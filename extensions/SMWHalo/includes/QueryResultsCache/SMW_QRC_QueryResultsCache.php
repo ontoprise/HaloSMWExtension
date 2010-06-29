@@ -71,8 +71,11 @@ class SMWQRCQueryResultsCache {
 			$qrcStore = SMWQRCStore::getInstance()->getDB();
 			$queryResult = unserialize($qrcStore->getQueryResult(SMWQRCQueryManagementHandler::getInstance()->getQueryId($query)));
 		
-			$query->addErrors($queryResult->getErrors());
-			$queryResult = new SMWQueryResult($query->getDescription()->getPrintRequests(), $query, $queryResult->getResults(), $store, $queryResult->hasFurtherResults());
+			if($query instanceof SMWQueryResult){
+				$query->addErrors($queryResult->getErrors());
+				$queryResult = 
+					new SMWQueryResult($query->getDescription()->getPrintRequests(), $query, $queryResult->getResults(), $store, $queryResult->hasFurtherResults());
+			}
 		}
 		return $queryResult;
 	}
@@ -123,7 +126,7 @@ class SMWQRCQueryResultsCache {
 		global $wgRequest;
 		$action = $wgRequest->getVal('action');
 		$isReadAccess = true;
-		if($wgRequest->wasposted() || $action == 'purge' || $action == 'submit'){
+		if($wgRequest->wasposted() || $action == 'purge2' || $action == 'submit'){
 			$isReadAccess = false;	
 		}
 		return $isReadAccess;
