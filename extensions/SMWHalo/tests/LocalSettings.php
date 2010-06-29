@@ -10,6 +10,8 @@ include_once('extensions/SMWHalo/includes/SMW_Initialize.php');
 enableSMWHalo('SMWHaloStore2', 'SMWTripleStore', 'http://publicbuild/ob');
 $smwgWebserviceEndpoint="localhost:8090";
 
+enableQueryResultsCache();
+
 #For DataAPI tests
 include_once('extensions/SemanticForms/includes/SF_Settings.php');
 $wgEnableWriteAPI = true;
