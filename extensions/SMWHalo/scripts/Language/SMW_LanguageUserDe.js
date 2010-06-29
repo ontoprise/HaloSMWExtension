@@ -311,6 +311,11 @@ var wgUserLanguageStrings = {
     'QI_LIKE'                 : '&auml;hnlich',
     'QI BUTTON_ADD'           : 'Hinzuf&uuml;gen',
     'QI_BUTTON_UPDATE'        : 'Aktualisieren',
+    'QI_TT_SHOW_IN_RES'       : 'Die Attributwerte werden im Ergebnis angezeigt.',
+    'QI_TT_MUST_BE_SET'       : 'Es werden nur Ergebnisse angezeigt, bei denen das Attribut gesetzt ist.',
+    'QI_TT_NO_RESTRICTION'    : 'Keine Einsch&auml;nkungen bei den Attributwerten. Alle Attributwerte werden im Ergebnis benutzt.',
+    'QI_TT_VALUE_RESTRICTION' : 'Die Attributwerte m&uuml;ssen bestimmte Kriterien erf&uuml;llen.',
+    'QI_TT_SUBQUERY'          : 'Die Einschr&auml;nkung der Attributwerte wird in einem eigenen Query bestimmt.',
 	
 	// Wiki text parser
 	'WTP_TEXT_NOT_FOUND'		  : "Konnte '$1' nicht im Wikitext finden.",

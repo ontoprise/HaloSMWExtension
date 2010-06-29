@@ -280,6 +280,8 @@ Druk de rechter knop om resultaten te verkrijgen. Enkel <i>Return</i> drukken ge
 	'smw_qi_tt_tcp' => 'The tabelkolom preview geeft een preview van de kolommen die in de resulterende tabel voorkomen',
 	'smw_qi_tt_prp' => 'De resultaten-preview geeft reeds een volledig beeld van de resultaten terwijl de query nog samengesteld wordt',
 	'smw_qi_tt_qlm' => 'The querylayout manager laat toe om de layout van de queryresultaten te definiëren',
+    'smw_qi_tt_qdef' => 'Define your query',
+    'smw_qi_tt_previewres' => 'Preview query results and format query',
     'smw_qi_tt_update' => 'Update the result preview of the query',
 	'smw_qi_tt_preview' => 'Geeft een preview van de queryresultaten, inclusief de layout settings',
     'smw_qi_tt_fullpreview' => 'Geeft een volledige preview van de queryresultaten, inclusief de layout settings',

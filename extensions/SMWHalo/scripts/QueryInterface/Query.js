@@ -89,17 +89,15 @@ Query.prototype = {
 */
     updateTree:function(){
         if (this.id == 0 && this.isEmpty()) {
-            $('treeanchor').innerHTML = gLanguage.getMessage('QI_EMPTY_QUERY');
-            return;
+            return gLanguage.getMessage('QI_EMPTY_QUERY');
         }
-        var tree = '<table>';
+        var tree = '<table class="qiTree">';
         if (this.id == 0)
             tree += '<tr><td colspan="2">'
                 + '<a href="javascript:void(0);" onclick="qihelper.setActiveQuery(0)">'
                 + gLanguage.getMessage('QI_MAIN_QUERY_NAME') + '</a></td></tr>';
-        tree += '<tr><td width="15"></td><td><table>';
         for(var i=0; i<this.categories.length; i++){
-			tree += '<tr><td width="15"><img src="'+qihelper.imgpath+'../../concept.gif"/></td><td> ';
+			tree += '<tr><td width="16"><img src="'+qihelper.imgpath+'../../concept.gif"/></td><td> ';
 			for(var j=0, js = this.categories[i].length; j < js; j++) {
 					tree += '<a href="javascript:void(0)" onclick="qihelper.selectNode(this, \'category-'+this.id+'-'+i+'-'+j+'\')">'
                         + this.categories[i][j] + '</a>';
@@ -109,7 +107,7 @@ Query.prototype = {
 			tree += '</td></tr>';
 		}
         for(var i=0; i<this.instances.length; i++){
-			tree += '<tr><td width="15"><img src="'+qihelper.imgpath+'../../instance.gif"/></td><td> ';
+			tree += '<tr><td width="16"><img src="'+qihelper.imgpath+'../../instance.gif"/></td><td> ';
 			for(var j=0, js = this.categories[i].length; j < js; j++) {
 					tree += '<a href="javascript:void(0)" onclick="qihelper.selectNode(this, \'instance-'+this.id+'-'+i+'-'+j+'\')">'
                         + this.instances[i][j] + '</a>';
@@ -119,17 +117,18 @@ Query.prototype = {
 			tree += '</td></tr>';
 		}
 		for(var i=0; i<this.properties.length; i++){
-			tree += '<tr><td width="15"><img src="'+qihelper.imgpath+'../../property.gif"/></td><td> '
+			tree += '<tr><td width="16"><img src="'+qihelper.imgpath+'../../property.gif"/></td><td> '
                 + '<a href="javascript:void(0);" onclick="qihelper.selectNode(this, \'property-'+this.id+'-'+i+'\')">'
-                + this.properties[i].getName() + '</a></td></tr>';
+                + this.properties[i].getName() + '</a></td></tr>'
+                + '<tr><td><img src="'+qihelper.imgpath+'lastlink.gif"/></td><td>';
 			propvalues = this.properties[i].getValues();
-			for(var j=0; j<propvalues.length; j++){
-                tree += '<tr><td> </td><td>';
+			for(var j=0, js= propvalues.length; j < js; j++){
+                
 				if(propvalues[j][0] == "subquery")
 					tree += '<img src="'+qihelper.imgpath+'subquery.png"/> '
                         + '<a href="javascript:void(0);" onclick="qihelper.setActiveQuery(' + propvalues[j][2] + ')">'
                         + gLanguage.getMessage('QI_SUBQUERY') + ' ' + propvalues[j][2]
-                        + '</a></td></tr><tr><td></td><td>___SUBQUERY_'+propvalues[j][2]+'___';
+                        + '</a></td></tr><tr><td> </td><td>___SUBQUERY_'+propvalues[j][2]+'___';
 				else {
 					var res = ""; //restriction for numeric values. Encode for HTML display
 					switch(propvalues[j][1]){
@@ -146,12 +145,13 @@ Query.prototype = {
                     res = ((this.properties[i].getArity() > 2 ) ? propvalues[j][0] : "")
                         + " " + res + " " + propvalues[j][2];
                     if (propvalues[j][3]) res += ' ' + propvalues[j][3];
-					tree += '<img src="'+qihelper.imgpath+'lastlink.gif"/> ' + res;
+					tree += res;
+                    if (j < (js - 1) )
+                        tree += ' <span style="font-weight:bold">' + gLanguage.getMessage('QI_OR') + '</span> ';
 				}
-                tree += '</td></tr>';
 			}
 		}
-        tree += '</table></td></tr></table>';
+        tree += '</table>';
         return tree;
     },
 

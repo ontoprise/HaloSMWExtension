@@ -10,6 +10,7 @@
  *  Manages major functionalities and GUI of the Query Interface
  *  @author Markus Nitsche [fitsch@gmail.com]
  *  @author Joerg Heizmann
+ *  @author Stephan Robotta
  */
 
 
@@ -39,6 +40,7 @@ QIHelper.prototype = {
 		this.enumValues = null;
 		this.loadedFromId = null;
 		this.addQuery(null, gLanguage.getMessage('QI_MAIN_QUERY_NAME'));
+        this.updateTree();
 		this.setActiveQuery(0);
 		this.updateColumnPreview();
 		this.pendingElement = null;
@@ -291,7 +293,6 @@ QIHelper.prototype = {
 	 */
 	setActiveQuery : function(id) {
 		this.activeQuery = this.queries[id];
-        this.activeQuery.updateTree(); // update treeview
 		this.activeQueryId = id;
 		this.emptyDialogue(); // empty open dialogue
 		this.updateBreadcrumbs(id); // update breadcrumb navigation of treeview
@@ -439,22 +440,6 @@ QIHelper.prototype = {
             return params;
         }
         return "";
-    },
-
-    getQueryFromSource : function() {
-        var ask = $('fullAskText').value;
-        ask = ask.replace(/\n/g, ''); // remove linebreaks
-        ask = ask.replace(/^\s+|\s+$/g, ''); // remove whitespaces
-        // check parser function type
-        var s = ask.match(/^(\{\{#(ask|sparql):)(.*?)(\}\})$/)
-        if (s) {
-            if (s[1].indexOf('ask') > -1)
-                s[3] += "|reasoner=ask";
-            else
-                s[3] += "|reasoner=sparql";
-            return s[3];
-        }
-        return ask;
     },
 
 	/**
@@ -941,7 +926,7 @@ QIHelper.prototype = {
         cell = newrow.insertCell(1);
         var param = (this.propTypename) ? this.propTypename : gLanguage.getMessage('QI_PAGE');
 		if (param == gLanguage.getMessage('QI_PAGE')) { // property dialogue & type = page
-			cell.innerHTML = this.createRestrictionSelector("=", true, false);
+			cell.innerHTML = this.createRestrictionSelector("=", false, false);
 			cell = newrow.insertCell(2);
 			cell.innerHTML = '<input class="wickEnabled general-forms" constraints="namespace: 0" autocomplete="OFF" type="text" id="input_r' + newRowIndex + '"/>';
 		} else { // property, no page type
@@ -1312,6 +1297,11 @@ QIHelper.prototype = {
 					}
 				}
 			}
+            // runtime issue: if the user selected radio for specific value
+            // and the property information is loaded after that, make the new
+            // created restriction table visible
+            if ($('dialoguecontent_pradio').getElementsByTagName('input')[1].checked)
+                this.setPropertyRestriction();
 		}
 		autoCompleter.registerAllInputs();
 		//this.pendingElement.hide();
@@ -1337,19 +1327,22 @@ QIHelper.prototype = {
         cell.style.verticalAlign="top";
         cell.innerHTML = gLanguage.getMessage('QI_PROPERTYVALUE');
         cell = row.insertCell(1);
-        var tmpHTML='';
+        var tmpHTML='<span onmouseover="Tip(\'' + gLanguage.getMessage('QI_TT_SHOW_IN_RES') + '\')">';
         if (this.activeQueryId == 0)
 			tmpHTML += '<input type="checkbox" id="input_c1" onchange="qihelper.toggleShowProperty();"/>';
 		else
 			tmpHTML += '<input type="checkbox" disabled="disabled" id="input_c1"/>';
         tmpHTML += ' ' + gLanguage.getMessage('QI_SHOW_PROPERTY')
+            + '</span>'
             + '<div id="input_c4d" style="display:none">&nbsp; &nbsp;' + gLanguage.getMessage('QI_SHOWUNIT')
             + '<select id="input_c4"></select></div>'
             + '<div id="input_c3d" style="display:none"><br/>' + gLanguage.getMessage('QI_COLUMN_LABEL')
             + '&nbsp;<input type="text" id="input_c3"/></div>'
             + '<br/>'
+            + '<span onmouseover="Tip(\'' + gLanguage.getMessage('QI_TT_MUST_BE_SET') + '\')">'
             + '<input type="checkbox" id="input_c2"/> '
-            + gLanguage.getMessage('QI_PROPERTY_MUST_BE_SET');
+            + gLanguage.getMessage('QI_PROPERTY_MUST_BE_SET')
+            + '</span>';
         cell.innerHTML = tmpHTML;
         $('dialoguecontent').parentNode.parentNode.appendChild(node);
         // hr line
@@ -1366,11 +1359,13 @@ QIHelper.prototype = {
         cell.innerHTML = gLanguage.getMessage('QI_PROP_VALUES_RESTRICT');
         row = node.insertRow(-1);
         cell = row.insertCell(-1);
-        cell.innerHTML = ''
-            + '<input type="radio" name="input_r0" value="-1" onchange="qihelper.setPropertyRestriction();" checked="checked" />' + gLanguage.getMessage('QI_NONE') + '&nbsp;'
-            + '<input type="radio" name="input_r0" value="-2" onchange="qihelper.setPropertyRestriction();"/>' + gLanguage.getMessage('QI_SPECIFIC_VALUE') + '&nbsp;'
+        cell.innerHTML = '<span onmouseover="Tip(\'' + gLanguage.getMessage('QI_TT_NO_RESTRICTION') + '\')">'
+            + '<input type="radio" name="input_r0" value="-1" onchange="qihelper.setPropertyRestriction();" checked="checked" />' + gLanguage.getMessage('QI_NONE')
+            + '</span>&nbsp;<span onmouseover="Tip(\'' + gLanguage.getMessage('QI_TT_VALUE_RESTRICTION') + '\')">'
+            + '<input type="radio" name="input_r0" value="-2" onchange="qihelper.setPropertyRestriction();"/>' + gLanguage.getMessage('QI_SPECIFIC_VALUE')
+            + '</span>&nbsp;<span onmouseover="Tip(\'' + gLanguage.getMessage('QI_TT_SUBQUERY') + '\')">'
             + '<input type="radio" name="input_r0" value="'+this.nextQueryId+'" onchange="qihelper.setPropertyRestriction();"/>'
-            + '<span id="usesub">' + gLanguage.getMessage('QI_SUBQUERY') + '</span>&nbsp;';
+            + '<span id="usesub">' + gLanguage.getMessage('QI_SUBQUERY') + '</span></span>&nbsp;';
         $('dialoguecontent').parentNode.parentNode.appendChild(node);
         node = document.createElement('table');
         node.style.display="none";
@@ -1564,57 +1559,58 @@ QIHelper.prototype = {
             }
             // some property values have been selected to restict the result set
             // set radio button and fill the input fiels with the selected values
+            if (prop.isEnumeration()) {
+                this.propIsEnum = true;
+                this.enumValues = prop.getEnumValues();
+            }
+            var acChange=false;
+            var rowOffset = 0;
+            // if arity > 2 then add the first row under the radio buttons without input field
+            if (this.proparity > 2) {
+                var newrow = $('dialoguecontent_pvalues').insertRow(-1);
+                var cell = newrow.insertCell(-1);
+                cell.innerHTML = gLanguage.getMessage('QI_PROPERTYVALUE');
+                rowOffset++;
+            }
+            for (var i = 0, n = vals.length; i < n; i++) {
+                this.addRestrictionInput();
+                var numType = false;
+                var currRow = i + rowOffset;
+                if (this.numTypes[vals[0][0].toLowerCase()]) // is it a numeric type?
+                    numType = true;
+                $('dialoguecontent_pvalues').rows[currRow].cells[1].innerHTML = this
+                    .createRestrictionSelector(vals[i][1], false, numType);
+                // deactivate autocompletion
+                if (!acChange)
+                    autoCompleter.deregisterAllInputs();
+                acChange = true;
+                $('dialoguecontent_pvalues').rows[currRow].cells[2].firstChild.className = "";
+                
+                // add unit selection, do this for all properties, even in subqueries
+                try {
+                    var propUnits = prop.getUnits();
+                    var uIdx = (this.proparity == 2) ? 0 : i;
+                    var tmpHTML = '';
+                    for (var k = 0, m = propUnits[uIdx].length; k < m; k++) {
+                        tmpHTML += '<option';
+                        if (propUnits[uIdx][k] == vals[i][3])
+                            tmpHTML += ' selected="selected"';
+                        tmpHTML += '>'+ propUnits[uIdx][k] + '</option>';
+                    }
+                    $('dialoguecontent_pvalues').rows[currRow].cells[2]
+                        .firstChild.nextSibling.innerHTML = tmpHTML;
+                } catch(e) {};
+                if (this.proparity > 2) {
+                    $('dialoguecontent_pvalues').rows[currRow].cells[0].innerHTML= vals[i][0];
+                    $('dialoguecontent_pvalues').rows[currRow].cells[0].style.fontWeight="normal";
+                }
+                $('input_r'+(i+1)).value = vals[i][2];
+            }
+            if (acChange) autoCompleter.registerAllInputs();
+            // if the selector is set to "restict value" then make the restictions visible
             if (selector == -2) {
                 document.getElementsByName('input_r0')[1].checked = true;
                 $('dialoguecontent_pvalues').style.display = "inline";
-                if (prop.isEnumeration()) {
-                    this.propIsEnum = true;
-                    this.enumValues = prop.getEnumValues();
-                }
-                var acChange=false;
-                var rowOffset = 0;
-                // if arity > 2 then add the first row under the radio buttons without input field
-                if (this.proparity > 2) {
-                    var newrow = $('dialoguecontent_pvalues').insertRow(-1);
-                    var cell = newrow.insertCell(-1);
-                    cell.innerHTML = gLanguage.getMessage('QI_PROPERTYVALUE');
-                    rowOffset++;
-                }
-                for (var i = 0, n = vals.length; i < n; i++) {
-                    this.addRestrictionInput();
-                    var disabled = true;
-                    var currRow = i + rowOffset;
-                    if (this.numTypes[vals[0][0].toLowerCase()]) { // is it a numeric type?
-                        disabled = false;
-                        $('dialoguecontent_pvalues').rows[currRow].cells[1].innerHTML = this
-                            .createRestrictionSelector(vals[i][1], disabled, true);
-                        // deactivate autocompletion
-                        if (!acChange)
-                            autoCompleter.deregisterAllInputs();
-                        acChange = true;
-                        $('dialoguecontent_pvalues').rows[currRow].cells[2].firstChild.className = "";
-                    }
-                    // add unit selection, do this for all properties, even in subqueries
-                    try {
-                        var propUnits = prop.getUnits();
-                        var uIdx = (this.proparity == 2) ? 0 : i;
-                        var tmpHTML = '';
-                        for (var k = 0, m = propUnits[uIdx].length; k < m; k++) {
-                            tmpHTML += '<option';
-                            if (propUnits[uIdx][k] == vals[i][3])
-                                tmpHTML += ' selected="selected"';
-                            tmpHTML += '>'+ propUnits[uIdx][k] + '</option>';
-                        }
-                        $('dialoguecontent_pvalues').rows[currRow].cells[2]
-                            .firstChild.nextSibling.innerHTML = tmpHTML;
-                    } catch(e) {};
-                    if (this.proparity > 2) {
-                        $('dialoguecontent_pvalues').rows[currRow].cells[0].innerHTML= vals[i][0];
-                        $('dialoguecontent_pvalues').rows[currRow].cells[0].style.fontWeight="normal";
-                    }
-                    $('input_r'+(i+1)).value = vals[i][2];
-                }
-                if (acChange) autoCompleter.registerAllInputs();
             }
         }
 		$('qidelete').style.display = "inline";
@@ -1768,6 +1764,18 @@ QIHelper.prototype = {
 	},
 
     selectNode : function(el, label) {
+        // remove any other highlighed nodes
+        var cells = $('treeanchor').getElementsByTagName('td');
+        for (i = 0; i < cells.length; i++) {
+            if (cells[i].style.backgroundColor) {
+                cells[i].style.backgroundColor = null;
+                for (j = 0; j < cells[i].childNodes.length; j++) {
+                    if (cells[i].childNodes[j].style)
+                        cells[i].childNodes[j].style.color= null;
+                }
+            }
+        }
+        // now mark the clicked cell as selected
         el.parentNode.style.backgroundColor='#1122FF';
         for (i = 0; i < el.parentNode.childNodes.length; i++) {
             if (el.parentNode.childNodes[i].style)
@@ -2494,7 +2502,7 @@ handleQueryString : function(args, queryId, pMustShow) {
                     }
                     for (j = 0; j < vals.length; j++) {
                         // check for restricion (makes sence for numeric properties)
-        				var op = vals[j].match(/^([\!|<|>]?=?)(.*)/);
+        				var op = vals[j].match(/^([\!|<|>|~]?=?)(.*)/);
             			if (op[1].length > 0) {
                 			restriction = op[1].indexOf('=') == -1
                                 ? op[1] + '='
