@@ -569,7 +569,7 @@ class WebService {
 		}
 
 		$result = $this->getCallResultParts($response[0], $resultParts);
-			
+		
 		$ws = $this->mArticleID;
 		if($this->getConfirmationStatus() == "false"){
 			$this->mConfirmationStatus = "once";
@@ -623,16 +623,16 @@ class WebService {
 			} else {
 				$results[$parts[1]] = $this->getResults($response, $rdef, $parts[1]);
 				$tmpResult = $this->evaluateAdditionalPathAttribute(
-				$rdef, $parts[1], $results[$parts[1]]);
-
-				if($tmpResult = DI_RDF_POSTPROCESS_REQUIRED){
+					$rdef, $parts[1], $results[$parts[1]]);
+				
+				if($tmpResult == DI_RDF_POSTPROCESS_REQUIRED){
 					$postProcess[$parts[1]] = $this->getPredicateForAlias($parts[1], $rdef);
 				} else {
 					$results[$parts[1]] = $tmpResult;
 				}
 			}
 		}
-
+		
 		//deal with the predicates special purpose parameter
 		if(array_key_exists(DI_PREDICATES, $this->mCallParameters)){
 			$this->initializeLinkedDataResultPartExtraction($response, $rdef);
@@ -711,7 +711,7 @@ class WebService {
 		$xpath = $this->getXPathForAlias($alias, $rdef);
 		$json = $this->getJSONForAlias($alias, $rdef);
 		$predicate = $this->getPredicateForAlias($alias, $rdef);
-
+		
 		if($xpath != null){
 			$newValue = array();
 			foreach($value as $v){
