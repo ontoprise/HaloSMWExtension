@@ -85,6 +85,8 @@ WebServiceRepositorySpecial.prototype = {
 	 */
 	confirmWWSDCallBack : function(request) {
 		var wsId = request.responseText;
+		var re = /\s*((\S+\s*)*)/;
+		wsId = wsId.replace(re, "$1");
 		document.getElementById("confirmButton"+wsId).style.display = "none";
 		document.getElementById("confirmText"+wsId).childNodes[0].nodeValue = diLanguage.getMessage("smw_wwsr_confirmed");
 	},
