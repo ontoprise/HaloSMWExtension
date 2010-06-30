@@ -724,6 +724,7 @@ QIHelper.prototype = {
 	 *            the tree
 	 */
 	newCategoryDialogue : function(reset) {
+        this.emptyDialogue();
         // add current action to breadcrumbs path
         this.updateBreadcrumbs(this.activeQueryId, gLanguage.getMessage((reset) ? 'QI_BC_ADD_CATEGORY' : 'QI_BC_EDIT_CATEGORY') );
 		this.activeDialogue = "category";
@@ -760,6 +761,7 @@ QIHelper.prototype = {
 	 *            the tree
 	 */
 	newInstanceDialogue : function(reset) {
+        this.emptyDialogue();
         this.updateBreadcrumbs(this.activeQueryId, gLanguage.getMessage((reset) ? 'QI_BC_ADD_INSTANCE' : 'QI_BC_EDIT_INSTANCE') );
 		this.activeDialogue = "instance";
         this.resetDialogueContent(reset);
@@ -792,6 +794,7 @@ QIHelper.prototype = {
 	 *            the tree
 	 */
 	newPropertyDialogue : function(reset) {
+        this.emptyDialogue();
         this.updateBreadcrumbs(this.activeQueryId, gLanguage.getMessage((reset) ? 'QI_BC_ADD_PROPERTY' : 'QI_BC_EDIT_PROPERTY') );
 		this.activeDialogue = "property";
 		this.propname = "";
@@ -840,11 +843,13 @@ QIHelper.prototype = {
         // row with input field and remove icon
         var cell = newrow.insertCell(0);
         if (idx == 0) cell.innerHTML = gLanguage.getMessage('QI_PROPERTYNAME');
+        else cell.innerHTML = ' <img src="' + this.imgpath + 'chain.png" alt="chain"/>';
 		cell = newrow.insertCell(1);
         cell.style.textAlign="left";
         cell.style.verticalAlign="middle";
         var tmpHTML = '<input type="text" id="input_p'+ idx +'" '
             + 'class="wickEnabled general-forms" constraints="' + constraintstring + '" '
+            + ((idx > 0) ? 'style="font-weight:bold;" ' : '')
             + 'autocomplete="OFF" onblur="qihelper.getPropertyInformation()"'
             + ((propName) ? ' value="'+propName+'"' : '')
             + '/>';
@@ -874,6 +879,11 @@ QIHelper.prototype = {
                 var img = $('dialoguecontent').rows[(idx-1)*2].getElementsByTagName('td')[1].getElementsByTagName('img');
                 if (img.length > 0)
                     img[0].parentNode.removeChild(img[0]);
+            } catch (e) {};
+            // if the previous input field has bold style, remove that
+            try {
+                var input = $('dialoguecontent').rows[(idx-1)*2].getElementsByTagName('td')[1].getElementsByTagName('input');
+                input[0].style.fontWeight = null;
             } catch (e) {};
         }
         autoCompleter.registerAllInputs();
@@ -996,6 +1006,8 @@ QIHelper.prototype = {
             img.alt="deleteInput";
             img.setAttribute('onclick', "qihelper.removePropertyChainInput()");
             $('dialoguecontent').rows[idx *2 - 2].getElementsByTagName('td')[1].appendChild(img);
+            $('dialoguecontent').rows[idx *2 - 2].getElementsByTagName('td')[1]
+                .getElementsByTagName('input').item(0).style.fontWeight = "bold";
         }
         this.toggleAddchain(true);
     },
@@ -1077,8 +1089,11 @@ QIHelper.prototype = {
 		if (propname != "" && propname != this.propname) { // only if not empty
 															// and name changed
 			this.propname = propname;
-			if (this.pendingElement)
-				this.pendingElement.remove();
+			if (this.pendingElement) {
+                try {
+                    this.pendingElement.remove();
+                } catch (e) {}
+            }
             // clean hidden table with old data and add pending indicator.
             /*
             $('displaycontent_pvalues_hidden').innerHTML = '';
@@ -1414,7 +1429,9 @@ QIHelper.prototype = {
                 ? gLanguage.getMessage('QI_ADD_PROPERTY_CHAIN')
                 : gLanguage.getMessage('QI_CREATE_PROPERTY_CHAIN');
             $('addchain').innerHTML =
-                '<a href="javascript:void(0)" onclick="qihelper.addPropertyChainInput()">'
+                '<a href="javascript:void(0)" '
+                + 'onmouseover="Tip(\'' + gLanguage.getMessage('QI_TT_ADD_CHAIN') + '\')" '
+                + 'onclick="tt_Hide(); qihelper.addPropertyChainInput()">'
                 + msg + '</a>';
         }
         else {
