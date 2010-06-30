@@ -12,6 +12,9 @@ class TestQueryResultsCache extends PHPUnit_Framework_TestCase {
 	private $queryArticle1 = '{{#ask: [[HasValue::+]] [[Category:DataArticle]] }} {{#ask: [[HasValue::+]] [[Category:AnotherDataArticle]] }}';
 	private $queryArticle1Version2 = '{{#ask: [[HasValue::+]] [[Category:DataArticle]] }}';
 	
+	private $queryArticle2 = '{{#sparql: SELECT ?x WHERE { ?x prop:HasValue ?y .  ?x rdf:type cat:DataArticle . } }} {{#sparql: SELECT ?x WHERE { ?x prop:HasValue ?y .  ?x rdf:type cat:AnotherDataArticle . } }}';
+	private $queryArticle2Version2 = '{{#sparql: SELECT ?x WHERE { ?x prop:HasValue ?y .  ?x rdf:type cat:DataArticle . } }}';
+	
 	function setup(){
 		$articles = array($this->dataArticle1, $this->dataArticle2, $this->dataArticle3);
 		$count = 0;
@@ -20,7 +23,7 @@ class TestQueryResultsCache extends PHPUnit_Framework_TestCase {
 			smwf_om_EditArticle('QRCDataArticle'.$count, 'PHPUnit', $article, '');
 		}
 		
-		$articles = array($this->queryArticle1);
+		$articles = array($this->queryArticle1, $this->queryArticle2);
 		$count = 0;
 		global $wgTitle;
 		foreach($articles as $article){
@@ -39,7 +42,7 @@ class TestQueryResultsCache extends PHPUnit_Framework_TestCase {
 		}
 	}
 	
-	function testEmptyCache(){
+	function testEmptyCacheBOTH(){
 		$request = json_encode(array('debug' => true));
 		$response = smwf_qc_getQueryIds($request);
 		$response = json_decode($response);
@@ -48,7 +51,7 @@ class TestQueryResultsCache extends PHPUnit_Framework_TestCase {
 		$this->assertEquals(0, count($response->queryIds));
 	}
 	
-	function testCacheEntriesAdded(){
+	function testCacheEntriesAddedASK(){
 		smwf_om_EditArticle('QRCQueryArticle1', 'PHPUnit', $this->queryArticle1, '');
 		
 		$request = json_encode(array('debug' => true));
@@ -74,9 +77,37 @@ class TestQueryResultsCache extends PHPUnit_Framework_TestCase {
 		}
 	}
 	
-	public function testDeleteCacheEntry(){
+	function testCacheEntriesAddedSPARQL(){
+		smwf_om_EditArticle('QRCQueryArticle2', 'PHPUnit', $this->queryArticle1, '');
+		
+		$request = json_encode(array('debug' => true));
+		$response = smwf_qc_getQueryIds($request);
+		$response = json_decode($response);
+		
+		//check whether two new cache entries have been added
+		$this->assertEquals(2, count($response->queryIds));
+		
+		$qrcStore = SMWQRCStore::getInstance()->getDB();
+		$resultCount = 2; //todo: this is ugly
+		foreach($response->queryIds as $qId){
+			$queryResult = $qrcStore->getQueryResult($qId);
+			$queryResult = unserialize($queryResult);
+			
+			//check whether unserialize works like expected
+			$unserializedCorrectly = ($queryResult instanceof SMWQueryResult) ? true : false;
+			$this->assertEquals(true, $unserializedCorrectly);
+			
+			//check number of retrieved results
+			$this->assertEquals($resultCount, count($queryResult->getResults()));
+			$resultCount--;
+		}
+	}
+	
+	public function testDeleteCacheEntryBOTH(){
 		smwf_om_EditArticle('QRCQueryArticle1', 'PHPUnit', $this->queryArticle1, '');
 		smwf_om_EditArticle('QRCQueryArticle1', 'PHPUnit', $this->queryArticle1Version2, '');
+		smwf_om_EditArticle('QRCQueryArticle2', 'PHPUnit', $this->queryArticle2, '');
+		smwf_om_EditArticle('QRCQueryArticle2', 'PHPUnit', $this->queryArticle2Version2, '');
 		
 		$request = json_encode(array('debug' => true));
 		$response = smwf_qc_getQueryIds($request);
@@ -94,10 +125,10 @@ class TestQueryResultsCache extends PHPUnit_Framework_TestCase {
 		$response = smwf_qc_getQueryIds($request);
 		$response = json_decode($response);
 		
-		$this->assertEquals(1, count($response->queryIds));
+		$this->assertEquals(2, count($response->queryIds));
 	}
 	
-	public function testCacheEntryUsed(){
+	public function testCacheEntryUsedASK(){
 		smwf_om_EditArticle('QRCQueryArticle1', 'PHPUnit', $this->queryArticle1, '');
 		
 		smwf_om_DeleteArticle('QRCDataArticle1', 'PHPUnit', '');
@@ -115,7 +146,25 @@ class TestQueryResultsCache extends PHPUnit_Framework_TestCase {
 		
 	}
 	
-	public function testCacheEntryNotUsed(){
+	public function testCacheEntryUsedSPARQL(){
+		smwf_om_EditArticle('QRCQueryArticle2', 'PHPUnit', $this->queryArticle2, '');
+		
+		smwf_om_DeleteArticle('QRCDataArticle1', 'PHPUnit', '');
+		
+		$article = Article::newFromID(Title::newFromText('QRCQueryArticle2')->getArticleID());
+		$content = $article->getContent();
+		
+		global $wgParser;
+		$pOpts = new ParserOptions();
+		$result = $wgParser->parse($content, Title::newFromText('QRCQueryArticle1'), $pOpts)->getText();
+		
+		$cacheEntryUsed = false;
+		if(strpos($result, 'QRCDataArticle1') > 0) $cacheEntryUsed = true;
+		$this->assertEquals(true, $cacheEntryUsed);
+		
+	}
+	
+	public function testCacheEntryNotUsedASK(){
 		smwf_om_EditArticle('QRCQueryArticle1', 'PHPUnit', $this->queryArticle1, '');
 		
 		smwf_om_DeleteArticle('QRCDataArticle1', 'PHPUnit', '');
@@ -137,7 +186,29 @@ class TestQueryResultsCache extends PHPUnit_Framework_TestCase {
 		$this->assertEquals(false, $cacheEntryUsed);
 	}
 	
-	public function testArticleUpdatedByAPI(){
+	public function testCacheEntryNotUsedSPARQL(){
+		smwf_om_EditArticle('QRCQueryArticle2', 'PHPUnit', $this->queryArticle2, '');
+		
+		smwf_om_DeleteArticle('QRCDataArticle1', 'PHPUnit', '');
+		
+		$article = Article::newFromID(Title::newFromText('QRCQueryArticle2')->getArticleID());
+		$content = $article->getContent();
+		
+		global $wgRequest;
+		$wgRequest->setVal('action', 'purge');
+		
+		global $wgParser;
+		$pOpts = new ParserOptions();
+		$result = $wgParser->parse($content, Title::newFromText('QRCQueryArticle2'), $pOpts)->getText();
+		
+		$article = Article::newFromID(Title::newFromText(QRCQueryArticle2));
+		
+		$cacheEntryUsed = false;
+		if(strpos($result, 'QRCDataArticle1') > 0) $cacheEntryUsed = true;
+		$this->assertEquals(false, $cacheEntryUsed);
+	}
+	
+	public function testArticleUpdatedByAPIBOTH(){
 		smwf_om_EditArticle('QRCQueryArticle1', 'PHPUnit', $this->queryArticle1, '');
 		
 		smwf_om_DeleteArticle('QRCDataArticle1', 'PHPUnit', '');
