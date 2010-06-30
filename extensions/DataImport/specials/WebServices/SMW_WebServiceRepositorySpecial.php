@@ -174,7 +174,7 @@ class SMWWebServiceRepositorySpecial extends SpecialPage {
 		}
 		
 		$log = SGAGardeningIssuesAccess::getGardeningIssuesAccess();
-		SMWQueryProcessor::processFunctionParams(array("[[TermImport:+]] [[Category:TermImport]]")
+		SMWQueryProcessor::processFunctionParams(array("[[Category:TermImport]]")
 			,$querystring,$params,$printouts);
 		$queryResult = explode("|",
 		SMWQueryProcessor::getResultFromQueryString($querystring,$params,
