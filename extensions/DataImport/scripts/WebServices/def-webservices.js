@@ -182,6 +182,8 @@ DefineWebServiceSpecial.prototype = {
 	 */
 	processStep2Do : function(parameterString, edit) {
 		var wsParameters = parameterString.split(";");
+		
+		var overflow = false;
 
 		this.numberOfUsedParameters = 0;
 		
