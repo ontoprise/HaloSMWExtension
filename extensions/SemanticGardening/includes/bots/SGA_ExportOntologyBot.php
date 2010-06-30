@@ -6,7 +6,7 @@
  * @defgroup ExportOntologyBot
  * @ingroup SemanticGardeningBots
  *
- * @author Kai Kühn
+ * @author Kai Kï¿½hn
  *
  * Created on 14.12.2007
  *
@@ -702,7 +702,7 @@ class ExportOntologyBot extends GardeningBot {
 			$conv = &smwfGetStore()->getPropertyValues($dttitle, $conversionFactorSIDV);
 			if ( !empty($conv) ) {
 				$dv = SMWDataValueFactory::newPropertyValue($pt->getXSDValue(), $value->getXSDValue() . " " . $value->getUnit());
-				list($sivalue, $siunit) = $this->convertToSI($dv->getNumericValue(), $conv[0]->getXSDValue());
+				list($sivalue, $siunit) = $this->convertToSI($dv->getValueKey(), $conv[0]->getXSDValue());
 				$dv->setUserValue($sivalue . " " . $dv->getUnit()); // in order to translate to XSD
 				if ($dv->getXSDValue() != null && $dv->getXSDValue() != '') {
 					return "\t\t<prop:" . ExportOntologyBot::makeXMLExportId($pt->getXSDValue()) . ' rdf:datatype="&xsd;float">' .
