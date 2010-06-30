@@ -12,9 +12,9 @@ function isWindows() {
     preg_match('!\nSystem(.*?)\n!is',strip_tags($info),$ma);
     //Check if it consists 'windows' as string
     if(preg_match('/[Ww]indows/',$ma[1])) {
-        $thisBoxRunsWindows= false;
+        $thisBoxRunsWindows= true;
     } else {
-        $thisBoxRunsWindows = true;
+        $thisBoxRunsWindows = false;
     }
     return $thisBoxRunsWindows;
 }
