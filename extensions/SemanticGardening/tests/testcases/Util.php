@@ -11,8 +11,7 @@ function isWindows() {
     //Get Systemstring
     preg_match('!\nSystem(.*?)\n!is',strip_tags($info),$ma);
     //Check if it consists 'windows' as string
-    preg_match('/[Ww]indows/',$ma[1],$os);
-    if($os[0]=='' && $os[0]==null ) {
+    if(preg_match('/[Ww]indows/',$ma[1])) {
         $thisBoxRunsWindows= false;
     } else {
         $thisBoxRunsWindows = true;
