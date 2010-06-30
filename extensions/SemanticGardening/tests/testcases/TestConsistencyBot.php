@@ -6,7 +6,7 @@ class TestConsistencyBot extends PHPUnit_Framework_TestCase {
 
 
 	function setUp() {
-		$cd = isWindows() ? "" : "./"; 
+		$cd = isWindows() ? "" : "sh ";
 		exec($cd.'runBots smw_consistencybot');
 	}
 
