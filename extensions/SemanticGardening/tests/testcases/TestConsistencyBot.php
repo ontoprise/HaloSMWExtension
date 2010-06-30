@@ -1,5 +1,6 @@
 <?php
-require_once '../includes/bots/consistency_bot/SGA_ConsistencyBot.php';
+global $sgagIP;
+require_once $sgagIP . '/includes/bots/consistency_bot/SGA_ConsistencyBot.php';
 require_once 'Util.php';
 class TestConsistencyBot extends PHPUnit_Framework_TestCase {
 

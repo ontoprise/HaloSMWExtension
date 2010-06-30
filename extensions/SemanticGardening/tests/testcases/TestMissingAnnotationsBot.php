@@ -1,7 +1,7 @@
 <?php
 global $sgagIP;
 require_once( $sgagIP . '/includes/SGA_GardeningIssues.php');
-require_once '../includes/bots/SGA_MissingAnnotationsBot.php';
+require_once $sgagIP . '/includes/bots/SGA_MissingAnnotationsBot.php';
 require_once 'Util.php';
 class TestMissingAnnotationsBot extends PHPUnit_Framework_TestCase {
     
