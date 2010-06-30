@@ -2708,7 +2708,11 @@ DefineWebServiceSpecial.prototype = {
 				o["path"] = editResults[i + 2];
 				resultsUpdate.push(o);
 			}
-			this.processStep1LD();
+			if (protocol == "ld") {
+				this.processStep1LD();
+			} else {
+				this.processStep3REST();
+			}
 			this.updateResultsREST(resultsUpdate, protocol);
 		}
 		
