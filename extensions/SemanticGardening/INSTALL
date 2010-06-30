@@ -40,14 +40,18 @@ Installation:
 	$phpInterpreter="<path to php executable>";
 	require_once("extensions/SemanticGardening/includes/SGA_GardeningInitialize.php");
 
-(3) To specify the gardening privilege, add:
+(3) Specify a temporary directory by setting $sgaTempDir to a directory
+    where PHP has read/write access. If none is specified, 
+    then c:\temp\wiki or /tmp/wiki is used on Windows respectively on Linux.
+    
+(4) To specify the gardening privilege, add:
 
 	$wgGroupPermissions['sysop']['gardening'] = true;
 	
-(4) If you want to use the ExportOntologyBot, create a directory 'wikiexport' in the 
+(5) If you want to use the ExportOntologyBot, create a directory 'wikiexport' in the 
 	directory $IP/extensions/SemanticGardening/.
 
-(5) Give the directory write access for the user runing Apache (or simply for all if possible). 
+(6) Give the directory write access for the user runing Apache (or simply for all if possible). 
 
 
     

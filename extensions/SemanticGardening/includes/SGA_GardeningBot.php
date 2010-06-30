@@ -434,20 +434,22 @@ abstract class GardeningBot {
 		}
 		return $botLogFile;
 	}
-	
+
 	/**
 	 * Returns a writeable dir (assuming $sgaTempDir is configured accrodingly).
-	 * If $sgaTempDir is not set it returns NULL;
-	 * 
+	 * If $sgaTempDir is not set it returns a default value for windows and linux;
+	 *
 	 */
 	public static function getWriteableDir() {
 		global $sgaTempDir;
 		if (isset($sgaTempDir)) {
-            $normalizedBotDir = substr(trim($sgaTempDir), -1) == '/' ? trim($sgaTempDir) : trim($sgaTempDir)."/";
-            self::mkpath($normalizedBotDir);
-			return $normalizedBotDir;
+			$normalizedBotDir = substr(trim($sgaTempDir), -1) == '/' ? trim($sgaTempDir) : trim($sgaTempDir)."/";
+		} else {
+			$normalizedBotDir = self::isWindows() ? 'c:/temp/wiki' : '/tmp/wiki';
 		}
-		return NULL;
+		self::mkpath($normalizedBotDir);
+		return $normalizedBotDir;
+
 	}
 
 	/**
