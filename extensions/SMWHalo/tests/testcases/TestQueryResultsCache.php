@@ -15,6 +15,8 @@ class TestQueryResultsCache extends PHPUnit_Framework_TestCase {
 	private $queryArticle2 = '{{#sparql: SELECT ?x WHERE { ?x prop:HasValue ?y .  ?x rdf:type cat:DataArticle . } }} {{#sparql: SELECT ?x WHERE { ?x prop:HasValue ?y .  ?x rdf:type cat:AnotherDataArticle . } }}';
 	private $queryArticle2Version2 = '{{#sparql: SELECT ?x WHERE { ?x prop:HasValue ?y .  ?x rdf:type cat:DataArticle . } }}';
 	
+	private $queryArticle3 = '{{#ask: [[HasValue::+]] }}';
+	
 	function setup(){
 		$articles = array($this->dataArticle1, $this->dataArticle2, $this->dataArticle3);
 		$count = 0;
@@ -23,7 +25,7 @@ class TestQueryResultsCache extends PHPUnit_Framework_TestCase {
 			smwf_om_EditArticle('QRCDataArticle'.$count, 'PHPUnit', $article, '');
 		}
 		
-		$articles = array($this->queryArticle1, $this->queryArticle2);
+		$articles = array($this->queryArticle1, $this->queryArticle2, $this->queryArticle3);
 		$count = 0;
 		global $wgTitle;
 		foreach($articles as $article){
@@ -38,7 +40,7 @@ class TestQueryResultsCache extends PHPUnit_Framework_TestCase {
 		
 		$qrcStore = SMWQRCStore::getInstance()->getDB();
 		foreach($response->queryIds as $qId){
-			$qrcStore->deleteQueryResult($qId);
+			$qrcStore->deleteQueryData($qId);
 		}
 	}
 	
@@ -49,6 +51,32 @@ class TestQueryResultsCache extends PHPUnit_Framework_TestCase {
 		
 		//first check whether the cache is empty
 		$this->assertEquals(0, count($response->queryIds));
+	}
+	
+	public function testGetQueryIdsByAPIOrder(){
+		smwf_om_EditArticle('QRCQueryArticle1', 'PHPUnit', $this->queryArticle1, '');
+		sleep(2);
+		smwf_om_EditArticle('QRCQueryArticle2', 'PHPUnit', $this->queryArticle2, '');
+		sleep(2);
+		smwf_om_EditArticle('QRCQueryArticle3', 'PHPUnit', $this->queryArticle3, '');
+		
+		$request = json_encode(array('debug' => true));
+		$response = smwf_qc_getQueryIds($request);
+		$response = json_decode($response);
+		
+		$this->assertEquals(5, count($response->queryIds));
+		
+		$qrcStore = SMWQRCStore::getInstance()->getDB();
+		$lastPriority = 0; 
+		foreach($response->queryIds as $qId){
+			$queryData = $qrcStore->getQueryData($qId);
+			
+			$this->assertEquals(true, $queryData['priority'] >= $lastPriority);
+			
+			$lastPriority = $queryData['priority'];
+		}
+		
+		$lastPriority();
 	}
 	
 	function testCacheEntriesAddedASK(){
@@ -64,8 +92,8 @@ class TestQueryResultsCache extends PHPUnit_Framework_TestCase {
 		$qrcStore = SMWQRCStore::getInstance()->getDB();
 		$resultCount = 2; //todo: this is ugly
 		foreach($response->queryIds as $qId){
-			$queryResult = $qrcStore->getQueryResult($qId);
-			$queryResult = unserialize($queryResult);
+			$queryData = $qrcStore->getQueryData($qId);
+			$queryResult = unserialize($queryData['queryResult']);
 			
 			//check whether unserialize works like expected
 			$unserializedCorrectly = ($queryResult instanceof SMWQueryResult) ? true : false;
@@ -90,8 +118,8 @@ class TestQueryResultsCache extends PHPUnit_Framework_TestCase {
 		$qrcStore = SMWQRCStore::getInstance()->getDB();
 		$resultCount = 2; //todo: this is ugly
 		foreach($response->queryIds as $qId){
-			$queryResult = $qrcStore->getQueryResult($qId);
-			$queryResult = unserialize($queryResult);
+			$queryData = $qrcStore->getQueryData($qId);
+			$queryResult = unserialize($queryData['queryResult']);
 			
 			//check whether unserialize works like expected
 			$unserializedCorrectly = ($queryResult instanceof SMWQueryResult) ? true : false;
@@ -234,5 +262,29 @@ class TestQueryResultsCache extends PHPUnit_Framework_TestCase {
 		if(strpos($html, 'QRCDataArticle1') > 0) $found = true;
 		
 		$this->assertEquals(false, $found);
+	}
+
+	public function testGetQueryIdsByAPIOrder(){
+		smwf_om_EditArticle('QRCQueryArticle1', 'PHPUnit', $this->queryArticle1, '');
+		sleep(2);
+		smwf_om_EditArticle('QRCQueryArticle2', 'PHPUnit', $this->queryArticle2, '');
+		sleep(2);
+		smwf_om_EditArticle('QRCQueryArticle3', 'PHPUnit', $this->queryArticle3, '');
+		
+		$request = json_encode(array('debug' => true));
+		$response = smwf_qc_getQueryIds($request);
+		$response = json_decode($response);
+		
+		$this->assertEquals(5, count($response->queryIds));
+		
+		$qrcStore = SMWQRCStore::getInstance()->getDB();
+		$lastPriority = 0; 
+		foreach($response->queryIds as $qId){
+			$queryData = $qrcStore->getQueryData($qId);
+			
+			$this->assertEquals(true, $queryData['priority'] >= $lastPriority);
+			
+			$lastPriority = $queryData['priority'];
+		}
 	}
 }
