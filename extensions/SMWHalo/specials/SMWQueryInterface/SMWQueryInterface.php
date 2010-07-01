@@ -55,15 +55,14 @@ class SMWQueryInterface extends SpecialPage {
                       onclick="qihelper.sectionCollapse(\'querylayout\')>'.wfMsg('smw_qi_layout_manager').'</span>
          */
 		$html = '<div id="definitiontitle"><span onclick="qihelper.switchDefinition()" onmouseover="Tip(\'' . wfMsg('smw_qi_tt_qdef') . '\')"><a id="definitiontitle-link" class="minusplus" href="javascript:void(0)"></a>' . wfMsg('smw_qi_section_definition') . '</span></div>
-                 <div id="qiquerydefinition">
-                 <div id="qiaddbuttons" class="qiaddbuttons">' .
-					'<button onclick="qihelper.newCategoryDialogue(true)" onmouseover="Tip(\'' . wfMsg('smw_qi_tt_addCategory') . '\')">' . wfMsg('smw_qi_add_category') . '</button>'.
-					'<button onclick="qihelper.newPropertyDialogue(true)" onmouseover="Tip(\'' . wfMsg('smw_qi_tt_addProperty') . '\')">' . wfMsg('smw_qi_add_property') . '</button>'.
+                 <table id="qiquerydefinition"><tr><td id="qiaddbuttons" class="qiaddbuttons">' .
+      				'<button onclick="qihelper.newCategoryDialogue(true)" onmouseover="Tip(\'' . wfMsg('smw_qi_tt_addCategory') . '\')">' . wfMsg('smw_qi_add_category') . '</button>'.
+          			'<button onclick="qihelper.newPropertyDialogue(true)" onmouseover="Tip(\'' . wfMsg('smw_qi_tt_addProperty') . '\')">' . wfMsg('smw_qi_add_property') . '</button>'.
                     '<button onclick="qihelper.newInstanceDialogue(true)" onmouseover="Tip(\'' . wfMsg('smw_qi_tt_addInstance') . '\')">' . wfMsg('smw_qi_add_instance') . '</button>'.
-                '</div><br/<br/>'.
-                $this->addDragbox().
-                $this->addTabHeaderForQIDefinition().
-                '</div>';
+                '</td></tr><tr><td>'.
+                    $this->addDragbox().
+                    $this->addTabHeaderForQIDefinition().
+                '</td></tr></table>';
         return $html;
     }
 
