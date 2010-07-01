@@ -76,6 +76,8 @@ else {
 	$newPage= str_replace('</body>', "</div>\n</body>", $newPage);
 }
 
+// remove smwCSH.js include because we do not want a help link in the query interface popup to appear
+$newPage = preg_replace('/<script.*?\/smwCSH.js.*?<\/script>/', "", $newPage);
 // output the page
 echo $newPage;
 
