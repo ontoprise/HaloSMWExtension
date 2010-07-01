@@ -940,11 +940,11 @@ class WebService {
 		// include the correct client
 		global $smwgDIIP;
 
-		$protocol = $this->mProtocol;
+		$protocol = strtoupper($this->mProtocol);
 		if(!$this->mWSClient){
 			try {
 				include_once($smwgDIIP . "/specials/WebServices/SMW_".
-				$protocol."Client.php");
+					$protocol."Client.php");
 				$classname = "SMW".ucfirst(strtolower($protocol))."Client";
 				if (!class_exists($classname)) {
 					return array(wfMsg("smw_wws_invalid_protocol"));
