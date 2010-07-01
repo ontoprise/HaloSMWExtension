@@ -296,7 +296,7 @@ var wgUserLanguageStrings = {
     'QI_INST_ADDED_SUCCESSFUL': 'Instanz erfolgreich zum Query hinzugef&uuml;gt',
     'QI_CREATE_PROPERTY_CHAIN': 'neue Attributkette anlegen durch hinzu&uumlgen eines Attributs',
     'QI_ADD_PROPERTY_CHAIN'   : 'weiteres Attribut zur Attributkette hinzuf&uuml;gen',
-    'QI_PROP_VALUES_RESTRICT' : 'Einschr&auml;nken der Attributwerte',
+    'QI_PROP_VALUES_RESTRICT' : 'Einschr&auml;nkung',
     'QI_SPECIFIC_VALUE'       : 'bestimmter Wert',
     'QI_NONE'                 : 'keine',
     'QI_PROPERTY_TYPE'        : 'Typ',

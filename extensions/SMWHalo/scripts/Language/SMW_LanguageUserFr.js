@@ -295,7 +295,7 @@ var wgUserLanguageStrings = {
     'QI_INST_ADDED_SUCCESSFUL': 'Instance successfully added to the query',
     'QI_ADD_PROPERTY_CHAIN'   : 'Add another property to property chain',
     'QI_CREATE_PROPERTY_CHAIN': 'Create a property chain by adding another property',
-    'QI_PROP_VALUES_RESTRICT' : 'Property values restriction',
+    'QI_PROP_VALUES_RESTRICT' : 'Restriction',
     'QI_SPECIFIC_VALUE'       : 'Specific value',
     'QI_NONE'                 : 'None',
     'QI_PROPERTY_TYPE'        : 'Type',
