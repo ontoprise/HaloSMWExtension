@@ -74,9 +74,6 @@ else {
 	// suround QI code by div with id = divQiGui for managing the tabs
 	$newPage= preg_replace('/<body[^>]*>/', '$0<div id="divQiGui"'.$ie_style.'>', $newPage);
 	$newPage= str_replace('</body>', "</div>\n</body>", $newPage);
-
-	// add div container for raw query source code at the end
-	$newPage= str_replace('</body>', getDivQiSrc()."\n</body>", $newPage);
 }
 
 // output the page
@@ -104,30 +101,6 @@ document.write( \'<script src="\' + FCKConfig.BasePath + \'dialog/common/fck_dia
 
 	</script>
 	<script type="text/javascript">
-
-'.($error
-? ''  // dont set any tabs on error
-: '
-// Set the dialog tabs.
-window.parent.AddTab( \'GUI\', FCKLang.wikiDlgQueryInterface || \'Query Interface\' ) ;
-window.parent.AddTab( \'SRC\', FCKLang.wikiDlgQIsource ||  \'Query sourcecode\' ) ;
-
-function OnDialogTabChange( tabCode ) {
-	ShowE(\'divQiGui\' , ( tabCode == \'GUI\' ) ) ;
-	ShowE(\'divQiSrc\' , ( tabCode == \'SRC\' ) ) ;
-	if (tabCode == \'GUI\') {
-		initialize_qi_from_querystring( GetE(\'xAskQueryRaw\').value.replace(/fckLR/g,\'\').replace( /&quot;/g, \'"\'));
-	}
-	else {
-		ask = qihelper.getFullParserAsk();
-   		ask = ask.replace(/\]\]\[\[/g, "]]\n[[");
-		ask = ask.replace(/>\[\[/g, ">\n[[");
-		ask = ask.replace(/\]\]</g, "]]\n<");
-    	ask = ask.replace(/([^\|]{1})\|{1}(?!\|)/g, "$1\n|");
-    	GetE(\'xAskQueryRaw\').value = ask;	
-	}
-}
-').'
 
 // Get the selected query embed (if available).
 var oFakeImage = FCK.Selection.GetSelectedElement();
@@ -194,23 +167,12 @@ function Ok(enterHit) {
 	// with the patch in fckdialog.html pevent that hitting ENTER closes the window 
 	if (enterHit) return false;
 
-	// use ask query from field in source code tab if active
-	if (GetE(\'divQiSrc\').style.display.indexOf("none") == -1) {
-		ask = FCKTools.HTMLEncode(GetE(\'xAskQueryRaw\').value.Trim().replace(/(\r\n|\n)/g, \'fckLR\')).replace( /"/g, \'&quot;\' ) ;
-
-		if ( !( /^{{#ask:[\s\S]+}}$/.test( ask ) ) ) {
-			alert( FCKLang.wikiDlgQIsyntaxErr || \'Ask query must start with {{#ask: and end with }}. Please check it.\' ) ;
-			return false ;
-		}
-	}
-	// the GUI tab is active
-	else {
-		ask = qihelper.getFullParserAsk();
-   		ask = ask.replace(/\]\]\[\[/g, "]]\n[[");
-		ask = ask.replace(/>\[\[/g, ">\n[[");
-		ask = ask.replace(/\]\]</g, "]]\n<");
-    	ask = ask.replace(/([^\|]{1})\|{1}(?!\|)/g, "$1\n|");
-	}
+	// get ask query from the QI
+	ask = qihelper.getAskQueryFromGui();
+	ask = ask.replace(/\]\]\[\[/g, "]]\n[[");
+	ask = ask.replace(/>\[\[/g, ">\n[[");
+	ask = ask.replace(/\]\]</g, "]]\n<");
+   	ask = ask.replace(/([^\|]{1})\|{1}(?!\|)/g, "$1\n|");
 
 	if ( !oAskSpan ) {
                 // if we are in source code mode, insert the query at the
@@ -234,29 +196,6 @@ function Ok(enterHit) {
 	return true;
 }
 </script>';
-}
-
-/**
- * return div element for the tab "Query source code". This is where the plain
- * wiki text of the query is displayed if a query is edited. 
- */
-function getDivQiSrc() {
-	return '<div id="divQiSrc" style="display: none;">
-		<table cellpadding="0" cellspacing="0" border="0" width="100%" height="100%">
-			<tr>
-				<td>
-					<span fcklang="wikiDlgQIrawdef">Ask Query raw definition (from {{#ask: to }})</span><br />
-				</td>
-			</tr>
-			<tr>
-				<td height="100%">
-					<textarea id="xAskQueryRaw" style="width: 100%; height: 100%; font-family: Monospace"
-						cols="50" rows="10" wrap="off"></textarea>
-				</td>
-			</tr>
-		</table>
-	</div>
-	';
 }
 
 /**
