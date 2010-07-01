@@ -86,7 +86,7 @@ class SMWQRCQueryResultsCache {
 					}
 					
 					$priority = SMWQRCPriorityCalculator::getInstance()
-						->computeQueryUpdatePriority($lastUpdate, $accessFrequency, $invalidationFrequeny);
+						->computeQueryUpdatePriority($lastUpdate, $accessFrequency, $invalidationFrequency);
 					
 					$qrcStore->updateQueryData($queryId, serialize($queryResult), $lastUpdate, 
 						$accessFrequency, $invalidationFrequency, $dirty, $priority);
