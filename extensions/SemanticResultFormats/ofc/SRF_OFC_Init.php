@@ -22,7 +22,7 @@ global $smgJSLibs; $smgJSLibs[] = 'jquery';
 
 global $smwgResultFormats, $wgAutoloadClasses, $srfgIP;
 $smwgResultFormats['ofc'] = 'SRFOFC';
-$wgAutoloadClasses['SRFOFC'] = $srfgIP . '/ofc/SRF_OFC.php';
+$wgAutoloadClasses['SRFOFC'] = $srfgIP . '/ofc/SRF_OFC2.php';
 
 $smwgResultFormats['ofc-pie'] = 'SRFOFC';
 $smwgResultFormats['ofc-bar'] = 'SRFOFC';
