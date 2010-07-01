@@ -20,7 +20,7 @@ class SRFOFC extends SMWResultPrinter {
 	protected $m_singlechart = false;
 	protected $m_tabview = false;
 	protected $m_notoolbar = false;
-	protected $m_disableprov = false;
+	protected $m_disableprov = true;
 
 	protected $m_isAjax = false;
 	
@@ -28,7 +28,8 @@ class SRFOFC extends SMWResultPrinter {
         return array(
 			array('name' => 'width', 'type' => 'int', 'description' => "Width of graphic"),
 			array('name' => 'height', 'type' => 'int', 'description' => "Height of graphic"),
-			array('name' => 'mainlabel', 'type' => 'string', 'description' => "Mainlabel")
+			array('name' => 'mainlabel', 'type' => 'string', 'description' => "Mainlabel"),
+            array('name' => 'options', 'type' => 'string', 'description' => "Options")
 			
 		);
     }
@@ -259,10 +260,10 @@ class SRFOFC extends SMWResultPrinter {
 
 				while ( ($object = $field->getNextObject()) !== false ) {
 					if ($object->getTypeID() == '_wpg') { // use shorter "LongText" for wikipage
-						$provURL = $object->getProvenance();
 						if($this->m_disableprov) {
 							$text = $object->getLongText($outputmode,$this->getLinker($firstcol));
 						} else {
+                            $provURL = $object->getProvenance();
 							if ($firstcol && !is_null($provURL)) {
 								//$text = $this->createArticleLinkFromProvenance($provURL, $this->getLinker($firstcol));
 								$text = $object->getLongText($outputmode,$this->getLinker($firstcol));
