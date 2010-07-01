@@ -638,6 +638,14 @@ QIHelper.prototype = {
 		return fullQuery;
 	},
 
+    getAskQueryFromGui : function() {
+        // which tab is active? query source or any other
+        if ($('qiDefTab3').className.indexOf('qiDefTabActive') != -1)
+            return $('fullAskText').value;
+        else
+            return this.getFullParserAsk();
+    },
+
 	insertAsNotification : function() {
 		var query = this.getFullParserAsk();
 		document.cookie = "NOTIFICATION_QUERY=<snq>" + query + "</snq>";
