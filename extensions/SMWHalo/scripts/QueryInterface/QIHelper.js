@@ -1224,7 +1224,7 @@ QIHelper.prototype = {
                     }
                     $('input_c4').innerHTML = uopts;
                     // runtime issue, check if we display hide values at once
-                    $('input_c4d').style.display = $('input_c1').checked ? 'inline' : 'none';
+                    $('input_c4d').style.display = $('input_c1').checked ? null : 'none';
                 }
                 else {
                     $('input_c4').innerHTML = "";
@@ -1569,7 +1569,7 @@ QIHelper.prototype = {
             if (this.activeQueryId == 0) {
                 $('input_c1').checked = prop.isShown(); // check box if appropriate
                 $('input_c3').value = prop.getColName();
-                $('input_c3d').style.display= prop.isShown() ? 'inline' : 'none';
+                $('input_c3d').style.display= prop.isShown() ? null : 'none';
                 if (prop.supportsUnits() && this.proparity == 2) {
                     $('input_c4').value = prop.getShowUnit();
                     var options = "";
@@ -1580,7 +1580,7 @@ QIHelper.prototype = {
                         options += '>' + this.propUnits[0][i] + '</option>';
                     }
                     $('input_c4').innerHTML=options;
-                    $('input_c4d').style.display= prop.isShown() ? 'inline' : 'none';
+                    $('input_c4d').style.display= prop.isShown() ? null : 'none';
                 }
             } else {
                 $('input_c1').disabled = "disabled";
