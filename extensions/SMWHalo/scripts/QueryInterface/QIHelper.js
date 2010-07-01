@@ -741,8 +741,8 @@ QIHelper.prototype = {
         // link to add another input for or-ed values
         newrow = $('dialoguecontent').insertRow(-1);
         cell = newrow.insertCell(0);
-        cell = newrow.insertCell(1);
-        cell.setAttribute('colspan', '2');
+        cell.style.textAlign="left";
+        cell.setAttribute('colspan', '3');
 		cell.innerHTML = '<a href="javascript:void(0)" onclick="qihelper.addDialogueInput()">'
             + gLanguage.getMessage('QI_BC_ADD_OTHER_CATEGORY') + '</a>';
 		$('dialoguebuttons').style.display = "inline";
@@ -774,8 +774,8 @@ QIHelper.prototype = {
         // link to add another input for or-ed values
         newrow = $('dialoguecontent').insertRow(-1);
         cell = newrow.insertCell(0);
-		cell = newrow.insertCell(1);
-        cell.setAttribute('colspan', '2');
+        cell.style.textAlign="left";
+        cell.setAttribute('colspan', '3');
 		cell.innerHTML = '<a href="javascript:void(0)" onclick="qihelper.addDialogueInput()">'
             + gLanguage.getMessage('QI_BC_ADD_OTHER_INSTANCE') + '</a>';
 		$('dialoguebuttons').style.display = "inline";
@@ -795,6 +795,7 @@ QIHelper.prototype = {
 	 */
 	newPropertyDialogue : function(reset) {
         this.emptyDialogue();
+        if (reset) this.updateTree();
         this.updateBreadcrumbs(this.activeQueryId, gLanguage.getMessage((reset) ? 'QI_BC_ADD_PROPERTY' : 'QI_BC_EDIT_PROPERTY') );
 		this.activeDialogue = "property";
 		this.propname = "";
@@ -869,8 +870,8 @@ QIHelper.prototype = {
         if (idx == 0) {
             newrow = $('dialoguecontent').insertRow(-1);
             cell = newrow.insertCell(0);
-            cell = newrow.insertCell(1);
-            cell.setAttribute('colspan', 2);
+            cell.style.textAlign="left";
+            cell.setAttribute('colspan', 3);
             cell.innerHTML = '<div id="addchain"></div>';
         }
         else {
@@ -980,8 +981,7 @@ QIHelper.prototype = {
             else {
                 newrow = $('dialoguecontent_pvalues').insertRow(-1);
                 cell = newrow.insertCell(-1);
-                cell = newrow.insertCell(-1);
-                cell.setAttribute('colspan', '3');
+                cell.setAttribute('colspan', '4');
                 cell.innerHTML = '<a href="javascript:void(0);" onclick="qihelper.addRestrictionInput()">'
                     + gLanguage.getMessage('QI_DC_ADD_OTHER_RESTRICT') + '</a>';
             }
@@ -1342,22 +1342,27 @@ QIHelper.prototype = {
         cell.style.verticalAlign="top";
         cell.innerHTML = gLanguage.getMessage('QI_PROPERTYVALUE');
         cell = row.insertCell(1);
-        var tmpHTML='<span onmouseover="Tip(\'' + gLanguage.getMessage('QI_TT_SHOW_IN_RES') + '\')">';
+        var tmpHTML='<table><tr><td '
+            + 'onmouseover="Tip(\'' + gLanguage.getMessage('QI_TT_SHOW_IN_RES') + '\')">';
         if (this.activeQueryId == 0)
 			tmpHTML += '<input type="checkbox" id="input_c1" onchange="qihelper.toggleShowProperty();"/>';
 		else
 			tmpHTML += '<input type="checkbox" disabled="disabled" id="input_c1"/>';
-        tmpHTML += ' ' + gLanguage.getMessage('QI_SHOW_PROPERTY')
-            + '</span>'
-            + '<div id="input_c4d" style="display:none">&nbsp; &nbsp;' + gLanguage.getMessage('QI_SHOWUNIT')
-            + '<select id="input_c4"></select></div>'
-            + '<div id="input_c3d" style="display:none"><br/>' + gLanguage.getMessage('QI_COLUMN_LABEL')
-            + '&nbsp;<input type="text" id="input_c3"/></div>'
-            + '<br/>'
-            + '<span onmouseover="Tip(\'' + gLanguage.getMessage('QI_TT_MUST_BE_SET') + '\')">'
-            + '<input type="checkbox" id="input_c2"/> '
+        tmpHTML += ' </td><td> '
+            + '<span onmouseover="Tip(\'' + gLanguage.getMessage('QI_TT_SHOW_IN_RES') + '\')">'
+            + gLanguage.getMessage('QI_SHOW_PROPERTY')
+            + '</span></td></tr>'
+            + '<tr id="input_c3d" style="display:none"><td> </td>'
+            + '<td>' + gLanguage.getMessage('QI_COLUMN_LABEL') + ':</td>'
+            + '<td><input type="text" id="input_c3"/></td></tr>'
+            + '<tr id="input_c4d" style="display:none"><td> </td>'
+            + '<td>' + gLanguage.getMessage('QI_SHOWUNIT') + ':</td>'
+            + '<td><select id="input_c4"></select></td></tr>'
+            + '<tr><td onmouseover="Tip(\'' + gLanguage.getMessage('QI_TT_MUST_BE_SET') + '\')">'
+            + '<input type="checkbox" id="input_c2"/></td>'
+            + '<td><span onmouseover="Tip(\'' + gLanguage.getMessage('QI_TT_MUST_BE_SET') + '\')">'
             + gLanguage.getMessage('QI_PROPERTY_MUST_BE_SET')
-            + '</span>';
+            + '</span></td><td> </td></tr></table>';
         cell.innerHTML = tmpHTML;
         $('dialoguecontent').parentNode.parentNode.appendChild(node);
         // hr line
@@ -1371,10 +1376,8 @@ QIHelper.prototype = {
         row = node.insertRow(-1);
         cell = row.insertCell(-1);
         cell.setAttribute('style', 'border-botton: 1px solid #AAAAAA;');
-        cell.innerHTML = gLanguage.getMessage('QI_PROP_VALUES_RESTRICT');
-        row = node.insertRow(-1);
-        cell = row.insertCell(-1);
-        cell.innerHTML = '<span onmouseover="Tip(\'' + gLanguage.getMessage('QI_TT_NO_RESTRICTION') + '\')">'
+        cell.innerHTML = gLanguage.getMessage('QI_PROP_VALUES_RESTRICT') + ': '
+            + '<span onmouseover="Tip(\'' + gLanguage.getMessage('QI_TT_NO_RESTRICTION') + '\')">'
             + '<input type="radio" name="input_r0" value="-1" onchange="qihelper.setPropertyRestriction();" checked="checked" />' + gLanguage.getMessage('QI_NONE')
             + '</span>&nbsp;<span onmouseover="Tip(\'' + gLanguage.getMessage('QI_TT_VALUE_RESTRICTION') + '\')">'
             + '<input type="radio" name="input_r0" value="-2" onchange="qihelper.setPropertyRestriction();"/>' + gLanguage.getMessage('QI_SPECIFIC_VALUE')
@@ -1441,9 +1444,9 @@ QIHelper.prototype = {
 
     toggleShowProperty : function() {
         if ($('input_c1').checked) {
-            $('input_c3d').style.display = 'inline';
+            $('input_c3d').style.display = null;
             if ($('input_c4').getElementsByTagName('option').length > 0)
-                $('input_c4d').style.display = 'inline';
+                $('input_c4d').style.display = null;
         } else {
             $('input_c3d').style.display = 'none';
             $('input_c4d').style.display = 'none'
@@ -1681,7 +1684,7 @@ QIHelper.prototype = {
 	                var ac_constraint = "";
 	                if (parameterTypes[0] == '_wpg') {
 	                    ac_constraint = 'annotation-value: '+propertyName+'|namespace: 0';
-	                } else if (parameterTypes[0] == '_dat') {
+	                }else if (parameterTypes[0] == '_dat') {
 	                    ac_constraint = 'fixvalues: {{NOW}},{{TODAY}}|annotation-value: '+propertyName;
 	                } else {
 	                    ac_constraint = 'annotation-value: '+propertyName;
