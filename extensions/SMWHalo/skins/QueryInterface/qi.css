@@ -390,6 +390,7 @@ cursor: pointer;
 
 #qiresultcontent, #qiquerydefinition {
     padding-left: 10px;
+    width: 98%;
 }
 
 #qiDefTab {
