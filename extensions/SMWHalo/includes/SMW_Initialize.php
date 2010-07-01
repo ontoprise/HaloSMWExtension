@@ -1255,7 +1255,7 @@ function smwfAutoCompletionToggles(&$extraToggles) {
 	return true;
 }
 
-function smwfSetUserDefinedCookies(& $user) {
+function smwfSetUserDefinedCookies($user) {
 	global $wgScriptPath;
 
 	$autoTriggering = $user->getOption( "autotriggering" ) == 1 ? "autotriggering=auto" : "autotriggering=manual";
