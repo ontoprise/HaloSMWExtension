@@ -82,17 +82,22 @@ interface SMWQRCStoreInterface {
 	public function getQueryIds($limit = null, $offset = null);
 		
 	/*
-	 * add or update a query result in the cache
+	 * update query data
 	 */
-	public function updateQueryResult($queryId, $queryResult);
+	public function updateQueryData($queryId, $queryResult, $lastUpdate, $accesFrequency, $invalidationFrequency, $dirty, $priority);
+	
+	/*
+	 * add query data
+	 */
+	public function addQueryData($queryId, $queryResult, $lastUpdate, $accesFrequency, $invalidationFrequency, $dirty, $priority);
 	
 	/*
 	 * Get a query result from the cache
 	 */
-	public function getQueryResult($queryId);
+	public function getQueryData($queryId);
 	
 	/*
 	 * Remove a query result with a given query id from the cache
 	 */
-	public function deleteQueryResult($queryId);
+	public function deleteQueryData($queryId);
 }

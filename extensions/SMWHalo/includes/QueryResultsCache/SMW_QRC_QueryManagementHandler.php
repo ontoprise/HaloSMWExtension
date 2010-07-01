@@ -13,6 +13,8 @@ define('QRC_HQID_LABEL','QRCHasQueryId');
 define('QRC_HQS_LABEL','QRCHasQueryString');
 define('QRC_HQL_LABEL','QRCHasQueryLimit');
 define('QRC_HQO_LABEL','QRCHasQueryOffset');
+define('QRC_DOP_LABEL','QRCDependsOnProperty');
+define('QRC_DOC_LABEL','QRCDependsOnCategory');
 
 /*
  * This class is responsible for the Query Results Cache related
@@ -43,6 +45,9 @@ class SMWQRCQueryManagementHandler {
 		SMWPropertyValue::registerProperty('___QRC_HQS', '_str', QRC_HQS_LABEL , false);
 		SMWPropertyValue::registerProperty('___QRC_HQL', '_num', QRC_HQL_LABEL , false);
 		SMWPropertyValue::registerProperty('___QRC_HQO', '_num', QRC_HQO_LABEL , false);
+		
+		SMWPropertyValue::registerProperty('___QRC_DOP', '_num', QRC_DOP_LABEL , false);
+		SMWPropertyValue::registerProperty('___QRC_DOC', '_num', QRC_DOC_LABEL , false);
 		return true;
 	}
 	
@@ -78,8 +83,20 @@ class SMWQRCQueryManagementHandler {
 		$dataValue->setQueryString($query->getQueryString());
 		if($query->getLimit()) $dataValue->setQueryLimit($query->getLimit());
 		if($query->getOffset()) $dataValue->setQueryOffset($query->getOffset());
-		$semanticData->addPropertyObjectValue($propertyValue, $dataValue);
 		
+		if($query instanceof SMWQuery){
+			list($properties, $categories) = $this->getQueryParts($query->getDescription());
+		
+			foreach($properties as $p){
+				$dataValue->addPropertyDependency($p);
+			}
+			
+			foreach($categories as $c){
+				$dataValue->addCategoryDependency($c);
+			}
+		}
+		
+		$semanticData->addPropertyObjectValue($propertyValue, $dataValue);
 		$wgParser->getOutput()->mSMWData = $semanticData;
 	}
 	
@@ -124,5 +141,40 @@ class SMWQRCQueryManagementHandler {
 	 */
 	public function getSearchMetadataQueryString($queryId){
 		return '[['.QRC_UQC_LABEL.'.'.QRC_HQID_LABEL."::".$queryId."]]";
+	}
+	
+	/*
+	 * Returns all properties and categories, which are used in a query
+	 */
+	private function getQueryParts($description, $properties = array(), $categories = array()){
+		if($this->hasSubdescription($description)){
+			foreach($description->getDescriptions() as $subDescription){
+				list($properties, $categories) = $this->getQueryParts($subDescription, $properties, $categories);
+			}
+		}
+		
+		//for properties with subqueries and query chains
+		if($description instanceof SMWSomeProperty && $description->getDepth() > 1){
+			list($properties, $categories) = $this->getQueryParts($description->getDescription(), $properties, $categories);
+		}
+		
+		if($description instanceof SMWSomeProperty){
+			$properties[$description->getProperty()->getText()] = null;
+		} else if ($description instanceof SMWClassDescription){
+			foreach($description->getCategories() as $title)
+			$categories[$title->getText()] = null;
+		}
+		
+		return array($properties, $categories);
+	}
+	
+	/*
+	 * determines whether a description has a subdescription
+	 */
+	private function hasSubdescription($description){
+		if($description instanceof SMWDisjunction ||	$description instanceof SMWConjunction){
+			return true;
+		}
+		return false;
 	}
 }

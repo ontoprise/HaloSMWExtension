@@ -17,6 +17,8 @@
 global $smwgHaloIP;
 require_once( "$smwgHaloIP/includes/QueryResultsCache/SMW_QRC_Store.php" );
 require_once( "$smwgHaloIP/includes/QueryResultsCache/SMW_QRC_QueryManagementHandler.php" );
+require_once( "$smwgHaloIP/includes/QueryResultsCache/SMW_QRC_Settings.php" );
+require_once( "$smwgHaloIP/includes/QueryResultsCache/SMW_QRC_PriorityCalculator.php" );
 
 
 /*
@@ -56,21 +58,58 @@ class SMWQRCQueryResultsCache {
 			$store = new $smwgBaseStore();
 		}
 		
+		$queryData = $this->getQueryData($query);
+		
 		// execute the query if no valid cache entry is available, if force was 
 		// set to true (e.g. by the update process) or if the query is executed because 
 		// of an edit or a purge action
-		if($force || !$this->isReadAccess() || !$this->hasValidCacheEntry($query)){
+		if($force || !$this->isReadAccess() || !$this->hasValidCacheEntry($queryData)){
 			$queryResult = $store->doGetQueryResult($query);
 			
 			if($cacheThis){
 				//add the serialized query result to the database
 				$qrcStore = SMWQRCStore::getInstance()->getDB();
-				$qrcStore->updateQueryResult(SMWQRCQueryManagementHandler::getInstance()->getQueryId($query), serialize($queryResult));
+				
+				$queryId = SMWQRCQueryManagementHandler::getInstance()->getQueryId($query);
+				$lastUpdate = time();
+				$dirty = false;
+				
+				if($queryData){ //results for this query already have been stored in the cache
+					if($force){ //this query result update was not triggered by a Wiki user action
+						$accessFrequency = SMWQRCPriorityCalculator::getInstance()
+							->computeNewAccessFrequency($queryData['accessFrequency']);
+						$invalidationFrequency = SMWQRCPriorityCalculator::getInstance()
+							->computeNewInvalidationFrequency($queryData['invalidationFrequency']);
+					} else {
+						$accessFrequency = $queryData['accessFrequency'] + 1;
+						$invalidationFrequency = $queryData['invalidationFrequency'] + 1;
+					}
+					
+					$priority = SMWQRCPriorityCalculator::getInstance()
+						->computeQueryUpdatePriority($lastUpdate, $accessFrequency, $invalidationFrequeny);
+					
+					$qrcStore->updateQueryData($queryId, serialize($queryResult), $lastUpdate, 
+						$accessFrequency, $invalidationFrequency, $dirty, $priority);
+				} else {
+					$priority = SMWQRCPriorityCalculator::getInstance()
+						->computeQueryUpdatePriority($lastUpdate, 1, 0);
+					
+					$qrcStore->addQueryData($queryId, serialize($queryResult), $lastUpdate, 
+						1, 0, $dirty, $priority);
+				}
+								
 			}
 		} else {
 			$qrcStore = SMWQRCStore::getInstance()->getDB();
-			$queryResult = unserialize($qrcStore->getQueryResult(SMWQRCQueryManagementHandler::getInstance()->getQueryId($query)));
-		
+			$queryResult = unserialize($queryData['queryResult']);
+			
+			//update access frequency and query priority
+			$priority = SMWQRCPriorityCalculator::getInstance()
+				->computeQueryUpdatePriority($queryData['lastUpdate'], $queryData['accessFrequency'] + 1, $queryData['invalidationFrequency']);
+			
+			$qrcStore->updateQueryData($queryData['queryId'], $queryData['queryResult'], $queryData['lastUpdate'], 
+				$queryData['accessFrequency']+1, $queryData['invalidationFrequency'], $queryData['dirty'], $priority);
+			
 			if($query instanceof SMWQueryResult){
 				$query->addErrors($queryResult->getErrors());
 				$queryResult = 
@@ -81,40 +120,21 @@ class SMWQRCQueryResultsCache {
 	}
 	
 	/*
+	 * get query data from the cache
+	 */
+	private function getQueryData(SMWQuery $query){
+		$qrcStore = SMWQRCStore::getInstance()->getDB();
+		return $qrcStore->getQueryData(SMWQRCQueryManagementHandler::getInstance()->getQueryId($query));
+	}
+	
+	/*
 	 * Checks whether a valid cache entry exists for this query.
 	 */
-	private function hasValidCacheEntry(SMWQuery $query){
-		//$usedProperties = $this->getQueryParts($query->getDescription());
-		//echo("<pre>".print_r($usedProperties, true)."</pre>");
-			
-		$qrcStore = SMWQRCStore::getInstance()->getDB();
-		if($qrcStore->getQueryResult(SMWQRCQueryManagementHandler::getInstance()->getQueryId($query))){
-			return true;
-		} else {
-			return false;
-		}
-	}
-	
-	private function getQueryParts($description, $properties = array(), $categories = array()){
-		if($this->hasSubdescription($description)){
-			foreach($description->getDescriptions() as $subDescription){
-				list($properties, $categories) = $this->getQueryParts($subDescription, $properties, $categories);
+	private function hasValidCacheEntry($queryData){
+		if($queryData){
+			if(!$queryData['dirty']){
+				return true;
 			}
-		}
-		
-		if($description instanceof SMWSomeProperty){
-			$properties[$description->getProperty()->getText()] = null;
-		} else if ($description instanceof SMWClassDescription){
-			foreach($description->getCategories() as $title)
-			$categories[$title->getText()] = null;
-		}
-		
-		return array($properties, $categories);
-	}
-	
-	private function hasSubdescription($description){
-		if($description instanceof SMWDisjunction ||	$description instanceof SMWConjunction){
-			return true;
 		}
 		return false;
 	}
@@ -179,11 +199,9 @@ class SMWQRCQueryResultsCache {
 			}
 		} else {
 			$qrcStore = SMWQRCStore::getInstance()->getDB();
-			$qrcStore->deleteQueryResult($queryId);		
+			$qrcStore->deleteQueryData($queryId);		
 		}
 		return true;
 	}
 	
 }
-
-?>

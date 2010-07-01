@@ -56,6 +56,24 @@ class SMWQueryCallMetadataValue extends SMWContainerValue {
 		$this->m_data->addPropertyObjectValue($propertyValue, $dataValue);
 	}
 	
+	/*
+	 * Add dependency to a property, which is used by the query
+	 */
+	public function addPropertyDependency($propertyName){
+		$propertyValue = SMWPropertyValue::makeUserProperty(QRC_DOP_LABEL);
+		$dataValue = SMWDataValueFactory::newPropertyObjectValue($propertyValue, $propertyName);
+		$this->m_data->addPropertyObjectValue($propertyValue, $dataValue);
+	}
+	
+	/*
+	 * Add dependency to a category, which is used by the query
+	 */
+	public function addCategoryDependency($categoryName){
+		$propertyValue = SMWPropertyValue::makeUserProperty(QRC_DOC_LABEL);
+		$dataValue = SMWDataValueFactory::newPropertyObjectValue($propertyValue, $categoryName);
+		$this->m_data->addPropertyObjectValue($propertyValue, $dataValue);
+	}
+	
 	public function parseUserValue($value){
 		return true;
 	} 

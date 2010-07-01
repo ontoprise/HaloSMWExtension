@@ -28,7 +28,12 @@ class SMWQRCSQLStore implements SMWQRCStoreInterface{
 		DBHelper::setupTable($qrcTable, array(
 				'query_id' => 'VARCHAR(36) NOT NULL PRIMARY KEY',
 				'query_result' => 'LONGTEXT',
-				'last_update' =>  'VARCHAR(14) NOT NULL' ,),
+				'last_update' =>  'int(20) NOT NULL' ,
+				'access_frequency' => 'INT(8) NOT NULL',
+				'invalidation_frequency' => 'INT(8) NOT NULL',
+				'dirty' => 'BOOLEAN NOT NULL',
+				'priority' => 'INT(20) NOT NULL',),
+		
 			$db, $verbose);
 		
 		DBHelper::reportProgress("   ... done!\n",$verbose);
@@ -72,6 +77,8 @@ class SMWQRCSQLStore implements SMWQRCStoreInterface{
 			$sql .= " OFFSET ".$offset;
 		}
 		
+		$sql .= 'ORDER BY priority asc'; 
+		
 		$sql .= ";";
 		
 		$res = $db->query($sql);
@@ -88,34 +95,54 @@ class SMWQRCSQLStore implements SMWQRCStoreInterface{
 	/*
 	 * add or update a query result in the cache
 	 */
-	public function updateQueryResult($queryId, $queryResult){
+	public function updateQueryData($queryId, $queryResult, $lastUpdate, $accessFrequency, $invalidationFrequency, $dirty, $priority){
 		$db =& wfGetDB( DB_MASTER );
 		
-		$res = $db->select($db->tableName("smw_qrc_cache"), 
-			array('query_id'), array('query_id' => $queryId));
+		$db->update( $db->tableName("smw_qrc_cache"), 
+			array(	
+				'query_result' => $queryResult,
+				'last_update' => $lastUpdate,
+				'access_frequency' => $accessFrequency,
+				'invalidation_frequency' => $invalidationFrequency,
+				'dirty' => false,
+				'priority' => $priority),
+			array(	'query_id' => $queryId));
+	}
+	
+	public function addQueryData($queryId, $queryResult, $lastUpdate, $accessFrequency, $invalidationFrequency, $dirty, $priority){
+		$db =& wfGetDB( DB_MASTER );
 		
-		if($db->numRows($res) > 0){
-			$db->update( $db->tableName("smw_qrc_cache"), 
-				array(	'query_result' => $queryResult),
-				array(	'query_id' => $queryId));
-		} else {
-			$db->insert( $db->tableName("smw_qrc_cache"), 
-				array(	'query_id' => $queryId, 
-					'query_result' => $queryResult));
-		}
+		$db->insert( $db->tableName("smw_qrc_cache"), 
+				array(	
+					'query_id' => $queryId, 
+					'query_result' => $queryResult, 
+					'last_update' => $lastUpdate,
+					'access_frequency' => $accessFrequency,
+					'invalidation_frequency' => $invalidationFrequency,
+					'dirty' => false,
+					'priority' => $priority));
 	}
 	
 	/*
-	 * Get a query result from the cache
+	 * Get a query data
 	 */
-	public function getQueryResult($queryId){
+	public function getQueryData($queryId){
 		$db =& wfGetDB( DB_SLAVE );
 		
 		$res = $db->select($db->tableName("smw_qrc_cache"), 
-			array('query_result'), array('query_id' => $queryId));
+			array('query_id', 'query_result', 'last_update', 'access_frequency', 'invalidation_frequency', 'dirty', 'priority'), 
+			array('query_id' => $queryId));
 		
 			if($db->numRows($res) > 0){
-				return $db->fetchObject($res)->query_result;
+				$res = $db->fetchObject($res);
+				return array(
+					'queryId' => $res->query_id,
+					'queryResult' => $res->query_result,
+					'lastUpdate' => $res->last_update,
+					'accessFrequency' => $res->access_frequency,
+					'invalidationFrequency' => $res->invalidation_frequency,
+					'dirty' => $res->dirty,
+					'priority' => $res->priority);
 			} else {
 				return false;
 			}
@@ -124,7 +151,7 @@ class SMWQRCSQLStore implements SMWQRCStoreInterface{
 	/*
 	 * Remove a query result with a given query id from the cache
 	 */
-	public function deleteQueryResult($queryId){
+	public function deleteQueryData($queryId){
 		$db =& wfGetDB( DB_MASTER );
 		
 		$db->delete($db->tableName("smw_qrc_cache"), 
