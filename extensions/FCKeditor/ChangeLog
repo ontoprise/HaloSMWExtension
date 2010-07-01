@@ -2,16 +2,16 @@ Data Import extension ChangeLog
 ===============================
 
 
-VERSION XXXX
+VERSION 1.3.2
 
 
   FEATURES:
 
-
-
   CHANGES:
-
-
+    * Query Interface popup has not tabs anymore because in the SMWHalo
+      extension 1.5.1 the query interface will support modifying the query
+      source directly.
+      Use this version only if you have the SMWHalo extension 1.5.1 installed.
 
   BUGFIXES:
 
