@@ -376,7 +376,7 @@ class SMWH_AAMParser {
 		$part0 = mb_substr($wikiText, $pos, 1);
 		$markedText .= $part0."\n\t{wikiTextOffset=".$pos.' obj="end"'."}\n";
 				
-		return $markedText;
+		return '<div id="smwh_AAM">'.$markedText.'<div>';
 	}
 	
 	/**

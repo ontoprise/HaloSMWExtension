@@ -331,22 +331,12 @@ Marker.prototype = {
 			templates[0] = currentTmpl; 
 		}
 		return templates;	
-	},
-	
-	addDiv: function(){
-		// This gets STB to work with skins which do not use the "content" element
-		var marker = $("content");
-		if (marker == null) {
-			var marker = new Element('div', {
-				'id' : 'content'} )
-			document.body.appendChild(marker);
-		}
 	}
+
 }
 
 
 //var smwhg_marker = new Marker('innercontent');
-var smwhg_marker = new Marker('content');
-Event.observe(window, 'load', smwhg_marker.addDiv.bind(smwhg_marker));
+var smwhg_marker = new Marker('smwh_AAM');
 Event.observe(window, 'load', smwhg_marker.markNodes.bind(smwhg_marker));
 Event.observe(window, 'resize', smwhg_marker.markNodes.bind(smwhg_marker));
