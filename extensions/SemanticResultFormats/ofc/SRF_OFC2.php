@@ -191,6 +191,9 @@ class SRFOFC extends SMWResultPrinter {
 		$outputmode = SMW_OUTPUT_HTML;
 		$this->isHTML = ($outputmode == SMW_OUTPUT_HTML); // yes, our code can be viewed as HTML if requested, no more parsing needed
 
+        // if there is only one column in the results then stop right away
+        if ($res->getColumnCount() == 1) return "";
+
 		if (defined('SMW_UP_RATING_VERSION')) $result .= "UpRatingTable___".$smwgIQRunningNumber."___elbaTgnitaRpU";
 
 		if (!$this->m_isAjax) {
