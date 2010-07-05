@@ -6,7 +6,7 @@
 $smwgDeployVersion = false;
 
 //$smwgMessageBroker='localhost';
-$smwgWebserviceEndpoint='localhost:8060';
+$smwgWebserviceEndpoint='localhost:8090';
 $smwgEnableObjectLogicRules=true;
 $smwgWebserviceProtocol="rest";
 
