@@ -264,27 +264,27 @@ class TestQueryResultsCache extends PHPUnit_Framework_TestCase {
 		$this->assertEquals(false, $found);
 	}
 
-	public function testGetQueryIdsByAPIOrder(){
-		smwf_om_EditArticle('QRCQueryArticle1', 'PHPUnit', $this->queryArticle1, '');
-		sleep(2);
-		smwf_om_EditArticle('QRCQueryArticle2', 'PHPUnit', $this->queryArticle2, '');
-		sleep(2);
-		smwf_om_EditArticle('QRCQueryArticle3', 'PHPUnit', $this->queryArticle3, '');
-		
-		$request = json_encode(array('debug' => true));
-		$response = smwf_qc_getQueryIds($request);
-		$response = json_decode($response);
-		
-		$this->assertEquals(5, count($response->queryIds));
-		
-		$qrcStore = SMWQRCStore::getInstance()->getDB();
-		$lastPriority = 0; 
-		foreach($response->queryIds as $qId){
-			$queryData = $qrcStore->getQueryData($qId);
-			
-			$this->assertEquals(true, $queryData['priority'] >= $lastPriority);
-			
-			$lastPriority = $queryData['priority'];
-		}
-	}
+//	public function testGetQueryIdsByAPIOrder(){
+//		smwf_om_EditArticle('QRCQueryArticle1', 'PHPUnit', $this->queryArticle1, '');
+//		sleep(2);
+//		smwf_om_EditArticle('QRCQueryArticle2', 'PHPUnit', $this->queryArticle2, '');
+//		sleep(2);
+//		smwf_om_EditArticle('QRCQueryArticle3', 'PHPUnit', $this->queryArticle3, '');
+//		
+//		$request = json_encode(array('debug' => true));
+//		$response = smwf_qc_getQueryIds($request);
+//		$response = json_decode($response);
+//		
+//		$this->assertEquals(5, count($response->queryIds));
+//		
+//		$qrcStore = SMWQRCStore::getInstance()->getDB();
+//		$lastPriority = 0; 
+//		foreach($response->queryIds as $qId){
+//			$queryData = $qrcStore->getQueryData($qId);
+//			
+//			$this->assertEquals(true, $queryData['priority'] >= $lastPriority);
+//			
+//			$lastPriority = $queryData['priority'];
+//		}
+//	}
 }
