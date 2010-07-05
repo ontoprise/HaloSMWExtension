@@ -3,14 +3,15 @@ Installation instructions
 
 #
 #Requirements:
-# 
+#
 
+    PHP 5.2.x
 	MediaWiki 1.15.3
 	Semantic MediaWiki 1.4.x or higher
 	Semantic Forms 1.9
 	Parser Functions
 	String Functions 2.0 or higher
-	Deployment Framework
+	Deployment Framework (optional)
 	
 #
 # Installation
@@ -22,8 +23,9 @@ Installation instructions
 	- '/extensions/RichMedia/RichMediaPatchForMW1_15_3.txt': This is needed to patch MediaWiki in version 1.15.3
 	
 	Note: We can not ensure that this patch works properly for other versions of MediaWiki.
-	These are Eclipse patch files which can be installed using the tool patch.php from the 
-	deploy framework (smwhalo-deploy-1.0) which itself uses GNU patch.
+	These are Eclipse patch files which can be installed using the tool patch.php which itself uses GNU patch. The
+    patch.php script is included in the zip archive or can be copied from the deploy framework (smwhalo-deploy-1.0)
+    which also contains a windows binary of GNU patch.
 
 		php patch.php -p <patch-file> -d <mw-dir> --onlypatch
 
@@ -52,7 +54,10 @@ Installation instructions
 4. Go to Special:Import, select and upload '/extensions/RichMedia/import/RichMediaOntology_v1.4.xml'
 
 Now you can enter {{RMList|show=True}} to any article where you want to get a
-list of all 'related documents and media' which also allows you to directly upload new files. 
+list of all 'related documents and media' which also allows you to directly upload new files.
+
+If you use an older PHP version than 5.2.x, some JSON functions (like json_encode) are missing. Please
+install the JSON modules from php pear.
 
 #
 # Notice 
