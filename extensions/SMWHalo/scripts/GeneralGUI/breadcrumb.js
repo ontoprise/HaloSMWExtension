@@ -6,7 +6,7 @@
  * @defgroup SMWHaloMiscellaneous SMWHalo miscellaneous components
  * @ingroup SMWHalo
  * 
- * @author Kai Kühn
+ * @author Kai Kï¿½hn
  * 
  * Breadcrumb is a tool which displays the last 5 (default) visited pages as a queue.
  * 
@@ -74,13 +74,28 @@ Breadcrumb.prototype = {
             }
             //add current page as normal text
             else {
-               html += '<p id="smwh_breadcrumb_currentpage">'+show+'</p>';
+               html += '<span id="smwh_breadcrumb_currentpage">'+show+'</span>';
             }
             
         };
         //add the last item (current page) not as link
 
+        //Check if breadcrumb-div exists
         var bc_div = $('breadcrumb');
+
+        //Check if there's no breadcrumb div
+        if ( bc_div == null){
+            //if so, check if there's a firstHeading
+            var firstHeading = $('firstHeading');
+            if( firstHeading != null){
+                //Add breadcrumb div before Heading
+                firstHeading.insert({
+                    before: "<div id='breadcrumb'/>"
+                });
+                bc_div = $('breadcrumb');
+            }
+        }
+        //verify that the div exists
         if (bc_div != null) bc_div.innerHTML = html;
     }
 }

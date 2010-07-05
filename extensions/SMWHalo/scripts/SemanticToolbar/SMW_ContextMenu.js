@@ -19,7 +19,7 @@ initialize: function() {
                         if (zindex < 30) zindex = 30;
 			var menu = '<div id="contextmenu" style="z-index: '+ zindex +'"></div>';
 //			new Insertion.Top($('innercontent'), menu );
-			new Insertion.After($('content'), menu );
+			new Insertion.After($('smwh_AAM'), menu );
 		}
 		
 },

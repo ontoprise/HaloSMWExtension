@@ -69,7 +69,6 @@ SmwhgTreeviewResize.prototype = {
 	
 	
 	resize: function(){
-		//alert("Foock");
 		$$('#smwf_browserview .dtree').each(
 			function(item){
 				var bottom = document.viewport.getHeight();
