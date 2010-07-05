@@ -248,7 +248,7 @@ class HACLEvaluator {
 			$r = self::hasRight($articleID, HACLSecurityDescriptor::PET_PAGE,
 			                    $userID, $actionID);
 			                    
-			if (!$r && $submit && sameTitle) {
+			if (!$r && $submit && $sameTitle) {
 				// The article is submitted but the right 'edit' is not granted 
 				// => check if the article has one of the rights 'formedit',
 				//    'wysiwyg' or 'annotate'
@@ -268,7 +268,7 @@ class HACLEvaluator {
 		// check namespace rights
 		list($r, $sd) = self::checkNamespaceRight($title, $userID, $actionID);
 		$hasSD = $hasSD ? true : $sd;
-		if (!$r && hasSD && $submit && sameTitle) {
+		if (!$r && $hasSD && $submit && $sameTitle) {
 			// The article is submitted but the right 'edit' is not granted 
 			// => check if the article has one of the rights 'formedit',
 			//    'wysiwyg' or 'annotate'
@@ -286,7 +286,7 @@ class HACLEvaluator {
 		// check category rights
 		list($r, $sd) = self::hasCategoryRight($title->getFullText(), $userID, $actionID);
 		$hasSD = $hasSD ? true : $sd;
-		if (!$r && hasSD && $submit && sameTitle) {
+		if (!$r && $hasSD && $submit && $sameTitle) {
 			// The article is submitted but the right 'edit' is not granted 
 			// => check if the article has one of the rights 'formedit',
 			//    'wysiwyg' or 'annotate'
@@ -882,6 +882,10 @@ class HACLEvaluator {
 		// Check for groups
 		try {
 			$group = HACLGroup::newFromID($t->getArticleID());
+			if (!$group->canBeModified()) {
+				// some groups can not be modified at all
+				return array(false, true);
+			}
 			return array($group->userCanModify($userID), true);
 		} catch (HACLGroupException $e) {
 			// Check for security descriptors
