@@ -49,6 +49,9 @@
 				<include name="RichMediaPatchForMW1_15_3.txt" />
 				<include name="deploy.xml" />
 			</fileset>
+   			<fileset dir="../../../patches/">
+				<include name="patch.php" />
+			</fileset>
 		</copy>
 
 		<copy todir="bin/zip/extensions/SemanticForms">
