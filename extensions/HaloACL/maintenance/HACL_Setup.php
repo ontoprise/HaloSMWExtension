@@ -42,12 +42,47 @@ require_once("$haclgIP/includes/HACL_Storage.php");
 require_once("$haclgIP/includes/HACL_GlobalFunctions.php");
 
 $delete = array_key_exists('delete', $options);
+$createUsers = array_key_exists('createUsers', $options);
+$ldapDomain = $options['ldapDomain'];
+$help = array_key_exists('help', $options) || array_key_exists('h', $options);
 
-if ($delete) {
+global $haclgBaseStore;
+echo "The current store is: $haclgBaseStore \n";
+
+if ($help) {
+	echo "Command line parameters for HACL_Setup\n";
+	echo "======================================\n";
+	echo "no parameter: Setup the database tables for HaloACL\n";
+	echo "--delete: Delete all database tables of HaloACL\n";
+	echo "--createUsers --ldapDomain=\"domain name\": Create the users of the LDAP domain with the name \"domain name\" in the wiki. Domain names with spaces must be quoted.\n";
+	echo "\n";
+} else if ($createUsers) {
+	echo "Creating user accounts for all LDAP users...";
+	if (!isset($ldapDomain)) {
+		echo "\nPlease specify the LDAP domain with option --ldapDomain ";
+		die();
+	} else {
+		echo "Using LDAP domain: $ldapDomain\n";
+		$_SESSION['wsDomain'] = $ldapDomain;
+	}
+	$newUsers = HACLStorage::getDatabase()->createUsersFromLDAP();
+	if (empty($newUsers)) {
+		echo "There are no new users on the LDAP server.\n";
+	} else {
+		echo "Created the following user accounts:\n";
+		foreach ($newUsers as $u) {
+			echo "$u\n";
+		}
+		echo "\ndone.\n";
+	}
+} else if ($delete) {
 	echo "Deleting database tables for HaloACL...";
 	HACLStorage::getDatabase()->dropDatabaseTables();
 	echo "done.\n";
 } else {
+	echo "Setup program for HaloACL\n";
+	echo "=========================\n";
+	echo "For help, please start with option --h or --help. \n\n";
 	echo "Setting up database tables for HaloACL...";
 	HACLStorage::getDatabase()->initDatabaseTables();
 	echo "done.\n";
