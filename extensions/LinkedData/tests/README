@@ -1,11 +1,4 @@
-set BUILD_SERVER=HALO-BUILD-SERV
 
-rem settings for the build server
-if %ComputerName% == %BUILD_SERVER% (
-    set MW_ROOT=%WORKSPACE%\SMWHaloTrunk
-    set XAMPP_DIR="C:\Programme\xampp"
-)
-
-REM Replace %MW_ROOT% by the correct folder
-php %MW_ROOT%/tests/tests_halo/init.php -t %MW_ROOT%/extensions/SemanticGardening/tests -x %XAMPP_DIR%
-php %MW_ROOT%/tests/tests_halo/run-test.php --log-xml logs/result.xml %MW_ROOT%/extensions/SemanticGardening/tests/GardeningTests.php
+REM Replace ${mw-root} by the correct folder
+php ${mw-root}/tests/tests_halo/init.php -t ${mw-root}/extensions/SemanticGardening/tests -x ${xampp-dir}
+php ${mw-root}/tests/tests_halo/run-test.php --log-xml logs/result.xml ${mw-root}/extensions/SemanticGardening/tests/GardeningTests.php
