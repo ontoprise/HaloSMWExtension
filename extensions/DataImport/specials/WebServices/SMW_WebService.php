@@ -100,6 +100,9 @@ class WebService {
 	private $mCallParameters;
 	// for memorizing errors occuring during ws-call
 	private $mCallErrorMessages = array();
+	
+	private $responseContentType = ''; //for temporarily storing the ws response content type, which is required for RDF parsing  
+	
 	/**
 	 * Constructor for new WebService objects.
 	 *
@@ -521,6 +524,7 @@ class WebService {
 			(wfTime() - wfTimestamp(TS_UNIX, $cacheResult["lastUpdate"])
 			< ($this->getDisplayPolicy()*60))){
 				$response = @ unserialize($cacheResult["result"]);
+				
 				WSStorage::getDatabase()->updateCacheLastAccess($this->mArticleID, $parameterSetId);
 			}
 		}
@@ -558,14 +562,28 @@ class WebService {
 						$response = @ unserialize($cacheResult["result"]);
 					}
 				} else {
+					
+					//the content type which is required for RDF processing is stored together
+					//with the cached WS result -> implement better solution
+					if($this->isLinkedDataResource()){
+						$response['http-content-type'] = $this->getWSClient()->getContentType(); 						
+					}
+					
 					WSStorage::getDatabase()->storeCacheEntry(
-					$this->mArticleID,
-					$parameterSetId,
-					serialize($response),
-					wfTimeStamp(TS_MW, wfTime()),
-					wfTimeStamp(TS_MW, wfTime()));
+						$this->mArticleID,
+						$parameterSetId,
+						serialize($response),
+						wfTimeStamp(TS_MW, wfTime()),
+						wfTimeStamp(TS_MW, wfTime()));
 				}
 			}
+		}
+		
+		//the content-type of the ws result, which is important for RDF parsing,
+		//is stored in the cached response. Todo: Implement s.th. more elegant
+		if(array_key_exists('http-content-type', $response)){
+			$this->responseContentType = $response['http-content-type']; 
+			unset($response['http-content-type']);
 		}
 
 		$result = $this->getCallResultParts($response[0], $resultParts);
@@ -575,7 +593,7 @@ class WebService {
 			$this->mConfirmationStatus = "once";
 			WSStorage::getDatabase()->setWWSDConfirmationStatus($this->mArticleID, "once");
 		}
-
+		
 		return $result;
 	}
 
@@ -595,7 +613,7 @@ class WebService {
 		//needs not to be parsed over and over again for each
 		//result part.
 		$lastRootPart = "";
-
+		
 		foreach ($resultParts as $rp) {
 			$parts = explode(".", $rp);
 			$rdef = $this->getResultDefinition($parts[0]);
@@ -604,6 +622,7 @@ class WebService {
 			//result is not parsed for each result part by the RDFProcessor
 			if($lastRootPart != $parts[0]){
 				//parse the web service result with the RDFProcessor
+				
 				$this->initializeLinkedDataResultPartExtraction($response, $rdef);
 				$lastRootPart = $parts[0];
 			}
@@ -677,9 +696,8 @@ class WebService {
 				$language = $this->mCallParameters[DI_LANGUAGE][0];
 			}
 
-			//parse WS result via the ARC2 library
 			SMWRDFProcessor::getInstance()->parse($this->getWSClient()->getURI(), $subject, $wsResponse,
-			$this->getWSClient()->getContentType(), $language);
+				$this->responseContentType, $language);
 
 			//setup namespace prefixes
 			SMWRDFProcessor::getInstance()->setNamespacePrefixes($resultDef->namespace);

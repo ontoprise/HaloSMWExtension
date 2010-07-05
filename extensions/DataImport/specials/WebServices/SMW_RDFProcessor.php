@@ -50,7 +50,7 @@ class SMWRDFProcessor {
 	 * @return unknown_type
 	 */
 	public function parse($uri, $subject, $content = null, $format, $language){
-		$parserName = !$format ? "RDF" : strtoupper($format);
+		$parserName = !$format ? "RDF" : $format;
 		$parserName = "get".$parserName."Parser";
 		$parser = ARC2::$parserName();
 		$parser->parse($uri, $content);
@@ -116,28 +116,43 @@ class SMWRDFProcessor {
 		if(strlen($this->subject) > 0){ //user has chosen to retrieve triples for a certain subject
 			$subject = $this->resolveNamespacePrefix($this->subject);
 			
-			if($predicate == DI_ALL_SUBJECTS){
-				if(array_key_exists($subject, $this->index)){
-					$result = array($this->subject);
+			if(array_key_exists($subject, $this->index)){
+				if($predicate == DI_ALL_SUBJECTS){
+					if(array_key_exists($subject, $this->index)){
+						$result = array($this->subject);
+						if(!array_key_exists($subject, $this->processedIndex)){
+							$this->processedIndex[$subject] = array();
+						}
+					}
+				} else if($predicate == DI_ALL_PREDICATES){
+					$this->allPredicatesRequested = true;;
 					if(!array_key_exists($subject, $this->processedIndex)){
 						$this->processedIndex[$subject] = array();
 					}
-				}
-			} else if($predicate == DI_ALL_PREDICATES){
-				$this->allPredicatesRequested = true;;
-				if(!array_key_exists($subject, $this->processedIndex)){
-					$this->processedIndex[$subject] = array();
-				}
-				foreach(array_keys($this->index[$subject]) as $predicate){
-					if(!array_key_exists($predicate, $this->processedIndex[$subject])){
-						$this->processedIndex[$subject][$predicate] = array();
-					}	
-				}
-			} else if($predicate == DI_ALL_OBJECTS){
-				$this->allObjectsRequested = true;
-				foreach($this->index[$subject] as $predicateId => $predicate){
+					foreach(array_keys($this->index[$subject]) as $predicate){
+						if(!array_key_exists($predicate, $this->processedIndex[$subject])){
+							$this->processedIndex[$subject][$predicate] = array();
+						}	
+					}
+				} else if($predicate == DI_ALL_OBJECTS){
+					$this->allObjectsRequested = true;
+					foreach($this->index[$subject] as $predicateId => $predicate){
+						$processedObjects = array();
+						foreach($predicate as $object){
+							if(array_key_exists('lang', $object)){ 
+								if($object['lang'] == $lang || strlen($lang) == 0){
+									$processedObjects[] = $object['value']; 
+								}
+							} else {
+								$processedObjects[] = $object['value'];
+							}
+						}
+						$this->processedIndex[$subject][$predicateId] = $processedObjects;
+					}
+				} else {		
 					$processedObjects = array();
-					foreach($predicate as $object){
+					
+					foreach($this->index[$subject][$predicate] as $object){
 						if(array_key_exists('lang', $object)){ 
 							if($object['lang'] == $lang || strlen($lang) == 0){
 								$processedObjects[] = $object['value']; 
@@ -146,20 +161,8 @@ class SMWRDFProcessor {
 							$processedObjects[] = $object['value'];
 						}
 					}
-					$this->processedIndex[$subject][$predicateId] = $processedObjects;
+					$this->processedIndex[$subject][$predicate] = $processedObjects;
 				}
-			} else {		
-				$processedObjects = array();
-				foreach($this->index[$subject][$predicate] as $object){
-					if(array_key_exists('lang', $object)){ 
-						if($object['lang'] == $lang || strlen($lang) == 0){
-							$processedObjects[] = $object['value']; 
-						}
-					} else {
-						$processedObjects[] = $object['value'];
-					}
-				}
-				$this->processedIndex[$subject][$predicate] = $processedObjects;
 			}
 		} else { //user is not interested in a certain subject
 			if($predicate == DI_ALL_SUBJECTS){
@@ -295,5 +298,7 @@ class SMWRDFProcessor {
 		
 		return $result;
 	}
+	
+	
 	
 }

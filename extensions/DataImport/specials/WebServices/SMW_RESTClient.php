@@ -41,6 +41,7 @@ class SMWRestClient implements IWebServiceClient {
 	private $mAuthenticationLogin;
 	private $mAuthenticationPassword;
 	private $contentType = false;
+	private $responseHeader = false; 
 
 	/**
 	 * Constructor
@@ -167,26 +168,18 @@ class SMWRestClient implements IWebServiceClient {
 		$ctx = stream_context_create($params);
 
 		$fp = @ fopen($uri, 'rb', true, $ctx);
-
+		
 		if (!$fp) {
 			return wfMsg('smw_wws_client_connect_failure').$uri;
 		}
 
 		$response = stream_get_contents($fp);
+		
 		if ($response === false) {
 			return wfMsg('smw_wws_client_connect_failure').$uri;
 		}
 		
-		foreach($http_response_header as $field){
-			if(strpos(strtolower($field), "content-type") !== false){
-				$r = false;
-				$this->contentType = (!$this->contentType && preg_match('/\/atom\+xml/', $field)) ? 'atom' : $this->contentType;
-  				$this->contentType = (!$this->contentType && preg_match('/\/rdf\+xml/', $field)) ? 'rdfxml' : $this->contentType;
-  				$this->contentType = (!$this->contentType && preg_match('/\/(x\-)?turtle/', $field)) ? 'turtle' : $this->contentType;
-  				$this->contentType = (!$this->contentType && preg_match('/\/rdf\+n3/', $field)) ? 'n3' : $this->contentType;
-  				if($this->contentType) break;
-  			}
-		}
+		$this->responseHeader = $http_response_header;
 		
 		return array($response);
 	}
@@ -196,6 +189,18 @@ class SMWRestClient implements IWebServiceClient {
 	}
 	
 	public function getContentType(){
+		foreach($this->responseHeader as $field){
+			if(strpos(strtolower($field), "content-type") !== false){
+				$this->contentType = (!$this->contentType && preg_match('/\/atom\+xml/', $field)) ? 'Atom' : $this->contentType;
+  				$this->contentType = (!$this->contentType && preg_match('/\/rdf\+xml/', $field)) ? 'RDFXML' : $this->contentType;
+  				$this->contentType = (!$this->contentType && preg_match('/\/(x\-)?turtle/', $field)) ? 'Turtle' : $this->contentType;
+  				$this->contentType = (!$this->contentType && preg_match('/\/rdf\+n3/', $field)) ? 'Turtle' : $this->contentType;
+  				$this->contentType = (!$this->contentType && preg_match('/text\/html/', $field)) ? 'SemHTML' : $this->contentType;
+  				
+				if($this->contentType) break;
+  			}
+		}
+		
 		return $this->contentType;		
 	}
 }

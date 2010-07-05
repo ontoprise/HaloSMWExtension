@@ -45,7 +45,7 @@ class SMWLinkeddataClient implements IWebServiceClient {
 	 */
 	public function call($operationName, $parameters) {
 		if(!array_key_exists(DI_ACCEPT, $parameters)){
-			$parameters[DI_ACCEPT][0] = "application/rdf+xml";
+			$parameters[DI_ACCEPT][0] = "*/*, application/rdf+xml";
 		}
 		$response = $this->mRESTClient->call($operationName, $parameters); 
 		return  $response;
