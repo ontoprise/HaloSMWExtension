@@ -59,7 +59,11 @@ class HACLStorage {
                 case (HACL_STORE_SQL):
                     require_once("$haclgIP/storage/HACL_StorageSQL.php");
                     self::$mDatabase = new HACLStorageSQL();
-                break;
+                    break;
+                case (HACL_STORE_LDAP):
+                    require_once("$haclgIP/storage/HACL_StorageLDAP.php");
+                    self::$mDatabase = new HACLStorageLDAP();
+                    break;
             }
         }
 		
@@ -93,6 +97,22 @@ class HACLStorage {
         return self::$mDatabase;
 	}
 	
+	/**
+	 * Resets the storage for testing purposes. The global variable
+	 * $haclgBaseStore will be set to $storeID and the next time getDatabase()
+	 * will return a corresponding database.
+	 * 
+	 * @param $storeID
+	 * 		ID of the store that will be used the next time when getDatabase()
+	 * 		is called.
+	 */
+	public static function reset($storeID) {
+		self::$mInstance = null;
+		self::$mDatabase = null;
+		global $haclgBaseStore;
+		$haclgBaseStore = $storeID;
+		
+	}
 	
 	 
 }

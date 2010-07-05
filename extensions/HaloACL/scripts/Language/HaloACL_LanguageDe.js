@@ -25,7 +25,7 @@ var gHACLUserLanguageStrings = {
     
     'NoName'                : '(namenlos)',
     'groups'                : 'Gruppen',
-    'noGroupsAvailable'		: 'Es sind noch keine Gruppen definiert.',
+    'noGroupsAvailable'		: 'Es sind noch keine Gruppen definiert oder die existierenden Gruppen sind für Sie nicht zugreifbar.',
     'createACL'             : 'ACL anlegen',
     'manageACLs'            : 'ACLs verwalten',
     'manageACLTooltip'      : 'ACLs verwalten, eigenes Standard Template verwalten und ACL Favoriten verwalten',

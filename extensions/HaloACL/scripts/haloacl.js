@@ -550,7 +550,8 @@ YAHOO.haloacl.buildRightPanelTabView = function(containerName, predefine, readOn
         predefine:predefine,
         readOnly:readOnly,
         preload:preload,
-        preloadRightId:preloadRightId
+        preloadRightId:preloadRightId,
+		context: 'RightPanel'
     };
 
 
@@ -831,7 +832,8 @@ YAHOO.haloacl.buildGroupPanelTabView = function(containerName, predefine, readOn
         predefine:predefine,
         readOnly:readOnly,
         preload:preload,
-        preloadRightId:preloadRightId
+        preloadRightId:preloadRightId,
+		context: 'GroupPanel'
     };
 
     //if (!readOnly) {

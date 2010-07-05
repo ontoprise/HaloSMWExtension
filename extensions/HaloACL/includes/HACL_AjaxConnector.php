@@ -91,7 +91,6 @@ $wgAjaxExportList[] = "haclSaveTempRightToSession";
 $wgAjaxExportList[] = "haclGetModificationRightsPanel";
 $wgAjaxExportList[] = "haclSaveSecurityDescriptor";
 $wgAjaxExportList[] = "haclGetWhitelistPages";
-$wgAjaxExportList[] = "haclGetUsersWithGroups";
 $wgAjaxExportList[] = "haclGetUsersForGroups";
 $wgAjaxExportList[] = "haclGetGroupsForManageUser";
 $wgAjaxExportList[] = "haclGetACLs";
@@ -1074,6 +1073,7 @@ HTML;
 
         <div id="right_tabview_$panelid" class="yui-navset"></div>
         <script type="text/javascript">
+        
         // resetting previously selected items
         YAHOO.haloacl.clickedArrayGroups['right_tabview_$panelid'] = new Array();
         YAHOO.haloacl.clickedArrayUsers['right_tabview_$panelid'] = new Array();
@@ -1695,6 +1695,9 @@ HTML;
 
 
         <script>
+	
+	        YAHOO.haloaclrights.clickedArrayGroups['right_tabview_$panelid'] = new Array();
+	        
             /* define-for-javascript-handling */
             YAHOO.haloacl.panelDefinePanel_$panelid = "";
    
@@ -2232,9 +2235,11 @@ HTML;
  * @param <boolean> is readonly?
  * @param <boolean> preload right?
  * @param <string> right-id to preload
+ * @param <string> $context 
+ * 		The context of the tab: "RightPanel" or "GroupPanel"
  * @return <string> select-deselect tab-content
  */
-function haclRightPanelSelectDeselectTab($panelid, $predefine, $readOnly, $preload, $preloadRightId) {
+function haclRightPanelSelectDeselectTab($panelid, $predefine, $readOnly, $preload, $preloadRightId, $context) {
     if ($preload == "false") {
         $preload=false;
     };
@@ -2312,7 +2317,7 @@ function haclRightPanelSelectDeselectTab($panelid, $predefine, $readOnly, $prelo
         YAHOO.haloacl.datatableInstance$panelid = YAHOO.haloacl.userDataTable("datatableDiv_$panelid","$panelid");
 
 
-        YAHOO.haloacl.treeInstance$panelid = YAHOO.haloacl.getNewTreeview("treeDiv_$panelid",'$panelid');
+        YAHOO.haloacl.treeInstance$panelid = YAHOO.haloacl.getNewTreeview("treeDiv_$panelid",'$panelid', 'editGroups');
 
         YAHOO.haloacl.labelClickAction_$panelid = function(query,element){
             if (YAHOO.haloacl.debug) console.log("element"+element);
@@ -2330,7 +2335,7 @@ function haclRightPanelSelectDeselectTab($panelid, $predefine, $readOnly, $prelo
         };
 
         YAHOO.haloacl.treeInstance$panelid.labelClickAction = 'YAHOO.haloacl.labelClickAction_$panelid';
-        YAHOO.haloacl.buildTreeFirstLevelFromJson(YAHOO.haloacl.treeInstance$panelid);
+        YAHOO.haloacl.buildTreeFirstLevelFromJson(YAHOO.haloacl.treeInstance$panelid, '$context');
 
        
         //filter event
@@ -3360,16 +3365,23 @@ function haclSaveTempGroupToSession($groupxml) {
     if ($groupname == "") {
         $response = new AjaxResponse();
         $response->setResponseCode(400);
-        $response->addText("You entered no groupname. A name is required to create a new group.");
+        $msg = wfMsgForContent('hacl_group_no_name');
+        $response->addText($msg);
         return $response;
     }
     $newGroup = (String)$xml->newgroup;
     if ($newGroup == "true") {
-        $article = new Article(Title::newFromText("$ns:$groupPrefix/$groupname"));
-        if ($article->exists()) {
+    	$groupID = HACLGroup::idForGroup($groupname);
+    	if ($groupID == null) {
+    		$groupID = HACLGroup::idForGroup("$groupPrefix/$groupname");
+    	}
+        if ($groupID) {
+        	$group = HACLGroup::newFromID($groupID);
+        	$type = $group->getType();
             $response = new AjaxResponse();
             $response->setResponseCode(400);
-            $response->addText("Group already exists. You can not create two groups with the same name.");
+            $msg = wfMsgForContent('hacl_group_exists', $groupname, $type);
+            $response->addText($msg);
             return $response;
         }
 
@@ -4283,13 +4295,19 @@ function haclGetGroupsForRightPanel($clickedGroup, $search=null, $recursive=fals
                     || stripos(haclRemoveGroupPrefix($value->getGroupName()),$search) !== false 
                     || (isset($subgroups) 
                         && (sizeof($subgroups) > 0))) {
-					$tempgroup = array('name'   => haclRemoveGroupPrefix($value->getGroupName()),
-					                   'id'     => $value->getGroupId(),
-					                   'checked'=> 'false');
-                    if (isset($subgroups)) {
-                        $tempgroup['children'] = $subgroups;
-                    }
-                    $array[] = $tempgroup;
+					$name = haclRemoveGroupPrefix($value->getGroupName());
+					$g = $array[$name];
+					if (!isset($g) || $g['type'] == 'HaloACL') {
+						$tempgroup = array('name'   => $name,
+						                   'id'     => $value->getGroupId(),
+						                   'checked'=> 'false',
+										   'canBeModified' => $value->canBeModified(),
+										   'type' => $value->getType());
+	                    if (isset($subgroups)) {
+	                        $tempgroup['children'] = $subgroups;
+	                    }
+	                    $array[$name] = $tempgroup;
+					}
                 }
 
             // non recursive part
@@ -4300,13 +4318,19 @@ function haclGetGroupsForRightPanel($clickedGroup, $search=null, $recursive=fals
                     try {
                         $subparent = HACLGroup::newFromName($value->getGroupName());
                         $subgroups = $subparent->getGroups(HACLGroup::OBJECT);
-						$tempgroup = array('name'    => haclRemoveGroupPrefix($value->getGroupName()),
-										   'id'      => $value->getGroupId(),
-										   'checked' => 'false');
-                        if (sizeof($subgroups) == 0 && !search) {
-                            $tempgroup['children'] = '';
-                        }
-                        $array[] = $tempgroup;
+						$name = haclRemoveGroupPrefix($value->getGroupName());
+						$g = $array[$name];
+						if (!isset($g) || $g['type'] == 'HaloACL') {
+							$tempgroup = array('name'    => $name,
+											   'id'      => $value->getGroupId(),
+											   'checked' => 'false',
+											   'canBeModified' => $value->canBeModified(),
+											   'type' => $value->getType());
+	                        if (sizeof($subgroups) == 0 && !$search) {
+	                            $tempgroup['children'] = '';
+	                        }
+	                        $array[$name] = $tempgroup;
+						}
                     } catch (HACLGroupException $e) {}
 
                 }
@@ -4321,16 +4345,22 @@ function haclGetGroupsForRightPanel($clickedGroup, $search=null, $recursive=fals
 
             $subparent = HACLGroup::newFromName($value->getGroupName());
             $subgroups = $subparent->getGroups(HACLGroup::OBJECT);
-            $tempgroup = array('name'    => haclRemoveGroupPrefix($value->getGroupName()),
-                               'id'      => $value->getGroupId(),
-                               'checked' => 'false');
-            if (sizeof($subgroups) == 0) {
-                $tempgroup['children'] = '';
-            }
-            $array[] = $tempgroup;
+			$name = haclRemoveGroupPrefix($value->getGroupName());
+			$g = $array[$name];
+			if (!isset($g) || $g['type'] == 'HaloACL') {
+				$tempgroup = array('name'    => $name,
+	                               'id'      => $value->getGroupId(),
+	                               'checked' => 'false',
+								   'canBeModified' => $value->canBeModified(),
+								   'type' => $value->getType());
+	            if (sizeof($subgroups) == 0) {
+	                $tempgroup['children'] = '';
+	            }
+	            $array[$name] = $tempgroup;
+			}
         }
     }
-
+    $array = array_values($array);
     //only json encode final result
     if ($level == 0) {
         $array = (json_encode($array));
@@ -4375,8 +4405,10 @@ function haclGetGroupsForManageUser($clickedGroup, $search=null,
                 if (sizeof($subgroupsToCall)> 0 || $level == 0) {
                     $subgroups = haclGetGroupsForManageUser("all", $search, true, $level+1,$subgroupsToCall);
                 }
-                if ($value->userCanModify($wgUser->getName()) || array_intersect_key($haclCrossTemplateAccess, $wgUser->getGroups()) != null ) {
-                    if (!$search || stripos(haclRemoveGroupPrefix($value->getGroupName()),$search) !== false || (isset($subgroups) && (sizeof($subgroups) > 0))) {
+                if (($value->userCanModify($wgUser->getName()) 
+                     || array_intersect_key($haclCrossTemplateAccess, $wgUser->getGroups()) != null)
+                    && $value->canBeModified()) {
+                   	if (!$search || stripos(haclRemoveGroupPrefix($value->getGroupName()),$search) !== false || (isset($subgroups) && (sizeof($subgroups) > 0))) {
                     	$tempgroup = array('name'=>haclRemoveGroupPrefix($value->getGroupName()),
                                            'id'=>$value->getGroupId(),
                                            'checked'=>'false', 
@@ -4392,7 +4424,9 @@ function haclGetGroupsForManageUser($clickedGroup, $search=null,
 
             // non recursive part
             } else {
-                if ($value->userCanModify($wgUser->getName()) || array_intersect_key($haclCrossTemplateAccess, $wgUser->getGroups()) != null ) {
+                if (($value->userCanModify($wgUser->getName()) 
+                     || array_intersect_key($haclCrossTemplateAccess, $wgUser->getGroups()) != null)
+                    && $value->canBeModified()) {
 
                     if (!$search || preg_match("/$search/is",haclRemoveGroupPrefix($value->getGroupName()))) {
 
@@ -4404,7 +4438,7 @@ function haclGetGroupsForManageUser($clickedGroup, $search=null,
                                 			   'checked'=>'false',
                                 			   'description'=>$value->getGroupDescription(),
                             			   	   'valid' => $valid);
-                            if (sizeof($subgroups) == 0 && !search) {
+                            if (sizeof($subgroups) == 0 && !$search) {
 			                    $tempgroup['children'] = '';
                             }
                             $array[] = $tempgroup;
@@ -4420,7 +4454,9 @@ function haclGetGroupsForManageUser($clickedGroup, $search=null,
         //groups
         $groups = $parent->getGroups(HACLGroup::OBJECT);
         foreach ( $groups as $key => $value ) {
-            if ($value->userCanModify($wgUser->getName()) || array_intersect_key($haclCrossTemplateAccess, $wgUser->getGroups()) != null ) {
+        	if (($value->userCanModify($wgUser->getName())
+        	     || array_intersect_key($haclCrossTemplateAccess, $wgUser->getGroups()) != null)
+        	    && $value->canBeModified()) {
         		$valid = $value->checkIntegrity();
             	
                 $subparent = HACLGroup::newFromName($value->getGroupName());
@@ -4449,18 +4485,6 @@ function haclGetGroupsForManageUser($clickedGroup, $search=null,
 
 
 }
-
-
-/**
- *
- * @param <String>  selected group
- * @return <JSON>   json from first-level-childs of the query-group; not all childs!
- */
-function haclGetUsersWithGroups() {
-    return (json_encode(HACLStorage::getDatabase()->getUsersWithGroups()));
-}
-
-
 
 /**
  *
@@ -5481,6 +5505,11 @@ function haclRemoveGroupPrefix($groupName) {
  * 		The group name with prefix.
  */
 function haclAddGroupPrefix($groupName) {
+	// If the group exists without the prefix, no prefix is added
+	if (HACLStorage::getDatabase()->getGroupByName($groupName) !== null) {
+		return $groupName;
+	}
+	
 	global $haclgContLang;
 	$prefix = $haclgContLang->getNamingConvention(HACLLanguage::NC_GROUP)."/";
 	return $prefix.$groupName;

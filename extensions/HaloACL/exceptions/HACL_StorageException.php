@@ -40,10 +40,20 @@ class HACLStorageException extends HACLException {
 
 	//--- Constants ---
 	
-	// There is no article for the specified group. 
+	// LDAP groups can not be saved 
 	// Parameters:
 	// 1 - name of the group
-//	const SOME_ERROR_ID = 1;	
+	const CANT_SAVE_LDAP_GROUP = 1;	
+	
+	// It is not possible to save a group that already exists in LDAP 
+	// Parameters:
+	// 1 - name of the group
+	const SAME_GROUP_IN_LDAP = 2;
+	
+	// LDAP groups can not be modified
+	// Parameters:
+	// 1 - ID of the group
+	const CANT_MODIFY_LDAP_GROUP = 3;
 	
 	
 	/**
@@ -61,9 +71,16 @@ class HACLStorageException extends HACLException {
     protected function createMessage($args) {
     	$msg = "";
     	switch ($args[0]) {
-//    		case self::SOME_ERROR_ID:
-//    			$msg = "The article for group $args[1] is not yet created.";
-//    			break;
+    		case self::CANT_SAVE_LDAP_GROUP:
+    			$msg = "The LDAP group <$args[1]> can not be saved.";
+    			break;
+    		case self::SAME_GROUP_IN_LDAP:
+    			$msg = "A group with the name <$args[1]> already exists in LDAP.";
+    			break;
+    		case self::CANT_MODIFY_LDAP_GROUP:
+    			$msg = "The LDAP group with the ID <$args[1]> can not be modified.";
+    			break;
+    			
     	}
     	return $msg;
     }

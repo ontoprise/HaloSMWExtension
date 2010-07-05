@@ -843,9 +843,9 @@ class HACLParserFunctions {
 
 		$isWhitelist = ($id == $wlid);
 		if ($msg === true &&
-		!HACLGroup::exists($id) &&
-		!HACLSecurityDescriptor::exists($id) &&
-		!$isWhitelist) {
+			!HACLGroup::exists($id) &&
+			!HACLSecurityDescriptor::exists($id) &&
+			!$isWhitelist) {
 			$msg = array(wfMsgForContent('hacl_acl_element_not_in_db'));
 		}
 
@@ -933,8 +933,8 @@ class HACLParserFunctions {
 		$t = $this->mTitle;
 		// group does not exist yet
 		$group = new HACLGroup($t->getArticleID(), $t->getText(),
-		$this->mGroupManagerGroups,
-		$this->mGroupManagerUsers);
+								$this->mGroupManagerGroups,
+								$this->mGroupManagerUsers);
 		$group->save();
 		$group->removeAllMembers();
 		foreach ($this->mGroupMembers as $m) {
@@ -1094,6 +1094,18 @@ class HACLParserFunctions {
 			if (count($this->mGroupManagerGroups) == 0 &&
 			count($this->mGroupManagerUsers) == 0) {
 				$msg[] = wfMsgForContent('hacl_group_must_have_managers');
+			}
+			// check if the group is overloaded
+			$groupName = $this->mTitle->getText();
+			global $haclgContLang;
+			$gWOPre = "";
+			$prefix = $haclgContLang->getNamingConvention(HACLLanguage::NC_GROUP)."/";
+			if (strpos($groupName, $prefix) === 0) {
+				$gWOPre = substr($groupName, strlen($prefix));
+			}
+				
+			if (HACLGroup::isOverloaded($groupName) || HACLGroup::isOverloaded($gWOPre)) {
+				$msg[] = wfMsgForContent("hacl_group_overloaded", $groupName);
 			}
 		}
 
@@ -1325,6 +1337,18 @@ class HACLParserFunctions {
 					// Group does not exist => add a warning 
 					$warnings[] = wfMsgForContent("hacl_unknown_group", $assignee);
 				} else {
+					// Check if the group is overloaded i.e. if there are several
+					// definitions for the same group name.
+					global $haclgContLang;
+					$assWOPre = "";
+					$prefix = $haclgContLang->getNamingConvention(HACLLanguage::NC_GROUP)."/";
+					if (strpos($assignee, $prefix) === 0) {
+						$assWOPre = substr($assignee, strlen($prefix));
+					}
+					
+					if (HACLGroup::isOverloaded($assignee) || HACLGroup::isOverloaded($assWOPre)) {
+						$warnings[] = wfMsgForContent("hacl_group_overloaded", $assignee);
+					}
 					$groups[] = $assignee;
 				}
 			}

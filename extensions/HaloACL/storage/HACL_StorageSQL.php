@@ -38,6 +38,9 @@ require_once $haclgIP . '/storage/HACL_DBHelper.php';
  *
  */
 class HACLStorageSQL {
+	
+	const GROUP_TYPE_HACL = 'HaloACL';
+	
 
 	/**
 	 * Initializes the database tables of the HaloACL extensions.
@@ -239,9 +242,7 @@ class HACLStorageSQL {
 	}
 
 	/**
-	 * Retrieves all groups from
-	 * the database.
-	 *
+	 * Retrieves all top level groups from the database.
 	 *
 	 * @return Array
 	 * 		Array of Group Objects
@@ -283,56 +284,13 @@ class HACLStorageSQL {
 			$mgGroups = self::strToIntArray($row->mg_groups);
 			$mgUsers  = self::strToIntArray($row->mg_users);
 
-			$groups[] = new HACLGroup($groupID, $groupName, $mgGroups, $mgUsers);
+			$groups[] = new HACLGroup($groupID, $groupName, $mgGroups, $mgUsers, 
+									  true, self::GROUP_TYPE_HACL);
 		}
 
 		$db->freeResult($res);
 
 		return $groups;
-	}
-
-
-	/**
-	 * Retrieves all users and the groups they are attached to
-	 *
-	 *
-	 * @return Array
-	 * 		Array of Group Objects
-	 *
-	 */
-	public function getUsersWithGroups() {
-		$db =& wfGetDB( DB_SLAVE );
-		$ut = $db->tableName('user');
-		$gt = $db->tableName('halo_acl_groups');
-		$gmt = $db->tableName('halo_acl_group_members');
-		$sql = "SELECT user_id, group_id, group_name
-		FROM $ut
-		LEFT JOIN  $gmt ON  $gmt.child_id = $ut.user_id
-		LEFT JOIN $gt ON $gt.group_id = $gmt.parent_group_id
-            ";
-
-
-		$users = array();
-
-		$res = $db->query($sql);
-
-		$curUser = null;
-
-
-		while ($row = $db->fetchObject($res)) {
-
-			if ($curUser <> $row->user_id) {
-
-				$curGroupArray = array();
-				$curUser = $row->user_id;
-			}
-			$curGroupArray[] = array("id"=>$row->group_id, "name"=>$row->group_name);
-			$users[$row->user_id] = $curGroupArray;
-		}
-
-		$db->freeResult($res);
-
-		return $users;
 	}
 
 
@@ -363,7 +321,8 @@ class HACLStorageSQL {
 			$mgGroups = self::strToIntArray($row->mg_groups);
 			$mgUsers  = self::strToIntArray($row->mg_users);
 
-			$group = new HACLGroup($groupID, $groupName, $mgGroups, $mgUsers);
+			$group = new HACLGroup($groupID, $groupName, $mgGroups, $mgUsers, 
+								   true, self::GROUP_TYPE_HACL);
 		}
 		$db->freeResult($res);
 
@@ -398,7 +357,8 @@ class HACLStorageSQL {
 			$mgGroups = self::strToIntArray($row->mg_groups);
 			$mgUsers  = self::strToIntArray($row->mg_users);
 
-			$group = new HACLGroup($groupID, $groupName, $mgGroups, $mgUsers);
+			$group = new HACLGroup($groupID, $groupName, $mgGroups, $mgUsers, 
+								   true, self::GROUP_TYPE_HACL);
 		}
 		$db->freeResult($res);
 
@@ -535,8 +495,7 @@ class HACLStorageSQL {
 	 * Returns all groups the user is member of
 	 *
 	 * @param string $memberType
-	 * 		'user' => ask for all user IDs
-	 *      'group' => ask for all group IDs
+	 * 		ID of the user who's groups are retrieved.
 	 * @return array(int)
 	 * 		List of IDs of all direct users or groups in this group.
 	 *
@@ -559,7 +518,10 @@ class HACLStorageSQL {
 		$curGroupArray = array();
 
 		while ($row = $db->fetchObject($res)) {
-			$curGroupArray[] = array("id"=>$row->group_id, "name"=>$row->group_name);
+			if (isset($row->group_id) && isset($row->group_name)) {
+				$curGroupArray[] = array("id"   => $row->group_id, 
+				                         "name" => $row->group_name);
+			}
 		}
 
 		$db->freeResult($res);
@@ -708,6 +670,20 @@ class HACLStorageSQL {
 		$obj = $db->selectRow($db->tableName('halo_acl_groups'),
 								array("group_id"), array("group_id" => $groupID));
 		return ($obj !== false);
+	}
+	
+	/**
+	 * Checks if there are several definitions for the group with the specified
+	 * $groupName. This can happen if another source of groups is attached.
+	 * 
+	 * @param string $groupName
+	 * 		The name of the group that is checked.
+	 * @return bool
+	 * 		false
+	 * 		In the SQL storage layer there can be no overloaded groups. 
+	 */
+	public function isOverloaded($groupName) {
+		return false;
 	}
 
 
@@ -1467,7 +1443,7 @@ class HACLStorageSQL {
 	 * @return array(int)
 	 * 		Array of integers or <null> if the string was empty.
 	 */
-	private static function strToIntArray($values) {
+	protected static function strToIntArray($values) {
 		if (!is_string($values) || strlen($values) == 0) {
 			return null;
 		}

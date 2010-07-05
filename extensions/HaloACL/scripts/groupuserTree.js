@@ -59,9 +59,11 @@ function dump(arr,level) {
 
 
 // defining customnode
-YAHOO.widget.CustomNode = function(oData, oParent, expanded, checked) {
+YAHOO.widget.CustomNode = function(oData, oParent, expanded, checked, typeOfGroup, canBeModified) {
     YAHOO.widget.CustomNode.superclass.constructor.call(this,oData,oParent,expanded);
     this.setUpCheck(checked || oData.checked);
+	this.typeOfGroup = typeOfGroup;
+	this.canBeModified = canBeModified;
 };
 
 // impl of customnode; extending textnode
@@ -105,6 +107,12 @@ YAHOO.extend(YAHOO.widget.CustomNode, YAHOO.widget.TextNode, {
     _type: "CustomNode",
 
     textWidth:399,
+	
+	// Groups of different types can be decorated accordingly
+	typeOfGroup : 'HaloACL',
+	
+	// <true>, if this group can be modified
+	canBeModified : true,
 
     customNodeParentChange: function() {
     //this.updateParent();
@@ -340,6 +348,7 @@ YAHOO.extend(YAHOO.widget.CustomNode, YAHOO.widget.TextNode, {
     getContentHtml: function() {                                                                                                                                           
         var sb = [];
 
+		
         if (this.treeType=="rw") {
 
             sb[sb.length] = '<td><span';
@@ -351,8 +360,15 @@ YAHOO.extend(YAHOO.widget.CustomNode, YAHOO.widget.TextNode, {
             sb[sb.length] = ' style="width:'+this.textWidth+'px" ';
             sb[sb.length] = ' >';
             sb[sb.length] = "<a href='javascript:"+this.tree.labelClickAction+"(\""+this.label+"\",\""+this.labelElId+"\");'>"+this.label+"</a>";
+			
+			if (this.typeOfGroup == 'LDAP') {
+				sb[sb.length] = '<span class="ygtgrouptypeldap">';
+				sb[sb.length] = '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+				sb[sb.length] = '</span>';
+			}
 
-            sb[sb.length] = '</span></td>';
+            sb[sb.length] = '</span>';
+			sb[sb.length] = '</td>';
             sb[sb.length] = '<td';
             sb[sb.length] = ' id="' + this.getCheckElId() + '"';
             sb[sb.length] = ' class="' + this.getCheckStyle() + '"';
@@ -372,8 +388,14 @@ YAHOO.extend(YAHOO.widget.CustomNode, YAHOO.widget.TextNode, {
             sb[sb.length] = ' class="haloacl_grouptree_title ' + this.labelStyle  + '"';
             sb[sb.length] = ' >';
             sb[sb.length] = this.label;
-
-            sb[sb.length] = '</span></td>';
+			if (this.typeOfGroup == 'LDAP') {
+				sb[sb.length] = '<span class="ygtgrouptypeldap">';
+				sb[sb.length] = '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+				sb[sb.length] = '</span>';
+			}
+            sb[sb.length] = '</span>'
+			
+			sb[sb.length] = '</td>';
             
             sb[sb.length] = '<td';
             sb[sb.length] = ' id="' + this.getCheckElId() + '"';
@@ -391,7 +413,40 @@ YAHOO.extend(YAHOO.widget.CustomNode, YAHOO.widget.TextNode, {
     }  
 });
 
+/**
+ * Initialization of a Group Tree
+ * @param {Object} divname
+ * 		Name of the div that contains the tree
+ * @param {String} purpose
+ * 		The purpose of the tree. The purpose influences the appearance of the tree.
+ */ 
+YAHOO.widget.GroupTree = function(divname, purpose) {
+    YAHOO.widget.GroupTree.superclass.constructor.call(this,divname);
+    this.construct(purpose);
+};
 
+// Definition of the GroupTree
+YAHOO.extend(YAHOO.widget.GroupTree, YAHOO.widget.TreeView, {
+	
+	// The purpose of this tree
+	purpose: 'normal',
+	
+	// The content in which the tree is used: RightPanel or GroupPanel
+	context: 'RightPanel',
+	
+	/**
+	 * 
+	 * @param {String} purpose
+	 */
+	construct: function(purpose) {
+		this.purpose = purpose;
+	},
+	
+	setContext: function(context) {
+		this.context = context;
+	}
+
+});
 
 /*
  * treeview-dataconnect
@@ -494,16 +549,31 @@ YAHOO.haloacl.buildNodesFromData = function(parentNode,data,panelid){
         },callback);
 
     };
+	
+	hideImmutableNodes = false;
+	tree = parentNode.tree;
+	context = "RightPanel";
+	if (tree.context != undefined) {
+		context = tree.context; 
+	}
+	if (tree.purpose != undefined) {
+		hideImmutableNodes = (tree.purpose == 'editGroups' && context == "GroupPanel"); 
+	}
+	
 
     for(var i= 0, len = data.length; i<len; ++i){
         var element = data[i];
+		
+		if (element.canBeModified == false && hideImmutableNodes) {
+			continue;
+		}
 
         var elementWidth = 340;
         if(parentNode.textWidth != null){
             elementWidth = parentNode.textWidth - 18;
         }
 
-        var tmpNode = new YAHOO.widget.CustomNode(element.name, parentNode,false);
+        var tmpNode = new YAHOO.widget.CustomNode(element.name, parentNode, false, element.checked, element.type, element.canBeModified);
         
         tmpNode.textWidth = elementWidth;
 
@@ -573,7 +643,7 @@ YAHOO.haloacl.filterNodesGroupUser = function(parentNode,filter){
  * @param data
  * @param labelClickAction (name)
  */
-YAHOO.haloacl.buildUserTree = function(tree,data) {
+YAHOO.haloacl.buildUserTree = function(tree, data) {
     var loadNodeData = function(node, fnLoadComplete)  {
         var nodeLabel = encodeURI(node.label);
         //prepare our callback object
@@ -651,11 +721,22 @@ YAHOO.haloacl.buildUserTreeRO = function(rwTree,tree) {
 
             var groupsInTree = false;
             var groupsarray = YAHOO.haloacl.getGroupsArray(tree.panelid);
-            for(var i=0;i<groupsarray.length;i++){
-                if(tree){
+			if(tree){
+            	for(var i=0;i<groupsarray.length;i++){
                     var name=groupsarray[i];
                     if(name != ""){
-                        var tmpNode = new YAHOO.widget.CustomNode(name, tree.getRoot(),false);
+						var type = 'HaloACL';
+						var cbm = true;
+						// find the group in the received data
+			            for (var j = 0, l = data.length; j < l; ++j) {
+							var g = data[j];
+							if (g.name == name) {
+								type = g.type;
+								cbm = g.canBeModified;
+								break;
+							}	
+						}
+                        var tmpNode = new YAHOO.widget.CustomNode(name, tree.getRoot(), false, false, type, cbm);
                         tmpNode.setGroupId(name);
                         tmpNode.setCheckState(2);
                         tmpNode.setTreeType("r");
@@ -708,11 +789,12 @@ YAHOO.haloacl.preloadCheckedGroups = function(groups, tree) {
  * function to be called from outside to init a tree
  * @param tree-instance
  */
-YAHOO.haloacl.buildTreeFirstLevelFromJson = function(tree){
+YAHOO.haloacl.buildTreeFirstLevelFromJson = function(tree, context){
     var callback = {
         success: function(oResponse) {
             var data = YAHOO.lang.JSON.parse(oResponse.responseText);
-            YAHOO.haloacl.buildUserTree(tree,data);
+			tree.setContext(context);
+            YAHOO.haloacl.buildUserTree(tree, data);
         },
         failure: function(oResponse) {
         }
@@ -791,8 +873,8 @@ YAHOO.haloacl.applyFilterOnTree = function(tree,filtervalue){
  * @param targetdiv
  * @param panelid
  */
-YAHOO.haloacl.getNewTreeview = function(divname,panelid){
-    var instance = new YAHOO.widget.TreeView(divname);
+YAHOO.haloacl.getNewTreeview = function(divname, panelid, purpose){
+    var instance = new YAHOO.widget.GroupTree(divname, purpose);
     instance.panelid = panelid;
     if(!YAHOO.haloacl.clickedArrayGroups[panelid]){
         YAHOO.haloacl.clickedArrayGroups[panelid] = new Array();

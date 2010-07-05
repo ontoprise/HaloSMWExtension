@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites>
+  <testsuite name="PHPUnit" tests="16" assertions="107" failures="1" errors="0" time="2.491054">
+    <testsuite name="" tests="16" assertions="107" failures="1" errors="0" time="2.491054">
+      <testsuite name="TestLDAPStorage" file="D:\MediaWiki\HaloSMWExtension\extensions\HaloACL\tests\testcases\TestLDAPStorage.php" tests="2" assertions="5" failures="0" errors="0" time="0.156759">
+        <testcase name="testGroupNameForID" class="TestLDAPStorage" file="D:\MediaWiki\HaloSMWExtension\extensions\HaloACL\tests\testcases\TestLDAPStorage.php" line="668" assertions="3" time="0.053054"/>
+        <testcase name="testSaveGroup" class="TestLDAPStorage" file="D:\MediaWiki\HaloSMWExtension\extensions\HaloACL\tests\testcases\TestLDAPStorage.php" line="680" assertions="2" time="0.103705"/>
+      </testsuite>
+      <testsuite name="TestLDAPMixedStorage" file="D:\MediaWiki\HaloSMWExtension\extensions\HaloACL\tests\testcases\TestLDAPStorage.php" tests="14" assertions="102" failures="1" errors="0" time="2.334295">
+        <testcase name="testGetGroups" class="TestLDAPMixedStorage" file="D:\MediaWiki\HaloSMWExtension\extensions\HaloACL\tests\testcases\TestLDAPStorage.php" line="130" assertions="1" time="0.132130">
+          <failure type="PHPUnit_Framework_ExpectationFailedException">TestLDAPMixedStorage::testGetGroups
+Failed asserting that &lt;integer:4&gt; matches expected &lt;integer:6&gt;.
+
+D:\MediaWiki\HaloSMWExtension\extensions\HaloACL\tests\testcases\TestLDAPStorage.php:134
+D:\MediaWiki\HaloSMWExtension\tests\tests_halo\run-test.php:5
+</failure>
+        </testcase>
+        <testcase name="testGetGroupByName" class="TestLDAPMixedStorage" file="D:\MediaWiki\HaloSMWExtension\extensions\HaloACL\tests\testcases\TestLDAPStorage.php" line="149" assertions="3" time="0.099436"/>
+        <testcase name="testGetGroupByID" class="TestLDAPMixedStorage" file="D:\MediaWiki\HaloSMWExtension\extensions\HaloACL\tests\testcases\TestLDAPStorage.php" line="166" assertions="5" time="0.086091"/>
+        <testcase name="testAddUserToGroup" class="TestLDAPMixedStorage" file="D:\MediaWiki\HaloSMWExtension\extensions\HaloACL\tests\testcases\TestLDAPStorage.php" line="191" assertions="3" time="0.086858"/>
+        <testcase name="testAddGroupToGroup" class="TestLDAPMixedStorage" file="D:\MediaWiki\HaloSMWExtension\extensions\HaloACL\tests\testcases\TestLDAPStorage.php" line="219" assertions="5" time="0.083680"/>
+        <testcase name="testRemoveUserFromGroup" class="TestLDAPMixedStorage" file="D:\MediaWiki\HaloSMWExtension\extensions\HaloACL\tests\testcases\TestLDAPStorage.php" line="270" assertions="3" time="0.086963"/>
+        <testcase name="testRemoveAllMembersFromGroup" class="TestLDAPMixedStorage" file="D:\MediaWiki\HaloSMWExtension\extensions\HaloACL\tests\testcases\TestLDAPStorage.php" line="304" assertions="5" time="0.087702"/>
+        <testcase name="testRemoveGroupFromGroup" class="TestLDAPMixedStorage" file="D:\MediaWiki\HaloSMWExtension\extensions\HaloACL\tests\testcases\TestLDAPStorage.php" line="340" assertions="5" time="0.081966"/>
+        <testcase name="testGetMembersOfGroup" class="TestLDAPMixedStorage" file="D:\MediaWiki\HaloSMWExtension\extensions\HaloACL\tests\testcases\TestLDAPStorage.php" line="397" assertions="14" time="0.245690"/>
+        <testcase name="testGetGroupsOfMember" class="TestLDAPMixedStorage" file="D:\MediaWiki\HaloSMWExtension\extensions\HaloACL\tests\testcases\TestLDAPStorage.php" line="458" assertions="3" time="0.127653"/>
+        <testcase name="testHasGroupMember" class="TestLDAPMixedStorage" file="D:\MediaWiki\HaloSMWExtension\extensions\HaloACL\tests\testcases\TestLDAPStorage.php" line="484" assertions="45" time="0.928095"/>
+        <testcase name="testDeleteGroup" class="TestLDAPMixedStorage" file="D:\MediaWiki\HaloSMWExtension\extensions\HaloACL\tests\testcases\TestLDAPStorage.php" line="563" assertions="3" time="0.107009"/>
+        <testcase name="testGroupExists" class="TestLDAPMixedStorage" file="D:\MediaWiki\HaloSMWExtension\extensions\HaloACL\tests\testcases\TestLDAPStorage.php" line="589" assertions="4" time="0.079351"/>
+        <testcase name="testIsOverloaded" class="TestLDAPMixedStorage" file="D:\MediaWiki\HaloSMWExtension\extensions\HaloACL\tests\testcases\TestLDAPStorage.php" line="603" assertions="3" time="0.101671"/>
+      </testsuite>
+    </testsuite>
+  </testsuite>
+</testsuites>

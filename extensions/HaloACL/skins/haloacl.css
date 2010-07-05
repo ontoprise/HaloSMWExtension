@@ -598,6 +598,8 @@ abbr,acronym { border:0;
 .ygtvcheck2 { background: url(yuipics/check2.gif) 0 0 no-repeat; width:16px; cursor:pointer }
 .ygtvcheck2-ro { background: url(images/remove.png) 0 0 no-repeat; width:16px; cursor:pointer;float:right; }
 
+.ygtgrouptypeldap { background: url(yuipics/GroupLDAP.gif) 0 0 no-repeat; width:16px; }
+
 .haloacl_rightpanel_selecttab_leftpart_treeview{
     border:1px #000 solid;
     border-style:none none solid none;

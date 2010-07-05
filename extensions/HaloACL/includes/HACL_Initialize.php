@@ -38,7 +38,8 @@ if ( !defined( 'MEDIAWIKI' ) ) {
 define('HACL_HALOACL_VERSION', '{{$VERSION}}');
 
 define('HACL_STORE_SQL', 'HaclStoreSQL');
-// constant for special schema properties
+define('HACL_STORE_LDAP', 'HaclStoreLDAP');
+
 
 
 ###

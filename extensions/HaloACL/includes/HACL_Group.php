@@ -56,14 +56,17 @@ class  HACLGroup {
     const OBJECT = 2;		// Mode parameter for getUsers/getGroups
     const USER   = 'user';  // Child type for users
     const GROUP  = 'group'; // Child type for groups
+    const TYPE_HALO_ACL = 'HaloACL';
 
     //--- Private fields ---
     private $mGroupID;    		// int: Page ID of the article that defines this group
     private $mGroupName;		// string: The name of this group
     private $mManageGroups;		// array(int): IDs of the groups that can modify
-    //		the definition of this group
+							    //		the definition of this group
     private $mManageUsers;		// array(int): IDs of the users that can modify
-    //		the definition of this group
+							    //		the definition of this group
+	private $mCanBeModified;	// bool: <true> if this group can be modified
+	private $mType;				// string: The type of this group e.g. HaloACL or LDAP							    
 
     /**
      * Constructor for HACLGroup
@@ -82,12 +85,17 @@ class  HACLGroup {
      * 		An array or a string of comma separated of user names or IDs that
      *      can modify the group's definition. User names are converted and
      *      internally stored as user IDs. Invalid values cause an exception.
+     * @param bool $canBeModified
+     * 		<true> if this group can be modified in general
+     * @param string $type
+     * 		The type of the group, e.g. HaloACL or LDAP etc.
      * @throws
      * 		HACLGroupException(HACLGroupException::UNKOWN_GROUP)
      * 		HACLException(HACLException::UNKOWN_USER)
      *
      */
-    function __construct($groupID, $groupName, $manageGroups, $manageUsers) {
+    function __construct($groupID, $groupName, $manageGroups, $manageUsers, 
+    					 $canBeModified = true, $type = self::TYPE_HALO_ACL) {
 
         if (is_null($groupID)) {
             $groupID = self::idForGroup($groupName);
@@ -97,7 +105,8 @@ class  HACLGroup {
 
         $this->setManageGroups($manageGroups);
         $this->setManageUsers($manageUsers);
-
+		$this->mCanBeModified = $canBeModified;
+		$this->mType = $type;
     }
 
     //--- getter/setter ---
@@ -106,6 +115,9 @@ class  HACLGroup {
     public function getGroupName() {return $this->mGroupName;}
     public function getManageGroups() {return $this->mManageGroups;}
     public function getManageUsers() {return $this->mManageUsers;}
+    public function getType() 		{return $this->mType;}
+    public function canBeModified()	{return $this->mCanBeModified;}
+    
 
     //	public function setXY($xy)               {$this->mXY = $xy;}
 
@@ -168,18 +180,27 @@ class  HACLGroup {
      *
      */
     public static function idForGroup($group) {
-        if (is_int($group)) {
-        // group ID given
-            return $group;
-        } else if (is_string($group)) {
-            // Name of group given
-                return haclfArticleID($group, HACL_NS_ACL);
-            } else if (is_a($group, 'HACLGroup')) {
-                // group object given
-                    return $group->getGroupID();
-                }
-        // This should not happen
-        return null;
+    	if (is_int($group)) {
+    		// group ID given
+    		return $group;
+    	} else if (is_string($group)) {
+    		// Name of group given
+    		$id = haclfArticleID($group, HACL_NS_ACL);
+    		if ($id == 0) {
+    			try {
+    				$g = HACLGroup::newFromName($group);
+    			} catch (HACLGroupException $e) {
+    				return null;
+    			}
+    			$id = $g->getGroupID();
+    		}
+    		return $id;
+    	} else if (is_a($group, 'HACLGroup')) {
+    		// group object given
+    		return $group->getGroupID();
+    	}
+    	// This should not happen
+    	return null;
     }
 
     /**
@@ -209,6 +230,21 @@ class  HACLGroup {
     public static function exists($groupID) {
         return HACLStorage::getDatabase()->groupExists($groupID);
     }
+    
+	/**
+	 * Checks if there are several definitions for the group with the specified
+	 * $groupName. This can happen if the same group is defined in a wiki article
+	 * and on the LDAP server.
+	 * 
+	 * @param string $groupName
+	 * 		The name of the group that is checked.
+	 * @return bool
+	 * 		true: The group is defined in the wiki and on the LDAP server.
+	 * 		false: There is only one or no definition for the group
+	 */
+	public static function isOverloaded($groupName) {
+        return HACLStorage::getDatabase()->isOverloaded($groupName);		
+	}
 
 	/**
 	 * This method checks the integrity of this group. The integrity can be violated

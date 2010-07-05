@@ -11,6 +11,8 @@ class TestDatabase extends PHPUnit_Framework_TestCase {
 	protected $backupGlobals = FALSE;
 	
     function setUp() {
+		HACLStorage::reset(HACL_STORE_SQL);
+    	
     	User::createNew("U1");
     	User::createNew("U2");
         User::createNew("U3");
