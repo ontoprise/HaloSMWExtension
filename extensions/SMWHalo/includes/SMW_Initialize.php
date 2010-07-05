@@ -110,7 +110,6 @@ function smwgHaloSetupExtension() {
 	$wgAutoloadClasses['SMWSPARQLQuery'] = $smwgHaloIP . '/includes/SMW_SPARQLQueryParser.php';
 
 	require_once $smwgHaloIP.'/includes/queryprinters/SMW_QP_Halo.php';
-	require_once $smwgHaloIP.'/includes/queryprinters/SMW_QP_Provenance.php';
 
 	global $smwgResultFormats;
 
@@ -118,8 +117,6 @@ function smwgHaloSetupExtension() {
 	$smwgResultFormats['exceltable'] = 'SMWExcelResultPrinter';
 	$smwgResultFormats['aggregation'] = 'SMWAggregationResultPrinter';
 	$smwgResultFormats['csv'] = 'SMWHaloCsvResultPrinter';
-
-	$smwgResultFormats['ul_table'] = 'SMWProvenanceResultPrinter';
 
 
 
