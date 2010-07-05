@@ -8,7 +8,7 @@
  * @defgroup SemanticGardeningBots
  * @ingroup SemanticGardening
  * 
- * @author Kai Kühn
+ * @author Kai Kï¿½hn
  * 
  */
 if ( !defined( 'SMW_HALO_VERSION' ) )
@@ -55,7 +55,8 @@ function sgagGardeningSetupExtension() {
 
 	global $sgagLocalGardening, $wgJobClasses;
 	//XXX: deactivated because of Performance
-	//$wgJobClasses['SMW_LocalGardeningJob'] = 'SMW_LocalGardeningJob';
+    if ($sgagLocalGardening == true)
+        $wgJobClasses['SMW_LocalGardeningJob'] = 'SMW_LocalGardeningJob';
 
 	global $wgRequest;
 	$action = $wgRequest->getVal('action');
