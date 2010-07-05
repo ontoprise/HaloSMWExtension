@@ -24,20 +24,16 @@
 
 // fetch the Use Web Service GUI by calling the URL http://host/wiki/Special:UseWebService
 global $wgServer, $wgScript;
-if( !defined( 'MEDIAWIKI' ) ) define('MEDIAWIKI', "fake");
-if (is_null($wgServer)) {
-	$wgServer = "http";
-	// check for SSL
-	if (isset($_SERVER['SCRIPT_URI']) && strtolower(substr($_SERVER['SCRIPT_URI'], 4, 1)) == "s" || 
-    	isset($_SERVER['SERVER_PORT']) && $_SERVER['SERVER_PORT'] == 443)
-		$wgServer.= "s";
-	// add hostname and build correct path, assuming that the QI can be accessed as a special page
-	$wgServer.= "://".$_SERVER['HTTP_HOST'];
-}
-if (is_null($wgScript)) {
-    $wgScript = substr($_SERVER['REQUEST_URI'], 0, strpos($_SERVER['REQUEST_URI'], 'extensions/FCKeditor/plugins/')).
-       "index.php";
-}
+$wgServer = "http";
+// check for SSL
+if (isset($_SERVER['SCRIPT_URI']) && strtolower(substr($_SERVER['SCRIPT_URI'], 4, 1)) == "s" || 
+    isset($_SERVER['SERVER_PORT']) && $_SERVER['SERVER_PORT'] == 443)
+    $wgServer.= "s";
+// add hostname and build correct path, assuming that the QI can be accessed as a special page
+$wgServer.= "://".$_SERVER['HTTP_HOST'];
+
+$wgScript = substr($_SERVER['REQUEST_URI'], 0, strpos($_SERVER['REQUEST_URI'], 'extensions/FCKeditor/plugins/'))."index.php";
+
 // now actually include the file with the ajax function
 $UWSAjaxFuncFile = '../../../../DataImport/specials/WebServices/SMW_UseWebServiceAjaxAccess.php';
 if (!file_exists($UWSAjaxFuncFile))
