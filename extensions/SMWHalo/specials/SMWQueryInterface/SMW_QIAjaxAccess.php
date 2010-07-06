@@ -105,27 +105,18 @@ function smwf_qi_QIAccess($method, $params) {
             }
 	    switch ($fixparams['format']) {
             	case 'timeline':
-            		return $result;
-            		break;
+            	case 'exhibit':
             	case 'eventline':
             		return $result;
             		break;
             	case 'googlepie':
-            		return $result[0];
-            		break;     
             	case 'googlebar':
-            		return $result[0];
-            		break;            		
-            	case 'exhibit':
-            		return $result;
-            		break;
-            		
-            		case 'ofc-pie':
-            		case 'ofc-bar':
-            		case 'ofc-bar_3d':
-            		case 'ofc-line':
-            	    case 'ofc-scatterline':			
-                    return $result[0];
+           		case 'ofc-pie':
+           		case 'ofc-bar':
+           		case 'ofc-bar_3d':
+           		case 'ofc-line':
+           	    case 'ofc-scatterline':
+                    return (is_array($result)) ? $result[0] : $result;
                     break;   
             	default:            		
             }
