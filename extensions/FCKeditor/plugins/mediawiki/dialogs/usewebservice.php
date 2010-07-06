@@ -23,6 +23,8 @@
  */
 
 // fetch the Use Web Service GUI by calling the URL http://host/wiki/Special:UseWebService
+sleep(1);
+
 global $wgServer, $wgScript;
 $wgServer = "http";
 // check for SSL

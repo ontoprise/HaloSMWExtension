@@ -231,7 +231,7 @@ function uws_doHttpRequestWithCurl($server, $file) {
 	curl_setopt($c, CURLOPT_RETURNTRANSFER, true);
 	// needs authentication?
 	if (isset($_SERVER['AUTH_TYPE']) && isset($_SERVER['PHP_AUTH_USER']) && isset($_SERVER['PHP_AUTH_PW'])) {
-		curl_setopt($c, CURLOPT_USERPWD, $_SERVER['PHP_AUTH_USER'], $_SERVER['PHP_AUTH_PW']);
+		curl_setopt($c, CURLOPT_USERPWD, $_SERVER['PHP_AUTH_USER'].":".$_SERVER['PHP_AUTH_PW']);
 	}
 	// user agent (important i.e. for Popup in FCK Editor)
 	if (isset($_SERVER['HTTP_USER_AGENT']))
