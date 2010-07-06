@@ -41,6 +41,8 @@ License along with this library; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
 */
 
+define('WYSIWYG_EDITOR_VERSION', '{{$VERSION}}');
+
 require_once $IP . "/includes/GlobalFunctions.php";
 require_once $IP . "/includes/parser/ParserOptions.php";
 require_once $IP . "/includes/EditPage.php";
@@ -83,7 +85,7 @@ $wgAjaxExportList[] = 'wfSajaxFormForTemplateFCKeditor';
 $wgExtensionCredits['other'][] = array(
 "name" => "WYSIWYG extension",
 "author" => "[http://ckeditor.com FCKeditor] (inspired by the code written by Mafs [http://www.mediawiki.org/wiki/Extension:FCKeditor_%28by_Mafs%29]) extended by [http://www.ontoprise.de Ontoprise]",
-"version" => '{{$VERSION}}, FCK 2.6.4 Build 21629',
+"version" => WYSIWYG_EDITOR_VERSION.', FCK 2.6.4 Build 21629',
 "url" => "http://smwforum.ontoprise.com/smwforum/index.php/Help%3AWYSIWYG_Extension",
 "description" => "FCKeditor for Semantic MediaWiki"
 );
