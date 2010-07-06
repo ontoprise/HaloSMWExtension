@@ -733,6 +733,8 @@ QIHelper.prototype = {
 	 */
 	newCategoryDialogue : function(reset) {
         this.emptyDialogue();
+        // remove any selection in the tree, in case there is one
+        if (reset) this.updateTree();
         // add current action to breadcrumbs path
         this.updateBreadcrumbs(this.activeQueryId, gLanguage.getMessage((reset) ? 'QI_BC_ADD_CATEGORY' : 'QI_BC_EDIT_CATEGORY') );
 		this.activeDialogue = "category";
@@ -770,6 +772,7 @@ QIHelper.prototype = {
 	 */
 	newInstanceDialogue : function(reset) {
         this.emptyDialogue();
+        if (reset) this.updateTree();
         this.updateBreadcrumbs(this.activeQueryId, gLanguage.getMessage((reset) ? 'QI_BC_ADD_INSTANCE' : 'QI_BC_EDIT_INSTANCE') );
 		this.activeDialogue = "instance";
         this.resetDialogueContent(reset);
