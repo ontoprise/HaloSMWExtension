@@ -16,20 +16,24 @@
  */
 
 /**
- * Makes changes to the the LocalSettings.php or other configuration files.
+ * Applies changes to the the LocalSettings.php.
  * Modifications are specified in the deploy descriptor.
  *
- *  @author: Kai Kühn / Ontoprise / 2009
+ *  @author: Kai Kï¿½hn / Ontoprise / 2009
  *
  */
 
 class DeployDescriptionProcessor {
-
+	
+	// Location of LocalSettings file
 	private $ls_loc;
+
+	// content of LocalSettings file
+	private $localSettingsContent;
+	
+	// Deploy descriptor used
 	private $dd_parser;
 
-
-	private $localSettingsContent;
 
 
 
@@ -59,8 +63,9 @@ class DeployDescriptionProcessor {
 	/**
 	 * Reads the LocalSettings.php file, applies changes and return it as string.
 	 *
-	 *
-	 * @param callback $userCallback Requests for values
+	 * @param callback $userCallback Callback function which asks for user requirements. Returns hash array ($nameConfigElement => $value)
+	 * @param hash array ($nameConfigElement => array($type, $description)) User requirements  
+	 * @param boolean $dryRun Dry run or actual change.
 	 * @return string changed LocalSettings.php file
 	 */
 	function applyLocalSettingsChanges($userCallback, $userRequirements, $dryRun) {
@@ -88,7 +93,12 @@ class DeployDescriptionProcessor {
 		if (!$dryRun) $this->writeLocalSettingsFile($this->localSettingsContent);
 		return $this->localSettingsContent;
 	}
-
+	
+	/**
+	 * Unapplies changes to LocalSettings.php by reversing the operations.
+	 * 
+	 * @return string changed LocalSettings.php file
+	 */
 	function unapplyLocalSettingsChanges() {
 		//TODO: external variables get not re-set. hard to fix.
 		$fragment = ConfigElement::getExtensionFragment($this->dd_parser->getID(), $this->localSettingsContent);
@@ -103,8 +113,7 @@ class DeployDescriptionProcessor {
 	/**
 	 * Runs the given setup scripts.
 	 *
-	 * Needs php interpreter in PATH
-	 *
+	 * Note: Needs php interpreter in PATH. Must be checked beforehand.
 	 *
 	 */
 	function applySetups() {
@@ -131,8 +140,7 @@ class DeployDescriptionProcessor {
 	/**
 	 * Runs the given setup scripts in de-install mode.
 	 *
-	 * Needs php interpreter in PATH
-	 *
+	 * Note: Needs php interpreter in PATH. Must be checked beforehand.
 	 *
 	 */
 	function unapplySetups() {
@@ -159,10 +167,9 @@ class DeployDescriptionProcessor {
 	/**
 	 * Applies patches
 	 *
-	 * Needs php Interpreter and GNU-patch in PATH.
+	 * Note: Needs php Interpreter and GNU-patch in PATH. Must be checked beforehand.
 	 *
-	 *
-	 * @param callback $userCallback
+	 * @param callback $userCallback Callback function for user confirmation. Returns 'y' or 'n'.
 	 */
 	function applyPatches($userCallback) {
 		$rootDir = self::makeUnixPath(dirname($this->ls_loc));
@@ -215,7 +222,7 @@ class DeployDescriptionProcessor {
 	/**
 	 * Removes patches
 	 *
-	 * Needs php Interpreter and GNU-patch in PATH.
+	 * Note: Needs php Interpreter and GNU-patch in PATH. Must be checked beforehand.
 	 *
 	 *
 	 */
@@ -261,9 +268,9 @@ class DeployDescriptionProcessor {
 	}
 
 	/*
-	 * Calculates the insert position
+	 * Calculates the insert position. Normallay at the end but not if successors must be considered.
 	 * 
-	 * if there is already an extension with the $ext_id, return  
+	 * If there is already an extension with the $ext_id, return (insertPosition, true) otherwise (insertPosition, false)   
 	 */
 	private function getInsertPosition($ext_id) {
 		$MAXINT = pow(2,32);
@@ -295,7 +302,7 @@ class DeployDescriptionProcessor {
 /**
  * Represents a configuration change in the localsettings file.
  *
- * @author: Kai Kühn / Ontoprise / 2009
+ * @author: Kai Kï¿½hn / Ontoprise / 2009
  *
  */
 abstract class ConfigElement {
@@ -525,7 +532,7 @@ class VariableConfigElement extends ConfigElement {
 /**
  * Represents a require/include statement in the settings.
  *
- * @author: Kai Kühn / Ontoprise / 2009
+ * @author: Kai Kï¿½hn / Ontoprise / 2009
  *
  */
 class RequireConfigElement extends ConfigElement {
@@ -559,7 +566,7 @@ class RequireConfigElement extends ConfigElement {
 /**
  * Represents a arbitrary PHP statement in the settings.
  *
- * @author: Kai Kühn / Ontoprise / 2009
+ * @author: Kai Kï¿½hn / Ontoprise / 2009
  *
  */
 class PHPConfigElement extends ConfigElement {
@@ -594,7 +601,7 @@ class PHPConfigElement extends ConfigElement {
  *
  * e.g. enableSemantics('http://localhost:8080', true);
  *
- * @author: Kai Kühn / Ontoprise / 2009
+ * @author: Kai Kï¿½hn / Ontoprise / 2009
  *
  */
 class FunctionCallConfigElement extends ConfigElement {

@@ -21,7 +21,7 @@ require_once ('DF_DeployDescriptorProcessor.php');
  * This class works as a parser of the general
  * description of a deployable entity (aka deploy descriptor).
  *
- * @author: Kai Kühn / ontoprise / 2009
+ * @author: Kai Kï¿½hn / ontoprise / 2009
  *
  */
 class DeployDescriptor {
@@ -50,7 +50,17 @@ class DeployDescriptor {
 	var $codefiles_xml;
 	var $resources_xml;
 	var $resources_onlycopyxml;
-
+	
+	/**
+	 * Creates a DeployDescriptor from an XML representation. 
+	 * 
+	 * @param $xml XML representation
+	 * @param $fromVersion Use the configuration from this version, otherwise use the 'new' configuration is used
+	 * 			ie. if an extension is newly installed.
+	 * @param $fromPatchlevel  Use the configuration from this patchlevel, otherwise use the patchlevel 0 is used
+	 * 			ie. if an extension is newly installed.
+	 * 
+	 */
 	function __construct($xml, $fromVersion = NULL, $fromPatchlevel = NULL) {
 
 		// parse xml results
@@ -68,21 +78,35 @@ class DeployDescriptor {
 	}
 
 
-
+	/**
+	 * Returns extension IDs which must follow this extension.
+	 * @return Array of string
+	 */
 	public function getSuccessors() {
 		return $this->successors;
 	}
 
 
-
+	/**
+	 * Returns configuration elements (subclasses of ConfigElement)
+	 * @return Array of ConfigElement
+	 */
 	public function getConfigs() {
 		return $this->configs;
 	}
-
+	
+	/**
+	 * Returns installation scripts with parameters.
+	 * @return Array of hash array ('script'=>$script, 'params'=>$params)
+	 */
 	public function getInstallScripts() {
 		return $this->install_scripts;
 	}
-
+	
+	/**
+	 * Returns uninstallation scripts with parameters.
+	 * @return Array of hash array ('script'=>$script, 'params'=>$params)
+	 */
 	public function getUninstallScripts() {
 		return $this->uninstall_scripts;
 	}
@@ -92,6 +116,7 @@ class DeployDescriptor {
 	 * Can be called as often as needed.
 	 *
 	 * @param int $from Version to update from (if NULL the new config is assumed)
+	 * @param int $fromPatchlevel Version to update from (if NULL the patchlevel 0 is assumed)
 	 */
 	public function createConfigElements($from = NULL, $fromPatchlevel = NULL) {
 
@@ -211,38 +236,66 @@ class DeployDescriptor {
 			}
 		}
 	}
-
+	
+	/**
+	 * Returns values which must be provided by the user.
+	 * @return hash array ($nameConfigElement => array($type, $description))
+	 */
 	function getUserRequirements() {
 		return $this->userReqs;
 	}
 
-
 	// global properties
+	// GETTER
 	function getVersion() {
 		return trim((string) $this->globalElement[0]->version);
 	}
-
+	
+	/**
+	 * Returns patchlevel
+	 * @return int
+	 */
 	function getPatchlevel() {
 		$patchlevel = trim((string) $this->globalElement[0]->patchlevel);
 		return empty($patchlevel) ? 0 : intval($patchlevel);
 	}
-
+	
+	/**
+	 * Returns ID (always lowercase)
+	 * @return string
+	 */
 	function getID() {
 		return strtolower(trim((string) $this->globalElement[0]->id));
 	}
-
+	
+	/**
+	 * Returns vendor
+	 * @return string
+	 */
 	function getVendor() {
 		return trim((string) $this->globalElement[0]->vendor);
 	}
-
+	
+	/**
+	 * Returns installation directory.
+	 * @return string
+	 */
 	function getInstallationDirectory() {
 		return trim((string) $this->globalElement[0]->instdir);
 	}
-
+	
+	/**
+	 * Returns the extension's description.
+	 * @return string
+	 */
 	function getDescription() {
 		return trim((string) $this->globalElement[0]->description);
 	}
-
+	
+	/**
+	 * Returns dependant extensions
+	 * @return Array of ($ext_id, $minVersion, $maxVersion)
+	 */
 	function getDependencies() {
 		if (!is_null($this->dependencies)) return $this->dependencies;
 		$this->dependencies = array();
@@ -257,7 +310,12 @@ class DeployDescriptor {
 		}
 		return $this->dependencies;
 	}
-
+	
+	/**
+	 * Returns the dependency of the given extension.
+	 * @param $ext_id Extension ID
+	 * @return Array of ($ext_id, $minVersion, $maxVersion) or NULL if $ext_id does not occur as dependency.
+	 */
 	function getDependency($ext_id) {
 		$ext_id = strtolower($ext_id);
 		$dependencies = $this->getDependencies();
@@ -267,7 +325,12 @@ class DeployDescriptor {
 		}
 		return NULL;
 	}
-
+	
+	/**
+	 * Checks if $ext_id exists as dependecy
+	 * @param $ext_id Extension ID
+	 * @return boolean
+	 */
 	function hasDependency($ext_id) {
 		return !is_null($this->getDependency($ext_id));
 	}
@@ -275,7 +338,7 @@ class DeployDescriptor {
 	/**
 	 * Returns patches which are suitable for the given local packages.
 	 *
-	 * @param array of DeployDescriptor $localPackages
+	 * @param $localPackages array of DeployDescriptor 
 	 * @return array of string (patch file paths)
 	 */
 	function getPatches($localPackages) {
@@ -321,7 +384,13 @@ class DeployDescriptor {
 		}
 		return $patches;
 	}
-
+	
+	/**
+	 * Returns locations of files explicitly marked as codefiles in the deploy descriptor (relative paths). 
+	 * It can be a directory or a single file.
+	 * 
+	 * @return array of string
+	 */
 	function getCodefiles() {
 		if (!is_null($this->codefiles)) return $this->codefiles;
 		$this->codefiles = array();
@@ -332,7 +401,11 @@ class DeployDescriptor {
 		}
 		return $this->codefiles;
 	}
-
+	
+	/**
+	 * Returns the location of wiki dump files (relative paths)
+	 * @return array of string
+	 */
 	function getWikidumps() {
 		if (!is_null($this->wikidumps)) return $this->wikidumps;
 		$this->wikidumps = array();
@@ -341,7 +414,11 @@ class DeployDescriptor {
 		}
 		return $this->wikidumps;
 	}
-
+	
+	/**
+	 * Returns the location of resource files (relative paths)
+	 * @return array of string
+	 */
 	function getResources() {
 
 		if (!is_null($this->resources)) return $this->resources;
@@ -351,7 +428,11 @@ class DeployDescriptor {
 		}
 		return $this->resources;
 	}
-
+	
+	/**
+	 * Returns the location of resource files (relative paths) which get only copied but not imported.
+	 * @return hash array of ($location => $destination)
+	 */
 	function getOnlyCopyResources() {
 
 		if (!is_null($this->oc_resources)) return $this->oc_resources;
@@ -363,7 +444,12 @@ class DeployDescriptor {
 		}
 		return $this->oc_resources;
 	}
-
+	
+	/**
+	 * Extracts config elements which are marked as user requirements.
+	 * @param $child
+	 * @return hash array ($nameConfigElement => array($type, $description))
+	 */
 	private function extractUserRequirements($child) {
 		$userReqs = array();
 		$this->_extractUserRequirements($child, $userReqs);
@@ -406,7 +492,8 @@ class DeployDescriptor {
 
 	}
 	/**
-	 * Validates the code files.
+	 * Validates the code files. Calculates MD5 hashes over all codefiles and compares 
+	 * to a MD5 checksum. (attribute 'hash' of codefiles node)
 	 *
 	 * @return boolean. True if all files are valid, otherwise false.
 	 */
@@ -455,10 +542,10 @@ class DeployDescriptor {
 	/**
 	 * Applies all necessary configurations.
 	 *
-	 * @param string $rootDir Location of Mediawiki
-	 * @param boolean $dryRun If true, nothing gets actually changed or asked.
-	 * @param int $fromVersion Update from version or NULL if no update.
-	 * @param callback $userCallback (see Installer.php)
+	 * @param string $rootDir . Location of Mediawiki
+	 * @param boolean $dryRun .  If true, nothing gets actually changed or asked.
+	 * @param int $fromVersion .  Update from version or NULL if no update.
+	 * @param function $userCallback. callback function for user input (see Installer.php)
 	 * @return string updated LocalSettings.php
 	 */
 	function applyConfigurations($rootDir, $dryRun = false, $fromVersion = NULL, $userCallback = NULL) {
