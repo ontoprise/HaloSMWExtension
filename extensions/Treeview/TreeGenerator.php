@@ -313,6 +313,10 @@ abstract class TreeviewStorage {
         $this->leafNodes = array();
         $this->openToPath = array();
 
+        $this->smw_start_id = null;
+        $this->smw_category_ids = null;
+
+
     }
 
     /**
@@ -1109,18 +1113,23 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 		$cid = $this->getSmwIdByTitle($category);
 		if (is_null($cid)) return;
 		$catIds[] = $cid;
-		$smw_inst = $this->db->tableName('smw_inst2');
+		$catNames = array($category->getText());
 		$smw_ids = $this->db->tableName('smw_ids');
-		$query = "SELECT s.smw_id AS cat FROM $smw_ids s, $smw_inst i " .
-				 "WHERE s.smw_id = i.s_id AND i.o_id = %d AND s.smw_namespace = ".NS_CATEGORY;
-		$children = $catIds;
+        $categorylinks = $this->db->tableName('categorylinks');
+        $page= $this->db->tableName('page');
+        $query = "SELECT s.smw_id AS smw_id, cl.cl_sortkey AS cat ".
+                 "FROM $categorylinks cl, $page p, $smw_ids s ".
+                 "WHERE cl.cl_to = %s AND p.page_id = cl.cl_from ".
+                 "AND p.page_namespace = ".NS_CATEGORY.
+                 " AND s.smw_title = p.page_title AND s.smw_namespace = ".NS_CATEGORY;
+		$children = $catNames;
 		while (count($children) > 0) {
 			$currentCat = array_shift($children);
-			$res = $this->db->query(sprintf($query, $currentCat));
+			$res = $this->db->query(sprintf($query, $this->db->addQuotes($currentCat)));
 			if ($res) {
 				while ($row = $this->db->fetchObject($res)) {
 					$children[] = $row->cat;
-					$catIds[] = $row->cat;
+					$catIds[] = $row->smw_id;
 				}
 			}
 		}
