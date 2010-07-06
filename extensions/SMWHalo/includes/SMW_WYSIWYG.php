@@ -8,6 +8,8 @@
  */
 if ( !defined( 'MEDIAWIKI' ) ) die;
 
+define('SMWHALO_WYSIWYG_EDITOR_WRAPPER', 'Wrapper for WYSIWYG extension');
+
 global $wgHooks, $wgAvailableRights;
 $wgHooks[ 'SkinTemplateTabs' ][] = 'smwfAddWYSIWYGTab';
 $wgHooks[ 'LanguageGetMagic' ][] = 'smwfAddMagigWordNoricheditor';
