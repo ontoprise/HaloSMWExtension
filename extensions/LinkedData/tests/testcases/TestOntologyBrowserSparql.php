@@ -20,8 +20,8 @@ class TestOntologyBrowserSparql extends PHPUnit_Framework_TestCase {
 	protected $backupGlobals = FALSE;
 
 	protected static $mBaseURI = 'http://www.example.org/smw-lde/';
-	protected $mGraph1 = "http://smw/ToyotaGraph";
-	protected $mGraph2 = "http://smw/VolkswagenGraph";
+	protected $mGraph1 = "http://www.example.org/smw-lde/smwGraphs/ToyotaGraph";
+	protected $mGraph2 = "http://www.example.org/smw-lde/smwGraphs/VolkswagenGraph";
 	protected $mProvGraph;
 	protected $mDSIGraph;
     
@@ -35,7 +35,6 @@ class TestOntologyBrowserSparql extends PHPUnit_Framework_TestCase {
 	function setUp() {
 		$this->mProvGraph = self::$mBaseURI."smwGraphs/ProvenanceGraph";
 		$this->mDSIGraph = self::$mBaseURI."smwGraphs/DataSourceInformationGraph";
-
 
 		$tsa = new LODTripleStoreAccess();
 		$tsa->createGraph($this->mGraph1);
