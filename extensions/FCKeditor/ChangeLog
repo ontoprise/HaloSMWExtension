@@ -12,6 +12,8 @@ VERSION 1.3.2
       extension 1.5.1 the query interface will support modifying the query
       source directly.
       Use this version only if you have the SMWHalo extension 1.5.1 installed.
+    * A define has been added so that other extensions may easily check whether
+      the WYSIWYG extension is available or not.
 
   BUGFIXES:
 
