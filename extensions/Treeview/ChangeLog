@@ -2,6 +2,11 @@ Treeview extension ChangeLog
 ============================
 
 
+VERSION 1.4_1
+
+  BUGFIXES:
+    * With SMW 1.5.0 the sub category determination didn't seem to work anymore
+
 VERSION 1.4
 
 
