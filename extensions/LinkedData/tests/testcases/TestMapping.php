@@ -89,13 +89,15 @@ text;
 	}
 
 	function testLODMappingsStore() {
-		//$this->doTestLODMappingStore(new MockMappingStore());
+		$this->doTestLODMappingStore(new MockMappingStore());
 		$this->doTestLODMappingStore(new LODMappingTripleStore());
+		$this->doTestLODMappingStore(new LODPersistentMappingStore(new LODMappingTripleStore()));
 	}
 
 	function testMappingsInArticles() {
-		//$this->doTestMappingsInArticles(new MockMappingStore());
+		$this->doTestMappingsInArticles(new MockMappingStore());
 		$this->doTestMappingsInArticles(new LODMappingTripleStore());
+		$this->doTestMappingsInArticles(new LODPersistentMappingStore(new LODMappingTripleStore()));
 	}
 
 
@@ -366,10 +368,10 @@ class MockMappingStore implements ILODMappingStore {
 		foreach (self::$mMapping as $key => $m) {
 			$s = substr($key, 0, strpos($key, "---"));
 			if (!in_array($s, $sources)) {
-				$sources[] = $s;
+				$sources[] = ucfirst($s);
 			}
 		}
-		return $sources;
+		return array_unique($sources);
 	}
 
 	public function getAllTargets() {
