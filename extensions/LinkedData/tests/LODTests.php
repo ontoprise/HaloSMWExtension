@@ -18,8 +18,8 @@ class LODTests
     {
         $suite = new PHPUnit_Framework_TestSuite('PHPUnit');
         
-        $suite->addTestSuite("TestLODSourceDefinition");
         $suite->addTestSuite("TestTripleStoreAccess");
+        $suite->addTestSuite("TestLODSourceDefinition");
         $suite->addTestSuite("TestMapping");
         $suite->addTestSuite("TestSparqlDataspaceRewriter");
         $suite->addTestSuite("TestOntologyBrowserSparql");
