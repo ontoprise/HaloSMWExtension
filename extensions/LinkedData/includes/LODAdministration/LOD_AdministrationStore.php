@@ -69,7 +69,7 @@ class  LODAdministrationStore  {
 		self::$mInstance = $this;
 		// Initialize Triple store connection (Needed for the initialization of
 		// TSNamespaces.)
-		TSConnection::getConnector(); 
+//		TSConnection::getConnector(); 
 	}
 	
 
