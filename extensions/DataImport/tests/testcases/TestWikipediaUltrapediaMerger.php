@@ -146,7 +146,10 @@ class TestWikipediaUltrapediaMerger extends PHPUnit_Framework_TestCase {
 	private function getWikiArticleContent($title){
 		$title = Title::newFromText($title);
 		$article = Article::newFromID($title->getArticleID());
-		return $article->getContent();
+		if(!is_null($article->getContent())){
+			return $article->getContent();
+		}
+		return '';
 	}
 	
 	private function getEditToken(){
