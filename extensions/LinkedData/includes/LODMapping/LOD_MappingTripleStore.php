@@ -80,7 +80,11 @@ class LODMappingTripleStore implements ILODMappingStore {
 		if ($status != 200) {
 			return array();
 		}
-		return $this->makeIDs2Array($res);
+		$sources = $this->makeIDs2Array($res);
+		foreach ($sources as $k => $s) {
+			$sources[$k] = $this->removeSourcePrefix($s);
+		}
+		return $sources;
 	}
 
 	public function getAllTargets() {
@@ -89,7 +93,11 @@ class LODMappingTripleStore implements ILODMappingStore {
 		if ($status != 200) {
 			return array();
 		}
-		return $this->makeIDs2Array($res);
+		$targets = $this->makeIDs2Array($res);
+		foreach ($targets as $k => $t) {
+			$targets[$k] = $this->removeTargetPrefix($t);
+		}
+		return $targets;
 	}
 	// end implement interfaces methods from ILODMappingStore
 
@@ -127,13 +135,19 @@ class LODMappingTripleStore implements ILODMappingStore {
 
 		$results = array();
 		foreach($mappings as $m) {
-			$results[] = new LODMapping((string) $m, (string) $m->attributes()->sourceID, (string) $m->attributes()->targetID);
+			$source = $this->removeSourcePrefix((string) $m->attributes()->sourceID);
+			$target = $this->removeTargetPrefix((string) $m->attributes()->targetID);
+			$results[] = new LODMapping((string) $m, $source, $target);
 		}
 		
 		return $results;
 
 	}
 
+	/**
+	 * @param unknown_type $paramMap
+	 * @return string
+	 */
 	private function serializeParameters($paramMap) {
 		$first = true;
 		$result = "";
@@ -148,5 +162,23 @@ class LODMappingTripleStore implements ILODMappingStore {
 		}
 		return $result;
 	}
-
+	
+	private function removeSourcePrefix($source) {
+		$sourcePrefix = LODAdministrationStore::LOD_BASE_URI
+						.LODAdministrationStore::LOD_SMW_DATASOURCES;
+		if (strpos($source, $sourcePrefix) === 0) {
+			$source = substr($source, strlen($sourcePrefix));
+		}
+		return $source;
+	}
+	
+	private function removeTargetPrefix($target) {
+		$targetPrefix = LODAdministrationStore::LOD_BASE_URI
+						.LODAdministrationStore::LOD_SMW_LDE;
+		if (strpos($target, $targetPrefix) === 0) {
+			$target = substr($target, strlen($targetPrefix));
+		}
+		return $target;
+	}
+	
 }
