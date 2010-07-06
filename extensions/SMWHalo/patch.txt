@@ -202,7 +202,7 @@ Index: includes/Linker.php
  			$query['action'] = 'edit';
  			$query['redlink'] = '1';
 +            global $IP;
-+            if (file_exists($IP.'/extensions/FCKeditor/FCKeditor.php') &&
++            if ((defined('SMWHALO_WYSIWYG_EDITOR_WRAPPER') || defined('WYSIWYG_EDITOR_VERSION')) &&
 +                empty( $query['mode']))
 +                $query['mode']= 'wysiwyg';
  		}
