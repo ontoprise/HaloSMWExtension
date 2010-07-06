@@ -94,7 +94,7 @@ function lodfInitStores() {
 	# Mappings for different LOD sources are stored with the LODMappingStore. The
 	# actual store for this data can be set with setIOStrategy().
 	##
-	LODMappingStore::setStore(new LODMappingTripleStore());
+	LODMappingStore::setStore(new LODPersistentMappingStore(new LODMappingTripleStore()));
 	
 }
 
