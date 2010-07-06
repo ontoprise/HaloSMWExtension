@@ -30,7 +30,7 @@
  */
 
 global $lodgIP;
-//require_once $haclgIP . '/storage/LOD_DBHelper.php';
+require_once $lodgIP . '/storage/LOD_DBHelper.php';
 
 /**
  * This class encapsulates methods that care about the database tables and 
@@ -49,7 +49,24 @@ class LODStorageSQL {
 	public function initDatabaseTables() {
 
 		print "Setting up the Linked Data Extension...\n";
-//TODO: Add setup for tables		
+
+		$db =& wfGetDB( DB_MASTER );
+
+		$verbose = true;
+		LODDBHelper::reportProgress("Setting up LinkedData ...\n",$verbose);
+
+		// lod_mapping_persistence:
+		//		persistence of mappings that are defined in wiki articles
+		$table = $db->tableName('lod_mapping_persistence');
+
+		LODDBHelper::setupTable($table, array(
+			'mapping_id'	=> 'INT(8) UNSIGNED NOT NULL AUTO_INCREMENT',
+            'source' 		=> 'Text CHARACTER SET utf8 COLLATE utf8_bin',
+            'target' 		=> 'Text CHARACTER SET utf8 COLLATE utf8_bin',
+            'mapping_text' 	=> 'Text CHARACTER SET utf8 COLLATE utf8_bin'),
+		$db, $verbose, 'mapping_id, source(128), target(128)');
+		LODDBHelper::reportProgress("   ... done!\n",$verbose);
+		
 		print "   ... done!\n";
 		
 		return true;
