@@ -317,8 +317,6 @@ class  LODAdministrationStore  {
 		return $result;
 	}
 	
-	//--- Private methods ---
-	
 	/**
 	 * Returns the prefixes for all namespaces that are used in triples for
 	 * storing LOD source definitions.
@@ -327,7 +325,7 @@ class  LODAdministrationStore  {
 	 * 		Namespace prefixes
 	 *
 	 */
-	private function getSourceDefinitionPrefixes() {
+	public function getSourceDefinitionPrefixes() {
 		
 		return
 			 "PREFIX smw-lde: <".self::LOD_BASE_URI.self::LOD_SMW_LDE."> \n"
@@ -335,5 +333,8 @@ class  LODAdministrationStore  {
 			."PREFIX smwDatasources: <".self::LOD_BASE_URI.self::LOD_SMW_DATASOURCES."> \n"
 			."PREFIX owl: <http://www.w3.org/2002/07/owl#> \n\n";
 	}
+	
+	//--- Private methods ---
+	
 }
 
