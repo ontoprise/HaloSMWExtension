@@ -330,6 +330,7 @@ QIHelper.prototype = {
         queryIds.push(0);
         for (var i = 0; i < queryIds.length; i++) {
             var activeQuery = this.queries[queryIds[i]];
+            if (! activeQuery) continue; // deleted subqueries are removed but position is empty
             var xml = activeQuery.updateTree(); // update treeview
             if (i == 0) treeXML = xml;
             else
@@ -1105,6 +1106,11 @@ QIHelper.prototype = {
                     this.pendingElement.remove();
                 } catch (e) {}
             }
+            // try to remove blank row that indicates that a property information is loaded
+            if ($('dialoguecontent_pvalues')) {
+                while ($('dialoguecontent_pradio').rows.length > 1)
+                    $('dialoguecontent_pradio').deleteRow(1);
+            }
             // clean hidden table with old data and add pending indicator.
             /*
             $('displaycontent_pvalues_hidden').innerHTML = '';
@@ -1137,6 +1143,8 @@ QIHelper.prototype = {
                 while ($('dialoguecontent_pvalues').rows.length > 0)
                     $('dialoguecontent_pvalues').deleteRow(0);
             }
+            if ($('dialoguecontent_pradio'))
+                $('dialoguecontent_pradio').insertRow(-1);
             var tmpHTML = "";
 			// create standard values in case request fails
 			this.proparity = 2;
