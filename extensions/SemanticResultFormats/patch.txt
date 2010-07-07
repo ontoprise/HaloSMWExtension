@@ -1,244 +1,158 @@
-Index: extensions/SemanticResultFormats/Calendar/SRF_Calendar.php
+Index: extensions/SemanticResultFormats/Outline/SRF_Outline.php
 ===================================================================
---- extensions/SemanticResultFormats/Calendar/SRF_Calendar.php	(revision 6699)
-+++ extensions/SemanticResultFormats/Calendar/SRF_Calendar.php	(working copy)
-@@ -13,7 +13,14 @@
+--- extensions/SemanticResultFormats/Outline/SRF_Outline.php	2010-07-06 18:28:01.000000000 +0200
++++ extensions/SemanticResultFormats/Outline/SRF_Outline.php	2010-07-07 10:37:47.000000000 +0200
+@@ -232,7 +232,7 @@
  
- 	protected $mTemplate = '';
- 	protected $mUserParam = '';
--
-+ 
-+    function getParameters() {
-+        return array(
-+			array('name' => 'template', 'type' => 'string', 'description' => "Template used to display"),
-+			array('name' => 'userparam', 'type' => 'string', 'description' => "User param")
-+		);
-+    }
-+   
- 	protected function readParameters($params,$outputmode) {
- 		SMWResultPrinter::readParameters($params,$outputmode);
+ 	public function getParameters() {
+                 $params = parent::getParameters();
+-                $params[] = array( 'name' => 'outlineproperties', 'type' => 'string', 'description' => wfMsg( 'srf_paramdesc_outlineproperties' ) );
++                $params[] = array( 'name' => 'outlineproperties', 'type' => 'string', 'description' => wfMsg( 'srf_paramdesc_outlineproperties' ), 'constraints' => "namespace: ".SMW_NS_PROPERTY );
+                 return $params;
+ 	}
  
+Index: extensions/SemanticResultFormats/Timeline/SRF_Timeline.php
+===================================================================
+--- extensions/SemanticResultFormats/Timeline/SRF_Timeline.php	2010-07-06 18:27:55.000000000 +0200
++++ extensions/SemanticResultFormats/Timeline/SRF_Timeline.php	2010-07-07 10:43:52.000000000 +0200
+@@ -121,6 +121,7 @@
+ 							$objectlabel = $object->getLongText( $outputmode, $l );
+ 						} else {
+ 							$objectlabel = $object->getShortText( $outputmode, $l );
++							if ($objectlabel == '') continue;
+ 						}
+ 						$urlobject =  ( $l !== null );
+ 						$header = '';
+@@ -226,4 +227,12 @@
+ 		$params[] = array( 'name' => 'timelinesize', 'type' => 'string', 'description' => wfMsg( 'srf_paramdesc_timelinesize' ) );
+ 		 return $params;
+ 	}
++
++	function getScripts() {
++	        global $srfgScriptPath;
++                $scripts [] = '<script type="text/javascript" src="' . $srfgScriptPath .  '/Timeline/SRF_timeline.js"></script>' . "\n";
++                $scripts [] = '<script type="text/javascript" src="' . $srfgScriptPath .  '/Timeline/SimileTimeline/timeline-api.js"></script>' . "\n";
++                return $scripts;
++        }
++
+ }
+Index: extensions/SemanticResultFormats/GoogleCharts/SRF_GoogleBar.php
+===================================================================
+--- extensions/SemanticResultFormats/GoogleCharts/SRF_GoogleBar.php	2010-07-06 18:28:01.000000000 +0200
++++ extensions/SemanticResultFormats/GoogleCharts/SRF_GoogleBar.php	2010-07-07 10:51:36.000000000 +0200
+@@ -28,6 +28,11 @@
+ 		$this->isHTML = true;
+ 
+ 		$t = "";
++		$n = "";
++
++		// if there is only one column in the results then stop right away
++		if ($res->getColumnCount() == 1) return "";
++
+ 		// print all result rows
+ 		$first = true;
+ 		$count = 0; // How many bars will they be? Needed to calculate the height of the image
+Index: extensions/SemanticResultFormats/GoogleCharts/SRF_GooglePie.php
+===================================================================
+--- extensions/SemanticResultFormats/GoogleCharts/SRF_GooglePie.php	2010-07-06 18:28:01.000000000 +0200
++++ extensions/SemanticResultFormats/GoogleCharts/SRF_GooglePie.php	2010-07-07 10:50:17.000000000 +0200
+@@ -34,6 +34,11 @@
+ 		$this->isHTML = true;
+ 
+ 		$t = "";
++		$n = "";
++		
++		// if there is only one column in the results then stop right away
++		if ($res->getColumnCount() == 1) return "";
++		                
+ 		// print all result rows
+ 		$first = true;
+ 		$max = 0; // the biggest value. needed for scaling
+Index: extensions/SemanticResultFormats/Ploticus/SRF_Ploticus.php
+===================================================================
+--- extensions/SemanticResultFormats/Ploticus/SRF_Ploticus.php	2010-07-06 18:28:01.000000000 +0200
++++ extensions/SemanticResultFormats/Ploticus/SRF_Ploticus.php	2010-07-07 10:40:47.000000000 +0200
+@@ -383,4 +383,27 @@
+ 		
+ 		return ( $rtnstr );
+ 	}
++	
++	function getParameters() {
++	        return array(
++	                array('name' => 'ploticusmode', 'type' => 'enumeration', 'values' => array('preftab', 'script')),
++	                array('name' => 'ploticusparams', 'type' => 'string'),
++                	array('name' => 'imageformat', 'type' => 'enumeration', 'values' => array('png', ' gif', 'jpeg', 'svg', 'svgz', 'swf', 'eps', 'ps', 'drawdump', 'drawdumpa'), 'defaultValue'=>'png'),
++                	array('name' => 'titletext', 'type' => 'string'),
++                	array('name' => 'showcsv', 'type' => 'boolean'), 
++                	array('name' => 'ploticusmode', 'type' => 'string'),
++                	array('name' => 'debug', 'type' => 'boolean'),
++                	array('name' => 'liveupdating', 'type' => 'boolean'),
++                	array('name' => 'updatefrequency', 'type' => 'int'), 
++                	array('name' => 'showtimestamp', 'type' => 'boolean'),
++                	array('name' => 'showimagelink', 'type' => 'boolean'),
++                	array('name' => 'showrefresh', 'type' => 'boolean'),  
++                	array('name' => 'drawdumpoutput', 'type' => 'string'),
++                	array('name' => 'tblwidth', 'type' => 'int'),
++                	array('name' => 'tblheight', 'type' => 'int'),
++                	array('name' => 'width', 'type' => 'int'),
++                	array('name' => 'height', 'type' => 'int')
++        	);      
++	}
++	
+ }
 Index: extensions/SemanticResultFormats/Exhibit/SRF_Exhibit.php
 ===================================================================
---- extensions/SemanticResultFormats/Exhibit/SRF_Exhibit.php	(revision 6703)
-+++ extensions/SemanticResultFormats/Exhibit/SRF_Exhibit.php	(working copy)
-@@ -16,7 +16,17 @@
- 	protected $m_types = array("_wpg" => "text", "_num" => "number", "_dat" => "date", "_geo" => "text", "_uri" => "url");
+--- extensions/SemanticResultFormats/Exhibit/SRF_Exhibit.php	2010-07-06 18:27:55.000000000 +0200
++++ extensions/SemanticResultFormats/Exhibit/SRF_Exhibit.php	2010-07-07 10:15:43.000000000 +0200
+@@ -449,6 +449,7 @@
+ 		$params[] = array('name' => 'views', 'type' => 'enum-list', 'description' => wfMsg('srf_paramdesc_views'), 'values' => array('tiles', 'tabular', 'timeline', 'maps'));
+ 		$params[] = array('name' => 'facets', 'type' => 'string', 'description' => wfMsg('srf_paramdesc_facets'));
+ 		$params[] = array('name' => 'lens', 'type' => 'string', 'description' => wfMsg('srf_paramdesc_lens'));
++		$params[] = array('name' => 'order', 'type' => 'enumeration', 'description' => wfMsg('srf_paramdesc_order'), 'values' => array('ascending','descending'));
+ 		return $params;
+ 	}
  
- 	protected static $exhibitRunningNumber = 0; //not sufficient since there might be multiple pages rendered within one PHP run; but good enough now
--
+Index: extensions/SemanticResultFormats/SRF_Messages.php
+===================================================================
+--- extensions/SemanticResultFormats/SRF_Messages.php	2010-07-06 18:28:01.000000000 +0200
++++ extensions/SemanticResultFormats/SRF_Messages.php	2010-07-07 10:32:11.000000000 +0200
+@@ -66,6 +66,18 @@
+ 	'srf_paramdesc_chartwidth' => 'The width of the chart, in pixels',
+ 	// format "gallery"
+ 	'srf_printername_gallery' => 'Gallery',
++
++	// format "graph"
++	'srf_paramdesc_graphname' => 'Title',
++	'srf_paramdesc_graphsize' => 'Graph size (in px)',
++	'srf_paramdesc_graphlegend' => 'Show graph legend or not',
++	'srf_paramdesc_graphlabel' => 'Graph label',
++	'srf_paramdesc_rankdir' => 'Rank dir',
++	'srf_paramdesc_graphlink' => 'Graph link',
++	'srf_paramdesc_graphcolor' => 'Graph color',
++	
++	// general params for "order"
++	'srf_paramdesc_order' => 'Sort order',
+ );
+ 
+ /** Message documentation (Message documentation)
+Index: extensions/SemanticResultFormats/GraphViz/SRF_Graph.php
+===================================================================
+--- extensions/SemanticResultFormats/GraphViz/SRF_Graph.php	2010-07-06 18:27:55.000000000 +0200
++++ extensions/SemanticResultFormats/GraphViz/SRF_Graph.php	2010-07-07 10:35:35.000000000 +0200
+@@ -151,4 +151,16 @@
+ 		}
+ 		return $result;
+ 	}
 +	
 +	function getParameters() {
 +		return array(
-+		array('name' => 'views', 'type' => 'string', 'description' => "tiles, tabular, timeline, maps. MULTIPLE separated by comma)"),
-+		array('name' => 'facets', 'type' => 'string', 'description' => "List of properties to be used as facets, separated by commas", 'constraints' => "namespace: "+SMW_NS_PROPERTY),
-+		array('name' => 'order', 'type' => 'enumeration', 'values' => array('ascending','descending'),  'description' => "Sort order"),
-+		array('name' => 'link', 'type' => 'enumeration', 'values' => array('all','subject', 'none'),  'description' => "Show everything as link, only subjects or nothing at all."),
-+		array('name' => 'limit', 'type' => 'int', 'description' => "Instance display limit")
-+		);
++			array('name' => 'graphname', 'type' => 'string', 'description' => wfMsg('srf_paramdesc_graphname'),
++	                array('name' => 'graphsize', 'type' => 'int', 'description' => wfMsg('srf_paramdesc_graphsize')),
++	                array('name' => 'graphlegend', 'type' => 'enumeration', 'description' => wfMsg('srf_paramdesc_graphlegend'), 'values'=>array('yes', 'no')),
++	                array('name' => 'graphlabel', 'type' => 'enumeration', 'description' => wfMsg('srf_paramdesc_graphlabel'), 'values'=>array('yes', 'no')),
++	                array('name' => 'rankdir', 'type' => 'string', 'description' => wfMsg('srf_paramdesc_rankdir'),
++	                array('name' => 'graphlink', 'type' => 'enumeration', 'description' => wfMsg('srf_paramdesc_graphlink'), 'values'=>array('yes', 'no')),
++	                array('name' => 'graphcolor', 'type' => 'enumeration', 'description' => wfMsg('srf_paramdesc_graphcolor'), 'values'=>array('yes', 'no')),
++		);      
 +	}
-+	
- 	///overwrite function to allow execution of result printer even if no results are available (in case remote query yields no results in local wiki)
- 	public function getResult($results, $params, $outputmode) {
- 		$this->readParameters($params,$outputmode);
-Index: extensions/SemanticResultFormats/GoogleCharts/SRF_GoogleBar.php
-===================================================================
---- extensions/SemanticResultFormats/GoogleCharts/SRF_GoogleBar.php	(revision 6699)
-+++ extensions/SemanticResultFormats/GoogleCharts/SRF_GoogleBar.php	(working copy)
-@@ -11,7 +11,14 @@
- 
- class SRFGoogleBar extends SMWResultPrinter {
- 	protected $m_width = '250';
--
-+    
-+	function getParameters() {
-+        return array(
-+			array('name' => 'width', 'type' => 'int', 'description' => "Width of bar"),
-+			array('name' => 'height', 'type' => 'int', 'description' => "Height of bar")
-+		);
-+    }
-+   
- 	protected function readParameters($params,$outputmode) {
- 		SMWResultPrinter::readParameters($params,$outputmode);
- 		if (array_key_exists('width', $this->m_params)) {
-Index: extensions/SemanticResultFormats/GoogleCharts/SRF_GooglePie.php
-===================================================================
---- extensions/SemanticResultFormats/GoogleCharts/SRF_GooglePie.php	(revision 6699)
-+++ extensions/SemanticResultFormats/GoogleCharts/SRF_GooglePie.php	(working copy)
-@@ -12,6 +12,14 @@
- class SRFGooglePie extends SMWResultPrinter {
- 	protected $m_width = 250;
- 	protected $m_heighth = 250;
-+	
-+	function getParameters() {
-+        return array(
-+			array('name' => 'width', 'type' => 'int', 'description' => "Width of pie"),
-+			array('name' => 'height', 'type' => 'int', 'description' => "Height of pie")
-+		);
-+    }
-+   
- 
- 	protected function readParameters($params,$outputmode) {
- 		SMWResultPrinter::readParameters($params,$outputmode);
-Index: extensions/SemanticResultFormats/GraphViz/SRF_Graph.php
-===================================================================
---- extensions/SemanticResultFormats/GraphViz/SRF_Graph.php	(revision 6699)
-+++ extensions/SemanticResultFormats/GraphViz/SRF_Graph.php	(working copy)
-@@ -25,7 +25,21 @@
- 	protected $m_graphSize="";
- 	protected $m_labelArray = array();
- 	protected $m_graphColors = array("black","red","green","blue","darkviolet","gold","deeppink","brown","bisque","darkgreen","yellow","darkblue","magenta","steelblue2");
--
-+    
-+	function getParameters() {
-+        return array(
-+			array('name' => 'graphname', 'type' => 'string', 'description' => "Title"),
-+			array('name' => 'graphsize', 'type' => 'int', 'description' => "Graph size (in px)"),
-+			array('name' => 'graphlegend', 'type' => 'enumeration', 'values'=>array('yes', 'no'), 'description' => "Show graph legend or not."),
-+			array('name' => 'graphlabel', 'type' => 'enumeration', 'values'=>array('yes', 'no'), 'description' => "Graph label"),
-+			array('name' => 'rankdir', 'type' => 'string', 'description' => "Rank dir"),
-+			array('name' => 'graphlink', 'type' => 'enumeration', 'values'=>array('yes', 'no'), 'description' => "Graph link"),
-+			array('name' => 'graphcolor', 'type' => 'enumeration', 'values'=>array('yes', 'no'), 'description' => "Graph color"),
-+			
-+			
-+		);
-+    }
-+       
- 	protected function readParameters($params,$outputmode) {
- 
- 		SMWResultPrinter::readParameters($params,$outputmode);
-Index: extensions/SemanticResultFormats/Math/SRF_Math.php
-===================================================================
---- extensions/SemanticResultFormats/Math/SRF_Math.php	(revision 6699)
-+++ extensions/SemanticResultFormats/Math/SRF_Math.php	(working copy)
-@@ -12,7 +12,13 @@
- if (!defined('MEDIAWIKI')) die();
- 
- class SRFMath extends SMWResultPrinter {
--
-+    
-+	function getParameters() {
-+        return array(
-+			array('name' => 'limit', 'type' => 'int', 'description' => "Instance display limit")
-+		);
-+    }
-+    
- 	public function getName() {
- 		wfLoadExtensionMessages('SemanticResultFormats');
- 		return wfMsg('srf_printername_' . $this->mFormat);
-Index: extensions/SemanticResultFormats/Outline/SRF_Outline.php
-===================================================================
---- extensions/SemanticResultFormats/Outline/SRF_Outline.php	(revision 6703)
-+++ extensions/SemanticResultFormats/Outline/SRF_Outline.php	(working copy)
-@@ -84,7 +84,15 @@
- 
- 	protected $mOutlineProperties = array();
- 	protected $mInnerFormat = '';
--
-+  
-+	function getParameters() {
-+        $params = array(
-+			array('name' => 'outlineproperties', 'type' => 'string', 'description' => "The list of properties to be used as outline headers, separated by commas.", 'constraints' => "namespace: ".SMW_NS_PROPERTY),
-+			
-+		); 
-+		return array_merge($params, parent::getParameters());
-+    }
-+       
- 	protected function readParameters($params,$outputmode) {
- 		SMWResultPrinter::readParameters($params,$outputmode);
- 
-Index: extensions/SemanticResultFormats/Ploticus/SRF_Ploticus.php
-===================================================================
---- extensions/SemanticResultFormats/Ploticus/SRF_Ploticus.php	(revision 6699)
-+++ extensions/SemanticResultFormats/Ploticus/SRF_Ploticus.php	(working copy)
-@@ -36,7 +36,30 @@
- 	protected $m_tblheight = '';
- 	protected $m_width = '';
- 	protected $m_height = '';
--
-+    
-+	function getParameters() {
-+        return array(
-+			array('name' => 'ploticusmode', 'type' => 'enumeration', 'values' => array('preftab', 'script')),
-+			array('name' => 'ploticusparams', 'type' => 'string'),
-+			array('name' => 'imageformat', 'type' => 'enumeration', 'values' => array('png', ' gif', 'jpeg', 'svg', 'svgz', 'swf', 'eps', 'ps', 'drawdump', 'drawdumpa'), 'defaultValue'=>"png"),
-+			array('name' => 'titletext', 'type' => 'string'),
-+			array('name' => 'showcsv', 'type' => 'boolean'),
-+			array('name' => 'ploticusmode', 'type' => 'string'),
-+			array('name' => 'debug', 'type' => 'boolean'),
-+			array('name' => 'liveupdating', 'type' => 'boolean'),
-+			array('name' => 'updatefrequency', 'type' => 'int'),
-+			array('name' => 'showtimestamp', 'type' => 'boolean'),
-+			array('name' => 'showimagelink', 'type' => 'boolean'),
-+			array('name' => 'showrefresh', 'type' => 'boolean'),
-+			array('name' => 'drawdumpoutput', 'type' => 'string'),
-+			array('name' => 'tblwidth', 'type' => 'int'),
-+			array('name' => 'tblheight', 'type' => 'int'),
-+			array('name' => 'width', 'type' => 'int'),
-+			array('name' => 'height', 'type' => 'int')
-+			
-+		);
-+    }
-+    
- 	protected function readParameters($params, $outputmode) {
- 		SMWResultPrinter::readParameters($params, $outputmode);
- 		if (array_key_exists('ploticusparams', $this->m_params)) {
-Index: extensions/SemanticResultFormats/Timeline/SRF_Timeline.php
-===================================================================
---- extensions/SemanticResultFormats/Timeline/SRF_Timeline.php	(revision 6699)
-+++ extensions/SemanticResultFormats/Timeline/SRF_Timeline.php	(working copy)
-@@ -17,7 +17,25 @@
- 	protected $m_tlsize = ''; // CSS-compatible size (such as 400px)
- 	protected $m_tlbands = ''; // array of band IDs (MONTH, YEAR, ...)
- 	protected $m_tlpos = ''; // position identifier (start, end, today, middle)
-+   
-+	function getParameters() {
-+        return array(
-+			array('name' => 'limit', 'type' => 'int', 'description' => "Instance display limit"),
-+			array('name' => 'timelinestart', 'type' => 'string', 'description' => "Can be used to define a specific printout (property) name to use as a first timepoint in timeline. "),
-+			array('name' => 'timelineend', 'type' => 'string', 'description' => "Can be used to define a specific printout (property) name to use as second timepoint in timeline. "),
-+			array('name' => 'timelinesize', 'type' => 'int', 'defaultValue'=> "300", 'description' => "Can be used to give the height of the timeline. The default value is 300px."),
-+			array('name' => 'timelinebands', 'type' => 'string', 'description' => "Defines which bands are displayed in the result. Available bands are DECADE, YEAR, MONTH, WEEK, and DAY. Bands should be given from finer to coarser, and be separated by commas as in the above example. "),
-+			array('name' => 'timelineposition', 'type' => 'enumeration', 'values' => array('middle', 'start', 'end'), 'defaultValue'=>"middle", 'description' => "Defines where the timeline initially focusses at. Possible values are start (earliest entry), middle (middle entry), end (latest entry).")
-+		);
-+    }
- 
-+    function getScripts() {
-+        global $srfgScriptPath;
-+        $scripts [] = '<script type="text/javascript" src="' . $srfgScriptPath .  '/Timeline/SRF_timeline.js"></script>' . "\n";
-+        $scripts [] = '<script type="text/javascript" src="' . $srfgScriptPath .  '/Timeline/SimileTimeline/timeline-api.js"></script>' . "\n";
-+        return $scripts;
-+    }
-+    
- 	protected function readParameters($params,$outputmode) {
- 		SMWResultPrinter::readParameters($params,$outputmode);
- 
-@@ -109,6 +127,7 @@
- 							$objectlabel = $object->getLongText($outputmode,$l);
- 						} else {
- 							$objectlabel = $object->getShortText($outputmode,$l);
-+                           if ($objectlabel == '') continue;
- 						}
- 						$urlobject =  ($l !== NULL);
- 						$header = '';
-Index: extensions/SemanticResultFormats/iCalendar/SRF_iCalendar.php
-===================================================================
---- extensions/SemanticResultFormats/iCalendar/SRF_iCalendar.php	(revision 6699)
-+++ extensions/SemanticResultFormats/iCalendar/SRF_iCalendar.php	(working copy)
-@@ -14,7 +14,15 @@
- class SRFiCalendar extends SMWResultPrinter {
- 	protected $m_title = '';
- 	protected $m_description = '';
--
-+    
-+	function getParameters() {
-+        return array(
-+			array('name' => 'icalendartitle', 'type' => 'string', 'description' => "iCalendar title"),
-+			array('name' => 'icalendardescription', 'type' => 'string', 'description' => "iCalendar description")
-+		); 
-+    }
-+   
-+    
- 	protected function readParameters($params,$outputmode) {
- 		SMWResultPrinter::readParameters($params,$outputmode);
- 		if (array_key_exists('title', $this->m_params)) {
+ }
