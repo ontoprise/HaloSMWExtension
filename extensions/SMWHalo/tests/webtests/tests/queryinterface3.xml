@@ -53,7 +53,7 @@
             />
             <clickElement
               description="click on add subquery"
-              xpath="//input[@name='input_r0' and position() = 3]"
+              xpath="//table[@id='dialoguecontent_pradio']//span[3]/input"
             />
             <clickButton
               description="and click add"
@@ -62,7 +62,7 @@
             <checkAjaxResponseXpathRegex
               description="Preview contains a warning now (subquery is still empty)"
               xpath="//div[@id='previewcontent']/p/span/img/@src"
-              regex=".*?waring\.png"
+              regex=".*warning\.png$"
             />  
 
             <showFullAsk query="\{\{#ask: \[\[Category:City\]\]\s*\[\[Located In::&lt;q&gt;&lt;/q&gt;\]\]\s*\| format=table\s*\| link=all\s*\|\}\}" />
@@ -111,7 +111,7 @@
             />
             <clickElement
               description="Click radion button to specify value"
-              xpath="//input[@name='input_r0' and position() = 2]"
+              xpath="//input[@name='input_r0' and @value='-2']"
             />
             <setInputField
               description="set value America"
@@ -160,7 +160,7 @@
             />
             <clickElement
               description="click on add subquery"
-              xpath="//input[@name='input_r0' and position() = 3]"
+              xpath="//table[@id='dialoguecontent_pradio']//span[3]/input"
             />
             <clickButton
               description="and click add"
@@ -217,7 +217,7 @@
             />
             <clickElement
               description="Click radion button to specify value"
-              xpath="//input[@name='input_r0' and position() = 2]"
+              xpath="//input[@name='input_r0' and @value='-2']"
             />
             <setInputField
               description="set value 1 Mio"

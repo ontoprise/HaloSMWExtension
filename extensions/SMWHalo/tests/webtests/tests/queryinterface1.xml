@@ -51,7 +51,7 @@
             />
             <clickElement
               description="Click radion button to specify value"
-              xpath="//input[@name='input_r0' and position() = 2]"
+              xpath="//input[@name='input_r0' and @value='-2']"
             />
             <setInputField
               description="set value to USA"

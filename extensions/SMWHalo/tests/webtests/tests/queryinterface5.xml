@@ -30,7 +30,7 @@
             />
             <verifyXPath
                 description="Check existing link to City in navtree" 
-                xpath="//a[@class='leaf']/text()"
+                xpath="//div[@id='treeanchor']//a[1]/text()"
                 regex="\s*City\s*"
             />
             <showFullAsk query="\{\{#ask: \[\[Category:City\]\]\s*\| format=table\s*\| link=all\s*\|\}\}" />
