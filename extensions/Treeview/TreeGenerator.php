@@ -1114,6 +1114,7 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 		if (is_null($cid)) return;
 		$catIds[] = $cid;
 		$catNames = array($category->getText());
+        $catNamesChecked = array();
 		$smw_ids = $this->db->tableName('smw_ids');
         $categorylinks = $this->db->tableName('categorylinks');
         $page= $this->db->tableName('page');
@@ -1125,7 +1126,9 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 		$children = $catNames;
 		while (count($children) > 0) {
 			$currentCat = array_shift($children);
-			$res = $this->db->query(sprintf($query, $this->db->addQuotes($currentCat)));
+            if (in_array($currentCat, $catNamesChecked)) continue;
+            array_push($catNamesChecked, $currentCat);
+            $res = $this->db->query(sprintf($query, $this->db->addQuotes($currentCat)));
 			if ($res) {
 				while ($row = $this->db->fetchObject($res)) {
 					$children[] = $row->cat;
