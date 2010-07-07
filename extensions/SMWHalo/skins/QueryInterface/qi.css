@@ -409,7 +409,6 @@ cursor: pointer;
 }
 
 .qiDefTabActive {
-    font-family:'trebuchet ms',helvetica,sans-serif;
     font-size:84%;
     font-weight: bold;
     white-space:nowrap;
@@ -425,7 +424,6 @@ cursor: pointer;
     border-top-style: solid;
 }
 .qiDefTabInactive {
-    font-family:'trebuchet ms',helvetica,sans-serif;
     font-size:84%;
     white-space:nowrap;
     cursor:pointer;cursor:hand;
