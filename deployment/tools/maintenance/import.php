@@ -19,7 +19,7 @@
  * http://www.gnu.org/copyleft/gpl.html
  *
  * @file
- * @ingroup Maintenance
+ * @ingroup DFMaintenance
  */
 
 $optionsWithArgs = array( 'report' );

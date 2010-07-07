@@ -22,7 +22,8 @@
 # http://www.gnu.org/copyleft/gpl.html
 
 /**
- * @defgroup Dump Dump
+ * @file
+ * @ingroup DFIO
  */
 
 /**

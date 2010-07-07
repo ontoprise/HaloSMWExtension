@@ -18,6 +18,12 @@
 require_once ('DF_DeployDescriptorProcessor.php');
 
 /**
+ * @file
+ * @ingroup DFDeployDescriptor
+ * 
+ * @defgroup DFDeployDescriptor Deploy Descriptor
+ * @ingroup DeployFramework
+ * 
  * This class works as a parser of the general
  * description of a deployable entity (aka deploy descriptor).
  *

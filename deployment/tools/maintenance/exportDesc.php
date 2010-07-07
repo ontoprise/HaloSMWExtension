@@ -15,6 +15,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 /**
+ * @file
+ * @ingroup DFMaintenance
+ * 
  * Exports the deploy descriptor for an ontology bundle.
  *
  * @author: Kai Kühn

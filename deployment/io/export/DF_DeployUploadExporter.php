@@ -22,6 +22,12 @@
 # http://www.gnu.org/copyleft/gpl.html
 
 /**
+ * @file
+ * @ingroup DFIO
+ * 
+ * @defgroup DFIO Input/Output
+ * @ingroup DeployFramework
+ * 
  * Exports uploaded files contained in one bundle.
  *
  */

@@ -17,6 +17,9 @@
  */
 
 /**
+ * @file
+ * @ingroup DFInstaller
+ * 
  * Rollback an installation.
  *
  * @author: Kai Kühn / ontoprise / 2009

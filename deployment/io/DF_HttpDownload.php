@@ -18,6 +18,9 @@
 define('PROGRESS_BAR_LENGTH', 40);
 
 /**
+ * @file
+ * @ingroup DFIO
+ * 
  * HTTP Downloader implementation.
  * 
  * @author Kai Kühn / Ontoprise / 2009

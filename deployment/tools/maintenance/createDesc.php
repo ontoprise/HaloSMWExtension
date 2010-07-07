@@ -15,6 +15,12 @@
 *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 /**
+ * @file
+ * @ingroup DFMaintenance
+ * 
+ * @defgroup DFMaintenance Maintenance
+ * @ingroup DeployFramework
+ * 
  * Creates deploy descriptor skeletton. Asks interactively for descriptor data.
  *
  * @author: Kai Kühn / ontoprise / 2009

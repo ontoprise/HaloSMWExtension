@@ -16,6 +16,9 @@
  */
 
 /**
+ * @file
+ * @ingroup DFDeployDescriptor
+ * 
  * Applies changes to the the LocalSettings.php.
  * Modifications are specified in the deploy descriptor.
  *

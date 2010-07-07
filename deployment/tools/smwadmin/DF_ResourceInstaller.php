@@ -21,6 +21,9 @@ require_once('../io/import/DF_DeployWikiImporter.php');
 require_once('../io/import/DF_BackupReader.php');
 
 /**
+ * @file
+ * @ingroup DFInstaller
+ * 
  * Resource installer takes care about wikidump/resource (de-)installation.
  *
  * @author Kai Kühn / ontoprise / 2009

@@ -17,6 +17,9 @@
 */
 
 /**
+ * @file
+ * @ingroup DFInstaller
+ * 
  * Some tools for file operations and other stuff.
  * 
  * @author: Kai Kühn / ontoprise / 2009

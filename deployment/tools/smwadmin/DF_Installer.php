@@ -35,6 +35,12 @@ require_once 'DF_Rollback.php';
 require_once 'DF_ResourceInstaller.php';
 
 /**
+ * @file
+ * @ingroup DFInstaller
+ *
+ * @defgroup DFInstaller Installer
+ * @ingroup DeployFramework
+ * 
  * Provides the basic installation routines for the smwadmin tool.
  *
  * @author: Kai Kühn / ontoprise / 2009

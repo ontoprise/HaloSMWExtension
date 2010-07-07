@@ -1,5 +1,8 @@
 <?php
 /**
+ * @file
+ * @ingroup DFMaintenance
+ * 
  * Creates a repository XML file. Must be done once a new release available
  * 
  * Usage:   php createRepsoitory -o <repository path>  -r release-num 

@@ -1,5 +1,8 @@
 <?php
 /**
+ * @file
+ * @ingroup DFMaintenance
+ * 
  * Extracts deploy descriptors and writes them to a given location.
  * 
  * @author: Kai Kühn / ontoprise / 2009

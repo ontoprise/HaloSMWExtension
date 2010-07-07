@@ -1,5 +1,8 @@
 <?php
 /**
+ * @file
+ * @ingroup DFMaintenance
+ * 
  * Reads repository and updates patchlevels.
  * 
  * Usage: php updatePatchlevels.php -o <repository path>

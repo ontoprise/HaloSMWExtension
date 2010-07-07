@@ -17,6 +17,12 @@
  */
 
 /**
+ * @file
+ * @ingroup DeployFramework
+ *
+ * @defgroup DeployFramework Deploy Framework
+ * @ingroup DeployFramework
+ * 
  * Installation tool.
  *
  * @author: Kai Kühn / ontoprise / 2009
