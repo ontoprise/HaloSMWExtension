@@ -5,37 +5,38 @@
  * @file
  * @ingroup SemanticResultFormats
  */
-if( !defined( 'MEDIAWIKI' ) ) {
+if ( !defined( 'MEDIAWIKI' ) ) {
 	die( 'Not an entry point.' );
 }
 
-define('SRF_VERSION', '1.4.5_1');
+define( 'SRF_VERSION', '1.5.0' );
 
-$srfgScriptPath = $wgScriptPath . '/extensions/SemanticResultFormats';
-$srfgIP = $IP . '/extensions/SemanticResultFormats';
+$srfgScriptPath = $wgScriptPath . '/extensions/SemanticResultFormats'; // TODO: fix hardcoded path
+$srfgIP = dirname( __FILE__ );
 $wgExtensionMessagesFiles['SemanticResultFormats'] = $srfgIP . '/SRF_Messages.php';
 $wgExtensionFunctions[] = 'srffSetup';
 
 $wgAutoloadClasses['SRFParserFunctions'] = $srfgIP . '/SRF_ParserFunctions.php';
 
+// FIXME: Can be removed when new style magic words are used (introduced in r52503)
 $wgHooks['LanguageGetMagic'][] = 'SRFParserFunctions::languageGetMagic';
 $wgHooks['AdminLinks'][] = 'srffAddToAdminLinks';
-$wgExtensionFunctions[] = 'srffRegisterFunctions';
+$wgHooks['ParserFirstCallInit'][] = 'SRFParserFunctions::registerFunctions';
 
-$srfgFormats = array('icalendar', 'vcard', 'bibtex', 'calendar', 'eventline', 'timeline', 'outline', 'sum', 'average', 'min', 'max');
+$srfgFormats = array( 'icalendar', 'vcard', 'bibtex', 'calendar', 'eventline', 'timeline', 'outline', 'gallery', 'sum', 'average', 'min', 'max' );
 
 function srffSetup() {
 	global $srfgFormats, $wgExtensionCredits;
 
-	foreach($srfgFormats as $fn) srffInitFormat($fn);
-	$formats_list = implode(', ', $srfgFormats);
-	$wgExtensionCredits['other'][]= array(
+	foreach ( $srfgFormats as $fn ) srffInitFormat( $fn );
+	
+	$formats_list = implode( ', ', $srfgFormats );
+	$wgExtensionCredits['other'][] = array(
 		'path' => __FILE__,
 		'name' => 'Semantic Result Formats',
 		'version' => SRF_VERSION,
-		'author' => array( 'Frank Dengler', '[http://steren.fr Steren Giannini]', 'Fabian Howahl', 'Yaron Koren', '[http://korrekt.org Markus Krötzsch]', 'David Loomer', 'Joel Natividad', '[http://simia.net Denny&nbsp;Vrandecic]', 'Nathan Yergler' ),
+		'author' => array( 'Frank Dengler', '[http://steren.fr Steren Giannini]', 'Fabian Howahl', 'Yaron Koren', '[http://korrekt.org Markus Krötzsch]', 'David Loomer', 'Joel Natividad', '[http://simia.net Denny Vrandecic]', 'Nathan Yergler', 'Hans-Jörg Happel', 'Rowan Rodrik van der Molen' ),
 		'url' => 'http://semantic-mediawiki.org/wiki/Help:Semantic_Result_Formats',
-		'description' => 'Additional formats for Semantic MediaWiki inline queries. Available formats: ' . $formats_list,
 		'descriptionmsg' => 'srf-desc'
 	);
 }
@@ -45,7 +46,7 @@ function srffInitFormat( $format ) {
 
 	$class = '';
 	$file = '';
-	switch ($format) {
+	switch ( $format ) {
 		case 'timeline': case 'eventline':
 			$class = 'SRFTimeline';
 			$file = $srfgIP . '/Timeline/SRF_Timeline.php';
@@ -65,18 +66,18 @@ function srffInitFormat( $format ) {
 		case 'calendar':
 			$class = 'SRFCalendar';
 			$file = $srfgIP . '/Calendar/SRF_Calendar.php';
-		breaK;
+		break;
 		case 'outline':
 			$class = 'SRFOutline';
 			$file = $srfgIP . '/Outline/SRF_Outline.php';
-		breaK;
+		break;
 		case  'sum': case 'average': case 'min': case 'max':
 			$class = 'SRFMath';
 			$file = $srfgIP . '/Math/SRF_Math.php';
 		break;
 		case 'exhibit':
 			$class = 'SRFExhibit';
-			$file = $srfgIP . '/Exhibit/SRF_Exhibit2.php';
+			$file = $srfgIP . '/Exhibit/SRF_Exhibit.php';
 		break;
 		case 'googlebar':
 			$class = 'SRFGoogleBar';
@@ -90,63 +91,36 @@ function srffInitFormat( $format ) {
 			$class = 'SRFGraph';
 			$file = $srfgIP . '/GraphViz/SRF_Graph.php';
 		break;
+		case 'process':
+			$class = 'SRFProcess';
+			$file = $srfgIP . '/GraphViz/SRF_Process.php';
+		break;
+		case 'ploticusvbar':
+			$class = 'SRFPloticusVBar';
+			$file = $srfgIP . '/Ploticus/SRF_PloticusVBar.php';
+		break;
+		case 'gallery':
+			$class = 'SRFGallery';
+			$file = $srfgIP . '/Gallery/SRF_Gallery.php';
+		break;
 	}
-	if (($class) && ($file)) {
+	if ( ( $class ) && ( $file ) ) {
 		$smwgResultFormats[$format] = $class;
 		$wgAutoloadClasses[$class] = $file;
 	}
 }
 
-function srffRegisterFunctions ( ) {
-	global $wgHooks, $wgParser;
-	if( defined( 'MW_SUPPORTS_PARSERFIRSTCALLINIT' ) ) {
-		$wgHooks['ParserFirstCallInit'][] = 'SRFParserFunctions::registerFunctions';
-	} else {
-		if ( class_exists( 'StubObject' ) && !StubObject::isRealObject( $wgParser ) ) {
-			$wgParser->_unstub();
-		}
-		SRFParserFunctions::registerFunctions( $wgParser );
-	}
-
-}
-
 /**
  * Adds a link to Admin Links page
  */
-function srffAddToAdminLinks(&$admin_links_tree) {
-	$displaying_data_section = $admin_links_tree->getSection(wfMsg('smw_adminlinks_displayingdata'));
+function srffAddToAdminLinks( &$admin_links_tree ) {
+	$displaying_data_section = $admin_links_tree->getSection( wfMsg( 'smw_adminlinks_displayingdata' ) );
 	// escape is SMW hasn't added links
-	if (is_null($displaying_data_section))
+	if ( is_null( $displaying_data_section ) )
 		return true;
-	$smw_docu_row = $displaying_data_section->getRow('smw');
-	wfLoadExtensionMessages('SemanticResultFormats');
-	$srf_docu_label = wfMsg('adminlinks_documentation', wfMsg('srf-name'));
-	$smw_docu_row->addItem(AlItem::newFromExternalLink("http://www.mediawiki.org/wiki/Extension:Semantic_Result_Formats", $srf_docu_label));
-	return true;
-}
-
-
-global $wgExtensionFunctions;
-$wgExtensionFunctions[] = 'SRFSetupExtension';
-function SRFSetupExtension() {
-	global $wgHooks, $wgRequest, $srfgIP;
-	$wgHooks['smwInitializeTables'][] = 'srfGMapInitializeTables';
-
-	$action = $wgRequest->getVal('action');
-	// add some AJAX calls
-	if ($action == 'ajax') {
-		$func_name = isset( $_POST["rs"] ) ? $_POST["rs"] : (isset( $_GET["rs"] ) ? $_GET["rs"] : NULL);
-		if ($func_name == NULL) return NULL;
-		if (substr( $func_name, 0, strlen( 'srf_' ) ) === 'srf_' ) {
-			require_once($srfgIP . '/includes/SRF_AjaxAccess.php');
-		}
-	}
-	return true;
-}
-function srfGMapInitializeTables() {
-	global $srfgIP;
-	require_once( $srfgIP . '/includes/SRF_Storage.php' );
-	SRFStorage::getDatabase()->setup(true);
-	
+	$smw_docu_row = $displaying_data_section->getRow( 'smw' );
+	wfLoadExtensionMessages( 'SemanticResultFormats' );
+	$srf_docu_label = wfMsg( 'adminlinks_documentation', wfMsg( 'srf-name' ) );
+	$smw_docu_row->addItem( AlItem::newFromExternalLink( "http://www.mediawiki.org/wiki/Extension:Semantic_Result_Formats", $srf_docu_label ) );
 	return true;
 }
