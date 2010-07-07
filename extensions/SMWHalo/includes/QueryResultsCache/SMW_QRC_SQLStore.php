@@ -8,6 +8,10 @@
  *
  */
 
+
+global $smwgHaloIP;
+require_once $smwgHaloIP . '/includes/SMW_DBHelper.php';
+
 /**
  * Implementation of the QueryResultsCache storage for MySQL DB's 
  */
