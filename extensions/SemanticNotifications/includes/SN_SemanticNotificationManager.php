@@ -122,11 +122,9 @@ class SemanticNotificationManager {
 	
 	public static function addQueryInterfaceButton(&$buttons) {
 		$buttons .= '<button id="qi-insert-notification-btn" '.
-			           'class="btn" onclick="qihelper.insertAsNotification()" 
-			           onmouseover="this.className=\'btn btnhov\'; 
-			           Tip(\'' . wfMsg('sn_qi_tt_insertNotification') . '\')" 
-			           onmouseout="this.className=\'btn\'" ' . 
-						'specialpage="'.urlencode(SpecialPage::getTitleFor('SemanticNotifications')->getFullURL()).'">'.
+			           'onclick="qihelper.insertAsNotification()" 
+			           onmouseover="Tip(\'' . wfMsg('sn_qi_tt_insertNotification') . '\')" '.
+			           'specialpage="'.urlencode(SpecialPage::getTitleFor('SemanticNotifications')->getFullURL()).'">'.
 						wfMsg('sn_qi_insertNotification') . 
 			   '</button>';
 		
