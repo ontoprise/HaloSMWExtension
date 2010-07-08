@@ -237,9 +237,12 @@ class  HACLQueryRewriter  {
 		$queryString = $prefixes . $query->getQueryString();
 			
 		/* ARC2 static class inclusion */
-		global $haclgIP;
-		include_once("$haclgIP/arc/ARC2.php");
-
+		if(!class_exists('ARC2')){
+			//this is necessary, because other extensions also are shipped with that library		
+			global $haclgIP;
+			include_once("$haclgIP/arc/ARC2.php");
+		}
+		
 		/* parser instantiation */
 		$parser = ARC2::getSPARQLParser();
 		
