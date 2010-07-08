@@ -283,9 +283,7 @@ function smwgHaloSetupExtension() {
 		$wgSpecialPages['QueryInterface'] = array('SMWQueryInterface');
 		$wgSpecialPageGroups['QueryInterface'] = 'smwplus_group';
 
-
-
-		$wgSpecialPages['Properties'] = array('SMWSpecialPage','Properties', 'smwfDoSpecialProperties', $smwgHaloIP . '/specials/SMWQuery/SMWAdvSpecialProperties.php');
+		$wgSpecialPages['Properties'] = array('SpecialPage','Properties', '', true, 'smwfDoSpecialProperties', $smwgHaloIP . '/specials/SMWQuery/SMWAdvSpecialProperties.php');
 		$wgSpecialPageGroups['Properties'] = 'smwplus_group';
 
 
