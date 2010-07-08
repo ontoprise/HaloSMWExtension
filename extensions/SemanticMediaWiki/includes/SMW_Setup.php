@@ -7,7 +7,7 @@
 
 require_once( 'SMW_GlobalFunctions.php' );
 
-define( 'SMW_VERSION', '{{VERSION}}' );
+define( 'SMW_VERSION', '{{$VERSION}}' );
 
 /**
  * Function to switch on Semantic MediaWiki. This function must be called in
