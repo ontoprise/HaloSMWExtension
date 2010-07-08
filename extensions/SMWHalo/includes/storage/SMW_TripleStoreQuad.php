@@ -214,7 +214,7 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 			$response = $client->query("SELECT ?s WHERE { GRAPH ?g { ?s <$smwgTripleStoreGraph/$nsPrefixProp#$propertyName> <$smwgTripleStoreGraph/$nsPrefixObj#$objectName>. } } $limit $offset",  "merge=false");
 
 		} else {
-			$objectvalue = str_replace('"', '\"', $value->getXSDValue());
+			$objectvalue = str_replace('"', '\"', array_shift($value->getDBkeys()));
 			$objecttype = WikiTypeToXSD::getXSDType($value->getTypeID());
 
 			$response = $client->query("SELECT ?s WHERE { GRAPH ?g { ?s <$smwgTripleStoreGraph/$nsPrefixProp#$propertyName> \"$objectvalue\"^^$objecttype. } } $limit $offset",  "merge=false");
@@ -324,7 +324,7 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 				// external URI
 
 				$v = SMWDataValueFactory::newTypeIDValue('_uri');
-				$v->setXSDValue($sv);
+				$v->setDBkeys(array($sv));
 				foreach($metadata as $mdProperty => $mdValue) {
 					if (strpos($mdProperty, "_meta_") === 0) {
 						$v->setMetadata(substr($mdProperty,6), explode("|||",$mdValue));
@@ -404,9 +404,9 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 				$value = SMWDataValueFactory::newTypeIDValue(WikiTypeToXSD::getWikiType($literalType));
 			}
 			if ($value->getTypeID() == '_dat') { // exception for dateTime
-				if ($literalValue != '') $value->setXSDValue(str_replace("-","/", $literalValue));
+				if ($literalValue != '') $value->setDBkeys(array(str_replace("-","/", $literalValue)));
 			} else if ($value->getTypeID() == '_ema') { // exception for email
-				$value->setXSDValue($literalValue);
+				$value->setDBkeys(array($literalValue));
 			} else {
 				$value->setUserValue($literalValue);
 			}
