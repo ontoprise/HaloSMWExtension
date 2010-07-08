@@ -30,7 +30,7 @@ function smwfTripleStorePropertyUpdate(& $data, & $property, & $propertyValueArr
 	// and therefore ignored.
 	$allProperties = $data->getProperties();
 
-	if (smwfGetSemanticStore()->domainRangeHintRelation->getDBkey() == $property->getXSDValue()) {
+	if (smwfGetSemanticStore()->domainRangeHintRelation->getDBkey() == array_shift($property->getDBkeys())) {
 
 		foreach($propertyValueArray as $domRange) {
 			if (!$domRange instanceof SMWRecordValue) continue; // occurs if 'has domain and range' is not n-ary
@@ -50,12 +50,12 @@ function smwfTripleStorePropertyUpdate(& $data, & $property, & $propertyValueArr
 					$triplesFromHook[] = array("_:2", "owl:onProperty", "<$smwgTripleStoreGraph/property#".$data->getSubject()->getDBkey().">");
 					$triplesFromHook[] = array("_:2", "owl:allValuesFrom", "<$smwgTripleStoreGraph/category#".$dvs[1]->getDBkey().">");
 					foreach($minCard as $value) {
-						if ($value->getXSDValue() !== false)
-						$triplesFromHook[] = array("_:2", "owl:minCardinality", "\"".$value->getXSDValue()."\"");
+						if (array_shift($value->getDBkeys()) !== false)
+						$triplesFromHook[] = array("_:2", "owl:minCardinality", "\"".array_shift($value->getDBkeys())."\"");
 					}
 					foreach($maxCard as $value) {
-						if ($value->getXSDValue() !== false)
-						$triplesFromHook[] = array("_:2", "owl:minCardinality", "\"".$value->getXSDValue()."\"");
+						if (array_shift($value->getDBkeys()) !== false)
+						$triplesFromHook[] = array("_:2", "owl:minCardinality", "\"".array_shift($value->getDBkeys())."\"");
 					}
 				} elseif ($dvs[0] != NULL && $dvs[0]->isValid()) { // only domain
 					$typeValues = $data->getPropertyValues(SMWPropertyValue::makeProperty("_TYPE"));
@@ -65,8 +65,8 @@ function smwfTripleStorePropertyUpdate(& $data, & $property, & $propertyValueArr
 					// insert RDFS
 					$triplesFromHook[] = array("prop:".$data->getSubject()->getDBkey(), "rdfs:domain", "<$smwgTripleStoreGraph/category#".$dvs[0]->getDBkey().">");
 					foreach($typeValues as $value) {
-						if ($value->getXSDValue() !== false) {
-							$typeID = $value->getXSDValue();
+						if (array_shift($value->getDBkeys()) !== false) {
+							$typeID = array_shift($value->getDBkeys());
 							if ($typeID != '_wpg') $triplesFromHook[] = array("<$smwgTripleStoreGraph/property#".$data->getSubject()->getDBkey().">", "rdfs:range", WikiTypeToXSD::getXSDType($typeID));
 						}
 					}
@@ -76,33 +76,33 @@ function smwfTripleStorePropertyUpdate(& $data, & $property, & $propertyValueArr
 					$triplesFromHook[] = array("_:1", "owl:Restriction", "_:2");
 					$triplesFromHook[] = array("_:2", "owl:onProperty", "<$smwgTripleStoreGraph/property#".$data->getSubject()->getDBkey().">");
 					foreach($typeValues as $value) {
-						if ($value->getXSDValue() !== false) {
-							$triplesFromHook[] = array("_:2", "owl:allValuesFrom", WikiTypeToXSD::getXSDType($value->getXSDValue()));
+						if (array_shift($value->getDBkeys()) !== false) {
+							$triplesFromHook[] = array("_:2", "owl:allValuesFrom", WikiTypeToXSD::getXSDType(array_shift($value->getDBkeys())));
 						}
 					}
 					foreach($minCard as $value) {
-						if ($value->getXSDValue() !== false)
-						$triplesFromHook[] = array("_:2", "owl:minCardinality", "\"".$value->getXSDValue()."\"");
+						if (array_shift($value->getDBkeys()) !== false)
+						$triplesFromHook[] = array("_:2", "owl:minCardinality", "\"".array_shift($value->getDBkeys())."\"");
 					}
 					foreach($maxCard as $value) {
-						if ($value->getXSDValue() !== false)
-						$triplesFromHook[] = array("_:2", "owl:maxCardinality", "\"".$value->getXSDValue()."\"");
+						if (array_shift($value->getDBkeys()) !== false)
+						$triplesFromHook[] = array("_:2", "owl:maxCardinality", "\"".array_shift($value->getDBkeys())."\"");
 					}
 				}
 			}
 				
 		}
-	} elseif (smwfGetSemanticStore()->inverseOf->getDBkey() == $property->getXSDValue()) {
+	} elseif (smwfGetSemanticStore()->inverseOf->getDBkey() == array_shift($property->getDBkeys())) {
 		foreach($propertyValueArray as $inverseProps) {
 			if (count($propertyValueArray) == 1) {
 				
 				$triplesFromHook[] = array("<$smwgTripleStoreGraph/property#".$data->getSubject()->getDBkey().">", "owl:inverseOf", "<$smwgTripleStoreGraph/property#".$inverseProps->getDBkey().">");
 			}
 		}
-	} elseif (smwfGetSemanticStore()->minCard->getDBkey() == $property->getXSDValue()) {
+	} elseif (smwfGetSemanticStore()->minCard->getDBkey() == array_shift($property->getDBkeys())) {
 		// do nothing
 		$triplesFromHook = false;
-	} elseif (smwfGetSemanticStore()->maxCard->getDBkey() == $property->getXSDValue()) {
+	} elseif (smwfGetSemanticStore()->maxCard->getDBkey() == array_shift($property->getDBkeys())) {
 		// do nothing
 		$triplesFromHook = false;
 	} elseif ($property->getPropertyID() == "_TYPE") {
@@ -119,23 +119,23 @@ function smwfTripleStorePropertyUpdate(& $data, & $property, & $propertyValueArr
 			$triplesFromHook[] = array("_:1", "owl:Restriction", "_:2");
 			$triplesFromHook[] = array("_:2", "owl:onProperty", "<$smwgTripleStoreGraph/property#".$data->getSubject()->getDBkey().">");
 			foreach($propertyValueArray as $value) {
-				if ($value->getXSDValue() !== false) {
-					$typeID = $value->getXSDValue();
+				if (array_shift($value->getDBkeys()) !== false) {
+					$typeID = array_shift($value->getDBkeys());
 					$triplesFromHook[] = array("_:2", "owl:allValuesFrom", WikiTypeToXSD::getXSDType($typeID));
 				}
 			}
 			foreach($minCard as $value) {
-				if ($value->getXSDValue() !== false)
-				$triplesFromHook[] = array("_:2", "owl:minCardinality", "\"".$value->getXSDValue()."\"");
+				if (array_shift($value->getDBkeys()) !== false)
+				$triplesFromHook[] = array("_:2", "owl:minCardinality", "\"".array_shift($value->getDBkeys())."\"");
 			}
 			foreach($maxCard as $value) {
-				if ($value->getXSDValue() !== false)
-				$triplesFromHook[] = array("_:2", "owl:maxCardinality", "\"".$value->getXSDValue()."\"");
+				if (array_shift($value->getDBkeys()) !== false)
+				$triplesFromHook[] = array("_:2", "owl:maxCardinality", "\"".array_shift($value->getDBkeys())."\"");
 			}
 
 			// insert RDFS range/domain
 			foreach($propertyValueArray as $value) {
-				$typeID = $value->getXSDValue();
+				$typeID = array_shift($value->getDBkeys());
 				//$triplesFromHook[] = array("prop:".$data->getSubject()->getDBkey(), "rdfs:domain", "cat:DefaultRootCategory");
 				if ($typeID != '_wpg') $triplesFromHook[] = array("<$smwgTripleStoreGraph/property#".$data->getSubject()->getDBkey().">", "rdfs:range", WikiTypeToXSD::getXSDType($typeID));
 					
@@ -143,7 +143,7 @@ function smwfTripleStorePropertyUpdate(& $data, & $property, & $propertyValueArr
 		}
 		// insert Has type
 		foreach($propertyValueArray as $value) {
-			$typeID = $value->getXSDValue();
+			$typeID = array_shift($value->getDBkeys());
 			if ($typeID != '_wpg') {
 				$triplesFromHook[] = array("<$smwgTripleStoreGraph/property#".$data->getSubject()->getDBkey().">", "Has_type", WikiTypeToXSD::getXSDType($typeID));
 			}
