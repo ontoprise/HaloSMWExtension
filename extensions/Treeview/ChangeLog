@@ -2,6 +2,11 @@ Treeview extension ChangeLog
 ============================
 
 
+VERSION 1.4_2
+
+  BUGFIXES:
+    * Make extension conpatible to work with SMW 1.5.1
+
 VERSION 1.4_1
 
   BUGFIXES:

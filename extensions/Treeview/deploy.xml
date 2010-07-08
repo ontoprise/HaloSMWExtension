@@ -2,7 +2,7 @@
 <deploydescriptor>
 	<global>
 		<version>140</version>
-        <patchlevel>1</patchlevel>
+        <patchlevel>2</patchlevel>
 		<id>treeview</id>
 		<vendor>Ontoprise GmbH</vendor>
 		<instdir>extensions/Treeview</instdir>
