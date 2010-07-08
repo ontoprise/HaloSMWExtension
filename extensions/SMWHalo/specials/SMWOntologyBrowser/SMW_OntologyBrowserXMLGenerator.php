@@ -114,10 +114,13 @@ class SMWOntologyBrowserXMLGenerator {
 
 			// metadata
 			$metadataTags = "<metadata id=\"".$id."_meta_".$count."\">";
+				
 			if (!is_null($metadata)) {
 				// read metadata
-				foreach($metadata as $mdProperty => $mdValue) {
-					$metadataTags .= "<property name=\"".htmlspecialchars($mdProperty)."\">".htmlspecialchars($mdValue)."</property>";
+				foreach($metadata as $mdProperty => $mdValues) {
+					foreach($mdValues as $mdValue) {
+						$metadataTags .= "<property name=\"".htmlspecialchars($mdProperty)."\">".htmlspecialchars($mdValue)."</property>";
+					}
 				}
 			}
 			$metadataTags .= "</metadata>";
@@ -365,8 +368,10 @@ class SMWOntologyBrowserXMLGenerator {
 				$metadataTags = "<metadata id=\"".$id."_meta_".$count."\">";
 				if (method_exists($smwValue, "getMetadataMap")) {
 					// read metadata
-					foreach($smwValue->getMetadataMap() as $mdProperty => $mdValue) {
-						$metadataTags .= "<property name=\"".htmlspecialchars($mdProperty)."\">".htmlspecialchars($mdValue)."</property>";
+					foreach($smwValue->getMetadataMap() as $mdProperty => $mdValues) {
+						foreach($mdValues as $mdValue) {
+							$metadataTags .= "<property name=\"".htmlspecialchars($mdProperty)."\">".htmlspecialchars($mdValue)."</property>";
+						}
 					}
 				}
 				$metadataTags .= "</metadata>";
@@ -398,9 +403,9 @@ class SMWOntologyBrowserXMLGenerator {
 						$value = strip_tags($value, "<sub><sup><b><i>");
 						$value = "<![CDATA[".html_entity_decode($value)." ".$smwValue->getUnit()."]]>";
 					} if ($smwValue->getTypeID() == '__tls') { // SMW_DV_TypeList
-						
+
 						$value = "<![CDATA[".html_entity_decode($smwValue->getWikiValue())."]]>";
-                    } else {
+					} else {
 						// small hack for datetime type. It may occur that there is a T at the end.
 						if ($smwValue->getTypeID() == '_dat') {
 							$xsdValue = (substr($smwValue->getXSDValue(), -1) == 'T') ? str_replace('T', '', $smwValue->getXSDValue()) : $smwValue->getXSDValue();
@@ -428,8 +433,10 @@ class SMWOntologyBrowserXMLGenerator {
 				$metadataTags = "<metadata id=\"".$id."_meta_".$count."\">";
 				if (method_exists($smwValue, "getMetadataMap")) {
 					// read metadata
-					foreach($smwValue->getMetadataMap() as $mdProperty => $mdValue) {
-						$metadataTags .= "<property name=\"".htmlspecialchars($mdProperty)."\">".htmlspecialchars($mdValue)."</property>";
+					foreach($smwValue->getMetadataMap() as $mdProperty => $mdValues) {
+						foreach($mdValues as $mdValue) {
+							$metadataTags .= "<property name=\"".htmlspecialchars($mdProperty)."\">".htmlspecialchars($mdValue)."</property>";
+						}
 					}
 				}
 				$metadataTags .= "</metadata>";

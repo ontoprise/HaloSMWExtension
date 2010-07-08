@@ -180,8 +180,8 @@ class OB_Storage {
 		} else {
 			$attinstances = array();
 		}
-        
-		
+
+
 		//FIXME: create this data structure in the SemanticStore interface
 		$instanceWithMetadata = array();
 		foreach($attinstances as $i) {
@@ -292,7 +292,7 @@ class OB_StorageTS extends OB_Storage {
 		 	$metadataMap = array();
 		 	foreach($sv->attributes() as $mdProperty => $mdValue) {
 		 		if (strpos($mdProperty, "_meta_") === 0) {
-		 			$metadataMap[strtoupper($mdProperty)] = $mdValue;
+		 			$metadataMap[strtoupper($mdProperty)] = explode("|||",$mdValue);
 		 		}
 		 	}
 
@@ -348,6 +348,14 @@ class OB_StorageTS extends OB_Storage {
 
 
 
+		} else {
+			// any URI
+			if (strpos($sv, "#") !== false) {
+				$local = substr($sv, strpos($sv, "#")+1);
+			} else if (strrpos($sv, "/") !== false) {
+				$local = substr($sv, strrpos($sv, "/")+1);
+			}
+			return Title::newFromText($local, NS_MAIN);
 		}
 
 		return NULL;
@@ -396,10 +404,10 @@ class OB_StorageTS extends OB_Storage {
 			$instance = Title::newFromText($instanceName);
 			$instanceName = str_replace("//","__",$instance->getDBkey()); //XXX: hack for ultrapedia
 
-			// actually limit and offset is not used 
+			// actually limit and offset is not used
 			$limit =  isset($p_array[1]) && is_numeric($p_array[1]) ? $p_array[1] : 500;
-            $partition = isset($p_array[2]) && is_numeric($p_array[2]) ? $p_array[2] : 0;
-            $offset = $partition * $limit;
+			$partition = isset($p_array[2]) && is_numeric($p_array[2]) ? $p_array[2] : 0;
+			$offset = $partition * $limit;
 			$metadata = isset($p_array[3]) ? $p_array[3] : false;
 			$metadataRequest = $metadata != false ? "|metadata=$metadata" : "";
 
@@ -407,9 +415,9 @@ class OB_StorageTS extends OB_Storage {
 
 			// query
 			$nsPrefix = $this->tsNamespaceHelper->getNSPrefix($instance->getNamespace());
-				
+
 			$response = $client->query("SELECT ?p ?o WHERE { <$smwgTripleStoreGraph/$nsPrefix#$instanceName> ?p ?o. }",  "limit=$limit|offset=$offset$dataSpace$metadataRequest");
-				
+
 
 			global $smwgSPARQLResultEncoding;
 			// PHP strings are always interpreted in ISO-8859-1 but may be actually encoded in
@@ -443,7 +451,7 @@ class OB_StorageTS extends OB_Storage {
 					$metadata = array();
 					foreach($sv->attributes() as $mdProperty => $mdValue) {
 						if (strpos($mdProperty, "_meta_") === 0) {
-							$value->setMetadata(strtoupper($mdProperty), $mdValue);
+							$value->setMetadata(strtoupper($mdProperty), explode("|||",$mdValue));
 						}
 					}
 
@@ -458,7 +466,7 @@ class OB_StorageTS extends OB_Storage {
 					$metadata = array();
 					foreach($sv->attributes() as $mdProperty => $mdValue) {
 						if (strpos($mdProperty, "_meta_") === 0) {
-							$value->setMetadata(strtoupper($mdProperty), $mdValue);
+							$value->setMetadata(strtoupper($mdProperty), explode("|||",$mdValue));
 						}
 					}
 					$values[] = $value;
@@ -622,9 +630,9 @@ class OB_StorageTS extends OB_Storage {
 				$filter .= ")";
 			}
 
-				
+
 			$response = $client->query("SELECT ?s WHERE { ?s ?p ?o.  $filter }",  "limit=1000$dataSpace");
-				
+
 
 			global $smwgSPARQLResultEncoding;
 			// PHP strings are always interpreted in ISO-8859-1 but may be actually encoded in

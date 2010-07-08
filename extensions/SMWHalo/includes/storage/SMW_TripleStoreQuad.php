@@ -29,8 +29,8 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 	}
 
 	/**
-     * @see superclass
-     */
+	 * @see superclass
+	 */
 	function getAllPropertyAnnotations(SMWPropertyValue $property, $requestoptions = NULL) {
 
 		global $smwgTripleStoreGraph;
@@ -68,7 +68,7 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 			$children = $r->children(); // binding nodes
 			$b = $children->binding[0];
 			$sv = $b->children()->uri[0];
-			
+
 			$title = $this->getTitleFromURI((string) $sv);
 			$title_dv = SMWDataValueFactory::newTypeIDValue('_wpg');
 			$title_dv->setValues($title->getDBkey(), $title->getNamespace(), $title->getArticleID());
@@ -76,13 +76,13 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 
 			$b = $children->binding[1];
 			foreach($b->children()->uri as $sv) {
-				
+
 				$object = $this->getTitleFromURI((string) $sv);
 				$value = SMWDataValueFactory::newPropertyObjectValue($property, $object);
 				$metadata = $sv->attributes();
 				foreach($metadata as $mdProperty => $mdValue) {
 					if (strpos($mdProperty, "_meta_") === 0) {
-						$value->setMetadata(substr($mdProperty,6), $mdValue);
+						$value->setMetadata(substr($mdProperty,6), explode("|||",$mdValue));
 					}
 				}
 				$values[] = $value;
@@ -94,7 +94,7 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 				$metadata = $sv->attributes();
 				foreach($metadata as $mdProperty => $mdValue) {
 					if (strpos($mdProperty, "_meta_") === 0) {
-						$value->setMetadata(substr($mdProperty,6), $mdValue);
+						$value->setMetadata(substr($mdProperty,6), explode("|||",$mdValue));
 					}
 				}
 				$values[] = $value;
@@ -108,8 +108,8 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 	}
 
 	/**
-     * @see superclass
-     */
+	 * @see superclass
+	 */
 	function getPropertyValues($subject, SMWPropertyValue $property, $requestoptions = NULL, $outputformat = '') {
 
 		if (!$property->isUserDefined()) {
@@ -152,13 +152,13 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 
 
 			foreach($b->children()->uri as $sv) {
-				
+
 				$object = $this->getTitleFromURI((string) $sv);
 				$value = SMWDataValueFactory::newPropertyObjectValue($property, $object);
 				$metadata = $sv->attributes();
 				foreach($metadata as $mdProperty => $mdValue) {
 					if (strpos($mdProperty, "_meta_") === 0) {
-						$value->setMetadata(substr($mdProperty,6), $mdValue);
+						$value->setMetadata(substr($mdProperty,6), explode("|||",$mdValue));
 					}
 				}
 				$values[] = $value;
@@ -170,7 +170,7 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 				$metadata = $sv->attributes();
 				foreach($metadata as $mdProperty => $mdValue) {
 					if (strpos($mdProperty, "_meta_") === 0) {
-						$value->setMetadata(substr($mdProperty,6), $mdValue);
+						$value->setMetadata(substr($mdProperty,6), explode("|||",$mdValue));
 					}
 				}
 				$values[] = $value;
@@ -182,9 +182,9 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 
 		return $values;
 	}
-    
+
 	/**
-     * @see superclass
+	 * @see superclass
 	 */
 	function getPropertySubjects(SMWPropertyValue $property, $value, $requestoptions = NULL) {
 		if (!$property->isUserDefined()) {
@@ -247,7 +247,7 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 			$metadata = $sv->attributes();
 			foreach($metadata as $mdProperty => $mdValue) {
 				if (strpos($mdProperty, "_meta_") === 0) {
-					$value->setMetadata(substr($mdProperty,6), $mdValue);
+					$value->setMetadata(substr($mdProperty,6), explode("|||",$mdValue));
 				}
 			}
 
@@ -268,7 +268,7 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 	/**
 	 * @see superclass
 	 */
-	protected function addURIToResult($uris, $prs, & $allValues, $outputformat) {
+	protected function addURIToResult($uris, & $allValues) {
 			
 		foreach($uris as $uri) {
 			list($sv, $metadata) = $uri;
@@ -276,7 +276,7 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 			$nsFound = false;
 			foreach (TSNamespaces::getAllNamespaces() as $nsIndsex => $ns) {
 				if (stripos($sv, $ns) === 0) {
-					$allValues[] = $this->createSMWDataValue($sv, $metadata, $ns, $nsIndsex, $outputformat);
+					$allValues[] = $this->createSMWDataValue($sv, $metadata, $ns, $nsIndsex);
 					$nsFound = true;
 				}
 			}
@@ -290,7 +290,7 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 					$v = SMWDataValueFactory::newTypeIDValue('_wpg');
 					foreach($metadata as $mdProperty => $mdValue) {
 						if (strpos($mdProperty, "_meta_") === 0) {
-							$v->setMetadata(substr($mdProperty,6), $mdValue);
+							$v->setMetadata(substr($mdProperty,6), explode("|||",$mdValue));
 						}
 					}
 					$allValues[] = $v;
@@ -299,26 +299,14 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 					$length = strpos($sv, "#") - $startNS;
 					$ns = intval(substr($sv, $startNS, $length));
 
-					$nosection = strpos($outputformat,"nosection");
-					if ($nosection === false && !is_null($provenance) && $provenance != '' && strpos($provenance, "section=") !== false) {
-							
-						// UP special behaviour: if provenance contains section, use it as fragment identifier
-						$uri_parts = explode("#", $provenance);
-						$local = substr($uri_parts[0], strrpos($uri_parts[0], "/")+1);
 
-						$sectionIndex = strpos($uri_parts[1], "section=");
-						$section = substr($uri_parts[1], $sectionIndex, strpos($uri_parts[1], "&", $sectionIndex));
-
-						$sections_parts = explode("=", $section);
-						$section_name = urldecode($sections_parts[1]);
-						$section_name = preg_replace('/\{\{[^}]*\}\}/', '', $section_name);
-						$section_name = str_replace("'","",$section_name);
-						$localToDisplay = str_replace("_", " ", $localToDisplay);
-						$title = Title::makeTitle($ns, $local, $localToDisplay."##".$section_name);
-					} else {
+					if (strpos($sv, "#") !== false) {
 						$local = substr($sv, strpos($sv, "#")+1);
-						$title = Title::newFromText($local, $ns);
+					} else if (strrpos($sv, "/") !== false) {
+						$local = substr($sv, strrpos($sv, "/")+1);
 					}
+					$title = Title::newFromText($local, $ns);
+
 					if (is_null($title)) {
 						$title = Title::newFromText(wfMsg('smw_ob_invalidtitle'), $ns);
 					}
@@ -327,7 +315,7 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 
 					foreach($metadata as $mdProperty => $mdValue) {
 						if (strpos($mdProperty, "_meta_") === 0) {
-							$v->setMetadata(substr($mdProperty,6), $mdValue);
+							$v->setMetadata(substr($mdProperty,6), explode("|||",$mdValue));
 						}
 					}
 					$allValues[] = $v;
@@ -339,7 +327,7 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 				$v->setXSDValue($sv);
 				foreach($metadata as $mdProperty => $mdValue) {
 					if (strpos($mdProperty, "_meta_") === 0) {
-						$v->setMetadata(substr($mdProperty,6), $mdValue);
+						$v->setMetadata(substr($mdProperty,6), explode("|||",$mdValue));
 					}
 				}
 				$allValues[] = $v;
@@ -352,28 +340,11 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 	/**
 	 * @see superclass
 	 */
-	protected function createSMWDataValue($sv, $metadata, $nsFragment, $ns, $outputformat) {
-		$nosection = strpos($outputformat,"nosection");
-		$provenance = NULL; // TODO: where is provenance?
-		if ($nosection === false && !is_null($provenance) && $provenance != '' && strpos($provenance, "section=") !== false) {
-			// UP special behaviour: if provenance contains section, use it as fragment identifier
-			$uri_parts = explode("#", $provenance);
-			$local = substr($uri_parts[0], strrpos($uri_parts[0], "/")+1);
+	protected function createSMWDataValue($sv, $metadata, $nsFragment, $ns) {
 
-			$sectionIndex = strpos($uri_parts[1], "section=");
-			$section = substr($uri_parts[1], $sectionIndex, strpos($uri_parts[1], "&", $sectionIndex));
+		$local = substr($sv, strlen($nsFragment));
+		$title = Title::newFromText($local, $ns);
 
-			$sections_parts = explode("=", $section);
-			$section_name = urldecode($sections_parts[1]);
-			$section_name = preg_replace('/\{\{[^}]*\}\}/', '', $section_name);
-			$section_name = str_replace("'","",$section_name);
-			$localToDisplay = substr($sv, strlen($nsFragment));
-			$localToDisplay = str_replace("_", " ", $localToDisplay);
-			$title = Title::makeTitle($ns, $local, $localToDisplay."##".$section_name);
-		} else {
-			$local = substr($sv, strlen($nsFragment));
-			$title = Title::newFromText($local, $ns);
-		}
 		if (is_null($title)) {
 			$title = Title::newFromText(wfMsg('smw_ob_invalidtitle'), $ns);
 		}
@@ -381,7 +352,7 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 		$v->setValues($title->getDBkey(), $ns, $title->getArticleID(), false, '', $title->getFragment());
 		foreach($metadata as $mdProperty => $mdValue) {
 			if (strpos($mdProperty, "_meta_") === 0) {
-				$v->setMetadata(substr($mdProperty,6), $mdValue);
+				$v->setMetadata(substr($mdProperty,6), explode("|||",$mdValue));
 			}
 		}
 		return $v;
@@ -389,26 +360,13 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 	}
 
 	private function getTitleFromURI($sv) {
-        $provenance = NULL; // TODO: where is provenance?
+
 		foreach (TSNamespaces::$ALL_NAMESPACES as $nsIndsex => $ns) {
 			if (stripos($sv, $ns) === 0) {
-				if (!is_null($provenance) && $provenance != '' && strpos($provenance, "section=") !== false) {
-					// UP special behaviour: if provenance contains section, use it as fragment identifier
-					$uri_parts = explode("#", $provenance);
-					$local = substr($uri_parts[0], strrpos($uri_parts[0], "/")+1);
 
-					$sectionIndex = strpos($uri_parts[1], "section=");
-					$section = substr($uri_parts[1], $sectionIndex, strpos($uri_parts[1], "&", $sectionIndex));
+				$local = substr($sv, strlen($ns));
+				return Title::newFromText($local, $nsIndsex);
 
-					$sections_parts = explode("=", $section);
-					$section_name = urldecode($sections_parts[1]);
-					$section_name = preg_replace('/\{\{[^}]*\}\}/', '', $section_name);
-					$section_name = str_replace("'","",$section_name);
-					return Title::makeTitle($nsIndsex, $local, $section_name);
-				} else {
-					$local = substr($sv, strlen($ns));
-					return Title::newFromText($local, $nsIndsex);
-				}
 
 			}
 		}
