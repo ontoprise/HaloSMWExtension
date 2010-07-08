@@ -1,62 +1,19 @@
 Index: extensions/SemanticMediaWiki/includes/SMW_DV_WikiPage.php
 ===================================================================
---- extensions/SemanticMediaWiki/includes/SMW_DV_WikiPage.php	(revision 7243)
-+++ extensions/SemanticMediaWiki/includes/SMW_DV_WikiPage.php	(working copy)
-@@ -61,16 +61,16 @@
- 		switch ($typeid) {
- 			case '__typ':
- 				$this->m_fixNamespace = SMW_NS_TYPE;
--			break;
-+				break;
- 			case '_wpp' : case '__sup':
- 				$this->m_fixNamespace = SMW_NS_PROPERTY;
--			break;
-+				break;
- 			case '_wpc' : case '__suc': case '__sin':
- 				$this->m_fixNamespace = NS_CATEGORY;
--			break;
-+				break;
- 			case '_wpf' : case '__spf':
- 				$this->m_fixNamespace = SF_NS_FORM;
--			break;
-+				break;
- 			default: //case '_wpg':
- 				$this->m_fixNamespace = NS_MAIN;
- 		}
-@@ -86,7 +86,7 @@
- 				wfLoadExtensionMessages('SemanticMediaWiki');
- 				$this->addError(wfMsgForContent('smw_notitle', $value));
- 			} elseif ( ($this->m_fixNamespace != NS_MAIN) &&
--				 ($this->m_fixNamespace != $this->m_title->getNamespace()) ) {
-+			($this->m_fixNamespace != $this->m_title->getNamespace()) ) {
- 				wfLoadExtensionMessages('SemanticMediaWiki');
- 				$this->addError(wfMsgForContent('smw_wrong_namespace', $wgContLang->getNsText($this->m_fixNamespace)));
- 			}
-@@ -116,6 +116,7 @@
- 		$this->m_namespace = array_key_exists(1,$args)?$args[1]:$this->m_fixNamespace;
- 		$this->m_interwiki = array_key_exists(2,$args)?$args[2]:'';
- 		$this->m_sortkey   = array_key_exists(3,$args)?$args[3]:'';
-+		$this->m_fragment   = array_key_exists(4,$args)?$args[4]:'';
- 		$this->m_textform = str_replace('_', ' ', $this->m_dbkeyform);
+--- extensions/SemanticMediaWiki/includes/SMW_DV_WikiPage.php	2010-06-07 09:48:39.000000000 +0200
++++ extensions/SemanticMediaWiki/includes/SMW_DV_WikiPage.php	2010-07-08 11:10:37.000000000 +0200
+@@ -118,6 +118,7 @@
+ 		$this->m_namespace = array_key_exists( 1, $args ) ? $args[1]:$this->m_fixNamespace;
+ 		$this->m_interwiki = array_key_exists( 2, $args ) ? $args[2]:'';
+ 		$this->m_sortkey   = array_key_exists( 3, $args ) ? $args[3]:'';
++		$this->m_fragment  = array_key_exists( 4, $args ) ? $args[4]:'';
+ 		$this->m_textform = str_replace( '_', ' ', $this->m_dbkeyform );
  		$this->m_id = false;
  		$this->m_title = null;
-@@ -133,7 +134,7 @@
- 			return $this->getCaption();
- 		} else {
- 			return '[[:' . str_replace("'", '&#x0027;', $this->getPrefixedText()) .
--			        ($this->m_fragment?"#$this->m_fragment":'') . '|' . $this->getCaption() . ']]';
-+			($this->m_fragment?"#$this->m_fragment":'') . '|' . $this->getCaption() . ']]';
- 		}
- 	}
- 
-@@ -162,9 +163,24 @@
- 		if ( ($linked === null) || ($linked === false) || ($this->m_outformat == '-') ) {
- 			return $this->m_fixNamespace == NS_MAIN?$this->getPrefixedText():$this->getText();
- 		} elseif ($this->m_namespace == NS_IMAGE) { // embed images instead of linking to their page
--			 return '[[' . str_replace("'", '&#x0027;', $this->getPrefixedText()) . '|' . $this->m_textform . '|frameless|border|text-top]]';
-+			return '[[' . str_replace("'", '&#x0027;', $this->getPrefixedText()) . '|' . $this->m_textform . '|frameless|border|text-top]]';
+@@ -166,6 +167,21 @@
+ 		} elseif ( $this->m_namespace == NS_IMAGE ) { // embed images instead of linking to their page
+ 			 return '[[' . str_replace( "'", '&#x0027;', $this->getPrefixedText() ) . '|' . $this->m_textform . '|frameless|border|text-top]]';
  		} else { // this takes care of all other cases, esp. it is right for Media:
--			return '[[:' . str_replace("'", '&#x0027;', $this->getPrefixedText()) . '|' . $this->m_textform . ']]';
 +			if ( $this->m_fragment != NULL) {
 +				if (strpos($this->m_fragment, "##") === false) {
 +					// only fragment set
@@ -72,105 +29,62 @@ Index: extensions/SemanticMediaWiki/includes/SMW_DV_WikiPage.php
 +				$fragment = "";
 +			}
 +			$fragment = str_replace("'", '&#x0027;', $fragment);
-+			return '[[:' . str_replace("'", '&#x0027;', $this->getPrefixedText()) . ($this->m_fragment != NULL ? "#".$fragment : "") . '|' . $label  . ']]';
+ 			return '[[:' . str_replace( "'", '&#x0027;', $this->getPrefixedText() ) . '|' . $this->m_textform . ']]';
  		}
  	}
- 
-@@ -241,14 +257,14 @@
- 				} else { // Medialink to non-existing file :-/
- 					return null;
- 				}
--			break;
-+				break;
- 			default: // some true wiki page
- 				return new SMWExpData(SMWExporter::getResourceElement($this));
--			break;
-+				break;
- 		}
- 	}
- 
--///// special interface for wiki page values
-+	///// special interface for wiki page values
- 
+@@ -369,8 +385,8 @@
  	/**
- 	 * Return according Title object or NULL if no valid value was set.
-@@ -318,7 +334,7 @@
- 		if ($this->m_prefixedtext === false) {
- 			$nstext = $wgContLang->getNSText($this->m_namespace);
- 			$this->m_prefixedtext = $this->m_interwiki . ($this->m_interwiki != ''?':':'') .
--									$nstext . ($nstext != ''?':':'') . $this->m_textform;
-+			$nstext . ($nstext != ''?':':'') . $this->m_textform;
- 		}
- 		return $this->m_prefixedtext;
- 	}
-@@ -361,15 +377,16 @@
+ 	 * @deprecated Use setDBkeys()
  	 */
- 	protected function getCaption() {
- 		return $this->m_caption !== false?$this->m_caption:
--		       ($this->m_fixNamespace == NS_MAIN?$this->getPrefixedText():$this->getText());
-+		($this->m_fixNamespace == NS_MAIN?$this->getPrefixedText():$this->getText());
+-	public function setValues( $dbkey, $namespace, $id = false, $interwiki = '', $sortkey = '' ) {
+-		$this->setDBkeys( array( $dbkey, $namespace, $interwiki, $sortkey ) );
++	public function setValues( $dbkey, $namespace, $id = false, $interwiki = '', $sortkey = '', $fragment = '' ) {
++		$this->setDBkeys( array( $dbkey, $namespace, $interwiki, $sortkey, $fragment ) );
  	}
- 
- 	/**
--	 * @deprecated Use setDBkeys()
--	 */
--	public function setValues($dbkey, $namespace, $id = false, $interwiki = '', $sortkey = '') {
--		$this->setDBkeys(array($dbkey,$namespace,$interwiki,$sortkey));
--	}
-+     * @deprecated Use setDBkeys()
-+     */
-+
-+    public function setValues($dbkey, $namespace, $id = false, $interwiki = '', $sortkey = '', $fragment = '') {
-+        $this->setDBkeys(array($dbkey,$namespace,$interwiki,$sortkey, $fragment));
-+    }
- 
+
  }
- 
-Index: extensions/SemanticMediaWiki/includes/SMW_DataValue.php
+Index: extensions/SemanticMediaWiki/includes/SMW_DV_DataValue.php
 ===================================================================
---- extensions/SemanticMediaWiki/includes/SMW_DataValue.php	(revision 7243)
-+++ extensions/SemanticMediaWiki/includes/SMW_DataValue.php	(working copy)
-@@ -67,7 +67,23 @@
- 	private $m_errors = array();
- 	/// True if there were any errors
- 	private $m_haserrors = false;
--
-+    
+--- extensions/SemanticMediaWiki/includes/SMW_DataValue.php	2010-06-07 09:49:10.000000000 +0200
++++ extensions/SemanticMediaWiki/includes/SMW_DataValue.php	2010-07-08 11:13:22.000000000 +0200
+@@ -118,6 +118,22 @@
+ 	 */
+ 	private $mHasErrors = false;
+
 +	/// Patch:KK|Metadata data|Start
-+    private $m_metadata = array();
-+    
-+    public function setMetadata($mdProperty, $mdValue) {
-+       $this->m_metadata[$mdProperty] = $mdValue;
-+    }
-+   
-+    public function getMetadata($mdProperty) {
-+       return $this->m_metadata[$mdProperty];
-+    }
-+    
-+    public function getMetadataMap() {
-+    	return $this->m_metadata; 
-+    }
-+    /// Patch:KK|Metadata data|End
-+    
- 	public function __construct($typeid) {
- 		$this->m_typeid = $typeid;
- 	}
++	private $m_metadata = array();
++
++	public function setMetadata($mdProperty, $mdValue) {
++		$this->m_metadata[$mdProperty] = $mdValue;
++	}
++
++	public function getMetadata($mdProperty) {
++		return $this->m_metadata[$mdProperty];
++	}
++
++	public function getMetadataMap() {
++		return $this->m_metadata;
++	}
++	/// Patch:KK|Metadata data|End
++
+ 	/**
+ 	 * Constructor.
+ 	 *
 Index: extensions/SemanticMediaWiki/skins/SMW_sorttable.js
 ===================================================================
---- extensions/SemanticMediaWiki/skins/SMW_sorttable.js	(revision 7243)
-+++ extensions/SemanticMediaWiki/skins/SMW_sorttable.js	(working copy)
-@@ -85,9 +85,9 @@
+--- extensions/SemanticMediaWiki/skins/SMW_sorttable.js	2010-06-07 09:48:41.000000000 +0200
++++ extensions/SemanticMediaWiki/skins/SMW_sorttable.js	2010-07-08 11:15:42.000000000 +0200
+@@ -85,9 +85,8 @@
  	for (var i=0;i<spans.length;i++) {
  	    if(spans[i].className=="smwsortkey") return spans[i].innerHTML;
  	}
 -    }else{
--	return el.innerHTML;	
+-	return el.innerHTML;
      }
-+	return el.innerHTML;	
-+    
- 
++    return el.innerHTML;
+
  }
- 
+
 Index: includes/Article.php
 ===================================================================
 --- includes/Article.php	(revision 7264)
