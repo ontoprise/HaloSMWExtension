@@ -508,10 +508,10 @@ function qiGetPropertyInformation($relationName) {
 		           	  		 '</relationSchema>';
 			} else {
                 $units = "";
-				$typeValues = $type[0]->getTypeValues();
 				if ($type[0] instanceof SMWTypesValue) {
+                    $typeValues = $type[0]->getTypeValues();
                     // check if the type is a Record
-                    if ($typeValues[0]->getXSDValue() == "_rec") {
+                    if ($typeValues[0]->getValueIndex() == "_rec") {
                         $record = smwfGetStore()->getPropertyValues($relationTitle, SMWPropertyValue::makeProperty("_LIST"));
                         if (count($record) > 0)
                             $typeValues= $record[0]->getTypeValues();
@@ -525,10 +525,12 @@ function qiGetPropertyInformation($relationName) {
 			   		$relSchema = '<relationSchema name="'.$relationName.'" arity="'.$arity.'">';
 	
 			   		for($i = 0, $n = $arity-1; $i < $n; $i++) {
+                        $value = $typeValues[$i]->getDBkeys();
 			   			$pvalues = smwfGetStore()->getPropertyValues($relationTitle, $possibleValueDV);
-			   			$relSchema .= '<param name="'.$typeValues[$i]->getWikiValue().'" type="'.$typeValues[$i]->getXSDValue().'"'.$range.'>';
+			   			$relSchema .= '<param name="'.$typeValues[$i]->getWikiValue().'" type="'.$value[0].'"'.$range.'>';
 			   			for($j = 0; $j < sizeof($pvalues); $j++){
-			   				$relSchema .= '<allowedValue value="' . $pvalues[$j]->getXSDValue() . '"/>';
+                            $value = $pvalues[$j]->getDBkeys();
+			   				$relSchema .= '<allowedValue value="' . $value[0] . '"/>';
 			   			}
 						$relSchema .= $units.'</param>';
 					}
