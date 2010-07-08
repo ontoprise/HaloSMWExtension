@@ -317,7 +317,7 @@
 				</a>
                <xsl:if test="count(metadata/property) > 0">
                     <xsl:variable name="metaid" select="child::metadata/@id" />
-                    <img class="metadataContainerSwitch" src="{$param-img-directory}/extensions/SMWHalo/skins/OntologyBrowser/images/view.gif" onclick="instanceActionListener.toggleMetadata(event, this,'{$metaid}')"/>
+                    <img class="metadataContainerSwitch" src="{$param-img-directory}/extensions/SMWHalo/skins/OntologyBrowser/images/metadata.gif" onclick="instanceActionListener.toggleMetadata(event, this,'{$metaid}')"/>
                 </xsl:if>
 			</td>
 			<td>
@@ -407,7 +407,7 @@
 				</a>
 				 <xsl:if test="count(metadata/property) > 0"> 
 				    <xsl:variable name="metaid" select="child::metadata/@id" />
-                    <img class="metadataContainerSwitch" src="{$param-img-directory}/extensions/SMWHalo/skins/OntologyBrowser/images/view.gif" onclick="annotationActionListener.toggleMetadata(event, this,'{$metaid}')"/>
+                    <img class="metadataContainerSwitch" src="{$param-img-directory}/extensions/SMWHalo/skins/OntologyBrowser/images/metadata.gif" onclick="annotationActionListener.toggleMetadata(event, this,'{$metaid}')"/>
                 </xsl:if>
 			</td>
 			<td align="right">
