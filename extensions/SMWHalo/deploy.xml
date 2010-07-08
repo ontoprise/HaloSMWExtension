@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <deploydescriptor>
 	<global>
-		<version>150</version>
+		<version>151</version>
 		<patchlevel>0</patchlevel>
 		<id>smwhalo</id>
 		<vendor>Ontoprise GmbH</vendor>
@@ -11,7 +11,7 @@
 			Mediawiki
 		</description>
 		<dependencies>
-			<dependency from="150">smw</dependency>
+			<dependency from="151">smw</dependency>
 			<dependency from="100" to="100">scriptmanager</dependency>
 		</dependencies>
 	</global>
