@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <deploydescriptor>
     <global>
-        <version>145</version>
-        <patchlevel>2</patchlevel>
+        <version>150</version>
         <id>semanticresultformats</id>
         <vendor>Ontoprise GmbH</vendor>
         <instdir>extensions/SemanticResultFormats</instdir>
