@@ -10,7 +10,7 @@
  *  2. rules (optional)
  *  3. redirects
  * 
- * @author Kai Kühn
+ * @author Kai Kï¿½hn
  */
 class SMWFullSemanticData {
 
@@ -154,7 +154,7 @@ class SMWFullSemanticData {
 			        			break;
 			        		}
 			        	} else {
-			        		if ($dv->getXSDValue() == $v->getXSDValue()) {
+			        		if (array_shift($dv->getDBkeys()) == array_shift($v->getDBkeys())) {
 			        			$isDerived = false;
 			        			break;
 			        		}
