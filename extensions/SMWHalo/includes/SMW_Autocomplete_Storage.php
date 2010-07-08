@@ -131,7 +131,7 @@ class AutoCompletionStorageSQL2 extends AutoCompletionStorage {
 		$types = smwfGetStore()->getPropertyValues($property, $hasTypeDV);
 		foreach($types as $t) {
 
-			$subtypes = explode(";", $t->getXSDValue());
+			$subtypes = explode(";", array_shift($t->getDBkeys()));
 
 			foreach($subtypes as $st) {
 				// get all units registered for a given type
@@ -152,7 +152,7 @@ class AutoCompletionStorageSQL2 extends AutoCompletionStorage {
 
 		// collect all units which match the substring (if non empty, otherwise all)
 		foreach($all_units as $u) {
-			$s_units = explode(",", $u->getXSDValue());
+			$s_units = explode(",", array_shift($u->getDBkeys()));
 			foreach($s_units as $su) {
 				if ($substring != '') {
 					if (strpos(strtolower($su), $substring) > 0) {
@@ -174,7 +174,7 @@ class AutoCompletionStorageSQL2 extends AutoCompletionStorage {
 		$poss_values = smwfGetStore()->getPropertyValues($property, $possibleValueDV);
 		$result = array();
 		foreach($poss_values as $v) {
-			$result[] = $v->getXSDValue();
+			$result[] = array_shift($v->getDBkeys());
 		}
 		return $result;
 	}
@@ -583,7 +583,7 @@ class AutoCompletionStorageSQL2 extends AutoCompletionStorage {
         // deactivated code which considers users preferred date format
         $prop = SMWPropertyValue::makeUserProperty($property);
         
-        if ($prop->getTypesValue()->getXSDValue() == '_dat') {
+        if (array_shift($prop->getTypesValue()->getDBkeys()) == '_dat') {
             $dateformat = "dmy"; // set "25 April 1980 00:00:00" as default dateFormat (the time is optional)
             // This would consider user prefs for date format.
         	//global $wgUser;
@@ -713,7 +713,7 @@ class AutoCompletionStorageSQL2 extends AutoCompletionStorage {
         $hasWikiPageType = false;
         $typeValues = $typesValue->getTypeValues();
         foreach($typeValues as $tv) {
-            $hasWikiPageType |= $tv->getXSDValue() == '_wpg';
+            $hasWikiPageType |= array_shift($tv->getDBkeys()) == '_wpg';
         }
         
         
