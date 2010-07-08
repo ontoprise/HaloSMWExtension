@@ -525,12 +525,10 @@ function qiGetPropertyInformation($relationName) {
 			   		$relSchema = '<relationSchema name="'.$relationName.'" arity="'.$arity.'">';
 	
 			   		for($i = 0, $n = $arity-1; $i < $n; $i++) {
-                        $value = $typeValues[$i]->getDBkeys();
 			   			$pvalues = smwfGetStore()->getPropertyValues($relationTitle, $possibleValueDV);
-			   			$relSchema .= '<param name="'.$typeValues[$i]->getWikiValue().'" type="'.$value[0].'"'.$range.'>';
+			   			$relSchema .= '<param name="'.$typeValues[$i]->getWikiValue().'" type="'.$typeValues[$i]->getDBkey().'"'.$range.'>';
 			   			for($j = 0; $j < sizeof($pvalues); $j++){
-                            $value = $pvalues[$j]->getDBkeys();
-			   				$relSchema .= '<allowedValue value="' . $value[0] . '"/>';
+			   				$relSchema .= '<allowedValue value="' . array_shift($pvalues[$j]->getDBkeys()) . '"/>';
 			   			}
 						$relSchema .= $units.'</param>';
 					}
