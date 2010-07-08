@@ -6,7 +6,7 @@
  * @ingroup SMWHaloSpecials
  * @ingroup SMWHaloOntologyBrowser
  *
- * @author Kai Kühn
+ * @author Kai Kï¿½hn
  */
 if ( !defined( 'MEDIAWIKI' ) ) die;
 
@@ -201,7 +201,8 @@ class SMWOntologyBrowserXMLGenerator {
 		$gi_store = SGAGardeningIssuesAccess::getGardeningIssuesAccess();
 		foreach($propertyAnnotations as $a) {
 			list($property, $values) = $a;
-			$propertyTitle = Title::newFromText($property->getXSDValue(), SMW_NS_PROPERTY);
+            $val = $property->getDBkeys();
+			$propertyTitle = Title::newFromText($val[0], SMW_NS_PROPERTY);
 			$result .= SMWOntologyBrowserXMLGenerator::encapsulateAsAnnotation($instance, $propertyTitle, $values);
 		}
 		// get low cardinality issues and "highlight" missing annotations. This is an exception because missing annotations do not exist.
@@ -267,7 +268,7 @@ class SMWOntologyBrowserXMLGenerator {
 		} else {
 			// it must be an attribute or n-ary relation otherwise.
 			$v = SMWDataValueFactory::newPropertyObjectValue(SMWPropertyValue::makeProperty("_TYPE"));
-			$v->setXSDValue($type);
+			$v->setDBkeys(array($type));
 			$typesOfAttributeAsString = $v->getTypeLabels();
 			foreach($typesOfAttributeAsString as $typeOfAttributeAsString) {
 				$content .= "<rangeType>".$typeOfAttributeAsString."</rangeType>";
@@ -323,21 +324,21 @@ class SMWOntologyBrowserXMLGenerator {
 					}
 					if ($params->getTypeID() == '_che') {
 						$isFormula = true;
-						$chemistryParser->checkEquation($params->getXSDValue());
+						$chemistryParser->checkEquation(array_shift($params->getDBkeys()));
 						$formulaAsHTML = html_entity_decode($chemistryParser->getHtmlFormat());
 						$value = "<![CDATA[".($formulaAsHTML)."]]>";
 					} else if ( $params->getTypeID() == '_chf') {
 						$isFormula = true;
-						$chemistryParser->checkFormula($params->getXSDValue());
+						$chemistryParser->checkFormula(array_shift($params->getDBkeys()));
 						$formulaAsHTML = html_entity_decode($chemistryParser->getHtmlFormat());
 						$value = "<![CDATA[".($formulaAsHTML)."]]>";
 					} else {
 						// escape potential HTML in a CDATA section
-						$value = "<![CDATA[".(html_entity_decode($params->getXSDValue()))." ".(html_entity_decode($params->getUnit()))."]]>";
+						$value = "<![CDATA[".(html_entity_decode(array_shift($params->getDBkeys())))." ".(html_entity_decode($params->getUnit()))."]]>";
 					}
 
 					// check if re-paste is needed
-					$needRepaste |= html_entity_decode($params->getXSDValue()) != $params->getXSDValue() || $params->getUnit() != '';
+					$needRepaste |= html_entity_decode(array_shift($params->getDBkeys())) != array_shift($params->getDBkeys()) || $params->getUnit() != '';
 
 					// check if target is a wikipage and built param
 					$isLink = $params instanceof SMWWikiPageValue ? "isLink=\"true\"" : "";
@@ -387,12 +388,12 @@ class SMWOntologyBrowserXMLGenerator {
 			} else if ($smwValue != NULL){ // normal attribute
 				if ($smwValue->getTypeID() == '_che') {
 					$isFormula = true;
-					$chemistryParser->checkEquation($smwValue->getXSDValue());
+					$chemistryParser->checkEquation(array_shift($smwValue->getDBkeys()));
 					$formulaAsHTML = html_entity_decode($chemistryParser->getHtmlFormat());
 					$value = "<![CDATA[".($formulaAsHTML)."]]>";
 				} else if ( $smwValue->getTypeID() == '_chf') {
 					$isFormula = true;
-					$chemistryParser->checkFormula($smwValue->getXSDValue());
+					$chemistryParser->checkFormula(array_shift($smwValue->getDBkey()));
 					$formulaAsHTML = html_entity_decode($chemistryParser->getHtmlFormat());
 					$value = "<![CDATA[".($formulaAsHTML)."]]>";
 				} else {
@@ -408,9 +409,10 @@ class SMWOntologyBrowserXMLGenerator {
 					} else {
 						// small hack for datetime type. It may occur that there is a T at the end.
 						if ($smwValue->getTypeID() == '_dat') {
-							$xsdValue = (substr($smwValue->getXSDValue(), -1) == 'T') ? str_replace('T', '', $smwValue->getXSDValue()) : $smwValue->getXSDValue();
+                            $val = array_shift($smwValue->getDBkeys());
+							$xsdValue = (substr($val, -1) == 'T') ? str_replace('T', '', $val) : $val;
 						} else {
-							$xsdValue = $smwValue->getXSDValue();
+							$xsdValue = array_shift($smwValue->getDBkeys());
 						}
 						$value = strip_tags($xsdValue, "<sub><sup><b><i>");
 						$value = "<![CDATA[".html_entity_decode($value)." ".$smwValue->getUnit()."]]>";
@@ -418,7 +420,7 @@ class SMWOntologyBrowserXMLGenerator {
 
 				}
 				//special attribute mark for all things needed to get re-pasted in FF.
-				$repasteMarker = $isFormula || strip_tags($smwValue->getXSDValue()) != $smwValue->getXSDValue() || $smwValue->getUnit() != '' ? "needRepaste=\"true\"" : "";
+				$repasteMarker = $isFormula || strip_tags(array_shift($smwValue->getDBkeys())) != array_shift($smwValue->getDBkeys()) || $smwValue->getUnit() != '' ? "needRepaste=\"true\"" : "";
 
 				$title = htmlspecialchars($annotationTitle->getDBkey());
 				$titleURLEscaped = htmlspecialchars(self::urlescape($annotationTitle->getDBkey()));
