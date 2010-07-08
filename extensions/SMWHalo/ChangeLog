@@ -2,17 +2,21 @@ SMWHalo extension ChangeLog
 ===========================
 
 
-VERSION XXXX
+VERSION 1.5.1
 
 
   FEATURES:
 
 
-
   CHANGES:
-
-
+    * Dependency is set to SMW 1.5.1 and changes are applied to use the latest
+      SMW version.
+    * Improved Query Interface that makes query building easier and that
+      supports the latest features of SMW.
+    * Enhanced Ontology Browser with seamless integration of linked open data
+      sources
 
   BUGFIXES:
+    * Many bugfixes that where reported since SMWHalo 1.5.0.
 
 
