@@ -1178,7 +1178,7 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
        	$prop = SMWPropertyValue::makeUserProperty($pname->getDBkey());
 		$smwValues = smwfGetStore()->getPropertyValues($title, $prop);
 	    if (count($smwValues) > 0) {
-        	$propValue = str_replace("_", " ", $smwValues[0]->getXSDValue());
+        	$propValue = str_replace("_", " ", $smwValues[0]->getWikiValue());
    		    if (strlen(trim($propValue)) > 0) return $propValue;
 	    }
 	}
