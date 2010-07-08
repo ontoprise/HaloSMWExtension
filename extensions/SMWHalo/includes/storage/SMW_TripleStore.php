@@ -172,7 +172,7 @@ class SMWTripleStore extends SMWStore {
 				if ( $subject->getNamespace() == SMW_NS_TYPE ) {
 					foreach($propertyValueArray as $value) {
 						// parse conversion annotation format
-						$measures = explode(",", $value->getXSDValue());
+						$measures = explode(",", array_shift($value->getDBkeys()));
 
 						// parse linear factor followed by (first) unit
 						$firstMeasure = reset($measures);
@@ -219,7 +219,7 @@ class SMWTripleStore extends SMWStore {
 			foreach($propertyValueArray as $value) {
 				if ($value->isValid()) {
 					if ($value->getTypeID() == '_txt') {
-						$triples[] = array("<$smwgTripleStoreGraph/$subj_ns#".$subject->getDBkey().">", "<$smwgTripleStoreGraph/property#".$property->getWikiPageValue()->getDBkey().">", "\"".$this->escapeForStringLiteral($value->getXSDValue())."\"^^xsd:string");
+						$triples[] = array("<$smwgTripleStoreGraph/$subj_ns#".$subject->getDBkey().">", "<$smwgTripleStoreGraph/property#".$property->getWikiPageValue()->getDBkey().">", "\"".$this->escapeForStringLiteral(array_shift($value->getDBkey()))."\"^^xsd:string");
 
 					} elseif ($value->getTypeID() == '_wpg') {
 						$obj_ns = $this->tsNamespace->getNSPrefix($value->getNamespace());
@@ -232,13 +232,13 @@ class SMWTripleStore extends SMWStore {
 
 						if ($value->getUnit() != '') {
 							// attribute with unit value
-							$triples[] = array("<$smwgTripleStoreGraph/$subj_ns#".$subject->getDBkey().">", "<$smwgTripleStoreGraph/property#".$property->getWikiPageValue()->getDBkey().">", "\"".$value->getXSDValue()." ".$value->getUnit()."\"^^xsd:unit");
+							$triples[] = array("<$smwgTripleStoreGraph/$subj_ns#".$subject->getDBkey().">", "<$smwgTripleStoreGraph/property#".$property->getWikiPageValue()->getDBkey().">", "\"".array_shift($value->getDBkeys())." ".$value->getUnit()."\"^^xsd:unit");
 						} else {
 							if (!is_null($property->getWikiPageValue())) {
-								if ($value->getXSDValue() != NULL) {
+								if (array_shift($value->getDBkeys()) != NULL) {
 									// attribute with textual value
 									$xsdType = WikiTypeToXSD::getXSDType($property->getPropertyTypeID());
-									$triples[] = array("<$smwgTripleStoreGraph/$subj_ns#".$subject->getDBkey().">", "<$smwgTripleStoreGraph/property#".$property->getWikiPageValue()->getDBkey().">", "\"".$this->escapeForStringLiteral($value->getXSDValue())."\"^^$xsdType");
+									$triples[] = array("<$smwgTripleStoreGraph/$subj_ns#".$subject->getDBkey().">", "<$smwgTripleStoreGraph/property#".$property->getWikiPageValue()->getDBkey().">", "\"".$this->escapeForStringLiteral(array_shift($value->getDBkeys()))."\"^^$xsdType");
 								} else if ($value->getNumericValue() != NULL) {
 									// attribute with numeric value
 									$triples[] = array("<$smwgTripleStoreGraph/$subj_ns#".$subject->getDBkey().">", "<$smwgTripleStoreGraph/property#".$property->getWikiPageValue()->getDBkey().">", "\"".$value->getNumericValue()."\"^^xsd:double");
@@ -616,7 +616,7 @@ class SMWTripleStore extends SMWStore {
 
 				} else  {
 
-					$label = $data instanceof Title ? $data->getDBkey() : $data->getXSDValue();
+					$label = $data instanceof Title ? $data->getDBkey() : array_shift($data->getDBkeys());
 					$mapPRTOColumns[$label] = $index;
 					$rewritten_pr = $this->rewritePrintrequest($pr);
 					$prs[] = $rewritten_pr;
@@ -631,7 +631,7 @@ class SMWTripleStore extends SMWStore {
 
 				$data = $pr->getData();
 				if ($data != NULL) {
-					$label = $data instanceof Title ? $data->getDBkey() : $data->getXSDValue();
+					$label = $data instanceof Title ? $data->getDBkey() : array_shift($data->getDBkeys());
 					$mapPRTOColumns[$label] = $index;
 					$rewritten_pr = $this->rewritePrintrequest($pr);
 					$prs[] = $rewritten_pr;
@@ -868,7 +868,7 @@ class SMWTripleStore extends SMWStore {
 				// external URI
 
 				$v = SMWDataValueFactory::newTypeIDValue('_uri');
-				$v->setXSDValue($sv);
+				$v->setDBkeys(array($sv));
 				foreach($metadata as $mdProperty => $mdValue) {
 					if (strpos($mdProperty, "_meta_") === 0) {
 						$v->setMetadata(substr($mdProperty,6), explode("|||",$mdValue));
@@ -908,10 +908,10 @@ class SMWTripleStore extends SMWStore {
 						if (substr($literalValue, -9) == 'T00:00:00') {
 							$literalValue = substr($literalValue, 0, strpos($literalValue, "T"));
 						}
-						$value->setXSDValue(str_replace("-","/",$literalValue));
+						$value->setDBkeys(array(str_replace("-","/",$literalValue)));
 					}
 				} else if ($value->getTypeID() == '_ema' || $value->getTypeID() == '_tel') { // exception for email
-					$value->setXSDValue($literalValue);
+					$value->setDBkeys(array($literalValue));
 				} else {
 					$value->setUserValue($literalValue);
 				}
@@ -981,7 +981,7 @@ class SMWTripleStore extends SMWStore {
 				$result .= "?".$printout->getData()->getDBkey().$outputFormat."=".$printout->getLabel();
 			} else if ($printout->getData() instanceof SMWPropertyValue ) {
 				$outputFormat = $printout->getOutputFormat() !== NULL ? "#".$printout->getOutputFormat() : "";
-				$result .= "?".$printout->getData()->getXSDValue().$outputFormat."=".$printout->getLabel();
+				$result .= "?".array_shift($printout->getData()->getDBkeys()).$outputFormat."=".$printout->getLabel();
 			}
 			$first = false;
 		}
@@ -1039,7 +1039,7 @@ class SMWTripleStore extends SMWStore {
 				return true;
 			}
 			if ($po->getData() != NULL) {
-				$label = $po->getData() instanceof Title ? $po->getData()->getDBkey() : $po->getData()->getXSDValue();
+				$label = $po->getData() instanceof Title ? $po->getData()->getDBkey() : array_shift($po->getData()->getDBkeys());
 				$contains |= strtolower($label) == strtolower($var_name);
 			}
 
