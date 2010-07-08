@@ -16,13 +16,6 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
- * @file
- * @ingroup DFInstaller
- * 
- * @author Kai Kuehn
- */
-
 define('DEPLOY_FRAMEWORK_REPO_PACKAGE_DOES_NOT_EXIST', 1);
 define('DEPLOY_FRAMEWORK_REPO_INVALID_DESCRIPTOR', 2);
 
@@ -42,6 +35,9 @@ define("SMWPLUS_REPOSITORY", "http://dailywikibuilds.ontoprise.com/repository/")
 
 
 /**
+ * @file
+ * @ingroup DFInstaller
+ * 
  * Allows access package repositories.
  *
  * @author: Kai Kühn / ontoprise / 2009
