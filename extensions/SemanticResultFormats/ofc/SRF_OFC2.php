@@ -303,7 +303,7 @@ class SRFOFC extends SMWResultPrinter {
 					}
 					if ($first) {
 						if ($object->isNumeric()) { // use numeric sortkey
-							$table .= '<span class="smwsortkey">' . $object->getNumericValue() . '</span>';
+							$table .= '<span class="smwsortkey">' . $object->getWikiValue() . '</span>';
 						}
 						// get first data only
 						$data .= $object->getShortText(SMW_OUTPUT_WIKI);
