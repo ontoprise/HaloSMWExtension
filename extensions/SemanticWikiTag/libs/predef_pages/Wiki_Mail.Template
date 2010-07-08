@@ -1,0 +1,42 @@
+<noinclude>
+This is the 'Wiki Mail' template.
+It should be called in the following format:
+<pre>
+{{Wiki Mail
+|from=
+|to=
+|cc=
+|sent=
+|attachment=
+}}
+</pre>
+Edit the page to see the template text.
+</noinclude><includeonly>
+----
+{| 
+{{#if:{{{from|}}}|
+! From
+{{!}} [[Mail from::{{{from|}}}]]
+{{!}}-
+}}
+{{#if:{{{to|}}}|
+! To
+{{!}} {{#arraymap:{{{to|}}}|,|x|[[Mail to::x]]}}
+{{!}}-
+}}
+{{#if:{{{cc|}}}|
+! Cc
+{{!}} {{#arraymap:{{{cc|}}}|,|x|[[Mail cc::x]]}}
+{{!}}-
+}}
+{{#if:{{{sent|}}}|
+! Sent
+{{!}} [[Mail sent::{{{sent|}}}]]
+}}
+|}
+----
+{{#if:{{{attachment|}}}|
+==Attachment(s)==
+{{#arraymap:{{{attachment|}}}|,|x|x|<br>}}
+}}
+</includeonly>
