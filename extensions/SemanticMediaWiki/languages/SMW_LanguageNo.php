@@ -8,10 +8,10 @@
  * Protect against register_globals vulnerabilities.
  * This line must be present before any global variable is referenced.
  */
-if (!defined('MEDIAWIKI')) die();
+if ( !defined( 'MEDIAWIKI' ) ) die();
 
 global $smwgIP;
-include_once($smwgIP . '/languages/SMW_Language.php');
+include_once( $smwgIP . 'languages/SMW_Language.php' );
 
 /**
  * Norwegian language labels for important SMW labels (namespaces, datatypes,...).
@@ -54,7 +54,7 @@ protected $m_DatatypeAliases = array(
 );
 
 protected $m_SpecialProperties = array(
-	//always start upper-case
+	// always start upper-case
 	'_TYPE' => 'Har type',
 	'_URI'  => 'Ekvivalent URI',
 	'_SUBP' => 'Underkategori av',
@@ -78,8 +78,6 @@ protected $m_SpecialPropertyAliases = array(
 
 
 protected $m_Namespaces = array(
-	SMW_NS_RELATION       => 'Relasjon',
-	SMW_NS_RELATION_TALK  => 'Relasjon-diskusjon',
 	SMW_NS_PROPERTY       => 'Egenskap',
 	SMW_NS_PROPERTY_TALK  => 'Egenskap-diskusjon',
 	SMW_NS_TYPE           => 'Type',
@@ -88,17 +86,10 @@ protected $m_Namespaces = array(
 	SMW_NS_CONCEPT_TALK   => 'Konsept-diskusjon'
 );
 
-protected $m_NamespaceAliases = array(
-        'Relasjonsdiskusjon' => SMW_NS_RELATION_TALK,
-        'Egenskapsdiskusjon' => SMW_NS_PROPERTY_TALK,
-        'Typediskusjon' => SMW_NS_TYPE_TALK,
-        'Konseptdiskusjon' => SMW_NS_CONCEPT_TALK
-);
+protected $m_dateformats = array( array( SMW_Y ), array( SMW_MY, SMW_YM ), array( SMW_DMY, SMW_MDY, SMW_YMD, SMW_YDM ) );
 
-protected $m_dateformats = array(array(SMW_Y), array(SMW_MY,SMW_YM), array(SMW_DMY,SMW_MDY,SMW_YMD,SMW_YDM));
+protected $m_months = array( "januar", "februar", "mars", "april", "mai", "juni", "juli", "august", "september", "oktober", "november", "desember" );
 
-protected $m_months = array("januar", "februar", "mars", "april", "mai", "juni", "juli", "august", "september", "oktober", "november", "desember");
-
-protected $m_monthsshort = array("jan.", "feb.", "mars", "april", "mai", "juni", "juli", "aug.", "sep.", "okt.", "nov.", "des.");
+protected $m_monthsshort = array( "jan.", "feb.", "mars", "april", "mai", "juni", "juli", "aug.", "sep.", "okt.", "nov.", "des." );
 
 }

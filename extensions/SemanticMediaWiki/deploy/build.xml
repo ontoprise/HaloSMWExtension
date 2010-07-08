@@ -60,7 +60,7 @@
         <exec executable="php">
             <arg value="../../../buildtools/replaceVersionHint.php" />
             <arg value="../deploy.xml" />
-            <arg value="../includes/SMW_GlobalFunctions.php" />
+            <arg value="../includes/SMW_Setup.php" />
         </exec>
     </target>
 
