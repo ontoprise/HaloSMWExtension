@@ -67,12 +67,12 @@ class SMWXMLResultPrinter extends SMWResultPrinter {
 						$text = str_replace('&', '&amp;', $object->getTitle()->getPrefixedText());
 						 
 					} else if ($object->getTypeID() == '_dat') {
-						$text = $object->getXSDValue();
+						$text = array_shift($object->getDBkeys());
 					} else {
 						if ($object->isNumeric()) { // does this have any effect?
 							$text = $object->getNumericValue();
 						} else {
-							$text = str_replace('&', '&amp;', $object->getXSDValue());
+							$text = str_replace('&', '&amp;', array_shift($object->getDBkeys()));
 						}
 					}
 
