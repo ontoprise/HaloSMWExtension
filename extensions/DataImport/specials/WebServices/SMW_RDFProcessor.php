@@ -6,8 +6,11 @@
  * @author Ingo Steinbauer
  */
 
-global $smwgDIIP;
-require_once("$smwgDIIP/libs/arc/ARC2.php");
+if(!class_exists('ARC2')){
+	//this is necessary, because other extensions also are shipped with that library
+	global $smwgDIIP;
+	require_once("$smwgDIIP/libs/arc/ARC2.php");
+}
 
 /**
  * This class provides a wrapper for the ARC2 library
@@ -149,7 +152,7 @@ class SMWRDFProcessor {
 						}
 						$this->processedIndex[$subject][$predicateId] = $processedObjects;
 					}
-				} else {		
+				} else if(array_key_exists($predicate, $this->index[$subject])){		
 					$processedObjects = array();
 					
 					foreach($this->index[$subject][$predicate] as $object){
