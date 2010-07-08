@@ -128,7 +128,7 @@ class LODParserFunctions {
 			$targetName = $lodgContLang->getParserFunctionParameter(LODLanguage::PFP_MAPPING_TARGET);
 			$target = null;
 			if (array_key_exists($targetName, $params)) {
-				$target = strtolower($params[$targetName]);
+				$target = $params[$targetName];
 			}
 			// Store this mapping.
 			$mapping = new LODMapping($text, $title->getText(), $target);
