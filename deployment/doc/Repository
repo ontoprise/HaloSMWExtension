@@ -1,0 +1,50 @@
+* 
+* Repository
+*
+* @author: Kai Kühn / ontoprise / 2010
+*
+
+The deploy framework repository is a HTTP accessible endpoint of the following structure:
+
+    (1) A respository.xml file
+    (2) A extensions directory containing a subdirectory for every deployable entity 
+        The directory is named with the ID of the extension. The directory contains all available
+        deploy descriptors named after the following schema: deploy-<ver>.xml where <ver> is a 
+        3-digit version number. It also contains a file deploy.xml pointing to the latest deploy
+        descriptor, ie. the one with the highest version number.
+        
+ example:
+
+    - repository.xml
+    - extensions 
+     | 
+     |-smwhalo
+       |
+       |- deploy-130.xml
+       |- deploy-140.xml
+       |- deploy.xml
+     |-smw
+     |-haloacl
+     
+     
+
+The repository may use HTTP Basic Authentication for access restriction.
+
+Repository.xml format:
+
+    <root>
+        <extensions>
+            <extension id="extension>
+                <version ver="130" patchlevel="3" url="http://..."/>
+                <version ver="140" patchlevel="2" url="http://..."/>
+            </extension>
+        </extensions>
+    <root>    
+    
+Each extension has its own <extension> node. For each version there is one version node below containg the 
+version number and the patchlevel. The url attribute specifies where the bundle can be downloaded. Any 
+HTTP location is possible.
+
+Version numbers are always 3-digit numbers, patchlevels is an integer number >= 0. A missing patchlevel
+attribute is interpreted as 0.
+    

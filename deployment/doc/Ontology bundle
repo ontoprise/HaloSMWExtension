@@ -65,7 +65,8 @@ Contents:
 			in the wiki with their appropriate types:
             
             * Property:Dependency:
-              [[has type::Type:String;Type:Number;Type:Number| ]]
+              [[has type::Type:Record]]
+              [[has fields::Type:String;Type:Number;Type:Number| ]]
             
             * Property:Description:
               [[has type::Type:String| ]]
