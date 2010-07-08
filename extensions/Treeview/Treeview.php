@@ -40,6 +40,11 @@ $wgExtensionCredits['parserhook'][] = array(
                      ' [http://www.destroydrop.com/javascripts/tree dTree] JavaScript tree menu.',
     'version'     => SEMANTIC_TREEVIEW_VERSION
     );
+
+// Tell the script manager, that we need prototype
+global $smgJSLibs;
+$smgJSLibs[] = 'prototype';
+$smgJSLibs[] = 'jquery';
  
 class SemanticTreeview {
  
