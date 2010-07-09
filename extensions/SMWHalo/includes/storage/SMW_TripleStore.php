@@ -378,12 +378,12 @@ class SMWTripleStore extends SMWStore {
 
 	public function getQueryResult(SMWQuery $query){
 		global $smwgQRCEnabled;
-		if($smwgQRCEnabled){	
+		if($smwgQRCEnabled){
 			$qrc = new SMWQRCQueryResultsCache();
 			return $qrc->getQueryResult($query);
 		} else {
 			return $this->doGetQueryResult($query);
-		}		
+		}
 	}
 
 	function doGetQueryResult(SMWQuery $query) {
@@ -414,9 +414,18 @@ class SMWTripleStore extends SMWStore {
 
 
 			} catch(Exception $e) {
-				//              var_dump($e);
-				$sqr = new SMWHaloQueryResult(array(), $query, array(), $this);
-				$sqr->addErrors(array($e->getMessage()));
+
+				switch ($query->querymode) {
+
+					case SMWQuery::MODE_COUNT:
+						$sqr = $e->getMessage();
+						break;
+					default:
+						$sqr = new SMWHaloQueryResult(array(), $query, array(), $this);
+						$sqr->addErrors(array($e->getMessage()));
+
+						break;
+				}
 				return $sqr;
 			}
 
@@ -810,7 +819,7 @@ class SMWTripleStore extends SMWStore {
 	/**
 	 * Gets an array of tuples (URI, metadata-uri) and creates SMWWikiPageValue objects.
 	 *
-	 * @param array of tuples (uri, hash array metadata) $uris 
+	 * @param array of tuples (uri, hash array metadata) $uris
 	 * @param array SMWDataValue (out) & $allValues
 	 */
 	protected function addURIToResult($uris, & $allValues) {
@@ -885,9 +894,9 @@ class SMWTripleStore extends SMWStore {
 	 * Gets an array of literal tuples (value, type, metadata-uri) and creates according
 	 * SMWDataValue objects.
 	 *
-	 * @param array Tuple (string value, string xsd-type, hash array metadata) $literals 
+	 * @param array Tuple (string value, string xsd-type, hash array metadata) $literals
 	 * @param PrintRequest $pr QueryPrinter contains property and thus denotes type (optional)
-	 * @param array SMWDataValue (out) & $allValues 
+	 * @param array SMWDataValue (out) & $allValues
 	 */
 	protected function addLiteralToResult($literals, $pr, & $allValues) {
 		foreach($literals as $literal) {
@@ -1015,8 +1024,8 @@ class SMWTripleStore extends SMWStore {
 			$result .= 'merge=false';
 			$first = false;
 		}
-        
-		
+
+
 		if (isset($query->params) && isset($query->params['dataspace'])) {
 			if (!$first) $result .= "|";
 			$result .= 'dataspace='.trim($query->params['dataspace']);
