@@ -43,7 +43,7 @@ Index: extensions/SemanticMediaWiki/includes/SMW_DV_WikiPage.php
  	}
 
  }
-Index: extensions/SemanticMediaWiki/includes/SMW_DV_DataValue.php
+Index: extensions/SemanticMediaWiki/includes/SMW_DataValue.php
 ===================================================================
 --- extensions/SemanticMediaWiki/includes/SMW_DataValue.php	2010-06-07 09:49:10.000000000 +0200
 +++ extensions/SemanticMediaWiki/includes/SMW_DataValue.php	2010-07-08 11:13:22.000000000 +0200
