@@ -1047,7 +1047,7 @@ class SMWTripleStore extends SMWStore {
 		return $contains;
 	}
 
-
+	
 }
 
 

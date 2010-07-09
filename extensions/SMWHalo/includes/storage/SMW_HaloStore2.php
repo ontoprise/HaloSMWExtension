@@ -23,5 +23,21 @@ class SMWHaloStore2 extends SMWSQLStore2 {
 	public function doGetQueryResult(SMWQuery $query){
 		return parent::getQueryResult($query);
 	}
+	
+	function updateData(SMWSemanticData $data) {
+		global $smwgQRCEnabled;
+		if($smwgQRCEnabled){	
+			$qrc = new SMWQRCQueryResultsCache();
+			return $qrc->updateData($data, $this);
+		} else {
+			return $this->doUpdateData($data);
+		}
+	}
+	
+	function doUpdateData(SMWSemanticData $data) {
+		return parent::updateData($data);
+	}
 
 }
+
+
