@@ -80,6 +80,13 @@ UseWebService.prototype = {
 		//to detect if the use all checkbox should be displayed
 		var optionalParameterExists = false;
 		
+		//the default values features are only displayed if this is not a LD WS
+		if(this.protocol == 'LinkedData'){
+			$("step2-parameters").childNodes[0].childNodes[0].childNodes[3].style.display = 'none';
+		} else {
+			$("step2-parameters").childNodes[0].childNodes[0].childNodes[3].style.display = '';
+		}
+		
 		for ( var i = 0; i < parameters.length; i += 3) {
 			var row = document.createElement("tr");
 
@@ -112,28 +119,32 @@ UseWebService.prototype = {
 			td.appendChild(input);
 			row.appendChild(td);
 
-			td = document.createElement("td");
-			input = document.createElement("input");
-			input.type = "checkbox";
-			input.style.marginRight = "8px";
-			if(parameters[i + 2] != ""){
-				td.appendChild(input);
-				input = document.createElement("span");
-				text = document.createTextNode(parameters[i + 2]);
-				input.appendChild(text);
-				td.appendChild(input);
-			} else {
-				input.checked = false;
-				input.disabled = true;
-				td.appendChild(input);
-				
+			// the default value features are only displayed
+			// if this is not a LD WS
+			if(this.protocol != 'LinkedData'){
+				td = document.createElement("td");
 				input = document.createElement("input");
-				input.value = "Not available";
-				input.disabled = true;
-				input.style.borderWidth = "0px";
-				td.appendChild(input);
+				input.type = "checkbox";
+				input.style.marginRight = "8px";
+				if(parameters[i + 2] != ""){
+					td.appendChild(input);
+					input = document.createElement("span");
+					text = document.createTextNode(parameters[i + 2]);
+					input.appendChild(text);
+					td.appendChild(input);
+				} else {
+					input.checked = false;
+					input.disabled = true;
+					td.appendChild(input);
+					
+					input = document.createElement("input");
+					input.value = "Not available";
+					input.disabled = true;
+					input.style.borderWidth = "0px";
+					td.appendChild(input);
+				}
+				row.appendChild(td);
 			}
-			row.appendChild(td);
 			$("step2-parameters").childNodes[0].appendChild(row);
 		}
 		
