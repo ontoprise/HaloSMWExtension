@@ -179,8 +179,9 @@ class SMWUseWebServiceSpecial extends SpecialPage {
 		$html .= "</select>";
 		$html .= "</p>";
 
+		
 		$html .= "<p id=\"step4-template-container\">Template: ";
-		$html .= "<input id=\"step4-template\"></input> ";
+		$html .= "<input class=\"wickEnabled\" constraints = \"namespace: ".NS_TEMPLATE."\" id=\"step4-template\"></input> ";
 		$html .= "</p>";
 
 		$html .= "<div id=\"step4-help\" style=\"display:none\">".wfMsg("smw_wsuse_s4-help")."</div>";
