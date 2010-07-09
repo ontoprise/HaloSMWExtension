@@ -591,4 +591,8 @@ abstract class GardeningBot {
 		}
 		print $pro_str."%";
 	}
+	
+	public static function getXSDValue($dataValue) {
+		return array_shift($dataValue->getDBkeys());
+	}
 }

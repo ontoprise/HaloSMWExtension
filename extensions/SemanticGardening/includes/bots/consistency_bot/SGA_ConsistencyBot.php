@@ -415,7 +415,7 @@ abstract class ConsistencyBotStorageSQL extends ConsitencyBotStorage {
 			$minCards = smwfGetStore()->getPropertyValues($saTitle, smwfGetSemanticStore()->minCardProp);
 			if (count($minCards) > 0) {
 
-				return array($minCards[0]->getXSDValue() + 0);
+				return array(intval(GardeningBot::getXSDValue($minCards[0])));
 			} else {
 				if (!in_array($sa->to, $visitedNodes)) {
 					$results = array_merge($results, $this->_getMinCardinalityOfSuperProperty($inheritanceGraph, $saTitle, $visitedNodes));
@@ -446,7 +446,7 @@ abstract class ConsistencyBotStorageSQL extends ConsitencyBotStorage {
 			$maxCards = smwfGetStore()->getPropertyValues($saTitle, smwfGetSemanticStore()->maxCardProp);
 			if (count($maxCards) > 0) {
 
-				return array($maxCards[0]->getXSDValue() + 0);
+				return array(intval(GardeningBot::getXSDValue($maxCards[0])));
 			} else {
 				if (!in_array($sa->to, $visitedNodes)) {
 					$results = array_merge($results, $this->_getMaxCardinalityOfSuperProperty($inheritanceGraph, $saTitle, $visitedNodes));

@@ -153,7 +153,10 @@ class ExportOntologyBot extends GardeningBot {
 
 		// create download link
 		global $wgServer, $wgScriptPath;
-		$downloadLink = wfMsg('smw_gard_export_download', "[".$wgServer.$wgScriptPath."/extensions/SemanticGardening/wikiexport/$outputFile ".wfMsg('smw_gard_export_here')."]");
+		$exportFileTitle = Title::newFromText(basename($wikiexportDir."/".$outputFile), NS_IMAGE);
+		$im_file = wfLocalFile($exportFileTitle);
+        $im_file->upload($wikiexportDir."/".$outputFile, "auto-inserted file", "noText");
+		$downloadLink = wfMsg('smw_gard_export_download', "[[".$exportFileTitle->getPrefixedText()."|".wfMsg('smw_gard_export_here')."]]");
 			
 		return "\n\n".$downloadLink."\n\n";
 	}
@@ -278,7 +281,7 @@ class ExportOntologyBot extends GardeningBot {
 	 		foreach($properties as $p) {
 	 			if (!$p->isUserDefined()) continue;
 	 			// create valid xml export ID for property. If no exists, skip it.
-	 			$propertyLocal = ExportOntologyBot::makeXMLExportId($p->getXSDValue());
+	 			$propertyLocal = ExportOntologyBot::makeXMLExportId(GardeningBot::getXSDValue($p));
 	 			if ($propertyLocal == NULL) continue;
 
 	 			$values = smwfGetStore()->getPropertyValues($inst, $p);
@@ -300,7 +303,7 @@ class ExportOntologyBot extends GardeningBot {
 							} else {
 								$wikiType = array_key_exists($smwValue->getTypeID(), $this->mapWikiTypeToXSD) ? $smwValue->getTypeID() : "_str";
 								$xsdType = $this->mapWikiTypeToXSD[$wikiType] == NULL ? 'string' : $this->mapWikiTypeToXSD[$wikiType];
-								$content = preg_replace("/\x07/","", smwfXMLContentEncode($smwValue->getXSDValue()));
+								$content = preg_replace("/\x07/","", smwfXMLContentEncode(GardeningBot::getXSDValue($smwValue)));
 								if ($convertDate) {
 									$content = str_replace('/', "-", $content); // SMW uses / XSD - for separation
 									$datetime = date_create(str_replace("T", "", $content));
@@ -370,7 +373,7 @@ class ExportOntologyBot extends GardeningBot {
 
 				$maxCards = smwfGetStore()->getPropertyValues($rp, smwfGetSemanticStore()->maxCardProp);
 				if ($maxCards != NULL || count($maxCards) > 0) {
-					$maxCard = intval($maxCards[0]->getXSDValue());
+					$maxCard = intval(GardeningBot::getXSDValue($maxCards[0]));
 
 				} else {
 					$maxCard = NULL;
@@ -378,7 +381,7 @@ class ExportOntologyBot extends GardeningBot {
 
 				$minCards = smwfGetStore()->getPropertyValues($rp, smwfGetSemanticStore()->minCardProp);
 				if ($minCards != NULL || count($minCards) > 0) {
-					$minCard = intval($minCards[0]->getXSDValue());
+					$minCard = intval(GardeningBot::getXSDValue($minCards[0]));
 
 				} else {
 					$minCard = NULL;
@@ -394,7 +397,7 @@ class ExportOntologyBot extends GardeningBot {
 					// default type: binary relation
 					$firstType = '_wpg';
 				} else {
-					$firstType = $type[0]->getXSDValue();
+					$firstType = GardeningBot::getXSDValue($type[0]);
 				}
 
 				if ($firstType == '_wpg') {
@@ -696,18 +699,18 @@ class ExportOntologyBot extends GardeningBot {
 	private function exportSI($pt, $value) {
 		if ( $value->isNumeric() ) {
 			$conversionFactorSIDV = SMWPropertyValue::makeProperty("___cfsi");
-			$dttitle = Title::newFromText($pt->getTypesValue()->getXSDValue(), SMW_NS_TYPE);
+			$dttitle = Title::newFromText(GardeningBot::getXSDValue($pt->getTypesValue()), SMW_NS_TYPE);
 			$conv = array();
 			if ($dttitle !== NULL)
 			$conv = &smwfGetStore()->getPropertyValues($dttitle, $conversionFactorSIDV);
 			if ( !empty($conv) ) {
-				$dv = SMWDataValueFactory::newPropertyValue($pt->getXSDValue(), $value->getXSDValue() . " " . $value->getUnit());
-				list($sivalue, $siunit) = $this->convertToSI($dv->getValueKey(), $conv[0]->getXSDValue());
+				$dv = SMWDataValueFactory::newPropertyValue(GardeningBot::getXSDValue($pt), GardeningBot::getXSDValue($value) . " " . $value->getUnit());
+				list($sivalue, $siunit) = $this->convertToSI($dv->getValueKey(), GardeningBot::getXSDValue($conv[0]));
 				$dv->setUserValue($sivalue . " " . $dv->getUnit()); // in order to translate to XSD
-				if ($dv->getXSDValue() != null && $dv->getXSDValue() != '') {
-					return "\t\t<prop:" . ExportOntologyBot::makeXMLExportId($pt->getXSDValue()) . ' rdf:datatype="&xsd;float">' .
-					smwfXMLContentEncode($dv->getXSDValue()) .
-								'</prop:' . ExportOntologyBot::makeXMLExportId($pt->getXSDValue()) . ">\n";
+				if (GardeningBot::getXSDValue($dv) != null && GardeningBot::getXSDValue($dv) != '') {
+					return "\t\t<prop:" . ExportOntologyBot::makeXMLExportId(GardeningBot::getXSDValue($pt)) . ' rdf:datatype="&xsd;float">' .
+					smwfXMLContentEncode(GardeningBot::getXSDValue($dv)) .
+								'</prop:' . ExportOntologyBot::makeXMLExportId(GardeningBot::getXSDValue($pt)) . ">\n";
 				}
 
 			}

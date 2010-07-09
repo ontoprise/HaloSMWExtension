@@ -731,8 +731,8 @@ class SimilarityBotStorageSQL extends SimilarityBotStorage {
 		$result = array();
 		// ignore several types
 		if (count($values1) >= 1 && count($values2) >= 1) {
-			$type1 = reset($values1)->getXSDValue();
-			$type2 = reset($values2)->getXSDValue();
+			$type1 =GardeningBot::getXSDValue( reset($values1));
+			$type2 = GardeningBot::getXSDValue(reset($values2));
 			if ($type1 == $type2) {
 				$result[] = SMWDataValueFactory::findTypeLabel($type1);
 			}

@@ -347,6 +347,7 @@ class MissingAnnotationStorageSQL2 extends MissingAnnotationStorageSQL {
 
 			foreach($categories as $category) {
 				$categoryTitle = Title::newFromText($category, NS_CATEGORY);
+				if (is_null($categoryTitle)) continue;
 				$db->query('INSERT INTO smw_ob_categories_super VALUES ('.$db->addQuotes($categoryTitle->getDBkey()).')');
 				$db->query('INSERT INTO smw_ob_categories VALUES ('.$db->addQuotes($categoryTitle->getDBkey()).')');
 			}

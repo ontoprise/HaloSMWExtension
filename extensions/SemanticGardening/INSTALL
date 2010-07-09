@@ -47,13 +47,6 @@ Installation:
 (4) To specify the gardening privilege, add:
 
 	$wgGroupPermissions['sysop']['gardening'] = true;
-	
-(5) If you want to use the ExportOntologyBot, create a directory 'wikiexport' in the 
-	directory $IP/extensions/SemanticGardening/.
-
-(6) Give the directory write access for the user runing Apache (or simply for all if possible). 
-
-
     
 Options:
 ========

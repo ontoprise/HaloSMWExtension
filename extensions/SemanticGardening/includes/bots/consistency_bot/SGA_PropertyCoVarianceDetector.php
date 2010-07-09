@@ -130,21 +130,21 @@ class PropertyCoVarianceDetector {
 
             // check for doubles
             if (count($minCard) > 1) {
-                $firstMinCard = reset($minCard)->getXSDValue();
+                $firstMinCard = GardeningBot::getXSDValue(reset($minCard));
                 $this->gi_store->addGardeningIssueAboutValue($this->bot->getBotID(), SMW_GARDISSUE_DOUBLE_MIN_CARD, $a, $firstMinCard);
 
             }
 
             // check for correct value
             $minCardDV = reset($minCard);
-            if ($this->isCardinalityValue($minCardDV->getXSDValue()) !== true) {
+            if ($this->isCardinalityValue(GardeningBot::getXSDValue($minCardDV)) !== true) {
 
-                $this->gi_store->addGardeningIssueAboutValue($this->bot->getBotID(), SMW_GARDISSUE_WRONG_MINCARD_VALUE, $a, $minCardDV->getXSDValue());
+                $this->gi_store->addGardeningIssueAboutValue($this->bot->getBotID(), SMW_GARDISSUE_WRONG_MINCARD_VALUE, $a, GardeningBot::getXSDValue($minCardDV));
 
             }
             // read min cards
 
-            $minCardValue = intval($minCardDV->getXSDValue());
+            $minCardValue = intval(GardeningBot::getXSDValue($minCardDV));
             $minCardValueOfParent = $this->cc_store->getMinCardinalityOfSuperProperty($this->propertyGraph, $a);
 
             $minCardCOVTest = $this->checkMinCardinalityForCovariance($minCardValue, $minCardValueOfParent);
@@ -179,19 +179,19 @@ class PropertyCoVarianceDetector {
         if (!empty($maxCard)) {
             // check for doubles
             if (count($maxCard) > 1) {
-                $firstMaxCard = reset($maxCard)->getXSDValue();
+                $firstMaxCard = GardeningBot::getXSDValue(reset($maxCard));
                 $this->gi_store->addGardeningIssueAboutValue($this->bot->getBotID(), SMW_GARDISSUE_DOUBLE_MAX_CARD, $a, $firstMaxCard);
 
             }
             // check for correct value format
             $maxCardDV = reset($maxCard);
-            if ($this->isCardinalityValue($maxCardDV->getXSDValue()) !== true) {
-                $this->gi_store->addGardeningIssueAboutValue($this->bot->getBotID(), SMW_GARDISSUE_WRONG_MAXCARD_VALUE, $a, $maxCardDV->getXSDValue());
+            if ($this->isCardinalityValue(GardeningBot::getXSDValue($maxCardDV)) !== true) {
+                $this->gi_store->addGardeningIssueAboutValue($this->bot->getBotID(), SMW_GARDISSUE_WRONG_MAXCARD_VALUE, $a, GardeningBot::getXSDValue($maxCardDV));
 
             }
             // check for co-variance with parent
 
-            $maxCardValue = intval($maxCardDV->getXSDValue());
+            $maxCardValue = intval(GardeningBot::getXSDValue($maxCardDV));
             $maxCardValueOfParent = $this->cc_store->getMaxCardinalityOfSuperProperty($this->propertyGraph, $a);
 
             $maxCardCOVTest = $this->checkMaxCardinalityForCovariance($maxCardValue, $maxCardValueOfParent);
@@ -222,7 +222,7 @@ class PropertyCoVarianceDetector {
       
         
         $firstType = reset($type);
-        if (count($type) == 0 || $firstType->getXSDValue() == '_wpg' || $firstType->getXSDValue() == '__nry') {
+        if (count($type) == 0 || GardeningBot::getXSDValue($firstType) == '_wpg' || GardeningBot::getXSDValue($firstType) == '__nry') {
             // default property (type wikipage), explicitly defined wikipage or nary property
             $domainRangeAnnotations = smwfGetStore()->getPropertyValues($p, smwfGetSemanticStore()->domainRangeHintProp);
 
@@ -236,7 +236,7 @@ class PropertyCoVarianceDetector {
                 $this->gi_store->addGardeningIssueAboutArticle($this->bot->getBotID(), SMW_GARDISSUE_DOMAINS_NOT_DEFINED, $p);
             }
 
-            if (count($type) > 0 && $firstType->getXSDValue() == '__nry') {
+            if (count($type) > 0 && GardeningBot::getXSDValue($firstType) == '__nry') {
                 // n-ary relation
                 // only complain about missing range if it contains at least one Type:Page
                 if ($this->containsPageType($firstType) && !$this->containsRange($domainRangeAnnotations)) {
@@ -382,7 +382,7 @@ class PropertyCoVarianceDetector {
             $typesOfSuperAttribute = $this->cc_store->getTypeOfSuperProperty($this->propertyGraph, $a);
             $typesAsString = array();
             foreach($typesOfSuperAttribute as $t) {
-                $typesAsString[] = $t->getXSDValue();
+                $typesAsString[] = GardeningBot::getXSDValue($t);
             }
             $typesAsString = array_unique($typesAsString);
             if (count($typesAsString) > 1) {
@@ -393,7 +393,7 @@ class PropertyCoVarianceDetector {
             // only check first 'has type' value, because if more exist, it will be indicated anyway.
             $firstType = count($typesOfSuperAttribute) > 0 ? reset($typesOfSuperAttribute) : null;
             if ($firstType != null && $firstType instanceof SMWTypesValue) {
-                if ($firstType->getXSDValue() == reset($types)->getXSDValue()) {
+                if (GardeningBot::getXSDValue($firstType) == GardeningBot::getXSDValue(reset($types))) {
                     $covariant = true;
                 }
             }

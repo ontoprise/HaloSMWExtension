@@ -254,7 +254,7 @@ class AnnotationLevelConsistency {
 			$minCards = CARDINALITY_MIN;
 		} else {
 			// assume there's only one defined. If not it will be found in co-variance checker anyway
-			$minCards = $minCardArray[0]->getXSDValue() + 0;
+			$minCards = intval(GardeningBot::getXSDValue($minCardArray[0]));
 		}
 
 		// get maximum cardinality
@@ -267,7 +267,7 @@ class AnnotationLevelConsistency {
 
 		} else {
 			// assume there's only one defined. If not it will be found in co-variance checker anyway
-			$maxCards = $maxCardsArray[0]->getXSDValue() + 0;
+			$maxCards = intval(GardeningBot::getXSDValue($maxCardsArray[0]));
 		}
 
 		if ($minCards == CARDINALITY_MIN && $maxCards == CARDINALITY_UNLIMITED) {
@@ -353,7 +353,7 @@ class AnnotationLevelConsistency {
 
 		foreach($properties as $a) {
 			// get minimum cardinality
-			$aTitle = Title::newFromDBkey($a->getXSDValue(), SMW_NS_PROPERTY);
+			$aTitle = Title::newFromDBkey(GardeningBot::getXSDValue($a), SMW_NS_PROPERTY);
 			$minCardArray = smwfGetStore()->getPropertyValues($aTitle, smwfGetSemanticStore()->minCardProp);
 
 			if (empty($minCardArray)) {
@@ -361,7 +361,7 @@ class AnnotationLevelConsistency {
 				$minCards = CARDINALITY_MIN;
 			} else {
 				// assume there's only one defined. If not it will be found in co-variance checker anyway
-				$minCards = $minCardArray[0]->getXSDValue() + 0;
+				$minCards = intval(GardeningBot::getXSDValue($minCardArray[0]));
 			}
 
 			// get maximum cardinality
@@ -373,7 +373,7 @@ class AnnotationLevelConsistency {
 
 			} else {
 				// assume there's only one defined. If not it will be found in co-variance checker anyway
-				$maxCards = $maxCardsArray[0]->getXSDValue() + 0;
+				$maxCards = intval(GardeningBot::getXSDValue($maxCardsArray[0]));
 			}
 
 			if ($minCards == CARDINALITY_MIN && $maxCards == CARDINALITY_UNLIMITED) {
@@ -419,7 +419,7 @@ class AnnotationLevelConsistency {
 				$minCards = CARDINALITY_MIN;
 			} else {
 				// assume there's only one defined. If not it will be found in co-variance checker anyway
-				$minCards = $minCardArray[0]->getXSDValue() + 0;
+				$minCards = intval(GardeningBot::getXSDValue($minCardArray[0]));
 			}
 
 			if ($minCards == CARDINALITY_MIN) {
@@ -481,7 +481,7 @@ class AnnotationLevelConsistency {
 
 			// check if a unit matches
 			foreach($conversion_factors as $c) {
-				$valuetrimmed = trim($c->getXSDValue());
+				$valuetrimmed = trim(GardeningBot::getXSDValue($c));
 				// remove linear factory, then split the units separted by comma
 				$unitString = trim(substr($valuetrimmed, stripos($valuetrimmed, " ")));
 				$units = explode(",", $unitString);
@@ -493,7 +493,7 @@ class AnnotationLevelConsistency {
 
 			// check if a SI unit matches
 			foreach($si_conversion_factors as $c) {
-				$valuetrimmed = trim($c->getXSDValue());
+				$valuetrimmed = trim(GardeningBot::getXSDValue($c));
 				// remove linear factory, then split the units separted by comma
 				$unitString = trim(substr($valuetrimmed, stripos($valuetrimmed, " ")));
 				$units = explode(",", $unitString);
@@ -520,21 +520,21 @@ class AnnotationLevelConsistency {
 		$conversionFactorSIDV = SMWPropertyValue::makeProperty("___cfsi");
 		$properties = smwfGetStore()->getProperties($instance);
 		foreach($properties as $p) {
-			$pTitle = Title::newFromDBkey($p->getXSDValue(), SMW_NS_PROPERTY);
+			$pTitle = Title::newFromDBkey(GardeningBot::getXSDValue($p), SMW_NS_PROPERTY);
 			$values = smwfGetStore()->getPropertyValues($instance, $p);
 			foreach($values as $v) {
 				if ($v->getUnit() != '') {
 					$type = smwfGetStore()->getPropertyValues($pTitle, $hasTypeDV);
 					$firstType = reset($type);
 					if (count($type) == 0 || $firstType->isBuiltIn()) continue;
-					$typeTitle = Title::newFromText($firstType->getXSDValue(), SMW_NS_TYPE);
+					$typeTitle = Title::newFromText(GardeningBot::getXSDValue($firstType), SMW_NS_TYPE);
 					$conversion_factors = smwfGetStore()->getPropertyValues($typeTitle, $conversionFactorDV);
 					$si_conversion_factors = smwfGetStore()->getPropertyValues($typeTitle, $conversionFactorSIDV);
 					$correct_unit = false;
 
 					// check if a unit matches
 					foreach($conversion_factors as $c) {
-						$valuetrimmed = trim($c->getXSDValue());
+						$valuetrimmed = trim(GardeningBot::getXSDValue($c));
 						// remove linear factory, then split the units separted by comma
 						$unitString = trim(substr($valuetrimmed, stripos($valuetrimmed, " ")));
 						$units = explode(",", $unitString);
@@ -546,7 +546,7 @@ class AnnotationLevelConsistency {
 
 					// check if a SI unit matches
 					foreach($si_conversion_factors as $c) {
-						$valuetrimmed = trim($c->getXSDValue());
+						$valuetrimmed = trim(GardeningBot::getXSDValue($c));
 						// remove linear factory, then split the units separted by comma
 						$unitString = trim(substr($valuetrimmed, stripos($valuetrimmed, " ")));
 						$units = explode(",", $unitString);
@@ -570,7 +570,7 @@ class AnnotationLevelConsistency {
 		$type = smwfGetStore()->getPropertyValues($property, $hasTypeDV);
 		$firstType = reset($type);
 		if (count($type) == 0 || $firstType->isBuiltIn()) return;
-		$typeTitle = Title::newFromText($firstType->getXSDValue(), SMW_NS_TYPE);
+		$typeTitle = Title::newFromText(GardeningBot::getXSDValue($firstType), SMW_NS_TYPE);
 		$subjects = smwfGetStore()->getAllPropertySubjects(SMWPropertyValue::makeUserProperty($property->getDBkey()));
 		foreach($subjects as $s) {
 			$propertyDV = SMWPropertyValue::makeUserProperty($property->getDBkey());
@@ -583,7 +583,7 @@ class AnnotationLevelConsistency {
 
 					// check if a unit matches
 					foreach($conversion_factors as $c) {
-						$valuetrimmed = trim($c->getXSDValue());
+						$valuetrimmed = trim(GardeningBot::getXSDValue($c));
 						// remove linear factory, then split the units separted by comma
 						$unitString = trim(substr($valuetrimmed, stripos($valuetrimmed, " ")));
 						$units = explode(",", $unitString);
@@ -595,7 +595,7 @@ class AnnotationLevelConsistency {
 
 					// check if a SI unit matches
 					foreach($si_conversion_factors as $c) {
-						$valuetrimmed = trim($c->getXSDValue());
+						$valuetrimmed = trim(GardeningBot::getXSDValue($c));
 						// remove linear factory, then split the units separted by comma
 						$unitString = trim(substr($valuetrimmed, stripos($valuetrimmed, " ")));
 						$units = explode(",", $unitString);

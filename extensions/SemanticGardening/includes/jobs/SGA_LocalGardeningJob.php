@@ -175,7 +175,7 @@ class SMW_LocalGardeningJob extends Job {
         // domain/range check
         foreach($properties as $property) {
         	if (!$property->isUserDefined()) continue;
-        	$propertyTitle = Title::newFromDBkey($property->getXSDValue(), SMW_NS_PROPERTY);
+        	$propertyTitle = Title::newFromDBkey(GardeningBot::getXSDValue($property), SMW_NS_PROPERTY);
         	
             $this->annot_checker->checkPropertyAnnotations($subjects, $propertyTitle);
             
