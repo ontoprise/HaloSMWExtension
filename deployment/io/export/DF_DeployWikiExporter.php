@@ -294,8 +294,10 @@ class DeployXmlDumpWriter extends XmlDumpWriter {
 	function schemaVersion() {
 		return "1.0";
 	}
-
-	function openStream() {
+	
+	// namespace must not be changed
+	// otherwise MW import won't work.
+	/*function openStream() {
 		global $wgContLanguageCode;
 		$ver = $this->schemaVersion();
 		return wfElement( 'mediawiki', array(
@@ -307,7 +309,7 @@ class DeployXmlDumpWriter extends XmlDumpWriter {
 		null ) .
             "\n" .
 		$this->siteInfo();
-	}
+	}*/
 
 	function openPage( $row ) {
 		$out = "  <page>\n";

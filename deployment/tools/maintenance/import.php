@@ -27,6 +27,7 @@ $optionsWithArgs = array( 'report' );
 require_once( '../../../maintenance/commandLine.inc' );
 require_once('../../io/import/DF_DeployWikiImporter.php');
 require_once('../../io/import/DF_BackupReader.php');
+require_once('../../tools/smwadmin/DF_Tools.php');
 
 $langClass = "DF_Language_$wgLanguageCode";
 if (!file_exists("../../languages/$langClass.php")) {

@@ -39,9 +39,11 @@ class DeployWikiImporter extends WikiImporter {
 		parent::__construct($source);
 		$this->mode = $mode;
 		$this->callback = $callback;
+		
 	}
 
 function in_page( $parser, $name, $attribs ) {
+	
             $name = $this->stripXmlNamespace($name);
         $this->debug( "in_page $name" );
         switch( $name ) {
@@ -56,7 +58,7 @@ function in_page( $parser, $name, $attribs ) {
         case "revision":
             $this->push( "revision" );
             if( is_object( $this->pageTitle ) ) {
-                $this->workRevision = new DeployWikiRevision;
+                $this->workRevision = new DeployWikiRevision($this->mode, $this->callback);
                 $this->workRevision->setTitle( $this->pageTitle );
                 $this->workRevisionCount++;
             } else {
@@ -68,7 +70,7 @@ function in_page( $parser, $name, $attribs ) {
         case "upload":
             $this->push( "upload" );
             if( is_object( $this->pageTitle ) ) {
-                $this->workRevision = new DeployWikiRevision;
+                $this->workRevision = new DeployWikiRevision($this->mode, $this->callback);
                 $this->workRevision->setTitle( $this->pageTitle );
                 $this->uploadCount++;
             } else {
@@ -84,6 +86,7 @@ function in_page( $parser, $name, $attribs ) {
 
 
 	function in_revision( $parser, $name, $attribs ) {
+		
 		$this->debug( "in_revision $name" );
 		switch( $name ) {
 			case "oversion":
@@ -228,6 +231,7 @@ class DeployWikiRevision extends WikiRevision {
 				
 		$article = new Article( $this->title );
 		$pageId = $article->getId();
+		
 		if( $pageId == 0 ) {
 			# must create the page...
 			return $this->mode == DEPLOYWIKIREVISION_INFO ? false : parent::importOldRevision();
@@ -238,7 +242,7 @@ class DeployWikiRevision extends WikiRevision {
 				
 				$ontversion = SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString('df_contenthash'));
 				$values = smwfGetStore()->getPropertyValues($this->title, $ontversion);
-				if (count($values) > 0) $exp_hash = strtolower(reset($values)->getXSDValue()); else $exp_hash = NULL;
+				if (count($values) > 0) $exp_hash = strtolower(Tools::getXSDValue(reset($values))); else $exp_hash = NULL;
 				$rawtext = preg_replace('/\n\[\['.$dfgLang->getLanguageString('df_contenthash').'\s*::\s*\w+(\s*\|)?[^]]*\]\]/', "", $prior->getRawText());
 				$hash = md5($rawtext);
 				

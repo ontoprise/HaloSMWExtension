@@ -95,10 +95,10 @@ function dumpDescriptor($bundeID, $output = "deploy.xml", $dumpFile = "dump.xml"
 		fwrite( STDERR , "No description annotation on $bundeID" . "\n" );
 	}
 
-	$versionText = count($version) > 0 ? reset($version)->getXSDValue() : "no version";
-	$vendorText = count($vendor) > 0 ? reset($vendor)->getXSDValue() : "no vendor";
-	$instdirText = count($instdir) > 0 ? reset($instdir)->getXSDValue() : "no instdir";
-	$descriptionText = count($description) > 0 ? reset($description)->getXSDValue() : "no description";
+	$versionText = count($version) > 0 ? Tools::getXSDValue(reset($version)) : "no version";
+	$vendorText = count($vendor) > 0 ? Tools::getXSDValue(reset($vendor)) : "no vendor";
+	$instdirText = count($instdir) > 0 ? Tools::getXSDValue(reset($instdir)) : "no instdir";
+	$descriptionText = count($description) > 0 ? Tools::getXSDValue(reset($description)) : "no description";
 
 	$handle = fopen("$output", "w");
 	$src = dirname(__FILE__)."/../../../";
@@ -119,9 +119,9 @@ function dumpDescriptor($bundeID, $output = "deploy.xml", $dumpFile = "dump.xml"
 	$xml .= "\t\t".'<dependencies>'."\n";
 	foreach($dependencies as $dep) {
 		$dvs = $dep->getDVs();
-		$id = reset($dvs)->getXSDValue();
-		$minVersion = next($dvs)->getXSDValue();
-		$maxVersion = next($dvs)->getXSDValue();
+		$id = Tools::getXSDValue(reset($dvs));
+		$minVersion = Tools::getXSDValue(next($dvs));
+		$maxVersion = Tools::getXSDValue(next($dvs));
 		$xml .= "\t\t\t".'<dependency from="'.$minVersion.'" to="'.$maxVersion.'">'.$id.'</dependency>'."\n";
 	}
 	$xml .= "\t".'</dependencies>'."\n";
