@@ -8,7 +8,7 @@ Installation instructions
     PHP 5.2.x
 	MediaWiki 1.15.3
 	Semantic MediaWiki 1.4.x or higher
-	Semantic Forms 1.9
+	Semantic Forms 1.9 or 1.9.1
 	Parser Functions
 	String Functions 2.0 or higher
 	Deployment Framework (optional)
@@ -18,8 +18,11 @@ Installation instructions
 #
 
 1. Patch process:
-	1.1 The RichMedia extension comes with two different patch files.
-	- '/extensions/RichMediaRichMediaPatchForSF1_9.txt': This file provides the necessary patches for Semantic Forms.
+	1.1 The RichMedia extension comes with several patch files, where two must
+    be applied. One file patches Mediawiki and the other the Semantic Forms
+    extension. Depending on the version number choose the correct patch file.
+	- '/extensions/RichMediaRichMediaPatchForSF1_9.txt': This file provides the necessary patches for Semantic Forms 1.9
+    - '/extensions/RichMediaRichMediaPatchForSF1_9_1.txt': This file provides the necessary patches for Semantic Forms 1.9.1
 	- '/extensions/RichMedia/RichMediaPatchForMW1_15_3.txt': This is needed to patch MediaWiki in version 1.15.3
 	
 	Note: We can not ensure that this patch works properly for other versions of MediaWiki.
