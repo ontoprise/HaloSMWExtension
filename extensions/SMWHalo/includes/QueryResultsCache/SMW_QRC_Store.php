@@ -100,4 +100,9 @@ interface SMWQRCStoreInterface {
 	 * Remove a query result with a given query id from the cache
 	 */
 	public function deleteQueryData($queryId);
+	
+	/*
+	 * Invalidate a query result and update its score
+	 */
+	public function invalidateQueryData($queryIds);
 }

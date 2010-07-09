@@ -33,6 +33,14 @@ class SMWQRCQueryResultsCache {
 	 * the cache otherwise.
 	 */
 	public function getQueryResult(SMWQuery $query, $force=false, $cacheThis=true){
+		global $secondTime;
+		
+		global $qrcF;
+		if(!$qrcF){
+			$qrcF = true;
+			//$this->updateQueryResult(SMWQRCQueryManagementHandler::getInstance()->getQueryId($query));
+		}
+		
 		//get title of article in which query was executed 
 		//or set title to false if query was executed somehow else 
 		global $wgParser;
@@ -41,8 +49,7 @@ class SMWQRCQueryResultsCache {
 			$title = $wgParser->getTitle();
 		}
 		
-		global $smwgDefaultStore;
-		$defaultStore = new $smwgDefaultStore();
+		$defaultStore = smwfGetStore();
 		
 		// update the semdata object for this title, respectively 
 		// the query management annotations
@@ -172,6 +179,8 @@ class SMWQRCQueryResultsCache {
 			SMWQueryProcessor::createQuery($queryString,$params);
 		$queryResults = $this->getQueryResult($query, true, false)->getResults();
 		
+		//echo('<pre>'.print_r($queryResults, true).'</pre>');
+		
 		if(count($queryResults) > 0){ //this query is still in use
 			global $smwgDefaultStore;
 			$defaultStore = new $smwgDefaultStore();
@@ -202,6 +211,108 @@ class SMWQRCQueryResultsCache {
 			$qrcStore->deleteQueryData($queryId);		
 		}
 		return true;
+	}
+	
+	public function updateData(SMWSemanticData $data, $store){
+		//return $store->doUpdateData($data);
+		
+		//get list of properties which are set by this article
+		//todo: think about only querying for modified properties
+		$properties = $data->getProperties();
+		
+		foreach($properties as $name => $property){
+			//ignore internal properties
+			if(!$property->isUserDefined() || $name == QRC_HQID_LABEL){
+				unset($properties[$name]);
+			}
+		}
+		
+		//determine differences between the new and the original semantic data
+		global $wgTitle;
+		if($wgTitle){
+			$originalData = $store->getSemanticData($wgTitle);
+			foreach($originalData->getProperties() as $oName => $oProperty){
+				if(array_key_exists($oName, $properties)){
+					$oValues = $originalData->getPropertyValues($oProperty);
+					$values = $data->getPropertyValues($properties[$oName]); 
+					 
+					if(count($oValues) == count($values)){
+						$oWikiValues = array();
+						foreach($oValues as $key => $value){
+							$oWikiValues[$value->getWikiValue()] = true;
+						}
+						
+						$wikiValues = array();
+						foreach($values as $key => $value){
+							$wikiValues[$value->getWikiValue()] = true;
+						}
+						
+						$unset = true;
+						foreach(array_keys($values) as $value){
+							if(!array_key_exists($value, $oWikiValues)){
+								$unset = false;		
+								break;
+							}
+						}
+						
+						if($unset) unset($properties[$oName]);
+					}
+					
+					//echo('<pre>'.print_r($oProperty, true).'</pre>');
+					//echo('<pre>'.print_r(, true).'</pre>');
+				} else if($oProperty->isUserDefined() && $name != QRC_HQID_LABEL){
+					$properties[$oName] = $oProperty;
+				}
+			}
+		}
+		
+		//deal with categories and determine which queries to update
+		$categories = array();
+		global $wgParser;
+		if($wgParser && $wgParser->getOutput() && $wgTitle){
+			$categories = $wgParser->getOutput()->getCategories();
+			
+			$originalCategories = $wgTitle->getParentCategories();
+			//echo('<pre>'.print_r($originalCategories, true).'</pre>');
+			foreach(array_keys($originalCategories) as $category){
+				$category = substr($category, strpos($category, ':') + 1);
+				if(array_key_exists($category, $categories)){
+					unset($categories[$category]);
+				} else {
+					$categories[$category] = true;
+				}
+			}
+		}
+		
+		echo('<pre>'.print_r(array_keys($categories), true).'</pre>');
+		echo('<pre>'.print_r(array_keys($properties), true).'</pre>');
+		
+		
+		if(count($properties) > 0 || count($categories) > 0){
+			//query for all articles that use a query which depends on one of the properties
+			$queryString = SMWQRCQueryManagementHandler::getInstance()
+				->getSearchQueriesAffectedByDataModification(array_keys($properties), array_keys($categories));
+			
+			SMWQueryProcessor::processFunctionParams(array($queryString) 
+				,$queryString,$params,$printouts);
+			$query = 
+				SMWQueryProcessor::createQuery($queryString,$params);
+			$queryResults = $this->getQueryResult($query, true, false)->getResults();
+			
+			//get query ids which have to be invalidated
+			$queryIds = array();
+			foreach($queryResults as $queryResult){
+				$semanticData = $store->getSemanticData($queryResult);
+				
+				$queryIds = array_merge($queryIds,
+					SMWQRCQueryManagementHandler::getInstance()->getIdsOfQueriesUsingProperty($semanticData, $properties));
+			}
+			
+			$qrcStore = SMWQRCStore::getInstance()->getDB();
+			$qrcStore->invalidateQueryData($queryIds);
+		}
+		
+		return $store->doUpdateData($data);
 	}
 	
 }

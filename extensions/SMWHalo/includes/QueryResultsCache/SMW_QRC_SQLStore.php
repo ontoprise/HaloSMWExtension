@@ -160,5 +160,23 @@ class SMWQRCSQLStore implements SMWQRCStoreInterface{
 		
 		$db->delete($db->tableName("smw_qrc_cache"), 
 				array(	'query_id' => $queryId));
-	}	
+	}
+
+	public function invalidateQueryData($queryIds){
+		$db =& wfGetDB( DB_MASTER );
+
+		$qrcTable = $db->tableName('smw_qrc_cache');
+		
+		//not good that the store knows about the priority algorithm, but faster than first querying for all data
+		global $lastUpdateTimeStampWeight, $accessFrequencyWeight, $invalidationFrequencyWeight;
+		
+		$query = "UPDATE $qrcTable SET invalidation_frequency = invalidation_frequency + 1, dirty=true, "; 
+		$query .= "priority = last_update * $lastUpdateTimeStampWeight - access_frequency * $accessFrequencyWeight - (invalidation_frequency + 1) * $invalidationFrequencyWeight"; 
+		$query .= " WHERE query_id=\"";
+		$query .= implode('" OR query_id="', array_keys($queryIds));
+		$query .= '"';
+
+		$db->query($query, 'Database::update');
+
+	}
 }

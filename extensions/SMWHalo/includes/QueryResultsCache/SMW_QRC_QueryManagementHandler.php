@@ -46,8 +46,8 @@ class SMWQRCQueryManagementHandler {
 		SMWPropertyValue::registerProperty('___QRC_HQL', '_num', QRC_HQL_LABEL , false);
 		SMWPropertyValue::registerProperty('___QRC_HQO', '_num', QRC_HQO_LABEL , false);
 		
-		SMWPropertyValue::registerProperty('___QRC_DOP', '_num', QRC_DOP_LABEL , false);
-		SMWPropertyValue::registerProperty('___QRC_DOC', '_num', QRC_DOC_LABEL , false);
+		SMWPropertyValue::registerProperty('___QRC_DOP', '_str', QRC_DOP_LABEL , false);
+		SMWPropertyValue::registerProperty('___QRC_DOC', '_str', QRC_DOC_LABEL , false);
 		return true;
 	}
 	
@@ -84,16 +84,21 @@ class SMWQRCQueryManagementHandler {
 		if($query->getLimit()) $dataValue->setQueryLimit($query->getLimit());
 		if($query->getOffset()) $dataValue->setQueryOffset($query->getOffset());
 		
-		if($query instanceof SMWQuery){
-			list($properties, $categories) = $this->getQueryParts($query->getDescription());
+		$properties = array();
+		$categories = array();
 		
-			foreach($properties as $p){
-				$dataValue->addPropertyDependency($p);
-			}
-			
-			foreach($categories as $c){
-				$dataValue->addCategoryDependency($c);
-			}
+		if ($query instanceof SMWSPARQLQuery){
+			list($properties, $categories) = $this->getSPARQLQueryParts($query);
+		} else  if($query instanceof SMWQuery){
+			list($properties, $categories) = $this->getQueryParts($query->getDescription());
+		}
+
+		foreach($properties as $p => $dontCare){
+			$dataValue->addPropertyDependency($p);
+		}
+		
+		foreach($categories as $c => $dontCare){
+			$dataValue->addCategoryDependency($c);
 		}
 		
 		$semanticData->addPropertyObjectValue($propertyValue, $dataValue);
@@ -105,7 +110,20 @@ class SMWQRCQueryManagementHandler {
 	 */
 	public function getQueryId($query){
 		$rawId = $query->getQueryString().' limit='.$query->getLimit().' offset='.$query->getOffset();
+		
+		//the id of a SPARQL query also depends on the printrequests,
+		//because not only the subjects but the complete query result
+		//is cached
+		if($query instanceof SMWSPARQLQuery){
+			$prProperties = $this->getPrintRequestsProperties($query->getExtraPrintouts());
+			$rawId .= ';'.implode(';', array_keys($prProperties));
+			if($this->isCategoryRequestedInPrintRequests($query->getExtraPrintouts())){
+				$rawId .= ';CategoryRequested';
+			}
+		}
+		
 		$id = md5($rawId);
+		
 		return $id;
 	}
 	
@@ -144,6 +162,31 @@ class SMWQRCQueryManagementHandler {
 	}
 	
 	/*
+	 * Get query string for searching for articles containing queries
+	 * which must be invalidated becaue of property modifications
+	 */
+	public function getSearchQueriesAffectedByDataModification($propertyNames, $categoryNames){
+		$queryString = '[['.QRC_UQC_LABEL.'::<q>';
+		
+		if(count($propertyNames) > 0){
+			$queryString .= '[['.QRC_DOP_LABEL.'::';
+			$queryString .= implode(']] OR [['.QRC_DOP_LABEL.'::', $propertyNames);
+			$queryString .= ']]';
+		}
+		
+		if(count($categoryNames) > 0){
+			if(count($propertyNames) > 0) $queryString .= ' OR ';
+			$queryString .= '[['.QRC_DOC_LABEL.'::';
+			$queryString .= implode(']] OR [['.QRC_DOC_LABEL.'::', $categoryNames);
+			$queryString .= ']]';
+		}
+		
+		$queryString .= '</q>]]';
+		
+		return $queryString;
+	}
+	
+	/*
 	 * Returns all properties and categories, which are used in a query
 	 */
 	private function getQueryParts($description, $properties = array(), $categories = array()){
@@ -174,6 +217,131 @@ class SMWQRCQueryManagementHandler {
 	private function hasSubdescription($description){
 		if($description instanceof SMWDisjunction ||	$description instanceof SMWConjunction){
 			return true;
+		}
+		return false;
+	}
+	
+	
+	public function getIdsOfQueriesUsingProperty($semanticData, $properties){
+		$queryIds = array();
+		
+		$property = SMWPropertyValue::makeProperty('___QRC_UQC');
+		$propVals = $semanticData->getPropertyValues($property);
+			
+		foreach($propVals as $pVs){
+			$pVs = $pVs->getDBKeys();
+			$pVs = $pVs[0];
+			
+			$break = false;
+			$queryId = '';
+			foreach($pVs as $pV){
+				if($pV[0] == QRC_DOP_LABEL && array_key_exists($pV[1][0], $properties)) $break = true;
+				if($pV[0] == QRC_HQID_LABEL) $queryId = $pV[1][0];
+				
+				if($break && strlen($queryId) > 0){
+					$queryIds[$queryId] = true;
+					break;
+				}
+			}
+		}
+		return $queryIds;	
+	}
+	
+	private function getSPARQLQueryParts($query){
+		//todo:deal with categories
+		
+		$properties = array();
+		$categories = array();
+		
+		$description = $query->getDescription();
+		$extraPrintOuts = $query->getExtraPrintouts();
+		
+		if (!($description instanceof SMWSPARQLDescription)) {
+			//echo('<pre>'.print_r($description, true).'</pre>');
+			//echo('<pre>'.print_r($extraPrintOuts, true).'</pre>');
+			
+			list($properties, $categories) = $this->getQueryParts($description);
+		} else {
+			if(!class_exists('ARC2')){
+				global $smwgHaloIP;
+				require_once( "$smwgHaloIP/libs/arc/ARC2.php" );
+			}
+			
+			$prefixes = str_replace(':<', ': <', TSNamespaces::getAllPrefixes());
+			$queryString = $prefixes . $query->getQueryString();
+			
+			$parser = ARC2::getSPARQLParser();
+			$parser->parse($queryString);
+			$queryInfo = $parser->getQueryInfos();
+			
+			if (array_key_exists('query', $queryInfo)) {
+				if ($queryInfo['query']['type'] == 'select') {
+					list($properties, $categories) = $this->getPropertiesInSPARQLPattern(
+						$queryInfo['query']['pattern'], $queryInfo['prefixes']['prop:'], $queryInfo['prefixes']['rdf:'].'type', $queryInfo['prefixes']['cat:']);
+				}
+			}
+		}
+		
+		//deal with extra printouts
+		$properties = array_merge($properties, $this->getPrintRequestsProperties($extraPrintOuts));
+		
+		return array($properties, $categories);
+	}
+	
+	private function getPropertiesInSPARQLPattern($pattern, $propertyNS, $categoryPred, $categoryNS, 
+			$properties = array(), $categories = array()){
+		switch ($pattern['type']) {
+			case 'group':
+			case 'union':
+			case 'optional':
+				foreach($pattern['patterns'] as $p) {
+					list($properties, $categories) = 
+						$this->getPropertiesInSPARQLPattern($p, $propertyNS, $categoryPred, $categoryNS, $properties, $categories);
+				}
+				break;
+			case 'triples':
+				foreach ($pattern['patterns'] as $triple) {
+					if ($triple['p_type'] == 'uri') {
+						if(strpos($triple['p'], $propertyNS) === 0){
+							$properties[substr($triple['p'], strlen($propertyNS))] = true;
+						} else if (strpos($triple['p'], $categoryPred) === 0){
+							if ($triple['o_type'] == 'uri') {
+								if(strpos($triple['o'], $categoryNS) === 0){
+									$categories[substr($triple['o'], strlen($categoryNS))] = true;
+								}
+							}
+						}
+					} 
+				}
+				break;
+			default:
+				break;
+		}
+		
+		return array($properties, $categories);
+	}
+	
+	private function getPrintRequestsProperties($printRequests){
+		$properties = array();
+		
+		foreach ($printRequests as $printRequest) {
+			if ($printRequest->getMode() == SMWPrintRequest::PRINT_THIS) {
+				$propertyName = $printRequest->getData()->getText();
+				$properties[$propertyName] = true;  
+			} else if ($printRequest->getMode() == SMWPrintRequest::PRINT_PROP){
+				$propertyName = $printRequest->getData()->getWikiPageValue();
+				$properties[$propertyName] = true;
+			}
+		}
+		
+		return $properties;	
+	}
+	
+	private function isCategoryRequestedInPrintRequests($printRequests){
+		foreach ($printRequests as $printRequest) {
+			if ($printRequest->getMode() == SMWPrintRequest::PRINT_CATS) {
+				return true;  
+			}
 		}
 		return false;
 	}
