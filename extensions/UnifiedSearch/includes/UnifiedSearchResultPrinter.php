@@ -22,7 +22,7 @@ class UnifiedSearchResult {
 		$this->luceneResult = $luceneResult;
 		$this->terms = array();
 		foreach($terms as $t) {
-			array_push($this->terms, preg_quote($t));
+			array_push($this->terms, preg_quote($t,"/"));
 		}
 	}
 
