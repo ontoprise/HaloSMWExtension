@@ -273,6 +273,10 @@
 						select="@namespace" />')</xsl:attribute>
 					<xsl:attribute name="id"><xsl:value-of
 						select="@id" /></xsl:attribute>
+					<xsl:if test="@uri">
+						<xsl:attribute name="uri"><xsl:value-of
+							select="@uri" /></xsl:attribute>
+					</xsl:if>
 					<xsl:variable name="title" select="@title" />
 					<xsl:choose>
 						<xsl:when test="@namespace=''">
@@ -302,6 +306,10 @@
 
 				<a class="navigationLink" style="margin-left:5px;">
 					<xsl:choose>
+						<xsl:when test="@uri">
+							<xsl:attribute name="href"><xsl:value-of
+								select="@uri" /></xsl:attribute>
+						</xsl:when>
 						<xsl:when test="@namespace=''">
 							<xsl:attribute name="href"><xsl:value-of
 								select="substring-before($param-wiki-path,'$1')" /><xsl:value-of
@@ -315,10 +323,12 @@
 					</xsl:choose>
 					{{SMW_OB_OPEN}}
 				</a>
-               <xsl:if test="count(metadata/property) > 0">
-                    <xsl:variable name="metaid" select="child::metadata/@id" />
-                    <img class="metadataContainerSwitch" src="{$param-img-directory}/extensions/SMWHalo/skins/OntologyBrowser/images/metadata.gif" onclick="instanceActionListener.toggleMetadata(event, this,'{$metaid}')"/>
-                </xsl:if>
+				<xsl:if test="count(metadata/property) > 0">
+					<xsl:variable name="metaid" select="child::metadata/@id" />
+					<img class="metadataContainerSwitch"
+						src="{$param-img-directory}/extensions/SMWHalo/skins/OntologyBrowser/images/metadata.gif"
+						onclick="instanceActionListener.toggleMetadata(event, this,'{$metaid}')" />
+				</xsl:if>
 			</td>
 			<td>
 				<xsl:if test="@superCat">
@@ -336,8 +346,8 @@
 			</td>
 		</tr>
 		<tr>
-        <xsl:call-template name="metadata"/>
-        </tr>
+			<xsl:call-template name="metadata" />
+		</tr>
 	</xsl:template>
 
 	<xsl:template match="annotationsList">
@@ -405,10 +415,12 @@
 						select="$param-ns-property" />:<xsl:value-of select="@title_url" /></xsl:attribute>
 					{{SMW_OB_OPEN}}
 				</a>
-				 <xsl:if test="count(metadata/property) > 0"> 
-				    <xsl:variable name="metaid" select="child::metadata/@id" />
-                    <img class="metadataContainerSwitch" src="{$param-img-directory}/extensions/SMWHalo/skins/OntologyBrowser/images/metadata.gif" onclick="annotationActionListener.toggleMetadata(event, this,'{$metaid}')"/>
-                </xsl:if>
+				<xsl:if test="count(metadata/property) > 0">
+					<xsl:variable name="metaid" select="child::metadata/@id" />
+					<img class="metadataContainerSwitch"
+						src="{$param-img-directory}/extensions/SMWHalo/skins/OntologyBrowser/images/metadata.gif"
+						onclick="annotationActionListener.toggleMetadata(event, this,'{$metaid}')" />
+				</xsl:if>
 			</td>
 			<td align="right">
 
@@ -416,6 +428,10 @@
 					<xsl:when test="child::param[1][@isLink]">
 						<a style="margin-left:5px;">
 							<xsl:choose>
+							<xsl:when test="child::param[1][@uri]">
+                                            <xsl:attribute name="href"><xsl:value-of
+                                                select="child::param[1]/@uri" /></xsl:attribute>
+                                        </xsl:when>
 								<xsl:when test="child::param[1][@notexists]">
 									<xsl:attribute name="href"><xsl:value-of
 										select="substring-before($param-wiki-path,'$1')" /><xsl:value-of
@@ -454,6 +470,10 @@
 								<a style="margin-left:5px;">
 
 									<xsl:choose>
+										<xsl:when test="@uri">
+											<xsl:attribute name="href"><xsl:value-of
+												select="@uri" /></xsl:attribute>
+										</xsl:when>
 										<xsl:when test="@notexists">
 											<xsl:attribute name="href"><xsl:value-of
 												select="$param-wiki-path" />/<xsl:value-of
@@ -483,7 +503,7 @@
 			</xsl:if>
 		</xsl:for-each>
 		<tr>
-		<xsl:call-template name="metadata"/>
+			<xsl:call-template name="metadata" />
 		</tr>
 	</xsl:template>
 
@@ -636,25 +656,34 @@
 
 
 	<xsl:template name="definingRule">
-	<xsl:variable name="ruleURI" select="." />
-		<img class="treeviewdecorator" src="{$param-img-directory}/extensions/SMWHalo/skins/OntologyBrowser/images/rule.gif" onclick="ruleActionListener.selectFromExternal(this, '{$ruleURI}')" title="Show rule {$ruleURI}"/>
+		<xsl:variable name="ruleURI" select="." />
+		<img class="treeviewdecorator"
+			src="{$param-img-directory}/extensions/SMWHalo/skins/OntologyBrowser/images/rule.gif"
+			onclick="ruleActionListener.selectFromExternal(this, '{$ruleURI}')"
+			title="Show rule {$ruleURI}" />
 	</xsl:template>
-	
+
 	<xsl:template name="metadata">
-	<xsl:variable name="metaid" select="child::metadata/@id" />
-	<div style="display: none;" class="metadataContainer" id="{$metaid}">
-	<table>
-	<th>{{SMW_OB_META_PROPERTY}}</th>
-	<th>Value</th>
-    <xsl:for-each select="child::metadata/property">
-	<tr>
-        <td>{{SMW_OB<xsl:value-of select="@name"/>}}</td>
-        <td><xsl:value-of select="."/></td>
-    </tr>
-    </xsl:for-each>
-    </table>
-    </div>
-    </xsl:template>
+		<xsl:variable name="metaid" select="child::metadata/@id" />
+		<div style="display: none;" class="metadataContainer" id="{$metaid}">
+			<table>
+				<th>{{SMW_OB_META_PROPERTY}}</th>
+				<th>Value</th>
+				<xsl:for-each select="child::metadata/property">
+					<tr>
+						<td>
+							{{SMW_OB
+							<xsl:value-of select="@name" />
+							}}
+						</td>
+						<td>
+							<xsl:value-of select="." />
+						</td>
+					</tr>
+				</xsl:for-each>
+			</table>
+		</div>
+	</xsl:template>
 
 	<xsl:template name="gissues">
 		<xsl:param name="title" />

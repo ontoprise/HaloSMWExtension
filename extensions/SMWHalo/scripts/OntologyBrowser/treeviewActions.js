@@ -770,14 +770,17 @@ OBInstanceActionListener.prototype = {
 	  	
 	  	if (OB_RIGHT_ARROW == 0) {
 	  		OB_relatt_pendingIndicator.show();
-
-	  		dataAccess.getAnnotations(instanceNamespace+":"+instanceName, callbackOnInstanceSelectToRight);
+	  		var instanceParam = node.getAttribute("uri") == null ? instanceNamespace+":"+instanceName : node.getAttribute("uri");
+	  	
+	  		dataAccess.getAnnotations(instanceParam, callbackOnInstanceSelectToRight);
+	  		
 		 	
 	  	} 
 	  	if (OB_LEFT_ARROW == 1) {
 	  		OB_tree_pendingIndicator.show();
 	  		//TODO: externalize in dataAccess
-	  		sajax_do_call('smwf_ob_OntologyBrowserAccess', ['getCategoryForInstance',instanceNamespace+":"+instanceName, obAdvancedOptions.getDataSource()], callbackOnInstanceSelectToLeft);
+	  		 var instanceParam = node.getAttribute("uri") == null ? instanceNamespace+":"+instanceName : node.getAttribute("uri");
+	  		sajax_do_call('smwf_ob_OntologyBrowserAccess', ['getCategoryForInstance',instanceParam, obAdvancedOptions.getDataSource()], callbackOnInstanceSelectToLeft);
 	  	}
 	
 		}
@@ -1014,7 +1017,9 @@ OBPropertyTreeActionListener.prototype = Object.extend(new OBTreeActionListener(
 	 	
 	 	 if (OB_LEFT_ARROW == 0) {
 		     OB_instance_pendingIndicator.show();
-		 	 dataAccess.getInstancesUsingProperty(propertyName, 0, callbackOnPropertySelect);
+		     var propertyParam = node.getAttribute("uri") == null ? propertyName : node.getAttribute("uri");
+			  	
+		 	 dataAccess.getInstancesUsingProperty(propertyParam, 0, callbackOnPropertySelect);
 		 	 selectionProvider.fireSelectionChanged(null, null, SMW_INSTANCE_NS, null);
 	 	 }
 	 	 if (OB_RIGHT_ARROW == 0) {
