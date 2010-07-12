@@ -35,7 +35,8 @@ Marker.prototype = {
  	* 			element to mark
  	*/
  	insertMarkers: function(){
- 		
+ 		//return if AAM-Div does not exist
+                if( !$(this.rootnode) ) return;
  		$(this.rootnode).hide();
  		// transparencyMarkers
  		for(var index=0; index < this.transparencymarkerlist.length; index++){
@@ -207,6 +208,8 @@ Marker.prototype = {
  	* 				Element which descendants will be checked for removing
  	*/
 	removeMarkers: function(){
+                        //return if AAM-Div does not exist
+                        if( !$(this.rootnode) ) return;
 			$(this.rootnode).hide();
 			var markers = $$('.icon-marker');
 			for(var index=0; index < markers.length; index++){
@@ -246,6 +249,8 @@ Marker.prototype = {
  	* @param 
  	*/	
 	mark: function(rootnode, mark){
+                //return if AAM-Div does not exist
+                if( !$(this.rootnode) ) return;
 		//Stores template links found by checking the subtree of childelements, so elements can be marked with later
 		//return:  -1 the currently opened template was close in the subtree
 		// 			0 nothing has been found in the subtree
