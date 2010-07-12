@@ -81,10 +81,10 @@ function sgagGardeningSetupExtension() {
 		$wgSpecialPages['Gardening'] = array('SGAGardening');
 		$wgSpecialPageGroups['Gardening'] = 'smwplus_group';
 
-		$wgSpecialPages['GardeningLog'] = array('SMWSpecialPage','GardeningLog', 'smwfDoSpecialLogPage', $sgagIP . '/specials/GardeningLog/SGA_GardeningLogPage.php');
+		$wgSpecialPages['GardeningLog'] = array('SpecialPage','GardeningLog', '', true, 'smwfDoSpecialLogPage', $sgagIP . '/specials/GardeningLog/SGA_GardeningLogPage.php');
 		$wgSpecialPageGroups['GardeningLog'] = 'smwplus_group';
 
-		$wgSpecialPages['FindWork'] = array('SMWSpecialPage','FindWork', 'smwfDoSpecialFindWorkPage', $sgagIP . '/specials/FindWork/SGA_FindWork.php');
+		$wgSpecialPages['FindWork'] = array('SpecialPage','FindWork', '', true, 'smwfDoSpecialFindWorkPage', $sgagIP . '/specials/FindWork/SGA_FindWork.php');
 		$wgSpecialPageGroups['FindWork'] = 'smwplus_group';
 
 	}
