@@ -664,7 +664,7 @@ DefineWebServiceSpecial.prototype = {
 	 */
 	processStep3Do : function(resultsString, edit) {
 		//hide REST and LD studd
-		$('step4-addnss').style.display = "none";
+		$('step4-nss-header').style.display = "none";
 		$('step4-nss').style.display = "none";
 		
 		this.numberOfUsedResultParts = 0;
@@ -3476,11 +3476,14 @@ DefineWebServiceSpecial.prototype = {
 			$("step4-rest-intro").appendChild(button);
 			
 			//add aditional button for defining namespace prefixes
-			if(window.addEventListener){
-				$('step4-addnss').addEventListener("click", webServiceSpecial.displayNSTable, false);
-			} else {
-				$('step4-addnss').attachEvent("onclick", webServiceSpecial.displayNSTable, false);
-			}
+			// if(window.addEventListener){
+			// $('step4-display-nss').addEventListener("click",
+			// webServiceSpecial.displayNSTable, false);
+			// } else {
+			// $('step4-display-nss').attachEvent("onclick",
+			// webServiceSpecial.displayNSTable, false);
+			// }
+			$('step4-display-nss').setAttribute('onclick', 'webServiceSpecial.displayNSTable()');
 		} else {
 			$("step4-rest-intro").childNodes[1].checked = false;
 			$("step4-rest-intro").childNodes[3].value = "complete";
@@ -3494,7 +3497,7 @@ DefineWebServiceSpecial.prototype = {
 		$("step4-rest-intro").childNodes[5].style.display = "";
 
 		$("step4-rest-intro").childNodes[6].style.display = "";
-		$('step4-addnss').style.display = "none";
+		$('step4-nss-header').style.display = "none";
 
 		$("step4-results").style.display = "none";
 		var tempHead = $("step4-results").childNodes[0].childNodes[0]
@@ -3578,7 +3581,11 @@ DefineWebServiceSpecial.prototype = {
 			}
 
 			if (remove) {
-				$("step4-addnss").style.display = "";
+				webServiceSpecial.nsPrefixesInitialized = false;
+				$('step4-display-nss').setAttribute('onclick', 'webServiceSpecial.displayNSTable()');
+				$('step4-display-nss').src = wgScriptPath
+					+ "/extensions/DataImport/skins/webservices/pfeil_rechts.gif";
+				//$("step4-nss-header").style.display = "";
 				$("step4-nss").style.display = "none";
 			}
 		}
@@ -3980,14 +3987,30 @@ DefineWebServiceSpecial.prototype = {
 	},
 
 	displayNSTable : function() {
-		$("step4-addnss").style.display = "none";
+		$('step4-display-nss').src = wgScriptPath
+			+ "/extensions/DataImport/skins/webservices/plus.gif";
+		$('step4-display-nss').setAttribute('onclick', 'webServiceSpecial.hideNSTable()');
 		
-		if ($("step4-nss").childNodes[0].childNodes[1] == null) {
-			webServiceSpecial.appendNSPrefix();
+		if(!webServiceSpecial.nsPrefixesInitialized){
+			webServiceSpecial.nsPrefixesInitialized = true;
+			
+			if ($("step4-nss").childNodes[0].childNodes[1] == null) {
+				webServiceSpecial.appendNSPrefix();
+			}
+			$("step4-nss").childNodes[0].childNodes[1].style.display = "";
+			$("step4-nss").childNodes[0].childNodes[1].removed = false;
+			
+			$("step4-nss").childNodes[0].childNodes[1].childNodes[0].childNodes[0].value = '';
+			$("step4-nss").childNodes[0].childNodes[1].childNodes[1].childNodes[0].value = '';
 		}
 		$("step4-nss").style.display = "";
-		$("step4-nss").childNodes[0].childNodes[1].style.display = "";
-		$("step4-nss").childNodes[0].childNodes[1].removed = false;
+	},
+	
+	hideNSTable : function(){
+		$('step4-display-nss').src = wgScriptPath
+			+ "/extensions/DataImport/skins/webservices/pfeil_rechts.gif";
+		$('step4-display-nss').setAttribute('onclick', 'webServiceSpecial.displayNSTable()');
+		$("step4-nss").style.display = "none";
 	},
 	
 	useParameters : function() {
@@ -4605,11 +4628,12 @@ DefineWebServiceSpecial.prototype = {
 			
 			
 			//add aditional button for defining namespace prefixes
-			if(window.addEventListener){
-				$('step4-addnss').addEventListener("click", webServiceSpecial.displayNSTable, false);
-			} else {
-				$('step4-addnss').attachEvent("onclick", webServiceSpecial.displayNSTable, false);
-			}
+			//if(window.addEventListener){
+			//	$('step4-display-nss').addEventListener("click", webServiceSpecial.displayNSTable, false);
+			//} else {
+			//	$('step4-display-nss').attachEvent("onclick", webServiceSpecial.displayNSTable, false);
+			//}
+			$('step4-display-nss').setAttribute('onclick', 'webServiceSpecial.displayNSTable()');
 		} else {
 			//nothing to do
 		}
@@ -4625,7 +4649,7 @@ DefineWebServiceSpecial.prototype = {
 		
 		
 		$("step4-rest-intro").childNodes[6].style.display = "";
-		$('step4-addnss').style.display = "";
+		$('step4-nss-header').style.display = "";
 
 		$("step4-results").style.display = "none";
 		var tempHead = $("step4-results").childNodes[0].childNodes[0]
@@ -4663,7 +4687,7 @@ DefineWebServiceSpecial.prototype = {
 		var node = Event.element(event);
 		//todo use lang file
 		if(node.value == diLanguage.getMessage('smw_wws_predicate') && $('step4-nss').style.display == "none"){
-			$('step4-addnss').style.display = "";
+			$('step4-nss-header').style.display = "";
 		} 
 	},
 	
@@ -4719,11 +4743,15 @@ DefineWebServiceSpecial.prototype = {
 	},
 	
 	displaySubjectCreationPattern : function(){
-		$('step4-enable-triplification-button').style.display = "none";
-		$('step4-enable-triplification-span').style.display = "";
+		if($("step4-enable-triplification-checkbox").checked){
+			$('step4-enable-triplification-details').style.display = "";
+		} else {
+			$('step4-enable-triplification-details').style.display = "none";
+			//todo: also reinitialize the row + also do that when protocol is changed or so
+		}
 	},
 	
-	initSubjectCreationPatternInput : function(){
+	initSubjectCreationPatternAliasClick : function(){
 		var aliasColumn = 0;
 		if($("step1-protocol-soap").checked){
 			aliasColumn = 2;
@@ -4733,18 +4761,20 @@ DefineWebServiceSpecial.prototype = {
 		for (var i = 1; i < resultTable.childNodes.length; i++) {
 			if(resultTable.childNodes[i].childNodes[aliasColumn]){
 				resultTable.childNodes[i].childNodes[aliasColumn].firstChild.style.cursor = "pointer";
-				resultTable.childNodes[i].childNodes[aliasColumn].firstChild.isAlias = true;
+				resultTable.childNodes[i].childNodes[aliasColumn].firstChild.style.backgroundColor = "grey";
+				resultTable.childNodes[i].childNodes[aliasColumn].firstChild.setAttribute('onclick', 
+						'webServiceSpecial.addAliasToSubjectCreationPattern('+i+')');
 			}
 		}
 		
-		$body = document.getElementsByTagName('body');
-		$body[0].setAttribute('onclick', 'webServiceSpecial.addAliasToSubjectCreationPattern(event)');
-		
-		$("step4-enable-triplification-input")
-			.setAttribute('onblur', 'webServiceSpecial.getSubjectCreationPatternCursorPos()');
+		$("step4-add-alias-to-input").setAttribute('onclick', 'webServiceSpecial.resetSubjectCreationPatternAliasClick()');
+		$("step4-add-alias-to-input-note").style.display = '';
+		var tempText = $("step4-add-alias-to-input-stop-text").firstChild.nodeValue;
+		$("step4-add-alias-to-input-stop-text").firstChild.nodeValue = $("step4-add-alias-to-input").firstChild.nodeValue;
+		$("step4-add-alias-to-input").firstChild.nodeValue = tempText;
 	},
 	
-	resetSubjectCreationPatternInput : function(){
+	resetSubjectCreationPatternAliasClick : function(){
 		var aliasColumn = 0;
 		if($("step1-protocol-soap").checked){
 			aliasColumn = 2;
@@ -4754,38 +4784,45 @@ DefineWebServiceSpecial.prototype = {
 		for (var i = 1; i < resultTable.childNodes.length; i++) {
 			if(resultTable.childNodes[i].childNodes[aliasColumn]){
 				resultTable.childNodes[i].childNodes[aliasColumn].firstChild.style.cursor = "";
-				resultTable.childNodes[i].childNodes[aliasColumn].firstChild.isAlias = false;
+				resultTable.childNodes[i].childNodes[aliasColumn].firstChild.style.backgroundColor = "#ffffff";
+				resultTable.childNodes[i].childNodes[aliasColumn].firstChild.removeAttribute('onclick');
 			}
 		}
 		
-		$body = document.getElementsByTagName('body');
-		$body[0].setAttribute('onclick', '');
+		$("step4-add-alias-to-input").setAttribute('onclick', 'webServiceSpecial.initSubjectCreationPatternAliasClick()');
+		$("step4-add-alias-to-input-note").style.display = 'none';
+		var tempText = $("step4-add-alias-to-input-stop-text").firstChild.nodeValue;
+		$("step4-add-alias-to-input-stop-text").firstChild.nodeValue = $("step4-add-alias-to-input").firstChild.nodeValue;
+		$("step4-add-alias-to-input").firstChild.nodeValue = tempText;
 		
-		$("step4-enable-triplification-input")
-			.removeAttribute('onblur');
 	},
 	
-	addAliasToSubjectCreationPattern : function(event) {
-		var element = Event.element(event);
-		if(element.id == "step4-enable-triplification-input"){
-			return;
-		} else if(element.isAlias){
-			var alias = element.value;
-			if(alias.length > 0){
-				alias = '?result.' + alias + '?';
-				var startText = $("step4-enable-triplification-input").value.substr(
-					0, $("step4-enable-triplification-input").myCursorStartPos);
-				var endText = $("step4-enable-triplification-input").value.substr(
-						$("step4-enable-triplification-input").myCursorEndPos);
-				$("step4-enable-triplification-input").value = startText + alias + endText;
-			} 
-			$("step4-enable-triplification-input").focus();
-		} else {
-			webServiceSpecial.resetSubjectCreationPatternInput();
+	addAliasToSubjectCreationPattern : function(i) {
+		var aliasColumn = 0;
+		if($("step1-protocol-soap").checked){
+			aliasColumn = 2;
 		}
+		
+		var resultTable = $("step4-results").childNodes[0];
+		alias = resultTable.childNodes[i].childNodes[aliasColumn].firstChild.value;
+		
+		if(alias.length > 0){
+			alias = '?result.' + alias + '?';
+			var startPos = $("step4-enable-triplification-input").myCursorStartPos;
+			var endPos = $("step4-enable-triplification-input").myCursorEndPos;
+			
+			if(startPos == 'undefined') startPos = 0;
+			if(endPos == 'undefined') endPos = startPos;
+			
+			var startText = $("step4-enable-triplification-input").value.substr(0, startPos);
+			var endText = $("step4-enable-triplification-input").value.substr(endPos);
+			$("step4-enable-triplification-input").value = startText + alias + endText;
+			
+			$("step4-enable-triplification-input").myCursorEndPos = startPos;
+		} 
 	},
 	
-	getSubjectCreationPatternCursorPos : function(){
+	setSubjectCreationPatternCursorPos : function(){
 		$("step4-enable-triplification-input").myCursorStartPos =
 			$("step4-enable-triplification-input").selectionStart;
 		$("step4-enable-triplification-input").myCursorEndPos = 
@@ -4793,10 +4830,12 @@ DefineWebServiceSpecial.prototype = {
 	},
 	
 	processSubjectCreationPattern : function(){
-		var pattern = $("step4-enable-triplification-input").value;
 		var response = "";
-		if(pattern.length > 0){
-			response = '<triplification subject="' + pattern + '"/>\r\n';
+		if($('step4-enable-triplification-checkbox').checked){
+			var pattern = $("step4-enable-triplification-input").value;
+			if(pattern.length > 0){
+				response = '<triplification subject="' + pattern + '"/>\r\n';
+			}
 		}
 		return response;
 	}

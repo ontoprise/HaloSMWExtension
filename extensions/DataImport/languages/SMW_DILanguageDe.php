@@ -289,7 +289,7 @@ class SMW_DILanguageDe extends SMW_DILanguage {
 	'smw_wwsr_update_tooltip_ti' => 'Update Bot für diesen Term Import starten.',
 	'smw_wwsr_rep_edit_tooltip_ti' => 'Diesen Term Import in der GUI editieren.',
 	
-	'smw_wws_add_prefixes' => 'Namensraum Präfixe hinzuf&uuml;gen',
+	'smw_wws_add_prefixes' => 'Namensraum Präfixe:',
 	'smw_wws_nss_prefix' => 'Pr&auml;fix:',
 	'smw_wws_nss_url' => 'URL:',
 	
@@ -310,6 +310,10 @@ class SMW_DILanguageDe extends SMW_DILanguage {
 	'smw_wws_s4-help-triplification' => '<p>Klicken Sie <b>Triplifizierung erm&ouml;glichen</b> und geben Sie einen <b>Subject creation pattern</b> an, um Nutzern die Triplifizierung der Webservice-Ergebnisse zu erm&ouml;glichen. <br>Triplifizierung bedeutet, dass Webservice-Ergebnisse in mehrere Tripel transformiert und im Triplestore gespeichert werden. Ein Webservice-Ergebnis besteht aus einer Tabelle mit Zeilen und Spalten. Der Wert des <b>Pattern zur Subjekt-Erzeugung</b> wird als Subjekt des Tripels f&uuml;r jede Zeile verwendet. Der Result Part Alias der entsprechenden Tabellenzelle wird als Pr&auml;dikat und der Zellenwert als Objekt verwendet. <br>Es ist empfohlen f&uuml;r einen Result Part Alias einen bereits in der Wiki-Ontologie existierenden Property-Namen zu verwenden. Dr&uuml;cken Sie Alt&#43;Strg&#43;Leertaste um die Auto-Vervollst&auml;ndigung zu aktivieren. Diese Methode hat zwei Vorteile: Zum Einen werden die Result Part Aliase als Pr&auml;dikat benutzt. Zum Anderen pr&uuml;ft das Wiki bei jedem Result Part Alias, ob ein Property mit dem selben Namen existiert und ob dieses Property Typinformationen besitzt. Ist dies der Fall, wird diese Typinformation bei der Erstellung der Tripel verwendet.<br>Sie k&ouml;nnen beliebige Wiki-Syntax im <b>Pattern zur Subjekt-Erzeugung</b> verwenden. Wenn Sie Werte aus Tabellenzellen im Subjekt verwenden m&ouml;chten, benutzen Sie die Syntax: <i>?Ergebnis.Alias-Name?</i>. Dieses Konstrukt wird dann bei der Subjekterstellung mit dem entsprechenden Zellenwert ersetzt. Anstatt die Syntax in das Feld <b>Pattern zur Subjekt-Erzeugung</b> per Hand einzugeben, klicken Sie auf ein Alias-Eingabefeld, um dieses hinzuzuf&uuml;gen. </p>',
 	
 	'smw_wws_too_many_results' => 'Ihre WWSD enthaelt mehr als eine Result Definition, bzw. Benutzungen des Result Tags. Einige der neuen Feaures der Data Import extension unterstützen dieses Konstrukt nicht mehr. Bitte beschränken Sie sich daher auf eine Result Definition.',
+	
+	'smw_wws_enable_triplification-scp-add' => 'Result Parts zum Subject Creation Pattern hinzufügen',
+	'smw_wws_enable_triplification-scp-stop-add' => 'Das Hinzufügen von Result Parts beenden.',
+	'smw_wws_enable_triplification-scp-add-note' => 'Bitte klicken Sie auf ein Alias Eingabefeld um den zugehörigen Result Part zum Subject Creation Pattern hinzuzuf&uuml;gen.',
 	);
 
 	protected $smwDINamespaces = array(

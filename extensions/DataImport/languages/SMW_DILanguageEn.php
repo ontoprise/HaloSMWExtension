@@ -291,7 +291,7 @@ class SMW_DILanguageEn extends SMW_DILanguage {
 	'smw_wwsr_update_tooltip_ti' => 'Start the update bot for this Term Import.',
 	'smw_wwsr_rep_edit_tooltip_ti' => 'Edit this Term Import in the graphical user interface.',
 	
-	'smw_wws_add_prefixes' => 'Add namespace prefixes',
+	'smw_wws_add_prefixes' => 'Namespace prefixes:',
 	'smw_wws_nss_prefix' => 'Prefix:',
 	'smw_wws_nss_url' => 'URL:',
 	
@@ -313,6 +313,10 @@ class SMW_DILanguageEn extends SMW_DILanguage {
 	'smw_wws_s4-help-triplification' => '<p>Click <b>Enable triplification</b> and enter a <b>Subject creation pattern</b> if you want to enable users to triplify the results of this web service. <br> Triplification means, that web service results will be transformed in several triples and stored in the Triple store. A web service result consists of a table with rows and columns. The value in the <b>Subject creation pattern</b> will be the triple subject for each row. The result part alias that corresponds to the table cell will be used as predicate and the cell value will be used as object. <br>Use property names which are already defined in the wiki ontology for result part aliases. Press Alt&#43;Ctrl&#43;Space to activate the auto-completion. This approach has two advantages: First, the result part aliases will be used as predicates. Second, the wiki will check for each result part alias, if there is a property with the same name and if that property has type information annotations; then it will use this type information when creating triples. <br>The <b>Subject creation pattern</b> can contain arbitrary wiki markup language. If you want to include cell values into the subject creation, use the syntax: <i>?result.alias-name?</i>. This construct will then be replaced by the corresponding cell value when subjects are created. Instead of typing this syntax on your own into the Subject creation pattern field, you can also click on an alias input field, this will be automatically added to the subject creation pattern.</p>',
 	
 	'smw_wws_too_many_results' => 'Your WWSD contains more than one result definitions, i.e. usages of the <i>result-tag</i>. This is not supported by some of the new features of the Data Import extension, e.g. triplifying web service results. Please use therefore only one result definition.',
+	
+	'smw_wws_enable_triplification-scp-add' => 'Add result parts to subject creation pattern',
+	'smw_wws_enable_triplification-scp-stop-add' => 'Finish adding result parts',
+	'smw_wws_enable_triplification-scp-add-note' => 'Click on an alias input field to add the corresponding result part to the subject creation pattern.',
 	
 	);
 

@@ -101,7 +101,7 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 		
 		$subjectCreationPattern = "";
 		$subjectCreationPatternVisibility = "none";
-		$subjectCreationButtonVisibility = "";
+		$subjectCreationCheckboxChecked = '';
 
 		$displayOnce = "checked=\"true\"";
 		$displayMax = "";
@@ -142,7 +142,7 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 			if(strlen($ts) > 0){
 				$subjectCreationPattern = $ts;
 				$subjectCreationPatternVisibility = "";
-				$subjectCreationButtonVisibility = "none";
+				$subjectCreationCheckboxChecked = ' checked="true" ';
 			}
 
 			if($wwsd->getDisplayPolicy() > 0){
@@ -270,21 +270,41 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 		$html .= "<table id=\"step4-results\"><tr><th>".wfMsg('smw_wws_path')."</th><th>".wfMsg('smw_wws_use')."<span onclick=\"webServiceSpecial.useResults()\"><input title=\"".wfMsg("smw_wws_selectall-tooltip")."\" type=\"checkbox\" id=\"step4-use\"/></span></th><th>".wfMsg('smw_wws_alias')."<span class=\"alias-generate\" onclick=\"webServiceSpecial.generateResultAliases(true)\"><img id=\"step-4-alias-generate-button\" title=\"".wfMsg("smw_wws_autogenerate-alias-tooltip-resultpart")."\" src=\"".$smwgDIScriptPath."/skins/webservices/Pencil_grey.png\"></img></span></th><th>".wfMsg('smw_wws_format')."</th><th>".wfMsg('smw_wws_path')."</th><th></th></tr></table>";
 		
 		//Add button for displaying the namespace prefix table
-		$html .= '<button id="step4-addnss" style="display: none" value="'.wfMsg('smw_wws_add_prefixes').'">'.wfMsg('smw_wws_add_prefixes').'</button>';
+		$html .= '<div id="step4-nss-header" style="display: none">';
+		$html .= '<img id="step4-display-nss" src="'.$smwgDIScriptPath.'/skins/webservices/pfeil_rechts.gif"></img>';
+		$html .= '<span>'.wfMsg('smw_wws_add_prefixes').'</span>';
+		$html .= '</div>';
 		
 		//Add table for defining namespace prefixes
 		$html .= "<table id=\"step4-nss\" style=\"padding-top:20px; display: none\"><tr><th>".wfMsg('smw_wws_nss_prefix')."</th><th>".wfMsg('smw_wws_nss_url')."</th><th></th></tr></table>";
 
 		//for triplification
-		$displayTriplificationontainer = ' style="display: none" ';
+		$displayTriplificationContainer = ' style="display: none" ';
 		if(defined( 'LOD_LINKEDDATA_VERSION')){
-			$displayTriplificationontainer = ' style="display: " ';
+			$displayTriplificationContainer = ' style="display: " ';
 		}
-		$html .= '<div id="step4-enable-triplification" '.$displayTriplificationontainer.'>';
-		$html .= '<button id="step4-enable-triplification-button" style="display: '.$subjectCreationButtonVisibility.'" onclick="webServiceSpecial.displaySubjectCreationPattern()" value="'.wfMsg('smw_wws_enable_triplification').'">'.wfMsg('smw_wws_enable_triplification').'</button>'	;
-		$html .= '<span id="step4-enable-triplification-span" style="display: '.$subjectCreationPatternVisibility.'">'.wfMsg('smw_wws_enable_triplification-intro');
-		$html .= '<input id="step4-enable-triplification-input" type="text" size="80" onfocus="webServiceSpecial.initSubjectCreationPatternInput()" value='.$subjectCreationPattern.'></input>';
-		$html .= '</span></div>';
+		
+		$html .= '<table id="step4-enable-triplification" '.$displayTriplificationContainer.'>';
+		
+		$html .= '<tr>';
+		$html .= '<td><input id="step4-enable-triplification-checkbox" type="checkbox" '.$subjectCreationCheckboxChecked.' onchange="webServiceSpecial.displaySubjectCreationPattern()"/></td>';
+		$html .= '<td><span>'.wfMsg('smw_wws_enable_triplification').'</span></td>';
+		$html .= '<td/>';
+		$html .= "</tr>";
+		
+		$triplificationDetailsVisible = strpos($subjectCreationCheckboxChecked, 'true') ? '' : ' style="display: none" ';
+		$html .= '<tr id="step4-enable-triplification-details" '.$triplificationDetailsVisible.'>';
+		$html .= '<td/>';
+		$html .= '<td id="step4-enable-triplification-scp-label"><span>'.wfMsg('smw_wws_enable_triplification-intro').'</span></td>';
+		$html .= '<td>';
+		$html .= '<textarea id="step4-enable-triplification-input" rows="5" cols="80" onblur="webServiceSpecial.setSubjectCreationPatternCursorPos()" value="'.$subjectCreationPattern.'">'.$subjectCreationPattern.'</textarea><br/>';
+		$html .= '<a id="step4-add-alias-to-input" href="javascript:void(0)" onclick="webServiceSpecial.initSubjectCreationPatternAliasClick()">'.wfMsg('smw_wws_enable_triplification-scp-add').'</a><br/>';
+		$html .= '<span id="step4-add-alias-to-input-stop-text" style="display: none">'.wfMsg('smw_wws_enable_triplification-scp-stop-add').'</span>';
+		$html .= '<span id="step4-add-alias-to-input-note" style="display:none">'.wfMsg('smw_wws_enable_triplification-scp-add-note').'</span>';
+		$html .= '</td>';
+		$html .= "</tr>";
+		
+		$html .= '</table>';
 		
 		$triplificationHelp = "";
 		if(defined( 'LOD_LINKEDDATA_VERSION')){

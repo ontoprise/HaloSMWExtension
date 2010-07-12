@@ -66,8 +66,12 @@ span.alias-generate {
 	text-align: right;
 }
 
-#step4-addnss {
+#step4-nss-header {
 	margin-top: 10px; 
+}
+
+#step4-display-nss {
+	cursor: pointer; 
 }
 
 #step4-enable-triplification {
@@ -197,4 +201,22 @@ span.alias-generate {
 
 #step6-subject-alias-container {
 	margin-left: 5px;
+}
+
+#step4-enable-triplification-scp-label {
+	font-weight: bold;
+	vertical-align: top;
+}
+
+#step4-add-alias-to-input-note {
+	font-style: italic;
+}
+
+#step4-display-nss {
+	padding-right: 5px;
+}
+
+#step4-enable-triplification-checkbox {
+	position: relative; 
+	left: -7px;
 }
