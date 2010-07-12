@@ -61,3 +61,22 @@
 .dtree .clip {
      /* overflow: hidden;  /* disabled so scrollbars will be visible in ontoskin 3 */
 }
+
+.treeoverlay {
+	width: 98%;
+	height: 98%;
+	position: fixed;
+        background: white;
+        border: 1px solid #AAA;
+	top: 1%;
+	left: 1%;
+	z-index: 98;
+}
+
+#smwh_closetree{
+    float: right;
+    font-size: large;
+    margin-right: 3px;
+    margin-top: 3px;
+}
+

@@ -26,6 +26,58 @@ var refreshOpenNodes = [];
 var refreshRootNodes = [];
 var refreshDtree;
 
+/**
+ * Loads the TreeView by Ajax
+ * 
+ */
+function smwhf_loadNavTree(){
+    sajax_do_call('smwfNavTree',
+		              [],
+		              smwhf_insertNavTree);
+}
+
+/**
+ *  Inserts NavTree into the html document
+ *  @param ajax xml returnvalue
+ *  
+ */
+function smwhf_insertNavTree(param){
+    if(param.status!=200){
+        //Something went wrong with the ajax call
+        alert('NavTree insertion  failed: ' + param.statusText);
+    } else {
+       //get return value
+       var tree = param.responseText;
+       //create a new div, which we wanna insert in the document
+       var treeDiv = document.createElement("div");
+       treeDiv.setAttribute("id", "smwh_tree");
+       treeDiv.setAttribute("class", "treeoverlay");
+       treeDiv.setAttribute("style", "display: none;");
+       //add the tree loading code into the div
+       treeDiv.innerHTML = "<a id=\"smwh_closetree\" href=\"javascript:smwhf_hideTree()\"><img src=\""+wgScriptPath+"/extensions/Treeview/img/button_close.png\"/></a> "+ tree;
+       //add the div containing the tree to the body
+       window.document.body.appendChild(treeDiv);
+       //window.document.body.
+       //call the javascript in the added html, so tree gets populated with content by ajax
+       eval(document.getElementById('navtreejs').innerHTML);
+    }
+}
+
+function smwhf_hideTree(){
+    var tree = document.getElementById('smwh_tree');
+    tree.hide();
+    //tree.setAttribute("css", "display: none;");
+}
+
+function smwhf_showTree(){
+    var tree = document.getElementById('smwh_tree');
+    tree.show();
+}
+
+
+//load the tree dynamically after the page is loaded in Skins different then Ontoskin
+addOnloadHook(smwhf_loadNavTree);
+
 // Node object
 function Node(id, pid, name, url, title, target, icon, iconOpen, open) {
 	this.id = id;

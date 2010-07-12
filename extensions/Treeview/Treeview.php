@@ -29,7 +29,7 @@ $wgTreeViewMagic               = "tree"; # the parser-function name for trees
 $wgTreeViewShowLines           = false;  # whether to render the dotted lines joining nodes
 $wgExtensionFunctions[]        = 'wfSetupTreeView';
 $wgHooks['LanguageGetMagic'][] = 'wfTreeViewLanguageGetMagic';
- 
+
 $wgExtensionCredits['parserhook'][] = array(
     'name'        => 'Semantic Treeview',
     'author'      => 'based on the work of [http://www.organicdesign.co.nz/nad Nad], improved by [http://www.ontoprise.de Ontoprise]',
@@ -44,8 +44,14 @@ $wgExtensionCredits['parserhook'][] = array(
 // Tell the script manager, that we need prototype
 global $smgJSLibs;
 $smgJSLibs[] = 'prototype';
-$smgJSLibs[] = 'jquery';
- 
+
+function smwhg_AddTreeToToolbox(& $template) {    
+    echo '<li><a href="javascript:smwhf_showTree()">'.'Show TreeView'.'</a></li>';
+    return true;
+}
+
+$wgHooks['SkinTemplateToolboxEnd'][] = 'smwhg_AddTreeToToolbox';
+
 class SemanticTreeview {
  
     var $version  = SEMANTIC_TREEVIEW_VERSION;
@@ -305,7 +311,7 @@ class SemanticTreeview {
                     $tree = "
                         $top
                         <div class='Treeview' id='$id'>
-                            <script type=\"$wgJsMimeType\">
+                            <script id=\"navtreejs\" type=\"$wgJsMimeType\">
                                 // TreeView{$this->version}
                                 tree = new dTree('{$this->uniqname}$id', '$class');
                                 for (i in tree.icon) tree.icon[i] = '{$this->baseUrl}/'+tree.icon[i];{$this->images}
@@ -364,4 +370,3 @@ function wfTreeViewLanguageGetMagic(&$magicWords,$langCode = 0) {
     $magicWords['generateTree']  = array( 0, 'generateTree' );
     return true;
     }
-?>

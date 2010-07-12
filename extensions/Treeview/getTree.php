@@ -5,6 +5,9 @@
  * @ingroup Treeview
  */
 $wgAjaxExportList[] = 'smw_treeview_getTree';
+$wgAjaxExportList[] = 'smwfNavTree';
+
+$wgHooks['OntoSkinInsertTreeNavigation'][] = 'smwfInsertNavTree';
 
 /**
  * Provides functionality to get partial trees in treeview
@@ -75,4 +78,41 @@ function smw_treeview_getTree($input) {
   return "";
 }
 
-?>
+/**
+ * Generates Navigation tree for the sidebar
+ */
+function smwfNavTree() {
+	global $wgUser,$wgTitle,$wgParser;
+	if (is_object($wgParser)) $psr =& $wgParser; else $psr = new Parser;
+	$opt = ParserOptions::newFromUser($wgUser);
+	$nav_title = Title::newFromText('NavTree', NS_MEDIAWIKI);
+	if (!$nav_title->exists()) return true;
+	$nav = new Article($nav_title);
+	$out = $psr->parse($nav->fetchContent(0,false,false),$wgTitle,$opt,true,true);
+	$html = $out->getText();
+	$groups = $wgUser->getGroups();
+	foreach($groups as $g) {
+		$title = Title::newFromText('NavTree_'.$g, NS_MEDIAWIKI);
+		if ($title->exists()) {
+			$nav = new Article($title);
+			$out = $psr->parse($nav->fetchContent(0,false,false),$wgTitle,$opt,true,true);
+			$html .= '<br/>'.$out->getText();
+		}
+	}
+	return $html;
+}
+
+/**
+ * Includes Navigation tree in sidebar
+ */
+function smwfInsertNavTree() {
+
+   //Don't insert tree into ontoskin
+   global $wgUser;
+   $skin = $wgUser->getSkin();
+   if(($skin == 'ontoskin') || ($skin == 'ontoskin2') || ($skin == 'ontoskin3')) return true;
+
+
+   echo smwfNavTree();
+   return true;
+}
