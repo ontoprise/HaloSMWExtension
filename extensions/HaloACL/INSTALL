@@ -59,6 +59,9 @@ How to install manually:
 	have the Semantic Forms extension installed):
 		php patch.php -d <SemanticForms-dir> -p patch_for_SF_1.9.txt
 		
+(8) Download the ScriptManger from http://sourceforge.net/projects/halo-extension/files/ 
+    and install it.		
+		
 	
 
 * patch_for_MW_1.13.2.txt or patch_for_MW_1.15.1.txt or patch_for_MW_1.15.3.txt: 
