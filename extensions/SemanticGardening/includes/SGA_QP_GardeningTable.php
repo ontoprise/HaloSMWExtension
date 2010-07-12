@@ -29,9 +29,8 @@ class SGAGardeningTableResultPrinter extends SMWResultPrinter {
 		// import ConsistencyIssue class and make sure ConsistencyIssue class can be instantiated
 		require_once( $sgagIP . "/includes/SGA_GardeningIssues.php");
 		require_once( $sgagIP . "/includes/bots/consistency_bot/SGA_ConsistencyIssue.php");
-	    global $registeredBots;
-	    $registeredBots['smw_consistencybot'] = 'ConsistencyBot';
-	    
+		require_once( $sgagIP . "/includes/bots/consistency_bot/SGA_ConsistencyBot.php");
+	  	    
         wfGAInitUserMessages();
 		$cols = array(); //Names of columns
 		$gi_store = SGAGardeningIssuesAccess::getGardeningIssuesAccess();
