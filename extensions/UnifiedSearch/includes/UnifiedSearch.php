@@ -123,7 +123,7 @@ function wfUSSetupExtension() {
 	$wgAutoloadClasses['LuceneResult'] = $dir . 'MWSearch/MWSearch_body.php';
 	$wgAutoloadClasses['LuceneSearchSet'] = $dir . 'MWSearch/MWSearch_body.php';
 
-	$wgSpecialPages['UnifiedSearchStatistics'] = array('SMWSpecialPage','UnifiedSearchStatistics', 'smwfDoSpecialUSSearch', $dir . 'includes/UnifiedSearchStatistics.php');
+	$wgSpecialPages['UnifiedSearchStatistics'] = array('SpecialPage','UnifiedSearchStatistics', '', true, 'smwfDoSpecialUSSearch', $dir . 'includes/UnifiedSearchStatistics.php');
 	//$wgSpecialPageGroups['UnifiedSearchStatistics'] = 'maintenance';
 
 	$wgSpecialPages['Search'] = array('USSpecialPage');
