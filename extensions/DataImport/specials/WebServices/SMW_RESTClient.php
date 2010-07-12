@@ -109,10 +109,10 @@ class SMWRestClient implements IWebServiceClient {
 			unset($parameters[DI_SUBJECT]);
 		}
 		
-		//the predicates parameter is used for RDF extraction, it must not
+		//the propertys parameter is used for RDF extraction, it must not
 		//be passed to the web service
-		if(array_key_exists(DI_PREDICATES, $parameters)){
-			unset($parameters[DI_PREDICATES]);
+		if(array_key_exists(DI_PROPERTIES, $parameters)){
+			unset($parameters[DI_PROPERTIES]);
 		}
 		
 		//the language parameter is used for RDF extraction, it must not

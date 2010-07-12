@@ -49,14 +49,14 @@ define('DI_SUBJECT', '__subject');
 define('DI_SUBJECT_ALIAS', 'subject');
 define('DI_URL_SUFFIX_ALIAS', 'url-suffix');
 define("DI_ALL_SUBJECTS", "__triple__subjects");
-define("DI_ALL_PREDICATES", "__triple__predicates");
+define("DI_ALL_PROPERTIES", "__triple__propertys");
 define("DI_ALL_OBJECTS", "__triple__objects");
 define("DI_ALL_SUBJECTS_ALIAS", "allSubjects");
-define("DI_ALL_PREDICATES_ALIAS", "allPredicates");
+define("DI_ALL_PROPERTIES_ALIAS", "allPropertys");
 define("DI_ALL_OBJECTS_ALIAS", "allObjects");
 define("DI_RDF_POSTPROCESS_REQUIRED", "postprocess required");
-define("DI_PREDICATES", "__predicates");
-define("DI_PREDICATES_ALIAS", "predicates");
+define("DI_PROPERTIES", "__propertys");
+define("DI_PROPERTIES_ALIAS", "propertys");
 define("DI_LANGUAGE", "__language");
 define("DI_LANGUAGE_ALIAS", "language");
 
@@ -339,7 +339,7 @@ class WebService {
 		if(strtolower($ws->mProtocol) == "linkeddata"){
 			$ws->mParameters .= '<parameter name="'.DI_URL_SUFFIX_ALIAS.'" path="'.DI_URL_SUFFIX.'" optional="true"/>';
 			$ws->mParameters .= '<parameter name="'.DI_SUBJECT_ALIAS.'" path="'.DI_SUBJECT.'" optional="true"/>';
-			$ws->mParameters .= '<parameter name="'.DI_PREDICATES_ALIAS.'" path="'.DI_PREDICATES.'" optional="true"/>';
+			$ws->mParameters .= '<parameter name="'.DI_PROPERTIES_ALIAS.'" path="'.DI_PROPERTIES.'" optional="true"/>';
 			$ws->mParameters .= '<parameter name="'.DI_LANGUAGE_ALIAS.'" path="'.DI_LANGUAGE.'" optional="true"/>';
 		}
 
@@ -368,9 +368,9 @@ class WebService {
 		//Add special purpose result parts for ld protocol
 		if(strtolower($ws->mProtocol) == "linkeddata"){
 			$ws->mResult = str_replace("</result>", "", $ws->mResult);
-			$ws->mResult .= '<part name="'.DI_ALL_SUBJECTS_ALIAS.'" predicate="'.DI_ALL_SUBJECTS.'"/>';
-			$ws->mResult .= '<part name="'.DI_ALL_PREDICATES_ALIAS.'" predicate="'.DI_ALL_PREDICATES.'"/>';
-			$ws->mResult .= '<part name="'.DI_ALL_OBJECTS_ALIAS.'" predicate="'.DI_ALL_OBJECTS.'"/>';
+			$ws->mResult .= '<part name="'.DI_ALL_SUBJECTS_ALIAS.'" property="'.DI_ALL_SUBJECTS.'"/>';
+			$ws->mResult .= '<part name="'.DI_ALL_PROPERTIES_ALIAS.'" property="'.DI_ALL_PROPERTIES.'"/>';
+			$ws->mResult .= '<part name="'.DI_ALL_OBJECTS_ALIAS.'" property="'.DI_ALL_OBJECTS.'"/>';
 			$ws->mResult .= "</result>";
 		}
 
@@ -634,7 +634,7 @@ class WebService {
 					$tmpResult = $this->evaluateAdditionalPathAttribute(
 					$rdef, $part, $results[$part]);
 					if($tmpResult = DI_RDF_POSTPROCESS_REQUIRED){
-						$postProcess[$part] = $this->getPredicateForAlias($part, $rdef);
+						$postProcess[$part] = $this->getPropertyForAlias($part, $rdef);
 					} else {
 						$results[$part] = $tmpResult;
 					}
@@ -645,29 +645,29 @@ class WebService {
 					$rdef, $parts[1], $results[$parts[1]]);
 				
 				if($tmpResult == DI_RDF_POSTPROCESS_REQUIRED){
-					$postProcess[$parts[1]] = $this->getPredicateForAlias($parts[1], $rdef);
+					$postProcess[$parts[1]] = $this->getPropertyForAlias($parts[1], $rdef);
 				} else {
 					$results[$parts[1]] = $tmpResult;
 				}
 			}
 		}
 		
-		//deal with the predicates special purpose parameter
-		if(array_key_exists(DI_PREDICATES, $this->mCallParameters)){
+		//deal with the propertys special purpose parameter
+		if(array_key_exists(DI_PROPERTIES, $this->mCallParameters)){
 			$this->initializeLinkedDataResultPartExtraction($response, $rdef);
-			$predicates = explode(";", $this->mCallParameters[DI_PREDICATES][0]);
-			foreach($predicates as $p){
+			$propertys = explode(";", $this->mCallParameters[DI_PROPERTIES][0]);
+			foreach($propertys as $p){
 				$p = explode("=", $p, 2);
 				$alias = $p[0];
-				$predicate = $p[1];
-				SMWRDFProcessor::getInstance()->preprocessPredicate($predicate);
-				$postProcess[$alias] = $predicate;
+				$property = $p[1];
+				SMWRDFProcessor::getInstance()->preprocessProperty($property);
+				$postProcess[$alias] = $property;
 			}
 		}
 
 		if(count($postProcess) > 0){
-			foreach ($postProcess as $alias => $predicate){
-				$results[$alias] = SMWRDFProcessor::getInstance()->getFinalResult($predicate);
+			foreach ($postProcess as $alias => $property){
+				$results[$alias] = SMWRDFProcessor::getInstance()->getFinalResult($property);
 			}
 		}
 
@@ -677,7 +677,7 @@ class WebService {
 
 	/**
 	 * This method initializes the RDFParser
-	 * if resulz parts which use predicate subpaths
+	 * if resulz parts which use property subpaths
 	 * must be extracted from the web service result
 	 *
 	 * @param unknown_type $wsResponse
@@ -716,10 +716,10 @@ class WebService {
 		}
 
 		//this is a LD resource if the REST protocol was chosen
-		//and if the result part definitions contain predicate subpaths
+		//and if the result part definitions contain property subpaths
 		if(strtolower($this->mProtocol) == 'rest'){
-			if(strpos($this->mResult, "predicate=") > 0) return true;
-			if(strpos($this->mResult, "predicate =") > 0) return true;
+			if(strpos($this->mResult, "property=") > 0) return true;
+			if(strpos($this->mResult, "property =") > 0) return true;
 		}
 
 		return false;
@@ -728,7 +728,7 @@ class WebService {
 	private function evaluateAdditionalPathAttribute($rdef, $alias, $value){
 		$xpath = $this->getXPathForAlias($alias, $rdef);
 		$json = $this->getJSONForAlias($alias, $rdef);
-		$predicate = $this->getPredicateForAlias($alias, $rdef);
+		$property = $this->getPropertyForAlias($alias, $rdef);
 		
 		if($xpath != null){
 			$newValue = array();
@@ -746,8 +746,8 @@ class WebService {
 				$newValue = array_merge($newValue, $xpathProcessor->evaluateQuery($json));
 			}
 			$value = $newValue;
-		} else if ($predicate != null){
-			$value = SMWRDFProcessor::getInstance()->preprocessPredicate($predicate);
+		} else if ($property != null){
+			$value = SMWRDFProcessor::getInstance()->preprocessProperty($property);
 		}
 		return $value;
 	}
@@ -1528,13 +1528,13 @@ class WebService {
 	}
 
 	/*
-	 * Returns the value of the predicate attribute
+	 * Returns the value of the property attribute
 	 * of a result part with a given alias
 	 */
-	private function getPredicateForAlias($alias, $resultDef) {
+	private function getPropertyForAlias($alias, $resultDef) {
 		foreach ($resultDef->part as $part) {
 			if ($alias == ''.$part['name']) {
-				return ''.$part['predicate'];
+				return ''.$part['property'];
 			}
 		}
 		return null;

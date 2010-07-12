@@ -69,8 +69,8 @@ class WSTriplifier {
 			$triples = array();
 			foreach($tripleData as $td){
 				$td['subject'] = $this->getSubjectIRI($td['subject']);
-				$td['predicate'] = $this->getPropertyIRI($td['predicate']);
-				$triple = new LODTriple($td['subject'], $td['predicate'], $td['object'], $td['type']);
+				$td['property'] = $this->getPropertyIRI($td['property']);
+				$triple = new LODTriple($td['subject'], $td['property'], $td['object'], $td['type']);
 				$triples[] = $triple;
 			}
 			
@@ -120,25 +120,25 @@ class WSTriplifier {
 	/*
 	 * Creates the preprocessed triples as well as the corresponding subjects
 	 */
-	private function createTriples($wsResult, $subjectCreationPattern, $wsId, $unwantedPredicates, $previewTitle){
-		$unwantedPredicates = array_flip($unwantedPredicates);
+	private function createTriples($wsResult, $subjectCreationPattern, $wsId, $unwantedPropertys, $previewTitle){
+		$unwantedPropertys = array_flip($unwantedPropertys);
 		
 		global $wgParser, $IP;
 		require_once($IP."/extensions/SMWHalo/includes/storage/SMW_TS_Helper.php");
 		
 		$subjects = array();
 		
-		//get number of rows and predicate types
+		//get number of rows and property types
 		$lineCount = 0;
 		$types = array();
 		
-		foreach($wsResult as $predicate => $resultPart){
+		foreach($wsResult as $property => $resultPart){
 			$lineCount = max($lineCount, count($resultPart));
-			$title = Title::newFromText($predicate, SMW_NS_PROPERTY);
+			$title = Title::newFromText($property, SMW_NS_PROPERTY);
 			$semData = smwfGetStore()->getSemanticData(SMWWikiPageValue::makePageFromTitle($title));
 			$property = SMWPropertyValue::makeProperty('Has type');
 			$value = $semData->getPropertyValues($property);
-			$types[$predicate] = (count($value) > 0) ? 
+			$types[$property] = (count($value) > 0) ? 
 				SMWDataValueFactory::findTypeID($value[0]->getShortWikiText()) : '';
 		}
 		
@@ -155,30 +155,30 @@ class WSTriplifier {
 		for($i=0; $i < $lineCount; $i++){
 			$tempTriples = array();
 			$subject = $subjectCreationPattern;
-			foreach($wsResult as $predicate => $objects){
+			foreach($wsResult as $property => $objects){
 				if(array_key_exists($i, $objects) && strlen($objects[$i]) > 0){
-					if (array_key_exists($predicate, $subjectCreationPatternParts)){
-						$subject = str_replace("?".$subjectCreationPatternParts[$predicate]."?", $objects[$i], $subject);
+					if (array_key_exists($property, $subjectCreationPatternParts)){
+						$subject = str_replace("?".$subjectCreationPatternParts[$property]."?", $objects[$i], $subject);
 					}
 					$triple = array();
-					$triple['predicate'] = $predicate;
+					$triple['property'] = $property;
 					$triple['object'] = $objects[$i];
-					if(strlen($types[$predicate]) == 0){
+					if(strlen($types[$property]) == 0){
 						$triple['type'] = null;
 					} else {
-						$typeDataValue = SMWDataValueFactory::newTypeIDValue($types[$predicate], $objects[$i]);
+						$typeDataValue = SMWDataValueFactory::newTypeIDValue($types[$property], $objects[$i]);
 						if($typeDataValue->isValid()){
-							$triple['type'] = WikiTypeToXSD::getXSDType($types[$predicate]);
+							$triple['type'] = WikiTypeToXSD::getXSDType($types[$property]);
 						} else {
 							$triple['type'] = null;
 						}
 					}
 					
-					if(!array_key_exists($predicate, $unwantedPredicates)){
+					if(!array_key_exists($property, $unwantedPropertys)){
 						$tempTriples[] = $triple;
 					}
-				} else if (array_key_exists($predicate, $subjectCreationPatternParts)){
-					$subject = str_replace("?".$subjectCreationPatternParts[$predicate]."?", '', $subject);
+				} else if (array_key_exists($property, $subjectCreationPatternParts)){
+					$subject = str_replace("?".$subjectCreationPatternParts[$property]."?", '', $subject);
 				}
 			}
 			

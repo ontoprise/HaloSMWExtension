@@ -56,7 +56,7 @@ function smwf_wsu_processStep1($name){
 	$response .= $webService->getProtocol().";";
 	
 	foreach($parameters->children() as $param){
-		if($param->attributes()->name != DI_PREDICATES_ALIAS || $param->attributes()->path != DI_PREDICATES){
+		if($param->attributes()->name != DI_PROPERTIES_ALIAS || $param->attributes()->path != DI_PROPERTIES){
 			$response .= $param->attributes()->name;
 			$response .= ";";
 			$response .= $param->attributes()->optional;
@@ -112,9 +112,9 @@ function smwf_wsu_processStep2($name){
 	$response = "";
 	foreach($results->children() as $result){
 		foreach($result->children() as $part){
-			if(($part->attributes()->predicate != DI_ALL_SUBJECTS || $part->attributes()->name != DI_ALL_SUBJECTS_ALIAS)
-					&& ($part->attributes()->predicate != DI_ALL_PREDICATES || $part->attributes()->name != DI_ALL_PREDICATES_ALIAS)
-					&& ($part->attributes()->predicate != DI_ALL_OBJECTS || $part->attributes()->name != DI_ALL_OBJECTS_ALIAS)){
+			if(($part->attributes()->property != DI_ALL_SUBJECTS || $part->attributes()->name != DI_ALL_SUBJECTS_ALIAS)
+					&& ($part->attributes()->property != DI_ALL_PROPERTIES || $part->attributes()->name != DI_ALL_PROPERTIES_ALIAS)
+					&& ($part->attributes()->property != DI_ALL_OBJECTS || $part->attributes()->name != DI_ALL_OBJECTS_ALIAS)){
 				if(strlen(''.$part->attributes()->name) > 0){ //this is for ignoring namespace definitions
 					$response .= $result->attributes()->name;
 					$response .= ".".$part->attributes()->name;

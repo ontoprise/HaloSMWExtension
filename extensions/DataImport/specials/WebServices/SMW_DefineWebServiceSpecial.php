@@ -712,9 +712,9 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 			} else {
 				//ignore special purpose result parts for ld wss
 				if($protocol != 'ld' || 
-						((''.$wwsdParameter["predicate"] != DI_ALL_SUBJECTS || ''.$wwsdParameter["name"] != DI_ALL_SUBJECTS_ALIAS)
-						&& ($protocol != 'ld' || ''.$wwsdParameter["predicate"] != DI_ALL_PREDICATES || ''.$wwsdParameter["name"] != DI_ALL_PREDICATES_ALIAS)
-						&& ($protocol != 'ld' || ''.$wwsdParameter["predicate"] != DI_ALL_OBJECTS || ''.$wwsdParameter["name"] != DI_ALL_OBJECTS_ALIAS))){
+						((''.$wwsdParameter["property"] != DI_ALL_SUBJECTS || ''.$wwsdParameter["name"] != DI_ALL_SUBJECTS_ALIAS)
+						&& ($protocol != 'ld' || ''.$wwsdParameter["property"] != DI_ALL_PROPERTIES || ''.$wwsdParameter["name"] != DI_ALL_PROPERTIES_ALIAS)
+						&& ($protocol != 'ld' || ''.$wwsdParameter["property"] != DI_ALL_OBJECTS || ''.$wwsdParameter["name"] != DI_ALL_OBJECTS_ALIAS))){
 					if(strlen(''.$wwsdParameter['name']) > 0){
 						$html .= $wwsdParameter["name"].";";
 						if(strlen($wwsdParameter["xpath"]."") > 0){
@@ -723,9 +723,9 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 						} else if(strlen($wwsdParameter["json"]."") > 0){
 							$html .= "json;";
 							$html .= $wwsdParameter["json"].";";
-						} else if(strlen($wwsdParameter["predicate"]."") > 0){
-							$html .= "predicate;";
-							$html .= $wwsdParameter["predicate"].";";
+						} else if(strlen($wwsdParameter["property"]."") > 0){
+							$html .= "property;";
+							$html .= $wwsdParameter["property"].";";
 						} else {
 							$html .= "##;";
 							$html .= "##;";

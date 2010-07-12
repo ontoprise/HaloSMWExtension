@@ -3296,9 +3296,9 @@ DefineWebServiceSpecial.prototype = {
 			select.appendChild(option);
 			
 			option = document.createElement("option");
-			text = document.createTextNode("predicate");
+			text = document.createTextNode("property");
 			option.appendChild(text);
-			option.value = "predicate";
+			option.value = "property";
 			select.appendChild(option);
 	
 			td.appendChild(select);
@@ -3749,7 +3749,7 @@ DefineWebServiceSpecial.prototype = {
 					result += resultTable.childNodes[i].childNodes[1].firstChild.value 	+ "=\"";
 					var column = 2;
 				} else {
-					result += "predicate=\"";
+					result += "property=\"";
 					var column = 1;
 				}
 				var subPathString = resultTable.childNodes[i].childNodes[column].firstChild.value;
@@ -3978,7 +3978,7 @@ DefineWebServiceSpecial.prototype = {
 		if ($("step1-protocol-ld").checked){
 			$("step4-results").childNodes[0].childNodes[0].childNodes[3].style.display = "none";
 			$("step4-results").childNodes[0].childNodes[0].childNodes[4].childNodes[0].nodeValue = 
-				diLanguage.getMessage('smw_wws_results_table_predicate');
+				diLanguage.getMessage('smw_wws_results_table_property');
 		} else {
 			$("step4-results").childNodes[0].childNodes[0].childNodes[3].style.display = "";
 			$("step4-results").childNodes[0].childNodes[0].childNodes[4].childNodes[0].nodeValue = 
@@ -4686,7 +4686,7 @@ DefineWebServiceSpecial.prototype = {
 	checkDisplayAssNS : function(event){
 		var node = Event.element(event);
 		//todo use lang file
-		if(node.value == diLanguage.getMessage('smw_wws_predicate') && $('step4-nss').style.display == "none"){
+		if(node.value == diLanguage.getMessage('smw_wws_property') && $('step4-nss').style.display == "none"){
 			$('step4-nss-header').style.display = "";
 		} 
 	},

@@ -38,8 +38,8 @@ class SMWRDFProcessor {
 	private $processedIndex = array();
 	private $subject;
 	private $namespacePrefixes = array();
-	private $allPredicatesRequested = false; //user has used the DI_ALL_PREDICATES predicate
-	private $allObjectsRequested = false; //user has used the DI_ALL_OBJECTS predicate
+	private $allPropertysRequested = false; //user has used the DI_ALL_PROPERTIES property
+	private $allObjectsRequested = false; //user has used the DI_ALL_OBJECTS property
 	private $language;
 	
 	
@@ -63,13 +63,13 @@ class SMWRDFProcessor {
 		$this->language = $language;
 		
 		$this->processedIndex = array();
-		$this->allPredicatesRequested = false;
+		$this->allPropertysRequested = false;
 		$this->allObjectsRequested = false;
 	}
 	
 	/**
 	 * Add namespace prefixes which will be used when
-	 * processing predicates
+	 * processing propertys
 	 * 
 	 * @param $nsp
 	 * @return unknown_type
@@ -93,55 +93,55 @@ class SMWRDFProcessor {
 		return $uri;
 	}
 	
-	private function getRequestedLanguage($predicate){
+	private function getRequestedLanguage($property){
 		$lang = $this->language;
-		if(strpos($predicate, "@") > 0){
-			$lang = substr($predicate, strpos($predicate, "@")+1);
-			$predicate = substr($predicate, 0, strpos($predicate, "@"));
+		if(strpos($property, "@") > 0){
+			$lang = substr($property, strpos($property, "@")+1);
+			$property = substr($property, 0, strpos($property, "@"));
 		}
-		return array($lang, $predicate);
+		return array($lang, $property);
 	}
 		
 	/**
 	 * This method is called by SMWWebService
 	 * when processing result parts. It updates the internal
 	 * processed index, which can be accessed by
-	 * SMWWebService after all predicates have 
+	 * SMWWebService after all propertys have 
 	 * been preprocessed.
 	 * 
-	 * @param unknown_type $predicate
+	 * @param unknown_type $property
 	 * @return unknown_type
 	 */
-	public function preprocessPredicate($predicate){
-		list($lang, $predicate) = $this->getRequestedLanguage($predicate);
-		$predicate = $this->resolveNamespacePrefix($predicate);
+	public function preprocessProperty($property){
+		list($lang, $property) = $this->getRequestedLanguage($property);
+		$property = $this->resolveNamespacePrefix($property);
 		
 		if(strlen($this->subject) > 0){ //user has chosen to retrieve triples for a certain subject
 			$subject = $this->resolveNamespacePrefix($this->subject);
 			
 			if(array_key_exists($subject, $this->index)){
-				if($predicate == DI_ALL_SUBJECTS){
+				if($property == DI_ALL_SUBJECTS){
 					if(array_key_exists($subject, $this->index)){
 						$result = array($this->subject);
 						if(!array_key_exists($subject, $this->processedIndex)){
 							$this->processedIndex[$subject] = array();
 						}
 					}
-				} else if($predicate == DI_ALL_PREDICATES){
-					$this->allPredicatesRequested = true;;
+				} else if($property == DI_ALL_PROPERTIES){
+					$this->allPropertysRequested = true;;
 					if(!array_key_exists($subject, $this->processedIndex)){
 						$this->processedIndex[$subject] = array();
 					}
-					foreach(array_keys($this->index[$subject]) as $predicate){
-						if(!array_key_exists($predicate, $this->processedIndex[$subject])){
-							$this->processedIndex[$subject][$predicate] = array();
+					foreach(array_keys($this->index[$subject]) as $property){
+						if(!array_key_exists($property, $this->processedIndex[$subject])){
+							$this->processedIndex[$subject][$property] = array();
 						}	
 					}
-				} else if($predicate == DI_ALL_OBJECTS){
+				} else if($property == DI_ALL_OBJECTS){
 					$this->allObjectsRequested = true;
-					foreach($this->index[$subject] as $predicateId => $predicate){
+					foreach($this->index[$subject] as $propertyId => $property){
 						$processedObjects = array();
-						foreach($predicate as $object){
+						foreach($property as $object){
 							if(array_key_exists('lang', $object)){ 
 								if($object['lang'] == $lang || strlen($lang) == 0){
 									$processedObjects[] = $object['value']; 
@@ -150,12 +150,12 @@ class SMWRDFProcessor {
 								$processedObjects[] = $object['value'];
 							}
 						}
-						$this->processedIndex[$subject][$predicateId] = $processedObjects;
+						$this->processedIndex[$subject][$propertyId] = $processedObjects;
 					}
-				} else if(array_key_exists($predicate, $this->index[$subject])){		
+				} else if(array_key_exists($property, $this->index[$subject])){		
 					$processedObjects = array();
 					
-					foreach($this->index[$subject][$predicate] as $object){
+					foreach($this->index[$subject][$property] as $object){
 						if(array_key_exists('lang', $object)){ 
 							if($object['lang'] == $lang || strlen($lang) == 0){
 								$processedObjects[] = $object['value']; 
@@ -164,28 +164,28 @@ class SMWRDFProcessor {
 							$processedObjects[] = $object['value'];
 						}
 					}
-					$this->processedIndex[$subject][$predicate] = $processedObjects;
+					$this->processedIndex[$subject][$property] = $processedObjects;
 				}
 			}
 		} else { //user is not interested in a certain subject
-			if($predicate == DI_ALL_SUBJECTS){
+			if($property == DI_ALL_SUBJECTS){
 				foreach(array_keys($this->index) as $subjectId){ //add all subject ids to the processed index
 					if(!array_key_exists($subjectId, $this->processedIndex)){
 						$this->processedIndex[$subjectId] = array();
 					}
 				}		
-			} else { // predicate != DI_ALL_SUBJECTS
+			} else { // property != DI_ALL_SUBJECTS
 				foreach($this->index as $subjectId => $subject){
-					if($predicate == DI_ALL_PREDICATES){
-						$this->allPredicatesRequested = true;
-						foreach(array_keys($subject) as $predicateId){
-							if(!array_key_exists($predicateId, $this->processedIndex[$subjectId])){
-								$this->processedIndex[$subjectId][$predicateId] = array();
+					if($property == DI_ALL_PROPERTIES){
+						$this->allPropertysRequested = true;
+						foreach(array_keys($subject) as $propertyId){
+							if(!array_key_exists($propertyId, $this->processedIndex[$subjectId])){
+								$this->processedIndex[$subjectId][$propertyId] = array();
 							}
 						}
-					} else if($predicate == DI_ALL_OBJECTS){
+					} else if($property == DI_ALL_OBJECTS){
 						$this->allObjectsRequested = true;
-						foreach($subject as $predicateId => $objects){
+						foreach($subject as $propertyId => $objects){
 							$processedObjects = array();
 							foreach($objects as $object){
 								if(array_key_exists('lang', $object)){ 
@@ -197,12 +197,12 @@ class SMWRDFProcessor {
 								}
 							}
 							
-							$this->processedIndex[$subjectId][$predicateId] = $processedObjects;
+							$this->processedIndex[$subjectId][$propertyId] = $processedObjects;
 						}
-					} else if(array_key_exists($predicate, $subject)){
+					} else if(array_key_exists($property, $subject)){
 						
 						$processedObjects = array();
-						foreach($subject[$predicate] as $object){
+						foreach($subject[$property] as $object){
 							if(array_key_exists('lang', $object)){ 
 								if($object['lang'] == $lang || strlen($lang) == 0){
 									$processedObjects[] = $object['value']; 
@@ -211,7 +211,7 @@ class SMWRDFProcessor {
 								$processedObjects[] = $object['value'];
 							}
 						}
-						$this->processedIndex[$subjectId][$predicate] = $processedObjects; 
+						$this->processedIndex[$subjectId][$property] = $processedObjects; 
 					} 
 				}
 			}
@@ -222,39 +222,39 @@ class SMWRDFProcessor {
 	
 	/**
 	 * This method is called by SMWWebService
-	 * after all predicates have been been Preprocessed
+	 * after all propertys have been been Preprocessed
 	 * in order to get the final result part values.
 	 * 
-	 * @param unknown_type $predicate
+	 * @param unknown_type $property
 	 * @return unknown_type
 	 */
-	public function getFinalResult($predicate){
-		list($lang, $predicate) = $this->getRequestedLanguage($predicate);
-		$requestPredicate = $this->resolveNamespacePrefix($predicate);
+	public function getFinalResult($property){
+		list($lang, $property) = $this->getRequestedLanguage($property);
+		$requestProperty = $this->resolveNamespacePrefix($property);
 		
 		$result = array();
 		foreach($this->processedIndex as $subjectId => $subject){
 			if(count($subject) == 0){ //a subject with no associated triples
-				if($requestPredicate == DI_ALL_SUBJECTS){
+				if($requestProperty == DI_ALL_SUBJECTS){
 					$result[] = $subjectId;
-				} else if($requestPredicate == DI_ALL_PREDICATES){
+				} else if($requestProperty == DI_ALL_PROPERTIES){
 					$result[] = ""; //this should never happen
 				} else {
 					$result [] = "";
 				}
 			} else { //this subject has associated triples
-				if(!$this->allPredicatesRequested && !$this->allObjectsRequested){ //all predicates was not requested => do not add spacers for them
-					//add spacers if some predicates have several values
+				if(!$this->allPropertysRequested && !$this->allObjectsRequested){ //all propertys was not requested => do not add spacers for them
+					//add spacers if some propertys have several values
 					$maxObjects = 1;
 					$objects = array();							
-					foreach($subject as $predicateId => $predicate){
-						$maxObjects = max($maxObjects, count($predicate));
-						if($predicateId == $requestPredicate){
-							$objects = $predicate;
+					foreach($subject as $propertyId => $property){
+						$maxObjects = max($maxObjects, count($property));
+						if($propertyId == $requestProperty){
+							$objects = $property;
 						}
 					}
 					
-					if($requestPredicate == DI_ALL_SUBJECTS){
+					if($requestProperty == DI_ALL_SUBJECTS){
 						for($i=0; $i < $maxObjects; $i++){
 							$result[] = $subjectId;
 						}
@@ -267,26 +267,26 @@ class SMWRDFProcessor {
 							}
 						}
 					}
-				} else { //all predicates were requested	
-					foreach($subject as $predicateId => $predicate){
-						if(count($predicate) == 0){ //no values for that predicate exist
-							if($requestPredicate == DI_ALL_SUBJECTS){
+				} else { //all propertys were requested	
+					foreach($subject as $propertyId => $property){
+						if(count($property) == 0){ //no values for that property exist
+							if($requestProperty == DI_ALL_SUBJECTS){
 								$result[] = $subjectId;
-							} else if($requestPredicate == DI_ALL_PREDICATES){
-								$result[] = $predicateId;
+							} else if($requestProperty == DI_ALL_PROPERTIES){
+								$result[] = $propertyId;
 							} else {
 								$result [] = "";
 							}
-						} else { //values for the current predicate are available
-							foreach($predicate as $object){
-								if($requestPredicate == DI_ALL_SUBJECTS){
+						} else { //values for the current property are available
+							foreach($property as $object){
+								if($requestProperty == DI_ALL_SUBJECTS){
 									$result[] = $subjectId;
-								} else if($requestPredicate == DI_ALL_PREDICATES){
-									$result[] = $predicateId;
-								} else if($requestPredicate == DI_ALL_OBJECTS){
+								} else if($requestProperty == DI_ALL_PROPERTIES){
+									$result[] = $propertyId;
+								} else if($requestProperty == DI_ALL_OBJECTS){
 									$result[] = $object;
 								} else {
-									if($predicateId == $requestPredicate){
+									if($propertyId == $requestProperty){
 										$result [] = $object;
 									} else {
 										$result[] = "";
