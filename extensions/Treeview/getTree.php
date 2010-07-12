@@ -109,8 +109,9 @@ function smwfInsertNavTree() {
 
    //Don't insert tree into ontoskin
    global $wgUser;
-   $skin = $wgUser->getSkin();
+   $skin = $wgUser !== NULL ? $wgUser->getSkin()->getSkinName() : $wgDefaultSkin;
    if(($skin == 'ontoskin') || ($skin == 'ontoskin2') || ($skin == 'ontoskin3')) return true;
+   echo "<!--".$skin."-->";
 
 
    echo smwfNavTree();

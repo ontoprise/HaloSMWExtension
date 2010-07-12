@@ -65,13 +65,13 @@ function smwhf_insertNavTree(param){
 
 function smwhf_hideTree(){
     var tree = document.getElementById('smwh_tree');
-    tree.hide();
+    $(tree).hide();
     //tree.setAttribute("css", "display: none;");
 }
 
 function smwhf_showTree(){
     var tree = document.getElementById('smwh_tree');
-    tree.show();
+    $(tree).show();
 }
 
 

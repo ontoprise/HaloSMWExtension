@@ -11,9 +11,9 @@
 * @ingroup Treeview
 * @defgroup Treeview Semantic Treeview extension
 */
- 
+
 if (!defined('MEDIAWIKI')) die('Not an entry point.');
- 
+
 define('SEMANTIC_TREEVIEW_VERSION','{{$VERSION}}');
 
 require_once('TreeGenerator.php');
@@ -24,7 +24,7 @@ require_once('getTree.php');
 require_once('TreeviewResize.php');
 # Set any unset images to default titles
 if (!isset($wgTreeViewImages) || !is_array($wgTreeViewImages)) $wgTreeViewImages = array();
- 
+
 $wgTreeViewMagic               = "tree"; # the parser-function name for trees
 $wgTreeViewShowLines           = false;  # whether to render the dotted lines joining nodes
 $wgExtensionFunctions[]        = 'wfSetupTreeView';
@@ -45,15 +45,25 @@ $wgExtensionCredits['parserhook'][] = array(
 global $smgJSLibs;
 $smgJSLibs[] = 'prototype';
 
-function smwhg_AddTreeToToolbox(& $template) {    
+
+//Insert show trigger into toolbox
+function smwhg_AddTreeToToolbox(& $template) {
+
+    //Don't insert tree into ontoskin
+    global $wgUser;
+    $skin = $wgUser !== NULL ? $wgUser->getSkin()->getSkinName() : $wgDefaultSkin;
+    if(($skin == 'ontoskin') || ($skin == 'ontoskin2') || ($skin == 'ontoskin3')) return true;
+
     echo '<li><a href="javascript:smwhf_showTree()">'.'Show TreeView'.'</a></li>';
     return true;
 }
 
 $wgHooks['SkinTemplateToolboxEnd'][] = 'smwhg_AddTreeToToolbox';
+ 
+
 
 class SemanticTreeview {
- 
+
     var $version  = SEMANTIC_TREEVIEW_VERSION;
     var $uniq     = '';      # uniq part of all tree id's
     var $uniqname = 'tv';    # input name for uniqid
@@ -63,27 +73,27 @@ class SemanticTreeview {
     var $images   = '';      # internal JS to update dTree images
     var $useLines = true;    # internal variable determining whether to render connector lines
     var $args     = array(); # args for each tree
-   
+
     /**
      * Constructor
      */
     function __construct() {
         global $wgOut,$wgHooks,$wgParser,$wgScriptPath,$wgJsMimeType,
             $wgTreeViewMagic,$wgTreeViewImages,$wgTreeViewShowLines;
- 
+
         # Add hooks
         $wgParser->setFunctionHook($wgTreeViewMagic,array($this,'expandTree'));
         $wgHooks['ParserAfterTidy'][] = array($this,'renderTree');
- 
+
         # Update general tree paths and properties
         $this->baseDir  = dirname(__FILE__);
         //XXX: (KK) replace backslash with slash
         $this->baseDir  = str_replace("\\", "/", $this->baseDir);
         $this->baseUrl  = preg_replace('|^.+(?=[/\\\\]extensions)|',$wgScriptPath,$this->baseDir);
-       
+
         $this->useLines = $wgTreeViewShowLines ? 'true' : 'false';
         $this->uniq     = uniqid($this->uniqname);
- 
+
         # Convert image titles to file paths and store as JS to update dTree
         foreach ($wgTreeViewImages as $k => $v) {
             $title = Title::newFromText($v,NS_IMAGE);
@@ -91,7 +101,7 @@ class SemanticTreeview {
             $v = $image && $image->exists() ? $image->getURL() : $wgTreeViewImages[$k];
             $this->images .= "tree.icon['$k'] = '$v';";
             }
- 
+
         # Add link to output to load dtree.js script
         $wgOut->addScript("<script type=\"$wgJsMimeType\" src=\"{$this->baseUrl}/dtree.js\"><!-- Semantic Treeview ".SEMANTIC_TREEVIEW_VERSION." --></script>\n");
         $wgOut->addLink(array(
@@ -101,14 +111,14 @@ class SemanticTreeview {
                     'href'  => "{$this->baseUrl}/dtree.css"
                 ));
         }
- 
- 
+
+
     /**
      * Expand #tree parser-functions (reformats tree rows for matching later) and store args
      */
     public function expandTree(&$parser) {
         global $wgServer, $wgScriptPath;
- 
+
         # Store args for this tree for later use
         $args = array();
         $text = "";
@@ -117,11 +127,11 @@ class SemanticTreeview {
                 if (preg_match('/^(\\w+?)\\s*=\\s*(.+)$/s',$arg,$m)) $args[$m[1]] = $m[2]; else $text = $arg;
             }
         }
-        
+
         # Create a unique id for this tree or use id supplied in args and store args wrt id
         $this->id = isset($args['id']) ? $args['id'] : uniqid('');
         $this->args[$this->id] = $args;
-        
+
         $this->class = isset($args['class']) ? $args['class'] : "dtree";
         $this->args[$this->id."class"] = $this->class;
 
@@ -137,7 +147,7 @@ class SemanticTreeview {
 	            	$this->args[$this->id."SmwUrl"] = "setupSmwUrl('".$wgServer.$wgScriptPath."');";
 	            	$text .= $matches[2]."*".$matches[1]."\n";
 	            	$matches[1] = substr($matches[1], 12); // remove initOnload('
-	            	$matches[1] = substr($matches[1], 0, -2); // and ')'	
+	            	$matches[1] = substr($matches[1], 0, -2); // and ')'
 	            }
 	            parse_str($matches[1], $params);
 	    	    if (isset($params['opento']))
@@ -149,7 +159,7 @@ class SemanticTreeview {
             	    $addSmwData .= (isset($params['category'])) ? "'".$params['category']."', " : "null, ";
             	    $addSmwData .= (isset($params['display'])) ? "'".$params['display']."', " : "null, ";
                     $addSmwData .= (isset($params['linkto'])) ? "'".$params['linkto']."', " : "null, ";
-            	    $addSmwData .= (isset($params['start'])) ? "'".$params['start']."', " : "null, "; 
+            	    $addSmwData .= (isset($params['start'])) ? "'".$params['start']."', " : "null, ";
 					$addSmwData .= (isset($params['maxDepth'])) ? $params['maxDepth']."," : "null, ";
 					$addSmwData .= (isset($params['condition'])) ? "'".urlencode($params['condition'])."', " : "null, ";
 					$addSmwData .= (isset($params['urlparams'])) ? "'".$params['urlparams']."', " : "null, ";
@@ -177,8 +187,8 @@ class SemanticTreeview {
         }
         return $newtext;
    }
- 
- 
+
+
     /**
      * Reformat tree bullet structure recording row, depth and id in a format which is not altered by wiki-parsing
      * - format is: 1{uniq}-{id}-{depth}-{item}-{hc}-2{uniq}
@@ -196,23 +206,23 @@ class SemanticTreeview {
     		$m2 = '';
     		$m3 = "\x7f";
     	}
-    	
+
         return "\x7f1{$this->uniq}\x7f{$this->id}\x7f{$m1}\x7f{$m2}{$m3}\x7f2{$this->uniq}";
     }
- 
+
     /**
      * Called after parser has finished (ParserAfterTidy) so all transcluded parts can be assembled into final trees
      */
     public function renderTree(&$parser, &$text) {
         global $wgJsMimeType;
         $u = $this->uniq;
-        
+
         # first, split text into single lines to have a smaller amount to do a regex matching with
         $subs = array();
         $matches = array();
         $lines = explode("\n", $text);
         foreach ($lines as $line) {
-           # Extract all the formatted tree rows in the page 
+           # Extract all the formatted tree rows in the page
            if (preg_match_all("/\x7f1$u\x7f(.+?)\x7f([0-9]+)\x7f({$u}3(.+?){$u}4)?(.*?)(?=\x7f[12]$u)/",$line,$lineMatch,PREG_SET_ORDER)) {
          	   foreach ($lineMatch as &$item)
                    $matches[]= $item;
@@ -224,7 +234,7 @@ class SemanticTreeview {
                    $subs[]= $item;
            }
         }
-        
+
         // if there are no subtrees found, initialize the array as below
         if (count($subs) == 0) $subs = array(1 => array());
         # Use extracted tree rows in the page and if any, replace with dTree JavaScript
@@ -248,7 +258,7 @@ class SemanticTreeview {
                 $lastId    = $id;
                 $lastDepth = $depth;
             }
- 
+
             # PASS-2: build the JavaScript and replace into $text
             $parents = array(); # parent node for each depth
             $last    = -1;
@@ -289,24 +299,24 @@ class SemanticTreeview {
                 }
 
                 # Last row of current root-tree, surround nodes dtree JS and div etc
-                
+
                 if ($end) {
                 	// add opento command to node list if neccessarry
-                	$openTo = (isset($this->args[$id."opento"])) 
+                	$openTo = (isset($this->args[$id."opento"]))
                    		      ? "{$this->uniqname}$id.openToName('".$this->args[$id."opento"]."');\n"
                    		      : "";
-                	
+
                     # Open all and close all links
                     $top = $bottom = $root = '';
- 
+
                     foreach ($args as $arg => $pos)
                         if (($pos == 'top' || $pos == 'bottom' || $pos == 'root') && ($arg == 'open' || $arg == 'close'))
                             $$pos .= "<a href=\"javascript: {$this->uniqname}$id.{$arg}All();\">&nbsp;{$arg} all</a>&nbsp;";
- 
-                    if ($top) $top = "<p>&nbsp;$top</p>";               
+
+                    if ($top) $top = "<p>&nbsp;$top</p>";
                     if ($bottom) $bottom = "<p>&nbsp;$bottom</p>";
-                    if ($root) $add = "tree.add(0,-1,'$root');"; 
- 
+                    if ($root) $add = "tree.add(0,-1,'$root');";
+
                     # Build tree JS
                     $tree = "
                         $top
@@ -349,7 +359,7 @@ class SemanticTreeview {
     }
 }
 
- 
+
 /**
  * Called from $wgExtensionFunctions array when initialising extensions
  */
@@ -359,8 +369,8 @@ function wfSetupTreeView() {
     new TreeGenerator();
     $wgTreeView = new SemanticTreeview();
     }
- 
- 
+
+
 /**
  * Needed in MediaWiki >1.8.0 for magic word hooks to work properly
  */
