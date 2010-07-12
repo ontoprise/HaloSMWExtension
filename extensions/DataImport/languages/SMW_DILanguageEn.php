@@ -318,6 +318,8 @@ class SMW_DILanguageEn extends SMW_DILanguage {
 	'smw_wws_enable_triplification-scp-stop-add' => 'Finish adding result parts',
 	'smw_wws_enable_triplification-scp-add-note' => 'Click on an alias input field to add the corresponding result part to the subject creation pattern.',
 	
+	'smw_wws_s4_add_rest_result_part' => 'Add another result part',
+	
 	);
 
 	protected $smwDINamespaces = array(

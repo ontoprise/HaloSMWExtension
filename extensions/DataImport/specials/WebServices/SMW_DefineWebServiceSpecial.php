@@ -269,9 +269,11 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 
 		$html .= "<table id=\"step4-results\"><tr><th>".wfMsg('smw_wws_path')."</th><th>".wfMsg('smw_wws_use')."<span onclick=\"webServiceSpecial.useResults()\"><input title=\"".wfMsg("smw_wws_selectall-tooltip")."\" type=\"checkbox\" id=\"step4-use\"/></span></th><th>".wfMsg('smw_wws_alias')."<span class=\"alias-generate\" onclick=\"webServiceSpecial.generateResultAliases(true)\"><img id=\"step-4-alias-generate-button\" title=\"".wfMsg("smw_wws_autogenerate-alias-tooltip-resultpart")."\" src=\"".$smwgDIScriptPath."/skins/webservices/Pencil_grey.png\"></img></span></th><th>".wfMsg('smw_wws_format')."</th><th>".wfMsg('smw_wws_path')."</th><th></th></tr></table>";
 		
+		$html .= '<a id="step4-add-rest-result-part" style="display: none" href="javascript:webServiceSpecial.appendRESTResultPart()">'.wfMsg('smw_wws_s4_add_rest_result_part').'</a>';
+		
 		//Add button for displaying the namespace prefix table
 		$html .= '<div id="step4-nss-header" style="display: none">';
-		$html .= '<img id="step4-display-nss" src="'.$smwgDIScriptPath.'/skins/webservices/pfeil_rechts.gif"></img>';
+		$html .= '<img id="step4-display-nss" src="'.$smwgDIScriptPath.'/skins/webservices/right.png"></img>';
 		$html .= '<span>'.wfMsg('smw_wws_add_prefixes').'</span>';
 		$html .= '</div>';
 		

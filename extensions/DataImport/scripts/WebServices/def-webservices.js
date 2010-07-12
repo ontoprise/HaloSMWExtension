@@ -1021,6 +1021,10 @@ DefineWebServiceSpecial.prototype = {
 			$("step6c-error").style.display = "none";
 		}
 		this.hidePendingIndicator();
+		
+		$('step4-add-rest-result-part').style.display = "none";
+		
+		this.hideSubjectCreationPattern();
 	},
 
 	/**
@@ -3255,7 +3259,7 @@ DefineWebServiceSpecial.prototype = {
 
 	appendRESTResultPart : function() {
 		var id = $("step4-results").childNodes[0].childNodes.length;
-
+		
 		var row = document.createElement("tr");
 
 		// add alias-input
@@ -3314,37 +3318,50 @@ DefineWebServiceSpecial.prototype = {
 
 		// add additional buttons
 		td = document.createElement("td");
-		select = document.createElement("select");
+		// select = document.createElement("select");
 
-		option = document.createElement("option");
-		text = document.createTextNode(diLanguage
-				.getMessage('smw_wws_add_resultpart'));
-		option.appendChild(text);
-		option.value = diLanguage.getMessage('smw_wws_add_resultpart');
-		select.appendChild(option);
+		// option = document.createElement("option");
+		// text = document.createTextNode(diLanguage
+		// 		.getMessage('smw_wws_add_resultpart'));
+		// option.appendChild(text);
+		// option.value = diLanguage.getMessage('smw_wws_add_resultpart');
+		// select.appendChild(option);
 
-		option = document.createElement("option");
-		text = document.createTextNode(diLanguage
-				.getMessage('smw_wws_remove_resultpart'));
-		option.appendChild(text);
-		option.value = diLanguage.getMessage('smw_wws_remove_resultpart');
-		select.appendChild(option);
+		// option = document.createElement("option");
+		// text = document.createTextNode(diLanguage
+		// 		.getMessage('smw_wws_remove_resultpart'));
+		// option.appendChild(text);
+		// option.value = diLanguage.getMessage('smw_wws_remove_resultpart');
+		// select.appendChild(option);
 
-		td.appendChild(select);
+		// td.appendChild(select);
 
-		input = document.createElement("input");
-		input.type = "button";
-		input.value = "OK";
-		if(window.addEventListener){
-			input.addEventListener("click", webServiceSpecial.processRESTResultPartButton, false);
-		} else {
-			input.attachEvent("onclick", webServiceSpecial.processRESTResultPartButton, false);
-		}
-		input.clickEventId = id;
+		// input = document.createElement("input");
+		// input.type = "button";
+		// input.value = "OK";
+		// if(window.addEventListener){
+		// 	input.addEventListener("click", webServiceSpecial.removeRESTResultPart, false);
+		// } else {
+		// 	input.attachEvent("onclick", webServiceSpecial.removeRESTResultPart, false);
+		// }
+		//  input.clickEventId = id;
 		
-		input.style.cursor = "pointer";
-		td.appendChild(input);
+		// input.style.cursor = "pointer";
+		// td.appendChild(input);
 
+		var img = document.createElement('img');
+		img.src = wgScriptPath
+			+ "/extensions/DataImport/skins/webservices/delete.png";;
+			img.style.cursor = 'pointer';			
+			img.clickEventId = id;	
+		if(window.addEventListener){
+		 	img.addEventListener("click", webServiceSpecial.removeRESTResultPart, false);
+		} else {
+		 	img.attachEvent("onclick", webServiceSpecial.removeRESTResultPart, false);
+		}
+		
+		td.appendChild(img);
+		
 		row.appendChild(td);
 
 		$("step4-results").childNodes[0].appendChild(row);
@@ -3464,16 +3481,11 @@ DefineWebServiceSpecial.prototype = {
 			var br = document.createElement("br");
 			$("step4-rest-intro").appendChild(br);
 
-			var button = document.createElement("input");
-			button.setAttribute("type", "button");
-			button.setAttribute("value", diLanguage
-					.getMessage('smw_wws_add_resultparts'));
-			if(window.addEventListener){
-				button.addEventListener("click", webServiceSpecial.displayRestResultsTable, false);
-			} else {
-				button.attachEvent("onclick", webServiceSpecial.displayRestResultsTable, false);
-			}
-			$("step4-rest-intro").appendChild(button);
+			var a = document.createElement("a");
+			var label = document.createTextNode(diLanguage.getMessage('smw_wws_add_resultparts'));
+			a.appendChild(label);
+			a.setAttribute("href", 'javascript:webServiceSpecial.displayRestResultsTable()');
+			$("step4-rest-intro").appendChild(a);
 			
 			//add aditional button for defining namespace prefixes
 			// if(window.addEventListener){
@@ -3529,35 +3541,29 @@ DefineWebServiceSpecial.prototype = {
 		this.appendNSPrefix();
 		$("step4-nss").childNodes[0].childNodes[1].removed = true;
 		$("step4-nss").style.display = "none";
+		
+		this.hideSubjectCreationPattern();
 	},
 
-	processRESTResultPartButton : function(event) {
+	removeRESTResultPart : function(event) {
 		var id = Event.element(event).clickEventId;
-		if ($("step1-protocol-rest").checked) {
-			var select = $("step4-results").childNodes[0].childNodes[id].childNodes[3].childNodes[0];
-		} else if ($("step1-protocol-ld").checked) {
-			var select = $("step4-results").childNodes[0].childNodes[id].childNodes[2].childNodes[0];
-		}
 		
 		var action = select.value;
 
-		if (action == diLanguage.getMessage('smw_wws_add_resultpart')) {
-			webServiceSpecial.appendRESTResultPart();
-		} else if (action == diLanguage.getMessage('smw_wws_remove_resultpart')) {
-			$("step4-results").childNodes[0].childNodes[id].removed = true;
-			$("step4-results").childNodes[0].childNodes[id].style.display = "none";
+		$("step4-results").childNodes[0].childNodes[id].removed = true;
+		$("step4-results").childNodes[0].childNodes[id].style.display = "none";
 
-			var remove = true;
-			for ( var i = 1; i < $("step4-results").childNodes[0].childNodes.length; i++) {
-				if (!$("step4-results").childNodes[0].childNodes[i].removed) {
-					remove = false;
-				}
+		var remove = true;
+		for ( var i = 1; i < $("step4-results").childNodes[0].childNodes.length; i++) {
+			if (!$("step4-results").childNodes[0].childNodes[i].removed) {
+				remove = false;
 			}
+		}
 
-			if (remove) {
-				$("step4-rest-intro").childNodes[6].style.display = "";
-				$("step4-results").style.display = "none";
-			}
+		if (remove) {
+			$("step4-rest-intro").childNodes[6].style.display = "";
+			$("step4-results").style.display = "none";
+			$('step4-add-rest-result-part').style.display = "none";
 		}
 	},
 	
@@ -3584,7 +3590,7 @@ DefineWebServiceSpecial.prototype = {
 				webServiceSpecial.nsPrefixesInitialized = false;
 				$('step4-display-nss').setAttribute('onclick', 'webServiceSpecial.displayNSTable()');
 				$('step4-display-nss').src = wgScriptPath
-					+ "/extensions/DataImport/skins/webservices/pfeil_rechts.gif";
+					+ "/extensions/DataImport/skins/webservices/right.png";
 				//$("step4-nss-header").style.display = "";
 				$("step4-nss").style.display = "none";
 			}
@@ -3984,11 +3990,13 @@ DefineWebServiceSpecial.prototype = {
 			$("step4-results").childNodes[0].childNodes[0].childNodes[4].childNodes[0].nodeValue = 
 				diLanguage.getMessage('smw_wws_results_table_path');
 		}
+		
+		$('step4-add-rest-result-part').style.display = "";
 	},
 
 	displayNSTable : function() {
 		$('step4-display-nss').src = wgScriptPath
-			+ "/extensions/DataImport/skins/webservices/plus.gif";
+			+ "/extensions/DataImport/skins/webservices/down.png";
 		$('step4-display-nss').setAttribute('onclick', 'webServiceSpecial.hideNSTable()');
 		
 		if(!webServiceSpecial.nsPrefixesInitialized){
@@ -4008,7 +4016,7 @@ DefineWebServiceSpecial.prototype = {
 	
 	hideNSTable : function(){
 		$('step4-display-nss').src = wgScriptPath
-			+ "/extensions/DataImport/skins/webservices/pfeil_rechts.gif";
+			+ "/extensions/DataImport/skins/webservices/right.png";
 		$('step4-display-nss').setAttribute('onclick', 'webServiceSpecial.displayNSTable()');
 		$("step4-nss").style.display = "none";
 	},
@@ -4615,17 +4623,11 @@ DefineWebServiceSpecial.prototype = {
 			var br = document.createElement("br");
 			$("step4-rest-intro").appendChild(br);
 
-			var button = document.createElement("input");
-			button.setAttribute("type", "button");
-			button.setAttribute("value", diLanguage
-					.getMessage('smw_wws_add_resultparts'));
-			if(window.addEventListener){
-				button.addEventListener("click", webServiceSpecial.displayRestResultsTable, false);
-			} else {
-				button.attachEvent("onclick", webServiceSpecial.displayRestResultsTable, false);
-			}
-			$("step4-rest-intro").appendChild(button);
-			
+			var a = document.createElement("a");
+			var label = document.createTextNode(diLanguage.getMessage('smw_wws_add_resultparts'));
+			a.appendChild(label);
+			a.setAttribute("href", 'javascript:webServiceSpecial.displayRestResultsTable()');
+			$("step4-rest-intro").appendChild(a);
 			
 			//add aditional button for defining namespace prefixes
 			//if(window.addEventListener){
@@ -4681,6 +4683,8 @@ DefineWebServiceSpecial.prototype = {
 		this.appendNSPrefix();
 		$("step4-nss").childNodes[0].childNodes[1].removed = true;
 		$("step4-nss").style.display = "none";
+		
+		this.hideSubjectCreationPattern();
 	},
 	
 	checkDisplayAssNS : function(event){
@@ -4749,6 +4753,11 @@ DefineWebServiceSpecial.prototype = {
 			$('step4-enable-triplification-details').style.display = "none";
 			//todo: also reinitialize the row + also do that when protocol is changed or so
 		}
+	},
+	
+	hideSubjectCreationPattern : function(){
+		$("step4-enable-triplification-checkbox").checked = false;
+		this.displaySubjectCreationPattern();
 	},
 	
 	initSubjectCreationPatternAliasClick : function(){
