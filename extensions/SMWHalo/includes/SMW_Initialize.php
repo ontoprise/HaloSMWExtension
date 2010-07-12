@@ -35,7 +35,8 @@ $smwgDisableAAMParser = false;
 $smwgProcessedAnnotations = null;
 $wgCustomVariables = array('CURRENTUSER', 'CURRENTUSERNS', 'NOW', 'TODAY');
 
-
+//Disable default mediawiki autocompletion, so it does not interfere with the mw one
+$wgEnableMWSuggest = false;
 
 require_once($smwgHaloIP."/includes/SMW_ResourceManager.php");
 /**
@@ -151,7 +152,7 @@ function smwgHaloSetupExtension() {
 
 	$wgHooks['OntoSkinTemplateToolboxEnd'][] = 'smwfOntoSkinTemplateToolboxEnd';
 	$wgHooks['OntoSkinTemplateNavigationEnd'][] = 'smwfOntoSkinTemplateNavigationEnd';
-	$wgHooks['OntoSkinInsertTreeNavigation'][] = 'smwfNavTree';
+	
 
 
 	global $wgRequest;
@@ -1364,30 +1365,6 @@ function smwfCreateLinks($name) {
 	return $result;
 }
 
-/**
- * Includes Navigation tree in sidebar
- */
-function smwfNavTree() {
-	global $wgUser,$wgTitle,$wgParser;
-	if (is_object($wgParser)) $psr =& $wgParser; else $psr = new Parser;
-	$opt = ParserOptions::newFromUser($wgUser);
-	$nav_title = Title::newFromText('NavTree', NS_MEDIAWIKI);
-	if (!$nav_title->exists()) return true;
-	$nav = new Article($nav_title);
-	$out = $psr->parse($nav->fetchContent(0,false,false),$wgTitle,$opt,true,true);
-	echo $out->getText();
-	$groups = $wgUser->getGroups();
-	foreach($groups as $g) {
-		$title = Title::newFromText('NavTree_'.$g, NS_MEDIAWIKI);
-		if ($title->exists()) {
-			$nav = new Article($title);
-			$out = $psr->parse($nav->fetchContent(0,false,false),$wgTitle,$opt,true,true);
-			echo '<br/>'.$out->getText();
-		}
-	}
-	return true;
-}
-
 function wfAddCustomVariable(&$magicWords) {
 	foreach($GLOBALS['wgCustomVariables'] as $var) $magicWords[] = "MAG_$var";
 	return true;
@@ -1635,3 +1612,4 @@ function smwfQRCInitializeTables(){
 	
 	return true;
 }
+
