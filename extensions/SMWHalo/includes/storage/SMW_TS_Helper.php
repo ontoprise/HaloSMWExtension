@@ -184,3 +184,6 @@ class TSNamespaces {
         return "";
     }
 }
+
+
+$smwhgTSNamespaces = new TSNamespaces();
