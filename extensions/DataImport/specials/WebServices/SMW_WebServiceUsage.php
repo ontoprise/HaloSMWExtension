@@ -255,7 +255,7 @@ function webServiceUsage_processCall(&$parser, $parameters, $preview=false) {
 			}
 		} else {
 			//process triplification instructions
-			if($wsTriplify || $displayTripleSubjects){
+			if(($wsTriplify || $displayTripleSubjects) && !is_string($wsResults)){
 				$wsResultsForTriplification = $wsResults;
 				foreach($subjectCreationPatternParts as $p){
 					if(array_key_exists($p, $wsResults)){
@@ -278,8 +278,8 @@ function webServiceUsage_processCall(&$parser, $parameters, $preview=false) {
 							->triplify($wsResultsForTriplification, $triplificationSubject, $wsId, $wsTriplify & !$preview, $articleId, $dropGraph, $subjectCreationPatternParts, $parser);
 				}
 			}
-			
-			if($displayTripleSubjects){
+		 	
+			if($displayTripleSubjects && !is_string($wsResults)){
 				$wsResults = array_merge($subjects, $wsResults);
 			} 
 			
@@ -312,7 +312,6 @@ function webServiceUsage_processCall(&$parser, $parameters, $preview=false) {
 		$wsFormattedResult = $parser->replaceVariables($wsFormattedResult);
 		
 		
-
 		return $wsFormattedResult;
 	} else {
 		return smwfEncodeMessages($messages);

@@ -126,9 +126,12 @@ class WSTriplifier {
 		global $wgParser, $IP;
 		require_once($IP."/extensions/SMWHalo/includes/storage/SMW_TS_Helper.php");
 		
+		$subjects = array();
+		
 		//get number of rows and predicate types
 		$lineCount = 0;
 		$types = array();
+		
 		foreach($wsResult as $predicate => $resultPart){
 			$lineCount = max($lineCount, count($resultPart));
 			$title = Title::newFromText($predicate, SMW_NS_PROPERTY);
@@ -188,7 +191,7 @@ class WSTriplifier {
 				$wgParser->startExternalParse($t, $popts, Parser::OT_HTML);
 	
 				$subject = $wgParser->internalParse($subject);
-				$subject = $wgParser->doBlockLevels($subject, true);
+				//$subject = $wgParser->doBlockLevels($subject, true);
 				$subject = urlencode(trim($subject));	
 			} else {
 					$subject = urlencode(trim($wgParser->replaceVariables($subject)));
