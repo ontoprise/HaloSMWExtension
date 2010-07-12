@@ -129,8 +129,8 @@ class StompConnection {
     var $password = '';
 
     function StompConnection($brokerUri) {
-		$ereg = "^(([a-zA-Z]+)://)+\(*([a-zA-Z0-9\.:/i,-]+)\)*\??([a-zA-Z0-9=]*)$";
-        if (eregi($ereg, $brokerUri, $regs)) {
+		$ereg = "/^(([\w]+):\/\/)+\(*([\w\d\.:\/i,-]+)\)*\??([\w\d=]*)$/i";
+        if (preg_match($ereg, $brokerUri, $regs)) {
           $scheme = $regs[2];
           $hosts = $regs[3];
           $params = $regs[4];
