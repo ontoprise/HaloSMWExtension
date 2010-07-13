@@ -543,10 +543,11 @@ DefineWebServiceSpecial.prototype = {
 				paramTD4.id = "step3-paramTD4-" + i;
 				paramRow.appendChild(paramTD4);
 				
-				var addSubParameterButton = document.createElement("input");
-				addSubParameterButton.type = "button";
-				addSubParameterButton.value = 
-					diLanguage.getMessage('smw_wws_add_subparameters');
+				
+				var addSubParameterButton = document.createElement("img");
+				addSubParameterButton.style.cursor = "pointer";
+				addSubParameterButton.src = wgScriptPath
+					+ "/extensions/DataImport/skins/webservices/Add.png";
 				if(window.addEventListener){
 					addSubParameterButton.addEventListener("click", webServiceSpecial.appendSubParametersEventAdapter, false);
 				} else {
@@ -4375,20 +4376,7 @@ DefineWebServiceSpecial.prototype = {
 	
 	appendSubParameters : function(id) {
 		// add remove option
-		$("step3-paramRow-" + id).childNodes[5].childNodes[0].value = diLanguage
-			.getMessage('smw_wws_remove_subparameters');
-		
-		if(window.addEventListener){
-			$("step3-paramRow-" + id).childNodes[5].childNodes[0]
-			    .addEventListener("click", webServiceSpecial.removeSubParametersEventAdapter, false);                                               
-			$("step3-paramRow-" + id).childNodes[5].childNodes[0]
-			    .removeEventListener("click", webServiceSpecial.appendSubParametersEventAdapter, false);
-		} else {
-			$("step3-paramRow-" + id).childNodes[5].childNodes[0]
-			     .attachEvent("onclick", webServiceSpecial.removeSubParametersEventAdapter);
-			$("step3-paramRow-" + id).childNodes[5].childNodes[0]
-			    .detachEvent("onclick", webServiceSpecial.appendSubParametersEventAdapter, false);
-		}
+		$("step3-paramRow-" + id).childNodes[5].childNodes[0].style.display = 'none';
 		
 		//add subparameter row
 		$("step3-paramRow-" + id).hasSubParameter = true;
@@ -4456,6 +4444,24 @@ DefineWebServiceSpecial.prototype = {
 		table.appendChild(row);
 		outerTd.appendChild(table);
 		outerRow.appendChild(outerTd);
+		
+		outerTd = document.createElement('td');
+		
+		img = document.createElement("img");
+		img.style.cursor = "pointer";
+		img.clickEventId = id;
+		img.src = wgScriptPath
+			+ "/extensions/DataImport/skins/webservices/delete.png";
+		if(window.addEventListener){
+			img.addEventListener("click", webServiceSpecial.removeSubParametersEventAdapter, false);                                               
+		} else {
+			img.attachEvent("onclick", webServiceSpecial.removeSubParametersEventAdapter);
+		}
+		outerTd.appendChild(img);
+		outerTd.style.verticalAlign = 'top';
+		
+		outerRow.appendChild(outerTd);
+
 
 		if(id == this.preparedPathSteps.length - 1){
 			$("step3-paramRow-" + id).parentNode.appendChild(outerRow);
@@ -4475,22 +4481,8 @@ DefineWebServiceSpecial.prototype = {
 	
 	removeSubParameters : function(id) {
 		// add remove option
-		$("step3-paramRow-" + id).childNodes[5].childNodes[0].value = diLanguage
-			.getMessage('smw_wws_add_subparameters');
+		$("step3-paramRow-" + id).childNodes[5].childNodes[0].style.display = '';
 		
-		if(window.addEventListener){
-			$("step3-paramRow-" + id).childNodes[5].childNodes[0]
-			    .removeEventListener("click", webServiceSpecial.removeSubParametersEventAdapter, false);                                               
-			$("step3-paramRow-" + id).childNodes[5].childNodes[0]
-			    .addEventListener("click", webServiceSpecial.appendSubParametersEventAdapter, false);
-		} else {
-			$("step3-paramRow-" + id).childNodes[5].childNodes[0]
-			     .detachEvent("onclick", webServiceSpecial.removeSubParametersEventAdapter);
-			$("step3-paramRow-" + id).childNodes[5].childNodes[0]
-			    .attachEvent("onclick", webServiceSpecial.appendSubParametersEventAdapter, false);
-		}
-		
-	
 		//add subparameter row
 		$("step3-paramRow-" + id).hasSubParameter = false;
 
