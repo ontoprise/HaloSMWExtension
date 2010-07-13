@@ -979,6 +979,9 @@ DefineWebServiceSpecial.prototype = {
 		if (!this.editMode) {
 			this.hideSubjectCreationPattern();
 		}
+		
+		$("step4-results").style.display = "";
+		
 	},
 
 	/**
