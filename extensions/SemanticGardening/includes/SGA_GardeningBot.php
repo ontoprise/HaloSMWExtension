@@ -5,7 +5,7 @@
  *
  * Created on 12.03.2007
  *
- * @author Kai Kühn
+ * @author Kai Kï¿½hn
  *
  */
 
@@ -369,7 +369,7 @@ abstract class GardeningBot {
 				$logRedirect = self::getLogRedirection($taskid, "/dev/null");
 
 				$runCommand .= " -b ".escapeshellarg($botID)." -t $taskid -u $userId -s $serverNameParam ".escapeshellarg(str_replace("%", '{{percentage}}', $params));
-				$nullResult = `$runCommand > $logRedirect &`;
+				$nullResult = `$runCommand $logRedirect 2>&1 &`;
 					
 
 			} else { // run sync
@@ -425,13 +425,16 @@ abstract class GardeningBot {
 	 * @param string $nullDeviceDefault default nulldevice, if NULL then no default redirection.
 	 */
 	private static function getLogRedirection($taskid, $nullDeviceDefault = NULL) {
-		global $sgaTempDir;
-		$botLogFile = is_null($nullDeviceDefault) ? "" : "> $nullDeviceDefault";
-		if (isset($sgaTempDir)) {
-			$normalizedBotDir = substr(trim($sgaTempDir), -1) == '/' ? trim($sgaTempDir) : trim($sgaTempDir)."/";
-			self::mkpath($normalizedBotDir);
-			$botLogFile =  "> $normalizedBotDir"."log_$taskid";
-		}
+        global $sgaTempDir;
+        // $sgaTempDir is set but empty to disable logging
+        if (isset($sgaTempDir) && strlen(trim($sgaTempDir)) == 0)
+            return is_null($nullDeviceDefault) ? "" : "> $nullDeviceDefault";
+		$useTmpDir = self::getWriteableDir();
+
+        $normalizedBotDir = substr(trim($useTmpDir), -1) == '/' ? trim($useTmpDir) : trim($useTmpDir)."/";
+		self::mkpath($normalizedBotDir);
+		$botLogFile =  "> $normalizedBotDir"."log_$taskid";
+		
 		return $botLogFile;
 	}
 
