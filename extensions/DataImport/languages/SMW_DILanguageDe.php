@@ -317,7 +317,9 @@ class SMW_DILanguageDe extends SMW_DILanguage {
 	
 	'smw_wws_s4_add_rest_result_part' => 'Weiteren Result Part hinzuf%uuml;gen',
 	
-	'smw_wws_s4_add_ns_prefix' => 'Weiteres Namespace Pr&auml:fix hinzuf&uuml;gen';
+	'smw_wws_s4_add_ns_prefix' => 'Weiteres Namespace Pr&auml:fix hinzuf&uuml;gen',
+	
+	'smw_wws_s3_add_another_parameter' => 'Weiteren Parameter hinzuf&uuml;gen',
 	);
 
 	protected $smwDINamespaces = array(

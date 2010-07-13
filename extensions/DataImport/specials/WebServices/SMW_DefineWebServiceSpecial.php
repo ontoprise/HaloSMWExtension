@@ -245,7 +245,7 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 
 		$html .= "<table id=\"step3-parameters\"><tr><th>".wfMsg('smw_wws_path')."</th><th>".wfMsg('smw_wws_use')."<span><input title=\"".wfMsg("smw_wws_selectall-tooltip")."\" type=\"checkbox\" id=\"step3-use\"/></span></th><th>".wfMsg('smw_wws_alias')."<span class=\"alias-generate\"><img title=\"".wfMsg("smw_wws_autogenerate-alias-tooltip-parameter")."\" id=\"step-3-alias-generate-button\" src=\"".$smwgDIScriptPath."/skins/webservices/Pencil_grey.png\"></img></span></th><th>".wfMsg('smw_wws_optional')."</th><th>".wfMsg('smw_wws_defaultvalue')."</th><th></th></tr></table>";
 		
-		$html .= '<a id="step3-add-rest-parameter" style="display: none" href="javascript:webServiceSpecial.appendRESTParameter()">'.wfMsg('smw_wws_s4_add_rest_result_part').'</a>';
+		$html .= '<a id="step3-add-rest-parameter" style="display: none" href="javascript:webServiceSpecial.appendRESTParameter()">'.wfMsg('smw_wws_s3_add_another_parameter').'</a>';
 
 		$html .= "<div id=\"step3-help\" style=\"display:none\">".wfMsg("smw_wws_s3-help", $smwgDIScriptPath."/skins/webservices/Pencil_go.png")."</div>";
 		$html .= "<div id=\"step3-rest-help\" style=\"display:none\">".wfMsg("smw_wws_s3-REST-help")."</div>";

@@ -32,7 +32,7 @@ var wgDIUserLanguageStrings = {
 		'smw_wws_add_prefix'	:	'Präfix hinzufügen',
 		'smw_wws_add_resultparts'	:	'Result Parts hinzufügen',
 		'smw_wws_remove_resultpart'	:	'Entferne Result Part',
-		'smw_wws_remove_prefix'	:	'Entferne Präfix',
+		'smw_wws_remove_prefix'	:	'Entferne Namensraum-Präfix',
 		'smw_wws_proceed'			:	'Wenn Sie fortfahren, gehen alle Eingaben, die Sie in nachfolgenden Schritten schon getätigt haben, wieder verloren!',
 		'smw_wws_use_complete'		:	'Benutze komplettes Ergebnis als Result Part: ',
 		'smw_wws_alias'				:	'Alias: ',

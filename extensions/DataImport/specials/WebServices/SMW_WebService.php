@@ -608,6 +608,8 @@ class WebService {
 	 */
 	public function getCallResultParts($response, $resultParts){
 		$results = array();
+		
+		$postProcess = array();
 
 		//this variable is used, so that the web service result
 		//needs not to be parsed over and over again for each

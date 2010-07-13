@@ -31,7 +31,7 @@ var wgDIUserLanguageStrings = {
 		'smw_wws_add_prefix'	:	'Add prefix',
 		'smw_wws_add_resultparts'	:	'Add result parts',
 		'smw_wws_remove_resultpart'	:	'Remove result part',
-		'smw_wws_remove_prefix'	:	'Remove prefix',
+		'smw_wws_remove_prefix'	:	'Remove namespace prefix',
 		'smw_wws_proceed'			:	'If you proceed, all input you already gave in the subsequent steps will be lost!',
 		'smw_wws_use_complete'		:	'Use complete result as result part: ',
 		'smw_wws_alias'				:	'Alias: ',
