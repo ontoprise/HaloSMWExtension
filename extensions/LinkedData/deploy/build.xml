@@ -57,6 +57,9 @@
 		<delete dir="bin/zip" />
 	</target>
 
+   	<target name="deployscripts">
+	</target>
+
    	<target name="versionhint">
 		<exec executable="php">
 			<arg value="../../../buildtools/replaceVersionHint.php" />
