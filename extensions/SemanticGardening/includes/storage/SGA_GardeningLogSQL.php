@@ -7,7 +7,7 @@
  *
  * Implementation of Gardening Log interface in SQL.
  *
- * @author Kai Kühn
+ * @author Kai Kï¿½hn
  */
 if ( !defined( 'MEDIAWIKI' ) ) die;
 
@@ -238,6 +238,8 @@ class SGAGardeningLogSQL extends SGAGardeningLog {
 
 		// Remove very old (2 days) and still running tasks. They are probably crashed.
 		// If not, they are still available via GardeningLog category.
+        if (version_compare(PHP_VERSION, '5.3.0') >= 0)
+            date_default_timezone_set('UTC');
 		$twoDaysAgo  = mktime(0, 0, 0, date("m"), date("d")-2,   date("Y"));
 		$date = getDate($twoDaysAgo);
 		$dbr->query('DELETE FROM '.$tblName.' WHERE endtime IS NULL AND starttime < '.$dbr->addQuotes($this->getDBDate($date)));
