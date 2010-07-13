@@ -45,6 +45,16 @@ require_once("$smwgHaloIP/includes/storage/SMW_RESTWebserviceConnector.php");
 
 global $smwgWebserviceEndpoint;
 
+$update = "false";
+for( $arg = reset( $argv ); $arg !== false; $arg = next( $argv ) ) {
+
+    //-update => mode
+    if ($arg == '-update') {
+        $update = "true";
+        continue;
+    }
+}
+
 $ids = LODAdministrationStore::getInstance()->getAllSourceDefinitionIDs();
 list($host, $port) = explode(":", $smwgWebserviceEndpoint);
 
@@ -53,8 +63,8 @@ $con = new RESTWebserviceConnector($host, $port, "ldimporter");
 
 foreach($ids as $id) {
     $sd = LODAdministrationStore::getInstance()->loadSourceDefinition($id);
-    print "Updating ".$sd->getLabel()." [$id] ...";
-    $payload = "dataSourceId=$id&update=false";
+    print ($update ? "Updating " :"Importing ") .$sd->getLabel()." [$id] ...";
+    $payload = "dataSourceId=$id&update=$update";
     list($header, $status, $res) = $con->send($payload, "/runImport");
     print "done.\n";
     print "\nStatus: $status";
