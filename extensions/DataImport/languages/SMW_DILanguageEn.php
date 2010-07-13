@@ -320,6 +320,8 @@ class SMW_DILanguageEn extends SMW_DILanguage {
 	
 	'smw_wws_s4_add_rest_result_part' => 'Add another result part',
 	
+	'smw_wws_s4_add_ns_prefix' => 'Add another namespace prefix',
+	
 	);
 
 	protected $smwDINamespaces = array(

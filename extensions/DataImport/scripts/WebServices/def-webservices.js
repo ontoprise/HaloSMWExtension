@@ -3401,37 +3401,37 @@ DefineWebServiceSpecial.prototype = {
 
 		// add additional buttons
 		td = document.createElement("td");
-		select = document.createElement("select");
 		
-		option = document.createElement("option");
-		text = document.createTextNode(diLanguage
-				.getMessage('smw_wws_add_prefix'));
-		option.appendChild(text);
-		option.value = diLanguage.getMessage('smw_wws_add_prefix');
-		select.appendChild(option);
+		// select = document.createElement("select");
+		
+		// option = document.createElement("option");
+		// text = document.createTextNode(diLanguage
+		// 		.getMessage('smw_wws_add_prefix'));
+		// option.appendChild(text);
+		// option.value = diLanguage.getMessage('smw_wws_add_prefix');
+		// select.appendChild(option);
 
-		option = document.createElement("option");
-		text = document.createTextNode(diLanguage
-				.getMessage('smw_wws_remove_prefix'));
-		option.appendChild(text);
-		option.value = diLanguage
-			.getMessage('smw_wws_remove_prefix');
-		select.appendChild(option);
+		// option = document.createElement("option");
+		// text = document.createTextNode(diLanguage
+		// 		.getMessage('smw_wws_remove_prefix'));
+		// option.appendChild(text);
+		// option.value = diLanguage
+		// 	.getMessage('smw_wws_remove_prefix');
+		// select.appendChild(option);
 
-		td.appendChild(select);
+		// td.appendChild(select);
 
-		input = document.createElement("input");
-		input.type = "button";
-		input.value = "OK";
+		var img = document.createElement("img");
+		img.src = wgScriptPath
+			+ "/extensions/DataImport/skins/webservices/delete.png";
 		if(window.addEventListener){
-			input.addEventListener("click", webServiceSpecial.processNSButton, false);
+			img.addEventListener("click", webServiceSpecial.processNSButton, false); //xyz
 		} else {
-			input.attachEvent("onclick", webServiceSpecial.processNSButton, false);
+			img.attachEvent("onclick", webServiceSpecial.processNSButton, false);
 		}
-		input.clickEventId = id;
-		
-		input.style.cursor = "pointer";
-		td.appendChild(input);
+		img.clickEventId = id;
+		img.style.cursor = "pointer";
+		td.appendChild(img);
 
 		row.appendChild(td);
 
@@ -3570,31 +3570,33 @@ DefineWebServiceSpecial.prototype = {
 	processNSButton : function(event) {
 		var id = Event.element(event).clickEventId;
 		
-		var select = $("step4-nss").childNodes[0].childNodes[id].childNodes[2].childNodes[0];
-		var action = select.value;
+		// var select = $("step4-nss").childNodes[0].childNodes[id].childNodes[2].childNodes[0];
+		// var action = select.value;
 
-		if (action == diLanguage.getMessage('smw_wws_add_prefix')) {
-			webServiceSpecial.appendNSPrefix();
-		} else {
-			$("step4-nss").childNodes[0].childNodes[id].removed = true;
-			$("step4-nss").childNodes[0].childNodes[id].style.display = "none";
+		// if (action == diLanguage.getMessage('smw_wws_add_prefix')) {
+		// 	webServiceSpecial.appendNSPrefix();
+		// } else {
+		
+		$("step4-nss").childNodes[0].childNodes[id].removed = true;
+		$("step4-nss").childNodes[0].childNodes[id].style.display = "none";
 
-			var remove = true;
-			for ( var i = 1; i < $("step4-nss").childNodes[0].childNodes.length; i++) {
-				if (!$("step4-nss").childNodes[0].childNodes[i].removed) {
-					remove = false;
-				}
-			}
-
-			if (remove) {
-				webServiceSpecial.nsPrefixesInitialized = false;
-				$('step4-display-nss').setAttribute('onclick', 'webServiceSpecial.displayNSTable()');
-				$('step4-display-nss').src = wgScriptPath
-					+ "/extensions/DataImport/skins/webservices/right.png";
-				//$("step4-nss-header").style.display = "";
-				$("step4-nss").style.display = "none";
+		var remove = true;
+		for ( var i = 1; i < $("step4-nss").childNodes[0].childNodes.length; i++) {
+			if (!$("step4-nss").childNodes[0].childNodes[i].removed) {
+				remove = false;
 			}
 		}
+
+		if (remove) {
+			webServiceSpecial.nsPrefixesInitialized = false;
+			$('step4-display-nss').setAttribute('onclick', 'webServiceSpecial.displayNSTable()');
+			$('step4-display-nss').src = wgScriptPath
+				+ "/extensions/DataImport/skins/webservices/right.png";
+			//$("step4-nss-header").style.display = "";
+			$("step4-nss").style.display = "none";
+			$("step4-add-nsp").style.display = "none";
+		}
+		//  }
 	},
 	
 	processStep4REST : function() {
@@ -4012,6 +4014,8 @@ DefineWebServiceSpecial.prototype = {
 			$("step4-nss").childNodes[0].childNodes[1].childNodes[1].childNodes[0].value = '';
 		}
 		$("step4-nss").style.display = "";
+		
+		$('step4-add-nsp').style.display = '';
 	},
 	
 	hideNSTable : function(){
@@ -4019,6 +4023,8 @@ DefineWebServiceSpecial.prototype = {
 			+ "/extensions/DataImport/skins/webservices/right.png";
 		$('step4-display-nss').setAttribute('onclick', 'webServiceSpecial.displayNSTable()');
 		$("step4-nss").style.display = "none";
+		
+		$('step4-add-nsp').style.display = 'none';
 	},
 	
 	useParameters : function() {

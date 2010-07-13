@@ -280,6 +280,8 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 		//Add table for defining namespace prefixes
 		$html .= "<table id=\"step4-nss\" style=\"padding-top:20px; display: none\"><tr><th>".wfMsg('smw_wws_nss_prefix')."</th><th>".wfMsg('smw_wws_nss_url')."</th><th></th></tr></table>";
 
+		$html .= '<a id="step4-add-nsp" style="display: none" href="javascript:webServiceSpecial.appendNSPrefix()">'.wfMsg('smw_wws_s4_add_ns_prefix').'</a>';
+		
 		//for triplification
 		$displayTriplificationContainer = ' style="display: none" ';
 		if(defined( 'LOD_LINKEDDATA_VERSION')){

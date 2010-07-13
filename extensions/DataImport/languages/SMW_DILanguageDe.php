@@ -316,6 +316,8 @@ class SMW_DILanguageDe extends SMW_DILanguage {
 	'smw_wws_enable_triplification-scp-add-note' => 'Bitte klicken Sie auf ein Alias Eingabefeld um den zugehörigen Result Part zum Subject Creation Pattern hinzuzuf&uuml;gen.',
 	
 	'smw_wws_s4_add_rest_result_part' => 'Weiteren Result Part hinzuf%uuml;gen',
+	
+	'smw_wws_s4_add_ns_prefix' => 'Weiteres Namespace Pr&auml:fix hinzuf&uuml;gen';
 	);
 
 	protected $smwDINamespaces = array(
