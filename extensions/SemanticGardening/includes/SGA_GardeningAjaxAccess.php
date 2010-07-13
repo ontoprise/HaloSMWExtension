@@ -5,7 +5,7 @@
  *
  * Created on 04.02.2008
  *
- * @author Kai Kühn
+ * @author Kai Kï¿½hn
  *
  */
 
@@ -32,10 +32,9 @@ $wgAjaxExportList[] = 'smwf_ga_readBotLog';
 function smwf_ga_readBotLog($taskid) {
 	global $sgaTempDir;
 	$botLogFile = "";
-	if (isset($sgaTempDir)) {
-		$normalizedBotDir = substr(trim($sgaTempDir), -1) == '/' ? trim($sgaTempDir) : trim($sgaTempDir)."/";
-		$botLogFile =  "$normalizedBotDir"."log_$taskid";
-	}
+    $botDir = isset($sgaTempDir) ? $sgaTempDir : GardeningBot::getWriteableDir();
+    $normalizedBotDir = substr(trim($botDir), -1) == '/' ? trim($botDir) : trim($botDir)."/";
+    $botLogFile =  "$normalizedBotDir"."log_$taskid";
 	$botlog = file_get_contents($botLogFile);
 	$botlog = preg_replace("/\x08/","\n",$botlog); // replace backspace by linefeed.
 	$response = new AjaxResponse($botlog);
