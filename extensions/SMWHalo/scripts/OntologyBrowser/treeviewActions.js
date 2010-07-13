@@ -1017,9 +1017,8 @@ OBPropertyTreeActionListener.prototype = Object.extend(new OBTreeActionListener(
 	 	
 	 	 if (OB_LEFT_ARROW == 0) {
 		     OB_instance_pendingIndicator.show();
-		     var propertyParam = node.getAttribute("uri") == null ? propertyName : node.getAttribute("uri");
-			  	
-		 	 dataAccess.getInstancesUsingProperty(propertyParam, 0, callbackOnPropertySelect);
+		    			  	
+		 	 dataAccess.getInstancesUsingProperty(propertyName, 0, callbackOnPropertySelect);
 		 	 selectionProvider.fireSelectionChanged(null, null, SMW_INSTANCE_NS, null);
 	 	 }
 	 	 if (OB_RIGHT_ARROW == 0) {
@@ -1182,7 +1181,7 @@ OBSchemaPropertyActionListener.prototype = {
 			}
 			if (OB_RIGHT_ARROW == 1) {
 				 OB_instance_pendingIndicator.show();
-				
+				 
 				 dataAccess.getInstancesUsingProperty(attributeName, 0, callbackOnPropertySelectForInstance);
 			}
 		}

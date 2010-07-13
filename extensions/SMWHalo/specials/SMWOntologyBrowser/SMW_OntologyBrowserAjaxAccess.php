@@ -271,49 +271,9 @@ class OB_StorageTS extends OB_Storage {
 
 			// query
 			$response = $client->query("[[Category:$categoryName]]", "?Category|limit=$limit|offset=$offset|merge=false$dataSpace$metadataRequest");
-
-			global $smwgSPARQLResultEncoding;
-			// PHP strings are always interpreted in ISO-8859-1 but may be actually encoded in
-			// another charset.
-			if (isset($smwgSPARQLResultEncoding) && $smwgSPARQLResultEncoding == 'UTF-8') {
-				$response = utf8_decode($response);
-			}
-
-		 $dom = simplexml_load_string($response);
-
-		 $titles = array();
-		 $results = $dom->xpath('//result');
-		 foreach ($results as $r) {
-
-		 	$children = $r->children(); // binding nodes
-		 	$b = $children->binding[0]; // instance
-		 	 
-		 	$sv = $b->children()->uri[0];
-
-		 	$metadataMap = array();
-		 	foreach($sv->attributes() as $mdProperty => $mdValue) {
-		 		if (strpos($mdProperty, "_meta_") === 0) {
-		 			$metadataMap[strtoupper($mdProperty)] = explode("|||",$mdValue);
-		 		}
-		 	}
-
-		 	$instance = array($this->getTitleFromURI((string) $sv), (string) $sv, $metadataMap);
-		 	 
-		 	$categories = array();
-		 	$b = $children->binding[1]; // categories
-		 	 
-		 	foreach($b->children()->uri as $sv) {
-		 		$category = $this->getTitleFromURI((string) $sv);
-		 		if (!is_null($instance) && !is_null($category)) {
-		 			$titles[] = array($instance, array((string) $sv, $this->getTitleFromURI((string) $sv)));
-		 		} else  {
-		 			$titles[] = array($instance, array(NULL , NULL));
-		 		}
-
-		 	}
-
-		 	 
-		 }
+				
+			$titles = array();
+			$this->parseInstances($response, $titles);
 
 
 		} catch(Exception $e) {
@@ -321,6 +281,53 @@ class OB_StorageTS extends OB_Storage {
 		}
 
 		return SMWOntologyBrowserXMLGenerator::encapsulateAsInstancePartition($titles, $limit, $partition);
+	}
+
+	protected function parseInstances($response, &$titles) {
+		global $smwgSPARQLResultEncoding;
+		// PHP strings are always interpreted in ISO-8859-1 but may be actually encoded in
+		// another charset.
+		if (isset($smwgSPARQLResultEncoding) && $smwgSPARQLResultEncoding == 'UTF-8') {
+			$response = utf8_decode($response);
+		}
+        
+		
+		$dom = simplexml_load_string($response);
+
+
+		$results = $dom->xpath('//result');
+		foreach ($results as $r) {
+
+			$children = $r->children(); // binding nodes
+			$b = $children->binding[0]; // instance
+			 
+			$sv = $b->children()->uri[0];
+
+			$metadataMap = array();
+			foreach($sv->attributes() as $mdProperty => $mdValue) {
+				if (strpos($mdProperty, "_meta_") === 0) {
+					$metadataMap[strtoupper($mdProperty)] = explode("|||",$mdValue);
+				}
+			}
+
+			$instance = array($this->getTitleFromURI((string) $sv), (string) $sv, $metadataMap);
+			 
+			$categories = array();
+			$b = $children->binding[1]; // categories
+			 
+			foreach($b->children()->uri as $sv) {
+				$category = $this->getTitleFromURI((string) $sv);
+				if (!is_null($instance) && !is_null($category)) {
+					$titles[] = array($instance, array((string) $sv, $this->getTitleFromURI((string) $sv)));
+				} else  {
+					$titles[] = array($instance, array(NULL , NULL));
+				}
+
+			}
+
+			 
+		}
+
 	}
 
 	private function isLocalURI($uri) {
@@ -467,7 +474,7 @@ class OB_StorageTS extends OB_Storage {
 			$title = $this->getTitleFromURI((string) $sv);
 			if (is_null($title)) continue;
 			$predicate = SMWPropertyValue::makeUserProperty($title->getText());
-
+							
 			$categories = array();
 			$b = $children->binding[1]; // categories
 			$values = array();
@@ -537,43 +544,7 @@ class OB_StorageTS extends OB_Storage {
 		return SMWOntologyBrowserXMLGenerator::encapsulateAsInstancePartition($titles, $limit, $partition, 'getInstancesUsingProperty,'.$propertyName_xml);
 	}
 
-	protected function parseInstances($response, &$titles) {
-		global $smwgSPARQLResultEncoding;
-		// PHP strings are always interpreted in ISO-8859-1 but may be actually encoded in
-		// another charset.
-		if (isset($smwgSPARQLResultEncoding) && $smwgSPARQLResultEncoding == 'UTF-8') {
-			$response = utf8_decode($response);
-		}
-
-		$dom = simplexml_load_string($response);
-
-			
-		$results = $dom->xpath('//result');
-		foreach ($results as $r) {
-
-			$children = $r->children(); // binding nodes
-			$b = $children->binding[0]; // instance
-
-			$sv = $b->children()->uri[0];
-			$sv = str_replace("__", "//", $sv); // XXX: hack for Ultrapedia
-			$instance = array($this->getTitleFromURI((string) $sv), NULL);
-
-			$categories = array();
-			$b = $children->binding[1]; // categories
-
-			foreach($b->children()->uri as $sv) {
-				$category = $this->getTitleFromURI((string) $sv);
-				if (!is_null($instance) && !is_null($category)) {
-					$titles[] = array($instance, $this->getTitleFromURI((string) $sv));
-				} else if (!is_null($instance)) {
-					$titles[] = array($instance, NULL);
-				}
-			}
-
-
-		}
-			
-	}
+	
 
 	public function getCategoryForInstance($p_array) {
 		global $wgServer, $wgScript, $smwgWebserviceUser, $smwgWebservicePassword, $smwgDeployVersion;
@@ -665,37 +636,11 @@ class OB_StorageTS extends OB_Storage {
 			}
 
 
-			$response = $client->query("SELECT ?s WHERE { ?s ?p ?o.  $filter }",  "limit=1000$dataSpace");
+			$response = $client->query(TSNamespaces::getW3CPrefixes()." SELECT ?s ?cat WHERE { ?s ?p ?o. OPTIONAL { ?s rdf:type ?cat. } $filter }",  "limit=1000$dataSpace");
 
 
-			global $smwgSPARQLResultEncoding;
-			// PHP strings are always interpreted in ISO-8859-1 but may be actually encoded in
-			// another charset.
-			if (isset($smwgSPARQLResultEncoding) && $smwgSPARQLResultEncoding == 'UTF-8') {
-				$response = utf8_decode($response);
-			}
-
-			$dom = simplexml_load_string($response);
-
-			$titles = array();
-			$results = $dom->xpath('//result');
-			foreach ($results as $r) {
-
-				$children = $r->children(); // binding nodes
-				$b = $children->binding[0]; // instance
-					
-				$sv = $b->children()->uri[0];
-				$sv = str_replace("__", "//", $sv); // XXX: hack for Ultrapedia
-				$instance = array($this->getTitleFromURI((string) $sv), NULL);
-					
-				foreach($b->children()->uri as $sv) {
-					if (!is_null($instance)) {
-						$titles[] = array($instance, NULL);
-					}
-				}
-
-					
-			}
+			 $titles = array();
+            $this->parseInstances($response, $titles);
 
 
 		} catch(Exception $e) {
@@ -844,12 +789,12 @@ class OB_StorageTSQuad extends OB_StorageTS {
 		try {
 			global $smwgTripleStoreGraph;
 
-			$propertyURI = $p_array[0];
+			$propertyURI = TSNamespaces::$PROP_NS.$p_array[0];
 			$limit =  intval($p_array[1]);
 			$partition =  intval($p_array[2]);
 			$offset = $partition * $limit;
-            $metadata = isset($p_array[3]) ? $p_array[3] : false;
-            $metadataRequest = $metadata != false ? "|metadata=$metadata" : "";
+			$metadata = isset($p_array[3]) ? $p_array[3] : false;
+			$metadataRequest = $metadata != false ? "|metadata=$metadata" : "";
 			$dataSpace = $this->getDataSourceParameters();
 
 			// query
@@ -861,9 +806,9 @@ class OB_StorageTSQuad extends OB_StorageTS {
 		} catch(Exception $e) {
 			return "Internal error: ".$e->getMessage();
 		}
-
-		$propertyName_xml = str_replace( array('"'),array('&quot;'),$propertyName);
-		return SMWOntologyBrowserXMLGenerator::encapsulateAsInstancePartition($titles, $limit, $partition, 'getInstancesUsingProperty,'.$propertyName_xml);
+       
+		$propertyURI = str_replace( array('"'),array('&quot;'),$propertyURI);
+		return SMWOntologyBrowserXMLGenerator::encapsulateAsInstancePartition($titles, $limit, $partition, 'getInstancesUsingProperty,'.$propertyURI);
 	}
 
 	public function getCategoryForInstance($p_array) {

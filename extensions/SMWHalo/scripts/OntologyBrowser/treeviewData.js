@@ -268,7 +268,8 @@ getPropertyPartition: function(isRootLevel, partition, attributeName, selectPart
 
 
 getInstancesUsingProperty: function(propertyName, partition, callback) {
-	sajax_do_call('smwf_ob_OntologyBrowserAccess', ['getInstancesUsingProperty',propertyName+"##"+OB_partitionSize+"##"+partition, obAdvancedOptions.getDataSource()], callback);
+	var requestMetaproperties = obAdvancedOptions.requestedMetaproperties();
+	sajax_do_call('smwf_ob_OntologyBrowserAccess', ['getInstancesUsingProperty',propertyName+"##"+OB_partitionSize+"##"+partition+"##"+requestMetaproperties, obAdvancedOptions.getDataSource()], callback);
 },
 
 filterBrowseCategories: function(title) {

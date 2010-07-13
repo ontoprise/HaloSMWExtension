@@ -181,6 +181,7 @@ class SMWOntologyBrowserXMLGenerator {
 			foreach($definingRules as $df) {
 				$definingRulesXML .= "<definingRule>".htmlspecialchars($df)."</definingRule>";
 			}
+			
 			$titleURLEscaped = htmlspecialchars(self::urlescape($t->getDBkey()));
 			$issues = $gi_store->getGardeningIssues('smw_consistencybot', NULL, NULL, $t);
 			$gi_issues = SMWOntologyBrowserErrorHighlighting::getGardeningIssuesAsXML($issues);
@@ -217,6 +218,7 @@ class SMWOntologyBrowserXMLGenerator {
 		$instanceTitleEscaped = htmlspecialchars($instance->getDBkey());
 		$namespaceInstance = $instance->getNsText();
 		$titleURLEscaped = htmlspecialchars(self::urlescape($instance->getDBkey()));
+		
 		return $result == '' ? "<annotationsList isEmpty=\"true\" textToDisplay=\"".wfMsg('smw_ob_no_annotations')."\" title_url=\"$titleURLEscaped\" title=\"$instanceTitleEscaped\" namespace=\"$namespaceInstance\"/>" : "<annotationsList>".$result."</annotationsList>";
 	}
 
@@ -318,6 +320,8 @@ class SMWOntologyBrowserXMLGenerator {
 		$isFormula = false;
 		$chemistryParser = new ChemEqParser();
 		$gi_store = SGAGardeningIssuesAccess::getGardeningIssuesAccess();
+		
+       
 		foreach($smwValues as $smwValue) {
 			//list($smwValue, $uri) = $tuple;
 			if ($smwValue instanceof SMWRecordValue) { // n-ary property
@@ -360,7 +364,7 @@ class SMWOntologyBrowserXMLGenerator {
 				$gi_issues = SMWOntologyBrowserErrorHighlighting::getAnnotationIssuesAsXML($issues, $smwValue);
 
 				// no metadata available on n-ary properties
-				$multiProperties .= "<annotation title_url=\"$titleURLEscaped\" title=\"".$title."\" id=\"ID_$id$count\" $repasteMarker>".$parameters."$gi_issues</annotation>";
+				$multiProperties .= "<annotation  title_url=\"$titleURLEscaped\" title=\"".$title."\" id=\"ID_$id$count\" $repasteMarker>".$parameters."$gi_issues</annotation>";
 
 			} else if ($smwValue instanceof SMWWikiPageValue || $smwValue->getTypeID() == '_uri') { // relation
 
@@ -389,7 +393,7 @@ class SMWOntologyBrowserXMLGenerator {
 
 				if ($smwValue instanceof SMWWikiPageValue && !is_null($smwValue->getTitle())) {
 					$targetNotExists = $smwValue->getTitle()->exists() ?  "" : "notexists=\"true\"";
-					$singleProperties .= "<annotation title_url=\"$titleURLEscaped\" title=\"".$title."\" id=\"ID_$id$count\">".
+					$singleProperties .= "<annotation  title_url=\"$titleURLEscaped\" title=\"".$title."\" id=\"ID_$id$count\">".
 					                     "<param isLink=\"true\" $targetNotExists><![CDATA[".$smwValue->getTitle()->getPrefixedDBkey()."]]></param>".
 					$gi_issues.$metadataTags.
 					                     "</annotation>";
@@ -404,7 +408,7 @@ class SMWOntologyBrowserXMLGenerator {
 						$local = $uri;
 					}
 					$uri_att = 'uri="'.htmlspecialchars($uri).'"';
-					$singleProperties .= "<annotation title_url=\"$titleURLEscaped\" title=\"".$title."\" id=\"ID_$id$count\">".
+					$singleProperties .= "<annotation  title_url=\"$titleURLEscaped\" title=\"".$title."\" id=\"ID_$id$count\">".
                                          "<param isLink=\"true\" $uri_att><![CDATA[".$local."]]></param>".
 					$metadataTags.
                                          "</annotation>";
@@ -473,7 +477,7 @@ class SMWOntologyBrowserXMLGenerator {
 				}
 				$metadataTags .= "</metadata>";
 
-				$singleProperties .= "<annotation title_url=\"$titleURLEscaped\" title=\"".$title."\" id=\"ID_".$id.$count."\" $repasteMarker>".
+				$singleProperties .= "<annotation  title_url=\"$titleURLEscaped\" title=\"".$title."\" id=\"ID_".$id.$count."\" $repasteMarker>".
 				                        "<param>".$value."</param>".
 				$gi_issues.
 				$metadataTags.
