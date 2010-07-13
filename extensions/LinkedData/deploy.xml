@@ -28,7 +28,9 @@
 		<precedes ext="smw" />
 
 		<new>
-			<function name="enableLinkedData">
+			<require name="lod"
+				file="extensions/LinkedData/includes/LOD_Initialize.php" />
+            <function name="enableLinkedData">
 			</function>
 			<script file="extensions/LinkedData/maintenance/LOD_Setup.php" />
 		</new>
