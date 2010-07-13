@@ -961,12 +961,12 @@ DefineWebServiceSpecial.prototype = {
 				resultTD3.id = "step4-resultTD3-" + i;
 				resultRow.appendChild(resultTD3);
 
-				var subPathButton = document.createElement("input");
+				var img = document.createElement('img');
+				
+				var subPathButton = document.createElement("img");
 				subPathButton.id = "s4-add-subpath" + i;
-				subPathButton.type = "button";
-				subPathButton.value = diLanguage
-						.getMessage('smw_wws_add_subpath');
-				subPathButton.style.cursor = "pointer";
+				subPathButton.src = wgScriptPath
+					+ "/extensions/DataImport/skins/webservices/Add.png";
 				subPathButton.style.cursor = "pointer";
 				
 				if(window.addEventListener){
@@ -2943,9 +2943,10 @@ DefineWebServiceSpecial.prototype = {
 
 		var td3 = document.createElement("td");
 
-		var removeButton = document.createElement("input");
-		removeButton.type = "button";
-		removeButton.value = diLanguage.getMessage('smw_wws_remove_subpath');
+		
+		var removeButton = document.createElement("img");
+		removeButton.src = wgScriptPath
+			+ "/extensions/DataImport/skins/webservices/delete.png";
 		if(window.addEventListener){
 			removeButton.addEventListener("click", webServiceSpecial.removeSubPathEventAdapter, false);
 		} else {
