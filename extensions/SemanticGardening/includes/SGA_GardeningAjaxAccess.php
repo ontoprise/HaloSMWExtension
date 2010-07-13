@@ -30,11 +30,9 @@ $wgAjaxExportList[] = 'smwf_ga_readBotLog';
 
 
 function smwf_ga_readBotLog($taskid) {
-	global $sgaTempDir;
-	$botLogFile = "";
-    $botDir = isset($sgaTempDir) ? $sgaTempDir : GardeningBot::getWriteableDir();
-    $normalizedBotDir = substr(trim($botDir), -1) == '/' ? trim($botDir) : trim($botDir)."/";
-    $botLogFile =  "$normalizedBotDir"."log_$taskid";
+	
+    $botDir = GardeningBot::getWriteableDir();
+    $botLogFile =  "$botDir"."log_$taskid";
 	$botlog = file_get_contents($botLogFile);
 	$botlog = preg_replace("/\x08/","\n",$botlog); // replace backspace by linefeed.
 	$response = new AjaxResponse($botlog);

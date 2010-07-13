@@ -92,7 +92,7 @@ class SGAGardening extends SpecialPage {
 			$html .= ($runningBot ? "<td class=\"runningBots\">running</td>" : "<td class=\"finishedBots\">finished</td>");
 			$html .= "<td><button type=\"button\" name=\"abort\" ".($runningBot ? "" : "disabled")." onclick=\"gardeningPage.cancel(event, ".$row[6].")\">".wfMsg('smw_gard_abortbot')."</button></td>";
 			global $sgaTempDir;
-			if (isset($sgaTempDir)) $html .= "<td><a href=\"$wgServer$wgScript?action=ajax&rs=smwf_ga_readBotLog&rsargs[]=".$row[$i]."\">".wfMsg('smw_gard_consolelog')."</a></td>";
+			$html .= "<td><a href=\"$wgServer$wgScript?action=ajax&rs=smwf_ga_readBotLog&rsargs[]=".$row[$i]."\">".wfMsg('smw_gard_consolelog')."</a></td>";
 			$html .= "</tr>";
 		}
 		$html .= "</table>";

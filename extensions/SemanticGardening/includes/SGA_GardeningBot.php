@@ -366,7 +366,7 @@ abstract class GardeningBot {
 			if ($runAsync) {
 				//TODO: test async code for linux.
 				//low prio
-				$logRedirect = self::getLogRedirection($taskid, "/dev/null");
+				$logRedirect = self::getLogRedirection($taskid);
 
 				$runCommand .= " -b ".escapeshellarg($botID)." -t $taskid -u $userId -s $serverNameParam ".escapeshellarg(str_replace("%", '{{percentage}}', $params));
 				$nullResult = `$runCommand $logRedirect 2>&1 &`;
@@ -393,7 +393,7 @@ abstract class GardeningBot {
 
 			if ($runAsync) { // run async
 
-				$logRedirect = self::getLogRedirection($taskid, NULL);
+				$logRedirect = self::getLogRedirection($taskid);
 
 				// botID is first parameter
 				// taskID is second
@@ -422,18 +422,16 @@ abstract class GardeningBot {
 	 * Returns log direction (shell command output redirection)
 	 *
 	 * @param int $taskid ID of gardening run
-	 * @param string $nullDeviceDefault default nulldevice, if NULL then no default redirection.
+	 * 
 	 */
-	private static function getLogRedirection($taskid, $nullDeviceDefault = NULL) {
+	private static function getLogRedirection($taskid) {
         global $sgaTempDir;
         // $sgaTempDir is set but empty to disable logging
-        if (isset($sgaTempDir) && strlen(trim($sgaTempDir)) == 0)
-            return is_null($nullDeviceDefault) ? "" : "> $nullDeviceDefault";
+    
 		$useTmpDir = self::getWriteableDir();
-
-        $normalizedBotDir = substr(trim($useTmpDir), -1) == '/' ? trim($useTmpDir) : trim($useTmpDir)."/";
-		self::mkpath($normalizedBotDir);
-		$botLogFile =  "> $normalizedBotDir"."log_$taskid";
+      
+		self::mkpath($useTmpDir);
+		$botLogFile =  "> $useTmpDir"."log_$taskid";
 		
 		return $botLogFile;
 	}
