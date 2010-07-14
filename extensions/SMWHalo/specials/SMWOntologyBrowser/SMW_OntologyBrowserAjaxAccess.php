@@ -394,9 +394,9 @@ class OB_StorageTS extends OB_Storage {
 				$value = SMWDataValueFactory::newTypeIDValue(WikiTypeToXSD::getWikiType($literalType));
 			}
 			if ($value->getTypeID() == '_dat') { // exception for dateTime
-				if ($literalValue != '') $value->setXSDValue(str_replace("-","/", $literalValue));
+				if ($literalValue != '') $value->setDBkeys(array(str_replace("-","/", $literalValue)));
 			} else if ($value->getTypeID() == '_ema') { // exception for email
-				$value->setXSDValue($literalValue);
+				$value->setDBkeys(array($literalValue));
 			} else {
 				$value->setUserValue($literalValue);
 			}
