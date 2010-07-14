@@ -274,7 +274,7 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 		$html .= '<a id="step4-add-rest-result-part" style="display: none" href="javascript:webServiceSpecial.appendRESTResultPart()">'.wfMsg('smw_wws_s4_add_rest_result_part').'</a>';
 		
 		//Add button for displaying the namespace prefix table
-		$html .= '<div id="step4-nss-header" style="display: none">';
+		$html .= '<div id="step4-nss-header" style="display: none; cursor: pointer">';
 		$html .= '<img id="step4-display-nss" src="'.$smwgDIScriptPath.'/skins/webservices/right.png"></img>';
 		$html .= '<span>'.wfMsg('smw_wws_add_prefixes').'</span>';
 		$html .= '</div>';

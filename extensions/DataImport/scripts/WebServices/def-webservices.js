@@ -3381,20 +3381,14 @@ DefineWebServiceSpecial.prototype = {
 			a.appendChild(label);
 			a.setAttribute("href", 'javascript:webServiceSpecial.displayRestResultsTable()');
 			$("step4-rest-intro").appendChild(a);
-			
-			//add aditional button for defining namespace prefixes
-			// if(window.addEventListener){
-			// $('step4-display-nss').addEventListener("click",
-			// webServiceSpecial.displayNSTable, false);
-			// } else {
-			// $('step4-display-nss').attachEvent("onclick",
-			// webServiceSpecial.displayNSTable, false);
-			// }
-			$('step4-display-nss').setAttribute('onclick', 'webServiceSpecial.displayNSTable()');
 		} else {
 			$("step4-rest-intro").childNodes[1].checked = false;
 			$("step4-rest-intro").childNodes[3].value = "complete";
 		}
+		
+		$('step4-nss-header').setAttribute('onclick', 'webServiceSpecial.displayNSTable()');
+		$('step4-display-nss').src = wgScriptPath
+			+ "/extensions/DataImport/skins/webservices/right.png";
 		
 		$("step4-rest-intro").childNodes[0].style.display = "";
 		$("step4-rest-intro").childNodes[1].style.display = "";
@@ -3485,7 +3479,7 @@ DefineWebServiceSpecial.prototype = {
 
 		if (remove) {
 			webServiceSpecial.nsPrefixesInitialized = false;
-			$('step4-display-nss').setAttribute('onclick', 'webServiceSpecial.displayNSTable()');
+			$('step4-nss-header').setAttribute('onclick', 'webServiceSpecial.displayNSTable()');
 			$('step4-display-nss').src = wgScriptPath
 				+ "/extensions/DataImport/skins/webservices/right.png";
 			//$("step4-nss-header").style.display = "";
@@ -3898,7 +3892,7 @@ DefineWebServiceSpecial.prototype = {
 	displayNSTable : function() {
 		$('step4-display-nss').src = wgScriptPath
 			+ "/extensions/DataImport/skins/webservices/down.png";
-		$('step4-display-nss').setAttribute('onclick', 'webServiceSpecial.hideNSTable()');
+		$('step4-nss-header').setAttribute('onclick', 'webServiceSpecial.hideNSTable()');
 		
 		if(!webServiceSpecial.nsPrefixesInitialized){
 			webServiceSpecial.nsPrefixesInitialized = true;
@@ -3920,7 +3914,7 @@ DefineWebServiceSpecial.prototype = {
 	hideNSTable : function(){
 		$('step4-display-nss').src = wgScriptPath
 			+ "/extensions/DataImport/skins/webservices/right.png";
-		$('step4-display-nss').setAttribute('onclick', 'webServiceSpecial.displayNSTable()');
+		$('step4-nss-header').setAttribute('onclick', 'webServiceSpecial.displayNSTable()');
 		$("step4-nss").style.display = "none";
 		
 		$('step4-add-nsp').style.display = 'none';
@@ -4556,10 +4550,13 @@ DefineWebServiceSpecial.prototype = {
 			a.setAttribute("href", 'javascript:webServiceSpecial.displayRestResultsTable()');
 			$("step4-rest-intro").appendChild(a);
 			
-			$('step4-display-nss').setAttribute('onclick', 'webServiceSpecial.displayNSTable()');
 		} else {
 			//nothing to do
 		}
+		
+		$('step4-nss-header').setAttribute('onclick', 'webServiceSpecial.displayNSTable()');
+		$('step4-display-nss').src = wgScriptPath
+			+ "/extensions/DataImport/skins/webservices/right.png";
 
 		//hide element, which are not required for ld
 		$("step4-rest-intro").childNodes[0].style.display = "none";
@@ -4677,16 +4674,14 @@ DefineWebServiceSpecial.prototype = {
 			$('step4-enable-triplification-details').style.display = "";
 		} else {
 			$('step4-enable-triplification-details').style.display = "none";
-			//todo: also reinitialize the row + also do that when protocol is changed or so
 		}
 		
-		webServiceSpecial.resetSubjectCreationPatternAliasClick();
-		
+		//webServiceSpecial.resetSubjectCreationPatternAliasClick();
 	},
 	
 	hideSubjectCreationPattern : function(){
 		$("step4-enable-triplification-checkbox").checked = false;
-		this.displaySubjectCreationPattern();
+		webServiceSpecial.displaySubjectCreationPattern();
 	},
 	
 	initSubjectCreationPatternAliasClick : function(){
@@ -4699,7 +4694,7 @@ DefineWebServiceSpecial.prototype = {
 		for (var i = 1; i < resultTable.childNodes.length; i++) {
 			if(resultTable.childNodes[i].childNodes[aliasColumn]){
 				resultTable.childNodes[i].childNodes[aliasColumn].firstChild.style.cursor = "pointer";
-				resultTable.childNodes[i].childNodes[aliasColumn].firstChild.style.backgroundColor = "grey";
+				resultTable.childNodes[i].childNodes[aliasColumn].firstChild.style.backgroundColor = "#grey";
 				resultTable.childNodes[i].childNodes[aliasColumn].firstChild.setAttribute('onclick', 
 						'webServiceSpecial.addAliasToSubjectCreationPattern('+i+')');
 			}
@@ -4756,7 +4751,8 @@ DefineWebServiceSpecial.prototype = {
 			var endText = $("step4-enable-triplification-input").value.substr(endPos);
 			$("step4-enable-triplification-input").value = startText + alias + endText;
 			
-			$("step4-enable-triplification-input").myCursorEndPos = startPos;
+			$("step4-enable-triplification-input").myCursorStartPos += alias.length;
+			$("step4-enable-triplification-input").myCursorEndPos = $("step4-enable-triplification-input").myCursorStartPos;
 		} 
 	},
 	
