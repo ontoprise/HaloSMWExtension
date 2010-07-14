@@ -401,7 +401,7 @@ abstract class GardeningBot {
 				// special escaping for % --> {{percentage}} because escapeshellarg(...) replaces % by blanks
 				$runCommand .= " -b ".escapeshellarg($botID)." -t $taskid -u $userId -s $serverNameParam ".escapeshellarg(str_replace("%", '{{percentage}}', $params));
 
-				$oExec = $wshShell->Run("$runCommand $logRedirect", 7, false);
+				$oExec = $wshShell->Run("$runCommand $logRedirect 2>&1", 7, false);
 					
 			} else { // run synchron
 					
