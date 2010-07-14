@@ -297,11 +297,11 @@ class DeployXmlDumpWriter extends XmlDumpWriter {
 	
 	// namespace must not be changed
 	// otherwise MW import won't work.
-	/*function openStream() {
+	function openStream() {
 		global $wgContLanguageCode;
 		$ver = $this->schemaVersion();
 		return wfElement( 'mediawiki', array(
-            'xmlns'              => "http://www.ontoprise.de/halowikiexport/",
+            'xmlns'              => "http://www.mediawiki.org/halowikiexport/",
             'xmlns:xsi'          => "http://www.w3.org/2001/XMLSchema-instance",
             'xsi:schemaLocation' => "http://www.ontoprise.de/halowikiexport-$ver.xsd",
             'version'            => $ver,
@@ -309,7 +309,7 @@ class DeployXmlDumpWriter extends XmlDumpWriter {
 		null ) .
             "\n" .
 		$this->siteInfo();
-	}*/
+	}
 
 	function openPage( $row ) {
 		$out = "  <page>\n";

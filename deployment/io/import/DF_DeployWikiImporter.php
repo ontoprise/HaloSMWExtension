@@ -86,7 +86,7 @@ function in_page( $parser, $name, $attribs ) {
 
 
 	function in_revision( $parser, $name, $attribs ) {
-		
+		 $name = $this->stripXmlNamespace($name);
 		$this->debug( "in_revision $name" );
 		switch( $name ) {
 			case "oversion":
@@ -114,6 +114,7 @@ function in_page( $parser, $name, $attribs ) {
 	}
 
 	function out_append( $parser, $name ) {
+		 $name = $this->stripXmlNamespace($name);
 		$this->debug( "out_append $name" );
 		if( $name != $this->appendfield ) {
 			return $this->throwXMLerror( "Expected </{$this->appendfield}>, got </$name>" );
