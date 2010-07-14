@@ -132,14 +132,19 @@ class SRRuleEndpoint {
 	 *
 	 * @param $filter
 	 * @param $resultformat
+	 * @param $ajaxCall (if false, do not return AjaxResponse object but simple text)
 	 */
-	public function searchForRulesByFragment($params, $resultformat = "xml") {
+	public function searchForRulesByFragment($params, $resultformat = "xml", $ajaxCall = true) {
 		$filter = $params[0];
 		global $smwgWebserviceProtocol, $smwgTripleStoreGraph;
 
 		$payload = "graph=$smwgTripleStoreGraph&fragment=$filter";
 		list($header, $status, $res) = self::$_client->send($payload, "/searchForRulesByFragment");
-
+        
+		if (!$ajaxCall) {
+			return $resultformat == 'xml' ? $this->encapsulateTreeElementAsXML($res, true) : $this->encapsulateRuleWidget($res);
+		}
+		
 		$response = new AjaxResponse($resultformat == 'xml' ? $this->encapsulateTreeElementAsXML($res, true) : $this->encapsulateRuleWidget($res));
 		$response->setContentType( "application/xml" );
 		$response->setResponseCode($status);

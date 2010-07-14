@@ -97,7 +97,7 @@ function ruleSetupExtension() {
  */
 function srfAddToUnifiedSearch($searchTerms, $receivers, & $results) {
 	if (in_array("SemanticRules", $receivers)) {
-		$html = SRRuleEndpoint::getInstance()->searchForRulesByFragment($searchTerms, "widget");
+		$html = SRRuleEndpoint::getInstance()->searchForRulesByFragment($searchTerms, "widget", false);
 		if ($html != '') {
 			$html = "<span style=\"margin: 5px;\">".wfMsg('sr_rulesfound')."</span>".$html;
 		}
