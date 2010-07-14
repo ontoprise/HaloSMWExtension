@@ -185,7 +185,7 @@ var wgUserLanguageStrings = {
 	'KS_NOT_SUPPORTED'        : 'Konqueror is not supported currently!',
 	'SHOW_INSTANCES'          : 'Show instances',
 	'HIDE_INSTANCES'          : 'Hide instances',
-	'ENTER_MORE_LETTERS'      : "Please enter at least two letters. Otherwise you will receive simply too much results.",
+	'ENTER_MORE_LETTERS'      : "Please enter at least two letters. You will otherwise receive too many results.",
 	'MARK_A_WORD'             : 'Mark a word...',
 	'OPEN_IN_OB'              : 'Open in Ontology Browser',
 	'OPEN_IN_OB_NEW_TAB'      : '... new tab',
