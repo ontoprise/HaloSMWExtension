@@ -391,7 +391,7 @@ class SMWTripleStore extends SMWStore {
 
 		// handle only SPARQL queries and delegate all others
 		if ($query instanceof SMWSPARQLQuery) {
-			wfRunHooks('RewriteSparqlQuery', array(&$query) );
+//			wfRunHooks('RewriteSparqlQuery', array(&$query) );
 
 			if ($query->getQueryString() == "") {
 				$sqr = new SMWHaloQueryResult(array(), $query, array(), $this, false);
@@ -429,7 +429,7 @@ class SMWTripleStore extends SMWStore {
 				return $sqr;
 			}
 
-			wfRunHooks('FilterQueryResults', array(&$queryResult) );
+//			wfRunHooks('FilterQueryResults', array(&$queryResult) );
 
 			switch ($query->querymode) {
 
