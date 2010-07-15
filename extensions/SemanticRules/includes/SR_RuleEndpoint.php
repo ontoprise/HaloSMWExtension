@@ -92,7 +92,7 @@ class SRRuleEndpoint {
 
 		$attachMap = array();
 		$dom = simplexml_load_string($res);
-		if($dom === FALSE) return "error:XML-parsing wrong";
+		if($dom === FALSE) return $attachMap;
 		foreach($dom->children() as $resource) {
 			$resourceURI = (string) $resource->attributes()->id;
 			$wikiName = $this->getWikiTitleFromURI($resourceURI)->getPrefixedDBkey();
