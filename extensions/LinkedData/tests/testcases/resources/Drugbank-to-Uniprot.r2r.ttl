@@ -1,0 +1,106 @@
+# Exemplary Drugbank to Uniprot mapping (Christian Becker, 07/04/2010)
+# Based on a comparison between http://www4.wiwiss.fu-berlin.de/drugbank/resource/targets/27 and http://www.uniprot.org/uniprot/P51168.rdf
+
+@prefix r2r: <http://www4.wiwiss.fu-berlin.de/bizer/r2r/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix mp: <http://www.example.org/smw-lde/smwTransformations/> .
+
+# A target is a protein if it has a gene bank protein ID
+mp:Target
+   a r2r:ClassMapping;
+   r2r:prefixDefinitions  "drugbank: <http://www4.wiwiss.fu-berlin.de/drugbank/resource/drugbank/> . uniprot: <http://purl.uniprot.org/core/> . skos: <http://www.w3.org/2004/02/skos/core#> .";
+   r2r:sourcePattern "?SUBJ drugbank:genbankIdProtein ?protein";
+   r2r:targetPattern "?SUBJ a uniprot:Protein";
+   .
+
+mp:GeneName
+   a r2r:PropertyMapping;
+   r2r:classMappingRef    mp:Target;
+   r2r:sourcePattern      "?SUBJ drugbank:geneName ?o";
+   r2r:targetPattern     
+		"?SUBJ uniprot:encodedBy <_:1>",
+		"<_:1> a uniprot:Gene",
+		"<_:1> skos:prefLabel ?o";
+   .
+
+mp:CellularLocation
+   a r2r:PropertyMapping;
+   r2r:classMappingRef    mp:Target;
+   r2r:sourcePattern      "?SUBJ drugbank:cellularLocation ?o";
+   r2r:targetPattern
+		"?SUBJ uniprot:annotation <_:1>",
+		"<_:1> rdfs:comment ?o";
+   .
+
+# TODO crc64sequence would be a good example for an R2R transformation
+mp:ProteinSequence
+   a r2r:PropertyMapping;
+   r2r:classMappingRef    mp:Target;
+   r2r:sourcePattern      "?SUBJ drugbank:proteinSequence ?o";
+   r2r:targetPattern 
+		"?SUBJ uniprot:sequence <_:1>",
+		"<_:1> a uniprot:Simple_Sequence",
+		"<_:1> rdf:value ?o";
+   .
+
+# TODO Can't construct a resource URI on the fly yet
+# drugbank:hgncId <http://bio2rdf.org/hgnc:10600> => rdfs:seeAlso <http://purl.uniprot.org/hgnc/10600>
+# <http://purl.uniprot.org/hgnc/10600>  a :Resource, :database "HGNC" .
+#mp:HgncId
+#   a r2r:PropertyMapping;
+#   r2r:classMappingRef    mp:Target;
+#   r2r:sourcePattern      "?SUBJ drugbank:hgncId ?o";
+#   r2r:targetPattern      "?SUBJ rdfs:seeAlso ?uniprotURL";
+#   r2r:transformation     "?uniprotURL = concat('<http://purl.uniprot.org/hgnc/', '10600>')";
+#   .
+
+mp:Label
+   a r2r:PropertyMapping;
+   r2r:classMappingRef    mp:Target;
+   r2r:sourcePattern      "?SUBJ rdfs:label ?o";
+   r2r:targetPattern 
+		"?SUBJ uniprot:recommendedName <_:1>",
+		"<_:1> a uniprot:Structured_Name",
+		"<_:1> uniprot:fullName ?o";
+   .
+
+# TODO Can't construct a resource URI on the fly yet
+# drugbank:pfamDomainFunction <http://bio2rdf.org/pfam:PF00858> => rdfs:seeAlso <http://purl.uniprot.org/pfam/PF00858>;
+# <http://purl.uniprot.org/pfam/PF00858> a :Resource, :database "Pfam"
+#mp:PfamDomainFunction
+#   a r2r:PropertyMapping;
+#   r2r:classMappingRef    mp:Target;
+#   r2r:sourcePattern      "?SUBJ drugbank:pfamDomainFunction ?o";
+#   r2r:targetPattern      "?SUBJ rdfs:seeAlso ?pfamURL";
+#   r2r:transformation     "?pfamURL = concat('<http://purl.uniprot.org/pfam/', 'PF00858>')";
+#   .
+
+mp:SpecificFunction
+   a r2r:PropertyMapping;
+   r2r:classMappingRef    mp:Target;
+   r2r:sourcePattern      "?SUBJ drugbank:specificFunction ?o";
+   r2r:targetPattern 
+		"?SUBJ uniprot:annotation <_:1>",
+		"<_:1> a uniprot:Function_Annotation",
+		"<_:1> rdfs:comment ?o";
+   .
+
+# TODO Can't construct a resource URI on the fly yet
+# drugbank:swissprotPage <http://www.uniprot.org/uniprot/P51168> => owl:sameAs< http://purl.uniprot.org/uniprot/P51168>
+
+# TODO Condition support to distinguish shortName vs. fullName
+# TODO Here, <_:1> must be global
+mp:Synonym
+   a r2r:PropertyMapping;
+   r2r:classMappingRef    mp:Target;
+   r2r:sourcePattern      "?SUBJ drugbank:synonym ?o";
+   r2r:targetPattern 
+		"?SUBJ uniprot:alternativeName <_:1>",
+		"<_:1> a uniprot:Structured_Name",
+		"<_:1> uniprot:shortName ?o";
+   .
+
+# TODO Can't construct a resource URI on the fly yet
+# drugbank:target <http://www4.wiwiss.fu-berlin.de/drugbank/resource/drugs/DB00384>
+# => rdfs:seeAlso <http://purl.uniprot.org/drugbank/DB00384> [ a       :Resource; :database "DrugBank" . ]

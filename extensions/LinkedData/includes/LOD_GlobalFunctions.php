@@ -71,11 +71,25 @@ function enableLinkedData() {
 	$wgAutoloadClasses['LODMappingStore'] 	= $lodgIP . '/includes/LODMapping/LOD_MappingStore.php';
 	$wgAutoloadClasses['LODMappingTripleStore'] = $lodgIP . '/includes/LODMapping/LOD_MappingTripleStore.php';
 	$wgAutoloadClasses['LODPersistentMappingStore'] = $lodgIP . '/includes/LODMapping/LOD_PersistentMappingStore.php';
+
+	$wgAutoloadClasses['LODMLClassMapping'] = $lodgIP . '/includes/LODMLApi/LOD_MLClassMapping.php';
+	$wgAutoloadClasses['LODMLEquivalentClassMapping'] = $lodgIP . '/includes/LODMLApi/LOD_MLEquivalentClassMapping.php';
+	$wgAutoloadClasses['LODMLEquivalentPropertyMapping'] = $lodgIP . '/includes/LODMLApi/LOD_MLEquivalentPropertyMapping.php';
+	$wgAutoloadClasses['LODMLMapping'] = $lodgIP . '/includes/LODMLApi/LOD_MLMapping.php';
+	$wgAutoloadClasses['LODMLMappingLanguageAPI'] = $lodgIP . '/includes/LODMLApi/LOD_MLMappingLanguageAPI.php';
+	$wgAutoloadClasses['LODMLPropertyMapping'] = $lodgIP . '/includes/LODMLApi/LOD_MLPropertyMapping.php';
+	$wgAutoloadClasses['LODMLR2RMapping'] = $lodgIP . '/includes/LODMLApi/LOD_MLR2RMapping.php';
+	$wgAutoloadClasses['LODMLStatementBasedMapping'] = $lodgIP . '/includes/LODMLApi/LOD_MLStatementBasedMapping.php';
+	$wgAutoloadClasses['LODMLSubclassMapping'] = $lodgIP . '/includes/LODMLApi/LOD_MLSubclassMapping.php';
+	$wgAutoloadClasses['LODMLSubpropertyMapping'] = $lodgIP . '/includes/LODMLApi/LOD_MLSubpropertyMapping.php';
 	
     //--- Autoloading for exception classes ---
    	$wgAutoloadClasses['LODException']        = $lodgIP . '/exceptions/LOD_Exception.php';
    	$wgAutoloadClasses['LODMappingException'] = $lodgIP . '/exceptions/LOD_MappingException.php';
    	
+    //--- Autoloading for libraries ---
+	$wgAutoloadClasses['ARC2'] = $lodgIP . '/libs/arc/ARC2.php';
+
     return true;
 }
 

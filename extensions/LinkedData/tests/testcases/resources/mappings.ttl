@@ -1,0 +1,85 @@
+@prefix r2r: <http://www4.wiwiss.fu-berlin.de/bizer/r2r/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix dbpedia: <http://dbpedia.org/ontology/> .
+@prefix movie: <http://data.linkedmdb.org/resource/movie/> .
+
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+
+# Made up Mapping publisher
+@prefix mp: <http://www4.wiwiss.fu-berlin.de/R2Rmappings/> .
+
+# Mappings from DBpedia to FOAF Person and rdfs:label (from DBpedia) to foaf:name
+
+mp:DBpediaToFoafPersonMapping
+   a r2r:ClassMapping ;
+   r2r:prefixDefinitions  "foaf: <http://xmlns.com/foaf/0.1/> . dbpedia: <http://dbpedia.org/ontology/>" ;
+   r2r:sourcePattern "?SUBJ a dbpedia:Person" ;
+   r2r:targetPattern "?SUBJ a foaf:Person" .
+    
+
+mp:labelToNameMapping
+   a r2r:PropertyMapping ;
+   r2r:sourcePattern      "?SUBJ rdfs:label ?o . FILTER(lang(?o)='en')" ;
+   r2r:classMappingRef    mp:DBpediaToFoafPersonMapping ; # This is necessary and means that this mapping makes only sense in a "Person context"
+   r2r:prefixDefinitions  "foaf: <http://xmlns.com/foaf/0.1/>" ;
+   r2r:targetPattern      "?SUBJ foaf:name ?o" ;
+   r2r:targetPattern      "?SUBJ <http://www.w3.org/2006/vcard/ns#n> ?o" .
+
+# Linkedmdb to DBpedia
+
+mp:StarringMapping # map from Linkedmdb to dbpedia:starring (domain dbpedia:movie), making it a bit more complicated and ignoring movie:actor
+   a r2r:PropertyMapping ;
+   r2r:sourcePattern      "?SUBJ a movie:film . ?SUBJ movie:performance ?p . ?a movie:performance ?p . ?a a movie:actor" ;
+   r2r:prefixDefinitions  "movie: <http://data.linkedmdb.org/resource/movie/> . dbpedia: <http://dbpedia.org/ontology/>" ;
+   r2r:targetPattern      "?SUBJ dbpedia:starring ?a" .
+
+# VCard to FOAF mappings
+
+mp:VCardEmailToFoafMbox
+   a r2r:PropertyMapping ;
+   r2r:sourcePattern      "{ ?SUBJ v:email ?o } UNION { ?SUBJ v:workEmail ?o }" ;
+   r2r:prefixDefinitions  "foaf: <http://xmlns.com/foaf/0.1/> . v: <http://www.w3.org/2006/vcard/ns#> . " ;
+   r2r:targetPattern      "?SUBJ foaf:mbox ?o" .
+   
+mp:VCardBirthDayMapping
+   a r2r:PropertyMapping ;
+   r2r:sourcePattern      "?SUBJ v:bday ?o" ;
+   r2r:prefixDefinitions  "v: <http://www.w3.org/2006/vcard/ns#> . dbpedia: <http://dbpedia.org/ontology/>" ;
+   r2r:targetPattern      "?SUBJ dbpedia:birthDay ?o" .
+   
+# OWL:equivalentClass, OWL:equivalentProperty, RDFS:subPropertyOf and RDFS:subClassOf mappings
+
+ foaf:Person owl:equivalentClass dbpedia:Person .
+
+ movie:country owl:equivalentClass dbpedia:Country .
+
+ movie:director owl:equivalentProperty dbpedia:director .
+
+# Mappings needing transformations
+
+mp:concatFirstAndLastNameMapping
+   a r2r:PropertyMapping ;
+   r2r:sourcePattern "?SUBJ foaf:firstName ?f . ?SUBJ foaf:lastName ?l" ;
+   r2r:targetPattern "?SUBJ v:n ?name" ;
+   r2r:transformation "?name = concat(?l, ', ', ?f)" ; # Concatenate the first and last name seperated by a comma+space.
+   r2r:prefixDefinitions "foaf: <http://xmlns.com/foaf/0.1/> . v: <http://www.w3.org/2006/vcard/ns#>" .
+
+# The properties of the following example are made up, this should show a transformation from Fahrenheit to Kelvin
+
+mp:numericTransformationMapping
+   a r2r:PropertyMapping ;
+   r2r:sourcePattern "?SUBJ <http://nodomain/meltingPoint> ?mPointInFahrenheit" ;
+   r2r:targetPattern "?SUBJ dbpedia:meltingPoint ?mPointInKelvin" ;
+   r2r:transformation "?mPointInKelvin = (?mPointInFahrenheit + 459.67) * 5 / 9" ;
+   r2r:prefixDefinitions "dbpedia: <http://dbpedia.org/ontology/>" .
+
+# Transform numeric value into a string value: This mapping transform a double value (weight in grams) to a string "x lb"
+
+mp:numericToStringMapping
+  a r2r:PropertyMapping ;
+  r2r:prefixDefinitions  "nodomain: <http://nodomain/ontology/> . dbpedia: <http://dbpedia.org/ontology/>" ;
+  r2r:sourcePattern "?SUBJ dbpedia:weight ?wGrams" ;
+  r2r:targetPattern "?SUBJ nodomain:weight ?wString" ;
+  r2r:transformation "?wString = concat(integer(?wGrams / 453.59237),' lb')" .
