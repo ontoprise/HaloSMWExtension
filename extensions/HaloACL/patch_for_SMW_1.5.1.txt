@@ -59,22 +59,27 @@ Index: extensions/SemanticMediaWiki/includes/storage/SMW_SQLStore2_Queries.php
 ===================================================================
 --- extensions/SemanticMediaWiki/includes/storage/SMW_SQLStore2_Queries.php	(revision 7432)
 +++ extensions/SemanticMediaWiki/includes/storage/SMW_SQLStore2_Queries.php	(working copy)
-@@ -536,7 +536,22 @@
+@@ -536,7 +536,27 @@
  
  						//No defaultnamespaces here; If any, these are already in the concept.
  						$desc = $qp->getQueryDescription( $row->concept_txt );
 -						$qid = $this->compileQueries( $desc );
 +/*op-patch|TS|2010-07-14|HaloACL|Semantic protection|start*/
-+						$query = new SMWQuery($desc);
-+						wfRunHooks('RewriteQuery', array(&$query, &$queryEmpty) );
-+						$errors = $query->getErrors();
-+						if (!empty($errors)) {
-+							$this->m_errors += $errors;
-+						}
-+						if ($queryEmpty) {
-+							$qid = -1;
++						global $haclgProtectProperties;
++						if (isset($haclgProtectProperties) && $haclgProtectProperties) {
++							$query = new SMWQuery($desc);
++							wfRunHooks('RewriteQuery', array(&$query, &$queryEmpty) );
++							$errors = $query->getErrors();
++							if (!empty($errors)) {
++								$this->m_errors += $errors;
++							}
++							if ($queryEmpty) {
++								$qid = -1;
++							} else {
++								$desc = $query->getDescription();
++								$qid = $this->compileQueries( $desc );
++							}
 +						} else {
-+							$desc = $query->getDescription();
 +							$qid = $this->compileQueries( $desc );
 +						}
 +/*op-patch|TS|2010-07-14|end*/
