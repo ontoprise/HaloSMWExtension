@@ -511,7 +511,8 @@ function qiGetPropertyInformation($relationName) {
 				if ($type[0] instanceof SMWTypesValue) {
                     $typeValues = $type[0]->getTypeValues();
                     // check if the type is a Record
-                    if ($typeValues[0]->getValueIndex() == "_rec") {
+                    if ($typeValues[0]->getDBkey() == "_rec") {
+                        var_dump("1");
                         $record = smwfGetStore()->getPropertyValues($relationTitle, SMWPropertyValue::makeProperty("_LIST"));
                         if (count($record) > 0)
                             $typeValues= $record[0]->getTypeValues();
