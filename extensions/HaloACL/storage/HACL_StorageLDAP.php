@@ -65,13 +65,12 @@ class HACLStorageLDAP extends HACLStorageSQL {
 	 * 		stores the mapping from LDAP distinguished names to numeric group IDs.
 	 *
 	 */
-	public function initDatabaseTables() {
+	public function initDatabaseTables($verbose = true) {
 
-		parent::initDatabaseTables();
+		parent::initDatabaseTables($verbose);
 
 		$db =& wfGetDB( DB_MASTER );
 
-		$verbose = true;
 		HACLDBHelper::reportProgress("Setting up HaloACL for LDAP ...\n",$verbose);
 
 		// halo_acl_ldap_group_id_map:
@@ -89,9 +88,9 @@ class HACLStorageLDAP extends HACLStorageSQL {
 
 	}
 
-	public function dropDatabaseTables() {
+	public function dropDatabaseTables($verbose = true) {
 
-		parent::dropDatabaseTables();
+		parent::dropDatabaseTables($verbose);
 
 		global $wgDBtype;
 		$verbose = true;
