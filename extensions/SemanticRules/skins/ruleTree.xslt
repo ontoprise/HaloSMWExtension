@@ -173,11 +173,13 @@
 				<td id="ruleList-ruletext" class="ruleListLabel">{{SR_RULE_TEXT}}</td>
 				<td>
 					<div id="rule_content_0" ruleID="" class="ruleWidget">
-						<select style="margin-left: 5px;margin-top: 5px;" name="rule_content_selector0"
+						<!--
+						 FIXME: rule serializer selector is deactivated for this release. 
+						 <select style="margin-left: 5px;margin-top: 5px;" name="rule_content_selector0"
 							onchange="sr_rulewidget.selectMode(event)">
 							<option mode="easyreadible">{{SR_EASYREADIBLE}}</option>
 							<option mode="stylized">{{SR_STYLIZED_ENGLISH}}</option>
-						</select>
+						</select> -->
 						<div id="rule_content_0_easyreadible" class="ruleSerialization">
 							<xsl:choose>
 								<xsl:when test="child::easyreadible">
