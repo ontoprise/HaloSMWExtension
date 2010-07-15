@@ -49,11 +49,13 @@ How to install manually:
 (6) Choose the command depending on your Semantic MediaWiki installation to patch SMW 
 	(skip this step if you don't have SMW installed):
 		- SMW 1.4.2 
-		   php patch.php -d <smw-dir> -p patch_for_SMW_1.4.2.txt
+		   php patch.php -d <mediawiki-dir> -p patch_for_SMW_1.4.2.txt
 		- SMW 1.4.3
-		   php patch.php -d <smw-dir> -p patch_for_SMW_1.4.3.txt
+		   php patch.php -d <mediawiki-dir> -p patch_for_SMW_1.4.3.txt
 		- SMW 1.5.0 
-		   php patch.php -d <smw-dir> -p patch_for_SMW_1.5.0.txt
+		   php patch.php -d <mediawiki-dir> -p patch_for_SMW_1.5.0.txt
+		- SMW 1.5.1 
+		   php patch.php -d <mediawiki-dir> -p patch_for_SMW_1.5.1.txt
 	
 (7) Execute the following command to patch Semantic Forms (skip this step if you don't 
 	have the Semantic Forms extension installed):
