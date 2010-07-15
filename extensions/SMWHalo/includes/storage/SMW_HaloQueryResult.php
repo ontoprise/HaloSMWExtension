@@ -14,6 +14,15 @@ class SMWHaloQueryResult extends SMWQueryResult {
 	public function SMWHaloQueryResult($printrequests, $query, $results, $store, $furtherres=false) {
 		parent::__construct($printrequests, $query, $results, $store, $furtherres);
 	}
+	
+	/**
+	 * Setter method for the results.
+	 * @param array(array(SMWHaloResultArray)) $results
+	 * 		A table of results
+	 */
+	public function setResults($results) {
+		$this->mResults = $results;
+	}
     
     /**
      * Return the next result row as an array of SMWResultArray objects, and
