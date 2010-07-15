@@ -7,9 +7,10 @@
  * @author Ingo Steinbauer
  *
  */
-
-global $lodgIP;
-require_once("$lodgIP/includes/LODAdministration/LOD_AdministrationStore.php");
+if(defined( 'LOD_LINKEDDATA_VERSION')){
+	global $lodgIP;
+	require_once("$lodgIP/includes/LODAdministration/LOD_AdministrationStore.php");
+}
 
 /*
  * This class provides the Connection between the Web Service component
