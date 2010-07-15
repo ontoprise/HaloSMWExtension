@@ -221,7 +221,7 @@ class SMWTripleStore extends SMWStore {
 					if ($value->getTypeID() == '_txt') {
 						$triples[] = array("<$smwgTripleStoreGraph/$subj_ns#".$subject->getDBkey().">", "<$smwgTripleStoreGraph/property#".$property->getWikiPageValue()->getDBkey().">", "\"".$this->escapeForStringLiteral(array_shift($value->getDBkeys()))."\"^^xsd:string");
 
-					} elseif ($value->getTypeID() == '_wpg') {
+					} elseif ($value->getTypeID() == '_wpg' || $value->getTypeID() == '_wpp' || $value->getTypeID() == '_wpc' || $value->getTypeID() == '_wpf') {
 						$obj_ns = $this->tsNamespace->getNSPrefix($value->getNamespace());
 
 						$triples[] = array("<$smwgTripleStoreGraph/$subj_ns#".$subject->getDBkey().">", "<$smwgTripleStoreGraph/property#".$property->getWikiPageValue()->getDBkey().">", "<$smwgTripleStoreGraph/$obj_ns#".$value->getDBkey().">");
