@@ -167,6 +167,8 @@ TreeTransformer.prototype = {
 	node.appendChild(fragment);
 
 	// translate XSLT output
+	
+	// replace language constant in text nodes
 	var languageNodes = GeneralXMLTools.getNodeByText(document, '{{');
 	var regex = new RegExp("\{\{(\\w+)\}\}");
 	var lp = this.languageProvider;
@@ -189,6 +191,35 @@ TreeTransformer.prototype = {
 			});
 		}
 		n.textContent = text;
+		
+	
+	});
+	
+	// replace language constants in HTML attribute nodes
+	var languageAtts = GeneralXMLTools.getAttributeNodeByText(document, '{{');
+	var regex = new RegExp("\{\{(\\w+)\}\}");
+	var lp = this.languageProvider;
+	languageAtts.each(function(n) {
+		var vars;
+		var text = n.textContent;
+		while (vars = regex.exec(text)) {
+			var reg_exp = new RegExp('\{\{' + vars[1] + '\}\}', "g");
+			
+			// use local language data
+			var msg = gLanguage.getMessage(vars[1])
+			if (msg != vars[1]) text = text.replace(reg_exp,
+					msg);
+			
+			// use other language providers
+			lp.each(function(provider) { 
+				var msg = provider(vars[1]);
+				if (msg) text = text.replace(reg_exp,
+						msg);
+			});
+		}
+		n.textContent = text;
+		
+	
 	});
 
 } else if (OB_bd.isIE) {
