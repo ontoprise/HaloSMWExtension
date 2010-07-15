@@ -632,7 +632,7 @@ class ImportOntologyBot extends GardeningBot {
 		global $smwgContLang, $smwgHaloContLang, $wgContLang, $wgLanguageCode;
 		$ssp = $smwgHaloContLang->getSpecialSchemaPropertyArray();
 		$sp = $smwgContLang->getPropertyLabels();
-			
+		$smwNSArray = $smwgContLang->getNamespaces();
 		$slabel = $this->getLabelForEntity($entity, $wgLanguageCode);
 		$st = Title::newFromText( $slabel , SMW_NS_PROPERTY );
 		if ($st == NULL) return $statements; // Could not create a title, next please
@@ -676,6 +676,18 @@ class ImportOntologyBot extends GardeningBot {
 				
 			$s['WIKI'][] = "[[".$sp["_TYPE"]."::" . $wgContLang->getNsText(SMW_NS_TYPE) . ":" . $label . "]]" . "\n";
 		}
+		
+		// read subproperties
+        $it  = $this->model->findAsIterator($entity, RDFS::SUB_PROPERTY_OF(), NULL);
+        while ($it->hasNext()) {
+            $statement = $it->next();
+            $object = $statement->getObject();
+            $label = $this->getLabelForEntity($object, $wgLanguageCode);
+
+            $s['WIKI'][] = "[[".$sp['_SUBP']."::" . $smwNSArray[SMW_NS_PROPERTY] . ":" . $label . "]]" . "\n";
+
+        }
+		
 
 		$statements[] = $s;
 		return $statements;
