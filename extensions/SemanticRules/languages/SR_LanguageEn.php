@@ -32,6 +32,8 @@ class SR_LanguageEn extends SR_Language {
     'sr_ruleselector' => 'Rule format: ',
     'sr_easyreadible' => 'Easy readible',
     'sr_stylizedenglish' => 'Stylized english',
+    'sr_rulesdefinedfor' => 'Rules defined for',
+    'sr_rulestatus' => 'Status',
     
     #Unified search extension
     'sr_rulesfound' => 'The following rules were found:'

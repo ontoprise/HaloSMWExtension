@@ -209,6 +209,7 @@ class SRRuleEndpoint {
 		foreach($dom->children() as $rule) {
 			if ($rule->getName() != 'rule') continue;
 			$ruleURI = (string) $rule->attributes()->id;
+			$active = (string) $rule->attributes()->active;
 			$ruleText = (string) $rule[0];
 			$easyreadible = isset($rule->children()->easyreadible) ? (string) $rule->children()->easyreadible[0] : "";
 			$stylizedEnglish = isset($rule->children()->easyreadible) ? (string) $rule->children()->stylizedenglish[0] : "";
@@ -217,10 +218,17 @@ class SRRuleEndpoint {
 			$containingPageTitle = $this->getWikiTitleFromURI($containingPageURI);
 			// FIXME: rule serializer selector removed for current release because it has no effect.
 			//$html .= '<div id="rule_content_'.$i.'" ruleID="'.htmlspecialchars($ruleURI).'" class="ruleWidget"><a style="margin-left: 5px;" href="'.htmlspecialchars($containingPageTitle->getFullURL()).'">'.htmlspecialchars($rulename).'</a> | '.wfMsg('sr_ruleselector').'<select style="margin-top: 5px;" name="rule_content_selector'.$i.'" onchange="sr_rulewidget.selectMode(event)"><option mode="easyreadible">'.wfMsg('sr_easyreadible').'</option><option mode="stylized">'.wfMsg('sr_stylizedenglish').'</option></select> '. // tab container
-			$html .= '<div id="rule_content_'.$i.'" ruleID="'.htmlspecialchars($ruleURI).'" class="ruleWidget"><a style="margin-left: 5px;" href="'.htmlspecialchars($containingPageTitle->getFullURL()).'">'.htmlspecialchars($rulename).'</a> | '.wfMsg('sr_ruleselector'). // tab container
-                         '<div id="rule_content_'.$i.'_easyreadible" class="ruleSerialization">'.htmlspecialchars($easyreadible).'</div>'. // tab 1
+			
+			global $wgTitle;
+            $prefixedText = !is_null($wgTitle) && $wgTitle->getNamespace() != NS_SPECIAL ? '<h2>'.wfMsg('sr_rulesdefinedfor').' '.$wgTitle->getPrefixedText().'</h2>' : "";  
+            $status = $active ? "active" : "inactive";
+            $statusColor = $active ? "green" : "red";
+            $html .= '<div id="rule_content_'.$i.'" ruleID="'.htmlspecialchars($ruleURI).'" class="ruleWidget"><img style="margin-top: 5px;margin-left: 5px;" src="extensions/SemanticRules/skins/images/rule.gif"/><a style="margin-left: 5px;font-weight:bold;" href="'.htmlspecialchars($containingPageTitle->getFullURL()).'">'.htmlspecialchars($rulename).'</a> <span style="float:right;margin-right: 10px;margin-top: 5px;">'.wfMsg('sr_rulestatus').':<span style="font-weight: bold;color:'.$statusColor.';">'.$status.'</span></span><hr/>'. // tab container
+                          '<div id="rule_content_'.$i.'_easyreadible" class="ruleSerialization">'.htmlspecialchars($easyreadible).'</div>'. // tab 1
                          '<div id="rule_content_'.$i.'_stylized" class="ruleSerialization" style="display:none;">'.htmlspecialchars($stylizedEnglish).'</div>'.
                      '</div>'; // tab 2
+            
+
 			$i++;
 		}
 

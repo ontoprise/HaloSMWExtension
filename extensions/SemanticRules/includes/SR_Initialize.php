@@ -360,7 +360,13 @@ function srfTripleStoreParserHook(&$parser, &$text, &$strip_state = null) {
 			}
 			//FIXME: remove rule serialize selector for this release.
 			//$replaceBy = '<div id="rule_content_'.$i.'" ruleID="'.htmlspecialchars($uri).'" class="ruleWidget"><span style="margin-left: 5px;">'.htmlspecialchars($name).'</span> | '.wfMsg('sr_ruleselector').'<select style="margin-top: 5px;" name="rule_content_selector'.$i.'" onchange="sr_rulewidget.selectMode(event)"><option mode="easyreadible">'.wfMsg('sr_easyreadible').'</option><option mode="stylized">'.wfMsg('sr_stylizedenglish').'</option></select> '. // tab container
-			$replaceBy = '<div id="rule_content_'.$i.'" ruleID="'.htmlspecialchars($uri).'" class="ruleWidget"><span style="margin-left: 5px;">'.htmlspecialchars($name).'</span> '. // tab container
+			
+			global $wgTitle;
+			$prefixedText = !is_null($wgTitle) ? $wgTitle->getPrefixedText() : "";  
+			$status = $active ? "active" : "inactive";
+			$statusColor = $active ? "green" : "red";
+			$replaceBy = '<h2>'.wfMsg('sr_rulesdefinedfor').' '.$prefixedText.'</h2><div id="rule_content_'.$i.'" ruleID="'.htmlspecialchars($uri).'" class="ruleWidget"><img style="margin-top: 5px;margin-left: 5px;" src="extensions/SemanticRules/skins/images/rule.gif"/><span style="margin-left: 5px;font-weight:bold;">
+			             '.htmlspecialchars($name).'</span> <span style="float:right;margin-right: 10px;margin-top: 5px;">'.wfMsg('sr_rulestatus').':<span style="font-weight: bold;color:'.$statusColor.';">'.$status.'</span></span><hr/>'. // tab container
 			             '<div id="rule_content_'.$i.'_easyreadible" class="ruleSerialization">'.htmlspecialchars($ruletext).'</div>'. // tab 1
 			             '<div id="rule_content_'.$i.'_stylized" class="ruleSerialization" style="display:none;">Stylized english</div>'.
 			             '</div>'; // tab 2

@@ -144,31 +144,7 @@
 
 	<xsl:template match="ruleMetadata">
 		<table class="ruleTreeColors" border="0" cellspacing="0">
-			<tr>
-				<td id="ruleList-id" class="ruleListLabel">{{SR_RULE_ID}}</td>
-				<td class="ruleListValue">
-					<xsl:if test="@title">
-						<xsl:value-of select="@title" />
-					</xsl:if>
-				</td>
-			</tr>
-			<tr>
-				<td id="ruleList-link" class="ruleListLabel">{{SR_RULE_HOME}}</td>
-				<td class="ruleListValue">
-
-					<xsl:variable name="title" select="@title" />
-					<xsl:if test="@containing_page">
-						<a class="navigationLink" title="Goto to {$title}" style="margin-left:5px;">
-
-							<xsl:attribute name="href"><xsl:value-of
-								select="substring-before($param-wiki-path,'$1')" /><xsl:value-of
-								select="@containing_page" /></xsl:attribute>
-
-							<xsl:value-of select="@containing_page" />
-						</a>
-					</xsl:if>
-				</td>
-			</tr>
+			
 			<tr>
 				<td id="ruleList-ruletext" class="ruleListLabel">{{SR_RULE_TEXT}}</td>
 				<td>
@@ -205,6 +181,34 @@
 					</div>
 				</td>
 			</tr>
+			</table>
+			<hr/>
+			<table class="ruleTreeColors" border="0" cellspacing="0">
+			<tr>
+                <td id="ruleList-id" class="ruleListLabel">{{SR_RULE_ID}}</td>
+                <td class="ruleListValue">
+                    <xsl:if test="@title">
+                        <xsl:value-of select="@title" />
+                    </xsl:if>
+                </td>
+            </tr>
+            <tr>
+                <td id="ruleList-link" class="ruleListLabel">{{SR_RULE_HOME}}</td>
+                <td class="ruleListValue">
+
+                    <xsl:variable name="title" select="@title" />
+                    <xsl:if test="@containing_page">
+                        <a class="navigationLink" title="Goto to {$title}" >
+
+                            <xsl:attribute name="href"><xsl:value-of
+                                select="substring-before($param-wiki-path,'$1')" /><xsl:value-of
+                                select="@containing_page" /></xsl:attribute>
+
+                            <xsl:value-of select="@containing_page" />
+                        </a>
+                    </xsl:if>
+                </td>
+            </tr>
 			<tr>
 				<td id="ruleList-native" class="ruleListLabel">{{SR_RULE_ISNATIVE}}</td>
 				<td class="ruleListValue">
@@ -243,12 +247,15 @@
 					</xsl:if>
 				</td>
 			</tr>
+			</table>
+            <hr/>
+            <table class="ruleTreeColors" border="0" cellspacing="0">
 			<tr>
 				<td id="ruleList-defines" class="ruleListLabel">{{SR_RULE_DEFINES}}</td>
 				<td class="ruleListValue">
 					<xsl:for-each select="child::defining">
 						<xsl:variable name="title" select="." />
-						<a class="navigationLink" title="Goto to {$title}" style="margin-left:5px;">
+						<a class="navigationLink" title="Goto to {$title}" >
 
 							<xsl:attribute name="href"><xsl:value-of
 								select="substring-before($param-wiki-path,'$1')" /><xsl:value-of
@@ -264,7 +271,7 @@
 				<td class="ruleListValue">
 					<xsl:for-each select="child::using">
 						<xsl:variable name="title" select="." />
-						<a class="navigationLink" title="Goto to {$title}" style="margin-left:5px;">
+						<a class="navigationLink" title="Goto to {$title}" >
 
 							<xsl:attribute name="href"><xsl:value-of
 								select="substring-before($param-wiki-path,'$1')" /><xsl:value-of

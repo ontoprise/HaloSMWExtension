@@ -31,6 +31,7 @@ var wgUserSR_LanguageStrings = {
     'RULE_TYPE_DEFINITION'    : 'Definition',
     'RULE_TYPE_PROP_CHAINING' : 'Property chaining',
     'RULE_TYPE_CALCULATION'   : 'Calculation',
+    'RULE_TYPE_USER_DEFINED'   : 'User defined',
     
     
     
