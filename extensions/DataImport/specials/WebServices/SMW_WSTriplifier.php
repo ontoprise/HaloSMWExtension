@@ -8,28 +8,8 @@
  *
  */
 
-define("DI_PROVENANCE_GRAPH", "ProvenanceGraph");
-define("DI_SWP_ASSERTED_BY", "swp:assertedBy");
-define("DI_SWP_AUTHORITY", "swp:authority");
-define("DI_DC_DATE", "dc:date");
-define("DI_DC_DATE_FORMAT", "xsd:dateTime");
-define("DI_XSD_PREFIX", "xsd");
-define("DI_XSD_IRI", "<http://www.w3.org/2001/XMLSchema#>");
-define("DI_SWP_PREFIX", "swp");
-define("DI_SWP_IRI", "<http://www.w3.org/2004/03/trix/swp-2/>");
-define("DI_DC_PREFIX", "dc");
-define("DI_DC_IRI", "<http://purl.org/dc/elements/1.1/>");
-
-define('DI_DATASOURCE_GRAPH', 'DataSourceInformationGraph');
-define('DI_RDF_PREFIX', 'rdf');
-define('DI_RDF_IRI', '<http://www.w3.org/1999/02/22-rdf-syntax-ns#>');
-define('DI_RDFS_PREFIX', 'rdfs');
-define('DI_RDFS_IRI', '<http://www.w3.org/2000/01/rdf-schema#>');
-define('DI_SHK_PREFIX', 'shk');
-//todo: get shk namespace uri ALSO UPDATE TESTCASE!
-define('DI_SHK_IRI', '<http://smw-house-keeping/>');
-
-
+global $lodgIP;
+require_once("$lodgIP/includes/LODAdministration/LOD_AdministrationStore.php");
 
 /*
  * This class provides the Connection between the Web Service component
@@ -75,7 +55,9 @@ class WSTriplifier {
 			}
 			
 			$tsA = new LODTripleStoreAccess();
-			$tsA->addPrefixes("PREFIX ".DI_XSD_PREFIX.":".DI_XSD_IRI);
+			
+			$tsA->addPrefixes(LODAdministrationStore::getInstance()->getSourceDefinitionPrefixes());
+			
 			if($createGraph){
 				//new graph only needs to be created if this is the first usage
 				//of this ws in this article 
@@ -96,15 +78,26 @@ class WSTriplifier {
 	 * Get the name of a ws usage graph
 	 */
 	private function getGraphName($wsId, $articleId){
-		return $this->getWikiNS()."WS_".$wsId."_".$articleId;
+		$lAS = LODAdministrationStore::getInstance();
+		return $lAS->getSMWGraphsURI()."WS_".$wsId."_".$articleId;
 	}
 	
 	private function getSubjectIRI($subject){
-		return "<".$this->getWikiNS()."a#".$subject.">";
+		$tsN = new TSNamespaces();
+		$uri = $tsN->getAllNamespaces();
+		$uri = $uri[NS_MAIN];
+		return '<'.$uri.$subject.'>';
+	}
+	
+	private function getDataSourceURI($source){
+		return "smwDatasources:".$source;
 	}
 	
 	private function getPropertyIRI($property){
-		return "<".$this->getWikiNS()."property#".$property.">";
+		$tsN = new TSNamespaces();
+		$uri = $tsN->getAllNamespaces();
+		$uri = $uri[SMW_NS_PROPERTY];
+		return '<'.$uri.$property.'>';
 	}
 	
 	/*
@@ -138,7 +131,7 @@ class WSTriplifier {
 			$semData = smwfGetStore()->getSemanticData(SMWWikiPageValue::makePageFromTitle($title));
 			$property = SMWPropertyValue::makeProperty('Has type');
 			$value = $semData->getPropertyValues($property);
-			$types[$property] = (count($value) > 0) ? 
+			@ $types[$property] = (count($value) > 0) ? 
 				SMWDataValueFactory::findTypeID($value[0]->getShortWikiText()) : '';
 		}
 		
@@ -163,7 +156,7 @@ class WSTriplifier {
 					$triple = array();
 					$triple['property'] = $property;
 					$triple['object'] = $objects[$i];
-					if(strlen($types[$property]) == 0){
+					if(!array_key_exists($property, $types) || strlen($types[$property]) == 0){
 						$triple['type'] = null;
 					} else {
 						$typeDataValue = SMWDataValueFactory::newTypeIDValue($types[$property], $objects[$i]);
@@ -224,6 +217,9 @@ class WSTriplifier {
 			$this->dropProvenanceData($wsId, $articleId);
 			
 			$tsA = new LODTripleStoreAccess();
+			
+			$tsA->addPrefixes(LODAdministrationStore::getInstance()->getSourceDefinitionPrefixes());
+			
 			$tsA->dropGraph($this->getGraphName($wsId, $articleId));
 			$tsA->flushCommands();
 		}		
@@ -234,24 +230,30 @@ class WSTriplifier {
 	 */
 	private function addProvenanceData($wsId, $articleId){
 		$tsA = new LODTripleStoreAccess();
-		$tsA->addPrefixes("PREFIX ".DI_SWP_PREFIX.":".DI_SWP_IRI);
-		$tsA->addPrefixes("PREFIX ".DI_DC_PREFIX.":".DI_DC_IRI);
-		$tsA->addPrefixes("PREFIX ".DI_XSD_PREFIX.":".DI_XSD_IRI);
-			
-		$tsA->createGraph($this->getWikiNS().DI_PROVENANCE_GRAPH);
+		
+		$tsA->addPrefixes(LODAdministrationStore::getInstance()->getSourceDefinitionPrefixes());
+		$tsA->addPrefixes(LODAdministrationStore::getInstance()->getProvenanceGraphPrefixes());
+		$tsA->addPrefixes(TSNamespaces::getAllPrefixes());
+		
+		$lAS = LODAdministrationStore::getInstance();;
+		$tsA->createGraph($lAS->getSMWGraphsURI().'ProvenanceGraph');
 		
 		$dateTime = new DateTime();
 		$dateTime = $dateTime->format('Y-m-d')."T".$dateTime->format('H:i:s');
 		
 		$triples = array();
 		$triples[] = new LODTriple(
-			"<".$this->getGraphName($wsId, $articleId).">", DI_SWP_ASSERTED_BY, "<".$this->getGraphName($wsId, $articleId)."Warrant>", "__objectURI");
+			'<'.$this->getGraphName($wsId, $articleId).'>', 'rdf:type', "smw-lde:ImportGraph", "__objectURI");
 		$triples[] = new LODTriple(
-			"<".$this->getGraphName($wsId, $articleId)."Warrant>", DI_SWP_AUTHORITY, "<".$this->getWikiNS()."WS_".$wsId.">", "__objectURI");
+			'<'.$this->getGraphName($wsId, $articleId).'>', 'swp:assertedBy', "_:1", "__objectURI");
 		$triples[] = new LODTriple(
-			"<".$this->getGraphName($wsId, $articleId)."Warrant>", DI_DC_DATE, $dateTime, "xsd:dateTime");	
+			"_:1", 'rdf:type', "swp:Warrant", "__objectURI");
+		$triples[] = new LODTriple(
+			"_:1", 'swp:authority', $this->getDataSourceURI($wsId), "__objectURI");
+		$triples[] = new LODTriple(
+			'<'.$this->getGraphName($wsId, $articleId).'>', 'smw-lde:created', $dateTime, "xsd:dateTime");	
 		 
-		$tsA->insertTriples($this->getWikiNS().DI_PROVENANCE_GRAPH, $triples);
+		$tsA->insertTriples($lAS->getSMWGraphsURI().'ProvenanceGraph', $triples);
 		
 		$tsA->flushCommands();	
 	}
@@ -262,10 +264,14 @@ class WSTriplifier {
 	private function dropProvenanceData($wsId, $articleId){
 		$tsA = new LODTripleStoreAccess();
 		
-		$tsA->deleteTriples($this->getWikiNS().DI_PROVENANCE_GRAPH, 
-			"<".$this->getGraphName($wsId, $articleId)."> ?p ?o", "<".$this->getGraphName($wsId, $articleId)."> ?p ?o");
-		$tsA->deleteTriples($this->getWikiNS().DI_PROVENANCE_GRAPH, 
-			"<".$this->getGraphName($wsId, $articleId)."Warrant> ?p ?o", "<".$this->getGraphName($wsId, $articleId)."Warrant> ?p ?o");
+		$tsA->addPrefixes(LODAdministrationStore::getInstance()->getSourceDefinitionPrefixes());
+		
+		$lAS = LODAdministrationStore::getInstance();;
+		
+		$tsA->deleteTriples($lAS->getSMWGraphsURI().'ProvenanceGraph', 
+			'<'.$this->getGraphName($wsId, $articleId)."> ?p ?o", '<'.$this->getGraphName($wsId, $articleId)."> ?p ?o");
+		
+		//todo: delete blank nodes	
 		
 		$tsA->flushCommands();
 	}
@@ -280,8 +286,12 @@ class WSTriplifier {
 			require_once($IP."/extensions/LinkedData/storage/TripleStore/LOD_Triple.php");
 			$tsA = new LODTripleStoreAccess();
 			
-			$tsA->deleteTriples($this->getWikiNS().DI_DATASOURCE_GRAPH, 
-				$this->getSubjectIRI("WS_".$wsId)." ?p ?o", $this->getSubjectIRI("WS_".$wsId)." ?p ?o");
+			$tsA->addPrefixes(LODAdministrationStore::getInstance()->getSourceDefinitionPrefixes());
+			
+			$lAS = LODAdministrationStore::getInstance();;
+			
+			$tsA->deleteTriples($lAS->getSMWGraphsURI().'DataSourceInformationGraph', 
+				$this->getDataSourceURI("WS_".$wsId)." ?p ?o", $this->getDataSourceURI("WS_".$wsId)." ?p ?o");
 			
 			$tsA->flushCommands();
 		}
@@ -314,20 +324,21 @@ class WSTriplifier {
 		
 			$tsA = new LODTripleStoreAccess();
 			
-			$tsA->createGraph($this->getWikiNS().DI_DATASOURCE_GRAPH);
+			$lAS = LODAdministrationStore::getInstance();
 			
-			$tsA->addPrefixes("PREFIX ".DI_RDF_PREFIX.":".DI_RDF_IRI);
-			$tsA->addPrefixes("PREFIX ".DI_RDFS_PREFIX.":".DI_RDFS_IRI);
-			$tsA->addPrefixes("PREFIX ".DI_SHK_PREFIX.":".DI_SHK_IRI);
-			$tsA->addPrefixes("PREFIX ".DI_XSD_PREFIX.":".DI_XSD_IRI);
+			$tsA->createGraph($lAS->getSMWGraphsURI().'DataSourceInformationGraph');
+			
+			$tsA->addPrefixes(TSNamespaces::getAllPrefixes());
+			
+			$tsA->addPrefixes(LODAdministrationStore::getInstance()->getSourceDefinitionPrefixes());
 			
 			$triples = array();
 			$triples[] = new LODTriple(
-				$this->getSubjectIRI("WS_".$wsId), "rdf:type", "shk:DataSource", "__objectURI");
+				$this->getDataSourceURI("WS_".$wsId), "rdf:type", "smw-lde:Datasource", "__objectURI");
 			$triples[] = new LODTriple(
-				$this->getSubjectIRI("WS_".$wsId), "rdfs:label", Title::newFromID($wsId)->getFullText(), "xsd:string");
+				$this->getDataSourceURI("WS_".$wsId), "smw-lde:label", Title::newFromID($wsId)->getFullText(), "xsd:string");
 			
-			$tsA->insertTriples($this->getWikiNS().DI_DATASOURCE_GRAPH, $triples);
+			$tsA->insertTriples($lAS->getSMWGraphsURI().'DataSourceInformationGraph', $triples);
 			
 			$tsA->flushCommands();
 		}

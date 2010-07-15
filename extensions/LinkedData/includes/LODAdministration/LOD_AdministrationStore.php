@@ -55,6 +55,8 @@ class  LODAdministrationStore  {
 	const LOD_SMW_GRAPHS = "smwGraphs/";
 	const LOD_SMW_DATASOURCES = "smwDatasources/";
 	
+	const LOD_SWP = "http://www.w3.org/2004/03/trix/swp-2/";
+	
 	//--- Private fields ---
 	
 	// LODAdministrationStore
@@ -332,6 +334,15 @@ class  LODAdministrationStore  {
 			."PREFIX smwGraphs: <".self::LOD_BASE_URI.self::LOD_SMW_GRAPHS."> \n"
 			."PREFIX smwDatasources: <".self::LOD_BASE_URI.self::LOD_SMW_DATASOURCES."> \n"
 			."PREFIX owl: <http://www.w3.org/2002/07/owl#> \n\n";
+	}
+	
+	public function getProvenanceGraphPrefixes() {
+		return
+			 "PREFIX swp: <".self::LOD_SWP."> \n";
+	}
+	
+	public function getSMWGraphsURI(){
+		return self::LOD_BASE_URI.self::LOD_SMW_GRAPHS;
 	}
 	
 	//--- Private methods ---
