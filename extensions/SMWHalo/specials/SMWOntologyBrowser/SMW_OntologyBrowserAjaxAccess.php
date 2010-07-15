@@ -271,7 +271,7 @@ class OB_StorageTS extends OB_Storage {
 
 			// query
 			$response = $client->query("[[Category:$categoryName]]", "?Category|limit=$limit|offset=$offset|merge=false$dataSpace$metadataRequest");
-				
+
 			$titles = array();
 			$this->parseInstances($response, $titles);
 
@@ -290,8 +290,8 @@ class OB_StorageTS extends OB_Storage {
 		if (isset($smwgSPARQLResultEncoding) && $smwgSPARQLResultEncoding == 'UTF-8') {
 			$response = utf8_decode($response);
 		}
-        
-		
+
+
 		$dom = simplexml_load_string($response);
 
 
@@ -300,7 +300,7 @@ class OB_StorageTS extends OB_Storage {
 
 			$children = $r->children(); // binding nodes
 			$b = $children->binding[0]; // instance
-			 
+
 			$sv = $b->children()->uri[0];
 
 			$metadataMap = array();
@@ -311,10 +311,10 @@ class OB_StorageTS extends OB_Storage {
 			}
 
 			$instance = array($this->getTitleFromURI((string) $sv), (string) $sv, $metadataMap);
-			 
+
 			$categories = array();
 			$b = $children->binding[1]; // categories
-			 
+
 			foreach($b->children()->uri as $sv) {
 				$category = $this->getTitleFromURI((string) $sv);
 				if (!is_null($instance) && !is_null($category)) {
@@ -325,7 +325,7 @@ class OB_StorageTS extends OB_Storage {
 
 			}
 
-			 
+
 		}
 
 	}
@@ -474,7 +474,7 @@ class OB_StorageTS extends OB_Storage {
 			$title = $this->getTitleFromURI((string) $sv);
 			if (is_null($title)) continue;
 			$predicate = SMWPropertyValue::makeUserProperty($title->getText());
-							
+				
 			$categories = array();
 			$b = $children->binding[1]; // categories
 			$values = array();
@@ -544,7 +544,7 @@ class OB_StorageTS extends OB_Storage {
 		return SMWOntologyBrowserXMLGenerator::encapsulateAsInstancePartition($titles, $limit, $partition, 'getInstancesUsingProperty,'.$propertyName_xml);
 	}
 
-	
+
 
 	public function getCategoryForInstance($p_array) {
 		global $wgServer, $wgScript, $smwgWebserviceUser, $smwgWebservicePassword, $smwgDeployVersion;
@@ -639,8 +639,8 @@ class OB_StorageTS extends OB_Storage {
 			$response = $client->query(TSNamespaces::getW3CPrefixes()." SELECT ?s ?cat WHERE { ?s ?p ?o. OPTIONAL { ?s rdf:type ?cat. } $filter }",  "limit=1000$dataSpace");
 
 
-			 $titles = array();
-            $this->parseInstances($response, $titles);
+			$titles = array();
+			$this->parseInstances($response, $titles);
 
 
 		} catch(Exception $e) {
@@ -689,15 +689,16 @@ class OB_StorageTS extends OB_Storage {
 function smwf_ob_OntologyBrowserAccess($method, $params, $dataSource) {
 
 	$browseWiki = wfMsg("smw_ob_source_wiki");
-	global $smwgWebserviceEndpoint;
-	if (!isset($smwgWebserviceEndpoint)) {
+	global $smwgDefaultStore;
+	if ($smwgDefaultStore == 'SMWTripleStore' && !empty($dataSource) && $dataSource != $browseWiki) {
+		// dataspace parameter. so assume quad driver is installed
+    	$storage = new OB_StorageTSQuad($dataSource);
+	} else if ($smwgDefaultStore == 'SMWTripleStore') {
+		// assume normal (non-quad) TSC is running
+		$storage = new OB_StorageTS($dataSource);
+	} else {
 		// no TSC installed
 		$storage = new OB_Storage($dataSource);
-	} else if (!empty($dataSource) && $dataSource != $browseWiki) {
-		// dataspace parameter. so assume quad driver is installed
-		$storage = new OB_StorageTSQuad($dataSource);
-	} else {
-		$storage = new OB_StorageTS($dataSource);
 	}
 
 	$p_array = explode("##", $params);
@@ -806,7 +807,7 @@ class OB_StorageTSQuad extends OB_StorageTS {
 		} catch(Exception $e) {
 			return "Internal error: ".$e->getMessage();
 		}
-       
+		 
 		$propertyURI = str_replace( array('"'),array('&quot;'),$propertyURI);
 		return SMWOntologyBrowserXMLGenerator::encapsulateAsInstancePartition($titles, $limit, $partition, 'getInstancesUsingProperty,'.$propertyURI);
 	}
