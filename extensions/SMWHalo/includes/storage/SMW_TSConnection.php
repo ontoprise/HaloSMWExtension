@@ -112,6 +112,7 @@ class TSConnectorMessageBrokerAndRESTWebservice extends TSConnectorRESTWebservic
 		list($host, $port) = explode(":", $smwgWebserviceEndpoint);
 		$credentials = isset($smwgWebserviceUser) ? $smwgWebserviceUser.":".$smwgWebservicePassword : "";
 		$this->queryClient = new RESTWebserviceConnector($host, $port, "sparql", $credentials);
+		$this->manageClient = new RESTWebserviceConnector($host, $port, "management/", $credentials);
 	}
 
 
