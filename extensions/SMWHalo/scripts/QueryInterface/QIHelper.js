@@ -2314,14 +2314,17 @@ QIHelper.prototype = {
 		// run over all query strings and fetch property names
 		var propertiesInQuery = new Array();
 		for ( var i = 0; i < sub.length; i++) {
-			var props = sub[i].match(/\[\[([\w\d _]*)::.*?\]\]/g);
+			var props = sub[i].match(/\[\[([\w\d _\.]*)::.*?\]\]/g);
 			if (!props)
 				props = [];
 			for ( var j = 0; j < props.length; j++) {
 				var pname = escapeQueryHTML(props[j].substring(2, props[j]
 						.indexOf('::')));
-				if (!propertiesInQuery.inArray(pname))
-					propertiesInQuery.push(pname);
+                var pchain = pname.split('.');
+                for (var c = 0; c < pchain.length; c++) {
+                    if (!propertiesInQuery.inArray(pchain[c]))
+                        propertiesInQuery.push(pchain[c]);
+                }
 			}
 		}
 		// check all properties that exist in parameter "must show" only (like |
@@ -2333,8 +2336,11 @@ QIHelper.prototype = {
 						props[i].length);
                 pname = pname.replace(/^([^#|=]*).*/, "$1");
 				pname = escapeQueryHTML(pname.replace(/\s*$/,''));
-				if (!propertiesInQuery.inArray(pname))
-					propertiesInQuery.push(pname);
+                var pchain = pname.split('.');
+                for (var c = 0; c < pchain.length; c++) {
+    				if (!propertiesInQuery.inArray(pchain[c]))
+        				propertiesInQuery.push(pchain[c]);
+                }
 			}
 		}
 		if (propertiesInQuery.length > 0) {
@@ -2453,6 +2459,8 @@ handleQueryString : function(args, queryId, pMustShow) {
 			var pname = args[i].substring(0, args[i].indexOf('::'));
 			var pval = args[i].substring(args[i].indexOf('::') + 2,
 					args[i].length);
+            var pchains = pname.split('.');
+            pname = pchains[pchains.length - 1];
 
 			// if the property was already once in the arguments, we already
 			// have details about the property
