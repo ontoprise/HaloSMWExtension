@@ -338,6 +338,8 @@ class WSTriplifier {
 				$this->getDataSourceURI("WS_".$wsId), "rdf:type", "smw-lde:Datasource", "__objectURI");
 			$triples[] = new LODTriple(
 				$this->getDataSourceURI("WS_".$wsId), "smw-lde:label", Title::newFromID($wsId)->getFullText(), "xsd:string");
+			$triples[] = new LODTriple(
+				$this->getDataSourceURI("WS_".$wsId), "smw-lde:ID", Title::newFromID($wsId)->getFullText(), "xsd:string");
 			
 			$tsA->insertTriples($lAS->getSMWGraphsURI().'DataSourceInformationGraph', $triples);
 			

@@ -12,12 +12,16 @@ class TestWikipediaUltrapediaMerger extends PHPUnit_Framework_TestCase {
 		try {
 			$et = $this->getEditToken();
 		}  catch (Exception $e){
-			//ignore strange exception
+			echo('\r\nWUM Exception:\r\n');
+			print_r($e);			
 		}
 		list($originalWPText, $newWPText, $currentUPText) = $this->getArticleContent();
 		$this->writeArticles(array($originalWPText, $currentUPText, $newWPText), $et);
 		
 		$result = $this->getWikiArticleContent("Talk:Main_Page");
+		
+		echo('\r\nWUM Wiki Article Content:\r\n');
+		print_r($result);
 		
 		//check whether all of our contributions have been merged somewoh
 		$this->assertGreaterThan(0, strpos($result,'Results 1 ====='.WUM_TAG_CLOSE));

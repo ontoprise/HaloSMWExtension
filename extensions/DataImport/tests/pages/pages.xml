@@ -1228,11 +1228,10 @@ this is a test form
     <title>WebService:LDTest</title>
     <id>63</id>
     <revision>
-      <id>111</id>
-      <timestamp>2010-05-27T10:47:01Z</timestamp>
+      <id>133</id>
+      <timestamp>2010-07-15T12:29:53Z</timestamp>
       <contributor>
-        <username>WikiSysop</username>
-        <id>1</id>
+        <ip>127.0.0.1</ip>
       </contributor>
       <text xml:space="preserve">&lt;WebService&gt;
 &lt;uri name=&quot;http://localhost/mediawiki/extensions/DataImport/tests/testcases/ld_resources/&quot; /&gt;
@@ -1241,9 +1240,9 @@ this is a test form
 &lt;result name=&quot;result&quot;&gt;
 &lt;namespace prefix=&quot;wiki&quot; uri=&quot;http://localhost/mediawiki/index.php/&quot;/&gt;
 &lt;namespace prefix=&quot;rdf&quot; uri=&quot;http://www.w3.org/1999/02/22-rdf-syntax-ns#&quot;/&gt;
-&lt;part name=&quot;abstract&quot; predicate=&quot;wiki:Property:HasAbstract@en&quot;/&gt;
-&lt;part name=&quot;product&quot; predicate=&quot;wiki:Property:HasProduct&quot;/&gt;
-&lt;part name=&quot;type&quot; predicate=&quot;rdf:type&quot;/&gt;
+&lt;part name=&quot;abstract&quot; property=&quot;wiki:Property:HasAbstract@en&quot;/&gt;
+&lt;part name=&quot;product&quot; property=&quot;wiki:Property:HasProduct&quot;/&gt;
+&lt;part name=&quot;type&quot; property=&quot;rdf:type&quot;/&gt;
 &lt;/result&gt;
 &lt;displayPolicy&gt;
 &lt;maxAge value=&quot;1&quot;&gt;&lt;/maxAge&gt;
@@ -1260,17 +1259,16 @@ this is a test form
     <title>TestLD1</title>
     <id>64</id>
     <revision>
-      <id>117</id>
-      <timestamp>2010-05-27T11:44:37Z</timestamp>
+      <id>135</id>
+      <timestamp>2010-07-15T12:32:23Z</timestamp>
       <contributor>
-        <username>WikiSysop</username>
-        <id>1</id>
+        <ip>127.0.0.1</ip>
       </contributor>
       <text xml:space="preserve">{{#ws:LDTest
 | url-suffix=rdfa.html
 | language=en
 | ?result.allSubjects
-| ?result.allPredicates
+| ?result.allProperties
 | ?result.allObjects
 | _format=table
 }}</text>
@@ -1280,18 +1278,17 @@ this is a test form
     <title>TestLD2</title>
     <id>65</id>
     <revision>
-      <id>118</id>
-      <timestamp>2010-05-27T11:45:09Z</timestamp>
+      <id>134</id>
+      <timestamp>2010-07-15T12:30:32Z</timestamp>
       <contributor>
-        <username>WikiSysop</username>
-        <id>1</id>
+        <ip>127.0.0.1</ip>
       </contributor>
       <text xml:space="preserve">{{#ws:LDTest
 | url-suffix=rdfa.html
 | subject=wiki:OtherCompany
 | language=en
 | ?result.allSubjects
-| ?result.allPredicates
+| ?result.allProperties
 | ?result.allObjects
 | _format=table
 }}</text>
@@ -1321,15 +1318,14 @@ this is a test form
     <title>TestLD4</title>
     <id>67</id>
     <revision>
-      <id>116</id>
-      <timestamp>2010-05-27T11:06:14Z</timestamp>
+      <id>131</id>
+      <timestamp>2010-07-15T12:27:39Z</timestamp>
       <contributor>
-        <username>WikiSysop</username>
-        <id>1</id>
+        <ip>127.0.0.1</ip>
       </contributor>
       <text xml:space="preserve">{{#ws:LDTest
 | url-suffix=rdfa.html
-| predicates = abstract=wiki:Property:HasAbstract; type=rdf:type; product=wiki:Property:HasProduct
+| properties = abstract=wiki:Property:HasAbstract; type=rdf:type; product=wiki:Property:HasProduct
 | language=en
 | ?result.allSubjects
 | _format=table

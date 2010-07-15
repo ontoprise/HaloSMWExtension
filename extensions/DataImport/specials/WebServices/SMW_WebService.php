@@ -49,14 +49,14 @@ define('DI_SUBJECT', '__subject');
 define('DI_SUBJECT_ALIAS', 'subject');
 define('DI_URL_SUFFIX_ALIAS', 'url-suffix');
 define("DI_ALL_SUBJECTS", "__triple__subjects");
-define("DI_ALL_PROPERTIES", "__triple__propertys");
+define("DI_ALL_PROPERTIES", "__triple__properties");
 define("DI_ALL_OBJECTS", "__triple__objects");
 define("DI_ALL_SUBJECTS_ALIAS", "allSubjects");
-define("DI_ALL_PROPERTIES_ALIAS", "allPropertys");
+define("DI_ALL_PROPERTIES_ALIAS", "allProperties");
 define("DI_ALL_OBJECTS_ALIAS", "allObjects");
 define("DI_RDF_POSTPROCESS_REQUIRED", "postprocess required");
-define("DI_PROPERTIES", "__propertys");
-define("DI_PROPERTIES_ALIAS", "propertys");
+define("DI_PROPERTIES", "__properties");
+define("DI_PROPERTIES_ALIAS", "properties");
 define("DI_LANGUAGE", "__language");
 define("DI_LANGUAGE_ALIAS", "language");
 
