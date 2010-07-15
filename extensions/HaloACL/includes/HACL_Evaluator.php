@@ -442,10 +442,19 @@ class HACLEvaluator {
 		                           $article->mTitle, $options);
 		self::$mMode = HACLEvaluator::NORMAL;
 		                           
-		$protectedProperties = "";	                           
+		$protectedProperties = "";
 		if (isset($output->mSMWData)) {
 			foreach ($output->mSMWData->getProperties() as $name => $prop) {
-				if (!$prop->userCan("propertyformedit")) {
+				$wpv = $prop->getWikiPageValue();
+				if (!$wpv) {
+					// There's no page for the property
+					continue;
+				}
+				$allowed = self::hasPropertyRight(
+										$wpv->getTitle(), 
+										$wgUser->getId(),
+										HACLRight::FORMEDIT);
+				if (!$allowed) {
 					// Access to property is restricted
 					if (!isset($oldPV)) {
 						// Get all old properties of the page from the semantic store
@@ -529,6 +538,46 @@ class HACLEvaluator {
 		
 		return true;
 	}	
+	
+	/**
+	 * This function is called before is the value of a property is printed into
+	 * an article by the SMWParserExtension.
+	 * It checks if the property or its value is protected. In this case the text
+	 * is replaced.
+	 * 
+	 * @param SMWDataValue $propertyValue
+	 * 		The value of this property will be printed.
+	 * @param string $text
+	 * 		The text that will appear in the article. It might be changed by this
+	 * 		function.
+	 */
+	public static function onPropertyBeforeOutput(SMWDataValue &$propertyValue, &$text) {
+		global $wgUser;
+		
+		$protected = false;
+		$pt = $propertyValue->getProperty();
+		$pt = $pt->getWikiPageValue()->getTitle();
+		if (!self::hasPropertyRight($pt, $wgUser, HACLRight::READ)) {
+			// The property is protected
+			$protected = true;
+		} else {
+			if ($propertyValue instanceof SMWWikiPageValue) {
+				$vt = $propertyValue->getTitle();
+				wfRunHooks('userCan', array(&$vt, &$wgUser, "read", &$allowed));
+				if (!$allowed) {
+					// The value of the property can not be read
+					$protected = true;
+				}
+			}
+		}
+		if ($protected) {
+			$text = "<nowiki>***</nowiki>";
+			$errMsg = wfMsgForContent('hacl_protected_property_error');
+			$propertyValue->addError($errMsg);
+		}
+		return true;
+	}
+	
 
 	/**
 	 * This method is important if the mode of the access control is 
@@ -929,6 +978,7 @@ class HACLEvaluator {
 	 * 			<false>, otherwise
 	 */
 	private static function checkProperties(Title $t, $userID, $actionID) {
+
 		global $haclgProtectProperties;
 		global $wgRequest;
 		if (!$haclgProtectProperties) {
@@ -966,10 +1016,20 @@ class HACLEvaluator {
 			}
 			
 		}
-	
+
 		// Get all properties of the page
+		$store = smwfGetStore(); 
+		if (!($store instanceof HACLSMWStore)) {
+			throw new HACLException(HACLException::INTERNAL_ERROR, 
+									"Expected an instance of HACLSMWStore as semantic store!");			
+		}
+		
+		// We need ALL properties of the title
+		$pa = $store->setProtectionActive(false);
 		$semdata = smwfGetStore()->getSemanticData($t);
+		$store->setProtectionActive($pa);
 		$props = $semdata->getProperties();
+
 		foreach ($props as $p) {
 //			if (!$p->isShown()) {
 //				// Ignore invisible(internal) properties

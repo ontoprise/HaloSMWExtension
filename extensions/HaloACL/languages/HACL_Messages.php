@@ -90,6 +90,7 @@ $messages['en'] = array(
     'hacl_sp_empty_query'			=> '- Your query consists only of protected properties or has variables at property position. It was not executed. The system administrator can disable the protetction of properties by setting $haclgProtectProperties = false; in the LocalSettings.php'."\n",
     'hacl_sp_results_removed'		=> "- Some results were removed due to access restrictions.\n",
     'hacl_sp_cant_save_article'		=> "'''The article contains the following protected properties:'''\n$1'''You do not have the permission to set their values. Please remove these properties and save again.'''",
+	'hacl_protected_property_error' => "The value of a protected property is hidden.",
 
 	/* Messages for Special:ACL */
     'hacl_tab_create_acl' => 'Create ACL',
@@ -420,6 +421,7 @@ $messages['de'] = array(
     'hacl_sp_empty_query'			=> '- Ihre Anfrage besteht nur aus geschützten Attributen oder hat Variablen an Attributpositionen und konnte deshalb nicht ausgeführt werden. Systemadministratoren können geschützte Attribute abschalten, indem sie $haclgProtectProperties = false; in LocalSettings.php setzen.'."\n",
     'hacl_sp_results_removed'		=> "- Wegen Zugriffbeschränkungen wurden einige Resultate entfernt.\n",
     'hacl_sp_cant_save_article'		=> "'''Der Artikel enthält die folgenden geschützten Attribute:'''\n$1'''Sie haben nicht die Berechtigung, deren Werte zu setzen. Bitte entfernen Sie die Attribute und speichern Sie erneut.'''",
+	'hacl_protected_property_error'	=> "Der Wert eines geschützten Attributs wird nicht angezeigt.",
 
 	/* Messages for Special:ACL */
     'hacl_tab_create_acl' => 'Recht erzeugen',

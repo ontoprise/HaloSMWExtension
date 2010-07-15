@@ -68,38 +68,9 @@ class  HACLQueryRewriter  {
 	
 	//--- Public methods ---
 	
-	
+		
 	/**
-	 * This function for the hook "RewriteQuery" modifies ASK queries. Constraints
-	 * and print requests for protected properties are removed.
-	 *
-	 * @param SMWQuery &$query
-	 * 		This query is modified.
-	 * 
-	 * @return bool true
-	 * 		Returns <true> to keep the chain of hooks running.
-	 */
-	public static function rewriteAskQuery(SMWQuery &$query) {
-		$descr = $query->getDescription();
-		// Remove protected properties from the query description 
-		$qr = new HACLQueryRewriter();
-		
-		$qr->pruneProtectedPropertiesFromAsk($descr);
-		$queryString = $descr->getQueryString();
-		$query->setQueryString($queryString);
-		
-		$ep = $query->getExtraPrintouts();
-		$query->setExtraPrintouts($qr->prunePrintRequests($ep));
-		
-		if ($qr->mModified) {
-			$query->addErrors(array(wfMsgForContent('hacl_sp_query_modified')));
-		}
-		
-		return true;
-	}
-
-	/**
-	 * This function for the hook "RewriteSparqlQuery" modifies Sparql queries. 
+	 * This function for the hook "RewriteSparqlQuery" modifies ASK and SPARQL queries. 
 	 * Constraints and print requests for protected properties are removed.
 	 *
 	 * @param SMWQuery &$query
@@ -108,25 +79,36 @@ class  HACLQueryRewriter  {
 	 * @return bool true
 	 * 		Returns <true> to keep the chain of hooks running.
 	 */
-	public static function rewriteSparqlQuery(SMWQuery &$query) {
+	public static function rewriteQuery(SMWQuery &$query, &$queryEmpty) {
 		$qr = new HACLQueryRewriter();
 		$descr = $query->getDescription();
+		$queryEmpty = false;
 		if (!($descr instanceof SMWSPARQLDescription)) {
 			// Remove protected properties from the query description with ask
 			// syntax
-			$qr->pruneProtectedPropertiesFromAsk($descr);
+			$descr = $qr->pruneProtectedPropertiesFromAsk($descr);
 			
-			$queryString = $descr->getQueryString();
+			$queryString = $descr ? $descr->getQueryString()
+			                      : "";
 			$queryString = str_replace('&lt;','<',$queryString);
 			$queryString = str_replace('&gt;','>',$queryString);
 			$query->setQueryString($queryString);
+			$ep = $query->getExtraPrintouts();
+			$query->setExtraPrintouts($qr->prunePrintRequests($ep));
+			
+			if ($descr) {
+				$query->setDescription($descr);
+			} else {
+				$queryEmpty = true;
+			}
 		} else {
 			// handle query with SPARQL-syntax
 			$qr->pruneSparqlQuery($query);
+			$ep = $query->getExtraPrintouts();
+			$query->setExtraPrintouts($qr->prunePrintRequests($ep));
+			
 		}
 		
-		$ep = $query->getExtraPrintouts();
-		$query->setExtraPrintouts($qr->prunePrintRequests($ep));
 		
 		if ($qr->mModified) {
 			$query->addErrors(array(wfMsgForContent('hacl_sp_query_modified')));
@@ -144,48 +126,67 @@ class  HACLQueryRewriter  {
 	 *
 	 * @param SMWDescription $descr
 	 * 		The description which is pruned.
+	 * @return SMWDescription
+	 * 		The pruned description
 	 */
 	private function pruneProtectedPropertiesFromAsk(SMWDescription $descr) {
 		// Remove protected properties from the print requests 
 		$printRequests = $this->prunePrintRequests($descr->getPrintRequests());
-		$descr->setPrintRequests($printRequests);
-		
+				
 		if (!($descr instanceof SMWConjunction ||
-		      $descr instanceof SMWDisjunction)) {
-		   	return;
+		      $descr instanceof SMWDisjunction ||
+		      $descr instanceof SMWSomeProperty)) {
+			// Only conjunctions, disjunctions and properties have to be pruned.
+		   	return $descr;
 		}
 		
-		$descriptions = $descr->getDescriptions();
-		$remDescr = array();
-		for ($i = 0, $num = count($descriptions); $i < $num; ++$i) {
-			$d = $descriptions[$i];
-			if ($d instanceof SMWSomeProperty) {
-				// Check if property is protected
-				$prop = $d->getProperty();
-				$wpv = $prop->getWikiPageValue();
-				if ($wpv) {
-					$id = $wpv->getTitle()->getArticleID();
-					global $wgUser;
-					$allowed = HACLEvaluator::hasPropertyRight($id, 
-					                                   $wgUser->getId(), HACLRight::READ);
-					if ($allowed) {
-						// Access to property is allowed => check for further
-						// subqueries of the property
-						$pd = $d->getDescription();
-						if ($pd) {
-							$this->pruneProtectedPropertiesFromAsk($pd);
+		$newDescr = null;
+		if ($descr instanceof SMWConjunction) {
+			$newDescr = new SMWConjunction();
+		} else if ($descr instanceof SMWDisjunction) {
+			$newDescr = new SMWDisjunction();
+		} else {
+			// Handle a property
+			// Check if property is protected
+			$prop = $descr->getProperty();
+			$wpv = $prop->getWikiPageValue();
+			if ($wpv) {
+				$id = $wpv->getTitle()->getArticleID();
+				global $wgUser;
+				$allowed = HACLEvaluator::hasPropertyRight($id, 
+				                             $wgUser->getId(), HACLRight::READ);
+				if ($allowed) {
+					// Access to property is allowed => check for further
+					// subqueries of the property
+					$pd = $descr->getDescription();
+					if ($pd) {
+						$d = $this->pruneProtectedPropertiesFromAsk($pd);
+						if ($d) {
+							$newDescr = new SMWSomeProperty($prop, $d);
+							$newDescr->setPrintRequests($printRequests);
 						}
-					} else {
-						$this->mModified = true;			                                   
-						$remDescr[] = $i;
 					}
+				} else {
+					$this->mModified = true;			                                   
 				}
-			} else {
-				$this->pruneProtectedPropertiesFromAsk($d);
+			}
+			return $newDescr;
+		}
+		
+		// traverse the tree of conjunctions and disjunctions
+		$descriptions = $descr->getDescriptions();
+		$descAdded = false;
+		foreach ($descriptions as $d) {
+			$d = $this->pruneProtectedPropertiesFromAsk($d);
+			if ($d) {
+				$newDescr->addDescription($d);
+				$descAdded = true;
 			}
 		}
-		$descr->removeDescriptions($remDescr);
-				
+		$newDescr->setPrintRequests($printRequests);
+		
+		return $descAdded ? $newDescr : null;
+		
 	}
 
 	/**
@@ -229,9 +230,9 @@ class  HACLQueryRewriter  {
 	private function pruneSparqlQuery(SMWQuery &$query) {
 
 		$store = smwfGetStore();
-		if (!$store instanceof SMWTripleStore) {
-			return;
-		}
+//		if (!$store instanceof SMWTripleStore) {
+//			return;
+//		}
 		
 		$prefixes = str_replace(':<', ': <', TSNamespaces::getAllPrefixes());
 		$queryString = $prefixes . $query->getQueryString();
@@ -332,6 +333,7 @@ class  HACLQueryRewriter  {
 			case 'group':
 			case 'union':
 			case 'optional':
+			case 'graph':
 				$patterns = &$pattern['patterns'];
 				$protected = true;
 				foreach($patterns as &$p) {
@@ -370,6 +372,7 @@ class  HACLQueryRewriter  {
 			case 'group':
 			case 'union':
 			case 'optional':
+			case 'graph':
 				$patterns = &$pattern['patterns'];
 				foreach($patterns as &$p) {
 					$this->pruneUnboundFilters($p);
@@ -532,6 +535,8 @@ class  HACLQueryRewriter  {
 		switch ($pattern['type']) {
 			case 'group':
 				return $this->serializeGroup($pattern['patterns']);
+			case 'graph':
+				return $this->serializeGraph($pattern['patterns'], $pattern['uri']);
 			case 'triples':
 				return $this->serializeTriples($pattern['patterns']);
 			case 'union':
@@ -561,6 +566,26 @@ class  HACLQueryRewriter  {
 		$qs .= "}\n";
 		return $qs;
 	}
+
+	/**
+	 * Generates the string representation of a graph pattern. 
+	 *
+	 * @param array $patterns
+	 * 		A graph pattern
+	 * @param string $uri
+	 * 		URI of the graph
+	 * @return string
+	 * 		String representation of the graph pattern.
+	 */
+	private function serializeGraph($patterns, $uri) {
+		$qs = "\nGRAPH <$uri> {";
+		
+		foreach($patterns as $p) {
+			$qs .= $this->serializePattern($p);
+		}
+		$qs .= "}\n";
+		return $qs;
+	}
 	
 	/**
 	 * Generates the string representation of a union pattern. 
@@ -572,13 +597,18 @@ class  HACLQueryRewriter  {
 	 */
 	private function serializeUnion($patterns) {
 		$qs = '';	
-		$first = true;
+
+		$lastString = 0; // 0 = nothing, 1 = pattern, 2 = UNION
 		foreach($patterns as $p) {
-			if (!$first) {
+			$s = $this->serializePattern($p);
+			if ($lastString == 1 && !empty($s)) {
 				$qs .= ' UNION ';
+				$lastString = 2;
 			}
-			$qs .= $this->serializePattern($p);
-			$first = false;
+			$qs .= $s;
+			if (!empty($s)) {
+				$lastString = 1;
+			}
 		}
 		return $qs;
 	}

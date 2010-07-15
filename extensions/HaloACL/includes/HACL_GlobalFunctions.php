@@ -61,6 +61,7 @@ function enableHaloACL() {
     $wgAutoloadClasses['HACLEvaluator'] = $haclgIP . '/includes/HACL_Evaluator.php';
     $wgAutoloadClasses['HaloACLSpecial'] = $haclgIP . '/specials/HACL_ACLSpecial.php';
     $wgAutoloadClasses['HACLStorage'] = $haclgIP . '/includes/HACL_Storage.php';
+    $wgAutoloadClasses['HACLSMWStore'] = $haclgIP . '/includes/HACL_SMWStore.php';
     $wgAutoloadClasses['HACLGroup'] = $haclgIP . '/includes/HACL_Group.php';
     $wgAutoloadClasses['HACLSecurityDescriptor'] = $haclgIP . '/includes/HACL_SecurityDescriptor.php';
     $wgAutoloadClasses['HACLRight'] = $haclgIP . '/includes/HACL_Right.php';
@@ -97,6 +98,11 @@ function haclfSetupExtension() {
     wfProfileIn('haclfSetupExtension');
     global $haclgIP, $wgHooks, $wgParser, $wgExtensionCredits,
     $wgLanguageCode, $wgVersion, $wgRequest, $wgContLang;
+    
+    global $haclgProtectProperties;
+    if ($haclgProtectProperties) {
+    	haclfInitSemanticStores();
+    }
 
     global $haclgDoEnableTitleCheck;
     haclfRestoreTitlePatch($haclgDoEnableTitleCheck);
@@ -123,10 +129,11 @@ function haclfSetupExtension() {
     global $haclgProtectProperties;
     if ($haclgProtectProperties === true) {
         $wgHooks['FilterQueryResults'][] = 'HACLResultFilter::filterResult';
-        $wgHooks['RewriteQuery'][]       = 'HACLQueryRewriter::rewriteAskQuery';
-        $wgHooks['RewriteSparqlQuery'][] = 'HACLQueryRewriter::rewriteSparqlQuery';
+        $wgHooks['RewriteQuery'][]       = 'HACLQueryRewriter::rewriteQuery';
         $wgHooks['DiffViewHeader'][]     = 'HACLEvaluator::onDiffViewHeader';
         $wgHooks['EditFilter'][]         = 'HACLEvaluator::onEditFilter';
+        $wgHooks['PropertyBeforeOutput'][] = 'HACLEvaluator::onPropertyBeforeOutput';
+        
     }
 
     global $haclgNewUserTemplate, $haclgDefaultQuickAccessRights;
@@ -656,6 +663,30 @@ function haclfArticleID($articleName, $defaultNS = NS_MAIN) {
     }
     return $id;
 
+}
+
+/**
+ * If properties are protected, the semantic store is wrapped so that access to
+ * properties and protected pages can be restricted.
+ * The stores of SMW and the Halo extension are wrapped.
+ */
+function haclfInitSemanticStores() {
+	if (!defined('SMW_VERSION')) {
+		die("<b>HaloACL Setup error!</b><br />"
+		    ."The protection of semantic properties is enabled but SMW is not installed.<br />"
+		    ."You can:<br />"
+		    ."<ol>"
+		    ."<li> Set up and enable SMW in LocalSettings.php before HaloACL or </li>"
+		    ."<li> Disable the protection of semantic properties. (Set <tt>\$haclgProtectProperties = false;</tt> in HACL_Initialize.php) </li>"
+		    ."</ol>");
+	}
+	
+	// Wrap the semantic store of SMW
+	global $smwgMasterStore;
+	$smwStore = smwfGetStore();
+	$wrapper = new HACLSMWStore($smwStore);
+	$smwgMasterStore = $wrapper;
+	
 }
 
 /**

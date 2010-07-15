@@ -78,6 +78,11 @@ class  HACLResultFilter  {
 	 * 		The query result that is modified
 	 */
 	public static function filterResult(SMWQueryResult &$qr) {
+		
+		if ($qr instanceof SMWHaloQueryResult) {
+			self::filterSPARQLQueryResult($qr);
+			return true;
+		}
 		// Retrieve all subjects of a query result
 		$results = $qr->getResults();
 		$valuesRemoved = false;
@@ -101,5 +106,69 @@ class  HACLResultFilter  {
 
 		return true;
 	}
+	
 	//--- Private methods ---
+	
+	/**
+	 * This function removes all protected pages from a SPARQL query result. 
+	 * These results don't have a subject. They are just two dimensional tables.
+	 * 
+	 * In normal query results (for ASK), a subject for each row is given. If
+	 * this subject is protected, the complete row can be removed as it reveals
+	 * some content of the subject. However, this is not the case for SPARQL
+	 * query results. No subject is available, only variable bindings with no
+	 * further meaning. Consequently, rows can only be removed if they are completely
+	 * empty i.e. contain only protected values. 
+	 *
+	 * @param SMWHaloQueryResult $qr
+	 * 		The query result that is modified
+	 */
+	public static function filterSPARQLQueryResult(SMWHaloQueryResult &$qr) {
+		global $wgUser;
+		$results = $qr->getResults();
+		$valuesRemoved = false;
+		
+		foreach ($results as $kr => $row) {
+			$allCellsRemoved = true;
+			foreach ($row as $cell) {
+				// Iterate over all results in a cell
+				$items = $cell->getContent();
+				$cellModified = false;
+				foreach ($items as $k => $item) {
+					if ($item instanceof SMWWikiPageValue) {
+						$t = $item->getTitle();
+						wfRunHooks('userCan', array(&$t, &$wgUser, "read", &$allowed));
+						if (!$allowed) {
+							unset($items[$k]);
+							$valuesRemoved = true;
+							$cellModified = true;
+						} else {
+							$allCellsRemoved = false;
+						}
+					}
+				}
+				if ($cellModified) {
+					$cell->setContent($items);
+				}
+			}
+			if ($allCellsRemoved) {
+				// All cells in a row were removed
+				// => Remove the complete row from the result.
+				unset($results[$kr]);	
+			} else {
+				reset($row);
+			}
+		}
+		reset($results);
+		
+		$qr->setResults($results);
+		
+		if ($valuesRemoved) {
+			// Some subject were removed => create a new query result.
+			$qr->addErrors(array(wfMsgForContent('hacl_sp_results_removed')));
+		}
+
+		return true;
+		
+	}
 }
