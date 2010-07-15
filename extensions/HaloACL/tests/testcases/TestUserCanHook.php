@@ -13,6 +13,10 @@ class TestUserCanHookSuite extends PHPUnit_Framework_TestSuite
 	}
 	
 	protected function setUp() {
+		HACLStorage::reset(HACL_STORE_SQL);
+		HACLStorage::getDatabase()->dropDatabaseTables(false);
+		HACLStorage::getDatabase()->initDatabaseTables(false);
+		
     	User::createNew("U1");
     	User::createNew("U2");
         User::createNew("U3");
@@ -30,6 +34,8 @@ class TestUserCanHookSuite extends PHPUnit_Framework_TestSuite
 	
 	protected function tearDown() {
         $this->removeArticles();
+		HACLStorage::getDatabase()->dropDatabaseTables(false);
+		HACLStorage::getDatabase()->initDatabaseTables(false);
 	}
 
 	private function createArticle($title, $content) {
@@ -47,6 +53,13 @@ class TestUserCanHookSuite extends PHPUnit_Framework_TestSuite
     
 	private function initArticleContent() {
 		$this->mOrderOfArticleCreation = array(
+			'A',
+			'B',
+			'C',
+			'Whitelist',
+			'Category:B',
+			'Category:C',
+			'Category:D',
 			'Category:ACL/Group',
 			'Category:ACL/Right',
 			'Category:ACL/ACL',
@@ -62,6 +75,55 @@ class TestUserCanHookSuite extends PHPUnit_Framework_TestSuite
 		);
 		
 		$this->mArticles = array(
+//------------------------------------------------------------------------------		
+			'A' =>
+<<<ACL
+This page is protected by [[ACL:Page/A]].
+ACL
+,
+//------------------------------------------------------------------------------		
+			'B' =>
+<<<ACL
+This page is protected by [[ACL:Category/B]]
+
+[[Category:B]]
+ACL
+,
+//------------------------------------------------------------------------------		
+			'C' =>
+<<<ACL
+This is page C.
+
+[[Category:C]]
+ACL
+,
+//------------------------------------------------------------------------------		
+			'Whitelist' =>
+<<<ACL
+This is the article Whitelist.
+ACL
+,
+//------------------------------------------------------------------------------		
+			'Category:B' =>
+<<<ACL
+This is category B.
+ACL
+,
+//------------------------------------------------------------------------------		
+			'Category:C' =>
+<<<ACL
+This is category C.
+      [[Category:B]]
+      [[Category:D]]
+ACL
+,
+//------------------------------------------------------------------------------		
+			'Category:D' =>
+<<<ACL
+This is category D.
+      [[Category:C]]
+ACL
+,
 //------------------------------------------------------------------------------		
 			'Category:ACL/Group' =>
 <<<ACL
@@ -224,22 +286,13 @@ ACL
  
     
 	private function removeArticles() {
+		global $wgUser;
+		$wgUser = User::newFromName("WikiSysop");
 		
-		$articles = array(
-			'ACL:Whitelist',
-			'ACL:Page/A',
-			'ACL:Category/B',
-			'ACL:Category/D',
-			'ACL:Page/Whitelist',
-			'ACL:Namespace/User',
-			'ACL:Group/G1'
-			
-		);
-		
-		foreach ($articles as $a) {
+		foreach ($this->mOrderOfArticleCreation as $a) {
 		    $t = Title::newFromText($a);
 	    	$article = new Article($t);
-			$article->doDelete("Testing");
+			$article->doDeleteArticle("Testing finished.");
 		}
 		
 	}

@@ -8,12 +8,18 @@ require_once 'PHPUnit/Framework.php';
 
 class TestDefaultSecurityDescriptorSuite extends PHPUnit_Framework_TestSuite
 {
+	private $mOrderOfArticleCreation;
+	
 	public static function suite() {
 		return new TestDefaultSecurityDescriptorSuite('TestDefaultSecurityDescriptor');
 	}
 	
 	protected function setUp() {
-    	User::createNew("U1");
+    	HACLStorage::reset(HACL_STORE_SQL);
+		HACLStorage::getDatabase()->dropDatabaseTables(false);
+		HACLStorage::getDatabase()->initDatabaseTables(false);
+		
+		User::createNew("U1");
     	User::createNew("U2");
         User::idFromName("U1");  
         User::idFromName("U2");  
@@ -27,6 +33,10 @@ class TestDefaultSecurityDescriptorSuite extends PHPUnit_Framework_TestSuite
 	
 	protected function tearDown() {
         $this->removeArticles();
+
+        HACLStorage::getDatabase()->dropDatabaseTables(false);
+		HACLStorage::getDatabase()->initDatabaseTables(false);
+        
 	}
 
 	public static function createArticle($title, $content) {
@@ -92,19 +102,17 @@ ACL
 	private function removeArticles() {
 		
 		$articles = array(
-			'Category:ACL/Group',
-			'Category:ACL/Right',
-			'Category:ACL/ACL',
 			'Public',
 			'Private',
 			'ACL:Page/Private',
 			'ACL:Template/U1'			
 		);
+		$articles = array_merge($articles, $this->mOrderOfArticleCreation);
 		
 		foreach ($articles as $a) {
 		    $t = Title::newFromText($a);
 	    	$article = new Article($t);
-			$article->doDelete("Testing");
+			$article->doDeleteArticle("Testing");
 		}
 		
 	}

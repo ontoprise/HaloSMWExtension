@@ -13,6 +13,8 @@ class TestParserFunctions extends PHPUnit_Framework_TestCase {
 	protected $backupGlobals = FALSE;
 	
     function setUp() {
+    	HACLStorage::reset(HACL_STORE_SQL);
+    	
     	User::createNew("U1");
     	User::createNew("U2");
         User::createNew("U3");
@@ -582,29 +584,8 @@ class TestParserFunctions extends PHPUnit_Framework_TestCase {
 	}
 	
 	public function removeArticles() {
-		
-		$articles = array(
-			'Category:ACL/Group',
-			'Category:ACL/Right',
-			'Category:ACL/ACL',
-			'anonymous',
-			'registered',
-			'ACL:Page/anonymous',
-			'ACL:Page/registered',	
-			'ACL:Whitelist',
-			'ACL:Group/G4',
-			'ACL:Group/G5',
-			'ACL:Group/G3',
-			'ACL:Group/G2',
-			'ACL:Group/G1',
-			'ACL:Right/PR2',
-			'ACL:Right/PR1',
-			'ACL:Right/PR3',
-			'ACL:Page/A',
-			'ACL:Category/B'
-		);
-		
-		foreach ($articles as $a) {
+				
+		foreach ($this->mOrderOfArticleCreation as $a) {
 		    $t = Title::newFromText($a);
 	    	$article = new Article($t);
 			$article->doDelete("Testing");
@@ -781,6 +762,9 @@ class TestParserFunctions extends PHPUnit_Framework_TestCase {
     
 	private function initArticleContent() {
 		$this->mOrderOfArticleCreation = array(
+			'A',
+			'B',
+			'Category:B',
 			'Category:ACL/Group',
 			'Category:ACL/Right',
 			'Category:ACL/ACL',
@@ -798,7 +782,7 @@ class TestParserFunctions extends PHPUnit_Framework_TestCase {
 			'ACL:Right/PR1',
 			'ACL:Right/PR3',
 			'ACL:Page/A',
-			'ACL:Category/B'
+			'ACL:Category/B',
 		);
 		
 		$this->mArticles = array(
@@ -818,6 +802,12 @@ ACL
 			'Category:ACL/ACL' =>
 <<<ACL
 This is the category for security descriptors.
+ACL
+,
+//------------------------------------------------------------------------------		
+			'Category:B' =>
+<<<ACL
+This is category B.
 ACL
 ,
 //------------------------------------------------------------------------------		
@@ -1005,7 +995,23 @@ This is the whitelist.
 {{#whitelist: pages=Main Page, ACL:Group/G1}}
 
 ACL
-			
+,
+
+//------------------------------------------------------------------------------		
+			'A' =>
+<<<ACL
+This page is protected by [[ACL:Page/A]].
+ACL
+,
+//------------------------------------------------------------------------------		
+			'B' =>
+<<<ACL
+This page is protected by [[ACL:Category/B]]
+
+[[Category:B]]
+ACL
+,
+
 		);
 	}
 

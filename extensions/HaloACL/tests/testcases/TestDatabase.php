@@ -6,19 +6,305 @@
 
 require_once 'PHPUnit/Framework.php';
 
-class TestDatabase extends PHPUnit_Framework_TestCase {
-
-	protected $backupGlobals = FALSE;
+class TestDatabaseSuite extends PHPUnit_Framework_TestSuite
+{
 	
-    function setUp() {
-		HACLStorage::reset(HACL_STORE_SQL);
-    	
+	private $mOrderOfArticleCreation;
+	
+	public static function suite() {
+		
+		$suite = new TestDatabaseSuite();
+		$suite->addTestSuite('TestDatabase');
+		return $suite;
+	}
+	
+	protected function setUp() {
+    	HACLStorage::reset(HACL_STORE_SQL);
+		HACLStorage::getDatabase()->dropDatabaseTables(false);
+		HACLStorage::getDatabase()->initDatabaseTables(false);
+		
     	User::createNew("U1");
     	User::createNew("U2");
         User::createNew("U3");
         User::createNew("U4");
         User::createNew("U5");
         User::createNew("U6");
+        
+        $this->initArticleContent();
+        $this->createArticles();
+		
+	}
+	
+	protected function tearDown() {
+		$this->removeArticles();
+		HACLStorage::getDatabase()->dropDatabaseTables(false);
+		HACLStorage::getDatabase()->initDatabaseTables(false);
+		
+	}
+
+	private function createArticles() {
+    	global $wgUser;
+    	$wgUser = User::newFromName("U1");
+    	
+    	$file = __FILE__;
+    	try {
+	    	foreach ($this->mOrderOfArticleCreation as $title) {
+	    		$pf = HACLParserFunctions::getInstance();
+	    		$pf->reset();
+				self::createArticle($title, $this->mArticles[$title]);
+	    	}
+    	} catch (Exception $e) {
+			echo "Unexpected exception while testing ".basename($file)."::createArticles():".$e->getMessage();
+			throw $e;
+		}
+    	
+    }
+	
+    private function createArticle($title, $content) {
+	
+    	if (!isset($content)) {
+    		return;
+    	}
+		$title = Title::newFromText($title);
+		$article = new Article($title);
+		// Set the article's content
+		$success = $article->doEdit($content, 'Created for test case', 
+		                            $article->exists() ? EDIT_UPDATE : EDIT_NEW);
+		if (!$success) {
+			echo "Creating article ".$title->getFullText()." failed\n";
+		}
+	}
+    
+	private function removeArticles() {
+		global $wgUser;
+		$wgUser = User::newFromName("WikiSysop");
+		
+	    foreach ($this->mOrderOfArticleCreation as $a) {
+	    	$t = Title::newFromText($a);
+	    	$article = new Article($t);
+			$article->doDeleteArticle("Testing");
+		}
+		
+	}
+    
+	
+	private function initArticleContent() {
+		$this->mOrderOfArticleCreation = array(
+			'ACL:Category/B',
+			'ACL:Group/G1',
+			'ACL:Group/G2',
+			'ACL:Group/G3',
+			'ACL:Group/G4',
+			'ACL:Group/G5',
+			'ACL:Page/A',
+			'ACL:Right/PR1',
+			'ACL:Right/PR2',
+			'ACL:Right/PR3',
+			'A',
+			'B',
+			'C',
+			'Whitelist',
+			'User:U1',
+			'Category:B',
+			'Category:C',
+			'Category:D',
+			'Category:ACL/Group',
+			'Category:ACL/Right',
+			'Category:ACL/ACL',
+			'Permission denied'
+		
+		);
+		
+		$this->mArticles = array(
+//------------------------------------------------------------------------------		
+			'ACL:Category/B' =>
+<<<ACL
+PR: PR3
+ACL
+,
+//------------------------------------------------------------------------------		
+			'ACL:Group/G1' =>
+<<<ACL
+Manage: U1
+
+Groups:Group/G2, Group/G3
+
+Users:
+ACL
+,
+//------------------------------------------------------------------------------		
+			'ACL:Group/G2' =>
+<<<ACL
+Manage: U1
+Groups:Group/G4, Group/G5
+Users:
+ACL
+,
+//------------------------------------------------------------------------------		
+			'ACL:Group/G3' =>
+<<<ACL
+Manage: U1
+
+Groups:Group/G4
+
+Users:U6
+ACL
+,
+//------------------------------------------------------------------------------		
+			'ACL:Group/G4' =>
+<<<ACL
+Manage: U1, U4, U5
+
+Group:
+
+Users:U4, U5
+ACL
+,
+//------------------------------------------------------------------------------		
+			'ACL:Group/G5' =>
+<<<ACL
+Manage: U1,G5
+
+Groups:
+
+Users:U2,U3,U4
+ACL
+,
+//------------------------------------------------------------------------------		
+			'ACL:Page/A' =>
+<<<ACL
+Manage: G1
+
+IR:
+
+R1(r, G1, U1)
+
+PR: PR1, PR2
+ACL
+,
+//------------------------------------------------------------------------------		
+			'ACL:Right/PR1' =>
+<<<ACL
+Manage: G4, G5
+
+IR:
+
+R1(r|ef|e|a, G4)
+
+PR: PR2
+ACL
+,
+//------------------------------------------------------------------------------		
+			'ACL:Right/PR2' =>
+<<<ACL
+Manage: U1, U2
+
+IR:
+
+R3(r|ef|e|d, U2)
+ACL
+,
+//------------------------------------------------------------------------------		
+			'ACL:Right/PR3' =>
+<<<ACL
+Manage: U1
+
+PR: PR1, PR2
+ACL
+,
+//------------------------------------------------------------------------------		
+			'A' =>
+<<<ACL
+This page is protected by [[ACL:Page/A]].
+ACL
+,
+//------------------------------------------------------------------------------		
+			'B' =>
+<<<ACL
+This page is protected by [[ACL:Category/B]]
+
+[[Category:B]]
+ACL
+,
+//------------------------------------------------------------------------------		
+			'C' =>
+<<<ACL
+This is page C.
+
+[[Category:C]]
+ACL
+,
+//------------------------------------------------------------------------------		
+			'Whitelist' =>
+<<<ACL
+This is the article Whitelist.
+ACL
+,
+//------------------------------------------------------------------------------		
+			'User:U1' =>
+<<<ACL
+This is the article User:U1
+ACL
+,
+//------------------------------------------------------------------------------		
+			'Category:D' =>
+<<<ACL
+This is category D.
+      [[Category:C]]
+ACL
+,
+//------------------------------------------------------------------------------		
+			'Category:B' =>
+<<<ACL
+This is category B.
+ACL
+,
+//------------------------------------------------------------------------------		
+			'Category:C' =>
+<<<ACL
+This is category C.
+      [[Category:B]]
+      [[Category:D]]
+ACL
+,
+//------------------------------------------------------------------------------		
+			'Category:ACL/Group' =>
+<<<ACL
+This is the category for groups.
+ACL
+,
+//------------------------------------------------------------------------------		
+			'Category:ACL/Right' =>
+<<<ACL
+This is the category for rights.
+ACL
+,
+//------------------------------------------------------------------------------		
+			'Category:ACL/ACL' =>
+<<<ACL
+This is the category for security descriptors.
+ACL
+,
+//------------------------------------------------------------------------------		
+			'Permission denied' =>
+<<<ACL
+You are not allowed to perform the requested action on this page.
+
+Return to [[Main Page]].      
+ACL
+
+		);
+	}
+	
+}
+
+
+class TestDatabase extends PHPUnit_Framework_TestCase {
+
+	protected $backupGlobals = FALSE;
+	
+    function setUp() {
+		HACLStorage::reset(HACL_STORE_SQL);
     }
 
     function tearDown() {
