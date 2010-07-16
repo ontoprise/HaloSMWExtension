@@ -81,15 +81,15 @@ class SMWQueryInterface extends SpecialPage {
                      onmouseover="Tip(\'' . wfMsg('smw_qi_tt_showAsk') . '\')">'.wfMsg('smw_qi_querysource').'</td>
                  <td class="qiDefTabSpacer" width="100%">&nbsp;</td>
                  </tr>
-                 <tr>
-                 <td class="qiDefTabContent" colspan="5" style="height:100%">'.
+                 </table>
+                 <div class="qiDefTabContent">'.
                  $this->addTreeView().
                 '<div id="qitextview">Query as text</div>
                  <div id="qisource"><textarea id="fullAskText" onchange="qihelper.sourceChanged=1"></textarea>'.
                 '<button onclick="qihelper.loadFromSource(true)" onmouseover="Tip(\'' . wfMsg('smw_qi_tt_update') . '\')">' . wfMsg('smw_qi_update') . '</button>'.
                 '&nbsp;<span class="qibutton" onclick="qihelper.discardChangesOfSource();">' . wfMsg('smw_qi_discard_changes') . '</span>&nbsp;' .
-                '</div>
-                 </td></tr></table></div>
+                '</div>'.
+                '</div></div>
         ';
         return $html;
     }
