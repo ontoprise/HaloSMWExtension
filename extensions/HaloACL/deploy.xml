@@ -60,7 +60,7 @@
 			<patch file="extensions/HaloACL/patch_for_SMW_1.5.1.txt" ext="smw" from="151" to="151" />
 			<patch file="extensions/HaloACL/patch_for_SF_1.9.txt" ext="semanticforms" from="190" to="190" />
    			<patch file="extensions/HaloACL/patch_for_SF_1.9.1.txt" ext="semanticforms" from="191" to="191" />
-			<script file="extensions/SMWHalo/maintenance/HACL_Setup.php"
+			<script file="extensions/HaloACL/maintenance/HACL_Setup.php"
 				params="--delete" />
 		</uninstall>
 	</configs>
