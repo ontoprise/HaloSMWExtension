@@ -1336,8 +1336,8 @@ this is a test form
     <title>WebService:TestTriplification</title>
     <id>68</id>
     <revision>
-      <id>120</id>
-      <timestamp>2010-06-08T11:20:23Z</timestamp>
+      <id>136</id>
+      <timestamp>2010-07-15T14:48:27Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
       </contributor>
@@ -1347,9 +1347,9 @@ this is a test form
 &lt;method name=&quot;get&quot; /&gt;
 &lt;result name=&quot;result&quot;&gt;
 &lt;namespace prefix=&quot;wiki&quot; uri=&quot;http://localhost/mediawiki/index.php/&quot;/&gt;
-&lt;part name=&quot;HasAbstract&quot; predicate=&quot;wiki:Property:HasAbstract&quot;/&gt;
-&lt;part name=&quot;HasProduct&quot; predicate=&quot;wiki:Property:HasProduct&quot;/&gt;
-&lt;part name=&quot;NA&quot; predicate=&quot;wiki:na&quot;/&gt;
+&lt;part name=&quot;HasAbstract&quot; property=&quot;wiki:Property:HasAbstract&quot;/&gt;
+&lt;part name=&quot;HasProduct&quot; property=&quot;wiki:Property:HasProduct&quot;/&gt;
+&lt;part name=&quot;NA&quot; property=&quot;wiki:na&quot;/&gt;
 &lt;triplification subject=&quot;{{URLShortener|?result.allSubjects?}}&quot;/&gt;
 &lt;/result&gt;
 &lt;displayPolicy&gt;
@@ -1367,20 +1367,19 @@ this is a test form
     <title>WebService:TestTriplification2</title>
     <id>69</id>
     <revision>
-      <id>121</id>
-      <timestamp>2010-06-08T11:21:08Z</timestamp>
+      <id>137</id>
+      <timestamp>2010-07-15T14:50:52Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
       </contributor>
-      <comment>Created page with '&lt;WebService&gt; &lt;uri name=&quot;http://localhost/mediawiki/extensions/DataImport/tests/testcases/ld_resources/&quot; /&gt; &lt;protocol&gt;LinkedData&lt;/protocol&gt; &lt;method name=&quot;get&quot; /&gt; &lt;result name=&quot;res…'</comment>
       <text xml:space="preserve">&lt;WebService&gt;
 &lt;uri name=&quot;http://localhost/mediawiki/extensions/DataImport/tests/testcases/ld_resources/&quot; /&gt;
 &lt;protocol&gt;LinkedData&lt;/protocol&gt;
 &lt;method name=&quot;get&quot; /&gt;
 &lt;result name=&quot;result&quot;&gt;
 &lt;namespace prefix=&quot;wiki&quot; uri=&quot;http://localhost/mediawiki/index.php/&quot;/&gt;
-&lt;part name=&quot;HasAbstract&quot; predicate=&quot;wiki:Property:HasAbstract&quot;/&gt;
-&lt;part name=&quot;HasProduct&quot; predicate=&quot;wiki:Property:HasProduct&quot;/&gt;
+&lt;part name=&quot;HasAbstract&quot; property=&quot;wiki:Property:HasAbstract&quot;/&gt;
+&lt;part name=&quot;HasProduct&quot; property=&quot;wiki:Property:HasProduct&quot;/&gt;
 &lt;triplification subject=&quot;{{URLShortener|?result.allSubjects?}}&quot;/&gt;
 &lt;/result&gt;
 &lt;displayPolicy&gt;
@@ -1398,20 +1397,19 @@ this is a test form
     <title>WebService:TestTriplification3</title>
     <id>70</id>
     <revision>
-      <id>122</id>
-      <timestamp>2010-06-08T11:21:58Z</timestamp>
+      <id>138</id>
+      <timestamp>2010-07-15T14:52:03Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
       </contributor>
-      <comment>Created page with '&lt;WebService&gt; &lt;uri name=&quot;http://localhost/mediawiki/extensions/DataImport/tests/testcases/ld_resources/&quot; /&gt; &lt;protocol&gt;LinkedData&lt;/protocol&gt; &lt;method name=&quot;get&quot; /&gt; &lt;result name=&quot;res…'</comment>
       <text xml:space="preserve">&lt;WebService&gt;
 &lt;uri name=&quot;http://localhost/mediawiki/extensions/DataImport/tests/testcases/ld_resources/&quot; /&gt;
 &lt;protocol&gt;LinkedData&lt;/protocol&gt;
 &lt;method name=&quot;get&quot; /&gt;
 &lt;result name=&quot;result&quot;&gt;
 &lt;namespace prefix=&quot;wiki&quot; uri=&quot;http://localhost/mediawiki/index.php/&quot;/&gt;
-&lt;part name=&quot;HasAbstract&quot; predicate=&quot;wiki:Property:HasAbstract&quot;/&gt;
-&lt;part name=&quot;HasProduct&quot; predicate=&quot;wiki:Property:HasProduct&quot;/&gt;
+&lt;part name=&quot;HasAbstract&quot; property=&quot;wiki:Property:HasAbstract&quot;/&gt;
+&lt;part name=&quot;HasProduct&quot; property=&quot;wiki:Property:HasProduct&quot;/&gt;
 &lt;triplification subject=&quot;{{URLShortener|}}&quot;/&gt;
 &lt;/result&gt;
 &lt;displayPolicy&gt;
@@ -1429,20 +1427,19 @@ this is a test form
     <title>WebService:TestTriplification4</title>
     <id>71</id>
     <revision>
-      <id>123</id>
-      <timestamp>2010-06-08T11:22:44Z</timestamp>
+      <id>139</id>
+      <timestamp>2010-07-15T14:53:03Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
       </contributor>
-      <comment>Created page with '&lt;WebService&gt; &lt;uri name=&quot;http://localhost/mediawiki/extensions/DataImport/tests/testcases/ld_resources/&quot; /&gt; &lt;protocol&gt;LinkedData&lt;/protocol&gt; &lt;method name=&quot;get&quot; /&gt; &lt;result name=&quot;res…'</comment>
       <text xml:space="preserve">&lt;WebService&gt;
 &lt;uri name=&quot;http://localhost/mediawiki/extensions/DataImport/tests/testcases/ld_resources/&quot; /&gt;
 &lt;protocol&gt;LinkedData&lt;/protocol&gt;
 &lt;method name=&quot;get&quot; /&gt;
 &lt;result name=&quot;result&quot;&gt;
 &lt;namespace prefix=&quot;wiki&quot; uri=&quot;http://localhost/mediawiki/index.php/&quot;/&gt;
-&lt;part name=&quot;HasAbstract&quot; predicate=&quot;wiki:Property:HasAbstract&quot;/&gt;
-&lt;part name=&quot;HasProduct&quot; predicate=&quot;wiki:Property:HasProduct&quot;/&gt;
+&lt;part name=&quot;HasAbstract&quot; property=&quot;wiki:Property:HasAbstract&quot;/&gt;
+&lt;part name=&quot;HasProduct&quot; property=&quot;wiki:Property:HasProduct&quot;/&gt;
 &lt;/result&gt;
 &lt;displayPolicy&gt;
 &lt;maxAge value=&quot;1&quot;&gt;&lt;/maxAge&gt;
