@@ -11,7 +11,7 @@ require_once 'testcases/TestTripleStoreAccess.php';
 require_once 'testcases/TestMapping.php';
 require_once 'testcases/TestSparqlDataspaceRewriter.php';
 require_once 'testcases/TestOntologyBrowserSparql.php';
-require_once 'testcases/TestMappingLanguageAPI.php';
+//Requires PHP 5.3 require_once 'testcases/TestMappingLanguageAPI.php';
 
 class LODTests
 { 
@@ -29,7 +29,7 @@ class LODTests
         $suite->addTestSuite("TestMapping");
         $suite->addTestSuite("TestSparqlDataspaceRewriter");
         $suite->addTestSuite("TestOntologyBrowserSparql");
-        $suite->addTestSuite("TestMappingLanguageAPI");
+//        $suite->addTestSuite("TestMappingLanguageAPI");
 
         return $suite;
     }
