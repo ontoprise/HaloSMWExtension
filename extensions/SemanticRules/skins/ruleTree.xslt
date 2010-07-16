@@ -144,18 +144,19 @@
 
 	<xsl:template match="ruleMetadata">
 		<table class="ruleTreeColors" border="0" cellspacing="0">
-			
+
 			<tr>
 				<td id="ruleList-ruletext" class="ruleListLabel">{{SR_RULE_TEXT}}</td>
 				<td>
 					<div id="rule_content_0" ruleID="" class="ruleWidget">
 						<!--
-						 FIXME: rule serializer selector is deactivated for this release. 
-						 <select style="margin-left: 5px;margin-top: 5px;" name="rule_content_selector0"
-							onchange="sr_rulewidget.selectMode(event)">
-							<option mode="easyreadible">{{SR_EASYREADIBLE}}</option>
-							<option mode="stylized">{{SR_STYLIZED_ENGLISH}}</option>
-						</select> -->
+							FIXME: rule serializer selector is deactivated for this release.
+							<select style="margin-left: 5px;margin-top: 5px;"
+							name="rule_content_selector0"
+							onchange="sr_rulewidget.selectMode(event)"> <option
+							mode="easyreadible">{{SR_EASYREADIBLE}}</option> <option
+							mode="stylized">{{SR_STYLIZED_ENGLISH}}</option> </select>
+						-->
 						<div id="rule_content_0_easyreadible" class="ruleSerialization">
 							<xsl:choose>
 								<xsl:when test="child::easyreadible">
@@ -181,34 +182,34 @@
 					</div>
 				</td>
 			</tr>
-			</table>
-			<hr/>
-			<table class="ruleTreeColors" border="0" cellspacing="0">
+		</table>
+		<hr />
+		<table class="ruleTreeColors" border="0" cellspacing="0">
 			<tr>
-                <td id="ruleList-id" class="ruleListLabel">{{SR_RULE_ID}}</td>
-                <td class="ruleListValue">
-                    <xsl:if test="@title">
-                        <xsl:value-of select="@title" />
-                    </xsl:if>
-                </td>
-            </tr>
-            <tr>
-                <td id="ruleList-link" class="ruleListLabel">{{SR_RULE_HOME}}</td>
-                <td class="ruleListValue">
+				<td id="ruleList-id" class="ruleListLabel">{{SR_RULE_ID}}</td>
+				<td class="ruleListValue">
+					<xsl:if test="@title">
+						<xsl:value-of select="@title" />
+					</xsl:if>
+				</td>
+			</tr>
+			<tr>
+				<td id="ruleList-link" class="ruleListLabel">{{SR_RULE_HOME}}</td>
+				<td class="ruleListValue">
 
-                    <xsl:variable name="title" select="@title" />
-                    <xsl:if test="@containing_page">
-                        <a class="navigationLink" title="Goto to {$title}" >
+					<xsl:variable name="title" select="@title" />
+					<xsl:if test="@containing_page">
+						<a class="navigationLink" title="Goto to {$title}">
 
-                            <xsl:attribute name="href"><xsl:value-of
-                                select="substring-before($param-wiki-path,'$1')" /><xsl:value-of
-                                select="@containing_page" /></xsl:attribute>
+							<xsl:attribute name="href"><xsl:value-of
+								select="substring-before($param-wiki-path,'$1')" /><xsl:value-of
+								select="@containing_page" /></xsl:attribute>
 
-                            <xsl:value-of select="@containing_page" />
-                        </a>
-                    </xsl:if>
-                </td>
-            </tr>
+							<xsl:value-of select="@containing_page" />
+						</a>
+					</xsl:if>
+				</td>
+			</tr>
 			<tr>
 				<td id="ruleList-native" class="ruleListLabel">{{SR_RULE_ISNATIVE}}</td>
 				<td class="ruleListValue">
@@ -243,26 +244,29 @@
 				<td id="ruleList-type" class="ruleListLabel">{{SR_RULE_TYPE}}</td>
 				<td class="ruleListValue">
 					<xsl:if test="@type">
-						{{RULE_TYPE_<xsl:value-of select="@type" />}}
+						{{RULE_TYPE_
+						<xsl:value-of select="@type" />
+						}}
 					</xsl:if>
 				</td>
 			</tr>
-			</table>
-            <hr/>
-            <table class="ruleTreeColors" border="0" cellspacing="0">
+		</table>
+		<hr />
+		<table class="ruleTreeColors" border="0" cellspacing="0">
 			<tr>
 				<td id="ruleList-defines" class="ruleListLabel">{{SR_RULE_DEFINES}}</td>
 				<td class="ruleListValue">
 					<xsl:for-each select="child::defining">
 						<xsl:variable name="title" select="." />
-						<a class="navigationLink" title="Goto to {$title}" >
+						<a class="navigationLink" title="Goto to {$title}">
 
 							<xsl:attribute name="href"><xsl:value-of
 								select="substring-before($param-wiki-path,'$1')" /><xsl:value-of
 								select="." /></xsl:attribute>
 
-							<xsl:value-of select="." />
-						</a>
+							<xsl:variable name="titleWithoutUnderscore" select="." />
+							<xsl:value-of select="translate($titleWithoutUnderscore, '_', ' ')" />
+						</a>,
 					</xsl:for-each>
 				</td>
 			</tr>
@@ -271,14 +275,15 @@
 				<td class="ruleListValue">
 					<xsl:for-each select="child::using">
 						<xsl:variable name="title" select="." />
-						<a class="navigationLink" title="Goto to {$title}" >
+						<a class="navigationLink" title="Goto to {$title}">
 
 							<xsl:attribute name="href"><xsl:value-of
 								select="substring-before($param-wiki-path,'$1')" /><xsl:value-of
 								select="." /></xsl:attribute>
 
-							<xsl:value-of select="." />
-						</a>
+							<xsl:variable name="titleWithoutUnderscore" select="." />
+							<xsl:value-of select="translate($titleWithoutUnderscore, '_', ' ')" />
+						</a>,
 					</xsl:for-each>
 				</td>
 			</tr>
@@ -436,12 +441,18 @@
 
 		<xsl:variable name="title" select="@title" />
 		<xsl:if test="@isDirty">
-			<img src="{$param-img-directory}/extensions/SemanticRules/skins/images/rules_dirty.gif" />
+			<img
+				src="{$param-img-directory}/extensions/SemanticRules/skins/images/rules_dirty.gif">
+				<xsl:attribute name="title">{{SR_RULE_DIRTY}}</xsl:attribute>
+			</img>
 		</xsl:if>
 		<xsl:if test="@inactive">
-		    <!-- FIXME: title attribute should be language independant -->
-            <img title="inactive" src="{$param-img-directory}/extensions/SemanticRules/skins/images/rules_inactive.gif" />
-        </xsl:if>
+			<!-- FIXME: title attribute should be language independant -->
+			<img
+				src="{$param-img-directory}/extensions/SemanticRules/skins/images/rules_inactive.gif">
+				<xsl:attribute name="title">{{SR_RULE_INACTIVE}}</xsl:attribute>
+			</img>
+		</xsl:if>
 		<a class="navigationLink" title="Goto to {$title}" style="margin-left:5px;">
 
 			<xsl:attribute name="href"><xsl:value-of

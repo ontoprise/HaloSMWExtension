@@ -91,7 +91,10 @@ var wgUserSR_LanguageStrings = {
     'SR_RULE_USES' : 'Regel benutzt',
     
     'SR_EASYREADIBLE' : 'Leicht lesbar',
-    'SR_STYLIZED_ENGLISH' : 'Formales Englisch' 
+    'SR_STYLIZED_ENGLISH' : 'Formales Englisch' ,
+    'SR_RULE_DIRTY' : "Regel wurde kürzlich geändert",
+    'SR_RULE_INACTIVE' : "Regel ist inaktiv"
+    	
 };
 
 var wgContSR_LanguageStrings= {};  

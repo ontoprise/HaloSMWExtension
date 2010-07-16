@@ -181,7 +181,7 @@ PropertyChain.prototype = {
 			}			
 			
 			var chainText = "\n\n" 
-				+ '<rule hostlanguage="f-logic" '
+				+ '<rule  '
 				+ 'name="' + this.ruleName + '" '
 				+ 'type="' + this.ruleType + '">' + "\n"
 				+ request.responseText +

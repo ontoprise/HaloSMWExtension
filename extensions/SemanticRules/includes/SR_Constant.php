@@ -35,7 +35,11 @@ class SMWConstant extends SMWTerm {
 	function __construct($value) {
 		// check if it is numeric value - if not, add quotes
 		$value_unquoted = self::unquote($value);
-		if (!is_numeric($value_unquoted)) {
+		
+		// better solution would be to store the type here.
+		if ($value_unquoted == 'true' || $value_unquoted == 'false') {
+			$value = $value_unquoted;
+		} else if (!is_numeric($value_unquoted)) {
 			// if not numeric then quote
 			$value = "\"" . $value_unquoted . "\"";
 			

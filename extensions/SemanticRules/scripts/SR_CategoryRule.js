@@ -819,7 +819,7 @@ saveRule: function(event) {
 			
 			var ruleText = 
 				"\n\n" +
-				'<rule hostlanguage="f-logic" ' +
+				'<rule  ' +
 				      'name="' + this.ruleName + '" ' +
 				      'type="' + this.ruleType + '">' + "\n" +
 				request.responseText +
