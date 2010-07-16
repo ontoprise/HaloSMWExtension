@@ -641,7 +641,7 @@ function smwfHaloAddHTMLHeader(&$out) {
 	$jsm->addCSSIf($smwgHaloScriptPath . '/skins/semantictoolbar.css', "annotate");
 	$jsm->addCSSIf($smwgHaloScriptPath . '/skins/semantictoolbar.css', "formedit");
 	$jsm->addCSSIf($smwgHaloScriptPath . '/skins/semantictoolbar.css', "submit");
-	$jsm->addCSSIf($smwgHaloScriptPath . '/skins/semantictoolbar.css', "all", NS_SPECIAL, array(NS_SPECIAL.':AddData', NS_SPECIAL.':EditData'));
+	$jsm->addCSSIf($smwgHaloScriptPath . '/skins/semantictoolbar.css', "all", NS_SPECIAL, array(NS_SPECIAL.':AddData', NS_SPECIAL.':EditData', NS_SPECIAL.':FormEdit'));
 
 	$jsm->addCSSIf($wgStylePath .'/'.$skin->getSkinName().'/lightbulb.css');
 
