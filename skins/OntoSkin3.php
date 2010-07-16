@@ -279,7 +279,6 @@ class OntoSkin3Template extends QuickTemplate {
             </table>
             </div>
             <?php endif; // page != 'plain' ?>
-        </div>
         <div id="ontomenuanchor"></div>
     </body></html>
         <?php
