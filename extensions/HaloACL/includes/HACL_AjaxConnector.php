@@ -4055,7 +4055,8 @@ function haclSaveWhitelist($whitelistXml) {
 function haclGetAutocompleteDocuments($subName,$type) {
     global $haclgContLang;
     $ns = $haclgContLang->getNamespaces();
-    $ns = $ns[HACL_NS_ACL];
+    $nsPrefix = $ns[HACL_NS_ACL];
+    $petPrefix = $haclgContLang->getPetPrefix(HACLSecurityDescriptor::PET_NAMESPACE);
     global $wgCanonicalNamespaceNames,$wgUser;
 
 
@@ -4070,9 +4071,17 @@ function haclGetAutocompleteDocuments($subName,$type) {
 
     $a = array();
     if ($type == "namespace") {
-        foreach ($wgCanonicalNamespaceNames as $ns) {
+    	$namespaces = $wgCanonicalNamespaceNames;
+    	$namespaces[] = $nsMain = $haclgContLang->getLabelOfNSMain();
+    	global $haclgUnprotectableNamespaces;
+        foreach ($namespaces as $ns) {
+        	if (in_array($ns, $haclgUnprotectableNamespaces) 
+        	    || ($ns == $nsMain && in_array("Main", $haclgUnprotectableNamespaces))) {
+        		// The namespace can not be protected.
+        		continue;
+        	} 
             $addThatItem = true;
-            $SDName = "$ns:Namespace/$ns";
+            $SDName = "$nsPrefix:$petPrefix/$ns";
             try {
                 $sd = HACLSecurityDescriptor::newFromName($SDName);
                 if (!$sd->userCanModify($wgUser->getName())) {
@@ -5428,8 +5437,10 @@ function haclDoesArticleExists($articlename,$protect) {
     }
     if ($protect == "namespace") {
         $response = new AjaxResponse();
-
-        if (array_intersect($wgCanonicalNamespaceNames,array($articlename))) {
+    	$namespaces = $wgCanonicalNamespaceNames;
+    	$namespaces[] = $haclgContLang->getLabelOfNSMain();
+        
+        if (array_intersect($namespaces,array($articlename))) {
             $sd = new Article(Title::newFromText("$ns:$protect/$articlename"));
             if ($sd->exists()) {
                 $response->addText("sdexisting");

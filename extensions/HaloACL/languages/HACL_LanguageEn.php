@@ -103,6 +103,7 @@ class HACLLanguageEn extends HACLLanguage {
 		HACLLanguage::NC_GROUP => 'Group'
 	);
     
+	protected $mLabelNSMain = "Main";
 	
 }
 

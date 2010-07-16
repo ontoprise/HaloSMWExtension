@@ -103,6 +103,8 @@ class HACLLanguageDe extends HACLLanguage {
 		HACLLanguage::NC_GROUP => 'Gruppe'
 	);
 	
+	protected $mLabelNSMain = "Hauptnamensraum";
+	
 }
 
 

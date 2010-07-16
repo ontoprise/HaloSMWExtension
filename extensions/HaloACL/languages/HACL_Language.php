@@ -70,6 +70,7 @@ abstract class HACLLanguage {
 	protected $mSDTemplateName;			// Part of the name of default SDs for users
 	protected $mPredefinedRightName;	// Part of the name of a predefined right
 	protected $mNamingConvention = array();
+	protected $mLabelNSMain = "main";			// Label of the namespace Main
 
 
 	public function getPredefinedRightName() {
@@ -230,6 +231,11 @@ abstract class HACLLanguage {
 	 */
 	public function getNamingConvention($ncID) {
 		return $this->mNamingConvention[$ncID];
+	}
+	
+	public function getLabelOfNSMain() {
+		return $this->mLabelNSMain;
+		
 	}
 }
 

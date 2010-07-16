@@ -171,7 +171,9 @@ class  HACLSecurityDescriptor  {
 			$peName = str_replace(' ', '_', $peName);
 			$idx = $wgContLang->getNsIndex($peName);
 			if ($idx == false) {
-				return (strtolower($peName) == 'main') ? 0 : false;
+				global $haclgContLang;
+				$nsMain = strtolower($haclgContLang->getLabelOfNSMain());
+				return (strtolower($peName) == $nsMain) ? 0 : false;
 			}
 			return $idx;
 		} else if ($peType === self::PET_RIGHT) {
