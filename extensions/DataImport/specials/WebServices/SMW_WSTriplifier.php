@@ -41,7 +41,7 @@ class WSTriplifier {
 		//preprocess triples and subjects
 		list($tripleData, $subjects) = $this->createTriples($wsResult, $subjectCreationPattern, $wsId, $subjectCreationPatternParts, $previewTitle);
 		
-		if($triplify && defined( 'LOD_LINKEDDATA_VERSION')){
+		if($triplify && defined( 'LOD_LINKEDDATA_VERSION') && $articleId != 0){
 			global $IP;
 			require_once($IP."/extensions/LinkedData/storage/TripleStore/LOD_Triple.php");
 			require_once($IP."/extensions/LinkedData/storage/TripleStore/LOD_TripleStoreAccess.php");
@@ -51,6 +51,7 @@ class WSTriplifier {
 			foreach($tripleData as $td){
 				$td['subject'] = $this->getSubjectIRI($td['subject']);
 				$td['property'] = $this->getPropertyIRI($td['property']);
+				$td['object'] = str_replace('"', '\\"', $td['object']);
 				$triple = new LODTriple($td['subject'], $td['property'], $td['object'], $td['type']);
 				$triples[] = $triple;
 			}
@@ -250,7 +251,7 @@ class WSTriplifier {
 		$triples[] = new LODTriple(
 			"_:1", 'rdf:type', "swp:Warrant", "__objectURI");
 		$triples[] = new LODTriple(
-			"_:1", 'swp:authority', $this->getDataSourceURI($wsId), "__objectURI");
+			"_:1", 'swp:authority', $this->getDataSourceURI("WS_".$wsId), "__objectURI");
 		$triples[] = new LODTriple(
 			'<'.$this->getGraphName($wsId, $articleId).'>', 'smw-lde:created', $dateTime, "xsd:dateTime");	
 		 
@@ -269,10 +270,13 @@ class WSTriplifier {
 		
 		$lAS = LODAdministrationStore::getInstance();;
 		
-		$tsA->deleteTriples($lAS->getSMWGraphsURI().'ProvenanceGraph', 
-			'<'.$this->getGraphName($wsId, $articleId)."> ?p ?o", '<'.$this->getGraphName($wsId, $articleId)."> ?p ?o");
+		$dataSourceURI = LODAdministrationStore::getInstance()->getDataSourcesURI();
 		
-		//todo: delete blank nodes	
+		$tsA->deleteTriples($lAS->getSMWGraphsURI().'ProvenanceGraph', 
+			'<'.$this->getGraphName($wsId, $articleId).'> ?p ?o. ?sw ?x <'.$dataSourceURI.'WS_'.$wsId.'>. ?sw ?y ?z .'
+			, '<'.$this->getGraphName($wsId, $articleId).'> ?p ?o. ?sw ?y ?z.');
+		
+		//todo: delete blank nodes xyz	
 		
 		$tsA->flushCommands();
 	}

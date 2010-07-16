@@ -345,6 +345,10 @@ class  LODAdministrationStore  {
 		return self::LOD_BASE_URI.self::LOD_SMW_GRAPHS;
 	}
 	
+	public function getDataSourcesURI(){
+		return self::LOD_BASE_URI.self::LOD_SMW_DATASOURCES;
+	}
+	
 	//--- Private methods ---
 	
 }
