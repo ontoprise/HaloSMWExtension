@@ -236,6 +236,18 @@ FCK.DataProcessor =
 				{
 					var basic0 = basicElement[0];
 					var basic1 = basicElement[1];
+                    // work around for text alignment
+                    if (sNodeName == 'p') {
+                        try {
+                            var alignment = htmlNode.style.textAlign;
+                            if (alignment.toLowerCase() == "right" ||
+                                alignment.toLowerCase() == "center" ||
+                                alignment.toLowerCase() == "justify" ) {
+                                this._AppendTextNode( htmlNode, stringBuilder, sNodeName, prefix);
+                                return;
+                            }
+                        } catch (e) {};
+                    }
 
 					if ( ( basicElement[0] == "''" || basicElement[0] == "'''" ) && stringBuilder.length > 2 )
 					{
@@ -760,6 +772,23 @@ FCK.DataProcessor =
 			child = child.nextSibling ;
 		}
 	},
+
+    _AppendTextNode : function( htmlNode, stringBuilder, sNodeName, prefix ) {
+    	var attribs = this._GetAttributesStr( htmlNode ) ;
+
+		stringBuilder.push( '<' ) ;
+		stringBuilder.push( sNodeName ) ;
+
+    	if ( attribs.length > 0 )
+			stringBuilder.push( attribs ) ;
+
+		stringBuilder.push( '>' ) ;
+		this._AppendChildNodes( htmlNode, stringBuilder, prefix ) ;
+		stringBuilder.push( '<\/' ) ;
+		stringBuilder.push( sNodeName ) ;
+		stringBuilder.push( '>' ) ;
+
+    },
 
 	_GetAttributesStr : function( htmlNode )
 	{
