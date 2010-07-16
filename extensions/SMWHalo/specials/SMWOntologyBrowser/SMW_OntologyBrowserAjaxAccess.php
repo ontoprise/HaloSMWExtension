@@ -160,7 +160,7 @@ class OB_Storage {
 		$superatt = Title::newFromText($p_array[0], SMW_NS_PROPERTY);
 		$directsubatts = smwfGetSemanticStore()->getDirectSubProperties($superatt, $reqfilter);
 		$resourceAttachments = array();
-		wfRunHooks('smw_ob_attachtoresource', $directsubatts, $resourceAttachments, SMW_NS_PROPERTY);
+		wfRunHooks('smw_ob_attachtoresource', array($directsubatts, & $resourceAttachments, SMW_NS_PROPERTY));
 		return SMWOntologyBrowserXMLGenerator::encapsulateAsPropertyPartition($directsubatts, $resourceAttachments, $reqfilter->limit, $partitionNum, false);
 
 	}
