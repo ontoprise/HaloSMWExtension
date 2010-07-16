@@ -18,7 +18,12 @@ class LODTests
     public static function suite()
     {
         $suite = new PHPUnit_Framework_TestSuite('PHPUnit');
-        
+
+// IMPORTANT!!
+// Ontobroker Quad must be started with the following options:
+//   msgbroker=none client=MyStore driver=ontobroker-quad wsport=8090 console 
+//   run=D:\MediaWiki\SMWTripleStore\resources\lod_wiki_tests\OntologyBrowserSparql\initDebug.sparul 
+//   reasoner=owl restfulws        
         $suite->addTestSuite("TestTripleStoreAccess");
         $suite->addTestSuite("TestLODSourceDefinition");
         $suite->addTestSuite("TestMapping");
