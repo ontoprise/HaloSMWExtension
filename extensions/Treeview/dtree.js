@@ -31,7 +31,7 @@ var refreshDtree;
  * 
  */
 function smwhf_loadNavTree(){
-    sajax_do_call('smwfNavTree',
+    sajax_do_call('smwfGetNavTree',
 		              [],
 		              smwhf_insertNavTree);
 }
@@ -48,6 +48,7 @@ function smwhf_insertNavTree(param){
     } else {
        //get return value
        var tree = param.responseText;
+       if(tree=="") return;
        //create a new div, which we wanna insert in the document
        var treeDiv = document.createElement("div");
        treeDiv.setAttribute("id", "smwh_tree");

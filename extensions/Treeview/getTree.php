@@ -5,9 +5,9 @@
  * @ingroup Treeview
  */
 $wgAjaxExportList[] = 'smw_treeview_getTree';
-$wgAjaxExportList[] = 'smwfNavTree';
+$wgAjaxExportList[] = 'smwfGetNavTree';
 
-$wgHooks['OntoSkinInsertTreeNavigation'][] = 'smwfInsertNavTree';
+$wgHooks['OntoSkinInsertTreeNavigation'][] = 'smwfEchoNavTree';
 
 /**
  * Provides functionality to get partial trees in treeview
@@ -103,17 +103,23 @@ function smwfNavTree() {
 }
 
 /**
- * Includes Navigation tree in sidebar
+ * Includes navigation tree in ontoskin through php
  */
-function smwfInsertNavTree() {
+function smwfEchoNavTree() {
+
+   echo smwfNavTree();
+   return true;
+}
+
+/**
+ * Includes navigation tree in skins different than ontoskin through ajax
+ */
+function smwfGetNavTree() {
 
    //Don't insert tree into ontoskin
    global $wgUser;
    $skin = $wgUser !== NULL ? $wgUser->getSkin()->getSkinName() : $wgDefaultSkin;
-   if(($skin == 'ontoskin') || ($skin == 'ontoskin2') || ($skin == 'ontoskin3')) return true;
-   echo "<!--".$skin."-->";
-
-
-   echo smwfNavTree();
-   return true;
+   if(($skin == 'ontoskin') || ($skin == 'ontoskin2') || ($skin == 'ontoskin3')) return "";
+ 
+   return smwfNavTree();
 }
