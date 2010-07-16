@@ -67,7 +67,6 @@ vertical-align: text-top;
 #treeview{
 border: none;
 float:left;
-margin-top: 10px;
 margin-right: 10px;
 width: 100%;
 height:100%;
@@ -394,10 +393,8 @@ cursor: pointer;
 }
 
 #qiDefTab {
-    height: 300px;
     float:right;
     width: 40%;
-    padding-top: 1px;
     margin-bottom: 10px;
 }
 
@@ -405,7 +402,7 @@ cursor: pointer;
 	border-collapse:collapse;
 	empty-cells:show;
 	width:100%;
-	height:100%;
+	height:20px;
 }
 
 .qiDefTabActive {
@@ -444,7 +441,7 @@ cursor: pointer;
     border-left-style: solid;
     border-right-width: 1px;
     border-right-style: solid;
-    height: 100%;
+    height: 276px;
 }
 .qiDisabled {
     color: #AAAAAA;
