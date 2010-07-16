@@ -137,6 +137,11 @@ class TestSparqlDataspaceRewriter extends PHPUnit_Framework_TestCase {
     	$val = $r[0]->getResult("l")->getValue();
     	$this->assertEquals($val, "Intel, Inc"); 
     	
+    	// Ask the query in an unknown dataspace "unknown"
+    	$qr = $tsa->queryTripleStore($query, $this->mDSIGraph, "dataspace = unknown");
+    	$rows = $qr->getRows();
+    	$this->assertEquals(count($rows), 0);
+    	
     }
     
     
