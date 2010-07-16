@@ -394,7 +394,7 @@ UseWebService.prototype = {
 			if (parameters.childNodes[i].childNodes[1].childNodes[0].checked) {
 				wsSyn += "\n| "
 					+ parameters.childNodes[i].childNodes[0].childNodes[0].childNodes[0].nodeValue;
-				if(parameters.childNodes[i].childNodes[3].childNodes[0].checked){
+				if(parameters.childNodes[i].childNodes[3] != undefined && parameters.childNodes[i].childNodes[3].childNodes[0].checked){
 					wsSyn += " = "
 						+ parameters.childNodes[i].childNodes[3].childNodes[1].childNodes[0].nodeValue;
 				} else {
