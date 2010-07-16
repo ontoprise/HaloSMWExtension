@@ -2062,7 +2062,7 @@ QIHelper.prototype = {
             // user selected the source tab, convert query to source code
             if (id == 3) {
                 this.showFullAsk('parser', false);
-                $('query4DiscardChanges').innerHTML = $('fullAskText').value;
+                $('query4DiscardChanges').innerHTML = escapeQueryHTML($('fullAskText').value);
             }
             // user selected the tree tab, load the query from source
             else {
