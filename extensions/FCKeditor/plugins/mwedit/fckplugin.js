@@ -37,15 +37,26 @@ StartStandardMwEditCommand.prototype = {
     makeContainer: function() {
             var x = (FCKBrowserInfo.IsIE) ? self.document.body.clientWidth : self.innerWidth;
             var y = (FCKBrowserInfo.IsIE) ? self.document.body.clientHeight: self.innerHeight;
+            /*
             this.ContextMenu = new window.parent.ContextMenuFramework();
             this.ContextMenu.setPosition(parseInt(x / 2), parseInt(y / 2));
             this.ContextMenu.setContent(this.getHtml(), 'ANNOTATIONHINT', 'Save changes?');
             this.ContextMenu.showMenu();
+            */
+           this.ContextMenu = document.createElement('div');
+           this.ContextMenu.setAttribute('style',
+                'position:absolute; top:'+parseInt(y / 2)+'px; left:'+parseInt(x / 2)+'px; '+
+                'z-index:1000; visability:visible; background-color: #E3E3C7');
+           this.ContextMenu.id = "fckMweditSaveChanges";
+           this.ContextMenu.innerHTML = this.getHtml();
+           var el = window.parent.document.getElementById('globalWrapper');
+           el.appendChild(this.ContextMenu);
 
     },
 
     getHtml: function() {
-    return 'The editor content has changed. Do you want to save the changes?<br/>' +
+    return '<span style="padding: 3px 10px; font-weight:bold; color:#737357; font-size: 14pt">Save changes?</span><br/>' +
+           'The editor content has changed.<br/>Do you want to save the changes?<br/>' +
            '<br/><br/><div style="text-align: center;">' +
            '<input type="submit" name="wgSave" value="yes" onClick="window.frames[0].switchToStandardEdit.save();" />&nbsp;' +
            '<input type="submit" name="dontSave" value="no" onClick="window.frames[0].switchToStandardEdit.redirect();" />&nbsp;' +
@@ -83,7 +94,8 @@ StartStandardMwEditCommand.prototype = {
     },
 
     cancel: function() {
-        this.ContextMenu.remove();
+        var el = window.parent.document.getElementById('fckMweditSaveChanges');
+        el.parentNode.removeChild(el);
     }
 }
 
