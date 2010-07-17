@@ -110,24 +110,17 @@ class SMWQueryInterface extends SpecialPage {
 		global $smwgHaloScriptPath;
 
 		return '<div id="dragbox" class="dragbox">' .
-					'<div id="boxcontent" class="boxcontent">' .
-                        '<table class="qiBoxcontentTable">' .
-                            '<tr><td id="treeviewbreadcrumbs"></td></tr>' .
-                            '<tr><td id="qistatus"></td><tr>' .
-                            '<tr><td>' .
-                                '<table><tbody id="dialoguecontent"></tbody></table>' .
-                            '</td></tr>' .
-                            '<tr><td height="100%"> </td></tr>' .
-                            '<tr><td id="dialoguebuttons" style="display:none; width: 100%">' .
-       							'<button onclick="qihelper.add()">' . wfMsg('smw_qi_add') . '</button>&nbsp;' .
-                                '<span style="text-align:right">' .
-                                    '<span class="qibutton" onclick="qihelper.emptyDialogue(); qihelper.updateTree();">' . wfMsg('smw_qi_cancel') . '</span>&nbsp;' .
-                                    '<span id="qidelete" style="display:none" class="qibutton" onclick="qihelper.deleteActivePart()">' . wfMsg('smw_qi_delete') . '</span>' .
-                                '</span>' .
-                            '</td></tr>'.
-                        '</table>' .
-					'</div>' .
-				'</div>';
+                    '<div id="treeviewbreadcrumbs"></div>' .
+                    '<div id="qistatus"></div>' .
+                    '<div id="boxcontent"><table><tbody id="dialoguecontent"></tbody></table></div>' .
+                    '<div id="dialoguebuttons" style="display:none; width: 100%">' .
+						'<button onclick="qihelper.add()">' . wfMsg('smw_qi_add') . '</button>&nbsp;' .
+                        '<span style="text-align:right">' .
+                             '<span class="qibutton" onclick="qihelper.emptyDialogue(); qihelper.updateTree();">' . wfMsg('smw_qi_cancel') . '</span>&nbsp;' .
+                             '<span id="qidelete" style="display:none" class="qibutton" onclick="qihelper.deleteActivePart()">' . wfMsg('smw_qi_delete') . '</span>' .
+                        '</span>' .
+                    '</div>' .
+               '</div>';
 	}
 
     private function addResultPart() {
