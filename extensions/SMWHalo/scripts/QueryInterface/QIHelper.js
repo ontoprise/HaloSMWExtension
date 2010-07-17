@@ -585,10 +585,20 @@ QIHelper.prototype = {
 			html += this.queries[nav[i]].getName() + '</span>';
 		}
         if (action) html += ': <b>' + action + '</b>';
-		html += "<hr/>";
 		var breadcrumpDIV = $('treeviewbreadcrumbs');
  		if (breadcrumpDIV) breadcrumpDIV.innerHTML = html;
 	},
+
+    updateHeightBoxcontent : function() {
+        var off = 0;
+        var dim = $('treeviewbreadcrumbs').getDimensions();
+        off += dim.height + 3;
+        dim = $('qistatus').getDimensions();
+        off += dim.height + 3;
+        dim = $('dialoguebuttons').getDimensions();
+        off += dim.height + 3;
+        $('boxcontent').style.height = (300 - off) + 'px';
+    },
 
 	/**
 	 * Updates the table column preview as well as the option box "Sort by".
@@ -723,6 +733,7 @@ QIHelper.prototype = {
             if (!n) break;
             n.parentNode.removeChild(n);
         }
+        this.updateHeightBoxcontent();
     },
 
 	/**
@@ -762,6 +773,7 @@ QIHelper.prototype = {
 		autoCompleter.registerAllInputs();
 		if (reset)
 			$('input0').focus();
+        this.updateHeightBoxcontent();
 	},
 
 	/**
@@ -796,6 +808,7 @@ QIHelper.prototype = {
 		autoCompleter.registerAllInputs();
 		if (reset)
 			$('input0').focus();
+        this.updateHeightBoxcontent();
 	},
 
 	/**
@@ -825,6 +838,7 @@ QIHelper.prototype = {
 		autoCompleter.registerAllInputs();
 		if (reset)
 			$('input_p0').focus();
+        this.updateHeightBoxcontent();
 	},
 
     addPropertyChainInput : function(propName) {
@@ -1918,10 +1932,12 @@ QIHelper.prototype = {
 			if (inputs[i].value == "")
 				allinputs = false;
 		}
-		if (!allinputs) // show error
+		if (!allinputs) { // show error
 			$('qistatus').innerHTML = (this.activeDialogue == "category")
                 ? gLanguage.getMessage('QI_ENTER_CATEGORY')
                 : gLanguage.getMessage('QI_ENTER_INSTANCE');
+            this.updateHeightBoxcontent();
+        }
 		else {
 			/* STARTLOG */
 			if (window.smwhgLogger) {
