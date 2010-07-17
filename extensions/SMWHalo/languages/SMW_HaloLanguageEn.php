@@ -275,6 +275,10 @@ clicking the big arrows between the columns.',
     'smw_qi_queryastree' => 'Query as tree',
     'smw_qi_queryastext' => 'Query as text',
     'smw_qi_querysource' => 'Query source',
+    'smw_qi_printout_err1' => 'The selected format for the query result needs at least one additional property that is shown in the result.',
+    'smw_qi_printout_err2' => 'The selected format for the query result needs at least one property of the type date that is shown in the result.',
+    'smw_qi_printout_err3' => 'The selected format for the query result needs at least one property of a numeric type that is shown in the result.',
+    'smw_qi_printout_err4' => 'Your query did not return any results.',
 
 	/*Tooltips for Query Interface*/
 	'smw_qi_tt_addCategory' => 'By adding a category, only articles of this category are included',
