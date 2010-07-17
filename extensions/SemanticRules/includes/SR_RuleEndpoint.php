@@ -130,15 +130,16 @@ class SRRuleEndpoint {
 	/**
 	 * Returns rule containing the string given as filter in a resource or literal.
 	 *
-	 * @param $filter
+	 * @param $params (string filter, boolean asTree)
 	 * @param $resultformat
 	 * @param $ajaxCall (if false, do not return AjaxResponse object but simple text)
 	 */
 	public function searchForRulesByFragment($params, $resultformat = "xml", $ajaxCall = true) {
 		$filter = $params[0];
+		$asTree = $params[1];
 		global $smwgWebserviceProtocol, $smwgTripleStoreGraph;
 
-		$payload = "graph=$smwgTripleStoreGraph&fragment=$filter";
+		$payload = "graph=$smwgTripleStoreGraph&fragment=$filter&asTree=$asTree";
 		list($header, $status, $res) = self::$_client->send($payload, "/searchForRulesByFragment");
         
 		if (!$ajaxCall) {
@@ -159,10 +160,10 @@ class SRRuleEndpoint {
 	 * @param $ruleID
 	 */
 	public function serializeRules($params) {
-		$ruleIDs = implode("&ruleID=",$params);
+		$ruleIDs = implode("&ruletuple=",$params);
 		global $smwgWebserviceProtocol, $smwgTripleStoreGraph;
 
-		$payload = "graph=$smwgTripleStoreGraph&ruleID=$ruleIDs";
+		$payload = "graph=$smwgTripleStoreGraph&ruletuple=$ruleIDs";
 		list($header, $status, $res) = self::$_client->send($payload, "/serializeRules");
 
 		$response = new AjaxResponse($res);
@@ -210,6 +211,7 @@ class SRRuleEndpoint {
 			if ($rule->getName() != 'rule') continue;
 			$ruleURI = (string) $rule->attributes()->id;
 			$active = (string) $rule->attributes()->active;
+			$native =  (string) $rule->attributes()->native;
 			$ruleText = (string) $rule[0];
 			$easyreadible = isset($rule->children()->easyreadible) ? (string) $rule->children()->easyreadible[0] : "";
 			$stylizedEnglish = isset($rule->children()->easyreadible) ? (string) $rule->children()->stylizedenglish[0] : "";
@@ -227,6 +229,7 @@ class SRRuleEndpoint {
             $html .= '<div id="rule_content_'.$i.'" ruleID="'.htmlspecialchars($ruleURI).'" class="ruleWidget"><img style="margin-top: 5px;margin-left: 5px;" src="'.$wgScriptPath.'/extensions/SemanticRules/skins/images/rule.gif"/><a style="margin-left: 5px;font-weight:bold;" href="'.htmlspecialchars($containingPageTitle->getFullURL()).'">'.htmlspecialchars($rulename).'</a> <span style="float:right;margin-right: 10px;margin-top: 5px;">'.wfMsg('sr_rulestatus').':<span style="font-weight: bold;color:'.$statusColor.';">'.$status.'</span></span><hr/>'. // tab container
                           '<div id="rule_content_'.$i.'_easyreadible" class="ruleSerialization">'.htmlspecialchars($easyreadible).'</div>'. // tab 1
                          '<div id="rule_content_'.$i.'_stylized" class="ruleSerialization" style="display:none;">'.htmlspecialchars($stylizedEnglish).'</div>'.
+                         '<div id="'.htmlspecialchars($ruleURI).'" native="'.$native.'" class="ruleSerialization" style="display:none;">'.htmlspecialchars($ruleText).'</div>'.
                      '</div>'; // tab 2
             
 

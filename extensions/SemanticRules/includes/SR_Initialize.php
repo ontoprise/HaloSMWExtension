@@ -97,7 +97,7 @@ function ruleSetupExtension() {
  */
 function srfAddToUnifiedSearch($searchTerms, $receivers, & $results) {
 	if (in_array("SemanticRules", $receivers)) {
-		$html = SRRuleEndpoint::getInstance()->searchForRulesByFragment($searchTerms, "widget", false);
+		$html = SRRuleEndpoint::getInstance()->searchForRulesByFragment(array($searchTerms[0], false), "widget", false);
 		if ($html != '') {
 			$html = "<span style=\"margin: 5px;\">".wfMsg('sr_rulesfound')."</span>".$html;
 		}
@@ -370,6 +370,7 @@ function srfTripleStoreParserHook(&$parser, &$text, &$strip_state = null) {
 			             '.htmlspecialchars($name).'</span> <span style="float:right;margin-right: 10px;margin-top: 5px;">'.wfMsg('sr_rulestatus').':<span style="font-weight: bold;color:'.$statusColor.';">'.$status.'</span></span><hr/>'. // tab container
 			             '<div id="rule_content_'.$i.'_easyreadible" class="ruleSerialization">'.htmlspecialchars($ruletext).'</div>'. // tab 1
 			             '<div id="rule_content_'.$i.'_stylized" class="ruleSerialization" style="display:none;">Stylized english</div>'.
+			             '<div id="'.htmlspecialchars($uri).'" native="'.($native?"true":"false").'" class="ruleSerialization" style="display:none;">'.htmlspecialchars($ruletext).'</div>'.
 			             '</div>'; // tab 2
 			
 			$text = str_replace($matches[0][$i], $replaceBy, $text);

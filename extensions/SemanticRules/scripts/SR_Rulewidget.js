@@ -15,16 +15,20 @@ SRRuleWidget.prototype = {
 	},
 	
 	renderWidgets: function() {
-		var idlist = "";
+		var rulelist = "";
 		var isfirst = true;
 		var pendingIndicators = new Array();
 		$$('.ruleWidget').each(function(w) { 
 			var ruleID = w.getAttribute("ruleID");
+			var ruletext = $(ruleID).textContent;
+			var native = $(ruleID).getAttribute("native");
 			var width =  (w.getAttribute("width") != null ?  w.getAttribute("width") : 600);
 	        var height = (w.getAttribute("height") != null ?  w.getAttribute("height") : 300);
 	        //TODO: set size
 	        
-	        idlist += isfirst ? ruleID : "##"+ruleID;
+	        var o = { 'ruleID' : ruleID, 'ruletext' : ruletext, 'native':native };
+	      
+	        rulelist += isfirst ? Object.toJSON(o) : "##"+Object.toJSON(o);
 	        if (isfirst) isfirst = false;
 	       		    
 		});
@@ -47,8 +51,14 @@ SRRuleWidget.prototype = {
 					var ruleID = w.getAttribute("ruleID");
 					var wID = w.getAttribute("id");
 					if (id == ruleID) {
-						if (type == "easyreadible") $(wID+"_easyreadible").innerHTML = this.escapeHTML(ruletextNodes[i].textContent);
-						else if (type == "stylized") $(wID+"_stylized").innerHTML = this.escapeHTML(ruletextNodes[i].textContent);
+						
+						// escape html
+						var html = ruletextNodes[i].textContent;
+						html = html.replace(/</g, "&lt;");
+						html = html.replace(/>/g, "&gt;");
+						
+						if (type == "easyreadible") $(wID+"_easyreadible").innerHTML = html;
+						else if (type == "stylized") $(wID+"_stylized").innerHTML = html;
 					}
 				});
 			}
@@ -61,7 +71,7 @@ SRRuleWidget.prototype = {
 		});
 		
 			sajax_do_call('srf_sr_AccessRuleEndpoint', [
-					'serializeRules', idlist ], callbackOnRequest
+					'serializeRules', rulelist ], callbackOnRequest
 					.bind(this));
 	},
 	

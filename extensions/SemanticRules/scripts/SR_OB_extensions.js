@@ -80,7 +80,7 @@ SRRuleActionListener.prototype = {
 		}
 		OB_tree_pendingIndicator.show(globalActionListener.activeTreeName);
 		sajax_do_call('srf_sr_AccessRuleEndpoint', [
-				'searchForRulesByFragment', filter ], callbackOnSearchRequest
+				'searchForRulesByFragment', filter+"##true" ], callbackOnSearchRequest
 				.bind(this));
 	},
 
