@@ -78,24 +78,27 @@ height:100%;
 }
 
 #treeviewbreadcrumbs{
-overflow:auto;
+    overflow-x:auto;
+    border-bottom: 1px solid #AAAAAA;
+    padding-top: 2px;
+    padding-bottom: 3px;
 }
 
 .dragbox{
     float:left;
     width:59%;
     height: 300px;
-    margin-bottom: 10px;
+    border: 1px solid #AAAAAA;
+    float:left;
 }
-.boxcontent {
-border: 1px solid #AAAAAA;
+#boxcontent {
 width:100%;
-height: 100%;
+height: 230px;
 float:left;
 overflow:auto;
 }
 
-.boxcontent img{
+#boxcontent img{
 cursor:pointer;
 }
 
@@ -251,7 +254,7 @@ margin-top: 10px;
 border:1px solid #AAAAAA;
 background: #FFFFFF;
 height: 160px;
-overflow: scroll;
+overflow: auto;
 }
 
 .qlm_input{
@@ -388,14 +391,13 @@ cursor: pointer;
 }
 
 #qiresultcontent, #qiquerydefinition {
-    padding-left: 10px;
-    width: 98%;
+    width: 100%;
+    border-collapse: collapse;
 }
 
 #qiDefTab {
     float:right;
     width: 40%;
-    margin-bottom: 10px;
 }
 
 #qiDefTab > table {
@@ -447,6 +449,9 @@ cursor: pointer;
     color: #AAAAAA;
 }
 
+#qistatus {
+    padding-left: 5px;
+}
 #qitextview , #qisource {
 	display: none;
 	height:100%;
