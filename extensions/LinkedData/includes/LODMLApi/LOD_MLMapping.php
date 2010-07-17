@@ -37,7 +37,8 @@ abstract class LODMLMapping {
 	public function __construct($uri, $properties, $otherMappings) {
 		$this->uri = $uri;
 		$this->properties = $properties;
-		if (!static::handles($properties)) {
+		/*PHP 5.3: if (!static::handles($properties)) {*/
+		if ($uri && $properties && !$this->handles($properties)) {
 			throw new Exception("$uri can not be handled by this class");
 		}
 	}
@@ -55,21 +56,23 @@ abstract class LODMLMapping {
 	 * @param	array<property> => array<string>	$properties
 	 * @return	boolean
 	 */
-	public static function handles($properties) {
+	public /*PHP 5.3: static*/ function handles($properties) {
 		if (!$properties) {
 			return;
 		}
 
 		if ($properties[LOD_ML_RDF_TYPE]) {
 			foreach ($properties[LOD_ML_RDF_TYPE] as $type) {
-				if (static::handlesType($type)) {
+				/*PHP 5.3: if (static::handlesType($type)) {*/
+				if ($this->handlesType($type)) {
 					return true;
 				}
 			}
 		}
 
 		foreach (array_keys($properties) as $property) {
-			if (static::handlesProperty($property)) {
+			/*PHP 5.3: if (static::handlesProperty($property)) {*/
+			if ($this->handlesProperty($property)) {
 				return true;
 			}
 		}
@@ -81,8 +84,9 @@ abstract class LODMLMapping {
 	 * @param	string	$type
 	 * @return	boolean
 	 */
-	public static function handlesType($type) {
-		return (static::type() && static::type() == $type);
+	public /*PHP 5.3: static*/ function handlesType($type) {
+		/*PHP 5.3: return (static::type() && static::type() == $type);*/
+		return ($this->type() && $this->type() == $type);
 	}
 
 	/**
@@ -90,8 +94,9 @@ abstract class LODMLMapping {
 	 * @param	string	$property
 	 * @return	boolean
 	 */
-	public static function handlesProperty($property) {
-		return (static::property() && static::property() == $property);
+	public /*PHP 5.3: static*/ function handlesProperty($property) {
+		/*PHP 5.3: return (static::property() && static::property() == $property);*/
+		return ($this->property() && $this->property() == $property);
 	}
 
 	/**

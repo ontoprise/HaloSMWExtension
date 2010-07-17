@@ -64,7 +64,9 @@ class LODMLMappingLanguageAPI {
 			$handled = false;
 			
 			foreach (self::$classes as $class) {
-				if ($class::handles($properties)) {
+				/*PHP 5.3: if ($class::handles($properties)) { */
+				$instance = new $class(null, null, null);
+				if ($instance->handles($properties)) {
 					$mappings[$uri] = new $class($uri, $properties, $mappings);
 					$handled = true;
 					break;
