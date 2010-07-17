@@ -58,7 +58,7 @@ function smwf_qi_QIAccess($method, $params) {
              foreach($params as $p) {
                  if (strlen($p) > 0 && strpos($p, "=") !== false) {
                     list($key, $value) = explode("=", $p);
-                     $fixparams[$key] = str_replace('%2C', ',', $value);
+                     $fixparams[trim($key)] = str_replace('%2C', ',', $value);
                  }
              }
              // indicate that it comes from an ajax call
@@ -93,17 +93,27 @@ function smwf_qi_QIAccess($method, $params) {
             if (! in_array('reasoner', array_keys($fixparams))) $fixparams['reasoner'] = 'ask';
             if (! in_array('format', array_keys($fixparams))) $fixparams['format'] = 'table';
 
+            // use SMW classes or TSC classes
+            if ($fixparams['reasoner'] == 'ask') 
+                $queryProcessor = "SMWQueryProcessor";
+            else if ($fixparams['reasoner'] == 'sparql')
+                $queryProcessor = "SMWSPARQLQueryProcessor";
             // parse params and answer query
-            if ($fixparams['reasoner'] == 'ask') {
-	            SMWQueryProcessor::processFunctionParams($rawparams,$querystring,$params,$printouts);
-	           
-	            $result = SMWQueryProcessor::getResultFromQueryString($querystring,$params,$printouts, SMW_OUTPUT_WIKI);
-            } else if ($fixparams['reasoner'] == 'sparql') {
-            	 SMWSPARQLQueryProcessor::processFunctionParams($rawparams,$querystring,$params,$printouts);
-               
-                $result = SMWSPARQLQueryProcessor::getResultFromQueryString($querystring,$params,$printouts, SMW_OUTPUT_WIKI);
+            if (isset($queryProcessor) && class_exists($queryProcessor)) {
+                $queryProcessor::processFunctionParams($rawparams,$querystring,$params,$printouts);
+                // check if there is any result and if it corresponds to the selected format
+                $mainlabel = (isset($rawparams['mainlabel']) && $rawparams['mainlabel'] == '-');
+                $invalidRes = smwf_qi_CheckValidResult($printouts, $fixparams['format'], $mainlabel);
+                if ( $invalidRes != 0 )
+                    return wfMsg('smw_qi_printout_err'.$invalidRes);
+
+                $result = $queryProcessor::getResultFromQueryString($querystring,$params,$printouts, SMW_OUTPUT_WIKI);
             }
-	    switch ($fixparams['format']) {
+            // check for empty result
+            if (is_array($result) && trim($result[0]) == '' || trim($result == '') )
+                return wfMsg('smw_qi_printout_err4');
+
+            switch ($fixparams['format']) {
             	case 'timeline':
             	case 'exhibit':
             	case 'eventline':
@@ -322,6 +332,52 @@ function smwf_qi_getPage($args= "") {
    
 	return $newPage;
 		
+}
+
+/**
+ * Check the print out params for types and return an error if the choosen format
+ * doesn't have corresponding types
+ *
+ * @param array(SMWDataValue) $printRequest
+ * @param string $format
+ * @param boolean $mainlabel (true if surpressed, false otherwise);
+ * @return int $result
+ *         0 = format matches printouts
+ *         1 = format needs at least 1 additional printout
+ *         2 = format needs at least 1 printout of the type date
+ *         3 = format needs at least 1 numeric printout
+ */
+function smwf_qi_CheckValidResult ($printRequest, $format, $mainlabel) {
+
+    $formatNeedsNumber = array('sum', 'min', 'max');
+    $formatNeeds2Cols = array('googlepie', 'googlebar', 'ofc-pie', 'ofc-bar', 'ofc-bar_3d', 'ofc-line', 'ofc-scatterline');
+    $formatNeedsDate = array('timeline', 'eventline');
+    $numericTypes = array('_num', '_tem');
+    if ((count($printRequest) == 0 ||
+        ( count($printRequest) == 1 && $mainlabel) ) &&
+        in_array($format, array_merge($formatNeeds2Cols, $formatNeedsDate)))
+            return 1;
+    // check types
+    $haveDate = false;
+    $haveNumber = false;
+    foreach( $printRequest as $object ) {
+        $propName = $object->getData()->getDBkey();
+        $propXML = qiGetPropertyInformation($propName);
+        $xmlDoc = DOMDocument::loadXML($propXML);
+        for ($i = 0; $i < count($xmlDoc->documentElement->childNodes); $i++) {
+            $type = $xmlDoc->documentElement->childNodes->item($i)->getAttribute('type');
+            $unit = $xmlDoc->documentElement->childNodes->item($i)->getElementsByTagName('unit');
+            if ( $unit->length > 0 || in_array($type, $numericTypes) )
+                $haveNumber = true;
+            if ($type == '_dat')
+                $haveDate = true;
+        }
+    }
+    if (in_array($format, $formatNeedsDate) && !$haveDate)
+        return 2;
+    if (in_array($format, array_merge($formatNeedsNumber, $formatNeeds2Cols)) && !$haveNumber)
+        return 3;
+    return 0;
 }
 
 function smwf_qi_deleteScriptsCallback($match) {
