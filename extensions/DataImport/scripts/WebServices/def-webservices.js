@@ -4697,7 +4697,7 @@ DefineWebServiceSpecial.prototype = {
 		for (var i = 1; i < resultTable.childNodes.length; i++) {
 			if(resultTable.childNodes[i].childNodes[aliasColumn]){
 				resultTable.childNodes[i].childNodes[aliasColumn].firstChild.style.cursor = "pointer";
-				resultTable.childNodes[i].childNodes[aliasColumn].firstChild.style.backgroundColor = "#grey";
+				resultTable.childNodes[i].childNodes[aliasColumn].firstChild.style.backgroundColor = "#fbfb97";
 				resultTable.childNodes[i].childNodes[aliasColumn].firstChild.setAttribute('onclick', 
 						'webServiceSpecial.addAliasToSubjectCreationPattern('+i+')');
 			}
