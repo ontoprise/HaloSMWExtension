@@ -3258,7 +3258,11 @@ DefineWebServiceSpecial.prototype = {
 		// add subpath-input
 		td = document.createElement("td");
 		input = document.createElement("input");
-		input.size = "70";
+		if ($("step1-protocol-rest").checked){
+			input.size = "70";
+		} else {
+			input.size = "83";
+		}
 		td.appendChild(input);
 		row.appendChild(td);
 
@@ -3309,7 +3313,7 @@ DefineWebServiceSpecial.prototype = {
 		// add url-input
 		td = document.createElement("td");
 		input = document.createElement("input");
-		input.size = "70";
+		input.size = "83";
 		td.appendChild(input);
 		row.appendChild(td);
 

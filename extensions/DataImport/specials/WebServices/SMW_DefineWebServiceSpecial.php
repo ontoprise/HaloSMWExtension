@@ -303,7 +303,7 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 		$html .= '<td/>';
 		$html .= '<td id="step4-enable-triplification-scp-label"><span>'.wfMsg('smw_wws_enable_triplification-intro').'</span></td>';
 		$html .= '<td>';
-		$html .= '<textarea id="step4-enable-triplification-input" rows="5" cols="80" onblur="webServiceSpecial.setSubjectCreationPatternCursorPos()" value="'.$subjectCreationPattern.'">'.$subjectCreationPattern.'</textarea><br/>';
+		$html .= '<textarea id="step4-enable-triplification-input" rows="3" cols="64" onblur="webServiceSpecial.setSubjectCreationPatternCursorPos()" value="'.$subjectCreationPattern.'">'.$subjectCreationPattern.'</textarea><br/>';
 		$html .= '<a id="step4-add-alias-to-input" href="javascript:void(0)" onclick="webServiceSpecial.initSubjectCreationPatternAliasClick()">'.wfMsg('smw_wws_enable_triplification-scp-add').'</a><br/>';
 		$html .= '<span id="step4-add-alias-to-input-stop-text" style="display: none">'.wfMsg('smw_wws_enable_triplification-scp-stop-add').'</span>';
 		$html .= '<span id="step4-add-alias-to-input-note" style="display:none">'.wfMsg('smw_wws_enable_triplification-scp-add-note').'</span>';
