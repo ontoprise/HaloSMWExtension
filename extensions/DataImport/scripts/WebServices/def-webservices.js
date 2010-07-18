@@ -4679,11 +4679,13 @@ DefineWebServiceSpecial.prototype = {
 	displaySubjectCreationPattern : function(){
 		if($("step4-enable-triplification-checkbox").checked){
 			$('step4-enable-triplification-details').style.display = "";
+			$("step4-enable-triplification-input").value = '';
+			
 		} else {
 			$('step4-enable-triplification-details').style.display = "none";
 		}
 		
-		//webServiceSpecial.resetSubjectCreationPatternAliasClick();
+		webServiceSpecial.resetSubjectCreationPatternAliasClick();
 	},
 	
 	hideSubjectCreationPattern : function(){
@@ -4730,10 +4732,12 @@ DefineWebServiceSpecial.prototype = {
 		}
 		
 		$("step4-add-alias-to-input").setAttribute('onclick', 'webServiceSpecial.initSubjectCreationPatternAliasClick()');
-		$("step4-add-alias-to-input-note").style.display = 'none';
-		var tempText = $("step4-add-alias-to-input-stop-text").firstChild.nodeValue;
-		$("step4-add-alias-to-input-stop-text").firstChild.nodeValue = $("step4-add-alias-to-input").firstChild.nodeValue;
-		$("step4-add-alias-to-input").firstChild.nodeValue = tempText;
+		if($("step4-add-alias-to-input-note").style.display != 'none'){
+			$("step4-add-alias-to-input-note").style.display = 'none';
+			var tempText = $("step4-add-alias-to-input-stop-text").firstChild.nodeValue;
+			$("step4-add-alias-to-input-stop-text").firstChild.nodeValue = $("step4-add-alias-to-input").firstChild.nodeValue;
+			$("step4-add-alias-to-input").firstChild.nodeValue = tempText;
+		}
 		
 	},
 	
