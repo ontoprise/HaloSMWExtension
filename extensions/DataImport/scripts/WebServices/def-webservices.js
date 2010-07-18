@@ -3946,7 +3946,7 @@ DefineWebServiceSpecial.prototype = {
 		}
 		
 		//handle alias icon
-		if(this.numberOfUsedParameters == 0){
+		if(webServiceSpecial.numberOfUsedParameters == 0){
 			$("step-3-alias-generate-button").src = wgScriptPath
 				+ "/extensions/DataImport/skins/webservices/Pencil_grey.png";
 			$("step-3-alias-generate-button").style.cursor = "default";
