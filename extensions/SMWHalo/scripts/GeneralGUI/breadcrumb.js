@@ -26,10 +26,10 @@ Breadcrumb.prototype = {
         var breadcrumbArray;
         //get the querystring without the title=$foo, since pagename is handled different
         var currenturlquerystring = this.removeTitleFromQuery(document.location.search);
-
-        if(breadcrumb.isJSON()){
+        
+        try{
             breadcrumbArray = breadcrumb.evalJSON(true);
-        } else {
+        } catch(err) {
             breadcrumbArray = null;
         }
         
