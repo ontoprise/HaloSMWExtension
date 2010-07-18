@@ -2858,7 +2858,7 @@ DefineWebServiceSpecial.prototype = {
 		subPathRow.id = "step4-resultRow-sb-" + id + "-" + sid;
 
 		var td0 = document.createElement("td");
-		td0.setAttribute("colspan", "2");
+		//td0.setAttribute("colspan", "2");
 
 		var formatLabel = document.createTextNode("format: ");
 		td0.appendChild(formatLabel);
@@ -2888,6 +2888,9 @@ DefineWebServiceSpecial.prototype = {
 
 		subPathRow.appendChild(td0);
 
+		var td1 = document.createElement("td");
+		subPathRow.appendChild(td1);
+		
 		var td2 = document.createElement("td");
 
 		var subPathInput = document.createElement("input");
