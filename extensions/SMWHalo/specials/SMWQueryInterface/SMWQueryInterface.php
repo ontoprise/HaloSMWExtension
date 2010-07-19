@@ -167,7 +167,7 @@ class SMWQueryInterface extends SpecialPage {
                                     </select>
                                 </td>
                                 <td onmouseover="Tip(\'' . wfMsg('smw_qi_tt_sort') . '\') ">
-                                    Sort by: <select id="layout_sort" onchange="qihelper.updatePreview()">
+                                    Sort by: <select id="layout_sort" onchange="qihelper.updateQuerySource(); qihelper.updatePreview()">
                                     </select>
                                 </td>
                             </tr>
