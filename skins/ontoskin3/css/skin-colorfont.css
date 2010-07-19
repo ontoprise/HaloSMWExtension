@@ -152,6 +152,10 @@ ul.smwh_menulist div.smwh_menubody td:hover {
     font-size: small;
 }
 
+#smwh_tabs .tab.new a{
+    color: #CC2200;
+}
+
 #tabsright .righttabelements {
     border-color: #cacac4;
 }
