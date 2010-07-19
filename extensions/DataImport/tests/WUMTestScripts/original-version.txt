@@ -1,0 +1,51 @@
+== Successfull Three-Way-Merge ==
+=== Introduction ===
+==== Abstract ====
+The Porsche 911 (pronounced as Nine Eleven, German: Neunelfer) is a 2-door sports coupe made by Porsche AG of Stuttgart, Germany. It has a distinctive design, rear engined and with independent rear suspension, an evolution of the swing axle on the Porsche 356. The engine was also air-cooled until the introduction of the Type 996 in 1998. Since its introduction in autumn 1963[1], it has undergone continuous development[2]. The basic concept has remained little changed throughout its evolution.[2]
+
+Throughout its lifetime, the 911 has been modified by private teams and by the factory itself for racing, rallying and other forms of automotive competition. It is among the most successful competition cars ever. In the mid 1970s, normally aspirated 911 Carrera RSRs won major world championship sports car races such as Targa Florio, Daytona, Sebring and Nürburgring, even against prototypes. The 911-derived 935 turbo also won the coveted 24 Hours of Le Mans in 1978.
+
+In the 1999 international poll for the award of Car of the Century, the 911 came fifth. It is the only one in the top five that has remained continuously in production,[3] and was until 1998 the most successful surviving application of the air- (now water-) cooled opposed rear engine layout pioneered by its original ancestor, the Volkswagen Beetle. It is one of the oldest sports coupe nameplates still in production.
+
+==== Awards ====
+In 2004, Sports Car International named the 911 number three on the list of Top Sports Cars of the 1960s, the Carrera RS number seven on the list of Top Sports Cars of the 1970s, and the 911 Carrera number seven on the list of Top Sports Cars of the 1980s. In addition, the 911 was voted Number 2 on Automobile Magazine's list of the "100 Coolest Cars". The 997 was nominated for the World Car of the Year award for 2005.
+
+=== Outlook ===
+==== References ====
+# Corlett, Tony (2005). Porsche 911 3.2 Carrera: The Last of the Evolution. Veloce Publishing Ltd. ISBN 9781904788652. 
+# Paternie, Patrick C. (2001). Porsche 911. MotorBooks/MBI Publishing Company. ISBN 9780760307960. 
+# Paternie, Patrick C. (2004). Porsche 911 Red Book 1965–2005. MotorBooks/MBI Publishing Company. ISBN 9780760319604.
+
+==== Further Reading ====
+* Frère, P. (2006). Porsche 911 Story (eighth edition). J H Haynes & Co Ltd. ISBN 1-84425-301-5.
+* Meredith, L. (2000). Porsche 911. Sutton Publishing. ISBN 0-7509-2281-8.
+* Morgan, P. (1995). Original Porsche 911. MBI Publishing. ISBN 1-901432-16-5.
+* Raby, P. (2005). Porsche 911 Identification Guide. Herridge & Son. ISBN 0-9541063-8-5.
+* Wood, J. (1997). Porsche: The Legend. Parragon. ISBN 0-7525-2072-5.
+
+== Section-Based Merging ==
+=== Introduction ===
+==== Abstract ====
+The Porsche 911 (pronounced as Nine Eleven, German: Neunelfer) is a 2-door sports coupe made by Porsche AG of Stuttgart, Germany. It has a distinctive design, rear engined and with independent rear suspension, an evolution of the swing axle on the Porsche 356. The engine was also air-cooled until the introduction of the Type 996 in 1998. Since its introduction in autumn 1963[1], it has undergone continuous development[2]. The basic concept has remained little changed throughout its evolution.[2]
+
+Throughout its lifetime, the 911 has been modified by private teams and by the factory itself for racing, rallying and other forms of automotive competition. It is among the most successful competition cars ever. In the mid 1970s, normally aspirated 911 Carrera RSRs won major world championship sports car races such as Targa Florio, Daytona, Sebring and Nürburgring, even against prototypes. The 911-derived 935 turbo also won the coveted 24 Hours of Le Mans in 1978.
+
+In the 1999 international poll for the award of Car of the Century, the 911 came fifth. It is the only one in the top five that has remained continuously in production,[3] and was until 1998 the most successful surviving application of the air- (now water-) cooled opposed rear engine layout pioneered by its original ancestor, the Volkswagen Beetle. It is one of the oldest sports coupe nameplates still in production.
+
+==== Awards ====
+In 2004, Sports Car International named the 911 number three on the list of Top Sports Cars of the 1960s, the Carrera RS number seven on the list of Top Sports Cars of the 1970s, and the 911 Carrera number seven on the list of Top Sports Cars of the 1980s. In addition, the 911 was voted Number 2 on Automobile Magazine's list of the "100 Coolest Cars". The 997 was nominated for the World Car of the Year award for 2005.
+
+=== Outlook ===
+==== References ====
+# Corlett, Tony (2005). Porsche 911 3.2 Carrera: The Last of the Evolution. Veloce Publishing Ltd. ISBN 9781904788652. 
+# Paternie, Patrick C. (2001). Porsche 911. MotorBooks/MBI Publishing Company. ISBN 9780760307960. 
+# Paternie, Patrick C. (2004). Porsche 911 Red Book 1965–2005. MotorBooks/MBI Publishing Company. ISBN 9780760319604.
+
+==== Further Reading ====
+* Frère, P. (2006). Porsche 911 Story (eighth edition). J H Haynes & Co Ltd. ISBN 1-84425-301-5.
+* Meredith, L. (2000). Porsche 911. Sutton Publishing. ISBN 0-7509-2281-8.
+* Morgan, P. (1995). Original Porsche 911. MBI Publishing. ISBN 1-901432-16-5.
+* Raby, P. (2005). Porsche 911 Identification Guide. Herridge & Son. ISBN 0-9541063-8-5.
+* Wood, J. (1997). Porsche: The Legend. Parragon. ISBN 0-7525-2072-5.
+
+__WUM_Overwrite__
