@@ -1,6 +1,13 @@
 HaloACL extension ChangeLog
 ===========================
 
+VERSION 1.2
+
+  FEATURE:
+  	Use groups and users from an LDAP/ActiveDirectory server
+  	
+  CHANGES:
+  	* The extension was adapted to Semantic MediaWiki 1.5.1
 
 VERSION 1.1.1
 

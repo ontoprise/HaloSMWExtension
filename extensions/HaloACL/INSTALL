@@ -1,5 +1,5 @@
-Installation instructions for HaloACL extension v1.1.1
-------------------------------------------------------
+Installation instructions for HaloACL extension v1.2
+----------------------------------------------------
 
 Install instructions for the latest version of HaloACL are also online:
 
@@ -14,7 +14,7 @@ Requirements:
 =============
 
     MediaWiki 1.13.2 or 1.15.1 - 1.15.3
-    SMW 1.5.0 (optional)
+    SMW 1.5.0 - SMW 1.5.1 (optional)
     Semantic Forms 1.9 (optional)
     Deployment Framework (optional, but recommended for a fast and easy installation)
 
@@ -70,8 +70,8 @@ How to install manually:
 	This patch for MediaWiki removes all links to protected pages from 
 	the rendered articles and listings. If a link can not be removed, it is 
 	replaced by a link to the page 'Permission denied'. This patch is optional.
-* patch_for_SMW_1.5.0.txt: 
-	This patch for SMW 1.5.0 is mandatory, if you want to protect the values of 
+* patch_for_SMW_1.5.x.txt: 
+	This patch for SMW 1.5.x is mandatory, if you want to protect the values of 
 	semantic properties.
 * patch_for_SF_1.9.txt:
 	This patch for Semantic Forms 1.9 is mandatory, if you want to protect the 
@@ -108,3 +108,115 @@ Options:
 
 All configuration options are defined and described in HACL_Initialize.php.
 
+HaloACL with LDAP / ActiveDirectory support
+===========================================
+HaloACL can be connected to a LDAP or Active Directory server to use its structure
+of groups and users. The extension "LdapAuthentication" is required for this. 
+See http://www.mediawiki.org/wiki/Extension:LDAP_Authentication for further 
+information.
+
+Enabling LDAP support
+---------------------
+
+You have to set the variable $haclgBaseStore = HACL_STORE_LDAP, either in 
+HACL_Initialize.php or in LocalSettings.php.
+
+In LocalSettings.php it has to look like this:
+
+include_once('extensions/HaloACL/includes/HACL_Initialize.php');
+$haclgBaseStore = HACL_STORE_LDAP;
+enableHaloACL(); 
+
+After that the extension LdapAuthentication has to be configured in LocalSettings.php.
+The extension allows configuring the connection to several LDAP/ActiveDirectory
+domains. The following example configuration shows one setting for an LDAP and an
+Active Directory system, respectively. Of course, these settings will vary for
+your system. Most variables originate from LdapAuthentication. Please refer to
+its documentation for further information.
+
+//--- LDAP/ActiveDirectory settings ---
+
+require_once( "$IP/extensions/LdapAuthentication/LdapAuthentication.php" );
+$wgAuth = new LdapAuthenticationPlugin();
+$wgLDAPDomainNames = array( "LDAP", "ActiveDirectory" );
+$wgLDAPServerNames = 
+	array(	"LDAP"    => "localhost",
+			"ActiveDirectory" => 'localhost' );
+$wgLDAPSearchStrings = 
+	array(	"LDAP"    => "cn=USER-NAME,ou=people,dc=company,dc=com",
+			"ActiveDirectory" => "USER-NAME@xyz.company.com");
+$wgLDAPSearchAttributes = array(
+			"LDAP" => "cn",
+			"ActiveDirectory"=>"sAMAccountName"  );
+$wgLDAPGroupUseFullDN = array(
+			"ActiveDirectory"=>true  );
+
+//User and password used for proxyagent access.
+//Please use a user with limited access, NOT your directory manager!
+$wgLDAPProxyAgent = array(
+			"ActiveDirectory"=>"CN=Wikisysop,OU=Users,OU=SMW,DC=xyz,DC=company,DC=com" );
+$wgLDAPProxyAgentPassword = array(
+			"ActiveDirectory"=>"test"  );
+
+ 	
+$wgLDAPEncryptionType = 
+	array(	"LDAP"    => "clear",
+			"ActiveDirectory" => "clear");
+$wgLDAPLowerCaseUsername = 
+	array(	"LDAP"    => true,
+			"ActiveDirectory" => true);
+
+$wgLDAPBaseDNs =
+	array(	'LDAP' => 'dc=company,dc=com',
+			"ActiveDirectory" => 'OU=SMW,DC=xyz,DC=company,DC=com');
+	
+$wgLDAPUserBaseDNs =	
+	array(	'LDAP'    => 'ou=people,dc=company,dc=com',
+			"ActiveDirectory" => 'OU=Users,OU=SMW,DC=xyz,DC=company,DC=com');
+$wgLDAPGroupBaseDNs =	
+	array(	'LDAP'    => 'ou=groups,dc=company,dc=com',
+			"ActiveDirectory" => 'OU=Groups,OU=SMW,DC=xyz,DC=company,DC=com');
+	
+//The objectclass of the groups we want to search for
+$wgLDAPGroupObjectclass = 
+	array("LDAP"     => "groupOfNames" ,
+		  "ActiveDirectory" => "group");
+
+//The attribute used for group members
+$wgLDAPGroupAttribute = 
+	array(	"LDAP"=>"member" ,
+			"ActiveDirectory" => "member");
+
+//The naming attribute of the group
+$wgLDAPGroupNameAttribute = 
+	array(	"LDAP"    => "cn" ,
+			"ActiveDirectory" =>  "cn");
+$wgLDAPGroupSearchNestedGroups = 
+	array(	"LDAP"    => true ,
+			"ActiveDirectory" => true);
+$wgLDAPUseLDAPGroups = 
+	array(	"LDAP"    => true ,
+			"ActiveDirectory" => true);
+
+//The objectclass of the users we want to search for
+$wgLDAPUserObjectclass = 
+	array(	"LDAP"    => "inetOrgPerson" ,
+			"ActiveDirectory" => "person"); // only for HaloACL
+$wgLDAPUserNameAttribute = 
+	array(	"LDAP"    => "cn" ,
+			"ActiveDirectory" => "samaccountname"); // only for HaloACL
+
+Synchronizing users from the LDAP server
+----------------------------------------
+The UI shows the LDAP groups and their users. However, this is only possible if 
+the users are really known to the wiki system. If a new LDAP server is connected 
+to the wiki, unknown users will be displayed as 127.0.0.1  as unknown users 
+default to localhost. The class HACLStorageLDAP  provides the utility method 
+createUsersFromLDAP which creates a user account for each LDAP user in the wiki. 
+The wiki administrator can invoke this function with the commandline script 
+HACL_Setup.php in /extensions/HaloACL/maintenance/:
+
+php HACL_Setup.php --createUsers --ldapDomain="Name of LDAP domain"
+
+The Name of the LDAP domain is one of the domains that is specified in the LDAP 
+configuration in LocalSettings.php. 
