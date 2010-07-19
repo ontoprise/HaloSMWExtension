@@ -72,6 +72,7 @@ class TestWSTriplifier extends PHPUnit_Framework_TestCase {
 		$graphsURI = LODAdministrationStore::getInstance()->getSMWGraphsURI();
 		$allPrefixes = TSNamespaces::getAllPrefixes();
 		$allPrefixes .= ' '.LODAdministrationStore::getInstance()->getSourceDefinitionPrefixes();
+		$allPrefixes .= ' '.LODAdministrationStore::getInstance()->getProvenanceGraphPrefixes();
 		
 		$client = TSConnection::getConnector();
 		$client->connect();
@@ -99,33 +100,37 @@ class TestWSTriplifier extends PHPUnit_Framework_TestCase {
 		
 		$this->assertGreaterThan(0, strpos($response, 'assertedBy'));
 		
-		//todo: verify warrant blank nodes
+		$query = $allPrefixes.' '.' SELECT ?warrant ?p ?o WHERE { smwGraphs:WS_58_62 swp:assertedBy ?warrant . ?warrant ?p ?o . }  LIMIT 200'; 
+		$response = $client->query($query, 'merge=false', $graphsURI."ProvenanceGraph");
 		
-		//$this->assertGreaterThan(0, strpos($response, 'WS_58_62Warrant'));
-		
-		//$query = $allPrefixes.' SELECT ?p ?o WHERE { smwGraphs:WS_58_62Warrant ?p ?o . }  LIMIT 200'; 
-		//$response = $client->query($query, 'merge=false', LODAdministrationStore::getInstance()->getSMWGraphsURI()."ProvenanceGraph");
-		
-		//$this->assertGreaterThan(0, strpos($response, 'http://www.w3.org/2004/03/trix/swp-2/authority'));
-		//$this->assertGreaterThan(0, strpos($response, 'WS_58<'));
-		//$this->assertGreaterThan(0, strpos($response, 'http://purl.org/dc/elements/1.1/date'));
+		$this->assertGreaterThan(0, strpos($response, 'Warrant<'));
+		$this->assertGreaterThan(0, strpos($response, 'authority'));
 		
 		$query = $allPrefixes.' SELECT ?p ?o WHERE { smwGraphs:WS_59_62 ?p ?o . }  LIMIT 200'; 
 		$response = $client->query($query, 'merge=false', $graphsURI."ProvenanceGraph");
 		
 		$this->assertGreaterThan(0, strpos($response, 'assertedBy'));
-		//$this->assertGreaterThan(0, strpos($response, 'WS_59_62Warrant'));
 		
-		//$query = $allPrefixes.' SELECT ?p ?o WHERE { smwGraphs:WS_59_62Warrant ?p ?o . }  LIMIT 200'; 
-		//$response = $client->query($query, 'merge=false', $graphsURI."ProvenanceGraph");
+		$query = $allPrefixes.' '.' SELECT ?warrant ?p ?o WHERE { smwGraphs:WS_59_62 swp:assertedBy ?warrant . ?warrant ?p ?o . }  LIMIT 200'; 
+		$response = $client->query($query, 'merge=false', $graphsURI."ProvenanceGraph");
 		
-		//$this->assertGreaterThan(0, strpos($response, 'http://www.w3.org/2004/03/trix/swp-2/authority'));
-		//$this->assertGreaterThan(0, strpos($response, 'WS_59<'));
-		//$this->assertGreaterThan(0, strpos($response, 'http://purl.org/dc/elements/1.1/date'));
+		$this->assertGreaterThan(0, strpos($response, 'Warrant<'));
+		$this->assertGreaterThan(0, strpos($response, 'authority'));
 	}
 	
 	public function testDataSpaceSPARQLQuery(){
-		error();
+		$graphsURI = LODAdministrationStore::getInstance()->getSMWGraphsURI();
+		$allPrefixes = TSNamespaces::getAllPrefixes();
+		$allPrefixes .= ' '.LODAdministrationStore::getInstance()->getSourceDefinitionPrefixes();
+		$allPrefixes .= ' '.LODAdministrationStore::getInstance()->getProvenanceGraphPrefixes();
+		
+		$client = TSConnection::getConnector();
+		$client->connect();
+		
+		$query = $allPrefixes.' SELECT ?s ?p ?o WHERE { ?s ?p ?o . } LIMIT 200'; 
+		$response = $client->query($query, 'merge=false| dataspace=WebService:TestTriplification');
+		
+		$this->assertGreaterThan(0, strpos($response, 'OtherCompany'));
 	}
 
 	/*
@@ -139,11 +144,11 @@ class TestWSTriplifier extends PHPUnit_Framework_TestCase {
 		$text = smwf_om_GetWikiText("TestTriplification2");
 		smwf_om_EditArticle("TestTriplification1", 'PHPUnit', $text, '');
 		
-		
 		//verify triples
 		$graphsURI = LODAdministrationStore::getInstance()->getSMWGraphsURI();
 		$allPrefixes = TSNamespaces::getAllPrefixes();
 		$allPrefixes .= ' '.LODAdministrationStore::getInstance()->getSourceDefinitionPrefixes();
+		$allPrefixes .= ' '.LODAdministrationStore::getInstance()->getProvenanceGraphPrefixes();
 		
 		$client = TSConnection::getConnector();
 		$client->connect();
@@ -166,33 +171,28 @@ class TestWSTriplifier extends PHPUnit_Framework_TestCase {
 		
 		$this->assertEquals(false, strpos($response, 'Das ist der deutsche'));
 		
-		$query = $allPrefixes.' '.TSNamespaces::getAllPrefixes().' SELECT ?p ?o WHERE { smw-lde:WS_58_62 ?p ?o . }  LIMIT 200'; 
+		$query = $allPrefixes.' '.TSNamespaces::getAllPrefixes().' SELECT ?p ?o WHERE { smwGraphs:WS_58_62 ?p ?o . }  LIMIT 200'; 
 		$response = $client->query($query, 'merge=false', $graphsURI."ProvenanceGraph");
 		
-		//$this->assertGreaterThan(0, strpos($response, 'assertedBy'));
+		$this->assertGreaterThan(0, strpos($response, 'assertedBy'));
 		
-		//todo deal with warrant blank nodes
-		//$this->assertGreaterThan(0, strpos($response, 'WS_58_62Warrant'));
+		$query = $allPrefixes.' '.' SELECT ?warrant ?p ?o WHERE { smwGraphs:WS_58_62 swp:assertedBy ?warrant . ?warrant ?p ?o . }  LIMIT 200'; 
+		$response = $client->query($query, 'merge=false', $graphsURI."ProvenanceGraph");
 		
-		//$query = $allPrefixes.' SELECT ?p ?o WHERE { smw-lde:WS_58_62Warrant ?p ?o . }  LIMIT 200'; 
-		//$response = $client->query($query, 'merge=false', $graphsURI()."ProvenanceGraph");
-		
-		//$this->assertGreaterThan(0, strpos($response, 'http://www.w3.org/2004/03/trix/swp-2/authority'));
-		//$this->assertGreaterThan(0, strpos($response, 'WS_58<'));
-		//$this->assertGreaterThan(0, strpos($response, 'http://purl.org/dc/elements/1.1/date'));
+		$this->assertGreaterThan(0, strpos($response, 'Warrant<'));
+		$this->assertGreaterThan(0, strpos($response, 'authority'));
 		
 		$query = $allPrefixes.' SELECT ?p ?o WHERE { smw-lde:WS_59_62 ?p ?o . }  LIMIT 200'; 
 		$response = $client->query($query, 'merge=false', $graphsURI."ProvenanceGraph");
 		
 		$this->assertEquals(false, strpos($response, 'assertedBy'));
-		//$this->assertEquals(false, strpos($response, 'WS_59_62Warrant'));
 		
-		$query = $allPrefixes.' SELECT ?p ?o WHERE { smw-lde:WS_59_62Warrant ?p ?o . }  LIMIT 200'; 
+		$query = $allPrefixes.' '.' SELECT ?warrant ?p ?o WHERE { smwGraphs:WS_59_62 swp:assertedBy ?warrant . ?warrant ?p ?o . }  LIMIT 200'; 
 		$response = $client->query($query, 'merge=false', $graphsURI."ProvenanceGraph");
 		
-		//$this->assertEquals(false, strpos($response, 'http://www.w3.org/2004/03/trix/swp-2/authority'));
+		$this->assertEquals(false, strpos($response, 'Warrant<'));
+		$this->assertEquals(false, strpos($response, 'authority'));
 		$this->assertEquals(false, strpos($response, 'WS_59<'));
-		//$this->assertEquals(false, strpos($response, 'http://purl.org/dc/elements/1.1/date'));
 	}
 
 	/*
@@ -268,16 +268,6 @@ class TestWSTriplifier extends PHPUnit_Framework_TestCase {
 		$response = $client->query($query, 'merge=false', $graphsURI."ProvenanceGraph");
 		
 		$this->assertEquals(false, strpos($response, 'assertedBy'));
-		
-		//todo: deal with warrants
-		//$this->assertEquals(false, strpos($response, 'WS_58_62Warrant'));
-		
-		//$query = $allPrefixes.' SELECT ?p ?o WHERE { smw-lde:WS_58_62Warrant ?p ?o . }  LIMIT 200'; 
-		//$response = $client->query($query, 'merge=false', $graphsURI."ProvenanceGraph");
-		
-		//$this->assertEquals(false, strpos($response, 'http://www.w3.org/2004/03/trix/swp-2/authority'));
-		//$this->assertEquals(false, strpos($response, 'WS_58<'));
-		//$this->assertEquals(false, strpos($response, 'http://purl.org/dc/elements/1.1/date'));
 	}
 	
 	/*
