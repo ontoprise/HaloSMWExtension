@@ -525,6 +525,12 @@ QIHelper.prototype = {
             break;
         }
 	},
+    // ofc stuff can be once at a page only. If the full preview is closed,
+    // load the small preview box again
+    reloadOfcPreview : function() {
+        if ($('layout_format').value.indexOf('ofc-') == 0)
+            this.updatePreview();
+    },
 	/**
 	 * Creates valid links for Wiki Links in Preview div for elements like in
 	 * timeline div with id="previewcontent" innerHtml is changed directly
