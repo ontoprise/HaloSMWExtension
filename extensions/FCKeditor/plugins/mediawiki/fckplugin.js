@@ -1181,8 +1181,11 @@ SMW_Annotate.prototype = {
         if (window.parent.wsToolBar)
             window.parent.wsToolBar.callme();
         // rule toolbar, only available if SemanticRuls extension is included
+        // disable it for now, because the rule editor doesn't work with the FCK
+        /*
         if (window.parent.ruleToolBar)
             window.parent.ruleToolBar.callme();
+        */
         // Annotations toolbar, only if SemanticGardening extension is included
         if (window.parent.smwhgGardeningHints)
             window.parent.smwhgGardeningHints.createContainer();
