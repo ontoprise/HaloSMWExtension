@@ -733,7 +733,6 @@ QIHelper.prototype = {
             if (!n) break;
             n.parentNode.removeChild(n);
         }
-        this.updateHeightBoxcontent();
     },
 
 	/**
@@ -838,6 +837,7 @@ QIHelper.prototype = {
 		autoCompleter.registerAllInputs();
 		if (reset)
 			$('input_p0').focus();
+        this.updateHeightBoxcontent();
 	},
 
     addPropertyChainInput : function(propName) {
