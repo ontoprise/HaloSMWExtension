@@ -298,6 +298,7 @@ protected $smwUserMessages = array(
 	'smw_qi_tt_format' => 'Ausgabeformat des Queries',
 	'smw_qi_tt_link' => 'Bestimmt, welche Teile der Ergebnistabelle als Link dargestellt werden',
 	'smw_qi_tt_intro' => 'Text, der vor den Queryergebnissen ausgegeben wird',
+	'smw_qi_tt_outro' => 'Text, der hinter den Queryergebnissen ausgegeben wird',
 	'smw_qi_tt_sort' => 'Spalte, nach welcher die Sortierung erfolgt',
 	'smw_qi_tt_limit' => 'Maximale Anzahl der angezeigten Ergebnisse',
 	'smw_qi_tt_mainlabel' => '&uuml;berschrift der ersten Spalte',

@@ -295,6 +295,7 @@ Druk de rechter knop om resultaten te verkrijgen. Enkel <i>Return</i> drukken ge
 	'smw_qi_tt_format' => 'Output formaat van je query',
 	'smw_qi_tt_link' => 'Definieert welke delen van de resultatentabel zullen verschijnen als links',
 	'smw_qi_tt_intro' => 'Tekst die vooraan aan de queryresultaten toegevoegd wordt',
+    'smw_qi_tt_outro' => 'Tekst die achteraan aan de queryresultaten toegevoegd wordt',
 	'smw_qi_tt_sort' => 'Kolom die zal gebruikt worden om te sorteren',
 	'smw_qi_tt_limit' => 'Maximum aantal getoonde resultaten',
 	'smw_qi_tt_mainlabel' => 'Naam van de eerste kolom',
