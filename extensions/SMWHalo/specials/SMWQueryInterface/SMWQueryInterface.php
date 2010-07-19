@@ -206,7 +206,7 @@ class SMWQueryInterface extends SpecialPage {
 
 				'<div id="fullpreviewbox" style="display:none">'.
 				'<div id="fullpreview"></div>'.
-				'<span class="qibutton" onclick="$(\'fullpreviewbox\', \'shade\').invoke(\'toggle\')"><img src="'. $imagepath. 'delete.png"/>' . wfMsg('smw_qi_close_preview') . '</span></div>'.
+				'<span class="qibutton" onclick="$(\'fullpreviewbox\', \'shade\').invoke(\'toggle\'); qihelper.reloadOfcPreview()"><img src="'. $imagepath. 'delete.png"/>' . wfMsg('smw_qi_close_preview') . '</span></div>'.
 				'</div>'.
 
 				'<div id="resetdialogue" class="topDialogue" style="display:none">' .
