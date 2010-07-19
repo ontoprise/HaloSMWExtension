@@ -20,6 +20,11 @@
 				<exclude name="**/.svn, **/CVS" />
 			</fileset>
 		</copy>
+		<copy todir="bin/zip/extensions/LinkedData/libs">
+			<fileset dir="../libs/">
+				<exclude name="**/.svn, **/CVS" />
+			</fileset>
+		</copy>
 		<copy todir="bin/zip/extensions/LinkedData/maintenance">
 			<fileset dir="../maintenance/">
 				<exclude name="**/.svn, **/CVS" />
