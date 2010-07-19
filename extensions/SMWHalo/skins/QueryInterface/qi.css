@@ -218,9 +218,10 @@ height: 25px;
 }
 
 #querylayout{
-width:100%;
+width:98%;
 float:left;
 margin-top: 10px;
+margin-left: 2%;
 }
 
 
@@ -238,13 +239,15 @@ background: #FFFFFF;
 }
 
 #previewlayout{
-width:100%;
+width:98%;
 float:left;
 margin-top: 10px;
+margin-left: 2%;
 }
 
 #definitiontitle, #qiresulttitle, #layouttitle, #previewtitle {
     border: none;
+    min-height: 20px;
 }
 #definitiontitle span, #qiresulttitle span, #layouttitle span, #previewtitle span {
     cursor:pointer;
