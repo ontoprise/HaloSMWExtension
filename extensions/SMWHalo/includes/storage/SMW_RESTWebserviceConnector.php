@@ -66,8 +66,54 @@ class RESTWebserviceConnector {
         list($header, $res) = strpos($res, "\r\n\r\n") !== false ? explode("\r\n\r\n", $res) : array($res, "");
         return array($header, $status, str_replace("%0A%0D%0A%0D", "\r\n\r\n", $res));
 	}
+	
+	
+	/**
+	 * Sends an input stream or string data via HTTP POST
+	 * 
+	 * @param string	$payload
+	 * @param string	$path
+	 * @param resource or string	$inputHandleOrString
+	 * @param string	$contentType
+	 * @param string	$charset (optional; defaults to utf-8)
+	 * 
+	 * @returns array(HTTP header, HTTP status code, Message body)
+	 */
+	public function sendData($payload, $path, $inputHandleOrString, $contentType, $charset="utf-8") {
 
 
+		$res = "";
+		$header = "";
+
+		// Create a curl handle to a non-existing location
+		$ch = curl_init("http://".$this->host.":".$this->port."/".$this->path.$path."?".$payload);
+		curl_setopt($ch,CURLOPT_HTTPHEADER,array (
+        "Content-Type: $contentType; charset=$charset",
+        "Expect: "
+        ));
+        if (is_resource($inputHandleOrString)) {
+			curl_setopt($ch,CURLOPT_INFILE,$inputHandleOrString);
+			curl_setopt($ch,CURLOPT_PUT,true);
+			curl_setopt($ch,CURLOPT_CUSTOMREQUEST,"POST");
+        } else {
+			curl_setopt($ch,CURLOPT_POST,true);
+        	curl_setopt($ch,CURLOPT_POSTFIELDS,$inputHandleOrString);
+        }
+        
+        if ($this->credentials != '') curl_setopt($ch,CURLOPT_USERPWD,trim($this->credentials));
+        // Execute
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_BINARYTRANSFER, true);
+        curl_setopt($ch, CURLOPT_HEADER, true);
+
+        $res = curl_exec($ch);
+       
+        $status = curl_getinfo($ch,CURLINFO_HTTP_CODE);
+        curl_close($ch);
+       
+        list($header, $res) = strpos($res, "\r\n\r\n") !== false ? explode("\r\n\r\n", $res) : array($res, "");
+        return array($header, $status, str_replace("%0A%0D%0A%0D", "\r\n\r\n", $res));
+	}
 
 	private function getContentLength($header) {
 		preg_match("/Content-Length:\\s*(\\d+)/i", $header, $matches);
