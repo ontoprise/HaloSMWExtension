@@ -166,11 +166,31 @@ function smwf_qi_QIAccess($method, $params) {
 
         // fix for missing parameter order
         $order_missing = true;
+        $intro_missing = true;
+        $outro_missing = true;
         $qp = new $formatclass($format, false);
         $params = $qp->getParameters();
+        // repair some misplaced parameters
         for ($i =0; $i < count($params); $i++) {
-            if ($params[$i]['name'] == "order")
-                $order_missing = false;
+            switch ($params[$i]['name']) {
+                case "order" :
+                    $order_missing = false;
+                    break;
+                case "template" :
+                    if ( $format != "template" )
+                        array_splice($params, $i, 1);
+                    break;
+                case "intro" :
+                    $intro_missing = false;
+                    break;
+                case "outro" :
+                    $outro_missing = false;
+                    break;
+                case "headers" :
+                    if ( $format != "table" && $format != "broadtable" )
+                        array_splice($params, $i, 1);
+                    break;
+            }
         }
         if ($order_missing) {
             $params[]= array(
@@ -178,6 +198,20 @@ function smwf_qi_QIAccess($method, $params) {
                 'type' => 'enumeration',
                 'description' => wfMsg('smw_qi_tt_order'),
                 'values' => array('ascending', 'descending'),
+            );
+        }
+        if ($intro_missing) {
+            $params[]= array(
+                'name' => 'intro',
+                'type' => 'string',
+                'description' => wfMsg('smw_qi_tt_intro'),
+            );
+        }
+        if ($outro_missing) {
+            $params[]= array(
+                'name' => 'outro',
+                'type' => 'string',
+                'description' => wfMsg('smw_qi_tt_outro'),
             );
         }
         $jsonEnc = new Services_JSON();
