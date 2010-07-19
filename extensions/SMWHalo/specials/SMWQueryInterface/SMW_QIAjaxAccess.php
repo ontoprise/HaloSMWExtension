@@ -93,22 +93,23 @@ function smwf_qi_QIAccess($method, $params) {
             if (! in_array('reasoner', array_keys($fixparams))) $fixparams['reasoner'] = 'ask';
             if (! in_array('format', array_keys($fixparams))) $fixparams['format'] = 'table';
 
-            // use SMW classes or TSC classes
+            // use SMW classes or TSC classes and parse params and answer query
             if ($fixparams['reasoner'] == 'ask') 
-                $queryProcessor = "SMWQueryProcessor";
+                SMWQueryProcessor::processFunctionParams($rawparams,$querystring,$params,$printouts);
             else if ($fixparams['reasoner'] == 'sparql')
-                $queryProcessor = "SMWSPARQLQueryProcessor";
-            // parse params and answer query
-            if (isset($queryProcessor) && class_exists($queryProcessor)) {
-                $queryProcessor::processFunctionParams($rawparams,$querystring,$params,$printouts);
-                // check if there is any result and if it corresponds to the selected format
-                $mainlabel = (isset($rawparams['mainlabel']) && $rawparams['mainlabel'] == '-');
-                $invalidRes = smwf_qi_CheckValidResult($printouts, $fixparams['format'], $mainlabel);
-                if ( $invalidRes != 0 )
-                    return wfMsg('smw_qi_printout_err'.$invalidRes);
+                SMWSPARQLQueryProcessor::processFunctionParams($rawparams,$querystring,$params,$printouts);
 
-                $result = $queryProcessor::getResultFromQueryString($querystring,$params,$printouts, SMW_OUTPUT_WIKI);
-            }
+            // check if there is any result and if it corresponds to the selected format
+            $mainlabel = (isset($rawparams['mainlabel']) && $rawparams['mainlabel'] == '-');
+            $invalidRes = smwf_qi_CheckValidResult($printouts, $fixparams['format'], $mainlabel);
+            if ( $invalidRes != 0 )
+                return wfMsg('smw_qi_printout_err'.$invalidRes);
+            // answer query using the SMW classes or TSC classes
+            if ($fixparams['reasoner'] == 'ask')
+                $result = SMWQueryProcessor::getResultFromQueryString($querystring,$params,$printouts, SMW_OUTPUT_WIKI);
+            else if ($fixparams['reasoner'] == 'sparql')
+                $result = SMWSPARQLQueryProcessor::getResultFromQueryString($querystring,$params,$printouts, SMW_OUTPUT_WIKI);
+
             // check for empty result
             if (is_array($result) && trim($result[0]) == '' || trim($result == '') )
                 return wfMsg('smw_qi_printout_err4');
