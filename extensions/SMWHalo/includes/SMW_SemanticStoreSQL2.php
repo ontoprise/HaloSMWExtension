@@ -21,9 +21,9 @@ class SMWSemanticStoreSQL2 extends SMWSemanticStoreSQL {
 		$smw_subs2 = $db->tableName('smw_subp2');
 		$page = $db->tableName('page');
 		$sqlOptions = DBHelper::getSQLOptionsAsString($requestoptions, 'page_title');
-		$res = $db->query('(SELECT page_title, "true" AS has_subproperties FROM '.$page.' JOIN '.$smw_ids.' t ON page_title=smw_title AND page_namespace = '.SMW_NS_PROPERTY.
+		$res = $db->query('(SELECT page_title, "true" AS has_subproperties FROM '.$page.' JOIN '.$smw_ids.' t ON page_title=smw_title AND smw_namespace = '.SMW_NS_PROPERTY.
         ' AND page_is_redirect = 0 AND NOT EXISTS (SELECT s.s_id FROM '.$smw_subs2.' s WHERE s.s_id = smw_id) AND NOT EXISTS (SELECT s2.s_id FROM '.$smw_subs2.' s2 WHERE s2.o_id = t.smw_id)) UNION '.
-        '(SELECT page_title, "false" AS has_subproperties FROM '.$page.' JOIN '.$smw_ids.' t ON page_title=smw_title AND page_namespace = '.SMW_NS_PROPERTY.
+        '(SELECT page_title, "false" AS has_subproperties FROM '.$page.' JOIN '.$smw_ids.' t ON page_title=smw_title AND smw_namespace = '.SMW_NS_PROPERTY.
         ' AND page_is_redirect = 0 AND NOT EXISTS (SELECT s.s_id FROM '.$smw_subs2.' s WHERE s.s_id = smw_id) AND EXISTS (SELECT s2.s_id FROM '.$smw_subs2.' s2 WHERE s2.o_id = t.smw_id))'.$sqlOptions);
         
 		

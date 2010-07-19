@@ -671,7 +671,7 @@ function smwf_om_MoveProperty($draggedProperty, $oldSuperProperty, $newSuperProp
 		$newText = preg_replace("/\[\[\s*".$sp["_SUBP"]."\s*:[:|=]\s*".preg_quote($oldSuperPropertyTitle->getPrefixedText())."\s*\]\]/i", "", $text);
 	} else if ($draggedOnRootLevel) {
 		// dragged property was on root level
-		$newText .= $text."\n[[".$sp["_SUBP"]."::".$newSuperPropertyTitle->getPrefixedText()."]]";
+		$newText = $text."\n[[".$sp["_SUBP"]."::".$newSuperPropertyTitle->getPrefixedText()."]]";
 	} else {
 		// replace on article $draggedProperty [[Subproperty of::$oldSuperProperty]] with [[Subproperty of::$newSuperProperty]]
 		$newText = preg_replace("/\[\[\s*".$sp["_SUBP"]."\s*:[:|=]\s*".preg_quote($oldSuperPropertyTitle->getPrefixedText())."\s*\]\]/i", "[[".$sp["_SUBP"]."::".$newSuperPropertyTitle->getPrefixedText()."]]", $text);
@@ -680,7 +680,7 @@ function smwf_om_MoveProperty($draggedProperty, $oldSuperProperty, $newSuperProp
 	// save article
 	$draggedPropertyArticle->doEdit($newText, $draggedPropertyRevision->getComment(), EDIT_UPDATE);
 	$wgParser->parse($newText, $draggedPropertyTitle, $options, true, true, $draggedPropertyRevision->getID());
-	SMWFactbox::storeData(true);	
+	//SMWFactbox::storeData(true);	
 	return "true";
 }
 
