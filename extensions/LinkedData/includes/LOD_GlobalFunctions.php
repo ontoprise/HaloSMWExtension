@@ -84,6 +84,7 @@ function enableLinkedData() {
 	$wgAutoloadClasses['LODMLSubclassMapping'] = $lodgIP . '/includes/LODMLApi/LOD_MLSubclassMapping.php';
 	$wgAutoloadClasses['LODMLSubpropertyMapping'] = $lodgIP . '/includes/LODMLApi/LOD_MLSubpropertyMapping.php';
 */
+	$wgAutoloadClasses['LODImporter'] = $lodgIP . '/includes/LODImport/LOD_Importer.php';
 		
     //--- Autoloading for exception classes ---
    	$wgAutoloadClasses['LODException']        = $lodgIP . '/exceptions/LOD_Exception.php';
