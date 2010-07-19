@@ -1,0 +1,57 @@
+Installation instructions for LinkedData Extension v1.0
+-------------------------------------------------------
+
+In the following instructions we will use the abbreviation LDE for LinkedData 
+Extension.
+
+
+Requirements: 
+=============
+
+    MediaWiki 1.15.x
+    SMW 1.5.x
+    Triple Store Connector with OntoBroker-Quad
+    Deployment Framework (optional, but recommended for a fast and easy installation)
+
+Installation:
+=============
+
+How to install with deployment framework:
+
+(1) Download the Deployment Framework
+(2) Extract the Deplyoment Framework zip-file into the MediaWiki roots folder
+(3) Open the SMWAdministration tool
+(4) Type 'smwadmin -i linkeddata'
+    This installs the extension.
+
+How to install manually:
+
+(1) Copy the folder 'LinkedData' into the extensions folder of MediaWiki. 
+(2) Activate the LDE by adding the following lines to LocalSettings.php: 
+	include_once('extensions/LinkedData/includes/LOD_Initialize.php');
+	enableLinkedData(); 
+
+Updating the database
+---------------------
+
+The LDE requires some additional tables in the database that must
+be added to the existing database schema. Existing data will not be modified.
+Therefore change into the maintenance folder of the LDE and run the
+setup script:
+ cd /folder_to_mediawiki/extension/LinkedData/maintenance
+ php LOD_Setup.php
+
+
+Activating LDE
+------------------
+
+The extension is activated by adding the following lines to LocalSettings.php:
+
+	include_once('extensions/LinkedData/includes/LOD_Initialize.php');
+	enableLinkedData(); 
+
+
+Options:
+========
+
+All configuration options are defined and described in LOD_Initialize.php.
