@@ -23,22 +23,22 @@ Installation:
 
 How to install with deployment framework:
 
-(1) Extract the HaloACL ZIP archive
-(2) Download the Deployment Framework
-(3) Extract the Deplyoment Framework zip-file into the MediaWiki roots folder
-(4) Open the SMWAdministration tool
-(5) Type 'smwadmin -i haloacl'
+(1) Download the Deployment Framework
+(2) Extract the Deplyoment Framework zip-file into the MediaWiki roots folder
+(3) Open the SMWAdministration tool
+(4) Type 'smwadmin -i haloacl'
     This installs the extension and patches MediaWiki and SMW.
 
 How to install manually:
 
-(1) Copy the folder 'HaloACL' into the extensions folder of MediaWiki. 
-(2) Activate the HaloACL by adding the following lines to LocalSettings.php: 
+(1) Download and extract the HaloACL ZIP archive.
+(2) Copy the folder 'HaloACL' into the extensions folder of MediaWiki. 
+(3) Activate the HaloACL by adding the following lines to LocalSettings.php: 
 	include_once('extensions/HaloACL/includes/HACL_Initialize.php');
 	enableHaloACL(); 
-(3) Open a command prompt
-(4) Go to the directory of HaloACL
-(5) Choose the command depending on your MediaWiki installation to patch MediaWiki:
+(4) Open a command prompt
+(5) Go to the directory of HaloACL
+(6) Choose the command depending on your MediaWiki installation to patch MediaWiki:
 		- MediaWiki 1.13.2
 		   php patch.php -d <mediawiki-dir> -p patch_for_MW_1.13.2.txt
 		- MediaWiki 1.15.1 and 1.15.2 
@@ -46,7 +46,7 @@ How to install manually:
 		- MediaWiki 1.15.3 
 		   php patch.php -d <mediawiki-dir> -p patch_for_MW_1.15.3.txt
 	
-(6) Choose the command depending on your Semantic MediaWiki installation to patch SMW 
+(7) Choose the command depending on your Semantic MediaWiki installation to patch SMW 
 	(skip this step if you don't have SMW installed):
 		- SMW 1.4.2 
 		   php patch.php -d <mediawiki-dir> -p patch_for_SMW_1.4.2.txt
@@ -57,11 +57,11 @@ How to install manually:
 		- SMW 1.5.1 
 		   php patch.php -d <mediawiki-dir> -p patch_for_SMW_1.5.1.txt
 	
-(7) Execute the following command to patch Semantic Forms (skip this step if you don't 
+(8) Execute the following command to patch Semantic Forms (skip this step if you don't 
 	have the Semantic Forms extension installed):
 		php patch.php -d <SemanticForms-dir> -p patch_for_SF_1.9.txt
 		
-(8) Download the ScriptManger from http://sourceforge.net/projects/halo-extension/files/ 
+(9) Download the ScriptManger from http://sourceforge.net/projects/halo-extension/files/ 
     and install it.		
 		
 	
