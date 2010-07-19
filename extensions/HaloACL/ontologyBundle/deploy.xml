@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <deploydescriptor>
 	<global>
-		<version>110</version>
+		<version>120</version>
 		<id>Haloaclontologybundle</id>
 		<instdir>extensions/HaloACL/ontologyBundle</instdir>
 		<vendor>Ontoprise</vendor>
 		<description>Default rights for HaloACL</description>
 		<dependencies>
-			<dependency from="110" to="110">HaloACL</dependency>
+			<dependency from="110" to="190">HaloACL</dependency>
 	</dependencies>
 	</global>
 	<wikidumps>
