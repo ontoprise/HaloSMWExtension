@@ -163,7 +163,7 @@ QIHelper.prototype = {
 			if (callWhenFinished) callWhenFinished();
 		}
 		var createSelectionBox = function(id, values) {
-			var html = '<select id="' + 'qp_param_' + id + '" onchange="qihelper.updatePreview()">';
+			var html = '<select id="' + 'qp_param_' + id + '" onchange="qihelper.updateQuerySource(); qihelper.updatePreview()">';
 			values.each(function(v) {
 				html += '<option value="' + v + '">' + v + '</option>';
 			})
@@ -175,13 +175,13 @@ QIHelper.prototype = {
 			if (constraints != null) {
 				aclAttributes = 'class="wickEnabled" constraints="'+constraints+'"';
 			}
-			var html = '<input id="' + 'qp_param_' + id + '" type="text" '+aclAttributes+' onchange="qihelper.updatePreview()"/>';
+			var html = '<input id="' + 'qp_param_' + id + '" type="text" '+aclAttributes+' onchange="qihelper.updateQuerySource(); qihelper.updatePreview()"/>';
 			return html;
 		}
 		var createCheckBox = function(id, defaultValue) {
 			var defaultValueAtt = defaultValue ? 'checked="checked"' : '';
 			var html = '<input id="' + 'qp_param_' + id + '" type="checkbox" '
-					+ defaultValueAtt + ' onchange="qihelper.updatePreview()"/>';
+					+ defaultValueAtt + ' onchange="qihelper.updateQuerySource(); qihelper.updatePreview()"/>';
 			return html;
 		}
 		if (this.parameterPendingElement)
@@ -643,7 +643,11 @@ QIHelper.prototype = {
 		.getMessage('QI_ARTICLE_TITLE') ? ""
 				: (' | sort=' + $('layout_sort').value);
 		var qParams = this.serializeSpecialQPParameters("|");
-		if (qParams.length > 0) fullQuery += qParams
+		if (qParams.length > 0) {
+            if (! qParams.match(/^\s*\|/))
+                fullQuery += '| ';
+            fullQuery += qParams;
+        }
 		fullQuery += "| merge=false|}}";
 
 		return fullQuery;
@@ -830,7 +834,7 @@ QIHelper.prototype = {
 
         this.completePropertyDialogue();
        
-		$('dialoguebuttons').style.display = "";
+		$('dialoguebuttons').style.display = "inline";
         $('dialoguebuttons').getElementsByTagName('button').item(0).innerHTML =
             gLanguage.getMessage((reset) ? 'QI_BUTTON_ADD' : 'QI_BUTTON_UPDATE');
 		this.proparity = 2;
@@ -2288,6 +2292,7 @@ QIHelper.prototype = {
 		
 		// update result preview
 		this.getSpecialQPParameters($('layout_format').value);
+        this.updateQuerySource();
 		this.updatePreview();
 
 	},
