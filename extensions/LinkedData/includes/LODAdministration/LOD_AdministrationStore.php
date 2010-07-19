@@ -313,6 +313,8 @@ class  LODAdministrationStore  {
 		$qr = $tsa->queryTripleStore($query, $graph);
 		
 		$result = array();
+		if (is_null($qr)) return $result;
+		
 		foreach ($qr->getRows() as $row) {
 			$result[] = $row->getResult("id")->getValue();
 		}
