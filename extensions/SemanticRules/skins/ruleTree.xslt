@@ -244,9 +244,7 @@
 				<td id="ruleList-type" class="ruleListLabel">{{SR_RULE_TYPE}}</td>
 				<td class="ruleListValue">
 					<xsl:if test="@type">
-						{{RULE_TYPE_
-						<xsl:value-of select="@type" />
-						}}
+						{{RULE_TYPE_<xsl:value-of select="@type" />}}
 					</xsl:if>
 				</td>
 			</tr>

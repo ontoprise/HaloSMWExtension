@@ -32,7 +32,7 @@ var wgUserSR_LanguageStrings = {
     'RULE_TYPE_PROP_CHAINING' : 'Eigenschaftsverkettung',
     'RULE_TYPE_CALCULATION'   : 'Berechnung',
     'RULE_TYPE_USER_DEFINED'   : 'Benutzerdefiniert',
-    
+    'SR_INVALID_RULE' : 'fehlerhaft',
 
     // Simple rules
     

@@ -47,6 +47,7 @@ SRRuleWidget.prototype = {
 			
 				var id = ruletextNodes[i].getAttribute("id");
 				var type = ruletextNodes[i].getAttribute("type");
+				var status = ruletextNodes[i].getAttribute("status");
 				$$('.ruleWidget').each(function(w) { 
 					var ruleID = w.getAttribute("ruleID");
 					var wID = w.getAttribute("id");
@@ -59,6 +60,11 @@ SRRuleWidget.prototype = {
 						
 						if (type == "easyreadible") $(wID+"_easyreadible").innerHTML = html;
 						else if (type == "stylized") $(wID+"_stylized").innerHTML = html;
+						
+						if (status == "invalid") { 
+							$(wID+"_status").innerHTML = gsrLanguage.getMessage('SR_INVALID_RULE');
+							$(wID+"_status").style.color = "orange";
+						}
 					}
 				});
 			}

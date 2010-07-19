@@ -33,6 +33,8 @@ var wgUserSR_LanguageStrings = {
     'RULE_TYPE_CALCULATION'   : 'Calculation',
     'RULE_TYPE_USER_DEFINED'   : 'User defined',
     
+    'SR_INVALID_RULE' : 'invalid',
+    
     
     
 

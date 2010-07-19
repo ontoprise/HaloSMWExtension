@@ -229,6 +229,7 @@ function srfAddHTMLHeader(& $out) {
 	global $srgSRIP, $wgScriptPath, $smwgEnableObjectLogicRules, $wgRequest, $wgTitle;
 
 	// load these two on every page
+	srfAddJSLanguageScripts($out);
 	$out->addScript('<script type="text/javascript" src="'.$wgScriptPath . '/extensions/SemanticRules/scripts/SR_Rulewidget.js"></script>');
 	$out->addLink(array('rel'   => 'stylesheet','type'  => 'text/css',
                         'media' => 'screen, projection','href'  => $wgScriptPath . '/extensions/SemanticRules/skins/rules.css'));
@@ -238,7 +239,6 @@ function srfAddHTMLHeader(& $out) {
 	$action = $wgRequest->getVal('action');
 	if ($action != "edit" && $action != "annotate" && $action != "formedit" && !$SF) return true;
 
-	srfAddJSLanguageScripts($out);
 
 	$rulesEnabled = isset($smwgEnableObjectLogicRules)
 	? (($smwgEnableObjectLogicRules) ? 'true' : 'false')
@@ -367,7 +367,7 @@ function srfTripleStoreParserHook(&$parser, &$text, &$strip_state = null) {
 			$status = $active ? "active" : "inactive";
 			$statusColor = $active ? "green" : "red";
 			$replaceBy = '<h2>'.wfMsg('sr_rulesdefinedfor').' '.$prefixedText.'</h2><div id="rule_content_'.$i.'" ruleID="'.htmlspecialchars($uri).'" class="ruleWidget"><img style="margin-top: 5px;margin-left: 5px;" src="'.$wgScriptPath.'/extensions/SemanticRules/skins/images/rule.gif"/><span style="margin-left: 5px;font-weight:bold;">
-			             '.htmlspecialchars($name).'</span> <span style="float:right;margin-right: 10px;margin-top: 5px;">'.wfMsg('sr_rulestatus').':<span style="font-weight: bold;color:'.$statusColor.';">'.$status.'</span></span><hr/>'. // tab container
+			             '.htmlspecialchars($name).'</span> <span style="float:right;margin-right: 10px;margin-top: 5px;">'.wfMsg('sr_rulestatus').':<span id="rule_content_'.$i.'_status" style="font-weight: bold;color:'.$statusColor.';">'.$status.'</span></span><hr/>'. // tab container
 			             '<div id="rule_content_'.$i.'_easyreadible" class="ruleSerialization">'.htmlspecialchars($ruletext).'</div>'. // tab 1
 			             '<div id="rule_content_'.$i.'_stylized" class="ruleSerialization" style="display:none;">Stylized english</div>'.
 			             '<div id="'.htmlspecialchars($uri).'" native="'.($native?"true":"false").'" class="ruleSerialization" style="display:none;">'.htmlspecialchars($ruletext).'</div>'.
