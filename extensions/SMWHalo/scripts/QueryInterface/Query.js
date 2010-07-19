@@ -284,20 +284,26 @@ Query.prototype = {
 				asktext += "[[" + this.properties[i].getName().unescapeHTML() + "::+]]";
 			}
 			if(this.properties[i].getArity() > 2){ // always special treatment for arity > 2
-				asktext += "[[" + this.properties[i].getName().unescapeHTML() + "::";
-				var vals = this.properties[i].getValues();
-				for(var j=0; j<vals.length; j++){
-					if(j!=0)
-						asktext += ";"; // connect values with semicolon
-					if (vals[j][1] != "=") //add operator <, >, ! if existing
+                var valueSet = false;
+                var tmpAsk = "[[" + this.properties[i].getName().unescapeHTML() + "::";
+                var vals = this.properties[i].getValues();
+                for(var j=0; j<vals.length; j++){
+                    if(j!=0)
+        				tmpAsk += ";"; // connect values with semicolon
+            		if (vals[j][1] != "=") //add operator <, >, ! if existing
                         // normal ask makes no difference between > and >= the TSC does
-                        asktext += ($('usetriplestore') && $('usetriplestore').checked &&
-                                    (vals[j][1].charAt(0) == '>' || vals[j][1].charAt(0) == '<') )
+                        tmpAsk += ($('usetriplestore') && $('usetriplestore').checked &&
+                                   (vals[j][1].charAt(0) == '>' || vals[j][1].charAt(0) == '<') )
                             ? vals[j][1]
                             : vals[j][1].substring(0,1);
-					asktext += (vals[j][2] == '*') ? '' : vals[j][2].unescapeHTML();
-				}
-				asktext += "]]";
+                    // value set?
+                    if (vals[j][2] != '*') {
+                        tmpAsk += vals[j][2].unescapeHTML();
+                        valueSet = true;
+                    }
+                }
+                tmpAsk += "]]";
+                if (valueSet) asktext += tmpAsk;
 			} else { //binary property
 				var vals = this.properties[i].getValues();
 				if (vals.length == 1 && vals[0][2] == "*"){}
