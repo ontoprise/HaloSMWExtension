@@ -69,7 +69,11 @@ textarea {
 #smwh_logo{
     float: left;
     margin-bottom: 5px;
-    max-width: 400px;
+    max-width: 110px;
+}
+
+#smwh_logo img{
+    max-height: 100px;
 }
 
 #smwh_personal{
