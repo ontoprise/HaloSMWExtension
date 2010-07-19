@@ -125,7 +125,7 @@ class  LODTriple  {
 		}
 		
 		$obj = ($this->mType == '__objectURI') 
-						? $this->mObject
+						? (preg_match("~^http://~i", $this->mObject) ? '<' . $this->mObject . '>' : $this->mObject)
 						: self::makeLiteral($this->mObject, $this->mType);
 		
 		$SPARULCommand = "{$this->mSubject} {$this->mPredicate} $obj .";

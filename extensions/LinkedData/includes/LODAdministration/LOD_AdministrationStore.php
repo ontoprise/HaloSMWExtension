@@ -143,25 +143,25 @@ class  LODAdministrationStore  {
 		$propNS = "smw-lde:";
 		$triples = array();
 		
-		$triples[] = new LODTriple($subject, "rdf:type", "smw-lde:Datasource", "owl:Thing");
+		$triples[] = new LODTriple($subject, "rdf:type", "smw-lde:Datasource", "__objectURI");
 		$triples[] = new LODTriple($subject, $propNS."ID", $sd->getID(), "xsd:string");
 		$triples[] = new LODTriple($subject, $propNS."description", $sd->getDescription(), "xsd:string");
 		$triples[] = new LODTriple($subject, $propNS."label", $sd->getLabel(), "xsd:string");
 		$triples[] = new LODTriple($subject, $propNS."linkedDataPrefix", $sd->getLinkedDataPrefix(), "xsd:string");
 		$triples[] = new LODTriple($subject, $propNS."uriRegexPattern", $sd->getUriRegexPattern());
-		$triples[] = new LODTriple($subject, $propNS."homepage", $sd->getHomepage(), "owl:Thing");
+		$triples[] = new LODTriple($subject, $propNS."homepage", $sd->getHomepage(), "__objectURI");
 
 		if (is_array($sd->getSampleURIs())) {
 			foreach ($sd->getSampleURIs() as $uri) {
-				$triples[] = new LODTriple($subject, $propNS."sampleURI", $uri, "owl:Thing");
+				$triples[] = new LODTriple($subject, $propNS."sampleURI", $uri, "__objectURI");
 		 	}
 		}
 
-	 	$triples[] = new LODTriple($subject, $propNS."sparqlEndpointLocation", $sd->getSparqlEndpointLocation(), "owl:Thing");
-	 	$triples[] = new LODTriple($subject, $propNS."sparqlGraphName", $sd->getSparqlGraphName(), "owl:Thing");
+	 	$triples[] = new LODTriple($subject, $propNS."sparqlEndpointLocation", $sd->getSparqlEndpointLocation(), "__objectURI");
+	 	$triples[] = new LODTriple($subject, $propNS."sparqlGraphName", $sd->getSparqlGraphName(), "__objectURI");
 		if (is_array($sd->getDataDumpLocations())) {
 		 	foreach ($sd->getDataDumpLocations() as $ddl) {
-		 		$triples[] = new LODTriple($subject, $propNS."dataDumpLocation", $ddl, "owl:Thing");
+		 		$triples[] = new LODTriple($subject, $propNS."dataDumpLocation", $ddl, "__objectURI");
 		 	}
 		}
 
@@ -170,7 +170,7 @@ class  LODAdministrationStore  {
 
 		if (is_array($sd->getVocabularies())) {
 		 	foreach ($sd->getVocabularies() as $voc) {
-		 		$triples[] = new LODTriple($subject, $propNS."vocabulary", $voc, "owl:Thing");
+		 		$triples[] = new LODTriple($subject, $propNS."vocabulary", $voc, "__objectURI");
 		 	}
 		}
 

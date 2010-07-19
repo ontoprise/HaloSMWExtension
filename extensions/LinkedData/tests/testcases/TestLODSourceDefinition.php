@@ -21,9 +21,9 @@ class TestLODSourceDefinition extends PHPUnit_Framework_TestCase {
 		"LinkedDataPrefix" => "http://dbpedia.org/resource/",
 		"SampleURIs" => array("http://dbpedia.org/resource/Computer_science", "http://dbpedia.org/resource/Organization"),
 		"SparqlEndpointLocation" => "http://deepblue.rkbexplorer.com/sparql/",
-		"SparqlGraphName" => "deepblue",
+		"SparqlGraphName" => "http://example.org/deepblue",
 		"UriRegexPattern" => "^http://deepblue.rkbexplorer.com/id/.+",
-		"Vocabularies" => array("dc", "foaf", "rdfs"),
+		"Vocabularies" => array("http://purl.org/dc/elements/1.1/", "http://xmlns.com/foaf/0.1/", "http://www.w3.org/2000/01/rdf-schema#"),
 	
 	);
 	
