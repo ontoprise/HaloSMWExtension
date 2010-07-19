@@ -51,6 +51,31 @@ The extension is activated by adding the following lines to LocalSettings.php:
 	enableLinkedData(); 
 
 
+Installing TSC
+-------------------
+The LOD extension requires the TSC prof. version 1.5.1. It must be installed and
+configured using the ontobroker-quad driver. 
+
+1. Install TSC prof. 1.5.1
+
+2. Goto to install-dir and type: 
+        tsc.exe driver=ontobroker-quad 
+        (you may create a shortcut for that)
+        
+3. Load a datasource description from a RDF file. 
+   Add the additional commands in scripts/init.sample:
+    
+    DROP SILENT GRAPH <http://www.example.org/smw-lde/smwGraphs/DataSourceInformationGraph>
+    CREATE SILENT GRAPH <http://www.example.org/smw-lde/smwGraphs/DataSourceInformationGraph>
+    LOAD file://<your file>?format=<format> INTO <http://www.example.org/smw-lde/smwGraphs/DataSourceInformationGraph>
+    
+    Replace <your file> and <format> by proper values. <your file> can be a relative or absolute path.
+    
+4. Change to to directory wiki-dir/extensions/LinkedData/maintenance
+    Type: LOD_importDatasources.php
+    
+    It should return with HTTP 200 status code.
+
 Options:
 ========
 
