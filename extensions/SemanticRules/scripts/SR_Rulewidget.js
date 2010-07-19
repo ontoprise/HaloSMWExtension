@@ -76,9 +76,10 @@ SRRuleWidget.prototype = {
 			pi.show(w);
 		});
 		
-			sajax_do_call('srf_sr_AccessRuleEndpoint', [
+		if (rulelist != '') {	sajax_do_call('srf_sr_AccessRuleEndpoint', [
 					'serializeRules', rulelist ], callbackOnRequest
 					.bind(this));
+		}
 	},
 	
 	selectMode: function(event) {
