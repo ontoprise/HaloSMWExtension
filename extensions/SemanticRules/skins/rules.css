@@ -27,6 +27,8 @@
 	border: 1px solid #aaaaaa;
 }
 
+
+
 .rules-title {
 	color: #ffffff;
 	background: #aaaaaa;
@@ -130,4 +132,9 @@
 	 background-color: #F9F9F9;
 	 padding: 1em;
 	 margin: 5px;
+}
+
+#ruleTreeSwitch {
+    margin-left:2px;
+    vertical-align: top;
 }

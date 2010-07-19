@@ -125,7 +125,7 @@ function srfAddToOntologyBrowser(& $treeContainer, & $boxContainer, & $menu, & $
 	$treeContainer .= '<div id="ruleTree" style="display:none" class="ruleTreeListColors treeContainer"></div>';
 
 	// additional switch
-	$switch .= "<img src=\"$wgScriptPath/extensions/SemanticRules/skins/images/rule.gif\"></img><a class=\"treeSwitch\" id=\"ruleTreeSwitch\" onclick=\"globalActionListener.switchTreeComponent(event,'ruleTree')\">".wfMsg('smw_ob_ruleTree')."</a>";
+	$switch .= "<img style=\"margin-left: 3px;margin-bottom: -1px\" src=\"$wgScriptPath/extensions/SemanticRules/skins/images/rule.gif\"></img><a class=\"treeSwitch\" id=\"ruleTreeSwitch\" onclick=\"globalActionListener.switchTreeComponent(event,'ruleTree')\">".wfMsg('smw_ob_ruleTree')."</a>";
 
 	// additional rule box with metadata
 	$boxContainer = "<div id=\"ruleContainer\" style=\"display:none\">
