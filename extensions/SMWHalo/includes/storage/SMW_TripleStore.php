@@ -906,8 +906,15 @@ class SMWTripleStore extends SMWStore {
 			if (!empty($literalValue)) {
 
 				// create SMWDataValue either by property or if that is not possible by the given XSD type
+				
 				if ($property instanceof SMWPropertyValue ) {
-					$value = SMWDataValueFactory::newPropertyObjectValue($pr->getData(), $literalValue);
+					$propertyTitle = Title::newFromText($pr->getData()->getText(), SMW_NS_PROPERTY);
+					if (!$propertyTitle->exists()) {
+						// fallback if property does not exist, then use tyoe
+						$value = SMWDataValueFactory::newTypeIDValue(WikiTypeToXSD::getWikiType($literalType));
+					} else {
+					    $value = SMWDataValueFactory::newPropertyObjectValue($pr->getData(), $literalValue);
+					}
 				} else {
 					$value = SMWDataValueFactory::newTypeIDValue(WikiTypeToXSD::getWikiType($literalType));
 				}
