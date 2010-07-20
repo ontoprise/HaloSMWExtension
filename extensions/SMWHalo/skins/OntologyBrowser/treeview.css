@@ -323,7 +323,7 @@ a.selectedSwitch {
 }
 	
 .aoFoldClosed {
-    background: url(./images/plus.gif);
+    background: url(./images/ArrowRight.png);
     width: 16px;
 	height: 16px;
 	background-repeat:no-repeat;
@@ -331,7 +331,7 @@ a.selectedSwitch {
 }
 
 .aoFoldOpen {
-    background: url(./images/minus.gif);
+    background: url(./images/ArrowDown.png);
     width: 16px;
 	height: 16px;
 	background-repeat:no-repeat;
