@@ -14,7 +14,6 @@ SRRuleActionListener.prototype = {
 		this.OB_cachedRuleTree = null;
 		selectionProvider.addListener(this, OB_TREETABCHANGELISTENER);
 		selectionProvider.addListener(this, OB_FILTERTREE);
-		selectionProvider.addListener(this, OB_FILTERBROWSING);
 		selectionProvider.addListener(this, OB_RESET);
 		selectionProvider.addListener(this, OB_SELECTIONLISTENER);
 		
@@ -46,7 +45,8 @@ SRRuleActionListener.prototype = {
 		$('relattributesContainer').hide();
 		$('hideInstancesButton').hide();
 
-		$('ruleContainer').show();
+		var ruleContainer = $('ruleContainer');
+		if (ruleContainer) ruleContainer.show();
 	},
 	
 	hideRuleContainer: function() {
@@ -55,8 +55,9 @@ SRRuleActionListener.prototype = {
 		$('rightArrow').show();
 		$('relattributesContainer').show();
 		$('hideInstancesButton').show();
-
-		$('ruleContainer').hide();
+		
+		var ruleContainer = $('ruleContainer');
+		if (ruleContainer) ruleContainer.hide();
 	},
 
 	filterBrowsing : function(tabname, filter) {
