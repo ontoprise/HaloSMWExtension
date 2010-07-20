@@ -1021,7 +1021,8 @@ QIHelper.prototype = {
                     + gLanguage.getMessage('QI_DC_ADD_OTHER_RESTRICT') + '</a>';
             }
         }
-        $('input_r' + newRowIndex).focus(); // focus created input
+        if ($('dialoguecontent_pvalues').style.display != 'none')
+            $('input_r' + newRowIndex).focus(); // focus created input
 		autoCompleter.registerAllInputs();
     },
 
@@ -1385,15 +1386,12 @@ QIHelper.prototype = {
         cell.innerHTML = gLanguage.getMessage('QI_PROPERTYVALUE');
         cell = row.insertCell(1);
         var tmpHTML='<table><tr><td '
-            + 'onmouseover="Tip(\'' + gLanguage.getMessage('QI_TT_SHOW_IN_RES') + '\')">';
-        if (this.activeQueryId == 0)
-			tmpHTML += '<input type="checkbox" id="input_c1" onchange="qihelper.toggleShowProperty();"/>';
-		else
-			tmpHTML += '<input type="checkbox" disabled="disabled" id="input_c1"/>';
-        tmpHTML += ' </td><td> '
+            + 'onmouseover="Tip(\'' + gLanguage.getMessage('QI_TT_SHOW_IN_RES') + '\')">'
+            + '<input type="checkbox" id="input_c1" />'
+            + ' </td><td> '
             + '<span onmouseover="Tip(\'' + gLanguage.getMessage('QI_TT_SHOW_IN_RES') + '\')">'
             + gLanguage.getMessage('QI_SHOW_PROPERTY')
-            + '</span></td></tr>'
+            + '</span></td><td> </td></tr>'
             + '<tr id="input_c3d" style="display:none"><td> </td>'
             + '<td>' + gLanguage.getMessage('QI_COLUMN_LABEL') + ':</td>'
             + '<td><input type="text" id="input_c3"/></td></tr>'
@@ -1407,6 +1405,12 @@ QIHelper.prototype = {
             + '</span></td><td> </td></tr></table>';
         cell.innerHTML = tmpHTML;
         $('dialoguecontent').parentNode.parentNode.appendChild(node);
+        // add event handler when clicking the checkbox "show in result"
+        if (this.activeQueryId == 0)
+            $('input_c1').onclick = function() { qihelper.toggleShowProperty(); }
+        else
+            $('input_c1').disabled = "disabled";
+            
         // hr line
         node = document.createElement('hr');
         $('dialoguecontent').parentNode.parentNode.appendChild(node);
@@ -1420,17 +1424,21 @@ QIHelper.prototype = {
         cell.setAttribute('style', 'border-botton: 1px solid #AAAAAA;');
         cell.innerHTML = gLanguage.getMessage('QI_PROP_VALUES_RESTRICT') + ': '
             + '<span onmouseover="Tip(\'' + gLanguage.getMessage('QI_TT_NO_RESTRICTION') + '\')">'
-            + '<input type="radio" name="input_r0" value="-1" onchange="qihelper.setPropertyRestriction();" checked="checked" />' + gLanguage.getMessage('QI_NONE')
+            + '<input type="radio" name="input_r0" value="-1" checked="checked" />' + gLanguage.getMessage('QI_NONE')
             + '</span>&nbsp;<span onmouseover="Tip(\'' + gLanguage.getMessage('QI_TT_VALUE_RESTRICTION') + '\')">'
-            + '<input type="radio" name="input_r0" value="-2" onchange="qihelper.setPropertyRestriction();"/>' + gLanguage.getMessage('QI_SPECIFIC_VALUE')
+            + '<input type="radio" name="input_r0" value="-2" />' + gLanguage.getMessage('QI_SPECIFIC_VALUE')
             + '</span>&nbsp;<span onmouseover="Tip(\'' + gLanguage.getMessage('QI_TT_SUBQUERY') + '\')">'
-            + '<input type="radio" name="input_r0" value="'+this.nextQueryId+'" onchange="qihelper.setPropertyRestriction();"/>'
+            + '<input type="radio" name="input_r0" value="'+this.nextQueryId+'" />'
             + '<span id="usesub">' + gLanguage.getMessage('QI_SUBQUERY') + '</span></span>&nbsp;';
         $('dialoguecontent').parentNode.parentNode.appendChild(node);
         node = document.createElement('table');
         node.style.display="none";
         node.id = "dialoguecontent_pvalues";
         $('dialoguecontent').parentNode.parentNode.appendChild(node);
+        // add onclick handler for changing the value (IE won't accept onchange)
+        var radiobuttons = $('dialoguecontent_pradio').getElementsByTagName('input');
+        for (var i = 0; i < radiobuttons.length; i++)
+            radiobuttons[i].onclick = function() { qihelper.setPropertyRestriction(); } 
     },
 
     /**
@@ -1486,9 +1494,9 @@ QIHelper.prototype = {
 
     toggleShowProperty : function() {
         if ($('input_c1').checked) {
-            $('input_c3d').style.display = null;
+            $('input_c3d').style.display = (Prototype.Browser.IE) ? 'inline' : null;
             if ($('input_c4').getElementsByTagName('option').length > 0)
-                $('input_c4d').style.display = null;
+                $('input_c4d').style.display = (Prototype.Browser.IE) ? 'inline' : null;
         } else {
             $('input_c3d').style.display = 'none';
             $('input_c4d').style.display = 'none'
@@ -1603,7 +1611,8 @@ QIHelper.prototype = {
             if (this.activeQueryId == 0) {
                 $('input_c1').checked = prop.isShown(); // check box if appropriate
                 $('input_c3').value = prop.getColName();
-                $('input_c3d').style.display= prop.isShown() ? null : 'none';
+                $('input_c3d').style.display= prop.isShown()
+                    ? (Prototype.Browser.IE) ? 'inline' : null : 'none';
                 if (prop.supportsUnits() && this.proparity == 2) {
                     $('input_c4').value = prop.getShowUnit();
                     var options = "";
@@ -1614,13 +1623,18 @@ QIHelper.prototype = {
                         options += '>' + this.propUnits[0][i] + '</option>';
                     }
                     $('input_c4').innerHTML=options;
-                    $('input_c4d').style.display= prop.isShown() ? null : 'none';
+                    $('input_c4d').style.display= prop.isShown()
+                        ? Prototype.Browser.IE ? 'inline' : null : 'none';
                 }
             } else {
                 $('input_c1').disabled = "disabled";
             }
-            // some property values have been selected to restict the result set
-            // set radio button and fill the input fiels with the selected values
+            // if the selector is set to "restict value" then make the restictions visible
+            if (selector == -2) {
+                document.getElementsByName('input_r0')[1].checked = true;
+                $('dialoguecontent_pvalues').style.display = "inline";
+            }
+            // load enumeration values
             if (prop.isEnumeration()) {
                 this.propIsEnum = true;
                 this.enumValues = prop.getEnumValues();
@@ -1640,8 +1654,8 @@ QIHelper.prototype = {
                 var currRow = i + rowOffset;
                 if (this.numTypes[vals[0][0].toLowerCase()]) // is it a numeric type?
                     numType = true;
-                $('dialoguecontent_pvalues').rows[currRow].cells[1].innerHTML = this
-                    .createRestrictionSelector(vals[i][1], false, numType);
+                $('dialoguecontent_pvalues').rows[currRow].cells[1].innerHTML =
+                    this.createRestrictionSelector(vals[i][1], false, numType);
                 // deactivate autocompletion
                 if (!acChange)
                     autoCompleter.deregisterAllInputs();
@@ -1669,11 +1683,6 @@ QIHelper.prototype = {
                 $('input_r'+(i+1)).value = vals[i][2];
             }
             if (acChange) autoCompleter.registerAllInputs();
-            // if the selector is set to "restict value" then make the restictions visible
-            if (selector == -2) {
-                document.getElementsByName('input_r0')[1].checked = true;
-                $('dialoguecontent_pvalues').style.display = "inline";
-            }
         }
 		$('qidelete').style.display = "inline";
 		
@@ -1868,6 +1877,7 @@ QIHelper.prototype = {
 		        result = result.replace(/>/g, '&gt;');
 		        return result;
 		    }
+		    if (! op) return;
 			var selected = (op[0] == option) ? 'selected="selected"' : '';
             var esc_op = escapeXMLEntities(op[0]);
             html += '<option value="'+esc_op+'" '+selected+'>'+op[1] + ' ('+esc_op+')</option>';
@@ -2883,7 +2893,7 @@ getShowUnit : function() {
     return this.showUnit;
 },
 getColName : function() {
-    return this.colName;
+    return (this.colName) ? this.colName : "";
 }
 }
 
