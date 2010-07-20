@@ -149,7 +149,7 @@ class SMWFullSemanticData {
 	        			break;
 	        		} else {
 						if ($dv->isNumeric()) {
-			        		if ($dv->getNumericValue() == $v->getNumericValue()) {
+			        		if ($dv->getWikiValue() == $v->getWikiValue()) {
 			        			$isDerived = false;
 			        			break;
 			        		}
