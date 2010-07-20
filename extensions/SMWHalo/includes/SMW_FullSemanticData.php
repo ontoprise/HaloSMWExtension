@@ -86,7 +86,7 @@ class SMWFullSemanticData {
         // echo $queryText;
 		
 		// Ask for all properties of the subject (derived and ground facts)
-		$q = SMWSPARQLQueryProcessor::createQuery($queryText, new ParserOptions());
+		$q = SMWSPARQLQueryProcessor::createQuery($queryText, array());
 		$res = smwfGetStore()->getQueryResult($q); // SMWQueryResult
 		
 		$propVal = array();
