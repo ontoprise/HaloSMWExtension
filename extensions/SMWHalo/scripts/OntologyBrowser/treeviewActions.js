@@ -1234,7 +1234,7 @@ OBGlobalActionListener.prototype = {
 		$$('.treeSwitch').each(function(e) { 
 			if (e.id != showWhichTree+"Switch") e.removeClassName("selectedSwitch")
 			});
-		$$('.menuBar').each(function(e) { e.hide() });
+		$$('.menuBarTree').each(function(e) { e.hide() });
 		var menuBarToShow = $("menuBar"+showWhichTree);
 		if (menuBarToShow) menuBarToShow.show(); // menubar is optional
 				
