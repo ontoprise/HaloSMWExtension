@@ -343,3 +343,11 @@ a.selectedSwitch {
 	padding: 10px;
 }
 
+.OBStaticHint {
+	color: #666666;
+	margin-top: 0.5em;
+}
+
+.aoDataSourceSelector {
+	width: 20em;
+}
