@@ -919,7 +919,7 @@ QIHelper.prototype = {
             // if the previous input field has bold style, remove that
             try {
                 var input = $('dialoguecontent').rows[(idx-1)*2].getElementsByTagName('td')[1].getElementsByTagName('input');
-                input[0].style.fontWeight = null;
+                input[0].style.fontWeight = 'normal';
             } catch (e) {};
         }
         autoCompleter.registerAllInputs();
