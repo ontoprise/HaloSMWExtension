@@ -191,7 +191,8 @@ protected $smwUserMessages = array(
 	'smw_ob_advanced_options' => "Einstellungen" ,
 	'smw_ob_select_datasource' => "Zu durchsuchende Datenquellen:" ,
 	'smw_ob_select_multiple' => "Sie können <b>mehrere</b> Datenquellen auswählen, indem Sie <b>STRG</b> gedückt halten und die Einträge anklicken.",
-	
+	'smw_ob_ts_not_connected' => "Es wurde kein Triple Store gefunden. Bitte fragen Sie Ihren Wikiadministrator!",
+
 
 	/* Combined Search*/
 	'smw_combined_search' => 'Combined Search',
