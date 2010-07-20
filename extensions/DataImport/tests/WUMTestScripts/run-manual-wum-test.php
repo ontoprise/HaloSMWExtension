@@ -1,6 +1,6 @@
 <?php
 
-$url = 'http://localhost/mediawiki/';
+$url = 'http://10.0.0.211/DemoWiki/';
 $user = 'WikiSysop';
 $user = 'root';
 $title = 'WUMDemo';
