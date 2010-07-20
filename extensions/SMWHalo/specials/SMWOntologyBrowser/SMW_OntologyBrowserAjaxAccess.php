@@ -302,6 +302,8 @@ class OB_StorageTS extends OB_Storage {
 			$b = $children->binding[0]; // instance
 
 			$sv = $b->children()->uri[0];
+			if (is_null($sv)) $sv = $b->children()->bnode[0];
+			if (is_null($sv)) continue;
 
 			$metadataMap = array();
 			foreach($sv->attributes() as $mdProperty => $mdValue) {
