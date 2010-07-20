@@ -89,16 +89,19 @@ class SMW_OntologyBrowser extends SpecialPage {
 			$advancedOptions  = wfMsg("smw_ob_advanced_options");
 			$fromWiki         = wfMsg("smw_ob_source_wiki");
 			$selectDatasource = wfMsg("smw_ob_select_datasource");
+			$selectMultiHint  = wfMsg("smw_ob_select_multiple");
+			
 			$html .= <<<TEXT
 <div id="advancedOptions" class="advancedOptions">
 	<div id="aoFoldIcon" class="aoFoldClosed"> </div>
 	<b>$advancedOptions</b>
 	<div id="aoContent" class="aoContent">
 		<div><b>$selectDatasource</b></div>
-		<select id="dataSourceSelector" name="DataSource" size="5" multiple="multiple">
+		<select id="dataSourceSelector" name="DataSource" size="5" multiple="multiple" class="aoDataSourceSelector">
 			<option>$fromWiki</option>
 			$sourceOptions
 		</select>
+		<div class="OBStaticHint">$selectMultiHint</div>
 	</div>
 </div>
 TEXT;
