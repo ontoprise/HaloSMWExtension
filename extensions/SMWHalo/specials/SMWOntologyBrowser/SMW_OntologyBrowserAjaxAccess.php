@@ -690,7 +690,7 @@ function smwf_ob_OntologyBrowserAccess($method, $params, $dataSource) {
 
 	$browseWiki = wfMsg("smw_ob_source_wiki");
 	global $smwgDefaultStore;
-	if ($smwgDefaultStore == 'SMWTripleStore' && !empty($dataSource) && $dataSource != $browseWiki) {
+	if ($smwgDefaultStore == 'SMWTripleStoreQuad' && !empty($dataSource) && $dataSource != $browseWiki) {
 		// dataspace parameter. so assume quad driver is installed
     	$storage = new OB_StorageTSQuad($dataSource);
 	} else if ($smwgDefaultStore == 'SMWTripleStore') {
