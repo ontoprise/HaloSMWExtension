@@ -924,13 +924,18 @@ function smwfGenerateUpdateAfterMoveJob(& $moveform, & $oldtitle, & $newtitle) {
 
 function smwfAnnotateTab ($content_actions) {
 	global $wgUser, $wgTitle,  $wgRequest;
+	global $wgTitle;
+	
+	wfRunHooks('userCan', array(&$wgTitle, &$wgUser, "annotate", &$allowed));
+	if (!$allowed) {
+		return true;
+	}
 	if ($wgTitle->getNamespace() == NS_SPECIAL) return true; // Special page
 	//Check if edit tab is present, if not don't at annote tab
 	//if (!array_key_exists('edit',$content_actions) )
 	//return true;
 	$action = $wgRequest->getText( 'action' );
 	//Build annotate tab
-	global $wgTitle;
 	$main_action['main'] = array(
         	'class' => ($action == 'annotate') ? 'selected' : false,
         	'text' => wfMsg('smw_annotation_tab'), //Title of the tab
