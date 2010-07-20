@@ -1997,6 +1997,7 @@ QIHelper.prototype = {
 		if (pname == "") { // no name entered?
 			$('qistatus').innerHTML = gLanguage
 					.getMessage('QI_ENTER_PROPERTY_NAME');
+            this.updateHeightBoxcontent();
 		} else {
 			var pshow = $('input_c1').checked; // show in results?
             // when show in results is checked, add label and unit if they exist
