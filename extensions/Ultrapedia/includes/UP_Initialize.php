@@ -12,14 +12,17 @@ $smwgUltraPediaIP = $IP . '/extensions/Ultrapedia';
 $smwgUltraPediaScriptPath = $wgScriptPath . '/extensions/Ultrapedia';
 $smwgUltraPediaEnabled = true;
 
-global $wgExtensionFunctions, $wgHooks, $wgAutoloadClasses;
+global $wgExtensionFunctions, $wgHooks, $wgAutoloadClasses, $smwgUltraPediaEnableLocalEdit;
 $wgExtensionFunctions[] = 'smwgUltraPediaSetupExtension';
 $wgHooks['LanguageGetMagic'][] = 'UPParserFunctions::languageGetMagic';
 $wgHooks['BeforePageDisplay'][]='smwfUltraPediaAddHTMLHeader';
 
 $wgAutoloadClasses['UPParserFunctions'] = $smwgUltraPediaIP . '/includes/UP_ParserFunctions.php';
 
-$wgHooks['SkinTemplateTabs'][] = 'smwfUPWPCloneEditTab';
+if( $smwgUltraPediaEnableLocalEdit === true){
+    $wgHooks['SkinTemplateTabs'][] = 'smwfUPWPCloneEditTab';
+}
+
 function smwfUPWPCloneEditTab($obj, $content_actions) {
 		// make sure that this is not a special page, and
 		// that the user is allowed to edit it
