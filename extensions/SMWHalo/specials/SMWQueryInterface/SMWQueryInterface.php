@@ -191,6 +191,7 @@ class SMWQueryInterface extends SpecialPage {
 
 		$imagepath = $smwgHaloScriptPath . '/skins/QueryInterface/images/';
 		$useTS = "";
+		$isIE = (isset($_SERVER['HTTP_USER_AGENT']) && preg_match('/MSIE \d+\.\d+/', $_SERVER['HTTP_USER_AGENT']));
 		if (isset($smwgWebserviceEndpoint)) {
 			$useTS = '<input type="checkbox" id="usetriplestore">' . wfMsg('smw_qi_usetriplestore') . '</input>';
 		}
@@ -198,7 +199,7 @@ class SMWQueryInterface extends SpecialPage {
 		//'<span class="qibutton" onclick="qihelper.showLoadDialogue()">' . wfMsg('smw_qi_load') . '</span><span style="color:#C0C0C0">&nbsp;|&nbsp;</span>' .
 		//'<span class="qibutton" onclick="qihelper.showSaveDialogue()">' . wfMsg('smw_qi_save') . '</span><span style="color:#C0C0C0">&nbsp;|&nbsp;</span>' .
 		//'<span class="qibutton" onclick="qihelper.exportToXLS()">' . wfMsg('smw_qi_exportXLS') . '</span>' .
-						'<button onclick="qihelper.copyToClipboard()" onmouseover="Tip(\'' . wfMsg('smw_qi_tt_clipboard') . '\')">' . wfMsg('smw_qi_clipboard') . '</button>'.
+		      (($isIE) ? '<button onclick="qihelper.copyToClipboard()" onmouseover="Tip(\'' . wfMsg('smw_qi_tt_clipboard') . '\')">' . wfMsg('smw_qi_clipboard') . '</button>' : '').
 		$buttons.
 		$useTS.
 						'<span><button onclick="qihelper.resetQuery()" onmouseover="Tip(\'' . wfMsg('smw_qi_tt_reset') . '\')">' . wfMsg('smw_qi_reset') . '</button></span>'.
