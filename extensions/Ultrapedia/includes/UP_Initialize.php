@@ -19,6 +19,8 @@ $wgHooks['BeforePageDisplay'][]='smwfUltraPediaAddHTMLHeader';
 
 $wgAutoloadClasses['UPParserFunctions'] = $smwgUltraPediaIP . '/includes/UP_ParserFunctions.php';
 
+
+//change the edit tab only in the ultrapedia context, there for the config var has to be set true
 if( $smwgUltraPediaEnableLocalEdit === true){
     $wgHooks['SkinTemplateTabs'][] = 'smwfUPWPCloneEditTab';
 }
