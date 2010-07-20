@@ -624,8 +624,10 @@ select: function (event, node, categoryID, categoryName) {
 	 
 	 
 	 if (OB_LEFT_ARROW == 0) {
-	 	OB_instance_pendingIndicator.show();
-	 	dataAccess.getInstances(categoryName, 0, callbackOnCategorySelect);
+		 if ($("hideInstancesButton").getAttribute("hidden") != "true") {
+		 	OB_instance_pendingIndicator.show();
+		 	dataAccess.getInstances(categoryName, 0, callbackOnCategorySelect);
+		 }
 	 }
 	 if (OB_RIGHT_ARROW == 0) {
 	 	OB_relatt_pendingIndicator.show();
@@ -838,9 +840,11 @@ OBInstanceActionListener.prototype = {
 	toggleInstanceBox: function (event) {
 		if ($("instanceContainer").visible()) {
 			$("hideInstancesButton").innerHTML = gLanguage.getMessage('SHOW_INSTANCES');
+			$("hideInstancesButton").setAttribute("hidden", "true");
 			Effect.Fold("instanceContainer");
 			Effect.Fold($("leftArrow"));
 		} else {
+			$("hideInstancesButton").removeAttribute("hidden");
 			new Effect.Grow('instanceContainer');
 			$("hideInstancesButton").innerHTML = gLanguage.getMessage('HIDE_INSTANCES');
 			new Effect.Grow($("leftArrow"));

@@ -51,7 +51,9 @@ SRRuleActionListener.prototype = {
 	
 	hideRuleContainer: function() {
 		// show instance and property view
-		$('instanceContainer').show();
+		if ($("hideInstancesButton").getAttribute("hidden") != "true") { 
+			$('instanceContainer').show();
+		}
 		$('rightArrow').show();
 		$('relattributesContainer').show();
 		$('hideInstancesButton').show();
