@@ -349,6 +349,10 @@ a.selectedSwitch {
 	cursor: pointer;
 }
 
+.aoConnectionError {
+	background-color: #FF0000;
+	color: #ffffff;
+}
 .OBStaticHint {
 	color: #666666;
 	margin-top: 0.5em;

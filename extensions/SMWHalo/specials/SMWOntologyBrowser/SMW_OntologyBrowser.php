@@ -81,6 +81,13 @@ class SMW_OntologyBrowser extends SpecialPage {
 // advancedOption.js should also be moved to the Linked Data Extension, but it
 // is used for getting parameters for the ajax calls to smwf_ob_OntologyBrowserAccess().	
 		if (defined('LOD_LINKEDDATA_VERSION')) {
+			// Check if the triples store is propertly connected.
+			$connectionError = "";
+			$tsa = new LODTripleStoreAccess();
+			if (!$tsa->isConnected()) {
+				$connectionError = "<div class=\"aoConnectionError\">".wfMsg("smw_ob_ts_not_connected")."</div>";
+			}
+			
 			$ids = LODAdministrationStore::getInstance()->getAllSourceDefinitionIDs();
 			$sourceOptions = "";
 			foreach ($ids as $sourceID) {
@@ -96,6 +103,7 @@ class SMW_OntologyBrowser extends SpecialPage {
 	<div id="aoFoldIcon" class="aoFoldClosed"> </div>
 	<span id="aoTitle" class="aoTitle"><b>$advancedOptions</b> </span>
 	<div id="aoContent" class="aoContent">
+		$connectionError
 		<div><b>$selectDatasource</b></div>
 		<select id="dataSourceSelector" name="DataSource" size="5" multiple="multiple" class="aoDataSourceSelector">
 			<option>$fromWiki</option>
