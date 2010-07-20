@@ -328,6 +328,7 @@ a.selectedSwitch {
 	height: 16px;
 	background-repeat:no-repeat;
 	float: left;
+	cursor: pointer;
 }
 
 .aoFoldOpen {
@@ -336,11 +337,16 @@ a.selectedSwitch {
 	height: 16px;
 	background-repeat:no-repeat;
 	float: left;
+	cursor: pointer;
 }
 
 .aoContent {
 	border: 1px solid #AAAAAA;
 	padding: 10px;
+}
+
+.aoTitle {
+	cursor: pointer;
 }
 
 .OBStaticHint {

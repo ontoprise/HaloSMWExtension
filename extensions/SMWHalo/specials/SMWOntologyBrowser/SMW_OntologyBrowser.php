@@ -94,7 +94,7 @@ class SMW_OntologyBrowser extends SpecialPage {
 			$html .= <<<TEXT
 <div id="advancedOptions" class="advancedOptions">
 	<div id="aoFoldIcon" class="aoFoldClosed"> </div>
-	<b>$advancedOptions</b>
+	<span id="aoTitle" class="aoTitle"><b>$advancedOptions</b> </span>
 	<div id="aoContent" class="aoContent">
 		<div><b>$selectDatasource</b></div>
 		<select id="dataSourceSelector" name="DataSource" size="5" multiple="multiple" class="aoDataSourceSelector">

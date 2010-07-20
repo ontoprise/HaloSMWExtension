@@ -78,6 +78,28 @@ OBAdvancedOptions.prototype = {
 	},
 	
 	/**
+	 * Opens or closes the box of advanced option depending on its current state.
+	 */
+	foldAdvancedOptionsBox: function() {
+		var obj = $('aoFoldIcon');
+		var classes = obj.classNames().toArray();
+		var addClass    = 'aoFoldOpen';
+		var removeClass = 'aoFoldClosed';
+		
+		if (classes.indexOf('aoFoldOpen') != -1) {
+			// The option box is open => close it
+			addClass    = 'aoFoldClosed';
+			removeClass = 'aoFoldOpen';
+			doOpen      = false;
+			$('aoContent').hide();
+		} else {
+			$('aoContent').show();
+		}
+		obj.addClassName(addClass);
+		obj.removeClassName(removeClass);
+	},
+	
+	/**
 	 * Initializes the callbacks for the UI after the window was loaded.
 	 */
 	onLoad: function(event){
@@ -95,22 +117,12 @@ OBAdvancedOptions.prototype = {
 		
 		Event.observe('aoFoldIcon', 'click',
 				function(event) {
-					var obj = $('aoFoldIcon');
-					var classes = obj.classNames().toArray();
-					var addClass    = 'aoFoldOpen';
-					var removeClass = 'aoFoldClosed';
-					
-					if (classes.indexOf('aoFoldOpen') != -1) {
-						// The option box is open => close it
-						addClass    = 'aoFoldClosed';
-						removeClass = 'aoFoldOpen';
-						doOpen      = false;
-						$('aoContent').hide();
-					} else {
-						$('aoContent').show();
-					}
-					obj.addClassName(addClass);
-					obj.removeClassName(removeClass);
+					obAdvancedOptions.foldAdvancedOptionsBox();
+				});
+
+		Event.observe('aoTitle', 'click',
+				function(event) {
+					obAdvancedOptions.foldAdvancedOptionsBox();
 				});
 
 		$('aoContent').hide();
