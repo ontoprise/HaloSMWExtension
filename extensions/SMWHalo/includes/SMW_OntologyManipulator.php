@@ -806,14 +806,16 @@ function smwf_om_GetDerivedFacts($titleName) {
 			continue;
 		}
 		if ($property->isUserDefined()) { // user defined property
-			$property->setCaption(preg_replace('/[ ]/u','&nbsp;',$property->getWikiValue(),2));
+			$wpv = $property->getWikiPageValue();
+			$t = $wpv->getTitle();
+			$t = $t->getFullText();
 			/// NOTE: the preg_replace is a slight hack to ensure that the left column does not get too narrow
 			$text .= '<tr><td class="smwpropname">' . 
-					 $linker->makeLink($property->getLongWikiText(),$property->getShortWikiText()) . 
+					 $linker->makeLink($t, $property->getShortWikiText()) . 
 					 '</td><td class="smwprops">';
 		} elseif ($property->isVisible()) { // predefined property
 			$text .= '<tr><td class="smwspecname">' . 
-					 $linker->makeLink($property->getLongWikiText(),$property->getShortWikiText()) . 
+					 $linker->makeLink($t, $property->getShortWikiText()) . 
 					 '</td><td class="smwspecs">';
 		} else { // predefined, internal property
 			continue;
