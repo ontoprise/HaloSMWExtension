@@ -55,7 +55,7 @@ createContainer: function(event){
 	if ((wgAction == "edit" || wgAction == "annotate" || wgAction == "formedit" || wgAction == "submit" ||
              wgCanonicalSpecialPageName == 'AddData' || wgCanonicalSpecialPageName == 'EditData' ||
              wgCanonicalSpecialPageName == 'FormEdit')
-	     && stb_control.isToolbarAvailable()){
+	     && typeof stb_control != 'undefined' && stb_control.isToolbarAvailable()){
 		this.gardeningHintContainer = stb_control.createDivContainer(ANNOTATIONHINTCONTAINER,0);
 		this.showToolbar();
 	}

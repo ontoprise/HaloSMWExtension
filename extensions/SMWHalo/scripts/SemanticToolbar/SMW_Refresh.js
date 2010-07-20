@@ -42,7 +42,7 @@ RefreshSemanticToolBar.prototype = {
 		if( (wgAction == "edit" || wgAction == 'formedit' || wgAction == 'submit' ||
                      wgCanonicalSpecialPageName == 'AddData' || wgCanonicalSpecialPageName == 'EditData' ||
                      wgCanonicalSpecialPageName == 'FormEdit' )
-		   && stb_control.isToolbarAvailable()){
+		   && typeof stb_control != 'undefined' && stb_control.isToolbarAvailable()){
 			Event.observe('wpTextbox1', 'change' ,this.changed.bind(this));
 			Event.observe('wpTextbox1', 'keyup' ,this.setUserIsTyping.bind(this));
 			this.registerTimer();

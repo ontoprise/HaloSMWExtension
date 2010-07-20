@@ -142,7 +142,7 @@ callme: function(event){
 	if((wgAction == "edit" || wgAction == "annotate" || wgAction == 'formedit' || wgAction == 'submit' ||
             wgCanonicalSpecialPageName == 'AddData' || wgCanonicalSpecialPageName == 'EditData' ||
             wgCanonicalSpecialPageName == 'FormEdit' )
-	    && stb_control.isToolbarAvailable()){
+	    && typeof stb_control != 'undefined' && stb_control.isToolbarAvailable()){
 		this.relationcontainer = stb_control.createDivContainer(RELATIONCONTAINER, 0);
 		this.showToolbar();		
 	}
