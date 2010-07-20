@@ -459,7 +459,7 @@ editCategoryCondition: function(partID) {
 	elem = $('cat_'+partID);
 	if (elem) {
 		var val = unescape(elem.readAttribute('catname'));
-		elem.replace('<input type="text" value="" id="sr-cat-name" class="wickEnabled" constraints="namespace: '+SMW_CATEGORY+'"/>');
+		elem.replace('<input type="text" value="" id="sr-cat-name" class="wickEnabled" constraints="namespace: 14"/>');
 		$("sr-cat-name").value = val;
 	}
 	elem = $('buttons_'+partID);
