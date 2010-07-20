@@ -81,6 +81,25 @@ class  LODTripleStoreAccess  {
 	//	public function setXY($xy)               {$this->mXY = $xy;}
 
 	//--- Public methods ---
+	
+	/**
+	 * Checks if the the triple store is properly connected.
+	 * 
+	 * @return bool
+	 * 		true: if the triple store is properly connected
+	 * 		false: otherwise
+	 */
+	public function isConnected() {
+		try {
+			$con = TSConnection::getConnector();
+			$con->connect();
+			$status = $con->getStatus(null);
+			$con->disconnect();
+		} catch (Exception $e) {
+			return false;
+		}
+		return true;
+	}
 
 	/**
 	 * Adds the string with namespace prefixes to the current prefix string.

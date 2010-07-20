@@ -34,6 +34,28 @@ class TestTripleStoreAccess extends PHPUnit_Framework_TestCase {
     	$this->assertNotNull($tsa);
     }
     
+    /**
+     * Tests if the triples store is properly connected.
+     */
+    function testTSConnectionStatus() {
+    	global $smwgWebserviceEndpoint;
+    	
+    	$we = $smwgWebserviceEndpoint;
+    	$tsa = new LODTripleStoreAccess();
+    	
+    	// Verify that connection with TS fails with invalid connections settings 
+    	$smwgWebserviceEndpoint = 'localhost:1234'; 
+    	$connected = $tsa->isConnected();
+    	$this->assertFalse($connected);
+    	
+    	// Verify a proper connection
+    	$smwgWebserviceEndpoint = $we; 
+    	$connected = $tsa->isConnected();
+    	$this->assertTrue($connected);
+    	
+    	
+    }
+    
     
     /**
      * Tests operations on the triple store.
