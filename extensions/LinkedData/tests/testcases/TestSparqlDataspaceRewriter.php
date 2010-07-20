@@ -173,11 +173,12 @@ class TestSparqlDataspaceRewriter extends PHPUnit_Framework_TestCase {
         $val = $r[0]->getResult("l")->getValue();
         $this->assertEquals($val,"Intel, Inc");
        
-        $metadata = $r[0]->getResult("l")->getMetadata();
+        $metadata = $r[0]->getResult("s")->getMetadata();
+       
         $this->assertEquals($metadata['swp2_authority'],"http://www.example.org/smw-lde/smwDatasources/DataSource1");
         
         $r = $qr->getRowsWhere("g", self::$mBaseURI."smwGraphs/Graph2");
-        $metadata = $r[1]->getResult("l")->getMetadata();
+        $metadata = $r[1]->getResult("s")->getMetadata();
         $this->assertEquals($metadata['swp2_authority'],"http://www.example.org/smw-lde/smwDatasources/DataSource2");
         
         
