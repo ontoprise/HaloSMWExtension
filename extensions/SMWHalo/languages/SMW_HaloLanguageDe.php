@@ -186,12 +186,11 @@ protected $smwUserMessages = array(
 	'smw_ob_cmd_deleteinstance' => 'Instanz löschen',
 	'smw_ob_cmd_addpropertytodomain' => 'Attribut hinzufügen zur Kategorie: ',
 	
-//TODO: Translate strings
 	/* Advanced options in the ontology browser */
 	'smw_ob_source_wiki' => "-Wiki-" ,
 	'smw_ob_advanced_options' => "Einstellungen" ,
-	'smw_ob_select_datasource' => "Zu durchsuchende Datenquelle:" ,
-
+	'smw_ob_select_datasource' => "Zu durchsuchende Datenquellen:" ,
+	'smw_ob_select_multiple' => "Sie können <b>mehrere</b> Datenquellen auswählen, indem Sie <b>STRG</b> gedückt halten und die Einträge anklicken.",
 	
 
 	/* Combined Search*/
