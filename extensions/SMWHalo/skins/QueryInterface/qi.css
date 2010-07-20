@@ -393,11 +393,15 @@ cursor: pointer;
     width: 400px;                        
 }
 
-#qiresultcontent, #qiquerydefinition {
+#qiresultcontent{
     width: 100%;
     border-collapse: collapse;
 }
-
+#qiquerydefinition {
+	float:right;
+    width: 98%;
+    border-collapse: collapse;
+}
 #qiDefTab {
     float:right;
     width: 40%;
