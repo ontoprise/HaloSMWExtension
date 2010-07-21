@@ -41,6 +41,10 @@ YAHOO.haloacl.userDataTable = function(divid,panelid) {
 
     // custom defined formatter
     this.mySelectFormatter = function(elLiner, oRecord, oColumn, oData) {
+		if (YAHOO.haloacl.clickedArrayUsers[panelid] == undefined){
+			YAHOO.haloacl.clickedArrayUsers[panelid] = new Array();
+		}
+
         var checkedFromJS = false;
         var groupsstring = ""+oRecord._oData.groups;
         for(i=0;i<YAHOO.haloacl.clickedArrayUsers[panelid].length;i++){
