@@ -59,7 +59,7 @@ function enableSMWHalo($store = 'SMWHaloStore2', $tripleStore = NULL, $tripleSto
 
 	$smwgIgnoreSchema = !isset($smwgIgnoreSchema) ? true : $smwgIgnoreSchema;
 	$smwgTripleStoreGraph = $tripleStoreGraph !== NULL ? $tripleStoreGraph : 'http://mywiki';
-	
+
 	$wgExtensionFunctions[] = 'smwgHaloSetupExtension';
 	$smwgOWLFullExport = true;
 	$smwgDefaultStore = $tripleStore !== NULL ? $tripleStore : $store;
@@ -152,7 +152,7 @@ function smwgHaloSetupExtension() {
 
 	$wgHooks['OntoSkinTemplateToolboxEnd'][] = 'smwfOntoSkinTemplateToolboxEnd';
 	$wgHooks['OntoSkinTemplateNavigationEnd'][] = 'smwfOntoSkinTemplateNavigationEnd';
-	
+
 
 
 	global $wgRequest;
@@ -253,11 +253,11 @@ function smwgHaloSetupExtension() {
 			case '_ws_' :  smwfHaloInitMessages();
 			require_once($smwgHaloIP . '/includes/SMW_WebInterfaces.php');
 			break;
-			
+				
 			case '_qc_' :  smwfHaloInitMessages();
-            require_once($smwgHaloIP . '/includes/QueryResultsCache/SMW_QRC_AjaxAPI.php');
-            break;
-			
+			require_once($smwgHaloIP . '/includes/QueryResultsCache/SMW_QRC_AjaxAPI.php');
+			break;
+				
 
 			default: // default case just imports everything (should be avoided)
 				smwfHaloInitMessages();
@@ -635,16 +635,16 @@ function smwfHaloAddHTMLHeader(&$out) {
 	$allowStbOnSubmit = true;
 	$action = $wgRequest->getText('action');
 	$title = $wgRequest->getText('title');
-	
+
 	if (!empty($action) && !empty($title)) {
 		$allowStbOnSubmit = ($action == 'submit');
 		$title = Title::newFromText($title);
 		if ($allowStbOnSubmit && $title->getNamespace() == NS_SPECIAL) {
-			// Don't use the STB when special pages are submitted 
+			// Don't use the STB when special pages are submitted
 			$allowStbOnSubmit = false;
 		}
 	}
-	
+
 	$skin = $wgUser->getSkin();
 	$skinName = $wgUser !== NULL ? $wgUser->getSkin()->getSkinName() : $wgDefaultSkin;
 	$jsm = SMWResourceManager::SINGLETON();
@@ -941,7 +941,7 @@ function smwfGenerateUpdateAfterMoveJob(& $moveform, & $oldtitle, & $newtitle) {
 function smwfAnnotateTab ($content_actions) {
 	global $wgUser, $wgTitle,  $wgRequest;
 	global $wgTitle;
-	
+
 	wfRunHooks('userCan', array(&$wgTitle, &$wgUser, "annotate", &$allowed));
 	if (!$allowed) {
 		return true;
@@ -1610,17 +1610,31 @@ function smwfRichMediaIsImage( &$index, &$rMresult ) {
 }
 
 /*
- * Call this method in LocalSettings in order to enable the Query Results Cache 
+ * Call this method in LocalSettings in order to enable the Query Results Cache
  */
 function enableQueryResultsCache(){
 	global $smwgHaloIP, $smwgQRCEnabled, $wgHooks;
 	require_once( "$smwgHaloIP/includes/QueryResultsCache/SMW_QRC_QueryResultsCache.php" );
 	require_once( "$smwgHaloIP/includes/QueryResultsCache/SMW_QRC_AjaxAPI.php" );
 	$smwgQRCEnabled = true;
-	
+
 	$wgHooks['smwInitializeTables'][] = 'smwfQRCInitializeTables';
 	$wgHooks['smwInitDatatypes'][] = 'SMWQRCQueryManagementHandler::initQRCDataTypes';
 	$wgHooks['smwInitProperties'][] = 'SMWQRCQueryManagementHandler::initProperties';
+}
+
+/**
+ * Checks if the given property is predefined by SMWHalo
+ * @param SMWPropertyValue $property
+ */
+function smwfCheckIfPredefinedSMWHaloProperty(SMWPropertyValue $property) {
+	if (smwfGetSemanticStore()->domainRangeHintRelation->getDBkey() == $property->getDBkey()
+	|| smwfGetSemanticStore()->minCard-->getDBkey() == $property->getDBkey()
+	|| smwfGetSemanticStore()->maxCard->getDBkey() == $property->getDBkey()
+	|| smwfGetSemanticStore()->inverseOf->getDBkey() == $property->getDBkey()) {
+		return true;
+	}
+	return false;
 }
 
 /*
@@ -1630,7 +1644,7 @@ function smwfQRCInitializeTables(){
 	global $smwgHaloIP;
 	require_once( "$smwgHaloIP/includes/QueryResultsCache/SMW_QRC_Store.php" );
 	SMWQRCStore::getInstance()->getDB()->initDatabaseTables();
-	
+
 	return true;
 }
 
