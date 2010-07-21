@@ -911,7 +911,7 @@ YAHOO.haloacl.removeHighlighting = function(){
  *  @param anchor/container for popup
  *
  */
-YAHOO.haloaclrights.popup = function(id, label, anchorId){
+YAHOO.haloaclrights.popup = function(id, label, anchorId, valid){
 
     /*
     if(YAHOO.haloaclrights.popupPanel == null){
@@ -935,6 +935,13 @@ YAHOO.haloaclrights.popup = function(id, label, anchorId){
     YAHOO.haloaclrights.popupPanel.show();
 */
 
+	if (typeof valid != 'undefined') {
+		if (valid == false) {
+			var uri = wgServer + wgScript + "/ACL:" + label;
+			window.open(uri, "_blank");
+			return;
+		}
+	}
     if (!anchorId) {
         anchorId = id;
     }

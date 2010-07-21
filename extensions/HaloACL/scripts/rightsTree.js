@@ -360,6 +360,7 @@ YAHOO.extend(YAHOO.widget.ACLNode, YAHOO.widget.TextNode, {
             });
 
         } else {
+			var validPar = this.valid == true ? "true" : "false";
             sb[sb.length] = 
 '<td>' +
 	'<span id="manageUserRow_' + localLabel + '"' +
@@ -375,7 +376,7 @@ YAHOO.extend(YAHOO.widget.ACLNode, YAHOO.widget.TextNode, {
 		   (this.valid == true ? 'haloacl_infobutton' 
 		                      : 'haloacl_warningbutton') +
 		   '"'+
-		   ' onclick="javascript:YAHOO.haloaclrights.popup(\''+this.groupId+'\',\''+this.label+'\',\''+this.groupId+'\');return false;">'+
+		   ' onclick="javascript:YAHOO.haloaclrights.popup(\''+this.groupId+'\',\''+this.label+'\',\''+this.groupId+'\', ' + validPar + ');return false;">'+
 	    '</div>'+
 	'</span>'+
 	'<div id="popup_'+this.groupId+'"></div>'+

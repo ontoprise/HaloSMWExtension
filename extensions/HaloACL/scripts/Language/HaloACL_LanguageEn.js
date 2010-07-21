@@ -67,7 +67,7 @@ var gHACLUserLanguageStrings = {
     'namelessright'     : 'nameless right',
     'selectDeselectUser': 'Explicit select user',
     'aclinfotooltip'    : 'Click here to show more infos about this ACL',
-    'aclwarningtooltip' : 'This right is no longer valid. A contained group, user or template has been deleted.',
+    'aclwarningtooltip' : 'This right is no longer valid. A contained group, user or template has been deleted.<br />Click the icon for further information.',
     'haclEditingGroup'  : 'Editing group'
 
 }
