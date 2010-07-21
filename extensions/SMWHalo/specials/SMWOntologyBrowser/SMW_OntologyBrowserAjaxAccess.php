@@ -377,6 +377,8 @@ class OB_StorageTS extends OB_Storage {
 				$local = substr($sv, strpos($sv, "#")+1);
 			} else if (strrpos($sv, "/") !== false) {
 				$local = substr($sv, strrpos($sv, "/")+1);
+			} else {
+				return NULL;
 			}
 			return Title::newFromText($local, NS_MAIN);
 		}
@@ -416,42 +418,35 @@ class OB_StorageTS extends OB_Storage {
 	}
 
 
-	public function getAnnotations($p_array) {
-		global $wgServer, $wgScript, $smwgWebserviceUser, $smwgWebservicePassword, $smwgDeployVersion;
-		$client = TSConnection::getConnector();
-		$client->connect();
-		try {
-			global $smwgTripleStoreGraph;
+public function getAnnotations($p_array) {
+        global $wgServer, $wgScript, $smwgWebserviceUser, $smwgWebservicePassword, $smwgDeployVersion;
+        $client = TSConnection::getConnector();
+        $client->connect();
+        try {
+            global $smwgTripleStoreGraph;
 
-			$instanceName = $p_array[0];
-			$instance = Title::newFromText($instanceName);
-			$instanceName = str_replace("//","__",$instance->getDBkey()); //XXX: hack for ultrapedia
+            $instanceURI = $p_array[0];
 
-			// actually limit and offset is not used
-			$limit =  isset($p_array[1]) && is_numeric($p_array[1]) ? $p_array[1] : 500;
-			$partition = isset($p_array[2]) && is_numeric($p_array[2]) ? $p_array[2] : 0;
-			$offset = $partition * $limit;
-			$metadata = isset($p_array[3]) ? $p_array[3] : false;
-			$metadataRequest = $metadata != false ? "|metadata=$metadata" : "";
+            // actually limit and offset is not used
+            $limit =  isset($p_array[1]) && is_numeric($p_array[1]) ? $p_array[1] : 500;
+            $partition = isset($p_array[2]) && is_numeric($p_array[2]) ? $p_array[2] : 0;
+            $offset = $partition * $limit;
+            $metadata = isset($p_array[3]) ? $p_array[3] : false;
+            $metadataRequest = $metadata != false ? "|metadata=$metadata" : "";
 
-			$dataSpace = $this->getDataSourceParameters();
-
-			// query
-			$nsPrefix = $this->tsNamespaceHelper->getNSPrefix($instance->getNamespace());
-
-			$response = $client->query("SELECT ?p ?o WHERE { <$smwgTripleStoreGraph/$nsPrefix#$instanceName> ?p ?o. }",  "limit=$limit|offset=$offset$dataSpace$metadataRequest");
-
-			$annotations = array();
-			$this->parseAnnotations($response, $annotations);
+           
+            $response = $client->query("SELECT ?p ?o WHERE { <$instanceURI> ?p ?o. }",  "limit=$limit|offset=$offset$metadataRequest");
+            $annotations = array();
+            $this->parseAnnotations($response, $annotations);
 
 
-		} catch(Exception $e) {
-			return "Internal error: ".$e->getMessage();
-		}
+        } catch(Exception $e) {
+            return "Internal error: ".$e->getMessage();
+        }
 
-		return SMWOntologyBrowserXMLGenerator::encapsulateAsAnnotationList($annotations, $instance);
+        return SMWOntologyBrowserXMLGenerator::encapsulateAsAnnotationList($annotations, Title::newFromText("dummy"));
 
-	}
+    }
 
 
 
@@ -530,10 +525,8 @@ class OB_StorageTS extends OB_Storage {
 			$partition =  intval($p_array[2]);
 			$offset = $partition * $limit;
 
-			$dataSpace = $this->getDataSourceParameters();
-
 			// query
-			$response = $client->query("[[$propertyName::+]]",  "?Category|limit=$limit|offset=$offset$dataSpace|merge=false");
+			$response = $client->query("[[$propertyName::+]]",  "?Category|limit=$limit|offset=$offset|merge=false");
 
 			$titles = array();
 			$this->parseInstances($response, $titles);
@@ -548,32 +541,29 @@ class OB_StorageTS extends OB_Storage {
 
 
 
-	public function getCategoryForInstance($p_array) {
-		global $wgServer, $wgScript, $smwgWebserviceUser, $smwgWebservicePassword, $smwgDeployVersion;
-		$client = TSConnection::getConnector();
-		$client->connect();
-		try {
-			global $smwgTripleStoreGraph;
+public function getCategoryForInstance($p_array) {
+        global $wgServer, $wgScript, $smwgWebserviceUser, $smwgWebservicePassword, $smwgDeployVersion;
+        $client = TSConnection::getConnector();
+        $client->connect();
+        try {
+            global $smwgTripleStoreGraph;
 
-			$instanceName = substr($p_array[0],1); // remove leading colon
-			$instanceName = str_replace("//","__",$instanceName); //XXX: hack for ultrapedia
+            $instanceURI = $p_array[0];
 
-			$dataSpace = $this->getDataSourceParameters();
+            // query
+            $response = $client->query(TSNamespaces::getW3CPrefixes()." SELECT ?cat WHERE { <$instanceURI> rdf:type ?cat.  }",  "");
 
-			// query
-			$response = $client->query("[[$instanceName]]", "?Category$dataSpace");
-
-			$categories = array();
-			$this->parseCategories($response, $categories);
+            $categories = array();
+            $this->parseCategories($response, $categories);
 
 
-		} catch(Exception $e) {
-			return "Internal error: ".$e->getMessage();
-		}
-			
-		$browserFilter = new SMWOntologyBrowserFilter();
-		return $browserFilter->getCategoryTree($categories);
-	}
+        } catch(Exception $e) {
+            return "Internal error: ".$e->getMessage();
+        }
+
+        $browserFilter = new SMWOntologyBrowserFilter();
+        return $browserFilter->getCategoryTree($categories);
+    }
 
 	protected function parseCategories($response, & $categories) {
 		global $smwgSPARQLResultEncoding;
@@ -620,8 +610,6 @@ class OB_StorageTS extends OB_Storage {
 		try {
 			global $smwgTripleStoreGraph;
 
-			$dataSpace = $this->getDataSourceParameters();
-
 			//query
 			for ($i = 0; $i < count($hint); $i++) {
 				$hint[$i] = preg_quote($hint[$i]);
@@ -638,7 +626,7 @@ class OB_StorageTS extends OB_Storage {
 			}
 
 
-			$response = $client->query(TSNamespaces::getW3CPrefixes()." SELECT ?s ?cat WHERE { ?s ?p ?o. OPTIONAL { ?s rdf:type ?cat. } $filter }",  "limit=1000$dataSpace");
+			$response = $client->query(TSNamespaces::getW3CPrefixes()." SELECT ?s ?cat WHERE { ?s ?p ?o. OPTIONAL { ?s rdf:type ?cat. } $filter }",  "limit=1000");
 
 
 			$titles = array();
@@ -662,7 +650,7 @@ class OB_StorageTS extends OB_Storage {
 	 * @return string
 	 * 	The data source parameters for the query.
 	 */
-	public function getDataSourceParameters() {
+	protected function getDataSourceParameters() {
 		if (!isset($this->dataSource)) {
 			// no dataspace parameters
 			return "";
@@ -839,6 +827,53 @@ class OB_StorageTSQuad extends OB_StorageTS {
 		$browserFilter = new SMWOntologyBrowserFilter();
 		return $browserFilter->getCategoryTree($categories);
 	}
+	
+public function filterBrowse($p_array) {
+            
+        $browserFilter = new SMWOntologyBrowserFilter();
+        $type = $p_array[0];
+        $hint = explode(" ", $p_array[1]);
+        $hint = smwfEliminateStopWords($hint);
+        if ($type != 'instance') return parent::filterBrowse($p_array);
+
+        global $wgServer, $wgScript, $smwgWebserviceUser, $smwgWebservicePassword, $smwgDeployVersion;
+        $client = TSConnection::getConnector();
+        $client->connect();
+        try {
+            global $smwgTripleStoreGraph;
+
+            $dataSpace = $this->getDataSourceParameters();
+
+            //query
+            for ($i = 0; $i < count($hint); $i++) {
+                $hint[$i] = preg_quote($hint[$i]);
+                $hint[$i] = str_replace("\\", "\\\\", $hint[$i]);
+            }
+            $filter = "";
+            if (count($hint) > 0) {
+                $filter = "FILTER (";
+                for ($i = 0; $i < count($hint); $i++) {
+                    if ($i > 0) $filter .= " && ";
+                    $filter .= "regex(str(?s), \"$hint[$i]\", \"i\")";
+                }
+                $filter .= ")";
+            }
+
+
+            $response = $client->query(TSNamespaces::getW3CPrefixes()." SELECT ?s ?cat WHERE { ?s ?p ?o. OPTIONAL { ?s rdf:type ?cat. } $filter }",  "limit=1000$dataSpace");
+
+
+            $titles = array();
+            $this->parseInstances($response, $titles);
+
+
+        } catch(Exception $e) {
+            return "Internal error: ".$e->getMessage();
+        }
+
+        // do not show partitions. 1000 instances is maximum here.
+        return SMWOntologyBrowserXMLGenerator::encapsulateAsInstancePartition($titles, 1001, 0);
+    }
 }
 
 
