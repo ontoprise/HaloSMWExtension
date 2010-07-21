@@ -133,6 +133,8 @@ function haclfSetupExtension() {
         $wgHooks['DiffViewHeader'][]     = 'HACLEvaluator::onDiffViewHeader';
         $wgHooks['EditFilter'][]         = 'HACLEvaluator::onEditFilter';
         $wgHooks['PropertyBeforeOutput'][] = 'HACLEvaluator::onPropertyBeforeOutput';
+        $wgHooks['BeforeDerivedPropertyQuery'][] = 'haclfAllowVariableForPredicate';
+        $wgHooks['AfterDerivedPropertyQuery'][] = 'haclfDisallowVariableForPredicate';
         
     }
 
@@ -773,8 +775,29 @@ function haclfOnSfSetTargetName($titleName) {
 	return true;
 }
 
+/**
+ * Normally the query rewriter does not allow queries with a variable for a 
+ * predicate. This function turns this protection off.
+ */
+function haclfAllowVariableForPredicate() {
+	HACLQueryRewriter::allowVariableForPredicate(true);
+	return true;
+}
 
+/**
+ * Normally the query rewriter does not allow queries with a variable for a 
+ * predicate. This function turns this protection on.
+ */
+function haclfDisallowVariableForPredicate() {
+	HACLQueryRewriter::allowVariableForPredicate(false);
+	return true;
+}
 
+/**
+ * Registers the icon for Auto Completion.
+ * 
+ * @param $namespaceMappings
+ */
 function haclfRegisterACIcon(& $namespaceMappings) {
     global $haclgIP;
     $namespaceMappings[HACL_NS_ACL]="/extensions/HaloACL/skins/images/ACL_AutoCompletion.gif";
