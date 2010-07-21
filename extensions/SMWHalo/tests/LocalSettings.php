@@ -12,6 +12,8 @@ $smwgWebserviceEndpoint="localhost:8090";
 
 enableQueryResultsCache();
 
+$wgParserCacheType = CACHE_NONE; //disable parse cache for query results cache tests
+
 #For DataAPI tests
 include_once('extensions/SemanticForms/includes/SF_Settings.php');
 $wgEnableWriteAPI = true;
