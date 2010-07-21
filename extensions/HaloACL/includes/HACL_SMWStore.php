@@ -90,7 +90,7 @@ class HACLSMWStore extends SMWStore {
 			return $this->mWrappedStore->getSemanticData($subject, $filter);
 		}
 		
-		$result = new SMWSemanticData($subject);
+		$result = new SMWSemanticData(SMWWikiPageValue::makePageFromTitle($subject));
 		if (!$this->isSubjectAccessible($subject)) {
 			// The subject can not be accessed 
 			// => return an empty semantic data object
@@ -111,15 +111,16 @@ class HACLSMWStore extends SMWStore {
 			// Check if the property's value is protected
 			$values = $semData->getPropertyValues($prop);
 			foreach ($values as $v) {
+				$allowed = true;
 				if ($v instanceof SMWWikiPageValue) {
 					$allowed = $this->userCanAccessTitle($v->getTitle(), 'read');
-					if ($allowed) {
-						// Property and its value are not protected 
-						// => copy to the new result
-						$propKey = $prop->getDBkeys();
-						$valKey = $v->getDBkeys();
-						$result->addPropertyStubValue($propKey[0], $valKey);
-					}
+				}
+				if ($allowed) {
+					// Property and its value are not protected 
+					// => copy to the new result
+					$propKey = $prop->getDBkeys();
+					$valKey = $v->getDBkeys();
+					$result->addPropertyStubValue($propKey[0], $valKey);
 				}
 			}
 					

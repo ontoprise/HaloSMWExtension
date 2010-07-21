@@ -65,9 +65,24 @@ class  HACLQueryRewriter  {
 	// <true> if the query was modified because of protected properties
 	private $mModified = false;
 	
+	// boolean
+	// Normally the query rewriter does not allow queries with a variable for a 
+ 	// predicate. If <true>, this restriction is switched off.
+	private static $mAllowVariableForPredicate = false;
 	
 	//--- Public methods ---
 	
+	/**
+	 * Sets the mode of query rewriting.
+	 * @param boolean $allow
+	 * 		<true>: Queries with variables for predicates are allowed. This should
+	 * 				only be set in controlled environments.
+	 * 		<false>: Variables for predicates are not allowed. This is the standard
+	 * 				case.
+	 */
+	public static function allowVariableForPredicate($allow) {
+		self::$mAllowVariableForPredicate = $allow;
+	}
 		
 	/**
 	 * This function for the hook "RewriteSparqlQuery" modifies ASK and SPARQL queries. 
@@ -433,8 +448,8 @@ class  HACLQueryRewriter  {
 			$allowed = true;
 					
 			if ($t['p_type'] == 'var') {
-				// Variables are not allowed for predicates
-				$allowed = false;
+				// Variables are normally not allowed for predicates
+				$allowed = self::$mAllowVariableForPredicate;
 			} else if ($t['p_type'] == 'uri') {
 				$pred = $t['p'];
 				if (strpos($pred, $propNs) === 0) {
@@ -681,6 +696,10 @@ class  HACLQueryRewriter  {
 			}
 			
 			$pred = $t['p'];
+			if ($t['p_type'] == 'var') {
+				$pred = '?' . $pred;
+			}
+			
 			$obj = $t['o'];
 			if ($t['o_type'] == 'var') {
 				$obj = '?' . $obj;

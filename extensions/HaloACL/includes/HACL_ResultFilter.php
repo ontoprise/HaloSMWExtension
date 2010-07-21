@@ -76,11 +76,17 @@ class  HACLResultFilter  {
 	 *
 	 * @param SMWQueryResult $qr
 	 * 		The query result that is modified
+	 * @param array<string> $properties
+	 * 		A query result may contain values for properties. The names of the
+	 * 		variables that contain property names are given in this array.
+	 * 		If a row of the result contains a protected property then the complete
+	 * 		row is removed. This applies only to SPARQL queries.
+	 * 
 	 */
-	public static function filterResult(SMWQueryResult &$qr) {
+	public static function filterResult(SMWQueryResult &$qr, array $properties = null) {
 		
 		if ($qr instanceof SMWHaloQueryResult) {
-			self::filterSPARQLQueryResult($qr);
+			self::filterSPARQLQueryResult($qr, $properties);
 			return true;
 		}
 		// Retrieve all subjects of a query result
@@ -118,26 +124,51 @@ class  HACLResultFilter  {
 	 * some content of the subject. However, this is not the case for SPARQL
 	 * query results. No subject is available, only variable bindings with no
 	 * further meaning. Consequently, rows can only be removed if they are completely
-	 * empty i.e. contain only protected values. 
+	 * empty i.e. contain only protected values or if they contain a protected
+	 * property. 
 	 *
 	 * @param SMWHaloQueryResult $qr
 	 * 		The query result that is modified
+	 * @param array<string> $properties
+	 * 		A query result may contain values for properties. The names of the
+	 * 		variables that contain property names are given in this array.
+	 * 		If a row of the result contains a protected property then the complete
+	 * 		row is removed. This applies only to SPARQL queries.
 	 */
-	public static function filterSPARQLQueryResult(SMWHaloQueryResult &$qr) {
+	public static function filterSPARQLQueryResult(SMWHaloQueryResult &$qr, array $properties = null) {
 		global $wgUser;
 		$results = $qr->getResults();
 		$valuesRemoved = false;
 		
 		foreach ($results as $kr => $row) {
 			$allCellsRemoved = true;
+			$deleteRow = false;
 			foreach ($row as $cell) {
 				// Iterate over all results in a cell
+				$pr = $cell->getPrintRequest();
+				$isProperty = false;
+				if (is_array($properties) 
+				    && in_array(strtolower($pr->getLabel()), $properties)) {
+					// The cell contains a property name. 
+					// => Check if the property is accessible.
+					$isProperty = true;
+				}
 				$items = $cell->getContent();
 				$cellModified = false;
 				foreach ($items as $k => $item) {
 					if ($item instanceof SMWWikiPageValue) {
 						$t = $item->getTitle();
+						if ($isProperty) {
+							wfRunHooks('userCan', array(&$t, &$wgUser, "propertyread", &$allowed));
+							if (!$allowed) {
+								// The property is protected
+								// => remove all cells
+								$deleteRow = true;
+								break;
+							}
+						}
 						wfRunHooks('userCan', array(&$t, &$wgUser, "read", &$allowed));
+						
 						if (!$allowed) {
 							unset($items[$k]);
 							$valuesRemoved = true;
@@ -150,8 +181,12 @@ class  HACLResultFilter  {
 				if ($cellModified) {
 					$cell->setContent($items);
 				}
+				if ($deleteRow) {
+					// A row is deleted because it contains protected properties.
+					break;
+				}
 			}
-			if ($allCellsRemoved) {
+			if ($allCellsRemoved || $deleteRow) {
 				// All cells in a row were removed
 				// => Remove the complete row from the result.
 				unset($results[$kr]);	
