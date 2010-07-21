@@ -267,7 +267,7 @@ confirmedFormulaHTML: function(parsedRule) {
 '		<img src="' + wgScriptPath + '/extensions/SMWHalo/skins/checkmark.png"/>' +
 		syntaxChecked +
 '		&nbsp;' +
-'		<span style="position:absolute; right:1em">' +		
+'		<span style="right:1em">' +		
 '			<a href="javascript:smwhgCreateCalculationRule.editFormula()">' +
 				edit +
 '			</a>' +
