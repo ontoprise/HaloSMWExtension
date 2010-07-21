@@ -240,9 +240,23 @@ TreeTransformer.prototype = {
 	var regex = new RegExp("\{\{(\\w+)\}\}");
 	var vars;
 	while (vars = regex.exec(translatedOutput)) {
+		var msg = gLanguage.getMessage(vars[1]);
+		if (msg != vars[1]) {
 		translatedOutput = translatedOutput.replace(new RegExp(
-				'\{\{' + vars[1] + '\}\}', "g"), gLanguage.getMessage(vars[1]));
+				'\{\{' + vars[1] + '\}\}', "g"), msg);
+		}
+		
+		var lp = this.languageProvider;
+		for(var i = 0; i < lp.length; i++) { 
+			var msg = lp[i](vars[1]);
+			if (msg != vars[1]) {
+			translatedOutput = translatedOutput.replace(new RegExp(
+					'\{\{' + vars[1] + '\}\}', "g"), msg);
+			}
+		}
 	}
+
+	
 	// insert HTML
 	node.innerHTML = translatedOutput;
 
