@@ -2375,7 +2375,7 @@ function haclRightPanelSelectDeselectTab($panelid, $predefine, $readOnly, $prelo
            if (YAHOO.haloacl.clickedArrayUsers[panelid] == null){
                 YAHOO.haloacl.clickedArrayUsers[panelid] = new Array();
            }
-           if (YAHOO.haloacl.clickedArrayUsersGroups[panelid] == null){
+           if (YAHOO.haloacl.clickedArrayUsersGroups[panelid] == undefined){
                 YAHOO.haloacl.clickedArrayUsersGroups[panelid] = new Array();
             }
             var element = item;
