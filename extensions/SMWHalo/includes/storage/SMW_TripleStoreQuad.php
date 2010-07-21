@@ -48,9 +48,13 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 		// query
 
 		$nsPrefixProp = $this->tsNamespace->getNSPrefix($property->getWikiPageValue()->getTitle()->getNamespace());
-
-		$response = $client->query("SELECT ?s ?o WHERE { GRAPH ?g { ?s <$smwgTripleStoreGraph/$nsPrefixProp#$propertyName> ?o. } } ORDER BY ASC(?s) $limit $offset",  "merge=false");
-
+        
+		try {
+		    $response = $client->query("SELECT ?s ?o WHERE { GRAPH ?g { ?s <$smwgTripleStoreGraph/$nsPrefixProp#$propertyName> ?o. } } ORDER BY ASC(?s) $limit $offset",  "merge=false");
+		} catch(Exception $e) {
+			wfDebug("Triplestore does probably not run.\n");
+			$response = TSNamespaces::$EMPTY_SPARQL_XML;
+		}
 
 		global $smwgSPARQLResultEncoding;
 		// PHP strings are always interpreted in ISO-8859-1 but may be actually encoded in
@@ -130,9 +134,13 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 		// query
 		$nsPrefix = $this->tsNamespace->getNSPrefix($subject->getNamespace());
 		$nsPrefixProp = $this->tsNamespace->getNSPrefix($property->getWikiPageValue()->getTitle()->getNamespace());
-
-		$response = $client->query("SELECT ?o WHERE { GRAPH ?g { <$smwgTripleStoreGraph/$nsPrefix#$subjctName> <$smwgTripleStoreGraph/$nsPrefixProp#$propertyName> ?o. } } $limit $offset",  "merge=false");
-
+    
+		try {
+		    $response = $client->query("SELECT ?o WHERE { GRAPH ?g { <$smwgTripleStoreGraph/$nsPrefix#$subjctName> <$smwgTripleStoreGraph/$nsPrefixProp#$propertyName> ?o. } } $limit $offset",  "merge=false");
+		} catch(Exception $e) {
+			wfDebug("Triplestore does probably not run.\n");
+			$response = TSNamespaces::$EMPTY_SPARQL_XML;
+		}
 
 		global $smwgSPARQLResultEncoding;
 		// PHP strings are always interpreted in ISO-8859-1 but may be actually encoded in
@@ -203,6 +211,8 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 		$offset =  isset($requestoptions->offset) ? " OFFSET ".$requestoptions->offset : "";
 
 		$nsPrefixProp = $this->tsNamespace->getNSPrefix($property->getWikiPageValue()->getTitle()->getNamespace());
+		
+		try {
 		if (is_null($value)) {
 
 			$response = $client->query("SELECT ?s WHERE { GRAPH ?g { ?s <$smwgTripleStoreGraph/$nsPrefixProp#$propertyName> ?o. } } $limit $offset",  "merge=false|graph=$smwgTripleStoreGraph");
@@ -220,7 +230,10 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 			$response = $client->query("SELECT ?s WHERE { GRAPH ?g { ?s <$smwgTripleStoreGraph/$nsPrefixProp#$propertyName> \"$objectvalue\"^^$objecttype. } } $limit $offset",  "merge=false");
 
 		}
-
+		} catch(Exception $e) {
+			wfDebug("Triplestore does probably not run.\n");
+			$response = TSNamespaces::$EMPTY_SPARQL_XML;
+		}
 		// query
 
 
