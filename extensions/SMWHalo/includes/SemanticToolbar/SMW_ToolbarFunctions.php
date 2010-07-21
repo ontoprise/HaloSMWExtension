@@ -232,10 +232,12 @@ function smwf_tb_getTripleStoreStatus() {
 	global $smwgTripleStoreGraph;
 	$con = TSConnection::getConnector();
 	try {
+		$con->connect();
 		$statusInfo = $con->getStatus($smwgTripleStoreGraph);
 		$response = new AjaxResponse(json_encode($statusInfo));
         $response->setContentType( "application/json" );
         $response->setResponseCode(200);
+        $con->disconnect();
 	} catch(Exception $e) {
 		$response = new AjaxResponse($e->getMessage());
         $response->setContentType( "application/text" );
