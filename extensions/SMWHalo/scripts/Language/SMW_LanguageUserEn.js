@@ -368,7 +368,7 @@ var wgUserLanguageStrings = {
 	
 	// Semantic Toolbar General
 	'STB_LINKS'				: 'Links to other pages',
-	'STB_TOOLS'				: 'Tools', 
+	'STB_TOOLS'				: 'Semantic toolbar', 
 	'STB_FACTS'				: 'Facts about this Article',
-	'STB_ANNOTATION_HELP' 	: 'Annotations & Help' 
+	'STB_ANNOTATION_HELP' 	: 'Semantic toolbar' 
 };
