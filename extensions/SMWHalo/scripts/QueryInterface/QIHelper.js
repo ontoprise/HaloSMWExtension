@@ -2657,29 +2657,44 @@ handleQueryString : function(args, queryId, pMustShow) {
 	// [[...]] part but only as |?myprop in the printout
 	// therefore check now that in the main query we also have all "must show"
 	// properties included
+	var propMerged = new Array();
 	if (queryId == 0) { // do this only for the main query, subqueries have no printouts
 		for ( var i = 0; i < pMustShow.length; i++) { // loop over all properties to show
-			if (propList.getPgroup(pMustShow[i][0]) == null) { // property does not exist yet
-                // create property grou with default values
-                var pgroup = new PropertyGroup(escapeQueryHTML(pMustShow[i][0]),
-						2, true, false, null, null, -1,
-                        pMustShow[i][1], pMustShow[i][2]);
-                var defPgroup = this.propertyTypesList.getPgroup(pMustShow[i][0]);
-                var ptype = gLanguage.getMessage('QI_PAGE');
-                // use the definition, like enum values and arity from the ajax
-                // call when querying the property types
-                if (defPgroup) {
-                    ptype = this.propertyTypesList.getType(pMustShow[i][0]);
-                    pgroup = new PropertyGroup(escapeQueryHTML(pMustShow[i][0]),
-                        defPgroup.getArity(), true, false,
-                        defPgroup.isEnumeration(), defPgroup.getEnumValues(), -1,
-                        pMustShow[i][1], pMustShow[i][2]);
-                    pgroup.setUnits(defPgroup.getUnits());
-                }
-				pgroup.addValue(ptype, '=', '*'); // add default values
-                // add current property to property list
-				propList.add(pMustShow[i][0], pgroup, [], ptype);
-			}
+		    var pgroup;
+            // get information about the property itself
+            var defPgroup = this.propertyTypesList.getPgroup(pMustShow[i][0]);
+            var ptype = gLanguage.getMessage('QI_PAGE');
+            // use the definition, like enum values and arity from the ajax
+            // call when querying the property types
+            if (defPgroup) {
+                ptype = this.propertyTypesList.getType(pMustShow[i][0]);
+                pgroup = new PropertyGroup(escapeQueryHTML(pMustShow[i][0]),
+                    defPgroup.getArity(), true, false,
+                    defPgroup.isEnumeration(), defPgroup.getEnumValues(), -1,
+                    pMustShow[i][1], pMustShow[i][2]);
+                pgroup.setUnits(defPgroup.getUnits());
+                pgroup.addValue(ptype, '=', '*'); // add default values
+            }
+            else // create property group with default values
+                pgroup = new PropertyGroup(escapeQueryHTML(pMustShow[i][0]),
+                     2, true, false, null, null, -1,
+                     pMustShow[i][1], pMustShow[i][2]);
+            
+            // we have this property for the first time and it exists also in the query condition
+            // then merge the conditions and must show settings into one property group
+		    var oldPgroup = propList.getPgroup(pMustShow[i][0]); // get information about property
+		    if (oldPgroup != null && ! propMerged[ pMustShow[i][0] ]) {
+                pgroup.setValues(oldPgroup.getValues());
+                pgroup.setSelector(oldPgroup.getSelector());
+                pgroup.setMustBeSet(oldPgroup.mustBeSet());
+		    }
+            // add current property to property list
+            if (propMerged[ pMustShow[i][0] ] == null ) // property does not exist yet
+                propList.add(pMustShow[i][0], pgroup, [], ptype);
+            else
+			    propList.addNew(pMustShow[i][0], pgroup, [], ptype);
+			// and remember now that this porperty appeared in the printouts
+			propMerged[ pMustShow[i][0] ] = true;
 		}
 	}
 
@@ -2871,6 +2886,10 @@ setUnits : function(vals) {
 },
 setSelector : function(val) {
     this.selector = val;
+},
+
+setMustBeSet : function(val) {
+    this.must = val;
 },
 
 supportsUnits : function() {
