@@ -323,6 +323,8 @@
 					</xsl:choose>
 					{{SMW_OB_OPEN}}
 				</a>
+				</td>
+				<td>
 				<xsl:if test="count(metadata/property) > 0">
 					<xsl:variable name="metaid" select="child::metadata/@id" />
 					<img class="metadataContainerSwitch"

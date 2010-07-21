@@ -305,13 +305,15 @@ a.selectedSwitch {
 
 .metadataContainerSwitch{
 	cursor: pointer;
-	margin: 2px;
+	margin: 6px;
+	
 	
 }
 .metadataContainerSelected {
 	background-color: #CCC;
     border: 1px solid #FFF;
-    margin: 1px;
+   margin: 5px;
+   
 }
 
 .closeMetadataSwitch {
