@@ -33,14 +33,6 @@ class SMWQRCQueryResultsCache {
 	 * the cache otherwise.
 	 */
 	public function getQueryResult(SMWQuery $query, $force=false, $cacheThis=true){
-		global $secondTime;
-		
-		global $qrcF;
-		if(!$qrcF){
-			$qrcF = true;
-			//$this->updateQueryResult(SMWQRCQueryManagementHandler::getInstance()->getQueryId($query));
-		}
-		
 		//get title of article in which query was executed 
 		//or set title to false if query was executed somehow else 
 		global $wgParser;
@@ -123,6 +115,7 @@ class SMWQRCQueryResultsCache {
 					new SMWQueryResult($query->getDescription()->getPrintRequests(), $query, $queryResult->getResults(), $store, $queryResult->hasFurtherResults());
 			}
 		}
+		
 		return $queryResult;
 	}
 	
@@ -191,12 +184,29 @@ class SMWQRCQueryResultsCache {
 				SMWQRCQueryManagementHandler::getInstance()->getQueryCallMetadata($semanticData, $queryId);
 			
 			$queryParams = array ($metadata['queryString']);
-			if($metadata['limit']) $queryParams[] = 'limit='.$metadata['limit'];
+			//if($metadata['limit']) $queryParams[] = 'limit='.$metadata['limit'];
 			if($metadata['offset']) $queryParams[] = 'offset='.$metadata['offset'];
+			if(array_key_exists('extraPropertyPrintouts', $metadata)){
+				foreach(explode(';', $metadata['extraPropertyPrintouts']) as $pP){
+					$queryParams[]= '?'.$pP;
+				}
+			}
+			if(array_key_exists('extraCategoryPrintouts', $metadata)) $queryParams[]= '?Category';
 			
-			SMWQueryProcessor::processFunctionParams($queryParams,$querystring,$params,$printouts);
-			$query = 
-				SMWQueryProcessor::createQuery($querystring,$params);
+			//echo('<pre>'.print_r($queryParams, true).'</pre>');
+			
+			if(array_key_exists('isSPARQLQuery', $metadata)){
+				SMWSPARQLQueryProcessor::processFunctionParams($queryParams, $querystring, $params, $printouts);
+				$query =
+					SMWSPARQLQueryProcessor::createQuery($querystring, $params, SMWQueryProcessor::INLINE_QUERY, 'table', $printouts);
+			} else {			
+				SMWQueryProcessor::processFunctionParams($queryParams,$querystring,$params,$printouts);
+				$query = 
+					SMWQueryProcessor::createQuery($querystring,$params);
+			}
+			
+			//echo('<pre>'.print_r($query, true).'</pre>');
+			
 			$this->getQueryResult($query, true);
 			
 			//invalidate parser caches
@@ -214,8 +224,6 @@ class SMWQRCQueryResultsCache {
 	}
 	
 	public function updateData(SMWSemanticData $data, $store){
-		//return $store->doUpdateData($data);
-		
 		//get list of properties which are set by this article
 		//todo: think about only querying for modified properties
 		$properties = $data->getProperties();
@@ -284,8 +292,8 @@ class SMWQRCQueryResultsCache {
 			}
 		}
 		
-		echo('<pre>'.print_r(array_keys($categories), true).'</pre>');
-		echo('<pre>'.print_r(array_keys($properties), true).'</pre>');
+		//echo('<pre>'.print_r(array_keys($categories), true).'</pre>');
+		//echo('<pre>'.print_r(array_keys($properties), true).'</pre>');
 		
 		
 		if(count($properties) > 0 || count($categories) > 0){

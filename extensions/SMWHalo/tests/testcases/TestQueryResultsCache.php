@@ -44,6 +44,9 @@ class TestQueryResultsCache extends PHPUnit_Framework_TestCase {
 		}
 	}
 	
+	/*
+	 * Test if the cache is empty, so that we can really start testing
+	 */
 	function testEmptyCacheBOTH(){
 		$request = json_encode(array('debug' => true));
 		$response = smwf_qc_getQueryIds($request);
@@ -53,7 +56,12 @@ class TestQueryResultsCache extends PHPUnit_Framework_TestCase {
 		$this->assertEquals(0, count($response->queryIds));
 	}
 	
+	/*
+	 * Adds five queries, uses the API to get the query Ids which have to
+	 * be updated next and verifies that they are sorted due to their priority
+	 */
 	public function testGetQueryIdsByAPIOrder(){
+		//fill the cache
 		smwf_om_EditArticle('QRCQueryArticle1', 'PHPUnit', $this->queryArticle1, '');
 		sleep(2);
 		smwf_om_EditArticle('QRCQueryArticle2', 'PHPUnit', $this->queryArticle2, '');
@@ -75,10 +83,13 @@ class TestQueryResultsCache extends PHPUnit_Framework_TestCase {
 			
 			$lastPriority = $queryData['priority'];
 		}
-		
-		$lastPriority();
 	}
 	
+	/*
+	 * Adds some results to the cache and verifies whether the
+	 * results are stored correctly, respectively, whether they are
+	 * deserializable
+	 */
 	function testCacheEntriesAddedASK(){
 		smwf_om_EditArticle('QRCQueryArticle1', 'PHPUnit', $this->queryArticle1, '');
 		
@@ -105,6 +116,11 @@ class TestQueryResultsCache extends PHPUnit_Framework_TestCase {
 		}
 	}
 	
+	/*
+	 * Adds some results to the cache and verifies whether the
+	 * results are stored correctly, respectively, whether they are
+	 * deserializable
+	 */
 	function testCacheEntriesAddedSPARQL(){
 		smwf_om_EditArticle('QRCQueryArticle2', 'PHPUnit', $this->queryArticle1, '');
 		
@@ -131,6 +147,10 @@ class TestQueryResultsCache extends PHPUnit_Framework_TestCase {
 		}
 	}
 	
+	/*
+	 * Checks whether cache entries are deleted if a query is updated via the API
+	 * and if this query is not used anymore
+	 */
 	public function testDeleteCacheEntryBOTH(){
 		smwf_om_EditArticle('QRCQueryArticle1', 'PHPUnit', $this->queryArticle1, '');
 		smwf_om_EditArticle('QRCQueryArticle1', 'PHPUnit', $this->queryArticle1Version2, '');
@@ -156,6 +176,10 @@ class TestQueryResultsCache extends PHPUnit_Framework_TestCase {
 		$this->assertEquals(2, count($response->queryIds));
 	}
 	
+	/*
+	 * Adds query, modifies the data and then checks whether the modified data
+	 * is used
+	 */
 	public function testCacheEntryUsedASK(){
 		smwf_om_EditArticle('QRCQueryArticle1', 'PHPUnit', $this->queryArticle1, '');
 		
@@ -171,9 +195,12 @@ class TestQueryResultsCache extends PHPUnit_Framework_TestCase {
 		$cacheEntryUsed = false;
 		if(strpos($result, 'QRCDataArticle1') > 0) $cacheEntryUsed = true;
 		$this->assertEquals(true, $cacheEntryUsed);
-		
 	}
 	
+	/*
+	 * Adds query, modifies the data and then checks whether the modified data
+	 * is used if read action is performed
+	 */
 	public function testCacheEntryUsedSPARQL(){
 		smwf_om_EditArticle('QRCQueryArticle2', 'PHPUnit', $this->queryArticle2, '');
 		
@@ -192,6 +219,10 @@ class TestQueryResultsCache extends PHPUnit_Framework_TestCase {
 		
 	}
 	
+	/*
+	 * Adds query, modifies the data and then checks whether the modified data
+	 * is used if purge action is performed
+	 */
 	public function testCacheEntryNotUsedASK(){
 		smwf_om_EditArticle('QRCQueryArticle1', 'PHPUnit', $this->queryArticle1, '');
 		
@@ -214,6 +245,10 @@ class TestQueryResultsCache extends PHPUnit_Framework_TestCase {
 		$this->assertEquals(false, $cacheEntryUsed);
 	}
 	
+	/*
+	 * Adds query, modifies the data and then checks whether the modified data
+	 * is used if purge action is performed
+	 */
 	public function testCacheEntryNotUsedSPARQL(){
 		smwf_om_EditArticle('QRCQueryArticle2', 'PHPUnit', $this->queryArticle2, '');
 		
@@ -236,6 +271,10 @@ class TestQueryResultsCache extends PHPUnit_Framework_TestCase {
 		$this->assertEquals(false, $cacheEntryUsed);
 	}
 	
+	/*
+	 * Creates a query, modifies the test data, uses API update and checks whether 
+	 * the updated result is displayed when performing read action.
+	 */
 	public function testArticleUpdatedByAPIBOTH(){
 		smwf_om_EditArticle('QRCQueryArticle1', 'PHPUnit', $this->queryArticle1, '');
 		
@@ -263,28 +302,4 @@ class TestQueryResultsCache extends PHPUnit_Framework_TestCase {
 		
 		$this->assertEquals(false, $found);
 	}
-
-//	public function testGetQueryIdsByAPIOrder(){
-//		smwf_om_EditArticle('QRCQueryArticle1', 'PHPUnit', $this->queryArticle1, '');
-//		sleep(2);
-//		smwf_om_EditArticle('QRCQueryArticle2', 'PHPUnit', $this->queryArticle2, '');
-//		sleep(2);
-//		smwf_om_EditArticle('QRCQueryArticle3', 'PHPUnit', $this->queryArticle3, '');
-//		
-//		$request = json_encode(array('debug' => true));
-//		$response = smwf_qc_getQueryIds($request);
-//		$response = json_decode($response);
-//		
-//		$this->assertEquals(5, count($response->queryIds));
-//		
-//		$qrcStore = SMWQRCStore::getInstance()->getDB();
-//		$lastPriority = 0; 
-//		foreach($response->queryIds as $qId){
-//			$queryData = $qrcStore->getQueryData($qId);
-//			
-//			$this->assertEquals(true, $queryData['priority'] >= $lastPriority);
-//			
-//			$lastPriority = $queryData['priority'];
-//		}
-//	}
 }

@@ -13,6 +13,11 @@ define('QRC_HQID_LABEL','QRCHasQueryId');
 define('QRC_HQS_LABEL','QRCHasQueryString');
 define('QRC_HQL_LABEL','QRCHasQueryLimit');
 define('QRC_HQO_LABEL','QRCHasQueryOffset');
+
+define('QRC_HEPP_LABEL','QRCHasExtraPropertyPrintouts');
+define('QRC_HECP_LABEL','QRCHasExtraCategoryPrintout');
+define('QRC_ISQ_LABEL','QRCIsSPARQLQuery');
+
 define('QRC_DOP_LABEL','QRCDependsOnProperty');
 define('QRC_DOC_LABEL','QRCDependsOnCategory');
 
@@ -45,6 +50,10 @@ class SMWQRCQueryManagementHandler {
 		SMWPropertyValue::registerProperty('___QRC_HQS', '_str', QRC_HQS_LABEL , false);
 		SMWPropertyValue::registerProperty('___QRC_HQL', '_num', QRC_HQL_LABEL , false);
 		SMWPropertyValue::registerProperty('___QRC_HQO', '_num', QRC_HQO_LABEL , false);
+		
+		SMWPropertyValue::registerProperty('___QRC_HEPP', '_str', QRC_HEPP_LABEL , false);
+		SMWPropertyValue::registerProperty('___QRC_HECP', '_boo', QRC_HECP_LABEL , false);
+		SMWPropertyValue::registerProperty('___QRC_ISQ', '_boo', QRC_ISQ_LABEL , false);
 		
 		SMWPropertyValue::registerProperty('___QRC_DOP', '_str', QRC_DOP_LABEL , false);
 		SMWPropertyValue::registerProperty('___QRC_DOC', '_str', QRC_DOC_LABEL , false);
@@ -84,6 +93,16 @@ class SMWQRCQueryManagementHandler {
 		if($query->getLimit()) $dataValue->setQueryLimit($query->getLimit());
 		if($query->getOffset()) $dataValue->setQueryOffset($query->getOffset());
 		
+		if ($query instanceof SMWSPARQLQuery){
+			$prProperties = $this->getPrintRequestsProperties($query->getExtraPrintouts());
+			$dataValue->setExtraPropertyPrintouts(implode(';', array_keys($prProperties)));
+			
+			$dataValue->setExtraCategoryPrintouts($this->isCategoryRequestedInPrintRequests($query->getExtraPrintouts()));
+			$dataValue->setIsSPQRQLQuery(true);
+		} else {
+			$dataValue->setIsSPQRQLQuery(false);
+		}
+			
 		$properties = array();
 		$categories = array();
 		
@@ -146,6 +165,10 @@ class SMWQRCQueryManagementHandler {
 				if($pV[0] == QRC_HQS_LABEL) $metadata['queryString'] = $pV[1][0];
 				if($pV[0] == QRC_HQL_LABEL) $metadata['limit'] = $pV[1][0];
 				if($pV[0] == QRC_HQO_LABEL) $metadata['offset'] = $pV[1][0];
+				
+				if($pV[0] == QRC_HEPP_LABEL) $metadata['extraPropertyPrintouts'] = $pV[1][0];
+				if($pV[0] == QRC_HECP_LABEL) $metadata['extraCategoryPrintouts'] = $pV[1][0];
+				if($pV[0] == QRC_ISQ_LABEL) $metadata['isSPARQLQuery'] = $pV[1][0];
 			}
 			
 			if($break) break;

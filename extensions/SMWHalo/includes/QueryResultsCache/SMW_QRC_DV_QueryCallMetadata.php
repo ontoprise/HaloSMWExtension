@@ -74,6 +74,24 @@ class SMWQueryCallMetadataValue extends SMWContainerValue {
 		$this->m_data->addPropertyObjectValue($propertyValue, $dataValue);
 	}
 	
+	public function setExtraPropertyPrintouts($epp){
+		$propertyValue = SMWPropertyValue::makeUserProperty(QRC_HEPP_LABEL);
+		$dataValue = SMWDataValueFactory::newPropertyObjectValue($propertyValue, $epp);
+		$this->m_data->addPropertyObjectValue($propertyValue, $dataValue);
+	}
+	
+	public function setExtraCategoryPrintouts($hasECP){
+		$propertyValue = SMWPropertyValue::makeUserProperty(QRC_HECP_LABEL);
+		$dataValue = SMWDataValueFactory::newPropertyObjectValue($propertyValue, $hasECP);
+		$this->m_data->addPropertyObjectValue($propertyValue, $dataValue);
+	}
+	
+	public function setIsSPQRQLQuery($isSPARQL){
+		$propertyValue = SMWPropertyValue::makeUserProperty(QRC_ISQ_LABEL);
+		$dataValue = SMWDataValueFactory::newPropertyObjectValue($propertyValue, $isSPARQL);
+		$this->m_data->addPropertyObjectValue($propertyValue, $dataValue);
+	}
+	
 	public function parseUserValue($value){
 		return true;
 	} 
