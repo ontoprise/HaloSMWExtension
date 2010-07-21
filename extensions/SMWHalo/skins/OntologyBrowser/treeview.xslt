@@ -665,16 +665,13 @@
 
 	<xsl:template name="metadata">
 		<xsl:variable name="metaid" select="child::metadata/@id" />
-		<div style="display: none;" class="metadataContainer" id="{$metaid}">
-			<table>
+			<table style="display: none;width: 500px;" class="metadataContainer" id="{$metaid}">
 				<th>{{SMW_OB_META_PROPERTY}}</th>
 				<th>Value</th>
 				<xsl:for-each select="child::metadata/property">
 					<tr>
 						<td>
-							{{SMW_OB
-							<xsl:value-of select="@name" />
-							}}
+							{{SMW_OB<xsl:value-of select="@name" />}}
 						</td>
 						<td>
 							<xsl:value-of select="." />
@@ -682,7 +679,7 @@
 					</tr>
 				</xsl:for-each>
 			</table>
-		</div>
+		
 	</xsl:template>
 
 	<xsl:template name="gissues">
