@@ -300,6 +300,7 @@ a.selectedSwitch {
 	position: absolute;
 	background-color: #DDBBBB;
 	border: 2px solid;
+	z-index: 200;
 }
 
 .metadataContainerSwitch{
