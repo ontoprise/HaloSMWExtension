@@ -37,6 +37,7 @@ QIHelper.prototype = {
 		this.propname = null;
 		this.proparity = null;
 		this.propIsEnum = false;
+		this.propRange = new Array();
 		this.enumValues = null;
 		this.loadedFromId = null;
 		this.addQuery(null, gLanguage.getMessage('QI_MAIN_QUERY_NAME'));
@@ -858,8 +859,20 @@ QIHelper.prototype = {
     addPropertyChainInput : function(propName) {
         autoCompleter.deregisterAllInputs();
 		// fetch category constraints:
-		var cats = this.activeQuery.categories; // get the category group
+		var cats = this.activeQuery.categories; // get the category group 
         var constraintsCategories = "";
+        // calculate index of current field
+        var idx = $('dialoguecontent').rows.length;
+        if (idx > 0) idx = (idx - 1) / 2;
+        
+        // check if this is an element of a property chain
+        if  (idx > 0) {
+            var pName = $('input_p'+(idx-1)).value;
+            if (this.propRange[pName.toLowerCase()]) {
+                constraintsCategories = this.propRange[pName.toLowerCase()];
+                cats = null; // deactivate category
+            } 
+        }
 		if (cats != null) {
 			for ( var i = 0, n = cats.length; i < n; i++) {
 				catconstraint = cats[i];
@@ -878,8 +891,6 @@ QIHelper.prototype = {
 			}
 		}
         var constraintstring = "schema-property-domain: "+constraintsCategories+ "|annotation-property: "+constraintsCategories + "|namespace: 102";
-        var idx = $('dialoguecontent').rows.length;
-        if (idx > 0) idx = (idx - 1) / 2;
 		var newrow = $('dialoguecontent').insertRow(idx*2);
         // row with input field and remove icon
         var cell = newrow.insertCell(0);
@@ -891,7 +902,7 @@ QIHelper.prototype = {
         var tmpHTML = '<input type="text" id="input_p'+ idx +'" '
             + 'class="wickEnabled general-forms" constraints="' + constraintstring + '" '
             + ((idx > 0) ? 'style="font-weight:bold;" ' : '')
-            + 'autocomplete="OFF" onblur="qihelper.getPropertyInformation()"'
+            + 'onblur="qihelper.getPropertyInformation()"'
             + ((propName) ? ' value="'+propName+'"' : '')
             + '/>';
         if (idx > 0)
@@ -979,7 +990,13 @@ QIHelper.prototype = {
 		if (param == gLanguage.getMessage('QI_PAGE')) { // property dialogue & type = page
 			cell.innerHTML = this.createRestrictionSelector("=", false, false);
 			cell = newrow.insertCell(2);
-			cell.innerHTML = '<input class="wickEnabled general-forms" constraints="namespace: 0" autocomplete="OFF" type="text" id="input_r' + newRowIndex + '"/>';
+			if (this.propRange[this.propname.toLowerCase()]) {
+			    var propNameAC = gLanguage.getMessage('PROPERTY_NS')+this.propname.replace(/\s/g, '_');
+    			cell.innerHTML = '<input class="wickEnabled general-forms" constraints="instance-property-range: '
+    			    + propNameAC + '|namespace: 0" autocomplete=OFF" type="text" id="input_r' + newRowIndex + '"/>';
+    	    }
+    		else
+			    cell.innerHTML = '<input class="wickEnabled general-forms" constraints="namespace: 0" autocomplete=OFF" type="text" id="input_r' + newRowIndex + '"/>';
 		} else { // property, no page type
 			if (this.numTypes[param.toLowerCase()]) // numeric type? operators
 													// possible
@@ -1200,10 +1217,13 @@ QIHelper.prototype = {
 						.getAttribute("arity"));
                 propertyName = schemaData.documentElement.getAttribute("name");
 				parameterNames = [];
+				parameterRanges = [];
 				// parse all parameter names
 				for ( var i = 0, n = schemaData.documentElement.childNodes.length; i < n; i++) {
 					parameterNames.push(schemaData.documentElement.childNodes[i].getAttribute("name"));
 					parameterTypes.push(schemaData.documentElement.childNodes[i].getAttribute("type"));
+					var range = schemaData.documentElement.childNodes[i].getAttribute("range");
+					if (range) parameterRanges.push(range);
                     var allowedValues = schemaData.documentElement.childNodes[i].getElementsByTagName('allowedValue');
 					for ( var j = 0, m = allowedValues.length; j < m; j++) {
                         // contains allowed values for enumerations if applicable
@@ -1222,6 +1242,9 @@ QIHelper.prototype = {
                     possibleUnits[0].length > 0 &&
                     !this.numTypes[parameterNames[0].toLowerCase()])
                     this.numTypes[parameterNames[0].toLowerCase()] = true;
+                // save the range information if there were any
+                if (parameterRanges.length > 0)
+                    this.propRange[ propertyName.toLowerCase() ] = parameterRanges.join(',');
 			}
             // remove additional rows, if these had been added before
             // we got the information that this property is not of the type page
@@ -1246,7 +1269,9 @@ QIHelper.prototype = {
 				// therefore we need an "add" button
 				var ac_constraint = "";
 				if (parameterTypes[0] == '_wpg') {
-					ac_constraint = 'constraints="annotation-value: '+propNameAC+'|namespace: 0"';
+				    ac_constraint = 'constraints="'+
+				        (this.propRange[propertyName.toLowerCase()]) ? 'instance-property-range: ' : 'annotation-value: '
+				        +propNameAC+'|namespace: 0"';
                     // enable subquery and add chain link
                     this.toggleSubqueryAddchain(true);
 				} else if (parameterTypes[0] == '_dat') {
@@ -1304,7 +1329,7 @@ QIHelper.prototype = {
 					tmpHTML += "</select>";
 				}
                 else { // normal input field
-                    tmpHTML += '<input class="wickEnabled general-forms" '+ac_constraint+' autocomplete="OFF" type="text" id="input_r1"/>';
+                    tmpHTML += '<input class="wickEnabled general-forms" '+ac_constraint+' type="text" id="input_r1"/>';
                     if (possibleUnits.length > 0 && possibleUnits[0].length > 0) {
                         tmpHTML += '<select id="input_ru1">';
                         for (var i = 0, m = possibleUnits[0].length; i < m; i++)
@@ -1350,7 +1375,9 @@ QIHelper.prototype = {
 						cell.innerHTML = this.createRestrictionSelector("=", false, false);
                     cell = row.insertCell(-1);
 					if (parameterTypes[i] == '_wpg') {
-                    	cell.innerHTML = '<input class="wickEnabled general-forms" constraints="annotation-value: '+propNameAC+'|namespace: 0" autocomplete="OFF" type="text" id="input_r' + (i + 1) + '"/>';
+                    	cell.innerHTML = '<input class="wickEnabled general-forms" constraints="'
+                    	   + (this.propRange[parameterNames[i].toLowerCase()]) ? 'instance-property-range: ' : 'annotation-value: '
+                    	   + propNameAC+'|namespace: 0" type="text" id="input_r' + (i + 1) + '"/>';
 					} else if (parameterTypes[i] == '_dat') {
 						cell.innerHTML = '<input type="text" id="input_r' + (i + 1) + '" constraints="fixvalues: {{NOW}},{{TODAY}}|annotation-value: '+propNameAC+'"/>';
 					} else {
@@ -1723,6 +1750,7 @@ QIHelper.prototype = {
                 this.proparity = arity;
                 var parameterNames = [];
                 var parameterTypes = [];
+                var ranges = [];
                 // parse all parameter names
                 for ( var i = 0, n = schemaData.documentElement.childNodes.length; i < n; i++) {
                     parameterNames
@@ -1730,7 +1758,9 @@ QIHelper.prototype = {
                                     .getAttribute("name"));
                     parameterTypes
                             .push(schemaData.documentElement.childNodes[i]
-                                    .getAttribute("type"));             
+                                    .getAttribute("type"));
+                    var range = schemaData.documentElement.childNodes[i].getAttribute("range");
+                    if (range) ranges.push(range);          
                 }
                 
 	                // Special treatment: binary properties support conjunction,
@@ -1738,9 +1768,12 @@ QIHelper.prototype = {
 	                var idx = ($('dialoguecontent').rows.length -1) / 2 - 1;
                     var propertyName = $('input_p'+idx).value;
 	                propertyName = gLanguage.getMessage('PROPERTY_NS')+propertyName.replace(/\s/g, '_');
+	                this.propRange[propertyName.toLowerCase()]= ranges.join(',');
 	                var ac_constraint = "";
 	                if (parameterTypes[0] == '_wpg') {
-	                    ac_constraint = 'annotation-value: '+propertyName+'|namespace: 0';
+	                    ac_constraint = (this.propRange[propertyName.toLowerCase()])
+	                        ? 'annotation-value: ' : 'instance-property-range: '
+	                        +propertyName+'|namespace: 0';
 	                }else if (parameterTypes[0] == '_dat') {
 	                    ac_constraint = 'fixvalues: {{NOW}},{{TODAY}}|annotation-value: '+propertyName;
 	                } else {
@@ -2395,58 +2428,7 @@ QIHelper.prototype = {
 
 	parsePropertyTypes : function(request) {
 		if (request.status == 200) {
-			var xmlDoc = GeneralXMLTools
-					.createDocumentFromString(request.responseText);
-			var prop = xmlDoc.getElementsByTagName('relationSchema');
-			for ( var i = 0; i < prop.length; i++) {
-				var pname = prop.item(i).getAttribute('name');
-				var arity = parseInt(prop.item(i).getAttribute('arity'));
-				var ptype = prop.item(i).getElementsByTagName('param')[0]
-						.getAttribute('name');
-                var noval = new Array();
-                var enumValues = [];
-                var unitVals = new Array();
-                if (arity == 2) {
-    				noval = prop.item(i).getElementsByTagName('allowedValue');
-                	for ( var j = 0; j < noval.length; j++) {
-                    	enumValues.push(noval.item(j).getAttribute('value'));
-                    }
-                    // fill the units array
-                    var units = prop.item(i).getElementsByTagName('unit');
-                    var uvals = new Array();
-                    for ( var j = 0; j < units.length; j++) {
-                        uvals.push(units.item(j).getAttribute('label'));
-                    }
-                    if (uvals.length > 0) {
-                        unitVals.push(uvals);
-                        if (!this.numTypes[pname.toLowerCase()])
-                            this.numTypes[pname.toLowerCase()]= true;
-                    }
-                }
-                var isEnum = noval.length > 0 ? true : false;
-				var pgroup = new PropertyGroup(pname, arity, false, false,
-						isEnum, enumValues);
-                // Nary property
-                if (arity > 2) {
-                    var naryParams = prop.item(i).getElementsByTagName('param');
-                    for (k = 0; k < naryParams.length; k++) {
-                        // enumerations
-                        var enumValNodes = naryParams.item(k).getElementsByTagName('allowedValue');
-                        var enumVals = [];
-                        for (m = 0; m < enumValNodes.length; m++ )
-                            enumVals[m] = enumValNodes.item(m).getAttribute('value');
-                        pgroup.addValue(naryParams.item(k).getAttribute('name'), null, enumVals);
-                        // units
-                        var units = naryParams.item(k).getElementsByTagName('unit');
-                        var uvals = new Array();
-                        for ( var m = 0; m < units.length; m++)
-                            uvals.push(units.item(m).getAttribute('label'));
-                        unitVals.push(uvals);
-                    }
-                }
-                pgroup.setUnits(unitVals);
-				this.propertyTypesList.add(pname, pgroup, [], ptype);
-			}
+	       this.savePropertyInformation(request.responseText);
 		}
 		this.parseQueryString();
 	},
@@ -2455,11 +2437,11 @@ QIHelper.prototype = {
 		var sub = this.queryPartsFromInitByAsk;
 
 		// properties that must be shown in the result
-	var pMustShow = this.applyOptionParams(sub[0]);
+    	var pMustShow = this.applyOptionParams(sub[0]);
 
-	// run over all query strings and start parsing
-	for (f = 0; f < sub.length; f++) {
-		// set current query to active, do this manually (treeview is not
+    	// run over all query strings and start parsing
+	   for (f = 0; f < sub.length; f++) {
+        // set current query to active, do this manually (treeview is not
 		// updated)
 		this.activeQuery = this.queries[f];
 		this.activeQueryId = f;
@@ -2471,12 +2453,71 @@ QIHelper.prototype = {
 		// and [[ from the first element
 		args[0] = args[0].replace(/^\s*\[\[/, '');
 		this.handleQueryString(args, f, pMustShow);
-	}
-	this.setActiveQuery(0); // set main query to active
-    this.updateTree();      // show new tree
-	this.updatePreview(); // update result preview
-},
-
+	   }
+        this.setActiveQuery(0); // set main query to active
+        this.updateTree();      // show new tree
+	   this.updatePreview(); // update result preview
+    },
+    
+    savePropertyInformation : function(xml) {
+        var xmlDoc = GeneralXMLTools
+                .createDocumentFromString(xml);
+        var prop = xmlDoc.getElementsByTagName('relationSchema');
+        var returnedPropNames = [];
+        for ( var i = 0; i < prop.length; i++) {
+            var pname = prop.item(i).getAttribute('name');
+            returnedPropNames.push(pname);
+            var arity = parseInt(prop.item(i).getAttribute('arity'));
+            var ptype = prop.item(i).getElementsByTagName('param')[0]
+                    .getAttribute('name');
+            var noval = new Array();
+            var enumValues = [];
+            var unitVals = new Array();
+            var prange = prop.item(i).getElementsByTagName('param')[0]
+                .getAttribute('range');
+            if (arity == 2) {
+                noval = prop.item(i).getElementsByTagName('allowedValue');
+                for ( var j = 0; j < noval.length; j++) {
+                    enumValues.push(noval.item(j).getAttribute('value'));
+                }
+                // fill the units array
+                var units = prop.item(i).getElementsByTagName('unit');
+                var uvals = new Array();
+                for ( var j = 0; j < units.length; j++) {
+                    uvals.push(units.item(j).getAttribute('label'));
+                }
+                if (uvals.length > 0) {
+                    unitVals.push(uvals);
+                    if (!this.numTypes[pname.toLowerCase()])
+                        this.numTypes[pname.toLowerCase()]= true;
+                }
+            }
+            var isEnum = noval.length > 0 ? true : false;
+            var pgroup = new PropertyGroup(pname, arity, false, false,
+                        isEnum, enumValues);
+            // Nary property
+            if (arity > 2) {
+                var naryParams = prop.item(i).getElementsByTagName('param');
+                for (k = 0; k < naryParams.length; k++) {
+                    // enumerations
+                    var enumValNodes = naryParams.item(k).getElementsByTagName('allowedValue');
+                    var enumVals = [];
+                    for (m = 0; m < enumValNodes.length; m++ )
+                        enumVals[m] = enumValNodes.item(m).getAttribute('value');
+                    pgroup.addValue(naryParams.item(k).getAttribute('name'), null, enumVals);
+                    // units
+                    var units = naryParams.item(k).getElementsByTagName('unit');
+                    var uvals = new Array();
+                    for ( var m = 0; m < units.length; m++)
+                        uvals.push(units.item(m).getAttribute('label'));
+                    unitVals.push(uvals);
+                }
+            }
+            pgroup.setUnits(unitVals);
+            this.propertyTypesList.add(pname, pgroup, [], ptype, prange);
+        }
+        return returnedPropNames;
+    },
 handleQueryString : function(args, queryId, pMustShow) {
 
 	// list of properties (each property has an own pgoup)
@@ -2928,25 +2969,28 @@ PropertyList.prototype = {
 		this.pgroup = Array();
 		this.subqueries = Array();
 		this.type = Array();
+		this.range = Array();
 		this.length = 0;
 	},
 
-	add : function(name, pgroup, subqueries, type) {
+	add : function(name, pgroup, subqueries, type, range) {
 		for ( var i = 0; i < this.name.length; i++) {
 			if (this.name[i] == name) {
 				this.pgroup[i] = pgroup;
 				this.subqueries[i] = (subqueries) ? subqueries : [];
 				this.type[i] = type;
+				this.range = (range) ? range : "";
 				return;
 			}
 		}
-		this.addNew(name, pgroup, subqueries, type);
+		this.addNew(name, pgroup, subqueries, type, range);
 	},
-    addNew : function(name, pgroup, subqueries, type) {
+    addNew : function(name, pgroup, subqueries, type, range) {
 		this.name.push(name);
 		this.pgroup.push(pgroup);
 		this.subqueries.push((subqueries) ? subqueries : []);
 		this.type.push(type);
+		this.range.push(range);
         this.length++;
     },
 
@@ -2984,6 +3028,13 @@ PropertyList.prototype = {
 				return this.type[i];
 		}
 	},
+	
+    getRange : function(name) {
+        for ( var i = 0; i < this.name.length; i++) {
+            if (this.name[i] == name)
+                return this.range[i];
+        }
+    },	
 
     supportsUnits : function(name) {
 		for ( var i = 0; i < this.name.length; i++) {
