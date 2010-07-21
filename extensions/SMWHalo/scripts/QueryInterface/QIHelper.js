@@ -51,9 +51,9 @@ QIHelper.prototype = {
         $('qistatus').innerHTML = gLanguage.getMessage('QI_START_CREATING_QUERY');
         if (! this.noTabSwitch) this.switchTab(1, true);
         this.sourceChanged = 0;
-                // if triplestore is enabled in wiki, the <input id="usetriplestore"> exists
-                if ($('usetriplestore'))
-                    Event.observe($('usetriplestore'),'click', this.updatePreview.bind(this));
+        // if triplestore is enabled in wiki, the <input id="usetriplestore"> exists
+        if ($('usetriplestore'))
+            Event.observe($('usetriplestore'),'click', this.updateSrcAndPreview.bind(this));
 	},
 
 	/**
@@ -126,6 +126,11 @@ QIHelper.prototype = {
         if ($('qiDefTab3').className.indexOf('qiDefTabActive') > -1)
             this.showFullAsk('parser', false);
     },
+    
+    updateSrcAndPreview : function() {
+        this.updateQuerySource();
+        this.updatePreview();
+    },
 
 	getSpecialQPParameters : function(qp, callWhenFinished) {
 		var callback = function(request) {
@@ -163,7 +168,7 @@ QIHelper.prototype = {
 			if (callWhenFinished) callWhenFinished();
 		}
 		var createSelectionBox = function(id, values) {
-			var html = '<select id="' + 'qp_param_' + id + '" onchange="qihelper.updateQuerySource(); qihelper.updatePreview()">';
+			var html = '<select id="' + 'qp_param_' + id + '" onchange="qihelper.updateSrcAndPreview()">';
 			values.each(function(v) {
 				html += '<option value="' + v + '">' + v + '</option>';
 			})
@@ -175,13 +180,13 @@ QIHelper.prototype = {
 			if (constraints != null) {
 				aclAttributes = 'class="wickEnabled" constraints="'+constraints+'"';
 			}
-			var html = '<input id="' + 'qp_param_' + id + '" type="text" '+aclAttributes+' onchange="qihelper.updateQuerySource(); qihelper.updatePreview()"/>';
+			var html = '<input id="' + 'qp_param_' + id + '" type="text" '+aclAttributes+' onchange="qihelper.updateSrcAndPreview()"/>';
 			return html;
 		}
 		var createCheckBox = function(id, defaultValue) {
 			var defaultValueAtt = defaultValue ? 'checked="checked"' : '';
 			var html = '<input id="' + 'qp_param_' + id + '" type="checkbox" '
-					+ defaultValueAtt + ' onchange="qihelper.updateQuerySource(); qihelper.updatePreview()"/>';
+					+ defaultValueAtt + ' onchange="qihelper.updateSrcAndPreview()"/>';
 			return html;
 		}
 		if (this.parameterPendingElement)
@@ -1931,8 +1936,7 @@ QIHelper.prototype = {
         else
 			this.addCatInstGroup();
 		this.updateTree();
-		this.updatePreview();
-        this.updateQuerySource();
+		this.updateSrcAndPreview()
         this.updateBreadcrumbs(this.activeQueryId);
 		this.loadedFromID = null;
 	},
@@ -2310,9 +2314,7 @@ QIHelper.prototype = {
 		
 		// update result preview
 		this.getSpecialQPParameters($('layout_format').value);
-        this.updateQuerySource();
-		this.updatePreview();
-
+		this.updateSrcAndPreview();
 	},
 
     /**
