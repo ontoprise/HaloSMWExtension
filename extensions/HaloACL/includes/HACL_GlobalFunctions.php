@@ -124,7 +124,8 @@ function haclfSetupExtension() {
     $wgHooks['IsFileCacheable'][]      = 'haclfIsFileCacheable';
     $wgHooks['PageRenderingHash'][]    = 'haclfPageRenderingHash';
     $wgHooks['SpecialMovepageAfterMove'][] = 'HACLParserFunctions::articleMove';
-
+	$wgHooks['SkinTemplateContentActions'][] = 'haclfRemoveProtectTab';
+    
 
     global $haclgProtectProperties;
     if ($haclgProtectProperties === true) {
@@ -801,6 +802,17 @@ function haclfDisallowVariableForPredicate() {
 function haclfRegisterACIcon(& $namespaceMappings) {
     global $haclgIP;
     $namespaceMappings[HACL_NS_ACL]="/extensions/HaloACL/skins/images/ACL_AutoCompletion.gif";
+    return true;
+}
+
+/**
+ * Removes the tab "Protect"
+ * 
+ * @param $content_actions
+ */
+function haclfRemoveProtectTab( &$content_actions ) {
+    if (array_key_exists('protect', $content_actions))
+		unset($content_actions['protect']);
     return true;
 }
 
