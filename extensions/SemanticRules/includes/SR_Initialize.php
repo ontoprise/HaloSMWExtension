@@ -142,18 +142,20 @@ function srfAddToOntologyBrowser(& $treeContainer, & $boxContainer, & $menu, & $
 	return true;
 }
 
-function srAttachToResource($properties, & $resourceAttachments, $nsIndex) {
+function srAttachToResource($schemaElements, & $resourceAttachments, $nsIndex) {
 	$ruleEndpoint = SRRuleEndpoint::getInstance();
 	$resources = array();
 	new TSNamespaces(); // assure namespaces are initialized
 	$allNamespaces = TSNamespaces::getAllNamespaces();
 
-	foreach($properties as $p) {
-		list($name, $hasSubProperty) = $p;
-		$resources[] = $allNamespaces[$nsIndex].$name->getDBkey();
+	foreach($schemaElements as $p) {
+		list($title, $hasSubElement) = $p;
+		$resources[] = $allNamespaces[$nsIndex].$title->getDBkey();
 			
 	}
-	$resourceAttachments = $ruleEndpoint->getDefiningRules($resources);
+	if (!empty($resources)) {
+	   $resourceAttachments = $ruleEndpoint->getDefiningRules($resources);
+	}
 	return true;
 }
 
