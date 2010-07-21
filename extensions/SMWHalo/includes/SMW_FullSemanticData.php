@@ -85,9 +85,12 @@ class SMWFullSemanticData {
         $queryText = "SELECT ?pred ?obj WHERE { <".$smwgTripleStoreGraph."/$ns#$localName> ?pred ?obj . }";
         // echo $queryText;
 		
+		wfRunHooks('BeforeDerivedPropertyQuery', array(&$queryText) );
 		// Ask for all properties of the subject (derived and ground facts)
 		$q = SMWSPARQLQueryProcessor::createQuery($queryText, array());
 		$res = smwfGetStore()->getQueryResult($q); // SMWQueryResult
+		wfRunHooks('AfterDerivedPropertyQuery', array() );
+		wfRunHooks('FilterQueryResults', array(&$res, array('pred')) );
 		
 		$propVal = array();
 		while ( $row = $res->getNext() ) { //$row: SMWResultArray[]
