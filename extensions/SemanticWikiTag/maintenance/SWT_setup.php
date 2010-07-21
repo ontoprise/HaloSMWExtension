@@ -86,6 +86,9 @@ function smwfWTImportPage($filepath, $ns, $ext) {
 
 	$helpPageTitle = Title::newFromText($filename, $ns);
 	$helpPageArticle = new Article($helpPageTitle);
+	global $wgTitle;
+	$wgTitle = $helpPageTitle;
+	
 	if (!$helpPageArticle->exists()) {
 		reportProgress("\nImport: ".$filename."...", true);
 		$helpPageArticle->insertNewArticle($contents, $helpPageTitle->getText(), false, false);
