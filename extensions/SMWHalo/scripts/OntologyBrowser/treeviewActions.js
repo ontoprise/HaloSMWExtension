@@ -1212,11 +1212,17 @@ OBGlobalActionListener.prototype = {
         new Form.Element.Observer($("propertyFilter"), 0.5, this.filterProperties.bindAsEventListener(this));
 		
 		// make sure that OntologyBrowser Filter search gets focus if a key is pressed
-		Event.observe(document, 'keydown', function(event) { 
+        var keyDownListener = function(event) { 
 			if (event.target && event.target.localName == 'HTML') { // that means, no other element has the focus
     			$('FilterBrowserInput').focus() 
 			}
-		});
+			
+			if (event.keyCode == 27) { // escape pressed
+				this.closeAllMetadataviews();
+			}
+		};
+        
+		Event.observe(document, 'keydown', keyDownListener.bind(this));
 		
 		selectionProvider.addListener(this, OB_REFRESHLISTENER);
 	},
@@ -1548,6 +1554,15 @@ OBGlobalActionListener.prototype = {
 			OB_RIGHT_ARROW = 0;
 			img.setAttribute("src",wgScriptPath+"/extensions/SMWHalo/skins/OntologyBrowser/images/bigarrow.gif");
 		}
+	},
+	
+	closeMetadataview: function(event, id) {
+		$(id).hide();
+		
+	},
+	
+	closeAllMetadataviews: function() {
+		$$(".metadataContainer").each(function(s) { s.hide(); });
 	}
 
 }

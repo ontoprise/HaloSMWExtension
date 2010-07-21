@@ -666,8 +666,9 @@
 	<xsl:template name="metadata">
 		<xsl:variable name="metaid" select="child::metadata/@id" />
 			<table style="display: none;width: 500px;" class="metadataContainer" id="{$metaid}">
-				<th>{{SMW_OB_META_PROPERTY}}</th>
+		        <th>{{SMW_OB_META_PROPERTY}}</th>
 				<th>Value</th>
+			    <th> <img src="{$param-img-directory}/extensions/SMWHalo/skins/expanded-close.gif" class="closeMetadataSwitch" onclick="globalActionListener.closeMetadataview(event, '{$metaid}')"/></th>
 				<xsl:for-each select="child::metadata/property">
 					<tr>
 						<td>

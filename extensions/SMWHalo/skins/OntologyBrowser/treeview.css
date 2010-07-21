@@ -298,8 +298,8 @@ a.selectedSwitch {
 
 .metadataContainer {
 	position: absolute;
-	background-color: #DDBBBB;
-	border: 2px solid;
+	background-color: #FFFFF9;
+	border: 2px solid #999999;
 	z-index: 200;
 }
 
@@ -312,6 +312,10 @@ a.selectedSwitch {
 	background-color: #CCC;
     border: 1px solid #FFF;
     margin: 1px;
+}
+
+.closeMetadataSwitch {
+	cursor: pointer;
 }
 
 /*
