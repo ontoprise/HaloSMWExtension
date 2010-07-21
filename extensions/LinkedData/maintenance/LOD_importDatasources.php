@@ -38,6 +38,10 @@ require_once "$mediaWikiLocation/maintenance/commandLine.inc";
 $dir = dirname(__FILE__);
 $lodgIP = "$dir/../../LinkedData";
 
+if (!defined('LOD_LINKEDDATA_VERSION')) {
+      echo "\nPlease configure LinkData extension before executing this script.\n";
+    return;
+}
 
 require_once("$lodgIP/includes/LOD_Storage.php");
 require_once("$lodgIP/includes/LOD_GlobalFunctions.php");
