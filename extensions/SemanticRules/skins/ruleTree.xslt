@@ -143,6 +143,20 @@
 	</xsl:template>
 
 	<xsl:template match="ruleMetadata">
+	   <table class="ruleTreeColors" border="0" cellspacing="0">
+           <tr>
+                <td id="ruleList-id" class="ruleListLabel">
+                <img src="{$param-img-directory}/extensions/SemanticRules/skins/images/rule.gif" style="margin-bottom: -3px;"/>
+                <span style="margin-left:5px;"><xsl:if test="@title">
+                        <xsl:value-of select="@title" />
+                    </xsl:if>
+                </span>
+                </td>
+                
+            </tr>
+       </table>
+	   <div style="margin: 10px; border-top: 1px dashed rgb(47, 111, 171);"/>
+	
 		<table class="ruleTreeColors" border="0" cellspacing="0">
 
 			<tr>
@@ -183,23 +197,16 @@
 				</td>
 			</tr>
 		</table>
-		<hr />
+		<div style="margin: 10px; border-top: 1px dashed rgb(47, 111, 171);"/>
 		<table class="ruleTreeColors" border="0" cellspacing="0">
-			<tr>
-				<td id="ruleList-id" class="ruleListLabel">{{SR_RULE_ID}}</td>
-				<td class="ruleListValue">
-					<xsl:if test="@title">
-						<xsl:value-of select="@title" />
-					</xsl:if>
-				</td>
-			</tr>
+			
 			<tr>
 				<td id="ruleList-link" class="ruleListLabel">{{SR_RULE_HOME}}</td>
 				<td class="ruleListValue">
 
-					<xsl:variable name="title" select="@title" />
+					<xsl:variable name="hometitle" select="@title" />
 					<xsl:if test="@containing_page">
-						<a class="navigationLink" title="Goto to {$title}">
+						<a class="navigationLink" title="Goto to {$hometitle}">
 
 							<xsl:attribute name="href"><xsl:value-of
 								select="substring-before($param-wiki-path,'$1')" /><xsl:value-of
@@ -222,11 +229,11 @@
 				<td id="ruleList-active" class="ruleListLabel">{{SR_RULE_ISACTIVE}}</td>
 				<td class="ruleListValue">
 
-					<xsl:variable name="title" select="@title" />
+					<xsl:variable name="containingPageTitle" select="@title" />
 					<xsl:variable name="containingPage" select="@containing_page" />
 
 					<select name="ruleActivitySelector"
-						onchange="ruleActionListener.changeRuleState(event, this, '{$containingPage}','{$title}')">
+						onchange="ruleActionListener.changeRuleState(event, this, '{$containingPage}','{$containingPageTitle}')">
 						<xsl:choose>
 							<xsl:when test="@active='true'">
 								<option selected="true">True</option>
@@ -249,21 +256,21 @@
 				</td>
 			</tr>
 		</table>
-		<hr />
+		<div style="margin: 10px; border-top: 1px dashed rgb(47, 111, 171);"/>
 		<table class="ruleTreeColors" border="0" cellspacing="0">
 			<tr>
 				<td id="ruleList-defines" class="ruleListLabel">{{SR_RULE_DEFINES}}</td>
 				<td class="ruleListValue">
 					<xsl:for-each select="child::defining">
-						<xsl:variable name="title" select="." />
-						<a class="navigationLink" title="Goto to {$title}">
+						<xsl:variable name="title_def" select="." />
+						<a class="navigationLink" title="Goto to {$title_def}">
 
 							<xsl:attribute name="href"><xsl:value-of
 								select="substring-before($param-wiki-path,'$1')" /><xsl:value-of
 								select="." /></xsl:attribute>
 
-							<xsl:variable name="titleWithoutUnderscore" select="." />
-							<xsl:value-of select="translate($titleWithoutUnderscore, '_', ' ')" />
+							<xsl:variable name="titleWithoutUnderscore_def" select="." />
+							<xsl:value-of select="translate($titleWithoutUnderscore_def, '_', ' ')" />
 						</a>,
 					</xsl:for-each>
 				</td>
@@ -272,15 +279,15 @@
 				<td id="ruleList-uses" class="ruleListLabel">{{SR_RULE_USES}}</td>
 				<td class="ruleListValue">
 					<xsl:for-each select="child::using">
-						<xsl:variable name="title" select="." />
-						<a class="navigationLink" title="Goto to {$title}">
+						<xsl:variable name="title_use" select="." />
+						<a class="navigationLink" title="Goto to {$title_use}">
 
 							<xsl:attribute name="href"><xsl:value-of
 								select="substring-before($param-wiki-path,'$1')" /><xsl:value-of
 								select="." /></xsl:attribute>
 
-							<xsl:variable name="titleWithoutUnderscore" select="." />
-							<xsl:value-of select="translate($titleWithoutUnderscore, '_', ' ')" />
+							<xsl:variable name="titleWithoutUnderscore_use" select="." />
+							<xsl:value-of select="translate($titleWithoutUnderscore_use, '_', ' ')" />
 						</a>,
 					</xsl:for-each>
 				</td>
