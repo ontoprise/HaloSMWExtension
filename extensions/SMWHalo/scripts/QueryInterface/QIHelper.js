@@ -984,26 +984,33 @@ QIHelper.prototype = {
 			cell = newrow.insertCell(2);
 			if (this.propIsEnum) { // if enumeration, a select box is used
 									// instead of a text input field
-				var tmpHTML = '<select id="input_r' + newRowIndex + '">';
+				var oSelect = document.createElement("SELECT");
+				oSelect.id = "input_r" + newRowIndex;					
 				for ( var i = 0; i < this.enumValues.length; i++) {
-					tmpHTML += '<option value="' + this.enumValues[i]
-							+ '" style="width:100%">' + this.enumValues[i]
-							+ '</option>';
+				    var oOption = document.createElement("OPTION");
+                    oOption.text=this.enumValues[i];
+                    oOption.value=this.enumValues[i];
+                    oOption.style.width="100%";
+                    oSelect.add(oOption);
 				}
-				tmpHTML += '</select>';
-				cell.innerHTML = tmpHTML;
+				cell.appendChild(oSelect);
 			} else { // no enumeration, no page type, simple input field
-				var tmpHTML = '<input type="text" id="input_r' + newRowIndex + '"/>';
-                try {
+                var oInput = document.createElement("INPUT");
+                oInput.type = "text";
+                oInput.id = "input_r" + newRowIndex;
+                cell.appendChild(oInput);
+				try {
                     var uIdx = (arity == 2) ? 0 : newRowIndex - 1;
                     if (this.propUnits.length > 0 && this.propUnits[uIdx].length > 0) {
-                        tmpHTML += '<select id="input_ru' + newRowIndex + '">';
-                        for (var i = 0, m = this.propUnits[uIdx].length; i < m; i++)
-                            tmpHTML += '<option>'+ this.propUnits[uIdx][i] + '</option>';
-                        tmpHTML += '</select>';
+                        var oSelect = document.createElement("SELECT");
+                        oSelect.id = "input_ru" + newRowIndex;
+                        for (var i = 0, m = this.propUnits[uIdx].length; i < m; i++) {
+                            oSelect.options[i] = 
+                                new Option(this.propUnits[uIdx][i], this.propUnits[uIdx][i]);
+                        }
+                        cell.appendChild(oSelect);        
                     }
                 } catch (e) {};
-                cell.innerHTML = tmpHTML;
 			}
 		}
         if (arity == 2) {
@@ -1251,18 +1258,16 @@ QIHelper.prototype = {
                 // start to build HTML for restriction values
 				tmpHTML += '<tr><td>' + gLanguage.getMessage('QI_PROPERTYVALUE') + '</td><td>';
 
-                // add units to selection to show property chekbox if there are any
+                // add units to selection to show property checkbox if there are any
                 if (possibleUnits.length > 0 && possibleUnits[0].length > 0) {
-                    var uopts= '';
                     for (var i = 0; i < possibleUnits[0].length; i++ ) {
-                        uopts += '<option>'+ possibleUnits[0][i] + '</option>';
+                        $('input_c4').options[i] = new Option(possibleUnits[0][i], possibleUnits[0][i]);
                     }
-                    $('input_c4').innerHTML = uopts;
                     // runtime issue, check if we display hide values at once
                     $('input_c4d').style.display = $('input_c1').checked ? null : 'none';
                 }
                 else {
-                    $('input_c4').innerHTML = "";
+                    $('input_c4').outerHTML = '<select id="input_c4"></select>';
                     $('input_c4d').style.display = 'none';
                 }
 				
@@ -1615,14 +1620,12 @@ QIHelper.prototype = {
                     ? (Prototype.Browser.IE) ? 'inline' : null : 'none';
                 if (prop.supportsUnits() && this.proparity == 2) {
                     $('input_c4').value = prop.getShowUnit();
-                    var options = "";
                     for (var i = 0; i < this.propUnits[0].length; i++) {
-                        options += '<option';
+                        $('input_c4').options[i]= 
+                            new Option(this.propUnits[0][i],this.propUnits[0][i]);
                         if (prop.getShowUnit() == this.propUnits[0][i])
-                            options += ' selected="selected"';
-                        options += '>' + this.propUnits[0][i] + '</option>';
+                            $('input_c4').options[i].selected = "selected";
                     }
-                    $('input_c4').innerHTML=options;
                     $('input_c4d').style.display= prop.isShown()
                         ? Prototype.Browser.IE ? 'inline' : null : 'none';
                 }
@@ -1666,15 +1669,13 @@ QIHelper.prototype = {
                 try {
                     var propUnits = prop.getUnits();
                     var uIdx = (this.proparity == 2) ? 0 : i;
-                    var tmpHTML = '';
+                    var oSelect = $('dialoguecontent_pvalues').rows[currRow].cells[2]
+                        .firstChild.nextSibling;
                     for (var k = 0, m = propUnits[uIdx].length; k < m; k++) {
-                        tmpHTML += '<option';
+                        oSelect.options[k] = new Option(propUnits[uIdx][k], propUnits[uIdx][k]);
                         if (propUnits[uIdx][k] == vals[i][3])
-                            tmpHTML += ' selected="selected"';
-                        tmpHTML += '>'+ propUnits[uIdx][k] + '</option>';
+                            oSelect.options[k].selected="selected";
                     }
-                    $('dialoguecontent_pvalues').rows[currRow].cells[2]
-                        .firstChild.nextSibling.innerHTML = tmpHTML;
                 } catch(e) {};
                 if (this.proparity > 2) {
                     $('dialoguecontent_pvalues').rows[currRow].cells[0].innerHTML= vals[i][0];
@@ -1839,10 +1840,10 @@ QIHelper.prototype = {
         var cells = $('treeanchor').getElementsByTagName('td');
         for (i = 0; i < cells.length; i++) {
             if (cells[i].style.backgroundColor) {
-                cells[i].style.backgroundColor = null;
+                cells[i].style.backgroundColor = (Prototype.Browser.IE) ? '' : null;
                 for (j = 0; j < cells[i].childNodes.length; j++) {
                     if (cells[i].childNodes[j].style)
-                        cells[i].childNodes[j].style.color= null;
+                        cells[i].childNodes[j].style.color= (Prototype.Browser.IE ) ? '': null;
                 }
             }
         }
