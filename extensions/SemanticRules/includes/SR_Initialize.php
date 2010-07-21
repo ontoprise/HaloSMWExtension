@@ -19,13 +19,13 @@ if (!defined("SMW_HALO_VERSION")) {
 }
 
 global $smwgDefaultStore;
-if($smwgDefaultStore != 'SMWTripleStore') {
-	trigger_error("Triplestore not active. See manual how to activate.");
-	die();
-}
 if($smwgDefaultStore == 'SMWTripleStoreQuad') {
     trigger_error("Rule extension will not work with the quad driver currently. Please deactivate it.");
     die();
+}
+if($smwgDefaultStore != 'SMWTripleStore') {
+	trigger_error("Triplestore not active. See manual how to activate.");
+	die();
 }
 
 $wgExtensionFunctions[] = 'ruleSetupExtension';
