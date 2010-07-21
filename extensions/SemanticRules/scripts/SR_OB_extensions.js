@@ -27,6 +27,11 @@ SRRuleActionListener.prototype = {
 		if (ns == SMW_PROPERTY_NS || ns == SMW_CATEGORY_NS) {
 			this.hideRuleContainer();
 		}
+		if (ns == 300) {
+			// 300 means rule, although it is not a namespace
+			GeneralBrowserTools.toggleHighlighting(this.oldNode, node);
+			this.oldNode = node;
+		}
 	},
 
 	treeTabChanged : function(tabname) {
@@ -274,6 +279,7 @@ SRRuleActionListener.prototype = {
 		selectionProvider.fireRefresh();
 
 	}
+	selectionProvider.fireSelectionChanged(ruleURI, null, 300, node);
 	this.rulePendingIndicator.show($('ruleList'));
 	sajax_do_call('srf_sr_AccessRuleEndpoint', [ 'getRule', ruleURI ],
 			callbackOnRuleRequest.bind(this));
