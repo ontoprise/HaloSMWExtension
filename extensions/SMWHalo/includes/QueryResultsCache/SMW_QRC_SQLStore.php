@@ -173,7 +173,7 @@ class SMWQRCSQLStore implements SMWQRCStoreInterface{
 		global $lastUpdateTimeStampWeight, $accessFrequencyWeight, $invalidationFrequencyWeight;
 		
 		$query = "UPDATE $qrcTable SET invalidation_frequency = invalidation_frequency + 1, dirty=true, "; 
-		$query .= "priority = last_update * $lastUpdateTimeStampWeight - access_frequency * $accessFrequencyWeight - (invalidation_frequency + 1) * $invalidationFrequencyWeight"; 
+		$query .= "priority = last_update * $lastUpdateTimeStampWeight - access_frequency * $accessFrequencyWeight - invalidation_frequency * $invalidationFrequencyWeight"; 
 		$query .= " WHERE query_id=\"";
 		$query .= implode('" OR query_id="', array_keys($queryIds));
 		$query .= '"';
