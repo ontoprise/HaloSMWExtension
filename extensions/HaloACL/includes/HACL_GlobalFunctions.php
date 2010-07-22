@@ -214,6 +214,10 @@ function haclfSetupExtension() {
  * @return <type>
  */
 function addNonSpecialPageHeader(&$out) {
+	global $wgRequest;
+	if ($wgRequest->getText('action', 'view') == 'view') {
+		return true;
+	}
     global $haclgHaloScriptPath, $smwgDeployVersion;
     haclAddJSLanguageScripts($out);
     if (!isset($smwgDeployVersion) || $smwgDeployVersion === false) {

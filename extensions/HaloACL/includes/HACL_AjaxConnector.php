@@ -1102,6 +1102,8 @@ HTML;
 
     $myGenericPanel->setContent($content);
 
+    $emptyGroupErr = wfMsg('hacl_popup_invalid_no_group_members');
+    
     $footerextension = <<<HTML
     <script type="javascript>
 
@@ -1160,11 +1162,19 @@ HTML;
             };
 
             YAHOO.haloacl.buildGroupPanelXML_$panelid = function(){
-                genericPanelSetSaved_$panelid(true);
 
 
-                var groups = YAHOO.haloacl.getCheckedNodesFromTree(YAHOO.haloacl.treeInstanceright_tabview_$panelid);
                 var panelid = '$panelid';
+                var groups = YAHOO.haloacl.getCheckedNodesFromTree(YAHOO.haloacl.treeInstanceright_tabview_$panelid);
+                if (groups.length == 0 
+                	&& YAHOO.haloacl.clickedArrayUsers['right_tabview_$panelid'] == 0) {
+					YAHOO.haloacl.notification.createDialogOk("content", "Groups", "$emptyGroupErr", {
+									yes: function () {}
+								});
+                	return;
+                }
+                	 
+                genericPanelSetSaved_$panelid(true);
                 if (YAHOO.haloacl.debug) console.log("panelid of grouppanel:"+panelid)
 
                 // building xml

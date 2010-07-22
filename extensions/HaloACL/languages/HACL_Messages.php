@@ -315,7 +315,8 @@ $messages['en'] = array(
     'hacl_save_acl' => "Save ACL",
     'hacl_create_right' => "Create right",
     'hacl_add_template' => "Add template",
-    'hacl_groupsettings' => "Groupsettings",
+    'hacl_groupsettings' => "Group settings",
+	'hacl_popup_invalid_no_group_members' => "Please select at least one user or group!",
 
     'hacl_saved' => "Saved",
     'hacl_notsaved' => "Not saved",
@@ -643,6 +644,7 @@ $messages['de'] = array(
     'hacl_create_right' => "Recht erstellen",
     'hacl_add_template' => "Template hinzuf&uuml;gen",
     'hacl_groupsettings' => "Gruppeneinstellungen",
+	'hacl_popup_invalid_no_group_members' => "Bitte wählen Sie mindestens einen Benutzer oder eine Gruppe aus!",
 
     'hacl_saved' => "Gespeichert",
     'hacl_notsaved' => "Nicht gespeichert",
