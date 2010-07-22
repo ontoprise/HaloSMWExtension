@@ -373,6 +373,7 @@ en cliquant sur les grosses flà¨ches situées entre les colonnes.",
     'smw_tsa_status' => 'Statut',
     'smw_tsa_rulesupport'=> 'Le driver triplestore supporte les rà¨gles ; il vous est conseillé d\'ajouter <pre>$smwgEnableObjectLogicRules=true;</pre> à  votre LocalSettings.php. Sinon, les rà¨gles ne fonctionneront pas.',
     'smw_tsa_norulesupport'=> 'Le driver triplestore ne supporte pas les rà¨gles, bien qu\'elles soient activées dans le wiki. Veuillez supprimer <pre>$smwgEnableObjectLogicRules=true;</pre> de votre LocalSettings.php, afin de ne pas obtenir d\'erreurs.',
+    'smw_ts_notconnected' => 'TSC not accessible. Check server: $1',
     'asktsc' => 'Ask triplestore',
     
     // Simple Rules formula parser

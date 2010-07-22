@@ -344,6 +344,7 @@ protected $smwUserMessages = array(
 
 	'smw_tsa_tscinfo' => 'Triplestore Connector information',
     'smw_tsa_tscversion' => 'TSC Version',
+    'smw_ts_notconnected' => 'TSC nicht erreichbar. Prüfe Server unter: $1',
     'asktsc' => 'Ask triplestore',
 
 	// Derived facts

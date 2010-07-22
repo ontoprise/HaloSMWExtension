@@ -422,7 +422,13 @@ class SMWTripleStore extends SMWStore {
 						break;
 					default:
 						$sqr = new SMWHaloQueryResult(array(), $query, array(), $this);
-						$sqr->addErrors(array($e->getMessage()));
+						if ($e->getCode() == 0) {
+							// happens most likely when TSC is not running
+							global $smwgWebserviceEndpoint;
+						    $sqr->addErrors(array(wfMsg('smw_ts_notconnected', $smwgWebserviceEndpoint)));
+						} else {
+							$sqr->addErrors(array($e->getMessage()));
+						}
 
 						break;
 				}

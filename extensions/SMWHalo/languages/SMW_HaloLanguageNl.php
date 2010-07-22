@@ -373,6 +373,7 @@ Druk de rechter knop om resultaten te verkrijgen. Enkel <i>Return</i> drukken ge
     'smw_tsa_norulesupport'=> 'The triplestore driver does not supports rules, although they are activated in the wiki. Please remove <pre>$smwgEnableObjectLogicRules=true;</pre> from your LocalSettings.php. Otherwise you may get obscure errors.',
     'smw_tsa_tscinfo' => 'Triplestore Connector information',
     'smw_tsa_tscversion' => 'TSC Version',
+    'smw_ts_notconnected' => 'TSC not accessible. Check server: $1',
 
 	// Derived facts
 	'smw_df_derived_facts_about' => 'Afgeleide feiten $1',
