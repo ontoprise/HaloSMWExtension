@@ -309,7 +309,7 @@ class AutoCompletionRequester {
 			$specialMatches[] = Title::newFromText($specialProperties["_TYPE"], SMW_NS_PROPERTY);
 		}
 		// make sure the special relations come first
-		$pages = array_merge($specialMatches, $pages);
+		$pages = AutoCompletionHandler::mergeResults($specialMatches, $pages);
 
 		return AutoCompletionRequester::encapsulateAsXML($pages);
 	}
@@ -684,7 +684,7 @@ class AutoCompletionHandler {
 	 *
 	 * @param array $results First element is Title or string and siginifcant for double or not.
 	 */
-	private static function mergeResults(& $arr1, & $arr2) {
+	public static function mergeResults(& $arr1, & $arr2) {
 		// merge results
 		for($i = 0, $n = count($arr2); $i < $n; $i++) {
 			$contains = false;
