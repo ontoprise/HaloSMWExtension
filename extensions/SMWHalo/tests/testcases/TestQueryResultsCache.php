@@ -414,4 +414,41 @@ class TestQueryResultsCache extends PHPUnit_Framework_TestCase {
 		$this->assertEquals('0', $queryData['dirty']);
 	
 	}
+	
+	public function testAccessFrequencyBOTH(){
+		smwf_om_EditArticle('QRCQueryArticle1', 'PHPUnit', $this->queryArticle1Version2, '');
+		
+		smwf_om_EditArticle('QRCQueryArticle1', 'PHPUnit', $this->queryArticle1Version2, '');
+		
+		smwf_om_EditArticle('QRCQueryArticle1', 'PHPUnit', $this->queryArticle1Version2, '');
+		
+		$article = Article::newFromID(Title::newFromText('QRCQueryArticle1')->getArticleID());
+		$content = $article->getContent();
+		
+		global $wgParser;
+		$pOpts = new ParserOptions();
+		$result = $wgParser->parse($content, Title::newFromText('QRCQueryArticle1'), $pOpts)->getText();		
+		
+		$request = json_encode(array('debug' => true));
+		$response = smwf_qc_getQueryIds($request);
+		$response = json_decode($response);
+		
+		$qrcStore = SMWQRCStore::getInstance()->getDB();
+		$qId = $response->queryIds[0];
+		
+		$queryData = $qrcStore->getQueryData($qId);
+
+		$this->assertEquals(4, $queryData['accessFrequency']);
+		$this->assertEquals('0', $queryData['dirty']);
+		
+		$request = json_encode(array('debug' => true, 'queryId' => $qId));
+		$response = smwf_qc_updateQuery($request);
+		$response = json_decode($response);
+		
+		$queryData = $qrcStore->getQueryData($qId);
+			
+		$this->assertEquals(2, $queryData['accessFrequency']);
+		$this->assertEquals('0', $queryData['dirty']);
+	
+	}
 }
