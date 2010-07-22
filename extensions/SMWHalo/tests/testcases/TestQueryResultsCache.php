@@ -374,7 +374,7 @@ class TestQueryResultsCache extends PHPUnit_Framework_TestCase {
 		$this->assertEquals('0', $queryData['dirty']);
 	
 	}
-	
+//	
 	public function testCacheEntryInvalidatedSPARQL(){
 		smwf_om_EditArticle('QRCQueryArticle1', 'PHPUnit', $this->queryArticle2Version2, '');
 		
@@ -449,6 +449,65 @@ class TestQueryResultsCache extends PHPUnit_Framework_TestCase {
 			
 		$this->assertEquals(2, $queryData['accessFrequency']);
 		$this->assertEquals('0', $queryData['dirty']);
+	}
 	
+	public function testPriorityComputation(){
+		smwf_om_EditArticle('QRCQueryArticle1', 'PHPUnit', $this->queryArticle1Version2, '');
+		
+		$request = json_encode(array('debug' => true));
+		$response = smwf_qc_getQueryIds($request);
+		$response = json_decode($response);
+		
+		$qrcStore = SMWQRCStore::getInstance()->getDB();
+		$qId = $response->queryIds[0];
+		
+		$queryData = $qrcStore->getQueryData($qId);
+		
+		$this->assertEquals($queryData['priority'], 
+			SMWQRCPriorityCalculator::getInstance()->computeQueryUpdatePriority(
+				$queryData['lastUpdate'], $queryData['accessFrequency'], $queryData['invalidationFrequency']));
+
+		$rememberedPriority = $queryData['priority'];
+
+		$article = Article::newFromID(Title::newFromText('QRCQueryArticle1')->getArticleID());
+		$content = $article->getContent();
+		
+		global $wgParser;
+		$pOpts = new ParserOptions();
+		$result = $wgParser->parse($content, Title::newFromText('QRCQueryArticle1'), $pOpts)->getText();
+		
+		$queryData = $qrcStore->getQueryData($qId);
+
+		$this->assertEquals($queryData['priority'], 
+			SMWQRCPriorityCalculator::getInstance()->computeQueryUpdatePriority(
+				$queryData['lastUpdate'], $queryData['accessFrequency'], $queryData['invalidationFrequency']));
+		
+		$this->assertNotEquals($rememberedPriority, $queryData['priority']);
+				
+		$rememberedPriority = $queryData['priority']; 		
+				
+		global $wgTitle;
+		$wgTitle = Title::newFromText('QRCDataArticle1');
+		smwf_om_EditArticle('QRCDataArticle1', 'PHPUnit', '', '');
+		
+		$queryData = $qrcStore->getQueryData($qId);
+		
+		$this->assertEquals($queryData['priority'], 
+			SMWQRCPriorityCalculator::getInstance()->computeQueryUpdatePriority(
+				$queryData['lastUpdate'], $queryData['accessFrequency'], $queryData['invalidationFrequency']));
+				
+		$this->assertNotEquals($rememberedPriority, $queryData['priority']);
+		
+		$request = json_encode(array('debug' => true, 'queryId' => $qId));
+		$response = smwf_qc_updateQuery($request);
+		$response = json_decode($response);
+		
+		$queryData = $qrcStore->getQueryData($qId);
+		
+		$this->assertEquals($queryData['priority'], 
+			SMWQRCPriorityCalculator::getInstance()->computeQueryUpdatePriority(
+				$queryData['lastUpdate'], $queryData['accessFrequency'], $queryData['invalidationFrequency']));
+				
+		$this->assertNotEquals($rememberedPriority, $queryData['priority']);
 	}
 }
