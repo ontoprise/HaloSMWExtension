@@ -51,12 +51,13 @@ class SMWQRCQueryManagementHandler {
 		SMWPropertyValue::registerProperty('___QRC_HQL', '_num', QRC_HQL_LABEL , false);
 		SMWPropertyValue::registerProperty('___QRC_HQO', '_num', QRC_HQO_LABEL , false);
 		
+		SMWPropertyValue::registerProperty('___QRC_DOP', '_str', QRC_DOP_LABEL , false);
+		SMWPropertyValue::registerProperty('___QRC_DOC', '_str', QRC_DOC_LABEL , false);
+		
 		SMWPropertyValue::registerProperty('___QRC_HEPP', '_str', QRC_HEPP_LABEL , false);
 		SMWPropertyValue::registerProperty('___QRC_HECP', '_boo', QRC_HECP_LABEL , false);
 		SMWPropertyValue::registerProperty('___QRC_ISQ', '_boo', QRC_ISQ_LABEL , false);
 		
-		SMWPropertyValue::registerProperty('___QRC_DOP', '_str', QRC_DOP_LABEL , false);
-		SMWPropertyValue::registerProperty('___QRC_DOC', '_str', QRC_DOC_LABEL , false);
 		return true;
 	}
 	
@@ -111,7 +112,7 @@ class SMWQRCQueryManagementHandler {
 		} else  if($query instanceof SMWQuery){
 			list($properties, $categories) = $this->getQueryParts($query->getDescription());
 		}
-
+		
 		foreach($properties as $p => $dontCare){
 			$dataValue->addPropertyDependency($p);
 		}
@@ -259,6 +260,31 @@ class SMWQRCQueryManagementHandler {
 			$queryId = '';
 			foreach($pVs as $pV){
 				if($pV[0] == QRC_DOP_LABEL && array_key_exists($pV[1][0], $properties)) $break = true;
+				if($pV[0] == QRC_HQID_LABEL) $queryId = $pV[1][0];
+				
+				if($break && strlen($queryId) > 0){
+					$queryIds[$queryId] = true;
+					break;
+				}
+			}
+		}
+		return $queryIds;	
+	}
+	
+	public function getIdsOfQueriesUsingCategory($semanticData, $categories){
+		$queryIds = array();
+		
+		$property = SMWPropertyValue::makeProperty('___QRC_UQC');
+		$propVals = $semanticData->getPropertyValues($property);
+			
+		foreach($propVals as $pVs){
+			$pVs = $pVs->getDBKeys();
+			$pVs = $pVs[0];
+			
+			$break = false;
+			$queryId = '';
+			foreach($pVs as $pV){
+				if($pV[0] == QRC_DOC_LABEL && array_key_exists($pV[1][0], $categories)) $break = true;
 				if($pV[0] == QRC_HQID_LABEL) $queryId = $pV[1][0];
 				
 				if($break && strlen($queryId) > 0){

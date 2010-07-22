@@ -139,7 +139,7 @@ class SMWQRCSQLStore implements SMWQRCStoreInterface{
 		
 			if($db->numRows($res) > 0){
 				$res = $db->fetchObject($res);
-				return array(
+				$response = array(
 					'queryId' => $res->query_id,
 					'queryResult' => $res->query_result,
 					'lastUpdate' => $res->last_update,
@@ -147,6 +147,8 @@ class SMWQRCSQLStore implements SMWQRCStoreInterface{
 					'invalidationFrequency' => $res->invalidation_frequency,
 					'dirty' => $res->dirty,
 					'priority' => $res->priority);
+				
+				return $response;				
 			} else {
 				return false;
 			}

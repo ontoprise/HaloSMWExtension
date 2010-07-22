@@ -12,6 +12,6 @@ $invalidationFrequencyWeight = 60*60;
 
 global $accessFrequencyAgingFactor, $invalidationFrequencyAgingFactor;
 
-$accessFrequencyAgingFactor = 0.9;
+$accessFrequencyAgingFactor = 0.5;
 
-$invalidationFrequencyAgingFactor = 0.9;
+$invalidationFrequencyAgingFactor = 0.5;

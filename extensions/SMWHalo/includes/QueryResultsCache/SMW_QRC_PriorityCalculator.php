@@ -27,7 +27,8 @@ class SMWQRCPriorityCalculator {
 	 */
 	public function computeNewInvalidationFrequency($if){
 		global $invalidationFrequencyAgingFactor;
-		return round($invalidationFrequencyAgingFactor * $af);
+		$iF = round($invalidationFrequencyAgingFactor * $if);
+		return $iF;
 	}
 	
 	/*

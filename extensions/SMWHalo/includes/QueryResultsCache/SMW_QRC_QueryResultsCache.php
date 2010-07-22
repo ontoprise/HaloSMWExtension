@@ -239,6 +239,7 @@ class SMWQRCQueryResultsCache {
 		global $wgTitle;
 		if($wgTitle){
 			$originalData = $store->getSemanticData($wgTitle);
+			
 			foreach($originalData->getProperties() as $oName => $oProperty){
 				if(array_key_exists($oName, $properties)){
 					$oValues = $originalData->getPropertyValues($oProperty);
@@ -314,6 +315,8 @@ class SMWQRCQueryResultsCache {
 				
 				$queryIds = array_merge($queryIds,
 					SMWQRCQueryManagementHandler::getInstance()->getIdsOfQueriesUsingProperty($semanticData, $properties));
+				$queryIds = array_merge($queryIds,
+					SMWQRCQueryManagementHandler::getInstance()->getIdsOfQueriesUsingCategory($semanticData, $categories));
 			}
 			
 			$qrcStore = SMWQRCStore::getInstance()->getDB();
