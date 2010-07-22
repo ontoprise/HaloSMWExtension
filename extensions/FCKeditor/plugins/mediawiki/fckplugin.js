@@ -802,7 +802,7 @@ FCK.DataProcessor =
 			if ( oAttribute.specified )
 			{
 				var sAttName = oAttribute.nodeName.toLowerCase() ;
-				var sAttValue ;
+				var sAttValue = '';
 
 				// Ignore any attribute starting with "_fck".
 				if ( sAttName.StartsWith( '_fck' ) )
@@ -830,6 +830,8 @@ FCK.DataProcessor =
                             
                         while (s.indexOf('-') != -1)
                             s=s.replace(/-(\w)/, s.match(/-(\w)/)[1].toUpperCase());
+                        // tr float to cssFloat (bug #12176)
+                        if (s == "float") s = "cssFloat";
                         if (typeof (htmlNode.style[s]) != "undefined" ) {
                             if (! sAttValue) sAttValue ="";
                             sAttValue += htmlNode.style[i] + ': ' + htmlNode.style[s] + '; '
