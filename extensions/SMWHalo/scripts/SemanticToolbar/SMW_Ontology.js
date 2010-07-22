@@ -281,7 +281,7 @@ OntologyModifier.prototype = {
 		}
 		this.createArticle(gLanguage.getMessage('PROPERTY_NS')+title, 
 						   initialContent, schema,
-						   "Create a property for category " + domain, true);
+						   "Create a property for category " + domain, false);
 	},
 	
 	/**
@@ -360,7 +360,7 @@ OntologyModifier.prototype = {
 	createCategory : function(title, initialContent) {
 		this.createArticle(gLanguage.getMessage('CATEGORY_NS')+title, 
 						   initialContent, "",
-						   gLanguage.getMessage('CREATE_CATEGORY'), true);
+						   gLanguage.getMessage('CREATE_CATEGORY'), false);
 	},
 	
 	/**
@@ -379,7 +379,7 @@ OntologyModifier.prototype = {
 	 */
 	createSubProperty : function(title, initialContent, openNewArticle) {
 		if (openNewArticle == undefined) {
-			openNewArticle = true;
+			openNewArticle = false;
 		}
 		var schemaProp = this.getSchemaProperties();
 		if (   wgNamespaceNumber == 102    // SMW_NS_PROPERTY
@@ -417,7 +417,7 @@ OntologyModifier.prototype = {
 	 */
 	createSuperProperty : function(title, initialContent, openNewArticle, wtp) {
 		if (openNewArticle == undefined) {
-			openNewArticle = true;
+			openNewArticle = false;
 		}
 		var schemaProp = this.getSchemaProperties();
 		if (!wtp) {
@@ -460,7 +460,7 @@ OntologyModifier.prototype = {
 	 */
 	createSuperCategory : function(title, initialContent, openNewArticle, wtp) {
 		if (openNewArticle == undefined) {
-			openNewArticle = true;
+			openNewArticle = false;
 		}
 		if (!wtp) {
 			wtp = new WikiTextParser();
@@ -494,7 +494,7 @@ OntologyModifier.prototype = {
 		if (wgNamespaceNumber == 14) {
 			this.createArticle(gLanguage.getMessage('CATEGORY_NS')+title, initialContent, 
 			                   "[["+gLanguage.getMessage('CATEGORY_NS')+wgTitle+"]]",
-							   gLanguage.getMessage('CREATE_SUB_CATEGORY'), true);			
+							   gLanguage.getMessage('CREATE_SUB_CATEGORY'), false);			
 		} else {
 			alert(gLanguage.getMessage('NOT_A_CATEGORY'))
 		}
