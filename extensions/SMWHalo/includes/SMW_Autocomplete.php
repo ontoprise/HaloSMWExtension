@@ -19,11 +19,11 @@
 /**
  * @file
  * @ingroup SMWHaloAutocompletion
- * 
+ *
  * Created on 21.02.2007
  * Author: KK
  * AutoCompletion Dispatcher
- * 
+ *
  * @defgroup SMWHaloAutocompletion SMWHalo Autocompletion
  * @ingroup SMWHalo
  */
@@ -185,7 +185,7 @@ function &smwfGetAutoCompletionStore() {
 	if ($smwhgAutoCompletionStore == NULL) {
 		global $smwgBaseStore;
 		switch ($smwgBaseStore) {
-			
+
 			case ('SMWHaloStore2'): default:
 				$smwhgAutoCompletionStore = new AutoCompletionStorageSQL2();
 				break;
@@ -249,8 +249,18 @@ class AutoCompletionRequester {
 			return AutoCompletionRequester::encapsulateAsXML($pages, true); // return namespace too!
 		} else {
 
-			// all others
-			$pages = smwfGetAutoCompletionStore()->getPages($match, array(NS_MAIN));
+			$propertyTitle = self::getTitleFromContext($userContext);
+			if (!is_null($propertyTitle)) {
+				$property = Title::newFromText($propertyTitle, SMW_NS_PROPERTY);
+				$domainRangeAnnotations = smwfGetStore()->getPropertyValues($property, smwfGetSemanticStore()->domainRangeHintProp);
+				$pages = smwfGetAutoCompletionStore()->getInstanceAsTarget($match, $domainRangeAnnotations);
+			
+			}
+				
+			if (empty($pages)) {
+				// fallback
+				$pages = smwfGetAutoCompletionStore()->getPages($match, array(NS_MAIN));
+			}
 			return AutoCompletionRequester::encapsulateAsXML($pages);
 
 		}
@@ -345,6 +355,11 @@ class AutoCompletionRequester {
 			return true;
 		}
 		return false;
+	}
+
+	private static function getTitleFromContext($context) {
+		preg_match('/\[\[(([^:]|:[^:])+):[:=]/', $context, $matches);
+		return isset($matches[1]) ? $matches[1] : NULL;
 	}
 
 	/**
@@ -572,7 +587,7 @@ class AutoCompletionHandler {
 
 					}
 				}
-				
+
 				if (count($result) >= SMW_AC_MAX_RESULTS) break;
 			} else if ($commandText == 'instance-property-range') {
 				if (empty($params[0]) || is_null($params[0])) continue;
@@ -598,12 +613,12 @@ class AutoCompletionHandler {
 				$datatype = $params[0];
 				$result = self::mergeResults($result, smwfGetAutoCompletionStore()->getPropertyWithType($userInput, $datatype));
 				if (count($result) >= SMW_AC_MAX_RESULTS) break;
-				
+
 				global $smwgContLang;
 				$dtl = $smwgContLang->getDatatypeLabels();
 				$result = self::mergeResults($result, smwfGetAutoCompletionStore()->getPropertyWithType($userInput, $dtl['_str']));
 				if (count($result) >= SMW_AC_MAX_RESULTS) break;
-				
+
 			} else if ($commandText == 'ask') {
 				if (empty($params[0]) || is_null($params[0])) continue;
 				$query = $params[0];
