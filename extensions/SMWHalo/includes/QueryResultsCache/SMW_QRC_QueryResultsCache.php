@@ -72,7 +72,6 @@ class SMWQRCQueryResultsCache {
 				$queryId = SMWQRCQueryManagementHandler::getInstance()->getQueryId($query);
 				$lastUpdate = time();
 				$dirty = false;
-				
 				if($queryData){ //results for this query already have been stored in the cache
 					if($force){ //this query result update was not triggered by a Wiki user action
 						$accessFrequency = SMWQRCPriorityCalculator::getInstance()
