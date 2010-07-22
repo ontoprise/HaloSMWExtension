@@ -120,7 +120,9 @@ function smwf_ws_processStep3($uri, $methodName){
  * @return string error/ok signals if the wwsd could be validated
  */
 function smwf_ws_processStep6($name, $wwsd, $user, $wsSyntax){
-
+	global $wgHooks;
+	$wgHooks['ArticleSaveComplete'][] = 'WebServiceManager::articleSavedHook';
+	
 	//$editResult = explode(",", smwf_om_EditArticle("webservice:".$name, $user, $wwsd.$wsSyntax, ""));
 	$editResult = explode(",", smwf_om_EditArticle("webservice:".$name, $user, $wwsd, ""));
 	if($editResult[0]){
