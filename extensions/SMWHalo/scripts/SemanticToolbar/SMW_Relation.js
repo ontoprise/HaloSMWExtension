@@ -549,7 +549,9 @@ updateNewItem: function(request) {
 				? oldValues[i]
 				: '');
 		var hint = SMW_REL_HINT_INSTANCE; //(parameterNames[i] == "Page" ? SMW_REL_HINT_INSTANCE : "");
-		if (i == 0 && parameterNames[i] == "Page") {
+		var pageIdx = parameterNames[i].indexOf("|Page");
+		if (i == 0 &&  pageIdx > 0) {
+			parameterNames[i] = parameterNames[i].substr(0, pageIdx);
 			var relation = $('rel-name');
 			hint = 'namespace:' + SMW_INSTANCE_NS;
 			if (relation.value.length > 0) { 

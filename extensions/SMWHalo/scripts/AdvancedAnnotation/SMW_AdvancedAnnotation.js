@@ -1206,7 +1206,11 @@ AdvancedAnnotation.prototype = {
 				if (schemaData.documentElement.tagName != 'parsererror') {
 					// read parameter names
 					for (var i = 0, n = schemaData.documentElement.childNodes.length; i < n; i++) {
-						relTypes.push(schemaData.documentElement.childNodes[i].getAttribute("name"));
+						var type = schemaData.documentElement.childNodes[i].getAttribute("name");
+						if (type.indexOf("|Page")) {
+							type = gLanguage.getMessage('TYPE_PAGE_WONS');
+						}
+						relTypes.push(type);
 					}
 				}
 			}

@@ -457,8 +457,8 @@ function smwf_om_RelationSchemaData($relationName) {
 			$arity = count($typeLabels) + 1;  // +1 because of subject
 	   		$relSchema = '<relationSchema name="'.$relationName.'" arity="'.$arity.'">';
 
-	   		// If first parameter is a wikipage, take the property name as label, otherwise use type label.
-	   		$firstParam = $typeValues[0] instanceof SMWWikiPageValue ? $relationName : $typeLabels[0];
+	   		// If first parameter is a wikipage, take the property name + "|Page" as label, otherwise use type label.
+	   		$firstParam = $typeValues[0] instanceof SMWWikiPageValue ? $relationName."|Page" : $typeLabels[0];
 	   		$relSchema .= '<param name="'.$firstParam.'"/>';
 	   		for($i = 1, $n = $arity-1; $i < $n; $i++) {
 
