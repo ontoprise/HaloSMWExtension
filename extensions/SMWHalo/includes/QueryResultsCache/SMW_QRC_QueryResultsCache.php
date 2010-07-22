@@ -131,8 +131,10 @@ class SMWQRCQueryResultsCache {
 	 * Checks whether a valid cache entry exists for this query.
 	 */
 	private function hasValidCacheEntry($queryData){
+		global $showInvalidatedCacheEntries;
+		
 		if($queryData){
-			if(!$queryData['dirty']){
+			if(!$queryData['dirty'] || $showInvalidatedCacheEntries){
 				return true;
 			}
 		}

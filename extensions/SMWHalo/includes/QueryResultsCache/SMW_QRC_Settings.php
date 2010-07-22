@@ -15,3 +15,9 @@ global $accessFrequencyAgingFactor, $invalidationFrequencyAgingFactor;
 $accessFrequencyAgingFactor = 0.5;
 
 $invalidationFrequencyAgingFactor = 0.5;
+
+
+
+global $showInvalidatedCacheEntries;
+
+$showInvalidatedCacheEntries = true;
