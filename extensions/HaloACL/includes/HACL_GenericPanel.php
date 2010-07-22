@@ -232,7 +232,8 @@ HTML;
     }
 
     function setContent($newContent) {
-        $this->content = '<div id="haloacl_generic_panel_content_'.$this->panelid.'" class="haloacl_generic_panel_content">'.$newContent.'</div>';
+//        $this->content = '<div id="haloacl_generic_panel_content_'.$this->panelid.'" class="haloacl_generic_panel_content">'.$newContent.'</div>';
+        $this->content = '<div id="content_'.$this->panelid.'" class="haloacl_generic_panel_content">'.$newContent.'</div>';
     }
 
     function getPanel() {
