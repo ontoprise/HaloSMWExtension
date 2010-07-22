@@ -241,6 +241,13 @@ $phpInterpreter=/*start-variable-phpInterpreter*/"{{xamp-install}}/php/php.exe";
 include_once('extensions/SemanticGardening/includes/SGA_GardeningInitialize.php');
 /*end-semanticgardening*/
 
+# Semantic Maps and required extensions for maps
+/*start-semanticmaps*/
+require_once( "$IP/extensions/Validator/Validator.php" );
+require_once( "$IP/extensions/Maps/Maps.php" );
+require_once( "$IP/extensions/SemanticMaps/SemanticMaps.php" );
+/*end-semanticmaps*/
+
 #Data import
 /*start-dataimport*/
 include_once('extensions/DataImport/includes/DI_Initialize.php');
