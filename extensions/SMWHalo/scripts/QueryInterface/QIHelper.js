@@ -1215,6 +1215,11 @@ QIHelper.prototype = {
 				// read arity
 				this.proparity = parseInt(schemaData.documentElement
 						.getAttribute("arity"));
+			    // check that the property which we are receiving information for
+			    // is that that the property we've asked for
+			    // (important for AC - then this function is called twice
+			    // 1st with substr of user input and 2nd with completed prop name from AC)
+			    if (schemaData.documentElement.getAttribute("name") != propertyName) return;
                 propertyName = schemaData.documentElement.getAttribute("name");
 				parameterNames = [];
 				parameterRanges = [];
