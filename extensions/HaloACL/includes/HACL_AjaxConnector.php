@@ -4156,6 +4156,7 @@ function haclGetUsersForUserTable($selectedGroup,$sort,$dir,$startIndex,$results
     $a['sort'] = $sort;
     $a['dir'] = $dir;
     $a['pageSize'] = 10;
+    $a['records'] = array();
 
     $tmpstring = "";
 
