@@ -200,10 +200,12 @@
 	</target>
 
 	<target name="versionhint">
+		<property environment="env" />
 		<exec executable="php">
 			<arg value="../../../buildtools/replaceVersionHint.php" />
 			<arg value="../deploy.xml" />
 			<arg value="../includes/SMW_Initialize.php" />
+			<arg value="${env.BUILD_NUMBER}" />
 		</exec>
 	</target>
 
