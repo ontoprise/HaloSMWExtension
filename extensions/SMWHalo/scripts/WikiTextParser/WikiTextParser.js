@@ -1081,17 +1081,18 @@ WikiTextParser.prototype = {
 	 * 
 	 */
 	 parseRule: function(ruleTxt, start, end) {
-		var hl = ruleTxt.match(/.*hostlanguage\s*=\s*"(.*?)"/);
+		var native = ruleTxt.match(/.*native\s*=\s*"(.*?)"/);
 		var rulename = ruleTxt.match(/.*name\s*=\s*"(.*?)"/);
 		var type = ruleTxt.match(/.*type\s*=\s*"(.*?)"/);
 		var rule = ruleTxt.match(/<rule(?:.|\s)*?>((.|\s)*?)<\/rule>/m);
 		
-		if (hl && rulename && type && rule) {
-			hl = hl[1];
+		native = native && native[1] == "true";
+		
+		if (!native && rulename && type && rule) {
 			rulename = rulename[1];
 			type = type[1];
 			rule = rule[1];
-			return new WtpRule(ruleTxt, start, end, this, rulename, hl, type, rule);
+			return new WtpRule(ruleTxt, start, end, this, rulename, "objectlogic", type, rule);
 		} else {
 			return null;
 		} 
