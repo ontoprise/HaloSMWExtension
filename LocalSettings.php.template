@@ -286,10 +286,17 @@ require_once("$IP/extensions/SemanticResultFormats/ofc/SRF_OFC_Init.php");
 #Glossary
 require_once( "$IP/extensions/Glossary/Glossary.php" );
 
-#ACL
-include_once('extensions/HaloACL/includes/HACL_Initialize.php');
+/*start-haloacl*/
+require_once('extensions/HaloACL/includes/HACL_Initialize.php');
+/*php-start-MasterTemplate*/
+// Remove the comments from the following line to enable the ACL master template
+            // for private user spaces. Every new article of a user will only be accessible
+            // by himself until the access rights are changed.
+            //$haclgNewUserTemplate = "ACL:Template/NewUserTemplate";
+/*php-end-MasterTemplate*/
 $haclgProtectProperties = false;
-enableHaloACL(); 
+enableHaloACL(/*param-start-enableHaloACL*//*param-end-enableHaloACL*/);
+/*end-haloacl*/ 
 
 #Semantic Notifications
 include_once('extensions/SemanticNotifications/includes/SN_Initialize.php');

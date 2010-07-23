@@ -105,9 +105,13 @@ class DeployDescriptionProcessor {
 	function unapplyLocalSettingsChanges() {
 		//TODO: external variables get not re-set. hard to fix.
 		$fragment = ConfigElement::getExtensionFragment($this->dd_parser->getID(), $this->localSettingsContent);
-		if (!is_null($fragment)) {
-			$ls = str_replace($fragment, "", $this->localSettingsContent);
+		
+		if (is_null($fragment)) {
+			echo "\nCould not find configuration for ".$this->dd_parser->getID();
+			echo "\nAbort changing LocalSettings.php";
+			return $this->localSettingsContent;
 		}
+		$ls = str_replace($fragment, "", $this->localSettingsContent);
 		$ls = Tools::removeTrailingWhitespaces($ls);
 		$this->writeLocalSettingsFile($ls);
 		return $ls;
