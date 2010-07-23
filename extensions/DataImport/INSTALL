@@ -23,12 +23,16 @@ Requirements:
  	MySQL higher than 4.0.14 (Recommended MySQL 5.x)
  	PHP 5.2.x (PHP 5.3.x is not supported yet)
  	MediaWiki 1.15.x (see installation guide)
-	Semantic MediaWiki 1.5 (Please make reference to the installation instructions)
-    Halo extension 1.5.0 or higher
-    Semantic Gardening extension 1.3.1 or higher
+	Semantic MediaWiki 1.5.1
+    Halo extension 1.5.1 or higher
+    Semantic Gardening extension 1.4 or higher
     Script Manager 1.0 or higher
+    Linked Data Extension 1.0 (This is only required if you want to use the Triplification Extension)
+    Triple Store Connector (This is only required if you want to use the Triplification Extension)
     
-    You also must activate the following two PHP extensions in your php.ini
+    You also must activate the following two PHP extensions in your 
+    php.ini if you want to use the POP3 import feature of the Term Import
+    Framework.
     extension=php_imap.dll
     extension=php_mime_magic.dll
 	
