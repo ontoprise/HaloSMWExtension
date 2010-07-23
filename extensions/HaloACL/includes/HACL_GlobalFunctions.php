@@ -326,6 +326,16 @@ function haclAddHTMLHeader(&$out) {
     if ($wgTitle->getNamespace() != NS_SPECIAL) {
         return true;
     } else {
+    	// Add global JS variables
+    	global $haclgAllowLDAPGroupMembers;
+    	$globalJSVar = "var haclgAllowLDAPGroupMembers = "
+    				   . (($haclgAllowLDAPGroupMembers == true) ? 'true' : 'false')
+    				   .';';
+    	
+    	$out->addScript('<script type="text/javascript">'.$globalJSVar.'</script>');
+    	
+    	
+    	// Add language files
         haclAddJSLanguageScripts($out);
 
 		if (!isset($smwgDeployVersion) || $smwgDeployVersion === false) {

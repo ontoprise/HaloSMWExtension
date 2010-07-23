@@ -557,7 +557,9 @@ YAHOO.haloacl.buildNodesFromData = function(parentNode,data,panelid){
 		context = tree.context; 
 	}
 	if (tree.purpose != undefined) {
-		hideImmutableNodes = (tree.purpose == 'editGroups' && context == "GroupPanel"); 
+		hideImmutableNodes = (tree.purpose == 'editGroups' 
+							  && context == "GroupPanel"
+							  && haclgAllowLDAPGroupMembers == false); 
 	}
 	
 

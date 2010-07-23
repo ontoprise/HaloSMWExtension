@@ -351,9 +351,14 @@ class HACLStorageLDAP extends HACLStorageSQL {
 			throw new HACLStorageException(HACLStorageException::CANT_MODIFY_LDAP_GROUP,
 										   $parentGroupID);
 		}
-		if ($childGroupID >= self::LDAP_MAPPING_BASE) {
-			throw new HACLStorageException(HACLStorageException::CANT_MODIFY_LDAP_GROUP,
-										   $childGroupID);
+		global $haclgAllowLDAPGroupMembers;
+		if ($haclgAllowLDAPGroupMembers !== true) {
+			// Adding LDAP groups to HaloACL groups must be explicitly allowed
+			// If we end up here, it is not.
+			if ($childGroupID >= self::LDAP_MAPPING_BASE) {
+				throw new HACLStorageException(HACLStorageException::CANT_MODIFY_LDAP_GROUP,
+											   $childGroupID);
+			}
 		}
 		parent::addGroupToGroup($parentGroupID, $childGroupID);
 		
@@ -421,9 +426,14 @@ class HACLStorageLDAP extends HACLStorageSQL {
 			throw new HACLStorageException(HACLStorageException::CANT_MODIFY_LDAP_GROUP,
 										   $parentGroupID);
 		}
-		if ($childGroupID >= self::LDAP_MAPPING_BASE) {
-			throw new HACLStorageException(HACLStorageException::CANT_MODIFY_LDAP_GROUP,
-										   $childGroupID);
+		global $haclgAllowLDAPGroupMembers;
+		if ($haclgAllowLDAPGroupMembers !== true) {
+			// Adding LDAP groups to HaloACL groups must be explicitly allowed
+			// If we end up here, it is not.
+			if ($childGroupID >= self::LDAP_MAPPING_BASE) {
+				throw new HACLStorageException(HACLStorageException::CANT_MODIFY_LDAP_GROUP,
+											   $childGroupID);
+			}
 		}
 		
 		parent::removeGroupFromGroup($parentGroupID, $childGroupID);
@@ -539,7 +549,9 @@ class HACLStorageLDAP extends HACLStorageSQL {
 	public function hasGroupMember($parentID, $childID, $memberType, $recursive) {
 		if ($parentID < self::LDAP_MAPPING_BASE) {
 			// Parent is a HaloACl group
-			return parent::hasGroupMember($parentID, $childID, $memberType, $recursive);
+			if (parent::hasGroupMember($parentID, $childID, $memberType, $recursive)) {
+				return true;
+			}
 		} 
 		
 		global $wgAuth, $wgLDAPLowerCaseUsername;
@@ -570,12 +582,21 @@ class HACLStorageLDAP extends HACLStorageSQL {
 		do {
 			$groups = $this->searchGroups($dn, self::AS_MEMBER);
 			if (count($groups) > 0) {
+				// The child is member of an LDAP group
 				$searchedGroups[$dn] = true;
 				// check if the parent is among the groups of the user
 				foreach ($groups as $g) {
 					$dn = $g['dn'];
-					if ($parentID == $this->getGroupIDForDN($dn)) {
+					$groupID = $this->getGroupIDForDN($dn);
+					if ($parentID == $groupID) {
 						return true;
+					}
+					if ($recursive) {
+						// The LDAP group may be member of a HaloACL group
+						// => check if is a member of the specified parent
+						if (parent::hasGroupMember($parentID, $groupID, HACLGroup::GROUP, true)) {
+							return true;
+						}
 					}
 					if (!isset($searchedGroups[$dn])) {
 						$groupsToSearch[] = $dn;

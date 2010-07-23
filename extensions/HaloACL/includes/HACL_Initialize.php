@@ -94,8 +94,22 @@ $haclgProtectProperties = true;
 # specify which store will actually be used.
 # Possible values:
 # - HACL_STORE_SQL
+# - HACL_STORE_LDAP (use this if you want to see LDAP groups in your wiki)
 ##
 $haclgBaseStore = HACL_STORE_SQL;
+
+###
+# If LDAP is enabled for HaloACL (see $haclgBaseStore) you can choose if LDAP
+# groups may be members of HaloACL groups. 
+# If this variable <true>, your users can add LDAP groups to their own HaloACL
+# groups. 
+# If it is <false> the set of LDAP and HaloACL groups remains completely separated.
+#
+# NOTE: HaloACL groups can never be members of LDAP groups as this would undermine
+#       security restrictions that are granted only for LDAP groups. The members
+#       of the HaloACL group would inherit the rights of the LDAP groups.
+##
+$haclgAllowLDAPGroupMembers = true;
 
 ###
 # This array contains the names of all namespaces that can not be protected by
