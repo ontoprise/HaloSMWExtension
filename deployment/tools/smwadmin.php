@@ -239,7 +239,15 @@ foreach($packageToUpdate as $toUpdate) {
 	}
 }
 
-print "\n\nOK.\n";
+if (count($installer->getErrors()) === 0) {
+	print "\n\nOK.\n";
+} else {
+	print "\n\nErrors occured:\n";
+	foreach($installer->getErrors() as $e) {
+		print "\n$e";
+	}
+	print "\n";
+}
 
 function showHelp() {
 	echo "\nsmwhalo admin utility v".DEPLOY_FRAMEWORK_VERSION.", Ontoprise 2009";

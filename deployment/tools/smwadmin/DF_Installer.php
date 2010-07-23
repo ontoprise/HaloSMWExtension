@@ -82,6 +82,9 @@ class Installer {
 	private $rollback;
 	private $res_installer;
 
+	// 
+	private $errors;
+	
 	/**
 	 * Creates new Installer.
 	 *
@@ -89,6 +92,7 @@ class Installer {
 	 */
 	private function __construct($rootDir = NULL, $force = false, $noAsk = false, $noRollback = false) {
 		// create temp folder
+		$this->errors = array();
 		$this->tmpFolder = Tools::isWindows() ? 'c:\temp\mw_deploy_tool' : '/tmp/mw_deploy_tool';
 		if (!file_exists($this->tmpFolder)) Tools::mkpath($this->tmpFolder);
 		if (!file_exists($this->tmpFolder)) {
@@ -197,6 +201,7 @@ class Installer {
 		// - patches
 		print "\nUnapply configurations of $packageID...";
 		$ext->unapplyConfigurations($this->instDir, false);
+		$this->errors = array_merge($this->errors, $ext->getLastErrors());
 
 		// remove extension code
 		print "\nRemove code of $packageID...";
@@ -397,7 +402,7 @@ class Installer {
 				if (count($desc->getConfigs()) > 0) $this->rollback->saveLocalSettings();
 			}
 			$desc->applyConfigurations($this->instDir, false, $fromVersion, $this);
-
+            $this->errors = array_merge($this->errors, $desc->getLastErrors());
 			$this->res_installer->installOrUpdateResources($desc);
 			$this->res_installer->installOrUpdateWikidumps($desc, $fromVersion, $this->force ? DEPLOYWIKIREVISION_FORCE : DEPLOYWIKIREVISION_WARN);
 
@@ -669,6 +674,10 @@ class Installer {
 		print "\n\n$message [ (y)es/(n)o ]";
 		$line = trim(fgets(STDIN));
 		$result = strtolower($line);
+	}
+	
+	public function getErrors() {
+		return $this->errors;
 	}
 
 	public function downloadProgres($percentage) {

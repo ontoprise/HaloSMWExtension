@@ -37,7 +37,8 @@ class DeployDescriptionProcessor {
 	// Deploy descriptor used
 	private $dd_parser;
 
-
+	// error messages which occur during processing
+    private $errorMessages;
 
 
 	/**
@@ -49,7 +50,7 @@ class DeployDescriptionProcessor {
 	 */
 	function __construct($ls_loc, $dd_parser) {
 		$this->dd_parser = $dd_parser;
-
+        $this->errorMessages = array();
 		$this->ls_loc = $ls_loc;
 		if (file_exists($ls_loc)) {
 			$this->localSettingsContent = file_get_contents($ls_loc);
@@ -107,6 +108,7 @@ class DeployDescriptionProcessor {
 		$fragment = ConfigElement::getExtensionFragment($this->dd_parser->getID(), $this->localSettingsContent);
 		
 		if (is_null($fragment)) {
+			$this->errorMessages[] = "Could not find configuration for ".$this->dd_parser->getID();
 			echo "\nCould not find configuration for ".$this->dd_parser->getID();
 			echo "\nAbort changing LocalSettings.php";
 			return $this->localSettingsContent;
@@ -130,6 +132,7 @@ class DeployDescriptionProcessor {
 			if (substr($instDir, -1) != '/') $instDir .= "/";
 			$script = self::makeUnixPath($setup['script']);
 			if (!file_exists($rootDir."/".$script)) {
+				$this->errorMessages[] = "Warning: setup script at '$rootDir/$script' does not exist";
 				print "\nWarning: setup script at '$rootDir/$script' does not exist";
 				continue;
 			}
@@ -137,6 +140,7 @@ class DeployDescriptionProcessor {
 			exec("php ".$rootDir."/".$script." ".$setup['params'], $out, $ret);
 			foreach($out as $line) print "\n".$line;
 			if ($ret != 0) {
+				$this->errorMessages[] = "Script ".$rootDir."/".$script." failed!";
 				print "\n\nScript ".$rootDir."/".$script." failed!";
 				throw new RollbackInstallation();
 			}
@@ -157,6 +161,7 @@ class DeployDescriptionProcessor {
 			if (substr($instDir, -1) != '/') $instDir .= "/";
 			$script = self::makeUnixPath($setup['script']);
 			if (!file_exists($rootDir."/".$script)) {
+				$this->errorMessages[] = "Warning: setup script at '$rootDir/$script' does not exist";
 				print "\nWarning: setup script at '$rootDir/$script' does not exist";
 				continue;
 			}
@@ -164,6 +169,7 @@ class DeployDescriptionProcessor {
 			exec("php ".$rootDir."/".$script." ".$setup['params'], $out, $ret);
 			foreach($out as $line) print "\n".$line;
 			if ($ret != 0) {
+				$this->errorMessages[] = "Script ".$rootDir."/".$script." failed!";
 				print "\n\nScript ".$rootDir."/".$script." failed!";
 				throw new RollbackInstallation();
 			}
@@ -189,6 +195,7 @@ class DeployDescriptionProcessor {
 			$patch = self::makeUnixPath($patch);
 			$patchFailed = false;
 			if (!file_exists($rootDir."/".$patch)) {
+				$this->errorMessages[] = "Warning: patch at '$rootDir/$patch' does not exist";
 				print "\nWarning: patch at '$rootDir/$patch' does not exist";
 				continue;
 			}
@@ -242,6 +249,7 @@ class DeployDescriptionProcessor {
 			if (substr($instDir, -1) != '/') $instDir .= "/";
 			$patch = self::makeUnixPath($patch);
 			if (!file_exists($rootDir."/".$patch)) {
+				$this->errorMessages[] = "Warning: patch at '$rootDir/$patch' does not exist";
 				print "\nWarning: patch at '$rootDir/$patch' does not exist";
 				continue;
 			}
@@ -266,12 +274,22 @@ class DeployDescriptionProcessor {
 	 */
 	function writeLocalSettingsFile(& $content) {
 		if (empty($content)) {
+			$this->errorMessages[] = "Warning: LocalSettings.php is empty. Nothing done here.";
 			// do never write an empty localsettings file.
 			return;
 		}
 		$handle = fopen($this->ls_loc, "wb");
 		fwrite($handle, $content);
 		fclose($handle);
+	}
+	
+	/**
+	 * Returns errormessages which occured during processing.
+	 * 
+	 * @return array of string
+	 */
+	function getErrorMessages() {
+		return $this->errorMessages;
 	}
 
 	/*

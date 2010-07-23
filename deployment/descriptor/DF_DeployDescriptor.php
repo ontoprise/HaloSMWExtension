@@ -57,6 +57,11 @@ class DeployDescriptor {
 	var $resources_xml;
 	var $resources_onlycopyxml;
 	
+	
+	// last errors on applying  configurations
+	var $lastErrors;
+	
+	
 	/**
 	 * Creates a DeployDescriptor from an XML representation. 
 	 * 
@@ -564,6 +569,7 @@ class DeployDescriptor {
 		$content = $dp->applyLocalSettingsChanges($userCallback, $this->getUserRequirements(), $dryRun);
 		if (!$dryRun) $dp->applyPatches($userCallback);
 		if (!$dryRun) $dp->applySetups();
+		$this->lastErrors = $dp->getErrorMessages();
 		return $content; // return for testing purposes.
 	}
 
@@ -579,8 +585,17 @@ class DeployDescriptor {
 		$dp->unapplySetups();
 		$dp->unapplyPatches();
 		$content = $dp->unapplyLocalSettingsChanges();
-
+        $this->lastErrors = $dp->getErrorMessages();
 		return $content; // return for testing purposes.
+	}
+	
+	/**
+	 * Returns last errors occured on applyConfigurations or unapplyConfigurations
+	 * 
+	 * @return array of string
+	 */
+	function getLastErrors() {
+		return $this->lastErrors;
 	}
 
 }
