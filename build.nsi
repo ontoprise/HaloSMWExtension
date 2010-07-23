@@ -56,7 +56,7 @@
 !define MUI_FINISHPAGE_SHOWREADME_CHECKED
 !define MUI_FINISHPAGE_TEXT "Installation of ${PRODUCT} ${VERSION} is completed. You are advised to study the README-SMWPLUS.txt file (readme file) \ 
 located in the zip-file containing this installer. The readme file contains important information about: $\n \
-* how to access the Wiki after the installation process is finished $\n \
+* how to access the Wiki after the installation $\n \
 * default access credentials for administrators $\n \
 * where to find documentation for administrators and end users $\n \
 * trouble shooting hints and $\n \
