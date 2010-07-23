@@ -42,7 +42,7 @@ class SRRuleEndpoint {
 	public function getRootRules() {
 		global $smwgWebserviceProtocol, $smwgTripleStoreGraph;
 
-		$payload = "graph=$smwgTripleStoreGraph";
+		$payload = "graph=".urlencode($smwgTripleStoreGraph);
 		list($header, $status, $res) = self::$_client->send($payload, "/getRootRules");
 
 		$response = new AjaxResponse($this->encapsulateTreeElementAsXML($res));
@@ -62,10 +62,10 @@ class SRRuleEndpoint {
 	 * @return string XML
 	 */
 	public function getDependantRules($params) {
-		$ruleID = $params[0];
+		$ruleID = urlencode($params[0]);
 		global $smwgWebserviceProtocol, $smwgTripleStoreGraph;
 
-		$payload = "graph=$smwgTripleStoreGraph&ruleID=$ruleID";
+		$payload = "graph=".urlencode($smwgTripleStoreGraph)."&ruleID=$ruleID";
 		list($header, $status, $res) = self::$_client->send($payload, "/getDependantRules");
 
 		$response = new AjaxResponse($this->encapsulateTreeElementAsXML($res));
@@ -87,7 +87,7 @@ class SRRuleEndpoint {
 		foreach($params as $r) $resources .= "&resource=".urlencode($r);
 		global $smwgWebserviceProtocol, $smwgTripleStoreGraph;
 
-		$payload = "graph=$smwgTripleStoreGraph$resources";
+		$payload = "graph=".urlencode($smwgTripleStoreGraph).$resources;
 		list($header, $status, $res) = self::$_client->send($payload, "/getDefiningRules");
 
 		$attachMap = array();
@@ -113,10 +113,10 @@ class SRRuleEndpoint {
 	 * @param $ruleID
 	 */
 	public function getRule($params) {
-		$ruleID = $params[0];
+		$ruleID = urlencode($params[0]);
 		global $smwgWebserviceProtocol, $smwgTripleStoreGraph;
 
-		$payload = "graph=$smwgTripleStoreGraph&ruleID=$ruleID";
+		$payload = "graph=".urlencode($smwgTripleStoreGraph)."&ruleID=$ruleID";
 		list($header, $status, $res) = self::$_client->send($payload, "/getRule");
 
 		$response = new AjaxResponse($this->encapsulateMetadataAsXML($res));
@@ -135,11 +135,11 @@ class SRRuleEndpoint {
 	 * @param $ajaxCall (if false, do not return AjaxResponse object but simple text)
 	 */
 	public function searchForRulesByFragment($params, $resultformat = "xml", $ajaxCall = true) {
-		$filter = $params[0];
-		$asTree = $params[1];
+		$filter = urlencode($params[0]);
+		$asTree = urlencode($params[1]);
 		global $smwgWebserviceProtocol, $smwgTripleStoreGraph;
 
-		$payload = "graph=$smwgTripleStoreGraph&fragment=$filter&asTree=$asTree";
+		$payload = "graph=".urlencode($smwgTripleStoreGraph)."&fragment=$filter&asTree=$asTree";
 		list($header, $status, $res) = self::$_client->send($payload, "/searchForRulesByFragment");
         
 		if (!$ajaxCall) {
@@ -163,7 +163,7 @@ class SRRuleEndpoint {
 		$ruleIDs = implode("&ruletuple=",$params);
 		global $smwgWebserviceProtocol, $smwgTripleStoreGraph;
 
-		$payload = "graph=$smwgTripleStoreGraph&ruletuple=$ruleIDs";
+		$payload = "graph=".urlencode($smwgTripleStoreGraph)."&ruletuple=".urlencode($ruleIDs);
 		list($header, $status, $res) = self::$_client->send($payload, "/serializeRules");
 
 		$response = new AjaxResponse($res);
