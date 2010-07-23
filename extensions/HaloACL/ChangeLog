@@ -8,6 +8,18 @@ VERSION 1.2
   	
   CHANGES:
   	* The extension was adapted to Semantic MediaWiki 1.5.1
+  	
+  BUGFIXES: (Bug numbers according to http://smwforum.ontoprise.com/smwbugs/)
+	12098 - DF searches setup HACL_Setup.php in wrong path
+	11836 - Protect properties prevents loading derived facts
+	12005 - Auto-Completion should be aware of ACL settings
+	12099 - HaloACL does not remove tables in the database when removed with DF
+	11930 - Properties which are created by a user must be editable for the user
+	11681 - Misc bugs from user feedback
+	11938 - Autocompletion in HaloACL does not show namespace "Main"
+	12077 - A HaloACL collapse button does not work.
+	11256 - Error message when creating a ACL / Group which contains an error
+  
 
 VERSION 1.1.1
 
