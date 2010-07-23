@@ -311,8 +311,9 @@ class OB_StorageTS extends OB_Storage {
 					$metadataMap[strtoupper($mdProperty)] = explode("|||",$mdValue);
 				}
 			}
-
-			$instance = array($this->getTitleFromURI((string) $sv), (string) $sv, $metadataMap);
+            
+			list($url, $title) = $this->makeLocalURL((string) $sv);
+			$instance = array($title, $url, $metadataMap);
 
 			$categories = array();
 			$b = $children->binding[1]; // categories
@@ -343,6 +344,24 @@ class OB_StorageTS extends OB_Storage {
 		if (stripos($uri, TSNamespaces::$UNKNOWN_NS) === 0) return true;
 
 		return false;
+	}
+
+	/**
+	 * Returns a local URL and Title object if the given URI matches the wiki graph.
+	 * Otherwise the URI is returned unchanged an its localname is used to create a Title object.
+	 * 
+	 * @param string $uri
+	 * @return tuple($url, Title)
+	 */
+	private function makeLocalURL($uri) {
+		global $smwgTripleStoreGraph;
+
+		$title = $this->getTitleFromURI($uri);
+		if (stripos($uri, $smwgTripleStoreGraph) === 0) {
+			$uri = $title->getFullURL();
+		}
+
+		return array($title->getFullURL(), $title);
 	}
 
 	private function getTitleFromURI($sv) {
@@ -418,35 +437,35 @@ class OB_StorageTS extends OB_Storage {
 	}
 
 
-public function getAnnotations($p_array) {
-        global $wgServer, $wgScript, $smwgWebserviceUser, $smwgWebservicePassword, $smwgDeployVersion;
-        $client = TSConnection::getConnector();
-        $client->connect();
-        try {
-            global $smwgTripleStoreGraph;
+	public function getAnnotations($p_array) {
+		global $wgServer, $wgScript, $smwgWebserviceUser, $smwgWebservicePassword, $smwgDeployVersion;
+		$client = TSConnection::getConnector();
+		$client->connect();
+		try {
+			global $smwgTripleStoreGraph;
 
-            $instanceURI = $p_array[0];
+			$instanceURI = $p_array[0];
 
-            // actually limit and offset is not used
-            $limit =  isset($p_array[1]) && is_numeric($p_array[1]) ? $p_array[1] : 500;
-            $partition = isset($p_array[2]) && is_numeric($p_array[2]) ? $p_array[2] : 0;
-            $offset = $partition * $limit;
-            $metadata = isset($p_array[3]) ? $p_array[3] : false;
-            $metadataRequest = $metadata != false ? "|metadata=$metadata" : "";
+			// actually limit and offset is not used
+			$limit =  isset($p_array[1]) && is_numeric($p_array[1]) ? $p_array[1] : 500;
+			$partition = isset($p_array[2]) && is_numeric($p_array[2]) ? $p_array[2] : 0;
+			$offset = $partition * $limit;
+			$metadata = isset($p_array[3]) ? $p_array[3] : false;
+			$metadataRequest = $metadata != false ? "|metadata=$metadata" : "";
 
-           
-            $response = $client->query("SELECT ?p ?o WHERE { <$instanceURI> ?p ?o. }",  "limit=$limit|offset=$offset$metadataRequest");
-            $annotations = array();
-            $this->parseAnnotations($response, $annotations);
+			 
+			$response = $client->query("SELECT ?p ?o WHERE { <$instanceURI> ?p ?o. }",  "limit=$limit|offset=$offset$metadataRequest");
+			$annotations = array();
+			$this->parseAnnotations($response, $annotations);
 
 
-        } catch(Exception $e) {
-            return "Internal error: ".$e->getMessage();
-        }
+		} catch(Exception $e) {
+			return "Internal error: ".$e->getMessage();
+		}
 
-        return SMWOntologyBrowserXMLGenerator::encapsulateAsAnnotationList($annotations, Title::newFromText("dummy"));
+		return SMWOntologyBrowserXMLGenerator::encapsulateAsAnnotationList($annotations, Title::newFromText("dummy"));
 
-    }
+	}
 
 
 
@@ -471,7 +490,7 @@ public function getAnnotations($p_array) {
 			$title = $this->getTitleFromURI((string) $sv);
 			if (is_null($title)) continue;
 			$predicate = SMWPropertyValue::makeUserProperty($title->getText());
-				
+
 			$categories = array();
 			$b = $children->binding[1]; // categories
 			$values = array();
@@ -541,29 +560,29 @@ public function getAnnotations($p_array) {
 
 
 
-public function getCategoryForInstance($p_array) {
-        global $wgServer, $wgScript, $smwgWebserviceUser, $smwgWebservicePassword, $smwgDeployVersion;
-        $client = TSConnection::getConnector();
-        $client->connect();
-        try {
-            global $smwgTripleStoreGraph;
+	public function getCategoryForInstance($p_array) {
+		global $wgServer, $wgScript, $smwgWebserviceUser, $smwgWebservicePassword, $smwgDeployVersion;
+		$client = TSConnection::getConnector();
+		$client->connect();
+		try {
+			global $smwgTripleStoreGraph;
 
-            $instanceURI = $p_array[0];
+			$instanceURI = $p_array[0];
 
-            // query
-            $response = $client->query(TSNamespaces::getW3CPrefixes()." SELECT ?cat WHERE { <$instanceURI> rdf:type ?cat.  }",  "");
+			// query
+			$response = $client->query(TSNamespaces::getW3CPrefixes()." SELECT ?cat WHERE { <$instanceURI> rdf:type ?cat.  }",  "");
 
-            $categories = array();
-            $this->parseCategories($response, $categories);
+			$categories = array();
+			$this->parseCategories($response, $categories);
 
 
-        } catch(Exception $e) {
-            return "Internal error: ".$e->getMessage();
-        }
+		} catch(Exception $e) {
+			return "Internal error: ".$e->getMessage();
+		}
 
-        $browserFilter = new SMWOntologyBrowserFilter();
-        return $browserFilter->getCategoryTree($categories);
-    }
+		$browserFilter = new SMWOntologyBrowserFilter();
+		return $browserFilter->getCategoryTree($categories);
+	}
 
 	protected function parseCategories($response, & $categories) {
 		global $smwgSPARQLResultEncoding;
@@ -682,7 +701,7 @@ function smwf_ob_OntologyBrowserAccess($method, $params, $dataSource) {
 	global $smwgDefaultStore;
 	if ($smwgDefaultStore == 'SMWTripleStoreQuad' && !empty($dataSource) && $dataSource != $browseWiki) {
 		// dataspace parameter. so assume quad driver is installed
-    	$storage = new OB_StorageTSQuad($dataSource);
+		$storage = new OB_StorageTSQuad($dataSource);
 	} else if ($smwgDefaultStore == 'SMWTripleStore') {
 		// assume normal (non-quad) TSC is running
 		$storage = new OB_StorageTS($dataSource);
@@ -797,7 +816,7 @@ class OB_StorageTSQuad extends OB_StorageTS {
 		} catch(Exception $e) {
 			return "Internal error: ".$e->getMessage();
 		}
-		 
+			
 		$propertyURI = str_replace( array('"'),array('&quot;'),$propertyURI);
 		return SMWOntologyBrowserXMLGenerator::encapsulateAsInstancePartition($titles, $limit, $partition, 'getInstancesUsingProperty,'.$propertyURI);
 	}
@@ -827,53 +846,53 @@ class OB_StorageTSQuad extends OB_StorageTS {
 		$browserFilter = new SMWOntologyBrowserFilter();
 		return $browserFilter->getCategoryTree($categories);
 	}
-	
-public function filterBrowse($p_array) {
-            
-        $browserFilter = new SMWOntologyBrowserFilter();
-        $type = $p_array[0];
-        $hint = explode(" ", $p_array[1]);
-        $hint = smwfEliminateStopWords($hint);
-        if ($type != 'instance') return parent::filterBrowse($p_array);
 
-        global $wgServer, $wgScript, $smwgWebserviceUser, $smwgWebservicePassword, $smwgDeployVersion;
-        $client = TSConnection::getConnector();
-        $client->connect();
-        try {
-            global $smwgTripleStoreGraph;
+	public function filterBrowse($p_array) {
 
-            $dataSpace = $this->getDataSourceParameters();
+		$browserFilter = new SMWOntologyBrowserFilter();
+		$type = $p_array[0];
+		$hint = explode(" ", $p_array[1]);
+		$hint = smwfEliminateStopWords($hint);
+		if ($type != 'instance') return parent::filterBrowse($p_array);
 
-            //query
-            for ($i = 0; $i < count($hint); $i++) {
-                $hint[$i] = preg_quote($hint[$i]);
-                $hint[$i] = str_replace("\\", "\\\\", $hint[$i]);
-            }
-            $filter = "";
-            if (count($hint) > 0) {
-                $filter = "FILTER (";
-                for ($i = 0; $i < count($hint); $i++) {
-                    if ($i > 0) $filter .= " && ";
-                    $filter .= "regex(str(?s), \"$hint[$i]\", \"i\")";
-                }
-                $filter .= ")";
-            }
+		global $wgServer, $wgScript, $smwgWebserviceUser, $smwgWebservicePassword, $smwgDeployVersion;
+		$client = TSConnection::getConnector();
+		$client->connect();
+		try {
+			global $smwgTripleStoreGraph;
 
+			$dataSpace = $this->getDataSourceParameters();
 
-            $response = $client->query(TSNamespaces::getW3CPrefixes()." SELECT ?s ?cat WHERE { ?s ?p ?o. OPTIONAL { ?s rdf:type ?cat. } $filter }",  "limit=1000$dataSpace");
+			//query
+			for ($i = 0; $i < count($hint); $i++) {
+				$hint[$i] = preg_quote($hint[$i]);
+				$hint[$i] = str_replace("\\", "\\\\", $hint[$i]);
+			}
+			$filter = "";
+			if (count($hint) > 0) {
+				$filter = "FILTER (";
+				for ($i = 0; $i < count($hint); $i++) {
+					if ($i > 0) $filter .= " && ";
+					$filter .= "regex(str(?s), \"$hint[$i]\", \"i\")";
+				}
+				$filter .= ")";
+			}
 
 
-            $titles = array();
-            $this->parseInstances($response, $titles);
+			$response = $client->query(TSNamespaces::getW3CPrefixes()." SELECT ?s ?cat WHERE { ?s ?p ?o. OPTIONAL { ?s rdf:type ?cat. } $filter }",  "limit=1000$dataSpace");
 
 
-        } catch(Exception $e) {
-            return "Internal error: ".$e->getMessage();
-        }
+			$titles = array();
+			$this->parseInstances($response, $titles);
 
-        // do not show partitions. 1000 instances is maximum here.
-        return SMWOntologyBrowserXMLGenerator::encapsulateAsInstancePartition($titles, 1001, 0);
-    }
+
+		} catch(Exception $e) {
+			return "Internal error: ".$e->getMessage();
+		}
+
+		// do not show partitions. 1000 instances is maximum here.
+		return SMWOntologyBrowserXMLGenerator::encapsulateAsInstancePartition($titles, 1001, 0);
+	}
 }
 
 
