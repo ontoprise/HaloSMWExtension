@@ -79,6 +79,7 @@ if (!isset($release) && !isset($head)) {
 
 $outputDir = str_replace("\\", "/", $outputDir);
 if (substr($outputDir, -1) != "/") $outputDir .= "/";
+if (!file_exists($outputDir)) Tools::mkpath($outputDir);
 
 $rootDir = dirname(__FILE__);
 $rootDir = str_replace("\\", "/", $rootDir);
