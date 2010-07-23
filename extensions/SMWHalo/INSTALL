@@ -158,6 +158,11 @@ the FAQ section, then contact the user support list (see the Contact section).
 
 6.  Allows to enter new help questions for context-sensitive help.
     $smwgAllowNewHelpQuestions = true;
+    
+ 7. Enable the Query Results Cache. Please note that the full feature richness of the Query Results Cache
+ 	 is only available, if the Query Updator, which is deployed together with the Triple Store Connector is
+ 	 installed. The behaviour of the Query Results Cache can be configured in ./includes/QueryResultsCache/QRC_Settings.php
+ 	 enableQueryResultsCache();
 
 === Configuring a triplestore ===
 Change the line with 'enableSMWHalo' to:
