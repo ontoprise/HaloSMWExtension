@@ -14,6 +14,7 @@ class TestLDAPStorageSuite extends PHPUnit_Framework_TestSuite
 		$suite = new TestLDAPStorageSuite();
 		$suite->addTestSuite('TestLDAPStorage');
 		$suite->addTestSuite('TestLDAPMixedStorage');
+		$suite->addTestSuite('TestLDAPGroupMembers');
 		return $suite;
 	}
 	
@@ -108,6 +109,12 @@ class TestLDAPMixedStorage extends PHPUnit_Framework_TestCase {
 		$this->mDoubleGroup->delete("U1");
 		HACLStorage::reset(HACL_STORE_LDAP);
 		
+		global $haclgAllowLDAPGroupMembers;
+		$algm = $haclgAllowLDAPGroupMembers;
+		$haclgAllowLDAPGroupMembers = true;
+		HACLStorage::getDatabase()->removeGroupFromGroup(42, $this->mGAID);
+		$haclgAllowLDAPGroupMembers = $algm;
+		
 	}
 	
 	/** ONLY TEMPORARY
@@ -131,7 +138,7 @@ class TestLDAPMixedStorage extends PHPUnit_Framework_TestCase {
 		
 		$groups = HACLStorage::getDatabase()->getGroups();
 		// We expect 3 top level groups
-		$this->assertEquals(count($groups), 4);
+		$this->assertEquals(count($groups), 3);
 			
 		$groupMap = array();
 		foreach ($groups as $group) {
@@ -243,6 +250,11 @@ class TestLDAPMixedStorage extends PHPUnit_Framework_TestCase {
 		}
 		
 		// Try to add an LDAP group to an HaloACL group 
+		
+		// Case 1: $haclgAllowLDAPGroupMembers is false
+		global $haclgAllowLDAPGroupMembers;
+		$haclgAllowLDAPGroupMembers = false;
+		
 		$exceptionCaught = false;
 		try {		
 			HACLStorage::getDatabase()->addGroupToGroup(42, $this->mGAID);
@@ -253,13 +265,28 @@ class TestLDAPMixedStorage extends PHPUnit_Framework_TestCase {
 		if (!$exceptionCaught) {
 			$this->fail('Expected exception: HACLStorageException');
 		}
+
+		// Case 2: $haclgAllowLDAPGroupMembers is true
+		global $haclgAllowLDAPGroupMembers;
+		$haclgAllowLDAPGroupMembers = true;
+		
+		$exceptionCaught = false;
+		try {		
+			HACLStorage::getDatabase()->addGroupToGroup(42, $this->mGAID);
+		} catch (HACLStorageException $e) {
+			$this->fail("It should be possible to add an LDAP group to a HaloACL group.");
+			$exceptionCaught = true;
+			$haclgAllowLDAPGroupMembers = false;
+		}
+		$this->assertFalse($exceptionCaught);
+		$haclgAllowLDAPGroupMembers = false;
 		
 		// Try to add a HaloACL group to an HAloACL group 
 		HACLStorage::getDatabase()->addGroupToGroup(42, 1);
 		// Verify that the group has a new member
 		$group = HACLGroup::newFromID(42);
 		$groups = $group->getGroups(HACLGroup::ID);
-		$this->assertEquals(count($groups), 2);
+		$this->assertEquals(count($groups), 3);
 		$this->assertEquals(array_search(1, $groups), 0);
 		
 	}
@@ -609,6 +636,159 @@ class TestLDAPMixedStorage extends PHPUnit_Framework_TestCase {
 		$this->assertFalse($store->isOverloaded("GROUP_Developer"));
 		$this->assertFalse($store->isOverloaded("MyGroup"));
 				
+	}
+	
+	private function checkGroupMembers($testcase, $group, $mode, $membersAndResults) {
+		for ($i = 0; $i < count($membersAndResults); $i+=2) {
+			$name = $membersAndResults[$i];
+			$result    = $membersAndResults[$i+1];
+			if ($mode == "user") {
+				$this->assertEquals($result, $group->hasUserMember($name, true),
+										"Check for group membership failed. ".
+										"Expected ".($result?"true":"false")." for ".
+				$group->getGroupName()."->hasUserMember($name) (Testcase: $testcase)");
+			} else if ($mode == "group") {
+				$this->assertEquals($result, $group->hasGroupMember($name, true),
+										"Check for group membership failed. ".
+										"Expected ".($result?"true":"false")." for ".
+				$group->getGroupName()."->hasGroupMember($name) (Testcase: $testcase)");
+			}
+		}
+	}
+	
+}
+
+class TestLDAPGroupMembers extends PHPUnit_Framework_TestCase {
+
+	protected $backupGlobals = FALSE;
+	protected $mDoubleGroup = null;
+	protected $mMyGroup = null;
+	protected $mSubGroup = null;
+	protected $mGAID;  // ID of GROUP_Administration
+	protected $mGDID;  // ID of GROUP_Developer
+	protected $mGFAID;  // ID of GROUP_FinancialAdministration;
+	
+	function setUp() {
+		
+		// Proceed with the LDAP DB
+		HACLStorage::reset(HACL_STORE_LDAP);
+		
+		// In addition to the LDAP groups, we create two normal HaloACL groups
+		$this->mMyGroup = new HACLGroup(42, "MyGroup", null, array("U1"));
+		$this->mMyGroup->save("U1");
+		$this->mMyGroup->addUser("U1", "U1");
+		$this->mSubGroup = new HACLGroup(43, "SubGroup", null, array("U1"));
+		$this->mSubGroup->addUser("U2", "U1");
+		$this->mSubGroup->save("U1");
+		$this->mMyGroup->addGroup($this->mSubGroup, "U1");
+		
+		
+		$g = HACLGroup::newFromName('GROUP_Administration');
+		$this->mGAID = $g->getGroupID();
+		$g = HACLGroup::newFromName('GROUP_Developer');
+		$this->mGDID = $g->getGroupID();
+		$g = HACLGroup::newFromName('GROUP_FinancialAdministration');
+		$this->mGFAID = $g->getGroupID();
+		
+		// Make GROUP_Administration subgroup of SubGroup
+		
+		global $haclgAllowLDAPGroupMembers;
+		$algm = $haclgAllowLDAPGroupMembers;
+		$haclgAllowLDAPGroupMembers = true;
+		HACLStorage::getDatabase()->addGroupToGroup(43, $this->mGAID);
+		$haclgAllowLDAPGroupMembers = $algm;
+		
+		
+	}
+
+	function tearDown() {
+		$this->mMyGroup->delete("U1");
+		$this->mSubGroup->delete("U1");
+	}
+	
+	
+	/**
+	 * Tests the method HACLStorage::hasGroupMember() or the case that LDAP
+	 * groups are members of HaloACL groups.
+	 * 
+	 */
+	function testHasGroupMember() {
+		
+		$g = HACLGroup::newFromName('GROUP_Administration');
+
+		$this->checkGroupMembers("testHasGroupMember - 1g", $g, "group", 
+								 array( "MyGroup", false, 
+								 		"SubGroup", false, 
+								 		"GROUP_Administration", false, 
+								 		"GROUP_Developer", false, 
+								 		"GROUP_FinancialAdministration", true));
+
+		$this->checkGroupMembers("testHasGroupMember - 1u", $g, "user", 
+								 array( "U1", false,
+								 		"U2", false, 
+								 		"Bianca", true, 
+								 		"Thomas", false, 
+								 		"Judith", true));
+								 
+		$g = HACLGroup::newFromName('GROUP_Developer');
+		$this->checkGroupMembers("testHasGroupMember - 2g", $g, "group", 
+								 array( "MyGroup", false, 
+								 		"SubGroup", false, 
+								 		"GROUP_Administration", false, 
+								 		"GROUP_Developer", false, 
+								 		"GROUP_FinancialAdministration", false));
+		$this->checkGroupMembers("testHasGroupMember - 2u", $g, "user", 
+								 array( "U1", false, 
+								 		"U2", false, 
+								 		"Bianca", false, 
+								 		"Thomas", true, 
+								 		"Judith", false));
+								 
+		$g = HACLGroup::newFromName('GROUP_FinancialAdministration');
+		$this->checkGroupMembers("testHasGroupMember - 3g", $g, "group", 
+								 array( "MyGroup", false, 
+								 		"SubGroup", false, 
+								 		"GROUP_Administration", false, 
+								 		"GROUP_Developer", false, 
+								 		"GROUP_FinancialAdministration", false));
+		$this->checkGroupMembers("testHasGroupMember - 3u", $g, "user", 
+								 array( "U1", false, 
+								 		"U2", false, 
+								 		"Bianca", false, 
+								 		"Thomas", false, 
+								 		"Judith", true));
+								 
+		$g = HACLGroup::newFromName('MyGroup');
+		$this->checkGroupMembers("testHasGroupMember - 4g", $g, "group", 
+								 array( "MyGroup", false, 
+								 		"SubGroup", true, 
+								 		"GROUP_Administration", true, 
+								 		"GROUP_Developer", false, 
+								 		"GROUP_FinancialAdministration", true));
+		$this->checkGroupMembers("testHasGroupMember - 4u", $g, "user", 
+								 array( "U1", true, 
+								 		"U2", true, 
+								 		"Bianca", true, 
+								 		"Thomas", false, 
+								 		"Judith", true));
+								 
+		$g = HACLGroup::newFromName('SubGroup');
+		$this->checkGroupMembers("testHasGroupMember - 5g", $g, "group", 
+								 array( "MyGroup", false, 
+								 		"SubGroup", false, 
+								 		"GROUP_Administration", true, 
+								 		"GROUP_Developer", false, 
+								 		"GROUP_FinancialAdministration", true));
+		$this->checkGroupMembers("testHasGroupMember - 5u", $g, "user", 
+								 array( "U1", false, 
+								 		"U2", true, 
+								 		"Bianca", true, 
+								 		"Thomas", false, 
+								 		"Judith", true));
+								 
+								 
+								 
+								 
 	}
 	
 	private function checkGroupMembers($testcase, $group, $mode, $membersAndResults) {
