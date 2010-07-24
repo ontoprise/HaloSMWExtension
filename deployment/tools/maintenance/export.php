@@ -30,37 +30,45 @@ require_once( '../../../maintenance/commandLine.inc' );
 require_once( '../../../maintenance/backup.inc' );
 require_once('../../io/export/DF_DeployWikiExporter.php');
 
-$langClass = "DF_Language_$wgLanguageCode";
+$langClass = "DF_Language_".ucfirst($wgLanguageCode);
+
 if (!file_exists("../../languages/$langClass.php")) {
-    $langClass = "DF_Language_En";
+	$langClass = "DF_Language_En";
 }
 require_once("../../languages/$langClass.php");
 $dfgLang = new $langClass();
 
+// check if required properties exist
+// return false if not
+$check = checkProperties();
+if (!$check) {
+	print "\n\nCorrect the errors and try again!\n";
+	die();
+}
 
 $dumper = new DeployBackupDumper( $argv );
 
 if( isset( $options['quiet'] ) ) {
-    $dumper->reporting = false;
+	$dumper->reporting = false;
 }
 
 if ( isset( $options['pagelist'] ) ) {
-    $olddir = getcwd();
-    chdir( $originalDir );
-    $pages = file( $options['pagelist'] );
-    chdir( $olddir );
-    if ( $pages === false ) {
-        wfDie( "Unable to open file {$options['pagelist']}\n" );
-    }
-    $pages = array_map( 'trim', $pages );
-    $dumper->pages = array_filter( $pages, create_function( '$x', 'return $x !== "";' ) );
+	$olddir = getcwd();
+	chdir( $originalDir );
+	$pages = file( $options['pagelist'] );
+	chdir( $olddir );
+	if ( $pages === false ) {
+		wfDie( "Unable to open file {$options['pagelist']}\n" );
+	}
+	$pages = array_map( 'trim', $pages );
+	$dumper->pages = array_filter( $pages, create_function( '$x', 'return $x !== "";' ) );
 }
 
 if( isset( $options['start'] ) ) {
-    $dumper->startId = intval( $options['start'] );
+	$dumper->startId = intval( $options['start'] );
 }
 if( isset( $options['end'] ) ) {
-    $dumper->endId = intval( $options['end'] );
+	$dumper->endId = intval( $options['end'] );
 }
 $dumper->skipHeader = isset( $options['skip-header'] );
 $dumper->skipFooter = isset( $options['skip-footer'] );
@@ -69,12 +77,12 @@ $dumper->dumpUploads = isset( $options['uploads'] );
 $textMode = isset( $options['stub'] ) ? DeployWikiExporter::STUB : DeployWikiExporter::TEXT;
 
 if( isset( $options['full'] ) ) {
-    $dumper->dump( DeployWikiExporter::FULL, $textMode );
+	$dumper->dump( DeployWikiExporter::FULL, $textMode );
 } elseif( isset( $options['current'] ) ) {
-    $dumper->dump( DeployWikiExporter::CURRENT, $textMode );
-    
+	$dumper->dump( DeployWikiExporter::CURRENT, $textMode );
+
 } else {
-    $dumper->progress( <<<ENDS
+	$dumper->progress( <<<ENDS
 This script dumps the wiki page database into an XML interchange wrapper
 format for export or backup.
 
@@ -104,7 +112,7 @@ Fancy stuff:
   --filter=<type>[:<options>] Add a filter on an output branch
 
 ENDS
-);
+	);
 
 }
 
@@ -112,4 +120,66 @@ function fatalError($text) {
 	print "\n$text\n";die();
 }
 
+function checkProperties() {
+	global $dfgLang;
+	global $wgContLang;
+	$propNSText = $wgContLang->getNsText(SMW_NS_PROPERTY);
+	// check if the required properties exist
+    $check = true;
+	// Property:Dependecy
+	$pDependencyTitle = Title::newFromText($dfgLang->getLanguageString('df_dependencies'), SMW_NS_PROPERTY);
+	$pDependency = SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString('df_dependencies'));
+	$pDependencyTypeValue = $pDependency->getTypesValue();
+
+	if (reset($pDependencyTypeValue->getDBkeys()) != '_rec') {
+		print "\n'".$pDependencyTitle->getPrefixedText()."' is not a record type.";
+		$check = false;
+	}
+
+	$pDependencyTypes = reset(smwfGetStore()->getPropertyValues( $pDependency->getWikiPageValue(), SMWPropertyValue::makeProperty( '_LIST' ) ));
+	$typeIDs = explode(";",reset($pDependencyTypes->getDBkeys()));
+	if (count($typeIDs) != 3) {
+		print "\n'".$pDependencyTitle->getPrefixedText()."' wrong number of fields.";
+		$check = false;
+	}
+	list($ext_id, $from, $to) = $typeIDs;
+	if ($ext_id != '_str' || $from != '_num' || $to != '_num') {
+		print "\n'".$pDependencyTitle->getPrefixedText()."' property has wrong field types.";
+		$check = false;
+	}
+
+	// Ontology version
+	$pOntologyVersionTitle = Title::newFromText($dfgLang->getLanguageString('df_ontologyversion'), SMW_NS_PROPERTY);
+	$pOntologyVersion = SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString('df_ontologyversion'));
+	$pOntologyVersionValue = $pOntologyVersion->getTypesValue();
+	if (reset($pOntologyVersionValue->getDBkeys()) != '_num') {
+		print "\n'".$pOntologyVersionTitle->getPrefixedText()."' is not a number type.";
+		$check = false;
+	}
+	// Installation dir
+	$pInstallationDirTitle = Title::newFromText($dfgLang->getLanguageString('df_instdir'), SMW_NS_PROPERTY);
+	$pInstallationDir = SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString('df_instdir'));
+	$pInstallationDirValue = $pInstallationDir->getTypesValue();
+	if (reset($pInstallationDirValue->getDBkeys()) != '_str') {
+		print "\n'".$pInstallationDirTitle->getPrefixedText()."' is not a string type.";
+		$check = false;
+	}
+	// Vendor
+	$pVendorTitle = Title::newFromText($dfgLang->getLanguageString('df_ontologyvendor'), SMW_NS_PROPERTY);
+	$pVendor = SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString('df_ontologyvendor'));
+	$pVendorValue = $pVendor->getTypesValue();
+	if (reset($pVendorValue->getDBkeys()) != '_str') {
+		print "\n'".$pVendorTitle->getPrefixedText()."' is not a string type.";
+		$check = false;
+	}
+	// Description
+	$pDescriptionTitle = Title::newFromText($dfgLang->getLanguageString('df_description'), SMW_NS_PROPERTY);
+	$pDescription = SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString('df_description'));
+	$pDescriptionValue = $pDescription->getTypesValue();
+	if (reset($pDescriptionValue->getDBkeys()) != '_str') {
+		print "\n'".$pDescriptionTitle->getPrefixedText()."' is not a string type.";
+		$check = false;
+	}
+	return $check;
+}
 
