@@ -65,13 +65,26 @@ class SMWQRCSQLStore implements SMWQRCStoreInterface{
 	 * get all query ids which are stored in the db
 	 */
 	public function getQueryIds($limit = null, $offset = null){
-		//todo: add limit and offset parameter
-		
 		$db =& wfGetDB( DB_SLAVE );
 		
 		$qrcTable = $db->tableName('smw_qrc_cache');
 		
-		$sql = "SELECT query_id FROM ".$qrcTable;
+		global $lastUpdateTimeStampWeight, $accessFrequencyWeight, $invalidationFrequencyWeight, $invalidWeight;
+		
+		$currentTime = time();
+		
+		//this is necessary for the PHPUnitTests
+		global $qrcLastCurrentTimePHPUnit;
+		$qrcLastCurrentTimePHPUnit = $currentTime; 
+		
+		$sql = "SELECT query_id, "; 
+		$sql .= " ($currentTime - last_update) * $lastUpdateTimeStampWeight";
+		$sql .= " + access_frequency * $accessFrequencyWeight";
+		$sql .= " + invalidation_frequency * $invalidationFrequencyWeight";
+		$sql .= " + dirty*$invalidWeight";
+		$sql .= " AS priority FROM $qrcTable";
+		
+		$sql .= " ORDER BY priority DESC";
 		
 		if(!is_null($limit)){
 			$sql .= " LIMIT ".$limit;
@@ -80,10 +93,6 @@ class SMWQRCSQLStore implements SMWQRCStoreInterface{
 		if(!is_null($offset)){
 			$sql .= " OFFSET ".$offset;
 		}
-		
-		$sql .= 'ORDER BY priority asc'; 
-		
-		$sql .= ";";
 		
 		$res = $db->query($sql);
 		
@@ -173,7 +182,7 @@ class SMWQRCSQLStore implements SMWQRCStoreInterface{
 		global $lastUpdateTimeStampWeight, $accessFrequencyWeight, $invalidationFrequencyWeight;
 		
 		$query = "UPDATE $qrcTable SET invalidation_frequency = invalidation_frequency + 1, dirty=true, "; 
-		$query .= "priority = last_update * $lastUpdateTimeStampWeight - access_frequency * $accessFrequencyWeight - invalidation_frequency * $invalidationFrequencyWeight"; 
+		$query .= "priority = 0"; 
 		$query .= " WHERE query_id=\"";
 		$query .= implode('" OR query_id="', array_keys($queryIds));
 		$query .= '"';

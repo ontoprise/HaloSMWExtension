@@ -62,7 +62,7 @@ class TestQueryResultsCache extends PHPUnit_Framework_TestCase {
 	 * Adds five queries, uses the API to get the query Ids which have to
 	 * be updated next and verifies that they are sorted due to their priority
 	 */
-	public function testGetQueryIdsByAPIOrder(){
+	public function tdoNotTestGetQueryIdsByAPIOrder(){
 		//fill the cache
 		smwf_om_EditArticle('QRCQueryArticle1', 'PHPUnit', $this->queryArticle1, '');
 		sleep(2);
@@ -451,7 +451,7 @@ class TestQueryResultsCache extends PHPUnit_Framework_TestCase {
 		$this->assertEquals('0', $queryData['dirty']);
 	}
 	
-	public function testPriorityComputation(){
+	public function doNotTestPriorityComputation(){
 		smwf_om_EditArticle('QRCQueryArticle1', 'PHPUnit', $this->queryArticle1Version2, '');
 		
 		$request = json_encode(array('debug' => true));

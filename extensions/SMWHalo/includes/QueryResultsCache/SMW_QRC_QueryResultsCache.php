@@ -83,14 +83,12 @@ class SMWQRCQueryResultsCache {
 						$invalidationFrequency = $queryData['invalidationFrequency'] + 1;
 					}
 					
-					$priority = SMWQRCPriorityCalculator::getInstance()
-						->computeQueryUpdatePriority($lastUpdate, $accessFrequency, $invalidationFrequency);
+					$priority = 0;
 					
 					$qrcStore->updateQueryData($queryId, serialize($queryResult), $lastUpdate, 
 						$accessFrequency, $invalidationFrequency, $dirty, $priority);
 				} else {
-					$priority = SMWQRCPriorityCalculator::getInstance()
-						->computeQueryUpdatePriority($lastUpdate, 1, 0);
+					$priority = 0;
 					
 					$qrcStore->addQueryData($queryId, serialize($queryResult), $lastUpdate, 
 						1, 0, $dirty, $priority);
@@ -102,8 +100,7 @@ class SMWQRCQueryResultsCache {
 			$queryResult = unserialize($queryData['queryResult']);
 			
 			//update access frequency and query priority
-			$priority = SMWQRCPriorityCalculator::getInstance()
-				->computeQueryUpdatePriority($queryData['lastUpdate'], $queryData['accessFrequency'] + 1, $queryData['invalidationFrequency']);
+			$priority = 0;
 			
 			$qrcStore->updateQueryData($queryData['queryId'], $queryData['queryResult'], $queryData['lastUpdate'], 
 				$queryData['accessFrequency']+1, $queryData['invalidationFrequency'], $queryData['dirty'], $priority);
@@ -211,11 +208,14 @@ class SMWQRCQueryResultsCache {
 			$this->getQueryResult($query, true);
 			
 			//invalidate parser caches
-			foreach($queryResults as $qR){
-				$title = $qR->getTitle();
-				$title->invalidateCache();
-				// wfGetParserCacheStorage()->delete(
-				//		ParserCache::singleton()->getKey(Article::newFromID($title->getArticleID()), new ParserOptions()));
+			global $invalidateParserCache;
+			if($invalidateParserCache){
+				foreach($queryResults as $qR){
+					$title = $qR->getTitle();
+					$title->invalidateCache();
+					// wfGetParserCacheStorage()->delete(
+					//		ParserCache::singleton()->getKey(Article::newFromID($title->getArticleID()), new ParserOptions()));
+				}
 			}
 		} else {
 			$qrcStore = SMWQRCStore::getInstance()->getDB();
@@ -314,10 +314,20 @@ class SMWQRCQueryResultsCache {
 			foreach($queryResults as $queryResult){
 				$semanticData = $store->getSemanticData($queryResult);
 				
-				$queryIds = array_merge($queryIds,
-					SMWQRCQueryManagementHandler::getInstance()->getIdsOfQueriesUsingProperty($semanticData, $properties));
-				$queryIds = array_merge($queryIds,
-					SMWQRCQueryManagementHandler::getInstance()->getIdsOfQueriesUsingCategory($semanticData, $categories));
+				$invalidatePC = false;
+				$tQueryIds = SMWQRCQueryManagementHandler::getInstance()->getIdsOfQueriesUsingProperty($semanticData, $properties);
+				if(count($tQueryIds) > 0) $invalidatePC = true;
+				$queryIds = array_merge($queryIds,	$tQueryIds);
+				
+				$tQueryIds = SMWQRCQueryManagementHandler::getInstance()->getIdsOfQueriesUsingCategory($semanticData, $categories);
+				if(count($tQueryIds) > 0) $invalidatePC = true;
+				$queryIds = array_merge($queryIds,$tQueryIds);
+				
+				global $invalidateParserCache, $showInvalidatedCacheEntries;
+				if($invalidatePC && $invalidateParserCache && !$showInvalidatedCacheEntries){
+					$title = $queryResult->getTitle();
+					$title->invalidateCache();
+				}
 			}
 			
 			$qrcStore = SMWQRCStore::getInstance()->getDB();
