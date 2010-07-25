@@ -2,17 +2,21 @@ Data Import extension ChangeLog
 ===============================
 
 
-VERSION XXXX
+VERSION 1.4
 
 
   FEATURES:
-
+  * Linked Data Addon for web services added. 
+  ** This Addon enables users to easily access and import Linked Data resources via the Web Services component of the Data Import extension.
+  * Triplification Addon for Web Services added.
+  ** The triplification Addon enables you to easily import data via the Web Services component directly into your Triple Store. This will then enable you to process the imported data via Inline Queries.
 
 
   CHANGES:
-
+  * The Wiki Web Service Definition (WWSD) syntax originally accepted more than one usage of the '<result>' tag, which enabled users to group result parts. This is still allowed, but a warning will appear if you use such a construct, because the new Data Import extension features do not support that construct anymore and errors are possible.
 
 
   BUGFIXES:
+  * Nothing special to report.
 
 
