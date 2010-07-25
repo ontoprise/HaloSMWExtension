@@ -69,7 +69,7 @@ class SMWQRCSQLStore implements SMWQRCStoreInterface{
 		
 		$qrcTable = $db->tableName('smw_qrc_cache');
 		
-		global $lastUpdateTimeStampWeight, $accessFrequencyWeight, $invalidationFrequencyWeight, $invalidWeight;
+		global $cacheEntryAgeWeight, $accessFrequencyWeight, $invalidationFrequencyWeight, $invalidWeight;
 		
 		$currentTime = time();
 		
@@ -78,7 +78,7 @@ class SMWQRCSQLStore implements SMWQRCStoreInterface{
 		$qrcLastCurrentTimePHPUnit = $currentTime; 
 		
 		$sql = "SELECT query_id, "; 
-		$sql .= " ($currentTime - last_update) * $lastUpdateTimeStampWeight";
+		$sql .= " ($currentTime - last_update) * $cacheEntryAgeWeight";
 		$sql .= " + access_frequency * $accessFrequencyWeight";
 		$sql .= " + invalidation_frequency * $invalidationFrequencyWeight";
 		$sql .= " + dirty*$invalidWeight";
@@ -179,7 +179,7 @@ class SMWQRCSQLStore implements SMWQRCStoreInterface{
 		$qrcTable = $db->tableName('smw_qrc_cache');
 		
 		//not good that the store knows about the priority algorithm, but faster than first querying for all data
-		global $lastUpdateTimeStampWeight, $accessFrequencyWeight, $invalidationFrequencyWeight;
+		global $cacheEntryAgeWeight, $accessFrequencyWeight, $invalidationFrequencyWeight;
 		
 		$query = "UPDATE $qrcTable SET invalidation_frequency = invalidation_frequency + 1, dirty=true, "; 
 		$query .= "priority = 0"; 

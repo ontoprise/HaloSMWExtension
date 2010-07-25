@@ -37,10 +37,10 @@ class SMWQRCPriorityCalculator {
 	public function computeQueryUpdatePriority($lastUpdate, $af, $if, $invalid){
 		//This method is only used by the PHP unit tests
 		
-		global $lastUpdateTimeStampWeight, $accessFrequencyWeight, $invalidationFrequencyWeight, $invalidWeight;
+		global $cacheEntryAgeWeight, $accessFrequencyWeight, $invalidationFrequencyWeight, $invalidWeight;
 		
 		global $qrcLastCurrentTimePHPUnit;
 		
-		return ($qrcLastCurrentTimePHPUnit - $lastUpdate)*$lastUpdateTimeStampWeight + $af*$accessFrequencyWeight + $if*$invalidationFrequencyWeight + $invalid*$invalidWeight;
+		return ($qrcLastCurrentTimePHPUnit - $lastUpdate)*$cacheEntryAgeWeight + $af*$accessFrequencyWeight + $if*$invalidationFrequencyWeight + $invalid*$invalidWeight;
 	}
 }
