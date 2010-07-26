@@ -20,8 +20,8 @@ if (!defined("SMW_HALO_VERSION")) {
 
 global $smwgDefaultStore;
 if($smwgDefaultStore == 'SMWTripleStoreQuad') {
-    trigger_error("Rule extension will not work with the quad driver currently. Please deactivate it.");
-    die();
+	trigger_error("Rule extension will not work with the quad driver currently. Please deactivate it.");
+	die();
 }
 if($smwgDefaultStore != 'SMWTripleStore') {
 	trigger_error("Triplestore not active. See manual how to activate.");
@@ -52,8 +52,8 @@ function ruleSetupExtension() {
 	$wgHooks['InternalParseBeforeLinks'][] = 'srfTripleStoreParserHook';
 	$wgHooks['smw_ob_add'][] = 'srfAddToOntologyBrowser';
 	$wgHooks['us_extend_search'][] = 'srfAddToUnifiedSearch';
-	
-	
+
+
 
 
 	$wgAutoloadClasses['SRRuleStore'] = $srgSRIP . '/includes/SR_RuleStore.php';
@@ -94,10 +94,10 @@ function ruleSetupExtension() {
 
 /**
  * Adds additional results to the UnifiedSearch result list.
- * 
+ *
  * @param array $searchTerms array of search terms (currently only first is regarded)
  * @param array $receivers array of receivers
- * @param string & $results HTML result 
+ * @param string & $results HTML result
  */
 function srfAddToUnifiedSearch($searchTerms, $receivers, & $results) {
 	if (in_array("SemanticRules", $receivers)) {
@@ -154,7 +154,7 @@ function srAttachToResource($schemaElements, & $resourceAttachments, $nsIndex) {
 			
 	}
 	if (!empty($resources)) {
-	   $resourceAttachments = $ruleEndpoint->getDefiningRules($resources);
+		$resourceAttachments = $ruleEndpoint->getDefiningRules($resources);
 	}
 	return true;
 }
@@ -234,29 +234,44 @@ function srfAddJSLanguageScripts(& $out) {
 function srfAddHTMLHeader(& $out) {
 	global $srgSRIP, $wgScriptPath, $smwgEnableObjectLogicRules, $wgRequest, $wgTitle;
 
-	// load these two on every page
-	srfAddJSLanguageScripts($out);
-	$out->addScript('<script type="text/javascript" src="'.$wgScriptPath . '/extensions/SemanticRules/scripts/SR_Rulewidget.js"></script>');
-	$out->addLink(array('rel'   => 'stylesheet','type'  => 'text/css',
+	
+
+	global $smwgDeployVersion;
+	if (isset($smwgDeployVersion) && $smwgDeployVersion === true) {
+		srfAddJSLanguageScripts($out);
+		$out->addLink(array('rel'   => 'stylesheet','type'  => 'text/css',
                         'media' => 'screen, projection','href'  => $wgScriptPath . '/extensions/SemanticRules/skins/rules.css'));
-	
-	$SF = ($wgTitle->getNamespace() == -1 &&
-	in_array($wgTitle->getBasetext(), array("AddData", "EditData")));
-	$action = $wgRequest->getVal('action');
-	if ($action != "edit" && $action != "annotate" && $action != "formedit" && !$SF) return true;
 
 
-	$rulesEnabled = isset($smwgEnableObjectLogicRules)
-	? (($smwgEnableObjectLogicRules) ? 'true' : 'false')
-	: 'false';
-	$out->addScript('<script type= "text/javascript">var smwgEnableFlogicRules='.$rulesEnabled.';</script>'."\n");
+		$rulesEnabled = isset($smwgEnableObjectLogicRules)
+		? (($smwgEnableObjectLogicRules) ? 'true' : 'false')
+		: 'false';
+		$out->addScript('<script type= "text/javascript">var smwgEnableFlogicRules='.$rulesEnabled.';</script>'."\n");
+		$out->addScript('<script type="text/javascript" src="'.$wgScriptPath . '/extensions/SemanticRules/scripts/deployRulescripts.js"></script>');
+	} else {
+        // load these two on every page
+		srfAddJSLanguageScripts($out);
+		$out->addScript('<script type="text/javascript" src="'.$wgScriptPath . '/extensions/SemanticRules/scripts/SR_Rulewidget.js"></script>');
+		$out->addLink(array('rel'   => 'stylesheet','type'  => 'text/css',
+                        'media' => 'screen, projection','href'  => $wgScriptPath . '/extensions/SemanticRules/skins/rules.css'));
 
-	
-	$out->addScript('<script type="text/javascript" src="'.$wgScriptPath . '/extensions/SemanticRules/scripts/SR_Rule.js"></script>');
-	$out->addScript('<script type="text/javascript" src="'.$wgScriptPath . '/extensions/SemanticRules/scripts/SR_CategoryRule.js"></script>');
-	$out->addScript('<script type="text/javascript" src="'.$wgScriptPath . '/extensions/SemanticRules/scripts/SR_CalculationRule.js"></script>');
-	$out->addScript('<script type="text/javascript" src="'.$wgScriptPath . '/extensions/SemanticRules/scripts/SR_PropertyChain.js"></script>');
+		$SF = ($wgTitle->getNamespace() == -1 &&
+		in_array($wgTitle->getBasetext(), array("AddData", "EditData")));
+		$action = $wgRequest->getVal('action');
+		if ($action != "edit" && $action != "annotate" && $action != "formedit" && !$SF) return true;
 
+
+		$rulesEnabled = isset($smwgEnableObjectLogicRules)
+		? (($smwgEnableObjectLogicRules) ? 'true' : 'false')
+		: 'false';
+		$out->addScript('<script type= "text/javascript">var smwgEnableFlogicRules='.$rulesEnabled.';</script>'."\n");
+
+
+		$out->addScript('<script type="text/javascript" src="'.$wgScriptPath . '/extensions/SemanticRules/scripts/SR_Rule.js"></script>');
+		$out->addScript('<script type="text/javascript" src="'.$wgScriptPath . '/extensions/SemanticRules/scripts/SR_CategoryRule.js"></script>');
+		$out->addScript('<script type="text/javascript" src="'.$wgScriptPath . '/extensions/SemanticRules/scripts/SR_CalculationRule.js"></script>');
+		$out->addScript('<script type="text/javascript" src="'.$wgScriptPath . '/extensions/SemanticRules/scripts/SR_PropertyChain.js"></script>');
+	}
 
 	return true;
 
@@ -327,7 +342,7 @@ function srfTripleStoreParserHook(&$parser, &$text, &$strip_state = null) {
 			$ruleTypesAsContentLang = array(wfMsg('sr_definition_rule'),
 			wfMsg('sr_property_chaining'),
 			wfMsg('sr_calculation'));
-				
+
 			switch($type) {
 				case $ruleTypesAsContentLang[0]: $type = "DEFINITION";break;
 				case $ruleTypesAsContentLang[1]: $type = "PROP_CHAINING";break;
@@ -355,21 +370,21 @@ function srfTripleStoreParserHook(&$parser, &$text, &$strip_state = null) {
 
 					$ruletext = str_replace("&lt;","<", $ruletext);
 					$ruletext = str_replace("&gt;",">", $ruletext);
-					
-					// check if rule already exists. If so, use date of last change to 
+
+					// check if rule already exists. If so, use date of last change to
 					// indicate that the rule was actually not changed.
 					list($exist, $last_changed) = SMWRuleStore::getInstance()->existsRule(array($uri, $ruletext, $native, $active, $type));
 					$ruleTuple = array($uri, $ruletext, $native, $active, $type, $last_changed);
-					
+
 					$rules[] = $ruleTuple;
 				}
 			}
 			//FIXME: remove rule serialize selector for this release.
 			//$replaceBy = '<div id="rule_content_'.$i.'" ruleID="'.htmlspecialchars($uri).'" class="ruleWidget"><span style="margin-left: 5px;">'.htmlspecialchars($name).'</span> | '.wfMsg('sr_ruleselector').'<select style="margin-top: 5px;" name="rule_content_selector'.$i.'" onchange="sr_rulewidget.selectMode(event)"><option mode="easyreadible">'.wfMsg('sr_easyreadible').'</option><option mode="stylized">'.wfMsg('sr_stylizedenglish').'</option></select> '. // tab container
-			
+
 			global $wgTitle;
 			global $wgScriptPath;
-			$prefixedText = !is_null($wgTitle) ? $wgTitle->getPrefixedText() : "";  
+			$prefixedText = !is_null($wgTitle) ? $wgTitle->getPrefixedText() : "";
 			$status = $active ? "active" : "inactive";
 			$statusColor = $active ? "green" : "red";
 			$replaceBy = '<h2>'.wfMsg('sr_rulesdefinedfor').' '.$prefixedText.'</h2><div id="rule_content_'.$i.'" ruleID="'.htmlspecialchars($uri).'" class="ruleWidget"><img style="margin-top: 5px;margin-left: 5px;" src="'.$wgScriptPath.'/extensions/SemanticRules/skins/images/rule.gif"/><span style="margin-left: 5px;font-weight:bold;">
@@ -378,13 +393,13 @@ function srfTripleStoreParserHook(&$parser, &$text, &$strip_state = null) {
 			             '<div id="rule_content_'.$i.'_stylized" class="ruleSerialization" style="display:none;">Stylized english</div>'.
 			             '<div id="'.htmlspecialchars($uri).'" native="'.($native?"true":"false").'" class="ruleSerialization" style="display:none;">'.htmlspecialchars($ruletext).'</div>'.
 			             '</div>'; // tab 2
-			
+
 			$text = str_replace($matches[0][$i], $replaceBy, $text);
 		}
 
 	}
 
-	
+
 	SMWTripleStore::$fullSemanticData->setRules($rules);
 	return true;
 }

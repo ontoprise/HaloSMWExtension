@@ -52,7 +52,7 @@ var SMW_RULE_ALL_VALID =
 RuleToolBar.prototype = {
 
 initialize: function() {
-	this.genTB = new GenericToolBar();
+	if (typeof(GenericToolBar) != "undefined") this.genTB = new GenericToolBar();
 	this.toolbarContainer = null;
 	this.showList = true;
 	this.currentAction = "";

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <project basedir="." default="semanticrules" name="Semantic Rules">
-	<target name="semanticrules" depends="versionhint">
+	<target name="semanticrules" depends="deployscripts">
 		<delete dir="bin/zip" />
 		<delete>
 			<fileset dir="bin" includes="smwhalo-rules*.zip" />
@@ -53,6 +53,17 @@
 			<arg value="../deploy.xml" />
 			<arg value="bin/semanticrules.zip" />
 		</exec>
+	</target>
+	
+	<target name="deployscripts" depends="versionhint">
+	        <concat destfile="../../SemanticRules/scripts/deployRulescripts.js">
+	        	<fileset dir="../../SemanticRules/scripts" includes="SR_Rulewidget.js" />
+	        	<fileset dir="../../SemanticRules/scripts" includes="SR_Rule.js" />
+	            <fileset dir="../../SemanticRules/scripts" includes="SR_CalculationRule.js" />
+	            <fileset dir="../../SemanticRules/scripts" includes="SR_CategoryRule.js" />
+	            <fileset dir="../../SemanticRules/scripts" includes="SR_PropertyChain.js" />
+          
+	        </concat>
 	</target>
 
 	<target name="versionhint">
