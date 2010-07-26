@@ -104,7 +104,14 @@ function smwf_qi_QIAccess($method, $params) {
             $invalidRes = smwf_qi_CheckValidResult($printouts, $fixparams['format'], $mainlabel);
             if ( $invalidRes != 0 )
                 return wfMsg('smw_qi_printout_err'.$invalidRes);
-            // answer query using the SMW classes or TSC classes
+                
+            // quickfix: unset conflicting params for google maps
+            if ($fixparams['format'] == "googlemaps2") {
+                if (isset($params['reasoner'])) unset($params['reasoner']);
+                if (isset($params['ajaxcall'])) unset($params['ajaxcall']);
+                if (isset($params['merge'])) unset($params['merge']);
+            }
+            // answer query using the SMW classes or TSC classes            
             if ($fixparams['reasoner'] == 'ask')
                 $result = SMWQueryProcessor::getResultFromQueryString($querystring,$params,$printouts, SMW_OUTPUT_WIKI);
             else if ($fixparams['reasoner'] == 'sparql')
@@ -123,6 +130,7 @@ function smwf_qi_QIAccess($method, $params) {
             	case 'gallery':
             	case 'googlepie':
             	case 'googlebar':
+            	case 'googlemaps2':
            		case 'ofc-pie':
            		case 'ofc-bar':
            		case 'ofc-bar_3d':
