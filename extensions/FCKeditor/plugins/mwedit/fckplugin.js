@@ -17,7 +17,6 @@ StartStandardMwEditCommand.prototype = {
             } 
         }
         this.uri = window.parent.wgServer + window.parent.wgScriptPath + "/index.php?title=" + encodeURIComponent(pagename) + "&action=edit";
-        this.ContextMenu = null;
     },
 
     GetState: function() {
@@ -37,30 +36,37 @@ StartStandardMwEditCommand.prototype = {
     makeContainer: function() {
             var x = (FCKBrowserInfo.IsIE) ? self.document.body.clientWidth : self.innerWidth;
             var y = (FCKBrowserInfo.IsIE) ? self.document.body.clientHeight: self.innerHeight;
-            /*
-            this.ContextMenu = new window.parent.ContextMenuFramework();
-            this.ContextMenu.setPosition(parseInt(x / 2), parseInt(y / 2));
-            this.ContextMenu.setContent(this.getHtml(), 'ANNOTATIONHINT', 'Save changes?');
-            this.ContextMenu.showMenu();
-            */
-           this.ContextMenu = document.createElement('div');
-           this.ContextMenu.setAttribute('style',
-                'position:absolute; top:'+parseInt(y / 2)+'px; left:'+parseInt(x / 2)+'px; '+
-                'z-index:1000; visability:visible; background-color: #E3E3C7');
-           this.ContextMenu.id = "fckMweditSaveChanges";
-           this.ContextMenu.innerHTML = this.getHtml();
-           var el = window.parent.document.getElementById('globalWrapper');
-           el.appendChild(this.ContextMenu);
-
+        var ContextMenu = window.parent.document.createElement('div');
+        //document.getElementById(iframeId).contentWindow.document
+        ContextMenu.style.position="absolute";
+        ContextMenu.style.top=parseInt(y / 2)+'px';
+        ContextMenu.style.left=parseInt(x / 2)+'px';
+        ContextMenu.style.zIndex=1000;
+        ContextMenu.style.visability='visible';
+        ContextMenu.style.backgroundColor = "#E3E3C7";
+        ContextMenu.id = "fckMweditSaveChanges";
+        ContextMenu.innerHTML = this.getHtml();
+        var el = window.parent.document.getElementById('globalWrapper');
+        el.appendChild(ContextMenu);
     },
 
     getHtml: function() {
-    return '<span style="padding: 3px 10px; font-weight:bold; color:#737357; font-size: 14pt">Save changes?</span><br/>' +
+        var frame = 0;
+        if (FCKBrowserInfo.IsIE) {
+            for (i=0; i<window.parent.frames.length; i++) {
+                if (window.parent.frames(i).document.title == "FCKeditor") {
+                    frame = i;
+                    break;
+                }
+            }
+        }
+    
+        return '<span style="padding: 3px 10px; font-weight:bold; color:#737357; font-size: 14pt">Save changes?</span><br/>' +
            'The editor content has changed.<br/>Do you want to save the changes?<br/>' +
            '<br/><br/><div style="text-align: center;">' +
-           '<input type="submit" name="wgSave" value="yes" onClick="window.frames[0].switchToStandardEdit.save();" />&nbsp;' +
-           '<input type="submit" name="dontSave" value="no" onClick="window.frames[0].switchToStandardEdit.redirect();" />&nbsp;' +
-           '<input type="submit" name="cancel" value="cancel" onClick="window.frames[0].switchToStandardEdit.cancel();" />&nbsp;' +
+           '<input type="submit" name="wgSave" value="yes" onClick="window.frames['+frame+'].switchToStandardEdit.save();" />&nbsp;' +
+           '<input type="submit" name="dontSave" value="no" onClick="window.frames['+frame+'].switchToStandardEdit.redirect();" />&nbsp;' +
+           '<input type="submit" name="cancel" value="cancel" onClick="window.frames['+frame+'].switchToStandardEdit.cancel();" />&nbsp;' +
            '</div>';
     },
 
