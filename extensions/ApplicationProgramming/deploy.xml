@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <deploydescriptor>
 	<global>
-		<version>100</version>
+		<version>101</version>
 		<id>ApplicationProgramming</id>
 		<vendor>Ontoprise GmbH</vendor>
 		<instdir>extensions/ApplicationProgramming</instdir>
