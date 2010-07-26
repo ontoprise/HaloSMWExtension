@@ -181,10 +181,12 @@ function smwf_qi_QIAccess($method, $params) {
                         array_splice($params, $i, 1);
                     break;
                 case "intro" :
-                    $intro_missing = false;
+                    if (substr($format, 0, 4) != "ofc-")
+                        $intro_missing = false;
                     break;
                 case "outro" :
-                    $outro_missing = false;
+                    if (substr($format, 0, 4) != "ofc-")
+                        $outro_missing = false;
                     break;
                 case "headers" :
                     if ( $format != "table" && $format != "broadtable" )
