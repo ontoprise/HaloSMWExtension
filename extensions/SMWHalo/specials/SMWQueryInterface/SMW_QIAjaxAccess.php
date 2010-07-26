@@ -120,6 +120,7 @@ function smwf_qi_QIAccess($method, $params) {
             	case 'eventline':
             		return $result;
             		break;
+            	case 'gallery':
             	case 'googlepie':
             	case 'googlebar':
            		case 'ofc-pie':
