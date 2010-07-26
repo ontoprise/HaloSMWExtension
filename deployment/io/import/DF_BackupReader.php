@@ -35,7 +35,7 @@ class BackupReader {
         $this->report();
 
         if( !$this->dryRun ) {
-            call_user_func( $this->importCallback, $rev );
+            @call_user_func( $this->importCallback, $rev );
         }
     }
 

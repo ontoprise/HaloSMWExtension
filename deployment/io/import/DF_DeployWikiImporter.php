@@ -252,7 +252,9 @@ class DeployWikiRevision extends WikiRevision {
 				}
 				if ($hash != $exp_hash) {
 					$result = false;
-					if (!is_null($this->callback)) call_user_func(array(&$this->callback,"modifiedPage"), $this, $this->mode, & $result);
+					if (!is_null($this->callback)) {
+    					@call_user_func(array(&$this->callback,"modifiedPage"), $this, $this->mode, & $result);	
+					}
 					if ($result == true) {
 						return $this->importAsNewRevision();
 					}

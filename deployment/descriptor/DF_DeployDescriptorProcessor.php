@@ -76,7 +76,7 @@ class DeployDescriptionProcessor {
 		$userValues = array();
 
 		if (!is_null($userCallback)) {
-			call_user_func(array(&$userCallback,"getUserReqParams"), $userRequirements, & $userValues);
+			@call_user_func(array(&$userCallback,"getUserReqParams"), $userRequirements, & $userValues);
 		}
 		// calculate changes
 		$insertions = ""; // reset
@@ -215,7 +215,7 @@ class DeployDescriptionProcessor {
 			if (!is_null($userCallback) && $patchFailed) {
 				foreach($out as $line) print "\n".$line; // show failures
 				print "\n";
-				call_user_func(array(&$userCallback,"getUserConfirmation"), "Some patches failed. Apply anyway?", & $result);
+				@call_user_func(array(&$userCallback,"getUserConfirmation"), "Some patches failed. Apply anyway?", & $result);
 			}
 
 			switch($result) {
