@@ -193,7 +193,7 @@ class SMWQueryInterface extends SpecialPage {
 		$useTS = "";
 		$isIE = (isset($_SERVER['HTTP_USER_AGENT']) && preg_match('/MSIE \d+\.\d+/', $_SERVER['HTTP_USER_AGENT']));
 		if (isset($smwgWebserviceEndpoint)) {
-			$useTS = '<input type="checkbox" id="usetriplestore">' . wfMsg('smw_qi_usetriplestore') . '</input>';
+			$useTS = '<input type="checkbox" id="usetriplestore" checked="checked">' . wfMsg('smw_qi_usetriplestore') . '</input>';
 		}
 		return '<div id="qimenubar">' .
 		//'<span class="qibutton" onclick="qihelper.showLoadDialogue()">' . wfMsg('smw_qi_load') . '</span><span style="color:#C0C0C0">&nbsp;|&nbsp;</span>' .
