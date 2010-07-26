@@ -311,6 +311,7 @@ var wgUserLanguageStrings = {
     'QI_LIKE'                 : 'like',
     'QI BUTTON_ADD'           : 'Add',
     'QI_BUTTON_UPDATE'        : 'Update',
+    'QI_ALL_VALUES'           : 'all values',
     'QI_TT_SHOW_IN_RES'       : 'The property value will be shown in the result.',
     'QI_TT_MUST_BE_SET'       : 'Only results where the property value is  set will included in the query.',
     'QI_TT_NO_RESTRICTION'    : 'No property value restrictions. All property values will be included in the query.',
