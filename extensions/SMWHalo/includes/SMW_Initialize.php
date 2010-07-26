@@ -1629,7 +1629,7 @@ function enableQueryResultsCache(){
  */
 function smwfCheckIfPredefinedSMWHaloProperty(SMWPropertyValue $property) {
 	if (smwfGetSemanticStore()->domainRangeHintRelation->getDBkey() == $property->getDBkey()
-	|| smwfGetSemanticStore()->minCard-->getDBkey() == $property->getDBkey()
+	|| smwfGetSemanticStore()->minCard->getDBkey() == $property->getDBkey()
 	|| smwfGetSemanticStore()->maxCard->getDBkey() == $property->getDBkey()
 	|| smwfGetSemanticStore()->inverseOf->getDBkey() == $property->getDBkey()) {
 		return true;
