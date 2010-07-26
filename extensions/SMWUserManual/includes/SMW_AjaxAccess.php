@@ -99,7 +99,7 @@ function wfUmeAjaxGetArticleHtml($page){
     $prop = SMWPropertyValue::makeUserProperty($pname->getDBkey());
 	$smwValues = smwfGetStore()->getPropertyValues($title, $prop);
 	if (count($smwValues) > 0) {
-        $umeLink = str_replace(" ", "+", $smwValues[0]->getXSDValue());
+        $umeLink = str_replace(" ", "+", array_shift($smwValues[0]->getDBkeys()));
    		if (strlen(trim($umeLink)) > 0)
             $result['link'] = '<a href="'.SMW_FORUM_URL.'?title='
                                 .$umeLink.'" target="_blank">'
