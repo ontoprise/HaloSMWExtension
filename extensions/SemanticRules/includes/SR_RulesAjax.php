@@ -76,7 +76,7 @@ function smwf_sr_AddRule($ruleName, $ruleXML) {
 		$rule = SMWRuleObject::newFromFormula($property, $expr, $variables);
 		if (is_a($rule, 'SMWRuleObject')) {
 
-			return $rule->getWikiFlogicString();
+			return $rule->getWikiOblString();
 		} else {
 			// return the error message
 			return $rule;
@@ -147,7 +147,8 @@ function smwf_sr_AddRule($ruleName, $ruleXML) {
 			$object = new SMWVariable($prop->variable);
 			$boundVars[(string)$prop->variable] = $object;
 		} else if ($prop->value) {
-			$object = new SMWConstant(urldecode($prop->value));
+			$operand = $prop->value->attributes()->operand;
+			$object = new SMWConstant(urldecode($prop->value), $operand);
 		}
 		$bodyLit = new SMWLiteral(new SMWPredicateSymbol(P_ATTRIBUTE, 2),
 		array($subject, $rel, $object));
@@ -272,7 +273,7 @@ function smwf_sr_ParseRule($ruleName, $ruleText) {
 
 	$fp = SRRuleEndpoint::getInstance();
 
-	$ruleObject = $fp->parseOblRule($ruleName, $ruleText);
+	$ruleObject = $fp->parseOblRule($ruleName, $ruleText, false);
 
 	if ($ruleObject == null) {
 		return 'false';
@@ -340,9 +341,14 @@ function smwhCreateRuleXML($literals) {
 	if (!is_array($literals)) {
 		$literals = array($literals);
 	}
+	
+	$variableMap = smwhGetRelationalLiterals($literals);
 
 	foreach ($literals as $lit) {
 		$ps = $lit->getPreditcatesymbol()->getPredicateName();
+		
+		if ($ps == 'obl:reserved:greaterThan' || $ps == 'obl:reserved:lessThan') continue;
+		
 		$args = $lit->getArguments();
 		if ($ps == P_ISA || $ps == P_DISA) {
 			// Category
@@ -379,7 +385,15 @@ function smwhCreateRuleXML($literals) {
 			if (is_a($args[2], 'SMWConstant')) {
 				$xml .= '<value>'. $args[2]->getValue() . '</value>';
 			} else if (is_a($args[2], 'SMWVariable')) {
-				$xml .= '<variable>'. $args[2]->getVariableName() . '</variable>';
+				
+				// check if variable is bound by a comparison
+				// in this case serialized it as value
+				if (array_key_exists($args[2]->getVariableName(), $variableMap)) {
+					list($operand, $value) = $variableMap[$args[2]->getVariableName()];
+					$xml .= '<value operand="'.$operand.'">'. $value . '</value>';
+				} else {
+				    $xml .= '<variable>'. $args[2]->getVariableName() . '</variable>';
+				}
 			}
 			$xml .= '</property>';
 		}
@@ -389,4 +403,27 @@ function smwhCreateRuleXML($literals) {
 	return $xml;
 }
 
+/**
+ * Get literals expressing a comparison.
+ * 
+ * ?variable < value
+ * 
+ * @param array of SMWLiteral $literals
+ * @return hash array (variable => array(operator, value))
+ */
+function smwhGetRelationalLiterals($literals) {
+	$variableMap = array();
+	foreach ($literals as $lit) {
+        $ps = $lit->getPreditcatesymbol()->getPredicateName();
+        
+        if ($ps == 'obl:reserved:greaterThan') {
+        	$args = $lit->getArguments();
+        	$variableMap[$args[0]->getVariableName()] = array("gt", $args[1]->getValue());
+        } else if ($ps == 'obl:reserved:lessThan') {
+            $args = $lit->getArguments();
+            $variableMap[$args[0]->getVariableName()] = array("lt", $args[1]->getValue());
+        }
+	}
+	return $variableMap;
+}
 

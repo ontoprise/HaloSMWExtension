@@ -362,12 +362,14 @@ getHTMLForLiteral: function(literal, isHead, partID) {
 			}
 			var value = literal.getElementsByTagName('value');
 			if (value.length) {
+				var operand = value[0].getAttribute("operand");
 				value = value[0].firstChild.nodeValue;
+				var operandText = operand == null || operand == '=' ? '' : 'operand="'+operand+'"';
 				var valueInfo = 
 				valueHTML = '<span class="rules-category"' + 
 								'id="value_' + partID + '" ' +
 								'propvalue="' + escape(value) + '"' +
-								'proptype="value"' +							
+								'proptype="value" ' + operandText + 							
 								'>' +
 								value + 
 							'</span>';
@@ -588,6 +590,8 @@ memberOfProperty: function() {
 		'&nbsp;' +
 		this.createVariableSelector("sr-value-selector", gsrLanguage.getMessage('SR_SIMPLE_VALUE'),"X1") +
 		'&nbsp;' +
+		this.createOperatorSelector("sr-op-selector") +
+		'&nbsp;' +
 		'<input type="text" value="" id="sr-prop-value" style="display:none" />' +
 		'&nbsp;' +
 		
@@ -630,9 +634,12 @@ editPropertyCondition: function(partID) {
 	if (elem) {
 		var val = unescape(elem.readAttribute('propvalue'));
 		var type = unescape(elem.readAttribute('proptype'));
+		var operand = unescape(elem.readAttribute('operand'));
 		var select = (type == 'variable') ? val : gsrLanguage.getMessage('SR_SIMPLE_VALUE');
 		var html = this.createVariableSelector("sr-value-selector", 
 		                                       gsrLanguage.getMessage('SR_SIMPLE_VALUE'),select);
+		
+		html += this.createOperatorSelector("sr-op-selector", operand, true);
 		html += '<input type="text" value="" id="sr-prop-value" style="display:none"/>';
 		elem.replace(html);
 		if (type == 'value') {
@@ -671,10 +678,13 @@ editPropertyCondition: function(partID) {
  	var input = (event.target.id == 'sr-value-selector') 
 	 				? $('sr-prop-value')
 	 				: $('sr-prop-head-value');
+	var opselector = $('sr-op-selector');
  	if (val == gsrLanguage.getMessage('SR_SIMPLE_VALUE')) {
  		input.show();
+ 		opselector.show();
  	} else {
  		input.hide();
+ 		opselector.hide();
  	}
  },
 
@@ -730,6 +740,11 @@ editPropertyCondition: function(partID) {
 	var valueHTML;
 	var escapedValue = escape(value);
 	
+	var opSelector = $('sr-op-selector');
+	var selectedIndex = opSelector.selectedIndex;
+	var operator = opSelector.options[selectedIndex];
+	var operand = "operand=\""+opSelector.options[selectedIndex].value+"\"";
+	
 	var valueInfo = 'id="value_' + partID + '" ' +
 			'propvalue="' + escapedValue + '"' +
 			'proptype="' + (valueIsVariable ? 'variable"' : 'value"');
@@ -744,7 +759,7 @@ editPropertyCondition: function(partID) {
 		}
 					
 	} else {
-		valueHTML = '<span class="rules-category"' + valueInfo + '>' +
+		valueHTML = '<span class="rules-category"' + valueInfo + " "+operand+'>' +
 						value + 
 					'</span>';
 	}
@@ -905,6 +920,50 @@ createVariableSelector: function(id, option, select) {
 	
 },
 
+
+createOperatorSelector: function(id, defaultValue, visible) {
+	
+	var visibilityAtt = '';
+	if (!visible) {
+		visibilityAtt = 'style="display: none;"';
+	}
+	var html =
+		'<select id ="' + id + '" '+visibilityAtt+'>';
+	if (defaultValue == '==' || defaultValue == null) {
+		html += '<option selected="selected" value="=">=</option>';
+	} else {
+		html += '<option value="=">=</option>';
+	}
+	
+	if (defaultValue == 'lt') {
+		html += '<option selected="selected" value="lt">&lt;</option>';
+	} else {
+		html += '<option value="lt">&lt;</option>';
+	}
+	
+	if (defaultValue == 'lte') {
+		html += '<option selected="selected" value="lte">&lt;=</option>';
+	} else {
+		html += '<option value="lte">&lt;=</option>';
+	}
+	
+	if (defaultValue == 'gt') {
+		html += '<option selected="selected" value="gt">&gt;</option>';
+	} else {
+		html += '<option value="gt">&gt;</option>';
+	}
+	
+	if (defaultValue == 'gte') {
+		html += '<option selected="selected" value="gte">&gt;=</option>';
+	} else {
+		html += '<option value="gte">&gt;=</option>';
+	}
+
+	html +=		
+		'</select>';
+	return html;
+},
+
 /**
  * Shows or hides the edit and delete buttons to the right of a condition.
  * 
@@ -993,6 +1052,7 @@ serializeRule: function() {
 		if (isVariable) {
 			xml += '<variable>'+value+'</variable>';
 	 	} else {
+	 		
 		 	xml += '<value>'+value+'</value>';
 	 	}
 		xml += '</property>';
@@ -1034,7 +1094,9 @@ serializeRule: function() {
 			if (value.readAttribute('proptype') == 'variable') {
 				xml += '<variable>'+value.readAttribute('propvalue')+'</variable>';
 			} else {
-				xml += '<value>'+value.readAttribute('propvalue')+'</value>';
+				var operand = value.readAttribute('operand');
+				var operandText = operand == '=' ? "" : 'operand="'+operand+'"';
+				xml += '<value '+operandText+'>'+value.readAttribute('propvalue')+'</value>';
 			}
 			xml += '</property>';
 		}

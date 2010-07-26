@@ -31,6 +31,9 @@ class SMWRuleObject extends SMWAbstractRuleObject {
 	// holds bound variables for UPN stack parser.
 	private $bound = array();
 	private $tokentypes = array('const', 'var', 'op', 'func1', 'func2');
+	
+	// variable index counter for creating unique variables
+	private static $varIndex = 0;
 
 	function __construct($value = "") {
 		parent::__construct($value);
@@ -216,16 +219,31 @@ class SMWRuleObject extends SMWAbstractRuleObject {
 		// statement with 3 terms (att/rel)
 		// attribute/relation
 		$tmp = "";
+		$tmp2 = "";
 		for ($i = 0; $i < sizeof($args); $i++) {
 
-			$tmp .= $args[$i] instanceof SMWVariable ? $args[$i]->getName() : ucfirst($args[$i]->getName());
+			
 			if ($i == 0) {
+				$tmp .= $args[$i] instanceof SMWVariable ? $args[$i]->getName() : ucfirst($args[$i]->getName());
 				$tmp .= "[prop#";
 			} else if ($i == 1) {
+				$tmp .= $args[$i] instanceof SMWVariable ? $args[$i]->getName() : ucfirst($args[$i]->getName());
 				$tmp .="->";
+			} else if ($i == 2) {
+				if ($args[$i] instanceof SMWConstant && !is_null($args[$i]->getOperand())) {
+					
+					// in this case a second literal containing the comparison
+					// must be created
+					$tmp .= "?__VALUE".self::$varIndex;
+					$tmp2 = " AND ?__VALUE".self::$varIndex." ".$args[$i]->getOperand()." ".ucfirst($args[$i]->getName());
+					self::$varIndex++;
+					
+				} else {
+				    $tmp .= $args[$i] instanceof SMWVariable ? $args[$i]->getName() : ucfirst($args[$i]->getName());
+				}
 			}
 		}
-		return $tmp .= "]";
+		return $tmp .= "] ".$tmp2;
 	}
 
 	private function getOblOperatorPart($op, $args) {

@@ -18,7 +18,7 @@
 /**
  * @file
  * @ingroup SRRuleObject
- * 
+ *
  * @author Kai Kühn
  */
 if (!defined('MEDIAWIKI')) die();
@@ -26,33 +26,46 @@ if (!defined('MEDIAWIKI')) die();
 class SMWConstant extends SMWTerm {
 
 	private $_value;
+	private $_operand;
 
 	// creates a Constant object consisting of
 	// * a value of the constant
 	// * inherited SMWTerm
 
 	// constants must have arity = 0 and ground set to true
-	function __construct($value) {
+	function __construct($value, $operand = NULL) {
 		// check if it is numeric value - if not, add quotes
 		$value_unquoted = self::unquote($value);
-		
+
 		// better solution would be to store the type here.
 		if ($value_unquoted == 'true' || $value_unquoted == 'false') {
 			$value = $value_unquoted;
 		} else if (!is_numeric($value_unquoted)) {
 			// if not numeric then quote
 			$value = "\"" . $value_unquoted . "\"";
-			
+				
 		} else {
 			$value = $value_unquoted;
 		}
-		
+
 		parent::__construct($value, 0, false);
 		$this->_value = $value;
+		$this->_operand = $operand;
 	}
 
 	public function getValue() {
 		return $this->_value;
+	}
+	
+	public function getOperand() {
+		switch($this->_operand) {
+			case 'lt': return '<';
+			case 'gt': return '>';
+			case 'lte': return '<=';
+            case 'gte': return '>=';
+			default: return $this->_operand;
+		}
+
 	}
 
 	public function setValue($value) {

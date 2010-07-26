@@ -182,23 +182,31 @@ class SRRuleEndpoint {
 	 *      id in for of: RULE #id:flogic text
 	 * @param string $oblrule
 	 *      The text of the rule.
+	 * @param string ajax call or directly called
 	 * @return SMWRuleObject
 	 *      The rule object contains the parsed literals of the rule.
 	 */
-	public function parseOblRule($ruleid, $oblrule) {
+	public function parseOblRule($ruleid, $oblrule, $ajaxCall = true) {
 
 		$payload = "ruleText=".urlencode($oblrule);
 		list($header, $status, $res) = self::$_client->send($payload, "/parserule");
 		$_parsedstring = $res;
-
+ 
 		$_ruleObject = new SMWRuleObject();
 		$_ruleObject->setAxiomId($ruleid);
+        
+		$parsedRuleXML = $_ruleObject->parseRuleObject(simplexml_load_string($_parsedstring));
+		
+		if ($ajaxCall) {
+			$response = new AjaxResponse($parsedRuleXML);
+			$response->setContentType( "application/xml" );
+			$response->setResponseCode($status);
+			return $response;
+			
+		} else {
+			return $parsedRuleXML;
+		}
 
-		$response = new AjaxResponse($_ruleObject->parseRuleObject(simplexml_load_string($_parsedstring)));
-		$response->setContentType( "application/xml" );
-		$response->setResponseCode($status);
-
-		return $response;
 	}
 
 	private function encapsulateRuleWidget($resultXML) {
