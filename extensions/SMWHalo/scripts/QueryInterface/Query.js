@@ -142,8 +142,13 @@ Query.prototype = {
 							res = propvalues[j][1];
 							break;
 					}
+					var pvalue = propvalues[j][2];
+					
                     res = ((this.properties[i].getArity() > 2 ) ? propvalues[j][0] : "")
-                        + " " + res + " " + propvalues[j][2];
+                        + " " + res + " ";
+                    if (propvalues[j][2] == '*')
+                        res += '<i>'+gLanguage.getMessage('QI_ALL_VALUES')+'</i>'
+                    else res += propvalues[j][2];
                     if (propvalues[j][3]) res += ' ' + propvalues[j][3];
 					tree += res;
                     if (j < (js - 1) )
@@ -264,20 +269,8 @@ Query.prototype = {
 			}
 			asktext += "]]";
 		}
-		var displayStatements = new Array();
 		for(var i=0; i<this.properties.length; i++){
-			if(this.properties[i].isShown()){ // "Show in results" checked?
-                var prop = this.properties[i].getName().unescapeHTML();
-                if (this.properties[i].getShowUnit())
-                    prop += ' #' + this.properties[i].getShowUnit();
-                if (this.properties[i].getColName())
-                    prop += ' = ' + this.properties[i].getColName();
-                // do not show the same display statement twice
-                if (! displayStatements.inArray(prop)) {
-                    displayStatements.push(prop);
-                }
-			}
-                        // add this only if there is no special value asked for
+            // add this only if there is no special value asked for
 			if(this.properties[i].mustBeSet() && 
                            this.properties[i].getValues().length == 1 &&
                            this.properties[i].getValues()[0][2] == '*') {
@@ -323,7 +316,7 @@ Query.prototype = {
 						else
 							asktext += vals[j][2].unescapeHTML();
                         if (vals[j][3] && vals[j][3].length > 0)
-                            asktext += vals[j][3].unescapeHTML();
+                            asktext += ' '+vals[j][3].unescapeHTML();
 					}
 					asktext += "]]";
 				}
@@ -337,10 +330,14 @@ Query.prototype = {
 		for(var i=0; i<this.properties.length; i++){
 			if(this.properties[i].isShown()) { // "Show in results" checked?
                 var prop = this.properties[i].getName();
+                var pname = prop;
                 if (this.properties[i].getShowUnit())
                     prop += ' #' + this.properties[i].getShowUnit();
-                if (this.properties[i].getColName())
+                if (! this.properties[i].getColName())
+                    prop += ' = ';
+                else if (pname != this.properties[i].getColName())
                     prop += ' = ' + this.properties[i].getColName();
+                        
                 // do not show the same display statement twice
                 if (displayStatements.inArray(prop)) continue;
                 displayStatements.push(prop);

@@ -26,8 +26,10 @@ QIHelper.prototype = {
 		this.imgpath = wgScriptPath + '/extensions/SMWHalo/skins/QueryInterface/images/';
         this.divQiDefTabHeight = 300;
         this.divPreviewcontentHeight = 160;
-		this.numTypes = new Array();
-		this.getNumericDatatypes();
+		if (! this.numTypes ) { // get them only once.
+		    this.numTypes = new Array();
+		    this.getNumericDatatypes();
+		}
 		this.queries = Array();
 		this.activeQuery = null;
 		this.activeQueryId = null;
@@ -1537,6 +1539,10 @@ QIHelper.prototype = {
     toggleShowProperty : function() {
         if ($('input_c1').checked) {
             $('input_c3d').style.display = (Prototype.Browser.IE) ? 'inline' : null;
+            // default value for the first time
+            if ( !('input_c3').value ) {
+                $('input_c3').value = this.propname;
+            }
             if ($('input_c4').getElementsByTagName('option').length > 0)
                 $('input_c4d').style.display = (Prototype.Browser.IE) ? 'inline' : null;
         } else {
@@ -2493,8 +2499,8 @@ QIHelper.prototype = {
                 }
                 if (uvals.length > 0) {
                     unitVals.push(uvals);
-                    if (!this.numTypes[pname.toLowerCase()])
-                        this.numTypes[pname.toLowerCase()]= true;
+                    if (!this.numTypes[ptype.toLowerCase()])
+                        this.numTypes[ptype.toLowerCase()]= true;
                 }
             }
             var isEnum = noval.length > 0 ? true : false;
@@ -2560,7 +2566,7 @@ handleQueryString : function(args, queryId, pMustShow) {
             // in main query, check if property is on the list of props to show
             if (queryId == 0) {
                 for (var j = 0; j < pMustShow.length; j++) {
-                    if (pMustShow[j][0] == pname) {
+                    if (pMustShow[j][0] == pchains.join('.')) {
                         pshow = true;
                         unit = pMustShow[j][1];
                         column = pMustShow[j][2];
@@ -2574,7 +2580,7 @@ handleQueryString : function(args, queryId, pMustShow) {
 			var isEnum = propdef ? propdef.isEnumeration() : false;
 			var enumValues = propdef ? propdef.getEnumValues() : [];
             // create propertyGroup
-			var pgroup = new PropertyGroup(escapeQueryHTML(pname), arity,
+			var pgroup = new PropertyGroup(escapeQueryHTML(pchains.join('.')), arity,
                 	pshow, pmust, isEnum, enumValues, null, unit, column);
             if (arity > 2) {
                 var naryVals = propdef.getValues();
@@ -2583,7 +2589,7 @@ handleQueryString : function(args, queryId, pMustShow) {
             }
             pgroup.setUnits(propdef.getUnits());
 
-			var subqueryIds = propList.getSubqueryIds(propList.getIndex(pname));
+			var subqueryIds = propList.getSubqueryIds(propList.getIndex(pchains.join('.')));
             if (!subqueryIds) subqueryIds = new Array();
 			var paramname = this.propertyTypesList && this.propertyTypesList.getType(pname)
                             ? this.propertyTypesList.getType(pname)
@@ -2595,7 +2601,7 @@ handleQueryString : function(args, queryId, pMustShow) {
 			if (pval.match(/___q\d+q___/)) {
 				paramname = "subquery";
 				paramvalue = parseInt(pval.replace(/___q(\d+)q___/, '$1'));
-				this.insertQuery(paramvalue, queryId, pname);
+				this.insertQuery(paramvalue, queryId, pchains.join('.'));
 				subqueryIds.push(paramvalue);
                 // add a value group to the property group
 				pgroup.addValue(paramname, restriction, paramvalue);
@@ -2611,7 +2617,7 @@ handleQueryString : function(args, queryId, pMustShow) {
                 if (pval == "+") {
                     for (var k = 0; k < args.length; k++) {
                         // check if poperty exists again in query but with other value
-                        if (args[k].indexOf(pname) != -1 && args[k] != pname + '::+')
+                        if (args[k].indexOf(pchains.join('.')) != -1 && args[k] != pchains.join('.') + '::+')
                             skipMustShow = true;
                     }
                 }
@@ -2637,7 +2643,7 @@ handleQueryString : function(args, queryId, pMustShow) {
                         // check for restricion (makes sence for numeric properties)
         				var op = vals[j].match(/^([\!|<|>|~]?=?)(.*)/);
             			if (op[1].length > 0) {
-                			restriction = op[1].indexOf('=') == -1
+                			restriction = ( op[1].indexOf('=') == -1 && (op[1] == '>' || op[1] == '<') )
                                 ? op[1] + '='
                         		: op[1];
                             paramvalue = op[2];
@@ -2647,7 +2653,7 @@ handleQueryString : function(args, queryId, pMustShow) {
                             restriction = '=';
                         }
                         // check for a unit
-                        var paramunit;
+                        var paramunit = "";
                         if (this.propertyTypesList.supportsUnits(pname)) {
                             op = paramvalue.match(/^\s*(\d+(\.\d+)?)(.*?)$/);
                             if (op) {
@@ -2672,7 +2678,7 @@ handleQueryString : function(args, queryId, pMustShow) {
                         // check for restricion (makes sence for numeric properties)
                     	var op = vals[j].match(/^([\!|<|>]?=?)(.*)/);
                         if (op[1].length > 0) {
-                            restriction = op[1].indexOf('=') == -1
+                            restriction = ( op[1].indexOf('=') == -1 && (op[1] == '>' || op[1] == '<') )
                                 ? op[1] + '='
                                 : op[1];
                             paramvalue = op[2];
@@ -2684,7 +2690,7 @@ handleQueryString : function(args, queryId, pMustShow) {
                         // if j > 0 conjunction: page/type = val1 'or' valX
                         if (j > 0) paramname = gLanguage.getMessage('QI_OR');
                         // check for a unit
-                        var paramunit;
+                        var paramunit = "";
                         if (this.propertyTypesList.supportsUnits(pname)) {
                             op = paramvalue.match(/^\s*(\d+(\.\d+)?)(.*?)$/);
                             if (op) {
@@ -2698,7 +2704,7 @@ handleQueryString : function(args, queryId, pMustShow) {
                     }
                 }
 			}
-			propList.addNew(pname, pgroup, subqueryIds); // add current property to property list
+			propList.addNew(pchains.join('.'), pgroup, subqueryIds); // add current property to property list
 		}
 	}
 
@@ -2711,12 +2717,15 @@ handleQueryString : function(args, queryId, pMustShow) {
 		for ( var i = 0; i < pMustShow.length; i++) { // loop over all properties to show
 		    var pgroup;
             // get information about the property itself
-            var defPgroup = this.propertyTypesList.getPgroup(pMustShow[i][0]);
+            // split of propname
+            var pchain = pMustShow[i][0].split('.');
+            var plocname = pchain[pchain.length - 1];
+            var defPgroup = this.propertyTypesList.getPgroup(plocname);
             var ptype = gLanguage.getMessage('QI_PAGE');
             // use the definition, like enum values and arity from the ajax
             // call when querying the property types
             if (defPgroup) {
-                ptype = this.propertyTypesList.getType(pMustShow[i][0]);
+                ptype = this.propertyTypesList.getType(plocname);
                 pgroup = new PropertyGroup(escapeQueryHTML(pMustShow[i][0]),
                     defPgroup.getArity(), true, false,
                     defPgroup.isEnumeration(), defPgroup.getEnumValues(), -1,
@@ -2776,6 +2785,10 @@ applyOptionParams : function(query) {
                 var pname = m[1].replace(/^\s*\?/, '').replace(/\s*$/,'');
                 var punit = (m[2]) ? m[2].replace(/#/,'').replace(/\s*$/,'') : null;
                 var col = (m[3]) ? m[3].replace(/=\s*/,'').replace(/\s*$/,'') : null;
+                if (col == null) { // set default column value if not set.
+                    pchain = pname.split('.');
+                    col = pchain[pchain.length -1];
+                }
                 mustShow.push([pname, punit, col]);
                 continue;
             }
