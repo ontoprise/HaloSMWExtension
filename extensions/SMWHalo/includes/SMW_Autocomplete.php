@@ -254,9 +254,9 @@ class AutoCompletionRequester {
 				$property = Title::newFromText($propertyTitle, SMW_NS_PROPERTY);
 				$domainRangeAnnotations = smwfGetStore()->getPropertyValues($property, smwfGetSemanticStore()->domainRangeHintProp);
 				$pages = smwfGetAutoCompletionStore()->getInstanceAsTarget($match, $domainRangeAnnotations);
-			
+					
 			}
-				
+
 			if (empty($pages)) {
 				// fallback
 				$pages = smwfGetAutoCompletionStore()->getPages($match, array(NS_MAIN));
@@ -299,9 +299,21 @@ class AutoCompletionRequester {
 		$specialMatches = array(); // keeps matches of special relations
 		global $smwgContLang;
 		$specialProperties = $smwgContLang->getPropertyLabels();
+		
+		// propose category 
 		if (stripos(strtolower($wgLang->getNsText(NS_CATEGORY)), strtolower($match)) !== false) {
 			$specialMatches[] = Title::newFromText(strtolower($wgLang->getNsText(NS_CATEGORY)), NS_CATEGORY);
 		}
+		
+		// propose namespaces
+		global $wgExtraNamespaces;
+		$namespaceToPropose = $wgExtraNamespaces;
+		foreach($namespaceToPropose as $ns => $nsText) {
+			if (stripos(strtolower($wgLang->getNsText($ns)), strtolower($match)) !== false) {
+				$specialMatches[] = Title::newFromText(strtolower($wgLang->getNsText($ns)), $ns);
+			}
+		}
+		
 		if (stripos(strtolower($specialProperties["_SUBP"]), preg_replace("/_/", " ", strtolower($match))) !== false) {
 			$specialMatches[] = Title::newFromText($specialProperties["_SUBP"], SMW_NS_PROPERTY);
 		}
