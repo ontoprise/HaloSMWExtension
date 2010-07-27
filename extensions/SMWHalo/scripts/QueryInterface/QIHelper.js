@@ -304,7 +304,6 @@ QIHelper.prototype = {
 		this.activeQueryId = id;
 		this.emptyDialogue(); // empty open dialogue
 		this.updateBreadcrumbs(id); // update breadcrumb navigation of treeview
-		// update everything
 	},
 
 	/**
@@ -347,7 +346,6 @@ QIHelper.prototype = {
                 queryIds.push(activeQuery.subqueryIds[j]);
         }
         $('treeanchor').innerHTML = treeXML;
-        //updateQueryTree(treeXML);
     },
 
 	/**
@@ -988,55 +986,55 @@ QIHelper.prototype = {
             cell.style.fontWeight="bold";
             cell.style.textAlign="right";
         }
-        cell = newrow.insertCell(1);
         var param = (this.propTypename) ? this.propTypename : gLanguage.getMessage('QI_PAGE');
-		if (param == gLanguage.getMessage('QI_PAGE')) { // property dialogue & type = page
-			cell.innerHTML = this.createRestrictionSelector("=", false, false);
-			cell = newrow.insertCell(2);
-			if (this.propRange[this.propname.toLowerCase()]) {
-			    var propNameAC = gLanguage.getMessage('PROPERTY_NS')+this.propname.replace(/\s/g, '_');
-    			cell.innerHTML = '<input class="wickEnabled general-forms" constraints="instance-property-range: '
-    			    + propNameAC + '|namespace: 0" autocomplete=OFF" type="text" id="input_r' + newRowIndex + '"/>';
-    	    }
+        var ptype =  (this.propTypetype) ? this.propTypetype : '_wpg';
+        var numericType = this.numTypes[param.toLowerCase()];
+        var propNameAC = gLanguage.getMessage('PROPERTY_NS')+this.propname.replace(/\s/g, '_');
+        var ac_constraint = 'annotation-value: '+propNameAC;
+		if (ptype == '_wpg') { // property type = page
+			if (this.propRange[this.propname.toLowerCase()])
+			    ac_constraint = 'instance-property-range: '+propNameAC;
     		else
-			    cell.innerHTML = '<input class="wickEnabled general-forms" constraints="namespace: 0" autocomplete=OFF" type="text" id="input_r' + newRowIndex + '"/>';
-		} else { // property, no page type
-			if (this.numTypes[param.toLowerCase()]) // numeric type? operators
-													// possible
-				cell.innerHTML = this.createRestrictionSelector("=", false, true);
-			else
-				cell.innerHTML = this.createRestrictionSelector("=", false, false);
-			cell = newrow.insertCell(2);
-			if (this.propIsEnum) { // if enumeration, a select box is used
-									// instead of a text input field
-				var oSelect = document.createElement("SELECT");
-				oSelect.id = "input_r" + newRowIndex;					
-				for ( var i = 0; i < this.enumValues.length; i++) {
-				    var oOption = document.createElement("OPTION");
-                    oOption.text=this.enumValues[i];
-                    oOption.value=this.enumValues[i];
-                    oOption.style.width="100%";
-                    oSelect.add(oOption);
-				}
-				cell.appendChild(oSelect);
-			} else { // no enumeration, no page type, simple input field
-                var oInput = document.createElement("INPUT");
-                oInput.type = "text";
-                oInput.id = "input_r" + newRowIndex;
-                cell.appendChild(oInput);
-				try {
-                    var uIdx = (arity == 2) ? 0 : newRowIndex - 1;
-                    if (this.propUnits.length > 0 && this.propUnits[uIdx].length > 0) {
-                        var oSelect = document.createElement("SELECT");
-                        oSelect.id = "input_ru" + newRowIndex;
-                        for (var i = 0, m = this.propUnits[uIdx].length; i < m; i++) {
-                            oSelect.options[i] = 
-                                new Option(this.propUnits[uIdx][i], this.propUnits[uIdx][i]);
-                        }
-                        cell.appendChild(oSelect);        
-                    }
-                } catch (e) {};
+    		    ac_constraint += '|namespace: 0'; 
+        } else if (ptype == '_dat') { // property type = date
+            ac_constraint = 'fixvalues: {{NOW}},{{TODAY}}|annotation-value: '+propNameAC;
+            numericType= true;		    
+		} // else property, no page type and no date type, use defaults as set above.
+        cell = newrow.insertCell(1);
+		cell.innerHTML = this.createRestrictionSelector("=", false, numericType);
+		cell = newrow.insertCell(2);
+		if (this.propIsEnum) { // if enumeration, a select box is used
+								// instead of a text input field
+			var oSelect = document.createElement("SELECT");
+			oSelect.id = "input_r" + newRowIndex;					
+			for ( var i = 0; i < this.enumValues.length; i++) {
+				var oOption = document.createElement("OPTION");
+                oOption.text=this.enumValues[i];
+                oOption.value=this.enumValues[i];
+                oOption.style.width="100%";
+                oSelect.add(oOption);
 			}
+			cell.appendChild(oSelect);
+		} else { // no enumeration, no page type, simple input field
+            var oInput = document.createElement("INPUT");
+            oInput.type = "text";
+            oInput.id = "input_r" + newRowIndex;
+            oInput.className = "wickEnabled general-forms";
+            oInput.setAttribute('autocomplete', 'OFF');
+            oInput.setAttribute('constraints', ac_constraint);
+            cell.appendChild(oInput);
+			try {
+                var uIdx = (arity == 2) ? 0 : newRowIndex - 1;
+                if (this.propUnits.length > 0 && this.propUnits[uIdx].length > 0) {
+                    var oSelect = document.createElement("SELECT");
+                    oSelect.id = "input_ru" + newRowIndex;
+                    for (var i = 0, m = this.propUnits[uIdx].length; i < m; i++) {
+                        oSelect.options[i] = 
+                            new Option(this.propUnits[uIdx][i], this.propUnits[uIdx][i]);
+                    }
+                    cell.appendChild(oSelect);        
+                }
+            } catch (e) {};
 		}
         if (arity == 2) {
             if ($('dialoguecontent_pvalues').rows.length > 1) {
@@ -1092,6 +1090,7 @@ QIHelper.prototype = {
 		this.propname = null;
 		this.proparity = null;
         this.propTypename = null;
+        this.propTypetype = null;
         this.propUnits = null;
 		for ( var i = 0, n = $('dialoguecontent').rows.length; i < n; i++)
 			$('dialoguecontent').deleteRow(0);
@@ -1291,6 +1290,7 @@ QIHelper.prototype = {
 				}
                 // set property type
                 this.propTypename = parameterNames[0];
+                this.propTypetype = parameterTypes[0];
                 $('dialoguecontent').rows[$('dialoguecontent').rows.length -2].cells[1].innerHTML=
                     gLanguage.getMessage('QI_PROPERTY_TYPE') + ': ' + parameterNames[0];
                 // start to build HTML for restriction values
@@ -1363,6 +1363,7 @@ QIHelper.prototype = {
                 $('dialoguecontent').rows[$('dialoguecontent').rows.length -2].cells[1].innerHTML=
                     gLanguage.getMessage('QI_PROPERTY_TYPE') + ': ' + gLanguage.getMessage('QI_RECORD');
                 this.propTypename = gLanguage.getMessage('QI_RECORD');
+                this.propTypetype = '_rec';
                 this.toggleSubqueryAddchain(false);
 
                 var row = $('dialoguecontent_pvalues').insertRow(-1);
@@ -2586,7 +2587,7 @@ handleQueryString : function(args, queryId, pMustShow) {
                 }
             }
 			// must be set?
-			var pmust = args.inArray(pname + '::+');
+			var pmust = args.inArray(pchains.join('.') + '::+');
 			var arity = propdef ? propdef.getArity() : 2;
 			var isEnum = propdef ? propdef.isEnumeration() : false;
 			var enumValues = propdef ? propdef.getEnumValues() : [];
@@ -2922,7 +2923,7 @@ PropertyGroup.prototype = {
         this.selector = selector;
         this.showUnit = showUnit;
         this.colName = colName;
-		this.values = Array(); // paramName, retriction, paramValue, unitOfvalue
+		this.values = Array(); // paramName, restriction, paramValue, unitOfvalue
         this.units = Array();
 },
 
