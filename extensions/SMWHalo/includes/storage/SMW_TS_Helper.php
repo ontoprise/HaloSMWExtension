@@ -54,6 +54,17 @@ class WikiTypeToXSD {
 
     }
     
+    public static function isPageType($wikiType) {
+    	switch($wikiType) {
+    		 //only relevant for schema import
+            case '_wpc' :
+            case '_wpf' :
+            case '_wpp' :
+            case '_wpg' : return true;
+    	}
+    	return false;
+    }
+    
     /**
      * Translates XSD-URIs to wiki datatype IDs.
      * @param $xsdURI
