@@ -950,6 +950,7 @@ QIHelper.prototype = {
         var table = $('dialoguecontent_pradio')
         if (!table) return;
         var radio = table.getElementsByTagName('input');
+        $('usesub_text').style.display= (radio[2].checked) ? "block" : "none";
         if (radio[1].checked) {
             $('dialoguecontent_pvalues').style.display="inline";
             if ($('dialoguecontent_pvalues').rows.length == 0)
@@ -1435,12 +1436,13 @@ QIHelper.prototype = {
         cell = row.insertCell(1);
         var tmpHTML='<table><tr><td '
             + 'onmouseover="Tip(\'' + gLanguage.getMessage('QI_TT_SHOW_IN_RES') + '\')">'
-            + '<input type="checkbox" id="input_c1" checked="checked" />'
+            + '<input type="checkbox" id="input_c1"'
+            + (this.activeQueryId == 0 ? ' checked="checked"':'')+' />'
             + ' </td><td> '
             + '<span onmouseover="Tip(\'' + gLanguage.getMessage('QI_TT_SHOW_IN_RES') + '\')">'
             + gLanguage.getMessage('QI_SHOW_PROPERTY')
             + '</span></td><td> </td></tr>'
-            + '<tr id="input_c3d"><td> </td>'
+            + '<tr id="input_c3d"'+(this.activeQueryId > 0 ? ' style="display:none"':'')+'><td> </td>'
             + '<td>' + gLanguage.getMessage('QI_COLUMN_LABEL') + ':</td>'
             + '<td><input type="text" id="input_c3"/></td></tr>'
             + '<tr id="input_c4d" style="display:none"><td> </td>'
@@ -1477,7 +1479,8 @@ QIHelper.prototype = {
             + '<input type="radio" name="input_r0" value="-2" />' + gLanguage.getMessage('QI_SPECIFIC_VALUE')
             + '</span>&nbsp;<span onmouseover="Tip(\'' + gLanguage.getMessage('QI_TT_SUBQUERY') + '\')">'
             + '<input type="radio" name="input_r0" value="'+this.nextQueryId+'" />'
-            + '<span id="usesub">' + gLanguage.getMessage('QI_SUBQUERY') + '</span></span>&nbsp;';
+            + '<span id="usesub">' + gLanguage.getMessage('QI_SUBQUERY') + '</span></span>&nbsp'
+            + '<div id="usesub_text" style="display:none">' + gLanguage.getMessage('QI_SUBQUERY_TEXT') + '</div>';
         $('dialoguecontent').parentNode.parentNode.appendChild(node);
         node = document.createElement('table');
         node.style.display="none";
@@ -1651,20 +1654,22 @@ QIHelper.prototype = {
             else
                 this.toggleAddchain(true);
         }
+        // set property is shown and colum name (these are empty for properties in subqueries)
+        $('input_c1').checked = prop.isShown(); // check box if appropriate
+        $('input_c3').value = prop.getColName();
+        $('input_c3d').style.display= prop.isShown()
+            ? (Prototype.Browser.IE) ? 'inline' : null : 'none';
 
         // if we have a subquery set the selector correct and we are done
         if (selector >= 0) {
             document.getElementsByName('input_c1').disabled = "disabled";
             document.getElementsByName('input_r0')[2].checked = true;
             document.getElementsByName('input_r0')[2].value = selector;
+            $('usesub_text').style.display="block";
             this.toggleAddchain(false);
         }
         else {
             if (this.activeQueryId == 0) {
-                $('input_c1').checked = prop.isShown(); // check box if appropriate
-                $('input_c3').value = prop.getColName();
-                $('input_c3d').style.display= prop.isShown()
-                    ? (Prototype.Browser.IE) ? 'inline' : null : 'none';
                 if (prop.supportsUnits() && this.proparity == 2) {
                     $('input_c4').value = prop.getShowUnit();
                     for (var i = 0; i < this.propUnits[0].length; i++) {
@@ -2142,6 +2147,8 @@ QIHelper.prototype = {
 			this.emptyDialogue();
 			this.updateColumnPreview();
             $('qistatus').innerHTML = gLanguage.getMessage('QI_PROP_ADDED_SUCCESSFUL')
+            // if the property contains a subquery, set the active query now to this subquery
+            if (selector > 0) this.setActiveQuery(selector);
 		}
 	},
 

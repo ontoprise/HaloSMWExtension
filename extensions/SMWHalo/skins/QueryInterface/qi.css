@@ -477,3 +477,7 @@ cursor: pointer;
 .qiTree td {
     vertical-align: top;
 }
+
+#usesub_text {
+	font-style: italic;
+}

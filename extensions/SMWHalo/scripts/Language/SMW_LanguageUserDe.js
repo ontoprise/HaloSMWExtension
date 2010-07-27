@@ -312,6 +312,7 @@ var wgUserLanguageStrings = {
     'QI BUTTON_ADD'           : 'Hinzuf&uuml;gen',
     'QI_BUTTON_UPDATE'        : 'Aktualisieren',
     'QI_ALL_VALUES'           : 'alle Werte',
+    'QI_SUBQUERY_TEXT'        : 'Ein neuer Query wird erstellt wenn Sie die Schaltfl&auml;che "Hinzuf&uuml;gen" oder "Aktualisieren" bet&auml;tigen, in welcher Sie Einschr&auml;nkungen vornehmen k&ouml;nnen.',
     'QI_TT_SHOW_IN_RES'       : 'Die Attributwerte werden im Ergebnis angezeigt.',
     'QI_TT_MUST_BE_SET'       : 'Es werden nur Ergebnisse angezeigt, bei denen das Attribut gesetzt ist.',
     'QI_TT_NO_RESTRICTION'    : 'Keine Einsch&auml;nkungen bei den Attributwerten. Alle Attributwerte werden im Ergebnis benutzt.',
