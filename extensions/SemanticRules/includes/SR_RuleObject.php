@@ -245,10 +245,10 @@ class SMWRuleObject extends SMWAbstractRuleObject {
 						$value = '"'.strtolower($args[$i]->getName()).'"^^xsd:boolean';
 					} else if (!WikiTypeToXSD::isPageType($wikiType) && $wikiType != '_num') {
 						$typeHint = "^^$xsdType";
-						$value = '"'.$args[$i]->getName().'"';
+						$value = '"'.$args[$i]->getName().'"'.$typeHint;;
 					} else {
 						// either page type, then assume a QName or _num, then assume a number.
-						$value = ucfirst($args[$i]->getName());
+						$value = $args[$i]->getName();
 					}
 					$tmp .= "?__VALUE".self::$varIndex;
 					$tmp2 = " AND ?__VALUE".self::$varIndex." ".$args[$i]->getOperand()." ".$value;
@@ -264,7 +264,7 @@ class SMWRuleObject extends SMWAbstractRuleObject {
 						$value = '"'.ucfirst($args[$i]->getName()).'"'.$typeHint;
 					} else {
 						// either page type, then assume a QName or _num, then assume a number.
-						$value = ucfirst($args[$i]->getName());
+						$value = $args[$i]->getName();
 					}
 					$tmp .= $args[$i] instanceof SMWVariable ? $args[$i]->getName() : $value;
 				}

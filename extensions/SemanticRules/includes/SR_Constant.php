@@ -71,5 +71,6 @@ class SMWConstant extends SMWTerm {
 		}
 		return $trimed_lit;
 	}
+
 }
 

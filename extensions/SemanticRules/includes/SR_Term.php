@@ -80,6 +80,10 @@ if (!defined('MEDIAWIKI')) die();
 			return $this->_arguments[0];
 		} else return $this->_arguments[0];
 	}
+	
+	public function getValue() {
+		return self::unSingleQuote($this->getName());
+	}
 
 	public function getNamespace() {
 		global $smwgTripleStoreGraph;
@@ -131,7 +135,15 @@ if (!defined('MEDIAWIKI')) die();
 	{
    		return strncmp($source, $prefix, strlen($prefix)) == 0;
 	}
-
+	
+    private static function unSingleQuote($literal) {
+        $trimed_lit = trim($literal);
+        if (stripos($trimed_lit, "'") === 0 && strrpos($trimed_lit, "'") === strlen($trimed_lit)-1) {
+            $substr = substr($trimed_lit, 1, strlen($trimed_lit)-2);
+            return $substr;
+        }
+        return $trimed_lit;
+    }
 }
 
 
