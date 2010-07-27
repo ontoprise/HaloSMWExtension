@@ -1399,6 +1399,10 @@ QIHelper.prototype = {
 					}
 				}
 			}
+			// default value for column name if not yet set at all
+            if ( !('input_c3').value ) {
+                $('input_c3').value = this.propname;
+            }
             // runtime issue: if the user selected radio for specific value
             // and the property information is loaded after that, make the new
             // created restriction table visible
@@ -1431,12 +1435,12 @@ QIHelper.prototype = {
         cell = row.insertCell(1);
         var tmpHTML='<table><tr><td '
             + 'onmouseover="Tip(\'' + gLanguage.getMessage('QI_TT_SHOW_IN_RES') + '\')">'
-            + '<input type="checkbox" id="input_c1" />'
+            + '<input type="checkbox" id="input_c1" checked="checked" />'
             + ' </td><td> '
             + '<span onmouseover="Tip(\'' + gLanguage.getMessage('QI_TT_SHOW_IN_RES') + '\')">'
             + gLanguage.getMessage('QI_SHOW_PROPERTY')
             + '</span></td><td> </td></tr>'
-            + '<tr id="input_c3d" style="display:none"><td> </td>'
+            + '<tr id="input_c3d"><td> </td>'
             + '<td>' + gLanguage.getMessage('QI_COLUMN_LABEL') + ':</td>'
             + '<td><input type="text" id="input_c3"/></td></tr>'
             + '<tr id="input_c4d" style="display:none"><td> </td>'
@@ -1538,11 +1542,11 @@ QIHelper.prototype = {
 
     toggleShowProperty : function() {
         if ($('input_c1').checked) {
-            $('input_c3d').style.display = (Prototype.Browser.IE) ? 'inline' : null;
-            // default value for the first time
+            // default value for column name if not yet set at all
             if ( !('input_c3').value ) {
                 $('input_c3').value = this.propname;
             }
+            $('input_c3d').style.display = (Prototype.Browser.IE) ? 'inline' : null;
             if ($('input_c4').getElementsByTagName('option').length > 0)
                 $('input_c4d').style.display = (Prototype.Browser.IE) ? 'inline' : null;
         } else {
