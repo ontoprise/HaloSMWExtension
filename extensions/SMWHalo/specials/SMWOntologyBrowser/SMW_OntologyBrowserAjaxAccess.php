@@ -361,7 +361,7 @@ class OB_StorageTS extends OB_Storage {
 			$uri = $title->getFullURL();
 		}
 
-		return array($title->getFullURL(), $title);
+		return array($uri, $title);
 	}
 
 	private function getTitleFromURI($sv) {
