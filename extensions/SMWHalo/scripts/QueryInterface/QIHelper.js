@@ -1006,13 +1006,16 @@ QIHelper.prototype = {
 		if (this.propIsEnum) { // if enumeration, a select box is used
 								// instead of a text input field
 			var oSelect = document.createElement("SELECT");
-			oSelect.id = "input_r" + newRowIndex;					
+			oSelect.id = "input_r" + newRowIndex;
+			var optOff = 0;
+			if (arity == 2 && newRowIndex == 1) {
+                oSelect.options[0]= new Option(gLanguage.getMessage('QI_ALL_VALUES'), '*');
+                optOff = 1;
+            }
 			for ( var i = 0; i < this.enumValues.length; i++) {
-				var oOption = document.createElement("OPTION");
-                oOption.text=this.enumValues[i];
-                oOption.value=this.enumValues[i];
-                oOption.style.width="100%";
-                oSelect.add(oOption);
+                oSelect.options[i+optOff]=
+                    new Option(this.enumValues[i], this.enumValues[i]);
+                oSelect.options[i+optOff].style.width="100%";
 			}
 			cell.appendChild(oSelect);
 		} else { // no enumeration, no page type, simple input field
@@ -1293,8 +1296,6 @@ QIHelper.prototype = {
                 this.propTypetype = parameterTypes[0];
                 $('dialoguecontent').rows[$('dialoguecontent').rows.length -2].cells[1].innerHTML=
                     gLanguage.getMessage('QI_PROPERTY_TYPE') + ': ' + parameterNames[0];
-                // start to build HTML for restriction values
-				tmpHTML += '<tr><td>' + gLanguage.getMessage('QI_PROPERTYVALUE') + '</td><td>';
 
                 // add units to selection to show property checkbox if there are any
                 if (possibleUnits.length > 0 && possibleUnits[0].length > 0) {
@@ -1309,45 +1310,19 @@ QIHelper.prototype = {
                     $('input_c4d').style.display = 'none';
                 }
 				
-				// set restriction selector
-				if (this.numTypes[parameterNames[0].toLowerCase()]) {
-					tmpHTML += this.createRestrictionSelector("=", false, true);
-				} else
-					tmpHTML += this.createRestrictionSelector("=", false, false);
-                // input field
-				tmpHTML +='</td><td>';
-                
    				// special input field for enums
 				if (possibleValues.length > 0) { // enumeration
 					this.propIsEnum = true;
 					this.enumValues = new Array();
 					
-					tmpHTML += '<select id="input_r1">' // create html for option box
-                        + '<option value="" style="width:100%">*</option>';
 					for ( var i = 0; i < possibleValues.length; i++) {
 						this.enumValues.push(possibleValues[i]); // save
 																	// enumeration
 																	// values
 																	// for later
 																	// use
-						tmpHTML += '<option value="' + possibleValues[i]
-								+ '" style="width:100%">' + possibleValues[i]
-								+ '</option>';
 					}
-					tmpHTML += "</select>";
 				}
-                else { // normal input field
-                    tmpHTML += '<input class="wickEnabled general-forms" '+ac_constraint+' type="text" id="input_r1"/>';
-                    if (possibleUnits.length > 0 && possibleUnits[0].length > 0) {
-                        tmpHTML += '<select id="input_ru1">';
-                        for (var i = 0, m = possibleUnits[0].length; i < m; i++)
-                            tmpHTML += '<option>' + possibleUnits[0][i] + '</option>';
-                        tmpHTML += '</select>';
-                    }
-                }
-
-				// add property input button 
-				tmpHTML += '</td><td><img src="' + this.imgpath + 'add.png" alt="addPropertyInput" onclick="qihelper.addRestrictionInput()"/></td></tr>';
                 
                 // if binary property, make an 'insert subquery' checkbox
 				if (parameterTypes[0] == '_wpg') {
@@ -1369,7 +1344,6 @@ QIHelper.prototype = {
                 var row = $('dialoguecontent_pvalues').insertRow(-1);
                 var cell = row.insertCell(-1);
                 cell.innerHTML = gLanguage.getMessage('QI_PROPERTYVALUE');
-                tmpHTML += '<tr><td>' +  + '</td></tr>';
 				for ( var i = 0; i < parameterNames.length; i++) {
                     // Label of cell is parameter name (ex.: Integer, Date,...)
                     row = $('dialoguecontent_pvalues').insertRow(-1);
