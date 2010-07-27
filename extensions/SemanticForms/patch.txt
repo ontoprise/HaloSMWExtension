@@ -1735,3 +1735,43 @@ Index: extensions/SemanticForms/languages/SF_Messages.php
  	'semanticforms-desc'                 => 'Forms for adding and editing semantic data',
  	'specialpages-group-sf_group'        => 'Semantic Forms',
  	'createproperty'                     => 'Create a property',
+Index: extensions/SemanticForms/includes/SF_TemplateField.php
+===================================================================
+--- extensions/SemanticForms/includes/SF_TemplateField.php	2010-07-20 10:19:09.661000000 +0200
++++ extensions/SemanticForms/includes/SF_TemplateField.php	2010-07-27 17:21:21.859375000 +0200
+@@ -103,9 +103,32 @@
+                 $page_type = $datatypeLabels[$type_constant];
+ 		return ( $this->field_type == $page_type );
+ 	}
+-
+-	function createTemplateText( $template_name, $template_fields, $category, $aggregating_property, $aggregating_label, $template_format ) {
+-		$template_header = wfMsgForContent( 'sf_template_docu', $template_name );
++	/*op-patch|DH|2009-09-08|Special:CreateTemplate adapted to SMWplus|start*/
++	function createTemplateText( $template_name, $template_fields, $category, $aggregating_property, $aggregating_label, $template_format, $partof_wikisection, $rationale, $headerlabel) {
++		global $wgUser;
++		global $wgContLang;
++		$namespace_labels = $wgContLang->getNamespaces();
++		
++		$template_header ="{{Template
++|PAGENAME=".$namespace_labels[NS_TEMPLATE].":".$template_name."
++|Has author=".$wgUser->getUserPage()."
++|part of=".$partof_wikisection."
++|rationale=".$rationale."
++|defines category=".$namespace_labels[NS_CATEGORY].":".$category."
++|long description=__NOTITLE__
++|parameters=";
++
++$examplecall = '<pre>{{' . $template_name;
++		if (count($template_fields) > 0) {  $examplecall.= "\n"; }
++		foreach ($template_fields as $field) {
++			$examplecall .= "|" . $field->field_name . "=\n";
++		}
++$examplecall .= '}}</pre>';
++ 
++$template_header .= $examplecall." 
++|Calls template=
++}}";
++		/*op-patch|DH|2009-09-08|Special:CreateTemplate adapted to SMWplus|end*/
+ 		$text = <<<END
+ <noinclude>
+ $template_header
