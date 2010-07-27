@@ -217,14 +217,14 @@
 					</xsl:if>
 				</td>
 			</tr>
-			<tr>
+			<!-- <tr>
 				<td id="ruleList-native" class="ruleListLabel">{{SR_RULE_ISNATIVE}}</td>
 				<td class="ruleListValue">
 					<xsl:if test="@native">
 						<xsl:value-of select="@native" />
 					</xsl:if>
 				</td>
-			</tr>
+			</tr> -->
 			<tr>
 				<td id="ruleList-active" class="ruleListLabel">{{SR_RULE_ISACTIVE}}</td>
 				<td class="ruleListValue">
