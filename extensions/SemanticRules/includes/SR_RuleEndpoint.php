@@ -210,7 +210,7 @@ class SRRuleEndpoint {
 	}
 
 	private function encapsulateRuleWidget($resultXML) {
-		$i = 0;
+
 		$html = '';
 		$dom = simplexml_load_string($resultXML);
 		if($dom === FALSE) return "error:XML-parsing wrong";
@@ -226,22 +226,11 @@ class SRRuleEndpoint {
 
 			list($containingPageURI, $rulename) = explode("$$", $ruleURI);
 			$containingPageTitle = $this->getWikiTitleFromURI($containingPageURI);
-			// FIXME: rule serializer selector removed for current release because it has no effect.
-			//$html .= '<div id="rule_content_'.$i.'" ruleID="'.htmlspecialchars($ruleURI).'" class="ruleWidget"><a style="margin-left: 5px;" href="'.htmlspecialchars($containingPageTitle->getFullURL()).'">'.htmlspecialchars($rulename).'</a> | '.wfMsg('sr_ruleselector').'<select style="margin-top: 5px;" name="rule_content_selector'.$i.'" onchange="sr_rulewidget.selectMode(event)"><option mode="easyreadible">'.wfMsg('sr_easyreadible').'</option><option mode="stylized">'.wfMsg('sr_stylizedenglish').'</option></select> '. // tab container
 			
 			global $wgTitle;
-			global $wgScriptPath;
-            $prefixedText = !is_null($wgTitle) && $wgTitle->getNamespace() != NS_SPECIAL ? '<h2>'.wfMsg('sr_rulesdefinedfor').' '.$wgTitle->getPrefixedText().'</h2>' : "";  
-            $status = $active ? "active" : "inactive";
-            $statusColor = $active ? "green" : "red";
-            $html .= '<div id="rule_content_'.$i.'" ruleID="'.htmlspecialchars($ruleURI).'" class="ruleWidget"><img style="margin-top: 5px;margin-left: 5px;" src="'.$wgScriptPath.'/extensions/SemanticRules/skins/images/rule.gif"/><a style="margin-left: 5px;font-weight:bold;" href="'.htmlspecialchars($containingPageTitle->getFullURL()).'">'.htmlspecialchars($rulename).'</a> <span style="float:right;margin-right: 10px;margin-top: 5px;">'.wfMsg('sr_rulestatus').':<span id="rule_content_'.$i.'_status" style="font-weight: bold;color:'.$statusColor.';">'.$status.'</span></span><hr/>'. // tab container
-                          '<div id="rule_content_'.$i.'_easyreadible" class="ruleSerialization">'.htmlspecialchars($easyreadible).'</div>'. // tab 1
-                         '<div id="rule_content_'.$i.'_stylized" class="ruleSerialization" style="display:none;">'.htmlspecialchars($stylizedEnglish).'</div>'.
-                         '<div id="'.htmlspecialchars($ruleURI).'" native="'.$native.'" class="ruleSerialization" style="display:none;">'.htmlspecialchars($ruleText).'</div>'.
-                     '</div>'; // tab 2
-            
-
-			$i++;
+            $rw = new SRRuleWidget($wgTitle, $ruleURI, $ruleText, $active == "true", $native == "true");
+            $html .= $rw->asHTML(); 
+           
 		}
 
 		$html .= '';

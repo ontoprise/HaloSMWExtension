@@ -33,7 +33,7 @@ var wgUserSR_LanguageStrings = {
     'RULE_TYPE_CALCULATION'   : 'Berechnung',
     'RULE_TYPE_USER_DEFINED'   : 'Benutzerdefiniert',
     'SR_INVALID_RULE' : 'fehlerhaft',
-
+    'SR_COULD_NOT_CHANGE_RULESTATE': 'Regel konnte nicht aktiviert/deaktiviert werden.',
     // Simple rules
     
     'SR_DERIVE_BY'      : 'Ableitung von $1 $2 durch eine komplexe Regel',

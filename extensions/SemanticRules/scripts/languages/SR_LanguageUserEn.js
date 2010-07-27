@@ -34,7 +34,7 @@ var wgUserSR_LanguageStrings = {
     'RULE_TYPE_USER_DEFINED'   : 'User defined',
     
     'SR_INVALID_RULE' : 'invalid',
-    
+    'SR_COULD_NOT_CHANGE_RULESTATE': 'Could not change rule state.',
     
     
 

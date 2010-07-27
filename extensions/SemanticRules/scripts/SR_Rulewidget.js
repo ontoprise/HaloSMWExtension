@@ -64,6 +64,7 @@ SRRuleWidget.prototype = {
 			
 				var id = ruletextNodes[i].getAttribute("id");
 				var type = ruletextNodes[i].getAttribute("type");
+				var active = ruletextNodes[i].getAttribute("active");
 				var status = ruletextNodes[i].getAttribute("status");
 				$$('.ruleWidget').each(function(w) { 
 					var ruleID = w.getAttribute("ruleID");
@@ -75,12 +76,13 @@ SRRuleWidget.prototype = {
 						html = html.replace(/</g, "&lt;");
 						html = html.replace(/>/g, "&gt;");
 						
+						
 						if (type == "easyreadible") $(wID+"_easyreadible").innerHTML = html;
 						else if (type == "stylized") $(wID+"_stylized").innerHTML = html;
 						
 						if (status == "invalid") { 
-							$(wID+"_status").innerHTML = gsrLanguage.getMessage('SR_INVALID_RULE');
-							$(wID+"_status").style.color = "orange";
+							$(wID+"_switch").innerHTML = '<option>'+gsrLanguage.getMessage('SR_INVALID_RULE')+'</option>';
+							$(wID+"_switch").style.backgroundColor = "orange";
 						}
 					}
 				});
@@ -113,6 +115,34 @@ SRRuleWidget.prototype = {
 		html = html.replace(/</g, "&lt;");
 		html = html.replace(/>/g, "&gt;");
 		return html;
+	},
+	
+	changeRuleState : function(event, node, containingPage, ruleName, index) {
+
+		var callbackOnChangeState = function(request) {
+			pi.hide();
+			var r = request.responseText;
+			if (r == "true") {
+				
+				// toggle switch color
+				if (selectedIndex == 0) {
+					selectTag.style.backgroundColor = "lightgreen";
+				} else {
+					selectTag.style.backgroundColor = "red";
+				}
+				
+			} else {
+				alert(gsrLanguage.getMessage('SR_COULD_NOT_CHANGE_RULESTATE'));
+				return;
+			}
+			
+		}
+		var selectTag = Event.element(event);
+		var selectedIndex = selectTag.selectedIndex;
+		var w = $('rule_content_'+index)
+		var pi = new OBPendingIndicator(w);
+		pi.show(w);
+		sajax_do_call('smwf_sr_ChangeRuleState', [ containingPage, ruleName, (selectedIndex == 0) ], callbackOnChangeState.bind(this));
 	}
 
 }
