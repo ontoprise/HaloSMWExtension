@@ -240,6 +240,7 @@ class SMWRuleObject extends SMWAbstractRuleObject {
 					// in this case a second literal containing the comparison
 					// must be created
 					$xsdType = WikiTypeToXSD::getXSDType($wikiType);
+					$xsdType = str_replace(":", "#", $xsdType);
 					$typeHint = "";
 					if ($wikiType == '_boo') {
 						$value = '"'.strtolower($args[$i]->getName()).'"^^xsd:boolean';
@@ -256,6 +257,7 @@ class SMWRuleObject extends SMWAbstractRuleObject {
 
 				} else {
 					$xsdType = WikiTypeToXSD::getXSDType($wikiType);
+					$xsdType = str_replace(":", "#", $xsdType);
 					$typeHint = "";
 					if ($wikiType == '_boo') {
 						$value = '"'.strtolower($args[$i]->getName()).'"^^xsd:boolean';
