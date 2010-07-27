@@ -1095,7 +1095,7 @@ serializeRule: function() {
 				xml += '<variable>'+value.readAttribute('propvalue')+'</variable>';
 			} else {
 				var operand = value.readAttribute('operand');
-				var operandText = operand == '=' ? "" : 'operand="'+operand+'"';
+				var operandText = operand == '=' || operand == null ? "" : 'operand="'+operand+'"';
 				xml += '<value '+operandText+'>'+value.readAttribute('propvalue')+'</value>';
 			}
 			xml += '</property>';

@@ -19,10 +19,10 @@
 /**
  * @file
  * @ingroup SRRuleObject
- * 
+ *
  * @defgroup SRRuleObject Abstract semantic rule object
  * @ingroup SemanticRules
- * 
+ *
  * @author Kai K�hn
  */
 
@@ -64,7 +64,7 @@ abstract class SMWAbstractRuleObject {
 	}
 
 	public function setRule($rule) {
-		
+
 		// set axiomId
 		if (isset($rule->_axiomId)) {
 			$this->_axiomId = $rule->_axiomId;
@@ -77,8 +77,12 @@ abstract class SMWAbstractRuleObject {
 
 		// fetch head of rule
 		if (isset($rule->head)) {
-				
-			$this->_head = $this->setLiteral($rule->head->literalws);
+			$this->_head = array();
+			foreach ($rule->head->children() as $belement) {
+
+				array_push($this->_head, $this->setLiteral($belement));
+
+			}
 		}
 
 		// fetch body of rule
@@ -138,21 +142,21 @@ abstract class SMWAbstractRuleObject {
 				$isGround = (string) $termval->_isGround;
 				if ($isGround == "true") {
 					// 1st char. '"' denotes property/category... FIXME: provide method to distinguish Variables/Constants/Categories/Properties
-						
+
 					if (is_numeric((string) $termval->_argument) || substr((string)$termval->_argument,0,1) == "\"") {
 						$tempterm = new SMWConstant( $termval->_argument);
-					
+							
 					} else {
-						
+
 						$tempterm = new SMWTerm(self::convertToArray($termval->_argument), (string) $termval->_arity, true);
 					}
 				} else {
-						
+
 					$tempterm = new SMWVariable((string) $termval->_argument);
 				}
 			} else {
 
-				
+
 				$tempterm = new SMWTerm( self::convertToArray($termval->_argument), (string) $termval->_arity, $termval->_isGround);
 			}
 			array_push($termargs, $tempterm);

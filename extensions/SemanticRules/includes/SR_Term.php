@@ -73,12 +73,12 @@ if (!defined('MEDIAWIKI')) die();
 				return substr($this->_arguments[1], 1);				
 			}
 			return $this->_arguments[1];
-		} else {
+		} else if (sizeof($this->_arguments)>1) { 
 			if ($this->strStartsWith($this->_arguments[1], '#')) {
 				return substr($this->_arguments[0], 1);
 			}
 			return $this->_arguments[0];
-		}
+		} else return $this->_arguments[0];
 	}
 
 	public function getNamespace() {

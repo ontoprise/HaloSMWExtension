@@ -31,7 +31,7 @@ class SMWRuleObject extends SMWAbstractRuleObject {
 	// holds bound variables for UPN stack parser.
 	private $bound = array();
 	private $tokentypes = array('const', 'var', 'op', 'func1', 'func2');
-	
+
 	// variable index counter for creating unique variables
 	private static $varIndex = 0;
 
@@ -118,7 +118,7 @@ class SMWRuleObject extends SMWAbstractRuleObject {
 
 	/**
 	 * Returns the ObjectLogic rule as it is put into the wiki text.
-	 * 
+	 *
 	 */
 	public function getWikiOblString() {
 		global $smwgTripleStoreGraph;
@@ -167,8 +167,8 @@ class SMWRuleObject extends SMWAbstractRuleObject {
 				$op =  $formula[$i+1];
 
 				// operands
-				$op1 = $stack[$stackpointer-1];
-				$op2 = $stack[$stackpointer-2];
+				$op1 = $stack[$stackpointer-2];
+				$op2 = $stack[$stackpointer-1];
 				$f = "($op1 $op $op2)";
 				$stackpointer -= 2;
 				$stack[$stackpointer] = $f;
@@ -222,24 +222,51 @@ class SMWRuleObject extends SMWAbstractRuleObject {
 		$tmp2 = "";
 		for ($i = 0; $i < sizeof($args); $i++) {
 
-			
+
 			if ($i == 0) {
 				$tmp .= $args[$i] instanceof SMWVariable ? $args[$i]->getName() : ucfirst($args[$i]->getName());
 				$tmp .= "[prop#";
 			} else if ($i == 1) {
 				$tmp .= $args[$i] instanceof SMWVariable ? $args[$i]->getName() : ucfirst($args[$i]->getName());
 				$tmp .="->";
+				if (!($args[$i] instanceof SMWVariable)) {
+					$property = SMWPropertyValue::makeUserProperty(ucfirst($args[$i]->getName()));
+					$propertyType = $property->getTypesValue();
+					$wikiType = reset($propertyType->getDBkeys());
+				}
 			} else if ($i == 2) {
 				if ($args[$i] instanceof SMWConstant && !is_null($args[$i]->getOperand())) {
-					
+
 					// in this case a second literal containing the comparison
 					// must be created
+					$xsdType = WikiTypeToXSD::getXSDType($wikiType);
+					$typeHint = "";
+					if ($wikiType == '_boo') {
+						$value = '"'.strtolower($args[$i]->getName()).'"^^xsd:boolean';
+					} else if (!WikiTypeToXSD::isPageType($wikiType) && $wikiType != '_num') {
+						$typeHint = "^^$xsdType";
+						$value = '"'.$args[$i]->getName().'"';
+					} else {
+						// either page type, then assume a QName or _num, then assume a number.
+						$value = ucfirst($args[$i]->getName());
+					}
 					$tmp .= "?__VALUE".self::$varIndex;
-					$tmp2 = " AND ?__VALUE".self::$varIndex." ".$args[$i]->getOperand()." ".ucfirst($args[$i]->getName());
+					$tmp2 = " AND ?__VALUE".self::$varIndex." ".$args[$i]->getOperand()." ".$value;
 					self::$varIndex++;
-					
+
 				} else {
-				    $tmp .= $args[$i] instanceof SMWVariable ? $args[$i]->getName() : ucfirst($args[$i]->getName());
+					$xsdType = WikiTypeToXSD::getXSDType($wikiType);
+					$typeHint = "";
+					if ($wikiType == '_boo') {
+						$value = '"'.strtolower($args[$i]->getName()).'"^^xsd:boolean';
+					} else if (!WikiTypeToXSD::isPageType($wikiType) && $wikiType != '_num') {
+						$typeHint = "^^$xsdType";
+						$value = '"'.ucfirst($args[$i]->getName()).'"'.$typeHint;
+					} else {
+						// either page type, then assume a QName or _num, then assume a number.
+						$value = ucfirst($args[$i]->getName());
+					}
+					$tmp .= $args[$i] instanceof SMWVariable ? $args[$i]->getName() : $value;
 				}
 			}
 		}

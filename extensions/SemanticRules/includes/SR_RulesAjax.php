@@ -148,7 +148,7 @@ function smwf_sr_AddRule($ruleName, $ruleXML) {
 			$boundVars[(string)$prop->variable] = $object;
 		} else if ($prop->value) {
 			$operand = $prop->value->attributes()->operand;
-			$object = new SMWConstant(urldecode($prop->value), $operand);
+			$object = new SMWConstant(urldecode($prop->value), $operand = '' ? NULL : $operand);
 		}
 		$bodyLit = new SMWLiteral(new SMWPredicateSymbol(P_ATTRIBUTE, 2),
 		array($subject, $rel, $object));
@@ -279,6 +279,7 @@ function smwf_sr_ParseRule($ruleName, $ruleText) {
 		return 'false';
 	}
 
+	
 	$headXML = smwhCreateRuleXML($ruleObject->getHead());
 	$bodyXML = smwhCreateRuleXML($ruleObject->getBody());
 
@@ -356,9 +357,12 @@ function smwhCreateRuleXML($literals) {
 			if (count($args) != 2) {
 				return false;
 			}
+			if (!($args[0] instanceof SMWVariable)) continue;
 			$xml .= '<category>';
 
 			// first argument must be a variable
+			// if not, it is a type information, ignore this
+			
 			$subject = $args[0]->getVariableName();
 			$xml .= '<subject>'. $subject . '</subject>';
 
@@ -395,12 +399,14 @@ function smwhCreateRuleXML($literals) {
 				} else {
 				    $xml .= '<variable>'. $args[2]->getVariableName() . '</variable>';
 				}
-			}
+			} else if (is_a($args[2], 'SMWTerm')) {
+                $xml .= '<value>'. $args[2]->getName() . '</value>';
+            } 
 			$xml .= '</property>';
 		}
 
 	}
-
+    
 	return $xml;
 }
 
