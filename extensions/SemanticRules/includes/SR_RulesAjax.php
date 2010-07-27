@@ -347,7 +347,8 @@ function smwhCreateRuleXML($literals) {
 	foreach ($literals as $lit) {
 		$ps = $lit->getPreditcatesymbol()->getPredicateName();
 		
-		if ($ps == 'obl:reserved:greaterThan' || $ps == 'obl:reserved:lessThan') continue;
+		if ($ps == 'obl:reserved:greaterThan' || $ps == 'obl:reserved:lessThan'
+		|| $ps == 'obl:reserved:greaterOrEquals' || $ps == 'obl:reserved:lessOrEquals' ) continue;
 		
 		$args = $lit->getArguments();
 		if ($ps == P_ISA || $ps == P_DISA) {
@@ -422,6 +423,12 @@ function smwhGetRelationalLiterals($literals) {
         } else if ($ps == 'obl:reserved:lessThan') {
             $args = $lit->getArguments();
             $variableMap[$args[0]->getVariableName()] = array("lt", $args[1]->getValue());
+        } else if ($ps == 'obl:reserved:greaterOrEquals') {
+            $args = $lit->getArguments();
+            $variableMap[$args[0]->getVariableName()] = array("gte", $args[1]->getValue());
+        } else if ($ps == 'obl:reserved:lessOrEquals') {
+            $args = $lit->getArguments();
+            $variableMap[$args[0]->getVariableName()] = array("lte", $args[1]->getValue());
         }
 	}
 	return $variableMap;
