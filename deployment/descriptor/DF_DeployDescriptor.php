@@ -288,6 +288,15 @@ class DeployDescriptor {
 	}
 	
 	/**
+	 * Returns maintainer (which is optional)
+	 * @return string
+	 */
+	function getMaintainer() {
+		// maintainer is optional
+		return isset($this->globalElement[0]->maintainer) ? trim((string) $this->globalElement[0]->maintainer) : '';
+	}
+	
+	/**
 	 * Returns installation directory.
 	 * @return string
 	 */
