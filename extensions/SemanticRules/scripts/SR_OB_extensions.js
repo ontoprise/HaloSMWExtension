@@ -66,6 +66,7 @@ SRRuleActionListener.prototype = {
 		$('rightArrow').hide();
 		$('relattributesContainer').hide();
 		$('hideInstancesButton').hide();
+		$('propertyRangeSpan').hide();
 
 		var ruleContainer = $('ruleContainer');
 		if (ruleContainer) ruleContainer.show();
@@ -79,6 +80,7 @@ SRRuleActionListener.prototype = {
 		$('rightArrow').show();
 		$('relattributesContainer').show();
 		$('hideInstancesButton').show();
+		$('propertyRangeSpan').show();
 		
 		var ruleContainer = $('ruleContainer');
 		if (ruleContainer) ruleContainer.hide();
