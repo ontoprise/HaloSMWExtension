@@ -312,16 +312,16 @@ class OB_StorageTS extends OB_Storage {
 				}
 			}
             
-			list($url, $title) = $this->makeLocalURL((string) $sv);
+			list($url, $title) = TSHelper::makeLocalURL((string) $sv);
 			$instance = array($title, $url, $metadataMap);
 
 			$categories = array();
 			$b = $children->binding[1]; // categories
 
 			foreach($b->children()->uri as $sv) {
-				$category = $this->getTitleFromURI((string) $sv);
+				$category = TSHelper::getTitleFromURI((string) $sv);
 				if (!is_null($instance) && !is_null($category)) {
-					$titles[] = array($instance, array((string) $sv, $this->getTitleFromURI((string) $sv)));
+					$titles[] = array($instance, array((string) $sv, TSHelper::getTitleFromURI((string) $sv)));
 				} else  {
 					$titles[] = array($instance, array(NULL , NULL));
 				}
@@ -333,79 +333,7 @@ class OB_StorageTS extends OB_Storage {
 
 	}
 
-	private function isLocalURI($uri) {
-		foreach (TSNamespaces::$ALL_NAMESPACES as $nsIndsex => $ns) {
-			if (stripos($uri, $ns) === 0) {
-				$local = substr($uri, strlen($ns));
-				return true;
-
-			}
-		}
-		if (stripos($uri, TSNamespaces::$UNKNOWN_NS) === 0) return true;
-
-		return false;
-	}
-
-	/**
-	 * Returns a local URL and Title object if the given URI matches the wiki graph.
-	 * Otherwise the URI is returned unchanged an its localname is used to create a Title object.
-	 * 
-	 * @param string $uri
-	 * @return tuple($url, Title)
-	 */
-	private function makeLocalURL($uri) {
-		global $smwgTripleStoreGraph;
-
-		$title = $this->getTitleFromURI($uri);
-		if (stripos($uri, $smwgTripleStoreGraph) === 0) {
-			$uri = $title->getFullURL();
-		}
-
-		return array($uri, $title);
-	}
-
-	private function getTitleFromURI($sv) {
-
-		foreach (TSNamespaces::$ALL_NAMESPACES as $nsIndsex => $ns) {
-			if (stripos($sv, $ns) === 0) {
-				$local = substr($sv, strlen($ns));
-				return Title::newFromText($local, $nsIndsex);
-					
-			}
-		}
-
-			
-
-		// result with unknown namespace
-		if (stripos($sv, TSNamespaces::$UNKNOWN_NS) === 0) {
-
-
-			$startNS = strlen(TSNamespaces::$UNKNOWN_NS);
-			$length = strpos($sv, "#") - $startNS;
-			$ns = intval(substr($sv, $startNS, $length));
-
-			$local = substr($sv, strpos($sv, "#")+1);
-
-			return Title::newFromText($local, $ns);
-
-
-
-		} else {
-			// any URI
-			if (strpos($sv, "#") !== false) {
-				$local = substr($sv, strpos($sv, "#")+1);
-			} else if (strrpos($sv, "/") !== false) {
-				$local = substr($sv, strrpos($sv, "/")+1);
-			} else {
-				return NULL;
-			}
-			return Title::newFromText($local, NS_MAIN);
-		}
-
-		return NULL;
-	}
-
-
+	
 	private function getLiteral($literal, $predicate) {
 		list($literalValue, $literalType) = $literal;
 		if (!empty($literalValue)) {
@@ -487,7 +415,7 @@ class OB_StorageTS extends OB_Storage {
 			$b = $children->binding[0]; // predicate
 
 			$sv = $b->children()->uri[0];
-			$title = $this->getTitleFromURI((string) $sv);
+			$title = TSHelper::getTitleFromURI((string) $sv);
 			if (is_null($title)) continue;
 			$predicate = SMWPropertyValue::makeUserProperty($title->getText());
 
@@ -495,8 +423,8 @@ class OB_StorageTS extends OB_Storage {
 			$b = $children->binding[1]; // categories
 			$values = array();
 			foreach($b->children()->uri as $sv) {
-				$object = $this->getTitleFromURI((string) $sv);
-				if ($this->isLocalURI((string) $sv)) {
+				$object = TSHelper::getTitleFromURI((string) $sv);
+				if (TSHelper::isLocalURI((string) $sv)) {
 					$value = SMWDataValueFactory::newPropertyObjectValue($predicate, $object);
 				} else {
 					$value = SMWDataValueFactory::newTypeIDValue('_uri', (string) $sv);
@@ -604,7 +532,7 @@ class OB_StorageTS extends OB_Storage {
 			$b = $r->binding[0]; // categories
 
 			foreach($b->children()->uri as $sv) {
-				$category = $this->getTitleFromURI((string) $sv);
+				$category = TSHelper::getTitleFromURI((string) $sv);
 				if (!is_null($category)) {
 
 					$categories[] = $category;

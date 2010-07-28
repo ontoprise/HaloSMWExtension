@@ -47,14 +47,15 @@ class SRRuleWidget {
 	 * @param boolean $active rule is active
 	 * @param boolean $native rule is native
 	 */
-	public function __construct($containingPage, $ruleURI, $ruletext, $active, $native) {
-		$this->mContainingPage = $containingPage;
+	public function __construct($ruleURI, $ruletext, $active, $native) {
+		
 		$this->mRuleURI = $ruleURI;
 		$this->mRuletext = $ruletext;
 		$this->mActive = $active;
 		$this->mNative = $native;
 			
-		list($ns, $this->mRuleName) = explode("$$", $this->mRuleURI);
+		list($containingPageURI, $this->mRuleName) = explode("$$", $this->mRuleURI);
+		$this->mContainingPage = TSHelper::getTitleFromURI($containingPageURI);
 	}
     
 	/**
@@ -64,11 +65,12 @@ class SRRuleWidget {
 	 */
 	public function asHTML() {
 
-		global $wgScriptPath;
-		$prefixedText = !is_null($this->mContainingPage) && $this->mContainingPage->getNamespace() != NS_SPECIAL ? '<h2>'.wfMsg('sr_rulesdefinedfor').' '.$this->mContainingPage->getPrefixedText().'</h2>'  : "";
+		global $wgScriptPath, $wgTitle;
+		
+		$headline = !is_null($wgTitle) && $wgTitle->getNamespace() != NS_SPECIAL ? '<h2>'.wfMsg('sr_rulesdefinedfor').' '.$this->mContainingPage->getPrefixedText().'</h2>'  : "";
 		
 		$onOffSwitch = $this->onOffSwitch($this->mActive, self::$index);
-		return $prefixedText.'<div id="rule_content_'.self::$index.'" ruleID="'.htmlspecialchars($this->mRuleURI).'" class="ruleWidget"><img style="margin-top: 5px;margin-left: 5px;" src="'.$wgScriptPath.'/extensions/SemanticRules/skins/images/rule.gif"/><span style="margin-left: 5px;font-weight:bold;">
+		return $headline.'<div id="rule_content_'.self::$index.'" ruleID="'.htmlspecialchars($this->mRuleURI).'" class="ruleWidget"><img style="margin-top: 5px;margin-left: 5px;" src="'.$wgScriptPath.'/extensions/SemanticRules/skins/images/rule.gif"/><span style="margin-left: 5px;font-weight:bold;">
                          '.htmlspecialchars($this->mRuleName).'</span><span style="float:right;margin-right: 10px;margin-top: 5px;">'.$onOffSwitch.'</span> <span style="float:right;margin-right: 10px;margin-top: 5px;">'.wfMsg('sr_rulestatus').':</span><hr/>'. // tab container
                          '<div id="rule_content_'.self::$index.'_easyreadible" class="ruleSerialization">'.htmlspecialchars($this->mRuletext).'</div>'. // tab 1
                          '<div id="rule_content_'.self::$index.'_stylized" class="ruleSerialization" style="display:none;">Stylized english</div>'.
@@ -87,6 +89,7 @@ class SRRuleWidget {
 	 * @param int $i rule index (n-th rule on page starting with 0)
 	 */
 	private function onOffSwitch($defaultOn, $i) {
+		
 		if ($defaultOn) {
 			return '<select id="rule_content_'.$i.'_switch" style="background-color: lightgreen" onchange="sr_rulewidget.changeRuleState(event, this, \''.$this->mContainingPage->getPrefixedDBkey().'\', \''.$this->mRuleName.'\', '.$i.')"><option selected="true" value="true">active</option><option value="false">inactive</option></select>';       
 		} else {
@@ -94,4 +97,5 @@ class SRRuleWidget {
 		}
         
 	}
+	
 }

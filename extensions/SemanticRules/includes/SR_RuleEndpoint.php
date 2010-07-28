@@ -231,8 +231,7 @@ class SRRuleEndpoint {
 			list($containingPageURI, $rulename) = explode("$$", $ruleURI);
 			$containingPageTitle = $this->getWikiTitleFromURI($containingPageURI);
 			
-			global $wgTitle;
-            $rw = new SRRuleWidget($wgTitle, $ruleURI, $ruleText, $active == "true", $native == "true");
+		    $rw = new SRRuleWidget($ruleURI, $ruleText, $active == "true", $native == "true");
             $html .= $rw->asHTML(); 
            
 		}

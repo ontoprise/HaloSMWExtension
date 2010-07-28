@@ -380,8 +380,8 @@ function srfTripleStoreParserHook(&$parser, &$text, &$strip_state = null) {
 				}
 			}
 		  
-			global $wgTitle;
-			$rw = new SRRuleWidget($wgTitle, $uri, $ruletext, $active, $native);
+			
+			$rw = new SRRuleWidget($uri, $ruletext, $active, $native);
 			$replaceBy = $rw->asHTML(); 
    
 			$text = str_replace($matches[0][$i], $replaceBy, $text);
