@@ -189,6 +189,7 @@ editRule: function(ruleAnnotation) {
 			// create the user interface
 			this.createUIForRule(xml);
 		} else {
+			alert(request.responseText);
 		}
 	};
 

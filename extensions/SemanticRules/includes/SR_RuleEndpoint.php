@@ -190,6 +190,10 @@ class SRRuleEndpoint {
 
 		$payload = "ruleText=".urlencode($oblrule);
 		list($header, $status, $res) = self::$_client->send($payload, "/parserule");
+		
+		if ($status != 200) {
+			throw new Exception("Can not parse rule: ".$res, $status);
+		}
 		$_parsedstring = $res;
  
 		$_ruleObject = new SMWRuleObject();

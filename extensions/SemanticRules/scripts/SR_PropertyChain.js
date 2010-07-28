@@ -229,6 +229,7 @@ PropertyChain.prototype = {
 			}
 			this.getEditChainHtml(xml);
 		} else {
+			alert(request.responseText);
 		}
 	},
 	

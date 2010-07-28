@@ -181,8 +181,8 @@ function smwf_sr_ChangeRuleState($title, $ruleName, $activate) {
 	if (smwf_om_userCan($title, "edit") === "false") {
 		return "false,denied,$title";
 	}
-    
-	
+
+
 	$titleObj = Title::newFromText($title);
 	$rev = Revision::newFromTitle($titleObj);
 	$text = $rev->getText();
@@ -190,7 +190,7 @@ function smwf_sr_ChangeRuleState($title, $ruleName, $activate) {
 	// export title to make it reasible in parser hook
 	global $srgStateChangedPage;
 	$srgStateChangedPage = $titleObj;
-	
+
 	$article = new Article($titleObj);
 
 	if (!$article->exists()) {
@@ -205,7 +205,7 @@ function smwf_sr_ChangeRuleState($title, $ruleName, $activate) {
 	$copyOfText = $text;
 	// at least one parameter and content?
 	for($i = 0; $i < count($matches[0]); $i++) {
-		
+
 		$header = trim($matches[1][$i]);
 		$ruletext = trim($matches[2][$i]);
 
@@ -248,14 +248,14 @@ function smwf_sr_ChangeRuleState($title, $ruleName, $activate) {
 				$newRuleText .=  $ruletext;
 				$newRuleText .= "</rule>";
 				$copyOfText = str_replace($matches[0][$i], $newRuleText, $copyOfText);
-				
+
 			}
 
 		}
 
 	}
 
-	
+
 	$article->doEdit($copyOfText, $rev->getComment(), EDIT_UPDATE);
 	return "true";
 }
@@ -270,36 +270,42 @@ function smwf_sr_ChangeRuleState($title, $ruleName, $activate) {
  */
 function smwf_sr_ParseRule($ruleName, $ruleText) {
 
+	try {
+		$fp = SRRuleEndpoint::getInstance();
 
-	$fp = SRRuleEndpoint::getInstance();
+		$ruleObject = $fp->parseOblRule($ruleName, $ruleText, false);
 
-	$ruleObject = $fp->parseOblRule($ruleName, $ruleText, false);
+		if ($ruleObject == null) {
+			return 'false';
+		}
 
-	if ($ruleObject == null) {
-		return 'false';
-	}
 
-	
-	$headXML = smwhCreateRuleXML($ruleObject->getHead());
-	$bodyXML = smwhCreateRuleXML($ruleObject->getBody());
+		$headXML = smwhCreateRuleXML($ruleObject->getHead());
+		$bodyXML = smwhCreateRuleXML($ruleObject->getBody());
 
-	if ($headXML == false || $bodyXML == false) {
-		return false;
-	}
+		if ($headXML == false || $bodyXML == false) {
+			return false;
+		}
 
-	// Create the XML structure of the rule
-	$ruleXML =
+		// Create the XML structure of the rule
+		$ruleXML =
 		'<?xml version="1.0" encoding="UTF-8"?>' .
 		'<SimpleRule>' .
 		'	<head>' .
-	$headXML.
+		$headXML.
 		'	</head>' .
 		'	<body>' .
-	$bodyXML.
+		$bodyXML.
 		'	</body>' .
 		'</SimpleRule>';
 
-	return $ruleXML;
+		return $ruleXML;
+	} catch(Exception $e) {
+		$response = new AjaxResponse($e->getMessage());
+        $response->setContentType( "application/text" );
+        $response->setResponseCode($e->getCode());
+		return $response;
+	}
 }
 
 /**
@@ -342,15 +348,15 @@ function smwhCreateRuleXML($literals) {
 	if (!is_array($literals)) {
 		$literals = array($literals);
 	}
-	
+
 	$variableMap = smwhGetRelationalLiterals($literals);
 
 	foreach ($literals as $lit) {
 		$ps = $lit->getPreditcatesymbol()->getPredicateName();
-		
+
 		if ($ps == 'obl:reserved:greaterThan' || $ps == 'obl:reserved:lessThan'
 		|| $ps == 'obl:reserved:greaterOrEquals' || $ps == 'obl:reserved:lessOrEquals' ) continue;
-		
+
 		$args = $lit->getArguments();
 		if ($ps == P_ISA || $ps == P_DISA) {
 			// Category
@@ -362,7 +368,7 @@ function smwhCreateRuleXML($literals) {
 
 			// first argument must be a variable
 			// if not, it is a type information, ignore this
-			
+				
 			$subject = $args[0]->getVariableName();
 			$xml .= '<subject>'. $subject . '</subject>';
 
@@ -390,52 +396,52 @@ function smwhCreateRuleXML($literals) {
 			if (is_a($args[2], 'SMWConstant')) {
 				$xml .= '<value>'. $args[2]->getValue() . '</value>';
 			} else if (is_a($args[2], 'SMWVariable')) {
-				
+
 				// check if variable is bound by a comparison
 				// in this case serialized it as value
 				if (array_key_exists($args[2]->getVariableName(), $variableMap)) {
 					list($operand, $value) = $variableMap[$args[2]->getVariableName()];
 					$xml .= '<value operand="'.$operand.'">'. $value . '</value>';
 				} else {
-				    $xml .= '<variable>'. $args[2]->getVariableName() . '</variable>';
+					$xml .= '<variable>'. $args[2]->getVariableName() . '</variable>';
 				}
 			} else if (is_a($args[2], 'SMWTerm')) {
-                $xml .= '<value>'. $args[2]->getName() . '</value>';
-            } 
+				$xml .= '<value>'. $args[2]->getName() . '</value>';
+			}
 			$xml .= '</property>';
 		}
 
 	}
-    
+
 	return $xml;
 }
 
 /**
  * Get literals expressing a comparison.
- * 
+ *
  * ?variable < value
- * 
+ *
  * @param array of SMWLiteral $literals
  * @return hash array (variable => array(operator, value))
  */
 function smwhGetRelationalLiterals($literals) {
 	$variableMap = array();
 	foreach ($literals as $lit) {
-        $ps = $lit->getPreditcatesymbol()->getPredicateName();
-        
-        if ($ps == 'obl:reserved:greaterThan') {
-        	$args = $lit->getArguments();
-        	$variableMap[$args[0]->getVariableName()] = array("gt", $args[1]->getValue());
-        } else if ($ps == 'obl:reserved:lessThan') {
-            $args = $lit->getArguments();
-            $variableMap[$args[0]->getVariableName()] = array("lt", $args[1]->getValue());
-        } else if ($ps == 'obl:reserved:greaterOrEquals') {
-            $args = $lit->getArguments();
-            $variableMap[$args[0]->getVariableName()] = array("gte", $args[1]->getValue());
-        } else if ($ps == 'obl:reserved:lessOrEquals') {
-            $args = $lit->getArguments();
-            $variableMap[$args[0]->getVariableName()] = array("lte", $args[1]->getValue());
-        }
+		$ps = $lit->getPreditcatesymbol()->getPredicateName();
+
+		if ($ps == 'obl:reserved:greaterThan') {
+			$args = $lit->getArguments();
+			$variableMap[$args[0]->getVariableName()] = array("gt", $args[1]->getValue());
+		} else if ($ps == 'obl:reserved:lessThan') {
+			$args = $lit->getArguments();
+			$variableMap[$args[0]->getVariableName()] = array("lt", $args[1]->getValue());
+		} else if ($ps == 'obl:reserved:greaterOrEquals') {
+			$args = $lit->getArguments();
+			$variableMap[$args[0]->getVariableName()] = array("gte", $args[1]->getValue());
+		} else if ($ps == 'obl:reserved:lessOrEquals') {
+			$args = $lit->getArguments();
+			$variableMap[$args[0]->getVariableName()] = array("lte", $args[1]->getValue());
+		}
 	}
 	return $variableMap;
 }
