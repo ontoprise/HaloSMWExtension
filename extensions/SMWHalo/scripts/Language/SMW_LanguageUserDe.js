@@ -301,7 +301,6 @@ var wgUserLanguageStrings = {
     'QI_NONE'                 : 'keine',
     'QI_PROPERTY_TYPE'        : 'Typ',
     'QI_PROPERTY_RANGE'       : 'Range',
-    'QI_RECORD'               : 'Record',
     'QI_COLUMN_LABEL'         : 'Spalten&uuml;berschrift',
     'QI_SHOWUNIT'             : 'Einheit',
     'QI_EQUAL'                : 'gleich',

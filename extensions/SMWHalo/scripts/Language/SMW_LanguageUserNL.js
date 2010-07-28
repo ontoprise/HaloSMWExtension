@@ -301,7 +301,6 @@ var wgUserLanguageStrings = {
     'QI_NONE'                 : 'None',
     'QI_PROPERTY_TYPE'        : 'Type',
     'QI_PROPERTY_RANGE'       : 'Range',
-    'QI_RECORD'               : 'Record',
     'QI_COLUMN_LABEL'         : 'Column label',
     'QI_SHOWUNIT'             : 'Unit',
     'QI_EQUAL'                : 'equal',

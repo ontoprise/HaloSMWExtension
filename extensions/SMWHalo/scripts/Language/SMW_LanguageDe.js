@@ -32,6 +32,7 @@ var wgContLanguageStrings = {
 	'TYPE_PAGE'               : "Datentyp:Seite",	// type identifier
 	'TYPE_PAGE_WONS'		  : "Seite",			// type identifier without namespace
 	'TYPE_RECORD'			  : 'Verbund',
+	'TYPE_STRING'             : 'Zeichenkette',
 	
 	'HAS_TYPE'				  : "Hat Datentyp",		// Special property for definition of data type
 	'HAS_FIELDS'			  : "Hat Komponenten",

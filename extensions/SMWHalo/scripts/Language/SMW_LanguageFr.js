@@ -33,6 +33,7 @@ var wgContLanguageStrings = {
 	'TYPE_PAGE'               : "Type:Page",	// type identifier
 	'TYPE_PAGE_WONS'		  : "Page",			// type identifier without namespace
 	'TYPE_RECORD'			  : 'Record',
+	'TYPE_STRING'             : 'Chaîne de caractères',
 	
 	'HAS_TYPE'				  : "a pour type",		// Special property for definition of data type
 	'HAS_FIELDS'			  : "has fields",
