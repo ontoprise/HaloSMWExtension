@@ -991,7 +991,7 @@ QIHelper.prototype = {
         }
         var param = (this.propTypename) ? this.propTypename : gLanguage.getMessage('QI_PAGE');
         var ptype =  (this.propTypetype) ? this.propTypetype : '_wpg';
-        var numericType = this.numTypes[param.toLowerCase()];
+        var numericType = this.numTypes[param.toLowerCase()] ? 1 : 0;
         var propNameAC = gLanguage.getMessage('PROPERTY_NS')+this.propname.replace(/\s/g, '_');
         var ac_constraint = 'annotation-value: '+propNameAC;
 		if (ptype == '_wpg') { // property type = page
@@ -1001,7 +1001,9 @@ QIHelper.prototype = {
     		    ac_constraint += '|namespace: 0'; 
         } else if (ptype == '_dat') { // property type = date
             ac_constraint = 'fixvalues: {{NOW}},{{TODAY}}|annotation-value: '+propNameAC;
-            numericType= true;		    
+            numericType= 1;
+        } else if (ptype == '_str') {
+            numericType= 2;		    
 		} // else property, no page type and no date type, use defaults as set above.
         cell = newrow.insertCell(1);
 		cell.innerHTML = this.createRestrictionSelector("=", false, numericType);
@@ -1339,8 +1341,8 @@ QIHelper.prototype = {
                 $('dialoguecontent_pradio').getElementsByTagName('input')[2].disabled = 'true';
                 // set property type
                 $('dialoguecontent').rows[$('dialoguecontent').rows.length -2].cells[1].innerHTML=
-                    gLanguage.getMessage('QI_PROPERTY_TYPE') + ': ' + gLanguage.getMessage('QI_RECORD');
-                this.propTypename = gLanguage.getMessage('QI_RECORD');
+                    gLanguage.getMessage('QI_PROPERTY_TYPE') + ': ' + gLanguage.getMessage('TYPE_RECORD');
+                this.propTypename = gLanguage.getMessage('TYPE_RECORD');
                 this.propTypetype = '_rec';
                 this.toggleSubqueryAddchain(false);
 
@@ -1356,9 +1358,11 @@ QIHelper.prototype = {
                     cell = row.insertCell(-1);
                     cell.style.textAlign="right";
 					if (this.numTypes[parameterNames[i].toLowerCase()])
-						cell.innerHTML = this.createRestrictionSelector("=", false, true);
+						cell.innerHTML = this.createRestrictionSelector("=", false, 1);
+					else if ( parameterNames[i] == gLanguage.getMessage('TYPE_STRING') )
+					    cell.innerHTML = this.createRestrictionSelector("=", false, 2);
 					else
-						cell.innerHTML = this.createRestrictionSelector("=", false, false);
+						cell.innerHTML = this.createRestrictionSelector("=", false, 0);
                     cell = row.insertCell(-1);
 					if (parameterTypes[i] == '_wpg') {
                     	cell.innerHTML = '<input class="wickEnabled general-forms" constraints="'
@@ -1620,7 +1624,7 @@ QIHelper.prototype = {
         if (this.proparity > 2) {
             $('dialoguecontent').rows[typeRow].cells[1].innerHTML =
                 gLanguage.getMessage('QI_PROPERTY_TYPE') + ': ' +
-                gLanguage.getMessage('QI_RECORD') ;
+                gLanguage.getMessage('TYPE_RECORD') ;
             this.toggleSubquery(false);
         } else {
             // get type of property, if it's a subquery then type is page
@@ -1683,10 +1687,12 @@ QIHelper.prototype = {
             }
             for (var i = 0, n = vals.length; i < n; i++) {
                 this.addRestrictionInput();
-                var numType = false;
+                var numType = 0;
                 var currRow = i + rowOffset;
                 if (this.numTypes[vals[0][0].toLowerCase()]) // is it a numeric type?
-                    numType = true;
+                    numType = 1;
+                elseif (vals[0][0] == gLanguage.getMessage('TYPE_STRING'))
+                    numType = 2;
                 $('dialoguecontent_pvalues').rows[currRow].cells[1].innerHTML =
                     this.createRestrictionSelector(vals[i][1], false, numType);
                 // deactivate autocompletion
@@ -1904,8 +1910,12 @@ QIHelper.prototype = {
 	 * 
 	 * @param disabled
 	 *            enabled only for numeric datatypes
+	 * @param type
+     *            0 = other
+     *            1 = numeric
+     *            2 = string
 	 */
-	createRestrictionSelector : function(option, disabled, numericType) {
+	createRestrictionSelector : function(option, disabled, type) {
 		var html = disabled ? '<select disabled="disabled">' : '<select>';
 		var optionsFunc = function(op) {
 			
@@ -1919,21 +1929,25 @@ QIHelper.prototype = {
             var esc_op = escapeXMLEntities(op[0]);
             html += '<option value="'+esc_op+'" '+selected+'>'+op[1] + ' ('+esc_op+')</option>';
 		}
-		if (numericType) {
+		if (type == 1) {
 			[ 
                 ["=", gLanguage.getMessage('QI_EQUAL') ],
                 [">=", gLanguage.getMessage('QI_GT') ],
                 ["<=", gLanguage.getMessage('QI_LT') ],
                 ["!", gLanguage.getMessage('QI_NOT') ],
-                ["~", gLanguage.getMessage('QI_LIKE') ],
             ].each(optionsFunc);
-		} else {
+		} else if (type == 2) {
 			[
                 ["=", gLanguage.getMessage('QI_EQUAL') ],
                 ["!", gLanguage.getMessage('QI_NOT') ],
                 ["~", gLanguage.getMessage('QI_LIKE') ],
             ].each(optionsFunc);
-		}
+		} else {
+		    [
+                ["=", gLanguage.getMessage('QI_EQUAL') ],
+                ["!", gLanguage.getMessage('QI_NOT') ],
+            ].each(optionsFunc);
+        }
 		
 		return html + "</select>";
 	},
