@@ -264,8 +264,12 @@ SRRuleActionListener.prototype = {
 	initializeRootRulesCallback : function(request) {
 		OB_tree_pendingIndicator.hide();
 		if (request.status != 200) {
-			alert("Error: " + request.status + " " + request.statusText + ": "
-					+ request.responseText);
+			if (request.status == 404) {
+				alert("Could not connect to TSC. Rule endpoint started? Check your selected reasoner at the TSC!");
+			} else {
+				alert("Error: " + request.status + " " + request.statusText + ": "
+						+ request.responseText);
+			}
 			return;
 		}
 
