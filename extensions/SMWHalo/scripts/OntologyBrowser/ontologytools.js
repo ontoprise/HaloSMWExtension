@@ -1129,6 +1129,7 @@ OBInputFieldValidator.prototype = {
 		var e = $(this.id);
 		this.keyListener = this.onKeyEvent.bindAsEventListener(this);
 		this.blurListener = this.onBlurEvent.bindAsEventListener(this);
+		Event.observe(e, "input", this.keyListener);
 		Event.observe(e, "keyup", this.keyListener);
 		Event.observe(e, "keydown", this.keyListener);
 		Event.observe(e, "blur", this.blurListener);
@@ -1141,6 +1142,7 @@ OBInputFieldValidator.prototype = {
 		var e = $(this.id);
 		if (e == null)
 			return;
+		Event.stopObserving(e, "input", this.keyListener);
 		Event.stopObserving(e, "keyup", this.keyListener);
 		Event.stopObserving(e, "keydown", this.keyListener);
 		Event.stopObserving(e, "blur", this.blurListener);
