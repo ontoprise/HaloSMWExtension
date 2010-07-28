@@ -106,7 +106,7 @@ function smwf_qi_QIAccess($method, $params) {
                 return wfMsg('smw_qi_printout_err'.$invalidRes);
                 
             // quickfix: unset conflicting params for google maps
-            if ($fixparams['format'] == "googlemaps2") {
+            if ($fixparams['format'] == "googlemaps2" || $fixparams['format'] == "map" ) {
                 if (isset($params['reasoner'])) unset($params['reasoner']);
                 if (isset($params['ajaxcall'])) unset($params['ajaxcall']);
                 if (isset($params['merge'])) unset($params['merge']);
@@ -131,6 +131,7 @@ function smwf_qi_QIAccess($method, $params) {
             	case 'googlepie':
             	case 'googlebar':
             	case 'googlemaps2':
+            	case 'map':
            		case 'ofc-pie':
            		case 'ofc-bar':
            		case 'ofc-bar_3d':
