@@ -8,7 +8,7 @@
  * Usage:   php createRepsoitory -o <repository path>  -r release-num 
  *          php createRepsoitory -o <repository path>  --head 
  *          
- * @author: Kai Kühn / ontoprise / 2009
+ * @author: Kai Kï¿½hn / ontoprise / 2009
  */
 require_once("../../descriptor/DF_DeployDescriptor.php");
 require_once("../../tools/smwadmin/DF_Tools.php");
@@ -93,7 +93,7 @@ $localPackages = getLocalPackages($rootDir);
 echo "\nCreate new repository ".$outputDir."repository.xml";
 
 
-$new_ser = '<?xml version="1.0" encoding="UTF-8"?>'."<root>\n<extensions>\n";
+$new_ser = '<?xml version="1.0" encoding="UTF-8"?><?xml-stylesheet type="text/xsl" href="repository.xslt"?>'."<root>\n<extensions>\n";
 foreach($localPackages as $lp) {
     $id = $lp->getID();
     $installdir = $lp->getInstallationDirectory();
@@ -103,8 +103,10 @@ foreach($localPackages as $lp) {
         $ver = $lp->getVersion();
         $newPatchlevel = $lp->getPatchlevel();
         if ($newPatchlevel == '') $newPatchlevel = 0;
+        $maintainer = escapeForXMLAttribute($lp->getMaintainer());
+        $description = escapeForXMLAttribute($lp->getDescription());
         
-        $new_ser .= "<version ver=\"$ver\" url=\"$url\" patchlevel=\"$newPatchlevel\"/>";
+        $new_ser .= "<version ver=\"$ver\" url=\"$url\" patchlevel=\"$newPatchlevel\" maintainer=\"$maintainer\" description=\"$description\"/>";
     
     $new_ser .= "</extension>\n";
 }
@@ -122,4 +124,8 @@ function addSeparators($version, $sep = ".") {
         $sep_version .= $version[$i];
     }
     return $sep_version;
+}
+
+function escapeForXMLAttribute($text) {
+	return str_replace('"', "&quot;", $text);
 }
