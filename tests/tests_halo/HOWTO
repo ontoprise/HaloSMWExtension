@@ -272,7 +272,7 @@ because they are no more compatible.
 *Replace tests/tests_halo/mwXX_db.sql file by a updated empty wiki MySQL dump. (UTF-8)
 
 5. Create new repository (on external build system!)
-*Execute command: deployment/tools/maintenance/createRepository.php
+*Execute command: deployment/tools/maintenance/createRepository.php -o /root/repository -r <release num>
 *Add the following shell commands
 
     #!/bin/sh -x
