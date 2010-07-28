@@ -97,7 +97,7 @@ var wgUserLanguageStrings = {
 	'MAKE_SUPER_PROPERTY'     : 'Make "$t" super-property of "$-title"',
 	'MAKE_SUB_PROPERTY'       : 'Make "$t" sub-property of "$-title"',
 	'ADD_TYPE'                : 'Add type',
-	'ADD_RANGE'               : 'Add range',
+	'ADD_RANGE'               : 'Add page type',
 	'DOMAIN'                  : 'Domain:',
 	'RANGE'                   : 'Range:',
 	'INVERSE_OF'              : 'Inverse of:',

@@ -2423,7 +2423,7 @@ OBSchemaPropertySubMenu.prototype = Object
 					var toReplace = $(addTo.appendChild(document
 							.createElement("tr")));
 					toReplace
-							.replace('<tr><td width="60px;">Range </td><td>' + this
+							.replace('<tr><td width="60px;">'+gLanguage.getMessage('CATEGORY_NS_WOC')+' </td><td>' + this
 									.newRangeInputBox() + '</td></tr>');
 					autoCompleter.registerAllInputs();
 
