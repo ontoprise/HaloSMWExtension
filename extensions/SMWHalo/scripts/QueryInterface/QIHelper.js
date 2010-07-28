@@ -50,6 +50,7 @@ QIHelper.prototype = {
 		this.queryPartsFromInitByAsk = Array();
 		this.propertyTypesList = new PropertyList();
 		this.specialQPParameters = new Array();
+		this.sortColumn = null;
         
         $('qistatus').innerHTML = gLanguage.getMessage('QI_START_CREATING_QUERY');
         if (! this.noTabSwitch) this.switchTab(1, true);
@@ -641,6 +642,8 @@ QIHelper.prototype = {
 		for ( var i = 0; i < columns.length; i++) {
 			$('layout_sort').options[$('layout_sort').length] = new Option(
 					columns[i], columns[i]); // add options to optionbox
+			if (this.sortColumn == columns[i])
+			    $('layout_sort').options[$('layout_sort').length -1].selected="selected";
 		}
 	},
 
@@ -1691,7 +1694,7 @@ QIHelper.prototype = {
                 var currRow = i + rowOffset;
                 if (this.numTypes[vals[0][0].toLowerCase()]) // is it a numeric type?
                     numType = 1;
-                elseif (vals[0][0] == gLanguage.getMessage('TYPE_STRING'))
+                else if (vals[0][0] == gLanguage.getMessage('TYPE_STRING'))
                     numType = 2;
                 $('dialoguecontent_pvalues').rows[currRow].cells[1].innerHTML =
                     this.createRestrictionSelector(vals[i][1], false, numType);
@@ -2470,6 +2473,7 @@ QIHelper.prototype = {
 	   }
         this.setActiveQuery(0); // set main query to active
         this.updateTree();      // show new tree
+        this.updateColumnPreview(); // update sort selection
 	   this.updatePreview(); // update result preview
     },
     
@@ -2802,10 +2806,10 @@ applyOptionParams : function(query) {
             
             var key = kv[0].replace(/^\s*(.*?)\s*$/, '$1');
             var val = kv[1].replace(/^\s*(.*?)\s*$/, '$1');
-            if (key=="format") {
-            	format = val;
-            	
-            }
+            if (key=="format")
+            	format = val;	
+            else if (key=="sort")
+                this.sortColumn = val;
     }
 	
 
