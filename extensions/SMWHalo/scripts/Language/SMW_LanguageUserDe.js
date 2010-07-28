@@ -319,6 +319,9 @@ var wgUserLanguageStrings = {
     'QI_TT_VALUE_RESTRICTION' : 'Die Attributwerte m&uuml;ssen bestimmte Kriterien erf&uuml;llen.',
     'QI_TT_SUBQUERY'          : 'Die Einschr&auml;nkung der Attributwerte wird in einem eigenen Query bestimmt.',
     'QI_TT_ADD_CHAIN'         : 'Sie k&ouml;nnen eine Verkettung von Attributen erzeugen indem Sie einfach Attribute miteinander verbinden. Ein Beispiel: Sie k&ouml;nnen eine Attributkette aus den Attributen &quot;Liegt in&quot; und &quot;Mitglied von&quot; bilden, in welcher eine Werteeinschr&auml;nkung auf &quot;EU&quot; vorgenommen wird, um alle Dinge zu finden die in einer Sache liegen, welche Mitglied von der EU ist.',
+    'QI_QP_PARAM_intro'       : 'Kopfzeile',
+    'QI_QP_PARAM_outro'       : 'Fu&szlig;note',
+    
 	
 	// Wiki text parser
 	'WTP_TEXT_NOT_FOUND'		  : "Konnte '$1' nicht im Wikitext finden.",

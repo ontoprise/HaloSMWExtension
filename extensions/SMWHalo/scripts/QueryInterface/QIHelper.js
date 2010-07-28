@@ -144,10 +144,13 @@ QIHelper.prototype = {
 			var qpParameters = request.responseText.evalJSON();
 			var i = 0;
 			qpParameters.each(function(e) {
+			    var visibleName = gLanguage.getMessage('QI_QP_PARAM_'+e.name);
+			    if (visibleName == 'QI_QP_PARAM_'+ e.name) // no text for argument
+                    visibleName = e.name;
 				if (i % columns == 0)
 					html += "<tr>"
 				html += '<td onmouseover="Tip(\'' + e.description
-						+ '\');">' + e.name + "</td>";
+						+ '\');">' + visibleName + "</td>";
 				if (e.values instanceof Array) {
 					html += '<td>' + createSelectionBox(e.name, e.values)
 							+ "</td>";
