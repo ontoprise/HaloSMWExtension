@@ -91,9 +91,9 @@ class SRRuleWidget {
 	private function onOffSwitch($defaultOn, $i) {
 		
 		if ($defaultOn) {
-			return '<select id="rule_content_'.$i.'_switch" style="background-color: lightgreen" onchange="sr_rulewidget.changeRuleState(event, this, \''.$this->mContainingPage->getPrefixedDBkey().'\', \''.$this->mRuleName.'\', '.$i.')"><option selected="true" value="true">active</option><option value="false">inactive</option></select>';       
+			return '<select id="rule_content_'.$i.'_switch" style="background-color: lightgreen" onchange="sr_rulewidget.changeRuleState(event, this, \''.$this->mContainingPage->getPrefixedDBkey().'\', \''.$this->mRuleName.'\', '.$i.')"><option selected="true" value="true">'.wfMsg('sr_rule_isactive_state').'</option><option value="false">'.wfMsg('sr_rule_isinactive_state').'</option></select>';       
 		} else {
-			return '<select id="rule_content_'.$i.'_switch" style="background-color: red" onchange="sr_rulewidget.changeRuleState(event, this, \''.$this->mContainingPage->getPrefixedDBkey().'\', \''.$this->mRuleName.'\', '.$i.')"><option value="true">active</option><option selected="true" value="false">inactive</option></select>';       
+			return '<select id="rule_content_'.$i.'_switch" style="background-color: red" onchange="sr_rulewidget.changeRuleState(event, this, \''.$this->mContainingPage->getPrefixedDBkey().'\', \''.$this->mRuleName.'\', '.$i.')"><option value="true">'.wfMsg('sr_rule_isactive_state').'</option><option selected="true" value="false">'.wfMsg('sr_rule_isinactive_state').'</option></select>';       
 		}
         
 	}

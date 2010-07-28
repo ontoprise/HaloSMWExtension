@@ -85,7 +85,7 @@ var wgUserSR_LanguageStrings = {
     'SR_RULE_HOME' : 'Befindet sich auf Seite',
     'SR_RULE_TEXT' : 'Regel-Text',
     'SR_RULE_ISNATIVE' : 'Ist nativ',
-    'SR_RULE_ISACTIVE' : 'Ist aktiv',
+    'SR_RULE_ISACTIVE' : 'Status',
     'SR_RULE_TYPE' : 'Regel-Typ',
     'SR_RULE_DEFINES' : 'Regel definiert',
     'SR_RULE_USES' : 'Regel benutzt',
@@ -93,7 +93,9 @@ var wgUserSR_LanguageStrings = {
     'SR_EASYREADIBLE' : 'Leicht lesbar',
     'SR_STYLIZED_ENGLISH' : 'Formales Englisch' ,
     'SR_RULE_DIRTY' : "Regel wurde kürzlich geändert",
-    'SR_RULE_INACTIVE' : "Regel ist inaktiv"
+    'SR_RULE_INACTIVE_DESC' : "Regel ist inaktiv",
+    'SR_RULE_ISACTIVE_STATE' : "aktiv",
+    'SR_RULE_ISINACTIVE_STATE' : "inaktiv"
     	
 };
 

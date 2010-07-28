@@ -34,6 +34,8 @@ class SR_LanguageEn extends SR_Language {
     'sr_stylizedenglish' => 'Stylized english',
     'sr_rulesdefinedfor' => 'Rules defined for',
     'sr_rulestatus' => 'Status',
+    'sr_rule_isactive_state' => 'active',
+    'sr_rule_isinactive_state' => 'inactive',
     
     #Unified search extension
     'sr_rulesfound' => 'The following rules were found:'

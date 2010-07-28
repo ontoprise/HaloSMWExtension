@@ -36,6 +36,8 @@ class SR_LanguageDe extends SR_Language {
     'sr_stylizedenglish' => 'Formales Englisch',
     'sr_rulesdefinedfor' => 'Regeln definiert für',
     'sr_rulestatus' => 'Status',
+     'sr_rule_isactive_state' => 'aktiv',
+    'sr_rule_isinactive_state' => 'inaktiv',
     
      #Unified search extension
     'sr_rulesfound' => 'Die folgenden Regeln wurden gefunden:'

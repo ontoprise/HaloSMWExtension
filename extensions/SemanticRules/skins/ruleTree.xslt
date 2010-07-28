@@ -236,12 +236,12 @@
 						onchange="ruleActionListener.changeRuleState(event, this, '{$containingPage}','{$containingPageTitle}')">
 						<xsl:choose>
 							<xsl:when test="@active='true'">
-								<option selected="true">True</option>
-								<option>False</option>
+								<option selected="true">{{SR_RULE_ISACTIVE_STATE}}</option>
+								<option>{{SR_RULE_ISINACTIVE_STATE}}</option>
 							</xsl:when>
 							<xsl:otherwise>
-								<option>True</option>
-								<option selected="true">False</option>
+								<option>{{SR_RULE_ISACTIVE_STATE}}</option>
+								<option selected="true">{{SR_RULE_ISINACTIVE_STATE}}</option>
 							</xsl:otherwise>
 						</xsl:choose>
 					</select>
@@ -456,7 +456,7 @@
 			<!-- FIXME: title attribute should be language independant -->
 			<img
 				src="{$param-img-directory}/extensions/SemanticRules/skins/images/rules_inactive.gif">
-				<xsl:attribute name="title">{{SR_RULE_INACTIVE}}</xsl:attribute>
+				<xsl:attribute name="title">{{SR_RULE_INACTIVE_DESC}}</xsl:attribute>
 				<xsl:attribute name="id"><xsl:value-of select="@id"/>_inactive_icon</xsl:attribute>
 			</img>
 		</xsl:if>
