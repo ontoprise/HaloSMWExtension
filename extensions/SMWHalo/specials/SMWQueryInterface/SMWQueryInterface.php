@@ -146,7 +146,7 @@ class SMWQueryInterface extends SpecialPage {
 			if (!in_array(key($smwgResultFormats), $blacklist)) {
                 $className = $smwgResultFormats[key($smwgResultFormats)];
                 $class = new $className(key($smwgResultFormats), null);
-                $resultPrinters[$class->getName().' ('.key($smwgResultFormats).')'] = key($smwgResultFormats);
+                $resultPrinters[ucfirst($class->getName()).' ('.key($smwgResultFormats).')'] = key($smwgResultFormats);
 			}
 			next($smwgResultFormats);
 		}
