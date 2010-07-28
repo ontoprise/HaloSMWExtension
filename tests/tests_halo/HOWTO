@@ -261,7 +261,7 @@ Create a subfolder 'webtests' in the 'tests' folder
 3. Changes necessary when making a new release branch:
 
 *Change versions of packages / add new packages if necessary (in deploy.xml)
-*Add option -D<wikipath> at webtest call in buildsystem config to make sure which wiki is used.
+*Add option -Dwikipath=<path> at webtest call in buildsystem config to make sure which wiki is used.
 *Change $wgScriptPath in tests/tests_halo/LocalSettingsForTest.php template.
 *Create new alias for /releaseXXX on testing machine.
 
