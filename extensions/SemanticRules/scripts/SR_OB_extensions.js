@@ -1,19 +1,19 @@
 /*  Copyright 2010, ontoprise GmbH
-*  This file is part of the halo-Extension.
-*
-*   The halo-Extension is free software; you can redistribute it and/or modify
-*   it under the terms of the GNU General Public License as published by
-*   the Free Software Foundation; either version 3 of the License, or
-*   (at your option) any later version.
-*
-*   The halo-Extension is distributed in the hope that it will be useful,
-*   but WITHOUT ANY WARRANTY; without even the implied warranty of
-*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-*   GNU General Public License for more details.
-*
-*   You should have received a copy of the GNU General Public License
-*   along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ *  This file is part of the halo-Extension.
+ *
+ *   The halo-Extension is free software; you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation; either version 3 of the License, or
+ *   (at your option) any later version.
+ *
+ *   The halo-Extension is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 /**
  * @file
@@ -33,14 +33,14 @@ SRRuleActionListener.prototype = {
 		selectionProvider.addListener(this, OB_FILTERTREE);
 		selectionProvider.addListener(this, OB_RESET);
 		selectionProvider.addListener(this, OB_SELECTIONLISTENER);
-		
+
 	},
-	
-	registerPendingIndicator: function() {
+
+	registerPendingIndicator : function() {
 		this.rulePendingIndicator = new OBPendingIndicator($('ruleList'));
 	},
-	
-	selectionChanged: function(id, title, ns, node) {
+
+	selectionChanged : function(id, title, ns, node) {
 		if (ns == SMW_PROPERTY_NS || ns == SMW_CATEGORY_NS) {
 			this.hideRuleContainer();
 		}
@@ -59,8 +59,8 @@ SRRuleActionListener.prototype = {
 			this.hideRuleContainer();
 		}
 	},
-	
-	showRuleContainer: function() {
+
+	showRuleContainer : function() {
 		// hide instance and property view
 		$('instanceContainer').hide();
 		$('rightArrow').hide();
@@ -69,21 +69,23 @@ SRRuleActionListener.prototype = {
 		$('propertyRangeSpan').hide();
 
 		var ruleContainer = $('ruleContainer');
-		if (ruleContainer) ruleContainer.show();
+		if (ruleContainer)
+			ruleContainer.show();
 	},
-	
-	hideRuleContainer: function() {
+
+	hideRuleContainer : function() {
 		// show instance and property view
-		if ($("hideInstancesButton").getAttribute("hidden") != "true") { 
+		if ($("hideInstancesButton").getAttribute("hidden") != "true") {
 			$('instanceContainer').show();
 		}
 		$('rightArrow').show();
 		$('relattributesContainer').show();
 		$('hideInstancesButton').show();
 		$('propertyRangeSpan').show();
-		
+
 		var ruleContainer = $('ruleContainer');
-		if (ruleContainer) ruleContainer.hide();
+		if (ruleContainer)
+			ruleContainer.hide();
 	},
 
 	filterBrowsing : function(tabname, filter) {
@@ -93,8 +95,8 @@ SRRuleActionListener.prototype = {
 
 			if (request.responseText.indexOf('error:') != -1) {
 				// TODO: some error occured
-				alert("Error: " + request.status + " " + request.statusText + ": "
-						+ request.responseText);
+				alert("Error: " + request.status + " " + request.statusText
+						+ ": " + request.responseText);
 				return;
 			}
 			this.OB_cachedRuleTree = GeneralXMLTools
@@ -107,13 +109,14 @@ SRRuleActionListener.prototype = {
 		}
 		OB_tree_pendingIndicator.show(globalActionListener.activeTreeName);
 		sajax_do_call('srf_sr_AccessRuleEndpoint', [
-				'searchForRulesByFragment', filter+"##true" ], callbackOnSearchRequest
-				.bind(this));
+				'searchForRulesByFragment', filter + "##true" ],
+				callbackOnSearchRequest.bind(this));
 	},
 
 	reset : function(treeName) {
 		if (treeName == 'ruleTree') {
 			this.initializeRootRules(true);
+			with($('ruleList')) while(firstChild) removeChild(firstChild);
 		}
 	},
 
@@ -134,11 +137,38 @@ SRRuleActionListener.prototype = {
 				return;
 			}
 			
+			if (this.oldNode == null) {
+				// this should not happen. If though, tell user to reset manually
+				alert("Please reset view. Something is wrong here.");
+				return;
+			}
+			
+			if (selectedIndex == 0) {
+				// means rule was activated
+				var rule_inactive_icon = $(this.oldNode.getAttribute('id')+"_inactive_icon");
+				if (rule_inactive_icon) rule_inactive_icon.hide();
+			} else {
+				// rule was deactivated, so show icon
+				var rule_inactive_icon = $(this.oldNode.getAttribute('id')+"_inactive_icon");
+				if (rule_inactive_icon) { 
+					rule_inactive_icon.show();
+					return;
+				}
+				
+				// or if it does not exist create it
+				var newNode = document.createElement("img");
+				newNode.setAttribute("src", wgScriptPath+"/extensions/SemanticRules/skins/images/rules_inactive.gif")
+				newNode.setAttribute("id", this.oldNode.getAttribute('id')+"_inactive_icon");
+				newNode.setAttribute("title", gsrLanguage.getMessage('SR_RULE_INACTIVE'));
+				this.oldNode.parentNode.insertBefore(newNode, this.oldNode.nextSibling);
+				
+			}
 		}
 		var selectTag = Event.element(event);
 		var selectedIndex = selectTag.selectedIndex;
 		OB_tree_pendingIndicator.show(globalActionListener.activeTreeName);
-		sajax_do_call('smwf_sr_ChangeRuleState', [ containingPage, ruleName, (selectedIndex == 0) ], callbackOnChangeState.bind(this));
+		sajax_do_call('smwf_sr_ChangeRuleState', [ containingPage, ruleName,
+				(selectedIndex == 0) ], callbackOnChangeState.bind(this));
 	},
 
 	/**
@@ -272,62 +302,62 @@ SRRuleActionListener.prototype = {
 	 */
 	select : function(event, node, ruleID, ruleURI) {
 		// alert("Rule-ID:" + ruleID + " Rule URI:" + ruleURI);
-	var nextDIV = node.nextSibling;
+		var nextDIV = node.nextSibling;
 
-	// find the next DIV
-	while (nextDIV.nodeName != "DIV") {
-		nextDIV = nextDIV.nextSibling;
-	}
-
-	// check if node is already expanded and expand it if not
-	if (!nextDIV.hasChildNodes() || nextDIV.style.display == 'none') {
-		this.toggleExpand(event, node);
-	}
-
-	var callbackOnRuleRequest = function callbackOnRuleRequest(request) {
-		this.rulePendingIndicator.hide();
-
-		if (request.responseText.indexOf('error:') != -1) {
-			// TODO: some error occured
-
-			return;
+		// find the next DIV
+		while (nextDIV.nodeName != "DIV") {
+			nextDIV = nextDIV.nextSibling;
 		}
-		selectionProvider.fireBeforeRefresh();
-		var subTree = sr_transformer.transformResultToHTML(request,
-				$('ruleList'));
-		selectionProvider.fireRefresh();
 
-	}
-	selectionProvider.fireSelectionChanged(ruleURI, null, 300, node);
-	this.rulePendingIndicator.show($('ruleList'));
-	sajax_do_call('srf_sr_AccessRuleEndpoint', [ 'getRule', ruleURI ],
-			callbackOnRuleRequest.bind(this));
-},
-
-selectFromExternal: function(node, ruleURI) {
-	var callbackOnRuleRequest = function callbackOnRuleRequest(request) {
-		this.rulePendingIndicator.hide();
-
-		if (request.responseText.indexOf('error:') != -1) {
-			// TODO: some error occured
-
-			return;
+		// check if node is already expanded and expand it if not
+		if (!nextDIV.hasChildNodes() || nextDIV.style.display == 'none') {
+			this.toggleExpand(event, node);
 		}
-		
-		selectionProvider.fireBeforeRefresh();
-		var subTree = sr_transformer.transformResultToHTML(request,
-				$('ruleList'));
-		selectionProvider.fireRefresh();
 
-	}
-	this.showRuleContainer();
-	this.rulePendingIndicator.show($('ruleList'));
-	sajax_do_call('srf_sr_AccessRuleEndpoint', [ 'getRule', ruleURI ],
-			callbackOnRuleRequest.bind(this));
-},
+		var callbackOnRuleRequest = function callbackOnRuleRequest(request) {
+			this.rulePendingIndicator.hide();
 
-toggleExpand : function(event, node, tree) {
-	// stop event propagation in Gecko and IE
+			if (request.responseText.indexOf('error:') != -1) {
+				// TODO: some error occured
+
+				return;
+			}
+			selectionProvider.fireBeforeRefresh();
+			var subTree = sr_transformer.transformResultToHTML(request,
+					$('ruleList'));
+			selectionProvider.fireRefresh();
+
+		}
+		selectionProvider.fireSelectionChanged(ruleURI, null, 300, node);
+		this.rulePendingIndicator.show($('ruleList'));
+		sajax_do_call('srf_sr_AccessRuleEndpoint', [ 'getRule', ruleURI ],
+				callbackOnRuleRequest.bind(this));
+	},
+
+	selectFromExternal : function(node, ruleURI) {
+		var callbackOnRuleRequest = function callbackOnRuleRequest(request) {
+			this.rulePendingIndicator.hide();
+
+			if (request.responseText.indexOf('error:') != -1) {
+				// TODO: some error occured
+
+				return;
+			}
+
+			selectionProvider.fireBeforeRefresh();
+			var subTree = sr_transformer.transformResultToHTML(request,
+					$('ruleList'));
+			selectionProvider.fireRefresh();
+
+		}
+		this.showRuleContainer();
+		this.rulePendingIndicator.show($('ruleList'));
+		sajax_do_call('srf_sr_AccessRuleEndpoint', [ 'getRule', ruleURI ],
+				callbackOnRuleRequest.bind(this));
+	},
+
+	toggleExpand : function(event, node, tree) {
+		// stop event propagation in Gecko and IE
 	Event.stop(event);
 	// Get the next tag (read the HTML source)
 	var nextDIV = node.nextSibling;
@@ -422,4 +452,5 @@ sr_transformer.addLanguageProvider(function(id) {
 	return gsrLanguage.getMessage(id, "user");
 });
 
-Event.observe(window, 'load', ruleActionListener.registerPendingIndicator.bind(ruleActionListener));
+Event.observe(window, 'load', ruleActionListener.registerPendingIndicator
+		.bind(ruleActionListener));

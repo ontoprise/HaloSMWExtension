@@ -449,6 +449,7 @@
 			<img
 				src="{$param-img-directory}/extensions/SemanticRules/skins/images/rules_dirty.gif">
 				<xsl:attribute name="title">{{SR_RULE_DIRTY}}</xsl:attribute>
+				<xsl:attribute name="id"><xsl:value-of select="@id"/>_dirty_icon</xsl:attribute>
 			</img>
 		</xsl:if>
 		<xsl:if test="@inactive">
@@ -456,6 +457,7 @@
 			<img
 				src="{$param-img-directory}/extensions/SemanticRules/skins/images/rules_inactive.gif">
 				<xsl:attribute name="title">{{SR_RULE_INACTIVE}}</xsl:attribute>
+				<xsl:attribute name="id"><xsl:value-of select="@id"/>_inactive_icon</xsl:attribute>
 			</img>
 		</xsl:if>
 		<a class="navigationLink" title="Goto to {$title}" style="margin-left:5px;">
