@@ -1,0 +1,64 @@
+###################################################################################################
+    TODOs for BUILD in the !internal! build system
+###################################################################################################
+
+Create branches of the following projects
+
+HaloSMWExtension (SVN)
+SMWPlusInstaller (CVS)
+XAMPP (CVS)
+
+#
+# Hudson job copies
+#
+
+Create copies of the following jobs:
+
+Build SMWHalo (the Halo extensions and friends)
+Build SMWHaloInstaller (the Windows installer version)
+Build SMWHalo Installer Tools (containing SMWPlusInstaller and XAMPP)
+
+Adjust in HaloSMWExtension/build.nsi on the branch
+Replace 'SMWHalo Installer Tools' by the job name you selected for the copy.
+
+#
+# Release view in Hudson
+#
+Create a Hudson view and add these new jobs to the view. Name it like this: Release yyyy-mm-dd
+
+#
+# Deployment
+#
+
+The following adjustments are necessary for the deployment:
+Make sure the deploy descritptors are valid. Correct version, correct configs. Each
+extension must have one if it should be installable via the DF.
+
+#
+# Testing
+#
+
+The following things must be adjusted for the testing infrastructure:
+
+*Add option -Dwikipath=<path> at webtest call in buildsystem config to make sure which wiki is used.
+*Change $wgScriptPath in tests/tests_halo/LocalSettingsForTest.php template to /releaseXXX where XXX is
+the release number.
+*Create new HTTP alias for /releaseXXX on testing machine pointing to the directory of the HaloSMWExtension branch.
+
+
+#
+# Misc
+#
+
+The TSC must be updated to the latest version on the internal buildsystem. This does not happen
+automatically. Usually it is sufficient to just copy the lib folders.
+
+#
+# Lucene 
+#
+Usually you don't need to create a job copy of Lucene because it does not change. You may use the head version
+as predefined. If you branch it, you have to make sure to do the adjustment:
+
+HaloSMWExtension/build.nsi:
+Replace 'Build Lucene server' by the name of the copied job. 
+
