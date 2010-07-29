@@ -238,7 +238,11 @@ class SMWTripleStore extends SMWStore {
 								if (array_shift($value->getDBkeys()) != NULL) {
 									// attribute with textual value
 									$xsdType = WikiTypeToXSD::getXSDType($property->getPropertyTypeID());
-									$triples[] = array("<$smwgTripleStoreGraph/$subj_ns#".$subject->getDBkey().">", "<$smwgTripleStoreGraph/property#".$property->getWikiPageValue()->getDBkey().">", "\"".$this->escapeForStringLiteral(array_shift($value->getDBkeys()))."\"^^$xsdType");
+									if ($property->getPropertyTypeID() == '_geo') {
+										$triples[] = array("<$smwgTripleStoreGraph/$subj_ns#".$subject->getDBkey().">", "<$smwgTripleStoreGraph/property#".$property->getWikiPageValue()->getDBkey().">", "\"".$this->escapeForStringLiteral(implode(",", $value->getDBkeys()))."\"^^$xsdType");
+									} else {
+										$triples[] = array("<$smwgTripleStoreGraph/$subj_ns#".$subject->getDBkey().">", "<$smwgTripleStoreGraph/property#".$property->getWikiPageValue()->getDBkey().">", "\"".$this->escapeForStringLiteral(array_shift($value->getDBkeys()))."\"^^$xsdType");
+									}
 								} else if ($value->getNumericValue() != NULL) {
 									// attribute with numeric value
 									$triples[] = array("<$smwgTripleStoreGraph/$subj_ns#".$subject->getDBkey().">", "<$smwgTripleStoreGraph/property#".$property->getWikiPageValue()->getDBkey().">", "\"".$value->getNumericValue()."\"^^xsd:double");
@@ -311,7 +315,7 @@ class SMWTripleStore extends SMWStore {
 			$con = TSConnection::getConnector();
 			$sparulCommands = array();
 			$sparulCommands[] = TSNamespaces::getW3CPrefixes()."DELETE FROM <$smwgTripleStoreGraph> { <$smwgTripleStoreGraph/$subj_ns#".$subject->getDBkey()."> ?p ?o. }";
-			
+				
 			$sparulCommands[] =  TSNamespaces::getW3CPrefixes()."INSERT INTO <$smwgTripleStoreGraph> { ".$this->implodeTriples($triples)." }";
 
 			if (isset($smwgEnableObjectLogicRules)) {
@@ -388,7 +392,7 @@ class SMWTripleStore extends SMWStore {
 
 		// handle only SPARQL queries and delegate all others
 		if ($query instanceof SMWSPARQLQuery) {
-//			wfRunHooks('RewriteSparqlQuery', array(&$query) );
+			//			wfRunHooks('RewriteSparqlQuery', array(&$query) );
 
 			if ($query->getQueryString() == "") {
 				$sqr = new SMWHaloQueryResult(array(), $query, array(), $this, false);
@@ -422,7 +426,7 @@ class SMWTripleStore extends SMWStore {
 						if ($e->getCode() == 0) {
 							// happens most likely when TSC is not running
 							global $smwgWebserviceEndpoint;
-						    $sqr->addErrors(array(wfMsg('smw_ts_notconnected', $smwgWebserviceEndpoint)));
+							$sqr->addErrors(array(wfMsg('smw_ts_notconnected', $smwgWebserviceEndpoint)));
 						} else {
 							$sqr->addErrors(array($e->getMessage()));
 						}
@@ -432,7 +436,7 @@ class SMWTripleStore extends SMWStore {
 				return $sqr;
 			}
 
-//			wfRunHooks('FilterQueryResults', array(&$queryResult) );
+			//			wfRunHooks('FilterQueryResults', array(&$queryResult) );
 
 			switch ($query->querymode) {
 
@@ -909,14 +913,14 @@ class SMWTripleStore extends SMWStore {
 			if (!empty($literalValue)) {
 
 				// create SMWDataValue either by property or if that is not possible by the given XSD type
-				
+
 				if ($property instanceof SMWPropertyValue ) {
 					$propertyTitle = Title::newFromText($pr->getData()->getText(), SMW_NS_PROPERTY);
 					if (!$propertyTitle->exists()) {
 						// fallback if property does not exist, then use tyoe
 						$value = SMWDataValueFactory::newTypeIDValue(WikiTypeToXSD::getWikiType($literalType));
 					} else {
-					    $value = SMWDataValueFactory::newPropertyObjectValue($pr->getData(), $literalValue);
+						$value = SMWDataValueFactory::newPropertyObjectValue($pr->getData(), $literalValue);
 					}
 				} else {
 					$value = SMWDataValueFactory::newTypeIDValue(WikiTypeToXSD::getWikiType($literalType));
@@ -1066,7 +1070,7 @@ class SMWTripleStore extends SMWStore {
 		return $contains;
 	}
 
-	
+
 }
 
 
