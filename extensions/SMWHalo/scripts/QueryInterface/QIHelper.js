@@ -1689,20 +1689,26 @@ QIHelper.prototype = {
                 rowOffset++;
             }
             for (var i = 0, n = vals.length; i < n; i++) {
-                this.addRestrictionInput();
                 var numType = 0;
                 var currRow = i + rowOffset;
-                if (this.numTypes[vals[0][0].toLowerCase()]) // is it a numeric type?
+                if (this.numTypes[vals[0][0].toLowerCase()]) { // is it a numeric type?
                     numType = 1;
-                else if (vals[0][0] == gLanguage.getMessage('TYPE_STRING'))
+                    this.propTypetype = '_num';
+                }
+                else if (vals[0][0] == gLanguage.getMessage('TYPE_STRING')) {
                     numType = 2;
+                    this.propTypetype = '_str';
+                }
+                if (vals[0][0] == gLanguage.getMessage('TYPE_DATE')) {
+                    this.propTypetype = '_dat';
+                }
+                this.addRestrictionInput();
                 $('dialoguecontent_pvalues').rows[currRow].cells[1].innerHTML =
                     this.createRestrictionSelector(vals[i][1], false, numType);
                 // deactivate autocompletion
                 if (!acChange)
                     autoCompleter.deregisterAllInputs();
                 acChange = true;
-                $('dialoguecontent_pvalues').rows[currRow].cells[2].firstChild.className = "";
                 
                 // add unit selection, do this for all properties, even in subqueries
                 try {
