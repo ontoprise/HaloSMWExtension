@@ -105,8 +105,8 @@ function smwf_qi_QIAccess($method, $params) {
             if ( $invalidRes != 0 )
                 return wfMsg('smw_qi_printout_err'.$invalidRes);
                 
-            // quickfix: unset conflicting params for google maps
-            if ($fixparams['format'] == "googlemaps2" || $fixparams['format'] == "map" ) {
+            // quickfix: unset conflicting params for maps
+            if (in_array($fixparams['format'], array( "map", "googlemaps2", "openlayers", "yahoomaps" ) ) ) {
                 if (isset($params['reasoner'])) unset($params['reasoner']);
                 if (isset($params['ajaxcall'])) unset($params['ajaxcall']);
                 if (isset($params['merge'])) unset($params['merge']);
@@ -130,16 +130,19 @@ function smwf_qi_QIAccess($method, $params) {
             	case 'gallery':
             	case 'googlepie':
             	case 'googlebar':
-            	case 'googlemaps2':
-            	case 'map':
-           		case 'ofc-pie':
+            	case 'ofc-pie':
            		case 'ofc-bar':
            		case 'ofc-bar_3d':
            		case 'ofc-line':
            	    case 'ofc-scatterline':
                     return (is_array($result)) ? $result[0] : $result;
                     break;   
-            	default:            		
+                case 'map':
+                case 'googlemaps2':
+                case 'openlayers':
+                case 'yahoomaps':
+                    return wfMsg('smw_qi_printout_notavailable');
+                    default:            		
             }
           
             $result = parseWikiText($result);
