@@ -146,7 +146,12 @@ class SMWQueryInterface extends SpecialPage {
 			if (!in_array(key($smwgResultFormats), $blacklist)) {
                 $className = $smwgResultFormats[key($smwgResultFormats)];
                 $class = new $className(key($smwgResultFormats), null);
-                $resultPrinters[ucfirst($class->getName()).' ('.key($smwgResultFormats).')'] = key($smwgResultFormats);
+                // format the OFC printer names a bit, the rest comes with a real name
+                $label = (substr(key($smwgResultFormats), 0, 4) == "ofc-")
+                    ? 'OFC '.str_replace(array('_', '-'), ' ', substr(key($smwgResultFormats), 4))
+                    : ucfirst($class->getName());
+                $label .= ' ('.key($smwgResultFormats).')';
+                $resultPrinters[$label] = key($smwgResultFormats);
 			}
 			next($smwgResultFormats);
 		}
