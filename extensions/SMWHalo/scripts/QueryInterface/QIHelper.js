@@ -998,7 +998,9 @@ QIHelper.prototype = {
         var propNameAC = gLanguage.getMessage('PROPERTY_NS')+this.propname.replace(/\s/g, '_');
         var ac_constraint = 'annotation-value: '+propNameAC;
 		if (ptype == '_wpg') { // property type = page
-			if (this.propRange[this.propname.toLowerCase()])
+		    if ( this.propname.toLowerCase() == gLanguage.getMessage('HAS_TYPE') ) // property: has type
+		        ac_constraint = 'namespace: 104';
+			else if (this.propRange[this.propname.toLowerCase()])
 			    ac_constraint = 'instance-property-range: '+propNameAC;
     		else
     		    ac_constraint += '|namespace: 0'; 
@@ -1728,7 +1730,8 @@ QIHelper.prototype = {
                     $('dialoguecontent_pvalues').rows[currRow].cells[0].innerHTML= vals[i][0];
                     $('dialoguecontent_pvalues').rows[currRow].cells[0].style.fontWeight="normal";
                 }
-                $('input_r'+(i+1)).value = vals[i][2].unescapeHTML();
+                if (vals[i][2] != '*') // if a real value is set and not the placeholder for no value.
+                    $('input_r'+(i+1)).value = vals[i][2].unescapeHTML();
             }
             if (acChange) autoCompleter.registerAllInputs();
         }
