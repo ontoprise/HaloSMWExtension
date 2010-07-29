@@ -1521,9 +1521,11 @@ OBGlobalActionListener.prototype = {
 		} 
 		selectionProvider.fireReset(this.activeTreeName);
 		
-		// clear input field
-		var inputs = document.getElementsByTagName("input");
-		inputs[0].value = "";
+		// clear input fields except search field in skin
+		$$('input').each(function(e) { 
+			if (e.getAttribute("id") != 'searchInput') e.value=""; 
+		} );
+		
 	},
 	
 	/**
