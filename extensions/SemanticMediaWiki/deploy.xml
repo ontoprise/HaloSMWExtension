@@ -32,7 +32,7 @@
                 </string>
             </function>
             <script file="extensions/SemanticMediaWiki/maintenance/SMW_setup.php"/>
-            <script file="extensions/SemanticMediaWiki/maintenance/SMW_refreshData.php" params="-v"/>
+            
         </new>
         <uninstall>
             <script file="extensions/SemanticMediaWiki/maintenance/SMW_setup.php" params="--delete"/>
