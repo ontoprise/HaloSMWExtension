@@ -60,7 +60,9 @@ class HttpDownload {
 	 *      If null, an internal rendering method uses the console to show a progres bar and a finish message.
 	 */
 	public function downloadAsFile($path, $port, $host, $filename, $credentials = "", $callback = NULL) {
-
+        
+		$credentials = trim($credentials);
+		if ($credentials == ':') $credentials = ''; // make sure the credentials are not empty by accident
 		$address = gethostbyname($host);
 		$handle = fopen($filename, "wb");
 		$socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
@@ -124,7 +126,9 @@ class HttpDownload {
 	 * @return string
 	 */
 	public function downloadAsString($path, $port, $host, $credentials = "", $callback = NULL) {
-
+        
+		$credentials = trim($credentials);
+        if ($credentials == ':') $credentials = ''; // make sure the credentials are not empty by accident
 		$address = gethostbyname($host);
 		$res = "";
 		$socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
