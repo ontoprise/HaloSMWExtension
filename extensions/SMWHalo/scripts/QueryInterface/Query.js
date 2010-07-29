@@ -152,7 +152,9 @@ Query.prototype = {
                     if (propvalues[j][3]) res += ' ' + propvalues[j][3];
 					tree += res;
                     if (j < (js - 1) )
-                        tree += ' <span style="font-weight:bold">' + gLanguage.getMessage('QI_OR') + '</span> ';
+                        tree += ' <span style="font-weight:bold">'
+                            + ( this.properties[i].getArity() == 2 ? gLanguage.getMessage('QI_OR') : ';' )
+                            + '</span> ';
 				}
 			}
 		}
@@ -200,19 +202,28 @@ Query.prototype = {
 			}
 			
 			if(this.properties[i].getArity() > 2){ // always special treatment for arity > 2
-				asktext += "[[" + this.properties[i].getName().unescapeHTML() + "::";
+                var valueSet = false;
+                var tmpAsk = "[[" + this.properties[i].getName().unescapeHTML() + "::";
 				var vals = this.properties[i].getValues();
 				for(var j=0; j<vals.length; j++){
-					if(j!=0)
-						asktext += ";"; // connect values with semicolon
-					if(vals[j][1]!="=") //add operator <, >, ! if existing
+                    if(j!=0)
+                        tmpAsk += ";"; // connect values with semicolon
+                    if (vals[j][1] != "=") //add operator <, >, ! if existing
                         // normal ask makes no difference between > and >= the TSC does
-                        asktext += ($('usetriplestore') && $('usetriplestore').checked &&
-                                    (vals[j][1].charAt(0) == '>' || vals[j][1].charAt(0) == '<') )
+                        tmpAsk += ($('usetriplestore') && $('usetriplestore').checked &&
+                                   (vals[j][1].charAt(0) == '>' || vals[j][1].charAt(0) == '<') )
                             ? vals[j][1]
                             : vals[j][1].substring(0,1);
-                    asktext += (vals[j][2] == '*') ? '' : vals[j][2].unescapeHTML();
-				}
+                    // value set?
+                    if (vals[j][2] != '*') {
+                        tmpAsk += vals[j][2].unescapeHTML();
+                        valueSet = true;
+                    }
+                }
+                tmpAsk += "]]";
+                if (valueSet) asktext += tmpAsk;
+                else if (this.properties[i].mustBeSet())
+                    asktext += "[[" + this.properties[i].getName().unescapeHTML() + "::+]]";
 			} else { //binary property
 				var vals = this.properties[i].getValues();
 				if (vals.length == 1 && vals[0][2] == "*"){}
@@ -297,6 +308,8 @@ Query.prototype = {
                 }
                 tmpAsk += "]]";
                 if (valueSet) asktext += tmpAsk;
+                else if (this.properties[i].mustBeSet())
+                    asktext += "[[" + this.properties[i].getName().unescapeHTML() + "::+]]";
 			} else { //binary property
 				var vals = this.properties[i].getValues();
 				if (vals.length == 1 && vals[0][2] == "*"){}
