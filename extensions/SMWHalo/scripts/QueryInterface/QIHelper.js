@@ -1204,7 +1204,9 @@ QIHelper.prototype = {
 		autoCompleter.deregisterAllInputs();
 		if (this.activeDialogue != null) { // check if user cancelled the
 											// dialogue whilst ajax call
-			var oldsubid = $('input_r0') ? $('input_r0').value : this.nextQueryId;
+			try {
+			    var oldsubid = $('dialoguecontent_pradio').getElementsByTagName('input')[2].value;
+            } catch (e) { var oldsubid = this.nextQueryId; }
             if ($('dialoguecontent_pvalues')) {
                 while ($('dialoguecontent_pvalues').rows.length > 0)
                     $('dialoguecontent_pvalues').deleteRow(0);
@@ -1726,7 +1728,7 @@ QIHelper.prototype = {
                     $('dialoguecontent_pvalues').rows[currRow].cells[0].innerHTML= vals[i][0];
                     $('dialoguecontent_pvalues').rows[currRow].cells[0].style.fontWeight="normal";
                 }
-                $('input_r'+(i+1)).value = vals[i][2];
+                $('input_r'+(i+1)).value = vals[i][2].unescapeHTML();
             }
             if (acChange) autoCompleter.registerAllInputs();
         }
