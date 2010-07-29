@@ -927,8 +927,9 @@ QIHelper.prototype = {
         if (idx == 0) {
             newrow = $('dialoguecontent').insertRow(-1);
             cell = newrow.insertCell(0);
+            cell = newrow.insertCell(1);
             cell.style.textAlign="left";
-            cell.setAttribute('colspan', 3);
+            cell.setAttribute('colspan', 2);
             cell.innerHTML = '<div id="addchain"></div>';
         }
         else {
