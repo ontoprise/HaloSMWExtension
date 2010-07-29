@@ -266,13 +266,7 @@ include("extensions/DynamicPageList/DynamicPageList.php");
 # SemanticFormsInputs
 require_once('extensions/SemanticFormsInputs/SemanticFormsInputs.php');
 
-#MIME-Type
-include_once('extensions/RichMedia/includes/RM_Initialize.php');
-
-#Enable WebDAV server
-include_once('extensions/RichMedia/includes/WebDAV/WD_Initialize.php');
-
-#Semantic Results formats
+/*start-semanticresultformats*/
 require_once("extensions/SemanticResultFormats/SRF_Settings.php");
 $srfgFormats[] = 'googlepie';
 $srfgFormats[] = 'googlebar';
@@ -282,6 +276,7 @@ $srfgFormats[] = 'math';
 $srfgFormats[] = 'exhibit';
 $wgGoogleMapsKey='ABQIAAAALfJSGT7KuTRZWj3WNooD8xT2yXp_ZAY8_ufC3CFXhHIE1NvwkxSF9PCXcXEIe6Uenfr3x-G8L-rVKw';
 require_once("$IP/extensions/SemanticResultFormats/ofc/SRF_OFC_Init.php"); 
+/*end-semanticresultformats*/
 
 #Glossary
 require_once( "$IP/extensions/Glossary/Glossary.php" );
@@ -298,10 +293,10 @@ $haclgProtectProperties = false;
 enableHaloACL(/*param-start-enableHaloACL*//*param-end-enableHaloACL*/);
 /*end-haloacl*/ 
 
-#Semantic Notifications
+/*start-semanticnotifications*/
 include_once('extensions/SemanticNotifications/includes/SN_Initialize.php');
 enableSemanticNotifications(); 
-
+/*end-semanticnotifications*/
 
 # NewUserMessage
 require_once( "extensions/NewUserMessage/NewUserMessage.php" );
@@ -318,19 +313,24 @@ $wgNamespacesToBeSearchedDefault = array(
 
 $wgJobRunRate=0;
 
-#RichMedia
+/*start-richmedia*/
 include_once('extensions/RichMedia/includes/RM_Initialize.php');
 enableRichMediaExtension();
 $wgAllowExternalImages=true;
+include_once('extensions/RichMedia/includes/WebDAV/WD_Initialize.php');
+/*end-richmedia*/
 
+/*start-treeview*/
 include('extensions/Treeview/Treeview.php');
 $wgTreeViewImages['plus'] = "Plus.gif";
+/*end-treeview*/
 
+/*start-wysiwyg*/
 require_once('extensions/SMWHalo/includes/SMW_WYSIWYG.php');
 if (array_key_exists('mode', $_REQUEST) && $_REQUEST['mode'] == 'wysiwyg' || (array_key_exists('action', $_REQUEST) && $_REQUEST['action'] == 'ajax' && stripos($_REQUEST['rs'], 'wfSajax') === 0)) {
 require_once $IP . "/extensions/FCKeditor/FCKeditor.php";
 }
-
+/*end-wysiwyg*/
 
 require_once("$IP/extensions/ImageMap/ImageMap.php");
 
@@ -357,12 +357,16 @@ require_once('extensions/SMWHalo/DataAPI/SemanticFormsAPI/SemanticFormsAPI.php')
 #SemanticInputForms
 require_once('extensions/SemanticFormsInputs/SemanticFormsInputs.php');
 
-#Collaboration extension
+/*start-collaboration*/
 include_once('extensions/Collaboration/includes/CE_Initialize.php');
 enableCollaboration();
+/*end-collaboration*/
 
-#User Manual extension
+/*start-smwusermanual*/
 include_once('extensions/SMWUserManual/includes/SMW_UserManual.php');
 enableSMWUserManual();
+/*end-smwusermanual*/
 
+/*start-ultrapedia*/
 require_once("extensions/Ultrapedia/includes/UP_Initialize.php");
+/*end-ultrapedia*/
