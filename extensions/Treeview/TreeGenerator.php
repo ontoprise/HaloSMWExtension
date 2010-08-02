@@ -440,7 +440,7 @@ abstract class TreeviewStorage {
 
         	// get last parent of stack to look for it's children
 	        while ($currParent = end($parents)) {
-                
+                          
 	            foreach (array_keys($this->sIds) as $s_id) {
                     // check all elements to look for nodes that have the current parent
        		    	foreach (array_keys($this->sIds[$s_id]) as $item) {
@@ -475,6 +475,7 @@ abstract class TreeviewStorage {
            				    $depth++;
            				    $e = array($s_id, $depth);
     		            	$this->treeList->insertTail($e);
+    		            	unset($this->sIds[$s_id][$item]);
 
     		            	// If this element was already processed but exists several
 	    	            	// times, findSubTree contains the number of additional parents.
@@ -500,7 +501,6 @@ abstract class TreeviewStorage {
    				            // Then continue with next iteration one level down.
     			            else {
    	    			            $parents[] = $s_id;
-		    	                unset($this->sIds[$s_id][$item]);
 			                    if (count($this->sIds[$s_id]) == 0) {
 				                    unset($this->sIds[$s_id]);
 			                    } else {
