@@ -1,26 +1,15 @@
 Collaboration extension ChangeLog
 =================================
 
-VERSION 1.30
-
-  FEATURES:
-
-
-  CHANGES:
-    All style definitions are now collected in one CSS file (collaboration-comment.css).
-    This is part of preparations for standardization of GUI elements.
-
-
-  BUGFIXES:
-
-
 VERSION 1.20
 
   FEATURES:
 
 
   CHANGES:
-    Removed the dependency on SMWHalo.
+    * All style definitions are now collected in one CSS file (collaboration-comment.css).
+    This is part of preparations for standardization of GUI elements.
+    * Removed the dependency on SMWHalo.
 
 
   BUGFIXES:
