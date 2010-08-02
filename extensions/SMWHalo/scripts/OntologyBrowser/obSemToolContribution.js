@@ -85,7 +85,8 @@ OBSemanticToolbarContributor.prototype = {
 	selectionListener: function(event) {
 		if ($("openEntityInOB") == null) return;
 		//if (!GeneralBrowserTools.isTextSelected(this.textArea)) {
-		if (gEditInterface.getSelectedText().length == 0){
+		if (! gEditInterface.getSelectedText() ||
+		    gEditInterface.getSelectedText().length == 0){
 			// unselected
 			this.comsrchontainer.setContent(this.getOBLink(false));
 			this.comsrchontainer.contentChanged();
