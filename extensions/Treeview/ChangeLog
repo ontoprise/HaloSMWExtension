@@ -1,11 +1,16 @@
 Treeview extension ChangeLog
 ============================
 
+VERSION 1.4_3
+
+  BUGFIXES:
+    * Fix bug 11964: if an element had several parents it was appended several
+      times below each parent.
 
 VERSION 1.4_2
 
   BUGFIXES:
-    * Make extension conpatible to work with SMW 1.5.1
+    * Make extension compatible to work with SMW 1.5.1
     * Does not depend on OntoSkin3 anymore
 
 VERSION 1.4_1
