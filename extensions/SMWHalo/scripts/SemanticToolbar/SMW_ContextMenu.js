@@ -18,8 +18,10 @@ initialize: function() {
                         // because of Ontoskin3 set zIndex at least to 30
                         if (zindex < 30) zindex = 30;
 			var menu = '<div id="contextmenu" style="z-index: '+ zindex +'"></div>';
-//			new Insertion.Top($('innercontent'), menu );
-			new Insertion.After($('smwh_AAM'), menu );
+			if ($('smwh_AAM'))
+			    new Insertion.After($('smwh_AAM'), menu );
+			else // in edit mode smwh_AAM doesn't exist.
+			    new Insertion.After($('ontomenuanchor'), menu );
 		}
 		
 },
