@@ -115,5 +115,5 @@ $messages['de'] = array(
 	'ce_com_cannot_create'			=> 'Kann Kommentar nicht erstellen.',
 	'ce_com_edit_sum'				=> 'Dieser Artikel wurde von der Collaboration Extension erstellt.',
 	'ce_comment_exists'				=> 'Kommentar Artikel "$1" bereits vorhanden.',
-	'ce_com_created'				=> 'Kommentar Artikel "$1" erfolgreich erstellt.',
+	'ce_com_created'				=> 'Kommentar Artikel erfolgreich erstellt.',
 );
