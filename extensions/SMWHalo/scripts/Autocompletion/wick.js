@@ -1224,7 +1224,7 @@ AutoCompleter.prototype = {
         if (inputs) {
             while (inputs[x]) {
                 if (((i = inputs[x].id) && (i.indexOf("searchInput") != -1)) ||
-                        (c = inputs[x].className) && (c.indexOf("wickenabled"))) {
+                        (c = inputs[x].className) && (c.indexOf("wickenabled") != -1)) {
                     this.allInputs[z] = new Array();
                     this.allInputs[z][0] = inputs[x];
                     this.allInputs[z][0].setAttribute("autocomplete", "OFF");
