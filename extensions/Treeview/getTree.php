@@ -86,7 +86,7 @@ function smwfNavTree() {
 	if (is_object($wgParser)) $psr =& $wgParser; else $psr = new Parser;
 	$opt = ParserOptions::newFromUser($wgUser);
 	$nav_title = Title::newFromText('NavTree', NS_MEDIAWIKI);
-	if (!$nav_title->exists()) return true;
+	if (!$nav_title->exists()) return "";
 	$nav = new Article($nav_title);
 	$out = $psr->parse($nav->fetchContent(0,false,false),$wgTitle,$opt,true,true);
 	$html = $out->getText();
