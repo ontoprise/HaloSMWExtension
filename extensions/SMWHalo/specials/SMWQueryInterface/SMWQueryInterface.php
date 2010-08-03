@@ -160,9 +160,15 @@ class SMWQueryInterface extends SpecialPage {
             $selected = ($v == "table") ? 'selected="selected"' : '';
 			$resultoptionshtml .= '<option value="'.$v.'"'.$selected.'>'.$k.'</option>';
         }
-
-		return '<div id="querylayout">
-					<div id="layouttitle"><span onclick="qihelper.switchlayout()" onmouseover="Tip(\'' . wfMsg('smw_qi_tt_qlm') . '\')"><a id="layouttitle-link" class="plusminus" href="javascript:void(0)"></a>' . wfMsg('smw_qi_layout_manager') . '</span></div>
+        $fullPreviewLink = '';
+        global $smwgQIResultPreview;
+        if (isset($smwgQIResultPreview) && $smwgQIResultPreview === false)
+            $fullPreviewLink = '&nbsp;|&nbsp; <a href="javascript:void(0);" onclick="qihelper.previewQuery()" onmouseover="Tip(\'' . wfMsg('smw_qi_tt_fullpreview') . '\')">' . wfMsg('smw_qi_fullpreview') . '</a>';
+        return '<div id="querylayout">
+					<div id="layouttitle">
+                        <span onclick="qihelper.switchlayout()" onmouseover="Tip(\'' . wfMsg('smw_qi_tt_qlm') . '\')"><a id="layouttitle-link" class="plusminus" href="javascript:void(0)"></a>' . wfMsg('smw_qi_layout_manager') . '</span>
+                        '.$fullPreviewLink.'
+					</div>
 					<div id="layoutcontent" style="display:none">
                         <table summary="Layout Manager for query">
                             <tr>
@@ -183,11 +189,15 @@ class SMWQueryInterface extends SpecialPage {
 	}
 
 	private function addPreviewResults() {
+	    global $smwgQIResultPreview;
+	    if (isset($smwgQIResultPreview) && $smwgQIResultPreview === false)
+            return '<div id="previewcontent" style="display:none"></div>';
 		return '<div id="previewlayout">
-					<div id="previewtitle"><span onclick="qihelper.switchpreview()" onmouseover="Tip(\'' . wfMsg('smw_qi_tt_prp') . '\')"><a id="previewtitle-link" class="minusplus" href="javascript:void(0)"></a>' . wfMsg('smw_qi_preview_result') . '</span>
+    	       		<div id="previewtitle"><span onclick="qihelper.switchpreview()" onmouseover="Tip(\'' . wfMsg('smw_qi_tt_prp') . '\')"><a id="previewtitle-link" class="minusplus" href="javascript:void(0)"></a>' . wfMsg('smw_qi_preview_result') . '</span>
                     &nbsp;|&nbsp; <a href="javascript:void(0);" onclick="qihelper.previewQuery()" onmouseover="Tip(\'' . wfMsg('smw_qi_tt_fullpreview') . '\')">' . wfMsg('smw_qi_fullpreview') . '</a></div>
-					<div id="previewcontent"></div>
+    				<div id="previewcontent"></div>
                 </div>';
+		
 	}
 
 	private function addAdditionalStuff() {
