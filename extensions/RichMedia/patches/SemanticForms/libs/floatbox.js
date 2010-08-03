@@ -58,7 +58,7 @@ showNavOverlay:    'never'   ,// 'always'|'once'|'never'
 showHints:         'once'    ,// 'always'|'once'|'never'
 enableWrap:         true     ,// true|false
 enableKeyboardNav:  true     ,// true|false
-outsideClickCloses: true     ,// true|false
+outsideClickCloses: false     ,// true|false
 numIndexLinks:      0        ,// number, -1 = no limit
 indexLinksPanel:   'control' ,// 'info'|'control'
 showIndexThumbs:    true     ,// true|false
