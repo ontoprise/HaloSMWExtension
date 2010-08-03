@@ -13,5 +13,6 @@ VERSION 1.20
 
 
   BUGFIXES:
+    12278 - IE < version 8 throws errors due to supernumerous comma
 
 
