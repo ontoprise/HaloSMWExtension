@@ -215,7 +215,10 @@ function haclfSetupExtension() {
  */
 function addNonSpecialPageHeader(&$out) {
 	global $wgRequest;
-	if ($wgRequest->getText('action', 'view') == 'view') {
+	// scripts are needed at Special:FormEdit
+	if ( ($wgRequest->getText('action', 'view') == 'view') 
+		&& stripos($wgRequest->getRequestURL(), $spns_text.":FormEdit") == false
+        && stripos($wgRequest->getRequestURL(), $spns_text."%3AFormEdit") == false ) {
 		return true;
 	}
     global $haclgHaloScriptPath, $smwgDeployVersion;

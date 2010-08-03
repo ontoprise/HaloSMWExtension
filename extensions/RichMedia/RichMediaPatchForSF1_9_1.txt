@@ -100,8 +100,8 @@ Index: extensions/SemanticForms/specials/SF_FormEdit.php
  			$sfgFormPrinter->formHTML($form_definition, $form_submitted, $page_is_source, $form_article->getID(), $page_contents, $target_name, $page_name_formula);
 Index: extensions/SemanticForms/specials/SF_UploadWindow.php
 ===================================================================
---- extensions/SemanticForms/specials/SF_UploadWindow.php	2010-06-08 19:44:04.000000000 +0200
-+++ extensions/SemanticForms/specials/SF_UploadWindow.php	2010-07-09 13:28:56.000000000 +0200
+--- extensions/SemanticForms/specials/SF_UploadWindow.php	(revision 7833)
++++ extensions/SemanticForms/specials/SF_UploadWindow.php	(working copy)
 @@ -23,7 +23,7 @@
  	 * Constructor
  	 */
@@ -110,7 +110,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow.php
 +		UnlistedSpecialPage::UnlistedSpecialPage( 'UploadWindow' );
  		wfLoadExtensionMessages( 'SemanticForms' );
  	}
-
+ 
 @@ -40,7 +40,8 @@
  	global $wgRequest, $wgOut, $wgUser, $wgServer;
  	global $wgScript, $wgJsMimeType, $wgStylePath, $wgStyleVersion;
@@ -118,7 +118,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow.php
 -	global $wgUseAjax, $wgAjaxUploadDestCheck, $wgAjaxLicensePreview;
 +	global $wgUseAjax, $wgAjaxUploadDestCheck, $wgAjaxLicensePreview, $wgScriptPath, $sfgYUIBase;
 +	global $smwgHaloScriptPath, $sfgScriptPath, $smwgRMScriptPath;
-
+ 
  	// disable $wgOut - we'll print out the page manually, taking the
  	// body created by the form, plus the necessary Javascript files,
 @@ -70,6 +71,43 @@
@@ -163,7 +163,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow.php
 +headID.appendChild(cssNode);
 +
  </script>
-
+ 
  END;
 @@ -77,6 +115,26 @@
  	$wikibits_include = "<script type=\"{$wgJsMimeType}\" src=\"{$wgStylePath}/common/wikibits.js?$wgStyleVersion\"></script>";
@@ -192,8 +192,67 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow.php
  	$text = <<<END
  <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
  <html xmlns="{$wgXhtmlDefaultNamespace}"
-@@ -91,15 +149,24 @@
-
+@@ -87,19 +145,85 @@
+ 	$dir = $wgContLang->isRTL() ? "rtl" : "ltr";
+ 	$text .= "xml:lang=\"{$wgLanguageCode}\" lang=\"{$wgLanguageCode}\" dir=\"{$dir}\">";
+ 
++	// scripts are needed if the HaloACL extension is installed. Otherwise there will be JavaScript issues
++	if ( defined('HACL_HALOACL_VERSION') ) {
++		global $haclgHaloScriptPath;
++		$haloacl_include = '<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/yahoo-min.js"></script>'."\n".
++		'<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/event-min.js"></script>'."\n".
++		"<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/toolbar.js\"></script>"."\n".
++		'<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/yuiloader-min.js"></script>'."\n".
++		'<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/event-min.js"></script>'."\n".
++		'<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/dom-min.js"></script>'."\n".
++		'<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/treeview-min.js"></script>'."\n".
++		'<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/element-min.js"></script>'."\n".
++		'<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/button-min.js"></script>'."\n".
++		'<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/connection-min.js"></script>'."\n".
++		'<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/json-min.js"></script>'."\n".
++		'<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/yahoo-dom-event.js"></script>'."\n".
++		'<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/animation-min.js"></script>'."\n".
++		'<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/tabview-min.js"></script>'."\n".
++		'<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/datasource-min.js"></script>'."\n".
++		'<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/datatable-min.js"></script>'."\n".
++		'<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/paginator-min.js"></script>'."\n".
++		'<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/container-min.js"></script>'."\n".
++		'<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/dragdrop-min.js"></script>'."\n".
++		"<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/haloacl.js\"></script>"."\n".
++		"<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/groupuserTree.js\"></script>"."\n".
++		"<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/userTable.js\"></script>"."\n".
++		"<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/notification.js\"></script>"."\n";
++		$haloacl_css = <<<END
++<script type="{$wgJsMimeType}">
++var headID = document.getElementsByTagName("head")[0];
++var cssNode = document.createElement('link');
++cssNode.type = 'text/css';
++cssNode.rel = 'stylesheet';
++cssNode.href = "{$haclgHaloScriptPath}" + '/skins/haloacl.css';
++cssNode.media = 'screen, projection';
++headID.appendChild(cssNode);
++
++var cssNode = document.createElement('link');
++cssNode.type = 'text/css';
++cssNode.rel = 'stylesheet';
++cssNode.href = "{$haclgHaloScriptPath}" + '/skins/haloacl_toolbar.css';
++cssNode.media = 'screen, projection';
++headID.appendChild(cssNode);
++
++var cssNode = document.createElement('link');
++cssNode.type = 'text/css';
++cssNode.rel = 'stylesheet';
++cssNode.href = "{$haclgHaloScriptPath}" + '/yui/container.css';
++cssNode.media = 'screen, projection';
++headID.appendChild(cssNode);
++
++</script>
++END;
++	} else {
++		$haloacl_include = '';
++	}
+ 	$text .= <<<END
+ 
  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
  <head>
 +$user_js
@@ -207,6 +266,8 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow.php
 +$wick_include
 +$ajaxhalo_include
 +$smwhgLogger_include
++$haloacl_include
++$haloacl_css
  {$wgOut->getScript()}
  </head>
  <body>
@@ -217,19 +278,19 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow.php
 +</div>
  </body>
  </html>
-
-@@ -131,6 +198,10 @@
+ 
+@@ -131,6 +255,10 @@
  	var $mInputID;
  	var $mDelimiter;
-
+ 
 +	# used by Rich Media
 +	var $mRMFileStatus;
 +	var $mRMDnD;
 +
  	const SESSION_VERSION = 1;
  	/**#@-*/
-
-@@ -146,6 +217,11 @@
+ 
+@@ -146,6 +274,11 @@
  		$this->mComment           = $request->getText( 'wpUploadDescription' );
  		$this->mInputID           = $request->getText( 'sfInputID' );
  		$this->mDelimiter         = $request->getText( 'sfDelimiter' );
@@ -238,10 +299,10 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow.php
 +		//RM change: filestatus
 +		$this->mRMFileStatus	  = $request->getVal( 'filestatus' );
 +		$this->mRMDnD			  = $request->getCheck( 'dragndrop' );
-
+ 
  		if ( !$request->wasPosted() ) {
  			# GET requests just give the main form; no data except destination
-@@ -347,6 +423,9 @@
+@@ -347,6 +480,9 @@
  			$this->mainUploadWindowForm();
  		} else if ( 'submit' == $this->mAction || $this->mUploadClicked ) {
  			$this->processUpload();
@@ -251,7 +312,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow.php
  		} else {
  			$this->mainUploadWindowForm();
  		}
-@@ -421,7 +500,15 @@
+@@ -421,7 +557,15 @@
  		 * out of it. We'll strip some silently that Title would die on.
  		 */
  		$filtered = wfStripIllegalFilenameChars ( $filtered );
@@ -268,17 +329,17 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow.php
  		if ( is_null( $nt ) ) {
  			$this->uploadError( wfMsgWikiHtml( 'illegalfilename', htmlspecialchars( $filtered ) ) );
  			return;
-@@ -543,6 +630,9 @@
+@@ -543,6 +687,9 @@
  				$wgUser->addWatch( $this->mLocalFile->getTitle() );
-
+ 				
  			}
 +			//Let Hooks (especially the UploadConverter!) do their jobs
 +			wfRunHooks( 'UploadComplete', array( &$this ) );
 +
  			// Success, redirect to description page
  			// $wgOut->redirect( $this->mLocalFile->getTitle()->getFullURL() );
-
-@@ -550,41 +640,101 @@
+ 
+@@ -550,41 +697,101 @@
  			// fill in or append to the field in original form, and
  			// close the window
  			$basename = str_replace( '_', ' ', $basename );
@@ -286,7 +347,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow.php
 -			if ( $this->mDelimiter == null ) {
 -				$output .= <<<END
 -		parent.document.getElementById("{$this->mInputID}").value = "$basename";
-
+ 
 -END;
 -			} else {
 -				$output .= <<<END
@@ -357,13 +418,13 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow.php
 -		}
 +			$form_add_test = $form_add->execute($myQuery);
 +			// end Rich Media Changes
-
+ 
 +			$output = '<script type="text/javascript">' . "\n";
 +			if ( $this->mInputID ) {
 +				if ($this->mDelimiter == null) {
 +					$output .=<<<END
 +					parent.document.getElementById("{$this->mInputID}").value = "$basename";
- END;
++END;
 +				} else {
 +					$output .=<<<END
 +						// if the current value is blank, set it to this file name;
@@ -382,7 +443,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow.php
 +								parent.document.getElementById("{$this->mInputID}").value += "{$this->mDelimiter} $basename{$this->mDelimiter} ";
 +						}
 +					}
-+END;
+ END;
 +				}
  			}
 +			$uploadWindowPage = SpecialPage::getPage('UploadWindow');
@@ -396,15 +457,15 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow.php
 +		//load the upload success message
 +		parent.fb.loadAnchor('{$uploadWindowUrlSuccess}', 'sameBox:true', '' );
  	</script>
-
+ 
  END;
  			$wgOut->addHTML( $output );
 -			$img = null; // @todo: added to avoid passing a ref to null - should this be defined somewhere?
 -			wfRunHooks( 'UploadComplete', array( &$img ) );
  		}
  	}
-
-@@ -805,9 +955,56 @@
+ 
+@@ -805,9 +1012,56 @@
  	 * @access private
  	 */
  	function uploadError( $error ) {
@@ -461,12 +522,12 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow.php
 +		$form_add_test = $form_add->execute( $rMUploadFormName );
 +		$wgOut->addHTML('</div>');
  	}
-
+ 
  	/**
-@@ -828,6 +1025,12 @@
+@@ -828,6 +1082,12 @@
  			return;
  		}
-
+ 
 +		global $smwgRMScriptPath;
 +		$wgOut->addScript('<script type="text/javascript" src="' . $smwgRMScriptPath . '/scripts/richmedia.js"></script>' . "\n");
 +		$wgOut->addHTML( '<div id="rmUploadHeadline">' );
@@ -475,8 +536,8 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow.php
 +
  		$wgOut->addHTML( "<h2>" . wfMsgHtml( 'uploadwarning' ) . "</h2>\n" );
  		$wgOut->addHTML( "<ul class='warning'>{$warning}</ul><br />\n" );
-
-@@ -835,7 +1038,7 @@
+ 
+@@ -835,7 +1095,7 @@
  		$reupload = wfMsgHtml( 'reupload' );
  		$iw = wfMsgWikiHtml( 'ignorewarning' );
  		$reup = wfMsgWikiHtml( 'reuploaddesc' );
@@ -485,7 +546,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow.php
  		$action = $titleObj->escapeLocalURL( 'action=submit' );
  		$align1 = $wgContLang->isRTL() ? 'left' : 'right';
  		$align2 = $wgContLang->isRTL() ? 'right' : 'left';
-@@ -859,24 +1062,38 @@
+@@ -859,24 +1119,38 @@
  		<input type='hidden' name='wpDestFile' value=\"" . htmlspecialchars( $this->mDesiredDestName ) . "\" />
  		<input type='hidden' name='wpWatchthis' value=\"" . htmlspecialchars( intval( $this->mWatchthis ) ) . "\" />
  		<input type='hidden' name='sfInputID' value=\"" . htmlspecialchars( $this->mInputID ) . "\" />
@@ -526,12 +587,12 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow.php
 +		$form_add_test = $form_add->execute( $rMUploadFormName );
 +		$wgOut->addHTML('</div>');
  	}
-
+ 
  	/**
-@@ -898,6 +1115,10 @@
+@@ -898,6 +1172,10 @@
  		$adc = wfBoolToStr( $useAjaxDestCheck );
  		$alp = wfBoolToStr( $useAjaxLicensePreview );
-
+ 		
 +		//Rich Media: add script
 +		global $smwgRMScriptPath;
 +		$wgOut->addScript('<script type="text/javascript" src="' . $smwgRMScriptPath . '/scripts/richmedia.js"></script>' . "\n");
@@ -539,10 +600,10 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow.php
  		$wgOut->addScript( "<script type=\"text/javascript\">
  wgAjaxUploadDestCheck = {$adc};
  wgAjaxLicensePreview = {$alp};
-@@ -932,16 +1153,104 @@
+@@ -932,16 +1210,104 @@
  		if ( $ew ) $ew = " style=\"width:100%\"";
  		else $ew = '';
-
+ 
 -		if ( '' != $msg ) {
 -			$sub = wfMsgHtml( 'uploaderror' );
 -			$wgOut->addHTML( "<h2>{$sub}</h2>\n" .
@@ -590,7 +651,12 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow.php
 +				break;
 +			default:
 +				$val2 = $val;
-+		}
+ 		}
+-		// the 'uploadtext' message is not displayed in this window,
+-		// because most of it is irrelevant to a form-based upload
+-		// $wgOut->addHTML( '<div id="uploadtext">' );
+-		// $wgOut->addWikiText( wfMsgNoTrans( 'uploadtext', $this->mDesiredDestName ) );
+-		// $wgOut->addHTML( '</div>' );
 +		$val2 = $wgAllowCopyUploads ? min( $wgMaxUploadSize, $val2 ) : $val2;
 +		#end max file size
 +
@@ -644,25 +710,20 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow.php
 +		} else {
 +			$warningRow = '';
 +			$destOnkeyup = '';
- 		}
--		// the 'uploadtext' message is not displayed in this window,
--		// because most of it is irrelevant to a form-based upload
--		// $wgOut->addHTML( '<div id="uploadtext">' );
--		// $wgOut->addWikiText( wfMsgNoTrans( 'uploadtext', $this->mDesiredDestName ) );
--		// $wgOut->addHTML( '</div>' );
-
++		}
+ 
  		$sourcefilename = wfMsgHtml( 'sourcefilename' );
  		$destfilename = wfMsgHtml( 'destfilename' );
-@@ -974,7 +1283,7 @@
+@@ -974,7 +1340,7 @@
  				( $wgUser->getOption( 'watchcreations' ) && $this->mDesiredDestName == '' ) )
  			? 'checked="checked"'
  			: '';
 -		$warningChecked = $this->mIgnoreWarning ? 'checked' : '';
 +		$warningChecked = $this->mIgnoreWarning ? 'checked="checked"' : '';
-
+ 
  		// Prepare form for upload or upload/copy
  		if ( $wgAllowCopyUploads && $wgUser->isAllowed( 'upload_by_url' ) ) {
-@@ -996,41 +1305,84 @@
+@@ -996,41 +1362,84 @@
  				( $this->mDesiredDestName ? "":"onchange='fillDestFilename(\"wpUploadFileURL\")' " ) . "size='40' DISABLED />" .
  				wfMsgHtml( 'upload_source_url' ) ;
  		} else {
@@ -698,11 +759,11 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow.php
 +			  "<span class='error'>{$msg}</span></div>" );
 +			$fontColor = "red";
  		}
-
+ 
  		$encComment = htmlspecialchars( $this->mComment );
  		$align1 = $wgContLang->isRTL() ? 'left' : 'right';
  		$align2 = $wgContLang->isRTL() ? 'right' : 'left';
-
+ 
 +		$destFileTooltipTitle = wfMsg('smw_rm_dest_file_help_tooltip');
 +
 +		$uploadLegend ="<fieldset><legend class=\"rmUploadCollapse\" onClick=\"smwCollapsingForm.switchVisibilityWithImg('upload');\">
@@ -731,7 +792,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow.php
 -			<td align='$align1'><label for='wpDestFile'>{$destfilename}</label></td>
 +			<td align='$align1'><label for='wpDestFile' class='rmUploadDesc'>{$destfilename}</label></td>
  			<td align='$align2'>
--				<input tabindex='2' type='text' name='wpDestFile' id='wpDestFile' size='40'
+-				<input tabindex='2' type='text' name='wpDestFile' id='wpDestFile' size='40' 
 -					value="$encDestName" $destOnkeyup />
 +EOT
 +		);
@@ -759,7 +820,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow.php
  		<tr>
  			<td align='$align1'><label for='wpUploadDescription'>{$summary}</label></td>
  			<td align='$align2'>
-@@ -1038,7 +1390,7 @@
+@@ -1038,7 +1447,7 @@
  					cols='{$cols}'{$ew}>$encComment</textarea>
  		{$this->uploadFormTextAfterSummary}
  			</td>
@@ -768,7 +829,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow.php
  		<tr>
  EOT
  		);
-@@ -1046,7 +1398,7 @@
+@@ -1046,7 +1455,7 @@
  		if ( $licenseshtml != '' ) {
  			global $wgStylePath;
  			$wgOut->addHTML( "
@@ -777,7 +838,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow.php
  			<td align='$align2'>
  				<select name='wpLicense' id='wpLicense' tabindex='4'
  					onchange='licenseSelectorCheck()'>
-@@ -1056,13 +1408,13 @@
+@@ -1056,13 +1465,13 @@
  			</td>
  			</tr>
  			<tr>" );
@@ -791,17 +852,17 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow.php
 -			}
 +			}*/
  		}
-
+ 
  		if ( $wgUseCopyrightUpload ) {
-@@ -1081,21 +1433,22 @@
- 					<td><input tabindex='6' type='text' name='wpUploadSource' id='wpUploadCopyStatus'
+@@ -1081,21 +1490,22 @@
+ 					<td><input tabindex='6' type='text' name='wpUploadSource' id='wpUploadCopyStatus' 
  					  value=\"$uploadsource\" size='40' /></td>
  			</tr>
 -			<tr>
 +			<!--<tr>-->
  		" );
  		}
-
+ 
  		$wgOut->addHTML( "
  		<td></td>
  		<td>
@@ -821,7 +882,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow.php
  		<td></td>
  		<td align='$align2'><input tabindex='9' type='submit' name='wpUpload' value=\"{$ulb}\"" . $wgUser->getSkin()->tooltipAndAccesskey( 'upload' ) . " /></td>
  	</tr>
-@@ -1111,8 +1464,59 @@
+@@ -1111,8 +1521,59 @@
  	</table>
  	<input type='hidden' name='wpDestFileWarningAck' id='wpDestFileWarningAck' value=''/>
  	<input type='hidden' name='sfInputID' value=\"" . htmlspecialchars( $this->mInputID ) . "\" />
@@ -880,9 +941,9 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow.php
 +		$wgOut->addHTML("<table id=\"rmUploadButtonTable\"></td></tr><tr><td align=\"center\"><input type=\"button\" value=\"$saveButtonText\" class=\"rmUploadButton\" onclick=\"richMediaPage.doUpload()\"/ ></td></tr></table>");
 +		//$wgOut->addHTML('<script type="text/javascript">' . "\n" ."autoCompleter.registerSmartInputListeners();".'</script>');
  	}
-
+ 
  	/* -------------------------------------------------------------- */
-@@ -1576,4 +1980,60 @@
+@@ -1576,4 +2037,60 @@
  		}
  		return $pageText;
  	}
