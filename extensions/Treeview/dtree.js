@@ -1,5 +1,5 @@
 /*--------------------------------------------------|
-| dTree 2.05 | www.destroydrop.com/javascript/tree/ |
+| dTree 2.05 | www.destroydrop.com/javascripts/tree/|
 |---------------------------------------------------|
 | Copyright (c) 2002-2003 Geir Landr�               |
 |                                                   |
