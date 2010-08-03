@@ -36,10 +36,12 @@ $wgExtensionCredits['parserhook'][] = array(
   'author' => 'BarkerJr, Sorin Sbarnea'
 );
 
-$wgExtensionFunctions[] = 'glossarySetup';
-function glossarySetup() {
-  global $wgOut, $wgScriptPath;
-  $wgOut->addHTML("<script type='text/javascript' src='$wgScriptPath/extensions/SemanticMediaWiki/skins/SMW_tooltip.js'></script>");
+$wgHooks['BeforePageDisplay'][]='smfAddHTMLHeader';
+
+function smwh_addSMWTooltips(& $out) {
+        global $wgScriptPath;
+        $out->addScript("<script type='text/javascript' src='$wgScriptPath/extensions/SemanticMediaWiki/skins/SMW_tooltip.js'></script>");
+	return true;
 }
 
 $wgHooks['ParserBeforeTidy'][] = 'glossaryParser';
