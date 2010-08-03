@@ -191,9 +191,9 @@ CECommentForm.prototype = {
 				$('collabComFormMessage').setAttribute('class', 'success');
 				$('collabComFormMessage').innerHTML = htmlmsg + ' Page is reloading...';
 				//add pending span
-				var pendingSpan = new Element('span', {
-					'id' : 'collabComFormPending',
-				} );
+				var pendingSpan = new Element('span', 
+						{ 'id' : 'collabComFormPending' }
+				);
 				$('collabComFormMessage').appendChild(pendingSpan);
 				if (this.pendingIndicatorMsg == null) {
 					this.pendingIndicatorMsg = new CPendingIndicator($('collabComFormPending'));
@@ -285,7 +285,7 @@ CECommentForm.prototype = {
 				break;
 		}
 		this.ratingValue = ratingValue;
-	},
+	}
 }
 
 
@@ -447,7 +447,7 @@ Event.observe(window, 'load', function() {
 				var divEl = new Element('div', {
 					'style' : 'display:inline',
 					'title' : 'Delete this comment',
-					'class' : 'plainlinks',
+					'class' : 'plainlinks'
 				} );
 
 				aEl.appendChild(imgEl);
