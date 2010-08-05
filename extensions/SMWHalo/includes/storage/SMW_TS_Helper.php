@@ -162,6 +162,24 @@ class TSHelper {
 
 		return array($uri, $title);
 	}
+	
+    /**
+     * Returns a local URI for the wiki graph of a given Title object.
+     *
+     * @param Title $title
+     * @return string $uri
+     */
+	public static function getUriFromTitle($title) {
+        global $smwgTripleStoreGraph;
+        $res= $smwgTripleStoreGraph;
+        if (strpos($res, -1) != '/')
+            $res .= '/';
+        $res .= TSNamespaces::getNSPrefix($title->getNamespace())
+             .'#'
+             .str_replace(' ', '_', $title->getText());
+        return $res;        
+    }
+	
 }
 
 
