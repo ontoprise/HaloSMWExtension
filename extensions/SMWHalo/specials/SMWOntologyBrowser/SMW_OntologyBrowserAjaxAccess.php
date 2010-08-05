@@ -370,10 +370,13 @@ class OB_StorageTS extends OB_Storage {
 		$client = TSConnection::getConnector();
 		$client->connect();
 		try {
-			global $smwgTripleStoreGraph;
+            global $smwgTripleStoreGraph;
+            $title = str_replace($wgServer.$wgScript, '', $p_array[0]);
+            if ($title[0] == '/') $title = substr($title, 1);
+            $title = Title::newFromURL($title);
 
-			$instanceURI = $p_array[0];
-
+            $instanceURI = TSHelper::getUriFromTitle($title);
+			
 			// actually limit and offset is not used
 			$limit =  isset($p_array[1]) && is_numeric($p_array[1]) ? $p_array[1] : 500;
 			$partition = isset($p_array[2]) && is_numeric($p_array[2]) ? $p_array[2] : 0;
