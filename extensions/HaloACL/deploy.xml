@@ -4,6 +4,7 @@
 		<version>120</version>
 		<id>haloacl</id>
 		<vendor>Ontoprise GmbH</vendor>
+		<maintainer>Ontoprise GmbH</maintainer>
 		<instdir>extensions/HaloACL</instdir>
 		<description>
 			Protects pages, categories, namespaces and semantic properties.

@@ -4,6 +4,7 @@
 		<version>101</version>
 		<id>semanticrules</id>
 		<vendor>Ontoprise GmbH</vendor>
+		<maintainer>Ontoprise GmbH</maintainer>
 		<instdir>extensions/SemanticRules</instdir>
 		<description>
 			Rule provide more expressiveness and more powerful

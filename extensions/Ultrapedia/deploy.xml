@@ -4,6 +4,7 @@
         <version>111</version>
         <id>ultrapedia</id>
         <vendor>Ontoprise GmbH</vendor>
+        <maintainer>Ontoprise GmbH</maintainer>
         <instdir>extensions/Ultrapedia</instdir>
         <description>
             Provides a tab function and a dynamic ask query

@@ -4,6 +4,7 @@
 		<version>101</version>
 		<id>ApplicationProgramming</id>
 		<vendor>Ontoprise GmbH</vendor>
+		<maintainer>Ontoprise GmbH</maintainer>
 		<instdir>extensions/ApplicationProgramming</instdir>
 		<description>
 			Provides utility functionality for wikitext-programming

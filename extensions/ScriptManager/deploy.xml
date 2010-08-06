@@ -5,6 +5,7 @@
         <patchlevel>0</patchlevel>
         <id>scriptmanager</id>
         <vendor>Ontoprise GmbH</vendor>
+        <maintainer>Ontoprise GmbH</maintainer>
         <instdir>extensions/ScriptManager</instdir>
         <description>
            Javascript managing component. Basis for all Halo plugins.

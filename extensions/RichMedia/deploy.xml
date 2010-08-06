@@ -4,6 +4,7 @@
 		<version>141</version>
 		<id>RichMedia</id>
 		<vendor>Ontoprise GmbH</vendor>
+		<maintainer>Ontoprise GmbH</maintainer>
 		<instdir>extensions/RichMedia</instdir>
 		<description>
 			Store richmedia files in our your wiki

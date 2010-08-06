@@ -5,6 +5,7 @@
         <patchlevel>3</patchlevel>
 		<id>treeview</id>
 		<vendor>Ontoprise GmbH</vendor>
+		<maintainer>Ontoprise GmbH</maintainer>
 		<instdir>extensions/Treeview</instdir>
 		<description>
 			Treeview which gets populated by semantic data.

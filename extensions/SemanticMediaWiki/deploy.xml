@@ -5,6 +5,7 @@
         <patchlevel>1</patchlevel>
         <id>smw</id>
         <vendor>Ontoprise GmbH</vendor>
+        <maintainer>Ontoprise GmbH</maintainer>
         <instdir>extensions/SemanticMediaWiki</instdir>
         <description>Enhances the wiki with semantic annotations</description>
         <dependencies>

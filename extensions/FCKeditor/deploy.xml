@@ -5,6 +5,7 @@
         <patchlevel>1</patchlevel>
 		<id>wysiwyg</id>
 		<vendor>Ontoprise GmbH</vendor>
+		<maintainer>Ontoprise GmbH</maintainer>
 		<instdir>extensions/FCKeditor</instdir>
 		<description>
 			Use the popular FCKeditor for editing Wiki pages in WYSIWYYG mode.

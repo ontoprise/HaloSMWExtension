@@ -4,6 +4,7 @@
 		<version>110</version>
 		<id>semanticnotifications</id>
 		<vendor>Ontoprise GmbH</vendor>
+		<maintainer>Ontoprise GmbH</maintainer>
 		<instdir>extensions/SemanticNotifications</instdir>
 		<description>
 			Sends notifications when values of semantic properties change.

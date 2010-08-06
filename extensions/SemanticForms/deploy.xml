@@ -4,6 +4,7 @@
         <version>191</version>
         <id>semanticforms</id>
         <vendor>Ontoprise GmbH / Yaron Koren</vendor>
+        <maintainer>Ontoprise GmbH</maintainer>
         <instdir>extensions/SemanticForms</instdir>
         <description>
             Forms for adding and editing semantic data

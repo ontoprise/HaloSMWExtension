@@ -5,6 +5,7 @@
 		<patchlevel>0</patchlevel>
 		<id>smwhalo</id>
 		<vendor>Ontoprise GmbH</vendor>
+		<maintainer>Ontoprise GmbH</maintainer>
 		<instdir>extensions/SMWHalo</instdir>
 		<description>
 			Eases the usage and enhances the benefits of Semantic

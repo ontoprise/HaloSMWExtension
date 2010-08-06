@@ -4,6 +4,7 @@
         <version>135</version>
         <id>unifiedsearch</id>
         <vendor>Ontoprise GmbH</vendor>
+        <maintainer>Ontoprise GmbH</maintainer>
         <instdir>extensions/UnifiedSearch</instdir>
         <description>A client for the lucene wiki server</description>
         <dependencies>
