@@ -735,7 +735,7 @@ dTree.prototype.initOnload = function(id, arg) {
         if (args[i].indexOf('=') == -1) continue;
 		var key = args[i].substring(0, args[i].indexOf('='));
 		var value = args[i].substring(key.length + 1);
-        var p;
+        var p="";
 		if (key == 'condition')
 			p = 'q';
 		else if (key == 'refresh')
@@ -762,7 +762,7 @@ dTree.prototype.initOnload = function(id, arg) {
     // set configuration
     this.aSmw[this.aSmw.length] = new SmwData(
         id,
-        (kv.r ? kv.r : null), // relation
+        (kv.p ? kv.p : null), // relation
         (kv.c ? kv.c : null), // category
         (kv.d ? kv.d : null), // display
         (kv.l ? kv.l : null), // linkto
