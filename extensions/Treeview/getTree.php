@@ -32,13 +32,13 @@ function smw_treeview_getTree($input) {
   }
   
   $initOnload = (isset($req['i'])) ? true : false;
-  $relation = (isset($req['p'])) ? 'property='.$req['p'] : NULL;
-  $category = (isset($req['c'])) ? 'category='.$req['c'] : NULL;
-  $start = (isset($req['s'])) ? 'start='.$req['s'] : NULL;
-  $display = (isset($req['d'])) ? 'display='.$req['d'] : NULL;
-  $linkTo = (isset($req['l'])) ? 'linkto='.$req['l'] : NULL;
+  $relation = (isset($req['p'])) ? 'property='.urldecode($req['p']) : NULL;
+  $category = (isset($req['c'])) ? 'category='.urldecode($req['c']) : NULL;
+  $start = (isset($req['s'])) ? 'start='.urldecode($req['s']) : NULL;
+  $display = (isset($req['d'])) ? 'display='.urldecode($req['d']) : NULL;
+  $linkTo = (isset($req['l'])) ? 'linkto='.urldecode($req['l']) : NULL;
   $condition = (isset($req['q'])) ? 'condition='.$req['q'] : NULL;
-  $orderbyProperty = (isset($req['b'])) ? 'orderbyProperty='.$req['b'] : NULL;
+  $orderbyProperty = (isset($req['b'])) ? 'orderbyProperty='.urldecode($req['b']) : NULL;
   // checkNode only if dynamic expansion is used.
   $checkNode = (!isset($req['z']) && isset($req['n'])) ? 'checkNode=1' : NULL;
 
@@ -51,9 +51,9 @@ function smw_treeview_getTree($input) {
   $maxDepth = ($initOnload) ? (isset($req['m']) ? 'maxDepth='.$req['m'] : NULL ) : 'maxDepth=1';
   // these are not needed for the next level on dynamic expansion
   $urlparams = ($initOnload && isset($req['u'])) ? 'urlparams='.$req['u'] : NULL;
-  $redirectPage = ($initOnload && isset($req['r'])) ? 'redirectPage='.$req['r'] : NULL;
+  $redirectPage = ($initOnload && isset($req['r'])) ? 'redirectPage='.urldecode($req['r']) : NULL;
   $level = ($initOnload && isset($req['l'])) ? 'level='.$req['l'] : NULL;
-  $opento = ($initOnload && isset($req['o'])) ? 'opento='.$req['o'] : NULL;
+  $opento = ($initOnload && isset($req['o'])) ? 'opento='.urldecode($req['o']) : NULL;
   $iolStatic = ($initOnload && isset($req['z'])) ? 'iolStatic=1' : NULL;
 
   $treeGenerator = new TreeGenerator;
