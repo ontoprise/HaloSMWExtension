@@ -10,7 +10,7 @@
             Context sensitive help and feedback for Semantic MediaWiki and SMW based extentions.
         </description>
         <dependencies>
-            <dependency from="146" to="150">SMWHalo</dependency>
+            <dependency from="146">SMWHalo</dependency>
         </dependencies>
     </global>
     <codefiles>
