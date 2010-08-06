@@ -976,7 +976,6 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 
 		// the list contains some html and wiki text, we need to extract the page values
 		$result = strip_tags($result);
-		var_dump($result);
 
 		preg_match_all('/\[\[[^\|]+/', $result, $matches); 
 		$pages = $matches[0];
