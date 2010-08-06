@@ -833,6 +833,7 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
     // tree, the smw_ids will be fetched and stored here
     private $smw_relation_id;
     private $smw_condition_ids;
+    private $categoryName;
         
     private $db;
 
@@ -852,7 +853,7 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 
 		$smw_rels2 = $this->db->tableName('smw_rels2');
 		$smw_inst2 = $this->db->tableName('smw_inst2');
-
+        $this->categoryName = "";
 		$query ="";
 
         // relation must be set -> we fetch here the smw_id of the requested relation
@@ -862,6 +863,7 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 		if ($category) {
 			$this->getCategoryList($category);
 		    if (is_null($this->smw_category_ids)) return ($this->json) ? array() : "";
+		    $this->categoryName = $category;
 		}
 
 		// if start is set, fetch smw_id for start element		
@@ -956,7 +958,12 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 			"format" => "ul",
 			"limit" => $smwgQMaxInlineLimit,
 		);
-		
+		// if a category name is set, limit the search to the given category.
+		// fixme: event though without this limitation the results should be limited
+		// by the category, which they are not at the moment.
+		if ($this->categoryName)
+		    $querystring = '[['.$this->categoryName .']]'.$querystring;
+
 		// if there's a triplestore in use, use the SPARQL QueryProcessor to translate the ask into SPARQL and then
 		// the tripplestore gets used
 		if ($smwgDefaultStore == "SMWTripleStore") {
@@ -969,6 +976,7 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 
 		// the list contains some html and wiki text, we need to extract the page values
 		$result = strip_tags($result);
+		var_dump($result);
 
 		preg_match_all('/\[\[[^\|]+/', $result, $matches); 
 		$pages = $matches[0];
