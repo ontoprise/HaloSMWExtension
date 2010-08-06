@@ -1118,7 +1118,7 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 		$smw_ids = $this->db->tableName('smw_ids');
         $categorylinks = $this->db->tableName('categorylinks');
         $page= $this->db->tableName('page');
-        $query = "SELECT s.smw_id AS smw_id, cl.cl_sortkey AS cat ".
+        $query = "SELECT s.smw_id AS smw_id, p.page_title AS cat ".
                  "FROM $categorylinks cl, $page p, $smw_ids s ".
                  "WHERE cl.cl_to = %s AND p.page_id = cl.cl_from ".
                  "AND p.page_namespace = ".NS_CATEGORY.
