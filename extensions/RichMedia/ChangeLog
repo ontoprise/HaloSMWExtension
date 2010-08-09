@@ -1,6 +1,20 @@
 RichMedia extension ChangeLog
 =============================
 
+VERSION 1.X
+
+  FEATURES:
+	* 
+
+
+  CHANGES:
+	* 
+
+
+  BUGFIXES:
+	Issue 12322 - Key for error when uploading a filetype which is not permitted has changed
+
+
 VERSION 1.4.1
 
   FEATURES:

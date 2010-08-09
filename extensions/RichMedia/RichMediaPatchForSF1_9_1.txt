@@ -100,7 +100,7 @@ Index: extensions/SemanticForms/specials/SF_FormEdit.php
  			$sfgFormPrinter->formHTML($form_definition, $form_submitted, $page_is_source, $form_article->getID(), $page_contents, $target_name, $page_name_formula);
 Index: extensions/SemanticForms/specials/SF_UploadWindow.php
 ===================================================================
---- extensions/SemanticForms/specials/SF_UploadWindow.php	(revision 7833)
+--- extensions/SemanticForms/specials/SF_UploadWindow.php	(revision 7877)
 +++ extensions/SemanticForms/specials/SF_UploadWindow.php	(working copy)
 @@ -23,7 +23,7 @@
  	 * Constructor
@@ -329,6 +329,15 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow.php
  		if ( is_null( $nt ) ) {
  			$this->uploadError( wfMsgWikiHtml( 'illegalfilename', htmlspecialchars( $filtered ) ) );
  			return;
+@@ -452,7 +596,7 @@
+ 			return $this->uploadError( wfMsgExt( 'filetype-missing', array ( 'parseinline' ) ) );
+ 		} elseif ( $this->checkFileExtensionList( $ext, $wgFileBlacklist ) ||
+ 				( $wgStrictFileExtensions && !$this->checkFileExtension( $finalExt, $wgFileExtensions ) ) ) {
+-			return $this->uploadError( wfMsgExt( 'filetype-badtype', array ( 'parseinline' ),
++			return $this->uploadError( wfMsgExt( 'filetype-unwanted-type', array ( 'parseinline' ),
+ 				htmlspecialchars( $finalExt ), implode ( ', ', $wgFileExtensions ) ) );
+ 		}
+ 
 @@ -543,6 +687,9 @@
  				$wgUser->addWatch( $this->mLocalFile->getTitle() );
  				
