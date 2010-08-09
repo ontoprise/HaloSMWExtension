@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <deploydescriptor>
 	<global>
-		<version>131</version>
+		<version>132</version>
 		<patchlevel>0</patchlevel>
 		<id>semanticgardening</id>
 		<vendor>Ontoprise GmbH</vendor>
@@ -9,7 +9,7 @@
 		<instdir>extensions/SemanticGardening</instdir>
 		<description>Helps to keep the wiki clean and consistent. Allows to run asynchronous bots.</description>
 		<dependencies>
-			<dependency from="146" to="150">SMWHalo</dependency>
+			<dependency from="146" to="151">SMWHalo</dependency>
 		</dependencies>
 	</global>
 	<codefiles>
