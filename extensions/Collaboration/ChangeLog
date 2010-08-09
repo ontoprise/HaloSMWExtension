@@ -1,18 +1,30 @@
 Collaboration extension ChangeLog
 =================================
 
+VERSION 1.X
+
+  FEATURES:
+
+
+  CHANGES:
+	
+
+  BUGFIXES:
+	Issue 12226 -  After selecting a rating i cant deselect it
+
+
 VERSION 1.20
 
   FEATURES:
 
 
   CHANGES:
-    * All style definitions are now collected in one CSS file (collaboration-comment.css).
-    This is part of preparations for standardization of GUI elements.
-    * Removed the dependency on SMWHalo.
+	* All style definitions are now collected in one CSS file (collaboration-comment.css).
+	This is part of preparations for standardization of GUI elements.
+	* Removed the dependency on SMWHalo.
 
 
   BUGFIXES:
-    12278 - IE < version 8 throws errors due to supernumerous comma
+	12278 - IE < version 8 throws errors due to supernumerous comma
 
 

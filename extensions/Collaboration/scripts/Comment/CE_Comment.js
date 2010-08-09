@@ -267,6 +267,10 @@ CECommentForm.prototype = {
 		var ratingImg = cegScriptPath + '/skins/Comment/icons/';
 		
 		if ( this.ratingValue == ratingValue ) {
+			//deselect...
+			var oldhtmlid = 'collabComFormRating' + String(this.ratingValue + 2);
+			$(oldhtmlid).src = $(oldhtmlid).src.replace(/_active/g, '_inactive');
+			this.ratingValue = null;
 			return true;
 		}
 
