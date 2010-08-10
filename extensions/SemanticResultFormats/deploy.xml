@@ -2,6 +2,7 @@
 <deploydescriptor>
     <global>
         <version>150</version>
+        <patchlevel>1</patchlevel>
         <id>semanticresultformats</id>
         <vendor>Ontoprise GmbH</vendor>
         <maintainer>Ontoprise GmbH</maintainer>
