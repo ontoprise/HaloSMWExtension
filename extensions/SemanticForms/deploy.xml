@@ -2,6 +2,7 @@
 <deploydescriptor>
     <global>
         <version>191</version>
+        <patchlevel>1</patchlevel>
         <id>semanticforms</id>
         <vendor>Ontoprise GmbH / Yaron Koren</vendor>
         <maintainer>Ontoprise GmbH</maintainer>
