@@ -1,6 +1,11 @@
 Treeview extension ChangeLog
 ============================
 
+VERSION 1.4.1
+
+  BUGFIXES:
+    * Fix bug determining the sub categories of a given category.
+
 VERSION 1.4_3
 
   BUGFIXES:
