@@ -114,12 +114,6 @@
 				<exclude name="**/.svn, **/CVS" />
 			</fileset>
 		</copy>
-		<copy todir="bin/zip_convenience/extensions/Lockdown">
-			<fileset dir="../../Lockdown/">
-				<exclude name="**/.svn, **/CVS" />
-			</fileset>
-		</copy>
-
 		<copy todir="bin/zip_convenience/extensions/DebugTemplate">
 			<fileset dir="../../DebugTemplate/">
 				<exclude name="**/.svn, **/CVS" />
