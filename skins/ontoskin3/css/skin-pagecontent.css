@@ -185,7 +185,7 @@ pre {
 	line-height: 1.1em;
 
         /*TODO: find a better solution for linebreaks*/
-        width: 870px;                          /* specify width  */
+        /* width: 870px; */                    /* specify width so long links won't distort the layout - disabled since it causes problems with tables */
         white-space: pre-wrap;                 /* CSS3 browsers  */
         white-space: -moz-pre-wrap !important; /* 1999+ Mozilla  */
         white-space: -pre-wrap;                /* Opera 4 thru 6 */
