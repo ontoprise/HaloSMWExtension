@@ -3,7 +3,7 @@
 	<target name="unifiedsearch" depends="versionhint">
 		<delete dir="bin/zip" />
 		<delete>
-			<fileset dir="bin" includes="smwhalo-search*.zip" />
+			<fileset dir="bin" includes="enhancedretrieval*.zip" />
 		</delete>
 		<mkdir dir="bin/zip" />
 
