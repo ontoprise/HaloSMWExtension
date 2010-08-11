@@ -60,12 +60,12 @@
 				<include name="deploy.xml" />
 			</fileset>
 		</copy>
-		<zip destfile="bin/unifiedsearch.zip" basedir="bin/zip" />
+		<zip destfile="bin/enhancedretrieval.zip" basedir="bin/zip" />
 		<delete dir="bin/zip" />
 		<exec executable="php">
 			<arg value="../../../buildtools/renameDeployable.php" />
 			<arg value="../deploy.xml" />
-			<arg value="bin/unifiedsearch.zip" />
+			<arg value="bin/enhancedretrieval.zip" />
 		</exec>
 	</target>
 	<target name="versionhint">
