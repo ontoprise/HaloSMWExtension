@@ -1,0 +1,26 @@
+Installation instructions for Semantic Treeview extension v1.4.1
+----------------------------------------------------------------
+
+Install instructions for the latest version of the Semantic Treeview Extension
+are also online:
+
+ http://smwforum.ontoprise.com/smwforum/index.php/Help:Installation_of_TreeView_Extension
+
+
+Requirements:
+=============
+
+	MediaWiki 1.15.x
+	Semantic MediaWiki 1.5.x
+	Halo Extension 1.5.x
+	Basic Triple Store (optional)
+
+
+Installation:
+=============
+
+(1) Add to your LocalSettings.php
+    require_once("extensions/Treeview/Treeview.php");
+
+
+Now the Semantic Treeview Extension is installed and ready to use.
