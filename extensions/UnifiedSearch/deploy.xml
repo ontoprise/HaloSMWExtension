@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <deploydescriptor>
     <global>
-        <version>135</version>
+        <version>136</version>
         <id>unifiedsearch</id>
         <vendor>Ontoprise GmbH</vendor>
         <maintainer>Ontoprise GmbH</maintainer>
