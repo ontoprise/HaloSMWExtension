@@ -19,7 +19,7 @@
 /**
  * @file
  * @ingroup DIWebServices
- * 
+ *
  * This file provides the access to the MediaWiki SQL database tables that are
  * used by the web service extension.
  *
@@ -72,16 +72,16 @@ class WSStorageSQL {
 				'authentication_login'       =>  'VARCHAR(50) NOT NULL' ,
 				'authentication_password'    =>  'VARCHAR(50) NOT NULL' ),
 		$db, $verbose);
-		
+
 		$query = "ALTER TABLE ".$wwsdTable." ENGINE=MyISAM; ";
 		$db->query($query);
-		
+
 		$query = "ALTER TABLE ".$wwsdTable." MODIFY COLUMN protocol VARCHAR(20) NOT NULL; ";
 		$db->query($query);
-		
+
 		$query = "ALTER TABLE ".$wwsdTable." MODIFY COLUMN authentication_login VARCHAR(50) NOT NULL; ";
 		$db->query($query);
-		
+
 		$query = "ALTER TABLE ".$wwsdTable." MODIFY COLUMN authentication_password VARCHAR(60) NOT NULL; ";
 		$db->query($query);
 
@@ -97,13 +97,13 @@ class WSStorageSQL {
 				  'last_update'    	=>  'VARCHAR(14) NOT NULL' ,
 				  'last_access'    	=>  'VARCHAR(14) NOT NULL'), 
 		$db, $verbose, 'web_service_id,param_set_id');
-		
+
 		$query = "ALTER TABLE ".$cacheTable." ENGINE=MyISAM; ";
 		$db->query($query);
-		
+
 		$query = "ALTER TABLE ".$cacheTable." MODIFY result LONGTEXT NOT NULL";
 		$db->query($query);
-		
+
 		DBHelper::reportProgress("   ... done!\n",$verbose);
 
 		// create parameter table
@@ -116,7 +116,7 @@ class WSStorageSQL {
 
 		$query = "ALTER TABLE ".$paramTable." MODIFY value LONGTEXT NOT NULL";
 		$db->query($query);
-		
+
 		$query = "ALTER TABLE ".$paramTable." ENGINE=MyISAM; ";
 		$db->query($query);
 
@@ -130,10 +130,10 @@ class WSStorageSQL {
 				  'param_set_id'  	=>  'INT(8) UNSIGNED NOT NULL' ,
 				  'page_id'      	=>  'INT(8) UNSIGNED NOT NULL'), 
 		$db, $verbose, 'web_service_id,param_set_id,page_id');
-		
+
 		$query = "ALTER TABLE ".$articlesTable." ENGINE=MyISAM; ";
 		$db->query($query);
-		
+
 		DBHelper::reportProgress("   ... done!\n",$verbose);
 
 	}
@@ -149,11 +149,11 @@ class WSStorageSQL {
 			$db->query('DROP TABLE' . ($wgDBtype=='postgres'?'':' IF EXISTS'). $name, 'WSStorageSQL::drop');
 			DBHelper::reportProgress(" ... dropped table $name.\n", $verbose);
 		}
-		
+
 		DBHelper::reportProgress("   ... done!\n",$verbose);
 	}
-	
-	
+
+
 	/**
 	 * Stores a web service in the database.
 	 *
@@ -325,25 +325,32 @@ class WSStorageSQL {
 			} else {
 				$whereConstruct.= "(";
 			}
+				
 			$whereConstruct.= "(parameters.name='".mysql_real_escape_string($name)."' AND parameters.value='".mysql_real_escape_string($value)."')";
 			$i++;
 		}
 		$whereConstruct.= ") AND parameters.param_set_id in ".
-		"(SELECT p.param_set_id FROM ".$ptbl." p ".
-		"GROUP BY p.param_set_id HAVING count(p.name) = ".$i.")";
+			"(SELECT p.param_set_id FROM ".$ptbl." p ".
+			"GROUP BY p.param_set_id HAVING count(p.name) = ".$i.")";
 
 		$sql = "SELECT parameters.param_set_id, count(parameters.name)".
-		 "FROM ".$ptbl." parameters ".
-		"WHERE ".$whereConstruct.
-		"GROUP BY parameters.param_set_id HAVING count(parameters.name) =".$i.";";
+			 "FROM ".$ptbl." parameters ".
+			"WHERE ".$whereConstruct.
+			"GROUP BY parameters.param_set_id HAVING count(parameters.name) =".$i.";";
 
 		$res = $db->query($sql);
 
 		$parameterSetId = " an error occured";
 
-		if($db->numRows($res) > 1){
-			// an error occured;
-		} else if ($db->numRows($res) == 1){
+		//		if($db->numRows($res) > 1){
+		//			$goon = true;
+		//			while($row = $db->fetchObject($res) && $goon){
+		//				$pSId = $row->param_set_id;
+		//
+		//			}
+		//		} else
+
+		if ($db->numRows($res) >= 1){
 			// an appropriate parameter set exists
 			$row = $db->fetchObject($res);
 			$parameterSetId = "#".$row->param_set_id;
