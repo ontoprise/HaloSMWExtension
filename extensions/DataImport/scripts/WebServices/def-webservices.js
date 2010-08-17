@@ -1461,9 +1461,9 @@ DefineWebServiceSpecial.prototype = {
 				manualResultPart = true;
 				continue;
 			}
-			if (this.resultContainer.firstChild.childNodes[i].childNodes[1].firstChild.type != "checkbox") {
+			if (this.resultContainer.firstChild.childNodes[i].childNodes[1].firstChild == undefined) {
 				isSubPath = true;
-				var alias = this.resultContainer.firstChild.childNodes[i].childNodes[1].firstChild.value;
+				var alias = this.resultContainer.firstChild.childNodes[i].childNodes[2].firstChild.value;
 
 				if (alias.length == 0) {
 					alias = lastAlias;
@@ -1514,7 +1514,7 @@ DefineWebServiceSpecial.prototype = {
 			}
 
 			if (isSubPath) {
-				this.resultContainer.firstChild.childNodes[i].childNodes[1].firstChild.value = alias;
+				this.resultContainer.firstChild.childNodes[i].childNodes[2].firstChild.value = alias;
 			} else {
 				this.resultContainer.firstChild.childNodes[i].childNodes[2].firstChild.value = alias;
 				lastAlias = alias;
