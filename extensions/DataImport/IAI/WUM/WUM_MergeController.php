@@ -98,8 +98,9 @@ class WUMMergeController{
 		global $wumUseTableBasedMerger;
 		if($wumUseTableBasedMerger){
 			$tbm = WUMTableBasedMerger::getInstance();
-			wfProfileOut('WUMMergeController->merge');
-			return $tbm->merge($title, $newWPText, $currentUPText);
+			list($newWPText, $currentUPText) = $res = $tbm->merge($title, $newWPText, $currentUPText); 
+			//wfProfileOut('WUMMergeController->merge');
+			//return $currentUPText;
 		}
 
 		//get the last WP version
