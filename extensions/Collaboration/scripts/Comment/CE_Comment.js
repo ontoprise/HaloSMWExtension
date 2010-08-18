@@ -15,34 +15,25 @@
 *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-var CECommentForm = Class.create();
-
 /**
- * This class provides language dependent strings for an identifier.
- * 
+ *  * 
  */
-CECommentForm.prototype = {
-		
-	/**
-	 * @public
-	 * 
-	 * Constructor.
-	 */
-	initialize: function() {
-		// save the current comment for beaing able to repost on failure
-		this.textareaIsDefault = true;
-		this.ratingValue = null;
-		this.internalCall = null;
-		this.runCount = 0;
-		this.XMLResult = null;
-		this.currentWikiurl = null;
-		this.currentWikiPath = null;
-		this.currentPageName = null;
-		this.currentPageContent = null;
-		this.currentUserName = null;
-		this.currentUserPassword = null;
-		this.currentDomain = null;
-	},
+function CECommentForm() {
+
+	// Variables
+	this.textareaIsDefault = true;
+	this.ratingValue = null;
+	this.internalCall = null;
+	this.runCount = 0;
+	this.XMLResult = null;
+	this.currentWikiurl = null;
+	this.currentWikiPath = null;
+	this.currentPageName = null;
+	this.currentPageContent = null;
+	this.currentUserName = null;
+	this.currentUserPassword = null;
+	this.currentDomain = null;
+	
 
 	/**
 	 * The processForm function takes care about the html input form
@@ -51,16 +42,17 @@ CECommentForm.prototype = {
 	 * It gets the values from all fields and parses them into a string to form a template.
 	 * 
 	 */
-	processForm: function() {
+	this.processForm = function() {
 
 		//1. disable form
-		var cf = $('collabComForm');
-		cf.disable();
+		var cf = $jq('#collabComForm');
+		$jq('#collabComFormTextarea').attr('disabled', 'disabled');
+		$jq('#collabComFormSubmitbuttonID').attr('disabled', 'disabled');
+		$jq('#collabComFormResetbuttonID').attr('disabled', 'disabled');
 		
 		//2. and add pending indicator
-		
 		if (this.pendingIndicatorCF == null) {
-			this.pendingIndicatorCF = new CPendingIndicator($('collabComFormTextarea'));
+			this.pendingIndicatorCF = new CPendingIndicator($jq('#collabComFormTextarea'));
 		}
 		this.pendingIndicatorCF.show();
 
@@ -80,15 +72,15 @@ CECommentForm.prototype = {
 		}
 		
 		//textarea
-		var textArea = ($('collabComFormTextarea').value)? $('collabComFormTextarea').value: '';
+		var textArea = ($jq('#collabComFormTextarea').val())? $jq('#collabComFormTextarea').val(): '';
 		//remove leading and trailing whitespaces
 		textArea = textArea.strip();
 		if(textArea.blank() || this.textareaIsDefault) {
 			this.pendingIndicatorCF.hide();
-			$('collabComFormMessage').setAttribute('class', 'failure');
-			$('collabComFormMessage').innerHTML = 'You didn\'t enter a valid comment.';
+			$jq('#collabComFormMessage').attr('class', 'failure');
+			$jq('#collabComFormMessage').innerHTML = 'You didn\'t enter a valid comment.';
 			//enable form again
-			$('collabComForm').enable();
+			$jq('#collabComForm').attr('disabled', false);
 			return false;
 		}
 		//remove script tags
@@ -127,47 +119,13 @@ CECommentForm.prototype = {
 		this.createNewPage('', '', this.currentPageName, this.currentPageContent, '', '', '');
 
 		return false;
-	},
-	
-	/**
-	 * This function takes care of the ajax call.
-	 * @param wikiurl
-	 * @param wikipath
-	 * @param pageName
-	 * @param pageContent
-	 * @param userName
-	 * @param userPassword
-	 * @param domain
-	 * @return from callback
-	 */
-	createNewPage: function(wikiurl, wikipath, pageName, pageContent,
-			userName, userPassword, domain) {
+	};
 
-		if(this.internalCall) {
-			sajax_do_call('cef_comment_createNewPage', 
-				[wikiurl, wikipath, pageName, pageContent, userName, userPassword, domain],
-				this.processFormCallback.bind(this));
-		} else {
-			sajax_do_call('cef_comment_createNewPage', 
-				[wikiurl, wikipath, pageName, pageContent, userName, userPassword, domain],
-				this.createNewPageCallback.bind(this));
-		}
-		this.runCount++;
-	},
-	
-	/**
-	 * The callback function for createNewPage
-	 */
-	createNewPageCallback: function(request){
-
-		return request.responseText;
-	},
-	
 	/**
 	 * The callback function for createNewPage
 	 * @param request
 	 */
-	processFormCallback: function(request){
+	this.processFormCallback = function(request){
 
 		//alert(request.responseText);
 		var resultDOM = this.XMLResult = CollaborationXMLTools.createDocumentFromString(request.responseText);	
@@ -176,27 +134,30 @@ CECommentForm.prototype = {
 		var valueEl = resultDOM.getElementsByTagName('value')[0];
 		
 		var htmlmsg = resultDOM.getElementsByTagName('message')[0].firstChild.nodeValue;
-		
+
+		this.pendingIndicatorCF.hide();
+		$jq('#collabComForm').get(0).reset();
+		$jq('#collabComForm').hide();
+		$jq('#collabComFormTextarea').removeAttr('disabled');
+		$jq('#collabComFormSubmitbuttonID').removeAttr('disabled');
+		$jq('#collabComFormResetbuttonID').removeAttr('disabled');
+		var comMessage = $jq('#collabComFormMessage');
+		comMessage.show();
+
 		if ( valueEl.nodeType == 1 ) {
 			var valueCode = valueEl.firstChild.nodeValue
 			if ( valueCode == 0 ){
 				//fine.
 				//reset, hide and enable form again
-				this.pendingIndicatorCF.hide();
-				$('collabComForm').reset();
-				$('collabComForm').hide();
-				$('collabComForm').enable();
-
-				$('collabComFormMessage').show();
-				$('collabComFormMessage').setAttribute('class', 'success');
-				$('collabComFormMessage').innerHTML = htmlmsg + ' Page is reloading...';
+				comMessage.attr('class', 'success');
+				comMessage.get(0).innerHTML = htmlmsg + ceLanguage.getMessage('ce_reload');
 				//add pending span
 				var pendingSpan = new Element('span', 
 						{ 'id' : 'collabComFormPending' }
 				);
-				$('collabComFormMessage').appendChild(pendingSpan);
+				comMessage.append(pendingSpan);
 				if (this.pendingIndicatorMsg == null) {
-					this.pendingIndicatorMsg = new CPendingIndicator($('collabComFormPending'));
+					this.pendingIndicatorMsg = new CPendingIndicator($jq('#collabComFormPending'));
 				}
 				this.pendingIndicatorMsg.show();
 				//to do a page reload with action=purge
@@ -214,62 +175,91 @@ CECommentForm.prototype = {
 			} else if ( valueCode == 1 || valueCode == 2 ) {
 				//error, article already exists or permisson denied.
 				this.pendingIndicatorCF.hide();
-				$('collabComFormMessage').setAttribute('class', 'failure');
-				$('collabComFormMessage').innerHTML = htmlmsg;
-				$('collabComFormMessage').show();
-				//reset and enable form again
-				//$('collabComForm').reset();
-				$('collabComForm').enable();
+				$jq('#collabComFormMessage').attr('class', 'failure');
+				comMessage.get(0).innerHTML = htmlmsg;
 			} else {
 				//sthg's really gone wrong
 			}
 		}
 
 		return false;
-	},
-	
+	};
+
+	/**
+	 * This function takes care of the ajax call.
+	 * @param wikiurl
+	 * @param wikipath
+	 * @param pageName
+	 * @param pageContent
+	 * @param userName
+	 * @param userPassword
+	 * @param domain
+	 * @return from callback
+	 */
+	this.createNewPage = function(wikiurl, wikipath, pageName, pageContent,
+			userName, userPassword, domain) {
+
+		if(this.internalCall) {
+			sajax_do_call('cef_comment_createNewPage', 
+				[wikiurl, wikipath, pageName, pageContent, userName, userPassword, domain],
+				this.processFormCallback.bind(this));
+		} else {
+			sajax_do_call('cef_comment_createNewPage', 
+				[wikiurl, wikipath, pageName, pageContent, userName, userPassword, domain],
+				this.createNewPageCallback.bind(this));
+		}
+		this.runCount++;
+	};
+
+	/**
+	 * The callback function for createNewPage
+	 */
+	this.createNewPageCallback = function(request){
+		return request.responseText;
+	};
+
 	/*helper functions*/
-	
-	formReset:function() {
+
+	this.formReset = function() {
 		this.textareaIsDefault = true;
 		
 		if (this.ratingValue != null) {
-			var oldhtmlid = 'collabComFormRating' + String(this.ratingValue + 2);
-			$(oldhtmlid).src = $(oldhtmlid).src.replace(/active/g, 'inactive');
+			var oldhtmlid = '#collabComFormRating' + String(this.ratingValue + 2);
+			$jq(oldhtmlid).src = $jq(oldhtmlid).src.replace(/active/g, 'inactive');
 			this.ratingValue = null;
 		}
-		$('collabComForm').reset();
-	},
-	
+		$jq('#collabComForm').reset();
+	};
+
 	/**
 	 * onClick event function for textarea
 	 */
-	selectTextarea: function() {
+	this.selectTextarea = function() {
 		//check if we still have the form default in here
 		if (this.textareaIsDefault) {
-			$('collabComFormTextarea').activate();
+			$jq('#collabComFormTextarea').select();
 		}
-	},
-	
+	};
+
 	/**
 	 * Disable the onClick function for textarea
 	 */
-	textareaKeyPressed:function() {
+	this.textareaKeyPressed = function() {
 		this.textareaIsDefault = false;
-	},
-	
+	};
+
 	/**
 	 * switch for rating
 	 */
-	switchRating: function( htmlid, ratingValue ) {
+	this.switchRating = function( htmlid, ratingValue ) {
 		
-		var ratingHTML = $(htmlid);
+		var ratingHTML = $jq(htmlid);
 		var ratingImg = cegScriptPath + '/skins/Comment/icons/';
-		
+
 		if ( this.ratingValue == ratingValue ) {
 			//deselect...
-			var oldhtmlid = 'collabComFormRating' + String(this.ratingValue + 2);
-			$(oldhtmlid).src = $(oldhtmlid).src.replace(/_active/g, '_inactive');
+			var oldhtmlid = '#collabComFormRating' + String(this.ratingValue + 2);
+			$jq(oldhtmlid).attr('src', $jq(oldhtmlid).attr('src').replace(/_active/g, '_inactive'));
 			this.ratingValue = null;
 			return true;
 		}
@@ -277,62 +267,64 @@ CECommentForm.prototype = {
 		if ( this.ratingValue != null ) {
 			// sthg has been selected before. reset icon.
 			// collabComFormRatingX with X = ratingValue +2;
-			var oldhtmlid = 'collabComFormRating' + String(this.ratingValue + 2);
-			$(oldhtmlid).src = $(oldhtmlid).src.replace(/active/g, 'inactive');
+			var oldhtmlid = '#collabComFormRating' + String(this.ratingValue + 2);
+			$jq(oldhtmlid).attr('src', $jq(oldhtmlid).attr('src').replace(/active/g, 'inactive'));
 		}
 		switch (ratingValue) {
-			case -1 : ratingHTML.src = ratingImg + 'bad_active.png';
+			case -1 : ratingHTML.attr('src', ratingImg + 'bad_active.png');
 				break;
-			case 0 : ratingHTML.src = ratingImg + 'neutral_active.png';
+			case 0 : ratingHTML.attr('src', ratingImg + 'neutral_active.png');
 				break;
-			case 1 : ratingHTML.src = ratingImg + 'good_active.png';
+			case 1 : ratingHTML.attr('src', ratingImg + 'good_active.png');
 				break;
 		}
 		this.ratingValue = ratingValue;
-	}
+	};
 }
 
+//Set global variable for accessing comment form functions
+var ceCommentForm;
 
-//Singleton of this class
-
-var ceCommentForm = new CECommentForm();
+//Initialize Comment functions if page is loaded
+$jq(document).ready(
+	function(){
+		ceCommentForm = new CECommentForm();
+	}
+);
 
 /**
  * This class has been ported from the generalTools.js of SMWHalo
  * to remove the dependency.
  */
-var CPendingIndicator = Class.create();
-CPendingIndicator.prototype = {
-	initialize: function(container) {
+function CPendingIndicator(container) {
+	this.constructor = function(container) {
 		this.container = container;
 		this.pendingIndicator = document.createElement("img");
-		Element.addClassName(this.pendingIndicator, "obpendingElement");
+		Element.addClassName(this.pendingIndicator, "cependingElement");
 		this.pendingIndicator.setAttribute("src", 
 			wgServer + wgScriptPath + "/extensions/Collaboration/skins/Comment/icons/ajax-loader.gif");
 		this.contentElement = null;
-	},
-	
+	};
+
 	/**
 	 * Shows pending indicator relative to given container or relative to initial container
 	 * if container is not specified.
 	 */
-	show: function(container, alignment) {
-		
+	this.show = function(container, alignment) {
 		//check if the content element is there
-		if($("content") == null){
+		if($jq("#content") == null){
 			return;
 		}
-		
+
 		var alignOffset = 0;
 		if (alignment != undefined) {
 			switch(alignment) {
 				case "right": { 
 					if (!container) { 
-						alignOffset = $(this.container).offsetWidth - 16;
+						alignOffset = $jq(this.container).offsetWidth - 16;
 					} else {
-						alignOffset = $(container).offsetWidth - 16;
+						alignOffset = $jq(container).offsetWidth - 16;
 					}
-					
 					break;
 				}
 				case "left": break;
@@ -341,45 +333,48 @@ CPendingIndicator.prototype = {
 			
 		//if not already done, append the indicator to the content element so it can become visible
 		if(this.contentElement == null) {
-				this.contentElement = $("content");
-				this.contentElement.appendChild(this.pendingIndicator);
+				this.contentElement = $jq("#content");
+				this.contentElement.append(this.pendingIndicator);
 		}
 		if (!container) {
-			this.pendingIndicator.style.left = (alignOffset + Position.cumulativeOffset(this.container)[0]-Position.realOffset(this.container)[0])+"px";
-			this.pendingIndicator.style.top = (Position.cumulativeOffset(this.container)[1]-Position.realOffset(this.container)[1]+this.container.scrollTop)+"px";
+			var offSet = this.container.offset();
+			this.pendingIndicator.style.left = (alignOffset + offSet.left) + "px";
+			this.pendingIndicator.style.top = (offSet.top - $jq(document).scrollTop()) + "px";
 		} else {
-			this.pendingIndicator.style.left = (alignOffset + Position.cumulativeOffset($(container))[0]-Position.realOffset($(container))[0])+"px";
-			this.pendingIndicator.style.top = (Position.cumulativeOffset($(container))[1]-Position.realOffset($(container))[1]+$(container).scrollTop)+"px";
+			var offSet = $jq('#container').offset();
+			this.pendingIndicator.style.left = alignOffset + offSet.left + "px";
+			this.pendingIndicator.style.top = (offSet.top - $jq(document).scrollTop()) + "px";
 		}
 		// hmm, why does Element.show(...) not work here?
 		this.pendingIndicator.style.display="block";
 		this.pendingIndicator.style.visibility="visible";
-
-	},
+	};
 	
 	/**
 	 * Shows the pending indicator on the specified <element>. This works also
 	 * in popup panels with a defined z-index.
 	 */
-	showOn: function(element) {
+	this.showOn = function(element) {
 		container = element.offsetParent;
-		$(container).insert({top: this.pendingIndicator});
-		var pOff = $(element).positionedOffset();
+		$jq(container).insert({top: this.pendingIndicator});
+		var pOff = $jq(element).positionedOffset();
 		this.pendingIndicator.style.left = pOff[0]+"px";
 		this.pendingIndicator.style.top  = pOff[1]+"px";
 		this.pendingIndicator.style.display="block";
 		this.pendingIndicator.style.visibility="visible";
 		this.pendingIndicator.style.position = "absolute";
-		
-	},
+	};
 	
-	hide: function() {
+	this.hide = function() {
 		Element.hide(this.pendingIndicator);
-	},
+	};
 
-	remove: function() {
+	this.remove = function() {
 		Element.remove(this.pendingIndicator);
-	}
+	};
+	
+	// Execute initialize on object creation
+	this.constructor(container);
 }
 
 /*
@@ -427,46 +422,46 @@ CollaborationXMLTools.createDocumentFromString = function (xmlText) {
    return xmlDoc;
 }
 
+//Add delete links if page is loaded
+$jq(document).ready(
+	function(){
+		if( typeof( cegUserIsSysop ) != "undefined" && cegUserIsSysop != null && cegUserIsSysop != false) {
 
-Event.observe(window, 'load', function() {
-	if( typeof( cegUserIsSysop ) != "undefined" && cegUserIsSysop != null && cegUserIsSysop != false) {
+			var resultComments = $jq('.collabComResInfo');
 
-		var resultComments = $$('.collabComResInfo');
+			if ( resultComments != null ) {
+				$jq.each(resultComments, function(i, resCom ){
+					var resComName = resCom.innerHTML;
 
-		if ( resultComments != null ) {
-			resultComments.each( function( resCom, index ){
+					var imgEl = new Element('img', {
+						'src' : cegScriptPath + '/skins/Comment/icons/smw_plus_delete_icon_16x16.png',
+						'style' : 'float:none;padding-left:5px;vertical-align:bottom'
+					} );
+					var aEl = new Element('a', {
+						'rel' : 'nofollow',
+						'title' : 'Delete this comment',
+						'class' : 'plainlinks',
+						'href' : wgServer + wgScript + '/' + escape(resComName) + '?action=delete'
+					} );
+					var divEl = new Element('div', {
+						'style' : 'display:inline',
+						'title' : 'Delete this comment'
+					} );
 
-				var resComName = resCom.innerHTML;
+					aEl.appendChild(imgEl);
+					divEl.appendChild(aEl);
 
-				var imgEl = new Element('img', {
-					'src' : cegScriptPath + '/skins/Comment/icons/smw_plus_delete_icon_16x16.png',
-					'style' : 'float:none;padding-left:5px;vertical-align:bottom'
-				} );
-				var aEl = new Element('a', {
-					'rel' : 'nofollow',
-					'title' : 'Delete this comment',
-					'class' : 'external text',
-					'href' : wgServer + wgScript + '/' + escape(resComName) + '?action=delete'
-				} );
-				var divEl = new Element('div', {
-					'style' : 'display:inline',
-					'title' : 'Delete this comment',
-					'class' : 'plainlinks'
-				} );
-
-				aEl.appendChild(imgEl);
-				divEl.appendChild(aEl);
-
-				// Firefox considers the whitespace between element nodes
-				// to be text nodes (whereas IE does not)
-				resComSiblings = resCom.nextSiblings();
-				var i = 0;
-				do {
-					resComSib = resComSiblings[i++];
-				} while( resComSib && resComSib.nodeType !== 1 ); // 1 == Node.ELEMENT_NODE
-				if( resComSib )
-					resComSib.appendChild(divEl);
-			});
+					// Firefox considers the whitespace between element nodes
+					// to be text nodes (whereas IE does not)
+					var resComSib = this.nextSibling;
+					while( resComSib.nodeType !== 1 && resComSib) { // 1 == Node.ELEMENT_NODE
+						resComSib = resComSib.nextSibling
+					}
+					if( resComSib ) {
+						resComSib.appendChild(divEl);
+					}
+				});
+			}
 		}
 	}
-});
+);

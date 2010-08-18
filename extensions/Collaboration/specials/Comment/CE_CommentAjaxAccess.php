@@ -34,6 +34,7 @@ EOT;
 global $wgAjaxExportList;
 
 $wgAjaxExportList[] = 'cef_comment_createNewPage';
+$wgAjaxExportList[] = 'cef_comment_deleteComment';
 
 
 class CECommentAjax {
@@ -56,10 +57,10 @@ function cef_comment_createNewPage( $wikiurl, $wikiPath, $pageName, $pageContent
 	$pageName = CECommentUtils::unescape( $pageName );
 	$pageContent = CECommentUtils::unescape( $pageContent );	
 		
-	if ( !$wikiurl || $wikiurl == '' )
+	if ( !$wikiurl || $wikiurl == '' ) {
 		// no wikipath given -> must be local!
 		return CEComment::createLocalComment($pageName, $pageContent);
-	else
+	} else {
 		//remote!
 		if (!$wikiPath || $wikiPath = '' )
 			return '<xml>wikiurl entered but no wikipath!</xml>';
@@ -68,8 +69,27 @@ function cef_comment_createNewPage( $wikiurl, $wikiPath, $pageName, $pageContent
 			
 			return CEComment::createRemoteComment( $wikiurl, $wikiPath, $pageName, $pageContent, $userCredentials);
 		}
+	}
+	return CECommentUtils::createXMLResponse('sth went wrong here','0', $pageName);
+}
 
-	return CECommentUtils::createXMLResponse('sth went wrong here','0');
+function cef_comment_deleteComment($pageName) {
+	$pageName = CECommentUtils::unescape($pageName);
+	$result = wfMsg("ce_nothing_deleted");
+	$success = true;
+	if ($pageName != null) {
+		try {
+			$article = new Article(Title::newFromText($pageName));
+			$article->doDelete(wfMsg('ce_comment_delete_reason'));
+			$result = wfMsg('ce_comment_deletion_successful');
+			return CECommentUtils::createXMLResponse($result, '0', $pageName);
+		} catch(Exception $e ) {
+			$result .= wfMsg('ce_comment_deletion_error');
+			$success = false;
+			return CECommentUtils::createXMLResponse($result, '1', $pageName);
+		}
+	}
+	return CECommentUtils::createXMLResponse('sth went wrong here', '1', $pageName);
 }
 
 /**

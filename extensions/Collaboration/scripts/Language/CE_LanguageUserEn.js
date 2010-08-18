@@ -16,5 +16,6 @@
 */
 
 var wgCEUserLanguageStrings = {
-		'ce_key'			: 	'value',		
-};
+	'ce_reload'			:	' Page is reloading ...',
+	'ce_deleting'		:	'Deleting comment ...'
+}

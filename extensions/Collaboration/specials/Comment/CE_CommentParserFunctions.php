@@ -225,7 +225,7 @@ END;
 		$html = XML::openElement( 'div', array( 'id' => 'collabComFormHeader' )) .
 			XML::openElement('span', array( 'id' => 'collabComFormHeaderText',
 				'title' => $cfHeaderToolTip,
-				'onClick' => '$(\'collabComForm\').toggle();')) .
+				'onClick' => '$jq(\'#collabComForm\').toggle();')) .
 			wfMsg('ce_cf_header_text') .
 			XML::closeElement('span');
 
@@ -251,17 +251,17 @@ END;
 							'class' => 'collabComFormRatingImg',
 							'src' => $cegScriptPath . '/skins/Comment/icons/bad_inactive.png',
 							'title' => $ratingTitleBad,
-							'onClick' => 'ceCommentForm.switchRating(\'collabComFormRating1\',-1);' )) .
+							'onClick' => 'ceCommentForm.switchRating(\'#collabComFormRating1\',-1);' )) .
 						XML::Element('img', array( 'id' => 'collabComFormRating2',
 							'class' => 'collabComFormRatingImg',
 							'src' => $cegScriptPath . '/skins/Comment/icons/neutral_inactive.png',
 							'title' => $ratingTitleNeutral,
-							'onClick' => 'ceCommentForm.switchRating(\'collabComFormRating2\',0);' )) .
+							'onClick' => 'ceCommentForm.switchRating(\'#collabComFormRating2\',0);' )) .
 						XML::Element('img', array( 'id' => 'collabComFormRating3',
 							'class' => 'collabComFormRatingImg',
 							'title' => $ratingTitleGood,
 							'src' => $cegScriptPath . '/skins/Comment/icons/good_inactive.png',
-							'onClick' => 'ceCommentForm.switchRating(\'collabComFormRating3\',1);' )) .
+							'onClick' => 'ceCommentForm.switchRating(\'#collabComFormRating3\',1);' )) .
 					XML::closeElement('span') .
 				XML::closeElement('div') .
 					'<div class="mw-editTools\">' .

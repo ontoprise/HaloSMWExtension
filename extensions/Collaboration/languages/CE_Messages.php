@@ -69,6 +69,10 @@ $messages['en'] = array(
 	'ce_com_edit_sum'				=> 'This comment article was created by Collaboration Extension.',
 	'ce_comment_exists'				=> 'Comment article "$1" already exists.',
 	'ce_com_created'				=> 'Comment article successfully created.',
+	'ce_nothing_deleted'			=> 'No comment deleted.',
+	'ce_comment_delete_reason'		=> 'Comment has been deleted via Collaboration GUI.',
+	'ce_comment_deletion_successful'=> 'Comment has been successfully deleted.',
+	'ce_comment_deletion_error'		=> 'Comment could not be deleted.'
 );
 
 /** 
@@ -116,4 +120,8 @@ $messages['de'] = array(
 	'ce_com_edit_sum'				=> 'Dieser Artikel wurde von der Collaboration Extension erstellt.',
 	'ce_comment_exists'				=> 'Kommentar Artikel "$1" bereits vorhanden.',
 	'ce_com_created'				=> 'Kommentar Artikel erfolgreich erstellt.',
+	'ce_nothing_deleted'			=> 'Kein Kommentar gelöscht.',
+	'ce_comment_delete_reason'		=> 'Kommentar wurde per Collaboration GUI gelöscht.',
+	'ce_comment_deletion_successful'=> 'Kommentar wurde erfolgreich gelöscht.',
+	'ce_comment_deletion_error'		=> 'Kommentar konnte nicht gelöscht werden.'
 );

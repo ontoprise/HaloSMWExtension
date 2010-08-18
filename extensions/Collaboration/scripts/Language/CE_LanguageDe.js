@@ -16,5 +16,5 @@
 */
 
 var wgCEContLanguageStrings = {
-	'COMMENT_NS'	:	'Kommentar:'	//namespace identifier with colon
+	'ce_ns_comment'		:	'Kommentar:'	//namespace identifier with colon
 }

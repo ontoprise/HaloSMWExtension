@@ -1,55 +1,66 @@
 @CHARSET "UTF-8";
 
 /* The css from all Collaboration templates is now ported to this file*/
-/* for Template:Comment */
+	/* for Template:Comment */
 div.collabCom {
 	border: 1px solid lightgrey;
 	background-color: #F2F2F2;
 	margin: 5px 0px;
 	padding: 3px;
 	min-height: 50px;
-	clear:both;
+	clear: both;
 }
+
 div.collabComHeadline {
 	padding-bottom: 5px;
 }
+
 div.collabComPerson {
 	display: inline;
 	color: grey;
 }
-div.collabComPerson img{
+
+div.collabComPerson img {
 	float: left;
 	margin-right: 10px;
 }
+
 div.collabComUser {
 	display: inline;
 	color: grey;
 }
+
 div.collabComUserName {
 	display: inline;
 	color: blue;
 }
+
 div.collabComDate {
-	display: inline; color: grey;
+	display: inline;
+	color: grey;
 }
+
 div.collabComRating {
 	display: inline;
 	float: right;
 	text-align: right;
 	color: grey;
 }
+
 div.collabComRatingIcon {
 	display: inline;
 	margin-left: 3px;
 	font-weight: bold;
 	color: black;
 }
+
 div.collabComText {
 	display: inline;
 	font-weight: bold;
 }
+
 div.collabComRatingIcon img {
-	vertical-align:middle;
+	vertical-align: middle;
 }
 
 /* for Template:CommentResult
@@ -57,128 +68,150 @@ div.collabComRatingIcon img {
  * the query of existing comments
  */
 div.collabComResInfo {
-	display:none;
+	display: none;
 }
+
 div.collabComRes {
 	border: 1px solid lightgrey;
 	background-color: #F2F2F2;
 	margin: 5px 0px;
 	padding: 3px;
 	min-height: 50px;
-	clear:both;
+	clear: both;
 }
+
 div.collabComResHeadline {
 	padding-bottom: 5px;
 }
+
 div.collabComResPerson {
 	display: inline;
 	color: grey;
 }
-div.collabComResPerson img{
+
+div.collabComResPerson img {
 	float: left;
 	margin-right: 10px;
 }
+
 div.collabComResUsername {
 	display: inline;
 	color: blue;
 }
+
 div.collabComResDate {
 	display: inline;
 	color: grey;
 }
+
 div.collabComResBelongsTo {
 	display: inline;
 	color: grey;
 }
+
 div.collabComResLink {
-	display:inline
+	display: inline
 }
+
 div.collabComResRating {
 	display: inline;
 	float: right;
 	text-align: right;
 	color: grey;
 }
+
 div.collabComResRatingIcon {
 	display: inline;
 	margin-left: 3px;
 }
+
 div.collabComResRatingIcon img {
-	vertical-align:middle;
+	vertical-align: middle;
 }
+
 div.collabComResText {
 	display: inline;
 	font-weight: bold;
 }
 
 /* Comment form */
-
 div#collabComFormHeader {
-	background-color:#F2F2F2;
+	background-color: #F2F2F2;
 	width: 100%;
 	margin: 5px 0;
 	padding-top: 5px;
-	clear:both;
-	float:left;
-	overflow:hidden;
+	clear: both;
+	float: left;
+	overflow: hidden;
 }
+
 /*img#collabComFormHeaderImg {
 	width: 25px;
 	heigth: 25px;
 	vertical-align: bottom;
 }*/
 span#collabComFormHeaderText {
-	margin-left:10px;
+	margin-left: 10px;
 	font-size: larger;
 	font-weight: bold;
 	color: #116988;
 	cursor: pointer;
 }
+
 span#collabComFormHeaderText:hover {
 	text-decoration: underline;
 }
+
 form#collabComForm {
 	border-bottom: 1px solid grey;
-	border-collapse:collapse;
+	border-collapse: collapse;
 	width: 100%;
 	overflow: hidden;
 }
+
 div#collabComFormUserIcon {
 	float: left;
 	margin-top: 5px;
 	padding: 5px;
 }
+
 img#collabComFormUserImg {
 	width: 48px;
 	/*height: 48px;*/
 }
+
 div#collabComFormRight {
 	float: left;
 	width: 85%;
 	/*overflow: hidden;*/
 	margin: 5px 0;
 }
+
 div#collabComFormUser {
 	padding: 5px 0;
 	margin-top: 5px;
 }
-div#collabComFormUser span.userkey{
+
+div#collabComFormUser span.userkey {
 	color: grey;
 }
+
 div#collabComFormUser span.uservalue {
 	color: blue;
 	margin-left: 5px;
 }
+
 div#collabComFormRating {
 	padding: 5px;
 	height: 32px;
 	border: 1px solid lightgrey;
 	background-color: #f7f3f7;
 }
-span#collabComFormRadiobuttons{
-	/*float:right;*/
-	padding-left:10px;
+
+span#collabComFormRadiobuttons { /*float:right;*/
+	padding-left: 10px;
 }
+
 .collabComFormRatingImg {
 	padding: 0 5px;
 	cursor: pointer;
@@ -186,16 +219,19 @@ span#collabComFormRadiobuttons{
 }
 
 /* the textarea (comment content) */
-div#collabComFormHelp{
+div#collabComFormHelp {
 	margin: 5px 0;
-	color: grey;	
+	color: grey;
 }
-div#collabComFormHelp span.red{
+
+div#collabComFormHelp span.red {
 	color: red;
 }
-div#collabComFormHelp span{
+
+div#collabComFormHelp span {
 	color: black;
 }
+
 #collabComFormTextarea {
 	margin: 5px 0;
 }
@@ -204,6 +240,7 @@ div#collabComFormHelp span{
 #collabComFormSubmitbuttonID {
 	font-weight: bold;
 }
+
 #collabComFormResetbuttonID {
 	margin-left: 5px;
 }
@@ -212,25 +249,51 @@ div#collabComFormHelp span{
 #collabComFormMessage {
 	border: 1px dashed grey;
 	padding: 5px 3px;
-	margin-top:2px;
+	margin-top: 2px;
 	/*float:left;*/
-	clear:both;
+	clear: both;
 }
+
 #collabComFormMessage.success {
 	color: green;
 }
+
 /* failure messages from AJAX response */
 #collabComFormMessage.failure {
 	color: orange;
 }
+
 /* the span for the pending indicator*/
-#collabComFormPending{
+#collabComFormPending {
 	padding: 0px 3px;
 }
+
 /* warnings created by parser function*/
-.collabComWarning{
+.collabComWarning {
 	color: orange;
 }
-.collabComFormGrey{
+
+.collabComFormGrey {
 	color: grey;
+}
+
+#collabComDelMessage.success,.ce_success {
+	color: green;
+}
+
+/* failure messages from AJAX response */
+#collabComDelMessage.failure,.ce_failure {
+	color: orange;
+}
+
+#collabComDelPending {
+	padding: 0px 3px;
+}
+
+.cependingElement {
+	position: fixed;
+	z-index: 200;
+	top: 0px;
+	left: 0px;
+	display: none;
 }

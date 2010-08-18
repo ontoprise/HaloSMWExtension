@@ -54,29 +54,29 @@ class CEComment {
 		
 		# check if comments are enabled #
 		if ( !isset($cegEnableComment) || !$cegEnableComment )
-			return CECommentUtils::createXMLResponse(wfMsg('ce_cf_disabled'), self::PERMISSION_ERROR);
+			return CECommentUtils::createXMLResponse(wfMsg('ce_cf_disabled'), self::PERMISSION_ERROR, $pageName);
 		
 		# check authorization #
 		if ( !isset($cegEnableCommentFor)
 			|| ($cegEnableCommentFor == CE_COMMENT_NOBODY )
 			|| ( ($cegEnableCommentFor == CE_COMMENT_AUTH_ONLY) && !($wgUser->isAnon()) ) )
 		{
-			return CECommentUtils::createXMLResponse(wfMsg('ce_cf_disabled'), self::PERMISSION_ERROR);
+			return CECommentUtils::createXMLResponse(wfMsg('ce_cf_disabled'), self::PERMISSION_ERROR, $pageName);
 		} else {
 			//user is allowed
 			if ($article->exists()) {
-				return CECommentUtils::createXMLResponse(wfMsg('ce_comment_exists', $pageName), self::COMMENT_ALREADY_EXISTS);
+				return CECommentUtils::createXMLResponse(wfMsg('ce_comment_exists', $pageName), self::COMMENT_ALREADY_EXISTS, $pageName);
 			}
 			if(!$title->userCan('edit')) {
-				return CECommentUtils::createXMLResponse(wfMsg('ce_com_cannot_create'), self::PERMISSION_ERROR);
+				return CECommentUtils::createXMLResponse(wfMsg('ce_com_cannot_create'), self::PERMISSION_ERROR, $pageName);
 			} else {
 				$summary = wfMsg('ce_com_edit_sum');
 				$article->doEdit( $pageContent, $summary );
 
 				if($article->exists()) {
-					return CECommentUtils::createXMLResponse(wfMsg('ce_com_created'/*, $pageName*/), self::SUCCESS);
+					return CECommentUtils::createXMLResponse(wfMsg('ce_com_created'/*, $pageName*/), self::SUCCESS, $pageName);
 				} else {
-					return CECommentUtils::createXMLResponse(wfMsg('ce_com_cannot_create'), self::PERMISSION_ERROR);
+					return CECommentUtils::createXMLResponse(wfMsg('ce_com_cannot_create'), self::PERMISSION_ERROR, $pageName);
 				}
 			}
 		}

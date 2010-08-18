@@ -7,10 +7,13 @@ VERSION 1.X
 
 
   CHANGES:
-	
+	Migrated from Prototype to jQuery library.
+	Removed 'goto comment' link.
+	General Code changes
 
   BUGFIXES:
 	Issue 12226 -  After selecting a rating i cant deselect it
+	Adjusted path for autocompletion icons
 
 
 VERSION 1.20

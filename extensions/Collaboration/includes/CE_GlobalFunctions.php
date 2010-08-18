@@ -116,7 +116,6 @@ function cefSetupExtension() {
 		'description' => 'Some fancy collaboration tools.'
 		);
 
-
 	### Register autocompletion icon ###
 	$wgHooks['smwhACNamespaceMappings'][] = 'cefRegisterACIcon';
 	wfProfileOut('cefSetupExtension');
@@ -134,15 +133,10 @@ function cefSetupExtension() {
 function cefAddNonSpecialPageHeader(&$out) {
 	global $cegScriptPath;
 
-	#cefAddJSLanguageScripts($out);
-	if (!defined('SMW_HALO_VERSION')) {
-	   $out->addScript("<script type=\"text/javascript\" src=\"". $cegScriptPath .  "/scripts/prototype.js\"></script>");
-	}
-
 	$out->addScript("<script type=\"text/javascript\" src=\"". $cegScriptPath .  "/scripts/Comment/CE_Comment.js\"></script>");
 
-	//TODO:script.acoul.us
-
+	cefAddJSLanguageScripts($out);
+	
 	$out->addLink(array(
 		'rel'   => 'stylesheet',
 		'type'  => 'text/css',
@@ -150,7 +144,7 @@ function cefAddNonSpecialPageHeader(&$out) {
 		'href'  => $cegScriptPath. '/skins/Comment/collaboration-comment.css'
 	));
 
-return true;
+	return true;
 }
 
 /**
@@ -289,37 +283,39 @@ function cefInitUserMessages() {
 /**
  * Add appropriate JS language script
  */
-function cefAddJSLanguageScripts(& $jsm, $mode = "all", $namespace = -1, $pages = array()) {
-	global $cegIP, $cegScriptPath, $wgUser;
+function cefAddJSLanguageScripts(&$out, $mode = "all", $namespace = -1, $pages = array()) {
+	global $wgLanguageCode, $cegIP, $cegScriptPath, $wgUser;
 
 	// content language file
-	$jsm->addScript('<script type="text/javascript" src="' . $cegScriptPath .
-		'/scripts/Language/CE_Language.js' . '"></script>', $mode, $namespace, $pages);
 	$lng = '/scripts/Language/CE_Language';
-
+	$out->addScript("<script type=\"text/javascript\" src=\"".$cegScriptPath.$lng.".js\"></script>");
+	
 	if (!empty($wgLanguageCode)) {
 		$lng .= ucfirst($wgLanguageCode).'.js';
-		if (file_exists($cegScriptPath . $lng)) {
-			$jsm->addScript($cegScriptPath . $lng, $mode, $namespace, $pages);
+		if (file_exists($cegIP . $lng)) {
+			$out->addScript("<script type=\"text/javascript\" src=\"".$cegScriptPath.$lng."\"></script>");
 		} else {
-			$jsm->addScript($cegScriptPath . '/scripts/Language/CE_LanguageEn.js', $mode, $namespace, $pages);
+			$out->addScript("<script type=\"text/javascript\" src=\"".$cegScriptPath.
+				"/scripts/Language/CE_LanguageEn.js\"></script>");
 		}
 	} else {
-		$jsm->addScript($cegScriptPath . '/scripts/Language/CE_LanguageEn.js', $mode, $namespace, $pages);
+		$out->addScript("<script type=\"text/javascript\" src=\"".$cegScriptPath.
+			"/scripts/Language/CE_LanguageEn.js\"></script>");
 	}
 
 	// user language file
 	if (isset($wgUser)) {
 		$lng .= "User".ucfirst($wgUser->getOption('language')).'.js';
-		if (file_exists($cegScriptPath . $lng)) {
-			$jsm->addScript($cegScriptPath . $lng, $mode, $namespace, $pages);
+		if (file_exists($cegIP . $lng)) {
+			$out->addScript("<script type=\"text/javascript\" src=\"".$cegScriptPath.$lng."\"></script>");
 		} else {
-			$jsm->addScript($cegScriptPath . '/scripts/Language/CE_LanguageUserEn.js', $mode, $namespace, $pages);
+			$out->addScript("<script type=\"text/javascript\" src=\"".$cegScriptPath.
+				"/scripts/Language/CE_LanguageUserEn.js\"></script>");
 		}
 	} else {
-		$jsm->addScript($cegScriptPath . '/scripts/Language/CE_LanguageUserEn.js', $mode, $namespace, $pages);
+		$out->addScript("<script type=\"text/javascript\" src=\"".$cegScriptPath.
+			"/scripts/Language/CE_LanguageUserEn.js\"></script>");
 	}
-
 	return true;
 }
 
@@ -330,7 +326,6 @@ function cefAddJSLanguageScripts(& $jsm, $mode = "all", $namespace = -1, $pages 
  * @return bool
  */
 function cefRegisterACIcon( &$namespaceMappings) {
-	global $cegScriptPath;
-	$namespaceMappings[CE_COMMENT_NS] = $cegScriptPath . '/skins/Comment/icons/smw_plus_comment_icon_16x16.gif';
+	$namespaceMappings[CE_COMMENT_NS] = "/extensions/Collaboration/skins/Comment/icons/smw_plus_comment_icon_16x16.gif";
 	return true;
 }

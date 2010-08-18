@@ -33,12 +33,16 @@ define('CE_COM_RESP_START',
 			'<ReturnValue xmlns="http://www.ontoprise.de/collaboration#">'."\n".
     		'<value>');
 
-define('CE_COM_RESP_MIDDLE',
+define('CE_COM_RESP_MIDDLE1',
 			'</value>'. "\n" .
 			'<message>');
 
+define('CE_COM_RESP_MIDDLE2',
+			'</message>'. "\n" .
+			'<article>');
+
 define('CE_COM_RESP_END',
-			'</message>'."\n".
+			'</article>'."\n".
     		'</ReturnValue>'."\n");
 
 
@@ -51,15 +55,18 @@ class CECommentUtils {
 	 *
 	 * @param string $status The status of the operation: success or failed.
 	 * @param string $message The user message of the function status.
+	 * @param string pageName The corresponding page name
 	 *
 	 * @return string The XML string.
 	 */
-	public static function createXMLResponse($message, $statusCode = 0){
+	public static function createXMLResponse($message, $statusCode = 0, $pageName){
 		
 		$xmlString = CE_COM_RESP_START;
 		$xmlString .= $statusCode;
-		$xmlString .= CE_COM_RESP_MIDDLE;
+		$xmlString .= CE_COM_RESP_MIDDLE1;
 		$xmlString .= $message;
+		$xmlString .= CE_COM_RESP_MIDDLE2;
+		$xmlString .= $pageName;
 		$xmlString .= CE_COM_RESP_END;
 		return $xmlString;
 
