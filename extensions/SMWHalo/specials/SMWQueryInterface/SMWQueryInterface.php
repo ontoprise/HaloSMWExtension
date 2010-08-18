@@ -206,7 +206,10 @@ class SMWQueryInterface extends SpecialPage {
 
 		$imagepath = $smwgHaloScriptPath . '/skins/QueryInterface/images/';
 		$useTS = "";
-		$isIE = (isset($_SERVER['HTTP_USER_AGENT']) && preg_match('/MSIE \d+\.\d+/', $_SERVER['HTTP_USER_AGENT']));
+		$isIE = (isset($_SERVER['HTTP_USER_AGENT']) &&
+                 (preg_match('/MSIE \d+\.\d+/', $_SERVER['HTTP_USER_AGENT']) ||
+                  stripos($_SERVER['HTTP_USER_AGENT'], 'Excel Bridge') !== false)
+                );
 		if (isset($smwgWebserviceEndpoint)) {
 			$useTS = '<input type="checkbox" id="usetriplestore" checked="checked">' . wfMsg('smw_qi_usetriplestore') . '</input>';
 		}
