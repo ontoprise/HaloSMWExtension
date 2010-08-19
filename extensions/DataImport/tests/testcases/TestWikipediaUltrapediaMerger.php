@@ -20,8 +20,8 @@ class TestWikipediaUltrapediaMerger extends PHPUnit_Framework_TestCase {
 		
 		$result = $this->getWikiArticleContent("Talk:Main_Page");
 		
-		echo('\r\nWUM Wiki Article Content:\r\n');
-		print_r($result);
+		//echo("\r\nWUM Wiki Article Content:\r\n");
+		//print_r($result);
 		
 		//check whether all of our contributions have been merged somewoh
 		$this->assertGreaterThan(0, strpos($result,'Results 1 ====='.WUM_TAG_CLOSE));

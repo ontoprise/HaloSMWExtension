@@ -90,10 +90,10 @@
 				value=""
 				description="verify that defaults are loaded correctly" />
 			
-			<verifyElementText description="verify that subparameters are loaded correctly" regex="true"
-					type="textarea"
+			<verifyXPath description="verify that subparameters are loaded correctly" regex="true"
+					xpath="//table[@id='step3-parameters']/tbody/tr[6]/td[1]/table/row/td[2]/textarea"
 					text='&lt;subparameter name="optionalSubParameter" optional="true"/&gt;.*&lt;subparameter name="nonOptionalSubParameterNoDefault" optional="false"/&gt;.*&lt;subparameter name="nonOptionalSubParameterWithDefault" optional="false" defaultValue="default"/&gt;'> 
-			</verifyElementText>
+			</verifyXPath>
 			
 			<verifyCheckbox description="verify that the complete result is used"
 				xpath="//div[@id='step4-rest-intro']/input[1]" checked="true"/>
@@ -253,8 +253,12 @@
 		<verifyInputField xpath="//table[@id='step3-parameters']/tbody/tr[4]/td[5]/input" value="" description="verify that defaults are loaded correctly" />
 		<verifyInputField xpath="//table[@id='step3-parameters']/tbody/tr[6]/td[5]/input" value="" description="verify that defaults are loaded correctly" />
 
-		<verifyElementText description="verify that subparameters are loaded correctly" regex="true" type="textarea" text='Hello'>
-		</verifyElementText>
+		<clickElement xpath="//span[@id='step3-expand-2-0']/img"/>
+		
+		<verifyXPath description="verify that subparameters are loaded correctly" regex="true" 
+			xpath="//table[@id='step3-parameters']/tbody/tr[5]/td[1]/table/row/td[2]/textarea"
+			text='Hello'>
+		</verifyXPath>
 
 
 		<verifyText description="verify that result path is loaded correctly" text="flLeafParameter1">
@@ -282,8 +286,8 @@
 		<verifyInputField description="verify that result alias is loaded correctly" xpath="//table[@id='step4-results']/tbody/tr[3]/td[3]/input" value="flLeafParameter2" />
 		<verifyInputField description="verify that result alias is loaded correctly" xpath="//table[@id='step4-results']/tbody/tr[4]/td[3]/input" value="slLeafParameter1" />
 		<verifyInputField description="verify that result alias is loaded correctly" xpath="//table[@id='step4-results']/tbody/tr[5]/td[3]/input" value="slLeafParameter2" />
-		<verifyInputField description="verify that result alias is loaded correctly" xpath="//table[@id='step4-results']/tbody/tr[6]/td[2]/input" value="slLeafParameter2-0" />
-		<verifyInputField description="verify that result alias is loaded correctly" xpath="//table[@id='step4-results']/tbody/tr[7]/td[2]/input" value="slLeafParameter2-1" />
+		<verifyInputField description="verify that result alias is loaded correctly" xpath="//table[@id='step4-results']/tbody/tr[6]/td[3]/input" value="slLeafParameter2-0" />
+		<verifyInputField description="verify that result alias is loaded correctly" xpath="//table[@id='step4-results']/tbody/tr[7]/td[3]/input" value="slLeafParameter2-1" />
 
 		<verifySelectField description="verify that format is set correctly" xpath="//table[@id='step4-results']/tbody/tr[6]/td[1]/select" value="xpath" />
 
