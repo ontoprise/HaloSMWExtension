@@ -2778,7 +2778,7 @@ DefineWebServiceSpecial.prototype = {
 					if ($("step4-resultRow-" + (i - offset)).firstChild.firstChild.lastChild.style.visibility == "hidden") {
 						this.resultContainer.firstChild.childNodes[i + 1].style.display = "none";
 					}
-					this.resultContainer.firstChild.childNodes[i + 1].childNodes[1].firstChild.value = updates[i]["alias"];
+					this.resultContainer.firstChild.childNodes[i + 1].childNodes[2].childNodes[0].value = updates[i]["alias"];
 					if (updates[i]["json"] != "##") {
 						this.resultContainer.firstChild.childNodes[i + 1].childNodes[0].childNodes[1].value = "json";
 						this.resultContainer.firstChild.childNodes[i + 1].childNodes[0].childNodes[2].value = updates[i]["json"];
