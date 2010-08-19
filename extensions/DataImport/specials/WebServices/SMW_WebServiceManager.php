@@ -72,7 +72,7 @@ class WebServiceManager {
 
 	public static $mNewWebService = null;
 	public static $mOldWebservice = null; // the webserve in its state before the wwsd is changed
-
+	public static $mOldWebserviceRemembered = false; 
 
 	/**
 	 * Register the WebServicePage for articles in the namespace 'WebService'.
@@ -277,6 +277,11 @@ class WebServiceManager {
 			return true;
 		}
 		
+		//deal with case where user replaces a WWSD with a completely empty article
+		if(!self::$mOldWebserviceRemembered){
+			self::rememberWWSD(WebService::newFromID($article->getID()));
+		}
+		
 		global $smwgDIIP;
 		require_once($smwgDIIP."/specials/WebServices/SMW_WSTriplifier.php");
 		
@@ -287,15 +292,16 @@ class WebServiceManager {
 			self::$mOldWebservice->removeFromDB();
 			
 			//deal with triplification
-			$articles = WSStorage::getDatabase()->getWSArticles(self::$mNewWebService->getArticleID(), new SMWRequestOptions());
-			WSTriplifier::getInstance()->removeWS(self::$mNewWebService->getArticleID(), $articles);
+			if(self::$mOldWebservice){
+				$articles = WSStorage::getDatabase()->getWSArticles(self::$mOldWebservice->getArticleID(), new SMWRequestOptions());
+				WSTriplifier::getInstance()->removeWS(self::$mOldWebservice->getArticleID(), $articles);
+			}
 		}
 		
 		//handle triplification processing
-		WSTriplifier::getInstance()->addWSAsDataSource($article->getID());
-		
 		if (self::$mNewWebService) {
 			self::$mNewWebService->store();
+			WSTriplifier::getInstance()->addWSAsDataSource($article->getID());
 		}
 		self::$mNewWebService = null;
 		self::$mOldWebservice = null;
@@ -364,9 +370,9 @@ class WebServiceManager {
 	public static function detectModifiedWWSD($mNewWebService){
 		if(self::$mOldWebservice){
 			if(!$mNewWebService){
-				return true;
+					return true;
 			}
-
+			
 			$remove = false;
 			if(self::$mOldWebservice->getArticleID() != $mNewWebService->getArticleID()){
 				$remove = true;
@@ -391,6 +397,7 @@ class WebServiceManager {
 	 */
 	public static function rememberWWSD(&$ws){
 		self::$mOldWebservice = $ws;
+		self::$mOldWebserviceRemembered = true;
 	}
 }
 
