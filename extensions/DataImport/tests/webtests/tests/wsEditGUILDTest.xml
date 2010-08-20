@@ -35,11 +35,12 @@
 			<verifyInputField description="verify that predicate is set correctly"
 				xpath="//table[@id='step4-results']/tbody/tr[2]/td[2]/input" value="rdf:type" />
 
-			<verifyInputField description="verify that prefix is loaded correctly"
+			
+			<!--  <verifyInputField description="verify that prefix is loaded correctly"
 				xpath="//table[@id='step4-nss']/tbody/tr[2]/td[1]/input" value="xml" />
 
 			<verifyInputField description="verify that prefix url is set correctly"
-				xpath="//table[@id='step4-nss']/tbody/tr[2]/td[2]/input" value="rsomething" />
+				xpath="//table[@id='step4-nss']/tbody/tr[2]/td[2]/input" value="rsomething" />  -->
 				
 			<verifyElementText htmlid='menue-step6'  text='4. Save WWSD'/>
 			

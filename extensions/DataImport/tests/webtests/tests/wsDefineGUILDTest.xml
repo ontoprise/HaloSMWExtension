@@ -23,14 +23,14 @@
 			
 			<clickButton description="go to step2" htmlId="step1-go-img" />
 			
-			<clickButton xpath="//div[@id='step4-rest-intro']/input[3]" />
+			<clickElement xpath="//div[@id='step4-rest-intro']/a" />
 
 			<setInputField xpath="//table[@id='step4-results']/tbody/tr[2]/td[1]/input"
 				value="alias" />
 			<setInputField xpath="//table[@id='step4-results']/tbody/tr[2]/td[2]/input"
 				value="rdf:type" />
 			
-			<clickButton description="display namespace prefix table" htmlId="step4-addnss" />
+			<clickElement description="display namespace prefix table" xpath="//div[@id='step4-nss-header']" />
 			
 			<setInputField xpath="//table[@id='step4-nss']/tbody/tr[2]/td[1]/input"
 				value="xml" />
@@ -61,8 +61,8 @@
 			<invoke
 				url="http://localhost/${wikipath}/index.php/WebService:NewWebTestWSLD" />
 				
-			<verifyText text='WebService.*protocol.*LinkedData.*result.*part name=.*alias.*predicate=.*rdf.*namespace.*prefix=.*xml.*uri.*something.*WebService' 
-			regex="true"/>
+			<verifyText text='WebService.*protocol.*LinkedData.*result.*part name=.*alias.*property=.*rdf.*WebService' 
+				regex="true"/>
 			
 		</webtest>
 		

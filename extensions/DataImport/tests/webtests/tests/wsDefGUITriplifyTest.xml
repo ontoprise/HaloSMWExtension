@@ -23,19 +23,19 @@
 			
 			<clickButton description="go to step2" htmlId="step1-go-img" />
 			
-			<clickButton xpath="//div[@id='step4-rest-intro']/input[3]" />
+			<clickElement xpath="//div[@id='step4-rest-intro']/a" />
 
 			<setInputField xpath="//table[@id='step4-results']/tbody/tr[2]/td[1]/input"
 				value="alias" />
 			<setInputField xpath="//table[@id='step4-results']/tbody/tr[2]/td[2]/input"
 				value="rdf:type" />
 			
-			<clickButton description="add subject creation pattern" htmlId="step4-enable-triplification-button" />
+			<setCheckbox xpath="//input[@id='step4-enable-triplification-checkbox']"  description="add subject creation pattern"/>
 			
-			<setInputField xpath="//input[@id='step4-enable-triplification-input']"
+			<setInputField xpath="//textarea[@id='step4-enable-triplification-input']"
 				value="subject-" />
 				
-			<clickElement htmlid="step4-enable-triplification-input"  description="Select subject creation pattern input field"/>
+			<clickElement xpath="//a[@id='step4-add-alias-to-input']"  description="Select subject creation pattern input field"/>
 			
 			<clickElement xpath="//table[@id='step4-results']/tbody/tr[2]/td[1]/input"  description="Add alias to scp"/>
 			
