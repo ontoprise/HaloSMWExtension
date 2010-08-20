@@ -58,7 +58,7 @@
 				<include name="deploy.xml" />
 			</fileset>
 		</copy>
-		<zip destfile="bin/LinkedData-${version}.zip" basedir="bin/zip" />
+		<zip destfile="bin/LinkedData.zip" basedir="bin/zip" />
 		<delete dir="bin/zip" />
         <exec executable="php">
             <arg value="../../../buildtools/renameDeployable.php" />
