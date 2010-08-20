@@ -1167,9 +1167,9 @@ DefineWebServiceSpecial.prototype = {
 					continue;
 				}
 
-				if (this.resultContainer.firstChild.childNodes[i].childNodes[1].childNodes[0].type != "checkbox") {
+				if (this.resultContainer.firstChild.childNodes[i].childNodes[1].childNodes[0] == undefined) {
 					if (!this.resultContainer.firstChild.childNodes[i].removed) {
-						var name = this.resultContainer.firstChild.childNodes[i].childNodes[1].firstChild.value;
+						var name = this.resultContainer.firstChild.childNodes[i].childNodes[2].firstChild.value;
 						result += "<part name=\"" + name + "\" ";
 						wsSyntax += "| ?result." + name + "\n";
 
