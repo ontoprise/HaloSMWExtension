@@ -1117,6 +1117,9 @@ DefineWebServiceSpecial.prototype = {
 
 					var defaultValue = this.parameterContainer.firstChild.childNodes[i + 1 + offset].childNodes[4].firstChild.value;
 					if (defaultValue != "") {
+						defaultValue = defaultValue.replace(/>/g, "&gt;");
+						defaultValue = defaultValue.replace(/</g, "&lt;"); 
+						defaultValue = defaultValue.replace(/\"/g, "&quot;");
 						result += " defaultValue=\"" + defaultValue + "\" ";
 					}
 					
@@ -3591,6 +3594,9 @@ DefineWebServiceSpecial.prototype = {
 	
 					var defaultValue = parameterTable.childNodes[i].childNodes[3].firstChild.value;
 					if (defaultValue != "") {
+						defaultValue = defaultValue.replace(/>/g, "&gt;");
+						defaultValue = defaultValue.replace(/</g, "&lt;"); 
+						defaultValue = defaultValue.replace(/\"/g, "&quot;");
 						result += " defaultValue=\"" + defaultValue + "\" ";
 					}
 					result += " path=\""
@@ -3786,7 +3792,7 @@ DefineWebServiceSpecial.prototype = {
 	},
 
 	updateResultsREST : function(updates, protocol) {
-		if (updates.length > 1) {
+		if (updates.length > 1 || (updates.length == 1 && updates[0]["path"] != "##")) {
 			this.displayRestResultsTable(false);
 			$("step4-results").firstChild
 					.removeChild($("step4-results").firstChild.childNodes[1]);

@@ -287,15 +287,15 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 		//for triplification
 		$displayTriplificationContainer = ' style="display: none" ';
 		if(defined( 'LOD_LINKEDDATA_VERSION')){
-			$displayTriplificationContainer = ' style="display: " ';
+			$displayTriplificationContainer = '';
 		}
 		
 		$html .= '<table id="step4-enable-triplification" '.$displayTriplificationContainer.'>';
 		
 		$html .= '<tr>';
-		$html .= '<td><input id="step4-enable-triplification-checkbox" type="checkbox" '.$subjectCreationCheckboxChecked.' onchange="webServiceSpecial.displaySubjectCreationPattern()"/></td>';
+		$html .= '<td onclick="webServiceSpecial.displaySubjectCreationPattern()"><input id="step4-enable-triplification-checkbox" type="checkbox" '.$subjectCreationCheckboxChecked.'/></td>';
 		$html .= '<td><span>'.wfMsg('smw_wws_enable_triplification').'</span></td>';
-		$html .= '<td/>';
+		$html .= '<td></td>';
 		$html .= "</tr>";
 		
 		$triplificationDetailsVisible = strpos($subjectCreationCheckboxChecked, 'true') ? '' : ' style="display: none" ';
