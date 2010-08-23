@@ -59,7 +59,7 @@
 			<invoke
 				url="http://localhost/${wikipath}/index.php/WebService:NewWebTestWSTriplify" />
 				
-			<verifyText text='WebService.*protocol.*LinkedData.*result.*part name=.*alias.*predicate=.*rdf.*triplification.*subject=.*subject-.*WebService' 
+			<verifyText text='WebService.*protocol.*LinkedData.*result.*part name=.*alias.*property=.*rdf.*triplification.*subject=.*subject-.*WebService' 
 			regex="true"/>
 			
 		</webtest>

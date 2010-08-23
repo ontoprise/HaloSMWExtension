@@ -24,8 +24,8 @@
 			<verifyTitle text="Define Web Service - Halo3wiki"
 				description="Was define ws gui opened" />
 
-			<verifyInputField description="verify that the triplification subject pattern is displayed correctly"
-				xpath="//input[@id='step4-enable-triplification-input']" value="subject-" />
+			<verifyElementText description="verify that the triplification subject pattern is displayed correctly"
+				htmlId="step4-enable-triplification-input" text="subject-" />
 
 			</webtest>
 	</target>
