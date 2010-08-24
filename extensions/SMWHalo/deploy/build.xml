@@ -203,4 +203,11 @@
 		</exec>
 	</target>
 
+    <target name="cleanzip">
+    	<echo>Clean up old zip archives...</echo>
+        <delete>
+            <fileset dir="../../" includes="**/deploy/bin/*.zip" />
+        </delete>
+    </target>
+
 </project>
