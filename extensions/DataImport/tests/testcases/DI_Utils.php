@@ -5,7 +5,9 @@ function di_utils_getParamSetId($wsId, $pId){
 	$tn = $db->tableName("smw_ws_articles");
 	$query = 'SELECT param_set_id FROM '.$tn.' WHERE web_service_id='.$wsId.' AND page_id='.$pId;
 	$result = $db->query($query);
-	$result = $db->fetchObject($result);
+	if(!$result->param_set_id){
+		return 0;
+	}
 	return $result->param_set_id;
 }
 
