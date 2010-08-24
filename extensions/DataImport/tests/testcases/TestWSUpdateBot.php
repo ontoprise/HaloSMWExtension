@@ -79,7 +79,7 @@ class TestWSUpdateBot extends PHPUnit_Framework_TestCase {
 	}
 
 	function tearDown() {
-		di_utils_truncateWSTables();
+		//di_utils_truncateWSTables();
 	}
 
 	/*
