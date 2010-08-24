@@ -115,6 +115,7 @@ public function getImageDirectory() {
 				$queryResult = trim(substr($queryResult, 0, strpos($queryResult, "[")));
 			}
 			$timestamp = strtotime($queryResult);
+			
 
 			$tiDV = new SMWTermImportDefinitionValidator($xmlString);
 			if(!$tiDV->validate()){

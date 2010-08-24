@@ -528,7 +528,7 @@ $inputConfig, $importSetConfig, $termImportName, $updatePolicy, $edit) {
 	$articleContent = $tiConfig;
 
 	$articleContent .= "\n==== Last runs of this Term Import ====\n";
-	$articleContent .= "{{#ask: [[belongsToTermImport::TermImport:".$termImportName."]]"
+	$articleContent .= "{{#ask: [[belongsToTermImportWithLabel::".$termImportName."]]"
 	."\n| format=ul | limit=10 | sort=hasImportDate | order=descending}}";
 	$articleContent .= "\n[[Category:TermImport]]";
 	$result = smwf_om_EditArticle('TermImport:'.$termImportName, 'TermImportBot', $articleContent, '');

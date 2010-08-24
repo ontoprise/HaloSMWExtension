@@ -587,7 +587,7 @@ class TermImportBot extends GardeningBot {
 		$result = "__NOTOC__\n";
 		$result .= "==== Import summary ====";
 		$result .= "\n Term Import definition: [[belongsToTermImport::TermImport:".$termImportName."|"
-			.$termImportName."]]";
+			.$termImportName."]]"." [[belongsToTermImportWithLabel::".$termImportName."| ]]";
 		$result .= "\n Import date: [[hasImportDate::";
 		$result .= $this->getDateString()."]]";
 			
@@ -628,7 +628,7 @@ class TermImportBot extends GardeningBot {
 		$result = "__NOTOC__\n";
 		$result .= "==== Import summary ====";
 		$result .= "\n Term Import definition: [[belongsToTermImport::TermImport:".$termImportName."|"
-			.$termImportName."]]";
+			.$termImportName."]]"." [[belongsToTermImportWithLabel::".$termImportName."| ]]";
 		$result .= "\n Import date: [[hasImportDate::";
 		$result .= $this->getDateString()."]]";
 			

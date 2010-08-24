@@ -78,7 +78,7 @@ class DALReadPOP3 implements IDAL {
 			' 	<UserName display="'."User:".'" type="text"></UserName>'."\n".
 			' 	<Password display="'."Password:".'" type="text"></Password>'."\n".
 			'	<SSL display="'."Use SSL:".'" type="checkbox"></SSL>'."\n".
-			'	<AttachmentMP autocomplete="true" display="'."Extra Mapping Policy:".'" type="text"></AttachmentMP>'."\n".
+			//'	<AttachmentMP autocomplete="true" display="'."Extra Mapping Policy:".'" type="text"></AttachmentMP>'."\n".
 			'</DataSource>'."\n";
 	}
 
