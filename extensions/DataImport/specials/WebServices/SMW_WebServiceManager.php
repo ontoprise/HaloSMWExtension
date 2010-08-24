@@ -19,7 +19,7 @@
 /**
  * @file
  * @ingroup DIWebServices
- * 
+ *
  * This is the main entry file for the web service component.
  *
  * @author Thomas Schweitzer, Ingo Steinbauer
@@ -72,7 +72,7 @@ class WebServiceManager {
 
 	public static $mNewWebService = null;
 	public static $mOldWebservice = null; // the webserve in its state before the wwsd is changed
-	public static $mOldWebserviceRemembered = false; 
+	public static $mOldWebserviceRemembered = false;
 
 	/**
 	 * Register the WebServicePage for articles in the namespace 'WebService'.
@@ -88,7 +88,7 @@ class WebServiceManager {
 		}
 		return true;
 	}
-	
+
 	/**
 	 * Initializes the namespaces that are used by the Wiki Web Service extension.
 	 * Normally the base index starts at 200. It must be an even number greater than
@@ -146,7 +146,7 @@ class WebServiceManager {
 			
 		// Install the extended representation of articles in the namespace 'WebService'.
 		$wgHooks['ArticleFromTitle'][] = 'WebServiceManager::showWebServicePage';
-		
+
 		$wgParser->setHook('WebService', 'wwsdParserHook');
 		$wgHooks['ArticleSaveComplete'][] = 'WebServiceManager::articleSavedHook';
 		$wgHooks['ArticleDelete'][] = 'WebServiceManager::articleDeleteHook';
@@ -276,28 +276,27 @@ class WebServiceManager {
 		if($article->getTitle()->getNamespace() != SMW_NS_WEB_SERVICE) {
 			return true;
 		}
-		
 		//deal with case where user replaces a WWSD with a completely empty article
 		if(!self::$mOldWebserviceRemembered){
 			self::rememberWWSD(WebService::newFromID($article->getID()));
 		}
-		
+
 		global $smwgDIIP;
 		require_once($smwgDIIP."/specials/WebServices/SMW_WSTriplifier.php");
-		
+
 		// check if an wwsd was change and delete the old wwsd and the
 		// related cache entries from the db
 		if(WebServiceManager::detectModifiedWWSD(self::$mNewWebService)){
 			WebServiceCache::removeWS(self::$mOldWebservice->getArticleID());
 			self::$mOldWebservice->removeFromDB();
-			
+				
 			//deal with triplification
 			if(self::$mOldWebservice){
 				$articles = WSStorage::getDatabase()->getWSArticles(self::$mOldWebservice->getArticleID(), new SMWRequestOptions());
 				WSTriplifier::getInstance()->removeWS(self::$mOldWebservice->getArticleID(), $articles);
 			}
 		}
-		
+
 		//handle triplification processing
 		if (self::$mNewWebService) {
 			self::$mNewWebService->store();
@@ -305,6 +304,7 @@ class WebServiceManager {
 		}
 		self::$mNewWebService = null;
 		self::$mOldWebservice = null;
+
 		return true;
 	}
 
@@ -324,9 +324,9 @@ class WebServiceManager {
 			//deal with triplification
 			$articles = WSStorage::getDatabase()->getWSArticles($article->getID(), new SMWRequestOptions());
 			WSTriplifier::getInstance()->removeWS($article->getID(), $articles);
-			
+				
 			WebServiceCache::removeWS($ws->getArticleID());
-			
+				
 			$options = new SMWRequestOptions();
 			$pageIds = WSStorage::getDatabase()->getWSArticles($ws->getArticleID(), $options);
 			foreach($pageIds as $articleId){
@@ -342,7 +342,7 @@ class WebServiceManager {
 					}
 				}
 			}
-				
+
 			$ws->removeFromDB();
 		}
 		self::$mNewWebService = null;
@@ -370,9 +370,9 @@ class WebServiceManager {
 	public static function detectModifiedWWSD($mNewWebService){
 		if(self::$mOldWebservice){
 			if(!$mNewWebService){
-					return true;
+				return true;
 			}
-			
+				
 			$remove = false;
 			if(self::$mOldWebservice->getArticleID() != $mNewWebService->getArticleID()){
 				$remove = true;
@@ -468,15 +468,15 @@ function wwsdParserHook($input, $args, $parser) {
 		// add message: namespace webService needed.
 		$notice = "<b>".wfMsg('smw_wws_wwsd_needs_namespace')."</b>";
 	}
-	
-	global $wgArticlePath;
-	if(strpos($wgArticlePath, "?") > 0){
-		$url = Title::makeTitleSafe(NS_SPECIAL, "DefineWebService")->getFullURL()."&wwsdId=".$ws->getArticleID();
-	} else {
-		$url = Title::makeTitleSafe(NS_SPECIAL, "DefineWebService")->getFullURL()."?wwsdId=".$ws->getArticleID();
-	}
-	$linkToDefGui = '<h4><span class="mw-headline"><a href="'.$url.'">'.wfMsg('smw_wws_edit_in_gui').'</a></h4>';
-	
+
+	//	global $wgArticlePath;
+	//	if(strpos($wgArticlePath, "?") > 0){
+	//		$url = Title::makeTitleSafe(NS_SPECIAL, "DefineWebService")->getFullURL()."&wwsdId=".$ws->getArticleID();
+	//	} else {
+	//		$url = Title::makeTitleSafe(NS_SPECIAL, "DefineWebService")->getFullURL()."?wwsdId=".$ws->getArticleID();
+	//	}
+	//	$linkToDefGui = '<h4><span class="mw-headline"><a href="'.$url.'">'.wfMsg('smw_wws_edit_in_gui').'</a></h4>';
+
 	return  '<h4><span class="mw-headline">Web Service Definition</span></h4>'
-			."<pre>\n".htmlspecialchars($completeWWSD)."\n</pre>".$notice.$msg.$linkToDefGui;
+	."<pre>\n".htmlspecialchars($completeWWSD)."\n</pre>".$notice.$msg; //.$linkToDefGui;
 }

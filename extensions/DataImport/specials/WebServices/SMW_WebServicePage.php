@@ -110,16 +110,16 @@ class SMWWebServicePage extends SMWOrderedListPage {
 		wfProfileIn( __METHOD__ . ' (SMW)');
 		$r = '';
 
-		// global $wgArticlePath;
-		//		$ws = WebService::newFromID($this->getTitle()->getArticleID());
-		//		if($ws != null){
-		//			if(strpos($wgArticlePath, "?") > 0){
-		//				$url = Title::makeTitleSafe(NS_SPECIAL, "DefineWebService")->getFullURL()."&wwsdId=".$this->getTitle()->getArticleID();
-		//			} else {
-		//				$url = Title::makeTitleSafe(NS_SPECIAL, "DefineWebService")->getFullURL()."?wwsdId=".$this->getTitle()->getArticleID();
-		//			}
-		//			$r .= '<h2><a href="'.$url.'">'.wfMsg('smw_wws_edit_in_gui').'</a></h2>';
-		//		}
+		global $wgArticlePath;
+		$ws = WebService::newFromID($this->getTitle()->getArticleID());
+		if($ws != null){
+			if(strpos($wgArticlePath, "?") > 0){
+				$url = Title::makeTitleSafe(NS_SPECIAL, "DefineWebService")->getFullURL()."&wwsdId=".$this->getTitle()->getArticleID();
+			} else {
+				$url = Title::makeTitleSafe(NS_SPECIAL, "DefineWebService")->getFullURL()."?wwsdId=".$this->getTitle()->getArticleID();
+			}
+			$r .= '<h4><a href="'.$url.'">'.wfMsg('smw_wws_edit_in_gui').'</a></h4>';
+		}
 
 		$ti = htmlspecialchars( $this->mTitle->getText() );
 
