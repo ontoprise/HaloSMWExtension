@@ -118,7 +118,7 @@ class SMWWebServicePage extends SMWOrderedListPage {
 			} else {
 				$url = Title::makeTitleSafe(NS_SPECIAL, "DefineWebService")->getFullURL()."?wwsdId=".$this->getTitle()->getArticleID();
 			}
-			$r .= '<h4><a href="'.$url.'">'.wfMsg('smw_wws_edit_in_gui').'</a></h4>';
+			$r .= '<h4><span class="mw-headline"><a href="'.$url.'">'.wfMsg('smw_wws_edit_in_gui').'</a></span></h4>';
 		}
 
 		$ti = htmlspecialchars( $this->mTitle->getText() );
