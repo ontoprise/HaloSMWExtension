@@ -1949,18 +1949,18 @@ QIHelper.prototype = {
                 ["=", gLanguage.getMessage('QI_EQUAL') ],
                 [">=", gLanguage.getMessage('QI_GT') ],
                 ["<=", gLanguage.getMessage('QI_LT') ],
-                ["!", gLanguage.getMessage('QI_NOT') ],
+                ["!", gLanguage.getMessage('QI_NOT') ]
             ].each(optionsFunc);
 		} else if (type == 2) {
 			[
                 ["=", gLanguage.getMessage('QI_EQUAL') ],
                 ["!", gLanguage.getMessage('QI_NOT') ],
-                ["~", gLanguage.getMessage('QI_LIKE') ],
+                ["~", gLanguage.getMessage('QI_LIKE') ]
             ].each(optionsFunc);
 		} else {
 		    [
                 ["=", gLanguage.getMessage('QI_EQUAL') ],
-                ["!", gLanguage.getMessage('QI_NOT') ],
+                ["!", gLanguage.getMessage('QI_NOT') ]
             ].each(optionsFunc);
         }
 		
