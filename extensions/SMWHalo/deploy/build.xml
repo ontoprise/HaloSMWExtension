@@ -140,57 +140,82 @@
 	</target>
 
 	<target name="deployscripts" depends="versionhint">
-		<concat destfile="../../SMWHalo/scripts/deployGeneralTools.js">
-			<fileset dir="../../SMWHalo/scripts" includes="ajaxhalo.js" />
-			<fileset dir="../../SMWHalo/scripts/OntologyBrowser" includes="generalTools.js" />
-			<fileset dir="../../SMWHalo/scripts/GeneralGUI" includes="breadcrumb.js" />
-			<fileset dir="../../SMWHalo/scripts/GeneralGUI" includes="generalGUI.js" />
-			<fileset dir="../../SMWHalo/scripts/GeneralGUI" includes="contentSlider.js" />
-			<fileset dir="../../SMWHalo/scripts/Logger" includes="smw_logger.js" />
-			<fileset dir="../../SMWHalo/scripts/Language" includes="SMW_Language.js" />
-			<fileset dir="../../SMWHalo/scripts" includes="SMW_DerivedFactsTab.js" />
-		</concat>
+        <echo>General Tools</echo>
+        <java
+            fork="true"
+            jar="../../../buildtools/closure/compiler.jar"
+            failonerror="true">
+			<arg value="--js=../../SMWHalo/scripts/ajaxhalo.js" />
+			<arg value="--js=../../SMWHalo/scripts/OntologyBrowser/generalTools.js" />
+			<arg value="--js=../../SMWHalo/scripts/GeneralGUI/breadcrumb.js" />
+			<arg value="--js=../../SMWHalo/scripts/GeneralGUI/generalGUI.js" />
+			<arg value="--js=../../SMWHalo/scripts/GeneralGUI/contentSlider.js" />
+			<arg value="--js=../../SMWHalo/scripts/Logger/smw_logger.js" />
+			<arg value="--js=../../SMWHalo/scripts/Language/SMW_Language.js" />
+			<arg value="--js=../../SMWHalo/scripts/SMW_DerivedFactsTab.js" />
+		    <arg value="--js_output_file=../../SMWHalo/scripts/deployGeneralTools.js" />
+        </java>
 
-		<concat destfile="../../SMWHalo/scripts/deployGeneralScripts.js">
-			<fileset dir="../../SMWHalo/scripts/scriptaculous" includes="effects.js" />
-			<fileset dir="../../SMWHalo/scripts/scriptaculous" includes="slider.js" />
-			<fileset dir="../../SMWHalo/scripts/scriptaculous" includes="dragdrop.js" />
-			<fileset dir="../../SMWHalo/scripts/Autocompletion" includes="wick.js" />
-			<fileset dir="../../SMWHalo/scripts/SemanticToolbar" includes="SMW_Help.js" />
-			<fileset dir="../../SMWHalo/scripts/SemanticToolbar" includes="SMW_Links.js" />
-			<fileset dir="../../SMWHalo/scripts/SemanticToolbar" includes="SMW_Help.js" />
-			<fileset dir="../../SMWHalo/scripts/WikiTextParser" includes="Annotation.js" />
-			<fileset dir="../../SMWHalo/scripts/WikiTextParser" includes="WikiTextParser.js" />
-			<fileset dir="../../SMWHalo/scripts/SemanticToolbar" includes="SMW_Ontology.js" />
-			<fileset dir="../../SMWHalo/scripts/SemanticToolbar" includes="SMW_DataTypes.js" />
-			<fileset dir="../../SMWHalo/scripts/SemanticToolbar" includes="SMW_GenericToolbarFunctions.js" />
-			<fileset dir="../../SMWHalo/scripts/SemanticToolbar" includes="SMW_Container.js" />
-			<fileset dir="../../SMWHalo/scripts/SemanticToolbar" includes="SMW_Marker.js" />
-			<fileset dir="../../SMWHalo/scripts/SemanticToolbar" includes="SMW_Relation.js" />
-			<fileset dir="../../SMWHalo/scripts/SemanticToolbar" includes="SMW_Properties.js" />
-			<fileset dir="../../SMWHalo/scripts/SemanticToolbar" includes="SMW_Refresh.js" />
-			<fileset dir="../../SMWHalo/scripts/SemanticToolbar" includes="SMW_DragAndResize.js" />
-			<fileset dir="../../SMWHalo/scripts/SemanticToolbar" includes="SMW_ContextMenu.js" />
-			<fileset dir="../../SMWHalo/scripts/SemanticToolbar" includes="SMW_Category.js" />
-			<fileset dir="../../SMWHalo/scripts/SemanticToolbar" includes="SMW_Help.js" />
-			<fileset dir="../../SMWHalo/scripts/SemanticToolbar" includes="SMW_Links.js" />
-			<fileset dir="../../SMWHalo/scripts/AdvancedAnnotation" includes="SMW_AdvancedAnnotation.js" />
-			<fileset dir="../../SMWHalo/scripts/AdvancedAnnotation" includes="SMW_AnnotationHints.js" />
-			<fileset dir="../../SMWHalo/scripts/AdvancedAnnotation" includes="SMW_GardeningHints.js" />
-			<fileset dir="../../SMWHalo/scripts/AdvancedAnnotation" includes="SMW_SaveAnnotations.js" />
-			<fileset dir="../../SMWHalo/scripts" includes="SMW_DerivedFacts.js" />
-		</concat>
+        <echo>General Scripts</echo>
+        <java
+            fork="true"
+            jar="../../../buildtools/closure/compiler.jar"
+            failonerror="true">
+			<arg value="--js=../../SMWHalo/scripts/scriptaculous/effects.js" />
+			<arg value="--js=../../SMWHalo/scripts/scriptaculous/slider.js" />
+			<arg value="--js=../../SMWHalo/scripts/scriptaculous/dragdrop.js" />
+			<arg value="--js=../../SMWHalo/scripts/Autocompletion/wick.js" />
+			<arg value="--js=../../SMWHalo/scripts/WikiTextParser/Annotation.js" />
+			<arg value="--js=../../SMWHalo/scripts/WikiTextParser/WikiTextParser.js" />
+			<arg value="--js=../../SMWHalo/scripts/SemanticToolbar/SMW_Ontology.js" />
+			<arg value="--js=../../SMWHalo/scripts/SemanticToolbar/SMW_DataTypes.js" />
+			<arg value="--js=../../SMWHalo/scripts/SemanticToolbar/SMW_GenericToolbarFunctions.js" />
+			<arg value="--js=../../SMWHalo/scripts/SemanticToolbar/SMW_Container.js" />
+			<arg value="--js=../../SMWHalo/scripts/SemanticToolbar/SMW_Marker.js" />
+			<arg value="--js=../../SMWHalo/scripts/SemanticToolbar/SMW_Relation.js" />
+			<arg value="--js=../../SMWHalo/scripts/SemanticToolbar/SMW_Properties.js" />
+			<arg value="--js=../../SMWHalo/scripts/SemanticToolbar/SMW_Refresh.js" />
+			<arg value="--js=../../SMWHalo/scripts/SemanticToolbar/SMW_DragAndResize.js" />
+			<arg value="--js=../../SMWHalo/scripts/SemanticToolbar/SMW_ContextMenu.js" />
+			<arg value="--js=../../SMWHalo/scripts/SemanticToolbar/SMW_Category.js" />
+			<arg value="--js=../../SMWHalo/scripts/SemanticToolbar/SMW_Help.js" />
+			<arg value="--js=../../SMWHalo/scripts/SemanticToolbar/SMW_Links.js" />
+			<arg value="--js=../../SMWHalo/scripts/AdvancedAnnotation/SMW_AdvancedAnnotation.js" />
+			<arg value="--js=../../SMWHalo/scripts/AdvancedAnnotation/SMW_AnnotationHints.js" />
+			<arg value="--js=../../SMWHalo/scripts/AdvancedAnnotation/SMW_GardeningHints.js" />
+			<arg value="--js=../../SMWHalo/scripts/AdvancedAnnotation/SMW_SaveAnnotations.js" />
+			<arg value="--js=../../SMWHalo/scripts/SMW_DerivedFactsTab.js" />
+            <arg value="--js_output_file=../../SMWHalo/scripts/deployGeneralScripts.js" />
+        </java>
 
-		<concat destfile="../../SMWHalo/scripts/OntologyBrowser/deployOntologyBrowser.js">
-			<filelist dir="../../SMWHalo/scripts/scriptaculous" files="effects.js" />
-			<filelist dir="../../SMWHalo/scripts/OntologyBrowser" files="ontologytools.js, treeview.js, treeviewActions.js, treeviewData.js, advancedOptions.js" />
-			<filelist dir="../../SemanticMediaWiki/skins" files="SMW_tooltip.js" />
-		</concat>
 
-		<concat destfile="../../SMWHalo/scripts/QueryInterface/deployQueryInterface.js">
-			<filelist dir="../../SMWHalo/scripts/QueryInterface" files="Query.js, QIHelper.js, qi_tooltip.js" />
-			<filelist dir="../../SemanticMediaWiki/skins" files="SMW_tooltip.js" />
-		</concat>
+        <echo>OntologyBrowser</echo>
+        <java
+            fork="true"
+            jar="../../../buildtools/closure/compiler.jar"
+            failonerror="true">
+			<arg value="--js=../../SMWHalo/scripts/scriptaculous/effects.js" />
+			<arg value="--js=../../SMWHalo/scripts/OntologyBrowser/ontologytools.js" />
+            <arg value="--js=../../SMWHalo/scripts/OntologyBrowser/treeview.js" />
+            <arg value="--js=../../SMWHalo/scripts/OntologyBrowser/treeviewActions.js" />
+            <arg value="--js=../../SMWHalo/scripts/OntologyBrowser/treeviewData.js" />
+            <arg value="--js=../../SMWHalo/scripts/OntologyBrowser/advancedOptions.js" />
+			<arg value="--js=../../SemanticMediaWiki/skins/SMW_tooltip.js" />
+            <arg value="--js_output_file=../../SMWHalo/scripts/QueryInterface/deployOntologyBrowser.js" />
+        </java>
+
+        <echo>QueryInterface</echo>
+        <java
+            fork="true"
+            jar="../../../buildtools/closure/compiler.jar"
+            failonerror="true">
+            <arg value="--js=../../SMWHalo/scripts/QueryInterface/Query.js" />
+            <arg value="--js=../../SMWHalo/scripts/QueryInterface/QIHelper.js" />
+            <arg value="--js=../../SMWHalo/scripts/QueryInterface/qi_tooltip.js" />
+			<arg value="--js=../../SemanticMediaWiki/skins/SMW_tooltip.js" />
+            <arg value="--js_output_file=../../SMWHalo/scripts/QueryInterface/deployQueryInterface.js" />
+        </java>
+        
 	</target>
 
 	<target name="versionhint">
