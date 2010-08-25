@@ -96,6 +96,9 @@ class SMWWebServiceRepositorySpecial extends SpecialPage {
 		$html .= "<h2><span class=\"mw-headline\">".wfMsg('smw_wwsr_intro')."</span></h2>";
 
 		$html .= "<p>".wfMsg('smw_wwsr_rep_intro')."</p>";
+		
+		$html .= '<p><a href="'.Title::makeTitleSafe(NS_SPECIAL, "DefineWebService")->getFullURL().'">'.wfMsg('smw_wwsr_rep_create_link').'</a></p>';
+		
 		if($allowed){
 			$html .= "<table id=\"webservicetable\" class=\"smwtable\"><tr><th>".wfMsg('smw_wwsr_name')."</th><th>".wfMsg('smw_wwsr_lastupdate')."</th><th style=\"text-align: center\">".wfMsg('smw_wwsr_update_manual')."</th><th style=\"text-align: center\">".wfMsg('smw_wwsr_rep_edit')."</th><th style=\"text-align: center\">".wfMsg('smw_wwsr_confirm')."</th></tr>";
 		} else {
@@ -166,6 +169,8 @@ class SMWWebServiceRepositorySpecial extends SpecialPage {
 		
 		$html .= "<h2><span class=\"mw-headline\">".wfMsg('smw_tir_intro')."</span></h2>";
 		$html .= "<p>".wfMsg('smw_tir_rep_intro')."</p>";
+		
+		$html .= '<p><a href="'.Title::makeTitleSafe(NS_SPECIAL, "TermImport")->getFullURL().'">'.wfMsg('smw_tir_rep_create_link').'</a></p>';
 		
 		if($allowed){
 			$html .= "<table id=\"termimporttable\" width=\"100%\" class=\"smwtable\"><tr><th>".wfMsg('smw_wwsr_name')."</th><th>".wfMsg('smw_wwsr_lastupdate')."</th><th style=\"text-align: center\">".wfMsg('smw_wwsr_update_manual')."</th><th style=\"text-align: center\">".wfMsg('smw_wwsr_rep_edit')."</th></tr>";

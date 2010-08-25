@@ -320,6 +320,9 @@ class SMW_DILanguageDe extends SMW_DILanguage {
 	'smw_wws_s4_add_ns_prefix' => 'Weiteres Namespace Pr&auml:fix hinzuf&uuml;gen',
 	
 	'smw_wws_s3_add_another_parameter' => 'Weiteren Parameter hinzuf&uuml;gen',
+	
+	'smw_wwsr_rep_create_link' => 'Klicken Sie hier, um eine neue Wiki Web Service Definition zu erstellen.',
+	'smw_tir_rep_create_link' => 'Bitte klicken Sie hier, um einen neuen Term Import zu konfigurieren.',
 	);
 
 	protected $smwDINamespaces = array(

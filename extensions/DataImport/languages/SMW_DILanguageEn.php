@@ -323,6 +323,9 @@ class SMW_DILanguageEn extends SMW_DILanguage {
 	
 	'smw_wws_s3_add_another_parameter' => 'Add another parameter',
 	
+	'smw_wwsr_rep_create_link' => 'Click here to create a new Wiki Web Service Definition.',
+	'smw_tir_rep_create_link' => 'Click here to configure and start a new Term Import.',
+	
 	);
 
 	protected $smwDINamespaces = array(
