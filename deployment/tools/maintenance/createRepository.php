@@ -93,7 +93,7 @@ $localPackages = getLocalPackages($rootDir);
 echo "\nCreate new repository ".$outputDir."repository.xml";
 
 
-$new_ser = '<?xml version="1.0" encoding="UTF-8"?><?xml-stylesheet type="text/xsl" href="repository.xslt"?>'."<root>\n<extensions>\n";
+$new_ser = '<?xml version="1.0" encoding="UTF-8"?><?xml-stylesheet type="text/xsl" href="repository.xsl"?>'."<root>\n<extensions>\n";
 foreach($localPackages as $lp) {
     $id = $lp->getID();
     $installdir = $lp->getInstallationDirectory();
