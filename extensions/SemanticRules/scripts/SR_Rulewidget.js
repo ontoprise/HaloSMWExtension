@@ -38,12 +38,12 @@ SRRuleWidget.prototype = {
 		$$('.ruleWidget').each(function(w) { 
 			var ruleID = w.getAttribute("ruleID");
 			var ruletext = $(ruleID).textContent;
-			var native = $(ruleID).getAttribute("native");
+			var natives = $(ruleID).getAttribute("native");
 			var width =  (w.getAttribute("width") != null ?  w.getAttribute("width") : 600);
 	        var height = (w.getAttribute("height") != null ?  w.getAttribute("height") : 300);
 	        //TODO: set size
 	        
-	        var o = { 'ruleID' : ruleID, 'ruletext' : ruletext, 'native':native };
+	        var o = { 'ruleID' : ruleID, 'ruletext' : ruletext, 'native':natives };
 	      
 	        rulelist += isfirst ? Object.toJSON(o) : "##"+Object.toJSON(o);
 	        if (isfirst) isfirst = false;
