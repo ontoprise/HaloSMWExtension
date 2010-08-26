@@ -2,7 +2,7 @@
  * @file
  * @ingroup SRRuleTypes
  * 
- * @author: Kai Kühn / ontoprise / 2009
+ * @author: Kai Kï¿½hn / ontoprise / 2009
  *
  */
 var PropertyChain = Class.create();
@@ -88,7 +88,7 @@ PropertyChain.prototype = {
 			+ '" onclick="smwhgPropertyChain.addChain('
 			+ cCount
 			+ ')" src="' + wgScriptPath + '/extensions/SMWHalo/skins/add.png"'
-			+ ' style="margin-top: 3px; cursor:pointer"/>'; 
+			+ ' style="margin-top: 3px; cursor:pointer"/>'
 			+ '</div>'
 		
 		return chainHtml;
