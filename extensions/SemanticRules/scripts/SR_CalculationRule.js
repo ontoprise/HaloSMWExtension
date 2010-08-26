@@ -19,7 +19,7 @@
  * @file
  * @ingroup SRRuleTypes
  * 
- * @author: Kai Kühn / ontoprise / 2009
+ * @author: Kai Kï¿½hn / ontoprise / 2009
  *
  */
 
@@ -32,9 +32,9 @@ CalculationRule.prototype = {
 
 /**
  * Constructor
- * @param string ruleName
+ * @param ruleName of type string
  * 		Name of the rule
- * @param string ruleType
+ * @param ruleType of type string
  * 		Type of the rule e.g. Calculation, Property Chaining, Deduction, Mapping
  */
 initialize: function(ruleName, ruleType) {
@@ -53,7 +53,7 @@ initialize: function(ruleName, ruleType) {
  * 
  * Creates the initial user interface of the calculation rules editor.
  * 
- * @param string ruleText
+ * @param ruleText of type string
  * 		If this parameter is defined, an existing rule will be edited otherwise
  * 		a new rule will be created.
  */
@@ -118,7 +118,7 @@ cancel: function() {
  * 
  * Creates the initial user interface of the calculation rules editor.
  * 
- * @param FormulaRule parsedRule
+ * @param parsedRule of type FormulaRule
  * 		If this parameter is defined, it contains a representation of the parsed
  * 		rule that defines the content of the GUI.
  */
@@ -165,7 +165,7 @@ createUI: function(parsedRule) {
  * Returns the HTML structure of the rule interface consisting of the formula 
  * part, the variable definition area and the preview area.
  * 
- * @param FormulaRule parsedRule
+ * @param parsedRule of type FormulaRule
  * 		If defined, it contains the parsed representation of the rule for the
  * 		initial GUI.
  */
@@ -199,8 +199,8 @@ getHTMLRuleFramework: function(parsedRule) {
  * 
  * This function returns the HTML of the upper part of the GUI where the formula
  * is entered. This part allows editing the formula. 
- * 
- * @param FormulaRule parsedRule
+ *
+ * @param parsedRule of type FormulaRule
  * 		If defined, it contains the parsed representation of the rule for the
  * 		initial GUI.
  */
@@ -246,7 +246,7 @@ defineFormulaHTML: function(parsedRule) {
  * This function returns the HTML of the upper part of the GUI where the formula
  * has already been confirmed. This part no longer allows editing the formula. 
  * 
- * @param FormulaRule parsedRule
+ * @param parsedRule of type FormulaRule
  * 		Contains the parsed representation of the rule with the definition of
  * 		the formula.
  */
@@ -284,7 +284,7 @@ confirmedFormulaHTML: function(parsedRule) {
  * This function returns the HTML of the middle part of the GUI where the variables
  * are specified. This part is initially invisible.
  * 
- * @param FormulaRule parsedRule
+ * @param parsedRule of type FormulaRule
  * 		If defined, it contains the parsed representation of the rule for the
  * 		initial GUI.
  */
@@ -310,7 +310,7 @@ defineVariablesHTML: function(parsedRule) {
  * This function returns the HTML for the specification of all variables in
  * the given rule.
  * 
- * @param FormulaRule parsedRule
+ * @param parsedRule of type FormulaRule
  * 		Contains the parsed representation of the rule for the
  * 		initial GUI.
  * 
@@ -343,11 +343,11 @@ allVariableSpecificationsHTML: function(parsedRule) {
  * 
  * This function returns the HTML for the specification of one variable.
  * 
- * @param string variable
+ * @param variable of type string
  * 		The name of the variable
- * @param string type
+ * @param type of type string
  * 		The type of the variable (i.e. 'prop' or 'const')
- * @param string value
+ * @param value of type string
  * 		Depending in the type this is the name of the property or the value
  * 		of the constant.
  * 
@@ -535,7 +535,7 @@ editFormula: function() {
  * 
  * Shows or hides the operator help box.
  * 
- * @param bool doShow
+ * @param doShow of type bool
  * 		
  */
 showOpHelp: function(doShow) {
@@ -586,7 +586,7 @@ radioChanged: function(radioID) {
  * Checks if the formula is syntactically correct. If it is, the part for specifying
  * variables is opened, otherwise an error message is shown. 
  * 
- * @param string formula
+ * @param formula of type string
  * 		The formula to be checked
  */
 checkFormula: function(formula) {
@@ -700,7 +700,7 @@ saveRule: function(event) {
  * 
  * Shows the pending indicator on the element with the DOM-ID <onElement>
  * 
- * @param string onElement
+ * @param onElement of type string
  * 			DOM-ID if the element over which the indicator appears
  */
 showPendingIndicator: function(onElement) {
@@ -815,7 +815,7 @@ FormulaRule.prototype = {
 	
 /**
  * Constructor
- * @param string formula
+ * @param formula of type string
  * 		The formula
  */
 initialize: function(formula) {
@@ -830,7 +830,7 @@ getFormula: function() {
 /**
  * Sets the variables of the rule. 
  * 
- * @param array<{name,type,value}> variables
+ * @param variables of type array<{name,type,value}>
  * 		An array of variable definitions. A definition is an object with the
  * 		fields name, type and value.
  */
@@ -851,7 +851,7 @@ var FormulaRuleParser = {
  * This element has a formula- and a variableSpec-attribute. These attributes
  * are used to create a formula rule object of type (FormulaRule).
  * 
- * @param string ruleText
+ * @param ruleText of type string
  * 		The text of the rule beginning with the <rule> element
  * 
  * @return bool/FormulaRule
