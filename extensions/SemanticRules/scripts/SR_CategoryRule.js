@@ -20,7 +20,7 @@ var CategoryRule = Class.create();
  * @file
  * @ingroup SRRuleTypes
  * 
- * @author Kai Kühn
+ * @author Kai Kï¿½hn
  */
  		
 
@@ -29,9 +29,9 @@ CategoryRule.prototype = {
 
 /**
  * Constructor
- * @param string ruleName
+ * @param ruleName of type string
  * 		Name of the rule
- * @param string ruleType
+ * @param ruleType of type string
  * 		Type of the rule e.g. Calculation, Property Chaining, Deduction, Mapping
  */
 initialize: function(ruleName, ruleType) {
@@ -85,11 +85,11 @@ createRule: function() {
  * type of the head (category or property) depends on the namespace of the
  * current page.
  * 
- * @param string varIdx
+ * @param varIdx of type string
  * 		Index of the variable in the head
- * @param string catOrProp
+ * @param catOrProp of type string
  * 		The language dependent name for categories or properties
- * @param string title
+ * @param title of type string
  * 		Name of the category or property
  */
 createHeadHTML: function(varIdx, catOrProp, title, propValue, propIsVariable) {
@@ -122,9 +122,9 @@ createHeadHTML: function(varIdx, catOrProp, title, propValue, propIsVariable) {
  * Returns the HTML structure of the rule interface consisting of a head, body
  * and preview part.
  * 
- * @param string headText
+ * @param headText of type string
  * 		HTML-content of the head part
- * @param string bodyText
+ * @param bodyText of type string
  * 		HTML-content of the body part
  */
 getHTMLRuleFramework: function(headText, bodyText) {	
@@ -172,7 +172,7 @@ getHTMLRuleFramework: function(headText, bodyText) {
 /**
  * Edits the rule with the given rule text.
  * 
- * @param WtpRule rule
+ * @param rule of type WtpRule
  * 		The annotation object of the rule
  */
 editRule: function(ruleAnnotation) {
@@ -220,7 +220,7 @@ cancel: function() {
 /**
  * Creates the user interface for the rule that is given in the XML format.
  * 
- * @param string ruleXML
+ * @param ruleXML of type string
  * 		Description of the rule in XML
  */
 createUIForRule: function(ruleXML) {
@@ -287,9 +287,9 @@ createUIForRule: function(ruleXML) {
  * Assembles the HTML for a literal of a rule. The literal is passed as a DOM
  * node.
  * 
- * @param DOMnode literal
+ * @param literal of type DOMnode
  * 		Literal of a rule (a category or a property)
- * @param bool isHead
+ * @param isHead of type bool
  * 		If <true>, HTML code the head of the rule generated.
  *
  * @return string
@@ -444,7 +444,7 @@ memberOfCategory: function() {
 /**
  * Replaces the display of a category condition by the editable user interface.
  * 
- * @param int partID
+ * @param partID of type int
  * 		Index of the part of the rule.
  */
 editCategoryCondition: function(partID) {
@@ -482,9 +482,9 @@ editCategoryCondition: function(partID) {
  * format without input fields etc. The section for defining the next condition
  * is added if <update> is 'false'. 
  * 
- * @param int partID 
+ * @param partID of type int
  * 		ID of the part where the category condition is added
- * @param bool update
+ * @param update of type bool
  * 		If <true>, the current part is updated. The next condition will not be 
  * 		appended.
  */
@@ -611,7 +611,7 @@ memberOfProperty: function() {
 /**
  * Replaces the display of a property condition by the editable user interface.
  * 
- * @param int partID
+ * @param partID of type int
  * 		Index of the part of the rule.
  */
 editPropertyCondition: function(partID) {
@@ -694,9 +694,9 @@ editPropertyCondition: function(partID) {
  * format without input fields etc. The section for defining the next condition
  * is added if <update> is 'false'. 
  * 
- * @param int partID 
+ * @param partID of type int
  * 		ID of the part where the category condition is added
- * @param bool update
+ * @param update of type bool
  * 		If <true>, the current part is updated. The next condition will not be 
  * 		appended.
  */
@@ -874,7 +874,7 @@ saveRule: function(event) {
 /**
  * Removes the condition with the given ID.
  * 
- * @param int partID
+ * @param partID of type int
  * 		Index of the condition to be removed
  */
  removeCondition: function(partID) {
@@ -889,11 +889,11 @@ saveRule: function(event) {
 /**
  * Creates the HTML-code for the variable selector.
  * 
- * @param string id
+ * @param id of type string
  * 		ID of the selector
- * @param string option
+ * @param option of type string
  * 		One additional option that is appended
- * @param string select
+ * @param select of type string
  * 		If this item occurrs in the list of options, it will be selected.
  */
 createVariableSelector: function(id, option, select) {
@@ -968,7 +968,7 @@ createOperatorSelector: function(id, defaultValue, visible) {
 /**
  * Shows or hides the edit and delete buttons to the right of a condition.
  * 
- * @param bool show
+ * @param show of type bool
  * 		If <true>, buttons are shown, otherwise they are hidden.
  */
 showButtons: function(show) {
@@ -987,7 +987,7 @@ showButtons: function(show) {
 /*
  * Shows the pending indicator on the element with the DOM-ID <onElement>
  * 
- * @param string onElement
+ * @param onElement of type string
  * 			DOM-ID if the element over which the indicator appears
  */
 showPendingIndicator: function(onElement) {
