@@ -35,10 +35,10 @@
 !define MUI_ABORTWARNING
 
 !define MUI_HEADERIMAGE
-!define MUI_HEADERIMAGE_BITMAP "..\..\..\SMWHalo Installer Tools\workspace\SMWPlusInstaller\images\header-install.bmp"
+!define MUI_HEADERIMAGE_BITMAP "..\..\..\Internal__SMWPlusInstaller_and_XAMPP\workspace\SMWPlusInstaller\images\header-install.bmp"
 
 !define MUI_WELCOMEFINISHPAGE 
-!define MUI_WELCOMEFINISHPAGE_BITMAP "..\..\..\SMWHalo Installer Tools\workspace\SMWPlusInstaller\images\wizard-install.bmp"
+!define MUI_WELCOMEFINISHPAGE_BITMAP "..\..\..\Internal__SMWPlusInstaller_and_XAMPP\workspace\SMWPlusInstaller\images\wizard-install.bmp"
 !define MUI_WELCOMEFINISHPAGE_BITMAP_NOSTRETCH
 !define MUI_COMPONENTSPAGE_SMALLDESC
 
@@ -77,7 +77,7 @@ SetCompress off
 
 Name "${PRODUCT} v${VERSION}"
 Caption "${PRODUCT_CAPTION} ${VERSION}"
-Icon "..\..\..\SMWHalo Installer Tools\workspace\SMWPlusInstaller\images\nsis1-install.ico"
+Icon "..\..\..\Internal__SMWPlusInstaller_and_XAMPP\workspace\SMWPlusInstaller\images\nsis1-install.ico"
 OutFile "${PRODUCT}-${VERSION}.exe"
 
 AllowSkipFiles off
@@ -92,10 +92,10 @@ InstallColors FF8080 000030
 ComponentText "" "" " "
 InstallDir "$PROGRAMFILES\Ontoprise\${PRODUCTPATH}\"
 DirText $CHOOSEDIRTEXT "" "" "" 
-CheckBitmap "..\..\..\SMWHalo Installer Tools\workspace\SMWPlusInstaller\images\classic-cross.bmp"
+CheckBitmap "..\..\..\Internal__SMWPlusInstaller_and_XAMPP\workspace\SMWPlusInstaller\images\classic-cross.bmp"
 BrandingText "ontoprise GmbH ${PRODUCT_YEAR} - wiki.ontoprise.de - Build: ${BUILD_ID}"
 LicenseText "GPL-License"
-LicenseData "..\..\..\SMWHalo Installer Tools\workspace\SMWPlusInstaller\gpl.txt"
+LicenseData "..\..\..\Internal__SMWPlusInstaller_and_XAMPP\workspace\SMWPlusInstaller\gpl.txt"
 ComponentText "Choose type of installation"
 RequestExecutionLevel admin
 
@@ -104,10 +104,10 @@ Var STARTMENU_FOLDER
 Var MUI_TEMP
 ; Pages --------------------------------
 
-!define MUI_ICON "..\..\..\SMWHalo Installer Tools\workspace\SMWPlusInstaller\images\smwplus_32.ico"
+!define MUI_ICON "..\..\..\Internal__SMWPlusInstaller_and_XAMPP\workspace\SMWPlusInstaller\images\smwplus_32.ico"
   
 !insertmacro MUI_PAGE_WELCOME
-!insertmacro MUI_PAGE_LICENSE "..\..\..\SMWHalo Installer Tools\workspace\SMWPlusInstaller\gpl.txt"
+!insertmacro MUI_PAGE_LICENSE "..\..\..\Internal__SMWPlusInstaller_and_XAMPP\workspace\SMWPlusInstaller\gpl.txt"
 !define MUI_PAGE_CUSTOMFUNCTION_SHOW initComponentsPage
 !define MUI_PAGE_CUSTOMFUNCTION_LEAVE checkForNeededProcess
 !insertmacro MUI_PAGE_COMPONENTS
@@ -168,8 +168,8 @@ Var LUCENE_AS_SERVICE
 
 Function ".onInit"
   InitPluginsDir
-  File /oname=$PLUGINSDIR\wikicustomize.ini "..\..\..\SMWHalo Installer Tools\workspace\SMWPlusInstaller\gui\wikicustomize.ini"
-  File /oname=$PLUGINSDIR\lucene.ini "..\..\..\SMWHalo Installer Tools\workspace\SMWPlusInstaller\gui\lucene.ini"
+  File /oname=$PLUGINSDIR\wikicustomize.ini "..\..\..\Internal__SMWPlusInstaller_and_XAMPP\workspace\SMWPlusInstaller\gui\wikicustomize.ini"
+  File /oname=$PLUGINSDIR\lucene.ini "..\..\..\Internal__SMWPlusInstaller_and_XAMPP\workspace\SMWPlusInstaller\gui\lucene.ini"
   
 FunctionEnd
 
@@ -203,7 +203,7 @@ Section "XAMPP" xampp
   SetOutPath "$INSTDIR"
   CreateDirectory "$INSTDIR"
   !ifndef NOFILES
-    File /r /x .svn /x CVS "..\..\..\SMWHalo Installer Tools\workspace\XAMPP\*"
+    File /r /x .svn /x CVS "..\..\..\Internal__SMWPlusInstaller_and_XAMPP\workspace\XAMPP\*"
   !endif
   ;Store installation folder
     WriteRegStr HKCU "Software\Ontoprise\${PRODUCT} ${VERSION}" "" $INSTDIR
@@ -228,7 +228,7 @@ Section "-CopyInstaller"
   SetOutPath "$INSTDIR\htdocs\mediawiki\installer"
   CreateDirectory "$INSTDIR\htdocs\mediawiki\installer"
   !ifndef NOFILES
-    File /r /x CVS /x .svn /x *.exe /x *.nsi "..\..\..\SMWHalo Installer Tools\workspace\SMWPlusInstaller\*"
+    File /r /x CVS /x .svn /x *.exe /x *.nsi "..\..\..\Internal__SMWPlusInstaller_and_XAMPP\workspace\SMWPlusInstaller\*"
     ${If} $0 == 1
     
     #CreateShortCut "$DESKTOP\${PRODUCT} ${VERSION} Main Page.lnk" "http://localhost/mediawiki/index.php" \
@@ -380,24 +380,24 @@ Section "Lucene search" lucene
     CreateDirectory "$INSTDIR\lucene\service"
     #!ifndef NOFILES
         SetOutPath "$INSTDIR\lucene\lib"
-        File /r "..\..\..\Build Lucene server\workspace\lib\*.jar"
+        File /r "..\..\..\Product__Lucene_server\workspace\lib\*.jar"
         
         SetOutPath "$INSTDIR\lucene\service"
-        File /r /x CVS /x .svn "..\..\..\Build Lucene server\workspace\service\*"
+        File /r /x CVS /x .svn "..\..\..\Product__Lucene_server\workspace\service\*"
         
         SetOutPath "$INSTDIR\lucene\scripts"
-        File /r /x CVS /x .svn "..\..\..\Build Lucene server\workspace\scripts\*"
+        File /r /x CVS /x .svn "..\..\..\Product__Lucene_server\workspace\scripts\*"
         
         SetOutPath "$INSTDIR\lucene\template"
-        File /r /x CVS /x .svn "..\..\..\Build Lucene server\workspace\template\*"
+        File /r /x CVS /x .svn "..\..\..\Product__Lucene_server\workspace\template\*"
         
         SetOutPath "$INSTDIR\lucene"
-        File "..\..\..\Build Lucene server\workspace\LuceneSearch.jar"
-        File "..\..\..\Build Lucene server\workspace\*.bat"
-        File "..\..\..\Build Lucene server\workspace\linkd.exe"
-        File "..\..\..\Build Lucene server\workspace\*.txt"
-        File "..\..\..\Build Lucene server\workspace\*.properties"
-        File "..\..\..\Build Lucene server\workspace\smwplus_db.xml"
+        File "..\..\..\Product__Lucene_server\workspace\LuceneSearch.jar"
+        File "..\..\..\Product__Lucene_server\workspace\*.bat"
+        File "..\..\..\Product__Lucene_server\workspace\linkd.exe"
+        File "..\..\..\Product__Lucene_server\workspace\*.txt"
+        File "..\..\..\Product__Lucene_server\workspace\*.properties"
+        File "..\..\..\Product__Lucene_server\workspace\smwplus_db.xml"
     #!endif
         
         SetOutPath "$INSTDIR\lucene"
