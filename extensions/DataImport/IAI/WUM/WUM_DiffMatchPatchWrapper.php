@@ -71,17 +71,18 @@ class WUMDiffMatchPatchWrapper {
 		$explicitContributions = array();
 		$offset = 0;
 		while(strpos($text, WUM_TAG_OPEN) !== false){
-			$ec['start'] = $offset = strpos($text, WUM_TAG_OPEN) + $offset;
+			$ec['start'] = $offset + strpos($text, WUM_TAG_OPEN);
 			$text = substr($text, strpos($text, WUM_TAG_OPEN) + strlen(WUM_TAG_OPEN));
 			if(strpos($text, WUM_TAG_CLOSE) !== false){
 				$ec['end'] = 
-					$offset = strpos($text, WUM_TAG_CLOSE) + strlen(WUM_TAG_CLOSE) + strlen(WUM_TAG_OPEN) + $offset;
+					$offset = strpos($text, WUM_TAG_CLOSE) + strlen(WUM_TAG_CLOSE) + $ec['start'] + strlen(WUM_TAG_OPEN);
 				$text = substr($text, strpos($text, WUM_TAG_CLOSE) + strlen(WUM_TAG_CLOSE));
 				$explicitContributions[] = $ec;
 			} else {
 				break;
 			}
 		}
+			
 		
 		//create initial patches and make sure that each patch starts and ends with an equality diff where possible
 		//equality diffs are shortened to the patch_margin where possible
@@ -124,7 +125,7 @@ class WUMDiffMatchPatchWrapper {
 				$firstDiffEqual = false;
 			}
 		}
-
+		
 		//deal with the last patch, which might not end with an equality diff
 		if(count($patch->diffs) > 1){
 			$patch->start1 = $start;
@@ -258,9 +259,9 @@ class WUMDiffMatchPatchWrapper {
 
 			$processedPatches[] = $patch;
 		}
-
+		
 		$patches = $processedPatches;
-
+		
 		for($i=0; $i < count($patches); $i++){
 			$length1 = 0;
 			$length2 = 0;

@@ -36,12 +36,12 @@ class diff_match_patch {
 // Redefine these in your program to override the defaults.
 
 // Number of seconds to map a diff before giving up (0 for infinity).
-public $Diff_Timeout = 1.0;
+public $Diff_Timeout = 10.0;
 // Cost of an empty edit operation in terms of edit characters.
 public $Diff_EditCost = 4;
 // The size beyond which the double-ended diff activates.
 // Double-ending is twice as fast, but less accurate.
-public $Diff_DualThreshold = 32;
+public $Diff_DualThreshold = 1000000;
 // At what point is no match declared (0.0 = perfection, 1.0 = very loose).
 public $Match_Threshold = 0.5;
 // How far to search for a match (0 = exact location, 1000+ = broad match).

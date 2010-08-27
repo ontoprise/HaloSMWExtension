@@ -94,18 +94,9 @@ class WUMMergeController{
 			return $overwrite;
 		}
 		
-		//check whether to use the table based merger
-		global $wumUseTableBasedMerger;
-		if($wumUseTableBasedMerger){
-			$tbm = WUMTableBasedMerger::getInstance();
-			list($newWPText, $currentUPText) = $res = $tbm->merge($title, $newWPText, $currentUPText); 
-			//wfProfileOut('WUMMergeController->merge');
-			//return $currentUPText;
-		}
-
 		//get the last WP version
 		$originalWPText = $this->getOriginalWPText($title);
-
+		
 		$newWPText = $this->prepareText($newWPText);
 		$originalWPText = $this->prepareText($originalWPText);
 		$currentUPText = $this->prepareText($currentUPText);
@@ -114,6 +105,15 @@ class WUMMergeController{
 			return $newWPText."\n".$currentUPText;
 		}
 		
+		//check whether to use the table based merger
+		global $wumUseTableBasedMerger;
+		if($wumUseTableBasedMerger){
+			$tbm = WUMTableBasedMerger::getInstance();
+			list($newWPText, $currentUPText, $originalWPText) = $tbm->merge($title, $newWPText, $currentUPText, $originalWPText); 
+			//wfProfileOut('WUMMergeController->merge');
+			//return $currentUPText;
+		}
+
 		//do three way merge
 		$twmResult = WUMThreeWayBasedMerger::getInstance()
 			->merge($originalWPText, $newWPText, $currentUPText);

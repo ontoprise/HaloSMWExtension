@@ -77,6 +77,7 @@ class WUMThreeWayBasedMerger {
 	 */
 	private function createPatches($original, $modified){
 		global $wumPatchMargin; 
+		
 		$dmp = WUMDiffMatchPatchWrapper::getInstance();
 		$dmp->Patch_Margin = $wumPatchMargin; 
 		$diffs = $dmp->diff_main($original, $modified);
@@ -138,7 +139,7 @@ class WUMThreeWayBasedMerger {
 				$insert = $patch->diffs[$i][1];
 
 				if(strpos($insert, WUM_TAG_OPEN) !== false && strpos($insert, WUM_TAG_CLOSE) !== false){
-					$insert = substr($insert, strpos($insert, WUM_TAG_OPEN), strpos($insert, WUM_TAG_CLOSE) 
+					$insert = substr($insert, strpos($insert, WUM_TAG_OPEN), strrpos($insert, WUM_TAG_CLOSE) 
 						- strpos($insert, WUM_TAG_OPEN) + strlen(WUM_TAG_CLOSE));
 				} else if(substr($insert, 0,1) != "\n"){
 					if(substr($insert, strlen($insert)-1) == substr($equal, strlen($equal)-1)){

@@ -127,26 +127,29 @@ class WUMTableBasedMerger {
 	private $resolvedTableReplacements = array();
 	private $wikipediaText = "";
 	private $ultrapediaText = "";
+	private $originalWPText = "";
 	private $mergedText = "";
 	private $title = "";
 	
-	function merge($title, $wikipediaText, $ultrapediaText){
+	function merge($title, $wikipediaText, $ultrapediaText, $originalWPText){
 		wfProfileIn('WUMTableBasedMerger->merge');
 		$this->title = $title;
 		$this->wikipediaText = $wikipediaText;
 		$this->ultrapediaText = $ultrapediaText;
+		$this->originalWPText = $originalWPText;
 		
 		$this->getTableReplacements();
 		
 		$this->replaceStaticTables();
 		$this->replaceTabParserFunctions();
+		$this->replaceStaticTablesInOWP();
 		
 		$text = $this->getMergedText();
 		
 		//$this->createMergeResultArticle();
 		
 		wfProfileOut('WUMTableBasedMerger->merge');
-		return array($text, $this->ultrapediaText);		
+		return array($text, $this->ultrapediaText, $this->originalWPText);		
 	}
 	
 	private function replaceTabParserFunctions(){
@@ -154,17 +157,42 @@ class WUMTableBasedMerger {
 			$originalText = $tPF->getOriginalText();
 			$originalText = str_replace('{{#tab:', '', $originalText);
 			$startPos = strpos($this->ultrapediaText, $originalText);
+			
 			$endPos = $startPos + strlen($originalText);
 			$startPos = strrpos(substr($this->ultrapediaText, 0, $startPos), '{{');
-			 
-			$this->ultrapediaText = substr($this->ultrapediaText, 0, $startPos).substr($this->ultrapediaText, $endPos);
+			
+			$replacement = $tPF->getNewText($tPF->newTableText, true);
+			
+			$intro = substr($this->ultrapediaText, 0, $startPos);
+			$outro = substr($this->ultrapediaText, $endPos);  
+			
+			if(substr($intro, strrpos($intro, "upc>")-1, 5) == '<upc>'
+				&& substr($outro, strpos($outro, "upc>")-2, 6) == '</upc>'){
+					$replacement = '</upc>'.$replacement.'<upc>';		
+				}
+			
+			$this->ultrapediaText = $intro.$replacement.$outro;
 			
 			//replace empty '<upc> tags
 			$this->ultrapediaText = str_replace('<upc></upc>', '', $this->ultrapediaText);
 		}
 	}
 	
-	public function createMergeResultArticle(){
+	private function replaceStaticTablesInOWP(){
+		$this->originalWPText = $this->processText($this->originalWPText, "doReplaceStaticTablesInOWP", array());
+	}
+	
+	private function doReplaceStaticTablesInOWP($tableText, $fingerprintArray, $ignore){
+		foreach($this->resolvedTableReplacements as $key => $uTR){
+			if($uTR->matches($fingerprintArray)){
+				unset($this->resolvedTableReplacements[$key]);
+				return $uTR->getNewText($uTR->newTableText, true);
+			}
+		}
+		return $tableText;	
+	}
+	
+public function createMergeResultArticle(){
 		$dateString = $this->getDateString();
 		$title = $this->title."/WUM ".$dateString;
 		
@@ -208,13 +236,15 @@ class WUMTableBasedMerger {
 		$text = str_replace("<embedwiki>", "###embedwiki###", $text);
 		$text = str_replace("</embedwiki>", "###c-embedwiki###", $text);
 		
+		global $wumTabParserFunctions;
+		$wumTabParserFunctions = array();
+		
 		global $wgParser;
 		$t = Title::newFromText("XYZ");
 		$popts = new ParserOptions();
 		$wgParser->startExternalParse($t, $popts, Parser::OT_WIKI);
-	
-		global $wumTabParserFunctions;
-		$wumTabParserFunctions = array();
+		
+		$wgParser->internalParse($text);
 		
 		foreach($wumTabParserFunctions as $tabParserFunction){
 			$sourceText = str_replace("<embedwiki>", "", $tabParserFunction[1]);
@@ -330,7 +360,8 @@ class WUMTableBasedMerger {
 	private function doReplace($tableText, $fingerprintArray, $ignore){
 		foreach($this->unresolvedTableReplacements	 as $key => $uTR){
 			if($uTR->matches($fingerprintArray)){
-				$this->resolvedTableReplacements[$key] = $this->unresolvedTableReplacements[$key]; 
+				$this->unresolvedTableReplacements[$key]->newTableText = $tableText;
+				$this->resolvedTableReplacements[] = $this->unresolvedTableReplacements[$key]; 
 				unset($this->unresolvedTableReplacements[$key]);
 				return $uTR->getNewText($tableText);
 			}
@@ -353,6 +384,7 @@ class WUTableReplacement {
 	private $fingerprint = "";
 	public $replacement = "";
 	public $originalTableCode = "";
+	public $newTableText = '';
 	
 	function __construct($fingerprintArray, $replacement, $originalTableCode){
 		$this->fingerprint = $this->computeFingerprint($fingerprintArray);
@@ -380,8 +412,10 @@ class WUTableReplacement {
 		return $this->fingerprint;
 	}
 	
-	public function getNewText($text){
-		return str_replace("###replace###", '<embedwiki>'.$text.'</embedwiki>', $this->replacement);
+	public function getNewText($text, $addUPCTag = true){
+		$newText = str_replace("###replace###", '<embedwiki>'.$text.'</embedwiki>', $this->replacement);
+		if($addUPCTag) $newText = '<upc>'.$newText.'</upc>'; 
+		return $newText;
 	}
 	
 	public function getOriginalText(){

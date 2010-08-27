@@ -13,10 +13,8 @@ global $wumWPURL, $wumUseTableBasedMerger,
 //enter the URL of the WikiPedia clone
 $wumWPURL = "http://localhost/mediawiki/";
 
-//decide wheter to use the old based table based merger
-//or a combination of the three way based and the section
-//based merger
-$wumUseTableBasedMerger = false;
+//decide wheter to use the table based merger in addition (recommended!)
+$wumUseTableBasedMerger = true;
 
 //decide how many characters before and after a patch
 //must match in order to appöy a patch.
