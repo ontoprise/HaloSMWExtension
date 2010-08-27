@@ -35,7 +35,7 @@ class TestWikipediaUltrapediaMerger extends PHPUnit_Framework_TestCase {
 		$this->assertGreaterThan(0, 
 			strpos($result,'====Diagrams====#<upc>===== Additional Query Results 4'));
 		$this->assertGreaterThan(0, 
-			strpos($result,'4 =====</upc>#====Summary====##<upc>===== Additional Query Results 1'));
+			strpos($result,'4 =====</upc>####====Summary====###<upc>===== Additional Query Results 1 =====</upc>'));
 		$this->assertGreaterThan(0, 
 			strpos($result,'2b===#Some text#====Overview====#====Summary====##<upc>===== Additional Query Results 2'));
 		$this->assertGreaterThan(0, 
@@ -98,21 +98,219 @@ class TestWikipediaUltrapediaMerger extends PHPUnit_Framework_TestCase {
 			strpos($result,'3 =====</upc>##<upc>===== Additional Query Results 4 =====</upc>'));
 	}
 	
-	function testTableBasedMerger(){
-		return;
-		
-		$wumUseTableBasedMerger = true;
-		
-		$et = $this->getEditToken();
-		list($currentUPText, $newWPText) = $this->getArticleContentForTBM();
-		$this->writeArticles(array($currentUPText."__WUM_Overwrite__", $newWPText), $et);
+//	function testTableBasedMerger(){
+//		return;
+//		
+//		$wumUseTableBasedMerger = true;
+//		
+//		$et = $this->getEditToken();
+//		list($currentUPText, $newWPText) = $this->getArticleContentForTBM();
+//		$this->writeArticles(array($currentUPText."__WUM_Overwrite__", $newWPText), $et);
+//		
+//		$result = $this->getWikiArticleContent("Talk:Main_Page");
+//		
+//		$this->assertGreaterThan(0, 
+//			strpos($result,'{{#tab'));
+//	}
+	
+	function testWUMCombinedSuccess(){
+		try {
+			$et = $this->getEditToken();
+		}  catch (Exception $e){
+			echo('\r\nWUM Exception:\r\n');
+			print_r($e);			
+		}
+		list($originalWPText, $newWPText, $currentUPText) = $this->getArticleContent(2);
+		$this->writeArticles(array($originalWPText, $currentUPText, $newWPText), $et);
 		
 		$result = $this->getWikiArticleContent("Talk:Main_Page");
 		
-		$this->assertGreaterThan(0, 
-			strpos($result,'{{#tab'));
+		$result = str_replace("\n", "#", $result);
+		
+		//make sure that the #tab pf has been placed at the correct position
+		$this->assertGreaterThan( 
+			strpos($result,'version of this article.#<upc>{{#tab:|'),
+			strpos($result,'Cayenne Test'));
+		$this->assertGreaterThan( 
+			strpos($result,'Cayenne Test'),
+			strpos($result,'|merge=false#}}#}}</upc>#{{clear}}'));	
+
+		//make sure that there is only one upc tag, #tab pf and only one static table
+		$this->assertEquals( 
+			strpos($result,'<upc>'),
+			strrpos($result,'<upc>'));
+		$this->assertEquals( 
+			strpos($result,'<upc>{{#tab'),
+			strrpos($result,'<upc>{{#tab'));
+		$this->assertEquals( 
+			strpos($result,'Cayenne Test'),
+			strrpos($result,'Cayenne Test'));	
+			
 	}
 	
+	function testWUMCombinedSuccessWithIntroAndOutro(){
+		try {
+			$et = $this->getEditToken();
+		}  catch (Exception $e){
+			echo('\r\nWUM Exception:\r\n');
+			print_r($e);			
+		}
+		list($originalWPText, $newWPText, $currentUPText) = $this->getArticleContent(3);
+		$this->writeArticles(array($originalWPText, $currentUPText, $newWPText), $et);
+		
+		$result = $this->getWikiArticleContent("Talk:Main_Page");
+		
+		$result = str_replace("\n", "#", $result);
+		
+		//make sure that the #tab pf has been placed at the correct position
+		$this->assertGreaterThan( 
+			strpos($result,'article.#<upc>This is a new introduction for the table below.</upc>#<upc>{{#tab:|'),
+			strpos($result,'Cayenne Test'));
+		$this->assertGreaterThan( 
+			strpos($result,'Cayenne Test'),
+			strpos($result,'|merge=false#}}#}}</upc>#{{clear}}##<upc>This is a new footer for the table above.</upc>##This '));	
+
+		//make sure that there is only one tag, #tab pf and only one static table
+		$this->assertEquals( 
+			strpos($result,'<upc>{{#tab'),
+			strrpos($result,'<upc>{{#tab'));
+		$this->assertEquals( 
+			strpos($result,'Cayenne Test'),
+			strrpos($result,'Cayenne Test'));	
+			
+	}
+	
+function testWUMCombinedSuccessEmbeddedIntroAndOutro(){
+		try {
+			$et = $this->getEditToken();
+		}  catch (Exception $e){
+			echo('\r\nWUM Exception:\r\n');
+			print_r($e);			
+		}
+		list($originalWPText, $newWPText, $currentUPText) = $this->getArticleContent(4);
+		$this->writeArticles(array($originalWPText, $currentUPText, $newWPText), $et);
+		
+		$result = $this->getWikiArticleContent("Talk:Main_Page");
+		
+		$result = str_replace("\n", "#", $result);
+		
+		//make sure that the #tab pf has been placed at the correct position
+		$this->assertGreaterThan( 
+			0,
+			strpos($result,'article.#<upc>This is a new introduction for the table below.#</upc><upc>{{#tab:|'));
+		$this->assertGreaterThan( 
+			strpos($result,'article.#<upc>This is a new introduction for the table below.#</upc><upc>{{#tab:|'),
+			strpos($result,'Cayenne Test'));
+		$this->assertGreaterThan( 
+			strpos($result,'Cayenne Test'),
+			strpos($result,'|merge=false#}}#}}</upc><upc>##This is a new footer for the table above.</upc>##{{clear}}##This'));	
+
+		//make sure that there is only one tag, #tab pf and only one static table
+		$this->assertEquals( 
+			strpos($result,'<upc>{{#tab'),
+			strrpos($result,'<upc>{{#tab'));
+		$this->assertEquals( 
+			strpos($result,'Cayenne Test'),
+			strrpos($result,'Cayenne Test'));	
+			
+	}
+
+	function testWUMCombinedSuccessIntroAndOutroWithFailures(){
+		try {
+			$et = $this->getEditToken();
+		}  catch (Exception $e){
+			echo('\r\nWUM Exception:\r\n');
+			print_r($e);			
+		}
+		list($originalWPText, $newWPText, $currentUPText) = $this->getArticleContent(5);
+		$this->writeArticles(array($originalWPText, $currentUPText, $newWPText), $et);
+		
+		$result = $this->getWikiArticleContent("Talk:Main_Page");
+		
+		$result = str_replace("\n", "#", $result);
+		
+		//make sure that the #tab pf has been placed at the correct position
+		$this->assertGreaterThan( 
+			strpos($result,'Ultrapedia version of this article TEST.#<upc>{{#tab:|'),
+			strpos($result,'Cayenne Test'));
+		$this->assertGreaterThan( 
+			strpos($result,'Cayenne Test'),
+			strpos($result,'}}</upc>#{{clear}}##TEST This is some text below the table in order to test if the table will be moved downwards if a merge fault occurs.##<upc>This is a new introduction for the table below.</upc>##<upc>##This is a n'));	
+
+		//make sure that there is only one tag, #tab pf and only one static table
+		$this->assertEquals( 
+			strpos($result,'<upc>{{#tab'),
+			strrpos($result,'<upc>{{#tab'));
+		$this->assertEquals( 
+			strpos($result,'Cayenne Test'),
+			strrpos($result,'Cayenne Test'));	
+			
+	}
+	
+	function testWUMCombinedSuccessEmbedIntroAndOutroWithFailures(){
+		try {
+			$et = $this->getEditToken();
+		}  catch (Exception $e){
+			echo('\r\nWUM Exception:\r\n');
+			print_r($e);			
+		}
+		list($originalWPText, $newWPText, $currentUPText) = $this->getArticleContent(6);
+		$this->writeArticles(array($originalWPText, $currentUPText, $newWPText), $et);
+		
+		$result = $this->getWikiArticleContent("Talk:Main_Page");
+		
+		$result = str_replace("\n", "#", $result);
+		
+		//make sure that the #tab pf has been placed at the correct position
+		$this->assertGreaterThan( 
+			strpos($result,'this article TEST.#<upc>{{#tab:|'),
+			strpos($result,'Cayenne Test'));
+		$this->assertGreaterThan( 
+			strpos($result,'Cayenne Test'),
+			strpos($result,'}}</upc>#{{clear}}##TEST This is some text below the table in order to test if the table will be moved downwards if a merge fault occurs.##<upc>This is a new introduction for the table below.#</upc>##<upc>##This is a new footer for the table above.</upc>'));	
+
+		//make sure that there is only one tag, #tab pf and only one static table
+		$this->assertEquals( 
+			strpos($result,'<upc>{{#tab'),
+			strrpos($result,'<upc>{{#tab'));
+		$this->assertEquals( 
+			strpos($result,'Cayenne Test'),
+			strrpos($result,'Cayenne Test'));	
+			
+	}
+	
+	function testWUMCombinedFailuresIntroAndOutro(){
+		try {
+			$et = $this->getEditToken();
+		}  catch (Exception $e){
+			echo('\r\nWUM Exception:\r\n');
+			print_r($e);			
+		}
+		list($originalWPText, $newWPText, $currentUPText) = $this->getArticleContent(7);
+		$this->writeArticles(array($originalWPText, $currentUPText, $newWPText), $et);
+		
+		$result = $this->getWikiArticleContent("Talk:Main_Page");
+		
+		$result = str_replace("\n", "#", $result);
+		
+		//make sure that the #tab pf has been placed at the correct position
+		$this->assertGreaterThan( 
+			strpos($result,'Cayenne Test'),	
+			strpos($result,'fault occurs.##<upc>This is a new introduction for the table below.</upc>#<upc>{{#tab:|'));
+			
+		$this->assertGreaterThan( 
+			strpos($result,'fault occurs.##<upc>This is a new introduction for the table below.</upc>#<upc>{{#tab:|'),
+			strpos($result,'|merge=false#}}#}}</upc>##<upc>This is a new footer for the table above.</upc>##==== Engines sibling ===='));	
+
+		//make sure that there is only one tag, #tab pf and only one static table
+		$this->assertEquals( 
+			strpos($result,'<upc>{{#tab'),
+			strrpos($result,'<upc>{{#tab'));
+		$this->assertEquals( 
+			strpos($result,'Cayenne Test'),
+			strrpos($result,'Cayenne Test'));	
+			
+	}
 	
 	private function writeArticles($texts, $et){
 		$cc = new cURL();
@@ -124,15 +322,78 @@ class TestWikipediaUltrapediaMerger extends PHPUnit_Framework_TestCase {
 		}
 	}
 	
-	private function getArticleContent(){
+	function testWUMCombinedFailuresEmbedIntroAndOutro(){
+		try {
+			$et = $this->getEditToken();
+		}  catch (Exception $e){
+			echo('\r\nWUM Exception:\r\n');
+			print_r($e);			
+		}
+		list($originalWPText, $newWPText, $currentUPText) = $this->getArticleContent(8);
+		$this->writeArticles(array($originalWPText, $currentUPText, $newWPText), $et);
+		
+		$result = $this->getWikiArticleContent("Talk:Main_Page");
+		
+		$result = str_replace("\n", "#", $result);
+		
+		//make sure that the #tab pf has been placed at the correct position
+		$this->assertGreaterThan( 
+			strpos($result,'Cayenne Test'),	
+			strpos($result,'fault occurs.##<upc>This is a new introduction for the table below.#{{#tab:|'));
+			
+		$this->assertGreaterThan( 
+			strpos($result,'fault occurs.##<upc>This is a new introduction for the table below.#{{#tab:|'),
+			strpos($result,'|merge=false#}}#}}##This is a new footer for the table above.</upc>##==== Engines sibling ===='));	
+
+		//make sure that there is only one tag, #tab pf and only one static table
+		$this->assertEquals( 
+			strpos($result,'<upc>{{#tab'),
+			strrpos($result,'<upc>{{#tab'));
+		$this->assertEquals( 
+			strpos($result,'Cayenne Test'),
+			strrpos($result,'Cayenne Test'));	
+			
+	}
+	
+	private function getArticleContent($testCase = 1){
 		$text = array();
 		
 		$cd = isWindows() ? "" : "./";
 		
-		$text[] = urlencode(file_get_contents($cd."testcases/wum-test-articles/owptext.txt"));
-		$text[] = urlencode(file_get_contents($cd."testcases/wum-test-articles/nwptext.txt"));
-		$text[] = urlencode(file_get_contents($cd."testcases/wum-test-articles/cuptext.txt"));
-		
+		if($testCase == 1){
+			$text[] = urlencode(file_get_contents($cd."testcases/wum-test-articles/owptext.txt"));
+			$text[] = urlencode(file_get_contents($cd."testcases/wum-test-articles/nwptext.txt"));
+			$text[] = urlencode(file_get_contents($cd."testcases/wum-test-articles/cuptext.txt"));
+		} else if ($testCase == 2){
+			$text[] = urlencode(file_get_contents($cd."testcases/wum-test-articles/owptext2.txt"));
+			$text[] = urlencode(file_get_contents($cd."testcases/wum-test-articles/nwptext2.txt"));
+			$text[] = urlencode(file_get_contents($cd."testcases/wum-test-articles/cuptext2.txt"));
+		} else if ($testCase == 3){
+			$text[] = urlencode(file_get_contents($cd."testcases/wum-test-articles/owptext2.txt"));
+			$text[] = urlencode(file_get_contents($cd."testcases/wum-test-articles/nwptext2.txt"));
+			$text[] = urlencode(file_get_contents($cd."testcases/wum-test-articles/cuptext3.txt"));
+		} else if ($testCase == 4){
+			$text[] = urlencode(file_get_contents($cd."testcases/wum-test-articles/owptext2.txt"));
+			$text[] = urlencode(file_get_contents($cd."testcases/wum-test-articles/nwptext2.txt"));
+			$text[] = urlencode(file_get_contents($cd."testcases/wum-test-articles/cuptext4.txt"));
+		} else if ($testCase == 5){
+			$text[] = urlencode(file_get_contents($cd."testcases/wum-test-articles/owptext2.txt"));
+			$text[] = urlencode(file_get_contents($cd."testcases/wum-test-articles/nwptext5.txt"));
+			$text[] = urlencode(file_get_contents($cd."testcases/wum-test-articles/cuptext5.txt"));
+		} else if ($testCase == 6){
+			$text[] = urlencode(file_get_contents($cd."testcases/wum-test-articles/owptext2.txt"));
+			$text[] = urlencode(file_get_contents($cd."testcases/wum-test-articles/nwptext5.txt"));
+			$text[] = urlencode(file_get_contents($cd."testcases/wum-test-articles/cuptext6.txt"));
+		} else if ($testCase == 7){
+			$text[] = urlencode(file_get_contents($cd."testcases/wum-test-articles/owptext2.txt"));
+			$text[] = urlencode(file_get_contents($cd."testcases/wum-test-articles/nwptext7.txt"));
+			$text[] = urlencode(file_get_contents($cd."testcases/wum-test-articles/cuptext7.txt"));
+		} else if ($testCase == 8){
+			$text[] = urlencode(file_get_contents($cd."testcases/wum-test-articles/owptext2.txt"));
+			$text[] = urlencode(file_get_contents($cd."testcases/wum-test-articles/nwptext7.txt"));
+			$text[] = urlencode(file_get_contents($cd."testcases/wum-test-articles/cuptext8.txt"));
+		}
+			
 		return $text;
 	}
 	
