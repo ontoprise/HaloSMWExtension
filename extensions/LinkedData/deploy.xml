@@ -4,6 +4,7 @@
 		<version>100</version>
 		<id>linkeddata</id>
 		<vendor>Ontoprise GmbH</vendor>
+        <maintainer>Ontoprise GmbH</maintainer>
 		<instdir>extensions/LinkedData</instdir>
 		<description>
 			Use Linked Data in your wiki.
