@@ -4,6 +4,7 @@
 		<version>200</version>
 		<id>SemanticWikitag</id>
 		<vendor>Vulcan</vendor>
+        <maintainer>Vulcan</maintainer>
 		<instdir>extensions/SemanticWikitag</instdir>
 		<description>
 			The webservice endpoint for office wikitag add-in
