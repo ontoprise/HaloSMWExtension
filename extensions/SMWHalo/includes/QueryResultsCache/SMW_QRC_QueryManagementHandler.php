@@ -378,7 +378,7 @@ class SMWQRCQueryManagementHandler {
 				$propertyName = $printRequest->getData()->getText();
 				$properties[$propertyName] = true;  
 			} else if ($printRequest->getMode() == SMWPrintRequest::PRINT_PROP){
-				$propertyName = $printRequest->getData()->getWikiPageValue();
+				$propertyName = $printRequest->getData()->getWikiPageValue()->getText();
 				$properties[$propertyName] = true;
 			}
 		}
