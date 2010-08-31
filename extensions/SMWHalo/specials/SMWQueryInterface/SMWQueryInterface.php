@@ -201,7 +201,7 @@ class SMWQueryInterface extends SpecialPage {
 	}
 
 	private function addAdditionalStuff() {
-		global $smwgHaloScriptPath, $smwgWebserviceEndpoint;
+		global $smwgHaloScriptPath, $smwgDefaultStore;
 		wfRunHooks("QI_AddButtons", array (&$buttons));
 
 		$imagepath = $smwgHaloScriptPath . '/skins/QueryInterface/images/';
@@ -210,7 +210,7 @@ class SMWQueryInterface extends SpecialPage {
                  (preg_match('/MSIE \d+\.\d+/', $_SERVER['HTTP_USER_AGENT']) ||
                   stripos($_SERVER['HTTP_USER_AGENT'], 'Excel Bridge') !== false)
                 );
-		if (isset($smwgWebserviceEndpoint)) {
+		if (isset($smwgDefaultStore) && $smwgDefaultStore == "SMWTripleStore") {
 			$useTS = '<input type="checkbox" id="usetriplestore" checked="checked">' . wfMsg('smw_qi_usetriplestore') . '</input>';
 		}
 		return '<div id="qimenubar">' .
