@@ -188,7 +188,6 @@
             <arg value="--js_output_file=../../SMWHalo/scripts/deployGeneralScripts.js" />
         </java>
 
-
         <echo>OntologyBrowser</echo>
         <java
             fork="true"
@@ -201,7 +200,7 @@
             <arg value="--js=../../SMWHalo/scripts/OntologyBrowser/treeviewData.js" />
             <arg value="--js=../../SMWHalo/scripts/OntologyBrowser/advancedOptions.js" />
 			<arg value="--js=../../SemanticMediaWiki/skins/SMW_tooltip.js" />
-            <arg value="--js_output_file=../../SMWHalo/scripts/QueryInterface/deployOntologyBrowser.js" />
+            <arg value="--js_output_file=../../SMWHalo/scripts/OntologyBrowser/deployOntologyBrowser.js" />
         </java>
 
         <echo>QueryInterface</echo>
