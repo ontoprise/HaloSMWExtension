@@ -208,6 +208,7 @@
             fork="true"
             jar="../../../buildtools/closure/compiler.jar"
             failonerror="true">
+            <arg value="--compilation_level=WHITESPACE_ONLY" />
             <arg value="--js=../../SMWHalo/scripts/QueryInterface/Query.js" />
             <arg value="--js=../../SMWHalo/scripts/QueryInterface/QIHelper.js" />
             <arg value="--js=../../SMWHalo/scripts/QueryInterface/qi_tooltip.js" />
