@@ -41,7 +41,7 @@ hideFlash:       true     ,// true|false
 hideJava:        true     ,// true|false
 disableScroll:   false    ,// true|false
 autoGallery:     false    ,// true|false
-preloadAll:      true     ,// true|false
+preloadAll:      false     ,// true|false
 enableCookies:   false    ,// true|false
 cookieScope:    'site'    ,// 'site'|'folder'
 language:       'auto'    ,// 'auto'|'en'|... (see the languages folder)
