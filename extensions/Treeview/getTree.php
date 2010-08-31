@@ -87,9 +87,32 @@ function smwfNavTree() {
 	$opt = ParserOptions::newFromUser($wgUser);
 	$nav_title = Title::newFromText('NavTree', NS_MEDIAWIKI);
 	if (!$nav_title->exists()) return "";
+
+	// Check if content is cached
+	$navArticleName = $wgTitle->getFullText()."_NavTree";
+	$navArticleTitle = Title::newFromText($navArticleName);
+	$navArticle = new Article($navArticleTitle);
+
+	$parserCache = ParserCache::singleton();
+	$cachedContent = $parserCache->get($navArticle, $opt);
+
+	global $wgRequest;
 	$nav = new Article($nav_title);
-	$out = $psr->parse($nav->fetchContent(0,false,false),$wgTitle,$opt,true,true);
-	$html = $out->getText();
+	$ts = $nav->getTimestamp();
+
+	$purge = ($wgRequest->getVal('action') == 'purge');
+	if ($cachedContent && $ts*1 > $cachedContent->getCacheTime()*1) {
+		// Mediawiki:NavTree was changed => purge the cache of the tree
+		$purge = true;
+	}
+	if ($cachedContent && !$purge) {
+		$html = $cachedContent->getText();
+	} else {
+		$out = $psr->parse($nav->fetchContent(0,false,false),$wgTitle,$opt,true,true);
+		$html = $out->getText();
+		$parserCache->save($out, $navArticle, $opt);
+	}
+
 	$groups = $wgUser->getGroups();
 	foreach($groups as $g) {
 		$title = Title::newFromText('NavTree_'.$g, NS_MEDIAWIKI);
