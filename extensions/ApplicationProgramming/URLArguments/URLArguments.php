@@ -21,8 +21,9 @@ $wgExtensionCredits['parserhook'][] = array(
 	'description' => 'Defines a new parser function that retrieves arguments from the URL.'
 );
  
-$wgHooks['LanguageGetMagic'][] = 'wfURLArgumentsLanguageGetMagic';
- 
+$wgHooks['LanguageGetMagic'][]  = 'wfURLArgumentsLanguageGetMagic';
+$wgHooks['PageRenderingHash'][] = 'wfURLArgumentsPageRenderingHash';
+
 function wfURLArguments() {
 	global $wgParser, $wgExtURLArguments;
  
@@ -38,12 +39,32 @@ function wfURLArgumentsLanguageGetMagic( &$magicWords, $langCode ) {
 	}
 	return true;
 }
+
+/**
+ * The hash for the page cache depends on the URL arguments.
+ *
+ * @param string $hash
+ * 		A reference to the hash. The URL arguments are appended to this hash.
+ *
+ */
+function wfURLArgumentsPageRenderingHash($hash) {
+
+	global $wgRequest;
+	$urlArgs = $wgRequest->getValues();
+	ksort($urlArgs);
+	$hash .= "!args=";
+    foreach ($urlArgs as $key => $value) {  
+		$hash .= "$key+$value+";
+    }
+
+    return true;
+}
+
  
 class ExtURLArguments {
  
 	function arg( &$parser, $name = '', $default = '' ) {
 		global $wgRequest;
-		$parser->disableCache();
 		return $wgRequest->getVal($name, $default);
 	}
 }
