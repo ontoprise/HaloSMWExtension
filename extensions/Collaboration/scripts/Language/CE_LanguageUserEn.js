@@ -16,6 +16,14 @@
 */
 
 var wgCEUserLanguageStrings = {
-	'ce_reload'			:	' Page is reloading ...',
-	'ce_deleting'		:	'Deleting comment ...'
+	'ce_invalid'			:	'You didn\'t enter a valid comment.',
+	'ce_reload'				:	' Page is reloading ...',
+	'ce_deleting'			:	'Deleting comment ...',
+	'ce_delete'				:	'Do you really want to delete this comment?',
+	'ce_delete_button'		:	'Delete comment',
+	'ce_cancel_button'		:	'Cancel',
+	'ce_com_show'			:	'Show comments',
+	'ce_com_hide'			:	'Hide comments',
+	'ce_com_toggle_tooltip'	:	'Click to show/hide all comments',
+	'ce_form_toggle_tooltip':	'Click to show/hide the comment form.'
 }

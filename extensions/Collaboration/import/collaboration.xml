@@ -77,10 +77,11 @@
     <title>Template:Comment</title>
     <id>512</id>
     <revision>
-      <id>1351</id>
-      <timestamp>2010-05-21T10:56:45Z</timestamp>
+      <id>1540</id>
+      <timestamp>2010-08-24T12:44:14Z</timestamp>
       <contributor>
-        <ip>127.0.0.1</ip>
+        <username>WikiSysop</username>
+        <id>1</id>
       </contributor>
       <text xml:space="preserve">&lt;noinclude&gt;{{Template
 |PAGENAME=Template:Comment
@@ -102,15 +103,16 @@
 |copyright holder=Ontoprise GmbH
 |year=2010
 }}
-&lt;/noinclude&gt;&lt;includeonly&gt;''Comment for {{#if: {{{CommentRelatedArticle|}}} | [[Belongs to article::{{{CommentRelatedArticle|}}}]] | nothing}}''&lt;!-- start comment (do not change css-classes)--&gt;&lt;div class=&quot;collabCom&quot;&gt;&lt;!-- start comment headline --&gt;&lt;div class=&quot;collabComHeadline&quot;&gt;&lt;!-- start comment person (do not change css-class.) --&gt;&lt;div class=&quot;collabComResPerson&quot;&gt;{{#if: {{{CommentPerson|}}} | {{#vardefine:userimage|{{#ask: [[{{{CommentPerson}}}]] | ?User_image = | link=none}} }} }}{{#if:{{#var:userimage}}| [[{{#var:userimage}}|frameless|48x48px|nopreview|link={{{CommentPerson}}}]] | [[File:Defaultuser.gif|frameless|48px|nopreview|link=]] }}&lt;div class=&quot;collabComUser&quot;&gt;&lt;div class=&quot;collabComUserName&quot;&gt;{{#if: {{{CommentPerson|}}} |{{#ifexist:{{{CommentPerson}}}|[[{{{CommentPerson|}}}]], |{{{CommentPerson|}}},&amp;nbsp; }}[[Has comment person::{{{CommentPerson|}}}| ]]|}}&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;!-- end comment person --&gt;&lt;!-- start comment date--&gt;{{#if: {{{CommentDatetime|}}} | &lt;div class=&quot;collabComDate&quot;&gt;[[Has comment date::{{{CommentDatetime|}}}]]&lt;/div&gt;}}&lt;!-- end comment date--&gt;&lt;!-- start comment rating --&gt;{{#if:{{{CommentRating|}}}|[[Has comment rating::{{{CommentRating|}}}|]]&lt;div class =&quot;collabComRating&quot;&gt;{{#ifexpr: {{{CommentRating|}}} &lt; 2 | {{#ifexpr: {{{CommentRating|}}} &gt; -2 | Article quality rated:&lt;div class=&quot;collabComRatingIcon&quot;&gt;{{#ifexpr: {{{CommentRating|}}} = -1 | [[File:Bad_active.png]] }}{{#ifexpr: {{{CommentRating|}}} = 0 | [[File:Neutral_active.png]] }}{{#ifexpr: {{{CommentRating|}}} = 1 | [[File:Good_active.png]] }}&lt;/div&gt;| }}| }}&lt;/div&gt;| }}&lt;!-- end comment rating --&gt;&lt;!-- end comment headline --&gt;&lt;/div&gt;&lt;!-- start comment content--&gt;&lt;div class=&quot;collabComText&quot;&gt;{{#if:{{{CommentContent|}}}|[[Has comment text::{{{CommentContent|}}}]]}}&lt;/div&gt;&lt;!-- end comment content--&gt;&lt;/div&gt;&lt;!-- end comment --&gt;[[Category:Comment]]&lt;/includeonly&gt;</text>
+&lt;/noinclude&gt;&lt;includeonly&gt;''Comment for {{#if: {{{CommentRelatedArticle|}}} | [[Belongs to article::{{{CommentRelatedArticle|}}}]] | nothing}}''&lt;!-- start comment (do not change css-classes)--&gt;&lt;div class=&quot;collabCom&quot;&gt;&lt;!-- start comment headline --&gt;&lt;div class=&quot;collabComHeadline&quot;&gt;&lt;!-- start comment person (do not change css-class.) --&gt;&lt;div class=&quot;collabComResPerson&quot;&gt;{{#if: {{{CommentPerson|}}} | {{#vardefine:userimage|{{#ask: [[{{{CommentPerson}}}]] | ?User_image = | link=none}} }} }}{{#if:{{#var:userimage}}| [[{{#var:userimage}}|frameless|48x48px|nopreview|link={{{CommentPerson}}}]] | [[File:Defaultuser.gif|frameless|48px|nopreview|link=]] }}&lt;div class=&quot;collabComUser&quot;&gt;&lt;div class=&quot;collabComUserName&quot;&gt;{{#if: {{{CommentPerson|}}} |{{#ifexist:{{{CommentPerson}}}|[[{{{CommentPerson|}}}]], |{{{CommentPerson|}}},&amp;nbsp; }}[[Has comment person::{{{CommentPerson|}}}| ]]|}}&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;!-- end comment person --&gt;&lt;!-- start comment date--&gt;{{#if: {{{CommentDatetime|}}} | &lt;div class=&quot;collabComDate&quot;&gt;[[Has comment date::{{{CommentDatetime|}}}]]&lt;/div&gt;}}&lt;!-- end comment date--&gt;&lt;!-- start comment rating --&gt;{{#if:{{{CommentRating|}}}|[[Has comment rating::{{{CommentRating|}}}|]]&lt;div class =&quot;collabComRating&quot;&gt;{{#ifexpr: {{{CommentRating|}}} &lt; 2 | {{#ifexpr: {{{CommentRating|}}} &gt; -2 | Article quality rated:&lt;div class=&quot;collabComRatingIcon&quot;&gt;{{#ifexpr: {{{CommentRating|}}} = -1 | [[File:Bad_active.png]] }}{{#ifexpr: {{{CommentRating|}}} = 0 | [[File:Neutral_active.png]] }}{{#ifexpr: {{{CommentRating|}}} = 1 | [[File:Good_active.png]] }}&lt;/div&gt;| }}| }}&lt;/div&gt;| }}&lt;!-- end comment rating --&gt;&lt;!-- end comment headline --&gt;&lt;/div&gt;&lt;!-- start comment content--&gt;&lt;div class=&quot;collabComText&quot;&gt;{{#if:{{{CommentContent|}}}|[[Has comment text::{{{CommentContent|}}}]]}}&lt;/div&gt;&lt;!-- end comment content--&gt;&lt;/div&gt;&lt;!-- end comment --&gt;[[Category:Comment]]
+{{#if: {{{CommentRelatedComment|}}} | [[Belongs to comment::{{{CommentRelatedComment|}}}]] | }}&lt;/includeonly&gt;</text>
     </revision>
   </page>
   <page>
     <title>Template:CommentResult</title>
     <id>513</id>
     <revision>
-      <id>1330</id>
-      <timestamp>2010-05-17T15:12:33Z</timestamp>
+      <id>1627</id>
+      <timestamp>2010-08-31T15:39:56Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -128,9 +130,8 @@
 |year=2009
 }}
 &lt;/noinclude&gt;&lt;includeonly&gt;&lt;!-- start comment (do not change css-classes)--&gt;
-&lt;div class=&quot;collabComRes&quot;&gt;&lt;!-- start comment information --&gt;&lt;div class=&quot;collabComResInfo&quot;&gt;{{{1}}}&lt;/div&gt;
-&lt;!-- end comment information --&gt;&lt;!-- start comment headline --&gt;&lt;div class=&quot;collabComResHeadline&quot;&gt;
-&lt;!-- start comment person --&gt;&lt;div class=&quot;collabComResPerson&quot;&gt;{{#if: {{{2|}}} |{{#vardefine:userimage|{{#ask: [[{{{2}}}]] | ?User_image = | link=none}} }} }}{{#if:{{#var:userimage}}| [[{{#var:userimage}}|frameless|48x48px|nopreview|link={{{2}}}]] | [[File:Defaultuser.gif|frameless|48px|nopreview]] }}&lt;div class=&quot;collabComResUsername&quot;&gt;{{#if:{{{2|}}}|[[{{{2|}}}]], | }}&lt;/div&gt;&lt;/div&gt;&lt;!-- end comment person --&gt;&lt;!-- start comment date--&gt;&lt;div class=&quot;collabComResDate&quot;&gt;{{{3}}}&lt;/div&gt;&lt;!-- end comment date--&gt;&lt;!-- start belonging article--&gt;&lt;div class=&quot;collabComResBelongsTo&quot;&gt;{{#if:{{{6|}}}|, for article: [[{{{6}}}]]|}}&lt;/div&gt;&lt;!-- end belonging article--&gt;&lt;!-- start comment rating --&gt;{{#if:{{{5}}}|&lt;div class =&quot;collabComResRating&quot;&gt;{{#ifexpr: {{{5}}} &lt; 2 | {{#ifexpr: {{{5}}} &gt; -2 | Article quality rated:&lt;div class=&quot;collabComResRatingIcon&quot;&gt;{{#ifexpr: {{{5}}} = -1 | [[File:Bad_active.png|nopreview]] }}{{#ifexpr: {{{5}}} = 0 | [[File:Neutral_active.png|nopreview]] }}{{#ifexpr: {{{5}}} = 1 | [[File:Good_active.png|nopreview]] }}&lt;/div&gt;| }}| }}&lt;/div&gt;| }}&lt;!-- end comment rating --&gt;&lt;/div&gt;&lt;!-- End comment headline --&gt;&lt;!-- start comment content--&gt;&lt;div class=&quot;collabComResText&quot;&gt;{{{4}}}&lt;/div&gt;&lt;!-- end comment content--&gt;&lt;/div&gt;&lt;!-- end comment --&gt;&lt;/includeonly&gt;</text>
+{{#vardefine:resID|{{PAGENAMEE:{{#ifeq: {{#pos:{{{6}}}|:}} | | {{{6}}} | {{#sub:{{{6}}}|{{#expr:{{#pos:{{{6}}}|:}}+1}}|0}} }} }} }}{{#vardefine:myID|{{PAGENAMEE:{{#ifeq: {{#pos:{{{1}}}|:}} | | {{{1}}} | {{#sub:{{{1}}}|{{#expr:{{#pos:{{{1}}}|:}}+1}}|0}} }} }} }}&lt;div class=&quot;collabComRes&quot; id=&quot;{{#var:myID}}&quot;&gt;&lt;!-- start comment information --&gt;&lt;div class=&quot;collabComResInfoSuper&quot;&gt;{{#var:resID}}&lt;/div&gt;&lt;div class=&quot;collabComResInfo&quot;&gt;{{#var:myID}}&lt;/div&gt;
+&lt;!-- end comment information --&gt;&lt;!-- start comment person --&gt;&lt;div class=&quot;collabComResPerson&quot;&gt;{{#if: {{{2|}}} |{{#vardefine:userimage|{{#ask: [[{{{2}}}]] | ?User_image = | link=none}} }} }}{{#if:{{#var:userimage}}| [[{{#var:userimage}}|frameless|48x48px|nopreview|link={{{2}}}]] | [[File:Defaultuser.gif|frameless|48px|nopreview]] }}&lt;/div&gt;&lt;!-- start comment rating --&gt;{{#if:{{{5}}}|&lt;div class =&quot;collabComResRating&quot;&gt;{{#ifexpr: {{{5}}} &lt; 2 | {{#ifexpr: {{{5}}} &gt; -2 | Article quality rated:&lt;div class=&quot;collabComResRatingIcon&quot;&gt;{{#ifexpr: {{{5}}} = -1 | [[File:Bad_active.png|16px|nopreview]] }}{{#ifexpr: {{{5}}} = 0 | [[File:Neutral_active.png|16px|nopreview]] }}{{#ifexpr: {{{5}}} = 1 | [[File:Good_active.png|16px|nopreview]] }}&lt;/div&gt;| }}| }}&lt;/div&gt;| }}&lt;!-- end comment rating --&gt;&lt;div class=&quot;collabComResRight&quot;&gt;&lt;div class=&quot;collabComResUsername&quot;&gt;{{#if:{{{2|}}}|[[{{{2|}}}]], | }}&lt;/div&gt;&lt;!-- end comment person --&gt;&lt;!-- start comment date--&gt;&lt;div class=&quot;collabComResDate&quot;&gt; {{{3}}}&lt;/div&gt;&lt;!-- end comment date--&gt;&lt;!-- start comment content--&gt;&lt;div class=&quot;collabComResText&quot;&gt;{{{4}}}&lt;/div&gt;&lt;/div&gt;&lt;!-- end comment content--&gt;&lt;/div&gt;&lt;!-- end comment --&gt;&lt;/includeonly&gt;</text>
     </revision>
   </page>
   <page>
@@ -167,14 +168,12 @@
     <title>Template:ShowCommentsIntern</title>
     <id>515</id>
     <revision>
-      <id>1157</id>
-      <timestamp>2010-05-07T13:58:59Z</timestamp>
+      <id>1648</id>
+      <timestamp>2010-09-01T13:03:17Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
-      <minor/>
-      <comment>1 revision</comment>
       <text xml:space="preserve">&lt;noinclude&gt;{{Template
 |PAGENAME=Template:ShowCommentsIntern
 |Has author=User:WikiSysop
@@ -198,25 +197,30 @@
   | ?Has comment rating
   | format=count
 }}}}
-&lt;!--start surrounding div --&gt;&lt;div style=&quot;clear:both;border:1px solid white;&quot;&gt;{{#if:{{#var:avgrating}}|&lt;!-- start average div --&gt;&lt;div style=&quot;font-weight:bold;background-color:#EDF4FC;float:left;width:100%;color:black;border-bottom:1px solid grey;&quot;&gt;&lt;!--
---&gt;[[File:Comment_icon_crystal.png|middle|nopreview|25px|link=]]&amp;nbsp;&lt;span style=&quot;font-size:larger&quot;&gt;Comments&amp;nbsp;&lt;/span&gt;({{#var:countrating}} people rated this &lt;!--
---&gt;&lt;div class=&quot;ce-rating-icon&quot; style=&quot;color:black;padding-left:3px;display:inline&quot;&gt;&lt;!--
---&gt;{{#ifexpr:{{#var:avgrating}} &lt; -0.33 |[[File:Bad_active.png|nopreview|middle|link=]]}}&lt;!--
+{{#vardefine:commentnum|{{#ask: [[Belongs to article::{{FULLPAGENAME}}]][[Comment:+]]
+  | format=count
+}}}}
+&lt;!--start surrounding div --&gt;&lt;div class=&quot;collabComInternSurround&quot;&gt;&lt;!-- start header div --&gt;&lt;div class=&quot;collabComInternHeader&quot;&gt;{{#ifexpr:{{#var:commentnum}} &gt; 0 |&lt;span class=&quot;collabComInternComment&quot;&gt;[[File:Comment_icon_crystal.png|middle|nopreview|16px|link=]] Comments ({{#var:commentnum}})&lt;/span&gt;&lt;span id=&quot;collabComToggle&quot;&gt; &amp;#124; Hide comments&lt;/span&gt;&lt;span id=&quot;collabComFormToggle&quot;&gt; &amp;#124; Add comment&lt;/span&gt;{{#ifexpr:{{#var:countrating}} &gt; 0 |&lt;span class=&quot;collabComInternAvg&quot;&gt;Average article quality based on {{#var:countrating}} rating(s): &lt;!--
+--&gt;&lt;div class=&quot;collabComInternRatingIcon&quot;&gt;&lt;!--
+--&gt;{{#ifexpr:{{#var:avgrating}} &lt; -0.33 |[[File:Bad_active.png|16px|nopreview|middle|link=]]}}&lt;!--
 --&gt;{{#ifexpr:{{#var:avgrating}} &gt;= -0.33&lt;!--
-...--&gt;| {{#ifexpr:{{#var:avgrating}} &lt;= 0.33 |[[File:Neutral_active.png|nopreview|middle|link=]]}}&lt;!--
+...--&gt;| {{#ifexpr:{{#var:avgrating}} &lt;= 0.33 |[[File:Neutral_active.png|16px|nopreview|middle|link=]]}}&lt;!--
 --&gt;}}&lt;!--
---&gt;{{#ifexpr:{{#var:avgrating}} &gt; 0.33 |[[File:Good_active.png|nopreview|middle|link=]]}})&lt;/div&gt;&lt;/div&gt;&lt;!-- end average div --&gt;|}}
+--&gt;{{#ifexpr:{{#var:avgrating}} &gt; 0.33 |[[File:Good_active.png|16px|nopreview|middle|link=]]}}&lt;/div&gt;&lt;/span&gt;|}}| [[File:Comment_icon_crystal.png|middle|nopreview|16px|link=]]&lt;span id=&quot;collabComFormToggle&quot; style=&quot;font-weight:bold&quot;&gt;  Add comment&lt;/span&gt;}}&lt;/div&gt;&lt;!-- end header div --&gt;
 {{#showcommentform:}}
+&lt;div id=&quot;collabComResults&quot;&gt;
 {{#ask: [[Belongs to article::{{FULLPAGENAME}}]] [[Comment:+]]
   | ?Has comment person
   | ?Has comment date
   | ?Has comment text
   | ?Has comment rating
+  | ?Belongs to comment
   | format=template
   | template=CommentResult
   | link=none
   | limit=100
 }}
+&lt;/div&gt;
 &lt;/div&gt;&lt;!-- end surround div --&gt;&lt;/includeonly&gt;</text>
     </revision>
   </page>

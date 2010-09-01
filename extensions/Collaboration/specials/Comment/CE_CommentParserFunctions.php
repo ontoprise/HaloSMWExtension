@@ -125,7 +125,7 @@ class CECommentParserFunctions {
 	 * 			... if there's sthg wrong, that can not be caught by CE itself
 	 */
 	public static function showcommentform(&$parser) {
-		global $cegContLang, $wgUser, $cegScriptPath, $wgJsMimeType;
+		global $cegContLang, $wgUser, $cegScriptPath, $cegEnableRatingForArticles, $wgJsMimeType;
 
 		$jsText = <<<END
 <script type="{$wgJsMimeType}">/* <![CDATA[ */ var cegScriptPath = '{$cegScriptPath}';
@@ -161,7 +161,6 @@ END;
 		
 		$encPreComment = htmlspecialchars(wfMsg('ce_cf_predef'));
 		$comment_disabled = '';
-		$cfHeaderToolTip = wfMsgForContent('ce_cf_header_tooltip');
 
 		#rating#
 		$ratingValues = array( 0 => wfMsg('ce_ce_rating_0'),
@@ -219,29 +218,10 @@ END;
 
 		$submitButtonID = 'collabComFormSubmitbuttonID';
 		$resetButtonID = 'collabComFormResetbuttonID'; 
-		
-		//TODO: use script.aclo.us(?) for fading in.
 
-		$html = XML::openElement( 'div', array( 'id' => 'collabComFormHeader' )) .
-			XML::openElement('span', array( 'id' => 'collabComFormHeaderText',
-				'title' => $cfHeaderToolTip,
-				'onClick' => '$jq(\'#collabComForm\').toggle();')) .
-			wfMsg('ce_cf_header_text') .
-			XML::closeElement('span');
-
-		$html .= XML::openElement( 'form', array( 'method' => 'post', 'id' => 'collabComForm',
-			'style' => 'display:none',		
-			'onSubmit' => 'return ceCommentForm.processForm()' ) ) . 
-			XML::openElement('div', array('id' => 'collabComFormUserIcon')) .
-			XML::Element( 'img', array( 'id' => 'collabComFormUserImg',
-				'src' => $userImgSrc? $userImgSrc : '' )) .
-			XML::closeElement('div') .
-			XML::openElement('div', array('id' => 'collabComFormRight')) .
-				XML::openElement( 'div', array( 'id' => 'collabComFormUser') ) .
-					'<span class="userkey">' .wfMsg('ce_cf_author') . '</span>' . 
-					'<span class="uservalue">' . $currentUser . '</span>' .
-				XML::closeElement('div') .
-				XML::openElement('div', array( 'id' => 'collabComFormRating')) .
+		$ratingHTML = '';
+		if( isset($cegEnableRatingForArticles) && $cegEnableRatingForArticles ) {
+			$ratingHTML = XML::openElement('div', array( 'id' => 'collabComFormRating')) .
 					wfMsg('ce_cf_article_rating') .
 					'<span class="collabComFormGrey">' . '&nbsp;' . 
 						wfMsg('ce_cf_article_rating2') . 
@@ -263,8 +243,23 @@ END;
 							'src' => $cegScriptPath . '/skins/Comment/icons/good_inactive.png',
 							'onClick' => 'ceCommentForm.switchRating(\'#collabComFormRating3\',1);' )) .
 					XML::closeElement('span') .
+				XML::closeElement('div'); 
+		}
+
+		$html = XML::openElement( 'div', array( 'id' => 'collabComFormHeader' )) .
+			XML::openElement( 'form', array( 'method' => 'post', 'id' => 'collabComForm',
+			'style' => 'display:none',		
+			'onSubmit' => 'return ceCommentForm.processForm()' ) ) . 
+			XML::openElement('div', array('id' => 'collabComFormUserIcon')) .
+				XML::Element( 'img', array( 'id' => 'collabComFormUserImg',
+					'src' => $userImgSrc? $userImgSrc : '' )) .
+			XML::closeElement('div') .
+			XML::openElement('div', array('id' => 'collabComFormRight')) .
+				XML::openElement( 'div', array( 'id' => 'collabComFormUser') ) .
+					'<span class="userkey">' .wfMsg('ce_cf_author') . '</span>' . 
+					'<span class="uservalue">' . $currentUser . '</span>' .
 				XML::closeElement('div') .
-					'<div class="mw-editTools\">' .
+				$ratingHTML .
 				XML::openElement('div', array( 'id' => 'collabComFormHelp')) .
 					wfMsg('ce_cf_comment') .
 					XML::openElement('span', array('class' => 'red')) .
@@ -278,7 +273,6 @@ END;
 					'onKeyDown' => 'ceCommentForm.textareaKeyPressed();')) .
 				$encPreComment .
 				XML::closeElement('textarea') .
-			XML::closeElement('div') .
 			XML::submitButton( wfMsg( 'ce_cf_submit_button_name' ), 
 				array ( 'id' => $submitButtonID) ) .
 			XML::element( 'input', array( 'type' => 'reset', 

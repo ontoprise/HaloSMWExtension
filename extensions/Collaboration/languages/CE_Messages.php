@@ -43,9 +43,6 @@ $messages['en'] = array(
 	'ce_cf_all_not_allowed'			=> 'Nobody is actually allowed to enter comments.',
 	'ce_cf_you_not_allowed'			=> 'You are actually not allowed to enter comments.',
 
-	/*header*/
-	'ce_cf_header_text'				=> 'add a comment',
-	'ce_cf_header_tooltip'			=> 'You can open the comment form by clicking this text.',
 	/* author */
 	'ce_cf_author'					=> 'Author:',
 	/* rating */
@@ -92,9 +89,6 @@ $messages['de'] = array(
 	'ce_cf_all_not_allowed'			=> 'Niemand darf aktuell Kommentare eingeben.',
 	'ce_cf_you_not_allowed'			=> 'Sie dürfen aktuell keine Kommentare eingeben.',
  
-	/*header*/
-	'ce_cf_header_text'				=> 'Einen Kommentar hinzuf&uuml;gen',
-	'ce_cf_header_tooltip'			=> 'Sie können das Kommentarformular durch Klicken öffnen.', 
 	/* author */
 	'ce_cf_author'					=> 'Autor:',
 

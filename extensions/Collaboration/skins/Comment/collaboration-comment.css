@@ -63,11 +63,62 @@ div.collabComRatingIcon img {
 	vertical-align: middle;
 }
 
+/* for Template:ShowCommentsIntern
+*/
+div.collabComInternSurround {
+	clear: both;
+	border: 1px solid white;
+}
+
+div.collabComInternHeader {
+	background-color: #EDF4FC;
+	color: black;
+	border: 1px solid grey;
+	padding: 5px;
+}
+
+span.collabComInternComment {
+	font-size: larger;
+	font-weight: bold;
+	text-align: left;
+	padding-left: 5px;
+}
+
+span#collabComToggle {
+	color: blue;
+	cursor: pointer;
+}
+
+span#collabComFormToggle {
+	color: blue;
+	cursor: pointer;
+}
+
+span.collabComInternAvg {
+	color: grey;
+	float: right;
+	padding-right: 5px;
+}
+
+div.collabComInternRatingIcon {
+	color: black;
+	padding-left: 3px;
+	display: inline
+}
+
 /* for Template:CommentResult
  * This is used as result printer template for
  * the query of existing comments
  */
-div.collabComResInfo {
+div#collabComResults {
+	
+}
+
+span#collabComToggleView {
+	color: grey;
+}
+
+div.collabComResInfo,div.collabComResInfoSuper {
 	display: none;
 }
 
@@ -85,13 +136,15 @@ div.collabComResHeadline {
 }
 
 div.collabComResPerson {
-	display: inline;
-	color: grey;
+	float: left;
 }
 
 div.collabComResPerson img {
-	float: left;
-	margin-right: 10px;
+	
+}
+
+div.collabComResRight {
+	margin-left: 55px;
 }
 
 div.collabComResUsername {
@@ -118,6 +171,7 @@ div.collabComResRating {
 	float: right;
 	text-align: right;
 	color: grey;
+	margin-right: 5px;
 }
 
 div.collabComResRatingIcon {
@@ -130,8 +184,7 @@ div.collabComResRatingIcon img {
 }
 
 div.collabComResText {
-	display: inline;
-	font-weight: bold;
+	padding-top: 5px;
 }
 
 /* Comment form */
@@ -139,7 +192,6 @@ div#collabComFormHeader {
 	background-color: #F2F2F2;
 	width: 100%;
 	margin: 5px 0;
-	padding-top: 5px;
 	clear: both;
 	float: left;
 	overflow: hidden;
@@ -250,7 +302,7 @@ div#collabComFormHelp span {
 	border: 1px dashed grey;
 	padding: 5px 3px;
 	margin-top: 2px;
-	/*float:left;*/
+	text-align: center;
 	clear: both;
 }
 
@@ -292,7 +344,7 @@ div#collabComFormHelp span {
 
 .cependingElement {
 	position: fixed;
-	z-index: 200;
+	z-index: 10001;
 	top: 0px;
 	left: 0px;
 	display: none;

@@ -69,9 +69,9 @@ $cegEnableComment = true;
 $cegEnableCommentFor = CE_COMMENT_ALL;
 
 ###
-# Enable CurrentUsers
+# Enable Rating
 ###
-$cegEnableCurrentUsers = false;
+$cegEnableRatingForArticles = false;
 
 ###
 # Use ScriptManager

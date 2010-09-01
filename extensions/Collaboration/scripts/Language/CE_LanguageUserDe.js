@@ -16,6 +16,14 @@
 */
 
 var wgCEUserLanguageStrings = {
-	'ce_reload'			:	' Seite wird neu geladen ...',
-	'ce_deleting'		:	'Lösche Kommentar ...',
+	'ce_invalid'			:	'Sie haben keinen gültigen Kommentar eingegeben.',
+	'ce_reload'				:	' Seite wird neu geladen ...',
+	'ce_deleting'			:	'Lösche Kommentar ...',
+	'ce_delete'				:	'Möchten Sie diesen Kommentar wirklich löschen?',
+	'ce_delete_button'		:	'Lösche Kommentar',
+	'ce_cancel_button'		:	'Abbrechen',
+	'ce_com_show'			:	'Zeige Kommentare',
+	'ce_com_hide'			:	'Verstecke Kommentare',
+	'ce_com_toggle_tooltip'	:	'Sie können die Kommentare durch Klicken öffnen/schließen',
+	'ce_form_toggle_tooltip':	'Sie können das Kommentarformular durch Klicken öffnen/schließen.'
 }

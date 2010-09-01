@@ -71,30 +71,27 @@ function CECommentForm() {
 			ratingString = '|CommentRating=' + this.ratingValue;
 		}
 		
-		//textarea
+		// textarea
 		var textArea = ($jq('#collabComFormTextarea').val())? $jq('#collabComFormTextarea').val(): '';
-		//remove leading and trailing whitespaces
-		textArea = textArea.strip();
 		if(textArea.blank() || this.textareaIsDefault) {
 			this.pendingIndicatorCF.hide();
 			$jq('#collabComFormMessage').attr('class', 'failure');
-			$jq('#collabComFormMessage').innerHTML = 'You didn\'t enter a valid comment.';
-			//enable form again
-			$jq('#collabComForm').attr('disabled', false);
+			$jq('#collabComFormMessage').html(ceLanguage.getMessage('ce_invalid'));
+			$jq('#collabComFormMessage').show('slow');
+			// enable form again
+			$jq('#collabComFormTextarea').attr('disabled', false);
+			$jq('#collabComFormSubmitbuttonID').attr('disabled', false);
+			$jq('#collabComFormResetbuttonID').attr('disabled', false);
 			return false;
+		} else {
+			// hide possibly shown message div
+			$jq('#collabComFormMessage').hide('slow');
 		}
-		//remove script tags
+		// remove script tags
 		textArea = textArea.stripScripts();
-		//escape html chars
+		// escape html chars
 		textArea = textArea.escapeHTML();
-		//property & template cleaning:
-		textArea = textArea.replace(/:/g, '&#58;');
-		textArea = textArea.replace(/\{/g, '&#123;');
-		textArea = textArea.replace(/\{/g, '&#123;');
-		textArea = textArea.replace(/\[/g, '&#91;');
-		textArea = textArea.replace(/\]/g, '&#93;');
-		textArea = textArea.replace(/\//g, '&#47;');
-		textArea = textArea.replace(/\\/g, '&#92;');
+		textArea = this.textEncode(textArea);
 		//TODO: wgUserName is null, when not logged in!
 		var userNameString = '';
 		if( wgUserName != null && ceUserNS != null ) {
@@ -143,7 +140,6 @@ function CECommentForm() {
 		$jq('#collabComFormResetbuttonID').removeAttr('disabled');
 		var comMessage = $jq('#collabComFormMessage');
 		comMessage.show();
-
 		if ( valueEl.nodeType == 1 ) {
 			var valueCode = valueEl.firstChild.nodeValue
 			if ( valueCode == 0 ){
@@ -220,6 +216,44 @@ function CECommentForm() {
 
 	/*helper functions*/
 
+	/**
+	 * Function to do all necessary encodings
+	 * to make sure that comments are displayed 
+	 * excactly the same as in the form
+	 */
+	this.textEncode = function(text) {
+		// property & template cleaning:
+		text = text.replace(/:/g, '&#58;');
+		text = text.replace(/\{/g, '&#123;');
+		text = text.replace(/\{/g, '&#123;');
+		text = text.replace(/\[/g, '&#91;');
+		text = text.replace(/\]/g, '&#93;');
+		text = text.replace(/\//g, '&#47;');
+		text = text.replace(/\\/g, '&#92;');
+		// two leading spaces are interpreted as pre-tag 
+		text = text.replace(/ /g, '&nbsp;');
+		text = text.replace(/(\r\n|\r|\n)/g, '<br />');
+		return text;
+	};
+
+	/**
+	 * Function to decode again.
+	 */
+	this.textDecode = function(text) {
+		// two leading spaces are interpreted as pre-tag 
+		text = text.replace(/&nbsp;/g, ' ');
+		text = text.replace(/<br>|<br \/>/g, '\n');
+		// property & template cleaning:
+		text = text.replace(/&#58;/g, ':');
+		text = text.replace(/&#123;/g,'}');
+		text = text.replace(/&#123;/g, '{');
+		text = text.replace(/&#91;/g, '[');
+		text = text.replace(/&#93;/g, ']');
+		text = text.replace(/&#47;/g, '/');
+		text = text.replace(/&#92;/g, '\\');
+		return text;
+	};
+
 	this.formReset = function() {
 		this.textareaIsDefault = true;
 		
@@ -280,6 +314,24 @@ function CECommentForm() {
 		}
 		this.ratingValue = ratingValue;
 	};
+
+	/**
+	 * This functions toggles the comments and 
+	 * sets the corresponding text in the comment header
+	 */
+	this.toggleComments = function() {
+		var comToggle = $jq('#collabComToggle');
+		var commentResults = $jq('#collabComResults');
+		var newComToggleText = '';
+		if( commentResults.css('display') == 'block' ) {
+			newComToggleText = ceLanguage.getMessage('ce_com_show');
+		} else {
+			newComToggleText = ceLanguage.getMessage('ce_com_hide');
+		}
+		comToggle.html(' | ' + newComToggleText);
+		commentResults.toggle("slow");
+		return true;
+	}
 }
 
 //Set global variable for accessing comment form functions
@@ -425,43 +477,10 @@ CollaborationXMLTools.createDocumentFromString = function (xmlText) {
 //Add delete links if page is loaded
 $jq(document).ready(
 	function(){
-		if( typeof( cegUserIsSysop ) != "undefined" && cegUserIsSysop != null && cegUserIsSysop != false) {
-
-			var resultComments = $jq('.collabComResInfo');
-
-			if ( resultComments != null ) {
-				$jq.each(resultComments, function(i, resCom ){
-					var resComName = resCom.innerHTML;
-
-					var imgEl = new Element('img', {
-						'src' : cegScriptPath + '/skins/Comment/icons/smw_plus_delete_icon_16x16.png',
-						'style' : 'float:none;padding-left:5px;vertical-align:bottom'
-					} );
-					var aEl = new Element('a', {
-						'rel' : 'nofollow',
-						'title' : 'Delete this comment',
-						'class' : 'plainlinks',
-						'href' : wgServer + wgScript + '/' + escape(resComName) + '?action=delete'
-					} );
-					var divEl = new Element('div', {
-						'style' : 'display:inline',
-						'title' : 'Delete this comment'
-					} );
-
-					aEl.appendChild(imgEl);
-					divEl.appendChild(aEl);
-
-					// Firefox considers the whitespace between element nodes
-					// to be text nodes (whereas IE does not)
-					var resComSib = this.nextSibling;
-					while( resComSib.nodeType !== 1 && resComSib) { // 1 == Node.ELEMENT_NODE
-						resComSib = resComSib.nextSibling
-					}
-					if( resComSib ) {
-						resComSib.appendChild(divEl);
-					}
-				});
-			}
-		}
+		// add JS to header items
+		$jq('#collabComToggle').attr('onClick', 'ceCommentForm.toggleComments();');
+		$jq('#collabComToggle').attr('title', ceLanguage.getMessage('ce_com_toggle_tooltip'));
+		$jq('#collabComFormToggle').attr('onClick', '$jq(\'#collabComForm\').toggle(\'slow\');');
+		$jq('#collabComFormToggle').attr('title', ceLanguage.getMessage('ce_form_toggle_tooltip'));
 	}
 );
