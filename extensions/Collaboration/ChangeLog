@@ -4,11 +4,17 @@ Collaboration extension ChangeLog
 VERSION 1.X
 
   FEATURES:
-
+	FR #12230: Added a global var (in CE_Initialize.php) to enable/disable the rating mechanism
+	FR #12417: Clicking on the link "Hide comments" will cause all comments to be hidden and only the top "menue" box will be present
 
   CHANGES:
+	FR #12230: If no comment is present on the current page only an icon and the "Add comment" link are displayed
+	FR #12230: Line breaks and line feeds are correct interpreted
+	FR #12230: The final comment of the user should be formatted exactly the same as it looks like in the comment creation box
+	FR #12233: Icons are now 16x16 px
+	FR #12233: Reformatted the text block for the overall rating
 	Migrated from Prototype to jQuery library.
-	Removed 'goto comment' link.
+	FR #12229: Removed 'goto comment' link.
 	General Code changes
 
   BUGFIXES:
