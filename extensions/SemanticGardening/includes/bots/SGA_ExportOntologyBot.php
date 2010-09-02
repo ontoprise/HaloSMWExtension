@@ -155,7 +155,7 @@ class ExportOntologyBot extends GardeningBot {
 		global $wgServer, $wgScriptPath;
 		$exportFileTitle = Title::newFromText(basename($wikiexportDir."/".$outputFile), NS_IMAGE);
 		$im_file = wfLocalFile($exportFileTitle);
-        $im_file->upload($wikiexportDir."/".$outputFile, "auto-inserted file", "noText");
+		$im_file->upload($wikiexportDir."/".$outputFile, "auto-inserted file", "noText");
 		$downloadLink = wfMsg('smw_gard_export_download', "[[".$exportFileTitle->getPrefixedText()."|".wfMsg('smw_gard_export_here')."]]");
 			
 		return "\n\n".$downloadLink."\n\n";
@@ -543,7 +543,7 @@ class ExportOntologyBot extends GardeningBot {
 			}
 
 		}
-		
+
 
 		foreach($redirectedPropertiesToCreate as $r) {
 			$owl = '<owl:DatatypeProperty rdf:about="&prop;'.$r.'">'.LINE_FEED;
@@ -642,25 +642,28 @@ class ExportOntologyBot extends GardeningBot {
 					} else {
 						$owl .= '     <rdfs:range rdf:resource="&owl;Thing" />'.LINE_FEED;
 					}
-					if ($this->rdfsSemantics) $owl .= '</owl:ObjectProperty>'.LINE_FEED;
-					if ($maxCard != NULL || $minCard != NULL) {
-						$owl .= '<owl:Class rdf:about="&cat;'.ExportOntologyBot::makeXMLAttributeContent($domain).'">'.LINE_FEED;
-						if ($maxCard != NULL) {
-							$owl .= $this->exportMaxCard($rp, $maxCard);
-						}
-						if ($minCard != NULL) {
-							$owl .= $this->exportMinCard($rp, $minCard);
-						}
-						$owl .= '</owl:Class>'.LINE_FEED;
-					}
+					
 				}
 			}
 
+			if ($this->rdfsSemantics) {
+				$owl .= '</owl:ObjectProperty>'.LINE_FEED;
+				if ($maxCard != NULL || $minCard != NULL) {
+					$owl .= '<owl:Class rdf:about="&cat;'.ExportOntologyBot::makeXMLAttributeContent($domain).'">'.LINE_FEED;
+					if ($maxCard != NULL) {
+						$owl .= $this->exportMaxCard($rp, $maxCard);
+					}
+					if ($minCard != NULL) {
+						$owl .= $this->exportMinCard($rp, $minCard);
+					}
+					$owl .= '</owl:Class>'.LINE_FEED;
+				}
+			}
 		}
 
 
 		foreach($redirectedPropertiesToCreate as $r) {
-			$owl = '<owl:ObjectProperty rdf:about="&prop;'.$r.'">'.LINE_FEED;
+			$owl .= '<owl:ObjectProperty rdf:about="&prop;'.$r.'">'.LINE_FEED;
 			$owl .= '</owl:ObjectProperty>'.LINE_FEED;
 		}
 
