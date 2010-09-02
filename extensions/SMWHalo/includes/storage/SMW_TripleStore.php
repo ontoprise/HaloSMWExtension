@@ -315,7 +315,7 @@ class SMWTripleStore extends SMWStore {
 			$con = TSConnection::getConnector();
 			$sparulCommands = array();
 			$sparulCommands[] = TSNamespaces::getW3CPrefixes()."DELETE FROM <$smwgTripleStoreGraph> { <$smwgTripleStoreGraph/$subj_ns#".$subject->getDBkey()."> ?p ?o. }";
-				
+
 			$sparulCommands[] =  TSNamespaces::getW3CPrefixes()."INSERT INTO <$smwgTripleStoreGraph> { ".$this->implodeTriples($triples)." }";
 
 			if (isset($smwgEnableObjectLogicRules)) {
@@ -625,7 +625,7 @@ class SMWTripleStore extends SMWStore {
 				if ($data == NULL) { // main column
 					$hasMainColumn = true;
 					if (in_array('_X_', $variableSet)) { // x is missing for INSTANCE queries
-						$mapPRTOColumns['_X_'] = $index;
+						$mapPRTOColumns['_X_'] = array($index);
 						$prs[] = $pr;
 						$index++;
 					}
@@ -633,7 +633,11 @@ class SMWTripleStore extends SMWStore {
 				} else  {
 
 					$label = $data instanceof Title ? $data->getDBkey() : array_shift($data->getDBkeys());
-					$mapPRTOColumns[$label] = $index;
+					if (array_key_exists($label, $mapPRTOColumns)) {
+						$mapPRTOColumns[$label][] = $index;
+					} else {
+						$mapPRTOColumns[$label] = array($index);
+					}
 					$rewritten_pr = $this->rewritePrintrequest($pr);
 					$prs[] = $rewritten_pr;
 					$index++;
@@ -648,7 +652,11 @@ class SMWTripleStore extends SMWStore {
 				$data = $pr->getData();
 				if ($data != NULL) {
 					$label = $data instanceof Title ? $data->getDBkey() : array_shift($data->getDBkeys());
-					$mapPRTOColumns[$label] = $index;
+					if (array_key_exists($label, $mapPRTOColumns)) {
+						$mapPRTOColumns[$label][] = $index;
+					} else {
+						$mapPRTOColumns[$label] = array($index);
+					}
 					$rewritten_pr = $this->rewritePrintrequest($pr);
 					$prs[] = $rewritten_pr;
 					$index++;
@@ -681,8 +689,12 @@ class SMWTripleStore extends SMWStore {
 			$prs[] = new SMWPrintRequest(SMWPrintRequest::PRINT_THIS, str_replace("_"," ",$sel_var), $data);
 
 
-
-			$mapPRTOColumns[$var_name] = $index;
+			if (array_key_exists($var_name, $mapPRTOColumns)) {
+				$mapPRTOColumns[$var_name][] = $index;
+			} else {
+				$mapPRTOColumns[$var_name] = array($index);
+			}
+				
 			$index++;
 		}
 
@@ -707,7 +719,9 @@ class SMWTripleStore extends SMWStore {
 				$resultPages[] = SMWDataValueFactory::newTypeIDValue('_wpg');
 			}
 		}
-
+        
+		foreach($mapPRTOColumns as $pr => $column) reset($mapPRTOColumns[$pr]);
+		
 		// create and add result rows
 		// iterate result rows and add an SMWResultArray object for each field
 		$qresults = array();
@@ -726,8 +740,9 @@ class SMWTripleStore extends SMWStore {
 					$columnIndex++;
 					continue;
 				}
-				$resultColumn = $mapPRTOColumns[$var_name];
-
+				$resultColumn = current($mapPRTOColumns[$var_name]);
+                next($mapPRTOColumns[$var_name]);
+				
 				$allValues = array();
 				$this->parseBindungs($b, $var_name, $prs[$resultColumn], $allValues);
 
@@ -735,6 +750,7 @@ class SMWTripleStore extends SMWStore {
 
 				$columnIndex++;
 				$row[$resultColumn] = new SMWHaloResultArray($resultPages[$rowIndex], $prs[$resultColumn], $this, $allValues);
+				
 			}
 			$rowIndex++;
 			ksort($row);

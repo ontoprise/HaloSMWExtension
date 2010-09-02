@@ -276,6 +276,11 @@ class TSNamespaces {
 		elseif ($namespace == NS_HELP) return "help";
 		else return "ns_$namespace";
 	}
+	
+    public function getNSURI($namespace) {
+        global $smwgTripleStoreGraph;
+        return $smwgTripleStoreGraph."/".$this->getNSPrefix($namespace)."#";
+    }
 
 	/**
 	 * Create a SPARQL PREFIX statement for unknown namespaces.
