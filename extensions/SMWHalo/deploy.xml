@@ -12,6 +12,7 @@
 			Mediawiki
 		</description>
 		<dependencies>
+		    <dependency from="1150" to="1159">mw</dependency>
 			<dependency from="151">smw</dependency>
 			<dependency from="100" to="100">scriptmanager</dependency>
 		</dependencies>
