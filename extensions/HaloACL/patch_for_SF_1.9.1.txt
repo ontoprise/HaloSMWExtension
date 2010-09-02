@@ -7,7 +7,7 @@ Index: extensions/SemanticForms/includes/SF_FormPrinter.php
        $this->showDeletionLog( $wgOut );
      }
 -    $user_can_edit_page = ( $wgUser->isAllowed( 'edit' ) && $this->mPageTitle->userCan( 'edit' ) );
-+    /*op-patch|TS|2009-09-11|HaloACL|Protect properties in Semantic Forms|start*/
++    /*op-patch|TS|2009-09-11|HaloACL|Protect properties in Semantic Forms|start|doc|http://dmwiki.ontoprise.com:8888/dmwiki/index.php/Check_if_a_page_can_be_edited_with_SF*/
 +    $user_can_edit_page = ( $wgUser->isAllowed( 'edit' ) &&
 +      ( $this->mPageTitle->userCan( 'edit' ) || $this->mPageTitle->userCan( 'formedit' ) ) );
 +    /*op-patch|TS|2009-09-11|HaloACL|Protect properties in Semantic Forms|end*/
