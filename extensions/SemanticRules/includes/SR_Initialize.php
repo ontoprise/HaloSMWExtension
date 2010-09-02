@@ -363,11 +363,11 @@ function srfTripleStoreParserHook(&$parser, &$text, &$strip_state = null) {
 						$pageTitle = $srgStateChangedPage;
 					}
 					$ns = $pageTitle->getNamespace();
-					new TSNamespaces(); // assure namespaces are initialized
+					$tsNamespaces = new TSNamespaces(); // assure namespaces are initialized
 					$allNamespaces = TSNamespaces::getAllNamespaces();
 
-					$uri = $allNamespaces[$ns] . urlencode($pageTitle->getDBkey()) . "$$" . urlencode(str_replace(' ', '_', $name));
-
+					$uri = $tsNamespaces->getNSURI($ns) . urlencode($pageTitle->getDBkey()) . "$$" . urlencode(str_replace(' ', '_', $name));
+                
 					$ruletext = str_replace("&lt;","<", $ruletext);
 					$ruletext = str_replace("&gt;",">", $ruletext);
 
