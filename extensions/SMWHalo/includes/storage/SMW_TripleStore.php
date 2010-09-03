@@ -1049,9 +1049,9 @@ class SMWTripleStore extends SMWStore {
 			$result .= $sort."|".$order;
 		}
 
-		if ($query->mergeResults === false) {
+		if ($query->mergeResults !== 0) {
 			if (!$first) $result .= "|";
-			$result .= 'merge=false';
+			$result .= 'merge='.($query->mergeResults ? "true" : "false");
 			$first = false;
 		}
 

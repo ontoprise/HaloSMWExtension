@@ -166,7 +166,7 @@ class SMWSPARQLQueryProcessor extends SMWQueryProcessor {
 			$desc->prependPrintRequest(new SMWPrintRequest(SMWPrintRequest::PRINT_THIS, $mainlabel));
 		}
         
-		$mergeResults = array_key_exists('merge', $params) ? $params['merge'] == 'true' : true;
+		$mergeResults = array_key_exists('merge', $params) ? $params['merge'] == 'true' : 0;
 		
 		$query = new SMWSPARQLQuery($desc, true);
 		$query->params = $params; 
