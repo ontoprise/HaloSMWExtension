@@ -2,7 +2,7 @@ Semantic Gardening extension ChangeLog
 ======================================
 
 
-VERSION XXXX
+VERSION 1.4 Patch Level 1
 
 
   FEATURES:
@@ -14,5 +14,7 @@ VERSION XXXX
 
 
   BUGFIXES:
+  * Local gardening does not work
+  ** http://smwforum.ontoprise.com/smwbugs/show_bug.cgi?id=12600
 
 
