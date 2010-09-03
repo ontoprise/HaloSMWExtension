@@ -309,9 +309,6 @@ enableSemanticNotifications();
 # NewUserMessage
 require_once( "extensions/NewUserMessage/NewUserMessage.php" );
 
-#NoTitle extension
-require_once("$IP/extensions/notitle.php");
-
 #Set default searching for document and pdf namespace
 $wgNamespacesToBeSearchedDefault = array(
         NS_MAIN => true,
