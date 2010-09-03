@@ -694,7 +694,7 @@ class SMWTripleStore extends SMWStore {
 			} else {
 				$mapPRTOColumns[$var_name] = array($index);
 			}
-				
+
 			$index++;
 		}
 
@@ -719,9 +719,9 @@ class SMWTripleStore extends SMWStore {
 				$resultPages[] = SMWDataValueFactory::newTypeIDValue('_wpg');
 			}
 		}
-        
+
 		foreach($mapPRTOColumns as $pr => $column) reset($mapPRTOColumns[$pr]);
-		
+
 		// create and add result rows
 		// iterate result rows and add an SMWResultArray object for each field
 		$qresults = array();
@@ -741,8 +741,8 @@ class SMWTripleStore extends SMWStore {
 					continue;
 				}
 				$resultColumn = current($mapPRTOColumns[$var_name]);
-                next($mapPRTOColumns[$var_name]);
-				
+				next($mapPRTOColumns[$var_name]);
+
 				$allValues = array();
 				$this->parseBindungs($b, $var_name, $prs[$resultColumn], $allValues);
 
@@ -750,7 +750,7 @@ class SMWTripleStore extends SMWStore {
 
 				$columnIndex++;
 				$row[$resultColumn] = new SMWHaloResultArray($resultPages[$rowIndex], $prs[$resultColumn], $this, $allValues);
-				
+
 			}
 			$rowIndex++;
 			ksort($row);
@@ -929,7 +929,6 @@ class SMWTripleStore extends SMWStore {
 			if (!empty($literalValue)) {
 
 				// create SMWDataValue either by property or if that is not possible by the given XSD type
-
 				if ($property instanceof SMWPropertyValue ) {
 					$propertyTitle = Title::newFromText($pr->getData()->getText(), SMW_NS_PROPERTY);
 					if (!$propertyTitle->exists()) {
@@ -941,13 +940,18 @@ class SMWTripleStore extends SMWStore {
 				} else {
 					$value = SMWDataValueFactory::newTypeIDValue(WikiTypeToXSD::getWikiType($literalType));
 				}
+				
+				// set actual value
 				if ($value->getTypeID() == '_dat') { // exception for dateTime
 					if ($literalValue != '') {
-						// do not display time if it is 00:00:00
+
+						// remove time if it is 00:00:00
 						if (substr($literalValue, -9) == 'T00:00:00') {
 							$literalValue = substr($literalValue, 0, strpos($literalValue, "T"));
 						}
-						$value->setDBkeys(array(str_replace("-","/",$literalValue)));
+						// hack: can not use setUserValue for SMW_DV_Time for some reason.
+						$valueTemp = SMWDataValueFactory::newPropertyObjectValue($property, str_replace("-","/",$literalValue));
+						$value->setDBkeys($valueTemp->getDBkeys());
 					}
 				} else if ($value->getTypeID() == '_ema' || $value->getTypeID() == '_tel') { // exception for email
 					$value->setDBkeys(array($literalValue));
@@ -955,7 +959,8 @@ class SMWTripleStore extends SMWStore {
 					$value->setUserValue($literalValue);
 				}
 			} else {
-
+				
+                // literal value is empty
 				if ($property instanceof SMWPropertyValue ) {
 					$value = SMWDataValueFactory::newPropertyObjectValue($property);
 				} else {
@@ -964,6 +969,8 @@ class SMWTripleStore extends SMWStore {
 				}
 
 			}
+			
+			// set metadata
 			foreach($metadata as $mdProperty => $mdValue) {
 				if (strpos($mdProperty, "_meta_") === 0) {
 					$value->setMetadata(substr($mdProperty,6), explode("|||",$mdValue));
