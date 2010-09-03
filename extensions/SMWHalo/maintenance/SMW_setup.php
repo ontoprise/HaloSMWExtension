@@ -41,11 +41,13 @@ if ($delete) {
 }
 
 print "\nSetup SMWHalo.\n\n";
-smwfGetSemanticStore()->setup(true);
-
-//deal with the query results cache
 global $smwgHaloIP;
 require_once( "$smwgHaloIP/includes/QueryResultsCache/SMW_QRC_Store.php" );
 SMWQRCStore::getInstance()->getDB()->initDatabaseTables();
+
+smwfGetSemanticStore()->setup(true);
+
+//deal with the query results cache
+
 
 
