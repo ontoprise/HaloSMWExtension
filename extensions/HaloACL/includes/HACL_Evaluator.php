@@ -107,7 +107,7 @@ class HACLEvaluator {
 //		echo $title->getFullText().":".$action." (Request:".$wgRequest->getText('action').")\n";
 
 		if ($title == null) {
-			$result = true;
+// let other hooks decide			$result = true;
 			self::finishLog("Title is <null>.", $result, true);
 			return true;
 		}
@@ -120,7 +120,9 @@ class HACLEvaluator {
 			$r = self::checkPropertyAccess($title, $user, $action);
 			if ($r !== -1) {
 				haclfRestoreTitlePatch($etc);
-				$result = $r;
+				if ($r === false) {
+					$result = $r;
+				}
 				self::finishLog("Right for property evaluated.", $result, true);
 				return $r;
 			}
@@ -152,7 +154,9 @@ class HACLEvaluator {
 			$r = false;
 			haclfRestoreTitlePatch($etc);
 			self::finishLog('Special handling of "Permission denied" page.', $r, $r);
-			$result = $r;
+			if ($r === false) {
+				$result = $r;
+			}
 			return $r;
 	    }
 		
@@ -173,7 +177,9 @@ class HACLEvaluator {
 				list ($r, $sd) = HACLDefaultSD::userCanModify($title, $user);
 				if ($sd) {
 					haclfRestoreTitlePatch($etc);
-					$result = $r;
+					if ($r === false) {
+						$result = $r;
+					}
 					self::finishLog("Checked right for creating the default user template.", $r, $r);
 					return $r;
 				}
@@ -191,8 +197,10 @@ class HACLEvaluator {
 			// Check if the article belongs to a namespace with an SD
 		    list($r, $sd) = self::checkNamespaceRight($title, $userID, $actionID);
 			haclfRestoreTitlePatch($etc);
-		    $result = $r;
-		    self::finishLog("Checked if the user is allowed to create an article with in the given namespace.", $r, $r);
+			if ($r === false) {
+				$result = $r;
+			}
+			self::finishLog("Checked if the user is allowed to create an article with in the given namespace.", $r, $r);
 		    return $r;
 		}
 		
@@ -201,7 +209,9 @@ class HACLEvaluator {
 		if ($sd) {
 			// User tries to access an ACL article
 			haclfRestoreTitlePatch($etc);
-			$result = $r;
+			if ($r === false) {
+				$result = $r;
+			}
 			self::finishLog("Checked if user can modify an access control entity (SD, right or group).", $r, $r);
 			return $r;
 		}
@@ -259,7 +269,7 @@ class HACLEvaluator {
 			                    
 			if ($r) {
 				haclfRestoreTitlePatch($etc);
-				$result = true;
+// let other hooks decide				$result = true;
 				self::finishLog("Found an appropriate access right.", $result, true);
 				return true;
 			}
@@ -278,7 +288,7 @@ class HACLEvaluator {
 		}
 		if ($sd && $r) {
 			haclfRestoreTitlePatch($etc);
-			$result = true;
+// let other hooks decide			$result = true;
 			self::finishLog("Action allowed by a namespace right.", $result, true);
 			return true;
 		}
@@ -297,7 +307,7 @@ class HACLEvaluator {
 		
 		if ($sd && $r) {
 			haclfRestoreTitlePatch($etc);
-			$result = true;
+// let other hooks decide			$result = true;
 			self::finishLog("Action allowed by a category right.", $result, true);
 			return true;
 		}
@@ -307,7 +317,9 @@ class HACLEvaluator {
 			$r = $actionID == HACLRight::READ;
 			// articles in the whitelist can be read
 			haclfRestoreTitlePatch($etc);
-			$result = $r;
+			if ($result === false) {
+				$result = $r;
+			}
 			self::finishLog("Read access was determined by the Whitelist.", $result, true);
 			return $r;
 		}
@@ -321,7 +333,7 @@ class HACLEvaluator {
 				// Wiki is open for HaloACL but other extensions can still 
 				// prohibit access.
 				self::finishLog("No security descriptor for article found. HaloACL is configured to Open Wiki Access.", true, true);
-				$result = true;
+// let other hooks decide				$result = true;
 				return true;
 			}
 		}

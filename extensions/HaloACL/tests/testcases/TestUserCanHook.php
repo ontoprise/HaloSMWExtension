@@ -56,6 +56,7 @@ class TestUserCanHookSuite extends PHPUnit_Framework_TestSuite
 			'A',
 			'B',
 			'C',
+			'anon',
 			'Whitelist',
 			'Category:B',
 			'Category:C',
@@ -95,6 +96,12 @@ ACL
 This is page C.
 
 [[Category:C]]
+ACL
+,
+//------------------------------------------------------------------------------		
+			'anon' =>
+<<<ACL
+This page is protected by [[ACL:Page/anon]].
 ACL
 ,
 //------------------------------------------------------------------------------		
@@ -153,6 +160,22 @@ ACL
  assigned to=User:U1
 |actions=*
 |description= Page/A: Allow * access for U1
+}}
+
+[[Category:ACL/ACL]]
+
+ACL
+,
+//------------------------------------------------------------------------------		
+
+			'ACL:Page/anon' =>
+<<<ACL
+{{#manage rights: assigned to=User:U1}}
+
+{{#access:
+ assigned to=*
+|actions=*
+|description= Page/anon: Allow * access for * (anonymous users)
 }}
 
 [[Category:ACL/ACL]]
@@ -221,9 +244,9 @@ ACL
 {{#manage rights: assigned to=User:U1}}
 
 {{#access:
- assigned to=User:U1
+ assigned to=User:U1,*
 |actions=*
-|description= Namespace/User: Allow * access for U1
+|description= Namespace/User: Allow * access for U1 and anonymous users
 }}
 
 [[Category:ACL/ACL]]
@@ -310,35 +333,64 @@ class TestUserCanHook extends PHPUnit_Framework_TestCase {
     }
 
     function tearDown() {
+    	$wgGroupPermissions['*']['read'] = true;
     }
 
     function testArticleAccess() {
     	$file = __FILE__;
+    	global $wgGroupPermissions;
     	try {
 			$checkRights = array(
+				array('A', '*', 'read', false),
 				array('A', 'U1', 'read', true),
 				array('A', 'U2', 'read', false),
+				array('anon', 'U1', 'read', true),
+				array('anon', '*', 'read', true),
 			);
-			$this->doCheckRights("testArticleAccess", $checkRights);
-		} catch (Exception $e) {
+			$wgGroupPermissions['*']['read'] = true;
+			$this->doCheckRights("testArticleAccess_1", $checkRights);
+			
+			$checkRights = array(
+				array('A', '*', 'read', false),
+				array('A', 'U1', 'read', true),
+				array('A', 'U2', 'read', false),
+				array('anon', 'U1', 'read', true),
+				array('anon', '*', 'read', false),
+			);
+			$wgGroupPermissions['*']['read'] = false;
+			$this->doCheckRights("testArticleAccess_2", $checkRights);
+    	} catch (Exception $e) {
 			$this->assertTrue(false, "Unexpected exception while testing ".basename($file)."::testArticleAccess():".$e->getMessage());
 		}
     }
     
     function testNamespace() {
+    	global $wgGroupPermissions;
     	$file = __FILE__;
     	try {
 			$checkRights = array(
+				array('User:U1', '*', 'read', true),
 				array('User:U1', 'U1', 'read', true),
 				array('User:U1', 'U2', 'read', false),
 			);
-			$this->doCheckRights("testNamespace", $checkRights);
-		} catch (Exception $e) {
+			$wgGroupPermissions['*']['read'] = true;
+			$this->doCheckRights("testNamespace1", $checkRights);
+
+			$checkRights = array(
+				array('User:U1', '*', 'read', false),
+				array('User:U1', 'U1', 'read', true),
+				array('User:U1', 'U2', 'read', false),
+			);
+			$wgGroupPermissions['*']['read'] = false;
+			$this->doCheckRights("testNamespace2", $checkRights);
+			
+    	} catch (Exception $e) {
 			$this->assertTrue(false, "Unexpected exception while testing ".basename($file)."::testNamespace():".$e->getMessage());
 		}
 	}
     
     function testCategory() {
+    	global $wgGroupPermissions;
     	$file = __FILE__;
     	try {
 			$checkRights = array(
@@ -350,7 +402,22 @@ class TestUserCanHook extends PHPUnit_Framework_TestCase {
 				array('C', 'U1', 'read', false),
 				array('C', 'U2', 'edit', true),
 				);
-			$this->doCheckRights("testCategory", $checkRights);
+			$wgGroupPermissions['*']['read'] = true;
+			$this->doCheckRights("testCategory1", $checkRights);
+
+			$checkRights = array(
+				array('B', '*', 'read', false),
+				array('B', 'U1', 'read', false),
+				array('B', 'U2', 'edit', false),
+				
+				array('C', '*', 'read', false),
+				array('C', 'U1', 'read', false),
+				array('C', 'U2', 'edit', true),
+				);
+			$wgGroupPermissions['*']['read'] = false;
+			$this->doCheckRights("testCategory2", $checkRights);
+			
+			
 		} catch (Exception $e) {
 			$this->assertTrue(false, "Unexpected exception while testing ".basename($file)."::testCategory():".$e->getMessage());
 		}
@@ -475,7 +542,10 @@ class TestUserCanHook extends PHPUnit_Framework_TestCase {
 			
 			$user = $user == '*' ? new User() : User::newFromName($user);
 			unset($result);
-			HACLEvaluator::userCan($article, $user, $action, $result);
+			global $wgUser;
+			$wgUser = $user;
+			$result = $article->userCan($action);
+//			HACLEvaluator::userCan($article, $user, $action, $result);
 			if (is_null($result)) {
 				$result = true;
 			}
