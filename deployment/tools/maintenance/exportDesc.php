@@ -60,10 +60,16 @@ for( $arg = reset( $argv ); $arg !== false; $arg = next( $argv ) ) {
 // check bundle page
 $bundlePage = Title::newFromText($bundleToExport, NS_MAIN); 
 if (!$bundlePage->exists()) {
-	print $bundlePage->getText()." does not exist. Please create first.";
+	print "\n\n".$bundlePage->getText()." does not exist. Please create first.";
 	die();
 }
-// TODO: check if properties exist
+
+// check if relevant package properties exist
+if (Tools::checkPackageProperties() === false) {
+	print "\n\nCorrect the errors and try again!\n";
+    die();
+}
+
 dumpDescriptor($bundleToExport, $output, $dumpFile);
 
 function dumpDescriptor($bundeID, $output = "deploy.xml", $dumpFile = "dump.xml") {
@@ -119,6 +125,10 @@ function dumpDescriptor($bundeID, $output = "deploy.xml", $dumpFile = "dump.xml"
 	$xml .= "\t\t".'<dependencies>'."\n";
 	foreach($dependencies as $dep) {
 		$dvs = $dep->getDVs();
+		if (count($dvs) != 3) {
+		  print "\nWarning: Wrong dependency annotation. Ignore it.";
+		  continue;	
+		}
 		$id = Tools::getXSDValue(reset($dvs));
 		$minVersion = Tools::getXSDValue(next($dvs));
 		$maxVersion = Tools::getXSDValue(next($dvs));

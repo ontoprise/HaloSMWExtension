@@ -105,7 +105,7 @@ class Tools {
 	public static function copy_dir($source, $dest, $options=array('folderPermission'=>0755,'filePermission'=>0755))
 	{
 		$result=false;
-		 
+			
 		if (is_file($source)) {
 			if ($dest[strlen($dest)-1]=='/') {
 				if (!file_exists($dest)) {
@@ -117,7 +117,7 @@ class Tools {
 			}
 			$result=copy($source, $__dest);
 			chmod($__dest,$options['filePermission']);
-			 
+
 		} elseif(is_dir($source)) {
 			if ($dest[strlen($dest)-1]=='/') {
 				if ($source[strlen($source)-1]=='/') {
@@ -151,7 +151,7 @@ class Tools {
 				}
 			}
 			closedir($dirHandle);
-			 
+
 		} else {
 			$result=false;
 		}
@@ -228,7 +228,7 @@ class Tools {
 		preg_match('/\$wgVersion\s*=\s*([^;]+)/', $defaultSettings, $matches);
 		if (isset($matches[1])) {
 			$version = substr(trim($matches[1]),1,-1);
-				
+
 		}
 		return $version;
 	}
@@ -267,5 +267,68 @@ class Tools {
 
 	public static function getXSDValue($dataValue) {
 		return array_shift($dataValue->getDBkeys());
+	}
+
+	public static function checkPackageProperties() {
+		global $dfgLang;
+		global $wgContLang;
+		$propNSText = $wgContLang->getNsText(SMW_NS_PROPERTY);
+		// check if the required properties exist
+		$check = true;
+		// Property:Dependecy
+		$pDependencyTitle = Title::newFromText($dfgLang->getLanguageString('df_dependencies'), SMW_NS_PROPERTY);
+		$pDependency = SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString('df_dependencies'));
+		$pDependencyTypeValue = $pDependency->getTypesValue();
+
+		if (reset($pDependencyTypeValue->getDBkeys()) != '_rec') {
+			print "\n'".$pDependencyTitle->getPrefixedText()."' is not a record type.";
+			$check = false;
+		}
+
+		$pDependencyTypes = reset(smwfGetStore()->getPropertyValues( $pDependency->getWikiPageValue(), SMWPropertyValue::makeProperty( '_LIST' ) ));
+		$typeIDs = explode(";",reset($pDependencyTypes->getDBkeys()));
+		if (count($typeIDs) != 3) {
+			print "\n'".$pDependencyTitle->getPrefixedText()."' wrong number of fields.";
+			$check = false;
+		}
+		list($ext_id, $from, $to) = $typeIDs;
+		if ($ext_id != '_str' || $from != '_num' || $to != '_num') {
+			print "\n'".$pDependencyTitle->getPrefixedText()."' property has wrong field types.";
+			$check = false;
+		}
+
+		// Ontology version
+		$pOntologyVersionTitle = Title::newFromText($dfgLang->getLanguageString('df_ontologyversion'), SMW_NS_PROPERTY);
+		$pOntologyVersion = SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString('df_ontologyversion'));
+		$pOntologyVersionValue = $pOntologyVersion->getTypesValue();
+		if (reset($pOntologyVersionValue->getDBkeys()) != '_num') {
+			print "\n'".$pOntologyVersionTitle->getPrefixedText()."' is not a number type.";
+			$check = false;
+		}
+		// Installation dir
+		$pInstallationDirTitle = Title::newFromText($dfgLang->getLanguageString('df_instdir'), SMW_NS_PROPERTY);
+		$pInstallationDir = SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString('df_instdir'));
+		$pInstallationDirValue = $pInstallationDir->getTypesValue();
+		if (reset($pInstallationDirValue->getDBkeys()) != '_str') {
+			print "\n'".$pInstallationDirTitle->getPrefixedText()."' is not a string type.";
+			$check = false;
+		}
+		// Vendor
+		$pVendorTitle = Title::newFromText($dfgLang->getLanguageString('df_ontologyvendor'), SMW_NS_PROPERTY);
+		$pVendor = SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString('df_ontologyvendor'));
+		$pVendorValue = $pVendor->getTypesValue();
+		if (reset($pVendorValue->getDBkeys()) != '_str') {
+			print "\n'".$pVendorTitle->getPrefixedText()."' is not a string type.";
+			$check = false;
+		}
+		// Description
+		$pDescriptionTitle = Title::newFromText($dfgLang->getLanguageString('df_description'), SMW_NS_PROPERTY);
+		$pDescription = SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString('df_description'));
+		$pDescriptionValue = $pDescription->getTypesValue();
+		if (reset($pDescriptionValue->getDBkeys()) != '_str') {
+			print "\n'".$pDescriptionTitle->getPrefixedText()."' is not a string type.";
+			$check = false;
+		}
+		return $check;
 	}
 }

@@ -29,6 +29,7 @@ $optionsWithArgs = array( 'pagelist', 'start', 'end' );
 require_once( '../../../maintenance/commandLine.inc' );
 require_once( '../../../maintenance/backup.inc' );
 require_once('../../io/export/DF_DeployWikiExporter.php');
+require_once('../../tools/smwadmin/DF_Tools.php');
 
 $langClass = "DF_Language_".ucfirst($wgLanguageCode);
 
@@ -40,7 +41,7 @@ $dfgLang = new $langClass();
 
 // check if required properties exist
 // return false if not
-$check = checkProperties();
+$check = Tools::checkPackageProperties();
 if (!$check) {
 	print "\n\nCorrect the errors and try again!\n";
 	die();
@@ -120,66 +121,4 @@ function fatalError($text) {
 	print "\n$text\n";die();
 }
 
-function checkProperties() {
-	global $dfgLang;
-	global $wgContLang;
-	$propNSText = $wgContLang->getNsText(SMW_NS_PROPERTY);
-	// check if the required properties exist
-    $check = true;
-	// Property:Dependecy
-	$pDependencyTitle = Title::newFromText($dfgLang->getLanguageString('df_dependencies'), SMW_NS_PROPERTY);
-	$pDependency = SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString('df_dependencies'));
-	$pDependencyTypeValue = $pDependency->getTypesValue();
-
-	if (reset($pDependencyTypeValue->getDBkeys()) != '_rec') {
-		print "\n'".$pDependencyTitle->getPrefixedText()."' is not a record type.";
-		$check = false;
-	}
-
-	$pDependencyTypes = reset(smwfGetStore()->getPropertyValues( $pDependency->getWikiPageValue(), SMWPropertyValue::makeProperty( '_LIST' ) ));
-	$typeIDs = explode(";",reset($pDependencyTypes->getDBkeys()));
-	if (count($typeIDs) != 3) {
-		print "\n'".$pDependencyTitle->getPrefixedText()."' wrong number of fields.";
-		$check = false;
-	}
-	list($ext_id, $from, $to) = $typeIDs;
-	if ($ext_id != '_str' || $from != '_num' || $to != '_num') {
-		print "\n'".$pDependencyTitle->getPrefixedText()."' property has wrong field types.";
-		$check = false;
-	}
-
-	// Ontology version
-	$pOntologyVersionTitle = Title::newFromText($dfgLang->getLanguageString('df_ontologyversion'), SMW_NS_PROPERTY);
-	$pOntologyVersion = SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString('df_ontologyversion'));
-	$pOntologyVersionValue = $pOntologyVersion->getTypesValue();
-	if (reset($pOntologyVersionValue->getDBkeys()) != '_num') {
-		print "\n'".$pOntologyVersionTitle->getPrefixedText()."' is not a number type.";
-		$check = false;
-	}
-	// Installation dir
-	$pInstallationDirTitle = Title::newFromText($dfgLang->getLanguageString('df_instdir'), SMW_NS_PROPERTY);
-	$pInstallationDir = SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString('df_instdir'));
-	$pInstallationDirValue = $pInstallationDir->getTypesValue();
-	if (reset($pInstallationDirValue->getDBkeys()) != '_str') {
-		print "\n'".$pInstallationDirTitle->getPrefixedText()."' is not a string type.";
-		$check = false;
-	}
-	// Vendor
-	$pVendorTitle = Title::newFromText($dfgLang->getLanguageString('df_ontologyvendor'), SMW_NS_PROPERTY);
-	$pVendor = SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString('df_ontologyvendor'));
-	$pVendorValue = $pVendor->getTypesValue();
-	if (reset($pVendorValue->getDBkeys()) != '_str') {
-		print "\n'".$pVendorTitle->getPrefixedText()."' is not a string type.";
-		$check = false;
-	}
-	// Description
-	$pDescriptionTitle = Title::newFromText($dfgLang->getLanguageString('df_description'), SMW_NS_PROPERTY);
-	$pDescription = SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString('df_description'));
-	$pDescriptionValue = $pDescription->getTypesValue();
-	if (reset($pDescriptionValue->getDBkeys()) != '_str') {
-		print "\n'".$pDescriptionTitle->getPrefixedText()."' is not a string type.";
-		$check = false;
-	}
-	return $check;
-}
 
