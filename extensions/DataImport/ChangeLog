@@ -1,6 +1,18 @@
 Data Import extension ChangeLog
 ===============================
 
+VERSION 1.4 Patch Level 1
+
+BUGFIXES:
+* Default values are not escaped in Define WS GUI  
+** http://smwforum.ontoprise.com/smwbugs/show_bug.cgi?id=12134
+* When defining a WebService two "next" buttons appear  
+** http://smwforum.ontoprise.com/smwbugs/show_bug.cgi?id=12312
+* Bug when queriyng Webservice.  
+** http://smwforum.ontoprise.com/smwbugs/show_bug.cgi?id=12313
+* new section based merger does not support #tab parser function 
+** http://smwforum.ontoprise.com/smwbugs/show_bug.cgi?id=12435
+
 
 VERSION 1.4
 
