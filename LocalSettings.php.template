@@ -83,14 +83,15 @@ $wgDBts2schema      = "public";
 $wgDBmysql5 = false;
 
 ## Shared memory settings
-$wgMainCacheType = CACHE_ACCEL; /* use CACHE_NONE for disabling it */
-$wgParserCacheType = CACHE_ACCEL;
-$wgMemCachedServers = array();
+$wgMainCacheType = CACHE_MEMCACHED; /* use CACHE_NONE for disabling it */
+$wgParserCacheType = CACHE_MEMCACHED;
+$wgMessageCacheType = CACHE_MEMCACHED;
+$wgMemCachedServers = array( "127.0.0.1:11211" );
 $wgEnableParserCache = true;
 
-$wgUseFileCache = true; /* default: false */
+//$wgUseFileCache = true; /* default: false */
 $wgFileCacheDirectory = "$IP/cache";
-$wgShowIPinHeader = false;
+//$wgShowIPinHeader = false;
 
 ## To enable image uploads, make sure the 'images' directory
 ## is writable, then set this to true:
