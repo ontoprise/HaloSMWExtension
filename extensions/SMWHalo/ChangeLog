@@ -1,6 +1,19 @@
 SMWHalo extension ChangeLog
 ===========================
 
+VERSION 1.5.1 PATCH LEVEL 1
+
+
+  FEATURES:
+  
+
+  CHANGES:
+  
+
+  BUGFIXES:
+    *  QueryResultsCache cannot be enabled.  (edit)  
+    ** http://smwforum.ontoprise.com/smwbugs/show_bug.cgi?id=12613
+
 
 VERSION 1.5.1
 
