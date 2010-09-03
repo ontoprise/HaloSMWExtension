@@ -47,11 +47,9 @@ function wfHashingFunctionsLanguageGetMagic( &$magicWords, $langCode ) {
 class HashingFunctions {
  
 	function md5( &$parser, $value = '', $default = '' ) {
-		$parser->disableCache();
 		return (strlen($value) > 0) ? md5($value) : $default;
 	}
 	function rot13( &$parser, $value = '', $default = '' ) {
-		$parser->disableCache();
 		return (strlen($value) > 0) ? str_rot13($value) : $default;
 	}
 
