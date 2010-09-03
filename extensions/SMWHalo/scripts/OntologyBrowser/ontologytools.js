@@ -2319,7 +2319,7 @@ OBSchemaPropertySubMenu.prototype = Object
 						function fillBuiltinTypesCallback(request) {
 							this.builtinTypes = this.builtinTypes
 									.concat(request.responseText.split(","));
-
+							GeneralBrowserTools.setCookieObject("smwh_builtinTypes", this.builtinTypes);
 						}
 
 						function fillUserTypesCallback(request) {
@@ -2329,9 +2329,16 @@ OBSchemaPropertySubMenu.prototype = Object
 							this.builtinTypes = this.builtinTypes
 									.concat(userTypes);
 						}
-
-						sajax_do_call('smwf_tb_GetBuiltinDatatypes', [],
-								fillBuiltinTypesCallback.bind(this));
+						
+							this.builtinTypes = GeneralBrowserTools.getCookieObject("smwh_builtinTypes");
+							if (this.builtinTypes == null) {
+								this.builtinTypes = new Array();
+								sajax_do_call('smwf_tb_GetBuiltinDatatypes', 
+								              [], 
+								              fillBuiltinTypesCallback.bind(this));
+							}
+						
+						
 						sajax_do_call('smwf_tb_GetUserDatatypes', [],
 								fillUserTypesCallback.bind(this));
 					},
