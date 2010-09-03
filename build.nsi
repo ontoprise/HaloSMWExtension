@@ -216,7 +216,7 @@ Section "XAMPP" xampp
     CreateDirectory "$SMPROGRAMS\$STARTMENU_FOLDER"
    
     CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Start ${PRODUCT}.lnk" "$INSTDIR\xampp_start.bat"
-    CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Stop ${PRODUCT}.lnk" "$INSTDIR\xampp_stop.exe"
+    CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Stop ${PRODUCT}.lnk" "$INSTDIR\xampp_stop.bat"
     
 SectionEnd
 
