@@ -1,6 +1,17 @@
 HaloACL extension ChangeLog
 ===========================
 
+Version 1.5.2
+
+  FEATURE:
+  	
+  CHANGES:
+  	
+  BUGFIXES: (Bug numbers according to http://smwforum.ontoprise.com/smwbugs/)
+	12548 -  $wgGroupPermissions dont prohibit $haclgOpenWikiAccess
+
+
+
 VERSION 1.2
 
   FEATURE:
