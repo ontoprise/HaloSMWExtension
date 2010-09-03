@@ -97,7 +97,7 @@ class SMWOntologyBrowserXMLGenerator {
 
 			list($instanceData, $categoryData) = $t;
 			list($categoryURI, $categoryTitle) = $categoryData;
-			list($instanceTitle, $instanceURI, $metadata) = $instanceData;
+			list($instanceTitle, $instanceURI, $url, $metadata) = $instanceData;
 
 			if ($instanceTitle instanceof SMWWikiPageValue) { // also accept SMW datavalue here
 				$instanceTitle = $instanceTitle->getTitle();
@@ -126,16 +126,21 @@ class SMWOntologyBrowserXMLGenerator {
 			}
 			$metadataTags .= "</metadata>";
 
-			$instanceURI_att = "";
-			if (!is_null($instanceURI)) {
-				$instanceURI_att = 'uri="'.htmlspecialchars($instanceURI).'"';
+			$localurl_att = "";
+			if (!is_null($url)) {
+				$localurl_att = 'localurl="'.htmlspecialchars($url).'"';
 			}
+			
+			$instanceURI_att = "";
+		    if (!is_null($instanceURI)) {
+                $instanceURI_att = 'uri="'.htmlspecialchars($instanceURI).'"';
+            }
 				
 			if (!is_null($categoryTitle)) {
 				$categoryTitle = htmlspecialchars($categoryTitle->getDBkey());
-				$result = $result."<instance $instanceURI_att title_url=\"$titleURLEscaped\" title=\"".$titleEscaped."\" namespace=\"$namespace\" superCat=\"$categoryTitle\" img=\"instance.gif\" id=\"ID_$id$count\" inherited=\"true\">$gi_issues$metadataTags</instance>";
+				$result = $result."<instance $instanceURI_att $localurl_att title_url=\"$titleURLEscaped\" title=\"".$titleEscaped."\" namespace=\"$namespace\" superCat=\"$categoryTitle\" img=\"instance.gif\" id=\"ID_$id$count\" inherited=\"true\">$gi_issues$metadataTags</instance>";
 			} else {
-				$result = $result."<instance $instanceURI_att title_url=\"$titleURLEscaped\" title=\"".$titleEscaped."\" namespace=\"$namespace\" img=\"instance.gif\" id=\"ID_$id$count\">$gi_issues$metadataTags</instance>";
+				$result = $result."<instance $instanceURI_att $localurl_att title_url=\"$titleURLEscaped\" title=\"".$titleEscaped."\" namespace=\"$namespace\" img=\"instance.gif\" id=\"ID_$id$count\">$gi_issues$metadataTags</instance>";
 			}
 			$count++;
 		}

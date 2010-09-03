@@ -88,9 +88,9 @@ class OB_Storage {
 		$instanceWithMetadata = array();
 		foreach($instances as $i) {
 			if (is_array($i)) {
-				$instanceWithMetadata[] = array(array($i[0], NULL, NULL), array(NULL, $i[1]));
+				$instanceWithMetadata[] = array(array($i[0], NULL, NULL, NULL), array(NULL, $i[1]));
 			} else {
-				$instanceWithMetadata[] = array(array($i[0], NULL, NULL), array(NULL, NULL));
+				$instanceWithMetadata[] = array(array($i[0], NULL, NULL, NULL), array(NULL, NULL));
 			}
 		}
 
@@ -272,8 +272,9 @@ class OB_StorageTS extends OB_Storage {
 			// query
 			$response = $client->query("[[Category:$categoryName]]", "?Category|limit=$limit|offset=$offset|merge=false$dataSpace$metadataRequest");
 
+			$categoryTitle = Title::newFromText($categoryName, NS_CATEGORY);
 			$titles = array();
-			$this->parseInstances($response, $titles);
+			$this->parseInstances($response, $titles, $categoryTitle);
 
 
 		} catch(Exception $e) {
@@ -282,8 +283,17 @@ class OB_StorageTS extends OB_Storage {
 
 		return SMWOntologyBrowserXMLGenerator::encapsulateAsInstancePartition($titles, $limit, $partition);
 	}
-
-	protected function parseInstances($response, &$titles) {
+    
+	
+	/**
+	 * Parses an SPARQL-XML result containing instances with their parent categories (including inferred).
+	 * 
+	 * @param XML $response
+	 * @param Tuple $titles 
+	 *         ((instanceTitle, $instanceURI, $localInstanceURL, $metadataMap) , ($localCategoryURL, $categoryTitle))
+	 * @param Title $categoryTitle
+	 */
+	protected function parseInstances($response, &$titles, $categoryTitle) {
 		global $smwgSPARQLResultEncoding;
 		// PHP strings are always interpreted in ISO-8859-1 but may be actually encoded in
 		// another charset.
@@ -294,7 +304,7 @@ class OB_StorageTS extends OB_Storage {
 
 		$dom = simplexml_load_string($response);
 
-
+       
 		$results = $dom->xpath('//result');
 		foreach ($results as $r) {
 
@@ -313,7 +323,7 @@ class OB_StorageTS extends OB_Storage {
 			}
             
 			list($url, $title) = TSHelper::makeLocalURL((string) $sv);
-			$instance = array($title, $url, $metadataMap);
+			$instance = array($title, $sv, $url, $metadataMap);
 
 			$categories = array();
 			$b = $children->binding[1]; // categories
@@ -321,7 +331,9 @@ class OB_StorageTS extends OB_Storage {
 			foreach($b->children()->uri as $sv) {
 				$category = TSHelper::getTitleFromURI((string) $sv);
 				if (!is_null($instance) && !is_null($category)) {
-					$titles[] = array($instance, array((string) $sv, TSHelper::getTitleFromURI((string) $sv)));
+					$cTitle = TSHelper::getTitleFromURI((string) $sv);
+					$categoryTuple = $categoryTitle->equals($cTitle) ? array(NULL, NULL) : array((string) $sv, $cTitle);
+					$titles[] = array($instance, $categoryTuple);
 				} else  {
 					$titles[] = array($instance, array(NULL , NULL));
 				}
@@ -371,11 +383,7 @@ class OB_StorageTS extends OB_Storage {
 		$client->connect();
 		try {
             global $smwgTripleStoreGraph;
-            $title = str_replace($wgServer.$wgScript, '', $p_array[0]);
-            if ($title[0] == '/') $title = substr($title, 1);
-            $title = Title::newFromURL($title);
-
-            $instanceURI = TSHelper::getUriFromTitle($title);
+            $instanceURI = $p_array[0];
 			
 			// actually limit and offset is not used
 			$limit =  isset($p_array[1]) && is_numeric($p_array[1]) ? $p_array[1] : 500;

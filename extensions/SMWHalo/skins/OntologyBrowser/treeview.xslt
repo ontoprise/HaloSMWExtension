@@ -306,9 +306,9 @@
 
 				<a class="navigationLink" style="margin-left:5px;">
 					<xsl:choose>
-						<xsl:when test="@uri">
+						<xsl:when test="@localurl">
 							<xsl:attribute name="href"><xsl:value-of
-								select="@uri" /></xsl:attribute>
+								select="@localurl" /></xsl:attribute>
 						</xsl:when>
 						<xsl:when test="@namespace=''">
 							<xsl:attribute name="href"><xsl:value-of
