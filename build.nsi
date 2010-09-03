@@ -592,6 +592,10 @@ Function changeConfigForFullXAMPP
     DetailPrint "Update XAMPP"
     SetOutPath "$INSTDIR"
     nsExec::ExecToLog '"$INSTDIR\setup_xampp.bat"'
+    
+    DetailPrint "Install memcached"
+    nsExec::ExecToLog '"$INSTDIR\memcached.exe -d install"'
+        
     SetOutPath "$INSTDIR\htdocs\mediawiki"
     
     ; setup halowiki (change LocalSettings.php)
@@ -944,6 +948,13 @@ Function un.uninstallAsWindowsService
     SetOutPath "c:\temp\halo" #dummy to make installation dir removable
 FunctionEnd*/
 
+Function un.uninstallMemcached
+    DetailPrint "Uninstall memcached"
+    SetOutPath "$INSTDIR"
+    nsExec::ExecToLog '"$INSTDIR\memcached.exe -d stop"'
+    nsExec::ExecToLog '"$INSTDIR\memcached.exe -d uninstall"'
+FunctionEnd
+
 Section "Uninstall"
 
     !insertmacro MUI_STARTMENU_GETFOLDER Application $MUI_TEMP
@@ -961,6 +972,7 @@ Section "Uninstall"
     
     ; do not un-install since it was not installed
     ;Call un.uninstallAsWindowsService
+    Call un.uninstallMemcached
     
     # Delete all start menu entries
     Delete "$SMPROGRAMS\$MUI_TEMP\Uninstall.lnk"
