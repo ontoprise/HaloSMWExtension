@@ -53,10 +53,12 @@ function sgagGardeningSetupExtension() {
 
 
 
-	global $sgagLocalGardening, $wgJobClasses;
+	global $sgagLocalGardening, $wgJobClasses, $sgagIP;
 	//XXX: deactivated because of Performance
-    if ($sgagLocalGardening == true)
-        $wgJobClasses['SMW_LocalGardeningJob'] = 'SMW_LocalGardeningJob';
+    if ($sgagLocalGardening == true){        
+    	require_once($sgagIP . '/includes/jobs/SGA_LocalGardeningJob.php');
+    	$wgJobClasses['SMW_LocalGardeningJob'] = 'SMW_LocalGardeningJob';
+    }
 
 	global $wgRequest;
 	$action = $wgRequest->getVal('action');
@@ -161,8 +163,9 @@ function wfGAInitContentMessages() {
 function sgafHaloPreSaveHook(&$article, &$user, &$text, &$summary, $minor, $watch, $sectionanchor, &$flags) {
 	// -- LocalGardening --
 
-	global $sgagLocalGardening;
+	global $sgagLocalGardening, $sgagIP;
 	if (isset($sgagLocalGardening) && $sgagLocalGardening == true && (($flags & EDIT_FORCE_BOT) === 0)) {
+		require_once($sgagIP . '/includes/jobs/SGA_LocalGardeningJob.php');
 		$gard_jobs[] = new SMW_LocalGardeningJob($article->getTitle(), "save");
 		Job :: batchInsert($gard_jobs);
 	}
@@ -181,8 +184,9 @@ function sgafHaloPreSaveHook(&$article, &$user, &$text, &$summary, $minor, $watc
  */
 function sgafHaloPreDeleteHook(&$article, &$user, &$reason) {
 	// -- LocalGardening --
-	global $sgagLocalGardening;
+	global $sgagLocalGardening, $sgagIP;
 	if (isset($sgagLocalGardening) && $sgagLocalGardening == true) {
+		require_once($sgagIP . '/includes/jobs/SGA_LocalGardeningJob.php');
 		$gard_jobs[] = new SMW_LocalGardeningJob($article->getTitle(), "remove");
 		Job :: batchInsert($gard_jobs);
 	}

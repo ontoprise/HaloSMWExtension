@@ -57,7 +57,8 @@ Enforces a delay to diminish the server load.
 
 2.
 $sgagLocalGardening=true;  
-Enables local gardening. That creates gardening jobs when a page has been saved.
+Enables local gardening. That creates gardening jobs when a page has been saved. 
+We do not recomment to make use of that option since it decreases the Wiki's performance.
 
 3.
 $sgagDedicatedGardeningMachine="<host or IP>";
