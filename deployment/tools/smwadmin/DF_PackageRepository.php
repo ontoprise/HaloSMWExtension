@@ -69,6 +69,7 @@ class PackageRepository {
 			$rep_file_lines = array_unique(explode("\n", $content));
 			$repo_urls = array();
 			foreach($rep_file_lines as $u) {
+				$u = trim($u);
 				if (trim($u) == "" || substr(trim($u),0,1) == "#") continue;
 				@list($rawurl, $user, $pass) = explode(" ", $u); // do not complain about missing credentials
 				$url = (substr(trim($rawurl), -1) == "/") ? $rawurl : (trim($rawurl)."/"); //add trailing / if necessary
@@ -93,7 +94,13 @@ class PackageRepository {
 			$partsOfURL = parse_url($url. 'repository.xml');
 
 			$path = $partsOfURL['path'];
+			if (!array_key_exists('path', $partsOfURL)) {
+				print "\nWarning: Could not parse $url";
+			}
 			$host = $partsOfURL['host'];
+		    if (!array_key_exists('host', $partsOfURL)) {
+                print "\nWarning: Could not parse $url";
+            }
 			$port = array_key_exists("port", $partsOfURL) ? $partsOfURL['port'] : 80;
 			try {
 				$res = $d->downloadAsString($path, $port, $host, array_key_exists($url, self::$repo_credentials) ? self::$repo_credentials[$url] : "", NULL);
