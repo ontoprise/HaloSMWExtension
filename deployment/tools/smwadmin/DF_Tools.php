@@ -179,22 +179,22 @@ class Tools {
 		$found_unzip = false;
 		exec("unzip > $nullDevice", $out, $ret);
 		$found_unzip = ($ret == 0);
-		if (!$found_unzip) return("GNU-unzip is missing or not in PATH. Please install");
+		if (!$found_unzip) return("Cannot find GNU unzip.exe. Please install and include path to unzip.exe into PATH-variable.");
 
 		// check for GNU-patch tool
 		exec("patch -version > $nullDevice", $out, $ret);
 		$found_patch = ($ret == 0);
-		if (!$found_patch) return("GNU-Patch is missing or not in PATH. Please install");
+		if (!$found_patch) return("Cannot find GNU patch.exe. Please install and include path to patch.exe into PATH-variable.");
 
 		// check if PHP is in path
 		exec("php -version > $nullDevice", $out, $ret);
 		$phpInPath = ($ret == 0);
-		if (!$phpInPath) return("PHP is not in PATH. Please install");
+		if (!$phpInPath) return("Cannot find php.exe. Please include path to php.exe into PATH-variable.");
 
 		// check for mysql, mysqldump
 		exec("mysql --version > $nullDevice", $out, $ret);
 		$mysql_binaries = ($ret == 0);
-		if (!$mysql_binaries) return("MySQL binaries are not on path. Please install.");
+		if (!$mysql_binaries) return("Cannot find mysql.exe. Please include path to mysql.exe into PATH-variable.");
 
 		if (Tools::isWindows()) unlink($nullDevice);
 		return true;
