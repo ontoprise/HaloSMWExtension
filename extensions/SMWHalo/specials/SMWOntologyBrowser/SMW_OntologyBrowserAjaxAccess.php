@@ -216,7 +216,7 @@ class OB_Storage {
 		$browserFilter = new SMWOntologyBrowserFilter();
 		$type = $p_array[0];
 		$hint = explode(" ", $p_array[1]);
-		$hint = smwfEliminateStopWords($hint);
+		
 		if ($type == 'category') {
 			/*STARTLOG*/
 			smwLog($p_array[1],"OB","searched categories", "Special:OntologyBrowser");
@@ -332,7 +332,7 @@ class OB_StorageTS extends OB_Storage {
 				$category = TSHelper::getTitleFromURI((string) $sv);
 				if (!is_null($instance) && !is_null($category)) {
 					$cTitle = TSHelper::getTitleFromURI((string) $sv);
-					$categoryTuple = $categoryTitle->equals($cTitle) ? array(NULL, NULL) : array((string) $sv, $cTitle);
+					$categoryTuple = $cTitle->equals($categoryTitle) ? array(NULL, NULL) : array((string) $sv, $cTitle);
 					$titles[] = array($instance, $categoryTuple);
 				} else  {
 					$titles[] = array($instance, array(NULL , NULL));
@@ -559,7 +559,7 @@ class OB_StorageTS extends OB_Storage {
 		$browserFilter = new SMWOntologyBrowserFilter();
 		$type = $p_array[0];
 		$hint = explode(" ", $p_array[1]);
-		$hint = smwfEliminateStopWords($hint);
+		
 		if ($type != 'instance') return parent::filterBrowse($p_array);
 
 		global $wgServer, $wgScript, $smwgWebserviceUser, $smwgWebservicePassword, $smwgDeployVersion;
@@ -588,7 +588,7 @@ class OB_StorageTS extends OB_Storage {
 
 
 			$titles = array();
-			$this->parseInstances($response, $titles);
+			$this->parseInstances($response, $titles, NULL);
 
 
 		} catch(Exception $e) {
@@ -791,7 +791,7 @@ class OB_StorageTSQuad extends OB_StorageTS {
 		$browserFilter = new SMWOntologyBrowserFilter();
 		$type = $p_array[0];
 		$hint = explode(" ", $p_array[1]);
-		$hint = smwfEliminateStopWords($hint);
+		
 		if ($type != 'instance') return parent::filterBrowse($p_array);
 
 		global $wgServer, $wgScript, $smwgWebserviceUser, $smwgWebservicePassword, $smwgDeployVersion;
@@ -833,25 +833,4 @@ class OB_StorageTSQuad extends OB_StorageTS {
 		return SMWOntologyBrowserXMLGenerator::encapsulateAsInstancePartition($titles, 1001, 0);
 	}
 }
-
-
-
-
-/**
- * Eliminates common prefixes/suffixes from $hints array
- *
- * @param array of string
- * @return array of string
- */
-function smwfEliminateStopWords($hints) {
-	$stopWords = array('has', 'of', 'in', 'by', 'is');
-	$result = array();
-	foreach($hints as $h) {
-		if (!in_array(strtolower($h), $stopWords)) {
-			$result[] = $h;
-		}
-	}
-	return $result;
-}
-
 
