@@ -113,9 +113,11 @@ class USSpecialPage extends SpecialPage {
 		$ruleCheckBox = '';
 		global $wgUser;
 	    $showIncludeRulesCheckbox = !is_null($wgUser) && $wgUser->isAllowed("ontologyediting");
-		if (defined('SEMANTIC_RULES_VERSION') && $showIncludeRulesCheckbox) {
-			$ruleCheckBox = '<span style="margin-left:15px;"><input type="checkbox" name="includerules">'.wfMsg('us_includerules').'</input></span>';
-		}
+	    if (defined('SEMANTIC_RULES_VERSION') && $showIncludeRulesCheckbox) {
+            $ruleCheckBoxSelected = $wgRequest->getVal( 'includerules', '' );
+            $ruleCheckBoxSelected_att= $ruleCheckBoxSelected == "" ? "" : 'checked="checked"'; 
+            $ruleCheckBox = '<span style="margin-left:15px;"><input type="checkbox" name="includerules" '.$ruleCheckBoxSelected_att.'>'.wfMsg('us_includerules').'</input></span>';
+        }
 		
 
 		// -- search form --
