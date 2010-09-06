@@ -31,6 +31,11 @@ $messages = array();
  * English
  */
 $messages['en'] = array(
+	// Messages: Reasons for Access Denied
+	'hacl_ad_create_namespace'		=> "You are not allowed to create articles in the namespace '$1'.\n".
+					 				   "(The permission was denied by extension HaloACL.)",
+	'hacl_ad_access_denied'			=> "You are not allowed to perform the requested action.\n".
+					 				   "(The permission was denied by extension HaloACL.)",
 	/* general/maintenance messages */
     'haloacl' 			=> 'HaloACL',
     'hacl_special_page' => 'HaloACL',  // Name of the special page for administration
@@ -363,6 +368,12 @@ $messages['en'] = array(
  * German
  */
 $messages['de'] = array(
+	'hacl_ad_create_namespace'		=> "Sie sind nicht berechtigt, Artikel im Namensraum '$1' zu erzeugen.\n".
+					 				   "(Das Recht wurde durch die Erweiterung HaloACL entzogen.)",
+	'hacl_ad_access_denied'			=> "Sie sind nicht berechtigt, die angeforderte Operation durchzuführen..\n".
+					 				   "(Das Recht wurde durch die Erweiterung HaloACL entzogen.)",
+
+
 	/* general/maintenance messages */
     'haloacl' 			=> 'HaloACL',
     'hacl_special_page' => 'HaloACL',   // Name of the special page for administration
