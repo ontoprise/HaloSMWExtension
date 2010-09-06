@@ -482,17 +482,20 @@ class HACLStorageLDAP extends HACLStorageSQL {
 	}
 
 	/**
-	 * Returns all groups the user is member of
+	 * Returns all direct groups the user is member of.
 	 *
-	 * @param string $userID
-	 * 		ID of the user who's groups are retrieved.
-	 * @return array(int)
-	 * 		List of IDs of all direct groups of the user.
+	 * @param string $memberID
+	 * 		ID of the user or group who's direct groups are retrieved.
+	 * @param string $type
+	 * 		HACLGroup::USER: retrieve parent groups of a user
+	 * 		HACLGroup::GROUP: retrieve parent groups of a group
+	 * @return array<array<"id" => int, "name" => string>>
+	 * 		List of IDs of all direct groups of the given user.
 	 *
 	 */
-	public function getGroupsOfMember($userID) {
-		// get HaloACL groups
-		$groups = parent::getGroupsOfMember($userID);
+	public function getGroupsOfMember($memberID, $type = HACLGroup::USER) {
+			// get HaloACL groups
+		$groups = parent::getGroupsOfMember($memberID, $type);
 		$tmpGroupsOfMember = array();
 		foreach ($groups as $g) {
 			$tmpGroupsOfMember[$g['name']] = $g['id'];
@@ -501,8 +504,12 @@ class HACLStorageLDAP extends HACLStorageSQL {
 		// get LDAP groups
 		// LDAP groups overwrite HaloACL groups with the same name
 		$this->bindLDAPServer();
-		global $wgAuth;				
-		$dn = $wgAuth->getSearchString(User::whoIs($userID));
+		global $wgAuth;
+		if ($type == HACLGroup::USER) {
+			$dn = $wgAuth->getSearchString(User::whoIs($memberID));
+		} else {
+			$dn = $this->getGroupDNForID($memberID);
+		}
 		$wgAuth->getGroups($dn);
 		$groups = $wgAuth->userLDAPGroups;
 		

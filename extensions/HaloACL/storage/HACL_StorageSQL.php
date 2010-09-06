@@ -490,27 +490,36 @@ class HACLStorageSQL {
 	}
 
 	/**
-	 * Returns all groups the user is member of
+	 * Returns all direct groups the user is member of.
 	 *
-	 * @param string $memberType
-	 * 		ID of the user who's groups are retrieved.
-	 * @return array(int)
-	 * 		List of IDs of all direct users or groups in this group.
+	 * @param string $memberID
+	 * 		ID of the user or group who's direct groups are retrieved.
+	 * @param string $type
+	 * 		HACLGroup::USER: retrieve parent groups of a user
+	 * 		HACLGroup::GROUP: retrieve parent groups of a group
+	 * @return array<array<"id" => int, "name" => string>>
+	 * 		List of IDs of all direct groups of the given user.
 	 *
 	 */
-	public function getGroupsOfMember($userID) {
+	public function getGroupsOfMember($memberID, $type = HACLGroup::USER) {
 
 		$db =& wfGetDB( DB_SLAVE );
 		$ut = $db->tableName('user');
 		$gt = $db->tableName('halo_acl_groups');
 		$gmt = $db->tableName('halo_acl_group_members');
-		$sql = "SELECT DISTINCT user_id, group_id, group_name
-		FROM $ut
-		LEFT JOIN  $gmt ON  $gmt.child_id = $ut.user_id
-		LEFT JOIN $gt ON $gt.group_id = $gmt.parent_group_id
-		WHERE $ut.user_id = $userID
-            ";
-
+		if ($type == HACLGroup::USER) {
+			$sql = "SELECT DISTINCT user_id, group_id, group_name
+					FROM $ut
+					LEFT JOIN  $gmt ON  $gmt.child_id = $ut.user_id
+					LEFT JOIN $gt ON $gt.group_id = $gmt.parent_group_id
+					WHERE $ut.user_id = $memberID AND $gmt.child_type = 'user'
+	            ";
+		} else {
+			$sql = "SELECT DISTINCT group_id, group_name
+					FROM $gmt gmt
+         			LEFT JOIN $gt ON $gt.group_id = gmt.parent_group_id
+					WHERE gmt.child_id = $memberID AND gmt.child_type = 'group'";
+		}
 		$res = $db->query($sql);
 
 		$curGroupArray = array();
