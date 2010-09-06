@@ -563,7 +563,6 @@ dTree.prototype.toString = function() {
 	str += '</div>';
 	if (!this.selectedFound) this.selectedNode = null;
 	this.completed = true;
-	document.body.style.cursor = 'default';
 	return str;
 };
 
@@ -897,8 +896,7 @@ dTree.prototype.setCookie = function(cookieName, cookieValue, expires, path, dom
 		+ (path ? '; path=' + path : '')
 		+ (domain ? '; domain=' + domain : '')
 		+ (secure ? '; secure' : '');
-	if (document.cookie.length + new_cookie.length < 7000 &&
-	    new_cookie.length < 4096)
+	if ( document.cookie.length + new_cookie.length < 3800) // limit of cookie length is 4096
 		document.cookie = new_cookie;
 };
 
@@ -1269,7 +1267,6 @@ function dtreeCallQueue(){
 
 function dtreeDoCall(whereTo, returnTo){
 	dtreeInCall = true;
-	document.body.style.cursor='wait';
 	dtreeHttp.open('get', whereTo);
 	if(returnTo == "r")
 		dtreeHttp.onreadystatechange = dtreeHandleResponseRefresh;
