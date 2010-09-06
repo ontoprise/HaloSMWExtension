@@ -29,7 +29,7 @@ class SMWQueryInterface extends SpecialPage {
 	 */
 	public function execute() {
 
-		global $wgRequest, $wgOut, $smwgHaloScriptPath;
+		global $wgRequest, $wgOut, $smwgHaloScriptPath, $smwgDeployVersion;
 
 		$this->imagepath = $smwgHaloScriptPath . '/skins/QueryInterface/images/';
 
@@ -43,8 +43,10 @@ class SMWQueryInterface extends SpecialPage {
         $html .= $this->addResultPart();
 
 		$html .= $this->addAdditionalStuff();
-
-		$html .= '<script type="text/javascript" src="' . $smwgHaloScriptPath .  '/scripts/QueryInterface/qi_tooltip.js"></script>';
+        if ($smwgDeployVersion)
+		      $html .= '<script type="text/javascript" src="' . $smwgHaloScriptPath .  '/scripts/QueryInterface/deploy_qi_tooltip.js"></script>';
+		else
+              $html .= '<script type="text/javascript" src="' . $smwgHaloScriptPath .  '/scripts/QueryInterface/qi_tooltip.js"></script>';		
 		$html .= '</div>';
 		$wgOut->addHTML($html);
 	}

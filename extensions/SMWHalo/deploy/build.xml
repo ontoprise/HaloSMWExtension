@@ -210,6 +210,13 @@
 			<arg value="--js=../../SemanticMediaWiki/skins/SMW_tooltip.js" />
             <arg value="--js_output_file=../../SMWHalo/scripts/QueryInterface/deployQueryInterface.js" />
         </java>
+        <java
+            fork="true"
+            jar="../../../buildtools/closure/compiler.jar"
+            failonerror="true">
+            <arg value="--js=../../SMWHalo/scripts/QueryInterface/qi_tooltip.js" />
+            <arg value="--js_output_file=../../SMWHalo/scripts/QueryInterface/deploy_qi_tooltip.js" />
+        </java>
         
 	</target>
 

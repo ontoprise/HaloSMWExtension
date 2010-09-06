@@ -436,7 +436,7 @@ function smwf_qi_deleteScriptsCallback($match) {
 	 /* // positive list
 	 $keepScripts = array("wgServer","generalTools","SMW_sortable", "SMW_tooltip", "ajax","language",
 	                     "wick", "prototype", "QIHelper.js", "qi_tooltip", "Query", "queryTree.js", 
-	                     "treeviewQI", "deployQueryInterface");
+	                     "treeviewQI", "deployQueryInterface", "deploy_qi_tooltip");
 	
 	foreach($keepScripts as $script) {
 	   $contains = stripos($match[0], $script);
