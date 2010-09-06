@@ -61,6 +61,10 @@ class TestLDAPStorageSuite extends PHPUnit_Framework_TestSuite
  * It assumes that an LDAP server (e.g. OpenLDAP) is running and configured 
  * according to the LDAP settings in LocalSettings.php.
  * 
+ * See 
+ * http://dmwiki.ontoprise.de:8888/dmwiki/index.php/Darkmatter:Software_Design_for_ACL#LDAP_connector 
+ * for further information on how to setup OpenLDAP.
+ * 
  * @author thsc
  *
  */
@@ -791,6 +795,32 @@ class TestLDAPGroupMembers extends PHPUnit_Framework_TestCase {
 								 
 	}
 	
+	/**
+	 * Tests the method User::getEffectiveGroups() which includes Mediawiki-,
+	 * LDAP- and HaloACL-groups.
+	 */
+	function testGetGroupsOfUser() {
+		
+		$this->checkGroupsOfMember("Bianca", 
+									array("GROUP_Administration", 
+										  "SubGroup",
+										  "MyGroup",
+										  "*", "user", "autoconfirmed"));
+						
+		$this->checkGroupsOfMember("Judith", 
+									array("GROUP_FinancialAdministration",
+										  "GROUP_Administration", 
+										  "SubGroup",
+										  "MyGroup",
+										  "*", "user", "autoconfirmed"));
+
+		$this->checkGroupsOfMember("Thomas", 
+									array("GROUP_Developer", 
+										  "*", "user", "autoconfirmed"));
+									
+	}
+	
+	
 	private function checkGroupMembers($testcase, $group, $mode, $membersAndResults) {
 		for ($i = 0; $i < count($membersAndResults); $i+=2) {
 			$name = $membersAndResults[$i];
@@ -808,6 +838,41 @@ class TestLDAPGroupMembers extends PHPUnit_Framework_TestCase {
 			}
 		}
 	}
+	
+	/**
+	 * Checks if a user is member of a list of expected groups.
+	 * @param String $member
+	 * 		Name of user
+	 * @param array<string> $expectedGroups
+	 * 		Expected groups for $member
+	 */
+	private function checkGroupsOfMember($member, $expectedGroups) {
+		$u = User::newFromName($member);
+		$actualGOM = $u->getEffectiveGroups();
+		$unexpectedGOM = array_diff($actualGOM, $expectedGroups);
+		$msg = "";
+		if (!empty($unexpectedGOM)) {
+			$msg = "Check for groups of a user failed.\n".
+				   "User '$member' is not expected to be member of the following groups:\n";
+			foreach ($unexpectedGOM as $gn) {
+				$msg .= "* $gn\n";
+			} 
+		}
+
+		$missingGOM = array_diff($expectedGroups, $actualGOM);
+		if (!empty($missingGOM)) {
+			$msg .= "\nCheck for groups of a user failed.\n".
+				   "User '$member' is expected to be member of the following groups:\n";
+			foreach ($missingGOM as $gn) {
+				$msg .= "* $gn\n";
+			} 
+		}
+		if (!empty($msg)) {
+			$this->fail($msg);
+		}
+		
+	}
+	
 	
 }
 
