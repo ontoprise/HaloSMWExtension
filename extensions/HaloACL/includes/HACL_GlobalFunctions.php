@@ -71,6 +71,7 @@ function enableHaloACL() {
     $wgAutoloadClasses['HACLQueryRewriter'] = $haclgIP . '/includes/HACL_QueryRewriter.php';
     $wgAutoloadClasses['HACLQuickacl'] = $haclgIP . '/includes/HACL_Quickacl.php';
     $wgAutoloadClasses['HACLLanguageEn'] = $haclgIP . '/languages/HACL_LanguageEn.php';
+    $wgAutoloadClasses['HACLGroupPermissions'] = $haclgIP . '/includes/HACL_GroupPermissions.php';
     
     // UI
     $wgAutoloadClasses['HACL_GenericPanel'] = $haclgIP . '/includes/HACL_GenericPanel.php';
@@ -125,7 +126,7 @@ function haclfSetupExtension() {
     $wgHooks['PageRenderingHash'][]    = 'haclfPageRenderingHash';
     $wgHooks['SpecialMovepageAfterMove'][] = 'HACLParserFunctions::articleMove';
 	$wgHooks['SkinTemplateContentActions'][] = 'haclfRemoveProtectTab';
-    
+    $wgHooks['UserEffectiveGroups'][]  = 'HACLGroupPermissions::onUserEffectiveGroups';
 
     global $haclgProtectProperties;
     if ($haclgProtectProperties === true) {
@@ -214,8 +215,9 @@ function haclfSetupExtension() {
  * @return <type>
  */
 function addNonSpecialPageHeader(&$out) {
-	global $wgRequest;
+	global $wgRequest, $wgContLang;
 	// scripts are needed at Special:FormEdit
+    $spns_text = $wgContLang->getNsText(NS_SPECIAL);
 	if ( ($wgRequest->getText('action', 'view') == 'view') 
 		&& stripos($wgRequest->getRequestURL(), $spns_text.":FormEdit") == false
         && stripos($wgRequest->getRequestURL(), $spns_text."%3AFormEdit") == false ) {
