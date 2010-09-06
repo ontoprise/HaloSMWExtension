@@ -1,3 +1,4 @@
 @echo off
 REM start script
-php smwadmin.php %*
+SET PHP=php
+%PHP% smwadmin.php %*
