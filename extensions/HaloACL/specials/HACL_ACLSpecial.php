@@ -103,21 +103,9 @@ HTML;
     YAHOO.haloacl.specialPageUrl = "$url";
 
 HTML;
-        $articleTitle = null;
-        $activeTab = null;
-        if(array_key_exists("articletitle", $wgRequest->data)) {
-            $articleTitle = $wgRequest->data['articletitle'];
-        }
-
-        if(array_key_exists("activetab", $wgRequest->data)) {
-            $activeTab = $wgRequest->data['activetab'];
-        }else {
-            $activeTab = "createACL";
-        }
-        $activeSubTab = null;
-        if(array_key_exists("activesubtab", $wgRequest->data)) {
-            $activeSubTab = $wgRequest->data['activesubtab'];
-        }
+        $articleTitle = $wgRequest->getVal('articletitle');
+        $activeTab = $wgRequest->getVal('activetab', 'createACL');
+        $activeSubTab = $wgRequest->getVal('activesubtab');
 
         if($activeSubTab != null) {
             $html .="
