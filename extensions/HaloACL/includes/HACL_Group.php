@@ -632,12 +632,43 @@ class  HACLGroup {
     }
 
     /**
-     * Returns all groups a user is member of.
+     * Returns all groups the user or the group with the ID $memberId is member of.
      *
      *
+	 * @return array<array<"id" => int, "name" => string>>
+	 * 		List of IDs of all direct users or groups in this group.
+     * 
      */
-    public function getGroupsOfMember($userId) {
-        return HACLStorage::getDatabase()->getGroupsOfMember($userId);
+    public static function getGroupsOfMember($memberId, $type = self::USER, 
+    										 $recursive = false) {
+		$db = HACLStorage::getDatabase();									 	
+    	$groups = $db->getGroupsOfMember($memberId, $type);
+    	if (!$recursive || empty($groups)) {
+    		return $groups;
+    	}
+    	$result = array();
+    	$parents = array();
+    	$processedParents = array();
+    	do {
+    		// copy new parents
+    		foreach ($groups as $g) {
+    			$id = $g['id'];
+    			if (!in_array($id, $processedParents)
+    				&& !in_array($id, $parents)) {
+    				$parents[] = $id;
+    				$result[] = $g;
+    			}
+    		}
+    		$groups = null;
+    		$id = array_shift($parents);
+    		if (!is_null($id)) {
+    			$groups = $db->getGroupsOfMember($id, self::GROUP);
+    			$processedParents[] = $id;
+    		}
+    		
+    	} while (!empty($parents) || !empty($groups));
+    	
+    	return $result;
     }
 
     /**
