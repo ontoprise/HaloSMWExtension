@@ -85,10 +85,15 @@ function smwgHaloSetupExtension() {
 	global $smwgIP, $smwgHaloIP, $wgHooks, $smwgMasterGeneralStore, $wgFileExtensions, $wgJobClasses, $wgExtensionCredits;
 	global $smwgHaloContLang, $wgAutoloadClasses, $wgSpecialPages, $wgAjaxExportList, $wgGroupPermissions;
 	global $mediaWiki, $wgSpecialPageGroups;
-	global $smwgWebserviceEndpoint, $smwgMessageBroker;
+	global $smwgWebserviceEndpoint, $smwgMessageBroker, $smwgDefaultStore;
 	if (is_array($smwgWebserviceEndpoint) && count($smwgWebserviceEndpoint) > 1 && !isset($smwgMessageBroker)) {
 		trigger_error("Multiple webservice endpoints require a messagebroker to handle triplestore updates.");
 		die();
+	}
+	
+	if ($smwgDefaultStore == 'SMWTripleStore' && !isset($smwgWebserviceEndpoint)) {
+		trigger_error('$smwgWebserviceEndpoint is required but not set. Example: $smwgWebserviceEndpoint="localhost:8080";');
+        die();
 	}
 	global $smwgWebserviceProtocol;
 	$smwgWebserviceProtocol="rest";
@@ -141,8 +146,8 @@ function smwgHaloSetupExtension() {
 
 	$wgHooks['smwInitProperties'][] = 'smwfInitSpecialPropertyOfSMWHalo';
 
-	global $smwgWebserviceEndpoint, $smwgShowDerivedFacts, $wgRequest;
-	if (isset($smwgWebserviceEndpoint) && $smwgShowDerivedFacts === true) {
+	global $smwgDefaultStore, $smwgShowDerivedFacts, $wgRequest;
+	if ($smwgDefaultStore == 'SMWTripleStore' && $smwgShowDerivedFacts === true) {
 		$wgHooks['smwShowFactbox'][] = 'smwfAddDerivedFacts';
 	}
 
@@ -193,8 +198,8 @@ function smwgHaloSetupExtension() {
 	$wgHooks['smwhACNamespaceMappings'][] = 'smwfRegisterAutocompletionIcons';
 
 	// add triple store hooks if necessary
-	global $smwgWebserviceEndpoint,$smwgIgnoreSchema;
-	if (isset($smwgWebserviceEndpoint)) {
+	global $smwgDefaultStore,$smwgIgnoreSchema;
+	if ($smwgDefaultStore == 'SMWTripleStore') {
 		if (!isset($smwgIgnoreSchema) || $smwgIgnoreSchema === false) {
 			require_once('storage/SMW_TS_SchemaContributor.php');
 			$wgHooks['TripleStorePropertyUpdate'][] = 'smwfTripleStorePropertyUpdate';
@@ -287,8 +292,8 @@ function smwgHaloSetupExtension() {
 		$wgSpecialPages['Properties'] = array('SpecialPage','Properties', '', true, 'smwfDoSpecialProperties', $smwgHaloIP . '/specials/SMWQuery/SMWAdvSpecialProperties.php');
 		$wgSpecialPageGroups['Properties'] = 'smwplus_group';
 
-
-		if (isset($smwgWebserviceEndpoint)) {
+        global $smwgDefaultStore;
+		if ($smwgDefaultStore == 'SMWTripleStore') {
 			$wgAutoloadClasses['SMWTripleStoreAdmin'] = $smwgHaloIP . '/specials/SMWTripleStoreAdmin/SMW_TripleStoreAdmin.php';
 			$wgSpecialPages['TSA'] = array('SMWTripleStoreAdmin');
 			$wgSpecialPageGroups['TSA'] = 'smwplus_group';
@@ -329,8 +334,8 @@ function smwgHaloSetupExtension() {
 			'url'=>'https://sourceforge.net/projects/halo-extension', 
 			'description' => 'Facilitate the use of Semantic Mediawiki for a large community of non-tech-savvy users. [http://smwforum.ontoprise.com/smwforum/index.php/Help:SMW%2B_User_Manual View feature description.]');
 
-	global $smwgWebserviceEndpoint;
-	if (isset($smwgWebserviceEndpoint)) {
+	global $smwgDefaultStore;
+	if ($smwgDefaultStore == 'SMWTripleStore') {
 		$wgHooks['InternalParseBeforeLinks'][] = 'smwfTripleStoreParserHook';
 	}
 	$wgAjaxExportList[] = 'smwf_ts_getWikiNamespaces';
@@ -381,8 +386,8 @@ function smwfRegisterSPARQLInlineQueries( &$parser, &$text, &$stripstate ) {
  * The {{#sparql }} parser function processing part.
  */
 function smwfProcessSPARQLInlineQueryParserFunction(&$parser) {
-	global $smwgWebserviceEndpoint;
-	if (isset($smwgWebserviceEndpoint)) {
+	global $smwgDefaultStore;
+	if ($smwgDefaultStore == 'SMWTripleStore') {
 		global $smwgIQRunningNumber;
 		$smwgIQRunningNumber++;
 		$params = func_get_args();
