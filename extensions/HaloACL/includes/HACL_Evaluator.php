@@ -120,10 +120,11 @@ class HACLEvaluator {
 			$r = self::checkPropertyAccess($title, $user, $action);
 			if ($r !== -1) {
 				haclfRestoreTitlePatch($etc);
-				if ($r === false) {
-					$result = $r;
-				}
+				$result = $r;
 				self::finishLog("Right for property evaluated.", $result, true);
+				if (self::$mMode == self::DENY_DIFF) {
+					$r = wfMsg('hacl_ad_access_denied');
+				} 
 				return $r;
 			}
 		}
@@ -154,9 +155,7 @@ class HACLEvaluator {
 			$r = false;
 			haclfRestoreTitlePatch($etc);
 			self::finishLog('Special handling of "Permission denied" page.', $r, $r);
-			if ($r === false) {
-				$result = $r;
-			}
+			$result = $r;
 			return $r;
 	    }
 		
@@ -177,9 +176,7 @@ class HACLEvaluator {
 				list ($r, $sd) = HACLDefaultSD::userCanModify($title, $user);
 				if ($sd) {
 					haclfRestoreTitlePatch($etc);
-					if ($r === false) {
-						$result = $r;
-					}
+					$result = $r;
 					self::finishLog("Checked right for creating the default user template.", $r, $r);
 					return $r;
 				}
@@ -199,6 +196,8 @@ class HACLEvaluator {
 			haclfRestoreTitlePatch($etc);
 			if ($r === false) {
 				$result = $r;
+				$ns = $title->getNsText();
+				$r = wfMsg('hacl_ad_create_namespace', $ns);
 			}
 			self::finishLog("Checked if the user is allowed to create an article with in the given namespace.", $r, $r);
 		    return $r;
@@ -245,7 +244,7 @@ class HACLEvaluator {
 			haclfRestoreTitlePatch($etc);
 			$result = false;
 			self::finishLog("The article contains protected properties.", $result, false);
-			return false;
+			return $edit ? wfMsg('hacl_ad_access_denied') : false;
 		}
 		
 		// Check if there is a security descriptor for the article.
@@ -317,8 +316,9 @@ class HACLEvaluator {
 			$r = $actionID == HACLRight::READ;
 			// articles in the whitelist can be read
 			haclfRestoreTitlePatch($etc);
-			if ($result === false) {
+			if ($r === false) {
 				$result = $r;
+				$r = wfMsg('hacl_ad_access_denied');
 			}
 			self::finishLog("Read access was determined by the Whitelist.", $result, true);
 			return $r;
@@ -343,7 +343,7 @@ class HACLEvaluator {
 		self::finishLog("No matching right for article found.", false, false);
 		
 		$result = false;
-		return false;
+		return wfMsg('hacl_ad_access_denied');
 	}
 
 	
@@ -403,8 +403,8 @@ class HACLEvaluator {
 	 */
 	public static function hasPropertyRight($propertyTitle, $userID, $actionID) {
 		global $haclgProtectProperties;
-		if (!$haclgProtectProperties) {
-			// Protection of properties is disabled.
+		if (!$haclgProtectProperties || $propertyTitle == null) {
+			// Protection of properties is disabled or property has no page.
 			return true;
 		}
 		
@@ -516,6 +516,7 @@ class HACLEvaluator {
 	 * @return boolean true
 	 */
 	public static function onDiffViewHeader(DifferenceEngine &$diffEngine, $oldRev, $newRev) {
+		global $wgUser;
 		
 		$newText = $diffEngine->mNewtext;
 		if (!isset($newText)) {
@@ -530,7 +531,11 @@ class HACLEvaluator {
 	
 		if (isset($output->mSMWData)) {
 			foreach ($output->mSMWData->getProperties() as $name => $prop) {
-				if (!$prop->userCan("propertyread")) {
+				$prop = $prop->getWikiPageValue();
+				if ($prop) {
+					$prop = $prop->getTitle();
+				}
+				if (!self::checkPropertyAccess($prop, $wgUser, "propertyread")) {
 					HACLEvaluator::$mMode = HACLEvaluator::DENY_DIFF;
 					return true;
 				}
@@ -541,7 +546,11 @@ class HACLEvaluator {
 	
 		if (isset($output->mSMWData)) {
 			foreach ($output->mSMWData->getProperties() as $name => $prop) {
-				if (!$prop->userCan("propertyread")) {
+				$prop = $prop->getWikiPageValue();
+				if ($prop) {
+					$prop = $prop->getTitle();
+				}
+				if (!self::checkPropertyAccess($prop, $wgUser, "propertyread")) {
 					HACLEvaluator::$mMode = HACLEvaluator::DENY_DIFF;
 					return true;
 				}
@@ -552,7 +561,7 @@ class HACLEvaluator {
 	}	
 	
 	/**
-	 * This function is called before is the value of a property is printed into
+	 * This function is called before the value of a property is printed into
 	 * an article by the SMWParserExtension.
 	 * It checks if the property or its value is protected. In this case the text
 	 * is replaced.
@@ -576,7 +585,7 @@ class HACLEvaluator {
 			if ($propertyValue instanceof SMWWikiPageValue) {
 				$vt = $propertyValue->getTitle();
 				wfRunHooks('userCan', array(&$vt, &$wgUser, "read", &$allowed));
-				if (!$allowed) {
+				if ($allowed === false) {
 					// The value of the property can not be read
 					$protected = true;
 				}
