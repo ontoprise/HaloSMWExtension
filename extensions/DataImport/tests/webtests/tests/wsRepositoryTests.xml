@@ -46,10 +46,10 @@
 				<table htmlId="webservicetable" row="1" column="3" />
 			</verifyText>
 			<verifyText text="Confirm" description="Is there the confirm column?">
-				<table htmlId="webservicetable" row="0" column="4" />
+				<table htmlId="webservicetable" row="0" column="5" />
 			</verifyText>
 			<verifyText text="Confirm" description="Is there the confirm button?">
-				<table htmlId="webservicetable" row="1" column="4" />
+				<table htmlId="webservicetable" row="1" column="5" />
 			</verifyText>
 		</webtest>
 		
@@ -62,7 +62,7 @@
 			<antcall target="goToLogin" />
 
 			<invoke url="http://localhost/${wikipath}/index.php/Special:DataImportRepository" />
-			<clickButton xpath="//table[@id='webservicetable']/tbody/tr[2]/td[5]/button" description="Confirm wwsd"/>
+			<clickButton xpath="//table[@id='webservicetable']/tbody/tr[2]/td[6]/button" description="Confirm wwsd"/>
 		</webtest>
 		<webtest name="WSRepositoryCheckConfirmButtonPart2">
 			<config host="localhost">
@@ -74,7 +74,7 @@
 			
 			<invoke url="http://localhost/${wikipath}/index.php/Special:DataImportRepository" />
 			<verifyText text="confirmed" description="Was the WWSD confirmed?">
-				<table htmlId="webservicetable" row="1" column="4" />
+				<table htmlId="webservicetable" row="1" column="5" />
 			</verifyText>
 		</webtest>
 
