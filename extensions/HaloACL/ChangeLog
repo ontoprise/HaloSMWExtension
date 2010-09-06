@@ -9,6 +9,7 @@ Version 1.5.2
   	
   BUGFIXES: (Bug numbers according to http://smwforum.ontoprise.com/smwbugs/)
 	12548 -  $wgGroupPermissions dont prohibit $haclgOpenWikiAccess
+	12210 -  Improved error message for protected pages
 
 
 
