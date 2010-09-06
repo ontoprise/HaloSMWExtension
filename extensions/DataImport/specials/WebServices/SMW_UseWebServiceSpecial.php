@@ -111,7 +111,7 @@ class SMWUseWebServiceSpecial extends SpecialPage {
 		$html .= $ws."</select>";
 		$html .= "</p>";
 			
-		$html .= "<div id=\"step1-help\" style=\"display:none\">".wfMsg("smw_wsuse_s1-help")."</div>";
+		$html .= "<div id=\"step1-help\" class=\"WSHLPMSG\" style=\"display:none\">".wfMsg("smw_wsuse_s1-help")."</div>";
 
 		$html .= "<br/>";
 		$html .= "<span id=\"step1-go\" class=\"OKButton\">";
@@ -132,7 +132,7 @@ class SMWUseWebServiceSpecial extends SpecialPage {
 		$html .= "<table id=\"step2-parameters\"><tr><th>".wfMsg('smw_wwsu_alias')."</th><th id=\"step2-use-label\" style=\"visibility: hidden\">".wfMsg('smw_wwsu_use')."<span onclick=\"useWSSpecial.useParameters()\"><input title=\"".wfMsg("smw_wws_selectall-tooltip")."\" type=\"checkbox\" style=\"text-align: right\" id=\"step2-use\"/></span></th><th>".wfMsg('smw_wwsu_value')."</th><th>".wfMsg('smw_wwsu_defaultvalue')."</th></tr></table>";
 		$html .= "<div id=\"step2-noparameters\">".wfMsg("smw_wwsu_noparameters")."</div>";
 		
-		$html .= "<div id=\"step2-help\" style=\"display:none\">".wfMsg("smw_wsuse_s2-help")."</div>";
+		$html .= "<div id=\"step2-help\" class=\"WSHLPMSG\" style=\"display:none\">".wfMsg("smw_wsuse_s2-help")."</div>";
 
 		$html .= "<br/>";
 		$html .= "<span id=\"step2-go\" class=\"OKButton\">";
@@ -151,7 +151,7 @@ class SMWUseWebServiceSpecial extends SpecialPage {
 		$html .= "<table id=\"step3-results\"><tr><th>".wfMsg('smw_wwsu_alias')."</th><th>".wfMsg('smw_wwsu_use')."<span onclick=\"useWSSpecial.useResults()\"><input title=\"".wfMsg("smw_wws_selectall-tooltip")."\" type=\"checkbox\" style=\"text-align: right\" id=\"step3-use\"/></span></th></tr></table>";
 		$html .= "<div id=\"step3-noresults\">".wfMsg('smw_wwsu_noresults')."</div>";
 
-		$html .= "<div id=\"step3-help\" style=\"display:none\">".wfMsg("smw_wsuse_s3-help")."</div>";
+		$html .= "<div id=\"step3-help\" class=\"WSHLPMSG\" style=\"display:none\">".wfMsg("smw_wsuse_s3-help")."</div>";
 
 		$html .= "<br/>";
 		$html .= "<span id=\"step3-go\" class=\"OKButton\">";
@@ -184,7 +184,7 @@ class SMWUseWebServiceSpecial extends SpecialPage {
 		$html .= "<input class=\"wickEnabled\" constraints = \"namespace: ".NS_TEMPLATE."\" id=\"step4-template\"></input> ";
 		$html .= "</p>";
 
-		$html .= "<div id=\"step4-help\" style=\"display:none\">".wfMsg("smw_wsuse_s4-help")."</div>";
+		$html .= "<div id=\"step4-help\" class=\"WSHLPMSG\" style=\"display:none\">".wfMsg("smw_wsuse_s4-help")."</div>";
 
 		$html .= "<br/>";
 		$html .= "<span id=\"step4-go\" class=\"OKButton\">";
@@ -226,7 +226,7 @@ class SMWUseWebServiceSpecial extends SpecialPage {
 			
 			$html .= "</span>";
 	
-			$html .= "<div id=\"step6-help\" style=\"display:none\">".wfMsg("smw_wsuse_s6-help")."</div>";
+			$html .= "<div id=\"step6-help\" class=\"WSHLPMSG\" style=\"display:none\">".wfMsg("smw_wsuse_s6-help")."</div>";
 
 			$html .= "<br/>";
 			$html .= "<span id=\"step6-go\" class=\"OKButton\">";
@@ -250,7 +250,7 @@ class SMWUseWebServiceSpecial extends SpecialPage {
 		$html .= "<input type=\"button\" onclick=\"useWSSpecial.addToArticle()\" value=\"".wfMsg('smw_wwsu_addcall')."\" id=\"step5-add\" style=\"display: none\"></input>";
 		$html .= "</p>";
 
-		$html .= "<div id=\"step5-help\" style=\"display:none\">".wfMsg("smw_wsuse_s5-help")."</div>";
+		$html .= "<div id=\"step5-help\" class=\"WSHLPMSG\" style=\"display:none\">".wfMsg("smw_wsuse_s5-help")."</div>";
 
 		$html .= "<div id=\"step5-preview\" style=\"display: none; border-width: 2px; border-style: solid; border-color: #5d5d5d\"></div>";
 

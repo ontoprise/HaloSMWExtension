@@ -19,6 +19,10 @@
 	cursor: pointer;
 }
 
+.WSHLPMSG{
+	color: #666666;
+}
+
 .Marker{
 	padding-right: 15px;
 	cursor: pointer;
