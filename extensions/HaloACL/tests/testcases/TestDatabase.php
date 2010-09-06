@@ -313,6 +313,7 @@ class TestDatabase extends PHPUnit_Framework_TestCase {
 
     function testACLDatabaseTest() {
     	$this->setupGroups();
+    	$this->groupsOfMember();
     	$this->setupRights();
     	$this->checkRights();
     	$this->removeRights();
@@ -432,6 +433,28 @@ class TestDatabase extends PHPUnit_Framework_TestCase {
 		} catch (Exception $e) {
 			$this->assertTrue(false, "Unexpected exception while testing ".basename($file)."::setupGroups():".$e->getMessage());
 		}
+    	
+    }
+    
+    
+    function groupsOfMember() {
+    	$this->checkGroupsOfMember("U1", false, array());
+    	$this->checkGroupsOfMember("U1", true, array());
+
+    	$this->checkGroupsOfMember("U2", false, array("Group/G5"));
+    	$this->checkGroupsOfMember("U2", true, array("Group/G5", "Group/G2", "Group/G1"));
+
+    	$this->checkGroupsOfMember("U3", false, array("Group/G5"));
+    	$this->checkGroupsOfMember("U3", true, array("Group/G5", "Group/G2", "Group/G1"));
+
+    	$this->checkGroupsOfMember("U4", false, array("Group/G4", "Group/G5"));
+    	$this->checkGroupsOfMember("U4", true, array("Group/G5", "Group/G2", "Group/G1", "Group/G4", "Group/G3"));
+
+    	$this->checkGroupsOfMember("U5", false, array("Group/G4"));
+    	$this->checkGroupsOfMember("U5", true, array("Group/G1", "Group/G2", "Group/G3", "Group/G4"));
+    	
+    	$this->checkGroupsOfMember("U6", false, array("Group/G3"));
+    	$this->checkGroupsOfMember("U6", true, array("Group/G3", "Group/G1"));
     	
     }
 
@@ -1201,5 +1224,36 @@ class TestDatabase extends PHPUnit_Framework_TestCase {
 				                    $group->getGroupName()."->hasGroupMember($name) (Testcase: $testcase)");
 		}
 	}
+	
+	private function checkGroupsOfMember($member, $recursive, $expectedGroups) {
+    	$gom = HACLGroup::getGroupsOfMember(User::idFromName($member), HACLGroup::USER, $recursive);
+    	$actualGOM = array();
+		foreach ($gom as $g) {
+			$actualGOM[] = $g['name'];
+		}
+		$unexpectedGOM = array_diff($actualGOM, $expectedGroups);
+		$msg = "";
+		if (!empty($unexpectedGOM)) {
+			$msg = "Check for groups of a user failed.\n".
+				   "User '$member' is not expected to be member of the following groups:\n";
+			foreach ($unexpectedGOM as $gn) {
+				$msg .= "* $gn\n";
+			} 
+		}
+
+		$missingGOM = array_diff($expectedGroups, $actualGOM);
+		if (!empty($missingGOM)) {
+			$msg .= "\nCheck for groups of a user failed.\n".
+				   "User '$member' is expected to be member of the following groups:\n";
+			foreach ($missingGOM as $gn) {
+				$msg .= "* $gn\n";
+			} 
+		}
+		if (!empty($msg)) {
+			$this->fail($msg);
+		}
+		
+	}
+    	
 		
 }
