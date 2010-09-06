@@ -120,6 +120,46 @@ WebServiceRepositorySpecial.prototype = {
 	deHighlightTab : function(event){
 		var node = Event.element(event);
 		node.setAttribute('class', "InactiveTab");
+	},
+	
+	/**
+	 * this method deletes a WWSD
+	 * 
+	 * @param string wsId id of the webservice that has to be deleted
+	 * 
+	 */
+	deleteWWSD : function(wsId){
+		sajax_do_call("smwf_ws_deleteWWSD", [ wsId ], this.deleteWWSDCallBack.bind(this));
+	},
+
+	/**
+	 * callback method for the deletion of a webservice
+	 * 
+	 */
+	deleteWWSDCallBack : function(request) {
+		var wsId = request.responseText;
+		
+		$("ws-row-"+wsId).style.display = "none";
+	},
+	
+	/**
+	 * this method deletes a term import definition
+	 * 
+	 * @param string tiName name of the term import that has to be deleted
+	 * 
+	 */
+	deleteTermImport : function(tiName){
+		sajax_do_call("smwf_ti_deleteTermImport", [ tiName ], this.deleteTermImportCallBack.bind(this));
+	},
+	
+	/**
+	 * callback method for the deletion of a webservice
+	 * 
+	 */
+	deleteTermImportCallBack : function(request) {
+		var tiName = request.responseText;
+		
+		$("ti-row-"+tiName).style.display = "none";
 	}
 }	
 

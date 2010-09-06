@@ -326,6 +326,10 @@ class SMW_DILanguageEn extends SMW_DILanguage {
 	'smw_wwsr_rep_create_link' => 'Click here to create a new Wiki Web Service Definition.',
 	'smw_tir_rep_create_link' => 'Click here to configure and start a new Term Import.',
 	
+	'smw_wwsr_delete' => 'Delete',
+	'smw_wwsr_delete_tooltip' => 'Delete this WWSD.',
+	'smw_wwsr_rep_delete_tooltip_ti' => 'Delete this Term Import definition.',
+	
 	);
 
 	protected $smwDINamespaces = array(

@@ -100,7 +100,7 @@ class SMWWebServiceRepositorySpecial extends SpecialPage {
 		$html .= '<p><a href="'.Title::makeTitleSafe(NS_SPECIAL, "DefineWebService")->getFullURL().'">'.wfMsg('smw_wwsr_rep_create_link').'</a></p>';
 		
 		if($allowed){
-			$html .= "<table id=\"webservicetable\" class=\"smwtable\"><tr><th>".wfMsg('smw_wwsr_name')."</th><th>".wfMsg('smw_wwsr_lastupdate')."</th><th style=\"text-align: center\">".wfMsg('smw_wwsr_update_manual')."</th><th style=\"text-align: center\">".wfMsg('smw_wwsr_rep_edit')."</th><th style=\"text-align: center\">".wfMsg('smw_wwsr_confirm')."</th></tr>";
+			$html .= "<table id=\"webservicetable\" class=\"smwtable\"><tr><th>".wfMsg('smw_wwsr_name')."</th><th>".wfMsg('smw_wwsr_lastupdate')."</th><th style=\"text-align: center\">".wfMsg('smw_wwsr_update_manual')."</th><th style=\"text-align: center\">".wfMsg('smw_wwsr_rep_edit')."</th><th style=\"text-align: center\">".wfMsg('smw_wwsr_delete')."</th><th style=\"text-align: center\">".wfMsg('smw_wwsr_confirm')."</th></tr>";
 		} else {
 			$html .= "<table id=\"webservicetable\" class=\"smwtable\"><tr><th>".wfMsg('smw_wwsr_name')."</th><th>".wfMsg('smw_wwsr_lastupdate')."</th><th style=\"text-align: center\">".wfMsg('smw_wwsr_rep_edit')."</th></tr>";
 		}
@@ -109,7 +109,7 @@ class SMWWebServiceRepositorySpecial extends SpecialPage {
 			if(!is_null($title)){
 				$wsUrl = $title->getFullURL();
 				$wsName = substr($ws->getName(), 11, strlen($ws->getName()));
-				$html .= "<tr><td><a href=\"".$wsUrl."\">".$wsName."</a></td>";
+				$html .= "<tr id=\"ws-row-".$ws->getArticleID()."\"><td><a href=\"".$wsUrl."\">".$wsName."</a></td>";
 
 				$cacheResults = WSStorage::getDatabase()->getResultsFromCache($ws->getArticleID());
 				$oldestUpdate = "";
@@ -146,7 +146,11 @@ class SMWWebServiceRepositorySpecial extends SpecialPage {
 					$url = Title::makeTitleSafe(NS_SPECIAL, "DefineWebService")->getFullURL()."?wwsdId=".$ws->getArticleID();
 				}
 				$html .= "<td style=\"text-align: center\"><button id=\"edit".$ws->getArticleID()."\" type=\"button\" name=\"edit\" onclick=\"window.location.href = '".$url."';\" alt=\"".wfMsg('smw_wwsr_rep_edit')."\" title=\"".wfMsg('smw_wwsr_rep_edit_tooltip')."\">".wfMsg('smw_wwsr_rep_edit')."</button>";
-	
+				
+				if($allowed){
+					$html .= "<td style=\"text-align: center\">  <button type=\"button\"  onclick=\"webServiceRepSpecial.deleteWWSD(".$ws->getArticleID().")\" alt=\"".wfMsg('smw_wwsr_delete')."\" title=\"".wfMsg('smw_wwsr_delete_tooltip')."\">".wfMsg('smw_wwsr_delete')."</button></td>";
+				}
+				
 				if($allowed){
 					if($ws->getConfirmationStatus() != "true"){
 						$html .= "<td style=\"text-align: center\" id=\"confirmText".$ws->getArticleID()."\">  <button type=\"button\" id=\"confirmButton".$ws->getArticleID()."\" onclick=\"webServiceRepSpecial.confirmWWSD(".$ws->getArticleID().")\" alt=\"".wfMsg('smw_wwsr_confirm')."\" title=\"".wfMsg('smw_wwsr_confirm_tooltip')."\">".wfMsg('smw_wwsr_confirm')."</button></td></tr>";
@@ -173,7 +177,7 @@ class SMWWebServiceRepositorySpecial extends SpecialPage {
 		$html .= '<p><a href="'.Title::makeTitleSafe(NS_SPECIAL, "TermImport")->getFullURL().'">'.wfMsg('smw_tir_rep_create_link').'</a></p>';
 		
 		if($allowed){
-			$html .= "<table id=\"termimporttable\" width=\"100%\" class=\"smwtable\"><tr><th>".wfMsg('smw_wwsr_name')."</th><th>".wfMsg('smw_wwsr_lastupdate')."</th><th style=\"text-align: center\">".wfMsg('smw_wwsr_update_manual')."</th><th style=\"text-align: center\">".wfMsg('smw_wwsr_rep_edit')."</th></tr>";
+			$html .= "<table id=\"termimporttable\" width=\"100%\" class=\"smwtable\"><tr><th>".wfMsg('smw_wwsr_name')."</th><th>".wfMsg('smw_wwsr_lastupdate')."</th><th style=\"text-align: center\">".wfMsg('smw_wwsr_update_manual')."</th><th style=\"text-align: center\">".wfMsg('smw_wwsr_rep_edit')."</th><th style=\"text-align: center\">".wfMsg('smw_wwsr_delete')."</th></tr>";
 		} else {
 			$html .= "<table id=\"termimporttable\" width=\"100%\" class=\"smwtable\"><tr><th>".wfMsg('smw_wwsr_name')."</th><th>".wfMsg('smw_wwsr_lastupdate')."</th></tr>";
 		}
@@ -191,7 +195,7 @@ class SMWWebServiceRepositorySpecial extends SpecialPage {
 			$tiArticleName = substr($tiArticleName, 0, strpos($tiArticleName, "]]"));
 			
 			
-			$html .= "<tr>";
+			$html .= "<tr id=\"ti-row-".$tiArticleName."\">";
 			$tiUrl = Title::newFromText("TermImport:".$tiArticleName)->getFullURL();
 			$html .= "<td><a href=\"".$tiUrl."\">".$tiArticleName."</a></td>";
 			
@@ -222,17 +226,14 @@ class SMWWebServiceRepositorySpecial extends SpecialPage {
 			
 				global $wgArticlePath;
 				if(strpos($wgArticlePath, "?") > 0){
-					$url = Title::makeTitleSafe(NS_SPECIAL, "TermImport")->getFullURL()."&tiname=".$ws->getArticleID();
+					$url = Title::makeTitleSafe(NS_SPECIAL, "TermImport")->getFullURL()."&tiname=".$tiArticleName;
 				} else {
 					$url = Title::makeTitleSafe(NS_SPECIAL, "TermImport")->getFullURL()."?tiname=".$tiArticleName;
 				}
-				$html .= "<td style=\"text-align: center\"><button id=\"edit".$tiArticleName."\" type=\"button\" name=\"edit\" onclick=\"window.location.href = '".$url."';\" alt=\"".wfMsg('smw_wwsr_rep_edit')."\" title=\"".wfMsg('smw_wwsr_rep_edit_tooltip_ti')."\">".wfMsg('smw_wwsr_rep_edit')."</button>";
+				$html .= "<td style=\"text-align: center\"><button id=\"edit".$tiArticleName."\" type=\"button\" name=\"edit\" onclick=\"window.location.href = '".$url."';\" alt=\"".wfMsg('smw_wwsr_rep_edit')."\" title=\"".wfMsg('smw_wwsr_rep_edit_tooltip_ti')."\">".wfMsg('smw_wwsr_rep_edit')."</button></td>";
+				
+				$html .= "<td style=\"text-align: center\"><button type=\"button\" name=\"delete\" onclick=\"webServiceRepSpecial.deleteTermImport('".$tiArticleName."')\" alt=\"".wfMsg('smw_wwsr_delete')."\" title=\"".wfMsg('smw_wwsr_rep_delete_tooltip_ti')."\">".wfMsg('smw_wwsr_delete')."</button></td>";
 			}
-			
-			
-
-
-			
 			
 			$html .= "</tr>";
 		}

@@ -19,7 +19,9 @@
 global $wgAjaxExportList;
 $wgAjaxExportList[] = 'smwf_ws_updateCache';
 $wgAjaxExportList[] = 'smwf_ws_confirmWWSD';
+$wgAjaxExportList[] = 'smwf_ws_deleteWWSD';
 $wgAjaxExportList[] = 'smwf_ti_update';
+$wgAjaxExportList[] = 'smwf_ti_deleteTermImport'; 
 
 
 /**
@@ -44,7 +46,19 @@ function smwf_ws_confirmWWSD($wsId){
 	WSStorage::getDatabase()->setWWSDConfirmationStatus($wsId, "true");
 	return $wsId;
 }
+
+function smwf_ws_deleteWWSD($wsId){
+	global $smwgDIIP, $wgUser;
+	require_once($smwgDIIP . '/specials/WebServices/SMW_WSStorage.php');
 	
+	$pageName = Title::newFromID($wsId)->getFullText();
+	
+	smwf_om_DeleteArticle($pageName, $wgUser->getName(), 'Deleted via the WebServiceRepository special page.');
+	
+	return $wsId;
+}
+
+
 function smwf_ti_update($tiArticleName){
 	global $smwgDIIP;
 	require_once($smwgDIIP."/specials/TermImport/SMW_WIL.php");
@@ -77,4 +91,12 @@ function smwf_ti_update($tiArticleName){
 	} else {			
 		return "success";
 	}
+}
+
+function smwf_ti_deleteTermImport($tiName){
+	global $wgUser;
+	
+	smwf_om_DeleteArticle("TermImport:".$tiName, $wgUser->getName(), 'Deleted via the WebServiceRepository special page.');
+	
+	return $tiName;
 }
