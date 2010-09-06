@@ -17,7 +17,8 @@
 !include "MUI2.nsh"
 !include "LogicLib.nsh"
 !include "FileFunc.nsh"
-
+!include "TextFunc.nsh"
+!insertmacro ConfigWrite
 !insertmacro GetFileName
 
 ; --- The following definitions are meant to be changed ---
@@ -621,6 +622,10 @@ Function changeConfigForFullXAMPP
     ; Make halowiki directory accessible by Apache  
     DetailPrint "Update httpd.conf"  
     nsExec::ExecToLog '"$INSTDIR\php\php.exe" "$INSTDIR\htdocs\mediawiki\installer\changeHttpd.php" httpd="$INSTDIR\apache\conf\httpd.conf" wiki-path=mediawiki fs-path="$INSTDIR\htdocs\mediawiki"'
+    
+    ; Set PHP path for deployment framework
+    DetailPrint "Set PHP path for deployment framework"  
+    ${ConfigWrite} "$INSTDIR\htdocs\mediawiki\deployment\tools\smwadmin.bat" "SET PHP=" "$INSTDIR\php\php.exe" $R0
     
     DetailPrint "Config customizations"
     CALL configCustomizationsForNew
