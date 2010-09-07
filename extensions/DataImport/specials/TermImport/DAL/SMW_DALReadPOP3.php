@@ -284,6 +284,8 @@ class DALReadPOP3 implements IDAL {
 			$errorMessages = "<errors>".implode("", $this->errorMessages)."</errors>";
 		}
 		
+		print_r($result.$deleteCallback.$errorMessages);
+		
 		return
 			'<?xml version="1.0"?>'."\n".
 			'<terms xmlns="http://www.ontoprise.de/smwplus#">'."\n".
@@ -759,12 +761,14 @@ class DALReadPOP3 implements IDAL {
 
 	private function handleAttachmentCallBack($fileName, $attachmentMP,
 			$mailFrom, $mailId, $mailDate, $extraContent, $conflictPolicy, $termImportName){
+				
 		global $smwgDIIP;
 		$success = true;
 		$logMsgs = array();
 		$tiBot = new TermImportBot();
 
 		global $smwgEnableRichMedia; 
+		
 		if($smwgEnableRichMedia){
 			global $wgNamespaceByExtension;
 			$fileNameArray = split("\.", $fileName);
@@ -777,6 +781,7 @@ class DALReadPOP3 implements IDAL {
 		} else {
 			$ns = NS_IMAGE;
 		}
+		
 		$fileArticleTitle = Title::makeTitleSafe($ns, $fileName );
 
 		if($fileArticleTitle == null){
@@ -804,14 +809,15 @@ class DALReadPOP3 implements IDAL {
 			$updated = false;
 		}
 
-		$mappingPolicy = Title::newFromText($attachmentMP);
-		if(!$mappingPolicy->exists()){
-			throw new Exception("The attachment mapping policy \"".$attachmentMP."\" does not exist.");
-			
-			return $this->createCallBackResult(false,
-			array(array('id' => SMW_GARDISSUE_MAPPINGPOLICY_MISSING,
-				'title' => $attachmentMP)));
-		}
+		// outcommented because the extra attachments mapping policy does not exist anymore
+		// $mappingPolicy = Title::newFromText($attachmentMP);
+		// if(!$mappingPolicy->exists()){
+		// 	throw new Exception("The attachment mapping policy \"".$attachmentMP."\" does not exist.");
+		// 	
+		// 	return $this->createCallBackResult(false,
+		// 	array(array('id' => SMW_GARDISSUE_MAPPINGPOLICY_MISSING,
+		// 		'title' => $attachmentMP)));
+		// }
 		
 		$fileNameArray = split("\.", $fileName);
 		$ext = $fileNameArray[count($fileNameArray)-1];
@@ -837,48 +843,52 @@ class DALReadPOP3 implements IDAL {
 			array(array('id' => SMW_GARDISSUE_CREATION_FAILED,
 				'title' => $fileArticleTitle->getFullText())));
 		}
-
-		$mappingPolicy = new Article($mappingPolicy);
-		$mappingPolicy = $mappingPolicy->getContent();
-
-		$term = array();
-		if(trim($mailFrom != "")){
-			$term["FROM"] = array();
-			$term["FROM"][] = array("value" => $mailFrom);
-		}
-		if(trim($mailId != "")){
-			$term["MESSAGE_ID"] = array();
-			$term["MESSAGE_ID"][] = array("value" => $mailId);
-		}
-		if(trim($mailDate != "")){
-			$term["DATE"] = array();
-			$term["DATE"][] = array("value" => $mailDate);
-		}
 		
-		if($extraContent != ""){
-			$sxe = new SimpleXMLElement("<vc>".
-				htmlspecialchars_decode($extraContent)."</vc>", LIBXML_NOCDATA);
-			foreach($sxe->children() as $property => $value){
-				$term[strtoupper($property)] = array();
-				$term[strtoupper($property)][] = array("value" => $value);
-			} 
-		}
+		// outcommented because the extra attachments mapping policy does not exist anymore
+		// $mappingPolicy = new Article($mappingPolicy);
+		// $mappingPolicy = $mappingPolicy->getContent();
+		// 
+		// $term = array();
+		// if(trim($mailFrom != "")){
+		// 	$term["FROM"] = array();
+		// 	$term["FROM"][] = array("value" => $mailFrom);
+		// }
+		// if(trim($mailId != "")){
+		// 	$term["MESSAGE_ID"] = array();
+		// 	$term["MESSAGE_ID"][] = array("value" => $mailId);
+		// }
+		// if(trim($mailDate != "")){
+		// 	$term["DATE"] = array();
+		// 	$term["DATE"][] = array("value" => $mailDate);
+		// }
+		// 
+		// if($extraContent != ""){
+		// 	$sxe = new SimpleXMLElement("<vc>".
+		// 		htmlspecialchars_decode($extraContent)."</vc>", LIBXML_NOCDATA);
+		// 	foreach($sxe->children() as $property => $value){
+		// 		$term[strtoupper($property)] = array();
+		// 		$term[strtoupper($property)][] = array("value" => $value);
+		// 	} 
+		// }
 		
+		$content = "";
 		$local->load();
 		global $smwgEnableUploadConverter;
+		echo("UCONV\n");
 		if($smwgEnableUploadConverter){
 			$fileContent = UploadConverter::getFileContent($local);
+			$content = $fileContent;
 			//echo("\n\n####\n".substr($fileContent,0,200));
 			if(strlen($fileContent) > 0){
-				$term["CONTENT"] = array();
-				$term["CONTENT"][] = array("value" => $fileContent);
+			// 	$term["CONTENT"] = array();
+			// 	$term["CONTENT"][] = array("value" => $fileContent);
 			}
 		}
 
-		$content = $tiBot->createContent($term, $mappingPolicy);
-			
-		//echo("\n\n###title\n".$fileArticleTitle->getFullText());
-		//echo("\n\n###content\n".substr($content,0,300));
+		// $content = $tiBot->createContent($term, $mappingPolicy);
+		
+		echo("\n\n###title\n".$fileArticleTitle->getFullText());
+		echo("\n\n###content\n".substr($fileContent,0,300));
 		
 		$fileArticleTitle = Title::newFromText($fileArticleTitle->getText(), $fileArticleTitle->getNamespace());
 		$article = new Article($fileArticleTitle);
@@ -887,8 +897,7 @@ class DALReadPOP3 implements IDAL {
 
 		echo("\n\n###result\n".print_r($result, true));
 					
-		echo "Article ".$fileArticleTitle->getFullText();
-		//echo $updated==true ? " updated\n" : " created.\n";
+		echo $updated==true ? " updated\n" : " created.\n";
 
 		if($updated){
 			return $this->createCallBackResult(true,
