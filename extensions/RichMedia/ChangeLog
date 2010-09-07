@@ -9,6 +9,7 @@ VERSION 1.X
 
   CHANGES:
 	Issue 12237 - Text "Description page" changed to "File details"
+	Issue 11837 - WebDAV now uses /imnages as upload directory
 
 
   BUGFIXES:
