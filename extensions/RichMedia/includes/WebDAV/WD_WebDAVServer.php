@@ -287,10 +287,11 @@ class WebDAVServer extends HTTP_WebDAV_Server {
 			}
 		} else { //end of if is directory
 			if($fileData->isTempFile()){
-				if(file_exists("./extensions/RichMedia/includes/WebDAV/tmp/"
-				.$fileData->getFileName())){
-					$fileSize = filesize("./extensions/RichMedia/includes/WebDAV/tmp/"
-					.$fileData->getFileName());
+				global $wgUploadDirectory;
+				if(file_exists($wgUploadDirectory."/"
+						.$fileData->getFileName())){
+					$fileSize = filesize($wgUploadDirectory."/"
+						.$fileData->getFileName());
 					$file = urlencode($fileData->getFileName());
 					$status[] = $this->createFileResponse(
 					$fileData->getPrefixedFolderName()."/".$file, $file,
@@ -442,9 +443,10 @@ class WebDAVServer extends HTTP_WebDAV_Server {
 				$text = $rawPage->getRawText();
 			}
 		} else if($fileData->isTempFile()) {
-			if(file_exists("./extensions/RichMedia/includes/WebDAV/tmp/"
+			global $wgUploadDirectory;
+			if(file_exists($wgUploadDirectory."/"
 					.$fileData->getFileName())){
-				$text = file_get_contents("./extensions/RichMedia/includes/WebDAV/tmp/"
+				$text = file_get_contents($wgUploadDirectory."/"
 					.$fileData->getFileName());
 			} else {
 				$this->setResponseStatus("404 Not Found");
@@ -527,9 +529,10 @@ class WebDAVServer extends HTTP_WebDAV_Server {
 				|| $isArticleFolder)){
 			
 			if($fileData->isTempFile()){
-				if(file_exists("./extensions/RichMedia/includes/WebDAV/tmp/"
+				global $wgUploadDirectory;
+				if(file_exists($wgUploadDirectory."/"
 						.$fileData->getFileName())){
-					unlink("./extensions/RichMedia/includes/WebDAV/tmp/"
+					unlink($wgUploadDirectory."/"
 						.$fileData->getFileName());
 				}
 				return true;
@@ -643,7 +646,8 @@ class WebDAVServer extends HTTP_WebDAV_Server {
 
 	private function uploadTempFile($title, $text){
 		//create temporary file
-		file_put_contents("./extensions/RichMedia/includes/WebDAV/tmp/".$title, $text);
+		global $wgUploadDirectory;
+		file_put_contents($wgUploadDirectory."/".$title, $text);
 		return true;
 	}
 	
@@ -661,11 +665,15 @@ class WebDAVServer extends HTTP_WebDAV_Server {
 	}
 
 	private function uploadFile($fileData, $text, $relatedArticleTitle){
+		global $wgUploadDirectory;
+		
 		$title = $fileData->getFileName();
-		file_put_contents("./extensions/RichMedia/includes/WebDAV/tmp/tempfile", $text);
+		
+		file_put_contents($wgUploadDirectory."/tempfile", $text);
 		$local = wfLocalFile($title);
 		
-		$hash = File::sha1Base36("./extensions/RichMedia/includes/WebDAV/tmp/tempfile");
+		global $wgUploadDirectory;
+		$hash = File::sha1Base36($wgUploadDirectory."/tempfile");
 		$dupes = RepoGroup::singleton()->findBySha1( $hash );
 		$exists = false;
 		foreach($dupes as $dupe){
@@ -695,7 +703,7 @@ class WebDAVServer extends HTTP_WebDAV_Server {
 			
 			//upload file
 			$status = $local->upload(
-				"./extensions/RichMedia/includes/WebDAV/tmp/tempfile"
+				$wgUploadDirectory."/tempfile"
 				, "Created via the WebDAV extension", "",
 				File::DELETE_SOURCE);
 			
@@ -914,12 +922,13 @@ class WebDAVServer extends HTTP_WebDAV_Server {
 	}
 
 	private function getTempFiles($fileData){
-		$files = scandir("./extensions/RichMedia/includes/WebDAV/tmp/");
+		global $wgUploadDirectory;
+		$files = scandir($wgUploadDirectory);
 		//
 		$status = array();
 		foreach($files as $file){
 			if($file != "." && $file != ".."){
-				$fileSize = filesize("./extensions/RichMedia/includes/WebDAV/tmp/".$file);
+				$fileSize = filesize($wgUploadDirectory."/".$file);
 				$file = urlencode($file);
 				$status[] = $this->createFileResponse(
 				$fileData->getPrefixedFolderName()."/".$file, $file,
