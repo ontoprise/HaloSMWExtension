@@ -484,7 +484,7 @@
 										</xsl:when>
 										<xsl:otherwise>
 											<xsl:attribute name="href"><xsl:value-of
-												select="$param-wiki-path" />/<xsl:value-of
+												select="substring-before($param-wiki-path,'$1')" /><xsl:value-of
 												select="." /></xsl:attribute>
 											<xsl:attribute name="class">annotation</xsl:attribute>
 										</xsl:otherwise>
@@ -802,6 +802,10 @@
 			<xsl:if test="@title">
 				<xsl:attribute name="title"><xsl:value-of select="@title" /></xsl:attribute>
 			</xsl:if>
+			<xsl:if test="@uri">
+                        <xsl:attribute name="uri"><xsl:value-of
+                            select="@uri" /></xsl:attribute>
+                    </xsl:if>
 			<xsl:if test="$rek_depth=1">
 				<xsl:if test="@hidden='true'">
 					<xsl:attribute name="style">display: none;</xsl:attribute>

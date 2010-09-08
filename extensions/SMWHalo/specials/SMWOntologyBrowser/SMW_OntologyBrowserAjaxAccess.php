@@ -144,7 +144,12 @@ class OB_Storage {
 
 		$resourceAttachments = array();
 		wfRunHooks('smw_ob_attachtoresource', array($rootatts, & $resourceAttachments, SMW_NS_PROPERTY));
-
+	    for($i = 0; $i < count($rootatts); $i++) {
+            list($title, $hasSubproperties) = $rootatts[$i];
+            $rootatts[$i][] = NULL;
+            $rootatts[$i][] = NULL;
+        }
+        
 		return SMWOntologyBrowserXMLGenerator::encapsulateAsPropertyPartition($rootatts, $resourceAttachments, $reqfilter->limit, $partitionNum, true);
 	}
 
@@ -161,6 +166,11 @@ class OB_Storage {
 		$directsubatts = smwfGetSemanticStore()->getDirectSubProperties($superatt, $reqfilter);
 		$resourceAttachments = array();
 		wfRunHooks('smw_ob_attachtoresource', array($directsubatts, & $resourceAttachments, SMW_NS_PROPERTY));
+	    for($i = 0; $i < count($directsubatts); $i++) {
+            list($title, $hasSubproperties) = $directsubatts[$i];
+            $directsubatts[$i][] = NULL;
+            $directsubatts[$i][] = NULL;
+        }
 		return SMWOntologyBrowserXMLGenerator::encapsulateAsPropertyPartition($directsubatts, $resourceAttachments, $reqfilter->limit, $partitionNum, false);
 
 	}
@@ -251,6 +261,53 @@ class OB_StorageTS extends OB_Storage {
 		parent::__construct($dataSource);
 		$this->tsNamespaceHelper = new TSNamespaces(); // initialize namespaces
 	}
+	
+    public function getRootProperties($p_array) {
+        // param0 : limit
+        // param1 : partitionNum
+        $reqfilter = new SMWRequestOptions();
+        $reqfilter->sort = true;
+        $reqfilter->limit =  isset($p_array[0]) ? intval($p_array[0]) : SMWH_OB_DEFAULT_PARTITION_SIZE;
+        $partitionNum = isset($p_array[1]) ? intval($p_array[1]) : 0;
+        $reqfilter->offset = $partitionNum*$reqfilter->limit;
+        $rootatts = smwfGetSemanticStore()->getRootProperties($reqfilter);
+        
+        
+        $resourceAttachments = array();
+        wfRunHooks('smw_ob_attachtoresource', array($rootatts, & $resourceAttachments, SMW_NS_PROPERTY));
+        
+         // add TSC URI and local URL
+        for($i = 0; $i < count($rootatts); $i++) {
+        	list($title, $hasSubproperties) = $rootatts[$i];
+        	$rootatts[$i][] = TSHelper::getUriFromTitle($title);
+        	$rootatts[$i][] = $title->getFullURL();
+        }
+        return SMWOntologyBrowserXMLGenerator::encapsulateAsPropertyPartition($rootatts, $resourceAttachments, $reqfilter->limit, $partitionNum, true);
+    }
+    
+    public function getSubProperties($p_array) {
+        // param0 : attribute
+        // param1 : limit
+        // param2 : partitionNum
+        $reqfilter = new SMWRequestOptions();
+        $reqfilter->sort = true;
+        $reqfilter->limit =  intval($p_array[1]);
+        $partitionNum = isset($p_array[2]) ? intval($p_array[2]) : 0;
+        $reqfilter->offset = $partitionNum*$reqfilter->limit;
+        $superatt = Title::newFromText($p_array[0], SMW_NS_PROPERTY);
+        $directsubatts = smwfGetSemanticStore()->getDirectSubProperties($superatt, $reqfilter);
+        $resourceAttachments = array();
+        wfRunHooks('smw_ob_attachtoresource', array($directsubatts, & $resourceAttachments, SMW_NS_PROPERTY));
+        
+        // add TSC URI and local URL
+        for($i = 0; $i < count($directsubatts); $i++) {
+            list($title, $hasSubproperties) = $directsubatts[$i];
+            $directsubatts[$i][] = TSHelper::getUriFromTitle($title);
+            $directsubatts[$i][] = $title->getFullURL();
+        }
+        return SMWOntologyBrowserXMLGenerator::encapsulateAsPropertyPartition($directsubatts, $resourceAttachments, $reqfilter->limit, $partitionNum, false);
+
+    }
 
 	public function getInstance($p_array) {
 		global $wgServer, $wgScript, $smwgWebserviceUser, $smwgWebservicePassword, $smwgDeployVersion;
@@ -332,7 +389,7 @@ class OB_StorageTS extends OB_Storage {
 				$category = TSHelper::getTitleFromURI((string) $sv);
 				if (!is_null($instance) && !is_null($category)) {
 					$cTitle = TSHelper::getTitleFromURI((string) $sv);
-					$categoryTuple = $cTitle->equals($categoryTitle) ? array(NULL, NULL) : array((string) $sv, $cTitle);
+					$categoryTuple = !is_null($categoryTitle) && $cTitle->equals($categoryTitle) ? array(NULL, NULL) : array((string) $sv, $cTitle);
 					$titles[] = array($instance, $categoryTuple);
 				} else  {
 					$titles[] = array($instance, array(NULL , NULL));
@@ -360,7 +417,9 @@ class OB_StorageTS extends OB_Storage {
 				if ($literalValue != '') $value->setDBkeys(array(str_replace("-","/", $literalValue)));
 			} else if ($value->getTypeID() == '_ema') { // exception for email
 				$value->setDBkeys(array($literalValue));
-			} else {
+			} else if ($value->getTypeID() == '__tls') { // exception for email
+                $value->setDBkeys(array($literalValue));
+            } else {
 				$value->setUserValue($literalValue);
 			}
 		} else {
@@ -487,7 +546,7 @@ class OB_StorageTS extends OB_Storage {
 			$response = $client->query("[[$propertyName::+]]",  "?Category|limit=$limit|offset=$offset|merge=false");
 
 			$titles = array();
-			$this->parseInstances($response, $titles);
+			$this->parseInstances($response, $titles, NULL);
 
 		} catch(Exception $e) {
 			return "Internal error: ".$e->getMessage();

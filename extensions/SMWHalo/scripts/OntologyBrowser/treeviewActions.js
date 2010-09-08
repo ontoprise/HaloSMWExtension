@@ -1027,8 +1027,8 @@ OBPropertyTreeActionListener.prototype = Object.extend(new OBTreeActionListener(
 	 	 }
 	 	 if (OB_RIGHT_ARROW == 0) {
 	 		OB_relatt_pendingIndicator.show();
-	 	
-	 		dataAccess.getAnnotations(gLanguage.getMessage('PROPERTY_NS')+propertyName, callbackOnPropertySelect2);
+	 		var property = node.getAttribute("uri") == null ? gLanguage.getMessage('PROPERTY_NS')+propertyName : node.getAttribute("uri");
+	 		dataAccess.getAnnotations(property, callbackOnPropertySelect2);
 	 		
 	 	 }
 		}

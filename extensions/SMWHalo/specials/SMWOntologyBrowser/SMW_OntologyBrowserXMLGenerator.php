@@ -69,7 +69,8 @@ class SMWOntologyBrowserXMLGenerator {
 	/**
 	 * Encapsulate an array of instances as an instance partition in XML.
 	 *
-	 * @param array & $titles. Instance titles
+	 * @param Tuple $instances
+	 *         ((instanceTitle, $instanceURI, $localInstanceURL, $metadataMap) , ($localCategoryURL, $categoryTitle))
 	 * @param $limit Max number of instances per partition
 	 * @param $partitionNum Number of partition (0 <= $partitionNum <= total number / limit)
 	 *
@@ -130,12 +131,12 @@ class SMWOntologyBrowserXMLGenerator {
 			if (!is_null($url)) {
 				$localurl_att = 'localurl="'.htmlspecialchars($url).'"';
 			}
-			
-			$instanceURI_att = "";
-		    if (!is_null($instanceURI)) {
-                $instanceURI_att = 'uri="'.htmlspecialchars($instanceURI).'"';
-            }
 				
+			$instanceURI_att = "";
+			if (!is_null($instanceURI)) {
+				$instanceURI_att = 'uri="'.htmlspecialchars($instanceURI).'"';
+			}
+
 			if (!is_null($categoryTitle)) {
 				$categoryTitle = htmlspecialchars($categoryTitle->getDBkey());
 				$result = $result."<instance $instanceURI_att $localurl_att title_url=\"$titleURLEscaped\" title=\"".$titleEscaped."\" namespace=\"$namespace\" superCat=\"$categoryTitle\" img=\"instance.gif\" id=\"ID_$id$count\" inherited=\"true\">$gi_issues$metadataTags</instance>";
@@ -151,7 +152,8 @@ class SMWOntologyBrowserXMLGenerator {
 	/**
 	 * Encapsulate an array of properties as a property partition in XML.
 	 *
-	 * @param array & $titles. Property titles
+	 * @param array & $titles. Tuple (Title of property, boolean hasSubProperties, string URI, string local URL)
+	 * @param array & $resourceAttachments (Property title => array of rule URIs)
 	 * @param $limit Max number of properties per partition
 	 * @param $partitionNum Number of partition (0 <= $partitionNum <= total number / limit)
 	 * @param $rootLevel True, if partition on root level. Otherwise false
@@ -175,7 +177,8 @@ class SMWOntologyBrowserXMLGenerator {
 		$count++;
 		$gi_store = SGAGardeningIssuesAccess::getGardeningIssuesAccess();
 		foreach($titles as $e) {
-			list($t, $isLeaf) = $e;
+				
+			list($t, $isLeaf, $propertyURI, $localURL) = $e;
 			if (SMWOntologyBrowserXMLGenerator::isPredefined($t)) {
 				continue;
 			}
@@ -186,11 +189,13 @@ class SMWOntologyBrowserXMLGenerator {
 			foreach($definingRules as $df) {
 				$definingRulesXML .= "<definingRule>".htmlspecialchars($df)."</definingRule>";
 			}
-			
+				
+			$propertyURI_att = !is_null($propertyURI) ? 'uri="'.htmlspecialchars($propertyURI).'"' : "";
+			$localURL_att = !is_null($localURL) ? 'localurl="'.htmlspecialchars($localURL).'"' : "";
 			$titleURLEscaped = htmlspecialchars(self::urlescape($t->getDBkey()));
 			$issues = $gi_store->getGardeningIssues('smw_consistencybot', NULL, NULL, $t);
 			$gi_issues = SMWOntologyBrowserErrorHighlighting::getGardeningIssuesAsXML($issues);
-			$result = $result."<propertyTreeElement $leaf title_url=\"$titleURLEscaped\" title=\"".$title."\" img=\"attribute.gif\" id=\"ID_$id$count\">$gi_issues$definingRulesXML</propertyTreeElement>";
+			$result = $result."<propertyTreeElement $propertyURI_att $localURL_att $leaf title_url=\"$titleURLEscaped\" title=\"".$title."\" img=\"attribute.gif\" id=\"ID_$id$count\">$gi_issues$definingRulesXML</propertyTreeElement>";
 			$count++;
 		}
 		if ($rootLevel) {
@@ -223,7 +228,7 @@ class SMWOntologyBrowserXMLGenerator {
 		$instanceTitleEscaped = htmlspecialchars($instance->getDBkey());
 		$namespaceInstance = $instance->getNsText();
 		$titleURLEscaped = htmlspecialchars(self::urlescape($instance->getDBkey()));
-		
+
 		return $result == '' ? "<annotationsList isEmpty=\"true\" textToDisplay=\"".wfMsg('smw_ob_no_annotations')."\" title_url=\"$titleURLEscaped\" title=\"$instanceTitleEscaped\" namespace=\"$namespaceInstance\"/>" : "<annotationsList>".$result."</annotationsList>";
 	}
 
@@ -280,12 +285,14 @@ class SMWOntologyBrowserXMLGenerator {
 			}
 		} else {
 			// it must be an attribute or n-ary relation otherwise.
-			$v = SMWDataValueFactory::newPropertyObjectValue(SMWPropertyValue::makeProperty("_TYPE"));
+			$v = SMWDataValueFactory::newPropertyObjectValue(SMWPropertyValue::makeProperty("_LIST"));
 			$v->setDBkeys(array($type));
-			$typesOfAttributeAsString = $v->getTypeLabels();
-			foreach($typesOfAttributeAsString as $typeOfAttributeAsString) {
-				$content .= "<rangeType>".$typeOfAttributeAsString."</rangeType>";
+			$typesValues = $v->getTypeValues();
+
+			foreach($typesValues as $typesValue) {
+				$content .= "<rangeType>".reset($typesValue->getTypeLabels())."</rangeType>";
 			}
+
 
 
 		}
@@ -325,8 +332,8 @@ class SMWOntologyBrowserXMLGenerator {
 		$isFormula = false;
 		$chemistryParser = new ChemEqParser();
 		$gi_store = SGAGardeningIssuesAccess::getGardeningIssuesAccess();
-		
-       
+
+		 
 		foreach($smwValues as $smwValue) {
 			//list($smwValue, $uri) = $tuple;
 			if ($smwValue instanceof SMWRecordValue) { // n-ary property
@@ -394,7 +401,7 @@ class SMWOntologyBrowserXMLGenerator {
 				$metadataTags .= "</metadata>";
 
 
-				 
+					
 
 				if ($smwValue instanceof SMWWikiPageValue && !is_null($smwValue->getTitle())) {
 					$targetNotExists = $smwValue->getTitle()->exists() ?  "" : "notexists=\"true\"";
@@ -424,27 +431,33 @@ class SMWOntologyBrowserXMLGenerator {
 					$isFormula = true;
 					$chemistryParser->checkEquation(array_shift($smwValue->getDBkeys()));
 					$formulaAsHTML = html_entity_decode($chemistryParser->getHtmlFormat());
-					$value = "<![CDATA[".($formulaAsHTML)."]]>";
+					$value = "<param><![CDATA[".($formulaAsHTML)."]]></param>";
 				} if ($smwValue->getTypeID() == '_che') {
 					$isFormula = true;
 					$chemistryParser->checkEquation(array_shift($smwValue->getDBkeys()));
 					$formulaAsHTML = html_entity_decode($chemistryParser->getHtmlFormat());
-					$value = "<![CDATA[".($formulaAsHTML)."]]>";
+					$value = "<param><![CDATA[".($formulaAsHTML)."]]></param>";
 				} else if ( $smwValue->getTypeID() == '_chf') {
 					$isFormula = true;
 					$chemistryParser->checkFormula(array_shift($smwValue->getDBkey()));
 					$formulaAsHTML = html_entity_decode($chemistryParser->getHtmlFormat());
-					$value = "<![CDATA[".($formulaAsHTML)."]]>";
+					$value = "<param><![CDATA[".($formulaAsHTML)."]]></param>";
 				} else {
 					// escape potential HTML in a CDATA section
 
 					if ($smwValue->getTypeID() == '__typ') { //SMW_DV_Types
 						$value = implode(",",$smwValue->getTypeLabels());
 						$value = strip_tags($value, "<sub><sup><b><i>");
-						$value = "<![CDATA[".html_entity_decode($value)." ".$smwValue->getUnit()."]]>";
+						$value = "<param><![CDATA[".html_entity_decode($value)." ".$smwValue->getUnit()."]]></param>";
 					} if ($smwValue->getTypeID() == '__tls') { // SMW_DV_TypeList
-
-						$value = "<![CDATA[".html_entity_decode($smwValue->getWikiValue())."]]>";
+						$typesValues = $smwValue->getTypeValues();
+                         $value = "";
+						foreach($typesValues as $typesValue) {
+						    $typeLabel = reset($typesValue->getTypeLabels());
+						    $typeTitle = Title::newFromText($typeLabel, SMW_NS_TYPE);
+							$value .= "<param isLink=\"true\"><![CDATA[".html_entity_decode($typeTitle->getPrefixedDBkey())."]]></param>";
+						}
+						
 					} else {
 						// small hack for datetime type. It may occur that there is a T at the end.
 						if ($smwValue->getTypeID() == '_dat') {
@@ -454,7 +467,7 @@ class SMWOntologyBrowserXMLGenerator {
 							$xsdValue = array_shift($smwValue->getDBkeys());
 						}
 						$value = strip_tags($xsdValue, "<sub><sup><b><i>");
-						$value = "<![CDATA[".html_entity_decode($value)." ".$smwValue->getUnit()."]]>";
+						$value = "<param><![CDATA[".html_entity_decode($value)." ".$smwValue->getUnit()."]]></param>";
 					}
 
 				}
@@ -483,7 +496,7 @@ class SMWOntologyBrowserXMLGenerator {
 				$metadataTags .= "</metadata>";
 
 				$singleProperties .= "<annotation  title_url=\"$titleURLEscaped\" title=\"".$title."\" id=\"ID_".$id.$count."\" $repasteMarker>".
-				                        "<param>".$value."</param>".
+				                       $value.
 				$gi_issues.
 				$metadataTags.
 				                      "</annotation>";

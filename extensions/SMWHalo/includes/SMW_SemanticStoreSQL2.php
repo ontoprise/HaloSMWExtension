@@ -212,8 +212,8 @@ class SMWSemanticStoreSQL2 extends SMWSemanticStoreSQL {
                              ' GROUP BY property ORDER BY property');
 		$resMaxCard = $db->query('SELECT property, value_xsd AS maxCard FROM smw_ob_properties JOIN '.$smw_ids.' ON smw_title = property AND smw_namespace = '.SMW_NS_PROPERTY.' JOIN '.$smw_atts2.' ON smw_id = s_id AND p_id ='.$maxCardID.
                              ' GROUP BY property ORDER BY property');
-		$resTypes = $db->query('SELECT property, value_string AS type FROM smw_ob_properties  JOIN '.$smw_ids.' ON smw_title = property AND smw_namespace = '.SMW_NS_PROPERTY.' JOIN '.$smw_spec2.' ON smw_id = s_id'.
-                             ' WHERE p_id = '.$hasTypePropertyID.' GROUP BY property ORDER BY property');
+		$resTypes = $db->query('SELECT property, s1.value_string AS type, s2.value_string AS fields FROM smw_ob_properties  JOIN '.$smw_ids.' ON smw_title = property AND smw_namespace = '.SMW_NS_PROPERTY.' JOIN '.$smw_spec2.' s1 ON smw_id = s1.s_id LEFT JOIN '.$smw_spec2.' s2 ON s1.s_id = s2.s_id AND s2.p_id = 28'.
+                             ' WHERE s1.p_id = '.$hasTypePropertyID.' GROUP BY property ORDER BY property');
 		$resSymCats = $db->query('SELECT property FROM smw_ob_properties  JOIN '.$db->tableName('categorylinks').
                              ' ON cl_from = id WHERE cl_to = '.$db->addQuotes($this->symetricalCat->getDBKey()). ' GROUP BY property ORDER BY property');
 		$resTransCats = $db->query('SELECT property FROM smw_ob_properties  JOIN '.$db->tableName('categorylinks').
@@ -244,7 +244,7 @@ class SMWSemanticStoreSQL2 extends SMWSemanticStoreSQL {
 		if($db->numRows( $resTypes ) > 0) {
 			while($row = $db->fetchObject($resTypes)) {
 				$property = $row->property;
-				$typeArray[$property] = $row->type;
+				$typeArray[$property] = $row->type == '_rec' ? $row->fields : $row->type;
 			}
 		}
 

@@ -240,7 +240,7 @@ class TSNamespaces {
 		self::$UNKNOWN_NS = $smwgTripleStoreGraph.self::$UNKNOWN_NS_SUFFIX;
 
 		self::$ALL_NAMESPACES = array(NS_MAIN=>self::$INST_NS, NS_CATEGORY => self::$CAT_NS, SMW_NS_PROPERTY => self::$PROP_NS,
-		SMW_NS_TYPE => self::$TYPE_NS_SUFFIX, NS_IMAGE => self::$IMAGE_NS, NS_HELP => self::$HELP_NS, NS_TEMPLATE => self::$TEMPLATE_NS,
+		SMW_NS_TYPE => self::$TYPE_NS, NS_IMAGE => self::$IMAGE_NS, NS_HELP => self::$HELP_NS, NS_TEMPLATE => self::$TEMPLATE_NS,
 		NS_USER => self::$USER_NS);
 
 		// declare all common namespaces as SPARQL PREFIX statement (W3C + standard wiki + SMW)
