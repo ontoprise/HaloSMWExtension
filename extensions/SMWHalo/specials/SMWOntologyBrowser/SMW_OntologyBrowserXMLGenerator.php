@@ -276,10 +276,14 @@ class SMWOntologyBrowserXMLGenerator {
 		$isMemberOfTransCat = $schemaData[5];
 		$range = $schemaData[6];
 		$inherited = $schemaData[7] == true ? "inherited=\"true\"" : "";
-
+        
+		//FIXME: show primitive type as links to Type pages.
 		if ($type == '_wpg') { // binary relation?
 			if ($range == NULL) {
-				$content .= "<rangeType>".wfMsg('smw_ob_undefined_type')."</rangeType>";
+				$v = SMWDataValueFactory::newPropertyObjectValue(SMWPropertyValue::makeProperty("_TYPE"));
+                $v->setDBkeys(array("_wpg"));
+                $typesValue = reset($v->getTypeValues());
+				$content .= "<rangeType>".reset($typesValue->getTypeLabels())."</rangeType>";
 			} else {
 				$content .= "<rangeType isLink=\"true\">".$range."</rangeType>";
 			}
@@ -292,8 +296,6 @@ class SMWOntologyBrowserXMLGenerator {
 			foreach($typesValues as $typesValue) {
 				$content .= "<rangeType>".reset($typesValue->getTypeLabels())."</rangeType>";
 			}
-
-
 
 		}
 
