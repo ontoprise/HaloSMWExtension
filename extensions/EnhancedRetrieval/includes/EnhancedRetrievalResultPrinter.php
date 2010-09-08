@@ -1,13 +1,13 @@
 <?php
 /**
  * @file
- * @ingroup UnifiedSearch
+ * @ingroup EnhancedRetrieval
  *
  * Prints a set of LuceneResults and a WikiTitleResults
  *
  * @author: Kai K�hn
  */
-class UnifiedSearchResult {
+class EnhancedRetrievalResult {
 
 	// wrapped luceneResult
 	private $luceneResult;
@@ -65,12 +65,12 @@ class UnifiedSearchResult {
 	}
 
 	public static function newFromLuceneResult(LuceneResult $lc, array & $terms) {
-		return new UnifiedSearchResult($lc, $terms);
+		return new EnhancedRetrievalResult($lc, $terms);
 	}
 
 }
 
-class UnifiedSearchResultPrinter {
+class EnhancedRetrievalResultPrinter {
 
 	/**
 	 * Creates a result table
@@ -119,7 +119,7 @@ class UnifiedSearchResultPrinter {
 
 	public static function getImageURI($imageName) {
 		global $wgServer, $wgScriptPath;
-		$imagePath = "$wgServer$wgScriptPath/extensions/UnifiedSearch/skin/images/";
+		$imagePath = "$wgServer$wgScriptPath/extensions/EnhancedRetrieval/skin/images/";
 
 		$imagePath .= $imageName;
 

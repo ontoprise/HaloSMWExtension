@@ -1,9 +1,9 @@
 <?php
 /**
  * @file
- * @ingroup UnifiedSearchMaintenance
+ * @ingroup EnhancedRetrievalMaintenance
  * 
- * Setup database for Unified search extension.
+ * Setup database for Enhanced retrieval extension.
  * 
  * @author: Kai Kühn
  * 
@@ -16,7 +16,7 @@ if (array_key_exists('SERVER_NAME', $_SERVER) && $_SERVER['SERVER_NAME'] != NULL
 
 $mediaWikiLocation = dirname(__FILE__) . '/../../..';
 require_once "$mediaWikiLocation/maintenance/commandLine.inc";
-require_once "$mediaWikiLocation/extensions/UnifiedSearch/includes/UnifiedSearch.php";
+require_once "$mediaWikiLocation/extensions/EnhancedRetrieval/includes/EnhancedRetrieval.php";
 
 $delete = array_key_exists('delete', $options);
 $help = array_key_exists('h', $options);
@@ -35,7 +35,7 @@ if ($delete) {
 // no param - initialize 
 $onlyTables = array_key_exists('t', $options);
 
-print "\nSetup database for Unified search.\n\n";
+print "\nSetup database for Enhanced retrieval.\n\n";
 wfUSInitialize($onlyTables);
 
 //create synset tables

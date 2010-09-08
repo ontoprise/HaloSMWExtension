@@ -1,8 +1,8 @@
 <?php
 /**
  * @file
- * @ingroup UnifiedSearch
- * @defgroup UnifiedSearch Unified search
+ * @ingroup EnhancedRetrieval
+ * @defgroup EnhancedRetrieval Enhanced retrieval
  * @author: Kai K�hn
  *
  * Created on: 27.01.2009
@@ -38,8 +38,8 @@ $wgExtensionFunctions[] = 'wfUSSetupExtension';
 
 // enable path search if set in LocalSettings.php
 if (isset($wgUSPathSearch) && $wgUSPathSearch) {
-	require_once($IP."/extensions/UnifiedSearch/PathSearch/PathSearch.php");
-	require_once($IP."/extensions/UnifiedSearch/PathSearch/doPathSearch.php");
+	require_once($IP."/extensions/EnhancedRetrieval/PathSearch/PathSearch.php");
+	require_once($IP."/extensions/EnhancedRetrieval/PathSearch/doPathSearch.php");
 }
 
 /**
@@ -54,27 +54,27 @@ function wfUSAddHeader(& $out) {
 
 	$pagetitle = $wgRequest->getVal("title");
 	$spec_ns = $wgContLang->getNsText(NS_SPECIAL);
-	if ($pagetitle != "$spec_ns:Search" && $pagetitle != "$spec_ns:UnifiedSearchStatistics") return true;
+	if ($pagetitle != "$spec_ns:Search" && $pagetitle != "$spec_ns:EnhancedRetrievalStatistics") return true;
 
 	$out->addLink(array(
                     'rel'   => 'stylesheet',
                     'type'  => 'text/css',
                     'media' => 'screen, projection',
-                    'href'  => $wgScriptPath . '/extensions/UnifiedSearch/skin/unified_search.css'
+                    'href'  => $wgScriptPath . '/extensions/EnhancedRetrieval/skin/enhanced_retrieval.css'
                     ));
                    
-                    $out->addScript('<script type="text/javascript" src="'.$wgScriptPath . '/extensions/UnifiedSearch/scripts/unified_search.js"></script>');
+                    $out->addScript('<script type="text/javascript" src="'.$wgScriptPath . '/extensions/EnhancedRetrieval/scripts/enhanced_retrieval.js"></script>');
 
                     // add SimplePopup
                     $out->addLink(array(
                     'rel'   => 'stylesheet',
                     'type'  => 'text/css',
                     'media' => 'screen, projection',
-                    'href'  => $wgScriptPath . '/extensions/UnifiedSearch/scripts/SimplePopup/SimplePopup.css'
+                    'href'  => $wgScriptPath . '/extensions/EnhancedRetrieval/scripts/SimplePopup/SimplePopup.css'
                     ));
-                    $out->addScript('<script type="text/javascript" src="'.$wgScriptPath . '/extensions/UnifiedSearch/scripts/SimplePopup/SimplePopup.js"></script>');
+                    $out->addScript('<script type="text/javascript" src="'.$wgScriptPath . '/extensions/EnhancedRetrieval/scripts/SimplePopup/SimplePopup.js"></script>');
                     $out->addScript('<script type="text/javascript">/*<![CDATA[*/
-                        var SIMPLE_POPUP_DIR = "'.$wgScriptPath.'/extensions/UnifiedSearch/scripts/SimplePopup/";
+                        var SIMPLE_POPUP_DIR = "'.$wgScriptPath.'/extensions/EnhancedRetrieval/scripts/SimplePopup/";
                     /*]]>*/</script>');
 
                     // add GreyBox
@@ -82,12 +82,12 @@ function wfUSAddHeader(& $out) {
                     'rel'   => 'stylesheet',
                     'type'  => 'text/css',
                     'media' => 'screen, projection',
-                    'href'  => $wgScriptPath . '/extensions/UnifiedSearch/scripts/GreyBox/gb_styles.css'
+                    'href'  => $wgScriptPath . '/extensions/EnhancedRetrieval/scripts/GreyBox/gb_styles.css'
                     ));
-                    $out->addScript('<script type="text/javascript">var GB_ROOT_DIR = "'.$wgServer.$wgScriptPath.'/extensions/UnifiedSearch/scripts/GreyBox/";</script>'."\n");
-                    $out->addScript('<script type="text/javascript" src="'.$wgScriptPath . '/extensions/UnifiedSearch/scripts/GreyBox/AJS.js"></script>');
-                    $out->addScript('<script type="text/javascript" src="'.$wgScriptPath . '/extensions/UnifiedSearch/scripts/GreyBox/AJS_fx.js"></script>');
-                    $out->addScript('<script type="text/javascript" src="'.$wgScriptPath . '/extensions/UnifiedSearch/scripts/GreyBox/gb_scripts.js"></script>');
+                    $out->addScript('<script type="text/javascript">var GB_ROOT_DIR = "'.$wgServer.$wgScriptPath.'/extensions/EnhancedRetrieval/scripts/GreyBox/";</script>'."\n");
+                    $out->addScript('<script type="text/javascript" src="'.$wgScriptPath . '/extensions/EnhancedRetrieval/scripts/GreyBox/AJS.js"></script>');
+                    $out->addScript('<script type="text/javascript" src="'.$wgScriptPath . '/extensions/EnhancedRetrieval/scripts/GreyBox/AJS_fx.js"></script>');
+                    $out->addScript('<script type="text/javascript" src="'.$wgScriptPath . '/extensions/EnhancedRetrieval/scripts/GreyBox/gb_scripts.js"></script>');
 
                     return true;
 }
@@ -104,16 +104,16 @@ function wfUSSetupExtension() {
 	$wgHooks['BeforePageDisplay'][]='wfUSAddHeader';
 	wfUSInitUserMessages();
 	wfUSInitContentMessages();
-	$dir = 'extensions/UnifiedSearch/';
+	$dir = 'extensions/EnhancedRetrieval/';
 	global $smwgHaloIP;
 	$wgAutoloadClasses['USDBHelper'] = $dir . 'storage/US_DBHelper.php';
 	$wgAutoloadClasses['USStore'] = $dir . 'storage/US_Store.php';
 	$wgAutoloadClasses['SmithWaterman'] = $dir . 'includes/SmithWaterman.php';
 	$wgAutoloadClasses['SKOSVocabulary'] = $dir . 'includes/SKOSVocabulary.php';
-	$wgAutoloadClasses['USSpecialPage'] = $dir . 'includes/UnifiedSearchSpecialPage.php';
-	$wgAutoloadClasses['UnifiedSearchResultPrinter'] = $dir . 'includes/UnifiedSearchResultPrinter.php';
-	$wgAutoloadClasses['UnifiedSearchResult'] = $dir . 'includes/UnifiedSearchResultPrinter.php';
-	$wgAutoloadClasses['UnifiedSearchStatistics'] = $dir . 'includes/UnifiedSearchStatistics.php';
+	$wgAutoloadClasses['USSpecialPage'] = $dir . 'includes/EnhancedRetrievalSpecialPage.php';
+	$wgAutoloadClasses['EnhancedRetrievalResultPrinter'] = $dir . 'includes/EnhancedRetrievalResultPrinter.php';
+	$wgAutoloadClasses['EnhancedRetrievalResult'] = $dir . 'includes/EnhancedRetrievalResultPrinter.php';
+	$wgAutoloadClasses['EnhancedRetrievalStatistics'] = $dir . 'includes/EnhancedRetrievalStatistics.php';
 
 	if (file_exists($dir . 'SKOSExpander.php')) {
 		$wgAutoloadClasses['SKOSExpander'] = $dir . 'includes/SKOSExpander.php';
@@ -123,8 +123,8 @@ function wfUSSetupExtension() {
 	$wgAutoloadClasses['LuceneResult'] = $dir . 'MWSearch/MWSearch_body.php';
 	$wgAutoloadClasses['LuceneSearchSet'] = $dir . 'MWSearch/MWSearch_body.php';
 
-	$wgSpecialPages['UnifiedSearchStatistics'] = array('SpecialPage','UnifiedSearchStatistics', '', true, 'smwfDoSpecialUSSearch', $dir . 'includes/UnifiedSearchStatistics.php');
-	//$wgSpecialPageGroups['UnifiedSearchStatistics'] = 'maintenance';
+	$wgSpecialPages['EnhancedRetrievalStatistics'] = array('SpecialPage','EnhancedRetrievalStatistics', '', true, 'smwfDoSpecialUSSearch', $dir . 'includes/EnhancedRetrievalStatistics.php');
+	//$wgSpecialPageGroups['EnhancedRetrievalStatistics'] = 'maintenance';
 
 	$wgSpecialPages['Search'] = array('USSpecialPage');
 
@@ -156,30 +156,30 @@ function wfUSInitUserMessages() {
 
 	$usLangClass = 'US_Language' . str_replace( '-', '_', ucfirst( $wgLang->getCode() ) );
 
-	if (file_exists($IP.'/extensions/UnifiedSearch/languages/'. $usLangClass . '.php')) {
-		include_once('extensions/UnifiedSearch/languages/'. $usLangClass . '.php' );
+	if (file_exists($IP.'/extensions/EnhancedRetrieval/languages/'. $usLangClass . '.php')) {
+		include_once('extensions/EnhancedRetrieval/languages/'. $usLangClass . '.php' );
 	}
 	// fallback if language not supported
 	if ( !class_exists($usLangClass)) {
-		include_once('extensions/UnifiedSearch/languages/US_LanguageEn.php' );
+		include_once('extensions/EnhancedRetrieval/languages/US_LanguageEn.php' );
 		$aclgHaloLang = new US_LanguageEn();
 	} else {
 		$aclgHaloLang = new $usLangClass();
 	}
 	$wgMessageCache->addMessages($aclgHaloLang->us_userMessages, $wgLang->getCode());
-
+	$wgMessageCache->addMessages($aclgHaloLang->us_pathsearchMessages, $wgLang->getCode());
 
 }
 
 function wfUSInitContentMessages() {
 	global $wgMessageCache, $wgLanguageCode, $IP;
 	$usLangClass = 'US_Language' . str_replace( '-', '_', ucfirst( $wgLanguageCode) );
-	if (file_exists($IP.'/extensions/UnifiedSearch/languages/'. $usLangClass . '.php')) {
-		include_once($IP.'/extensions/UnifiedSearch/languages/'. $usLangClass . '.php' );
+	if (file_exists($IP.'/extensions/EnhancedRetrieval/languages/'. $usLangClass . '.php')) {
+		include_once($IP.'/extensions/EnhancedRetrieval/languages/'. $usLangClass . '.php' );
 	}
 	// fallback if language not supported
 	if ( !class_exists($usLangClass)) {
-		include_once('extensions/UnifiedSearch/languages/US_LanguageEn.php' );
+		include_once('extensions/EnhancedRetrieval/languages/US_LanguageEn.php' );
 		$aclgHaloLang = new US_LanguageEn();
 	} else {
 		$aclgHaloLang = new $usLangClass();
@@ -204,13 +204,13 @@ function wfUSInitialize($onlyTables) {
 
 function wfUSInitializeTables() {
 	global $IP;
-	require_once "$IP/extensions/UnifiedSearch/storage/US_StoreSQL.php";
+	require_once "$IP/extensions/EnhancedRetrieval/storage/US_StoreSQL.php";
 	USStore::getStore()->setup(true);
 }
 
 function wfUSDeInitializeTables() {
 	global $IP;
-	require_once "$IP/extensions/UnifiedSearch/storage/US_StoreSQL.php";
+	require_once "$IP/extensions/EnhancedRetrieval/storage/US_StoreSQL.php";
 	USStore::getStore()->drop(true);
 }
 
@@ -315,7 +315,7 @@ function smwf_ca_GetHTMLBody($page) {
 function smwfSynsetsInitializeTables() {
 
 	global $IP;
-	require_once($IP."/extensions/UnifiedSearch/synsets/SMW_Synsets.php");
+	require_once($IP."/extensions/EnhancedRetrieval/synsets/SMW_Synsets.php");
 	$s = new Synsets();
 	$s->setup();
 
@@ -325,7 +325,7 @@ function smwfSynsetsInitializeTables() {
 function smwfSynsetsDeInitializeTables() {
 
 	global $IP;
-	require_once($IP."/extensions/UnifiedSearch/synsets/SMW_Synsets.php");
+	require_once($IP."/extensions/EnhancedRetrieval/synsets/SMW_Synsets.php");
 	$s = new Synsets();
 	$s->drop();
 

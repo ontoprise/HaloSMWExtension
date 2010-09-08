@@ -1,14 +1,14 @@
 <?php
 /**
  * @file
- * @ingroup UnifiedSearchOAI
+ * @ingroup EnhancedRetrievalOAI
  */
 if( !defined( 'MEDIAWIKI' ) ) {
 	die();
 }
 
 global $IP;
-require_once( "$IP/extensions/UnifiedSearch/OAI/OAIFunctions.php" );
+require_once( "$IP/extensions/EnhancedRetrieval/OAI/OAIFunctions.php" );
 require_once( "$IP/includes/Export.php" );
 
 if( !function_exists( 'wfTimestamp2ISO8601' ) ) {

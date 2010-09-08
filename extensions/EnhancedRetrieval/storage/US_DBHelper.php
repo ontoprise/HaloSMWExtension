@@ -1,7 +1,7 @@
 <?php
 /**
  * @file
- * @ingroup UnifiedSearchStorage 
+ * @ingroup EnhancedRetrievalStorage 
  * 
  * Created on 19.10.2007
  *

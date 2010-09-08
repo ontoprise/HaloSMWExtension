@@ -1,7 +1,7 @@
 <?php
 /**
  * @file
- * @ingroup UnifiedSearchOAI
+ * @ingroup EnhancedRetrievalOAI
  */
 if( !class_exists( 'DOMAttr' ) ) {
 	echo

@@ -1,12 +1,12 @@
 <?php
 /**
  * @file
- * @ingroup UnifiedSearchPathSearch
+ * @ingroup EnhancedRetrievalPathSearch
  * 
- * @defgroup UnifiedSearchPathSearch Unified search path search
- * @ingroup UnifiedSearch
+ * @defgroup EnhancedRetrievalPathSearch Enhanced retrieval path search
+ * @ingroup EnhancedRetrieval
  */
-// Setup for PathSearch (part or the Unified Search extension) 
+// Setup for PathSearch (part or the Enhanced Retrieval extension) 
  
 
 $wgExtensionFunctions[] = 'wfUSPathSearchSetup';
@@ -43,11 +43,11 @@ function wfUSPathSearchAddHeader(& $out) {
                     'rel'   => 'stylesheet',
                     'type'  => 'text/css',
                     'media' => 'screen, projection',
-                    'href'  => $wgScriptPath . '/extensions/UnifiedSearch/skin/pathsearch.css'
+                    'href'  => $wgScriptPath . '/extensions/EnhancedRetrieval/skin/pathsearch.css'
                  )
     );
-    $out->addScript('<script type="text/javascript" src="'.$wgScriptPath . '/extensions/UnifiedSearch/scripts/pathsearch.js"></script>'."\n");
-    $out->addScript('<script type="text/javascript">var US_PATHSEARCH_DIR="'.$wgScriptPath.'/extensions/UnifiedSearch/PathSearch";</script>'."\n");
+    $out->addScript('<script type="text/javascript" src="'.$wgScriptPath . '/extensions/EnhancedRetrieval/scripts/pathsearch.js"></script>'."\n");
+    $out->addScript('<script type="text/javascript">var US_PATHSEARCH_DIR="'.$wgScriptPath.'/extensions/EnhancedRetrieval/PathSearch";</script>'."\n");
     return true;
 }
 

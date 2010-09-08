@@ -2,7 +2,7 @@
 
 /**
  * @file
- * @ingroup UnifiedSearch
+ * @ingroup EnhancedRetrieval
  * 
  * Query Expander augments search terms according to a given (SKOS-)ontology. It
  * uses synonyms, shortcuts, broader or narrower, subproperties or subcategories

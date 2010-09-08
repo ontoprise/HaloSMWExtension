@@ -2,7 +2,7 @@
 
 /**
  * @file
- * @ingroup UnifiedSearch
+ * @ingroup EnhancedRetrieval
  * 
  * Query Expander augments search terms.
  *

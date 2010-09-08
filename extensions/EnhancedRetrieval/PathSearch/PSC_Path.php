@@ -2,7 +2,7 @@
 
 /**
  * @file
- * @ingroup UnifiedSearchPathSearch
+ * @ingroup EnhancedRetrievalPathSearch
  * 
  * Holds functionality to exmine a path trough the existing Ontology of a wiki. 
  */

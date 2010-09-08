@@ -2,7 +2,7 @@
 
 /**
  * @file
- * @ingroup UnifiedSearch
+ * @ingroup EnhancedRetrieval
  * 
  * Implementation of Smith-Waterman algorithm.
  * Calculates the best matching sequence of two strings.

@@ -2,7 +2,7 @@
 
 /**
  * @file
- * @ingroup UnifiedSearchPathSearch
+ * @ingroup EnhancedRetrievalPathSearch
  * 
  * Core functionality for path search
  */
@@ -126,8 +126,8 @@
 				for ($i = 0; $i < $is; $i++) {
 					list($id, $direction) = explode("|", $properties[$i]);
 					$propName = ($direction == 1)
-					          ? $this->smwDataGetLink($id).' <img src="'.$wgScriptPath.'/extensions/UnifiedSearch/skin/images/ps_arrow_right.png" alt="&#9654;"/>'
-					          : '<img src="'.$wgScriptPath.'/extensions/UnifiedSearch/skin/images/ps_arrow_left.png" alt="&#9664;"/> '.$this->smwDataGetLink($id);
+					          ? $this->smwDataGetLink($id).' <img src="'.$wgScriptPath.'/extensions/EnhancedRetrieval/skin/images/ps_arrow_right.png" alt="&#9654;"/>'
+					          : '<img src="'.$wgScriptPath.'/extensions/EnhancedRetrieval/skin/images/ps_arrow_left.png" alt="&#9664;"/> '.$this->smwDataGetLink($id);
 					$center = '<td><table class="propSpacer"><tr><td width="100%"><hr style="height: 1px; color: black; background-color: black;"/></td><td><div class="property">'.$propName.'</div></td></tr></table></td>';
 					$left = '<td><table class="propSpacer"><tr><td></td><td class="propSpacerLeft"></td></tr><tr><td></td><td></td></tr></table></td>';
 					$right = '<td><table class="propSpacer"><tr><td class="propSpacerRight"></td><td></td></tr><tr><td></td><td></td></tr></table></td>';

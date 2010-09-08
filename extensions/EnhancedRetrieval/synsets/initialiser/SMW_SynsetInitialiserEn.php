@@ -1,7 +1,7 @@
 <?php
 /**
  * @file
- * @ingroup UnifiedSearchSynsetLanguage
+ * @ingroup EnhancedRetrievalSynsetLanguage
  * 
  * Created on 18.02.2009
  *
@@ -9,7 +9,7 @@
  */
 
 global $IP;
-require_once($IP."/extensions/UnifiedSearch/synsets/SMW_ISynsetInitialiser.php");
+require_once($IP."/extensions/EnhancedRetrieval/synsets/SMW_ISynsetInitialiser.php");
 
 /*
  * This class is responsible for filling the data base
@@ -23,10 +23,10 @@ class SynsetInitialiserEn implements ISynsetInitialiser {
 	 */
 	public function storeSynsetsFromSource(){
 		global $IP;
-		require_once($IP."/extensions/UnifiedSearch/synsets/storage/SMW_SynsetStorageSQL.php");
+		require_once($IP."/extensions/EnhancedRetrieval/synsets/storage/SMW_SynsetStorageSQL.php");
 		$synsetStorage = new SynsetStorageSQL();
 		
-		$fr = fopen ($IP.'/extensions/UnifiedSearch/synsets/initialiser/wn_s_en.pl', 'r' );
+		$fr = fopen ($IP.'/extensions/EnhancedRetrieval/synsets/initialiser/wn_s_en.pl', 'r' );
 
 		$count = 0;
 		//$synonyms = array();
@@ -65,10 +65,10 @@ class SynsetInitialiserEn implements ISynsetInitialiser {
 	 */
 	public function storeSynsets(){
 		global $IP;
-		require_once($IP."/extensions/UnifiedSearch/synsets/storage/SMW_SynsetStorageSQL.php");
+		require_once($IP."/extensions/EnhancedRetrieval/synsets/storage/SMW_SynsetStorageSQL.php");
 		$synsetStorage = new SynsetStorageSQL();
 
-		$fr = fopen ($IP.'/extensions/UnifiedSearch/synsets/initialiser/smw_synsets_En.sql', 'r' );
+		$fr = fopen ($IP.'/extensions/EnhancedRetrieval/synsets/initialiser/smw_synsets_En.sql', 'r' );
 		$synsetStorage->importSQLDump($fr);
 		fclose($fr);
 	}

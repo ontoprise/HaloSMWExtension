@@ -1,7 +1,7 @@
 <?php
 /**
  * @file
- * @ingroup UnifiedSearchLanguages
+ * @ingroup EnhancedRetrievalLanguages
  * 
  * @author: Kai K�hn
  * 
@@ -55,7 +55,7 @@ class US_LanguageEn {
 	    'us_semitolerantsearch' => 'semi-tolerant',
 	    'us_exactsearch' => 'exact',
     
-        'unifiedsearchstatistics' => 'Unified Search Statistics',
+        'enhancedretrievalstatistics' => 'Enhanced Retrieval Statistics',
         'us_statistics_docu' => 'Statistical information about search matches',
         'us_search_asc'=> 'Ascending',
         'us_search_desc' => 'Descending',

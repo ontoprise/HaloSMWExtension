@@ -2,7 +2,7 @@
 
  /**
   * @file
-  * @ingroup UnifiedSearchPathSearch
+  * @ingroup EnhancedRetrievalPathSearch
   * 
   * This object reads the appropriate tables of a wiki to find all existing categories and
   * properties. Also a structure is created that can tell whether a page of a certain category 

@@ -1,10 +1,10 @@
 <?php
 /**
  * @file
- * @ingroup UnifiedSearchMWSearch
+ * @ingroup EnhancedRetrievalMWSearch
  * 
- * @defgroup UnifiedSearchMWSearch MW Search extension
- * @ingroup UnifiedSearch
+ * @defgroup EnhancedRetrievalMWSearch MW Search extension
+ * @ingroup EnhancedRetrieval
  */
 /*
  * Copyright 2004, 2005 Kate Turner, Brion Vibber.

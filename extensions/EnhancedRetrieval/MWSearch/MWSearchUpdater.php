@@ -1,7 +1,7 @@
 <?php
 /**
  * @file
- * @ingroup UnifiedSearchMWSearch
+ * @ingroup EnhancedRetrievalMWSearch
  */
 // Requires PEAR XML_RPC module
 

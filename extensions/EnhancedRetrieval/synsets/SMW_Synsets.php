@@ -1,17 +1,17 @@
 <?php
 /**
  * @file
- * @ingroup UnifiedSearchSynsets
+ * @ingroup EnhancedRetrievalSynsets
  * 
- * @defgroup UnifiedSearchSynsets UnifiedSearch Synonyms 
- * @ingroup UnifiedSearch
+ * @defgroup EnhancedRetrievalSynsets EnhancedRetrieval Synonyms 
+ * @ingroup EnhancedRetrieval
  * Created on 18.02.2009
  *
  * @author Ingo Steinbauer
  */
 
 global $IP;
-require_once($IP."/extensions/UnifiedSearch/synsets/SMW_SynsetParserFunction.php");
+require_once($IP."/extensions/EnhancedRetrieval/synsets/SMW_SynsetParserFunction.php");
 
 /*
  * This class provides access to the synset functionality
@@ -24,14 +24,14 @@ class Synsets {
 	 */
 	public function setup(){
 		global $IP;
-		require_once($IP."/extensions/UnifiedSearch/synsets/storage/SMW_SynsetStorageSQL.php");
+		require_once($IP."/extensions/EnhancedRetrieval/synsets/storage/SMW_SynsetStorageSQL.php");
 		$st = new SynsetStorageSQL();
 		$st->setup(false);
 
 		global $wgLanguageCode;
 		if (!empty($wgLanguageCode)) {
 			$lng = ucfirst($wgLanguageCode);
-			$fileName = $IP."/extensions/UnifiedSearch/synsets/initialiser/SMW_SynsetInitialiser".$lng.".php";
+			$fileName = $IP."/extensions/EnhancedRetrieval/synsets/initialiser/SMW_SynsetInitialiser".$lng.".php";
 			if (file_exists($fileName)){
 				require_once($fileName);
 				$cName = "SynsetInitialiser".$lng;
@@ -40,7 +40,7 @@ class Synsets {
 		}
 
 		if ( !class_exists($cName)) {
-			require_once($IP."/extensions/UnifiedSearch/synsets/initialiser/SMW_SynsetInitialiserEn.php");
+			require_once($IP."/extensions/EnhancedRetrieval/synsets/initialiser/SMW_SynsetInitialiserEn.php");
 			$si = new SynsetInitialiserEn();
 		}
 
@@ -50,7 +50,7 @@ class Synsets {
 
 	public function drop(){
 		global $IP;
-		require_once($IP."/extensions/UnifiedSearch/synsets/storage/SMW_SynsetStorageSQL.php");
+		require_once($IP."/extensions/EnhancedRetrieval/synsets/storage/SMW_SynsetStorageSQL.php");
 		$st = new SynsetStorageSQL();
 		$st->drop(true);
 
@@ -62,14 +62,14 @@ class Synsets {
 	 */
 	public function setupFromSource(){
 		global $IP;
-		require_once($IP."/extensions/UnifiedSearch/synsets/storage/SMW_SynsetStorageSQL.php");
+		require_once($IP."/extensions/EnhancedRetrieval/synsets/storage/SMW_SynsetStorageSQL.php");
 		$st = new SynsetStorageSQL();
 		$st->setup(false);
 
 		global $wgLanguageCode;
 		if (!empty($wgLanguageCode)) {
 			$lng = ucfirst($wgLanguageCode);
-			$fileName = $IP."/extensions/UnifiedSearch/synsets/initialiser/SMW_SynsetInitialiser".$lng.".php";
+			$fileName = $IP."/extensions/EnhancedRetrieval/synsets/initialiser/SMW_SynsetInitialiser".$lng.".php";
 			if (file_exists($fileName)){
 				require_once($fileName);
 				$cName = "SynsetInitialiser".$lng;
@@ -78,7 +78,7 @@ class Synsets {
 		}
 
 		if ( !class_exists($cName)) {
-			require_once($IP."/extensions/UnifiedSearch/synsets/initialiser/SMW_SynsetInitialiserEn.php");
+			require_once($IP."/extensions/EnhancedRetrieval/synsets/initialiser/SMW_SynsetInitialiserEn.php");
 			$si = new SynsetInitialiserEn();
 		}
 
@@ -97,7 +97,7 @@ class Synsets {
 	 */
 	public function getSynsets($term){
 		global $IP;
-		require_once($IP."/extensions/UnifiedSearch/synsets/storage/SMW_SynsetStorageSQL.php");
+		require_once($IP."/extensions/EnhancedRetrieval/synsets/storage/SMW_SynsetStorageSQL.php");
 		$st = new SynsetStorageSQL();
 		return $st->getSynsets($term);
 

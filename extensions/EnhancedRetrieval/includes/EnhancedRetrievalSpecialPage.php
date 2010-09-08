@@ -1,7 +1,7 @@
 <?php
 /**
  * @file
- * @ingroup UnifiedSearch
+ * @ingroup EnhancedRetrieval
  * 
  * Created on 28.01.2009
  *
@@ -196,7 +196,7 @@ class USSpecialPage extends SpecialPage {
 			$highlight = $this->highlight($ns, $restrictNS) ? "us_refinelinks_highlighted" : "us_refinelinks";
 			$textcolor = $this->highlight($ns, $restrictNS) ? 'color: white;"' : ""; // overwrite text color, if it is set by the skin
 			$row .= '<td class="filtercolumn" '.$style.'><div><img alt="'.wfMsg('us_search_tooltip_refine', $nsName).'" title="'.wfMsg('us_search_tooltip_refine', $nsName).
-                     '"src="'.UnifiedSearchResultPrinter::getImageURI($img ).'"/><a style="'.$textcolor.'" class="'.$highlight.'" href="'.$nsURL.'">'.$nsName.
+                     '"src="'.EnhancedRetrievalResultPrinter::getImageURI($img ).'"/><a style="'.$textcolor.'" class="'.$highlight.'" href="'.$nsURL.'">'.$nsName.
                      '</a></div></td><td '.$style.'>|</td>';
 			$nsURL = next($namespaceFilterURLs);
 			$c++;
@@ -264,7 +264,7 @@ class USSpecialPage extends SpecialPage {
 			$fulltextResults .= '<div style="margin:15px;">'.wfMsg('us_noresults_text', $search).'</div>';
 		} else {
 			$fulltextResults .= "<div id=\"us_resultinfo\">".wfMsg('us_results').": $resultInfo</div>";
-			$fulltextResults .= UnifiedSearchResultPrinter::serialize($searchResults, $search);
+			$fulltextResults .= EnhancedRetrievalResultPrinter::serialize($searchResults, $search);
 		}
 		
 		$fulltextResults .= '</div>';
@@ -498,7 +498,7 @@ class USSpecialPage extends SpecialPage {
 		while ($nextFulltext !== false) {
 
 			if ($nextFulltext != false ) {
-				$lr = UnifiedSearchResult::newFromLuceneResult($nextFulltext, $cleanTerms);
+				$lr = EnhancedRetrievalResult::newFromLuceneResult($nextFulltext, $cleanTerms);
 				$resultSet[] = $lr;
 
 			}

@@ -25,11 +25,11 @@ $wgSearchType = 'LuceneSearch';
 $wgLuceneHost = 'localhost';
 $wgLucenePort = 8123;
 $wgLuceneSearchVersion = 2.1; 
-require_once("extensions/UnifiedSearch/includes/UnifiedSearch.php");
+require_once("extensions/EnhancedRetrieval/includes/EnhancedRetrieval.php");
 ---
 
 2. Then run:
-php {wiki-path}/extensions/UnifiedSearch/maintenance/setup.php
+php {wiki-path}/extensions/EnhancedRetrieval/maintenance/setup.php
 
 ---
 3. Run the LuceneServer
@@ -45,7 +45,7 @@ The following is optional:
 
 If you like to use query expansion based on synonym sets from WordNet/OpenThesaurus, also add:
 ---
-require_once("extensions/UnifiedSearch/synsets/SMW_Synsets.php");
+require_once("extensions/EnhancedRetrieval/synsets/SMW_Synsets.php");
 $usgSynsetExpansion = true;
 ---
 

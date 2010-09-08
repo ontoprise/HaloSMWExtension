@@ -1,7 +1,7 @@
 <?php
 /**
  * @file
- * @ingroup UnifiedSearchMWSearch
+ * @ingroup EnhancedRetrievalMWSearch
  */
 require_once( 'MWSearchUpdater.php' );
 

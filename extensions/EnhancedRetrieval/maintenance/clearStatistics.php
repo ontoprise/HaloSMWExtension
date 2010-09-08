@@ -1,10 +1,10 @@
 <?php
 /**
  * @file
- * @ingroup UnifiedSearchMaintenance
+ * @ingroup EnhancedRetrievalMaintenance
  * 
- * @defgroup UnifiedSearchMaintenance Unified search maintenance scripts
- * @ingroup UnifiedSearch
+ * @defgroup EnhancedRetrievalMaintenance Enhanced retrieval maintenance scripts
+ * @ingroup EnhancedRetrieval
  * 
  * Clear the search statistics table.
  *

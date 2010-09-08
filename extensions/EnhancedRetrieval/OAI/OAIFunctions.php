@@ -1,10 +1,10 @@
 <?php
 /**
  * @file
- * @ingroup UnifiedSearchOAI
+ * @ingroup EnhancedRetrievalOAI
  * 
- * @defgroup UnifiedSearchOAI UnifiedSearch incremental updater
- * @ingroup UnifiedSearch
+ * @defgroup EnhancedRetrievalOAI EnhancedRetrieval incremental updater
+ * @ingroup EnhancedRetrieval
  */
 
 /**

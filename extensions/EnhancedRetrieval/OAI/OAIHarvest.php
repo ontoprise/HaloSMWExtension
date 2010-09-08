@@ -2,7 +2,7 @@
 
 /**
  * @file
- * @ingroup UnifiedSearchOAI
+ * @ingroup EnhancedRetrievalOAI
  * 
  * OAI-PMH update harvester extension for MediaWiki 1.6+
  *

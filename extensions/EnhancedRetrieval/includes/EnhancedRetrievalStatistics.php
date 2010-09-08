@@ -1,7 +1,7 @@
 <?php
 /**
  * @file
- * @ingroup UnifiedSearch
+ * @ingroup EnhancedRetrieval
  * 
  * @author Kai K�hn
  */
@@ -10,7 +10,7 @@ function smwfDoSpecialUSSearch() {
 	global $wgOut;
 	wfProfileIn('smwfDoSpecialUSSearch (SMW)');
 	list( $limit, $offset ) = wfCheckLimits();
-	$rep = new UnifiedSearchStatistics();
+	$rep = new EnhancedRetrievalStatistics();
 	$result = $rep->doQuery( $offset, $limit );
 
 	wfProfileOut('smwfDoSpecialUSSearch (SMW)');
@@ -18,21 +18,21 @@ function smwfDoSpecialUSSearch() {
 }
 
 /**
- * UnifiedSearchStatistics displays statistical information about
+ * EnhancedRetrievalStatistics displays statistical information about
  * search matches and tries.
  *
  * @author: Kai K�hn
  *
  */
-class UnifiedSearchStatistics extends QueryPage {
+class EnhancedRetrievalStatistics extends QueryPage {
 	
 	
 	function getName() {
-		return "UnifiedSearchStatistics";
+		return "EnhancedRetrievalStatistics";
 	}
 	function getPageHeader() {
 		$html = '<p>' . wfMsg('us_statistics_docu') . "</p><br />\n";
-		$specialAttPage = Title::newFromText("UnifiedSearchStatistics", NS_SPECIAL);
+		$specialAttPage = Title::newFromText("EnhancedRetrievalStatistics", NS_SPECIAL);
 		global $wgRequest;
 		$sort = $wgRequest->getVal("sort") == NULL ? 0 : $wgRequest->getVal("sort") + 0;
 		$type = $wgRequest->getVal("type") == NULL ? 0 : $wgRequest->getVal("type") + 0;

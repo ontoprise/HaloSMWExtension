@@ -1,7 +1,7 @@
 <?php
 /**
  * @file
- * @ingroup UnifiedSearchMWSearch
+ * @ingroup EnhancedRetrievalMWSearch
  */
 class LuceneSearch extends SearchEngine {
 	/**

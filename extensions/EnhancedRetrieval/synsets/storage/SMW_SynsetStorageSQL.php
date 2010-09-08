@@ -1,16 +1,16 @@
 <?php
 /**
  * @file
- * @ingroup UnifiedSearchSynsetsStorage
+ * @ingroup EnhancedRetrievalSynsetsStorage
  * 
- * @defgroup UnifiedSearchSynsetsStorage UnifiedSearchSynsets storage layer
- * @ingroup UnifiedSearchSynsets
+ * @defgroup EnhancedRetrievalSynsetsStorage EnhancedRetrievalSynsets storage layer
+ * @ingroup EnhancedRetrievalSynsets
  * 
  * @author Ingo Steinbauer
  */
 
 global $IP;
-require_once($IP."/extensions/UnifiedSearch/synsets/SMW_ISynsetStorage.php");
+require_once($IP."/extensions/EnhancedRetrieval/synsets/SMW_ISynsetStorage.php");
 
 /*
  * This class is responsible for database access

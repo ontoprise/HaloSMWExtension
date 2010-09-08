@@ -2,7 +2,7 @@
 
 /**
  * @file
- * @ingroup UnifiedSearchOAI
+ * @ingroup EnhancedRetrievalOAI
  * 
  * OAI-PMH repository extension for MediaWiki 1.4+
  *

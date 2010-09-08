@@ -1,10 +1,10 @@
 <?php
 /**
  * @file
- * @ingroup UnifiedSearchStorage 
+ * @ingroup EnhancedRetrievalStorage 
  * 
- * @defgroup UnifiedSearchStorage UnifiedSearch storage layer
- * @ingroup UnifiedSearch
+ * @defgroup EnhancedRetrievalStorage EnhancedRetrieval storage layer
+ * @ingroup EnhancedRetrieval
  * 
  * @author Kai Kühn
  * 
@@ -23,10 +23,10 @@ abstract class USStore {
         if (self::$STORE == NULL) {
             if ($smwgDefaultStore == 'SMWSQLStore2' || 'SMWHaloStore2') {
             	// may use SMW or SMWHalo store
-                require_once($IP . '/extensions/UnifiedSearch/storage/US_StoreSQL.php');
+                require_once($IP . '/extensions/EnhancedRetrieval/storage/US_StoreSQL.php');
                 self::$STORE = new USStoreSQL();
             } else {
-                trigger_error("The store '$smwgDefaultStore' is not implemented for the UnifiedSearch extension. Please use 'SMWSQLStore2'.");
+                trigger_error("The store '$smwgDefaultStore' is not implemented for the EnhancedRetrieval extension. Please use 'SMWSQLStore2'.");
             } 
         }
         return self::$STORE;
@@ -102,7 +102,7 @@ abstract class USStore {
     public abstract function getSearchTries($limit, $offset, $ascOrDesc, $sortFor);
 
     /**
-     * Setups database for UnifiedSearch extension
+     * Setups database for EnhancedRetrieval extension
      *
      * @param boolean $verbose
      */

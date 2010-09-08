@@ -1,4 +1,4 @@
-Unified Search extension ChangeLog
+Enhanced Retrieval extension ChangeLog
 ==================================
 
 
@@ -14,5 +14,8 @@ VERSION XXXX
 
 
   BUGFIXES:
+  	Bugfix 12380 -  Rename Unified Search to Enhanced retrieval in SVN
+		http://smwforum.ontoprise.com/smwbugs/show_bug.cgi?id=12380
+  
 
 

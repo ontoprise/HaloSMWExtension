@@ -1,6 +1,6 @@
 /**
  * @file
- * @ingroup UnifiedSearchPathSearch
+ * @ingroup EnhancedRetrievalPathSearch
  */
 
 var us_psc_done;

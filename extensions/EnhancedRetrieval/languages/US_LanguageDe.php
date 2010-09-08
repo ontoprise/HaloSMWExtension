@@ -1,10 +1,10 @@
 <?php
 /**
  * @file
- * @ingroup UnifiedSearchLanguages
+ * @ingroup EnhancedRetrievalLanguages
  * 
- * @defgroup UnifiedSearchLanguages
- * @ingroup UnifiedSearch
+ * @defgroup EnhancedRetrievalLanguages
+ * @ingroup EnhancedRetrieval
  * @author: Kai K�hn
  * 
  * Created on: 27.01.2009
@@ -58,7 +58,7 @@ class US_LanguageDe {
         'us_tolerantsearch' => 'tolerant',
         'us_semitolerantsearch' => 'mittel',
         'us_exactsearch' => 'exakt',
-        'unifiedsearchstatistics' => 'Statistik Allgemeine Suche',
+        'enhancedretrievalstatistics' => 'Statistik Allgemeine Suche',
         'us_statistics_docu' => 'Statistische Informationen &uuml;ber Suchtreffer. 
 						        <br>Damit k&ouml;nnen sie z.B. Suchterme identifizieren, die h&auml;ufig benutzt, 
 						        aber wenig oder keine Treffer erzielen.',

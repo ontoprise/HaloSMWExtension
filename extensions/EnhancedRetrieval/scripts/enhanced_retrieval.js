@@ -1,6 +1,6 @@
 /**
  * @file
- * @ingroup UnifiedSearch
+ * @ingroup EnhancedRetrieval
  * 
  */
  
@@ -9,8 +9,8 @@ var csLoadObserver;
 if (csLoadObserver != null) Event.stopObserving(window, 'load', csLoadObserver);
 
  
-var UnifiedSearch = Class.create();
-UnifiedSearch.prototype = {
+var EnhancedRetrieval = Class.create();
+EnhancedRetrieval.prototype = {
     initialize: function() {
     
     },
@@ -46,7 +46,7 @@ ToleranceSelector.prototype = {
     },
     
     activate: function() {
-        var initialValue = smwhg_unifiedsearch.getCookie("tolerance-slider");
+        var initialValue = smwhg_enhancedretrieval.getCookie("tolerance-slider");
         if (initialValue == null) initialValue = 0; 
         
         // set tolerance selector
@@ -96,4 +96,4 @@ ToleranceSelector.prototype = {
 
 var smwhg_toleranceselector = new ToleranceSelector();
 Event.observe(window, 'load', smwhg_toleranceselector.activate.bind(smwhg_toleranceselector));
-var smwhg_unifiedsearch = new UnifiedSearch();
+var smwhg_enhancedretrieval = new EnhancedRetrieval();

@@ -1,7 +1,7 @@
 <?php
 /**
  * @file
- * @ingroup UnifiedSearchSynsets
+ * @ingroup EnhancedRetrievalSynsets
  * 
  * @author Ingo Steinbauer
  */
@@ -39,7 +39,7 @@ function synsetPF_Render( &$parser) {
 	$term = trim($parameters[1]);
 	
 	global $IP;
-	require_once($IP."/extensions/UnifiedSearch/synsets/storage/SMW_SynsetStorageSQL.php");
+	require_once($IP."/extensions/EnhancedRetrieval/synsets/storage/SMW_SynsetStorageSQL.php");
 	
 	$st = new SynsetStorageSQL();
 	$synonyms = $st->getSynsets($term);

@@ -1,7 +1,7 @@
 <?php
 /**
  * @file
- * @ingroup UnifiedSearchSynsets
+ * @ingroup EnhancedRetrievalSynsets
  * 
  * @author Ingo Steinbauer
  */
