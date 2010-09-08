@@ -347,9 +347,11 @@
 				</xsl:if>
 			</td>
 		</tr>
+		<xsl:if test="count(metadata/property) > 0">
 		<tr>
 			<xsl:call-template name="metadata" />
 		</tr>
+		</xsl:if>
 	</xsl:template>
 
 	<xsl:template match="annotationsList">
@@ -504,9 +506,11 @@
 				</tr>
 			</xsl:if>
 		</xsl:for-each>
+		<xsl:if test="count(metadata/property) > 0">
 		<tr>
 			<xsl:call-template name="metadata" />
 		</tr>
+		</xsl:if>
 	</xsl:template>
 
 
