@@ -648,8 +648,9 @@ class AutoCompletionHandler {
 
 				// make titles but eliminate duplicates before
 				$textTitles = array();
+								
 				foreach($queryResults as $r) {
-					if (empty($userInput) || stripos((string) $r[0], $userInput) !== false) {
+					if (empty($userInput) || stripos(str_replace(" ", "_", (string) $r[0]), $userInput) !== false) {
 						$textTitles[] = (string) $r[0];
 						if (count($textTitles) >= SMW_AC_MAX_RESULTS) break;
 					}
