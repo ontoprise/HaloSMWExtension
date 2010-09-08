@@ -384,13 +384,13 @@ createContent: function() {
 		} else {
 			var tsFeatures = request.responseText.evalJSON();
 			var msg = [];
-			if (tsFeatures.INVERSE !== true) {
+			if (tsFeatures.features.indexOf('INVERSE') == -1) {
 				msg.push(gLanguage.getMessage('PC_INVERSE'));
 			}
-			if (tsFeatures.TRANSITIVE !== true) {
+			if (tsFeatures.features.indexOf('TRANSITIVE') == -1) {
 				msg.push(gLanguage.getMessage('PC_TRANSITIVE'));
 			}
-			if (tsFeatures.SYMETRICAL !== true) {
+			if (tsFeatures.features.indexOf('SYMETRICAL') == -1) {
 				msg.push(gLanguage.getMessage('PC_SYMMETRICAL'));
 			}
 		}
