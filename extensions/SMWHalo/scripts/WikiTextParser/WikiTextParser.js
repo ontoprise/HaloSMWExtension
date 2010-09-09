@@ -1081,14 +1081,14 @@ WikiTextParser.prototype = {
 	 * 
 	 */
 	 parseRule: function(ruleTxt, start, end) {
-		var natives = ruleTxt.match(/.*native\s*=\s*"(.*?)"/);
+		var isNative = ruleTxt.match(/.*native\s*=\s*"(.*?)"/);
 		var rulename = ruleTxt.match(/.*name\s*=\s*"(.*?)"/);
 		var type = ruleTxt.match(/.*type\s*=\s*"(.*?)"/);
 		var rule = ruleTxt.match(/<rule(?:.|\s)*?>((.|\s)*?)<\/rule>/m);
 		
-		natives = natives && natives[1] == "true";
+		isNative = isNative && isNative[1] == "true";
 		
-		if (!natives && rulename && type && rule) {
+		if (!isNative && rulename && type && rule) {
 			rulename = rulename[1];
 			type = type[1];
 			rule = rule[1];
