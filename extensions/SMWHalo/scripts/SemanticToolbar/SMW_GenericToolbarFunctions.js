@@ -49,10 +49,7 @@ createList: function(list,id) {
 				divlist += '<a id="rel-menu-annotate" href="javascript:relToolBar.newItem()" class="menulink">'+gLanguage.getMessage('ANNOTATE')+'</a>';
 			}
 			divlist += '<a href="javascript:relToolBar.newRelation()" class="menulink">'+gLanguage.getMessage('CREATE')+'</a>';
-			//regex for checking attribute namespace. 
-			//since there's no special namespace number anymore since atr and rel are united 
-			var attrregex =	new RegExp("Attribute:.*");
-			if (wgNamespaceNumber == 100 || wgNamespaceNumber == 102  || attrregex.exec(wgPageName) != null) {
+			if (this.createSubSupAllowed()) {			
 				divlist += "<a href=\"javascript:relToolBar.CreateSubSup()\" class=\"menulink\">"+gLanguage.getMessage('SUB_SUPER')+"</a>";
 			}
   			divlist += '<a id="rel-menu-has-part" href="javascript:relToolBar.newPart()" class="menulink">'+gLanguage.getMessage('MHAS_PART')+'</a>';
@@ -191,6 +188,20 @@ createList: function(list,id) {
   	return divlist;
 },
 
+createSubSupAllowed: function() {
+	var allowed = false;
+	//regex for checking attribute namespace. 
+	//since there's no special namespace number anymore since atr and rel are united 
+	var attrregex =	new RegExp("Attribute:.*");
+	if (wgNamespaceNumber == 100 
+	    || wgNamespaceNumber == 102 
+		  || attrregex.exec(wgPageName) != null
+		  || (typeof smwhgSfTargetNamespace !== undefined 
+          && smwhgSfTargetNamespace == 102)) { // a property is edited with SemanticForms 
+		allowed = true;
+	}	
+	return allowed;
+},
 
 /*deprecated*/
 cutdowntosize: function(word, size /*, Optional: maxrows */ ){

@@ -1,4 +1,4 @@
-﻿/*  Copyright 2007, ontoprise GmbH
+/*  Copyright 2007, ontoprise GmbH
 *  This file is part of the halo-Extension.
 *
 *   The halo-Extension is free software; you can redistribute it and/or modify
@@ -92,10 +92,10 @@ var wgUserLanguageStrings = {
 	'PROPERTY_ACCESS_DENIED'  : '(e)You are not authorized to annotate this property.',	
 	'PROPERTY_ACCESS_DENIED_TT': 'You are not authorized to annotate this property.',	
 	'CANT_SAVE_FORBIDDEN_PROPERTIES': 'The article contains write protected properties and can not be saved.',
-	'CREATE_SUPER_PROPERTY'   : 'Creëer "$-title" en maak "$t" super-eigenschap van "$-title"',
-	'CREATE_SUB_PROPERTY'     : 'Creëer "$-title" en maak "$t" sub-eigenschap van "$-title"',
-	'MAKE_SUPER_PROPERTY'     : 'Maak "$t" super-eigenschap van "$-title"',
-	'MAKE_SUB_PROPERTY'       : 'Maak "$t" sub-eigenschap van "$-title"',
+	'CREATE_SUPER_PROPERTY'   : 'Creëer "$-title" en maak "$sftt" super-eigenschap van "$-title"',
+	'CREATE_SUB_PROPERTY'     : 'Creëer "$-title" en maak "$sftt" sub-eigenschap van "$-title"',
+	'MAKE_SUPER_PROPERTY'     : 'Maak "$sftt" super-eigenschap van "$-title"',
+	'MAKE_SUB_PROPERTY'       : 'Maak "$sftt" sub-eigenschap van "$-title"',
 	'ADD_TYPE'                : 'Type toevoegen',
 	'ADD_RANGE'               : 'Waardenbereik toevoegen',
 	'DOMAIN'                  : 'Domein:',
@@ -133,10 +133,10 @@ var wgUserLanguageStrings = {
 	'CATEGORY_DOES_NOT_EXIST' : '(w)Deze categorie bestaat niet.',
 	'CATEGORY_ALREADY_EXISTS' : '(w)Deze categorie bestaat reeds.',
 	'CATEGORY_NAME_TOO_LONG'  : '(e)De naam van deze categorie is te lang of bevat ongeldige karakters.',
-	'CREATE_SUPER_CATEGORY'   : 'Creëer "$-title" en maak "$t" super-categorie van "$-title"',
-	'CREATE_SUB_CATEGORY'     : 'Creëer "$-title" en maak "$t" sub-categorie van "$-title"',
-	'MAKE_SUPER_CATEGORY'     : 'Maak "$t" super-categorie van "$-title"',
-	'MAKE_SUB_CATEGORY'       : 'Maak "$t" sub-categorie van "$-title"',
+	'CREATE_SUPER_CATEGORY'   : 'Creëer "$-title" en maak "$sftt" super-categorie van "$-title"',
+	'CREATE_SUB_CATEGORY'     : 'Creëer "$-title" en maak "$sftt" sub-categorie van "$-title"',
+	'MAKE_SUPER_CATEGORY'     : 'Maak "$sftt" super-categorie van "$-title"',
+	'MAKE_SUB_CATEGORY'       : 'Maak "$sftt" sub-categorie van "$-title"',
 	'DEFINE_SUB_SUPER_CAT'    : 'Definieer een sub- of super-categorie.',
 	'CREATE_SUB'              : 'Creëer sub',
 	'CREATE_SUPER'            : 'Creëer super',

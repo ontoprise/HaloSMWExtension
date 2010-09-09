@@ -158,7 +158,8 @@ function smwgHaloSetupExtension() {
 	$wgHooks['OntoSkinTemplateToolboxEnd'][] = 'smwfOntoSkinTemplateToolboxEnd';
 	$wgHooks['OntoSkinTemplateNavigationEnd'][] = 'smwfOntoSkinTemplateNavigationEnd';
 
-
+	$wgHooks['sfSetTargetName'][]     		= 'smwfOnSfSetTargetName';
+	
 
 	global $wgRequest;
 
@@ -1653,3 +1654,32 @@ function smwfQRCInitializeTables(){
 	return true;
 }
 
+/**
+* This function is called from the hook 'sfSetTargetName' in SemanticForms. It adds a
+* JavaScript line that initializes the following variables that correspond to
+* the current title:
+* smwhgSfTargetTitle - the title of the article that is edited with SF (without namespace)
+* smwhgSfTargetPageName - the full title of the article that is edited with SF with namespace
+* smwhgSfTargetNamespace - the namespace ID of the article that is edited with SF
+* 
+* @param string $titleName
+* 	Name of the article that is edited with Semantic Forms
+*  
+*/
+function smwfOnSfSetTargetName($titleName) {
+	global $wgOut, $wgJsMimeType;
+	if (!empty($titleName)) {
+		$t = Title::newFromText($titleName);
+		$ttext = $t->getText();
+		$tfulltext = $t->getFullText();
+		$namespace = $t->getNamespace();
+		$script = "<script type= \"$wgJsMimeType\">/*<![CDATA[*/\n";
+		$script .= "smwhgSfTargetTitle = '$ttext';\n";
+		$script .= "smwhgSfTargetPageName = '$tfulltext';\n";
+		$script .= "smwhgSfTargetNamespace = $namespace;\n";
+		$script .= "\n/*]]>*/</script>\n";
+			
+		$wgOut->addScript($script);
+	}
+	return true;
+}

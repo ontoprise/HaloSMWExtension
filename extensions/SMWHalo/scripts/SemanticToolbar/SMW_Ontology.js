@@ -383,11 +383,13 @@ OntologyModifier.prototype = {
 		}
 		var schemaProp = this.getSchemaProperties();
 		if (   wgNamespaceNumber == 102    // SMW_NS_PROPERTY
-		    || wgNamespaceNumber == 100) { // SMW_NS_RELATION
+		    || wgNamespaceNumber == 100    // SMW_NS_RELATION
+		    || (typeof smwhgSfTargetNamespace !== 'undefined'
+            && smwhgSfTargetNamespace == 102)) { // Special treatment for target pages of semantic forms
 			this.createArticle(gLanguage.getMessage('PROPERTY_NS')+title, 
 							 initialContent, 
 							 schemaProp + 
-							 "\n[[_SUBP::"+wgPageName+"]]",
+							 "\n[[_SUBP::"+(typeof smwhgSfTargetNamespace !== 'undefined' ? smwhgSfTargetPageName : wgPageName)+"]]",
 							 gLanguage.getMessage('CREATE_SUB_PROPERTY'), 
 							 openNewArticle);
 			
@@ -424,7 +426,9 @@ OntologyModifier.prototype = {
 			wtp = new WikiTextParser();
 		}
 		if (   wgNamespaceNumber == 102 // SMW_NS_PROPERTY
-		    || wgNamespaceNumber == 100) {  // SMW_NS_RELATION
+		    || wgNamespaceNumber == 100 // SMW_NS_RELATION
+		    || (typeof smwhgSfTargetNamespace !== 'undefined'
+            && smwhgSfTargetNamespace == 102)) { // Special treatment for target pages of semantic forms
 			this.createArticle(gLanguage.getMessage('PROPERTY_NS')+title, 
 							 initialContent, 
 							 schemaProp,

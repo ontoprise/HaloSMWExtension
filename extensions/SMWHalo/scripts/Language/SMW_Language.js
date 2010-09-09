@@ -85,6 +85,7 @@ Language.prototype = {
 		msg = msg.replace(/\$n/g,wgCanonicalNamespace); 
 		msg = msg.replace(/\$p/g,wgPageName);
 		msg = msg.replace(/\$t/g,wgTitle);
+		msg = msg.replace(/\$sftt/g, typeof smwhgSfTargetTitle !== 'undefined' ? smwhgSfTargetTitle : wgTitle); // Semantic Forms target title
 		msg = msg.replace(/\$u/g,wgUserName);
 		msg = msg.replace(/\$s/g,wgServer);
 		return msg;
