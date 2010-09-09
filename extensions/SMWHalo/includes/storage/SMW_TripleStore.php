@@ -719,8 +719,9 @@ class SMWTripleStore extends SMWStore {
 				$resultPages[] = SMWDataValueFactory::newTypeIDValue('_wpg');
 			}
 		}
+		
 
-		foreach($mapPRTOColumns as $pr => $column) reset($mapPRTOColumns[$pr]);
+		
 
 		// create and add result rows
 		// iterate result rows and add an SMWResultArray object for each field
@@ -729,7 +730,10 @@ class SMWTripleStore extends SMWStore {
 		foreach ($results as $r) {
 			$row = array();
 			$columnIndex = 0; // column = n-th XML binding node
-
+			
+			// reset column arrays
+            foreach($mapPRTOColumns as $pr => $column) reset($mapPRTOColumns[$pr]);
+            
 			$children = $r->children(); // $chilren->binding denote all binding nodes
 			foreach ($children->binding as $b) {
 
@@ -740,6 +744,8 @@ class SMWTripleStore extends SMWStore {
 					$columnIndex++;
 					continue;
 				}
+				
+				// get current result column of the variable
 				$resultColumn = current($mapPRTOColumns[$var_name]);
 				next($mapPRTOColumns[$var_name]);
 
