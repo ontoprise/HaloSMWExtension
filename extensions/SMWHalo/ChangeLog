@@ -1,6 +1,11 @@
 SMWHalo extension ChangeLog
 ===========================
+VERSION 1.5.2
 
+	BUGFIXES
+		Bugfix 12370 -  Create Super/Subproperty missing
+		
+		
 VERSION 1.5.1 PATCH LEVEL 1
 
 
