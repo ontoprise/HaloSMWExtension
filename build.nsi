@@ -621,7 +621,7 @@ Function changeConfigForFullXAMPP
     
     ; Make halowiki directory accessible by Apache  
     DetailPrint "Update httpd.conf"  
-    nsExec::ExecToLog '"$INSTDIR\php\php.exe" "$INSTDIR\htdocs\mediawiki\installer\changeHttpd.php" httpd="$INSTDIR\apache\conf\httpd.conf" wiki-path=mediawiki fs-path="$INSTDIR\htdocs\mediawiki"'
+    nsExec::ExecToLog '"$INSTDIR\php\php.exe" "$INSTDIR\htdocs\mediawiki\installer\changeHttpd.php" httpd="$INSTDIR\apache\conf\httpd.conf" wiki-path=mediawiki fs-path="$INSTDIR\htdocs\mediawiki" memcache=true'
     
     ; Set PHP path for deployment framework
     DetailPrint "Set PHP path for deployment framework"  
