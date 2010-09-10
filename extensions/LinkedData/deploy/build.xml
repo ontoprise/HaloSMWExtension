@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <project basedir="." default="LinkedData_build" name="LinkedData">
-	<target name="LinkedData_build" depends="deployscripts">
+	<target name="LinkedData_build" depends="versionhint">
 		<delete dir="bin/zip" />
 		<delete file="bin/LinkedData*.zip" />
 		<mkdir dir="bin/zip" />
@@ -65,9 +65,6 @@
             <arg value="../deploy.xml" />
             <arg value="bin/LinkedData.zip" />
         </exec>		
-	</target>
-
-   	<target name="deployscripts">
 	</target>
 
    	<target name="versionhint">
