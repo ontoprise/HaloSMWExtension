@@ -20,11 +20,16 @@
  * 
  * Exports the deploy descriptor for an ontology bundle.
  *
- * @author: Kai Kühn
+ * @author: Kai Kï¿½hn
  */
-require_once( '../../../maintenance/commandLine.inc' );
-require_once('../smwadmin/DF_Tools.php');
-require_once('../../io/export/DF_DeployUploadExporter.php');
+
+global $rootDir;
+$rootDir = dirname(__FILE__);
+$rootDir = str_replace("\\", "/", $rootDir);
+$rootDir = realpath($rootDir."/../../");
+require_once($rootDir. '/../maintenance/commandLine.inc' );
+require_once($rootDir.'/tools/smwadmin/DF_Tools.php');
+require_once($rootDir.'/io/export/DF_DeployUploadExporter.php');
 
 $langClass = "DF_Language_$wgLanguageCode";
 if (!file_exists("../../languages/$langClass.php")) {

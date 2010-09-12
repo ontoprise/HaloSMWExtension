@@ -5,10 +5,16 @@
  * 
  * Extracts deploy descriptors and writes them to a given location.
  * 
- * @author: Kai Kühn / ontoprise / 2009
+ * @author: Kai Kï¿½hn / ontoprise / 2009
  */
-require_once("../../descriptor/DF_DeployDescriptor.php");
-require_once("../../tools/smwadmin/DF_Tools.php");
+
+global $rootDir;
+$rootDir = dirname(__FILE__);
+$rootDir = str_replace("\\", "/", $rootDir);
+$rootDir = realpath($rootDir."/../../");
+
+require_once($rootDir."/descriptor/DF_DeployDescriptor.php");
+require_once($rootDir."/tools/smwadmin/DF_Tools.php");
 
 function getLocalPackages($ext_dir) {
 

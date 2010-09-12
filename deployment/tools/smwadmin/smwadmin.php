@@ -25,14 +25,19 @@
  * 
  * Installation tool.
  *
- * @author: Kai Kühn / ontoprise / 2009
+ * @author: Kai Kï¿½hn / ontoprise / 2009
  *
  *
  */
 define('DEPLOY_FRAMEWORK_VERSION', 0.1);
 
-require_once('smwadmin/DF_Tools.php');
-require_once('smwadmin/DF_Installer.php');
+global $rootDir;
+$rootDir = dirname(__FILE__);
+$rootDir = str_replace("\\", "/", $rootDir);
+$rootDir = realpath($rootDir."/../../");
+
+require_once('DF_Tools.php');
+require_once('DF_Installer.php');
 
 if (array_key_exists('SERVER_NAME', $_SERVER) && $_SERVER['SERVER_NAME'] != NULL) {
 	echo "Invalid access! A maintenance script MUST NOT accessed from remote.";

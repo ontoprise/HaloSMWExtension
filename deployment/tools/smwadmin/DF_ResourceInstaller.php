@@ -16,9 +16,10 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-require_once( '../../maintenance/commandLine.inc' );
-require_once('../io/import/DF_DeployWikiImporter.php');
-require_once('../io/import/DF_BackupReader.php');
+global $rootDir;
+require_once($rootDir.'/../maintenance/commandLine.inc' );
+require_once($rootDir.'/io/import/DF_DeployWikiImporter.php');
+require_once($rootDir.'/io/import/DF_BackupReader.php');
 
 /**
  * @file
@@ -26,7 +27,7 @@ require_once('../io/import/DF_BackupReader.php');
  * 
  * Resource installer takes care about wikidump/resource (de-)installation.
  *
- * @author Kai Kühn / ontoprise / 2009
+ * @author Kai Kï¿½hn / ontoprise / 2009
  *
  */
 class ResourceInstaller {

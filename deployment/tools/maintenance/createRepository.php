@@ -10,40 +10,16 @@
  *          
  * @author: Kai K�hn / ontoprise / 2009
  */
-require_once("../../descriptor/DF_DeployDescriptor.php");
-require_once("../../tools/smwadmin/DF_Tools.php");
 
-function getLocalPackages($ext_dir) {
+global $rootDir;
+$rootDir = dirname(__FILE__);
+$rootDir = str_replace("\\", "/", $rootDir);
+$rootDir = realpath($rootDir."/../../");
 
-    $localPackages = array();
-    // add trailing slashes
-    if (substr($ext_dir,-1)!='/'){
-        $ext_dir .= '/';
-    }
+require_once($rootDir."/descriptor/DF_DeployDescriptor.php");
+require_once($rootDir."/tools/smwadmin/DF_PackageRepository.php");
+require_once($rootDir."/tools/smwadmin/DF_Tools.php");
 
-    $handle = @opendir($ext_dir);
-    if (!$handle) {
-        throw new IllegalArgument('Extension directory does not exist: '.$ext_dir);
-    }
-
-    while ($entry = readdir($handle) ){
-        if ($entry[0] == '.'){
-            continue;
-        }
-
-        if (is_dir($ext_dir.$entry)) {
-            // check if there is a deploy.xml
-            if (file_exists($ext_dir.$entry.'/deploy.xml')) {
-                $dd = new DeployDescriptor(file_get_contents($ext_dir.$entry.'/deploy.xml'));
-                $localPackages[$dd->getID()] = $dd;
-
-            }
-        }
-
-    }
-     
-    return $localPackages;
-}
 
 $latest = false;
 for( $arg = reset( $argv ); $arg !== false; $arg = next( $argv ) ) {
@@ -81,14 +57,14 @@ $outputDir = str_replace("\\", "/", $outputDir);
 if (substr($outputDir, -1) != "/") $outputDir .= "/";
 if (!file_exists($outputDir)) Tools::mkpath($outputDir);
 
-$rootDir = dirname(__FILE__);
-$rootDir = str_replace("\\", "/", $rootDir);
-$rootDir = realpath($rootDir."/../../../extensions/");
-print($rootDir);
-if (substr($rootDir, -1) != "/") $rootDir .= "/";
+$mwRootDir = dirname(__FILE__);
+$mwRootDir = str_replace("\\", "/", $mwRootDir);
+$mwRootDir = realpath($mwRootDir."/../../../extensions/");
+print($mwRootDir);
+if (substr($mwRootDir, -1) != "/") $mwRootDir .= "/";
 
 echo "\nRead local packages";
-$localPackages = getLocalPackages($rootDir);
+$localPackages = PackageRepository::getLocalPackages($mwRootDir);
 
 echo "\nCreate new repository ".$outputDir."repository.xml";
 

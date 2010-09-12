@@ -19,15 +19,11 @@
 define('DEPLOY_FRAMEWORK_REPO_PACKAGE_DOES_NOT_EXIST', 1);
 define('DEPLOY_FRAMEWORK_REPO_INVALID_DESCRIPTOR', 2);
 
-if (defined('DEBUG_MODE') && DEBUG_MODE == true) {
-	require_once 'deployment/io/DF_HttpDownload.php';
-	require_once 'deployment/tools/smwadmin/DF_Tools.php';
-	require_once 'deployment/descriptor/DF_DeployDescriptor.php';
-} else {
-	require_once '../io/DF_HttpDownload.php';
-	require_once '../tools/smwadmin/DF_Tools.php';
-	require_once '../descriptor/DF_DeployDescriptor.php';
-}
+global $rootDir;
+require_once $rootDir.'/io/DF_HttpDownload.php';
+require_once $rootDir.'/tools/smwadmin/DF_Tools.php';
+require_once $rootDir.'/descriptor/DF_DeployDescriptor.php';
+
 
 // default repository
 // this URL is supposed to be fix forever
@@ -40,7 +36,7 @@ define("SMWPLUS_REPOSITORY", "http://dailywikibuilds.ontoprise.com/repository/")
  * 
  * Allows access package repositories.
  *
- * @author: Kai Kühn / ontoprise / 2009
+ * @author: Kai Kï¿½hn / ontoprise / 2009
  *
  */
 class PackageRepository {
