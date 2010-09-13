@@ -70,7 +70,7 @@ foreach($localPackages as $p) {
 		
 		// check if dependant package has correct version
 		$ext = $localPackages[$id];
-		if ($ext->getVersion() < $min || $ext->getVersion > $max) {
+		if ($ext->getVersion() < $min || $ext->getVersion() > $max) {
 			print "\n\tExtension ".$id." has wrong version: ".$ext->getVersion();
 			print " [FAILED]";
 			print "\n\tExpected range $min-$max";
