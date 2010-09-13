@@ -48,7 +48,7 @@ class SMWSPARQLQueryParser extends SMWQueryParser {
 	 * no meaningful condition was extracted).
 	 */
 	public function getQueryDescription($querystring) {
-		if (stripos($querystring, "select") === 0) {
+		if (stripos($querystring, "select ") !== false) {
 			wfProfileIn('SMWSPARQLQueryParser::getQueryDescription (SMW)');
 			$this->m_errors = array();
 			$this->m_label = '';
