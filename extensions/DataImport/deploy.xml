@@ -13,7 +13,7 @@
 			<dependency from="1150" to="1159">MW</dependency>
 			<dependency from="150" to="151">smw</dependency>
 			<dependency from="150" to="151">smwhalo</dependency>
-			<dependency from="140" to="140">semanticgardening</dependency>
+			<dependency from="132" to="140">semanticgardening</dependency>
 			<dependency from="100" to="199">scriptmanager</dependency>
 			<dependency from="100" to="100">linkeddata</dependency>
 		</dependencies>
