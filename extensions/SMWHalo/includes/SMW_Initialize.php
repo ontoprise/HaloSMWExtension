@@ -263,7 +263,8 @@ function smwgHaloSetupExtension() {
 			case '_qc_' :  smwfHaloInitMessages();
 			require_once($smwgHaloIP . '/includes/QueryResultsCache/SMW_QRC_AjaxAPI.php');
 			break;
-				
+
+			case '_ts_' : break; // contained in this file
 
 			default: // default case just imports everything (should be avoided)
 				smwfHaloInitMessages();
@@ -340,6 +341,7 @@ function smwgHaloSetupExtension() {
 		$wgHooks['InternalParseBeforeLinks'][] = 'smwfTripleStoreParserHook';
 	}
 	$wgAjaxExportList[] = 'smwf_ts_getWikiNamespaces';
+	$wgAjaxExportList[] = 'smwf_ts_triggerAsynchronousLoading';
 
 	// make hook for red links
 	$wgHooks['BrokenLink'][] = 'smwfBrokenLinkForPage';
@@ -452,6 +454,24 @@ function smwf_ts_getWikiNamespaces() {
 		$first = false;
 	}
 	return $result;
+}
+
+/**
+ * Trigger asynchronous loading operations. Usually called when TSC comes up.
+ * 
+ * @return AjaxRespone object containing JSON encoded data.
+ */
+function smwf_ts_triggerAsynchronousLoading() {
+	global $smwgTripleStoreGraph;
+	$result = array();
+	$result['components'] = array();
+	$result['errors'] = array();
+	wfRunHooks("SMWHalo_AsynchronousLoading", array ($smwgTripleStoreGraph, & $result));
+		
+	$json = json_encode($result);
+	$response = new AjaxResponse($json);
+    $response->setContentType( "application/json" );
+    return $response;
 }
 /**
  * function for parser hook in Semantic Forms
