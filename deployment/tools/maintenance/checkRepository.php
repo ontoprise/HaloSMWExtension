@@ -36,6 +36,7 @@ $rootDir = realpath($rootDir."/../../");
 require_once($rootDir."/descriptor/DF_DeployDescriptor.php");
 require_once($rootDir."/tools/smwadmin/DF_PackageRepository.php");
 require_once($rootDir."/tools/smwadmin/DF_Tools.php");
+require_once($rootDir."/tools/maintenance/maintenanceTools.inc");
 
 $mwRootDir = dirname(__FILE__);
 $mwRootDir = str_replace("\\", "/", $mwRootDir);
@@ -51,36 +52,9 @@ if (count($localPackages) == 0) {
 	die(1);
 }
 
-$errorFound = false;
-foreach($localPackages as $p) {
-	$errorInExt = false;
-	print "\nChecking ".$p->getID()."...";
-	$dependencies = $p->getDependencies();
-	foreach($dependencies as $dep) {
-		list($id, $min, $max) = $dep;
-		
-		// check if dependant package exists
-		if (!array_key_exists($id, $localPackages)) {
-			print "\n\tExtension missing: ".$id;
-			print " [FAILED]";
-			$errorInExt = true;
-			$errorFound |= $errorInExt;
-			continue;
-		}
-		
-		// check if dependant package has correct version
-		$ext = $localPackages[$id];
-		if ($ext->getVersion() < $min || $ext->getVersion() > $max) {
-			print "\n\tExtension ".$id." has wrong version: ".$ext->getVersion();
-			print " [FAILED]";
-			print "\n\tExpected range $min-$max";
-			$errorInExt = true;
-			$errorFound |= $errorInExt;
-			continue;
-		}
-	}
-		if (!$errorInExt) print " [OK] "; 
-}
+$errorFound = MaintenanceTools::checkDependencies($localPackages, $out);
+
+foreach($out as $line) print $line;
 
 if ($errorFound) {
 	print "\n\nErrors found! See above.\n";

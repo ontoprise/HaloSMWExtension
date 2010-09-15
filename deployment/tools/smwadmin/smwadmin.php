@@ -38,6 +38,7 @@ $rootDir = realpath($rootDir."/../../");
 
 require_once('DF_Tools.php');
 require_once('DF_Installer.php');
+require_once('DF_ConsistencyChecker.php');
 
 if (array_key_exists('SERVER_NAME', $_SERVER) && $_SERVER['SERVER_NAME'] != NULL) {
 	echo "Invalid access! A maintenance script MUST NOT accessed from remote.";
@@ -79,6 +80,7 @@ $dfgShowDescription=false;
 $dfgListPackages=false;
 $dfgCheckDep=false;
 $dfgRestore=false;
+$dfgCheckInst=false;
 
 // get command line parameters
 for( $arg = reset( $argv ); $arg !== false; $arg = next( $argv ) ) {
@@ -124,6 +126,11 @@ for( $arg = reset( $argv ); $arg !== false; $arg = next( $argv ) ) {
 		$dfgCheckDep = true;
 		continue;
 	}
+	
+	if ($arg == '--checkinst') {  // => check installation for inconsistencies
+		$dfgCheckInst = true;
+		continue;
+	}
 
 	if ($arg == '--checkdump') { // => analyze installed dump
 		$checkDump = true;
@@ -146,7 +153,7 @@ for( $arg = reset( $argv ); $arg !== false; $arg = next( $argv ) ) {
 }
 
 
-$mediaWikiLocation = dirname(__FILE__) . '/../..';
+$mediaWikiLocation = dirname(__FILE__) . '/../../..';
 require_once "$mediaWikiLocation/maintenance/commandLine.inc";
 
 // check if AdminSettings.php is available
@@ -168,10 +175,20 @@ if ($help || count($argv) == 0) {
 	die();
 }
 
-$rootDir = realpath(dirname(__FILE__)."/../..");
-$installer = Installer::getInstance($rootDir, $dfgForce);
-$rollback = Rollback::getInstance($rootDir);
-$res_installer = ResourceInstaller::getInstance($rootDir);
+$mwrootDir = dirname(__FILE__);
+$mwrootDir = str_replace("\\", "/", $mwrootDir);
+$mwrootDir = realpath($mwrootDir."/../../../");
+
+$installer = Installer::getInstance($mwrootDir, $dfgForce);
+$rollback = Rollback::getInstance($mwrootDir);
+$cchecker = ConsistencyChecker::getInstance($mwrootDir);
+$res_installer = ResourceInstaller::getInstance($mwrootDir);
+
+
+if ($dfgCheckInst) {
+	$cchecker->checkInstallation();
+	die();
+}
 
 if ($dfgRestore) {
 	handleRollback();
@@ -274,6 +291,13 @@ function showHelp() {
 	echo "\n\tsmwadmin -d smw: Removes the package smw.";
 	echo "\n\n";
 
+}
+
+
+function checkInstallation() {
+	print "\Checking consistency";
+	
+	
 }
 
 function handleRollback() {
