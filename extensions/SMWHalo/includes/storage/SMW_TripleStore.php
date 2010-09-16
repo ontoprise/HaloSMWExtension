@@ -235,7 +235,7 @@ class SMWTripleStore extends SMWStore {
 							$triples[] = array("<$smwgTripleStoreGraph/$subj_ns#".$subject->getDBkey().">", "<$smwgTripleStoreGraph/property#".$property->getWikiPageValue()->getDBkey().">", "\"".array_shift($value->getDBkeys())." ".$value->getUnit()."\"^^xsd:unit");
 						} else {
 							if (!is_null($property->getWikiPageValue())) {
-								if (array_shift($value->getDBkeys()) != NULL) {
+								if (!is_null(array_shift($value->getDBkeys()))) {
 									// attribute with textual value
 									$xsdType = WikiTypeToXSD::getXSDType($property->getPropertyTypeID());
 									if ($property->getPropertyTypeID() == '_geo') {
@@ -243,10 +243,7 @@ class SMWTripleStore extends SMWStore {
 									} else {
 										$triples[] = array("<$smwgTripleStoreGraph/$subj_ns#".$subject->getDBkey().">", "<$smwgTripleStoreGraph/property#".$property->getWikiPageValue()->getDBkey().">", "\"".$this->escapeForStringLiteral(array_shift($value->getDBkeys()))."\"^^$xsdType");
 									}
-								} else if ($value->isNumeric() != NULL) {
-									// attribute with numeric value
-									$triples[] = array("<$smwgTripleStoreGraph/$subj_ns#".$subject->getDBkey().">", "<$smwgTripleStoreGraph/property#".$property->getWikiPageValue()->getDBkey().">", "\"".array_shift($value->getDBKeys())."\"^^xsd:double");
-								}
+								} 
 							}
 						}
 
