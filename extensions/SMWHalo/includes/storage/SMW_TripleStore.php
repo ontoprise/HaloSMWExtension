@@ -243,9 +243,9 @@ class SMWTripleStore extends SMWStore {
 									} else {
 										$triples[] = array("<$smwgTripleStoreGraph/$subj_ns#".$subject->getDBkey().">", "<$smwgTripleStoreGraph/property#".$property->getWikiPageValue()->getDBkey().">", "\"".$this->escapeForStringLiteral(array_shift($value->getDBkeys()))."\"^^$xsdType");
 									}
-								} else if ($value->getNumericValue() != NULL) {
+								} else if ($value->isNumeric() != NULL) {
 									// attribute with numeric value
-									$triples[] = array("<$smwgTripleStoreGraph/$subj_ns#".$subject->getDBkey().">", "<$smwgTripleStoreGraph/property#".$property->getWikiPageValue()->getDBkey().">", "\"".$value->getNumericValue()."\"^^xsd:double");
+									$triples[] = array("<$smwgTripleStoreGraph/$subj_ns#".$subject->getDBkey().">", "<$smwgTripleStoreGraph/property#".$property->getWikiPageValue()->getDBkey().">", "\"".array_shift($value->getDBKeys())."\"^^xsd:double");
 								}
 							}
 						}
