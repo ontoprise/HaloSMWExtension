@@ -39,15 +39,14 @@ class MaintenanceTools {
 		$out = array();
 		foreach($localPackages as $p) {
 			$errorInExt = false;
-			$out[]= "\nChecking ".$p->getID()."...";
+			$out[$p->getID()]= array();
 			$dependencies = $p->getDependencies();
 			foreach($dependencies as $dep) {
 				list($id, $min, $max) = $dep;
 
 				// check if dependant package exists
 				if (!array_key_exists($id, $localPackages)) {
-					$out[]= "\n\tExtension missing: ".$id;
-					$out[]= " [FAILED]";
+					$out[$p->getID()][]= "Extension missing: ".$id;
 					$errorInExt = true;
 					$errorFound |= $errorInExt;
 					continue;
@@ -56,15 +55,13 @@ class MaintenanceTools {
 				// check if dependant package has correct version
 				$ext = $localPackages[$id];
 				if ($ext->getVersion() < $min || $ext->getVersion() > $max) {
-					$out[]= "\n\tExtension ".$id." has wrong version: ".$ext->getVersion();
-					$out[]= " [FAILED]";
-					$out[]= "\n\tExpected range $min-$max";
+					$out[$p->getID()][]=  "Dependency to '".$id."' has wrong version: ".$ext->getVersion().". Expected range $min-$max";
 					$errorInExt = true;
 					$errorFound |= $errorInExt;
 					continue;
 				}
 			}
-			if (!$errorInExt) $out[]= " [OK] ";
+			if (!$errorInExt) $out[$p->getID()][]= NULL;
 		}
 		return $errorFound;
 	}

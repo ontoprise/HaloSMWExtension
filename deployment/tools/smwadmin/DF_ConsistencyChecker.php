@@ -22,51 +22,84 @@ require_once $rootDir.'/tools/maintenance/maintenanceTools.inc';
 /**
  * @file
  * @ingroup DFInstaller
- * 
+ *
  * Checks an installation for common consistency problems.
- * 
+ *
  *  1. Unresolved dependencies
- * 
+ *  2. Inconsistent LocalSettings.php entries
+ *
  * @author: Kai Kuehn / ontoprise / 2010
  */
 class ConsistencyChecker {
 
 	var $rootDir;
-    var $errorLog;
-    
+	var $localPackages;
+	var $errorLog;
+
 	public function __construct($rootDir) {
 		$this->rootDir = $rootDir;
+		$this->localPackages = PackageRepository::getLocalPackages($this->rootDir."/extensions");
 	}
-	
-    static $instance;
 
-    public static function getInstance($rootDir) {
-        if (is_null(self::$instance)) {
-            self::$instance = new ConsistencyChecker($rootDir);
-        }
-        return self::$instance;
-    }
-    
-    public function checkInstallation() {
-    	$this->checkDependencies();
-    }
-    
+	static $instance;
+
+	public static function getInstance($rootDir) {
+		if (is_null(self::$instance)) {
+			self::$instance = new ConsistencyChecker($rootDir);
+		}
+		return self::$instance;
+	}
+
+	public function checkInstallation() {
+		$this->checkDependencies();
+		$this->checkLocalSettings();
+	}
+
 	private  function checkDependencies() {
-		
-		$localPackages = PackageRepository::getLocalPackages($this->rootDir."/extensions");
 
-		if (count($localPackages) == 0) {
+		if (count($this->localPackages) == 0) {
 			print "\nNO extensions found!\n";
-			die(1);
 		}
-        
+
 		print "\nChecking consistency of dependencies in installed packages...";
-		$errorFound = MaintenanceTools::checkDependencies($localPackages, $out);
-		foreach($out as $line) print $line;
-		
+		$errorFound = MaintenanceTools::checkDependencies($this->localPackages, $out);
+
 		if ($errorFound) {
-		
+			foreach($out as $ext => $line) {
+				if (!is_null(reset($line))) print "\n\n$ext: ";
+				foreach($line as $l) {
+					if (is_null($l)) break; else print "\n\t[FAILED] ".$l;
+				}
+			}
+			print "\n";
 		}
+
+	}
+
+	private function checkLocalSettings() {
+		
+		if (!file_exists($this->rootDir."/LocalSettings.php")) {
+			print "\n\tLocalSettings.php does not exist.\n";
+			return;
+		}
+		
+		$ls = file_get_contents($this->rootDir."/LocalSettings.php");
+		if (trim($ls) == '') {
+			print "\n\tLocalSettings.php exists but is empty.\n";
+			return;
+		}
+		
+		// check if existing extensions are registered in LocalSettings.php
+		foreach($localPackages as $p) {
+			$start = strpos($ls, "/*start-".$p->getID()."*/");
+			$end = strpos($ls, "/*end-".$p->getID()."*/");
+			
+			if ($start === false || $end === false) {
+				
+			}
+		}
+		
+		// check if there are registerings for non-existings extensions
 		
 	}
 

@@ -18,13 +18,13 @@
 /**
  * @file
  * @ingroup DFMaintenance
- * 
+ *
  * Checks if all dependencies of all extensions exist and that they have the correct version.
- * 
- * Usage:   php checkRepository.php 
- * 
+ *
+ * Usage:   php checkRepository.php
+ *
  * 	Process terminates with exit code 0 if all dependecies are fulfilled, otherwise 1.
- *          
+ *
  * @author: Kai Kuehn / ontoprise / 2010
  */
 
@@ -54,7 +54,12 @@ if (count($localPackages) == 0) {
 
 $errorFound = MaintenanceTools::checkDependencies($localPackages, $out);
 
-foreach($out as $line) print $line;
+foreach($out as $ext => $line) {
+	print "\n\n$ext: ";
+	foreach($line as $l) {
+		if (is_null($l)) print "[OK]"; else print "\n\t[FAILED] ".$l;
+	}
+}
 
 if ($errorFound) {
 	print "\n\nErrors found! See above.\n";
