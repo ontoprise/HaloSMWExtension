@@ -79,7 +79,7 @@ class SRRuleEndpoint {
 	 * Returns rules which define the given entities.
 	 *
 	 * @param resources (as array)
-	 * 
+	 *
 	 * @note: not intended to be called via ajax. No serialization yet available.
 	 */
 	public function getDefiningRules($params) {
@@ -141,11 +141,11 @@ class SRRuleEndpoint {
 
 		$payload = "graph=".urlencode($smwgTripleStoreGraph)."&fragment=$filter&asTree=$asTree";
 		list($header, $status, $res) = self::$_client->send($payload, "/searchForRulesByFragment");
-        
+
 		if (!$ajaxCall) {
 			return $resultformat == 'xml' ? $this->encapsulateTreeElementAsXML($res, true) : $this->encapsulateRuleWidget($res);
 		}
-		
+
 		$response = new AjaxResponse($resultformat == 'xml' ? $this->encapsulateTreeElementAsXML($res, true) : $this->encapsulateRuleWidget($res));
 		$response->setContentType( "application/xml" );
 		$response->setResponseCode($status);
@@ -160,10 +160,11 @@ class SRRuleEndpoint {
 	 * @param $ruleID
 	 */
 	public function serializeRules($params) {
+		for($i = 0; $i < count($params); $i++) $params[$i] = urlencode($params[$i]);
 		$ruleIDs = implode("&ruletuple=",$params);
 		global $smwgWebserviceProtocol, $smwgTripleStoreGraph;
 
-		$payload = "graph=".urlencode($smwgTripleStoreGraph)."&ruletuple=".urlencode($ruleIDs);
+		$payload = "graph=".urlencode($smwgTripleStoreGraph)."&ruletuple=".$ruleIDs;
 		list($header, $status, $res) = self::$_client->send($payload, "/serializeRules");
 
 		$response = new AjaxResponse($res);
@@ -190,23 +191,23 @@ class SRRuleEndpoint {
 
 		$payload = "ruleText=".urlencode($oblrule);
 		list($header, $status, $res) = self::$_client->send($payload, "/parserule");
-		
+
 		if ($status != 200) {
 			throw new Exception("Can not parse rule: ".$res, $status);
 		}
 		$_parsedstring = $res;
- 
+
 		$_ruleObject = new SMWRuleObject();
 		$_ruleObject->setAxiomId($ruleid);
-        
+
 		$parsedRuleXML = $_ruleObject->parseRuleObject(simplexml_load_string($_parsedstring));
-		
+
 		if ($ajaxCall) {
 			$response = new AjaxResponse($parsedRuleXML);
 			$response->setContentType( "application/xml" );
 			$response->setResponseCode($status);
 			return $response;
-			
+				
 		} else {
 			return $parsedRuleXML;
 		}
@@ -230,10 +231,10 @@ class SRRuleEndpoint {
 
 			list($containingPageURI, $rulename) = explode("$$", $ruleURI);
 			$containingPageTitle = $this->getWikiTitleFromURI($containingPageURI);
-			
-		    $rw = new SRRuleWidget($ruleURI, $ruleText, $active == "true", $native == "true");
-            $html .= $rw->asHTML(); 
-           
+				
+			$rw = new SRRuleWidget($ruleURI, $ruleText, $active == "true", $native == "true");
+			$html .= $rw->asHTML();
+			 
 		}
 
 		$html .= '';

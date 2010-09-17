@@ -221,19 +221,20 @@ function smwf_sr_ChangeRuleState($title, $ruleName, $activate) {
 			$type="UNDEFINED";
 
 			// iterate over parameters
+			$unknown_parameters = "";
 			for($k = 0; $k < count($matchesheader[1]); $k++) {
 				if (trim($matchesheader[1][$k]) == 'native') {
 					$native = $matchesheader[2][$k];
-				}
-				if (trim($matchesheader[1][$k]) == 'active') {
+				} else if (trim($matchesheader[1][$k]) == 'active') {
 					$active = $matchesheader[2][$k];
-				}
-				if (trim($matchesheader[1][$k]) == 'type') {
+				} else if (trim($matchesheader[1][$k]) == 'type') {
 					$type = $matchesheader[2][$k];
-				}
-				if (trim($matchesheader[1][$k]) == 'name') {
+				} else if (trim($matchesheader[1][$k]) == 'name') {
 					$name = $matchesheader[2][$k];
 
+				} else {
+					// preserve unknown parameters
+					$unknown_parameters .= trim($matchesheader[1][$k]).'="'.$matchesheader[2][$k].'" ';
 				}
 			}
 			if ($name == $ruleName) {
@@ -244,7 +245,7 @@ function smwf_sr_ChangeRuleState($title, $ruleName, $activate) {
 					return "false, no state change, $ruleName";
 				}
 
-				$newRuleText = "<rule name=\"$name\" native=\"$native\" active=\"$activate_att\" type=\"$type\">";
+				$newRuleText = "<rule name=\"$name\" native=\"$native\" active=\"$activate_att\" type=\"$type\" $unknown_parameters>";
 				$newRuleText .=  $ruletext;
 				$newRuleText .= "</rule>";
 				$copyOfText = str_replace($matches[0][$i], $newRuleText, $copyOfText);

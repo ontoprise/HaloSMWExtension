@@ -61,6 +61,7 @@ class SMWRuleObject extends SMWAbstractRuleObject {
 				for ($j = 0; $j < sizeof($bndvars); $j++) {
 					if (sizeof($bndvars[$j] == 3)) {
 						if ($bndvars[$j][1] == "const" && $bndvars[$j][0] == $formula[$i]) {
+							$formula[$i-1] = "const";
 							$formula[$i] = $bndvars[$j][2];
 							$element = array_search($bndvars[$j][0], $variables);
 							if ($element !== FALSE) {
