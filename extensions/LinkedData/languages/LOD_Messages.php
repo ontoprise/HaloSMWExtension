@@ -34,6 +34,7 @@ $messages['en'] = array(
     'lod_mapping_tag_ns'	 => 'The tag <mapping> is only evaluated in the namespace "Mapping".',
     'lod_no_mapping_in_ns'   => 'Articles in the namespace "Mapping" are supposed to contain mappings for linked data sources. You can add mapping descriptions in the tag &lt;mapping&gt;.',
 	'lod_saving_mapping_failed' => '<b>The following mapping could not be saved:</b>',
+	'lod_nep_link'			=> 'Create the article <b>$1</b> with the content displayed below.',
 
 );
 
@@ -44,4 +45,5 @@ $messages['de'] = array(
     'lod_mapping_tag_ns'	 => 'Das Tag <zuordnung> wird nur im Namensraum "Mapping" ausgewertet.',
     'lod_no_mapping_in_ns'   => 'Artikel im Namensraum "Mapping" sollten Mappings für Linked Data Quellen beinhalten. Sie können Mapping-Beschreibungen im Tag &lt;zuordnung&gt; einfügen.',
 	'lod_saving_mapping_failed' => '<b>Die folgende Zuordnung konnte nicht gespeichert werden:</b>',
+	'lod_nep_link'			=> 'Den Artikel <b>$1</b> mit dem unten dargestellten Inhalt erzeugen.',
 );
