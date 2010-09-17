@@ -85,7 +85,10 @@ function enableLinkedData() {
 	$wgAutoloadClasses['LODMLSubpropertyMapping'] = $lodgIP . '/includes/LODMLApi/LOD_MLSubpropertyMapping.php';
 
 	$wgAutoloadClasses['LODImporter'] = $lodgIP . '/includes/LODImport/LOD_Importer.php';
-		
+	
+	$wgAutoloadClasses['LODNonExistingPageHandler'] = $lodgIP . '/includes/LODWikiFrontend/LOD_NonExistingPageHandler.php';
+	$wgAutoloadClasses['LODNonExistingPage'] = $lodgIP . '/includes/LODWikiFrontend/LOD_NonExistingPage.php';
+			
     //--- Autoloading for exception classes ---
    	$wgAutoloadClasses['LODException']        = $lodgIP . '/exceptions/LOD_Exception.php';
    	$wgAutoloadClasses['LODMappingException'] = $lodgIP . '/exceptions/LOD_MappingException.php';
@@ -106,14 +109,18 @@ function enableLinkedData() {
 function lodfSetupExtension() {
     wfProfileIn('lodfSetupExtension');
     global $lodgIP, $wgHooks, $wgParser, $wgExtensionCredits,
-    $wgLanguageCode, $wgVersion, $wgRequest, $wgContLang;
+    $wgLanguageCode, $wgVersion, $wgRequest, $wgContLang, $lodgNEPEnabled;
 
     //--- Register hooks ---
     global $wgHooks;
     
-    $wgHooks['ArticleDelete'][]        = 'LODParserFunctions::articleDelete';
-    $wgHooks['OutputPageBeforeHTML'][] = 'LODParserFunctions::outputPageBeforeHTML';
+    $wgHooks['ArticleDelete'][]			= 'LODParserFunctions::articleDelete';
+    $wgHooks['OutputPageBeforeHTML'][]	= 'LODParserFunctions::outputPageBeforeHTML';
     
+    if ($lodgNEPEnabled) {
+	 	$wgHooks['ArticleFromTitle'][]		= 'LODNonExistingPageHandler::onArticleFromTitle';
+	    $wgHooks['EditFormPreloadText'][]	= 'LODNonExistingPageHandler::onEditFormPreloadText';
+    }    	    
 
     //--- Load messages---
     wfLoadExtensionMessages('LinkedData');

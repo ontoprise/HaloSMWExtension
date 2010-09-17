@@ -69,6 +69,50 @@ $lodgBaseStore = LOD_STORE_SQL;
 # are omitted, the default mapping target is set.
 $lodgDefaultMappingTarget = "wiki";
 
+####
+# Settings for non-existing pages
+#
+# Linked Data items (URIs) are presented as red link in the wiki (e.g. as result
+# of a query) as there is usually no corresponding page. However, there is 
+# information related to these items which should be displayed. A page can assembled
+# for them that consists of one or more templates. There can be a generic template
+# that is used for all non-existing pages (NEP). Furthermore, the item can have 
+# several types (rdfs:type) and a template can be associated to each one.
+# There are additional templates for properties and categories.
+# In this context, templates are not the MediaWiki templates but normal pages whose
+# wiki text is copied into the resulting article. Of course, these pages may 
+# contain invokations of Mediawiki templates.  
+
+####
+# boolean - Set this variable to <true> to enable non-existing page handling.
+$lodgNEPEnabled = true;
+
+####
+# string - Article name of the generic template for all non-existing pages but
+# properties and categories.
+$lodgNEPGenericTemplate = "MediaWiki:NEP/Generic";
+
+####
+# string - Article name of the template for property pages
+$lodgNEPPropertyPageTemplate = "MediaWiki:NEP/Property";
+
+####
+# string - Article name of the template for category pages
+$lodgNEPCategoryPageTemplate = "MediaWiki:NEP/Category";
+
+####
+# boolean - If <true>, the generic NEP template is used, even if the Linked Data
+# item has a type.
+$lodgNEPUseGenericTemplateIfCategoryMember = true;
+
+####
+# string - The Linked Data item can have several types which are mapped to wiki
+# categories. A template can be used for each category according to the template
+# pattern. The variable {cat} is replaced by the category that is associated with
+# a type. 
+$lodgNEPCategoryTemplatePattern = "MediaWiki:NEP/Category/{cat}";
+
+
 
 # load global functions
 require_once('LOD_GlobalFunctions.php');
