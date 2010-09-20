@@ -38,13 +38,18 @@ function enableDataImportExtension() {
 	require_once($smwgDIIP. '/specials/TermImport/SMW_TermImportManager.php');
 	require_once($smwgDIIP. '/specials/TermImport/SMW_ImportedTermsNamespaces.php');
 	
-	//require the materialize parser function
-	require_once("$smwgDIIP/specials/Materialization/SMW_MaterializeParserFunction.php");
-			
 	$wgExtensionFunctions[] = 'smwfDISetupExtension';
 	
 	global $smgJSLibs; 
 	$smgJSLibs[] = 'prototype';
+}
+
+function enableMaterializationFeature(){
+	global $enableMaterialization, $smwgDIIP;;
+	$enableMaterialization = true;
+	
+	//require the materialize parser function
+	require_once("$smwgDIIP/specials/Materialization/SMW_MaterializeParserFunction.php");
 }
 
 /**
@@ -67,7 +72,10 @@ function smwfDISetupExtension() {
 	
 	$wgHooks['BeforePageDisplay'][]='smwDITBAddHTMLHeader';
 	
-	$wgHooks['BeforePageDisplay'][]='smwDIMAAddHTMLHeader';
+	global $enableMaterialization;
+	if(isset($enableMaterialization) && $enableMaterialization){ 
+		$wgHooks['BeforePageDisplay'][]='smwDIMAAddHTMLHeader';
+	}
 	
 	$wgHooks['smwhACNamespaceMappings'][] = 'difRegisterAutocompletionIcons';
 	
