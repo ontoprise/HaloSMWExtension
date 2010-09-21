@@ -198,7 +198,7 @@ function SmwData(id, relation, category, display, linkto, start, maxDepth, condi
 	this.start = start;
 	this.maxDepth = maxDepth;
 	this.condition = condition;
-	this.urlparams = urlparams;
+    this.urlparams = urlparams;
 	this.orderbyProperty = orderbyProperty;
 	this.checkNode = checkNode;
     this.useTsc = useTsc;
@@ -210,10 +210,10 @@ SmwData.prototype.getParamsForAjaxRequest = function() {
 	if (this.display) str += '%26d%3D' + URLEncode(this.display);
     if (this.linkto) str += '%26l%3D' + URLEncode(this.linkto);
 	if (this.condition) str += '%26q%3D' + this.condition; 
-	if (this.urlparams) str += '%26u%3D' + URLEncode(this.urlparams);
+	if (this.urlparams) str += '%26u%3D' + this.urlparams;
 	if (this.orderbyProperty) str += '%26b%3D' + URLEncode(this.orderbyProperty);
 	if (this.checkNode) str += '%26n%3D1';
-    if (this.useTsc) str += '%26u%3D1';
+    if (this.useTsc) str += '%26j%3D1';
 	str += '%26';
 	return str;
 }
@@ -707,7 +707,7 @@ dTree.prototype.loadNextLevel = function(id, callBackMethod) {
 		return;
 	}
 	var params = this.getSmwData(id);
-	params += 's%3D' + this.aNodes[id].getPageName();
+	params += 's%3D' + this.aNodes[id].getPageName().replace(/%2B/g, '%252B');
 	params += this.getTokenAndWriteCache(id);
 	dtreeSendCall(this.smwAjaxUrl + params, callBackMethod);
 };
@@ -737,6 +737,8 @@ dTree.prototype.initOnload = function(id, arg) {
         if (args[i].indexOf('=') == -1) continue;
 		var key = args[i].substring(0, args[i].indexOf('='));
 		var value = args[i].substring(key.length + 1);
+        // encode the encoded + once more to avoid spaces when the browser decodes it
+        value = value.replace(/%2B/g, '%252B');
         var p="";
 		if (key == 'condition')
 			p = 'q';
@@ -748,6 +750,8 @@ dTree.prototype.initOnload = function(id, arg) {
 			p = 'n';
         else if (key == 'useTsc')
             p = 'j';
+        else if (key == 'level')
+            p = 'v';
 		else if (key == 'dynamic') {
 			dynamic = 1;
 			continue;
@@ -774,9 +778,10 @@ dTree.prototype.initOnload = function(id, arg) {
         (kv.u ? kv.u : null), // urlparams
         (kv.b ? kv.b : null), // orderbyProperty
         (kv.n ? kv.n : null), // checkNode
-        (kv.j ? kv.j : null)  // useTsc
+        (kv.j ? kv.j : null), // useTsc
+        (kv.v ? kv.v : null)  // level
     );
-	if (! dynamic) params += '%26z%3D1';
+	if (! dynamic) params += '%26z%3D1';  // set iolStatic
 	params += this.getTokenAndWriteCache(id);
 
 	// clear cookie with saved nodes that where loaded as this causes trouble otherwise
@@ -1011,7 +1016,11 @@ dTree.prototype.saveCookiesAndDisplay = function(newSerialData) {
 dTree.prototype.getHtml4Node = function(cn, url, params) {
 	var str;
 	var link = cn.link.replace('%3A', ':');
-    if (params) params = URLDecode(params);
+    if (params) {
+        params = URLDecode(params);
+        if (params.match(/^\?[\d\w_-]+%3D/))
+            params = URLDecode(params); // fix double encoding
+    }
     if (URLDecode(cn.link) == wgPageName)
     	str = '<strong class="selflink">' + cn.name + '</strong>';
     else {
