@@ -52,7 +52,7 @@ function smw_treeview_getTree($input) {
   // these are not needed for the next level on dynamic expansion
   $urlparams = ($initOnload && isset($req['u'])) ? 'urlparams='.$req['u'] : NULL;
   $redirectPage = ($initOnload && isset($req['r'])) ? 'redirectPage='.urldecode($req['r']) : NULL;
-  $level = ($initOnload && isset($req['l'])) ? 'level='.$req['l'] : NULL;
+  $level = ($initOnload && isset($req['v'])) ? 'level='.$req['v'] : NULL;
   $opento = ($initOnload && isset($req['o'])) ? 'opento='.urldecode($req['o']) : NULL;
   $iolStatic = ($initOnload && isset($req['z'])) ? 'iolStatic=1' : NULL;
 
