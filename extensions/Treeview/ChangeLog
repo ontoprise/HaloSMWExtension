@@ -1,6 +1,17 @@
 Treeview extension ChangeLog
 ============================
 
+VERSION 1.5.2
+
+  BUGFIXES:
+    * Fix: When using the initOnload parameter some other parameters like level
+      and useTsc got lost.
+    * Fix bug 12651: Tree was not accessing the correct pages.
+    * Fix bug 12709: The content of the urlparam was encoded twice and so the links
+      in the tree contained the wrong url parameters.
+    * Fix bug 12337: Treeview displays nodes twice.
+
+
 VERSION 1.4.1
 
   BUGFIXES:
