@@ -34,7 +34,7 @@ class WikiTypeToXSD {
 			case '_anu' : return 'xsd:anyURI';
 
 			// single unit type in SMW
-			case '_tem' : return 'xsd:unit';
+			case '_tem' : return 'tsctype:unit';
 
 			//only relevant for schema import
 			case '_wpc' :
@@ -49,7 +49,7 @@ class WikiTypeToXSD {
 				// if n-ary, regard it as string
 				if (preg_match('/\w+(;\w+)+/', $wikiTypeID) > 0) return "xsd:string";
 				// otherwise assume a unit
-				return 'xsd:unit';
+				return 'tsctype:unit';
 		}
 
 	}
@@ -190,6 +190,7 @@ class TSNamespaces {
 	public static $OWL_NS = "http://www.w3.org/2002/07/owl#";
 	public static $RDFS_NS = "http://www.w3.org/2000/01/rdf-schema#";
 	public static $XSD_NS = "http://www.w3.org/2001/XMLSchema#";
+	public static $TSCTYPE_NS = "http://www.ontoprise.de/smwplus/tsc/unittype#";
 
 	public static $CAT_NS;
 	public static $PROP_NS;
@@ -207,7 +208,9 @@ class TSNamespaces {
 	public static function getAllPrefixes() { return self::$ALL_PREFIXES; }
 	public static $W3C_PREFIXES;
 	public static function getW3CPrefixes() { return self::$W3C_PREFIXES; }
-
+	public static $TSC_PREFIXES;
+	public static function getTSCPrefixes() { return self::$TSC_PREFIXES; }
+	
 	// general namespace suffixes for different namespaces
 	public static $CAT_NS_SUFFIX = "/category#";
 	public static $PROP_NS_SUFFIX = "/property#";
@@ -251,6 +254,9 @@ class TSNamespaces {
 
 		self::$W3C_PREFIXES = 'PREFIX xsd:<'.self::$XSD_NS.'> PREFIX owl:<'.self::$OWL_NS.'> PREFIX rdfs:<'.
 		self::$RDFS_NS.'> PREFIX rdf:<'.self::$RDF_NS.'> ';
+		
+		self::$TSC_PREFIXES = "PREFIX tsctype:<".self::$TSCTYPE_NS."> "; 
+		
 		// declare all other namespaces using ns_$index as prefix
 		$extraNamespaces = array_diff(array_keys($wgExtraNamespaces), array(NS_CATEGORY, SMW_NS_PROPERTY, SMW_NS_TYPE, NS_IMAGE, NS_HELP, NS_MAIN));
 		foreach($extraNamespaces as $nsIndex) {

@@ -232,7 +232,7 @@ class SMWTripleStore extends SMWStore {
 
 						if ($value->getUnit() != '') {
 							// attribute with unit value
-							$triples[] = array("<$smwgTripleStoreGraph/$subj_ns#".$subject->getDBkey().">", "<$smwgTripleStoreGraph/property#".$property->getWikiPageValue()->getDBkey().">", "\"".array_shift($value->getDBkeys())." ".$value->getUnit()."\"^^xsd:unit");
+							$triples[] = array("<$smwgTripleStoreGraph/$subj_ns#".$subject->getDBkey().">", "<$smwgTripleStoreGraph/property#".$property->getWikiPageValue()->getDBkey().">", "\"".array_shift($value->getDBkeys())." ".$value->getUnit()."\"^^tsctype:unit");
 						} else {
 							if (!is_null($property->getWikiPageValue())) {
 								if (!is_null(array_shift($value->getDBkeys()))) {
@@ -311,9 +311,10 @@ class SMWTripleStore extends SMWStore {
 		try {
 			$con = TSConnection::getConnector();
 			$sparulCommands = array();
-			$sparulCommands[] = TSNamespaces::getW3CPrefixes()."DELETE FROM <$smwgTripleStoreGraph> { <$smwgTripleStoreGraph/$subj_ns#".$subject->getDBkey()."> ?p ?o. }";
+			$prefixes = TSNamespaces::$W3C_PREFIXES.TSNamespaces::$TSC_PREFIXES;
+			$sparulCommands[] = $prefixes."DELETE FROM <$smwgTripleStoreGraph> { <$smwgTripleStoreGraph/$subj_ns#".$subject->getDBkey()."> ?p ?o. }";
 
-			$sparulCommands[] =  TSNamespaces::getW3CPrefixes()."INSERT INTO <$smwgTripleStoreGraph> { ".$this->implodeTriples($triples)." }";
+			$sparulCommands[] =  $prefixes."INSERT INTO <$smwgTripleStoreGraph> { ".$this->implodeTriples($triples)." }";
 
 			if (isset($smwgEnableObjectLogicRules)) {
 				// delete old rules...
