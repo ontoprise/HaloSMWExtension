@@ -36,6 +36,20 @@ class SMWHaloQueryResult extends SMWQueryResult {
         return $row;
     }
     
+    /**
+     * Resets the internal array pointer of the result (rows) and all columns
+     * within these rows.
+     */
+    public function resetResultArray() {
+    	reset($this->mResults);
+    	foreach ($this->mResults as $row) {
+    		foreach ($row as $cell) {
+    			$cell->resetContentArray();
+    		}
+    	}
+    	reset($this->mResults);
+    }
+    
 	public function getQueryLink($caption = false) {
 
 		$params = array(trim($this->mQuery->getQueryString()));
@@ -90,6 +104,13 @@ class SMWHaloResultArray extends SMWResultArray {
     
     public function setContent($content) {
     	$this->mContent = $content;
+    }
+    
+    /**
+     * Resets the internal array pointer of the content.
+     */
+    public function resetContentArray() {
+    	reset($this->mContent);
     }
     
     
