@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <deploydescriptor>
 	<global>
-		<version>110</version>
+		<version>152</version>
 		<id>semanticnotifications</id>
 		<vendor>Ontoprise GmbH</vendor>
 		<maintainer>Ontoprise GmbH</maintainer>
@@ -11,9 +11,9 @@
 		</description>
 		<dependencies>
 			<dependency from="1132" to="1159">MW</dependency>
-			<dependency from="140" to="151">SMW</dependency>
-			<dependency from="142" to="151">smwhalo</dependency>
-			<dependency from="100" to="140">SemanticGardening</dependency>
+			<dependency from="140" to="152">SMW</dependency>
+			<dependency from="142" to="152">smwhalo</dependency>
+			<dependency from="100" to="152">SemanticGardening</dependency>
 			<dependency from="100" to="100">scriptmanager</dependency>
 		</dependencies>
 		<patchlevel>0</patchlevel>
