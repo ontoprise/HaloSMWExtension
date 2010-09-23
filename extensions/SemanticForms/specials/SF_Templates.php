@@ -12,8 +12,8 @@ class SFTemplates extends SpecialPage {
 	/**
 	 * Constructor
 	 */
-	function SFTemplates() {
-		SpecialPage::SpecialPage( 'Templates' );
+	function __construct() {
+		parent::__construct( 'Templates' );
 		wfLoadExtensionMessages( 'SemanticForms' );
 	}
 

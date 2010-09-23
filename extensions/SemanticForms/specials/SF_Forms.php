@@ -12,8 +12,8 @@ class SFForms extends SpecialPage {
 	/**
 	 * Constructor
 	 */
-	function SFForms() {
-		SpecialPage::SpecialPage( 'Forms' );
+	function __construct() {
+		parent::__construct( 'Forms' );
 		wfLoadExtensionMessages( 'SemanticForms' );
 	}
 
