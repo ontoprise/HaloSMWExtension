@@ -53,8 +53,11 @@ function wfURLArgumentsPageRenderingHash($hash) {
 	$urlArgs = $wgRequest->getValues();
 	ksort($urlArgs);
 	$hash .= "!args=";
-    foreach ($urlArgs as $key => $value) {  
-		$hash .= "$key+$value+";
+	$ignoreArgs = array("action", "submit");
+    foreach ($urlArgs as $key => $value) {
+    	if (!in_array($key, $ignoreArgs)) {
+			$hash .= "$key+$value+";
+    	}
     }
 
     return true;
