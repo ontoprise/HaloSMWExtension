@@ -8,7 +8,7 @@
 		<instdir>extensions/SemanticGardening</instdir>
 		<description>Helps to keep the wiki clean and consistent. Allows to run asynchronous bots.</description>
 		<dependencies>
-			<dependency from="146" to="151">SMWHalo</dependency>
+			<dependency from="146" to="152">SMWHalo</dependency>
 		</dependencies>
 	</global>
 	<codefiles>
