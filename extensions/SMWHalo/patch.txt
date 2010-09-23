@@ -111,14 +111,17 @@ Index: includes/Linker.php
 ===================================================================
 --- includes/Linker.php	(revision 7264)
 +++ includes/Linker.php	(working copy)
-@@ -243,6 +243,10 @@
+@@ -243,6 +243,13 @@
  		and $target->getNamespace() != NS_SPECIAL ) {
  			$query['action'] = 'edit';
  			$query['redlink'] = '1';
-+            global $IP;
-+            if ((defined('SMWHALO_WYSIWYG_EDITOR_WRAPPER') || defined('WYSIWYG_EDITOR_VERSION')) &&
-+                empty( $query['mode']))
-+                $query['mode']= 'wysiwyg';
++			/*op-patch|SR|2010-09-23|SMWHalo|Open redlink in WYSIWYG editor|start*/
++			/*op-patch|SR|2010-09-23|SMWHalo|Open redlink in WYSIWYG editor|doc|http://dmwiki.ontoprise.com:8888/dmwiki/index.php/Redlink_with_wysiwyg*/
++			global $IP;
++			if ((defined('SMWHALO_WYSIWYG_EDITOR_WRAPPER') || defined('WYSIWYG_EDITOR_VERSION')) &&
++				empty( $query['mode']))
++				$query['mode']= 'wysiwyg';
++			/*op-patch|SR|2010-09-23|SMWHalo|Open redlink in WYSIWYG editor|end*/
  		}
  		$ret = $target->getLinkUrl( $query );
  		wfProfileOut( __METHOD__ );
