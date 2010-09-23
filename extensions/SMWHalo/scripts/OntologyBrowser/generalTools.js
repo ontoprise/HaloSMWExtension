@@ -22,7 +22,7 @@
  * @ingroup SMWHaloSpecials
  * @ingroup SMWHaloOntologyBrowser
  * 
- * @author Kai Kühn
+ * @author Kai Kï¿½hn
  * 
  * General JS tools
  */
@@ -545,8 +545,6 @@ GeneralTools.URLEncode = function ( str ) {
     return ret.replace(/(\%([a-z0-9]{2}))/g, function(full, m1, m2) {
 	return "%"+m2.toUpperCase();
     });
-     
-    return ret;
 }
 
 GeneralTools._URL_Histogram = function() {
