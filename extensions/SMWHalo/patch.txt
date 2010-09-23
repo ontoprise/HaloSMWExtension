@@ -89,11 +89,12 @@ Index: includes/Article.php
 ===================================================================
 --- includes/Article.php	(revision 7264)
 +++ includes/Article.php	(working copy)
-@@ -3552,9 +3552,15 @@
+@@ -3552,9 +3552,16 @@
  
  		$popts = $wgOut->parserOptions();
  		$popts->setTidy(true);
 +		/*op-patch|TS|2009-06-19|SMWHalo|Parsing context|start*/
++		/*op-patch|TS|2009-06-19|SMWHalo|Parsing context|doc|http://dmwiki.ontoprise.com:8888/dmwiki/index.php/Parsing_context*/
 +        $popts->setParsingContext("Main article");
 +		/*op-patch|TS|2009-06-19|end*/
  		$popts->enableLimitReport();
