@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <deploydescriptor>
 	<global>
-		<version>141</version>
+		<version>152</version>
 		<id>RichMedia</id>
 		<vendor>Ontoprise GmbH</vendor>
 		<maintainer>Ontoprise GmbH</maintainer>
@@ -11,7 +11,7 @@
 		</description>
 		<dependencies>
 			<dependency from="1153" to="1153">MW</dependency>
-			<dependency from="191" to="191">semanticforms</dependency>
+			<dependency from="190" to="200">semanticforms</dependency>
 			<dependency from="100" to="100">scriptmanager</dependency>
 		</dependencies>
 	</global>
@@ -46,7 +46,9 @@
                 ext="semanticforms" from="190" to="190" />
    			<patch file="extensions/RichMedia/RichMediaPatchForSF1_9_1.txt"
                 ext="semanticforms" from="191" to="191" />
-			<patch file="extensions/RichMedia/RichMediaPatchForMW1_15_3.txt" />
+   			<patch file="extensions/RichMedia/RichMediaPatchForSF2_0.txt"
+                ext="semanticforms" from="200" to="200" />
+            <patch file="extensions/RichMedia/RichMediaPatchForMW1_15_3.txt" />
 
 		</new>
 		<uninstall>
@@ -56,6 +58,9 @@
    			<patch
                 file="extensions/RichMedia/RichMediaPatchForSF1_9_1.txt"
                 ext="semanticforms" from="191" to="191" />
+   			<patch
+                file="extensions/RichMedia/RichMediaPatchForSF2_0.txt"
+                ext="semanticforms" from="200" to="200" />
 			<patch
 				file="extensions/RichMedia/RichMediaPatchForMW1_15_3.txt" />
 		</uninstall>
