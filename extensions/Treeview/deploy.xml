@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <deploydescriptor>
 	<global>
-		<version>141</version>
-        <patchlevel>0</patchlevel>
+		<version>152</version>
 		<id>treeview</id>
 		<vendor>Ontoprise GmbH</vendor>
 		<maintainer>Ontoprise GmbH</maintainer>
