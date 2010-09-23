@@ -21,7 +21,7 @@ class SMWSPARQLQueryProcessor extends SMWQueryProcessor {
 	 * objects, which are filled into call-by-ref parameters.
 	 * $showmode is true if the input should be treated as if given by #show
 	 */
-	static public function processFunctionParams($rawparams, &$querystring, &$params, &$printouts, $showmode=false) {
+	static public function processFunctionParams(array $rawparams, &$querystring, &$params, &$printouts, $showmode=false) {
 		global $wgContLang;
 		$querystring = '';
 		$printouts = array();
@@ -109,13 +109,13 @@ class SMWSPARQLQueryProcessor extends SMWQueryProcessor {
 	}
 
 
-	static public function getResultFromFunctionParams($rawparams, $outputmode, $context = SMWQueryProcessor::INLINE_QUERY, $showmode = false) {
+	static public function getResultFromFunctionParams(array $rawparams, $outputmode, $context = SMWQueryProcessor::INLINE_QUERY, $showmode = false) {
 		SMWSPARQLQueryProcessor::processFunctionParams($rawparams,$querystring,$params,$printouts,$showmode);
 
 		return SMWSPARQLQueryProcessor::getResultFromQueryString($querystring,$params,$printouts, SMW_OUTPUT_WIKI, $context);
 	}
 
-	static public function getResultFromQueryString($querystring, $params, $extraprintouts, $outputmode, $context = SMWQueryProcessor::INLINE_QUERY) {
+	static public function getResultFromQueryString($querystring, array $params, $extraprintouts, $outputmode, $context = SMWQueryProcessor::INLINE_QUERY) {
 
 		$format = SMWQueryProcessor::getResultFormat($params);
 		$query  = SMWSPARQLQueryProcessor::createQuery($querystring, $params, $context, $format, $extraprintouts);
