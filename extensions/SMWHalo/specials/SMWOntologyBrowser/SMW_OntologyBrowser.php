@@ -42,7 +42,7 @@ class SMW_OntologyBrowser extends SpecialPage {
 	public function __construct() {
 		parent::__construct('OntologyBrowser');
 	}
-	public function execute() {
+	public function execute($par) {
 		global $wgRequest, $wgOut, $wgScriptPath, $wgUser;
 		//$skin = $wgUser->getSkin();
 		$wgOut->setPageTitle(wfMsg('ontologybrowser'));

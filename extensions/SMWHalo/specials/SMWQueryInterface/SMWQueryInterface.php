@@ -27,7 +27,7 @@ class SMWQueryInterface extends SpecialPage {
 	/*
 	 * Overloaded function that is responsible for the creation of the Special Page
 	 */
-	public function execute() {
+	public function execute($par) {
 
 		global $wgRequest, $wgOut, $smwgHaloScriptPath, $smwgDeployVersion;
 
