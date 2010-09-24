@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <deploydescriptor>
 	<global>
-		<version>151</version>
-		<patchlevel>0</patchlevel>
+		<version>152</version>
 		<id>smwhalo</id>
 		<vendor>Ontoprise GmbH</vendor>
 		<maintainer>Ontoprise GmbH</maintainer>
@@ -12,8 +11,8 @@
 			Mediawiki
 		</description>
 		<dependencies>
-		    <dependency from="1150" to="1159">mw</dependency>
-			<dependency from="151">smw</dependency>
+		    <dependency from="1150" to="1169">mw</dependency>
+			<dependency from="152">smw</dependency>
 			<dependency from="100" to="100">scriptmanager</dependency>
 		</dependencies>
 	</global>
@@ -35,6 +34,8 @@
 
 		<new>
 			<patch file="extensions/SMWHalo/patch.txt" />
+            <patch file="extensions/SMWHalo/patch_for_MW1.15.3.txt"
+                ext="mw" from="1153" to="1153" />
 			<require name="smwhalo"
 				file="extensions/SMWHalo/includes/SMW_Initialize.php" />
 			<function name="enableSMWHalo">
@@ -58,6 +59,8 @@
 		</new>
 		<uninstall>
 			<patch file="extensions/SMWHalo/patch.txt" />
+            <patch file="extensions/SMWHalo/patch_for_MW1.15.3.txt"
+                ext="mw" from="1153" to="1153" />
 			<script file="extensions/SMWHalo/maintenance/SMW_setup.php"
 				params="--delete" />
 		</uninstall>
