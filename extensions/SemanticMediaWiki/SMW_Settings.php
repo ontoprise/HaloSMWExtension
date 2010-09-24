@@ -23,7 +23,10 @@ if ( !defined( 'MEDIAWIKI' ) ) {
 # web. Change it if required ($wgScriptPath is the path to the base directory
 # of your wiki). No final slash.
 ##
-$smwgScriptPath = $wgScriptPath . '/extensions/SemanticMediaWiki';
+$smwgScriptPath = ( 
+	( version_compare( $wgVersion, '1.16', '>=' ) && isset( $wgExtensionAssetsPath ) && $wgExtensionAssetsPath )
+	? $wgExtensionAssetsPath : $wgScriptPath . '/extensions'
+	) . '/SemanticMediaWiki';
 ##
 
 ###
@@ -436,4 +439,11 @@ $smwgTranslate = false;
 # or updating of all wiki data using the interface on Special:SMWAdmin.
 ##
 $smwgAdminRefreshStore = true;
+##
+
+###
+# Sets whether or not the 'printouts' textarea should have autocompletion
+# on property names.
+##
+$smwgAutocompleteInSpecialAsk = true;
 ##

@@ -191,6 +191,8 @@ class SMWSQLStore2QueryEngine {
 	 * processing -- not all DBMS might be able in seeing this by themselves.
 	 *
 	 * @param SMWQuery $query
+	 * 
+	 * @return mixed: depends on $query->querymode
 	 */
 	public function getQueryResult( SMWQuery $query ) {
 		global $smwgIgnoreQueryErrors, $smwgQSortingSupport;
@@ -276,6 +278,8 @@ class SMWSQLStore2QueryEngine {
 	 *
 	 * @param SMWQuery $query
 	 * @param integer $rootid
+	 * 
+	 * @return string
 	 */
 	protected function getDebugQueryResult( SMWQuery $query, $rootid ) {
 		$qobj = $this->m_queries[$rootid];
@@ -331,6 +335,8 @@ class SMWSQLStore2QueryEngine {
 	 *
 	 * @param SMWQuery $query
 	 * @param integer $rootid
+	 * 
+	 * @return integer
 	 */
 	protected function getCountQueryResult( SMWQuery $query, $rootid ) {
 		wfProfileIn( 'SMWSQLStore2Queries::getCountQueryResult (SMW)' );
@@ -639,7 +645,9 @@ class SMWSQLStore2QueryEngine {
 		// *** Add conditions on the value of the property ***//
 		if ( ( count( $objectfields ) == 1 ) && ( reset( $objectfields ) == 'p' ) ) { // page description, process like main query
 			$sub = $this->compileQueries( $valuedesc );
-			$objectfield = reset( array_keys( $objectfields ) );
+			
+			$objectfield = array_keys( $objectfields );
+			$objectfield = reset( $objectfield );
 
 			if ( $sub >= 0 ) {
 				$query->components[$sub] = "{$query->alias}.{$objectfield}";

@@ -17,7 +17,6 @@ class SMWQueryParser {
 	protected $m_sepstack; // list of open blocks ("parentheses") that need closing at current step
 	protected $m_curstring; // remaining string to be parsed (parsing eats query string from the front)
 	protected $m_errors; // empty array if all went right, array of strings otherwise
-	protected $m_label; // label of the main query result
 	protected $m_defaultns; // description of the default namespace restriction, or NULL if not used
 
 	protected $m_categoryprefix; // cache label of category namespace . ':'
@@ -49,27 +48,37 @@ class SMWQueryParser {
 	 * Compute an SMWDescription from a query string. Returns whatever descriptions could be
 	 * wrestled from the given string (the most general result being SMWThingDescription if
 	 * no meaningful condition was extracted).
+	 * 
+	 * @param string $querystring
+	 * 
+	 * @return SMWDescription
 	 */
 	public function getQueryDescription( $querystring ) {
 		wfProfileIn( 'SMWQueryParser::getQueryDescription (SMW)' );
+		
 		$this->m_errors = array();
-		$this->m_label = '';
 		$this->m_curstring = $querystring;
 		$this->m_sepstack = array();
 		$setNS = false;
-		$result = $this->getSubqueryDescription( $setNS, $this->m_label );
+		$result = $this->getSubqueryDescription( $setNS );
+		
 		if ( !$setNS ) { // add default namespaces if applicable
 			$result = $this->addDescription( $this->m_defaultns, $result );
 		}
+		
 		if ( $result === null ) { // parsing went wrong, no default namespaces
 			$result = new SMWThingDescription();
 		}
+		
 		wfProfileOut( 'SMWQueryParser::getQueryDescription (SMW)' );
+		
 		return $result;
 	}
 
 	/**
 	 * Return array of error messages (possibly empty).
+	 * 
+	 * @return array
 	 */
 	public function getErrors() {
 		return $this->m_errors;
@@ -77,19 +86,12 @@ class SMWQueryParser {
 
 	/**
 	 * Return error message or empty string if no error occurred.
+	 * 
+	 * @return string
 	 */
 	public function getErrorString() {
 		return smwfEncodeMessages( $this->m_errors );
 	}
-
-	/**
-	 * Return label for the results of this query (which
-	 * might be empty if no such information was passed).
-	 */
-	public function getLabel() {
-		return $this->m_label;
-	}
-
 
 	/**
 	 * Compute an SMWDescription for current part of a query, which should
@@ -111,29 +113,32 @@ class SMWQueryParser {
 	 * Note that $setNS is no means to switch on or off default namespaces in general,
 	 * but just controls query generation. For general effect, the default namespaces
 	 * should be set to NULL.
-	 *
-	 * The call-by-ref parameter $label is used to append any label strings found.
+	 * 
+	 * @return SMWDescription or null
 	 */
-	protected function getSubqueryDescription( &$setNS, &$label ) {
+	protected function getSubqueryDescription( &$setNS ) {
 		smwfLoadExtensionMessages( 'SemanticMediaWiki' );
+		
 		$conjunction = null;      // used for the current inner conjunction
 		$disjuncts = array();     // (disjunctive) array of subquery conjunctions
 		$hasNamespaces = false;   // does the current $conjnuction have its own namespace restrictions?
 		$mustSetNS = $setNS;      // must ns restrictions be set? (may become true even if $setNS is false)
 
 		$continue = ( $chunk = $this->readChunk() ) != ''; // skip empty subquery completely, thorwing an error
+		
 		while ( $continue ) {
 			$setsubNS = false;
+			
 			switch ( $chunk ) {
 				case '[[': // start new link block
-					$ld = $this->getLinkDescription( $setsubNS, $label );
+					$ld = $this->getLinkDescription( $setsubNS );
 					if ( $ld !== null ) {
 						$conjunction = $this->addDescription( $conjunction, $ld );
 					}
 				break;
 				case '<q>': // enter new subquery, currently irrelevant but possible
 					$this->pushDelimiter( '</q>' );
-					$conjunction = $this->addDescription( $conjunction, $this->getSubqueryDescription( $setsubNS, $label ) );
+					$conjunction = $this->addDescription( $conjunction, $this->getSubqueryDescription( $setsubNS ) );
 				break;
 				case 'OR': case '||': case '': case '</q>': // finish disjunction and maybe subquery
 					if ( $this->m_defaultns !== null ) { // possibly add namespace restrictions
@@ -141,19 +146,23 @@ class SMWQueryParser {
 							// add ns restrictions to all earlier conjunctions (all of which did not have them yet)
 							$mustSetNS = true; // enforce NS restrictions from now on
 							$newdisjuncts = array();
+							
 							foreach ( $disjuncts as $conj ) {
 								$newdisjuncts[] = $this->addDescription( $conj, $this->m_defaultns );
 							}
+							
 							$disjuncts = $newdisjuncts;
 						} elseif ( !$hasNamespaces && $mustSetNS ) {
 							// add ns restriction to current result
 							$conjunction = $this->addDescription( $conjunction, $this->m_defaultns );
 						}
 					}
+					
 					$disjuncts[] = $conjunction;
 					// start anew
 					$conjunction = null;
 					$hasNamespaces = false;
+					
 					// finish subquery?
 					if ( $chunk == '</q>' ) {
 						if ( $this->popDelimiter( '</q>' ) ) {
@@ -172,9 +181,11 @@ class SMWQueryParser {
 					$this->m_errors[] = wfMsgForContent( 'smw_unexpectedpart', $chunk );
 					// return null; // Try to go on, it can only get better ...
 			}
+			
 			if ( $setsubNS ) { // namespace restrictions encountered in current conjunct
 				$hasNamespaces = true;
 			}
+			
 			if ( $continue ) { // read on only if $continue remained true
 				$chunk = $this->readChunk();
 			}
@@ -182,6 +193,7 @@ class SMWQueryParser {
 
 		if ( count( $disjuncts ) > 0 ) { // make disjunctive result
 			$result = null;
+			
 			foreach ( $disjuncts as $d ) {
 				if ( $d === null ) {
 					$this->m_errors[] = wfMsgForContent( 'smw_emptysubquery' );
@@ -196,6 +208,7 @@ class SMWQueryParser {
 			$setNS = false;
 			return null;
 		}
+		
 		$setNS = $mustSetNS; // NOTE: also false if namespaces were given but no default NS descs are available
 
 		return $result;
@@ -205,27 +218,28 @@ class SMWQueryParser {
 	 * Compute an SMWDescription for current part of a query, which should
 	 * be the content of "[[ ... ]]". Returns NULL upon error.
 	 *
-	 * Parameters $setNS and $label have the same use as in getSubqueryDescription().
+	 * Parameters $setNS has the same use as in getSubqueryDescription().
 	 */
-	protected function getLinkDescription( &$setNS, &$label ) {
+	protected function getLinkDescription( &$setNS ) {
 		// This method is called when we encountered an opening '[['. The following
 		// block could be a Category-statement, fixed object, or property statement.
 		$chunk = $this->readChunk( '', true, false ); // NOTE: untrimmed, initial " " escapes prop. chains
+		
 		if ( ( smwfNormalTitleText( $chunk ) == $this->m_categoryprefix ) ||  // category statement or
 		     ( smwfNormalTitleText( $chunk ) == $this->m_conceptprefix ) ) {  // concept statement
-			return $this->getClassDescription( $setNS, $label,
-			       ( smwfNormalTitleText( $chunk ) == $this->m_categoryprefix ) );
+			return $this->getClassDescription( $setNS, ( smwfNormalTitleText( $chunk ) == $this->m_categoryprefix ) );
 		} else { // fixed subject, namespace restriction, property query, or subquery
 			$sep = $this->readChunk( '', false ); // do not consume hit, "look ahead"
+			
 			if ( ( $sep == '::' ) || ( $sep == ':=' ) ) {
 				if ( $chunk { 0 } != ':' ) { // property statement
-					return $this->getPropertyDescription( $chunk, $setNS, $label );
+					return $this->getPropertyDescription( $chunk, $setNS );
 				} else { // escaped article description, read part after :: to get full contents
 					$chunk .= $this->readChunk( '\[\[|\]\]|\|\||\|' );
-					return $this->getArticleDescription( trim( $chunk ), $setNS, $label );
+					return $this->getArticleDescription( trim( $chunk ), $setNS );
 				}
 			} else { // Fixed article/namespace restriction. $sep should be ]] or ||
-				return $this->getArticleDescription( trim( $chunk ), $setNS, $label );
+				return $this->getArticleDescription( trim( $chunk ), $setNS );
 			}
 		}
 	}
@@ -235,12 +249,14 @@ class SMWQueryParser {
 	 * is in between "[[Category:" and the closing "]]" and create a
 	 * suitable description.
 	 */
-	protected function getClassDescription( &$setNS, &$label, $category = true ) {
+	protected function getClassDescription( &$setNS, $category = true ) {
 		// note: no subqueries allowed here, inline disjunction allowed, wildcards allowed
 		$result = null;
 		$continue = true;
+		
 		while ( $continue ) {
 			$chunk = $this->readChunk();
+			
 			if ( $chunk == '+' ) {
 				// wildcard, ignore for categories (semantically meaningless, everything is in some class)
 			} else { // assume category/concept title
@@ -251,11 +267,12 @@ class SMWQueryParser {
 					$result = $this->addDescription( $result, $desc, false );
 				}
 			}
+			
 			$chunk = $this->readChunk();
 			$continue = ( $chunk == '||' ) && $category; // disjunctions only for cateories
 		}
 
-		return $this->finishLinkDescription( $chunk, false, $result, $setNS, $label );
+		return $this->finishLinkDescription( $chunk, false, $result, $setNS );
 	}
 
 	/**
@@ -264,24 +281,29 @@ class SMWQueryParser {
 	 * suitable description. The "::" is the first chunk on the current
 	 * string.
 	 */
-	protected function getPropertyDescription( $propertyname, &$setNS, &$label ) {
+	protected function getPropertyDescription( $propertyname, &$setNS ) {
 		smwfLoadExtensionMessages( 'SemanticMediaWiki' );
 		$this->readChunk(); // consume separator ":=" or "::"
+		
 		// first process property chain syntax (e.g. "property1.property2::value"), escaped by initial " ":
 		$propertynames = ( $propertyname { 0 } == ' ' ) ? array( $propertyname ):explode( '.', $propertyname );
 		$properties = array();
 		$typeid = '_wpg';
 		$inverse = false;
+		
 		foreach ( $propertynames as $name ) {
 			if ( $typeid != '_wpg' ) { // non-final property in chain was no wikipage: not allowed
 				$this->m_errors[] = wfMsgForContent( 'smw_valuesubquery', $prevname );
 				return null; ///TODO: read some more chunks and try to finish [[ ]]
 			}
+			
 			$property = SMWPropertyValue::makeUserProperty( $name );
+			
 			if ( !$property->isValid() ) { // illegal property identifier
 				$this->m_errors = array_merge( $this->m_errors, $property->getErrors() );
 				return null; ///TODO: read some more chunks and try to finish [[ ]]
 			}
+			
 			$typeid = $property->getPropertyTypeID();
 			$inverse = $property->isInverse();
 			$prevname = $name;
@@ -290,8 +312,10 @@ class SMWQueryParser {
 
 		$innerdesc = null;
 		$continue = true;
+		
 		while ( $continue ) {
 			$chunk = $this->readChunk();
+			
 			switch ( $chunk ) {
 				case '+': // wildcard, add namespaces for page-type properties
 					if ( ( $this->m_defaultns !== null ) && ( ( $typeid == '_wpg' ) || $inverse ) ) {
@@ -305,8 +329,7 @@ class SMWQueryParser {
 					if ( ( $typeid == '_wpg' ) || $inverse ) {
 						$this->pushDelimiter( '</q>' );
 						$setsubNS = true;
-						$sublabel = '';
-						$innerdesc = $this->addDescription( $innerdesc, $this->getSubqueryDescription( $setsubNS, $sublabel ), false );
+						$innerdesc = $this->addDescription( $innerdesc, $this->getSubqueryDescription( $setsubNS ), false );
 					} else { // no subqueries allowed for non-pages
 						$this->m_errors[] = wfMsgForContent( 'smw_valuesubquery', end( $propertynames ) );
 						$innerdesc = $this->addDescription( $innerdesc, new SMWThingDescription(), false );
@@ -356,12 +379,16 @@ class SMWQueryParser {
 			              $this->addDescription( $innerdesc, new SMWThingDescription(), false );
 			$this->m_errors[] = wfMsgForContent( 'smw_propvalueproblem', $property->getWikiValue() );
 		}
+		
 		$properties = array_reverse( $properties );
+		
 		foreach ( $properties as $property ) {
 			$innerdesc = new SMWSomeProperty( $property, $innerdesc );
 		}
+		
 		$result = $innerdesc;
-		return $this->finishLinkDescription( $chunk, false, $result, $setNS, $label );
+		
+		return $this->finishLinkDescription( $chunk, false, $result, $setNS );
 	}
 
 	/**
@@ -371,35 +398,42 @@ class SMWQueryParser {
 	 * The first chunk behind the "[[" has already been read and is
 	 * passed as a parameter.
 	 */
-	protected function getArticleDescription( $firstchunk, &$setNS, &$label ) {
+	protected function getArticleDescription( $firstchunk, &$setNS ) {
 		smwfLoadExtensionMessages( 'SemanticMediaWiki' );
+		
 		$chunk = $firstchunk;
 		$result = null;
 		$continue = true;
 		// $innerdesc = null;
+		
 		while ( $continue ) {
 			if ( $chunk == '<q>' ) { // no subqueries of the form [[<q>...</q>]] (not needed)
 				$this->m_errors[] = wfMsgForContent( 'smw_misplacedsubquery' );
 				return null;
 			}
+			
 			$list = preg_split( '/:/', $chunk, 3 ); // ":Category:Foo" "User:bar"  ":baz" ":+"
+			
 			if ( ( $list[0] == '' ) && ( count( $list ) == 3 ) ) {
 				$list = array_slice( $list, 1 );
 			}
 			if ( ( count( $list ) == 2 ) && ( $list[1] == '+' ) ) { // try namespace restriction
 				global $wgContLang;
 				$idx = $wgContLang->getNsIndex( $list[0] );
+				
 				if ( $idx !== false ) {
 					$result = $this->addDescription( $result, new SMWNamespaceDescription( $idx ), false );
 				}
 			} else {
 				$value = SMWDataValueFactory::newTypeIDValue( '_wpg', $chunk );
+				
 				if ( $value->isValid() ) {
 					$result = $this->addDescription( $result, new SMWValueDescription( $value ), false );
 				}
 			}
 
 			$chunk = $this->readChunk( '\[\[|\]\]|\|\||\|' );
+			
 			if ( $chunk == '||' ) {
 				$chunk = $this->readChunk( '\[\[|\]\]|\|\||\|' );
 				$continue = true;
@@ -408,37 +442,42 @@ class SMWQueryParser {
 			}
 		}
 
-		return $this->finishLinkDescription( $chunk, true, $result, $setNS, $label );
+		return $this->finishLinkDescription( $chunk, true, $result, $setNS );
 	}
 
-	protected function finishLinkDescription( $chunk, $hasNamespaces, $result, &$setNS, &$label ) {
+	protected function finishLinkDescription( $chunk, $hasNamespaces, $result, &$setNS ) {
 		smwfLoadExtensionMessages( 'SemanticMediaWiki' );
+		
 		if ( $result === null ) { // no useful information or concrete error found
 			$this->m_errors[] = wfMsgForContent( 'smw_badqueryatom' );
 		} elseif ( !$hasNamespaces && $setNS && ( $this->m_defaultns !== null ) ) {
 			$result = $this->addDescription( $result, $this->m_defaultns );
 			$hasNamespaces = true;
 		}
+		
 		$setNS = $hasNamespaces;
 
-		// terminate link (assuming that next chunk was read already)
-		if ( $chunk == '|' ) {
+		if ( $chunk == '|' ) { // skip content after single |, but report a warning
+			// Note: Using "|label" in query atoms used to be a way to set the mainlabel in SMW <1.0; no longer supported now
 			$chunk = $this->readChunk( '\]\]' );
+			$labelpart = '|';
 			if ( $chunk != ']]' ) {
-				$label .= $chunk;
+				$labelpart .= $chunk;
 				$chunk = $this->readChunk( '\]\]' );
-			} else { // empty label does not add to overall label
-				$chunk = ']]';
 			}
+			$this->m_errors[] = wfMsgForContent( 'smw_unexpectedpart', htmlspecialchars( $labelpart ) );
 		}
+		
 		if ( $chunk != ']]' ) {
 			// What happended? We found some chunk that could not be processed as
-			// link content (as in [[Category:Test<q>]]) and there was no label to
-			// eat it. Or the closing ]] are just missing entirely.
+			// link content (as in [[Category:Test<q>]]), or the closing ]] are 
+			// just missing entirely.
 			if ( $chunk != '' ) {
 				$this->m_errors[] = wfMsgForContent( 'smw_misplacedsymbol', htmlspecialchars( $chunk ) );
+				
 				// try to find a later closing ]] to finish this misshaped subpart
 				$chunk = $this->readChunk( '\]\]' );
+				
 				if ( $chunk != ']]' ) {
 					$chunk = $this->readChunk( '\]\]' );
 				}
@@ -447,6 +486,7 @@ class SMWQueryParser {
 				$this->m_errors[] = wfMsgForContent( 'smw_noclosingbrackets' );
 			}
 		}
+		
 		return $result;
 	}
 
@@ -477,17 +517,20 @@ class SMWQueryParser {
 			if ( $consume ) {
 				$this->m_curstring = '';
 			}
+			
 			return $trim ? trim( $chunks[0] ):$chunks[0];
 		} elseif ( count( $chunks ) == 3 ) { // this should generally happen if count is not 1
 			if ( $chunks[0] == '' ) { // string started with delimiter
 				if ( $consume ) {
 					$this->m_curstring = $chunks[2];
 				}
+				
 				return $trim ? trim( $chunks[1] ):$chunks[1];
 			} else {
 				if ( $consume ) {
 					$this->m_curstring = $chunks[1] . $chunks[2];
 				}
+				
 				return $trim ? trim( $chunks[0] ):$chunks[0];
 			}
 		} else { return false; }  // should never happen
@@ -541,10 +584,12 @@ class SMWQueryParser {
 		} else {
 			$allowed = true;
 		}
+		
 		if ( !$allowed ) {
 			$this->m_errors[] = wfMsgForContent( $notallowedmessage, str_replace( '[', '&#x005B;', $newdesc->getQueryString() ) );
 			return $curdesc;
 		}
+		
 		if ( $newdesc === null ) {
 			return $curdesc;
 		} elseif ( $curdesc === null ) {

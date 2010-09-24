@@ -12,12 +12,10 @@
  * @ingroup SMW
  */
 class SMWExporter {
-
 	static protected $m_exporturl = false;
 	static protected $m_ent_wiki = false;
 	static protected $m_ent_property = false;
 	static protected $m_ent_wikiurl = false;
-
 
 	/**
 	 * Make sure that necessary base URIs are initialised properly.
@@ -28,20 +26,18 @@ class SMWExporter {
 
 		global $smwgNamespace; // complete namespace for URIs (with protocol, usually http://)
 		if ( '' == $smwgNamespace ) {
-			$resolver = Title::makeTitle( NS_SPECIAL, 'URIResolver' );
+			$resolver = SpecialPage::getTitleFor( 'URIResolver' );
 			$smwgNamespace = $resolver->getFullURL() . '/';
-		}
-		if ( $smwgNamespace[0] == '.' ) {
-			$resolver = Title::makeTitle( NS_SPECIAL, 'URIResolver' );
+		} elseif ( $smwgNamespace[0] == '.' ) {
+			$resolver = SpecialPage::getTitleFor( 'URIResolver' );
 			$smwgNamespace = "http://" . substr( $smwgNamespace, 1 ) . $resolver->getLocalURL() . '/';
 		}
 
 		// The article name must be the last part of wiki URLs for proper OWL/RDF export:
 		SMWExporter::$m_ent_wikiurl  = $wgServer . str_replace( '$1', '', $wgArticlePath );
 		SMWExporter::$m_ent_wiki     = $smwgNamespace;
-		SMWExporter::$m_ent_property = SMWExporter::$m_ent_wiki .
-		          SMWExporter::encodeURI( urlencode( str_replace( ' ', '_', $wgContLang->getNsText( SMW_NS_PROPERTY ) . ':' ) ) );
-		$title = Title::makeTitle( NS_SPECIAL, 'ExportRDF' );
+		SMWExporter::$m_ent_property = SMWExporter::$m_ent_wiki . SMWExporter::encodeURI( urlencode( str_replace( ' ', '_', $wgContLang->getNsText( SMW_NS_PROPERTY ) . ':' ) ) );
+		$title = SpecialPage::getTitleFor( 'ExportRDF' );
 		SMWExporter::$m_exporturl    = '&wikiurl;' . $title->getPrefixedURL();
 	}
 
@@ -273,10 +269,10 @@ class SMWExporter {
 	 * allows services that receive a URI to extract e.g. the according wiki page.
 	 */
 	static public function decodeURI( $uri ) {
-		$uri = str_replace( array( '-22', '-23', '-26', '-27', '-2B', '-21', '-' ),
-		                    array( '"', '#', '&', "'", '+', '!', '%' ),
+		$uri = str_replace( array( '-3A', '-22', '-23', '-26', '-27', '-2B', '-21', '-' ),
+		                    array( ':', '"', '#', '&', "'", '+', '!', '%' ),
 		                   $uri );
-		$uri = str_replace( '-2D', '-', $uri );
+		$uri = str_replace( '%2D', '-', $uri );
 		return $uri;
 	}
 

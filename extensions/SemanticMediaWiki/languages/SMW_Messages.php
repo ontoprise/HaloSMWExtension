@@ -32,6 +32,7 @@ $messages['en'] = array(
 	'smw_concept_cache_miss'  => 'The concept "$1" can not be used at the moment, since the wiki configuration requires it to be computed off-line.
 If the problem does not go away after some time, ask your site administrator to make this concept available.',
 	'smw_noinvannot'        => 'Values cannot be assigned to inverse properties.',
+	'version-semantic'      => 'Semantic extensions',
 
 	// URIs that should not be used in objects in cases where users can provide URIs
 	'smw_uri_blacklist' => " http://www.w3.org/1999/02/22-rdf-syntax-ns#\n http://www.w3.org/2000/01/rdf-schema#\n http://www.w3.org/2002/07/owl#",
@@ -71,6 +72,9 @@ If the problem does not go away after some time, ask your site administrator to 
 	'smw_paramdesc_sep'	=> 'The separator for values',
 	'smw_paramdesc_template'	=> 'The name of a template with which to display the printouts',
 	'smw_paramdesc_columns'	=> 'The number of columns in which to display results (default is $1)',
+	'smw_paramdesc_userparam'	=> 'A value passed into each template call, if a template is used',
+	'smw_paramdesc_introtemplate'	=> 'The name of a template to display before the query results, if there are any',
+	'smw_paramdesc_outrotemplate'	=> 'The name of a template to display after the query results, if there are any',
 	'smw_paramdesc_embedformat'	=> 'The HTML tag used to define headings',
 	'smw_paramdesc_embedonly'	=> 'Display no headings',
 	'smw_paramdesc_rsstitle'	=> 'The text to be used as the title of the feed',
@@ -316,7 +320,7 @@ Estimated progress of current update:',
 
 	// Messages for Admin Links page
 	'smw_adminlinks_datastructure' => 'Data structure',
-	'smw_adminlinks_displayingdata' => 'Displaying data',
+	'smw_adminlinks_displayingdata' => 'Data display',
 	'smw_adminlinks_inlinequerieshelp' => 'Inline queries help',
 );
 
@@ -1021,6 +1025,7 @@ $messages['arz'] = array(
  * @author EugeneZelenko
  * @author Jim-by
  * @author Red Winged Duck
+ * @author Wizardist
  */
 $messages['be-tarask'] = array(
 	'smw-desc' => "Робіць {{GRAMMAR:вінавальны|{{SITENAME}}}} больш зручнай для кампутараў ''і'' людзей ([http://semantic-mediawiki.org/wiki/Help:User_manual дакумэнтацыя])",
@@ -1037,6 +1042,7 @@ $messages['be-tarask'] = array(
 	'smw_multiple_concepts' => 'Кожная старонка канцэпцыі можа мець толькі адно вызначэньне канцэпцыі.',
 	'smw_concept_cache_miss' => 'Канцэпцыя «$1» ня можа быць выкарыстаная ў гэты момант, таму што канфігурацыя {{GRAMMAR:родны|{{SITENAME}}}} патрабуе, каб яна вылічалася аф-лайн. Калі гэта праблема ня зьнікне празь некаторы час, запытайце Вашага адміністратара сайта ўключыць гэтую канцэпцыю.',
 	'smw_noinvannot' => 'Значэньні ня можа быць прызначаныя ў адваротныя уласьцівасьці.',
+	'version-semantic' => 'Сэмантычныя пашырэньні',
 	'smw_baduri' => 'Спасылкі на форму «$1» не дазволеныя.',
 	'smw_printername_auto' => 'Аўтаматычна',
 	'smw_printername_count' => 'Падлік вынікаў',
@@ -1062,6 +1068,9 @@ $messages['be-tarask'] = array(
 	'smw_paramdesc_sep' => 'Разьдзяляльнік значэньняў',
 	'smw_paramdesc_template' => 'Назва шаблёну, які будзе выкарыстоўвацца для вываду вынікаў',
 	'smw_paramdesc_columns' => 'Колькасьць слупкоў у якіх будуць паказвацца вынікі (па змоўчваньні — $1)',
+	'smw_paramdesc_userparam' => 'Значэньне, якое перадаецца ў кожны выклік шаблёну, калі ён выкарыстоўваецца',
+	'smw_paramdesc_introtemplate' => 'Назва шаблёну для паказу перад вынікамі запыту, калі яны ёсьць',
+	'smw_paramdesc_outrotemplate' => 'Назва шаблёну для паказу пасьля вынікаў запыту, калі яны ёсьць',
 	'smw_paramdesc_embedformat' => 'Тэг HTML, які выкарыстоўваецца для вызначэньня загалоўкаў',
 	'smw_paramdesc_embedonly' => 'Не паказваць загалоўкі',
 	'smw_paramdesc_rsstitle' => 'Тэкст, які будзе выкарыстоўвацца як назва стужкі',
@@ -1307,16 +1316,23 @@ $messages['bg'] = array(
 /** Breton (Brezhoneg)
  * @author Fohanno
  * @author Fulup
+ * @author Gwendal
  * @author Y-M D
  */
 $messages['br'] = array(
+	'smw-desc' => "Aesaat monedusted ho wiki - evit ar mekanikoù ''hag'' an dud ([http://semantic-mediawiki.org/wiki/Help:User_manual diellerezh enlinenn])",
 	'smw_edithelp' => 'Skoazell a ra evit skrivañ darempredoù ha perzhioù',
 	'smw_viewasrdf' => 'Gwelet evel RDF',
 	'smw_finallistconjunct' => ', ha',
 	'smw_factbox_head' => 'Fedoù diwar-benn $1',
 	'smw_isspecprop' => 'Ar perzh-mañ zo ur perzh arbennik er wiki-mañ',
+	'smw_isknowntype' => 'Ar seurt-mañ a zo unan eus seurtoù roadennoù skoueriek ar wiki-mañ.',
 	'smw_isaliastype' => 'Ar seurt-mañ zo un alias eus ar seurt roadennoù « $1 ».',
+	'smw_isnotype' => 'N\'eo ket er seurt "$1" ur seurt roadennoù skoueriek er wiki-mañ, ha n\'eo ket bet termenet kennebeut gan tun implijer.',
 	'smw_concept_description' => 'Deskrivadur eus ar meizad « $1 »',
+	'smw_multiple_concepts' => "Pep pajenn meizad na c'hell kaout nemet un dermenadur.",
+	'smw_noinvannot' => "Ne c'hell ket an talvoudennoù bezañ derannet evit eilpennañ perzhioù.",
+	'version-semantic' => 'Astennoù steroniezh',
 	'smw_baduri' => 'An URLoù er stumm « $1 » n"int ket aotreet.',
 	'smw_printername_auto' => 'Emgefre',
 	'smw_printername_count' => "Kontañ an disoc'hoù",
@@ -1335,44 +1351,60 @@ $messages['br'] = array(
 	'smw_paramdesc_headers' => 'Diskwel an talbennoù / anvioù ar perzhioù',
 	'smw_paramdesc_mainlabel' => 'Al label hag a ro anv ar bajenn degemer',
 	'smw_paramdesc_link' => 'Diskouez an talvoudoù evel liammoù',
+	'smw_paramdesc_intro' => "An destenn da ziskouez a-raok disoc'hoù ar reked, ma 'z eus",
+	'smw_paramdesc_outro' => "An destenn da ziskouez goude disoc'hoù ar reked, ma 'z eus",
 	'smw_paramdesc_default' => "An destenn da ziskwel ma n'eus disoc'h ebet d'ar reked",
 	'smw_paramdesc_searchlabel' => "An destenn war al liamm davet an disoc'hoù",
 	'smw_paramdesc_sep' => 'An disranner evit an talvoudoù',
+	'smw_paramdesc_template' => 'An ar patrom gant pehini eo ret diskouez ar moulladurioù',
 	'smw_paramdesc_columns' => "An niver a golonennoù evit pere ez eus da ziskouez an disoc'hoù ($1 dre ziouer)",
+	'smw_paramdesc_userparam' => "Un talvoudenn tremenet e pep galvadenn a batrom, ma 'z eo implijet ur patrom",
+	'smw_paramdesc_introtemplate' => "Anv ar patrom da ziskouez a-raok disoc'hoù ar reked, ma 'z eus",
+	'smw_paramdesc_outrotemplate' => "Anv ar patrom da ziskouez goude disoc'hoù ar reked, ma 'z eus",
+	'smw_paramdesc_embedformat' => 'Ar balizenn HTML hag a servij da dermeniñ an talbennoù',
 	'smw_paramdesc_embedonly' => 'Na ziskwel talbenn ebet',
 	'smw_paramdesc_rsstitle' => 'Testenn da implijout evel titl ar gwazhioù',
+	'smw_paramdesc_rssdescription' => 'Testenn da implijout evel deskrivadur ar gwazhioù',
 	'smw_iq_disabled' => 'Diweredekaet eo bet ar goulennoù semantek evit ar wiki-mañ.',
 	'smw_iq_moreresults' => "... disoc'hoù all",
 	'smw_iq_nojs' => 'Implijout ur merdeer a ra gant JavaScript evit gwelet an elfenn-mañ.',
 	'smw_iq_altresults' => "Furchal ar roll disoc'hoù war-eeun.",
+	'smw_unknown_importns' => 'N\'eus arc\'hweladur enporzhiañ ebet dieub evit an esaouenn anv "$1".',
 	'smw_nonright_importtype' => 'Ne c\'hell $1 bezañ implijet hepken evit pajennoù an esaouenn anv "$2".',
 	'smw_wrong_importtype' => 'Ne c\'hell ket $1 bezañ implijet evit pajennoù en esaouenn anv "$2".',
 	'smw_no_importelement' => "An elfenn « $1 » ne c'hall ket bezañ ezporzhiet.",
 	'smw_parseerror' => "An talvoud merket n'eo ket bet komprenet.",
 	'smw_notitle' => "« $1 » ne c'hall ket bezañ implijet da anv pajenn er wiki-mañ.",
 	'smw_wrong_namespace' => 'N\'eo aotreet amañ nemet ar pajennoù eus an esaouenn "$1".',
+	'smw_unknowntype' => 'Ar seurt roadennoù "$1" nann skoret a zo distroet d\'an doareenn',
 	'smw_manytypes' => 'Ouzhpenn ur seurt zo bet termenet evit ar perzh.',
 	'smw_emptystring' => 'Ne zegemerer ket an neudennadoù goullo.',
 	'smw_maxstring' => 'Re hir eo an neudennad $1.',
 	'smw_notinenum' => "« $1 » n'emañ ket er roll talvoudoù posupl ($2) evit ar perzh-mañ.",
+	'smw_noboolean' => 'N\'eo ket anavezet "$1" evel un talvoudenn Boolean (gwir/gaou).',
 	'smw_true_words' => 'gwir,g,ya,true',
 	'smw_false_words' => 'gaou,g,nann,n,false',
 	'smw_nofloat' => '"$1" n\'eo ket un niver.',
 	'smw_infinite' => "Niveroù ken bras ha « $1 » n'int ket skoret.",
+	'smw_infinite_unit' => 'Kemmadur an unanenn "$1" en deus roet un niver re vras.',
 	'smw_novalues' => "N'eus bet diferet talvoudoù ebet.",
 	'smw_unsupportedprefix' => "Ar rakgerioù evit an niveroù ( « $1 » ) n'int ket skoret.",
+	'smw_unsupportedunit' => 'N\'eo ket skoret kemmadur an unanenn "$1".',
 	'smw_nodatetime' => 'An deiziad « $1 » n’eo ket bet komprenet.',
 	'smw_toomanyclosing' => 'Re a reveziadennoù eus « $1 » zo er reked.',
 	'smw_noclosingbrackets' => 'Implijout \'zo eus "<nowiki>[[</nowiki>" en ho reked n\'int ket bet serret gant ar "]]" a glot.',
 	'smw_misplacedsymbol' => "Implijet eo bet an arouezenn « $1 » en ul lec'h ma n'eo ket talvoudus.",
 	'smw_unexpectedpart' => "Al lodenn « $1 » eus ar reked n'eo ket bet komprenet.
 Dic'hortoz e c'hall bezañ an disoc'hoù.",
+	'smw_emptysubquery' => "Is-rekedoù 'zo o deus un amplegad direizh.",
+	'smw_misplacedsubquery' => "Is-rekedoù 'zo a zo bet implijet en ul lec'h ma n'eo aotreet is-reked ebet.",
 	'smw_valuesubquery' => "Isreked n'eo ket skoret evit talvoudoù ar perzh « $1 ».",
 	'smw_overprintoutlimit' => "Re a c'houlennoù furmadiñ zo er reked.",
 	'smw_badprintout' => 'Lod urzhiadoù moullañ er reked a oa stummet fall.',
 	'smw_badtitle' => "« $1 » n'eo ket un titl pajenn reizh.",
 	'smw_badqueryatom' => "Al lodennoù « <nowiki>[[…]]</nowiki> » eus ar reked n'int ket bet komprenet.",
 	'smw_propvalueproblem' => "Talvoud ar perzh « $1 » n'eo ket bet komprenet.",
+	'smw_noqueryfeature' => "Un nebeut arc'hweladurioù rekedoù n'int ket skoret war ar wiki-mañ hag ul lodenn outo n'int ket bet tennet ($1).",
 	'smw_type_header' => 'Perzhioù eus ar seurt « $1 »',
 	'smw_typearticlecount' => 'Diskouez $1 {{PLURAL:$1|perzh|perzh}} a implij ar seurt-mañ.',
 	'smw_attribute_header' => 'Pajennoù a implij ar perzh « $1 »',
@@ -1537,6 +1569,7 @@ $messages['ca'] = array(
 	'smw_concept_cache_miss' => "El concepte «$1» no pot ser utilitzat per ara, atès que la configuració del wiki s'ha de computar fora de línia.
 Si el problema persisteix passat cert temps, demaneu a l'administrador del vostre wiki que posi disponible aquest concepte.",
 	'smw_noinvannot' => 'No es poden assignar valors a propietats inverses.',
+	'version-semantic' => 'Extensions semàntiques',
 	'smw_baduri' => 'Les URI del formulari «$1» no són permeses.',
 	'smw_printername_auto' => 'Automàtic',
 	'smw_printername_count' => 'Resultats del recompte',
@@ -1562,6 +1595,9 @@ Si el problema persisteix passat cert temps, demaneu a l'administrador del vostr
 	'smw_paramdesc_sep' => 'El separador entre valors',
 	'smw_paramdesc_template' => "El nom d'una plantilla amb la qual mostrar els llistats",
 	'smw_paramdesc_columns' => 'El nombre de columnes amb les quals mostrar els resultats (per defecte és $1)',
+	'smw_paramdesc_userparam' => "Es passa un valor a cada crida de la plantilla, sempre que s'utilitzi una plantilla",
+	'smw_paramdesc_introtemplate' => "El nom d'una plantilla que es mostrarà abans dels resultats de la consulta, si n'hi ha cap",
+	'smw_paramdesc_outrotemplate' => "El nom d'una plantilla que es mostrarà després dels resultats de la consulta, si n'hi ha cap",
 	'smw_paramdesc_embedformat' => "L'etiqueta HTML que s'utilitza per a definir les capçaleres",
 	'smw_paramdesc_embedonly' => 'No mostris capçaleres',
 	'smw_paramdesc_rsstitle' => "El text que s'utilitzarà com a títol del canal",
@@ -1759,6 +1795,11 @@ $messages['ch'] = array(
 	'smw_browse_go' => 'Hånao',
 );
 
+/** Sorani (کوردی) */
+$messages['ckb'] = array(
+	'smw_browse_go' => 'بڕۆ',
+);
+
 /** Czech (Česky)
  * @author Kjbenes
  * @author Matěj Grabovský
@@ -1927,9 +1968,10 @@ $messages['de'] = array(
 	'smw_concept_description' => 'Beschreibung des Konzepts „$1“',
 	'smw_no_concept_namespace' => "Konzepte können nur im Konzeptnamensraum (''Konzept:'') erstellt werden.",
 	'smw_multiple_concepts' => 'Jede Konzeptseite kann nur eine Konzeptdefinition beinhalten.',
-	'smw_concept_cache_miss' => 'Das Konzept „$1“ kann im Moment nicht angewendet werden, da die Wiki-Konfiguration offline berechnet werden muss.
-Falls sich das Problem nicht nach einiger Zeit von selbst erledigt, bitte Deinen Websiteadministrator, dieses Konzept zu ermöglichen.',
+	'smw_concept_cache_miss' => 'Das Konzept „$1“ kann im Moment nicht genutzt werden, da es, gemäß der Konfiguration des Wikis, offline zu berechnen ist.
+Falls sich das Problem nicht in angemessener Zeit von selbst erledigt, bitte deinen Websiteadministrator, die Daten dieses Konzepts zu aktualisieren.',
 	'smw_noinvannot' => 'Inversen Attributen können keine Werte zugewiesen werden.',
+	'version-semantic' => 'Softwareerweiterungen (Semantic MediaWiki)',
 	'smw_baduri' => 'URIs der Form „$1“ sind nicht zulässig.',
 	'smw_csv_link' => 'CSV',
 	'smw_printername_auto' => 'Automatisch',
@@ -1956,11 +1998,14 @@ Falls sich das Problem nicht nach einiger Zeit von selbst erledigt, bitte Deinen
 	'smw_paramdesc_sep' => 'Das Trennzeichen für Werte',
 	'smw_paramdesc_template' => 'Name der Vorlage mit der die Abfrageergebnisse angezeigt werden sollen',
 	'smw_paramdesc_columns' => 'Die Anzahl der Spalten die für die Anzeige Suchergebnisse verwendet werden sollen (standardmäßig $1)',
+	'smw_paramdesc_userparam' => 'Ein Wert, der bei jedem Vorlagenaufruf übergeben wird, sofern eine Vorlage genutzt wird',
+	'smw_paramdesc_introtemplate' => 'Der vor etwaigen Abfrageergebnissen anzuzeigende Name einer Vorlage',
+	'smw_paramdesc_outrotemplate' => 'Der nach etwaigen Abfrageergebnissen anzuzeigende Name einer Vorlage',
 	'smw_paramdesc_embedformat' => 'Das für die Festlegung der Überschriften genutzte HTML-Tag',
 	'smw_paramdesc_embedonly' => 'Keine Überschriften anzeigen',
 	'smw_paramdesc_rsstitle' => 'Der Text, der als Titel für den Feed benutzt wird',
 	'smw_paramdesc_rssdescription' => 'Der Text, der als Beschreibung für den Feed benutzt wird',
-	'smw_iq_disabled' => 'Semantische Anfragen sind in diesem Wiki zurzeit nicht möglich.',
+	'smw_iq_disabled' => 'Semantische Abfragen wurden in diesem Wiki deaktiviert.',
 	'smw_iq_moreresults' => '… weitere Ergebnisse',
 	'smw_iq_nojs' => 'Der Inhalt dieses Elementes kann mit einem Browser mit JavaScript-Unterstützung betrachtet werden.',
 	'smw_iq_altresults' => 'Suchergebnisse als Liste anzeigen.',
@@ -1988,24 +2033,24 @@ Falls sich das Problem nicht nach einiger Zeit von selbst erledigt, bitte Deinen
 	'smw_unsupportedprefix' => 'Vorangestellte Zeichen bei Dezimalzahlen („$1“) werden nicht unterstützt.',
 	'smw_unsupportedunit' => 'Umrechnung der Einheit „$1“ nicht unterstützt.',
 	'smw_nodatetime' => 'Das Datum „$1“ wurde nicht verstanden.',
-	'smw_toomanyclosing' => 'In der Anfrage kommen zu viele „$1“ vor.',
-	'smw_noclosingbrackets' => 'Ein Vorkommen von „<nowiki>[[</nowiki>“ in der Anfrage wurde nicht durch ein entsprechendes „]]“ abgeschlossen.',
+	'smw_toomanyclosing' => 'In der Abfrage kommen zu viele „$1“ vor.',
+	'smw_noclosingbrackets' => 'Ein Vorkommen von „<nowiki>[[</nowiki>“ in der Abfrage wurde nicht durch ein entsprechendes „]]“ abgeschlossen.',
 	'smw_misplacedsymbol' => 'Das Symbol „$1“ wurde an einer Stelle verwendet, an der es nicht sinnvoll ist.',
-	'smw_unexpectedpart' => 'Der Teil „$1“ der Anfrage wurde nicht verstanden. Die Ergebnisse sind eventuell nicht wie erwartet.',
-	'smw_emptysubquery' => 'Keine Bedingung in Teilanfrage.',
-	'smw_misplacedsubquery' => 'Eine Teilanfrage wurde an einer Stelle verwendet, an der keine Teilanfragen vorkommen dürfen.',
-	'smw_valuesubquery' => 'Teilanfragen werden für Werte des Attributs „$1“ nicht unterstützt.',
-	'smw_overprintoutlimit' => 'Die Anfrage enhält zu viele Ausgabeanweisungen.',
+	'smw_unexpectedpart' => 'Der Teil „$1“ der Abfrage konnte nicht interpretiert werden. Die Ergebnisse entsprechen möglicherweise nicht den Erwartungen.',
+	'smw_emptysubquery' => 'Es ist keine Bedingung in Teilabfrage vorhanden.',
+	'smw_misplacedsubquery' => 'Eine Teilabfrage wurde an einer Stelle eingesetzt, an der sie nicht vorkommen dürfen.',
+	'smw_valuesubquery' => 'Teilabfragen werden für Werte des Attributs „$1“ nicht unterstützt.',
+	'smw_overprintoutlimit' => 'Die Abfrage enthält zu viele Ausgabeanweisungen.',
 	'smw_badprintout' => 'Eine Ausgabeanweisung wurde nicht verstanden.',
 	'smw_badtitle' => 'Leider ist „$1“ als Seitentitel nicht zulässig.',
-	'smw_badqueryatom' => 'Ein Teil „<nowiki>[[…]]</nowiki>“ der Anfrage wurde nicht verstanden.',
+	'smw_badqueryatom' => 'Ein Teil „<nowiki>[[…]]</nowiki>“ der Abfrage konnte nicht interpretiert werden.',
 	'smw_propvalueproblem' => 'Der Wert des Attributs „$1“ wurde nicht verstanden.',
-	'smw_noqueryfeature' => 'Einige Abfrage-Funktionen werden derzeit nicht von diesem Wiki unterstützt. Der entsprechende Teil der Abfrage wurde entfernt ($1).',
-	'smw_noconjunctions' => 'UND-Verknüpfungen in den Anfragen werden von diesem Wiki nicht unterstützt und der entsprechende Teil der Anfrage wurde gelöscht ($1).',
-	'smw_nodisjunctions' => 'Disjunktionen (ODER) in Anfragen sind in diesem Wiki nicht zulässig und ein Teil der Anfrage muss daher ignoriert werden ($1).',
+	'smw_noqueryfeature' => 'Einige Abfragebestandteile werden nicht von diesem Wiki unterstützt. Der entsprechende Teil der Abfrage wurde ignoriert ($1).',
+	'smw_noconjunctions' => 'UND-Verknüpfungen in den Abfragen werden nicht von diesem Wiki unterstützt. Der entsprechende Teil der Abfrage wurde ignoriert ($1).',
+	'smw_nodisjunctions' => 'Disjunktionen (ODER) in Abfragen werden nicht von diesem Wiki unterstützt. Der entsprechende Teil der Abfrage wurde ignoriert ($1).',
 	'smw_querytoolarge' => 'Die folgenden Abfragebedingungen konnten, wegen der auf diesem Wiki gültigen Beschränkungen, bezüglich Größe und Tiefe von Abfragen, nicht berücksichtigt werden: $1.',
 	'smw_devel_warning' => 'Diese Funktion befindet sich zurzeit in Entwicklung und ist vielleicht noch nicht voll einsatzfähig. Eventuell ist es ratsam, den Inhalt des Wikis vor der Benutzung dieser Funktion zu sichern.',
-	'smw_notemplategiven' => 'Der Parameter „template“ muss angegeben werden, damit diese Anfrage durchgeführt werden kann.',
+	'smw_notemplategiven' => 'Der Parameter „template“ muss angegeben werden, damit diese Abfrage durchgeführt werden kann.',
 	'smw_type_header' => 'Attribute mit dem Datentyp „$1“',
 	'smw_typearticlecount' => 'Es {{PLURAL:$1|wird 1 Attribut|werden $1 Attribute}} mit diesem Datentyp angezeigt:',
 	'smw_attribute_header' => 'Seiten mit dem Attribut „$1“',
@@ -2028,18 +2073,20 @@ Falls sich das Problem nicht nach einiger Zeit von selbst erledigt, bitte Deinen
 	'smw_propertylackstype' => 'Für dieses Attribut wurde kein Datentyp angegeben ($1 wird vorläufig als Typ angenommen).',
 	'smw_propertyhardlyused' => 'Dieses Attribut wird im Wiki kaum verwendet!',
 	'unusedproperties' => 'Verwaiste Attribute',
-	'smw_unusedproperties_docu' => 'Die folgenden Attributseiten existieren, obwohl sie nicht verwendet werden.',
+	'smw_unusedproperties_docu' => 'Die folgenden Attributseiten sind vorhanden, obwohl sie nicht verwendet werden.',
 	'smw_unusedproperty_template' => '$1 mit Datentyp $2',
 	'wantedproperties' => 'Gewünschte Attribute',
 	'smw_wantedproperties_docu' => 'Folgende Attribute haben bisher keine erläuterende Seite, obwohl sie bereits für die Beschreibung anderer Seiten verwendet werden.',
 	'smw_wantedproperty_template' => '$1 ($2 {{PLURAL:$2|Vorkommen|Vorkommen}})',
-	'tooltip-purge' => 'Alle Anfrageergebnisse und Vorlagen auf dieser Seite auf den neuesten Stand bringen.',
-	'smw_purge' => 'Aktualisieren',
+	'tooltip-purge' => 'Hier klicken um die Abfrageergebnisse und Vorlagen auf dieser Seite auf den neuesten Stand zu bringen.',
+	'smw_purge' => 'Neu laden',
 	'types' => 'Datentypen',
 	'smw_types_docu' => 'Die folgenden Datentypen können Attributen zugewiesen werden. Jeder Datentyp hat eine eigene Seite, auf der genauere Informationen eingetragen werden können.',
 	'smw_typeunits' => 'Maßeinheiten des Datentyps „$1“: $2',
-	'semanticstatistics' => 'Statistik über semantische Daten',
-	'smw_semstats_text' => "In diesem Wiki {{PLURAL:$1|wurde '''1''' Wert|wurden '''$1''' Werte}} für insgesamt '''$2''' [[Special:Properties|{{PLURAL:$2|Attribut|verschiedene Attribute}}]] eingegeben. '''$3''' {{PLURAL:$3|Attribut hat|Attribute haben}} eine eigene Seite und der gewünschte Datentyp ist für '''$4''' von diesen angegeben worden. Einige der existierenden Attribute können [[Special:UnusedProperties|verwaiste Attribute]] sein. Attribute, für die noch eine Seite angelegt werden sollte, sind in der [[Special:WantedProperties|Liste der gewünschten Attribute]] aufgeführt.",
+	'semanticstatistics' => 'Statistik zu semantischen Daten',
+	'smw_semstats_text' => "In diesem Wiki {{PLURAL:$1|wurde '''1''' Wert|wurden '''$1''' Werte}} für insgesamt '''$2''' [[Special:Properties|{{PLURAL:$2|Attribut|verschiedene Attribute}}]] eingegeben. '''$3''' {{PLURAL:$3|Attribut hat|Attribute haben}} eine eigene Seite und der gewünschte Datentyp ist für '''$4''' von diesen angegeben worden.
+
+Einige der vorhandenen Attribute könnten [[Special:UnusedProperties|verwaiste Attribute]] sein. Attribute, für die noch eine Seite angelegt werden sollte, sind in der [[Special:WantedProperties|Liste der gewünschten Attribute]] aufgeführt.",
 	'uriresolver' => 'URI-Auflöser',
 	'smw_uri_doc' => 'Der URI-Auflöser setzt die Empfehlungen „<a href="http://www.w3.org/2001/tag/issues.html#httpRange-14">W3C TAG finding on httpRange-14</a>“ um. Er sorgt dafür, dass Menschen nicht zu Webseiten werden.',
 	'ask' => 'Semantische Suche',
@@ -2047,11 +2094,11 @@ Falls sich das Problem nicht nach einiger Zeit von selbst erledigt, bitte Deinen
 	'smw_ask_ascorder' => 'Aufsteigend',
 	'smw_ask_descorder' => 'Absteigend',
 	'smw_ask_submit' => 'Finde Ergebnisse',
-	'smw_ask_editquery' => '[Anfrage bearbeiten]',
+	'smw_ask_editquery' => '[Abfrage bearbeiten]',
 	'smw_add_sortcondition' => '[Sortieranweisung hinzufügen]',
-	'smw_ask_hidequery' => 'Anfrage ausblenden',
+	'smw_ask_hidequery' => 'Abfrage ausblenden',
 	'smw_ask_help' => 'Hilfe',
-	'smw_ask_queryhead' => 'Anfrage',
+	'smw_ask_queryhead' => 'Abfrage',
 	'smw_ask_printhead' => 'Zusätzliche Daten zur Anzeige',
 	'smw_ask_printdesc' => '(einen Eigenschaftsnamen pro Zeile hinzufügen)',
 	'smw_ask_format_as' => 'Formatiert als:',
@@ -2061,7 +2108,7 @@ Falls sich das Problem nicht nach einiger Zeit von selbst erledigt, bitte Deinen
 	'smw_ask_hide_embed' => 'Eingebetteten Code verstecken',
 	'smw_ask_embed_instr' => 'Um diese Abfrage in eine Wiki-Seite einzubauen, nutze den unten stehenden Code.',
 	'searchbyproperty' => 'Suche mittels Attribut',
-	'smw_sbv_docu' => 'Diese Spezialseite findet alle Seiten, die einen bestimmten Wert für das angegebene Attribut haben.',
+	'smw_sbv_docu' => 'Diese Spezialseite ermittelt alle Seiten, die einen bestimmten Wert für das angegebene Attribut haben.',
 	'smw_sbv_novalue' => 'Bitte den gewünschten Wert eingeben oder alle Werte für das Attribut $1 ansehen.',
 	'smw_sbv_displayresult' => 'Eine Liste aller Seiten, die ein Attribut $1 mit dem Wert $2 haben.',
 	'smw_sbv_displayresultfuzzy' => 'Eine Liste aller Seiten, die das Attribut „$1“ mit dem Wert „$2“ haben.
@@ -2092,40 +2139,40 @@ Weil nur wenige Ergebnisse gefunden wurden, werden auch ähnliche Werte aufgelis
 	'smw_smwadmin_settingup' => 'Speicherplatz für Semantic MediaWiki einstellen',
 	'smw_smwadmin_setupsuccess' => 'Die Speichereinheit wurde erfolgreich eingerichtet.',
 	'smw_smwadmin_return' => 'Zurück zu $1',
-	'smw_smwadmin_updatestarted' => 'Ein neuer Update-Prozess zur Aktualisierung der semantischen Daten wurde gestartet.
-Alle gespeicherten Daten werden neu erstellt oder repariert, sofern nötig.
-Du kannst den Fortschritt des Updates auf dieser Spezialseite verfolgen.',
-	'smw_smwadmin_updatenotstarted' => 'Es läuft bereits ein Update-Prozess.
+	'smw_smwadmin_updatestarted' => 'Ein Aktualisierungsprozess zu Erneuerung der semantischen Daten wurde gestartet.
+Alle gespeicherten Daten werden, sofern notwendig, entweder neu erstellt oder repariert.
+Du kannst den Fortschritt der Aktualisierung auf dieser Spezialseite verfolgen.',
+	'smw_smwadmin_updatenotstarted' => 'Es läuft bereits ein Aktualisierungsprozess.
 Es wird kein Neuer begonnen.',
-	'smw_smwadmin_updatestopped' => 'Alle existierenden Aktualisierungsprozesse wurden gestoppt.',
-	'smw_smwadmin_updatenotstopped' => 'Um laufende Prozesse zu stoppen, musst du das Kontrollkästchen aktivieren, wenn du dir wirklich sicher bist.',
-	'smw_smwadmin_docu' => 'Diese Spezialseite hilft während der Installation und dem Upgrade von <a href="http://semantic-mediawiki.org">Semantic MediaWiki</a>.
+	'smw_smwadmin_updatestopped' => 'Alle laufenden Aktualisierungsprozesse wurden gestoppt.',
+	'smw_smwadmin_updatenotstopped' => 'Um den laufenden Aktualisierungsprozess zu stoppen, musst du das Kontrollkästchen markieren, um dadurch anzuzeigen, dass du dir wirklich sicher bist.',
+	'smw_smwadmin_docu' => 'Diese Spezialseite unterstützt dich während der Installation und der Aktualisierung von <a href="http://semantic-mediawiki.org/wiki/Semantic_MediaWiki_–_Startseite">Semantic MediaWiki</a>.
 Denke daran, wichtige Daten vor der Ausführung administrativer Funktionen zu sichern.',
 	'smw_smwadmin_db' => 'Datenbankinstallation und -aktualisierung',
-	'smw_smwadmin_dbdocu' => 'Semantic MediaWiki benötigt einige Erweiterungen an der MediaWiki-Datenbank um die semantischen Daten zu speichern.
+	'smw_smwadmin_dbdocu' => 'Semantic MediaWiki benötigt weitere Datentabellen in der MediaWiki-Datenbank, um die semantischen Daten speichern zu können.
 Die folgende Funktion gewährleistet, dass die Datenbank richtig eingerichtet ist.
-Die Änderungen, die in diesem Schritt gemacht werden, beeinträchtigen den Rest der MediaWiki-Datenbank nicht und können einfach zurückgesetzt werden, wenn gewünscht.
-Diese Setup-Funktion kann mehrere Male ausgeführt werden ohne Schaden zu verursachen, es ist aber nur einmal bei Installation oder Update nötig.',
-	'smw_smwadmin_permissionswarn' => 'Wenn die Aktion mit einem SQL-Fehler abbricht, könnte es sein, dass der Datenbankbenutzer, durch den das Wiki auf die Datenbank zugreift (siehe die Datei LocalSettings.php), keine ausreichenden Rechte hat.
-Um das Problem zu lösen, ist es möglich, dem Benutzer zusätzliche Rechte zur Erstellung und Löschung von Tabellen einzuräumen, den Datenbank-Administrator zeitweilig in die LocalSettings.php einzutragen, oder das Wartungsskript <tt>SMW_setup.php</tt> zu benutzen, das die Benutzerdaten aus AdminSettings.php benutzen kann.',
+Die Datenbankänderungen, die in diesem Schritt durchgeführt werden, beeinträchtigen den Rest der MediaWiki-Datenbank nicht. Sie können, sofern dies gewünscht ist, leicht rückgängig gemacht werden.
+Diese Einrichtungsfunktion kann mehrere Male ausgeführt werden, ohne Schaden zu verursachen. Sie braucht allerdings nur einmal, während der Installation oder Aktualisierung von Semantic MediaWiki, durchgeführt werden.',
+	'smw_smwadmin_permissionswarn' => 'Sofern diese Aktion mit einem SQL-Fehler abbricht, könnte es sein, dass der Datenbankbenutzer, mit dem das Wiki auf die Datenbank zugreift (siehe die Datei LocalSettings.php), über keine ausreichenden Rechte verfügt.
+Um das Problem zu beheben, ist es notwendig, entweder dem Benutzer zusätzliche Rechte zur Erstellung und Löschung von Datentabellen einzuräumen, den Datenbankadministrator zeitweilig in die LocalSettings.php einzutragen, oder aber das Wartungsskript <tt>SMW_setup.php</tt> zu nutzen, das die Benutzerdaten aus der Datei AdminSettings.php einsetzt.',
 	'smw_smwadmin_dbbutton' => 'Tabellen initialisieren oder aktualiseren',
 	'smw_smwadmin_announce' => 'Dein Wiki bekannt geben',
-	'smw_smwadmin_announcedocu' => 'Semantic MediaWiki hat einen Webservice für die Bekanntgabe neuer semantischer Wikiseiten.
-Dieser Service wird benötigt um eine Liste zu erhalten, welche öffentlichen Seiten Semantic MediaWiki nutzen, hauptsächlich aber um dem <a href="http://semantic-mediawiki.org/wiki/SMW_Project">Semantic-MediaWiki-Projekt</a> einen Überbick über typische Anwendungen von Semantic MediaWiki zu geben.
-Siehe die Semantic-MediaWiki-Homepage für <a href="http://semantic-mediawiki.org/wiki/Registry">weiterführende Informationen über diesen Service</a>.',
+	'smw_smwadmin_announcedocu' => 'Semantic MediaWiki bietet einen Webservice zur Bekanntgabe neuer semantischer Wikis.
+Dieser Service wird genutzt, um eine Liste aller öffentlich zugänglichen Wikis zu erhalten, die Semantic MediaWiki verwenden. Er dient aber auch dazu, dem <a href="http://semantic-mediawiki.org/wiki/SMW_Project">Semantic-MediaWiki-Projekt</a> einen Überblick über typische Anwendungen von Semantic MediaWiki zu ermöglichen.
+Siehe hierzu die Homepage von Semantic-MediaWiki für <a href="http://semantic-mediawiki.org/wiki/Registry">weiterführende Informationen zu diesem Service</a>.',
 	'smw_smwadmin_announcebutton' => 'Drücke den folgenden Knopf um die URL deines Wikis zu diesem Dienst hinzuzufügen.
 Dieser Dienst wird keine Wikis aufnehmen, die nicht öffentlich zugänglich sind und er wird nur öffentlich zugängliche Informationen speichern.',
-	'smw_smwadmin_datarefresh' => 'Datenreparatur und -aktualisierung',
+	'smw_smwadmin_datarefresh' => 'Datenreparatur oder -aktualisierung',
 	'smw_smwadmin_datarefreshdocu' => 'Es ist möglich alle Datenbanken von Semantic MediaWiki auf Basis des aktuellen Inhalts des Wikis wiederherzustellen.
-Dies kann hilfreich sein, um eine zerstörte Datenbank zu erneuern oder um Daten zu aktualisieren, wenn Aufgrund eines Softwareupgrade die Datenbankstruktur geändert wurde.
-Das Update wird für jede Seite ausgeführt und wird einige Zeit in Anspruch nehmen.
-Nachfolgend wird gezeigt, ob ein Update läuft und es wird dir erlaubt ein Update zu starten oder zu stoppen (außer wenn diese Funktion vom Seitenbetreiber deaktiviert wurde).',
-	'smw_smwadmin_datarefreshprogress' => '<strong>Ein Update läuft bereits.</strong>
-Ein Update geht normalerweise nur langsam voran, da die Daten nur in kleinen Portionen aktualisiert werden, und zwar jedesmal, wenn jemand auf das Wiki zugreift.
-Um dieses Update schneller zu beenden, kann man das MediaWiki-Wartungsskript <tt>runJobs.php</tt> (mit dem Parameter <tt>--maxjobs 1000</tt> kann die Anzahl der Updates, die in einem Rutsch durchgeführt werden, beschränkt werden) benutzen.
-Geschätzter Fortschritt des laufenden Updates:',
-	'smw_smwadmin_datarefreshbutton' => 'Datenaktualisierung beginnen',
-	'smw_smwadmin_datarefreshstop' => 'Diese Aktualisierung beenden',
+Dies kann hilfreich sein, um eine fehlerhafte Datenbank zu erneuern oder um Daten zu aktualisieren, sofern bspw. aufgrund einer Softwareaktualisierung die Datenbankstruktur geändert wurde.
+Die Datenaktualisierung wird für jede Seite ausgeführt und daher einige Zeit in Anspruch nehmen.
+Nachfolgend wird angezeigt, ob eine momentan Aktualisierung läuft bzw. ermöglicht es dir, eine Aktualisierung zu starten oder zu stoppen (außer diese Funktion wurde vom Websiteadministrator deaktiviert).',
+	'smw_smwadmin_datarefreshprogress' => '<strong>Eine Aktualisierung wird bereits durchgeführt.</strong>
+Eine Aktualisierung geht normalerweise nur langsam voran, da die Daten lediglich in kleinen Schritten erneuert werden, und zwar jedes Mal, wenn ein Benutzer auf das Wiki zugreift.
+Um diese Aktualisierung schneller zu Ende zu führen, kann man das MediaWiki-Wartungsskript <tt>runJobs.php</tt> einsetzen. Mit dem Parameter <tt>--maxjobs 1000</tt> beschränkt man dabei die Anzahl der Aktualisierungsschritte, die in einem Rutsch durchgeführt werden, um Probleme bei der Nutzung des hierfür erforderlichen Arbeitsspeichers zu vermeiden.
+Geschätzter Fortschritt der laufenden Aktualisierung:',
+	'smw_smwadmin_datarefreshbutton' => 'Datenaktualisierung starten',
+	'smw_smwadmin_datarefreshstop' => 'Diese Datenaktualisierung beenden',
 	'smw_smwadmin_datarefreshstopconfirm' => 'Ja, ich bin mir sicher.',
 	'smw_smwadmin_support' => 'Unterstützung erhalten',
 	'smw_smwadmin_supportdocu' => 'Verschiedene Mittel/Quellen helfen dir vielleicht bei einem Problemfall:',
@@ -2135,7 +2182,7 @@ Geschätzter Fortschritt des laufenden Updates:',
 	'smw_smwadmin_questions' => 'Wenn du weitere Fragen oder Vorschläge hast, beteilige dich an der Diskussion im <a href="http://sourceforge.net/mailarchive/forum.php?forum_name=semediawiki-user">„Semantic MediaWiki“-Benutzerforum</a>.',
 	'smw_adminlinks_datastructure' => 'Datenstruktur',
 	'smw_adminlinks_displayingdata' => 'Daten anzeigen',
-	'smw_adminlinks_inlinequerieshelp' => 'Inline-Abfragen-Hilfe',
+	'smw_adminlinks_inlinequerieshelp' => 'Hilfe zu eingebetteten Abfragen',
 );
 
 /** German (formal address) (Deutsch (Sie-Form))
@@ -2184,6 +2231,7 @@ $messages['dsb'] = array(
 	'smw_concept_cache_miss' => 'Koncept "$1" njedajo se we wokugnuśu wužywaś, dokulaž wikijowa konfiguracija trjeba jón za pśeźěłowanje off-line.
 Jolic problem se njezgubujo pó wěstem casu, pšos swójogo sedłowego administratora, aby wón toś ten koncept k dispoziciji stajił.',
 	'smw_noinvannot' => 'Gódnoty njedaju se nawopacnym kakosćam pśipokazaś.',
+	'version-semantic' => 'Semantiske rozšyrjenja',
 	'smw_baduri' => 'URI formy "$1" njejsu dowólone.',
 	'smw_printername_auto' => 'Awtomatiski',
 	'smw_printername_count' => 'Wuslědki licyś',
@@ -2209,6 +2257,9 @@ Jolic problem se njezgubujo pó wěstem casu, pšos swójogo sedłowego administ
 	'smw_paramdesc_sep' => 'Źěleńske znamuško za gódnoty',
 	'smw_paramdesc_template' => 'Mjenja pśedłogi, z kótarejuž wuśišće maju se zwobrazniś',
 	'smw_paramdesc_columns' => 'Licba słupow, w kótarychž maju se wuslědki zwobrazniś (standard jo $1)',
+	'smw_paramdesc_userparam' => 'Gódnota jo se do zawołanje pśedłogi pśepódała, jolic pśedłoga se wužywa',
+	'smw_paramdesc_introtemplate' => 'Mě pśedłogi, kótarež ma se zwobrazniś pśed wuslědkami napšašowanja, joli take su',
+	'smw_paramdesc_outrotemplate' => 'Mě pśedłogi, kótarež ma se zwobrazniś za wuslědkami napšašowanja, joli take su',
 	'smw_paramdesc_embedformat' => 'HTML-toflicka, kótaraž wužywa se, aby definěrowała nadpisma',
 	'smw_paramdesc_embedonly' => 'Žedne nadpisma zwobraznis',
 	'smw_paramdesc_rsstitle' => 'Tekst, kótaryž ma se ako titel kanala wužywaś',
@@ -2394,6 +2445,11 @@ Licony póstup aktualneje aktualizacije:',
 	'smw_adminlinks_datastructure' => 'Datowa struktura',
 	'smw_adminlinks_displayingdata' => 'Daty zwobrazniś',
 	'smw_adminlinks_inlinequerieshelp' => 'Pomoc k wótpšašanjam',
+);
+
+/** Ewe (Eʋegbe) */
+$messages['ee'] = array(
+	'smw_browse_go' => 'Yi',
 );
 
 /** Greek (Ελληνικά)
@@ -2623,12 +2679,14 @@ $messages['eo'] = array(
 
 /** Spanish (Español)
  * @author Antur
+ * @author Bola
  * @author Carmen Jorge García-Reyes
  * @author Crazymadlover
  * @author Dvdgmz
  * @author Imre
  * @author Javier Calzada Prado
  * @author Locos epraix
+ * @author MaxSem
  * @author Sanbec
  * @author Translationista
  */
@@ -2637,8 +2695,8 @@ $messages['es'] = array(
 	'smw_edithelp' => 'Ayuda a la redacción de relaciones y atributos',
 	'smw_viewasrdf' => 'Ver como RDF',
 	'smw_finallistconjunct' => ' y',
-	'smw_factbox_head' => 'Hechos relativos a à $1 — Búsqueda de páginas similares con <span class="smwsearchicon">+</span>.',
-	'smw_isspecprop' => 'Esta propiedad en una propiedad especial en este wiki.',
+	'smw_factbox_head' => 'Hechos relativos a $1 — Búsqueda de páginas similares con <span class="smwsearchicon">+</span>.',
+	'smw_isspecprop' => 'Esta propiedad es una propiedad especial en este wiki.',
 	'smw_isknowntype' => 'Este tipo está entre los tipos de datos standar de este wiki.',
 	'smw_isaliastype' => 'Este tipo es un alias para el tipo de datos "$1".',
 	'smw_isnotype' => 'El tipo "$1" no es un tipo de datos estándar en el wiki y tampoco se le ha otorgado una definición de usuario.',
@@ -2648,6 +2706,7 @@ $messages['es'] = array(
 	'smw_concept_cache_miss' => 'El concepto "$1" no puede ser utilizado en este momento, ya que la configuración wiki exige que sea computado sin conexión.
 Si el problema persiste después de pasado algún tiempo, solicita al administrador de tu sitio que haga este concepto disponible.',
 	'smw_noinvannot' => 'Los valores no pueden asignarse a propiedades inversas.',
+	'version-semantic' => 'Extensiones semánticas',
 	'smw_baduri' => 'Lo sentimos. Las URIs del dominio $1 no están disponibles en este emplazamiento',
 	'smw_printername_auto' => 'Automático',
 	'smw_printername_count' => 'Contar resultados',
@@ -2673,6 +2732,9 @@ Si el problema persiste después de pasado algún tiempo, solicita al administra
 	'smw_paramdesc_sep' => 'El separador para los valores',
 	'smw_paramdesc_template' => 'El nombre de la plantilla con la que se mostrará la vista de impresión',
 	'smw_paramdesc_columns' => 'El número de columnas donde se muestran los resultados (el predeterminado es $1)',
+	'smw_paramdesc_userparam' => 'Un valor pasado en cada llamada de plantilla,si una plantilla es usada',
+	'smw_paramdesc_introtemplate' => 'El nombre de una plantilla a mostrar antes de los resultados de la consulta, si hay alguna',
+	'smw_paramdesc_outrotemplate' => 'El nombre de una plantilla a mostrar después de los resultados de la consulta, si hay alguna',
 	'smw_paramdesc_embedformat' => 'La etiqueta HTML usada para definir encabezados',
 	'smw_paramdesc_embedonly' => 'No mostrar encabezados',
 	'smw_paramdesc_rsstitle' => 'Texto a ser usado como título del canal',
@@ -2795,7 +2857,7 @@ En el caso de existir muy pocos resultados, se muestran también los valores apr
 	'smw_browse_go' => 'Ir',
 	'smw_browse_show_incoming' => 'mostrar propiedades que vinculen aquí',
 	'smw_browse_hide_incoming' => 'ocultar propiedades que vinculen aquí',
-	'smw_browse_no_outgoing' => 'Esta pa´gina no tiene propiedades.',
+	'smw_browse_no_outgoing' => 'Esta página no tiene propiedades.',
 	'smw_browse_no_incoming' => 'Ninguna propiedad vincula aquí.',
 	'smw_inverse_label_default' => '$1 de',
 	'smw_inverse_label_property' => 'Etiqueta de propiedad inversa',
@@ -3086,6 +3148,7 @@ Uutta ei käynnistetä.',
  * @author IAlex
  * @author McDutchie
  * @author Meithal
+ * @author Peter17
  * @author PieRRoMaN
  * @author Pierre Matringe
  * @author Sherbrooke
@@ -3108,6 +3171,7 @@ $messages['fr'] = array(
 	'smw_multiple_concepts' => 'Chaque page de concept ne peut avoir qu’une seule définition.',
 	'smw_concept_cache_miss' => 'Le concept « $1 » ne peut être utilisé en ce moment, puisque la configuration du wiki requiert qu’il soit lancé hors-ligne. Si le problème persiste après quelques instants, demander à votre administrateur du site de rendre disponible ce concept.',
 	'smw_noinvannot' => 'Les valeurs ne peuvent pas être allouées pour inverser des propriétés.',
+	'version-semantic' => 'Extensions sémantiques',
 	'smw_baduri' => 'Désolé. Les URIs du domaine « $1 » ne sont pas disponible à cet emplacement.',
 	'smw_csv_link' => 'CSV',
 	'smw_printername_auto' => 'Automatique',
@@ -3134,6 +3198,9 @@ $messages['fr'] = array(
 	'smw_paramdesc_sep' => 'Le séparateur des valeurs',
 	'smw_paramdesc_template' => 'Le nom du modèle avec lequel il faut afficher les impressions',
 	'smw_paramdesc_columns' => 'Le nombre de colonnes dans lesquelles il faut afficher les résultats (3 par défaut)',
+	'smw_paramdesc_userparam' => 'Une valeur passée dans chaque appel de modèle, si un modèle est utilisé',
+	'smw_paramdesc_introtemplate' => "Le nom d'un modèle à afficher avant les résultats de requête, s'il y en a",
+	'smw_paramdesc_outrotemplate' => "Le nom d'un modèle à afficher après les résultats de la requête, s'il y en a",
 	'smw_paramdesc_embedformat' => 'La balise HTML qui sert à définir les en-têtes',
 	'smw_paramdesc_embedonly' => 'Ne pas afficher d’en-tête',
 	'smw_paramdesc_rsstitle' => 'Texte à utiliser comme titre des flux',
@@ -3325,7 +3392,7 @@ Progression estimée de la mise à jour actuelle :',
  */
 $messages['frp'] = array(
 	'smw_ask_defaultformat' => 'dèfôt',
-	'smw_browse_go' => 'Dèmarrar',
+	'smw_browse_go' => 'Emmodar',
 	'smw_result_prev' => 'Devant',
 	'smw_result_next' => 'Aprés',
 	'smw_result_results' => 'Rèsultats',
@@ -3358,6 +3425,7 @@ $messages['gl'] = array(
 	'smw_multiple_concepts' => 'Cada páxina de conceptos só pode conter unha definición dun concepto.',
 	'smw_concept_cache_miss' => 'O concepto "$1" non pode ser usado desde que a configuración do wiki o require para calcular a desconexión. Se o problema non se resolve en breve, pregúntelle ao administrador do wiki para que o concepto poida estar dispoñible.',
 	'smw_noinvannot' => 'Non se poden asignar os valores para inverter as propiedades.',
+	'version-semantic' => 'Extensións semánticas',
 	'smw_baduri' => 'Sentímolo, os URIs da forma “$1” non están permitidos.',
 	'smw_csv_link' => 'CSV',
 	'smw_printername_auto' => 'Automático',
@@ -3384,6 +3452,9 @@ $messages['gl'] = array(
 	'smw_paramdesc_sep' => 'O separador dos valores',
 	'smw_paramdesc_template' => 'O nome dun modelo co que mostrar as impresións',
 	'smw_paramdesc_columns' => 'O número de columnas nas que mostrar os resultados (3 por defecto)',
+	'smw_paramdesc_userparam' => 'O valor pasado en cada chamada de modelo, se se empregase algún modelo',
+	'smw_paramdesc_introtemplate' => 'O nome dun modelo a mostrar antes dos resultados da pescuda, se houbese algún',
+	'smw_paramdesc_outrotemplate' => 'O nome dun modelo a mostrar despois dos resultados da pescuda, se houbese algún',
 	'smw_paramdesc_embedformat' => 'A etiqueta HTML utilizada para definir as cabeceiras',
 	'smw_paramdesc_embedonly' => 'Non mostrar as cabeceiras',
 	'smw_paramdesc_rsstitle' => 'O texto a usar como título da fonte de novas',
@@ -3616,6 +3687,7 @@ $messages['gsw'] = array(
 	'smw_concept_cache_miss' => 'S Konzäpt „$1“ cha im Momänt nit aagwändet wäre, wel d Wiki-Konfiguration offline grächnet muess wäre.
 Wänn s Probläm imfall noch eme Rung nit verschwindet, no bitt Dyy Syteverwalter, des Konzäpt megli z mache.',
 	'smw_noinvannot' => 'Wärt chenne nit mit umgchehrte Eigeschafte gchännzeichnet wäre',
+	'version-semantic' => 'Semantischi Erwyterige',
 	'smw_baduri' => 'URI mit dr Form „$1“ sin nit zuelässig.',
 	'smw_printername_auto' => 'Automatisch',
 	'smw_printername_count' => 'Zellerergebnis',
@@ -3641,6 +3713,9 @@ Wänn s Probläm imfall noch eme Rung nit verschwindet, no bitt Dyy Syteverwalte
 	'smw_paramdesc_sep' => 'S Trännzeiche fir Wärt',
 	'smw_paramdesc_template' => 'Dr Name vu dr Vorlag, wu Uusdruck dermit solle aazeigt wäre',
 	'smw_paramdesc_columns' => 'D Aazahl vu dr Spalte go Ergebnis aazeige (Standard isch $1)',
+	'smw_paramdesc_userparam' => 'E Wärt, wu bi jedem Vorlageufruef ibergee wird, wänn e Vorlag brucht wird',
+	'smw_paramdesc_introtemplate' => 'Dr Vorlagename, wu vor dr Abfrogergebnis aazeigt wird, wänn s git',
+	'smw_paramdesc_outrotemplate' => 'Dr Vorlagename, wu no dr Abfrogergebnis soll aazeigt wäre, wänn s het',
 	'smw_paramdesc_embedformat' => 'Dr HTML-Befähl zum Iberschrifte definiere',
 	'smw_paramdesc_embedonly' => 'Kei Iberschrifte aazeige',
 	'smw_paramdesc_rsstitle' => 'Dr Text, wu as Titel fir dr Kanal soll brucht wäre',
@@ -4071,9 +4146,237 @@ $messages['hil'] = array(
 
 /** Croatian (Hrvatski)
  * @author Dalibor Bosits
+ * @author Tivek
  */
 $messages['hr'] = array(
+	'smw-desc' => "Čini Vaš wiki dostupnijim - za strojeve ''i'' ljude ([http://semantic-mediawiki.org/wiki/Help:User_manual dokumentacija])",
+	'smw_edithelp' => 'Pomoć o uređivanju svojstava',
+	'smw_viewasrdf' => 'RDF feed',
+	'smw_finallistconjunct' => ', i',
+	'smw_factbox_head' => 'Činjenice o $1',
+	'smw_isspecprop' => 'Ovo svojstvo je specijalno na ovom wikiju.',
+	'smw_isknowntype' => 'Ovaj tip je jedan od standardnih tipova podataka na ovom wikiju.',
+	'smw_isaliastype' => 'Ovaj tip je pseudonim za tip podatka "$1".',
+	'smw_isnotype' => 'Ovaj tip "$1" nije standardna vrsta podataka u wikiju, niti ima korisničku definiciju.',
+	'smw_concept_description' => 'Opis koncepta "$1"',
+	'smw_no_concept_namespace' => 'Koncepti mogu biti definirani jedino u imenskom prostoru Concept: .',
+	'smw_multiple_concepts' => 'Stranica koncepta smije imati samo jednu definiciju koncepta.',
+	'smw_concept_cache_miss' => 'Koncept "$1" se trenutačno ne može se koristiti jer je wiki podešen tako da se koncept mora proračunati i izraditi off-line. Ako problem ne nestane nakon nekog vremena, zamolite administratora da ovaj koncept učini dostupnim.',
+	'smw_noinvannot' => 'Vrijednosti se ne mogu dodijeliti inverznim svojstva.',
+	'smw_baduri' => 'URI oblika "$1" nije dozvoljen.',
+	'smw_printername_auto' => 'Automatski',
+	'smw_printername_count' => 'Broji rezultate',
+	'smw_printername_csv' => 'Izvoz u CSV',
+	'smw_printername_debug' => 'Debugiranje upita (za stručnjake)',
+	'smw_printername_embedded' => 'Umetni sadržaj stranice',
+	'smw_printername_json' => 'Izvoz u JSON',
+	'smw_printername_list' => 'Popis',
+	'smw_printername_ol' => 'Nabrajanje',
+	'smw_printername_ul' => 'Ispis po predmetima',
+	'smw_printername_rss' => 'Izvoz u RSS',
+	'smw_printername_table' => 'Tablica',
+	'smw_printername_broadtable' => 'Široka tablica',
+	'smw_printername_template' => 'Predložak',
+	'smw_paramdesc_limit' => 'Maksimalni broj rezultata',
+	'smw_paramdesc_headers' => 'Prikaz zaglavlja/imena svojstava',
+	'smw_paramdesc_mainlabel' => 'Oznaka imenu glavne stranice',
+	'smw_paramdesc_link' => 'Prikaži vrijednosti kao poveznice',
+	'smw_paramdesc_intro' => 'Tekst za prikazati prije rezultata upita, ukoliko ih ima',
+	'smw_paramdesc_outro' => 'Tekst za prikazati nakon rezultata upita, ukoliko ih ima',
+	'smw_paramdesc_default' => 'Tekst koji će se prikazati ako nema rezultata upita',
+	'smw_paramdesc_searchlabel' => 'Tekst poveznice na rezultate',
+	'smw_paramdesc_sep' => 'Znak za razdvajanje vrijednosti',
+	'smw_paramdesc_template' => 'Naziv predloška kojim će se prikazati ispis',
+	'smw_paramdesc_columns' => 'Broj stupaca u kojima se prikazuje rezultat (default je $1)',
+	'smw_paramdesc_userparam' => 'Vrijednost koja se prenosi u svaki poziv predloška, ako se predložak koristi',
+	'smw_paramdesc_introtemplate' => 'Ime predloška koji će se prikazati prije rezultata upita, ako ih ima',
+	'smw_paramdesc_outrotemplate' => 'Ime predloška koji će se prikazati nakon rezultata upita, ako ih ima',
+	'smw_paramdesc_embedformat' => 'HTML tag koji definira zaglavlja',
+	'smw_paramdesc_embedonly' => 'Ne prikazuj zaglavlja',
+	'smw_paramdesc_rsstitle' => 'Tekst za naslov feeda',
+	'smw_paramdesc_rssdescription' => 'Tekst za opis feeda',
+	'smw_iq_disabled' => 'Semantički upiti su isključeni na ovom wikiju.',
+	'smw_iq_moreresults' => '… daljnji rezultati',
+	'smw_iq_nojs' => 'Koristite preglednik s JavaScriptom kako biste vidjeli ovaj element.',
+	'smw_iq_altresults' => 'Izravno pregledajte popis rezultata.',
+	'smw_unknown_importns' => 'Funkcije za uvoz nisu dostupne u imenskom prostoru "$1".',
+	'smw_nonright_importtype' => '$1 se može koristiti samo za stranice iz imenskog prostora "$2".',
+	'smw_wrong_importtype' => '$1 se ne može koristiti za stranice iz imenskog prostora "$2".',
+	'smw_no_importelement' => 'Element "$1" nije dostupan za uvoz.',
+	'smw_parseerror' => 'Dana vrijednost nije razumljiva.',
+	'smw_notitle' => '"$1" ne može biti ime stranice na ovom wikiju.',
+	'smw_wrong_namespace' => 'Ovdje su dozvoljene samo stranice iz imenskog prostora "$1".',
+	'smw_unknowntype' => 'Za svojstvo je definiran nepodržan tip "$1".',
+	'smw_manytypes' => 'Za svojstvo je definirano više od jednog tipa.',
+	'smw_emptystring' => 'Prazni nizovi se ne prihvaćaju.',
+	'smw_maxstring' => 'Reprezentacija niza $1 je predugačka.',
+	'smw_notinenum' => '"$1" nije na popisu dozvoljenih vrijednosti ($2) za ovo svojstvo.',
+	'smw_noboolean' => '"$1" nije prepoznat kao booleovska vrijednost ("true/false" odn. istina/laž).',
+	'smw_true_words' => 'true,t,yes,y,istina,i,da,d',
+	'smw_false_words' => 'false,f,no,n,laž,l,ne',
+	'smw_nofloat' => '"$1" nije broj.',
+	'smw_infinite' => 'Veliki brojevi poput "$1" nisu podržani.',
+	'smw_infinite_unit' => 'Rezultat pretvorbe u jedinicu "$1" je prevelik broj.',
+	'smw_novalues' => 'Nisu naznačene vrijednosti.',
+	'smw_unsupportedprefix' => 'Prefiksi za brojeve ("$1") nisu podržani.',
+	'smw_unsupportedunit' => 'Pretvorbe jedinica za "$1" nisu podržane.',
+	'smw_nodatetime' => 'Datum "$1" nije razumljiv.',
+	'smw_toomanyclosing' => 'Čini se da postoji previše pojava "$1" u upitu.',
+	'smw_noclosingbrackets' => 'Jedna od "<nowiki>[[</nowiki>" u Vašem upitu nije zatvorena odgovarajućom "]]".',
+	'smw_misplacedsymbol' => 'Simbol "$1" se javlja na mjestu gdje nije koristan.',
+	'smw_unexpectedpart' => 'Dio upita "$1" nije razumljiv.
+Rezultati možda neće biti odgovarajući.',
+	'smw_emptysubquery' => 'Neki podupiti nemaju valjani uvjet.',
+	'smw_misplacedsubquery' => 'Podupit je korišten na nedozvoljenom mjestu.',
+	'smw_valuesubquery' => 'Podupiti ne mogu biti vrijednosti svojstva "$1".',
+	'smw_overprintoutlimit' => 'Upit sadrži previše zahtjeva za ispisom.',
+	'smw_badprintout' => 'Neka od naredbi za ispis u upitu sadrži pogrešku..',
+	'smw_badtitle' => '"$1" nije valjani naslov stranice.',
+	'smw_badqueryatom' => 'Jedan od dijelova upita "<nowiki>[[…]]</nowiki>" nije razumljiv.',
+	'smw_propvalueproblem' => 'Vrijednost svojstva "$1" nije razumljiva.',
+	'smw_noqueryfeature' => 'Ovaj wiki ne podržava neku od osobina upita, pa je dio upita odbačen ($1).',
+	'smw_noconjunctions' => 'Ovaj wiki ne podržava veznike u upitima, pa je dio upita odbačen ($1).',
+	'smw_nodisjunctions' => 'Ovaj wiki ne podržava razdvajanja u upitima, pa je dio upita odbačen ($1).',
+	'smw_querytoolarge' => 'Zbog ograničenja veličine ili dubine upita na ovom wikiju, sljedeći uvjeti upita nisu uzeti u obzir: $1.',
+	'smw_devel_warning' => 'Ova osobina je trenutno u razvoju i moguće je da još u potpunosti ne funkcionira.
+Prije korištenja napravite kopiju svojih podataka.',
+	'smw_notemplategiven' => 'Navedite vrijednost parametra "template" ("predložak") za ovaj format upita.',
+	'smw_type_header' => 'Svojstva tipa "$1".',
+	'smw_typearticlecount' => '{{PLURAL:$1|Prikazano je $1 svojstvo koje koristi|Prikazana su $1 svojstva koja koriste|Prikazano je $1 svojstava koja koriste}} ovaj tip.',
+	'smw_attribute_header' => 'Stranice koje koriste svojstvo "$1".',
+	'smw_attributearticlecount' => 'Prikazano {{PLURAL:$1|$1 stranica koja koristi|$1 stranice koje koriste|$1 stranica koje koriste}} ovo svojstvo.',
+	'smw_subproperty_header' => 'Podsvojstva',
+	'smw_subpropertyarticlecount' => 'Ovo svojstvo ima {{PLURAL:$1|sljedeće podsvojstvo|sljedeća $1 podsvojstva|sljedećih $1 podsvojstava}}:',
+	'smw_concept_header' => 'Stranice koncepta "$1"',
+	'smw_conceptarticlecount' => 'Prikazano $1 {{PLURAL:$1|stranica koja pripada|stranice koje pripadaju|stranica koje pripadaju}} tom konceptu.',
+	'exportrdf' => 'Izvezi stranice u RDF',
+	'smw_exportrdf_docu' => 'Na ovoj stranici možete dobiti podatke o nekoj stranici u RDF formatu. 
+Da biste izvezli stranice unesite njihove naslove u prozor za uređivanje ispod, jedan naslov po retku.',
+	'smw_exportrdf_recursive' => 'Rekurzivno izvezi sve srodne stranice.
+Imajte na umu da bi rezultat mogao biti velik!',
+	'smw_exportrdf_backlinks' => 'Također izvezi sve stranice koje se referenciraju na izvezene stranice. 
+Generira RDF za pregled i pretraživanje.',
+	'smw_exportrdf_lastdate' => 'Ne izvozi stranice koje nisu izmijenjene od navedenog datuma.',
+	'smw_exportrdf_submit' => 'Izvezi',
+	'properties' => 'Svojstva',
+	'smw_properties_docu' => 'U wikiju se koriste sljedeća svojstva.',
+	'smw_property_template' => '$1 tipa $2 ($3)',
+	'smw_propertylackspage' => 'Svako svojstvo mora biti opisano na svojoj stranici!',
+	'smw_propertylackstype' => 'Za ovo svojstvo nije naveden tip (od sad na dalje pretpostavljam tip $1).',
+	'smw_propertyhardlyused' => 'Ovo se svojstvo gotovo ne koristi u wikiji!',
+	'unusedproperties' => 'Nekorištena svojstva',
+	'smw_unusedproperties_docu' => 'Sljedeća svojstva postoje, no ne koristi ih ni jedna stranica.',
+	'smw_unusedproperty_template' => '$1 tipa $2',
+	'wantedproperties' => 'Tražena svojstva',
+	'smw_wantedproperties_docu' => 'Sljedeća svojstva se koriste u wikiju, no još nemaju svoje stranice koje bi ih opisale.',
+	'smw_wantedproperty_template' => '$1 ($2 {{PLURAL:$2|korištenje|korištenja|korištenja}})',
+	'tooltip-purge' => 'Kliknite ovdje kako biste osvježili sve upite i predloške na ovoj stranici',
+	'smw_purge' => 'Osvježi',
+	'types' => 'Tipovi',
+	'smw_types_docu' => 'Slijedi popis svih tipova podataka koji mogu biti dodijeljeni svojstvima.
+Svaki tip podatka ima stranicu koja može pružiti dodatne informacije.',
+	'smw_typeunits' => 'Mjerne jedinice tipa "$1": $2',
+	'semanticstatistics' => 'Statistika o semantici',
+	'smw_semstats_text' => "Ovaj wiki sadrži '''$1''' {{PLURAL:$1|vrijednost svojstva|vrijednosti svojstava|vrijednosti svojstava}} za ukupno '''$2''' [[Special:Properties|{{PLURAL:$2|svojstvo|različita svojstva|različitih svojstava}}]].
+'''$3''' {{PLURAL:$3|svojstvo ima|svojstva imaju|svojstava imaju}} vlastitu stranicu i '''$4''' {{PLURAL:$3|ima|od njih imaju|od njih imaju}} zadan tip podatka.
+Neka od postojećih svojstava su možda [[Special:UnusedProperties|nekorištena svojstva]].
+Svojstva koja još uvijek nemaju stranicu nalaze se na [[Special:WantedProperties|popisu traženih svojstava]].",
+	'uriresolver' => 'URI razrješitelj',
+	'smw_uri_doc' => 'URI razrješitelj implementira <a href="http://www.w3.org/2001/tag/issues.html#httpRange-14">W3C traženje TAGova na httpRange-14</a> koje brine da se ljudi ne pretvore u web stranice.',
+	'ask' => 'Smenatička pretraga',
+	'smw_ask_sortby' => 'Razvrstavanje po stupcu (opcionalno)',
+	'smw_ask_ascorder' => 'Rastuće',
+	'smw_ask_descorder' => 'padajuće',
+	'smw_ask_submit' => 'Nađi rezultate',
+	'smw_ask_editquery' => '[Uredi upit]',
+	'smw_add_sortcondition' => '[Dodaj uvjet na razvrstavanje]',
+	'smw_ask_hidequery' => 'Sakrij upit',
+	'smw_ask_help' => 'Pomoć za upite',
+	'smw_ask_queryhead' => 'Upit',
+	'smw_ask_printhead' => 'Dodatni podaci za prikazati',
+	'smw_ask_printdesc' => '(dodaj jedno svojstvo po retku)',
+	'smw_ask_format_as' => 'Formatiraj kao:',
+	'smw_ask_defaultformat' => 'prvotno',
+	'smw_ask_otheroptions' => 'Ostale opcije',
+	'smw_ask_show_embed' => 'Prikaži kôd za umetanje',
+	'smw_ask_hide_embed' => 'Sakrij kôd za umetanje',
+	'smw_ask_embed_instr' => 'Da biste umetnuli ovaj upit u stranicu koristite kôd dolje.',
+	'searchbyproperty' => 'Traži po svojstvu',
+	'smw_sbv_docu' => 'Traži sve stranice koje imaju zadano svojstvo i vrijednost.',
+	'smw_sbv_novalue' => 'Unesite valjanu vrijednost za svojstvo ili pogledajte sve vrijednosti za "$1".',
+	'smw_sbv_displayresult' => 'Popis svih stranica koje imaju svojstvo "$1" vrijednosti "$2".',
+	'smw_sbv_displayresultfuzzy' => 'Popis svih stranica koje imaju svojstvo "$1" vrijednosti "$2".
+Budući da je rezultata malo, također su prikazane i bliske vrijednosti.',
+	'smw_sbv_property' => 'Svojstvo:',
+	'smw_sbv_value' => 'Vrijednost:',
+	'smw_sbv_submit' => 'Nađi rezultate',
+	'browse' => 'Pregledaj wiki',
+	'smw_browselink' => 'Pregledaj svojstva',
+	'smw_browse_article' => 'Unesite ime stranice od koje ćete početi pregledavanje.',
 	'smw_browse_go' => 'Kreni',
+	'smw_browse_show_incoming' => 'prikaži svojstva koja povezuju ovamo',
+	'smw_browse_hide_incoming' => 'sakrij svojstva koja povezuju ovamo',
+	'smw_browse_no_outgoing' => 'Ova stranica nema svojstva.',
+	'smw_browse_no_incoming' => 'Nijedno svojstvo ne povezuje na ovu stranicu.',
+	'smw_inverse_label_default' => '$1 od',
+	'smw_inverse_label_property' => 'Oznaka inverznog svojstva',
+	'pageproperty' => 'Pretraživanje svojstava stranica',
+	'smw_pp_docu' => 'Pretraži sve vrijednosti nekog svojstva na zadanoj stranici.
+Unesite stranicu i svojstvo.',
+	'smw_pp_from' => 'Sa stranice',
+	'smw_pp_type' => 'Svojstvo',
+	'smw_pp_submit' => 'Nađi rezultate',
+	'smw_result_prev' => 'Prethodni',
+	'smw_result_next' => 'Sljedeći',
+	'smw_result_results' => 'Rezultati',
+	'smw_result_noresults' => 'Nema rezultata.',
+	'smwadmin' => 'Administratorske funkcije za Semantic MediaWiki',
+	'smw_smwadmin_settingup' => 'Postavljam spremište za Semantic MediaWiki',
+	'smw_smwadmin_setupsuccess' => 'Spremište je uspješno postavljeno.',
+	'smw_smwadmin_return' => 'Vrati se na $1',
+	'smw_smwadmin_updatestarted' => 'Pokrenut je novi proces osvježavanja semantičkih podataka.
+Svi spremljeni podaci će biti ponovno izgrađeni ili popravljeni ako je to potrebno.
+Napredak osvježavanja možete pratiti na ovoj posebnoj stranici.',
+	'smw_smwadmin_updatenotstarted' => 'Već se izvršava proces osvježavanja.
+Ne pokrećem novi.',
+	'smw_smwadmin_updatestopped' => 'Svi postojeći procesi osvježavanja su zaustavljeni.',
+	'smw_smwadmin_updatenotstopped' => 'Da biste zaustavili proces osvježavanja, označite u potvrdnom okviru da ste zaista sigurni.',
+	'smw_smwadmin_docu' => 'Ova posebna stranica pomaže prilikom instalacije i nadogradnje <a href="http://semantic-mediawiki.org">Semantic MediaWiki</a>.
+Ne zaboravite napraviti sigurnosnu kopiju važnih podataka prije izvršavanja administrativnih funkcija.',
+	'smw_smwadmin_db' => 'Instalacija i nadgradnja baze podataka',
+	'smw_smwadmin_dbdocu' => 'Semantic MediaWiki zahtijeva određena proširenja MediaWiki baze podataka za čuvanje semantičkih podataka.
+Funkcija ispod osigurava da je vaša baza pravilno postavljena.
+Ovaj korak ne utječe na ostatak MediaWiki baze podataka i lako se može poništiti ukoliko to želite.
+Ova se funkcija može izvršiti više puta bez ikakvih štetnih posljedica, no potrebna je samo kod instalacije ili nadgradnje.',
+	'smw_smwadmin_permissionswarn' => 'Ako operacija ne uspije i vrati SQL grešku, baza podataka koju koristi Vaš wiki (provjerite svoj LocalSettings.php) vjerojatno nema dovoljna prava.
+Učinite jedno od sljedećeg: dodijelite ovom korisniku dodatna prava za stvaranje i brisanje tablica, privremeno unesite administratorsko korisničko ime i lozinku Vaše baze podataka u LocalSettings.php, ili pokrenite skriptu za održavanje <tt>SMW_setup.php</tt> koja će koristiti prava iz AdminSettings.php.',
+	'smw_smwadmin_dbbutton' => 'Inicijaliziraj ili nadogradi tablice',
+	'smw_smwadmin_announce' => 'Najavite svoj wiki',
+	'smw_smwadmin_announcedocu' => 'Semantic MediaWiki pruža web uslugu koja prikazuje i najavljuje nove semantičke wikije.
+Time se vodi popis javnih web stranica i projekata koji koriste Semantic MediaWiki, uglavnom kako bi <a href="http://semantic-mediawiki.org/wiki/SMW_Project">Projekt Semantic MediaWiki</a> dobio pregled tipičnih upotreba Semantic MediaWiki.
+Vidi početnu stranicu Semantic MediaWiki za <a href="http://semantic-mediawiki.org/wiki/Registry">više informacija o ovoj usluzi</a>.',
+	'smw_smwadmin_announcebutton' => 'Pritisnite sljedeći gumb kako biste poslali URL svog wikija na tu uslugu.
+Usluga neće registrirati wikije koji nisu javno dostupni i skupljat će samo javno dostupne podatke.',
+	'smw_smwadmin_datarefresh' => 'Popravljanje i nadgradnja podataka',
+	'smw_smwadmin_datarefreshdocu' => 'Moguće je povratiti sve semantičke podatke Semantic MediaWiki na osnovi trenutnog tekstualnog wikija, što možete koristiti za popravak pokvarenih podataka ili osvježivanje podataka u slučaju internih promjena softvera.
+Osvježavanje se izvršava stranicu po stranicu i neće biti gotovo odmah.
+Prikaz dolje sadrži popis svih osvježavanja u tijeku i omogućuje Vam da zaustavite ili pokrenete osvježavanje (osim ako to nije onemogućio administrator).',
+	'smw_smwadmin_datarefreshprogress' => '<strong>Osvježavanje je već u tijeku.</strong>
+Normalno je da osvježavanje napreduje sporo jer se podaci osvježavaju u malim obrocima svaki put kad korisnik pristupi wikiju.
+Da bi ovo osvježavanje završilo čim prije, možete pokrenuti MediaWiki skriptu za održavanje <tt>runJobs.php</tt> (koristite opciju <tt>--maxjobs 1000</tt> kako biste ograničili broj zasebnih osvježavanja po jednoj seriji).
+Procjena napretka osvježavanja:',
+	'smw_smwadmin_datarefreshbutton' => 'Pokreni osvježavanje podataka',
+	'smw_smwadmin_datarefreshstop' => 'Zaustavi ovo osvježavanje',
+	'smw_smwadmin_datarefreshstopconfirm' => 'Da, siguran sam.',
+	'smw_smwadmin_support' => 'Zatražite pomoć',
+	'smw_smwadmin_supportdocu' => 'U slučaju problema poslužite se sljedećim izvorima:',
+	'smw_smwadmin_installfile' => 'U slučaju problema s Vašom instalacijom pogledajte naputke u datoteci <a href="http://svn.wikimedia.org/svnroot/mediawiki/trunk/extensions/SemanticMediaWiki/INSTALL">INSTALL</a>.',
+	'smw_smwadmin_smwhomepage' => 'Potpuna korisnička dokumentacija za Semantic MediaWiki nalazi se na <a href="http://semantic-mediawiki.org"><b>semantic-mediawiki.org</b></a>.',
+	'smw_smwadmin_mediazilla' => 'Greške (bugove) možete prijaviti na <a href="https://bugzilla.wikimedia.org/">Bugzilli</a>.',
+	'smw_smwadmin_questions' => 'Ukoliko imate pitanja ili prijedloge, pridružite se raspravi na <a href="http://sourceforge.net/mailarchive/forum.php?forum_name=semediawiki-user">korisničkom forumu Semantic MediaWiki</a>.',
+	'smw_adminlinks_datastructure' => 'Struktura podataka',
+	'smw_adminlinks_displayingdata' => 'Prikaz podataka',
+	'smw_adminlinks_inlinequerieshelp' => 'Pomoć za umetnute upite',
 );
 
 /** Upper Sorbian (Hornjoserbsce)
@@ -4095,6 +4398,7 @@ $messages['hsb'] = array(
 	'smw_concept_cache_miss' => 'Koncept "$1" njeda so tuchwilu wužiwać, dokelž wikijowa konfiguracija jón za předźěłowanje offline trjeba.
 Jeli so problem po wěstym času njezhubi, woprašej so sydłoweho administratora, zo by wón tutón koncept k dispoziciji stajił.',
 	'smw_noinvannot' => 'Hódnoty njedadźa so nawopačnym kajkosćam připokazać.',
+	'version-semantic' => 'Semantiske rozšěrjenja',
 	'smw_baduri' => 'URI formy "$1" njejsu dowolene.',
 	'smw_printername_auto' => 'Awtomatiski',
 	'smw_printername_count' => 'Wuslědki ličić',
@@ -4120,6 +4424,9 @@ Jeli so problem po wěstym času njezhubi, woprašej so sydłoweho administrator
 	'smw_paramdesc_sep' => 'Dźělatko za hódnoty',
 	'smw_paramdesc_template' => 'Mjeno předłohi, z kotrejž maja so wućišće zwobraznić',
 	'smw_paramdesc_columns' => 'Ličba špaltow, w kotrychž maja so wuslědki zwobraznić (standard je $1)',
+	'smw_paramdesc_userparam' => 'Hódnota, kotraž so za kóždu namołwu předłohi přepodawa, jeli předłoha so wužiwa.',
+	'smw_paramdesc_introtemplate' => 'Mjeno předłohi, kotraž ma so před naprašowanskimi wuslědkami zwobraznić, jeli tajke su',
+	'smw_paramdesc_outrotemplate' => 'Mjeno předłohi, kotraž ma so za naprašowanskimi wuslědkami zwobraznić, jeli tajke su',
 	'smw_paramdesc_embedformat' => 'HTML-taflički, kotrež so wužiwaja, zo bychu nadpisma definowali',
 	'smw_paramdesc_embedonly' => 'Žane nadpisma zwobraznić',
 	'smw_paramdesc_rsstitle' => 'Tekst, kotryž ma so jako titul kanala wužiwać',
@@ -4597,6 +4904,7 @@ $messages['ia'] = array(
 	'smw_multiple_concepts' => 'Cata pagina de concepto pote haber un sol definition de concepto.',
 	'smw_concept_cache_miss' => 'Le concepto "$1" non pote esser usate al momento, post que le configuration del wiki require que illo sia computate foras de linea. Si le problema non dispare post alcun tempore, demanda al administrator de tu sito de render disponibile iste concepto.',
 	'smw_noinvannot' => 'Le valores non pote esser assignate al proprietates inverse.',
+	'version-semantic' => 'Extensiones semantic',
 	'smw_baduri' => 'Le adresses URI del forma "$1" non es permittite.',
 	'smw_rss_link' => 'RSS',
 	'smw_csv_link' => 'CSV',
@@ -4624,6 +4932,9 @@ $messages['ia'] = array(
 	'smw_paramdesc_sep' => 'Le separator de valores',
 	'smw_paramdesc_template' => 'Le nomine de un patrono con le qual presentar le impressiones',
 	'smw_paramdesc_columns' => 'Le numero de columnas in le quales presentar resultatos (predefinition es $1)',
+	'smw_paramdesc_userparam' => 'Un valor passate a cata appello de patrono, si un patrono es usate',
+	'smw_paramdesc_introtemplate' => 'Le nomine de un patrono a monstrar ante le resultatos del consulta, si existe',
+	'smw_paramdesc_outrotemplate' => 'Le nomine de un patrono a monstrar post le resultatos del consulta, si existe',
 	'smw_paramdesc_embedformat' => 'Le etiquetta HTML usate pro definir capites',
 	'smw_paramdesc_embedonly' => 'Non monstrar capites',
 	'smw_paramdesc_rsstitle' => 'Le texto a usar como titulo del syndication',
@@ -4822,6 +5133,7 @@ Progresso estimate del actualisation currente:',
 
 /** Indonesian (Bahasa Indonesia)
  * @author Bennylin
+ * @author Farras
  * @author Irwangatot
  * @author IvanLanin
  * @author Rex
@@ -4842,6 +5154,7 @@ $messages['id'] = array(
 	'smw_concept_cache_miss' => 'Konsep "$1" tidak dapat digunakan saat ini karena konfigurasi wiki membutuhkannya untuk dihitung secara luring.
 Jika masalah ini tidak hilang setelah beberapa waktu, mintalah pengelola situs untuk membuat konsep ini tersedia.',
 	'smw_noinvannot' => 'Nilai tidak dapat diberikan pada properti inversi.',
+	'version-semantic' => 'Ekstensi semantik',
 	'smw_baduri' => 'URI berbentuk "$1" tidak diperbolehkan.',
 	'smw_printername_auto' => 'Otomatis',
 	'smw_printername_count' => 'Hasil perhitungan',
@@ -4867,6 +5180,9 @@ Jika masalah ini tidak hilang setelah beberapa waktu, mintalah pengelola situs u
 	'smw_paramdesc_sep' => 'Pemisah untuk nilai',
 	'smw_paramdesc_template' => 'Nama templat yang digunakan untuk menampilkan cetakan',
 	'smw_paramdesc_columns' => 'Jumlah kolom untuk menampilkan hasil (bawaannya adalah $1)',
+	'smw_paramdesc_userparam' => 'Sebuah nilai dimasukkan ke setiap pencarian templat, bila sebuah templat digunakan',
+	'smw_paramdesc_introtemplate' => 'Nama templat yang ditampilkan sebelum hasil pencarian, bila ada',
+	'smw_paramdesc_outrotemplate' => 'Nama templat yang ditampilkan setelah hasil pencarian, bila ada',
 	'smw_paramdesc_embedformat' => 'Tag HTML yang digunakan untuk menentukan judul',
 	'smw_paramdesc_embedonly' => 'Jangan tampilkan judul',
 	'smw_paramdesc_rsstitle' => 'Tulisan yang digunakan sebagai judul umpan',
@@ -4893,6 +5209,7 @@ Jika masalah ini tidak hilang setelah beberapa waktu, mintalah pengelola situs u
 	'smw_nofloat' => '"$1" bukan angka.',
 	'smw_infinite' => 'Angka sebesar "$1" tidak didukung.',
 	'smw_infinite_unit' => 'Konversi menjadi unit "$1" menghasilkan suatu angka yang terlalu besar.',
+	'smw_novalues' => 'Tidak ada nilai yang disebutkan.',
 	'smw_unsupportedprefix' => 'Awalan untuk angka ("$1") tidak didukung.',
 	'smw_unsupportedunit' => 'Konversi unit untuk unit "$1" tidak didukung.',
 	'smw_nodatetime' => 'Tanggal "$1" tidak dipahami.',
@@ -5066,7 +5383,7 @@ $messages['ig'] = array(
 	'smw_printername_count' => 'güó ihe futárá',
 	'smw_printername_list' => 'Ndetu',
 	'smw_printername_table' => 'Agada',
-	'smw_printername_template' => 'Nkpurụ ihü',
+	'smw_printername_template' => 'Àtụ',
 );
 
 /** Ido (Ido)
@@ -6020,6 +6337,7 @@ Mer donn jetz nit noch ein aanshtüße!',
 $messages['lb'] = array(
 	'smw-desc' => "Är Wiki méi accessibel machen - fir Maschinnen ''a'' Menschen ([http://semantic-mediawiki.org/wiki/Help:User_manual online documentation])",
 	'smw_edithelp' => "D'Hellëf vun den Eegeschaften änneren",
+	'smw_viewasrdf' => 'RDF-Feed',
 	'smw_finallistconjunct' => ', an',
 	'smw_factbox_head' => 'Fakten iwwer $1',
 	'smw_isspecprop' => 'Dëse Eegeschaft ass eng Spezial-Eegschaft an dëser Wiki.',
@@ -6027,6 +6345,7 @@ $messages['lb'] = array(
 	'smw_isaliastype' => 'Dësen Typ vun donnéeën ass keen Alias fir den Typ vun Donnéeën "$1".',
 	'smw_concept_description' => 'Beschreiwung vum Konzept "$1"',
 	'smw_multiple_concepts' => 'Op jiddwer Konzeptsäit ka just eng Definitioun vun engem Konzept stoen.',
+	'version-semantic' => 'Softwareerweiderungen (Semantic MediaWiki)',
 	'smw_baduri' => 'URIë vun der Form "$1" sinn net erlaabt.',
 	'smw_csv_link' => 'CSV',
 	'smw_printername_auto' => 'Automatesch',
@@ -6157,6 +6476,7 @@ Et ka keen neien ugefaang ginn.',
 	'smw_smwadmin_datarefreshstop' => 'Dësn Update stoppen',
 	'smw_smwadmin_datarefreshstopconfirm' => 'Jo, ech si sécher.',
 	'smw_smwadmin_support' => 'Ënnerstëtzung kréien',
+	'smw_smwadmin_supportdocu' => 'Verschidde Quellen kéinten Iech bei Problemer hëllefen:',
 	'smw_smwadmin_smwhomepage' => 'Déi komplett Benotzerdokumentatioun vu Semantic MediaWiki fannt Dir op b><a href="http://semantic-mediawiki.org">semantic-mediawiki.org</a></b>.',
 	'smw_smwadmin_mediazilla' => 'Feeler kënnen op <a href="https://bugzilla.wikimedia.org/">Bugzilla</a> gemellt ginn.',
 	'smw_smwadmin_questions' => 'Wann dir nach Froen oder Propositiounen hutt, da bedeelegt Iech un der Diskussioun op dem <a href="http://sourceforge.net/mailarchive/forum.php?forum_name=semediawiki-user">Semantic MediaWiki Benotzer-Forum</a>.',
@@ -6183,6 +6503,7 @@ $messages['mk'] = array(
 	'smw_concept_cache_miss' => 'Концептот „$1“ во моментов не може да се користи, бидејќи местењата на викито бараат тој да се пресмета вон интернет.
 Ако проблемот не исчезне по извесно време, побарајте од вашиот администратор да го овозможи тој концепт.',
 	'smw_noinvannot' => 'На обратните својства не можат да им се назначуваат вредности.',
+	'version-semantic' => 'Семантички додатоци',
 	'smw_baduri' => 'URI-ja од обликот „$1“ не се дозволени.',
 	'smw_printername_auto' => 'Автоматски',
 	'smw_printername_count' => 'Резултати од пребројувањето',
@@ -6208,6 +6529,9 @@ $messages['mk'] = array(
 	'smw_paramdesc_sep' => 'Разделувачот за вредностите',
 	'smw_paramdesc_template' => 'Името на шаблонот со чија помош ќе се прикажуваат податоците',
 	'smw_paramdesc_columns' => 'Бројот на колони за приказ на резултати (3 по основно)',
+	'smw_paramdesc_userparam' => 'Вредност која се дава при секое повикување на шаблон, ако се користи',
+	'smw_paramdesc_introtemplate' => 'Име на шаблонот за приказ пред резултатите од пребарувањето, ако ги има',
+	'smw_paramdesc_outrotemplate' => 'Име на шаблонот за приказ по резултатите од пребарувањето, ако ги има',
 	'smw_paramdesc_embedformat' => 'HTML-ознаката која се користи за определување на наслови',
 	'smw_paramdesc_embedonly' => 'Не прикажувај наслови',
 	'smw_paramdesc_rsstitle' => 'Текстот што ќе се користи како наслов на каналот',
@@ -6254,7 +6578,7 @@ $messages['mk'] = array(
 	'smw_noqueryfeature' => 'Некои функции од барањето не се поддржани на ова вики, и затоа е испуштен дел од барањето ($1).',
 	'smw_noconjunctions' => 'Сврзници во барања не се поддржани во ова вики, и затоа е испуштен дел од барањето ($1).',
 	'smw_nodisjunctions' => 'Во ова вики не се поддржани дисјункции во барањата, и затоа еден дел од барањето е отфрлен ($1).',
-	'smw_querytoolarge' => 'Следниве услови на барањето не можеа да бидат земени во предвид заради ограничувањата на големината или длабочината на барањата во ова вики: $1',
+	'smw_querytoolarge' => 'Следниве услови на барањето не можеа да бидат земени предвид заради ограничувањата на големината или длабочината на барањата во ова вики: $1',
 	'smw_devel_warning' => 'Оваа функција е моментално во развој, и може да не биде наполно функционална.
 Направете резервна копија на податоците пред да ја користите.',
 	'smw_notemplategiven' => 'Наведете вредност за параметарот „template“ за да може да работи овој формат на барање.',
@@ -6299,15 +6623,15 @@ $messages['mk'] = array(
 Некои од постоечките својства може да се [[Special:UnusedProperties|неискористени]].
 Својствата кои сè уште немаат страница се наведени на [[Special:WantedProperties|списокот на потребни својства]].",
 	'uriresolver' => 'URI претворач',
-	'smw_uri_doc' => 'URI претварачот ја имплементира <a href="http://www.w3.org/2001/tag/issues.html#httpRange-14">W3C пронаоѓање на ознаки на httpRange-14</a>.
-Тој има за задача да внимава луѓето да не се претворат во веб-страници.',
+	'smw_uri_doc' => 'URI-претварачот применува <a href="http://www.w3.org/2001/tag/issues.html#httpRange-14">W3C пронаоѓање на ознаки на httpRange-14</a>.
+Тој има за задача да внимава луѓето да не се претворат во мрежни места.',
 	'ask' => 'Семантичко пребарување',
-	'smw_ask_sortby' => 'Сортирај по колона (незадолжително)',
+	'smw_ask_sortby' => 'Подреди по колона (незадолжително)',
 	'smw_ask_ascorder' => 'Нагорен',
 	'smw_ask_descorder' => 'Надолен',
 	'smw_ask_submit' => 'Пронајди',
 	'smw_ask_editquery' => '(Уреди барање)',
-	'smw_add_sortcondition' => '(Додај услов за сортирање)',
+	'smw_add_sortcondition' => '(Додај услов за подредување)',
 	'smw_ask_hidequery' => 'Сокриј барање',
 	'smw_ask_help' => 'Помош со поставување барања',
 	'smw_ask_queryhead' => 'Барање',
@@ -6370,9 +6694,9 @@ $messages['mk'] = array(
 Доделете му доволно дозволи на корисникот за да може да создава и брише табели, привремено внесете го најавниот корен (root) на вашата база на податоци во LocalSettings.php, или пак употребете ја скриптата за одржување <tt>SMW_setup.php</tt> која може да ги користи акердитивите за пристап од AdminSettings.php.',
 	'smw_smwadmin_dbbutton' => 'Започни или поднови табели',
 	'smw_smwadmin_announce' => 'Објавете го вашето вики',
-	'smw_smwadmin_announcedocu' => 'Semantic MediaWiki има веб-служба за соопштување на нови семантички вики-страници.
-Ова се користи за одржување на список на јавни веб-места кои го користат Semantic MediaWiki, главно со цел да му се помогне на <a href="http://semantic-mediawiki.org/wiki/SMW_Project">проектот Semantic MediaWiki</a> да добие претстава за типичните употреби на Semantic MediaWiki.
-Погледајте ја веб-страницата на Semantic MediaWiki за <a href="http://semantic-mediawiki.org/wiki/Registry">повеќе информации за оваа служба</a>.',
+	'smw_smwadmin_announcedocu' => 'Semantic MediaWiki има мрежна служба за соопштување на нови семантички вики-страници.
+Ова се користи за одржување на список на јавни мрежни места кои го користат Semantic MediaWiki, главно со цел да му се помогне на <a href="http://semantic-mediawiki.org/wiki/SMW_Project">проектот Semantic MediaWiki</a> да добие претстава за типичните употреби на Semantic MediaWiki.
+Погледајте го мрежното место на Semantic MediaWiki за <a href="http://semantic-mediawiki.org/wiki/Registry">повеќе информации за оваа служба</a>.',
 	'smw_smwadmin_announcebutton' => 'Притиснете го следново копче за да ја испратите URL-адресата на вашето вики во таа служба.
 Службата нема да регистрира викија што не се јавно достапни, и ќе складира само достапни информации.',
 	'smw_smwadmin_datarefresh' => 'Поправка и поднова на податоци',
@@ -6611,6 +6935,7 @@ $messages['nl'] = array(
 	'smw_concept_cache_miss' => 'Het concept "$1" kan op het moment niet gebruikt worden omdat de dit volgende de instellingen van de wiki offline berekend moet worden.
 Als het probleem over enige tijd nog niet verholpen is, vraag de beheerder dan om dit concept beschikbaar te maken.',
 	'smw_noinvannot' => 'Waarden kunnen niet toegekend worden aan omgekeerde eigenschappen.',
+	'version-semantic' => 'Semantische uitbreidingen',
 	'smw_baduri' => "URI's uit de reeks “$1” zijn hier niet beschikbaar.",
 	'smw_csv_link' => 'CSV',
 	'smw_printername_auto' => 'Automatisch',
@@ -6637,6 +6962,9 @@ Als het probleem over enige tijd nog niet verholpen is, vraag de beheerder dan o
 	'smw_paramdesc_sep' => 'Het scheidingsteken voor waarden',
 	'smw_paramdesc_template' => 'De naam van het sjabloon waar de afdrukken mee worden weergegeven',
 	'smw_paramdesc_columns' => 'Het aantal kolommen om resultaten in weer te geven (standaard $1)',
+	'smw_paramdesc_userparam' => 'Een aan ieder sjabloon doorgegeven waarde als een sjabloon wordt gebruikt',
+	'smw_paramdesc_introtemplate' => 'De naam van een weer te geven sjabloon voor de zoekresultaten als die er zijn',
+	'smw_paramdesc_outrotemplate' => 'De naam van een weer te geven sjabloon na de zoekresultaten als die er zijn',
 	'smw_paramdesc_embedformat' => 'Het HTML-label voor de koptekstdefinities',
 	'smw_paramdesc_embedonly' => 'Geen koppen weergeven',
 	'smw_paramdesc_rsstitle' => 'De tekst die wordt gebruikt als de naam van de feed',
@@ -7488,6 +7816,7 @@ $messages['os'] = array(
 $messages['pdc'] = array(
 	'smw_finallistconjunct' => ' unn',
 	'smw_printername_list' => 'Lischt',
+	'smw_printername_template' => 'Moddel',
 	'smw_true_words' => 'ya,yes,true',
 	'smw_false_words' => 'nee,no,false',
 	'smw_nofloat' => '„$1“ iss ken Zehl.',
@@ -7543,7 +7872,7 @@ $messages['pl'] = array(
 	'smw_kiloseparator' => '.',
 	'smw_notitle' => '„$1” nie może być użyte jako nazwa strony.',
 	'smw_wrong_namespace' => 'Dozwolone są tutaj tylko strony z przestrzeni nazw „$1”.',
-	'smw_unknowntype' => '„$1” jako typ atrybutu nie jest wspierany.',
+	'smw_unknowntype' => '„$1” jako typ atrybutu nie jest obsługiwany.',
 	'smw_manytypes' => 'Zdefiniowano więcej niż jeden typ dla atrybutu.',
 	'smw_emptystring' => 'Puste łańcuchy znakowe są niedozwolone.',
 	'smw_maxstring' => 'Reprezentacja znakowa $1 jest zbyt długa.',
@@ -7552,10 +7881,10 @@ $messages['pl'] = array(
 	'smw_true_words' => 'prawda,t,yes,y,tak,true',
 	'smw_false_words' => 'fałsz,f,no,n,nie,false',
 	'smw_nofloat' => '„$1” nie jest liczbą.',
-	'smw_infinite' => 'Liczby tak duże jak „$1” nie są wspierane.',
+	'smw_infinite' => 'Liczby tak duże jak „$1” nie są obsługiwane.',
 	'smw_infinite_unit' => 'Konwersja do jednostki „$1” zwróciła liczbę, która jest zbyt duża.',
-	'smw_unsupportedprefix' => 'Przedrostki dla liczb (“$1”) nie są obecnie wspierane.',
-	'smw_unsupportedunit' => 'Konwersja dla jednostki „$1” nie jest wspierana.',
+	'smw_unsupportedprefix' => 'Przedrostki dla liczb („$1“) nie są obecnie obsługiwane.',
+	'smw_unsupportedunit' => 'Konwersja dla jednostki „$1” nie jest obsługiwana.',
 	'smw_nodatetime' => 'Data „$1” nie została zrozumiana.',
 	'smw_toomanyclosing' => 'W zapytaniu jest zbyt wiele wystąpień „$1”.',
 	'smw_noclosingbrackets' => 'W zapytaniu któryś z podwójnych nawiasów „<nowiki>[[</nowiki>” nie został zamknięty nawiasem „]]”.',
@@ -7574,7 +7903,7 @@ Wyniki mogą być inne od oczekiwanych.',
 	'smw_noconjunctions' => 'Koniunkcje w zapytaniach nie są obsługiwane na tej wiki, pominięto część zapytania ($1).',
 	'smw_nodisjunctions' => 'Alternatywy w zapytaniach nie są obsługiwane na tej wiki, pominięto część zapytania ($1).',
 	'smw_querytoolarge' => 'Następujące warunki zapytania nie mogły zostać uwzględnione ze względu na ograniczenia wiki w wielkości lub głębokości zapytania: $1.',
-	'smw_devel_warning' => 'Ta opcja jest obecnie w fazie rozwoju, może nie być w pełni funkcjonalna. Przed użyciem zabezpiecz swoje dane.',
+	'smw_devel_warning' => 'Ta opcja jest obecnie w fazie rozwoju, może nie funkcjonować w pełni. Przed użyciem zabezpiecz swoje dane.',
 	'smw_notemplategiven' => 'Należy podać parametr „template”, aby to zapytanie zadziałało.',
 	'smw_type_header' => 'Atrybuty typu “$1”',
 	'smw_typearticlecount' => 'Pokazano $1 {{PLURAL:$1|atrybut używający|atrybuty używające|atrybutów używających}} tego typu.',
@@ -7620,7 +7949,7 @@ Wyniki mogą być inne od oczekiwanych.',
 	'smw_ask_hidequery' => 'Ukryj zapytanie',
 	'smw_ask_help' => 'Pomoc dla tworzenia zapytań',
 	'smw_ask_queryhead' => 'Zapytanie',
-	'smw_ask_printhead' => 'Dodatkowe wydruki (opcjonalnie)',
+	'smw_ask_printhead' => 'Dodatkowe dane do wyświetlenia',
 	'smw_ask_format_as' => 'Formatuj jako',
 	'smw_ask_defaultformat' => 'domyślny',
 	'smw_ask_otheroptions' => 'Inne opcje',
@@ -7701,6 +8030,7 @@ $messages['pms'] = array(
 	'smw_concept_cache_miss' => "Ël concet «$1» a peul pa esse dovrà ant ës moment, përchè la configurassion ëd la wiki a ciama ch'a sia calcolà fòra ëd linia.
 Se ël problema a van nen via an chèich moment, ciamé a l'aministrator ëd sò sit ëd rende 's concet disponìbil.",
 	'smw_noinvannot' => 'Ij valor a peulo pa esse assignà a le proprietà anverse.',
+	'version-semantic' => 'Estension semàntiche',
 	'smw_baduri' => 'URI dla forma "$1" a son pa përmëttù.',
 	'smw_printername_auto' => 'Automàtich',
 	'smw_printername_count' => "Conta dj'arzultà",
@@ -7726,6 +8056,9 @@ Se ël problema a van nen via an chèich moment, ciamé a l'aministrator ëd sò
 	'smw_paramdesc_sep' => 'Ël separator për ij valor',
 	'smw_paramdesc_template' => "Ël nòm ëd në stamp con ël qual visualisé j'arzultà",
 	'smw_paramdesc_columns' => "Ël nùmer ëd colòne andoa mostré j'arzultà (lë stàndard a l'é $1)",
+	'smw_paramdesc_userparam' => "Un valor passà an mincadun-a ciamà dë stamp, se në stamp a l'é dovrà",
+	'smw_paramdesc_introtemplate' => "Ël nòm ëd në stamp da mostré prima dj'arzultà dl'arserca, s'a-i në j'é",
+	'smw_paramdesc_outrotemplate' => "Ël nòm ëd në stamp da mostré apress ëd j'arzultà dl'arserca, s'a-i në j'é",
 	'smw_paramdesc_embedformat' => "L'etichëtta HTML dovrà për definì j'antestassion",
 	'smw_paramdesc_embedonly' => "Smon-e nen j'antestassion",
 	'smw_paramdesc_rsstitle' => 'Ël test da mostré com tìtol dël fluss',
@@ -7920,9 +8253,12 @@ Avansament stimà dla modìfica corenta:",
  */
 $messages['ps'] = array(
 	'smw_finallistconjunct' => '، او',
+	'smw_printername_auto' => 'اتوماتيک',
 	'smw_printername_list' => 'لړليک',
 	'smw_printername_template' => 'کينډۍ',
 	'smw_iq_moreresults' => 'نورې پايلې ...',
+	'smw_true_words' => 'سم، س، هو، هـ',
+	'smw_false_words' => 'ناسم، نا، نه، ن',
 	'smw_nodatetime' => 'دا "$1" نېټه و نه پېژندل شوه.',
 	'smw_exportrdf_submit' => 'صادرول',
 	'properties' => 'ځانتياوې',
@@ -7931,14 +8267,17 @@ $messages['ps'] = array(
 	'smw_ask_ascorder' => 'ختند',
 	'smw_ask_defaultformat' => 'تلواليز',
 	'smw_sbv_value' => 'ارزښت:',
+	'smw_sbv_submit' => 'پايلې موندل',
 	'browse' => 'ويکي سپړل',
 	'smw_browselink' => 'د سپړلو ځانتياوې',
 	'smw_browse_go' => 'ورځه',
 	'smw_pp_type' => 'ځانتيا',
+	'smw_pp_submit' => 'پايلې موندل',
 	'smw_result_prev' => 'پخواني',
 	'smw_result_next' => 'راتلونکي',
 	'smw_result_results' => 'پايلې',
-	'smw_result_noresults' => 'اوبښۍ، هېڅ کومه پايله نشته.',
+	'smw_result_noresults' => 'بې پايلو.',
+	'smw_smwadmin_return' => '$1 ته ورګرځېدل',
 	'smw_smwadmin_datarefreshstopconfirm' => 'هو، زه ډاډه يم.',
 );
 
@@ -7965,6 +8304,7 @@ $messages['pt'] = array(
 	'smw_multiple_concepts' => 'Cada página de conceito pode possuir apenas uma definição de conceito.',
 	'smw_concept_cache_miss' => "O conceito \"\$1\" não pode ser usado neste momento, porque a configuração da wiki requer que ele seja calculado ''off-line''. Caso o problema não seja resolvido dentro de algum tempo, peça a um administrador da wiki que disponibilize este conceito.",
 	'smw_noinvannot' => 'Valores não podem ser atribuídos a propriedades inversas.',
+	'version-semantic' => 'Extensões semânticas',
 	'smw_baduri' => 'Desculpe, URIs da forma “$1” não são permitidos.',
 	'smw_csv_link' => 'CSV',
 	'smw_printername_auto' => 'Automático',
@@ -7991,6 +8331,9 @@ $messages['pt'] = array(
 	'smw_paramdesc_sep' => 'O separador de valores',
 	'smw_paramdesc_template' => 'O nome da predefinição com a qual são apresentadas as impressões',
 	'smw_paramdesc_columns' => 'O número de colunas em que os resultados serão apresentados (por omissão, $1)',
+	'smw_paramdesc_userparam' => 'Um valor fornecido a cada chamada da predefinição, se for usada uma predefinição',
+	'smw_paramdesc_introtemplate' => 'O nome de uma predefinição para apresentar antes dos resultados da consulta, se existirem',
+	'smw_paramdesc_outrotemplate' => 'O nome de uma predefinição para apresentar após os resultados da consulta, se existirem',
 	'smw_paramdesc_embedformat' => 'O elemento HTML usado para definir cabeçalhos',
 	'smw_paramdesc_embedonly' => 'Não mostrar cabeçalhos',
 	'smw_paramdesc_rsstitle' => "O texto que será usado como título do ''feed''",
@@ -8185,6 +8528,7 @@ Progresso estimado da actualização em curso:",
  * @author 555
  * @author Eduardo.mps
  * @author GKnedo
+ * @author Giro720
  * @author Hamilton Abreu
  * @author Heldergeovane
  * @author Luckas Blade
@@ -8205,6 +8549,8 @@ $messages['pt-br'] = array(
 	'smw_no_concept_namespace' => 'Conceitos só podem ser definidos em páginas no domínio Conceito:.',
 	'smw_multiple_concepts' => 'Cada página de conceito pode ter apenas uma definição de conceito.',
 	'smw_concept_cache_miss' => 'O conceito "$1" não poderá ser utilizado neste momento, uma vez que a configuração deste wiki necessita ser refeita off-line. Caso o problema não seja resolvido automaticamente dentro de algum tempo, peça a um administrador deste wiki que este conceito seja disponibilizado.',
+	'smw_noinvannot' => 'Valores não podem ser atribuídos a propriedades inversas.',
+	'version-semantic' => 'Extensões semânticas',
 	'smw_baduri' => 'URIs na forma de "$1" não são permitidos.',
 	'smw_printername_auto' => 'Automático',
 	'smw_printername_count' => 'Contar resultados',
@@ -8219,6 +8565,24 @@ $messages['pt-br'] = array(
 	'smw_printername_table' => 'Tabela',
 	'smw_printername_broadtable' => 'Tabela ampla',
 	'smw_printername_template' => 'Predefinição',
+	'smw_paramdesc_limit' => 'O número máximo de resultados a devolver',
+	'smw_paramdesc_headers' => 'Apresentar os nomes dos cabeçalhos e propriedades',
+	'smw_paramdesc_mainlabel' => 'A etiqueta a atribuir ao nome da página principal',
+	'smw_paramdesc_link' => 'Apresentar os valores na forma de links',
+	'smw_paramdesc_intro' => 'O texto a apresentar antes dos resultados da consulta, caso existam',
+	'smw_paramdesc_outro' => 'O texto a apresentar após os resultados da consulta, caso existam',
+	'smw_paramdesc_default' => 'O texto a apresentar se a consulta não produzir resultados',
+	'smw_paramdesc_searchlabel' => 'O texto no link para os resultados',
+	'smw_paramdesc_sep' => 'O separador de valores',
+	'smw_paramdesc_template' => 'O nome da predefinição com a qual são apresentadas as impressões',
+	'smw_paramdesc_columns' => 'O número de colunas em que os resultados serão apresentados (por padrão, $1)',
+	'smw_paramdesc_userparam' => 'Um valor fornecido a cada chamada da predefinição, se for usada uma predefinição',
+	'smw_paramdesc_introtemplate' => 'O nome de uma predefinição para apresentar antes dos resultados da consulta, se existirem',
+	'smw_paramdesc_outrotemplate' => 'O nome de uma predefinição para apresentar após os resultados da consulta, se existirem',
+	'smw_paramdesc_embedformat' => 'O elemento HTML usado para definir cabeçalhos',
+	'smw_paramdesc_embedonly' => 'Não mostrar cabeçalhos',
+	'smw_paramdesc_rsstitle' => 'O texto que será usado como título do feed',
+	'smw_paramdesc_rssdescription' => 'O texto que será usado como descrição do feed',
 	'smw_iq_disabled' => 'Consultas semânticas foram desativadas neste wiki.',
 	'smw_iq_moreresults' => '… mais resultados',
 	'smw_iq_nojs' => 'Por favor, use um navegador com JavaScript ativado para visualizar este elemento.',
@@ -8241,6 +8605,7 @@ $messages['pt-br'] = array(
 	'smw_nofloat' => '“$1” não é um número.',
 	'smw_infinite' => 'Números tão grandes como "$1" não são suportados.',
 	'smw_infinite_unit' => 'A conversão para a unidade "$1" resultou num número grande demais.',
+	'smw_novalues' => 'Não foram especificados valores.',
 	'smw_unsupportedprefix' => 'Prefixos em números ("$1") não são suportados.',
 	'smw_unsupportedunit' => 'Conversão de unidade para unidade "$1" não suportada.',
 	'smw_nodatetime' => 'A data “$1” não foi compreendida.',
@@ -8257,6 +8622,12 @@ Os resultados podem não ser os esperados.',
 	'smw_badtitle' => 'Desculpe, mas "$1" não é um título de página válido.',
 	'smw_badqueryatom' => 'Alguma parte "<nowiki>[[…]]</nowiki>" da consulta não foi compreendida.',
 	'smw_propvalueproblem' => 'O valor da propriedade "$1" não foi compreendido.',
+	'smw_noqueryfeature' => 'Uma característica da consulta não é suportada nesta wiki e parte da consulta foi descartada ($1).',
+	'smw_noconjunctions' => 'Conjunções em consultas não são suportadas nesta wiki e parte da consulta foi descartada ($1).',
+	'smw_nodisjunctions' => 'Disjunções em consultas não são suportadas nesta wiki e parte da consulta foi descartada ($1).',
+	'smw_querytoolarge' => 'Não foi possível considerar as seguintes condições da consulta, devido às restrições no tamanho e profundidade de consulta das wikis: $1.',
+	'smw_devel_warning' => 'Esta funcionalidade está, neste momento, em desenvolvimento, e pode não estar totalmente funcional.
+Faça uma cópia de segurança dos seus dados antes de a usar.',
 	'smw_notemplategiven' => 'Providencie um valor para o parâmetro "template" para o formato desta consulta funcionar.',
 	'smw_type_header' => 'Propriedades do tipo "$1"',
 	'smw_typearticlecount' => 'Exibindo $1 {{PLURAL:$1|propriedade que usa|propriedades que usam}} este tipo.',
@@ -8269,13 +8640,37 @@ Os resultados podem não ser os esperados.',
 	'exportrdf' => 'Exportar páginas para RDF',
 	'smw_exportrdf_docu' => 'Esta página permite que você obtenha dados de uma página no formato RDF.
 Para exportar páginas, introduza os seus títulos na caixa de texto abaixo, um título por linha.',
+	'smw_exportrdf_recursive' => 'Exportar recursivamente todas as páginas relacionadas.
+Note que o resultado pode ser volumoso!',
+	'smw_exportrdf_backlinks' => 'Também exporta todas as páginas que se referem as páginas exportadas.
+Gera RDF navegável.',
+	'smw_exportrdf_lastdate' => 'Não exportar páginas que não foram alteradas desde o tempo dado.',
 	'smw_exportrdf_submit' => 'Exportar',
 	'properties' => 'Propriedades',
 	'smw_properties_docu' => 'As seguintes propriedades são usadas nesta wiki.',
+	'smw_property_template' => '$1 de tipo $2 ($3)',
+	'smw_propertylackspage' => 'Todas as propriedades devem ser descritas por uma página!',
+	'smw_propertylackstype' => 'Nenhum tipo foi especificado para esta propriedade (assumindo tipo $1 por agora).',
+	'smw_propertyhardlyused' => 'Esta propriedade é muito pouco usada nesta wiki!',
+	'unusedproperties' => 'Propriedades não usadas',
+	'smw_unusedproperties_docu' => 'As seguintes propriedade existem apesar de nenhuma página fazer uso delas.',
+	'smw_unusedproperty_template' => '$1 de tipo $2',
+	'wantedproperties' => 'Propriedades em falta',
+	'smw_wantedproperties_docu' => 'As seguintes propriedades são usadas na wiki mas ainda não têm uma página que as descreva.',
+	'smw_wantedproperty_template' => '$1 ($2 {{PLURAL:$2|uso|usos}})',
+	'tooltip-purge' => 'Carregue aqui para atualizar todas as consultar e predefinições nesta página',
 	'smw_purge' => 'Atualizar',
 	'types' => 'Tipos',
 	'smw_types_docu' => 'A seguinte lista contém todos os tipos de dados que podem ser atribuídos a propriedades.
 Cada tipo de dados tem uma página onde informação adicional pode ser providenciada.',
+	'smw_typeunits' => 'Unidades de medida de tipo "$1": $2',
+	'semanticstatistics' => 'Estatísticas de semântica',
+	'smw_semstats_text' => "Esta wiki contém '''$1''' {{PLURAL:$1|valor|valores}} de propriedades num total de '''$2''' [[Special:Properties|{{PLURAL:$2|propriedade diferente|propriedades diferentes}}]].
+'''$3''' {{PLURAL:$3|propriedade tem|propriedades têm}} sua própria página, e o tipo de dados pretendido está especificado para '''$4''' delas.
+Algumas das propriedades existentes podem estar [[Special:UnusedProperties|sem uso]].
+As propriedades que não possuem uma página poderão ser encontradas na [[Special:WantedProperties|lista de propriedades em falta]].",
+	'uriresolver' => 'Resolvedor de URIs',
+	'smw_uri_doc' => 'O resolvedor de URIs implementa a <a href="http://www.w3.org/2001/tag/issues.html#httpRange-14">descoberta TAG da W3C sobre o httpRange-14</a>. Ele certifica-se de que os seres humanos não se tornem em sites da internet.',
 	'ask' => 'Pesquisa semântica',
 	'smw_ask_sortby' => 'Ordenar por coluna (opcional)',
 	'smw_ask_ascorder' => 'Ascendente',
@@ -8287,6 +8682,7 @@ Cada tipo de dados tem uma página onde informação adicional pode ser providen
 	'smw_ask_help' => 'Ajuda sobre consultas',
 	'smw_ask_queryhead' => 'Consulta',
 	'smw_ask_printhead' => 'Dados adicionas para exibir',
+	'smw_ask_printdesc' => '(adicionar um nome de propriedade por linha)',
 	'smw_ask_format_as' => 'Formatar como:',
 	'smw_ask_defaultformat' => 'Padrão',
 	'smw_ask_otheroptions' => 'Outras opções',
@@ -8310,6 +8706,8 @@ Uma vez que houve poucos resultados, também são apresentados valores próximos
 	'smw_browse_hide_incoming' => 'ocultar propriedades que apontem para cá',
 	'smw_browse_no_outgoing' => 'Esta página não possui propriedades.',
 	'smw_browse_no_incoming' => 'Nenhuma propriedade aponta para esta página.',
+	'smw_inverse_label_default' => '$1 de',
+	'smw_inverse_label_property' => 'Etiqueta propriedade inversa',
 	'pageproperty' => 'Pesquisa de propriedade de página',
 	'smw_pp_docu' => 'Pesquise todos os conteúdos de uma propriedade em uma página dada.
 Por favor, inclua tanto a página quanto a propriedade.',
@@ -8334,9 +8732,24 @@ Não foi criado outro.',
 	'smw_smwadmin_docu' => 'Esta página especial ajuda-o durante a instalação ou atualização do <a href="http://semantic-mediawiki.org">Semantic MediaWiki</a>.
 Lembre-se de efetuar cópias de segurança dos dados importantes antes de executar funções administrativas.',
 	'smw_smwadmin_db' => 'Instalação e atualização da base de dados',
+	'smw_smwadmin_dbdocu' => 'O MediaWiki Semântico requer algumas alterações da base de dados MediaWiki de forma a armazenar os dados semânticos.
+A função abaixo assegura que a sua base de dados está devidamente preparada.
+As alterações feitas neste passo não afetam o resto da base de dados MediaWiki, e podem ser facilmente desfeitas se desejado.
+Esta função de preparação pode ser executada várias vezes sem causar quaisquer danos, mas é necessária apenas uma vez na instalação ou atualização.',
+	'smw_smwadmin_permissionswarn' => "Se a operação falhar com erros de SQL, provavelmente o usuário de base de dados utilizado pela sua wiki (consulte o seu LocalSettings.php) não possui permissões suficientes.
+Conceda a este utilizador permissões adicionais para criar e eliminar tabelas, introduza temporariamente as credenciais do seu superusuário (<i>root</i>) da base de dados em LocalSettings.php, ou use o ''script'' de manutenção <tt>SMW_setup.php</tt>, o qual pode usar as credenciais presentes em AdminSettings.php.",
 	'smw_smwadmin_dbbutton' => 'Inicializar ou atualizar tabelas',
 	'smw_smwadmin_announce' => 'Anuncie a sua wiki',
+	'smw_smwadmin_announcedocu' => 'O MediaWiki Semântico tem um serviço na internet para anunciar novas wikis semânticas.
+Este é usado para manter uma lista de sites públicos que usam o MediaWiki Semântico, principalmente para auxiliar o <a href="http://semantic-mediawiki.org/wiki/SMW_Project">projeto MediaWiki Semântico</a> a obter uma ideia geral das utilizações típicas do MediaWiki Semântico.
+Veja a página inicial do MediaWiki Semântico para <a href="http://semantic-mediawiki.org/wiki/Registry">mais informações sobre este serviço</a>.',
+	'smw_smwadmin_announcebutton' => 'Clique o seguinte botão para submeter a URL da sua wiki ao serviço.
+O serviço não registará wikis que não estejam publicamente acessíveis e apenas armazenará informação publicamente acessível.',
 	'smw_smwadmin_datarefresh' => 'Reparação de dados e atualização',
+	'smw_smwadmin_datarefreshdocu' => 'É possível restaurar todos os dados do MediaWiki Semântico baseado no conteúdo atual da wiki.
+Isto pode ser útil para reparar dados corrompidos ou para refrescar os dados se o formato interno tiver sido alterado devido a alguma evolução do software.
+A atualização é executada página a página e não ficará completa de imediato.
+Abaixo é mostrado se uma atualização está a decorrer e permite-lhe iniciar ou parar atualizações (a menos que esta funcionalidade tenha sido desativada por um administrador do site).',
 	'smw_smwadmin_datarefreshprogress' => '<strong>Uma atualização já se encontra a decorrer.</strong>
 É normal que a atualização progrida lentamente já que apenas refresca dados em pequenos blocos de cada vez que um utilizador acede ao wiki.
 Para terminar esta atualização mais rapidamente, você pode executar o script de manutenção do MediaWiki <tt>runJobs.php</tt> (use a opção <tt>--maxjobs 1000</tt> para restringir o número de atualizações feitas num bloco).
@@ -8363,6 +8776,7 @@ $messages['rif'] = array(
 );
 
 /** Romanian (Română)
+ * @author AdiJapan
  * @author Firilacroco
  * @author KlaudiuMihaila
  */
@@ -8434,7 +8848,7 @@ Rezultatele pot fi neașteptate.',
 	'smw_browselink' => 'Răsfoiți proprietățile',
 	'smw_browse_go' => 'Mergi',
 	'smw_browse_no_outgoing' => 'Această pagină nu are proprietăți.',
-	'smw_browse_no_incoming' => 'Nici o proprietate nu se leagă la această pagină.',
+	'smw_browse_no_incoming' => 'Nici o proprietate nu trimite la această pagină.',
 	'smw_pp_from' => 'De la pagina',
 	'smw_pp_type' => 'Proprietate',
 	'smw_pp_submit' => 'Găsește rezultate',
@@ -8465,6 +8879,7 @@ $messages['roa-tara'] = array(
 );
 
 /** Russian (Русский)
+ * @author Eleferen
  * @author Ferrer
  * @author Innv
  * @author Lockal
@@ -8486,6 +8901,7 @@ $messages['ru'] = array(
 	'smw_multiple_concepts' => 'Страница представления может содержать только одно определение представления.',
 	'smw_concept_cache_miss' => 'Представление «$1» в настоящий момент не может быть использовано, так как настройка вики-сайта требует, чтобы его результат определялся в фоновом режиме. Если данное сообщение не исчезнет через некоторое время, обратитесь к администратору вики-сайта для включения данного представления.',
 	'smw_noinvannot' => 'Обратным свойствам не могут быть присвоены значения.',
+	'version-semantic' => 'Семантическое расширение (Semantic MediaWiki)',
 	'smw_baduri' => 'Извините, но ссылки из диапазона "$1" не доступны отсюда.',
 	'smw_csv_link' => 'CSV',
 	'smw_printername_auto' => 'Автоматически',
@@ -8512,6 +8928,9 @@ $messages['ru'] = array(
 	'smw_paramdesc_sep' => 'Разделитель значений',
 	'smw_paramdesc_template' => 'Название шаблона, с помощью которого будут выводиться данные',
 	'smw_paramdesc_columns' => 'Количество столбцов для вывода результатов поиска (по умолчанию $1)',
+	'smw_paramdesc_userparam' => 'Значение, передаваемое в каждый вызов шаблонов, если шаблон используется',
+	'smw_paramdesc_introtemplate' => 'Название шаблона для отображения перед результатами запроса, если они есть',
+	'smw_paramdesc_outrotemplate' => 'Название шаблона для отображения после результатов запроса, если они есть',
 	'smw_paramdesc_embedformat' => 'HTML-тег, используемый для обозначения заголовков',
 	'smw_paramdesc_embedonly' => 'Не отображать заголовки',
 	'smw_paramdesc_rsstitle' => 'Текст, который будет использоваться в качестве названия канала',
@@ -8695,6 +9114,19 @@ $messages['ru'] = array(
 	'smw_adminlinks_datastructure' => 'Структура данных',
 	'smw_adminlinks_displayingdata' => 'Отображение данных',
 	'smw_adminlinks_inlinequerieshelp' => 'Справка по встроенным запросам',
+);
+
+/** Rusyn (русиньскый язык)
+ * @author Gazeb
+ */
+$messages['rue'] = array(
+	'smw_printername_auto' => 'Автоматічно',
+	'smw_browse_go' => 'Выконати',
+	'smw_result_prev' => 'Попередня',
+	'smw_result_next' => 'Далша',
+	'smw_result_results' => 'Резултаты',
+	'smw_result_noresults' => 'Жадны ресултаты',
+	'smw_smwadmin_return' => 'Навернутя до  «$1».',
 );
 
 /** Serbo-Croatian (Srpskohrvatski / Српскохрватски)
@@ -8953,6 +9385,7 @@ $messages['sr-ec'] = array(
 	'smw_baduri' => 'URI-ји облика "$1", нису прихватљиви.',
 	'smw_csv_link' => 'CSV',
 	'smw_printername_auto' => 'Аутоматски',
+	'smw_printername_count' => 'Изброј резултате',
 	'smw_printername_csv' => 'CSV извоз',
 	'smw_printername_debug' => 'Упит за пречишћавање (само за експерте)',
 	'smw_printername_embedded' => 'Угнезди садржај странице',
@@ -8972,6 +9405,7 @@ $messages['sr-ec'] = array(
 	'smw_paramdesc_searchlabel' => 'Текст у вези ка резултатима',
 	'smw_paramdesc_sep' => 'Раздвајач за вредности',
 	'smw_paramdesc_columns' => 'Број колона у којима ће се приказати резултати (предодређено $1)',
+	'smw_paramdesc_embedonly' => 'Не приказуј заглавља',
 	'smw_paramdesc_rsstitle' => 'Текст који ће се користити као наслов у добављачу',
 	'smw_paramdesc_rssdescription' => 'Текст који ће се користити као опис у добављачу',
 	'smw_iq_disabled' => 'Семантички упити су онемогућени на овом викију.',
@@ -8998,6 +9432,7 @@ $messages['sr-ec'] = array(
 	'smw_nofloat' => '"$1" није број.',
 	'smw_infinite' => 'Бројеви дужине као "$1" нису подржани.',
 	'smw_infinite_unit' => 'Конверзија у јединице "$1" је као резултат дала предугачак број.',
+	'smw_novalues' => 'Ниједна вредност није наведена.',
 	'smw_unsupportedprefix' => 'Префикси за бројеве ("$1") нису подржани.',
 	'smw_unsupportedunit' => 'Конверзија јединица за јединицу "$1" није подржана.',
 	'smw_nodatetime' => 'Формат датума "$1" није разумљив.',
@@ -9185,6 +9620,7 @@ Ako problem ne nestane za neko vreme, zatražite od administratora sajta da uči
 	'smw_rss_link' => 'RSS',
 	'smw_csv_link' => 'CSV',
 	'smw_printername_auto' => 'Automatski',
+	'smw_printername_count' => 'Izbroj rezultate',
 	'smw_printername_csv' => 'CSV izvoz',
 	'smw_printername_debug' => 'Upit za prečišćavanje (samo za eksperte)',
 	'smw_printername_embedded' => 'Ugnezdi sadržaj stranice',
@@ -9204,6 +9640,7 @@ Ako problem ne nestane za neko vreme, zatražite od administratora sajta da uči
 	'smw_paramdesc_searchlabel' => 'Tekst u vezi ka rezultatima',
 	'smw_paramdesc_sep' => 'Razdvajač za vrednosti',
 	'smw_paramdesc_columns' => 'Broj kolona u kojima će se prikazati rezultati (predodređeno $1)',
+	'smw_paramdesc_embedonly' => 'Ne prikazuj zaglavlja',
 	'smw_paramdesc_rsstitle' => 'Tekst koji će se koristiti kao naslov u dobavljaču',
 	'smw_paramdesc_rssdescription' => 'Tekst koji će se koristiti kao opis u dobavljaču',
 	'smw_iq_disabled' => 'Semantički upiti su onemogućeni na ovom vikiju.',
@@ -9230,6 +9667,7 @@ Ako problem ne nestane za neko vreme, zatražite od administratora sajta da uči
 	'smw_nofloat' => '"$1" nije broj.',
 	'smw_infinite' => 'Brojevi dužine kao "$1" nisu podržani.',
 	'smw_infinite_unit' => 'Konverzija u jedinice "$1" je kao rezultat dala predugačak broj.',
+	'smw_novalues' => 'Nijedna vrednost nije navedena.',
 	'smw_unsupportedprefix' => 'Prefiksi za brojeve ("$1") nisu podržani.',
 	'smw_unsupportedunit' => 'Konverzija jedinica za jedinicu "$1" nije podržana.',
 	'smw_nodatetime' => 'Format datuma "$1" nije razumljiv.',
@@ -9836,6 +10274,7 @@ Pinag-iingatan nitong huwag maging mga sityo ng web (websayt) ang mga tao.',
 	'smw_ask_printhead' => 'Karagdagang mga datong ipapakita',
 	'smw_ask_format_as' => 'Iayos bilang:',
 	'smw_ask_defaultformat' => 'likas na katakdaan',
+	'smw_ask_otheroptions' => 'Iba pang mga mapagpipilian',
 	'smw_ask_show_embed' => 'Ipakita ang kodigong pambaon',
 	'smw_ask_hide_embed' => 'Ibaong nakakubli ang kodigo',
 	'smw_ask_embed_instr' => 'Upang maibaon ang katanungang ito sa loob ng guhit papasok sa isang pahina ng wiki, gamitin ang kodigong nasa ibaba.',
@@ -10039,7 +10478,7 @@ $messages['ug-arab'] = array(
 	'smw_browse_go' => 'كۆچۈش',
 );
 
-/** Uighur (Latin) (Uyghurche‎ / ئۇيغۇرچە (Latin))
+/** Uighur (Latin) (ئۇيغۇرچە / Uyghurche‎ (Latin))
  * @author Jose77
  * @author Minh Nguyen
  * @author Vinhtantran
@@ -10452,35 +10891,463 @@ $messages['zh-cn'] = array(
 /** Simplified Chinese (‪中文(简体)‬)
  * @author Gzdavidwong
  * @author Liangent
+ * @author Onecountry
  * @author PhiLiP
  */
 $messages['zh-hans'] = array(
+	'smw-desc' => '让你的维基更可及——对机器与人都是如此（[http://semantic-mediawiki.org/wiki/Help:User_manual 网上文档]）',
+	'smw_edithelp' => '属性编辑帮助',
+	'smw_viewasrdf' => 'RDF源',
 	'smw_finallistconjunct' => '和',
-	'smw_nofloat' => '「$1」不是一个数字。',
-	'smw_exportrdf_submit' => '汇出',
+	'smw_factbox_head' => '关于 $1 的信息',
+	'smw_isspecprop' => '此属性为维基中特殊属性',
+	'smw_isknowntype' => '此类型为维基中的标准数据类型',
+	'smw_isaliastype' => '此类型是数据类型"$1"的别名',
+	'smw_isnotype' => '此类型"$1"并非本维基中的标准类型，且未被赋予用户定义。',
+	'smw_concept_description' => '概念"$1"的描述',
+	'smw_no_concept_namespace' => '概念只能在命名空间Concept（概念）:下的页面中定义。',
+	'smw_multiple_concepts' => '一个概念页面只允许有一个概念定义',
+	'smw_concept_cache_miss' => '因为维基设置需要概念"$1"在离线时计算，此概念现在无法使用。
+如果这个问题在一段时间后仍未解决，请向网站管理员请求令该概念可用。',
+	'smw_noinvannot' => '逆属性',
+	'smw_baduri' => '不允许"$1"形式的URI',
+	'smw_printername_auto' => '自动',
+	'smw_printername_count' => '计数结果',
+	'smw_printername_csv' => '导出为CSV',
+	'smw_printername_debug' => 'Debug信息（专家适用）',
+	'smw_printername_embedded' => '嵌入的页面内容',
+	'smw_printername_json' => '导出为JSON',
+	'smw_printername_list' => '列表',
+	'smw_printername_ol' => '有序列表项目',
+	'smw_printername_ul' => '无序列表项目',
+	'smw_printername_rss' => '导出为RSS',
+	'smw_printername_table' => '表格',
+	'smw_printername_broadtable' => '宽表格',
+	'smw_printername_template' => '模板',
+	'smw_paramdesc_limit' => '返回结果最大数目',
+	'smw_paramdesc_headers' => '显示头/属性名称',
+	'smw_paramdesc_mainlabel' => '首页名称的标签',
+	'smw_paramdesc_link' => '以链接形式显示值',
+	'smw_paramdesc_intro' => '查询结果前显示的文字',
+	'smw_paramdesc_outro' => '查询结果后显示的文字',
+	'smw_paramdesc_default' => '查询结果为空时显示的文字',
+	'smw_paramdesc_searchlabel' => '在指向结果的链接中显示的文字',
+	'smw_paramdesc_sep' => '值的分隔符',
+	'smw_paramdesc_template' => '输出显示模板的名称',
+	'smw_paramdesc_columns' => '结果显示列数（默认为$1）',
+	'smw_paramdesc_userparam' => '使用模板时，向模板传递的值',
+	'smw_paramdesc_introtemplate' => '用于在查询结果前显示内容的模板的名称',
+	'smw_paramdesc_outrotemplate' => '用于在查询结果后显示内容的模板的名称',
+	'smw_paramdesc_embedformat' => '定义标题的HTML标签',
+	'smw_paramdesc_embedonly' => '不显示标题',
+	'smw_paramdesc_rsstitle' => '源标题文字',
+	'smw_paramdesc_rssdescription' => '源描述文字',
+	'smw_iq_disabled' => '此维基的语义查询已被禁用',
+	'smw_iq_moreresults' => '更多结果',
+	'smw_iq_nojs' => '使用允许JavaScript的浏览器显示此元素',
+	'smw_iq_altresults' => '直接浏览结果列表。',
+	'smw_unknown_importns' => '命名空间"$1"不允许导入函数。',
+	'smw_nonright_importtype' => '$1只可用于命名空间"$2"下的页面。',
+	'smw_wrong_importtype' => '$1不可用于命名空间"$2"下的页面。',
+	'smw_no_importelement' => '不可导入元素"$1"。',
+	'smw_parseerror' => '输入的值无法理解。',
+	'smw_notitle' => '"$1"不得被用做此维基的页面名称。',
+	'smw_wrong_namespace' => '此处只允许命名空间"$1"中的页面。',
+	'smw_unknowntype' => '定义的属性类型"$1"不被支持。',
+	'smw_manytypes' => '此属性定义了一种以上类型。',
+	'smw_emptystring' => '不接受空字符串。',
+	'smw_maxstring' => '代表$1的字符串长度过大。',
+	'smw_notinenum' => '"$1" 不在此属性允许值列表（$2）中。',
+	'smw_noboolean' => '"$1"不是布尔（是非）值',
+	'smw_true_words' => 'true,t,yes,y,是,真,对',
+	'smw_false_words' => 'false,f,no,n,否,假,错',
+	'smw_nofloat' => '"$1"不是数字。',
+	'smw_infinite' => '"$1"数值过大，无法支持。',
+	'smw_infinite_unit' => '数字转换为单位"$1"后过大。',
+	'smw_novalues' => '未设置数值。',
+	'smw_unsupportedprefix' => '不支持数字（"$1"）前缀',
+	'smw_unsupportedunit' => '不支持单位"$1"的转换',
+	'smw_nodatetime' => '无法理解日期"$1"',
+	'smw_toomanyclosing' => '查询中"$1"过多。',
+	'smw_noclosingbrackets' => '你的查询中有未匹配"]]"的"<nowiki>[[</nowiki>"。',
+	'smw_misplacedsymbol' => '符号"$1"的位置无效。',
+	'smw_unexpectedpart' => '查询的"$1"部分无法理解。
+结果可能与预料的不同。',
+	'smw_emptysubquery' => '一些子查询状态无效。',
+	'smw_misplacedsubquery' => '一些子查询被用于禁止位置。',
+	'smw_valuesubquery' => '不支持对属性"$1"值的子查询',
+	'smw_overprintoutlimit' => '查询包含过多显示请求。',
+	'smw_badprintout' => '查询中的一些输出状态异常。',
+	'smw_badtitle' => '"$1"是无效页面标题。',
+	'smw_badqueryatom' => '查询的一些部分"<nowiki>[[…]]</nowiki>" 无法理解。',
+	'smw_propvalueproblem' => '属性"$1"的值无法理解。',
+	'smw_noqueryfeature' => '此维基不支持一些查询功能，查询被部分停止（$1）。',
+	'smw_noconjunctions' => '此维基不支持查询中的合取，查询被部分停止（$1）。',
+	'smw_nodisjunctions' => '此维基不支持查询中的析取，查询被部分停止（$1）。',
+	'smw_querytoolarge' => '由于维基对查询长度和深度的限制，以下查询状态无法包含：$1',
+	'smw_devel_warning' => '此功能正在开发中，可能无法完全正常使用。请在使用此功能前做好备份。',
+	'smw_notemplategiven' => '为使查询格式正常工作，请为参数“模板”赋值。',
+	'smw_type_header' => '类型"$1"的属性',
+	'smw_typearticlecount' => '使用此类型显示 $1 {{PLURAL:$1|property|属性}}',
+	'smw_attribute_header' => '使用属性 "$1" 的页面',
+	'smw_attributearticlecount' => '使用此属性显示 $1 {{PLURAL:$1|page|页面}}',
+	'smw_subproperty_header' => '子属性',
+	'smw_subpropertyarticlecount' => '此属性有以下 $1 {{PLURAL:$1|subproperty|子属性}}:',
+	'smw_concept_header' => '概念"$1"的页面',
+	'smw_conceptarticlecount' => '显示属于此概念的$1 {{PLURAL:$1|page|页面}}。',
+	'exportrdf' => '输出页面到RDF',
+	'smw_exportrdf_docu' => '这个页面用于以RDF格式获得页面数据。
+在下方文本框中输入标题以导出页面，每行一个标题。',
+	'smw_exportrdf_recursive' => '递归导出所有相关页面。
+注意：结果文件会很大。',
+	'smw_exportrdf_backlinks' => '同时导出与导出页面相关的所有页面。
+生成可浏览的RDF。',
+	'smw_exportrdf_lastdate' => '不要导出自给定时间后无更改的页面。',
+	'smw_exportrdf_submit' => '导出',
+	'properties' => '属性',
+	'smw_properties_docu' => '本维基使用以下属性。',
+	'smw_property_template' => '类型为$2的属性$1（出现$3次）',
+	'smw_propertylackspage' => '所有属性均应有一个页面描述！',
+	'smw_propertylackstype' => '此属性未指定类型（目前默认为类型$1）',
+	'smw_propertyhardlyused' => '此属性在本维基中不常使用。',
+	'unusedproperties' => '未使用的属性',
+	'smw_unusedproperties_docu' => '以下属性在本维基中存在但未被使用。',
+	'smw_unusedproperty_template' => '类型为$2的属性$1',
+	'wantedproperties' => '需要的属性',
+	'smw_wantedproperties_docu' => '以下属性已在本维基中使用，但是尚未创建描述页面。',
+	'smw_wantedproperty_template' => '$1 ($2 {{PLURAL:$2|use|使用}})',
+	'tooltip-purge' => '点击这里更新页面的所有查询和模板',
+	'smw_purge' => '更新',
+	'types' => '类型',
+	'smw_types_docu' => '以下列出了可被赋予属性的所有数据类型。每种数据类型都有一个可以提供附加信息的页面。',
+	'smw_typeunits' => '类型"$1"的量度单位：$2',
+	'semanticstatistics' => '语义统计',
+	'uriresolver' => 'URI解析器',
+	'ask' => '语义搜索',
+	'smw_ask_sortby' => '按列排序（可选）',
+	'smw_ask_ascorder' => '升序',
+	'smw_ask_descorder' => '降序',
+	'smw_ask_submit' => '搜索结果',
+	'smw_ask_editquery' => '[编辑查询]',
+	'smw_add_sortcondition' => '[添加排序条件]',
+	'smw_ask_hidequery' => '隐藏查询',
+	'smw_ask_help' => '查询帮助',
+	'smw_ask_queryhead' => '查询',
+	'smw_ask_printhead' => '需要显示的附加信息',
+	'smw_ask_printdesc' => '（每行添加一个查询名）',
+	'smw_ask_format_as' => '格式：',
+	'smw_ask_defaultformat' => '默认',
+	'smw_ask_otheroptions' => '其他选项',
+	'smw_ask_show_embed' => '显示嵌入代码',
+	'smw_ask_hide_embed' => '隐藏嵌入的代码',
+	'smw_ask_embed_instr' => '使用以下代码将查询嵌入维基页面。',
+	'searchbyproperty' => '按属性查询',
+	'smw_sbv_docu' => '搜索所有已设定属性和值的页面。',
+	'smw_sbv_novalue' => '为此属性输入一个有效值，或者显示所有"$1"的属性值。',
+	'smw_sbv_displayresult' => '有值为"$2"的属性"$1"的所有页面列表',
+	'smw_sbv_displayresultfuzzy' => '有值为"$2"的属性"$1"的所有页面列表。
+由于精确相符的页面不多，同时列出了部分有相似值的页面。',
+	'smw_sbv_property' => '属性：',
+	'smw_sbv_value' => '值：',
+	'smw_sbv_submit' => '搜索',
+	'browse' => '浏览维基',
+	'smw_browselink' => '浏览属性',
+	'smw_browse_article' => '输入浏览起始页面名称。',
+	'smw_browse_go' => '进入',
+	'smw_browse_show_incoming' => '显示链接到此页的属性',
+	'smw_browse_hide_incoming' => '隐藏链接到此页的属性',
+	'smw_browse_no_outgoing' => '这个页面没有设置属性。',
+	'smw_browse_no_incoming' => '没有属性连接到此页。',
+	'smw_inverse_label_default' => '的$1',
+	'smw_inverse_label_property' => '逆属性标签',
+	'pageproperty' => '页面属性搜索',
+	'smw_pp_docu' => '在指定页面搜索某属性的所有值。
+输入页面和属性。',
+	'smw_pp_from' => '从页面',
+	'smw_pp_type' => '属性',
 	'smw_pp_submit' => '搜索结果',
+	'smw_result_prev' => '上一个',
+	'smw_result_next' => '下一个',
 	'smw_result_results' => '结果',
 	'smw_result_noresults' => '没有结果。',
+	'smwadmin' => 'Semantic MediaWiki管理功能',
+	'smw_smwadmin_settingup' => '设置Semantic MediaWiki存储',
+	'smw_smwadmin_setupsuccess' => '存储引擎设置成功。',
+	'smw_smwadmin_return' => '返回到$1。',
+	'smw_smwadmin_updatestarted' => '更新语义数据过程开始。
+所有已存储数据将被按需重建或修复。
+你可以通过本特殊页面跟踪更新进程。',
+	'smw_smwadmin_updatenotstarted' => '已有更新进程正在运行，请勿新建另一个。',
+	'smw_smwadmin_updatestopped' => '已停止所有更新进程。',
+	'smw_smwadmin_updatenotstopped' => '请勾选复选框，以确认确实希望终止正在运行的升级进程。',
+	'smw_smwadmin_docu' => '这个特殊页面为您安装和升级<a href="http://semantic-mediawiki.org">Semantic MediaWiki</a>提供帮助。
+请在执行管理功能前备份好数据。',
+	'smw_smwadmin_db' => '数据库安装和升级',
+	'smw_smwadmin_dbdocu' => 'Semantic MediaWiki将MediaWiki数据库做一些扩展，以存储语义数据。
+以下功能可帮助你正确设置数据库。
+这个步骤所做的修改不会影响MediaWiki数据库的其他部分，如果需要，可以方便地撤销所做的修改。
+这个设置功能可多次执行，不会造成任何危害。但是只需在安装或升级时执行一次即可。',
+	'smw_smwadmin_permissionswarn' => '如果操作因SQL错误而失败，可能是维基的数据库用户（检查LocalSettings.php）没有相应权限。
+你可以向该用户赋予创建和删除表格的权限，或临时将数据库根用户的登录信息输入LocalSettings.php。你也可以使用维护脚本<tt>SMW_setup.php</tt>，这个脚本可以使用AdminSettings.php中的信息。',
+	'smw_smwadmin_dbbutton' => '初始化或升级表格',
+	'smw_smwadmin_announce' => '发布维基',
+	'smw_smwadmin_announcedocu' => 'Semantic Mediawiki提供一个网络服务，用于公告新的语义维基网站。
+这个服务用于维护一个使用Semantic MediaWiki的公共网站列表，主要用于帮助<a href="http://semantic-mediawiki.org/wiki/SMW_Project">Semantic MediaWiki 项目</a>了解Semantic MediaWiki的典型使用的概貌。
+<a href="http://semantic-mediawiki.org/wiki/SMW_Project">关于此服务的更多信息</a>请查看Semantic MediaWiki主页。',
+	'smw_smwadmin_announcebutton' => '按下以下按钮以将你的维基网址提交给该服务。
+这个服务只储存公众访问信息，不对公众无法访问的维基进行注册，',
+	'smw_smwadmin_datarefresh' => '数据修复和升级',
+	'smw_smwadmin_datarefreshdocu' => '可以基于维基先有内容对所有Semantic MediaWki数据进行重置。
+这个功能对修复损坏的数据，或者在软件升级，内部格式改变时更新数据非常有用。
+更新时逐页面执行的，需要一段时间。
+下方将显示更新是否正在进行，并允许你开始或终止更新。（此功能可以被网站管理员禁用）',
+	'smw_smwadmin_datarefreshprogress' => '<strong>有一个更新正在进行。</strong>
+更新进程可能会很慢，因为该进程仅在用户访问维基时小块地更新数据。
+可以使用MediaWiki维护脚本<tt>runJobs.php</tt>（使用选项 <tt>--maxjobs 1000</tt> 限制每批更新数目）来加快更新完成速度。
+目前更新的估计进度：',
 	'smw_smwadmin_datarefreshbutton' => '开始更新数据',
-	'smw_smwadmin_mediazilla' => '臭虫可到<a href="https://bugzilla.wikimedia.org/">Bugzilla</a>报告。',
+	'smw_smwadmin_datarefreshstop' => '停止更新',
+	'smw_smwadmin_datarefreshstopconfirm' => '是的，我确认。',
+	'smw_smwadmin_support' => '获得协助',
+	'smw_smwadmin_supportdocu' => '遇到问题时，可以使用以下资源获得帮助：',
+	'smw_smwadmin_installfile' => '如果安装遇到问题，请先仔细阅读<a href="http://svn.wikimedia.org/svnroot/mediawiki/trunk/extensions/SemanticMediaWiki/INSTALL">INSTALL文件</a>中的指引。',
+	'smw_smwadmin_smwhomepage' => 'Semantic MediaWiki的完整用户文档请查阅 <b><a href="http://semantic-mediawiki.org">semantic-mediawiki.org</a></b>。',
+	'smw_smwadmin_mediazilla' => '程序问题请到<a href="https://bugzilla.wikimedia.org/">Bugzilla</a>报告。',
+	'smw_smwadmin_questions' => '如果有问题或建议，可加入<a href="http://sourceforge.net/mailarchive/forum.php?forum_name=semediawiki-user">Semantic MediaWiki用户论坛</a>参与讨论。',
 	'smw_adminlinks_datastructure' => '数据结构',
+	'smw_adminlinks_displayingdata' => '数据显示',
+	'smw_adminlinks_inlinequerieshelp' => '直接插入式查询帮助',
 );
 
 /** Traditional Chinese (‪中文(繁體)‬)
+ * @author Frankou
  * @author Gzdavidwong
  * @author Sheepy
  * @author Wrightbus
  */
 $messages['zh-hant'] = array(
+	'smw-desc' => '讓你的維基更可及——對機器與人都是如此（[http://semantic-mediawiki.org/wiki/Help:User_manual 網上文檔]）',
+	'smw_edithelp' => '屬性編輯幫助',
+	'smw_viewasrdf' => 'RDF源',
 	'smw_finallistconjunct' => ', 和',
+	'smw_factbox_head' => '關於 $1 的信息',
+	'smw_isspecprop' => '此屬性為維基中特殊屬性',
+	'smw_isknowntype' => '此類型為維基中的標準數據類型',
+	'smw_isaliastype' => '此類型是數據類型"$1"的別名',
+	'smw_isnotype' => '此類型"$1"並非本維基中的標準類型，且未被賦予用戶定義。',
+	'smw_concept_description' => '概念"$1"的描述',
+	'smw_no_concept_namespace' => '概念只能在命名空間Concept（概念）:下的頁面中定義。',
+	'smw_multiple_concepts' => '一個概念頁面只允許有一個概念定義',
+	'smw_concept_cache_miss' => '因為維基設置需要概念"$1"在離線時計算，此概念現在無法使用。
+如果這個問題在一段時間後仍未解決，請向網站管理員請求令該概念可用。',
+	'smw_noinvannot' => '逆屬性',
+	'smw_baduri' => '不允許"$1"形式的URI',
+	'smw_printername_auto' => '自動',
+	'smw_printername_count' => '計數結果',
+	'smw_printername_csv' => '導出為CSV',
+	'smw_printername_debug' => 'Debug信息（專家適用）',
+	'smw_printername_embedded' => '嵌入的頁面內容',
+	'smw_printername_json' => '導出為JSON',
+	'smw_printername_list' => '列表',
+	'smw_printername_ol' => '有序列表項目',
+	'smw_printername_ul' => '無序列表項目',
+	'smw_printername_rss' => '導出為RSS',
+	'smw_printername_table' => '表格',
+	'smw_printername_broadtable' => '寬表格',
+	'smw_printername_template' => '模板',
+	'smw_paramdesc_limit' => '返回結果最大數目',
+	'smw_paramdesc_headers' => '顯示頭/屬性名稱',
+	'smw_paramdesc_mainlabel' => '首頁名稱的標籤',
+	'smw_paramdesc_link' => '以鏈接形式顯示值',
+	'smw_paramdesc_intro' => '查詢結果前顯示的文字',
+	'smw_paramdesc_outro' => '查詢結果後顯示的文字',
+	'smw_paramdesc_default' => '查詢結果為空時顯示的文字',
+	'smw_paramdesc_searchlabel' => '在指向結果的鏈接中顯示的文字',
+	'smw_paramdesc_sep' => '值的分隔符',
+	'smw_paramdesc_template' => '輸出顯示模板的名稱',
+	'smw_paramdesc_columns' => '結果顯示列數（默認為$1）',
+	'smw_paramdesc_userparam' => '使用模板時，向模板傳遞的值',
+	'smw_paramdesc_introtemplate' => '用於在查詢結果前顯示內容的模板的名稱',
+	'smw_paramdesc_outrotemplate' => '用於在查詢結果後顯示內容的模板的名稱',
+	'smw_paramdesc_embedformat' => '定義標題的HTML標籤',
+	'smw_paramdesc_embedonly' => '不顯示標題',
+	'smw_paramdesc_rsstitle' => '源標題文字',
+	'smw_paramdesc_rssdescription' => '源描述文字',
+	'smw_iq_disabled' => '此維基的語義查詢已被禁用',
+	'smw_iq_moreresults' => '更多結果',
+	'smw_iq_nojs' => '使用允許JavaScript的瀏覽器顯示此元素',
+	'smw_iq_altresults' => '直接瀏覽結果列表。',
+	'smw_unknown_importns' => '命名空間"$1"不允許導入函數。',
+	'smw_nonright_importtype' => '$1隻可用於命名空間"$2"下的頁面。',
+	'smw_wrong_importtype' => '$1不可用於命名空間"$2"下的頁面。',
+	'smw_no_importelement' => '不可導入元素"$1"。',
+	'smw_parseerror' => '輸入的值無法理解。',
+	'smw_notitle' => '"$1"不得被用做此維基的頁面名稱。',
+	'smw_wrong_namespace' => '此處只允許命名空間"$1"中的頁面。',
+	'smw_unknowntype' => '定義的屬性類型"$1"不被支持。',
+	'smw_manytypes' => '此屬性定義了一種以上類型。',
+	'smw_emptystring' => '不接受空字符串。',
+	'smw_maxstring' => '代表$1的字符串長度過大。',
+	'smw_notinenum' => '"$1" 不在此屬性允許值列表（$2）中。',
+	'smw_noboolean' => '"$1"不是布爾（是非）值',
+	'smw_true_words' => 'true,t,yes,y,是,真,對',
+	'smw_false_words' => 'false,f,no,n,否,假,錯',
 	'smw_nofloat' => '「$1」不是一個數字。',
+	'smw_infinite' => '"$1"數值過大，無法支持。',
+	'smw_infinite_unit' => '數字轉換為單位"$1"後過大。',
+	'smw_novalues' => '未設置數值。',
+	'smw_unsupportedprefix' => '不支持數字（"$1"）前綴',
+	'smw_unsupportedunit' => '不支持單位"$1"的轉換',
+	'smw_nodatetime' => '無法理解日期"$1"',
+	'smw_toomanyclosing' => '查詢中"$1"過多。',
+	'smw_noclosingbrackets' => '你的查詢中有未匹配"]]"的"<nowiki>[[</nowiki>"。',
+	'smw_misplacedsymbol' => '符號"$1"的位置無效。',
+	'smw_unexpectedpart' => '查詢的"$1"部分無法理解。
+結果可能與預料的不同。',
+	'smw_emptysubquery' => '一些子查詢狀態無效。',
+	'smw_misplacedsubquery' => '一些子查詢被用于禁止位置。',
+	'smw_valuesubquery' => '不支持對屬性"$1"值的子查詢',
+	'smw_overprintoutlimit' => '查詢包含過多顯示請求。',
+	'smw_badprintout' => '查詢中的一些輸出狀態異常。',
+	'smw_badtitle' => '"$1"是無效頁面標題。',
+	'smw_badqueryatom' => '查詢的一些部分"<nowiki>[[…]]</nowiki>" 無法理解。',
+	'smw_propvalueproblem' => '屬性"$1"的值無法理解。',
+	'smw_noqueryfeature' => '此維基不支持一些查詢功能，查詢被部分停止（$1）。',
+	'smw_noconjunctions' => '此維基不支持查詢中的合取，查詢被部分停止（$1）。',
+	'smw_nodisjunctions' => '此維基不支持查詢中的析取，查詢被部分停止（$1）。',
+	'smw_querytoolarge' => '由於維基對查詢長度和深度的限制，以下查詢狀態無法包含：$1',
+	'smw_devel_warning' => '此功能正在開發中，可能無法完全正常使用。請在使用此功能前做好備份。',
+	'smw_notemplategiven' => '為使查詢格式正常工作，請為參數“模板”賦值。',
+	'smw_type_header' => '類型"$1"的屬性',
+	'smw_typearticlecount' => '使用此類型顯示 $1 {{PLURAL:$1|property|屬性}}',
+	'smw_attribute_header' => '使用屬性 "$1" 的頁面',
+	'smw_attributearticlecount' => '使用此屬性顯示 $1 {{PLURAL:$1|page|頁面}}',
+	'smw_subproperty_header' => '子屬性',
+	'smw_subpropertyarticlecount' => '此屬性有以下 $1 {{PLURAL:$1|subproperty|子屬性}}:',
+	'smw_concept_header' => '概念"$1"的頁面',
+	'smw_conceptarticlecount' => '顯示屬於此概念的$1 {{PLURAL:$1|page|頁面}}。',
+	'exportrdf' => '輸出頁面到RDF',
+	'smw_exportrdf_docu' => '這個頁面用於以RDF格式獲得頁面數據。
+在下方文本框中輸入標題以導出頁面，每行一個標題。',
+	'smw_exportrdf_recursive' => '遞歸導出所有相關頁面。
+注意：結果文件會很大。',
+	'smw_exportrdf_backlinks' => '同時導出與導出頁面相關的所有頁面。
+生成可瀏覽的RDF。',
+	'smw_exportrdf_lastdate' => '不要導出自給定時間後無更改的頁面。',
 	'smw_exportrdf_submit' => '匯出',
+	'properties' => '屬性',
+	'smw_properties_docu' => '本維基使用以下屬性。',
+	'smw_property_template' => '類型為$2的屬性$1（出現$3次）',
+	'smw_propertylackspage' => '所有屬性均應有一個頁面描述！',
+	'smw_propertylackstype' => '此屬性未指定類型（目前默認為類型$1）',
+	'smw_propertyhardlyused' => '此屬性在本維基中不常使用。',
+	'unusedproperties' => '未使用的屬性',
+	'smw_unusedproperties_docu' => '以下屬性在本維基中存在但未被使用。',
+	'smw_unusedproperty_template' => '類型為$2的屬性$1',
+	'wantedproperties' => '需要的屬性',
+	'smw_wantedproperties_docu' => '以下屬性已在本維基中使用，但是尚未創建描述頁面。',
+	'smw_wantedproperty_template' => '$1 ($2 {{PLURAL:$2|use|使用}})',
+	'tooltip-purge' => '點擊這裡更新頁面的所有查詢和模板',
+	'smw_purge' => '更新',
+	'types' => '類型',
+	'smw_types_docu' => '以下列出了可被賦予屬性的所有數據類型。每種數據類型都有一個可以提供附加信息的頁面。',
+	'smw_typeunits' => '類型"$1"的量度單位：$2',
+	'semanticstatistics' => '語義統計',
+	'uriresolver' => 'URI解析器',
+	'ask' => '語義搜索',
+	'smw_ask_sortby' => '按列排序（可選）',
+	'smw_ask_ascorder' => '升序',
+	'smw_ask_descorder' => '降序',
+	'smw_ask_submit' => '搜索結果',
+	'smw_ask_editquery' => '[編輯查詢]',
+	'smw_add_sortcondition' => '[添加排序條件]',
+	'smw_ask_hidequery' => '隱藏查詢',
+	'smw_ask_help' => '查詢幫助',
+	'smw_ask_queryhead' => '查詢',
+	'smw_ask_printhead' => '需要顯示的附加信息',
+	'smw_ask_printdesc' => '（每行添加一個查詢名）',
+	'smw_ask_format_as' => '格式：',
+	'smw_ask_defaultformat' => '默認',
+	'smw_ask_otheroptions' => '其他選項',
+	'smw_ask_show_embed' => '顯示嵌入代碼',
+	'smw_ask_hide_embed' => '隱藏嵌入的代碼',
+	'smw_ask_embed_instr' => '使用以下代碼將查詢嵌入維基頁面。',
+	'searchbyproperty' => '按屬性查詢',
+	'smw_sbv_docu' => '搜索所有已設定屬性和值的頁面。',
+	'smw_sbv_novalue' => '為此屬性輸入一個有效值，或者顯示所有"$1"的屬性值。',
+	'smw_sbv_displayresult' => '有值為"$2"的屬性"$1"的所有頁面列表',
+	'smw_sbv_displayresultfuzzy' => '有值為"$2"的屬性"$1"的所有頁面列表。
+由於精確相符的頁面不多，同時列出了部分有相似值的頁面。',
+	'smw_sbv_property' => '屬性：',
+	'smw_sbv_value' => '值：',
+	'smw_sbv_submit' => '搜索',
+	'browse' => '瀏覽維基',
+	'smw_browselink' => '瀏覽屬性',
+	'smw_browse_article' => '輸入瀏覽起始頁面名稱。',
+	'smw_browse_go' => '進入',
+	'smw_browse_show_incoming' => '顯示鏈接到此頁的屬性',
+	'smw_browse_hide_incoming' => '隱藏鏈接到此頁的屬性',
+	'smw_browse_no_outgoing' => '這個頁面沒有設置屬性。',
+	'smw_browse_no_incoming' => '沒有屬性連接到此頁。',
+	'smw_inverse_label_default' => '的$1',
+	'smw_inverse_label_property' => '逆屬性標籤',
+	'pageproperty' => '頁面屬性搜索',
+	'smw_pp_docu' => '在指定頁面搜索某屬性的所有值。
+輸入頁面和屬性。',
+	'smw_pp_from' => '從頁面',
+	'smw_pp_type' => '屬性',
 	'smw_pp_submit' => '搜尋結果',
+	'smw_result_prev' => '上一個',
+	'smw_result_next' => '下一個',
 	'smw_result_results' => '結果',
 	'smw_result_noresults' => '沒有結果。',
+	'smwadmin' => 'Semantic MediaWiki管理功能',
+	'smw_smwadmin_settingup' => '設置Semantic MediaWiki存儲',
+	'smw_smwadmin_setupsuccess' => '存儲引擎設置成功。',
+	'smw_smwadmin_return' => '返回到$1。',
+	'smw_smwadmin_updatestarted' => '更新語義數據過程開始。
+所有已存儲數據將被按需重建或修復。
+你可以通過本特殊頁面跟蹤更新進程。',
+	'smw_smwadmin_updatenotstarted' => '已有更新進程正在運行，請勿新建另一個。',
+	'smw_smwadmin_updatestopped' => '已停止所有更新進程。',
+	'smw_smwadmin_updatenotstopped' => '請勾選複選框，以確認確實希望終止正在運行的升級進程。',
+	'smw_smwadmin_docu' => '這個特殊頁面為您安裝和升級<a href="http://semantic-mediawiki.org">Semantic MediaWiki</a>提供幫助。
+請在執行管理功能前備份好數據。',
+	'smw_smwadmin_db' => '數據庫安裝和升級',
+	'smw_smwadmin_dbdocu' => 'Semantic MediaWiki將MediaWiki數據庫做一些擴展，以存儲語義數據。
+以下功能可幫助你正確設置數據庫。
+這個步驟所做的修改不會影響MediaWiki數據庫的其他部分，如果需要，可以方便地撤銷所做的修改。
+這個設置功能可多次執行，不會造成任何危害。但是只需在安裝或升級時執行一次即可。',
+	'smw_smwadmin_permissionswarn' => '如果操作因SQL錯誤而失敗，可能是維基的數據庫用戶（檢查LocalSettings.php）沒有相應權限。
+你可以向該用戶賦予創建和刪除表格的權限，或臨時將數據庫根用戶的登錄信息輸入LocalSettings.php。你也可以使用維護腳本<tt>SMW_setup.php</tt>，這個腳本可以使用AdminSettings.php中的信息。',
+	'smw_smwadmin_dbbutton' => '初始化或升級表格',
+	'smw_smwadmin_announce' => '發布維基',
+	'smw_smwadmin_announcedocu' => 'Semantic Mediawiki提供一個網絡服務，用於公告新的語義維基網站。
+這個服務用於維護一個使用Semantic MediaWiki的公共網站列表，主要用於幫助<a href="http://semantic-mediawiki.org/wiki/SMW_Project">Semantic MediaWiki 項目</a>了解Semantic MediaWiki的典型使用的概貌。
+<a href="http://semantic-mediawiki.org/wiki/SMW_Project">關於此服務的更多信息</a>請查看Semantic MediaWiki主頁。',
+	'smw_smwadmin_announcebutton' => '按下以下按鈕以將你的維基網址提交給該服務。
+這個服務只儲存公眾訪問信息，不對公眾無法訪問的維基進行註冊，',
+	'smw_smwadmin_datarefresh' => '數據修復和升級',
+	'smw_smwadmin_datarefreshdocu' => '可以基於維基先有內容對所有Semantic MediaWki數據進行重置。
+這個功能對修復損壞的數據，或者在軟件升級，內部格式改變時更新數據非常有用。
+更新時逐頁面執行的，需要一段時間。
+下方將顯示更新是否正在進行，並允許你開始或終止更新。（此功能可以被網站管理員禁用）',
+	'smw_smwadmin_datarefreshprogress' => '<strong>有一個更新正在進行。</strong>
+更新進程可能會很慢，因為該進程僅在用戶訪問維基時小塊地更新數據。
+可以使用MediaWiki維護腳本<tt>runJobs.php</tt>（使用選項 <tt>--maxjobs 1000</tt> 限制每批更新數目）來加快更新完成速度。
+目前更新的估計進度：',
 	'smw_smwadmin_datarefreshbutton' => '開始更新數據',
+	'smw_smwadmin_datarefreshstop' => '停止更新',
+	'smw_smwadmin_datarefreshstopconfirm' => '是的，我確認。',
+	'smw_smwadmin_support' => '獲得協助',
+	'smw_smwadmin_supportdocu' => '遇到問題時，可以使用以下資源獲得幫助：',
+	'smw_smwadmin_installfile' => '如果安裝遇到問題，請先仔細閱讀<a href="http://svn.wikimedia.org/svnroot/mediawiki/trunk/extensions/SemanticMediaWiki/INSTALL">INSTALL文件</a>中的指引。',
+	'smw_smwadmin_smwhomepage' => 'Semantic MediaWiki的完整用戶文檔請查閱 <b><a href="http://semantic-mediawiki.org">semantic-mediawiki.org</a></b>。',
 	'smw_smwadmin_mediazilla' => '臭蟲可到<a href="https://bugzilla.wikimedia.org/">Bugzilla</a>報告。',
+	'smw_smwadmin_questions' => '如果有問題或建議，可加入<a href="http://sourceforge.net/mailarchive/forum.php?forum_name=semediawiki-user">Semantic MediaWiki用戶論壇</a>參與討論。',
 	'smw_adminlinks_datastructure' => '數據結構',
+	'smw_adminlinks_displayingdata' => '數據顯示',
+	'smw_adminlinks_inlinequerieshelp' => '直接插入式查詢幫助',
 );
 
 /** Chinese (Taiwan) (‪中文(台灣)‬)

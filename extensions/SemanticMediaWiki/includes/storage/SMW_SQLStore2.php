@@ -298,7 +298,7 @@ class SMWSQLStore2 extends SMWStore {
 	 *
 	 * @param $id
 	 * @param $object
-	 * @param $proptable
+	 * @param SMWSQLStore2Table $proptable
 	 * @param boolean $issubject
 	 * @param SMWRequestOptions $requestoptions
 	 *
@@ -578,10 +578,10 @@ class SMWSQLStore2 extends SMWStore {
 	}
 
 	/**
-	 *
-	 *
 	 * @param SMWPropertyValue $property
 	 * @param SMWRequestOptions $requestoptions
+	 * 
+	 * @return array
 	 */
 	public function getAllPropertySubjects( SMWPropertyValue $property, $requestoptions = null ) {
 		wfProfileIn( "SMWSQLStore2::getAllPropertySubjects (SMW)" );
@@ -773,7 +773,7 @@ class SMWSQLStore2 extends SMWStore {
 			$property = SMWPropertyValue::makeProperty( '_CONC' );
 			$concept_desc = end( $data->getPropertyValues( $property ) );
 
-			if ( ( $concept_desc !== null ) && ( $concept_desc->isValid() ) )  {
+			if ( ( $concept_desc !== false ) && ( $concept_desc->isValid() ) )  {
 				$up_conc2 = array(
 				     'concept_txt'   => $concept_desc->getConceptText(),
 				     'concept_docu'  => $concept_desc->getDocu(),
@@ -970,6 +970,11 @@ class SMWSQLStore2 extends SMWStore {
 
 ///// Query answering /////
 
+	/**
+	 * @param $query SMWQuery
+	 * 
+	 * @return mixed: depends on $query->querymode
+	 */
 	function getQueryResult( SMWQuery $query ) {
 		wfProfileIn( 'SMWSQLStore2::getQueryResult (SMW)' );
 		global $smwgIP;
@@ -1005,8 +1010,10 @@ class SMWSQLStore2 extends SMWStore {
 		$query = '(' . implode( ') UNION (', $queries ) . ') ORDER BY smw_sortkey';
 		// The following line is possible in MW 1.6 and above only:
 		// $query = $db->unionQueries($queries, false) . ' ORDER BY smw_sortkey'; // should probably use $db->makeSelectOptions()
-		if ( $requestoptions->limit > 0 ) {
-			$query = $db->limitResult( $query, $requestoptions->limit, ( $requestoptions->offset > 0 ) ? $requestoptions->offset:0 );
+		if ( $requestoptions !== null ) {
+			if ( $requestoptions->limit > 0 ) {
+				$query = $db->limitResult( $query, $requestoptions->limit, ( $requestoptions->offset > 0 ) ? $requestoptions->offset:0 );
+			}
 		}
 
 		$res = $db->query( $query, 'SMW::getPropertySubjects' );
@@ -1917,9 +1924,12 @@ class SMWSQLStore2 extends SMWStore {
 		$id = 0;
 
 		if ( $iw != '' ) { // external page; no need to think about redirects
-			$res = $db->select( 'smw_ids', array( 'smw_id', 'smw_sortkey' ),
-			                   array( 'smw_title' => $title, 'smw_namespace' => $namespace, 'smw_iw' => $iw ),
-			                   'SMW::getSMWPageID', array( 'LIMIT' => 1 ) );
+			$res = $db->select(
+				'smw_ids',
+				array( 'smw_id', 'smw_sortkey' ),
+				array( 'smw_title' => $title, 'smw_namespace' => $namespace, 'smw_iw' => $iw ),
+				'SMW::getSMWPageID', array( 'LIMIT' => 1 )
+			);
 
 			if ( $row = $db->fetchObject( $res ) ) {
 				$id = $row->smw_id;
@@ -1988,15 +1998,21 @@ class SMWSQLStore2 extends SMWStore {
 			$db = wfGetDB( DB_MASTER );
 			$sortkey = $sortkey ? $sortkey:( str_replace( '_', ' ', $title ) );
 
-			$db->insert( 'smw_ids',
-			            array( 'smw_id' => $db->nextSequenceValue( 'smw_ids_smw_id_seq' ),
-			                   'smw_title' => $title,
-			                   'smw_namespace' => $namespace,
-			                   'smw_iw' => $iw,
-			                   'smw_sortkey' => $sortkey ), 'SMW::makeSMWPageID' );
+			$db->insert(
+				'smw_ids',
+				array(
+					'smw_id' => $db->nextSequenceValue( 'smw_ids_smw_id_seq' ),
+					'smw_title' => $title,
+					'smw_namespace' => $namespace,
+					'smw_iw' => $iw,
+					'smw_sortkey' => $sortkey
+				),
+				'SMW::makeSMWPageID'
+			);
 
 			$id = $db->insertId();
 			$this->m_ids["$iw $namespace $title -"] = $id; // fill that cache, even if canonical was given
+			
 			// This ID is also authorative for the canonical version.
 			// This is always the case: if $canonical===false and $id===0, then there is no redi-entry in
 			// smw_ids either, hence the object just did not exist at all.
@@ -2086,8 +2102,17 @@ class SMWSQLStore2 extends SMWStore {
 		$db = wfGetDB( DB_MASTER );
 
 		// check if there is an unused bnode to take:
-		$res = $db->select(	'smw_ids', 'smw_id', array( 'smw_title' => '', 'smw_namespace' => 0, 'smw_iw' => SMW_SQL2_SMWIW ),
-			                'SMW::makeSMWBnodeID', array( 'LIMIT' => 1 ) );
+		$res = $db->select(
+			'smw_ids',
+			'smw_id',
+			array(
+				'smw_title' => '',
+				'smw_namespace' => 0,
+				'smw_iw' => SMW_SQL2_SMWIW
+			),
+			'SMW::makeSMWBnodeID',
+			array( 'LIMIT' => 1 )
+			);
 
 		$id = ( $row = $db->fetchObject( $res ) ) ? $row->smw_id:0;
 		$db->freeResult( $res );
@@ -2130,26 +2155,39 @@ class SMWSQLStore2 extends SMWStore {
 	 */
 	protected function moveSMWPageID( $curid, $targetid = 0 ) {
 		$db = wfGetDB( DB_MASTER );
-		$row = $db->selectRow( 'smw_ids',
-		                       array( 'smw_id', 'smw_namespace', 'smw_title', 'smw_iw', 'smw_sortkey' ),
-		                       array( 'smw_id' => $curid ),	'SMWSQLStore2::moveSMWPageID' );
+		
+		$row = $db->selectRow(
+			'smw_ids',
+			array( 'smw_id', 'smw_namespace', 'smw_title', 'smw_iw', 'smw_sortkey' ),
+			array( 'smw_id' => $curid ),	'SMWSQLStore2::moveSMWPageID'
+		);
 
 		if ( $row === false ) return; // no id at current position, ignore
 
 		if ( $targetid == 0 ) { // append new id
-			$db->insert( 'smw_ids', array( 'smw_id' => $db->nextSequenceValue( 'smw_ids_smw_id_seq' ),
-			                              'smw_title' => $row->smw_title,
-			                              'smw_namespace' => $row->smw_namespace,
-			                              'smw_iw' => $row->smw_iw,
-			                              'smw_sortkey' => $row->smw_sortkey ), 'SMW::moveSMWPageID' );
+			$db->insert(
+				'smw_ids',
+				array(
+					'smw_id' => $db->nextSequenceValue( 'smw_ids_smw_id_seq' ),
+					'smw_title' => $row->smw_title,
+					'smw_namespace' => $row->smw_namespace,
+					'smw_iw' => $row->smw_iw,
+					'smw_sortkey' => $row->smw_sortkey
+				),
+				'SMW::moveSMWPageID'
+			);
 
 			$targetid = $db->insertId();
 		} else { // change to given id
-			$db->insert( 'smw_ids', array( 'smw_id' => $targetid,
-			                              'smw_title' => $row->smw_title,
-			                              'smw_namespace' => $row->smw_namespace,
-			                              'smw_iw' => $row->smw_iw,
-			                              'smw_sortkey' => $row->smw_sortkey ), 'SMW::moveSMWPageID' );
+			$db->insert( 'smw_ids',
+				array( 'smw_id' => $targetid,
+					'smw_title' => $row->smw_title,
+					'smw_namespace' => $row->smw_namespace,
+					'smw_iw' => $row->smw_iw,
+					'smw_sortkey' => $row->smw_sortkey
+				),
+				'SMW::moveSMWPageID'
+			);
 		}
 
 		$db->delete( 'smw_ids', array( 'smw_id' => $curid ), 'SMWSQLStore2::moveSMWPageID' );
@@ -2230,7 +2268,11 @@ class SMWSQLStore2 extends SMWStore {
 		$fname = 'SMW::deleteSemanticData';
 		$id = $this->getSMWPageID( $subject->getDBkey(), $subject->getNamespace(), $subject->getInterwiki(), false );
 
-		if ( $id == 0 ) return; // not (directly) used anywhere yet, maybe a redirect but we do not care here
+		if ( $id == 0 ) {
+			// not (directly) used anywhere yet, may be a redirect but we do not care here
+			wfRunHooks( 'smwDeleteSemanticData', array( $subject ) );
+			return;
+		}
 
 		foreach ( self::getPropertyTables() as $proptable ) {
 			if ( $proptable->idsubject ) {
