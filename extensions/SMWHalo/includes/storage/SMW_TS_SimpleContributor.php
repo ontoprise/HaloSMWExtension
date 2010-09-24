@@ -28,8 +28,8 @@ function smwfTripleStorePropertyUpdate(& $data, & $property, & $propertyValueArr
 	// 'has min cardinality' and 'has max cardinality are read implictly when processing 'has domain and range'
 	// and therefore ignored.
 	$allProperties = $data->getProperties();
-
-	if (smwfGetSemanticStore()->inverseOf->getDBkey() == array_shift($property->getDBkeys())) {
+	$dbkeys = $property->getDBkeys();
+	if (smwfGetSemanticStore()->inverseOf->getDBkey() == array_shift($dbkeys)) {
         foreach($propertyValueArray as $inverseProps) {
             if (count($propertyValueArray) == 1) {
             	
@@ -41,7 +41,8 @@ function smwfTripleStorePropertyUpdate(& $data, & $property, & $propertyValueArr
 		 
 		// insert RDFS range/domain
 		foreach($propertyValueArray as $value) {
-			$typeID = array_shift($value->getDBkeys());
+			$dbkeys = $value->getDBkeys();
+			$typeID = array_shift($dbkeys);
 			if ($typeID != '_wpg') {
 				$triplesFromHook[] = array("<$smwgTripleStoreGraph/property#".$data->getSubject()->getDBkey().">", "<$smwgTripleStoreGraph/property#Has_type>", WikiTypeToXSD::getXSDType($typeID));
 			}
