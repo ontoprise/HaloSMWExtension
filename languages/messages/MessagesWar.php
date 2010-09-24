@@ -58,16 +58,26 @@ $messages = array(
 'tog-minordefault'            => 'Tigamni an ngatanan nga mga pagliwat nga gudti hin default',
 'tog-previewontop'            => 'Igpakita in prevista o pan-ugsa-nga-lantaw ugsa hiton pagliwat nga kahon',
 'tog-previewonfirst'          => 'Igpakita in prevista o pan-ugsa-nga-lantaw ha syahan nga pagliwat',
+'tog-enotifwatchlistpages'    => 'Ig-e-mail ako kun may nagbag-o ha pakli nga akon gintitiman-an (watchlist)',
+'tog-enotifusertalkpages'     => 'Ig-e-mail ako kun may nagbag-o han akon pakli-himangrawon',
+'tog-enotifminoredits'        => 'Ig-e-mail liwat ako ha mga gudti nga mga pagliwat hin mga pakli',
 'tog-enotifrevealaddr'        => 'Igpakita an akon e-mail nga adres ha mga e-mail hin pagsumat',
 'tog-shownumberswatching'     => 'Igpakita an ihap han mga nangingita nga mga nagamit',
+'tog-forceeditsummary'        => 'Pasabti ako kun waray ko ginsurat ha dalikyat-nga-tigaman han pagliwat (edit summary)',
 'tog-watchlisthideown'        => 'Tago-a an akon mga ginliwat tikang han angay timan-an',
 'tog-watchlisthidebots'       => 'Tago-a an ginliwat hin bot tikang han angay timan-an',
 'tog-watchlisthideminor'      => 'Tago-a an mga gagmay nga pagliwat tikang han angay timan-an',
+'tog-watchlisthideanons'      => 'Igtago an mga ginliwat han mga waray nagpakilala nga nagamit tikang ha gintitiman-an',
 'tog-ccmeonemails'            => 'Padad-i ak hin mga kopya hin mga email nga akon ginpapadara ha iba nga mga nágámit',
+'tog-diffonly'                => 'Ayaw igpakita an sulod han pakli ha ilarom han pagkakaiba',
 'tog-showhiddencats'          => 'Igpakita an mga tinago nga mga kategorya',
 
 'underline-always' => 'Pirme',
 'underline-never'  => 'Diri',
+
+# Font style option in Special:Preferences
+'editfont-sansserif' => 'Sans-serif nga agi',
+'editfont-serif'     => 'Serif nga agi',
 
 # Dates
 'sunday'        => 'Dominggo',
@@ -128,7 +138,7 @@ $messages = array(
 'category-media-header'          => 'Media ha kaarangay nga "$1"',
 'category-empty'                 => "''Ini nga kaarangay ha yana waray mga pakli o media.''",
 'hidden-categories'              => '{{PLURAL:$1|Tinago nga kaarangay|Tinago nga mga kaarangay}}',
-'hidden-category-category'       => 'Tinago nga mga kaarangay', # Name of the category where hidden categories will be listed
+'hidden-category-category'       => 'Tinago nga mga kaarangay',
 'category-subcat-count'          => '{{PLURAL:$2|Ini nga kaarangay mayda amo la nga nasunod nga ubos-nga-kaarangay.|Ini nga kaarangay mayda han mga nasunod nga {{PLURAL:$1|ubos-nga-kaarangay|$1 nga mga ubos-nga-kaarangay}}, tikang hin $2 nga kabug-osan.}}',
 'category-subcat-count-limited'  => 'Ini nga kaarangay mayda han nasunod nga {{PLURAL:$1|ubos-nga-kaarangay|$1 nga mga ubos-nga-kaarangay}}.',
 'category-article-count'         => '{{PLURAL:$2|Ini nga kaarangay mayda han amo la nga nasunod nga pakli.|An mga nasunod nga {{PLURAL:$1|ka pakli|$1 ka mga pakli}} aada hini nga kaarangay, tikang hin $2 nga kabug-osan.}}',
@@ -138,7 +148,7 @@ $messages = array(
 'listingcontinuesabbrev'         => 'pdyn.',
 
 'linkprefix'        => '/^(.*?)([a-zA-Z\\x80-\\xff]+)$/sD',
-'mainpagetext'      => "<big>'''Malinamposon an pag-instalar han MediaWiki.'''</big>",
+'mainpagetext'      => "'''Malinamposon an pag-instalar han MediaWiki.'''",
 'mainpagedocfooter' => "Kitaa an [http://meta.wikimedia.org/wiki/Help:Contents User's Guide] para hin impormasyon ha paggamit han wiki nga softweyr.
 
 == Ha pagtikang==
@@ -146,10 +156,18 @@ $messages = array(
 * [http://www.mediawiki.org/wiki/Manual:FAQ MediaWiki FAQ]
 * [https://lists.wikimedia.org/mailman/listinfo/mediawiki-announce MediaWiki release mailing list]",
 
-'about'          => 'Mahitungod han',
-'article'        => 'Pakli hin sulod',
-'newwindow'      => '(nabuklad hin bag-o nga tamboan o bintana)',
-'cancel'         => 'Igkanselar',
+'about'         => 'Mahitungod han',
+'article'       => 'Pakli hin sulod',
+'newwindow'     => '(nabuklad hin bag-o nga tamboan o bintana)',
+'cancel'        => 'Igkanselar',
+'moredotdotdot' => 'Damo pa nga…',
+'mypage'        => 'Akon pakli',
+'mytalk'        => 'Akon paghingay',
+'anontalk'      => 'Paghingay para hini nga IP',
+'navigation'    => 'Paglayag',
+'and'           => '&#32;ngan',
+
+# Cologne Blue skin
 'qbfind'         => 'Bilnga',
 'qbbrowse'       => 'Igdalikyat',
 'qbedit'         => 'Igliwat',
@@ -157,15 +175,32 @@ $messages = array(
 'qbpageinfo'     => 'Kontexto',
 'qbmyoptions'    => 'Akon mga pakli',
 'qbspecialpages' => 'Mga ispisyal nga pakli',
-'moredotdotdot'  => 'Damo pa nga…',
-'mypage'         => 'Akon pakli',
-'mytalk'         => 'Akon paghingay',
-'anontalk'       => 'Paghingay para hini nga IP',
-'navigation'     => 'Paglayag',
-'and'            => '&#32;ngan',
+'faq'            => 'AGG',
+'faqpage'        => 'Project:AGG',
 
-# Metadata in edit box
-'metadata_help' => 'Metadata:',
+# Vector skin
+'vector-action-addsection'   => 'Igdugang hin himangrawon',
+'vector-action-delete'       => 'Para-a',
+'vector-action-move'         => 'Balhina',
+'vector-action-protect'      => 'Panalipda',
+'vector-action-undelete'     => 'Igbalik an ginpara',
+'vector-namespace-category'  => 'Kaarangay',
+'vector-namespace-help'      => 'Pagbulig nga pakli',
+'vector-namespace-image'     => 'Fayl',
+'vector-namespace-main'      => 'Pakli',
+'vector-namespace-media'     => 'Pakli hin medya',
+'vector-namespace-mediawiki' => 'Mensahe',
+'vector-namespace-project'   => 'Proyekto nga pakli',
+'vector-namespace-special'   => 'Nalalain nga pakli',
+'vector-namespace-talk'      => 'Hiruhimangraw',
+'vector-namespace-template'  => 'Plantilya',
+'vector-namespace-user'      => 'Pakli hin nágámit',
+'vector-view-create'         => 'Himo-a',
+'vector-view-edit'           => 'Igliwat',
+'vector-view-history'        => 'Kitaa an kaagi',
+'vector-view-view'           => 'Basaha',
+'vector-view-viewsource'     => 'Kitaa an ginkuhaan',
+'actions'                    => 'Mga buhat',
 
 'errorpagetitle'    => 'Sayop',
 'returnto'          => 'Balik ngadto ha $1.',
@@ -177,6 +212,7 @@ $messages = array(
 'searcharticle'     => 'Kadto-a',
 'history'           => 'Kaagi han pakli',
 'history_short'     => 'Kaagi',
+'updatedmarker'     => 'ginbag-ohan tikang han akon urhi nga pagbisita',
 'info_short'        => 'Impormasyon',
 'printableversion'  => 'Maipapatik nga bersyon',
 'permalink'         => 'Sumpay nga unob',
@@ -214,18 +250,22 @@ $messages = array(
 'otherlanguages'    => 'Ha iba nga mga yinaknan',
 'redirectedfrom'    => '(Ginredirekta tikang ha $1)',
 'redirectpagesub'   => 'Redirek nga pakli',
-'lastmodifiedat'    => 'Ini nga pakli kataposan ginliwat dida han $1, han $2.', # $1 date, $2 time
+'lastmodifiedat'    => 'Ini nga pakli kataposan ginliwat dida han $1, han $2.',
 'viewcount'         => 'Ini nga pakli ginkanhi hin {{PLURAL:$1|makausa|$1 ka beses}}.',
 'protectedpage'     => 'Ginpanalipdan nga pakli',
 'jumpto'            => 'Laktaw ngadto ha:',
 'jumptonavigation'  => 'paglayag',
 'jumptosearch'      => 'bilnga',
+'view-pool-error'   => 'Pasayloa, an mga server diri na kaya yana nga takna.
+Damo nga nagamit in gusto sinmulod hini nga pakli.
+Alayon paghulat makadali san-o ka inmutro pagsulod hin nga pakli utro.
+
+$1',
 
 # All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage) and the disambiguation template definition (see disambiguations).
 'aboutsite'            => 'Mahitungod han {{SITENAME}}',
 'aboutpage'            => 'Project:Mahitungod han',
 'copyright'            => 'In sulod mabiblingan ha ilarom han $1.',
-'copyrightpagename'    => '{{SITENAME}} kopirayt',
 'copyrightpage'        => '{{ns:project}}:Mga kopirayt',
 'currentevents'        => 'Mga panhitabo',
 'currentevents-url'    => 'Project:Mga panhitabo',
@@ -233,8 +273,6 @@ $messages = array(
 'disclaimerpage'       => 'Project:Kasahiran nga disclaimer',
 'edithelp'             => 'Bulig hin pagliwat',
 'edithelppage'         => 'Help:Pagliwat',
-'faq'                  => 'AGG',
-'faqpage'              => 'Project:AGG',
 'helppage'             => 'Help:Sulod',
 'mainpage'             => 'Syahan nga Pakli',
 'mainpage-description' => 'Syahan nga Pakli',
@@ -272,6 +310,9 @@ $messages = array(
 'thisisdeleted'           => '¿Kitaa o balika in $1?',
 'viewdeleted'             => '¿Kitaa in $1?',
 'restorelink'             => '{{PLURAL:$1|usa nga ginpara nga pagliwat|$1 ka ginpara nga mga pagliwat}}',
+'feedlinks'               => 'Igsulod:',
+'site-rss-feed'           => '$1 RSS nga feed',
+'site-atom-feed'          => '$1 Atom nga feed',
 'red-link-title'          => '$1 (waray dida ini nga pakli)',
 
 # Short words for each namespace, by default used in the namespace tab in monobook
@@ -297,38 +338,46 @@ Bangin liwat ini usa nga bug dida han software nga ginagamit han {{SITENAME}}.',
 In lista o talaan hin puyde nga mga ispisyal nga pakli mabibilngan ha [[Special:SpecialPages|{{int:specialpages}}]].',
 
 # General errors
-'error'           => 'Sayop',
-'databaseerror'   => 'Sayop hin database',
-'dberrortext'     => 'Mayda nahinabo nga sayop hin syntax ha database nga kwery.
+'error'              => 'Sayop',
+'databaseerror'      => 'Sayop hin database',
+'dberrortext'        => 'Mayda nahinabo nga sayop hin syntax ha database nga kwery.
 Bangin ini nagpapakita hin bug dida han softweyr.
 An kataposan nga ginsari nga database nga kweri amo in:
 <blockquote><tt>$1</tt></blockquote>
 tikang ha sakob han funsyon nga "<tt>$2</tt>".
 Nagbalik an database hin sayop nga "<tt>$3: $4</tt>".',
-'dberrortextcl'   => 'Mayda nahitabo nga sayop hin syntax ha database nga kwery. 
+'dberrortextcl'      => 'Mayda nahitabo nga sayop hin syntax ha database nga kwery. 
 An kataposan nga ginsari nga kweri han database amo an:
 "$1"
 tikang ha sakob han funsyon nga "$2". 
 Nagbalik hin sayop an database nga "$3: $4"',
-'laggedslavemode' => 'Bantay: It pakli bangin waray mga kabag-ohan nga bag-o.',
-'readonly'        => 'Gintrankahan an database',
-'enterlockreason' => 'Pagbutang hin rason para han pagtrangka. upod hin banabana kon san-o kukuha-on an pagtrangka',
-'viewsource'      => 'Kitaa an ginkuhaan',
-'viewsourcefor'   => 'para han $1',
+'laggedslavemode'    => 'Bantay: It pakli bangin waray mga kabag-ohan nga bag-o.',
+'readonly'           => 'Gintrankahan an database',
+'enterlockreason'    => 'Pagbutang hin rason para han pagtrangka. upod hin banabana kon san-o kukuha-on an pagtrangka',
+'internalerror'      => 'Sayop ha sulod',
+'internalerror_info' => 'Sayop ha sulod: $1',
+'viewsource'         => 'Kitaa an ginkuhaan',
+'viewsourcefor'      => 'para han $1',
+'viewsourcetext'     => 'Puydi ka kinmita ngan kinmopya han gintikangan han pakli:',
 
 # Login and logout pages
+'yourname'                => 'Agnay han nagamit (Username):',
+'yourpassword'            => 'Tigaman han pagsulod (password):',
 'login'                   => 'Sakob',
 'nav-login-createaccount' => 'Sakob / paghimo hin bag-o nga akawnt',
 'userlogin'               => 'Sakob/Pagrehistro',
 'logout'                  => 'Gawas',
 'userlogout'              => 'Gawas',
-'yourlanguage'            => 'Yinaknan:',
-'gender-male'             => 'Lalaki',
 'loginerror'              => 'Sayop hin pagsakob',
 'loginlanguagelabel'      => 'Yinaknan: $1',
 
 # Edit pages
-'watchthis' => 'Bantayi ini nga pakli',
+'summary'          => 'Pahapyaw nga sumat han pagliwat (Summary):',
+'minoredit'        => 'Gutiay ini nga pagliwat',
+'watchthis'        => 'Bantayi ini nga pakli',
+'copyrightwarning' => "Iginpapasabot nga an ngatanan nga imo gin-amot ha {{SITENAME}} iginhatag mo ha ilarom han $2 (kitaa an $1 para han mga detalye).  Kun diri mo igkakalipay nga an imo ginsurat waray kalooy nga liliwaton ngan igpapakalat hit bisan hin-o nga it may gusto, alayon ayaw hiton igsumitir dinhi. <br />
+Nasaad ka liwat nga imo ini kalugaringon nga ginsurat, o ginkopya nimo ini tikang ha panimongto nga dominyo o kapareho nga waray-sabit nga kuruhaon.
+'''Ayaw igsumitir an mga buhat nga may ''copyright'' hin waray sarit!'''",
 
 # History pages
 'viewpagelogs' => 'Kitaa an mga log para hini nga pakli',
@@ -338,22 +387,28 @@ Nagbalik hin sayop an database nga "$3: $4"',
 'page_last'    => 'kataposan',
 
 # Search results
-'prevn'                    => 'naha-una nga $1',
-'nextn'                    => 'sunod nga $1',
-'viewprevnext'             => 'Kitaa an ($1) ($2) ($3)',
-'searchhelp-url'           => 'Help:Sulod',
-'search-suggest'           => 'Buot sidngon mo ba: $1',
-'search-interwiki-caption' => 'Mga bugto nga proyekto',
-'search-interwiki-default' => '$1 nga resulta:',
-'powersearch'              => 'Bilnga',
+'prevn'                     => 'naha-una nga {{PLURAL:$1|$1}}',
+'nextn'                     => 'sunod nga {{PLURAL:$1|$1}}',
+'viewprevnext'              => 'Kitaa an ($1 {{int:pipe-separator}} $2) ($3)',
+'searchhelp-url'            => 'Help:Sulod',
+'search-result-size'        => '$1 ({{PLURAL:$2|1 nga pulong|$2 nga mga pulong}})',
+'search-suggest'            => 'Buot sidngon mo ba: $1',
+'search-interwiki-caption'  => 'Mga bugto nga proyekto',
+'search-interwiki-default'  => '$1 nga resulta:',
+'search-mwsuggest-enabled'  => 'upod hin mga suhestyon',
+'search-mwsuggest-disabled' => 'waray mga suhestyon',
+'powersearch'               => 'Bilnga',
+'powersearch-field'         => 'Bilnga an',
 
 # Preferences page
 'preferences'       => 'Mga karuyag',
 'mypreferences'     => 'Akon mga karuyag',
-'datetime'          => 'Pitsa ngan oras',
+'prefs-datetime'    => 'Pitsa ngan oras',
 'searchresultshead' => 'Bilnga',
 'timezonelegend'    => 'Zona hin oras',
 'localtime'         => 'Oras nga lokal',
+'yourlanguage'      => 'Yinaknan:',
+'gender-male'       => 'Lalaki',
 
 # Recent changes
 'recentchanges'   => 'Mga kabag-ohan',
@@ -362,7 +417,9 @@ Nagbalik hin sayop an database nga "$3: $4"',
 'newpageletter'   => 'B',
 
 # Recent changes linked
-'recentchangeslinked' => 'Mga may kalabotan nga binag-o',
+'recentchangeslinked'         => 'Mga may kalabotan nga binag-o',
+'recentchangeslinked-feed'    => 'Mga may kalabotan nga binag-o',
+'recentchangeslinked-toolbox' => 'Mga may kalabotan nga binag-o',
 
 # Upload
 'upload'    => 'Pagkarga hin file',
@@ -373,12 +430,15 @@ Nagbalik hin sayop an database nga "$3: $4"',
 'listfiles_name' => 'Ngaran',
 
 # File description page
-'filehist-datetime' => 'Pitsa/Oras',
-'imagelinks'        => 'Mga sumpay hin fayl',
-'linkstoimage'      => 'An nasunod nga {{PLURAL:$1|pakli nasumpay|$1 mga pakli nasumpay}} hini nga fayl:',
-'nolinkstoimage'    => 'Waray mga pakli nga nasumpay hini nga fayl.',
-'sharedupload'      => 'Ini nga fayl tikang han $1 ngan puyde magamit ha iba nga mga proyekto.', # $1 is the repo name, $2 is shareduploadwiki(-desc)
-'shareduploadwiki'  => 'Alayon pagkita han $1 para hin dugang nga impormasyon.',
+'file-anchor-link'        => 'Fayl',
+'filehist-datetime'       => 'Pitsa/Oras',
+'filehist-user'           => 'Nagamit',
+'imagelinks'              => 'Mga sumpay hin fayl',
+'linkstoimage'            => 'An nasunod nga {{PLURAL:$1|pakli nasumpay|$1 mga pakli nasumpay}} hini nga fayl:',
+'nolinkstoimage'          => 'Waray mga pakli nga nasumpay hini nga fayl.',
+'sharedupload'            => 'Ini nga fayl tikang han $1 ngan puyde magamit ha iba nga mga proyekto.',
+'sharedupload-desc-there' => 'Ini nga fayl tikang han $1 ngan puyde magamit ha iba nga mga proyekto.
+Alayon pagkita han [$2 nga pakli hin pagpahayag mahitungod hini nga fayl] para hin dugang nga kasayuran.',
 
 # Unused templates
 'unusedtemplateswlh' => 'iba nga mga sumpay',
@@ -429,20 +489,32 @@ Nagbalik hin sayop an database nga "$3: $4"',
 'watchthispage' => 'Bantayi ini nga pakli',
 
 # Delete
-'deletedtext' => 'Ginpara an "<nowiki>$1</nowiki>".
+'deletepage'     => 'Igpara an pakli',
+'exblank'        => 'waray sulod an pakli',
+'delete-confirm' => 'Igpara "$1"',
+'delete-legend'  => 'Igpara',
+'deletedtext'    => 'Ginpara an "<nowiki>$1</nowiki>".
 Kitaa an $2 para hin talaan han mga gibag-ohi nga mga ginpamara.',
 
 # Protect
-'restriction-type' => 'Pagtugot:',
+'protectcomment'         => 'Katadongan:',
+'protect-default'        => 'Togota an ngatanan nga mga nagamit',
+'protect-otherreason'    => 'Lain/dugang nga katadongan:',
+'protect-otherreason-op' => 'Lain nga katadongan',
+'restriction-type'       => 'Pagtugot:',
 
 # Contributions
 'mycontris' => 'Akon mga ámot',
+
+'sp-contributions-talk' => 'Hiruhimangraw',
 
 # What links here
 'whatlinkshere' => 'Mga nasumpay dinhi',
 
 # Block/unblock
 'ipblocklist-submit' => 'Bilnga',
+'contribslink'       => 'mga ámot',
+'proxyblocksuccess'  => 'Human na.',
 
 # Thumbnails
 'thumbnail-more' => 'Padako-a',
@@ -450,6 +522,14 @@ Kitaa an $2 para hin talaan han mga gibag-ohi nga mga ginpamara.',
 # Tooltip help for the actions
 'tooltip-pt-logout'             => 'gawas',
 'tooltip-ca-move'               => 'Balhina ini nga pakli',
+'tooltip-search'                => 'Bilnga ha {{SITENAME}}',
+'tooltip-search-go'             => 'Kadto hin pakli nga mayda hin gud nga exakto ngaran kon aadà',
+'tooltip-search-fulltext'       => 'Bilnga ha mga pakli para hini nga texto',
+'tooltip-n-mainpage'            => 'Bisitaha an syahan nga pakli',
+'tooltip-n-portal'              => 'Mahiunong han proyekto, ano an imo mahihimo, diin makabiling hin mga butang',
+'tooltip-n-recentchanges'       => 'An talaan hin mga urhe nga mga kabag-ohan han wiki',
+'tooltip-n-randompage'          => 'Pagkaraga hin bisan ano nga pakli',
+'tooltip-n-help'                => 'An lugar hin pagbiling',
 'tooltip-t-whatlinkshere'       => 'Talaan han ngatanan nga wiki nga mga pakli nga nasumpay dinhe',
 'tooltip-t-recentchangeslinked' => 'Mga bag-o nga kabag-ohan ha mga pakli nga nahasumpay tikang hini nga pakli',
 'tooltip-feed-rss'              => 'RSS nga pangarga para hini nga pakli',
@@ -482,6 +562,7 @@ Kitaa an $2 para hin talaan han mga gibag-ohi nga mga ginpamara.',
 'watchlistall2'    => 'ngatanan',
 'namespacesall'    => 'ngatanan',
 'monthsall'        => 'ngatanan',
+'limitall'         => 'ngatanan',
 
 # Delete conflict
 'recreate' => 'Himo-a utro',
@@ -515,5 +596,8 @@ Kitaa an $2 para hin talaan han mga gibag-ohi nga mga ginpamara.',
 
 # Database error messages
 'dberr-header' => 'Ini nga wiki mayda problema',
+
+# HTML forms
+'htmlform-reset' => 'Igbalik an mga pinamalyuan',
 
 );
