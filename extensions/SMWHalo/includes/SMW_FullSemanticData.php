@@ -73,16 +73,14 @@ class SMWFullSemanticData {
 
 		global $wgContLang;
 		$subject = $semData->getSubject();
-		$ns = strtolower($wgContLang->getNSText($subject->getNamespace()));
-		if (empty($ns)) {
-			$ns = 'a';
-		}
 		$localName = $subject->getDBkey();
-
-		$inst = $smwgTripleStoreGraph.TSNamespaces::$INST_NS_SUFFIX;
+		
+		$tsn = new TSNamespaces();
+		$subject_iri = "<".$smwgTripleStoreGraph."/".$tsn->getNSPrefix($subject->getNamespace())."#".$localName.">";
+		
 		// $queryText = "PREFIX a:<$inst> SELECT ?pred ?obj WHERE { a:$subject ?pred ?obj . }";
 		// $queryText = "SELECT ?pred ?obj WHERE { a:$subject ?pred ?obj . }";
-		$queryText = "SELECT ?pred ?obj WHERE { <".$smwgTripleStoreGraph."/$ns#$localName> ?pred ?obj . }";
+		$queryText = "SELECT ?pred ?obj WHERE { $subject_iri ?pred ?obj . }";
 		// echo $queryText;
 
 		wfRunHooks('BeforeDerivedPropertyQuery', array(&$queryText) );
@@ -155,15 +153,19 @@ class SMWFullSemanticData {
 						// special handling for _dat because time (00:00:00) may be omitted 
 						if ($dv->getTypeID() == '_dat' && $v->getTypeID() == '_dat') {
 							// compare first dbkeys
-							$v1 = array_shift($dv->getDBkeys());
-							$v2 = array_shift($v->getDBkeys());
+							$v1_dbkeys = $dv->getDBkeys();
+							$v2_dbkeys = $v->getDBkeys();
+							$v1 = array_shift($v1_dbkeys);
+							$v2 = array_shift($v2_dbkeys);
 							if ($v1 == $v2 || $v1."00:00:00" == $v2) {
 								$isDerived = false;
 								break;
 							}
 						} else {
                             // all other datavalues
-							if (count(array_diff($dv->getDBkeys(), $v->getDBkeys())) == 0) {
+                            $v1_dbkeys = $dv->getDBkeys();
+							$v2_dbkeys = $v->getDBkeys();
+							if (count(array_diff($v1_dbkeys, $v2_dbkeys)) == 0) {
 								$isDerived = false;
 								break;
 							}
