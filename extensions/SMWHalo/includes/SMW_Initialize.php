@@ -390,7 +390,7 @@ function smwfRegisterSPARQLInlineQueries( &$parser, &$text, &$stripstate ) {
  */
 function smwfProcessSPARQLInlineQueryParserFunction(&$parser) {
 	global $smwgDefaultStore;
-	if ($smwgDefaultStore == 'SMWTripleStore') {
+	if ($smwgDefaultStore == 'SMWTripleStore' || $smwgDefaultStore == 'SMWTripleStoreQuad') {
 		global $smwgIQRunningNumber;
 		$smwgIQRunningNumber++;
 		$params = func_get_args();
