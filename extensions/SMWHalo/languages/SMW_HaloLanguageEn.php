@@ -355,6 +355,7 @@ clicking the big arrows between the columns.',
 	'smw_tsa_tscversion' => 'TSC Version',
 	'smw_ts_notconnected' => 'TSC not accessible. Check server: $1',
 	'asktsc' => 'Ask triplestore',
+	'smw_tsc_query_not_allowed' => 'Empty query not allowed when querying TSC.',
 	
 	
 	// Derived facts

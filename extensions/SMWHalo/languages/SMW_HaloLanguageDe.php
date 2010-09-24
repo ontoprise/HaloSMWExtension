@@ -347,6 +347,7 @@ protected $smwUserMessages = array(
     'smw_tsa_tscversion' => 'TSC Version',
     'smw_ts_notconnected' => 'TSC nicht erreichbar. Prüfe Server unter: $1',
     'asktsc' => 'Ask triplestore',
+	'smw_tsc_query_not_allowed' => 'Leere Query nicht erlaubt.',
 
 	// Derived facts
 	'smw_df_derived_facts_about' => 'Abgeleitete Fakten über $1',

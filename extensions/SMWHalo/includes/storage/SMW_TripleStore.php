@@ -401,7 +401,7 @@ class SMWTripleStore extends SMWStore {
 
 			if ($query->getQueryString() == "") {
 				$sqr = new SMWHaloQueryResult(array(), $query, array(), $this, false);
-				$sqr->addErrors(array(wfMsgForContent('hacl_sp_empty_query')));
+				$sqr->addErrors(array(wfMsg('smw_tsc_query_not_allowed')));
 				return $sqr;
 			}
 			try {

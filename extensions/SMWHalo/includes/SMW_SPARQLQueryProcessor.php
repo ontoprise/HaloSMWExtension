@@ -126,7 +126,11 @@ class SMWSPARQLQueryProcessor extends SMWQueryProcessor {
 
 	static public function createQuery($querystring, $params, $context = SMWQueryProcessor::INLINE_QUERY, $format = '', $extraprintouts = array()) {
 		global $smwgQDefaultNamespaces, $smwgQFeatures, $smwgQConceptFeatures;
-
+		
+		// check anomaly: happens when | is first character
+		if (substr(trim($querystring),0,2) == '||') {
+			$querystring = "";
+		}
 		// parse query:
 		if ($context == SMWQueryProcessor::CONCEPT_DESC) {
 			$queryfeatures = $smwgQConceptFeatures;
