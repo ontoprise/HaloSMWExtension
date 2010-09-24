@@ -10,7 +10,7 @@
 			Store richmedia files in our your wiki
 		</description>
 		<dependencies>
-			<dependency from="1153" to="1153">MW</dependency>
+			<dependency from="1153" to="1160">MW</dependency>
 			<dependency from="190" to="200">semanticforms</dependency>
 			<dependency from="100" to="100">scriptmanager</dependency>
 		</dependencies>
@@ -48,7 +48,10 @@
                 ext="semanticforms" from="191" to="191" />
    			<patch file="extensions/RichMedia/RichMediaPatchForSF2_0.txt"
                 ext="semanticforms" from="200" to="200" />
-            <patch file="extensions/RichMedia/RichMediaPatchForMW1_15_3.txt" />
+            <patch file="extensions/RichMedia/RichMediaPatchForMW1_15_3.txt"
+                ext="mw" from="1153" to="1153" />
+            <patch file="extensions/RichMedia/RichMediaPatchForMW1_16_0.txt"
+                ext="mw" from="1160" to="1160" />
 
 		</new>
 		<uninstall>
@@ -61,8 +64,10 @@
    			<patch
                 file="extensions/RichMedia/RichMediaPatchForSF2_0.txt"
                 ext="semanticforms" from="200" to="200" />
-			<patch
-				file="extensions/RichMedia/RichMediaPatchForMW1_15_3.txt" />
+            <patch file="extensions/RichMedia/RichMediaPatchForMW1_15_3.txt"
+                ext="mw" from="1153" to="1153" />
+            <patch file="extensions/RichMedia/RichMediaPatchForMW1_16_0.txt"
+                ext="mw" from="1160" to="1160" />
 		</uninstall>
 	</configs>
 </deploydescriptor>
