@@ -40,6 +40,13 @@ http://www.mediawiki.org/wiki/Extension:Lucene-search
 
 That's it.
 
+---
+4. Apply patches
+
+If you do not use the SMWHalo extension then please apply the patch to Mediawiki.
+Select the patch file depending on your installed Mediawiki version:
+php patch.php -d {wiki-path} -p patch_for_MW1.16.0.txt
+
 ------------------------------------------------------------------------------------------------------------
 The following is optional:
 

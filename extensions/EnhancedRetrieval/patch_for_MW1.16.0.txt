@@ -1,0 +1,12 @@
+--- mediawiki-1.16.0/includes/AjaxDispatcher.php	2010-02-14 23:07:30.000000000 +0100
++++ /home/stephan/NetBeansProjects/trunk/includes/AjaxDispatcher.php	2010-09-24 15:01:45.000000000 +0200
+@@ -113,6 +113,9 @@
+ 				else {
+ 					if ( is_string( $result ) ) {
+ 						$result = new AjaxResponse( $result );
++						$mimeType = NULL;
++						wfRunHooks('ajaxMIMEtype', array($func, & $mimeType));
++						if (!is_null($mimeType)) $result->setContentType($mimeType);
+ 					}
+ 
+ 					$result->sendHeaders();

@@ -8,7 +8,7 @@
         <instdir>extensions/EnhancedRetrieval</instdir>
         <description>A client for the lucene wiki server</description>
         <dependencies>
-            <dependency from="1150" to="1159">MW</dependency>
+            <dependency from="1150" to="1160">MW</dependency>
             <dependency from="100" to="100">scriptmanager</dependency>
         </dependencies>
     </global>
