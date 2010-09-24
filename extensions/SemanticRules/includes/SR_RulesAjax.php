@@ -356,7 +356,8 @@ function smwhCreateRuleXML($literals) {
 		$ps = $lit->getPreditcatesymbol()->getPredicateName();
 
 		if ($ps == 'obl:reserved:greaterThan' || $ps == 'obl:reserved:lessThan'
-		|| $ps == 'obl:reserved:greaterOrEquals' || $ps == 'obl:reserved:lessOrEquals' ) continue;
+		|| $ps == 'obl:reserved:greaterOrEquals' || $ps == 'obl:reserved:lessOrEquals' 
+		|| $ps == 'obl:reserved:equals' ) continue;
 
 		$args = $lit->getArguments();
 		if ($ps == P_ISA || $ps == P_DISA) {
@@ -407,7 +408,7 @@ function smwhCreateRuleXML($literals) {
 					$xml .= '<variable>'. $args[2]->getVariableName() . '</variable>';
 				}
 			} else if (is_a($args[2], 'SMWTerm')) {
-				$xml .= '<value>'. $args[2]->getName() . '</value>';
+				$xml .= '<value>'. $args[2]->getFullQualifiedName() . '</value>';
 			}
 			$xml .= '</property>';
 		}
@@ -442,6 +443,9 @@ function smwhGetRelationalLiterals($literals) {
 		} else if ($ps == 'obl:reserved:lessOrEquals') {
 			$args = $lit->getArguments();
 			$variableMap[$args[0]->getVariableName()] = array("lte", $args[1]->getValue());
+		} else if ($ps == 'obl:reserved:equals') {
+			$args = $lit->getArguments();
+			$variableMap[$args[0]->getVariableName()] = array("eql", $args[1]->getValue());
 		}
 	}
 	return $variableMap;

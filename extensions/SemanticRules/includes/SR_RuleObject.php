@@ -127,7 +127,7 @@ class SMWRuleObject extends SMWAbstractRuleObject {
 
 
 		// fetch rule head
-		$head = $this->argtostring($this->getHead()->getPreditcatesymbol(), $this->getHead()->getArguments());
+		$head = $this->argtostring($this->getHead()->getPreditcatesymbol(), $this->getHead()->getArguments(), "HEAD");
 		$oblstring .= " " . $head . " :- ";
 
 		// fetch array of rule body and concatenate arguments
@@ -137,7 +137,7 @@ class SMWRuleObject extends SMWAbstractRuleObject {
 			if ($i > 0) {
 				$body .= " AND ";
 			}
-			$body .= $this->argtostring($bodyarray[$i]->getPreditcatesymbol(), $bodyarray[$i]->getArguments());
+			$body .= $this->argtostring($bodyarray[$i]->getPreditcatesymbol(), $bodyarray[$i]->getArguments(), "BODY");
 		}
 
 		// don't forget the "." @ end of obl string ;-)
@@ -195,15 +195,15 @@ class SMWRuleObject extends SMWAbstractRuleObject {
 
 	// obl-logic helper functions
 
-	private function argtostring($pred, $args) {
+	private function argtostring($pred, $args, $rulePart) {
 		switch ($pred->getPredicateName()) {
 			case P_ATTRIBUTE:
 				// attribute statement
-				return $this->getOblPropertyPart($args);
+				return $this->getOblPropertyPart($args, $rulePart);
 				break;
 			case P_RELATION:
 				// relation statement
-				return $this->getOblPropertyPart($args);
+				return $this->getOblPropertyPart($args, $rulePart);
 				break;
 			case P_ISA:
 				// isa statement
@@ -216,7 +216,7 @@ class SMWRuleObject extends SMWAbstractRuleObject {
 		}
 	}
 
-	private function getOblPropertyPart($args) {
+	private function getOblPropertyPart($args, $rulePart) {
 		// statement with 3 terms (att/rel)
 		// attribute/relation
 		$tmp = "";
@@ -233,10 +233,11 @@ class SMWRuleObject extends SMWAbstractRuleObject {
 				if (!($args[$i] instanceof SMWVariable)) {
 					$property = SMWPropertyValue::makeUserProperty(ucfirst($args[$i]->getName()));
 					$propertyType = $property->getTypesValue();
-					$wikiType = reset($propertyType->getDBkeys());
+					$dbkeys=$propertyType->getDBkeys();
+					$wikiType = reset($dbkeys);
 				}
 			} else if ($i == 2) {
-				if ($args[$i] instanceof SMWConstant && !is_null($args[$i]->getOperand())) {
+				if ($args[$i] instanceof SMWConstant && $rulePart == "BODY") {
 
 					// in this case a second literal containing the comparison
 					// must be created
@@ -245,18 +246,26 @@ class SMWRuleObject extends SMWAbstractRuleObject {
 					$typeHint = "";
 					if ($wikiType == '_boo') {
 						$value = '"'.strtolower($args[$i]->getName()).'"^^xsd:boolean';
+						$tmp .= $value;
 					} else if (!WikiTypeToXSD::isPageType($wikiType) && $wikiType != '_num') {
 						$typeHint = "^^$xsdType";
-						$value = '"'.$args[$i]->getName().'"'.$typeHint;;
-					} else {
-						// either page type, then assume a QName or _num, then assume a number.
-						$value = $args[$i]->getName();
+						$value = '"'.$args[$i]->getValue().'"'.$typeHint;
+						$tmp .= $value;
+					} else if ($wikiType == '_num') {
+						$value = $args[$i]->getValue();
+						if (is_null($args[$i]->getOperand())) {
+							$operand = "==";
+						} else $operand = $args[$i]->getOperand();
+						$tmp .= "?__VALUE".self::$varIndex;
+						$tmp2 = " AND ?__VALUE".self::$varIndex." ".$operand." ".$value;
+						self::$varIndex++;
+					} else if (WikiTypeToXSD::isPageType($wikiType)) {
+						$value = "<".$args[$i]->getFullQualifiedName().">";
+						$tmp .= $value;
 					}
-					$tmp .= "?__VALUE".self::$varIndex;
-					$tmp2 = " AND ?__VALUE".self::$varIndex." ".$args[$i]->getOperand()." ".$value;
-					self::$varIndex++;
 
-				} else {
+				} else if ($args[$i] instanceof SMWConstant && $rulePart == "HEAD") {
+
 					$xsdType = WikiTypeToXSD::getXSDType($wikiType);
 					$xsdType = str_replace(":", "#", $xsdType);
 					$typeHint = "";
@@ -264,12 +273,18 @@ class SMWRuleObject extends SMWAbstractRuleObject {
 						$value = '"'.strtolower($args[$i]->getName()).'"^^xsd:boolean';
 					} else if (!WikiTypeToXSD::isPageType($wikiType) && $wikiType != '_num') {
 						$typeHint = "^^$xsdType";
-						$value = '"'.ucfirst($args[$i]->getName()).'"'.$typeHint;
-					} else {
-						// either page type, then assume a QName or _num, then assume a number.
-						$value = $args[$i]->getName();
+						$value = '"'.$args[$i]->getValue().'"'.$typeHint;
+					} else if ($wikiType == '_num') {
+						$value = $args[$i]->getValue();
+					} else if (WikiTypeToXSD::isPageType($wikiType)) {
+						$value = $args[$i]->getFullQualifiedName();
 					}
-					$tmp .= $args[$i] instanceof SMWVariable ? $args[$i]->getName() : $value;
+					$tmp .= $value;
+
+				} else if ($args[$i] instanceof SMWVariable) {
+					$tmp .= $args[$i]->getName();
+				} else if ($args[$i] instanceof SMWTerm) {
+					$tmp .= $args[$i]->getFullQualifiedName();
 				}
 			}
 		}

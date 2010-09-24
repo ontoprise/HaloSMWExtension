@@ -147,8 +147,8 @@ abstract class SMWAbstractRuleObject {
 						$tempterm = new SMWConstant( $termval->_argument);
 							
 					} else {
-
-						$tempterm = new SMWTerm(self::convertToArray($termval->_argument), (string) $termval->_arity, true);
+						$terms = self::convertToArray($termval->_argument);
+						$tempterm = new SMWTerm($terms, count($terms), true);
 					}
 				} else {
 
@@ -156,8 +156,8 @@ abstract class SMWAbstractRuleObject {
 				}
 			} else {
 
-
-				$tempterm = new SMWTerm( self::convertToArray($termval->_argument), (string) $termval->_arity, $termval->_isGround);
+		$terms = self::convertToArray($termval->_argument);
+				$tempterm = new SMWTerm($terms , count($terms), $termval->_isGround);
 			}
 			array_push($termargs, $tempterm);
 		}

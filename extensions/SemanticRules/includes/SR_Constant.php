@@ -35,7 +35,7 @@ class SMWConstant extends SMWTerm {
 	// constants must have arity = 0 and ground set to true
 	function __construct($value, $operand = NULL) {
 		// check if it is numeric value - if not, add quotes
-		$value_unquoted = self::unquote($value);
+		$value_unquoted = $this->unquote($value);
 
 		$value = $value_unquoted;
 
@@ -54,6 +54,7 @@ class SMWConstant extends SMWTerm {
 			case 'gt': return '>';
 			case 'lte': return '<=';
             case 'gte': return '>=';
+             case 'eql': return '==';
 			default: return $this->_operand;
 		}
 
@@ -63,14 +64,7 @@ class SMWConstant extends SMWTerm {
 		$this_value = $value;
 	}
 
-	private static function unquote($literal) {
-		$trimed_lit = trim($literal);
-		if (stripos($trimed_lit, "\"") === 0 && strrpos($trimed_lit, "\"") === strlen($trimed_lit)-1) {
-			$substr = substr($trimed_lit, 1, strlen($trimed_lit)-2);
-			return str_replace("\\\"", "\"", $substr);
-		}
-		return $trimed_lit;
-	}
+	
 
 }
 

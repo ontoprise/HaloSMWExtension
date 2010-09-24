@@ -82,7 +82,7 @@ if (!defined('MEDIAWIKI')) die();
 	}
 	
 	public function getValue() {
-		return self::unSingleQuote($this->getName());
+		return $this->unquote($this->getName());
 	}
 
 	public function getNamespace() {
@@ -97,16 +97,25 @@ if (!defined('MEDIAWIKI')) die();
 	public function getFullQualifiedName() {
 		global $smwgTripleStoreGraph;
 		if ($this->_arity == 0) {
-			return $this->_arguments;
+			// actually a constant here. Try to interprete it as term.
+			$tsn = new TSNamespaces();
+			$fullURI = $tsn->prefix2FullURI($this->_arguments);
+			return $fullURI;
 		} else {
 			if (sizeof($this->_arguments)>1) {
-				if ($this->strStartsWith($this->_arguments[0], '"')) {
-					return $this->_arguments[0] . $this->_arguments[1];
+				if (strpos($this->_arguments[0], $smwgTripleStoreGraph) === 0) {
+					// full qualified
+					return $this->_arguments[0] . substr($this->_arguments[1],1);
+				} else if (strpos($this->_arguments[0], "obl:default:") === 0) {
+					// no namespace given, assume instance
+					return $smwgTripleStoreGraph."/a#". ucfirst(substr($this->_arguments[1],1));
 				} else {
-					return '"' . $this->_arguments[0] . '#"' . $this->_arguments[1];
+					// only suffix given
+					return $smwgTripleStoreGraph.$this->_arguments[0] . ucfirst(substr($this->_arguments[1],1));	
 				}
+				
 			} else {
-				return $smwgTripleStoreGraph . $this->_arguments[0];
+				return $this->_arguments[0];
 			}
 		}
 	}
@@ -134,6 +143,22 @@ if (!defined('MEDIAWIKI')) die();
 	private function strStartsWith($source, $prefix)
 	{
    		return strncmp($source, $prefix, strlen($prefix)) == 0;
+	}
+	
+	
+	protected function unquote($literal) {
+		$literal = self::unDoublequote(self::unSingleQuote($literal));
+		$literal = self::unSingleQuote(self::unDoublequote($literal));
+		return $literal;
+	}
+	
+ 	private static function unDoublequote($literal) {
+		$trimed_lit = trim($literal);
+		if (stripos($trimed_lit, "\"") === 0 && strrpos($trimed_lit, "\"") === strlen($trimed_lit)-1) {
+			$substr = substr($trimed_lit, 1, strlen($trimed_lit)-2);
+			return str_replace("\\\"", "\"", $substr);
+		}
+		return $trimed_lit;
 	}
 	
     private static function unSingleQuote($literal) {

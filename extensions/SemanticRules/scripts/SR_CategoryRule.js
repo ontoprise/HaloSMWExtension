@@ -930,10 +930,10 @@ createOperatorSelector: function(id, defaultValue, visible) {
 	}
 	var html =
 		'<select id ="' + id + '" '+visibilityAtt+'>';
-	if (defaultValue == '==' || defaultValue == null) {
-		html += '<option selected="selected" value="=">=</option>';
+	if (defaultValue == 'eql' || defaultValue == null) {
+		html += '<option selected="selected" value="eql">=</option>';
 	} else {
-		html += '<option value="=">=</option>';
+		html += '<option value="eql">=</option>';
 	}
 	
 	if (defaultValue == 'lt') {
@@ -1096,7 +1096,7 @@ serializeRule: function() {
 				xml += '<variable>'+value.readAttribute('propvalue')+'</variable>';
 			} else {
 				var operand = value.readAttribute('operand');
-				var operandText = operand == '=' || operand == null ? "" : 'operand="'+operand+'"';
+				var operandText = operand == '=' || operand == null ? 'operand="eql"' : 'operand="'+operand+'"';
 				xml += '<value '+operandText+'>'+value.readAttribute('propvalue')+'</value>';
 			}
 			xml += '</property>';

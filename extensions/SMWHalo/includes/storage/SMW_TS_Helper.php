@@ -44,6 +44,7 @@ class WikiTypeToXSD {
 
 			// unknown or composite type
 			default:
+				if (is_null($wikiTypeID)) return "xsd:string";
 				// if builtin (starts with _) then regard it as string
 				if (substr($wikiTypeID, 0, 1) == '_') return "xsd:string";
 				// if n-ary, regard it as string
@@ -286,6 +287,26 @@ class TSNamespaces {
     public function getNSURI($namespace) {
         global $smwgTripleStoreGraph;
         return $smwgTripleStoreGraph."/".$this->getNSPrefix($namespace)."#";
+    }
+    
+    public function prefix2FullURI($prefixForm) {
+    	if (strpos($prefixForm, "#") === false) return $prefixForm;
+    	list($prefix, $local) = explode("#", $prefixForm);
+    	$local = ucfirst($local);
+    	if (self::$CAT_NS_SUFFIX == ("/".$prefix."#")) {
+    		return self::$CAT_NS.$local;
+    	} else if (self::$PROP_NS_SUFFIX == ("/".$prefix."#")) {
+    		return self::$PROP_NS.$local;
+    	} else if (self::$INST_NS_SUFFIX == ("/".$prefix."#")) {
+    		return self::$INST_NS.$local;
+    	} else if (self::$TYPE_NS_SUFFIX == ("/".$prefix."#")) {
+    		return self::$TYPE_NS.$local;
+    	} else if (self::$IMAGE_NS_SUFFIX == ("/".$prefix."#")) {
+    		return self::$IMAGE_NS.$local;
+    	} else if (self::$HELP_NS_SUFFIX == ("/".$prefix."#")) {
+    		return self::$HELP_NS.$local;
+    	} // FIXME: get other namespaces
+    	return $prefixForm;
     }
 
 	/**
