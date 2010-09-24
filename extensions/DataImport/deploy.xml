@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <deploydescriptor>
 	<global>
-		<version>140</version>
+		<version>152</version>
 		<id>dataimport</id>
 		<vendor>Ontoprise GmbH</vendor>
 		<maintainer>Ontoprise GmbH</maintainer>
@@ -11,9 +11,9 @@
 		</description>
 		<dependencies>
 			<dependency from="1150" to="1159">MW</dependency>
-			<dependency from="150" to="151">smw</dependency>
-			<dependency from="150" to="151">smwhalo</dependency>
-			<dependency from="132" to="140">semanticgardening</dependency>
+			<dependency from="150" to="152">smw</dependency>
+			<dependency from="150" to="152">smwhalo</dependency>
+			<dependency from="132" to="152">semanticgardening</dependency>
 			<dependency from="100" to="199">scriptmanager</dependency>
 			<dependency from="100" to="100">linkeddata</dependency>
 		</dependencies>
