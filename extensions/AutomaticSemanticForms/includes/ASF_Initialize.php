@@ -36,6 +36,10 @@ function asfSetupExtension(){
 			'url'=>'https://sourceforge.net/projects/halo-extension', 
 			'description' => 'Automatically creates Semantic Forms based on the Wiki ontology.');
 	
+	global $asfIP;
+	require_once($asfIP.'/includes/ASF_FormGenerator.php');
+	//ASFFormGenerator::getInstance()->generateFromCategory('FemaleTeacher');
+	
 	return true;
 }
 
