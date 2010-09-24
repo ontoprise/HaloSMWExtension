@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <deploydescriptor>
 	<global>
-		<version>120</version>
+		<version>152</version>
 		<id>haloacl</id>
 		<vendor>Ontoprise GmbH</vendor>
 		<maintainer>Ontoprise GmbH</maintainer>
@@ -10,7 +10,7 @@
 			Protects pages, categories, namespaces and semantic properties.
 		</description>
 		<dependencies>
-			<dependency from="1132" to="1159">mw</dependency>
+			<dependency from="1132" to="1160">mw</dependency>
 			<dependency from="100" to="100">scriptmanager</dependency>
 		</dependencies>
 		<patchlevel>0</patchlevel>
@@ -33,6 +33,7 @@
 			<patch file="extensions/HaloACL/patch_for_MW_1.13.2.txt" ext="mw" from="1130" to="1139"/>
 			<patch file="extensions/HaloACL/patch_for_MW_1.15.1.txt" ext="mw" from="1150" to="1152"/>
 			<patch file="extensions/HaloACL/patch_for_MW_1.15.3.txt" ext="mw" from="1153" to="1159"/>
+            <patch file="extensions/HaloACL/patch_for_MW_1.16.0.txt" ext="mw" from="1160" to="1160"/>
 			<patch file="extensions/HaloACL/patch_for_SMW_1.4.2.txt" ext="smw" from="142" to="142" />
 			<patch file="extensions/HaloACL/patch_for_SMW_1.4.3.txt" ext="smw" from="143" to="143" />
 			<patch file="extensions/HaloACL/patch_for_SMW_1.5.0.txt" ext="smw" from="150" to="150" />
@@ -57,7 +58,8 @@
 			<patch file="extensions/HaloACL/patch_for_MW_1.13.2.txt" ext="mw" from="1130" to="1139"/>
 			<patch file="extensions/HaloACL/patch_for_MW_1.15.1.txt" ext="mw" from="1150" to="1152"/>
 			<patch file="extensions/HaloACL/patch_for_MW_1.15.3.txt" ext="mw" from="1153" to="1159"/>
-			<patch file="extensions/HaloACL/patch_for_SMW_1.4.2.txt" ext="smw" from="142" to="142" />
+            <patch file="extensions/HaloACL/patch_for_MW_1.16.0.txt" ext="mw" from="1160" to="1160"/>
+            <patch file="extensions/HaloACL/patch_for_SMW_1.4.2.txt" ext="smw" from="142" to="142" />
 			<patch file="extensions/HaloACL/patch_for_SMW_1.4.3.txt" ext="smw" from="143" to="143" />
 			<patch file="extensions/HaloACL/patch_for_SMW_1.5.0.txt" ext="smw" from="150" to="150" />
 			<patch file="extensions/HaloACL/patch_for_SMW_1.5.1.txt" ext="smw" from="151" to="151" />
