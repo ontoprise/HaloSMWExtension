@@ -24,7 +24,7 @@ class SMWTripleStoreAdmin extends SpecialPage {
 		parent::__construct('TSA', 'delete');
 	}
 
-	public function execute() {
+	public function execute($par) {
 		global $wgRequest, $wgOut, $smwgMessageBroker, $smwgWebserviceEndpoint, $wgUser, $smwgEnableObjectLogicRules;
 		$wgOut->setPageTitle(wfMsg('tsa'));
 		$html = "";
