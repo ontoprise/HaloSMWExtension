@@ -59,6 +59,9 @@
 				<include name="INSTALL" />
 				<include name="deploy.xml" />
 			</fileset>
+   			<fileset dir="../../../patches/">
+				<include name="patch.php" />
+			</fileset>
 		</copy>
 		<zip destfile="bin/enhancedretrieval.zip" basedir="bin/zip" />
 		<delete dir="bin/zip" />
