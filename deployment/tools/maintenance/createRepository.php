@@ -80,9 +80,10 @@ foreach($localPackages as $lp) {
         $newPatchlevel = $lp->getPatchlevel();
         if ($newPatchlevel == '') $newPatchlevel = 0;
         $maintainer = escapeForXMLAttribute($lp->getMaintainer());
+        $helpurl = escapeForXMLAttribute($lp->getHelpURL());
         $description = escapeForXMLAttribute($lp->getDescription());
         
-        $new_ser .= "<version ver=\"$ver\" url=\"$url\" patchlevel=\"$newPatchlevel\" maintainer=\"$maintainer\" description=\"$description\"/>";
+        $new_ser .= "<version ver=\"$ver\" url=\"$url\" patchlevel=\"$newPatchlevel\" maintainer=\"$maintainer\" description=\"$description\" helpurl=\"$helpurl\"/>";
     
     $new_ser .= "</extension>\n";
 }

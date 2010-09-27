@@ -297,6 +297,15 @@ class DeployDescriptor {
 	}
 	
 	/**
+	 * Returns help URL (which is optional)
+	 * @return string
+	 */
+	function getHelpURL() {
+		// helpurl is optional
+		return isset($this->globalElement[0]->helpurl) ? trim((string) $this->globalElement[0]->helpurl) : '';
+	}
+	
+	/**
 	 * Returns installation directory.
 	 * @return string
 	 */
