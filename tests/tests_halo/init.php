@@ -41,7 +41,7 @@ tstInsertLocalSettings($testDir);
 echo "\ndone!\n";
 
 require_once( $mw_dir.'maintenance/commandLine.inc' );
-echo "\nInitializing database for use with MW 1.15 ...";
+echo "\nInitializing database for use with MW 1.16 ...";
 tstInitializeDatabase();
 echo "\ndone!\n";
 
@@ -59,9 +59,9 @@ function tstInitializeDatabase() {
 
 	// Import empty
 	echo "\nImporting database...";
-	echo "$mysqlExe -u $wgDBuser --password=$wgDBpassword < \"$mw_dir"."tests/tests_halo/mw15_db.sql\"";
+	echo "$mysqlExe -u $wgDBuser --password=$wgDBpassword < \"$mw_dir"."tests/tests_halo/mw16_db.sql\"";
 	//exec("\"$xamppDir/mysql/bin/mysql.exe\" -u $wgDBuser --password=$wgDBpassword < \"$mw_dir"."tests/tests_halo/mw15_db.sql\"");
-	runProcess("$mysqlExe -u $wgDBuser --password=$wgDBpassword < \"$mw_dir"."tests/tests_halo/mw15_db.sql\"");
+	runProcess("$mysqlExe -u $wgDBuser --password=$wgDBpassword < \"$mw_dir"."tests/tests_halo/mw16_db.sql\"");
 	echo "\ndone.\n";
 
 	// run setups
