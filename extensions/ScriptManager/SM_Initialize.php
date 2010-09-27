@@ -47,7 +47,8 @@ function smgSetupExtension() {
 
 function smfAddHTMLHeader(& $out) {
 	global $smgJSLibs, $smgSMPath;
-	if (!is_array($smgJSLibs)) return true;
+    static $outputSend;
+    if (isset($outputSend) || !is_array($smgJSLibs)) return true;
 	$smgJSLibs = array_unique($smgJSLibs);
 	$smgJSLibs = smfSortScripts($smgJSLibs);
 	foreach($smgJSLibs as $lib_id) {
@@ -77,6 +78,7 @@ function smfAddHTMLHeader(& $out) {
 						
 		}
 	}
+    $outputSend = true;
 	return true;
 }
 
