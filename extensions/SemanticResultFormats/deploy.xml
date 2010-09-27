@@ -11,7 +11,7 @@
             Semantic Result Formats provides several new result printer for ASK (and SPARQL)
         </description>
         <dependencies>
-            <dependency from="150" to="151">smw</dependency>
+            <dependency from="150" to="152">smw</dependency>
         </dependencies>
     </global>
     <codefiles></codefiles>
