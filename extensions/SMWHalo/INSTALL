@@ -93,7 +93,7 @@ section "Notes on Upgrading" below.
 
 (12) Extract the zip-file into the MediaWiki roots folder
 
-(13) Open a command-line interface to install the patch file
+(13) Open a command-line interface to install the patches
      The file patch.txt is an Eclipse patch file which can be installed using the
      tool patch.php from the deploy framework which itself uses GNU patch. The
      file is located in the directory 'extensions\SMWHalo'.
@@ -102,6 +102,11 @@ section "Notes on Upgrading" below.
      php patch.php -p patch.txt -d <mw-dir> --onlypatch
      replace <mw-dir> with the absolute path of your Mediawiki installation.
 
+(15) To apply the patch for Mediawiki please also run:
+     php patch.php -p patch_for_MW1.16.0.txt -d <mw-dir> --onlypatch
+     replace <mw-dir> with the absolute path of your Mediawiki installation.
+     replace patch_for_MW1.16.0.txt with the correct version for your Mediawiki
+     installation.
 -----------------------------------------------------------------------------------------------
 
 Note: 	Replace < mw-dir > with the path to root directory of MediaWiki.
