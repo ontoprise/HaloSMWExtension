@@ -154,28 +154,28 @@ the FAQ section, then contact the user support list (see the Contact section).
     Take a look in libs/mysqlUDFs/INSTALL.TXT for more information.
     $smwgUseEditDistance = true;
 
-4.  Show derived facts in a tab next to explicit facts. Makes only sense when a TSC is connected.
-    Note that the factbox must be switch on. Refer to SemanticMediaWiki/includes/Settings.php
+4.  Show derived facts in a tab next to explicit facts. Makes only sense when a
+    TSC is connected. Note that the factbox must be switch on.
+    Refer to SemanticMediaWiki/includes/Settings.php
     $smwgShowDerivedFacts=true;
 
-5. $smwgPropertyPageFromTSC: Reads annotations on property pages from the TSC, not from
-    the MySQL store.    
-
-6.  Allows to enter new help questions for context-sensitive help.
-    $smwgAllowNewHelpQuestions = true;
+5.  $smwgPropertyPageFromTSC: Reads annotations on property pages from the TSC,
+    not from the MySQL store.
     
- 7. Enable the Query Results Cache. Please note that the full feature richness of the Query Results Cache
- 	 is only available, if the Query Updator, which is deployed together with the Triple Store Connector is
- 	 installed. The behaviour of the Query Results Cache can be configured in ./includes/QueryResultsCache/QRC_Settings.php
- 	 enableQueryResultsCache();
+6.  Enable the Query Results Cache. Please note that the full feature richness
+    of the Query Results Cache is only available, if the Query Updator, which is
+    deployed together with the Triple Store Connector is installed. The behaviour
+    of the Query Results Cache can be configured
+    in ./includes/QueryResultsCache/QRC_Settings.php
+ 	enableQueryResultsCache();
 
 === Configuring a triplestore ===
 Change the line with 'enableSMWHalo' to:
 
  enableSMWHalo('SMWHaloStore2', 'SMWTripleStore', 'graph-uri');
 
-graph-uri is an arbitrary URI which works as an identifier for the wiki in the TSC. Every URI
-is possible as long as it does not contain a hash character (#).
+graph-uri is an arbitrary URI which works as an identifier for the wiki in the
+TSC. Every URI is possible as long as it does not contain a hash character (#).
 
 Then add:
     $smwgMessageBroker="localhost";
@@ -185,8 +185,8 @@ If the webserver requires HTTP authorization, add:
     $smwgWebserviceUser = "username";
     $smwgWebservicePassword = "password";
 
-You may now initialize the TSC on the page Special:TSA. Refer to the triplestore documentation for a better
-way of initialization.
+You may now initialize the TSC on the page Special:TSA. Refer to the triplestore
+documentation for a better way of initialization.
 
 === Customizing Semantic MediaWiki+ ===
 
@@ -207,9 +207,9 @@ http://smwforum.ontoprise.com/smwforum/index.php/Help:Customizing_SMW%2B
 
 === Upgrading from earlier versions ===
 
-In order to create new tables and update old ones, open a command-line interface and navigate to
-the directory $IP/extensions/SemanticMediaWiki/maintenance/. Then run the script SMW_setup.php
-to update the database tables.
+In order to create new tables and update old ones, open a command-line interface
+and navigate to the directory $IP/extensions/SemanticMediaWiki/maintenance/. Then
+run the script SMW_setup.php to update the database tables.
 
 In addition, run the script SMW_refreshData.php, which is located in the same directory.
 
