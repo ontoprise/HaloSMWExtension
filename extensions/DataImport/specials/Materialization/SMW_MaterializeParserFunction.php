@@ -125,6 +125,7 @@ function materializePF_render(&$parser) {
 }
 
 function materializePF_saveHook(&$article, &$user, &$text){
+	error();
 	$articleId  = $article->getID();
 	if($articleId != null){
 		materializePF_updateDB($articleId);

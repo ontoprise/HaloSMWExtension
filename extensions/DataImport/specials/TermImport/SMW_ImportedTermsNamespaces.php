@@ -33,5 +33,5 @@ function diRegisterTermImportNamespaces(){
 			NS_TI_EMAIL => true,
 		);
 
-	$wgContLang->fixUpSettings();
+	//$wgContLang->fixUpSettings();
 }
