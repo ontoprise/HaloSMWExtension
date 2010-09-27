@@ -11,7 +11,7 @@
 			Use the popular FCKeditor for editing Wiki pages in WYSIWYYG mode.
 		</description>
 		<dependencies>
-            <dependency from="1132" to="1159">MW</dependency>
+            <dependency from="1132" to="1160">MW</dependency>
 		</dependencies>
 	</global>
 	<codefiles>

@@ -10,7 +10,7 @@
 			Connects external datasources to your wiki.
 		</description>
 		<dependencies>
-			<dependency from="1150" to="1159">MW</dependency>
+			<dependency from="1150" to="1160">MW</dependency>
 			<dependency from="150" to="152">smw</dependency>
 			<dependency from="150" to="152">smwhalo</dependency>
 			<dependency from="132" to="152">semanticgardening</dependency>
