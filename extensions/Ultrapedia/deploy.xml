@@ -10,7 +10,7 @@
             Provides a tab function and a dynamic ask query
         </description>
         <dependencies>
-            <dependency from="142" to="151">smw</dependency>
+            <dependency from="142" to="152">smw</dependency>
         </dependencies>
     </global>
     <codefiles>
