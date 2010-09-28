@@ -41,11 +41,6 @@ $wgExtensionCredits['parserhook'][] = array(
     'version'     => SEMANTIC_TREEVIEW_VERSION
     );
 
-// Tell the script manager, that we need prototype
-global $smgJSLibs;
-$smgJSLibs[] = 'prototype';
-
-
 //Insert show trigger into toolbox
 function smwhg_AddTreeToToolbox(& $template) {
 
@@ -100,7 +95,15 @@ class SemanticTreeview {
             $image = Image::newFromTitle($title);
             $v = $image && $image->exists() ? $image->getURL() : $wgTreeViewImages[$k];
             $this->images .= "tree.icon['$k'] = '$v';";
-            }
+        }
+
+        // Tell the script manager, that we need prototype
+        if (defined('SCM_VERSION')) {
+            global $smgJSLibs;
+            $smgJSLibs[] = 'prototype';
+        }
+        else // no script manager is in use
+            $wgOut->addScript("<script type=\"$wgJsMimeType\" src=\"{$this->baseUrl}/prototype.js\"></script>\n");
 
         # Add link to output to load dtree.js script
         $wgOut->addScript("<script type=\"$wgJsMimeType\" src=\"{$this->baseUrl}/dtree.js\"><!-- Semantic Treeview ".SEMANTIC_TREEVIEW_VERSION." --></script>\n");
