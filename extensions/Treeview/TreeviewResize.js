@@ -41,7 +41,7 @@ window.onresize= function(){
 
 function initializeTreeviewResize(){
 	
-var SmwhgTreeviewResize = Class.create();
+function SmwhgTreeviewResize() {};
 
 SmwhgTreeviewResize.prototype = {
 	
