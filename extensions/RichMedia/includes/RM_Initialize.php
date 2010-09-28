@@ -250,7 +250,8 @@ function RMLinkBegin($this, $target, &$text, &$customAttribs, &$query, &$options
 function RMLinkEnd($skin, $target, $options, &$text, &$attribs, &$ret) {
 	
 	global $wgRMImagePreview;
-	RMNamespace::isImage( $target->getNamespace(), $rMresult );
+	$temp_var = $target->getNamespace();
+	RMNamespace::isImage( $temp_var, $rMresult );
 	if ( $rMresult ) {
 		if ( $wgRMImagePreview ) {
 			$linkID = $target->getPrefixedText() . rand(0, 1024);
@@ -318,16 +319,16 @@ function smwRMFormAddHTMLHeader(&$out){
 		
 		$out->addScript('<script type="text/javascript" src="'.$smwgRMScriptPath. '/scripts/richmedia.js"></script>');
 		# Floatbox needed!
-		$out->addScript('<script type="text/javascript" src="'.$sfgScriptPath .  '/libs/floatbox.js"></script>');
+		//$out->addScript('<script type="text/javascript" src="'.$sfgScriptPath .  '/libs/floatbox.js"></script>');
 		
 	
 		#Floatbox css file:
-		$out->addLink(array(
-			'rel'   => 'stylesheet',
-			'type'  => 'text/css',
-			'media' => 'screen, projection',
-			'href'  => $sfgScriptPath . '/skins/floatbox.css'
-		));
+//		$out->addLink(array(
+//			'rel'   => 'stylesheet',
+//			'type'  => 'text/css',
+//			'media' => 'screen, projection',
+//			'href'  => $sfgScriptPath . '/skins/floatbox.css'
+//		));
 		$out->addLink(array(
 			'rel'   => 'stylesheet',
 			'type'  => 'text/css',
@@ -450,5 +451,3 @@ function smwfRMRegisterAutocompletionIcons(& $namespaceMappings) {
 	$namespaceMappings[NS_ICAL]= "/extensions/RichMedia/skins/icalendar.gif";
 	return true;
 }
-
-?>

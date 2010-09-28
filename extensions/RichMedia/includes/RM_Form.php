@@ -128,7 +128,7 @@ END;
 	 * @param $text
 	 * @return bool
 	 */
-	function createRichMediaLinkAfterTidy(&$parser, &$text) {
+	static function createRichMediaLinkAfterTidy(&$parser, &$text) {
 		global $smwgRMMarkerList;
 		$keys = array();
 		$marker_count = count($smwgRMMarkerList);
@@ -181,4 +181,3 @@ END;
 		return $parser->insertStripItem( $html, $parser->mStripState );
 	}
 }
-?>

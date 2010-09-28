@@ -161,4 +161,3 @@ class RMNamespace {
 		return true;
 	}
 }
-?>
