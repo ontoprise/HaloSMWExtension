@@ -60,6 +60,8 @@ function smfAddHTMLHeader(& $out) {
 			case 'jquery':
 				if ( method_exists( 'OutputPage', 'includeJQuery' ) ) {
 					$out->includeJQuery();
+					//make it not conflicting with other libraries like prototype
+					$out->addScript("<script type=\"text/javascript\">var \$jq = jQuery.noConflict();</script>");
 				} else {
 					$out->addScript("<script type=\"text/javascript\" src=\"". "$smgSMPath/scripts/jquery.js\"></script>");
 					global $smwgJQueryIncluded;
