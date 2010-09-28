@@ -58,9 +58,13 @@ function smfAddHTMLHeader(& $out) {
 				$out->addScript("<script type=\"text/javascript\" src=\"". "$smgSMPath/scripts/prototype.js\" id=\"Prototype_script_inclusion\"></script>");
 				break;
 			case 'jquery':
-				$out->addScript("<script type=\"text/javascript\" src=\"". "$smgSMPath/scripts/jquery.js\"></script>");
-                global $smwgJQueryIncluded;
-                $smwgJQueryIncluded = true;
+				if ( method_exists( 'OutputPage', 'includeJQuery' ) ) {
+					$out->includeJQuery();
+				} else {
+					$out->addScript("<script type=\"text/javascript\" src=\"". "$smgSMPath/scripts/jquery.js\"></script>");
+					global $smwgJQueryIncluded;
+					$smwgJQueryIncluded = true;
+				}
 				break;
 			case 'ext':
 			
