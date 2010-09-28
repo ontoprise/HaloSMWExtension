@@ -506,7 +506,7 @@ Index: includes/Linker.php
 +			/*op-patch|BL|2009-10-07|RichMedia|TitleGotLost|start*/
 +			// pass title to link function
 +			// original content is located in else statement.
-+			if ($frameParams['title']) { 
++			if (array_key_exists('title', $frameParams) && $frameParams['title']) { 
 +				return $this->link( $title ,$frameParams['title']);
 +			} else {
 +				return $this->link( $title );
