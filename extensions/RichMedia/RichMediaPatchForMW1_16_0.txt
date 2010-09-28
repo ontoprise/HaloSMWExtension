@@ -670,7 +670,7 @@ Index: includes/Title.php
  
  			if( !$user->isAllowed( 'move' ) ) {
  				// User can't move anything
-@@ -1793,20 +1863,43 @@
+@@ -1793,20 +1863,44 @@
  
  		$dbr = wfGetDB( DB_SLAVE );
  
@@ -682,7 +682,8 @@ Index: includes/Title.php
 +		// original content is located in else statement.
 +		global $smwgEnableRichMedia;
 +		if( $smwgEnableRichMedia ) {
-+			RMNamespace::isImage( $this->getNamespace(), $rMresult );
++			$temp_var = $this->getNamespace();
++			RMNamespace::isImage( $temp_var, $rMresult );
 +			if ( $rMresult ) {
 +				$tables = array ('imagelinks', 'page_restrictions');
 +				$where_clauses = array(
@@ -719,7 +720,7 @@ Index: includes/Title.php
  
  		if ( $get_pages ) {
  			$cols = array('pr_page', 'page_namespace', 'page_title', 'pr_expiry', 'pr_type', 'pr_level' );
-@@ -2050,12 +2143,27 @@
+@@ -2050,12 +2144,27 @@
  				array( 'ar_namespace' => $this->getNamespace(), 'ar_title' => $this->getDBkey() ),
  				__METHOD__
  			);
@@ -750,7 +751,7 @@ Index: includes/Title.php
  		}
  		return (int)$n;
  	}
-@@ -2073,12 +2181,27 @@
+@@ -2073,12 +2182,27 @@
  			array( 'ar_namespace' => $this->getNamespace(), 'ar_title' => $this->getDBkey() ),
  			__METHOD__
  		);
@@ -781,7 +782,7 @@ Index: includes/Title.php
  		return $deleted;
  	}
  
-@@ -2679,25 +2802,52 @@
+@@ -2679,25 +2803,52 @@
  		}
  
  		// Image-specific checks
@@ -848,7 +849,7 @@ Index: includes/Title.php
  
  		if ( $auth ) {
  			$errors = wfMergeErrorArrays( $errors,
-@@ -3201,13 +3351,29 @@
+@@ -3201,13 +3352,29 @@
  	public function isValidMoveTarget( $nt ) {
  		$dbw = wfGetDB( DB_MASTER );
  		# Is it an existsing file?
@@ -883,131 +884,7 @@ Index: includes/Title.php
  		# Is it a redirect with no history?
  		if( !$nt->isSingleRevRedirect() ) {
  			wfDebug( __METHOD__ . ": not a one-rev redirect\n" );
-@@ -3491,6 +3657,21 @@
- 		if( $this->mInterwiki != '' ) {
- 			return true;  // any interwiki link might be viewable, for all we know
- 		}
-+		/*op-patch|BL|2009-10-07|RichMedia|AdditionalNamespaceCheck|start*/
-+		// NS_FILE is not the only Namespace now, so check them all
-+		global $smwgEnableRichMedia;
-+		if( $smwgEnableRichMedia ) {
-+			switch( $this->mNamespace ) {
-+				case NS_AUDIO:
-+				case NS_DOCUMENT:
-+				case NS_PDF:
-+				case NS_VIDEO:
-+				case NS_ICAL:
-+				case NS_VCARD:
-+					return wfFindFile( $this );  // file exists, possibly in a foreign repo
-+			}
-+		}
-+		/*op-patch|BL|2009-10-07|end*/
- 		switch( $this->mNamespace ) {
- 		case NS_MEDIA:
- 		case NS_FILE:
-@@ -2679,25 +2801,52 @@
- 		}
-
- 		// Image-specific checks
--		if( $this->getNamespace() == NS_FILE ) {
--			$file = wfLocalFile( $this );
--			if( $file->exists() ) {
--				if( $nt->getNamespace() != NS_FILE ) {
--					$errors[] = array('imagenocrossnamespace');
--				}
--				if( $nt->getText() != wfStripIllegalFilenameChars( $nt->getText() ) ) {
--					$errors[] = array('imageinvalidfilename');
-+		/*op-patch|BL|2009-10-07|RichMedia|AdditionalNamespaceCheck|start*/
-+		// NS_FILE is not the only Namespace now, so check them all
-+		// original content is located in else statement.
-+		global $smwgEnableRichMedia;
-+		if( $smwgEnableRichMedia ) {
-+			RMNamespace::isImage( $this->getNamespace(), $rMresult );
-+			if ( $rMresult  ) {
-+				$file = wfLocalFile( $this );
-+				if( $file->exists() ) {
-+					RMNamespace::isImage( $nt->getNamespace(), $rMresult );
-+					if( !$rMresult ) {
-+						$errors[] = array('imagenocrossnamespace');
-+					}
-+					if( $nt->getText() != wfStripIllegalFilenameChars( $nt->getText() ) ) {
-+						$errors[] = array('imageinvalidfilename');
-+					}
-+					if( !File::checkExtensionCompatibility( $file, $nt->getDBKey() ) ) {
-+						$errors[] = array('imagetypemismatch');
-+					}
- 				}
--				if( !File::checkExtensionCompatibility( $file, $nt->getDBkey() ) ) {
--					$errors[] = array('imagetypemismatch');
-+				$destfile = wfLocalFile( $nt );
-+				if( !$wgUser->isAllowed( 'reupload-shared' ) && !$destfile->exists() && wfFindFile( $nt ) ) {
-+					$errors[] = array( 'file-exists-sharedrepo' );
- 				}
- 			}
--			$destfile = wfLocalFile( $nt );
--			if( !$wgUser->isAllowed( 'reupload-shared' ) && !$destfile->exists() && wfFindFile( $nt ) ) {
--				$errors[] = array( 'file-exists-sharedrepo' );
-+		} else {
-+			if( $this->getNamespace() == NS_FILE ) {
-+				$file = wfLocalFile( $this );
-+				if( $file->exists() ) {
-+					if( $nt->getNamespace() != NS_FILE ) {
-+						$errors[] = array('imagenocrossnamespace');
-+					}
-+					if( $nt->getText() != wfStripIllegalFilenameChars( $nt->getText() ) ) {
-+						$errors[] = array('imageinvalidfilename');
-+					}
-+					if( !File::checkExtensionCompatibility( $file, $nt->getDBkey() ) ) {
-+						$errors[] = array('imagetypemismatch');
-+					}
-+				}
-+				$destfile = wfLocalFile( $nt );
-+				if( !$wgUser->isAllowed( 'reupload-shared' ) && !$destfile->exists() && wfFindFile( $nt ) ) {
-+					$errors[] = array( 'file-exists-sharedrepo' );
-+				}
- 			}
--
- 		}
-+		/*op-patch|BL|2009-10-07|RichMedia|AdditionalNamespaceCheck|end*/
-
- 		if ( $auth ) {
- 			$errors = wfMergeErrorArrays( $errors,
-@@ -3201,13 +3350,29 @@
- 	public function isValidMoveTarget( $nt ) {
- 		$dbw = wfGetDB( DB_MASTER );
- 		# Is it an existsing file?
--		if( $nt->getNamespace() == NS_FILE ) {
--			$file = wfLocalFile( $nt );
--			if( $file->exists() ) {
--				wfDebug( __METHOD__ . ": file exists\n" );
--				return false;
-+		/*op-patch|BL|2009-10-07|RichMedia|AdditionalNamespaceCheck|start*/
-+		// NS_FILE is not the only Namespace now, so check them all
-+		// original content is located in else statement.
-+		global $smwgEnableRichMedia;
-+		if( $smwgEnableRichMedia ) {
-+			RMNamespace::isImage( $nt->getNamespace(), $rMresult );
-+			if ( $rMresult ) {
-+				$file = wfLocalFile( $nt );
-+				if( $file->exists() ) {
-+					wfDebug( __METHOD__ . ": file exists\n" );
-+					return false;
-+				}
-+			}
-+		} else {
-+			if( $nt->getNamespace() == NS_FILE ) {
-+				$file = wfLocalFile( $nt );
-+				if( $file->exists() ) {
-+					wfDebug( __METHOD__ . ": file exists\n" );
-+					return false;
-+				}
- 			}
- 		}
-+		/*op-patch|BL|2009-10-07|end*/
- 		# Is it a redirect with no history?
- 		if( !$nt->isSingleRevRedirect() ) {
- 			wfDebug( __METHOD__ . ": not a one-rev redirect\n" );
-@@ -3491,6 +3656,21 @@
+@@ -3491,6 +3658,21 @@
  		if( $this->mInterwiki != '' ) {
  			return true;  // any interwiki link might be viewable, for all we know
  		}
