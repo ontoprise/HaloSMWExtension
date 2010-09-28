@@ -13,7 +13,8 @@ Index: includes/Article.php
 +			// original content is located in else statement.
 +			global $smwgEnableRichMedia;
 +			if( $smwgEnableRichMedia )  {
-+				RMNamespace::isImage( $this->getTitle()->getNamespace(), $rMresult );
++				$temp_var = $this->getTitle()->getNamespace();
++				RMNamespace::isImage( $temp_var, $rMresult );
 +				if ( $rMresult )
 +					RepoGroup::singleton()->getLocalRepo()->invalidateImageRedirect( $this->getTitle() );
 +			} else {
@@ -37,7 +38,8 @@ Index: includes/Article.php
 +		// original content is located in else statement.
 +		global $smwgEnableRichMedia;
 +		if( $smwgEnableRichMedia ) {
-+			RMNamespace::isImage( $title->getNamespace(), $rMresult );
++			$temp_var = $title->getNamespace();
++			RMNamespace::isImage( $temp_var, $rMresult );
 +			if ($rMresult) {
 +				$update = new HTMLCacheUpdate( $title, 'imagelinks' );
 +				$update->doUpdate();
@@ -107,7 +109,8 @@ Index: includes/CategoryPage.php
 +			// original content is located in else statement.
 +			global $smwgEnableRichMedia;
 +			if( $smwgEnableRichMedia ) {
-+				RMNamespace::isImage( $title->getNamespace(), $rMresult );
++				$temp_var = $title->getNamespace();
++				RMNamespace::isImage( $temp_var, $rMresult );
 +				if( $title->getNamespace() == NS_CATEGORY ) {
 +					$cat = Category::newFromRow( $x, $title );
 +					$this->addSubcategoryObject( $cat, $x->cl_sortkey, $x->page_len );
@@ -145,7 +148,8 @@ Index: includes/EditPage.php
 +		// original content is located in else statement.
 +		global $smwgEnableRichMedia;
 +		if( $smwgEnableRichMedia ) {
-+			RMNamespace::isImage( $this->mTitle->getNamespace(), $rMresult );
++			$temp_var = $this->mTitle->getNamespace();
++			RMNamespace::isImage( $temp_var, $rMresult );
 +			if ( $rMresult &&
 +			Title::newFromRedirect( $this->textbox1 ) instanceof Title &&
 +			!$wgUser->isAllowed( 'upload' ) ) {
@@ -237,7 +241,8 @@ Index: includes/ImageGallery.php
 +			// original content is located in else statement.
 +			global $smwgEnableRichMedia;
 +			if( $smwgEnableRichMedia ) {
-+				RMNamespace::isImage( $nt->getNamespace(), $rMresult );
++				$temp_var = $nt->getNamespace();
++				RMNamespace::isImage( $temp_var, $rMresult );
 +				if ( !$rMresult  || !$img ) {
 +					# We're dealing with a non-image, spit out the name and be done with it.
 +					$thumbhtml = "\n\t\t\t".'<div style="height: '.($this->mHeights*1.25+2).'px;">'
@@ -384,7 +389,8 @@ Index: includes/ImagePage.php
 +					return;
 +				} //otherwise the no file warning with upload link is displayed
 +			}
-+			RMNamespace::isImage( $this->mTitle->getNamespace(), $rMresult );
++			$temp_var = $this->mTitle->getNamespace();
++			RMNamespace::isImage( $temp_var, $rMresult );
 +			if ( $rMresult && $this->img->getRedirected() ) {
 +				if( $this->mTitle->getDBkey() == $this->img->getName() ) {
 +					// mTitle is the same as the redirect target so ask Article
@@ -432,7 +438,8 @@ Index: includes/ImagePage.php
 +		// original content is located in else statement.
 +		global $smwgEnableRichMedia;
 +		if( $smwgEnableRichMedia ) {
-+			RMNamespace::isImage( $this->mTitle->getNamespace(), $rMresult );
++			$temp_var = $this->mTitle->getNamespace();
++			RMNamespace::isImage( $temp_var, $rMresult );
 +			if ( !$rMresult || ( isset( $diff ) && $diffOnly ) )
 +				return Article::view();
 +		} else {
@@ -473,7 +480,8 @@ Index: includes/ImageQueryPage.php
 +		// original content is located in else statement.
 +		global $smwgEnableRichMedia;
 +		if( $smwgEnableRichMedia ) {
-+			RMNamespace::isImage( $title->getNamespace(), $rMresult );
++			$temp_var = $title->getNamespace();
++			RMNamespace::isImage( $temp_var, $rMresult );
 +			return ( $title instanceof Title && $rMresult )
 +			? wfFindFile( $title )
 +			: null;
@@ -521,7 +529,8 @@ Index: includes/MediaTransformOutput.php
 +		global $wgRequest, $smwgEnableRichMedia, $wgRMImagePreview;
 +		$loc = $wgRequest->getText('title');
 +		if ( $smwgEnableRichMedia && $title ) {
-+			RMNamespace::isImage( $title->getNamespace(), $rMresult );
++			$temp_var = $title->getNamespace();
++			RMNamespace::isImage( $temp_var, $rMresult );
 +			if ($rMresult && $wgRMImagePreview && $loc != 'Special:EmbedWindow') {
 +				$queryString = "target=".urlencode($title->getPrefixedText());
 +				$uploadWindowPage = SpecialPage::getPage('EmbedWindow');
