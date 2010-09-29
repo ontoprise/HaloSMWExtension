@@ -106,6 +106,17 @@ class LODImporter {
 	}	
 
 	/**
+	 * @param	LODSourceDefinition	$dataSourceIn
+	 * @param	LODSourceDefinition	$dataSourceOut
+	 * @param	string	$importGraphURI
+	 */	
+	public function resolve(LODSourceDefinition $dataSourceIn, LODSourceDefinition $dataSourceOut, $importGraphURI) {
+		$paramMap = array("dataSourceInId" => $dataSourceIn->getID(), "dataSourceOutId" => $dataSourceOut->getID(), "importGraphURI" => $importGraphURI);
+		$payload = $this->serializeParameters($paramMap);
+		list($header, $status, $res) =  $this->_client->send($payload, "/resolve");
+	}	
+
+	/**
 	 * @param unknown_type $paramMap
 	 * @return string
 	 */

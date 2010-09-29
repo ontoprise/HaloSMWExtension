@@ -58,12 +58,14 @@ END;
 	function tearDown() {
 	}
 
-	function testLoadDataFromDumpAndTranslate() {
+	function testLoadDataFromDumpTranslateResolve() {
 		$temporaryGraph = $this->importer->loadDataFromDump($this->lsd1, self::$inUrl, false);
 		$this->assertNotNull($temporaryGraph);
 		
 		$importGraph = $this->importer->translate($this->lsd1, $this->lsd2, $temporaryGraph, false);		
 		$this->assertNotNull($importGraph);
+
+		$importGraph = $this->importer->resolve($this->lsd1, $this->lsd2, $importGraph);		
 	}
 	
 	function testLoadDataStream() {
