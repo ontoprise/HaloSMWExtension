@@ -19,7 +19,7 @@ Installation:
 How to install with deployment framework:
 
 (1) Download the Deployment Framework
-(2) Extract the Deplyoment Framework zip-file into the MediaWiki roots folder
+(2) Extract the Deployment Framework zip-file into the MediaWiki roots folder
 (3) Open the SMWAdministration tool
 (4) Type 'smwadmin -i linkeddata'
     This installs the extension.
@@ -75,6 +75,11 @@ configured using the ontobroker-quad driver.
     Type: LOD_importDatasources.php
     
     It should return with HTTP 200 status code.
+    
+Enable XSLT for PHP
+-------------------
+If you want to use the XSLT meta-data printer you have to enable XSLT for PHP.
+See http://www.php.net/manual/en/xsl.installation.php 
 
 Options:
 ========
