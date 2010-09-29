@@ -11,6 +11,7 @@
 		</description>
 		<dependencies>
 			<dependency from="1150" to="1160">mw</dependency>
+			<dependency from="100" to="100">scriptmanager</dependency>
 		</dependencies>
 		<patchlevel>0</patchlevel>
 	</global>
