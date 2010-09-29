@@ -323,7 +323,8 @@ class SMWH_Skin {
                                                 $wgTitle->getNamespace() != NS_SPECIAL
                                                ) {
                                                 # check if there are forms available for the current article
-                        			if (count(SFLinkUtils::getFormsForArticle($this->skintemplate->skin)) > 0)
+                                    global $asfAutomaticFormExists;
+                        			if (count(SFLinkUtils::getFormsForArticle($this->skintemplate->skin)) > 0 || isset($asfAutomaticFormExists))
                                                     $link = htmlspecialchars(
                                                                 str_replace('action=edit',
                                                                     'action=formedit',
