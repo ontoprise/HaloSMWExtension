@@ -117,7 +117,9 @@ function enableRichMediaExtension() {
 	// register AC icons
 	$wgHooks['smwhACNamespaceMappings'][] = 'smwfRMRegisterAutocompletionIcons';
 	
-	global $smgJSLibs; $smgJSLibs[] = 'prototype';
+	global $smgJSLibs;
+	$smgJSLibs[] = 'jquery';
+	$smgJSLibs[] = 'prototype';
 
 	return true;
 }
@@ -318,17 +320,18 @@ function smwRMFormAddHTMLHeader(&$out){
 		
 		
 		$out->addScript('<script type="text/javascript" src="'.$smwgRMScriptPath. '/scripts/richmedia.js"></script>');
+		$out->addScript('<script type="text/javascript" src="'.$smwgRMScriptPath. '/scripts/fck_connect.js"></script>');
 		# Floatbox needed!
 		//$out->addScript('<script type="text/javascript" src="'.$sfgScriptPath .  '/libs/floatbox.js"></script>');
 		
 	
-		#Floatbox css file:
-//		$out->addLink(array(
-//			'rel'   => 'stylesheet',
-//			'type'  => 'text/css',
-//			'media' => 'screen, projection',
-//			'href'  => $sfgScriptPath . '/skins/floatbox.css'
-//		));
+		#Fancybox css file:
+		$out->addLink(array(
+			'rel'   => 'stylesheet',
+			'type'  => 'text/css',
+			'media' => 'screen, projection',
+			'href'  => $sfgScriptPath . '/skins/jquery.fancybox-1.3.1.css'
+		));
 		$out->addLink(array(
 			'rel'   => 'stylesheet',
 			'type'  => 'text/css',

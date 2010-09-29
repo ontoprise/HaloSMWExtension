@@ -9,8 +9,9 @@ VERSION 1.X
 
   CHANGES:
 	Issue 12237 - Text "Description page" changed to "File details"
+	Issue 12568. Disabled aggressively preload of all images in links to Special:EmbedWindow.
 	Issue 11837 - WebDAV now uses /imnages as upload directory
-
+	Added support for Semantic Forms 2.0
 
   BUGFIXES:
 	Issue 12322 - Key for error when uploading a filetype which is not permitted has changed

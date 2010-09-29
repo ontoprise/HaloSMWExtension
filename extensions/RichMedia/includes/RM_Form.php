@@ -33,24 +33,35 @@ class RMForm {
 	 * @return HTML
 	 */
 	static function createRichMediaForm($parser, &$parameter) {
-		global $wgOut;
+		global $wgOut, $smwgRMScriptPath, $sfgScriptPath, $sfgFancyBoxIncluded;
 
-		$html =<<<END
-<form onsubmit="fb.loadAnchor($('link_id'));return false;">
-END;
 		$uploadWindowPage = SpecialPage::getPage('UploadWindow');
-		
+
 		global $wgRequest;
 		$articleTitle = urlencode($wgRequest->getText('title'));
 		global $smwgRMFormByNamespace;
 		$smwgRMUploadFormName = $smwgRMFormByNamespace['RMUpload'];
-		$queryString = "&".$smwgRMUploadFormName."[RelatedArticles]=".$articleTitle."&wpIgnoreWarning=true";
+		$queryString = $smwgRMUploadFormName."[RelatedArticles]=".$articleTitle."&wpIgnoreWarning=true";
 		$uploadWindowUrl = $uploadWindowPage->getTitle()->getFullURL($queryString);
-		
+
+		$fancyboxClass = 'rmlink';
 		$uploadLabel = wfMsgNoTrans('smw_rm_uploadheadline');
 		$buttonText = '>> ' . wfMsgNoTrans('smw_rm_formbuttontext');
-		$html .= "<a id=\"link_id\" href=\"$uploadWindowUrl\" title=\"$uploadLabel\" rel=\"iframe\" rev=\"width:600 height:660\"></a>
-			<input class=\"rmUploadButton\" type=\"submit\" value=\"$buttonText\"/></form>";
+		$html = "<input class=\"$fancyboxClass rmUploadButton\" type=\"submit\"". 
+			"value=\"$buttonText\" title=\"$uploadLabel\" />";
+
+		$fancybox_js =<<<END
+<script type="text/javascript">
+var wgRMUploadUrl = "{$uploadWindowUrl}";</script>
+END;
+		$wgOut->addScript($fancybox_js);
+		
+		$script = $sfgScriptPath . '/libs/jquery.fancybox-1.3.1.js';
+		SMWOutputs::requireHeadItem($script,
+			'<script type="text/javascript" src="'.$script.'"></script>');
+		$script = $smwgRMScriptPath . '/scripts/richmedia_links.js';
+		SMWOutputs::requireHeadItem($script,
+			'<script type="text/javascript" src="'.$script.'"></script>');
 
 		//return array($html, 'noparse' => true, 'isHTML' => true);
 		return $parser->insertStripItem( $html, $parser->mStripState );
@@ -67,7 +78,7 @@ END;
 	 * @return HTML the text embraced by "richmedialink"-tags that will be removed again later in createRichMediaLinkAfterTidy
 	 */
 	static function createRichMediaLink($parser, &$parameters) {
-		global $wgOut, $wgRequest, $smwgRMFormByNamespace;
+		global $wgOut, $wgRequest, $smwgRMFormByNamespace, $sfgScriptPath, $smwgRMScriptPath;
 		$rMUploadFormName = $smwgRMFormByNamespace['RMUpload'];
 
 		if ( array_key_exists( 0, $parameters ) && isset( $parameters[0] ) ) {
@@ -82,9 +93,7 @@ END;
 			$linkTitle = wfMsgNoTrans('smw_rm_uploadheadline');
 		}
 
-
 		$queryString = "";
-
 		if( array_key_exists( 2, $parameters ) && isset( $parameters[2] ) ) {
 			$queryParameters = explode('&', $parameters[2]);
 			#cylce throuh other paramters and check if no preview value is blank!
@@ -110,8 +119,16 @@ END;
 		$queryString .= "&wpIgnoreWarning=true";
 		$uploadWindowPage = SpecialPage::getPage('UploadWindow');
 		$uploadWindowUrl = $uploadWindowPage->getTitle()->getFullURL($queryString);
+		$fancyboxClass = 'rmAlink';
+		
+		$script = $sfgScriptPath . '/libs/jquery.fancybox-1.3.1.js';
+		SMWOutputs::requireHeadItem($script,
+			'<script type="text/javascript" src="'.$script.'"></script>');
+		$script = $smwgRMScriptPath . '/scripts/richmedia_links.js';
+		SMWOutputs::requireHeadItem($script,
+			'<script type="text/javascript" src="'.$script.'"></script>');
 
-		$output = "<a href=\"$uploadWindowUrl\" title=\"$linkTitle\" rel=\"iframe\" rev=\"$rev\">$linkText</a>";
+		$output = "<a href=\"$uploadWindowUrl\" title=\"$linkTitle\" class=\"$fancyboxClass\">$linkText</a>";
 
 		global $smwgRMMarkerList;
 		$markercount = count($smwgRMMarkerList);

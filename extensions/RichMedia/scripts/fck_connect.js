@@ -26,7 +26,8 @@ function saveRichMediaData(mediaTitle, mediaLink) {
 	catch(err) {
 		// just reload if we're not using a form or doing an edit
 		if (!inFormEdit && window.top.wgAction != "edit") {
-			parent.fb.loadPageOnClose ='self';
+			//not available...
+//			parent.jQuery.fancybox.onClosed ='window.location.reload()';
 		}
 		return;
 	}
