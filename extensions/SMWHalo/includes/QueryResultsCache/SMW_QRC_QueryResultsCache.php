@@ -105,7 +105,7 @@ class SMWQRCQueryResultsCache {
 			$qrcStore->updateQueryData($queryData['queryId'], $queryData['queryResult'], $queryData['lastUpdate'], 
 				$queryData['accessFrequency']+1, $queryData['invalidationFrequency'], $queryData['dirty'], $priority);
 			
-			if($query instanceof SMWQueryResult){
+			if($query instanceof SMWQuery){
 				$query->addErrors($queryResult->getErrors());
 				$queryResult = 
 					new SMWQueryResult($query->getDescription()->getPrintRequests(), $query, $queryResult->getResults(), $store, $queryResult->hasFurtherResults());
