@@ -5,7 +5,7 @@
  * @ingroup SMW
  */
 
-define( 'SMW_VERSION', '{{$VERSION}}' );
+define( 'SMW_VERSION', '{{$VERSION}} [B{{$BUILDNUMBER}}]' );
 define( 'SEMANTIC_EXTENSION_TYPE', true );
 
 require_once( 'SMW_GlobalFunctions.php' );

@@ -13,7 +13,7 @@
 if ( !defined( 'MEDIAWIKI' ) ) die;
 
 // Version number of the extension
-define('SMW_USER_MANUAL_VERSION', '{{$VERSION}}');
+define('SMW_USER_MANUAL_VERSION', '{{$VERSION}} [B{{$BUILDNUMBER}}]');
 
 $wgExtensionCredits['other'][] = array(
     'name' => 'SMW User Manual v'.SMW_USER_MANUAL_VERSION,

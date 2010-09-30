@@ -27,7 +27,7 @@ if ( !defined( 'MEDIAWIKI' ) ) {
 	die( "This file is part of the Script Manager extension. It is not a valid entry point.\n" );
 }
 
-define('SCM_VERSION', '{{$VERSION}}');
+define('SCM_VERSION', '{{$VERSION}} [B{{$BUILDNUMBER}}]');
 
 global $wgExtensionFunctions, $wgScriptPath;;
 $smgSMPath = $wgScriptPath . '/extensions/ScriptManager';
