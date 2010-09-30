@@ -71,7 +71,6 @@ function enableLinkedData() {
 	$wgAutoloadClasses['LODMappingStore'] 	= $lodgIP . '/includes/LODMapping/LOD_MappingStore.php';
 	$wgAutoloadClasses['LODMappingTripleStore'] = $lodgIP . '/includes/LODMapping/LOD_MappingTripleStore.php';
 	$wgAutoloadClasses['LODPersistentMappingStore'] = $lodgIP . '/includes/LODMapping/LOD_PersistentMappingStore.php';
-
 	
 	$wgAutoloadClasses['LODMLClassMapping'] = $lodgIP . '/includes/LODMLApi/LOD_MLClassMapping.php';
 	$wgAutoloadClasses['LODMLEquivalentClassMapping'] = $lodgIP . '/includes/LODMLApi/LOD_MLEquivalentClassMapping.php';
@@ -86,8 +85,17 @@ function enableLinkedData() {
 
 	$wgAutoloadClasses['LODImporter'] = $lodgIP . '/includes/LODImport/LOD_Importer.php';
 	
+	//--- Non-existing page handler ---
 	$wgAutoloadClasses['LODNonExistingPageHandler'] = $lodgIP . '/includes/LODWikiFrontend/LOD_NonExistingPageHandler.php';
 	$wgAutoloadClasses['LODNonExistingPage'] = $lodgIP . '/includes/LODWikiFrontend/LOD_NonExistingPage.php';
+	
+	//--- Meta-data query printers ---
+	$wgAutoloadClasses['LODMetaDataQueryPrinter'] = $lodgIP . '/includes/LODWikiFrontend/MetaDataQueryPrinter/LOD_MetaDataQueryPrinter.php';
+	$wgAutoloadClasses['LODMetaDataPrinter'] = $lodgIP . '/includes/LODWikiFrontend/MetaDataQueryPrinter/LOD_MetaDataPrinter.php';
+	$wgAutoloadClasses['LODMDPTable'] = $lodgIP . '/includes/LODWikiFrontend/MetaDataQueryPrinter/LOD_MDP_Table.php';
+	$wgAutoloadClasses['LODMDPError'] = $lodgIP . '/includes/LODWikiFrontend/MetaDataQueryPrinter/LOD_MDP_Error.php';
+	$wgAutoloadClasses['LODMDPXslt'] = $lodgIP . '/includes/LODWikiFrontend/MetaDataQueryPrinter/LOD_MDP_XSLT.php';
+	
 			
     //--- Autoloading for exception classes ---
    	$wgAutoloadClasses['LODException']        = $lodgIP . '/exceptions/LOD_Exception.php';
@@ -109,7 +117,8 @@ function enableLinkedData() {
 function lodfSetupExtension() {
     wfProfileIn('lodfSetupExtension');
     global $lodgIP, $wgHooks, $wgParser, $wgExtensionCredits,
-    $wgLanguageCode, $wgVersion, $wgRequest, $wgContLang, $lodgNEPEnabled;
+    	   $wgLanguageCode, $wgVersion, $wgRequest, $wgContLang, $lodgNEPEnabled,
+    	   $lodgEnableMetaDataQueryPrinter;
 
     //--- Register hooks ---
     global $wgHooks;
@@ -120,8 +129,10 @@ function lodfSetupExtension() {
     if ($lodgNEPEnabled) {
 	 	$wgHooks['ArticleFromTitle'][]		= 'LODNonExistingPageHandler::onArticleFromTitle';
 	    $wgHooks['EditFormPreloadText'][]	= 'LODNonExistingPageHandler::onEditFormPreloadText';
-    }    	    
+    }    
 
+    lodfSetupMetaDataQueryPrinter();
+		    
     //--- Load messages---
     wfLoadExtensionMessages('LinkedData');
     
@@ -251,4 +262,30 @@ function lodfRegisterACIcon(& $namespaceMappings) {
 //    global $lodgIP;
 //    $namespaceMappings[LOD_NS_LOD]="/extensions/LinkedData/skins/images/LOD_AutoCompletion.gif";
     return true;
+}
+
+/**
+ * Setup of the meta-data query printers. This feature has to be enabled with
+ * the global variable $lodgEnableMetaDataQueryPrinter in LOD_Initialize.php.
+ */
+function lodfSetupMetaDataQueryPrinter() {
+	global $wgHooks, $lodgEnableMetaDataQueryPrinter, $lodgMetaDataPrinters;
+	
+    if ($lodgEnableMetaDataQueryPrinter) {
+		$wgHooks['smwInitDatatypes'][]     = 'LODMetaDataQueryPrinter::onSmwInitDatatypesHooks';
+		$wgHooks['ProcessQueryResults'][]  = 'LODMetaDataQueryPrinter::onProcessQueryResults';
+    }
+
+	# array(string ID => string className)
+	# This array maps from meta data printer IDs to the classes that print the meta
+	# data. The ID is the same as the one used in the "metadataformat" parameter
+	# in a query. It must be completely in lower case. 
+	# The className is the name of the class that formats the meta data and attaches
+	# it to the data value.
+	$lodgMetaDataPrinters = array(
+		'table' => 'LODMDPTable',
+		'xslt'  => 'LODMDPXslt',
+	
+	);
+	
 }
