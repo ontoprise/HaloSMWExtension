@@ -35,7 +35,7 @@ if ( !defined( 'MEDIAWIKI' ) ) {
 	die( "This file is part of the Collaboration extension. It is not a valid entry point.\n" );
 }
 
-define('CE_VERSION', '{{$VERSION}}');
+define('CE_VERSION', '{{$VERSION}} [B{{$BUILDNUMBER}}]');
 
 define('CE_COMMENT_ALL', 0);
 define('CE_COMMENT_AUTH_ONLY', 1);

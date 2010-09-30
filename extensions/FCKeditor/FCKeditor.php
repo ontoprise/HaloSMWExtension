@@ -41,7 +41,7 @@ License along with this library; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
 */
 
-define('WYSIWYG_EDITOR_VERSION', '{{$VERSION}}');
+define('WYSIWYG_EDITOR_VERSION', '{{$VERSION}} [B{{$BUILDNUMBER}}]');
 
 require_once $IP . "/includes/GlobalFunctions.php";
 require_once $IP . "/includes/parser/ParserOptions.php";
