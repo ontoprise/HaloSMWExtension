@@ -12,7 +12,7 @@
 
 if ( !defined( 'MEDIAWIKI' ) ) die;
 
-define('SEMANTIC_RULES_VERSION', '{{$VERSION}}');
+define('SEMANTIC_RULES_VERSION', '{{$VERSION}} [B{{$BUILDNUMBER}}]');
 if (!defined("SMW_HALO_VERSION")) {
 	trigger_error("SMWHalo is required but not installed.");
 	die();
