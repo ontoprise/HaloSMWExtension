@@ -51,7 +51,7 @@ class WebDAVServer extends HTTP_WebDAV_Server {
 		return array( 'OPTIONS', 'PROPFIND', 'GET', 'HEAD', 'DELETE', 'PUT', 'COPY', 'MOVE', 'MKCOL');
 	}
 
-	function options( &$serverOptions ) {
+	function options( array &$serverOptions ) {
 		parent::options( $serverOptions );
 
 		if ( $serverOptions['xpath']->evaluate( 'boolean(/D:options/D:activity-collection-set)' ) ) {
