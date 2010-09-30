@@ -31,6 +31,7 @@
 			<arg value="../../../buildtools/replaceVersionHint.php" />
 			<arg value="../deploy.xml" />
 			<arg value="../Treeview.php" />
+            <arg value="${env.BUILD_NUMBER}" />
 		</exec>
 	</target>
 </project>
