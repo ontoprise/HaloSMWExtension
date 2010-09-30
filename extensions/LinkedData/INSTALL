@@ -26,8 +26,10 @@ How to install with deployment framework:
 
 How to install manually:
 
-(1) Copy the folder 'LinkedData' into the extensions folder of MediaWiki. 
-(2) Activate the LDE by adding the following lines to LocalSettings.php: 
+(1) Install the script manager which you can find at 
+    http://sourceforge.net/projects/halo-extension/files/
+(2) Copy the folder 'LinkedData' into the extensions folder of MediaWiki. 
+(3) Activate the LDE by adding the following lines to LocalSettings.php: 
 	include_once('extensions/LinkedData/includes/LOD_Initialize.php');
 	enableLinkedData(); 
 
