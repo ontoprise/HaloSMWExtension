@@ -489,7 +489,6 @@ class SMWTripleStore extends SMWStore {
 				return $sqr;
 			}
 
-			//			wfRunHooks('FilterQueryResults', array(&$queryResult) );
 
 			switch ($query->querymode) {
 
@@ -497,7 +496,7 @@ class SMWTripleStore extends SMWStore {
 					$queryResult = $queryResult->getCount();
 					break;
 				default:
-
+					wfRunHooks('ProcessQueryResults', array(&$query, &$queryResult) );
 					break;
 			}
 			return $queryResult;
@@ -1129,6 +1128,13 @@ class SMWTripleStore extends SMWStore {
 			$result .= 'dataspace='.trim($query->params['dataspace']);
 			$first = false;
 		}
+		
+		if (isset($query->params) && isset($query->params['metadata'])) {
+			if (!$first) $result .= "|";
+			$result .= 'metadata='.trim($query->params['metadata']);
+			$first = false;
+		}
+		
 		return $result;
 	}
 
