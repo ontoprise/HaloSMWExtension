@@ -10,14 +10,14 @@
 
 		<webtest name="LoadMainPage">
 			<invoke url="http://localhost/${wikipath}/index.php/Main_Page" description="Tests if wiki responds at all by loading the main page" />
-			<verifyTitle text="Halo3wiki" />
+			<verifyTitle text="Main Page - Halo3wiki" />
 			<!--<setInputField name="search" value="WebTest" />
 			<clickButton label="Search" />
 			<verifyTitle text="Search results - Halo3wiki" />-->
 		</webtest>
 		<webtest name="LoadOntologyBrowser">
 			<antcall target="goToOntologyBrowser"/>
-			<verifyXPath description="Check if the heading element exists" xpath="//h1[@class='firstHeading']" text="OntologyBrowser" />
+			<verifyXPath description="Check if the heading element exists" xpath="//span[@id='smwh_breadcrumb_currentpage']" text="OntologyBrowser" />
 
 		</webtest>
 		
