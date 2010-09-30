@@ -7,8 +7,9 @@
         <maintainer>Vulcan</maintainer>
 		<instdir>extensions/SemanticWikitag</instdir>
 		<description>
-			The webservice endpoint for office wikitag add-in
+			The webservice endpoint for office wikitag add-in.
 		</description>
+		<helpurl>http://smwforum.ontoprise.com/smwforum/index.php/Help:WikiTags</helpurl>
 		<dependencies>
 			<dependency from="1135">MW</dependency>
 			<dependency from="142">smw</dependency>

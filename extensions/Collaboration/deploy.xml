@@ -9,6 +9,7 @@
 		<description>
 			Add fancy collaboration stuff to your wiki.
 		</description>
+		<helpurl>http://smwforum.ontoprise.com/smwforum/index.php/Help:Collaboration_Extension</helpurl>
 		<dependencies>
 			<dependency from="1151">mw</dependency>
 			<dependency from="143">smw</dependency>

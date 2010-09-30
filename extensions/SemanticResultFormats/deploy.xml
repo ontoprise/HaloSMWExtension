@@ -8,8 +8,9 @@
         <maintainer>Ontoprise GmbH</maintainer>
         <instdir>extensions/SemanticResultFormats</instdir>
         <description>
-            Semantic Result Formats provides several new result printer for ASK (and SPARQL)
+            Semantic Result Formats provides several new result printer for ASK (and SPARQL).
         </description>
+		<helpurl>http://smwforum.ontoprise.com/smwforum/index.php/Help:Semantic_Result_Formats</helpurl>
         <dependencies>
             <dependency from="150" to="152">smw</dependency>
         </dependencies>

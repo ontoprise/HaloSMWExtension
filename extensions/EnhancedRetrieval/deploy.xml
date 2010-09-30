@@ -6,8 +6,9 @@
         <vendor>Ontoprise GmbH</vendor>
         <maintainer>Ontoprise GmbH</maintainer>
         <instdir>extensions/EnhancedRetrieval</instdir>
-        <description>A client for the lucene wiki server</description>
-        <dependencies>
+        <description>A client for the lucene wiki server.</description>
+        <helpurl>http://smwforum.ontoprise.com/smwforum/index.php/Help:Enhanced_Retrieval_Extension</helpurl>
+		<dependencies>
             <dependency from="1150" to="1160">MW</dependency>
             <dependency from="100" to="100">scriptmanager</dependency>
         </dependencies>

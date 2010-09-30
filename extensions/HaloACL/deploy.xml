@@ -9,6 +9,7 @@
 		<description>
 			Protects pages, categories, namespaces and semantic properties.
 		</description>
+		<helpurl>http://smwforum.ontoprise.com/smwforum/index.php/Help:Access_Control_List_extension</helpurl>
 		<dependencies>
 			<dependency from="1132" to="1160">mw</dependency>
 			<dependency from="100" to="100">scriptmanager</dependency>

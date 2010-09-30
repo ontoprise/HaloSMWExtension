@@ -7,8 +7,9 @@
         <maintainer>Ontoprise GmbH</maintainer>
         <instdir>extensions/Ultrapedia</instdir>
         <description>
-            Provides a tab function and a dynamic ask query
+            Provides a tab function and a dynamic ask query.
         </description>
+		<helpurl>http://smwforum.ontoprise.com/smwforum/index.php/Help:Ultrapedia_Extension</helpurl>
         <dependencies>
             <dependency from="142" to="152">smw</dependency>
         </dependencies>

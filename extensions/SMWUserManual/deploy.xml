@@ -9,6 +9,7 @@
         <description>
             Context sensitive help and feedback for Semantic MediaWiki and SMW based extentions.
         </description>
+		<helpurl>http://smwforum.ontoprise.com/smwforum/index.php/Help:Semantic_MediaWiki_User_Manual</helpurl>
         <dependencies>
             <dependency from="146">SMWHalo</dependency>
         </dependencies>

@@ -10,6 +10,7 @@
         <description>
            Javascript managing component. Basis for all Halo plugins.
         </description>
+		<helpurl>http://smwforum.ontoprise.com/smwforum/index.php/Help:Script_Manager_Extension</helpurl>
         <dependencies>
            
         </dependencies>

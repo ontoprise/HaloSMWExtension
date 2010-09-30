@@ -9,6 +9,7 @@
 		<description>
 			Connects external datasources to your wiki.
 		</description>
+		<helpurl>http://smwforum.ontoprise.com/smwforum/index.php/Help:Data_Import_Extension</helpurl>
 		<dependencies>
 			<dependency from="1150" to="1160">MW</dependency>
 			<dependency from="150" to="152">smw</dependency>

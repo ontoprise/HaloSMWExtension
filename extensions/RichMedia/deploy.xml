@@ -7,8 +7,9 @@
 		<maintainer>Ontoprise GmbH</maintainer>
 		<instdir>extensions/RichMedia</instdir>
 		<description>
-			Store richmedia files in our your wiki
+			Store richmedia files in our your wiki.
 		</description>
+		<helpurl>http://smwforum.ontoprise.com/smwforum/index.php/Help:Rich_Media_Extension</helpurl>
 		<dependencies>
 			<dependency from="1153" to="1160">MW</dependency>
 			<dependency from="190" to="200">semanticforms</dependency>

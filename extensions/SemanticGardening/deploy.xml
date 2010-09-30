@@ -7,6 +7,7 @@
 		<maintainer>Ontoprise GmbH</maintainer>
 		<instdir>extensions/SemanticGardening</instdir>
 		<description>Helps to keep the wiki clean and consistent. Allows to run asynchronous bots.</description>
+		<helpurl>http://smwforum.ontoprise.com/smwforum/index.php/Help:Semantic_Gardening_Extension</helpurl>
 		<dependencies>
 			<dependency from="146" to="152">SMWHalo</dependency>
 		</dependencies>

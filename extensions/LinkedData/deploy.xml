@@ -9,6 +9,7 @@
 		<description>
 			Use Linked Data in your wiki.
 		</description>
+		<helpurl>http://smwforum.ontoprise.com/smwforum/index.php/Help:Linked_Data_extension</helpurl>
 		<dependencies>
 			<dependency from="1150" to="1160">mw</dependency>
 			<dependency from="100" to="100">scriptmanager</dependency>

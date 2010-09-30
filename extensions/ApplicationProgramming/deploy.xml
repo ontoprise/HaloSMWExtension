@@ -7,9 +7,9 @@
 		<maintainer>Ontoprise GmbH</maintainer>
 		<instdir>extensions/ApplicationProgramming</instdir>
 		<description>
-			Provides utility functionality for wikitext-programming
+			Provides utility functionality for wikitext-programming.
 		</description>
-
+		<helpurl>http://smwforum.ontoprise.com/smwforum/index.php/Help:Application_Programming_Extension</helpurl>
 	</global>
 	<codefiles>
 		<file loc="extensions/ApplicationProgramming/deploy.xml" />
