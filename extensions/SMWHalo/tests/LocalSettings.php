@@ -1,3 +1,5 @@
+// set skin here again to overwrite the default
+$wgDefaultSkin = 'ontoskin3';
 
 $wgGroupPermissions['*']['ontologyediting']=true;
 $wgGroupPermissions['user']['ontologyediting']=true;
