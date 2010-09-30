@@ -42,7 +42,7 @@ if ( !defined( 'SGA_GARDENING_EXTENSION_VERSION' ) ) {
 	     "Please read 'extensions/SemanticNotifications/INSTALL' for further information.\n" );
 }
 
-define('SN_SEMANTIC_NOTIFICATIONS_VERSION', '{{$VERSION}}');
+define('SN_SEMANTIC_NOTIFICATIONS_VERSION', '{{$VERSION}} [B{{$BUILDNUMBER}}]');
 
 // constant for special schema properties
 
