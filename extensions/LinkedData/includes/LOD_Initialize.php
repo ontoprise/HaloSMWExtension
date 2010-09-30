@@ -113,6 +113,17 @@ $lodgNEPUseGenericTemplateIfCategoryMember = true;
 $lodgNEPCategoryTemplatePattern = "MediaWiki:NEP/Category/{cat}";
 
 
+####
+# Settings for meta-data query printers
+#
+# The results of SPARQL queries can be augmented with meta-data. The following
+# settings configure this feature.
+
+####
+# boolean - The meta data query printer augments the results of a query with meta
+# data. It is enabled by setting this variable <true>.
+$lodgEnableMetaDataQueryPrinter = true;
+
 
 # load global functions
 require_once('LOD_GlobalFunctions.php');
@@ -143,6 +154,7 @@ function lodfInitStores() {
 }
 
 
-// Tell the script manager, that we need prototype
-//global $smgJSLibs; 
-//$smgJSLibs[] = 'prototype'; 
+// Tell the script manager, that we need jQuery
+global $smgJSLibs; 
+$smgJSLibs[] = 'jquery'; 
+$smgJSLibs[] = 'qtip'; 
