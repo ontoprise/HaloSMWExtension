@@ -188,7 +188,7 @@ class PCPServer extends PCPAny{
 		return $__result;
 	}
 
-	public function &readPage(PCPUserCredentials $userCredentials=NULL, $title= NULL, $revisionID = NULL){
+	public function readPage(PCPUserCredentials $userCredentials=NULL, $title= NULL, $revisionID = NULL){
 
 		$this->page = new PCPPage($title);
 		$this->setCookies($userCredentials);
@@ -315,7 +315,7 @@ class PCPServer extends PCPAny{
 		return $__pages;
 	}
 
-	public function deletePage(PCPUserCredentials $userCredentials=NULL, $title=NULL, $reason){
+	public function deletePage(PCPUserCredentials $userCredentials=NULL, $title=NULL, $reason=NULL){
 		if($title == NULL){
 			// trigger an error?
 			return false;

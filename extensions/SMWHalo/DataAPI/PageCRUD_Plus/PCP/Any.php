@@ -343,7 +343,7 @@ abstract class PCPAny{
 	 * @param string reason
 	 * @return boolean
 	 */
-	public function deletePage(PCPUserCredentials $userCredentials=NULL, $title=NULL, string $reason=NULL){
+	public function deletePage(PCPUserCredentials $userCredentials=NULL, $title=NULL, $reason=NULL){
 		return false;
 	}
 
