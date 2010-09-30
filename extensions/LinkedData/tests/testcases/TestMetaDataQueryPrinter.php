@@ -20,6 +20,19 @@ class TestMetaDataQueryPrinterSuite extends PHPUnit_Framework_TestSuite
 	public static $mOrderOfArticleCreation;
 	public static $mArticles;
 	
+	protected static $mBaseURI = 'http://www.example.org/smw-lde/';
+	protected $mGraph1 = "http://www.example.org/smw-lde/smwGraphs/ToyotaGraph";
+	protected $mGraph2 = "http://www.example.org/smw-lde/smwGraphs/VolkswagenGraph";
+	protected $mProvGraph;
+	protected $mDSIGraph;
+    
+	// this file is located in the TSC resources directory
+	protected $mFilePath = "file://resources/lod_wiki_tests/OntologyBrowserSparql/";
+	protected $mGraph1N3 = "ToyotaGraph.n3";
+	protected $mGraph2N3 = "VolkswagenGraph.n3";
+	protected $mProvGraphN3 = "ProvenanceGraph.n3";
+	protected $mDSIGraphN3 = "DataSourceInformationGraph.n3";
+	
 	public static function suite() {
 		
 		$suite = new TestMetaDataQueryPrinterSuite();
@@ -28,6 +41,20 @@ class TestMetaDataQueryPrinterSuite extends PHPUnit_Framework_TestSuite
 	}
 	
 	protected function setUp() {
+		// Setup the content of the triple store
+		$this->mProvGraph = self::$mBaseURI."smwGraphs/ProvenanceGraph";
+		$this->mDSIGraph = self::$mBaseURI."smwGraphs/DataSourceInformationGraph";
+
+		$tsa = new LODTripleStoreAccess();
+		$tsa->createGraph($this->mGraph1);
+		$tsa->createGraph($this->mGraph2);
+		$tsa->createGraph($this->mProvGraph);
+		$tsa->createGraph($this->mDSIGraph);
+		$tsa->loadFileIntoGraph("{$this->mFilePath}ToyotaGraph.n3", $this->mGraph1, "n3");
+		$tsa->loadFileIntoGraph("{$this->mFilePath}VolkswagenGraph.n3", $this->mGraph2, "n3");
+		$tsa->loadFileIntoGraph("{$this->mFilePath}ProvenanceGraph.n3", $this->mProvGraph, "n3");
+		$tsa->loadFileIntoGraph("{$this->mFilePath}DataSourceInformationGraph.n3", $this->mDSIGraph, "n3");
+		$tsa->flushCommands();
 		
 		// Create articles
     	$this->initArticleContent();
@@ -37,6 +64,13 @@ class TestMetaDataQueryPrinterSuite extends PHPUnit_Framework_TestSuite
 	
 	protected function tearDown() {
     	$this->removeArticles();
+    	
+		$tsa = new LODTripleStoreAccess();
+		$tsa->dropGraph($this->mGraph1);
+		$tsa->dropGraph($this->mGraph2);
+		$tsa->dropGraph($this->mProvGraph);
+		$tsa->createGraph($this->mDSIGraph);
+		$tsa->flushCommands();
 	}
 
 //--- Private functions --------------------------------------------------------
