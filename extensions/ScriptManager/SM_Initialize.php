@@ -68,6 +68,10 @@ function smfAddHTMLHeader(& $out) {
 					$smwgJQueryIncluded = true;
 				}
 				break;
+			case 'qtip':
+				$out->addScript("<script type=\"text/javascript\" src=\"". "$smgSMPath/scripts/qTip/jquery.qtip-1.0.0-rc3.min.js\"></script>");
+//Debug version				$out->addScript("<script type=\"text/javascript\" src=\"". "$smgSMPath/scripts/qTip/jquery.qtip-1.0.0-rc3.js\"></script>");
+				break;
 			case 'ext':
 			
 				$out->addLink(array(
