@@ -6,7 +6,7 @@
  */
 if ( !defined( 'MEDIAWIKI' ) ) die;
 
-define('SMW_ULTRAPEDIA_VERSION', '{{$VERSION}}');
+define('SMW_ULTRAPEDIA_VERSION', '{{$VERSION}} [B{{$BUILDNUMBER}}]');
 
 $smwgUltraPediaIP = $IP . '/extensions/Ultrapedia';
 $smwgUltraPediaScriptPath = $wgScriptPath . '/extensions/Ultrapedia';
