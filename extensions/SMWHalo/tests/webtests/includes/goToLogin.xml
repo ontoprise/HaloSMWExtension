@@ -4,5 +4,5 @@
 		description="Login into the wiki" />
 	<setInputField htmlId="wpName1" value="WikiSysop" />
 	<setInputField htmlId="wpPassword1" value="root" />
-	<clickButton htmlId="wpLoginattempt" />
+	<clickButton htmlId="wpLoginAttempt" />
 </target>
