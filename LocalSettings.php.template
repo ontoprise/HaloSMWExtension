@@ -312,16 +312,16 @@ require_once( "extensions/NewUserMessage/NewUserMessage.php" );
 $wgJobRunRate=0;
 
 /*start-richmedia*/
+include_once('extensions/RichMedia/includes/RM_Initialize.php');
+enableRichMediaExtension();
+$wgAllowExternalImages=true;
+include_once('extensions/RichMedia/includes/WebDAV/WD_Initialize.php');
 #Set default searching for document and pdf namespace
 $wgNamespacesToBeSearchedDefault = array(
         NS_MAIN => true,
         NS_DOCUMENT => true,
         NS_PDF => true
 );
-include_once('extensions/RichMedia/includes/RM_Initialize.php');
-enableRichMediaExtension();
-$wgAllowExternalImages=true;
-include_once('extensions/RichMedia/includes/WebDAV/WD_Initialize.php');
 /*end-richmedia*/
 
 /*start-treeview*/
