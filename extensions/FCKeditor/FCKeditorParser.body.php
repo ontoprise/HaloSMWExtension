@@ -268,9 +268,9 @@ class FCKeditorParser extends Parser
 		return parent::replaceInternalLinks($text);
 	}
 
-	function makeImage( $nt, $options ) {
+	function makeImage( $title, $options, $holders = false ) {
 		FCKeditorParser::$fck_mw_makeImage_options = $options;
-		return parent::makeImage( $nt, $options );
+		return parent::makeImage( $title, $options );
 	}
 
 	/**
@@ -421,7 +421,7 @@ class FCKeditorParser extends Parser
 		return $text;		
 	}
 
-	function internalParse ( $text ) {
+	function internalParse ( $text, $isMain = true, $frame=false ) {
 
 		$this->fck_internal_parse_text =& $text;
 
@@ -465,7 +465,7 @@ class FCKeditorParser extends Parser
 	function fck_leaveTemplatesAlone( $matches ) {
 		return "<!--FCK_SKIP_START-->".$matches['text']."<!--FCK_SKIP_END-->";
 	}
-	function formatHeadings( $text, $isMain=true ) { return $text; }
+	function formatHeadings( $text, $origText, $isMain=true) { return $text; }
 	function replaceFreeExternalLinks( $text ) { return $text; }
 	function stripNoGallery(&$text) {}
 	function stripToc( $text ) {
@@ -610,7 +610,7 @@ class FCKeditorParser extends Parser
   		return "[[".$match."]]";
 	}
 
-	function parse( $text, &$title, $options, $linestart = true, $clearState = true, $revid = null ) {
+	function parse( $text, Title $title, ParserOptions $options, $linestart = true, $clearState = true, $revid = null ) {
 		$text = preg_replace("/^#REDIRECT/", "<!--FCK_REDIRECT-->", $text);
 		$parserOutput = parent::parse($text, $title, $options, $linestart , $clearState , $revid );
 
