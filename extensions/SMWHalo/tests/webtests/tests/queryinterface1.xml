@@ -77,9 +77,9 @@
               value="list"
             />
             <checkAjaxResponseXpathText
-              description="Preview must contain 2 link in a list"
+              description="Preview must contain 4 links in a list"
               xpath="count(//div[@id='previewcontent']//a)"
-              text="2"
+              text="6"
             />  
             <clickLink
               description="Click on property in Tree"
@@ -97,7 +97,7 @@
             <checkAjaxResponseXpathText
               description="Preview has 3 results"
               xpath="count(//div[@id='previewcontent']//a)"
-              text="3"
+              text="9"
             />
             <clickLink
               description="Click on Category City in Tree"
@@ -110,7 +110,7 @@
             <checkAjaxResponseXpathText
               description="Preview still has 3 results"
               xpath="count(//div[@id='previewcontent']//a)"
-              text="3"
+              text="9"
             />
 
         </webtest>
