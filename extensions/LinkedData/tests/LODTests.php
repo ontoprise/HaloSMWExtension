@@ -14,6 +14,7 @@ require_once 'testcases/TestOntologyBrowserSparql.php';
 require_once 'testcases/TestMappingLanguageAPI.php';
 require_once 'testcases/TestImporter.php';
 require_once 'testcases/TestNonExistingPageHandler.php';
+require_once 'testcases/TestMetaDataQueryPrinter.php';
 
 class LODTests
 { 
@@ -35,6 +36,7 @@ class LODTests
         $suite->addTestSuite("TestMappingLanguageAPI");
         $suite->addTestSuite("TestImporter");
         $suite->addTestSuite("TestNonExistinPageSuite");
+        $suite->addTestSuite("TestMetaDataQueryPrinterSuite");
         
         return $suite;
     }
