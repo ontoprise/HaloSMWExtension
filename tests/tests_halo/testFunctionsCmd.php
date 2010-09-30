@@ -78,7 +78,7 @@ function isWindows() {
     static $thisBoxRunsWindows;
     
     if (! is_null($thisBoxRunsWindows)) return $thisBoxRunsWindows;
-    
+    date_default_timezone_set('UTC');
     ob_start();
     phpinfo();
     $info = ob_get_contents();
