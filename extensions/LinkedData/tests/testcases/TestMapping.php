@@ -43,7 +43,12 @@ text;
 	}
 
 	function tearDown() {
-
+		$store = new LODPersistentMappingStore(new LODMappingTripleStore());
+		$store->removeAllMappings();
+		
+		$store = new LODMappingTripleStore();
+		$store->removeAllMappings();
+		
 	}
 
 	/**
