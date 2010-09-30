@@ -34,7 +34,7 @@ if ( !defined( 'MEDIAWIKI' ) ) {
 	die( "This file is part of the LinkedData extension. It is not a valid entry point.\n" );
 }
 
-define('LOD_LINKEDDATA_VERSION', '{{$VERSION}}');
+define('LOD_LINKEDDATA_VERSION', '{{$VERSION}} [B{{$BUILDNUMBER}}]');
 
 define('LOD_STORE_SQL', 'LODStoreSQL');
 

@@ -33,7 +33,7 @@ if ( !defined( 'MEDIAWIKI' ) ) {
 	die( "This file is part of the RichMedia extension. It is not a valid entry point.\n" );
 }
 
-define('SMW_RM_VERSION', '{{$VERSION}}-for-SMW-1.4.x');
+define('SMW_RM_VERSION', '{{$VERSION}}-for-SMW-1.5.x [B{{$BUILDNUMBER}}]');
 
 global $smwgRMIP, $wgHooks; 
 $smwgRMIP = $IP . '/extensions/RichMedia';
