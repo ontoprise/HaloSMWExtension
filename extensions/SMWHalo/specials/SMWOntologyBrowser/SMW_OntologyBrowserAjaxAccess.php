@@ -674,7 +674,7 @@ class OB_StorageTS extends OB_Storage {
 		}
 		// Check if the wiki is among the data sources
 		$dataSpace = "";
-		$sources = split(',', $this->dataSource);
+		$sources = explode(',', $this->dataSource);
 		$graph = "";
 		$wikiID = wfMsg("smw_ob_source_wiki");
 		foreach ($sources as $key => $source) {
