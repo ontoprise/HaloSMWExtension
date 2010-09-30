@@ -41,7 +41,7 @@
 			<verifyXPath description="Check if the element exists" xpath="//div[@id='instanceList']/table/tbody/tr/td/a" text="Audi TT" />
 			<clickLink xpath="//div[@id='instanceList']/table/tbody/tr/td/a" />
 			<sleep description="4s pause" seconds="4" />
-			<verifyXPath description="Check if the element exists" xpath="//div[@id='relattributes']/table/tbody/tr/td/a" text="Has owner" />
+			<verifyXPath description="Check if the element exists" xpath="//div[@id='relattributes']/table/tbody/tr[5]/td/a" text="Has owner" />
 		</webtest>
 
 		<webtest name="Select category and check for schema property">
@@ -60,13 +60,13 @@
 			<clickLink xpath="//a[@title='Car']" description="Select category car" />
 			<sleep description="4s pause" seconds="4" />
 			<clickLink xpath="//span[@id='menuBarcategoryTree']/a" description="Select create subcategory" />
-			<setInputField htmlId="categoryTreeMenu_input_ontologytools" value="Racing car" description="Enter: Racing car" />
+			<setInputField htmlId="categoryTreeMenu_input_ontologytools" value="Vintage car" description="Enter: Vintage car" />
 			<sleep description="8s pause" seconds="8" />
 			<clickLink xpath="//a[@id='categoryTreeMenu_apply_ontologytools']" description="Click on create" />
 			<antcall target="goToOntologyBrowser" />
 			<clickLink xpath="//a[@title='Car']" description="Select category car (and show its subcategories)" />
 			<sleep description="8s pause" seconds="8" />
-			<verifyXPath xpath="//a[@title='Racing_car']" description="Check if category appears" />
+			<verifyXPath xpath="//a[@title='Vintage_car']" description="Check if category appears" />
 		</webtest>
 
 		<webtest name="Create a category on the same level of Car">
@@ -76,12 +76,12 @@
 			<clickLink xpath="//a[@title='Car']" description="Select category car" />
 			<sleep description="4s pause" seconds="4" />
 			<clickLink xpath="//span[@id='menuBarcategoryTree']/a[2]" description="Select create category on same level" />
-			<setInputField htmlId="categoryTreeMenu_input_ontologytools" value="Bike" description="Enter: Bike" />
+			<setInputField htmlId="categoryTreeMenu_input_ontologytools" value="Boat" description="Enter: Boat" />
 			<sleep description="8s pause" seconds="8" />
 			<clickLink xpath="//a[@id='categoryTreeMenu_apply_ontologytools']" description="Click on create" />
 			<antcall target="goToOntologyBrowser" />
 
-			<verifyXPath xpath="//a[@title='Bike']" description="Check if category appears" />
+			<verifyXPath xpath="//a[@title='Boat']" description="Check if category appears" />
 		</webtest>
 	</target>
 </project>
