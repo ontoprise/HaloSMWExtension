@@ -15,7 +15,7 @@
 if ( !defined( 'SMW_HALO_VERSION' ) ) die("The Data Import extension requires the Halo extension.");
 if ( !defined( 'SGA_GARDENING_EXTENSION_VERSION' ) ) die("The Data Import extension requires the Semantic Gardening extension.");
 
-define('SMW_DI_VERSION', '{{$VERSION}}');
+define('SMW_DI_VERSION', '{{$VERSION}} [B{{$BUILDNUMBER}}]');
 
 global $smwgDIIP, $wgHooks; 
 $smwgDIIP = $IP . '/extensions/DataImport';
