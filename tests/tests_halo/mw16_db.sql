@@ -16,6 +16,15 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
+-- Create schema mw16_db
+--
+
+DROP DATABASE IF EXISTS testdb;
+
+CREATE DATABASE testdb;
+USE testdb;
+
+--
 -- Table structure for table `archive`
 --
 
@@ -575,7 +584,7 @@ CREATE TABLE `objectcache` (
 
 LOCK TABLES `objectcache` WRITE;
 /*!40000 ALTER TABLE `objectcache` DISABLE KEYS */;
-INSERT INTO `objectcache` VALUES ('mw16:pcache:idhash:1-0!1!0!!en!2','¥V[oÛ6î³­‡íÉ–ä8ÉLË\Z† K$‡fëÃ0´tl¡H¤â¤AÿûÎ¡eWñº!]ÀŠÎõ#¿sñ-OG<šëÀÞ6¾n|ÄGGüÅñcUwðä£©ãi:Ix”Õy¶Èo ”â£|l-[\0hæš¢\0ç–RÏLjç…RP³x‘÷²½êüÌh×(Ïü\ZX&ØÚÂr­½¯yWàÅpƒ+\n=4vÓ[|	ªæèèA{±B	çfB«…bžÀ1ji³4J™M”ÿŽçøÑ±‹F–Å\"gKc~WÂK£þ5NêU@Bi˜3K¿†k/[òÌÕBï–Ò;(È;ÊÿÜƒ]µÙX‰`b©Kx\ZÖëúg/½‚Ùú~.Vðƒ¨ê©®3\nÞÛX³4b[óèU¬svÞ@¼Fë¡Œrò¤³ü•Å„+g¯àU›Á\ZD©¤†ˆÉrµþ÷{ÿÃˆ¬“ÅxÔ^Ö¨<S2ÿ-›Íf¡[úÂÊÐPÄËR®\ZnõÞm3¼•¥WÎlçÌ”tá Hú ~ýå·7\"øRÅèó_9&%\\î B+!U%tÐQ}Å{T¡µitß 0ŠM|ÜGŒLõzY0`½÷°™ÏÑ ÂÊ±Pë{s|ZCˆ%¯M	¬@ž³£8MÂ§77Îà	É/±)\nÕ ‘“Ÿ€³$%“ÓôxÄÏ\\ïªZ	LØUSaþ‹ÝùS\rÚÉG`u˜!l‰\'¬¶ÉJÞvÈ?ˆG ä;ûB¡ýš=À3«6é	¯ƒË\'Ìš§ƒ¤Ÿö“~tÄºG°–«šŒ>¦§ÉñÑ„Qš0¯Æ8¼®…^5Ø„×R?¸h*xÂ_>Ó,CÝme¬„®â”8n°{Ý­*oÄJÑtÁŠ˜Ð8¤vÝÍÄ	¨Ïõy´³8#àwo‡â5@’þ„f€u4N¦aÌ¦Ã“á˜þ?!ÔhCÞ–Œ®|Ô‘_•\râªBP]kºó¶\n÷Æ4æÇ¨ú¦9<•<%Üþ]ƒ¢\r3NÞ†Z»õ99âßÝš!Ô®\Z°™>´~G7m¿KÜ!_Q#ïÍí8ûüJz‰søÊCuÈÓv±^\ZÓeï¯ú(¬ÞÞFWÚ&Ò”¿HL °l^BíxS(xµçGí;&Ãz£\'R\ZÖA{Ã…²­4ÝT°­[Ú–bØd]âYZS…EÕ©úûnÕÓ$0Ë%R@œn]¬=\0±ßJÓÏ»ÛŸ[Sƒõ¯z‘šäîöìòîæš`zŒ0ê»îo•wÕž%‹çŽaÛ­í”øJ/ŽGGˆào','2010-09-28 17:05:39'),('mw16:messages:en','K´2´ª.¶2·R\ns\r\nöô÷S²Î´2´®\0','2010-09-28 17:05:39');
+INSERT INTO `objectcache` VALUES ('mw16:pcache:idhash:1-0!1!0!!en!2','ï¿½V[oï¿½6ï¿½ï¿½ï¿½ï¿½É–ï¿½8ï¿½Lï¿½\Zï¿½ K$ï¿½ï¿½fï¿½ï¿½0ï¿½tlï¿½Hï¿½ï¿½ï¿½Aï¿½ï¿½Î¡eWï¿½!]ï¿½ï¿½ï¿½ï¿½ï¿½#ï¿½sï¿½-OG<ï¿½ï¿½ï¿½ï¿½6ï¿½n|ï¿½GGï¿½ï¿½ï¿½cUwï¿½ä£©ï¿½i:Ixï¿½ï¿½yï¿½ï¿½oï¿½ï¿½ï¿½|ï¿½l-[\0hæš¢\0ç–Rï¿½Ljï¿½RPï¿½xï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½hï¿½(ï¿½ï¿½\ZX&ï¿½ï¿½ï¿½rï¿½ï¿½ï¿½yWï¿½ï¿½pï¿½+\n=4vï¿½[|	ï¿½ï¿½ï¿½ï¿½A{ï¿½B	ï¿½fBï¿½ï¿½bï¿½ï¿½1jiï¿½4Jï¿½Mï¿½ï¿½ï¿½ï¿½ï¿½Ñ±ï¿½Fï¿½ï¿½ï¿½\"gKc~Wï¿½Kï¿½ï¿½5Nï¿½U@Biï¿½3Kï¿½ï¿½k/[ï¿½ï¿½ï¿½ï¿½Bï¿½ï¿½ï¿½;(ï¿½;ï¿½ï¿½Üƒï¿½]ï¿½ï¿½Xï¿½`bï¿½Kx\Zï¿½ï¿½ï¿½g/ï¿½ï¿½Ùï¿½ï¿½~.Vï¿½ï¿½ï¿½ï¿½ï¿½3\nï¿½ï¿½Xï¿½4b[ï¿½ï¿½Uï¿½svï¿½@ï¿½Fë¡Œrï¿½ï¿½Å„+gï¿½ï¿½Uï¿½ï¿½\ZDï¿½ï¿½ï¿½ï¿½ï¿½rï¿½ï¿½ï¿½{ï¿½Ãˆï¿½ï¿½ï¿½ï¿½xï¿½^Ö¨<S2ï¿½-ï¿½ï¿½fï¿½[ï¿½ï¿½ÊÐPï¿½ï¿½Rï¿½\Znï¿½ï¿½m3ï¿½ï¿½ï¿½Wï¿½lï¿½Ì”tï¿½Hï¿½ï¿½~ï¿½ï¿½7\"ï¿½Rï¿½ï¿½ï¿½_9&%\\ï¿½B+!U%tï¿½Q}ï¿½{Tï¿½ï¿½itï¿½ 0ï¿½M|ï¿½Gï¿½Lï¿½zY0`ï¿½ï¿½ï¿½ï¿½ï¿½Ñ ï¿½Ê±Pï¿½{s|ZCï¿½ï¿½%ï¿½M	ï¿½@ï¿½ï¿½ï¿½8MÂ§77ï¿½ï¿½	ï¿½/ï¿½)\nÕ ï¿½ï¿½ï¿½ï¿½ï¿½$%ï¿½ï¿½ï¿½xï¿½ï¿½\\ï¿½ï¿½Z	Lï¿½USaï¿½ï¿½ï¿½ï¿½S\rï¿½ï¿½G`uï¿½!lï¿½\'ï¿½ï¿½ï¿½Jï¿½vï¿½?ï¿½Gï¿½ï¿½;ï¿½Bï¿½ï¿½=ï¿½3ï¿½6ï¿½	ï¿½ï¿½ï¿½ï¿½\'Ìšï¿½ï¿½ï¿½ï¿½ï¿½ï¿½~tï¿½ï¿½Gï¿½ï¿½ï¿½ï¿½ï¿½ï¿½>ï¿½ï¿½ï¿½ï¿½ï¿½Ñ„Qï¿½0ï¿½ï¿½8ï¿½ï¿½ï¿½^5Ø„ï¿½R?ï¿½h*xï¿½_>ï¿½,Cï¿½meï¿½ï¿½ï¿½ï¿½8nï¿½{Ý­*oï¿½Jï¿½tï¿½ï¿½ï¿½ï¿½8ï¿½vï¿½ï¿½ï¿½	ï¿½ï¿½ï¿½ï¿½yï¿½ï¿½8#ï¿½woï¿½ï¿½5@ï¿½ï¿½ï¿½fï¿½u4Nï¿½aÌ¦Ã“ï¿½ï¿½?!ï¿½hCÞ–ï¿½ï¿½|Ô‘_ï¿½\rï¿½ï¿½BP]kï¿½ï¿½ï¿½\nï¿½ï¿½4ï¿½Ç¨ï¿½9<ï¿½<%ï¿½ï¿½]ï¿½ï¿½\r3Nï¿½ï¿½Zï¿½ï¿½99ï¿½ï¿½Ýš!Ô®\Zï¿½ï¿½>ï¿½~G7mï¿½Kï¿½!_Q#ï¿½ï¿½ï¿½8ï¿½ï¿½Jzï¿½sï¿½ï¿½Cuï¿½ï¿½vï¿½^\Zï¿½eï¿½ï¿½(ï¿½ï¿½ï¿½FWï¿½&Ò”ï¿½HL ï¿½l^Bï¿½xS(xï¿½ï¿½Gï¿½;&ï¿½zï¿½\'R\Zï¿½A{ï¿½Ã…ï¿½ï¿½4ï¿½Tï¿½ï¿½[Ú–bï¿½d]ï¿½YZSï¿½EÕ©ï¿½ï¿½nï¿½ï¿½$0ï¿½%R@ï¿½ï¿½n]ï¿½ï¿½=\0ï¿½ï¿½Jï¿½Ï»ÛŸ[Sï¿½ï¿½ï¿½zï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½`zï¿½0ï¿½ï¿½oï¿½wï¿½ï¿½%ï¿½ï¿½aÛ­ï¿½ï¿½J/ï¿½GGï¿½ï¿½o','2010-09-28 17:05:39'),('mw16:messages:en','Kï¿½2ï¿½ï¿½.ï¿½2ï¿½R\ns\r\nï¿½ï¿½ï¿½Sï¿½Î´2ï¿½ï¿½\0','2010-09-28 17:05:39');
 /*!40000 ALTER TABLE `objectcache` ENABLE KEYS */;
 UNLOCK TABLES;
 
