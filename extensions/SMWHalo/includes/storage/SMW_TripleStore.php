@@ -683,8 +683,12 @@ class SMWTripleStore extends SMWStore {
 					}
 
 				} else  {
-					$dbkeys = $data->getDBkeys();
-					$label = $data instanceof Title ? $data->getDBkey() : array_shift($dbkeys);
+					if ( $data instanceof Title) {
+						$label = $data->getDBkey();
+					} else {
+						$dbkeys = $data->getDBkeys();
+						$label =  array_shift($dbkeys);
+					}
 					if (array_key_exists($label, $mapPRTOColumns)) {
 						$mapPRTOColumns[$label][] = $index;
 					} else {
