@@ -1,13 +1,14 @@
 Index: includes/Article.php
 ===================================================================
---- includes/Article.php	(revision 5543)
+--- includes/Article.php	(revision 8227)
 +++ includes/Article.php	(working copy)
-@@ -1666,9 +1666,20 @@
+@@ -1666,9 +1666,21 @@
  				$where = array( 'rd_from' => $this->getId() );
  				$dbw->delete( 'redirect', $where, __METHOD__ );
  			}
 -			if ( $this->getTitle()->getNamespace() == NS_FILE ) {
 -				RepoGroup::singleton()->getLocalRepo()->invalidateImageRedirect( $this->getTitle() );
+-			}
 +			/*op-patch|BL|2009-10-07|RichMedia|AdditionalNamespaceCheck|start*/
 +			// NS_FILE is not the only Namespace now, so check them all
 +			// original content is located in else statement.
@@ -21,18 +22,19 @@ Index: includes/Article.php
 +				if( $this->getTitle()->getNamespace() == NS_FILE ) {
 +					RepoGroup::singleton()->getLocalRepo()->invalidateImageRedirect( $this->getTitle() );
 +				}
- 			}
++ 			}
 +			/*op-patch|BL|2009-10-07|end*/
  			wfProfileOut( __METHOD__ );
  			return ( $dbw->affectedRows() != 0 );
  		}
-@@ -3758,10 +3769,23 @@
+@@ -3758,10 +3770,24 @@
  			$wgMessageCache->replace( $title->getDBkey(), false );
  		}
  		# Images
 -		if ( $title->getNamespace() == NS_FILE ) {
 -			$update = new HTMLCacheUpdate( $title, 'imagelinks' );
 -			$update->doUpdate();
+-		}
 +		/*op-patch|BL|2009-10-07|RichMedia|AdditionalNamespaceCheck|start*/
 +		// NS_FILE is not the only Namespace now, so check them all
 +		// original content is located in else statement.
@@ -49,13 +51,13 @@ Index: includes/Article.php
 +				$update = new HTMLCacheUpdate( $title, 'imagelinks' );
 +				$update->doUpdate();
 +			}
- 		}
++ 		}
 +		/*op-patch|BL|2009-10-07|end*/
  		# User talk pages
  		if ( $title->getNamespace() == NS_USER_TALK ) {
  			$user = User::newFromName( $title->getText(), false );
-@@ -4134,13 +4158,30 @@
-
+@@ -4134,13 +4160,29 @@
+ 
  		$addFields    = array( 'cat_pages = cat_pages + 1' );
  		$removeFields = array( 'cat_pages = cat_pages - 1' );
 -		if ( $ns == NS_CATEGORY ) {
@@ -64,7 +66,7 @@ Index: includes/Article.php
 -		} elseif ( $ns == NS_FILE ) {
 -			$addFields[]    = 'cat_files = cat_files + 1';
 -			$removeFields[] = 'cat_files = cat_files - 1';
-+
+-		}
 +		/*op-patch|BL|2009-10-07|RichMedia|AdditionalNamespaceCheck|start*/
 +		// NS_FILE is not the only Namespace now, so check them all
 +		// original content is located in else statement.
@@ -86,16 +88,16 @@ Index: includes/Article.php
 +				$addFields[]    = 'cat_files = cat_files + 1';
 +				$removeFields[] = 'cat_files = cat_files - 1';
 +			}
- 		}
++ 		}
 +		/*op-patch|BL|2009-10-07|end*/
-
+ 
  		if ( $added ) {
  			$dbw->update(
 Index: includes/CategoryPage.php
 ===================================================================
 --- includes/CategoryPage.php	(revision 5543)
 +++ includes/CategoryPage.php	(working copy)
-@@ -264,14 +264,31 @@
+@@ -264,14 +264,32 @@
 
  			$title = Title::makeTitle( $x->page_namespace, $x->page_title );
 
@@ -138,7 +140,7 @@ Index: includes/EditPage.php
 ===================================================================
 --- includes/EditPage.php	(revision 5543)
 +++ includes/EditPage.php	(working copy)
-@@ -753,7 +753,23 @@
+@@ -753,7 +753,24 @@
  		}
  
  		# Check image redirect
@@ -229,7 +231,7 @@ Index: includes/ImageGallery.php
 ===================================================================
 --- includes/ImageGallery.php	(revision 5543)
 +++ includes/ImageGallery.php	(working copy)
-@@ -244,13 +244,19 @@
+@@ -244,13 +244,20 @@
 
  			$img = wfFindFile( $nt, array( 'time' => $time ) );
 
@@ -344,7 +346,7 @@ Index: includes/ImagePage.php
 ===================================================================
 --- includes/ImagePage.php	(revision 5543)
 +++ includes/ImagePage.php	(working copy)
-@@ -63,27 +63,90 @@
+@@ -63,27 +63,92 @@
  		global $wgOut, $wgShowEXIF, $wgRequest, $wgUser;
  		$this->loadFile();
 
@@ -470,7 +472,7 @@ Index: includes/ImageQueryPage.php
 ===================================================================
 --- includes/ImageQueryPage.php	(revision 5543)
 +++ includes/ImageQueryPage.php	(working copy)
-@@ -47,9 +47,21 @@
+@@ -47,9 +47,22 @@
  	private function prepareImage( $row ) {
  		$namespace = isset( $row->namespace ) ? $row->namespace : NS_FILE;
  		$title = Title::makeTitleSafe( $namespace, $row->title );
@@ -519,7 +521,7 @@ Index: includes/MediaTransformOutput.php
 ===================================================================
 --- includes/MediaTransformOutput.php	(revision 5494)
 +++ includes/MediaTransformOutput.php	(working copy)
-@@ -92,6 +92,23 @@
+@@ -92,6 +92,24 @@
  		if ( $title ) {
  			$attribs['title'] = $title;
  		}
@@ -729,7 +731,7 @@ Index: includes/Title.php
  
  		if ( $get_pages ) {
  			$cols = array('pr_page', 'page_namespace', 'page_title', 'pr_expiry', 'pr_type', 'pr_level' );
-@@ -2050,12 +2144,27 @@
+@@ -2050,12 +2144,28 @@
  				array( 'ar_namespace' => $this->getNamespace(), 'ar_title' => $this->getDBkey() ),
  				__METHOD__
  			);
@@ -740,7 +742,8 @@ Index: includes/Title.php
 +			// original content is located in else statement.
 +			global $smwgEnableRichMedia;
 +			if( $smwgEnableRichMedia ) {
-+				RMNamespace::isImage( $this->getNamespace(), $rMresult );
++				$temp_var = $this->getNamespace();
++				RMNamespace::isImage( $temp_var, $rMresult );
 +				if ( $rMresult ) {
 +					$n += $dbr->selectField( 'filearchive', 'COUNT(*)',
  					array( 'fa_name' => $this->getDBkey() ),
@@ -760,7 +763,7 @@ Index: includes/Title.php
  		}
  		return (int)$n;
  	}
-@@ -2073,12 +2182,27 @@
+@@ -2073,12 +2183,28 @@
  			array( 'ar_namespace' => $this->getNamespace(), 'ar_title' => $this->getDBkey() ),
  			__METHOD__
  		);
@@ -771,7 +774,8 @@ Index: includes/Title.php
 +		// original content is located in else statement.
 +		global $smwgEnableRichMedia;
 +		if( $smwgEnableRichMedia ) {
-+			RMNamespace::isImage( $this->getNamespace(), $rMresult );
++			$temp_var = $this->getNamespace();
++			RMNamespace::isImage( $temp_var, $rMresult );
 +			if( !$deleted && $rMresult ) {
 +				$deleted = (bool)$dbr->selectField( 'filearchive', '1',
  				array( 'fa_name' => $this->getDBkey() ),
@@ -791,7 +795,7 @@ Index: includes/Title.php
  		return $deleted;
  	}
  
-@@ -2679,25 +2803,52 @@
+@@ -2679,25 +2805,53 @@
  		}
  
  		// Image-specific checks
@@ -808,7 +812,8 @@ Index: includes/Title.php
 +		// original content is located in else statement.
 +		global $smwgEnableRichMedia;
 +		if( $smwgEnableRichMedia ) {
-+			RMNamespace::isImage( $this->getNamespace(), $rMresult );
++			$temp_var = $this->getNamespace();
++			RMNamespace::isImage( $temp_var, $rMresult );
 +			if ( $rMresult  ) {
 +				$file = wfLocalFile( $this );
 +				if( $file->exists() ) {
@@ -858,7 +863,7 @@ Index: includes/Title.php
  
  		if ( $auth ) {
  			$errors = wfMergeErrorArrays( $errors,
-@@ -3201,13 +3352,29 @@
+@@ -3201,13 +3355,30 @@
  	public function isValidMoveTarget( $nt ) {
  		$dbw = wfGetDB( DB_MASTER );
  		# Is it an existsing file?
@@ -872,7 +877,8 @@ Index: includes/Title.php
 +		// original content is located in else statement.
 +		global $smwgEnableRichMedia;
 +		if( $smwgEnableRichMedia ) {
-+			RMNamespace::isImage( $nt->getNamespace(), $rMresult );
++			$temp_var = $nt->getNamespace();
++			RMNamespace::isImage( $temp_var, $rMresult );
 +			if ( $rMresult ) {
 +				$file = wfLocalFile( $nt );
 +				if( $file->exists() ) {
@@ -893,7 +899,7 @@ Index: includes/Title.php
  		# Is it a redirect with no history?
  		if( !$nt->isSingleRevRedirect() ) {
  			wfDebug( __METHOD__ . ": not a one-rev redirect\n" );
-@@ -3491,6 +3658,21 @@
+@@ -3491,6 +3662,21 @@
  		if( $this->mInterwiki != '' ) {
  			return true;  // any interwiki link might be viewable, for all we know
  		}
@@ -941,7 +947,7 @@ Index: includes/Wiki.php
  		switch( $title->getNamespace() ) {
  			case NS_FILE:
  				return new ImagePage( $title );
-@@ -312,7 +327,18 @@
+@@ -312,7 +327,19 @@
  		}
  		// Namespace might change when using redirects
  		// Check for redirects ...
@@ -958,6 +964,7 @@ Index: includes/Wiki.php
 +			$file = ($title->getNamespace() == NS_FILE) ? $article->getFile() : null;
 +		}
 +		/*op-patch|BL|2009-10-07|end*/
++		
  		if( ( $action == 'view' || $action == 'render' ) 	// ... for actions that show content
  			&& !$request->getVal( 'oldid' ) &&    // ... and are not old revisions
  			$request->getVal( 'redirect' ) != 'no' &&	// ... unless explicitly told not to
@@ -1130,7 +1137,7 @@ Index: includes/parser/Parser.php
  
  				if ( $ns == NS_CATEGORY ) {
  					wfProfileIn( __METHOD__."-category" );
-@@ -4426,9 +4459,21 @@
+@@ -4426,9 +4459,22 @@
  			$ig->add( $nt, $html );
  
  			# Only add real images (bug #5586)
