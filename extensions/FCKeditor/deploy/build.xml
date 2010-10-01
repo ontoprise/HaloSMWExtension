@@ -24,6 +24,7 @@
     </target>
 
     <target name="versionhint">
+        <property environment="env" />
         <exec executable="php">
             <arg value="../../../buildtools/replaceVersionHint.php" />
             <arg value="../deploy.xml" />
