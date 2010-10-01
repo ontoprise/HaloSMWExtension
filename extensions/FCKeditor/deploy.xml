@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <deploydescriptor>
 	<global>
-		<version>132</version>
-        <patchlevel>1</patchlevel>
+		<version>152</version>
 		<id>wysiwyg</id>
 		<vendor>Ontoprise GmbH</vendor>
 		<maintainer>Ontoprise GmbH</maintainer>
