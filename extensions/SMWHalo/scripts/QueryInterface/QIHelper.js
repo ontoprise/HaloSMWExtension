@@ -2760,16 +2760,18 @@ handleQueryString : function(args, queryId, pMustShow) {
             // we have this property for the first time and it exists also in the query condition
             // then merge the conditions and must show settings into one property group
 		    var oldPgroup = propList.getPgroup(pMustShow[i][0]); // get information about property
+            var subqueryIds = [];
 		    if (oldPgroup != null && ! propMerged[ pMustShow[i][0] ]) {
                 pgroup.setValues(oldPgroup.getValues());
                 pgroup.setSelector(oldPgroup.getSelector());
                 pgroup.setMustBeSet(oldPgroup.mustBeSet());
+                subqueryIds = oldPgroup.getSubqueryIds();
 		    }
             // add current property to property list
             if (propMerged[ pMustShow[i][0] ] == null ) // property does not exist yet
-                propList.add(pMustShow[i][0], pgroup, [], ptype);
+                propList.add(pMustShow[i][0], pgroup, subqueryIds, ptype);
             else
-			    propList.addNew(pMustShow[i][0], pgroup, [], ptype);
+			    propList.addNew(pMustShow[i][0], pgroup, subqueryIds, ptype);
 			// and remember now that this porperty appeared in the printouts
 			propMerged[ pMustShow[i][0] ] = true;
 		}
@@ -2801,7 +2803,7 @@ applyOptionParams : function(query) {
             var m = options[i].match(/^\s*\?/)
             if (m) {
                 m = options[i].replace(/\n/g,'').match(/^([^#|=]*)(#[^=]*)?(=.*?)?$/);
-                var pname = m[1].replace(/^\s*\?/, '').replace(/\s*$/,'');
+                var pname = m[1].replace(/^\s*\?\s*/, '').replace(/\s*$/,'');
                 var punit = (m[2]) ? m[2].replace(/#/,'').replace(/\s*$/,'') : null;
                 var col = (m[3]) ? m[3].replace(/=\s*/,'').replace(/\s*$/,'') : null;
                 if (col == null) { // set default column value if not set.
@@ -2995,6 +2997,14 @@ getShowUnit : function() {
 },
 getColName : function() {
     return (this.colName) ? this.colName : "";
+},
+getSubqueryIds : function() {
+    var ids = [];
+    for (var i = 0; i < this.values.length; i++ ) {
+        if (this.values[i][0] == 'subquery')
+            ids.push(this.values[i][2]);
+    }
+    return ids;
 }
 }
 
