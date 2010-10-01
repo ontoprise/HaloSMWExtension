@@ -236,7 +236,7 @@ class SMWTripleStore extends SMWStore {
 						$v3 =  reset($data->getPropertyValues(SMWPropertyValue::makeProperty("_3")));
 						$v4 =  reset($data->getPropertyValues(SMWPropertyValue::makeProperty("_4")));
 						$v5 =  reset($data->getPropertyValues(SMWPropertyValue::makeProperty("_5")));
-						
+
 						//echo print_r($v1, true);die();
 						$triples[] = array("<$smwgTripleStoreGraph/$subj_ns#".$subject->getDBkey().">", "<$smwgTripleStoreGraph/property#".$property->getWikiPageValue()->getDBkey().">", "_:1");
 
@@ -270,7 +270,7 @@ class SMWTripleStore extends SMWStore {
 							$firstValue = array_shift($dbkeys);
 							$triples[] = array("_:1", "<$smwgTripleStoreGraph/property#4>", "\"".$this->escapeForStringLiteral($firstValue)."\"^^$xsdType");
 						}
-						
+
 					} else {
 
 						if ($value->getUnit() != '') {
@@ -703,8 +703,13 @@ class SMWTripleStore extends SMWStore {
 
 				$data = $pr->getData();
 				if ($data != NULL) {
-					$dbkeys = $data->getDBkeys();
-					$label = $data instanceof Title ? $data->getDBkey() : array_shift($dbkeys);
+					if ($data instanceof Title) {
+						$label =  $data->getDBkey();
+					} else {
+						$dbkeys = $data->getDBkeys();
+						$label = array_shift($dbkeys);
+
+					}
 					if (array_key_exists($label, $mapPRTOColumns)) {
 						$mapPRTOColumns[$label][] = $index;
 					} else {
@@ -783,7 +788,7 @@ class SMWTripleStore extends SMWStore {
 		foreach ($results as $r) {
 			$row = array();
 			$columnIndex = 0; // column = n-th XML binding node
-				
+
 			// reset column arrays
 			foreach($mapPRTOColumns as $pr => $column) reset($mapPRTOColumns[$pr]);
 
@@ -1028,7 +1033,7 @@ class SMWTripleStore extends SMWStore {
 				}
 
 			}
-				
+
 			// set metadata
 			foreach($metadata as $mdProperty => $mdValue) {
 				if (strpos($mdProperty, "_meta_") === 0) {
@@ -1128,13 +1133,13 @@ class SMWTripleStore extends SMWStore {
 			$result .= 'dataspace='.trim($query->params['dataspace']);
 			$first = false;
 		}
-		
+
 		if (isset($query->params) && isset($query->params['metadata'])) {
 			if (!$first) $result .= "|";
 			$result .= 'metadata='.trim($query->params['metadata']);
 			$first = false;
 		}
-		
+
 		return $result;
 	}
 
@@ -1152,8 +1157,12 @@ class SMWTripleStore extends SMWStore {
 				return true;
 			}
 			if ($po->getData() != NULL) {
-				$dbkeys = $po->getData()->getDBkeys();
-				$label = $po->getData() instanceof Title ? $po->getData()->getDBkey() : array_shift($dbkeys);
+				if ($po->getData() instanceof Title) {
+					$label = $po->getData()->getDBkey() ;
+				} else {
+					$dbkeys = $po->getData()->getDBkeys();
+					$label =  array_shift($dbkeys);
+				}
 				$contains |= strtolower($label) == strtolower($var_name);
 			}
 
