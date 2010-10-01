@@ -146,8 +146,8 @@
             <!-- change the subquery 1 and add another subquery -->
             
             <clickLink
-              description="click property Located In"
-              label="Page = America"
+              description="click property Located In with value America"
+              xpath="//a[@onclick='qihelper.selectNode(this, \'property-1-0\')'"
             />
             <setInputField
               description="set property Has Capital"
