@@ -29,7 +29,7 @@
 		<exec executable="php">
 			<arg value="../../../buildtools/replaceVersionHint.php" />
 			<arg value="../deploy.xml" />
-			<arg value="../SRF_Settings.php" />
+			<arg value="../SemanticResultFormats.php" />
             <arg value="${env.BUILD_NUMBER}" />
 		</exec>
 	</target>
