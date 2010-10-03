@@ -94,13 +94,25 @@ class ConsistencyChecker {
 			$start = strpos($ls, "/*start-".$p->getID()."*/");
 			$end = strpos($ls, "/*end-".$p->getID()."*/");
 			
-			if ($start === false || $end === false) {
-				
+			if ($start === false && $end === false) {
+				print $p->getID()." is not configured.";
+			} else {
+				if ($start === false) {
+					print "\nStart tag missing: ".$p->getID();
+				}
+				if ($end === false) {
+					print "\nEnd tag missing: ".$p->getID();
+				}
 			}
 		}
 		
 		// check if there are registerings for non-existings extensions
-		
+		preg_match_all('/\/\*start-(\w+)\*\//', $ls, $matches);
+		foreach ($matches[1] as $m) {
+			if (!array_key_exists($m, $localPackages)) {
+				print "\nconfiguration for non-existing extension detected: $m";
+			}
+		}
 	}
 
 

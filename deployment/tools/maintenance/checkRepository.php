@@ -36,7 +36,6 @@ $rootDir = realpath($rootDir."/../../");
 require_once($rootDir."/descriptor/DF_DeployDescriptor.php");
 require_once($rootDir."/tools/smwadmin/DF_PackageRepository.php");
 require_once($rootDir."/tools/smwadmin/DF_Tools.php");
-require_once($rootDir."/tools/maintenance/maintenanceTools.inc");
 
 $mwRootDir = dirname(__FILE__);
 $mwRootDir = str_replace("\\", "/", $mwRootDir);
