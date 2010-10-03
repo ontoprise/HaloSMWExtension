@@ -7,7 +7,7 @@
  * @ingroup SemanticRules
  * 
  * Setup database for SemanticRules extension.
- * @author: Kai Kühn / ontoprise / 2009
+ * @author: Kai Kï¿½hn / ontoprise / 2009
  *
  */
 if (array_key_exists('SERVER_NAME', $_SERVER) && $_SERVER['SERVER_NAME'] != NULL) {
@@ -48,7 +48,7 @@ srfSetupSRTables(true);
  */
 function srfSetupSRTables($verbose) {
 	global $smwgHaloIP;
-	require($smwgHaloIP.'/includes/storage/SMW_RuleStore.php');
+	require_once($smwgHaloIP.'/includes/storage/SMW_RuleStore.php');
 	SMWRuleStore::getInstance()->setup($verbose);
 }
 
@@ -59,7 +59,7 @@ function srfSetupSRTables($verbose) {
  */
 function srfDropSRTables($verbose) {
 	global $smwgHaloIP;
-	require($smwgHaloIP.'/includes/storage/SMW_RuleStore.php');
+	require_once($smwgHaloIP.'/includes/storage/SMW_RuleStore.php');
 	SMWRuleStore::getInstance()->drop($verbose);
 }
 
