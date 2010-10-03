@@ -38,7 +38,7 @@ $rootDir = realpath($rootDir."/../../");
 
 require_once('DF_Tools.php');
 require_once('DF_Installer.php');
-require_once('DF_ConsistencyChecker.php');
+
 
 if (array_key_exists('SERVER_NAME', $_SERVER) && $_SERVER['SERVER_NAME'] != NULL) {
 	echo "Invalid access! A maintenance script MUST NOT accessed from remote.";
@@ -127,10 +127,7 @@ for( $arg = reset( $argv ); $arg !== false; $arg = next( $argv ) ) {
 		continue;
 	}
 	
-	if ($arg == '--checkinst') {  // => check installation for inconsistencies
-		$dfgCheckInst = true;
-		continue;
-	}
+	
 
 	if ($arg == '--checkdump') { // => analyze installed dump
 		$checkDump = true;
@@ -181,14 +178,8 @@ $mwrootDir = realpath($mwrootDir."/../../../");
 
 $installer = Installer::getInstance($mwrootDir, $dfgForce);
 $rollback = Rollback::getInstance($mwrootDir);
-$cchecker = ConsistencyChecker::getInstance($mwrootDir);
 $res_installer = ResourceInstaller::getInstance($mwrootDir);
 
-
-if ($dfgCheckInst) {
-	$cchecker->checkInstallation();
-	die();
-}
 
 if ($dfgRestore) {
 	handleRollback();
@@ -293,12 +284,6 @@ function showHelp() {
 
 }
 
-
-function checkInstallation() {
-	print "\Checking consistency";
-	
-	
-}
 
 function handleRollback() {
 	global $rollback;

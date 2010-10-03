@@ -17,7 +17,9 @@
 
 global $rootDir;
 require_once $rootDir.'/tools/maintenance/maintenanceTools.inc';
-
+require_once($rootDir."/tools/smwadmin/DF_PackageRepository.php");
+require_once($rootDir."/tools/smwadmin/DF_Tools.php");
+require_once($rootDir."/tools/maintenance/maintenanceTools.inc");
 
 /**
  * @file
@@ -51,8 +53,12 @@ class ConsistencyChecker {
 	}
 
 	public function checkInstallation() {
+		
+		print "\n";
 		$this->checkDependencies();
 		$this->checkLocalSettings();
+		
+		print "\n\n";
 	}
 
 	private  function checkDependencies() {
@@ -61,7 +67,7 @@ class ConsistencyChecker {
 			print "\nNO extensions found!\n";
 		}
 
-		print "\nChecking consistency of dependencies in installed packages...";
+		print "\nchecking consistency of dependencies in installed packages...";
 		$errorFound = MaintenanceTools::checkDependencies($this->localPackages, $out);
 
 		if ($errorFound) {
@@ -78,6 +84,7 @@ class ConsistencyChecker {
 
 	private function checkLocalSettings() {
 		
+		print "\ncheck LocalSettings.php...";
 		if (!file_exists($this->rootDir."/LocalSettings.php")) {
 			print "\n\tLocalSettings.php does not exist.\n";
 			return;
@@ -89,28 +96,29 @@ class ConsistencyChecker {
 			return;
 		}
 		
-		// check if existing extensions are registered in LocalSettings.php
-		foreach($localPackages as $p) {
+		
+		print "\ncheck if existing extensions are registered in LocalSettings.php...\n";
+		foreach($this->localPackages as $p) {
 			$start = strpos($ls, "/*start-".$p->getID()."*/");
 			$end = strpos($ls, "/*end-".$p->getID()."*/");
 			
 			if ($start === false && $end === false) {
-				print $p->getID()." is not configured.";
+				print "\n\t[FAILED] ".$p->getID()." is not configured.";
 			} else {
 				if ($start === false) {
-					print "\nStart tag missing: ".$p->getID();
+					print "\n\t[FAILED] Start tag missing: ".$p->getID();
 				}
 				if ($end === false) {
-					print "\nEnd tag missing: ".$p->getID();
+					print "\n\t[FAILED] End tag missing: ".$p->getID();
 				}
 			}
 		}
 		
-		// check if there are registerings for non-existings extensions
+		print "\n\ncheck if there are registerings for non-existings extensions";
 		preg_match_all('/\/\*start-(\w+)\*\//', $ls, $matches);
 		foreach ($matches[1] as $m) {
-			if (!array_key_exists($m, $localPackages)) {
-				print "\nconfiguration for non-existing extension detected: $m";
+			if (!array_key_exists($m, $this->localPackages)) {
+				print "\n\t[FAILED] configuration for non-existing extension detected: $m";
 			}
 		}
 	}
