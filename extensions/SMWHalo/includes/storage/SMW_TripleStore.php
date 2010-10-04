@@ -146,6 +146,7 @@ class SMWTripleStore extends SMWStore {
 		}
 
 		$subj_ns = $this->tsNamespace->getNSPrefix($subject->getNamespace());
+        $prop_ns = $this->tsNamespace->getNSPrefix(SMW_NS_PROPERTY);
 
 
 
@@ -231,11 +232,16 @@ class SMWTripleStore extends SMWStore {
 					} elseif ($value->getTypeID() == '_rec') {
 
 						$data = $value->getData(); // SMWSemanticData object
-						$v1 = reset($data->getPropertyValues(SMWPropertyValue::makeProperty("_1")));
-						$v2 =  reset($data->getPropertyValues(SMWPropertyValue::makeProperty("_2")));
-						$v3 =  reset($data->getPropertyValues(SMWPropertyValue::makeProperty("_3")));
-						$v4 =  reset($data->getPropertyValues(SMWPropertyValue::makeProperty("_4")));
-						$v5 =  reset($data->getPropertyValues(SMWPropertyValue::makeProperty("_5")));
+                        $mprop = $data->getPropertyValues(SMWPropertyValue::makeProperty("_1"));
+						$v1 = reset($mprop);
+                        $mprop = $data->getPropertyValues(SMWPropertyValue::makeProperty("_2"));
+                        $v2 = reset($mprop);
+                        $mprop = $data->getPropertyValues(SMWPropertyValue::makeProperty("_3"));
+                        $v3 = reset($mprop);
+                        $mprop = $data->getPropertyValues(SMWPropertyValue::makeProperty("_4"));
+                        $v4 = reset($mprop);
+                        $mprop = $data->getPropertyValues(SMWPropertyValue::makeProperty("_5"));
+                        $v5 = reset($mprop);
 
 						//echo print_r($v1, true);die();
 						$triples[] = array("<$smwgTripleStoreGraph/$subj_ns#".$subject->getDBkey().">", "<$smwgTripleStoreGraph/property#".$property->getWikiPageValue()->getDBkey().">", "_:1");
