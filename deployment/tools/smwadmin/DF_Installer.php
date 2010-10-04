@@ -641,13 +641,13 @@ class Installer {
 
 	/**
 	 * Callback method. Reads user for required parameters.
-	 * Contains out parameters which is declared by the call_user_func()
+	 * 
 	 *
 	 * @param array($name=>(array($type, $description)) $userParams
 	 * @param out array($name=>$value) $mapping
 	 *
 	 */
-	public function getUserReqParams($userParams, $mapping) {
+	public function getUserReqParams($userParams, & $mapping) {
 		if ($this->noAsk || count($userParams) == 0) return;
 		print "\n\nRequired parameters:";
 		foreach($userParams as $name => $up) {
@@ -663,13 +663,13 @@ class Installer {
 
 	/**
 	 * Callback method. Requests a confirmation by the user.
-	 * Contains out parameters which is declared by the call_user_func()
+	 * 
 	 *
 	 * @param string $message
 	 * @param out boolean $result
 	 * @return unknown
 	 */
-	public function getUserConfirmation($message, $result) {
+	public function getUserConfirmation($message, & $result) {
 		if ($this->noAsk) return 'y';
 		print "\n\n$message [ (y)es/(n)o ]";
 		$line = trim(fgets(STDIN));

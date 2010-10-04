@@ -77,7 +77,7 @@ class HttpDownload {
 		$this->header = "";
 		$length = 0;
 		$cb = is_null($callback) ? $this : $callback;
-		@call_user_func(array(&$cb,"downloadStart"), basename(dirname($path))."/".basename($path));
+		call_user_func(array($cb,"downloadStart"), basename(dirname($path))."/".basename($path));
 		$out = socket_read($socket, 2048);
 
 		do {
@@ -103,13 +103,13 @@ class HttpDownload {
 			fwrite($handle, $out);
 			$percentage = $length / $contentLength;
 
-			@call_user_func(array(&$cb,"downloadProgres"), $percentage > 1 ? 1 : $percentage);
+			call_user_func(array($cb,"downloadProgres"), $percentage > 1 ? 1 : $percentage);
 
 		}  while ($out = socket_read($socket, 2048));
 		if ($percentage < 1) { 
-		  @call_user_func(array(&$callback,"progress"), 1);	
+		  call_user_func(array($callback,"progress"), 1);	
 		}
-		@call_user_func(array(&$cb,"downloadFinished"), $filename);
+		call_user_func(array($cb,"downloadFinished"), $filename);
 		fclose($handle);
 		socket_close($socket);
 	}
@@ -143,7 +143,7 @@ class HttpDownload {
 		$this->header = "";
 		$length = 0;
 		$cb = is_null($callback) ? $this : $callback;
-		@call_user_func(array(&$cb,"downloadStart"), basename(dirname($path))."/".basename($path));
+		call_user_func(array($cb,"downloadStart"), basename(dirname($path))."/".basename($path));
 		$out = socket_read($socket, 2048);
 
 		do {
@@ -172,14 +172,14 @@ class HttpDownload {
 			$res .= $out;
 			$percentage = $length / $contentLength;
 
-			@call_user_func(array(&$cb,"downloadProgres"), $percentage > 1 ? 1 : $percentage);
+			call_user_func(array($cb,"downloadProgres"), $percentage > 1 ? 1 : $percentage);
 
 		} while ($out = socket_read($socket, 2048));
 
 		if ($percentage < 1) {  
-		  @call_user_func(array(&$callback,"progress"), 1);
+		  call_user_func(array($callback,"progress"), 1);
 		} 
-		@call_user_func(array(&$cb,"downloadFinished"), NULL);
+		call_user_func(array($cb,"downloadFinished"), NULL);
 
 		socket_close($socket);
 		return $res;

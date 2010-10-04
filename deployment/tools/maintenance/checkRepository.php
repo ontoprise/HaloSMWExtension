@@ -42,29 +42,23 @@ $mwRootDir = realpath($mwRootDir."/../../..");
 print($mwRootDir);
 if (substr($mwRootDir, -1) != "/") $mwRootDir .= "/";
 
-/*echo "\nRead local packages...";
-$localPackages = PackageRepository::getLocalPackages($mwRootDir);
+for( $arg = reset( $argv ); $arg !== false; $arg = next( $argv ) ) {
 
-if (count($localPackages) == 0) {
-	print "\nNO extensions found!\n";
-	die(1);
-}*/
+	//--repair => repair inconsistencies if possible
+	if ($arg == '--repair') {
+		$repair = next($argv);
+		continue;
+	}
+}
 
 $cChecker = new ConsistencyChecker($mwRootDir);
-$cChecker->checkInstallation();
+$errorFound = $cChecker->checkInstallation(isset($repair));
 
-//$errorFound = MaintenanceTools::checkDependencies($localPackages, $out);
-//
-//foreach($out as $ext => $line) {
-//	print "\n\n$ext: ";
-//	foreach($line as $l) {
-//		if (is_null($l)) print "[OK]"; else print "\n\t[FAILED] ".$l;
-//	}
-//}
 
-/*if ($errorFound) {
-	print "\n\nErrors found! See above.\n";
-} else {
-	print "\n\nOK.\n";
-}
-die($errorFound ? 1 : 0);*/
+
+if ($errorFound) {
+ print "\n\nErrors found! See above.\n";
+ } else {
+ print "\n\nOK.\n";
+ }
+ die($errorFound ? 1 : 0);
