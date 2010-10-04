@@ -36,7 +36,9 @@ class SMWSPARQLQuery extends SMWQuery {
 }
 
 class SMWSPARQLQueryParser extends SMWQueryParser {
-	public function SMWSPARQLQueryParser() {
+    protected $m_label;
+    
+    public function SMWSPARQLQueryParser() {
 		parent::__construct();
 		$this->m_defaultns = NULL;
 	}
