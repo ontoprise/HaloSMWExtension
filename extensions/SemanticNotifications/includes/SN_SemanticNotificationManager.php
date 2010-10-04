@@ -53,7 +53,7 @@ class SemanticNotificationManager {
 	 */
 	static function initSemanticNotificationExtension() {
 		
-		global $wgAutoloadClasses, $wgSpecialPages, $wgExtensionMessagesFiles;
+		global $wgAutoloadClasses, $wgSpecialPages;
 		global $sngIP, $wgHooks;
 		
 		//--- Autoloading ---
@@ -62,7 +62,6 @@ class SemanticNotificationManager {
 		
 		//--- Install the special page ---
 		$wgSpecialPages['SemanticNotifications'] = array('SemanticNotificationSpecial');
-		$wgExtensionMessagesFiles['SemanticNotification'] = $sngIP . '/includes/SN_SemanticNotificationMessages.php';
 
 		// register AddHTMLHeader functions for special pages
 		// to include javascript and css files (only on special page requests).
@@ -72,7 +71,6 @@ class SemanticNotificationManager {
 	
 		if (stripos($wgRequest->getRequestURL(), $spns_text.":") !== false ||
 		    stripos($wgRequest->getRequestURL(), $spns_text."%3A") !== false) {
-			wfLoadExtensionMessages('SemanticNotification');
 			$sppagename = wfMsg('sn_special_url_name');
 			if (stripos($wgRequest->getRequestURL(), $sppagename) !== false) {
 	    		$wgHooks['BeforePageDisplay'][]='SemanticNotificationManager::addHTMLHeader';

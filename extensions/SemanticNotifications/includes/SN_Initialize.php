@@ -77,9 +77,10 @@ $smgJSLibs[] = 'prototype';
  * etc.
  */
 function enableSemanticNotifications() {
-	global $wgExtensionFunctions, $wgExtensionCredits; 
+	global $wgExtensionFunctions, $wgExtensionCredits, $wgExtensionMessagesFiles, $sngIP;
 
 	$wgExtensionFunctions[] = 'snfSetupExtension';
+    $wgExtensionMessagesFiles['SemanticNotification'] = $sngIP . '/includes/SN_SemanticNotificationMessages.php';
 	       
 	//--- credits (see "Special:Version") ---
 	$wgExtensionCredits['other'][]= array(
