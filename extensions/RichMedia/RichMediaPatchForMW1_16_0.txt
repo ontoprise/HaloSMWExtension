@@ -519,7 +519,7 @@ Index: includes/Linker.php
  		// Shortcuts
 Index: includes/MediaTransformOutput.php
 ===================================================================
---- includes/MediaTransformOutput.php	(revision 5494)
+--- includes/MediaTransformOutput.php	(revision 8227)
 +++ includes/MediaTransformOutput.php	(working copy)
 @@ -92,6 +92,24 @@
  		if ( $title ) {
@@ -530,7 +530,7 @@ Index: includes/MediaTransformOutput.php
 +		// original content is located in else statement.
 +		global $wgRequest, $smwgEnableRichMedia, $wgRMImagePreview;
 +		$loc = $wgRequest->getText('title');
-+		if ( $smwgEnableRichMedia && $title ) {
++		if ( $smwgEnableRichMedia && $title && method_exists($title, 'getNamespace') ) {
 +			$temp_var = $title->getNamespace();
 +			RMNamespace::isImage( $temp_var, $rMresult );
 +			if ($rMresult && $wgRMImagePreview && $loc != 'Special:EmbedWindow') {
