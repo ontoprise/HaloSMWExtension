@@ -127,11 +127,7 @@ ToolbarFramework.prototype = {
 		this.contarray[contnum].createContainer(contnum, tabnr);
 
 		if (contnum == HELPCONTAINER) {
-			if (this.cookieHelpTab != null) {
-				this.contarray[contnum].setVisibility(this.cookieHelpTab);
-			} else {
-				this.contarray[contnum].setVisibility(0);
-			}
+			this.contarray[contnum].setVisibility(0);
 		} else {
 			this.contarray[contnum].setVisibility(1);
 		}
