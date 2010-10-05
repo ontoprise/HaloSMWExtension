@@ -42,41 +42,10 @@ $mwRootDir = realpath($mwRootDir."/../../..");
 
 if (substr($mwRootDir, -1) != "/") $mwRootDir .= "/";
 
-$first = true;
-for( $arg = reset( $argv ); $arg !== false; $arg = next( $argv ) ) {
-
-			
-	if ($arg == '--repair') {
-		$repair = true;
-		continue;
-	} else if ($arg == '--help') {
-		$help = true;
-		continue;
-	} else if ($arg == '--onlydep') {
-		$onlydep = true;
-		continue;
-	} else if (!$first) {
-		print "\n\nUnknown option: $arg\n";
-		die();
-	}
-	$first = false;
-}
-
-if (isset($help)) {
-	print "\n\nUsage";
-	print "\n\t <no option> : Shows all common problems";
-	print "\n\t --repair : Tries to repair common problems.";
-	print "\n\t --onlydep : Checks only dependencies of deploy descriptors.";
-	print "\n\n";
-	die();
-}
 
 $cChecker = new ConsistencyChecker($mwRootDir);
-if (isset($onlydep)) {
-	$errorFound = $cChecker->checkDependencies($repair);
-} else {
-	$errorFound = $cChecker->checkInstallation(isset($repair));
-}
+$errorFound = $cChecker->checkDependencies(false);
+
 
 if ($errorFound) {
  print "\n\nErrors found! See above.\n";
