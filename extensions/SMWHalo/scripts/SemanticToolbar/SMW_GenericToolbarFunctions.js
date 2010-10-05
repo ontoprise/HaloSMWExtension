@@ -196,7 +196,7 @@ createSubSupAllowed: function() {
 	if (wgNamespaceNumber == 100 
 	    || wgNamespaceNumber == 102 
 		  || attrregex.exec(wgPageName) != null
-		  || (typeof smwhgSfTargetNamespace !== undefined 
+		  || (typeof smwhgSfTargetNamespace !== "undefined"
           && smwhgSfTargetNamespace == 102)) { // a property is edited with SemanticForms 
 		allowed = true;
 	}	
