@@ -36,7 +36,7 @@ class SMWSPARQLQuery extends SMWQuery {
 }
 
 class SMWSPARQLQueryParser extends SMWQueryParser {
-    protected $m_label;
+  
     
     public function SMWSPARQLQueryParser() {
 		parent::__construct();
@@ -53,7 +53,7 @@ class SMWSPARQLQueryParser extends SMWQueryParser {
 		if (stripos($querystring, "select ") !== false) {
 			wfProfileIn('SMWSPARQLQueryParser::getQueryDescription (SMW)');
 			$this->m_errors = array();
-			$this->m_label = '';
+		
 			$this->m_curstring = $querystring;
 			$this->m_sepstack = array();
 			$setNS = false;
@@ -79,13 +79,7 @@ class SMWSPARQLQueryParser extends SMWQueryParser {
 		return smwfEncodeMessages($this->m_errors);
 	}
 
-	/**
-	 * Return label for the results of this query (which
-	 * might be empty if no such information was passed).
-	 */
-	public function getLabel() {
-		return $this->m_label;
-	}
+	
 
 }
 
