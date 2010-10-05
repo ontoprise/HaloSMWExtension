@@ -189,10 +189,10 @@
 |year=2009
 }}
 &lt;/noinclude&gt;&lt;includeonly&gt;
-{{#vardefine:avgrating|{{#ask: [[Belongs to article::{{FULLPAGENAME}}]] [[Has comment rating::+]][[Comment:+]]
+{{#vardefine:avgrating|{{formatnum:{{#ask: [[Belongs to article::{{FULLPAGENAME}}]] [[Has comment rating::+]][[Comment:+]]
   | ?Has comment rating
   | format=average
-}}}}
+}}|R}}}}
 {{#vardefine:countrating|{{#ask: [[Belongs to article::{{FULLPAGENAME}}]] [[Has comment rating::+]][[Comment:+]]
   | ?Has comment rating
   | format=count
