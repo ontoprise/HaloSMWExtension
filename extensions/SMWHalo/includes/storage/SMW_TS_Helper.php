@@ -284,11 +284,41 @@ class TSNamespaces {
 		else return "ns_$namespace";
 	}
 	
+	/**
+	 * Returns the NS URI (without local name)
+	 * 
+	 * @param int $namespace index 
+	 */
     public function getNSURI($namespace) {
         global $smwgTripleStoreGraph;
         return $smwgTripleStoreGraph."/".$this->getNSPrefix($namespace)."#";
     }
     
+    /**
+     * Returns the full IRI used by the TS for $t
+     * 
+     * @param Title $t
+     */
+    public function getFullIRI(Title $t) {
+    	global $smwgTripleStoreGraph;
+    	return "<".$smwgTripleStoreGraph."/".$this->getNSPrefix($t->getNamespace())."#".$t->getDBkey().">";
+    }
+    
+     /**
+     * Returns the full IRI used by the TS for $p
+     * 
+     * @param SMWPropertyValue $t
+     */
+ 	public function getFullIRIFromProperty(SMWPropertyValue $p) {
+    	global $smwgTripleStoreGraph;
+    	return "<".$smwgTripleStoreGraph."/".$this->getNSPrefix(SMW_NS_PROPERTY)."#".$p->getDBkey().">";
+    }
+    
+    /**
+     * Converts prefix from into full URI form 
+     * 
+     * @param string $prefixForm
+     */
     public function prefix2FullURI($prefixForm) {
     	if (strpos($prefixForm, "#") === false) return $prefixForm;
     	list($prefix, $local) = explode("#", $prefixForm);

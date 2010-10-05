@@ -155,9 +155,9 @@ class SMWSPARQLQueryProcessor extends SMWQueryProcessor {
 		}
 
 		if (array_key_exists('mainlabel', $params)) {
-			$mainlabel = $params['mainlabel'] . $qp->getLabel();
+			$mainlabel = $params['mainlabel'];
 		} else {
-			$mainlabel = $qp->getLabel();
+			$mainlabel = '';
 		}
 			
 		if ( ($querymode == SMWQuery::MODE_NONE) ||

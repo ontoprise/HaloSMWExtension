@@ -10,20 +10,25 @@
  */
 
 class SMWHaloQueryResult extends SMWQueryResult {
-
+	
+	// array of result subjects
+	private $mResultSubjects;
+	
 	public function SMWHaloQueryResult($printrequests, $query, $results, $store, $furtherres=false) {
 		parent::__construct($printrequests, $query, $results, $store, $furtherres);
+		
+		// retrieve result subjects for faster access
+		$this->mResultSubjects = array();
+		foreach($results as $r) {
+			$rs = $r[0]->getResultSubject();
+			$this->mResultSubjects[] = $rs;
+		}
+	}
+	    
+	public function getResults() {
+		return $this->mResultSubjects;
 	}
 	
-	/**
-	 * Setter method for the results.
-	 * @param array(array(SMWHaloResultArray)) $results
-	 * 		A table of results
-	 */
-	public function setResults($results) {
-		$this->mResults = $results;
-	}
-    
     /**
      * Return the next result row as an array of SMWResultArray objects, and
      * advance the internal pointer.
