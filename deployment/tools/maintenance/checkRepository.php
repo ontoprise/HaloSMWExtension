@@ -33,28 +33,50 @@ $rootDir = dirname(__FILE__);
 $rootDir = str_replace("\\", "/", $rootDir);
 $rootDir = realpath($rootDir."/../../");
 
-require_once($rootDir."/tools/smwadmin/DF_ConsistencyChecker.php");
+require_once($rootDir."/tools/maintenance/maintenanceTools.inc");
 
 
 $mwRootDir = dirname(__FILE__);
 $mwRootDir = str_replace("\\", "/", $mwRootDir);
 $mwRootDir = realpath($mwRootDir."/../../..");
-print($mwRootDir);
+
 if (substr($mwRootDir, -1) != "/") $mwRootDir .= "/";
 
+$first = true;
 for( $arg = reset( $argv ); $arg !== false; $arg = next( $argv ) ) {
 
-	//--repair => repair inconsistencies if possible
+			
 	if ($arg == '--repair') {
-		$repair = next($argv);
+		$repair = true;
 		continue;
+	} else if ($arg == '--help') {
+		$help = true;
+		continue;
+	} else if ($arg == '--onlydep') {
+		$onlydep = true;
+		continue;
+	} else if (!$first) {
+		print "\n\nUnknown option: $arg\n";
+		die();
 	}
+	$first = false;
+}
+
+if (isset($help)) {
+	print "\n\nUsage";
+	print "\n\t <no option> : Shows all common problems";
+	print "\n\t --repair : Tries to repair common problems.";
+	print "\n\t --onlydep : Checks only dependencies of deploy descriptors.";
+	print "\n\n";
+	die();
 }
 
 $cChecker = new ConsistencyChecker($mwRootDir);
-$errorFound = $cChecker->checkInstallation(isset($repair));
-
-
+if (isset($onlydep)) {
+	$errorFound = $cChecker->checkDependencies($repair);
+} else {
+	$errorFound = $cChecker->checkInstallation(isset($repair));
+}
 
 if ($errorFound) {
  print "\n\nErrors found! See above.\n";
