@@ -42,6 +42,12 @@ function enableDataImportExtension() {
 	
 	global $smgJSLibs; 
 	$smgJSLibs[] = 'prototype';
+	
+	//register namespaces
+	global $wgLanguageCode;
+	smwfDIInitContentLanguage($wgLanguageCode);
+	WebServiceManager::registerWWSNamespaces();
+	diRegisterTermImportNamespaces();
 }
 
 function enableMaterializationFeature(){
@@ -80,12 +86,6 @@ function smwfDISetupExtension() {
 	$wgHooks['smwhACNamespaceMappings'][] = 'difRegisterAutocompletionIcons';
 	
 	smwfDIInitMessages();
-	
-	
-	
-	//also registers TermImport namespace
-	WebServiceManager::registerWWSNamespaces();
-	diRegisterTermImportNamespaces();
 	
 	// add some AJAX calls
 	$action = $wgRequest->getVal('action');

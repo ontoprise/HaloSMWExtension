@@ -125,8 +125,6 @@ class WebServiceManager {
 		}
 		$wgExtraNamespaces = $wgExtraNamespaces + $smwgDIContLang->getNamespaces();
 		$wgNamespaceAliases = $wgNamespaceAliases + $smwgDIContLang->getNamespaceAliases();
-
-		//$wgContLang->fixUpSettings();
 	}
 
 	/**
