@@ -124,12 +124,16 @@ class  LODAdministrationStore  {
 	 * 
 	 * @param LODSourceDefinition $sd
 	 * 		This object defines a linked data source.
+	 * @param mixed bool/string $persistenceID
+	 * 		If <true> or an ID are given, the triples are stored in the 
+	 * 		persistency layer of the TS. In case of <true>, the ID of the LSD
+	 * 		will be chosen as persistency ID. 
 	 * 
 	 * @return bool 
 	 * 		<true> if the source definition was stored successfully or
 	 * 		<false> otherwise
 	 */
-	public function storeSourceDefinition(LODSourceDefinition $sd) {
+	public function storeSourceDefinition(LODSourceDefinition $sd, $persistenceID = false) {
 		
 		// create the triples for the source definition
 		$subjectNS = "smwDatasources:";
@@ -174,15 +178,25 @@ class  LODAdministrationStore  {
 		 	}
 		}
 
-		$graph = self::LOD_BASE_URI.self::LOD_SMW_GRAPHS.self::LOD_SD_GRAPH;
+		$graph = $this->getDataSourcesGraph();
 		
-		$tsa = new LODTripleStoreAccess();
+		$persist = $persistenceID === true || is_string($persistenceID);
+		$tsa = $persist 
+				? new LODPersistentTripleStoreAccess()
+				: new LODTripleStoreAccess();
 		$tsa->addPrefixes(TSNamespaces::getW3CPrefixes()
 			              .self::getSourceDefinitionPrefixes());
 		$tsa->createGraph($graph);
 		$tsa->deleteTriples($graph, "$subject ?p ?o", "$subject ?p ?o");
 		$tsa->insertTriples($graph, $triples);
-		$tsa->flushCommands();
+		if ($persist) {
+			if ($persistenceID === true) {
+				$persistenceID = $sd->getID();
+			}
+			$tsa->flushCommands("LODSourceDefinition", $persistenceID);
+		} else {
+			$tsa->flushCommands();
+		}
 		
 		return true;
 	}
@@ -194,11 +208,11 @@ class  LODAdministrationStore  {
 	 * 		ID of the linked data source
 	 * 
 	 * @return LODSourceDefinition
-	 * 		The definition of the source or <null>, if there is no such source
+	 * 		The definition of the source or <NULL>, if there is no such source
 	 * 		with the given ID.
 	 */
 	public function loadSourceDefinition($sourceID) {
-		$graph = self::LOD_BASE_URI.self::LOD_SMW_GRAPHS.self::LOD_SD_GRAPH;
+		$graph = $this->getDataSourcesGraph();
 		$subjectNS = "smwDatasources:";
 		$subject = $subjectNS.$sourceID;
 		$prefixes = self::getSourceDefinitionPrefixes();
@@ -210,7 +224,7 @@ class  LODAdministrationStore  {
 		$result = $tsa->queryTripleStore($query, $graph);
 		
 		if (!$result || count($result->getRows()) == 0) {
-			return null;
+			return NULL;
 		}
 		$result = $result->toTable();
 		
@@ -270,18 +284,32 @@ class  LODAdministrationStore  {
 	 * Deletes the source definition with the ID $sourceID from the triple store.
 	 *
 	 * @param string $sourceID
-	 * 		ID of the source definition.
+	 * 		ID of the source definition. It may be <NULL> if the $persistencyID 
+	 * 		is set. In this case all triples that belong to this ID will be deleted.
+	 * @param string $persistencyID
+	 * 		If not <NULL>, all LSDs with the given persistency ID will be deleted
+	 * 		from the persistency layer of the triple store and the triple store.
+	 * 		Otherwise the $sourceID	will be used as persistency ID.
 	 */
-	public function deleteSourceDefinition($sourceID) {
-		$subjectNS = "smwDatasources";
-		$subject   = $subjectNS.":".$sourceID;
-		
-		$tsa = new LODTripleStoreAccess();
-		$tsa->addPrefixes(TSNamespaces::getW3CPrefixes()
-			              .self::getSourceDefinitionPrefixes());
-		$tsa->deleteTriples(self::LOD_BASE_URI.self::LOD_SMW_GRAPHS.self::LOD_SD_GRAPH, 
-							"$subject ?p ?o", "$subject ?p ?o");
-		$tsa->flushCommands();
+	public function deleteSourceDefinition($sourceID, $persistencyID = NULL) {
+		$tsa = new LODPersistentTripleStoreAccess();
+		if (!is_null($sourceID)) {
+			$subjectNS = "smwDatasources";
+			$subject   = $subjectNS.":".$sourceID;
+			
+			$tsa->addPrefixes(TSNamespaces::getW3CPrefixes()
+				              .self::getSourceDefinitionPrefixes());
+			$tsa->deleteTriples($this->getDataSourcesGraph(), 
+								"$subject ?p ?o", "$subject ?p ?o");
+			$tsa->flushCommands();
+		}
+				
+		// The source definition may be stored in the persistency layer
+		// => delete this data too
+		if ($persistencyID === NULL) {
+			$persistencyID = $sourceID;
+		}
+		$tsa->deletePersistentTriples("LODSourceDefinition", $persistencyID);
 	}
 	
 	/**
@@ -290,9 +318,10 @@ class  LODAdministrationStore  {
 	 *
 	 */
 	public function deleteAllSourceDefinitions() {
-		$tsa = new LODTripleStoreAccess();
-		$tsa->dropGraph(self::LOD_BASE_URI.self::LOD_SMW_GRAPHS.self::LOD_SD_GRAPH);
+		$tsa = new LODPersistentTripleStoreAccess();
+		$tsa->dropGraph($this->getDataSourcesGraph());
 		$tsa->flushCommands();
+		$tsa->deletePersistentTriples("LODSourceDefinition");
 	}
 	
 	/**
@@ -303,7 +332,7 @@ class  LODAdministrationStore  {
 	 * 		An array of all IDs. If no ID is available, the array is empty.
 	 */
 	public function getAllSourceDefinitionIDs() {
-		$graph = self::LOD_BASE_URI.self::LOD_SMW_GRAPHS.self::LOD_SD_GRAPH;
+		$graph = $this->getDataSourcesGraph();
 		$id    = "smw-lde:ID";
 		$prefixes = self::getSourceDefinitionPrefixes();
 		
@@ -351,6 +380,14 @@ class  LODAdministrationStore  {
 		return self::LOD_BASE_URI.self::LOD_SMW_DATASOURCES;
 	}
 	
+	/**
+	 * @return string
+	 * 		Returns the name of the graph in which data source definitions are
+	 * 		stored. 
+	 */
+	public static function getDataSourcesGraph() {
+		return self::LOD_BASE_URI.self::LOD_SMW_GRAPHS.self::LOD_SD_GRAPH;
+	}
 	//--- Private methods ---
 	
 }
