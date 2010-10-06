@@ -22,6 +22,7 @@
 		<!-- TODO: add others -->
 	</codefiles>
 	<wikidumps>
+		<file loc="extensions/LinkedData/wikidumps/MetaDataXSLT.xml"/>
 	</wikidumps>
 	<resources>
 		<!-- empty -->
