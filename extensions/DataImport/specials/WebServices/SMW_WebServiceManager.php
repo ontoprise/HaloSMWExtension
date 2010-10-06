@@ -270,7 +270,7 @@ class WebServiceManager {
 	 * @param string $text
 	 * @return boolean true
 	 */
-	public static function articleSavedHook(&$article, &$user, &$text) {
+	public static function articleSavedHook(&$article, &$user, $text) {
 		if($article->getTitle()->getNamespace() != SMW_NS_WEB_SERVICE) {
 			return true;
 		}

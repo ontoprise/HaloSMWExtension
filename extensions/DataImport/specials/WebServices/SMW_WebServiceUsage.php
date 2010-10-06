@@ -460,7 +460,7 @@ function detectDeletedWSUsages(&$article, &$user, $reason){
  * calls detectRemovedWebServiceUsages()
  *
  */
-function detectEditedWSUsages(&$article, &$user, &$text){
+function detectEditedWSUsages(&$article, &$user, $text){
 	$articleId  = $article->getID();
 	if($articleId != null){
 		detectRemovedWebServiceUsages($articleId);
