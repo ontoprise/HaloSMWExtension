@@ -59,12 +59,16 @@ function enableLinkedData() {
     $wgExtensionAliasesFiles['LinkedData'] = $lodgIP . '/languages/LOD_Aliases.php';
 
     ///// Set up autoloading; essentially all classes should be autoloaded!
+	$wgAutoloadClasses['LODStorage'] = $lodgIP . '/includes/LOD_Storage.php';
+    
 	$wgAutoloadClasses['LODSourceDefinition'] = $lodgIP . '/includes/LODAdministration/LOD_SourceDefinition.php';
 	$wgAutoloadClasses['LODAdministrationStore'] = $lodgIP . '/includes/LODAdministration/LOD_AdministrationStore.php';
 
 	$wgAutoloadClasses['LODSparqlQueryResult'] = $lodgIP . '/storage/TripleStore/LOD_SparqlQueryResult.php';
 	$wgAutoloadClasses['LODTriple']            = $lodgIP . '/storage/TripleStore/LOD_Triple.php';
 	$wgAutoloadClasses['LODTripleStoreAccess'] = $lodgIP . '/storage/TripleStore/LOD_TripleStoreAccess.php';
+	$wgAutoloadClasses['LODPersistentTripleStoreAccess'] 
+											   = $lodgIP . '/storage/TripleStore/LOD_PersistentTripleStoreAccess.php';
 	
 	$wgAutoloadClasses['ILODMappingStore']	= $lodgIP . '/includes/LODMapping/ILOD_MappingStore.php';
 	$wgAutoloadClasses['LODMapping'] 		= $lodgIP . '/includes/LODMapping/LOD_Mapping.php';
