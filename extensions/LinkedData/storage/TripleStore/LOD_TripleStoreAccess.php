@@ -59,13 +59,13 @@ class  LODTripleStoreAccess  {
 	// array<string>:
 	// Each string is a SPARUL command that is executed when the method
 	// "flushCommands()" is called.
-	private $mCommands = array();
+	protected $mCommands = array();
 
 	// string
 	// This string contains namespace prefixes like
 	// PREFIX sd:<http://www.ontoprise.de/sd#>
 	// The prefixes are added to each command in $mCommands
-	private $mPrefixes = "";
+	protected $mPrefixes = "";
 
 	/**
 	 * Constructor for LODTripleStoreAccess
@@ -76,9 +76,7 @@ class  LODTripleStoreAccess  {
 
 
 	//--- getter/setter ---
-	//	public function getXY()           {return $this->mXY;}
-
-	//	public function setXY($xy)               {$this->mXY = $xy;}
+	public function getPrefixes() { return $this->mPrefixes; }
 
 	//--- Public methods ---
 	
@@ -198,11 +196,11 @@ class  LODTripleStoreAccess  {
 		}
 
 		$this->mCommands[] =
-		$this->mPrefixes
-		."INSERT DATA INTO <$graph> \n"
-		."{\n"
-		.$cmds
-		."\n}";
+			$this->mPrefixes
+			."INSERT DATA INTO <$graph> \n"
+			."{\n"
+			.$cmds
+			."\n}";
 	}
 
 	/**
