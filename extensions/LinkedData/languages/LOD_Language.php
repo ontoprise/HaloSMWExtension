@@ -31,9 +31,24 @@ abstract class LODLanguage {
 	
 	//---IDs of parser functions ---
 	const PF_MAPPING = 1;
+	const PF_LSD	 = 2; // LOD source definition
 
 	//---IDs of parser function parameters ---
 	const PFP_MAPPING_TARGET	= 100;
+	
+	const PFP_LSD_ID						= 200;
+	const PFP_LSD_CHANGEFREQ				= 201;
+	const PFP_LSD_DATADUMPLOCATION			= 202;
+	const PFP_LSD_DESCRIPTION				= 203;
+	const PFP_LSD_HOMEPAGE					= 204;
+	const PFP_LSD_LABEL						= 205;
+	const PFP_LSD_LASTMOD					= 206;
+	const PFP_LSD_LINKEDDATAPREFIX			= 207;
+	const PFP_LSD_SAMPLEURI					= 208;
+	const PFP_LSD_SPARQLENDPOINTLOCATION	= 209;
+	const PFP_LSD_SPARQLGRAPHNAME			= 210;
+	const PFP_LSD_URIREGEXPATTERN			= 211;
+	const PFP_LSD_VOCABULARY				= 212;
 	
 	
 	// the special message arrays ...

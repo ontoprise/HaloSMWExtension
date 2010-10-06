@@ -46,11 +46,28 @@ class LODLanguageDe extends LODLanguage {
 	);
 
 	protected $mParserFunctions = array(
-		LODLanguage::PF_MAPPING				=> 'zuordnung', 
+		LODLanguage::PF_MAPPING			=> 'zuordnung',
+		LODLanguage::PF_LSD				=> 'quelldefinition',
+		
 	);
 	
 	protected $mParserFunctionsParameters = array(
 		LODLanguage::PFP_MAPPING_TARGET		=> 'ziel', 
+		
+		LODLanguage::PFP_LSD_ID						=> "id",
+    	LODLanguage::PFP_LSD_CHANGEFREQ				=> "änderungsrate",
+		LODLanguage::PFP_LSD_DATADUMPLOCATION		=> "dumport",
+		LODLanguage::PFP_LSD_DESCRIPTION			=> "Beschreibung",
+		LODLanguage::PFP_LSD_HOMEPAGE				=> "homepage",
+		LODLanguage::PFP_LSD_LABEL					=> "Bezeichnung",
+		LODLanguage::PFP_LSD_LASTMOD				=> "letzteänderung",
+		LODLanguage::PFP_LSD_LINKEDDATAPREFIX		=> "linkeddatapräfix",
+		LODLanguage::PFP_LSD_SAMPLEURI				=> "beispieluri",
+		LODLanguage::PFP_LSD_SPARQLENDPOINTLOCATION	=> "sparqlendpunkt",
+		LODLanguage::PFP_LSD_SPARQLGRAPHNAME		=> "sparqlgraphname",
+		LODLanguage::PFP_LSD_URIREGEXPATTERN		=> "uriregexmuster",
+		LODLanguage::PFP_LSD_VOCABULARY				=> "vokabular",
+		
 	);
 		
 }

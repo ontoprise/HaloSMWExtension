@@ -31,10 +31,15 @@ $messages = array();
  * English
  */
 $messages['en'] = array(
-    'lod_mapping_tag_ns'	 => 'The tag <mapping> is only evaluated in the namespace "Mapping".',
+    //--- Mapping ---
+	'lod_mapping_tag_ns'	 => 'The tag <mapping> is only evaluated in the namespace "Mapping".',
     'lod_no_mapping_in_ns'   => 'Articles in the namespace "Mapping" are supposed to contain mappings for linked data sources. You can add mapping descriptions in the tag &lt;mapping&gt;.',
 	'lod_saving_mapping_failed' => '<b>The following mapping could not be saved:</b>',
+	
+	//--- Non-existing pages ---
 	'lod_nep_link'			=> 'Create the article <b>$1</b> with the content displayed below.',
+
+	//--- Meta-data printer ---
 	'lod_mdp_no_printer'	=> 'The requested meta-data printer for format <i>$1</i> was not found.',
 	'lod_mdp_no_metadata'	=> 'There is no neta-data for this value.',
 	'lod_mdp_property'		=> 'Property',
@@ -85,16 +90,45 @@ $messages['en'] = array(
 	'lod_mdpt_rating_user'						=> 'rating_user',
 	'lod_mdpt_rating_created'					=> 'rating_created',
 	'lod_mdpt_rating_assessment'				=> 'rating_assessment',
+							
+	//--- LOD source definition---
+	'lod_lsdparser_expected_at_least'			=> 'The parameter "$2" must occur at least $1 time(s).',
+	'lod_lsdparser_expected_exactly'			=> 'The parameter "$2" must occur exactly $1 time(s).',
+	'lod_lsdparser_expected_between'			=> 'The parameter "$3" must occur between $1 and $2 time(s).',
+	'lod_lsdparser_title'						=> 'Data source definition',
+	'lod_lsdparser_success'						=> 'The Linked Data source definition was parsed successfully. The following values will be stored:',							
+	'lod_lsdparser_failed'						=> 'The definition of the data source is faulty. It will not be saved.',			
+	'lod_lsdparser_error_intro'					=> 'The following errors were found in the definition of the data source:',				
+							
+	'lod_lsd_id'						=> "ID",
+	'lod_lsd_changefreq'				=> "Change frequency",
+	'lod_lsd_datadumplocation'			=> "Data dump location",
+	'lod_lsd_description'				=> "Description",
+	'lod_lsd_homepage'					=> "Homepage",
+	'lod_lsd_label'						=> "Label",
+	'lod_lsd_lastmod'					=> "Last modification",
+	'lod_lsd_linkeddataprefix'			=> "Linked data prefix",
+	'lod_lsd_sampleuri'					=> "Sample URI",
+	'lod_lsd_sparqlendpointlocation'	=> "SPARQL endpoint location",
+	'lod_lsd_sparqlgraphname'			=> "SPARQL graph name",
+	'lod_lsd_uriregexpattern'			=> "URI regex pattern",
+	'lod_lsd_vocabulary'				=> "Vocabulary",
+														
 );
 
 /** 
  * German
  */
 $messages['de'] = array(
-    'lod_mapping_tag_ns'	 => 'Das Tag <zuordnung> wird nur im Namensraum "Mapping" ausgewertet.',
+    //--- Mapping ---
+	'lod_mapping_tag_ns'	 => 'Das Tag <zuordnung> wird nur im Namensraum "Mapping" ausgewertet.',
     'lod_no_mapping_in_ns'   => 'Artikel im Namensraum "Mapping" sollten Mappings für Linked Data Quellen beinhalten. Sie können Mapping-Beschreibungen im Tag &lt;zuordnung&gt; einfügen.',
 	'lod_saving_mapping_failed' => '<b>Die folgende Zuordnung konnte nicht gespeichert werden:</b>',
+
+	//--- Non-existing pages ---
 	'lod_nep_link'			=> 'Den Artikel <b>$1</b> mit dem unten dargestellten Inhalt erzeugen.',
+
+	//--- Meta-data printer ---
 	'lod_mdp_no_printer'	=> 'Die gewünschte Metadatenausgabe <i>$1</i> wurde nicht gefunden.',
 	'lod_mdp_no_metadata'	=> 'Zu diesem Wert gibt es keine Metadaten.',
 	'lod_mdp_property'		=> 'Eigenschaft',
@@ -145,4 +179,28 @@ $messages['de'] = array(
 	'lod_mdpt_rating_user'						=> 'rating_user',
 	'lod_mdpt_rating_created'					=> 'rating_created',
 	'lod_mdpt_rating_assessment'				=> 'rating_assessment',
-							);
+							
+	//--- LOD source definition---
+	'lod_lsdparser_expected_at_least'			=> 'Der Parameter "$2" muss mindestens $1 mal vorkommen.',
+	'lod_lsdparser_expected_exactly'			=> 'Der Parameter "$2" muss genau $1 mal vorkommen.',
+	'lod_lsdparser_expected_between'			=> 'Der Parameter "$3" muss zwischen $1 und $2 mal vorkommen.',
+	'lod_lsdparser_title'						=> 'Datenquellendefinition',
+	'lod_lsdparser_success'						=> 'Die Linked-Data-Quelldefinition wurde erfolgreich gelesen. Die folgenden Werte werden gespeichert:',
+	'lod_lsdparser_failed'						=> 'Die Definition der Datenquelle ist fehlerhaft. Sie wird nicht gespeichert.',			
+	'lod_lsdparser_error_intro'					=> 'Die folgenden Fehler wurden in der Definition der Datenquelle gefunden:',				
+
+	'lod_lsd_id'						=> "ID",
+	'lod_lsd_changefreq'				=> "Änderungsrate",
+	'lod_lsd_datadumplocation'			=> "Adresse für Datendumps",
+	'lod_lsd_description'				=> "Beschreibung",
+	'lod_lsd_homepage'					=> "Homepage",
+	'lod_lsd_label'						=> "Bezeichnung",
+	'lod_lsd_lastmod'					=> "Letzte Änderung",
+	'lod_lsd_linkeddataprefix'			=> "Linked data Präfix",
+	'lod_lsd_sampleuri'					=> "Beispiel-URI",
+	'lod_lsd_sparqlendpointlocation'	=> "SPARQL-Endpunktadresse",
+	'lod_lsd_sparqlgraphname'			=> "SPARQL-Graphname",
+	'lod_lsd_uriregexpattern'			=> "URI Regex-Muster",
+	'lod_lsd_vocabulary'				=> "Vokabular",
+							
+);
