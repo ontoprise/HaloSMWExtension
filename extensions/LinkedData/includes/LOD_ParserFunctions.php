@@ -43,19 +43,22 @@ $wgHooks['LanguageGetMagic'][] = 'lodfLanguageGetMagic';
 function lodfInitParserfunctions() {
 	global $wgParser, $lodgContLang;
 	
-	LODParserFunctions::getInstance();
+	$inst = LODParserFunctions::getInstance();
 
 	$wgParser->setHook($lodgContLang->getParserFunction(LODLanguage::PF_MAPPING), 
 	                   array('LODParserFunctions', 'mapping'));
 	
-//	$wgParser->setFunctionHook('haclaccess', 'HACLParserFunctions::access');
+	$wgParser->setFunctionHook('lodsourcedefinition', array($inst, 'lodSourceDefinition'));
+	
+	global $wgHooks;
+	$wgHooks['ArticleSave'][] = 'LODParserFunctions::onArticleSave';
 
 }
 
 function lodfLanguageGetMagic( &$magicWords, $langCode ) {
 	global $lodgContLang;
-//	$magicWords['lodmapping']
-//		= array( 0, $lodgContLang->getParserFunction(LODLanguage::PF_MAPPING));
+	$magicWords['lodsourcedefinition']
+		= array( 0, $lodgContLang->getParserFunction(LODLanguage::PF_LSD));
 	return true;
 }
 
@@ -89,6 +92,9 @@ class LODParserFunctions {
 
 	//--- Public methods ---
 
+	/**
+	 * Returns the singleton of this class.
+	 */
 	public static function getInstance() {
 		if (is_null(self::$mInstance)) {
 			self::$mInstance = new self;
@@ -147,6 +153,109 @@ class LODParserFunctions {
 	}
 	
 	/**
+	 * Callback for parser function "#sourcedefinition:".
+	 * This parser function defines a LOD source definition. It can appear 
+	 * several times in an article and has the following parameters:
+	 * 
+	 * id (string) 1
+	 * A short name like "dbpedia" for the source (to be precise: the dataset of
+	 * a source). The ID will later be referenced in other places e.g. queries and
+	 * mappings. 
+	 *	
+	 * Description (string) 0..1
+	 * An optional textual description of the dataset. 
+	 *
+	 * Label (string) 0..1
+	 * An optional label that provides the name of the dataset. 
+	 *
+	 * LinkedDataPrefix string 0..1
+	 * A prefix for Linked Data hosted on a server. URIs that begin with this 
+	 * prefix MUST resolve to RDF descriptions. There can be any number of 
+	 * <sc:linkedDataPrefix> tags in a dataset. The dataset is said to contain 
+	 * all RDF data that can be retrieved from any URI that start with any of 
+	 * the prefixes. 
+	 *
+	 * UriRegexPattern string 0..1
+	 * This is complementary SiteMap's to LinkedDataPrefix. A regular expression 
+	 * pattern that matches one or more URIs in the dataset. The pattern should 
+	 * use the same regular expression syntax as SPARQL, which uses the syntax 
+	 * definition of XML Schema 2: Regular Expressions. 
+	 *
+	 * Homepage (URI) 0..1
+	 * The homepage of the dataset. Note, this must be different from the 
+	 * homepage of the creator or publisher to avoid incorrect 'smushing'. 
+	 *
+	 * SampleURI (URI) 0..*
+	 * This tag can be used to point to a URI within the dataset which can be 
+	 * considered a representative “sample”. This is useful for Semantic Web 
+	 * clients to provide starting points for human exploration of the dataset. 
+	 * There can be any number of sample URIs. 
+	 *
+	 * SparqlEndpointLocation (URI) 0..1
+	 * The location of a SPARQL protocol endpoint for the dataset. There can be 
+	 * zero or one for a dataset.
+	 *
+	 * SparqlGraphName (URI) 0..1
+	 * If this optional parameter is present, then it specifies the URI of a 
+	 * named graph within the SPARQL endpoint. This named graph is assumed to 
+	 * contain the data of this dataset. This tag must be used only if 
+	 * sparqlEndpointLocation is also present, and there must be at most one 
+	 * sparqlGraphName per dataset.
+	 * If the data is distributed over multiple named graphs in the endpoint, 
+	 * then the publisher should either use a value of “*” for this tag, or 
+	 * create separate datasets for each named graph.
+	 * If the tag is omitted, the dataset is assumed to be available through the 
+	 * endpoint's default graph. 
+	 *
+	 * DataDumpLocation (URI) 0..*
+	 * Indicates the location of an RDF data dump file. There can be any numbers
+	 * of data dump location assignments. The dataset is said to contain the RDF 
+	 * merge of all the dumps. 
+	 *
+	 * LastMod (date) 0..1
+	 * This optional parameter, defined by the Sitemap protocol, gives the date 
+	 * of last modification of the dataset. This date should be in W3C Datetime
+	 * format. Example values are 2007-11-21 and 2007-11-21T14:41:09+00:00. 
+	 *
+	 * ChangeFreq (string) 0..1
+	 * This optional tag, defined by the Sitemap protocol, describes how often 
+	 * the dataset is expected to be updated. Possible values are: always, hourly,
+	 * daily, weekly, monthly, yearly, never. 
+	 *
+	 * Vocabulary (URI) 0..*
+	 * Every RDF dataset uses one or more RDFS vocabularies or OWL ontologies. 
+	 * The vocabulary provides the terms (classes and properties) for expressing 
+	 * the data. The vocabulary property can be used to list vocabularies used in 
+	 * a dataset. 
+	 *
+	 * @param Parser $parser
+	 * 		The parser object
+	 *
+	 * @return string
+	 * 		Wikitext
+	 *
+	 */
+	public function lodSourceDefinition(&$parser) {
+		// Get the parameters of the parser function
+		$params = $this->getParameters(func_get_args());
+		
+		// Check the consistency of the parameters
+		$wikiText = "";
+		$lsd = $this->createLSDFromParams($params, $wikiText);
+		if (!is_null($lsd)) {
+			$articleName = $parser->getTitle()->getFullText();
+			// Data source definition is fine
+			// => store it persistently with the $articleName as ID 
+			// Store the source definition
+			$store = LODAdministrationStore::getInstance();
+			$store->storeSourceDefinition($lsd, $articleName);
+		};
+		
+		return $wikiText;
+	}
+	
+	
+	/**
 	 * This method is called, when an article is deleted. If the article
 	 * belongs to the namespace "Mapping", the LOD mappings for the article are
 	 * deleted.
@@ -166,6 +275,12 @@ class LODParserFunctions {
 			$store = LODMappingStore::getStore();
 			$store->removeAllMappings($source);
 		}
+		
+		// Delete the triples of LOD source definitions
+		$store = LODAdministrationStore::getInstance();
+		$persistencyID = $article->getTitle()->getFullText();
+		$store->deleteSourceDefinition(NULL, $persistencyID);
+		
 		return true;
 	}
 	
@@ -203,16 +318,32 @@ class LODParserFunctions {
 		self::$mFirstMapping = true;
 	}
 
+	/**
+	 * 
+	 * Occurs whenever the software receives a request to save an article.
+	 * The article may contain LOD source definitions that are no longer present
+	 * or that changed in the new version of the article. All source definitions
+	 * for the article are deleted in the triple store and the persistency layer.
+	 */
+	public static function onArticleSave(&$article, &$user, &$text, &$summary,
+			$minor, &$watchthis, $sectionanchor, &$flags, &$status) {
+		
+		$store = LODAdministrationStore::getInstance();
+		$persistencyID = $article->getTitle()->getFullText();
+		$store->deleteSourceDefinition(NULL, $persistencyID);
+		return true;
+	}
 
 	//--- Private methods ---
 	
 	/**
 	 * Returns the parser function parameters that were passed to the parser-function
-	 * callback.
+	 * callback. The same parameter name may be used several times. In this case
+	 * an array of values is returned.
 	 *
 	 * @param array(mixed) $args
 	 * 		Arguments of a parser function callback
-	 * @return array(string=>string)
+	 * @return array(string=>string/array)
 	 * 		Array of argument names and their values.
 	 */
 	private function getParameters($args) {
@@ -223,11 +354,203 @@ class LODParserFunctions {
 				continue;
 			}
 			if (preg_match('/^\s*(.*?)\s*=\s*(.*?)\s*$/', $arg, $p) == 1) {
-				$parameters[strtolower($p[1])] = $p[2];
+				$key = strtolower($p[1]);
+				if (array_key_exists($key, $parameters)) {
+					if (is_array($parameters[$key])) {
+						$parameters[$key][] = $p[2];
+					} else {
+						// until now only a single value was stored
+						$parameters[$key] = array($parameters[$key], $p[2]);			
+					}
+				} else {
+					$parameters[$key] = $p[2];
+				}
 			}
 		}
 
 		return $parameters;
+	}
+	
+	/**
+	 * Checks the consistency of the parameters of a LOD source definition and
+	 * creates an object of type LODSourceDefinition. If the parameters
+	 * are inconsistent a wiki text with error messages will be returned otherwise
+	 * the wiki text will list the properties of the LSD.
+	 * 
+	 * @param array $params
+	 * 		These parameters define the source
+	 * @param string $wikiText
+	 * 		The wiki text describes the errors or properties of the LSD..
+	 * @return mixed LODSourceDefinition
+	 * 		LODSourceDefinition: if all parameters are valid
+	 * 		null: Some parameters are invalid
+	 */
+	private function createLSDFromParams(array $params, &$wikiText) {
+		$errMsg = array();
+		$wikiTextMsg = array();
+		
+		// ID: mandatory
+		$id = $this->retrieveParam($params, LODLanguage::PFP_LSD_ID, 1, 1, $errMsg);
+		if (is_null($id)) {
+			$id = "dummy";
+		} else {
+			$wikiTextMsg[] = array(wfMsgForContent('lod_lsd_id'), array($id));
+		}
+		$lsd = new LODSourceDefinition($id);
+		
+		// Description of the parameters in a LODSourceDefinition
+		// 0 - Language ID of the parameter name
+		// 1 - minimum expected values
+		// 2 - maximum expected values
+		// 3 - Name of the setter function in LODSourceDefinition
+		$paramDescr = array(
+			array(LODLanguage::PFP_LSD_DESCRIPTION, 			0,  1, "setDescription", 			"lod_lsd_description"),
+			array(LODLanguage::PFP_LSD_LABEL, 					0,  1, "setLabel", 					"lod_lsd_label"),
+			array(LODLanguage::PFP_LSD_LINKEDDATAPREFIX, 		0,  1, "setLinkedDataPrefix", 		"lod_lsd_linkeddataprefix"),
+			array(LODLanguage::PFP_LSD_URIREGEXPATTERN, 		0,  1, "setUriRegexPattern", 		"lod_lsd_uriregexpattern"),
+			array(LODLanguage::PFP_LSD_HOMEPAGE, 				0,  1, "setHomepage", 				"lod_lsd_homepage"),
+			array(LODLanguage::PFP_LSD_SAMPLEURI, 				0, -1, "setSampleURIs", 			"lod_lsd_sampleuri"),
+			array(LODLanguage::PFP_LSD_SPARQLENDPOINTLOCATION,	0,  1, "setSparqlEndpointLocation",	"lod_lsd_sparqlendpointlocation"),
+			array(LODLanguage::PFP_LSD_SPARQLGRAPHNAME, 		0,  1, "setSparqlGraphName", 		"lod_lsd_sparqlgraphname"),
+			array(LODLanguage::PFP_LSD_DATADUMPLOCATION, 		0, -1, "setDataDumpLocations", 		"lod_lsd_datadumplocation"),
+			array(LODLanguage::PFP_LSD_LASTMOD, 				0,  1, "setLastMod", 				"lod_lsd_lastmod"),
+			array(LODLanguage::PFP_LSD_CHANGEFREQ, 				0,  1, "setChangeFreq",				"lod_lsd_changefreq"),
+			array(LODLanguage::PFP_LSD_VOCABULARY, 				0, -1, "setVocabularies", 			"lod_lsd_vocabulary"),
+			);
+		
+		// Retrieve and set all parameters of $lsd
+		foreach ($paramDescr as $pd) {
+			$val = $this->retrieveParam($params, $pd[0], $pd[1], $pd[2], $errMsg);
+			if (!is_null($val)) {
+				if ($pd[2] == -1 || $pd[2] > 1) {
+					// If the maximum number of values is greater than 1 an
+					// array is expected.
+					if (!is_array($val)) {
+						$val = array($val);
+					}
+				}
+				// Set the parameter value in the LSD
+				$lsd->$pd[3]($val);
+				
+				// Add the parameter/values-pairs to the wiki text.
+				if (!is_array($val)) {
+					$val = array($val);
+				}
+				$wikiTextMsg[] = array(wfMsgForContent($pd[4]),$val);
+			}
+		}
+		
+		if (!empty($errMsg)) {
+			// error messages => return the invalid LSD
+			$lsd = null;
+		}
+		
+		// Generate the wiki text wich consists of a table of valid parameters
+		// and a list of error messages.
+		
+		$title = wfMsgForContent("lod_lsdparser_title");
+		
+		$wikiText = "==$title==\n\n";
+		
+		$wikiText .= empty($errMsg) 
+						? wfMsgForContent("lod_lsdparser_success")
+						: wfMsgForContent("lod_lsdparser_failed");
+						
+		$wikiText .= "\n";						
+						
+		if (!empty($wikiTextMsg)) {
+			$wikiText .= '{| cellspacing="0" border="1" cellpadding="3"';
+			foreach ($wikiTextMsg as $propVal) {
+				$wikiText .= "\n|-\n!{$propVal[0]}\n|";
+				$num = count($propVal[1]);
+				for ($i = 0; $i < $num; ++$i) {
+					$wikiText .= $propVal[1][$i];
+					if ($i < $num-1) {
+						$wikiText .= "<br />";
+					}
+				}
+			}
+			$wikiText .= "\n|}\n\n";
+		}
+		
+		// Generate the list of error messages
+		if (!empty($errMsg)) {
+			$wikiText .= "\n\n";
+			$wikiText .= wfMsgForContent("lod_lsdparser_error_intro");
+			$wikiText .= "\n";
+			foreach ($errMsg as $em) {
+				$wikiText .= "* $em\n";
+			}
+		}
+		
+		return $lsd;
+	}
+	
+	/**
+	 * Retrieves the value of a parser function parameter and performs cardinality
+	 * checks. If these fail, the array of error messages is enhanced, otherwise
+	 * the value is returned.
+	 * 
+	 * @param array<paramName => string/array> $params
+	 * 		The array of all parser function parameters.
+	 * @param int $pfpID
+	 * 		The parser function parameter ID which is used to determine the
+	 * 		language dependent parameter name.
+	 * @param int $min
+	 * 		Minimum number of values for the parameter
+	 * @param int $max
+	 * 		Maximum number of values for the parameter. -1 means infinite.
+	 * @param array<string> $errMsg
+	 * 		An array of error messages which is extended if the cardinality 
+	 * 		constraints are violated.
+	 * 
+	 * @return mixed string/array/null
+	 * 		string: The single value of the parameter
+	 * 		array<string>: Multiple values of the parameter
+	 * 		null: Cardinality constraint is violated
+	 * 	
+	 */
+	private function retrieveParam(array $params, $pfpID, $min, $max, array &$errMsg) {
+		global $lodgContLang;
+		$pfp = $lodgContLang->getParserFunctionParameter($pfpID);
+		
+		$value = @$params[$pfp];
+		if (!isset($value)) {
+			// no value for this parameter
+			if ($min > 0) {
+				// expected at least one value
+				$errMsg[] = wfMsgForContent("lod_lsdparser_expected_at_least", $min, $pfp);
+				return null;
+			}
+		}
+		
+		if (is_array($value)) {
+			// Check that the number of values is between $min and $max
+			$num = count($value);
+			if ($num >= $min && ($max == -1 || $num <= max)) {
+				return $value;
+			} else {
+				$errMsg[] = ($max == -1)
+								? wfMsgForContent("lod_lsdparser_expected_at_least", $min, $pfp)
+								: ($min == $max) 
+									? wfMsgForContent("lod_lsdparser_expected_exactly", $min, $pfp)
+									: wfMsgForContent("lod_lsdparser_expected_between", $min, $max, $pfp);
+				return null;								
+			}
+		} else {
+			// A single value is given
+			if ($min > 1 || ($max < 1 && $max != -1)) {
+				// expected at least one value
+				if ($max == -1) {
+					$max = '*';
+				}
+				$errMsg[] = wfMsgForContent("lod_lsdparser_expected_between", $min, $max, $pfp);
+				return null;
+			}
+			
+		}
+		return $value;
+		
 	}
 
 
