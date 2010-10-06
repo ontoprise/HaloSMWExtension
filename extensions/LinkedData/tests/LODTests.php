@@ -25,11 +25,10 @@ class LODTests
 // IMPORTANT!!
 // Ontobroker Quad must be started with the following options:
 //   msgbroker=none client=MyStore driver=ontobroker-quad wsport=8090 console 
-//   run=D:\MediaWiki\SMWTripleStore\resources\lod_wiki_tests\OntologyBrowserSparql\initDebug.sparul 
 //   reasoner=owl restfulws        
 
-        $suite->addTestSuite("TestTripleStoreAccess");
-        $suite->addTestSuite("TestLODSourceDefinition");
+        $suite->addTestSuite("TestTripleStoreAccessSuite");
+        $suite->addTestSuite("TestLODSourceDefinitionSuite");
         $suite->addTestSuite("TestMapping");
         $suite->addTestSuite("TestSparqlDataspaceRewriter");
         $suite->addTestSuite("TestOntologyBrowserSparql");
