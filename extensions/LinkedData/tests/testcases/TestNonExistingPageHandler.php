@@ -8,7 +8,7 @@ require_once 'PHPUnit/Framework.php';
 
 /**
  * Test suite for handling non-existing pages. The tests requires that the
- * triple store is running and that the following data is loaded:
+ * triple store is running. The following data is loaded:
  * /SMWTripleStore/resources/lod_wiki_tests/OntologyBrowserSparql/PersonGraph.n3
  * 
  * @author thsc
@@ -19,6 +19,9 @@ class TestNonExistinPageSuite extends PHPUnit_Framework_TestSuite
 	
 	public static $mOrderOfArticleCreation;
 	public static $mArticles;
+	
+	protected $mPersonGraph = "http://www.example.org/smw-lde/smwGraphs/PersonGraph";
+	protected $mFilePath = "file://resources/lod_wiki_tests/OntologyBrowserSparql/";
 	
 	public static function suite() {
 		
@@ -61,12 +64,27 @@ class TestNonExistinPageSuite extends PHPUnit_Framework_TestSuite
     	$this->initArticleContent();
     	$this->createArticles();
     	
+		$this->dropGraphs();
+
+		$tsa = new LODTripleStoreAccess();
+		$tsa->createGraph($this->mPersonGraph);
+		$tsa->loadFileIntoGraph("{$this->mFilePath}PersonGraph.n3", $this->mPersonGraph, "n3");
+		$tsa->flushCommands();
+    	
 	}
 	
 	protected function tearDown() {
     	$this->removeArticles();
+    	$this->dropGraphs();
 	}
 
+	protected function dropGraphs() {
+		$tsa = new LODTripleStoreAccess();
+		$tsa->dropGraph($this->mPersonGraph);
+		$tsa->flushCommands();
+	}
+	
+	
 //--- Private functions --------------------------------------------------------
     
 	private function createArticles() {
