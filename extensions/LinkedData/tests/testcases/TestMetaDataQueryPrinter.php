@@ -9,7 +9,7 @@ require_once 'PHPUnit/Framework.php';
 /**
  * Test suite for the meta-data query printer.
  * Start the triple store with these options before running the test:
- * msgbroker=none client=MyStore driver=ontobroker-quad wsport=8090 console run=D:\MediaWiki\SMWTripleStore\resources\lod_wiki_tests\OntologyBrowserSparql\initDebug.sparul reasoner=owl restfulws
+ * msgbroker=none client=MyStore driver=ontobroker-quad wsport=8090 console reasoner=owl restfulws
  * 
  * @author thsc
  *
@@ -23,6 +23,7 @@ class TestMetaDataQueryPrinterSuite extends PHPUnit_Framework_TestSuite
 	protected static $mBaseURI = 'http://www.example.org/smw-lde/';
 	protected $mGraph1 = "http://www.example.org/smw-lde/smwGraphs/ToyotaGraph";
 	protected $mGraph2 = "http://www.example.org/smw-lde/smwGraphs/VolkswagenGraph";
+	protected $mGraph3 = "http://www.example.org/smw-lde/smwGraphs/PersonGraph";
 	protected $mProvGraph;
 	protected $mDSIGraph;
     
@@ -30,6 +31,7 @@ class TestMetaDataQueryPrinterSuite extends PHPUnit_Framework_TestSuite
 	protected $mFilePath = "file://resources/lod_wiki_tests/OntologyBrowserSparql/";
 	protected $mGraph1N3 = "ToyotaGraph.n3";
 	protected $mGraph2N3 = "VolkswagenGraph.n3";
+	protected $mGraph3N3 = "PersonGraph.n3";
 	protected $mProvGraphN3 = "ProvenanceGraph.n3";
 	protected $mDSIGraphN3 = "DataSourceInformationGraph.n3";
 	
@@ -41,17 +43,22 @@ class TestMetaDataQueryPrinterSuite extends PHPUnit_Framework_TestSuite
 	}
 	
 	protected function setUp() {
+				
 		// Setup the content of the triple store
 		$this->mProvGraph = self::$mBaseURI."smwGraphs/ProvenanceGraph";
 		$this->mDSIGraph = self::$mBaseURI."smwGraphs/DataSourceInformationGraph";
 
+		$this->dropGraphs();
+
 		$tsa = new LODTripleStoreAccess();
 		$tsa->createGraph($this->mGraph1);
 		$tsa->createGraph($this->mGraph2);
+		$tsa->createGraph($this->mGraph3);
 		$tsa->createGraph($this->mProvGraph);
 		$tsa->createGraph($this->mDSIGraph);
 		$tsa->loadFileIntoGraph("{$this->mFilePath}ToyotaGraph.n3", $this->mGraph1, "n3");
 		$tsa->loadFileIntoGraph("{$this->mFilePath}VolkswagenGraph.n3", $this->mGraph2, "n3");
+		$tsa->loadFileIntoGraph("{$this->mFilePath}PersonGraph.n3", $this->mGraph3, "n3");
 		$tsa->loadFileIntoGraph("{$this->mFilePath}ProvenanceGraph.n3", $this->mProvGraph, "n3");
 		$tsa->loadFileIntoGraph("{$this->mFilePath}DataSourceInformationGraph.n3", $this->mDSIGraph, "n3");
 		$tsa->flushCommands();
@@ -64,15 +71,19 @@ class TestMetaDataQueryPrinterSuite extends PHPUnit_Framework_TestSuite
 	
 	protected function tearDown() {
     	$this->removeArticles();
-    	
+    	$this->dropGraphs();
+	}
+
+	protected function dropGraphs() {
 		$tsa = new LODTripleStoreAccess();
 		$tsa->dropGraph($this->mGraph1);
 		$tsa->dropGraph($this->mGraph2);
+		$tsa->dropGraph($this->mGraph3);
 		$tsa->dropGraph($this->mProvGraph);
 		$tsa->createGraph($this->mDSIGraph);
 		$tsa->flushCommands();
+		
 	}
-
 //--- Private functions --------------------------------------------------------
     
 	private function createArticles() {
@@ -773,7 +784,8 @@ WHERE {
 }		
 SPARQL;
 		$params = array_merge($params,
-						array("metadata" => "$metaData",
+						array(
+						"metadata" => "$metaData",
 						"metadataformat" => $metaDataPrinter,
 						"dataspace" => "Toyota"));
 		
