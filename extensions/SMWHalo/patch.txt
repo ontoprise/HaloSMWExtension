@@ -47,19 +47,25 @@ Index: extensions/SemanticMediaWiki/includes/SMW_DataValue.php
 ===================================================================
 --- extensions/SemanticMediaWiki/includes/SMW_DataValue.php	2010-06-07 09:49:10.000000000 +0200
 +++ extensions/SemanticMediaWiki/includes/SMW_DataValue.php	2010-07-08 11:13:22.000000000 +0200
-@@ -118,6 +118,22 @@
+@@ -111,6 +111,28 @@
  	 */
- 	private $mHasErrors = false;
+ 	private $mErrors = array();
 
 +	/// Patch:KK|Metadata data|Start
 +	private $m_metadata = array();
++	private $m_metadataTypes = array();
 +
-+	public function setMetadata($mdProperty, $mdValue) {
++	public function setMetadata($mdProperty, $mdType, $mdValue) {
 +		$this->m_metadata[$mdProperty] = $mdValue;
++		$this->m_metadataTypes[$mdProperty] = $mdType;
 +	}
 +
 +	public function getMetadata($mdProperty) {
 +		return $this->m_metadata[$mdProperty];
++	}
++
++	public function getMetadataType($mdProperty) {
++		return $this->m_metadataTypes[$mdProperty];
 +	}
 +
 +	public function getMetadataMap() {
@@ -68,8 +74,8 @@ Index: extensions/SemanticMediaWiki/includes/SMW_DataValue.php
 +	/// Patch:KK|Metadata data|End
 +
  	/**
- 	 * Constructor.
- 	 *
+ 	 * Boolean indicating if there where any errors.
+ 	 * Should be modified accordingly when modifying $mErrors.
 Index: extensions/SemanticMediaWiki/skins/SMW_sorttable.js
 ===================================================================
 --- extensions/SemanticMediaWiki/skins/SMW_sorttable.js	2010-06-07 09:48:41.000000000 +0200
