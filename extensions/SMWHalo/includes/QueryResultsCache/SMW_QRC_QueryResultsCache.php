@@ -270,7 +270,7 @@ class SMWQRCQueryResultsCache {
 					
 					//echo('<pre>'.print_r($oProperty, true).'</pre>');
 					//echo('<pre>'.print_r(, true).'</pre>');
-				} else if($oProperty->isUserDefined() && $name != QRC_HQID_LABEL){
+				} else if($oProperty->isUserDefined() && $oName != QRC_HQID_LABEL){
 					$properties[$oName] = $oProperty;
 				}
 			}
