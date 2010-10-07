@@ -216,6 +216,7 @@ class SMWTripleStore extends SMWStore {
 	 */
 	private function handlePropertyAnnotations(SMWSemanticData $data, array & $triples) {
 		//properties
+		$bNodeCounter = 1;
 		$subject = $data->getSubject();
 		$subject_iri = $this->tsNamespace->getFullIRI($subject->getTitle());
 		global $smwgTripleStoreGraph;
@@ -226,6 +227,7 @@ class SMWTripleStore extends SMWStore {
 			wfRunHooks('TripleStorePropertyUpdate', array(& $data, & $property, & $propertyValueArray, & $triplesFromHook));
 			if ($triplesFromHook === false || count($triplesFromHook) > 0) {
 				$triples = is_array($triplesFromHook) ? array_merge($triples, $triplesFromHook) : $triples;
+				
 				continue; // do not process normal triple generation, if hook provides triples.
 			}
 
@@ -279,7 +281,7 @@ class SMWTripleStore extends SMWStore {
 			} elseif ($property->getPropertyID() == "_SUBP") {
 				if ( $subject->getNamespace() == SMW_NS_PROPERTY ) {
 					foreach($propertyValueArray as $value) {
-						$superproperty_iri = $this->tsNamespace->getFullIRI($value);
+						$superproperty_iri = $this->tsNamespace->getFullIRI($value->getTitle());
 						$triples[] = array($subject_iri, "rdfs:subPropertyOf", $superproperty_iri);
 					}
 
@@ -289,7 +291,9 @@ class SMWTripleStore extends SMWStore {
 
 			// there are other special properties which need not to be handled special
 			// so they can be handled by the default machanism:
+			
 			foreach($propertyValueArray as $value) {
+			
 				if ($value->isValid()) {
 					if ($value->getTypeID() == '_txt') {
 						$dbkeys = $value->getDBkeys();
@@ -302,49 +306,51 @@ class SMWTripleStore extends SMWStore {
 
 					} elseif ($value->getTypeID() == '_rec') {
 
-						$data = $value->getData(); // SMWSemanticData object
-						$v1 = reset($data->getPropertyValues(SMWPropertyValue::makeProperty("_1")));
-						$v2 =  reset($data->getPropertyValues(SMWPropertyValue::makeProperty("_2")));
-						$v3 =  reset($data->getPropertyValues(SMWPropertyValue::makeProperty("_3")));
-						$v4 =  reset($data->getPropertyValues(SMWPropertyValue::makeProperty("_4")));
-						$v5 =  reset($data->getPropertyValues(SMWPropertyValue::makeProperty("_5")));
+						$sdata = $value->getData(); // SMWSemanticData object
+						$v1 = reset($sdata->getPropertyValues(SMWPropertyValue::makeProperty("_1")));
+						$v2 =  reset($sdata->getPropertyValues(SMWPropertyValue::makeProperty("_2")));
+						$v3 =  reset($sdata->getPropertyValues(SMWPropertyValue::makeProperty("_3")));
+						$v4 =  reset($sdata->getPropertyValues(SMWPropertyValue::makeProperty("_4")));
+						$v5 =  reset($sdata->getPropertyValues(SMWPropertyValue::makeProperty("_5")));
 
-						//echo print_r($v1, true);die();
-						$triples[] = array($subject_iri, $property_iri, "_:1");
+						
+						$triples[] = array($subject_iri, $property_iri, "_:".$bNodeCounter);
 
 						if ($v1 !== false) {
 							$xsdType = WikiTypeToXSD::getXSDType($v1->getTypeID());
 							$dbkeys = $v1->getDBkeys();
 							$firstValue = array_shift($dbkeys);
-							$triples[] = array("_:1", "<$smwgTripleStoreGraph/property#0>", "\"".$this->escapeForStringLiteral($firstValue)."\"^^$xsdType");
+							$triples[] = array("_:".$bNodeCounter, "<$smwgTripleStoreGraph/property#0>", "\"".$this->escapeForStringLiteral($firstValue)."\"^^$xsdType");
 						}
 						if ($v2 !== false) {
 							$xsdType = WikiTypeToXSD::getXSDType($v2->getTypeID());
 							$dbkeys = $v2->getDBkeys();
 							$firstValue = array_shift($dbkeys);
-							$triples[] = array("_:1", "<$smwgTripleStoreGraph/property#1>", "\"".$this->escapeForStringLiteral($firstValue)."\"^^$xsdType");
+							$triples[] = array("_:".$bNodeCounter, "<$smwgTripleStoreGraph/property#1>", "\"".$this->escapeForStringLiteral($firstValue)."\"^^$xsdType");
 						}
 						if ($v3 !== false) {
 							$xsdType = WikiTypeToXSD::getXSDType($v3->getTypeID());
 							$dbkeys = $v3->getDBkeys();
 							$firstValue = array_shift($dbkeys);
-							$triples[] = array("_:1", "<$smwgTripleStoreGraph/property#2>", "\"".$this->escapeForStringLiteral($firstValue)."\"^^$xsdType");
+							$triples[] = array("_:".$bNodeCounter, "<$smwgTripleStoreGraph/property#2>", "\"".$this->escapeForStringLiteral($firstValue)."\"^^$xsdType");
 						}
 						if ($v4 !== false) {
 							$xsdType = WikiTypeToXSD::getXSDType($v4->getTypeID());
 							$dbkeys = $v5->getDBkeys();
 							$firstValue = array_shift($dbkeys);
-							$triples[] = array("_:1", "<$smwgTripleStoreGraph/property#3>", "\"".$this->escapeForStringLiteral($firstValue)."\"^^$xsdType");
+							$triples[] = array("_:".$bNodeCounter, "<$smwgTripleStoreGraph/property#3>", "\"".$this->escapeForStringLiteral($firstValue)."\"^^$xsdType");
 						}
 						if ($v5 !== false) {
 							$xsdType = WikiTypeToXSD::getXSDType($v5->getTypeID());
 							$dbkeys = $v5->getDBkeys();
 							$firstValue = array_shift($dbkeys);
-							$triples[] = array("_:1", "<$smwgTripleStoreGraph/property#4>", "\"".$this->escapeForStringLiteral($firstValue)."\"^^$xsdType");
+							$triples[] = array("_:".$bNodeCounter, "<$smwgTripleStoreGraph/property#4>", "\"".$this->escapeForStringLiteral($firstValue)."\"^^$xsdType");
 						}
-
+						$bNodeCounter++;
+						
 					} else {
 						// primitive value (including measures)
+						
 						if ($value->getUnit() != '') {
 							// attribute with unit value (measure)
 							$dbkeys = $value->getDBkeys();
