@@ -119,7 +119,6 @@ Note: 	If you are using Linux, make the smwadmin.sh executable (chmod +x smwadmi
 
 
 
-
 === Testing your Installation ===
 
 If you are uncertain that everything went well, you can do some testing steps to
@@ -168,6 +167,12 @@ the FAQ section, then contact the user support list (see the Contact section).
     of the Query Results Cache can be configured
     in ./includes/QueryResultsCache/QRC_Settings.php
  	enableQueryResultsCache();
+
+7.  One may use the OntologyBrowser to modify the ontology. Specify the appropriate 
+	rights (in this example for the WikiSysop) for modifying the ontology, otherwise 
+	you can only browse through.
+
+	$wgGroupPermissions['sysop']['ontologyediting'] = true;
 
 === Configuring a triplestore ===
 Change the line with 'enableSMWHalo' to:
