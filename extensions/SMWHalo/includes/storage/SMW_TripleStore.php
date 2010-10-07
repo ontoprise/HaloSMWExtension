@@ -149,15 +149,15 @@ class SMWTripleStore extends SMWStore {
 				return;
 			}
 		}
-		
+
 		// create triples from SemanticData object
 		$this->handlePropertyAnnotations($data, $triples);
 		$this->handleCategoryAnnotations($data, $triples);
 		$this->handleRedirects($data, $triples);
-		
+
 		// create rules
 		$subject = $data->getSubject()->getTitle();
-		
+
 		global $smwgEnableObjectLogicRules;
 		if (isset($smwgEnableObjectLogicRules)) {
 			$new_rules = self::$fullSemanticData->getRules();
@@ -165,7 +165,7 @@ class SMWTripleStore extends SMWStore {
 			SMWRuleStore::getInstance()->clearRules($subject->getArticleId());
 			SMWRuleStore::getInstance()->addRules($subject->getArticleId(), $new_rules);
 		}
-		
+
 
 		// connect to MessageBroker and send commands
 		global $smwgMessageBroker, $smwgTripleStoreGraph;
@@ -207,10 +207,10 @@ class SMWTripleStore extends SMWStore {
 			// print something??
 		}
 	}
-	
+
 	/**
 	 * Uses the semantic annotations in SMWSemanticData to create triples to insert into the TSC .
-	 * 
+	 *
 	 * @param SMWSemanticData $data
 	 * @param array & $triples (subject, predicate, object) IRI or prefix form.
 	 */
@@ -379,7 +379,7 @@ class SMWTripleStore extends SMWStore {
 
 	/**
 	 * Uses the category annotations to create triples to insert into the TSC .
-	 * 
+	 *
 	 * @param SMWSemanticData $data
 	 * @param array & $triples (subject, predicate, object) IRI or prefix form.
 	 */
@@ -418,7 +418,7 @@ class SMWTripleStore extends SMWStore {
 
 	/**
 	 * Uses the redirects to create triples to insert into the TSC .
-	 * 
+	 *
 	 * @param SMWSemanticData $data
 	 * @param array & $triples (subject, predicate, object) IRI or prefix form.
 	 */
@@ -837,7 +837,7 @@ class SMWTripleStore extends SMWStore {
 
 			$index++;
 		}
-	
+
 
 		// create and add result rows
 		// iterate result rows and add an SMWResultArray object for each field
@@ -851,7 +851,7 @@ class SMWTripleStore extends SMWStore {
 			foreach($mapPRTOColumns as $pr => $column) reset($mapPRTOColumns[$pr]);
 
 			$children = $r->children(); // $chilren->binding denote all binding nodes
-			
+
 			// find result column and store result page in $resultInstance variable
 			$resultInstance = NULL;
 			foreach ($children->binding as $b) {
@@ -859,7 +859,7 @@ class SMWTripleStore extends SMWStore {
 				if ($var_name == '_X_') {
 					$resultColumn = current($mapPRTOColumns[$var_name]);
 					next($mapPRTOColumns[$var_name]);
-	
+
 					$allValues = array();
 					$this->parseBindungs($b, $var_name, $prs[$resultColumn], $allValues);
 					// what happens if first column is merged??
@@ -867,14 +867,14 @@ class SMWTripleStore extends SMWStore {
 					break;
 				}
 			}
-			
+
 			if (is_null($resultInstance)) {
 				$resultInstance = SMWDataValueFactory::newTypeIDValue('_wpg');
 			}
-						
+
 			// reset column arrays
 			foreach($mapPRTOColumns as $pr => $column) reset($mapPRTOColumns[$pr]);
-			
+
 			foreach ($children->binding as $b) {
 
 				$var_name = ucfirst((string) $children[$columnIndex]->attributes()->name);
@@ -905,7 +905,8 @@ class SMWTripleStore extends SMWStore {
 		}
 		// Query result object
 		$queryResult = new SMWHaloQueryResult($prs, $query, $qresults, $this, (count($results) > $query->getLimit()));
-
+		
+		
 		return $queryResult;
 	}
 
@@ -958,14 +959,14 @@ class SMWTripleStore extends SMWStore {
 		$uris = array();
 
 		foreach($bindingsChildren->uri as $sv) {
-			$uris[] = array((string) $sv, $sv->attributes());
+			$uris[] = array((string) $sv, $sv->metadata);
 		}
 		if (!empty($uris)) {
 			$this->addURIToResult($uris, $allValues);
 		} else {
 			$literals = array();
 			foreach($bindingsChildren->literal as $sv) {
-				$literals[] = array((string) $sv, (string) $sv->attributes()->datatype, $sv->attributes());
+				$literals[] = array((string) $sv, (string) $sv->attributes()->datatype, $sv->metadata);
 			}
 
 			if (!empty($literals)) {
@@ -1015,11 +1016,8 @@ class SMWTripleStore extends SMWStore {
 
 				if (empty($sv)) {
 					$v = SMWDataValueFactory::newTypeIDValue('_wpg');
-					foreach($metadata as $mdProperty => $mdValue) {
-						if (strpos($mdProperty, "_meta_") === 0) {
-							$v->setMetadata(substr($mdProperty,6), explode("|||",$mdValue));
-						}
-					}
+
+					$this->setMetadata($v, $metadata);
 
 					$allValues[] = $v;
 				} else {
@@ -1035,11 +1033,7 @@ class SMWTripleStore extends SMWStore {
 					}
 					$v = SMWDataValueFactory::newTypeIDValue('_wpg');
 					$v->setValues($title->getDBkey(), $ns, $title->getArticleID());
-					foreach($metadata as $mdProperty => $mdValue) {
-						if (strpos($mdProperty, "_meta_") === 0) {
-							$v->setMetadata(substr($mdProperty,6), explode("|||",$mdValue));
-						}
-					}
+					$this->setMetadata($v, $metadata);
 					$allValues[] = $v;
 				}
 			} else {
@@ -1047,16 +1041,33 @@ class SMWTripleStore extends SMWStore {
 
 				$v = SMWDataValueFactory::newTypeIDValue('_uri');
 				$v->setDBkeys(array($sv));
-				foreach($metadata as $mdProperty => $mdValue) {
-					if (strpos($mdProperty, "_meta_") === 0) {
-						$v->setMetadata(substr($mdProperty,6), explode("|||",$mdValue));
-					}
-				}
+				$this->setMetadata($v, $metadata);
 				$allValues[] = $v;
 
 			}
 		}
 
+	}
+	
+	/**
+	 * Set metadata values (if available)
+	 * 
+	 * 
+	 * @param SMWDataValue $v
+	 * @param array of SimpleXMLElement $metadata
+	 */
+	private function setMetadata(SMWDataValue $v, $metadata) {
+		if (!is_null($metadata) && $metadata !== '') {
+			foreach($metadata as $m) {
+				$name = (string) $m->attributes()->name;
+				$datatype = (string) $m->attributes()->datatype;
+				$mdValues = array();
+				foreach($m->value as $mdValue) {
+					$mdValues[] = (string) $mdValue;
+				}
+				$v->setMetadata($name, $datatype, $mdValues);
+			}
+		}
 	}
 
 	/**
@@ -1088,7 +1099,7 @@ class SMWTripleStore extends SMWStore {
 				}
 
 				// set actual value
-				if ($value->getTypeID() == '_dat') { 
+				if ($value->getTypeID() == '_dat') {
 					// normalize dateTime
 					if ($literalValue != '') {
 
@@ -1100,9 +1111,9 @@ class SMWTripleStore extends SMWStore {
 						$valueTemp = SMWDataValueFactory::newPropertyObjectValue($property, str_replace("-","/",$literalValue));
 						$value->setDBkeys($valueTemp->getDBkeys());
 					}
-				} else if ($value->getTypeID() == '_ema' 
-							|| $value->getTypeID() == '_tel' 
-							|| $value->getTypeID() == '_num') { 
+				} else if ($value->getTypeID() == '_ema'
+				|| $value->getTypeID() == '_tel'
+				|| $value->getTypeID() == '_num') {
 					// set some types as DBkeys for normalization
 					$value->setDBkeys(array($literalValue));
 				} else {
@@ -1122,11 +1133,7 @@ class SMWTripleStore extends SMWStore {
 			}
 
 			// set metadata
-			foreach($metadata as $mdProperty => $mdValue) {
-				if (strpos($mdProperty, "_meta_") === 0) {
-					$value->setMetadata(substr($mdProperty,6), explode("|||",$mdValue));
-				}
-			}
+			$this->setMetadata($value, $metadata);
 			$allValues[] = $value;
 		}
 	}
