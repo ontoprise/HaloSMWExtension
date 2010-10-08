@@ -1,6 +1,5 @@
 <?php
-require_once 'PHPUnit/Framework.php';
- 
+
 require_once 'testcases/TestGenerateTree.php';
 require_once 'testcases/TestGenerateTreeDynamic.php';
 require_once 'testcases/TestGenerateTreeAjaxCalls.php'; 
