@@ -1,5 +1,4 @@
 <?php
-require_once 'PHPUnit/Framework.php';
 
 require_once 'testcases/TestWSUpdateBot.php';
 require_once 'testcases/TestWSCacheBot.php';
