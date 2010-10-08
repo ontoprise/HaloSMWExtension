@@ -170,7 +170,7 @@ class  HACLWhitelist  {
 	 * 		If requested: HACLWhitelistException(HACLWhitelistException::USER_CANT_MODIFY_WHITELIST) 
 	 * 
 	 */
-	public function userCanModify($user, $throwException = false) {
+	public static function userCanModify($user, $throwException = false) {
 		if (!is_a($user, "User")) {
 			// Get the ID of the user who wants to add/modify the group
 			list($userID, $userName) = haclfGetUserID($user);
