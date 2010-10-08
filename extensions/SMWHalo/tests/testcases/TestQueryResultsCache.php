@@ -20,6 +20,18 @@ class TestQueryResultsCache extends PHPUnit_Framework_TestCase {
 	private $queryArticle3 = '{{#ask: [[HasValue::+]] }}';
 	
 	function setup(){
+        // when the parser is called several times in all subsequent calls the
+        // skin is not know anymore. Therefore setup the skin names here hardcoded
+        // this worked also for the FCKeditor
+        global $wgDefaultSkin, $wgValidSkinNames;
+        $wgDefaultSkin = "ontoskin3";
+        $wgValidSkinNames = array(
+            "ontoskin3" => "OntoSkin3",
+            "simple" => "Simple",
+            "monobook" => "MonoBook",
+            "vector" => "Vector"
+        );
+
 		$articles = array($this->dataArticle1, $this->dataArticle2, $this->dataArticle3);
 		$count = 0;
 		foreach($articles as $article){
