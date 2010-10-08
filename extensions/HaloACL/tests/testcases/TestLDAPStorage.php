@@ -35,13 +35,17 @@ class TestLDAPStorageSuite extends PHPUnit_Framework_TestSuite
 		// authenticate users from the LDAP store
 		global $wgAuth;
 		$wgAuth->authenticate('Bianca', 'test');
-		$wgAuth->initUser(User::newFromName('Bianca'));
+        $user = User::newFromName('Bianca');
+		$wgAuth->initUser($user);
 		$wgAuth->authenticate('Judith', 'test');
-		$wgAuth->initUser(User::newFromName('Judith'));
+        $user= User::newFromName('Judith');
+		$wgAuth->initUser($user);
 		$wgAuth->authenticate('Thomas', 'test');
-		$wgAuth->initUser(User::newFromName('Thomas'));
+        $user = User::newFromName('Thomas');
+		$wgAuth->initUser($user);
 		$wgAuth->authenticate('WikiSysop', 'test');
-		$wgAuth->initUser(User::newFromName('WikiSysop'));
+        $user = User::newFromName('WikiSysop');
+		$wgAuth->initUser($user);
 		
 	}
 	
