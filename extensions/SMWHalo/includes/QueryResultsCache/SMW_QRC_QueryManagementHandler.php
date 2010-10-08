@@ -65,9 +65,7 @@ class SMWQRCQueryManagementHandler {
 	 * Called by the 'smwInitDatatypes' hook. Initializes the Query Management Data Type.
 	 */
 	public static function initQRCDataTypes(){
-		global $wgAutoloadClasses, $smwgHaloIP, $smwgHaloContLang;
-		$wgAutoloadClasses['SMWQueryCallMetadataValue'] = 
-			"$smwgHaloIP/includes/QueryResultsCache/SMW_QRC_DV_QueryCallMetadata.php";
+		global $smwgHaloIP, $smwgHaloContLang;
 		SMWDataValueFactory::registerDatatype('_qcm', 'SMWQueryCallMetadataValue');	
 	
 		return true;

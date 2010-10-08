@@ -278,7 +278,7 @@ class TestQueryResultsCache extends PHPUnit_Framework_TestCase {
 		$pOpts = new ParserOptions();
 		$result = $wgParser->parse($content, Title::newFromText('QRCQueryArticle1'), $pOpts)->getText();
 		
-		$article = Article::newFromID(Title::newFromText(QRCQueryArticle1));
+		$article = Article::newFromID(Title::newFromText('QRCQueryArticle1'));
 		
 		$cacheEntryUsed = false;
 		if(strpos($result, 'QRCDataArticle1') > 0) $cacheEntryUsed = true;
@@ -306,7 +306,7 @@ class TestQueryResultsCache extends PHPUnit_Framework_TestCase {
 		$pOpts = new ParserOptions();
 		$result = $wgParser->parse($content, Title::newFromText('QRCQueryArticle2'), $pOpts)->getText();
 		
-		$article = Article::newFromID(Title::newFromText(QRCQueryArticle2));
+		$article = Article::newFromID(Title::newFromText('QRCQueryArticle2'));
 		
 		$cacheEntryUsed = false;
 		if(strpos($result, 'QRCDataArticle1') > 0) $cacheEntryUsed = true;
@@ -407,6 +407,8 @@ class TestQueryResultsCache extends PHPUnit_Framework_TestCase {
 		$request = json_encode(array('debug' => true));
 		$response = smwf_qc_getQueryIds($request);
 		$response = json_decode($response);
+		
+		$this->assertGreaterThan(1, count($response->queryIds));
 		
 		$qrcStore = SMWQRCStore::getInstance()->getDB();
 		$qId = $response->queryIds[0];

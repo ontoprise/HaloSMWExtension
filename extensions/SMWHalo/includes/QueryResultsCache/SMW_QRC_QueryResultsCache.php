@@ -144,7 +144,13 @@ class SMWQRCQueryResultsCache {
 		global $wgRequest;
 		$action = $wgRequest->getVal('action');
 		$isReadAccess = true;
-		if($wgRequest->wasposted() || $action == 'purge' || $action == 'submit'){
+		
+		$wasPosted = false;
+		if(array_key_exists('REQUEST_METHOD', $_SERVER)){
+			$wasPosted = $_SERVER['REQUEST_METHOD'] == 'POST' ? true : false; 
+		}
+				;
+		if($wasPosted || $action == 'purge' || $action == 'submit'){
 			$isReadAccess = false;	
 		}
 		return $isReadAccess;

@@ -16,7 +16,8 @@ $wgAjaxExportList[] = 'smwf_qc_updateQuery';
  * Returns an empty query id array if QRC is disabled
  */
 function smwf_qc_getQueryIds($paramAsJSON){
-	if(!smwgQRCEnabled){
+	global $smwgQRCEnabled;
+	if(!$smwgQRCEnabled){
 		$response['queryIds'] = array(); 
 	} else {
 		$paramObj = json_decode($paramAsJSON);
