@@ -1017,7 +1017,8 @@ class HACLEvaluator {
 			$actionID != HACLRight::EDIT &&
 			$actionID != HACLRight::ANNOTATE) {
 
-			$a = @$wgRequest->data['action'];
+//			$a = @$wgRequest->data['action'];
+			$a = $wgRequest->getVal('action');
 			if (isset($a)) {
 				// Some web request are translated to other actions before they
 				// are passed to the userCan hook. E.g. action=history is passed
