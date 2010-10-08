@@ -115,7 +115,7 @@ $wgProxyKey = "4ea88d6d15d7e1935fddb31d9f5a9a33911f0622a3d46e230875a22e70e676";
 
 ## Default skin: you can change the default skin. Use the internal symbolic
 ## names, ie 'standard', 'nostalgia', 'cologneblue', 'monobook':
-$wgDefaultSkin = 'ontoskin2';
+$wgDefaultSkin = 'ontoskin3';
 
 ## For attaching licensing metadata to pages, and displaying an
 ## appropriate copyright notice / icon. GNU Free Documentation
