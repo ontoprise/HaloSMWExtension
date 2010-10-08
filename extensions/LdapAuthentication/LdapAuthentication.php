@@ -45,12 +45,17 @@
  * Add extension information to Special:Version
  */
 $wgExtensionCredits['other'][] = array(
+	'path' => __FILE__,
 	'name' => 'LDAP Authentication Plugin',
 	'version' => '1.2b (alpha)',
 	'author' => 'Ryan Lane',
 	'description' => 'LDAP Authentication plugin with support for multiple LDAP authentication methods',
+	'descriptionmsg' => 'ldapauthentication-desc',
 	'url' => 'http://www.mediawiki.org/wiki/Extension:LDAP_Authentication',
-	);
+);
+
+$dir = dirname(__FILE__) . '/';
+$wgExtensionMessagesFiles['LdapAuthentication'] = $dir . 'LdapAuthentication.i18n.php';
 
 //constants for search base
 define("GROUPDN", 0);
@@ -379,7 +384,7 @@ class LdapAuthenticationPlugin extends AuthPlugin {
 	 * @param UserLoginTemplate $template
 	 * @access public
 	 */
-	function modifyUITemplate( &$template ) {
+	function modifyUITemplate( &$template, &$type ) {
 		global $wgLDAPDomainNames, $wgLDAPUseLocal;
 		global $wgLDAPAddLDAPUsers;
 		global $wgLDAPAutoAuthDomain;
@@ -439,7 +444,7 @@ class LdapAuthenticationPlugin extends AuthPlugin {
 	 * @return bool
 	 * @access public
 	 */
-	function setPassword( $user, &$password ) {
+	function setPassword( $user, $password ) {
 		global $wgLDAPUpdateLDAP, $wgLDAPWriterDN, $wgLDAPWriterPassword;
 
 		$this->printDebug( "Entering setPassword", NONSENSITIVE );
@@ -626,7 +631,7 @@ class LdapAuthenticationPlugin extends AuthPlugin {
 	 * @return bool
 	 * @access public
 	 */
-	function addUser( $user, $password ) {
+	function addUser( $user, $password, $email='', $realname='' ) {
 		global $wgLDAPAddLDAPUsers, $wgLDAPWriterDN, $wgLDAPWriterPassword;
 		global $wgLDAPSearchAttributes;
 		global $wgLDAPWriteLocation;
@@ -658,8 +663,8 @@ class LdapAuthenticationPlugin extends AuthPlugin {
 			return false;
 		}
 
-		$this->email = $user->getEmail();
-		$this->realname = $user->getRealName();
+		$this->email = (strlen($email) > 0) ? $email : $user->getEmail();
+		$this->realname = (strlen($realname) > 0) ? $realname : $user->getRealName();
 		$username = $user->getName();
 
 		$pass = $this->getPasswordHash( $password );
@@ -829,7 +834,7 @@ class LdapAuthenticationPlugin extends AuthPlugin {
 	 * @access public
 	 * TODO: fix setExternalID stuff
 	 */
-	function initUser( &$user ) {
+	function initUser( &$user, $autocreate=false ) {
 		global $wgLDAPUseLDAPGroups;
 
 		$this->printDebug( "Entering initUser", NONSENSITIVE );
@@ -1721,6 +1726,7 @@ function AutoAuthSetup() {
 	global $wgLDAPSmartcardDomain;
 	global $wgHooks;
 	global $wgAuth;
+	global $wgVersion;
 
 	$wgAuth = new LdapAuthenticationPlugin();
 
@@ -1739,7 +1745,11 @@ function AutoAuthSetup() {
 	if( $wgLDAPAutoAuthUsername != null ) {
 		$wgAuth->printDebug( "wgLDAPAutoAuthUsername is not null, adding hooks.", NONSENSITIVE );
 		if ( version_compare( $wgVersion, '1.14.0', '<' ) ) {
-			$wgHooks['UserLoadFromSession'][] = 'LdapAutoAuthentication::Authenticate';
+			if ( version_compare( $wgVersion, '1.13.0', '<' ) ) {
+				$wgHooks['AutoAuthenticate'][] = 'LdapAutoAuthentication::Authenticate';
+			} else {
+				$wgHooks['UserLoadFromSession'][] = 'LdapAutoAuthentication::Authenticate';
+			}
 		} else {
 			$wgHooks['UserLoadAfterLoadFromSession'][] = 'LdapAutoAuthentication::Authenticate';
 		}
