@@ -5,12 +5,12 @@ class TestParserWiki2Html extends PHPUnit_Framework_TestCase {
         // calling the FCKparser a second time makes trouble with skins, therefore
         // set to monobook, and some default mechanism work.
         global $wgDefaultSkin, $wgValidSkinNames;
-        $wgDefaultSkin = "monobook";
+        $wgDefaultSkin = "ontoskin3";
         $wgValidSkinNames = array(
             "ontoskin3" => "OntoSkin3",
             "simple" => "Simple",
             "monobook" => "MonoBook",
-            "ontoskin2" => "OntoSkin2",
+            "vector" => "Vector",
         );
         
         $this->title = Title::newFromText("__dummy__");
