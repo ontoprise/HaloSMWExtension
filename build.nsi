@@ -643,7 +643,7 @@ Function changeConfigForFullXAMPP
     
     ; Activate php_gd2.dll for thumbnails and php_openssl.dll for SSL 
     DetailPrint "Update php.ini"
-    nsExec::ExecToLog '"$INSTDIR\php\php.exe" "$INSTDIR\htdocs\mediawiki\installer\activateExtension.php" ini="$INSTDIR\apache\bin\php.ini" on=php_gd2,php_openssl,php_curl'
+    nsExec::ExecToLog '"$INSTDIR\php\php.exe" "$INSTDIR\htdocs\mediawiki\installer\activateExtension.php" ini="$INSTDIR\php\php.ini" on=php_gd2,php_openssl,php_curl'
     
     
     ; Make halowiki directory accessible by Apache  
