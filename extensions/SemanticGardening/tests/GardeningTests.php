@@ -1,5 +1,4 @@
 <?php
-require_once 'PHPUnit/Framework.php';
  
 require_once 'testcases/TestConsistencyBot.php';
 require_once 'testcases/TestAnomaliesBot.php';
