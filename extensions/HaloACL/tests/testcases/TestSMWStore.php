@@ -4,9 +4,6 @@
  * @ingroup HaloACL_Tests
  */
 
-require_once 'PHPUnit/Framework.php';
-
-
 class TestSMWStoreSuite extends PHPUnit_Framework_TestSuite
 {
 	

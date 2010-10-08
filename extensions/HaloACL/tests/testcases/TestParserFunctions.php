@@ -4,8 +4,6 @@
  * @ingroup HaloACL_Tests
  */
 
-require_once 'PHPUnit/Framework.php';
-
 class TestParserFunctions extends PHPUnit_Framework_TestCase {
 
 	private $mArticles;

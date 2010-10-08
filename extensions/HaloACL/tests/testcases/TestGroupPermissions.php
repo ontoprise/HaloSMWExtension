@@ -4,9 +4,6 @@
  * @ingroup HaloACL_Tests
  */
 
-require_once 'PHPUnit/Framework.php';
-
-
 /**
  * This suite test Mediawiki group permissions with HaloACL groups. Groups
  * that are defined in HaloACL can be used in rights defined with 
