@@ -1162,11 +1162,8 @@ class SMWTripleStore extends SMWStore {
 		}
 		$v = SMWDataValueFactory::newTypeIDValue('_wpg');
 		$v->setValues($title->getDBkey(), $ns, $title->getArticleID());
-		foreach($metadata as $mdProperty => $mdValue) {
-			if (strpos($mdProperty, "_meta_") === 0) {
-				$v->setMetadata(substr($mdProperty,6), explode("|||",$mdValue));
-			}
-		}
+		$this->setMetadata($v, $metadata);
+		
 		return $v;
 
 	}
