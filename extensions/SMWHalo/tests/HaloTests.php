@@ -8,7 +8,6 @@
  * 
  * @author Kai K�hn
  */
-require_once 'PHPUnit/Framework.php';
 
 require_once 'testcases/TestSemanticStore.php';
 require_once 'testcases/TestAutocompletionStore.php';
