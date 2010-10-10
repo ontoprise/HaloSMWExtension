@@ -116,7 +116,7 @@ class BackupReader {
      * @param int $mode
      * @param out boolean $result
      */
-    function modifiedPage($deployRevision, $mode, $result) {
+    function modifiedPage($deployRevision, $mode, & $result) {
         static $overwrite = false;
         switch ($mode) {
             case DEPLOYWIKIREVISION_FORCE:
