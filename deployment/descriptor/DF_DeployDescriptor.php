@@ -586,9 +586,19 @@ class DeployDescriptor {
 
 		$content = $dp->applyLocalSettingsChanges($userCallback, $this->getUserRequirements(), $dryRun);
 		if (!$dryRun) $dp->applyPatches($userCallback);
-		if (!$dryRun) $dp->applySetups();
+		
 		$this->lastErrors = $dp->getErrorMessages();
 		return $content; // return for testing purposes.
+	}
+	
+	/**
+	 * Applies the setup script(s)
+	 * 
+	 * @param $dryRun If true, nothing gets actually changed or asked.
+	 */
+	function applySetups($rootDir, $dryRun = false) {
+		$dp = new DeployDescriptionProcessor($rootDir.'/LocalSettings.php', $this);
+		if (!$dryRun) $dp->applySetups();
 	}
 
 	/**

@@ -51,7 +51,7 @@ class Installer {
 
 	static $instance = NULL; // singleton
 
-	public function getInstance($rootDir = NULL, $force = false, $noAsk = false, $noRollback = false) {
+	public static function getInstance($rootDir = NULL, $force = false, $noAsk = false, $noRollback = false) {
 		if (!is_null(self::$instance)) return self::$instance;
 		self::$instance = new Installer($rootDir, $force, $noAsk, $noRollback);
 		return self::$instance;
@@ -407,6 +407,13 @@ class Installer {
 			$this->res_installer->installOrUpdateWikidumps($desc, $fromVersion, $this->force ? DEPLOYWIKIREVISION_FORCE : DEPLOYWIKIREVISION_WARN);
 
 			print "\n-------\n";
+		}
+		
+		// apply the setup operations which must not happen
+		// before all extensions are updated
+		foreach($extensions_to_update as $arr) {
+			list($desc, $min, $max) = $arr;
+			$desc->applySetups($this->instDir, false);
 		}
 	}
 
