@@ -621,6 +621,8 @@ Function changeConfigForFullXAMPP
     SetOutPath "$INSTDIR"
     nsExec::ExecToLog '"$INSTDIR\setup_xampp.bat"'
     SetOutPath "$INSTDIR\htdocs\mediawiki"
+    ; Apache logs directory doesn't exist, so create it
+    CreateDirectory "$INSTDIR\apache\logs"
     
     ; setup halowiki (change LocalSettings.php)
     ; Use LocalSettings.php.template and change the following variables:
