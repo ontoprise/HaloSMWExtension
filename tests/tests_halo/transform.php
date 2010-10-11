@@ -4,12 +4,15 @@
  *
  * Usage:
  *
- *  php Transform.php -i <input file> -o <output file> [ -p <package name> ]
+ *  php Transform.php -i <input file> -o|-O <output file> [ -p <package name> ]
+ *                    [ -t xsl stylesheet ]
  *
  *
- * @author Kai Kühn
+ * @author Kai Kï¿½hn
  *
  */
+$stylesheet = dirname(__FILE__)."/transform.xslt";
+$appendOutput = false;
 $params = array();
 for( $arg = reset( $argv ); $arg !== false; $arg = next( $argv ) ) {
 	//-i => input file
@@ -22,9 +25,20 @@ for( $arg = reset( $argv ); $arg !== false; $arg = next( $argv ) ) {
 		$outputFile = next($argv);
 		continue;
 	}
+    // -O => append to output file
+	if ($arg == '-O') {
+		$outputFile = next($argv);
+        $appendOutput = true;
+		continue;
+	}
 	// -p => package name
 	if ($arg == '-p') {
 		$package = next($argv);
+		continue;
+	}
+    // -t => xslt stylesheet
+	if ($arg == '-t') {
+		$stylesheet = next($argv);
 		continue;
 	}
 	$params[] = $arg;
@@ -34,7 +48,7 @@ for( $arg = reset( $argv ); $arg !== false; $arg = next( $argv ) ) {
 $xp = new XsltProcessor;
 $xp->setParameter("", "package", isset($package) ? $package : "GeneralTests");
 $xsl = new DOMDocument;
-$xsl->load(dirname(__FILE__)."/transform.xslt");
+$xsl->load($stylesheet);
 $xp->importStylesheet($xsl);
 
 $xml = new DOMDocument;
@@ -45,7 +59,8 @@ echo "\nTransforming...";
 $output = $xp->transformToXML($xml)
 or die('Transformation error!');
 
-$handle = fopen($outputFile,"wb");
+$mode = ($appendOutput) ? "ab" : "wb";
+$handle = fopen($outputFile, $mode);
 echo "\nWriting in output file: ".$outputFile;
 fwrite($handle, $output);
 fclose($handle);
