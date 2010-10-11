@@ -325,8 +325,7 @@ class LODParserFunctions {
 	 * or that changed in the new version of the article. All source definitions
 	 * for the article are deleted in the triple store and the persistency layer.
 	 */
-	public static function onArticleSave(&$article, &$user, &$text, &$summary,
-			$minor, &$watchthis, $sectionanchor, &$flags, &$status) {
+	public static function onArticleSave(&$article) {
 		
 		$store = LODAdministrationStore::getInstance();
 		$persistencyID = $article->getTitle()->getFullText();
