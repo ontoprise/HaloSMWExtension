@@ -25,8 +25,27 @@ class SMWHaloQueryResult extends SMWQueryResult {
 		}
 	}
 	    
+	
+	/**
+	 * Setter method for the results.
+	 * @param array(array(SMWHaloResultArray)) $results
+	 * 		A table of results
+	 */
+	public function setResults($results) {
+		$this->mResults = $results;
+		$this->mResultSubjects = array();
+		foreach($results as $r) {
+			$rs = $r[0]->getResultSubject();
+			$this->mResultSubjects[] = $rs;
+		}
+	}
+	
 	public function getResults() {
 		return $this->mResultSubjects;
+	}
+	
+	public function getFullResults() {
+		return $this->mResults;
 	}
 	
     /**
