@@ -18,6 +18,8 @@ class TestParserWiki2Html extends PHPUnit_Framework_TestCase {
         $this->options->setTidy(true);
         $this->parser = new FCKeditorParser();
         $this->parser->setOutputType(OT_HTML);
+        global $wgTitle;
+        $wgTitle = $this->title;
     }
 
     function tearDown() {
