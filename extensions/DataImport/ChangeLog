@@ -1,20 +1,19 @@
 Data Import extension ChangeLog
 ===============================
 
-VERSION 1.5.2
+VERSION 1.4 patchlevel 3
+
+CHANGES
+* Dependency to Linked Data extension removed in deploy.xml
 
 
-  FEATURES:
- 
-  CHANGES:
-  * The Wiki Web Service Definition (WWSD) syntax originally accepted more than one usage of the '<result>' tag, which enabled users to group result parts. This is still allowed, but a warning will appear if you use such a construct, because the new Data Import extension features do not support that construct anymore and errors are possible.
 
+VERSION 1.4 patchlevel 2
 
   BUGFIXES:
-  * Edit buttons added to Special:DataImportRepository
-  ** http://smwforum.ontoprise.com/smwbugs/show_bug.cgi?id=10849
-
-
+   *Fixed #12360: Wrong dependency to SemanticGardening extension
+   
+ 
 
 VERSION 1.4 Patch Level 1
 

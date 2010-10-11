@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <deploydescriptor>
 	<global>
-		<version>152</version>
+		<version>140</version>
 		<id>dataimport</id>
 		<vendor>Ontoprise GmbH</vendor>
 		<maintainer>Ontoprise GmbH</maintainer>
@@ -11,13 +11,13 @@
 		</description>
 		<helpurl>http://smwforum.ontoprise.com/smwforum/index.php/Help:Data_Import_Extension</helpurl>
 		<dependencies>
-			<dependency from="1150" to="1160">MW</dependency>
-			<dependency from="150" to="152">smw</dependency>
-			<dependency from="150" to="152">smwhalo</dependency>
-			<dependency from="132" to="152">semanticgardening</dependency>
+			<dependency from="1150" to="1159">MW</dependency>
+			<dependency from="150" to="151">smw</dependency>
+			<dependency from="150" to="151">smwhalo</dependency>
+			<dependency from="132" to="132">semanticgardening</dependency>
 			<dependency from="100" to="199">scriptmanager</dependency>
 		</dependencies>
-		<patchlevel>0</patchlevel>
+		<patchlevel>3</patchlevel>
 	</global>
 	<codefiles>
 
@@ -42,11 +42,10 @@
 				file="extensions/DataImport/IAI/includes/IAI_Initialize.php" />
 			<function name="enableIAI">
 			</function>
-		<script file="extensions/DataImport/maintenance/DI_setup.php" params="" />
 		</new>
 		<uninstall>
-			<script file="extensions/DataImport/maintenance/DI_setup.php" params="--delete" />
-    	</uninstall>
-    </configs>
+
+		</uninstall>
+	</configs>
 </deploydescriptor>
 
