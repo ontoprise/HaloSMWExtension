@@ -100,7 +100,16 @@ function enableLinkedData() {
 	$wgAutoloadClasses['LODMDPError'] = $lodgIP . '/includes/LODWikiFrontend/MetaDataQueryPrinter/LOD_MDP_Error.php';
 	$wgAutoloadClasses['LODMDPXslt'] = $lodgIP . '/includes/LODWikiFrontend/MetaDataQueryPrinter/LOD_MDP_XSLT.php';
 	
-			
+	//--- Derived data value classes for meta-data query printers ---
+	$wgAutoloadClasses['LODStringValue'] = $lodgIP . '/includes/LODWikiFrontend/MetaDataQueryPrinter/LOD_DV_String.php';
+	$wgAutoloadClasses['LODURIValue'] = $lodgIP . '/includes/LODWikiFrontend/MetaDataQueryPrinter/LOD_DV_URI.php';
+	$wgAutoloadClasses['LODWikiPageValue'] = $lodgIP . '/includes/LODWikiFrontend/MetaDataQueryPrinter/LOD_DV_WikiPage.php';
+	$wgAutoloadClasses['LODNumberValue'] = $lodgIP . '/includes/LODWikiFrontend/MetaDataQueryPrinter/LOD_DV_Number.php';
+	$wgAutoloadClasses['LODTemperatureValue'] = $lodgIP . '/includes/LODWikiFrontend/MetaDataQueryPrinter/LOD_DV_Temperature.php';
+	$wgAutoloadClasses['LODTimeValue'] = $lodgIP . '/includes/LODWikiFrontend/MetaDataQueryPrinter/LOD_DV_Time.php';
+	$wgAutoloadClasses['LODBoolValue'] = $lodgIP . '/includes/LODWikiFrontend/MetaDataQueryPrinter/LOD_DV_Bool.php';
+	$wgAutoloadClasses['LODRecordValue'] = $lodgIP . '/includes/LODWikiFrontend/MetaDataQueryPrinter/LOD_DV_Record.php';
+
     //--- Autoloading for exception classes ---
    	$wgAutoloadClasses['LODException']        = $lodgIP . '/exceptions/LOD_Exception.php';
    	$wgAutoloadClasses['LODMappingException'] = $lodgIP . '/exceptions/LOD_MappingException.php';

@@ -84,36 +84,28 @@ class  LODMetaDataQueryPrinter  {
 	public static function onSmwInitDatatypesHooks() {
 		global $wgAutoloadClasses, $lodgIP;
 		
-		$wgAutoloadClasses['LODStringValue'] = $lodgIP . '/includes/LODWikiFrontend/MetaDataQueryPrinter/LOD_DV_String.php';
 		SMWDataValueFactory::registerDatatype('_str', 'LODStringValue');
 		SMWDataValueFactory::registerDatatype('_txt', 'LODStringValue');
 		SMWDataValueFactory::registerDatatype('_cod', 'LODStringValue');
 		
-		$wgAutoloadClasses['LODURIValue'] = $lodgIP . '/includes/LODWikiFrontend/MetaDataQueryPrinter/LOD_DV_URI.php';
 		SMWDataValueFactory::registerDatatype('_ema', 'LODURIValue'); // Email type
 		SMWDataValueFactory::registerDatatype('_uri', 'LODURIValue'); // URL/URI type
 		SMWDataValueFactory::registerDatatype('_anu', 'LODURIValue'); // Annotation URI type
 		SMWDataValueFactory::registerDatatype('_tel', 'LODURIValue'); // Phone number (URI) type
 
-		$wgAutoloadClasses['LODWikiPageValue'] = $lodgIP . '/includes/LODWikiFrontend/MetaDataQueryPrinter/LOD_DV_WikiPage.php';
 		SMWDataValueFactory::registerDatatype('_wpg', 'LODWikiPageValue'); // Page type
 		SMWDataValueFactory::registerDatatype('_wpp', 'LODWikiPageValue'); // Property page type
 		SMWDataValueFactory::registerDatatype('_wpc', 'LODWikiPageValue'); // Category page type
 		SMWDataValueFactory::registerDatatype('_wpf', 'LODWikiPageValue'); // Form page type for Semantic Forms
 
-		$wgAutoloadClasses['LODNumberValue'] = $lodgIP . '/includes/LODWikiFrontend/MetaDataQueryPrinter/LOD_DV_Number.php';
 		SMWDataValueFactory::registerDatatype('_num', 'LODNumberValue'); // Number
 		
-		$wgAutoloadClasses['LODTemperatureValue'] = $lodgIP . '/includes/LODWikiFrontend/MetaDataQueryPrinter/LOD_DV_Temperature.php';
 		SMWDataValueFactory::registerDatatype('_tem', 'LODTemperatureValue'); // Temperature
 
-		$wgAutoloadClasses['LODTimeValue'] = $lodgIP . '/includes/LODWikiFrontend/MetaDataQueryPrinter/LOD_DV_Time.php';
 		SMWDataValueFactory::registerDatatype('_dat', 'LODTimeValue'); // Date / Time
 
-		$wgAutoloadClasses['LODBoolValue'] = $lodgIP . '/includes/LODWikiFrontend/MetaDataQueryPrinter/LOD_DV_Bool.php';
 		SMWDataValueFactory::registerDatatype('_boo', 'LODBoolValue'); // Boolean
 
-		$wgAutoloadClasses['LODRecordValue'] = $lodgIP . '/includes/LODWikiFrontend/MetaDataQueryPrinter/LOD_DV_Record.php';
 		SMWDataValueFactory::registerDatatype('_rec', 'LODRecordValue'); // Record
 		
 		return true;
