@@ -260,11 +260,9 @@ function RMLinkEnd($skin, $target, $options, &$text, &$attribs, &$ret) {
 			$queryString = "target=".urlencode($target->getPrefixedText());
 			$embedWindowPage = SpecialPage::getPage('EmbedWindow');
 			$embedWindowUrl = $embedWindowPage->getTitle()->getFullURL($queryString);
-			$attribs['rev'] = 'height:500 width:700';
-			$attribs['rel'] = 'iframe';
 			$attribs['id'] = $linkID;
+			$attribs['class'] = 'rmAlink';
 			$attribs['href'] = $embedWindowUrl;
-			$attribs['onclick'] = "fb.loadAnchor($('$linkID'));return false;";
 		}
 	}
 	//Change Special:Upload to Special:UploadWindow
@@ -272,12 +270,10 @@ function RMLinkEnd($skin, $target, $options, &$text, &$attribs, &$ret) {
 		$uploadWindowPage = SpecialPage::getPage('UploadWindow');
 		$queryString = "wpIgnoreWarning=true";
 		$uploadWindowUrl = $uploadWindowPage->getTitle()->getLocalURL($queryString);
-		$attribs['rev'] = 'height:660 width:600';
-		$attribs['rel'] = 'iframe';
 		$attribs['href'] = $uploadWindowUrl;
 		$attribs['title'] = $uploadWindowPage->getTitle()->getPrefixedText();
 		$attribs['id'] = 'upload_window';
-		$attribs['onclick'] = "fb.loadAnchor($('upload_window'));return false;";
+		$attribs['class'] = 'rmAlink';
 	}
 	
 	return true;

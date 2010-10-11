@@ -107,7 +107,7 @@ class EmbedWindowForm {
 			return;
 		}
 		
-		$image = Image::newFromTitle($nt);
+		$image = wfFindFile($nt);
 		$imagePath = $image->getURL();
 		$embedWidth = $image->getWidth();
 		$embedHeight = $image->getHeight();
