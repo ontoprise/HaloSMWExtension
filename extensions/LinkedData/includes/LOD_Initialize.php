@@ -34,6 +34,14 @@ if ( !defined( 'MEDIAWIKI' ) ) {
 	die( "This file is part of the LinkedData extension. It is not a valid entry point.\n" );
 }
 
+// check if a triplestore with quad driver is available
+// print notice if not.
+global $smwgDefaultStore;
+if (!isset($smwgDefaultStore) || $smwgDefaultStore !== "SMWTripleStoreQuad" ) {
+	trigger_error("The LinkedData extension will not work without a properly configured triplestore.".
+	" Take a look at: http://smwforum.ontoprise.com");
+}
+
 define('LOD_LINKEDDATA_VERSION', '{{$VERSION}} [B{{$BUILDNUMBER}}]');
 
 define('LOD_STORE_SQL', 'LODStoreSQL');
