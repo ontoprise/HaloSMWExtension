@@ -40,7 +40,7 @@ class WikiTypeToXSD {
 			case '_wpc' :
 			case '_wpf' :
 			case '_wpp' :
-			case '_wpg' : return 'cat:DefaultRootCategory';
+			case '_wpg' : return NULL;
 
 			// unknown or composite type
 			default:

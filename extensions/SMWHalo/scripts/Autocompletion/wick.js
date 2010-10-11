@@ -1397,7 +1397,8 @@ AutoCompleter.prototype = {
         this.acMaxMatches = list.firstChild.getAttribute("maxMatches");
         
         for (var i = 0, n = children.length; i < n; i++) {
-        	var content = children[i].firstChild.nodeValue;
+        	var displayNode = children[i].getElementsByTagName("display")[0];
+        	var display = displayNode.firstChild.nodeValue;
         	var type = parseInt(children[i].getAttribute("type"));
         	var inferred = children[i].getAttribute("inferred") == "true";
         	var nsText = children[i].getAttribute("nsText");
@@ -1405,7 +1406,7 @@ AutoCompleter.prototype = {
         	var extraDataTextNode = children[i].getElementsByTagName("extraData")[0];
         	var pasteContent = pasteContentTextNode.firstChild != null ? pasteContentTextNode.firstChild.nodeValue : "";
         	var extraData = extraDataTextNode.firstChild != null ? extraDataTextNode.firstChild.nodeValue : "";
-            collection[i] = new MatchItem(content, type, nsText, extraData, inferred, pasteContent);
+            collection[i] = new MatchItem(display, type, nsText, extraData, inferred, pasteContent);
         }
 
         return collection;

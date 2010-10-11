@@ -183,14 +183,14 @@ function smwf_ac_AutoCompletionOptions() {
 function &smwfGetAutoCompletionStore() {
 	global $smwhgAutoCompletionStore, $smwgHaloIP;
 	if ($smwhgAutoCompletionStore == NULL) {
-		global $smwgBaseStore;
-		switch ($smwgBaseStore) {
+		global $smwgDefaultStore;
+		switch ($smwgDefaultStore) {
 
 			case ('SMWHaloStore2'): default:
 				$smwhgAutoCompletionStore = new AutoCompletionStorageSQL2();
 				break;
-			case ('SMWHaloStore'): default:
-				$smwhgAutoCompletionStore = new AutoCompletionStorageSQL();
+			case ('SMWTripleStore'): default:
+				$smwhgAutoCompletionStore = new AutoCompletionStorageTSC();
 				break;
 		}
 	}
@@ -422,7 +422,7 @@ class AutoCompletionRequester {
 			}
 			$pasteContent = htmlspecialchars($pasteContent);
 			$extraData = htmlspecialchars($extraData);
-			$xmlResult .= "<match $typeAtt $inferredAtt $namespaceText>$content<pasteContent>$pasteContent</pasteContent><extraData>$extraData</extraData></match>";
+			$xmlResult .= "<match $typeAtt $inferredAtt $namespaceText><display>$content</display><pasteContent>$pasteContent</pasteContent><extraData>$extraData</extraData></match>";
 		}
 
 		return '<result maxMatches="'.SMW_AC_MAX_RESULTS.'">'.$xmlResult.'</result>';
@@ -449,7 +449,7 @@ class AutoCompletionRequester {
 
 
 
-	public function logResult(& $result, $articleName) {
+	public static function logResult(& $result, $articleName) {
 		if ($result == SMW_AC_NORESULT) {
 			smwLog("","AC","no result", $articleName);
 		} else {
@@ -566,7 +566,8 @@ class AutoCompletionHandler {
 				if (smwf_om_userCan($params[0], 'read') == 'true') {
 					$category = Title::newFromText($params[0]);
 					if (!is_null($category)) {
-						$result = self::mergeResults($result, $acStore->getPropertyForCategory($userInput, $category));
+						 $pages = $acStore->getPropertyForCategory($userInput, $category);
+						$result = self::mergeResults($result, $pages );
 
 					}
 				}
@@ -576,7 +577,8 @@ class AutoCompletionHandler {
 				if (smwf_om_userCan($params[0], 'read') == 'true') {
 					$instance = Title::newFromText($params[0]);
 					if (!is_null($instance)) {
-						$result = self::mergeResults($result, $acStore->getPropertyForInstance($userInput, $instance, false));
+						$pages = $acStore->getPropertyForInstance($userInput, $instance, false);
+						$result = self::mergeResults($result, $pages);
 
 					}
 				}
@@ -586,7 +588,8 @@ class AutoCompletionHandler {
 				if (smwf_om_userCan($params[0], 'read') == 'true') {
 					$category = Title::newFromText($params[0]);
 					if (!is_null($category)) {
-						$result = self::mergeResults($result, $acStore->getPropertyForAnnotation($userInput, $category, false));
+						$pages = $acStore->getPropertyForAnnotation($userInput, $category, false);
+						$result = self::mergeResults($result, $pages);
 					}
 				}
 				if (count($result) >= SMW_AC_MAX_RESULTS) break;
@@ -595,7 +598,8 @@ class AutoCompletionHandler {
 				if (smwf_om_userCan($params[0], 'read') == 'true') {
 					$property = Title::newFromText($params[0]);
 					if (!is_null($property)) {
-						$result = self::mergeResults($result, $acStore->getValueForAnnotation($userInput, $property));
+						$pages = $acStore->getValueForAnnotation($userInput, $property);
+						$result = self::mergeResults($result, $pages);
 
 					}
 				}
@@ -607,28 +611,33 @@ class AutoCompletionHandler {
 					$property = Title::newFromText($params[0]);
 					if (!is_null($property)) {
 						$domainRangeAnnotations = smwfGetStore()->getPropertyValues($property, smwfGetSemanticStore()->domainRangeHintProp);
-						$result = self::mergeResults($result, $acStore->getInstanceAsTarget($userInput, $domainRangeAnnotations));
+						$pages = $acStore->getInstanceAsTarget($userInput, $domainRangeAnnotations);
+						$result = self::mergeResults($result, $pages);
 
 					}
 				}
 				if (count($result) >= SMW_AC_MAX_RESULTS) break;
 			} else if ($commandText == 'namespace') {
-				$result = self::mergeResults($result, smwfGetAutoCompletionStore()->getPages($userInput, $params));
+				$pages = smwfGetAutoCompletionStore()->getPages($userInput, $params);
+				$result = self::mergeResults($result, $pages);
 
 				if (count($result) >= SMW_AC_MAX_RESULTS) break;
 			} else if ($commandText == 'lexical') {
-				$result = self::mergeResults($result, smwfGetAutoCompletionStore()->getPages($userInput));
+				$pages = smwfGetAutoCompletionStore()->getPages($userInput);
+				$result = self::mergeResults($result, $pages);
 
 				if (count($result) >= SMW_AC_MAX_RESULTS) break;
 			} else if ($commandText == 'schema-property-type') {
 				if (empty($params[0]) || is_null($params[0])) continue;
 				$datatype = $params[0];
-				$result = self::mergeResults($result, smwfGetAutoCompletionStore()->getPropertyWithType($userInput, $datatype));
+				$pages = smwfGetAutoCompletionStore()->getPropertyWithType($userInput, $datatype);
+				$result = self::mergeResults($result, $pages);
 				if (count($result) >= SMW_AC_MAX_RESULTS) break;
 
 				global $smwgContLang;
 				$dtl = $smwgContLang->getDatatypeLabels();
-				$result = self::mergeResults($result, smwfGetAutoCompletionStore()->getPropertyWithType($userInput, $dtl['_str']));
+				$pages = smwfGetAutoCompletionStore()->getPropertyWithType($userInput, $dtl['_str']);
+				$result = self::mergeResults($result, $pages);
 				if (count($result) >= SMW_AC_MAX_RESULTS) break;
 
 			} else if ($commandText == 'ask') {
@@ -642,7 +651,7 @@ class AutoCompletionHandler {
 					$column = str_replace(" ", "_", $column);
 				}
 
-				$xmlResult = self::runASKQuery($query, $column, $userInput);
+				$xmlResult = smwfGetAutoCompletionStore()->runASKQuery($query, $userInput,  $column);
 				$dom = simplexml_load_string($xmlResult);
 				$queryResults = $dom->xpath('//binding[@name="'.$column.'"]');
 
@@ -672,24 +681,7 @@ class AutoCompletionHandler {
 		return $result;
 	}
 
-	private static function runASKQuery($rawquery, $column, $userInput) {
-		global $smwgResultFormats, $smwgHaloIP;
-		require_once "$smwgHaloIP/includes/queryprinters/SMW_QP_XML.php";
-		$smwgResultFormats['xml'] = 'SMWXMLResultPrinter';
-
-		// add query as first rawparam
-
-		$rawparams[] = $rawquery;
-		if ($column != "_var0") $rawparams[] = "?$column";
-
-		// parse params and answer query
-		SMWQueryProcessor::processFunctionParams($rawparams,$querystring,$params,$printouts);
-		$params['format'] = "xml";
-		//$params['limit'] = SMW_AC_MAX_RESULTS;
-		if ($column != "_var0") $params['sort'] = $column;
-		$querystring = str_replace("{{USERINPUT}}", $userInput, $querystring);
-		return SMWQueryProcessor::getResultFromQueryString($querystring,$params,$printouts, SMW_OUTPUT_FILE);
-	}
+	
 
 	/**
 	 * Remove all double matches. This may occur if several AC commands are
