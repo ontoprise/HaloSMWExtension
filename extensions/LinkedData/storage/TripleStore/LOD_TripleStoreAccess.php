@@ -323,9 +323,15 @@ class  LODTripleStoreAccess  {
 				$name = (string) $attrib['name'];
 				if (isset($b->uri)) {
 					$metadata = array();
-					foreach($b->uri->attributes() as $mdProperty => $mdValue) {
-						if (strpos($mdProperty, "_meta_") === 0) {
-							$metadata[substr($mdProperty,6)] = (string) $mdValue;
+					if (isset($b->uri->metadata)) {
+						$mdNodes = $b->uri->metadata;
+						foreach($mdNodes as $mdn) {
+							$mdAttrib = $mdn->attributes();
+							$mdName = (string) $mdAttrib['name'];
+							$mdValue = @$mdn->value;
+							if (isset($mdValue)) {
+								$metadata[$mdName] = (string) $mdValue;
+							}
 						}
 					}
 				
@@ -333,16 +339,28 @@ class  LODTripleStoreAccess  {
 				} else if (isset($b->literal)) {
 					$attrib = $b->literal->attributes();
 					$datatype = isset($attrib['datatype'])
-					? (string) $attrib['datatype'] : null;
+									? (string) $attrib['datatype'] : null;
 					$lang     = isset($attrib['xml:lang'])
-					? (string) $attrib['xml:lang'] : null;
+									? (string) $attrib['xml:lang'] : null;
 						
 					$metadata = array();
-					foreach($b->literal->attributes() as $mdProperty => $mdValue) {
-						if (strpos($mdProperty, "_meta_") === 0) {
-							$metadata[substr($mdProperty,6)] = (string) $mdValue;
+					if (isset($b->literal->metadata)) {
+						$mdNodes = $b->literal->metadata;
+						foreach($mdNodes as $mdn) {
+							$mdAttrib = $mdn->attributes();
+							$mdName = (string) $mdAttrib['name'];
+							$mdValue = @$mdn->value;
+							if (isset($mdValue)) {
+								$metadata[$mdName] = (string) $mdValue;
+							}
 						}
 					}
+					
+//					foreach($b->literal->attributes() as $mdProperty => $mdValue) {
+//						if (strpos($mdProperty, "_meta_") === 0) {
+//							$metadata[substr($mdProperty,6)] = (string) $mdValue;
+//						}
+//					}
 					$row->addResult($name, new LODSparqlResultLiteral($name, (string) $b->literal, $datatype, $lang, $metadata));
 				}
 			}
