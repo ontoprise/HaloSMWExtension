@@ -621,7 +621,7 @@ SELECT ?s ?o
   }
 QUERY;
 
-		$this->doTestSPARQLGetQueryResult(array(
+ 		$this->doTestSPARQLGetQueryResult(array(
 		    'query'		=> $query,
 			'format'	=> "table",
     		'user'		=> "NormalUser",
@@ -1136,7 +1136,7 @@ QUERY;
 		
 		// Compare the actual and expected result
 		$expRows = $testConfig['result'];
-		$this->assertEquals(count($result), count($expRows), $errMsg.$msg);
+		$this->assertEquals(count($expRows), count($result), $errMsg.$msg);
 		foreach ($expRows as $expRow) {
 			// find the expected row in the result
 			$tempResult = $result;
