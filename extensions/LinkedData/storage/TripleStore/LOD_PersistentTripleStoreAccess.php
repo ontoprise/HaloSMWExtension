@@ -160,8 +160,11 @@ class  LODPersistentTripleStoreAccess extends LODTripleStoreAccess {
 			// Send all TriG serializations to the triple store who will delete them
 			foreach ($trigs as $t) {
 				// Escape all quotation marks in the TriG serialization.
-				$t = str_replace('"', '\"', $t);
-				$this->mCommands[] = "deleteTriG $t\n";
+				$t = str_replace("\\", "\\\\", $t);
+				$t = str_replace("\"", "\\\"", $t);
+				$t = str_replace("\n", "\\n", $t);
+				$t = str_replace("\r", "\\r", $t);
+				$this->mCommands[] = "DELETE DATA \"$t\"";
 			}
 			parent::flushCommands();
 		}
