@@ -4,8 +4,6 @@
  * @ingroup LinkedData_Tests
  */
 
-require_once 'PHPUnit/Framework.php';
-
 /**
  * Test suite for the meta-data query printer.
  * Start the triple store with these options before running the test:

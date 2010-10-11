@@ -4,8 +4,6 @@
  * @ingroup LinkedData_Tests
  */
 
-require_once 'PHPUnit/Framework.php';
-
 define("LOD_ML_TEST_NS1", "http://www4.wiwiss.fu-berlin.de/R2Rmappings/");
 define("LOD_ML_TEST_NS2", "http://www.example.org/smw-lde/smwTransformations/");
 

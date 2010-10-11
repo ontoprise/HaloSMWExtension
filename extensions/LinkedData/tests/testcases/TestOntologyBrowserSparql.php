@@ -4,7 +4,6 @@
  * @ingroup LinkedData_Tests
  */
 
-require_once 'PHPUnit/Framework.php';
 require_once 'extensions/SMWHalo/specials/SMWOntologyBrowser/SMW_OntologyBrowserAjaxAccess.php';
 
 /**

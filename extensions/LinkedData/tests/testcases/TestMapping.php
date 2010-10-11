@@ -4,8 +4,6 @@
  * @ingroup LinkedData_Tests
  */
 
-require_once 'PHPUnit/Framework.php';
-
 
 /**
  * This class tests the

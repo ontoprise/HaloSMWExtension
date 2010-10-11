@@ -4,8 +4,6 @@
  * @ingroup LinkedData_Tests
  */
 
-require_once 'PHPUnit/Framework.php';
-
 class TestSparqlDataspaceRewriter extends PHPUnit_Framework_TestCase {
 
 	protected $backupGlobals = FALSE;

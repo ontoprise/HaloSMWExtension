@@ -4,8 +4,6 @@
  * @ingroup LinkedData_Tests
  */
 
-require_once 'PHPUnit/Framework.php';
-
 /**
  * Test suite for handling non-existing pages. The tests requires that the
  * triple store is running. The following data is loaded:
