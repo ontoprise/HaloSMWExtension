@@ -320,31 +320,56 @@ class SMWTripleStore extends SMWStore {
 							$xsdType = WikiTypeToXSD::getXSDType($v1->getTypeID());
 							$dbkeys = $v1->getDBkeys();
 							$firstValue = array_shift($dbkeys);
-							$triples[] = array("_:".$bNodeCounter, "<$smwgTripleStoreGraph/property#0>", "\"".$this->escapeForStringLiteral($firstValue)."\"^^$xsdType");
+							if (is_null($xsdType)) {
+								$object = $this->tsNamespace->getFullIRI(Title::newFromDBkey($v1->getTitle()));
+							} else {
+								$object = "\"".$this->escapeForStringLiteral($firstValue)."\"^^$xsdType";
+							}
+							$triples[] = array("_:".$bNodeCounter, "<$smwgTripleStoreGraph/property#0>", $object);
 						}
 						if ($v2 !== false) {
 							$xsdType = WikiTypeToXSD::getXSDType($v2->getTypeID());
 							$dbkeys = $v2->getDBkeys();
 							$firstValue = array_shift($dbkeys);
-							$triples[] = array("_:".$bNodeCounter, "<$smwgTripleStoreGraph/property#1>", "\"".$this->escapeForStringLiteral($firstValue)."\"^^$xsdType");
+							if (is_null($xsdType)) {
+								$object = $this->tsNamespace->getFullIRI(Title::newFromDBkey($v2->getTitle()));
+							} else {
+								$object = "\"".$this->escapeForStringLiteral($firstValue)."\"^^$xsdType";
+							}
+							$triples[] = array("_:".$bNodeCounter, "<$smwgTripleStoreGraph/property#1>", $object);
 						}
 						if ($v3 !== false) {
 							$xsdType = WikiTypeToXSD::getXSDType($v3->getTypeID());
 							$dbkeys = $v3->getDBkeys();
 							$firstValue = array_shift($dbkeys);
-							$triples[] = array("_:".$bNodeCounter, "<$smwgTripleStoreGraph/property#2>", "\"".$this->escapeForStringLiteral($firstValue)."\"^^$xsdType");
+							if (is_null($xsdType)) {
+								$object = $this->tsNamespace->getFullIRI(Title::newFromDBkey($v3->getTitle()));
+							} else {
+								$object = "\"".$this->escapeForStringLiteral($firstValue)."\"^^$xsdType";
+							}
+							$triples[] = array("_:".$bNodeCounter, "<$smwgTripleStoreGraph/property#2>", $object);
 						}
 						if ($v4 !== false) {
 							$xsdType = WikiTypeToXSD::getXSDType($v4->getTypeID());
-							$dbkeys = $v5->getDBkeys();
+							$dbkeys = $v4->getDBkeys();
 							$firstValue = array_shift($dbkeys);
-							$triples[] = array("_:".$bNodeCounter, "<$smwgTripleStoreGraph/property#3>", "\"".$this->escapeForStringLiteral($firstValue)."\"^^$xsdType");
+							if (is_null($xsdType)) {
+								$object = $this->tsNamespace->getFullIRI(Title::newFromDBkey($v4->getTitle()));
+							} else {
+								$object = "\"".$this->escapeForStringLiteral($firstValue)."\"^^$xsdType";
+							}
+							$triples[] = array("_:".$bNodeCounter, "<$smwgTripleStoreGraph/property#3>", $object);
 						}
 						if ($v5 !== false) {
 							$xsdType = WikiTypeToXSD::getXSDType($v5->getTypeID());
 							$dbkeys = $v5->getDBkeys();
 							$firstValue = array_shift($dbkeys);
-							$triples[] = array("_:".$bNodeCounter, "<$smwgTripleStoreGraph/property#4>", "\"".$this->escapeForStringLiteral($firstValue)."\"^^$xsdType");
+							if (is_null($xsdType)) {
+								$object = $this->tsNamespace->getFullIRI(Title::newFromDBkey($v5->getTitle()));
+							} else {
+								$object = "\"".$this->escapeForStringLiteral($firstValue)."\"^^$xsdType";
+							}
+							$triples[] = array("_:".$bNodeCounter, "<$smwgTripleStoreGraph/property#4>", $object);
 						}
 						$bNodeCounter++;
 						
@@ -511,7 +536,7 @@ class SMWTripleStore extends SMWStore {
 
 	function doGetQueryResult(SMWQuery $query) {
 		global $wgServer, $wgScript, $smwgWebserviceUser, $smwgWebservicePassword, $smwgDeployVersion;
-
+		
 		$toTSC = false; // redirects a normal ASK query to the TSC
 		if (!($query instanceof SMWSPARQLQuery)) {
 			// normal query from #ask
@@ -535,6 +560,7 @@ class SMWTripleStore extends SMWStore {
 			try {
 				$con = TSConnection::getConnector();
 				$con->connect();
+				
 				$response = $con->query($query->getQueryString(), $this->serializeParams($query));
 					
 				global $smwgSPARQLResultEncoding;
