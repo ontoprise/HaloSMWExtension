@@ -136,7 +136,11 @@ class SMWTripleStore extends SMWStore {
 
 	function updateData(SMWSemanticData $data) {
 		$this->smwstore->updateData($data);
-
+		
+		// make sure that TS is not update in maintenace mode
+		if ( defined( 'DO_MAINTENANCE' ) && !defined('SMWH_FORCE_TS_UPDATE') ) {
+			return;
+		}
 		$triples = array();
 
 		$subject = $data->getSubject();
@@ -227,7 +231,7 @@ class SMWTripleStore extends SMWStore {
 			wfRunHooks('TripleStorePropertyUpdate', array(& $data, & $property, & $propertyValueArray, & $triplesFromHook));
 			if ($triplesFromHook === false || count($triplesFromHook) > 0) {
 				$triples = is_array($triplesFromHook) ? array_merge($triples, $triplesFromHook) : $triples;
-				
+
 				continue; // do not process normal triple generation, if hook provides triples.
 			}
 
@@ -291,9 +295,9 @@ class SMWTripleStore extends SMWStore {
 
 			// there are other special properties which need not to be handled special
 			// so they can be handled by the default machanism:
-			
+				
 			foreach($propertyValueArray as $value) {
-			
+					
 				if ($value->isValid()) {
 					if ($value->getTypeID() == '_txt') {
 						$dbkeys = $value->getDBkeys();
@@ -313,7 +317,7 @@ class SMWTripleStore extends SMWStore {
 						$v4 =  reset($sdata->getPropertyValues(SMWPropertyValue::makeProperty("_4")));
 						$v5 =  reset($sdata->getPropertyValues(SMWPropertyValue::makeProperty("_5")));
 
-						
+
 						$triples[] = array($subject_iri, $property_iri, "_:".$bNodeCounter);
 
 						if ($v1 !== false) {
@@ -372,10 +376,10 @@ class SMWTripleStore extends SMWStore {
 							$triples[] = array("_:".$bNodeCounter, "<$smwgTripleStoreGraph/property#4>", $object);
 						}
 						$bNodeCounter++;
-						
+
 					} else {
 						// primitive value (including measures)
-						
+
 						if ($value->getUnit() != '') {
 							// attribute with unit value (measure)
 							$dbkeys = $value->getDBkeys();
@@ -536,7 +540,7 @@ class SMWTripleStore extends SMWStore {
 
 	function doGetQueryResult(SMWQuery $query) {
 		global $wgServer, $wgScript, $smwgWebserviceUser, $smwgWebservicePassword, $smwgDeployVersion;
-		
+
 		$toTSC = false; // redirects a normal ASK query to the TSC
 		if (!($query instanceof SMWSPARQLQuery)) {
 			// normal query from #ask
@@ -560,7 +564,7 @@ class SMWTripleStore extends SMWStore {
 			try {
 				$con = TSConnection::getConnector();
 				$con->connect();
-				
+
 				$response = $con->query($query->getQueryString(), $this->serializeParams($query));
 					
 				global $smwgSPARQLResultEncoding;
@@ -937,8 +941,8 @@ class SMWTripleStore extends SMWStore {
 		}
 		// Query result object
 		$queryResult = new SMWHaloQueryResult($prs, $query, $qresults, $this, (count($results) > $query->getLimit()));
-		
-		
+
+
 		return $queryResult;
 	}
 
@@ -1080,11 +1084,11 @@ class SMWTripleStore extends SMWStore {
 		}
 
 	}
-	
+
 	/**
 	 * Set metadata values (if available)
-	 * 
-	 * 
+	 *
+	 *
 	 * @param SMWDataValue $v
 	 * @param array of SimpleXMLElement $metadata
 	 */
@@ -1189,7 +1193,7 @@ class SMWTripleStore extends SMWStore {
 		$v = SMWDataValueFactory::newTypeIDValue('_wpg');
 		$v->setValues($title->getDBkey(), $ns, $title->getArticleID());
 		$this->setMetadata($v, $metadata);
-		
+
 		return $v;
 
 	}
