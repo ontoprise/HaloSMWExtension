@@ -98,8 +98,9 @@ class  HACLResultFilter  {
 		// Filter all subjects that are protected
 		foreach ($results as $k => $r) {
 			$t = $r->getTitle();
+			unset($allowed);
 			wfRunHooks('userCan', array(&$t, &$wgUser, "read", &$allowed));
-			if (!$allowed) {
+			if (isset($allowed) && $allowed === false) {
 				unset($results[$k]);
 				$valuesRemoved = true;
 			}
@@ -137,7 +138,7 @@ class  HACLResultFilter  {
 	 */
 	public static function filterSPARQLQueryResult(SMWHaloQueryResult &$qr, array $properties = null) {
 		global $wgUser;
-		$results = $qr->getResults();
+		$results = $qr->getFullResults();
 		$valuesRemoved = false;
 		
 		foreach ($results as $kr => $row) {
@@ -167,9 +168,10 @@ class  HACLResultFilter  {
 								break;
 							}
 						}
+						unset($allowed);
 						wfRunHooks('userCan', array(&$t, &$wgUser, "read", &$allowed));
 						
-						if (!$allowed) {
+						if (isset($allowed) && $allowed === false) {
 							unset($items[$k]);
 							$valuesRemoved = true;
 							$cellModified = true;
