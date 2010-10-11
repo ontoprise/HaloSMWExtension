@@ -162,3 +162,10 @@
 	padding:10px;
 	text-align:center;
 }
+#mw-upload-form > fieldset > legend {
+	font-weight: bold;
+	cursor: pointer;
+}
+#mw-upload-form .mw-label {
+	font-weight: bold;
+}

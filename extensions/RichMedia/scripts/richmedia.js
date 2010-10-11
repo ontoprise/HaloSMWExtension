@@ -24,8 +24,11 @@ var RichMediaPage = Class.create({
 	/**
 	 * do the upload.
 	 */
-	doUpload: function() {
+	doUpload: function(destFormName) {
 		
+		if( destFormName === undefined ){
+			destFormName = 'upload';
+		}
 		//validate the form fields!
 		var error = validate_all();
 
@@ -34,7 +37,7 @@ var RichMediaPage = Class.create({
 		}
 		
 		var sForm = $$('form.createbox')[0]; //array
-		var destForm = $('upload');
+		var destForm = $(destFormName);
 
 		//merge SemanticForm into UploadForm
 		var result = richMediaPage.mergeFormsToForm([sForm], destForm);
@@ -51,6 +54,13 @@ var RichMediaPage = Class.create({
 					'value' : 'submit'} )
 		destForm.appendChild(el);
 		
+		var el = new Element('input', {
+			'type' : 'hidden', 
+			'name' : 'wpUpload', 
+			'value' : 'true'} )
+		destForm.appendChild(el);
+		
+		destForm.setAttribute("method", "POST");
 		destForm.submit();
 		return true;
 	},

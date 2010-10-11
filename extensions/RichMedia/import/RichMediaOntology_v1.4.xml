@@ -1562,10 +1562,7 @@ These are the literal class definitions in common.css:
 | {{{field|Filename|hidden}}}
 |- 
 | colspan=&quot;2&quot; class=&quot;rmFormImportant&quot; |Fields marked with a &quot;*&quot; are mandatory
-|}
-
-{{{end template}}}
-&lt;/includeonly&gt;</text>
+|}{{{end template}}}&lt;/includeonly&gt;</text>
     </revision>
   </page>
   <page>
