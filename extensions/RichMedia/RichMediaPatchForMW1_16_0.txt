@@ -530,6 +530,7 @@ Index: includes/MediaTransformOutput.php
 +		// original content is located in else statement.
 +		global $wgRequest, $smwgEnableRichMedia, $wgRMImagePreview;
 +		$loc = $wgRequest->getText('title');
++		$title = $title ? $title : $this->file->getTitle(); 
 +		if ( $smwgEnableRichMedia && $title && method_exists($title, 'getNamespace') ) {
 +			$temp_var = $title->getNamespace();
 +			RMNamespace::isImage( $temp_var, $rMresult );
@@ -538,8 +539,7 @@ Index: includes/MediaTransformOutput.php
 +				$uploadWindowPage = SpecialPage::getPage('EmbedWindow');
 +				$uploadWindowUrl = $uploadWindowPage->getTitle()->getFullURL($queryString);
 +				$attribs['href'] = $uploadWindowUrl;
-+				$attribs['rev'] = 'height:500 width:700';
-+				$attribs['rel'] = 'iframe';
++				$attribs['class'] = 'rmAlink';
 +			}
 +		}
 +		/*op-patch|BL|2009-10-07|end*/

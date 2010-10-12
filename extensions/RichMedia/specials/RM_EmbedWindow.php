@@ -126,7 +126,8 @@ class EmbedWindowForm {
 			$fullResNow = "";
 			$fitNow = "font-weight:bold;";
 		}
-		
+
+		$fullRes_fit_section = "";
 		list( $major, $minor ) = LocalFile::splitMime( $image->getMimeType() );
 		if ($major == "image") {
 			if (!$imageToSmall) {
@@ -165,8 +166,7 @@ END;
 END;
 		}
 		else{
-			# fullResSize and FitToWindow link for allother embedded objects
-			$fullRes_fit_section = "";
+			# for all other embedded objects
 			$embedObject = <<<END
 				<embed autostart="0" showcontrols="1" showstatusbar="1" id="rmEWEmbeddedObject" src="{$imagePath}" style="width:{$embedWidth}; height:{$embedHeight}" align="middle"/>
 END;

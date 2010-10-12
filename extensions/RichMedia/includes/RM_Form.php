@@ -187,13 +187,11 @@ END;
 		else
 			$rev_height = 'height:500';
 		
-		$rev = $rev_width . ' ' . $rev_height;
-		
 		$queryString = "target=".urlencode($link_name);
 		$embedWindowPage = SpecialPage::getPage('EmbedWindow');
 		$embedWindowUrl = $embedWindowPage->getTitle()->getFullURL($queryString);
 
-		$html = "<a href=\"$embedWindowUrl\" title=\"$link_title\" rel=\"iframe\" rev=\"$rev\">$link_title</a>";
+		$html = "<a href=\"$embedWindowUrl\" title=\"$link_title\" class=\"rmAlink\">$link_title</a>";
 		
 		return $parser->insertStripItem( $html, $parser->mStripState );
 	}

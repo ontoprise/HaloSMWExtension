@@ -109,6 +109,7 @@ function enableRichMediaExtension() {
 	//Change the image links
 	$wgHooks['LinkBegin'][] = 'RMLinkBegin';
 	$wgHooks['LinkEnd'][] = 'RMLinkEnd';
+	$wgHooks['LinkerMakeExternalLink'][] = 'RMLinkerMakeExternalLink';
 	
 	//EmbedWindow
 	$wgSpecialPages['EmbedWindow'] = 'RMEmbedWindow';
@@ -276,6 +277,33 @@ function RMLinkEnd($skin, $target, $options, &$text, &$attribs, &$ret) {
 		$attribs['class'] = 'rmAlink';
 	}
 	
+	return true;
+}
+
+/**
+ * 
+ * @param $url
+ * @param $text
+ * @param $link
+ * @param $attribs
+ */
+function RMLinkerMakeExternalLink(&$url, &$text, &$link, &$attribs) {
+	global $smwgRMScriptPath, $sfgScriptPath, $wgOut;
+	$uploadText = SpecialPage::getLocalNameFor( 'Upload' );
+	if(strpos($url, $uploadText)) {
+		$url = preg_replace('/'.$uploadText.'/', SpecialPage::getLocalNameFor( 'UploadWindow' ), $url, 1);
+		$attribs['class'] = 'rmAlink';
+		$link = '<a href="'.$url.'"'.Html::expandAttributes( $attribs ).'>'.$text.'</a>';
+	
+		$script = $sfgScriptPath . '/libs/jquery.fancybox-1.3.1.js';
+		SMWOutputs::requireHeadItem($script,
+			'<script type="text/javascript" src="'.$script.'"></script>');
+		$script = $smwgRMScriptPath . '/scripts/richmedia_links.js';
+		SMWOutputs::requireHeadItem($script,
+			'<script type="text/javascript" src="'.$script.'"></script>');
+		SMWOutputs::commitToOutputPage($wgOut);
+		return false;
+	}
 	return true;
 }
 
