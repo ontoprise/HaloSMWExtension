@@ -52,7 +52,9 @@ class UploadConverter {
 		global $smwgRMIP, $smwgUploadConverterExternal;
 		require_once("$smwgRMIP/specials/SMWUploadConverter/SMW_UploadConverterSettings.php");
 		
-		$file = $uploadedFile->mLocalFile; // can't avoid to access private field :(  
+		// $uploadedFile->mLocalfile is protected so use this instead
+		$title = $uploadedFile->getTitle();
+		$file = wfLocalFile($title);
 		$mimeType = $file->getMimeType();
 		$fileNameArray = split("\.", $file->getFullPath());
 		$ext = $fileNameArray[count($fileNameArray)-1];	
