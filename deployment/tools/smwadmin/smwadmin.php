@@ -82,6 +82,12 @@ $dfgCheckDep=false;
 $dfgRestore=false;
 $dfgCheckInst=false;
 
+$help = array_key_exists("help", $options);
+if ($help || count($argv) == 0) {
+	showHelp();
+	die();
+}
+
 // get command line parameters
 for( $arg = reset( $argv ); $arg !== false; $arg = next( $argv ) ) {
 
@@ -91,15 +97,13 @@ for( $arg = reset( $argv ); $arg !== false; $arg = next( $argv ) ) {
 		if ($package === false) fatalError("No package found");
 		$packageToInstall[] = $package;
 		continue;
-	} // -d => De-install
-	if ($arg == '-d') {
+	} else if ($arg == '-d') { // -d => De-install
 		$package = next($argv);
 		if ($package === false) fatalError("No package found");
 		$packageToDeinstall[] = $package;
 			
 		continue;
-	}
-	if ($arg == '-u') { // u => update
+	} else if ($arg == '-u') { // u => update
 		$package = next($argv);
 		if ($package === false || $package == '--dep') {
 			if ($package == '--dep') {
@@ -110,41 +114,31 @@ for( $arg = reset( $argv ); $arg !== false; $arg = next( $argv ) ) {
 		}
 		$packageToUpdate[] = $package;
 		continue;
-	}
-	if ($arg == '-l') { // => list packages
+	} else if ($arg == '-l') { // => list packages
 		$dfgListPackages = true;
 		$pattern = next($argv);
 		continue;
-	}
-
-	if ($arg == '-desc') { // => show description for each package
+	} else if ($arg == '-desc') { // => show description for each package
 		$dfgShowDescription = true;
 		continue;
-	}
-
-	if ($arg == '--dep') { // => show dependencies
+	} else if ($arg == '--dep') { // => show dependencies
 		$dfgCheckDep = true;
 		continue;
-	}
-	
-	
-
-	if ($arg == '--checkdump') { // => analyze installed dump
+	} else if ($arg == '--checkdump') { // => analyze installed dump
 		$checkDump = true;
 		$package = next($argv);
 		if ($package === false) fatalError("No package found");
 		$packageToInstall[] = $package;
 		continue;
-	}
-
-	if ($arg == '-f') { // => force
+	} else if ($arg == '-f') { // => force
 		$dfgForce = true;
 		continue;
-	}
-
-	if ($arg == '-r') { // => rollback last installation
+	} else if ($arg == '-r') { // => rollback last installation
 		$dfgRestore = true;
 		continue;
+	} else {
+		print "\nUnknown command: $arg. Try --help\n\n";
+		die();
 	}
 	$params[] = $arg;
 }
@@ -166,11 +160,7 @@ if (!file_exists("../languages/$langClass.php")) {
 require_once("../languages/$langClass.php");
 $dfgLang = new $langClass();
 
-$help = array_key_exists("help", $options);
-if ($help || count($argv) == 0) {
-	showHelp();
-	die();
-}
+
 
 $mwrootDir = dirname(__FILE__);
 $mwrootDir = str_replace("\\", "/", $mwrootDir);
