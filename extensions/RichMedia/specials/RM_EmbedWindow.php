@@ -56,8 +56,8 @@ headID.appendChild(cssNode);
 HTML;
 	$prototype_include = "<script type=\"text/javascript\" src=\"{$smwgRMScriptPath}/scripts/prototype.js?$wgStyleVersion\"></script>";
 	$text = <<<END
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 {$wgOut->getScript()}
 $prototype_include
 $user_js
@@ -106,8 +106,9 @@ class EmbedWindowForm {
 			$this->showError($errorText);
 			return;
 		}
+
 		
-		$image = wfFindFile($nt);
+		$image = wfLocalFile($nt);
 		$imagePath = $image->getURL();
 		$embedWidth = $image->getWidth();
 		$embedHeight = $image->getHeight();
@@ -116,18 +117,17 @@ class EmbedWindowForm {
 		if ($embedHeight <= 500 || $embedWidth <= 700) {
 			$imageToSmall = true;
 		}
-		
 		if ( $this->mfullResSize) {
 			$fullResNow = "font-weight:bold;";
 			$fitNow = "";
-		}
-		else {
+		} else {
 			$embedWidth = "670px;";
 			$embedHeight = "450px;";
 			$fullResNow = "";
 			$fitNow = "font-weight:bold;";
 		}
-		list( $major, $minor ) = Image::splitMime( $image->getMimeType() );
+		
+		list( $major, $minor ) = LocalFile::splitMime( $image->getMimeType() );
 		if ($major == "image") {
 			if (!$imageToSmall) {
 				# fullResSize and FitToWindow links for images
