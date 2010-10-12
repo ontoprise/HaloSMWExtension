@@ -1041,6 +1041,9 @@ Section "Uninstall"
     RMDir /r "$INSTDIR\MercuryMail"
     RMDir /r "$INSTDIR\mysql"
     RMDir /r "$INSTDIR\webdav"
+    RMDir /r "$INSTDIR\contrib"
+    RMDir /r "$INSTDIR\tomcat"
+    RMDir /r "$INSTDIR\memcached"
     
     ; only remove if empty
     RMDir "$INSTDIR"
