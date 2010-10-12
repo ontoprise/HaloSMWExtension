@@ -1006,18 +1006,39 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow2.php
 ===================================================================
 --- extensions/SemanticForms/specials/SF_UploadWindow2.php	(revision 8227)
 +++ extensions/SemanticForms/specials/SF_UploadWindow2.php	(working copy)
-@@ -52,6 +52,10 @@
+@@ -52,6 +52,11 @@
  	/** used by Semantic Forms **/
  	protected $mInputID;
  	protected $mDelimiter;
 +	
 +	/*op-patch|BL|2010-10-05|RichMedia|SpecialUploadWindow2|start*/
++	protected $mDestWarningAck;
 +	protected $mRMFileStatus;
 +	/*op-patch|BL|2010-10-05|end*/
  
  	/**
  	 * Initialize instance variables from request and create an Upload handler
-@@ -99,6 +103,9 @@
+@@ -70,12 +75,16 @@
+ 
+ 		// Guess the desired name from the filename if not provided
+ 		$this->mDesiredDestName   = $request->getText( 'wpDestFile' );
+-		if ( !$this->mDesiredDestName )
+-			$this->mDesiredDestName = $request->getText( 'wpUploadFile' );
++		/*op-patch|BL|2010-10-05|RichMedia|SpecialUploadWindow2|start*/
++		if( !$this->mDesiredDestName && $request->getFileName( 'wpUploadFile' ) !== null )
++			$this->mDesiredDestName = $request->getFileName( 'wpUploadFile' );
++		/*op-patch|BL|2010-10-05|end*/
+ 		$this->mComment	   = $request->getText( 'wpUploadDescription' );
+ 		$this->mLicense	   = $request->getText( 'wpLicense' );
+ 
+-
++		/*op-patch|BL|2010-10-05|RichMedia|SpecialUploadWindow2|start*/
++		$this->mDestWarningAck    = $request->getText( 'wpDestFileWarningAck' );
++		/*op-patch|BL|2010-10-05|end*/
+ 		$this->mIgnoreWarning     = $request->getCheck( 'wpIgnoreWarning' )
+ 			|| $request->getCheck( 'wpUploadIgnoreWarning' );
+ 		$this->mWatchthis	 = $request->getBool( 'wpWatchthis' );
+@@ -99,6 +108,9 @@
  		}
  		$this->mInputID	   = $request->getText( 'sfInputID' );
  		$this->mDelimiter	 = $request->getText( 'sfDelimiter' );
@@ -1027,7 +1048,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow2.php
  	}
  
  	/**
-@@ -168,7 +175,13 @@
+@@ -168,7 +180,13 @@
  		if ( $this->mTokenOk && !$this->mCancelUpload
  				&& ( $this->mUpload && $this->mUploadClicked ) ) {
  			$this->processUpload();
@@ -1041,7 +1062,36 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow2.php
  			$this->showUploadForm( $this->getUploadForm() );
  		}
  
-@@ -321,6 +334,50 @@
+@@ -208,8 +226,10 @@
+ 			'forreupload' => $this->mForReUpload,
+ 			'sessionkey' => $sessionKey,
+ 			'hideignorewarning' => $hideIgnoreWarning,
++			'destwarningack' => (bool)$this->mDestWarningAck,
+ 			'sfInputID' => $this->mInputID,
+ 			'sfDelimiter' => $this->mDelimiter,
++			'destfile' => $this->mDesiredDestName,
+ 		) );
+ 		$form->setTitle( $this->getTitle() );
+ 
+@@ -288,6 +308,17 @@
+ 	protected function uploadWarning( $warnings ) {
+ 		global $wgUser;
+ 
++		# If there are no warnings, or warnings we can ignore, return early.
++		# mDestWarningAck is set when some javascript has shown the warning
++		# to the user. mForReUpload is set when the user clicks the "upload a
++		# new version" link.
++		if ( !$warnings || ( count( $warnings ) == 1 && 
++			isset( $warnings['exists'] ) && 
++			( $this->mDestWarningAck || $this->mForReUpload ) ) )
++		{
++			return false;
++		}
++
+ 		$sessionKey = $this->mUpload->stashSession();
+ 
+ 		$sk = $wgUser->getSkin();
+@@ -321,6 +352,50 @@
  		$form->addButton( 'wpUploadIgnoreWarning', wfMsg( 'ignorewarning' ) );
  		$form->addButton( 'wpCancelUpload', wfMsg( 'reuploaddesc' ) );
  
@@ -1092,7 +1142,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow2.php
  		$this->showUploadForm( $form );
  	}
  
-@@ -330,9 +387,61 @@
+@@ -330,9 +405,61 @@
  	 * @param string $message
  	 */
  	protected function uploadError( $message ) {
@@ -1157,7 +1207,21 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow2.php
  	}
  
  	/**
-@@ -389,40 +498,89 @@
+@@ -362,8 +489,11 @@
+ 		// Check warnings if necessary
+ 		if ( !$this->mIgnoreWarning ) {
+ 			$warnings = $this->mUpload->checkWarnings();
+-			if ( count( $warnings ) )
+-				return $this->uploadWarning( $warnings );
++			/*op-patch|BL|2010-10-05|RichMedia|SpecialUploadWindow2|start*/
++			if( $this->uploadWarning( $warnings ) ) {
++				return;
++			}
++			/*op-patch|BL|2010-10-05|end*/
+ 		}
+ 
+ 		// Get the page text if this is not a reupload
+@@ -389,40 +519,91 @@
  		}
  
  		$basename = str_replace( '_', ' ', $basename );
@@ -1185,7 +1249,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow2.php
 +		//set wpSave to true (simluates a submitted SF)
 +		$wgRequest->setVal('wpSave', 'true');
 +		//This needs to be set, otherwise the page content (created by UploadConverter e.g.) is ignored
-+		$wgRequest->setVal('query', 'false');
++		$wgRequest->setVal('query', 'true');
 +		$wgRequest->setVal('SFviaRichMedia', 'true');
 +
 +		$target_title = Title::newFromText($target);
@@ -1193,7 +1257,9 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow2.php
 +		// and this ID is not correct now (always 0). So do an ID update once.
 +		$testID = $target_title->getArticleID(GAID_FOR_UPDATE);
  
-+		$wgRequest->setVal($rMDestFormName, $uploadFormContent);
++		if (!$this->mForReUpload){
++			$wgRequest->setVal($rMDestFormName, $uploadFormContent);
++		}
 +		$form_add = new SFFormEdit();
 +		$form_add_test = $form_add->execute($myQuery);
 +		/*op-patch|BL|2010-10-05|end*/
@@ -1271,7 +1337,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow2.php
  		$img = null; // @todo: added to avoid passing a ref to null - should this be defined somewhere?
  
  		wfRunHooks( 'SpecialUploadComplete', array( &$this ) );
-@@ -685,6 +843,65 @@
+@@ -685,6 +866,65 @@
  			return '';
  		}
  	}
@@ -1337,7 +1403,29 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow2.php
  
  }
  
-@@ -769,12 +986,12 @@
+@@ -696,6 +936,10 @@
+ 	protected $mForReUpload;
+ 	protected $mSessionKey;
+ 	protected $mHideIgnoreWarning;
++	/*op-patch|BL|2010-10-05|RichMedia|SpecialUploadWindow2|start*/
++	protected $mDestWarningAck;
++	protected $mDestFile;
++	/*op-patch|BL|2010-10-05|end*/
+ 	
+ 	protected $mSourceIds;
+ 
+@@ -707,6 +951,10 @@
+ 		$this->mSessionKey = isset( $options['sessionkey'] )
+ 				? $options['sessionkey'] : '';
+ 		$this->mHideIgnoreWarning = !empty( $options['hideignorewarning'] );
++		/*op-patch|BL|2010-10-05|RichMedia|SpecialUploadWindow2|start*/
++		$this->mDestWarningAck = !empty( $options['destwarningack'] );
++		$this->mDestFile = isset( $options['destfile'] ) ? $options['destfile'] : '';
++		/*op-patch|BL|2010-10-05|end*/
+ 
+ 		$sourceDescriptor = $this->getSourceSection();
+ 		$descriptor = $sourceDescriptor
+@@ -769,12 +1017,12 @@
  				'label-message' => 'sourcefilename',
  				'upload-type' => 'File',
  				'radio' => &$radio,
@@ -1352,7 +1440,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow2.php
  				'checked' => $selectedSourceType == 'file',
  		);
  		if ( $canUploadByUrl ) {
-@@ -795,12 +1012,12 @@
+@@ -795,12 +1043,12 @@
  		}
  		wfRunHooks( 'UploadFormSourceDescriptors', array( &$descriptor, &$radio, $selectedSourceType ) );
  
@@ -1367,7 +1455,21 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow2.php
  		return $descriptor;
  	}
  
-@@ -944,7 +1161,164 @@
+@@ -935,6 +1183,13 @@
+ 			);
+ 		}
+ 
++		if ( $this->mForReUpload ) {
++			$descriptor['wpForReUpload'] = array(
++				'type' => 'hidden',
++				'id' => 'wpForReUpload',
++				'default' => '1',
++			);
++		}
+ 		return $descriptor;
+ 
+ 	}
+@@ -944,7 +1199,169 @@
  	 */
  	public function show() {
  		$this->addUploadJS();
@@ -1437,13 +1539,13 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow2.php
 +			//sort file types!
 +			global $wgNamespaceByExtension;
 +			$extCat = array(
-+			NS_IMAGE => array(),
-+			NS_PDF=> array(),
-+			NS_DOCUMENT => array(),
-+			NS_AUDIO => array(),
-+			NS_VIDEO => array(),
-+			NS_ICAL => array(),
-+			NS_VCARD => array()
++				NS_IMAGE => array(),
++				NS_PDF=> array(),
++				NS_DOCUMENT => array(),
++				NS_AUDIO => array(),
++				NS_VIDEO => array(),
++				NS_ICAL => array(),
++				NS_VCARD => array()
 +			);
 +			sort($wgFileExtensions);
 +			foreach ($wgFileExtensions as $ext) {
@@ -1469,6 +1571,11 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow2.php
 +		/*op-patch|BL|2010-10-05|end*/
  		parent::show();
 +		/*op-patch|BL|2010-10-05|RichMedia|SpecialUploadWindow2|start*/
++		if ( $this->mDestFile && $wgUser->isAllowed( 'deletedhistory' ) ) {
++			$title = Title::makeTitleSafe( NS_IMAGE, $this->mDestFile );
++		} else {
++			$title = null;
++		}
 +		if(isset($smwgRMShowMainForm) && $smwgRMShowMainForm) {
 +			//after form
 +			if ( isset($title) ) {
@@ -1532,7 +1639,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow2.php
  	// disable $wgOut - we'll print out the page manually, taking the
  	// body created by the form, plus the necessary Javascript files,
  	// and turning them into an HTML page
-@@ -968,6 +1342,29 @@
+@@ -968,6 +1385,29 @@
  	$wikibits_include = "<script type=\"{$wgJsMimeType}\" src=\"{$wgStylePath}/common/wikibits.js?$wgStyleVersion\"></script>";
  	$ajax_include = "<script type=\"{$wgJsMimeType}\" src=\"{$wgStylePath}/common/ajax.js?$wgStyleVersion\"></script>";
  	$ajaxwatch_include = "<script type=\"{$wgJsMimeType}\" src=\"{$wgStylePath}/common/ajaxwatch.js?$wgStyleVersion\"></script>";
@@ -1562,7 +1669,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow2.php
  	$text = <<<END
  <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
  <html xmlns="{$wgXhtmlDefaultNamespace}"
-@@ -977,16 +1374,20 @@
+@@ -977,16 +1417,20 @@
  	}
  	$dir = $wgContLang->isRTL() ? "rtl" : "ltr";
  	$text .= "xml:lang=\"{$wgLanguageCode}\" lang=\"{$wgLanguageCode}\" dir=\"{$dir}\">";
@@ -1586,3 +1693,15 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow2.php
  </head>
  <body>
  {$wgOut->getHTML()}
+@@ -1016,7 +1460,10 @@
+ 			'wgAjaxUploadDestCheck' => $wgUseAjax && $wgAjaxUploadDestCheck,
+ 			'wgAjaxLicensePreview' => $wgUseAjax && $wgAjaxLicensePreview,
+ 			'wgEnableFirefogg' => (bool)$wgEnableFirefogg,
+-			'wgUploadAutoFill' => (bool)$autofill,
++			'wgUploadAutoFill' => !$this->mForReUpload &&
++				// If we received mDestFile from the request, don't autofill
++				// the wpDestFile textbox
++				$this->mDestFile === '',
+ 			'wgUploadSourceIds' => $this->mSourceIds,
+ 		);
+ 

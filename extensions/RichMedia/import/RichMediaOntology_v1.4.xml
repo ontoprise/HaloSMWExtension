@@ -1561,7 +1561,7 @@ These are the literal class definitions in common.css:
 |-
 | {{{field|Filename|hidden}}}
 |- 
-| colspan=&quot;2&quot; class=&quot;rmFormImportant&quot; |Fields marked with a &quot;*&quot; are mandatory
+| align=&quot;center&quot; colspan=&quot;2&quot; class=&quot;rmFormImportant&quot; |Fields marked with a &quot;*&quot; are mandatory
 |}{{{end template}}}&lt;/includeonly&gt;</text>
     </revision>
   </page>
@@ -1646,10 +1646,8 @@ These are the literal class definitions in common.css:
 | align=&quot;center&quot; class=&quot;rmFormImportant&quot; colspan=&quot;2&quot; | Fields marked with a &quot;*&quot; are mandatory
 |}
 {{{end template}}}
-{{{standard input|minor edit}}} {{{standard input|watch}}}
-
-{{{standard input|save}}} {{{standard input|preview}}} {{{standard input|changes}}} {{{standard input|cancel}}}
-&lt;/includeonly&gt;</text>
+{{{standard input|minor edit}}}{{{standard input|watch}}}
+{{{standard input|save}}}{{{standard input|preview}}}{{{standard input|changes}}}{{{standard input|cancel}}}&lt;/includeonly&gt;</text>
     </revision>
   </page>
   <page>
@@ -1740,8 +1738,8 @@ These are the literal class definitions in common.css:
 
 {{{standard input|minor edit}}} {{{standard input|watch}}} 
 
-{{{standard input|save}}} {{{standard input|preview}}} {{{standard input|changes}}} {{{standard input|cancel}}}&lt;/includeonly&gt;&lt;noinclude&gt;
-&lt;/noinclude&gt;</text>
+{{{standard input|save}}} {{{standard input|preview}}} {{{standard input|changes}}} {{{standard input|cancel}}}&lt;/includeonly&gt;
+</text>
     </revision>
   </page>
   <page>
@@ -1834,8 +1832,7 @@ These are the literal class definitions in common.css:
 
 {{{standard input|minor edit}}} {{{standard input|watch}}} 
 
-{{{standard input|save}}} {{{standard input|preview}}} {{{standard input|changes}}} {{{standard input|cancel}}}&lt;/includeonly&gt;&lt;noinclude&gt;
-&lt;/noinclude&gt;</text>
+{{{standard input|save}}} {{{standard input|preview}}} {{{standard input|changes}}} {{{standard input|cancel}}}&lt;/noinclude&gt;</text>
     </revision>
   </page>
   <page>
@@ -1918,8 +1915,7 @@ These are the literal class definitions in common.css:
 |-
 | align=&quot;center&quot; class=&quot;rmFormImportant&quot; colspan=&quot;2&quot; | Fields marked with a &quot;*&quot; are mandatory
 |}
-{{{end template}}}
-&lt;/includeonly&gt;</text>
+{{{end template}}}&lt;/includeonly&gt;</text>
     </revision>
   </page>
   <page>
@@ -2002,8 +1998,7 @@ These are the literal class definitions in common.css:
 |-
 | align=&quot;center&quot; class=&quot;rmFormImportant&quot; colspan=&quot;2&quot; | Fields marked with a &quot;*&quot; are mandatory
 |}
-{{{end template}}}
-&lt;/includeonly&gt;</text>
+{{{end template}}}&lt;/includeonly&gt;</text>
     </revision>
   </page>
   <page>
@@ -2093,8 +2088,8 @@ These are the literal class definitions in common.css:
 
 {{{standard input|minor edit}}} {{{standard input|watch}}}
 
-{{{standard input|save}}} {{{standard input|preview}}} {{{standard input|changes}}} {{{standard input|cancel}}}
-&lt;/includeonly&gt;</text>
+{{{standard input|save}}} {{{standard input|preview}}} {{{standard input|changes}}} {{{standard input|cancel}}}&lt;/includeonly&gt;
+</text>
     </revision>
   </page>
   <page>
@@ -2184,8 +2179,8 @@ These are the literal class definitions in common.css:
 
 {{{standard input|minor edit}}} {{{standard input|watch}}}
 
-{{{standard input|save}}} {{{standard input|preview}}} {{{standard input|changes}}} {{{standard input|cancel}}}
-&lt;/includeonly&gt;</text>
+{{{standard input|save}}} {{{standard input|preview}}} {{{standard input|changes}}} {{{standard input|cancel}}}&lt;/includeonly&gt;
+</text>
     </revision>
   </page>
   <page>
