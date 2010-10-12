@@ -100,7 +100,23 @@ class  LODPersistentTripleStoreAccess extends LODTripleStoreAccess {
 		parent::insertTriples($graph, $triples);		
 	}
 
-
+	/**
+	 * This methode overwrites the method of the parent class and throws an 
+	 * exception. The persistence layer can not handle delete operations on triples
+	 * as the parent class can do this. Triples must be deleted with the method
+	 * deletePersitentTriples().
+	 * 
+	 * @param string $graph
+	 * @param string $wherePattern
+	 * @param string $deleteTemplate
+	 * 
+	 * @throws
+	 */
+	public function deleteTriples($graph, $wherePattern, $deleteTemplate) {
+		throw new LODTSAException(LODTSAException::INVALID_METHOD, 
+								  "deleteTriples", "LODPersistentTripleStoreAccess");
+	}
+	
 	/**
 	 * Sends all collected SPARUL commands to the Triple Store. Afterwards all
 	 * commands are deleted and the definition of prefixes is reset.

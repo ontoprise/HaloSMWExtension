@@ -110,9 +110,15 @@ function enableLinkedData() {
 	$wgAutoloadClasses['LODBoolValue'] = $lodgIP . '/includes/LODWikiFrontend/MetaDataQueryPrinter/LOD_DV_Bool.php';
 	$wgAutoloadClasses['LODRecordValue'] = $lodgIP . '/includes/LODWikiFrontend/MetaDataQueryPrinter/LOD_DV_Record.php';
 
+	
+	//--- Classes for rating triples ---
+	$wgAutoloadClasses['LODRatingAccess'] = $lodgIP . '/includes/LODAccess/LODRating/LOD_RatingAccess.php';
+	$wgAutoloadClasses['LODRating']       = $lodgIP . '/includes/LODAccess/LODRating/LOD_Rating.php';
+	
     //--- Autoloading for exception classes ---
    	$wgAutoloadClasses['LODException']        = $lodgIP . '/exceptions/LOD_Exception.php';
    	$wgAutoloadClasses['LODMappingException'] = $lodgIP . '/exceptions/LOD_MappingException.php';
+   	$wgAutoloadClasses['LODTSAException']     = $lodgIP . '/exceptions/LOD_TSAException.php';
    	
     //--- Autoloading for libraries ---
 	$wgAutoloadClasses['ARC2'] = $lodgIP . '/libs/arc/ARC2.php';
