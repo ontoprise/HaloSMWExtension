@@ -27,6 +27,7 @@ class HaloTests
 		$suite = new PHPUnit_Framework_TestSuite('SMWHalo');
 
 		$suite->addTestSuite("TestSemanticStore");
+		$suite->addTestSuite("TestAutocompletionTSCStore");
 		$suite->addTestSuite("TestAutocompletionStore");
 		$suite->addTestSuite("TestQueryPrinters");
 		$suite->addTestSuite("TestWikiJobs");

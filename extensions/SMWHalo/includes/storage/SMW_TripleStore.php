@@ -97,6 +97,12 @@ class SMWTripleStore extends SMWStore {
 
 	function deleteSubject(Title $subject) {
 		$this->smwstore->deleteSubject($subject);
+
+		// make sure that TS is not update in maintenace mode
+		if ( defined( 'DO_MAINTENANCE' ) && !defined('SMWH_FORCE_TS_UPDATE') ) {
+			return;
+		}
+
 		$subject_iri = $this->tsNamespace->getFullIRI($subject);
 
 		// clear rules
@@ -136,7 +142,7 @@ class SMWTripleStore extends SMWStore {
 
 	function updateData(SMWSemanticData $data) {
 		$this->smwstore->updateData($data);
-		
+
 		// make sure that TS is not update in maintenace mode
 		if ( defined( 'DO_MAINTENANCE' ) && !defined('SMWH_FORCE_TS_UPDATE') ) {
 			return;
@@ -295,7 +301,7 @@ class SMWTripleStore extends SMWStore {
 
 			// there are other special properties which need not to be handled special
 			// so they can be handled by the default machanism:
-				
+
 			foreach($propertyValueArray as $value) {
 					
 				if ($value->isValid()) {
@@ -480,6 +486,10 @@ class SMWTripleStore extends SMWStore {
 	function changeTitle(Title $oldtitle, Title $newtitle, $pageid, $redirid=0) {
 		$this->smwstore->changeTitle($oldtitle, $newtitle, $pageid, $redirid);
 
+		// make sure that TS is not update in maintenace mode
+		if ( defined( 'DO_MAINTENANCE' ) && !defined('SMWH_FORCE_TS_UPDATE') ) {
+			return;
+		}
 		$old_iri = $this->tsNamespace->getFullIRI($oldtitle);
 		$new_iri = $this->tsNamespace->getFullIRI($newtitle);
 
@@ -540,6 +550,12 @@ class SMWTripleStore extends SMWStore {
 
 	function doGetQueryResult(SMWQuery $query) {
 		global $wgServer, $wgScript, $smwgWebserviceUser, $smwgWebservicePassword, $smwgDeployVersion;
+
+		// make sure that TS is not queried in maintenace mode
+		if ( defined( 'DO_MAINTENANCE' )  && !defined('SMWH_FORCE_TS_UPDATE') ) {
+			$sqr = new SMWHaloQueryResult(array(), $query, array(), $this, false);
+			return $sqr;
+		}
 
 		$toTSC = false; // redirects a normal ASK query to the TSC
 		if (!($query instanceof SMWSPARQLQuery)) {
@@ -678,6 +694,12 @@ class SMWTripleStore extends SMWStore {
 	public function cacheSMWPageID($id, $title, $namespace, $iw) {
 		return $this->smwstore->cacheSMWPageID($id, $title, $namespace, $iw);
 	}
+
+
+	public function getSMWPageIDandSort( $title, $namespace, $iw, &$sort, $canonical ) {
+		return $this->smwstore->getSMWPageIDandSort($title, $namespace, $iw, $sort, $canonical);
+	}
+
 
 	// Helper methods
 

@@ -5,8 +5,8 @@ require_once($smwgHaloIP.'/includes/SMW_Autocomplete.php');
 /**
  *
  * @file
- * @ingroup SMWHaloTests 
- * 
+ * @ingroup SMWHaloTests
+ *
  * Tests the auto-completion storage layer
  * @author Kai Kühn
  */
@@ -14,7 +14,8 @@ class TestAutocompletionStore extends PHPUnit_Framework_TestCase {
 
 
 	function setUp() {
-
+		global $smwgDefaultStore;
+		$smwgDefaultStore='SMWHaloStore2';
 	}
 
 	function tearDown() {
@@ -42,12 +43,13 @@ class TestAutocompletionStore extends PHPUnit_Framework_TestCase {
 	}
 
 	function testGetPages() {
-		$exp_values = array("Electric car","Elephant","Engine", "Europe");
+		$exp_values = array("Electric car","Elephant","Has Electric engine");
 
-		$values = smwfGetAutoCompletionStore()->getPages("e");
+		$values = smwfGetAutoCompletionStore()->getPages("el");
 
 		foreach ($values as $v) {
-			$this->assertContains($v->getText(), $exp_values, $v->getText()." missing");
+			$title = $this->getTitle($v);
+			$this->assertContains($title->getText(), $exp_values, $title->getText()." missing");
 		}
 	}
 
@@ -57,7 +59,8 @@ class TestAutocompletionStore extends PHPUnit_Framework_TestCase {
 		$values = smwfGetAutoCompletionStore()->getPages("ai", array(NS_MAIN));
 
 		foreach ($values as $v) {
-			$this->assertContains($v->getText(), $exp_values, $v->getText()." missing");
+			$title = $this->getTitle($v);
+			$this->assertContains($title->getText(), $exp_values, $title->getText()." missing");
 		}
 	}
 
@@ -67,7 +70,8 @@ class TestAutocompletionStore extends PHPUnit_Framework_TestCase {
 		$values = smwfGetAutoCompletionStore()->getPropertyWithType("tor", "N");
 			
 		foreach ($values as $v) {
-			$this->assertContains($v->getText(), $exp_values, $v->getText()." missing");
+			$title = $this->getTitle($v);
+			$this->assertContains($title->getText(), $exp_values, $title->getText()." missing");
 		}
 	}
 
@@ -80,7 +84,8 @@ class TestAutocompletionStore extends PHPUnit_Framework_TestCase {
 		$values = smwfGetAutoCompletionStore()->getInstanceAsTarget("K", $domainRangeAnnotations);
 
 		foreach ($values as $v) {
-			$this->assertContains($v->getText(), $exp_values, $v->getText()." missing");
+				$title = $this->getTitle($v);
+			$this->assertContains($title->getText(), $exp_values, $title->getText()." missing");
 		}
 	}
 
@@ -96,19 +101,19 @@ class TestAutocompletionStore extends PHPUnit_Framework_TestCase {
 			$this->assertEquals($exp_values2[$t->getText()], $inferred);
 		}
 	}
-	
-    function testGetPropertyForInstanceInferred() {
-        $exp_values = array("Has Engine");
-        $exp_values2 = array("Has Engine" => true);
 
-        $values = smwfGetAutoCompletionStore()->getPropertyForInstance("engine", Title::newFromText("Peugeot", NS_MAIN), true);
+	function testGetPropertyForInstanceInferred() {
+		$exp_values = array("Has Engine");
+		$exp_values2 = array("Has Engine" => true);
 
-        foreach ($values as $v) {
-            list($t, $inferred) = $v;
-            $this->assertContains($t->getText(), $exp_values, $t->getText()." missing");
-            $this->assertEquals($exp_values2[$t->getText()], $inferred);
-        }
-    }
+		$values = smwfGetAutoCompletionStore()->getPropertyForInstance("engine", Title::newFromText("Peugeot", NS_MAIN), true);
+
+		foreach ($values as $v) {
+			list($t, $inferred) = $v;
+			$this->assertContains($t->getText(), $exp_values, $t->getText()." missing");
+			$this->assertEquals($exp_values2[$t->getText()], $inferred);
+		}
+	}
 
 	function testGetPropertyForCategory() {
 		$exp_values = array("Has Engine", "Has Voltage");
@@ -122,52 +127,61 @@ class TestAutocompletionStore extends PHPUnit_Framework_TestCase {
 		}
 
 	}
-	
-    function testGetPropertyForAnnotation() {
-        $exp_values = array("Has Engine", "Has Voltage");
-        $exp_values2 = array("Has Engine" => false, "Has Voltage" => false);
-        $values = smwfGetAutoCompletionStore()->getPropertyForAnnotation("Has", Title::newFromText("Electric car", NS_CATEGORY));
-   
-        foreach ($values as $v) {
-            list($t, $inferred) = $v;
-            $this->assertContains($t->getText(), $exp_values, $t->getText()." missing");
-            $this->assertEquals($exp_values2[$t->getText()], $inferred);
-        }
 
-    }
-    
-    function testGetPropertyForAnnotationInferred() {
-        $exp_values = array("Has Engine", "Has Voltage");
-        $exp_values2 = array("Has Engine" => true, "Has Voltage" => true);
-        $values = smwfGetAutoCompletionStore()->getPropertyForAnnotation("Has", Title::newFromText("Hybrid car", NS_CATEGORY));
-   
-        foreach ($values as $v) {
-            list($t, $inferred) = $v;
-            $this->assertContains($t->getText(), $exp_values, $t->getText()." missing");
-            $this->assertEquals($exp_values2[$t->getText()], $inferred);
-        }
+	function testGetPropertyForAnnotation() {
+		$exp_values = array("Has Engine", "Has Voltage");
+		$exp_values2 = array("Has Engine" => false, "Has Voltage" => false);
+		$values = smwfGetAutoCompletionStore()->getPropertyForAnnotation("Has", Title::newFromText("Electric car", NS_CATEGORY));
+		 
+		foreach ($values as $v) {
+			list($t, $inferred) = $v;
+			$this->assertContains($t->getText(), $exp_values, $t->getText()." missing");
+			$this->assertEquals($exp_values2[$t->getText()], $inferred);
+		}
 
-    }
-    
-    function testGetValueForAnnotation() {
-        $exp_values = array("3 cylinder", "4 cylinder", "5 cylinder");
-        $values = smwfGetAutoCompletionStore()->getValueForAnnotation("cyl", Title::newFromText("Has Engine", SMW_NS_PROPERTY));
-        foreach ($values as $tuple) {
-        	   list($v, $inferred) = $tuple;
-        	   $text = is_string($v) ? $v : $v->getText();
-               $this->assertContains($text, $exp_values, $text." missing");
-        }
+	}
 
-    }
-    
-    function testGetValueForAnnotationInferred() {
-        $exp_values = array("Jack");
-        $values = smwfGetAutoCompletionStore()->getValueForAnnotation("jack", Title::newFromText("Has Child", SMW_NS_PROPERTY));
-        foreach ($values as $tuple) {
-               list($v, $inferred) = $tuple;
-               $text = is_string($v) ? $v : $v->getText();
-               $this->assertContains($text, $exp_values, $text." missing");
-        }
+	function testGetPropertyForAnnotationInferred() {
+		$exp_values = array("Has Engine", "Has Voltage");
+		$exp_values2 = array("Has Engine" => true, "Has Voltage" => true);
+		$values = smwfGetAutoCompletionStore()->getPropertyForAnnotation("Has", Title::newFromText("Hybrid car", NS_CATEGORY));
+		 
+		foreach ($values as $v) {
+			list($t, $inferred) = $v;
+			$this->assertContains($t->getText(), $exp_values, $t->getText()." missing");
+			$this->assertEquals($exp_values2[$t->getText()], $inferred);
+		}
 
-    }
+	}
+
+	function testGetValueForAnnotation() {
+		$exp_values = array("3 cylinder", "4 cylinder", "5 cylinder");
+		$values = smwfGetAutoCompletionStore()->getValueForAnnotation("cyl", Title::newFromText("Has Engine", SMW_NS_PROPERTY));
+		foreach ($values as $tuple) {
+			list($v, $inferred) = $tuple;
+			$text = is_string($v) ? $v : $v->getText();
+			$this->assertContains($text, $exp_values, $text." missing");
+		}
+
+	}
+
+	function testGetValueForAnnotationInferred() {
+		$exp_values = array("Jack");
+		$values = smwfGetAutoCompletionStore()->getValueForAnnotation("jack", Title::newFromText("Has Child", SMW_NS_PROPERTY));
+		foreach ($values as $tuple) {
+			list($v, $inferred) = $tuple;
+			$text = is_string($v) ? $v : $v->getText();
+			$this->assertContains($text, $exp_values, $text." missing");
+		}
+
+	}
+
+	private function getTitle($acResult) {
+		if ($acResult instanceof Title) {
+			$title = $acResult;
+		} else {
+			list($title, $inf, $pasteContent, $extraData) = $acResult;
+		}
+		return $title;
+	}
 }

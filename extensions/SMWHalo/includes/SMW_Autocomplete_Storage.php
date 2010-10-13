@@ -749,15 +749,16 @@ class AutoCompletionStorageSQL2 extends AutoCompletionStorage {
 			$hasWikiPageType |= array_shift($dbkeys) == '_wpg';
 		}
 
-
 		$rangeString = NULL;
 		if ($hasWikiPageType) {
 			$domainRangeAnnotations = smwfGetStore()->getPropertyValues($property, smwfGetSemanticStore()->domainRangeHintProp);
 			foreach($domainRangeAnnotations as $a) {
+				
 				$dvs = $a->getDVs();
 				$domain = reset($dvs);
 				$range = next($dvs);
 				if (!is_null($range) && $range !== false) $ranges[] = $range->getTitle()->getText();
+				
 			}
 
 			$rangeString = implode(',', array_unique($ranges));
@@ -767,6 +768,7 @@ class AutoCompletionStorageSQL2 extends AutoCompletionStorage {
 }
 
 class AutoCompletionStorageTSC extends AutoCompletionStorageSQL2 {
+	
 	public  function runASKQuery($rawquery, $userInput, $column = "_var0") {
 
 		global $smwgResultFormats, $smwgHaloIP;
@@ -797,7 +799,7 @@ class AutoCompletionStorageTSC extends AutoCompletionStorageSQL2 {
 
 		if ($namespaces == NULL || count($namespaces) == 0) {
 
-			$response = $client->query("SELECT DISTINCT ?s WHERE { ?s ?p ?o. FILTER(regex(str(?s), \"$match\",\"i\")) }",  "limit=".SMW_AC_MAX_RESULTS);
+			$response = $client->query("SELECT DISTINCT ?s WHERE { ?s ?p ?o. FILTER(regex(str(?s), \"#[^/:#]*$match\",\"i\")) }",  "limit=".SMW_AC_MAX_RESULTS);
 
 		} else {
 			$tsn = new TSNamespaces();
@@ -814,15 +816,16 @@ class AutoCompletionStorageTSC extends AutoCompletionStorageSQL2 {
 			$response = $client->query("SELECT DISTINCT ?s WHERE { $filter }",  "limit=".SMW_AC_MAX_RESULTS);
 		}
 
-		$result = array();
-		$this->parseSPARQLResults($response, $result);
+		$result = $this->parseSPARQLResults($response);
+		//$result = array("irgenwas");
+		
 		return $result;
 	}
 
-	protected function parseSPARQLResults($response, & $result) {
+	protected function parseSPARQLResults($response) {
 		$dom = simplexml_load_string($response);
 
-
+		$result = array();
 		$results = $dom->xpath('//result');
 		foreach ($results as $r) {
 
@@ -831,29 +834,35 @@ class AutoCompletionStorageTSC extends AutoCompletionStorageSQL2 {
 
 			$sv = $b->children()->uri[0];
 			if (!is_null($sv) && $sv !== '') {
-				
-			$title = TSHelper::getTitleFromURI((string) $sv);
-			$extraData = ($title->getNamespace() == SMW_NS_PROPERTY) ? $this->getPropertyData($title) : NULL;
-			$result[] = array($title, false, NULL, $extraData);
+			
+				$title = TSHelper::getTitleFromURI((string) $sv);
+				if (is_null($title)) {
+					
+					continue;
+				} 
+				$extraData = ($title->getNamespace() == SMW_NS_PROPERTY) ? $this->getPropertyData($title) : NULL;
+				$result[] = array($title, false, NULL, $extraData);
 			} else {
 				$sv = $b->children()->literal[0];
 				$result[] = array((string) $sv, false);
 			}
 
 		}
-
-
+	
+	return $result;
 	}
 
 
 	public function getPropertyForInstance($userInputToMatch, $instance, $matchDomainOrRange) {
+		$client = TSConnection::getConnector();
 		$client->connect();
-		$instance_iri = $this->tsNamespace->getFullIRI($instance->getTitle());
+		$tsn = new TSNamespaces();
+		$instance_iri = $tsn->getFullIRI($instance);
 
 		$pos = $matchDomainOrRange ? 0 : 1;
 
 		$response = $client->query("SELECT DISTINCT ?p WHERE { $instance_iri rdf:type ?c. ?p prop:Has_domain_and_range ?blank1 . ?blank1 prop:$pos ?c . ".
-								   " FILTER(regex(str(?p), \"$userInputToMatch\",\"i\")) }",  "limit=".SMW_AC_MAX_RESULTS);
+								   " FILTER(regex(str(?p), \"/property#[^/:#]*$userInputToMatch\",\"i\")) }",  "limit=".SMW_AC_MAX_RESULTS);
 
 		$result = array();
 		$this->parseSPARQLResults($response, $result);
@@ -862,11 +871,13 @@ class AutoCompletionStorageTSC extends AutoCompletionStorageSQL2 {
 
 
 	public function getPropertyForAnnotation($userInputToMatch, $category) {
+		$client = TSConnection::getConnector();
 		$client->connect();
-		$category_iri = $this->tsNamespace->getFullIRI($category->getTitle());
+		$tsn = new TSNamespaces();
+		$category_iri = $tsn->getFullIRI($category);
 
 		$response = $client->query("SELECT DISTINCT ?p WHERE { ?s rdf:type $category_iri. ?s ?p ?o . ".
-								   " FILTER(regex(str(?p), \"$userInputToMatch\",\"i\")) }",  "limit=".SMW_AC_MAX_RESULTS);
+								   " FILTER(regex(str(?p), \"/property#[^/:#]*$userInputToMatch\",\"i\")) }",  "limit=".SMW_AC_MAX_RESULTS);
 
 		$result = array();
 		$this->parseSPARQLResults($response, $result);
@@ -874,9 +885,11 @@ class AutoCompletionStorageTSC extends AutoCompletionStorageSQL2 {
 	}
 
 	public function getValueForAnnotation($userInputToMatch, $property) {
+		$client = TSConnection::getConnector();
 		$client->connect();
-		$property_iri = $this->tsNamespace->getFullIRI($property->getTitle());
-		
+		$tsn = new TSNamespaces();
+		$property_iri = $tsn->getFullIRI($property);
+
 
 		$response = $client->query("SELECT DISTINCT ?v WHERE { ?s $property_iri ?v. ".
 								   " FILTER(regex(str(?v), \"$userInputToMatch\",\"i\")) }",  "limit=".SMW_AC_MAX_RESULTS);
@@ -889,21 +902,23 @@ class AutoCompletionStorageTSC extends AutoCompletionStorageSQL2 {
 
 
 	public function getInstanceAsTarget($userInputToMatch, $domainRangeAnnotations) {
+		$client = TSConnection::getConnector();
 		$client->connect();
-		$instance_iri = $this->tsNamespace->getFullIRI($instance->getTitle());
-		
-		
+		$tsn = new TSNamespaces();
+	
+
+
 		$first = true;
 		$constraint = "";
 		foreach($domainRangeAnnotations as $dr) {
 			$dvs = $dr->getDVs();
 			if ($dvs[1] == NULL || !$dvs[1]->isValid()) continue;
-			$category_iri = $this->tsNamespace->getFullIRI($dvs[1]->getTitle());
-			if (!first) {
+			$category_iri = $tsn->getFullIRI($dvs[1]->getTitle());
+			if (!$first) {
 				$constraint .= " UNION ";
 			}
 			$constraint = "{ ?s rdf:type $category_iri . ".
-								   " FILTER(regex(str(?p), \"$userInputToMatch\",\"i\")) }";
+								   " FILTER(regex(str(?s), \"#[^/:#]*$userInputToMatch\",\"i\")) }";
 			$first = false;
 		}
 
