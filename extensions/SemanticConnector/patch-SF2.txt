@@ -1,0 +1,52 @@
+Index: extensions/SemanticForms/includes/SF_FormUtils.php
+===================================================================
+--- extensions/SemanticForms/includes/SF_FormUtils.php	(revision 0)
++++ extensions/SemanticForms/includes/SF_FormUtils.php	(revision 0)
+@@ -216,6 +216,13 @@
+ 		}
+ 		scroll(0, 0);
+ 	}
++// start SC patch
++END
++.<<<END
++if(num_errors == 0) return SemanticConnector.saveEnabledForm();
++END
++.<<<END
++// end of SC patch
+ 	return (num_errors == 0);
+ }
+ 
+Index: extensions/SemanticForms/includes/SF_LinkUtils.php
+===================================================================
+--- extensions/SemanticForms/includes/SF_LinkUtils.php	(revision 0)
++++ extensions/SemanticForms/includes/SF_LinkUtils.php	(revision 0)
+@@ -273,6 +273,14 @@
+ 	 * - the default form for the article's namespace, if there is one
+ 	 */
+ 	static function getFormsForArticle( $obj ) {
++		// start SC patch
++		// attention, this will break common parse of actived forms
++		// change default form settings (special property 'Has default form') 
++		// will not work if schema mapping defined
++		$forms = SCProcessor::getActivedForm($obj->mTitle->getText());
++		if($forms !== NULL) 
++			return $forms;
++		// end of SC patch
+ 		// see if the page itself has a default form (or forms), and
+ 		// return it/them if so
+ 		$default_forms = self::getFormsThatPagePointsTo( $obj->mTitle->getText(), $obj->mTitle->getNamespace(), '_SF_PDF', '_SF_PDF_BACKUP', SF_SP_PAGE_HAS_DEFAULT_FORM );
+Index: extensions/SemanticForms/specials/SF_FormEdit.php
+===================================================================
+--- extensions/SemanticForms/specials/SF_FormEdit.php	(revision 0)
++++ extensions/SemanticForms/specials/SF_FormEdit.php	(revision 0)
+@@ -104,6 +104,10 @@
+ 			} else {
+ 				$target_article = new Article( $target_title );
+ 				$page_contents = $target_article->getContent();
++				// start SC patch
++				SCProcessor::renderAddEditPage($form_name, $target_name);
++				$page_contents = SCProcessor::toMappedFormContent($page_contents, $target_title, $form_title);
++				// end of SC patch
+ 				$page_is_source = true;
+ 			}
+ 		} elseif ( $target_name != '' ) {

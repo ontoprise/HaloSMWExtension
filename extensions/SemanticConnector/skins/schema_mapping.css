@@ -1,0 +1,47 @@
+#class .loading-indicator{
+	font-size:12px;
+	height:18px;
+}
+#schema_mapping_form {
+	font: normal 12px verdana,arial,tahoma;
+	position:absolute;
+	z-index:2000;
+}
+#loading{
+	position:absolute;
+	left:45%;
+	top:40%;
+	padding:2px;
+	z-index:2000;
+  height:auto;
+}
+#loading img {
+    margin-bottom:5px;
+}
+#loading .loading-indicator{
+	background:white;
+	color:#555;
+	font:bold 13px tahoma,arial,helvetica;
+	padding:10px;
+	margin:0;
+    text-align:center;
+    height:auto;
+}
+.icon-expand-all {
+    background-image: url(expand-all.gif) !important;
+}
+.icon-collapse-all {
+    background-image: url(collapse-all.gif) !important;
+}
+.icon-root {
+    background-image: url(class.gif) !important;
+}
+.icon-form {
+    background-image: url(form.gif) !important;
+}
+.icon-template {
+    background-image: url(template.gif) !important;
+}
+.icon-field {
+    background-image: url(field.gif) !important;
+}
