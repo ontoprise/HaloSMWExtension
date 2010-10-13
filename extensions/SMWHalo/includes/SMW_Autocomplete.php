@@ -186,11 +186,18 @@ function &smwfGetAutoCompletionStore() {
 		global $smwgDefaultStore;
 		switch ($smwgDefaultStore) {
 
-			case ('SMWHaloStore2'): default:
-				$smwhgAutoCompletionStore = new AutoCompletionStorageSQL2();
+			case ('SMWTripleStore'):
+				global $smwhgAutoCompletionTSC;
+				if (isset($smwhgAutoCompletionTSC) && $smwhgAutoCompletionTSC === true) {
+					// activate TSC autocompletion only explicitly
+					$smwhgAutoCompletionStore = new AutoCompletionStorageTSC();
+				} else {
+					$smwhgAutoCompletionStore = new AutoCompletionStorageSQL2();
+				}
 				break;
-			case ('SMWTripleStore'): default:
-				$smwhgAutoCompletionStore = new AutoCompletionStorageTSC();
+			case ('SMWHaloStore2'):
+			default:
+				$smwhgAutoCompletionStore = new AutoCompletionStorageSQL2();
 				break;
 		}
 	}
@@ -299,12 +306,12 @@ class AutoCompletionRequester {
 		$specialMatches = array(); // keeps matches of special relations
 		global $smwgContLang;
 		$specialProperties = $smwgContLang->getPropertyLabels();
-		
-		// propose category 
+
+		// propose category
 		if (stripos(strtolower($wgLang->getNsText(NS_CATEGORY)), strtolower($match)) !== false) {
 			$specialMatches[] = Title::newFromText(strtolower($wgLang->getNsText(NS_CATEGORY)), NS_CATEGORY);
 		}
-		
+
 		// propose namespaces
 		global $wgExtraNamespaces;
 		$namespaceToPropose = $wgExtraNamespaces;
@@ -313,7 +320,7 @@ class AutoCompletionRequester {
 				$specialMatches[] = Title::newFromText(strtolower($wgLang->getNsText($ns)), $ns);
 			}
 		}
-		
+
 		if (stripos(strtolower($specialProperties["_SUBP"]), preg_replace("/_/", " ", strtolower($match))) !== false) {
 			$specialMatches[] = Title::newFromText($specialProperties["_SUBP"], SMW_NS_PROPERTY);
 		}
@@ -566,7 +573,7 @@ class AutoCompletionHandler {
 				if (smwf_om_userCan($params[0], 'read') == 'true') {
 					$category = Title::newFromText($params[0]);
 					if (!is_null($category)) {
-						 $pages = $acStore->getPropertyForCategory($userInput, $category);
+						$pages = $acStore->getPropertyForCategory($userInput, $category);
 						$result = self::mergeResults($result, $pages );
 
 					}
@@ -657,7 +664,7 @@ class AutoCompletionHandler {
 
 				// make titles but eliminate duplicates before
 				$textTitles = array();
-								
+
 				foreach($queryResults as $r) {
 					if (empty($userInput) || stripos(str_replace(" ", "_", (string) $r[0]), $userInput) !== false) {
 						$textTitles[] = (string) $r[0];
@@ -681,7 +688,7 @@ class AutoCompletionHandler {
 		return $result;
 	}
 
-	
+
 
 	/**
 	 * Remove all double matches. This may occur if several AC commands are

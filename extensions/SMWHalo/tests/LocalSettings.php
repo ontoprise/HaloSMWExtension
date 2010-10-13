@@ -11,7 +11,7 @@ enableSemantics('http://wiki', true);
 include_once('extensions/SMWHalo/includes/SMW_Initialize.php');
 enableSMWHalo('SMWHaloStore2', 'SMWTripleStore', 'http://publicbuild/ob');
 $smwgWebserviceEndpoint="localhost:8090";
-
+$smwhgAutoCompletionTSC=true;
 enableQueryResultsCache();
 
 $wgParserCacheType = CACHE_NONE; //disable parse cache for query results cache tests
