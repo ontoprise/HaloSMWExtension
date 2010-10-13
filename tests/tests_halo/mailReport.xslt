@@ -5,7 +5,7 @@
     <xsl:param name="package" select="'GeneralTests'"/>
 
 	<xsl:template match="testsuites/testsuite">
-Testsuite: <xsl:value-of select="@name" />
+Testsuite: <xsl:value-of select="$package" />
   tests: <xsl:value-of select="@tests" />
   assertions: <xsl:value-of select="@assertions" />
   failures: <xsl:value-of select="@failures" />
