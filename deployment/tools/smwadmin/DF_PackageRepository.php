@@ -254,11 +254,11 @@ class PackageRepository {
 	/**
 	 * Returns all available packages and their versions
 	 *
-	 * @return array of (package ids => array of ascending versions)
+	 * @return array of (package ids => array of (version, patchlevel, repo URL) sorted in descending order
 	 */
 	public static function getAllPackages() {
 		$results = array();
-		foreach(self::getPackageRepository() as $repo) {
+		foreach(self::getPackageRepository() as $repo_url => $repo) {
 			$packages = $repo->xpath("/root/extensions/extension");
 			foreach($packages as $p) {
 				$id = (string) $p->attributes()->id;
@@ -268,15 +268,15 @@ class PackageRepository {
 					$version = (string) $v->attributes()->ver;
 					$patchlevel = (string) $v->attributes()->patchlevel;
 					$patchlevel = empty($patchlevel) ? 0 : $patchlevel;
-					$results[$id][] = array($version, $patchlevel);
+					$results[$id][] = array($version, $patchlevel, $repo_url);
 				}
 
 			}
 		}
 		$sortedResults = array();
 		foreach($results as $id => $versions) {
-			sort($versions, SORT_NUMERIC);
-			$sortedResults[$id] = array_unique($versions);
+			Tools::sortVersions($versions);
+			$sortedResults[$id] = $versions;
 		}
 
 		return $sortedResults;

@@ -22,7 +22,7 @@
  *
  * Some tools for file operations and other stuff.
  *
- * @author: Kai Kühn / ontoprise / 2009
+ * @author: Kai Kï¿½hn / ontoprise / 2009
  *
  */
 class Tools {
@@ -248,6 +248,68 @@ class Tools {
 		} else {
 			return substr($v, 0, 1).".".substr($v, 1,2).".".substr($v,3).$patchlevel;
 		}
+	}
+
+	/**
+	 * Provides a shortend (non-functional) form of the URL
+	 * for displaying purposes.
+	 * 
+	 * @param string $s
+	 */
+	public static function shortenURL($s) {
+		$s = substr($s, 7); // cut off http://
+		if (strlen($s) < 20) return "[$s]";
+		return "[".substr($s, 0, 10)."...".substr($s, -12)."]";
+	}
+
+	/**
+	 * Sorts and compacts versions. That means it filters out all doubles.
+	 *
+	 * @param array of tuples(version, patchlevel) $versions
+	 */
+	public static function sortVersions(& $versions) {
+
+		// sort
+		for($i = 0; $i < count($versions); $i++) {
+			for($j = 0; $j < count($version)-1; $j++) {
+
+				list($ver1, $pl1) = $version[$j];
+				list($ver2, $pl2) = $version[$j+1];
+				if ($ver1 === $ver2) {
+					if ($pl1 < $pl2) {
+						$help = $version[$j];
+						$version[$j] = $version[$j+1];
+						$version[$j+1] = $help;
+					}
+				}
+				if ($ver1 < $ver2) {
+					$help = $version[$j];
+					$version[$j] = $version[$j+1];
+					$version[$j+1] = $help;
+				}
+			}
+		}
+
+		// remove doubles
+		$result = array();
+		$last = NULL;
+		for($i = 0; $i < count($versions); $i++) {
+			if (is_null($last)) {
+				$last = $versions[$i];
+				continue;
+			}
+
+			list($ver1, $pl1) = $last;
+			list($ver2, $pl2) = $versions[$i];
+			if($ver1 === $ver2 || $pl1 === $pl2) {
+				$versions[$i] = NULL;
+			} else {
+				$last = $versions[$i];
+			}
+				
+		}
+
+		$versions = array_diff($versions, array(NULL));
 	}
 
 	/**

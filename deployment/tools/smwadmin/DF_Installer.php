@@ -43,7 +43,7 @@ require_once 'DF_ResourceInstaller.php';
  * 
  * Provides the basic installation routines for the smwadmin tool.
  *
- * @author: Kai Kühn / ontoprise / 2009
+ * @author: Kai Kï¿½hn / ontoprise / 2009
  *
  */
 
@@ -261,9 +261,13 @@ class Installer {
 			print "\n\nNo packages available!\n";
 			return;
 		}
-		print "\n Installed       | Package            | Available versions";
-		print "\n----------------------------------------------------------\n";
+		print "\n Installed           | Package             | Av. versions  | Repository";
+		print "\n-------------------------------------------------------------------------\n";
+				
 		foreach($allPackages as $p_id => $versions) {
+			
+			
+			
 			if (!is_null($pattern) && !empty($pattern)) { // filter packages
 				if (substr(trim($pattern),0,1) == '*') {
 					$cleanPattern = str_replace("*", "", $pattern);
@@ -282,13 +286,17 @@ class Installer {
 			}
 
 			$id_shown = $p_id;
-			$id_shown .= str_repeat(" ", 20-strlen($p_id) >= 0 ? 20-strlen($p_id) : 0);
+			$id_shown .= str_repeat(" ", 22-strlen($p_id) >= 0 ? 22-strlen($p_id) : 0);
+			$instTag .= str_repeat(" ", 20-strlen($instTag) >= 0 ? 20-strlen($instTag) : 0);
 			$sep_v = array();
 			foreach($versions as $v) $sep_v[] = Tools::addVersionSeparators($v);
-			print "\n $instTag $id_shown| (".implode(", ", $sep_v).")";
+			$versionsShown = "(".implode(", ", $sep_v).")";
+			$versionsShown .= str_repeat(" ", 12-strlen($versionsShown) >= 0 ? 12-strlen($versionsShown) : 0);
+			print "\n $instTag $id_shown  $versionsShown ".Tools::shortenURL($v[2]);
+			
 			if ($showDescription && array_key_exists($p_id, $localPackages)) print "\n ".$localPackages[$p_id]->getDescription()."\n\n";
 		}
-		print "\n";
+		print "\n\n";
 	}
 
 	/**
