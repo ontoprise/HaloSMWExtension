@@ -41,7 +41,7 @@ $messages['en'] = array(
 
 	//--- Meta-data printer ---
 	'lod_mdp_no_printer'	=> 'The requested meta-data printer for format <i>$1</i> was not found.',
-	'lod_mdp_no_metadata'	=> 'There is no neta-data for this value.',
+	'lod_mdp_no_metadata'	=> 'There is no meta-data for this value.',
 	'lod_mdp_property'		=> 'Property',
 	'lod_mdp_value'			=> 'Value',
 	'lod_mdp_table_title'	=> 'Meta-data for this data value',
