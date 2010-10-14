@@ -223,7 +223,7 @@ class AutoCompletionStorageSQL2 extends AutoCompletionStorage {
 						$propertyTitle = Title::newFromText($row->page_title, SMW_NS_PROPERTY);
 						$result[] = array($propertyTitle, false, NULL, $this->getPropertyData($propertyTitle));
 					} else {
-						$result[] = Title::newFromText($row->page_title, $row->page_namespace);
+						$result[] = Title::makeTitle($row->page_namespace, $row->page_title);
 					}
 				}
 			}
@@ -610,7 +610,7 @@ class AutoCompletionStorageSQL2 extends AutoCompletionStorage {
 					$result[] = array($stringValue, $row->inferred == 'true');
 				} else {
 					if (smwf_om_userCan($row->title, 'read', $row->namespace) == 'true') {
-						$result[] = array(Title::newFromText($row->title, $row->namespace), $row->inferred == 'true');
+						$result[] = array(Title::makeTitle($row->namespace, $row->title), $row->inferred == 'true');
 					}
 				}
 			}
@@ -702,7 +702,7 @@ class AutoCompletionStorageSQL2 extends AutoCompletionStorage {
 			while($row)
 			{
 				if (smwf_om_userCan($row->instance, 'read', $row->namespace) == 'true') {
-					$instance = Title::newFromText($row->instance, $row->namespace);
+					$instance = Title::makeTitle($row->namespace, $row->instance);
 					$results[] = $instance;
 				}
 				$row = $db->fetchObject($res);
@@ -817,7 +817,6 @@ class AutoCompletionStorageTSC extends AutoCompletionStorageSQL2 {
 		}
 
 		$result = $this->parseSPARQLResults($response);
-		//$result = array("irgenwas");
 		
 		return $result;
 	}

@@ -97,7 +97,7 @@ class TSHelper {
 		foreach (TSNamespaces::$ALL_NAMESPACES as $nsIndsex => $ns) {
 			if (stripos($sv, $ns) === 0) {
 				$local = substr($sv, strlen($ns));
-				return Title::newFromText($local, $nsIndsex);
+				return Title::makeTitle($nsIndsex, $local);
 
 			}
 		}
@@ -114,7 +114,7 @@ class TSHelper {
 
 			$local = substr($sv, strpos($sv, "#")+1);
 
-			return Title::newFromText($local, $ns);
+			return Title::makeTitle($ns, $local);
 
 
 
