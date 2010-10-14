@@ -9,23 +9,59 @@ if( !defined( 'SF_VERSION' ) ) {
 			"Please read 'extensions/AutomaticSemanticForms/INSTALL' for further information.\n");
 	}
 
-define('ASF_VERSION', '{{$VERSION}}');
-
-global $asfIP; 
+global $asfIP;
 $asfIP = $IP . '/extensions/AutomaticSemanticForms';
 
-function enableAutomaticSemanticForms() {
-	global $wgExtensionFunctions, $asfEnableAutomaticSemanticForms;
+	
+/*
+ * This method must be called in Local Settings
+ * 
+ * It sets up the Automatic Semantic Forms Extension
+ */
+	function enableAutomaticSemanticForms() {
+	global $asfIP, $wgExtensionFunctions, $asfEnableAutomaticSemanticForms;
+
+	define('ASF_VERSION', '{{$VERSION}}');
 	
 	$asfEnableAutomaticSemanticForms = true;
 	
 	$wgExtensionFunctions[] = 'asfSetupExtension';
+	
+	require_once($asfIP . '/includes/ASF_Settings.php');
+	
+	//autoload classes
+	global $wgAutoloadClasses;
+	$wgAutoloadClasses['ASFFormEditTab'] = $asfIP . '/includes/ASF_FormEditTab.php';
+	$wgAutoloadClasses['ASFFormGenerator'] = $asfIP . '/includes/ASF_FormGenerator.php';
+	$wgAutoloadClasses['ASFFormGeneratorUtils'] = $asfIP . '/includes/ASF_FormGeneratorUtils.php';
+	$wgAutoloadClasses['ASFPropertyFormData'] = $asfIP . '/includes/ASF_PropertyFormData.php';
+	$wgAutoloadClasses['ASFCategoryFormData'] = $asfIP . '/includes/ASF_CategoryFormData.php';
+	$wgAutoloadClasses['ASFFormPrinter'] = $asfIP . '/includes/ASF_FormPrinter.php';
+	$wgAutoloadClasses['ASFParserFunctions'] = $asfIP . '/includes/ASF_ParserFunctions.php';
+	$wgAutoloadClasses['ASFFormEdit'] = $asfIP . '/specials/ASF_FormEdit.php';
+	
+	global $wgHooks;
+	//create edit with form tab
+	$wgHooks['SkinTemplateTabs'][] = 'ASFFormEditTab::displayTab';
+	$wgHooks['SkinTemplateNavigation'][] = 'ASFFormEditTab::displayTab2';
+	
+	//add handler for the formedit action
+	$wgHooks['UnknownAction'][] = 'ASFFormEditTab::displayForm';
+	
+	//Setup parser functions
+	$wgHooks['ParserFirstCallInit'][] = 'ASFParserFunctions::registerFunctions';
+	$wgHooks['LanguageGetMagic'][] = 'ASFParserFunctions::languageGetMagic';
+	
+	//Register special pages
+	global $wgSpecialPages;
+	$wgSpecialPages['FormEdit'] = 'ASFFormEdit';
 }
 
+/*
+ * Called by MW to setup this extension
+ */
 function asfSetupExtension(){
 	global $wgHooks, $wgExtensionCredits; 
-	
-	$wgHooks['BeforePageDisplay'][]='smwDITBAddHTMLHeader';
 	
 	asfInitMessages();
 	
@@ -36,9 +72,9 @@ function asfSetupExtension(){
 			'url'=>'https://sourceforge.net/projects/halo-extension', 
 			'description' => 'Automatically creates Semantic Forms based on the Wiki ontology.');
 	
-	global $asfIP;
-	require_once($asfIP.'/includes/ASF_FormGenerator.php');
-	//ASFFormGenerator::getInstance()->generateFromCategory('FemaleTeacher');
+	//replace SFFormPrinter with its ASF implementation
+	global $sfgFormPrinter;
+	$sfgFormPrinter = new ASFFormPrinter();
 	
 	return true;
 }
