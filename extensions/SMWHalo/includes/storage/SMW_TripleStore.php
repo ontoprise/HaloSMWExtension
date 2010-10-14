@@ -777,195 +777,227 @@ class SMWTripleStore extends SMWStore {
 
 		$dom = simplexml_load_string($sparqlXMLResult);
 		if($dom === FALSE) return new SMWHaloQueryResult(array(), $query, array(), $this);
-		$variables = $dom->xpath('//variable');
-		$results = $dom->xpath('//result');
-		// if no results return empty result object
-		if (count($results) == 0) return new SMWHaloQueryResult(array(), $query, array(), $this);
 
-		$variableSet = array();
-		foreach($variables as $var) {
-			$variableSet[] = (string) $var->attributes()->name;
+		$qResultSet = array();
+		$sources = $dom->xpath('//source');
+		$sourcesSet = array();
+		if (!is_null($sources) && $sources != '') {
+			foreach($sources as $s) {
+				$sourcesSet[] = (string) $s;
+			}
 		}
+		
+		// result integration parameter
+		if (array_key_exists('resultintegration', $query->params) && $query->params['resultintegration'] == 'integrated') {
+			$sourcesSet = array(); // show as if it was one source
+		} else if (array_key_exists('resultintegration', $query->params) && $query->params['resultintegration'] == 'preferred') {
+			// use first source which appears in result
+			$dataspaces = explode(",",$query->params['dataspace']);
+			foreach($dataspaces as $ds) {
+				if (in_array($ds, $sourcesSet)) {
+					$sourcesSet=array($ds);
+					break;
+				}
+			}
+		} // in any other case display the source separately
+		
+		if (count($sourcesSet) === 0) $sourcesSet[]='tsc'; // add at least 1 source
 
-		// PrinterRequests to use
-		$prs = array();
+		foreach($sourcesSet as $s) {
+			
+			$resultFilter = $s == 'tsc' ? '' : '[@source="'.$s.'"]';
+			$variables = $dom->xpath('//variable');
+			$results = $dom->xpath('//result'.$resultFilter);
+			
+			
+			// if no results return empty result object
+			if (count($results) == 0) return new SMWHaloQueryResult(array(), $query, array(), $this);
 
-		// Use PrintRequests to determine which variable denotes what type of entity. If no PrintRequest is given use first result row
-		// (which exist!) to determine which variable denotes what type of entity.
+			$variableSet = array();
+			foreach($variables as $var) {
+				$variableSet[] = (string) $var->attributes()->name;
+			}
+
+			// PrinterRequests to use
+			$prs = array();
+
+			// Use PrintRequests to determine which variable denotes what type of entity. If no PrintRequest is given use first result row
+			// (which exist!) to determine which variable denotes what type of entity.
 
 
-		// maps print requests (variable name) to result columns ( var_name => index )
-		$mapPRTOColumns = array();
+			// maps print requests (variable name) to result columns ( var_name => index )
+			$mapPRTOColumns = array();
 
-		// use user-given PrintRequests if possible
-		$print_requests = $query->getDescription()->getPrintRequests();
+			// use user-given PrintRequests if possible
+			$print_requests = $query->getDescription()->getPrintRequests();
 
-		// _X_ is used for the main variable.
-		$hasMainColumn = false;
-		$index = 0;
-		if ($query->fromASK) {
+			// _X_ is used for the main variable.
+			$hasMainColumn = false;
+			$index = 0;
+			if ($query->fromASK) {
 
-			// SPARQL query which was transformed from ASK
-			// x variable is handeled specially as main variable
-			foreach($print_requests as $pr) {
+				// SPARQL query which was transformed from ASK
+				// x variable is handeled specially as main variable
+				foreach($print_requests as $pr) {
 
-				$data = $pr->getData();
-				if ($data == NULL) { // main column
-					$hasMainColumn = true;
-					if (in_array('_X_', $variableSet)) { // x is missing for INSTANCE queries
-						$mapPRTOColumns['_X_'] = array($index);
-						$prs[] = $pr;
+					$data = $pr->getData();
+					if ($data == NULL) { // main column
+						$hasMainColumn = true;
+						if (in_array('_X_', $variableSet)) { // x is missing for INSTANCE queries
+							$mapPRTOColumns['_X_'] = array($index);
+							$prs[] = $pr;
+							$index++;
+						}
+
+					} else  {
+						if ( $data instanceof Title) {
+							$label = $data->getDBkey();
+						} else {
+							$dbkeys = $data->getDBkeys();
+							$label =  array_shift($dbkeys);
+						}
+						if (array_key_exists($label, $mapPRTOColumns)) {
+							$mapPRTOColumns[$label][] = $index;
+						} else {
+							$mapPRTOColumns[$label] = array($index);
+						}
+						$rewritten_pr = $this->rewritePrintrequest($pr);
+						$prs[] = $rewritten_pr;
 						$index++;
 					}
 
-				} else  {
-					if ( $data instanceof Title) {
-						$label = $data->getDBkey();
-					} else {
-						$dbkeys = $data->getDBkeys();
-						$label =  array_shift($dbkeys);
-					}
-					if (array_key_exists($label, $mapPRTOColumns)) {
-						$mapPRTOColumns[$label][] = $index;
-					} else {
-						$mapPRTOColumns[$label] = array($index);
-					}
-					$rewritten_pr = $this->rewritePrintrequest($pr);
-					$prs[] = $rewritten_pr;
-					$index++;
 				}
-
-			}
-		} else {
-
-			// native SPARQL query, no main variable
-			foreach($print_requests as $pr) {
-
-				$data = $pr->getData();
-				if ($data != NULL) {
-					if ($data instanceof Title) {
-						$label =  $data->getDBkey();
-					} else {
-						$dbkeys = $data->getDBkeys();
-						$label = array_shift($dbkeys);
-
-					}
-					if (array_key_exists($label, $mapPRTOColumns)) {
-						$mapPRTOColumns[$label][] = $index;
-					} else {
-						$mapPRTOColumns[$label] = array($index);
-					}
-					$rewritten_pr = $this->rewritePrintrequest($pr);
-					$prs[] = $rewritten_pr;
-					$index++;
-				}
-
-			}
-		}
-
-
-			
-		// generate PrintRequests for all bindings (if they do not exist already)
-		$var_index = 0;
-		$bindings = $results[0]->children()->binding;
-		foreach ($bindings as $b) {
-			$var_name = ucfirst((string) $variables[$var_index]->attributes()->name);
-
-			$var_index++;
-
-			// if no mainlabel, do not create a printrequest for _X_ (instance variable for ASK-converted queries)
-			if ($query->mainLabelMissing && $var_name == "_X_") {
-				continue;
-			}
-			// do not generate new printRequest if already given
-			if ($this->containsPrintRequest($var_name, $print_requests, $query)) continue;
-
-			// otherwise create one
-			$var_path = explode(".", $var_name);
-			$sel_var = ucfirst($var_path[count($var_path)-1]);
-			$data = SMWPropertyValue::makeUserProperty($sel_var);
-			$prs[] = new SMWPrintRequest(SMWPrintRequest::PRINT_THIS, str_replace("_"," ",$sel_var), $data);
-
-
-			if (array_key_exists($var_name, $mapPRTOColumns)) {
-				$mapPRTOColumns[$var_name][] = $index;
 			} else {
-				$mapPRTOColumns[$var_name] = array($index);
+
+				// native SPARQL query, no main variable
+				foreach($print_requests as $pr) {
+
+					$data = $pr->getData();
+					if ($data != NULL) {
+						if ($data instanceof Title) {
+							$label =  $data->getDBkey();
+						} else {
+							$dbkeys = $data->getDBkeys();
+							$label = array_shift($dbkeys);
+
+						}
+						if (array_key_exists($label, $mapPRTOColumns)) {
+							$mapPRTOColumns[$label][] = $index;
+						} else {
+							$mapPRTOColumns[$label] = array($index);
+						}
+						$rewritten_pr = $this->rewritePrintrequest($pr);
+						$prs[] = $rewritten_pr;
+						$index++;
+					}
+
+				}
 			}
 
-			$index++;
-		}
+
+				
+			// generate PrintRequests for all bindings (if they do not exist already)
+			$var_index = 0;
+			$bindings = $results[0]->children()->binding;
+			foreach ($bindings as $b) {
+				$var_name = ucfirst((string) $variables[$var_index]->attributes()->name);
+
+				$var_index++;
+
+				// if no mainlabel, do not create a printrequest for _X_ (instance variable for ASK-converted queries)
+				if ($query->mainLabelMissing && $var_name == "_X_") {
+					continue;
+				}
+				// do not generate new printRequest if already given
+				if ($this->containsPrintRequest($var_name, $print_requests, $query)) continue;
+
+				// otherwise create one
+				$var_path = explode(".", $var_name);
+				$sel_var = ucfirst($var_path[count($var_path)-1]);
+				$data = SMWPropertyValue::makeUserProperty($sel_var);
+				$prs[] = new SMWPrintRequest(SMWPrintRequest::PRINT_THIS, str_replace("_"," ",$sel_var), $data);
 
 
-		// create and add result rows
-		// iterate result rows and add an SMWResultArray object for each field
-		$qresults = array();
-		$rowIndex = 0;
-		foreach ($results as $r) {
-			$row = array();
-			$columnIndex = 0; // column = n-th XML binding node
+				if (array_key_exists($var_name, $mapPRTOColumns)) {
+					$mapPRTOColumns[$var_name][] = $index;
+				} else {
+					$mapPRTOColumns[$var_name] = array($index);
+				}
 
-			// reset column arrays
-			foreach($mapPRTOColumns as $pr => $column) reset($mapPRTOColumns[$pr]);
+				$index++;
+			}
 
-			$children = $r->children(); // $chilren->binding denote all binding nodes
 
-			// find result column and store result page in $resultInstance variable
-			$resultInstance = NULL;
-			foreach ($children->binding as $b) {
-				$var_name = ucfirst((string) $children[$columnIndex]->attributes()->name);
-				if ($var_name == '_X_') {
+			// create and add result rows
+			// iterate result rows and add an SMWResultArray object for each field
+			$qresults = array();
+			$rowIndex = 0;
+			foreach ($results as $r) {
+				$row = array();
+				$columnIndex = 0; // column = n-th XML binding node
+
+				// reset column arrays
+				foreach($mapPRTOColumns as $pr => $column) reset($mapPRTOColumns[$pr]);
+
+				$children = $r->children(); // $chilren->binding denote all binding nodes
+
+				// find result column and store result page in $resultInstance variable
+				$resultInstance = NULL;
+				foreach ($children->binding as $b) {
+					$var_name = ucfirst((string) $children[$columnIndex]->attributes()->name);
+					if ($var_name == '_X_') {
+						$resultColumn = current($mapPRTOColumns[$var_name]);
+						next($mapPRTOColumns[$var_name]);
+
+						$allValues = array();
+						$this->parseBindungs($b, $var_name, $prs[$resultColumn], $allValues);
+						// what happens if first column is merged??
+						$resultInstance = count($allValues) > 0 ? reset($allValues) : SMWDataValueFactory::newTypeIDValue('_wpg');
+						break;
+					}
+				}
+
+				if (is_null($resultInstance)) {
+					$resultInstance = SMWDataValueFactory::newTypeIDValue('_wpg');
+				}
+
+				// reset column arrays
+				foreach($mapPRTOColumns as $pr => $column) reset($mapPRTOColumns[$pr]);
+
+				foreach ($children->binding as $b) {
+
+					$var_name = ucfirst((string) $children[$columnIndex]->attributes()->name);
+
+					// ignore main variable if not displayed
+					if (!$hasMainColumn && $var_name == '_X_') {
+						$columnIndex++;
+						continue;
+					}
+
+					// get current result column of the variable
 					$resultColumn = current($mapPRTOColumns[$var_name]);
 					next($mapPRTOColumns[$var_name]);
 
 					$allValues = array();
 					$this->parseBindungs($b, $var_name, $prs[$resultColumn], $allValues);
-					// what happens if first column is merged??
-					$resultInstance = count($allValues) > 0 ? reset($allValues) : SMWDataValueFactory::newTypeIDValue('_wpg');
-					break;
-				}
-			}
 
-			if (is_null($resultInstance)) {
-				$resultInstance = SMWDataValueFactory::newTypeIDValue('_wpg');
-			}
+					// note: ignore bnodes
 
-			// reset column arrays
-			foreach($mapPRTOColumns as $pr => $column) reset($mapPRTOColumns[$pr]);
-
-			foreach ($children->binding as $b) {
-
-				$var_name = ucfirst((string) $children[$columnIndex]->attributes()->name);
-
-				// ignore main variable if not displayed
-				if (!$hasMainColumn && $var_name == '_X_') {
 					$columnIndex++;
-					continue;
+					$row[$resultColumn] = new SMWHaloResultArray($resultInstance, $prs[$resultColumn], $this, $allValues);
+
 				}
-
-				// get current result column of the variable
-				$resultColumn = current($mapPRTOColumns[$var_name]);
-				next($mapPRTOColumns[$var_name]);
-
-				$allValues = array();
-				$this->parseBindungs($b, $var_name, $prs[$resultColumn], $allValues);
-
-				// note: ignore bnodes
-
-				$columnIndex++;
-				$row[$resultColumn] = new SMWHaloResultArray($resultInstance, $prs[$resultColumn], $this, $allValues);
+				$rowIndex++;
+				ksort($row);
+				$qresults[] = $row;
 
 			}
-			$rowIndex++;
-			ksort($row);
-			$qresults[] = $row;
-
+			// Query result object
+			$queryResult = new SMWHaloQueryResult($prs, $query, $qresults, $this, (count($results) > $query->getLimit()));
+			$qResultSet[$s] = $queryResult;
 		}
-		// Query result object
-		$queryResult = new SMWHaloQueryResult($prs, $query, $qresults, $this, (count($results) > $query->getLimit()));
 
-
-		return $queryResult;
+		return count($qResultSet) == 1 ? reset($qResultSet) : $qResultSet;
 	}
 
 	/**

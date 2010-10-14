@@ -100,7 +100,7 @@ function smwgHaloSetupExtension() {
 	$smwgMasterGeneralStore = NULL;
 
 	// Autoloading. Use it for everything! No include_once or require_once please!
-
+	$wgAutoloadClasses['SMWQueryProcessor'] = $smwgHaloIP . '/includes/SMW_QueryProcessor.php';
 	$wgAutoloadClasses['SMWHaloStore2'] = $smwgHaloIP . '/includes/storage/SMW_HaloStore2.php';
 	$wgAutoloadClasses['SMWAdvRequestOptions'] = $smwgHaloIP . '/includes/SMW_AdvRequestOptions.php';
 
@@ -295,7 +295,7 @@ function smwgHaloSetupExtension() {
 		$wgSpecialPageGroups['Properties'] = 'smwplus_group';
 
         global $smwgDefaultStore;
-		if ($smwgDefaultStore == 'SMWTripleStore') {
+		if ($smwgDefaultStore == 'SMWTripleStore' || $smwgDefaultStore == 'SMWTripleStoreQuad') {
 			$wgAutoloadClasses['SMWTripleStoreAdmin'] = $smwgHaloIP . '/specials/SMWTripleStoreAdmin/SMW_TripleStoreAdmin.php';
 			$wgSpecialPages['TSA'] = array('SMWTripleStoreAdmin');
 			$wgSpecialPageGroups['TSA'] = 'smwplus_group';
@@ -380,7 +380,7 @@ function smwfRegisterAutocompletionIcons(& $namespaceMappings) {
 
 function smwfRegisterSPARQLInlineQueries( &$parser, &$text, &$stripstate ) {
 
-	$parser->setFunctionHook( 'sparql', 'smwfProcessSPARQLInlineQueryParserFunction' );
+	$parser->setFunctionHook( 'sparql', 'smwfProcessSPARQLInlineQueryParserFunction');
 
 	return true; // always return true, in order not to stop MW's hook processing!
 }
