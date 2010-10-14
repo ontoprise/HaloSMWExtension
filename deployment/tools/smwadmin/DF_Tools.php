@@ -271,21 +271,21 @@ class Tools {
 
 		// sort
 		for($i = 0; $i < count($versions); $i++) {
-			for($j = 0; $j < count($version)-1; $j++) {
+			for($j = 0; $j < count($versions)-1; $j++) {
 
-				list($ver1, $pl1) = $version[$j];
-				list($ver2, $pl2) = $version[$j+1];
+				list($ver1, $pl1) = $versions[$j];
+				list($ver2, $pl2) = $versions[$j+1];
 				if ($ver1 === $ver2) {
 					if ($pl1 < $pl2) {
-						$help = $version[$j];
-						$version[$j] = $version[$j+1];
-						$version[$j+1] = $help;
+						$help = $versions[$j];
+						$versions[$j] = $versions[$j+1];
+						$versions[$j+1] = $help;
 					}
 				}
 				if ($ver1 < $ver2) {
-					$help = $version[$j];
-					$version[$j] = $version[$j+1];
-					$version[$j+1] = $help;
+					$help = $versions[$j];
+					$versions[$j] = $versions[$j+1];
+					$versions[$j+1] = $help;
 				}
 			}
 		}
