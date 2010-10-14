@@ -507,6 +507,7 @@ function smwf_om_GetWikiText($pagename) {
 		return "false,denied,$pagename";
 	}	
 	$titleObj = Title::newFromText($pagename);
+    if (! is_object($titleObj)) return "";
 	$article = new Article($titleObj);
 
 	if ($article->exists()) {
