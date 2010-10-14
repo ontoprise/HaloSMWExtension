@@ -29,7 +29,7 @@
  *
  *
  */
-define('DEPLOY_FRAMEWORK_VERSION', 0.1);
+define('DEPLOY_FRAMEWORK_VERSION', '1.3');
 
 global $rootDir;
 $rootDir = dirname(__FILE__);
@@ -39,10 +39,15 @@ $rootDir = realpath($rootDir."/../../");
 require_once('DF_Tools.php');
 require_once('DF_Installer.php');
 
+$phpver = str_replace(".","",phpversion());
+if ($phpver < 520) {
+	print "\nPHP version must be >= 5.2\n";
+	die();
+}
 
 if (array_key_exists('SERVER_NAME', $_SERVER) && $_SERVER['SERVER_NAME'] != NULL) {
 	echo "Invalid access! A maintenance script MUST NOT accessed from remote.";
-	return;
+	die();
 }
 
 // check tools
