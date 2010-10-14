@@ -165,17 +165,4 @@ function tstInsertLocalSettings() {
 
 }
 
-/**
- * Setup log directory. This is usually inside the test directory where logs
- * from tests are written. The logfile is usually specified with the switch
- * --log-junit or similar.
- *
- * @param string $testDir
- */
-function tstInsertLocalSettings($testDir) {
-
-
-}
-
-
 ?>
