@@ -4,8 +4,8 @@
  *
  * Usage:
  *
- *  php Transform.php -i <input file> -o|-O <output file> [ -p <package name> ]
- *                    [ -t xsl stylesheet ]
+ *  php Transform.php -i <input file> -o|-O <output file> [ -t xsl stylesheet ]
+ *                    [ -D <key=value> ]
  *
  *
  * @author Kai K�hn
@@ -35,22 +35,29 @@ for( $arg = reset( $args ); $arg !== false; $arg = next( $args ) ) {
         $appendOutput = true;
 		continue;
 	}
-	// -p => package name
-	if ($arg == '-p') {
-		$package = next($args);
-		continue;
-	}
     // -t => xslt stylesheet
 	if ($arg == '-t') {
 		$stylesheet = next($args);
 		continue;
 	}
-	$params[] = $arg;
+    // -D param=value
+	if ($arg == '-D') {
+		$keyVal = next($args);
+        if (is_null($keyVal) || 
+            strpos($keyVal, "=") === false ||
+            strpos($keyVal, "=") == 0) continue;
+        $key = substr($keyVal, 0, strpos($keyVal, "="));
+        $val = substr($keyVal, strlen($key)+1);
+        $params[$key] = $val;
+	}
+
 }
 
-
 $xp = new XsltProcessor;
-$xp->setParameter("", "package", isset($package) ? $package : "GeneralTests");
+foreach (array_keys($params) as $key) {
+    $xp->setParameter("", $key, $params[$key]);
+}
+
 $xsl = new DOMDocument;
 $xsl->load($stylesheet);
 $xp->importStylesheet($xsl);
