@@ -5,13 +5,11 @@
     <xsl:param name="package" select="'GeneralTests'"/>
 
 	<xsl:template match="testsuites/testsuite">
-Testsuite: <xsl:value-of select="$package" />
+Unittests for: <xsl:value-of select="$package" />
   tests: <xsl:value-of select="@tests" />
   assertions: <xsl:value-of select="@assertions" />
   failures: <xsl:value-of select="@failures" />
   errors: <xsl:value-of select="@errors" />
-  time: <xsl:value-of select="@time" />
-        <!--<xsl:apply-templates select=".//error" />-->
 	</xsl:template>
 
     <xsl:template match="error">
