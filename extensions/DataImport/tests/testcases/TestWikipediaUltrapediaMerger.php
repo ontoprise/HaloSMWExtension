@@ -118,7 +118,6 @@ class TestWikipediaUltrapediaMerger extends PHPUnit_Framework_TestCase {
 			$et = $this->getEditToken();
 		}  catch (Exception $e){
 			echo('\r\nWUM Exception:\r\n');
-			print_r($e);			
 		}
 		list($originalWPText, $newWPText, $currentUPText) = $this->getArticleContent(2);
 		$this->writeArticles(array($originalWPText, $currentUPText, $newWPText), $et);
@@ -153,7 +152,6 @@ class TestWikipediaUltrapediaMerger extends PHPUnit_Framework_TestCase {
 			$et = $this->getEditToken();
 		}  catch (Exception $e){
 			echo('\r\nWUM Exception:\r\n');
-			print_r($e);			
 		}
 		list($originalWPText, $newWPText, $currentUPText) = $this->getArticleContent(3);
 		$this->writeArticles(array($originalWPText, $currentUPText, $newWPText), $et);
@@ -185,7 +183,6 @@ function testWUMCombinedSuccessEmbeddedIntroAndOutro(){
 			$et = $this->getEditToken();
 		}  catch (Exception $e){
 			echo('\r\nWUM Exception:\r\n');
-			print_r($e);			
 		}
 		list($originalWPText, $newWPText, $currentUPText) = $this->getArticleContent(4);
 		$this->writeArticles(array($originalWPText, $currentUPText, $newWPText), $et);
@@ -220,7 +217,6 @@ function testWUMCombinedSuccessEmbeddedIntroAndOutro(){
 			$et = $this->getEditToken();
 		}  catch (Exception $e){
 			echo('\r\nWUM Exception:\r\n');
-			print_r($e);			
 		}
 		list($originalWPText, $newWPText, $currentUPText) = $this->getArticleContent(5);
 		$this->writeArticles(array($originalWPText, $currentUPText, $newWPText), $et);
@@ -252,7 +248,6 @@ function testWUMCombinedSuccessEmbeddedIntroAndOutro(){
 			$et = $this->getEditToken();
 		}  catch (Exception $e){
 			echo('\r\nWUM Exception:\r\n');
-			print_r($e);			
 		}
 		list($originalWPText, $newWPText, $currentUPText) = $this->getArticleContent(6);
 		$this->writeArticles(array($originalWPText, $currentUPText, $newWPText), $et);
@@ -284,7 +279,6 @@ function testWUMCombinedSuccessEmbeddedIntroAndOutro(){
 			$et = $this->getEditToken();
 		}  catch (Exception $e){
 			echo('\r\nWUM Exception:\r\n');
-			print_r($e);			
 		}
 		list($originalWPText, $newWPText, $currentUPText) = $this->getArticleContent(7);
 		$this->writeArticles(array($originalWPText, $currentUPText, $newWPText), $et);
@@ -327,7 +321,6 @@ function testWUMCombinedSuccessEmbeddedIntroAndOutro(){
 			$et = $this->getEditToken();
 		}  catch (Exception $e){
 			echo('\r\nWUM Exception:\r\n');
-			print_r($e);			
 		}
 		list($originalWPText, $newWPText, $currentUPText) = $this->getArticleContent(8);
 		$this->writeArticles(array($originalWPText, $currentUPText, $newWPText), $et);
