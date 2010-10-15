@@ -78,7 +78,7 @@ class TestLDConnector extends PHPUnit_Framework_TestCase {
 		$this->assertEquals(false, strpos($html, $this->germanAbstract));
 	}
 	
-	function atestAllSubjectsAbstractTypeProduct(){
+	function testAllSubjectsAbstractTypeProduct(){
 		$titles = array('TestLD3');
 		di_utils_setupWSUsages($titles);
 	
@@ -89,7 +89,7 @@ class TestLDConnector extends PHPUnit_Framework_TestCase {
 		$this->assertGreaterThan(0, strpos($html, $this->subjectTypeProductRow));
 	}
 	
-	function atestPredicatesAndLanguageParams(){
+	function testPredicatesAndLanguageParams(){
 		$titles = array('TestLD4');
 		di_utils_setupWSUsages($titles);
 	
