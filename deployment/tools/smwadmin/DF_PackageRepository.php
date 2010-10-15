@@ -155,7 +155,8 @@ class PackageRepository {
 		}
 		asort($results, SORT_NUMERIC);
 		$results = array_reverse($results, true);
-		$url = reset(array_keys($results));
+		$rpURLs = array_keys($results);
+		$url = reset($rpURLs);
 
 
 		if ($url === false) throw new RepositoryError(DEPLOY_FRAMEWORK_REPO_PACKAGE_DOES_NOT_EXIST, "Can not find package: $ext_id. Missing repository?");
