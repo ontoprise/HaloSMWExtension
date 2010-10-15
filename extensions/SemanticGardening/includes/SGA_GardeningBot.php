@@ -248,7 +248,15 @@ abstract class GardeningBot {
 	 * @return 0 <= $value <= 1
 	 */
 	private function getWorkDone() {
-		return (($this->currentTask-1)/$this->totalWork) + ($this->currentWork / $this->subtaskWork / $this->totalWork);
+		$res = 0;
+		if($this->totalWork > 0){
+			$res = $res = ($this->currentTask-1)/$this->totalWork;
+		}
+		
+		if($this->subtaskWork > 0 && $this->totalWork > 0){
+			$res += $this->currentWork / $this->subtaskWork / $this->totalWork;
+		}
+		return  $res;   
 	}
 
 
