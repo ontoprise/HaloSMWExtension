@@ -776,10 +776,11 @@ class SMWTripleStore extends SMWStore {
 		// parse xml results
 
 		$dom = simplexml_load_string($sparqlXMLResult);
+		$dom->registerXPathNamespace("sparqlxml", "http://www.w3.org/2005/sparql-results#");
 		if($dom === FALSE) return new SMWHaloQueryResult(array(), $query, array(), $this);
 
 		$qResultSet = array();
-		$sources = $dom->xpath('//source');
+		$sources = $dom->xpath('//sparqlxml:source');
 		$sourcesSet = array();
 		if (!is_null($sources) && $sources != '') {
 			foreach($sources as $s) {
@@ -806,8 +807,8 @@ class SMWTripleStore extends SMWStore {
 		foreach($sourcesSet as $s) {
 			
 			$resultFilter = $s == 'tsc' ? '' : '[@source="'.$s.'"]';
-			$variables = $dom->xpath('//variable');
-			$results = $dom->xpath('//result'.$resultFilter);
+			$variables = $dom->xpath('//sparqlxml:variable');
+			$results = $dom->xpath('//sparqlxml:result'.$resultFilter);
 			
 			
 			// if no results return empty result object
