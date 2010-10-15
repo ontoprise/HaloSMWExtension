@@ -18,8 +18,16 @@ class TestWSTriplifier extends PHPUnit_Framework_TestCase {
 	
 	private $wikiNS;
 	
+	private static $wgValidSkinNames;
+	
 	function setUp(){
 		$titles = array('TestTriplification', 'TestTriplification2', 'TestTriplification3', 'TestTriplification4');
+		if(is_null(self::$wgValidSkinNames)){
+			self::$wgValidSkinNames = Skin::getSkinNames();
+		} else {
+			global $wgValidSkinNames;
+			$wgValidSkinNames = self::$wgValidSkinNames;
+		}
 		di_utils_setupWebServices($titles);
 	}
 	
