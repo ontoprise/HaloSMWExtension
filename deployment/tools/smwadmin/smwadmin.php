@@ -29,7 +29,7 @@
  *
  *
  */
-define('DEPLOY_FRAMEWORK_VERSION', '1.3');
+define('DEPLOY_FRAMEWORK_VERSION', '@VERSION@ [B@BUILD_NUMBER@]');
 
 global $rootDir;
 $rootDir = dirname(__FILE__);
