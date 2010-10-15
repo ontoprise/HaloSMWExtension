@@ -9,7 +9,6 @@
 if (!defined('MEDIAWIKI')) die();
  
 global $smwgIP;
-require_once ( $smwgIP . '/includes/SMW_QueryProcessor.php');
 require_once ( $smwgIP . '/includes/storage/SMW_Description.php');
 
 
