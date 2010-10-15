@@ -9,15 +9,17 @@
  *
  */
 
-while ($arg = array_shift($argv)) {
+// get command line parameters
+$args = $_SERVER['argv'];
+while ($arg = array_shift($args)) {
     if ($arg == '-t')
-        $to = array_shift($argv) or die ("Error: missing value for -t\n");
+        $to = array_shift($args) or die ("Error: missing value for -t\n");
     else if ($arg == '-s')
-        $subject = array_shift($argv) or die ("Error: missing value for -s\n");
+        $subject = array_shift($args) or die ("Error: missing value for -s\n");
     else if ($arg == '-m')
-        $message = array_shift($argv) or die ("Error: missing value for -m\n");
+        $message = array_shift($args) or die ("Error: missing value for -m\n");
     else if ($arg == '-f') {
-        $filename = array_shift($argv) or die ("Error: missing value for -f\n");
+        $filename = array_shift($args) or die ("Error: missing value for -f\n");
         if (!file_exists($filename)) die ("Error: file doesn't exist\n");
         $message = file_get_contents($filename);
     }
