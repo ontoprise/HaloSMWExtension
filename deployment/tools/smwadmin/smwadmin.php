@@ -94,22 +94,24 @@ if ($help || count($argv) == 0) {
 }
 
 // get command line parameters
-for( $arg = reset( $argv ); $arg !== false; $arg = next( $argv ) ) {
+$args = $_SERVER['argv'];
+array_shift($args); // remove script name
+for( $arg = reset( $args ); $arg !== false; $arg = next( $args ) ) {
 
 	//-i => Install
 	if ($arg == '-i') {
-		$package = next($argv);
+		$package = next($args);
 		if ($package === false) fatalError("No package found");
 		$packageToInstall[] = $package;
 		continue;
 	} else if ($arg == '-d') { // -d => De-install
-		$package = next($argv);
+		$package = next($args);
 		if ($package === false) fatalError("No package found");
 		$packageToDeinstall[] = $package;
 			
 		continue;
 	} else if ($arg == '-u') { // u => update
-		$package = next($argv);
+		$package = next($args);
 		if ($package === false || $package == '--dep') {
 			if ($package == '--dep') {
 				$dfgCheckDep = true;
@@ -121,7 +123,7 @@ for( $arg = reset( $argv ); $arg !== false; $arg = next( $argv ) ) {
 		continue;
 	} else if ($arg == '-l') { // => list packages
 		$dfgListPackages = true;
-		$pattern = next($argv);
+		$pattern = next($args);
 		continue;
 	} else if ($arg == '-desc') { // => show description for each package
 		$dfgShowDescription = true;
@@ -131,7 +133,7 @@ for( $arg = reset( $argv ); $arg !== false; $arg = next( $argv ) ) {
 		continue;
 	} else if ($arg == '--checkdump') { // => analyze installed dump
 		$checkDump = true;
-		$package = next($argv);
+		$package = next($args);
 		if ($package === false) fatalError("No package found");
 		$packageToInstall[] = $package;
 		continue;
