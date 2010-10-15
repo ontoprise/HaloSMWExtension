@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <project basedir="." default="deploymentframework" name="Deployment_framework">
 	<target name="deploymentframework">
+        <property environment="env" />
 		<delete dir="bin/zip" />
 		<delete file="bin/smwhalo-deploy-${version}.zip" />
 		<mkdir dir="bin/zip" />
@@ -27,6 +28,17 @@
 				<include name="patch.php" />
 			</fileset>
 		</copy>
+        <copy file="../tools/smwadmin/smwadmin.php"
+            tofile="bin/zip/deployment/tools/smwadmin/smwadmin.php"
+            filtering="on"
+            overwrite="true"
+            verbose="true"
+            failonerror="false">
+            <filterset>
+                <filter token="VERSION" value="${version}" />
+                <filter token="BUILD_NUMBER" value="${env.BUILD_NUMBER}" />
+            </filterset>
+        </copy>
 		<copy todir="bin/zip/deployment">
 			<fileset dir="../">
 				<include name="COPYING" />
