@@ -10,6 +10,7 @@
  */
 
 require_once 'testcases/TestSemanticStore.php';
+require_once 'testcases/TestAutocompletionTSCStore.php';
 require_once 'testcases/TestAutocompletionStore.php';
 require_once 'testcases/TestWikiJobs.php';
 require_once 'testcases/TestDataAPI.php';
