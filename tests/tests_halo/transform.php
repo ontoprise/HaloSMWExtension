@@ -14,31 +14,35 @@
 $stylesheet = dirname(__FILE__)."/transform.xslt";
 $appendOutput = false;
 $params = array();
-for( $arg = reset( $argv ); $arg !== false; $arg = next( $argv ) ) {
+
+// get command line parameters
+$args = $_SERVER['argv'];
+array_shift($args); // remove script name
+for( $arg = reset( $args ); $arg !== false; $arg = next( $args ) ) {
 	//-i => input file
 	if ($arg == '-i') {
-		$inputFile = next($argv);
+		$inputFile = next($args);
 		continue;
 	}
 	// -o => output file
 	if ($arg == '-o') {
-		$outputFile = next($argv);
+		$outputFile = next($args);
 		continue;
 	}
     // -O => append to output file
 	if ($arg == '-O') {
-		$outputFile = next($argv);
+		$outputFile = next($args);
         $appendOutput = true;
 		continue;
 	}
 	// -p => package name
 	if ($arg == '-p') {
-		$package = next($argv);
+		$package = next($args);
 		continue;
 	}
     // -t => xslt stylesheet
 	if ($arg == '-t') {
-		$stylesheet = next($argv);
+		$stylesheet = next($args);
 		continue;
 	}
 	$params[] = $arg;
