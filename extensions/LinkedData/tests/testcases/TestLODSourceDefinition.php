@@ -309,12 +309,11 @@ class TestLODSourceDefinition extends PHPUnit_Framework_TestCase {
 		$expected = <<<EXP
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 @prefix owl: <http://www.w3.org/2002/07/owl#> .
-@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix smw-lde: <http://www.example.org/smw-lde/smw-lde.owl#> .
 @prefix smwGraphs: <http://www.example.org/smw-lde/smwGraphs/> .
 @prefix smwDatasources: <http://www.example.org/smw-lde/smwDatasources/> .
-@prefix owl: <http://www.w3.org/2002/07/owl#> .
 
 <http://www.example.org/smw-lde/smwGraphs/DataSourceInformationGraph> {
 	smwDatasources:dbpedia rdf:type smw-lde:Datasource . 
@@ -417,12 +416,11 @@ class TestLSDParserFunction extends PHPUnit_Framework_TestCase {
 		$expected = <<<EXP
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 @prefix owl: <http://www.w3.org/2002/07/owl#> .
-@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix smw-lde: <http://www.example.org/smw-lde/smw-lde.owl#> .
 @prefix smwGraphs: <http://www.example.org/smw-lde/smwGraphs/> .
 @prefix smwDatasources: <http://www.example.org/smw-lde/smwDatasources/> .
-@prefix owl: <http://www.w3.org/2002/07/owl#> .
 
 <http://www.example.org/smw-lde/smwGraphs/DataSourceInformationGraph> {
 	smwDatasources:dbpedia rdf:type smw-lde:Datasource . 
