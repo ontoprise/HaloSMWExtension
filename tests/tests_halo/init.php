@@ -6,6 +6,7 @@
  */
 
 $mw_dir = dirname(__FILE__) . '/../../';
+$logDir = 'logs'; // log dir inside test directory which is given with -t
 
 require_once('testFunctionsCmd.php');
 
@@ -50,8 +51,11 @@ tstImportWikiPages();
 echo "\ndone!\n";
 
 echo "\nSetup log directory ...";
-if (!is_dir($testDir.'/'.$logDir))
-    runProcess('mkdir "'.$testDir.'/logs"');
+if (!is_dir($testDir.'/'.$logDir)) {
+    runProcess('mkdir "'.$testDir.'/'.$logDir.'"');
+    echo " created";
+}
+else echo " exists";
 echo "\ndone!\n";
 
 /**
