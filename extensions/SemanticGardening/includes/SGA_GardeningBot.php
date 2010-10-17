@@ -377,6 +377,7 @@ abstract class GardeningBot {
 				$logRedirect = self::getLogRedirection($taskid);
 
 				$runCommand .= " -b ".escapeshellarg($botID)." -t $taskid -u $userId -s $serverNameParam ".escapeshellarg(str_replace("%", '{{percentage}}', $params));
+				wfDebug("$runCommand $logRedirect 2>&1 &", true);
 				$nullResult = `$runCommand $logRedirect 2>&1 &`;
 					
 
@@ -408,7 +409,7 @@ abstract class GardeningBot {
 				// user defined parameters follow
 				// special escaping for % --> {{percentage}} because escapeshellarg(...) replaces % by blanks
 				$runCommand .= " -b ".escapeshellarg($botID)." -t $taskid -u $userId -s $serverNameParam ".escapeshellarg(str_replace("%", '{{percentage}}', $params));
-
+				wfDebug("$runCommand $logRedirect 2>&1", true);
 				$oExec = $wshShell->Run("$runCommand $logRedirect 2>&1", 7, false);
 					
 			} else { // run synchron
