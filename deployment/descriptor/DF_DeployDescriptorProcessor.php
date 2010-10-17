@@ -376,8 +376,10 @@ abstract class ConfigElement {
 		if ($start === false || $end === false) {
 			throw new IllegalArgument("$ext_id is not installed.");
 		}
-		$ls = substr($ls, 0, $start). $fragment . substr($ls, $end);
+		$ls = substr($ls, 0, $start). $fragment . substr($ls, $end + strlen("/*end-$ext_id*/"));
 	}
+	
+	
 
 	/**
 	 * Serializes arguments of a PHP function.
@@ -636,20 +638,31 @@ class FunctionCallConfigElement extends ConfigElement {
 		$this->functionname = $child->attributes()->name;
 		$this->remove = $child->attributes()->remove;
 		$this->remove = ($this->remove == "true");
-
+		$this->replace = $child->attributes()->replace;
+		$this->replace = ($this->replace == "true");
+		$this->ext = $child->attributes()->ext;
 
 	}
 
 	public function apply(& $ls, $ext_id, $userValues = array()) {
+		if ($this->ext !== '') $ext_id = $this->ext;
 		$arguments = $this->serializeParameters($this->argumentsAsXML, $userValues);
-		$appliedCommand = "\n".$this->functionname."(/*param-start-".$this->functionname."*/".$arguments."/*param-end-".$this->functionname."*/);";
+		$parameters = "/*param-start-".$this->functionname."*/".$arguments."/*param-end-".$this->functionname."*/";
+		$appliedCommand = "\n".$this->functionname."(".$parameters.");";
+		print "Applied command: ".$appliedCommand;
 		if ($this->remove) {
 
 			$fragment = self::getExtensionFragment($ext_id, $ls);
-			$fragment = str_replace($appliedCommand, "", $fragment);
+			$fragment = $this->removeFunction($parameters, $fragment);
 			$this->replaceExtensionFragment($ext_id, $fragment, $ls);
 
-		} else {
+		} if ($this->replace) {
+
+			$fragment = self::getExtensionFragment($ext_id, $ls);
+			$fragment = $this->replaceFunctionParams($parameters, $fragment);
+			$this->replaceExtensionFragment($ext_id, $fragment, $ls);
+
+		}  else {
 
 			$fragment = self::getExtensionFragment($ext_id, $ls);
 			if (is_null($fragment)) return $appliedCommand;
@@ -664,6 +677,19 @@ class FunctionCallConfigElement extends ConfigElement {
 			}
 			return $appliedCommand;
 		}
+	}
+	
+	protected function replaceFunctionParams($parameters, $fragment) {
+		$start = strpos($fragment, '/*param-start-'.$this->functionname);
+		$end = strpos($fragment, '/*param-end-'.$this->functionname);
+		return substr($fragment, 0, $start). $parameters . substr($fragment, $end + strlen('/*param-end-'.$this->functionname."*/"));
+	}
+	
+	protected function removeFunction($fragment) {
+		$start = strpos($fragment, '/*param-start-'.$this->functionname);
+		$end = strpos($fragment, '/*param-end-'.$this->functionname);
+		$fragment = substr($fragment, 0, $start) . substr($fragment, $end + strlen('/*param-end-'.$this->functionname."*/"));
+		return preg_replace("/".$this->functionname."\\s*\\(\\s*\\)\\s*;/", "", $fragment);
 	}
 
 
