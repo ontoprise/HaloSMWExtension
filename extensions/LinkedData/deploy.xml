@@ -17,12 +17,12 @@
 		<patchlevel>0</patchlevel>
 	</global>
 	<codefiles>
-		<file loc="deploy.xml" />
+		<file loc="extensions/LinkedData/deploy.xml" />
 
 		<!-- TODO: add others -->
 	</codefiles>
 	<wikidumps>
-		<file loc="wikidumps/MetaDataXSLT.xml"/>
+		<file loc="extensions/LinkedData/wikidumps/MetaDataXSLT.xml"/>
 	</wikidumps>
 	<resources>
 		<!-- empty -->
