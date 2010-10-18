@@ -64,7 +64,7 @@ class ResourceInstaller {
 		$wikidumps = $dd->getWikidumps();
 		foreach($wikidumps as $file) {
 			print "\nImport ontology: $file";
-			$result = $reader->importFromFile( $this->rootDir."/".$dd->getInstallationDirectory()."/".$file );
+			$result = $reader->importFromFile( $this->rootDir."/".$file );
 		}
 		if (!is_null($fromVersion)) {
 			// remove old pages
