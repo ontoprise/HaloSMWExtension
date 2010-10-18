@@ -6,7 +6,7 @@
  * 
  * REST webservice connector.
  *
- * @author: Kai Kühn / ontoprise / 2009
+ * @author: Kai Kï¿½hn / ontoprise / 2009
  *
  */
 class RESTWebserviceConnector {
@@ -38,7 +38,7 @@ class RESTWebserviceConnector {
 	 * 
 	 * @returns array(HTTP header, HTTP status code, Message body)
 	 */
-	public function send($payload, $path = '') {
+	public function send($payload, $path = '', $acceptMIME = NULL) {
 
 
 		$res = "";
@@ -48,10 +48,12 @@ class RESTWebserviceConnector {
 		$ch = curl_init("http://".$this->host.":".$this->port."/".$this->path.$path);
 		curl_setopt($ch,CURLOPT_POST,true);
 		curl_setopt($ch,CURLOPT_POSTFIELDS,$payload);
-		curl_setopt($ch,CURLOPT_HTTPHEADER,array (
+		$httpHeader = array (
         "Content-Type: application/x-www-form-urlencoded; charset=utf-8",
         "Expect: "
-        ));
+        );
+        if (!is_null($acceptMIME)) $httpHeader[] = "Accept: $acceptMIME";
+		curl_setopt($ch,CURLOPT_HTTPHEADER, $httpHeader);
         if ($this->credentials != '') curl_setopt($ch,CURLOPT_USERPWD,trim($this->credentials));
         // Execute
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
