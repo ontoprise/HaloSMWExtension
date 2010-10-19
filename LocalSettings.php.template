@@ -68,7 +68,7 @@ $wgEnotifWatchlist = true; # UPO
 $wgEmailAuthentication = true;
 
 $wgDBtype           = "mysql";
-$wgDBserver         = "localhost";
+$wgDBserver         = "127.0.0.1";
 $wgDBname           = "semwiki";
 $wgDBuser           = "root";
 $wgDBpassword       = "m8nix";
