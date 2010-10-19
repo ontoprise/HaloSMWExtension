@@ -24,8 +24,7 @@ class TestLDConnector extends PHPUnit_Framework_TestCase {
 
 	private static $wgValidSkinNames;
 
-	
-	
+
 	function setUp(){
 		$titles = array('LDTest');
 		if(is_null(self::$wgValidSkinNames)){
@@ -40,7 +39,6 @@ class TestLDConnector extends PHPUnit_Framework_TestCase {
 	function tearDown() {
 		di_utils_truncateWSTables();
 	}
-	
 	
 	function testAllSubjectsAllPredicatesAllObjects(){
 		$titles = array('TestLD1');

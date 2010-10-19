@@ -74,7 +74,7 @@ class WSUpdateBot extends GardeningBot {
 
 	public function run($paramArray, $isAsync, $delay) {
 		echo("bot started\n");
-		if($paramArray["WS_WSID"] != null){
+		if(array_key_exists("WS_WSID", $paramArray) && $paramArray["WS_WSID"] != null){
 			$log = SGAGardeningIssuesAccess::getGardeningIssuesAccess();
 			$ws = WebService::newFromID($paramArray["WS_WSID"]);
 			$affectedArticles = $this->updateWSResults($ws);

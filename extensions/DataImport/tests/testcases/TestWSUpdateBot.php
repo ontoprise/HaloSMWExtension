@@ -69,7 +69,7 @@ class TestWSUpdateBot extends PHPUnit_Framework_TestCase {
 		//setup testRemovedFromCacheResult 
 		$wsId = di_utils_getWSId('TimeTestWSExpires');
 		$pId = di_utils_getPageId("TimeTestWSExpires");
-		$paramSetId = di_utils_getParamSetId($wsId, $pId);
+		$patamSetId = di_utils_getParamSetId($wsId, $pId);
 		WSStorage::getDatabase()->removeWSEntryFromCache($wsId, $patamSetId);
 		
 		//run ws update bot

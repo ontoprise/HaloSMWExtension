@@ -76,7 +76,8 @@ class SMWSoapClient implements IWebServiceClient {
 	 * 		is returned.
 	 */
 	public function __construct($uri, $authenticationType = "",
-	$authenticationLogin = "", $authenticationPassword = "") {
+			$authenticationLogin = "", $authenticationPassword = "") {
+		
 		$this->mURI = $uri;
 		$this->mAuthenticationType = $authenticationType;
 		$this->mAuthenticationLogin = $authenticationLogin;
@@ -84,6 +85,7 @@ class SMWSoapClient implements IWebServiceClient {
 
 
 		$this->mClient = null;
+		
 		if (!$this->getWSDL()) {
 			throw new Exception("Invalid WSDL file");
 		}
@@ -220,14 +222,21 @@ class SMWSoapClient implements IWebServiceClient {
 		ini_set("soap.wsdl_cache_enabled", "0");
 
 		$this->duplicates = array();
-		$this->mClient = @ new SoapClient($this->mURI);
-
+		
+		//if xdebug is enabled, verify wsdl uri
+		if(function_exists('xdebug_disable') && !$this->validateWSDLURI($this->mURI)){
+			return false;
+		}
+		
+		
 		try {
+			$this->mClient = new SoapClient($this->mURI, array('exceptions' => true));
+			
 			$functions = $this->mClient->__getFunctions();
 			
 			$types = $this->mClient->__getTypes();
 		} catch (Exception $e) {
-			print_r($e);
+			//print_r($e);
 			return false;
 		}
 		
@@ -529,5 +538,42 @@ class SMWSoapClient implements IWebServiceClient {
 	public function getURI(){
 		return $this->mURI;
 	}
+	
+	/*
+	 * Verify if a valid wsdl uri was given. Required if xdebug
+	 * is enabled.
+	 */
+	private function validateWSDLURI($uri){
+		$params = array('http' => array('method' => 'GET'));
+		
+		$ctx = stream_context_create($params);
+
+		$fp = @ fopen($uri, 'rb', true, $ctx);
+		
+		if (!$fp) {
+			error();
+			return false;
+		}
+
+		$response = stream_get_contents($fp);
+		
+		try{		
+			@ $xml = new SimpleXMLElement($response);
+		} catch (Exception $e){
+			return false;
+		}
+
+		return true;
+	}
 }
+
+
+
+
+
+
+
+
+
+
 

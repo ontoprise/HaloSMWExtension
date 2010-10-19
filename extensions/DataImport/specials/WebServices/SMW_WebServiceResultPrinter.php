@@ -48,7 +48,9 @@ abstract class WebServiceResultPrinter{
 	 *
 	 * @return WebServiceListResultPribter
 	 */
-	static abstract public function getInstance();
+	public static function getInstance(){
+		
+	}
 
 	protected function __construct(){}
 	protected function __clone(){}

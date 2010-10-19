@@ -124,14 +124,14 @@ class SMWWebServicePage extends SMWOrderedListPage {
 		$ti = htmlspecialchars( $this->mTitle->getText() );
 
 		// list articles
-		$nav = $this->getNavigationLinks('WWSArticleResults', $this->mArticles,
+		$nav = $this->myGetNavigationLinks('WWSArticleResults', $this->mArticles,
 		$this->mFromArticle, $this->mUntilArticle,
 		                                 'fromarticle', 'untilarticle');
 		$r .= '<a name="WWSArticleResults"></a>' . "<div id=\"mw-pages\">\n";
 		$r .= '<h4><span class="mw-headline">' . wfMsg('smw_wws_articles_header',$ti) . "</h4>\n";
 		$r .= wfMsg('smw_wws_articlecount', min($this->limit, count($this->mArticles))) . "\n";
 		$r .= $nav;
-		$r .= $this->shortList( $this->mArticles, $this->articles_start_char, $this->mUntilArticle) . "\n</div>";
+		$r .= $this->myShortList( $this->mArticles, $this->articles_start_char, $this->mUntilArticle) . "\n</div>";
 		$r .= $nav;
 
 
@@ -143,10 +143,10 @@ class SMWWebServicePage extends SMWOrderedListPage {
 	/**
 	 * Generates the prev/next link part to the HTML code of the top and bottom section of the page.
 	 */
-	protected function getNavigationLinks($fragment, &$articles, $from, $until,
+	protected function myGetNavigationLinks($fragment, &$articles, $from, $until,
 	$fromLabel, $untilLabel) {
 		global $wgUser, $wgLang;
-		$sk =& $this->getSkin();
+		@ $sk =& $this->getSkin();
 		$limitText = $wgLang->formatNum( $this->limit );
 
 		$ac = count($articles);
@@ -186,7 +186,7 @@ class SMWWebServicePage extends SMWOrderedListPage {
 	 * Format a list of articles chunked by letter in a table that shows subject articles in
 	 * one column and object articles/values in the other one.
 	 */
-	protected function shortList(&$articles, &$startChar, $until) {
+	protected function myShortList(&$articles, &$startChar, $until) {
 		global $wgContLang;
 
 		$ac = count($articles);

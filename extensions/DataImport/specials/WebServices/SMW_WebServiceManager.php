@@ -276,7 +276,8 @@ class WebServiceManager {
 		}
 		//deal with case where user replaces a WWSD with a completely empty article
 		if(!self::$mOldWebserviceRemembered){
-			self::rememberWWSD(WebService::newFromID($article->getID()));
+			$wwsd = WebService::newFromID($article->getID());;
+			self::rememberWWSD($wwsd);
 		}
 
 		global $smwgDIIP;
@@ -310,7 +311,7 @@ class WebServiceManager {
 	 * Removes a deleted wwsd and its related cache entries from the database.
 	 * This function is a hook for 'ArticleDelete'
 	 */
-	function articleDeleteHook(&$article, &$user, $reason){
+	public static function articleDeleteHook(&$article, &$user, $reason){
 		if ($article->getTitle()->getNamespace() != SMW_NS_WEB_SERVICE) {
 			return true;
 		}
@@ -418,7 +419,8 @@ function wwsdParserHook($input, $args, $parser) {
 	global $smwgDIIP;
 	require_once("$smwgDIIP/specials/WebServices/SMW_WebService.php");
 
-	WebServiceManager::rememberWWSD(WebService::newFromID($parser->getTitle()->getArticleID()));
+	$wwsd = WebService::newFromID($parser->getTitle()->getArticleID());
+	WebServiceManager::rememberWWSD($wwsd);
 
 	$attr = "";
 	foreach ($args as $k => $v) {
@@ -429,7 +431,9 @@ function wwsdParserHook($input, $args, $parser) {
 	$notice = '';
 	$name = $parser->mTitle->getText();
 	$id = $parser->mTitle->getArticleID();
+	
 	$ws = WebService::newFromWWSD($name, $completeWWSD);
+	
 	$errors = null;
 	$warnings = null;
 	if (is_array($ws)) {
@@ -437,7 +441,9 @@ function wwsdParserHook($input, $args, $parser) {
 	} else {
 		// A web service object was returned. Validate the definition
 		// with respect to the WSDL.
+		
 		$res = $ws->validateWWSD();
+		
 		if (is_array($res)) {
 			// Warnings were returned
 			$warnings = $res;

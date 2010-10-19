@@ -288,7 +288,8 @@ function webServiceUsage_processCall(&$parser, $parameters, $preview=false) {
 
 		//handle cache issues for previews
 		if(!$preview){
-			$wgsmwRememberedWSUsages[] = array($wsId, $parameterSetId, "", array_pop(array_keys($wsReturnValues)));
+			$tmp = array_keys($wsReturnValues);
+			$wgsmwRememberedWSUsages[] = array($wsId, $parameterSetId, "", array_pop($tmp));
 		} else {
 			WebServiceCache::removeWSParameterPair($wsId, $parameterSetId);
 			if($removeParameterSetForPreview){

@@ -317,7 +317,9 @@ class WebService {
 		}
 		$valid &= self::getWWSDElement($parser, '/WebService/method', 'name', $ws->mMethod, false, 1, 1, $msg);
 
-		if(self::getWWSDElement($parser, '/WebService/authentication', null, $ignore, false, 1, 1, $ignoreMsg = array())){
+		
+		$ignoreMsg = array();
+		if(self::getWWSDElement($parser, '/WebService/authentication', null, $ignore, false, 1, 1, $ignoreMsg)){
 			$valid &= self::getWWSDElement($parser, '/WebService/authentication', 'type', $ws->mAuthenticationType, false, 1, 1, $msg);
 			$valid &= self::getWWSDElement($parser, '/WebService/authentication', 'login', $ws->mAuthenticationLogin, false, 1, 1, $msg);
 			$valid &= self::getWWSDElement($parser, '/WebService/authentication', 'password', $ws->mAuthenticationPassword, false, 1, 1, $msg);
@@ -457,13 +459,14 @@ class WebService {
 	 */
 	public function validateWWSD() {
 		$msg = $this->createWSClient();
+		
 		if ($msg === true) {
 			// client successfully created
 			$msg = array();
 		} else {
 			return $msg[0];
 		}
-
+		
 		// Check, if a valid method was chosen
 		if(strtolower($this->mProtocol) == "soap"){
 			$op = $this->mWSClient->getOperation($this->mMethod);
@@ -965,13 +968,15 @@ class WebService {
 			try {
 				include_once($smwgDIIP . "/specials/WebServices/SMW_".
 					$protocol."Client.php");
+				
 				$classname = "SMW".ucfirst(strtolower($protocol))."Client";
+				
 				if (!class_exists($classname)) {
 					return array(wfMsg("smw_wws_invalid_protocol"));
 				}
-
+				
 				$this->mWSClient = new $classname($this->mURI, $this->mAuthenticationType,
-				$this->mAuthenticationLogin, $this->mAuthenticationPassword);
+					$this->mAuthenticationLogin, $this->mAuthenticationPassword);
 			} catch (Exception $e) {
 				// The wwsd is erroneous
 				$this->mWSClient = null;

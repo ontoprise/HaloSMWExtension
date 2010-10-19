@@ -19,6 +19,7 @@ function di_utils_getPageId($pageName){
 	$query = 'SELECT page_id FROM '.$tn.' WHERE page_title="'.$pageName.'" AND page_namespace=0';
 	$result = $db->query($query);
 	$result = $db->fetchObject($result);
+	
 	return $result->page_id;
 }
 

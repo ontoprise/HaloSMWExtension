@@ -771,7 +771,7 @@ class DALReadPOP3 implements IDAL {
 		
 		if($smwgEnableRichMedia){
 			global $wgNamespaceByExtension;
-			$fileNameArray = split("\.", $fileName);
+			$fileNameArray = explode(".", $fileName);
 			$ext = $fileNameArray[count($fileNameArray)-1];
 			if(array_key_exists($ext, $wgNamespaceByExtension)){
 				$ns = $wgNamespaceByExtension[$ext];
@@ -791,7 +791,7 @@ class DALReadPOP3 implements IDAL {
 		}
 
 		$termAnnotations = $tiBot->getExistingTermAnnotations($fileArticleTitle);
-		if($fileArticleTitle->exists() && !conflictPolicy){
+		if($fileArticleTitle->exists() && !$conflictPolicy){
 			echo wfMsg('smw_ti_articleNotUpdated', $fileArticleTitle->getFullText())."\n";
 			$article = new Article($fileArticleTitle);
 			$article->doEdit(
@@ -819,7 +819,7 @@ class DALReadPOP3 implements IDAL {
 		// 		'title' => $attachmentMP)));
 		// }
 		
-		$fileNameArray = split("\.", $fileName);
+		$fileNameArray = explode(".", $fileName);
 		$ext = $fileNameArray[count($fileNameArray)-1];
 		$fileFullPath =
 			$smwgDIIP.'/specials/TermImport/DAL/attachments/'.$fileName;
@@ -836,7 +836,8 @@ class DALReadPOP3 implements IDAL {
 		$status = $local->upload(
 			$fileFullPath, wfMsg('smw_ti_creationComment'), "",
 			File::DELETE_SOURCE, $mFileProps );
-		if($status->failureCount > 0){
+		
+		if(isset($status->failureCount)  && $status->failureCount > 0){
 			throw new Exception("The file \"".$fileFullPath."\" could not be uploaded.");
 			
 			return $this->createCallBackResult(false,
@@ -1055,7 +1056,7 @@ class DALReadPOP3 implements IDAL {
 		$attachmentFNs = "";
 		foreach($this->attachments as $fn => $extraContent){
 			if($smwgEnableRichMedia){
-				$fileNameArray = split("\.", $fn);
+				$fileNameArray = explode(".", $fn);
 				$ext = $fileNameArray[count($fileNameArray)-1];
 				if(array_key_exists($ext, $wgNamespaceByExtension)){
 					$ns = $wgNamespaceByExtension[$ext];

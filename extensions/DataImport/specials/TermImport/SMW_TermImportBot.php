@@ -495,7 +495,7 @@ class TermImportBot extends GardeningBot {
 						for ($i = 0; $i < $numParam; ++$i) {
 							$p = trim($parameters[$i]);
 							$p = preg_replace("/ +/", "__SPACE__", $p);
-							if (!$term[strtoupper($p)]) {
+							if (!array_key_exists(strtoupper($p), $term) || !$term[strtoupper($p)]) {
 								// the parameter is not present
 								// => skip the whole content of the mapping
 								$useMap = false;

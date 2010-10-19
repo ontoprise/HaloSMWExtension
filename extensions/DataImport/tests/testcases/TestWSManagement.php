@@ -71,6 +71,7 @@ class TestWSManagement extends PHPUnit_Framework_TestCase {
 	 */
 	function testCreateWSFailureMissingWSTag(){
 		di_utils_setupWebServices(array("TimeTestWSCreateFailure1"), false);
+		
 		$wsId = di_utils_getWSId("TimeTestWSCreateFailure1");
 
 		$this->assertEquals($wsId, null);
@@ -79,10 +80,12 @@ class TestWSManagement extends PHPUnit_Framework_TestCase {
 	/*
 	 * Test soap ws with wrong uri
 	 */
+	//this test does not work due to a strange error
 	function testCreateWSFailureWrongURI(){
 		di_utils_setupWebServices(array("TimeTestWSCreateFailure2"), false);
+		
 		$wsId = di_utils_getWSId("TimeTestWSCreateFailure2");
-
+	
 		$this->assertEquals($wsId, null);
 	}
 
@@ -137,7 +140,7 @@ class TestWSManagement extends PHPUnit_Framework_TestCase {
 		}
 
 		$ws = WebService::newFromID($wsId);
-
+		
 		$this->assertEquals($ws, null);
 		$this->assertEquals(count(WSStorage::getDatabase()->getWSUsages($wsId)), 0);
 		$this->assertEquals(count(WSStorage::getDatabase()->getResultsFromCache($wsId)), 0);

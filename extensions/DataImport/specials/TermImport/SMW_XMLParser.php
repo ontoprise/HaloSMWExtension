@@ -353,12 +353,12 @@ class XMLParser {
 		$result = null;
 		$pathIdx = count($elementPath)-1;
 		if ($pathIdx < 0) {
-			return $values;
+			return null;
 		}
 		
 		$indices = &$this->xmlIndex[strtoupper($elementPath[$pathIdx])];
 		if (!$indices) {
-			return $values;
+			return null;
 		}
 		
 		// Find the next opening or complete element that matches the path

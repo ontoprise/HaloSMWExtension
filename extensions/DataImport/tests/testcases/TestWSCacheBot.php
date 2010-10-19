@@ -80,7 +80,11 @@ class TestWSCacheBot extends PHPUnit_Framework_TestCase {
 		
 		$cacheResult = WSStorage::getDatabase()->getResultFromCache($wsId, $paramSetId);
 		
-		$this->assertEquals($cacheResult["result"], null);
+		$t = null;
+		if(array_key_exists("result", $cacheResult)){
+			$t = $cacheResult["result"];
+		}
+		$this->assertEquals($t, null);
 	}
 	
 	function testUpToDateResult() {

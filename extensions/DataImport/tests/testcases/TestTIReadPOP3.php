@@ -100,6 +100,9 @@ class TestTIReadPOP3 extends PHPUnit_Framework_TestCase {
 	 * A created article implies that the Term Import was executed.
 	 */
 	function testTermImportWasExecuted() {
+		PHPUnit_Framework_Error_Notice::$enabled = FALSE;
+		$oldErrorLevel = error_reporting(E_ERROR );
+		
 		$error = "";
 		$error = $this->sendMailAndRunBot();
 		$this->assertEquals($error, "");
