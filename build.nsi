@@ -420,7 +420,7 @@ Section "Lucene search" lucene
          ; adapt lucene-wiki.l4j.ini.template
         nsExec::ExecToLog '"$PHP" "$MEDIAWIKIDIR\installer\changeVariable.php" in="template/lucene-wiki.l4j.ini.template" out=lucene-wiki.l4j.ini lucene-path-url="$INSTDIR\lucene" lucene-path="$INSTDIR\lucene" ip=$IP'
          ; adapt schtask_desc.xml.template
-        nsExec::ExecToLog '"$PHP" "$MEDIAWIKIDIR\installer\changeVariable.php" in="template/schtask_desc.xml.template" out=schtask_desc.xml lucene-path-url="$INSTDIR\lucene" lucene-path="$INSTDIR\lucene" ip=$IP'
+        nsExec::ExecToLog '"$PHP" "$MEDIAWIKIDIR\installer\changeVariable.php" in="template/schtask_desc.xml.template" out=schtask_desc.xml noslash=true lucene-path-url="$INSTDIR\lucene" lucene-path="$INSTDIR\lucene" ip=$IP'
         ;adapt startUpdater template file
         nsExec::ExecToLog '"$PHP" "$MEDIAWIKIDIR\installer\changeVariable.php" in="template/startUpdater.bat.template" out=startUpdater.bat currentdate="__DATE__"'
         
@@ -526,7 +526,7 @@ Function waitForApacheAndMySQL
    IntOp $2 0 + 10
  checkagain:
    Sleep 1000
-   FindProcDLL::FindProc "apache.exe"
+   FindProcDLL::FindProc "httpd.exe"
    IntOp $0 0 + $R0
    FindProcDLL::FindProc "mysqld.exe"
    IntOp $1 0 + $R0
@@ -765,8 +765,8 @@ Function configCustomizationsForNew
         nsExec::ExecToLog '"$INSTDIR\php\php.exe" "$INSTDIR\htdocs\mediawiki\extensions\SMWHaloHelp\maintenance\setup.php" --install'
     */
         DetailPrint "Import wiki database"
-        nsExec::ExecToLog ' "$INSTDIR\mysql\mysql.exe" -u root --password=m8nix --execute "create database semwiki_en;" '
-        nsExec::ExecToLog ' "$INSTDIR\mysql\mysql.exe" -u root --password=m8nix semwiki_en < "$INSTDIR\smwplus_database.sql" '
+        nsExec::ExecToLog ' "$INSTDIR\mysql\bin\mysql.exe" -u root --password=m8nix --execute "create database semwiki_en;" '
+        nsExec::ExecToLog ' "$INSTDIR\mysql\bin\mysql.exe" -u root --password=m8nix semwiki_en < "$INSTDIR\smwplus_database.sql" '
 FunctionEnd
 
 
