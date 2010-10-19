@@ -23,13 +23,20 @@ if($smwgDefaultStore == 'SMWTripleStoreQuad') {
 	trigger_error("Rule extension will not work with the quad driver currently. Please deactivate it.");
 	die();
 }
-if($smwgDefaultStore != 'SMWTripleStore') {
-	trigger_error("Triplestore not active. See manual how to activate.");
-	die();
+
+// must assume a triplestore is there, so just set the triplestore storage driver
+$smwgDefaultStore = 'SMWTripleStore';
+global $smwgWebserviceEndpoint;
+if (!isset($smwgWebserviceEndpoint)) {
+	// assume defaults if not set
+	$smwgWebserviceEndpoint = "localhost:8080";
 }
+
 
 $wgExtensionFunctions[] = 'ruleSetupExtension';
 $srgSRIP = $IP . '/extensions/SemanticRules';
+
+global $smwgEnableObjectLogicRules;
 $smwgEnableObjectLogicRules=true;
 
 /**

@@ -28,11 +28,7 @@
 		<new>
 			<require name="smwhalo"
 				file="extensions/SemanticRules/includes/SR_Initialize.php" />
-			<function ext="smwhalo" name="enableSMWHalo" replace="true">
-				<string name="sql_storage">SMWHaloStore2</string>
-				<string name="ts_storage">SMWTripleStore</string>
-				<string name="ts-url" null="true" />
-			</function>
+			
 			<script
 				file="extensions/SemanticRules/maintenance/setup.php" />
 		</new>
