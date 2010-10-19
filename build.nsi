@@ -754,7 +754,10 @@ Function configCustomizationsForNew
         MessageBox MB_OK|MB_ICONINFORMATION $(FIREWALL_COMPLAIN_INFO)
     /*    SetOutPath "$INSTDIR\htdocs\mediawiki\extensions\SMWHaloHelp\maintenance"
         nsExec::ExecToLog '"$INSTDIR\php\php.exe" "$INSTDIR\htdocs\mediawiki\extensions\SMWHaloHelp\maintenance\setup.php" --install'
-    */    
+    */
+        DetailPrint "Import wiki database"
+        nsExec::ExecToLog ' "$INSTDIR\mysql\mysql.exe" -u root --password=m8nix --execute "create database semwiki_en;" '
+        nsExec::ExecToLog ' "$INSTDIR\mysql\mysql.exe" -u root --password=m8nix semwiki_en < "$INSTDIR\smwplus_database.sql" '
 FunctionEnd
 
 
