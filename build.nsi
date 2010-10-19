@@ -747,7 +747,6 @@ Function configCustomizationsForNew
         smwgAllowNewHelpQuestions="true" ls=LocalSettings.php'
     
     ;DetailPrint "Installing helppages"
-    DetailPrint "Starting XAMPP"
         DetailPrint "Starting XAMPP"
         SetOutPath "$INSTDIR"
         Exec "$INSTDIR\xampp_start.bat"
