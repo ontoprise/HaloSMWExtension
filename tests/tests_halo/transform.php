@@ -5,15 +5,25 @@
  * Usage:
  *
  *  php Transform.php -i <input file> -o|-O <output file> [ -t xsl stylesheet ]
- *                    [ -D <key=value> ]
+ *                    [ -D <key=value> ] [ -e <error_message> ]
  *
- *
+ * -i: xml file that is supposed to be transformed
+ * -o: output file where the transformation is written to
+ * -O: same as -o but if the file exists, the output if appended
+ * -t: file with the xslt stylesheet, if none is given, transform.xslt in
+ *     the current directory is used.
+ * -D: key=value parameters that will be passed to the xslt stylesheet and
+ *     that can be used in the transformation process.
+ * -e: if the transformation fails, the output would be empty, no output
+ *     file would be written. If an error message is provided, it will be
+ *     written into the output file. 
  * @author Kai K�hn
  *
  */
 $stylesheet = dirname(__FILE__)."/transform.xslt";
 $appendOutput = false;
 $params = array();
+$errorMessage= "";
 
 // get command line parameters
 $args = $_SERVER['argv'];
@@ -40,7 +50,12 @@ for( $arg = reset( $args ); $arg !== false; $arg = next( $args ) ) {
 		$stylesheet = next($args);
 		continue;
 	}
-    // -D param=value
+    // -e => error message
+    if ($arg == '-e') {
+        $errorMessage = next($args);
+        continue;
+    }
+	// -D param=value
 	if ($arg == '-D') {
 		$keyVal = next($args);
         if (is_null($keyVal) || 
@@ -67,8 +82,15 @@ echo "\nReading testcases from $inputFile ...";
 $xml->load($inputFile);
 
 echo "\nTransforming...";
-$output = $xp->transformToXML($xml)
-or die('Transformation error!');
+
+$output = $xp->transformToXML($xml);
+if ($output == NULL) {
+  if ( strlen($errorMessage) > 0 ) {
+     $output = $errorMessage;
+     echo "Transformation error!";
+  }
+  else die('Transformation error!');
+}
 
 $mode = ($appendOutput) ? "ab" : "wb";
 $handle = fopen($outputFile, $mode);
