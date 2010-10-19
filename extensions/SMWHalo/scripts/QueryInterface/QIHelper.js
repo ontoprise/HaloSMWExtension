@@ -57,7 +57,7 @@ QIHelper.prototype = {
         this.sourceChanged = 0;
         // if triplestore is enabled in wiki, the <input id="usetriplestore"> exists
         if ($('usetriplestore'))
-            Event.observe($('usetriplestore'),'click', this.updateSrcAndPreview.bind(this));
+            Event.observe($('usetriplestore'),'click', this.resetTscOptions.bind(this));
 	},
 
 	/**
@@ -112,6 +112,41 @@ QIHelper.prototype = {
         }
     },
 
+    switchOption : function() {
+        if ($('qioptioncontent').style.display == "none") {
+            $('qioptioncontent').style.display = "";
+            $('qioptiontitle-link').removeClassName("plusminus");
+            $('qioptiontitle-link').addClassName("minusplus");
+            this.updatePreview();
+        }else {
+            $('qioptioncontent').style.display = "none";
+            $('qioptiontitle-link').removeClassName("minusplus");
+            $('qioptiontitle-link').addClassName("plusminus");
+        }
+    },
+
+    resetTscOptions : function() {
+        // check for linked data options and reset these
+        var dataSources = $('qidatasourceselector');
+        if (dataSources) {
+            for (var i=0; i < dataSources.options.length; i++) {
+                if (i == 0) dataSources.options[i].selected='selected'
+                else dataSources.options[i].selected=null;
+            }
+        }
+		if ( $('qio_showrating') != null )
+            $('qio_showrating').checked = null;
+		if ( $('qio_showmetainfo') != null )
+            $('qio_showmetadata').checked = null;
+        this.updateSrcAndPreview();
+    },
+
+    clickUseTsc : function () {
+        if ($('usetriplestore')) {
+            $('usetriplestore').checked="checked";
+            this.updateSrcAndPreview();
+        }
+    },
 
 	/**
 	 * Called whenever preview result printer needs to be updated.
@@ -376,7 +411,7 @@ QIHelper.prototype = {
 				ask += "|?" + s
 			});
 			
-			var reasoner = $('usetriplestore') ? $('usetriplestore').checked ? "sparql" : "ask" : "ask";
+			var reasoner = ( $('usetriplestore') && $('usetriplestore').checked ) ? "sparql" : "ask";
 			var params = ask.replace(',', '%2C') + ",";
 			params +='reasoner='+reasoner+'|';
 			params += $('layout_sort').value == gLanguage.getMessage('QI_ARTICLE_TITLE')? "" : 'sort=' + $('layout_sort').value + '|';
@@ -650,9 +685,7 @@ QIHelper.prototype = {
 	getFullParserAsk : function() {
 		var asktext = this.recurseQuery(0, "parser");
 		var displays = this.queries[0].getDisplayStatements();
-		var triplestoreSwitch = $('usetriplestore');
-		var reasoner = triplestoreSwitch != null && triplestoreSwitch.checked ? "sparql" : "ask";
-		var fullQuery = "{{#"+reasoner+": " + asktext;
+		var fullQuery = "{{#ask: " + asktext;
 		for ( var i = 0; i < displays.length; i++) {
 			fullQuery += "| ?" + displays[i];
 		}
@@ -666,6 +699,8 @@ QIHelper.prototype = {
                 fullQuery += '| ';
             fullQuery += qParams;
         }
+        qParams = this.getReasonerAndParams();
+        if (qParams.length > 0) fullQuery += "| "+ qParams;
 		fullQuery += "| merge=false|}}";
 
 		return fullQuery;
@@ -691,6 +726,38 @@ QIHelper.prototype = {
 		}
 
 	},
+
+    getReasonerAndParams : function() {
+        var args = [];
+		if ( $('usetriplestore') != null && $('usetriplestore').checked )
+            args.push('source=tsc');
+        var selectedDataSources = [];
+        var dataSources = $('qidatasourceselector');
+        if (dataSources) {
+            for (var i=0; i < dataSources.options.length; i++) {
+                if (dataSources.options[i].selected) {
+                    selectedDataSources.push(dataSources.options[i].value);
+                }
+            }
+            // if only the wiki data source is defined, we do not need a parameter
+            if (! (selectedDataSources.length == 1 &&
+                   selectedDataSources[0] == '-Wiki-')) {
+                args.push('dataspace=' + selectedDataSources.join(','));
+            }
+        }
+		if ( $('qio_showrating') != null && $('qio_showrating').checked )
+            args.push('enableRating=true');
+		if ( $('qio_showmetadata') != null && $('qio_showmetadata').checked ) {
+            if ($('qio_showmetadata').value)
+                args.push('metadata=' + $('qio_showmetadata').value);
+            else
+                args.push('metadata=*');
+        }
+        // return now all parameters
+        if (args.length > 0)
+            return args.join("| ");
+        return "";
+    },
 
 	/**
 	 * Recursive function that creates the ask syntax for the query with the ID
@@ -2397,7 +2464,7 @@ QIHelper.prototype = {
 		if (ask.replace(/^\s+/, '').replace(/\s+$/, '').length == 0)
 			return;
         
-                // check triplestore switch if it comes from sparql parser function
+        // check triplestore switch if it comes from sparql parser function
 		if (ask.indexOf('#sparql:') != -1) {
 			var triplestoreSwitch = $('usetriplestore');
 			if (triplestoreSwitch) triplestoreSwitch.checked = true;
@@ -2824,6 +2891,23 @@ applyOptionParams : function(query) {
             	format = val;	
             else if (key=="sort")
                 this.sortColumn = val;
+            else if ( key == "enableRating" && $('qio_showrating') )
+                $('qio_showrating').checked = "checked";
+            else if ( key == "metadata" && $('qio_showmetadata') ) {
+                $('qio_showmetadata').checked = "checked";
+                $('qio_showmetadata').value = val;
+            }
+            else if (key == "dataspace" && $('qidatasourceselector') ) {
+                var dsVals = val.split(',');
+                for (var s= 0; s < $('qidatasourceselector').length; s++ ) {
+                    $('qidatasourceselector').options[s].selected = null;
+                    for (var t= 0; t < dsVals.length; t++) {
+                        if (dsVals[t].replace(/^\s*(.*?)\s*$/, '$1') == $('qidatasourceselector').options[s].value )
+                            $('qidatasourceselector').options[s].selected = "selected";
+                    }
+                }
+            }
+
     }
 	
 
