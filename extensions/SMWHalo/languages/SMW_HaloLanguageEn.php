@@ -285,7 +285,7 @@ clicking the big arrows between the columns.',
 	'smw_qi_printout_notavailable' => 'The result of this query printer cannot be displayed in the query interface.',
     'smw_qi_datasource_select_header' => 'Select data source to query (hold CTRL to select multiple items)',
     'smw_qi_showdatarating' => 'Show data rating',
-    'smw_qi_showdataorigin' => 'Show data origin information',
+    'smw_qi_showmetadata' => 'Show meta information of data',
 
 	/*Tooltips for Query Interface*/
 	'smw_qi_tt_addCategory' => 'By adding a category, only articles of this category are included',
