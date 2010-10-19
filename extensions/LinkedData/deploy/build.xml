@@ -50,6 +50,11 @@
 				<exclude name="**/.svn, **/CVS" />
 			</fileset>
 		</copy>
+		<copy todir="bin/zip/extensions/LinkedData/wikidumps">
+			<fileset dir="../wikidumps/">
+				<exclude name="**/.svn, **/CVS" />
+			</fileset>
+		</copy>
 
 		<copy todir="bin/zip/extensions/LinkedData">
 			<fileset dir="../">
@@ -60,20 +65,20 @@
 		</copy>
 		<zip destfile="bin/linkeddata.zip" basedir="bin/zip" />
 		<delete dir="bin/zip" />
-        <exec executable="php">
-            <arg value="../../../buildtools/renameDeployable.php" />
-            <arg value="../deploy.xml" />
-            <arg value="bin/linkeddata.zip" />
-        </exec>		
+		<exec executable="php">
+			<arg value="../../../buildtools/renameDeployable.php" />
+			<arg value="../deploy.xml" />
+			<arg value="bin/linkeddata.zip" />
+		</exec>
 	</target>
 
-   	<target name="versionhint">
-        <property environment="env" />
+	<target name="versionhint">
+		<property environment="env" />
 		<exec executable="php">
 			<arg value="../../../buildtools/replaceVersionHint.php" />
 			<arg value="../deploy.xml" />
 			<arg value="../includes/LOD_Initialize.php" />
-            <arg value="${env.BUILD_NUMBER}" />
+			<arg value="${env.BUILD_NUMBER}" />
 		</exec>
 	</target>
 </project>
