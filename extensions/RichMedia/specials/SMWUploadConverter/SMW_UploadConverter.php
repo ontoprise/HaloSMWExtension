@@ -56,7 +56,7 @@ class UploadConverter {
 		$title = $uploadedFile->getTitle();
 		$file = wfLocalFile($title);
 		$mimeType = $file->getMimeType();
-		$fileNameArray = split("\.", $file->getFullPath());
+		$fileNameArray = explode(".", $file->getFullPath());
 		$ext = $fileNameArray[count($fileNameArray)-1];	
 		if($ext == "vcf"){
 			$mimeType = "application/vcard";
@@ -134,7 +134,8 @@ class UploadConverter {
 		
 		$mimeType = $file->getMimeType();
 		
-		$fileNameArray = split("\.", $file->getFullPath());
+		$fileNameArray = explode(".", $file->getFullPath());
+		
 		$ext = $fileNameArray[count($fileNameArray)-1];
 		if($mimeType == "text/plain" && $ext == "doc"){
 			$mimeType = "application/msword";
