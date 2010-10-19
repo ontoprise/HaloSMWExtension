@@ -201,17 +201,17 @@ doCreateRule: function(rule) {
 	$('rule-confirm').hide();
 	$('rule-type').disable();
 	
-	if (rt == gsrLanguage.getMessage('RULE_TYPE_DEFINITION')) {
+	if (rt == "Definition") {
 		// Create/edit a definition rule for categories or properties
 		var cr = new CategoryRule($('rule-name').value, rt);
 		this.currentEditObj = cr;
 		cr.createRule();
-	} else if (rt == gsrLanguage.getMessage('RULE_TYPE_CALCULATION')) {
+	} else if (rt == "Calculation") {
 		// Create/edit a calculation rule for properties
 		var cr = new CalculationRule($('rule-name').value, rt);
 		this.currentEditObj = cr;
 		cr.editRule();
-	} else if (rt == gsrLanguage.getMessage('RULE_TYPE_PROP_CHAINING')) {
+	} else if (rt == "Property chaining") {
 		// Create/edit a definition rule for properties
 		var pcr = new PropertyChain($('rule-name').value, rt);
 		this.currentEditObj = pcr;
@@ -306,7 +306,7 @@ getRuleTypes: function() {
 			this.typeMap = [gsrLanguage.getMessage('RULE_TYPE_DEFINITION'), "Definition"];
 			return [gsrLanguage.getMessage('RULE_TYPE_DEFINITION')];
 		case 102: //properties
-			var hasType = gLanguage.getMessage('PC_HAS_TYPE');
+			var hasType = gLanguage.getMessage('HAS_TYPE', 'cont');
 			var page = gLanguage.getMessage('TYPE_PAGE').toLowerCase();
 			var type = this.wtp.getRelation(hasType);
 			if (type) {
