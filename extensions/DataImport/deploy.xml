@@ -18,7 +18,7 @@
 			<dependency from="100" to="199">scriptmanager</dependency>
 			<dependency from="100" to="100" optional="true">linkeddata</dependency>
 		</dependencies>
-		<patchlevel>3</patchlevel>
+		<patchlevel>0</patchlevel>
 	</global>
 	<codefiles>
 
