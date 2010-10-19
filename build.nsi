@@ -399,6 +399,8 @@ Section "Lucene search" lucene
         File "..\..\..\Product__Lucene_server\workspace\*.txt"
         File "..\..\..\Product__Lucene_server\workspace\*.properties"
         File "..\..\..\Product__Lucene_server\workspace\smwplus_db.xml"
+        File "..\..\..\Product__Lucene_server\workspace\lucene-wiki.exe"
+        File "..\..\..\Product__Lucene_server\workspace\lucene-wiki.l4j.ini"
     #!endif
         
         SetOutPath "$INSTDIR\lucene"
@@ -415,6 +417,10 @@ Section "Lucene search" lucene
         nsExec::ExecToLog '"$PHP" "$MEDIAWIKIDIR\installer\changeVariable.php" in="template/lsearch.conf.template" out=lsearch.conf project-path="$INSTDIR\lucene" wiki-path="$MEDIAWIKIDIR" project-path-url="$INSTDIR\lucene" wiki-path-url="$MEDIAWIKIDIR"'
          ; adapt start.bat.template file
         nsExec::ExecToLog '"$PHP" "$MEDIAWIKIDIR\installer\changeVariable.php" in="template/start.bat.template" out=start.bat lucene-path-url="$INSTDIR\lucene" lucene-path="$INSTDIR\lucene" ip=$IP'
+         ; adapt lucene-wiki.l4j.ini.template
+        nsExec::ExecToLog '"$PHP" "$MEDIAWIKIDIR\installer\changeVariable.php" in="template/lucene-wiki.l4j.ini.template" out=lucene-wiki.l4j.ini lucene-path-url="$INSTDIR\lucene" lucene-path="$INSTDIR\lucene" ip=$IP'
+         ; adapt schtask_desc.xml.template
+        nsExec::ExecToLog '"$PHP" "$MEDIAWIKIDIR\installer\changeVariable.php" in="template/schtask_desc.xml.template" out=schtask_desc.xml lucene-path-url="$INSTDIR\lucene" lucene-path="$INSTDIR\lucene" ip=$IP'
         ;adapt startUpdater template file
         nsExec::ExecToLog '"$PHP" "$MEDIAWIKIDIR\installer\changeVariable.php" in="template/startUpdater.bat.template" out=startUpdater.bat currentdate="__DATE__"'
         
@@ -423,6 +429,9 @@ Section "Lucene search" lucene
         
         ; Build Lucene index
         nsExec::ExecToLog 'buildall.bat smwplus_db.xml semwiki_en'
+        
+         ; Register scheduled task for lucene update
+        nsExec::ExecToLog 'schtasks /create /tn "LuceneIndexUpdate" /XML "$INSTDIR\lucene\schtask_desc.xml"'
         
         ;change LocalSettings
         SetOutPath "$MEDIAWIKIDIR"
@@ -433,8 +442,8 @@ Section "Lucene search" lucene
         ${If} $0 == 1
             SetOutPath "$INSTDIR\lucene"
             CreateDirectory "$SMPROGRAMS\$STARTMENU_FOLDER"
-            CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\${PRODUCT} ${VERSION} Start Lucene.lnk" "$INSTDIR\lucene\start.bat"
-            CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\${PRODUCT} ${VERSION} Start Lucene Updater.lnk" "$INSTDIR\lucene\startUpdater.bat"
+            CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\${PRODUCT} ${VERSION} Start Lucene.lnk" "$INSTDIR\lucene\lucene-wiki.exe"
+            #CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\${PRODUCT} ${VERSION} Start Lucene Updater.lnk" "$INSTDIR\lucene\startUpdater.bat"
             
         ${EndIf}
        
@@ -1000,12 +1009,15 @@ Section "Uninstall"
     ; do not un-install since it was not installed
     ;Call un.uninstallAsWindowsService
     
+    ; Unregister scheduled task for lucene update
+    nsExec::ExecToLog 'schtasks /delete /TN "LuceneIndexUpdate"'
+    
     # Delete all start menu entries
     Delete "$SMPROGRAMS\$MUI_TEMP\Uninstall.lnk"
     Delete "$SMPROGRAMS\$MUI_TEMP\Start ${PRODUCT}.lnk"
     Delete "$SMPROGRAMS\$MUI_TEMP\Stop ${PRODUCT}.lnk"
     Delete "$SMPROGRAMS\$MUI_TEMP\${PRODUCT} ${VERSION} Start Lucene.lnk" 
-    Delete "$SMPROGRAMS\$MUI_TEMP\${PRODUCT} ${VERSION} Start Lucene Updater.lnk" 
+    #Delete "$SMPROGRAMS\$MUI_TEMP\${PRODUCT} ${VERSION} Start Lucene Updater.lnk" 
     Delete "$SMPROGRAMS\$MUI_TEMP\${PRODUCT} ${VERSION} Main Page.lnk"
     #Delete "$SMPROGRAMS\$MUI_TEMP\${PRODUCT} ${VERSION} Help.lnk"
     
