@@ -258,6 +258,7 @@ protected $smwUserMessages = array(
 	'smw_qi_reset_confirm' => 'M&ouml;chten Sie Ihren Query wirklich zur&uuml;ck setzen?',
 	'smw_qi_querytree_heading' => 'Query Baumnavigation',
 	'smw_qi_main_query_name' => 'Hauptquery',
+    'smw_qi_section_option' => 'Query Einstellungen',
     'smw_qi_section_definition' => 'Query Definition',
     'smw_qi_section_result' => 'Ergebnis',
 	'smw_qi_preview_result' => 'Result Preview',
@@ -280,6 +281,9 @@ protected $smwUserMessages = array(
     'smw_qi_printout_err3' => 'Das ausgew&auml;hlte Format f&uuml; das Ergebnis ben&ouml;tigt mindestens ein weiteres nummerisches Attribut, dessen Werte im Ergebnis ausgegeben werden.',
     'smw_qi_printout_err4' => 'F&uuml;r diesen Query gibt es keine Ergebnisse.',
     'smw_qi_printout_notavailable' => 'Das Ergebnis kann f&uuml;r dieses Format nicht im Query Interface angezeigt werden.',
+    'smw_qi_datasource_select_header' => 'W&auml;hle eine Datenquelle (dr&uuml;cke STRG um mehrere Quellen auszuw&auml;hlen)',
+    'smw_qi_showdatarating' => 'Zeige die Bewertung der Daten',
+    'smw_qi_showdataorigin' => 'Zeige Informationen zur Herkunft der Daten',
 
 	/*Tooltips for Query Interface*/
 	'smw_qi_tt_addCategory' => 'Indem man eine Kategorie hinzuf&uuml;gt, werden nur Artikel aus dieser Kategorie ber&uuml;cksichtigt',
@@ -308,6 +312,7 @@ protected $smwUserMessages = array(
 	'smw_qi_tt_default' => 'Text, der ausgegeben wird, falls keine Ergebnisse existieren',
     'smw_qi_tt_treeview' => 'Zeige die Query in einem Baum',
     'smw_qi_tt_textview' => 'Beschreibe die Query als Freitext',
+    'smw_qi_tt_option' => 'Definieren allgemeiner Einstellungen zum Ausf&uuml;hren der Query',
 
 	/* Annotation */
  	'smw_annotation_tab' => 'Seite annotieren',

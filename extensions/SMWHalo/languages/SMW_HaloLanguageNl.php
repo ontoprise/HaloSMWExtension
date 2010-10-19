@@ -253,6 +253,7 @@ Druk de rechter knop om resultaten te verkrijgen. Enkel <i>Return</i> drukken ge
     'smw_qi_discard_changes' => 'Discard changes',
     'smw_qi_usetriplestore' => 'Use triple store',
 	'smw_qi_main_query_name' => 'Main',
+    'smw_qi_section_option' => 'Query options',
     'smw_qi_section_definition' => 'Query Definition',
     'smw_qi_section_result' => 'Result',
 	'smw_qi_preview_result' => 'Result Preview',
@@ -275,6 +276,9 @@ Druk de rechter knop om resultaten te verkrijgen. Enkel <i>Return</i> drukken ge
     'smw_qi_printout_err3' => 'The selected format for the query result needs at least one property of a numeric type that is shown in the result.',
     'smw_qi_printout_err4' => 'Your query did not return any results.',
     'smw_qi_printout_notavailable' => 'The result of this query printer cannot be displayed in the query interface.',
+    'smw_qi_datasource_select_header' => 'Select data source to query (hold CTRL to select multiple items)',
+    'smw_qi_showdatarating' => 'Show data rating',
+    'smw_qi_showdataorigin' => 'Show data origin information',
 
 	/*Tooltips for Query Interface*/
 	'smw_qi_tt_addCategory' => 'Bij het toevoegen van een categorie, worden enkel artikels van deze categorie toegevoegd',
@@ -303,6 +307,7 @@ Druk de rechter knop om resultaten te verkrijgen. Enkel <i>Return</i> drukken ge
 	'smw_qi_tt_default' => 'Tekst die getoond wordt indien er geen resultaten zijn',
     'smw_qi_tt_treeview' => 'Display your query in a tree',
     'smw_qi_tt_textview' => 'Describe the query in stylized English',
+    'smw_qi_tt_option' => 'Define general settings for how the query is executed',
 	
 	/* Annotation */
  	'smw_annotation_tab' => 'aantekeningen maken',
