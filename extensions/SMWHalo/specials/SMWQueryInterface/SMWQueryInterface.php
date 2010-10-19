@@ -38,6 +38,8 @@ class SMWQueryInterface extends SpecialPage {
 		$html = '<div id="qicontent">' .
 				'<div id="shade" style="display:none"></div>';
 
+        $html .= $this->addQueryOption();
+        
 		$html .= $this->addQueryDefinition();
 
         $html .= $this->addResultPart();
@@ -50,6 +52,55 @@ class SMWQueryInterface extends SpecialPage {
 		$html .= '</div>';
 		$wgOut->addHTML($html);
 	}
+
+    private function addQueryOption() {
+        global $smwgDefaultStore;
+        $useTS = "";
+        $useLodDatasources = "";
+        
+   		if (defined('LOD_LINKEDDATA_VERSION')) { // LinkedData extension is installed
+            $sourceOptions = '<option selected="selected">-Wiki-</option>'; // default fist option is the wiki itself
+            $useLodDatasources = wfMsg('smw_qi_datasource_select_header') . ':';
+			// Check if the triples store is propertly connected.
+			$tsa = new LODTripleStoreAccess();
+			if (!$tsa->isConnected()) {
+				$useLodDatasources .= " <span class=\"qiConnectionError\">".wfMsg("smw_ob_ts_not_connected")."</span>";
+			}
+            else {
+                $ids = LODAdministrationStore::getInstance()->getAllSourceDefinitionIDs();
+                foreach ($ids as $sourceID) {
+                    $sourceOptions .= "<option>$sourceID</option>";
+        		}
+            }
+            $useLodDatasources .= '<br/><table><tr><td>' .
+                '<select id="qidatasourceselector" size="5" multiple="true" onchange="qihelper.clickUseTsc();">' .
+                    $sourceOptions .
+                '</select>' .
+                '</td><td>' .
+                '<input type="checkbox" id="qio_showrating" onchange="qihelper.clickUseTsc();" />' .
+                wfMsg('smw_qi_showdatarating') . '<br/>' .
+                '<input type="checkbox" id="qio_showorigin" onchange="qihelper.clickUseTsc();" />' .
+                wfMsg('smw_qi_showdataorigin') . '<br/>' .
+                '</td></tr></table><hr/>';
+        }
+        // check if triple store is availabe, and offer option do deselect
+        if (isset($smwgDefaultStore) && strpos($smwgDefaultStore, "SMWTripleStore") !== false) {
+			$useTS = '<input type="checkbox" id="usetriplestore" checked="checked">' . wfMsg('smw_qi_usetriplestore') . '</input>';
+		}
+        // check if there are any options that will be displayed, If this is not the case
+        // then ommit this section
+        if (strlen($useLodDatasources) == 0 &&
+            strlen($useTS) == 0) return "";
+
+        $html = '<div id="qioptiontitle"><span onclick="qihelper.switchOption()" onmouseover="Tip(\'' . wfMsg('smw_qi_tt_option') . '\')"><a id="qioptiontitle-link" class="plusminus" href="javascript:void(0)"></a>' . wfMsg('smw_qi_section_option') . '</span></div>' .
+                '<div id="qioptionlayout">' .
+                '<div id="qioptioncontent" style="display:none">' .
+                $useLodDatasources .
+                $useTS .
+                '</div>'.
+                '</div>';
+        return $html;
+    }
 
     private function addQueryDefinition() {
         /*
@@ -203,25 +254,20 @@ class SMWQueryInterface extends SpecialPage {
 	}
 
 	private function addAdditionalStuff() {
-		global $smwgHaloScriptPath, $smwgDefaultStore;
+		global $smwgHaloScriptPath;
 		wfRunHooks("QI_AddButtons", array (&$buttons));
 
 		$imagepath = $smwgHaloScriptPath . '/skins/QueryInterface/images/';
-		$useTS = "";
 		$isIE = (isset($_SERVER['HTTP_USER_AGENT']) &&
                  (preg_match('/MSIE \d+\.\d+/', $_SERVER['HTTP_USER_AGENT']) ||
                   stripos($_SERVER['HTTP_USER_AGENT'], 'Excel Bridge') !== false)
                 );
-		if (isset($smwgDefaultStore) && $smwgDefaultStore == "SMWTripleStore") {
-			$useTS = '<input type="checkbox" id="usetriplestore" checked="checked">' . wfMsg('smw_qi_usetriplestore') . '</input>';
-		}
 		return '<div id="qimenubar">' .
 		//'<span class="qibutton" onclick="qihelper.showLoadDialogue()">' . wfMsg('smw_qi_load') . '</span><span style="color:#C0C0C0">&nbsp;|&nbsp;</span>' .
 		//'<span class="qibutton" onclick="qihelper.showSaveDialogue()">' . wfMsg('smw_qi_save') . '</span><span style="color:#C0C0C0">&nbsp;|&nbsp;</span>' .
 		//'<span class="qibutton" onclick="qihelper.exportToXLS()">' . wfMsg('smw_qi_exportXLS') . '</span>' .
 		      (($isIE) ? '<button onclick="qihelper.copyToClipboard()" onmouseover="Tip(\'' . wfMsg('smw_qi_tt_clipboard') . '\')">' . wfMsg('smw_qi_clipboard') . '</button>' : '').
 		$buttons.
-		$useTS.
 						'<span><button onclick="qihelper.resetQuery()" onmouseover="Tip(\'' . wfMsg('smw_qi_tt_reset') . '\')">' . wfMsg('smw_qi_reset') . '</button></span>'.
 					'</div>'.
 
