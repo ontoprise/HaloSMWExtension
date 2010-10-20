@@ -19,7 +19,8 @@ class UCVCardConverter {
 	
 	public function getConvertedText(){
 		$vCardParser = new VCard();
-		$vCardParser->parse(explode("\n", $this->text));
+		$explodedText = explode("\n", $this->text);
+		$vCardParser->parse($explodedText);
 
 		global $wgUploadConverterTemplateMapping;
 		$result = "{{".$wgUploadConverterTemplateMapping['TemplateName'];

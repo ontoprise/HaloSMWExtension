@@ -21,7 +21,11 @@ class ICalParser {
 
 		for($i=0; $i<count($lines); $i++){
 			$line = $lines[$i];
-			$nextline = $lines[$i+1];
+			if(array_key_exists($i+1, $lines)){
+				$nextline = $lines[$i+1];
+			} else {
+				$nextline = "";
+			}
 			$nextline = str_replace("\r", "", $nextline);
 			$nextline = str_replace("\n", "", $nextline);
 
@@ -51,7 +55,7 @@ class ICalParser {
 					break;
 				default:
 					unset ($field, $data, $prop_pos, $property);
-					if (ereg ("([^:]+):(.*)", $line, $line)){
+					if (@ ereg ("([^:]+):(.*)", $line, $line)){
 						$field = $line[1];
 						$data = $line[2];
 						$property = strtoupper($field);
@@ -61,63 +65,63 @@ class ICalParser {
 						switch ($property) {
 							// Start VTODO Parsing
 							case 'DUE':
-								$iCal['due'] = $data;
-								$iCal['due'] = $this->convertDate($iCal['due']);
+								@ $iCal['due'] = $data;
+								@ $iCal['due'] = $this->convertDate($iCal['due']);
 								break;
 							case 'COMPLETED':
-								$iCal['completed'] = $datetime[1];
-								$iCal['completed'] = $this->convertDate($iCal['completed']);
+								@ $iCal['completed'] = $datetime[1];
+								@ $iCal['completed'] = $this->convertDate($iCal['completed']);
 								break;
 							case 'PRIORITY':
-								$iCal['priority'] = "$data";
+								@ $iCal['priority'] = "$data";
 								break;
 							case 'STATUS':
-								$iCal['status'] = "$data";
+								@ $iCal['status'] = "$data";
 								break;
 							case 'GEO':
-								$iCal['geo'] = "$data";
+								@ $iCal['geo'] = "$data";
 								break;
 							case 'CLASS':
-								$iCal['class'] = "$data";
+								@ $iCal['class'] = "$data";
 								break;
 							case 'CATEGORIES':
-								$iCal['categories'] = "$data";
+								@ $iCal['categories'] = "$data";
 								break;
 								// End VTODO Parsing
 							case 'DTSTART':
-								$iCal['start'] = $data;
-								$iCal['start'] = $this->convertDate($iCal['start']);
+								@ $iCal['start'] = $data;
+								@ $iCal['start'] = $this->convertDate($iCal['start']);
 								break;
 							case 'DTEND':
-								$iCal['end'] = $data;
-								$iCal['end'] = $this->convertDate($iCal['end']);
+								@ $iCal['end'] = $data;
+								@ $iCal['end'] = $this->convertDate($iCal['end']);
 								break;
 							case 'EXDATE':
-								$iCal['exdate'] = $data;
-								$iCal['exdate'] = $this->convertDate($iCal['exdate']);
+								@ $iCal['exdate'] = $data;
+								@ $iCal['exdate'] = $this->convertDate($iCal['exdate']);
 								break;
 							case 'SUMMARY':
-								if ($valarm_set == FALSE) {
-									$iCal['summary'] = $data;
+								if (@ $valarm_set == FALSE) {
+									@ $iCal['summary'] = $data;
 								} else {
-									$iCal['valarm-summary'] = $data;
+									@ $iCal['valarm-summary'] = $data;
 								}
 								break;
 							case 'DESCRIPTION':
-								if ($valarm_set == FALSE) {
-									$iCal['description'] = $data;
+								if (@ $valarm_set == FALSE) {
+									@ $iCal['description'] = $data;
 								} else {
-									$iCal['valarm-description'] = $data;
+									@ $iCal['valarm-description'] = $data;
 								}
 								break;
 							case 'UID':
-								$iCal["uid"] = $data;
+								@ $iCal["uid"] = $data;
 								break;
 							case 'X-WR-CALNAME':
-								$iCal['actual-calname'] = $data;
+								@ $iCal['actual-calname'] = $data;
 								break;
 							case 'X-WR-TIMEZONE':
-								$iCal['x-wr-tz'] = $data;
+								@ $iCal['x-wr-tz'] = $data;
 								break;
 							case 'ATTENDEE':
 								// if($iCal['attendee'] != ""){
@@ -125,16 +129,16 @@ class ICalParser {
 								//}
 								if(strpos($field, "CN=") > 0){
 									if(array_key_exists('attendee-name', $iCal)){
-										$iCal['attendee-name'] .= ", ";
+										@ $iCal['attendee-name'] .= ", ";
 									}
-									$iCal['attendee-name'] .= ereg_replace (".*CN=([^;]*).*", "\\1", $field);
+									@ $iCal['attendee-name'] .= @ ereg_replace (".*CN=([^;]*).*", "\\1", $field);
 								}
 
 								if(strpos($data, "mailto:") > 0 || strpos($data, "mailto:") === 0){
 									if(array_key_exists('attendee', $iCal)){
-										$iCal['attendee'] .= ", ";
+										@ $iCal['attendee'] .= ", ";
 									}
-									$iCal['attendee'] .= ereg_replace (".*mailto:(.*).*", "\\1", $data);
+									@ $iCal['attendee'] .= ereg_replace (".*mailto:(.*).*", "\\1", $data);
 								}
 
 								//	if(strpos($field, "RSVP=") > 0){
@@ -150,15 +154,15 @@ class ICalParser {
 							case 'ORGANIZER':
 								if(strpos($field, "CN=") > 0){
 									if(array_key_exists('organizer-name', $iCal)){
-										$iCal['organizer-name'] .= ", ";
+										@ $iCal['organizer-name'] .= ", ";
 									}
-									$iCal['organizer-name'] .= ereg_replace (".*CN=([^;]*).*", "\\1", $field);
+									@ $iCal['organizer-name'] .= @ ereg_replace (".*CN=([^;]*).*", "\\1", $field);
 								}
 								if(strpos($data, "mailto:") > 0 || strpos($data, "mailto:") === 0){
 									if(array_key_exists('organizer', $iCal)){
-										$iCal['organizer'] .= ", ";
+										@ $iCal['organizer'] .= ", ";
 									}
-									$iCal['organizer'] .= ereg_replace (".*mailto:(.*).*", "\\1", $data);
+									@ $iCal['organizer'] .= ereg_replace (".*mailto:(.*).*", "\\1", $data);
 								}
 								
 								// if(strpos($field, "RSVP=") > 0){
@@ -172,16 +176,16 @@ class ICalParser {
 								//}
 								break;
 							case 'URL':
-								$iCal['url'] = $data;
+								@ $iCal['url'] = $data;
 								break;
 							case 'LOCATION':
-								$iCal['location'] = $data;
+								@ $iCal['location'] = $data;
 								break;
 							case 'TZNAME':
 								if($tzname == ""){
 									$tzname = $data;
 								}
-								$iCal['timezone'] = data;
+								@ $iCal['timezone'] = $data;
 								break;
 							default:
 								if(strpos(':',$data) > 1) $iCal['other'] .= $data ."; ";
