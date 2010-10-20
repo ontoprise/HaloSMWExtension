@@ -91,7 +91,7 @@ function smwgHaloSetupExtension() {
 		die();
 	}
 	
-	if ($smwgDefaultStore == 'SMWTripleStore' && !isset($smwgWebserviceEndpoint)) {
+	if (smwfIsTripleStoreConfigured() && !isset($smwgWebserviceEndpoint)) {
 		trigger_error('$smwgWebserviceEndpoint is required but not set. Example: $smwgWebserviceEndpoint="localhost:8080";');
         die();
 	}
@@ -147,7 +147,7 @@ function smwgHaloSetupExtension() {
 	$wgHooks['smwInitProperties'][] = 'smwfInitSpecialPropertyOfSMWHalo';
 
 	global $smwgDefaultStore, $smwgShowDerivedFacts, $wgRequest;
-	if ($smwgDefaultStore == 'SMWTripleStore' && $smwgShowDerivedFacts === true) {
+	if (smwfIsTripleStoreConfigured() && $smwgShowDerivedFacts === true) {
 		$wgHooks['smwShowFactbox'][] = 'smwfAddDerivedFacts';
 	}
 
@@ -200,7 +200,7 @@ function smwgHaloSetupExtension() {
 
 	// add triple store hooks if necessary
 	global $smwgDefaultStore,$smwgIgnoreSchema;
-	if ($smwgDefaultStore == 'SMWTripleStore') {
+	if (smwfIsTripleStoreConfigured()) {
 		if (!isset($smwgIgnoreSchema) || $smwgIgnoreSchema === false) {
 			require_once('storage/SMW_TS_SchemaContributor.php');
 			$wgHooks['TripleStorePropertyUpdate'][] = 'smwfTripleStorePropertyUpdate';
@@ -295,7 +295,7 @@ function smwgHaloSetupExtension() {
 		$wgSpecialPageGroups['Properties'] = 'smwplus_group';
 
         global $smwgDefaultStore;
-		if ($smwgDefaultStore == 'SMWTripleStore' || $smwgDefaultStore == 'SMWTripleStoreQuad') {
+		if (smwfIsTripleStoreConfigured()) {
 			$wgAutoloadClasses['SMWTripleStoreAdmin'] = $smwgHaloIP . '/specials/SMWTripleStoreAdmin/SMW_TripleStoreAdmin.php';
 			$wgSpecialPages['TSA'] = array('SMWTripleStoreAdmin');
 			$wgSpecialPageGroups['TSA'] = 'smwplus_group';
@@ -337,7 +337,7 @@ function smwgHaloSetupExtension() {
 			'description' => 'Facilitate the use of Semantic Mediawiki for a large community of non-tech-savvy users. [http://smwforum.ontoprise.com/smwforum/index.php/Help:SMW%2B_User_Manual View feature description.]');
 
 	global $smwgDefaultStore;
-	if ($smwgDefaultStore == 'SMWTripleStore') {
+	if (smwfIsTripleStoreConfigured()) {
 		$wgHooks['InternalParseBeforeLinks'][] = 'smwfTripleStoreParserHook';
 	}
 	$wgAjaxExportList[] = 'smwf_ts_getWikiNamespaces';
@@ -378,6 +378,16 @@ function smwfRegisterAutocompletionIcons(& $namespaceMappings) {
 	return true;
 }
 
+/**
+ * Checks if the triplestore driver is configured.
+ * 
+ * @return boolean
+ */
+function smwfIsTripleStoreConfigured() {
+	global $smwgDefaultStore;
+	return ($smwgDefaultStore == 'SMWTripleStore' || $smwgDefaultStore == 'SMWTripleStoreQuad');
+}
+
 function smwfRegisterSPARQLInlineQueries( &$parser, &$text, &$stripstate ) {
 
 	$parser->setFunctionHook( 'sparql', 'smwfProcessSPARQLInlineQueryParserFunction');
@@ -390,7 +400,7 @@ function smwfRegisterSPARQLInlineQueries( &$parser, &$text, &$stripstate ) {
  */
 function smwfProcessSPARQLInlineQueryParserFunction(&$parser) {
 	global $smwgDefaultStore;
-	if ($smwgDefaultStore == 'SMWTripleStore' || $smwgDefaultStore == 'SMWTripleStoreQuad') {
+	if (smwfIsTripleStoreConfigured()) {
 		global $smwgIQRunningNumber;
 		$smwgIQRunningNumber++;
 		$params = func_get_args();
