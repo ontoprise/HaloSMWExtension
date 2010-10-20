@@ -47,7 +47,7 @@ class MaintenanceTools {
 			$out[$p->getID()]= array();
 			$dependencies = $p->getDependencies();
 			foreach($dependencies as $dep) {
-				list($id, $min, $max) = $dep;
+				list($id, $min, $max, $optional, $message) = $dep;
 
 				// check if dependant package exists
 				if (!array_key_exists($id, $localPackages)) {

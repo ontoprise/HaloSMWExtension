@@ -176,7 +176,8 @@ class Installer {
 			$dependencies = $p->getDependencies();
 
 			foreach($dependencies as $dep) {
-				list($id, $from, $to) = $dep;
+				list($id, $from, $to, $optional, $message) = $dep;
+				if ($optional) continue;
 				if ($id == $packageID) {
 					$dependantPackages[] = $p->getID();
 					$existDependency = true;
@@ -485,7 +486,8 @@ class Installer {
 				if ($min <= $max) {
 					$deps = $un->getDependencies();
 					foreach($deps as $dep) {
-						list($depID, $from, $to) = $dep;
+						list($depID, $from, $to, $optional, $message) = $dep;
+						if ($optional) continue;
 						if (array_key_exists($depID, $removed_extensions)) {
 							$removed_extensions[$id] = $un;
 						}
@@ -570,7 +572,14 @@ class Installer {
 		// or installed.
 
 		foreach($dependencies as $dep) {
-			list($id, $from, $to) = $dep;
+			list($id, $from, $to, $optional, $message) = $dep;
+			if ($optional) {
+				// ask for installation
+				$this->getUserConfirmation("$message\nInstall optional extension '$id'? ", $result);
+				if ($result != 'y') {
+					continue;
+				}
+			}
 			$packageFound = false;
 			foreach($localPackages as $p) {
 				if ($id === $p->getID()) {

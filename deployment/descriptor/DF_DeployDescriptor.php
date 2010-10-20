@@ -334,8 +334,11 @@ class DeployDescriptor {
 			$depID = strtolower(trim((string) $dep[0]));
 			$depFrom = intval((string) $dep->attributes()->from);
 			$depTo = intval((string) $dep->attributes()->to);
+			$optional = (string) $dep->attributes()->optional;
+			$optional = $optional == "true";
+			$message = (string) $dep->attributes()->message;
 			if ($depTo == 0) $depTo = 9999; // if to attribute is missing
-			$this->dependencies[] = array($depID, $depFrom, $depTo);
+			$this->dependencies[] = array($depID, $depFrom, $depTo, $optional, $message);
 		}
 		return $this->dependencies;
 	}
