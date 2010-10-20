@@ -553,8 +553,7 @@ class SMWTripleStore extends SMWStore {
 
 		// make sure that TS is not queried in maintenace mode
 		if ( defined( 'DO_MAINTENANCE' )  && !defined('SMWH_FORCE_TS_UPDATE') ) {
-			$sqr = new SMWHaloQueryResult(array(), $query, array(), $this, false);
-			return $sqr;
+			return $this->smwstore->getQueryResult($query);
 		}
 
 		$toTSC = false; // redirects a normal ASK query to the TSC
@@ -774,7 +773,7 @@ class SMWTripleStore extends SMWStore {
 	protected function parseSPARQLXMLResult(& $query, & $sparqlXMLResult) {
 
 		// parse xml results
-
+ 
 		$dom = simplexml_load_string($sparqlXMLResult);
 		$dom->registerXPathNamespace("sparqlxml", "http://www.w3.org/2005/sparql-results#");
 		if($dom === FALSE) return new SMWHaloQueryResult(array(), $query, array(), $this);
@@ -1147,7 +1146,7 @@ class SMWTripleStore extends SMWStore {
 	 * @param SMWDataValue $v
 	 * @param array of SimpleXMLElement $metadata
 	 */
-	private function setMetadata(SMWDataValue $v, $metadata) {
+	protected function setMetadata(SMWDataValue $v, $metadata) {
 		if (!is_null($metadata) && $metadata !== '') {
 			foreach($metadata as $m) {
 				$name = (string) $m->attributes()->name;

@@ -307,11 +307,7 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 
 				if (empty($sv)) {
 					$v = SMWDataValueFactory::newTypeIDValue('_wpg');
-					foreach($metadata as $mdProperty => $mdValue) {
-						if (strpos($mdProperty, "_meta_") === 0) {
-							$v->setMetadata(substr($mdProperty,6), explode("|||",$mdValue));
-						}
-					}
+					$this->setMetadata($v, $metadata);
 					$allValues[] = $v;
 				} else {
 					$startNS = strlen(TSNamespaces::$UNKNOWN_NS);
@@ -332,11 +328,7 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 					$v = SMWDataValueFactory::newTypeIDValue('_wpg');
 					$v->setValues($title->getDBkey(), $ns, $title->getArticleID(), false, '', $title->getFragment());
 
-					foreach($metadata as $mdProperty => $mdValue) {
-						if (strpos($mdProperty, "_meta_") === 0) {
-							$v->setMetadata(substr($mdProperty,6), explode("|||",$mdValue));
-						}
-					}
+					$this->setMetadata($v, $metadata);
 					$allValues[] = $v;
 				}
 			} else {
@@ -344,11 +336,7 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 
 				$v = SMWDataValueFactory::newTypeIDValue('_uri');
 				$v->setDBkeys(array($sv));
-				foreach($metadata as $mdProperty => $mdValue) {
-					if (strpos($mdProperty, "_meta_") === 0) {
-						$v->setMetadata(substr($mdProperty,6), explode("|||",$mdValue));
-					}
-				}
+				$this->setMetadata($v, $metadata);
 				$allValues[] = $v;
 
 			}
@@ -369,11 +357,7 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 		}
 		$v = SMWDataValueFactory::newTypeIDValue('_wpg');
 		$v->setValues($title->getDBkey(), $ns, $title->getArticleID(), false, '', $title->getFragment());
-		foreach($metadata as $mdProperty => $mdValue) {
-			if (strpos($mdProperty, "_meta_") === 0) {
-				$v->setMetadata(substr($mdProperty,6), explode("|||",$mdValue));
-			}
-		}
+		$this->setMetadata($v, $metadata);
 		return $v;
 
 	}

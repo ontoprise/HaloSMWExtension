@@ -122,6 +122,11 @@ function enableLinkedData() {
    	
     //--- Autoloading for libraries ---
 	$wgAutoloadClasses['ARC2'] = $lodgIP . '/libs/arc/ARC2.php';
+	
+	// register query printers
+	global $smwgResultFormats;
+	$smwgResultFormats['ld_table'] = 'LODMetadataTablePrinter';
+	$wgAutoloadClasses['LODMetadataTablePrinter'] = $lodgIP . '/includes/LODWikiFrontend/LOD_MetadataTablePrinter.php';
 
     return true;
 }
