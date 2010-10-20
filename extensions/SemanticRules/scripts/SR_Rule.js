@@ -308,11 +308,12 @@ getRuleTypes: function() {
 		case 102: //properties
 			var hasType = gLanguage.getMessage('HAS_TYPE', 'cont');
 			var page = gLanguage.getMessage('TYPE_PAGE').toLowerCase();
+			var pagewons = gLanguage.getMessage('TYPE_PAGE_WONS').toLowerCase();
 			var type = this.wtp.getRelation(hasType);
 			if (type) {
 				type = type[0].getValue().toLowerCase();
 			}
-			if (type == null || type == page) {
+			if (type == null || type == page || type == pagewons) {
 				// object property
 				this.typeMap = [gsrLanguage.getMessage('RULE_TYPE_DEFINITION'), "Definition",
 				                gsrLanguage.getMessage('RULE_TYPE_PROP_CHAINING'), 'Property chaining'];
