@@ -1,13 +1,19 @@
 Collaboration extension ChangeLog
 =================================
 
-VERSION 1.X
+VERSION 1.5.2 (version number adjusted)
 
   FEATURES:
 	FR #12230: Added a global var (in CE_Initialize.php) to enable/disable the rating mechanism
 	FR #12417: Clicking on the link "Hide comments" will cause all comments to be hidden and only the top "menue" box will be present
+	FR #12420: User can now change the kind of displaying comments. Therefor the views "flat" and "threaded" are implemented.
+	FR #12417: Comments can now be toggled
+	FR #11923: Comment deletion is now done via overlay and ajax without breaking the workflow.
+	FR #12232: Added an "Edit" option. The user is now able to edit existing comments using a fancy form.
+	FR #12231: Added a "Reply" option. The user is now able to reply to existing comments.
 
   CHANGES:
+	FR #12228: User name in the comment form is now clickable (user page)
 	FR #12230: If no comment is present on the current page only an icon and the "Add comment" link are displayed
 	FR #12230: Line breaks and line feeds are correct interpreted
 	FR #12230: The final comment of the user should be formatted exactly the same as it looks like in the comment creation box
@@ -18,7 +24,9 @@ VERSION 1.X
 	General Code changes
 
   BUGFIXES:
-	Issue 12226 -  After selecting a rating i cant deselect it
+	Use 'formatnum' magic word to prevent crashes with different decimal separators 
+	Issue 12226: After selecting a rating i cant deselect it
+	Issue 12768: Format the average rating number to work correctly with german language settings
 	Adjusted path for autocompletion icons
 
 
@@ -34,6 +42,6 @@ VERSION 1.20
 
 
   BUGFIXES:
-	12278 - IE < version 8 throws errors due to supernumerous comma
+	Issue 12278: IE < version 8 throws errors due to supernumerous comma
 
 

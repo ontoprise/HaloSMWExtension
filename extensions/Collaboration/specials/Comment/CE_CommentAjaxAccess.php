@@ -34,6 +34,7 @@ EOT;
 global $wgAjaxExportList;
 
 $wgAjaxExportList[] = 'cef_comment_createNewPage';
+$wgAjaxExportList[] = 'cef_comment_editPage';
 $wgAjaxExportList[] = 'cef_comment_deleteComment';
 
 
@@ -50,28 +51,20 @@ class CECommentAjax {
  * @return xml
  * 
  */
-function cef_comment_createNewPage( $wikiurl, $wikiPath, $pageName, $pageContent, 
-	$userName, $userPassword, $domain ) {
+function cef_comment_createNewPage( $pageName, $pageContent) {
 
-	
 	$pageName = CECommentUtils::unescape( $pageName );
 	$pageContent = CECommentUtils::unescape( $pageContent );	
-		
-	if ( !$wikiurl || $wikiurl == '' ) {
-		// no wikipath given -> must be local!
-		return CEComment::createLocalComment($pageName, $pageContent);
-	} else {
-		//remote!
-		if (!$wikiPath || $wikiPath = '' )
-			return '<xml>wikiurl entered but no wikipath!</xml>';
-		else {
-			// create and check(?) credentials
-			
-			return CEComment::createRemoteComment( $wikiurl, $wikiPath, $pageName, $pageContent, $userCredentials);
-		}
-	}
-	return CECommentUtils::createXMLResponse('sth went wrong here','0', $pageName);
+	return CEComment::createComment($pageName, $pageContent);
 }
+
+function cef_comment_editPage( $pageName, $pageContent) {
+
+	$pageName = CECommentUtils::unescape( $pageName );
+	$pageContent = CECommentUtils::unescape( $pageContent );	
+	return CEComment::createComment($pageName, $pageContent, true);
+}
+
 
 function cef_comment_deleteComment($pageName) {
 	$pageName = CECommentUtils::unescape($pageName);
@@ -101,14 +94,7 @@ function cef_comment_deleteComment($pageName) {
  * @param $section
  * @return unknown_type
  */
-function cef_comment_getPageContent( $wikiurl, $wikiPath, $pagename, $revision, $section ) {
-	
-	if ( !$wikiurl || $wikiurl == '' )
-		// no wikipath given -> must be local!
-		return CEComment::createLocalComment($pagexml);
-	else
-		if (!$wikiPath || $wikiPath = '' )
-			return 'wikiurl entered but no wikipath!';
-	
+function cef_comment_getPageContent($pagename, $revision, $section ) {
+//	return CEComment::createComment($pagexml);
 	return "xml";
 }

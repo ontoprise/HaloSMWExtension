@@ -172,6 +172,7 @@ END;
 		
 		#user#
 		$currentUser = $wgUser->getName();
+		
 		$ns = MWNamespace::getCanonicalName(NS_USER);
 		$jsText .= "var ceUserNS = '$ns';";
 
@@ -179,7 +180,7 @@ END;
 			$userImageTitle = Title::newFromText('defaultuser.gif', NS_FILE);
 			$userIsSysopJSText = 'var cegUserIsSysop = false;';
 			if($userImageTitle->exists()){
-				$image = Image::newFromTitle($userImageTitle);
+				$image = wfLocalFile($userImageTitle);
 				$userImgSrc = $image->getURL();
 			}
 		} else {
@@ -187,7 +188,7 @@ END;
 			SMWQueryProcessor::processFunctionParams(array("[[".$ns.":".$wgUser->getName()."]]", "[[User_image::+]]", "?User_image=")
 				,$querystring,$params,$printouts);
 			$queryResult = explode("|",
-			SMWQueryProcessor::getResultFromQueryString($querystring,$params,
+				SMWQueryProcessor::getResultFromQueryString($querystring,$params,
 				$printouts, SMW_OUTPUT_WIKI));
 
 			unset($queryResult[0]);
@@ -243,7 +244,13 @@ END;
 							'src' => $cegScriptPath . '/skins/Comment/icons/good_inactive.png',
 							'onClick' => 'ceCommentForm.switchRating(\'#collabComFormRating3\',1);' )) .
 					XML::closeElement('span') .
-				XML::closeElement('div'); 
+				XML::closeElement('div');
+
+		$script =<<<END
+<script type="text/javascript">
+var wgCEEnableRating = true;</script>
+END;
+		SMWOutputs::requireHeadItem('Collaboration', $script);  
 		}
 
 		$html = XML::openElement( 'div', array( 'id' => 'collabComFormHeader' )) .
@@ -257,7 +264,9 @@ END;
 			XML::openElement('div', array('id' => 'collabComFormRight')) .
 				XML::openElement( 'div', array( 'id' => 'collabComFormUser') ) .
 					'<span class="userkey">' .wfMsg('ce_cf_author') . '</span>' . 
-					'<span class="uservalue">' . $currentUser . '</span>' .
+					'<span class="uservalue">' . 
+						$parser->parse('[['.$wgUser->getUserPage()->getPrefixedText().'|'.$currentUser.']]',
+							$parser->mTitle, new ParserOptions(), false, true)->getText() . '</span>' .
 				XML::closeElement('div') .
 				$ratingHTML .
 				XML::openElement('div', array( 'id' => 'collabComFormHelp')) .

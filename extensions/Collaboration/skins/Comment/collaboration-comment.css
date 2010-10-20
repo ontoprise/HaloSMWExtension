@@ -32,7 +32,7 @@ div.collabComUser {
 
 div.collabComUserName {
 	display: inline;
-	color: blue;
+	color: #116988;
 }
 
 div.collabComDate {
@@ -60,7 +60,7 @@ div.collabComText {
 }
 
 div.collabComRatingIcon img {
-	vertical-align: middle;
+	vertical-align: text-bottom;
 }
 
 /* for Template:ShowCommentsIntern
@@ -84,13 +84,8 @@ span.collabComInternComment {
 	padding-left: 5px;
 }
 
-span#collabComToggle {
-	color: blue;
-	cursor: pointer;
-}
-
-span#collabComFormToggle {
-	color: blue;
+span#collabComToggle,span#collabComFormToggle {
+	color: #116988;
 	cursor: pointer;
 }
 
@@ -110,10 +105,6 @@ div.collabComInternRatingIcon {
  * This is used as result printer template for
  * the query of existing comments
  */
-div#collabComResults {
-	
-}
-
 span#collabComToggleView {
 	color: grey;
 }
@@ -124,7 +115,6 @@ div.collabComResInfo,div.collabComResInfoSuper {
 
 div.collabComRes {
 	border: 1px solid lightgrey;
-	background-color: #F2F2F2;
 	margin: 5px 0px;
 	padding: 3px;
 	min-height: 50px;
@@ -139,17 +129,13 @@ div.collabComResPerson {
 	float: left;
 }
 
-div.collabComResPerson img {
-	
-}
-
 div.collabComResRight {
 	margin-left: 55px;
 }
 
 div.collabComResUsername {
 	display: inline;
-	color: blue;
+	color: #116988;
 }
 
 div.collabComResDate {
@@ -180,11 +166,27 @@ div.collabComResRatingIcon {
 }
 
 div.collabComResRatingIcon img {
-	vertical-align: middle;
+	vertical-align: text-bottom;
 }
 
 div.collabComResText {
 	padding-top: 5px;
+}
+div.collabComReply {
+	display : inline;
+	color: #116988;
+	cursor: pointer;
+}
+div.collabComReply:hover {
+	text-decoration:underline;
+}
+div.collabComDelSelected {
+	background-color: #FAFAD2;
+}
+
+img.collabComEditImg,img.collabComDeleteImg,img.collabComReplyImg {
+	padding: 0 0 0 5px;
+	vertical-align: text-bottom;
 }
 
 /* Comment form */
@@ -215,6 +217,7 @@ span#collabComFormHeaderText:hover {
 }
 
 form#collabComForm {
+	border: 1px solid lightgrey;
 	border-bottom: 1px solid grey;
 	border-collapse: collapse;
 	width: 100%;
@@ -249,7 +252,7 @@ div#collabComFormUser span.userkey {
 }
 
 div#collabComFormUser span.uservalue {
-	color: blue;
+	color: #116988;
 	margin-left: 5px;
 }
 
@@ -267,7 +270,7 @@ span#collabComFormRadiobuttons { /*float:right;*/
 .collabComFormRatingImg {
 	padding: 0 5px;
 	cursor: pointer;
-	vertical-align: middle;
+	vertical-align: text-bottom;
 }
 
 /* the textarea (comment content) */
@@ -298,7 +301,7 @@ div#collabComFormHelp span {
 }
 
 /* normal status messages from AJAX response */
-#collabComFormMessage {
+#collabComFormMessage,#collabComEditFormMessage {
 	border: 1px dashed grey;
 	padding: 5px 3px;
 	margin-top: 2px;
@@ -348,4 +351,22 @@ div#collabComFormHelp span {
 	top: 0px;
 	left: 0px;
 	display: none;
+}
+
+/* the edit form */
+div#collabComEditFormRating {
+	padding: 5px;
+	height: 32px;
+	border: 1px solid lightgrey;
+	background-color: #f7f3f7;
+}
+
+span#collabComEditFormRadiobuttons {
+	padding-left: 10px;
+}
+
+.collabComEditFormRatingImg {
+	padding: 0 5px;
+	cursor: pointer;
+	vertical-align: text-bottom;
 }

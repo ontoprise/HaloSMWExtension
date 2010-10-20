@@ -133,15 +133,22 @@ function cefSetupExtension() {
 function cefAddNonSpecialPageHeader(&$out) {
 	global $cegScriptPath;
 
+	cefAddJSLanguageScripts($out);
+	$out->addScript("<script type=\"text/javascript\" src=\"". $cegScriptPath .  "/scripts/overlay.js\"></script>");
 	$out->addScript("<script type=\"text/javascript\" src=\"". $cegScriptPath .  "/scripts/Comment/CE_Comment.js\"></script>");
 
-	cefAddJSLanguageScripts($out);
-	
 	$out->addLink(array(
 		'rel'   => 'stylesheet',
 		'type'  => 'text/css',
 		'media' => 'screen, projection',
 		'href'  => $cegScriptPath. '/skins/Comment/collaboration-comment.css'
+	));
+
+	$out->addLink(array(
+		'rel'   => 'stylesheet',
+		'type'  => 'text/css',
+		'media' => 'screen, projection',
+		'href'  => $cegScriptPath. '/skins/Comment/collaboration-overlay.css'
 	));
 
 	return true;
@@ -202,7 +209,7 @@ function cefInitNamespaces() {
  */
 
 /**
- * Set up (possibly localised) names for HaloACL
+ * Set up (possibly localised) names for Collaboration
  */
 function cefAddMagicWords(&$magicWords, $langCode) {
 	#$magicWords['showcomments']     = array( 0, 'showcomments' );

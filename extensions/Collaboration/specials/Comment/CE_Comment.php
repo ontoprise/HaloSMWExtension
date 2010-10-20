@@ -44,62 +44,79 @@ class CEComment {
 	const PERMISSION_ERROR = 2;
 	
 	
-	public static function createLocalComment($pageName, $pageContent) {
+	public static function createComment($pageName, $pageContent, $editMode = false) {
 		global $wgUser, $cegEnableComment, $cegEnableCommentFor;
 		
 		$title = Title::newFromText($pageName);
-		$titleNSfixed = Title::makeTitle(CE_COMMENT_NS, $title);
-		
-		$article = new Article($titleNSfixed);
+		if($title->getNamespace() != CE_COMMENT_NS) {
+			$title = Title::makeTitle(CE_COMMENT_NS, $title);
+		}
+		$article = new Article($title);
 		
 		# check if comments are enabled #
 		if ( !isset($cegEnableComment) || !$cegEnableComment )
-			return CECommentUtils::createXMLResponse(wfMsg('ce_cf_disabled'), self::PERMISSION_ERROR, $pageName);
+			return CECommentUtils::createXMLResponse(
+				wfMsg('ce_cf_disabled'),
+				self::PERMISSION_ERROR, $pageName);
 		
 		# check authorization #
 		if ( !isset($cegEnableCommentFor)
 			|| ($cegEnableCommentFor == CE_COMMENT_NOBODY )
 			|| ( ($cegEnableCommentFor == CE_COMMENT_AUTH_ONLY) && !($wgUser->isAnon()) ) )
 		{
-			return CECommentUtils::createXMLResponse(wfMsg('ce_cf_disabled'), self::PERMISSION_ERROR, $pageName);
+			return CECommentUtils::createXMLResponse(
+				wfMsg('ce_cf_disabled'),
+				self::PERMISSION_ERROR, $pageName);
 		} else {
 			//user is allowed
-			if ($article->exists()) {
-				return CECommentUtils::createXMLResponse(wfMsg('ce_comment_exists', $pageName), self::COMMENT_ALREADY_EXISTS, $pageName);
+			if ($article->exists() && !$editMode) {
+				return CECommentUtils::createXMLResponse(
+					wfMsg('ce_comment_exists', $pageName),
+					self::COMMENT_ALREADY_EXISTS, $pageName);
 			}
 			if(!$title->userCan('edit')) {
-				return CECommentUtils::createXMLResponse(wfMsg('ce_com_cannot_create'), self::PERMISSION_ERROR, $pageName);
+				return CECommentUtils::createXMLResponse(
+					wfMsg('ce_com_cannot_create'),
+					self::PERMISSION_ERROR, $pageName);
 			} else {
-				$summary = wfMsg('ce_com_edit_sum');
+				
+				// Insert current Date
+				$date = new DateTime();
+				$dateString = $date->format('c');
+				if($editMode) {
+					// use the original DATE!!!
+					SMWQueryProcessor::processFunctionParams(array("[[".$pageName."]]", "?Has comment date=")
+						,$querystring,$params,$printouts);
+					$queryResult = explode("|",
+						SMWQueryProcessor::getResultFromQueryString($querystring,$params,
+						$printouts, SMW_OUTPUT_WIKI));
+					//just get the first property value and use this
+					if(isset($queryResult[0])) {
+						// see '/extensions/SemanticMediaWiki/includes/SMW_DV_Time.php'
+						// [...] For export, times are given without timezone information. [...]
+						$date = new Datetime($queryResult[0], new DateTimeZone('UTC'));
+						$dateString = $date->format('c');
+					}
+					$responseText = wfMsg('ce_com_edited');
+					$summary = wfMsg('ce_com_edit_sum'); 
+				} else {
+					$responseText = wfMsg('ce_com_created');
+					$summary = wfMsg('ce_com_create_sum');
+				}
+				$pageContent = str_replace('##DATE##', $dateString, $pageContent);
 				$article->doEdit( $pageContent, $summary );
 
 				if($article->exists()) {
-					return CECommentUtils::createXMLResponse(wfMsg('ce_com_created'/*, $pageName*/), self::SUCCESS, $pageName);
+					return CECommentUtils::createXMLResponse(
+						$responseText,
+						self::SUCCESS, $pageName);
 				} else {
-					return CECommentUtils::createXMLResponse(wfMsg('ce_com_cannot_create'), self::PERMISSION_ERROR, $pageName);
+					return CECommentUtils::createXMLResponse(
+						wfMsg('ce_com_cannot_create'),
+						self::PERMISSION_ERROR, $pageName);
 				}
 			}
 		}
-	}
-	
-	public static function createRemoteComment($wikiurl, $wikiPath, $pagename, $pageContent, $userCredentials) {
-		
-		//we have to use cURL to get an edit token if wikiuser is given
-
-		return CECommentUtils::createXMLResponse('everything ok', '1');
-	}
-
-	/**
-	 * Delete a list of comment articles
-	 * 
-	 * @param $relCommentArticleList
-	 * @return boolean
-	 * 		false: one or more comment articles could not be deleted
-	 * 		true: everythiny is fine
-	 */
-	function deleteRelatedCommentArticles ($relCommentArticleList) {
-		
-		return true;
 	}
 }
 

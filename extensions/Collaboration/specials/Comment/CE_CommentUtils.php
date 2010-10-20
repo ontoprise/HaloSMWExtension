@@ -77,7 +77,7 @@ class CECommentUtils {
 	 * @param <string> javascript-escaped string
 	 * @return <string> unescaped string
 	 */
-	public function unescape($source) {
+	public static function unescape($source) {
 		$decodedStr = '';
 		$pos = 0;
 		$len = strlen ($source);

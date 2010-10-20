@@ -23,21 +23,20 @@
 *
 */
 
-var CELanguage = Class.create();
+function CELanguage() {
 
 /**
  * This class provides language dependent strings for an identifier.
  * 
  */
-CELanguage.prototype = {
 
 	/**
 	 * @public
 	 * 
 	 * Constructor.
 	 */
-	initialize: function() {
-	},
+	this.initialize = function() {
+	};
 
 	/*
 	 * @public
@@ -50,7 +49,7 @@ CELanguage.prototype = {
 	 * @return string
 	 * 			The language dependent message for the given ID.
 	 */
-	getMessage: function(id, type) {
+	this.getMessage = function(id, type) {
 		switch (type) {
 			case "user":
 				var msg = wgCEUserLanguageStrings[id];
@@ -82,10 +81,16 @@ CELanguage.prototype = {
 		msg = msg.replace(/\$u/g,wgUserName);
 		msg = msg.replace(/\$s/g,wgServer);
 		return msg;
-	}
+	};
 	
 }
 
 // Singleton of this class
+var ceLanguage;
 
-var ceLanguage = new CELanguage();
+//Initialize if page is loaded
+$jq(document).ready(
+	function(){
+		ceLanguage = new CELanguage();
+	}
+);

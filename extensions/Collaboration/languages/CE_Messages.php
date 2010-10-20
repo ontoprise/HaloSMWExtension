@@ -63,9 +63,11 @@ $messages['en'] = array(
 
 	/* comment processing */
 	'ce_com_cannot_create'			=> 'Can not create comment.',
-	'ce_com_edit_sum'				=> 'This comment article was created by Collaboration Extension.',
+	'ce_com_create_sum'				=> 'This comment article was created by Collaboration Extension.',
+	'ce_com_edit_sum'				=> 'This comment article was edited by Collaboration Extension.',
 	'ce_comment_exists'				=> 'Comment article "$1" already exists.',
 	'ce_com_created'				=> 'Comment article successfully created.',
+	'ce_com_edited'					=> 'Comment article successfully edited.',
 	'ce_nothing_deleted'			=> 'No comment deleted.',
 	'ce_comment_delete_reason'		=> 'Comment has been deleted via Collaboration GUI.',
 	'ce_comment_deletion_successful'=> 'Comment has been successfully deleted.',
@@ -111,9 +113,11 @@ $messages['de'] = array(
 
 	/* comment processing */
 	'ce_com_cannot_create'			=> 'Kann Kommentar nicht erstellen.',
-	'ce_com_edit_sum'				=> 'Dieser Artikel wurde von der Collaboration Extension erstellt.',
+	'ce_com_create_sum'				=> 'Dieser Artikel wurde von der Collaboration Extension erstellt.',
+	'ce_com_edit_sum'				=> 'Dieser Artikel wurde von der Collaboration Extension editiert.',
 	'ce_comment_exists'				=> 'Kommentar Artikel "$1" bereits vorhanden.',
 	'ce_com_created'				=> 'Kommentar Artikel erfolgreich erstellt.',
+	'ce_com_edited'					=> 'Kommentar Artikel erfolgreich editiert.',
 	'ce_nothing_deleted'			=> 'Kein Kommentar gelöscht.',
 	'ce_comment_delete_reason'		=> 'Kommentar wurde per Collaboration GUI gelöscht.',
 	'ce_comment_deletion_successful'=> 'Kommentar wurde erfolgreich gelöscht.',
