@@ -61,11 +61,11 @@ Index: extensions/SemanticMediaWiki/includes/SMW_DataValue.php
 +	}
 +
 +	public function getMetadata($mdProperty) {
-+		return $this->m_metadata[$mdProperty];
++		return array_key_exists($mdProperty, $this->m_metadata) ? $this->m_metadata[$mdProperty] : '';
 +	}
 +
 +	public function getMetadataType($mdProperty) {
-+		return $this->m_metadataTypes[$mdProperty];
++		return array_key_exists($mdProperty, $this->m_metadataTypes) ? $this->m_metadataTypes[$mdProperty] : '';
 +	}
 +
 +	public function getMetadataMap() {
