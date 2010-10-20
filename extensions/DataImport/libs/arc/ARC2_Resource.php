@@ -6,7 +6,7 @@
  * @license http://arc.semsol.org/license
  * @homepage <http://arc.semsol.org/>
  * @package ARC2
- * @version 2009-11-26
+ * @version 2010-02-23
 */
 
 ARC2::inc('Class');
@@ -17,10 +17,6 @@ class ARC2_Resource extends ARC2_Class {
     parent::__construct($a, $caller);
   }
   
-  function ARC2_Resource($a = '', &$caller) {
-    $this->__construct($a, $caller);
-  }
-
   function __init() {
     parent::__init();
     $this->uri = '';
@@ -52,7 +48,7 @@ class ARC2_Resource extends ARC2_Class {
     if (isset($os['value'])) $os = array($os);
     /* list of values */
     foreach ($os as $i => $o) {
-      if (!is_array($o)) $os[i] = array('value' => $o, 'type' => 'literal');
+      if (!is_array($o)) $os[$i] = array('value' => $o, 'type' => 'literal');
     }
     $this->index[$s][$this->expandPName($p)] = $os;
   }

@@ -1,11 +1,12 @@
 <?php
-/*
-homepage: http://arc.semsol.org/
-license:  http://arc.semsol.org/license
-
-class:    ARC2 SPARQL Parser
-author:   Benjamin Nowack
-version:  2009-10-05
+/**
+ * ARC2 SPARQL Parser
+ *
+ * @author Benjamin Nowack
+ * @license <http://arc.semsol.org/license>
+ * @homepage <http://arc.semsol.org/>
+ * @package ARC2
+ * @version 2010-04-11
 */
 
 ARC2::inc('TurtleParser');
@@ -16,10 +17,6 @@ class ARC2_SPARQLParser extends ARC2_TurtleParser {
     parent::__construct($a, $caller);
   }
   
-  function ARC2_SPARQLParser($a = '', &$caller) {
-    $this->__construct($a, $caller);
-  }
-
   function __init() {
     parent::__init();
     $this->bnode_prefix = $this->v('bnode_prefix', 'arc'.substr(md5(uniqid(rand())), 0, 4).'b', $this->a);
@@ -29,7 +26,7 @@ class ARC2_SPARQLParser extends ARC2_TurtleParser {
 
   /*  */
 
-  function parse($q, $src = '') {
+  function parse($q, $src = '', $iso_fallback = 'ignore') {
     $this->setDefaultPrefixes();
     $this->base = $src ? $this->calcBase($src) : ARC2::getRequestURI();
     $this->r = array(
@@ -761,13 +758,17 @@ class ARC2_SPARQLParser extends ARC2_TurtleParser {
     }
   }
 
-  /* 70.. */
+  /* 70.. @@sync with TurtleParser */
   
   function xIRI_REF($v) {
     if (($r = $this->x('\<(\$\{[^\>]*\})\>', $v)) && ($sub_r = $this->xPlaceholder($r[1]))) {
       return array($r[1], $r[2]);
     }
     elseif ($r = $this->x('\<([^\<\>\s\"\|\^`]*)\>', $v)) {
+      return array($r[1] ? $r[1] : true, $r[2]);
+    }
+    /* allow reserved chars in obvious IRIs */
+    elseif ($r = $this->x('\<(https?\:[^\s][^\<\>]*)\>', $v)) {
       return array($r[1] ? $r[1] : true, $r[2]);
     }
     return array(0, $v);
