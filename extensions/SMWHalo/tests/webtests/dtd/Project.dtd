@@ -6,5 +6,4 @@ Do not edit it else you risk to lose your changes.
 -->
 
 <!ENTITY goToLogin SYSTEM "../includes/goToLogin.xml">
-<!ENTITY goToOntologyBrowser SYSTEM "../includes/goToOntologyBrowser.xml">
 
