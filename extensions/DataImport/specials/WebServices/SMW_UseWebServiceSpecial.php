@@ -47,7 +47,7 @@ class SMWUseWebServiceSpecial extends SpecialPage {
 	 * This method constructs the special page for defining webservices
 	 *
 	 */
-	public function execute() {
+	public function execute($par) {
 		global $wgRequest, $wgOut, $smwgDIIP;
 
 		require_once($smwgDIIP . '/specials/WebServices/SMW_WSStorage.php');

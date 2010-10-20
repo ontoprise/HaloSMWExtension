@@ -40,6 +40,7 @@ class TermImportUpdateBot extends GardeningBot {
 
 	function __construct() {
 		//todo:register termimportupdatebot
+		//define('SMWH_FORCE_TS_UPDATE', true);
 		parent::GardeningBot("smw_termimportupdatebot");
 	}
 
@@ -88,6 +89,7 @@ public function getImageDirectory() {
 		SMWQueryProcessor::getResultFromQueryString($querystring,$params,
 			$printouts, SMW_OUTPUT_WIKI));
 
+		
 		unset($queryResult[0]);
 
 		$necessaryTermImports = array();

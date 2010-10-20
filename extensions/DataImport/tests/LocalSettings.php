@@ -9,6 +9,7 @@ require_once("$IP/extensions/ScriptManager/SM_Initialize.php");
 
 include_once('extensions/SMWHalo/includes/SMW_Initialize.php');
 enableSMWHalo('SMWHaloStore2', 'SMWTripleStoreQuad', 'http://halowiki/ob');
+//enableSMWHalo('SMWHaloStore2');
 $smwgWebserviceEndpoint='localhost:8091';
 
 include_once('extensions/SemanticGardening/includes/SGA_GardeningInitialize.php');

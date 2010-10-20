@@ -13,9 +13,12 @@ class TestWikipediaUltrapediaMerger extends PHPUnit_Framework_TestCase {
 			$et = $this->getEditToken();
 		}  catch (Exception $e){
 			echo('\r\nWUM Exception:\r\n');
-			print_r($e);			
+			art();
+			//print_r($e);			
 		}
+		
 		list($originalWPText, $newWPText, $currentUPText) = $this->getArticleContent();
+		
 		$this->writeArticles(array($originalWPText, $currentUPText, $newWPText), $et);
 		
 		$result = $this->getWikiArticleContent("Talk:Main_Page");
@@ -312,7 +315,7 @@ function testWUMCombinedSuccessEmbeddedIntroAndOutro(){
 		foreach($texts as $text){
 			$param = "action=edit&title=Talk:Main_Page&summary=Hello%20World&text=$text&token=$et";
 			$editArticle = $cc->post($this->url."api.php", $param);
-			//print_r($editArticle);
+			//file_put_contents("d://res.html", print_r($editArticle, true));
 		}
 	}
 	
@@ -415,7 +418,13 @@ function testWUMCombinedSuccessEmbeddedIntroAndOutro(){
 		
 		$loginXML = $cc->post($this->url."api.php","action=login&lgname=".$this->user."&lgpassword=".$this->pw."&format=xml");
 		
+		$loginXML = substr($loginXML, strpos($loginXML, 'token="') + strlen('token="'));
+		$loginXML = substr($loginXML, 0, strpos($loginXML, '"'));
+		
+		$loginXML = $cc->post($this->url."api.php","action=login&lgname=".$this->user."&lgpassword=".$this->pw."&format=xml&lgtoken=".$loginXML);
+		
 		$editToken = $cc->post($this->url."api.php","action=query&prop=info|revisions&intoken=edit&titles=Main%20Page&format=xml");
+		
 		$editToken = substr($editToken, strpos($editToken, "<?xml"));
 		
 		$domDocument = new DOMDocument();
@@ -496,6 +505,7 @@ class cURL {
 		curl_setopt($process, CURLOPT_FOLLOWLOCATION, 1);
 		curl_setopt($process, CURLOPT_POST, 1);
 		$return = curl_exec($process);
+		
 		curl_close($process);
 		return $return;
 	}

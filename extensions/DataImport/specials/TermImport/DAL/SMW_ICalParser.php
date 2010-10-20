@@ -47,7 +47,7 @@ class ICalParserForPOP3 {
 					break;
 				default:
 					unset ($field, $data, $prop_pos, $property);
-					if (ereg ("([^:]+):(.*)", $line, $line)){
+					if (@ ereg ("([^:]+):(.*)", $line, $line)){
 						$field = $line[1];
 						$data = $line[2];
 						$property = strtoupper($field);

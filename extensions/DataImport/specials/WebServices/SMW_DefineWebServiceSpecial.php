@@ -43,7 +43,7 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 	 * This method constructs the special page for defining webservices
 	 *
 	 */
-	public function execute() {
+	public function execute($par) {
 		global $wgRequest, $wgOut;
 
 		$wgOut->setPageTitle(wfMsg("definewebservice"));

@@ -1,12 +1,5 @@
 <?php
 
-/**
- * @file
- * @ingroup DIWUM
- *
- * @author Ingo Steinbauer
- */
-
 global $smwgDIIP;
 require_once ("$smwgDIIP/IAI/WUM/WUM_ThreeWayBasedMerger.php");
 require_once ("$smwgDIIP/IAI/WUM/WUM_SectionBasedMerger.php");
@@ -36,7 +29,9 @@ function wumInitExtension(){
  * @param unknown_type $resultArr
  * @return unknown_type
  */
-function wum_doAPIEdit(&$editPage, $text, &$resultArr){
+function wum_doAPIEdit($editPage, $text, &$resultArr){
+	file_put_contents("D://apixyz.txt", print_r($editPage, true));
+	
 	$title = $editPage->mArticle->getTitle()->getFullText();
 	$editPage->textbox1 =
 	WUMMergeController::getInstance()->merge($title, $text, $editPage->mArticle->getContent());

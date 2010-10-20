@@ -98,7 +98,7 @@ class TestWSTriplifier extends PHPUnit_Framework_TestCase {
 		
 		$this->assertGreaterThan(0, strpos($response, 'Das ist der deutsche'));
 		
-		$query = $sllPrefixes.' SELECT ?p ?o WHERE { a:OtherCompany ?p ?o . } LIMIT 200'; 
+		$query = $allPrefixes.' SELECT ?p ?o WHERE { a:OtherCompany ?p ?o . } LIMIT 200'; 
 		$response = $client->query($query, 'merge=false', $graphsURI."WS_59_62");
 		
 		$this->assertGreaterThan(0, strpos($response, 'Das ist der deutsche'));

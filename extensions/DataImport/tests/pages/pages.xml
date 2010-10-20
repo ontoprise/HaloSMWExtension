@@ -118,13 +118,13 @@ Consult the [http://meta.wikimedia.org/wiki/Help:Contents User's Guide] for info
     <title>WebService:TimeTestWSOnce</title>
     <id>5</id>
     <revision>
-      <id>13</id>
-      <timestamp>2009-05-28T13:38:36Z</timestamp>
+      <id>145</id>
+      <timestamp>2010-10-20T08:27:03Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
       </contributor>
       <text xml:space="preserve">&lt;WebService&gt;
-&lt;uri name=&quot;http://localhost/MashupWiki/extensions/DataImport/tests/DI_TimeTestWS.php&quot; /&gt;
+&lt;uri name=&quot;http://localhost/mediawiki/extensions/DataImport/tests/DI_TimeTestWS.php&quot; /&gt;
 &lt;protocol&gt;REST&lt;/protocol&gt;
 &lt;method name=&quot;get&quot; /&gt;
 &lt;result name=&quot;result&quot; &gt;
@@ -145,15 +145,13 @@ Consult the [http://meta.wikimedia.org/wiki/Help:Contents User's Guide] for info
     <title>WebService:TimeTestWSUnused</title>
     <id>6</id>
     <revision>
-      <id>6</id>
-      <timestamp>2009-05-26T12:09:08Z</timestamp>
+      <id>143</id>
+      <timestamp>2010-10-20T08:24:13Z</timestamp>
       <contributor>
-        <username>WikiSysop</username>
-        <id>1</id>
+        <ip>127.0.0.1</ip>
       </contributor>
-      <comment>New page: &lt;WebService&gt; &lt;uri name=&quot;http://localhost/MashupWiki/extensions/DataImport/tests/DI_TimeTestWS.php&quot; /&gt; &lt;protocol&gt;REST&lt;/protocol&gt; &lt;method name=&quot;get&quot; /&gt; &lt;result name=&quot;result&quot; &gt; &lt;part name=&quot;co...</comment>
       <text xml:space="preserve">&lt;WebService&gt;
-&lt;uri name=&quot;http://localhost/MashupWiki/extensions/DataImport/tests/DI_TimeTestWS.php&quot; /&gt;
+&lt;uri name=&quot;http://localhost/mediawiki/extensions/DataImport/tests/DI_TimeTestWS.php&quot; /&gt;
 &lt;protocol&gt;REST&lt;/protocol&gt;
 &lt;method name=&quot;get&quot; /&gt;
 &lt;result name=&quot;result&quot; &gt;
@@ -318,13 +316,13 @@ Jump to: navigation, search
     <title>WebService:TimeTestWSCreate</title>
     <id>14</id>
     <revision>
-      <id>18</id>
-      <timestamp>2009-06-02T14:20:21Z</timestamp>
+      <id>140</id>
+      <timestamp>2010-10-20T08:21:32Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
       </contributor>
       <text xml:space="preserve">&lt;WebService&gt;
-&lt;uri name=&quot;http://localhost/MashupWiki/extensions/DataImport/tests/DI_TimeTestWS.php&quot; /&gt;
+&lt;uri name=&quot;http://localhost/mediawiki/extensions/DataImport/tests/DI_TimeTestWS.php&quot; /&gt;
 &lt;protocol&gt;REST&lt;/protocol&gt;
 &lt;authentication type=&quot;http&quot; login=&quot;userlogin&quot; password=&quot;password&quot;/&gt;
 &lt;method name=&quot;get&quot; /&gt;
@@ -347,14 +345,13 @@ Jump to: navigation, search
     <title>WebService:TimeTestWSDelete</title>
     <id>15</id>
     <revision>
-      <id>19</id>
-      <timestamp>2009-06-02T15:33:05Z</timestamp>
+      <id>141</id>
+      <timestamp>2010-10-20T08:22:52Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
       </contributor>
-      <comment>New page: &lt;WebService&gt; &lt;uri name=&quot;http://localhost/MashupWiki/extensions/DataImport/tests/DI_TimeTestWS.php&quot; /&gt; &lt;protocol&gt;REST&lt;/protocol&gt; &lt;method name=&quot;get&quot; /&gt; &lt;parameter name=&quot;dontCare&quot; path=&quot;dontC...</comment>
       <text xml:space="preserve">&lt;WebService&gt;
-&lt;uri name=&quot;http://localhost/MashupWiki/extensions/DataImport/tests/DI_TimeTestWS.php&quot; /&gt;
+&lt;uri name=&quot;http://localhost/mediawiki/extensions/DataImport/tests/DI_TimeTestWS.php&quot; /&gt;
 &lt;protocol&gt;REST&lt;/protocol&gt;
 &lt;method name=&quot;get&quot; /&gt;
 &lt;parameter name=&quot;dontCare&quot; path=&quot;dontCare&quot; optional=&quot;true&quot;/&gt;
@@ -389,14 +386,13 @@ Jump to: navigation, search
     <title>WebService:TimeTestWSMove</title>
     <id>17</id>
     <revision>
-      <id>22</id>
-      <timestamp>2009-06-02T16:08:45Z</timestamp>
+      <id>142</id>
+      <timestamp>2010-10-20T08:23:39Z</timestamp>
       <contributor>
-        <username>WikiSysop</username>
-        <id>1</id>
+        <ip>127.0.0.1</ip>
       </contributor>
       <text xml:space="preserve">&lt;WebService&gt;
-&lt;uri name=&quot;http://localhost/MashupWiki/extensions/DataImport/tests/DI_TimeTestWS.php&quot; /&gt;
+&lt;uri name=&quot;http://localhost/mediawiki/extensions/DataImport/tests/DI_TimeTestWS.php&quot; /&gt;
 &lt;protocol&gt;REST&lt;/protocol&gt;
 &lt;method name=&quot;get&quot; /&gt;
 &lt;parameter name=&quot;dontCare&quot; path=&quot;dontCare&quot; optional=&quot;true&quot;/&gt;
@@ -585,14 +581,13 @@ Jump to: navigation, search
     <title>WebService:TimeTestWSEdit</title>
     <id>27</id>
     <revision>
-      <id>37</id>
-      <timestamp>2009-06-08T11:16:32Z</timestamp>
+      <id>144</id>
+      <timestamp>2010-10-20T08:26:11Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
       </contributor>
-      <comment>New page: &lt;WebService&gt; &lt;uri name=&quot;http://localhost/MashupWiki/extensions/DataImport/tests/DI_TimeTestWS.php&quot; /&gt; &lt;protocol&gt;REST&lt;/protocol&gt; &lt;method name=&quot;get&quot; /&gt; &lt;parameter name=&quot;dontCare&quot; path=&quot;dontC...</comment>
       <text xml:space="preserve">&lt;WebService&gt;
-&lt;uri name=&quot;http://localhost/MashupWiki/extensions/DataImport/tests/DI_TimeTestWS.php&quot; /&gt;
+&lt;uri name=&quot;http://localhost/mediawiki/extensions/DataImport/tests/DI_TimeTestWS.php&quot; /&gt;
 &lt;protocol&gt;REST&lt;/protocol&gt;
 &lt;method name=&quot;get&quot; /&gt;
 &lt;parameter name=&quot;dontCare&quot; path=&quot;dontCare&quot; optional=&quot;true&quot;/&gt;
@@ -630,15 +625,13 @@ Jump to: navigation, search
     <title>WebService:TimeTestWSUse</title>
     <id>30</id>
     <revision>
-      <id>42</id>
-      <timestamp>2009-06-08T12:23:01Z</timestamp>
+      <id>146</id>
+      <timestamp>2010-10-20T08:27:35Z</timestamp>
       <contributor>
-        <username>WikiSysop</username>
-        <id>1</id>
+        <ip>127.0.0.1</ip>
       </contributor>
-      <comment>New page: &lt;WebService&gt; &lt;uri name=&quot;http://localhost/MashupWiki/extensions/DataImport/tests/DI_TimeTestWS.php&quot; /&gt; &lt;protocol&gt;REST&lt;/protocol&gt; &lt;method name=&quot;get&quot; /&gt; &lt;parameter name=&quot;dontCare&quot; path=&quot;dontC...</comment>
       <text xml:space="preserve">&lt;WebService&gt;
-&lt;uri name=&quot;http://localhost/MashupWiki/extensions/DataImport/tests/DI_TimeTestWS.php&quot; /&gt;
+&lt;uri name=&quot;http://localhost/mediawiki/extensions/DataImport/tests/DI_TimeTestWS.php&quot; /&gt;
 &lt;protocol&gt;REST&lt;/protocol&gt;
 &lt;method name=&quot;get&quot; /&gt;
 &lt;parameter name=&quot;dontCare&quot; path=&quot;dontCare&quot; optional=&quot;true&quot;/&gt;

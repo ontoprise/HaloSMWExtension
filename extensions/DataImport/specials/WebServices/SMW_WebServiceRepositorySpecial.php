@@ -49,7 +49,7 @@ class SMWWebServiceRepositorySpecial extends SpecialPage {
 	 * this methods constructs the special page webservice repository
 	 *
 	 */
-	public function execute() {
+	public function execute($par) {
 		global $wgRequest, $wgOut;
 
 		$wgOut->setPageTitle("Data Import Repository");
