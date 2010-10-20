@@ -765,8 +765,7 @@ Function configCustomizationsForNew
         nsExec::ExecToLog '"$INSTDIR\php\php.exe" "$INSTDIR\htdocs\mediawiki\extensions\SMWHaloHelp\maintenance\setup.php" --install'
     */
         DetailPrint "Import wiki database"
-        nsExec::ExecToLog ' "$INSTDIR\mysql\bin\mysql.exe" -u root --password=m8nix --execute="create database semwiki_en" '
-        nsExec::ExecToLog ' "$INSTDIR\mysql\bin\mysql.exe" -u root --password=m8nix semwiki_en < "$INSTDIR\smwplus_database.sql" '
+        nsExec::ExecToLog ' "$INSTDIR\import_smwplus_db.bat" "$INSTDIR" root m8nix semwiki_en "$INSTDIR\smwplus_database.sql" '
 FunctionEnd
 
 
