@@ -1009,7 +1009,7 @@ Section "Uninstall"
     ;Call un.uninstallAsWindowsService
     
     ; Unregister scheduled task for lucene update
-    nsExec::ExecToLog 'schtasks /delete /TN "LuceneIndexUpdate"'
+    nsExec::ExecToLog 'schtasks /delete /TN "LuceneIndexUpdate" /F'
     
     # Delete all start menu entries
     Delete "$SMPROGRAMS\$MUI_TEMP\Uninstall.lnk"
