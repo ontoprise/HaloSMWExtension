@@ -46,10 +46,8 @@ if ( !defined( 'MEDIAWIKI' ) ) {
 class  HACLResultFilter  {
 	
 	//--- Constants ---
-//	const XY= 0;		// the result has been added since the last time
 		
 	//--- Private fields ---
-	private $mXY;    		//string: comment
 	
 	/**
 	 * Constructor for  HACLResultFilter
@@ -58,14 +56,10 @@ class  HACLResultFilter  {
 	 * 		Name of the notification
 	 */		
 	function __construct() {
-//		$this->mXY = $xy;
 	}
 	
 
 	//--- getter/setter ---
-//	public function getXY()           {return $this->mXY;}
-
-//	public function setXY($xy)               {$this->mXY = $xy;}
 	
 	//--- Public methods ---
 	
