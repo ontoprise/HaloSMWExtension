@@ -74,6 +74,14 @@ located in the zip-file containing this installer. The readme file contains impo
 !ifdef NOCOMPRESS
 SetCompress off
 !endif
+
+!macro GetWindowsVersion OUTPUT_VALUE
+    Call GetWindowsVersion
+    Pop `${OUTPUT_VALUE}`
+!macroend
+ 
+!define GetWindowsVersion '!insertmacro "GetWindowsVersion"'
+
 ;--------------------------------
 
 Name "${PRODUCT} v${VERSION}"
@@ -407,6 +415,7 @@ Section "Lucene search" lucene
         StrCpy $PHP "$INSTDIR\php\php.exe"
         StrCpy $MEDIAWIKIDIR "$INSTDIR\htdocs\mediawiki"
         
+        DetailPrint "Configure Lucene"
         ; dump db 
         nsExec::ExecToLog '"$PHP" "$MEDIAWIKIDIR\installer\changeVariable.php" in="template\dump.bat.template" out=dump.bat noslash=true php-path="$PHP" wiki-path="$MEDIAWIKIDIR" lucene-path="$INSTDIR\lucene"'
         nsExec::ExecToLog 'dump.bat'
@@ -428,10 +437,23 @@ Section "Lucene search" lucene
         nsExec::ExecToLog 'initUpdates.bat "$INSTDIR\mysql" semwiki_en root m8nix'
         
         ; Build Lucene index
+        DetailPrint "Build Lucene index"
         nsExec::ExecToLog 'buildall.bat smwplus_db.xml semwiki_en'
         
          ; Register scheduled task for lucene update
-        nsExec::ExecToLog 'schtasks /create /tn "LuceneIndexUpdate" /XML "$INSTDIR\lucene\schtask_desc.xml"'
+         ${GetWindowsVersion} $R0
+         ${If} $R0 == "7"
+         ${OrIf} $R0 == "Vista"
+         ${OrIf} $R0 == "2008"
+            DetailPrint "Add LuceneIndexUpdate as planned task for Windows 7/Vista/2008 Server"
+            nsExec::ExecToLog 'schtasks /create /tn "LuceneIndexUpdate" /XML "$INSTDIR\lucene\schtask_desc.xml"'
+         ${EndIf}
+         
+         ${If} $R0 == "XP"
+         ${OrIf} $R0 == "2003"
+            DetailPrint "Add LuceneIndexUpdate as planned task for Windows XP/2003 Server"
+            nsExec::ExecToLog 'schtasks /create /tn "LuceneIndexUpdate" /ru "SYSTEM" /tr "$INSTDIR\lucene\rebuildIndex.bat" /sc daily'
+         ${EndIf}
         
         ;change LocalSettings
         SetOutPath "$MEDIAWIKIDIR"
@@ -1412,3 +1434,92 @@ Function VersionCheck
   Pop $1
   Exch $0
 FunctionEnd
+
+; Returns windows version
+; Usage: ${GetWindowsVersion} $R0
+;
+; $R0 contains: 95, 98, ME, NT x.x, 2000, XP, 2003, Vista, 7 or '' (for unknown)
+Function GetWindowsVersion
+ 
+  Push $R0
+  Push $R1
+ 
+  ClearErrors
+ 
+  ReadRegStr $R0 HKLM \
+  "SOFTWARE\Microsoft\Windows NT\CurrentVersion" CurrentVersion
+ 
+  IfErrors 0 lbl_winnt
+ 
+  ; we are not NT
+  ReadRegStr $R0 HKLM \
+  "SOFTWARE\Microsoft\Windows\CurrentVersion" VersionNumber
+ 
+  StrCpy $R1 $R0 1
+  StrCmp $R1 '4' 0 lbl_error
+ 
+  StrCpy $R1 $R0 3
+ 
+  StrCmp $R1 '4.0' lbl_win32_95
+  StrCmp $R1 '4.9' lbl_win32_ME lbl_win32_98
+ 
+  lbl_win32_95:
+    StrCpy $R0 '95'
+  Goto lbl_done
+ 
+  lbl_win32_98:
+    StrCpy $R0 '98'
+  Goto lbl_done
+ 
+  lbl_win32_ME:
+    StrCpy $R0 'ME'
+  Goto lbl_done
+ 
+  lbl_winnt:
+ 
+  StrCpy $R1 $R0 1
+ 
+  StrCmp $R1 '3' lbl_winnt_x
+  StrCmp $R1 '4' lbl_winnt_x
+ 
+  StrCpy $R1 $R0 3
+ 
+  StrCmp $R1 '5.0' lbl_winnt_2000
+  StrCmp $R1 '5.1' lbl_winnt_XP
+  StrCmp $R1 '5.2' lbl_winnt_2003
+  StrCmp $R1 '6.0' lbl_winnt_vista
+  StrCmp $R1 '6.1' lbl_winnt_7 lbl_error
+ 
+  lbl_winnt_x:
+    StrCpy $R0 "NT $R0" 6
+  Goto lbl_done
+ 
+  lbl_winnt_2000:
+    Strcpy $R0 '2000'
+  Goto lbl_done
+ 
+  lbl_winnt_XP:
+    Strcpy $R0 'XP'
+  Goto lbl_done
+ 
+  lbl_winnt_2003:
+    Strcpy $R0 '2003'
+  Goto lbl_done
+ 
+  lbl_winnt_vista:
+    Strcpy $R0 'Vista'
+  Goto lbl_done
+ 
+  lbl_winnt_7:
+    Strcpy $R0 '7'
+  Goto lbl_done
+ 
+  lbl_error:
+    Strcpy $R0 ''
+  lbl_done:
+ 
+  Pop $R1
+  Exch $R0
+ 
+FunctionEnd
+ 
