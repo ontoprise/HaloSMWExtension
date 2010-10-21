@@ -38,7 +38,7 @@ class SGAGardening extends SpecialPage {
 		parent::__construct('Gardening');
 	}
 	
-	public function execute() {
+	public function execute($par) {
 		global $wgRequest, $wgOut, $wgUser;
 		$wgOut->setPageTitle(wfMsg('gardening'));
 		$gardeningLogPage = Title::newFromText(wfMsg('gardeninglog'), NS_SPECIAL);
