@@ -92,7 +92,7 @@ class WikiTypeToXSD {
 }
 
 class TSHelper {
-	public static function getTitleFromURI($sv) {
+	public static function getTitleFromURI($sv, $forceTitle = true) {
 
 		foreach (TSNamespaces::$ALL_NAMESPACES as $nsIndsex => $ns) {
 			if (stripos($sv, $ns) === 0) {
@@ -120,17 +120,22 @@ class TSHelper {
 
 		} else {
 			// any URI
-			if (strpos($sv, "#") !== false) {
-				$local = substr($sv, strpos($sv, "#")+1);
-			} else if (strrpos($sv, "/") !== false) {
-				$local = substr($sv, strrpos($sv, "/")+1);
+				
+			if ($forceTitle) {
+				if (strpos($sv, "#") !== false) {
+					$local = substr($sv, strpos($sv, "#")+1);
+				} else if (strrpos($sv, "/") !== false) {
+					$local = substr($sv, strrpos($sv, "/")+1);
+				} else {
+					return NULL;
+				}
+				return Title::newFromText($local, NS_MAIN);
 			} else {
-				return NULL;
+				return $sv;
 			}
-			return Title::newFromText($local, NS_MAIN);
 		}
 
-		return NULL;
+
 	}
 
 	public static function isLocalURI($uri) {
@@ -163,24 +168,55 @@ class TSHelper {
 
 		return array($uri, $title);
 	}
+
+	/**
+	 * Returns a local URI for the wiki graph of a given Title object.
+	 *
+	 * @param Title $title
+	 * @return string $uri
+	 */
+	public static function getUriFromTitle($title) {
+		global $smwgTripleStoreGraph;
+		$res= $smwgTripleStoreGraph;
+		if (strpos($res, -1) != '/')
+		$res .= '/';
+		$res .= TSNamespaces::getNSPrefix($title->getNamespace())
+		.'#'
+		.str_replace(' ', '_', $title->getText());
+		return $res;
+	}
 	
     /**
-     * Returns a local URI for the wiki graph of a given Title object.
+     * Escapes double quotes, backslash and line feeds for a SPARUL string literal.
      *
-     * @param Title $title
-     * @return string $uri
+     * @param string $literal
+     * @return string
      */
-	public static function getUriFromTitle($title) {
-        global $smwgTripleStoreGraph;
-        $res= $smwgTripleStoreGraph;
-        if (strpos($res, -1) != '/')
-            $res .= '/';
-        $res .= TSNamespaces::getNSPrefix($title->getNamespace())
-             .'#'
-             .str_replace(' ', '_', $title->getText());
-        return $res;        
+    public static function escapeForStringLiteral($literal) {
+        return str_replace(array("\\", "\"", "\n", "\r"), array("\\\\", "\\\"", "\\n" ,"\\r"), $literal);
     }
-	
+    
+    /**
+     * Set metadata values (if available)
+     *
+     *
+     * @param SMWDataValue $v
+     * @param array of SimpleXMLElement $metadata
+     */
+    public static function setMetadata(SMWDataValue $v, $metadata) {
+        if (!is_null($metadata) && $metadata !== '') {
+            foreach($metadata as $m) {
+                $name = (string) $m->attributes()->name;
+                $datatype = (string) $m->attributes()->datatype;
+                $mdValues = array();
+                foreach($m->value as $mdValue) {
+                    $mdValues[] = (string) $mdValue;
+                }
+                $v->setMetadata($name, $datatype, $mdValues);
+            }
+        }
+    }
+
 }
 
 
@@ -211,7 +247,7 @@ class TSNamespaces {
 	public static function getW3CPrefixes() { return self::$W3C_PREFIXES; }
 	public static $TSC_PREFIXES;
 	public static function getTSCPrefixes() { return self::$TSC_PREFIXES; }
-	
+
 	// general namespace suffixes for different namespaces
 	public static $CAT_NS_SUFFIX = "/category#";
 	public static $PROP_NS_SUFFIX = "/property#";
@@ -232,7 +268,7 @@ class TSNamespaces {
 
 		// use initialize flag because PHP classes do not have static initializers.
 		if (self::$initialized) return;
-		 
+			
 		self::$CAT_NS = $smwgTripleStoreGraph.self::$CAT_NS_SUFFIX;
 		self::$PROP_NS = $smwgTripleStoreGraph.self::$PROP_NS_SUFFIX;
 		self::$INST_NS = $smwgTripleStoreGraph.self::$INST_NS_SUFFIX;
@@ -255,9 +291,9 @@ class TSNamespaces {
 
 		self::$W3C_PREFIXES = 'PREFIX xsd:<'.self::$XSD_NS.'> PREFIX owl:<'.self::$OWL_NS.'> PREFIX rdfs:<'.
 		self::$RDFS_NS.'> PREFIX rdf:<'.self::$RDF_NS.'> ';
-		
-		self::$TSC_PREFIXES = "PREFIX tsctype:<".self::$TSCTYPE_NS."> "; 
-		
+
+		self::$TSC_PREFIXES = "PREFIX tsctype:<".self::$TSCTYPE_NS."> ";
+
 		// declare all other namespaces using ns_$index as prefix
 		$extraNamespaces = array_diff(array_keys($wgExtraNamespaces), array(NS_CATEGORY, SMW_NS_PROPERTY, SMW_NS_TYPE, NS_IMAGE, NS_HELP, NS_MAIN));
 		foreach($extraNamespaces as $nsIndex) {
@@ -283,61 +319,61 @@ class TSNamespaces {
 		elseif ($namespace == NS_HELP) return "help";
 		else return "ns_$namespace";
 	}
-	
+
 	/**
 	 * Returns the NS URI (without local name)
-	 * 
-	 * @param int $namespace index 
+	 *
+	 * @param int $namespace index
 	 */
-    public function getNSURI($namespace) {
-        global $smwgTripleStoreGraph;
-        return $smwgTripleStoreGraph."/".$this->getNSPrefix($namespace)."#";
-    }
-    
-    /**
-     * Returns the full IRI used by the TS for $t
-     * 
-     * @param Title $t
-     */
-    public function getFullIRI(Title $t) {
-    	global $smwgTripleStoreGraph;
-    	return "<".$smwgTripleStoreGraph."/".$this->getNSPrefix($t->getNamespace())."#".$t->getDBkey().">";
-    }
-    
-     /**
-     * Returns the full IRI used by the TS for $p
-     * 
-     * @param SMWPropertyValue $t
-     */
- 	public function getFullIRIFromProperty(SMWPropertyValue $p) {
-    	global $smwgTripleStoreGraph;
-    	return "<".$smwgTripleStoreGraph."/".$this->getNSPrefix(SMW_NS_PROPERTY)."#".$p->getDBkey().">";
-    }
-    
-    /**
-     * Converts prefix from into full URI form 
-     * 
-     * @param string $prefixForm
-     */
-    public function prefix2FullURI($prefixForm) {
-    	if (strpos($prefixForm, "#") === false) return $prefixForm;
-    	list($prefix, $local) = explode("#", $prefixForm);
-    	$local = ucfirst($local);
-    	if (self::$CAT_NS_SUFFIX == ("/".$prefix."#")) {
-    		return self::$CAT_NS.$local;
-    	} else if (self::$PROP_NS_SUFFIX == ("/".$prefix."#")) {
-    		return self::$PROP_NS.$local;
-    	} else if (self::$INST_NS_SUFFIX == ("/".$prefix."#")) {
-    		return self::$INST_NS.$local;
-    	} else if (self::$TYPE_NS_SUFFIX == ("/".$prefix."#")) {
-    		return self::$TYPE_NS.$local;
-    	} else if (self::$IMAGE_NS_SUFFIX == ("/".$prefix."#")) {
-    		return self::$IMAGE_NS.$local;
-    	} else if (self::$HELP_NS_SUFFIX == ("/".$prefix."#")) {
-    		return self::$HELP_NS.$local;
-    	} // FIXME: get other namespaces
-    	return $prefixForm;
-    }
+	public function getNSURI($namespace) {
+		global $smwgTripleStoreGraph;
+		return $smwgTripleStoreGraph."/".$this->getNSPrefix($namespace)."#";
+	}
+
+	/**
+	 * Returns the full IRI used by the TS for $t
+	 *
+	 * @param Title $t
+	 */
+	public function getFullIRI(Title $t) {
+		global $smwgTripleStoreGraph;
+		return "<".$smwgTripleStoreGraph."/".$this->getNSPrefix($t->getNamespace())."#".$t->getDBkey().">";
+	}
+
+	/**
+	 * Returns the full IRI used by the TS for $p
+	 *
+	 * @param SMWPropertyValue $t
+	 */
+	public function getFullIRIFromProperty(SMWPropertyValue $p) {
+		global $smwgTripleStoreGraph;
+		return "<".$smwgTripleStoreGraph."/".$this->getNSPrefix(SMW_NS_PROPERTY)."#".$p->getDBkey().">";
+	}
+
+	/**
+	 * Converts prefix from into full URI form
+	 *
+	 * @param string $prefixForm
+	 */
+	public function prefix2FullURI($prefixForm) {
+		if (strpos($prefixForm, "#") === false) return $prefixForm;
+		list($prefix, $local) = explode("#", $prefixForm);
+		$local = ucfirst($local);
+		if (self::$CAT_NS_SUFFIX == ("/".$prefix."#")) {
+			return self::$CAT_NS.$local;
+		} else if (self::$PROP_NS_SUFFIX == ("/".$prefix."#")) {
+			return self::$PROP_NS.$local;
+		} else if (self::$INST_NS_SUFFIX == ("/".$prefix."#")) {
+			return self::$INST_NS.$local;
+		} else if (self::$TYPE_NS_SUFFIX == ("/".$prefix."#")) {
+			return self::$TYPE_NS.$local;
+		} else if (self::$IMAGE_NS_SUFFIX == ("/".$prefix."#")) {
+			return self::$IMAGE_NS.$local;
+		} else if (self::$HELP_NS_SUFFIX == ("/".$prefix."#")) {
+			return self::$HELP_NS.$local;
+		} // FIXME: get other namespaces
+		return $prefixForm;
+	}
 
 	/**
 	 * Create a SPARQL PREFIX statement for unknown namespaces.

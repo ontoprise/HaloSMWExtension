@@ -192,7 +192,12 @@ class SMWTripleStore extends SMWStore {
 			$sparulCommands[] = "DELETE FROM <$smwgTripleStoreGraph> { $subject_iri ?p ?o. ?o $naryPropFrag#4> ?v.}";
 			$sparulCommands[] = "DELETE FROM <$smwgTripleStoreGraph> { $subject_iri ?p ?o. }";
 
-			$sparulCommands[] =  $prefixes."INSERT INTO <$smwgTripleStoreGraph> { ".$this->implodeTriples($triples)." }";
+			$tripleSerialization = "";
+			foreach($triples as $t) {
+				$tripleSerialization .= implode(" ", $t);
+				$tripleSerialization .= ". ";
+			}
+			$sparulCommands[] =  $prefixes."INSERT INTO <$smwgTripleStoreGraph> { ".$tripleSerialization." }";
 
 			if (isset($smwgEnableObjectLogicRules)) {
 				// delete old rules...
@@ -207,7 +212,7 @@ class SMWTripleStore extends SMWStore {
 					$ruleText = preg_replace("/[\n\r]/", " ", $ruleText);
 					$nativeText = $native ? "NATIVE" : "";
 					$activeText = !$active ? "INACTIVE" : "";
-					$sparulCommands[] = "INSERT $nativeText $activeText RULE $ruleID INTO <$smwgTripleStoreGraph> : \"".$this->escapeForStringLiteral($ruleText)."\" TYPE \"$type\"";
+					$sparulCommands[] = "INSERT $nativeText $activeText RULE $ruleID INTO <$smwgTripleStoreGraph> : \"".TSHelper::escapeForStringLiteral($ruleText)."\" TYPE \"$type\"";
 				}
 			}
 			$con->connect();
@@ -308,7 +313,7 @@ class SMWTripleStore extends SMWStore {
 					if ($value->getTypeID() == '_txt') {
 						$dbkeys = $value->getDBkeys();
 
-						$triples[] = array($subject_iri, $property_iri, "\"".$this->escapeForStringLiteral(array_shift($dbkeys))."\"^^xsd:string");
+						$triples[] = array($subject_iri, $property_iri, "\"".TSHelper::escapeForStringLiteral(array_shift($dbkeys))."\"^^xsd:string");
 
 					} elseif ($value->getTypeID() == '_wpg' || $value->getTypeID() == '_wpp' || $value->getTypeID() == '_wpc' || $value->getTypeID() == '_wpf') {
 						$object_iri = $this->tsNamespace->getFullIRI($value->getTitle());
@@ -333,7 +338,7 @@ class SMWTripleStore extends SMWStore {
 							if (is_null($xsdType)) {
 								$object = $this->tsNamespace->getFullIRI(Title::newFromDBkey($v1->getTitle()));
 							} else {
-								$object = "\"".$this->escapeForStringLiteral($firstValue)."\"^^$xsdType";
+								$object = "\"".TSHelper::escapeForStringLiteral($firstValue)."\"^^$xsdType";
 							}
 							$triples[] = array("_:".$bNodeCounter, "<$smwgTripleStoreGraph/property#0>", $object);
 						}
@@ -344,7 +349,7 @@ class SMWTripleStore extends SMWStore {
 							if (is_null($xsdType)) {
 								$object = $this->tsNamespace->getFullIRI(Title::newFromDBkey($v2->getTitle()));
 							} else {
-								$object = "\"".$this->escapeForStringLiteral($firstValue)."\"^^$xsdType";
+								$object = "\"".TSHelper::escapeForStringLiteral($firstValue)."\"^^$xsdType";
 							}
 							$triples[] = array("_:".$bNodeCounter, "<$smwgTripleStoreGraph/property#1>", $object);
 						}
@@ -355,7 +360,7 @@ class SMWTripleStore extends SMWStore {
 							if (is_null($xsdType)) {
 								$object = $this->tsNamespace->getFullIRI(Title::newFromDBkey($v3->getTitle()));
 							} else {
-								$object = "\"".$this->escapeForStringLiteral($firstValue)."\"^^$xsdType";
+								$object = "\"".TSHelper::escapeForStringLiteral($firstValue)."\"^^$xsdType";
 							}
 							$triples[] = array("_:".$bNodeCounter, "<$smwgTripleStoreGraph/property#2>", $object);
 						}
@@ -366,7 +371,7 @@ class SMWTripleStore extends SMWStore {
 							if (is_null($xsdType)) {
 								$object = $this->tsNamespace->getFullIRI(Title::newFromDBkey($v4->getTitle()));
 							} else {
-								$object = "\"".$this->escapeForStringLiteral($firstValue)."\"^^$xsdType";
+								$object = "\"".TSHelper::escapeForStringLiteral($firstValue)."\"^^$xsdType";
 							}
 							$triples[] = array("_:".$bNodeCounter, "<$smwgTripleStoreGraph/property#3>", $object);
 						}
@@ -377,7 +382,7 @@ class SMWTripleStore extends SMWStore {
 							if (is_null($xsdType)) {
 								$object = $this->tsNamespace->getFullIRI(Title::newFromDBkey($v5->getTitle()));
 							} else {
-								$object = "\"".$this->escapeForStringLiteral($firstValue)."\"^^$xsdType";
+								$object = "\"".TSHelper::escapeForStringLiteral($firstValue)."\"^^$xsdType";
 							}
 							$triples[] = array("_:".$bNodeCounter, "<$smwgTripleStoreGraph/property#4>", $object);
 						}
@@ -400,10 +405,10 @@ class SMWTripleStore extends SMWStore {
 									// special treatment for geo coords
 									if ($property->getPropertyTypeID() == '_geo') {
 										$dbkeys = $value->getDBkeys();
-										$triples[] = array($subject_iri, $property_iri, "\"".$this->escapeForStringLiteral(implode(",", $dbkeys))."\"^^$xsdType");
+										$triples[] = array($subject_iri, $property_iri, "\"".TSHelper::escapeForStringLiteral(implode(",", $dbkeys))."\"^^$xsdType");
 									} else {
 										// all other primitive types
-										$triples[] = array($subject_iri, $property_iri, "\"".$this->escapeForStringLiteral($firstValue)."\"^^$xsdType");
+										$triples[] = array($subject_iri, $property_iri, "\"".TSHelper::escapeForStringLiteral($firstValue)."\"^^$xsdType");
 									}
 								}
 							}
@@ -700,69 +705,7 @@ class SMWTripleStore extends SMWStore {
 	}
 
 
-	// Helper methods
-
-
-
-
-
-	/**
-	 * Implodes triples separated by a dot for SPARUL commands.
-	 *
-	 * @param array of $triples
-	 * @return string
-	 */
-	protected function implodeTriples($triples) {
-		$result = "";
-		foreach($triples as $t) {
-			$result .= implode(" ", $t);
-			$result .= ". ";
-		}
-		return $result;
-	}
-
-
-
-
-
-	/**
-	 * Escapes double quotes, backslash and line feeds for a SPARUL string literal.
-	 *
-	 * @param string $literal
-	 * @return string
-	 */
-	protected function escapeForStringLiteral($literal) {
-		return str_replace(array("\\", "\"", "\n", "\r"), array("\\\\", "\\\"", "\\n" ,"\\r"), $literal);
-	}
-
-	/**
-	 * Unquotes a string
-	 *
-	 * @param String $literal
-	 * @return String
-	 */
-	protected function unquote($literal) {
-		$trimed_lit = trim($literal);
-		if (stripos($trimed_lit, "\"") === 0 && strrpos($trimed_lit, "\"") === strlen($trimed_lit)-1) {
-			$substr = substr($trimed_lit, 1, strlen($trimed_lit)-2);
-			return str_replace("\\\"", "\"", $substr);
-		}
-		return $trimed_lit;
-	}
-
-
-
-	/**
-	 * Removes type hint, e.g. "....."^^xsd:type gets to "....."
-	 *
-	 * @param string $literal
-	 * @return string
-	 */
-	protected function removeXSDType($literal) {
-		$pos = strpos($literal, "^^");
-		return $pos !== false ? substr($literal, 0, $pos) : $literal;
-	}
-
+		
 	/**
 	 * Parses a SPARQL XML-Result and returns an SMWHaloQueryResult.
 	 *
@@ -773,7 +716,7 @@ class SMWTripleStore extends SMWStore {
 	protected function parseSPARQLXMLResult(& $query, & $sparqlXMLResult) {
 
 		// parse xml results
- 
+
 		$dom = simplexml_load_string($sparqlXMLResult);
 		$dom->registerXPathNamespace("sparqlxml", "http://www.w3.org/2005/sparql-results#");
 		if($dom === FALSE) return new SMWHaloQueryResult(array(), $query, array(), $this);
@@ -786,7 +729,7 @@ class SMWTripleStore extends SMWStore {
 				$sourcesSet[] = (string) $s;
 			}
 		}
-		
+
 		// result integration parameter
 		if (array_key_exists('resultintegration', $query->params) && $query->params['resultintegration'] == 'integrated') {
 			$sourcesSet = array(); // show as if it was one source
@@ -800,16 +743,16 @@ class SMWTripleStore extends SMWStore {
 				}
 			}
 		} // in any other case display the source separately
-		
+
 		if (count($sourcesSet) === 0) $sourcesSet[]='tsc'; // add at least 1 source
 
 		foreach($sourcesSet as $s) {
-			
+
 			$resultFilter = $s == 'tsc' ? '' : '[@source="'.$s.'"]';
 			$variables = $dom->xpath('//sparqlxml:variable');
 			$results = $dom->xpath('//sparqlxml:result'.$resultFilter);
-			
-			
+
+
 			// if no results return empty result object
 			if (count($results) == 0) return new SMWHaloQueryResult(array(), $query, array(), $this);
 
@@ -895,7 +838,7 @@ class SMWTripleStore extends SMWStore {
 			}
 
 
-				
+
 			// generate PrintRequests for all bindings (if they do not exist already)
 			$var_index = 0;
 			$bindings = $results[0]->children()->binding;
@@ -1052,7 +995,22 @@ class SMWTripleStore extends SMWStore {
 			$uris[] = array((string) $sv, $sv->metadata);
 		}
 		if (!empty($uris)) {
-			$this->addURIToResult($uris, $allValues);
+			foreach($uris as $uri) {
+				list($sv, $metadata) = $uri;
+
+				$title = TSHelper::getTitleFromURI($sv, false);
+				if (is_null($title) || $title instanceof Title) {
+					$allValues[] = $this->createSMWPageValue($title, $metadata);
+				} else {
+					// external URI
+
+					$v = SMWDataValueFactory::newTypeIDValue('_uri');
+					$v->setDBkeys(array($sv));
+					TSHelper::setMetadata($v, $metadata);
+					$allValues[] = $v;
+
+				}
+			}
 		} else {
 			$literals = array();
 			foreach($bindingsChildren->literal as $sv) {
@@ -1069,167 +1027,89 @@ class SMWTripleStore extends SMWStore {
 						$v->setValues($title->getDBkey(), $title->getNamespace(), $title->getArticleID());
 					}
 				} else
-				$this->addLiteralToResult($literals, $pr, $allValues);
+				foreach($literals as $literal) {
+
+					list($literalValue, $literalType, $metadata) = $literal;
+					$property = !is_null($pr) ? $pr->getData() : NULL;
+					$value = $this->createSMWDataValue($property, $literalValue, $literalType, $metadata);
+					$allValues[] = $value;
+				}
 			}
 
 
 		}
 	}
 
-	/**
-	 * Gets an array of tuples (URI, metadata-uri) and creates SMWWikiPageValue objects.
-	 *
-	 * @param array of tuples (uri, hash array metadata) $uris
-	 * @param array SMWDataValue (out) & $allValues
-	 */
-	protected function addURIToResult($uris, & $allValues) {
 
-		foreach($uris as $uri) {
-			list($sv, $metadata) = $uri;
 
-			// check if common namespace from MW or SMW
-			// and create SMWDataValue accoringly
-			$nsFound = false;
-			foreach (TSNamespaces::getAllNamespaces() as $nsIndsex => $ns) {
-				if (stripos($sv, $ns) === 0) {
-					$allValues[] = $this->createSMWDataValue($sv, $metadata, $ns, $nsIndsex);
-					$nsFound = true;
-				}
-			}
+	
 
-			if ($nsFound) continue;
-
-			// result with unknown namespace
-			// unknown means the namespace has a suffix: /ns_<index>#
-			// where <index> is the namespace index.
-			if (stripos($sv, TSNamespaces::$UNKNOWN_NS) === 0) {
-
-				if (empty($sv)) {
-					$v = SMWDataValueFactory::newTypeIDValue('_wpg');
-
-					$this->setMetadata($v, $metadata);
-
-					$allValues[] = $v;
-				} else {
-					$startNS = strlen(TSNamespaces::$UNKNOWN_NS);
-					$length = strpos($sv, "#") - $startNS;
-					$ns = intval(substr($sv, $startNS, $length));
-
-					$local = substr($sv, strpos($sv, "#")+1);
-
-					$title = Title::newFromText($local, $ns);
-					if (is_null($title)) {
-						$title = Title::newFromText(wfMsg('smw_ob_invalidtitle'), $ns);
-					}
-					$v = SMWDataValueFactory::newTypeIDValue('_wpg');
-					$v->setValues($title->getDBkey(), $ns, $title->getArticleID());
-					$this->setMetadata($v, $metadata);
-					$allValues[] = $v;
-				}
-			} else {
-				// external URI
-
-				$v = SMWDataValueFactory::newTypeIDValue('_uri');
-				$v->setDBkeys(array($sv));
-				$this->setMetadata($v, $metadata);
-				$allValues[] = $v;
-
-			}
-		}
-
-	}
 
 	/**
-	 * Set metadata values (if available)
 	 *
+	 * Creates primitive SMWWikiDataValue object. (ie. no SMWWikiPageValue)
 	 *
-	 * @param SMWDataValue $v
-	 * @param array of SimpleXMLElement $metadata
+	 * @param $property
+	 * @param $literalValue
+	 * @param $literalType
+	 * @param $metadata
 	 */
-	protected function setMetadata(SMWDataValue $v, $metadata) {
-		if (!is_null($metadata) && $metadata !== '') {
-			foreach($metadata as $m) {
-				$name = (string) $m->attributes()->name;
-				$datatype = (string) $m->attributes()->datatype;
-				$mdValues = array();
-				foreach($m->value as $mdValue) {
-					$mdValues[] = (string) $mdValue;
-				}
-				$v->setMetadata($name, $datatype, $mdValues);
-			}
-		}
-	}
+	protected function createSMWDataValue($property, $literalValue, $literalType, $metadata) {
+		if (!empty($literalValue)) {
 
-	/**
-	 * Gets an array of literal tuples (value, type, metadata-uri) and creates according
-	 * SMWDataValue objects.
-	 *
-	 * @param array Tuple (string value, string xsd-type, hash array metadata) $literals
-	 * @param PrintRequest $pr QueryPrinter contains property and thus denotes type (optional)
-	 * @param array SMWDataValue (out) & $allValues
-	 */
-	protected function addLiteralToResult($literals, $pr, & $allValues) {
-		foreach($literals as $literal) {
-
-			list($literalValue, $literalType, $metadata) = $literal;
-			$property = !is_null($pr) ? $pr->getData() : NULL;
-			if (!empty($literalValue)) {
-
-				// create SMWDataValue either by property or if that is not possible by the given XSD type
-				if ($property instanceof SMWPropertyValue ) {
-					$propertyTitle = Title::newFromText($pr->getData()->getText(), SMW_NS_PROPERTY);
-					if (!$propertyTitle->exists()) {
-						// fallback if property does not exist, then use tyoe
-						$value = SMWDataValueFactory::newTypeIDValue(WikiTypeToXSD::getWikiType($literalType));
-					} else {
-						$value = SMWDataValueFactory::newPropertyObjectValue($pr->getData(), $literalValue);
-					}
-				} else {
+			// create SMWDataValue either by property or if that is not possible by the given XSD type
+			if ($property instanceof SMWPropertyValue ) {
+				$propertyTitle = $property->getWikiPageValue()->getTitle();
+				if (!$propertyTitle->exists()) {
+					// fallback if property does not exist, then use tyoe
 					$value = SMWDataValueFactory::newTypeIDValue(WikiTypeToXSD::getWikiType($literalType));
-				}
-
-				// set actual value
-				if ($value->getTypeID() == '_dat') {
-					// normalize dateTime
-					if ($literalValue != '') {
-
-						// remove time if it is 00:00:00
-						if (substr($literalValue, -9) == 'T00:00:00') {
-							$literalValue = substr($literalValue, 0, strpos($literalValue, "T"));
-						}
-						// hack: can not use setUserValue for SMW_DV_Time for some reason.
-						$valueTemp = SMWDataValueFactory::newPropertyObjectValue($property, str_replace("-","/",$literalValue));
-						$value->setDBkeys($valueTemp->getDBkeys());
-					}
-				} else if ($value->getTypeID() == '_ema'
-				|| $value->getTypeID() == '_tel'
-				|| $value->getTypeID() == '_num') {
-					// set some types as DBkeys for normalization
-					$value->setDBkeys(array($literalValue));
 				} else {
-					// all others, set as user type
-					$value->setUserValue($literalValue);
+					$value = SMWDataValueFactory::newPropertyObjectValue($property, $literalValue);
 				}
 			} else {
+				$value = SMWDataValueFactory::newTypeIDValue(WikiTypeToXSD::getWikiType($literalType));
+			}
 
-				// literal value is empty
-				if ($property instanceof SMWPropertyValue ) {
-					$value = SMWDataValueFactory::newPropertyObjectValue($property);
-				} else {
-					$value = SMWDataValueFactory::newTypeIDValue('_wpg');
+			// set actual value
+			if ($value->getTypeID() == '_dat') {
+				// normalize dateTime
+				if ($literalValue != '') {
 
+					// remove time if it is 00:00:00
+					if (substr($literalValue, -9) == 'T00:00:00') {
+						$literalValue = substr($literalValue, 0, strpos($literalValue, "T"));
+					}
+					// hack: can not use setUserValue for SMW_DV_Time for some reason.
+					$valueTemp = SMWDataValueFactory::newPropertyObjectValue($property, str_replace("-","/",$literalValue));
+					$value->setDBkeys($valueTemp->getDBkeys());
 				}
+			} else if ($value->getTypeID() == '_ema'
+			|| $value->getTypeID() == '_tel'
+			|| $value->getTypeID() == '_num') {
+				// set some types as DBkeys for normalization
+				$value->setDBkeys(array($literalValue));
+			} else {
+				// all others, set as user type
+				$value->setUserValue($literalValue);
+			}
+		} else {
+
+			// literal value is empty
+			if ($property instanceof SMWPropertyValue ) {
+				$value = SMWDataValueFactory::newPropertyObjectValue($property);
+			} else {
+				$value = SMWDataValueFactory::newTypeIDValue('_wpg');
 
 			}
 
-			// set metadata
-			$this->setMetadata($value, $metadata);
-			$allValues[] = $value;
 		}
+		// set metadata
+		TSHelper::setMetadata($value, $metadata);
+		return $value;
 	}
 
 	/**
-	 * Creates SMWWikiPageValue object from a (possibly) merged result.
+	 * Creates SMWWikiPageValue object.
 	 *
 	 * @param string $uri Full URI
 	 * @param hash array $metadata (propertyName=>value)
@@ -1237,17 +1117,14 @@ class SMWTripleStore extends SMWStore {
 	 * @param int $ns Namespace index
 	 * @return SMWWikiPageValue
 	 */
-	protected function createSMWDataValue($uri, $metadata, $nsFragment, $ns) {
+	protected function createSMWPageValue($title, $metadata) {
 
-		$local = substr($uri, strlen($nsFragment));
-		$title = Title::newFromText($local, $ns);
+		$v = SMWDataValueFactory::newTypeIDValue('_wpg');
 		if (is_null($title)) {
 			$title = Title::newFromText(wfMsg('smw_ob_invalidtitle'), $ns);
 		}
-		$v = SMWDataValueFactory::newTypeIDValue('_wpg');
-		$v->setValues($title->getDBkey(), $ns, $title->getArticleID());
-		$this->setMetadata($v, $metadata);
-
+		$v->setValues($title->getDBkey(), $title->getNamespace(), $title->getArticleID(), false, '', $title->getFragment());
+		TSHelper::setMetadata($v, $metadata);
 		return $v;
 
 	}
