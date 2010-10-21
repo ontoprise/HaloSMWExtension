@@ -123,7 +123,10 @@ class HACLEvaluator {
 				$result = $r;
 				self::finishLog("Right for property evaluated.", $result, true);
 				if (self::$mMode == self::DENY_DIFF) {
-					$r = wfMsg('hacl_ad_access_denied');
+					// Can not return an error msg because of MW-bug: 
+					// http://www.mediawiki.org/wiki/Manual:Hooks/userCan#Risk_of_returning_a_string_value
+					//$r = wfMsg('hacl_ad_access_denied');
+					$r = false;
 				} 
 				return $r;
 			}
@@ -197,7 +200,9 @@ class HACLEvaluator {
 			if ($r === false) {
 				$result = $r;
 				$ns = $title->getNsText();
-				$r = wfMsg('hacl_ad_create_namespace', $ns);
+				// Can not return an error msg because of MW-bug: 
+				// http://www.mediawiki.org/wiki/Manual:Hooks/userCan#Risk_of_returning_a_string_value
+				//$r = wfMsg('hacl_ad_create_namespace', $ns);
 			}
 			self::finishLog("Checked if the user is allowed to create an article with in the given namespace.", $r, $r);
 		    return $r;
@@ -244,7 +249,10 @@ class HACLEvaluator {
 			haclfRestoreTitlePatch($etc);
 			$result = false;
 			self::finishLog("The article contains protected properties.", $result, false);
-			return $edit ? wfMsg('hacl_ad_access_denied') : false;
+			// Can not return an error msg because of MW-bug: 
+			// http://www.mediawiki.org/wiki/Manual:Hooks/userCan#Risk_of_returning_a_string_value
+			//			return $edit ? wfMsg('hacl_ad_access_denied') : false;
+			return false;
 		}
 		
 		// Check if there is a security descriptor for the article.
@@ -318,7 +326,9 @@ class HACLEvaluator {
 			haclfRestoreTitlePatch($etc);
 			if ($r === false) {
 				$result = $r;
-				$r = wfMsg('hacl_ad_access_denied');
+				// Can not return an error msg because of MW-bug: 
+				// http://www.mediawiki.org/wiki/Manual:Hooks/userCan#Risk_of_returning_a_string_value
+				//$r = wfMsg('hacl_ad_access_denied');
 			}
 			self::finishLog("Read access was determined by the Whitelist.", $result, true);
 			return $r;
@@ -343,7 +353,11 @@ class HACLEvaluator {
 		self::finishLog("No matching right for article found.", false, false);
 		
 		$result = false;
-		return wfMsg('hacl_ad_access_denied');
+		// Can not return an error msg because of MW-bug: 
+		// http://www.mediawiki.org/wiki/Manual:Hooks/userCan#Risk_of_returning_a_string_value
+		//return wfMsg('hacl_ad_access_denied');
+		
+		return false;
 	}
 
 	
