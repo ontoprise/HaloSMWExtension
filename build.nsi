@@ -1014,10 +1014,6 @@ Section "Uninstall"
 
     !insertmacro MUI_STARTMENU_GETFOLDER Application $MUI_TEMP
     
-    nsExec::ExecToLog '"$INSTDIR\xampp_stop.bat"'
-    nsExec::ExecToLog '"$INSTDIR\memcached\memcached.exe" -d stop'
-    nsExec::ExecToLog '"$INSTDIR\memcached\memcached.exe" -d uninstall'
-
     MessageBox MB_OKCANCEL|MB_ICONEXCLAMATION \
         "Please note that all running ${PRODUCT} instances must be closed before uninstall. $\n$\n \
         Are you sure you want to deinstall the ${PRODUCT}? All files (including \
@@ -1058,6 +1054,8 @@ Section "Uninstall"
 
     DeleteRegKey HKCU "Software\Ontoprise\${PRODUCT} ${VERSION}"
     DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT} ${VERSION}"
+
+    nsExec::ExecToLog '"$INSTDIR\xampp_stop.bat"'
 
     Delete "$INSTDIR\*"
    
