@@ -452,7 +452,7 @@ Section "Lucene search" lucene
          ${If} $R0 == "XP"
          ${OrIf} $R0 == "2003"
             DetailPrint "Add LuceneIndexUpdate as planned task for Windows XP/2003 Server"
-            nsExec::ExecToLog 'schtasks /create /tn "LuceneIndexUpdate" /ru "SYSTEM" /tr "$INSTDIR\lucene\rebuildIndex.bat" /sc daily'
+            nsExec::ExecToLog 'schtasks /create /tn "LuceneIndexUpdate" /ru "SYSTEM" /tr "$\"$INSTDIR\lucene\rebuildIndex.bat$\"" /sc daily'
          ${EndIf}
         
         ;change LocalSettings
