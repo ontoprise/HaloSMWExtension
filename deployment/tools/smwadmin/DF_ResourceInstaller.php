@@ -24,7 +24,7 @@ require_once($rootDir.'/io/import/DF_BackupReader.php');
 /**
  * @file
  * @ingroup DFInstaller
- * 
+ *
  * Resource installer takes care about wikidump/resource (de-)installation.
  *
  * @author Kai K�hn / ontoprise / 2009
@@ -64,6 +64,10 @@ class ResourceInstaller {
 		$wikidumps = $dd->getWikidumps();
 		foreach($wikidumps as $file) {
 			print "\nImport ontology: $file";
+			if (!file_exists($this->rootDir."/".$file)) {
+				print "\n\tWARNING: dump file '".$this->rootDir."/".$file."' does not exist.";
+				continue;
+			}
 			$result = $reader->importFromFile( $this->rootDir."/".$file );
 		}
 		if (!is_null($fromVersion)) {
@@ -85,7 +89,7 @@ class ResourceInstaller {
 							wfRunHooks('ArticleDeleteComplete', array(&$a, &$wgUser, $reason, $id));
 						}
 					}
-						
+
 				}
 				$next = $res->getNext();
 			}
@@ -115,7 +119,7 @@ class ResourceInstaller {
 
 	 */
 	public function deleteResources($dd) {
-        global $wgUser;
+		global $wgUser;
 		if (count($dd->getResources()) ==  0) return;
 
 
@@ -140,7 +144,7 @@ class ResourceInstaller {
 					wfRunHooks('ArticleDeleteComplete', array(&$a, &$wgUser, $reason, $id));
 				}
 			}
-			
+				
 		}
 
 		if (count($dd->getOnlyCopyResources()) ==  0) return;
@@ -197,6 +201,10 @@ class ResourceInstaller {
 		$reader = new BackupReader(DEPLOYWIKIREVISION_INFO);
 		$wikidumps = $package->getWikidumps();
 		foreach($wikidumps as $file) {
+		    if (!file_exists($this->rootDir."/".$file)) {
+                print "\n\tWARNING: dump file '".$this->rootDir."/".$file."' does not exist.";
+                continue;
+            }
 			$result = $reader->importFromFile( $this->rootDir."/".$file );
 		}
 	}
@@ -217,16 +225,18 @@ class ResourceInstaller {
 		$resources = $dd->getResources();
 		foreach($resources as $file) {
 			$resourcePath = $this->rootDir."/".$dd->getInstallationDirectory()."/".$file;
-			print "\n\tCopy $file...";
+			if (!file_exists($resourcePath)) {
+				print "\n\tWARNING: '$resourcePath' does not exist.";
+				continue;
+			}
+			print "\n\tImport '$resourcePath'";
 			if (is_dir($resourcePath)) {
-
 				$this->importResources($resourcePath);
 			} else {
-				print $resourcePath."\n";
 				$im_file = wfLocalFile(Title::newFromText(basename($resourcePath), NS_IMAGE));
 				$im_file->upload($resourcePath, "auto-inserted image", "noText");
 			}
-			print "done.";
+			
 		}
 
 		if (count($dd->getOnlyCopyResources()) ==  0) return;
@@ -234,16 +244,19 @@ class ResourceInstaller {
 		$resources = $dd->getOnlyCopyResources();
 		foreach($resources as $file => $dest) {
 			$resourcePathSrc = $this->rootDir."/".$dd->getInstallationDirectory()."/".$file;
-			print "\n\tCopy $file...";
+			if (!file_exists($resourcePathSrc)) {
+				print "\n\tWARNING: '$resourcePathSrc' does not exist.";
+				continue;
+			}
+			print "\n\tCopy '$resourcePathSrc' to '".$this->rootDir."/".$dest."'";
 			if (is_dir($resourcePathSrc)) {
-
 				Tools::copy_dir($resourcePathSrc, $this->rootDir."/".$dest);
 			} else {
 				Tools::mkpath(dirname($this->rootDir."/".$dest));
 				copy($resourcePathSrc, $this->rootDir."/".$dest);
 
 			}
-			print "done.";
+			
 		}
 	}
 

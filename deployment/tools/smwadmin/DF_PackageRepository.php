@@ -294,7 +294,7 @@ class PackageRepository {
 
 			$package = $repo->xpath("/root/extensions/extension[@id='$packageID']/version[position()=last()]");
 			if (count($package) == 0) continue;
-			$download_url = (string) $package[0]->attributes()->url;
+			$download_url = trim((string) $package[0]->attributes()->url);
 			$version = (string) $package[0]->attributes()->ver;
 			$results[$version] = array($download_url, $url);
 
@@ -321,7 +321,7 @@ class PackageRepository {
 
 			if (is_null($package) || $package === false || count($package) == 0) continue;
 			$repo_url = $url;
-			$download_url = (string) $package[0]->attributes()->url;
+			$download_url = trim((string) $package[0]->attributes()->url);
 			break;
 		}
 		if (!isset($download_url)) throw new RepositoryError(DEPLOY_FRAMEWORK_REPO_PACKAGE_DOES_NOT_EXIST, "Can not find package: $packageID-$version. Missing repository?");
