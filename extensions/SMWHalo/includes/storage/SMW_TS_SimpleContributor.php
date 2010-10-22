@@ -27,24 +27,26 @@ function smwfTripleStorePropertyUpdate(& $data, & $property, & $propertyValueArr
 	// check for 'has domain, range' and 'is inverse of' and 'has type'
 	// 'has min cardinality' and 'has max cardinality are read implictly when processing 'has domain and range'
 	// and therefore ignored.
+	$tsNamespace = new TSNamespaces();
+	$subj_iri = $tsNamespace->getFullIRI($data->getSubject()->getTitle());
 	$allProperties = $data->getProperties();
 	$dbkeys = $property->getDBkeys();
 	if (smwfGetSemanticStore()->inverseOf->getDBkey() == array_shift($dbkeys)) {
         foreach($propertyValueArray as $inverseProps) {
             if (count($propertyValueArray) == 1) {
-            	
-                $triplesFromHook[] = array("<$smwgTripleStoreGraph/property#".$data->getSubject()->getDBkey().">", "owl:inverseOf", "<$smwgTripleStoreGraph/property#".$inverseProps->getDBkey().">");
+            	$invprop_iri = $tsNamespace->getFullIRI($inverseProps);
+                $triplesFromHook[] = array($subj_iri, "owl:inverseOf", $invprop_iri);
             }
         }
     } elseif ($property->getPropertyID() == "_TYPE") {
 
-		 
-		// insert RDFS range/domain
+		$hasType_iri = $tsNamespace->getFullIRIByName(SMW_NS_PROPERTY, "Has_type");
+		
 		foreach($propertyValueArray as $value) {
 			$dbkeys = $value->getDBkeys();
 			$typeID = array_shift($dbkeys);
 			if ($typeID != '_wpg') {
-				$triplesFromHook[] = array("<$smwgTripleStoreGraph/property#".$data->getSubject()->getDBkey().">", "<$smwgTripleStoreGraph/property#Has_type>", WikiTypeToXSD::getXSDType($typeID));
+				$triplesFromHook[] = array($subj_iri, $hasType_iri, WikiTypeToXSD::getXSDType($typeID));
 			}
 
 		}

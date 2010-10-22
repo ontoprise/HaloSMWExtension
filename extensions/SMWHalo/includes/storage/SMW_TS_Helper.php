@@ -329,6 +329,18 @@ class TSNamespaces {
 		global $smwgTripleStoreGraph;
 		return $smwgTripleStoreGraph."/".$this->getNSPrefix($namespace)."#";
 	}
+	
+	/**
+	 * Returns the full IRI used by the TS for a namespace index and a localname.
+	 *
+	 * @param int $namespace
+	 * @param string $localname
+	 */
+	public function getFullIRIByName($namespace, $localname) {
+		global $smwgTripleStoreGraph;
+		$localname = str_replace(" ", "_", $localname);
+        return "<".$smwgTripleStoreGraph."/".$this->getNSPrefix($namespace)."#$localname>";
+	}
 
 	/**
 	 * Returns the full IRI used by the TS for $t
