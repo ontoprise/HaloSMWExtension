@@ -414,6 +414,7 @@ class Installer {
             $this->errors = array_merge($this->errors, $desc->getLastErrors());
 			$this->res_installer->installOrUpdateResources($desc);
 			$this->res_installer->installOrUpdateWikidumps($desc, $fromVersion, $this->force ? DEPLOYWIKIREVISION_FORCE : DEPLOYWIKIREVISION_WARN);
+			$this->res_installer->installOrUpdateMappings($desc);
 
 			print "\n-------\n";
 		}

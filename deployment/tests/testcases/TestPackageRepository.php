@@ -1,16 +1,15 @@
 <?php
 
-define(DEPLOY_FRAMEWORK_INTERNAL_REPO, "http://localhost/mediawiki/deployment/tests/testcases/resources/repository/");
-define(DEPLOY_FRAMEWORK_INTERNAL_REPO2, "http://localhost/mediawiki/deployment/tests/testcases/resources/repository2/");
+define("DEPLOY_FRAMEWORK_INTERNAL_REPO", "http://localhost/mediawiki/deployment/tests/testcases/resources/repository/");
+define("DEPLOY_FRAMEWORK_INTERNAL_REPO2", "http://localhost/mediawiki/deployment/tests/testcases/resources/repository2/");
 
-// activate for debugging
-//define('DEBUG_MODE', true);
+global $rootDir;
+$rootDir = dirname(__FILE__);
+$rootDir = str_replace("\\", "/", $rootDir);
+$rootDir = realpath($rootDir."/../../");
 
-if (defined('DEBUG_MODE') && DEBUG_MODE == true) {
-	require_once 'deployment/tools/smwadmin/DF_PackageRepository.php';
-} else {
-	require_once '../tools/smwadmin/DF_PackageRepository.php';
-}
+require_once $rootDir.'/tools/smwadmin/DF_PackageRepository.php';
+
 /**
  * Tests the installer clazz
  *

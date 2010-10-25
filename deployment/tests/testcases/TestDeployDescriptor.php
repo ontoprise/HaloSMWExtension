@@ -43,7 +43,7 @@ class TestDeployDescriptor extends PHPUnit_Framework_TestCase {
 	function testCodeFiles() {
 		$exp_files = array("extensions/SMWHalo/SMW_Initialize.php", "extensions/SMWHalo/SMW_QP_XML.php");
 		foreach($this->ddp->getCodefiles() as $loc) {
-				
+
 			$this->assertContains($loc, $exp_files);
 		}
 	}
@@ -66,7 +66,7 @@ class TestDeployDescriptor extends PHPUnit_Framework_TestCase {
 		$exp_locs = array("resources/thumb/pic-300px.png");
 		$exp_dests = array("thumb/pic.300px.png");
 		foreach($this->ddp->getOnlyCopyResources() as $loc => $dest) {
-				
+
 			$this->assertContains($loc, $exp_locs);
 			$this->assertContains($dest, $exp_dests);
 		}
@@ -87,18 +87,18 @@ class TestDeployDescriptor extends PHPUnit_Framework_TestCase {
 
 	function testPatches() {
 		$patches = $this->ddp->getPatches(array('smwhalo' => $this->ddp));
-		
-		
+
+
 		$this->assertEquals("patch.txt", $patches[0]);
-		
+
 	}
 
 	function testUninstallPatches() {
-		
+
 		$patches = $this->ddp->getUninstallPatches(array('smwhalo' => $this->ddp));
-                
-        $this->assertEquals("patch.txt", $patches[0]);
-        
+
+		$this->assertEquals("patch.txt", $patches[0]);
+
 	}
 
 	function testUpdateSection() {
@@ -107,5 +107,23 @@ class TestDeployDescriptor extends PHPUnit_Framework_TestCase {
 			
 		$configs = $this->ddp->getConfigs();
 		$this->assertTrue(count($configs) > 0);
+	}
+
+	function testMappings() {
+		$xml = file_get_contents('testcases/resources/test_deploy_variables.xml');
+		$this->ddp = new DeployDescriptor($xml);
+
+		$mappings = $this->ddp->getMappings();
+		 
+		$this->assertTrue(count($mappings) == 2);
+		list($loc, $target) = $mappings['dbpedia'][0];
+		$this->assertEquals("mappings/mapping1.map", $loc);
+		$this->assertEquals("wiki", $target);
+		list($loc, $target) = $mappings['dbpedia'][1];
+		$this->assertEquals("mappings/mapping2.map", $loc);
+		$this->assertEquals("wiki", $target);
+		list($loc, $target) = $mappings['freebase'][0];
+		$this->assertEquals("mappings/mapping3.map", $loc);
+		$this->assertEquals("wiki", $target);
 	}
 }

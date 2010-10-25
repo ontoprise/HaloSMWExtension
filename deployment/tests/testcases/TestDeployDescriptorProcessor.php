@@ -33,6 +33,7 @@ class TestDeployDescriptorProcessor extends PHPUnit_Framework_TestCase {
 		$exp_precedings = array("SemanticMediawiki", "SemanticGardening");
 		$ddp = new DeployDescriptor($this->xml_variables);
 		$successors = $ddp->getSuccessors();
+		
 		foreach($successors as $succ) {
 			$this->assertContains($succ, $exp_precedings);
 		}
@@ -118,6 +119,7 @@ class TestDeployDescriptorProcessor extends PHPUnit_Framework_TestCase {
 		$ddp2 = new DeployDescriptor($this->xml_function);
 		$res = $ddp2->applyConfigurations("testcases/resources", true);
 
+
 		global $ret1;
 		eval($res);
 
@@ -132,6 +134,7 @@ class TestDeployDescriptorProcessor extends PHPUnit_Framework_TestCase {
 		global $server;
 		global $port;
 		global $protocol;
+		
 		
 		eval($res);
 

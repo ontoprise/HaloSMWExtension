@@ -27,10 +27,14 @@
 		<file loc="resources/img1.png"/>
 		<file loc="resources/thumb/pic-300px.png" dest="thumb/pic.300px.png"/>
 	</resources>
-	
+	<mappings>
+	   <file loc="mappings/mapping1.map" source="dbpedia" target="wiki"/>
+	   <file loc="mappings/mapping2.map" source="dbpedia" target="wiki"/>
+	   <file loc="mappings/mapping3.map" source="freebase" target="wiki"/>
+	</mappings>
 	<configs>
-		<successor>SemanticMediawiki</successor>
-		<successor>SemanticGardening</successor>
+		<successor ext="SemanticMediawiki"/>
+		<successor ext="SemanticGardening"/>
 
 		<new>
 		    <patch file="patch.txt" ext="smwhalo" from="100" to="999" />

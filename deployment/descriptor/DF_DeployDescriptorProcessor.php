@@ -18,7 +18,7 @@
 /**
  * @file
  * @ingroup DFDeployDescriptor
- * 
+ *
  * Applies changes to the the LocalSettings.php.
  * Modifications are specified in the deploy descriptor.
  *
@@ -27,18 +27,18 @@
  */
 
 class DeployDescriptionProcessor {
-	
+
 	// Location of LocalSettings file
 	private $ls_loc;
 
 	// content of LocalSettings file
 	private $localSettingsContent;
-	
+
 	// Deploy descriptor used
 	private $dd_parser;
 
 	// error messages which occur during processing
-    private $errorMessages;
+	private $errorMessages;
 
 
 	/**
@@ -50,7 +50,7 @@ class DeployDescriptionProcessor {
 	 */
 	function __construct($ls_loc, $dd_parser) {
 		$this->dd_parser = $dd_parser;
-        $this->errorMessages = array();
+		$this->errorMessages = array();
 		$this->ls_loc = $ls_loc;
 		if (file_exists($ls_loc)) {
 			$this->localSettingsContent = file_get_contents($ls_loc);
@@ -68,7 +68,7 @@ class DeployDescriptionProcessor {
 	 * Reads the LocalSettings.php file, applies changes and return it as string.
 	 *
 	 * @param callback $userCallback Callback function which asks for user requirements. Returns hash array ($nameConfigElement => $value)
-	 * @param hash array ($nameConfigElement => array($type, $description)) User requirements  
+	 * @param hash array ($nameConfigElement => array($type, $description)) User requirements
 	 * @param boolean $dryRun Dry run or actual change.
 	 * @return string changed LocalSettings.php file
 	 */
@@ -97,16 +97,16 @@ class DeployDescriptionProcessor {
 		if (!$dryRun) $this->writeLocalSettingsFile($this->localSettingsContent);
 		return $this->localSettingsContent;
 	}
-	
+
 	/**
 	 * Unapplies changes to LocalSettings.php by reversing the operations.
-	 * 
+	 *
 	 * @return string changed LocalSettings.php file
 	 */
 	function unapplyLocalSettingsChanges() {
 		//TODO: external variables get not re-set. hard to fix.
 		$fragment = ConfigElement::getExtensionFragment($this->dd_parser->getID(), $this->localSettingsContent);
-		
+
 		if (is_null($fragment)) {
 			$this->errorMessages[] = "Could not find configuration for ".$this->dd_parser->getID();
 			echo "\nCould not find configuration for ".$this->dd_parser->getID();
@@ -187,9 +187,9 @@ class DeployDescriptionProcessor {
 	function applyPatches($userCallback) {
 		$rootDir = self::makeUnixPath(dirname($this->ls_loc));
 		$localPackages = PackageRepository::getLocalPackages($rootDir.'/extensions');
-		
+
 		foreach($this->dd_parser->getPatches($localPackages) as $patch) {
-			
+
 			$instDir = self::makeUnixPath($this->dd_parser->getInstallationDirectory());
 			if (substr($instDir, -1) != '/') $instDir .= "/";
 			$patch = self::makeUnixPath($patch);
@@ -244,7 +244,7 @@ class DeployDescriptionProcessor {
 		$rootDir = self::makeUnixPath(dirname($this->ls_loc));
 		$localPackages = PackageRepository::getLocalPackages($rootDir.'/extensions');
 		foreach($this->dd_parser->getUninstallPatches($localPackages) as $patch) {
-			
+
 			$instDir = self::makeUnixPath($this->dd_parser->getInstallationDirectory());
 			if (substr($instDir, -1) != '/') $instDir .= "/";
 			$patch = self::makeUnixPath($patch);
@@ -282,10 +282,10 @@ class DeployDescriptionProcessor {
 		fwrite($handle, $content);
 		fclose($handle);
 	}
-	
+
 	/**
 	 * Returns errormessages which occured during processing.
-	 * 
+	 *
 	 * @return array of string
 	 */
 	function getErrorMessages() {
@@ -294,13 +294,13 @@ class DeployDescriptionProcessor {
 
 	/*
 	 * Calculates the insert position. Normallay at the end but not if successors must be considered.
-	 * 
-	 * If there is already an extension with the $ext_id, return (insertPosition, true) otherwise (insertPosition, false)   
+	 *
+	 * If there is already an extension with the $ext_id, return (insertPosition, true) otherwise (insertPosition, false)
 	 */
 	private function getInsertPosition($ext_id) {
 		$MAXINT = pow(2,32);
 		$maximumInsert = $MAXINT;
-		 
+			
 		$pos = strpos($this->localSettingsContent, "/*end-$ext_id*/");
 
 		if ($pos === false) {
@@ -310,7 +310,7 @@ class DeployDescriptionProcessor {
 				$maximumInsert = $pos < $maximumInsert ? $pos : $maximumInsert;
 			}
 			$ext_found = false;
-			$pos = $maximumInsert == $MAXINT ? strlen($this->localSettingsContent) : $maximumInsert; 
+			$pos = $maximumInsert == $MAXINT ? strlen($this->localSettingsContent) : $maximumInsert;
 			return array($pos, $ext_found);
 		}
 		$ext_found = true;
@@ -378,8 +378,8 @@ abstract class ConfigElement {
 		}
 		$ls = substr($ls, 0, $start). $fragment . substr($ls, $end + strlen("/*end-$ext_id*/"));
 	}
-	
-	
+
+
 
 	/**
 	 * Serializes arguments of a PHP function.
@@ -637,61 +637,51 @@ class FunctionCallConfigElement extends ConfigElement {
 		$this->argumentsAsXML = $child;
 		$this->functionname = $child->attributes()->name;
 		$this->remove = $child->attributes()->remove;
-		$this->remove = ($this->remove == "true");
-		$this->replace = $child->attributes()->replace;
-		$this->replace = ($this->replace == "true");
+		$this->remove = ($this->remove === "true");
 		$this->ext = $child->attributes()->ext;
 
 	}
 
 	public function apply(& $ls, $ext_id, $userValues = array()) {
-		if ($this->ext !== '') $ext_id = $this->ext;
+
 		$arguments = $this->serializeParameters($this->argumentsAsXML, $userValues);
 		$parameters = "/*param-start-".$this->functionname."*/".$arguments."/*param-end-".$this->functionname."*/";
 		$appliedCommand = "\n".$this->functionname."(".$parameters.");";
-		print "Applied command: ".$appliedCommand;
+
 		if ($this->remove) {
 
 			$fragment = self::getExtensionFragment($ext_id, $ls);
-			$fragment = $this->removeFunction($parameters, $fragment);
-			$this->replaceExtensionFragment($ext_id, $fragment, $ls);
-
-		} if ($this->replace) {
-
-			$fragment = self::getExtensionFragment($ext_id, $ls);
-			$fragment = $this->replaceFunctionParams($parameters, $fragment);
+			$fragment = $this->replaceFunction($fragment, "");
 			$this->replaceExtensionFragment($ext_id, $fragment, $ls);
 
 		}  else {
 
 			$fragment = self::getExtensionFragment($ext_id, $ls);
+
 			if (is_null($fragment)) return $appliedCommand;
-			$start = strpos($fragment, '/*param-start-'.$this->functionname);
-			$end = strpos($fragment, '/*param-end-'.$this->functionname);
-			if ($start !== false && $end !== false) {
-
-				$mappings = $this->deserialize($this->argumentsAsXML, substr($fragment, $start, $end-$start));
-
-				$arguments = $this->serializeParameters($this->argumentsAsXML, $mappings);
-				$appliedCommand = "\n".$this->functionname."(/*param-start-".$this->functionname."*/".$arguments."/*param-end-".$this->functionname."*/);";
-			}
-			return $appliedCommand;
+			$start = strpos($fragment, '/*param-start-'.$this->functionname."*/");
+			$end = strpos($fragment, '/*param-end-'.$this->functionname."*/");
+			if ($start === false || $end === false) {
+				return $appliedCommand;
+			} 
+			$mappings = $this->deserialize($this->argumentsAsXML, substr($fragment, $start, $end-$start));
+			$arguments = $this->serializeParameters($this->argumentsAsXML, $mappings);
+			$fragment = $this->replaceFunction($fragment, $arguments);
+    		$this->replaceExtensionFragment($ext_id, $fragment, $ls);
 		}
 	}
-	
-	protected function replaceFunctionParams($parameters, $fragment) {
-		$start = strpos($fragment, '/*param-start-'.$this->functionname);
-		$end = strpos($fragment, '/*param-end-'.$this->functionname);
-		return substr($fragment, 0, $start). $parameters . substr($fragment, $end + strlen('/*param-end-'.$this->functionname."*/"));
-	}
-	
-	protected function removeFunction($fragment) {
-		$start = strpos($fragment, '/*param-start-'.$this->functionname);
-		$end = strpos($fragment, '/*param-end-'.$this->functionname);
-		$fragment = substr($fragment, 0, $start) . substr($fragment, $end + strlen('/*param-end-'.$this->functionname."*/"));
-		return preg_replace("/".$this->functionname."\\s*\\(\\s*\\)\\s*;/", "", $fragment);
-	}
 
+	/**
+	 * Replace the function call in fragment with the given function call.
+	 *
+	 * @param string $fragment
+	 * @param string $arguments serialized arguments
+	 */
+	protected function replaceFunction($fragment, $arguments = "") {
+		$start = strpos($fragment, '/*param-start-'.$this->functionname."*/");
+		$end = strpos($fragment, '/*param-end-'.$this->functionname."*/");
+		return preg_replace("/".$this->functionname."\\s*\\(\\s*\\)\\s*;/", $this->functionname."(/*param-start-".$this->functionname."*/".$arguments."/*param-end-".$this->functionname."*/);", $fragment);
+	}
 
 
 }

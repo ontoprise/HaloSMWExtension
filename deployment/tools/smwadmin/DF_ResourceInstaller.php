@@ -144,7 +144,7 @@ class ResourceInstaller {
 					wfRunHooks('ArticleDeleteComplete', array(&$a, &$wgUser, $reason, $id));
 				}
 			}
-				
+
 		}
 
 		if (count($dd->getOnlyCopyResources()) ==  0) return;
@@ -201,10 +201,10 @@ class ResourceInstaller {
 		$reader = new BackupReader(DEPLOYWIKIREVISION_INFO);
 		$wikidumps = $package->getWikidumps();
 		foreach($wikidumps as $file) {
-		    if (!file_exists($this->rootDir."/".$file)) {
-                print "\n\tWARNING: dump file '".$this->rootDir."/".$file."' does not exist.";
-                continue;
-            }
+			if (!file_exists($this->rootDir."/".$file)) {
+				print "\n\tWARNING: dump file '".$this->rootDir."/".$file."' does not exist.";
+				continue;
+			}
 			$result = $reader->importFromFile( $this->rootDir."/".$file );
 		}
 	}
@@ -236,7 +236,7 @@ class ResourceInstaller {
 				$im_file = wfLocalFile(Title::newFromText(basename($resourcePath), NS_IMAGE));
 				$im_file->upload($resourcePath, "auto-inserted image", "noText");
 			}
-			
+
 		}
 
 		if (count($dd->getOnlyCopyResources()) ==  0) return;
@@ -256,8 +256,73 @@ class ResourceInstaller {
 				copy($resourcePathSrc, $this->rootDir."/".$dest);
 
 			}
-			
+
 		}
+	}
+
+	/**
+	 * Import mapping pages.
+	 *
+	 * @param $dd
+	 */
+	public function installOrUpdateMappings($dd, $dryRun = false) {
+		if (count($dd->getMappings()) ==  0) return;
+
+		if (!defined('LOD_NS_MAPPING')) {
+			print "\n\tWARNING: LinkedData extension is not installed. Can not install mappings.";
+			return;
+		}
+        
+		$importedMappings = array();
+		// import mappings
+		print "\nImporting mappings...";
+		$resources = $dd->getMappings();
+
+		// delete old mapping articles
+		foreach($resources as $source => $list) {
+
+			$mappingTitle = Title::newFromText($source, LOD_NS_MAPPING);
+			$a = new Article($mappingTitle);
+
+			// check if article for source exists and delete if so
+			if ($a->exists()) {
+				if (!$dryRun) $a->doDeleteArticle("update");
+			}
+		}
+
+		// import new
+		foreach($resources as $source => $list) {
+			foreach($list as $tuple) {
+				$content = "";
+				list($file, $target) = $tuple;
+				$resourcePath = $this->rootDir."/".$dd->getInstallationDirectory()."/".$file;
+				if (!file_exists($resourcePath)) {
+					print "\n\tWARNING: '$resourcePath' does not exist.";
+					continue;
+				}
+				print "\n\tImport '$resourcePath'";
+				if (is_dir($resourcePath)) {
+					print "\n\tMapping location '$resourcePath' must be a file not a directory.";
+				} else {
+
+					$mappingContent = file_get_contents($resourcePath);
+					$content .= "<mapping target=\"$target\">\n".$mappingContent."\n</mapping>";
+						
+				}
+			}
+			$mappingTitle = Title::newFromText($source, LOD_NS_MAPPING);
+			$a = new Article($mappingTitle);
+			print "\nInsert mapping [$source]...";
+			if (!$a->exists()) {
+				if (!$dryRun) $a->insertNewArticle($content, "auto-generated mapping page", false, false);
+			} else {
+				// should not happen because of delete above. anyway
+				if (!$dryRun) $a->doEdit($content, "auto-generated mapping page");
+			}
+			$importedMappings[] = array($source, $target, $content);
+			print "done.";
+		}
+		return $importedMappings;
 	}
 
 	/**

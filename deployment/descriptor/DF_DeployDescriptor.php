@@ -37,6 +37,7 @@ class DeployDescriptor {
 	var $codefiles; // code files or directories (which are controlled by hash)
 	var $codeHash; // accumalted hash over all codefiles
 	var $wikidumps; // wiki XML dump file (Halo format)
+	var $mappings; // mappings (LOD)
 	var $resources; // resources: images
 	var $oc_resources; // resources which get only copied
 	var $configs;   // config elements concerning localsettings changes
@@ -56,7 +57,7 @@ class DeployDescriptor {
 	var $codefiles_xml;
 	var $resources_xml;
 	var $resources_onlycopyxml;
-	
+	var $mappings_xml;
 	
 	// last errors on applying  configurations
 	var $lastErrors;
@@ -85,6 +86,7 @@ class DeployDescriptor {
 		$this->wikidumps_xml = $this->dom->xpath('/deploydescriptor/wikidumps/file');
 		$this->resources_xml = $this->dom->xpath('/deploydescriptor/resources/file[not(@dest)]');
 		$this->resources_onlycopyxml = $this->dom->xpath('/deploydescriptor/resources/file[@dest]');
+		$this->mappings_xml = $this->dom->xpath('/deploydescriptor/mappings/file');
 		$this->createConfigElements($fromVersion, $fromPatchlevel); // assume new config, not update
 	}
 
@@ -446,6 +448,26 @@ class DeployDescriptor {
 		}
 		return $this->wikidumps;
 	}
+	
+    /**
+     * Returns the location of mappings (relative paths)
+     * @return array of string
+     */
+    function getMappings() {
+        if (!is_null($this->mappings)) return $this->mappings;
+        $this->mappings = array();
+        foreach($this->mappings_xml as $file) {
+            $loc = (string) $file->attributes()->loc;
+            $source = (string) $file->attributes()->source;
+            $target = (string) $file->attributes()->target;
+            if (!isset($this->mappings[$source])) {
+            	$this->mappings[$source] = array();
+            }
+            $this->mappings[$source][] = array($loc, $target);
+           
+        }
+        return $this->mappings;
+    }
 	
 	/**
 	 * Returns the location of resource files (relative paths)

@@ -302,8 +302,10 @@ class PackageRepository {
 		if (count($results) == 0) return NULL;
 		ksort($results, SORT_NUMERIC); // sort for versions
 		$results = array_reverse($results, true); // highest version on top
-		$version = reset(array_keys($results)); // get highest version
-		list($download_url, $repo_url) = reset(array_values($results)); // get its download url and repo
+		$keys = array_keys($results);
+		$version = reset($keys); // get highest version
+		$values = array_values($results);
+		list($download_url, $repo_url) = reset($values); // get its download url and repo
 		return array($download_url, $version, $repo_url);
 	}
 
