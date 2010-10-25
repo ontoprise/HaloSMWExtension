@@ -54,7 +54,8 @@ class RMForm {
 <script type="text/javascript">
 var wgRMUploadUrl = "{$uploadWindowUrl}";</script>
 END;
-		$wgOut->addScript($fancybox_js);
+		SMWOutputs::requireHeadItem('rmlinkheaditem',
+			$fancybox_js);
 		
 		$script = $sfgScriptPath . '/libs/jquery.fancybox-1.3.1.js';
 		SMWOutputs::requireHeadItem($script,
