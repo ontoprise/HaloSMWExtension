@@ -12,9 +12,9 @@ class ASFCategoryFormData {
 	
 	public $propertiesFormData;
 	
-	private $categorySectionIntro;
-	private $categorySectionOutro;
-	private $categorySectionAppendix;
+	protected $categorySectionIntro;
+	protected $categorySectionOutro;
+	protected $categorySectionAppendix;
 	
 	public $noAutomaticFormEdit; 	//value of 'no automatic formedit' property
 	public $useDisplayTemplate; 		//Value of 'use display template' property
@@ -23,7 +23,7 @@ class ASFCategoryFormData {
 	
 	
 	
-	public function __construct($categoryTitleObject){
+	public function __construct($categoryTitleObject, $includedCategories = null){
 		$this->titleObject = $categoryTitleObject;
 
 		global $smwgBaseStore;
@@ -32,7 +32,7 @@ class ASFCategoryFormData {
 		
 		$this->initializeFormCreationMetadata();
 		
-		$this->initializePropertiesFormData();
+		$this->initializePropertiesFormData($includedCategories);
 		
 		$this->sortProperties();
 	}
@@ -40,33 +40,29 @@ class ASFCategoryFormData {
 	/*
 	 * Initializes the propertiesFormData field
 	 */
-	private function initializePropertiesFormData(){
-		//get super categories
-		$superCategoryTitles = ASFFormGeneratorUtils::getSuperCategories($this->titleObject);
+	private function initializePropertiesFormData($includedCategories){
+		if(is_null($includedCategories)){
+			//create property input fields for all super categories
+			
+			//get super categories
+			$superCategoryTitles = ASFFormGeneratorUtils::getSuperCategories($this->titleObject);
+		} else {
+			//create property input fields for selected categories
+			
+			$superCategoryTitles = array();
+			foreach($includedCategories as $categoryName => $dontCare){
+				$superCategoryTitles[$categoryName] = Title::newFromText($categoryName, NS_CATEGORY);
+			}
+		}
 		
 		$propertyTitles = 
-			$this->getPropertiesWithDomain(array_merge($superCategoryTitles, 
+			ASFFormGeneratorUtils::getPropertiesWithDomain(array_merge($superCategoryTitles, 
 			array($this->titleObject->getText() => $this->titleObject)));
 		
 		$this->propertiesFormData = array();
 		foreach($propertyTitles as $pT){
 			$this->propertiesFormData[$pT->getText()] = new ASFPropertyFormData($pT);
 		}
-	}
-	
-	/*
-	 * get all properties that use at least one of the given categories as domain
-	 */
-	private function getPropertiesWithDomain($categoryTitles){
-		$properties = array();
-		
-		foreach($categoryTitles as $cT){
-			foreach(smwfGetSemanticStore()->getPropertiesWithDomain($cT) as $p){
-				$properties[] = $p;
-			} 
-		}
-		
-		return $properties;
 	}
 	
 	/*
@@ -87,7 +83,7 @@ class ASFCategoryFormData {
 	 * sort properties first by sequence numbers and then
 	 * in alphabetic order
 	 */
-	private function sortProperties(){
+	protected function sortProperties(){
 		$maxSequenceNumber = 0;
 		foreach($this->propertiesFormData as $prop){
 			if($prop->fieldSequenceNumber) {
@@ -126,9 +122,20 @@ class ASFCategoryFormData {
 	public function getCategorySectionIntro(){
 		if(!is_null($this->categorySectionIntro)) return $this->categorySectionIntro;
 		
+		if(count($this->propertiesFormData) == 0){
+			return '';
+		}
+		
+		global $asfDisplayPropertiesAndCategoriesAsLinks;
+		if($asfDisplayPropertiesAndCategoriesAsLinks){
+			$categoryLabel = '[[:'.$this->titleObject->getFullText().'|'.$this->titleObject->getText().']]';
+		} else {
+			$categoryLabel = "<i>".$this->titleObject->getText()."</i>";
+		}
+		
 		$intro = "<fieldset>\n\n";
 		$intro .= "<legend>";
-		$intro .= wfMsg('asf_category_section_label', $this->titleObject->getText());
+		$intro .= wfMsg('asf_category_section_label', $categoryLabel);
 		$intro .= "</legend>";
 		
 		$intro .= "\n\n{|";
@@ -150,6 +157,10 @@ class ASFCategoryFormData {
 	 */
 	public function getCategorySectionOutro(){
 		if(!is_null($this->categorySectionOutro)) return $this->categorySectionOutro;
+		
+		if(count($this->propertiesFormData) == 0){
+			return '';
+		}
 		
 		$outro = "\n|}\n";
 		

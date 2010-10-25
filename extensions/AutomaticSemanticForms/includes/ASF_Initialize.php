@@ -39,6 +39,8 @@ $asfIP = $IP . '/extensions/AutomaticSemanticForms';
 	$wgAutoloadClasses['ASFFormPrinter'] = $asfIP . '/includes/ASF_FormPrinter.php';
 	$wgAutoloadClasses['ASFParserFunctions'] = $asfIP . '/includes/ASF_ParserFunctions.php';
 	$wgAutoloadClasses['ASFFormEdit'] = $asfIP . '/specials/ASF_FormEdit.php';
+	$wgAutoloadClasses['ASFCategorySectionStructureProcessor'] = $asfIP . '/includes/ASF_CategorySectionStructureProcessor.php';
+	$wgAutoloadClasses['ASFUnresolvedAnnotationsFormData'] = $asfIP . '/includes/ASF_UnresolvedAnnotationsFormData.php';
 	
 	global $wgHooks;
 	//create edit with form tab
@@ -55,6 +57,9 @@ $asfIP = $IP . '/extensions/AutomaticSemanticForms';
 	//Register special pages
 	global $wgSpecialPages;
 	$wgSpecialPages['FormEdit'] = 'ASFFormEdit';
+	
+	//load form generator in order to initialize constants
+	ASFFormGenerator::getInstance();
 }
 
 /*

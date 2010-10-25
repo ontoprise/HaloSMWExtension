@@ -53,13 +53,21 @@ class ASFFormGeneratorUtils {
 	/*
 	 * Get all supercategories of a given category
 	 */
-	public static function getSuperCategories($categoryTitle, $superCategoryTitles = array()){
-		
+	public static function getSuperCategories($categoryTitle, $asTree = false, $superCategoryTitles = array()){
 		$directSuperCatgeoryTitles = smwfGetSemanticStore()->getDirectSuperCategories($categoryTitle);
 		
+		if($asTree){
+			$superCategoryTitles[$categoryTitle->getText()] = array();
+		}
+		
 		foreach($directSuperCatgeoryTitles as $dSCT){
-			$superCategoryTitles[$dSCT->getText()] = $dSCT;
-			$superCategoryTitles = self::getSuperCategories($dSCT, $superCategoryTitles);
+			if($asTree){
+				$superCategoryTitles[$categoryTitle->getText()] = 
+					self::getSuperCategories($dSCT, $asTree, $superCategoryTitles[$categoryTitle->getText()]);
+			} else {
+				$superCategoryTitles[$dSCT->getText()] = $dSCT;
+				$superCategoryTitles = self::getSuperCategories($dSCT, $asTree, $superCategoryTitles);
+			}
 		}
 		
 		return $superCategoryTitles;
@@ -146,6 +154,21 @@ class ASFFormGeneratorUtils {
 				$res = $article->doEdit($dummyContent, wfMsg('asf_dummy_article_edit_comment'));
 			}
 		}
+	}
+	
+/*
+	 * get all properties that use at least one of the given categories as domain
+	 */
+	public static function getPropertiesWithDomain($categoryTitles){
+		$properties = array();
+		
+		foreach($categoryTitles as $cT){
+			foreach(smwfGetSemanticStore()->getPropertiesWithDomain($cT) as $p){
+				$properties[] = $p;
+			} 
+		}
+		
+		return $properties;
 	}
 	
 } 

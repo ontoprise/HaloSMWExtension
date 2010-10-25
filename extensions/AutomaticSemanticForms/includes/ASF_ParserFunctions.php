@@ -41,6 +41,8 @@ class ASFParserFunctions {
 		global $smwgBaseStore;
 		$store = new $smwgBaseStore();
 		
+		global $asfSilentAnnotations;
+		if(!is_array($asfSilentAnnotations)) $asfSilentAnnotations = array();
 		foreach($args as $arg){
 			$arg = explode("=",  trim($frame->expand( $arg)), 2);
 			
@@ -50,6 +52,8 @@ class ASFParserFunctions {
 			$value = $arg[1];
 			
 			$title = Title::newFromText($propertyName, SMW_NS_PROPERTY);
+			
+			$asfSilentAnnotations[$propertyName] = $value;
 			
 			if(!$title->exists()){
 				$result .= '[['.$propertyName.'::'.$value.'| ]]';

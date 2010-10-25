@@ -167,7 +167,12 @@ class ASFPropertyFormData {
 		$intro = "\n|-";
 		
 		//add form field label
-		$intro .= "\n|" . $this->inputLabel . ':';
+		global $asfDisplayPropertiesAndCategoriesAsLinks;
+		if($asfDisplayPropertiesAndCategoriesAsLinks){
+			$intro .= "\n|[[".$this->titleObject->getFullText().'|' . $this->inputLabel . ']]:';
+		} else {
+			$intro .= "\n|" . $this->inputLabel . ':';
+		}
 		
 		$intro .= "\n|";
 		
@@ -229,7 +234,7 @@ class ASFPropertyFormData {
 	 */
 	private function getFormFieldInputTypeMetadata(){
 		$inputType = '';
-		$size = false;
+		$size = '110';
 		$rows = false;
 		$cols = false;
 		$autocompletion = false;
@@ -242,16 +247,16 @@ class ASFPropertyFormData {
 			$objectType = '-'.strtolower($this->objectType).'-';
 			if(strpos(LONGTEXTDATATYPES, $objectType) !== false){
 				$inputType = 'text';
-				$size = '100';
+				$size = '110';
 				$autocompletion = 'values';
 			} else if(strpos(SHORTTEXTDATATYPES, $objectType) !== false){
 				$inputType = 'text';
-				$size = '10';
+				$size = '30';
 				$autocompletion = 'values';
 			} else if(strpos(TEXTAREADATATYPES, $objectType) !== false){
 				$inputType = 'textarea';
 				$rows = '5';
-				$cols = '30';
+				$cols = '78';
 			} else if(strpos(DATETIMEDATATYPES, $objectType) !== false){
 				//TODO deal with datepicker
 				global $asfUseSemanticFormsInputsFeatures;
@@ -264,7 +269,7 @@ class ASFPropertyFormData {
 				$inputType = 'checkbox';
 			} else {
 				$inputType = 'text';
-				$size = '35';
+				$size = '110';
 				$autocompletion = 'category';
 			}
 		}

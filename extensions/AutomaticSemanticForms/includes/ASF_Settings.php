@@ -22,4 +22,31 @@ global $asfUseSemanticFormsInputsFeatures;
 $asfUseSemanticFormsInputsFeatures = false;
 
 
+/*
+ * Decide whther to compute the category sections in the
+ * form so that no doublicate properties are shown or whether
+ * to just display one category section for each category 
+ * annotation of the instance
+ */
+global $asfDoEnhancedCategorySectionProcessing;
+$asfDoEnhancedCategorySectionProcessing = true;
+
+
+/*
+ * Decide whether to display a category section for each
+ * category in the category hierarchy of the instance or whether
+ * to combine them where possible. 
+ * This setting only has an effect if $asfDoEnhancedCategorySectionProcessing
+ * is set to true;
+ */
+global $asfCombineCategorySectionsWherePossible;
+$asfCombineCategorySectionsWherePossible = true;
+
+/*
+ * Decide whether to display property labels and category labels as links
+ */
+global $asfDisplayPropertiesAndCategoriesAsLinks;
+$asfDisplayPropertiesAndCategoriesAsLinks = true;
+
+
 

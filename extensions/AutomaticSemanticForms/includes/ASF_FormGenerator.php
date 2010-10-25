@@ -60,38 +60,69 @@ class ASFFormGenerator {
 			return false;
 		}
 		
-		return $this->generateFormForCategories(array_keys($categories));
+		return $this->generateFormForCategories(array_keys($categories), $title);
 	}
 	
 	/*
 	 * Generate form for an instance based on some given category names
 	 */
-	public function generateFormForCategories($categories){
+	public function generateFormForCategories($categories, $instanceTitle = null){
 		//check if an automatic form can be created
 		if(count($categories) == 0) return false;
 		
 		//eliminate categories that are super-categories of another annotated category
 		$categories = $this->removeSuperCategories(array_flip($categories));
 		
-		//initialize category form data objects
-		global $wgLang;
-		foreach($categories as $key => $category){
-			if(strpos($category, $wgLang->getNSText(NS_CATEGORY).":") === 0){
-				$category = substr($category, strpos($category, ":") +1);
-			}
+		$categories = $this->initializeCategoryFormData($categories);
+		
+		if(!is_null($instanceTitle)){
+			$unresolvedAnnotationsSection = 
+				new ASFUnresolvedAnnotationsFormData($instanceTitle, $categories);
 			
-			$category = Category::newFromName($category);
-			$categories[$key] = new ASFCategoryFormData($category->getTitle());
-		}
-		
-		$categories = $this->dealWithDuplicateProperties($categories);
-		
+			$categories[] = $unresolvedAnnotationsSection;
+		}	
+			
 		//deal with duplicate properties
 		$formDefinition = $this->getFormDefinition($categories);
 		
 		//echo('<pre>'.print_r($formDefinition, true).'</pre>');
 		
 		return $formDefinition;
+	}
+	
+	
+	/*
+	 * 
+	 */
+	private function initializeCategoryFormData($categories){
+		global $asfDoEnhancedCategorySectionProcessing;
+		if($asfDoEnhancedCategorySectionProcessing){
+			//let the category section structure processor compute which
+			//sections to create
+			$categorySections = 
+				ASFCategorySectionStructureProcessor::getInstance()->getCategorySectionStructure($categories);
+
+			$categories = array();
+			foreach($categorySections as $categoryName => $categorySection){
+				$category = Category::newFromName($categoryName);
+				$categories[] = 
+					new ASFCategoryFormData($category->getTitle(), $categorySection->includesCategories);
+			}	
+		} else {
+			//create section for each category annotation and then deal with duplicate properties
+			global $wgLang;
+			foreach($categories as $key => $category){
+				if(strpos($category, $wgLang->getNSText(NS_CATEGORY).":") === 0){
+					$category = substr($category, strpos($category, ":") +1);
+				}
+				
+				$category = Category::newFromName($category);
+				$categories[$key] = new ASFCategoryFormData($category->getTitle());
+			}
+			$categories = $this->dealWithDuplicateProperties($categories);
+		}
+		
+		return $categories;
 	}
 	
 	
@@ -186,11 +217,21 @@ class ASFFormGenerator {
 		}
 		
 		$outro .= "\n\n'''".wfMsg('asf_free_text')."'''\n\n";
-		$outro .= "{{{standard input|free text}}}";
+		
+		global $wgUser;
+		$cols = $wgUser->getIntOption('cols');
+		$rows = $wgUser->getIntOption('rows');
+		
+		$outro .= "{{{standard input|free text|rows=".$rows."|cols=".$cols."}}}";
 		
 		return $outro;
 	}
 	
+	/*
+	 * If the category section structure processor is not used, then it is
+	 * possible, that different sections want to define the same
+	 * property values.  Those form input fields therefore will be replaced.
+	 */
 	private function dealWithDuplicateProperties($categories){
 		for($i=0; $i < count($categories); $i++){
 			for($k=0; $k < $i; $k++){
@@ -205,7 +246,12 @@ class ASFFormGenerator {
 		
 		return $categories;
 	}
-}	
+	
+}
+
+
+
+
 
 	
 	

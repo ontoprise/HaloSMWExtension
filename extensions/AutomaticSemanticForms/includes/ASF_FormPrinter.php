@@ -16,8 +16,11 @@ class ASFFormPrinter extends SFFormPrinter {
 		if(StubObject::isRealObject($sfgFormPrinter)){
 			$this->mSemanticTypeHooks = $sfgFormPrinter->mSemanticTypeHooks;
   			$this->mInputTypeHooks = $sfgFormPrinter->mInputTypeHooks;
+  			
   			$this->standardInputsIncluded = $sfgFormPrinter->standardInputsIncluded;
   			$this->mPageTitle = $sfgFormPrinter->mPageTitle;	
+		} else {
+			parent::__construct();
 		}
 	}
 
@@ -71,6 +74,19 @@ class ASFFormPrinter extends SFFormPrinter {
 				$endFreeText = strpos($form_text, '</textarea>', $startFreeText);
 				$form_text = substr($form_text, 0, $endFreeText).$additionalCategoryAnnotations.substr($form_text, $endFreeText);
 			}
+			
+			//deal with standard text input with
+			$startPos = strpos($form_text, 'id="free_text"');
+			$startPos = strrpos(substr($form_text, 0, $startPos), '<textare');
+			$styleStartPos = strpos($form_text, 'style=', $startPos);
+			if($styleStartPos > 0){
+				$styleStartPos = strpos($form_text, '"', $styleStartPos);
+				$form_text = substr($form_text, 0, $endPos).'width: 100%;'.substr($form_text, $endPos);
+			} else {
+				$endPos = strpos($form_text, '>', $startPos);
+				$form_text = substr($form_text, 0, $endPos).'style="width: 100%"'.substr($form_text, $endPos);
+			}
+			
 		}
 		
 		//echo('<pre>'.print_r($form_text, true).'</pre>');

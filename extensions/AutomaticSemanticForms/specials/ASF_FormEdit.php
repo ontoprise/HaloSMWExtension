@@ -23,9 +23,11 @@ class ASFFormEdit extends SFFormEdit {
 		//Initialize category names array
 		$categoryNames = array();
 		if($categoryParam){
+			$categoryParam = str_replace('_', '', $categoryParam);
 			$categoryNames = explode(',', $categoryParam);
 			global $wgLang;
 			foreach($categoryNames as $key => $category){
+				$category = trim($category);
 				if(strpos($category, $wgLang->getNSText(NS_CATEGORY).':') !== 0){
 					$category = $wgLang->getNSText(NS_CATEGORY).':'.$category;
 				}
@@ -44,7 +46,9 @@ class ASFFormEdit extends SFFormEdit {
 			
 			//TODO: What to do with non existing or empty  category names?
 			
-			$formDefinition = ASFFormGenerator::getInstance()->generateFormForCategories($categoryNames);
+			$targetTitle = Title::newFromText($targetName);
+			
+			$formDefinition = ASFFormGenerator::getInstance()->generateFormForCategories($categoryNames, $targetTitle);
 			if($formDefinition){
 				//Set the dummy form name to trick the Semantic Forms extension
 				global $asfDummyFormName;
