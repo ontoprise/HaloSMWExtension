@@ -40,7 +40,9 @@ class WikiTypeToXSD {
 			case '_wpc' :
 			case '_wpf' :
 			case '_wpp' :
-			case '_wpg' : return NULL;
+			case '_wpg' : return 'tsctype:page' ;
+			
+			case '_rec' : return 'tsctype:record';
 
 			// unknown or composite type
 			default:

@@ -47,7 +47,11 @@ function smwfTripleStorePropertyUpdate(& $data, & $property, & $propertyValueArr
 			$typeID = array_shift($dbkeys);
 			if ($typeID != '_wpg') {
 				$triplesFromHook[] = array($subj_iri, $hasType_iri, WikiTypeToXSD::getXSDType($typeID));
-			}
+			} elseif ($typeID == '_wpg' || $typeID == '_wpp' || $typeID == '_wpc' ||$typeID == '_wpf') {
+				$triplesFromHook[] = array($subj_iri, $hasType_iri, "tsctype:page");
+			} else if ($typeID === '_rec') {
+				$triplesFromHook[] = array($subj_iri, $hasType_iri, "tsctype:record");
+			} 
 
 		}
 

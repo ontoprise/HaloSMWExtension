@@ -302,7 +302,65 @@ class SMWTripleStore extends SMWStore {
 
 				}
 				continue;
+			} elseif ($property->getPropertyID() == "_UNIT") {
+				foreach($propertyValueArray as $value) {
+					$dbkeys = $value->getDBkeys();
+					$firstValue = array_shift($dbkeys);
+					$triples[] = array($subject_iri, $property_iri, "\"".TSHelper::escapeForStringLiteral($firstValue)."\"^^xsd:string");
+				}
+				continue;
+			} elseif ($property->getPropertyID() == "_IMPO") {
+				foreach($propertyValueArray as $value) {
+					$dbkeys = $value->getDBkeys();
+					$firstValue = array_shift($dbkeys);
+					$triples[] = array($subject_iri, $property_iri, "\"".TSHelper::escapeForStringLiteral($firstValue)."\"^^xsd:string");
+				}
+				continue;
+			} elseif ($property->getPropertyID() == "_URI") {
+				foreach($propertyValueArray as $value) {
+					$dbkeys = $value->getDBkeys();
+					$firstValue = array_shift($dbkeys);
+					$triples[] = array($subject_iri, $property_iri, "\"".TSHelper::escapeForStringLiteral($firstValue)."\"^^xsd:anyURI");
+				}
+				continue;
+			} elseif ($property->getPropertyID() == "_SERV") {
+				foreach($propertyValueArray as $value) {
+					$dbkeys = $value->getDBkeys();
+					$firstValue = array_shift($dbkeys);
+					$triples[] = array($subject_iri, $property_iri, "\"".TSHelper::escapeForStringLiteral($firstValue)."\"^^xsd:string");
+				}
+				continue;
+			} elseif ($property->getPropertyID() == "_PVAL") {
+				foreach($propertyValueArray as $value) {
+					$dbkeys = $value->getDBkeys();
+					$firstValue = array_shift($dbkeys);
+					$triples[] = array($subject_iri, $property_iri, "\"".TSHelper::escapeForStringLiteral($firstValue)."\"^^xsd:string");
+				}
+				continue;
+			} elseif ($property->getPropertyID() == "_ERRP") {
+				foreach($propertyValueArray as $value) {
+					$dbkeys = $value->getDBkeys();
+					$firstValue = array_shift($dbkeys);
+					$triples[] = array($subject_iri, $property_iri, "\"".TSHelper::escapeForStringLiteral($firstValue)."\"^^xsd:string");
+				}
+				continue;
+			} elseif ($property->getPropertyID() == "_LIST") {
+				foreach($propertyValueArray as $value) {
+					//echo print_r($value, true);die();
+					$typeValues = $value->getTypeValues();
+					$i=0;
+					$triples[] = array($subject_iri, $property_iri, "_:".$bNodeCounter);
+					foreach($typeValues as $tv) {
+						$dbkeys = $tv->getDBkeys();
+						$firstValue = array_shift($dbkeys);
+						$triples[] = array("_:".$bNodeCounter, "<$smwgTripleStoreGraph/property#$i>", WikiTypeToXSD::getXSDType($firstValue));
+						$i++;
+					}
+					
+				}
+				continue;
 			}
+
 
 			// there are other special properties which need not to be handled special
 			// so they can be handled by the default machanism:
@@ -705,7 +763,7 @@ class SMWTripleStore extends SMWStore {
 	}
 
 
-		
+
 	/**
 	 * Parses a SPARQL XML-Result and returns an SMWHaloQueryResult.
 	 *
@@ -1042,7 +1100,7 @@ class SMWTripleStore extends SMWStore {
 
 
 
-	
+
 
 
 	/**
