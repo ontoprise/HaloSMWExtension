@@ -1044,7 +1044,7 @@ $jq(document).ready(
 				});
 				$jq(divEl).html('Reply');
 				var replyImgEl = document.createElement('img');
-				$jq(replyImgEl).attr('src', cegScriptPath + '/skins/Comment/icons/reply_Comment.png')
+				$jq(replyImgEl).attr('src', cegScriptPath + '/skins/Comment/icons/Reply_Comment.png')
 				$jq(replyImgEl).addClass('collabComReplyImg');
 				$jq(divEl).append($jq(replyImgEl));
 				$jq('.collabComResText', resCom).after(divEl);
