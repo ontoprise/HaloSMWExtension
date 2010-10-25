@@ -72,7 +72,11 @@ function cef_comment_deleteComment($pageName) {
 	$success = true;
 	if ($pageName != null) {
 		try {
-			$article = new Article(Title::newFromText($pageName));
+			$title = Title::newFromText($pageName);
+			if($title->getNamespace() != CE_COMMENT_NS) {
+				$title = Title::makeTitle(CE_COMMENT_NS, $title);
+			}
+			$article = new Article($title);
 			$article->doDelete(wfMsg('ce_comment_delete_reason'));
 			$result = wfMsg('ce_comment_deletion_successful');
 			return CECommentUtils::createXMLResponse($result, '0', $pageName);
