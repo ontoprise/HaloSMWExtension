@@ -82,7 +82,7 @@ foreach($mappings as $source => $list) {
 		} else print ".";
 		$handleMap = fopen($outputDir.$target.".map", "w");
 		fwrite($handleMap, $mapping_text);
-		fwrite($handleXML, "\n<mapping source=\"$source\" target=\"$target\" loc=\"mappings/$target.map\"/>");
+		fwrite($handleXML, "\n<file source=\"$source\" target=\"$target\" loc=\"mappings/$target.map\"/>");
 		fclose($handleMap);
 	}
 }
