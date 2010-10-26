@@ -44,10 +44,9 @@ function lodfInitParserfunctions() {
 	global $wgParser, $lodgContLang;
 	
 	$inst = LODParserFunctions::getInstance();
-
 	$wgParser->setHook($lodgContLang->getParserFunction(LODLanguage::PF_MAPPING), 
 	                   array('LODParserFunctions', 'mapping'));
-	
+	                   
 	$wgParser->setFunctionHook('lodsourcedefinition', array($inst, 'lodSourceDefinition'));
 	
 	global $wgHooks;
@@ -112,7 +111,7 @@ class LODParserFunctions {
 	 * @param Parser $parser
 	 * 		The parser
 	 */
-	public static function mapping($text, $params, &$parser)  {
+	public static function mapping($text, $params, $parser)  {
 		// The mapping function is only allowed in namespace "Mapping".
 		$title = $parser->getTitle();
 		$ns = $title->getNamespace();
