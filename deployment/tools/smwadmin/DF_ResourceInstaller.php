@@ -64,11 +64,11 @@ class ResourceInstaller {
 		$wikidumps = $dd->getWikidumps();
 		foreach($wikidumps as $file) {
 			print "\nImport ontology: $file";
-			if (!file_exists($this->rootDir."/".$file)) {
-				print "\n\tWARNING: dump file '".$this->rootDir."/".$file."' does not exist.";
+			if (!file_exists($this->rootDir."/".$dd->getInstallationDirectory()."/".$file)) {
+				print "\n\tWARNING: dump file '".$this->rootDir."/".$dd->getInstallationDirectory()."/".$file."' does not exist.";
 				continue;
 			}
-			$result = $reader->importFromFile( $this->rootDir."/".$file );
+			$result = $reader->importFromFile( $this->rootDir."/".$dd->getInstallationDirectory()."/".$file );
 		}
 		if (!is_null($fromVersion)) {
 			// remove old pages
