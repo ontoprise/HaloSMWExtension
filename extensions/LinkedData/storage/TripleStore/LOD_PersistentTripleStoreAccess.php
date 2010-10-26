@@ -65,13 +65,29 @@ class  LODPersistentTripleStoreAccess extends LODTripleStoreAccess {
 	// inserted, serialized in TriG syntax.
 	private $mSerializedTriples = array();
 	
+	// boolean
+	// Normally the method deleteTriples() throws an exception as the persistence
+	// layer can not track the triples that are deleted by this command. However,
+	// this operation may be allowed if the developer takes care that the deleted
+	// triples are also removed from the persistence layer.
+	private $mAllowDeleteTriples = false;
+	
 
 	/**
 	 * Constructor for LODTripleStoreAccess
 	 *
+	 * @param bool $allowDeleteTriples
+	 * Normally the method deleteTriples() throws an exception as the persistence
+	 * layer can not track the triples that are deleted by this command. However,
+	 * this operation may be allowed if the developer takes care that the deleted
+	 * triples are also removed from the persistence layer. 
+	 * WARNING: This may lead to inconsistencies i.e. triples that were deleted
+	 * 		from the triple store will be restored when it is restarted. Use this
+	 * 		at your own risk!!
 	 */
-	function __construct() {
+	function __construct($allowDeleteTriples = false) {
 		parent::__construct();
+		$this->mAllowDeleteTriples = $allowDeleteTriples;
 	}
 
 
@@ -105,16 +121,25 @@ class  LODPersistentTripleStoreAccess extends LODTripleStoreAccess {
 	 * exception. The persistence layer can not handle delete operations on triples
 	 * as the parent class can do this. Triples must be deleted with the method
 	 * deletePersitentTriples().
+	 * The constructor of this class may be called with the parameter 
+	 * $allowDeleteTriples = true. In this case the parent method is called. 
+	 * WARNING: This may lead to inconsistencies i.e. triples that were deleted
+	 * 		from the triple store will be restored when it is restarted.
 	 * 
 	 * @param string $graph
 	 * @param string $wherePattern
 	 * @param string $deleteTemplate
 	 * 
-	 * @throws
+	 * @throws LODTSAException
+	 * 		INVALID_METHOD
 	 */
 	public function deleteTriples($graph, $wherePattern, $deleteTemplate) {
-		throw new LODTSAException(LODTSAException::INVALID_METHOD, 
-								  "deleteTriples", "LODPersistentTripleStoreAccess");
+		if ($this->mAllowDeleteTriples) {
+			parent::deleteTriples($graph, $wherePattern, $deleteTemplate);
+		} else {
+			throw new LODTSAException(LODTSAException::INVALID_METHOD, 
+									  "deleteTriples", "LODPersistentTripleStoreAccess");
+		}
 	}
 	
 	/**
