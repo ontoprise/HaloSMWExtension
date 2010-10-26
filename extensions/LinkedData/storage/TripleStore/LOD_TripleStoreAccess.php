@@ -113,7 +113,7 @@ class  LODTripleStoreAccess  {
 	 * 		Different prefixes in $prefixes must be separated by spaces.
 	 */
 	public function addPrefixes($prefixes) {
-		$this->mPrefixes .= "$prefixes ";
+		$this->mPrefixes .= "$prefixes\n";
 	}
 
 	/**
@@ -293,6 +293,7 @@ class  LODTripleStoreAccess  {
 	 */
 	private function parseSparqlXMLResult($sparqlXMLResult) {
 		$dom = simplexml_load_string($sparqlXMLResult);
+		$dom->registerXPathNamespace("sparqlxml", "http://www.w3.org/2005/sparql-results#");
 		if ($dom === FALSE) {
 			return null;
 		}
@@ -301,7 +302,7 @@ class  LODTripleStoreAccess  {
 		$queryResult = new LODSparqlQueryResult();
 
 		// add variables to the query result
-		$variables = $dom->xpath('//variable');
+		$variables = $dom->xpath('//sparqlxml:variable');
 		foreach ($variables as $v) {
 			$attrib = $v->attributes();
 			$name = (string) $attrib['name'];
@@ -309,7 +310,7 @@ class  LODTripleStoreAccess  {
 		}
 
 		// add all rows to the query result
-		$results = $dom->xpath('//result');
+		$results = $dom->xpath('//sparqlxml:result');
 
 		foreach ($results as $r) {
 			$binding = $r->binding;
@@ -355,12 +356,6 @@ class  LODTripleStoreAccess  {
 							}
 						}
 					}
-					
-//					foreach($b->literal->attributes() as $mdProperty => $mdValue) {
-//						if (strpos($mdProperty, "_meta_") === 0) {
-//							$metadata[substr($mdProperty,6)] = (string) $mdValue;
-//						}
-//					}
 					$row->addResult($name, new LODSparqlResultLiteral($name, (string) $b->literal, $datatype, $lang, $metadata));
 				}
 			}
