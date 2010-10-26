@@ -20,7 +20,7 @@ if (!defined("SMW_HALO_VERSION")) {
 
 global $smwgDefaultStore;
 if($smwgDefaultStore == 'SMWTripleStoreQuad') {
-	trigger_error("Rule extension will not work with the quad driver currently. Please deactivate it.");
+	echo "Rule extension will not work with the 'SMWTripleStoreQuad' client. Please deactivate it and replace it by 'SMWTripleStore'.";
 	die();
 }
 
