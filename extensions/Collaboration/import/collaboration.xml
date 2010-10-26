@@ -1,58 +1,44 @@
-<mediawiki xmlns="http://www.mediawiki.org/xml/export-0.3/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mediawiki.org/xml/export-0.3/ http://www.mediawiki.org/xml/export-0.3.xsd" version="0.3" xml:lang="en">
+<mediawiki xmlns="http://www.mediawiki.org/xml/export-0.4/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mediawiki.org/xml/export-0.4/ http://www.mediawiki.org/xml/export-0.4.xsd" version="0.4" xml:lang="en">
   <siteinfo>
     <sitename>Halo3wiki</sitename>
-    <base>http://localhost/trunk/index.php/Main_Page</base>
-    <generator>MediaWiki 1.15.3</generator>
+    <base>http://127.0.0.1/trunk/index.php/Main_Page</base>
+    <generator>MediaWiki 1.16.0</generator>
     <case>first-letter</case>
     <namespaces>
-      <namespace key="-2">Media</namespace>
-      <namespace key="-1">Special</namespace>
-      <namespace key="0" />
-      <namespace key="1">Talk</namespace>
-      <namespace key="2">User</namespace>
-      <namespace key="3">User talk</namespace>
-      <namespace key="4">Halo3wiki</namespace>
-      <namespace key="5">Halo3wiki talk</namespace>
-      <namespace key="6">File</namespace>
-      <namespace key="7">File talk</namespace>
-      <namespace key="8">MediaWiki</namespace>
-      <namespace key="9">MediaWiki talk</namespace>
-      <namespace key="10">Template</namespace>
-      <namespace key="11">Template talk</namespace>
-      <namespace key="12">Help</namespace>
-      <namespace key="13">Help talk</namespace>
-      <namespace key="14">Category</namespace>
-      <namespace key="15">Category talk</namespace>
-      <namespace key="102">Property</namespace>
-      <namespace key="103">Property talk</namespace>
-      <namespace key="104">Type</namespace>
-      <namespace key="105">Type talk</namespace>
-      <namespace key="106">Form</namespace>
-      <namespace key="107">Form talk</namespace>
-      <namespace key="108">Concept</namespace>
-      <namespace key="109">Concept talk</namespace>
-      <namespace key="120">Document</namespace>
-      <namespace key="121">Document talk</namespace>
-      <namespace key="122">Audio</namespace>
-      <namespace key="123">Audio talk</namespace>
-      <namespace key="124">Video</namespace>
-      <namespace key="125">Video talk</namespace>
-      <namespace key="126">Pdf</namespace>
-      <namespace key="127">Pdf talk</namespace>
-      <namespace key="128">ICalendar</namespace>
-      <namespace key="129">ICalendar talk</namespace>
-      <namespace key="130">VCard</namespace>
-      <namespace key="131">VCard talk</namespace>
-      <namespace key="700">Comment</namespace>
-      <namespace key="701">Comment talk</namespace>
+      <namespace key="-2" case="first-letter">Media</namespace>
+      <namespace key="-1" case="first-letter">Special</namespace>
+      <namespace key="0" case="first-letter" />
+      <namespace key="1" case="first-letter">Talk</namespace>
+      <namespace key="2" case="first-letter">User</namespace>
+      <namespace key="3" case="first-letter">User talk</namespace>
+      <namespace key="4" case="first-letter">Halo3wiki</namespace>
+      <namespace key="5" case="first-letter">Halo3wiki talk</namespace>
+      <namespace key="6" case="first-letter">File</namespace>
+      <namespace key="7" case="first-letter">File talk</namespace>
+      <namespace key="8" case="first-letter">MediaWiki</namespace>
+      <namespace key="9" case="first-letter">MediaWiki talk</namespace>
+      <namespace key="10" case="first-letter">Template</namespace>
+      <namespace key="11" case="first-letter">Template talk</namespace>
+      <namespace key="12" case="first-letter">Help</namespace>
+      <namespace key="13" case="first-letter">Help talk</namespace>
+      <namespace key="14" case="first-letter">Category</namespace>
+      <namespace key="15" case="first-letter">Category talk</namespace>
+      <namespace key="102" case="first-letter">Property</namespace>
+      <namespace key="103" case="first-letter">Property talk</namespace>
+      <namespace key="104" case="first-letter">Type</namespace>
+      <namespace key="105" case="first-letter">Type talk</namespace>
+      <namespace key="108" case="first-letter">Concept</namespace>
+      <namespace key="109" case="first-letter">Concept talk</namespace>
+      <namespace key="700" case="first-letter">Comment</namespace>
+      <namespace key="701" case="first-letter">Comment talk</namespace>
     </namespaces>
   </siteinfo>
   <page>
     <title>Category:Comment</title>
-    <id>511</id>
+    <id>62155</id>
     <revision>
-      <id>1149</id>
-      <timestamp>2010-05-07T13:58:55Z</timestamp>
+      <id>63399</id>
+      <timestamp>2010-10-23T13:42:16Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -75,10 +61,10 @@
   </page>
   <page>
     <title>Template:Comment</title>
-    <id>512</id>
+    <id>62156</id>
     <revision>
-      <id>1540</id>
-      <timestamp>2010-08-24T12:44:14Z</timestamp>
+      <id>63432</id>
+      <timestamp>2010-10-26T10:12:18Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -103,16 +89,50 @@
 |copyright holder=Ontoprise GmbH
 |year=2010
 }}
-&lt;/noinclude&gt;&lt;includeonly&gt;''Comment for {{#if: {{{CommentRelatedArticle|}}} | [[Belongs to article::{{{CommentRelatedArticle|}}}]] | nothing}}''&lt;!-- start comment (do not change css-classes)--&gt;&lt;div class=&quot;collabCom&quot;&gt;&lt;!-- start comment headline --&gt;&lt;div class=&quot;collabComHeadline&quot;&gt;&lt;!-- start comment person (do not change css-class.) --&gt;&lt;div class=&quot;collabComResPerson&quot;&gt;{{#if: {{{CommentPerson|}}} | {{#vardefine:userimage|{{#ask: [[{{{CommentPerson}}}]] | ?User_image = | link=none}} }} }}{{#if:{{#var:userimage}}| [[{{#var:userimage}}|frameless|48x48px|nopreview|link={{{CommentPerson}}}]] | [[File:Defaultuser.gif|frameless|48px|nopreview|link=]] }}&lt;div class=&quot;collabComUser&quot;&gt;&lt;div class=&quot;collabComUserName&quot;&gt;{{#if: {{{CommentPerson|}}} |{{#ifexist:{{{CommentPerson}}}|[[{{{CommentPerson|}}}]], |{{{CommentPerson|}}},&amp;nbsp; }}[[Has comment person::{{{CommentPerson|}}}| ]]|}}&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;!-- end comment person --&gt;&lt;!-- start comment date--&gt;{{#if: {{{CommentDatetime|}}} | &lt;div class=&quot;collabComDate&quot;&gt;[[Has comment date::{{{CommentDatetime|}}}]]&lt;/div&gt;}}&lt;!-- end comment date--&gt;&lt;!-- start comment rating --&gt;{{#if:{{{CommentRating|}}}|[[Has comment rating::{{{CommentRating|}}}|]]&lt;div class =&quot;collabComRating&quot;&gt;{{#ifexpr: {{{CommentRating|}}} &lt; 2 | {{#ifexpr: {{{CommentRating|}}} &gt; -2 | Article quality rated:&lt;div class=&quot;collabComRatingIcon&quot;&gt;{{#ifexpr: {{{CommentRating|}}} = -1 | [[File:Bad_active.png]] }}{{#ifexpr: {{{CommentRating|}}} = 0 | [[File:Neutral_active.png]] }}{{#ifexpr: {{{CommentRating|}}} = 1 | [[File:Good_active.png]] }}&lt;/div&gt;| }}| }}&lt;/div&gt;| }}&lt;!-- end comment rating --&gt;&lt;!-- end comment headline --&gt;&lt;/div&gt;&lt;!-- start comment content--&gt;&lt;div class=&quot;collabComText&quot;&gt;{{#if:{{{CommentContent|}}}|[[Has comment text::{{{CommentContent|}}}]]}}&lt;/div&gt;&lt;!-- end comment content--&gt;&lt;/div&gt;&lt;!-- end comment --&gt;[[Category:Comment]]
-{{#if: {{{CommentRelatedComment|}}} | [[Belongs to comment::{{{CommentRelatedComment|}}}]] | }}&lt;/includeonly&gt;</text>
+&lt;/noinclude&gt;
+&lt;includeonly&gt;''Comment for {{#if: {{{CommentRelatedArticle|}}} 
+| [[Belongs to article::{{{CommentRelatedArticle|}}}]] | nothing
+}}{{#if: {{{CommentRelatedComment|}}} 
+| &amp;nbsp;and a reply to [[Belongs to comment::{{{CommentRelatedComment|}}}]] | 
+}}''&lt;!-- start comment (do not change css-classes)--&gt;
+&lt;!-- start comment person (do not change css-class.) --&gt;
+&lt;div class=&quot;collabComResPerson&quot;&gt;
+{{#if: {{{CommentPerson|}}} 
+| {{#vardefine:userimage|{{#ask: [[{{{CommentPerson}}}]] | ?User_image = | link=none}} }} 
+}}
+{{#if:{{#var:userimage}}
+| [[{{#var:userimage}}|frameless|48x48px|nopreview|link={{{CommentPerson}}}]] 
+| [[File:Defaultuser.gif|frameless|48px|nopreview|link={{{CommentPerson}}}]] 
+}}&lt;/div&gt;&lt;!-- end comment person 
+--&gt;&lt;!-- start comment rating 
+--&gt;{{#if:{{{CommentRating|}}}
+| [[Has comment rating::{{{CommentRating|}}}|]]&lt;div class =&quot;collabComResRating&quot;&gt;{{#ifexpr: {{{CommentRating|}}} &lt; 2 | {{#ifexpr: {{{CommentRating|}}} &gt; -2 | Article quality rated:&lt;div class=&quot;collabComResRatingIcon&quot;&gt;{{#ifexpr: {{{CommentRating|}}} = -1 | [[File:Bad_active.png]] }}{{#ifexpr: {{{CommentRating|}}} = 0 | [[File:Neutral_active.png]] }}{{#ifexpr: {{{CommentRating|}}} = 1 | [[File:Good_active.png]] }}&lt;/div&gt;|}}| }}&lt;/div&gt;|}}&lt;!-- end comment rating 
+--&gt;&lt;div class=&quot;collabComResRight&quot;&gt;&lt;div class=&quot;collabComResUsername&quot;&gt;
+{{#if: {{{CommentPerson|}}} 
+|{{#ifexist:{{{CommentPerson}}}
+|[[{{{CommentPerson|}}}]], 
+|{{{CommentPerson|}}},&amp;nbsp; 
+}}[[Has comment person::{{{CommentPerson|}}}| ]]|
+}}&lt;/div&gt;
+&lt;!-- start comment date
+--&gt;{{#if: {{{CommentDatetime|}}} 
+| &lt;div class=&quot;collabComResDate&quot;&gt;[[Has comment date::{{{CommentDatetime|}}}]]&lt;/div&gt;
+}}&lt;!-- end comment date
+--&gt;&lt;!-- start comment content
+--&gt;&lt;div class=&quot;collabComResText&quot;&gt;
+{{#if:{{{CommentContent|}}}
+|[[Has comment text::{{{CommentContent|}}}]]}}&lt;/div&gt;
+&lt;!-- end comment content--&gt;&lt;/div&gt;
+&lt;!-- end comment --&gt;[[Category:Comment]]
+&lt;/includeonly&gt;</text>
     </revision>
   </page>
   <page>
     <title>Template:CommentResult</title>
-    <id>513</id>
+    <id>62157</id>
     <revision>
-      <id>1627</id>
-      <timestamp>2010-08-31T15:39:56Z</timestamp>
+      <id>63425</id>
+      <timestamp>2010-10-26T09:33:10Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -129,17 +149,44 @@
 |copyright holder=Ontoprise GmbH
 |year=2009
 }}
-&lt;/noinclude&gt;&lt;includeonly&gt;&lt;!-- start comment (do not change css-classes)--&gt;
-{{#vardefine:resID|{{PAGENAMEE:{{#ifeq: {{#pos:{{{6}}}|:}} | | {{{6}}} | {{#sub:{{{6}}}|{{#expr:{{#pos:{{{6}}}|:}}+1}}|0}} }} }} }}{{#vardefine:myID|{{PAGENAMEE:{{#ifeq: {{#pos:{{{1}}}|:}} | | {{{1}}} | {{#sub:{{{1}}}|{{#expr:{{#pos:{{{1}}}|:}}+1}}|0}} }} }} }}&lt;div class=&quot;collabComRes&quot; id=&quot;{{#var:myID}}&quot;&gt;&lt;!-- start comment information --&gt;&lt;div class=&quot;collabComResInfoSuper&quot;&gt;{{#var:resID}}&lt;/div&gt;&lt;div class=&quot;collabComResInfo&quot;&gt;{{#var:myID}}&lt;/div&gt;
-&lt;!-- end comment information --&gt;&lt;!-- start comment person --&gt;&lt;div class=&quot;collabComResPerson&quot;&gt;{{#if: {{{2|}}} |{{#vardefine:userimage|{{#ask: [[{{{2}}}]] | ?User_image = | link=none}} }} }}{{#if:{{#var:userimage}}| [[{{#var:userimage}}|frameless|48x48px|nopreview|link={{{2}}}]] | [[File:Defaultuser.gif|frameless|48px|nopreview]] }}&lt;/div&gt;&lt;!-- start comment rating --&gt;{{#if:{{{5}}}|&lt;div class =&quot;collabComResRating&quot;&gt;{{#ifexpr: {{{5}}} &lt; 2 | {{#ifexpr: {{{5}}} &gt; -2 | Article quality rated:&lt;div class=&quot;collabComResRatingIcon&quot;&gt;{{#ifexpr: {{{5}}} = -1 | [[File:Bad_active.png|16px|nopreview]] }}{{#ifexpr: {{{5}}} = 0 | [[File:Neutral_active.png|16px|nopreview]] }}{{#ifexpr: {{{5}}} = 1 | [[File:Good_active.png|16px|nopreview]] }}&lt;/div&gt;| }}| }}&lt;/div&gt;| }}&lt;!-- end comment rating --&gt;&lt;div class=&quot;collabComResRight&quot;&gt;&lt;div class=&quot;collabComResUsername&quot;&gt;{{#if:{{{2|}}}|[[{{{2|}}}]], | }}&lt;/div&gt;&lt;!-- end comment person --&gt;&lt;!-- start comment date--&gt;&lt;div class=&quot;collabComResDate&quot;&gt; {{{3}}}&lt;/div&gt;&lt;!-- end comment date--&gt;&lt;!-- start comment content--&gt;&lt;div class=&quot;collabComResText&quot;&gt;{{{4}}}&lt;/div&gt;&lt;/div&gt;&lt;!-- end comment content--&gt;&lt;/div&gt;&lt;!-- end comment --&gt;&lt;/includeonly&gt;</text>
+&lt;/noinclude&gt;&lt;includeonly&gt;&lt;!-- start comment (do not change css-classes)
+--&gt;{{#vardefine:resID
+|{{PAGENAMEE:{{#ifeq: {{#pos:{{{6}}}|:}} 
+| 
+| {{{6}}} 
+| {{#sub:{{{6}}}|{{#expr:{{#pos:{{{6}}}|:}}+1}}|0}} }} }} 
+}}
+{{#vardefine:myID
+|{{PAGENAMEE:{{#ifeq: {{#pos:{{{1}}}|:}} | | {{{1}}} | {{#sub:{{{1}}}|{{#expr:{{#pos:{{{1}}}|:}}+1}}|0}} }} }} 
+}}&lt;div class=&quot;collabComRes&quot; id=&quot;{{#var:myID}}&quot;&gt;&lt;!-- start comment information 
+--&gt;&lt;div class=&quot;collabComResInfoSuper&quot;&gt;{{#var:resID}}&lt;/div&gt;
+&lt;div class=&quot;collabComResInfo&quot;&gt;{{#var:myID}}&lt;/div&gt;&lt;!-- end comment information 
+--&gt;&lt;!-- start comment person 
+--&gt;&lt;div class=&quot;collabComResPerson&quot;&gt;{{#if: {{{2|}}} 
+|{{#vardefine:userimage|{{#ask: [[{{{2}}}]] | ?User_image = | link=none}} }} 
+}}
+{{#if:{{#var:userimage}}
+| [[{{#var:userimage}}|frameless|48x48px|nopreview|link={{{2}}}]] 
+| [[File:Defaultuser.gif|frameless|48px|nopreview]] 
+}}&lt;/div&gt;&lt;!-- start comment rating 
+--&gt;{{#if:{{{5}}}
+|&lt;div class =&quot;collabComResRating&quot;&gt;{{#ifexpr: {{{5}}} &lt; 2 | {{#ifexpr: {{{5}}} &gt; -2 | Article quality rated:&lt;div class=&quot;collabComResRatingIcon&quot;&gt;{{#ifexpr: {{{5}}} = -1 | [[File:Bad_active.png|16px|nopreview]] }}{{#ifexpr: {{{5}}} = 0 | [[File:Neutral_active.png|16px|nopreview]] }}{{#ifexpr: {{{5}}} = 1 | [[File:Good_active.png|16px|nopreview]] }}&lt;/div&gt;| }}| }}&lt;/div&gt;| 
+}}&lt;!-- end comment rating 
+--&gt;&lt;div class=&quot;collabComResRight&quot;&gt;&lt;div class=&quot;collabComResUsername&quot;&gt;{{#if:{{{2|}}}|[[{{{2|}}}]], | }}&lt;/div&gt;&lt;!-- end comment person 
+--&gt;&lt;!-- start comment date
+--&gt;&lt;div class=&quot;collabComResDate&quot;&gt; {{{3}}}&lt;/div&gt;&lt;!-- end comment date
+--&gt;&lt;!-- start comment content
+--&gt;&lt;div class=&quot;collabComResText&quot;&gt;{{{4}}}&lt;/div&gt;&lt;/div&gt;&lt;!-- end comment content
+--&gt;&lt;/div&gt;&lt;!-- end comment 
+--&gt;&lt;/includeonly&gt;</text>
     </revision>
   </page>
   <page>
     <title>Template:ShowComments</title>
-    <id>514</id>
+    <id>62158</id>
     <revision>
-      <id>1155</id>
-      <timestamp>2010-05-07T13:58:58Z</timestamp>
+      <id>63405</id>
+      <timestamp>2010-10-23T13:42:19Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -166,10 +213,10 @@
   </page>
   <page>
     <title>Template:ShowCommentsIntern</title>
-    <id>515</id>
+    <id>62159</id>
     <revision>
-      <id>1648</id>
-      <timestamp>2010-09-01T13:03:17Z</timestamp>
+      <id>63436</id>
+      <timestamp>2010-10-26T11:14:08Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -200,13 +247,7 @@
 {{#vardefine:commentnum|{{#ask: [[Belongs to article::{{FULLPAGENAME}}]][[Comment:+]]
   | format=count
 }}}}
-&lt;!--start surrounding div --&gt;&lt;div class=&quot;collabComInternSurround&quot;&gt;&lt;!-- start header div --&gt;&lt;div class=&quot;collabComInternHeader&quot;&gt;{{#ifexpr:{{#var:commentnum}} &gt; 0 |&lt;span class=&quot;collabComInternComment&quot;&gt;[[File:Comment_icon_crystal.png|middle|nopreview|16px|link=]] Comments ({{#var:commentnum}})&lt;/span&gt;&lt;span id=&quot;collabComToggle&quot;&gt; &amp;#124; Hide comments&lt;/span&gt;&lt;span id=&quot;collabComFormToggle&quot;&gt; &amp;#124; Add comment&lt;/span&gt;{{#ifexpr:{{#var:countrating}} &gt; 0 |&lt;span class=&quot;collabComInternAvg&quot;&gt;Average article quality based on {{#var:countrating}} rating(s): &lt;!--
---&gt;&lt;div class=&quot;collabComInternRatingIcon&quot;&gt;&lt;!--
---&gt;{{#ifexpr:{{#var:avgrating}} &lt; -0.33 |[[File:Bad_active.png|16px|nopreview|middle|link=]]}}&lt;!--
---&gt;{{#ifexpr:{{#var:avgrating}} &gt;= -0.33&lt;!--
-...--&gt;| {{#ifexpr:{{#var:avgrating}} &lt;= 0.33 |[[File:Neutral_active.png|16px|nopreview|middle|link=]]}}&lt;!--
---&gt;}}&lt;!--
---&gt;{{#ifexpr:{{#var:avgrating}} &gt; 0.33 |[[File:Good_active.png|16px|nopreview|middle|link=]]}}&lt;/div&gt;&lt;/span&gt;|}}| [[File:Comment_icon_crystal.png|middle|nopreview|16px|link=]]&lt;span id=&quot;collabComFormToggle&quot; style=&quot;font-weight:bold&quot;&gt;  Add comment&lt;/span&gt;}}&lt;/div&gt;&lt;!-- end header div --&gt;
+&lt;!--start surrounding div --&gt;&lt;div class=&quot;collabComInternSurround&quot;&gt;&lt;!-- start header div --&gt;&lt;div class=&quot;collabComInternHeader&quot;&gt;[[File:Comment_icon_crystal.png|text-bottom|nopreview|16px|link=]]&lt;/div&gt;&lt;!-- end header div --&gt;
 {{#showcommentform:}}
 &lt;div id=&quot;collabComResults&quot;&gt;
 {{#ask: [[Belongs to article::{{FULLPAGENAME}}]] [[Comment:+]]
@@ -226,10 +267,10 @@
   </page>
   <page>
     <title>Property:Has comment person</title>
-    <id>516</id>
+    <id>62160</id>
     <revision>
-      <id>1159</id>
-      <timestamp>2010-05-07T13:59:00Z</timestamp>
+      <id>63409</id>
+      <timestamp>2010-10-23T13:42:22Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -254,10 +295,10 @@
   </page>
   <page>
     <title>Property:Has comment rating</title>
-    <id>517</id>
+    <id>62161</id>
     <revision>
-      <id>1161</id>
-      <timestamp>2010-05-07T13:59:01Z</timestamp>
+      <id>63411</id>
+      <timestamp>2010-10-23T13:42:23Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -283,10 +324,10 @@
   </page>
   <page>
     <title>Property:Has comment date</title>
-    <id>518</id>
+    <id>62162</id>
     <revision>
-      <id>1163</id>
-      <timestamp>2010-05-07T13:59:02Z</timestamp>
+      <id>63413</id>
+      <timestamp>2010-10-23T13:42:24Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -311,10 +352,10 @@
   </page>
   <page>
     <title>Property:Belongs to article</title>
-    <id>519</id>
+    <id>62163</id>
     <revision>
-      <id>1165</id>
-      <timestamp>2010-05-07T13:59:03Z</timestamp>
+      <id>63415</id>
+      <timestamp>2010-10-23T13:42:25Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -338,11 +379,38 @@
     </revision>
   </page>
   <page>
+    <title>Property:Belongs to comment</title>
+    <id>714</id>
+    <revision>
+      <id>1539</id>
+      <timestamp>2010-08-24T12:42:09Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <comment>Created page with '{{Property |PAGENAME=Property:Belongs to comment |Has author=User:WikiSysop |part of=SMWplus Basic Ontology Section |Has default form=Form:Add and edit Property |rationale=Used t…'</comment>
+      <text xml:space="preserve">{{Property
+|PAGENAME=Property:Belongs to comment
+|Has author=User:WikiSysop
+|part of=SMWplus Basic Ontology Section
+|Has default form=Form:Add and edit Property
+|rationale=Used to create a relation between comments and other comments.
+|long description=This is used to create a relation between comments created by the Collaboration Extension and other existing comments.
+}}
+{{Copyright of article
+|own work=True
+|copyright holder=Ontoprise GmbH
+|year=2009
+}}
+[[has type::Type:Page| ]][[Has max cardinality::1| ]][[Has min cardinality::1| ]][[has domain and range::Category:Comment;Category:Comment | ]]</text>
+    </revision>
+  </page>
+  <page>
     <title>Template:!</title>
     <id>554</id>
     <revision>
-      <id>1251</id>
-      <timestamp>2010-05-17T10:22:05Z</timestamp>
+      <id>1675</id>
+      <timestamp>2010-09-06T10:19:52Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -360,8 +428,8 @@ helper template for pipe symbol, which can e.g. not be used directly in template
     <title>Template:Category</title>
     <id>561</id>
     <revision>
-      <id>1265</id>
-      <timestamp>2010-05-17T10:22:10Z</timestamp>
+      <id>1685</id>
+      <timestamp>2010-09-06T10:19:59Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -426,8 +494,8 @@ This category is modified by the following rules: {{#sparql:[[Category:Rule]][[I
     <title>Template:Copyright of article</title>
     <id>556</id>
     <revision>
-      <id>1255</id>
-      <timestamp>2010-05-17T10:22:06Z</timestamp>
+      <id>1677</id>
+      <timestamp>2010-09-06T10:19:54Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -476,8 +544,8 @@ This category is modified by the following rules: {{#sparql:[[Category:Rule]][[I
     <title>Template:GNU Free Documentation License</title>
     <id>557</id>
     <revision>
-      <id>1257</id>
-      <timestamp>2010-05-17T10:22:07Z</timestamp>
+      <id>1678</id>
+      <timestamp>2010-09-06T10:19:55Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -514,8 +582,8 @@ GNU Free Documentation License
     <title>Template:Header for wiki parts</title>
     <id>558</id>
     <revision>
-      <id>1259</id>
-      <timestamp>2010-05-17T10:22:08Z</timestamp>
+      <id>1679</id>
+      <timestamp>2010-09-06T10:19:55Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -788,8 +856,8 @@ case: All content sections END
     <title>Template:Tablelongrow</title>
     <id>463</id>
     <revision>
-      <id>1177</id>
-      <timestamp>2010-05-07T13:59:05Z</timestamp>
+      <id>1681</id>
+      <timestamp>2010-09-06T10:19:56Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -818,8 +886,8 @@ case: All content sections END
     <title>Template:Tablerow</title>
     <id>464</id>
     <revision>
-      <id>1179</id>
-      <timestamp>2010-05-07T13:59:05Z</timestamp>
+      <id>1682</id>
+      <timestamp>2010-09-06T10:19:57Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -846,8 +914,8 @@ case: All content sections END
     <title>Template:Template</title>
     <id>465</id>
     <revision>
-      <id>1181</id>
-      <timestamp>2010-05-07T13:59:05Z</timestamp>
+      <id>1718</id>
+      <timestamp>2010-09-06T10:20:25Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -928,8 +996,8 @@ Edit the page to see the template text.&lt;/includeonly&gt;&lt;noinclude&gt;
     <title>Template:Property</title>
     <id>560</id>
     <revision>
-      <id>1263</id>
-      <timestamp>2010-05-17T10:22:09Z</timestamp>
+      <id>1684</id>
+      <timestamp>2010-09-06T10:19:58Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -982,6 +1050,52 @@ This property is modified by the following rules:&lt;br&gt;
 &lt;br&gt;
 &lt;/includeonly&gt;&lt;noinclude&gt;
 &lt;/noinclude&gt;</text>
+    </revision>
+  </page>
+  <page>
+    <title>Template:Cite web in help</title>
+    <id>555</id>
+    <revision>
+      <id>1676</id>
+      <timestamp>2010-09-06T10:19:53Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <minor/>
+      <comment>1 revision</comment>
+      <text xml:space="preserve">&lt;noinclude&gt;{{Bundle}}&lt;/noinclude&gt;{{Template
+|PAGENAME=Template:Cite web in help
+|Has author=User:WikiSysop
+|part of=SMWplus Basic Ontology Section, 
+|rationale=Displays a box in articles which fall under GFDL.
+|long description=__NOTITLE__
+|parameters=&lt;pre&gt;
+{{Cite web in help
+|wiki=
+|url=
+|title=
+|retrieved=
+|publisher=
+}}
+&lt;/pre&gt;
+}}
+{{Copyright of article
+|own work=True
+|copyright holder=Ontoprise GmbH
+|year=2009
+}}
+&lt;onlyinclude&gt;&lt;noinclude&gt;&lt;/noinclude&gt;
+
+&lt;includeonly&gt;&lt;/includeonly&gt;
+&lt;div style=&quot;border: 1px solid rgb(240, 240, 240); margin-bottom: 15px; padding-left: 10px; font-family: tahoma,sans-serif; font-size: x-small;&quot;&gt;
+
+
+;References &lt;br&gt;
+
+The content of this page uses material from the article [{{{url}}} {{{title}}}] published by {{{publisher}}} (retrieved on {{{retrieved}}}).&lt;br&gt; This article is licensed under the [[GNU Free Documentation License|GNU Free Documentation License]].
+&lt;/div&gt;
+&lt;noinclude&gt;&lt;/noinclude&gt;&lt;/onlyinclude&gt;</text>
     </revision>
   </page>
 </mediawiki>

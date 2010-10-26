@@ -1,67 +1,7 @@
 @CHARSET "UTF-8";
 
 /* The css from all Collaboration templates is now ported to this file*/
-	/* for Template:Comment */
-div.collabCom {
-	border: 1px solid lightgrey;
-	background-color: #F2F2F2;
-	margin: 5px 0px;
-	padding: 3px;
-	min-height: 50px;
-	clear: both;
-}
-
-div.collabComHeadline {
-	padding-bottom: 5px;
-}
-
-div.collabComPerson {
-	display: inline;
-	color: grey;
-}
-
-div.collabComPerson img {
-	float: left;
-	margin-right: 10px;
-}
-
-div.collabComUser {
-	display: inline;
-	color: grey;
-}
-
-div.collabComUserName {
-	display: inline;
-	color: #116988;
-}
-
-div.collabComDate {
-	display: inline;
-	color: grey;
-}
-
-div.collabComRating {
-	display: inline;
-	float: right;
-	text-align: right;
-	color: grey;
-}
-
-div.collabComRatingIcon {
-	display: inline;
-	margin-left: 3px;
-	font-weight: bold;
-	color: black;
-}
-
-div.collabComText {
-	display: inline;
-	font-weight: bold;
-}
-
-div.collabComRatingIcon img {
-	vertical-align: text-bottom;
-}
+/* Template:Comment uses same definitions as Template:CommentResult*/
 
 /* for Template:ShowCommentsIntern
 */
@@ -98,7 +38,11 @@ span.collabComInternAvg {
 div.collabComInternRatingIcon {
 	color: black;
 	padding-left: 3px;
-	display: inline
+	display: inline;
+}
+
+div.collabComInternRatingIcon img {
+	vertical-align: text-bottom;
 }
 
 /* for Template:CommentResult

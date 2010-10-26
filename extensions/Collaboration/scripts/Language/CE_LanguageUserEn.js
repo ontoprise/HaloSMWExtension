@@ -16,6 +16,8 @@
 */
 
 var wgCEUserLanguageStrings = {
+	'ce_com_default_header'	:	'Add comment',
+	'ce_com_ext_header'		:	'Comments',
 	'ce_invalid'			:	'You didn\'t enter a valid comment.',
 	'ce_reload'				:	' Page is reloading ...',
 	'ce_deleting'			:	'Deleting comment ...',
@@ -31,6 +33,11 @@ var wgCEUserLanguageStrings = {
 	'ce_edit_button'		:	'Update comment',
 	'ce_com_show'			:	'Show comments',
 	'ce_com_hide'			:	'Hide comments',
+	'ce_com_view'			:	'View',
+	'ce_com_view_flat'		:	'Flat',
+	'ce_com_view_threaded'	:	'Threaded',
+	'ce_com_rating_text'	:	'Average article quality based on',
+	'ce_com_rating_text2'	:	'rating(s):',
 	'ce_com_toggle_tooltip'	:	'Click to show/hide all comments',
 	'ce_form_toggle_tooltip':	'Click to show/hide the comment form.'
 }

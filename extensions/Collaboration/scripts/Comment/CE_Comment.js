@@ -22,6 +22,9 @@
 function CECommentForm() {
 
 	// Variables
+	this.numOfComments = 0;
+	this.numOfRatings = 0;
+	this.averageRating = 0;
 	this.textareaIsDefault = true;
 	this.ratingValue = null;
 	this.internalCall = null;
@@ -703,7 +706,7 @@ function CECommentForm() {
 				ceCommentForm.editCommentForm(resComName);
 			});
 			// reply
-			$jq('collabComReply', resCom).bind('click', function() {
+			$jq('.collabComReply', resCom).bind('click', function() {
 				ceCommentForm.replyCommentForm(resComName);
 			});
 		});
@@ -763,7 +766,6 @@ function CECommentForm() {
 	 * It's more like the deepest related comment.
 	 */
 	this.getLastChildComment = function(commentName) {
-		var meinz = $jq('#' + commentName.replace(/(:|\.)/g, '\\$1')).nextAll();
 		var childComments = $jq('.comRearranged').filter(function(index) {
 			var indSuperComName = $jq('.collabComResInfoSuper',this);
 			return indSuperComName.html() == commentName;
@@ -774,7 +776,176 @@ function CECommentForm() {
 		} else {
 			return commentName;
 		}
-	}
+	};
+	
+	/**
+	 * This function determines the number of comments, number of ratings 
+	 * and the average rating value and stores them in object variables.
+	 */
+	this.setCommentQuantities = function() {
+		this.numOfComments = $jq('.collabComRes').length;
+		this.numOfRatings = $jq('.collabComResRatingIcon').length;
+		if( this.numOfRatings === 0) {
+			return true;
+		}
+		var avgRating = 0;
+		$jq('.collabComResRatingIcon').each( function(){
+			var moooo = $jq('img', this).attr('src');
+			if( $jq('img', this).attr('src').indexOf("Bad") >=0 ) {
+				avgRating--;
+			} else if ($jq('img', this).attr('src').indexOf("Neutral") >=0 ) {
+				// do nothing
+			} else if ($jq('img', this).attr('src').indexOf("Good") >=0 ) {
+				avgRating++;
+			}
+		});
+		this.averageRating = avgRating / this.numOfRatings;
+		return true;
+	};
+
+	/**
+	 * Builds the header for handling comments 
+	 */
+	this.buildHeader = function() {
+		//var comHeader = $jq('.collabComInternHeader');
+		this.setCommentQuantities();
+		var expandedHead = this.addHeaderText();
+		if(expandedHead === true) {
+			this.addCommentToggler();
+			this.addFormToggler(true);
+			this.addHeaderView();
+			this.addHeaderRating();
+		}
+		return true;
+	};
+	
+	/**
+	 * Wrapper function for the header
+	 */
+	this.addHeaderText = function() {
+		if(this.numOfComments > 0) {
+			// set expanded header
+			return this.addExtendedHeaderText();
+		} else {
+			// set default header
+			return this.addDefaultHeaderText();
+		}
+	};
+
+	/**
+	 * Adds the default header text and makes it bold.
+	 * This text is normally sthg like "Add comment"
+	 * @returns false
+	 */
+	this.addDefaultHeaderText = function() {
+		this.addFormToggler(false);
+		$jq('#collabComFormToggle').css('font-weight','bold');
+		return false;
+	};
+
+	/**
+	 * The extended header text also contains the number of comments.
+	 * Sthg like "Comments (2)"
+	 * @returns true
+	 */
+	this.addExtendedHeaderText = function() {
+		var headerText = ceLanguage.getMessage('ce_com_ext_header');
+		headerText = headerText + ' (' + this.numOfComments + ')';
+		var headerSpan = document.createElement('span');
+		$jq(headerSpan).addClass('collabComInternComment');
+		$jq(headerSpan).html(headerText);
+		$jq('.collabComInternHeader').append($jq(headerSpan));
+		return true;
+	};
+
+	/**
+	 * This function adds the toggle element for the comments.
+	 */
+	this.addCommentToggler = function() {
+		var toggleSpan = document.createElement('span');
+		$jq(toggleSpan).attr('id', 'collabComToggle');
+		$jq(toggleSpan).html( ' | ' + ceLanguage.getMessage('ce_com_hide'));
+		$jq(toggleSpan).bind('click', function() {
+			ceCommentForm.toggleComments();
+		});
+		$jq(toggleSpan).attr('title', ceLanguage.getMessage('ce_com_toggle_tooltip'));
+		$jq('.collabComInternHeader').append($jq(toggleSpan));
+		return true;
+	};
+
+	/**
+	 * This function adds the toggle element for the comment form.
+	 * @param withPipe: Indicates if the Text should be extended with a leading pipe symbol
+	 */
+	this.addFormToggler = function(withPipe) {
+		var toggleSpan = document.createElement('span');
+		$jq(toggleSpan).attr('id', 'collabComFormToggle');
+		$jq(toggleSpan).html((withPipe? ' | ' : ' ') + ceLanguage.getMessage('ce_com_default_header'));
+		$jq(toggleSpan).bind('click', function() {
+			$jq('#collabComForm').toggle('slow');
+		});
+		$jq('.collabComInternHeader').append($jq(toggleSpan));
+		return true;
+	};
+
+	/**
+	 * Creates the "change view" select box element.
+	 */
+	this.addHeaderView = function() {
+		// "change view" functionality
+		var viewSpan = document.createElement('span');
+		$jq(viewSpan).html(' | ' + ceLanguage.getMessage('ce_com_view') + ': ');
+		$jq(viewSpan).attr('id', 'collabComFormView');
+		var selectEl = document.createElement('select');
+		$jq(selectEl).bind('change', function() {
+			ceCommentForm.toggleView();
+		});
+		try {
+			selectEl.add(new Option('Threaded', 0, true, true), null); // standards compliant; doesn't work in IE
+		}
+		catch(ex) {
+			selectEl.add(new Option('Threaded', 0, true, true)); // IE only
+		}
+		try {
+			selectEl.add(new Option('Flat', 1), null); // standards compliant; doesn't work in IE
+		}
+		catch(ex) {
+			selectEl.add(new Option('Flat', 1)); // IE only
+		}
+		$jq(viewSpan).append($jq(selectEl));
+		$jq('.collabComInternHeader').append($jq(viewSpan));
+		this.currentView = 0;
+		return true;
+	};
+
+	/**
+	 * Adds the text and icon for the average rating.
+	 */
+	this.addHeaderRating = function() {
+		if( this.numOfRatings >= 0 ) {
+			var ratingSpan = document.createElement('span');
+			$jq(ratingSpan).attr('class', 'collabComInternAvg');
+			$jq(ratingSpan).html(ceLanguage.getMessage('ce_com_rating_text') +
+				' ' + this.numOfRatings + ' ' + ceLanguage.getMessage('ce_com_rating_text2')
+			);
+			var ratingIconDiv = document.createElement('div');
+			$jq(ratingIconDiv).attr('class', 'collabComInternRatingIcon');
+			
+			var ratingIcon = document.createElement('img');
+			var ratingIconSrc = cegScriptPath + '/skins/Comment/icons/';
+			if(this.averageRating < -0.33) {
+				$jq(ratingIcon).attr('src', ratingIconSrc + 'bad_active.png');
+			} else if(this.averageRating >= -0.33 && this.averageRating <= 0.33 ) {
+				$jq(ratingIcon).attr('src', ratingIconSrc + 'neutral_active.png');
+			} else if(this.averageRating > 0.33) {
+				$jq(ratingIcon).attr('src', ratingIconSrc + 'good_active.png');
+			}
+			$jq(ratingIconDiv).append($jq(ratingIcon));
+			$jq(ratingSpan).append($jq(ratingIconDiv));
+			$jq('.collabComInternHeader').append($jq(ratingSpan));
+		}
+		return true;
+	};
 
 	/**
 	 * Creates the complete overlay structure and returns it.
@@ -969,40 +1140,8 @@ CollaborationXMLTools.createDocumentFromString = function (xmlText) {
  */
 $jq(document).ready(
 	function(){
-		// add JS to header items
-		$jq('#collabComToggle').bind('click', function() {
-			ceCommentForm.toggleComments();
-		});
-		$jq('#collabComToggle').attr('title', ceLanguage.getMessage('ce_com_toggle_tooltip'));
-		$jq('#collabComFormToggle').bind('click', function() {
-			$jq('#collabComForm').toggle('slow');
-		});
-		$jq('#collabComFormToggle').attr('title', ceLanguage.getMessage('ce_form_toggle_tooltip'));
-		// "change view" functionality
-		var viewSpan = document.createElement('span');
-		$jq(viewSpan).html(' | View: ');
-		$jq(viewSpan).attr('id', 'collabComFormView');
-		var selectEl = document.createElement('select');
-		$jq(selectEl).bind('change', function() {
-			ceCommentForm.toggleView();
-		});
-		
-		try {
-			selectEl.add(new Option('Threaded', 0, true, true), null); // standards compliant; doesn't work in IE
-		}
-		catch(ex) {
-			selectEl.add(new Option('Threaded', 0, true, true)); // IE only
-		}
-		try {
-			selectEl.add(new Option('Flat', 1), null); // standards compliant; doesn't work in IE
-		}
-		catch(ex) {
-			selectEl.add(new Option('Flat', 1)); // IE only
-		}
-		$jq(viewSpan).append($jq(selectEl));
-		$jq('#collabComFormToggle').after($jq(viewSpan));
-		ceCommentForm.currentView = 0;
-		// format comments
+		// build header
+		ceCommentForm.buildHeader();// format comments
 		var resultComments = $jq('.collabComRes');
 		$jq.each(resultComments, function(i, resCom ){
 			var resComInfo = $jq('.collabComResInfo', resCom);
@@ -1035,20 +1174,6 @@ $jq(document).ready(
 				$jq('.collabComResDate', resCom).after(divEl);
 				$jq('#collabComResults').after(overlayDiv);
 
-				// reply
-				var divEl = document.createElement('div');
-				$jq(divEl).attr('title', ceLanguage.getMessage('ce_reply_title'));
-				$jq(divEl).addClass('collabComReply');
-				$jq(divEl).bind('click', function() {
-					ceCommentForm.replyCommentForm(resComName);
-				});
-				$jq(divEl).html('Reply');
-				var replyImgEl = document.createElement('img');
-				$jq(replyImgEl).attr('src', cegScriptPath + '/skins/Comment/icons/Reply_Comment.png')
-				$jq(replyImgEl).addClass('collabComReplyImg');
-				$jq(divEl).append($jq(replyImgEl));
-				$jq('.collabComResText', resCom).after(divEl);
-
 				// edit
 				var divEl = document.createElement('div');
 				$jq(divEl).css({'display' : 'inline', 'cursor' : 'pointer', 'color' : 'blue'});
@@ -1063,6 +1188,21 @@ $jq(document).ready(
 				$jq(divEl).append($jq(imgEl));
 				$jq('.collabComResDate', resCom).after(divEl);
 			}
+
+			// reply
+			var divEl = document.createElement('div');
+			$jq(divEl).attr('title', ceLanguage.getMessage('ce_reply_title'));
+			$jq(divEl).addClass('collabComReply');
+			$jq(divEl).bind('click', function() {
+				ceCommentForm.replyCommentForm(resComName);
+			});
+			$jq(divEl).html('Reply');
+			var replyImgEl = document.createElement('img');
+			$jq(replyImgEl).attr('src', cegScriptPath + '/skins/Comment/icons/Reply_Comment.png')
+			$jq(replyImgEl).addClass('collabComReplyImg');
+			$jq(divEl).append($jq(replyImgEl));
+			$jq('.collabComResText', resCom).after(divEl);
+
 		});
 		//clone actual structure without events (bind them again later)
 		ceCommentForm.savedStructure = $jq('#collabComResults').clone();
