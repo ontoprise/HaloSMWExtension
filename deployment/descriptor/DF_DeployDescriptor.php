@@ -307,6 +307,15 @@ class DeployDescriptor {
 		return isset($this->globalElement[0]->helpurl) ? trim((string) $this->globalElement[0]->helpurl) : '';
 	}
 	
+    /**
+     * Get notice (which is optional). It is displayed at the end of an installation operation.
+     * @return string
+     */
+    function getNotice() {
+        // helpurl is optional
+        return isset($this->globalElement[0]->notice) ? trim((string) $this->globalElement[0]->notice) : '';
+    }
+	
 	/**
 	 * Returns installation directory.
 	 * @return string

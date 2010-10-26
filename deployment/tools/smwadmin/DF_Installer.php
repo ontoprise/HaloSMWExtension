@@ -40,7 +40,7 @@ require_once 'DF_ResourceInstaller.php';
  *
  * @defgroup DFInstaller Installer
  * @ingroup DeployFramework
- * 
+ *
  * Provides the basic installation routines for the smwadmin tool.
  *
  * @author: Kai K�hn / ontoprise / 2009
@@ -82,9 +82,9 @@ class Installer {
 	private $rollback;
 	private $res_installer;
 
-	// 
+	//
 	private $errors;
-	
+
 	/**
 	 * Creates new Installer.
 	 *
@@ -264,11 +264,11 @@ class Installer {
 		}
 		print "\n Installed           | Package             | Av. versions  | Repository";
 		print "\n-------------------------------------------------------------------------\n";
-				
+
 		foreach($allPackages as $p_id => $versions) {
-			
-			
-			
+				
+				
+				
 			if (!is_null($pattern) && !empty($pattern)) { // filter packages
 				if (substr(trim($pattern),0,1) == '*') {
 					$cleanPattern = str_replace("*", "", $pattern);
@@ -294,7 +294,7 @@ class Installer {
 			$versionsShown = "(".implode(", ", $sep_v).")";
 			$versionsShown .= str_repeat(" ", 12-strlen($versionsShown) >= 0 ? 12-strlen($versionsShown) : 0);
 			print "\n $instTag $id_shown  $versionsShown ".Tools::shortenURL($v[2]);
-			
+				
 			if ($showDescription && array_key_exists($p_id, $localPackages)) print "\n ".$localPackages[$p_id]->getDescription()."\n\n";
 		}
 		print "\n\n";
@@ -369,8 +369,8 @@ class Installer {
 		// 7. calculate version which matches all depdencies of an extension.
 		print "\nFilter incompatible packages";
 		$this->filterIncompatiblePackages($updatesNeeded, $extensions_to_update, $contradictions);
-      
-        
+
+
 		return array($new_package, $old_package, $extensions_to_update, $contradictions);
 	}
 
@@ -411,19 +411,26 @@ class Installer {
 				if (count($desc->getConfigs()) > 0) $this->rollback->saveLocalSettings();
 			}
 			$desc->applyConfigurations($this->instDir, false, $fromVersion, $this);
-            $this->errors = array_merge($this->errors, $desc->getLastErrors());
+			$this->errors = array_merge($this->errors, $desc->getLastErrors());
 			$this->res_installer->installOrUpdateResources($desc);
 			$this->res_installer->installOrUpdateWikidumps($desc, $fromVersion, $this->force ? DEPLOYWIKIREVISION_FORCE : DEPLOYWIKIREVISION_WARN);
 			$this->res_installer->installOrUpdateMappings($desc);
 
 			print "\n-------\n";
 		}
-		
+
 		// apply the setup operations which must not happen
 		// before all extensions are updated
 		foreach($extensions_to_update as $arr) {
 			list($desc, $min, $max) = $arr;
 			$desc->applySetups($this->instDir, false);
+		}
+
+		// print (optional) notices
+		foreach($extensions_to_update as $arr) {
+			list($desc, $min, $max) = $arr;
+			$notice = $desc->getNotice();
+			if ($notice !== '') print "\n\tNOTICE: $notice";
 		}
 	}
 
@@ -632,7 +639,7 @@ class Installer {
 	 * @param array of DeployDescriptor $localPackages
 	 */
 	private function collectSuperExtensions($dd, & $packagesToUpdate, $localPackages) {
-	
+
 		foreach($localPackages as $p) {
 
 			// check if a local extension has $dd as a dependency
@@ -657,7 +664,7 @@ class Installer {
 					}
 				}
 				if (!$updateFound) throw new InstallationError(DEPLOY_FRAMEWORK_COULD_NOT_FIND_UPDATE, "Could not find update for: ".$p->getID());
-				
+
 				$this->collectSuperExtensions($p, $packagesToUpdate, $localPackages);
 			}
 		}
@@ -666,7 +673,7 @@ class Installer {
 
 	/**
 	 * Callback method. Reads user for required parameters.
-	 * 
+	 *
 	 *
 	 * @param array($name=>(array($type, $description)) $userParams
 	 * @param out array($name=>$value) $mapping
@@ -688,7 +695,7 @@ class Installer {
 
 	/**
 	 * Callback method. Requests a confirmation by the user.
-	 * 
+	 *
 	 *
 	 * @param string $message
 	 * @param out boolean $result
@@ -700,7 +707,7 @@ class Installer {
 		$line = trim(fgets(STDIN));
 		$result = strtolower($line);
 	}
-	
+
 	public function getErrors() {
 		return $this->errors;
 	}
