@@ -466,9 +466,10 @@ Section "Lucene search" lucene
             CreateDirectory "$SMPROGRAMS\$STARTMENU_FOLDER"
             CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\${PRODUCT} ${VERSION} Start Lucene.lnk" "$INSTDIR\lucene\lucene-wiki.exe"
             #CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\${PRODUCT} ${VERSION} Start Lucene Updater.lnk" "$INSTDIR\lucene\startUpdater.bat"
-            
         ${EndIf}
-       
+        DetailPrint "Starting Lucene"
+        SetOutPath "$INSTDIR\lucene"
+        Exec "$INSTDIR\lucene\lucene-wiki.exe"       
 SectionEnd
 
 SectionGroupEnd
