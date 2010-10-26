@@ -71,6 +71,15 @@ abstract class TSConnection {
 	 * @return String (HTML) or false on an error
 	 */
 	public abstract function getStatus($graph);
+	
+	/**
+	 * Translates an ASK query into SPARQL.
+	 * 
+	 * @param string $query The ASK query
+	 * @param string $params ASK parameters (limit, merge, offset, ....)
+	 * @param string $baseURI Base URI from which the SPARQL IRIs are created.
+	 */
+	public abstract function translateASK($query, $params = "", $baseURI = "");
 
 	public static function getConnector() {
 		if (is_null(self::$_instance)) {
@@ -220,6 +229,23 @@ class TSConnectorRESTWebservice extends TSConnection {
 		return $resultMap;
 
 	}
+	
+    public function translateASK($query, $params = "", $baseURI = "") {
+        global $smwgTripleStoreGraph;
+        if (empty($baseURI)) {
+            $baseURI = $smwgTripleStoreGraph;
+        }
+        
+        $queryRequest = "query=".urlencode($query);
+        $queryRequest .= "&baseuri=".urlencode($baseURI);
+        $queryRequest .= "&parameters=".urlencode($params);
+
+        list($header, $status, $result) = $this->queryClient->send($queryRequest, "/translateASK");
+        if ($status != 200) {
+            throw new Exception(strip_tags($result), $status);
+        }
+        return $result;
+    }
 }
 
 

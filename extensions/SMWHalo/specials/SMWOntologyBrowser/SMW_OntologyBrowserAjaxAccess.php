@@ -144,12 +144,12 @@ class OB_Storage {
 
 		$resourceAttachments = array();
 		wfRunHooks('smw_ob_attachtoresource', array($rootatts, & $resourceAttachments, SMW_NS_PROPERTY));
-	    for($i = 0; $i < count($rootatts); $i++) {
-            list($title, $hasSubproperties) = $rootatts[$i];
-            $rootatts[$i][] = NULL;
-            $rootatts[$i][] = NULL;
-        }
-        
+		for($i = 0; $i < count($rootatts); $i++) {
+			list($title, $hasSubproperties) = $rootatts[$i];
+			$rootatts[$i][] = NULL;
+			$rootatts[$i][] = NULL;
+		}
+
 		return SMWOntologyBrowserXMLGenerator::encapsulateAsPropertyPartition($rootatts, $resourceAttachments, $reqfilter->limit, $partitionNum, true);
 	}
 
@@ -166,11 +166,11 @@ class OB_Storage {
 		$directsubatts = smwfGetSemanticStore()->getDirectSubProperties($superatt, $reqfilter);
 		$resourceAttachments = array();
 		wfRunHooks('smw_ob_attachtoresource', array($directsubatts, & $resourceAttachments, SMW_NS_PROPERTY));
-	    for($i = 0; $i < count($directsubatts); $i++) {
-            list($title, $hasSubproperties) = $directsubatts[$i];
-            $directsubatts[$i][] = NULL;
-            $directsubatts[$i][] = NULL;
-        }
+		for($i = 0; $i < count($directsubatts); $i++) {
+			list($title, $hasSubproperties) = $directsubatts[$i];
+			$directsubatts[$i][] = NULL;
+			$directsubatts[$i][] = NULL;
+		}
 		return SMWOntologyBrowserXMLGenerator::encapsulateAsPropertyPartition($directsubatts, $resourceAttachments, $reqfilter->limit, $partitionNum, false);
 
 	}
@@ -226,7 +226,7 @@ class OB_Storage {
 		$browserFilter = new SMWOntologyBrowserFilter();
 		$type = $p_array[0];
 		$hint = explode(" ", $p_array[1]);
-		
+
 		if ($type == 'category') {
 			/*STARTLOG*/
 			smwLog($p_array[1],"OB","searched categories", "Special:OntologyBrowser");
@@ -261,53 +261,53 @@ class OB_StorageTS extends OB_Storage {
 		parent::__construct($dataSource);
 		$this->tsNamespaceHelper = new TSNamespaces(); // initialize namespaces
 	}
-	
-    public function getRootProperties($p_array) {
-        // param0 : limit
-        // param1 : partitionNum
-        $reqfilter = new SMWRequestOptions();
-        $reqfilter->sort = true;
-        $reqfilter->limit =  isset($p_array[0]) ? intval($p_array[0]) : SMWH_OB_DEFAULT_PARTITION_SIZE;
-        $partitionNum = isset($p_array[1]) ? intval($p_array[1]) : 0;
-        $reqfilter->offset = $partitionNum*$reqfilter->limit;
-        $rootatts = smwfGetSemanticStore()->getRootProperties($reqfilter);
-        
-        
-        $resourceAttachments = array();
-        wfRunHooks('smw_ob_attachtoresource', array($rootatts, & $resourceAttachments, SMW_NS_PROPERTY));
-        
-         // add TSC URI and local URL
-        for($i = 0; $i < count($rootatts); $i++) {
-        	list($title, $hasSubproperties) = $rootatts[$i];
-        	$rootatts[$i][] = TSHelper::getUriFromTitle($title);
-        	$rootatts[$i][] = $title->getFullURL();
-        }
-        return SMWOntologyBrowserXMLGenerator::encapsulateAsPropertyPartition($rootatts, $resourceAttachments, $reqfilter->limit, $partitionNum, true);
-    }
-    
-    public function getSubProperties($p_array) {
-        // param0 : attribute
-        // param1 : limit
-        // param2 : partitionNum
-        $reqfilter = new SMWRequestOptions();
-        $reqfilter->sort = true;
-        $reqfilter->limit =  intval($p_array[1]);
-        $partitionNum = isset($p_array[2]) ? intval($p_array[2]) : 0;
-        $reqfilter->offset = $partitionNum*$reqfilter->limit;
-        $superatt = Title::newFromText($p_array[0], SMW_NS_PROPERTY);
-        $directsubatts = smwfGetSemanticStore()->getDirectSubProperties($superatt, $reqfilter);
-        $resourceAttachments = array();
-        wfRunHooks('smw_ob_attachtoresource', array($directsubatts, & $resourceAttachments, SMW_NS_PROPERTY));
-        
-        // add TSC URI and local URL
-        for($i = 0; $i < count($directsubatts); $i++) {
-            list($title, $hasSubproperties) = $directsubatts[$i];
-            $directsubatts[$i][] = TSHelper::getUriFromTitle($title);
-            $directsubatts[$i][] = $title->getFullURL();
-        }
-        return SMWOntologyBrowserXMLGenerator::encapsulateAsPropertyPartition($directsubatts, $resourceAttachments, $reqfilter->limit, $partitionNum, false);
 
-    }
+	public function getRootProperties($p_array) {
+		// param0 : limit
+		// param1 : partitionNum
+		$reqfilter = new SMWRequestOptions();
+		$reqfilter->sort = true;
+		$reqfilter->limit =  isset($p_array[0]) ? intval($p_array[0]) : SMWH_OB_DEFAULT_PARTITION_SIZE;
+		$partitionNum = isset($p_array[1]) ? intval($p_array[1]) : 0;
+		$reqfilter->offset = $partitionNum*$reqfilter->limit;
+		$rootatts = smwfGetSemanticStore()->getRootProperties($reqfilter);
+
+
+		$resourceAttachments = array();
+		wfRunHooks('smw_ob_attachtoresource', array($rootatts, & $resourceAttachments, SMW_NS_PROPERTY));
+
+		// add TSC URI and local URL
+		for($i = 0; $i < count($rootatts); $i++) {
+			list($title, $hasSubproperties) = $rootatts[$i];
+			$rootatts[$i][] = TSHelper::getUriFromTitle($title);
+			$rootatts[$i][] = $title->getFullURL();
+		}
+		return SMWOntologyBrowserXMLGenerator::encapsulateAsPropertyPartition($rootatts, $resourceAttachments, $reqfilter->limit, $partitionNum, true);
+	}
+
+	public function getSubProperties($p_array) {
+		// param0 : attribute
+		// param1 : limit
+		// param2 : partitionNum
+		$reqfilter = new SMWRequestOptions();
+		$reqfilter->sort = true;
+		$reqfilter->limit =  intval($p_array[1]);
+		$partitionNum = isset($p_array[2]) ? intval($p_array[2]) : 0;
+		$reqfilter->offset = $partitionNum*$reqfilter->limit;
+		$superatt = Title::newFromText($p_array[0], SMW_NS_PROPERTY);
+		$directsubatts = smwfGetSemanticStore()->getDirectSubProperties($superatt, $reqfilter);
+		$resourceAttachments = array();
+		wfRunHooks('smw_ob_attachtoresource', array($directsubatts, & $resourceAttachments, SMW_NS_PROPERTY));
+
+		// add TSC URI and local URL
+		for($i = 0; $i < count($directsubatts); $i++) {
+			list($title, $hasSubproperties) = $directsubatts[$i];
+			$directsubatts[$i][] = TSHelper::getUriFromTitle($title);
+			$directsubatts[$i][] = $title->getFullURL();
+		}
+		return SMWOntologyBrowserXMLGenerator::encapsulateAsPropertyPartition($directsubatts, $resourceAttachments, $reqfilter->limit, $partitionNum, false);
+
+	}
 
 	public function getInstance($p_array) {
 		global $wgServer, $wgScript, $smwgWebserviceUser, $smwgWebservicePassword, $smwgDeployVersion;
@@ -340,13 +340,13 @@ class OB_StorageTS extends OB_Storage {
 
 		return SMWOntologyBrowserXMLGenerator::encapsulateAsInstancePartition($titles, $limit, $partition);
 	}
-    
-	
+
+
 	/**
 	 * Parses an SPARQL-XML result containing instances with their parent categories (including inferred).
-	 * 
+	 *
 	 * @param XML $response
-	 * @param Tuple $titles 
+	 * @param Tuple $titles
 	 *         ((instanceTitle, $instanceURI, $localInstanceURL, $metadataMap) , ($localCategoryURL, $categoryTitle))
 	 * @param Title $categoryTitle
 	 */
@@ -360,9 +360,9 @@ class OB_StorageTS extends OB_Storage {
 
 
 		$dom = simplexml_load_string($response);
-
-       
-		$results = $dom->xpath('//result');
+		$dom->registerXPathNamespace("sparqlxml", "http://www.w3.org/2005/sparql-results#");
+		 
+		$results = $dom->xpath('//sparqlxml:result');
 		foreach ($results as $r) {
 
 			$children = $r->children(); // binding nodes
@@ -372,13 +372,8 @@ class OB_StorageTS extends OB_Storage {
 			if (is_null($sv)) $sv = $b->children()->bnode[0];
 			if (is_null($sv)) continue;
 
-			$metadataMap = array();
-			foreach($sv->attributes() as $mdProperty => $mdValue) {
-				if (strpos($mdProperty, "_meta_") === 0) {
-					$metadataMap[strtoupper($mdProperty)] = explode("|||",$mdValue);
-				}
-			}
-            
+			
+            $metadataMap = $this->parseMetadata($sv->metadata);
 			list($url, $title) = TSHelper::makeLocalURL((string) $sv);
 			$instance = array($title, $sv, $url, $metadataMap);
 
@@ -402,7 +397,7 @@ class OB_StorageTS extends OB_Storage {
 
 	}
 
-	
+
 	private function getLiteral($literal, $predicate) {
 		list($literalValue, $literalType) = $literal;
 		if (!empty($literalValue)) {
@@ -418,8 +413,8 @@ class OB_StorageTS extends OB_Storage {
 			} else if ($value->getTypeID() == '_ema') { // exception for email
 				$value->setDBkeys(array($literalValue));
 			} else if ($value->getTypeID() == '__tls') { // exception for email
-                $value->setDBkeys(array($literalValue));
-            } else {
+				$value->setDBkeys(array($literalValue));
+			} else {
 				$value->setUserValue($literalValue);
 			}
 		} else {
@@ -441,9 +436,9 @@ class OB_StorageTS extends OB_Storage {
 		$client = TSConnection::getConnector();
 		$client->connect();
 		try {
-            global $smwgTripleStoreGraph;
-            $instanceURI = $p_array[0];
-			
+			global $smwgTripleStoreGraph;
+			$instanceURI = $p_array[0];
+				
 			// actually limit and offset is not used
 			$limit =  isset($p_array[1]) && is_numeric($p_array[1]) ? $p_array[1] : 500;
 			$partition = isset($p_array[2]) && is_numeric($p_array[2]) ? $p_array[2] : 0;
@@ -451,7 +446,7 @@ class OB_StorageTS extends OB_Storage {
 			$metadata = isset($p_array[3]) ? $p_array[3] : false;
 			$metadataRequest = $metadata != false ? "|metadata=$metadata" : "";
 
-			 
+
 			$response = $client->query("SELECT ?p ?o WHERE { <$instanceURI> ?p ?o. }",  "limit=$limit|offset=$offset$metadataRequest");
 			$annotations = array();
 			$this->parseAnnotations($response, $annotations);
@@ -476,9 +471,9 @@ class OB_StorageTS extends OB_Storage {
 		}
 
 		$dom = simplexml_load_string($response);
+		$dom->registerXPathNamespace("sparqlxml", "http://www.w3.org/2005/sparql-results#");
 
-
-		$results = $dom->xpath('//result');
+		$results = $dom->xpath('//sparqlxml:result');
 		foreach ($results as $r) {
 
 			$children = $r->children(); // binding nodes
@@ -591,9 +586,9 @@ class OB_StorageTS extends OB_Storage {
 		}
 
 		$dom = simplexml_load_string($response);
-
+		$dom->registerXPathNamespace("sparqlxml", "http://www.w3.org/2005/sparql-results#");
 		$titles = array();
-		$results = $dom->xpath('//result');
+		$results = $dom->xpath('//sparqlxml:result');
 
 
 		foreach ($results as $r) {
@@ -618,7 +613,7 @@ class OB_StorageTS extends OB_Storage {
 		$browserFilter = new SMWOntologyBrowserFilter();
 		$type = $p_array[0];
 		$hint = explode(" ", $p_array[1]);
-		
+
 		if ($type != 'instance') return parent::filterBrowse($p_array);
 
 		global $wgServer, $wgScript, $smwgWebserviceUser, $smwgWebservicePassword, $smwgDeployVersion;
@@ -690,6 +685,21 @@ class OB_StorageTS extends OB_Storage {
 		return $dataSpace;
 	}
 
+	protected function parseMetadata($metadataNode) {
+		$result = array();
+		if (!is_null($metadataNode) && $metadataNode !== '') {
+			foreach($metadataNode as $m) {
+				$name = (string) $m->attributes()->name;
+				$datatype = (string) $m->attributes()->datatype;
+				$mdValues = array();
+				foreach($m->value as $mdValue) {
+					$mdValues[] = (string) $mdValue;
+				}
+				$result[strtoupper($name)] = $mdValues;
+			}
+		}
+		return $result;
+	}
 }
 
 
@@ -850,7 +860,7 @@ class OB_StorageTSQuad extends OB_StorageTS {
 		$browserFilter = new SMWOntologyBrowserFilter();
 		$type = $p_array[0];
 		$hint = explode(" ", $p_array[1]);
-		
+
 		if ($type != 'instance') return parent::filterBrowse($p_array);
 
 		global $wgServer, $wgScript, $smwgWebserviceUser, $smwgWebservicePassword, $smwgDeployVersion;

@@ -282,8 +282,10 @@ class SMWOntologyBrowserXMLGenerator {
 			if ($range == NULL) {
 				$v = SMWDataValueFactory::newPropertyObjectValue(SMWPropertyValue::makeProperty("_TYPE"));
                 $v->setDBkeys(array("_wpg"));
-                $typesValue = reset($v->getTypeValues());
-				$content .= "<rangeType>".reset($typesValue->getTypeLabels())."</rangeType>";
+                $typeValues = $v->getTypeValues();
+                $typesValue = reset($typeValues);
+                $typeLabels = $typesValue->getTypeLabels();
+				$content .= "<rangeType>".reset($typeLabels)."</rangeType>";
 			} else {
 				$content .= "<rangeType isLink=\"true\">".$range."</rangeType>";
 			}

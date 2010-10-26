@@ -32,10 +32,9 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 		if ( defined( 'DO_MAINTENANCE' )  && !defined('SMWH_FORCE_TS_UPDATE') ) {
 			$this->smwstore->getSemanticData($subject, $filter);
 		}
-		
+
 		global $smwgTripleStoreGraph;
 
-		$semanticData = new SMWSemanticData($subject);
 
 		$client = TSConnection::getConnector();
 		$client->connect();
@@ -47,8 +46,12 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 
 		// query
 		if ($subject instanceof Title) {
+			$v = SMWDataValueFactory::newTypeIDValue('_wpg');
+            $v->setValues($subject->getDBkey(), $subject->getNamespace(), $subject->getArticleID(), false, '', $subject->getFragment());
+            $semanticData = new SMWSemanticData($v);
 			$subj_iri =  $this->tsNamespace->getFullIRI($subject);
 		} else {
+			$semanticData = new SMWSemanticData($subject);
 			$subj_iri =  $this->tsNamespace->getFullIRI($subject->getTitle());
 		}
 
@@ -76,8 +79,8 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 			$children = $r->children(); // binding nodes
 			$b = $children->binding[0];
 			$sv = $b->children()->uri[0];
-            if ($sv == TSNamespaces::$RDF_NS."type") continue;
-            
+			if ($sv == TSNamespaces::$RDF_NS."type") continue;
+
 			$title = TSHelper::getTitleFromURI((string) $sv);
 			$property = SMWPropertyValue::makeUserProperty($title->getText());
 
@@ -99,7 +102,7 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 			foreach($b->children()->literal as $sv) {
 				$literalValue = (string) $sv;
 				$literalType = (string) $sv->attributes()->datatype;
-				
+
 				$value = $this->createSMWDataValue($property, $literalValue, $literalType, $sv->metadata);
 
 				$semanticData->addPropertyObjectValue($property, $value);
@@ -112,10 +115,10 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 	}
 
 	function getProperties( $subject, $requestoptions = null ) {
-	    if ( defined( 'DO_MAINTENANCE' )  && !defined('SMWH_FORCE_TS_UPDATE') ) {
-            $this->smwstore->getProperties($subject, $requestoptions);
-        }
-        
+		if ( defined( 'DO_MAINTENANCE' )  && !defined('SMWH_FORCE_TS_UPDATE') ) {
+			$this->smwstore->getProperties($subject, $requestoptions);
+		}
+
 		global $smwgTripleStoreGraph;
 
 		$client = TSConnection::getConnector();
@@ -123,7 +126,7 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 
 		$values = array();
 
-		
+
 
 		$limit =  isset($requestoptions->limit) ? " LIMIT ".$requestoptions->limit : "";
 		$offset =  isset($requestoptions->offset) ? " OFFSET ".$requestoptions->offset : "";
@@ -159,9 +162,9 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 			$children = $r->children(); // binding nodes
 			$b = $children->binding[0];
 			$sv = $b->children()->uri[0];
-            
+
 			if ($sv == TSNamespaces::$RDF_NS."type") continue;
-			
+				
 			$title = TSHelper::getTitleFromURI((string) $sv);
 			$properties[] = SMWPropertyValue::makeUserProperty($title->getText());
 
@@ -171,10 +174,10 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 	}
 
 	function getInProperties( SMWDataValue $object, $requestoptions = null ) {
-	    if ( defined( 'DO_MAINTENANCE' )  && !defined('SMWH_FORCE_TS_UPDATE') ) {
-            $this->smwstore->getInProperties($object, $requestoptions);
-        }
-        
+		if ( defined( 'DO_MAINTENANCE' )  && !defined('SMWH_FORCE_TS_UPDATE') ) {
+			$this->smwstore->getInProperties($object, $requestoptions);
+		}
+
 		global $smwgTripleStoreGraph;
 
 		$client = TSConnection::getConnector();
@@ -219,8 +222,8 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 			$children = $r->children(); // binding nodes
 			$b = $children->binding[0];
 			$sv = $b->children()->uri[0];
-            if ($sv == TSNamespaces::$RDF_NS."type") continue;
-            
+			if ($sv == TSNamespaces::$RDF_NS."type") continue;
+
 			$title = TSHelper::getTitleFromURI((string) $sv);
 			$properties[] = SMWPropertyValue::makeUserProperty($title->getText());
 
@@ -230,9 +233,9 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 	}
 
 	function getAllPropertyAnnotations(SMWPropertyValue $property, $requestoptions = NULL) {
-	    if ( defined( 'DO_MAINTENANCE' )  && !defined('SMWH_FORCE_TS_UPDATE') ) {
-            $this->smwstore->getAllPropertyAnnotations($property, $requestoptions);
-        }
+		if ( defined( 'DO_MAINTENANCE' )  && !defined('SMWH_FORCE_TS_UPDATE') ) {
+			$this->smwstore->getAllPropertyAnnotations($property, $requestoptions);
+		}
 		global $smwgTripleStoreGraph;
 
 		$client = TSConnection::getConnector();
@@ -246,8 +249,8 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 		$offset =  isset($requestoptions->offset) ? " OFFSET ".$requestoptions->offset : "";
 
 		// query
-        $property_iri =  $this->tsNamespace->getFullIRI($property->getWikiPageValue()->getTitle());
-		
+		$property_iri =  $this->tsNamespace->getFullIRI($property->getWikiPageValue()->getTitle());
+
 
 		try {
 			$response = $client->query("SELECT ?s ?o WHERE {  ?s $property_iri ?o.  } ORDER BY ASC(?s) $limit $offset",  "merge=false");
@@ -311,9 +314,9 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 
 
 	function getPropertyValues($subject, SMWPropertyValue $property, $requestoptions = NULL, $outputformat = '') {
-	    if ( defined( 'DO_MAINTENANCE' )  && !defined('SMWH_FORCE_TS_UPDATE') ) {
-            $this->smwstore->getPropertyValues($subject, $property, $requestoptions, $outputformat);
-        }
+		if ( defined( 'DO_MAINTENANCE' )  && !defined('SMWH_FORCE_TS_UPDATE') ) {
+			$this->smwstore->getPropertyValues($subject, $property, $requestoptions, $outputformat);
+		}
 		if (!$property->isUserDefined()) {
 			return parent::getPropertyValues($subject,$property,$requestoptions,$outputformat);
 		}
@@ -334,9 +337,14 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 		$offset =  isset($requestoptions->offset) ? " OFFSET ".$requestoptions->offset : "";
 
 		// query
-		 $subject_iri =  $this->tsNamespace->getFullIRI($subject);
-		 $property_iri =  $this->tsNamespace->getFullIRI($property->getWikiPageValue()->getTitle());
-		
+		if ($subject instanceof Title) {
+			$subject_iri =  $this->tsNamespace->getFullIRI($subject);
+		} else {
+			$subject_iri =  $this->tsNamespace->getFullIRI($subject->getTitle());
+		}
+
+		$property_iri =  $this->tsNamespace->getFullIRI($property->getWikiPageValue()->getTitle());
+
 
 		try {
 			$response = $client->query("SELECT ?o WHERE { $subject_iri $property_iri ?o. } $limit $offset",  "merge=false");
@@ -414,7 +422,7 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 		$limit =  isset($requestoptions->limit) ? " LIMIT ".$requestoptions->limit : "";
 		$offset =  isset($requestoptions->offset) ? " OFFSET ".$requestoptions->offset : "";
 
-		
+
 		$propertyIRI = $this->tsNamespace->getFullIRI($property->getWikiPageValue()->getTitle());
 
 		try {

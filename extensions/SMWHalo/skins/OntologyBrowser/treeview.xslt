@@ -678,7 +678,7 @@
 				<xsl:for-each select="child::metadata/property">
 					<tr>
 						<td>
-							{{SMW_OB<xsl:value-of select="@name" />}}
+							{{SMW_OB_META_<xsl:value-of select="@name" />}}
 						</td>
 						<td>
 							<xsl:value-of select="." />
