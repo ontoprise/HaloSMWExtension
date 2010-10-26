@@ -218,6 +218,14 @@ abstract class LODSparqlResult {
 	// metadata hashmap. Maps (pre-defined) metadata properties to values.
 	private $mMetadata;
 
+	/**
+	 * Returns the data type of the value.
+	 * @return string
+	 * 		The data type of the value. 
+	 * 
+	 */
+	abstract public function getDatatype();
+	
 	// Returns the name of the variable
 	public function getVariableName() {
 		return $this->mVariableName;
@@ -226,7 +234,7 @@ abstract class LODSparqlResult {
 	// Returns the value
 	public function getValue() {
 		return $this->mValue;
-	}
+	}	
     
 	// Returns a metadata property value
 	public function getMetadataValue($metadataProperty) {
@@ -268,10 +276,19 @@ class LODSparqlResultURI extends LODSparqlResult{
 	 * @param string $uri
 	 * 		The URI that is bound by the variable.
 	 */
-	public function __construct($name, $uri, $metadata) {
+	public function __construct($name, $uri, $metadata = array()) {
 		parent::__construct($name, $uri, $metadata);
 	}
 
+	/**
+	 * Returns the data type of the URI.
+	 * @return string
+	 * 		The data type of the value i.e. http://www.w3.org/2001/XMLSchema#anyURI
+	 * 
+	 */
+	public function getDatatype() {
+		return "http://www.w3.org/2001/XMLSchema#anyURI";
+	}
 	
 }
 
@@ -308,6 +325,16 @@ class LODSparqlResultLiteral extends LODSparqlResult {
 		$this->mLanguage = $language;
 	}
 	
+	
+	/**
+	 * Returns the data type of the literal value.
+	 * @return string
+	 * 		The data type of the value.
+	 * 
+	 */
+	public function getDatatype() {
+		return $this->mDatatype;
+	}
    
 }
 
