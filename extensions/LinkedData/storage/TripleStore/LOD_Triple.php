@@ -86,7 +86,9 @@ class  LODTriple  {
 	 * 		line breaks) are escaped. 
 	 * 		The special value "__objectURI" indicates that the object is the URI
 	 * 		of another subject in the graph. 
-	 * 		If not type is given, the object is a simple literal
+	 * 		The special value "__blankNode" indicates that the object is a blank 
+	 * 		node. 
+	 * 		If no type is given, the object is a simple literal
  	 */		
 	public function __construct($subject, $predicate, $object, $type = null) {
 		if (!isset($subject) || !isset($predicate) || !isset($object)) {
@@ -103,12 +105,43 @@ class  LODTriple  {
 	
 
 	//--- getter/setter ---
-//	public function getXY()           {return $this->mXY;}
-
+	public function getSubject()	{return $this->mSubject;}
+	public function getPredicate()	{return $this->mPredicate;}
+	public function getObject()		{return $this->mObject;}
+	public function getType()		{return $this->mType;}
+	
 //	public function setXY($xy)               {$this->mXY = $xy;}
 	
 	//--- Public methods ---
+
+	/**
+	 * Returns <true> if the object of this triple is a literal and <false> if it 
+	 * is an URI.
+	 * 
+	 * @return boolean
+	 * 		true - Object is a literal
+	 * 		false - Object is an URI
+	 */
+	public function isObjectLiteral() {
+		return $this->mType !== "__objectURI" && $this->mType !== "__blankNode";
+	}
 	
+	/**
+	 * Returns all prefixes of subject, predicate, object and type in this order.
+	 * 
+	 * @return array(string)
+	 * 		All prefixes used in this triple. If an element has no prefix, the 
+	 * 		empty string is returned for that element.
+	 */
+	public function getPrefixes() {
+		return array(
+			$this->getPrefix($this->mSubject),
+			$this->getPrefix($this->mPredicate),
+			$this->getPrefix($this->mObject),
+			$this->getPrefix($this->mType),
+			
+		);
+	}
 	
 	/**
 	 * Creates a SPARUL command for this triple.
@@ -124,12 +157,41 @@ class  LODTriple  {
 		    return "";
 		}
 		
-		$obj = ($this->mType == '__objectURI') 
-						? (preg_match("~^http://~i", $this->mObject) ? '<' . $this->mObject . '>' : $this->mObject)
-						: self::makeLiteral($this->mObject, $this->mType);
+		$subj = $this->mSubject;
+		if (strpos($subj, "http://") === 0) {
+			$subj = "<$subj>";
+		}
 		
-		$SPARULCommand = "{$this->mSubject} {$this->mPredicate} $obj .";
+		$pred = $this->mPredicate;
+		if (strpos($pred, "http://") === 0) {
+			$pred = "<$pred>";
+		}
+		
+		switch ($this->mType) {
+		case '__objectURI':
+			$obj = (preg_match("~^http://~i", $this->mObject) ? '<' . $this->mObject . '>' : $this->mObject);
+			break;
+		case '__blankNode':
+			$obj = $this->mObject;
+			break;
+		default:
+			$obj = self::makeLiteral($this->mObject, $this->mType);
+		}
+		
+		$SPARULCommand = "$subj $pred $obj .";
 		return $SPARULCommand;
+	}
+	
+	/**
+	 * Returns an associative array representation of this triple.
+	 */
+	public function toArray() {
+		return array(
+			"subject"   => $this->mSubject,
+			"predicate" => $this->mPredicate,
+			"object"    => $this->mObject,
+			"type"      => $this->mType,
+		);
 	}
 
 	//--- Private methods ---
@@ -159,5 +221,22 @@ class  LODTriple  {
 		}
 		return $literal;
 	}
+	
+	/**
+	 * Returns the prefix of a URI, if it contains a colon and is not an absolute
+	 * URI.
+	 * 
+	 * @param string $uri
+	 * 		A (possible) URI. If it contains a colon, the part before the colon
+	 * 		is returned otherwise an empty string.
+	 */
+	private function getPrefix($uri) {
+		if (strpos($uri, "http://") === 0) {
+			// An absolute URI has no prefix.
+			return "";
+		}
 		
+		$pos = strpos($uri, ":");
+		return $pos === false ? "" : substr($uri, 0, $pos);
+	}
 }
