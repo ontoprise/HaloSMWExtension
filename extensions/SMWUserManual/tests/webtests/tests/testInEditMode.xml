@@ -10,10 +10,10 @@
 			<invoke url="${wgScript}/Main_Page?action=edit" description="Edit Main Page"/>
 			<verifyTitle text="Editing Main Page - ${wgSitename}" />
 
-            <openCshCountQuestions number="13"/>
+            <openCshCountQuestions number="10"/>
             
-            <selectQuestion option="11" text="How can I revert an edit" link="1"/>
-            <selectQuestion option="5" text="How can I prevent conflicts" link="1"/>
+            <selectQuestion option="8" text="How can I revert an edit" link="1"/>
+            <selectQuestion option="3" text="How can I prevent conflicts" link="1"/>
 
             <closeCsh/>
 
