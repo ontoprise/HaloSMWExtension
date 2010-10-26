@@ -8,7 +8,7 @@
 
 		<webtest name="call CSH on Main Page">
 			<invoke url="${wgScript}/Main_Page" description="Go to Main page"/>
-			<verifyTitle text="${wgSitename}" />
+			<verifyTitle text="Main Page - ${wgSitename}" />
 
             <openCshCountQuestions number="5"/>
 
