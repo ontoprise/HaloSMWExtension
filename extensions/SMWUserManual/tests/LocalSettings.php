@@ -8,7 +8,7 @@ include_once('extensions/SMWHalo/includes/SMW_Initialize.php');
 enableSMWHalo('SMWHaloStore2');
 
 # Parser functions (needed for copyright template)
-include_once('extensions/ParserFunctions/ParserFunctions.php');
+include_once('extensions/ApplicationProgramming/ParserFunctions/ParserFunctions.php');
 
 #UserManual extension
 require_once('extensions/SMWUserManual/includes/SMW_UserManual.php');
