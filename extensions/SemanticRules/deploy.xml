@@ -14,6 +14,7 @@
 		<dependencies>
 			<dependency from="146">smwhalo</dependency>
 		</dependencies>
+		<notice>The Semantic rules extension requires the installation of the Triplestore connector (TSC). Please check smwforum.ontoprise.com for help.</notice>
 	</global>
 	<codefiles></codefiles>
 	<wikidumps>
