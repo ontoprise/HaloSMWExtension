@@ -71,7 +71,7 @@ $cegEnableCommentFor = CE_COMMENT_ALL;
 ###
 # Enable Rating
 ###
-$cegEnableRatingForArticles = true;
+$cegEnableRatingForArticles = false;
 
 ###
 # Use ScriptManager
