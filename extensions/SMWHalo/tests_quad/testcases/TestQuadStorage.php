@@ -106,4 +106,19 @@ class TestQuadStorage extends PHPUnit_Framework_TestCase {
         $this->assertEquals("3450000.0", $dbkey[0]);
        
 	}
+	
+    function testGetSemanticData2() {
+        $subject = Title::newFromText("Body Form", SMW_NS_PROPERTY);
+        $sd = smwfGetStore()->getSemanticData($subject);
+        $this->assertTrue(array_key_exists('Has_domain_and_range', $sd->getProperties()));
+        $properties = $sd->getProperties();
+        $dmr = $properties['Has_domain_and_range'];
+        $values = $sd->getPropertyValues($dmr);
+        $recordValue = reset($values);
+        $dvs = $recordValue->getDVs();
+        $_1 = reset($dvs);
+        $this->assertEquals("Category:Car", $_1->getTitle()->getPrefixedText());
+     
+       
+    }
 }

@@ -33,9 +33,7 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 			$this->smwstore->getSemanticData($subject, $filter);
 		}
 
-		global $smwgTripleStoreGraph;
-
-
+		$naryPropertiesPresent = false;
 		$client = TSConnection::getConnector();
 		$client->connect();
 
@@ -47,8 +45,8 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 		// query
 		if ($subject instanceof Title) {
 			$v = SMWDataValueFactory::newTypeIDValue('_wpg');
-            $v->setValues($subject->getDBkey(), $subject->getNamespace(), $subject->getArticleID(), false, '', $subject->getFragment());
-            $semanticData = new SMWSemanticData($v);
+			$v->setValues($subject->getDBkey(), $subject->getNamespace(), $subject->getArticleID(), false, '', $subject->getFragment());
+			$semanticData = new SMWSemanticData($v);
 			$subj_iri =  $this->tsNamespace->getFullIRI($subject);
 		} else {
 			$semanticData = new SMWSemanticData($subject);
@@ -85,6 +83,10 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 			$property = SMWPropertyValue::makeUserProperty($title->getText());
 
 			$b = $children->binding[1];
+			if (isset($b->children()->bnode)) {
+				$naryPropertiesPresent = true;
+				continue;
+			}
 			foreach($b->children()->uri as $sv) {
 
 				$title = TSHelper::getTitleFromURI($sv, false);
@@ -111,6 +113,11 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 
 		}
 
+		if ($naryPropertiesPresent) {
+			list($property, $value) = $this->readRecordPropertyValues($subject);
+			$semanticData->addPropertyObjectValue($property, $value);
+		}
+
 		return $semanticData;
 	}
 
@@ -119,7 +126,6 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 			$this->smwstore->getProperties($subject, $requestoptions);
 		}
 
-		global $smwgTripleStoreGraph;
 
 		$client = TSConnection::getConnector();
 		$client->connect();
@@ -164,7 +170,7 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 			$sv = $b->children()->uri[0];
 
 			if ($sv == TSNamespaces::$RDF_NS."type") continue;
-				
+
 			$title = TSHelper::getTitleFromURI((string) $sv);
 			$properties[] = SMWPropertyValue::makeUserProperty($title->getText());
 
@@ -178,7 +184,6 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 			$this->smwstore->getInProperties($object, $requestoptions);
 		}
 
-		global $smwgTripleStoreGraph;
 
 		$client = TSConnection::getConnector();
 		$client->connect();
@@ -236,7 +241,6 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 		if ( defined( 'DO_MAINTENANCE' )  && !defined('SMWH_FORCE_TS_UPDATE') ) {
 			$this->smwstore->getAllPropertyAnnotations($property, $requestoptions);
 		}
-		global $smwgTripleStoreGraph;
 
 		$client = TSConnection::getConnector();
 		$client->connect();
@@ -324,7 +328,7 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 			return parent::getPropertyValues($subject,$property,$requestoptions,$outputformat);
 		}
 
-		global $smwgTripleStoreGraph;
+
 		$client = TSConnection::getConnector();
 		$client->connect();
 
@@ -411,7 +415,7 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 		if (smwfCheckIfPredefinedSMWHaloProperty($property)) {
 			return parent::getPropertyValues($subject,$property,$requestoptions,$outputformat);
 		}
-		global $smwgTripleStoreGraph;
+
 		$client = TSConnection::getConnector();
 		$client->connect();
 
@@ -427,7 +431,7 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 
 		try {
 			if (is_null($value)) {
-				$response = $client->query("SELECT ?s WHERE {  ?s $propertyIRI ?o. } ORDER BY ASC(?s) $limit $offset",  "merge=false|graph=$smwgTripleStoreGraph");
+				$response = $client->query("SELECT ?s WHERE {  ?s $propertyIRI ?o. } ORDER BY ASC(?s) $limit $offset",  "merge=false");
 
 			} else if ($value instanceof SMWWikiPageValue) {
 
@@ -490,6 +494,92 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 
 	function getAllPropertySubjects(SMWPropertyValue $property, $requestoptions = NULL) {
 		return $this->getPropertySubjects($property,NULL,$requestoptions);
+	}
+
+	private function readRecordPropertyValues($subject) {
+
+		$client = TSConnection::getConnector();
+		$client->connect();
+
+		$values = array();
+
+		$limit =  isset($requestoptions->limit) ? " LIMIT ".$requestoptions->limit : "";
+		$offset =  isset($requestoptions->offset) ? " OFFSET ".$requestoptions->offset : "";
+
+		// query
+		if ($subject instanceof Title) {
+
+			$subj_iri =  $this->tsNamespace->getFullIRI($subject);
+		} else {
+
+			$subj_iri =  $this->tsNamespace->getFullIRI($subject->getTitle());
+		}
+
+		try {
+			$slot0 = $this->tsNamespace->getFullIRIByName(SMW_NS_PROPERTY, "_1");
+			$slot1 = $this->tsNamespace->getFullIRIByName(SMW_NS_PROPERTY, "_2");
+			$slot2 = $this->tsNamespace->getFullIRIByName(SMW_NS_PROPERTY, "_3");
+			$slot3 = $this->tsNamespace->getFullIRIByName(SMW_NS_PROPERTY, "_4");
+			$slot4 = $this->tsNamespace->getFullIRIByName(SMW_NS_PROPERTY, "_5");
+			$response = $client->query("SELECT DISTINCT ?p ?b ?s0 ?s1 ?s2 ?s3 ?s4 WHERE {  $subj_iri ?p ?b. ?b $slot0 ?s0 . ?b $slot1 ?s1 . ?b $slot2 ?s2 . ?b $slot3 ?s3 . ?b $slot4 ?s4  } ORDER BY ASC(?p) $limit $offset",  "merge=false");
+		} catch(Exception $e) {
+			wfDebug("Triplestore does probably not run.\n");
+			$response = TSNamespaces::$EMPTY_SPARQL_XML;
+		}
+
+		global $smwgSPARQLResultEncoding;
+		// PHP strings are always interpreted in ISO-8859-1 but may be actually encoded in
+		// another charset.
+		if (isset($smwgSPARQLResultEncoding) && $smwgSPARQLResultEncoding == 'UTF-8') {
+			$response = utf8_decode($response);
+		}
+
+		$dom = simplexml_load_string($response);
+		$dom->registerXPathNamespace("sparqlxml", "http://www.w3.org/2005/sparql-results#");
+		$properties = array();
+
+		$results = $dom->xpath('//sparqlxml:result');
+		foreach ($results as $r) {
+			$values = array();
+			$children = $r->children(); // binding nodes
+			$b = $children->binding[0];
+			$sv = $b->children()->uri[0];
+			if ($sv == TSNamespaces::$RDF_NS."type") continue;
+
+			$title = TSHelper::getTitleFromURI((string) $sv);
+			$property = SMWPropertyValue::makeUserProperty($title->getText());
+
+			$b = $children->binding[1];
+			if (!isset($b->children()->bnode)) continue;
+
+			$v0 = $this->getResultValue($children->binding[2]);
+			$v1 = $this->getResultValue($children->binding[3]);
+			$v2 = $this->getResultValue($children->binding[4]);
+			$v3 = $this->getResultValue($children->binding[5]);
+			$v4 = $this->getResultValue($children->binding[6]);
+		}
+
+		return array($property, SMWDataValueFactory::newPropertyObjectValue($property, implode(";",array($v0, $v1, $v2, $v3, $v4))));
+	}
+
+	private function getResultValue($b) {
+	
+		if (isset($b->children()->uri)) {
+			$sv = reset($b->children()->uri);
+			if ($sv == "http://__defaultvalue__/doesnotexist") return "";
+			$title = TSHelper::getTitleFromURI($sv, false);
+			if (is_null($title) || $title instanceof Title) {
+				return $title->getPrefixedDBkey();
+			} else {
+				return (string) $sv;
+			}
+
+		} else if (isset($b->children()->literal)) {
+			$sv = reset($b->children()->literal);
+			$literalValue = (string) $sv;
+			return $literalValue;
+		}
+		return "";
 	}
 
 }

@@ -264,6 +264,7 @@ class TSNamespaces {
 	public static $initialized = false;
 
 	public static $EMPTY_SPARQL_XML = '<?xml version="1.0"?><sparql></sparql>';
+	public static $DEFAULT_VALUE_URI = 'http://__defaultvalue__/doesnotexist';
 
 	function __construct() {
 		global $smwgTripleStoreGraph, $smwgDefaultStore, $smwgBaseStore, $wgContLang, $wgExtraNamespaces;
