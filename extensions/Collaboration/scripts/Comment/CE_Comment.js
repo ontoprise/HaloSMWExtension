@@ -370,6 +370,7 @@ function CECommentForm() {
 			ceCommentForm.switchEditRating('#collabComEditFormRating' + (parseInt(editRatingValue) + 2), editRatingValue);
 		}
 		$jq('#' + pageName.replace(/(:|\.)/g,'\\$1') + ' .collabComResText').toggle();
+		$jq('.collabComReply', $jq('#' + pageName.replace(/(:|\.)/g,'\\$1'))).hide();
 		return true;
 	};
 	
@@ -493,6 +494,7 @@ function CECommentForm() {
 		$jq('#' + pageName.replace(/(:|\.)/g,'\\$1') + ' .collabComResText').toggle();
 		$jq('#' + pageName.replace(/(:|\.)/g,'\\$1') + ' .collabComResText').html(this.savedCommentContent);
 		$jq('#' + pageName.replace(/(:|\.)/g,'\\$1') + ' .collabComResText').toggle();
+		$jq('.collabComReply', $jq('#' + pageName.replace(/(:|\.)/g,'\\$1'))).show();
 		return true;
 	};
 
