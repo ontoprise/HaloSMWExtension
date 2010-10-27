@@ -282,7 +282,7 @@ protected $smwUserMessages = array(
     'smw_qi_printout_err4' => 'F&uuml;r diesen Query gibt es keine Ergebnisse.',
     'smw_qi_printout_notavailable' => 'Das Ergebnis kann f&uuml;r dieses Format nicht im Query Interface angezeigt werden.',
     'smw_qi_datasource_select_header' => 'W&auml;hle eine Datenquelle (dr&uuml;cke STRG um mehrere Quellen auszuw&auml;hlen)',
-    'smw_qi_showdatarating' => 'Zeige die Bewertung der Daten',
+    'smw_qi_showdatarating' => 'Aktiviere die Bewertung der Daten',
     'smw_qi_showmetadata' => 'Zeige Metainformationen zu den Daten',
 
 	/*Tooltips for Query Interface*/
