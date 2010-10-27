@@ -117,11 +117,7 @@ class SMWTripleStore extends SMWStore {
 			$sparulCommands = array();
 			$prop_ns = $this->tsNamespace->getNSPrefix(SMW_NS_PROPERTY);
 			$naryPropFrag = "<$smwgTripleStoreGraph/$prop_ns";
-			$sparulCommands[] = "DELETE FROM <$smwgTripleStoreGraph> { $subject_iri ?p ?o. ?o $naryPropFrag#_1> ?v. }";
-			$sparulCommands[] = "DELETE FROM <$smwgTripleStoreGraph> { $subject_iri ?p ?o. ?o $naryPropFrag#_2> ?v.}";
-			$sparulCommands[] = "DELETE FROM <$smwgTripleStoreGraph> { $subject_iri ?p ?o. ?o $naryPropFrag#_3> ?v.}";
-			$sparulCommands[] = "DELETE FROM <$smwgTripleStoreGraph> { $subject_iri ?p ?o. ?o $naryPropFrag#_4> ?v.}";
-			$sparulCommands[] = "DELETE FROM <$smwgTripleStoreGraph> { $subject_iri ?p ?o. ?o $naryPropFrag#_5> ?v.}";
+			$sparulCommands[] = "DELETE FROM <$smwgTripleStoreGraph> { $subject_iri ?p ?b. ?b $naryPropFrag#_1> ?v1. ?b $naryPropFrag#_2> ?v2. ?b $naryPropFrag#_3> ?v3. ?b $naryPropFrag#_4> ?v4. ?b $naryPropFrag#_5> ?v5.}";
 			$sparulCommands[] = "DELETE FROM <$smwgTripleStoreGraph> { $subject_iri ?p ?o. }";
 			if ($subject->getNamespace() == SMW_NS_PROPERTY) {
 				$sparulCommands[] = TSNamespaces::getW3CPrefixes()."DELETE FROM <$smwgTripleStoreGraph> { ?s owl:onProperty $subject_iri. }";
@@ -185,11 +181,7 @@ class SMWTripleStore extends SMWStore {
 			$prefixes = TSNamespaces::$W3C_PREFIXES.TSNamespaces::$TSC_PREFIXES;
 			$prop_ns = $this->tsNamespace->getNSPrefix(SMW_NS_PROPERTY);
 			$naryPropFrag = "<$smwgTripleStoreGraph/$prop_ns";
-			$sparulCommands[] = "DELETE FROM <$smwgTripleStoreGraph> { $subject_iri ?p ?o. ?o $naryPropFrag#_1> ?v. }";
-			$sparulCommands[] = "DELETE FROM <$smwgTripleStoreGraph> { $subject_iri ?p ?o. ?o $naryPropFrag#_2> ?v.}";
-			$sparulCommands[] = "DELETE FROM <$smwgTripleStoreGraph> { $subject_iri ?p ?o. ?o $naryPropFrag#_3> ?v.}";
-			$sparulCommands[] = "DELETE FROM <$smwgTripleStoreGraph> { $subject_iri ?p ?o. ?o $naryPropFrag#_4> ?v.}";
-			$sparulCommands[] = "DELETE FROM <$smwgTripleStoreGraph> { $subject_iri ?p ?o. ?o $naryPropFrag#_5> ?v.}";
+			$sparulCommands[] = "DELETE FROM <$smwgTripleStoreGraph> { $subject_iri ?p ?b. ?b $naryPropFrag#_1> ?v1. ?b $naryPropFrag#_2> ?v2. ?b $naryPropFrag#_3> ?v3. ?b $naryPropFrag#_4> ?v4. ?b $naryPropFrag#_5> ?v5.}";
 			$sparulCommands[] = "DELETE FROM <$smwgTripleStoreGraph> { $subject_iri ?p ?o. }";
 
 			$tripleSerialization = "";
@@ -587,24 +579,7 @@ class SMWTripleStore extends SMWStore {
 			$sparulCommands = array();
 			$prop_ns = $this->tsNamespace->getNSPrefix(SMW_NS_PROPERTY);
 			$naryPropFrag = "<$smwgTripleStoreGraph/$prop_ns";
-			$sparulCommands[] = "MODIFY <$smwgTripleStoreGraph> DELETE { $old_iri ?p ?o. ?o $naryPropFrag#_1> ?v. } INSERT { $new_iri ?p ?o. ?o $naryPropFrag#_1> ?v. }";
-			$sparulCommands[] = "MODIFY <$smwgTripleStoreGraph> DELETE { $old_iri ?p ?o. ?o $naryPropFrag#_2> ?v. } INSERT { $new_iri ?p ?o. ?o $naryPropFrag#_2> ?v. }";
-			$sparulCommands[] = "MODIFY <$smwgTripleStoreGraph> DELETE { $old_iri ?p ?o. ?o $naryPropFrag#_3> ?v. } INSERT { $new_iri ?p ?o. ?o $naryPropFrag#_3> ?v. }";
-			$sparulCommands[] = "MODIFY <$smwgTripleStoreGraph> DELETE { $old_iri ?p ?o. ?o $naryPropFrag#_4> ?v. } INSERT { $new_iri ?p ?o. ?o $naryPropFrag#_4> ?v. }";
-			$sparulCommands[] = "MODIFY <$smwgTripleStoreGraph> DELETE { $old_iri ?p ?o. ?o $naryPropFrag#_5> ?v. } INSERT { $new_iri ?p ?o. ?o $naryPropFrag#_5> ?v. }";
-
-			$sparulCommands[] = "MODIFY <$smwgTripleStoreGraph> DELETE { ?s $old_iri ?o. ?o $naryPropFrag#_1> ?v. } INSERT { ?s $new_iri ?o. ?o $naryPropFrag#_1> ?v. }";
-			$sparulCommands[] = "MODIFY <$smwgTripleStoreGraph> DELETE { ?s $old_iri ?o. ?o $naryPropFrag#_2> ?v. } INSERT { ?s $new_iri ?o. ?o $naryPropFrag#_2> ?v. }";
-			$sparulCommands[] = "MODIFY <$smwgTripleStoreGraph> DELETE { ?s $old_iri ?o. ?o $naryPropFrag#_3> ?v. } INSERT { ?s $new_iri ?o. ?o $naryPropFrag#_3> ?v. }";
-			$sparulCommands[] = "MODIFY <$smwgTripleStoreGraph> DELETE { ?s $old_iri ?o. ?o $naryPropFrag#_4> ?v. } INSERT { ?s $new_iri ?o. ?o $naryPropFrag#_4> ?v. }";
-			$sparulCommands[] = "MODIFY <$smwgTripleStoreGraph> DELETE { ?s $old_iri ?o. ?o $naryPropFrag#_5> ?v. } INSERT { ?s $new_iri ?o. ?o $naryPropFrag#_5> ?v. }";
-
-			$sparulCommands[] = "MODIFY <$smwgTripleStoreGraph> DELETE { ?s ?p $old_iri. ?o $naryPropFrag#_1> ?v. } INSERT { ?s ?p $new_iri. ?o $naryPropFrag#_1> ?v. }";
-			$sparulCommands[] = "MODIFY <$smwgTripleStoreGraph> DELETE { ?s ?p $old_iri. ?o $naryPropFrag#_2> ?v. } INSERT { ?s ?p $new_iri. ?o $naryPropFrag#_2> ?v. }";
-			$sparulCommands[] = "MODIFY <$smwgTripleStoreGraph> DELETE { ?s ?p $old_iri. ?o $naryPropFrag#_3> ?v. } INSERT { ?s ?p $new_iri. ?o $naryPropFrag#_3> ?v. }";
-			$sparulCommands[] = "MODIFY <$smwgTripleStoreGraph> DELETE { ?s ?p $old_iri. ?o $naryPropFrag#_4> ?v. } INSERT { ?s ?p $new_iri. ?o $naryPropFrag#_4> ?v. }";
-			$sparulCommands[] = "MODIFY <$smwgTripleStoreGraph> DELETE { ?s ?p $old_iri. ?o $naryPropFrag#_5> ?v. } INSERT { ?s ?p $new_iri. ?o $naryPropFrag#_5> ?v. }";
-
+	
 			$sparulCommands[] = TSNamespaces::getW3CPrefixes()."MODIFY <$smwgTripleStoreGraph> DELETE  { $old_iri ?p ?o. } INSERT { $new_iri ?p ?o. }";
 			$sparulCommands[] = TSNamespaces::getW3CPrefixes()."MODIFY <$smwgTripleStoreGraph> DELETE  { ?s $old_iri ?o. } INSERT { ?s $new_iri ?o. }";
 			$sparulCommands[] = TSNamespaces::getW3CPrefixes()."MODIFY <$smwgTripleStoreGraph> DELETE  { ?s ?p $old_iri. } INSERT { ?s ?p $new_iri. }";
