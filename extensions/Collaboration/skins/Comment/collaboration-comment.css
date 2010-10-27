@@ -24,7 +24,7 @@ span.collabComInternComment {
 	padding-left: 5px;
 }
 
-span#collabComToggle,span#collabComFormToggle {
+span#collabComToggle, span#collabComFormToggle {
 	color: #116988;
 	cursor: pointer;
 }
@@ -241,7 +241,9 @@ div#collabComFormHelp span {
 }
 
 #collabComFormResetbuttonID {
-	margin-left: 5px;
+	color: #116988;;
+	cursor: pointer;
+	display: inline;
 }
 
 /* normal status messages from AJAX response */
@@ -313,4 +315,9 @@ span#collabComEditFormRadiobuttons {
 	padding: 0 5px;
 	cursor: pointer;
 	vertical-align: text-bottom;
+}
+#collabComEditFormCancel {
+	color: #116988;;
+	cursor: pointer;
+	display: inline;
 }

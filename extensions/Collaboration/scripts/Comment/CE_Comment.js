@@ -348,11 +348,11 @@ function CECommentForm() {
 		});
 
 		var cancelSpan = this.createDOMElement('span', 'collabComEditFormCancel');
-		$jq(cancelSpan).css({'display':'inline','cursor':'pointer','color':'blue'});
+//		$jq(cancelSpan).css({'display':'inline','cursor':'pointer','color':'blue'});
 		$jq(cancelSpan).bind('click', function() {
 			ceCommentForm.cancelCommentEditForm(pageName);
 		});
-		var cancelText = document.createTextNode(' | Cancel');
+		var cancelText = document.createTextNode(' | ' + ceLanguage.getMessage('ce_cancel_button'));
 		$jq(cancelSpan).append($jq(cancelText));
 
 		// message div
@@ -572,6 +572,7 @@ function CECommentForm() {
 			$jq(oldhtmlid).attr('src', $jq(oldhtmlid).attr('src').replace(/_active/g, '_inactive'));
 			this.ratingValue = null;
 		}
+		$jq('#collabComForm').get(0).reset();
 	};
 
 	/**

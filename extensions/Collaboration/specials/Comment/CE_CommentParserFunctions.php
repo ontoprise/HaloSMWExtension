@@ -284,9 +284,11 @@ END;
 				XML::closeElement('textarea') .
 			XML::submitButton( wfMsg( 'ce_cf_submit_button_name' ), 
 				array ( 'id' => $submitButtonID) ) .
-			XML::element( 'input', array( 'type' => 'reset', 
-				'value' => wfMsg( 'ce_cf_reset_button_name' ),
-				'id' => $resetButtonID, 'onClick' => 'ceCommentForm.formReset();')) .
+			XML::element( 'span', array(
+				'id' => $resetButtonID,
+				'onClick' => 'ceCommentForm.formReset();')) .
+				' | ' . wfMsg( 'ce_cf_reset_button_name' ) .
+			XML::closeElement('span') .
 			XML::closeElement('div') . //end collabComFormRight
 			XML::closeElement('form') .
 			XML::openElement('div', array('id' => 'collabComFormMessage', 
