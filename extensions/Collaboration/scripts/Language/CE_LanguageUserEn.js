@@ -28,6 +28,7 @@ var wgCEUserLanguageStrings = {
 	'ce_delete_title'		:	'Click here to delete this comment',
 	'ce_edit_title'			:	'Click here to edit this comment',
 	'ce_reply_title'		:	'Click here to reply to this comment',
+	'ce_com_reply'			:	'Reply',
 	'ce_edit_rating_text'	:	'Rate the quality of this article ',
 	'ce_edit_rating_text2'	:	'(optional)',
 	'ce_edit_button'		:	'Update comment',

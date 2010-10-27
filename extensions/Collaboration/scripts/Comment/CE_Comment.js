@@ -154,8 +154,7 @@ function CECommentForm() {
 				comMessage.attr('class', 'success');
 				comMessage.html(htmlmsg + ceLanguage.getMessage('ce_reload'));
 				//add pending span
-				var pendingSpan = document.createElement('span');
-				$jq(pendingSpan).attr('id', 'collabComFormPending');
+				var pendingSpan = this.createDOMElement('span', 'collabComPending');
 				comMessage.append(pendingSpan);
 				if (this.pendingIndicatorMsg == null) {
 					this.pendingIndicatorMsg = new CPendingIndicator($jq('#collabComFormPending'));
@@ -194,8 +193,7 @@ function CECommentForm() {
 		// add pending indicator
 		var comEl = $jq('#' + container);
 		$jq('.ceOverlayDetails', comEl).html(ceLanguage.getMessage('ce_deleting'));
-		var pendingSpan = document.createElement('span');
-		$jq(pendingSpan).attr('id', 'collabComDelPending')
+		var pendingSpan = this.createDOMElement('span', 'collabComDelPending');
 		$jq('.ceOverlayDetails', comEl).append(pendingSpan);
 		if (this.pendingIndicatorDel == null) {
 			this.pendingIndicatorDel = new CPendingIndicator($jq('#collabComDelPending'));
@@ -296,42 +294,39 @@ function CECommentForm() {
 			var ratingText = document.createTextNode(ceLanguage.getMessage('ce_edit_rating_text'));
 			var ratingTextOpt = document.createTextNode(ceLanguage.getMessage('ce_edit_rating_text2'));
 			var ratingTextOpt2 = document.createTextNode(':');
-			var ratingSpan = document.createElement('span');
-			$jq(ratingSpan).addClass('collabComFormGrey');
+			var ratingSpan = this.createDOMElement('span', null, ['collabComFormGrey']);
 			$jq(ratingSpan).append($jq(ratingTextOpt));
 
-			var ratingDiv = document.createElement('div');
-			$jq(ratingDiv).attr('id', 'collabComEditFormRating');
+			var ratingDiv = this.createDOMElement('div', 'collabComEditFormRating');
 			$jq(ratingDiv).append($jq(ratingText));
 			$jq(ratingDiv).append($jq(ratingSpan));
 			$jq(ratingDiv).append($jq(ratingTextOpt2));
 
-			var ratingIcons = document.createElement('span');
-			$jq(ratingIcons).attr('id', 'collabComEditFormRadioButtons');
+			var ratingIcons = this.createDOMElement('span', 'collabComEditFormRadionButtons');
 
-			var ratingIcon1 = document.createElement('img');
-			$jq(ratingIcon1).addClass('collabComEditFormRatingImg');
-			$jq(ratingIcon1).attr('id', 'collabComEditFormRating1');
+			var ratingIcon1 = this.createDOMElement('img',
+					'collabComEditFormRating1',
+					['collabComEditFormRatingImg'],
+					[['src', cegScriptPath + '/skins/Comment/icons/bad_inactive.png']]);
 			$jq(ratingIcon1).bind('click', function() {
 				ceCommentForm.switchEditRating('#collabComEditFormRating1',-1);
 			});
-			$jq(ratingIcon1).attr('src', cegScriptPath + '/skins/Comment/icons/bad_inactive.png');
 
-			var ratingIcon2 = document.createElement('img');
-			$jq(ratingIcon2).addClass('collabComEditFormRatingImg');
-			$jq(ratingIcon2).attr('id', 'collabComEditFormRating2');
+			var ratingIcon2 = this.createDOMElement('img',
+					'collabComEditFormRating2',
+					['collabComEditFormRatingImg'],
+					[['src', cegScriptPath + '/skins/Comment/icons/neutral_inactive.png']]);
 			$jq(ratingIcon2).bind('click', function() {
 				ceCommentForm.switchEditRating('#collabComEditFormRating2', 0);
 			});
-			$jq(ratingIcon2).attr('src', cegScriptPath + '/skins/Comment/icons/neutral_inactive.png');
 
-			var ratingIcon3 = document.createElement('img');
-			$jq(ratingIcon3).addClass('collabComEditFormRatingImg');
-			$jq(ratingIcon3).attr('id', 'collabComEditFormRating3');
+			var ratingIcon3 = this.createDOMElement('img',
+					'collabComEditFormRating3',
+					['collabComEditFormRatingImg'],
+					[['src', cegScriptPath + '/skins/Comment/icons/good_inactive.png']]);
 			$jq(ratingIcon3).bind('click', function() {
 				ceCommentForm.switchEditRating('#collabComEditFormRating3', 1);
 			});
-			$jq(ratingIcon3).attr('src', cegScriptPath + '/skins/Comment/icons/good_inactive.png');
 
 			$jq(ratingIcons).append(ratingIcon1);
 			$jq(ratingIcons).append(ratingIcon2);
@@ -340,22 +335,19 @@ function CECommentForm() {
 		} // end rating
 
 		// textarea
-		var form = document.createElement('textarea');
-		$jq(form).attr('id', 'collabComEditFormTextarea');
-		$jq(form).attr('rows', '5');
-		$jq(form).val(content);
+		var textarea = this.createDOMElement('textarea',
+				'collabComEditFormTextarea',
+				null, [['rows', '5']], null, content);
 
 		//buttons
-		var submitButton = document.createElement('input');
-		$jq(submitButton).attr('id', 'collabComEditFormSubmit');
-		$jq(submitButton).attr('type', 'button');
-		$jq(submitButton).attr('value', ceLanguage.getMessage('ce_edit_button'));
+		var submitButton = this.createDOMElement('input',
+				'collabComEditFormSubmit', null, [['type', 'button']],
+				null,  ceLanguage.getMessage('ce_edit_button'));
 		$jq(submitButton).bind('click', function() {
 			ceCommentForm.editExistingComment();
 		});
 
-		var cancelSpan = document.createElement('span');
-		$jq(cancelSpan).attr('id', 'collabComEditFormCancel');
+		var cancelSpan = this.createDOMElement('span', 'collabComEditFormCancel');
 		$jq(cancelSpan).css({'display':'inline','cursor':'pointer','color':'blue'});
 		$jq(cancelSpan).bind('click', function() {
 			ceCommentForm.cancelCommentEditForm(pageName);
@@ -364,13 +356,12 @@ function CECommentForm() {
 		$jq(cancelSpan).append($jq(cancelText));
 
 		// message div
-		var msgDiv = document.createElement('div');
-		$jq(msgDiv).attr('id', 'collabComEditFormMessage');
+		var msgDiv = this.createDOMElement('div', 'collabComEditFormMessage');
 		$jq(msgDiv).css('display', 'none');
 
 		$jq('#' + pageName.replace(/(:|\.)/g,'\\$1') + ' .collabComResText').html('');
 		$jq('#' + pageName.replace(/(:|\.)/g,'\\$1') + ' .collabComResText').append(ratingDiv);
-		$jq('#' + pageName.replace(/(:|\.)/g,'\\$1') + ' .collabComResText').append(form);
+		$jq('#' + pageName.replace(/(:|\.)/g,'\\$1') + ' .collabComResText').append(textarea);
 		$jq('#' + pageName.replace(/(:|\.)/g,'\\$1') + ' .collabComResText').append(submitButton);
 		$jq('#' + pageName.replace(/(:|\.)/g,'\\$1') + ' .collabComResText').append(cancelSpan);
 		$jq('#' + pageName.replace(/(:|\.)/g,'\\$1') + ' .collabComResText').append(msgDiv);
@@ -453,8 +444,7 @@ function CECommentForm() {
 		this.pendingIndicatorEF.hide();
 		if ( valueEl.nodeType == 1 ) {
 			var valueCode = valueEl.firstChild.nodeValue
-			var comEditMessage = document.createElement('div');
-			$jq(comEditMessage).attr('id', 'collabComEditFormMessage');
+			var comEditMessage = this.createDOMElement('div', 'collabComEditFormMessage');
 			$jq('#' + this.editCommentName.replace(/(:|\.)/g,'\\$1')).before($jq(comEditMessage));
 			if ( valueCode == 0 ){
 				//fine.
@@ -463,8 +453,7 @@ function CECommentForm() {
 				$jq(comEditMessage).attr('class', 'success');
 				$jq(comEditMessage).html(htmlmsg + ceLanguage.getMessage('ce_reload'));
 				//add pending span
-				var pendingSpan = document.createElement('span');
-				$jq(pendingSpan).attr('id', 'collabComEditFormPending');
+				var pendingSpan = this.createDOMElement('span', 'collabComEditFormPending');
 				$jq(comEditMessage).append(pendingSpan);
 				if (this.pendingIndicatorMsg == null) {
 					this.pendingIndicatorMsg = new CPendingIndicator($jq('#collabComEditFormPending'));
@@ -851,9 +840,8 @@ function CECommentForm() {
 	this.addExtendedHeaderText = function() {
 		var headerText = ceLanguage.getMessage('ce_com_ext_header');
 		headerText = headerText + ' (' + this.numOfComments + ')';
-		var headerSpan = document.createElement('span');
-		$jq(headerSpan).addClass('collabComInternComment');
-		$jq(headerSpan).html(headerText);
+		var headerSpan = this.createDOMElement('span',
+				null, ['collabComInternComment'], null, headerText);
 		$jq('.collabComInternHeader').append($jq(headerSpan));
 		return true;
 	};
@@ -862,13 +850,14 @@ function CECommentForm() {
 	 * This function adds the toggle element for the comments.
 	 */
 	this.addCommentToggler = function() {
-		var toggleSpan = document.createElement('span');
-		$jq(toggleSpan).attr('id', 'collabComToggle');
-		$jq(toggleSpan).html( ' | ' + ceLanguage.getMessage('ce_com_hide'));
+		var toggleSpan = this.createDOMElement('span', 
+				'collabComToggle', 
+				null,
+				[['title', ceLanguage.getMessage('ce_com_toggle_tooltip')]],
+				' | ' + ceLanguage.getMessage('ce_com_hide'));
 		$jq(toggleSpan).bind('click', function() {
 			ceCommentForm.toggleComments();
 		});
-		$jq(toggleSpan).attr('title', ceLanguage.getMessage('ce_com_toggle_tooltip'));
 		$jq('.collabComInternHeader').append($jq(toggleSpan));
 		return true;
 	};
@@ -878,9 +867,11 @@ function CECommentForm() {
 	 * @param withPipe: Indicates if the Text should be extended with a leading pipe symbol
 	 */
 	this.addFormToggler = function(withPipe) {
-		var toggleSpan = document.createElement('span');
-		$jq(toggleSpan).attr('id', 'collabComFormToggle');
-		$jq(toggleSpan).html((withPipe? ' | ' : ' ') + ceLanguage.getMessage('ce_com_default_header'));
+		var toggleSpan = this.createDOMElement('span',
+				'collabComFormToggle',
+				null,
+				[['id', 'collabComFormToggle']],
+				(withPipe? ' | ' : ' ') + ceLanguage.getMessage('ce_com_default_header'));
 		$jq(toggleSpan).bind('click', function() {
 			$jq('#collabComForm').toggle('slow');
 		});
@@ -893,24 +884,27 @@ function CECommentForm() {
 	 */
 	this.addHeaderView = function() {
 		// "change view" functionality
-		var viewSpan = document.createElement('span');
-		$jq(viewSpan).html(' | ' + ceLanguage.getMessage('ce_com_view') + ': ');
-		$jq(viewSpan).attr('id', 'collabComFormView');
-		var selectEl = document.createElement('select');
+		var viewSpan = this.createDOMElement('span',
+				'collabComFormView',
+				null,
+				[['id', 'collabComFormView']],
+				' | ' + ceLanguage.getMessage('ce_com_view') + ': ');
+
+		var selectEl = this.createDOMElement('select');
 		$jq(selectEl).bind('change', function() {
 			ceCommentForm.toggleView();
 		});
 		try {
-			selectEl.add(new Option('Threaded', 0, true, true), null); // standards compliant; doesn't work in IE
+			selectEl.add(new Option(ceLanguage.getMessage('ce_com_view_threaded'), 0, true, true), null); // standards compliant; doesn't work in IE
 		}
 		catch(ex) {
-			selectEl.add(new Option('Threaded', 0, true, true)); // IE only
+			selectEl.add(new Option(ceLanguage.getMessage('ce_com_view_threaded'), 0, true, true)); // IE only
 		}
 		try {
-			selectEl.add(new Option('Flat', 1), null); // standards compliant; doesn't work in IE
+			selectEl.add(new Option(ceLanguage.getMessage('ce_com_view_flat'), 1), null); // standards compliant; doesn't work in IE
 		}
 		catch(ex) {
-			selectEl.add(new Option('Flat', 1)); // IE only
+			selectEl.add(new Option(ceLanguage.getMessage('ce_com_view_flat'), 1)); // IE only
 		}
 		$jq(viewSpan).append($jq(selectEl));
 		$jq('.collabComInternHeader').append($jq(viewSpan));
@@ -923,15 +917,16 @@ function CECommentForm() {
 	 */
 	this.addHeaderRating = function() {
 		if( this.numOfRatings >= 0 ) {
-			var ratingSpan = document.createElement('span');
-			$jq(ratingSpan).attr('class', 'collabComInternAvg');
-			$jq(ratingSpan).html(ceLanguage.getMessage('ce_com_rating_text') +
-				' ' + this.numOfRatings + ' ' + ceLanguage.getMessage('ce_com_rating_text2')
-			);
-			var ratingIconDiv = document.createElement('div');
-			$jq(ratingIconDiv).attr('class', 'collabComInternRatingIcon');
+			var ratingSpan = this.createDOMElement('span',
+					'',
+					['collabComInternAvg'],
+					'',
+					ceLanguage.getMessage('ce_com_rating_text') + ' ' + 
+					this.numOfRatings + ' ' + ceLanguage.getMessage('ce_com_rating_text2'));
+
+			var ratingIconDiv = this.createDOMElement('div', '', ['collabComInternRatingIcon']);
 			
-			var ratingIcon = document.createElement('img');
+			var ratingIcon = this.createDOMElement('img');
 			var ratingIconSrc = cegScriptPath + '/skins/Comment/icons/';
 			if(this.averageRating < -0.33) {
 				$jq(ratingIcon).attr('src', ratingIconSrc + 'bad_active.png');
@@ -953,42 +948,84 @@ function CECommentForm() {
 	this.createOverlay = function(num, pageName) {
 		var overlayName = 'overlay_' + num;
 		// divs
-		var overlayDivEl = document.createElement('div');
-		$jq(overlayDivEl).addClass('ceOverlay');
-		$jq(overlayDivEl).attr('id', overlayName);
-
-		var overlayDivDetailsEl = document.createElement('div');
-		$jq(overlayDivDetailsEl).addClass('ceOverlayDetails');
+		var overlayDivEl = this.createDOMElement('div', overlayName, ['ceOverlay']);
+		var overlayDivDetailsEl = this.createDOMElement('div', '', ['ceOverlayDetails']);
 		$jq(overlayDivEl).append($jq(overlayDivDetailsEl));
 		var overlayDivContent = document.createTextNode(ceLanguage.getMessage('ce_delete'));
 		$jq(overlayDivDetailsEl).append($jq(overlayDivContent));
 
 		// cancel button
-		var cancelButtonDiv = document.createElement('div');
-		$jq(cancelButtonDiv).addClass('ceOverlayCancelButtonDiv');
+		var cancelButtonDiv = this.createDOMElement('div', '', ['ceOverlayCancelButtonDiv']);
 		$jq(cancelButtonDiv).bind('click', function() {
 			$jq('#' + pageName.replace(/(:|\.)/g,'\\\\$1')).css('background-color', '');
 		});
-		var cancelButton = document.createElement('input');
-		$jq(cancelButton).attr('type', 'button');
-		$jq(cancelButton).addClass('ceOverlayCancelButton close');
-		$jq(cancelButton).attr('value', ceLanguage.getMessage('ce_cancel_button'));
+		var cancelButton = this.createDOMElement('input',
+				'',
+				['ceOverlayCancelButton', 'close'],
+				[['type', 'button']],
+				'',
+				ceLanguage.getMessage('ce_cancel_button'));
 		$jq(cancelButtonDiv).append($jq(cancelButton));
 		$jq(overlayDivEl).append($jq(cancelButtonDiv));
 
 		// delete button
-		var deleteButtonDiv = document.createElement('div');
-		$jq(deleteButtonDiv).addClass('ceOverlayDeleteButtonDiv');
+		var deleteButtonDiv = this.createDOMElement('div',
+				'', ['ceOverlayDeleteButtonDiv']);
 		$jq(deleteButtonDiv).bind('click', function() {
 			ceCommentForm.deleteComment(escape(pageName), overlayName);
 		});
-		var deleteButton = document.createElement('input');
-		$jq(deleteButton).attr('type', 'button');
-		$jq(deleteButton).addClass('ceOverlayDeleteButton');
-		$jq(deleteButton).attr('value', ceLanguage.getMessage('ce_delete_button'));
+		var deleteButton = this.createDOMElement('input',
+				null,
+				['ceOverlayDeleteButton'],
+				[['type', 'button']],
+				null,
+				ceLanguage.getMessage('ce_delete_button'));
 		$jq(deleteButtonDiv).append($jq(deleteButton));
 		$jq(overlayDivEl).append($jq(deleteButtonDiv));
 		return overlayDivEl;
+	};
+
+	/**
+	 * MW 1.16.x comes with jQuery version 1.3.
+	 * This framework is missing the fancy way
+	 * of adding new DOM elements as described in 
+	 * http://api.jquery.com/jQuery/#jQuery2.
+	 * So this function takes care about this.
+	 * 
+	 * @param tag string
+	 * @param id string
+	 * @param classes Array
+	 * @param attribs multi-dim Array
+	 * @param htmlcontent string
+	 * @param value string
+	 * 
+	 * @return DOM Element or false if no tag has been passed.
+	 **/
+	this.createDOMElement = function(tag, id, classes, attribs, htmlcontent, value) {
+		if( tag === null || typeof( tag ) !== 'string' ) {
+			return false;
+		}
+		var el = document.createElement(tag);
+		if( id !== null && typeof( id ) === 'string' ) {
+			$jq(el).attr('id', id);
+		}
+		if( classes !== null && typeof( classes ) === 'object' ) {
+			$jq(classes).each(function(){
+				$jq(el).addClass(this);
+			});
+		}
+		if( attribs !== null && typeof( attribs ) === 'object' ) {
+			$jq(attribs).each(function(){
+				$jq(el).attr(this[0], this[1]);
+			});
+		}
+		if( htmlcontent !== null && typeof( htmlcontent ) === 'string' ) {
+			$jq(el).html(htmlcontent);
+		}
+		if( value !== null && typeof( value ) === 'string') {
+			$jq(el).val(value);
+		}
+		return el;
 	};
 }
 
@@ -1001,6 +1038,111 @@ $jq(document).ready(
 		ceCommentForm = new CECommentForm();
 	}
 );
+
+/**
+ * This function takes care about missing event handlers.
+ * (It hasn't been possible to add this in the Template itself)
+ * It also creates Edit and Delete links for users that own the appropriate right.
+ * The current DOM structure is saved to be reused in "flat view".
+ */
+$jq(document).ready(
+	function(){
+		// build header
+		ceCommentForm.buildHeader();// format comments
+		var resultComments = $jq('.collabComRes');
+		$jq.each(resultComments, function(i, resCom ){
+			var resComInfo = $jq('.collabComResInfo', resCom);
+			// name of actual comment
+			var resComName = resComInfo.html();
+			var commentPerson= $jq('.collabComResUsername > a', resCom).html();
+			if(!commentPerson) {
+				commentPerson = '';
+			} else {
+				var commentPerson = commentPerson.split(':');
+				commentPerson = commentPerson.pop();
+			}
+			if( (typeof( cegUserIsSysop ) != "undefined" && cegUserIsSysop != null && cegUserIsSysop != false) ||
+					(wgUserName != null && commentPerson == wgUserName) ) {
+				//Overlay for deleting comments
+				var overlayDiv = ceCommentForm.createOverlay(i, resComName);
+				var divEl = ceCommentForm.createDOMElement('div',
+						'ceDel' + escape(resComName),
+						['collabComDel'],
+						[['title', ceLanguage.getMessage('ce_delete_title')],['rel', '#overlay_' + i]]);
+				$jq(divEl).css({'display' : 'inline', 'cursor' : 'pointer', 'color':'blue'});
+				$jq(divEl).bind('click', function() {
+					$jq('#' + resComName.replace(/(:|\.)/g,'\\$1')).addClass('collabComDelSelected');
+				});
+				var delImgEl = ceCommentForm.createDOMElement('img',
+						null,
+						['collabComDeleteImg'],
+						[['src', cegScriptPath + '/skins/Comment/icons/Delete_button.png']]);
+				$jq(divEl).append($jq(delImgEl));
+				$jq('.collabComResDate', resCom).after(divEl);
+				$jq('#collabComResults').after(overlayDiv);
+
+				// edit
+				var divEl = ceCommentForm.createDOMElement('div',
+						null,
+						['collabComEdit'],
+						[['title', ceLanguage.getMessage('ce_edit_title')]]);
+				$jq(divEl).css({'display' : 'inline', 'cursor' : 'pointer', 'color' : 'blue'});
+				$jq(divEl).bind('click', function() {
+					ceCommentForm.editCommentForm(resComName);
+				});
+				var imgEl = ceCommentForm.createDOMElement('img',
+						null,
+						['collabComEditImg'],
+						[['src', cegScriptPath + '/skins/Comment/icons/Edit_button2.png']]);
+				$jq(divEl).append($jq(imgEl));
+				$jq('.collabComResDate', resCom).after(divEl);
+			}
+
+			// reply
+			var divEl = ceCommentForm.createDOMElement('div',
+					null,
+					['collabComReply'],
+					[['title', ceLanguage.getMessage('ce_reply_title')]], ceLanguage.getMessage('ce_com_reply'));
+			$jq(divEl).bind('click', function() {
+				ceCommentForm.replyCommentForm(resComName);
+			});
+			
+			var replyImgEl = ceCommentForm.createDOMElement('img',
+					null,
+					['collabComReplyImg'],
+					[['src', cegScriptPath + '/skins/Comment/icons/Reply_Comment.png']]);
+			$jq(divEl).append($jq(replyImgEl));
+			$jq('.collabComResText', resCom).after(divEl);
+		});
+		//clone actual structure without events (bind them again later)
+		ceCommentForm.savedStructure = $jq('#collabComResults').clone();
+		ceCommentForm.showThreaded();
+	}
+);
+
+$jq(document).ready(
+	function(){
+		// did not work in the same ready function
+		$jq("div[rel]").overlay({
+			api: true,
+			// when overlay is closed, remove color highlighting
+			onClose: function() {
+				$jq('.collabComRes').removeClass('collabComDelSelected');
+			}
+		});
+	}
+);
+
+/**
+ * Function binding
+ */
+Function.prototype.bindToFunction = function(context){
+	var func = this;
+	return function(){
+		return func.apply(context, arguments);
+	};
+};
+
 
 /**
  * This class has been ported from the generalTools.js of SMWHalo
@@ -1131,104 +1273,3 @@ CollaborationXMLTools.createDocumentFromString = function (xmlText) {
 	}
 	return xmlDoc;
 }
-
-/**
- * This function takes care about missing event handlers.
- * (It hasn't been possible to add this in the Template itself)
- * It also creates Edit and Delete links for users that own the appropriate right.
- * The current DOM structure is saved to be reused in "flat view".
- */
-$jq(document).ready(
-	function(){
-		// build header
-		ceCommentForm.buildHeader();// format comments
-		var resultComments = $jq('.collabComRes');
-		$jq.each(resultComments, function(i, resCom ){
-			var resComInfo = $jq('.collabComResInfo', resCom);
-			// name of actual comment
-			var resComName = resComInfo.html();
-			var commentPerson= $jq('.collabComResUsername > a', resCom).html();
-			if(!commentPerson) {
-				commentPerson = '';
-			} else {
-				var commentPerson = commentPerson.split(':');
-				commentPerson = commentPerson.pop();
-			}
-			if( (typeof( cegUserIsSysop ) != "undefined" && cegUserIsSysop != null && cegUserIsSysop != false) ||
-					(wgUserName != null && commentPerson == wgUserName) ) {
-				//Overlay for deleting comments
-				var overlayDiv = ceCommentForm.createOverlay(i, resComName);
-				var divEl = document.createElement('div');
-				$jq(divEl).css({'display' : 'inline', 'cursor' : 'pointer', 'color':'blue'});
-				$jq(divEl).attr('title', ceLanguage.getMessage('ce_delete_title'));
-				$jq(divEl).attr('rel', '#overlay_' + i);
-				$jq(divEl).attr('id' , 'ceDel' + escape(resComName));
-				$jq(divEl).addClass('collabComDel');
-				$jq(divEl).bind('click', function() {
-					$jq('#' + resComName.replace(/(:|\.)/g,'\\$1')).addClass('collabComDelSelected');
-				});
-				var delImgEl = document.createElement('img');
-				$jq(delImgEl).attr('src', cegScriptPath + '/skins/Comment/icons/Delete_button.png')
-				$jq(delImgEl).addClass('collabComDeleteImg');
-				$jq(divEl).append($jq(delImgEl));
-				$jq('.collabComResDate', resCom).after(divEl);
-				$jq('#collabComResults').after(overlayDiv);
-
-				// edit
-				var divEl = document.createElement('div');
-				$jq(divEl).css({'display' : 'inline', 'cursor' : 'pointer', 'color' : 'blue'});
-				$jq(divEl).attr('title', ceLanguage.getMessage('ce_edit_title'));
-				$jq(divEl).addClass('collabComEdit');
-				$jq(divEl).bind('click', function() {
-					ceCommentForm.editCommentForm(resComName);
-				});
-				var imgEl = document.createElement('img');
-				$jq(imgEl).attr('src', cegScriptPath + '/skins/Comment/icons/Edit_button2.png')
-				$jq(imgEl).addClass('collabComEditImg');
-				$jq(divEl).append($jq(imgEl));
-				$jq('.collabComResDate', resCom).after(divEl);
-			}
-
-			// reply
-			var divEl = document.createElement('div');
-			$jq(divEl).attr('title', ceLanguage.getMessage('ce_reply_title'));
-			$jq(divEl).addClass('collabComReply');
-			$jq(divEl).bind('click', function() {
-				ceCommentForm.replyCommentForm(resComName);
-			});
-			$jq(divEl).html('Reply');
-			var replyImgEl = document.createElement('img');
-			$jq(replyImgEl).attr('src', cegScriptPath + '/skins/Comment/icons/Reply_Comment.png')
-			$jq(replyImgEl).addClass('collabComReplyImg');
-			$jq(divEl).append($jq(replyImgEl));
-			$jq('.collabComResText', resCom).after(divEl);
-
-		});
-		//clone actual structure without events (bind them again later)
-		ceCommentForm.savedStructure = $jq('#collabComResults').clone();
-		ceCommentForm.showThreaded();
-	}
-);
-
-$jq(document).ready(
-	function(){
-		// did not work in the same ready function
-		$jq("div[rel]").overlay({
-			api: true,
-			// when overlay is closed, remove color highlighting
-			onClose: function() {
-				$jq('.collabComRes').removeClass('collabComDelSelected');
-			}
-		});
-	}
-);
-
-/**
- * Function binding
- */
-Function.prototype.bindToFunction = function(context){
-	var func = this;
-	return function(){
-		return func.apply(context, arguments);
-	};
-};

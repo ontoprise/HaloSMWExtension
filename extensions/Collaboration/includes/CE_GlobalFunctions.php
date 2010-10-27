@@ -312,7 +312,7 @@ function cefAddJSLanguageScripts(&$out, $mode = "all", $namespace = -1, $pages =
 
 	// user language file
 	if (isset($wgUser)) {
-		$lng .= "User".ucfirst($wgUser->getOption('language')).'.js';
+		$lng = '/scripts/Language/CE_LanguageUser'.ucfirst($wgUser->getOption('language')).'.js';
 		if (file_exists($cegIP . $lng)) {
 			$out->addScript("<script type=\"text/javascript\" src=\"".$cegScriptPath.$lng."\"></script>");
 		} else {

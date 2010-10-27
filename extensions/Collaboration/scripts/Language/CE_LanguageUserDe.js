@@ -16,7 +16,7 @@
 */
 
 var wgCEUserLanguageStrings = {
-	'ce_com_default_header'	:	'Kommentar erstellen',
+	'ce_com_default_header'	:	'Erstellen',
 	'ce_com_ext_header'		:	'Kommentare',
 	'ce_invalid'			:	'Sie haben keinen gültigen Kommentar eingegeben.',
 	'ce_reload'				:	' Seite wird neu geladen ...',
@@ -28,6 +28,7 @@ var wgCEUserLanguageStrings = {
 	'ce_delete_title'		:	'Klicken Sie hier um diesen Kommentar zu löschen',
 	'ce_edit_title'			:	'Klicken Sie hier um diesen Kommentar zu editieren',
 	'ce_reply_title'		:	'Klicken Sie hier um auf diesen Kommentar zu antworten',
+	'ce_com_reply'			:	'Antworten',
 	'ce_edit_rating_text'	:	'Bewerten Sie die Qualität dieses Artikels ',
 	'ce_edit_rating_text2'	:	'(optional)',
 	'ce_edit_button'		:	'Aktualisiere Kommentar',
@@ -36,7 +37,7 @@ var wgCEUserLanguageStrings = {
 	'ce_com_view'			:	'Ansicht',
 	'ce_com_view_flat'		:	'Flach',
 	'ce_com_view_threaded'	:	'Eingerückt',
-	'ce_com_rating_text'	:	'Durchschnittliche Bewertung des Artikels basierend auf',
+	'ce_com_rating_text'	:	'Durchschn. Bewertung basierend auf',
 	'ce_com_rating_text2'	:	'Bewertung(en):',
 	'ce_com_toggle_tooltip'	:	'Sie können die Kommentare durch Klicken öffnen/schließen',
 	'ce_form_toggle_tooltip':	'Sie können das Kommentarformular durch Klicken öffnen/schließen.'
