@@ -182,7 +182,7 @@ class  LODAdministrationStore  {
 		
 		$persist = $persistenceID === true || is_string($persistenceID);
 		$tsa = $persist 
-				? new LODPersistentTripleStoreAccess()
+				? new LODPersistentTripleStoreAccess(true)
 				: new LODTripleStoreAccess();
 		$tsa->addPrefixes(TSNamespaces::getW3CPrefixes()
 			              .self::getSourceDefinitionPrefixes());
@@ -292,7 +292,7 @@ class  LODAdministrationStore  {
 	 * 		Otherwise the $sourceID	will be used as persistency ID.
 	 */
 	public function deleteSourceDefinition($sourceID, $persistencyID = NULL) {
-		$tsa = new LODPersistentTripleStoreAccess();
+		$tsa = new LODPersistentTripleStoreAccess(true);
 		if (!is_null($sourceID)) {
 			$subjectNS = "smwDatasources";
 			$subject   = $subjectNS.":".$sourceID;
@@ -391,4 +391,3 @@ class  LODAdministrationStore  {
 	//--- Private methods ---
 	
 }
-
