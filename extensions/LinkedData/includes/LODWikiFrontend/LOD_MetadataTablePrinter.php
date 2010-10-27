@@ -17,8 +17,8 @@ class LODMetadataTablePrinter extends SMWResultPrinter {
 	 * Colors for different sources
 	 * @var hash array
 	 */
-	private static $bgColors = array(0 => "#cccccc", 1 => "#bbbbbb", 2 => "#aaaaaa", 3 => "#999999", 4 => "#888888", 5 => "#777777",
-	                          6 => "#666666", 7 => "#555555", 8 => "#444444", 9 => "#333333");
+    private static $bgColors = array(0 => "#d2d5ee", 1 => "#fff6c9", 2 => "#dbd9be", 3 => "#bfd8f6", 4 => "#dedede", 5 => "#ffe3b0",
+	                          6 => "#f2d0cd", 7 => "#e6ddee", 8 => "#eff9cd", 9 => "#d4e7ec");
 	
     public function getName() {
         smwfLoadExtensionMessages( 'SemanticMediaWiki' );
