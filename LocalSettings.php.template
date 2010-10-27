@@ -269,6 +269,11 @@ $wgAllowExternalImages=/*start-variable-wgAllowExternalImages*/true;/*end-variab
 #enableIAI(/*param-start-enableIAI*//*param-end-enableIAI*/);
 /*end-dataimport*/
 
+/*start-automaticsf*/
+require_once("$IP/extensions/AutomaticSemanticForms/includes/ASF_Initialize.php");
+enableAutomaticSemanticForms();
+/*end-autmaticsf*/
+
 include("extensions/DynamicPageList/DynamicPageList.php");
 
 # SemanticFormsInputs
