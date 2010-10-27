@@ -113,15 +113,17 @@ class SGAGardening extends SpecialPage {
 		 	}
 		 	
 		 	$imageDirectory = $bot->getImageDirectory();
-            
-            // if $imageDirectory is NULL, try to find icons in the SemanticGardening skin folder
-            $imageDirectory = $imageDirectory == NULL ? 'extensions/SemanticGardening/skins' : $imageDirectory;
-            
-            $htmlResult .= "<div class=\"entry\" onMouseOver=\"this.className='entry-over';\"" .
-                           " onMouseOut=\"gardeningPage.showRightClass(event, this, '$botID')\" onClick=\"gardeningPage.showParams(event, this, '$botID')\" id=\"$botID\">" .
-                           "<img src=\"$wgServer$wgScriptPath/$imageDirectory/".$botID."_image.png\"/><a>" .$bot->getLabel()."</a>" .
-                           "</div>";
-	
+
+		 	// if $imageDirectory is NULL, try to find icons in the SemanticGardening skin folder
+			$imageDirectory = $imageDirectory == NULL ? 'extensions/SemanticGardening/skins' : $imageDirectory;
+			
+			$htmlResult .= "<div class=\"entry\" onMouseOver=\"this.className='entry-over';\"" .
+							" onMouseOut=\"gardeningPage.showRightClass(event, this, '$botID')\" onClick=\"gardeningPage.showParams(event, this, '$botID')\" id=\"$botID\">" .
+							"<table width=\"100%\"><tr>" .
+							"<td><img src=\"$wgServer$wgScriptPath/$imageDirectory/" . $botID . "_image.png\"/></td>" .
+							"<td><a>" . $bot->getLabel() . "</a></td>" .
+							"</tr></table>" .
+							"</div>";
 		 }
 		 if ($htmlResult == '') {
 		 	$htmlResult .= wfMsg('smw_gard_notools');
