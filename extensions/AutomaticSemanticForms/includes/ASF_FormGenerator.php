@@ -30,6 +30,12 @@ define('TEXTAREADATATYPES', '-text- -ccode-');
 define('DATETIMEDATATYPES', '-date-');
 define('CHECKBOXDATATYPES', '-boolean-');
 
+//define sizes of form input fields
+define('ASF_LONG_TEXT_SIZE', '110');
+define('ASF_SHORT_TEXT_SIZE', '30');
+define('ASF_TEXTAREA_ROWS', '5');
+define('ASF_TEXTAREA_COLS', '78');
+
 
 /*
  * Automatically generates Semantic Forms based on the current ontology 
@@ -87,6 +93,8 @@ class ASFFormGenerator {
 		
 		//echo('<pre>'.print_r($formDefinition, true).'</pre>');
 		
+		$this->addJavaScriptFiles();
+		
 		return $formDefinition;
 	}
 	
@@ -95,6 +103,10 @@ class ASFFormGenerator {
 	 * 
 	 */
 	private function initializeCategoryFormData($categories){
+		//todo: Use something better than a global variable here
+		global $asfAllDirectCategoryAnnotations;
+		$asfAllDirectCategoryAnnotations = array();
+		
 		global $asfDoEnhancedCategorySectionProcessing;
 		if($asfDoEnhancedCategorySectionProcessing){
 			//let the category section structure processor compute which
@@ -104,9 +116,18 @@ class ASFFormGenerator {
 
 			$categories = array();
 			foreach($categorySections as $categoryName => $categorySection){
-				$category = Category::newFromName($categoryName);
-				$categories[] = 
-					new ASFCategoryFormData($category->getTitle(), $categorySection->includesCategories);
+				$categoryTitle = Category::newFromName($categoryName)->getTitle();
+				
+				 $categoryFormDataObject =
+					new ASFCategoryFormData($categoryTitle, $categorySection->includesCategories);
+				
+				//Make sure that display templates of not directly annotated
+				//categories will not be shown
+				if(count($categorySection->children) == 0){
+					$asfAllDirectCategoryAnnotations[ $categoryTitle->getFullText()] = false; 
+				}  
+				
+				$categories[] = $categoryFormDataObject;
 			}	
 		} else {
 			//create section for each category annotation and then deal with duplicate properties
@@ -118,6 +139,7 @@ class ASFFormGenerator {
 				
 				$category = Category::newFromName($category);
 				$categories[$key] = new ASFCategoryFormData($category->getTitle());
+				$asfAllDirectCategoryAnnotations[][$categoty->getTitle()->getFullText()] = false;
 			}
 			$categories = $this->dealWithDuplicateProperties($categories);
 		}
@@ -212,6 +234,8 @@ class ASFFormGenerator {
 	private function getFormDefinitionOutro($categories){
 		$outro = "\n\n{{{end template}}}";
 		
+		//echo('<pre>'.print_r($categories, true).'</pre>');
+		
 		foreach($categories as $categoty){
 			$outro .= $categoty->getCategorySectionAppendix();
 		}
@@ -245,6 +269,21 @@ class ASFFormGenerator {
 		}
 		
 		return $categories;
+	}
+	
+	/*
+	 * Adds the javascript libraries, which are required by
+	 * the Automatic Semantic Forms extension
+	 */
+	private function addJavascriptFiles(){
+		// Tell the script manager, that we need jQuery
+		global $smgJSLibs; 
+		$smgJSLibs[] = 'jquery'; 
+		$smgJSLibs[] = 'qtip';
+		
+		global $wgOut, $asfScriptPath;
+		$scriptFile = $asfScriptPath . "/scripts/automatic_semantic_forms.js";
+		$wgOut->addScriptFile( $scriptFile );	
 	}
 	
 }

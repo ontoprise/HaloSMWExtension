@@ -12,7 +12,12 @@ class ASFLanguageDe extends ASFLanguage {
 		'asf_dummy_article_content' => "'''Dieser Artikel wird von der Automatic Semantic Forms Extension ben&ouml;t. Bitte l&ouml;schen, editieren oder verschieben Sie ihn daher nicht.'''",
 		'asf_category_section_label' => "Eingabe von $1 Daten:",
 		'asf_duplicate_property_placeholder' => "Please enter value in the input field above.",
-	'asf_unresolved_annotations' => "Bearbeiten von weiteren Annotationen:",
+		'asf_unresolved_annotations' => "Bearbeiten von weiteren Annotationen:",
+	
+		'asf_tt_intro' => "Klicken Sie, um $1 zu öffnen.",
+		'asf_tt_type' => "Der <b>Type</b> dieses Properties is $1.",
+		'asf_tt_autocomplete' => "Dieses Eingabefeld <b>autovervollst&auml;ndigt</b> auf $1.",
+		'asf_tt_delimiter' => "Mehrere Werte sind in diesem Eingabefeld m&ouml;glich. \"$1\" wird als <b>Trennzeichen</b> verwendet."
 	);
 
 }

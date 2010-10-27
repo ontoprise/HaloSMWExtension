@@ -126,15 +126,30 @@ class ASFCategoryFormData {
 			return '';
 		}
 		
+		//create field input label text
 		global $asfDisplayPropertiesAndCategoriesAsLinks;
 		if($asfDisplayPropertiesAndCategoriesAsLinks){
-			$categoryLabel = '[[:'.$this->titleObject->getFullText().'|'.$this->titleObject->getText().']]';
+			$categoryLabel = '<span class="asf_category_tooltip">';
+			$categoryLabel .= '[[:'.$this->titleObject->getFullText().'|'.$this->titleObject->getText().']]';
+			$categoryLabel .= '<span class="asf_category_tooltip_content" style="display: none">';
+			$categoryLabel .= $this->getCategoryTooltip().'</span></span>';
 		} else {
 			$categoryLabel = "<i>".$this->titleObject->getText()."</i>";
 		}
 		
-		$intro = "<fieldset>\n\n";
+		//create collapsed version of section
+		$sectionId =  'fieldset_'.$this->titleObject->getText();
+		$intro = "<fieldset id=\"".$sectionId."_hidden\" style=\"display: none\">";
 		$intro .= "<legend>";
+		$intro .= '<img src="ASF_PLUS_ICON" onclick="asf_show_category_section(\''.$sectionId.'\')"></img> ';
+		$intro .= wfMsg('asf_category_section_label', $categoryLabel);
+		$intro .= "</legend>";
+		$intro .= "</fieldset>";
+		
+		//create expanded version of section
+		$intro .= "<fieldset id=\"".$sectionId."_visible\">";
+		$intro .= "<legend>";
+		$intro .= '<img src="ASF_MINUS_ICON" onclick="asf_hide_category_section(\''.$sectionId.'\')"></img> ';
 		$intro .= wfMsg('asf_category_section_label', $categoryLabel);
 		$intro .= "</legend>";
 		
@@ -216,11 +231,28 @@ class ASFCategoryFormData {
 		$appendix = "";
 		
 		if($this->useDisplayTemplate){
-			$appendix .= "\n\n{{{for template| ".$this->useDisplayTemplate."}}} {{{end template}}}";
+			//todo: Use something better than a global variable here
+			global $asfAllDirectCategoryAnnotations;
+			if(array_key_exists($this->titleObject->getFullText(), $asfAllDirectCategoryAnnotations)){
+				$asfAllDirectCategoryAnnotations[$this->titleObject->getFullText()] = $this->useDisplayTemplate; 
+				$appendix .= "{{{for template| ".$this->useDisplayTemplate."}}} ";
+				$appendix .= '{{{field |categories|hidden}}}';
+				$appendix .= "{{{end template}}}";
+
+			}
 		}
 
 		$this->categorySectionAppendix = $appendix;
 		
 		return $appendix;		
 	}
+	
+	private function getCategoryTooltip(){
+		return wfMsg('asf_tt_intro', $this->titleObject->getFullText());
+	}
+	
+	
+	
+	
+	
 }

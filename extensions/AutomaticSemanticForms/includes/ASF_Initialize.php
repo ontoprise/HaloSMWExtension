@@ -9,9 +9,9 @@ if( !defined( 'SF_VERSION' ) ) {
 			"Please read 'extensions/AutomaticSemanticForms/INSTALL' for further information.\n");
 	}
 
-global $asfIP;
+global $asfIP, $asfScriptPath;
 $asfIP = $IP . '/extensions/AutomaticSemanticForms';
-
+$asfScriptPath = $wgScriptPath . '/extensions/AutomaticSemanticForms';
 	
 /*
  * This method must be called in Local Settings
@@ -140,3 +140,4 @@ function asfInitContentLanguage($langcode) {
 	}
 	$asfContLang = new $langClass();
 }
+

@@ -150,7 +150,9 @@ class ASFPropertyFormData {
 		//deal with form input help
 		if($this->helpText){
 			//TODO: Use a help icon instead
-			$syntax .= ' <img src="ASF_HELP_ICON" title="'.$this->helpText.'"></img>';	
+			$syntax .= ' <span class="asf_additional_help"><img src="ASF_HELP_ICON">';
+			$syntax .= '<span class="asf_additional_help_content" style="display: none">'.$this->helpText.'</span>';
+			$syntax .= '</img></span>';	
 		}
 		
 		$this->formFieldSyntax = $syntax;
@@ -166,13 +168,25 @@ class ASFPropertyFormData {
 		
 		$intro = "\n|-";
 		
+		$intro .= "\n|<span class=\"asf_property_link\">";
+		
 		//add form field label
 		global $asfDisplayPropertiesAndCategoriesAsLinks;
 		if($asfDisplayPropertiesAndCategoriesAsLinks){
-			$intro .= "\n|[[".$this->titleObject->getFullText().'|' . $this->inputLabel . ']]:';
+			$intro .= "[[".$this->titleObject->getFullText().'|' . $this->inputLabel . ']]:';
 		} else {
-			$intro .= "\n|" . $this->inputLabel . ':';
+			$intro .= '<span class="asf_input_label">'.$this->inputLabel . ':</span>';
 		}
+		
+		//deal with the red mandatory asterisc
+		if($this->minCardinality){
+			$intro .= '<span style="color: red">*</span>';
+		}
+		
+		//Create the tooltip:
+		$intro .= '<span class="asf_tooltip_content" style="display: none">';
+		$intro .= $this->getPropertyToolTip();
+		$intro .= '</span></span>';
 		
 		$intro .= "\n|";
 		
@@ -232,9 +246,9 @@ class ASFPropertyFormData {
 	 * Helper method for getFormFieldSyntax
 	 * Returns input type related data
 	 */
-	private function getFormFieldInputTypeMetadata(){
+	private function getFormFieldInputTypeMetadata($forToolTip = false){
 		$inputType = '';
-		$size = '110';
+		$size = ASF_LONG_TEXT_SIZE;
 		$rows = false;
 		$cols = false;
 		$autocompletion = false;
@@ -247,16 +261,16 @@ class ASFPropertyFormData {
 			$objectType = '-'.strtolower($this->objectType).'-';
 			if(strpos(LONGTEXTDATATYPES, $objectType) !== false){
 				$inputType = 'text';
-				$size = '110';
+				$size = ASF_LONG_TEXT_SIZE;
 				$autocompletion = 'values';
 			} else if(strpos(SHORTTEXTDATATYPES, $objectType) !== false){
 				$inputType = 'text';
-				$size = '30';
+				$size = ASF_SHORT_TEXT_SIZE;
 				$autocompletion = 'values';
 			} else if(strpos(TEXTAREADATATYPES, $objectType) !== false){
 				$inputType = 'textarea';
-				$rows = '5';
-				$cols = '78';
+				$rows = ASF_TEXTAREA_ROWS;
+				$cols = ASF_TEXTAREA_COLS;
 			} else if(strpos(DATETIMEDATATYPES, $objectType) !== false){
 				//TODO deal with datepicker
 				global $asfUseSemanticFormsInputsFeatures;
@@ -269,7 +283,7 @@ class ASFPropertyFormData {
 				$inputType = 'checkbox';
 			} else {
 				$inputType = 'text';
-				$size = '110';
+				$size = ASF_LONG_TEXT_SIZE;
 				$autocompletion = 'category';
 			}
 		}
@@ -278,6 +292,52 @@ class ASFPropertyFormData {
 			$values = implode(',', $this->allowsValues);
 		}
 		
-		return array($inputType, $size, $rows, $cols, $autocompletion, $values);
+		if($forToolTip){
+			return $autocompletion;	
+		} else {
+			return array($inputType, $size, $rows, $cols, $autocompletion, $values);
+		}
 	}
+	
+	/*
+	 * Returns the input field label tooltip
+	 */
+	private function getPropertyToolTip(){
+		$result = "";
+		
+		global $asfDisplayPropertiesAndCategoriesAsLinks;
+		if($asfDisplayPropertiesAndCategoriesAsLinks){
+			$result .= wfMsg('asf_tt_intro', $this->titleObject->getFullText());
+		}
+		
+		$additionalTips = "";
+		
+		if($this->objectType){
+			$additionalTips .= '<li>'.wfMsg('asf_tt_type', $this->objectType).'</li>';
+		}
+		
+		$autocompletion = $this->getFormFieldInputTypeMetadata(true);
+		if($this->autocompletionRange && $autocompletion == 'category'){
+			$additionalTips .= '<li>'.wfMsg('asf_tt_autocomplete', $this->autocompletionRange).'</li>';
+		}
+
+		if($this->minCardinality > 1 || $this->maxCardinality > 1 || $this->delimiter){
+			$delimiter = ($this->delimiter) ? $this->delimiter : ',';
+			$additionalTips .= '<li>'.wfMsg('asf_tt_delimiter', trim($delimiter)).'</li>';
+		}		
+
+		if(strlen($additionalTips) > 0){
+			$additionalTips = '<ul>'.$additionalTips.'</ul>';
+		}
+		
+		$result .= $additionalTips;
+		
+		return $result;
+	}
+	
+	
+	
+	
+	
+	
 }
