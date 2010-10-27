@@ -247,7 +247,7 @@ div#collabComFormHelp span {
 }
 
 /* normal status messages from AJAX response */
-#collabComFormMessage,#collabComEditFormMessage {
+#collabComFormMessage, #collabComEditFormMessage {
 	border: 1px dashed grey;
 	padding: 5px 3px;
 	margin-top: 2px;
@@ -261,7 +261,7 @@ div#collabComFormHelp span {
 
 /* failure messages from AJAX response */
 #collabComFormMessage.failure {
-	color: orange;
+	color: red;
 }
 
 /* the span for the pending indicator*/

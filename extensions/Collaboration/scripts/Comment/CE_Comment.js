@@ -154,7 +154,7 @@ function CECommentForm() {
 				comMessage.attr('class', 'success');
 				comMessage.html(htmlmsg + ceLanguage.getMessage('ce_reload'));
 				//add pending span
-				var pendingSpan = this.createDOMElement('span', 'collabComPending');
+				var pendingSpan = this.createDOMElement('span', 'collabComFormPending');
 				comMessage.append(pendingSpan);
 				if (this.pendingIndicatorMsg == null) {
 					this.pendingIndicatorMsg = new CPendingIndicator($jq('#collabComFormPending'));
@@ -214,38 +214,43 @@ function CECommentForm() {
 
 		var page = resultDOM.getElementsByTagName('article')[0].firstChild.nodeValue;
 		var divId = '#' + page;
+		var comEditMessage = this.createDOMElement('div', 'collabComEditFormMessage');
+		$jq(divId).before($jq(comEditMessage));
 		if ( valueEl.nodeType == 1 ) {
 			var valueCode = valueEl.firstChild.nodeValue
 			this.pendingIndicatorDel.hide();
 			if ( valueCode == 0 ){
 				//fine.
-				$jq('.ceOverlayDetails', $jq('#' + this.overlayName)).html(htmlmsg);
-				$jq('.ceOverlayDeleteButtonDiv', $jq('#' + this.overlayName)).toggle();
-				// change cancel button to close button
-				$jq('.ceOverlayCancelButtonDiv', $jq('#' + this.overlayName)).css('float', 'none');
-				$jq('.ceOverlayCancelButtonDiv', $jq('#' + this.overlayName)).css('padding', '0');
-				$jq('.ceOverlayCancelButton', $jq('#' + this.overlayName)).val(ceLanguage.getMessage('ce_close_button'));
-				$jq('.ceOverlayCancelButtonDiv', $jq('#' + this.overlayName)).css('text-align', 'center');
-				$jq('.ceOverlayCancelButton', $jq('#' + this.overlayName)).bind('click', function(){
-					//to do a page reload with action=purge
-					var winSearch = window.location.search; 
-					if ( winSearch.indexOf('action=purge') != -1 ) {
-						window.location.reload();
+				htmlmsg += ceLanguage.getMessage('ce_reload');
+				// close overlay -> just click the button
+				$jq('#' + this.overlayName).find('.close').click();
+				$jq(comEditMessage).addClass('success');
+				$jq(comEditMessage).html(htmlmsg);
+				var pendingSpan = this.createDOMElement('span', 'collabComDelPending');
+				$jq(comEditMessage).append(pendingSpan);
+				if (this.pendingIndicatorDel2 == null) {
+					this.pendingIndicatorDel2 = new CPendingIndicator($jq('#collabComDelPending'));
+				}
+				this.pendingIndicatorDel2.show();
+				// do a page reload with action=purge
+				var winSearch = window.location.search; 
+				if ( winSearch.indexOf('action=purge') != -1 ) {
+					window.location.reload();
+				} else {
+					if ( winSearch.indexOf('?') != -1 ) {
+						window.location.href = window.location.href.concat('&action=purge');
 					} else {
-						if ( winSearch.indexOf('?') != -1 ) {
-							window.location.href = window.location.href.concat('&action=purge');
-						} else {
-							window.location.href = window.location.href.concat('?action=purge');
-						}
+						window.location.href = window.location.href.concat('?action=purge');
 					}
-				});
+				}
 				return true;
 			} else if ( valueCode == 1 || valueCode == 2 ) {
-				//error, article already exists or permisson denied.
-				$jq('.ceOverlayDetails', $jq('#' + this.overlayName)).html(htmlmsg);
+				// error, article already exists or permisson denied.
+				$jq(comEditMessage).addClass('failure');
+				$jq(comEditMessage).html(htmlmsg);
 				return false;
 			} else {
-				//sthg's really gone wrong
+				// sthg's really gone wrong
 				return false;
 			}
 		}
@@ -348,7 +353,6 @@ function CECommentForm() {
 		});
 
 		var cancelSpan = this.createDOMElement('span', 'collabComEditFormCancel');
-//		$jq(cancelSpan).css({'display':'inline','cursor':'pointer','color':'blue'});
 		$jq(cancelSpan).bind('click', function() {
 			ceCommentForm.cancelCommentEditForm(pageName);
 		});
@@ -451,7 +455,7 @@ function CECommentForm() {
 				//fine.
 				//reset, hide and enable form again
 				$jq(comEditMessage).show();
-				$jq(comEditMessage).attr('class', 'success');
+				$jq(comEditMessage).addClass('success');
 				$jq(comEditMessage).html(htmlmsg + ceLanguage.getMessage('ce_reload'));
 				//add pending span
 				var pendingSpan = this.createDOMElement('span', 'collabComEditFormPending');
@@ -474,6 +478,7 @@ function CECommentForm() {
 				return true;
 			} else if ( valueCode == 1 || valueCode == 2 ) {
 				//error, article already exists or permisson denied.
+				$jq(comEditMessage).addClass('failure');
 				$jq(comEditMessage).html(htmlmsg);
 			} else {
 				//sthg's really gone wrong
