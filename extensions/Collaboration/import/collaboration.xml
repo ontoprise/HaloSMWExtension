@@ -1,7 +1,7 @@
 <mediawiki xmlns="http://www.mediawiki.org/xml/export-0.4/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mediawiki.org/xml/export-0.4/ http://www.mediawiki.org/xml/export-0.4.xsd" version="0.4" xml:lang="en">
   <siteinfo>
     <sitename>Halo3wiki</sitename>
-    <base>http://127.0.0.1/trunk/index.php/Main_Page</base>
+    <base>http://localhost/trunk/index.php/Main_Page</base>
     <generator>MediaWiki 1.16.0</generator>
     <case>first-letter</case>
     <namespaces>
@@ -29,6 +29,8 @@
       <namespace key="105" case="first-letter">Type talk</namespace>
       <namespace key="108" case="first-letter">Concept</namespace>
       <namespace key="109" case="first-letter">Concept talk</namespace>
+      <namespace key="300" case="first-letter">ACL</namespace>
+      <namespace key="301" case="first-letter">ACL talk</namespace>
       <namespace key="700" case="first-letter">Comment</namespace>
       <namespace key="701" case="first-letter">Comment talk</namespace>
     </namespaces>
@@ -215,11 +217,10 @@
     <title>Template:ShowCommentsIntern</title>
     <id>62159</id>
     <revision>
-      <id>63436</id>
-      <timestamp>2010-10-26T11:14:08Z</timestamp>
+      <id>63448</id>
+      <timestamp>2010-10-27T13:26:38Z</timestamp>
       <contributor>
-        <username>WikiSysop</username>
-        <id>1</id>
+        <ip>127.0.0.1</ip>
       </contributor>
       <text xml:space="preserve">&lt;noinclude&gt;{{Template
 |PAGENAME=Template:ShowCommentsIntern
@@ -236,17 +237,6 @@
 |year=2009
 }}
 &lt;/noinclude&gt;&lt;includeonly&gt;
-{{#vardefine:avgrating|{{formatnum:{{#ask: [[Belongs to article::{{FULLPAGENAME}}]] [[Has comment rating::+]][[Comment:+]]
-  | ?Has comment rating
-  | format=average
-}}|R}}}}
-{{#vardefine:countrating|{{#ask: [[Belongs to article::{{FULLPAGENAME}}]] [[Has comment rating::+]][[Comment:+]]
-  | ?Has comment rating
-  | format=count
-}}}}
-{{#vardefine:commentnum|{{#ask: [[Belongs to article::{{FULLPAGENAME}}]][[Comment:+]]
-  | format=count
-}}}}
 &lt;!--start surrounding div --&gt;&lt;div class=&quot;collabComInternSurround&quot;&gt;&lt;!-- start header div --&gt;&lt;div class=&quot;collabComInternHeader&quot;&gt;[[File:Comment_icon_crystal.png|text-bottom|nopreview|16px|link=]]&lt;/div&gt;&lt;!-- end header div --&gt;
 {{#showcommentform:}}
 &lt;div id=&quot;collabComResults&quot;&gt;
