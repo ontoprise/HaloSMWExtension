@@ -95,9 +95,9 @@ function CECommentForm() {
 			$jq('#collabComFormMessage').hide('slow');
 		}
 		// escape html chars
-		textArea.replace(/&/g,'&amp;');
-		textArea.replace(/</g,'&lt;');
-		textArea.replace(/>/g,'&gt;');
+		textArea = textArea.replace(/&/g,'&amp;');
+		textArea = textArea.replace(/</g,'&lt;');
+		textArea = textArea.replace(/>/g,'&gt;');
 		textArea = this.textEncode(textArea);
 		var userNameString = '';
 		if( wgUserName != null && ceUserNS != null ) {
