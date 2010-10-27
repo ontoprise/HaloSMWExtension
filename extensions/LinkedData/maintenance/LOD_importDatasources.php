@@ -67,11 +67,10 @@ $con = new RESTWebserviceConnector($host, $port, "ldimporter");
 
 foreach($ids as $id) {
     $sd = LODAdministrationStore::getInstance()->loadSourceDefinition($id);
-    print ($update ? "Updating " :"Importing ") .$sd->getLabel()." [$id] ...";
+    print ($update ? "Updating " : "Importing ") . $sd->getLabel() . " [$id] ... ";
     $payload = "dataSourceId=$id&update=$update";
     list($header, $status, $res) = $con->send($payload, "/runImport");
     print "done.\n";
-    print "\nStatus: $status";
-    print "\nResult: $res";
+    print "Status: $status\n";
+    print "Result: $res\n\n";
 }
-
