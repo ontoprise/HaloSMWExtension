@@ -202,7 +202,7 @@ $wgGroupPermissions['sysop']['ontologyediting'] = true;
 require_once('extensions/ScriptManager/SM_Initialize.php');
 
 #Misc
-require_once( "{$IP}/extensions/Cite.php" );
+require_once( "{$IP}/extensions/Cite/Cite.php" );
 
 /*start-applicationprogramming*/
 require_once( "$IP/extensions/ApplicationProgramming/ParserFunctions/ParserFunctions.php" );
