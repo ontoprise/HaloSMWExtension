@@ -661,6 +661,9 @@ function CECommentForm() {
 		}
 		comToggle.html(' | ' + newComToggleText);
 		commentResults.toggle("slow");
+		//hide "Add" and "View"
+		$jq('#collabComFormToggle').toggle();
+		$jq('#collabComViewToggle').toggle();
 		return true;
 	};
 
@@ -669,7 +672,7 @@ function CECommentForm() {
 	 * Determines which view is requested and calls the appropriate function
 	 */
 	this.toggleView = function() {
-		var newView = $jq('#collabComFormView option:selected').val();
+		var newView = $jq('#collabComViewToggle option:selected').val();
 		if(newView == this.currentView) {
 			return true;
 		} else {
@@ -893,9 +896,9 @@ function CECommentForm() {
 	this.addHeaderView = function() {
 		// "change view" functionality
 		var viewSpan = this.createDOMElement('span',
-				'collabComFormView',
+				'collabComViewToggle',
 				null,
-				[['id', 'collabComFormView']],
+				null,
 				' | ' + ceLanguage.getMessage('ce_com_view') + ': ');
 
 		var selectEl = this.createDOMElement('select');
@@ -924,15 +927,15 @@ function CECommentForm() {
 	 * Adds the text and icon for the average rating.
 	 */
 	this.addHeaderRating = function() {
-		if( this.numOfRatings >= 0 ) {
+		if( this.numOfRatings > 0 ) {
 			var ratingSpan = this.createDOMElement('span',
-					'',
+					null,
 					['collabComInternAvg'],
-					'',
+					null,
 					ceLanguage.getMessage('ce_com_rating_text') + ' ' + 
 					this.numOfRatings + ' ' + ceLanguage.getMessage('ce_com_rating_text2'));
 
-			var ratingIconDiv = this.createDOMElement('div', '', ['collabComInternRatingIcon']);
+			var ratingIconDiv = this.createDOMElement('div', null, ['collabComInternRatingIcon']);
 			
 			var ratingIcon = this.createDOMElement('img');
 			var ratingIconSrc = cegScriptPath + '/skins/Comment/icons/';
@@ -957,28 +960,28 @@ function CECommentForm() {
 		var overlayName = 'overlay_' + num;
 		// divs
 		var overlayDivEl = this.createDOMElement('div', overlayName, ['ceOverlay']);
-		var overlayDivDetailsEl = this.createDOMElement('div', '', ['ceOverlayDetails']);
+		var overlayDivDetailsEl = this.createDOMElement('div', null, ['ceOverlayDetails']);
 		$jq(overlayDivEl).append($jq(overlayDivDetailsEl));
 		var overlayDivContent = document.createTextNode(ceLanguage.getMessage('ce_delete'));
 		$jq(overlayDivDetailsEl).append($jq(overlayDivContent));
 
 		// cancel button
-		var cancelButtonDiv = this.createDOMElement('div', '', ['ceOverlayCancelButtonDiv']);
+		var cancelButtonDiv = this.createDOMElement('div', null, ['ceOverlayCancelButtonDiv']);
 		$jq(cancelButtonDiv).bind('click', function() {
 			$jq('#' + pageName.replace(/(:|\.)/g,'\\\\$1')).css('background-color', '');
 		});
 		var cancelButton = this.createDOMElement('input',
-				'',
+				null,
 				['ceOverlayCancelButton', 'close'],
 				[['type', 'button']],
-				'',
+				null,
 				ceLanguage.getMessage('ce_cancel_button'));
 		$jq(cancelButtonDiv).append($jq(cancelButton));
 		$jq(overlayDivEl).append($jq(cancelButtonDiv));
 
 		// delete button
 		var deleteButtonDiv = this.createDOMElement('div',
-				'', ['ceOverlayDeleteButtonDiv']);
+				null, ['ceOverlayDeleteButtonDiv']);
 		$jq(deleteButtonDiv).bind('click', function() {
 			ceCommentForm.deleteComment(escape(pageName), overlayName);
 		});

@@ -27,6 +27,11 @@ span.collabComInternComment {
 span#collabComToggle, span#collabComFormToggle {
 	color: #116988;
 	cursor: pointer;
+	display: inline;
+}
+span#collabComViewToggle {
+	color: grey;
+	display: inline;
 }
 
 span.collabComInternAvg {
@@ -49,10 +54,6 @@ div.collabComInternRatingIcon img {
  * This is used as result printer template for
  * the query of existing comments
  */
-span#collabComToggleView {
-	color: grey;
-}
-
 div.collabComResInfo,div.collabComResInfoSuper {
 	display: none;
 }
