@@ -117,7 +117,7 @@ div.collabComResText {
 	padding-top: 5px;
 }
 div.collabComReply {
-	display : inline;
+	margin-top: 5px;
 	color: #116988;
 	cursor: pointer;
 }
