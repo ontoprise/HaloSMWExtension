@@ -375,6 +375,7 @@ SPARQL;
       </tr>
     </table>
   </span>
+  <span class="lodRatingKey" style="display:none">***</span>
 </span>
 HTML;
 		self::checkMetaDataOfValue("113", $res, $expected);
@@ -399,6 +400,7 @@ HTML;
       </tr>
     </table>
   </span>
+  <span class="lodRatingKey" style="display:none">***</span>
 </span>
 HTML;
 		self::checkMetaDataOfValue("Category:Hybrid", $res, $expected);
@@ -423,6 +425,7 @@ HTML;
       </tr>
     </table>
   </span>
+  <span class="lodRatingKey" style="display:none">***</span>
 </span>
 HTML;
 		self::checkMetaDataOfValue("Category:Automobile", $res, $expected);
@@ -640,6 +643,7 @@ SPARQL;
       </tr>
     </table>
   </span>
+  <span class="lodRatingKey" style="display:none">***</span>
 </span>
 HTML;
 		self::checkMetaDataOfValue("113", $res, $expected);
@@ -661,6 +665,7 @@ HTML;
       </tr>
     </table>
   </span>
+  <span class="lodRatingKey" style="display:none">***</span>
 </span>
 HTML;
 		self::checkMetaDataOfValue("Category:Hybrid", $res, $expected);
@@ -683,6 +688,7 @@ HTML;
       </tr>
     </table>
   </span>
+  <span class="lodRatingKey" style="display:none">***</span>
 </span>
 HTML;
 		self::checkMetaDataOfValue("Category:Automobile", $res, $expected);
@@ -710,6 +716,9 @@ HTML;
 		$wikiText = $dataValue->getShortWikiText();
 		// replace whitespaces in the result and the expected result
 		$wikiText = preg_replace("/\s*/", "", $wikiText);
+		$wikiText = preg_replace('/<spanclass="lodRatingKey"style="display:none">.*?<\/span>/', 
+								 '<spanclass="lodRatingKey"style="display:none">***</span>', 
+								 $wikiText);
 		$expected = preg_replace("/\s*/", "", $expected);
 		
 		$this->assertEquals($expected, $wikiText, 
