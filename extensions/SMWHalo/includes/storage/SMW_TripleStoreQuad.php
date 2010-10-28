@@ -30,7 +30,7 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 
 	function getSemanticData( $subject, $filter = false ) {
 		if ( defined( 'DO_MAINTENANCE' )  && !defined('SMWH_FORCE_TS_UPDATE') ) {
-			$this->smwstore->getSemanticData($subject, $filter);
+			return $this->smwstore->getSemanticData($subject, $filter);
 		}
 
 		$naryPropertiesPresent = false;
@@ -123,7 +123,7 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 
 	function getProperties( $subject, $requestoptions = null ) {
 		if ( defined( 'DO_MAINTENANCE' )  && !defined('SMWH_FORCE_TS_UPDATE') ) {
-			$this->smwstore->getProperties($subject, $requestoptions);
+			return $this->smwstore->getProperties($subject, $requestoptions);
 		}
 
 
@@ -181,7 +181,7 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 
 	function getInProperties( SMWDataValue $object, $requestoptions = null ) {
 		if ( defined( 'DO_MAINTENANCE' )  && !defined('SMWH_FORCE_TS_UPDATE') ) {
-			$this->smwstore->getInProperties($object, $requestoptions);
+			return $this->smwstore->getInProperties($object, $requestoptions);
 		}
 
 
@@ -239,7 +239,7 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 
 	function getAllPropertyAnnotations(SMWPropertyValue $property, $requestoptions = NULL) {
 		if ( defined( 'DO_MAINTENANCE' )  && !defined('SMWH_FORCE_TS_UPDATE') ) {
-			$this->smwstore->getAllPropertyAnnotations($property, $requestoptions);
+			 return $this->smwstore->getAllPropertyAnnotations($property, $requestoptions);
 		}
 
 		$client = TSConnection::getConnector();
@@ -319,7 +319,7 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 
 	function getPropertyValues($subject, SMWPropertyValue $property, $requestoptions = NULL, $outputformat = '') {
 		if ( defined( 'DO_MAINTENANCE' )  && !defined('SMWH_FORCE_TS_UPDATE') ) {
-			$this->smwstore->getPropertyValues($subject, $property, $requestoptions, $outputformat);
+			return $this->smwstore->getPropertyValues($subject, $property, $requestoptions, $outputformat);
 		}
 		if (!$property->isUserDefined()) {
 			return parent::getPropertyValues($subject,$property,$requestoptions,$outputformat);
@@ -407,7 +407,7 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 
 	function getPropertySubjects(SMWPropertyValue $property, $value, $requestoptions = NULL) {
 		if ( defined( 'DO_MAINTENANCE' )  && !defined('SMWH_FORCE_TS_UPDATE') ) {
-			$this->smwstore->getPropertySubjects($property, $value, $requestoptions);
+			return $this->smwstore->getPropertySubjects($property, $value, $requestoptions);
 		}
 		if (!$property->isUserDefined()) {
 			return parent::getPropertySubjects($property, $value, $requestoptions);
