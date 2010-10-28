@@ -50,12 +50,6 @@ class  LODAdministrationStore  {
 	
 	//--- Constants ---
 	const LOD_SD_GRAPH = "DataSourceInformationGraph";
-	const LOD_BASE_URI = "http://www.example.org/smw-lde/";
-	const LOD_SMW_LDE = "smw-lde.owl#";
-	const LOD_SMW_GRAPHS = "smwGraphs/";
-	const LOD_SMW_DATASOURCES = "smwDatasources/";
-	
-	const LOD_SWP = "http://www.w3.org/2004/03/trix/swp-2/";
 	
 	//--- Private fields ---
 	
@@ -99,8 +93,7 @@ class  LODAdministrationStore  {
 	
 	/**
 	 * Stores the definition of a Linked Data source in the triple store. The
-	 * new namespace "smw-lde" is used.
-	 * Is is a concatenation of the constants LOD_BASE_URI and LOD_SMW_LDE.
+	 * new namespace with the prefix "smw-lde" is used.
 	 * 
 	 * Data source definitions are stored in a dedicated graph defined by LOD_BASE_URI
 	 * and LOD_SD_GRAPH.
@@ -184,8 +177,7 @@ class  LODAdministrationStore  {
 		$tsa = $persist 
 				? new LODPersistentTripleStoreAccess(true)
 				: new LODTripleStoreAccess();
-		$tsa->addPrefixes(TSNamespaces::getW3CPrefixes()
-			              .self::getSourceDefinitionPrefixes());
+		$tsa->addPrefixes(self::getSourceDefinitionPrefixes());
 		$tsa->createGraph($graph);
 		$tsa->deleteTriples($graph, "$subject ?p ?o", "$subject ?p ?o");
 		$tsa->insertTriples($graph, $triples);
@@ -213,11 +205,17 @@ class  LODAdministrationStore  {
 	 */
 	public function loadSourceDefinition($sourceID) {
 		$graph = $this->getDataSourcesGraph();
-		$subjectNS = "smwDatasources:";
-		$subject = $subjectNS.$sourceID;
 		$prefixes = self::getSourceDefinitionPrefixes();
 		
-		$query = $prefixes."SELECT ?p ?o FROM <$graph> WHERE { $subject ?p ?o . }";
+		$query = <<<QUERY
+$prefixes
+SELECT ?p ?o 
+FROM <$graph> 
+WHERE { 
+	?s ?p ?o . 
+	?s smw-lde:ID "$sourceID"^^xsd:string .
+}
+QUERY;
 		
 		$tsa = new LODTripleStoreAccess();
 		
@@ -238,7 +236,8 @@ class  LODAdministrationStore  {
 		}
 		
 		// Create a source definition object.
-		$propNS = self::LOD_BASE_URI.self::LOD_SMW_LDE;
+		$pm = LODPrefixManager::getInstance();
+		$propNS = $pm->getNamespaceURI("smw-lde");
 		$sd = new LODSourceDefinition($properties["{$propNS}ID"][0]);
 		if (array_key_exists("{$propNS}description", $properties)) {
 			$sd->setDescription($properties["{$propNS}description"][0]);
@@ -294,13 +293,15 @@ class  LODAdministrationStore  {
 	public function deleteSourceDefinition($sourceID, $persistencyID = NULL) {
 		$tsa = new LODPersistentTripleStoreAccess(true);
 		if (!is_null($sourceID)) {
-			$subjectNS = "smwDatasources";
-			$subject   = $subjectNS.":".$sourceID;
 			
-			$tsa->addPrefixes(TSNamespaces::getW3CPrefixes()
-				              .self::getSourceDefinitionPrefixes());
+			$tsa->addPrefixes(self::getSourceDefinitionPrefixes());
+			$wherePattern = <<<QUERY
+	?s ?p ?o . 
+	?s smw-lde:ID "$sourceID"^^xsd:string .
+QUERY;
+			
 			$tsa->deleteTriples($this->getDataSourcesGraph(), 
-								"$subject ?p ?o", "$subject ?p ?o");
+								$wherePattern, "?s ?p ?o");
 			$tsa->flushCommands();
 		}
 				
@@ -359,25 +360,25 @@ class  LODAdministrationStore  {
 	 *
 	 */
 	public function getSourceDefinitionPrefixes() {
-		
-		return
-			 "PREFIX smw-lde: <".self::LOD_BASE_URI.self::LOD_SMW_LDE."> \n"
-			."PREFIX smwGraphs: <".self::LOD_BASE_URI.self::LOD_SMW_GRAPHS."> \n"
-			."PREFIX smwDatasources: <".self::LOD_BASE_URI.self::LOD_SMW_DATASOURCES."> \n"
-			."PREFIX owl: <http://www.w3.org/2002/07/owl#> \n\n";
+		$pm = LODPrefixManager::getInstance();
+		return $pm->getSPARQLPrefixes(array("xsd", "owl", "rdf", "rdfs", 
+											"smw-lde", "smwGraphs", 
+											"smwDatasources"));
 	}
 	
 	public function getProvenanceGraphPrefixes() {
-		return
-			 "PREFIX swp: <".self::LOD_SWP."> \n";
+		$pm = LODPrefixManager::getInstance();
+		return $pm->getSPARQLPrefixes(array("swp"));
 	}
 	
 	public function getSMWGraphsURI(){
-		return self::LOD_BASE_URI.self::LOD_SMW_GRAPHS;
+		$pm = LODPrefixManager::getInstance();
+		return $pm->getNamespaceURI('smwGraphs');
 	}
 	
 	public function getDataSourcesURI(){
-		return self::LOD_BASE_URI.self::LOD_SMW_DATASOURCES;
+		$pm = LODPrefixManager::getInstance();
+		return $pm->getNamespaceURI('smwDatasources');
 	}
 	
 	/**
@@ -386,8 +387,10 @@ class  LODAdministrationStore  {
 	 * 		stored. 
 	 */
 	public static function getDataSourcesGraph() {
-		return self::LOD_BASE_URI.self::LOD_SMW_GRAPHS.self::LOD_SD_GRAPH;
+		$pm = LODPrefixManager::getInstance();
+		return $pm->getNamespaceURI('smwGraphs').self::LOD_SD_GRAPH;
 	}
 	//--- Private methods ---
 	
 }
+
