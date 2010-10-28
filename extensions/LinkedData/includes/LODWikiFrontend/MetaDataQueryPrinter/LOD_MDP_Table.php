@@ -43,7 +43,6 @@ if ( !defined( 'MEDIAWIKI' ) ) {
 class LODMDPTable extends LODMetaDataPrinter {
 	
 	//--- Constants ---
-//	const XY= 0;		// the result has been added since the last time
 		
 	//--- Private fields ---
 	
@@ -81,6 +80,8 @@ class LODMDPTable extends LODMetaDataPrinter {
 	 */
 	public function attachMetaDataToWikiText(SMWDataValue $value, $wikiText) {
 		$md = $value->getMetadataMap();
+		$specialMetaDataHTML = $this->filterSpecialMetaData($md);
+		
 		if (empty($md)) {
 			$metaDataHTML = wfMsg('lod_mdp_no_metadata');
 		} else {
@@ -113,7 +114,9 @@ class LODMDPTable extends LODMetaDataPrinter {
 				. $wikiText 
 				. '<span class="lodMetadataContent">' 
 				.  $metaDataHTML
-				. '</span></span>';
+				. "</span>"
+				. $specialMetaDataHTML
+				. "</span>";
 		
 	}
 	
