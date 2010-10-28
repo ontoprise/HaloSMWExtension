@@ -160,5 +160,27 @@ abstract class LODMetaDataPrinter  {
 		return wfMsg("lod_mdpt_$mdProperty");
 	}
 	
+	/**
+	 * Some meta-data properties will not be displayed but become part of the
+	 * HTML structure that is generated for meta-data e.g. the rating-key.
+	 * This method removes this meta-data and creates the HTML for it.
+	 * 
+	 * @param array(string => array(string)) $metaDataMap
+	 * 		This map of meta-data will be filtered.
+	 * 
+	 */
+	protected function filterSpecialMetaData(&$metaDataMap) {
+		$html = "";
+		foreach ($metaDataMap as $mdprop => $mdval) {
+			if ($mdprop === "rating-key") {
+				// The rating key is not added to the content of the meta-data
+				// table.
+				$html .= "<span class=\"lodRatingKey\" style=\"display:none\">{$mdval[0]}</span>";
+				unset($metaDataMap[$mdprop]);
+			}
+		}
+		return $html;
+	}
+	
 	//--- Private methods ---
 }
