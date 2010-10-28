@@ -127,6 +127,11 @@ function enableLinkedData() {
 	global $smwgResultFormats;
 	$smwgResultFormats['ld_table'] = 'LODMetadataTablePrinter';
 	$wgAutoloadClasses['LODMetadataTablePrinter'] = $lodgIP . '/includes/LODWikiFrontend/LOD_MetadataTablePrinter.php';
+	
+	// register special pages
+	$wgAutoloadClasses['LODSourcesPage']       = $lodgIP . '/specials/LODSources/LOD_SpecialSources.php';
+    $wgSpecialPages['LODSpecialSources']       = array( 'LODSourcesPage' );
+    $wgSpecialPageGroups['LODSpecialSources']  = 'lod_group';
 
     return true;
 }

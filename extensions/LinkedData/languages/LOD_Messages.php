@@ -113,7 +113,15 @@ $messages['en'] = array(
 	'lod_lsd_sparqlgraphname'			=> "SPARQL graph name",
 	'lod_lsd_uriregexpattern'			=> "URI regex pattern",
 	'lod_lsd_vocabulary'				=> "Vocabulary",
-														
+
+	//--- LOD special pages ---
+	'lodspecialsources'	=> 'LOD sources',
+	'specialpages-group-lod_group' => 'Linked Data extension',
+	'lod_sp_source_label' => 'Data source',
+	'lod_sp_source_sparqlEndpoint' => 'SPARQL endpoint',
+	'lod_sp_source_lastmod' => 'Last modification',
+	'lod_sp_source_changefreq' => 'Change frequency',
+	'lod_sp_source_updateimport' => 'Import/Update'
 );
 
 /** 
@@ -202,5 +210,13 @@ $messages['de'] = array(
 	'lod_lsd_sparqlgraphname'			=> "SPARQL-Graphname",
 	'lod_lsd_uriregexpattern'			=> "URI Regex-Muster",
 	'lod_lsd_vocabulary'				=> "Vokabular",
-							
+
+	//--- LOD special pages ---
+    'lodspecialsources'    => 'LOD-Quellen',
+	'specialpages-group-lod_group' => 'Linked Data extension',
+	'lod_sp_source_label' => 'Datenquelle',
+    'lod_sp_source_sparqlEndpoint' => 'SPARQL-Endpunkt',
+    'lod_sp_source_lastmod' => 'Letzte Änderung',
+    'lod_sp_source_changefreq' => 'Änderungsfrequenz',
+	'lod_sp_source_updateimport' => 'Aktualisiere/Importiere'
 );
