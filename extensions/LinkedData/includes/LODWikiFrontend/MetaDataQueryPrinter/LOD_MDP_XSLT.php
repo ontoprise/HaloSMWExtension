@@ -99,6 +99,8 @@ class LODMDPXslt extends LODMetaDataPrinter {
 	 */
 	public function attachMetaDataToWikiText(SMWDataValue $value, $wikiText) {
 		$md = $value->getMetadataMap();
+		$specialMetaDataHTML = $this->filterSpecialMetaData($md);
+		
 		if (empty($md)) {
 			$metaDataHTML = wfMsg('lod_mdp_no_metadata');
 		} else {
@@ -110,7 +112,9 @@ class LODMDPXslt extends LODMetaDataPrinter {
 				. $wikiText 
 				. '<span class="lodMetadataContent">' 
 				.  $metaDataHTML
-				. '</span></span>';
+				. '</span>'
+				. $specialMetaDataHTML
+				.'</span>';
 		
 	}
 	
