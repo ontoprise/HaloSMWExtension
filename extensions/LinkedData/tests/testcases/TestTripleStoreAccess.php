@@ -5,9 +5,9 @@
  */
 
 /**
- * Test suite for the meta-data query printer.
+ * Test suite for triple store access.
  * Start the triple store with these options before running the test:
- * msgbroker=none client=MyStore driver=ontobroker-quad wsport=8090 console run=D:\MediaWiki\SMWTripleStore\resources\lod_wiki_tests\OntologyBrowserSparql\initDebug.sparul reasoner=owl restfulws
+ * msgbroker=none client=MyStore driver=ontobroker-quad wsport=8090 console  reasoner=owl restfulws
  * 
  * @author thsc
  *
@@ -17,12 +17,12 @@ class TestTripleStoreAccessSuite extends PHPUnit_Framework_TestSuite
 	const GRAPH = "http://example.com/booksGraph";
 	
 	public static $mTriples = array(
-		array("ex:HitchhickersGuide", "ex:title", "The Hitchhiker's Guide to the Galaxy", "xsd:string"),
-		array("ex:HitchhickersGuide", "ex:price", "10.20", "xsd:double"),
-		array("ex:HitchhickersGuide", "ex:pages", "224", "xsd:int"),
-		array("ex:HitchhickersGuide", "ex:reallyCool", "true", "xsd:boolean"),
-		array("ex:HitchhickersGuide", "ex:published", "1979-04-02T13:41:09+01:00", "xsd:dateTime"),
-		array("ex:HitchhickersGuide", "ex:amazon", "http://www.amazon.com/Hitchhikers-Guide-Galaxy-25th-Anniversary/dp/1400052920/ref=sr_1_1?ie=UTF8&s=books&qid=1272987287&sr=1-1", "xsd:anyURI")
+		array("ex:HitchhikersGuide", "ex:title", "The Hitchhiker's Guide to the Galaxy", "xsd:string"),
+		array("ex:HitchhikersGuide", "ex:price", "10.20", "xsd:double"),
+		array("ex:HitchhikersGuide", "ex:pages", "224", "xsd:int"),
+		array("ex:HitchhikersGuide", "ex:reallyCool", "true", "xsd:boolean"),
+		array("ex:HitchhikersGuide", "ex:published", "1979-04-02T13:41:09+01:00", "xsd:dateTime"),
+		array("ex:HitchhikersGuide", "ex:amazon", "http://www.amazon.com/Hitchhikers-Guide-Galaxy-25th-Anniversary/dp/1400052920/ref=sr_1_1?ie=UTF8&s=books&qid=1272987287&sr=1-1", "xsd:anyURI")
 	);
 	
 	
@@ -31,6 +31,7 @@ class TestTripleStoreAccessSuite extends PHPUnit_Framework_TestSuite
 		$suite = new TestTripleStoreAccessSuite();
 		$suite->addTestSuite('TestTripleStoreAccess');
 		$suite->addTestSuite('TestPersistentTripleStoreAccess');
+		$suite->addTestSuite('TestPrefixManager');
 		return $suite;
 	}
 	
@@ -265,12 +266,12 @@ class TestPersistentTripleStoreAccess extends PHPUnit_Framework_TestCase {
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 
 <http://example.com/booksGraph> {
-	ex:HitchhickersGuide ex:title "The Hitchhiker's Guide to the Galaxy"^^xsd:string . 
-	ex:HitchhickersGuide ex:price "10.20"^^xsd:double . 
-	ex:HitchhickersGuide ex:pages "224"^^xsd:int . 
-	ex:HitchhickersGuide ex:reallyCool "true"^^xsd:boolean . 
-	ex:HitchhickersGuide ex:published "1979-04-02T13:41:09+01:00"^^xsd:dateTime . 
-	ex:HitchhickersGuide ex:amazon "http://www.amazon.com/Hitchhikers-Guide-Galaxy-25th-Anniversary/dp/1400052920/ref=sr_1_1?ie=UTF8&s=books&qid=1272987287&sr=1-1"^^xsd:anyURI . 
+	ex:HitchhikersGuide ex:title "The Hitchhiker's Guide to the Galaxy"^^xsd:string . 
+	ex:HitchhikersGuide ex:price "10.20"^^xsd:double . 
+	ex:HitchhikersGuide ex:pages "224"^^xsd:int . 
+	ex:HitchhikersGuide ex:reallyCool "true"^^xsd:boolean . 
+	ex:HitchhikersGuide ex:published "1979-04-02T13:41:09+01:00"^^xsd:dateTime . 
+	ex:HitchhikersGuide ex:amazon "http://www.amazon.com/Hitchhikers-Guide-Galaxy-25th-Anniversary/dp/1400052920/ref=sr_1_1?ie=UTF8&s=books&qid=1272987287&sr=1-1"^^xsd:anyURI . 
 }
 EXP;
 		$this->compareContent("TestTripleStoreAccess", "ID-1", $expected, "***testPersistentTripleStore#2*** failed.");
@@ -330,12 +331,12 @@ EXP;
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 
 <http://example.com/booksGraph> {
-	ex:HitchhickersGuide ex:title "The Hitchhiker's Guide to the Galaxy"^^xsd:string . 
-	ex:HitchhickersGuide ex:price "10.20"^^xsd:double . 
-	ex:HitchhickersGuide ex:pages "224"^^xsd:int . 
-	ex:HitchhickersGuide ex:reallyCool "true"^^xsd:boolean . 
-	ex:HitchhickersGuide ex:published "1979-04-02T13:41:09+01:00"^^xsd:dateTime . 
-	ex:HitchhickersGuide ex:amazon "http://www.amazon.com/Hitchhikers-Guide-Galaxy-25th-Anniversary/dp/1400052920/ref=sr_1_1?ie=UTF8&s=books&qid=1272987287&sr=1-1"^^xsd:anyURI . 
+	ex:HitchhikersGuide ex:title "The Hitchhiker's Guide to the Galaxy"^^xsd:string . 
+	ex:HitchhikersGuide ex:price "10.20"^^xsd:double . 
+	ex:HitchhikersGuide ex:pages "224"^^xsd:int . 
+	ex:HitchhikersGuide ex:reallyCool "true"^^xsd:boolean . 
+	ex:HitchhikersGuide ex:published "1979-04-02T13:41:09+01:00"^^xsd:dateTime . 
+	ex:HitchhikersGuide ex:amazon "http://www.amazon.com/Hitchhikers-Guide-Galaxy-25th-Anniversary/dp/1400052920/ref=sr_1_1?ie=UTF8&s=books&qid=1272987287&sr=1-1"^^xsd:anyURI . 
 }
 
 @prefix ex: <http://example.com/> .
@@ -345,12 +346,12 @@ EXP;
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 
 <http://example.com/anotherBooksGraph> {
-	ex:HitchhickersGuide ex:title "The Hitchhiker's Guide to the Galaxy"^^xsd:string . 
-	ex:HitchhickersGuide ex:price "10.20"^^xsd:double . 
-	ex:HitchhickersGuide ex:pages "224"^^xsd:int . 
-	ex:HitchhickersGuide ex:reallyCool "true"^^xsd:boolean . 
-	ex:HitchhickersGuide ex:published "1979-04-02T13:41:09+01:00"^^xsd:dateTime . 
-	ex:HitchhickersGuide ex:amazon "http://www.amazon.com/Hitchhikers-Guide-Galaxy-25th-Anniversary/dp/1400052920/ref=sr_1_1?ie=UTF8&s=books&qid=1272987287&sr=1-1"^^xsd:anyURI . 
+	ex:HitchhikersGuide ex:title "The Hitchhiker's Guide to the Galaxy"^^xsd:string . 
+	ex:HitchhikersGuide ex:price "10.20"^^xsd:double . 
+	ex:HitchhikersGuide ex:pages "224"^^xsd:int . 
+	ex:HitchhikersGuide ex:reallyCool "true"^^xsd:boolean . 
+	ex:HitchhikersGuide ex:published "1979-04-02T13:41:09+01:00"^^xsd:dateTime . 
+	ex:HitchhikersGuide ex:amazon "http://www.amazon.com/Hitchhikers-Guide-Galaxy-25th-Anniversary/dp/1400052920/ref=sr_1_1?ie=UTF8&s=books&qid=1272987287&sr=1-1"^^xsd:anyURI . 
 }
 EXP;
 		$this->compareContent("TestTripleStoreAccess", "ID-2", $expected, "***testPersistTriples2#3*** failed.");
@@ -439,12 +440,12 @@ EXP;
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 
 <http://example.com/anotherBooksGraph> {
-	ex:HitchhickersGuide ex:title "The Hitchhiker's Guide to the Galaxy"^^xsd:string . 
-	ex:HitchhickersGuide ex:price "10.20"^^xsd:double . 
-	ex:HitchhickersGuide ex:pages "224"^^xsd:int . 
-	ex:HitchhickersGuide ex:reallyCool "true"^^xsd:boolean . 
-	ex:HitchhickersGuide ex:published "1979-04-02T13:41:09+01:00"^^xsd:dateTime . 
-	ex:HitchhickersGuide ex:amazon "http://www.amazon.com/Hitchhikers-Guide-Galaxy-25th-Anniversary/dp/1400052920/ref=sr_1_1?ie=UTF8&s=books&qid=1272987287&sr=1-1"^^xsd:anyURI . 
+	ex:HitchhikersGuide ex:title "The Hitchhiker's Guide to the Galaxy"^^xsd:string . 
+	ex:HitchhikersGuide ex:price "10.20"^^xsd:double . 
+	ex:HitchhikersGuide ex:pages "224"^^xsd:int . 
+	ex:HitchhikersGuide ex:reallyCool "true"^^xsd:boolean . 
+	ex:HitchhikersGuide ex:published "1979-04-02T13:41:09+01:00"^^xsd:dateTime . 
+	ex:HitchhikersGuide ex:amazon "http://www.amazon.com/Hitchhikers-Guide-Galaxy-25th-Anniversary/dp/1400052920/ref=sr_1_1?ie=UTF8&s=books&qid=1272987287&sr=1-1"^^xsd:anyURI . 
 }
 
 @prefix ex: <http://example.com/> .
@@ -454,12 +455,12 @@ EXP;
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 
 <http://example.com/yetAnotherBooksGraph> {
-	ex:HitchhickersGuide ex:title "The Hitchhiker's Guide to the Galaxy"^^xsd:string . 
-	ex:HitchhickersGuide ex:price "10.20"^^xsd:double . 
-	ex:HitchhickersGuide ex:pages "224"^^xsd:int . 
-	ex:HitchhickersGuide ex:reallyCool "true"^^xsd:boolean . 
-	ex:HitchhickersGuide ex:published "1979-04-02T13:41:09+01:00"^^xsd:dateTime . 
-	ex:HitchhickersGuide ex:amazon "http://www.amazon.com/Hitchhikers-Guide-Galaxy-25th-Anniversary/dp/1400052920/ref=sr_1_1?ie=UTF8&s=books&qid=1272987287&sr=1-1"^^xsd:anyURI . 
+	ex:HitchhikersGuide ex:title "The Hitchhiker's Guide to the Galaxy"^^xsd:string . 
+	ex:HitchhikersGuide ex:price "10.20"^^xsd:double . 
+	ex:HitchhikersGuide ex:pages "224"^^xsd:int . 
+	ex:HitchhikersGuide ex:reallyCool "true"^^xsd:boolean . 
+	ex:HitchhikersGuide ex:published "1979-04-02T13:41:09+01:00"^^xsd:dateTime . 
+	ex:HitchhikersGuide ex:amazon "http://www.amazon.com/Hitchhikers-Guide-Galaxy-25th-Anniversary/dp/1400052920/ref=sr_1_1?ie=UTF8&s=books&qid=1272987287&sr=1-1"^^xsd:anyURI . 
 }
 EXP;
 		$this->compareContent("TestTripleStoreAccess", "ID-2", $expected, 
@@ -491,7 +492,16 @@ EXP;
 		
     }
     
-    
+    /**
+     * Tests the method deleteTriples() of the persistent TSA. Expects an exception
+     * to be thrown.
+     */
+    function testDeleteTriples() {
+    	$this->setExpectedException('LODTSAException');
+    	$ptsa = new LODPersistentTripleStoreAccess();
+    	$ptsa->deleteTriples("", "", "");
+    	
+    }
     
     /**
      * Compares the content in the database for $component and $id with the $expected
@@ -513,5 +523,83 @@ EXP;
 		
 		$this->assertEquals($expected, $trig, $errMsg);
 		
+    }
+}
+
+
+/**
+ * This class test the prefix manager.
+ * 
+ * @author thsc
+ *
+ */
+class TestPrefixManager extends PHPUnit_Framework_TestCase {
+
+	protected $backupGlobals = FALSE;
+		
+    function setUp() {
+    }
+
+    function tearDown() {
+    }
+    
+    /**
+     * Gets the singleton of the prefix manager
+     */
+    function testGetInstance() {
+    	$pm = LODPrefixManager::getInstance();
+    	$this->assertNotNull($pm, "The instance of LODPrefixManager could not be retrieved.");
+    }
+    
+    /**
+     * Tests getting some namespace URIs for prefixes from the prefix manager.
+     */
+    function testGetNamespaceURIs() {
+    	$pm = LODPrefixManager::getInstance();
+    	$p = $pm->getNamespaceURI("xsd");
+    	$this->assertEquals("http://www.w3.org/2001/XMLSchema#", $p);
+    	$p = $pm->getNamespaceURI("unknown");
+    	$this->assertNull($p);
+    	
+    	$pm->addPrefix("ex", "http://example.com/");
+    	$p = $pm->getNamespaceURI("ex");
+    	$this->assertEquals("http://example.com/", $p);
+    	
+    }
+    
+    /**
+     * Tests the methof LODPrefixManager::makeAbsoluteURI.
+     */
+    function testMakeAbsoluteURI() {
+    	$pm = LODPrefixManager::getInstance();
+    	$pm->addPrefix("ex", "http://example.com/");
+
+    	$auri = $pm->makeAbsoluteURI("ex:HitchhikersGuide");
+    	$this->assertEquals("<http://example.com/HitchhikersGuide>", $auri);
+    	
+    	$exceptionCaught = false;
+    	try {
+    		$auri = $pm->makeAbsoluteURI("exa:HitchhikersGuide");
+    	} catch (LODPrefixManagerException $e) {
+			$this->assertEquals(LODPrefixManagerException::UNKNOWN_PREFIX_IN_URI,
+								$e->getCode(), "Expected exception UNKNOWN_PREFIX_IN_URI");
+			$exceptionCaught = true; 		
+    	}
+    	if (!$exceptionCaught) {
+    		$this->fail("An expected exception was not caught: LODPrefixManagerException::UNKNOWN_PREFIX");
+    	}
+
+    	$exceptionCaught = false;
+    	try {
+    		$auri = $pm->makeAbsoluteURI("HitchhikersGuide");
+    	} catch (LODPrefixManagerException $e) {
+			$this->assertEquals(LODPrefixManagerException::MISSING_COLON,
+								$e->getCode(), "Expected exception MISSING_COLON");    		
+			$exceptionCaught = true; 		
+    	}
+    	if (!$exceptionCaught) {
+    		$this->fail("An expected exception was not caught: LODPrefixManagerException::MISSING_COLON");
+    	}
+								    	
     }
 }
