@@ -34,8 +34,6 @@ if ( !defined( 'MEDIAWIKI' ) ) {
 }
 
  //--- Includes ---
- global $haclgIP;
-//require_once("$haclgIP/...");
 
 /**
  * The class LODMetaDataQueryPrinter sets up the framework for enhancing query
