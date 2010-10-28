@@ -164,8 +164,8 @@ class LODMappingTripleStore implements ILODMappingStore {
 	}
 	
 	private function removeSourcePrefix($source) {
-		$sourcePrefix = LODAdministrationStore::LOD_BASE_URI
-						.LODAdministrationStore::LOD_SMW_DATASOURCES;
+		$pm = LODPrefixManager::getInstance();
+		$sourcePrefix = $pm->getNamespaceURI('smwDatasources');
 		if (strpos($source, $sourcePrefix) === 0) {
 			$source = substr($source, strlen($sourcePrefix));
 		}
@@ -173,8 +173,8 @@ class LODMappingTripleStore implements ILODMappingStore {
 	}
 	
 	private function removeTargetPrefix($target) {
-		$targetPrefix = LODAdministrationStore::LOD_BASE_URI
-						.LODAdministrationStore::LOD_SMW_LDE;
+		$pm = LODPrefixManager::getInstance();
+		$targetPrefix = $pm->getNamespaceURI('smwDatasources');
 		if (strpos($target, $targetPrefix) === 0) {
 			$target = substr($target, strlen($targetPrefix));
 		}
