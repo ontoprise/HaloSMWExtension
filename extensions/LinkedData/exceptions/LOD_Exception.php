@@ -49,10 +49,10 @@ class LODException extends Exception {
 	/**
 	 * Constructor of the LODException.
 	 *
-	 * @param string $message
-	 * 		The error message
-	 * @param int $code
+	 * @param int $args[0]
 	 * 		A user defined error code.
+	 * @param string $args[1]
+	 * 		The error message
 	 */
     public function __construct($args) {
     	$code = 0;
