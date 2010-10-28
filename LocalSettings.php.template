@@ -201,6 +201,10 @@ $wgGroupPermissions['sysop']['ontologyediting'] = true;
 #ScriptManager
 require_once('extensions/ScriptManager/SM_Initialize.php');
 
+# ARC Library (needed by SMW, Halo ...)
+include_once('extensions/ARCLibrary/ARCLibrary.php');
+enableARCLibrary();
+
 #Misc
 require_once( "{$IP}/extensions/Cite/Cite.php" );
 
