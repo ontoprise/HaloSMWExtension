@@ -13,6 +13,8 @@ require_once 'testcases/TestMappingLanguageAPI.php';
 require_once 'testcases/TestImporter.php';
 require_once 'testcases/TestNonExistingPageHandler.php';
 require_once 'testcases/TestMetaDataQueryPrinter.php';
+require_once 'testcases/TestLODRating.php';
+require_once 'testcases/TestSparqlParser.php';
 
 class LODTests
 { 
@@ -24,7 +26,7 @@ class LODTests
 // Ontobroker Quad must be started with the following options:
 //   msgbroker=none client=MyStore driver=ontobroker-quad wsport=8090 console 
 //   reasoner=owl restfulws        
-
+        
         $suite->addTestSuite("TestTripleStoreAccessSuite");
         $suite->addTestSuite("TestLODSourceDefinitionSuite");
         $suite->addTestSuite("TestMapping");
@@ -34,6 +36,8 @@ class LODTests
         $suite->addTestSuite("TestImporter");
         $suite->addTestSuite("TestNonExistinPageSuite");
         $suite->addTestSuite("TestMetaDataQueryPrinterSuite");
+        $suite->addTestSuite("TestSparqlParserSuite");
+        $suite->addTestSuite("TestLODRatingSuite");
         
         return $suite;
     }
