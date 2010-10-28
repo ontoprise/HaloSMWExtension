@@ -1,0 +1,35 @@
+Installation instructions for ARCLibrary Extension v1.0
+-------------------------------------------------------
+
+In the following instructions we will use the abbreviation ALE for LinkedData 
+Extension.
+
+
+Requirements: 
+=============
+
+    MediaWiki 1.15.x
+    Deployment Framework (optional, but recommended for a fast and easy installation)
+
+Installation:
+=============
+
+How to install with deployment framework:
+
+(1) Download the Deployment Framework
+(2) Extract the Deployment Framework zip-file into the MediaWiki roots folder
+(3) Open the SMWAdministration tool
+(4) Type 'smwadmin -i arclibrary'
+    This installs the extension.
+
+How to install manually:
+
+(1) Install ALE which you can find at 
+    http://
+(2) Extract the files into a folder named ARCLibrary.
+(2) Copy this folder into the extensions folder of MediaWiki. 
+(3) Activate the ALE by adding the following lines to LocalSettings.php: 
+	include_once('extensions/ARCLibrary/ARCLibrary.php');
+	enableARCLibrary(); 
+
+
