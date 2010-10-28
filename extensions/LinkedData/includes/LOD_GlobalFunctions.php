@@ -33,6 +33,7 @@ if ( !defined( 'MEDIAWIKI' ) ) {
     die( "This file is part of the LinkedData extension. It is not a valid entry point.\n" );
 }
 
+require_once("$lodgIP/includes/LOD_AjaxConnector.php");
 
 /**
  * Switch on LinkedData. This function must be called in
@@ -64,7 +65,9 @@ function enableLinkedData() {
 	$wgAutoloadClasses['LODSourceDefinition'] = $lodgIP . '/includes/LODAdministration/LOD_SourceDefinition.php';
 	$wgAutoloadClasses['LODAdministrationStore'] = $lodgIP . '/includes/LODAdministration/LOD_AdministrationStore.php';
 
-	$wgAutoloadClasses['LODSparqlQueryResult'] = $lodgIP . '/storage/TripleStore/LOD_SparqlQueryResult.php';
+	$wgAutoloadClasses['LODSparqlQueryResult']   = $lodgIP . '/storage/TripleStore/LOD_SparqlQueryResult.php';
+	$wgAutoloadClasses['LODSparqlResultURI'] 	 = $lodgIP . '/storage/TripleStore/LOD_SparqlQueryResult.php';
+	$wgAutoloadClasses['LODSparqlResultLiteral'] = $lodgIP . '/storage/TripleStore/LOD_SparqlQueryResult.php';
 	$wgAutoloadClasses['LODTriple']            = $lodgIP . '/storage/TripleStore/LOD_Triple.php';
 	$wgAutoloadClasses['LODTripleStoreAccess'] = $lodgIP . '/storage/TripleStore/LOD_TripleStoreAccess.php';
 	$wgAutoloadClasses['LODPersistentTripleStoreAccess'] 
@@ -110,15 +113,31 @@ function enableLinkedData() {
 	$wgAutoloadClasses['LODBoolValue'] = $lodgIP . '/includes/LODWikiFrontend/MetaDataQueryPrinter/LOD_DV_Bool.php';
 	$wgAutoloadClasses['LODRecordValue'] = $lodgIP . '/includes/LODWikiFrontend/MetaDataQueryPrinter/LOD_DV_Record.php';
 
+	//--- Classes for prefix management ---
+	$wgAutoloadClasses['LODPrefixManager'] = $lodgIP . '/includes/LODAccess/LOD_PrefixManager.php';
 	
 	//--- Classes for rating triples ---
 	$wgAutoloadClasses['LODRatingAccess'] = $lodgIP . '/includes/LODAccess/LODRating/LOD_RatingAccess.php';
 	$wgAutoloadClasses['LODRating']       = $lodgIP . '/includes/LODAccess/LODRating/LOD_Rating.php';
+	$wgAutoloadClasses['LODRatingRewriter'] = $lodgIP . '/includes/LODAccess/LODRating/LOD_RatingRewriter.php';
+	$wgAutoloadClasses['LODSparqlRatingSerializer'] = $lodgIP . '/includes/LODAccess/LODRating/LOD_SparqlRatingSerializer.php';
+	$wgAutoloadClasses['LODRatingTripleInfo'] = $lodgIP . '/includes/LODAccess/LODRating/LOD_RatingTripleInfo.php';
+	$wgAutoloadClasses['LODQueryAnalyzer'] = $lodgIP . '/includes/LODAccess/LODRating/LOD_QueryAnalyzer.php';
+
+	//--- UI/HTML for rating triples ---
+	$wgAutoloadClasses['LODQueryResultRatingUI'] = $lodgIP . '/includes/LODWikiFrontend/RatingUI/LOD_QueryResultRating.php';
+	
+	//--- SPARQL queries ---
+	$wgAutoloadClasses['LODSparqlQueryVisitor'] = $lodgIP . '/includes/LODAccess/LODSparql/LOD_SparqlQueryVisitor.php';
+	$wgAutoloadClasses['LODSparqlSerializerVisitor'] = $lodgIP . '/includes/LODAccess/LODSparql/LOD_SparqlSerializerVisitor.php';
+	$wgAutoloadClasses['LODSparqlQueryParser'] = $lodgIP . '/includes/LODAccess/LODSparql/LOD_SparqlQueryParser.php';
 	
     //--- Autoloading for exception classes ---
    	$wgAutoloadClasses['LODException']        = $lodgIP . '/exceptions/LOD_Exception.php';
    	$wgAutoloadClasses['LODMappingException'] = $lodgIP . '/exceptions/LOD_MappingException.php';
    	$wgAutoloadClasses['LODTSAException']     = $lodgIP . '/exceptions/LOD_TSAException.php';
+   	$wgAutoloadClasses['LODPrefixManagerException'] = $lodgIP . '/exceptions/LOD_PrefixManagerException.php';
+   	$wgAutoloadClasses['LODRatingException'] = $lodgIP . '/exceptions/LOD_RatingException.php';
    	
     //--- Autoloading for libraries ---
 	$wgAutoloadClasses['ARC2'] = $lodgIP . '/libs/arc/ARC2.php';
@@ -161,6 +180,7 @@ function lodfSetupExtension() {
     }    
 
     lodfSetupMetaDataQueryPrinter();
+    lodfSetupRating();
 		    
     //--- Load messages---
     wfLoadExtensionMessages('LinkedData');
@@ -296,6 +316,7 @@ function lodfRegisterACIcon(& $namespaceMappings) {
 /**
  * Setup of the meta-data query printers. This feature has to be enabled with
  * the global variable $lodgEnableMetaDataQueryPrinter in LOD_Initialize.php.
+ * Do not call this method. It is called from lodfSetupExtension.
  */
 function lodfSetupMetaDataQueryPrinter() {
 	global $wgHooks, $lodgEnableMetaDataQueryPrinter, $lodgMetaDataPrinters;
@@ -316,5 +337,36 @@ function lodfSetupMetaDataQueryPrinter() {
 		'xslt'  => 'LODMDPXslt',
 	
 	);
+	
+}
+
+/**
+ * Setup of the rating features for triples.
+ * Do not call this method. It is called from lodfSetupExtension.
+ */
+function lodfSetupRating() {
+	global $wgHooks;
+    
+    $wgHooks['ProcessSPARQLXMLResults'][] = 'LODRatingAccess::onProcessSPARQLXMLResults';
+    
+	global $lodgScriptPath;
+		
+	$css = "rating.css";
+	$cssFile = $lodgScriptPath . "/skins/$css";
+	SMWOutputs::requireHeadItem($css,
+			'<link rel="stylesheet" media="screen, projection" type="text/css" href="'.$cssFile.'" />');
+	$css = "jquery.fancybox-1.3.1.css";
+	$cssFile = $lodgScriptPath . "/skins/$css";
+	SMWOutputs::requireHeadItem($css,
+			'<link rel="stylesheet" media="screen, projection" type="text/css" href="'.$cssFile.'" />');
+	
+	$script = "LOD_Rating.js";
+	$scriptFile = $lodgScriptPath . "/scripts/$script";
+	SMWOutputs::requireHeadItem($script,
+			'<script type="text/javascript" src="' . $scriptFile . '"></script>');
+	$script = "jquery.fancybox-1.3.1.js";
+	$scriptFile = $lodgScriptPath . "/scripts/$script";
+	SMWOutputs::requireHeadItem($script,
+			'<script type="text/javascript" src="' . $scriptFile . '"></script>');
 	
 }
