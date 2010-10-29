@@ -1,3 +1,4 @@
+define("SMWH_FORCE_TS_UPDATE","1");
 // set skin here again to overwrite the default
 $wgDefaultSkin = 'ontoskin3';
 
