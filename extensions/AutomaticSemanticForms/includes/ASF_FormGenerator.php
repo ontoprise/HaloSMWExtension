@@ -124,7 +124,7 @@ class ASFFormGenerator {
 				//Make sure that display templates of not directly annotated
 				//categories will not be shown
 				if(count($categorySection->children) == 0){
-					$asfAllDirectCategoryAnnotations[ $categoryTitle->getFullText()] = false; 
+					$asfAllDirectCategoryAnnotations[$categoryTitle->getFullText()] = false; 
 				}  
 				
 				$categories[] = $categoryFormDataObject;
@@ -139,7 +139,7 @@ class ASFFormGenerator {
 				
 				$category = Category::newFromName($category);
 				$categories[$key] = new ASFCategoryFormData($category->getTitle());
-				$asfAllDirectCategoryAnnotations[][$categoty->getTitle()->getFullText()] = false;
+				$asfAllDirectCategoryAnnotations[$category->getTitle()->getFullText()] = false;
 			}
 			$categories = $this->dealWithDuplicateProperties($categories);
 		}

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<deploydescriptor>
+	<global>
+		<version>100</version>
+		<id>automaticsemanticforms</id>
+		<vendor>Ontoprise GmbH</vendor>
+		<maintainer>Ontoprise GmbH</maintainer>
+		<instdir>extensions/AutomaticSemanticForms</instdir>
+		<description>
+			Automatically creates Semantic Forms based on the Wiki ontology.
+		</description>
+		<helpurl>http://smwforum.ontoprise.com/smwforum/index.php/Help:Automatic_Semantic_Forms_Extension</helpurl>
+		<dependencies>
+			<dependency from="1160" to="1160">MW</dependency>
+			<dependency from="152" to="152">smw</dependency>
+			<dependency from="152" to="152">smwhalo</dependency>
+			<dependency from="100" to="199">scriptmanager</dependency>
+			<dependency from="200" to="200">semanticforms</dependency>
+		</dependencies>
+		<patchlevel>0</patchlevel>
+	</global>
+	<codefiles>
+
+		<file loc="extensions/AutomaticSemanticForms/deploy.xml" />
+		<!-- TODO: add all others -->
+	</codefiles>
+	<wikidumps>
+		<!-- empty -->
+	</wikidumps>
+	<resources>
+		<!-- empty -->
+	</resources>
+
+	<configs>
+
+		<new>
+			<require name="asf_init"
+				file="extensions/AutomaticSemanticForms/includes/ASF_Initialize.php" />
+			<function name="enableAutomaticSemanticForms">
+			</function>
+		</new>
+		<uninstall>
+
+		</uninstall>
+	</configs>
+</deploydescriptor>
+

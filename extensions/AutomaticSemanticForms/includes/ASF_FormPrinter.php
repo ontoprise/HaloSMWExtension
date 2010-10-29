@@ -103,6 +103,7 @@ class ASFFormPrinter extends SFFormPrinter {
 			//Deal with display templates
 			//todo: Use something better than a global variable here
 			global $asfAllDirectCategoryAnnotations;
+			
 			foreach($asfAllDirectCategoryAnnotations as $templateName){
 				if($templateName){
 					$startPos = strpos($form_text, 'name="'.$templateName.'[categories]"'); 
@@ -114,6 +115,8 @@ class ASFFormPrinter extends SFFormPrinter {
 				}
 			}
 		}
+		
+		echo('<br><br><br>'.$form_text);
 		
 		//echo('<pre>'.print_r($form_text, true).'</pre>');
 			

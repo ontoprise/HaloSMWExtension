@@ -112,7 +112,7 @@ class ASFCategorySectionStructureProcessor {
 			$title = Title::newFromText($categoryName, NS_CATEGORY);
 			$properties = ASFFormGeneratorUtils::getPropertiesWithDomain(array($title));
 			
-			if(count($properties) == 0){
+			if(count($properties) == 0 && count($item->children) > 0){
 				$emptyCategorySections[$categoryName] = true;
 			}
 		}
@@ -239,7 +239,8 @@ class ASFCategorySectionStructureProcessor {
 				//this category do not count as visible child nodes
 				$continue = false;
 				foreach($this->categorySectionStructure[$childName]->visibleDescendantOf as $descendant => $dontCare){
-					if(array_key_exists($descendant, $descendants)){
+					if(array_key_exists($descendant, $descendants)
+							&& $this->categorySectionStructure[$descendant]->visible){
 						$continue = true;
 						break;
 					}
