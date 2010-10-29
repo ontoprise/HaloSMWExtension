@@ -644,6 +644,10 @@ class SMWTripleStore extends SMWStore {
 					$response = utf8_decode($response);
 				}
 
+				// Allow extensions to transform the query result before it is
+				// parsed.
+				wfRunHooks('ProcessSPARQLXMLResults', array(&$query, &$response) );
+				
 				$queryResult = $this->parseSPARQLXMLResult($query, $response);
 
 
@@ -1276,8 +1280,7 @@ class SMWTripleStore extends SMWStore {
 
 		}
 		return $contains;
-	}
-
+	} 
 
 }
 
