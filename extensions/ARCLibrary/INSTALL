@@ -1,8 +1,8 @@
 Installation instructions for ARCLibrary Extension v1.0
 -------------------------------------------------------
 
-In the following instructions we will use the abbreviation ALE for LinkedData 
-Extension.
+The ARCLibrary extension is required for the use of the Halo, Access Control List, Data 
+Import and Linked Data extension. 
 
 
 Requirements: 
@@ -18,18 +18,23 @@ How to install with deployment framework:
 
 (1) Download the Deployment Framework
 (2) Extract the Deployment Framework zip-file into the MediaWiki roots folder
-(3) Open the SMWAdministration tool
-(4) Type 'smwadmin -i arclibrary'
-    This installs the extension.
+(3) Open a command-line interface
+(4) Start the SMWAdministration tool:
+    <mw-dir>htdocs\mediawiki\deployment\tools\smwadmin>
+(5) Type:
+	smwadmin -i arclibrary
+This installs the extension.
+
 
 How to install manually:
 
-(1) Install ALE which you can find at 
-    http://
-(2) Extract the files into a folder named ARCLibrary.
-(2) Copy this folder into the extensions folder of MediaWiki. 
-(3) Activate the ALE by adding the following lines to LocalSettings.php: 
+(1) Extract the zip-file into a folder named ARCLibrary
+(2) Copy this folder into the MediaWiki extensions folder
+(3) Open the LocalSettings.php
+(4) Activate the extension by adding the following lines:
 	include_once('extensions/ARCLibrary/ARCLibrary.php');
-	enableARCLibrary(); 
+	enableARCLibrary();
+
+Note: 	Add this lines after the ScriptManager is initialized and before SMWHalo is initialized.
 
 
