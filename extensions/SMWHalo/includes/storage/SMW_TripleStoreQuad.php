@@ -239,7 +239,7 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 
 	function getAllPropertyAnnotations(SMWPropertyValue $property, $requestoptions = NULL) {
 		if ( defined( 'DO_MAINTENANCE' )  && !defined('SMWH_FORCE_TS_UPDATE') ) {
-			 return $this->smwstore->getAllPropertyAnnotations($property, $requestoptions);
+			 return array();
 		}
 
 		$client = TSConnection::getConnector();
