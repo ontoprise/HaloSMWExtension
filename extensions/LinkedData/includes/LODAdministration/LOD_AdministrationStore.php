@@ -275,6 +275,9 @@ QUERY;
 		if (array_key_exists("{$propNS}vocabulary", $properties)) {
 			$sd->setVocabularies($properties["{$propNS}vocabulary"]);
 		}
+	    if (array_key_exists("{$propNS}imported", $properties)) {
+            $sd->setImported($properties["{$propNS}imported"]);
+        }
 		
 		return $sd;
 	}

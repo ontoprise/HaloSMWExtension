@@ -34,6 +34,15 @@ class LODSourcesPage extends SpecialPage {
 
 	function execute( $p ) {
 		global $wgOut;
+		global $lodgScriptPath;
+        
+        $scriptFile = $lodgScriptPath . "/scripts/LOD_SpecialSources.js";
+        SMWOutputs::requireHeadItem("LOD_SpecialSources.js",
+            '<script type="text/javascript" src="' . $scriptFile . '"></script>');
+            SMWOutputs::requireHeadItem("lod_sources.css",
+            '<link rel="stylesheet" type="text/css" href="' . $lodgScriptPath . '/skins/sources.css" />');
+        
+        SMWOutputs::commitToOutputPage( $wgOut );
 		$this->setHeaders();
 		wfProfileIn( 'doLODSources (LOD)' );
 		 
@@ -42,7 +51,7 @@ class LODSourcesPage extends SpecialPage {
 		wfProfileOut( 'doLODSources (LOD)' );
 	}
 	
-	private function getAllSources() {
+	public function getAllSources() {
 		$results = array();
 		$lodAdminStore = LODAdministrationStore::getInstance();
 		$sourceIDs = $lodAdminStore->getAllSourceDefinitionIDs();
@@ -53,20 +62,22 @@ class LODSourcesPage extends SpecialPage {
 		return $results;
 	}
 	
-	private function createSourceTable($table) {
-		$html = "<table>";
+	public function createSourceTable($table) {
+		$html = '<table id="lod_source_table" class="lod_sp_sources_table">';
 		$html .= "<th>".wfMsg('lod_sp_source_label')."</th>";
-		$html .= "<th>".wfMsg('lod_sp_source_sparqlEndpoint')."</th>";
+		$html .= "<th>".wfMsg('lod_sp_source_source')."</th>";
 		$html .= "<th>".wfMsg('lod_sp_source_lastmod')."</th>";
 		$html .= "<th>".wfMsg('lod_sp_source_changefreq')."</th>";
+		$html .= "<th>".wfMsg('lod_sp_isimported')."</th>";
 		
 		foreach($table as $s => $ldSource) {
+			$dataDumpLocations = is_array($ldSource->getDataDumpLocations()) ? implode(",",$ldSource->getDataDumpLocations()) : '';
 			$html .= "<tr>";
 			$html .="<td>";
 			$html .= $ldSource->getLabel();
 			$html .="</td>";
 			$html .="<td>";
-            $html .=  $ldSource->getSparqlEndpointLocation() == '' ? "-" : $ldSource->getSparqlEndpointLocation();
+            $html .=  $ldSource->getSparqlEndpointLocation() == '' ? $dataDumpLocations : $ldSource->getSparqlEndpointLocation();
             $html .="</td>";
             $html .="<td>";
             $html .= $ldSource->getLastMod() == '' ? "-" : $ldSource->getLastMod();
@@ -75,7 +86,19 @@ class LODSourcesPage extends SpecialPage {
             $html .= $ldSource->getChangeFreq() == '' ? "-" : $ldSource->getChangeFreq();
             $html .="</td>";
             $html .="<td>";
-            $html .= "<input type=\"button\" value=\"".wfMsg('lod_sp_source_updateimport')."\"/>";
+            $html .= $ldSource->isImported() === false ? "-" : "yes";
+            $html .="</td>";
+            
+            if (!$ldSource->isImported()) {
+            	$disabled = 'disabled="disabled"';
+            } else {
+            	$disabled = '';
+            }
+            $html .="<td>";
+            $html .= "<input type=\"button\" onclick=\"LOD.sources.doImportOrUpdate(this, '$s', false);\" value=\"".($ldSource->isImported() ? wfMsg('lod_sp_source_reimport') : wfMsg('lod_sp_source_import'))."\"/>";
+            $html .="</td>";
+            $html .="<td>";
+            $html .= "<input $disabled type=\"button\" onclick=\"LOD.sources.doImportOrUpdate(this, '$s', true);\" value=\"".wfMsg('lod_sp_source_update')."\"/>";
             $html .="</td>";
 			$html .= "</tr>";
 			

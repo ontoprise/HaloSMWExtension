@@ -34,6 +34,8 @@ if ( !defined( 'MEDIAWIKI' ) ) {
 }
 
 $wgAjaxExportList[] = "lodafGetRatingEditorForKey";
+$wgAjaxExportList[] = "lodImportOrUpdate";
+$wgAjaxExportList[] = "lodGetDataSourceTable";
 
 
 /**
@@ -57,4 +59,51 @@ function lodafGetRatingEditorForKey($ratingKey, $value) {
 	$html = LODQueryResultRatingUI::getRatingHTML($ratingKey, $value, $triples);
     $response->addText($html);
 	return $response;
+}
+
+/**
+ * Triggers an import or update operation.
+ * 
+ * @param string $dataSource datasource ID
+ * @param string $update (true/false)
+ * 
+ * @return AjaxResponse true if successful. Otherwise an error message.
+ *       
+ */
+function lodImportOrUpdate($dataSource, $update) {
+    $response = new AjaxResponse();
+    $response->setContentType("text/plain");
+
+    try {
+        $con = TSConnection::getConnector();
+        $con->connect();
+        $con->runImport($dataSource, $update);
+        $response->addText("true");
+    } catch(Exception $e) {
+    	$response->setResponseCode($e->getCode());
+    	$response->addText($e->getMessage());
+    }
+    
+    return $response;
+}
+
+/**
+ * Returns the datasource table as HTML
+ *  
+ * @return AjaxResponse HTML. Otherwise an error message.
+ *       
+ */
+function lodGetDataSourceTable() {
+    $response = new AjaxResponse();
+    $response->setContentType("text/html");
+
+    try {
+       $lodSourcePage = new LODSourcesPage();
+       $response->addText($lodSourcePage->createSourceTable($lodSourcePage->getAllSources()));
+    } catch(Exception $e) {
+        $response->setResponseCode($e->getCode());
+        $response->addText($e->getMessage());
+    }
+    
+    return $response;
 }

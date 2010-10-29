@@ -87,7 +87,7 @@ class LODSourceDefinition  {
 	
 	// array<string> (URI):
 	// This tag can be used to point to a URI within the dataset which can be 
-	// considered a representative “sample”. This is useful for Semantic Web 
+	// considered a representative "sample". This is useful for Semantic Web 
 	// clients to provide starting points for human exploration of the dataset. 
 	// There can be any number of sample URIs. 
 	private $mSampleURIs;
@@ -104,7 +104,7 @@ class LODSourceDefinition  {
 	// sparqlEndpointLocation is also present, and there must be at most one 
 	// sparqlGraphName per dataset.
 	// If the data is distributed over multiple named graphs in the endpoint, 
-	// then the publisher should either use a value of “*” for this tag, or 
+	// then the publisher should either use a value of â€œ*â€� for this tag, or 
 	// create separate datasets for each named graph.
 	// If the tag is omitted, the dataset is assumed to be available through the 
 	// endpoint's default graph. 
@@ -135,6 +135,10 @@ class LODSourceDefinition  {
 	// a dataset. 
 	private $mVocabularies;
 	
+	// boolean
+	// Is true if the datasource was imported at least once.
+	private $mIsImported = false;
+	
 	
 	/**
 	 * Constructor for LODSourceDefinition.
@@ -161,7 +165,8 @@ class LODSourceDefinition  {
 	public function getLastMod()				{ return $this->mLastMod; }
 	public function getChangeFreq()				{ return $this->mChangeFreq; }
 	public function getVocabularies()			{ return $this->mVocabularies; }
-	
+    public function isImported()               { return $this->mIsImported; }
+
 	public function setID($val)						{ $this->mID = $val; }
 	public function setDescription($val)			{ $this->mDescription = $val; }
 	public function setLabel($val)					{ $this->mLabel = $val; }
@@ -175,6 +180,7 @@ class LODSourceDefinition  {
 	public function setLastMod($val)				{ $this->mLastMod = $val; }
 	public function setChangeFreq($val)				{ $this->mChangeFreq = $val; }
 	public function setVocabularies(array $val)		{ $this->mVocabularies = $val; }
+    public function setImported($val)               { $this->mIsImported = $val; }
 	
 	//--- Public methods ---
 	

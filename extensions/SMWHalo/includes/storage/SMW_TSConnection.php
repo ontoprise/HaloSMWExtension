@@ -24,14 +24,15 @@ abstract class TSConnection {
 	protected $updateClient;
 	protected $queryClient;
 	protected $manageClient;
+	protected $ldImportClient;
 
 	protected static $_instance;
-	
+
 	protected function __construct() {
 		// Initialize namespaces
 		new TSNamespaces();
 	}
-	
+
 	/**
 	 * Connects to the triplestore
 	 *
@@ -71,15 +72,24 @@ abstract class TSConnection {
 	 * @return String (HTML) or false on an error
 	 */
 	public abstract function getStatus($graph);
-	
+
 	/**
 	 * Translates an ASK query into SPARQL.
-	 * 
+	 *
 	 * @param string $query The ASK query
 	 * @param string $params ASK parameters (limit, merge, offset, ....)
 	 * @param string $baseURI Base URI from which the SPARQL IRIs are created.
 	 */
 	public abstract function translateASK($query, $params = "", $baseURI = "");
+
+
+	/**
+	 * Trigger datasource import/update
+	 *
+	 * @param string $datasource ID
+	 * @param boolean $update true for update, false for initial import
+	 */
+	public abstract function runImport($datasource, $update = false);
 
 	public static function getConnector() {
 		if (is_null(self::$_instance)) {
@@ -121,7 +131,8 @@ class TSConnectorMessageBrokerAndRESTWebservice extends TSConnectorRESTWebservic
 		list($host, $port) = explode(":", $smwgWebserviceEndpoint);
 		$credentials = isset($smwgWebserviceUser) ? $smwgWebserviceUser.":".$smwgWebservicePassword : "";
 		$this->queryClient = new RESTWebserviceConnector($host, $port, "sparql", $credentials);
-		$this->manageClient = new RESTWebserviceConnector($host, $port, "management/", $credentials);
+		$this->manageClient = new RESTWebserviceConnector($host, $port, "management", $credentials);
+		$this->ldImportClient = new RESTWebserviceConnector($host, $port, "ldimporter", $credentials);
 	}
 
 
@@ -159,7 +170,8 @@ class TSConnectorRESTWebservice extends TSConnection {
 		$credentials = isset($smwgWebserviceUser) ? $smwgWebserviceUser.":".$smwgWebservicePassword : "";
 		$this->updateClient = new RESTWebserviceConnector($host, $port, "sparul", $credentials);
 		$this->queryClient = new RESTWebserviceConnector($host, $port, "sparql", $credentials);
-		$this->manageClient = new RESTWebserviceConnector($host, $port, "management/", $credentials);
+		$this->manageClient = new RESTWebserviceConnector($host, $port, "management", $credentials);
+		$this->ldImportClient = new RESTWebserviceConnector($host, $port, "ldimporter", $credentials);
 	}
 
 	public function disconnect() {
@@ -178,10 +190,10 @@ class TSConnectorRESTWebservice extends TSConnection {
 		foreach($commands as $c) {
 			$enc_command = isset($smwgSPARULUpdateEncoding) && $smwgSPARULUpdateEncoding === "UTF-8" ? utf8_encode($c) : $c;
 			if ($first) {
-				 $enc_commands .= "command=".urlencode($enc_command);
-				 $first=false;
+				$enc_commands .= "command=".urlencode($enc_command);
+				$first=false;
 			} else {
-				 $enc_commands .= "&command=".urlencode($enc_command);
+				$enc_commands .= "&command=".urlencode($enc_command);
 			}
 		}
 
@@ -194,7 +206,7 @@ class TSConnectorRESTWebservice extends TSConnection {
 		if (empty($graph)) {
 			$graph = $smwgTripleStoreGraph;
 		}
-		
+
 		if (stripos(trim($query), 'SELECT') === 0 || stripos(trim($query), 'PREFIX') === 0) {
 			// SPARQL, attach common prefixes
 			$query = TSNamespaces::getAllPrefixes().$query;
@@ -214,8 +226,8 @@ class TSConnectorRESTWebservice extends TSConnection {
 		global $smwgTripleStoreGraph;
 
 		$request = "graph=".urlencode($smwgTripleStoreGraph);
-		
-		list($header, $status, $result) = $this->manageClient->send($request, "getTripleStoreStatus");
+
+		list($header, $status, $result) = $this->manageClient->send($request, "/getTripleStoreStatus");
 		if ($status != 200) {
 			throw new Exception(strip_tags($result), $status);
 		}
@@ -229,23 +241,32 @@ class TSConnectorRESTWebservice extends TSConnection {
 		return $resultMap;
 
 	}
-	
-    public function translateASK($query, $params = "", $baseURI = "") {
-        global $smwgTripleStoreGraph;
-        if (empty($baseURI)) {
-            $baseURI = $smwgTripleStoreGraph;
-        }
-        
-        $queryRequest = "query=".urlencode($query);
-        $queryRequest .= "&baseuri=".urlencode($baseURI);
-        $queryRequest .= "&parameters=".urlencode($params);
 
-        list($header, $status, $result) = $this->queryClient->send($queryRequest, "/translateASK");
-        if ($status != 200) {
-            throw new Exception(strip_tags($result), $status);
-        }
-        return $result;
-    }
+	public function translateASK($query, $params = "", $baseURI = "") {
+		global $smwgTripleStoreGraph;
+		if (empty($baseURI)) {
+			$baseURI = $smwgTripleStoreGraph;
+		}
+
+		$queryRequest = "query=".urlencode($query);
+		$queryRequest .= "&baseuri=".urlencode($baseURI);
+		$queryRequest .= "&parameters=".urlencode($params);
+
+		list($header, $status, $result) = $this->queryClient->send($queryRequest, "/translateASK");
+		if ($status != 200) {
+			throw new Exception(strip_tags($result), $status);
+		}
+		return $result;
+	}
+
+	public function runImport($datasourceID, $update = false) {
+		$payload = "dataSourceId=".urlencode($datasourceID)."&update=".urlencode($update);
+		list($header, $status, $result) = $this->ldImportClient->send($payload, "/runImport");
+		if ($status != 200) {
+			throw new Exception(strip_tags($result), $status);
+		}
+		return true;
+	}
 }
 
 
