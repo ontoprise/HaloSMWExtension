@@ -136,8 +136,10 @@ QIHelper.prototype = {
         }
 		if ( $('qio_showrating') != null )
             $('qio_showrating').checked = null;
-		if ( $('qio_showmetainfo') != null )
+		if ( $('qio_showmetadata') != null )
             $('qio_showmetadata').checked = null;
+        if ( $('qio_showdatasource_div') )
+            $('qio_showdatasource_div').style.display = "none";
         this.updateSrcAndPreview();
     },
 
@@ -146,6 +148,14 @@ QIHelper.prototype = {
             $('usetriplestore').checked="checked";
             this.updateSrcAndPreview();
         }
+    },
+
+    clickMetadata : function () {
+		if ( $('qio_showmetadata') && $('qio_showmetadata').checked )
+            $('qio_showdatasource_div').style.display = "block";
+        else
+            $('qio_showdatasource_div').style.display = "none";
+        this.clickUseTsc();
     },
 
 	/**
@@ -748,7 +758,9 @@ QIHelper.prototype = {
 		if ( $('qio_showrating') != null && $('qio_showrating').checked )
             args.push('enableRating=true');
 		if ( $('qio_showmetadata') != null && $('qio_showmetadata').checked ) {
-            if ($('qio_showmetadata').value)
+            if ($('qio_showdatasource').checked)
+                args.push('metadata=(DATASOURCE_LABEL_FROM)');
+            else if ($('qio_showmetadata').value)
                 args.push('metadata=' + $('qio_showmetadata').value);
             else
                 args.push('metadata=*');
@@ -1010,7 +1022,7 @@ QIHelper.prototype = {
             try {
                 var input = $('dialoguecontent').rows[(idx-1)*2].getElementsByTagName('td')[1].getElementsByTagName('input');
                 input[0].style.fontWeight = 'normal';
-            } catch (e) {};
+            }catch (e) {};
         }
         autoCompleter.registerAllInputs();
 		if (!propName) $('input_p' + idx).focus(); // focus created input
@@ -1276,7 +1288,7 @@ QIHelper.prototype = {
 											// dialogue whilst ajax call
 			try {
 			    var oldsubid = $('dialoguecontent_pradio').getElementsByTagName('input')[2].value;
-            } catch (e) { var oldsubid = this.nextQueryId; }
+            } catch (e) {var oldsubid = this.nextQueryId;}
             if ($('dialoguecontent_pvalues')) {
                 while ($('dialoguecontent_pvalues').rows.length > 0)
                     $('dialoguecontent_pvalues').deleteRow(0);
@@ -1411,7 +1423,7 @@ QIHelper.prototype = {
 				} else { // no checkbox for other types
    					$('dialoguecontent_pradio').getElementsByTagName('input')[2].disabled = 'true';
 				}
-			} else {
+			}else {
 				// properties with arity > 2: attributes or n-ary. no conjunction, no subqueries
                 $('dialoguecontent_pradio').getElementsByTagName('input')[2].disabled = 'true';
                 // set property type
@@ -1443,7 +1455,7 @@ QIHelper.prototype = {
                     	cell.innerHTML = '<input class="wickEnabled general-forms" constraints="'
                     	   + (this.propRange[parameterNames[i].toLowerCase()]) ? 'instance-property-range: ' : 'annotation-value: '
                     	   + propNameAC+'|namespace: 0" type="text" id="input_r' + (i + 1) + '"/>';
-					} else if (parameterTypes[i] == '_dat') {
+					}else if (parameterTypes[i] == '_dat') {
 						cell.innerHTML = '<input type="text" id="input_r' + (i + 1) + '" constraints="fixvalues: {{NOW}},{{TODAY}}|annotation-value: '+propNameAC+'"/>';
 					} else {
 						var tmpHTML = '<input type="text" id="input_r' + (i + 1) + '" constraints="annotation-value: '+propNameAC+'"/>';
@@ -1514,7 +1526,7 @@ QIHelper.prototype = {
         $('dialoguecontent').parentNode.parentNode.appendChild(node);
         // add event handler when clicking the checkbox "show in result"
         if (this.activeQueryId == 0)
-            $('input_c1').onclick = function() { qihelper.toggleShowProperty(); }
+            $('input_c1').onclick = function() {qihelper.toggleShowProperty();}
         else
             $('input_c1').disabled = "disabled";
             
@@ -1546,7 +1558,7 @@ QIHelper.prototype = {
         // add onclick handler for changing the value (IE won't accept onchange)
         var radiobuttons = $('dialoguecontent_pradio').getElementsByTagName('input');
         for (var i = 0; i < radiobuttons.length; i++)
-            radiobuttons[i].onclick = function() { qihelper.setPropertyRestriction(); } 
+            radiobuttons[i].onclick = function() {qihelper.setPropertyRestriction();} 
     },
 
     /**

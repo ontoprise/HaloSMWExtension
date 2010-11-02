@@ -79,8 +79,11 @@ class SMWQueryInterface extends SpecialPage {
                 '</td><td>' .
                 '<input type="checkbox" id="qio_showrating" onchange="qihelper.clickUseTsc();" />' .
                 wfMsg('smw_qi_showdatarating') . '<br/>' .
-                '<input type="checkbox" id="qio_showmetadata" value="*" onchange="qihelper.clickUseTsc();" />' .
+                '<input type="checkbox" id="qio_showmetadata" value="*" onchange="qihelper.clickMetadata();" />' .
                 wfMsg('smw_qi_showmetadata') . '<br/>' .
+                '<div id="qio_showdatasource_div" style="display:none">'.
+                '<input type="checkbox" id="qio_showdatasource" onchange="qihelper.clickMetadata();" />' .
+                wfMsg('smw_qi_showdatasource') . '<br/></div>' .
                 '</td></tr></table><hr/>';
         }
         // check if triple store is availabe, and offer option do deselect

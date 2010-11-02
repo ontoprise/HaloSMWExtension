@@ -284,6 +284,7 @@ protected $smwUserMessages = array(
     'smw_qi_datasource_select_header' => 'W&auml;hle eine Datenquelle (dr&uuml;cke STRG um mehrere Quellen auszuw&auml;hlen)',
     'smw_qi_showdatarating' => 'Aktiviere die Bewertung der Daten',
     'smw_qi_showmetadata' => 'Zeige Metainformationen zu den Daten',
+    'smw_qi_showdatasource' => 'Zeige nur Informationen zur Datenquelle',
 
 	/*Tooltips for Query Interface*/
 	'smw_qi_tt_addCategory' => 'Indem man eine Kategorie hinzuf&uuml;gt, werden nur Artikel aus dieser Kategorie ber&uuml;cksichtigt',
