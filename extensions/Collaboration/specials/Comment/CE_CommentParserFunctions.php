@@ -127,10 +127,13 @@ class CECommentParserFunctions {
 	public static function showcommentform(&$parser) {
 		global $cegContLang, $wgUser, $cegScriptPath, $cegEnableRatingForArticles, $wgJsMimeType;
 
-		$jsText = <<<END
-<script type="{$wgJsMimeType}">/* <![CDATA[ */ var cegScriptPath = '{$cegScriptPath}';
-END;
-		
+		$ns = MWNamespace::getCanonicalName(NS_USER);
+		$jsText = '<script type="'.$wgJsMimeType.'">/*<![CDATA[*/' .
+			'var wgCEScriptPath = "'.$cegScriptPath.'";' .
+			'var wgCEUserNS = "'.$ns.'";' .
+			'/*]]>*/</script>';
+		SMWOutputs::requireHeadItem('CEJS_Variables', $jsText);
+
 		# do checks #
 		$status = self::$mInstance->doInitialChecks($parser);
 
@@ -169,16 +172,13 @@ END;
 		$ratingTitleBad = wfMsg('ce_cf_rating_title_b');
 		$ratingTitleNeutral = wfMsg('ce_cf_rating_title_n');
 		$ratingTitleGood = wfMsg('ce_cf_rating_title_g');
-		
+
 		#user#
 		$currentUser = $wgUser->getName();
 		
-		$ns = MWNamespace::getCanonicalName(NS_USER);
-		$jsText .= "var ceUserNS = '$ns';";
-
 		if($wgUser->isAnon()) {
 			$userImageTitle = Title::newFromText('defaultuser.gif', NS_FILE);
-			$userIsSysopJSText = 'var cegUserIsSysop = false;';
+			$userIsSysopJSText = 'var wgCEUserIsSysop = false;';
 			if($userImageTitle->exists()){
 				$image = wfLocalFile($userImageTitle);
 				$userImgSrc = $image->getURL();
@@ -207,9 +207,9 @@ END;
 			$isAllowed = false;
 			if (in_array( 'sysop', $wgUser->getEffectiveGroups() ) == 1) {
 				//provide delete link for every existing comment
-				$userIsSysopJSText = 'var cegUserIsSysop = true;';
+				$userIsSysopJSText = 'var wgCEUserIsSysop = true;';
 			} else {
-				$userIsSysopJSText = 'var cegUserIsSysop = false;';
+				$userIsSysopJSText = 'var wgCEUserIsSysop = false;';
 			}
 		}
 		if(!isset($userImgSrc) || !$userImgSrc) {
@@ -246,11 +246,11 @@ END;
 					XML::closeElement('span') .
 				XML::closeElement('div');
 
-		$script =<<<END
-<script type="text/javascript">
-var wgCEEnableRating = true;</script>
-END;
-		SMWOutputs::requireHeadItem('Collaboration', $script);  
+		$script = '<script type="'.$wgJsMimeType.'">/*<![CDATA[*/'.
+			'var wgCEEnableRating = true;' .
+			($userIsSysopJSText? $userIsSysopJSText : "") .
+			'/*]]>*/</script>';
+		SMWOutputs::requireHeadItem('CEJS_Variables2', $script);  
 		}
 
 		$html = XML::openElement( 'div', array( 'id' => 'collabComFormHeader' )) .
@@ -295,8 +295,6 @@ END;
 				'style' => 'display:none')) .
 			XML::closeElement('div') .
 			XML::closeElement('div');
-
-		$html .= $jsText . ($userIsSysopJSText? $userIsSysopJSText : '') . '/* ]]> */ </script>';
 
 		self::$mInstance->mCommentFormDisplayed = true;
 		return $parser->insertStripItem( $html, $parser->mStripState );
@@ -390,16 +388,17 @@ END;
 
 		global $cegEnableComment, $cegEnableCommentFor;
 		# check if comments enabled #
-		if ( !isset($cegEnableComment) || !$cegEnableComment )
+		if ( !isset($cegEnableComment) || !$cegEnableComment ) {
 			return self::COMMENTS_DISABLED;
-		if ( !isset($cegEnableCommentFor) )
+		}
+		if ( !isset($cegEnableCommentFor) ) {
 			return self::COMMENTS_FOR_NOT_DEF;
-
+		}
 		# check authorization #
 		if ($cegEnableCommentFor == CE_COMMENT_NOBODY) {
 			return self::NOBODY_ALLOWED_TO_COMMENT;
 		} elseif ( ($cegEnableCommentFor == CE_COMMENT_AUTH_ONLY) &&
-			!($wgUser->isAnon()) ) {
+			$wgUser->isAnon() ) {
 			return self::USER_NOT_ALLOWED_TO_COMMENT;
 		} else {
 			//user is allowed
@@ -421,12 +420,16 @@ END;
 	 * @access private
 	 */
 	private function commentFormWarning( $warning ) {
-		
-		//TODO: reformat!
-		
+		global $wgJsMimeType;
+		$script =<<<END
+<script type="{$wgJsMimeType}">/* <![CDATA[ */
+var wgCECommentsDisabled = true;
+/* ]]> */ </script>
+END;
+		SMWOutputs::requireHeadItem('CEJS_Disabled', $script);  
+
 		$html = '<h2>' . wfMsgHtml( 'ce_warning' ) . "</h2>\n";
 		$html .= '<ul class="collabComWarning">' . $warning . "</ul>\n";
-		
 		return $html;
 	}
 

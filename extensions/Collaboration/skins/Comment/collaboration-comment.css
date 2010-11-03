@@ -117,12 +117,22 @@ div.collabComResRatingIcon img {
 div.collabComResText {
 	padding-top: 5px;
 }
-div.collabComReply {
+
+div.collabComEdit {
+	display: inline;
+	cursor: pointer;
+}
+div.collabComDel {
+	display: inline;
+	cursor: pointer;
+}
+
+span.collabComReply {
 	margin-top: 5px;
 	color: #116988;
 	cursor: pointer;
 }
-div.collabComReply:hover {
+span.collabComReply:hover {
 	text-decoration:underline;
 }
 div.collabComDelSelected {
@@ -162,10 +172,11 @@ span#collabComFormHeaderText:hover {
 }
 
 form#collabComForm {
+	background-color: #F2F2F2;
 	border: 1px solid lightgrey;
 	border-bottom: 1px solid grey;
 	border-collapse: collapse;
-	width: 100%;
+	/*width: 100%;*/
 	overflow: hidden;
 }
 
@@ -202,8 +213,8 @@ div#collabComFormUser span.uservalue {
 }
 
 div#collabComFormRating {
-	padding: 5px;
-	height: 32px;
+	width: 100%;
+	padding: 5px 0px 5px 5px;
 	border: 1px solid lightgrey;
 	background-color: #f7f3f7;
 }
@@ -219,6 +230,11 @@ span#collabComFormRadiobuttons { /*float:right;*/
 }
 
 /* the textarea (comment content) */
+textarea#collabComFormTextarea {
+	white-space: nowrap;
+	width:100%;
+}
+
 div#collabComFormHelp {
 	margin: 5px 0;
 	color: grey;
@@ -272,7 +288,7 @@ div#collabComFormHelp span {
 
 /* warnings created by parser function*/
 .collabComWarning {
-	color: orange;
+	color: red;
 }
 
 .collabComFormGrey {
@@ -302,8 +318,8 @@ div#collabComFormHelp span {
 
 /* the edit form */
 div#collabComEditFormRating {
-	padding: 5px;
-	height: 32px;
+	width: 100%;
+	padding: 5px 0px 5px 5px;;
 	border: 1px solid lightgrey;
 	background-color: #f7f3f7;
 }
@@ -317,6 +333,10 @@ span#collabComEditFormRadiobuttons {
 	cursor: pointer;
 	vertical-align: text-bottom;
 }
+textarea#collabComEditFormTextarea {
+	width:100%;
+}
+
 #collabComEditFormCancel {
 	color: #116988;;
 	cursor: pointer;

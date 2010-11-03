@@ -1,6 +1,6 @@
 <mediawiki xmlns="http://www.mediawiki.org/xml/export-0.4/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mediawiki.org/xml/export-0.4/ http://www.mediawiki.org/xml/export-0.4.xsd" version="0.4" xml:lang="en">
   <siteinfo>
-    <sitename>Halo3wiki</sitename>
+    <sitename>DevWiki</sitename>
     <base>http://localhost/trunk/index.php/Main_Page</base>
     <generator>MediaWiki 1.16.0</generator>
     <case>first-letter</case>
@@ -11,8 +11,8 @@
       <namespace key="1" case="first-letter">Talk</namespace>
       <namespace key="2" case="first-letter">User</namespace>
       <namespace key="3" case="first-letter">User talk</namespace>
-      <namespace key="4" case="first-letter">Halo3wiki</namespace>
-      <namespace key="5" case="first-letter">Halo3wiki talk</namespace>
+      <namespace key="4" case="first-letter">DevWiki</namespace>
+      <namespace key="5" case="first-letter">DevWiki talk</namespace>
       <namespace key="6" case="first-letter">File</namespace>
       <namespace key="7" case="first-letter">File talk</namespace>
       <namespace key="8" case="first-letter">MediaWiki</namespace>
@@ -27,20 +27,20 @@
       <namespace key="103" case="first-letter">Property talk</namespace>
       <namespace key="104" case="first-letter">Type</namespace>
       <namespace key="105" case="first-letter">Type talk</namespace>
+      <namespace key="106" case="first-letter">Form</namespace>
+      <namespace key="107" case="first-letter">Form talk</namespace>
       <namespace key="108" case="first-letter">Concept</namespace>
       <namespace key="109" case="first-letter">Concept talk</namespace>
-      <namespace key="300" case="first-letter">ACL</namespace>
-      <namespace key="301" case="first-letter">ACL talk</namespace>
       <namespace key="700" case="first-letter">Comment</namespace>
       <namespace key="701" case="first-letter">Comment talk</namespace>
     </namespaces>
   </siteinfo>
   <page>
     <title>Category:Comment</title>
-    <id>62155</id>
+    <id>8</id>
     <revision>
-      <id>63399</id>
-      <timestamp>2010-10-23T13:42:16Z</timestamp>
+      <id>9</id>
+      <timestamp>2010-11-03T13:05:50Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -63,14 +63,16 @@
   </page>
   <page>
     <title>Template:Comment</title>
-    <id>62156</id>
+    <id>9</id>
     <revision>
-      <id>63432</id>
-      <timestamp>2010-10-26T10:12:18Z</timestamp>
+      <id>11</id>
+      <timestamp>2010-11-03T13:05:50Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
+      <minor/>
+      <comment>1 revision</comment>
       <text xml:space="preserve">&lt;noinclude&gt;{{Template
 |PAGENAME=Template:Comment
 |Has author=User:WikiSysop
@@ -131,14 +133,16 @@
   </page>
   <page>
     <title>Template:CommentResult</title>
-    <id>62157</id>
+    <id>10</id>
     <revision>
-      <id>63425</id>
-      <timestamp>2010-10-26T09:33:10Z</timestamp>
+      <id>13</id>
+      <timestamp>2010-11-03T13:05:50Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
+      <minor/>
+      <comment>1 revision</comment>
       <text xml:space="preserve">&lt;noinclude&gt;{{Template
 |PAGENAME=Template:CommentResult
 |Has author=User:WikiSysop
@@ -185,10 +189,10 @@
   </page>
   <page>
     <title>Template:ShowComments</title>
-    <id>62158</id>
+    <id>11</id>
     <revision>
-      <id>63405</id>
-      <timestamp>2010-10-23T13:42:19Z</timestamp>
+      <id>15</id>
+      <timestamp>2010-11-03T13:05:50Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -215,13 +219,16 @@
   </page>
   <page>
     <title>Template:ShowCommentsIntern</title>
-    <id>62159</id>
+    <id>12</id>
     <revision>
-      <id>63448</id>
-      <timestamp>2010-10-27T13:26:38Z</timestamp>
+      <id>17</id>
+      <timestamp>2010-11-03T13:05:50Z</timestamp>
       <contributor>
-        <ip>127.0.0.1</ip>
+        <username>WikiSysop</username>
+        <id>1</id>
       </contributor>
+      <minor/>
+      <comment>1 revision</comment>
       <text xml:space="preserve">&lt;noinclude&gt;{{Template
 |PAGENAME=Template:ShowCommentsIntern
 |Has author=User:WikiSysop
@@ -257,10 +264,10 @@
   </page>
   <page>
     <title>Property:Has comment person</title>
-    <id>62160</id>
+    <id>13</id>
     <revision>
-      <id>63409</id>
-      <timestamp>2010-10-23T13:42:22Z</timestamp>
+      <id>19</id>
+      <timestamp>2010-11-03T13:05:51Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -285,10 +292,10 @@
   </page>
   <page>
     <title>Property:Has comment rating</title>
-    <id>62161</id>
+    <id>14</id>
     <revision>
-      <id>63411</id>
-      <timestamp>2010-10-23T13:42:23Z</timestamp>
+      <id>21</id>
+      <timestamp>2010-11-03T13:05:51Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -314,10 +321,10 @@
   </page>
   <page>
     <title>Property:Has comment date</title>
-    <id>62162</id>
+    <id>15</id>
     <revision>
-      <id>63413</id>
-      <timestamp>2010-10-23T13:42:24Z</timestamp>
+      <id>23</id>
+      <timestamp>2010-11-03T13:05:51Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -341,11 +348,38 @@
     </revision>
   </page>
   <page>
-    <title>Property:Belongs to article</title>
-    <id>62163</id>
+    <title>Property:Has comment text</title>
+    <id>33</id>
     <revision>
-      <id>63415</id>
-      <timestamp>2010-10-23T13:42:25Z</timestamp>
+      <id>55</id>
+      <timestamp>2010-11-03T13:14:02Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <comment>Created page with &quot;{{Property |PAGENAME=Property:Has comment text |Has author=User:WikiSysop |part of=SMWplus Basic Ontology Section |Has default form=Form:Add and edit Property |rationale=Contains...&quot;</comment>
+      <text xml:space="preserve">{{Property
+|PAGENAME=Property:Has comment text
+|Has author=User:WikiSysop
+|part of=SMWplus Basic Ontology Section
+|Has default form=Form:Add and edit Property
+|rationale=Contains a comment text.
+|long description=This porperty contains the comment text of a comment created by the Collaboration Extension.
+}}
+{{Copyright of article
+|own work=True
+|copyright holder=Ontoprise GmbH
+|year=2009
+}}
+[[has domain and range::Category:Comment; | ]][[has type::Type:Text| ]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Belongs to article</title>
+    <id>16</id>
+    <revision>
+      <id>25</id>
+      <timestamp>2010-11-03T13:05:51Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -370,15 +404,16 @@
   </page>
   <page>
     <title>Property:Belongs to comment</title>
-    <id>714</id>
+    <id>17</id>
     <revision>
-      <id>1539</id>
-      <timestamp>2010-08-24T12:42:09Z</timestamp>
+      <id>27</id>
+      <timestamp>2010-11-03T13:05:51Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
-      <comment>Created page with '{{Property |PAGENAME=Property:Belongs to comment |Has author=User:WikiSysop |part of=SMWplus Basic Ontology Section |Has default form=Form:Add and edit Property |rationale=Used t…'</comment>
+      <minor/>
+      <comment>1 revision</comment>
       <text xml:space="preserve">{{Property
 |PAGENAME=Property:Belongs to comment
 |Has author=User:WikiSysop
@@ -397,10 +432,10 @@
   </page>
   <page>
     <title>Template:!</title>
-    <id>554</id>
+    <id>18</id>
     <revision>
-      <id>1675</id>
-      <timestamp>2010-09-06T10:19:52Z</timestamp>
+      <id>29</id>
+      <timestamp>2010-11-03T13:05:52Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -416,10 +451,10 @@ helper template for pipe symbol, which can e.g. not be used directly in template
   </page>
   <page>
     <title>Template:Category</title>
-    <id>561</id>
+    <id>19</id>
     <revision>
-      <id>1685</id>
-      <timestamp>2010-09-06T10:19:59Z</timestamp>
+      <id>31</id>
+      <timestamp>2010-11-03T13:05:52Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -482,10 +517,10 @@ This category is modified by the following rules: {{#sparql:[[Category:Rule]][[I
   </page>
   <page>
     <title>Template:Copyright of article</title>
-    <id>556</id>
+    <id>20</id>
     <revision>
-      <id>1677</id>
-      <timestamp>2010-09-06T10:19:54Z</timestamp>
+      <id>33</id>
+      <timestamp>2010-11-03T13:05:52Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -532,10 +567,10 @@ This category is modified by the following rules: {{#sparql:[[Category:Rule]][[I
   </page>
   <page>
     <title>Template:GNU Free Documentation License</title>
-    <id>557</id>
+    <id>21</id>
     <revision>
-      <id>1678</id>
-      <timestamp>2010-09-06T10:19:55Z</timestamp>
+      <id>35</id>
+      <timestamp>2010-11-03T13:05:52Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -570,10 +605,10 @@ GNU Free Documentation License
   </page>
   <page>
     <title>Template:Header for wiki parts</title>
-    <id>558</id>
+    <id>22</id>
     <revision>
-      <id>1679</id>
-      <timestamp>2010-09-06T10:19:55Z</timestamp>
+      <id>37</id>
+      <timestamp>2010-11-03T13:05:52Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -844,10 +879,10 @@ case: All content sections END
   </page>
   <page>
     <title>Template:Tablelongrow</title>
-    <id>463</id>
+    <id>23</id>
     <revision>
-      <id>1681</id>
-      <timestamp>2010-09-06T10:19:56Z</timestamp>
+      <id>39</id>
+      <timestamp>2010-11-03T13:05:53Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -874,10 +909,10 @@ case: All content sections END
   </page>
   <page>
     <title>Template:Tablerow</title>
-    <id>464</id>
+    <id>24</id>
     <revision>
-      <id>1682</id>
-      <timestamp>2010-09-06T10:19:57Z</timestamp>
+      <id>41</id>
+      <timestamp>2010-11-03T13:05:53Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -902,10 +937,10 @@ case: All content sections END
   </page>
   <page>
     <title>Template:Template</title>
-    <id>465</id>
+    <id>25</id>
     <revision>
-      <id>1718</id>
-      <timestamp>2010-09-06T10:20:25Z</timestamp>
+      <id>43</id>
+      <timestamp>2010-11-03T13:05:53Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -984,10 +1019,10 @@ Edit the page to see the template text.&lt;/includeonly&gt;&lt;noinclude&gt;
   </page>
   <page>
     <title>Template:Property</title>
-    <id>560</id>
+    <id>26</id>
     <revision>
-      <id>1684</id>
-      <timestamp>2010-09-06T10:19:58Z</timestamp>
+      <id>45</id>
+      <timestamp>2010-11-03T13:05:54Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -1040,52 +1075,6 @@ This property is modified by the following rules:&lt;br&gt;
 &lt;br&gt;
 &lt;/includeonly&gt;&lt;noinclude&gt;
 &lt;/noinclude&gt;</text>
-    </revision>
-  </page>
-  <page>
-    <title>Template:Cite web in help</title>
-    <id>555</id>
-    <revision>
-      <id>1676</id>
-      <timestamp>2010-09-06T10:19:53Z</timestamp>
-      <contributor>
-        <username>WikiSysop</username>
-        <id>1</id>
-      </contributor>
-      <minor/>
-      <comment>1 revision</comment>
-      <text xml:space="preserve">&lt;noinclude&gt;{{Bundle}}&lt;/noinclude&gt;{{Template
-|PAGENAME=Template:Cite web in help
-|Has author=User:WikiSysop
-|part of=SMWplus Basic Ontology Section, 
-|rationale=Displays a box in articles which fall under GFDL.
-|long description=__NOTITLE__
-|parameters=&lt;pre&gt;
-{{Cite web in help
-|wiki=
-|url=
-|title=
-|retrieved=
-|publisher=
-}}
-&lt;/pre&gt;
-}}
-{{Copyright of article
-|own work=True
-|copyright holder=Ontoprise GmbH
-|year=2009
-}}
-&lt;onlyinclude&gt;&lt;noinclude&gt;&lt;/noinclude&gt;
-
-&lt;includeonly&gt;&lt;/includeonly&gt;
-&lt;div style=&quot;border: 1px solid rgb(240, 240, 240); margin-bottom: 15px; padding-left: 10px; font-family: tahoma,sans-serif; font-size: x-small;&quot;&gt;
-
-
-;References &lt;br&gt;
-
-The content of this page uses material from the article [{{{url}}} {{{title}}}] published by {{{publisher}}} (retrieved on {{{retrieved}}}).&lt;br&gt; This article is licensed under the [[GNU Free Documentation License|GNU Free Documentation License]].
-&lt;/div&gt;
-&lt;noinclude&gt;&lt;/noinclude&gt;&lt;/onlyinclude&gt;</text>
     </revision>
   </page>
 </mediawiki>

@@ -56,13 +56,10 @@ function CECommentForm() {
 	 */
 	this.processForm = function() {
 		//1. disable form
-		var cf = $jq('#collabComForm');
-		$jq('#collabComFormTextarea').attr('disabled', 'disabled');
-		$jq('#collabComFormSubmitbuttonID').attr('disabled', 'disabled');
-		$jq('#collabComFormResetbuttonID').attr('disabled', 'disabled');
-		
+		$jq('#collabComForm *:input').attr('disabled', 'disabled');
+
 		//2. and add pending indicator
-		if (this.pendingIndicatorCF == null) {
+		if ( typeof(this.pendingIndicatorCF) === 'undefined' || this.pendingIndicatorCF === null ) {
 			this.pendingIndicatorCF = new CPendingIndicator($jq('#collabComFormTextarea'));
 		}
 		this.pendingIndicatorCF.show();
@@ -73,22 +70,19 @@ function CECommentForm() {
 		
 		//rating
 		var ratingString = '';
-
-		if ( this.ratingValue != null) {
+		if ( this.ratingValue !== null ) {
 			ratingString = '|CommentRating=' + this.ratingValue;
 		}
 
 		// textarea
 		var textArea = ($jq('#collabComFormTextarea').val())? $jq('#collabComFormTextarea').val(): '';
-		if(textArea.length==0 || this.textareaIsDefault) {
+		if( textArea.length === 0 || this.textareaIsDefault ) {
 			this.pendingIndicatorCF.hide();
 			$jq('#collabComFormMessage').attr('class', 'failure');
 			$jq('#collabComFormMessage').html(ceLanguage.getMessage('ce_invalid'));
 			$jq('#collabComFormMessage').show('slow');
 			// enable form again
-			$jq('#collabComFormTextarea').attr('disabled', false);
-			$jq('#collabComFormSubmitbuttonID').attr('disabled', false);
-			$jq('#collabComFormResetbuttonID').attr('disabled', false);
+			$jq('#collabComForm *:input').removeAttr('disabled');
 			return false;
 		} else {
 			// hide possibly shown message div
@@ -100,14 +94,14 @@ function CECommentForm() {
 		textArea = textArea.replace(/>/g,'&gt;');
 		textArea = this.textEncode(textArea);
 		var userNameString = '';
-		if( wgUserName != null && ceUserNS != null ) {
-			userNameString = '|CommentPerson=' + ceUserNS + ':' + wgUserName;
+		if( wgUserName !== null && wgCEUserNS !== null ) {
+			userNameString = '|CommentPerson=' + wgCEUserNS + ':' + wgUserName;
 		} else {
 			userNameString = '|CommentPerson=';
 		}
 
 		var relatedCommentString = '';
-		if(this.replyCommentName != null) {
+		if( this.replyCommentName !== null ) {
 			relatedCommentString = '|CommentRelatedComment=' + this.replyCommentName;
 		}
 
@@ -141,22 +135,19 @@ function CECommentForm() {
 		this.pendingIndicatorCF.hide();
 		$jq('#collabComForm').get(0).reset();
 		$jq('#collabComForm').hide();
-		$jq('#collabComFormTextarea').removeAttr('disabled');
-		$jq('#collabComFormSubmitbuttonID').removeAttr('disabled');
-		$jq('#collabComFormResetbuttonID').removeAttr('disabled');
+		$jq('#collabComForm *:input').removeAttr('disabled');
 		var comMessage = $jq('#collabComFormMessage');
 		comMessage.show();
-		if ( valueEl.nodeType == 1 ) {
-			var valueCode = valueEl.firstChild.nodeValue
-			if ( valueCode == 0 ){
+		if ( valueEl.nodeType === 1 ) {
+			var valueCode = valueEl.firstChild.nodeValue;
+			if ( valueCode === '0' ){
 				//fine.
-				//reset, hide and enable form again
 				comMessage.attr('class', 'success');
 				comMessage.html(htmlmsg + ceLanguage.getMessage('ce_reload'));
 				//add pending span
 				var pendingSpan = this.createDOMElement('span', 'collabComFormPending');
 				comMessage.append(pendingSpan);
-				if (this.pendingIndicatorMsg == null) {
+				if (typeof(this.pendingIndicatorMsg) === 'undefined' || this.pendingIndicatorMsg === null) {
 					this.pendingIndicatorMsg = new CPendingIndicator($jq('#collabComFormPending'));
 				}
 				this.pendingIndicatorMsg.show();
@@ -172,13 +163,11 @@ function CECommentForm() {
 					}
 				}
 				return true;
-			} else if ( valueCode == 1 || valueCode == 2 ) {
+			} else if ( valueCode === '1' || valueCode === '2' ) {
 				//error, article already exists or permisson denied.
 				this.pendingIndicatorCF.hide();
 				$jq('#collabComFormMessage').attr('class', 'failure');
 				comMessage.html(htmlmsg);
-			} else {
-				// sthg's really gone wrong
 			}
 		}
 		return false;
@@ -187,6 +176,7 @@ function CECommentForm() {
 	/**
 	 * This function deletes a single comment page.
 	 * @param pageName
+	 * @param container
 	 */
 	this.deleteComment = function(pageName, container) {
 		this.overlayName = container;
@@ -195,7 +185,7 @@ function CECommentForm() {
 		$jq('.ceOverlayDetails', comEl).html(ceLanguage.getMessage('ce_deleting'));
 		var pendingSpan = this.createDOMElement('span', 'collabComDelPending');
 		$jq('.ceOverlayDetails', comEl).append(pendingSpan);
-		if (this.pendingIndicatorDel == null) {
+		if (typeof(this.pendingIndicatorDel) === 'undefined' || this.pendingIndicatorDel === null) {
 			this.pendingIndicatorDel = new CPendingIndicator($jq('#collabComDelPending'));
 		}
 		this.pendingIndicatorDel.show();
@@ -216,10 +206,10 @@ function CECommentForm() {
 		var divId = '#' + page;
 		var comEditMessage = this.createDOMElement('div', 'collabComEditFormMessage');
 		$jq(divId).before($jq(comEditMessage));
-		if ( valueEl.nodeType == 1 ) {
-			var valueCode = valueEl.firstChild.nodeValue
+		if ( valueEl.nodeType === 1 ) {
+			var valueCode = valueEl.firstChild.nodeValue;
 			this.pendingIndicatorDel.hide();
-			if ( valueCode == 0 ){
+			if ( valueCode === '0' ){
 				//fine.
 				htmlmsg += ceLanguage.getMessage('ce_reload');
 				// close overlay -> just click the button
@@ -228,7 +218,7 @@ function CECommentForm() {
 				$jq(comEditMessage).html(htmlmsg);
 				var pendingSpan = this.createDOMElement('span', 'collabComDelPending');
 				$jq(comEditMessage).append(pendingSpan);
-				if (this.pendingIndicatorDel2 == null) {
+				if (typeof(this.pendingIndicatorDel2) === 'undefined' || this.pendingIndicatorDel2 === null) {
 					this.pendingIndicatorDel2 = new CPendingIndicator($jq('#collabComDelPending'));
 				}
 				this.pendingIndicatorDel2.show();
@@ -244,7 +234,7 @@ function CECommentForm() {
 					}
 				}
 				return true;
-			} else if ( valueCode == 1 || valueCode == 2 ) {
+			} else if ( valueCode === '1' || valueCode === '2' ) {
 				// error, article already exists or permisson denied.
 				$jq(comEditMessage).addClass('failure');
 				$jq(comEditMessage).html(htmlmsg);
@@ -261,6 +251,7 @@ function CECommentForm() {
 	 * "edit comment" was clicked. Provide the comment form.
 	 */
 	this.editCommentForm = function(pageName) {
+		var ratingDiv, ratingExistent, editRatingValue;
 		this.editCommentName = pageName;
 		this.editCommentRelatedComment = $jq('#' + pageName.replace(/(:|\.)/g,'\\$1') + ' .collabComResInfoSuper').html();
 		if (this.editMode) {
@@ -276,11 +267,12 @@ function CECommentForm() {
 		this.savedCommentContent = content;
 		content = this.textDecode(content);
 		$jq('#' + pageName.replace(/(:|\.)/g,'\\$1') + ' .collabComResText').toggle();
+		$jq('#' + pageName.replace(/(:|\.)/g,'\\$1') + ' .collabComResRight').css(
+			'width', '85%'
+		);
 		// rating only if rating is enabled
-		if( typeof(wgCEEnableRating) !== "undefined" ) {
+		if( typeof(wgCEEnableRating) !== 'undefined' ) {
 			var ratingIconSrc = $jq('#' + pageName.replace(/(:|\.)/g,'\\$1') + ' .collabComResRatingIcon img').attr('src');
-			var ratingExistent = null;
-			var editRatingValue = null;
 			if(ratingIconSrc) {
 				if (ratingIconSrc.match('Bad')) {
 					editRatingValue = -1;
@@ -302,7 +294,7 @@ function CECommentForm() {
 			var ratingSpan = this.createDOMElement('span', null, ['collabComFormGrey']);
 			$jq(ratingSpan).append($jq(ratingTextOpt));
 
-			var ratingDiv = this.createDOMElement('div', 'collabComEditFormRating');
+			ratingDiv = this.createDOMElement('div', 'collabComEditFormRating');
 			$jq(ratingDiv).append($jq(ratingText));
 			$jq(ratingDiv).append($jq(ratingSpan));
 			$jq(ratingDiv).append($jq(ratingTextOpt2));
@@ -312,7 +304,7 @@ function CECommentForm() {
 			var ratingIcon1 = this.createDOMElement('img',
 					'collabComEditFormRating1',
 					['collabComEditFormRatingImg'],
-					[['src', cegScriptPath + '/skins/Comment/icons/bad_inactive.png']]);
+					[['src', wgCEScriptPath + '/skins/Comment/icons/bad_inactive.png']]);
 			$jq(ratingIcon1).bind('click', function() {
 				ceCommentForm.switchEditRating('#collabComEditFormRating1',-1);
 			});
@@ -320,7 +312,7 @@ function CECommentForm() {
 			var ratingIcon2 = this.createDOMElement('img',
 					'collabComEditFormRating2',
 					['collabComEditFormRatingImg'],
-					[['src', cegScriptPath + '/skins/Comment/icons/neutral_inactive.png']]);
+					[['src', wgCEScriptPath + '/skins/Comment/icons/neutral_inactive.png']]);
 			$jq(ratingIcon2).bind('click', function() {
 				ceCommentForm.switchEditRating('#collabComEditFormRating2', 0);
 			});
@@ -328,7 +320,7 @@ function CECommentForm() {
 			var ratingIcon3 = this.createDOMElement('img',
 					'collabComEditFormRating3',
 					['collabComEditFormRatingImg'],
-					[['src', cegScriptPath + '/skins/Comment/icons/good_inactive.png']]);
+					[['src', wgCEScriptPath + '/skins/Comment/icons/good_inactive.png']]);
 			$jq(ratingIcon3).bind('click', function() {
 				ceCommentForm.switchEditRating('#collabComEditFormRating3', 1);
 			});
@@ -364,7 +356,9 @@ function CECommentForm() {
 		$jq(msgDiv).css('display', 'none');
 
 		$jq('#' + pageName.replace(/(:|\.)/g,'\\$1') + ' .collabComResText').html('');
-		$jq('#' + pageName.replace(/(:|\.)/g,'\\$1') + ' .collabComResText').append(ratingDiv);
+		if( typeof(ratingDiv) !== 'undefined' && ratingDiv !== null ) {
+			$jq('#' + pageName.replace(/(:|\.)/g,'\\$1') + ' .collabComResText').append(ratingDiv);
+		}
 		$jq('#' + pageName.replace(/(:|\.)/g,'\\$1') + ' .collabComResText').append(textarea);
 		$jq('#' + pageName.replace(/(:|\.)/g,'\\$1') + ' .collabComResText').append(submitButton);
 		$jq('#' + pageName.replace(/(:|\.)/g,'\\$1') + ' .collabComResText').append(cancelSpan);
@@ -383,12 +377,10 @@ function CECommentForm() {
 	 */
 	this.editExistingComment = function() {
 		//1. disable form tools
-		$jq('#collabComEditFormTextarea').attr('disabled', 'disabled');
-		$jq('#collabComEditFormSubmit').attr('disabled', 'disabled');
-		$jq('#collabComEditFormCancel').hide();
+		$jq('#' + this.editCommentName.replace(/(:|\.)/g,'\\$1') + ' *:input').attr('disabled', 'disabled');
 
 		//2. and add pending indicator
-		if (this.pendingIndicatorEF == null) {
+		if (typeof(this.pendingIndicatorEF) === 'undefined' || this.pendingIndicatorEF === null) {
 			this.pendingIndicatorEF = new CPendingIndicator($jq('#collabComEditFormTextarea'));
 		}
 		this.pendingIndicatorEF.show();
@@ -396,7 +388,7 @@ function CECommentForm() {
 		/* form params */
 		//rating
 		var ratingString = '';
-		if ( this.editRatingValue != null) {
+		if ( this.editRatingValue !== null) {
 			ratingString = '|CommentRating=' + this.editRatingValue;
 		}
 
@@ -412,12 +404,12 @@ function CECommentForm() {
 		if(!commentPerson) {
 			commentPerson = '';
 		} else {
-			var commentPerson = commentPerson.split(':');
+			commentPerson = commentPerson.split(':');
 			commentPerson = commentPerson.pop();
-			commentPerson = '|CommentPerson=' + ceUserNS + ':' + commentPerson;
+			commentPerson = '|CommentPerson=' + wgCEUserNS + ':' + commentPerson;
 		}
 		var relatedComment = '';
-		if(this.editCommentRelatedComment != null && this.editCommentRelatedComment != '') {
+		if(this.editCommentRelatedComment !== null && this.editCommentRelatedComment !== '') {
 			relatedComment = '|CommentRelatedComment=' + this.editCommentRelatedComment;
 		}
 		var pageContent = '{{Comment' +
@@ -447,11 +439,11 @@ function CECommentForm() {
 		var htmlmsg = resultDOM.getElementsByTagName('message')[0].firstChild.nodeValue;
 
 		this.pendingIndicatorEF.hide();
-		if ( valueEl.nodeType == 1 ) {
-			var valueCode = valueEl.firstChild.nodeValue
+		if ( valueEl.nodeType === 1 ) {
+			var valueCode = valueEl.firstChild.nodeValue;
 			var comEditMessage = this.createDOMElement('div', 'collabComEditFormMessage');
 			$jq('#' + this.editCommentName.replace(/(:|\.)/g,'\\$1')).before($jq(comEditMessage));
-			if ( valueCode == 0 ){
+			if ( valueCode === '0' ){
 				//fine.
 				//reset, hide and enable form again
 				$jq(comEditMessage).show();
@@ -460,7 +452,7 @@ function CECommentForm() {
 				//add pending span
 				var pendingSpan = this.createDOMElement('span', 'collabComEditFormPending');
 				$jq(comEditMessage).append(pendingSpan);
-				if (this.pendingIndicatorMsg == null) {
+				if (typeof(this.pendingIndicatorMsg) === 'undefined' || this.pendingIndicatorMsg === null) {
 					this.pendingIndicatorMsg = new CPendingIndicator($jq('#collabComEditFormPending'));
 				}
 				this.pendingIndicatorMsg.show();
@@ -476,12 +468,11 @@ function CECommentForm() {
 					}
 				}
 				return true;
-			} else if ( valueCode == 1 || valueCode == 2 ) {
+			} else if ( valueCode === '1' || valueCode === '2' ) {
 				//error, article already exists or permisson denied.
 				$jq(comEditMessage).addClass('failure');
 				$jq(comEditMessage).html(htmlmsg);
-			} else {
-				//sthg's really gone wrong
+				$jq('#' + this.editCommentName.replace(/(:|\.)/g,'\\$1') + ' *:input').removeAttr('disabled');
 			}
 		}
 		return false;
@@ -499,6 +490,9 @@ function CECommentForm() {
 		$jq('#' + pageName.replace(/(:|\.)/g,'\\$1') + ' .collabComResText').toggle();
 		$jq('#' + pageName.replace(/(:|\.)/g,'\\$1') + ' .collabComResText').html(this.savedCommentContent);
 		$jq('#' + pageName.replace(/(:|\.)/g,'\\$1') + ' .collabComResText').toggle();
+		$jq('#' + pageName.replace(/(:|\.)/g,'\\$1') + ' .collabComResRight').css(
+				'width', ''
+		);
 		$jq('.collabComReply', $jq('#' + pageName.replace(/(:|\.)/g,'\\$1'))).show();
 		return true;
 	};
@@ -516,7 +510,7 @@ function CECommentForm() {
 			($jq('#collabComFormHeader')).append(commentForm);
 		});
 		var resMargin = container.css('margin-left');
-		if ( typeof( resMargin ) != "undefined" ) {
+		if ( typeof( resMargin ) != 'undefined' ) {
 			var newMargin = (parseInt(resMargin) + 30);
 			commentForm.css( 'marginLeft', newMargin);
 		} else {
@@ -543,9 +537,13 @@ function CECommentForm() {
 		text = text.replace(/\]/g, '&#93;');
 		text = text.replace(/\//g, '&#47;');
 		text = text.replace(/\\/g, '&#92;');
-		// two leading spaces are interpreted as pre-tag 
-		text = text.replace(/ /g, '&nbsp;');
 		text = text.replace(/(\r\n|\r|\n)/g, '<br />');
+		//replace the leading whitespace with html entity for every line
+		var textLines = text.split('<br />');
+		for( var i=0; i <= textLines.length-1; i++ ){
+			textLines[i] = textLines[i].replace(/^\s/,'&nbsp;');
+		}
+		text = textLines.join('<br />');
 		return text;
 	};
 
@@ -553,10 +551,9 @@ function CECommentForm() {
 	 * Function to decode again.
 	 */
 	this.textDecode = function(text) {
-		// two leading spaces are interpreted as pre-tag 
-		text = text.replace(/&nbsp;/g, ' ');
-		text = text.replace(/<br>|<br \/>/g, '\n');
+		text = text.replace(/<br\/>|<br \/>|<br>/g, '\n');
 		// property & template cleaning:
+		text = text.replace(/&nbsp;/g, ' ');
 		text = text.replace(/&#58;/g, ':');
 		text = text.replace(/&#123;/g,'}');
 		text = text.replace(/&#123;/g, '{');
@@ -572,7 +569,8 @@ function CECommentForm() {
 	 */
 	this.formReset = function() {
 		this.textareaIsDefault = true;
-		if (this.ratingValue != null) {
+		this.replyCommentName = null;
+		if (this.ratingValue !== null) {
 			var oldhtmlid = '#collabComFormRating' + String(this.ratingValue + 2);
 			$jq(oldhtmlid).attr('src', $jq(oldhtmlid).attr('src').replace(/_active/g, '_inactive'));
 			this.ratingValue = null;
@@ -602,7 +600,7 @@ function CECommentForm() {
 	 */
 	this.switchRating = function( htmlid, ratingValue ) {
 		var ratingHTML = $jq(htmlid);
-		var ratingImg = cegScriptPath + '/skins/Comment/icons/';
+		var ratingImg = wgCEScriptPath + '/skins/Comment/icons/';
 		var oldhtmlid = '#collabComFormRating' + String(this.ratingValue + 2);
 		$jq(oldhtmlid).attr('src', $jq(oldhtmlid).attr('src').replace(/_active/g, '_inactive'));
 		if ( this.ratingValue == ratingValue ) {
@@ -626,7 +624,7 @@ function CECommentForm() {
 	 */
 	this.switchEditRating = function( htmlid, ratingValue ) {
 		var ratingHTML = $jq(htmlid);
-		var ratingImg = cegScriptPath + '/skins/Comment/icons/';
+		var ratingImg = wgCEScriptPath + '/skins/Comment/icons/';
 		var oldhtmlid = '#collabComEditFormRating' + String(this.editRatingValue + 2);
 		$jq(oldhtmlid).attr('src', $jq(oldhtmlid).attr('src').replace(/_active/g, '_inactive'));
 		if ( this.editRatingValue == ratingValue ) {
@@ -676,9 +674,9 @@ function CECommentForm() {
 		if(newView == this.currentView) {
 			return true;
 		} else {
-			if(newView == 0) {
-				this.showThreaded()
-			} else if (newView == 1) {
+			if(newView === 0) {
+				this.showThreaded();
+			} else if (newView === 1) {
 				this.showFlat();
 			}
 		}
@@ -731,23 +729,21 @@ function CECommentForm() {
 		// format comments
 		$jq('.collabComRes').each( function(i, resCom ){
 			var resComInfo = $jq('.collabComResInfo', resCom);
-			// name of actual comment
-			var resComName = resComInfo.html();
 			var superComInfo = $jq('.collabComResInfoSuper', resCom);
 			// name of the comment, the actual comment is related to (if there's one)
 			var superComName = superComInfo.html();
-			if(typeof( superComName ) != "undefined" && 
-					superComName != null && superComName != false && superComName != '') {
+			if(typeof( superComName ) !== 'undefined' && 
+					superComName !== null && superComName !== false && superComName !== '') {
 				var resMargin = $jq('#' + superComName.replace(/(:|\.)/g, '\\$1')).css('margin-left');
 				var newMargin = "30";
-				if ( typeof( resMargin ) != "undefined" ) {
+				if ( typeof( resMargin ) !== 'undefined' ) {
 					newMargin = (parseInt(resMargin) + 30);
 				}
 				// check if there are "child" comments
 				var name = ceCommentForm.getLastChildComment(superComName);
-				if(name != superComName) {
+				if(name !== superComName) {
 					// child found. add behind.
-					$jq('#' + name.replace(/(:|\.)/g, '\\$1')).after($jq(resCom))	
+					$jq('#' + name.replace(/(:|\.)/g, '\\$1')).after($jq(resCom));
 				} else {
 					// no child found
 					$jq('#' + superComName.replace(/(:|\.)/g, '\\$1')).after($jq(resCom));
@@ -769,7 +765,7 @@ function CECommentForm() {
 		var childComments = $jq('.comRearranged').filter(function(index) {
 			var indSuperComName = $jq('.collabComResInfoSuper',this);
 			return indSuperComName.html() == commentName;
-		})
+		});
 		if(childComments.length > 0){
 			lastChildComment = childComments[childComments.length-1];
 			return this.getLastChildComment($jq(lastChildComment).attr('id'));
@@ -790,11 +786,8 @@ function CECommentForm() {
 		}
 		var avgRating = 0;
 		$jq('.collabComResRatingIcon').each( function(){
-			var moooo = $jq('img', this).attr('src');
 			if( $jq('img', this).attr('src').indexOf("Bad") >=0 ) {
 				avgRating--;
-			} else if ($jq('img', this).attr('src').indexOf("Neutral") >=0 ) {
-				// do nothing
 			} else if ($jq('img', this).attr('src').indexOf("Good") >=0 ) {
 				avgRating++;
 			}
@@ -812,7 +805,9 @@ function CECommentForm() {
 		var expandedHead = this.addHeaderText();
 		if(expandedHead === true) {
 			this.addCommentToggler();
-			this.addFormToggler(true);
+			if( typeof(wgCECommentsDisabled) === 'undefined' || wgCECommentsDisabled === false ) {
+				this.addFormToggler(true); //remove header
+			}
 			this.addHeaderView();
 			this.addHeaderRating();
 		}
@@ -938,7 +933,7 @@ function CECommentForm() {
 			var ratingIconDiv = this.createDOMElement('div', null, ['collabComInternRatingIcon']);
 			
 			var ratingIcon = this.createDOMElement('img');
-			var ratingIconSrc = cegScriptPath + '/skins/Comment/icons/';
+			var ratingIconSrc = wgCEScriptPath + '/skins/Comment/icons/';
 			if(this.averageRating < -0.33) {
 				$jq(ratingIcon).attr('src', ratingIconSrc + 'bad_active.png');
 			} else if(this.averageRating >= -0.33 && this.averageRating <= 0.33 ) {
@@ -1059,7 +1054,8 @@ $jq(document).ready(
 $jq(document).ready(
 	function(){
 		// build header
-		ceCommentForm.buildHeader();// format comments
+		ceCommentForm.buildHeader();
+		// format comments
 		var resultComments = $jq('.collabComRes');
 		$jq.each(resultComments, function(i, resCom ){
 			var resComInfo = $jq('.collabComResInfo', resCom);
@@ -1069,61 +1065,62 @@ $jq(document).ready(
 			if(!commentPerson) {
 				commentPerson = '';
 			} else {
-				var commentPerson = commentPerson.split(':');
+				commentPerson = commentPerson.split(':');
 				commentPerson = commentPerson.pop();
 			}
-			if( (typeof( cegUserIsSysop ) != "undefined" && cegUserIsSysop != null && cegUserIsSysop != false) ||
-					(wgUserName != null && commentPerson == wgUserName) ) {
+			if( (typeof( wgCEUserIsSysop ) !== 'undefined' && wgCEUserIsSysop !== null &&
+					wgCEUserIsSysop !== false) || (wgUserName !== null && commentPerson == wgUserName) ) {
 				//Overlay for deleting comments
 				var overlayDiv = ceCommentForm.createOverlay(i, resComName);
 				var divEl = ceCommentForm.createDOMElement('div',
 						'ceDel' + escape(resComName),
 						['collabComDel'],
 						[['title', ceLanguage.getMessage('ce_delete_title')],['rel', '#overlay_' + i]]);
-				$jq(divEl).css({'display' : 'inline', 'cursor' : 'pointer', 'color':'blue'});
 				$jq(divEl).bind('click', function() {
 					$jq('#' + resComName.replace(/(:|\.)/g,'\\$1')).addClass('collabComDelSelected');
 				});
 				var delImgEl = ceCommentForm.createDOMElement('img',
 						null,
 						['collabComDeleteImg'],
-						[['src', cegScriptPath + '/skins/Comment/icons/Delete_button.png']]);
+						[['src', wgCEScriptPath + '/skins/Comment/icons/Delete_button.png']]);
 				$jq(divEl).append($jq(delImgEl));
 				$jq('.collabComResDate', resCom).after(divEl);
 				$jq('#collabComResults').after(overlayDiv);
 
-				// edit
-				var divEl = ceCommentForm.createDOMElement('div',
-						null,
-						['collabComEdit'],
-						[['title', ceLanguage.getMessage('ce_edit_title')]]);
-				$jq(divEl).css({'display' : 'inline', 'cursor' : 'pointer', 'color' : 'blue'});
-				$jq(divEl).bind('click', function() {
-					ceCommentForm.editCommentForm(resComName);
-				});
-				var imgEl = ceCommentForm.createDOMElement('img',
-						null,
-						['collabComEditImg'],
-						[['src', cegScriptPath + '/skins/Comment/icons/Edit_button2.png']]);
-				$jq(divEl).append($jq(imgEl));
-				$jq('.collabComResDate', resCom).after(divEl);
+				if( typeof(wgCECommentsDisabled) === 'undefined' || wgCECommentsDisabled === false ) {
+					// edit
+					var divEl = ceCommentForm.createDOMElement('div',
+							null,
+							['collabComEdit'],
+							[['title', ceLanguage.getMessage('ce_edit_title')]]);
+					$jq(divEl).bind('click', function() {
+						ceCommentForm.editCommentForm(resComName);
+					});
+					var imgEl = ceCommentForm.createDOMElement('img',
+							null,
+							['collabComEditImg'],
+							[['src', wgCEScriptPath + '/skins/Comment/icons/Edit_button2.png']]);
+					$jq(divEl).append($jq(imgEl));
+					$jq('.collabComResDate', resCom).after(divEl);
+				}
 			}
-
-			// reply
-			var divEl = ceCommentForm.createDOMElement('div',
-					null,
-					['collabComReply'],
-					[['title', ceLanguage.getMessage('ce_reply_title')]], ceLanguage.getMessage('ce_com_reply'));
-			$jq(divEl).bind('click', function() {
-				ceCommentForm.replyCommentForm(resComName);
-			});
-			
-			var replyImgEl = ceCommentForm.createDOMElement('img',
-					null,
-					['collabComReplyImg'],
-					[['src', cegScriptPath + '/skins/Comment/icons/Reply_Comment.png']]);
-			$jq(divEl).append($jq(replyImgEl));
-			$jq('.collabComResText', resCom).after(divEl);
+			if( typeof(wgCECommentsDisabled) === 'undefined' || wgCECommentsDisabled === false ) {
+				// reply
+				var divEl = ceCommentForm.createDOMElement('span',
+						null,
+						['collabComReply'],
+						[['title', ceLanguage.getMessage('ce_reply_title')]], ceLanguage.getMessage('ce_com_reply'));
+				$jq(divEl).bind('click', function() {
+					ceCommentForm.replyCommentForm(resComName);
+				});
+				
+				var replyImgEl = ceCommentForm.createDOMElement('img',
+						null,
+						['collabComReplyImg'],
+						[['src', wgCEScriptPath + '/skins/Comment/icons/Reply_Comment.png']]);
+				$jq(divEl).append($jq(replyImgEl));
+				$jq('.collabComResText', resCom).after(divEl);
+			}
 		});
 		//clone actual structure without events (bind them again later)
 		ceCommentForm.savedStructure = $jq('#collabComResults').clone();
@@ -1175,12 +1172,12 @@ function CPendingIndicator(container) {
 	 */
 	this.show = function(container, alignment) {
 		//check if the content element is there
-		if($jq("#content") == null){
+		if($jq("#content") === null){
 			return;
 		}
 
 		var alignOffset = 0;
-		if (alignment != undefined) {
+		if (typeof(alignment) !== 'undefined') {
 			switch(alignment) {
 				case "right": { 
 					if (!container) { 
@@ -1195,7 +1192,7 @@ function CPendingIndicator(container) {
 		}
 			
 		//if not already done, append the indicator to the content element so it can become visible
-		if(this.contentElement == null) {
+		if(this.contentElement === null) {
 				this.contentElement = $jq("#content");
 				this.contentElement.append(this.pendingIndicator);
 		}

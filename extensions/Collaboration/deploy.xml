@@ -15,22 +15,21 @@
 			<dependency from="143">smw</dependency>
 			<dependency from="100" to="100">scriptmanager</dependency>
 			<dependency from="100">applicationprogramming</dependency>
-			<dependency from="145">semanticresultformats</dependency>
 		</dependencies>
 	</global>
 	<codefiles>
-		<file loc="extensions/Collaboration/deploy.xml" />
+		<file loc="deploy.xml" />
 		<!-- TODO: add others -->
 	</codefiles>
 	<wikidumps>
-		<file loc="extensions/Collaboration/import/collaboration.xml"/>
+		<file loc="import/collaboration.xml"/>
 	</wikidumps>
 	<resources>
-		<file loc="/extensions/Collaboration/skins/Comment/icons/defaultuser.gif" />
-		<file loc="/extensions/Collaboration/skins/Comment/icons/good_active.png" />
-		<file loc="/extensions/Collaboration/skins/Comment/icons/neutral_active.png" />
-		<file loc="/extensions/Collaboration/skins/Comment/icons/bad_active.png" />
-		<file loc="/extensions/Collaboration/skins/Comment/icons/Comment_icon_crystal.png" />
+		<file loc="skins/Comment/icons/defaultuser.gif" />
+		<file loc="skins/Comment/icons/good_active.png" />
+		<file loc="skins/Comment/icons/neutral_active.png" />
+		<file loc="skins/Comment/icons/bad_active.png" />
+		<file loc="skins/Comment/icons/Comment_icon_crystal.png" />
 	</resources>
 	<configs>
 		<new>
