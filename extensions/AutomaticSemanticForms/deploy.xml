@@ -21,7 +21,7 @@
 	</global>
 	<codefiles>
 
-		<file loc="extensions/AutomaticSemanticForms/deploy.xml" />
+		<file loc="deploy.xml" />
 		<!-- TODO: add all others -->
 	</codefiles>
 	<wikidumps>
