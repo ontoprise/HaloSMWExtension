@@ -41,6 +41,8 @@ if (array_key_exists('SERVER_NAME', $_SERVER) && $_SERVER['SERVER_NAME'] != NULL
 $mediaWikiLocation = dirname(__FILE__) . '/../../..';
 require_once "$mediaWikiLocation/maintenance/commandLine.inc";
 
+$delay = 5;
+
 if (array_key_exists('d', $options)) {
 	$delay = $options['d'];
 }
