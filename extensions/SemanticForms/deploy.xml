@@ -18,7 +18,7 @@
     </global>
     <codefiles>
 
-        <file loc="extensions/SemanticForms/deploy.xml" />
+        <file loc="deploy.xml" />
         <!-- TODO: add all others -->
     </codefiles>
     <wikidumps>
@@ -33,10 +33,10 @@
         <new>
             <require name="sf_init"
                 file="extensions/SemanticForms/includes/SF_Settings.php" />
-            <patch file="extensions/SemanticForms/patch.txt" />
+            <patch file="patch.txt" />
         </new>
             <uninstall>
-        <patch file="extensions/SemanticForms/patch.txt" />
+        <patch file="patch.txt" />
     </uninstall>
     </configs>
 
