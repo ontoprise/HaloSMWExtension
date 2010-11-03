@@ -26,7 +26,7 @@
         <precedes ext="smw" />
 
         <new>
-            <patch file="extensions/SemanticResultFormats/patch.txt" />
+            <patch file="patch.txt" />
             <require name="srf"
                 file="extensions/SemanticResultFormats/SRF_Settings.php" />
      
