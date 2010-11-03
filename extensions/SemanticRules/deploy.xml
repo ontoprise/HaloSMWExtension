@@ -31,11 +31,11 @@
 				file="extensions/SemanticRules/includes/SR_Initialize.php" />
 			
 			<script
-				file="extensions/SemanticRules/maintenance/setup.php" />
+				file="maintenance/setup.php" />
 		</new>
 		<uninstall>
 			<script
-				file="extensions/SemanticRules/maintenance/setup.php"
+				file="maintenance/setup.php"
 				params="--delete" />
 		</uninstall>
 	</configs>
