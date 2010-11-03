@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <deploydescriptor>
 	<global>
-		<version>152</version>
+		<version>133</version>
 		<id>wysiwyg</id>
 		<vendor>Ontoprise GmbH</vendor>
 		<maintainer>Ontoprise GmbH</maintainer>
@@ -16,7 +16,7 @@
 	</global>
 	<codefiles>
 
-		<file loc="extensions/FCKeditor/deploy.xml" />
+		<file loc="deploy.xml" />
 		<!-- TODO: add all others -->
 	</codefiles>
 	<wikidumps>
