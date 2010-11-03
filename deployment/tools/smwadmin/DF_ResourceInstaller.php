@@ -64,11 +64,12 @@ class ResourceInstaller {
 		$wikidumps = $dd->getWikidumps();
 		foreach($wikidumps as $file) {
 			print "\nImport ontology: $file";
-			if (!file_exists($this->rootDir."/".$file)) {
-				print "\n\t[WARNING]: dump file '".$this->rootDir."/".$file."' does not exist.";
+			$dumpPath = $this->rootDir."/". $dd->getInstallationDirectory()."/".$file;
+			if (!file_exists($dumpPath)) {
+				print "\n\t[WARNING]: dump file '".$dumpPath."' does not exist.";
 				continue;
 			}
-			$result = $reader->importFromFile( $this->rootDir."/".$file );
+			$result = $reader->importFromFile($dumpPath );
 		}
 		if (!is_null($fromVersion)) {
 			// remove old pages
@@ -224,7 +225,7 @@ class ResourceInstaller {
 		print "\nUploading resources...";
 		$resources = $dd->getResources();
 		foreach($resources as $file) {
-			$resourcePath = $this->rootDir."/".$file;
+			$resourcePath = $this->rootDir."/".$dd->getInstallationDirectory()."/".$file;
 			if (!file_exists($resourcePath)) {
 				print "\n\t[WARNING]: '$resourcePath' does not exist.";
 				continue;

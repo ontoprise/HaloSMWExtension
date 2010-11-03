@@ -249,7 +249,7 @@ class DeployWikiRevision extends WikiRevision {
 				$hash = md5($rawtext);
 
 				if (is_null($exp_hash)) {
-					print "\n\t[Import page] ".$this->title->getPrefixedText();
+					
 					return $this->mode == DEPLOYWIKIREVISION_INFO ? false : $this->importAsNewRevision();
 				}
 				if ($hash != $exp_hash) {
@@ -259,7 +259,7 @@ class DeployWikiRevision extends WikiRevision {
 						//@call_user_func(array(&$this->callback,"modifiedPage"), $this, $this->mode, & $result);
 					}
 					if ($result == true) {
-						print "\n\t[Import page] ".$this->title->getPrefixedText();
+						
 						return $this->importAsNewRevision();
 					}
 				}
@@ -348,7 +348,7 @@ class DeployWikiRevision extends WikiRevision {
 			$revId );
 		}
 		$GLOBALS['wgTitle'] = $tempTitle;
-
+        print "\n\t[Imported page] ".$this->title->getPrefixedText();
 		return true;
 	}
 }

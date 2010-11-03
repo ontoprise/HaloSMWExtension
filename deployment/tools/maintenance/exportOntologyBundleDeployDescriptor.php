@@ -143,7 +143,7 @@ function dumpDescriptor($bundeID, $output = "deploy.xml", $dumpFile = "dump.xml"
 
 	$xml .= "\t".'</global>'."\n";
 	$xml .= "\t".'<wikidumps>'."\n";
-	$xml .= "\t\t".'<file loc="'.$dumpFile.'"/>'."\n";
+	$xml .= "\t\t".'<file loc="'.strtolower($instdirText)."/".$dumpFile.'"/>'."\n";
 	$xml .= "\t".'</wikidumps>'."\n";
 	$xml .= "\t".'<resources>'."\n";
 	fwrite($handle, $xml);
