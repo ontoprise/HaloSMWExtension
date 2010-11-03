@@ -114,6 +114,9 @@ function smwgHaloSetupExtension() {
 	$wgAutoloadClasses['SMWAggregationResultPrinter'] = $smwgHaloIP . '/includes/queryprinters/SMW_QP_Aggregation.php';
 	$wgAutoloadClasses['SMWExcelResultPrinter'] = $smwgHaloIP . '/includes/queryprinters/SMW_QP_Excel.php';
 	$wgAutoloadClasses['SMWSPARQLQuery'] = $smwgHaloIP . '/includes/SMW_SPARQLQueryParser.php';
+    $wgAutoloadClasses['SMWChemicalFormulaTypeHandler'] = $smwgHaloIP . '/includes/SMW_DV_ChemFormula.php';
+	$wgAutoloadClasses['SMWChemicalEquationTypeHandler'] = $smwgHaloIP . '/includes/SMW_DV_ChemEquation.php';
+	$wgAutoloadClasses['SMWMathematicalEquationTypeHandler'] = $smwgHaloIP . '/includes/SMW_DV_MathEquation.php';
 
 	require_once $smwgHaloIP.'/includes/queryprinters/SMW_QP_Halo.php';
 
@@ -432,13 +435,10 @@ function smwfInitSpecialPropertyOfSMWHalo() {
  */
 function smwfHaloInitDatatypes() {
 	global $wgAutoloadClasses, $smwgHaloIP, $smwgHaloContLang;
-	$wgAutoloadClasses['SMWChemicalFormulaTypeHandler'] = $smwgHaloIP . '/includes/SMW_DV_ChemFormula.php';
 	SMWDataValueFactory::registerDatatype('_chf', 'SMWChemicalFormulaTypeHandler',
 	$smwgHaloContLang->getHaloDatatype('smw_hdt_chemical_formula'));
-	$wgAutoloadClasses['SMWChemicalEquationTypeHandler'] = $smwgHaloIP . '/includes/SMW_DV_ChemEquation.php';
 	SMWDataValueFactory::registerDatatype('_che', 'SMWChemicalEquationTypeHandler',
 	$smwgHaloContLang->getHaloDatatype('smw_hdt_chemical_equation'));
-	$wgAutoloadClasses['SMWMathematicalEquationTypeHandler'] = $smwgHaloIP . '/includes/SMW_DV_MathEquation.php';
 	SMWDataValueFactory::registerDatatype('_meq', 'SMWMathematicalEquationTypeHandler',
 	$smwgHaloContLang->getHaloDatatype('smw_hdt_mathematical_equation'));
 
