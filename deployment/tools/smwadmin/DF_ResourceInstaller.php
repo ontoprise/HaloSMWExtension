@@ -173,10 +173,11 @@ class ResourceInstaller {
 		foreach($codefiles as $f) {
 			if (strpos($f, $dd->getInstallationDirectory()) === 0) continue; // ignore these
 			print "\n\tRemove $f";
-			if (is_dir($this->rootDir."/".$f)) {
-				Tools::remove_dir($this->rootDir."/".$f);
-			} else if (file_exists($this->rootDir."/".$f)) {
-				unlink($this->rootDir."/".$f);
+			$path = $this->rootDir."/".$dd->getInstallationDirectory()."/".$f;
+			if (is_dir($path)) {
+				Tools::remove_dir($path);
+			} else if (file_exists($path)) {
+				unlink($path);
 			}
 		}
 	}

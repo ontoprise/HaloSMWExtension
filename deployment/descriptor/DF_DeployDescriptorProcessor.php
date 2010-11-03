@@ -128,9 +128,9 @@ class DeployDescriptionProcessor {
 	function applySetups() {
 		$rootDir = self::makeUnixPath(dirname($this->ls_loc));
 		foreach($this->dd_parser->getInstallScripts() as $setup) {
-			$instDir = self::makeUnixPath($this->dd_parser->getInstallationDirectory());
+			$instDir = trim(self::makeUnixPath($this->dd_parser->getInstallationDirectory()));
 			if (substr($instDir, -1) != '/') $instDir .= "/";
-			$script = self::makeUnixPath($setup['script']);
+			$script = $instDir.self::makeUnixPath($setup['script']);
 			if (!file_exists($rootDir."/".$script)) {
 				$this->errorMessages[] = "Warning: setup script at '$rootDir/$script' does not exist";
 				print "\nWarning: setup script at '$rootDir/$script' does not exist";
@@ -157,9 +157,9 @@ class DeployDescriptionProcessor {
 	function unapplySetups() {
 		$rootDir = self::makeUnixPath(dirname($this->ls_loc));
 		foreach($this->dd_parser->getUninstallScripts() as $setup) {
-			$instDir = self::makeUnixPath($this->dd_parser->getInstallationDirectory());
+			$instDir = trim(self::makeUnixPath($this->dd_parser->getInstallationDirectory()));
 			if (substr($instDir, -1) != '/') $instDir .= "/";
-			$script = self::makeUnixPath($setup['script']);
+			$script = $instDir.self::makeUnixPath($setup['script']);
 			if (!file_exists($rootDir."/".$script)) {
 				$this->errorMessages[] = "Warning: setup script at '$rootDir/$script' does not exist";
 				print "\nWarning: setup script at '$rootDir/$script' does not exist";
@@ -190,9 +190,9 @@ class DeployDescriptionProcessor {
 
 		foreach($this->dd_parser->getPatches($localPackages) as $patch) {
 
-			$instDir = self::makeUnixPath($this->dd_parser->getInstallationDirectory());
+			$instDir = trim(self::makeUnixPath($this->dd_parser->getInstallationDirectory()));
 			if (substr($instDir, -1) != '/') $instDir .= "/";
-			$patch = self::makeUnixPath($patch);
+			$patch = $instDir.self::makeUnixPath($patch);
 			$patchFailed = false;
 			if (!file_exists($rootDir."/".$patch)) {
 				$this->errorMessages[] = "Warning: patch at '$rootDir/$patch' does not exist";
@@ -245,9 +245,9 @@ class DeployDescriptionProcessor {
 		$localPackages = PackageRepository::getLocalPackages($rootDir.'/extensions');
 		foreach($this->dd_parser->getUninstallPatches($localPackages) as $patch) {
 
-			$instDir = self::makeUnixPath($this->dd_parser->getInstallationDirectory());
+			$instDir = trim(self::makeUnixPath($this->dd_parser->getInstallationDirectory()));
 			if (substr($instDir, -1) != '/') $instDir .= "/";
-			$patch = self::makeUnixPath($patch);
+			$patch = $instDir.self::makeUnixPath($patch);
 			if (!file_exists($rootDir."/".$patch)) {
 				$this->errorMessages[] = "Warning: patch at '$rootDir/$patch' does not exist";
 				print "\nWarning: patch at '$rootDir/$patch' does not exist";
