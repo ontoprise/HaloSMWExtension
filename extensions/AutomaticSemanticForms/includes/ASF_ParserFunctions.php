@@ -61,15 +61,13 @@ class ASFParserFunctions {
 			};
 			
 			$semanticData = $store->getSemanticData($title);
-			$minCardinality = 	
-				ASFFormGeneratorUtils::getPropertyValue($semanticData, ASF_PROP_HAS_MIN_CARDINALITY);
 			$maxCardinality = 
 				ASFFormGeneratorUtils::getPropertyValue($semanticData, ASF_PROP_HAS_MAX_CARDINALITY);
 			$delimiter = 
 				ASFFormGeneratorUtils::getPropertyValue($semanticData, ASF_PROP_DELIMITER);
 			
-			if($minCardinality > 1 || $maxCardinality > 1 ||  $delimiter){
-				if(!$delimiter) $delimiter = ',';
+			if($maxCardinality != 1 || $delimiter){
+				if(!$delimiter) $delimiter = ';';
 				
 				foreach(explode($delimiter, $value) as $val){
 					if(strlen(trim($val)) == 0) continue;
@@ -94,7 +92,7 @@ class ASFParserFunctions {
 		
 		if(array_key_exists(0, $args)){
 			$result .= "__asf_shownow:";
-			$showProperty['name'] = trim($args[0]);
+			$showProperty['name'] = str_replace(' ', '_' , trim($args[0]));
 			$result .= $showProperty['name'];
 		}
 		
@@ -125,7 +123,7 @@ class ASFParserFunctions {
 	 */
 	private static function getArgValue($value, $tag = 'value'){
 		$value = explode('<'.$tag.'>', $value);
-		$value = substr($value[1], 0, strrpos($value[1], '</'.$tag.'>'));
+		$value = substr($value[0], 0, strrpos($value[1], '</'.$tag.'>'));
 		$value = trim($value);
 		return $value;
 	}
@@ -137,8 +135,6 @@ class ASFParserFunctions {
 	public static function finallyRenderShowNow( &$parser, &$text ) {
 		global $asfShowNowProperties;
 		
-		//echo('<pre>'.print_r($asfShowNowProperties, true).'</pre>');
-		
 		global $asfFinallyRenderShowNowStarted;
 		if($asfFinallyRenderShowNowStarted) return true;
 		$asfFinallyRenderShowNowStarted = true;
@@ -147,7 +143,7 @@ class ASFParserFunctions {
 		
 		$semanticData = $parser->getOutput()->mSMWData;
 		
-		foreach($asfShowNowProperties as $prop){
+		foreach($asfShowNowProperties as $key => $prop){
 			if(strpos($text, "asf_shownow:".$prop['name']) === false) continue;
 			
 			$value = 	
@@ -164,8 +160,9 @@ class ASFParserFunctions {
 			}	
 				
 			$text = str_replace('__asf_shownow:'.$prop['name'], $value, $text);
+			unset($asfShowNowProperties[$key]);
 		}
-
+		
 		return true;
 	}
 }
