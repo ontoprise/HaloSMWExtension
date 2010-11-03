@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <deploydescriptor>
     <global>
-        <version>152</version>
+        <version>102</version>
         <id>smwusermanual</id>
         <vendor>Ontoprise GmbH</vendor>
         <maintainer>Ontoprise GmbH</maintainer>
@@ -29,11 +29,11 @@
                 file="extensions/SMWUserManual/includes/SMW_UserManual.php" />
             <function name="enableSMWUserManual">
             </function>
-            <script file="extensions/SMWUserManual/maintenance/UME_setup.php" params="-o" />
+            <script file="maintenance/UME_setup.php" params="-o" />
       
         </new>
         <uninstall>
-            <script file="extensions/SMWUserManual/maintenance/UME_setup.php" params="-d" />
+            <script file="maintenance/UME_setup.php" params="-d" />
         </uninstall>
     </configs>
 </deploydescriptor>
