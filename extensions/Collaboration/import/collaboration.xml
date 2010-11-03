@@ -65,14 +65,12 @@
     <title>Template:Comment</title>
     <id>9</id>
     <revision>
-      <id>11</id>
-      <timestamp>2010-11-03T13:05:50Z</timestamp>
+      <id>89</id>
+      <timestamp>2010-11-03T16:17:26Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
-      <minor/>
-      <comment>1 revision</comment>
       <text xml:space="preserve">&lt;noinclude&gt;{{Template
 |PAGENAME=Template:Comment
 |Has author=User:WikiSysop
@@ -127,6 +125,7 @@
 {{#if:{{{CommentContent|}}}
 |[[Has comment text::{{{CommentContent|}}}]]}}&lt;/div&gt;
 &lt;!-- end comment content--&gt;&lt;/div&gt;
+[[Comment was deleted::{{{CommentWasDeleted|false}}}]]
 &lt;!-- end comment --&gt;[[Category:Comment]]
 &lt;/includeonly&gt;</text>
     </revision>
@@ -135,8 +134,8 @@
     <title>Template:CommentResult</title>
     <id>10</id>
     <revision>
-      <id>58</id>
-      <timestamp>2010-11-03T13:53:29Z</timestamp>
+      <id>90</id>
+      <timestamp>2010-11-03T16:19:15Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -181,7 +180,7 @@
 --&gt;&lt;div class=&quot;collabComResDate&quot;&gt; {{{3}}}&lt;/div&gt;&lt;!-- end comment date
 --&gt;&lt;!-- start comment content
 --&gt;&lt;div class=&quot;collabComResText&quot;&gt;{{{4}}}&lt;/div&gt;&lt;/div&gt;&lt;!-- end comment content
---&gt;&lt;/div&gt;&lt;!-- end comment 
+--&gt;{{#if:{{{7|}}}|&lt;div class=&quot;collabComResDeletion&quot;&gt;{{{7|}}}&lt;/div&gt;&lt;!-- end deletion info --&gt;|}}&lt;/div&gt;&lt;!-- end comment 
 --&gt;&lt;/includeonly&gt;</text>
     </revision>
   </page>
@@ -219,14 +218,12 @@
     <title>Template:ShowCommentsIntern</title>
     <id>12</id>
     <revision>
-      <id>17</id>
-      <timestamp>2010-11-03T13:05:50Z</timestamp>
+      <id>82</id>
+      <timestamp>2010-11-03T16:01:55Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
-      <minor/>
-      <comment>1 revision</comment>
       <text xml:space="preserve">&lt;noinclude&gt;{{Template
 |PAGENAME=Template:ShowCommentsIntern
 |Has author=User:WikiSysop
@@ -251,6 +248,7 @@
   | ?Has comment text
   | ?Has comment rating
   | ?Belongs to comment
+  | ?Comment was deleted
   | format=template
   | template=CommentResult
   | link=none
@@ -370,6 +368,33 @@
 |year=2009
 }}
 [[has domain and range::Category:Comment; | ]][[has type::Type:Text| ]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Comment was deleted</title>
+    <id>36</id>
+    <revision>
+      <id>87</id>
+      <timestamp>2010-11-03T16:15:03Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <comment>Created page with &quot;{{Property |PAGENAME=Property:Comment was deleted |Has author=User:WikiSysop |part of=SMWplus Basic Ontology Section |Has default form=Form:Add and edit Property |rationale=Flag ...&quot;</comment>
+      <text xml:space="preserve">{{Property
+|PAGENAME=Property:Comment was deleted
+|Has author=User:WikiSysop
+|part of=SMWplus Basic Ontology Section
+|Has default form=Form:Add and edit Property
+|rationale=Flag for comment deletion.
+|long description=This property shows if the comment has been deleted with the Collaboration Extension.
+}}
+{{Copyright of article
+|own work=True
+|copyright holder=Ontoprise GmbH
+|year=2009
+}}
+[[has domain and range::Category:Comment; | ]][[has type::Type:Boolean| ]]</text>
     </revision>
   </page>
   <page>
