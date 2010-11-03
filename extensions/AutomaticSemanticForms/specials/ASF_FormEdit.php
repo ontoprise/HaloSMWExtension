@@ -13,12 +13,23 @@ class ASFFormEdit extends SFFormEdit {
 	 * 
 	 * It adds some ASF features and then calls its parent method
 	 */
-	function execute($query) {
+function execute($query) {
 		//get get parameters
 		global $wgRequest;
 		$categoryParam = $wgRequest->getVal('categories');
 		$targetName = $wgRequest->getVal('target');
 		$formName = $wgRequest->getVal('form');
+		
+		if(!$categoryParam){
+			$requestURL = $wgRequest->getRequestURL();
+			$requestURL = explode('/', $requestURL);
+			
+			if(strpos($requestURL[count($requestURL)-2], 'categories') === 0){
+				$categoryParam = $requestURL[count($requestURL)-2];
+				$categoryParam = substr($categoryParam, strlen('categories'));
+				$targetName = $requestURL[count($requestURL)-1];
+			}
+		}
 		
 		//Initialize category names array
 		$categoryNames = array();
@@ -54,6 +65,7 @@ class ASFFormEdit extends SFFormEdit {
 				global $asfDummyFormName;
 				ASFFormGeneratorUtils::createFormDummyIfNecessary();
 				$wgRequest->setVal('form', $asfDummyFormName);
+				$wgRequest->setVal('target', $targetName);
 			
 				global $asfFormDefData;
 				$asfFormDefData = array();		

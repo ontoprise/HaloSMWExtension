@@ -5,7 +5,7 @@ define('ASF_PROP_HAS_TYPE', 'Has_type');
 define('ASF_PROP_HAS_DOMAIN_AND_RANGE', 'Has_domain_and_range');
 define('ASF_PROP_HAS_MIN_CARDINALITY', 'Has_min_cardinality');
 define('ASF_PROP_HAS_MAX_CARDINALITY', 'Has_max_cardinality');
-define('ASF_PROP_ALLOWS_VALUES', 'Allows_values');
+define('ASF_PROP_ALLOWS_VALUES', 'Allows_value');
 define('ASF_PROP_FORM_INPUT_LABEL', 'Form_input_label');
 define('ASF_PROP_USE_INPUT_TYPE', 'Use_input_type');
 define('ASF_PROP_IS_UPLOADABLE', 'Is_uploadable');

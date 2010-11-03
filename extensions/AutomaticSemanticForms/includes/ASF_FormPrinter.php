@@ -116,8 +116,6 @@ class ASFFormPrinter extends SFFormPrinter {
 			}
 		}
 		
-		echo('<br><br><br>'.$form_text);
-		
 		//echo('<pre>'.print_r($form_text, true).'</pre>');
 			
 		return array($form_text, $javascript_text, $data_text, $form_page_title, $generated_page_name);

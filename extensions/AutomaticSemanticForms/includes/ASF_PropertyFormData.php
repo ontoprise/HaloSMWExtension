@@ -130,7 +130,7 @@ class ASFPropertyFormData {
 		}
 		
 		//deal with multi value input fields
-		if($this->minCardinality > 1 || $this->maxCardinality > 1 || $this->delimiter){
+		if($this->maxCardinality != 1 || $this->delimiter){
 			$syntax .= ' |list';	
 		}
 		
@@ -321,7 +321,7 @@ class ASFPropertyFormData {
 			$additionalTips .= '<li>'.wfMsg('asf_tt_autocomplete', $this->autocompletionRange).'</li>';
 		}
 
-		if($this->minCardinality > 1 || $this->maxCardinality > 1 || $this->delimiter){
+		if($this->maxCardinality != 1 || $this->delimiter){
 			$delimiter = ($this->delimiter) ? $this->delimiter : ',';
 			$additionalTips .= '<li>'.wfMsg('asf_tt_delimiter', trim($delimiter)).'</li>';
 		}		
