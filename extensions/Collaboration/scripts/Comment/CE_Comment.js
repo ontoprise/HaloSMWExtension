@@ -1061,6 +1061,12 @@ $jq(document).ready(
 			var resComInfo = $jq('.collabComResInfo', resCom);
 			// name of actual comment
 			var resComName = resComInfo.html();
+			var resComDeleted = $jq('.collabComResDeletion', resCom);
+			if( resComDeleted.html() === 'true' ) {
+				$jq('.collabComResText', resCom).addClass('collabComDeleted');
+				// this comment has been marked as deleted -> step out
+				return true;
+			}
 			var commentPerson= $jq('.collabComResUsername > a', resCom).html();
 			if(!commentPerson) {
 				commentPerson = '';

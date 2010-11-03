@@ -118,6 +118,15 @@ div.collabComResText {
 	padding-top: 5px;
 }
 
+.collabComDeleted {
+	color: grey;
+	font-style: italic;
+}
+
+div.collabComResDeletion{
+	display: none;
+}
+
 div.collabComEdit {
 	display: inline;
 	cursor: pointer;

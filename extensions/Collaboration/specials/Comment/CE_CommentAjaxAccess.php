@@ -67,6 +67,7 @@ function cef_comment_editPage( $pageName, $pageContent) {
 
 
 function cef_comment_deleteComment($pageName) {
+	global $wgUser;
 	$pageName = CECommentUtils::unescape($pageName);
 	$result = wfMsg("ce_nothing_deleted");
 	$success = true;
@@ -77,7 +78,15 @@ function cef_comment_deleteComment($pageName) {
 				$title = Title::makeTitle(CE_COMMENT_NS, $title);
 			}
 			$article = new Article($title);
-			$article->doDelete(wfMsg('ce_comment_delete_reason'));
+			$articleContent = $article->getContent();
+			$date = new Datetime(null, new DateTimeZone('UTC'));
+			$articleContent = preg_replace('/\|CommentContent.*}}/',
+				'|CommentContent=' . $wgUser->getName() . ' ' .
+				wfMsg('ce_comment_has_deleted') . ' ' .
+				$date->format('r') . '|CommentWasDeleted=true|}}',
+				$articleContent);
+			$article->doEdit($articleContent, wfMsg('ce_comment_delete_reason'));
+//			$article->doDelete(wfMsg('ce_comment_delete_reason'));
 			$result = wfMsg('ce_comment_deletion_successful');
 			return CECommentUtils::createXMLResponse($result, '0', $pageName);
 		} catch(Exception $e ) {
