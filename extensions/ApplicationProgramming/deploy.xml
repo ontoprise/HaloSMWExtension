@@ -12,7 +12,7 @@
 		<helpurl>http://smwforum.ontoprise.com/smwforum/index.php/Help:Application_Programming_Extension</helpurl>
 	</global>
 	<codefiles>
-		<file loc="extensions/ApplicationProgramming/deploy.xml" />
+		<file loc="deploy.xml" />
 		<!-- TODO: add others -->
 	</codefiles>
 	<wikidumps>
