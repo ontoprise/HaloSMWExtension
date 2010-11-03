@@ -191,15 +191,18 @@ class DeployWikiExporter extends WikiExporter {
 
 
 		$order = 'ORDER BY page_id';
+		$groupby = '';
 		$limit = '';
 
 		if( $this->history == WikiExporter::FULL ) {
 			$join = 'page_id=rev_page';
+			$groupby = 'GROUP BY rev_id';
 		} elseif( $this->history == WikiExporter::CURRENT ) {
 			if ( $this->list_authors && $cond != '' )  { // List authors, if so desired
 				$this->do_list_authors ( $page , $revision , $cond );
 			}
 			$join = 'page_id=rev_page AND page_latest=rev_id';
+			$groupby = 'GROUP BY page_id';
 		} elseif ( is_array( $this->history ) ) {
 			$join = 'page_id=rev_page';
 			if ( $this->history['dir'] == 'asc' ) {
@@ -243,9 +246,9 @@ class DeployWikiExporter extends WikiExporter {
 			$page $pageindex,
 			$revision $revindex
 			$joinTables
-			WHERE $where $join
-			$order $limit";
-
+			WHERE $where $join 
+			$groupby $order $limit";
+            
 		} else {
 
 			$sql = "SELECT $straight * FROM
@@ -253,8 +256,8 @@ class DeployWikiExporter extends WikiExporter {
 			$revision $revindex,
 			$text
 			$joinTables
-			WHERE $where $join AND rev_text_id=old_id
-			$order $limit";
+			WHERE $where $join AND rev_text_id=old_id 
+			$groupby $order $limit";
 
 		}
 
