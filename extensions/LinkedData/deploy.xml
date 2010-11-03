@@ -17,12 +17,12 @@
 		<patchlevel>0</patchlevel>
 	</global>
 	<codefiles>
-		<file loc="extensions/LinkedData/deploy.xml" />
+		<file loc="deploy.xml" />
 
 		<!-- TODO: add others -->
 	</codefiles>
 	<wikidumps>
-		<file loc="extensions/LinkedData/wikidumps/MetaDataXSLT.xml"/>
+		<file loc="wikidumps/MetaDataXSLT.xml"/>
 	</wikidumps>
 	<resources>
 		<!-- empty -->
@@ -35,10 +35,10 @@
 				file="extensions/LinkedData/includes/LOD_Initialize.php" />
             <function name="enableLinkedData">
 			</function>
-			<script file="extensions/LinkedData/maintenance/LOD_Setup.php" />
+			<script file="maintenance/LOD_Setup.php" />
 		</new>
 		<uninstall>
-			<script file="extensions/LinkedData/maintenance/LOD_Setup.php"
+			<script file="maintenance/LOD_Setup.php"
 				params="--delete" />
 		</uninstall>
 	</configs>
