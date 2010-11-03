@@ -64,11 +64,11 @@ class ResourceInstaller {
 		$wikidumps = $dd->getWikidumps();
 		foreach($wikidumps as $file) {
 			print "\nImport ontology: $file";
-			if (!file_exists($this->rootDir."/".$dd->getInstallationDirectory()."/".$file)) {
-				print "\n\tWARNING: dump file '".$this->rootDir."/".$dd->getInstallationDirectory()."/".$file."' does not exist.";
+			if (!file_exists($this->rootDir."/".$file)) {
+				print "\n\t[WARNING]: dump file '".$this->rootDir."/".$file."' does not exist.";
 				continue;
 			}
-			$result = $reader->importFromFile( $this->rootDir."/".$dd->getInstallationDirectory()."/".$file );
+			$result = $reader->importFromFile( $this->rootDir."/".$file );
 		}
 		if (!is_null($fromVersion)) {
 			// remove old pages
@@ -202,7 +202,7 @@ class ResourceInstaller {
 		$wikidumps = $package->getWikidumps();
 		foreach($wikidumps as $file) {
 			if (!file_exists($this->rootDir."/".$file)) {
-				print "\n\tWARNING: dump file '".$this->rootDir."/".$file."' does not exist.";
+				print "\n\t[WARNING]: dump file '".$this->rootDir."/".$file."' does not exist.";
 				continue;
 			}
 			$result = $reader->importFromFile( $this->rootDir."/".$file );
@@ -224,12 +224,12 @@ class ResourceInstaller {
 		print "\nUploading resources...";
 		$resources = $dd->getResources();
 		foreach($resources as $file) {
-			$resourcePath = $this->rootDir."/".$dd->getInstallationDirectory()."/".$file;
+			$resourcePath = $this->rootDir."/".$file;
 			if (!file_exists($resourcePath)) {
-				print "\n\tWARNING: '$resourcePath' does not exist.";
+				print "\n\t[WARNING]: '$resourcePath' does not exist.";
 				continue;
 			}
-			print "\n\tImport '$resourcePath'";
+			print "\n\t[Import] ".Tools::shortenPath($resourcePath);
 			if (is_dir($resourcePath)) {
 				$this->importResources($resourcePath);
 			} else {
@@ -243,12 +243,12 @@ class ResourceInstaller {
 		print "\nCopying resources...";
 		$resources = $dd->getOnlyCopyResources();
 		foreach($resources as $file => $dest) {
-			$resourcePathSrc = $this->rootDir."/".$dd->getInstallationDirectory()."/".$file;
+			$resourcePathSrc = $this->rootDir."/".$file;
 			if (!file_exists($resourcePathSrc)) {
-				print "\n\tWARNING: '$resourcePathSrc' does not exist.";
+				print "\n\t[WARNING]: '$resourcePathSrc' does not exist.";
 				continue;
 			}
-			print "\n\tCopy '$resourcePathSrc' to '".$this->rootDir."/".$dest."'";
+			print "\n\t[Copy] '".Tools::shortenPath($resourcePathSrc)."' to '".Tools::shortenPath($this->rootDir."/".$dest)."'";
 			if (is_dir($resourcePathSrc)) {
 				Tools::copy_dir($resourcePathSrc, $this->rootDir."/".$dest);
 			} else {
@@ -269,7 +269,7 @@ class ResourceInstaller {
 		if (count($dd->getMappings()) ==  0) return;
 
 		if (!defined('LOD_NS_MAPPING')) {
-			print "\n\tWARNING: LinkedData extension is not installed. Can not install mappings.";
+			print "\n\t[WARNING]: LinkedData extension is not installed. Can not install mappings.";
 			return;
 		}
         
@@ -297,7 +297,7 @@ class ResourceInstaller {
 				list($file, $target) = $tuple;
 				$resourcePath = $this->rootDir."/".$dd->getInstallationDirectory()."/".$file;
 				if (!file_exists($resourcePath)) {
-					print "\n\tWARNING: '$resourcePath' does not exist.";
+					print "\n\t[WARNING]: '$resourcePath' does not exist.";
 					continue;
 				}
 				print "\n\tImport '$resourcePath'";

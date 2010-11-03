@@ -261,6 +261,17 @@ class Tools {
 		if (strlen($s) < 20) return "[$s]";
 		return "[".substr($s, 0, 10)."...".substr($s, -12)."]";
 	}
+	
+    /**
+     * Provides a shortend form of a path
+     * for displaying purposes.
+     * 
+     * @param string $s
+     */
+    public static function shortenPath($s) {
+        if (strlen($s) < 20) return "$s";
+        return substr($s, 0, 10)."...".substr($s, -12);
+    }
 
 	/**
 	 * Sorts and compacts versions. That means it filters out all doubles.

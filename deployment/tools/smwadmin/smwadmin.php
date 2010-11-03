@@ -137,7 +137,10 @@ for( $arg = reset( $args ); $arg !== false; $arg = next( $args ) ) {
 		if ($package === false) fatalError("No package found");
 		$packageToInstall[] = $package;
 		continue;
-	} else if ($arg == '-f') { // => force
+	} else if ($arg == '--install') { // => analyze installed dump
+        $dfgInstallPackages = true;
+		continue;
+    } else if ($arg == '-f') { // => force
 		$dfgForce = true;
 		continue;
 	} else if ($arg == '-r') { // => rollback last installation
@@ -192,6 +195,11 @@ if ($dfgGlobalUpdate) {
 // List all available packages and show which are installed.
 if ($dfgListPackages) {
 	$installer->listAvailablePackages($dfgShowDescription, $pattern);
+	die();
+}
+
+if ($dfgInstallPackages) {
+	$installer->initializePackages();
 	die();
 }
 

@@ -266,9 +266,9 @@ class Installer {
 		print "\n-------------------------------------------------------------------------\n";
 
 		foreach($allPackages as $p_id => $versions) {
-				
-				
-				
+
+
+
 			if (!is_null($pattern) && !empty($pattern)) { // filter packages
 				if (substr(trim($pattern),0,1) == '*') {
 					$cleanPattern = str_replace("*", "", $pattern);
@@ -294,7 +294,7 @@ class Installer {
 			$versionsShown = "(".implode(", ", $sep_v).")";
 			$versionsShown .= str_repeat(" ", 12-strlen($versionsShown) >= 0 ? 12-strlen($versionsShown) : 0);
 			print "\n $instTag $id_shown  $versionsShown ".Tools::shortenURL($v[2]);
-				
+
 			if ($showDescription && array_key_exists($p_id, $localPackages)) print "\n ".$localPackages[$p_id]->getDescription()."\n\n";
 		}
 		print "\n\n";
@@ -383,6 +383,7 @@ class Installer {
 	private function installOrUpdatePackages($extensions_to_update) {
 		$d = new HttpDownload();
 		$localPackages = PackageRepository::getLocalPackages($this->rootDir.'/extensions');
+		$num = 0;
 		foreach($extensions_to_update as $arr) {
 			list($desc, $min, $max) = $arr;
 			$id = $desc->getID();
@@ -412,29 +413,60 @@ class Installer {
 			}
 			$desc->applyConfigurations($this->instDir, false, $fromVersion, $this);
 			$this->errors = array_merge($this->errors, $desc->getLastErrors());
-			$this->res_installer->installOrUpdateResources($desc);
-			$this->res_installer->installOrUpdateWikidumps($desc, $fromVersion, $this->force ? DEPLOYWIKIREVISION_FORCE : DEPLOYWIKIREVISION_WARN);
-			$this->res_installer->installOrUpdateMappings($desc);
+			$handle = fopen($this->rootDir."/".$desc->getInstallationDirectory()."/init$.ext", "w");
+			fwrite($handle, $num.",".$fromVersion);
+			fclose($handle);
+			$num++;
 
 			print "\n-------\n";
 		}
 
+
+	}
+    
+	/**
+	 * Runs the setups scripts of the extensions and installs all resource files and wikidumps. 
+	 * 
+	 */
+	public function initializePackages() {
+		$localPackages = PackageRepository::getLocalPackagesToInitialize($this->rootDir.'/extensions');
+		ksort($localPackages, SORT_NUMERIC);
+		
 		// apply the setup operations which must not happen
 		// before all extensions are updated
-		foreach($extensions_to_update as $arr) {
-			list($desc, $min, $max) = $arr;
+		foreach($localPackages as $tupl) {
+			list($desc, $fromVersion) = $tupl;
+			try {
 			$desc->applySetups($this->instDir, false);
+			} catch(RollbackInstallation $e) {
+				// ignore here
+			}
+		}
+		
+        // do the actual work
+		foreach($localPackages as $tupl) {
+			list($desc, $fromVersion) = $tupl;
+			$this->res_installer->installOrUpdateResources($desc);
+			$this->res_installer->installOrUpdateWikidumps($desc, $fromVersion, $this->force ? DEPLOYWIKIREVISION_FORCE : DEPLOYWIKIREVISION_WARN);
+			$this->res_installer->installOrUpdateMappings($desc);
 		}
 
 		// print (optional) notices
-		foreach($extensions_to_update as $arr) {
-			list($desc, $min, $max) = $arr;
+		foreach($localPackages as $tupl) {
+			list($desc, $fromVersion) = $tupl;
 			$notice = $desc->getNotice();
 			if ($notice !== '') print "\n\tNOTICE: $notice";
 		}
+		
+		// remove installation hint files
+		print "\nClean up...";
+		foreach($localPackages as $tupl) {
+            list($desc, $fromVersion) = $tupl;
+            unlink($this->rootDir."/".$desc->getInstallationDirectory()."/init$.ext");
+		}
+		print "done.\n\n";
+
 	}
-
-
 
 	/**
 	 * Unzips the package denoted by $id and $version

@@ -90,7 +90,7 @@ class Rollback {
 			$localExt = $localPackages[$id];
 			foreach($localExt->getResources() as $file) {
 				// save all resources of $dd
-				$im_file = wfLocalFile(Title::newFromText(basename($this->rootDir."/".$file), NS_IMAGE));
+				$im_file = wfLocalFile(Title::newFromText(basename($this->inst_dir."/".$file), NS_IMAGE));
 				Tools::mkpath($this->tmpDir."/resources/".$im_file->getHashPath());
 				copy($this->inst_dir."/images/".$im_file->getHashPath().$im_file->getName(), $this->tmpDir."/resources/".$im_file->getHashPath().$im_file->getName());
 			}

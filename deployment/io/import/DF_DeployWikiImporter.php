@@ -39,54 +39,54 @@ class DeployWikiImporter extends WikiImporter {
 		parent::__construct($source);
 		$this->mode = $mode;
 		$this->callback = $callback;
-		
+
 	}
 
-function in_page( $parser, $name, $attribs ) {
+	function in_page( $parser, $name, $attribs ) {
 	
-            $name = $this->stripXmlNamespace($name);
-        $this->debug( "in_page $name" );
-        switch( $name ) {
-        case "id":
-        case "title":
-        case "restrictions":
-            $this->appendfield = $name;
-            $this->appenddata = "";
-            xml_set_element_handler( $parser, "in_nothing", "out_append" );
-            xml_set_character_data_handler( $parser, "char_append" );
-            break;
-        case "revision":
-            $this->push( "revision" );
-            if( is_object( $this->pageTitle ) ) {
-                $this->workRevision = new DeployWikiRevision($this->mode, $this->callback);
-                $this->workRevision->setTitle( $this->pageTitle );
-                $this->workRevisionCount++;
-            } else {
-                // Skipping items due to invalid page title
-                $this->workRevision = null;
-            }
-            xml_set_element_handler( $parser, "in_revision", "out_revision" );
-            break;
-        case "upload":
-            $this->push( "upload" );
-            if( is_object( $this->pageTitle ) ) {
-                $this->workRevision = new DeployWikiRevision($this->mode, $this->callback);
-                $this->workRevision->setTitle( $this->pageTitle );
-                $this->uploadCount++;
-            } else {
-                // Skipping items due to invalid page title
-                $this->workRevision = null;
-            }
-            xml_set_element_handler( $parser, "in_upload", "out_upload" );
-            break;
-        default:
-            return $this->throwXMLerror( "Element <$name> not allowed in a <page>." );
-        }
-    }
+		$name = $this->stripXmlNamespace($name);
+		$this->debug( "in_page $name" );
+		switch( $name ) {
+			case "id":
+			case "title":
+			case "restrictions":
+				$this->appendfield = $name;
+				$this->appenddata = "";
+				xml_set_element_handler( $parser, "in_nothing", "out_append" );
+				xml_set_character_data_handler( $parser, "char_append" );
+				break;
+			case "revision":
+				$this->push( "revision" );
+				if( is_object( $this->pageTitle ) ) {
+					$this->workRevision = new DeployWikiRevision($this->mode, $this->callback);
+					$this->workRevision->setTitle( $this->pageTitle );
+					$this->workRevisionCount++;
+				} else {
+					// Skipping items due to invalid page title
+					$this->workRevision = null;
+				}
+				xml_set_element_handler( $parser, "in_revision", "out_revision" );
+				break;
+			case "upload":
+				$this->push( "upload" );
+				if( is_object( $this->pageTitle ) ) {
+					$this->workRevision = new DeployWikiRevision($this->mode, $this->callback);
+					$this->workRevision->setTitle( $this->pageTitle );
+					$this->uploadCount++;
+				} else {
+					// Skipping items due to invalid page title
+					$this->workRevision = null;
+				}
+				xml_set_element_handler( $parser, "in_upload", "out_upload" );
+				break;
+			default:
+				return $this->throwXMLerror( "Element <$name> not allowed in a <page>." );
+		}
+	}
 
 
 	function in_revision( $parser, $name, $attribs ) {
-		 $name = $this->stripXmlNamespace($name);
+		$name = $this->stripXmlNamespace($name);
 		$this->debug( "in_revision $name" );
 		switch( $name ) {
 			case "oversion":
@@ -114,7 +114,7 @@ function in_page( $parser, $name, $attribs ) {
 	}
 
 	function out_append( $parser, $name ) {
-		 $name = $this->stripXmlNamespace($name);
+		$name = $this->stripXmlNamespace($name);
 		$this->debug( "out_append $name" );
 		if( $name != $this->appendfield ) {
 			return $this->throwXMLerror( "Expected </{$this->appendfield}>, got </$name>" );
@@ -213,26 +213,27 @@ class DeployWikiRevision extends WikiRevision {
 	 * @return unknown
 	 */
 	function importOldRevision() {
-		
+
+
 		$dbw = wfGetDB( DB_MASTER );
 		// check revision here
 		$linkCache = LinkCache::singleton();
 		$linkCache->clear();
-		
+
 		global $dfgLang;
 		// add annotations FIXME: as template?
 		if ($this->title->getNamespace() == NS_TEMPLATE) {
-		  // add content hash with <noinclude> tag
-		  // FIXME: must reside in a noinclude section, but only 1 is allowed.	
-		  //$this->text .= "\n<noinclude>[[".$dfgLang->getLanguageString('df_contenthash')."::".$this->md5_hash."| ]]</noinclude>";
+			// add content hash with <noinclude> tag
+			// FIXME: must reside in a noinclude section, but only 1 is allowed.
+			//$this->text .= "\n<noinclude>[[".$dfgLang->getLanguageString('df_contenthash')."::".$this->md5_hash."| ]]</noinclude>";
 		} else {
-		  $this->text .= "\n[[".$dfgLang->getLanguageString('df_contenthash')."::".$this->md5_hash."| ]]";
+			$this->text .= "\n[[".$dfgLang->getLanguageString('df_contenthash')."::".$this->md5_hash."| ]]";
 		}
-		
-				
+
+
 		$article = new Article( $this->title );
 		$pageId = $article->getId();
-		
+
 		if( $pageId == 0 ) {
 			# must create the page...
 			return $this->mode == DEPLOYWIKIREVISION_INFO ? false : parent::importOldRevision();
@@ -240,23 +241,25 @@ class DeployWikiRevision extends WikiRevision {
 
 			$prior = Revision::loadFromTitle( $dbw, $this->title );
 			if( !is_null( $prior ) ) {
-				
+
 				$ontversion = SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString('df_contenthash'));
 				$values = smwfGetStore()->getPropertyValues($this->title, $ontversion);
 				if (count($values) > 0) $exp_hash = strtolower(Tools::getXSDValue(reset($values))); else $exp_hash = NULL;
 				$rawtext = preg_replace('/\n\[\['.$dfgLang->getLanguageString('df_contenthash').'\s*::\s*\w+(\s*\|)?[^]]*\]\]/', "", $prior->getRawText());
 				$hash = md5($rawtext);
-				
+
 				if (is_null($exp_hash)) {
+					print "\n\t[Import page] ".$this->title->getPrefixedText();
 					return $this->mode == DEPLOYWIKIREVISION_INFO ? false : $this->importAsNewRevision();
 				}
 				if ($hash != $exp_hash) {
 					$result = false;
 					if (!is_null($this->callback)) {
 						$this->callback->modifiedPage($this, $this->mode, $result);
-    					//@call_user_func(array(&$this->callback,"modifiedPage"), $this, $this->mode, & $result);	
+						//@call_user_func(array(&$this->callback,"modifiedPage"), $this, $this->mode, & $result);
 					}
 					if ($result == true) {
+						print "\n\t[Import page] ".$this->title->getPrefixedText();
 						return $this->importAsNewRevision();
 					}
 				}
@@ -265,10 +268,10 @@ class DeployWikiRevision extends WikiRevision {
 		return false;
 
 	}
-	
+
 	function importAsNewRevision() {
 		$dbw = wfGetDB( DB_MASTER );
-
+	
 		# Sneak a single revision into place
 		$user = User::newFromName( $this->getUser() );
 		if( $user ) {
@@ -285,33 +288,66 @@ class DeployWikiRevision extends WikiRevision {
 
 		$article = new Article( $this->title );
 		$pageId = $article->getId();
-				
+		if( $pageId == 0 ) {
+			# must create the page...
+			$pageId = $article->insertOn( $dbw );
+			$created = true;
+		} else {
+			$created = false;
 
+			$prior = $dbw->selectField( 'revision', '1',
+			array( 'rev_page' => $pageId,
+                    'rev_timestamp' => $dbw->timestamp( $this->timestamp ),
+                    'rev_user_text' => $userText,
+                    'rev_comment'   => $this->getComment() ),
+			__METHOD__
+			);
+			if( $prior ) {
+				// FIXME: this could fail slightly for multiple matches :P
+				wfDebug( __METHOD__ . ": skipping existing revision for [[" .
+				$this->title->getPrefixedText() . "]], timestamp " . $this->timestamp . "\n" );
+				return false;
+			}
+		}
+
+		# FIXME: Use original rev_id optionally (better for backups)
 		# Insert the row
 		$revision = new Revision( array(
-			'page'       => $pageId,
-			'text'       => $this->getText(),
-			'comment'    => $this->getComment(),
-			'user'       => $userId,
-			'user_text'  => $userText,
-			'timestamp'  => $dbw->timestamp(),
-			'minor_edit' => $this->minor,
-			) );
+            'page'       => $pageId,
+            'text'       => $this->getText(),
+            'comment'    => $this->getComment(),
+            'user'       => $userId,
+            'user_text'  => $userText,
+            'timestamp'  => $this->timestamp,
+            'minor_edit' => $this->minor,
+		) );
 		$revId = $revision->insertOn( $dbw );
 		$changed = $article->updateIfNewerOn( $dbw, $revision );
 
-		
+		# To be on the safe side...
+		$tempTitle = $GLOBALS['wgTitle'];
+		$GLOBALS['wgTitle'] = $this->title;
+
+		if( $created ) {
+			wfDebug( __METHOD__ . ": running onArticleCreate\n" );
+			Article::onArticleCreate( $this->title );
+
+			wfDebug( __METHOD__ . ": running create updates\n" );
+			$article->createUpdates( $revision );
+
+		} elseif( $changed ) {
 			wfDebug( __METHOD__ . ": running onArticleEdit\n" );
 			Article::onArticleEdit( $this->title );
 
 			wfDebug( __METHOD__ . ": running edit updates\n" );
 			$article->editUpdates(
-				$this->getText(),
-				$this->getComment(),
-				$this->minor,
-				$this->timestamp,
-				$revId );
-		
+			$this->getText(),
+			$this->getComment(),
+			$this->minor,
+			$this->timestamp,
+			$revId );
+		}
+		$GLOBALS['wgTitle'] = $tempTitle;
 
 		return true;
 	}
