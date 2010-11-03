@@ -11,8 +11,8 @@
 		</description>
 		<helpurl>http://smwforum.ontoprise.com/smwforum/index.php/Help:WikiTags</helpurl>
 		<dependencies>
-			<dependency from="1135">MW</dependency>
-			<dependency from="142">smw</dependency>
+			<dependency from="1153">MW</dependency>
+			<dependency from="151">smw</dependency>
 		</dependencies>
 	</global>
 	<codefiles>
@@ -27,7 +27,7 @@
 	<configs>
 		<new>
 			<require name="SemanticWikitag" file="extensions/SemanticWikiTag/includes/SWT_Initialize.php"/>
-			<script file="extensions/SemanticWikiTag/maintenance/SWT_setup.php"/>
+			<script file="maintenance/SWT_setup.php"/>
 		</new>
 		<uninstall>
 			<!-- empty -->
