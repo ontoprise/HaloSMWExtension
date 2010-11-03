@@ -49,7 +49,7 @@ class TestWikiJobs extends PHPUnit_Framework_TestCase {
     function testRunJobs() {
     	global $IP;
     	exec("php $IP/maintenance/runJobs.php", $out, $ret);
-    	print_r($out);
+    	
     	$this->assertTrue(true);
     }
 

@@ -4,9 +4,7 @@
                 <variable name="_var0"/>
         </head>
         <results>
-                <result>
-                        <binding name="_var0">Audi TT</binding>
-                </result>
+               
                 <result>
                         <binding name="_var0">Peugeot</binding>
                 </result>

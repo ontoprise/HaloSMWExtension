@@ -39,6 +39,7 @@ class TestSemanticStore extends PHPUnit_Framework_TestCase {
 								 "Has Child",
 								  "Has Engine",
 								  "Has Gears",
+		                          "Height",
 								  "Has adress",
 								  "Has domain and range",
 								  "Has max cardinality",
@@ -56,6 +57,7 @@ class TestSemanticStore extends PHPUnit_Framework_TestCase {
 
 		foreach ($rootProperties as $tuple) {
 			  list($p,$isLeaf) = $tuple;
+			
 		      $this->assertContains($p->getText(), $exp_properties, $p->getText()." missing");
 		}
 			
@@ -237,7 +239,7 @@ class TestSemanticStore extends PHPUnit_Framework_TestCase {
 	}
 
 	public function testNumberOfInstancesAndSubcategories() {
-		$exp_usage = 2;
+		$exp_usage = 1;
 		$usage = smwfGetSemanticStore()->getNumberOfInstancesAndSubcategories(Title::newFromText("Car", SMW_NS_PROPERTY));
 		$this->assertEquals($exp_usage, $usage);
 			
