@@ -124,7 +124,29 @@ $messages['en'] = array(
 	'lod_sp_source_import' => 'Import',
 	'lod_sp_source_reimport' => '(Re-)Import',
 	'lod_sp_source_update' => 'Update',
-	'lod_sp_isimported' => 'Imported'
+	'lod_sp_isimported' => 'Imported',
+								
+	//--- LOD rating ---
+	'lod_rt_heading'			=> 'Selected value:',
+	'lod_rt_flagged_correct'	=> 'In your opinion the flagged fact is <b>correct</b>.',
+	'lod_rt_flagged_wrong'		=> 'In your opinion the flagged fact is <b>wrong</b>.',
+	'lod_rt_enter_comment'		=> 'Enter your comment:',
+	'lod_rt_bt_save'			=> 'Save',
+	'lod_rt_bt_cancel'			=> 'Cancel',
+	'lod_rt_click_flag'			=> 'Click a flag to rate a fact',
+	'lod_rt_pathways'			=> 'Pathways to this value:',
+	'lod_rt_rating_statistics'	=> 'Rating statistics: ',
+	'lod_rt_user_comments'		=> 'Other comments:',
+	'lod_rt_rate_correct'		=> 'Click, to mark this fact as correct.',
+	'lod_rt_rate_wrong'			=> 'Click, to mark this fact as wrong.',
+	'lod_rt_value_may_differ'	=> 'The representation of the actual value may differ from the presented result.',
+	'lod_rt_rate_related'		=> 'Show more facts',
+	'lod_rt_hide_related'		=> 'Hide more facts',	
+	'lod_rt_show_comments'		=> 'Show comments',
+	'lod_rt_hide_comments'		=> 'Hide comments',
+	'lod_rt_click_for_comments' => 'Click to view comments.',
+	'lod_rt_rating_saved'		=> 'Your rating was successfully saved. Thanks!'
+														
 );
 
 /** 
@@ -219,10 +241,31 @@ $messages['de'] = array(
 	'specialpages-group-lod_group' => 'Linked Data extension',
 	'lod_sp_source_label' => 'Name',
     'lod_sp_source_source' => 'Datenquelle',
-    'lod_sp_source_lastmod' => 'Letzte �nderung',
-    'lod_sp_source_changefreq' => '�nderungsfrequenz',
+    'lod_sp_source_lastmod' => 'Letzte Änderung',
+    'lod_sp_source_changefreq' => 'Änderungsfrequenz',
 	'lod_sp_source_import' => 'Importiere',
     'lod_sp_source_reimport' => '(Re-)Importiere',
     'lod_sp_source_update' => 'Aktualisiere',
-	'lod_sp_isimported' => 'Ist importiert'
+	'lod_sp_isimported' => 'Ist importiert',
+								
+	//--- LOD rating ---
+	'lod_rt_heading'			=> 'Ausgewählter Wert:',
+	'lod_rt_flagged_correct'	=> 'Sie meinen das geflaggte Faktum sei <b>korrekt</b>.',
+	'lod_rt_flagged_wrong'		=> 'Sie meinen das geflaggte Faktum sei <b>falsch</b>.',
+	'lod_rt_enter_comment'		=> 'Geben Sie Ihren Kommentar ein:',
+	'lod_rt_bt_save'			=> 'Speichern',
+	'lod_rt_bt_cancel'			=> 'Abbrechen',
+	'lod_rt_click_flag'			=> 'Klicken Sie auf ein Fähnchen um das Faktum zu bewerten.',
+	'lod_rt_pathways'			=> 'Pfade zu diesem Wert:',
+	'lod_rt_rating_statistics'	=> 'Bewertungsstatistik: ',
+	'lod_rt_user_comments'		=> 'Andere Kommentare:',
+	'lod_rt_rate_correct'		=> 'Klicken, um dieses Faktum als korrekt zu bewerten.',
+	'lod_rt_rate_wrong'			=> 'Klicken, um dieses Faktum als falsch zu bewerten.',
+	'lod_rt_value_may_differ'	=> 'Die Repräsentation des tatsächlichen Wertes kann vom gezeigten Wert abweichen.',
+	'lod_rt_rate_related'		=> 'Weitere Fakten anzeigen',
+	'lod_rt_hide_related'		=> 'Weitere Fakten ausblenden',	
+	'lod_rt_show_comments'		=> 'Kommentare anzeigen',
+	'lod_rt_hide_comments'		=> 'Kommentare ausblenden',
+	'lod_rt_click_for_comments' => 'Klicken, um Kommentare anzuzeigen.',
+	'lod_rt_rating_saved'		=> 'Ihre Bewertung wurde erfolgreich gespeichert. Vielen Dank!'
 );
