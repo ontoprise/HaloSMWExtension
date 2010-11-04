@@ -140,7 +140,6 @@ function enableLinkedData() {
    	$wgAutoloadClasses['LODRatingException'] = $lodgIP . '/exceptions/LOD_RatingException.php';
    	
     //--- Autoloading for libraries ---
-	$wgAutoloadClasses['ARC2'] = $lodgIP . '/libs/arc/ARC2.php';
 	
 	// register query printers
 	global $smwgResultFormats;
