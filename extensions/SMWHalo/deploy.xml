@@ -15,6 +15,7 @@
 		    <dependency from="1150" to="1169">mw</dependency>
 			<dependency from="152">smw</dependency>
 			<dependency from="100" to="100">scriptmanager</dependency>
+            <dependency from="100" to="100">arclibrary</dependency>
 		</dependencies>
 	</global>
 	<codefiles>
