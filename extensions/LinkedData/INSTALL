@@ -10,6 +10,8 @@ Requirements:
 
     MediaWiki 1.15.x
     SMW 1.5.x
+    ScriptManager 1.x
+    ARC Library 1.x
     Triple Store Connector with OntoBroker-Quad
     Deployment Framework (optional, but recommended for a fast and easy installation)
 
@@ -26,10 +28,16 @@ How to install with deployment framework:
 
 How to install manually:
 
-(1) Install the script manager which you can find at 
+(1) Install the ScriptManager and the ARCLibrary extension which you can find at
     http://sourceforge.net/projects/halo-extension/files/
-(2) Copy the folder 'LinkedData' into the extensions folder of MediaWiki. 
-(3) Activate the LDE by adding the following lines to LocalSettings.php: 
+(2) Activate the ScriptManager and the ARCLibrary extension by adding the
+    following lines to LocalSettings.php. These lines should be placed before
+    any other extension is loaded:
+    require_once("extensions/ScriptManager/SM_Initialize.php");
+	require_once("extensions/ARCLibrary/ARCLibrary.php");
+    enableARCLibrary();
+(3) Copy the folder 'LinkedData' into the extensions folder of MediaWiki.
+(4) Activate the LDE by adding the following lines to LocalSettings.php:
 	include_once('extensions/LinkedData/includes/LOD_Initialize.php');
 	enableLinkedData(); 
 
