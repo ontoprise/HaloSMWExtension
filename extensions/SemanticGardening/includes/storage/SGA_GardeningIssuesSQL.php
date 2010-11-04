@@ -461,6 +461,8 @@ class SGAGardeningIssuesAccessSQL extends SGAGardeningIssuesAccess {
 
 	public function setGardeningIssueToModified(Title $t) {
 		$db =& wfGetDB( DB_MASTER );
+		$gi_table = $db->tableName('smw_gardeningissues');
+		if (!$db->tableExists($gi_table)) return;
 		$db->update($db->tableName('smw_gardeningissues'), array('modified' => 'y'), array('p1_id' => $t->getArticleID()));
 	}
 
