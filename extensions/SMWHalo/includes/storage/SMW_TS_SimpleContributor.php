@@ -62,7 +62,7 @@ function smwfTripleStorePropertyUpdate(& $data, & $property, & $propertyValueArr
 /**
  * Called when category annotations get updated in a triple store.
  *
- * @param $subject Title with category link
+ * @param $subject SMWWikiPageValue 
  * @param $c Title of category
  * @param $triplesFromHook Triples which are returned.
  *
@@ -71,11 +71,12 @@ function smwfTripleStorePropertyUpdate(& $data, & $property, & $propertyValueArr
 function smwfTripleStoreCategoryUpdate(& $subject, & $c, & $triplesFromHook) {
 	global $smwgTripleStoreGraph;
 	$tsNamespace = new TSNamespaces();
-	$subj_iri = $tsNamespace->getFullIRI($subject);
+	$subj_iri = $tsNamespace->getFullIRI($subject->getTitle());
 	// serialize transitive or symetric property triples
-	if ($subject->getNamespace() == SMW_NS_PROPERTY && smwfGetSemanticStore()->transitiveCat->equals($c)) {
+	$ns = $subject->getTitle()->getNamespace();
+	if ($ns == SMW_NS_PROPERTY && smwfGetSemanticStore()->transitiveCat->equals($c)) {
 		$triplesFromHook[] = array($subj_iri, "rdf:type", "owl:TransitiveProperty");
-	} elseif ($subject->getNamespace() == SMW_NS_PROPERTY && smwfGetSemanticStore()->symetricalCat->equals($c)) {
+	} elseif ($ns == SMW_NS_PROPERTY && smwfGetSemanticStore()->symetricalCat->equals($c)) {
 		$triplesFromHook[] = array($subj_iri, "rdf:type", "owl:SymmetricProperty");
 	}
 	return true;
