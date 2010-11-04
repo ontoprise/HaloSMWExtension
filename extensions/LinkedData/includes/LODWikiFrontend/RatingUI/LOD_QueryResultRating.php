@@ -49,46 +49,40 @@ class LODQueryResultRatingUI  {
 	const RATING_HTML = <<<HTML
 	
 <div class="lodDivRatingMain">
-    <div class="lodDivRatingValue">
-        Rate a relation of this value: <span id="lodRatingValue">***value***</span>
-    </div>
-    ***pathway***
-    <div class="lodDivRatingTriples">
-        ***allTriples***
-    </div>
-    <div class="lodDivRatingRateAndComment">
-        <p id="lodRatingTitleCorrect" class="lodRatingTitle" style="display:none">
-            In your opinion the selected triple is <b>correct</b>.
-        </p>
-        <p id="lodRatingTitleWrong" class="lodRatingTitle" style="display:none">
-            In your opinion the selected triple is <b>wrong</b>.
-        </p>
-        <p>
-            Your comment:
-            <textarea id="lodRatingCommentTA" rows="5" cols="20" name="comment"></textarea>
-        </p>
-    	<a id="lodRatingShowComments">Show other comments</a>
-    </div>
-    <div class="lodDivRatingOtherCommentsContainer">
-    	<div class="lodDivRatingOtherComments">
-            Others flagged this:  <img src="***imgPath***/correct.png" alt="" /> <span id="lodRatingCorrect">(0)</span>&nbsp;&nbsp;<img src="***imgPath***/wrong.png" alt="" />  <span id="lodRatingWrong">(0)</span>
-        
-	        <div class="lodDivRatingComments">
-            	<p class="lodRatingCoou">Comments of other users:</p>
-	            <div class="lodRatingCommentContainer">
-	                <div lodratingcomment="" class="">
-	                    - Is Hesse really english?
-	                </div>
-	                <div lodratingcomment="" class="">
-	                    - That's wrong. Hesse is a german author!
-	                </div>
-	            </div>
+	<div class="lodRatingContent">
+	    <div class="lodDivRatingValue">
+	        {{lod_rt_heading}} <span id="lodRatingValue">***value***</span>
+	    </div>
+	    ***pathway***
+	    <div class="lodDivRatingTriples">
+	        ***allTriples***
+	    </div>
+	    <div class="lodDivRatingRateAndComment">
+	        <div id="lodRatingTitleCorrect" class="lodRatingTitle" style="display:none">
+	            {{lod_rt_flagged_correct}}
+	        </div>
+	        <div id="lodRatingTitleWrong" class="lodRatingTitle" style="display:none">
+	            {{lod_rt_flagged_wrong}}
+	        </div>
+	        <div id="lodRatingYourComment">
+	            {{lod_rt_enter_comment}}
+	            <textarea id="lodRatingCommentTA" rows="3" cols="20" name="comment"></textarea>
 	        </div>
 	    </div>
-    </div>
+	    <div class="lodDIVRatingSC" id="lodRatingShowOtherComments" style="display:none">
+	    	<a id="lodRatingShowComments" 
+	    		class="lodRatingActionLink"
+	    		toggleText="{{lod_rt_hide_comments}}"
+	    		value="show">{{lod_rt_show_comments}}</a>
+		</div>    	
+	    <div class="lodDivRatingOtherCommentsContainer" id="lodRatingOtherComments">
+	    </div>
+	</div>
     <div class="lodRatingSaveArea">
-        <input type="button" id="lodRatingSave" value="Save" /> 
-        <input type="button" id="lodRatingCancel" value="Cancel" />
+    	<div class="lodRatingButtons">
+	        <input type="button" id="lodRatingSave" value="{{lod_rt_bt_save}}" /> 
+	        <input type="button" id="lodRatingCancel" value="{{lod_rt_bt_cancel}}" />
+	    </div>
     </div>
 </div>
 HTML;
@@ -130,10 +124,83 @@ HTML;
 		$imgPath = $lodgScriptPath . "/skins/img";
 		$html = str_replace("***imgPath***", $imgPath, $html);
 		
+		// Replace language dependent strings
+		$html = self::replaceLanguageStrings($html);
 		return $html;
 		
 	}
 	
+	/**
+	 * Returns the HTML representation of all ratings of the given $triple.
+	 * @param LODTriple $triple
+	 * 		The ratings for this triple are retrieved
+	 */
+	public static function getRatingsForTripleHTML(LODTriple $triple) {
+		$ra = new LODRatingAccess();
+		$ratings = $ra->getRatings($triple);
+
+		// Create the list of all ratings with comments, authors and creation time
+		$numCorrect = 0;
+		$numWrong = 0;
+		$html = <<<HTML
+<div class="lodRatingCommentContainer">
+HTML;
+		
+		foreach ($ratings as $r) {
+			$author = $r->getAuthor();
+			$time = $r->getCreationTime();
+			$time = str_replace("T","&nbsp;&nbsp;", $time);
+			$time = str_replace("Z","", $time);
+			$comment = $r->getComment();
+			$value = $r->getValue();
+			$commentImg = $value === "true" ? "correct.png" : "wrong.png";
+			$html .= <<<HTML
+<div class="lodRatingComment">
+	<div class="lodRatingCommentFlag">
+		<img src="***imgPath***/$commentImg" alt="" />
+	</div>
+	<div>	
+		<div>
+			<span class="lodRatingAuthor">$author</span>
+			<span class="lodRatingTime">$time</span>
+		</div>
+		<div>$comment</div>
+	</div>
+</div>
+HTML;
+			if ($r->getValue() === "true") {
+				++$numCorrect;
+			} else if ($r->getValue() === "false") {
+				++$numWrong;
+			}
+		}
+		$html .= <<<HTML
+</div>
+HTML;
+
+		$html = <<<HTML
+<div class="lodRatingStatistics">
+	{{lod_rt_rating_statistics}}
+	<img src="***imgPath***/correct.png" alt="" /> $numCorrect
+	&nbsp;&nbsp;&nbsp;&nbsp;
+	<img src="***imgPath***/wrong.png" alt="" /> $numWrong
+</div>
+<div class="lodDivRatingComments">
+	<p class="lodRatingCoou">{{lod_rt_user_comments}}</p>
+	$html
+</div>	
+HTML;
+
+		// Replace the image path
+		global $lodgScriptPath;
+		$imgPath = $lodgScriptPath . "/skins/img";
+		$html = str_replace("***imgPath***", $imgPath, $html);
+	
+		// Replace language dependent strings
+		$html = self::replaceLanguageStrings($html);
+		
+		return $html;		
+	}
 	//--- Private function ---
 	
 	/**
@@ -151,24 +218,22 @@ HTML;
 
 		$html = "";
 
-		// init language dependent strings
-		$clickFlag = "Click a flag to rate a triple";
-		$rateRelated  = "Rate other related triples";
-		
 		// Each result set is wrapped in its own div
 		
 		$rsIdx = 1;
 	    foreach ($triples as $resultSet) {
 	    	$html .= <<<HTML
 <div class="lodRatingResultSet" id="lodRatingResultSet_$rsIdx">
-<span class="lodRatingGrayText"> $clickFlag</span><br />
+<span class="lodRatingGrayText">{{lod_rt_click_flag}}</span><br />
 HTML;
 			// Add the table of primary triples
 			$html .= self::generateTriplesTable($rsIdx, 1, $resultSet[0]);
 			
 			// Add the table of secondary triples
 			$html .= <<<HTML
-	<a class="lodRatingOpenRelatedTriples" id="lodRatingRateOthers_$rsIdx">$rateRelated</a>
+	<a class="lodRatingActionLink lodRatingOpenRelatedTriples" 
+		id="lodRatingRateOthers_$rsIdx"
+		toggleText="{{lod_rt_hide_related}}">{{lod_rt_rate_related}}</a>
 	<div class="lodRatingRelatedTriples" id="lodRatingRelated_$rsIdx">
 HTML;
 			$html .= self::generateTriplesTable($rsIdx, 2, $resultSet[1]);
@@ -201,7 +266,15 @@ HTML;
 	 */
 	private static function generateTriplesTable($id, $primSec, array $triples) {
 		$html = <<<HTML
-<table id="lodRatingTriples_$id_$primSec" class="lodRatingTriplesTable">
+<div class="lodRatingDivTriplesTable">	
+	<table id="lodRatingTriples_$id_$primSec" class="lodRatingTriplesTable">
+	<colgroup>
+		<col width="20px">
+		<col width="20px">
+		<col width="33%">
+		<col width="33%">
+		<col width="33%">
+	</colgroup>
 HTML;
 		
 		$pm = LODPrefixManager::getInstance();
@@ -221,32 +294,39 @@ HTML;
 				$p = htmlentities($po[0]);
 				$o = htmlentities($po[1]);
 				
-				$displaySubject = $first ? "" : "style=\"visibility:hidden\"";
-				
 				$psubj = htmlentities($pm->makePrefixedURI($subj));
 				$ppred = htmlentities($pm->makePrefixedURI($po[0]));
 				$pobj  = htmlentities($pm->makePrefixedURI($po[1]));
 				
+				$psubj = $first ? $psubj : "";
+				
 				$first = false;
 			
 				$html .= <<<HTML
-<tr subject="$s" predicate="$p" object="$o">
+<tr subject="$s" predicate="$p" object="$o" title="{{lod_rt_click_for_comments}}" class="lodRatingResultRow">
 	<td>
-		<img src="***imgPath***/correct.png" alt="" value="true" class="lodRatingFlag"/>
+		<img src="***imgPath***/correctDisabled.png" alt="" type="disabled" value="true" title="{{lod_rt_rate_correct}}" class="lodRatingFlag"/>
+		<img src="***imgPath***/correct.png" alt="" type="hover" value="true" title="{{lod_rt_rate_correct}}" class="lodRatingFlag" style="display:none"/>
+		<img src="***imgPath***/correctSelected.png" alt="" type="selected" value="true" title="{{lod_rt_rate_correct}}" class="lodRatingFlag" style="display:none"/>
 	</td>
 	<td>
-		<img src="***imgPath***/wrong.png" alt="" value="false" class="lodRatingFlag"/>
+		<img src="***imgPath***/wrongDisabled.png" alt="" type="disabled" value="false" title="{{lod_rt_rate_wrong}}" class="lodRatingFlag"/>
+		<img src="***imgPath***/wrong.png" alt="" type="hover" value="false" title="{{lod_rt_rate_correct}}" class="lodRatingFlag" style="display:none"/>
+		<img src="***imgPath***/wrongSelected.png" alt="" type="selected" value="false" title="{{lod_rt_rate_correct}}" class="lodRatingFlag" style="display:none"/>
 	</td>
-	<td $displaySubject>$psubj</td>
+	<td>$psubj</td>
 	<td>$ppred</td>
-	<td>$pobj</td>
+	<td title="{{lod_rt_value_may_differ}}">$pobj</td>
 </tr>
 HTML;
 
 				++$row;
 			}
 		}
-		$html .= "</table>";
+		$html .= <<<HTML
+	</table>
+</div>	
+HTML;
 		
 		return $html;
 	}
@@ -268,22 +348,47 @@ HTML;
 			return "";
 		}
 		
-		// language dependent strings
-		$pathwayLabel = "Pathways to this value:";
 		$html = <<<HTML
 <div class="lodDivRatingPathway">
-	$pathwayLabel <a id="lodRatingPathwayBack">&lt;</a>
+		{{lod_rt_pathways}} <a id="lodRatingPathwayBack" class="lodRatingActionLink">&lt;</a>
 HTML;
 		for ($i = 1, $len = count($triples); $i <= $len; ++$i) {
 			$html .= <<<HTML
- <a id="lodRatingPathway_$i" class="lodRatingPathwayIndex">$i</a> 
+ <a id="lodRatingPathway_$i" class="lodRatingPathwayIndex lodRatingActionLink">$i</a> 
 HTML;
 		}
 		$html .= <<<HTML
-        <a id="lodRatingPathwayForward">&gt;</a>
+        <a id="lodRatingPathwayForward" class="lodRatingActionLink">&gt;</a>
     </div>
 HTML;
 		return $html;
+	}
+	
+	/**
+	 * Language dependent identifiers in $text that have the format {{identifier}}
+	 * are replaced by the string that corresponds to the identifier.
+	 * 
+	 * @param string $text
+	 * 		Text with language identifiers
+	 * @return string
+	 * 		Text with replaced language identifiers.
+	 */
+	private static function replaceLanguageStrings($text) {
+		// Find all identifiers
+		$numMatches = preg_match_all("/(\{\{(.*?)\}\})/", $text, $identifiers);
+		if ($numMatches === 0) {
+			return $text;
+		}
+
+		// Get all language strings
+		$langStrings = array();
+		foreach ($identifiers[2] as $id) {
+			$langStrings[] = wfMsg($id);
+		}
+		
+		// Replace all language identifiers
+		$text = str_replace($identifiers[1], $langStrings, $text);
+		return $text;
 	}
 }
 
