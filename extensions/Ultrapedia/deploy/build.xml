@@ -23,9 +23,12 @@
 			</fileset>
 		</copy>
 		<copy todir="bin/zip/extensions/Ultrapedia/">
-			<fileset file="../*">
-				<exclude name="**/.svn, **/CVS" />
-				<exclude name="**/*deploy*" />
+			<fileset dir="../">
+				<include name="COPYING" />
+				<include name="INSTALL" />
+				<include name="ajax-loader.gif" />
+				<include name="ChangeLog" />
+				<include name="deploy.xml" />
 			</fileset>
 		</copy>
 		<zip destfile="bin/ultrapedia.zip" basedir="bin/zip" />
@@ -38,12 +41,12 @@
 	</target>
 
 	<target name="versionhint">
-        <property environment="env" />
+		<property environment="env" />
 		<exec executable="php">
 			<arg value="../../../buildtools/replaceVersionHint.php" />
 			<arg value="../deploy.xml" />
 			<arg value="../includes/UP_Initialize.php" />
-            <arg value="${env.BUILD_NUMBER}" />
+			<arg value="${env.BUILD_NUMBER}" />
 		</exec>
 	</target>
 </project>
