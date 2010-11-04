@@ -2,6 +2,7 @@
 
 global $smwgHaloIP;
 require_once( "$smwgHaloIP/includes/QueryResultsCache/SMW_QRC_Store.php" );
+require_once( "$smwgHaloIP/includes/QueryResultsCache/SMW_QRC_AjaxAPI.php" );
 
 class TestQueryResultsCache extends PHPUnit_Framework_TestCase {
 
