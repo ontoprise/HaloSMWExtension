@@ -1671,20 +1671,20 @@ Index: extensions/SemanticForms/languages/SF_Messages.php
  	'createproperty'                     => 'Create a property',
 Index: extensions/SemanticForms/specials/SF_FormEdit.php
 ===================================================================
---- extensions/SemanticForms/specials/SF_FormEdit.php	2010-09-23 14:46:26.000000000 +0200
-+++ extensions/SemanticForms/specials/SF_FormEdit.php	2010-09-23 14:48:19.000000000 +0200
-@@ -147,6 +147,11 @@
- 				$page_is_source = false;
- 				$page_contents = null;
- 			}
+--- extensions/SemanticForms/specials/SF_FormEdit.php	(revision 8657)
++++ extensions/SemanticForms/specials/SF_FormEdit.php	(working copy)
+@@ -124,6 +124,11 @@
+ 		} elseif ( $target_name == '' && $page_name_formula == '' ) {
+ 			$text = '<p class="error">' . wfMsg( 'sf_formedit_badurl' ) . "</p>\n";
+ 		} else {
 +			/*op-patch|BL|2009-09-16|CollapsingForms|SaveFormnameGlobally|start*/
-+            /*op-patch|BL|2009-09-16|CollapsingForms|doc|http://dmwiki.ontoprise.com:8888/dmwiki/index.php/CollapsingForms*/
++			/*op-patch|BL|2009-09-16|CollapsingForms|doc|http://dmwiki.ontoprise.com:8888/dmwiki/index.php/CollapsingForms*/
 +			global $smwgRMActFormName;
 +			$smwgRMActFormName = $form_name;
 +			/*op-patch|BL|2009-09-16|end*/
- 			list ( $form_text, $javascript_text, $data_text, $form_page_title, $generated_page_name ) =
- 				$sfgFormPrinter->formHTML( $form_definition, $form_submitted, $page_is_source, $form_article->getID(), $page_contents, $target_name, $page_name_formula );
- 			if ( $form_submitted ) {
+ 			SFUtils::addJavascriptAndCSS();
+ 			$form_article = new Article( $form_title );
+ 			$form_definition = $form_article->getContent();
 @@ -252,6 +257,8 @@
  		if ( ! empty( $javascript_text ) ) {
  			$wgOut->addHTML( '		<script type="text/javascript">' . "\n" . $javascript_text . '</script>' . "\n" );
