@@ -3,7 +3,7 @@
  * @file
  * @ingroup SMWHaloTests 
  * 
- * @author Kai Kühn
+ * @author Kai Kï¿½hn
  *
  */
 class TestQueryPrinters extends PHPUnit_Framework_TestCase {
@@ -29,12 +29,12 @@ class TestQueryPrinters extends PHPUnit_Framework_TestCase {
 		$query  = SMWQueryProcessor::createQuery($querystring, $params, $context, $format, $extraprintouts);
 		$res = smwfGetStore()->getQueryResult($query);
 		$result = SMWQueryProcessor::getResultFromQuery($query, $params, $extraprintouts, SMW_OUTPUT_FILE, $context, $format);
-		$this->assertFileContentsIgnoringWhitespaces("testcases/resources/xml_qp_result.dat", $result);
+		$this->assertFileContentsIgnoringWhitespaces("$smwgHaloIP/tests/testcases/resources/xml_qp_result.dat", $result);
 		
 	}
 
 	function testExcelQueryPrinter() {
-	
+		global $smwgHaloIP;
 		$params = array();
 		$context = SMWQueryProcessor::INLINE_QUERY;
 		$format = "exceltable";
@@ -44,7 +44,7 @@ class TestQueryPrinters extends PHPUnit_Framework_TestCase {
 		$res = smwfGetStore()->getQueryResult($query);
 		$result = SMWQueryProcessor::getResultFromQuery($query, $params, $extraprintouts, SMW_OUTPUT_FILE, $context, $format);
 		
-		$this->assertFileContentsIgnoringWhitespaces("testcases/resources/excel_qp_result.dat", $result);
+		$this->assertFileContentsIgnoringWhitespaces("$smwgHaloIP/tests/testcases/resources/excel_qp_result.dat", $result);
 		
 	}
 	
