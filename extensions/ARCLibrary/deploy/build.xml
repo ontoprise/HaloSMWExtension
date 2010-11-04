@@ -3,7 +3,7 @@
 	<target name="build" depends="versionhint">
 		<delete dir="bin/zip" />
 		<delete>
-			<fileset dir="bin" includes="arc-library*.zip" />
+			<fileset dir="bin" includes="arclibrary*.zip" />
 		</delete>
 		<mkdir dir="bin/zip" />
 
@@ -15,12 +15,12 @@
             </fileset>
         </copy>
 
-		<zip destfile="bin/arc-library.zip" basedir="bin/zip" />
+		<zip destfile="bin/arclibrary.zip" basedir="bin/zip" />
 		<delete dir="bin/zip" />
 		<exec executable="php">
 			<arg value="../../../buildtools/renameDeployable.php" />
 			<arg value="../deploy.xml" />
-			<arg value="bin/arc-library.zip" />
+			<arg value="bin/arclibrary.zip" />
 		</exec>
 	</target>
 	<target name="versionhint">
