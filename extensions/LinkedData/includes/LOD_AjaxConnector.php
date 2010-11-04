@@ -34,6 +34,8 @@ if ( !defined( 'MEDIAWIKI' ) ) {
 }
 
 $wgAjaxExportList[] = "lodafGetRatingEditorForKey";
+$wgAjaxExportList[] = "lodafSaveRating";
+$wgAjaxExportList[] = "lodafGetRatingsForTriple";
 $wgAjaxExportList[] = "lodImportOrUpdate";
 $wgAjaxExportList[] = "lodGetDataSourceTable";
 
@@ -59,6 +61,55 @@ function lodafGetRatingEditorForKey($ratingKey, $value) {
 	$html = LODQueryResultRatingUI::getRatingHTML($ratingKey, $value, $triples);
     $response->addText($html);
 	return $response;
+}
+
+/**
+ * Adds a rating for a triple. The rating and the triple are JSON-encoded in
+ * $rating.
+ * 
+ * @param string $rating
+ * 		The JSON encoded rating.
+ * @return AjaxResponse
+ */
+function lodafSaveRating($rating) {
+	$rating = json_decode($rating);
+	
+	$ra = new LODRatingAccess();
+	$r = new LODRating($rating->rating, $rating->comment);
+	$t = new LODTriple($rating->triple->subject, 
+					   $rating->triple->predicate,
+					   $rating->triple->object);
+	$ra->addRating($t, $r);
+	
+    $response = new AjaxResponse();
+    $response->setContentType("json");
+    
+    $response->addText(wfMsg('lod_rt_rating_saved'));
+	return $response;
+}
+
+/**
+ * Retrieves all ratings for a triple. Returns the HTML that contains the number
+ * of "correct" and "wrong" ratings and all comments.
+ * 
+ * @param string $triple
+ * 		The JSON encoded triple
+ */
+function lodafGetRatingsForTriple($triple) {
+	$triple = json_decode($triple);
+	
+	$t = new LODTriple($triple->subject, 
+					   $triple->predicate,
+					   $triple->object);
+					   
+	$html = LODQueryResultRatingUI::getRatingsForTripleHTML($t);
+					   
+    $response = new AjaxResponse();
+    $response->setContentType("html");
+    
+    $response->addText($html);
+	return $response;
+					   
 }
 
 /**
