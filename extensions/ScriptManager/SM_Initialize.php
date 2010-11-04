@@ -72,6 +72,10 @@ function smfAddHTMLHeader(& $out) {
 				$out->addScript("<script type=\"text/javascript\" src=\"". "$smgSMPath/scripts/qTip/jquery.qtip-1.0.0-rc3.min.js\"></script>");
 //Debug version				$out->addScript("<script type=\"text/javascript\" src=\"". "$smgSMPath/scripts/qTip/jquery.qtip-1.0.0-rc3.js\"></script>");
 				break;
+			case 'json':
+				$out->addScript("<script type=\"text/javascript\" src=\"". "$smgSMPath/scripts/json2.min.js\"></script>");
+//Debug version				$out->addScript("<script type=\"text/javascript\" src=\"". "$smgSMPath/scripts/json2.js\"></script>");
+				break;
 			case 'ext':
 			
 				$out->addLink(array(
