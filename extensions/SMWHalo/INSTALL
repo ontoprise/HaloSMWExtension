@@ -46,6 +46,7 @@ the authors.
  * MediaWiki 1.15.x (see installation guide)
  * ScriptManager 1.x (see installation guide)
  * Semantic MediaWiki 1.5 (Please make reference to the installation instructions)
+ * ARC Library 1.x (see installation guide)
  * Web browser (for clients, recommended Firefox 3.x or Internet Explorer 8. There might be glitches with other browsers)
 
 
@@ -54,55 +55,65 @@ the authors.
 We recommend to install the Halo Extension using the SMW+ Administration tool
 which is part of the Deployment Framework Extension (Download: 
 https://sourceforge.net/projects/halo-extension/files/smwhalo-deploy-1.2.zip/download). 
-It empowers the convenient administration and automatic setup of extensions for MediaWiki and Semantic MediaWiki.
-If you upgrade an existing installation of SMW+, also read the remarks in the
-section "Notes on Upgrading" below.
+It empowers the convenient administration and automatic setup of extensions for
+MediaWiki and Semantic MediaWiki. If you upgrade an existing installation of
+SMW+, also read the remarks in the section "Notes on Upgrading" below.
 
-(1) Download and install the ScriptManager extension into your Mediawiki installation.
+(1) Download and install the ScriptManager extension into your Mediawiki
+    installation.
 
-(2) Extract the SMWHalo ZIP archive to the directory <mw-dir>\htdocs\mediawiki\extensions\
+(2) Download and install the ARCLibrary extension into your Mediawiki
+    installation.
 
-	Note: 	Replace < mw-dir > with the path to root directory of MediaWiki.
+(3) Extract the SMWHalo ZIP archive to the directory
+    <mw-dir>\htdocs\mediawiki\extensions\
 
-(3) Edit the configuration file <mw-dir>\htdocs\mediawiki\LocalSettings.php
+	Note: 	Replace <mw-dir> with the path to root directory of MediaWiki.
 
-(4)	Add the following code in front of every other extension, this initializes the ScriptManager
+(4) Edit the configuration file <mw-dir>\htdocs\mediawiki\LocalSettings.php
+
+(5)	Add the following code in a place before any other extension is loaded. This
+    initializes the ScriptManager and the ARCLibrary extension first, so that
+    all following extensions make use of these two that are already available.
 
 	 require_once("extensions/ScriptManager/SM_Initialize.php");
+	 require_once("extensions/ARCLibrary/ARCLibrary.php");
+     enableARCLibrary();
 
-(5) Adjust the path to the PHP interpreter accordingly. 
+(6) Adjust the path to the PHP interpreter accordingly.
 	Specify the path to the file php.exe: $phpInterpreter="<mw-dir>\php\php.exe";
+    On Linux systems the entry usually looks like: $phpInterpreter="/usr/bin/php";
 
-(6) Change $wgDefaultSkin='ontoskin3';
+(7) Change $wgDefaultSkin='ontoskin3';
 
-(7) Add following lines to initialize the Halo Extension: 
+(8) Add following lines to initialize the Halo Extension:
 
 	include_once('extensions/SMWHalo/includes/SMW_Initialize.php');
 	enableSMWHalo(/*param-start-enableSMWHalo*/'SMWHaloStore2', NULL, NULL/*param-end-enableSMWHalo*/);
 	$wgUseAjax=true;
 
-(8) Open a command-line interface
+(9) Open a command-line interface
 
-(9) Navigate to the directory
-    <mw-dir>\extensions\SemanticMediaWiki\maintenance\
+(10) Navigate to the directory
+     <mw-dir>\extensions\SemanticMediaWiki\maintenance\
 
-(10) Run the script SMW_setup.php to initialize the database tables
+(11) Run the script SMW_setup.php to initialize the database tables
 
-(11) Download the Deployment Framework to install the patches: 
+(12) Download the Deployment Framework to install the patches:
 	 https://sourceforge.net/projects/halo-extension/files/smwhalo-deploy-1.2.zip/download
 
-(12) Extract the zip-file into the MediaWiki roots folder
+(13) Extract the zip-file into the MediaWiki roots folder
 
-(13) Open a command-line interface to install the patches
+(14) Open a command-line interface to install the patches
      The file patch.txt is an Eclipse patch file which can be installed using the
      tool patch.php from the deploy framework which itself uses GNU patch. The
      file is located in the directory 'extensions\SMWHalo'.
 
-(14) Enter the following command:
+(15) Enter the following command:
      php patch.php -p patch.txt -d <mw-dir> --onlypatch
      replace <mw-dir> with the absolute path of your Mediawiki installation.
 
-(15) To apply the patch for Mediawiki please also run:
+(16) To apply the patch for Mediawiki please also run:
      php patch.php -p patch_for_MW1.16.0.txt -d <mw-dir> --onlypatch
      replace <mw-dir> with the absolute path of your Mediawiki installation.
      replace patch_for_MW1.16.0.txt with the correct version for your Mediawiki
