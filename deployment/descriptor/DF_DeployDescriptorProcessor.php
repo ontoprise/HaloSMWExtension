@@ -144,7 +144,7 @@ class DeployDescriptionProcessor {
 				print "\n\nScript ".$rootDir."/".$script." failed!";
 				throw new RollbackInstallation();
 			}
-
+            $out = array(); // delete output
 		}
 	}
 
@@ -228,6 +228,9 @@ class DeployDescriptionProcessor {
 				case 'r': throw new RollbackInstallation();
 				case 'n': break; // just ignore the patches completely
 			}
+			
+			// clear patch.php output
+			$out = array();
 
 
 		}

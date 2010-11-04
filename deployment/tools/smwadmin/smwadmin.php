@@ -86,6 +86,7 @@ $dfgListPackages=false;
 $dfgCheckDep=false;
 $dfgRestore=false;
 $dfgCheckInst=false;
+$dfgInstallPackages=false;
 
 $help = array_key_exists("help", $options);
 if ($help || count($argv) == 0) {
@@ -275,6 +276,7 @@ function showHelp() {
 	echo "\n\t-i <package>: Install";
 	echo "\n\t-d <package> ]: De-Install";
 	echo "\n\t-u <package>: Update";
+	echo "\n\t--install: Finalizes installation";
 	echo "\n\t--checkdump <package>: Check only dumps for changes but do not install.";
 	echo "\n\t-l [ pattern ] : List installed packages.";
 	echo "\n\t-r : Rollback last installation.";

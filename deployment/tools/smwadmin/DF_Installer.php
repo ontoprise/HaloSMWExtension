@@ -432,6 +432,10 @@ class Installer {
 		$localPackages = PackageRepository::getLocalPackagesToInitialize($this->rootDir.'/extensions');
 		ksort($localPackages, SORT_NUMERIC);
 		
+		if (count($localPackages) === 0) {
+			print "\n\tNothing to do.";
+			return;
+		}
 		// apply the setup operations which must not happen
 		// before all extensions are updated
 		foreach($localPackages as $tupl) {
@@ -455,7 +459,11 @@ class Installer {
 		foreach($localPackages as $tupl) {
 			list($desc, $fromVersion) = $tupl;
 			$notice = $desc->getNotice();
-			if ($notice !== '') print "\n\tNOTICE: $notice";
+			if ($notice !== '') {
+				 print "\n\n========================================================="; 
+			     print "\nNOTICE: $notice";	
+			     print "\n\n=========================================================";
+			}
 		}
 		
 		// remove installation hint files

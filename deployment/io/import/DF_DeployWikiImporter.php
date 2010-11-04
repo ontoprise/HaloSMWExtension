@@ -43,7 +43,7 @@ class DeployWikiImporter extends WikiImporter {
 	}
 
 	function in_page( $parser, $name, $attribs ) {
-	
+
 		$name = $this->stripXmlNamespace($name);
 		$this->debug( "in_page $name" );
 		switch( $name ) {
@@ -236,7 +236,12 @@ class DeployWikiRevision extends WikiRevision {
 
 		if( $pageId == 0 ) {
 			# must create the page...
-			return $this->mode == DEPLOYWIKIREVISION_INFO ? false : parent::importOldRevision();
+			if ($this->mode == DEPLOYWIKIREVISION_INFO) {
+				return false;
+			} else {
+				print "\n\t[Imported page] ".$this->title->getPrefixedText();
+			    return parent::importOldRevision();
+			}
 		} else {
 
 			$prior = Revision::loadFromTitle( $dbw, $this->title );
@@ -249,7 +254,7 @@ class DeployWikiRevision extends WikiRevision {
 				$hash = md5($rawtext);
 
 				if (is_null($exp_hash)) {
-					
+						
 					return $this->mode == DEPLOYWIKIREVISION_INFO ? false : $this->importAsNewRevision();
 				}
 				if ($hash != $exp_hash) {
@@ -259,7 +264,7 @@ class DeployWikiRevision extends WikiRevision {
 						//@call_user_func(array(&$this->callback,"modifiedPage"), $this, $this->mode, & $result);
 					}
 					if ($result == true) {
-						
+
 						return $this->importAsNewRevision();
 					}
 				}
@@ -271,7 +276,7 @@ class DeployWikiRevision extends WikiRevision {
 
 	function importAsNewRevision() {
 		$dbw = wfGetDB( DB_MASTER );
-	
+
 		# Sneak a single revision into place
 		$user = User::newFromName( $this->getUser() );
 		if( $user ) {
@@ -348,7 +353,7 @@ class DeployWikiRevision extends WikiRevision {
 			$revId );
 		}
 		$GLOBALS['wgTitle'] = $tempTitle;
-        print "\n\t[Imported page] ".$this->title->getPrefixedText();
+		print "\n\t[Imported page] ".$this->title->getPrefixedText();
 		return true;
 	}
 }
