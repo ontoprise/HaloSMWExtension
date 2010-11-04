@@ -17,6 +17,9 @@ enableSemantics('http://wiki', true);
 include_once('extensions/SMWHalo/includes/SMW_Initialize.php');
 enableSMWHalo('SMWHaloStore2', "SMWTripleStoreQuad");
 
+include_once('extensions/ARCLibrary/ARCLibrary.php');
+enableARCLibrary();
+
 include_once('extensions/LinkedData/includes/LOD_Initialize.php');
 enableLinkedData(); 
 
