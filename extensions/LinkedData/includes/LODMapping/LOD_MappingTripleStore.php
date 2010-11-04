@@ -26,6 +26,7 @@ class LODMappingTripleStore implements ILODMappingStore {
 		global $smwgWebserviceEndpoint, $smwgWebserviceUser, $smwgWebservicePassword, $smwgWebserviceProtocol;
 
 		if (isset($smwgWebserviceProtocol) && strtolower($smwgWebserviceProtocol) === 'rest') {
+			if (!isset($smwgWebserviceEndpoint)) $smwgWebserviceEndpoint = "localhost:8080"; // assume a default value
 			list($host, $port) = explode(":", $smwgWebserviceEndpoint);
 			$credentials = isset($smwgWebserviceUser) ? $smwgWebserviceUser.":".$smwgWebservicePassword : "";
 			$this->_client = new RESTWebserviceConnector($host, $port, "mapping", $credentials);

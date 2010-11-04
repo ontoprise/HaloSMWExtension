@@ -37,7 +37,7 @@ if ( !defined( 'MEDIAWIKI' ) ) {
 // check if a triplestore with quad driver is available
 // print notice if not.
 global $smwgDefaultStore;
-if (!isset($smwgDefaultStore) || $smwgDefaultStore !== "SMWTripleStoreQuad" ) {
+if (!defined( 'DO_MAINTENANCE' ) && (!isset($smwgDefaultStore) || $smwgDefaultStore !== "SMWTripleStoreQuad" )) {
 	trigger_error("The LinkedData extension will not work without a properly configured triplestore.".
 	" Take a look at: http://smwforum.ontoprise.com");
 }
