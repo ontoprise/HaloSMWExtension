@@ -29,7 +29,7 @@
     </resources>
 
     <configs>
-    <successor ext="smw" />
+   
         <new>
             <require name="sf_init"
                 file="extensions/SemanticForms/includes/SF_Settings.php" />
