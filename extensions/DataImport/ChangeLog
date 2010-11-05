@@ -1,6 +1,12 @@
 Data Import extension ChangeLog
 ===============================
 
+VERSION 1.4.1
+
+CHANGES
+* Adujstments in the source code so that PHP 5.3.3 and Mediawiki 1.16.0 are
+  supported
+
 VERSION 1.4 patchlevel 3
 
 CHANGES
