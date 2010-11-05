@@ -1239,7 +1239,15 @@ class SMWTripleStore extends SMWStore {
 			$first = false;
 		}
 
-
+		if (isset($query->params)) {
+			// Serialize all additional parameters
+			foreach ($query->params as $param => $value) {
+				if (!$first) $result .= "|";
+				$result .= "$param=".trim($value);
+				$first = false;
+			}
+		}
+/*
 		if (isset($query->params) && isset($query->params['dataspace'])) {
 			if (!$first) $result .= "|";
 			$result .= 'dataspace='.trim($query->params['dataspace']);
@@ -1251,6 +1259,7 @@ class SMWTripleStore extends SMWStore {
 			$result .= 'metadata='.trim($query->params['metadata']);
 			$first = false;
 		}
+*/
 
 		return $result;
 	}
