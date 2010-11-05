@@ -54,12 +54,12 @@ class DLList{
 
 			//new node at head
 			if($index == 0){
-				$newNode->setNext(&$nodeAtIndex);
-				$nodeAtIndex->setPrevious(&$newNode);
-				$this->head->setNext(&$newNode);
+				$newNode->setNext($nodeAtIndex);
+				$nodeAtIndex->setPrevious($newNode);
+				$this->head->setNext($newNode);
 			}
 			else //somewhere else in the list
-			$this->insertNodeInList(&$newNode, &$nodeAtIndex);
+			$this->insertNodeInList($newNode, $nodeAtIndex);
 
 			$this->size++;
 
@@ -86,10 +86,10 @@ class DLList{
 	public function insertNodeInList(&$newNode, &$nodeAtIndex){
 		$previousNode = &$nodeAtIndex->getPrevious();
 
-		$newNode->setPrevious(&$previousNode);
-		$newNode->setNext(&$nodeAtIndex);
-		$nodeAtIndex->setPrevious(&$newNode);
-		$previousNode->setNext(&$newNode);
+		$newNode->setPrevious($previousNode);
+		$newNode->setNext($nodeAtIndex);
+		$nodeAtIndex->setPrevious($newNode);
+		$previousNode->setNext($newNode);
 	}
 
 	/**
@@ -100,18 +100,18 @@ class DLList{
 	 * @return boolean True if successful and false if not.
 	 */
 	public function add(&$object){
-		$newNode = $this->getNewNode(&$object);
+		$newNode = $this->getNewNode($object);
 
 		//A non empty list, mostly the case.
 		if(!$this->isEmpty()){
 			$previousNode = &$this->tail->getPrevious();
-			$previousNode->setNext(&$newNode);
-			$newNode->setPrevious(&$previousNode);
+			$previousNode->setNext($newNode);
+			$newNode->setPrevious($previousNode);
 		}
 		else //empty
-		$this->head->setNext(&$newNode);
+		$this->head->setNext($newNode);
 
-		$this->tail->setPrevious(&$newNode);
+		$this->tail->setPrevious($newNode);
 
 		$this->size++;
 
@@ -127,7 +127,7 @@ class DLList{
 	 * @return A ListNode object
 	 */
 	public function getNewNode(&$object){
-		return new ListNode(&$object);
+		return new ListNode($object);
 	}
 
 	/**
@@ -181,21 +181,21 @@ class DLList{
 				case 0:	//removing head
 					$nextNode = &$nodeToRemove->getNext();
 					$nextNode->setPrevious(NULL);
-					$this->head->setNext(&$nextNode);
+					$this->head->setNext($nextNode);
 					break;
 				case ($this->size()-1):
 					//removing tail
 					$previousNode = &$nodeToRemove->getPrevious();
 					$previousNode->setNext(NULL);
-					$this->tail->setPrevious(&$previousNode);
+					$this->tail->setPrevious($previousNode);
 					break;
 				default:
 					//gets the node before and after the deleted node
 					$previousNode = &$nodeToRemove->getPrevious();
 					$nextNode = &$nodeToRemove->getNext();
 					//updates the references for the before and after node.
-					$previousNode->setNext(&$nextNode);
-					$nextNode->setPrevious(&$previousNode);
+					$previousNode->setNext($nextNode);
+					$nextNode->setPrevious($previousNode);
 					break;
 			}
 			//compleatly removes the node
@@ -231,18 +231,18 @@ class DLList{
 					$__previousNode = &$__node->getPrevious();
 					$__nextNode = &$__node->getNext();
 					//updates the references for the before and after node.
-					$__previousNode->setNext(&$__nextNode);
-					$__nextNode->setPrevious(&$__previousNode);
+					$__previousNode->setNext($__nextNode);
+					$__nextNode->setPrevious($__previousNode);
 
 					if($__i === 0){
 						// the head should be set correctly
-						$this->head->setNext(&$__nextNode);
+						$this->head->setNext($__nextNode);
 
 					}
 
 					if($__i === $this->size()-1){
 						// the tail should be set correctly
-						$this->tail->setPrevious(&$__previousNode);
+						$this->tail->setPrevious($__previousNode);
 					}
 					// remove the shortcut
 					$this->removeShortcut($element);
@@ -532,8 +532,8 @@ class DLListIterator{
 		$this->list->removeObjectAtIndex(($this->list->size()-1));
 		else{
 			//updates the references for the before and after the current node.
-			$this->previousNode->setNext(&$this->nextNode);
-			$this->nextNode->setPrevious(&$this->previousNode);
+			$this->previousNode->setNext($this->nextNode);
+			$this->nextNode->setPrevious($this->previousNode);
 			$this->list->decSize();
 		}
 		$this->currentNode->setNext(NULL);
@@ -597,7 +597,7 @@ class ListNode{
 	 * Constructs a node.
 	 * @param $element The object/value of the node
 	 */
-	public function ListNode($element = NULL){
+	public function ListNode(&$element = NULL){
 		$this->element = &$element;
 	}
 
@@ -613,7 +613,7 @@ class ListNode{
 	 * Sets the reference to the next node.
 	 * @param &$node The next node.
 	 */
-	public function setNext($node){
+	public function setNext(&$node){
 		$this->nextNode = &$node;
 	}
 

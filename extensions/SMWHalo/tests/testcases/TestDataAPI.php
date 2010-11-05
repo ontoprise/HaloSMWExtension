@@ -3,7 +3,7 @@
  * @file
  * @ingroup SMWHaloTests 
  * 
- * @author Kai Kühn
+ * @author Kai Kï¿½hn
  *
  */
 class TestDataAPI extends PHPUnit_Framework_TestCase {
@@ -14,9 +14,9 @@ class TestDataAPI extends PHPUnit_Framework_TestCase {
 	private static $isInitialized = false;	
 	
 	function setUp() {
-		if(!$self->isInitialized){
+		if(!self::$isInitialized){
 			$this->initialize();
-			$self->isInitialized = true;
+			self::$isInitialized = true;
 		}
 	}
 
@@ -295,7 +295,7 @@ class TestDataAPI extends PHPUnit_Framework_TestCase {
 		$params = array('http' => array('method' => 'GET'));
 		$ctx = stream_context_create($params);
 		$response = stream_get_contents(
-		fopen($this->url."?action=wspcp&method=login&un=".$this->userName."&pwd=".$this->pw."&format=xml",
+		@ fopen($this->url."?action=wspcp&method=login&un=".$this->userName."&pwd=".$this->pw."&format=xml",
 		'rb', true, $ctx));
 
 		$response = new SimpleXMLElement($response);
@@ -316,7 +316,7 @@ class TestDataAPI extends PHPUnit_Framework_TestCase {
 		$ctx = stream_context_create($params);
 
 		$response = stream_get_contents(
-		fopen($this->url."?action=sfdata&sflist=".$title.$substr."&format=xml",
+		@fopen($this->url."?action=sfdata&sflist=".$title.$substr."&format=xml",
 			'rb', true, $ctx));
 		//echo("\n\n".$response);
 		return $response;
@@ -331,7 +331,7 @@ class TestDataAPI extends PHPUnit_Framework_TestCase {
 		$ctx = stream_context_create($params);
 
 		$response = stream_get_contents(
-		fopen($this->url."?action=sfdata&cattree=".$category.$level."&format=xml",
+		@ fopen($this->url."?action=sfdata&cattree=".$category.$level."&format=xml",
 			'rb', true, $ctx));
 		//echo("\n\n".$response);
 		return $response;
@@ -346,7 +346,7 @@ class TestDataAPI extends PHPUnit_Framework_TestCase {
 		$ctx = stream_context_create($params);
 
 		$response = stream_get_contents(
-		fopen($this->url."?action=sfdata&pagelist=".$title.$substr."&format=xml",
+		@ fopen($this->url."?action=sfdata&pagelist=".$title.$substr."&format=xml",
 			'rb', true, $ctx));
 		//echo("\n\n".$response);
 		return $response;
@@ -356,14 +356,14 @@ class TestDataAPI extends PHPUnit_Framework_TestCase {
 		$params = array('http' => array('method' => 'GET'));
 		$ctx = stream_context_create($params);
 		$response = stream_get_contents(
-		fopen($this->url."?action=wspcp&method=readPage&format=xml&title=".$title,
+		@ fopen($this->url."?action=wspcp&method=readPage&format=xml&title=".$title,
 		'rb', true, $ctx));
 
 		//echo("\n\n".$response);
 
 		$response = new SimpleXMLElement($response);
 		$res = $response->xpath("//readPage/@text");
-		$res = $res[0];
+		@ $res = $res[0];
 
 		return $res;
 	}
@@ -383,7 +383,7 @@ class TestDataAPI extends PHPUnit_Framework_TestCase {
 		$ctx = $this->getPostContext($dataArray);
 
 		$response = stream_get_contents(
-		fopen($this->url,'rb', true, $ctx));
+		@ fopen($this->url,'rb', true, $ctx));
 		//echo("\n\n".$response);
 	}
 
@@ -403,7 +403,7 @@ class TestDataAPI extends PHPUnit_Framework_TestCase {
 		$ctx = $this->getPostContext($dataArray);
 
 		$response = stream_get_contents(
-		fopen($this->url,'rb', true, $ctx));
+		@ fopen($this->url,'rb', true, $ctx));
 		//echo("\n\n".$response);
 	}
 
@@ -422,7 +422,7 @@ class TestDataAPI extends PHPUnit_Framework_TestCase {
 		$ctx = $this->getPostContext($dataArray);
 
 		$response = stream_get_contents(
-		fopen($this->url,'rb', true, $ctx));
+		@ fopen($this->url,'rb', true, $ctx));
 		//echo("\n\n".$response);
 	}
 
@@ -441,7 +441,7 @@ class TestDataAPI extends PHPUnit_Framework_TestCase {
 		$ctx = $this->getPostContext($dataArray);
 
 		$response = stream_get_contents(
-		fopen($this->url,'rb', true, $ctx));
+		@ fopen($this->url,'rb', true, $ctx));
 		//echo("\n\n".$response);
 	}
 
@@ -456,7 +456,7 @@ class TestDataAPI extends PHPUnit_Framework_TestCase {
 		}
 
 		$response = stream_get_contents(
-		fopen($this->url."?action=wspom&format=xml&method=".$method."&title=".$title.$name,'rb', true, $ctx));
+		@ fopen($this->url."?action=wspom&format=xml&method=".$method."&title=".$title.$name,'rb', true, $ctx));
 		//echo("\n\n".$response);
 
 		return $response;
@@ -467,7 +467,7 @@ class TestDataAPI extends PHPUnit_Framework_TestCase {
 		$ctx = stream_context_create($params);
 
 		$response = stream_get_contents(
-		fopen($this->url."?action=wspom&format=xml&method=getElements&title=".$title,'rb', true, $ctx));
+		@ fopen($this->url."?action=wspom&format=xml&method=getElements&title=".$title,'rb', true, $ctx));
 		//echo("\n\n".$response);
 
 		return $response;
@@ -482,7 +482,7 @@ class TestDataAPI extends PHPUnit_Framework_TestCase {
 			$direct = "title";
 		}
 		$response = stream_get_contents(
-		fopen($this->url."?action=sfdata&format=".$format."&".$direct."=".$title,'rb', true, $ctx));
+		@ fopen($this->url."?action=sfdata&format=".$format."&".$direct."=".$title,'rb', true, $ctx));
 		//echo("\n\n".$response);
 		return $response;
 	}
@@ -503,7 +503,7 @@ class TestDataAPI extends PHPUnit_Framework_TestCase {
 		$ctx = $this->getPostContext($dataArray);
 
 		$response = stream_get_contents(
-		fopen($this->url,'rb', true, $ctx));
+		@ fopen($this->url,'rb', true, $ctx));
 		//echo("\n\n".$response);
 	}
 
@@ -523,12 +523,13 @@ class TestDataAPI extends PHPUnit_Framework_TestCase {
 		$ctx = $this->getPostContext($dataArray);
 
 		$response = stream_get_contents(
-		fopen($this->url,'rb', true, $ctx));
-		echo("\n\n".$response);
+		@ fopen($this->url,'rb', true, $ctx));
+		//echo("\n\n".$response);
 	}
 
 	function getPostData($dataArray){
 		$data = "";
+		$first=true;
 		foreach ($dataArray as $key => $value){
 			if(!$first){
 				$data .= "&";

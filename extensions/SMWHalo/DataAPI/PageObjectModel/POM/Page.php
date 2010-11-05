@@ -278,7 +278,7 @@ class POMPage extends PCPPage
 	 * @return  TRUE == insertin ok || FALSE == error adding element
 	 */
 	public function addElementBefore(POMElement  &$oldElement, POMElement  &$newElement){
-		return $this->children->addAtPosition($this->children->getPosition($oldElement), &$newElement);
+		return $this->children->addAtPosition($this->children->getPosition($oldElement), $newElement);
 	}
 
 	/**
