@@ -131,8 +131,7 @@
 .lodRatingTime {
 	color:#999999;
 	font-size:smaller;
-	position:absolute;
-	right:5px;
+	float: right;
 }
 
 .lodRatingAuthor {
@@ -142,12 +141,10 @@
 
 .lodRatingComment {
 	margin: 10px 0px;
-	position: relative;
+	width: 100%;
 }
 
 .lodRatingCommentFlag {
-	float: left;
-	margin: 8px;
 }
 
 .lodRatingSaveArea {
