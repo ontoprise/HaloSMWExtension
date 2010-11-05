@@ -384,6 +384,39 @@ SPARQL;
 		
 	}
 	
+	/**
+	 * This method is called, when an article is deleted. All stored queries
+	 * that belong to the article and their results are deleted.
+	 *
+	 * @param Article $article
+	 * 		The article that will be deleted.
+	 * @param User $user
+	 * 		The user who deletes the article.
+	 * @param string $reason
+	 * 		The reason, why the article is deleted.
+	 */
+	public static function onArticleDelete(&$article, &$user, &$reason) {
+		$name = $article->getTitle()->getFullText();
+		$db = LODStorage::getDatabase();
+    	$db->deleteQueries($name);
+    	return true;
+	}
+	
+	/**
+	 * 
+	 * Occurs whenever the software receives a request to save an article.
+	 * The article may contain queries whose content and results may be stored.
+	 * This data will be deleted.
+	 * @param Article $article
+	 * 		The article that will be saved.
+	 */
+	public static function onArticleSave(&$article) {
+		$name = $article->getTitle()->getFullText();
+		$db = LODStorage::getDatabase();
+    	$db->deleteQueries($name);
+		return true;
+	}
+	
 	//--- Private methods ---
 	
 	/**

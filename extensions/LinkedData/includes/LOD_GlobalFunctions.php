@@ -353,6 +353,8 @@ function lodfSetupRating() {
     }
 	
     $wgHooks['ProcessSPARQLXMLResults'][] = 'LODRatingAccess::onProcessSPARQLXMLResults';
+    $wgHooks['ArticleDelete'][]			  = 'LODRatingAccess::onArticleDelete';
+    $wgHooks['ArticleSave'][] 			  = 'LODRatingAccess::onArticleSave';
     
 	global $lodgScriptPath;
 		
