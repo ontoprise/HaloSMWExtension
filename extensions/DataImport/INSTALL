@@ -34,7 +34,7 @@ Requirements:
     php.ini if you want to use the POP3 import feature of the Term Import
     Framework.
     extension=php_imap.dll
-    extension=php_mime_magic.dll
+    extension=php_mime_magic.dll (only required if PHP < 5.3.3)
 	
 
 (1) Add to your LocalSettings.php: (After the Halo and the 
