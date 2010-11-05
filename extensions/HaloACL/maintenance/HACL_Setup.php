@@ -43,7 +43,7 @@ require_once("$haclgIP/includes/HACL_GlobalFunctions.php");
 
 $delete = array_key_exists('delete', $options);
 $createUsers = array_key_exists('createUsers', $options);
-$ldapDomain = $options['ldapDomain'];
+$ldapDomain = @$options['ldapDomain'];
 $help = array_key_exists('help', $options) || array_key_exists('h', $options);
 
 global $haclgBaseStore;
