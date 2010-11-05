@@ -59,6 +59,7 @@ class LODQueryAnalyzer  {
 	private $mRewrittenQuery;	// string: The rewritten query
 	private $mBindings;			// array<LODSparqlQueryResult>: All known bindings
 	private $mQuery;			// string: The original query
+	private $mQueryParams;		// array: The parameters of the original query
 	
 	/**
 	 * Constructor for LODQueryAnalyzer
@@ -68,6 +69,8 @@ class LODQueryAnalyzer  {
 	 * 
 	 * @param string $query
 	 * 		This SPARQL query will be rewritten
+	 * @param array $queryParams
+	 * 		An array of query parameters as key-value pairs
 	 * @param array<LODSparqlResult> $bindings
 	 * 		An array of sparql result bindings that consists of values, their type
 	 * 		and the variables they are bound to.
@@ -79,9 +82,10 @@ class LODQueryAnalyzer  {
 	 * 		CANNOT_REWRITE_QUERY, if the query can not be rewritten e.g. because
 	 * 			it contains unions. 
 	 */		
-	function __construct($query, array $bindings) {
+	function __construct($query, $queryParams, array $bindings) {
 		$this->mBindings = $bindings;
 		$this->mQuery = $query;
+		$this->mQueryParams = $queryParams;
 		$this->mParser = new LODSparqlQueryParser($query);
 		$this->mRewriter = new LODRatingRewriter($bindings);
 		$this->mParser->visitQuery($this->mRewriter);
@@ -143,8 +147,20 @@ class LODQueryAnalyzer  {
 		}
 		
 		// Ask the rewritten query with unbound variables again
+		
+		// First, serialize the query parameters
+		$params = "";
+		$first = true;
+		foreach ($this->mQueryParams as $param => $value) {
+			if (!$first) {
+				$params .= "|";
+			} else {
+				$first = false;
+			}
+			$params .= "$param=$value";
+		}
 		$tsa = new LODTripleStoreAccess();
-		$result = $tsa->queryTripleStore($this->mRewrittenQuery);
+		$result = $tsa->queryTripleStore($this->mRewrittenQuery, null, $params);
 		
 		$rows = $result->getRows();
 		foreach ($rows as $row) {

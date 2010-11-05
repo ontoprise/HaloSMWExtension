@@ -205,7 +205,7 @@ SPARQL;
 	public static function getTriplesForRatingKey($ratingKey) {
 		list($queryID, $row, $var) = self::parseRatingKey($ratingKey);
 		
-		$query = self::getQueryForRatingKey($ratingKey);
+		list($query, $queryParams) = self::getQueryForRatingKey($ratingKey);
 		
 		// Retrieve the complete row of results
 		$db = LODStorage::getDatabase();
@@ -229,7 +229,7 @@ SPARQL;
 		}
 
 		// Start the query analyzer
-		$qa = new LODQueryAnalyzer($query, $bindings);
+		$qa = new LODQueryAnalyzer($query, $queryParams, $bindings);
 		$resultSets = $qa->bindAndGetAllTriples();
 
 		// There may be several solutions with different variable bindings
@@ -269,8 +269,8 @@ SPARQL;
 	 * 		The rating key is needed for retrieving information about the query
 	 * 		and its result from the database. Its format is 
 	 * 		"query-ID|row index|variable name" e.g. "42|2|x".
-	 * @return string query
-	 * 		The query as string
+	 * @return array(string query, array queryParams)
+	 * 		The query as string and its parameters as array.
 	 * 
 	 * @throws LODRatingException
 	 * 		LODRatingException::WRONG_RATING_KEY
@@ -288,7 +288,8 @@ SPARQL;
 		if (is_null($query)) {
 			throw new LODRatingException(LODRatingException::INVALID_QUERY_ID, $queryID);
 		}
-		return $query;
+		$params = $db->getQueryParamsByID($queryID);
+		return array($query, $params);
 	}
 		
 	/**
@@ -297,10 +298,10 @@ SPARQL;
 	 * in form of SPARQL-XML.
 	 * 
 	 * This function adds meta-data to each query result i.e. it augments each 
-	 * value with 
-	 * - the variable it is bound to
-	 * - the representation of the value
-	 * - the data type of the value if it appears at object-position in a triple.
+	 * value with rating key which consists of
+	 * - the query ID
+	 * - the index of the row of a result
+	 * - the variable a result value is bound to 
 	 * 
 	 * @param SMWQuery $query
 	 * 		The original query whose result can now be processed.
@@ -313,6 +314,11 @@ SPARQL;
 	 * 
 	 */
 	public static function onProcessSPARQLXMLResults(SMWQuery $query, &$sparqlXML) {
+		// The result is only processed if the parameter "enableRating" is set "true".
+		if (!(isset($query->params) && $query->params['enablerating'] == "true")) {
+			return true;
+		}
+		
 		global $wgRequest;
 		
 		$articleName = $wgRequest->getText("title");
@@ -325,7 +331,11 @@ SPARQL;
 
 		// Store the query and its results in the database
 		$db = LODStorage::getDatabase();
-		$queryID = $db->addQuery($query->getQueryString(), $articleName);
+		$params = @$query->params;
+		if (!isset($params)) {
+			$params = array();
+		}
+		$queryID = $db->addQuery($query->getQueryString(), $params, $articleName);
 		
 		$results = $dom->xpath('//sparqlxml:result');
 		$row = 0;
