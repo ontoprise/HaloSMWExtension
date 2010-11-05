@@ -18,7 +18,7 @@ class NewUserMessage {
 	 * Add the template message if the users talk page does not already exist
 	 */
 	static function createNewUserMessage( $user ) {
-		$talk = $user->getTalkPage();
+		$talk = $user->getUserPage();
 
 		if ( !$talk->exists() ) {
 			global $wgUser, $wgLqtTalkPages;
