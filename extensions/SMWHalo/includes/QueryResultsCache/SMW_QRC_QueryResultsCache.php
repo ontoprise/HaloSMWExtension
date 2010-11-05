@@ -50,7 +50,7 @@ class SMWQRCQueryResultsCache {
 		}
 		
 		//delegate query processing to the responsible store
-		if ($query instanceof SMWSPARQLQuery) {
+		if ($query instanceof SMWSPARQLQuery && !(defined( 'DO_MAINTENANCE' ) && !defined('SMWH_FORCE_TS_UPDATE'))) {
 			$store = $defaultStore;
 		} else {
 			global $smwgBaseStore;
