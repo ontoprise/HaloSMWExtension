@@ -200,7 +200,7 @@ LOD.classes.RatingEditor = function () {
 		jQuery.ajax({ 
 			url:  url, 
 			data: "rs=lodafGetRatingsForTriple&rsargs[]="
-			  	+ encodeURIComponent(t.toJSON()),
+			  	+ encodeURIComponent(JSON.stringify(t)),
 			success: that.tripleRatingsLoaded,
 			error: function (request, status, error) {
 				jQuery('#lodRatingOtherComments')
@@ -482,7 +482,7 @@ LOD.classes.RatingEditor = function () {
 	that.saveRating = function () {
 		mCurrentRating.comment(jQuery('#lodRatingCommentTA').val());
 
-		var json = encodeURIComponent(mCurrentRating.toJSON());
+		var json = encodeURIComponent(JSON.stringify(mCurrentRating));
 
 		var url = wgServer + wgScriptPath + "/index.php?action=ajax";
 
@@ -556,11 +556,11 @@ LOD.classes.Rating = function (triple, rating, comment) {
 	 * 		This object as JSON
 	 */
 	that.toJSON = function () {
-		var json = "{ "
-			+ ' "triple" : '   + mTriple.toJSON() + ", "
-			+ ' "rating" : "'  + mRating + '", '
-			+ ' "comment" : "' + mComment + '" '
-			+ '}';
+		var json = {
+			triple	: mTriple,
+			rating	: mRating,
+			comment	: mComment
+		};
 		return json;
 	}
 
@@ -583,14 +583,13 @@ LOD.classes.Triple = function (subject, predicate, object) {
 	 * 		This object as JSON
 	 */
 	that.toJSON = function () {
-		var json = "{ "
-			+ ' "subject" : "'    + mSubject   + '", '
-			+ ' "predicate" : "'  + mPredicate + '", '
-			+ ' "object" : "'     + mObject    + '"'
-			+ ' }';
+		var json = {
+			subject		: mSubject,
+			predicate	: mPredicate,
+			object		: mObject
+		};
 		return json;
 	}
-	
 	
 	return that;
 }
@@ -601,7 +600,7 @@ LOD.ratingEditor = LOD.classes.RatingEditor();
 
 jQuery(document).ready( function ($) {
 		
-	var metadataSpans = $("span.lodMetadata");
+	var metadataSpans = $("span.lodMetadata:has(.lodRatingKey)");
 	
 	// Open the rating editor when a value is clicked
 	metadataSpans.click(function () {
