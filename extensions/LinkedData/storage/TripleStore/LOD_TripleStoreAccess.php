@@ -212,7 +212,7 @@ class  LODTripleStoreAccess  {
 	 * @param string $format
 	 */
 	public function loadFileIntoGraph($file, $graph, $format) {
-		$this->mCommands[] = "LOAD $file?format=$format INTO <$graph>\n";
+		$this->mCommands[] = "LOAD <$file?format=$format> INTO <$graph>\n";
 	}
 
 	/**
