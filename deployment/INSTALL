@@ -7,49 +7,60 @@ Install instructions for the latest version of the Deployment Framework are also
  
 For the full manual of the Deployment Framework have a look at:
 
- http://smwforum.ontoprise.com/smwforum/index.php/Help:Deployment_Framework_1.2
+ http://smwforum.ontoprise.com/smwforum/index.php/Help:Deployment_Framework_1.3
  
 Requirements: 
 =============
-    MediaWiki 1.13.2 or 1.15.1 - 1.15.3
-    
+    MediaWiki 1.16 installed
     
 Installation:
 =============
 
-(1) Unzip smwhalo-deploy-1.1.zip in the MediaWiki root folder.
-(2) Goto directory deployment/tools
-(3) On Linux: make smwadmin.sh executable (chmod +x smwadmin.sh)
-
+(1) Unzip smwhalo-deploy-1.3.zip in the MediaWiki root folder.
+(2) Replace in AdminSettings.php the example values given for  $wgDBadminuser (e.g. 'wikiadmin') and 
+      $wgDBadminpassword (e.g 'adminpass') with the name and passwort of the 
+      administrator user in your MYSQL installation. If you are using SMW+
+      then your default name and passwort is: 'root', 'm8nix'.
+(3) On Linux: make smwadmin.sh executable 
+      Open the installation directory of the deployment framework in the 
+      commandline interface: "<mediawiki-install-dir>/deployment/tools/"
+      and call: "chmod +x smwadmin.sh"
+(4) Include the path to the php binary to PATH variable (either Windows or Linux) 
+(5) Include the path to mysql.exe to the PATH variable (either Windows or Linux)
+(6) Test your installation
+  Open the installation directory of the deployment framework in the 
+  commandline interface in <mediawiki-install-dir>/deployment/tools/
+  and call: smwadmin.bat/sh. You should see the help screen.
 
 
 HowTo use the deployment framework
 ==================================
 
 
-smwhalo admin utility v0.1, Ontoprise 2009
+smwhalo admin utility v1.3, Ontoprise 2010
 
 Usage: smwadmin [ -i | -d ] <package>[-<version>]
        smwadmin -u [ <package>[-<version>] ]
+       smwadmin --install
 
         -i <package>: Install
+        --install: Finalizes installation
         -d <package> ]: De-Install
         -u <package>: Update
         --dep : Check only dependencies but do not install.
-        --checkdump <package>: Check only dumps for changes but do not install.
         -l [ pattern ] : List installed packages.
-        -r : Rollback last installation.
+        -r : Rollback last installation (does not work for un-installed extensions)
 
 Examples:
 
-        smwadmin -i smwhalo-1.4.4: Installs the given packages
         smwadmin -i smwhalo: Installs latest version of smwhalo.
-        smwadmin -u smw-142: Updates the given package to the specified version. (if possible)
+        smwadmin -i smwhalo-1.5.2: Installs the given package in this version (if available)
+        smwadmin --install: Finalizes every installation. Must be called after something was installed or updated.
+        smwadmin -u smw-152: Updates the given package to the specified version. (if possible)
         smwadmin -u: Updates complete installation
         smwadmin -u --dep: Shows what would be updated.
         smwadmin -d smw: Removes the package smw.
         smwadmin -l: List all installed/available packages 
-
 
 Adding new repositories
 =========================
@@ -58,3 +69,5 @@ File for repository links:
 /deployment/tools/repositories
 
 You may add new repositories here, the Ontoprise repo is already configured.
+
+TODO (Robert): add documentation here for proxy server
