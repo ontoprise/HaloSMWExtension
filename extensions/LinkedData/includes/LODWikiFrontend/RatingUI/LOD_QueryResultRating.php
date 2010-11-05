@@ -106,7 +106,7 @@ HTML;
 		
 		$query = LODRatingAccess::getQueryForRatingKey($ratingKey);
 		$pm = LODPrefixManager::getInstance();
-		$pm->addPrefixesFromQuery($query);
+		$pm->addPrefixesFromQuery($query[0]);
 		
 		// Insert the value that will be rated
 		$html = str_replace("***value***", $value, $html);
@@ -144,6 +144,11 @@ HTML;
 		$numWrong = 0;
 		$html = <<<HTML
 <div class="lodRatingCommentContainer">
+	<table class="lodRatingComment">
+	<colgroup>
+		<col width="24px">
+		<col width="100%%">
+	</colgroup>
 HTML;
 		
 		foreach ($ratings as $r) {
@@ -152,21 +157,22 @@ HTML;
 			$time = str_replace("T","&nbsp;&nbsp;", $time);
 			$time = str_replace("Z","", $time);
 			$comment = $r->getComment();
+			$comment = str_replace("\n", "<br />", $comment);
 			$value = $r->getValue();
 			$commentImg = $value === "true" ? "correct.png" : "wrong.png";
 			$html .= <<<HTML
-<div class="lodRatingComment">
-	<div class="lodRatingCommentFlag">
+<tr>
+	<td class="lodRatingCommentFlag">
 		<img src="***imgPath***/$commentImg" alt="" />
-	</div>
-	<div>	
+	</td>
+	<td>	
 		<div>
 			<span class="lodRatingAuthor">$author</span>
 			<span class="lodRatingTime">$time</span>
 		</div>
 		<div>$comment</div>
-	</div>
-</div>
+	</td>
+</tr>
 HTML;
 			if ($r->getValue() === "true") {
 				++$numCorrect;
@@ -175,6 +181,7 @@ HTML;
 			}
 		}
 		$html .= <<<HTML
+	</table>
 </div>
 HTML;
 
