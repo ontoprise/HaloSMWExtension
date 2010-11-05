@@ -408,6 +408,19 @@ class HACLSMWStore extends SMWStore {
 		return $this->mWrappedStore->initialize($verbose);
 	}
 	
+    public function getSMWPageID($title, $namespace, $iw, $canonical=true) {
+        return $this->mWrappedStore->getSMWPageID($title, $namespace, $iw, $canonical);
+    }
+
+    public function cacheSMWPageID($id, $title, $namespace, $iw) {
+        return $this->mWrappedStore->cacheSMWPageID($id, $title, $namespace, $iw);
+    }
+
+
+    public function getSMWPageIDandSort( $title, $namespace, $iw, &$sort, $canonical ) {
+        return $this->mWrappedStore->getSMWPageIDandSort($title, $namespace, $iw, $sort, $canonical);
+    }
+	
 	/**
 	 * Checks if a subject for properties is accessible.
 	 * @param Title/SMWWikiPageValue $subject
