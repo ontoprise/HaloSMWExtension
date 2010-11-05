@@ -82,10 +82,10 @@ $lodgDefaultMappingTarget = "wiki";
 #
 # Linked Data items (URIs) are presented as red link in the wiki (e.g. as result
 # of a query) as there is usually no corresponding page. However, there is 
-# information related to these items which should be displayed. A page can assembled
+# information related to these items which should be displayed. A page can be assembled
 # for them that consists of one or more templates. There can be a generic template
 # that is used for all non-existing pages (NEP). Furthermore, the item can have 
-# several types (rdfs:type) and a template can be associated to each one.
+# several types (rdf:type) and a template can be associated to each one.
 # There are additional templates for properties and categories.
 # In this context, templates are not the MediaWiki templates but normal pages whose
 # wiki text is copied into the resulting article. Of course, these pages may 
@@ -129,7 +129,8 @@ $lodgNEPCategoryTemplatePattern = "MediaWiki:NEP/Category/{cat}";
 
 ####
 # boolean - The meta data query printer augments the results of a query with meta
-# data. It is enabled by setting this variable <true>.
+# data. This is also need for rating triples.
+# It is enabled by setting this variable <true>.
 $lodgEnableMetaDataQueryPrinter = true;
 
 
@@ -165,4 +166,5 @@ function lodfInitStores() {
 // Tell the script manager, that we need jQuery
 global $smgJSLibs; 
 $smgJSLibs[] = 'jquery'; 
-$smgJSLibs[] = 'qtip'; 
+$smgJSLibs[] = 'qtip';
+$smgJSLibs[] = 'json';  
