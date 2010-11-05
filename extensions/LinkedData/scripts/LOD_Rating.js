@@ -182,9 +182,9 @@ LOD.classes.RatingEditor = function () {
 	
 	/**
 	 * Loads the HTML for the ratings and comments of the currently selected
-	 * or the given triple.
+	 * triple.
 	 */
-	that.showOtherComments = function (triple) {
+	that.showOtherComments = function () {
 	
 		var url = wgServer + wgScriptPath + "/index.php?action=ajax";
 
