@@ -23,11 +23,18 @@ define('PROGRESS_BAR_LENGTH', 40);
  * 
  * HTTP Downloader implementation.
  * 
- * @author Kai Kühn / Ontoprise / 2009
+ * @author Kai Kï¿½hn / Ontoprise / 2009
  *
  */
 class HttpDownload {
 	private $header;
+
+        private $proxy_addr="";
+        private $proxy_port="8080"; //use Port 8080 as default for proxy servers
+
+        public function __construct() {
+                $this->setProxy();
+	}
 
 	/**
 	 * Downloads a resource via HTTP protocol and stores it into a file.
@@ -35,7 +42,7 @@ class HttpDownload {
 	 * @param URL $url
 	 * @param string $filename
 	 * @param object $callback: An object with 2 methods:
-	 *                     downloadProgres($percentage).
+	 *                     downloadProgress($percentage).
 	 *                     downloadFinished($filename)
 	 */
 	public function downloadAsFileByURL($url, $filename, $credentials = "", $callback = NULL) {
@@ -55,7 +62,7 @@ class HttpDownload {
 	 * @param string $host
 	 * @param string $filename (may contain path)
 	 * @param object $callback: An object with 2 methods:
-	 *                     downloadProgres($percentage).
+	 *                     downloadProgress($percentage).
 	 *                     downloadFinished($filename)
 	 *      If null, an internal rendering method uses the console to show a progres bar and a finish message.
 	 */
@@ -71,7 +78,7 @@ class HttpDownload {
 		$in .= "Host: $host\r\n";
 		if ($credentials != '') $in .= "Authorization: Basic ".base64_encode(trim($credentials))."\r\n";
 		$in .= "\r\n";
-		
+		$this->useProxy($path, $port, $address);
 		socket_write($socket, $in, strlen($in));
 		$this->headerFound = false;
 		$this->header = "";
@@ -101,13 +108,12 @@ class HttpDownload {
 			}
 			$length += strlen($out);
 			fwrite($handle, $out);
-			$percentage = $length / $contentLength;
 
-			call_user_func(array($cb,"downloadProgres"), $percentage > 1 ? 1 : $percentage);
+			call_user_func(array($cb,"downloadProgress"), $length,$contentLength);
 
 		}  while ($out = socket_read($socket, 2048));
 		if ($percentage < 1) { 
-		  call_user_func(array($callback,"progress"), 1);	
+		  //call_user_func(array($callback,"progress"), 1);
 		}
 		call_user_func(array($cb,"downloadFinished"), $filename);
 		fclose($handle);
@@ -133,6 +139,7 @@ class HttpDownload {
 		$address = gethostbyname($host);
 		$res = "";
 		$socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
+                $this->useProxy($path, $port, $address);
 		socket_connect($socket, $address, $port);
 		$in = "GET $path HTTP/1.0\r\n";
 		$in .= "Host: $host\r\n";
@@ -170,14 +177,12 @@ class HttpDownload {
 			}
 			$length += strlen($out);
 			$res .= $out;
-			$percentage = $length / $contentLength;
-
-			call_user_func(array($cb,"downloadProgres"), $percentage > 1 ? 1 : $percentage);
+			call_user_func(array($cb,'downloadProgress'), $length, $contentLength);
 
 		} while ($out = socket_read($socket, 2048));
 
 		if ($percentage < 1) {  
-		  call_user_func(array($callback,"progress"), 1);
+		  call_user_func(array($cb,"downloadProgress"), 100,100);
 		} 
 		call_user_func(array($cb,"downloadFinished"), NULL);
 
@@ -201,6 +206,53 @@ class HttpDownload {
 
 	}
 
+
+        /**
+         * Checks if a proxy is given and modifies the parameters for the http-request accordingly
+         *
+         * @param string $path
+         * @param string $port
+         * @param string $host
+         */
+        private function useProxy(&$path, &$port, &$host){
+            //Is the proxy set?
+            if($this->proxy_addr != "" && $this->proxy_port != ""){
+                //use the full url of the resource for the HTTP GET
+                $path = $host.":".$port.$path;
+                //use the proxy address and port for socket connect
+                $host = $this->proxy_addr;
+                $port = $this->proxy_port;
+                return true;
+            }
+            else {
+                //No proxy is set, so don't change path, port and host
+                return false;
+            }
+        }
+
+        /**
+         * 
+         */
+        private function setProxy(){
+            //Read settings for the proxy
+            $proxy_url = DF_Config::getValue('df_proxy');
+            //don't change anything if no proxy is set in the config
+            if($proxy_url=="" || $proxy_url ==null) return;
+
+            //get proxy port and host
+            $partsOfURL = parse_url($proxy_url);
+            //get proxy ip to connect to
+            $proxy_server = gethostbyname($partsOfURL['host']);
+            //get port from settings
+            $proxy_port = $partsOfURL['port'];
+            //set port to default 8080 if not specified
+            if( $proxy_port == "" || $proxy_port == null ) $proxy_port = "8080";
+
+            //Set the proxy address and the port for Download
+            $this->proxy_addr = $proxy_server;
+            $this->proxy_port = $proxy_port;
+        }
+
 	/**
 	 * Parser content length from HTTP header
 	 *
@@ -208,7 +260,8 @@ class HttpDownload {
 	 */
 	private function getContentLength() {
 		preg_match("/Content-Length:\\s*(\\d+)/", $this->header, $matches);
-		if (!isset($matches[1])) throw new HttpError("Content-Length not set", 0, $this->header);
+                //if (!isset($matches[1])) throw new HttpError("Content-Length not set", 0, $this->header);
+                if (!isset($matches[1])) return 0; //Return 0 if contentlength is not set, e.g. filtert by a proxy
 		if (!is_numeric($matches[1])) throw new HttpError("Content-Length not numeric", 0, $this->header);
 		return intval($matches[1]);
 	}
@@ -218,20 +271,28 @@ class HttpDownload {
 	 *
 	 * @param float $per
 	 */
-	public function downloadProgres($per) {
-		static $first = true;
-		static $lastLength = 0;
-		if (!$first) for($i = 0; $i < $lastLength; $i++) echo chr(8);
-		$first = false;
-		$prg = intval(round($per,2)*PROGRESS_BAR_LENGTH);
-		$done = "";
-		$left = "";
-		for($i = 0; $i < $prg; $i++) $done .= "=";
-		for($i = $prg; $i < PROGRESS_BAR_LENGTH; $i++) $left .= " ";
-		$per100 = intval(round($per,2)*100);
-		$show = "[$done$left] $per100%";
-		echo $show;
-		$lastLength = strlen($show);
+	public function downloadProgress($length, $contentLength = 0) {
+                static $first = true;
+                static $lastLength = 0;
+                if (!$first) for($i = 0; $i < $lastLength; $i++) echo chr(8);
+                $first = false;
+                if($contentLength != 0){
+                    $per = $length / $contentLength;
+                    $per > 1 ? $per = 1 : $per;
+                    $prg = intval(round($per,2)*PROGRESS_BAR_LENGTH);
+                    $done = "";
+                    $left = "";
+                    for($i = 0; $i < $prg; $i++) $done .= "=";
+                    for($i = $prg; $i < PROGRESS_BAR_LENGTH; $i++) $left .= " ";
+                    $per100 = intval(round($per,2)*100);
+                    $show = "[$done$left] $per100%";
+                    echo $show;
+                    $lastLength = strlen($show);
+                } else {                    
+                    echo "Downloaded: ".$length;
+                    $lastLength = strlen("Downloaded: ".$length);
+                }
+
 	}
 
 	public function downloadStart($filename) {

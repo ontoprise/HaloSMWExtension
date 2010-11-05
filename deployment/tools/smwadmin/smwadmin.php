@@ -39,6 +39,13 @@ $rootDir = realpath($rootDir."/../../");
 require_once('DF_Tools.php');
 require_once('DF_Installer.php');
 
+//Load Settings
+if(file_exists($rootDir.'/settings.php'))
+{
+    require_once($rootDir.'/settings.php');
+}
+
+
 $phpver = str_replace(".","",phpversion());
 if ($phpver < 520) {
 	print "\nPHP version must be >= 5.2\n";

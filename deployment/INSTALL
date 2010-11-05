@@ -63,11 +63,16 @@ Examples:
         smwadmin -l: List all installed/available packages 
 
 Adding new repositories
-=========================
+=======================
         
 File for repository links:
 /deployment/tools/repositories
 
 You may add new repositories here, the Ontoprise repo is already configured.
 
-TODO (Robert): add documentation here for proxy server
+
+Using Deployment Framework with a Proxy
+=======================================
+
+Open <mediawiki-install-dir>/deployment/settings.php and set the proxy server address for
+'df_proxy'. For Example: 'df_proxy' => 'proxy.example.com:8080'
