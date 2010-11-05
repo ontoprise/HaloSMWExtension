@@ -39,14 +39,8 @@ require_once("$smwgDIIP/specials/WebServices/SMW_WebService.php");
 require_once("$smwgDIIP/specials/WebServices/SMW_WSTriplifier.php");
 
 
-global $wgExtensionFunctions, $wgHooks;
-// Define a setup function for the {{ ws:}} Syntax Parser
-$wgExtensionFunctions[] ='webServiceUsage_Setup';
-
-//Add a hook to initialise the magic word for the {{ ws:}} Syntax Parser
-$wgHooks['LanguageGetMagic'][] = 'webServiceUsage_Magic';
-
-// used to delete unused parameter sets that are no longer referred
+global $wgHooks;
+/// used to delete unused parameter sets that are no longer referred
 // and web services that are no longer used in this article.
 $wgHooks['ArticleSaveComplete'][] = 'detectEditedWSUsages';
 $wgHooks['ArticleDelete'][] = 'detectDeletedWSUsages';
@@ -65,22 +59,6 @@ $wgAutoloadClasses['WebServiceTemplateResultPrinter'] = $smwgDIIP . '/specials/W
 $wgAutoloadClasses['WebServiceTransposedResultPrinter'] = $smwgDIIP . '/specials/WebServices/resultprinters/SMW_WebServiceRPTransposed.php';
 $wgAutoloadClasses['WebServiceTIXMLResultPrinter'] = $smwgDIIP . '/specials/WebServices/resultprinters/SMW_WebServiceRPTIXML.php';
 
-
-/**
- * Set a function hook associating the "webServiceUsage" magic word with our function
- */
-function webServiceUsage_Setup() {
-	global $wgParser;
-	$wgParser->setFunctionHook( 'webServiceUsage', 'webServiceUsage_Render' );
-}
-
-/**
- * maps the magic word "webServiceUsage"to occurences of "ws:" in the wiki text
- */
-function webServiceUsage_Magic( &$magicWords, $langCode ) {
-	$magicWords['webServiceUsage'] = array( 0, 'ws' );
-	return true;
-}
 
 /**
  * Simply calls webServiceUsage_processCall

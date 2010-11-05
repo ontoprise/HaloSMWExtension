@@ -40,15 +40,6 @@
 # than 100. Semantic MediaWiki normally uses namespace numbers from 100 upwards.
 ##
 
-// Register additional namespaces
-if (!isset($smwgTINamespaceIndex)) {
-	TermImportManager::initTINamespaces(202);
-} else {
-	TermImportManager::initTINamespaces();
-}
-
-global $wgLanguageCode, $smwgNamespacesWithSemanticLinks;
-$smwgNamespacesWithSemanticLinks[SMW_NS_TERM_IMPORT] = true;
 
 /**
  * This class does some initialisation for the Term Import framework
@@ -65,27 +56,6 @@ class TermImportManager {
 	//		}
 	//		return true;
 	//	}
-
-	/**
-	 * Initializes the namespaces that are used by the Term Import framework
-	 * Normally the base index starts at 202. It must be an even number greater than
-	 * than 100. However, by default Semantic MediaWiki uses the namespace indexes
-	 * from 100 upwards.
-	 *
-	 * @param int $baseIndex
-	 * 		Optional base index for all Term Import namespaces. The default is 202.
-	 */
-	static function initTINamespaces($baseIndex = 200) {
-		global $smwgTINamespaceIndex;
-		if (!isset($smwgTINamespaceIndex)) {
-			$smwgTINamespaceIndex = $baseIndex;
-		}
-
-		if (!defined('SMW_NS_TERM_IMPORT')) {
-			define('SMW_NS_TERM_IMPORT',       $smwgTINamespaceIndex);
-			define('SMW_NS_TERM_IMPORT_TALK',  $smwgTINamespaceIndex+1);
-		}
-	}
 
 	/**
 	 * Initialized the Term Import framework

@@ -49,16 +49,6 @@ require_once($smwgDIIP . '/specials/WebServices/SMW_UseWebServiceAjaxAccess.php'
 # than 100. Semantic MediaWiki normally uses namespace numbers from 100 upwards.
 ##
 
-// Register additional namespaces
-global $smwgWWSNamespaceIndex;
-if (!isset($smwgWWSNamespaceIndex)) {
-	WebServiceManager::initWWSNamespaces(200);
-} else {
-	WebServiceManager::initWWSNamespaces();
-}
-
-global $wgLanguageCode;
-
 /**
  * This class contains the top level functionality of the Wiki Web Service
  * extensions. It
@@ -67,7 +57,6 @@ global $wgLanguageCode;
  * - registers namespaces
  *
  */
-
 class WebServiceManager {
 
 	public static $mNewWebService = null;
@@ -87,44 +76,6 @@ class WebServiceManager {
 			$article = new SMWWebServicePage($title);
 		}
 		return true;
-	}
-
-	/**
-	 * Initializes the namespaces that are used by the Wiki Web Service extension.
-	 * Normally the base index starts at 200. It must be an even number greater than
-	 * than 100. However, by default Semantic MediaWiki uses the namespace indexes
-	 * from 100 upwards.
-	 *
-	 * @param int $baseIndex
-	 * 		Optional base index for all Wiki Web Service namespaces. The default is 200.
-	 */
-	static function initWWSNamespaces($baseIndex = 200) {
-		global $smwgWWSNamespaceIndex;
-		if (!isset($smwgWWSNamespaceIndex)) {
-			$smwgWWSNamespaceIndex = $baseIndex;
-		}
-
-		if (!defined('SMW_NS_WEB_SERVICE')) {
-			define('SMW_NS_WEB_SERVICE',       $smwgWWSNamespaceIndex);
-			define('SMW_NS_WEB_SERVICE_TALK',  $smwgWWSNamespaceIndex+1);
-		}
-	}
-
-	/**
-	 * Registers the new namespaces. Must be called after the language dependent
-	 * messages have been installed.
-	 *
-	 */
-	static function registerWWSNamespaces() {
-		//also registers TermImport namespace
-		global $wgExtraNamespaces, $wgNamespaceAliases, $smwgDIContLang, $wgContLang;
-
-		// Register namespace identifiers
-		if (!is_array($wgExtraNamespaces)) {
-			$wgExtraNamespaces = array();
-		}
-		$wgExtraNamespaces = $wgExtraNamespaces + $smwgDIContLang->getNamespaces();
-		$wgNamespaceAliases = $wgNamespaceAliases + $smwgDIContLang->getNamespaceAliases();
 	}
 
 	/**

@@ -11,6 +11,7 @@
  * @defgroup DataImport
  */
 
+
 //this extension does only work if the Halo extension is enabled
 if ( !defined( 'SMW_HALO_VERSION' ) ) die("The Data Import extension requires the Halo extension.");
 if ( !defined( 'SGA_GARDENING_EXTENSION_VERSION' ) ) die("The Data Import extension requires the Semantic Gardening extension.");
@@ -29,25 +30,42 @@ $wgHooks['smwInitializeTables'][] = 'smwfDIInitializeTables';
  */
 function enableDataImportExtension() {
 	//tell SMW to call this function during initialization
-	global $wgExtensionFunctions, $smwgEnableDataImportExtension, $smwgDIIP;
-	
-	//so that other extensions like the gardening framework know about
-	//the Data Import Extension
-	$smwgEnableDataImportExtension = true;
-	require_once($smwgDIIP. '/specials/WebServices/SMW_WebServiceManager.php');
-	require_once($smwgDIIP. '/specials/TermImport/SMW_TermImportManager.php');
-	require_once($smwgDIIP. '/specials/TermImport/SMW_ImportedTermsNamespaces.php');
+	global $wgExtensionFunctions, $smwgDIIP;
 	
 	$wgExtensionFunctions[] = 'smwfDISetupExtension';
 	
 	global $smgJSLibs; 
 	$smgJSLibs[] = 'prototype';
 	
+	// Register additional namespaces
+	global $smwgWWSNamespaceIndex;
+	if (!isset($smwgWWSNamespaceIndex)) {
+		difInitWWSNamespaces(200);
+	} else {
+		difInitWWSNamespaces();
+	}
+	
+	// Register additional namespaces
+	if (!isset($smwgTINamespaceIndex)) {
+		difInitTINamespaces(202);
+	} else {
+		difInitTINamespaces();
+	}
+	
+	require_once($smwgDIIP. '/specials/TermImport/SMW_ImportedTermsNamespaces.php');
+	
+	global $smwgNamespacesWithSemanticLinks;
+	$smwgNamespacesWithSemanticLinks[SMW_NS_TERM_IMPORT] = true;
+	
 	//register namespaces
 	global $wgLanguageCode;
 	smwfDIInitContentLanguage($wgLanguageCode);
-	WebServiceManager::registerWWSNamespaces();
+	//WebServiceManager::registerWWSNamespaces();
+	difRegisterWWSNamespaces();	
 	diRegisterTermImportNamespaces();
+	
+	global $wgHooks;
+	$wgHooks['LanguageGetMagic'][] = 'difSetupMagic';
 }
 
 function enableMaterializationFeature(){
@@ -64,8 +82,25 @@ function enableMaterializationFeature(){
  */
 function smwfDISetupExtension() {
 	global $wgHooks, $wgExtensionCredits, $wgAutoloadClasses, $wgSpecialPages; 
-	global $smwgDIIP, $wgSpecialPageGroups, $wgRequest, $wgContLang;
+	global $smwgDIIP, $wgSpecialPageGroups, $wgRequest, $smwgEnableDataImportExtension, $wgContLang;
 
+if(defined( 'DO_MAINTENANCE' )){
+		require_once($smwgDIIP . '/specials/WebServices/SMW_WSStorage.php');
+		if(!WSStorage::getDatabase()->isInitialized()){
+			return true;
+		}
+	}
+	
+	//so that other extensions like the gardening framework know about
+	//the Data Import Extension
+	$smwgEnableDataImportExtension = true;
+	
+	require_once($smwgDIIP. '/specials/WebServices/SMW_WebServiceManager.php');
+	require_once($smwgDIIP. '/specials/TermImport/SMW_TermImportManager.php');
+	
+	global $wgParser;
+	$wgParser->setFunctionHook( 'webServiceUsage', 'webServiceUsage_Render' );
+	
 	$spns_text = $wgContLang->getNsText(NS_SPECIAL);
 
 	// register AddHTMLHeader functions for special pages
@@ -337,7 +372,7 @@ function smwDITBAddHTMLHeader(&$out){
 	
 	$action = $wgRequest->getVal('action');
 	if ($action == 'edit' || $action == 'formedit' || $ns == NS_SPECIAL && $text == "FormEdit") {
-		$out->addScript("<script type=\"text/javascript\" src=\"".$smwgDIScriptPath .  "/scripts/WebServices/semantic-toolbar-container.js\"></script>");
+		//$out->addScript("<script type=\"text/javascript\" src=\"".$smwgDIScriptPath .  "/scripts/WebServices/semantic-toolbar-container.js\"></script>");
 		//$out->addScript("<script type=\"text/javascript\" src=\"".$smwgDIScriptPath."/scripts/WebServices/use-webservice.js\"></script>");
 	}
 	
@@ -366,5 +401,72 @@ function difRegisterAutocompletionIcons(& $namespaceMappings) {
 	$namespaceMappings[SMW_NS_WEB_SERVICE]="/extensions/DataImport/skins/webservices/Image Webservice.gif";
 	$namespaceMappings[SMW_NS_TERM_IMPORT]="/extensions/DataImport/skins/TermImport/images/Image Termimport.gif";
 	
+	return true;
+}
+
+/**
+	 * Initializes the namespaces that are used by the Wiki Web Service extension.
+	 * Normally the base index starts at 200. It must be an even number greater than
+	 * than 100. However, by default Semantic MediaWiki uses the namespace indexes
+	 * from 100 upwards.
+	 *
+	 * @param int $baseIndex
+	 * 		Optional base index for all Wiki Web Service namespaces. The default is 200.
+	 */
+	function difInitWWSNamespaces($baseIndex = 200) {
+		global $smwgWWSNamespaceIndex;
+		if (!isset($smwgWWSNamespaceIndex)) {
+			$smwgWWSNamespaceIndex = $baseIndex;
+		}
+
+		if (!defined('SMW_NS_WEB_SERVICE')) {
+			define('SMW_NS_WEB_SERVICE',       $smwgWWSNamespaceIndex);
+			define('SMW_NS_WEB_SERVICE_TALK',  $smwgWWSNamespaceIndex+1);
+		}
+	}
+	
+	/**
+	 * Registers the new namespaces. Must be called after the language dependent
+	 * messages have been installed.
+	 *
+	 */
+	function difRegisterWWSNamespaces() {
+		//also registers TermImport namespace
+		global $wgExtraNamespaces, $wgNamespaceAliases, $smwgDIContLang, $wgContLang;
+
+		// Register namespace identifiers
+		if (!is_array($wgExtraNamespaces)) {
+			$wgExtraNamespaces = array();
+		}
+		$wgExtraNamespaces = $wgExtraNamespaces + $smwgDIContLang->getNamespaces();
+		$wgNamespaceAliases = $wgNamespaceAliases + $smwgDIContLang->getNamespaceAliases();
+	}
+	
+	/**
+	 * Initializes the namespaces that are used by the Term Import framework
+	 * Normally the base index starts at 202. It must be an even number greater than
+	 * than 100. However, by default Semantic MediaWiki uses the namespace indexes
+	 * from 100 upwards.
+	 *
+	 * @param int $baseIndex
+	 * 		Optional base index for all Term Import namespaces. The default is 202.
+	 */
+	function difInitTINamespaces($baseIndex = 200) {
+		global $smwgTINamespaceIndex;
+		if (!isset($smwgTINamespaceIndex)) {
+			$smwgTINamespaceIndex = $baseIndex;
+		}
+
+		if (!defined('SMW_NS_TERM_IMPORT')) {
+			define('SMW_NS_TERM_IMPORT',       $smwgTINamespaceIndex);
+			define('SMW_NS_TERM_IMPORT_TALK',  $smwgTINamespaceIndex+1);
+		}
+	}
+	
+/*
+ * Initialize magic words
+ */
+	function difSetupMagic( &$magicWords, $langCode ) {
+	$magicWords['webServiceUsage'] = array( 0, 'ws' );
 	return true;
 }

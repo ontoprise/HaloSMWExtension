@@ -36,6 +36,29 @@ require_once $smwgHaloIP . '/includes/SMW_DBHelper.php';
  *
  */
 class WSStorageSQL {
+	
+	/*
+	 * Check if all database tables already have been initialized
+	 */
+	public function isInitialized(){
+		$isInitialized = true;
+		
+		$db =& wfGetDB( DB_SLAVE );
+
+		$wwsdTable = $db->tableName('smw_ws_wwsd');
+		$isInitialized = $isInitialized && $db->tableExists($wwsdTable);
+		
+		$cacheTable = $db->tableName('smw_ws_cache');
+		$isInitialized = $isInitialized && $db->tableExists($cacheTable);
+		
+		$paramTable = $db->tableName('smw_ws_parameters');
+		$isInitialized = $isInitialized && $db->tableExists($paramTable);
+		
+		$articlesTable = $db->tableName('smw_ws_articles');
+		$isInitialized = $isInitialized && $db->tableExists($articlesTable);
+		
+		return $isInitialized;
+	}
 
 	/**
 	 * Initializes the database tables of the web service extensions. These are:
