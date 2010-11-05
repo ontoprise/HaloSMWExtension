@@ -301,7 +301,7 @@ SPARQL;
 			new LODSparqlResultURI("a", "http://example.com/DouglasAdams"),
 			new LODSparqlResultLiteral("p", "10.2", "http://www.w3.org/2001/XMLSchema#double")
 		);
-		$qa = new LODQueryAnalyzer($query, $bindings);
+		$qa = new LODQueryAnalyzer($query, array(), $bindings);
 		$rewritten = $qa->getRewrittenQuery();
 		
 		$expected = <<<SPARQL
@@ -447,7 +447,7 @@ SPARQL;
 		
 				
 		try {
-			$qa = new LODQueryAnalyzer($query, $bindings);
+			$qa = new LODQueryAnalyzer($query, array(), $bindings);
 		} catch (LODRatingException $e) {
 			$this->assertEquals(LODRatingException::QUERY_CONTAINS_UNION, $e->getCode(),
 					"Wrong type of exception caught.");
@@ -490,7 +490,7 @@ SPARQL;
 			new LODSparqlResultLiteral("p", "10.2", "http://www.w3.org/2001/XMLSchema#double")
 		);
 		
-		$qa = new LODQueryAnalyzer($query, $bindings);
+		$qa = new LODQueryAnalyzer($query, array(), $bindings);
 		$rewritten = $qa->getRewrittenQuery();
 						
 		$expected = <<<SPARQL
@@ -542,7 +542,7 @@ SPARQL;
 			new LODSparqlResultURI("a", "http://example.com/DouglasAdams"),
 		);
 		
-		$qa = new LODQueryAnalyzer($query, $bindings);
+		$qa = new LODQueryAnalyzer($query, array(), $bindings);
 		$rewritten = $qa->getRewrittenQuery();
 
 		$expected = <<<SPARQL
@@ -602,7 +602,7 @@ SPARQL;
 			new LODSparqlResultLiteral("p", "10.2", "http://www.w3.org/2001/XMLSchema#double")
 		);
 		
-		$qa = new LODQueryAnalyzer($query, $bindings);
+		$qa = new LODQueryAnalyzer($query, array(), $bindings);
 		$resultSets = $qa->bindAndGetAllTriples();
 		
 		// There is only one result
@@ -662,7 +662,7 @@ SPARQL;
 			new LODSparqlResultLiteral("p", "10.2", "http://www.w3.org/2001/XMLSchema#double")
 		);
 		
-		$qa = new LODQueryAnalyzer($query, $bindings);
+		$qa = new LODQueryAnalyzer($query, array(), $bindings);
 		$resultSets = $qa->bindAndGetAllTriples();
     	
 		// There are two results
@@ -719,7 +719,7 @@ SPARQL;
     function testRatingWorkflow() {
     	
     	$this->setupAuthorExample();
-    	
+ 
 		$query = <<<SPARQL
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
@@ -727,19 +727,22 @@ PREFIX ex:  <http://example.com/>
 
 SELECT ?a ?p
 WHERE {
-  GRAPH <http://example.com/authorGraph> {
     ?a rdf:type ex:Author .
     ?a ex:nationality "english"^^xsd:string .
     ?a ex:authorOf ?b .
     ?b ex:price ?p .
-  }
 }
 SPARQL;
-
+		
 		// Execute a query and get the result as HTML
-    	$result = SMWSPARQLQueryProcessor::getResultFromQueryString($query, array(), array(), SMW_OUTPUT_WIKI);
+		$result = SMWSPARQLQueryProcessor::getResultFromQueryString(
+					$query, 
+					array("graph" => "http://example.com/authorGraph",
+						  "enablerating" => "true"), 
+					array(), 
+					SMW_OUTPUT_WIKI);
 
-		// Get all values in the row of the vtbr. 
+    	// Get all values in the row of the vtbr. 
 		// The price of the Hermann Hesse book is 17.0. Get all values in that row.
 		$dom = simplexml_load_string($result);
 		$this->assertTrue($dom !== false, "Query processor returned invalid result.");
@@ -840,7 +843,7 @@ SPARQL;
 	 */
 	private function getQueryResult($queryString) {
 		
-		$params = array();
+		$params = array("enablerating" => "true");
 		
 		$query  = SMWSPARQLQueryProcessor::createQuery($queryString, $params);
 		$store = new SMWTripleStore();
@@ -924,6 +927,8 @@ WHERE {
     ?s ?p ?o .
 }
 SPARQL;
+		$params1 = array("dataspace" => "source1", 
+						 "someparam" => "somevalue");
 
    		$queryString2 = <<<SPARQL
 SELECT ?s ?p ?o
@@ -931,6 +936,8 @@ WHERE {
     ?s ?p ?o .
 }
 SPARQL;
+		$params2 = array("dataspace" => "source2", 
+						 "p" => "some other value");
    		
    		
     	$db = LODStorage::getDatabase();
@@ -938,8 +945,8 @@ SPARQL;
     	$articleName = self::ARTICLE_WITH_QUERIES;
     	
     	// Store queries
-    	$queryID1 = $db->addQuery($queryString1, $articleName);
-    	$queryID2 = $db->addQuery($queryString2, $articleName);
+    	$queryID1 = $db->addQuery($queryString1, $params1, $articleName);
+    	$queryID2 = $db->addQuery($queryString2, $params2, $articleName);
 
     	// Retrieve queries
     	
@@ -953,6 +960,13 @@ SPARQL;
 		// Verify that the query was correctly stored and retrieved
 		$this->assertEquals($queryString1, $q1, "Storing and retrieving a query failed.");
 		$this->assertEquals($queryString2, $q2, "Storing and retrieving a query failed.");
+
+    	$p1 = $db->getQueryParamsByID($queryID1);
+    	$p2 = $db->getQueryParamsByID($queryID2);
+		// Verify that the query parameters were correctly stored and retrieved
+		$this->assertEquals($params1, $p1, "Storing and retrieving query parameters failed.");
+		$this->assertEquals($params2, $p2, "Storing and retrieving query parameters failed.");
+    	
 		
 		// Delete queries
 		$db->deleteQueries($articleName);
@@ -973,7 +987,7 @@ SPARQL;
     	
     	$articleName = "AnArticleWithAQuery";
     	
-    	$queryID = $db->addQuery($queryString1, $articleName);
+    	$queryID = $db->addQuery($queryString1, array(), $articleName);
     	    	
     	$result = array(
     		array(array("a", "http://example.com/DouglasAdams", ""),
