@@ -314,12 +314,12 @@ HTML;
 	<td>
 		<img src="***imgPath***/correctDisabled.png" alt="" type="disabled" value="true" title="{{lod_rt_rate_correct}}" class="lodRatingFlag"/>
 		<img src="***imgPath***/correct.png" alt="" type="hover" value="true" title="{{lod_rt_rate_correct}}" class="lodRatingFlag" style="display:none"/>
-		<img src="***imgPath***/correctSelected.png" alt="" type="selected" value="true" title="{{lod_rt_rate_correct}}" class="lodRatingFlag" style="display:none"/>
+		<img src="***imgPath***/correctSelected.png" alt="" type="selected" value="true" title="{{lod_rt_rated_correct}}" class="lodRatingFlag" style="display:none"/>
 	</td>
 	<td>
 		<img src="***imgPath***/wrongDisabled.png" alt="" type="disabled" value="false" title="{{lod_rt_rate_wrong}}" class="lodRatingFlag"/>
-		<img src="***imgPath***/wrong.png" alt="" type="hover" value="false" title="{{lod_rt_rate_correct}}" class="lodRatingFlag" style="display:none"/>
-		<img src="***imgPath***/wrongSelected.png" alt="" type="selected" value="false" title="{{lod_rt_rate_correct}}" class="lodRatingFlag" style="display:none"/>
+		<img src="***imgPath***/wrong.png" alt="" type="hover" value="false" title="{{lod_rt_rate_wrong}}" class="lodRatingFlag" style="display:none"/>
+		<img src="***imgPath***/wrongSelected.png" alt="" type="selected" value="false" title="{{lod_rt_rated_wrong}}" class="lodRatingFlag" style="display:none"/>
 	</td>
 	<td>$psubj</td>
 	<td>$ppred</td>
