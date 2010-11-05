@@ -194,7 +194,7 @@ class SMWTripleStore extends SMWStore {
 			if (isset($smwgEnableObjectLogicRules)) {
 				// delete old rules...
 				foreach($old_rules as $ruleID) {
-					$sparulCommands[] = "DELETE RULE $ruleID FROM <$smwgTripleStoreGraph>";
+					$sparulCommands[] = "DELETE RULE <$ruleID> FROM <$smwgTripleStoreGraph>";
 				}
 				// ...and add new
 				foreach($new_rules as $rule) {
@@ -204,7 +204,7 @@ class SMWTripleStore extends SMWStore {
 					$ruleText = preg_replace("/[\n\r]/", " ", $ruleText);
 					$nativeText = $native ? "NATIVE" : "";
 					$activeText = !$active ? "INACTIVE" : "";
-					$sparulCommands[] = "INSERT $nativeText $activeText RULE $ruleID INTO <$smwgTripleStoreGraph> : \"".TSHelper::escapeForStringLiteral($ruleText)."\" TYPE \"$type\"";
+					$sparulCommands[] = "INSERT $nativeText $activeText RULE <$ruleID> INTO <$smwgTripleStoreGraph> : \"".TSHelper::escapeForStringLiteral($ruleText)."\" TYPE \"$type\"";
 				}
 			}
 			$con->connect();
@@ -727,7 +727,7 @@ class SMWTripleStore extends SMWStore {
 			$sparulCommands = array();
 			$sparulCommands[] = "DROP SILENT GRAPH <$smwgTripleStoreGraph>"; // drop may fail. don't worry
 			$sparulCommands[] = "CREATE SILENT GRAPH <$smwgTripleStoreGraph>";
-			$sparulCommands[] = "LOAD smw://".urlencode($wgDBuser).":".urlencode($wgDBpassword)."@$wgDBserver:$wgDBport/$wgDBname?lang=$wgLanguageCode&smwstore=$smwgBaseStore&ignoreSchema=$ignoreSchema&smwnsindex=$smwgNamespaceIndex#".urlencode($wgDBprefix)." INTO <$smwgTripleStoreGraph>";
+			$sparulCommands[] = "LOAD <smw://".urlencode($wgDBuser).":".urlencode($wgDBpassword)."@$wgDBserver:$wgDBport/$wgDBname?lang=$wgLanguageCode&smwstore=$smwgBaseStore&ignoreSchema=$ignoreSchema&smwnsindex=$smwgNamespaceIndex#".urlencode($wgDBprefix)."> INTO <$smwgTripleStoreGraph>";
 			$con->connect();
 			$con->update("/topic/WIKI.TS.UPDATE", $sparulCommands);
 			$con->disconnect();
