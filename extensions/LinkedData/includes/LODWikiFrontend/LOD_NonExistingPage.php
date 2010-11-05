@@ -45,16 +45,12 @@ if ( !defined( 'MEDIAWIKI' ) ) {
 class  LODNonExistingPage extends Article {
 	
 	//--- Constants ---
-//	const XY= 0;		// the result has been added since the last time
 		
 	//--- Private fields ---
 	private $mArticleID = 0; // ID of this article
 	
 
 	//--- getter/setter ---
-//	public function getXY()           {return $this->mXY;}
-
-//	public function setXY($xy)               {$this->mXY = $xy;}
 	
 	//--- Public methods ---
 	
@@ -245,11 +241,11 @@ class  LODNonExistingPage extends Article {
 		// get the categories of the entity
 		$tsa = new LODTripleStoreAccess();
 		$query = <<<SPARQL
-			PREFIX rdfs: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+			PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 			SELECT ?C
 			WHERE {
 				GRAPH ?G {
-					<$uri> rdfs:type ?C .
+					<$uri> rdf:type ?C .
 				}
 			}
 SPARQL;
