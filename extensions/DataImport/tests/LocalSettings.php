@@ -7,6 +7,9 @@ enableSemantics('http://wiki', true);
  
 require_once("$IP/extensions/ScriptManager/SM_Initialize.php");
 
+require_once("$IP/extensions/ARCLibrary/ARCLibrary.php");
+enableARCLibrary();
+
 include_once('extensions/SMWHalo/includes/SMW_Initialize.php');
 enableSMWHalo('SMWHaloStore2', 'SMWTripleStoreQuad', 'http://halowiki/ob');
 //enableSMWHalo('SMWHaloStore2');
