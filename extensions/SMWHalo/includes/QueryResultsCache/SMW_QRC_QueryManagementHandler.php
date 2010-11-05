@@ -309,11 +309,6 @@ class SMWQRCQueryManagementHandler {
 			
 			list($properties, $categories) = $this->getQueryParts($description);
 		} else {
-			if(!class_exists('ARC2')){
-				global $smwgHaloIP;
-				require_once( "$smwgHaloIP/libs/arc/ARC2.php" );
-			}
-			
 			$prefixes = str_replace(':<', ': <', TSNamespaces::getAllPrefixes());
 			$queryString = $prefixes . $query->getQueryString();
 			
