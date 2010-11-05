@@ -1,0 +1,13 @@
+== Important notice about modifiactions ==
+
+For the Halo project we use the NewUserMessage extension in the SMW+
+installation. The released version of the NewUserMessage is modified by
+Ontoprise to fit into the SMW+ installation.
+
+When a user registeres himself in the wiki, a new user page is created. This
+page is by default in the User_talk namespce. In SMW+ we want this page to be
+in the user namespace, but not the talk page. Therefore we apply the patch
+to the file NewUserMessage.class.php to implement the described behaviour. This
+change may break functionality when the NewUserMessage extension is used together
+with the LiquidThreads extension. In the standard SMW+ installation the
+LiquidThreads extension is not in use.
