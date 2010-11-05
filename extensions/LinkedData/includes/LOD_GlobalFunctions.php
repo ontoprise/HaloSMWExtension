@@ -342,10 +342,16 @@ function lodfSetupMetaDataQueryPrinter() {
 /**
  * Setup of the rating features for triples.
  * Do not call this method. It is called from lodfSetupExtension.
+ * The rating feature needs the meta-data query printer as prerequisite.
  */
 function lodfSetupRating() {
-	global $wgHooks;
-    
+	global $wgHooks, $lodgEnableMetaDataQueryPrinter;
+	
+    if (!$lodgEnableMetaDataQueryPrinter) {
+    	// No rating possible without the meta-data query printer
+    	return;
+    }
+	
     $wgHooks['ProcessSPARQLXMLResults'][] = 'LODRatingAccess::onProcessSPARQLXMLResults';
     
 	global $lodgScriptPath;
