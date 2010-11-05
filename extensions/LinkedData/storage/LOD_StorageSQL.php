@@ -91,7 +91,8 @@ class LODStorageSQL {
 		LODDBHelper::setupTable($table, array(
 				'query_id'	=> 'INT(8) UNSIGNED NOT NULL AUTO_INCREMENT',
 	            'query' 		=> 'Text CHARACTER SET utf8 COLLATE utf8_bin',
-	            'article_name'	=> 'VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_bin'),
+	            'params' 		=> 'Text CHARACTER SET utf8 COLLATE utf8_bin',
+				'article_name'	=> 'VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_bin'),
 				$db, $verbose, 'query_id');
 				
 		// lod_rating_query_result:
@@ -250,6 +251,8 @@ class LODStorageSQL {
 	 * 
 	 * @param string $queryString
 	 * 		The query to store.
+	 * @params array(string => string) $params
+	 * 		An array of query parameters as key-value pairs (parameter name => value) 
 	 * @param string $articleName
 	 * 		The full name of the article (i.e. with namespace) where the query 
 	 * 		is defined.
@@ -258,12 +261,20 @@ class LODStorageSQL {
 	 * @throws DBError
 	 * 		... when a database error occurs
 	 */
-	public function addQuery($queryString, $articleName) {
+	public function addQuery($queryString, array $params, $articleName) {
 		$db = & wfGetDB( DB_MASTER );
 		$t = $db->tableName(self::QUERY_TABLE);
+		
+		// Convert parameters to a string. All parameters are stored in a single
+		// line.
+		$paramString = "";
+		foreach ($params as $name => $value) {
+			$paramString .= "$name=>$value\n";
+		}
 
 		$setValues = array(
             'query'			=> $queryString,
+			'params'		=> $paramString,
             'article_name'	=> $articleName);
 		
 		$db->insert($t, $setValues);
@@ -278,7 +289,7 @@ class LODStorageSQL {
 	 * @param int $queryID
 	 * 		ID of the query to retrieve
 	 * @return string / null
-	 * 		The content of the query of <null> if it does not exist.
+	 * 		The content of the query or <null> if it does not exist.
 	 */
 	public function getQueryByID($queryID) {
 		$db = & wfGetDB( DB_SLAVE );
@@ -291,6 +302,41 @@ class LODStorageSQL {
 		$db->freeResult($res);
 										   
 		return $query;
+		
+	}
+	
+	/**
+	 * Retrieves the parameters of a query by the given $queryID.
+	 * 
+	 * @param int $queryID
+	 * 		ID of the query to retrieve
+	 * @return array / null
+	 * 		The parameters of the query or <null> if it does not exist.
+	 */
+	public function getQueryParamsByID($queryID) {
+		$db = & wfGetDB( DB_SLAVE );
+
+		$cond = array("query_id" => $queryID);
+		$res = $db->select($db->tableName(self::QUERY_TABLE), array("params"), $cond);
+										   
+		$row = $db->fetchObject($res);
+		$params = $row === false ? null : $row->params;
+		$db->freeResult($res);
+		
+		if (is_null($params)) {
+			return null;
+		}
+		
+		// Convert string to array
+		$paramArray = array();
+		$p = explode("\n", $params);
+		foreach ($p as $keyValue) {
+			$kv = explode("=>", $keyValue);
+			if (count($kv) == 2) {
+				$paramArray[$kv[0]] = $kv[1];
+			}
+		}
+		return $paramArray;
 		
 	}
 	
