@@ -37,7 +37,10 @@ if ( !defined( 'MEDIAWIKI' ) ) {
 //require_once("$lodgIP/...");
 
 /**
- * 
+ * This class stores information about triples in a query. It stores where a 
+ * certain variable occurs in the triple and if a value is bound to the 
+ * variable. As there may be up to three variables in a triple, several triple
+ * infos may exist for one triple.
  * 
  * @author Thomas Schweitzer
  * 
