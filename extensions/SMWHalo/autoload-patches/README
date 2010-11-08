@@ -1,0 +1,29 @@
+== Content of this directory ==
+
+This directory contains patch files that reflect the changes of existing classes
+from other extensions that are overloaded with the Mediawiki autoload feature.
+The patches in this directory are for documentation purposes only. They will not
+be applied during the install process of this extension. When the original
+extension gets updated the original class may change. These changes are not
+available in the overloaded class. Therefore the class in this extension that
+overloads the original class should be checked whether it must be changed as
+well to reflect all changes in the original class.
+
+== Build process ==
+
+These patches are not applied in the build process nor are they packed into the
+zip file. They exist on the SVN only. If the extension of the overloaded class
+changes and the class itself changes, it must be checked by the developer if the
+changes must be applied to the overloading class. Also a new patch must be
+created if changes are applied to the overloading class.
+Also when overloading a class, the developer of this extension must check the
+deploy descriptor that all prerequisites are defined correctly. This is mainly
+the version of the extensions which class gets overloaded.
+
+== List of patch files ==
+
+extension: SemanticMediaWiki 1.5.2
+file of original class:
+extensions/SemanticMediaWiki/includes/SMW_QueryProcessor.php
+overloaded Class: SMWQueryProcessor
+patchfile: SMW_QueryProcessor.php
