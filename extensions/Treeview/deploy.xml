@@ -12,7 +12,7 @@
 		<helpurl>http://smwforum.ontoprise.com/smwforum/index.php/Help:TreeView_Extension</helpurl>
 		<dependencies>
 			<dependency from="146">SMWHalo</dependency>
-            <dependency from="100" to="100">scriptmanager</dependency>
+            <dependency from="101">scriptmanager</dependency>
 		</dependencies>
 	</global>
 	<codefiles>
