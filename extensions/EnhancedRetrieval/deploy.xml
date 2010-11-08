@@ -10,7 +10,7 @@
         <helpurl>http://smwforum.ontoprise.com/smwforum/index.php/Help:Enhanced_Retrieval_Extension</helpurl>
 		<dependencies>
             <dependency from="1150" to="1160">MW</dependency>
-            <dependency from="100" to="100">scriptmanager</dependency>
+            <dependency from="101">scriptmanager</dependency>
         </dependencies>
     </global>
     <codefiles>
