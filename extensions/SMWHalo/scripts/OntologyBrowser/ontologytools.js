@@ -40,6 +40,7 @@ var SMW_OB_COMMAND_ADD_SCHEMAPROPERTY = 9;
 
 // Event types
 var OB_SELECTIONLISTENER = 'selectionChanged';
+var OB_SELECTEDTRIPLELISTENER = 'selectedTripleChanged';
 var OB_TREETABCHANGELISTENER = 'treeTabChanged'
 var OB_BEFOREREFRESHLISTENER = 'beforeRefresh';
 var OB_REFRESHLISTENER = 'refresh';
@@ -103,12 +104,29 @@ OBEventProvider.prototype = {
 	 *            namespace
 	 * @param node
 	 *            in HTML DOM tree.
+	 * 
 	 */
 	fireSelectionChanged : function(id, title, ns, node) {
 		if (!this.listeners[OB_SELECTIONLISTENER])
 			return;
 		this.listeners[OB_SELECTIONLISTENER].each(function(l) {
 			l.selectionChanged(id, title, ns, node);
+		});
+	},
+	
+	/**
+	 * Fires selectedTripleChanged event. The listener method must have the name
+	 * 'selectedTripleChanged' with the following signature:
+	 * 
+	 * @param s subject URI
+	 * @param p predicate URI
+	 * @param o object URI or literal
+	 */
+	fireSelectedTripleChanged: function(s,p,o) {
+		if (!this.listeners[OB_SELECTEDTRIPLELISTENER])
+			return;
+		this.listeners[OB_SELECTEDTRIPLELISTENER].each(function(l) {
+			l.selectedTripleChanged(s,p,o);
 		});
 	},
 

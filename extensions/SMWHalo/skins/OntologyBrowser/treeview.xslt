@@ -391,6 +391,10 @@
 					<xsl:if test="gissues">
 						<xsl:attribute name="class">gardeningissue</xsl:attribute>
 					</xsl:if>
+					<xsl:if test="@uri">
+                    <xsl:attribute name="uri"><xsl:value-of
+                            select="@uri" /></xsl:attribute>
+                            </xsl:if>
 					<xsl:choose>
 						<xsl:when test="string-length($title) > $maximumEntityLength">
 							<xsl:value-of
@@ -431,29 +435,34 @@
 				<xsl:choose>
 					<xsl:when test="child::param[1][@isLink]">
 						<a style="margin-left:5px;">
+        					    <xsl:if test="child::param[1][@uri]">
+			                        <xsl:attribute name="uri"><xsl:value-of
+			                            select="child::param[1]/@uri" /></xsl:attribute>
+                                </xsl:if>
+                                <xsl:if test="child::param[1][@url]">
+                                      <xsl:attribute name="href"><xsl:value-of
+                                                select="child::param[1]/@url" /></xsl:attribute>
+                                </xsl:if>
+                      
 							<xsl:choose>
-							<xsl:when test="child::param[1][@uri]">
-                                            <xsl:attribute name="href"><xsl:value-of
-                                                select="child::param[1]/@uri" /></xsl:attribute>
-                                        </xsl:when>
 								<xsl:when test="child::param[1][@notexists]">
-									<xsl:attribute name="href"><xsl:value-of
-										select="substring-before($param-wiki-path,'$1')" /><xsl:value-of
-										select="child::param[1]" />?action=edit</xsl:attribute>
+									
 									<xsl:attribute name="class">annotation titleNotExists</xsl:attribute>
 								</xsl:when>
 								<xsl:otherwise>
-									<xsl:attribute name="href"><xsl:value-of
-										select="substring-before($param-wiki-path,'$1')" /><xsl:value-of
-										select="child::param[1]" /></xsl:attribute>
+									
 									<xsl:attribute name="class">annotation</xsl:attribute>
 								</xsl:otherwise>
 							</xsl:choose>
+						
 							<xsl:variable name="target" select="child::param[1]" />
 							<xsl:value-of select="translate($target, '_', ' ')" />
 						</a>
 					</xsl:when>
 					<xsl:otherwise>
+					 <xsl:attribute name="typeURI"><xsl:value-of
+                                        select="child::param[1]/@typeURI" /></xsl:attribute>
+                                       
 						<xsl:if test="@needRepaste">
 							<xsl:attribute name="needRepaste">true</xsl:attribute>
 						</xsl:if>
@@ -473,21 +482,21 @@
 							<xsl:when test="@isLink">
 								<a style="margin-left:5px;">
 
+										   <xsl:if test="@uri">
+		                                     <xsl:attribute name="uri"><xsl:value-of
+		                                        select="@uri" /></xsl:attribute>
+			                                </xsl:if>
+			                                <xsl:if test="@url">
+			                                      <xsl:attribute name="href"><xsl:value-of
+			                                                select="@url" /></xsl:attribute>
+			                                </xsl:if>
 									<xsl:choose>
-										<xsl:when test="@uri">
-											<xsl:attribute name="href"><xsl:value-of
-												select="@uri" /></xsl:attribute>
-										</xsl:when>
 										<xsl:when test="@notexists">
-											<xsl:attribute name="href"><xsl:value-of
-												select="$param-wiki-path" />/<xsl:value-of
-												select="." />?action=edit</xsl:attribute>
+											
 											<xsl:attribute name="class">annotation titleNotExists</xsl:attribute>
 										</xsl:when>
 										<xsl:otherwise>
-											<xsl:attribute name="href"><xsl:value-of
-												select="substring-before($param-wiki-path,'$1')" /><xsl:value-of
-												select="." /></xsl:attribute>
+											
 											<xsl:attribute name="class">annotation</xsl:attribute>
 										</xsl:otherwise>
 									</xsl:choose>
@@ -548,6 +557,10 @@
 					<xsl:if test="@inherited">
 						<xsl:attribute name="class">attribute inherited</xsl:attribute>
 					</xsl:if>
+					<xsl:if test="@uri">
+					<xsl:attribute name="uri"><xsl:value-of
+                            select="@uri" /></xsl:attribute>
+                            </xsl:if>
 					<xsl:choose>
 						<xsl:when test="string-length($title) > $maximumEntityLength">
 							<xsl:value-of
@@ -806,6 +819,10 @@
 			<xsl:if test="@title">
 				<xsl:attribute name="title"><xsl:value-of select="@title" /></xsl:attribute>
 			</xsl:if>
+			<xsl:if test="@uri">
+                        <xsl:attribute name="uri"><xsl:value-of
+                            select="@uri" /></xsl:attribute>
+                    </xsl:if>
 			<xsl:if test="@uri">
                         <xsl:attribute name="uri"><xsl:value-of
                             select="@uri" /></xsl:attribute>

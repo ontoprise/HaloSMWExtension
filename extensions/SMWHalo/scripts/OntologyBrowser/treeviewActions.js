@@ -445,6 +445,7 @@ OBCategoryTreeActionListener.prototype = Object.extend(new OBTreeActionListener(
 		this.selectedCategory = null;
 		this.selectedCategoryID = null;
 		this.oldSelectedNode = null;
+		this.selectedCategoryURI = null;
 		this.draggableCategories = [];
 		selectionProvider.addListener(this, OB_SELECTIONLISTENER);
 		selectionProvider.addListener(this, OB_REFRESHLISTENER);
@@ -471,6 +472,7 @@ OBCategoryTreeActionListener.prototype = Object.extend(new OBTreeActionListener(
 			this.selectedCategory = title;
 			this.selectedCategoryID = id;
 			this.oldSelectedNode = GeneralBrowserTools.toggleHighlighting(this.oldSelectedNode, node);
+			
 		}
 	},
 	
@@ -572,6 +574,8 @@ select: function (event, node, categoryID, categoryName) {
 	
 	// fire selection event
 	selectionProvider.fireSelectionChanged(categoryID, categoryName, SMW_CATEGORY_NS, node);
+	this.selectedCategoryURI = node.getAttribute("uri");
+	selectionProvider.fireSelectedTripleChanged(null, "rdf:type", this.selectedCategoryURI);
 	
 	// check if node is already expanded and expand it if not
 	if (!nextDIV.hasChildNodes() || nextDIV.style.display == 'none') {
@@ -671,6 +675,7 @@ OBInstanceActionListener.prototype = {
 		
 		this.selectedInstance = null;
 		this.oldSelectedInstance = null;
+		this.selectedInstanceURI = null;
 		selectionProvider.addListener(this, OB_SELECTIONLISTENER);
 	},
 	
@@ -734,6 +739,9 @@ OBInstanceActionListener.prototype = {
 		
 		
 		selectionProvider.fireSelectionChanged(id, instanceNamespace+":"+instanceName, SMW_INSTANCE_NS, node);
+		this.selectedInstanceURI = node.getAttribute("uri");
+		selectionProvider.fireSelectedTripleChanged(this.selectedInstanceURI, "rdf:type", categoryActionListener.selectedCategoryURI);
+		
 		smwhgLogger.log(instanceName, "OB","clicked");
 		
 		function callbackOnInstanceSelectToRight(request) {
@@ -1076,6 +1084,13 @@ OBAnnotationActionListener.prototype = {
 	
 	selectProperty: function(event, node, propertyName) {
 		// delegate to schemaPropertyListener
+		var propertyURI = node.getAttribute("uri");
+		var valueNode = node.parentNode.nextSibling;
+		var valueURI = valueNode.getAttribute("uri");
+		var valueTypeURI = valueNode.getAttribute("typeURI");
+		var valueString = valueNode.textContent.trim();
+		var objectValue = valueURI == null ? '"'+valueString+'"^^'+valueTypeURI : valueURI;
+		selectionProvider.fireSelectedTripleChanged(instanceActionListener.selectedInstanceURI, propertyURI, objectValue );
 		schemaActionPropertyListener.selectProperty(event, node, propertyName);
 	},
 	
@@ -1207,6 +1222,7 @@ OBGlobalActionListener.prototype = {
 	initialize: function() {
 		this.activeTreeName = 'categoryTree';
 		
+		
 		new Form.Element.Observer($("treeFilter"), 0.5, this.filterTree.bindAsEventListener(this));
         new Form.Element.Observer($("instanceFilter"), 0.5, this.filterInstances.bindAsEventListener(this));
         new Form.Element.Observer($("propertyFilter"), 0.5, this.filterProperties.bindAsEventListener(this));
@@ -1225,6 +1241,11 @@ OBGlobalActionListener.prototype = {
 		Event.observe(document, 'keydown', keyDownListener.bind(this));
 		
 		selectionProvider.addListener(this, OB_REFRESHLISTENER);
+		selectionProvider.addListener(this, OB_SELECTEDTRIPLELISTENER);
+	},
+	
+	selectedTripleChanged: function(s,p,o) {
+		// do nothing
 	},
 	
 	refresh: function() {

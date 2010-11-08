@@ -197,9 +197,9 @@ class OB_Storage {
 		$instanceWithMetadata = array();
 		foreach($attinstances as $i) {
 			if (is_array($i)) {
-				$instanceWithMetadata[] = array(array($i, NULL), NULL);
+				$instanceWithMetadata[] = array(array($i, NULL, NULL, NULL), NULL);
 			} else {
-				$instanceWithMetadata[] = array(array($i, NULL), NULL);
+				$instanceWithMetadata[] = array(array($i, NULL, NULL, NULL), NULL);
 			}
 		}
 
@@ -480,6 +480,7 @@ class OB_StorageTS extends OB_Storage {
 			$b = $children->binding[0]; // predicate
 
 			$sv = $b->children()->uri[0];
+			if (TSNamespaces::$RDF_NS."type" === (string) $sv) continue; // ignore rdf:type annotations
 			$title = TSHelper::getTitleFromURI((string) $sv);
 			if (is_null($title)) continue;
 			$predicate = SMWPropertyValue::makeUserProperty($title->getText());
@@ -495,11 +496,9 @@ class OB_StorageTS extends OB_Storage {
 					$value = SMWDataValueFactory::newTypeIDValue('_uri', (string) $sv);
 				}
 				// add metadata
-				$metadata = array();
-				foreach($sv->attributes() as $mdProperty => $mdValue) {
-					if (strpos($mdProperty, "_meta_") === 0) {
-						$value->setMetadata(strtoupper($mdProperty), explode("|||",$mdValue));
-					}
+				$metadataMap = $this->parseMetadata($sv->metadata);
+				foreach($metadataMap as $mdProperty => $mdValue) {
+						$value->setMetadata(strtoupper($mdProperty), NULL, $mdValue);
 				}
 
 				$values[] = $value ;
@@ -510,12 +509,10 @@ class OB_StorageTS extends OB_Storage {
 				$value = $this->getLiteral($literal, $predicate);
 
 				// add metadata
-				$metadata = array();
-				foreach($sv->attributes() as $mdProperty => $mdValue) {
-					if (strpos($mdProperty, "_meta_") === 0) {
-						$value->setMetadata(strtoupper($mdProperty), explode("|||",$mdValue));
-					}
-				}
+			    $metadataMap = $this->parseMetadata($sv->metadata);
+                foreach($metadataMap as $mdProperty => $mdValue) {
+                        $value->setMetadata(strtoupper($mdProperty), NULL, $mdValue);
+                }
 				$values[] = $value;
 			}
 
@@ -819,7 +816,7 @@ class OB_StorageTSQuad extends OB_StorageTS {
 			$response = $client->query(TSNamespaces::getW3CPrefixes()." SELECT ?s ?cat WHERE { ?s <$propertyURI> ?o. OPTIONAL { ?s rdf:type ?cat. } }",  "limit=$limit|offset=$offset$dataSpace$metadataRequest");
 
 			$titles = array();
-			$this->parseInstances($response, $titles);
+			$this->parseInstances($response, $titles, NULL);
 
 		} catch(Exception $e) {
 			return "Internal error: ".$e->getMessage();

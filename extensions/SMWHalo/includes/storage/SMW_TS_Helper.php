@@ -354,6 +354,16 @@ class TSNamespaces {
 		global $smwgTripleStoreGraph;
 		return "<".$smwgTripleStoreGraph."/".$this->getNSPrefix($t->getNamespace())."#".$t->getDBkey().">";
 	}
+	
+    /**
+     * Returns the full URI used by the TS for $t
+     *
+     * @param Title $t
+     */
+    public function getFullURI(Title $t) {
+        global $smwgTripleStoreGraph;
+        return $smwgTripleStoreGraph."/".$this->getNSPrefix($t->getNamespace())."#".$t->getDBkey();
+    }
 
 	/**
 	 * Returns the full IRI used by the TS for $p

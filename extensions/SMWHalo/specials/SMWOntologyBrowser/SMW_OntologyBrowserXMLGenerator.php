@@ -40,6 +40,7 @@ class SMWOntologyBrowserXMLGenerator {
 			$result .= "<categoryPartition id=\"ID_$id$count\" partitionNum=\"$partitionNum\" length=\"$limit\" hideNextArrow=\"true\"/>";
 		}
 		$count++;
+		$ts = new TSNamespaces();
 		$gi_store = SGAGardeningIssuesAccess::getGardeningIssuesAccess();
 		foreach($titles as $e) {
 			list($t, $isLeaf) = $e;
@@ -56,7 +57,8 @@ class SMWOntologyBrowserXMLGenerator {
 			$titleURLEscaped = htmlspecialchars(self::urlescape($t->getDBkey()));
 			$issues = $gi_store->getGardeningIssues('smw_consistencybot', NULL, NULL, $t);
 			$gi_issues = SMWOntologyBrowserErrorHighlighting::getGardeningIssuesAsXML($issues);
-			$result = $result."<conceptTreeElement $leaf title_url=\"$titleURLEscaped\" title=\"".$title_esc."\" img=\"concept.gif\" id=\"ID_$id$count\">$gi_issues$definingRulesXML</conceptTreeElement>";
+			$uri_att = 'uri="'.htmlspecialchars($ts->getFullURI($t)).'"';
+			$result = $result."<conceptTreeElement $leaf $uri_att title_url=\"$titleURLEscaped\" title=\"".$title_esc."\" img=\"concept.gif\" id=\"ID_$id$count\">$gi_issues$definingRulesXML</conceptTreeElement>";
 			$count++;
 		}
 		if ($rootLevel) {
@@ -131,7 +133,7 @@ class SMWOntologyBrowserXMLGenerator {
 			if (!is_null($url)) {
 				$localurl_att = 'localurl="'.htmlspecialchars($url).'"';
 			}
-				
+
 			$instanceURI_att = "";
 			if (!is_null($instanceURI)) {
 				$instanceURI_att = 'uri="'.htmlspecialchars($instanceURI).'"';
@@ -177,7 +179,7 @@ class SMWOntologyBrowserXMLGenerator {
 		$count++;
 		$gi_store = SGAGardeningIssuesAccess::getGardeningIssuesAccess();
 		foreach($titles as $e) {
-				
+
 			list($t, $isLeaf, $propertyURI, $localURL) = $e;
 			if (SMWOntologyBrowserXMLGenerator::isPredefined($t)) {
 				continue;
@@ -189,7 +191,7 @@ class SMWOntologyBrowserXMLGenerator {
 			foreach($definingRules as $df) {
 				$definingRulesXML .= "<definingRule>".htmlspecialchars($df)."</definingRule>";
 			}
-				
+
 			$propertyURI_att = !is_null($propertyURI) ? 'uri="'.htmlspecialchars($propertyURI).'"' : "";
 			$localURL_att = !is_null($localURL) ? 'localurl="'.htmlspecialchars($localURL).'"' : "";
 			$titleURLEscaped = htmlspecialchars(self::urlescape($t->getDBkey()));
@@ -276,15 +278,15 @@ class SMWOntologyBrowserXMLGenerator {
 		$isMemberOfTransCat = $schemaData[5];
 		$range = $schemaData[6];
 		$inherited = $schemaData[7] == true ? "inherited=\"true\"" : "";
-        
+		$ts = new TSNamespaces();
 		//FIXME: show primitive type as links to Type pages.
 		if ($type == '_wpg') { // binary relation?
 			if ($range == NULL) {
 				$v = SMWDataValueFactory::newPropertyObjectValue(SMWPropertyValue::makeProperty("_TYPE"));
-                $v->setDBkeys(array("_wpg"));
-                $typeValues = $v->getTypeValues();
-                $typesValue = reset($typeValues);
-                $typeLabels = $typesValue->getTypeLabels();
+				$v->setDBkeys(array("_wpg"));
+				$typeValues = $v->getTypeValues();
+				$typesValue = reset($typeValues);
+				$typeLabels = $typesValue->getTypeLabels();
 				$content .= "<rangeType>".reset($typeLabels)."</rangeType>";
 			} else {
 				$content .= "<rangeType isLink=\"true\">".$range."</rangeType>";
@@ -312,7 +314,8 @@ class SMWOntologyBrowserXMLGenerator {
 		$numberofUsage = smwfGetSemanticStore()->getNumberOfUsage($title);
 		$numberOfUsageAtt = 'num="'.$numberofUsage.'"';
 		$gi_issues = SMWOntologyBrowserErrorHighlighting::getGardeningIssuesAsXML($issues);
-		return "<property title_url=\"$titleURLEscaped\" title=\"".$title_esc."\" id=\"ID_".$id.$count."\" " .
+		$uri_att = 'uri="'.htmlspecialchars($ts->getFullURI($title)).'"';
+		return "<property $uri_att title_url=\"$titleURLEscaped\" title=\"".$title_esc."\" id=\"ID_".$id.$count."\" " .
 					"$minCardText $maxCardText $isSymetricalText $isTransitiveText $numberOfUsageAtt $inherited>".
 		$content.$gi_issues.
 				"</property>";
@@ -336,15 +339,17 @@ class SMWOntologyBrowserXMLGenerator {
 		$isFormula = false;
 		$chemistryParser = new ChemEqParser();
 		$gi_store = SGAGardeningIssuesAccess::getGardeningIssuesAccess();
-
-		 
+		$ts = new TSNamespaces();
+			
 		foreach($smwValues as $smwValue) {
-			//list($smwValue, $uri) = $tuple;
+			
 			if ($smwValue instanceof SMWRecordValue) { // n-ary property
 
 				$needRepaste = false;
 				$parameters = "";
 				foreach($smwValue->getDVs() as $params) {
+					$uri_att = "";
+                        $url_att = "";
 					if ($params == NULL) {
 						$parameters .= "<param></param>";
 						continue;
@@ -361,7 +366,14 @@ class SMWOntologyBrowserXMLGenerator {
 						$value = "<![CDATA[".($formulaAsHTML)."]]>";
 					} else {
 						// escape potential HTML in a CDATA section
-						$value = "<![CDATA[".(html_entity_decode(array_shift($params->getDBkeys())))." ".(html_entity_decode($params->getUnit()))."]]>";
+						
+						if ($params instanceof SMWWikiPageValue) {
+						  $uri_att = 'uri="'.htmlspecialchars($ts->getFullURI($params->getTitle())).'"';
+                          $url_att = 'url="'.htmlspecialchars($params->getTitle()->getFullURL()).'"';
+						  $value = "<![CDATA[".$params->getTitle()->getPrefixedDBkey()."]]>";
+						} else {
+						  $value = "<![CDATA[".(html_entity_decode(array_shift($params->getDBkeys())))." ".(html_entity_decode($params->getUnit()))."]]>";
+						}
 					}
 
 					// check if re-paste is needed
@@ -369,7 +381,8 @@ class SMWOntologyBrowserXMLGenerator {
 
 					// check if target is a wikipage and built param
 					$isLink = $params instanceof SMWWikiPageValue ? "isLink=\"true\"" : "";
-					$parameters .= "<param $isLink>$value</param>";
+					
+					$parameters .= "<param $isLink $uri_att $url_att>$value</param>";
 				}
 				$repasteMarker = $isFormula || $needRepaste ? "needRepaste=\"true\"" : "";
 				$title = htmlspecialchars($annotationTitle->getDBkey());
@@ -403,18 +416,18 @@ class SMWOntologyBrowserXMLGenerator {
 					}
 				}
 				$metadataTags .= "</metadata>";
-
-
-					
-
+                
+				$propertyURI_att = 'uri="'.htmlspecialchars($ts->getFullURI($annotationTitle)).'"';
 				if ($smwValue instanceof SMWWikiPageValue && !is_null($smwValue->getTitle())) {
 					$targetNotExists = $smwValue->getTitle()->exists() ?  "" : "notexists=\"true\"";
-					$singleProperties .= "<annotation  title_url=\"$titleURLEscaped\" title=\"".$title."\" id=\"ID_$id$count\">".
-					                     "<param isLink=\"true\" $targetNotExists><![CDATA[".$smwValue->getTitle()->getPrefixedDBkey()."]]></param>".
+					$uri_att = 'uri="'.htmlspecialchars($ts->getFullURI($smwValue->getTitle())).'"';
+					$url_att = 'url="'.htmlspecialchars($smwValue->getTitle()->getFullURL()).'"';
+					$singleProperties .= "<annotation $propertyURI_att title_url=\"$titleURLEscaped\" title=\"".$title."\" id=\"ID_$id$count\">".
+					                     "<param isLink=\"true\" $uri_att $url_att $targetNotExists><![CDATA[".$smwValue->getTitle()->getPrefixedDBkey()."]]></param>".
 					$gi_issues.$metadataTags.
 					                     "</annotation>";
 				} else if ($smwValue->getTypeID() == '_uri') {
-					// any URI
+					// any URI. External (=non wiki instances) are always of type _uri
 					$uri = $smwValue->getWikiValue();
 					if (strpos($uri, "#") !== false) {
 						$local = substr($uri, strpos($uri, "#")+1);
@@ -423,20 +436,24 @@ class SMWOntologyBrowserXMLGenerator {
 					} else {
 						$local = $uri;
 					}
+					
 					$uri_att = 'uri="'.htmlspecialchars($uri).'"';
-					$singleProperties .= "<annotation  title_url=\"$titleURLEscaped\" title=\"".$title."\" id=\"ID_$id$count\">".
-                                         "<param isLink=\"true\" $uri_att><![CDATA[".$local."]]></param>".
+					$url_att = 'url="'.htmlspecialchars($uri).'"';
+					$singleProperties .= "<annotation $propertyURI_att title_url=\"$titleURLEscaped\" title=\"".$title."\" id=\"ID_$id$count\">".
+                                         "<param isLink=\"true\" $uri_att $url_att><![CDATA[".$local."]]></param>".
 					$metadataTags.
                                          "</annotation>";
 				}
 					
 			} else if ($smwValue != NULL){ // normal attribute
+				$typeURI = WikiTypeToXSD::getXSDType($smwValue->getTypeID());
+				$typeURI_att = 'typeURI="'.htmlspecialchars($typeURI).'"';
 				if ($smwValue->getTypeID() == '_che') {
 					$isFormula = true;
 					$chemistryParser->checkEquation(array_shift($smwValue->getDBkeys()));
 					$formulaAsHTML = html_entity_decode($chemistryParser->getHtmlFormat());
 					$value = "<param><![CDATA[".($formulaAsHTML)."]]></param>";
-				} if ($smwValue->getTypeID() == '_che') {
+				} else if ($smwValue->getTypeID() == '_che') {
 					$isFormula = true;
 					$chemistryParser->checkEquation(array_shift($smwValue->getDBkeys()));
 					$formulaAsHTML = html_entity_decode($chemistryParser->getHtmlFormat());
@@ -449,19 +466,16 @@ class SMWOntologyBrowserXMLGenerator {
 				} else {
 					// escape potential HTML in a CDATA section
 
-					if ($smwValue->getTypeID() == '__typ') { //SMW_DV_Types
-						$value = implode(",",$smwValue->getTypeLabels());
-						$value = strip_tags($value, "<sub><sup><b><i>");
-						$value = "<param><![CDATA[".html_entity_decode($value)." ".$smwValue->getUnit()."]]></param>";
-					} if ($smwValue->getTypeID() == '__tls') { // SMW_DV_TypeList
+					if ($smwValue->getTypeID() == '__tls') { // SMW_DV_TypeList
 						$typesValues = $smwValue->getTypeValues();
-                         $value = "";
+						$value = "";
 						foreach($typesValues as $typesValue) {
-						    $typeLabel = reset($typesValue->getTypeLabels());
-						    $typeTitle = Title::newFromText($typeLabel, SMW_NS_TYPE);
-							$value .= "<param isLink=\"true\"><![CDATA[".html_entity_decode($typeTitle->getPrefixedDBkey())."]]></param>";
+							$typeLabel = reset($typesValue->getTypeLabels());
+							$typeTitle = Title::newFromText($typeLabel, SMW_NS_TYPE);
+							$uri_att = 'uri="'.htmlspecialchars($ts->getFullURI($typeTitle)).'"';
+							$value .= "<param isLink=\"true\" $uri_att><![CDATA[".html_entity_decode($typeTitle->getPrefixedDBkey())."]]></param>";
 						}
-						
+
 					} else {
 						// small hack for datetime type. It may occur that there is a T at the end.
 						if ($smwValue->getTypeID() == '_dat') {
@@ -471,7 +485,7 @@ class SMWOntologyBrowserXMLGenerator {
 							$xsdValue = array_shift($smwValue->getDBkeys());
 						}
 						$value = strip_tags($xsdValue, "<sub><sup><b><i>");
-						$value = "<param><![CDATA[".html_entity_decode($value)." ".$smwValue->getUnit()."]]></param>";
+						$value = "<param $typeURI_att><![CDATA[".html_entity_decode($value)." ".$smwValue->getUnit()."]]></param>";
 					}
 
 				}
@@ -485,7 +499,7 @@ class SMWOntologyBrowserXMLGenerator {
 					
 				// gardening issues
 				$gi_issues = SMWOntologyBrowserErrorHighlighting::getAnnotationIssuesAsXML($issues, $smwValue);
-
+				$propertyURI_att = 'uri="'.htmlspecialchars($ts->getFullURI($annotationTitle)).'"';
 				// metadata
 				// check if metadata patch is applied
 				$metadataTags = "<metadata id=\"".$id."_meta_".$count."\">";
@@ -499,8 +513,8 @@ class SMWOntologyBrowserXMLGenerator {
 				}
 				$metadataTags .= "</metadata>";
 
-				$singleProperties .= "<annotation  title_url=\"$titleURLEscaped\" title=\"".$title."\" id=\"ID_".$id.$count."\" $repasteMarker>".
-				                       $value.
+				$singleProperties .= "<annotation $propertyURI_att title_url=\"$titleURLEscaped\" title=\"".$title."\" id=\"ID_".$id.$count."\" $repasteMarker>".
+				$value.
 				$gi_issues.
 				$metadataTags.
 				                      "</annotation>";
