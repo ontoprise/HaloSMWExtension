@@ -15,7 +15,7 @@
 			<dependency from="140" to="152">SMW</dependency>
 			<dependency from="142" to="152">smwhalo</dependency>
 			<dependency from="100" to="133">SemanticGardening</dependency>
-			<dependency from="100" to="100">scriptmanager</dependency>
+			<dependency from="101">scriptmanager</dependency>
 		</dependencies>
 		<patchlevel>0</patchlevel>
 	</global>
