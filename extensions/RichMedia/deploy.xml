@@ -13,7 +13,7 @@
 		<dependencies>
 			<dependency from="1153" to="1160">MW</dependency>
 			<dependency from="190" to="200">semanticforms</dependency>
-			<dependency from="100" to="100">scriptmanager</dependency>
+			<dependency from="101">scriptmanager</dependency>
 		</dependencies>
 	</global>
 	<codefiles>
