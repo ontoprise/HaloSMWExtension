@@ -327,9 +327,10 @@
 				<td>
 				<xsl:if test="count(metadata/property) > 0">
 					<xsl:variable name="metaid" select="child::metadata/@id" />
+					<xsl:variable name="subjectID" select="@id"/>
 					<img class="metadataContainerSwitch"
 						src="{$param-img-directory}/extensions/SMWHalo/skins/OntologyBrowser/images/metadata.gif"
-						onclick="instanceActionListener.toggleMetadata(event, this,'{$metaid}')" />
+						data="{$metaid}" subjectID="{$subjectID}" subjectType="instance" />
 				</xsl:if>
 			</td>
 			<td>
@@ -384,6 +385,8 @@
 				<!-- <img src="{$param-img-directory}../../{$icon}"/>  -->
 				<xsl:variable name="title" select="@title" />
 				<a title="{$title}" class="annotation">
+				<xsl:attribute name="id"><xsl:value-of
+                        select="@id" /></xsl:attribute>
 					<xsl:attribute name="onclick">annotationActionListener.selectProperty(event, this,'<xsl:call-template
 						name="replace-string"><xsl:with-param name="text" select="@title" /><xsl:with-param
 						name="from" select="$var-simple-quote" /><xsl:with-param
@@ -425,9 +428,10 @@
 				</a>
 				<xsl:if test="count(metadata/property) > 0">
 					<xsl:variable name="metaid" select="child::metadata/@id" />
-					<img class="metadataContainerSwitch"
-						src="{$param-img-directory}/extensions/SMWHalo/skins/OntologyBrowser/images/metadata.gif"
-						onclick="annotationActionListener.toggleMetadata(event, this,'{$metaid}')" />
+					<xsl:variable name="subjectID" select="@id"/>
+                    <img class="metadataContainerSwitch"
+                        src="{$param-img-directory}/extensions/SMWHalo/skins/OntologyBrowser/images/metadata.gif"
+                        data="{$metaid}" subjectID="{$subjectID}" subjectType="annotation" />
 				</xsl:if>
 			</td>
 			<td align="right">

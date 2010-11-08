@@ -74,6 +74,7 @@ function enableSMWHalo($store = 'SMWHaloStore2', $tripleStore = NULL, $tripleSto
 
 	global $smgJSLibs;
 	$smgJSLibs[] = 'prototype';
+	$smgJSLibs[] = 'qtip'; 
 
 }
 
