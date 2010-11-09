@@ -1512,7 +1512,7 @@ OBGlobalActionListener.prototype = {
 									+ '\''
 									+ ', 1, \''
 									+ data
-									+ '\')">'+gLanguage.getMessage('SMW_OB_META_COMMAND_RATE')+</a>');
+									+ '\')">'+gLanguage.getMessage('SMW_OB_META_COMMAND_RATE')+'</a>');
 									
 							// install the tool-tip on the current DOM element
 							jQuery(this).qtip( {
