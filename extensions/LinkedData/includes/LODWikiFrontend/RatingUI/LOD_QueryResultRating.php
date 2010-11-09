@@ -92,6 +92,7 @@ HTML;
 	 * 
 	 * @param $ratingKey
 	 * 		The rating key is needed to retrieve the prefixes from the query.
+	 * 		Can be <null>.
 	 * @param string $value
 	 * 		The value whose relations will be rated.
 	 * @param array $triples
@@ -104,9 +105,11 @@ HTML;
 	public static function getRatingHTML($ratingKey, $value, array $triples) {
 		$html = self::RATING_HTML;
 		
-		$query = LODRatingAccess::getQueryForRatingKey($ratingKey);
 		$pm = LODPrefixManager::getInstance();
-		$pm->addPrefixesFromQuery($query[0]);
+		if (!is_null($ratingKey)) {
+			$query = LODRatingAccess::getQueryForRatingKey($ratingKey);
+			$pm->addPrefixesFromQuery($query[0]);
+		}
 		
 		// Insert the value that will be rated
 		$html = str_replace("***value***", $value, $html);
@@ -237,15 +240,19 @@ HTML;
 			$html .= self::generateTriplesTable($rsIdx, 1, $resultSet[0]);
 			
 			// Add the table of secondary triples
-			$html .= <<<HTML
+			if (count($resultSet[1])) {
+				$html .= <<<HTML
 	<a class="lodRatingActionLink lodRatingOpenRelatedTriples" 
 		id="lodRatingRateOthers_$rsIdx"
 		toggleText="{{lod_rt_hide_related}}">{{lod_rt_rate_related}}</a>
 	<div class="lodRatingRelatedTriples" id="lodRatingRelated_$rsIdx">
 HTML;
-			$html .= self::generateTriplesTable($rsIdx, 2, $resultSet[1]);
-			$html .= <<<HTML
+				$html .= self::generateTriplesTable($rsIdx, 2, $resultSet[1]);
+				$html .= <<<HTML
 	</div>
+HTML;
+			}
+			$html .= <<<HTML
 </div>
 HTML;
 

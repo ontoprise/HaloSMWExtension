@@ -167,4 +167,5 @@ function lodfInitStores() {
 global $smgJSLibs; 
 $smgJSLibs[] = 'jquery'; 
 $smgJSLibs[] = 'qtip';
-$smgJSLibs[] = 'json';  
+$smgJSLibs[] = 'json'; 
+$smgJSLibs[] = 'fancybox'; 

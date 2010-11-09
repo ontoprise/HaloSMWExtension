@@ -36,6 +36,7 @@ if ( !defined( 'MEDIAWIKI' ) ) {
 $wgAjaxExportList[] = "lodafGetRatingEditorForKey";
 $wgAjaxExportList[] = "lodafSaveRating";
 $wgAjaxExportList[] = "lodafGetRatingsForTriple";
+$wgAjaxExportList[] = "lodafGetRatingEditorForTriple";
 $wgAjaxExportList[] = "lodImportOrUpdate";
 $wgAjaxExportList[] = "lodGetDataSourceTable";
 
@@ -59,6 +60,38 @@ function lodafGetRatingEditorForKey($ratingKey, $value) {
     
     $value = urldecode($value);
 	$html = LODQueryResultRatingUI::getRatingHTML($ratingKey, $value, $triples);
+    $response->addText($html);
+	return $response;
+}
+
+/**
+ * Returns the HTML of the editor for rating the given triple.
+ * 
+ * @param string $triple
+ * 		The triple that can be rated.
+ * @param string $value
+ * 		The value whose relations will be rated.
+ * @return AjaxResponse
+ * 		The HTML for the rating editor.
+ */
+function lodafGetRatingEditorForTriple($triple, $value) {
+    $response = new AjaxResponse();
+    $response->setContentType("json");
+    $triple = json_decode($triple);
+	// Object can be given with type
+	$objType = null;
+	$obj = $triple->object;
+	$type = null;
+	if (preg_match("/\"(.*?)\"\^\^(.*)/", $obj, $objType) == 1) {
+		$obj = $objType[1];
+		$type = $objType[2];
+	}
+    
+    $triple = new LODTriple($triple->subject, $triple->predicate, $obj, $type);
+    $triples = array(array(array($triple), array()));
+    
+    $value = urldecode($value);
+	$html = LODQueryResultRatingUI::getRatingHTML(null, $value, $triples);
     $response->addText($html);
 	return $response;
 }

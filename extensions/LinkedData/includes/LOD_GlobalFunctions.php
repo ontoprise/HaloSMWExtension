@@ -351,18 +351,15 @@ function lodfSetupRating() {
     	// No rating possible without the meta-data query printer
     	return;
     }
-	
+
     $wgHooks['ProcessSPARQLXMLResults'][] = 'LODRatingAccess::onProcessSPARQLXMLResults';
     $wgHooks['ArticleDelete'][]			  = 'LODRatingAccess::onArticleDelete';
     $wgHooks['ArticleSave'][] 			  = 'LODRatingAccess::onArticleSave';
+    $wgHooks['BeforePageDisplay'][]		  =	'lodfOnBeforePageDisplayRating';
     
 	global $lodgScriptPath;
 		
 	$css = "rating.css";
-	$cssFile = $lodgScriptPath . "/skins/$css";
-	SMWOutputs::requireHeadItem($css,
-			'<link rel="stylesheet" media="screen, projection" type="text/css" href="'.$cssFile.'" />');
-	$css = "jquery.fancybox-1.3.1.css";
 	$cssFile = $lodgScriptPath . "/skins/$css";
 	SMWOutputs::requireHeadItem($css,
 			'<link rel="stylesheet" media="screen, projection" type="text/css" href="'.$cssFile.'" />');
@@ -371,9 +368,47 @@ function lodfSetupRating() {
 	$scriptFile = $lodgScriptPath . "/scripts/$script";
 	SMWOutputs::requireHeadItem($script,
 			'<script type="text/javascript" src="' . $scriptFile . '"></script>');
-	$script = "jquery.fancybox-1.3.1.js";
-	$scriptFile = $lodgScriptPath . "/scripts/$script";
-	SMWOutputs::requireHeadItem($script,
-			'<script type="text/javascript" src="' . $scriptFile . '"></script>');
 	
+}
+
+/**
+ * This function is called by the hook 'BeforePageDisplay'. The scripts for
+ * the rating features are added for the OntologyBrowser.
+ * @param OutputPage $out
+ * 		The output page object
+ */
+function lodfOnBeforePageDisplayRating(& $out) {
+	// Include scripts for OntologyBrowser
+	global $lodgScriptPath;
+	$t = $out->getTitle();
+	if ($t->getNamespace() == NS_SPECIAL && $t->getDBkey() == 'OntologyBrowser') {
+		$script = "LOD_Rating.js";
+		$scriptFile = $lodgScriptPath . "/scripts/$script";
+		$out->addScript('<script type="text/javascript" src="' . $scriptFile . '"></script>');
+		
+		$css = "rating.css";
+		$cssFile = $lodgScriptPath . "/skins/$css";
+		$out->addLink(array(
+					'rel'   => 'stylesheet',
+					'type'  => 'text/css',
+					'media' => 'screen, projection',
+					'href'  => $cssFile
+		));
+			
+		
+//		$script = "jquery.fancybox-1.3.1.js";
+//		$scriptFile = $lodgScriptPath . "/scripts/$script";
+//		$out->addScript('<script type="text/javascript" src="' . $scriptFile . '"></script>');
+//		
+//		$css = "jquery.fancybox-1.3.1.css";
+//		$cssFile = $lodgScriptPath . "/skins/$css";
+//		$out->addLink(array(
+//					'rel'   => 'stylesheet',
+//					'type'  => 'text/css',
+//					'media' => 'screen, projection',
+//					'href'  => $cssFile
+//				));		
+	}
+	
+	return true;
 }

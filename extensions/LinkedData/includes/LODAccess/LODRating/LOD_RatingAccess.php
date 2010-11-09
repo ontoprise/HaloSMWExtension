@@ -440,7 +440,7 @@ SPARQL;
 	 * 		The hash value.
 	 */
 	private function makeHashForTriple(LODTriple $triple) {
-		$pm = LODPrefixManager::getInstance();
+		$pm = LODPrefixManager::getInstance();		
 		// get the absolute URIs of the triple's elements
 		$s = $triple->getSubject();
 		$s = $pm->makeAbsoluteURI($s);
