@@ -206,8 +206,11 @@ var wgUserLanguageStrings = {
 	'SMW_OB_MODIFIED'		  : 'Artikel wurde gespeichert. Das Problem wurde möglicherweise bereits behoben.',
 	
 	// Ontology Browser metadata
-	'SMW_OB_META_PROPERTY'	  : 'Meta property',
-	'SMW_OB_META_PROPERTY_VALUE' : 'Value',
+	'SMW_OB_META_PROPERTY'	  : 'Meta-Property',
+	'SMW_OB_META_PROPERTY_VALUE' : 'Wert',
+	'SMW_OB_META_COMMAND_SHOW'  : 'Zeige Metadata',
+	'SMW_OB_META_COMMAND_RATE'  : 'Bewerte Metadata',
+	
 	
 	// metaproperties
 	'SMW_OB_META_SWP2_AUTHORITY'   : 'Herausgeber',

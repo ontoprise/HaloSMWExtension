@@ -213,6 +213,8 @@ var wgUserLanguageStrings = {
 	// Ontology Browser metadata
 	'SMW_OB_META_PROPERTY'	  : 'Meta property',
 	'SMW_OB_META_PROPERTY_VALUE' : 'Value',
+	'SMW_OB_META_COMMAND_SHOW'  : 'Show metadata',
+	'SMW_OB_META_COMMAND_RATE'  : 'Rate metadata',
 	
 	// metaproperties
 	'SMW_OB_META_SWP2_AUTHORITY'   : 'Authority',

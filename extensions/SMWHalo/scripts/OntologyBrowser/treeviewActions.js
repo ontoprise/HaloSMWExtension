@@ -1489,10 +1489,12 @@ OBGlobalActionListener.prototype = {
 		jQuery(".metadataContainerSwitch")
 				.each(
 						function() {
-							// get the html of the content span
+							// get subject this metdata is about
 							var subjectID = this.getAttribute("subjectid");
 							var subjectType = this.getAttribute("subjecttype");
 							var data = this.getAttribute("data");
+							
+							// content for menu tooltip
 							var html = jQuery('<a onclick="globalActionListener.selectedMetadataSwitch(event, \''
 									+ subjectID
 									+ '\', '
@@ -1501,7 +1503,7 @@ OBGlobalActionListener.prototype = {
 									+ '\''
 									+ ', 0, \''
 									+ data
-									+ '\')">Show metadata</a>'
+									+ '\')">'+gLanguage.getMessage('SMW_OB_META_COMMAND_SHOW')+'</a>'
 									+ '<br><a onclick="globalActionListener.selectedMetadataSwitch(event, \''
 									+ subjectID
 									+ '\', '
@@ -1510,7 +1512,8 @@ OBGlobalActionListener.prototype = {
 									+ '\''
 									+ ', 1, \''
 									+ data
-									+ '\')">Rate metadata</a>');
+									+ '\')">'+gLanguage.getMessage('SMW_OB_META_COMMAND_RATE')+</a>');
+									
 							// install the tool-tip on the current DOM element
 							jQuery(this).qtip( {
 								content : html,
@@ -1560,6 +1563,7 @@ OBGlobalActionListener.prototype = {
 	 *            The type of the subject (instance or annotation)
 	 * @param commandID
 	 *            Type of the selected command.
+	 * @param data Command specific data
 	 */
 	selectedMetadataSwitch : function(event, subjectID, subjectType, commandID,
 			data) {
@@ -1587,7 +1591,7 @@ OBGlobalActionListener.prototype = {
 				var o = categoryActionListener.selectedCategoryURI;
 				break;
 			case 'annotation':
-				var s = this.selectedInstanceURI;
+				var s = instanceActionListener.selectedInstanceURI;
 				var p = $(subjectID).getAttribute("uri");
 
 				// select object value
