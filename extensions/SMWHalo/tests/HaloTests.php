@@ -18,9 +18,6 @@ require_once 'testcases/TestDataAPI.php';
 require_once 'testcases/TestQueryPrinters.php';
 require_once 'testcases/TestQIAjaxAccess.php';
 
-require_once 'testcases/TestQueryResultsCache.php';
-
-
 class HaloTests
 {
 	public static function suite()
@@ -33,8 +30,7 @@ class HaloTests
 		$suite->addTestSuite("TestQueryPrinters");
 		$suite->addTestSuite("TestWikiJobs");
 		$suite->addTestSuite("TestDataAPI");
-        $suite->addTestSuite("TestQIAjaxAccess");
-        $suite->addTestSuite("TestQueryResultsCache");
+		$suite->addTestSuite("TestQIAjaxAccess");
 		return $suite;
 	}
 }

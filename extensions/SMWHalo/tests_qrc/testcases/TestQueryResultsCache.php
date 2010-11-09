@@ -1,7 +1,10 @@
 <?php
 
 global $smwgHaloIP;
+require_once( "$smwgHaloIP/includes/SMW_OntologyManipulator.php" );
+
 require_once( "$smwgHaloIP/includes/QueryResultsCache/SMW_QRC_Store.php" );
+require_once( "$smwgHaloIP/includes/QueryResultsCache/SMW_QRC_QueryResultsCache.php" );
 require_once( "$smwgHaloIP/includes/QueryResultsCache/SMW_QRC_AjaxAPI.php" );
 
 class TestQueryResultsCache extends PHPUnit_Framework_TestCase {
@@ -32,7 +35,7 @@ class TestQueryResultsCache extends PHPUnit_Framework_TestCase {
             "monobook" => "MonoBook",
             "vector" => "Vector"
         );
-
+        
 		$articles = array($this->dataArticle1, $this->dataArticle2, $this->dataArticle3);
 		$count = 0;
 		foreach($articles as $article){
@@ -219,19 +222,22 @@ class TestQueryResultsCache extends PHPUnit_Framework_TestCase {
 	public function testCacheEntryUsedSPARQL(){
 		smwf_om_EditArticle('QRCQueryArticle2', 'PHPUnit', $this->queryArticle2, '');
 		
-			global $wgTitle;
-			$wgTitle = Title::newFromText('QRCDataArticle1');
-			smwf_om_EditArticle('QRCDataArticle1', 'PHPUnit','' , '');
+		global $wgTitle;
+		$wgTitle = Title::newFromText('QRCDataArticle1');
+		smwf_om_EditArticle('QRCDataArticle1', 'PHPUnit','' , '');
 		
 		$article = Article::newFromID(Title::newFromText('QRCQueryArticle2')->getArticleID());
 		$content = $article->getContent();
+		
+//		echo($content."\n\n");
 		
 		global $wgParser;
 		$pOpts = new ParserOptions();
 		$result = $wgParser->parse($content, Title::newFromText('QRCQueryArticle1'), $pOpts)->getText();
 		
+//		echo($result."\n\n");
 		$cacheEntryUsed = false;
-		if(strpos($result, 'QRCDataArticle1') > 0) $cacheEntryUsed = true;
+		if(strpos('QRCDataArticle1', $result) > 0) $cacheEntryUsed = true;
 		$this->assertEquals(true, $cacheEntryUsed);
 	}
 	
