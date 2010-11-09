@@ -112,7 +112,7 @@ function cefSetupExtension() {
 		'name' => 'Collaboration',
 		'version' => CE_VERSION,
 		'author' => "Benjamin Langguth and others",
-		'url' => 'http://smwforum.ontoprise.de',
+		'url' => 'http://smwforum.ontoprise.com/smwforum/index.php/Help:Collaboration_extension_1.3',
 		'description' => 'Some fancy collaboration tools.'
 		);
 
