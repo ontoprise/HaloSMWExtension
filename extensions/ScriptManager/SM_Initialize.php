@@ -76,6 +76,15 @@ function smfAddHTMLHeader(& $out) {
 				$out->addScript("<script type=\"text/javascript\" src=\"". "$smgSMPath/scripts/json2.min.js\"></script>");
 //Debug version				$out->addScript("<script type=\"text/javascript\" src=\"". "$smgSMPath/scripts/json2.js\"></script>");
 				break;
+			case 'fancybox':
+				$out->addScript("<script type=\"text/javascript\" src=\"". "$smgSMPath/scripts/fancybox/jquery.fancybox-1.3.1.js\"></script>");
+				$out->addLink(array(
+							'rel'   => 'stylesheet',
+							'type'  => 'text/css',
+							'media' => 'screen, projection',
+							'href'  => "$smgSMPath/scripts/fancybox/jquery.fancybox-1.3.1.css"
+						));		
+				break;
 			case 'ext':
 			
 				$out->addLink(array(
