@@ -76,6 +76,40 @@ LOD.classes.RatingEditor = function () {
 	};
 	
 	/**
+	 * This function is called when the rating feature is selected in the 
+	 * Ontology Browser. A triple is passed in <subject>, <predicate> and
+	 * <object>.
+	 * If at least one of these values is <null>, nothing happens. Otherwise
+	 * the rating editor is opened for that triple. 
+	 * 
+	 * @param {string} subject
+	 * @param {string} predicate
+	 * @param {string} object
+	 * @param {string} value
+	 * 		The selected value
+	 */
+	that.selectedTripleInOB = function(subject, predicate, object, value) {
+		if (!subject || !predicate || !object) {
+			return;
+		}
+		var url = wgServer + wgScriptPath + "/index.php?action=ajax";
+
+		var triple = LOD.classes.Triple(subject, predicate, object);
+		var tripleJSON = JSON.stringify(triple);
+		// Load the editor via ajax
+		jQuery.ajax({ url:  url, 
+					  data: "rs=lodafGetRatingEditorForTriple&rsargs[]="
+						  	+ encodeURIComponent(tripleJSON)
+						  	+ "&rsargs[]="
+						  	+ encodeURIComponent(value),
+							
+					  success: that.ratingEditorLoaded,
+					  type: 'POST',
+					});
+	}
+	
+	
+	/**
 	 * This function is called when the rating editor was completely loaded.
 	 * The editor is initialized.
 	 */
@@ -176,7 +210,6 @@ LOD.classes.RatingEditor = function () {
 			that.saveRating();
 			return false;
 		});
-		
 		
 	}
 	
@@ -597,9 +630,7 @@ LOD.classes.Triple = function (subject, predicate, object) {
 
 LOD.ratingEditor = LOD.classes.RatingEditor();
 
-
 jQuery(document).ready( function ($) {
-		
 	var metadataSpans = $("span.lodMetadata:has(.lodRatingKey)");
 	
 	// Open the rating editor when a value is clicked
