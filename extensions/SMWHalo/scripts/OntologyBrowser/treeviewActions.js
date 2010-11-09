@@ -1589,6 +1589,7 @@ OBGlobalActionListener.prototype = {
 				var s = $(subjectID).getAttribute("uri");
 				var p = "rdf:type"
 				var o = categoryActionListener.selectedCategoryURI;
+				var value = $(subjectID).innerHTML;
 				break;
 			case 'annotation':
 				var s = instanceActionListener.selectedInstanceURI;
@@ -1610,9 +1611,13 @@ OBGlobalActionListener.prototype = {
 				var objectValue = valueURI == null ? '"' + valueString + '"^^'
 						+ valueTypeURI : valueURI;
 				var o = objectValue;
+				var value = valueString;
 				break;
 			}
-			// TODO: Thomas alert(s+", "+ p + ","+o);
+			
+			if (typeof LOD !== "undefined") {
+				LOD.ratingEditor.selectedTripleInOB(s, p, o, value);
+			}
 		}
 	},
 
