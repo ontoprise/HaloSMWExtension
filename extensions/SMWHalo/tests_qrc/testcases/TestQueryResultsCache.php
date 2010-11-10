@@ -237,7 +237,7 @@ class TestQueryResultsCache extends PHPUnit_Framework_TestCase {
 		
 //		echo($result."\n\n");
 		$cacheEntryUsed = false;
-		if(strpos('QRCDataArticle1', $result) > 0) $cacheEntryUsed = true;
+		if(strpos($result, 'QRCDataArticle1') > 0) $cacheEntryUsed = true;
 		$this->assertEquals(true, $cacheEntryUsed);
 	}
 	
