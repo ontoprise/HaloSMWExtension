@@ -115,7 +115,7 @@ $messages['en'] = array(
 	'lod_lsd_vocabulary'				=> "Vocabulary",
 
 	//--- LOD special pages ---
-	'lodspecialsources'	=> 'LOD sources',
+	'lodsources'	=> 'LOD sources',
 	'specialpages-group-lod_group' => 'Linked Data extension',
 	'lod_sp_source_label' => 'Name',
 	'lod_sp_source_source' => 'Data source',
@@ -239,7 +239,7 @@ $messages['de'] = array(
 	'lod_lsd_vocabulary'				=> "Vokabular",
 
 	//--- LOD special pages ---
-    'lodspecialsources'    => 'LOD-Quellen',
+    'lodsources'    => 'LOD-Quellen',
 	'specialpages-group-lod_group' => 'Linked Data extension',
 	'lod_sp_source_label' => 'Name',
     'lod_sp_source_source' => 'Datenquelle',

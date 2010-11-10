@@ -27,7 +27,7 @@ if (typeof LOD == "undefined") {
 	};
 }
 /**
- * This is the class of the LODSpecialSources page.
+ * This is the class of the LODSources page.
  */
 LOD.classes.SpecialSources = function () {
 	var that = {};
@@ -68,7 +68,7 @@ LOD.classes.SpecialSources = function () {
 	
 	/**
 	 * Callback function for displaying the table on the 
-	 * special page LODSpecialSources.
+	 * special page LODSources.
 	 */
 	that.updateTable = function(data, textStatus, request) {
 		var $ = jQuery;

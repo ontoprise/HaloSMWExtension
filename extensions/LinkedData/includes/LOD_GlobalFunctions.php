@@ -148,8 +148,8 @@ function enableLinkedData() {
 	
 	// register special pages
 	$wgAutoloadClasses['LODSourcesPage']       = $lodgIP . '/specials/LODSources/LOD_SpecialSources.php';
-    $wgSpecialPages['LODSpecialSources']       = array( 'LODSourcesPage' );
-    $wgSpecialPageGroups['LODSpecialSources']  = 'lod_group';
+    $wgSpecialPages['LODSources']       = array( 'LODSourcesPage' );
+    $wgSpecialPageGroups['LODSources']  = 'lod_group';
 
     return true;
 }

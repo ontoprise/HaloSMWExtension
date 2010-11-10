@@ -28,7 +28,7 @@ class LODSourcesPage extends SpecialPage {
 	 * Constructor
 	 */
 	public function __construct() {
-		parent::__construct( 'LODSpecialSources', 'delete' );
+		parent::__construct( 'LODSources', 'delete' );
 
 	}
 
