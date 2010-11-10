@@ -52,7 +52,8 @@ class LODLanguageDe extends LODLanguage {
 	);
 	
 	protected $mParserFunctionsParameters = array(
-		LODLanguage::PFP_MAPPING_TARGET		=> 'ziel', 
+		LODLanguage::PFP_MAPPING_TARGET				=> 'ziel', 
+		LODLanguage::PFP_MAPPING_SOURCE				=> 'quelle', 
 		
 		LODLanguage::PFP_LSD_ID						=> "id",
     	LODLanguage::PFP_LSD_CHANGEFREQ				=> "änderungsrate",

@@ -100,6 +100,55 @@ class LODMappingTripleStore implements ILODMappingStore {
 		}
 		return $targets;
 	}
+	
+	/**
+	 * As mappings are stored in articles the system must know which mappings
+	 * (i.e. source-target pairs) are stored in an article.
+	 * This function stores a source-target pairs for an article.
+	 * @param string $articleName
+	 * 		Fully qualified name of an article
+	 * @param string $source
+	 * 		Name of the mapping source
+	 * @param string $target
+	 * 		Name of the mapping target
+	 */
+	public function addMappingToPage($articleName, $source, $target) {
+		$db = LODStorage::getDatabase();
+		$db->addMappingToPage($articleName, $source, $target);
+	}
+	
+	/**
+	 * Returns an array of source-target pairs of mappings that are stored in the
+	 * article with the name $articleName
+	 * @param string $articleName
+	 * 		Fully qualified name of an article
+	 * @return array(array(string source, string $target))
+	 */
+	public function getMappingsInArticle($articleName) {
+		$db = LODStorage::getDatabase();
+		return $db->getMappingsInArticle($articleName);
+	}
+	
+	/**
+	 * Deletes all mappings that are stored in the article with the name 
+	 * $articleName.
+	 * @param string $articleName
+	 * 		Fully qualified name of an article
+	 */
+	public function removeAllMappingsFromPage($articleName) {
+		$db = LODStorage::getDatabase();
+		$sourceTargetPairs = $db->getMappingsInArticle($articleName);
+		if (isset($sourceTargetPairs)) {
+			foreach ($sourceTargetPairs as $stp) {
+				$source = $stp[0];
+				$target = $stp[1];
+				$this->removeAllMappings($source, $target);
+			}
+		}
+		$db->removeAllMappingsFromPage($articleName);
+		
+	}
+		
 	// end implement interfaces methods from ILODMappingStore
 
 	/**

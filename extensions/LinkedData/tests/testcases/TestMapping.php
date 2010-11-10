@@ -38,14 +38,26 @@ r2r:classMapping
 	r2r:prefixDefinitions "foaf: <http://xmlns.com/foaf/0.1/>" ;
 	r2r:targetPattern "?s rdf:type <http://other/Person>" .
 text;
+
+		$this->mMappingText3 = <<<text
+r2r:classMapping
+	a r2r:ClassMapping ;
+	r2r:sourcePattern "?s rdf:type foaf:Automobile" ;
+	r2r:prefixDefinitions "foaf: <http://xmlns.com/foaf/0.1/>" ;
+	r2r:targetPattern "?s rdf:type <http://other/Automobile>" .
+text;
 	}
 
 	function tearDown() {
+		$articleName = "Mapping:".ucfirst($this->mMappingSource);
+		
 		$store = new LODPersistentMappingStore(new LODMappingTripleStore());
 		$store->removeAllMappings();
+		$store->removeAllMappingsFromPage($articleName);
 		
 		$store = new LODMappingTripleStore();
 		$store->removeAllMappings();
+		$store->removeAllMappingsFromPage($articleName);
 		
 	}
 
@@ -201,7 +213,7 @@ text;
 	function doTestMappingsInArticles($theStore) {
 		global $lodgDefaultMappingTarget;
 			
-		$articleName = "Mapping:{$this->mMappingSource}";
+		$articleName = "Mapping:".ucfirst($this->mMappingSource);
 		// Get the mapping store and configure the actual store.
 		// The store is used when the article with a mapping is saved.
 		LODMappingStore::setStore($theStore);
@@ -222,8 +234,11 @@ text;
 		// Create article with <mapping> tags and make sure its content is stored
 		// with the LODMappingStore
 		$article = new Article(Title::newFromText($articleName));
+		$mySource = "My{$this->mMappingSource}";
+		$myTarget = "My{$this->mMappingTarget}";
 		$text = <<<text
-This is the first mapping:
+This is the first mapping without a source i.e. the name of the source is the
+article name:
 <mapping target = "{$this->mMappingTarget}">
 		{$this->mMappingText1}
 </mapping>
@@ -232,15 +247,29 @@ And this is the second mapping with default target:
 <mapping>
 		{$this->mMappingText2}
 </mapping>
+
+Finally the last mapping with a given source and target:
+<mapping source="$mySource" target="$myTarget">
+		{$this->mMappingText3}
+</mapping>
 text;
 		$article->doEdit($text, "");
 
 		// Make sure the mappings exist
-		$this->assertTrue($store->existsMapping(ucfirst($this->mMappingSource), $this->mMappingTarget));
-		$this->assertTrue($store->existsMapping(ucfirst($this->mMappingSource), $lodgDefaultMappingTarget));
-
-		// Load the mappings with the for the saved source and targets.
-		$mapping = $store->getAllMappings(ucfirst($this->mMappingSource), $this->mMappingTarget);
+		$mwSource = ucfirst($this->mMappingSource);
+		$this->assertTrue($store->existsMapping($mwSource, $this->mMappingTarget));
+		$this->assertTrue($store->existsMapping($mwSource, $lodgDefaultMappingTarget));
+		$this->assertTrue($store->existsMapping($mySource, $myTarget));
+		
+		// Check that the source-target pair of all mappings of the article
+		// is stored in the DB
+		$sourceTargetPairs = $store->getMappingsInArticle($articleName);
+		$this->assertContains(array($mwSource, $this->mMappingTarget), $sourceTargetPairs); 
+		$this->assertContains(array($mwSource, $lodgDefaultMappingTarget), $sourceTargetPairs); 
+		$this->assertContains(array($mySource, $myTarget), $sourceTargetPairs); 
+		
+		// Load the mappings with the saved source and targets.
+		$mapping = $store->getAllMappings($mwSource, $this->mMappingTarget);
 		$this->assertNotNull($mapping);
 
 		// Remove linefeeds from the mappings for comparison
@@ -250,7 +279,7 @@ text;
 		// Make sure that the correct mapping text was saved and loaded.
 		//$this->assertEquals($mt, $mmt);
 
-		$mapping = $store->getAllMappings(ucfirst($this->mMappingSource), $lodgDefaultMappingTarget);
+		$mapping = $store->getAllMappings($mwSource, $lodgDefaultMappingTarget);
 		$this->assertNotNull($mapping);
 
 		// Remove linefeeds from the mappings for comparison
@@ -262,12 +291,14 @@ text;
 
 		// Make sure that all sources and targets can be retrieved
 		$sources = $store->getAllSources();
-		$this->assertContains(ucfirst($this->mMappingSource), $sources);
+		$this->assertContains($mwSource, $sources);
+		$this->assertContains($mySource, $sources);
 		$targets = $store->getAllTargets();
 		$this->assertContains($this->mMappingTarget, $targets);
 		$this->assertContains($lodgDefaultMappingTarget, $targets);
-		$this->assertEquals(1, count($sources));
-		$this->assertEquals(2, count($targets));
+		$this->assertContains($myTarget, $targets);
+		$this->assertEquals(2, count($sources));
+		$this->assertEquals(3, count($targets));
 
 		// Delete the article and make sure its content is removed from the triple
 		// store.
@@ -287,6 +318,10 @@ text;
 		$this->assertEquals(0, count($sources));
 		$targets = $store->getAllTargets();
 		$this->assertEquals(0, count($targets));
+		
+		// Make sure source-target-pairs for the article are removed from the DB
+		$sourceTargetPairs = $store->getMappingsInArticle($articleName);
+		$this->assertEquals(0, count($sourceTargetPairs));
 
 	}
 
@@ -298,17 +333,22 @@ class MockMappingStore implements ILODMappingStore {
 	// array(string=>string)
 	// Maps from a mapping ID to the mapping text
 	private static $mMapping;
+	
+	// array(string articlename => array(string source, string target))
+	private static $mMappingsPerPage; 
 
 	function __construct() {
 		self::$mMapping = array();
+		self::$mMappingsPerPage = array();
 	}
 
 	public function existsMapping($source, $target) {
-		return array_key_exists(strtolower($source).'---'.strtolower($target), self::$mMapping);
+		return array_key_exists($source.'---'.$target, self::$mMapping)
+			|| array_key_exists(strtolower($source).'---'.strtolower($target), self::$mMapping);
 	}
 
 	public function addMapping(LODMapping $mapping) {
-		$key = strtolower($mapping->getSource()).'---'.strtolower($mapping->getTarget());
+		$key = $mapping->getSource().'---'.$mapping->getTarget();
 		if (array_key_exists($key, self::$mMapping)) {
 			self::$mMapping[$key] = self::$mMapping[$key]."\n".$mapping->getMappingText();
 		} else {
@@ -327,12 +367,12 @@ class MockMappingStore implements ILODMappingStore {
 			if ($source == null && $target == null) {
 				$addMapping = true;
 			} else if ($source == null && $target != null) {
-				$addMapping = $t == strtolower($target);
+				$addMapping = $t == $target;
 			} else if ($source !== null && $target == null) {
-				$addMapping = $s == strtolower($source);
+				$addMapping = $s == $source;
 			} else {
-				$source = strtolower($source);
-				$target = strtolower($target);
+				$source = $source;
+				$target = $target;
 				$addMapping = ($key == "$source---$target");
 			}
 			if ($addMapping) {
@@ -350,12 +390,12 @@ class MockMappingStore implements ILODMappingStore {
 			if ($source == null && $target == null) {
 				$delMapping = true;
 			} else if ($source == null && $target != null) {
-				$delMapping = $t == strtolower($target);
+				$delMapping = $t == $target;
 			} else if ($source !== null && $target == null) {
-				$delMapping = $s == strtolower($source);
+				$delMapping = $s == $source;
 			} else {
-				$source = strtolower($source);
-				$target = strtolower($target);
+				$source = $source;
+				$target = $target;
 
 				$delMapping = ($key == "$source---$target");
 			}
@@ -365,13 +405,33 @@ class MockMappingStore implements ILODMappingStore {
 		}
 
 	}
+	
+	public function getMappingsInArticle($articleName) {
+		return $this->mMappingsPerPage[$articleName];
+	}
+	
+	public function removeAllMappingsFromPage($articleName) {
+		$sourceTargetPairs = $this->mMappingsPerPage[$articleName];
+		if (isset($sourceTargetPairs)) {
+			foreach ($sourceTargetPairs as $stp) {
+				$source = $stp[0];
+				$target = $stp[1];
+				$this->removeAllMappings($source, $target);
+			}
+		}
+		$this->mMappingsPerPage[$articleName] = array();
+	}
+	
+	public function addMappingToPage($articleName, $source, $target) {
+		$this->mMappingsPerPage[$articleName][] = array($source, $target);		
+	}
 
 	public function getAllSources() {
 		$sources = array();
 		foreach (self::$mMapping as $key => $m) {
 			$s = substr($key, 0, strpos($key, "---"));
 			if (!in_array($s, $sources)) {
-				$sources[] = ucfirst($s);
+				$sources[] = $s;
 			}
 		}
 		return array_unique($sources);

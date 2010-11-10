@@ -43,6 +43,7 @@ class LODStorageSQL {
 	
 	const TRIPLE_PERSISTENCE_TABLE	= "lod_triple_persistence"; 
 	const MAPPING_PERSISTENCE_TABLE	= "lod_mapping_persistence"; 
+	const MAPPINGS_PER_ARTICLE_TABLE= "lod_mapping_per_article"; 
 	const QUERY_TABLE				= "lod_rating_query"; 
 	const QUERY_RESULT_TABLE		= "lod_rating_query_result"; 
 	
@@ -73,7 +74,16 @@ class LODStorageSQL {
 	            'target' 		=> 'Text CHARACTER SET utf8 COLLATE utf8_bin',
 	            'mapping_text' 	=> 'Text CHARACTER SET utf8 COLLATE utf8_bin'),
 				$db, $verbose, 'mapping_id, source(128), target(128)');
-			
+
+		// MAPPINGS_PER_ARTICLE_TABLE:
+		//		stores the source-target pairs of mappings in an article
+		$table = $db->tableName(self::MAPPINGS_PER_ARTICLE_TABLE);
+
+		LODDBHelper::setupTable($table, array(
+				'article'	=> 'VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_bin',
+	            'source' 	=> 'Text CHARACTER SET utf8 COLLATE utf8_bin',
+	            'target' 	=> 'Text CHARACTER SET utf8 COLLATE utf8_bin'),
+				$db, $verbose);
 			
 		// lod_triple_persistence
 		//		persistence of triples in the triple store			
@@ -129,6 +139,7 @@ class LODStorageSQL {
 		$db =& wfGetDB( DB_MASTER );
 		$tables = array(
 			self::MAPPING_PERSISTENCE_TABLE,
+			self::MAPPINGS_PER_ARTICLE_TABLE,
 			self::TRIPLE_PERSISTENCE_TABLE,
 			self::QUERY_TABLE.
 			self::QUERY_RESULT_TABLE);
@@ -236,6 +247,78 @@ class LODStorageSQL {
 	public function deleteAllPersistentTriples() {
 		$db = & wfGetDB( DB_MASTER );
 		$db->delete($db->tableName(self::TRIPLE_PERSISTENCE_TABLE), "*");
+		
+	}
+	
+	/*
+	 * Functions for storing/retrieving source-target pairs in articles.
+	 * 
+	 */
+	
+	/**
+	 * As mappings are stored in articles the system must know which mappings
+	 * (i.e. source-target pairs) are stored in an article.
+	 * This function stores a source-target pairs for an article.
+	 * @param string $articleName
+	 * 		Fully qualified name of an article
+	 * @param string $source
+	 * 		Name of the mapping source
+	 * @param string $target
+	 * 		Name of the mapping target
+	 * 
+ 	 * @return bool success
+	 * 		<true>, if the operation was successful,
+	 * 		<false> otherwise
+	 * 
+	 */
+	public function addMappingToPage($articleName, $source, $target) {
+		$db = & wfGetDB( DB_MASTER );
+		$t = $db->tableName(self::MAPPINGS_PER_ARTICLE_TABLE);
+
+		$setValues = array(
+            'article'=> $articleName,
+            'source' => $source,
+            'target' => $target);
+		
+		return $db->insert($t, $setValues);
+		
+	}
+	
+	/**
+	 * Returns an array of source-target pairs of mappings that are stored in the
+	 * article with the name $articleName
+	 * @param string $articleName
+	 * 		Fully qualified name of an article
+	 * @return array(array(string source, string $target))
+	 */
+	public function getMappingsInArticle($articleName) {
+		$db = & wfGetDB( DB_SLAVE );
+
+		$cond = array("article" => $articleName);
+		$res = $db->select($db->tableName(self::MAPPINGS_PER_ARTICLE_TABLE), 
+							array("source", "target"), $cond);
+										   
+		$result = $res->numRows() === 0 ? null : array();					   
+		while ($row = $db->fetchObject($res)) {
+			$result[] = array($row->source, $row->target);
+		}
+		$db->freeResult($res);
+
+		return $result;
+	}
+	
+	/**
+	 * Deletes all source-target pairs that are stored in the article with the name 
+	 * $articleName.
+	 * @param string $articleName
+	 * 		Fully qualified name of an article
+	 */
+	public function removeAllMappingsFromPage($articleName) {
+		$db = & wfGetDB( DB_MASTER );
+		$t = $db->tableName(self::MAPPINGS_PER_ARTICLE_TABLE);
+		
+		$condition = array("article" => $articleName);
+		$db->delete($t, $condition);
 		
 	}
 	

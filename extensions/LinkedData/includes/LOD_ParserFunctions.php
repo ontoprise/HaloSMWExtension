@@ -102,7 +102,12 @@ class LODParserFunctions {
 	}
 
 	/**
-	 * Parses the mapping tag <mapping>
+	 * Parses the mapping tag <mapping>. The tag may have two parameters:
+	 * "source" and "target" of the mapping. If the source is not specified,
+	 * the name of the article is taken as source. Users must be aware that the
+	 * case of the article is modified by MW and the spaces are replaced by "_".
+	 * If the target is undefined, the default target defined in the global variable
+	 * $lodgDefaultMappingTarget is used. 
 	 *
 	 * @param string $text
 	 * 		The content of the <mapping> tag
@@ -112,6 +117,7 @@ class LODParserFunctions {
 	 * 		The parser
 	 */
 	public static function mapping($text, $params, $parser)  {
+		
 		// The mapping function is only allowed in namespace "Mapping".
 		$title = $parser->getTitle();
 		$ns = $title->getNamespace();
@@ -120,29 +126,42 @@ class LODParserFunctions {
 			// Wrong namespace => add a warning
 			$msg = wfMsg('lod_mapping_tag_ns');
 		} else {
-			// If this is the first mapping on the page, all mappings for the page
-			// must be deleted.
+			// All mappings for previous version of the page must be deleted.
 			$store = LODMappingStore::getStore();
 			if (self::$mFirstMapping) {
-				$store->removeAllMappings($title->getText());
+				$store->removeAllMappingsFromPage($title->getText());
 				self::$mFirstMapping = false;
 			}
-			
+
 			// Get the "target" parameter
 			global $lodgContLang;
 			$targetName = $lodgContLang->getParserFunctionParameter(LODLanguage::PFP_MAPPING_TARGET);
 			$target = null;
 			if (array_key_exists($targetName, $params)) {
 				$target = $params[$targetName];
+			} else {
+				global $lodgDefaultMappingTarget;
+				$target = $lodgDefaultMappingTarget;
+			}
+			// Get the "source" parameter
+			global $lodgContLang;
+			$sourceName = $lodgContLang->getParserFunctionParameter(LODLanguage::PFP_MAPPING_SOURCE);
+			$source = null;
+			if (array_key_exists($sourceName, $params)) {
+				$source = $params[$sourceName];
+			} else {
+				// Article name is the default source
+				$source = $title->getText();
 			}
 			// Store this mapping.
-			$mapping = new LODMapping($text, $title->getText(), $target);
+			$mapping = new LODMapping($text, $source, $target);
 			$success = true;
 			try {
 				$success = $store->addMapping($mapping);
 			} catch (Exception $e) {
 				$success = false;
 			}
+			$store->addMappingToPage($title->getFullText(), $source, $target);
 			if (!$success) {
 				$msg = wfMsg("lod_saving_mapping_failed.");
 			}
@@ -270,9 +289,9 @@ class LODParserFunctions {
 		if ($article->getTitle()->getNamespace() == LOD_NS_MAPPING) {
 			// The article is in the "Mapping" namespace. 
 			// => delete the mappings that are defined in the article.
-			$source = $article->getTitle()->getText();
+			$source = $article->getTitle()->getFullText();
 			$store = LODMappingStore::getStore();
-			$store->removeAllMappings($source);
+			$store->removeAllMappingsFromPage($source);
 		}
 		
 		// Delete the triples of LOD source definitions

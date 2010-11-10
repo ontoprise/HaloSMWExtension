@@ -187,4 +187,41 @@ class LODPersistentMappingStore  {
 		return $this->mWrappedStore->getAllTargets();
 	}
 	
+	/**
+	 * As mappings are stored in articles the system must know which mappings
+	 * (i.e. source-target pairs) are stored in an article.
+	 * This function stores a source-target pairs for an article.
+	 * @param string $articleName
+	 * 		Fully qualified name of an article
+	 * @param string $source
+	 * 		Name of the mapping source
+	 * @param string $target
+	 * 		Name of the mapping target
+	 */
+	public function addMappingToPage($articleName, $source, $target) {
+		return $this->mWrappedStore->addMappingToPage($articleName, $source, $target);
+	}
+	
+	/**
+	 * Returns an array of source-target pairs of mappings that are stored in the
+	 * article with the name $articleName
+	 * @param string $articleName
+	 * 		Fully qualified name of an article
+	 * @return array(array(string source, string $target))
+	 */
+	public function getMappingsInArticle($articleName) {
+		return $this->mWrappedStore->getMappingsInArticle($articleName);		
+	}
+	
+	/**
+	 * Deletes all mappings that are stored in the article with the name 
+	 * $articleName.
+	 * @param string $articleName
+	 * 		Fully qualified name of an article
+	 */
+	public function removeAllMappingsFromPage($articleName) {
+		return $this->mWrappedStore->removeAllMappingsFromPage($articleName);		
+	}
+	
+	
 }

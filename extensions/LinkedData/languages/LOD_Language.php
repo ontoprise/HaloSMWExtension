@@ -35,6 +35,7 @@ abstract class LODLanguage {
 
 	//---IDs of parser function parameters ---
 	const PFP_MAPPING_TARGET	= 100;
+	const PFP_MAPPING_SOURCE	= 101;
 	
 	const PFP_LSD_ID						= 200;
 	const PFP_LSD_CHANGEFREQ				= 201;
