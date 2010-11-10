@@ -467,7 +467,7 @@ class LODParserFunctions {
 		
 		$title = wfMsgForContent("lod_lsdparser_title");
 		
-		$wikiText = "==$title==\n\n";
+		$wikiText = "==$title $id==\n\n";
 		
 		$wikiText .= empty($errMsg) 
 						? wfMsgForContent("lod_lsdparser_success")
