@@ -670,8 +670,8 @@ function CECommentForm() {
 	 * Determines which view is requested and calls the appropriate function
 	 */
 	this.toggleView = function() {
-		var newView = $jq('#collabComViewToggle option:selected').val();
-		if(newView == this.currentView) {
+		var newView = parseInt($jq('#collabComViewToggle option:selected').val());
+		if(newView === this.currentView) {
 			return true;
 		} else {
 			if(newView === 0) {
