@@ -5,6 +5,10 @@
 
 $smwgDeployVersion = false;
 
+
+include_once('extensions/ARCLibrary/ARCLibrary.php');
+enableARCLibrary();
+
 //$smwgMessageBroker='localhost';
 $smwgWebserviceEndpoint='localhost:8092';
 $smwgEnableObjectLogicRules=true;
@@ -17,9 +21,5 @@ enableSemantics('http://wiki', true);
 include_once('extensions/SMWHalo/includes/SMW_Initialize.php');
 enableSMWHalo('SMWHaloStore2', "SMWTripleStoreQuad");
 
-include_once('extensions/ARCLibrary/ARCLibrary.php');
-enableARCLibrary();
-
 include_once('extensions/LinkedData/includes/LOD_Initialize.php');
 enableLinkedData(); 
-
