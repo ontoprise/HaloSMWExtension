@@ -341,6 +341,9 @@ function smwf_qi_getPage($args= "") {
 
 	// remove the Switch to Semantic Notification button, incase it's there
 	$newPage= preg_replace('/<button id="qi-insert-notification-btn"([^>]*)>(.*?)<\/button>/m', '', $newPage);
+
+    // remove smwCSH.js include because we do not want a help link in the query interface popup to appear
+    $newPage = preg_replace('/<script.*?\/smwCSH.js.*?<\/script>/', "", $newPage);
 	
 	// have a string where to store JS command for onload event
 	$onloadArgs = ''; 
@@ -376,10 +379,13 @@ function smwf_qi_getPage($args= "") {
         $newPage = str_replace('<body',
                                '<body onload="'.$onloadArgs.'"',
                                $newPage);
+    // for the CKEditor we set a smaller font size
+    if (isset($params['CKE']))
+        $newPage = preg_replace('/(<body.*?)(style=")([^"]*")/i', '$1$2font-size: 70%; $3', $newPage);
     
     // remove unnecessary scripts
     $newPage = preg_replace_callback('/<script[^>]+>([^<]+|<!)*<\/script>/','smwf_qi_deleteScriptsCallback', $newPage);
-   
+
 	return $newPage;
 		
 }
