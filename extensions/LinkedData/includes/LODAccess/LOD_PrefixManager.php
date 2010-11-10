@@ -122,8 +122,7 @@ class LODPrefixManager  {
 	 * 		The namespace URI for the prefix or NULL if the prefix is unknown.
 	 */
 	public function getNamespaceURI($prefix) {
-		$p = NULL;
-		$p = $this->mPrefixMap[$prefix];
+		$p = array_key_exists($prefix, $this->mPrefixMap)? $this->mPrefixMap[$prefix] : NULL;
 		return $p;
 	}
 	
