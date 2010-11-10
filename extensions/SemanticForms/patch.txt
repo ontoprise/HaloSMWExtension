@@ -1375,8 +1375,8 @@ Index: extensions/SemanticForms/includes/SF_FormEditTab.php
  
 Index: extensions/SemanticForms/includes/SF_FormPrinter.php
 ===================================================================
---- extensions/SemanticForms/includes/SF_FormPrinter.php	2010-09-23 14:46:26.000000000 +0200
-+++ extensions/SemanticForms/includes/SF_FormPrinter.php	2010-09-23 14:58:29.000000000 +0200
+--- extensions/SemanticForms/includes/SF_FormPrinter.php	(revision 8757)
++++ extensions/SemanticForms/includes/SF_FormPrinter.php	(working copy)
 @@ -9,6 +9,12 @@
   * @author Daniel Hansch
   */
@@ -1455,13 +1455,13 @@ Index: extensions/SemanticForms/includes/SF_FormPrinter.php
                if ( $sub_components[0] == 'label' ) {
                  $template_label = $sub_components[1];
                }
-             }
 +              /*op-patch|BL|2009-09-16|CollapsingForms|AddForceopenTag|start*/
 +              elseif ($sub_components[0] == 'forceopen') {
 +                if ($sub_components[1] && strtolower($sub_components[1] == 'true'))
 +                  $force_open = true;
 +              }
 +              /*op-patch|BL|2009-09-16|CollapsingForms|AddForceopenTag|end*/
+             }
            }
            // if this is the first instance, add the label in the form
            if ( ( $old_template_name != $template_name ) && isset( $template_label ) ) {
