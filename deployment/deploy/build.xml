@@ -43,6 +43,7 @@
 			<fileset dir="../">
 				<include name="COPYING" />
 				<include name="INSTALL" />
+				<include name="settings.php" />
 			</fileset>
 		</copy>
 		<zip destfile="bin/smwhalo-deploy-${version}.zip" basedir="bin/zip" />

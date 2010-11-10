@@ -433,7 +433,7 @@ class Installer {
 		ksort($localPackages, SORT_NUMERIC);
 		
 		if (count($localPackages) === 0) {
-			print "\n\tNothing to do.";
+			print "\nNo finalization required.\n";
 			return;
 		}
 		// apply the setup operations which must not happen

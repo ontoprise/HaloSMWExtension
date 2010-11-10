@@ -1,2 +1,4 @@
 #!/bin/bash
-php smwadmin/smwadmin.php $*
+if php smwadmin/smwadmin.php $*
+then smwadmin/smwadmin.php --install
+fi

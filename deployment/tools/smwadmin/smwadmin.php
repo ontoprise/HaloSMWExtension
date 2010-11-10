@@ -31,6 +31,11 @@
  */
 define('DEPLOY_FRAMEWORK_VERSION', '@VERSION@ [B@BUILD_NUMBER@]');
 
+// termination constants
+define('DF_TERMINATION_WITH_FINALIZE', 0);
+define('DF_TERMINATION_ERROR', 1);
+define('DF_TERMINATION_WITHOUT_FINALIZE', 2);
+
 global $rootDir;
 $rootDir = dirname(__FILE__);
 $rootDir = str_replace("\\", "/", $rootDir);
@@ -49,12 +54,12 @@ if(file_exists($rootDir.'/settings.php'))
 $phpver = str_replace(".","",phpversion());
 if ($phpver < 520) {
 	print "\nPHP version must be >= 5.2\n";
-	die();
+	die(DF_TERMINATION_ERROR); 
 }
 
 if (array_key_exists('SERVER_NAME', $_SERVER) && $_SERVER['SERVER_NAME'] != NULL) {
 	echo "Invalid access! A maintenance script MUST NOT accessed from remote.";
-	die();
+	die(DF_TERMINATION_ERROR); 
 }
 
 // check tools
@@ -98,7 +103,7 @@ $dfgInstallPackages=false;
 $help = array_key_exists("help", $options);
 if ($help || count($argv) == 0) {
 	showHelp();
-	die();
+	die(DF_TERMINATION_WITHOUT_FINALIZE);  
 }
 
 // get command line parameters
@@ -145,7 +150,7 @@ for( $arg = reset( $args ); $arg !== false; $arg = next( $args ) ) {
 		if ($package === false) fatalError("No package found");
 		$packageToInstall[] = $package;
 		continue;
-	} else if ($arg == '--install') { // => analyze installed dump
+	} else if ($arg == '--finalize') { // => analyze installed dump
         $dfgInstallPackages = true;
 		continue;
     } else if ($arg == '-f') { // => force
@@ -156,7 +161,7 @@ for( $arg = reset( $args ); $arg !== false; $arg = next( $args ) ) {
 		continue;
 	} else {
 		print "\nUnknown command: $arg. Try --help\n\n";
-		die();
+		die(DF_TERMINATION_ERROR);
 	}
 	$params[] = $arg;
 }
@@ -191,24 +196,31 @@ $res_installer = ResourceInstaller::getInstance($mwrootDir);
 
 if ($dfgRestore) {
 	handleRollback();
-	die();
+	die(DF_TERMINATION_WITH_FINALIZE);
 }
 
 // Global update (ie. updates all packages to the latest possible version)
 if ($dfgGlobalUpdate) {
 	handleGlobalUpdate($dfgCheckDep);
-	die();
+	die(isset($dfgCheckDep) ? DF_TERMINATION_WITHOUT_FINALIZE : DF_TERMINATION_WITH_FINALIZE);
 }
 
 // List all available packages and show which are installed.
 if ($dfgListPackages) {
 	$installer->listAvailablePackages($dfgShowDescription, $pattern);
-	die();
+	die(DF_TERMINATION_WITHOUT_FINALIZE);  // 2 is normal termination but no further action
 }
 
 if ($dfgInstallPackages) {
 	$installer->initializePackages();
-	die();
+	die(DF_TERMINATION_WITHOUT_FINALIZE);  // 2 is normal termination but no further action
+} else {
+	// check for non-initialized extensions
+	$localPackages = PackageRepository::getLocalPackagesToInitialize($mwrootDir.'/extensions');
+	if (count($localPackages) > 0) {
+		print "\nThere are non-initialized extensions. Run: smwadmin --finalize\n";
+		die(DF_TERMINATION_ERROR);
+	}
 }
 
 // install
@@ -228,6 +240,7 @@ foreach($packageToInstall as $toInstall) {
 	} catch(RollbackInstallation $e) {
 		fatalError("Installation failed! You can try to rollback: smwadmin -r");
 	}
+	
 }
 
 //de-install
@@ -244,6 +257,7 @@ foreach($packageToDeinstall as $toDeInstall) {
 	}catch(RepositoryError $e) {
 		fatalError($e);
 	}
+	
 }
 
 // update
@@ -263,16 +277,19 @@ foreach($packageToUpdate as $toUpdate) {
 	} catch(RepositoryError $e) {
 		fatalError($e);
 	}
+	
 }
 
 if (count($installer->getErrors()) === 0) {
 	print "\n\nOK.\n";
+	die(isset($dfgCheckDep) ? DF_TERMINATION_WITHOUT_FINALIZE : DF_TERMINATION_WITH_FINALIZE);
 } else {
 	print "\n\nErrors occured:\n";
 	foreach($installer->getErrors() as $e) {
 		print "\n$e";
 	}
 	print "\n";
+	die(DF_TERMINATION_ERROR);
 }
 
 function showHelp() {
@@ -283,7 +300,7 @@ function showHelp() {
 	echo "\n\t-i <package>: Install";
 	echo "\n\t-d <package> ]: De-Install";
 	echo "\n\t-u <package>: Update";
-	echo "\n\t--install: Finalizes installation";
+	echo "\n\t--finalize: Finalizes installation";
 	echo "\n\t--checkdump <package>: Check only dumps for changes but do not install.";
 	echo "\n\t-l [ pattern ] : List installed packages.";
 	echo "\n\t-r : Rollback last installation.";
@@ -295,7 +312,7 @@ function showHelp() {
 	echo "\n\tsmwadmin -u --dep: Shows what would be updated.";
 	echo "\n\tsmwadmin -d smw: Removes the package smw.";
 	echo "\n\n";
-
+   
 }
 
 
@@ -303,7 +320,6 @@ function handleRollback() {
 	global $rollback;
 	print "Rollback...";
 	$rollback->rollback();
-
 }
 
 
@@ -347,7 +363,7 @@ function handleGlobalUpdate($dfgCheckDep) {
 	} catch(RepositoryError $e) {
 		fatalError($e);
 	}
-
+   
 }
 
 function handleInstallOrUpdate($packageID, $version) {
@@ -417,5 +433,5 @@ function fatalError($e) {
 	}
 	print "\n\n";
 	// stop installation
-	die();
+	die(DF_TERMINATION_ERROR);
 }
