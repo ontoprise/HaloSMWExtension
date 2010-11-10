@@ -287,9 +287,11 @@ function umefAddHtml2Page(&$out) {
 
     $out->addHTML(umefDivBox().'
         <script type="text/javascript">/*<![CDATA[*/
-        var smwCsh = new SMW_UserManual_CSH("'.wfMsg('smw_ume_help_link').'");
-        smwCsh.setHeadline("'.wfMsg('smw_ume_box_headline').'");
-        smwCsh.setCloseLabel("'.wfMsg('smw_ume_close_label').'");
+        if ( SMW_UserManual_CSH ) {
+          var smwCsh = new SMW_UserManual_CSH("'.wfMsg('smw_ume_help_link').'");
+          smwCsh.setHeadline("'.wfMsg('smw_ume_box_headline').'");
+          smwCsh.setCloseLabel("'.wfMsg('smw_ume_close_label').'");
+        }
         /*]]>*/</script>
     ');
     return true;
