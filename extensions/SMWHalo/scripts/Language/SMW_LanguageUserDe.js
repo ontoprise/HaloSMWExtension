@@ -209,7 +209,7 @@ var wgUserLanguageStrings = {
 	'SMW_OB_META_PROPERTY'	  : 'Meta-Property',
 	'SMW_OB_META_PROPERTY_VALUE' : 'Wert',
 	'SMW_OB_META_COMMAND_SHOW'  : 'Zeige Metadata',
-	'SMW_OB_META_COMMAND_RATE'  : 'Bewerte Metadata',
+	'SMW_OB_META_COMMAND_RATE'  : 'Bewerte dieses Faktum',
 	
 	
 	// metaproperties
