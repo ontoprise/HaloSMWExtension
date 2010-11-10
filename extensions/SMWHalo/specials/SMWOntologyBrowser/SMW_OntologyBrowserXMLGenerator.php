@@ -380,7 +380,8 @@ class SMWOntologyBrowserXMLGenerator {
 			    $value = self::createValueAsXML($smwValue);
 				
 				//special attribute mark for all things needed to get re-pasted in FF.
-				$repasteMarker = $isFormula || strip_tags(array_shift($smwValue->getDBkeys())) != array_shift($smwValue->getDBkeys()) || $smwValue->getUnit() != '' ? "needRepaste=\"true\"" : "";
+				$dbkeys = $smwValue->getDBkeys();
+				$repasteMarker = $isFormula || strip_tags(array_shift($dbkeys)) != array_shift($dbkeys) || $smwValue->getUnit() != '' ? "needRepaste=\"true\"" : "";
 
 				$title = htmlspecialchars($annotationTitle->getDBkey());
 				$titleURLEscaped = htmlspecialchars(self::urlescape($annotationTitle->getDBkey()));
@@ -486,7 +487,8 @@ class SMWOntologyBrowserXMLGenerator {
 						$val = array_shift($smwValue->getDBkeys());
 						$xsdValue = (substr($val, -1) == 'T') ? str_replace('T', '', $val) : $val;
 					} else {
-						$xsdValue = array_shift($smwValue->getDBkeys());
+						$dbkeys = $smwValue->getDBkeys();
+						$xsdValue = array_shift($dbkeys);
 					}
 					$value = strip_tags($xsdValue, "<sub><sup><b><i>");
 					$value = "<param $typeURI_att><![CDATA[".html_entity_decode($value)." ".$smwValue->getUnit()."]]></param>";
