@@ -5,5 +5,5 @@ SET PHP=php
 IF ERRORLEVEL 1 goto end
 IF ERRORLEVEL 2 goto end
 IF [%1]==[] goto end
-%PHP% smwadmin/smwadmin.php --install
+%PHP% smwadmin/smwadmin.php --finalize
 :end
