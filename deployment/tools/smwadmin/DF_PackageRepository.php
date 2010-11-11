@@ -33,7 +33,7 @@ define("SMWPLUS_REPOSITORY", "http://dailywikibuilds.ontoprise.com/repository/")
 /**
  * @file
  * @ingroup DFInstaller
- * 
+ *
  * Allows access package repositories.
  *
  * @author: Kai K�hn / ontoprise / 2009
@@ -51,7 +51,7 @@ class PackageRepository {
 	// cache for local packages
 	static $localPackages = NULL;
 	// cache for local packages
-    static $localPackagesToInitialize = NULL;
+	static $localPackagesToInitialize = NULL;
 
 	/**
 	 * Downloads all package repositories from remote.
@@ -96,9 +96,9 @@ class PackageRepository {
 				print "\nWarning: Could not parse $url";
 			}
 			$host = $partsOfURL['host'];
-		    if (!array_key_exists('host', $partsOfURL)) {
-                print "\nWarning: Could not parse $url";
-            }
+			if (!array_key_exists('host', $partsOfURL)) {
+				print "\nWarning: Could not parse $url";
+			}
 			$port = array_key_exists("port", $partsOfURL) ? $partsOfURL['port'] : 80;
 			try {
 				$res = $d->downloadAsString($path, $port, $host, array_key_exists($url, self::$repo_credentials) ? self::$repo_credentials[$url] : "", NULL);
@@ -185,7 +185,7 @@ class PackageRepository {
 				$dd = self::getDeployDescriptor($ext_id, $i);
 				return $dd;
 			} catch(RepositoryError $e) {
-	   	        // try next version
+				// try next version
 			}
 		}
 		throw new RepositoryError(DEPLOY_FRAMEWORK_REPO_PACKAGE_DOES_NOT_EXIST, "Can not find package: $ext_id in version range $minversion-$maxversion");
@@ -392,46 +392,54 @@ class PackageRepository {
 		self::$localPackages['mw'] = self::createMWDeployDescriptor(realpath($ext_dir."/.."));
 		return self::$localPackages;
 	}
-	
-    /**
-     * Returns the deploy descriptors of packages which have not been initialized.
-     *
-     * @param string $ext_dir Extension directory
-     * @return array of (id=>DeployDescriptor)
-     */
-    public static function getLocalPackagesToInitialize($ext_dir, $forceReload = false) {
-        if (!is_null(self::$localPackagesToInitialize) && !$forceReload) return self::$localPackagesToInitialize;
-        self::$localPackagesToInitialize = array();
-        // add trailing slashes
-        if (substr($ext_dir,-1)!='/'){
-            $ext_dir .= '/';
-        }
 
-        $handle = @opendir($ext_dir);
-        if (!$handle) {
-            throw new IllegalArgument('Extension directory does not exist: '.$ext_dir);
-        }
+	/**
+	 * Returns the deploy descriptors of packages which have not been initialized.
+	 *
+	 * @param string $ext_dir Extension directory
+	 * @return array of (id=>DeployDescriptor)
+	 */
+	public static function getLocalPackagesToInitialize($ext_dir, $forceReload = false) {
+		if (!is_null(self::$localPackagesToInitialize) && !$forceReload) return self::$localPackagesToInitialize;
+		self::$localPackagesToInitialize = array();
+		// add trailing slashes
+		if (substr($ext_dir,-1)!='/'){
+			$ext_dir .= '/';
+		}
 
-        while ($entry = readdir($handle) ){
-            if ($entry[0] == '.'){
-                continue;
-            }
+		$handle = @opendir($ext_dir);
+		if (!$handle) {
+			throw new IllegalArgument('Extension directory does not exist: '.$ext_dir);
+		}
 
-            if (is_dir($ext_dir.$entry)) {
-                // check if there is a init$.ext
-                if (file_exists($ext_dir.$entry.'/init$.ext')) {
-                	$init_ext_file = trim(file_get_contents($ext_dir.$entry.'/init$.ext'));
-                	list($id, $fromVersion) = explode(",", $init_ext_file);
-                    $dd = new DeployDescriptor(file_get_contents($ext_dir.$entry.'/deploy.xml'));
-                    self::$localPackagesToInitialize[$id] = array($dd, $fromVersion);
+		while ($entry = readdir($handle) ){
+			if ($entry[0] == '.'){
+				continue;
+			}
 
-                }
-            }
+			if (is_dir($ext_dir.$entry)) {
+				// check if there is a init$.ext
+				if (file_exists($ext_dir.$entry.'/init$.ext')) {
+					$init_ext_file = trim(file_get_contents($ext_dir.$entry.'/init$.ext'));
+					list($id, $fromVersion) = explode(",", $init_ext_file);
+					$dd = new DeployDescriptor(file_get_contents($ext_dir.$entry.'/deploy.xml'));
+					self::$localPackagesToInitialize[$id] = array($dd, $fromVersion);
 
-        }
-       
-        return self::$localPackagesToInitialize;
-    }
+				}
+			}
+
+		}
+
+		// special handling for MW itself
+		if (file_exists($ext_dir.'../init$.ext')) {
+			$init_ext_file = trim(file_get_contents($ext_dir.'../init$.ext'));
+			list($id, $fromVersion) = explode(",", $init_ext_file);
+			$dd = new DeployDescriptor(file_get_contents($ext_dir.'../deploy.xml'));
+			self::$localPackagesToInitialize[$id] = array($dd, $fromVersion);
+		}
+
+		return self::$localPackagesToInitialize;
+	}
 
 	private static function createMWDeployDescriptor($rootDir) {
 		$version = Tools::getMediawikiVersion($rootDir);
@@ -440,7 +448,7 @@ class PackageRepository {
 				<deploydescriptor>
 				    <global>
 				        <version>'.$version.'</version>
-				        <id>MW</id>
+				        <id>mw</id>
 				        <vendor>Ontoprise GmbH</vendor>
 				        <instdir/>
 				        <description>Mediawiki software</description>

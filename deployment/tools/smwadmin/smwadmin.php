@@ -202,7 +202,7 @@ if ($dfgRestore) {
 // Global update (ie. updates all packages to the latest possible version)
 if ($dfgGlobalUpdate) {
 	handleGlobalUpdate($dfgCheckDep);
-	die(isset($dfgCheckDep) ? DF_TERMINATION_WITHOUT_FINALIZE : DF_TERMINATION_WITH_FINALIZE);
+	die($dfgCheckDep === true  ? DF_TERMINATION_WITHOUT_FINALIZE : DF_TERMINATION_WITH_FINALIZE);
 }
 
 // List all available packages and show which are installed.
@@ -282,7 +282,7 @@ foreach($packageToUpdate as $toUpdate) {
 
 if (count($installer->getErrors()) === 0) {
 	print "\n\nOK.\n";
-	die(isset($dfgCheckDep) ? DF_TERMINATION_WITHOUT_FINALIZE : DF_TERMINATION_WITH_FINALIZE);
+	die($dfgCheckDep === true ? DF_TERMINATION_WITHOUT_FINALIZE : DF_TERMINATION_WITH_FINALIZE);
 } else {
 	print "\n\nErrors occured:\n";
 	foreach($installer->getErrors() as $e) {
@@ -373,7 +373,7 @@ function handleInstallOrUpdate($packageID, $version) {
 		$res_installer->checkWikidump($packageID, $version);
 		print "\n\n";
 
-	} else if (isset($dfgCheckDep) && $dfgCheckDep == true) {
+	} else if ($dfgCheckDep === true) {
 
 		// check dependencies of a package to install or update
 		list($new_package, $old_package, $extensions_to_update) = $installer->collectPackagesToInstall($packageID, $version);

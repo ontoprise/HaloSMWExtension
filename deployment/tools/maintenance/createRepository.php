@@ -72,6 +72,7 @@ echo "\nCreate new repository ".$outputDir."repository.xml";
 $new_ser = '<?xml version="1.0" encoding="UTF-8"?><?xml-stylesheet type="text/xsl" href="repository.xsl"?>'."<root>\n<extensions>\n";
 foreach($localPackages as $lp) {
     $id = $lp->getID();
+    if ($id == 'mw') continue;
     $installdir = $lp->getInstallationDirectory();
     $new_ser .= "<extension id=\"$id\">";
         $branch = isset($head) ? "smwhalo" : "smwhalo_".addSeparators($release,"_")."_release";

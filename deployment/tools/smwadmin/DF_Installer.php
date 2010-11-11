@@ -225,7 +225,7 @@ class Installer {
 		// are available and collect all depending extension to be updated.
 		$updatesNeeded = array();
 		foreach($localPackages as $tl_ext) {
-			if ($tl_ext->getID() == 'mw') continue;
+		
 			$dd = PackageRepository::getLatestDeployDescriptor($tl_ext->getID());
 			if ($dd->getVersion() > $localPackages[$dd->getID()]->getVersion()
 			|| $dd->getPatchlevel() > $localPackages[$dd->getID()]->getPatchlevel()) {
@@ -654,14 +654,7 @@ class Installer {
 		// need to get updated too.
 		foreach($updatesNeeded as $up) {
 			list($id, $minVersion, $maxVersion) = $up;
-			if ($id == 'mw') {
-				// special handling for Mediawiki (mw)
-				// stop installation if version does not match
-				$mwVersion = $localPackages['mw']->getVersion();
-				if ($mwVersion < $minVersion || $mwVersion > $maxVersion) {
-					throw new InstallationError(DEPLOY_FRAMEWORK_WRONG_MW_VERSION, "Wrong mediawiki version $mwVersion. ".$dd->getID()." requires $minVersion - $maxVersion");
-				}
-			}
+			
 			$desc_min = PackageRepository::getDeployDescriptorFromRange($id, $minVersion, $maxVersion);
 
 			$packagesToUpdate[] = array($desc_min, $minVersion, $maxVersion);
