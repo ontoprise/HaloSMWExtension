@@ -338,7 +338,7 @@ class SMWTripleStore extends SMWStore {
 				continue;
 			} elseif ($property->getPropertyID() == "_LIST") {
 				foreach($propertyValueArray as $value) {
-					
+						
 					$typeValues = $value->getTypeValues();
 					$i=0;
 					$triples[] = array($subject_iri, $property_iri, "_:".$bNodeCounter);
@@ -351,7 +351,7 @@ class SMWTripleStore extends SMWStore {
 					for($j = $i; $j < 5; $j++) {
 						$triples[] = array("_:".$bNodeCounter, $this->tsNamespace->getFullIRIByName(SMW_NS_PROPERTY, "_$j"), "<".TSNamespaces::$DEFAULT_VALUE_URI.">");
 					}
-					
+						
 				}
 				continue;
 			}
@@ -373,7 +373,7 @@ class SMWTripleStore extends SMWStore {
 						$triples[] = array($subject_iri, $property_iri, $object_iri);
 
 					} elseif ($value->getTypeID() == '_rec') {
-       
+						 
 						$sdata = $value->getData(); // SMWSemanticData object
 						$v1 = reset($sdata->getPropertyValues(SMWPropertyValue::makeProperty("_1")));
 						$v2 =  reset($sdata->getPropertyValues(SMWPropertyValue::makeProperty("_2")));
@@ -383,7 +383,7 @@ class SMWTripleStore extends SMWStore {
 
 
 						$triples[] = array($subject_iri, $property_iri, "_:".$bNodeCounter);
-                        
+
 						if ($v1 !== false) {
 							$xsdType = WikiTypeToXSD::getXSDType($v1->getTypeID());
 							$dbkeys = $v1->getDBkeys();
@@ -397,7 +397,7 @@ class SMWTripleStore extends SMWStore {
 						} else {
 							$triples[] = array("_:".$bNodeCounter, $this->tsNamespace->getFullIRIByName(SMW_NS_PROPERTY, "_1"), "<".TSNamespaces::$DEFAULT_VALUE_URI.">");
 						}
-						
+
 						if ($v2 !== false) {
 							$xsdType = WikiTypeToXSD::getXSDType($v2->getTypeID());
 							$dbkeys = $v2->getDBkeys();
@@ -409,9 +409,9 @@ class SMWTripleStore extends SMWStore {
 							}
 							$triples[] = array("_:".$bNodeCounter, $this->tsNamespace->getFullIRIByName(SMW_NS_PROPERTY, "_2"), $object);
 						} else {
-                            $triples[] = array("_:".$bNodeCounter, $this->tsNamespace->getFullIRIByName(SMW_NS_PROPERTY, "_2"), "<".TSNamespaces::$DEFAULT_VALUE_URI.">");
-                        }
-                        
+							$triples[] = array("_:".$bNodeCounter, $this->tsNamespace->getFullIRIByName(SMW_NS_PROPERTY, "_2"), "<".TSNamespaces::$DEFAULT_VALUE_URI.">");
+						}
+
 						if ($v3 !== false) {
 							$xsdType = WikiTypeToXSD::getXSDType($v3->getTypeID());
 							$dbkeys = $v3->getDBkeys();
@@ -423,9 +423,9 @@ class SMWTripleStore extends SMWStore {
 							}
 							$triples[] = array("_:".$bNodeCounter, $this->tsNamespace->getFullIRIByName(SMW_NS_PROPERTY, "_3"), $object);
 						} else {
-                            $triples[] = array("_:".$bNodeCounter, $this->tsNamespace->getFullIRIByName(SMW_NS_PROPERTY, "_3"), "<".TSNamespaces::$DEFAULT_VALUE_URI.">");
-                        }
-                        
+							$triples[] = array("_:".$bNodeCounter, $this->tsNamespace->getFullIRIByName(SMW_NS_PROPERTY, "_3"), "<".TSNamespaces::$DEFAULT_VALUE_URI.">");
+						}
+
 						if ($v4 !== false) {
 							$xsdType = WikiTypeToXSD::getXSDType($v4->getTypeID());
 							$dbkeys = $v4->getDBkeys();
@@ -437,9 +437,9 @@ class SMWTripleStore extends SMWStore {
 							}
 							$triples[] = array("_:".$bNodeCounter, $this->tsNamespace->getFullIRIByName(SMW_NS_PROPERTY, "_4"), $object);
 						} else {
-                            $triples[] = array("_:".$bNodeCounter, $this->tsNamespace->getFullIRIByName(SMW_NS_PROPERTY, "_4"), "<".TSNamespaces::$DEFAULT_VALUE_URI.">");
-                        }
-                        
+							$triples[] = array("_:".$bNodeCounter, $this->tsNamespace->getFullIRIByName(SMW_NS_PROPERTY, "_4"), "<".TSNamespaces::$DEFAULT_VALUE_URI.">");
+						}
+
 						if ($v5 !== false) {
 							$xsdType = WikiTypeToXSD::getXSDType($v5->getTypeID());
 							$dbkeys = $v5->getDBkeys();
@@ -451,8 +451,8 @@ class SMWTripleStore extends SMWStore {
 							}
 							$triples[] = array("_:".$bNodeCounter, $this->tsNamespace->getFullIRIByName(SMW_NS_PROPERTY, "_5"), $object);
 						} else {
-                            $triples[] = array("_:".$bNodeCounter, $this->tsNamespace->getFullIRIByName(SMW_NS_PROPERTY, "_5"), "<".TSNamespaces::$DEFAULT_VALUE_URI.">");
-                        }
+							$triples[] = array("_:".$bNodeCounter, $this->tsNamespace->getFullIRIByName(SMW_NS_PROPERTY, "_5"), "<".TSNamespaces::$DEFAULT_VALUE_URI.">");
+						}
 						$bNodeCounter++;
 
 					} else {
@@ -579,7 +579,7 @@ class SMWTripleStore extends SMWStore {
 			$sparulCommands = array();
 			$prop_ns = $this->tsNamespace->getNSPrefix(SMW_NS_PROPERTY);
 			$naryPropFrag = "<$smwgTripleStoreGraph/$prop_ns";
-	
+
 			$sparulCommands[] = TSNamespaces::getW3CPrefixes()."MODIFY <$smwgTripleStoreGraph> DELETE  { $old_iri ?p ?o. } INSERT { $new_iri ?p ?o. }";
 			$sparulCommands[] = TSNamespaces::getW3CPrefixes()."MODIFY <$smwgTripleStoreGraph> DELETE  { ?s $old_iri ?o. } INSERT { ?s $new_iri ?o. }";
 			$sparulCommands[] = TSNamespaces::getW3CPrefixes()."MODIFY <$smwgTripleStoreGraph> DELETE  { ?s ?p $old_iri. } INSERT { ?s ?p $new_iri. }";
@@ -605,6 +605,7 @@ class SMWTripleStore extends SMWStore {
 
 	function doGetQueryResult(SMWQuery $query) {
 		global $wgServer, $wgScript, $smwgWebserviceUser, $smwgWebservicePassword, $smwgDeployVersion;
+
 
 		// make sure that TS is not queried in maintenace mode
 		if ( defined( 'DO_MAINTENANCE' )  && !defined('SMWH_FORCE_TS_UPDATE') ) {
@@ -647,7 +648,7 @@ class SMWTripleStore extends SMWStore {
 				// Allow extensions to transform the query result before it is
 				// parsed.
 				wfRunHooks('ProcessSPARQLXMLResults', array(&$query, &$response) );
-				
+
 				$queryResult = $this->parseSPARQLXMLResult($query, $response);
 
 
@@ -670,8 +671,9 @@ class SMWTripleStore extends SMWStore {
 						}
 						// in case of an error
 						// redirect query to the default SMW implementation
+						
 						return $this->smwstore->getQueryResult($query);
-							
+						
 				}
 				return $sqr;
 			}
@@ -1289,7 +1291,7 @@ class SMWTripleStore extends SMWStore {
 
 		}
 		return $contains;
-	} 
+	}
 
 }
 

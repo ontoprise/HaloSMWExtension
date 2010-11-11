@@ -106,11 +106,12 @@ class OB_Storage {
 
 		$instance = Title::newFromText($p_array[0]);
 
-		$properties = smwfGetStore()->getProperties($instance, $reqfilter);
-
+		$properties = smwfGetStore()->getProperties($instance, $reqfilter, true);
+	
+       
 		foreach($properties as $a) {
 			if (!$a->isShown() || !$a->isVisible()) continue;
-			$values = smwfGetStore()->getPropertyValues($instance, $a);
+			$values = smwfGetStore()->getPropertyValues($instance, $a, true);
 			$propertyAnnotations[] = array($a, $values);
 		}
 
@@ -187,7 +188,7 @@ class OB_Storage {
 		$prop = Title::newFromText($p_array[0], SMW_NS_PROPERTY);
 
 		if (smwf_om_userCan($p_array[0], 'propertyread', SMW_NS_PROPERTY) === "true") {
-			$attinstances = smwfGetStore()->getAllPropertySubjects(SMWPropertyValue::makeUserProperty($prop->getDBkey()),  $reqfilter);
+			$attinstances = smwfGetStore()->getAllPropertySubjects(SMWPropertyValue::makeUserProperty($prop->getDBkey()),  $reqfilter, true);
 		} else {
 			$attinstances = array();
 		}
@@ -888,7 +889,7 @@ class OB_StorageTSQuad extends OB_StorageTS {
 
 
 			$titles = array();
-			$this->parseInstances($response, $titles);
+			$this->parseInstances($response, $titles, NULL);
 
 
 		} catch(Exception $e) {

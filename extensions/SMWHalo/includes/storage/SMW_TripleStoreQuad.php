@@ -28,8 +28,9 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 		parent::__construct();
 	}
 
-	function getSemanticData( $subject, $filter = false ) {
-		if ( defined( 'DO_MAINTENANCE' )  && !defined('SMWH_FORCE_TS_UPDATE') ) {
+	function getSemanticData( $subject, $filter = false, $forceSMWStore = false ) {
+		
+		if ( $forceSMWStore || (defined( 'DO_MAINTENANCE' )  && !defined('SMWH_FORCE_TS_UPDATE')) ) {
 			return $this->smwstore->getSemanticData($subject, $filter);
 		}
 
@@ -121,11 +122,13 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 		return $semanticData;
 	}
 
-	function getProperties( $subject, $requestoptions = null ) {
-		if ( defined( 'DO_MAINTENANCE' )  && !defined('SMWH_FORCE_TS_UPDATE') ) {
+	function getProperties( $subject, $requestoptions = null, $forceSMWStore = false ) {
+		
+		if ( $forceSMWStore || (defined( 'DO_MAINTENANCE' )  && !defined('SMWH_FORCE_TS_UPDATE')) ) {
 			return $this->smwstore->getProperties($subject, $requestoptions);
 		}
 
+		
 
 		$client = TSConnection::getConnector();
 		$client->connect();
@@ -179,8 +182,9 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 		return $properties;
 	}
 
-	function getInProperties( SMWDataValue $object, $requestoptions = null ) {
-		if ( defined( 'DO_MAINTENANCE' )  && !defined('SMWH_FORCE_TS_UPDATE') ) {
+	function getInProperties( SMWDataValue $object, $requestoptions = null , $forceSMWStore = false) {
+		
+		if ( $forceSMWStore || (defined( 'DO_MAINTENANCE' )  && !defined('SMWH_FORCE_TS_UPDATE')) ) {
 			return $this->smwstore->getInProperties($object, $requestoptions);
 		}
 
@@ -237,8 +241,9 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 		return $properties;
 	}
 
-	function getAllPropertyAnnotations(SMWPropertyValue $property, $requestoptions = NULL) {
-		if ( defined( 'DO_MAINTENANCE' )  && !defined('SMWH_FORCE_TS_UPDATE') ) {
+	function getAllPropertyAnnotations(SMWPropertyValue $property, $requestoptions = NULL, $forceSMWStore = false) {
+	
+		if ( $forceSMWStore || (defined( 'DO_MAINTENANCE' )  && !defined('SMWH_FORCE_TS_UPDATE')) ) {
 			 return array();
 		}
 
@@ -317,8 +322,9 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 	}
 
 
-	function getPropertyValues($subject, SMWPropertyValue $property, $requestoptions = NULL, $outputformat = '') {
-		if ( defined( 'DO_MAINTENANCE' )  && !defined('SMWH_FORCE_TS_UPDATE') ) {
+	function getPropertyValues($subject, SMWPropertyValue $property, $requestoptions = NULL, $outputformat = '', $forceSMWStore = false ) {
+	
+		if ( $forceSMWStore || (defined( 'DO_MAINTENANCE' )  && !defined('SMWH_FORCE_TS_UPDATE')) ) {
 			return $this->smwstore->getPropertyValues($subject, $property, $requestoptions, $outputformat);
 		}
 		if (!$property->isUserDefined()) {
@@ -405,8 +411,9 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 	}
 
 
-	function getPropertySubjects(SMWPropertyValue $property, $value, $requestoptions = NULL) {
-		if ( defined( 'DO_MAINTENANCE' )  && !defined('SMWH_FORCE_TS_UPDATE') ) {
+	function getPropertySubjects(SMWPropertyValue $property, $value, $requestoptions = NULL, $forceSMWStore=false) {
+		
+		if ($forceSMWStore || (defined( 'DO_MAINTENANCE' )  && !defined('SMWH_FORCE_TS_UPDATE')) ) {
 			return $this->smwstore->getPropertySubjects($property, $value, $requestoptions);
 		}
 		if (!$property->isUserDefined()) {
