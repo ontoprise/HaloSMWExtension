@@ -4,6 +4,7 @@
  */
 
 $smwgDeployVersion = false;
+$smwghConvertColoumns="utf8";
 
 
 include_once('extensions/ARCLibrary/ARCLibrary.php');
