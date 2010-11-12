@@ -611,7 +611,7 @@ class SMWTripleStore extends SMWStore {
 		if ( defined( 'DO_MAINTENANCE' )  && !defined('SMWH_FORCE_TS_UPDATE') ) {
 			return $this->smwstore->getQueryResult($query);
 		}
-
+ 		
 		$toTSC = false; // redirects a normal ASK query to the TSC
 		if (!($query instanceof SMWSPARQLQuery)) {
 			// normal query from #ask
@@ -992,7 +992,7 @@ class SMWTripleStore extends SMWStore {
 
 			}
 			// Query result object
-			$queryResult = new SMWHaloQueryResult($prs, $query, $qresults, $this, (count($results) > $query->getLimit()));
+			$queryResult = new SMWHaloQueryResult($prs, $query, $qresults, $this, (count($results) == $query->getLimit()));
 			$qResultSet[$s] = $queryResult;
 		}
 

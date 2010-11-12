@@ -137,7 +137,9 @@ class SMWQueryProcessor {
 		} else { // sort by page title (main column) by default
 			$query->sortkeys[''] = ( current( $orders ) != false ) ? current( $orders ) : 'ASC';
 		} // TODO: check and report if there are further order statements?
-
+		
+		// make sure to copy source parameter
+        if (array_key_exists('source', $params)) $query->params['source'] = $params['source'];
 		return $query;
 	}
 
@@ -228,6 +230,12 @@ class SMWQueryProcessor {
 					$querystring .= $param;
 				}
 			}
+		}
+		
+		// make sure the TSC source is selected on the Special:Ask page
+		global $wgTitle;
+		if ( SpecialPage::getTitleFor('Ask')->equals($wgTitle)) {
+		  if (smwfIsTripleStoreConfigured()) $params['source'] = "tsc";
 		}
 		
 		$querystring = str_replace( array( '&lt;', '&gt;' ), array( '<', '>' ), $querystring );
