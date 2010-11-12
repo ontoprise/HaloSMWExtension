@@ -33,6 +33,12 @@ $wgAjaxExportList[] = 'smwf_wsu_processStep2';
 $wgAjaxExportList[] = 'smwf_wsu_getPreview';
 $wgAjaxExportList[] = 'smwf_uws_getPage';
 
+$wgHooks['ajaxMIMEtype'][] = 'smwf_uws_getPageMimeType';
+
+function smwf_uws_getPageMimeType($func, & $mimeType) {
+    if ($func == 'smwf_uws_getPage') $mimeType = 'text/html; charset=utf-8';
+   return true;
+}
 
 /**
  * this method is called after step 1 (choose web service)
