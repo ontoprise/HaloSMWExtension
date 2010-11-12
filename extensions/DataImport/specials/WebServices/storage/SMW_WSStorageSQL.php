@@ -365,14 +365,6 @@ class WSStorageSQL {
 
 		$parameterSetId = " an error occured";
 
-		//		if($db->numRows($res) > 1){
-		//			$goon = true;
-		//			while($row = $db->fetchObject($res) && $goon){
-		//				$pSId = $row->param_set_id;
-		//
-		//			}
-		//		} else
-
 		if ($db->numRows($res) >= 1){
 			// an appropriate parameter set exists
 			$row = $db->fetchObject($res);

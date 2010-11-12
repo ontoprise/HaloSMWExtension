@@ -56,7 +56,7 @@ class WebServiceTransposedResultPrinter extends WebServiceResultPrinter {
 	 * @param unknown_type $wsResult
 	 * @return unknown
 	 */
-	public function getWikiText($template, $wsResult, $subst){
+	public function getWikiText($template, $wsResult){
 		$result = array();
 		for($i = 1; $i<sizeof($wsResult);$i++){
 			$k=0;
@@ -72,12 +72,7 @@ class WebServiceTransposedResultPrinter extends WebServiceResultPrinter {
 		$return = "";
 		if($template != ""){
 			
-			//check if substitution is necessary
-			if(!$subst){
-				$return .= "{{".$template."";
-			} else {
-				$return .= "{{subst:".$template."";
-			}
+			$return .= "{{".$template."";
 			
 			$i=1;
 			foreach($result as $res){

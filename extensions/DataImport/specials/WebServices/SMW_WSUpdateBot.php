@@ -169,8 +169,7 @@ class WSUpdateBot extends GardeningBot {
 
 				$goon = true;
 					
-				$errorMessages = $ws->getErrorMessages();
-				if(count($errorMessages) > 0){
+				if(is_string($response)){
 					$log->addGardeningIssueAboutValue(
 					$this->id, SMW_GARDISSUE_ERROR_WSCACHE_ENTRIES,
 					Title::newFromText($ws->getName()), 0);

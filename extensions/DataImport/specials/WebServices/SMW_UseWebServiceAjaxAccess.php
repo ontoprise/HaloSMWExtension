@@ -148,7 +148,7 @@ function smwf_wsu_getPreview($articleName, $wsSyn){
 	for($i=1; $i < count($wsSyn); $i++){
 		$parameters[] = $wsSyn[$i];
 	}
-	return webservice_getPreview($articleName, $parameters);
+	return SMWWebServiceUsage::getPreview($articleName, $parameters);
 }
 
 function smwf_uws_getPage($args= "") {

@@ -66,6 +66,10 @@ function enableDataImportExtension() {
 	
 	global $wgHooks;
 	$wgHooks['LanguageGetMagic'][] = 'difSetupMagic';
+	
+	global $wgAutoloadClasses;
+	$wgAutoloadClasses['SMWWSSMWAskPage']  = 
+		$smwgDIIP.'/specials/WebServices/smwstoragelayer/SMW_WSSMWASKPage.php';	
 }
 
 function enableMaterializationFeature(){
@@ -91,6 +95,10 @@ if(defined( 'DO_MAINTENANCE' )){
 		}
 	}
 	
+	global $smwgQuerySources;
+	$smwgQuerySources['webservice'] = 'SMWWSSMWStore';
+	require_once($smwgDIIP. '/specials/WebServices/smwstoragelayer/SMW_WSSMWStore.php');
+	
 	//so that other extensions like the gardening framework know about
 	//the Data Import Extension
 	$smwgEnableDataImportExtension = true;
@@ -99,7 +107,7 @@ if(defined( 'DO_MAINTENANCE' )){
 	require_once($smwgDIIP. '/specials/TermImport/SMW_TermImportManager.php');
 	
 	global $wgParser;
-	$wgParser->setFunctionHook( 'webServiceUsage', 'webServiceUsage_Render' );
+	$wgParser->setFunctionHook( 'webServiceUsage', 'wsuf_Render' );
 	
 	$spns_text = $wgContLang->getNsText(NS_SPECIAL);
 
@@ -172,6 +180,7 @@ if(defined( 'DO_MAINTENANCE' )){
 	require_once("$smwgDIIP/specials/WebServices/SMW_WSCacheBot.php");
 	require_once("$smwgDIIP/specials/WebServices/SMW_WSUpdateBot.php");
 	
+	$wgSpecialPages['Ask'] = array('SMWWSSMWAskPage' );
 	
 	return true;
 }

@@ -99,7 +99,6 @@ class WebService {
 	//   access to the service
 	private $mCallParameters;
 	// for memorizing errors occuring during ws-call
-	private $mCallErrorMessages = array();
 	
 	private $responseContentType = ''; //for temporarily storing the ws response content type, which is required for RDF parsing  
 	
@@ -505,13 +504,8 @@ class WebService {
 	 * @return an array that contains the result
 	 */
 	public function call($parameterSetId, $resultParts) {
-		// this is necessary due to changes for default results handling
-		$defaultReturnValues = $resultParts;
-		$resultParts = array();
-		foreach($defaultReturnValues as $key => $value){
-			$resultParts[] = $key;
-		}
-
+		$resultParts = array_keys($resultParts);
+		
 		//always get parameters although a cached web service result might be used
 		//because some features of the result extraction might want to know about
 		//special parameters like the Linked Data subject and so on.
@@ -524,48 +518,31 @@ class WebService {
 		//check if an appropriate result allready exists in the cache
 		if($cacheResult != null){
 			if(($this->mDisplayPolicy == 0) ||
-			(wfTime() - wfTimestamp(TS_UNIX, $cacheResult["lastUpdate"])
-			< ($this->getDisplayPolicy()*60))){
+					(wfTime() - wfTimestamp(TS_UNIX, $cacheResult["lastUpdate"])
+					< ($this->getDisplayPolicy()*60))){
 				$response = @ unserialize($cacheResult["result"]);
 				
 				WSStorage::getDatabase()->updateCacheLastAccess($this->mArticleID, $parameterSetId);
 			}
 		}
-
+		
 		// get the result from a call to a webservice if there
 		// was no appropriate result in the cache
 		if(!$response){
 			if($this->getConfirmationStatus() == "once"){
-				if($cacheResult == null){
-					return wfMsg('smw_wws_need_confirmation');
-				} else {
-					$this->mCallErrorMessages[] = wfMsg('smw_wws_need_confirmation');
-					$response = unserialize($cacheResult["result"]);
-				}
+				return wfMsg('smw_wws_need_confirmation');
 			} else {
 				$this->createWSClient();
 
 				if($this->mWSClient){
 					$response = $this->mWSClient->call($this->mMethod, $this->mCallParameters);
 				} else {
-					$response = "Could not connect to Web Service. Please check your Wiki Web Service Definition.";
+					return "Could not connect to Web Service. Please check your Wiki Web Service Definition.";
 				}
 
 				if(is_string($response)){
-					if($cacheResult == null){
-						$this->mCallErrorMessages[] = $response;
-						$defaultValues = $this->getResultDefaultValues($defaultReturnValues);
-						if(strlen($defaultValues) > 0){
-							$this->mCallErrorMessages[] = wfMsg('smw_wws_client_connect_failure_display_default');
-						}
-						return $defaultValues;
-					} else {
-						$this->mCallErrorMessages[] = $response;
-						$this->mCallErrorMessages[] = wfMsg('smw_wws_client_connect_failure_display_cache');
-						$response = @ unserialize($cacheResult["result"]);
-					}
+					return $response;
 				} else {
-					
 					//the content type which is required for RDF processing is stored together
 					//with the cached WS result -> implement better solution
 					if($this->isLinkedDataResource()){
@@ -645,6 +622,7 @@ class WebService {
 					}
 				}
 			} else {
+				$parts[1] = ucfirst($parts[1]);
 				$results[$parts[1]] = $this->getResults($response, $rdef, $parts[1]);
 				$tmpResult = $this->evaluateAdditionalPathAttribute(
 					$rdef, $parts[1], $results[$parts[1]]);
@@ -784,7 +762,7 @@ class WebService {
 
 	private function getPathForAlias($alias, $resultDef) {
 		foreach ($resultDef->part as $part) {
-			if ($alias == ''.$part['name']) {
+			if (ucfirst($alias) == ucfirst(''.$part['name'])) {
 				return ''.$part['path'];
 			}
 		}
@@ -1317,7 +1295,7 @@ class WebService {
 			$exists = false;
 			if($this->mParsedParameters != null){
 				foreach($this->mParsedParameters->children() as $child){
-					if("".$child["name"] == $pName){
+					if(ucfirst("".$child["name"]) == ucfirst($pName)){
 						$exists = true;
 					}
 				}
@@ -1331,7 +1309,7 @@ class WebService {
 				if("".$child["optional"] == "false" && "".$child["defaultValue"] == null){
 					$exists = false;
 					foreach($specifiedParameters as $pName => $pValue){
-						if("".$child["name"] == $pName){
+						if(ucfirst("".$child["name"]) == ucfirst($pName)){
 							$exists = true;
 						}
 					}
@@ -1352,7 +1330,6 @@ class WebService {
 	 * @return array of error-messages
 	 */
 	public function validateSpecifiedResults($specifiedResults){
-
 		$messages = array();
 		foreach($specifiedResults as $rName => $rValue){
 			$rPathSteps = explode(".",$rName);
@@ -1364,7 +1341,7 @@ class WebService {
 					return $messages;
 				}
 				foreach($resultDef->children() as $child){
-					if("".$child["name"] == $rPathSteps[1]){
+					if(ucfirst("".$child["name"]) == ucfirst($rPathSteps[1])){
 						$exists = true;
 					}
 				}
@@ -1422,13 +1399,6 @@ class WebService {
 		return $this->mWSClient;
 	}
 
-	public function getErrorMessages(){
-		$eMess = $this->mCallErrorMessages;
-		$this->mCallErrorMessages = array();
-		return $eMess;
-	}
-
-
 	/**
 	 * A WWSD can contain several result definitions that have a unique name.
 	 * This method returns the parsed XML structure of the result definition
@@ -1441,7 +1411,7 @@ class WebService {
 	 */
 	private function getResultDefinition($defName) {
 		foreach ($this->mParsedResult as $rdef) {
-			if ($defName == $rdef['name']) {
+			if (ucfirst($defName) == ucfirst($rdef['name'])) {
 				return $rdef;
 			}
 		}
@@ -1512,7 +1482,7 @@ class WebService {
 	 */
 	private function getXPathForAlias($alias, $resultDef) {
 		foreach ($resultDef->part as $part) {
-			if ($alias == ''.$part['name']) {
+			if (ucfirst($alias) == ucfirst(''.$part['name'])) {
 				return ''.$part['xpath'];
 			}
 		}
@@ -1526,7 +1496,7 @@ class WebService {
 	 */
 	private function getJSONForAlias($alias, $resultDef) {
 		foreach ($resultDef->part as $part) {
-			if ($alias == ''.$part['name']) {
+			if (ucfirst($alias) == ucfirst(''.$part['name'])) {
 				return ''.$part['json'];
 			}
 		}
@@ -1540,7 +1510,7 @@ class WebService {
 	 */
 	private function getPropertyForAlias($alias, $resultDef) {
 		foreach ($resultDef->part as $part) {
-			if ($alias == ''.$part['name']) {
+			if (ucfirst($alias) == ucfirst(''.$part['name'])) {
 				return ''.$part['property'];
 			}
 		}
@@ -1566,7 +1536,7 @@ class WebService {
 			foreach($this->mParsedParameters->children() as $child){
 				$found = false;
 				foreach($subParameterBundle as $parameterName => $subParameters){
-					if("".$child["name"] == $parameterName){
+					if(ucfirst("".$child["name"]) == ucfirst($parameterName)){
 						$found = true;
 					}
 				}
