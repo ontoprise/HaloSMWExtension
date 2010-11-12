@@ -216,6 +216,7 @@ WHERE {
  | format=list
  | merge=true
  | default=none
+ | ?cat=
 }}
 
 {|width=&quot;100%&quot; border=1
