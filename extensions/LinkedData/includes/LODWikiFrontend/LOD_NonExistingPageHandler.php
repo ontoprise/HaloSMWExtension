@@ -68,7 +68,7 @@ class  LODNonExistingPageHandler  {
 		
 		if (!$title->exists()
 			 && $wgRequest->getVal('action', 'view') === 'view'
-			 && $wgRequest->getVal('title') === $title->getFullText()) {
+			 && $wgRequest->getVal('title') === $title->getPrefixedDBkey()) {
 			$article = new LODNonExistingPage($title);
 		}
 		
