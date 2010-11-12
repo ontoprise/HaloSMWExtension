@@ -380,6 +380,10 @@ public static function processSMWQueryASWSCall($parameters){
 			$printer = SMWQueryProcessor::getResultPrinter( $format);
 			$result = $printer->getResult( $queryResult, array(), SMW_OUTPUT_WIKI);
 		
+			if(array_key_exists('format', $configArgs) && $configArgs['format'] == 'xount'){
+				$result = '';
+			}
+			
 			return $result;
 		}
 		
@@ -511,6 +515,11 @@ public static function processSMWQueryASWSCall($parameters){
 		$queryResult = 
 			new SMWWSQueryResult($printRequests, $query, $queryResults, new SMWWSSMWStore(), $furtherResults);
 		
+		
+		if($format == 'count'){
+			return count($queryResults);
+		}	
+			
 		if($smwQueryMode){
 			return $queryResult;
 		}
