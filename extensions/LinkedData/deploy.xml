@@ -24,6 +24,7 @@
 	</codefiles>
 	<wikidumps>
 		<file loc="wikidumps/MetaDataXSLT.xml"/>
+		<file loc="wikidumps/NEPTemplates.xml"/>
 	</wikidumps>
 	<resources>
 		<!-- empty -->
