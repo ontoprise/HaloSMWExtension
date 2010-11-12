@@ -1,6 +1,6 @@
 <mediawiki xmlns="http://www.mediawiki.org/xml/export-0.4/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mediawiki.org/xml/export-0.4/ http://www.mediawiki.org/xml/export-0.4.xsd" version="0.4" xml:lang="en">
   <siteinfo>
-    <sitename>Halo3wiki</sitename>
+    <sitename>MyWiki</sitename>
     <base>http://localhost/mediawiki/index.php/Main_Page</base>
     <generator>MediaWiki 1.16.0</generator>
     <case>first-letter</case>
@@ -11,8 +11,8 @@
       <namespace key="1" case="first-letter">Talk</namespace>
       <namespace key="2" case="first-letter">User</namespace>
       <namespace key="3" case="first-letter">User talk</namespace>
-      <namespace key="4" case="first-letter">Halo3wiki</namespace>
-      <namespace key="5" case="first-letter">Halo3wiki talk</namespace>
+      <namespace key="4" case="first-letter">MyWiki</namespace>
+      <namespace key="5" case="first-letter">MyWiki talk</namespace>
       <namespace key="6" case="first-letter">File</namespace>
       <namespace key="7" case="first-letter">File talk</namespace>
       <namespace key="8" case="first-letter">MediaWiki</namespace>
@@ -27,182 +27,50 @@
       <namespace key="103" case="first-letter">Property talk</namespace>
       <namespace key="104" case="first-letter">Type</namespace>
       <namespace key="105" case="first-letter">Type talk</namespace>
+      <namespace key="106" case="first-letter">Form</namespace>
+      <namespace key="107" case="first-letter">Form talk</namespace>
       <namespace key="108" case="first-letter">Concept</namespace>
       <namespace key="109" case="first-letter">Concept talk</namespace>
+      <namespace key="120" case="first-letter">Document</namespace>
+      <namespace key="121" case="first-letter">Document talk</namespace>
+      <namespace key="122" case="first-letter">Audio</namespace>
+      <namespace key="123" case="first-letter">Audio talk</namespace>
+      <namespace key="124" case="first-letter">Video</namespace>
+      <namespace key="125" case="first-letter">Video talk</namespace>
+      <namespace key="126" case="first-letter">Pdf</namespace>
+      <namespace key="127" case="first-letter">Pdf talk</namespace>
+      <namespace key="128" case="first-letter">ICalendar</namespace>
+      <namespace key="129" case="first-letter">ICalendar talk</namespace>
+      <namespace key="130" case="first-letter">VCard</namespace>
+      <namespace key="131" case="first-letter">VCard talk</namespace>
+      <namespace key="200" case="first-letter">WebService</namespace>
+      <namespace key="201" case="first-letter">WebService talk</namespace>
+      <namespace key="202" case="first-letter">TermImport</namespace>
+      <namespace key="203" case="first-letter">TermImport talk</namespace>
+      <namespace key="220" case="first-letter">E-mail</namespace>
+      <namespace key="221" case="first-letter">E-mail talk</namespace>
       <namespace key="300" case="first-letter">ACL</namespace>
       <namespace key="301" case="first-letter">ACL talk</namespace>
       <namespace key="500" case="first-letter">LOD</namespace>
       <namespace key="501" case="first-letter">LOD talk</namespace>
       <namespace key="502" case="first-letter">Mapping</namespace>
       <namespace key="503" case="first-letter">Mapping talk</namespace>
+      <namespace key="700" case="first-letter">Comment</namespace>
+      <namespace key="701" case="first-letter">Comment talk</namespace>
+      <namespace key="702" case="first-letter">UserManual</namespace>
+      <namespace key="703" case="first-letter">UserManual talk</namespace>
     </namespaces>
   </siteinfo>
   <page>
-    <title>MediaWiki:NEP/Category</title>
-    <id>86</id>
-    <revision>
-      <id>100</id>
-      <timestamp>2010-11-12T15:19:23Z</timestamp>
-      <contributor>
-        <username>WikiSysop</username>
-        <id>1</id>
-      </contributor>
-      <comment>Created page with &quot;This category is stored in the underlying knowledge-base with the following URI: &lt;$uri$&gt;  Instances of category ''$name$'': {{#sparql:  SELECT DISTINCT ?i  WHERE {    GRAPH ?g { ...&quot;</comment>
-      <text xml:space="preserve">This category is stored in the underlying knowledge-base with the following URI: &lt;$uri$&gt;
-
-Instances of category ''$name$'':
-{{#sparql:
- SELECT DISTINCT ?i
- WHERE { 
-  GRAPH ?g {
-    ?i rdf:type &lt;$uri$&gt;.
-  }
- }
- | format=category
- | limit=100
- | headers=hide
- | merge=true
- | default=no instances of category ''$name$''
-}}
-
-{|width=&quot;100%&quot; border=1
-|-
-! super-categories of ''$name$'' !! sub-categories of ''$name$''
-|-
-|
- {{#sparql:
- SELECT DISTINCT ?cat
- WHERE { 
-  GRAPH ?g {
-    &lt;$uri$&gt; rdfs:subClassOf ?cat .
-  }
- }
- | format=ul
- | headers=hide
- | merge=true
- | default=no super-categories found
- }}
-|
- {{#sparql:
- SELECT DISTINCT ?cat
- WHERE { 
-  GRAPH ?g {
-    ?cat rdfs:subClassOf &lt;$uri$&gt; .
-  }
- }
- | format=ul
- | headers=hide
- | merge=true
- | default=no sub-categories found
- }}
-|}
-
-&lt;br&gt;
-
-{|width=&quot;100%&quot; border=1
-|-
-! properties for ''$name$'' !! properties pointing to ''$name$''
-|-
-|
- {{#sparql:
- SELECT DISTINCT ?p
- WHERE { 
-  GRAPH ?g {
-    ?p rdfs:domain &lt;$uri$&gt; .
-  }
- }
- | format=ul
- | headers=hide
- | merge=true
- | default=no properties found with ''$name$'' as domain
- }}
-|
- {{#sparql:
- SELECT DISTINCT ?p
- WHERE { 
-  GRAPH ?g {
-    ?p rdfs:range &lt;$uri$&gt; .
-  }
- }
- | format=ul
- | headers=hide
- | merge=true
- | default=no properties found with ''$name$'' as range
- }}
-|}</text>
-    </revision>
-  </page>
-  <page>
-    <title>MediaWiki:NEP/Property</title>
-    <id>85</id>
-    <revision>
-      <id>99</id>
-      <timestamp>2010-11-12T15:18:05Z</timestamp>
-      <contributor>
-        <username>WikiSysop</username>
-        <id>1</id>
-      </contributor>
-      <comment>Created page with &quot;This property is stored in the underlying knowledge-base with the following URI: &lt;$uri$&gt;  {|width=&quot;100%&quot; border=1 |- ! domain categories for ''$name$'' !! range categories / type...&quot;</comment>
-      <text xml:space="preserve">This property is stored in the underlying knowledge-base with the following URI: &lt;$uri$&gt;
-
-{|width=&quot;100%&quot; border=1
-|-
-! domain categories for ''$name$'' !! range categories / types of ''$name$'' 
-|-
-|
- {{#sparql:
- SELECT DISTINCT ?cat
- WHERE { 
-  GRAPH ?g {
-    &lt;$uri$&gt; rdfs:domain ?cat .
-  }
- }
- | format=ul
- | headers=hide
- | merge=true
- | default=no domain categories found
- }}
-|
- {{#sparql:
- SELECT DISTINCT ?cat
- WHERE { 
-  GRAPH ?g {
-    &lt;$uri$&gt; rdfs:range ?cat .
-  }
- }
- | format=ul
- | headers=hide
- | merge=true
- | default=no range categories found
- }}
-|}
-
-&lt;br&gt;
-Assertions using property ''$name$'': 
-{{#sparql:
-SELECT  ?s ?o
-WHERE { 
-  GRAPH ?g {
-    ?s &lt;$uri$&gt; ?o .
-  }
-}
- | format=table
- | merge=true
- | default=no assertions found
-}}</text>
-    </revision>
-  </page>
-  <page>
     <title>MediaWiki:NEP/Generic</title>
-    <id>82</id>
+    <id>14382</id>
     <revision>
-      <id>96</id>
-      <timestamp>2010-11-12T15:10:27Z</timestamp>
+      <id>25819</id>
+      <timestamp>2010-11-12T15:46:50Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
-      <comment>Created page with &quot;This resource is stored in the underlying knowledge-base with the following URI: &lt;$uri$&gt;  ''$name$'' belongs to the following categories: {{#sparql:  SELECT DISTINCT ?cat  WHERE ...&quot;</comment>
       <text xml:space="preserve">This resource is stored in the underlying knowledge-base with the following URI: &lt;$uri$&gt;
 
 ''$name$'' belongs to the following categories:
@@ -213,11 +81,11 @@ WHERE {
      &lt;$uri$&gt; rdf:type ?cat .
    }
  }
+ | ?Cat=
  | format=list
- | merge=true
  | default=none
- | ?cat=
 }}
+
 
 {|width=&quot;100%&quot; border=1
 |-
@@ -248,6 +116,165 @@ WHERE {
  | default=no references to ''$name$'' found
  }}
 |}</text>
+    </revision>
+  </page>
+  <page>
+    <title>MediaWiki:NEP/Category</title>
+    <id>14383</id>
+    <revision>
+      <id>25817</id>
+      <timestamp>2010-11-12T15:41:02Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">This category is stored in the underlying knowledge-base with the following URI: &lt;$uri$&gt;
+
+Instances of category ''$name$'':
+{{#sparql:
+ SELECT DISTINCT ?i
+ WHERE { 
+  GRAPH ?g {
+    ?i rdf:type &lt;$uri$&gt;.
+  }
+ }
+ | format=category
+ | limit=100
+ | headers=hide
+ | merge=true
+ | default=none
+}}
+
+{|width=&quot;100%&quot; border=1
+|-
+! super-categories of ''$name$'' !! sub-categories of ''$name$''
+|-
+|
+ {{#sparql:
+ SELECT DISTINCT ?cat
+ WHERE { 
+  GRAPH ?g {
+    &lt;$uri$&gt; rdfs:subClassOf ?cat .
+  }
+ }
+ | ?cat=
+ | format=ul
+ | headers=hide
+ | merge=true
+ | default=no super-categories found
+ }}
+|
+ {{#sparql:
+ SELECT DISTINCT ?cat
+ WHERE { 
+  GRAPH ?g {
+    ?cat rdfs:subClassOf &lt;$uri$&gt; .
+  }
+ }
+ | ?cat=
+ | format=ul
+ | headers=hide
+ | merge=true
+ | default=no sub-categories found
+ }}
+|}
+
+&lt;br&gt;
+
+{|width=&quot;100%&quot; border=1
+|-
+! properties for ''$name$'' !! properties pointing to ''$name$''
+|-
+|
+ {{#sparql:
+ SELECT DISTINCT ?p
+ WHERE { 
+  GRAPH ?g {
+    ?p rdfs:domain &lt;$uri$&gt; .
+  }
+ }
+ | ?p=
+ | format=ul
+ | headers=hide
+ | merge=true
+ | default=no properties found with ''$name$'' as domain
+ }}
+|
+ {{#sparql:
+ SELECT DISTINCT ?p
+ WHERE { 
+  GRAPH ?g {
+    ?p rdfs:range &lt;$uri$&gt; .
+  }
+ }
+ | ?p=
+ | format=ul
+ | headers=hide
+ | merge=true
+ | default=no properties found with ''$name$'' as range
+ }}
+|}</text>
+    </revision>
+  </page>
+  <page>
+    <title>MediaWiki:NEP/Property</title>
+    <id>14384</id>
+    <revision>
+      <id>25818</id>
+      <timestamp>2010-11-12T15:41:59Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">This property is stored in the underlying knowledge-base with the following URI: &lt;$uri$&gt;
+
+{|width=&quot;100%&quot; border=1
+|-
+! domain categories for ''$name$'' !! range categories / types of ''$name$'' 
+|-
+|
+ {{#sparql:
+ SELECT DISTINCT ?cat
+ WHERE { 
+  GRAPH ?g {
+    &lt;$uri$&gt; rdfs:domain ?cat .
+  }
+ }
+ | ?cat=
+ | format=ul
+ | headers=hide
+ | merge=true
+ | default=no domain categories found
+ }}
+|
+ {{#sparql:
+ SELECT DISTINCT ?cat
+ WHERE { 
+  GRAPH ?g {
+    &lt;$uri$&gt; rdfs:range ?cat .
+  }
+ }
+ | ?cat=
+ | format=ul
+ | headers=hide
+ | merge=true
+ | default=no range categories found
+ }}
+|}
+
+&lt;br&gt;
+Assertions using property ''$name$'': 
+{{#sparql:
+SELECT  ?s ?o
+WHERE { 
+  GRAPH ?g {
+    ?s &lt;$uri$&gt; ?o .
+  }
+}
+ | format=table
+ | merge=true
+ | default=no assertions found
+}}</text>
     </revision>
   </page>
 </mediawiki>
