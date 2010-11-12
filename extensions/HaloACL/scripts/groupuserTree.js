@@ -474,7 +474,7 @@ YAHOO.haloacl.treeviewDataConnect = function(action,parameterlist,callback){
         }
     }
 
-    appendedParams = appendedParams + "&rsargs="+ temparray;
+    appendedParams = appendedParams + "&rsargs[]="+ temparray;
     YAHOO.util.Connect.asyncRequest('POST', url, callback,querystring);
 };
 

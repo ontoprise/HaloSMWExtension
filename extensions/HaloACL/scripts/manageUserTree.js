@@ -387,7 +387,7 @@ YAHOO.haloacl.manageUser.treeviewDataConnect = function(action,parameterlist,cal
     for(param in parameterlist){
         temparray.push(parameterlist[param]);
     }
-    appendedParams = appendedParams + "&rsargs="+ temparray;
+    appendedParams = appendedParams + "&rsargs[]="+ temparray;
     YAHOO.util.Connect.asyncRequest('POST', url, callback,appendedParams);
 };
 
