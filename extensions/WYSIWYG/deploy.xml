@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<deploydescriptor>
+	<global>
+		<version>140</version>
+		<id>wysiwyg</id>
+		<vendor>Ontoprise GmbH</vendor>
+		<maintainer>Ontoprise GmbH</maintainer>
+		<instdir>extensions/WYSIWYG</instdir>
+		<description>
+			Use the popular CKEditor for editing Wiki pages in WYSIWYYG mode.
+		</description>
+		<helpurl>http://smwforum.ontoprise.com/smwforum/index.php/Help:WYSIWYG_Extension</helpurl>
+		<dependencies>
+            <dependency from="1160" to="1160">MW</dependency>
+		</dependencies>
+	</global>
+	<codefiles>
+
+		<file loc="deploy.xml" />
+		<!-- TODO: add all others -->
+	</codefiles>
+	<wikidumps>
+		<!-- empty -->
+	</wikidumps>
+	<resources>
+		<!-- empty -->
+	</resources>
+
+	<configs>
+		<new>
+			<require name="wysiwyg"
+				file="extensions/WYSIWYG/WYSIWYG.php" />
+		</new>
+	</configs>
+</deploydescriptor>
