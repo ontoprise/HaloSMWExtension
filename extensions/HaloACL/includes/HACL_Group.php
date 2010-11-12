@@ -118,6 +118,22 @@ class  HACLGroup {
     public function getType() 		{return $this->mType;}
     public function canBeModified()	{return $this->mCanBeModified;}
     
+    /**
+     * Returns the name of the group without the prefix "Group/"
+     * @return string
+     * 		Name of the group without prefix
+     */
+    public function getGroupNameWithoutPrefix() {
+    	global $haclgContLang;
+    	$prefix = $haclgContLang->getNamingConvention(HACLLanguage::NC_GROUP)."/";
+
+   		if (strpos($this->mGroupName, $prefix) === 0) {
+   			// Remove the prefix of the naming convention e.g. "Group/"
+   			return substr($this->mGroupName, strlen($prefix));
+   		}
+   		 
+    	return $this->mGroupName;
+    }
 
     //	public function setXY($xy)               {$this->mXY = $xy;}
 
