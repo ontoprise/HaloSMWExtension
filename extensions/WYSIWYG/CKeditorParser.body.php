@@ -434,7 +434,7 @@ class CKeditorParser extends CKeditorParserWrapper {
 	}
 
 	function makeImage( $nt, $options, $holders = false ) {
-		FCKeditorParser::$fkc_mw_makeImage_options = $options;
+		CKeditorParser::$fkc_mw_makeImage_options = $options;
 		return parent::makeImage( $nt, $options, $holders );
 	}
 
@@ -880,7 +880,7 @@ class CKeditorParser extends CKeditorParserWrapper {
 		array(
 		'end'=>']',
 		'cb' => array(
-		2=>array('FCKeditorParser', 'fck_leaveTemplatesAlone'),
+		2=>array('CKeditorParser', 'fck_leaveTemplatesAlone'),
 		3=>array('', ''),
 		),
 		'min' =>2,
