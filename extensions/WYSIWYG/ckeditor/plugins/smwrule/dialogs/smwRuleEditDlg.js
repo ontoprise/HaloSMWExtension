@@ -1,7 +1,7 @@
-CKEDITOR.dialog.add( 'SMWwebserviceEdit', function( editor ) {
+CKEDITOR.dialog.add( 'SMWruleEdit', function( editor ) {
 
 	return {
-		title: 'Edit webservice definition',
+		title: 'Edit semantic rule',
 
 		minWidth: 600,
 		minHeight:200,
@@ -16,8 +16,8 @@ CKEDITOR.dialog.add( 'SMWwebserviceEdit', function( editor ) {
                     {
                         id: 'tagDefinition',
                         type: 'textarea',
-                        label: 'Define here the webservice definition:',
-                        title: 'Edit webservice definition',
+                        label: 'Edit your rule definition:',
+                        title: 'Edit semantic rule',
                         className: 'swmf_class',
                         style: 'border: 1px;'
                     }
@@ -31,10 +31,11 @@ CKEDITOR.dialog.add( 'SMWwebserviceEdit', function( editor ) {
                 content = textarea.getValue();
 
             content = content.Trim().replace(/\r?\n/, 'fckLR');
-            content = '<span class="fck_smw_webservice">' + content + '</span>';
+            content = CKEDITOR.tools.htmlEncode(content);
+            content = '<span class="fck_smw_rule">' + content + '</span>';
 
 			var element = CKEDITOR.dom.element.createFromHtml(content, editor.document),
-				newFakeObj = editor.createFakeElement( element, 'FCK__SMWwebservice', 'span' );
+				newFakeObj = editor.createFakeElement( element, 'FCK__SMWrule', 'span' );
 			if ( this.fakeObj ) {
 				newFakeObj.replace( this.fakeObj );
 				editor.getSelection().selectElement( newFakeObj );
@@ -50,13 +51,14 @@ CKEDITOR.dialog.add( 'SMWwebserviceEdit', function( editor ) {
 
    			// Fill in all the relevant fields if there's already one item selected.
        		if ( ( element = selection.getSelectedElement() ) && element.is( 'img' )
-           			&& element.getAttribute( 'class' ) == 'FCK__SMWwebservice'
+           			&& element.getAttribute( 'class' ) == 'FCK__SMWrule'
                )
             {
                 this.fakeObj = element;
  				element = editor.restoreRealElement( this.fakeObj );
        			selection.selectElement( this.fakeObj );
                 var content = element.getHtml().replace(/fckLR/g, '\r\n');
+                content = content.htmlDecode().Trim();
                 var textarea = this.getContentElement( 'tab1', 'tagDefinition');
                 textarea.setValue(content);
             }

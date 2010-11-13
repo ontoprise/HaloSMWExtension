@@ -17,11 +17,6 @@ class CKeditorParserWrapper extends Parser {
                 $this->setHook( $h, array( $this, 'replaceWebserviceDefinition' ) );
                 continue;
             }
-            if ( strtolower($h) == 'rule' &&
-                 defined('SEMANTIC_RULES_VERSION') ) {
-                $this->setHook( $h, array( $this, 'replaceRule' ) );
-                continue;
-            }
             $this->setHook( $h, array( $this, 'fck_genericTagHook' ) );
 		}
 	}

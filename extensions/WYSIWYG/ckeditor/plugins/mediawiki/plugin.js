@@ -801,6 +801,7 @@ CKEDITOR.customprocessor.prototype =
 									stringBuilder.push( unescape(htmlNode.textContent).replace(/fckLR/g,'\r\n') );
 									return;
                                 case 'fck_smw_webservice' :
+                                case 'fck_smw_rule' :
 									stringBuilder.push( htmlNode.textContent.htmlDecode().replace(/fckLR/g,'\r\n') );
 									return;
 								case 'fck_mw_magic' :
@@ -866,7 +867,6 @@ CKEDITOR.customprocessor.prototype =
 									break;
 								case 'fck_mw_property' :
 								case 'fck_mw_category' :
-								case 'fck_mw_rule' :
 									stringBuilder.push( this._formatSemanticValues( htmlNode ) ) ;
 									return ;
 							}
@@ -1136,9 +1136,6 @@ CKEDITOR.customprocessor.prototype =
 				}
 				if (emptyVal.exec(text)) return '';
 				return '[[' + labelCategory + ':' + text + ']]'
-		    case 'fck_mw_rule' :
-                htmlNode.textContent = '';
-		        return text.replace(/&lt;/g, '<').replace(/&gt;/g, '>');
 		}
 	},
     // Get real element from a fake element.

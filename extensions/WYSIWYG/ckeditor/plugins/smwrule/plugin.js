@@ -15,8 +15,8 @@ CKEDITOR.plugins.add('smw_rule', {
 				'height: 18px !important;' +
 			'}\n'
         );
-		editor.addCommand( 'SMWrule', new CKEDITOR.dialogCommand( 'SMWrule' ) );
-        CKEDITOR.dialog.add( 'SMWrule', this.path + 'dialogs/smwRuleDlg.js');
+		//editor.addCommand( 'SMWrule', new CKEDITOR.dialogCommand( 'SMWrule' ) );
+        //CKEDITOR.dialog.add( 'SMWrule', this.path + 'dialogs/smwRuleDlg.js');
 		editor.addCommand( 'SMWruleEdit', new CKEDITOR.dialogCommand( 'SMWruleEdit' ) );
         CKEDITOR.dialog.add( 'SMWruleEdit', this.path + 'dialogs/smwRuleEditDlg.js');
 
@@ -31,7 +31,7 @@ CKEDITOR.plugins.add('smw_rule', {
                 group: 'mediawiki'
             });
         }
-
+        /*
         if ( editor.ui.addButton ) {
             editor.ui.addButton( 'SMWrule',
                 {
@@ -40,6 +40,7 @@ CKEDITOR.plugins.add('smw_rule', {
                     icon: this.path + 'images/tb_icon_rule.gif'
                 });
         }
+        */
         // context menu
         if (editor.contextMenu) {
             editor.contextMenu.addListener(function(element, selection) {

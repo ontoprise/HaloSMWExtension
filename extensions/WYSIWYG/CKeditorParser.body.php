@@ -564,6 +564,11 @@ class CKeditorParser extends CKeditorParserWrapper {
 		    $this->fck_allTagsCurrentTagReplaced = $tag;
 		    $text = StringUtils::delimiterReplaceCallback( "<$tag", "</$tag>", array($this, 'fck_allTags'), $text );
 		}
+        // Rule tags (the tag is not registered as a official wiki tag, therefore
+        // not treated by the parser before
+        if ( defined('SEMANTIC_RULES_VERSION') ) {
+            $text = $this->replaceRules($text);
+        }
         // __TOC__ etc. must be replaced
         $text = $this->stripToc( $text );
 		// HTML comments shouldn't be stripped
@@ -1034,41 +1039,38 @@ class CKeditorParser extends CKeditorParserWrapper {
      *
      * @global Title $wgTitle
      * @global Request $wgRequest
-	 * @param string $str Input
-	 * @param array $argv Arguments
-	 * @return string
+     * @param  String $text
+     * @return String
      */
-	private function replaceRules( $str, $argv, $parser ) {
-	    global $wgTitle, $wgRequest;
+	private function replaceRules($text) {
+	    //global $wgTitle, $wgRequest;
 	    // rules exist in poperty and category pages only.
 	    // if it's an ajax call we don't know the page name, so do it always
         /*
 	    if (($wgRequest->getVal('action') == 'ajax') ||
 	        ($wgTitle && (defined('SMW_NS_PROPERTY') && $wgTitle->getNamespace() == SMW_NS_PROPERTY) ||
              $wgTitle->getNamespace() == NS_CATEGORY )) {
-        */
-        
-        $ret = '<' . $this->fck_mw_taghook;
-		if( empty( $argv ) ) {
-			$ret .= '>';
-		} else {
-			foreach( $argv as $key => $value ) {
-				$ret .= " " . $key . "=\"" . $value . "\"";
-			}
-			$ret .= '>';
-		}
-		if( !is_null( $str ) )
-			$ret .= $str ;
-        $ret .= '</' . $this->fck_mw_taghook . '>';
-        $ret = '<span class="fck_smw_rule">' .
-                htmlspecialchars($ret).
-                '</span>';
-		$replacement = $this->fck_addToStrtr( $ret );
-		return $replacement;
-
+         */
+	        if (preg_match_all('/<rule[^>]*>.*?<\/rule>/is', $text, $matches)) {
+	             for ($i= 0; $i<count($matches[0]); $i++) {
+	                 $this->fck_mw_strtr_span['Fckmw'.$this->fck_mw_strtr_span_counter.'fckmw']=
+	                     '<span class="fck_smw_rule">'.htmlentities($matches[0][$i]).'</span>';
+	                 $this->fck_mw_strtr_span['href="Fckmw'.$this->fck_mw_strtr_span_counter.'fckmw"']=
+	                     'href="'.$matches[0][$i].'"';
+                     $key = 'Fckmw'.$this->fck_mw_strtr_span_counter.'fckmw';
+                     $this->fck_mw_strtr_span_counter++;
+                     $cnt=1;
+	                 $text = str_replace($matches[0][$i], $key, $text, $cnt);
+	             }
+	        }
+        /*
+	    }
+         */
+	    return $text;
 	}
+        
     /**
-     * Replace wikitext for webservice definition
+     * Replace wikitext for webservice definition, called as a parser hook
      *
 	 * @param string $str Input
 	 * @param array $argv Arguments

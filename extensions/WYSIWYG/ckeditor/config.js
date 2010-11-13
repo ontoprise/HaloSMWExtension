@@ -42,6 +42,11 @@ CKEDITOR.editorConfig = function( config )
         CKEDITOR.plugins.addExternal( 'smw_webservice', CKEDITOR.basePath + 'plugins/smwwebservice/' );
         extraPlugins += ",smw_webservice";
     }
+    // SemanticRule extension
+    if (('SEMANTIC_RULES_VERSION').InArray(window.parent.wgCKeditorUseBuildin4Extensions)) {
+        CKEDITOR.plugins.addExternal( 'smw_rule', CKEDITOR.basePath + 'plugins/smwrule/' );
+        extraPlugins += ",smw_rule";
+    }
 
     config.toolbar_Wiki = [
         ['Source','-','Save','NewPage','Preview','-','Templates'],
