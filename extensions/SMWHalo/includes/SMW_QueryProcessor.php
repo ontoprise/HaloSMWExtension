@@ -33,6 +33,11 @@ class SMWQueryProcessor {
 	 * needed. This parameter is just for optimisation in a common case.
 	 */
 	static public function createQuery( $querystring, array $params, $context = SMWQueryProcessor::INLINE_QUERY, $format = '', $extraprintouts = array() ) {
+		// check if SPARQL then change query creator class
+		// necessary for Special:Ask
+		if (strpos($querystring, "SELECT ") !== false) {
+			return SMWSPARQLQueryProcessor::createQuery($querystring, $params, $context, $extraprintouts);
+		}
 		global $smwgQDefaultNamespaces, $smwgQFeatures, $smwgQConceptFeatures;
 		if ( $format == '' ) {
 			$format = SMWQueryProcessor::getResultFormat( $params );
@@ -138,7 +143,7 @@ class SMWQueryProcessor {
 			$query->sortkeys[''] = ( current( $orders ) != false ) ? current( $orders ) : 'ASC';
 		} // TODO: check and report if there are further order statements?
 		
-		// make sure to copy source parameter
+		// make sure to copy source parameter. necessary for Special:Ask
         if (array_key_exists('source', $params)) $query->params['source'] = $params['source'];
 		return $query;
 	}
