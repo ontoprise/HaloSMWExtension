@@ -74,7 +74,7 @@ function enableSMWHalo($store = 'SMWHaloStore2', $tripleStore = NULL, $tripleSto
 
 	global $smgJSLibs;
 	$smgJSLibs[] = 'prototype';
-	$smgJSLibs[] = 'qtip'; 
+	$smgJSLibs[] = 'qtip';
 
 }
 
@@ -91,10 +91,10 @@ function smwgHaloSetupExtension() {
 		trigger_error("Multiple webservice endpoints require a messagebroker to handle triplestore updates.");
 		die();
 	}
-	
+
 	if (smwfIsTripleStoreConfigured() && !isset($smwgWebserviceEndpoint)) {
 		trigger_error('$smwgWebserviceEndpoint is required but not set. Example: $smwgWebserviceEndpoint="localhost:8080";');
-        die();
+		die();
 	}
 	global $smwgWebserviceProtocol;
 	$smwgWebserviceProtocol="rest";
@@ -115,7 +115,7 @@ function smwgHaloSetupExtension() {
 	$wgAutoloadClasses['SMWAggregationResultPrinter'] = $smwgHaloIP . '/includes/queryprinters/SMW_QP_Aggregation.php';
 	$wgAutoloadClasses['SMWExcelResultPrinter'] = $smwgHaloIP . '/includes/queryprinters/SMW_QP_Excel.php';
 	$wgAutoloadClasses['SMWSPARQLQuery'] = $smwgHaloIP . '/includes/SMW_SPARQLQueryParser.php';
-    $wgAutoloadClasses['SMWChemicalFormulaTypeHandler'] = $smwgHaloIP . '/includes/SMW_DV_ChemFormula.php';
+	$wgAutoloadClasses['SMWChemicalFormulaTypeHandler'] = $smwgHaloIP . '/includes/SMW_DV_ChemFormula.php';
 	$wgAutoloadClasses['SMWChemicalEquationTypeHandler'] = $smwgHaloIP . '/includes/SMW_DV_ChemEquation.php';
 	$wgAutoloadClasses['SMWMathematicalEquationTypeHandler'] = $smwgHaloIP . '/includes/SMW_DV_MathEquation.php';
 
@@ -163,7 +163,7 @@ function smwgHaloSetupExtension() {
 	$wgHooks['OntoSkinTemplateNavigationEnd'][] = 'smwfOntoSkinTemplateNavigationEnd';
 
 	$wgHooks['sfSetTargetName'][]     		= 'smwfOnSfSetTargetName';
-	
+
 
 	global $wgRequest;
 
@@ -176,6 +176,16 @@ function smwgHaloSetupExtension() {
 		$wgHooks['BeforePageDisplay'][]='smwfQIAddHTMLHeader';
 		$wgHooks['BeforePageDisplay'][]='smwPRAddHTMLHeader';
 
+	}
+    
+	// special handling: application/rdf+xml requests are redirected to 
+	// the external query interface
+	if ($_SERVER['HTTP_ACCEPT'] == 'application/rdf+xml') {
+		global $IP;
+		require_once( $IP . '/extensions/SMWHalo/includes/webservices/SMW_EQI.php' );
+		header ( "Content-Type: application/rdf+xml" );
+		echo smwhRDFRequest($title->getPrefixedText());
+		exit; // stop any processing here
 	}
 	// Register parser hooks for advanced annotation mode
 
@@ -263,7 +273,7 @@ function smwgHaloSetupExtension() {
 			case '_ws_' :  smwfHaloInitMessages();
 			require_once($smwgHaloIP . '/includes/SMW_WebInterfaces.php');
 			break;
-				
+
 			case '_qc_' :  smwfHaloInitMessages();
 			require_once($smwgHaloIP . '/includes/QueryResultsCache/SMW_QRC_AjaxAPI.php');
 			break;
@@ -298,16 +308,16 @@ function smwgHaloSetupExtension() {
 		$wgSpecialPages['Properties'] = array('SpecialPage','Properties', '', true, 'smwfDoSpecialProperties', $smwgHaloIP . '/specials/SMWQuery/SMWAdvSpecialProperties.php');
 		$wgSpecialPageGroups['Properties'] = 'smwplus_group';
 
-        global $smwgDefaultStore;
+		global $smwgDefaultStore;
 		if (smwfIsTripleStoreConfigured()) {
 			$wgAutoloadClasses['SMWTripleStoreAdmin'] = $smwgHaloIP . '/specials/SMWTripleStoreAdmin/SMW_TripleStoreAdmin.php';
 			$wgSpecialPages['TSA'] = array('SMWTripleStoreAdmin');
 			$wgSpecialPageGroups['TSA'] = 'smwplus_group';
-            
+
 			// deactivated AskTSC
 			/*$wgAutoloadClasses['SMWAskTSCPage'] = $smwgHaloIP . '/specials/SMWTripleStoreAdmin/SMW_AskTSC.php';
-			$wgSpecialPages['AskTSC'] = array('SMWAskTSCPage');
-			$wgSpecialPageGroups['AskTSC'] = 'smwplus_group';*/
+			 $wgSpecialPages['AskTSC'] = array('SMWAskTSCPage');
+			 $wgSpecialPageGroups['AskTSC'] = 'smwplus_group';*/
 		}
 
 
@@ -385,7 +395,7 @@ function smwfRegisterAutocompletionIcons(& $namespaceMappings) {
 
 /**
  * Checks if the triplestore driver is configured.
- * 
+ *
  * @return boolean
  */
 function smwfIsTripleStoreConfigured() {
@@ -470,7 +480,7 @@ function smwf_ts_getWikiNamespaces() {
 
 /**
  * Trigger asynchronous loading operations. Usually called when TSC comes up.
- * 
+ *
  * @return AjaxRespone object containing JSON encoded data.
  */
 function smwf_ts_triggerAsynchronousLoading() {
@@ -479,11 +489,11 @@ function smwf_ts_triggerAsynchronousLoading() {
 	$result['components'] = array();
 	$result['errors'] = array();
 	wfRunHooks("SMWHalo_AsynchronousLoading", array ($smwgTripleStoreGraph, & $result));
-		
+
 	$json = json_encode($result);
 	$response = new AjaxResponse($json);
-    $response->setContentType( "application/json" );
-    return $response;
+	$response->setContentType( "application/json" );
+	return $response;
 }
 /**
  * function for parser hook in Semantic Forms
@@ -1656,11 +1666,11 @@ function enableQueryResultsCache(){
 	global $smwgHaloIP, $smwgQRCEnabled, $wgHooks;
 	require_once( "$smwgHaloIP/includes/QueryResultsCache/SMW_QRC_QueryResultsCache.php" );
 	require_once( "$smwgHaloIP/includes/QueryResultsCache/SMW_QRC_AjaxAPI.php" );
-	
+
 	global $wgAutoloadClasses;
-	$wgAutoloadClasses['SMWQueryCallMetadataValue'] = 
+	$wgAutoloadClasses['SMWQueryCallMetadataValue'] =
 		"$smwgHaloIP/includes/QueryResultsCache/SMW_QRC_DV_QueryCallMetadata.php";
-	
+
 	$smwgQRCEnabled = true;
 
 	$wgHooks['smwInitializeTables'][] = 'smwfQRCInitializeTables';
@@ -1694,17 +1704,17 @@ function smwfQRCInitializeTables(){
 }
 
 /**
-* This function is called from the hook 'sfSetTargetName' in SemanticForms. It adds a
-* JavaScript line that initializes the following variables that correspond to
-* the current title:
-* smwhgSfTargetTitle - the title of the article that is edited with SF (without namespace)
-* smwhgSfTargetPageName - the full title of the article that is edited with SF with namespace
-* smwhgSfTargetNamespace - the namespace ID of the article that is edited with SF
-* 
-* @param string $titleName
-* 	Name of the article that is edited with Semantic Forms
-*  
-*/
+ * This function is called from the hook 'sfSetTargetName' in SemanticForms. It adds a
+ * JavaScript line that initializes the following variables that correspond to
+ * the current title:
+ * smwhgSfTargetTitle - the title of the article that is edited with SF (without namespace)
+ * smwhgSfTargetPageName - the full title of the article that is edited with SF with namespace
+ * smwhgSfTargetNamespace - the namespace ID of the article that is edited with SF
+ *
+ * @param string $titleName
+ * 	Name of the article that is edited with Semantic Forms
+ *
+ */
 function smwfOnSfSetTargetName($titleName) {
 	global $wgOut, $wgJsMimeType;
 	if (!empty($titleName)) {

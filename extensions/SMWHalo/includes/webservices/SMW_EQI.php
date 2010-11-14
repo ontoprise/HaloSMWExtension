@@ -14,13 +14,13 @@
  * @param string $queryString in ASK or SPARQL syntax
  * @return XML string
  */
-function query($rawQuery, $format = "xml") {
+function smwhExternalQuery($rawQuery, $format = "xml") {
 	$mediaWikiLocation = dirname(__FILE__) . '/../../..';
 
 	global $smwgHaloIP;
-    require_once $smwgHaloIP.'/includes/storage/SMW_RESTWebserviceConnector.php';
-	require_once "$mediaWikiLocation/SemanticMediaWiki/includes/SMW_QueryProcessor.php";
-	require_once "$mediaWikiLocation/SMWHalo/includes/queryprinters/SMW_QP_XML.php";
+    require_once $smwgHaloIP.'/includes/storage/SMW_TSConnection.php';
+	require_once "$smwgHaloIP/includes/SMW_QueryProcessor.php";
+	require_once "$smwgHaloIP/includes/queryprinters/SMW_QP_XML.php";
 
 	global $smwgWebserviceEndpoint;
 	$eqi = new ExternalQueryInterface();
@@ -31,10 +31,10 @@ function query($rawQuery, $format = "xml") {
 	$query = $params['query'];
 
 	// check if source other than default or smw
-	if (!is_null($source) && $source != 'smw') {
+	if (!is_null($source) && $source == 'tsc') {
 		// TSC
 		// if webservice endpoint is set, sent to TSC
-		if (isset($smwgWebserviceEndpoint)) {
+		if (smwfIsTripleStoreConfigured()) {
 			return $eqi->answerSPARQL($query, $eqi->serializeParams($params));
 		} else {
 			// fallback, redirect to SMW
@@ -62,6 +62,36 @@ function query($rawQuery, $format = "xml") {
 	}
 }
 
+/**
+ * Handles RDF requests to the triplestore.  
+ * 
+ * @param string $subject prefixed title 
+ * @return RDF/XML all triples about the subject
+ */
+function smwhRDFRequest($subject) {
+	
+	if (!smwfIsTripleStoreConfigured()) throw Exception("TS not configured");
+	global $smwgTripleStoreGraph;
+	
+	// get wiki URI from prefixed title
+	$title = Title::newFromText($subject);
+	$ts = new TSNamespaces();
+	$iri = TSHelper::getUriFromTitle($title);
+	$iri = $ts->getFullIRI($title);
+	
+	// request RDF/XML via CONSTRUCT query
+	$con = TSConnection::getConnector();
+	$con->connect();
+	$rdf = $con->queryRDF("CONSTRUCT { $iri ?p ?o. } WHERE { GRAPH <$smwgTripleStoreGraph> { $iri ?p ?o. } }");
+	return $rdf;
+}
+
+/**
+ * External query interface which handles the requests
+ * 
+ * @author kuehn
+ *
+ */
 class ExternalQueryInterface {
 
 	/**
@@ -166,31 +196,14 @@ class ExternalQueryInterface {
 	 * @throws Exception, SOAPExeption
 	 */
 	function answerSPARQL($query, $params) {
-		global $wgServer, $wgScript, $smwgWebserviceProtocol, $smwgWebserviceUser, $smwgWebservicePassword;
+		global $smwgTripleStoreGraph, $smwgWebserviceProtocol;
 
 		if (isset($smwgWebserviceProtocol) && strtolower($smwgWebserviceProtocol) === 'rest') {
 
-			global $smwgTripleStoreGraph;
-			if (stripos(trim($query), 'SELECT') === 0 || stripos(trim($query), 'PREFIX') === 0) {
-				// SPARQL, attach common prefixes
-				$query = TSNamespaces::getAllPrefixes().$query;
-			}
-			$queryRequest = "<query>";
-			$queryRequest .= "<text><![CDATA[$query]]></text>";
-			$queryRequest .= "<params><![CDATA[$params]]></params>";
-			$queryRequest .= "<graph><![CDATA[$smwgTripleStoreGraph]]></graph>";
-			$queryRequest .= "</query>";
-
-			global $smwgWebserviceUser, $smwgWebservicePassword, $smwgWebserviceEndpoint;
-			list($host, $port) = explode(":", $smwgWebserviceEndpoint);
-			$credentials = isset($smwgWebserviceUser) ? $smwgWebserviceUser.":".$smwgWebservicePassword : "";
-			$queryClient = new RESTWebserviceConnector($host, $port, "sparql", $credentials);
-
-			list($header, $status, $result) = $queryClient->send($queryRequest);
-			if ($status != 200) {
-				throw new Exception(strip_tags($result), $status);
-			}
-			return $result;
+			$con = TSConnection::getConnector();
+			$con->connect();
+			return $con->query($query, $params, $smwgTripleStoreGraph);
+			
 		} else {
 			trigger_error("SOAP requests to TSC are not supported anymore.");
 		}

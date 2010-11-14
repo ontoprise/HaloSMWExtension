@@ -54,7 +54,7 @@ abstract class TSConnection {
 	public abstract function update($topic, $commands);
 
 	/**
-	 * Sends query
+	 * Sends query which returns SPARQL/XML. (SELECT or ASK)
 	 *
 	 * @param string $query text
 	 * @param string query parameters
@@ -64,6 +64,18 @@ abstract class TSConnection {
 	 * @return string SPARQL-XML result
 	 */
 	public abstract function query($query, $params = "", $graph = "");
+	
+	/**
+     * Sends query which returns RDF/XML (CONSTRUCT OR DESRIBE)
+     *
+     * @param string $query text
+     * @param string query parameters
+     * @param string $graph
+     *      The graph to query. If not set, the graph stored in the global variable
+     *      $smwgTripleStoreGraph is queried.
+     * @return string SPARQL-XML result
+     */
+	public abstract function queryRDF($query, $params = "", $graph = "");
 
 	/**
 	 * Calls the webservice which gives status information about the triple store connector.
@@ -220,6 +232,26 @@ class TSConnectorRESTWebservice extends TSConnection {
 			throw new Exception(strip_tags($result), $status);
 		}
 		return $result;
+	}
+	
+	public function queryRDF($query, $params = "", $graph = "") {
+		global $smwgTripleStoreGraph;
+        if (empty($graph)) {
+            $graph = $smwgTripleStoreGraph;
+        }
+
+         // SPARQL, attach common prefixes
+        $query = TSNamespaces::getAllPrefixes().$query;
+        
+        $queryRequest = "query=".urlencode($query);
+        $queryRequest .= "&default-graph-uri=".urlencode($graph);
+        $queryRequest .= "&params=".urlencode($params);
+
+        list($header, $status, $result) = $this->queryClient->send($queryRequest, '', 'application/rdf+xml');
+        if ($status != 200) {
+            throw new Exception(strip_tags($result), $status);
+        }
+        return $result;
 	}
 
 	public function getStatus($graph) {

@@ -11,7 +11,7 @@
 $wgAjaxExportList[] = 'smwf_ws_callEQI';
 $wgAjaxExportList[] = 'smwf_ws_callEQIXML';
 $wgAjaxExportList[] = 'smwf_ws_getWSDL';
-
+$wgAjaxExportList[] = 'smwf_ws_RDFRequest';
 
 #
 # Handle 'quick query' call
@@ -20,17 +20,29 @@ $wgAjaxExportList[] = 'smwf_ws_getWSDL';
 function smwf_ws_callEQI($query) {
 	global $IP;
 	require_once( $IP . '/extensions/SMWHalo/includes/webservices/SMW_EQI.php' );
-	return query($query, "exceltable");
+	return smwhExternalQuery($query, "exceltable");
 }
 
 # same as smwf_ws_callEQI except that XML is returned
 function smwf_ws_callEQIXML($query) {
+	
 	global $IP;
 	require_once( $IP . '/extensions/SMWHalo/includes/webservices/SMW_EQI.php' );
-	$result= new AjaxResponse( query($query, "xml") );
+	$result= new AjaxResponse( smwhExternalQuery($query, "xml") );
 	$result->setContentType( "application/xml" );
 	return $result;
 }
+
+# RDF request. Requires triple store
+function smwf_ws_RDFRequest($subject) {
+    global $IP;
+    require_once( $IP . '/extensions/SMWHalo/includes/webservices/SMW_EQI.php' );
+    $result= new AjaxResponse( smwhRDFRequest($subject) );
+    $result->setContentType( "application/rdf+xml" );
+    return $result;
+}
+
+
 
 #
 # Returns WSDL file for wiki webservices

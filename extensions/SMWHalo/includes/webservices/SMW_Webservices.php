@@ -13,7 +13,7 @@ if (!isset($smwgDeployVersion) || !$smwgDeployVersion) ini_set("soap.wsdl_cache_
 $server = new SoapServer("extensions/SMWHalo/includes/webservices/eqi.wsdl"); 
 
 // add additional functions if neccessary
-$server->addFunction("query"); 
+$server->addFunction("smwhExternalQuery"); 
 
 // execute
 $server->handle(); 
