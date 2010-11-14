@@ -22,7 +22,8 @@ CKEDITOR.editorConfig = function( config )
     CKEDITOR.plugins.addExternal( 'mediawiki', CKEDITOR.basePath + 'plugins/mediawiki/' );
     CKEDITOR.plugins.addExternal( 'mwtemplate', CKEDITOR.basePath + 'plugins/mwtemplate/' );
     
-
+    // Remove the link plugin because it's replaced with the mediawiki plugin
+    //CKEDITOR.config.plugins = CKEDITOR.config.plugins.replace( /(?:^|,)link(?=,|$)/, '' );
 	var extraPlugins = "mediawiki,mwtemplate";
 
 	CKEDITOR.config.toolbar = 'Wiki';

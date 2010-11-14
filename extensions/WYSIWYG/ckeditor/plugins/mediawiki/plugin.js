@@ -184,6 +184,8 @@ CKEDITOR.plugins.add( 'mediawiki',
         dataProcessor.dataFilter.addRules( wikiFilterRules );
         //dataProcessor.htmlFilter.addRules( htmlFilterRules );
 
+        editor.addCommand( 'link', new CKEDITOR.dialogCommand( 'MWLink' ) );
+        CKEDITOR.dialog.add( 'MWLink', this.path + 'dialogs/link.js' );
         editor.addCommand( 'MWSpecialTags', new CKEDITOR.dialogCommand( 'MWSpecialTags' ) );
         CKEDITOR.dialog.add( 'MWSpecialTags', this.path + 'dialogs/special.js' );
         if (editor.addMenuItem) {
@@ -225,6 +227,13 @@ CKEDITOR.plugins.add( 'mediawiki',
                    ) return { MWSpecialTags: CKEDITOR.TRISTATE_ON };
             });
         }
+		editor.on( 'doubleclick', function( evt )
+			{
+				var element = CKEDITOR.plugins.link.getSelectedLink( editor ) || evt.data.element;
+
+				if ( element.is( 'a' ) || ( element.is( 'img' ) && element.getAttribute( '_cke_real_element_type' ) == 'anchor' ) )
+					evt.data.dialog = 'MWLink';
+			});
 
 	}
 
@@ -834,7 +843,7 @@ CKEDITOR.customprocessor.prototype =
 								            break;
 								        case 'p' :
 								            stringBuilder.push( '{{' + tagName );
-								            if (htmlNode.innerHTML.length > 0)
+								            if (htmlNode.textContent.length > 0)
 								                stringBuilder.push( ':' + unescape(htmlNode.textContent).replace(/fckLR/g,'\r\n').replace(/_$/, '') );
 								            stringBuilder.push( '}}');
 								            break;

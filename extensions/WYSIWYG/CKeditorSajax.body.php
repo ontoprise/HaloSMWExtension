@@ -100,7 +100,7 @@ function wfSajaxSearchImageCKeditor( $term ) {
 
 function wfSajaxSearchArticleCKeditor( $term ) {
 	global $wgContLang, $wgExtraNamespaces;
-	$limit = 10;
+	$limit = 15;
 	$ns = NS_MAIN;
 
 	$term = $wgContLang->checkTitleEncoding( $wgContLang->recodeInput( js_unescape( $term ) ) );
@@ -155,18 +155,16 @@ function wfSajaxSearchArticleCKeditor( $term ) {
 		array( 'LIMIT' => $limit + 1 )
 	);
 
-	$ret = '';
+	$ret = array();
 	$i = 0;
 	while ( ( $row = $dbr->fetchObject( $res ) ) && ( ++$i <= $limit ) ) {
 		if( isset( $prefix ) && !is_null( $prefix ) ) {
 			$ret .= $prefix;
 		}
-		$ret .= $row->page_title . "\n";
+		$ret[]= $row->page_title;
 	}
 
-	$term = htmlspecialchars( $term );
-
-	return $ret;
+	return join("\n", $ret);
 }
 
 function wfSajaxSearchCategoryCKeditor(){
