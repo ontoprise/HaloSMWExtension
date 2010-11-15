@@ -83,7 +83,7 @@ Consult the [http://meta.wikimedia.org/wiki/Help:Contents User's Guide] for info
         <ip>127.0.0.1</ip>
       </contributor>
       <text xml:space="preserve">&lt;WebService&gt;
-&lt;uri name=&quot;http://localhost/MashupWiki/extensions/DataImport/tests/DI_TimeTestWS.php&quot; /&gt;
+&lt;uri name=&quot;http://localhost/mediawiki/extensions/DataImport/tests/DI_TimeTestWS.php&quot; /&gt;
 &lt;protocol&gt;REST&lt;/protocol&gt;
 &lt;method name=&quot;get&quot; /&gt;
 &lt;parameter name=&quot;dontCare&quot; path=&quot;dontCare&quot; optional=&quot;true&quot;/&gt;
@@ -229,14 +229,14 @@ Consult the [http://meta.wikimedia.org/wiki/Help:Contents User's Guide] for info
       <contributor>
         <ip>127.0.0.1</ip>
       </contributor>
-      <comment>New page:  WebService:TimeTestWSUnused From TestDBWiki Jump to: navigation, search  &lt;WebService&gt; &lt;uri name=&quot;http://localhost/MashupWiki/extensions/DataImport/tests/DI_TimeTestWS.php&quot; /&gt; &lt;protocol&gt;RE...</comment>
+      <comment>New page:  WebService:TimeTestWSUnused From TestDBWiki Jump to: navigation, search  &lt;WebService&gt; &lt;uri name=&quot;http://localhost/mediawiki/extensions/DataImport/tests/DI_TimeTestWS.php&quot; /&gt; &lt;protocol&gt;RE...</comment>
       <text xml:space="preserve">
 WebService:TimeTestWSUnused
 From TestDBWiki
 Jump to: navigation, search
 
 &lt;WebService&gt;
-&lt;uri name=&quot;http://localhost/MashupWiki/extensions/DataImport/tests/DI_TimeTestWS.php&quot; /&gt;
+&lt;uri name=&quot;http://localhost/mediawiki/extensions/DataImport/tests/DI_TimeTestWS.php&quot; /&gt;
 &lt;protocol&gt;REST&lt;/protocol&gt;
 &lt;method name=&quot;get&quot; /&gt;
 &lt;result name=&quot;result&quot; &gt;
@@ -277,9 +277,9 @@ Jump to: navigation, search
       <contributor>
         <ip>127.0.0.1</ip>
       </contributor>
-      <comment>New page: &lt;WebService&gt; &lt;uri name=&quot;http://localhost/MashupWiki/extensions/DataImport/tests/DI_TimeTestWS.php&quot; /&gt; &lt;protocol&gt;REST&lt;/protocol&gt; &lt;method name=&quot;get&quot; /&gt; &lt;parameter name=&quot;dontCare&quot; path=&quot;dontC...</comment>
+      <comment>New page: &lt;WebService&gt; &lt;uri name=&quot;http://localhost/mediawiki/extensions/DataImport/tests/DI_TimeTestWS.php&quot; /&gt; &lt;protocol&gt;REST&lt;/protocol&gt; &lt;method name=&quot;get&quot; /&gt; &lt;parameter name=&quot;dontCare&quot; path=&quot;dontC...</comment>
       <text xml:space="preserve">&lt;WebService&gt;
-&lt;uri name=&quot;http://localhost/MashupWiki/extensions/DataImport/tests/DI_TimeTestWS.php&quot; /&gt;
+&lt;uri name=&quot;http://localhost/mediawiki/extensions/DataImport/tests/DI_TimeTestWS.php&quot; /&gt;
 &lt;protocol&gt;REST&lt;/protocol&gt;
 &lt;method name=&quot;get&quot; /&gt;
 &lt;parameter name=&quot;dontCare&quot; path=&quot;dontCare&quot; optional=&quot;true&quot;/&gt;
@@ -435,7 +435,7 @@ Jump to: navigation, search
         <id>1</id>
       </contributor>
       <text xml:space="preserve">WebService&gt;
-&lt;uri name=&quot;http://localhost/MashupWiki/extensions/DataImport/tests/DI_TimeTestWS.php&quot; /&gt;
+&lt;uri name=&quot;http://localhost/mediawiki/extensions/DataImport/tests/DI_TimeTestWS.php&quot; /&gt;
 &lt;protocol&gt;REST&lt;/protocol&gt;
 &lt;authentication type=&quot;http&quot; login=&quot;userlogin&quot; password=&quot;password&quot;/&gt;
 &lt;method name=&quot;get&quot; /&gt;
@@ -464,9 +464,9 @@ Jump to: navigation, search
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
-      <comment>New page: &lt;WebService&gt; &lt;uri name=&quot;http://localhost/MashupWiki/extensions/DataImport/tests/DI_TimeTestWS.php&quot; /&gt; &lt;protocol&gt;SOAP&lt;/protocol&gt; &lt;authentication type=&quot;http&quot; login=&quot;userlogin&quot; password=&quot;pass...</comment>
+      <comment>New page: &lt;WebService&gt; &lt;uri name=&quot;http://localhost/mediawiki/extensions/DataImport/tests/DI_TimeTestWS.php&quot; /&gt; &lt;protocol&gt;SOAP&lt;/protocol&gt; &lt;authentication type=&quot;http&quot; login=&quot;userlogin&quot; password=&quot;pass...</comment>
       <text xml:space="preserve">&lt;WebService&gt;
-&lt;uri name=&quot;http://localhost/MashupWiki/extensions/DataImport/tests/DI_TimeTestWS.php&quot; /&gt;
+&lt;uri name=&quot;http://localhost/mediawiki/extensions/DataImport/tests/DI_TimeTestWS.php&quot; /&gt;
 &lt;protocol&gt;SOAP&lt;/protocol&gt;
 &lt;authentication type=&quot;http&quot; login=&quot;userlogin&quot; password=&quot;password&quot;/&gt;
 &lt;method name=&quot;get&quot; /&gt;
@@ -675,9 +675,9 @@ Jump to: navigation, search
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
-      <comment>New page: &lt;WebService&gt; &lt;uri name=&quot;http://localhost/MashupWiki/extensions/DataImport/tests/DI_TimeTestWS.php&quot; /&gt; &lt;protocol&gt;REST&lt;/protocol&gt; &lt;method name=&quot;get&quot; /&gt; &lt;parameter name=&quot;dontCare&quot; path=&quot;dontC...</comment>
+      <comment>New page: &lt;WebService&gt; &lt;uri name=&quot;http://localhost/mediawiki/extensions/DataImport/tests/DI_TimeTestWS.php&quot; /&gt; &lt;protocol&gt;REST&lt;/protocol&gt; &lt;method name=&quot;get&quot; /&gt; &lt;parameter name=&quot;dontCare&quot; path=&quot;dontC...</comment>
       <text xml:space="preserve">&lt;WebService&gt;
-&lt;uri name=&quot;http://localhost/MashupWiki/extensions/DataImport/tests/DI_TimeTestWS.php&quot; /&gt;
+&lt;uri name=&quot;http://localhost/mediawiki/extensions/DataImport/tests/DI_TimeTestWS.php&quot; /&gt;
 &lt;protocol&gt;REST&lt;/protocol&gt;
 &lt;method name=&quot;get&quot; /&gt;
 &lt;parameter name=&quot;dontCare&quot; path=&quot;dontCare&quot; optional=&quot;true&quot;/&gt;
@@ -741,7 +741,7 @@ Jump to: navigation, search
         <ip>127.0.0.1</ip>
       </contributor>
       <text xml:space="preserve">&lt;WebService&gt;
-&lt;uri name=&quot;http://localhost/MashupWiki/extensions/DataImport/tests/DI_TimeTestWS.php&quot; /&gt;
+&lt;uri name=&quot;http://localhost/mediawiki/extensions/DataImport/tests/DI_TimeTestWS.php&quot; /&gt;
 &lt;protocol&gt;REST&lt;/protocol&gt;
 &lt;method name=&quot;get&quot; /&gt;
 &lt;parameter name=&quot;nonOptionalParameter&quot; path=&quot;dontCare&quot; optional=&quot;false&quot;/&gt;

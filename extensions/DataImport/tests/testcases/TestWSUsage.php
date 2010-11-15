@@ -2,6 +2,8 @@
 
 require_once 'DI_Utils.php';
 
+global $IP;
+require_once($IP."/extensions/DataImport/specials/WebServices/SMW_WebServiceUsage.php");
 /*
  * test using web services in articles
  */
@@ -203,7 +205,7 @@ class TestWSUsage extends PHPUnit_Framework_TestCase {
 		$wsParameters = array("nonOptionalParameter" => "value",
 			"parameterWithSubParameters.nonOptionalSubParameter" => "value");
 
-		$response = validateWSUsage($wsId, $wsReturnValues, $wsParameters);
+		$response = SMWWebServiceUsage::validateWSUsage($wsId, $wsReturnValues, $wsParameters);
 		$this->assertEquals($response[0][0],
 			"The result-part \"result.doesNotExist\" does not exist in the Wiki Web Service Definition.");
 	}
@@ -216,7 +218,7 @@ class TestWSUsage extends PHPUnit_Framework_TestCase {
 		$wsParameters = array("nonOptionalParameter" => "value",
 			"parameterWithSubParameters.nonOptionalSubParameter" => "value");
 
-		$response = validateWSUsage($wsId, $wsReturnValues, $wsParameters);
+		$response = SMWWebServiceUsage::validateWSUsage($wsId, $wsReturnValues, $wsParameters);
 		$this->assertEquals($response[0][0],
 			"The result-part \"doesNotExist.result\" does not exist in the Wiki Web Service Definition.");
 	}
@@ -228,7 +230,7 @@ class TestWSUsage extends PHPUnit_Framework_TestCase {
 		$wsReturnValues = array("result" => "");
 		$wsParameters = array("parameterWithSubParameters.nonOptionalSubParameter" => "value");
 
-		$response = validateWSUsage($wsId, $wsReturnValues, $wsParameters);
+		$response = SMWWebServiceUsage::validateWSUsage($wsId, $wsReturnValues, $wsParameters);
 
 		$this->assertEquals($response[0][0],
 			"The parameter \"nonOptionalParameter\" is not optional and no default value was provided by the Wiki Web Service Definition.");
@@ -241,7 +243,7 @@ class TestWSUsage extends PHPUnit_Framework_TestCase {
 		$wsReturnValues = array("result" => "");
 		$wsParameters = array("nonOptionalParameter" => "value");
 
-		$response = validateWSUsage($wsId, $wsReturnValues, $wsParameters);
+		$response = SMWWebServiceUsage::validateWSUsage($wsId, $wsReturnValues, $wsParameters);
 
 		$this->assertEquals($response[0][0],
 			"The parameter \"parameterWithSubParameters.nonOptionalSubParameter\" is not optional and no default value was provided by the Wiki Web Service Definition.");
@@ -256,7 +258,7 @@ class TestWSUsage extends PHPUnit_Framework_TestCase {
 							"parameterWithSubParameters" => "dontCare",
 							"parameterWithSubParameters.nonOptionalSubParameter" => "nopt");
 
-		$response = validateWSUsage($wsId, $wsReturnValues, $wsParameters);
+		$response = SMWWebServiceUsage::validateWSUsage($wsId, $wsReturnValues, $wsParameters);
 
 		$this->assertEquals($response[1]["nonOptionalParameter"], "value");
 		$this->assertEquals($response[1]["parameterWithSubParameters"], "some<thingnoptelsedefault");

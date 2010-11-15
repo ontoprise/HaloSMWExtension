@@ -32,7 +32,7 @@ function di_utils_setupWebServices($titles, $confirm=true){
 	global $wgScriptPath;
 	foreach($titles as $title){
 		$text = smwf_om_GetWikiText('WebService:'.$title);
-		$text = str_replace("http://localhost/MashupWiki"
+		$text = str_replace("http://localhost/mediawiki"
 			, "http://localhost".$wgScriptPath, $text);
 		smwf_om_EditArticle('WebService:'.$title, 'PHPUnit', $text, '');
 		$ws = WebService::newFromName($title);

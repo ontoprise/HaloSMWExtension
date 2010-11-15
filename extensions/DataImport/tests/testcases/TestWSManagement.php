@@ -55,7 +55,7 @@ class TestWSManagement extends PHPUnit_Framework_TestCase {
 		
 		$text = smwf_om_GetWikiText('WebService:TimeTestWSEdit');
 		$text = str_replace("http://localhost".$wgScriptPath
-			, "http://localhost/MashupWiki", $text);
+			, "http://localhost/mediawiki", $text);
 		smwf_om_EditArticle('WebService:TimeTestWSEdit', 'PHPUnit', $text, '');
 		
 		$wsId = di_utils_getWSId("TimeTestWSEdit");

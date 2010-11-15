@@ -222,7 +222,7 @@ public static function processSMWQueryASWSCall($parameters){
 		if(is_string($wsResults)){
 			
 			//todo: remove parameter sets and so on
-			$wsResults = formatWSResult($wsResults, $configArgs, $wsParameters, $wsReturnValues, $smwQueryMode);
+			$wsResults = self::formatWSResult($wsResults, $configArgs, $wsParameters, $wsReturnValues, $smwQueryMode);
 		
 		} else {
 			
