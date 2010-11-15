@@ -220,6 +220,17 @@ class LODPersistentMappingStore  {
 	 * 		Fully qualified name of an article
 	 */
 	public function removeAllMappingsFromPage($articleName) {
+		// Remove mappings of the article from the persistency layer
+		$db = LODStorage::getDatabase();
+		$sourceTargetPairs = $db->getMappingsInArticle($articleName);
+		if (isset($sourceTargetPairs)) {
+			foreach ($sourceTargetPairs as $stp) {
+				$source = $stp[0];
+				$target = $stp[1];
+				$this->removeAllMappings($source, $target);
+			}
+		}
+		
 		return $this->mWrappedStore->removeAllMappingsFromPage($articleName);		
 	}
 	
