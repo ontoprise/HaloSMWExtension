@@ -319,6 +319,7 @@ class CKeditor_MediaWiki {
 		global $wgStylePath, $wgStyleVersion, $wgDefaultSkin, $wgExtensionFunctions, $wgHooks, $wgDefaultUserOptions;
 		global $wgFCKWikiTextBeforeParse, $wgFCKEditorIsCompatible;
 		global $wgFCKEditorExtDir, $wgFCKEditorDir, $wgFCKEditorHeight, $wgFCKEditorToolbarSet;
+        global $wgCKEditorUrlparamMode, $wgRequest;
 
 		if( !isset( $this->showFCKEditor ) ){
 			$this->showFCKEditor = 0;
@@ -356,6 +357,11 @@ class CKeditor_MediaWiki {
 		if( false !== strpos( $form->textbox1, '__NORICHEDITOR__' ) ) {
 			return true;
 		}
+
+        # If $wgCKEditorUrlparamMode is set to true check the url params
+        if ( $wgCKEditorUrlparamMode && !( $wgRequest->getVal('mode') && $wgRequest->getVal('mode') == 'wysiwyg' ) ) {
+            return true;
+        }
 
 		$wgFCKWikiTextBeforeParse = $form->textbox1;
 		if( $this->showFCKEditor & RTE_VISIBLE ){
