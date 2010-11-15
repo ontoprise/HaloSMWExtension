@@ -46,7 +46,12 @@ class LODSourcesPage extends SpecialPage {
 		$this->setHeaders();
 		wfProfileIn( 'doLODSources (LOD)' );
 		 
-		$wgOut->addHTML( $this->createSourceTable($this->getAllSources()) );
+		$allSources = $this->getAllSources();
+	    if (!is_array($allSources)) {
+            $wgOut->addHTML("Error: Triplestore not accessible.");
+            return;
+        }
+		$wgOut->addHTML( $this->createSourceTable($allSources) );
 
 		wfProfileOut( 'doLODSources (LOD)' );
 	}
@@ -60,6 +65,7 @@ class LODSourcesPage extends SpecialPage {
 	}
 	
 	public function createSourceTable($table) {
+		
 		$html = '<table id="lod_source_table" class="lod_sp_sources_table">';
 		$html .= "<th>".wfMsg('lod_sp_source_label')."</th>";
 		$html .= "<th>".wfMsg('lod_sp_source_source')."</th>";
