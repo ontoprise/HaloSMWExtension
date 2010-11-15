@@ -56,7 +56,7 @@ class SMWTripleStore extends SMWStore {
 	function __construct() {
 		global $smwgBaseStore;
 		$this->smwstore = new $smwgBaseStore;
-		$this->tsNamespace = new TSNamespaces();
+		$this->tsNamespace = TSNamespaces::getInstance();
 	}
 
 

@@ -265,7 +265,14 @@ class TSNamespaces {
 
 	public static $EMPTY_SPARQL_XML = '<?xml version="1.0"?><sparql></sparql>';
 	public static $DEFAULT_VALUE_URI = 'http://__defaultvalue__/doesnotexist';
-
+    
+	private static $INSTANCE = NULL;
+	public static function getInstance() {
+		if (is_null(self::$INSTANCE)) {
+		  self::$INSTANCE = new TSNamespaces();
+		}
+		return self::$INSTANCE;
+	}
 	function __construct() {
 		global $smwgTripleStoreGraph, $smwgDefaultStore, $smwgBaseStore, $wgContLang, $wgExtraNamespaces;
 
@@ -416,4 +423,4 @@ class TSNamespaces {
 }
 
 
-$smwhgTSNamespaces = new TSNamespaces();
+$smwhgTSNamespaces = TSNamespaces::getInstance();

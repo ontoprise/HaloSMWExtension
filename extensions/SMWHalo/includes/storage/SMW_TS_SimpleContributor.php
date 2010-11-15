@@ -27,7 +27,7 @@ function smwfTripleStorePropertyUpdate(& $data, & $property, & $propertyValueArr
 	// check for 'has domain, range' and 'is inverse of' and 'has type'
 	// 'has min cardinality' and 'has max cardinality are read implictly when processing 'has domain and range'
 	// and therefore ignored.
-	$tsNamespace = new TSNamespaces();
+	$tsNamespace = TSNamespaces::getInstance();
 	$subj_iri = $tsNamespace->getFullIRI($data->getSubject()->getTitle());
 	$allProperties = $data->getProperties();
 	$dbkeys = $property->getDBkeys();
@@ -70,7 +70,7 @@ function smwfTripleStorePropertyUpdate(& $data, & $property, & $propertyValueArr
  */
 function smwfTripleStoreCategoryUpdate(& $subject, & $c, & $triplesFromHook) {
 	global $smwgTripleStoreGraph;
-	$tsNamespace = new TSNamespaces();
+	$tsNamespace = TSNamespaces::getInstance();
 	$subj_iri = $tsNamespace->getFullIRI($subject->getTitle());
 	// serialize transitive or symetric property triples
 	$ns = $subject->getTitle()->getNamespace();

@@ -260,7 +260,7 @@ class OB_StorageTS extends OB_Storage {
 
 	public function __construct($dataSource = null) {
 		parent::__construct($dataSource);
-		$this->tsNamespaceHelper = new TSNamespaces(); // initialize namespaces
+		$this->tsNamespaceHelper = TSNamespaces::getInstance(); // initialize namespaces
 	}
 
 	public function getRootProperties($p_array) {

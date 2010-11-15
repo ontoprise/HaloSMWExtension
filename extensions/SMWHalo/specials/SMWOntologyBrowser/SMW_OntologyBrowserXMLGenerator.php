@@ -40,7 +40,7 @@ class SMWOntologyBrowserXMLGenerator {
 			$result .= "<categoryPartition id=\"ID_$id$count\" partitionNum=\"$partitionNum\" length=\"$limit\" hideNextArrow=\"true\"/>";
 		}
 		$count++;
-		$ts = new TSNamespaces();
+		$ts = TSNamespaces::getInstance();
 		$gi_store = SGAGardeningIssuesAccess::getGardeningIssuesAccess();
 		foreach($titles as $e) {
 			list($t, $isLeaf) = $e;
@@ -278,7 +278,7 @@ class SMWOntologyBrowserXMLGenerator {
 		$isMemberOfTransCat = $schemaData[5];
 		$range = $schemaData[6];
 		$inherited = $schemaData[7] == true ? "inherited=\"true\"" : "";
-		$ts = new TSNamespaces();
+		$ts = TSNamespaces::getInstance();
 		//FIXME: show primitive type as links to Type pages.
 		if ($type == '_wpg') { // binary relation?
 			if ($range == NULL) {
@@ -339,7 +339,7 @@ class SMWOntologyBrowserXMLGenerator {
 		$isFormula = false;
 		$chemistryParser = new ChemEqParser();
 		$gi_store = SGAGardeningIssuesAccess::getGardeningIssuesAccess();
-		$ts = new TSNamespaces();
+		$ts = TSNamespaces::getInstance();
 			
 		foreach($smwValues as $smwValue) {
 				
@@ -422,7 +422,7 @@ class SMWOntologyBrowserXMLGenerator {
      * @param unknown_type $smwValue
      */
 	private static function createValueAsXML($smwValue) {
-		$ts = new TSNamespaces();
+		$ts = TSNamespaces::getInstance();
 	
 		if ($smwValue instanceof SMWWikiPageValue || $smwValue->getTypeID() == '_uri') { // relation
             

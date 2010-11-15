@@ -802,7 +802,7 @@ class AutoCompletionStorageTSC extends AutoCompletionStorageSQL2 {
 			$response = $client->query("SELECT DISTINCT ?s WHERE { ?s ?p ?o. FILTER(regex(str(?s), \"#[^/:#]*$match\",\"i\")) }",  "limit=".SMW_AC_MAX_RESULTS);
 
 		} else {
-			$tsn = new TSNamespaces();
+			$tsn = TSNamespaces::getInstance();
 			$filter = "";
 			$first = true;
 			for ($i = 0, $n = count($namespaces); $i < $n; $i++) {
@@ -855,7 +855,7 @@ class AutoCompletionStorageTSC extends AutoCompletionStorageSQL2 {
 	public function getPropertyForInstance($userInputToMatch, $instance, $matchDomainOrRange) {
 		$client = TSConnection::getConnector();
 		$client->connect();
-		$tsn = new TSNamespaces();
+		$tsn = TSNamespaces::getInstance();
 		$instance_iri = $tsn->getFullIRI($instance);
 
 		$pos = $matchDomainOrRange ? 0 : 1;
@@ -872,7 +872,7 @@ class AutoCompletionStorageTSC extends AutoCompletionStorageSQL2 {
 	public function getPropertyForAnnotation($userInputToMatch, $category) {
 		$client = TSConnection::getConnector();
 		$client->connect();
-		$tsn = new TSNamespaces();
+		$tsn = TSNamespaces::getInstance();
 		$category_iri = $tsn->getFullIRI($category);
 
 		$response = $client->query("SELECT DISTINCT ?p WHERE { ?s rdf:type $category_iri. ?s ?p ?o . ".
@@ -886,7 +886,7 @@ class AutoCompletionStorageTSC extends AutoCompletionStorageSQL2 {
 	public function getValueForAnnotation($userInputToMatch, $property) {
 		$client = TSConnection::getConnector();
 		$client->connect();
-		$tsn = new TSNamespaces();
+		$tsn = TSNamespaces::getInstance();
 		$property_iri = $tsn->getFullIRI($property);
 
 
@@ -903,7 +903,7 @@ class AutoCompletionStorageTSC extends AutoCompletionStorageSQL2 {
 	public function getInstanceAsTarget($userInputToMatch, $domainRangeAnnotations) {
 		$client = TSConnection::getConnector();
 		$client->connect();
-		$tsn = new TSNamespaces();
+		$tsn = TSNamespaces::getInstance();
 	
 
 

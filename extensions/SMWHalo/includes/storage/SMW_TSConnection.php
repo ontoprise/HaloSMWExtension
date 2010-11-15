@@ -30,7 +30,7 @@ abstract class TSConnection {
 
 	protected function __construct() {
 		// Initialize namespaces
-		new TSNamespaces();
+		TSNamespaces::getInstance();
 	}
 
 	/**
@@ -96,7 +96,15 @@ abstract class TSConnection {
 
 
 	/**
-	 * Trigger datasource import/update
+     * Calls a method from the LDImport REST interface
+     *
+     * @param string $method
+     * @param string $payload (application/x-www-form-urlencoded)
+     */
+    public abstract function callLDImporter($method, $payload = "");
+    
+	/**
+	 * Trigger datasource import/update of LDImporter. Convenience method.
 	 *
 	 * @param string $datasource ID
 	 * @param boolean $update true for update, false for initial import
@@ -299,6 +307,14 @@ class TSConnectorRESTWebservice extends TSConnection {
 		}
 		return true;
 	}
+	
+    public function callLDImporter($method, $payload = "") {
+        list($header, $status, $result) = $this->ldImportClient->send($payload, "/$method");
+        if ($status != 200) {
+            throw new Exception(strip_tags($result), $status);
+        }
+        return $result;
+    }
 }
 
 

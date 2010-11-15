@@ -75,7 +75,7 @@ function smwhRDFRequest($subject) {
 	
 	// get wiki URI from prefixed title
 	$title = Title::newFromText($subject);
-	$ts = new TSNamespaces();
+	$ts = TSNamespaces::getInstance();
 	$iri = TSHelper::getUriFromTitle($title);
 	$iri = $ts->getFullIRI($title);
 	
