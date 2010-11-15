@@ -140,6 +140,11 @@ class LODSourceDefinition  {
 	private $mIsImported = false;
 	
 	
+	// string
+	// error message from last import operation
+	private $mErrorMessagesLastImport = NULL;
+	
+	
 	/**
 	 * Constructor for LODSourceDefinition.
 	 *
@@ -166,6 +171,7 @@ class LODSourceDefinition  {
 	public function getChangeFreq()				{ return $this->mChangeFreq; }
 	public function getVocabularies()			{ return $this->mVocabularies; }
     public function isImported()               { return $this->mIsImported; }
+    public function getErrorMessagesFromLastImport(){ return $this->mErrorMessagesLastImport; }
 
 	public function setID($val)						{ $this->mID = $val; }
 	public function setDescription($val)			{ $this->mDescription = $val; }
@@ -181,7 +187,7 @@ class LODSourceDefinition  {
 	public function setChangeFreq($val)				{ $this->mChangeFreq = $val; }
 	public function setVocabularies(array $val)		{ $this->mVocabularies = $val; }
     public function setImported($val)               { $this->mIsImported = $val; }
-	
+	public function setErrorMessagesFromLastImport($val){ $this->mErrorMessagesLastImport = $val; }
 	//--- Public methods ---
 	
 	

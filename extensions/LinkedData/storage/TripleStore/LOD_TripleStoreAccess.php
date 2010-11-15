@@ -276,6 +276,28 @@ class  LODTripleStoreAccess  {
 		return $result;
 	}
 	
+	/**
+	 * Sends a call  to the LDImporter.
+	 * 
+	 * @param string $method Method to call
+	 * @param string $payload Payload encoded as application/x-www-form-urlencoded
+	 * 
+	 */
+    public function callLDImporter($method, $payload = '') {
+        try {
+            $con = TSConnection::getConnector();
+            $con->connect();
+           
+            $result = $con->callLDImporter($method, $payload);
+            $con->disconnect();
+        } catch (Exception $e) {
+            // An exception occurred => no result
+            return null;
+        }
+       
+        return $result;
+    }
+	
 
 	//--- Private methods ---
 

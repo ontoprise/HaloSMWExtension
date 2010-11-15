@@ -54,11 +54,8 @@ class LODSourcesPage extends SpecialPage {
 	public function getAllSources() {
 		$results = array();
 		$lodAdminStore = LODAdministrationStore::getInstance();
-		$sourceIDs = $lodAdminStore->getAllSourceDefinitionIDs();
-		foreach($sourceIDs as $s) {
-			$sourceDef = $lodAdminStore->loadSourceDefinition($s);
-			$results[$s] = $sourceDef;
-		}
+		$results = $lodAdminStore->loadAllSourceDefinitions();
+		
 		return $results;
 	}
 	
@@ -69,6 +66,7 @@ class LODSourcesPage extends SpecialPage {
 		$html .= "<th>".wfMsg('lod_sp_source_lastmod')."</th>";
 		$html .= "<th>".wfMsg('lod_sp_source_changefreq')."</th>";
 		$html .= "<th>".wfMsg('lod_sp_isimported')."</th>";
+		$html .= "<th>".wfMsg('lod_sp_statusmsg')."</th>";
 		
 		foreach($table as $s => $ldSource) {
 			$dataDumpLocations = is_array($ldSource->getDataDumpLocations()) ? implode(",",$ldSource->getDataDumpLocations()) : '';
@@ -87,6 +85,9 @@ class LODSourcesPage extends SpecialPage {
             $html .="</td>";
             $html .="<td>";
             $html .= $ldSource->isImported() === false ? "-" : "yes";
+            $html .="</td>";
+              $html .="<td>";
+            $html .= $ldSource->getErrorMessagesFromLastImport();
             $html .="</td>";
             
             if (!$ldSource->isImported()) {

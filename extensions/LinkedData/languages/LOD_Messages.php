@@ -125,6 +125,7 @@ $messages['en'] = array(
 	'lod_sp_source_reimport' => '(Re-)Import',
 	'lod_sp_source_update' => 'Update',
 	'lod_sp_isimported' => 'Imported',
+	'lod_sp_statusmsg' => 'Status message',
 								
 	//--- LOD rating ---
 	'lod_rt_heading'			=> 'Selected value:',
@@ -249,6 +250,7 @@ $messages['de'] = array(
     'lod_sp_source_reimport' => '(Re-)Importiere',
     'lod_sp_source_update' => 'Aktualisiere',
 	'lod_sp_isimported' => 'Ist importiert',
+	'lod_sp_statusmsg' => 'Statusnachricht',
 								
 	//--- LOD rating ---
 	'lod_rt_heading'			=> 'Ausgewählter Wert:',
