@@ -313,14 +313,9 @@ function smwgHaloSetupExtension() {
 			$wgAutoloadClasses['SMWTripleStoreAdmin'] = $smwgHaloIP . '/specials/SMWTripleStoreAdmin/SMW_TripleStoreAdmin.php';
 			$wgSpecialPages['TSA'] = array('SMWTripleStoreAdmin');
 			$wgSpecialPageGroups['TSA'] = 'smwplus_group';
-
-			// deactivated AskTSC
-			/*$wgAutoloadClasses['SMWAskTSCPage'] = $smwgHaloIP . '/specials/SMWTripleStoreAdmin/SMW_AskTSC.php';
-			 $wgSpecialPages['AskTSC'] = array('SMWAskTSCPage');
-			 $wgSpecialPageGroups['AskTSC'] = 'smwplus_group';*/
+		
 		}
-
-
+      
 	}
 
 	// include SMW logger (exported as ajax function but also used locally)
