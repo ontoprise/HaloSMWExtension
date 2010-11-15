@@ -69,7 +69,7 @@ function enableDataImportExtension() {
 	
 	global $wgAutoloadClasses;
 	$wgAutoloadClasses['SMWWSSMWAskPage']  = 
-		$smwgDIIP.'/specials/WebServices/smwstoragelayer/SMW_WSSMWASKPage.php';
+		$smwgDIIP.'/specials/WebServices/smwstoragelayer/SMW_WSSMWAskPage.php';
 
 	$wgAutoloadClasses['SMWQPWSSimpleTable'] = $smwgDIIP . '/specials/WebServices/resultprinters/SMW_QP_WSSimpleTable.php';
 	$wgAutoloadClasses['SMWQPWSTransposed'] = $smwgDIIP . '/specials/WebServices/resultprinters/SMW_QP_WSTransposed.php';
