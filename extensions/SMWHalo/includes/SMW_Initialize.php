@@ -180,7 +180,7 @@ function smwgHaloSetupExtension() {
     
 	// special handling: application/rdf+xml requests are redirected to 
 	// the external query interface
-	if ($_SERVER['HTTP_ACCEPT'] == 'application/rdf+xml') {
+	if (array_key_exists('HTTP_ACCEPT', $_SERVER) && $_SERVER['HTTP_ACCEPT'] == 'application/rdf+xml') {
 		global $IP;
 		require_once( $IP . '/extensions/SMWHalo/includes/webservices/SMW_EQI.php' );
 		header ( "Content-Type: application/rdf+xml" );
