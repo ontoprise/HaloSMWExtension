@@ -250,7 +250,8 @@ class DALReadTIXML implements IDAL {
 		$content = $article->getContent();
 		$options = new ParserOptions();
 		global $wgParser;
-		$wgParser->startExternalParse(Title::newFromText($articleName), $options, 1);
+		$titleTemp = Title::newFromText($articleName);
+		$wgParser->startExternalParse($titleTemp, $options, 1);
 		$content = $wgParser->replaceVariables($content);
 		
 		$startPos = 0;
@@ -437,7 +438,7 @@ class DALReadTIXML implements IDAL {
 		foreach ($this->tixmlContent[0] as $idx => $prop) {
 			$p = trim($prop);
 			$p = preg_replace("/ +/", "__SPACE__", $p);
-			if (strtolower($p) == 'articlename') {
+			if (strtolower($p) == 'Articlename') {
 				$p = 'articleName';
 			} else if (strtolower($p) == 'importset') {
 				$p = 'ImportSet';

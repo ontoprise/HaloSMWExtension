@@ -32,7 +32,7 @@ class SMWWSSMWStore extends SMWSQLStore2 {
 			} else if ($paramName == 'webservice'){
 				$wsName = $paramValue;
 			} else {
-				if(strlen($paramValue) > 0){
+				if(strlen(trim($paramValue)) > 0){
 					$paramValue = '='.$paramValue;
 				}
 				$configParameters[] = '_'.$paramName.$paramValue;
@@ -41,7 +41,14 @@ class SMWWSSMWStore extends SMWSQLStore2 {
 		
 		$resultParts = array();
 		foreach($query->getExtraPrintouts() as $printRequest){
-			$resultParts[] = '?'.$printRequest->getData()->getText().'='.$printRequest->getLabel();
+		$label = $printRequest->getLabel();
+			if($label != $printRequest->getData()->getText()){
+				$label = '='.$label;;
+			} else {
+				$label = "";
+			}
+			
+			$resultParts[] = '?'.$printRequest->getData()->getText().$label;
 		}
 		
 		$wsCallParameters = array(null, $wsName);
@@ -54,6 +61,8 @@ class SMWWSSMWStore extends SMWSQLStore2 {
 		if(!array_key_exists('offset', $wsCallParameters)){
 			$wsCallParameters[] = '_offset='.$query->getOffset();
 		}
+		
+		//echo('<pre>'.print_r($wsCallParameters, true).'</pre>');
 		
 		return $wsCallParameters;
 	}

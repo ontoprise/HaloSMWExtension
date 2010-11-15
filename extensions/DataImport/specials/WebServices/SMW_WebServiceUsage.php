@@ -49,14 +49,6 @@ $wgHooks['ArticleDelete'][] = 'wsuf_detectDeletedWSUsages';
 // to handle action=purge
 $wgHooks['OutputPageBeforeHTML'][] = 'wsuf_handlePurge';
 
-
-global $wgAutoloadClasses;
-// needed for formatting the ws-usage result
-$wgAutoloadClasses['WebServiceTableResultPrinter'] = $smwgDIIP . '/specials/WebServices/resultprinters/SMW_WebServiceRPTable.php';
-$wgAutoloadClasses['WebServiceTransposedResultPrinter'] = $smwgDIIP . '/specials/WebServices/resultprinters/SMW_WebServiceRPTransposed.php';
-$wgAutoloadClasses['WebServiceTIXMLResultPrinter'] = $smwgDIIP . '/specials/WebServices/resultprinters/SMW_WebServiceRPTIXML.php';
-
-
 /**
  * Simply calls webServiceUsage_processCall
  *
@@ -461,6 +453,7 @@ public static function processSMWQueryASWSCall($parameters){
 		
 		foreach($wsReturnValues as $id => $label){
 			$id = ucfirst(substr($id, strpos($id, '.')+1));
+			if(!$label) $label = $id;
 			$printRequests[$id] = 
 				new SMWPrintRequest(SMWPrintRequest::PRINT_THIS, $label, $id);
 		}
@@ -498,6 +491,8 @@ public static function processSMWQueryASWSCall($parameters){
 			$queryParams[$param] = $value;
 		}
 		
+		$queryParams['source'] = 'webservice';
+		
 		$queryParams['webservice'] = 'LDTest';
 		
 		
@@ -524,7 +519,7 @@ public static function processSMWQueryASWSCall($parameters){
 			return $queryResult;
 		}
 		
-		$printer = SMWQueryProcessor::getResultPrinter( $format);
+		$printer = SMWQueryProcessor::getResultPrinter( $format, SMWQueryProcessor::INLINE_QUERY);
 		
 		$result = $printer->getResult( $queryResult, $configArgs, SMW_OUTPUT_WIKI);
 		
@@ -568,18 +563,7 @@ public static function processSMWQueryASWSCall($parameters){
 		$outputFormat = (array_key_exists('format', $configArgs)) ? $configArgs['format'] : false;
 		$template = (array_key_exists('template', $configArgs)) ? $configArgs['template'] : false;
 		
-		if(!$smwQueryMode && $outputFormat == "wstable"){
-			$printer = WebServiceTableResultPrinter::getInstance();
-			return $printer->getWikiText($template, $wsResults);
-		} else if(!$smwQueryMode && $outputFormat == "transposed"){
-			$printer = WebServiceTransposedResultPrinter::getInstance();
-			return $printer->getWikiText($template, $wsResults);
-		} else if(!$smwQueryMode && $outputFormat == "tixml"){
-			$printer = WebServiceTIXMLResultPrinter::getInstance();
-			return $printer->getWikiText($template, $wsResults);
-		} else {
-			return self::formatWSResultWithSMWQPs($wsResults, $configArgs, $wsParameters, $wsReturnValues, $smwQueryMode);
-		}
+		return self::formatWSResultWithSMWQPs($wsResults, $configArgs, $wsParameters, $wsReturnValues, $smwQueryMode);
 	}
 	
 	/*

@@ -18,7 +18,7 @@ class SMWWSSMWAskPage extends SMWAskPage {
 	 * 
 	 */
 	protected function makeHTMLResult() {
-
+		
 		$this->checkIfThisIsAWSCALL();
 		
 		global $wgOut, $smwgAutocompleteInSpecialAsk;
@@ -111,6 +111,7 @@ END;
 			$queryobj->params = $this->m_params;
 			$store = $this->getStore();
 			$res = $store->getQueryResult( $queryobj );
+			
 			// try to be smart for rss/ical if no description/title is given and we have a concept query:
 			if ( $this->m_params['format'] == 'rss' ) {
 				$desckey = 'rssdescription';
