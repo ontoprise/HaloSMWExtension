@@ -69,7 +69,16 @@ function enableDataImportExtension() {
 	
 	global $wgAutoloadClasses;
 	$wgAutoloadClasses['SMWWSSMWAskPage']  = 
-		$smwgDIIP.'/specials/WebServices/smwstoragelayer/SMW_WSSMWASKPage.php';	
+		$smwgDIIP.'/specials/WebServices/smwstoragelayer/SMW_WSSMWASKPage.php';
+
+	$wgAutoloadClasses['SMWQPWSSimpleTable'] = $smwgDIIP . '/specials/WebServices/resultprinters/SMW_QP_WSSimpleTable.php';
+	$wgAutoloadClasses['SMWQPWSTransposed'] = $smwgDIIP . '/specials/WebServices/resultprinters/SMW_QP_WSTransposed.php';
+	$wgAutoloadClasses['SMWQPWSTIXML'] = $smwgDIIP . '/specials/WebServices/resultprinters/SMW_QP_WSTIXML.php';
+
+	global $smwgResultFormats;
+	$smwgResultFormats['simpletable'] = 'SMWQPWSSimpleTable'; 
+	$smwgResultFormats['transposed'] = 'SMWQPWSTransposed';
+	$smwgResultFormats['tixml'] = 'SMWQPWSTIXML';
 }
 
 function enableMaterializationFeature(){
@@ -130,6 +139,9 @@ if(defined( 'DO_MAINTENANCE' )){
 	
 	smwfDIInitMessages();
 	
+	WebServiceManager::initWikiWebServiceExtension();
+	TermImportManager::initTermImportFramework();
+	
 	// add some AJAX calls
 	$action = $wgRequest->getVal('action');
 	if ($action == 'ajax') {
@@ -147,9 +159,6 @@ if(defined( 'DO_MAINTENANCE' )){
 		} 
 				
 	} else { // otherwise register special pages
-		WebServiceManager::initWikiWebServiceExtension();
-		TermImportManager::initTermImportFramework();
-		
 		$wgAutoloadClasses['SMWTermImportSpecial'] = $smwgDIIP . '/specials/TermImport/SMW_TermImportSpecial.php';
 		$wgSpecialPages['TermImport'] = array('SMWTermImportSpecial');
 		$wgSpecialPageGroups['TermImport'] = 'di_group';
