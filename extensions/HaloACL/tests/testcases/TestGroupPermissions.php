@@ -21,6 +21,7 @@ class TestGroupPermissionsSuite extends PHPUnit_Framework_TestSuite
 		
 		$suite = new TestGroupPermissionsSuite();
 		$suite->addTestSuite('TestMWGroupsStorage');
+		$suite->addTestSuite('TestMWGroupPermissionsUI');
 		return $suite;
 	}
 	
@@ -53,7 +54,7 @@ class TestGroupPermissionsSuite extends PHPUnit_Framework_TestSuite
 
 
 /**
- * This class tests operations on Mediawiki groups and users.
+ * This class tests operations on Mediawiki groups and users and group permissions.
  * 
  * It assumes that the HaloACL extension is enabled in LocalSettings.php
  * 
@@ -69,11 +70,22 @@ class TestMWGroupsStorage extends PHPUnit_Framework_TestCase {
 		TestGroupPermissionsSuite::$mGroup->addUser("U1", "U1");
 		TestGroupPermissionsSuite::$mSubGroup->addUser("U2", "U1");
 		
+		global $haclgFeature, $wgGroupPermissions;
+		$haclgFeature = array();
+		$wgGroupPermissions = array();
+		
+		HACLGroupPermissions::deleteAllPermissions();
 	}
 
 	function tearDown() {
 		TestGroupPermissionsSuite::$mGroup->removeUser("U1", "U1");
 		TestGroupPermissionsSuite::$mSubGroup->removeUser("U2", "U1");
+		
+		global $haclgFeature, $wgGroupPermissions;
+		$haclgFeature = array();
+		$wgGroupPermissions = array();
+		
+		HACLGroupPermissions::deleteAllPermissions();
 		
 	}
 	
@@ -91,6 +103,278 @@ class TestMWGroupsStorage extends PHPUnit_Framework_TestCase {
 				
 	}
 	
+	/**
+	 * Upon startup of the wiki the default permissions in all $haclgFeature
+	 * elements have to be translated into values of $wgGroupPermissions.
+	 * Test the function HACLGroupPermissions::initGroupPermissions().
+	 */
+	function testCreateDefaultPermissions1() {
+		global $haclgFeature, $wgGroupPermissions;
+		
+		$haclgFeature['upload']['systemfeatures'] = "upload|reupload|reupload-own|reupload-shared|upload_by_url";
+		$haclgFeature['upload']['name'] = "Upload";
+		$haclgFeature['upload']['description'] = "This is the feature for uploading files into the wiki.";
+		$haclgFeature['upload']['permissibleBy'] = "admin"; // The other alternative would be "all"
+		$haclgFeature['upload']['default'] = "permit"; // The other alternative would be "deny"
+		
+		HACLGroupPermissions::initDefaultPermissions();
+		
+		// Check if $wgGroupPermissions is correctly initialized
+		$this->assertEquals(true, $wgGroupPermissions['*']['upload']);
+		$this->assertEquals(true, $wgGroupPermissions['*']['reupload']);
+		$this->assertEquals(true, $wgGroupPermissions['*']['reupload-own']);
+		$this->assertEquals(true, $wgGroupPermissions['*']['reupload-shared']);
+		$this->assertEquals(true, $wgGroupPermissions['*']['upload_by_url']);
+		
+	}
+
+	/**
+	 * Test exception handling of an erroneous $haclgFeature in 
+	 * HACLGroupPermissions::initGroupPermissions().
+	 * The entry 'systemfeatures' is empty.
+	 */
+	function testCreateDefaultPermissions2() {
+		global $haclgFeature;
+		unset($haclgFeature['upload']);
+		
+		// The system features are missing / empty
+		// => expect exception HACLGroupPermissionsException
+		$haclgFeature['upload']['systemfeatures'] = "";
+		
+		$haclgFeature['upload']['name'] = "Upload";
+		$haclgFeature['upload']['description'] = "This is the feature for uploading files into the wiki.";
+		$haclgFeature['upload']['permissibleBy'] = "admin"; // The other alternative would be "all"
+		$haclgFeature['upload']['default'] = "permit"; // The other alternative would be "deny"
+		
+		try {
+			HACLGroupPermissions::initDefaultPermissions();
+		} catch (HACLGroupPermissionsException $e) {
+			$this->assertEquals(HACLGroupPermissionsException::MISSING_PARAMETER,
+								$e->getCode(), "Expected exception HACLGroupPermissionsException::MISSING_SYSTEMFEATURES_ID");
+			return;
+		}
+		$this->fail("Expected exception HACLGroupPermissionsException::MISSING_SYSTEMFEATURES_ID");
+		
+	}
+
+	/**
+	 * Test exception handling of an erroneous $haclgFeature in 
+	 * HACLGroupPermissions::initGroupPermissions().
+	 * The entry 'default' is missing.
+	 */
+	function testCreateDefaultPermissions3() {
+		global $haclgFeature;
+		unset($haclgFeature['upload']);
+		
+		// The system features are missing / empty
+		// => expect exception HACLGroupPermissionsException
+		$haclgFeature['upload']['systemfeatures'] = "upload";
+		
+		$haclgFeature['upload']['name'] = "Upload";
+		$haclgFeature['upload']['description'] = "This is the feature for uploading files into the wiki.";
+		$haclgFeature['upload']['permissibleBy'] = "admin"; // The other alternative would be "all"
+		
+		try {
+			HACLGroupPermissions::initDefaultPermissions();
+		} catch (HACLGroupPermissionsException $e) {
+			$this->assertEquals(HACLGroupPermissionsException::MISSING_PARAMETER,
+								$e->getCode(), "Expected exception HACLGroupPermissionsException::MISSING_SYSTEMFEATURES_ID");
+			return;
+		}
+		$this->fail("Expected exception HACLGroupPermissionsException::MISSING_SYSTEMFEATURES_ID");
+		
+	}
+	
+	/**
+	 * Test exception handling of an erroneous $haclgFeature in 
+	 * HACLGroupPermissions::initGroupPermissions()
+	 * The default value is neither 'permit' nor 'deny'.
+	 */
+	function testCreateDefaultPermissions4() {
+		global $haclgFeature;
+		unset($haclgFeature['upload']);
+		
+		// The system features are missing / empty
+		// => expect exception HACLGroupPermissionsException
+		$haclgFeature['upload']['systemfeatures'] = "upload";
+		
+		$haclgFeature['upload']['name'] = "Upload";
+		$haclgFeature['upload']['description'] = "This is the feature for uploading files into the wiki.";
+		$haclgFeature['upload']['permissibleBy'] = "admin"; // The other alternative would be "all"
+		$haclgFeature['upload']['default'] = "invalid"; // The other alternative would be "deny"
+		
+		try {
+			HACLGroupPermissions::initDefaultPermissions();
+		} catch (HACLGroupPermissionsException $e) {
+			$this->assertEquals(HACLGroupPermissionsException::INVALID_PARAMETER_VALUE,
+								$e->getCode(), "Expected exception HACLGroupPermissionsException::INVALID_PARAMETER_VALUE");
+			return;
+		}
+		$this->fail("Expected exception HACLGroupPermissionsException::INVALID_PARAMETER_VALUE");
+		
+	}
+	
+	/**
+	 * Group permissions for features are related to groups. The storage layer
+	 * has to store which feature is permitted/denied for which groups.
+	 * This function tests the storage layer.
+	 */
+	public function testFeaturePermissionStorage() {
+
+		$gid = TestGroupPermissionsSuite::$mGroup->getGroupID();
+		
+		// Store a permission
+		HACLGroupPermissions::storePermission($gid, 'upload', true);
+		$permission = HACLGroupPermissions::getPermission($gid, 'upload');
+		$this->assertEquals(true, $permission, "Expected permission to be 'true'");
+		
+		// Overwrite a permission
+		HACLGroupPermissions::storePermission($gid, 'upload', false);
+		$permission = HACLGroupPermissions::getPermission($gid, 'upload');
+		$this->assertEquals(false, $permission, "Expected permission to be 'false'");
+		
+		// Store some permissions for a group
+		HACLGroupPermissions::storePermission($gid, 'read', false);
+		HACLGroupPermissions::storePermission($gid, 'edit', true);
+		HACLGroupPermissions::storePermission($gid, 'move', true);
+		$permissions = HACLGroupPermissions::getPermissionsForGroup($gid);
+		$expected = array(
+			"upload" => false,
+			"read" => false,
+			"edit" => true,
+			"move" => true,
+		);
+		$this->assertEquals($expected, $permissions, "Incorrect permissions were retrieved for a group.");
+		
+		
+		
+		// Delete all permissions and check if they are gone
+		HACLGroupPermissions::deleteAllPermissions();
+		$permission = HACLGroupPermissions::getPermission($gid, 'upload');
+		$this->assertEquals(NULL, $permission, "Expected permission to be 'NULL'");
+		
+	}
+	
+	/**
+	 * After default permissions have been created the group permissions stored 
+	 * in the DB have to be read and translated in $wgGroupPermissions. 
+	 * This function checks that this is working correctly.
+	 */
+	public function testInitPermissionsFromDB() {
+		$gid = TestGroupPermissionsSuite::$mGroup->getGroupID();
+		global $haclgFeature;
+		$haclgFeature['read']['systemfeatures'] = "read";
+		$haclgFeature['read']['name'] = "Read";
+		
+		$haclgFeature['upload']['systemfeatures'] = "upload|reupload|reupload-own|reupload-shared|upload_by_url";
+		$haclgFeature['upload']['name'] = "Upload";
+
+		$haclgFeature['edit']['systemfeatures'] = "edit|createpage|createtalk";
+		$haclgFeature['edit']['name'] = "Edit";
+		
+		$permissions = array(
+			'read'   => array($gid, 'read', true),
+			'upload' => array($gid, 'upload', true),
+			'edit'   => array($gid, 'edit', false),
+		);
+		
+		// Store all permission for features
+		foreach ($permissions as $p) {
+			HACLGroupPermissions::storePermission($p[0], $p[1], $p[2]);
+		}
+		
+		// Initialize $wgGroupPermissions from the stored permissions
+		HACLGroupPermissions::initPermissionsFromDB();
+		
+		// Verify $wgGroupPermissions
+		$group = TestGroupPermissionsSuite::$mGroup->getGroupName();
+		global $wgGroupPermissions;
+		foreach ($haclgFeature as $fn => $f) {
+			$sysFeatures = explode('|', $f['systemfeatures']);
+			$permitted = $permissions[$fn][2];
+			
+			// Does the group entry exist?
+			$this->assertArrayHasKey($group, $wgGroupPermissions);
+			
+			foreach ($sysFeatures as $sf) {
+				// Are the correct permissions set?
+				$this->assertEquals($permitted, $wgGroupPermissions[$group][$sf]);
+			}
+		}
+	}
+
+	/**
+	 * After default permissions have been created the group permissions stored 
+	 * in the DB have to be read and translated in $wgGroupPermissions. 
+	 * This function checks that exception is thrown for unknown features.
+	 */
+	public function testInitPermissionsFromDBException() {
+		$gid = TestGroupPermissionsSuite::$mGroup->getGroupID();
+		
+		// Store an unknown features
+		HACLGroupPermissions::storePermission($gid, 'unknown feature', true);
+		
+		// Initialize $wgGroupPermissions from the stored permissions
+		try {
+			HACLGroupPermissions::initPermissionsFromDB();
+		} catch (HACLGroupPermissionsException $e) {
+			$this->assertEquals(HACLGroupPermissionsException::UNKNOWN_FEATURE,
+								$e->getCode(), 
+								"Caught unexpected exception code.");
+			return;
+		}
+		$this->fail("Expectec exception HACLGroupPermissionsException::UNKNOWN_FEATURE.");
+		
+	}
+	
+	/**
+	 * Checks the complete functionality of the group permission feature by
+	 * checking if the Main page is accessible after group permissions have been
+	 * intitializes.
+	 * 
+	 */
+	public function testPermissions() {
+		global $wgUser;
+		$wgUser = User::newFromName('U1');
+		// U1 is member of group "Group"		
+		
+		global $wgGroupPermissions;
+		$wgGroupPermissions['*']['read'] = true;
+		
+		// No permissions set so far
+		// => Main page should be accessible (read)
+		$t = Title::newFromText("Main_Page");
+		$canRead = $t->userCan('read');
+		$this->assertTrue($canRead, "Expected that Main Page is accessible.");
+		
+		
+		// Initialize default permissions
+		// => Main page should not be accessible (read)
+		global $haclgFeature;
+		$haclgFeature['readFeature']['systemfeatures'] = "read";
+		$haclgFeature['readFeature']['name'] = "Read";
+		$haclgFeature['readFeature']['default'] = "deny";
+		
+		HACLGroupPermissions::initDefaultPermissions();
+		$wgUser = User::newFromName('U1');
+		
+		$canRead = $t->userCan('read');
+		$this->assertFalse($canRead, "Expected that Main Page is not accessible.");
+		
+		// Read group permissions from DB
+		// => Main page should be accessible (read)
+		$gid = TestGroupPermissionsSuite::$mGroup->getGroupID();
+		
+		HACLGroupPermissions::storePermission($gid, 'readFeature', true);
+		
+		// Initialize $wgGroupPermissions from the stored permissions
+		HACLGroupPermissions::initPermissionsFromDB();
+		$wgUser = User::newFromName('U1');
+		
+		$canRead = $t->userCan('read');
+		$this->assertTrue($canRead, "Expected that Main Page is accessible.");
+	}
+
 	/**
 	 * Checks if a user is member of a list of expected groups.
 	 * @param String $member
@@ -127,3 +411,111 @@ class TestMWGroupsStorage extends PHPUnit_Framework_TestCase {
 		
 }
 
+/**
+ * This class tests the backend of the user interface for group permissions.
+ * 
+ * It assumes that the HaloACL extension is enabled in LocalSettings.php
+ * 
+ * @author thsc
+ *
+ */
+class TestMWGroupPermissionsUI extends PHPUnit_Framework_TestCase {
+
+	protected $backupGlobals = FALSE;
+	
+	function setUp() {
+		// U1 is member of "Group" and U2 is member of "SubGroup"
+		TestGroupPermissionsSuite::$mGroup->addUser("U1", "U1");
+		TestGroupPermissionsSuite::$mSubGroup->addUser("U2", "U1");
+		
+		global $haclgFeature, $wgGroupPermissions;
+		$haclgFeature = array();
+		$wgGroupPermissions = array();
+		
+		HACLGroupPermissions::deleteAllPermissions();
+	}
+
+	function tearDown() {
+		TestGroupPermissionsSuite::$mGroup->removeUser("U1", "U1");
+		TestGroupPermissionsSuite::$mSubGroup->removeUser("U2", "U1");
+				
+		global $haclgFeature, $wgGroupPermissions;
+		$haclgFeature = array();
+		$wgGroupPermissions = array();
+		
+		HACLGroupPermissions::deleteAllPermissions();
+		
+	}
+	
+	/**
+	 * Checks the existence of class HACLUIGroupPermissions
+	 */
+	public function testHACLUIGroupPermissions() {
+		$hui = new HACLUIGroupPermissions();
+	}
+	
+	
+	/**
+	 * Checks getting the child groups of a group in JSON format
+	 */
+	public function testUIgetGroupChildren() {
+		$gid = TestGroupPermissionsSuite::$mGroup->getGroupID();
+		$sgid = TestGroupPermissionsSuite::$mSubGroup->getGroupID();
+		
+		HACLGroupPermissions::storePermission($gid, 'read', false);
+		HACLGroupPermissions::storePermission($gid, 'edit', true);
+		HACLGroupPermissions::storePermission($gid, 'move', true);
+
+		HACLGroupPermissions::storePermission($sgid, 'read', true);
+		HACLGroupPermissions::storePermission($sgid, 'edit', false);
+		HACLGroupPermissions::storePermission($sgid, 'upload', true);
+		
+		// Check generated JSON for ROOT
+		$json = HACLUIGroupPermissions::getGroupChildren("---ROOT---");
+	
+		$expected = <<<JSON
+[			
+	{
+		attributes: { 
+			id : "$gid" 
+		}, 
+		data: "Group <span class=\"haclPermittedFeatures\">edit,move</span>", 
+		state: "closed"
+	}
+]
+JSON;
+		$json = preg_replace("/\s*/", "", $json);
+		$expected = preg_replace("/\s*/", "", $expected);
+		$this->assertEquals($expected, $json, "Wrong JSON for ROOT group");
+		
+
+		// Check generated JSON for group "Group"
+		$json = HACLUIGroupPermissions::getGroupChildren($gid);
+		$expected = <<<JSON
+[
+	{
+		attributes: { 
+			id : "$sgid" 
+		}, 
+		data: "SubGroup <span class=\"haclPermittedFeatures\">read,upload</span>"
+	}
+]
+JSON;
+		$json = preg_replace("/\s*/", "", $json);
+		$expected = preg_replace("/\s*/", "", $expected);
+		$this->assertEquals($expected, $json, "Wrong JSON for groups in <Group>");
+
+		// Check generated JSON for group "SubGroup"
+		$json = HACLUIGroupPermissions::getGroupChildren($sgid);
+		$expected = <<<JSON
+[]
+JSON;
+		$json = preg_replace("/\s*/", "", $json);
+		$expected = preg_replace("/\s*/", "", $expected);
+		$this->assertEquals($expected, $json, "Wrong JSON for groups in <SubGroup>");
+
+		
+	}
+	
+	
+}

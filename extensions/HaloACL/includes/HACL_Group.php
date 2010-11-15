@@ -261,6 +261,34 @@ class  HACLGroup {
 	public static function isOverloaded($groupName) {
         return HACLStorage::getDatabase()->isOverloaded($groupName);		
 	}
+	
+	/**
+	 * Searches for all groups whose name contains the search string $search.
+	 * 
+	 * @param string $search
+	 * 		The group name must contain the string. Comparison is case insensitive.
+	 * 
+	 * @return array(string => int)
+	 * 		A map from group names to group IDs of groups that match the search 
+	 * 		string.
+	 */
+	public static function searchGroups($search) {
+		// get all matching group names
+		$db = HACLStorage::getDatabase();
+		$groups = $db->searchMatchingGroups($search);
+		
+		// make sure the match is not in the prefix
+		global $haclgContLang;
+    	$prefix = $haclgContLang->getNamingConvention(HACLLanguage::NC_GROUP);
+    	foreach ($groups as $gn => $gid) {
+    		if (!preg_match("/($prefix\/)?.*?$search.*/i", $gn)) {
+    			unset($groups[$gn]);
+    		}
+    	}
+    	
+    	return $groups;
+		
+	}
 
 	/**
 	 * This method checks the integrity of this group. The integrity can be violated

@@ -78,6 +78,10 @@ class TestLDAPMixedStorage extends PHPUnit_Framework_TestCase {
 	protected $mGAID;  // ID of GROUP_Administration
 	protected $mGDID;  // ID of GROUP_Developer
 	protected $mGFAID;  // ID of GROUP_FinancialAdministration;
+	protected $mGroupNames = array(
+		"GROUP_Administration", "GROUP_Developer", "GROUP_FinancialAdministration",
+		"MyGroup", "SubGroup"
+	);
 	
 	function setUp() {
 		// Add a group with the name of an existing LDAP group. This works
@@ -642,6 +646,36 @@ class TestLDAPMixedStorage extends PHPUnit_Framework_TestCase {
 		$this->assertFalse($store->isOverloaded("MyGroup"));
 				
 	}
+	
+   /**
+     * Tests searching for groups whose name contains a string
+     */
+    function testSearchGroups() {
+    	$this->doSearchGroups('e');
+    	$this->doSearchGroups('o');
+    	$this->doSearchGroups('Dev');
+    	$this->doSearchGroups('dev');
+    	$this->doSearchGroups('group');
+    	$this->doSearchGroups('unknown');
+    }
+
+    /**
+     * Performs the actual tests, searching for groups whose name contains a string
+     */
+    function doSearchGroups($search) {
+    	$expected = array();
+    	foreach ($this->mGroupNames as $gn) {
+    		if (preg_match("/.*?$search.*/i", $gn)) {
+    			$expected[] = $gn;
+    		}
+    	}
+    	$matchingGroups = HACLGroup::searchGroups($search);
+    	$mg = array_keys($matchingGroups);
+    	sort($mg);
+    	sort($expected);
+    	$this->assertEquals($expected, $mg);
+    }
+	
 	
 	private function checkGroupMembers($testcase, $group, $mode, $membersAndResults) {
 		for ($i = 0; $i < count($membersAndResults); $i+=2) {

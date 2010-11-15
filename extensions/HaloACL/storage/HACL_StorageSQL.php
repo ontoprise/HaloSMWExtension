@@ -148,14 +148,26 @@ class HACLStorageSQL {
 		HACLDBHelper::reportProgress("   ... done!\n",$verbose, "id,name");
 
 
-                // setup quickacl-table
-                $table = $db->tableName('halo_acl_quickacl');
+		// setup quickacl-table
+		$table = $db->tableName('halo_acl_quickacl');
 
 		HACLDBHelper::setupTable($table, array(
             'sd_id' 	=> 'INT(8) NOT NULL',
             'user_id' 	=> 'INT(10) NOT NULL'),
 		$db, $verbose, "sd_id,user_id");
 		HACLDBHelper::reportProgress("   ... done!\n",$verbose, "sd_id,user_id");
+		
+		// halo_acl_group_permissions:
+		//		description of each group permission for mediawiki features
+		$table = $db->tableName('halo_acl_group_permissions');
+
+		HACLDBHelper::setupTable($table, array(
+            'group_id' 		=> 'INT(8) UNSIGNED NOT NULL',
+            'feature' 		=> 'VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL',
+            'permission'	=> 'BOOL'),
+		$db, $verbose, "group_id,feature");
+		HACLDBHelper::reportProgress("   ... done!\n",$verbose);
+		
 		return true;
 
 	}
@@ -173,7 +185,8 @@ class HACLStorageSQL {
 			'halo_acl_groups',
 			'halo_acl_group_members',
 			'halo_acl_special_pages',
-			'halo_acl_quickacl');
+			'halo_acl_quickacl',
+			'halo_acl_group_permissions');
 		foreach ($tables as $table) {
 			$name = $db->tableName($table);
 			$db->query('DROP TABLE' . ($wgDBtype=='postgres'?'':' IF EXISTS'). $name, 'SMWSemanticStoreSQL2::drop');
@@ -325,6 +338,36 @@ class HACLStorageSQL {
 		$db->freeResult($res);
 
 		return $group;
+	}
+	
+	/**
+	 * Searches for all groups whose name contains the search string $search.
+	 * 
+	 * @param string $search
+	 * 		The group name must contain the string. Comparison is case insensitive.
+	 * 
+	 * @return array(string => int)
+	 * 		A map from group names to group IDs of groups that match the search 
+	 * 		string. Matches in the prefix of a group name (e.g. "Group/someName")
+	 * 		are not removed.
+	 */
+	public function searchMatchingGroups($search) {
+		$db =& wfGetDB( DB_SLAVE );
+		$gt = $db->tableName('halo_acl_groups');
+		$sql = "SELECT group_name, group_id FROM $gt ".
+               "WHERE lower(group_name) LIKE lower('%$search%');";
+		$group = null;
+
+		$res = $db->query($sql);
+
+		$matches = array();
+		while ($row = $db->fetchObject($res)) {
+			$matches[$row->group_name] = (int) $row->group_id;
+		}
+		$db->freeResult($res);
+
+		return $matches;
+		
 	}
 
 	/**
@@ -1561,4 +1604,119 @@ class HACLStorageSQL {
 		return true;
 	}
 
+	
+	/***************************************************************************
+	 *
+	 * Functions for group permissions
+	 *
+	 **************************************************************************/
+	
+	/**
+	 * Stores the group permission of a group for a feature.
+	 * 
+	 * @param int $groupID
+	 * 		ID of the group whose permission is to be stored.
+	 * @param string $feature
+	 * 		Name of the feature whose permission is set.
+	 * @param boolean $permission
+	 * 		true, if the feature is permitted for the group
+	 * 		false, otherwise
+	 */
+	public function storeGroupPermission($groupID, $feature, $permission) {
+		$db =& wfGetDB( DB_MASTER );
+
+		$db->replace($db->tableName('halo_acl_group_permissions'), null, array(
+            'group_id'    	=>  $groupID ,
+            'feature'		=>  $feature ,
+            'permission '   =>  $permission));
+	}
+
+	/**
+	 * Retrieves the permission of the group with ID $groupID for the feature
+	 * $feature.
+	 * 
+	 * @param int $groupID
+	 * 		The ID of the group whose permission is retrieved.
+	 * @param string $feature
+	 * 		Name of the feature whose permission is retrieved.
+	 * @return boolean/NULL
+	 * 		true, if the feature is permitted for the group
+	 * 		false, if not
+	 * 		NULL, if no permission is stored
+	 */
+	public function getGroupPermission($groupID, $feature) {
+		$db =& wfGetDB( DB_SLAVE );
+		$t = $db->tableName('halo_acl_group_permissions');
+		$res = $db->select($t, 
+							array('permission'), 
+							array('group_id' => $groupID,
+								  'feature'  => $feature,
+							));
+
+		$permission = NULL;
+		while ($row = $db->fetchObject($res)) {
+			$permission = $row->permission == 1 ? true : false;
+		}
+		$db->freeResult($res);
+
+		return $permission;
+	}
+	
+	/**
+	 * Returns all permissions of features that are explicitly specified (i.e.
+	 * stored in the database) for the group with the ID $groupID. 
+	 * 
+	 * @param $groupID
+	 * 		ID of the group
+	 * @return array(string feature => boolean permission)
+	 */
+	public function getPermissionsForGroup($groupID) {
+		$db =& wfGetDB( DB_SLAVE );
+		$t = $db->tableName('halo_acl_group_permissions');
+		$res = $db->select($t, 
+							array('feature' ,'permission'), 
+							array('group_id' => $groupID));
+
+		$permissions = array();
+		while ($row = $db->fetchObject($res)) {
+			$permissions[$row->feature] = $row->permission == 1 ? true : false;
+		}
+		$db->freeResult($res);
+
+		return $permissions;
+	}
+	
+	/**
+	 * Returns an array with all existing group permissions.
+	 * 
+	 * @return array(array('groupID' => int, 'feature' => string, 'permission' => bool))
+	 */
+	public function getAllGroupPermissions() {
+		$db =& wfGetDB( DB_SLAVE );
+		$t = $db->tableName('halo_acl_group_permissions');
+		$res = $db->select($t, 
+							array('group_id', 'feature' ,'permission'), 
+							array());
+
+		$permissions = array();
+		while ($row = $db->fetchObject($res)) {
+			$permissions[] = array( 'groupID'   => $row->group_id, 
+									'feature'    => $row->feature ,
+									'permission' => $row->permission == 1 ? true : false);
+		}
+		$db->freeResult($res);
+
+		return $permissions;
+		
+	}
+	
+	/**
+	 * Deletes all group permissions in the database.
+	 */
+	public function deleteAllGroupPermissions() {
+		$db = & wfGetDB( DB_MASTER );
+		$t = $db->tableName('halo_acl_group_permissions');
+		$db->delete($t,'*');
+	}
+	
 }

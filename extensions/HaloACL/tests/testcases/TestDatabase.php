@@ -13,6 +13,7 @@ class TestDatabaseSuite extends PHPUnit_Framework_TestSuite
 		
 		$suite = new TestDatabaseSuite();
 		$suite->addTestSuite('TestDatabase');
+		$suite->addTestSuite('TestDatabaseGroups');
 		return $suite;
 	}
 	
@@ -1254,4 +1255,95 @@ class TestDatabase extends PHPUnit_Framework_TestCase {
 	}
     	
 		
+}
+
+/**
+ * Tests some functions on groups
+ * 
+ * @author thsc
+ *
+ */
+class TestDatabaseGroups extends PHPUnit_Framework_TestCase {
+
+	protected $backupGlobals = FALSE;
+	
+	protected $mGroupNames;
+	
+    function setUp() {
+		HACLStorage::reset(HACL_STORE_SQL);
+		HACLStorage::getDatabase()->dropDatabaseTables(false);
+		HACLStorage::getDatabase()->initDatabaseTables(false);
+		
+    	global $wgUser;
+    	$wgUser = User::newFromName("U1");
+    	
+    	//-- Set up groups --
+    	$c = new HACLGroup(42, "Group/Company", null, array("U1"));
+    	$c->save();
+    	$m = new HACLGroup(43, "Group/Marketing", null, array("U1"));
+    	$m->save();
+    	$d = new HACLGroup(44, "Group/Development", null, array("U1"));
+    	$d->save();
+    	$hd = new HACLGroup(45, "Group/HaloDev", null, array("U1"));
+	   	$hd->save();
+    	$dn = new HACLGroup(46, "Group/DevNull", null, array("U1"));
+	   	$dn->save();
+    	$s = new HACLGroup(47, "Group/Services", null, array("U1"));
+    	$s->save();
+    	$ps = new HACLGroup(48, "Group/ProfessionalServices", null, array("U1"));
+    	$ps->save();
+    	$ds = new HACLGroup(49, "Group/DilettantishServices", null, array("U1"));
+    	$ds->save();
+    	
+    	
+    	$c->addGroup("Group/Marketing");
+    	$c->addGroup("Group/Development");
+    	$c->addGroup("Group/Services");
+    	
+    	$d->addGroup("Group/HaloDev");
+    	$d->addGroup("Group/DevNull");
+    	
+    	$s->addGroup("Group/ProfessionalServices");
+    	$s->addGroup("Group/DilettantishServices");
+		
+    	$this->mGroupNames = array(
+    		"Group/Company", "Group/Marketing",	"Group/Development",
+    		"Group/HaloDev", "Group/DevNull",	"Group/Services",
+    		"Group/ProfessionalServices", "Group/DilettantishServices"
+    	);
+    	
+    }
+
+    function tearDown() {
+		HACLStorage::getDatabase()->dropDatabaseTables(false);
+		HACLStorage::getDatabase()->initDatabaseTables(false);
+    }
+    
+    /**
+     * Tests searching for groups whose name contains a string
+     */
+    function testSearchGroups() {
+    	$this->doSearchGroups('e');
+    	$this->doSearchGroups('o');
+    	$this->doSearchGroups('Dev');
+    	$this->doSearchGroups('dev');
+    	$this->doSearchGroups('services');
+    	$this->doSearchGroups('group');
+    }
+
+    /**
+     * Performs the actual tests, searching for groups whose name contains a string
+     */
+    function doSearchGroups($search) {
+    	$expected = array();
+    	foreach ($this->mGroupNames as $gn) {
+    		if (preg_match("/Group\/.*?$search.*/i", $gn)) {
+    			$expected[] = $gn;
+    		}
+    	}
+    	$matchingGroups = HACLGroup::searchGroups($search);
+    	$mg = array_keys($matchingGroups);
+    	$this->assertEquals($expected, $mg);
+    }
+    
 }
