@@ -65,8 +65,7 @@ class TermImportManager {
 		$action = $wgRequest->getVal('action');
 
 		if ($action == 'ajax') {
-			// Do not install the extension for ajax calls
-			return;
+			//return;
 		}
 			
 		//$wgHooks['ArticleFromTitle'][] = 'TermImportManager::showTermImportPage';
