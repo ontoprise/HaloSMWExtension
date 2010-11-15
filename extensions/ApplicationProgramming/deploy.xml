@@ -10,6 +10,9 @@
 			Provides utility functionality for wikitext-programming.
 		</description>
 		<helpurl>http://smwforum.ontoprise.com/smwforum/index.php/Help:Application_Programming_Extension</helpurl>
+		<dependencies>
+            <dependency from="1120" to="1169">mw</dependency>
+        </dependencies>
 	</global>
 	<codefiles>
 		<file loc="deploy.xml" />

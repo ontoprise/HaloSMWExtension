@@ -12,7 +12,7 @@
         </description>
 		<helpurl>http://smwforum.ontoprise.com/smwforum/index.php/Help:Script_Manager_Extension</helpurl>
         <dependencies>
-           
+            <dependency from="1120" to="1169">mw</dependency>
         </dependencies>
     </global>
     <codefiles>
