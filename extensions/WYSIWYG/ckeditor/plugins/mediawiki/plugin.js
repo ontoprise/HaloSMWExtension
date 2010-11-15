@@ -186,6 +186,8 @@ CKEDITOR.plugins.add( 'mediawiki',
 
         editor.addCommand( 'link', new CKEDITOR.dialogCommand( 'MWLink' ) );
         CKEDITOR.dialog.add( 'MWLink', this.path + 'dialogs/link.js' );
+        editor.addCommand( 'image', new CKEDITOR.dialogCommand( 'MWImage' ) );
+        CKEDITOR.dialog.add( 'MWImage', this.path + 'dialogs/image.js' );
         editor.addCommand( 'MWSpecialTags', new CKEDITOR.dialogCommand( 'MWSpecialTags' ) );
         CKEDITOR.dialog.add( 'MWSpecialTags', this.path + 'dialogs/special.js' );
         if (editor.addMenuItem) {
@@ -239,6 +241,7 @@ CKEDITOR.plugins.add( 'mediawiki',
 
 });
 
+CKEDITOR.config.image_previewText = 'Preview';
 
 CKEDITOR.customprocessor = function( editor )
 {
