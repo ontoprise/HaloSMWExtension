@@ -45,10 +45,11 @@ class HACLStorageLDAP extends HACLStorageSQL {
 	const LDAP_MAPPING_BASE = 1000000;
 	const GROUP_TYPE_LDAP = 'LDAP';
 
-	//-- Search modes in searchGroups()
+	//-- Search modes in searchLDAPGroups()
 	const AS_MEMBER = 1;
 	const BY_NAME = 2;
 	const BY_DN = 3; // search by Distinguished Name
+	const BY_NAME_FILTER = 4;
 	
 	
 	//--- Fields ---
@@ -132,7 +133,7 @@ class HACLStorageLDAP extends HACLStorageSQL {
 		}
 		
 		// get the cn i.e. name of the group
-		$groups = $this->searchGroups($groupDN, self::BY_DN);
+		$groups = $this->searchLDAPGroups($groupDN, self::BY_DN);
 
 		global $wgLDAPGroupNameAttribute;
 		$nameAttr = $wgLDAPGroupNameAttribute[$_SESSION['wsDomain']];
@@ -164,7 +165,7 @@ class HACLStorageLDAP extends HACLStorageSQL {
 										   $group->getGroupName());
 		}
 		// Check if there is an LDAP group with the same name
-		$groups = $this->searchGroups($group->getGroupName(), self::BY_NAME);
+		$groups = $this->searchLDAPGroups($group->getGroupName(), self::BY_NAME);
 		if (!empty($groups)) {
 			throw new HACLStorageException(HACLStorageException::SAME_GROUP_IN_LDAP,
 										   $group->getGroupName());
@@ -219,7 +220,7 @@ class HACLStorageLDAP extends HACLStorageSQL {
 		$groups = array();
 		$groupNames = array();
 		foreach ($rootGroups as $rootDN => $val) {
-			$ldapGroup = $this->searchGroups($rootDN, self::BY_DN);
+			$ldapGroup = $this->searchLDAPGroups($rootDN, self::BY_DN);
 
 			foreach ($ldapGroup as $group) {
 				$g = $this->createGroupFromLDAP($group);
@@ -257,7 +258,7 @@ class HACLStorageLDAP extends HACLStorageSQL {
 	 */
 	public function getGroupByName($groupName) {
 		// search for the group on the LDAP server
-		$group = $this->searchGroups($groupName, self::BY_NAME);
+		$group = $this->searchLDAPGroups($groupName, self::BY_NAME);
 		if (!empty($group)) {
 			return $this->createGroupFromLDAP($group[0]);
 		}
@@ -305,7 +306,7 @@ class HACLStorageLDAP extends HACLStorageSQL {
 		$groupDN = $row->dn;
 		$db->freeResult($res);
 		
-		$group = $this->searchGroups($groupDN, self::BY_DN);
+		$group = $this->searchLDAPGroups($groupDN, self::BY_DN);
 
 		return (empty($group)) ? null : $this->createGroupFromLDAP($group[0]);
 		
@@ -515,9 +516,11 @@ class HACLStorageLDAP extends HACLStorageSQL {
 		
 		$dns = $groups['dn'];
 		foreach ($dns as $dn) {
-			$id = $this->getGroupIDForDN($dn);
-			$name = $this->groupNameForID($id);			
-			$tmpGroupsOfMember[$name] = $id;	// HaloACL groups can be overwritten
+			if (!empty($dn)) {
+				$id = $this->getGroupIDForDN($dn);
+				$name = $this->groupNameForID($id);			
+				$tmpGroupsOfMember[$name] = $id;	// HaloACL groups can be overwritten
+			}
 		}
 		
 		// create the final data structure (array<array(id,name)>) 
@@ -587,7 +590,7 @@ class HACLStorageLDAP extends HACLStorageSQL {
 		$searchedGroups = array();
 		
 		do {
-			$groups = $this->searchGroups($dn, self::AS_MEMBER);
+			$groups = $this->searchLDAPGroups($dn, self::AS_MEMBER);
 			if (count($groups) > 0) {
 				// The child is member of an LDAP group
 				$searchedGroups[$dn] = true;
@@ -726,7 +729,33 @@ class HACLStorageLDAP extends HACLStorageSQL {
 		
 	}
 	
+	/**
+	 * Searches for all groups whose name contains the search string $search.
+	 * 
+	 * @param string $search
+	 * 		The group name must contain the string. Comparison is case insensitive.
+	 * 
+	 * @return array(string => int)
+	 * 		A map from group names to group IDs of groups that match the search 
+	 * 		string. Matches in the prefix of a group name (e.g. "Group/someName")
+	 * 		are not removed.
+	 */
+	public function searchMatchingGroups($search) {
+		// Search matching groups in parent
+		$matchingGroups = parent::searchMatchingGroups($search);
+		
+		// Search matching LDAP groups
+		$groups = $this->searchLDAPGroups($search, self::BY_NAME_FILTER);
+		
+		foreach ($groups as $g) {
+			$dn = $g['dn'];
+			$id = $this->getGroupIDForDN($dn);
+			$matchingGroups[$g['cn']] = $id;
+		}
+		return $matchingGroups;
+	}
 
+	
 	/**
 	 * Search groups for the supplied DN
 	 *
@@ -734,7 +763,7 @@ class HACLStorageLDAP extends HACLStorageSQL {
 	 * @return array
 	 * @access private
 	 */
-	private function searchGroups($dn, $searchMode) {
+	private function searchLDAPGroups($dn, $searchMode) {
 		global $wgLDAPGroupObjectclass, $wgLDAPGroupAttribute, $wgLDAPGroupNameAttribute;
 		global $wgAuth;
 
@@ -756,6 +785,9 @@ class HACLStorageLDAP extends HACLStorageSQL {
 			case self::BY_NAME:
 				$filter = "(&($nameattribute=$value)(objectclass=$objectclass))";
 				break;
+			case self::BY_NAME_FILTER:
+				$filter = "(&($nameattribute=*$value*)(objectclass=$objectclass))";
+				break;
 			case self::BY_DN:
 				$base = $value;
 				$filter = "(objectclass=$objectclass)";
@@ -773,7 +805,7 @@ class HACLStorageLDAP extends HACLStorageSQL {
 
 		return $groups;
 	}
-
+	
 	/**
 	 * Search groups for the supplied DN
 	 *
@@ -828,6 +860,7 @@ class HACLStorageLDAP extends HACLStorageSQL {
 	 * 		ID of the group or false if it does not exist (and is not created).
 	 */
 	private function getGroupIDForDN($dn, $addDN = true) {
+		
 		$dn = strtolower($dn);
 		$db =& wfGetDB( DB_SLAVE );
 		$gt = $db->tableName('halo_acl_ldap_group_id_map');
