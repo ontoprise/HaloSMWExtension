@@ -58,6 +58,10 @@ $wgFCKEditorHeight = '0';
 // Array of namespaces that FCKeditor is disabled for. Use constants like NS_MEDIAWIKI here.
 $wgFCKEditorExcludedNamespaces = array();
 
+// set this to true if you want the Richeditor show up only when the
+// URL param mode=wysiwyg is set
+$wgCKEditorUrlparamMode = false;
+
 /**
  * Enable use of AJAX features.
  */
