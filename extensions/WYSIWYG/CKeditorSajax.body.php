@@ -61,7 +61,7 @@ function wfSajaxSearchSpecialTagCKeditor( $empty ) {
 
 function wfSajaxSearchImageCKeditor( $term ) {
 	global $wgContLang;
-	$limit = 10;
+	$limit = 40;
 
 	$term = $wgContLang->checkTitleEncoding( $wgContLang->recodeInput( js_unescape( $term ) ) );
 	$term1 = str_replace( ' ', '_', $wgContLang->ucfirst( $term ) );
@@ -70,15 +70,15 @@ function wfSajaxSearchImageCKeditor( $term ) {
 	$term4 = str_replace( ' ', '_', $wgContLang->ucfirst( $term2 ) );
 	$term = $term1;
 
-	if ( strlen( str_replace( '_', '', $term ) ) < 3 )
+	if ( strlen( str_replace( '_', '', $term ) ) < 1 )
 		return '';
 
 	$dbr = wfGetDB( DB_SLAVE );
 	$res = $dbr->select( 'page',
 		'page_title',
 		array(
-			'page_namespace' => NS_FILE,
-			"page_title LIKE '%". $dbr->strencode( $term1 ) ."%'".
+			'page_namespace IN (' . NS_IMAGE . ',' . NS_FILE . ')',
+			"LOWER (page_title) LIKE '%". $dbr->strencode( $term1 ) ."%'".
 			"OR (page_title LIKE '%". $dbr->strencode( $term2 ) ."%') ".
 			"OR (page_title LIKE '%". $dbr->strencode( $term3 ) ."%') ".
 			"OR (page_title LIKE '%". $dbr->strencode( $term4 ) ."%') "
@@ -87,15 +87,19 @@ function wfSajaxSearchImageCKeditor( $term ) {
 		array( 'LIMIT' => $limit + 1 )
 	);
 
-	$ret = '';
+	$ret = array();
 	$i = 0;
 	while ( ( $row = $dbr->fetchObject( $res ) ) && ( ++$i <= $limit ) ) {
-		$ret .= $row->page_title . "\n";
+        $pos = strrpos($row->page_title, '.');
+        if ($pos === false) continue;
+        $suffix = strtolower(substr($row->page_title, $pos + 1));
+        if (! in_array($suffix,
+                array('gif', 'jpg', 'jpeg', 'tif', 'tiff', 'svg', 'png')))
+            continue;
+		$ret[] = $row->page_title;
 	}
 
-	$term = htmlspecialchars( $term );
-
-	return $ret;
+	return join("\n", $ret);
 }
 
 function wfSajaxSearchArticleCKeditor( $term ) {
