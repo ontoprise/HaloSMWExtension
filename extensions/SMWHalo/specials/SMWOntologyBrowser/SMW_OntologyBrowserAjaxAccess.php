@@ -111,7 +111,7 @@ class OB_Storage {
        
 		foreach($properties as $a) {
 			if (!$a->isShown() || !$a->isVisible()) continue;
-			$values = smwfGetStore()->getPropertyValues($instance, $a, true);
+			$values = smwfGetStore()->getPropertyValues($instance, $a, $reqfilter, '', true);
 			$propertyAnnotations[] = array($a, $values);
 		}
 
