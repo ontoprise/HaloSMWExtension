@@ -117,11 +117,11 @@ Var MUI_TEMP
   
 !insertmacro MUI_PAGE_WELCOME
 !insertmacro MUI_DEFAULT MUI_LICENSEPAGE_TEXT_TOP "License agreement of SMW+ Community Edition and SMW+ Professional"
-!insertmacro MUI_PAGE_LICENSE "..\..\..\SMWPlus_1_5_1_Installer_Tools\workspace\SMWPlusInstaller\op_license.txt"
+!insertmacro MUI_PAGE_LICENSE "..\..\..\Internal__SMWPlusInstaller_and_XAMPP\workspace\SMWPlusInstaller\op_license.txt"
 !insertmacro MUI_DEFAULT MUI_LICENSEPAGE_TEXT_TOP "SMW+ Community Edition and SMW+ Professional are distributed together \ 
 with certain open source software separate from ontoprise's own software \
 products and licensed under different license term (listed in the box below)"
-!insertmacro MUI_PAGE_LICENSE "..\..\..\SMWPlus_1_5_1_Installer_Tools\workspace\SMWPlusInstaller\thirdparty.txt"
+!insertmacro MUI_PAGE_LICENSE "..\..\..\Internal__SMWPlusInstaller_and_XAMPP\workspace\SMWPlusInstaller\thirdparty.txt"
 !define MUI_PAGE_CUSTOMFUNCTION_SHOW initComponentsPage
 !define MUI_PAGE_CUSTOMFUNCTION_LEAVE checkForNeededProcess
 !insertmacro MUI_PAGE_COMPONENTS
