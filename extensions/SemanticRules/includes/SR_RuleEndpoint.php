@@ -286,7 +286,7 @@ class SRRuleEndpoint {
 	}
 
 	private function getWikiTitleFromURI($uri) {
-		new TSNamespaces(); // assure namespaces are initialized
+		TSNamespaces::getInstance(); // assure namespaces are initialized
 		$allNamespaces = TSNamespaces::getAllNamespaces();
 
 		foreach ($allNamespaces as $nsIndsex => $ns) {

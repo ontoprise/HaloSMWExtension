@@ -152,7 +152,7 @@ function srfAddToOntologyBrowser(& $treeContainer, & $boxContainer, & $menu, & $
 function srAttachToResource($schemaElements, & $resourceAttachments, $nsIndex) {
 	$ruleEndpoint = SRRuleEndpoint::getInstance();
 	$resources = array();
-	new TSNamespaces(); // assure namespaces are initialized
+	TSNamespaces::getInstance(); // assure namespaces are initialized
 	$allNamespaces = TSNamespaces::getAllNamespaces();
 
 	foreach($schemaElements as $p) {
@@ -370,7 +370,7 @@ function srfTripleStoreParserHook(&$parser, &$text, &$strip_state = null) {
 						$pageTitle = $srgStateChangedPage;
 					}
 					$ns = $pageTitle->getNamespace();
-					$tsNamespaces = new TSNamespaces(); // assure namespaces are initialized
+					$tsNamespaces = TSNamespaces::getInstance(); // assure namespaces are initialized
 					$allNamespaces = TSNamespaces::getAllNamespaces();
 
 					$uri = $tsNamespaces->getNSURI($ns) . urlencode($pageTitle->getDBkey()) . "$$" . urlencode(str_replace(' ', '_', $name));

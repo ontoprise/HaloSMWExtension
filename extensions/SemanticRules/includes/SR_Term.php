@@ -19,7 +19,7 @@
  * @file
  * @ingroup SRRuleObject
  * 
- * @author Kai Kühn
+ * @author Kai Kï¿½hn
  */
 if (!defined('MEDIAWIKI')) die();
 
@@ -98,7 +98,7 @@ if (!defined('MEDIAWIKI')) die();
 		global $smwgTripleStoreGraph;
 		if ($this->_arity == 0) {
 			// actually a constant here. Try to interprete it as term.
-			$tsn = new TSNamespaces();
+			$tsn = TSNamespaces::getInstance();
 			$fullURI = $tsn->prefix2FullURI($this->_arguments);
 			return $fullURI;
 		} else {
