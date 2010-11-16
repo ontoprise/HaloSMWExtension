@@ -340,10 +340,7 @@ $wgTreeViewShowLines = true;
 /*end-treeview*/
 
 /*start-wysiwyg*/
-require_once('extensions/SMWHalo/includes/SMW_WYSIWYG.php');
-if (array_key_exists('mode', $_REQUEST) && $_REQUEST['mode'] == 'wysiwyg' || (array_key_exists('action', $_REQUEST) && $_REQUEST['action'] == 'ajax' && stripos($_REQUEST['rs'], 'wfSajax') === 0)) {
-require_once $IP . "/extensions/FCKeditor/FCKeditor.php";
-}
+require_once("$IP/extensions/WYSIWYG/WYSIWYG.php");
 /*end-wysiwyg*/
 
 require_once("$IP/extensions/ImageMap/ImageMap.php");
