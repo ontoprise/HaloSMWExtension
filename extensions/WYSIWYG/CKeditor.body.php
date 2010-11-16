@@ -431,6 +431,7 @@ var RTE_TOGGLE_LINK = ' . RTE_TOGGLE_LINK . ';
 var RTE_POPUP = ' . RTE_POPUP . ';
 var wgCKeditorInstance = null;
 var wgCKeditorCurrentMode = "wysiwyg";
+CKEDITOR.ready=true;
 
 ';
 		$script .= '</script>';
@@ -556,7 +557,7 @@ function ToggleCKEditor( mode, objId ){
 
 	var oToggleLink = document.getElementById( 'toggle_' + objId );
 	var oPopupLink = document.getElementById( 'popup_' + objId );
-/*
+
 	if ( firstLoad ){
 		// firstLoad = true => FCKeditor start invisible
 		if( oToggleLink ) oToggleLink.innerHTML = 'Loading...';
@@ -572,41 +573,38 @@ function ToggleCKEditor( mode, objId ){
 		});
 		return true;
 	}
-*/
+
 	if( ! CKEDITOR.ready ) return false; // sajax_do_call in action
-	if( ! (CKEDITOR.status == 'ready') ) return false; // not loaded yet
-	var oEditorIns = CKEDITOR.instances.objId;
-	var oEditorIframe  = document.getElementById( objId + '___Frame' );
+	if( ! (CKEDITOR.status == 'basic_ready') ) return false; // not loaded yet
+    var editor1 = objId;
+	var oEditorIns = CKEDITOR.instances[objId];
+	var oEditorIframe  = document.getElementById( 'cke_' + objId );
 	var CKtoolbar = document.getElementById( 'toolbar' );
 	var bIsWysiwyg = ( oEditorIns.mode == 'wysiwyg' );
 
 	//CKeditor visible -> hidden
 	if ( showFCKEditor & RTE_VISIBLE ){
-		var text = oEditorIns.GetData( oEditorIns.Config.FormatSource );
-		SRCtextarea.value = text;
-		if ( bIsWysiwyg ) oEditorIns.SwitchEditMode(); // switch to plain
-		var text = oEditorIns.GetData( oEditorIns.Config.FormatSource );
-		// copy from FCKeditor to textarea
+		var text = oEditorIns.getData();
 		SRCtextarea.value = text;
 		if( saveSetting ){
 			sajax_request_type = 'GET';
-			sajax_do_call( 'wfSajaxToggleFCKeditor', ['hide'], function(){} ); //remember closing in session
+			sajax_do_call( 'wfSajaxToggleCKeditor', ['hide'], function(){} ); //remember closing in session
 		}
 		if( oToggleLink ) oToggleLink.innerHTML = editorMsgOn;
 		if( oPopupLink ) oPopupLink.style.display = '';
 		showFCKEditor -= RTE_VISIBLE;
 		oEditorIframe.style.display = 'none';
-		FCKtoolbar.style.display = '';
+		CKtoolbar.style.display = '';
 		SRCtextarea.style.display = '';
 	} else {
 		// FCKeditor hidden -> visible
-		if ( bIsWysiwyg ) oEditorIns.SwitchEditMode(); // switch to plain
+		//if ( bIsWysiwyg ) oEditorIns.SwitchEditMode(); // switch to plain
 		SRCtextarea.style.display = 'none';
 		// copy from textarea to FCKeditor
-		oEditorIns.EditingArea.Textarea.value = SRCtextarea.value;
-		FCKtoolbar.style.display = 'none';
+		oEditorIns.setData( SRCtextarea.value );
+		CKtoolbar.style.display = 'none';
 		oEditorIframe.style.display = '';
-		if ( !bIsWysiwyg ) oEditorIns.SwitchEditMode();	// switch to WYSIWYG
+		//if ( !bIsWysiwyg ) oEditorIns.SwitchEditMode();	// switch to WYSIWYG
 		showFCKEditor += RTE_VISIBLE; // showFCKEditor+=RTE_VISIBLE
 		if( oToggleLink ) oToggleLink.innerHTML = editorMsgOff;
 		if( oPopupLink ) oPopupLink.style.display = 'none';
