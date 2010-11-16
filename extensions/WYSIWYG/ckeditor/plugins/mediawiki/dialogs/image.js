@@ -356,7 +356,7 @@ CKEDITOR.dialog.add( 'MWImage', function( editor ) {
                                                     }
                                                 }
                                             }
-                                            else if ( TYPE == CLEANUP )
+                                            else if ( type == CLEANUP )
                                                 element.setAttribute('_fck_mw_type', '');
                                         }
                                     },
