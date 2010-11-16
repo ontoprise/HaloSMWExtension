@@ -382,7 +382,7 @@ public static function processSMWQueryASWSCall($parameters){
 		//do sorting
 		if(array_key_exists('sort', $configArgs) && $configArgs['sort'] && array_key_exists(ucfirst($configArgs['sort']), $wsResults)){
 			$sortArray = array();
-			foreach($wsResults[$configArgs['sort']] as $key => $value){
+			foreach($wsResults[ucfirst($configArgs['sort'])] as $key => $value){
 				$sortArray[$value][] = $key;
 			}
 			

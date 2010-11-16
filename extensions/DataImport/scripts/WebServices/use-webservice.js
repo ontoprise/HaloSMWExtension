@@ -215,7 +215,19 @@ UseWebService.prototype = {
 			input = document.createElement("input");
 			input.type = "checkbox";
 			input.checked = true;
+			
+			if(window.addEventListener){
+				input.addEventListener("change", useWSSpecial.displaySortDetails, false);
+			} else {
+				input.attachEvent("onchange", useWSSpecial.displaySortDetails, false);
+			}
 			td.appendChild(input);
+			row.appendChild(td);
+			
+			td = document.createElement("td");
+			input = document.createElement("input");
+			td.appendChild(input);
+			
 			row.appendChild(td);
 
 			$("step3-results").childNodes[0].appendChild(row);
@@ -249,7 +261,8 @@ UseWebService.prototype = {
 		$("menue-step4").className = "ActualMenueStep";
 		
 		$("step4-template").value = "";
-
+		useWSSpecial.displaySortDetails();
+		
 		this.hideHelpAll();
 	},
 	
@@ -336,10 +349,10 @@ UseWebService.prototype = {
 	},
 
 	updateStep4Widgets : function() {
-		if ($("step4-format").value == "table") {
-			$("step4-template-container").style.display = "none";
-		} else {
+		if ($("step4-format").value in { 'list':1, 'ul':1, 'ol':1, 'template':1, 'transposed':1 }) {
 			$("step4-template-container").style.display = "";
+		} else {
+			$("step4-template-container").style.display = "none";
 		} 
 	},
 
@@ -409,6 +422,10 @@ UseWebService.prototype = {
 			if (results.childNodes[i].childNodes[1].childNodes[0].checked) {
 				wsSyn += "\n| ?"
 						+ results.childNodes[i].childNodes[0].childNodes[0].childNodes[0].nodeValue;
+				
+				if(results.childNodes[i].childNodes[2].childNodes[0].value.length > 0){
+					wsSyn += " = " + results.childNodes[i].childNodes[2].childNodes[0].value;
+				}
 			}
 		}
 		
@@ -428,6 +445,16 @@ UseWebService.prototype = {
 				}
 			}
 		}
+		
+		if($("step4-sort-checkbox").checked){
+			wsSyn += "\n| _sort=" + $("step4-sort-column").value;
+			var order = 'asc';
+			if($("step4-sort-order").value == $("step4-sort-order").childNodes[1].value) order='desc';
+			wsSyn += "\n| _order=" + order;
+		}
+		
+		wsSyn += "\n| _limit=" + $("step4-limit").value;
+		wsSyn += "\n| _offset=" + $("step4-offset").value;
 		
 		wsSyn += "\n}}\n";
 		
@@ -551,6 +578,34 @@ UseWebService.prototype = {
 		} else {
 			$("menue-step6").style.display = "none";
 			$("menue-step5").firstChild.nodeValue = $("menue-step5").firstChild.nodeValue.replace(/6./g, "5.");
+		}
+	},
+	
+	displaySortDetails : function(){
+		if($("step4-sort-checkbox").checked){
+			
+			while ( $("step4-sort-column").childNodes.length > 0) {
+				var node = $("step4-sort-column").childNodes[0];
+				$("step4-sort-column").removeChild(node);
+			}
+			
+			var results = $("step3-results").childNodes[0]; 
+			for ( var i = 1; i < results.childNodes.length; i++) {
+				if (results.childNodes[i].childNodes[1].childNodes[0].checked) {
+					var name = results.childNodes[i].childNodes[0].childNodes[0].childNodes[0].nodeValue;
+					name = name.substr(name.indexOf('.') + 1);
+					var option = document.createElement("option");
+					var textNode = document.createTextNode(name);
+					option.appendChild(textNode);
+					option.value = name;
+					$("step4-sort-column").appendChild(option);	
+					
+				}
+			}
+			
+			$("step4-sort-details").style.display = "";
+		} else {
+			$("step4-sort-details").style.display = "none";
 		}
 	}
 };

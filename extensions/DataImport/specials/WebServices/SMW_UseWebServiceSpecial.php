@@ -148,7 +148,7 @@ class SMWUseWebServiceSpecial extends SpecialPage {
 		$html .= "<img id=\"step3-help-img\" class=\"help-image\" title=\"".wfMsg("smw_wws_help-button-tooltip")."\" onclick=\"useWSSpecial.displayHelp(3)\" src=\"".$smwgDIScriptPath."/skins/webservices/help.gif\"></img>";
 		$html .= "</p>";
 
-		$html .= "<table id=\"step3-results\"><tr><th>".wfMsg('smw_wwsu_alias')."</th><th>".wfMsg('smw_wwsu_use')."<span onclick=\"useWSSpecial.useResults()\"><input title=\"".wfMsg("smw_wws_selectall-tooltip")."\" type=\"checkbox\" style=\"text-align: right\" id=\"step3-use\"/></span></th></tr></table>";
+		$html .= "<table id=\"step3-results\"><tr><th>".wfMsg('smw_wwsu_alias')."</th><th>".wfMsg('smw_wwsu_use')."<span onclick=\"useWSSpecial.useResults()\"><input title=\"".wfMsg("smw_wws_selectall-tooltip")."\" type=\"checkbox\" style=\"text-align: right\" id=\"step3-use\"/></span></th><th>".wfMsg('smw_wwsu_label')."</th</tr></table>";
 		$html .= "<div id=\"step3-noresults\">".wfMsg('smw_wwsu_noresults')."</div>";
 
 		$html .= "<div id=\"step3-help\" class=\"WSHLPMSG\" style=\"display:none\">".wfMsg("smw_wsuse_s3-help")."</div>";
@@ -167,22 +167,49 @@ class SMWUseWebServiceSpecial extends SpecialPage {
 		$html .= "<img id=\"step4-help-img\" title=\"".wfMsg("smw_wws_help-button-tooltip")."\" class=\"help-image\" onclick=\"useWSSpecial.displayHelp(4)\" src=\"".$smwgDIScriptPath."/skins/webservices/help.gif\"></img>";
 		$html .= "</p>";
 			
+		// format selector
 		$html .= "<p>".wfMsg('smw_wwsu_availableformats');
 		$html .= "<select id=\"step4-format\" size=\"1\" onchange=\"useWSSpecial.updateStep4Widgets()\">";
 		$html .= "<option value=\"list\">list</option>";
 		$html .= "<option value=\"ol\">ol</option>";
 		$html .= "<option value=\"ul\">ul</option>";
 		$html .= "<option value=\"table\">table</option>";
+		$html .= "<option value=\"broadtable\">broadtable</option>";
+		$html .= "<option value=\"simpletable\">simpletable</option>";
 		$html .= "<option value=\"template\">template</option>";
 		$html .= "<option value=\"tixml\">tixml</option>";
 		$html .= "<option value=\"transposed\">transposed</option>";
+		$html .= "<option value=\"count\">count</option>";
+		$html .= "<option value=\"csv\">csv</option>";
 		$html .= "</select>";
 		$html .= "</p>";
-
 		
+		//sorting
+		$html .= '<p>'.wfMsg('smw_wwsu_sort');
+		$html .= '<input id="step4-sort-checkbox" type="checkbox" onchange="useWSSpecial.displaySortDetails()"/>';
+		$html .= '<span id="step4-sort-details" style="display: none">';
+		$html .= '<span class="step4-format-labels">'.wfMsg('smw_wwsu_sort_by').'</span>';
+		$html .= '<select id="step4-sort-column"></select>';
+		$html .= '<span class="step4-format-labels">'.wfMsg('smw_wwsu_sort_order').'</span>';
+		$html .= '<select id="step4-sort-order">';
+		$html .= "<option value=\"".wfMsg('smw_wwsu_sort_order_asc')."\">".wfMsg('smw_wwsu_sort_order_asc')."</option>";
+		$html .= "<option value=\"".wfMsg('smw_wwsu_sort_order_desc')."\">".wfMsg('smw_wwsu_sort_order_desc')."</option>";
+		$html .= '</select>';
+		$html .= "</sption>";
+		$html .= '</p>';
+		
+		//template
 		$html .= "<p id=\"step4-template-container\">Template: ";
 		$html .= "<input class=\"wickEnabled\" constraints = \"namespace: ".NS_TEMPLATE."\" id=\"step4-template\"></input> ";
 		$html .= "</p>";
+		
+		//limit
+		global $smwgQMaxInlineLimit;
+		$html .= '<p>'.wfMsg('smw_wwsu_limit');
+		$html .= '<input id="step4-limit" value="'.$smwgQMaxInlineLimit.'" size="3"/>';
+		$html .= '<span class="step4-format-labels">'.wfMsg('smw_wwsu_offset').'</span>';
+		$html .= '<input id="step4-offset" value="0" size="3"/>';
+		$html .= '</p>';
 
 		$html .= "<div id=\"step4-help\" class=\"WSHLPMSG\" style=\"display:none\">".wfMsg("smw_wsuse_s4-help")."</div>";
 

@@ -256,7 +256,7 @@ class SMW_DILanguageEn extends SMW_DILanguage {
 	'smw_wwsu_use' => 'Use: ',
 	'smw_wwsu_value' => 'Value:',
 	'smw_wwsu_defaultvalue' => 'Use default value:',
-	'smw_wwsu_availableformats' => 'Available formats: ',
+	'smw_wwsu_availableformats' => 'Format: ',
 	'smw_wwsu_displaypreview' => 'Display preview',
 	'smw_wwsu_displaywssyntax' => 'Display #ws-syntax',
 	'smw_wwsu_addcall' => 'Add call to <articlename>',
@@ -330,6 +330,15 @@ class SMW_DILanguageEn extends SMW_DILanguage {
 	'smw_wwsr_delete_tooltip' => 'Delete this WWSD.',
 	'smw_wwsr_rep_delete_tooltip_ti' => 'Delete this Term Import definition.',
 	
+	'smw_wwsu_sort' => 'Sort: ',
+	'smw_wwsu_sort_by' => 'By: ',
+	'smw_wwsu_sort_order' => 'Order: ',
+	'smw_wwsu_sort_order_asc' => 'ascending',
+	'smw_wwsu_sort_order_desc' => 'descending',
+	'smw_wwsu_limit' => 'Limit: ',
+	'smw_wwsu_offset' => 'Offset: ',
+	
+	'smw_wwsu_label' => 'Label',
 	);
 
 	protected $smwDINamespaces = array(
