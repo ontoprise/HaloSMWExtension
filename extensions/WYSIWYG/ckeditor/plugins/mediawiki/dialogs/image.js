@@ -65,6 +65,8 @@ CKEDITOR.dialog.add( 'MWImage', function( editor ) {
         }
         var LoadPreviewImage = function(result) {
             var url = result.responseText.Trim();
+            if (! url)
+                url = CKEDITOR.getUrl( editor.skinPath + 'images/noimage.png' );
             // Query the preloader to figure out the url impacted by based href.
             previewPreloader.setAttribute( 'src', url );
 			dialog.preview.setAttribute( 'src', previewPreloader.$.src );
