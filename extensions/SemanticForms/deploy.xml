@@ -35,9 +35,12 @@
                 file="extensions/SemanticForms/includes/SF_Settings.php" />
             <patch file="patch.txt" />
         </new>
-            <uninstall>
-        <patch file="patch.txt" />
-    </uninstall>
+         <update from="191">
+            <patch file="patch.txt" />
+         </update>
+         <uninstall>
+            <patch file="patch.txt" />
+         </uninstall>
     </configs>
 
 </deploydescriptor>

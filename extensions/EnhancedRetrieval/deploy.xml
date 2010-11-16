@@ -29,7 +29,7 @@
 	<configs>
 
 		<new>
-
+            <patch file="patch_for_MW1.16.0.txt"/>
 			<variable name="wgSearchType">
 				<string name="wgSearchType" description="Search engine type">LuceneSearch</string>
 			</variable>
@@ -51,6 +51,7 @@
 			<script file="maintenance/setup.php" params="" />
 		</new>
 		<update from="136">
+		    <patch file="patch_for_MW1.16.0.txt"/>
 			<require name="us_init" remove="true"
 				file="extensions/UnifiedSearch/includes/UnifiedSearch.php" />
 			<require name="us_init"
@@ -58,6 +59,7 @@
 		</update>
 		<uninstall>
 			<script file="maintenance/setup.php" params="--delete" />
+			<patch file="patch_for_MW1.16.0.txt"/>
 		</uninstall>
 	</configs>
 </deploydescriptor>
