@@ -1195,7 +1195,7 @@ if (!String.prototype.InArray) {
         }
 		return false;
 	}
-};
+}
 
 if (!String.prototype.StartsWith) {
     String.prototype.StartsWith = function(str)
@@ -1217,6 +1217,12 @@ if (!String.prototype.IEquals) {
             if (String.prototype.IEquals.arguments[i] == this ) return true;
         }
         return false;
+    }
+}
+if (!String.prototype.FirstToUpper) {
+    String.prototype.FirstToUpper = function() {
+        string = this;
+        return string.substr(0,1).toUpperCase() + string.substr(1);
     }
 }
 

@@ -5,7 +5,12 @@ CKEDITOR.dialog.add( 'MWImage', function( editor ) {
 	var IMAGE = 1,
 		LINK = 2,
 		PREVIEW = 4,
-		CLEANUP = 8;
+		CLEANUP = 8,
+		regexGetSize = /^\s*(\d+)((px)|\%)?\s*$/i,
+		regexGetSizeOrEmpty = /(^\s*(\d+)((px)|\%)?\s*$)|^$/i,
+		pxLengthRegex = /^\d+px$/,
+		SrcInWiki;
+
 	var onImgLoadEvent = function()	{
 		// Image is ready.
 		var original = this.originalElement;
@@ -22,7 +27,7 @@ CKEDITOR.dialog.add( 'MWImage', function( editor ) {
 			resetSize( this );
 
 		if ( this.firstLoad )
-			CKEDITOR.tools.setTimeout( function(){ switchLockRatio( this, 'check' ); }, 0, this );
+			CKEDITOR.tools.setTimeout( function(){switchLockRatio( this, 'check' );}, 0, this );
 
 		this.firstLoad = false;
 		this.dontResetSize = false;
@@ -67,6 +72,7 @@ CKEDITOR.dialog.add( 'MWImage', function( editor ) {
             var url = result.responseText.Trim();
             if (! url)
                 url = CKEDITOR.getUrl( editor.skinPath + 'images/noimage.png' );
+            SrcInWiki = url;
             // Query the preloader to figure out the url impacted by based href.
             previewPreloader.setAttribute( 'src', url );
 			dialog.preview.setAttribute( 'src', previewPreloader.$.src );
@@ -208,7 +214,7 @@ CKEDITOR.dialog.add( 'MWImage', function( editor ) {
 												if ( type == IMAGE && ( this.getValue() || this.isChanged() ) )
 												{
 													element.setAttribute( '_cke_saved_src', decodeURI( this.getValue() ) );
-													element.setAttribute( 'src', decodeURI( this.getValue() ) );
+													element.setAttribute( 'src', SrcInWiki );
                                                     element.setAttribute( '_fck_mw_filename', decodeURI( this.getValue() ) );
 												}
 												else if ( type == CLEANUP )
@@ -290,26 +296,21 @@ CKEDITOR.dialog.add( 'MWImage', function( editor ) {
 							{
 								//updatePreview( this.getDialog() );
 							},
-							setup : function( type, element )
-							{
+							setup : function( type, element ) {
 								if ( type == IMAGE )
 									this.setValue( element.getAttribute( 'alt' ) );
 							},
-							commit : function( type, element )
-							{
-								if ( type == IMAGE )
-								{
-									if ( this.getValue() || this.isChanged() )
+							commit : function( type, element ) {
+								if ( type == IMAGE ) {
+									if ( this.getValue() || this.isChanged() ) {
+                                        var test = this.getValue();
 										element.setAttribute( 'alt', this.getValue() );
+                                    }
 								}
 								else if ( type == PREVIEW )
-								{
 									element.setAttribute( 'alt', this.getValue() );
-								}
 								else if ( type == CLEANUP )
-								{
 									element.removeAttribute( 'alt' );
-								}
 							}
 
                         },
@@ -325,8 +326,39 @@ CKEDITOR.dialog.add( 'MWImage', function( editor ) {
                                             [ ' ' ],
                                             [ 'Thumbnail' ],
                                             [ 'Frame' ],
-                                            [ 'Boder' ]
-                                        ]
+                                            [ 'Border' ]
+                                        ],
+                                        setup : function( type, element ) {
+                                            var imgType = element.getAttribute( '_fck_mw_type') || '',
+                                                typeName = {
+                                                    thumb : 'Thumbnail',
+                                                    frame : 'Frame',
+                                                    border : 'Border'
+                                                }
+                                            if ( type == IMAGE && imgType )
+                                                this.setValue( typeName[imgType] );
+                                        },
+                                        commit : function( type, element ) {
+                                            if ( type == IMAGE ) {
+                                                if ( this.getValue() || this.isChanged() ) {
+                                                    switch (this.getValue()) {
+                                                        case 'Thumbnail':
+                                                            element.setAttribute('_fck_mw_type', 'thumb');
+                                                            break;
+                                                        case 'Frame' :
+                                                            element.setAttribute('_fck_mw_type', 'frame');
+                                                            break;
+                                                        case 'Border' :
+                                                            element.setAttribute('_fck_mw_type', 'border');
+                                                            break;
+                                                        default:
+                                                            element.setAttribute('_fck_mw_type', '');
+                                                    }
+                                                }
+                                            }
+                                            else if ( TYPE == CLEANUP )
+                                                element.setAttribute('_fck_mw_type', '');
+                                        }
                                     },
                                     {
                                         id: 'imgAlign',
@@ -337,19 +369,115 @@ CKEDITOR.dialog.add( 'MWImage', function( editor ) {
                                             [ 'Right' ],
                                             [ 'Left' ],
                                             [ 'Center' ]
-                                        ]
+                                        ],
+                                        setup : function( type, element ) {
+                                            var className = element.getAttribute( 'class') || '',
+                                                align = className.replace(/fck_mw_(right|left|center)/, '$1');
+                                            if ( type == IMAGE && align )
+                                                this.setValue( align.FirstToUpper() );
+                                        },
+                                        commit : function( type, element ) {
+                                            if ( type == IMAGE ) {
+                                                if ( this.getValue() || this.isChanged() ) {
+                                                    var className = element.getAttribute( 'class') || '';
+                                                    if ( className.match(/fck_mw_(right|left|center)/) &&
+                                                         this.getValue() ) {
+                                                        element.setAttribute( 'class',
+                                                            className.replace(/fck_mw_(right|left|center)/, this.getValue().toLowerCase().Trim() )
+                                                        );
+                                                    }
+                                                    
+                                                }
+                                            }
+                                        }
                                     },
                                     {
                                         id: 'imgWidth',
                                         type: 'text',
                                         label: 'Width',
-                                        size: 4
+                                        size: '4',
+                                        setup : function( type, element ) {
+                                            var imgStyle = element.getAttribute( 'style') || '',
+                                                match = /(?:^|\s)width\s*:\s*(\d+)/i.exec( imgStyle ),
+                                                imgStyleWidth = match && match[1] || 0;
+                                            if ( type == IMAGE && imgStyleWidth )
+                                                this.setValue( imgStyleWidth );
+                                        },
+                                        commit : function( type, element, internalCommit ) {
+											var value = this.getValue();
+											if ( type == IMAGE )
+											{
+												if ( value )
+													element.setStyle( 'width', CKEDITOR.tools.cssLength( value ) );
+												else if ( !value && this.isChanged( ) )
+													element.removeStyle( 'width' );
+                                                
+												!internalCommit && element.removeAttribute( 'width' );
+											}
+											else if ( type == PREVIEW )
+											{
+												var aMatch = value.match( regexGetSize );
+												if ( !aMatch )
+												{
+													var oImageOriginal = this.getDialog().originalElement;
+													if ( oImageOriginal.getCustomData( 'isReady' ) == 'true' )
+														element.setStyle( 'width',  oImageOriginal.$.width + 'px');
+												}
+												else
+													element.setStyle( 'width', CKEDITOR.tools.cssLength( value ) );
+											}
+											else if ( type == CLEANUP )
+											{
+												element.removeAttribute( 'width' );
+												element.removeStyle( 'width' );
+											}
+										}
+
                                     },
                                     {
                                         id: 'imgHeight',
                                         type: 'text',
                                         label: 'Height',
-                                        size: 4
+                                        size: '4',
+                                        setup : function( type, element ) {
+                                            var imgStyle = element.getAttribute( 'style') || '',
+                                                match = /(?:^|\s)height\s*:\s*(\d+)/i.exec( imgStyle ),
+                                                imgStyleWidth = match && match[1] || 0;
+                                            if ( type == IMAGE && imgStyleWidth )
+                                                this.setValue( imgStyleWidth );
+                                        },
+										commit : function( type, element, internalCommit )
+										{
+											var value = this.getValue();
+											if ( type == IMAGE )
+											{
+												if ( value )
+													element.setStyle( 'height', CKEDITOR.tools.cssLength( value ) );
+												else if ( !value && this.isChanged( ) )
+													element.removeStyle( 'height' );
+
+												if ( !internalCommit && type == IMAGE )
+													element.removeAttribute( 'height' );
+											}
+											else if ( type == PREVIEW )
+											{
+												var aMatch = value.match( regexGetSize );
+												if ( !aMatch )
+												{
+													var oImageOriginal = this.getDialog().originalElement;
+													if ( oImageOriginal.getCustomData( 'isReady' ) == 'true' )
+														element.setStyle( 'height', oImageOriginal.$.height + 'px' );
+												}
+												else
+													element.setStyle( 'height',  CKEDITOR.tools.cssLength( value ) );
+											}
+											else if ( type == CLEANUP )
+											{
+												element.removeAttribute( 'height' );
+												element.removeStyle( 'height' );
+											}
+										}
+
                                     },
                                     {
                                         type: 'html',
@@ -363,57 +491,26 @@ CKEDITOR.dialog.add( 'MWImage', function( editor ) {
             ],
 
             onOk : function() {
-                var e = this.getContentElement( 'mwLinkTab1', 'linkTarget'),
-                    link = e.getValue().Trim().replace(/ /g, '_'),
-                    attributes = {href : link};
 
-                if ( !this._.selectedElement ) {
-                    // Create element if current selection is collapsed.
-                    var selection = editor.getSelection(),
-                        ranges = selection.getRanges( true );
-                    if ( ranges.length == 1 ) {
-                        if ( ranges[0].collapsed ) {
-                            var text = new CKEDITOR.dom.text( attributes.href, editor.document );
-                            ranges[0].insertNode( text );
-                            ranges[0].selectNodeContents( text );
-                            selection.selectRanges( ranges );
-                            if (text == link)
-                                attributes._fcknotitle=true;
-                        }
-                        else attributes._fcknotitle=true; // remove this if the else part is fixed
-                        /*
-                        else {
-                            var temp = ranges.clone();
-                            try {
-                                var node = temp[0].extractContents().getFirst();
-                                if (node.$.nodeType == 3 && node.$.nodeValue == link)
-                                    attributes._fcknotitle=true;
-                            } catch (e) {}
-                        }
-                        */
-                    }
-
-                    // Apply style.
-                    var style = new CKEDITOR.style( {element : 'a', attributes : attributes} );
-                    style.type = CKEDITOR.STYLE_INLINE;		// need to override... dunno why.
-                    style.apply( editor.document );
-
-                } else {
-                    // We're only editing an existing link, so just overwrite the attributes.
-                    var element = this._.selectedElement,
-                        textView = element.getHtml();
-
-                    if (textView == link)
-                        attributes._fcknotitle = 'true';
-                    else
-                        element.removeAttributes( ['_fcknotitle'] );
-                    element.setAttributes( attributes );
-
-                    if ( this.fakeObj )
-                        editor.createFakeElement( element, 'cke_anchor', 'anchor' ).replace( this.fakeObj );
-
-
+                if (this.imageEditMode && this.imageEditMode == "img" ) {
+                    this.imageElement = this.cleanImageElement;
+					delete this.cleanImageElement;
                 }
+                else {
+                    this.imageElement = editor.document.createElement( 'img' );
+                }
+                // Set attributes.
+				this.commitContent( IMAGE, this.imageElement );
+
+                // Remove empty style attribute.
+				if ( !this.imageElement.getAttribute( 'style' ) )
+					this.imageElement.removeAttribute( 'style' );
+
+                // Insert a new Image.
+				if ( !this.imageEditMode )
+				{
+					editor.insertElement( this.imageElement );
+				}
             },
 
     		onShow : function()
@@ -449,6 +546,7 @@ CKEDITOR.dialog.add( 'MWImage', function( editor ) {
 				{
 					this.imageEditMode = element.getName();
 					this.imageElement = element;
+					SrcInWiki = element.getAttribute( 'src' );
 				}
 
 				if ( this.imageEditMode )

@@ -1,7 +1,7 @@
 <?php
 
 class CKeditorParser extends CKeditorParserWrapper {
-	public static $fkc_mw_makeImage_options;
+	public static $fck_mw_makeImage_options;
 	protected $fck_mw_strtr_span;
 	protected $fck_mw_strtr_span_counter = 1;
 	protected $fck_mw_taghook;
@@ -434,7 +434,7 @@ class CKeditorParser extends CKeditorParserWrapper {
 	}
 
 	function makeImage( $nt, $options, $holders = false ) {
-		CKeditorParser::$fkc_mw_makeImage_options = $options;
+		CKeditorParser::$fck_mw_makeImage_options = $options;
 		return parent::makeImage( $nt, $options, $holders );
 	}
 
