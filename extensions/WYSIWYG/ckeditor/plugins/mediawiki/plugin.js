@@ -316,6 +316,9 @@ CKEDITOR.customprocessor.prototype =
         data = '<body>' + data.htmlEntities()+ '</body>';
         // fix <img> tags
         data = data.replace(/(<img[^>]*)([^/])>/gi, '$1$2/>' );
+        // fix <hr> tags
+        data = data.replace(/<hr>/gi, '<hr/>' );
+        data = data.replace(/(<hr[^>]*)([^/])>/gi, '$1$2/>' );
         // and fix <br> tags
         data = data.replace(/<br>/gi, '<br/>' );
         // remove some unncessary br tags that are followed by a </p> or </li>
