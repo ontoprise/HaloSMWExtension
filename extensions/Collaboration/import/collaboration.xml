@@ -399,6 +399,33 @@
 [[has domain and range::Category:Comment; | ]][[has type::Type:Boolean| ]]</text>
     </revision>
   </page>
+    <page>
+    <title>Property:Has comment content</title>
+    <id>98</id>
+    <revision>
+      <id>171</id>
+      <timestamp>2010-11-16T10:57:56Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <comment>Created page with &quot;{{Property |PAGENAME=Property:Has comment date |Has author=User:WikiSysop |part of=SMWplus Basic Ontology Section |Has default form=Form:Add a...&quot;</comment>
+      <text xml:space="preserve">{{Property
+|PAGENAME=Property:Has comment date
+|Has author=User:WikiSysop
+|part of=SMWplus Basic Ontology Section
+|Has default form=Form:Add and edit Property
+|rationale=The date of a comment.
+|long description=This property contains a datetime string of a comment created by the Collaboration Extension.
+}}
+{{Copyright of article
+|own work=True
+|copyright holder=Ontoprise GmbH
+|year=2009
+}}
+[[has domain and range::Category:Comment; | ]][[has type::Type:Text| ]]</text>
+    </revision>
+  </page>
   <page>
     <title>Property:Belongs to article</title>
     <id>16</id>
@@ -467,7 +494,7 @@
       </contributor>
       <minor/>
       <comment>1 revision</comment>
-      <text xml:space="preserve">&lt;noinclude&gt;{{Bundle}}&lt;/noinclude&gt;|&lt;noinclude&gt;
+      <text xml:space="preserve">|&lt;noinclude&gt;
 {{documentation}}
 &lt;!-- Add cats and interwikis to the /doc subpage, not here! --&gt;
 helper template for pipe symbol, which can e.g. not be used directly in template parameter calls.
@@ -486,7 +513,7 @@ helper template for pipe symbol, which can e.g. not be used directly in template
       </contributor>
       <minor/>
       <comment>1 revision</comment>
-      <text xml:space="preserve">&lt;noinclude&gt;{{Bundle}}&lt;/noinclude&gt;&lt;noinclude&gt;{{Template
+      <text xml:space="preserve">&lt;noinclude&gt;{{Template
 |PAGENAME=Template:Category
 |Has author=User:WikiSysop
 |part of=SMWplus Basic Ontology Section
@@ -552,7 +579,7 @@ This category is modified by the following rules: {{#sparql:[[Category:Rule]][[I
       </contributor>
       <minor/>
       <comment>1 revision</comment>
-      <text xml:space="preserve">&lt;noinclude&gt;{{Bundle}}&lt;/noinclude&gt;{{Template
+      <text xml:space="preserve">{{Template
 |PAGENAME=Template:Copyright of article
 |Has author=User:WikiSysop
 |part of=SMWplus Basic Ontology Section, 
@@ -602,7 +629,7 @@ This category is modified by the following rules: {{#sparql:[[Category:Rule]][[I
       </contributor>
       <minor/>
       <comment>1 revision</comment>
-      <text xml:space="preserve">&lt;noinclude&gt;{{Bundle}}&lt;/noinclude&gt;&lt;div style=&quot;border: 1px solid rgb(240, 240, 240); 
+      <text xml:space="preserve">&lt;div style=&quot;border: 1px solid rgb(240, 240, 240); 
 margin-bottom: 15px; 
 padding-left: 10px;
 font-family: tahoma, sans-serif; 
@@ -640,7 +667,7 @@ GNU Free Documentation License
       </contributor>
       <minor/>
       <comment>1 revision</comment>
-      <text xml:space="preserve">&lt;noinclude&gt;{{Bundle}}&lt;/noinclude&gt;&lt;noinclude&gt;{{Template
+      <text xml:space="preserve">&lt;noinclude&gt;{{Template
 |PAGENAME=Template:Header for wiki parts
 |Has author=Daniel
 |part of=SMWplus Basic Ontology Section
@@ -914,7 +941,7 @@ case: All content sections END
       </contributor>
       <minor/>
       <comment>1 revision</comment>
-      <text xml:space="preserve">&lt;noinclude&gt;{{Bundle}}&lt;/noinclude&gt;&lt;noinclude&gt;{{Template
+      <text xml:space="preserve">&lt;noinclude&gt;{{Template
 |PAGENAME=Template:Tablelongrow
 |part of=SMWforum User Manuals Section
 |rationale=This is a helper template to display a table row spanning 2 columns.
@@ -944,7 +971,7 @@ case: All content sections END
       </contributor>
       <minor/>
       <comment>1 revision</comment>
-      <text xml:space="preserve">&lt;noinclude&gt;{{Bundle}}&lt;/noinclude&gt;&lt;noinclude&gt;{{Template
+      <text xml:space="preserve">&lt;noinclude&gt;{{Template
 |PAGENAME=Template:Tablerow
 |part of=SMWplus Basic Ontology Section
 |rationale=This is helper template to display a table row containing two columns.
@@ -972,7 +999,7 @@ case: All content sections END
       </contributor>
       <minor/>
       <comment>1 revision</comment>
-      <text xml:space="preserve">&lt;noinclude&gt;{{Bundle}}&lt;/noinclude&gt;&lt;noinclude&gt;{{Template
+      <text xml:space="preserve">&lt;noinclude&gt;{{Template
 |PAGENAME=Template:Template
 |Has author=User:WikiSysop
 |part of=SMWplus Basic Ontology Section
@@ -1054,7 +1081,7 @@ Edit the page to see the template text.&lt;/includeonly&gt;&lt;noinclude&gt;
       </contributor>
       <minor/>
       <comment>1 revision</comment>
-      <text xml:space="preserve">&lt;noinclude&gt;{{Bundle}}&lt;/noinclude&gt;&lt;noinclude&gt;{{Template
+      <text xml:space="preserve">&lt;noinclude&gt;{{Template
 |PAGENAME=Template:Property
 |Has author=User:WikiSysop
 |part of=SMWplus Basic Ontology Section
