@@ -251,6 +251,8 @@
   | ?Comment was deleted
   | format=template
   | template=CommentResult
+  | sort=Has comment date
+  | order=asc
   | link=none
   | limit=100
 }}
