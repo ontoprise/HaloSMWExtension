@@ -1,7 +1,7 @@
 <mediawiki xmlns="http://www.mediawiki.org/halowikiexport/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.ontoprise.de/halowikiexport-1.0.xsd" version="1.0" xml:lang="en">
   <siteinfo>
-    <sitename>DevWiki</sitename>
-    <base>http://localhost/trunk/index.php/Main_Page</base>
+    <sitename>Halo3wiki</sitename>
+    <base>http://localhost/mediawiki/index.php/Main_Page</base>
     <generator>MediaWiki 1.16.0</generator>
     <case>first-letter</case>
     <namespaces>
@@ -11,8 +11,8 @@
       <namespace key="1" case="first-letter">Talk</namespace>
       <namespace key="2" case="first-letter">User</namespace>
       <namespace key="3" case="first-letter">User talk</namespace>
-      <namespace key="4" case="first-letter">DevWiki</namespace>
-      <namespace key="5" case="first-letter">DevWiki talk</namespace>
+      <namespace key="4" case="first-letter">Halo3wiki</namespace>
+      <namespace key="5" case="first-letter">Halo3wiki talk</namespace>
       <namespace key="6" case="first-letter">File</namespace>
       <namespace key="7" case="first-letter">File talk</namespace>
       <namespace key="8" case="first-letter">MediaWiki</namespace>
@@ -36,18 +36,45 @@
     </namespaces>
   </siteinfo>
   <page>
-    <title>Property:Has comment person</title>
-    <id>43</id>
+    <title>Category:Comment</title>
+    <id>86</id>
     <revision>
-      <id>105</id>
-      <timestamp>2010-11-08T09:31:47Z</timestamp>
+      <id>159</id>
+      <timestamp>2010-11-03T13:05:50Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
       <minor/>
       <comment>1 revision</comment>
-      <text xml:space="preserve">{{Property
+      <text xml:space="preserve">&lt;noinclude&gt;{{CE Bundle}}&lt;/noinclude&gt;{{Category
+|PAGENAME=Category:Comment
+|Has author=User:WikiSysop
+|part of=SMWplus Basic Ontology Section
+|rationale=Contains all comments.
+|long description=This category contains all comments created by the Collaboration Extension.
+}}
+{{Copyright of article
+|own work=True
+|copyright holder=Ontoprise GmbH
+|year=2009
+}}</text>
+    <hash>fb7db87054b770078f677d1b3d23d7bf</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Has comment person</title>
+    <id>91</id>
+    <revision>
+      <id>164</id>
+      <timestamp>2010-11-03T13:05:51Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <minor/>
+      <comment>1 revision</comment>
+      <text xml:space="preserve">&lt;noinclude&gt;{{CE Bundle}}&lt;/noinclude&gt;{{Property
 |PAGENAME=Property:Has comment person
 |Has author=User:WikiSysop
 |part of=SMWplus Basic Ontology Section
@@ -59,24 +86,24 @@
 |own work=True
 |copyright holder=Ontoprise GmbH
 |year=2009
-}}&lt;noinclude&gt;{{CE Bundle}}&lt;/noinclude&gt;
+}}
 [[has domain and range::Category:Comment; | ]][[has type::Type:String| ]]</text>
-    <hash>38229028e241b40ece499e862bc0b70c</hash>
+    <hash>4a8c42bf9dd8457d3a7e52728dc8b4fa</hash>
     </revision>
   </page>
   <page>
     <title>Property:Has comment rating</title>
-    <id>44</id>
+    <id>92</id>
     <revision>
-      <id>107</id>
-      <timestamp>2010-11-08T09:31:47Z</timestamp>
+      <id>165</id>
+      <timestamp>2010-11-03T13:05:51Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
       <minor/>
       <comment>1 revision</comment>
-      <text xml:space="preserve">{{Property
+      <text xml:space="preserve">&lt;noinclude&gt;{{CE Bundle}}&lt;/noinclude&gt;{{Property
 |PAGENAME=Property:Has rating
 |Has author=User:WikiSysop
 |part of=SMWplus Basic Ontology Section
@@ -88,25 +115,25 @@
 |own work=True
 |copyright holder=Ontoprise GmbH
 |year=2009
-}}&lt;noinclude&gt;{{CE Bundle}}&lt;/noinclude&gt;
+}}
 [[has domain and range::Category:Comment; | ]][[has type::Type:Number| ]]
 [[Allows value::1| ]] [[Allows value::0| ]] [[Allows value::-1| ]]</text>
-    <hash>323c85757483e68ce80f77d93af11579</hash>
+    <hash>0e61e57406c8fa3f8a8b860ea563e635</hash>
     </revision>
   </page>
   <page>
     <title>Property:Has comment date</title>
-    <id>45</id>
+    <id>93</id>
     <revision>
-      <id>109</id>
-      <timestamp>2010-11-08T09:31:47Z</timestamp>
+      <id>166</id>
+      <timestamp>2010-11-03T13:05:51Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
       <minor/>
       <comment>1 revision</comment>
-      <text xml:space="preserve">{{Property
+      <text xml:space="preserve">&lt;noinclude&gt;{{CE Bundle}}&lt;/noinclude&gt;{{Property
 |PAGENAME=Property:Has comment date
 |Has author=User:WikiSysop
 |part of=SMWplus Basic Ontology Section
@@ -118,24 +145,23 @@
 |own work=True
 |copyright holder=Ontoprise GmbH
 |year=2009
-}}&lt;noinclude&gt;{{CE Bundle}}&lt;/noinclude&gt;
+}}
 [[has domain and range::Category:Comment; | ]][[has type::Type:Date| ]]</text>
-    <hash>d746fe5454f705e00a15e229205234e2</hash>
+    <hash>c30407d2295a4a0d4ed09fc82253453d</hash>
     </revision>
   </page>
   <page>
     <title>Property:Has comment text</title>
-    <id>46</id>
+    <id>94</id>
     <revision>
-      <id>111</id>
-      <timestamp>2010-11-08T09:31:48Z</timestamp>
+      <id>167</id>
+      <timestamp>2010-11-03T13:14:02Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
-      <minor/>
-      <comment>1 revision</comment>
-      <text xml:space="preserve">{{Property
+      <comment>Created page with &quot;{{Property |PAGENAME=Property:Has comment text |Has author=User:WikiSysop |part of=SMWplus Basic Ontology Section |Has default form=Form:Add and edit Property |rationale=Contains...&quot;</comment>
+      <text xml:space="preserve">&lt;noinclude&gt;{{CE Bundle}}&lt;/noinclude&gt;{{Property
 |PAGENAME=Property:Has comment text
 |Has author=User:WikiSysop
 |part of=SMWplus Basic Ontology Section
@@ -147,24 +173,23 @@
 |own work=True
 |copyright holder=Ontoprise GmbH
 |year=2009
-}}&lt;noinclude&gt;{{CE Bundle}}&lt;/noinclude&gt;
+}}
 [[has domain and range::Category:Comment; | ]][[has type::Type:Text| ]]</text>
-    <hash>5c915d3c54c8dd0aafddde75a60ea8bb</hash>
+    <hash>56a2c4bbf3f6b87c56efdf0cf12a511a</hash>
     </revision>
   </page>
   <page>
     <title>Property:Comment was deleted</title>
-    <id>47</id>
+    <id>95</id>
     <revision>
-      <id>113</id>
-      <timestamp>2010-11-08T09:31:48Z</timestamp>
+      <id>168</id>
+      <timestamp>2010-11-03T16:15:03Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
-      <minor/>
-      <comment>1 revision</comment>
-      <text xml:space="preserve">{{Property
+      <comment>Created page with &quot;{{Property |PAGENAME=Property:Comment was deleted |Has author=User:WikiSysop |part of=SMWplus Basic Ontology Section |Has default form=Form:Add and edit Property |rationale=Flag ...&quot;</comment>
+      <text xml:space="preserve">&lt;noinclude&gt;{{CE Bundle}}&lt;/noinclude&gt;{{Property
 |PAGENAME=Property:Comment was deleted
 |Has author=User:WikiSysop
 |part of=SMWplus Basic Ontology Section
@@ -176,24 +201,24 @@
 |own work=True
 |copyright holder=Ontoprise GmbH
 |year=2009
-}}&lt;noinclude&gt;{{CE Bundle}}&lt;/noinclude&gt;
+}}
 [[has domain and range::Category:Comment; | ]][[has type::Type:Boolean| ]]</text>
-    <hash>f50b7675c831ee2adaf4519c76b24441</hash>
+    <hash>4ffab526fb12fe3aaf7c7da2a06271ed</hash>
     </revision>
   </page>
   <page>
     <title>Property:Belongs to article</title>
-    <id>48</id>
+    <id>96</id>
     <revision>
-      <id>115</id>
-      <timestamp>2010-11-08T09:31:49Z</timestamp>
+      <id>169</id>
+      <timestamp>2010-11-03T13:05:51Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
       <minor/>
       <comment>1 revision</comment>
-      <text xml:space="preserve">{{Property
+      <text xml:space="preserve">&lt;noinclude&gt;{{CE Bundle}}&lt;/noinclude&gt;{{Property
 |PAGENAME=Property:Belongs to article
 |Has author=User:WikiSysop
 |part of=SMWplus Basic Ontology Section
@@ -205,24 +230,24 @@
 |own work=True
 |copyright holder=Ontoprise GmbH
 |year=2009
-}}&lt;noinclude&gt;{{CE Bundle}}&lt;/noinclude&gt;
+}}
 [[has type::Type:Page| ]][[Has max cardinality::1| ]][[Has min cardinality::1| ]][[has domain and range::Category:Comment; | ]]</text>
-    <hash>17e3beef4cb6276ce836bba3db2c86e2</hash>
+    <hash>b439dd9b22a55497bb238627baec0034</hash>
     </revision>
   </page>
   <page>
     <title>Property:Belongs to comment</title>
-    <id>49</id>
+    <id>97</id>
     <revision>
-      <id>117</id>
-      <timestamp>2010-11-08T09:31:49Z</timestamp>
+      <id>170</id>
+      <timestamp>2010-11-03T13:05:51Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
       <minor/>
       <comment>1 revision</comment>
-      <text xml:space="preserve">{{Property
+      <text xml:space="preserve">&lt;noinclude&gt;{{CE Bundle}}&lt;/noinclude&gt;{{Property
 |PAGENAME=Property:Belongs to comment
 |Has author=User:WikiSysop
 |part of=SMWplus Basic Ontology Section
@@ -234,27 +259,37 @@
 |own work=True
 |copyright holder=Ontoprise GmbH
 |year=2009
-}}&lt;noinclude&gt;{{CE Bundle}}&lt;/noinclude&gt;
+}}
 [[has type::Type:Page| ]][[Has max cardinality::1| ]][[Has min cardinality::1| ]][[has domain and range::Category:Comment;Category:Comment | ]]</text>
-    <hash>c44e3d508f86f4fcdf050ea6b25defd1</hash>
+    <hash>ceb9ac189935b85e12122f242947cc08</hash>
     </revision>
   </page>
   <page>
-    <title>Collaboration</title>
-    <id>57</id>
+    <title>Property:Has comment content</title>
+    <id>98</id>
     <revision>
-      <id>127</id>
-      <timestamp>2010-11-08T10:01:09Z</timestamp>
+      <id>171</id>
+      <timestamp>2010-11-16T10:57:56Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
-      <text xml:space="preserve">Ontology version: [[Ontology version::130]]
-Install dir: [[Installation dir::extensions/Collaboration]]
-vendor: [[Vendor::Ontoprise]]
-desc: [[Description::Add fancy collaboration tools to your wiki]]
-{{CE Bundle}}</text>
-    <hash>211e3f37306a71556a565499ee63e84b</hash>
+      <comment>Created page with &quot;&lt;noinclude&gt;{{CE Bundle}}&lt;/noinclude&gt;{{Property |PAGENAME=Property:Has comment date |Has author=User:WikiSysop |part of=SMWplus Basic Ontology Section |Has default form=Form:Add a...&quot;</comment>
+      <text xml:space="preserve">&lt;noinclude&gt;{{CE Bundle}}&lt;/noinclude&gt;{{Property
+|PAGENAME=Property:Has comment date
+|Has author=User:WikiSysop
+|part of=SMWplus Basic Ontology Section
+|Has default form=Form:Add and edit Property
+|rationale=The date of a comment.
+|long description=This property contains a datetime string of a comment created by the Collaboration Extension.
+}}
+{{Copyright of article
+|own work=True
+|copyright holder=Ontoprise GmbH
+|year=2009
+}}
+[[has domain and range::Category:Comment; | ]][[has type::Type:Text| ]]</text>
+    <hash>2ddb56350726186ac3bf7d2d0a7af51d</hash>
     </revision>
   </page>
   <page>
@@ -275,6 +310,73 @@ desc: [[Description::Add fancy collaboration tools to your wiki]]
 helper template for pipe symbol, which can e.g. not be used directly in template parameter calls.
 &lt;/noinclude&gt;</text>
     <hash>61ec90e9d1e6e4ed156c5be869886c27</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Template:Category</title>
+    <id>19</id>
+    <revision>
+      <id>31</id>
+      <timestamp>2010-11-03T13:05:52Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <minor/>
+      <comment>1 revision</comment>
+      <text xml:space="preserve">&lt;noinclude&gt;{{Bundle}}&lt;/noinclude&gt;&lt;noinclude&gt;{{Template
+|PAGENAME=Template:Category
+|Has author=User:WikiSysop
+|part of=SMWplus Basic Ontology Section
+|rationale=This template is used to display a category.
+|long description=__NOTITLE__
+You should use this template to provide your wiki-community with a proper documentation of the categories used in the wiki.
+|Calls template=Template:Header for wiki parts
+}}
+{{Copyright of article
+|own work=True
+|copyright holder=Ontoprise GmbH
+|year=2009
+}}
+&lt;/noinclude&gt;&lt;includeonly&gt;__NOTOC__ {{Header for wiki parts
+|Category=Category
+|Icon=Image:Smw_plus_category_icon_100x100.gif
+|Pagetitle={{PAGENAME}}
+|Short description={{#ifeq:{{{rationale|}}}|||[[rationale::{{{rationale|}}}]]}}
+|author={{#ifeq:{{{Has author|}}}|||{{#arraymap:{{{Has author|}}}|,|x|[[has author::x]]|,}}}}
+|Wiki section={{#ifeq:{{{part of|}}}|||{{#arraymap:{{{part of|}}}|,|x|[[part of::x]]|,}}}}
+}} {{{long description|}}} 
+
+=== Default form  ===
+
+This category is populated by the form: 
+{{#ifeq:{{FULLPAGENAME}}|Category:Category&lt;!--
+--&gt;|*{{#ifeq:{{{Has default form|}}}||''not specified''|[[Page has default form::{{{Has default form|}}}]]}}&lt;!--
+--&gt;|*{{#ifeq:{{{Has default form|}}}||''not specified''|[[Has default form::{{{Has default form|}}}]]}}
+}}[[Page has default form::Form:Add and edit Category| ]]
+
+=== Defined in templates  ===
+
+This category is used for category annotations in the templates: 
+
+{{#ifeq:{{#ask:[[Category:Template]][[Defines category::{{FULLPAGENAME}}]]|default=}}||* none ''(you can create a new template using this category by clicking here: &lt;span class=&quot;plainlinks&quot;&gt;[{{SERVER}}{{SCRIPTPATH}}/index.php/Special:CreateTemplate?category={{urlencode:{{PAGENAME}}}} create template]&lt;/span&gt;)''|&lt;ul&gt;{{#ask:[[Category:Template]][[Defines category::{{FULLPAGENAME}}]]|format=template|template=Show defining template|link=none}}&lt;/ul&gt;
+}} &lt;!-- not needed currently, too fine-grained
+&lt;nowiki&gt;
+=== Rules  ===
+
+==== Read by rules  ====
+
+This category is read by the following rules: {{#sparql:[[Category:Rule]][[Is read by rule::{{FULLPAGENAME}}]]|?=|format=ul|default=&lt;ul&gt;&lt;li&gt;''no rule reading this''&lt;/ul&gt;}} 
+
+==== Modified by rules  ====
+
+This category is modified by the following rules: {{#sparql:[[Category:Rule]][[Is written by rule::{{FULLPAGENAME}}]]|?=|format=ul|default=&lt;ul&gt;&lt;li&gt;''no rule modifying this''&lt;/ul&gt;}}
+&lt;/nowiki&gt;
+--&gt;&lt;!-- category annotations --&gt;&lt;!--
+--&gt;{{#ifeq:{{FULLPAGENAME}}|Category:Category|[[Category:Wiki part| ]]|}}[[Is category::true| ]]&lt;!--
+--&gt;&lt;/includeonly&gt;&lt;noinclude&gt;
+&lt;/noinclude&gt;</text>
+    <hash>eb3c695dc464f8eeb93e775886e8a80d</hash>
     </revision>
   </page>
   <page>
@@ -767,14 +869,178 @@ This property is modified by the following rules:&lt;br&gt;
     <title>Template:CE Bundle</title>
     <id>50</id>
     <revision>
-      <id>126</id>
-      <timestamp>2010-11-08T09:51:54Z</timestamp>
+      <id>118</id>
+      <timestamp>2010-11-08T09:32:45Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
-      <text xml:space="preserve">Bundle: [[Part of bundle::Collaboration]]</text>
-    <hash>41d008284094b2babe08873125ce1263</hash>
+      <comment>Created page with &quot;Ontology version: [[Ontology version::130]] Bundle: [[Part of bundle::Collaboration]] Install dir: [[Installation dir::extensions/Collaboration]] vendor: [[Vendor::Ontoprise]] de...&quot;</comment>
+      <text xml:space="preserve">Ontology version: [[Ontology version::130]]
+Bundle: [[Part of bundle::Collaboration]]
+Install dir: [[Installation dir::extensions/Collaboration]]
+vendor: [[Vendor::Ontoprise]]
+desc: [[Description::Add fancy collaboration tools to your wiki]]</text>
+    <hash>c4652a742c8a7bd494e03bf0dd4dc6d1</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Comment:CollabTest1 1288789665891</title>
+    <id>29</id>
+    <revision>
+      <id>91</id>
+      <timestamp>2010-11-03T16:27:40Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <comment>Comment has been deleted via Collaboration GUI.</comment>
+      <text xml:space="preserve">{{Comment|CommentPerson=User:WikiSysop|CommentRelatedArticle=CollabTest1|CommentRating=0|CommentDatetime=2010-11-03T13:07:56+00:00|CommentContent=WikiSysop deleted this comment on 2010-11-03T16:27:40+00:00|CommentWasDeleted=true|}}</text>
+    <hash>cd2c58eda25f45f158bb2e7f4c59dca7</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Comment:CollabTest1 1288789777814</title>
+    <id>31</id>
+    <revision>
+      <id>88</id>
+      <timestamp>2010-11-03T16:16:19Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">{{Comment|CommentPerson=User:WikiSysop|CommentRelatedArticle=CollabTest1|CommentDatetime=2010-11-03T13:34:08+00:00|CommentWasDeleted=true|CommentContent=WikiSysopdeleted2010-11-03T16:08:34+00:00|}}</text>
+    <hash>ac0fe9b06439d46f870baf4ef9cc14dc</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Comment:CollabTest1 1288801745778</title>
+    <id>37</id>
+    <revision>
+      <id>93</id>
+      <timestamp>2010-11-03T16:33:19Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <comment>Comment has been deleted via Collaboration GUI.</comment>
+      <text xml:space="preserve">{{Comment|CommentPerson=User:WikiSysop|CommentRelatedArticle=CollabTest1|CommentDatetime=2010-11-03T17:29:06+01:00|CommentContent=WikiSysop deleted this comment on Wed, 03 Nov 2010 16:33:18 +0000|CommentWasDeleted=true|}}</text>
+    <hash>a2198d3046d05f9623c292595e612426</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Comment:CollaborationTest1 1289903706637</title>
+    <id>59</id>
+    <revision>
+      <id>128</id>
+      <timestamp>2010-11-16T10:35:07Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <comment>This comment article was created by Collaboration Extension.</comment>
+      <text xml:space="preserve">{{Comment|CommentPerson=User:WikiSysop|CommentRelatedArticle=CollaborationTest1|CommentDatetime=2010-11-16T11:35:06+01:00|CommentContent=test #1|}}</text>
+    <hash>d0acef5045daa1257b6b30e68f13f617</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Comment:CollaborationTest1 1289903721788</title>
+    <id>60</id>
+    <revision>
+      <id>129</id>
+      <timestamp>2010-11-16T10:35:22Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <comment>This comment article was created by Collaboration Extension.</comment>
+      <text xml:space="preserve">{{Comment|CommentPerson=User:WikiSysop|CommentRelatedArticle=CollaborationTest1|CommentDatetime=2010-11-16T11:35:22+01:00|CommentContent=test #2|}}</text>
+    <hash>5b065a039178797fe7f614c8ba568cdd</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Comment:CollaborationTest1 1289904261152</title>
+    <id>73</id>
+    <revision>
+      <id>145</id>
+      <timestamp>2010-11-16T10:44:22Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <comment>This comment article was created by Collaboration Extension.</comment>
+      <text xml:space="preserve">{{Comment|CommentPerson=User:WikiSysop|CommentRelatedArticle=CollaborationTest1|CommentRelatedComment=CollaborationTest1_1289903706637|CommentDatetime=2010-11-16T11:44:21+01:00|CommentContent=fasfsdfa |}}</text>
+    <hash>73b64beffaed2fc9a3b3e496986c7a17</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Template:Comment</title>
+    <id>87</id>
+    <revision>
+      <id>160</id>
+      <timestamp>2010-11-03T16:17:26Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">&lt;noinclude&gt;{{CE Bundle}}&lt;/noinclude&gt;&lt;noinclude&gt;{{Template
+|PAGENAME=Template:Comment
+|Has author=User:WikiSysop
+|part of=SMWplus Basic Ontology Section
+|rationale=Creates a comment.
+|long description=This template is used to create a comment with the Collaboration Extension.
+|parameters=&lt;pre&gt;{{Comment
+|CommentPerson
+|CommentContent
+|CommentDatetime
+|CommentRelatedArticle
+|CommentRating
+}}&lt;/pre&gt;
+|defines category=Category:Comment
+}}
+{{Copyright of article
+|own work=True
+|copyright holder=Ontoprise GmbH
+|year=2010
+}}
+&lt;/noinclude&gt;
+&lt;includeonly&gt;''Comment for {{#if: {{{CommentRelatedArticle|}}} 
+| [[Belongs to article::{{{CommentRelatedArticle|}}}]] | nothing
+}}{{#if: {{{CommentRelatedComment|}}} 
+| &amp;nbsp;and a reply to [[Belongs to comment::{{{CommentRelatedComment|}}}]] | 
+}}''&lt;!-- start comment (do not change css-classes)--&gt;
+&lt;!-- start comment person (do not change css-class.) --&gt;
+&lt;div class=&quot;collabComResPerson&quot;&gt;
+{{#if: {{{CommentPerson|}}} 
+| {{#vardefine:userimage|{{#ask: [[{{{CommentPerson}}}]] | ?User_image = | link=none}} }} 
+}}
+{{#if:{{#var:userimage}}
+| [[{{#var:userimage}}|frameless|48x48px|nopreview|link={{{CommentPerson}}}]] 
+| [[File:Defaultuser.gif|frameless|48px|nopreview|link={{{CommentPerson}}}]] 
+}}&lt;/div&gt;&lt;!-- end comment person 
+--&gt;&lt;!-- start comment rating 
+--&gt;{{#if:{{{CommentRating|}}}
+| [[Has comment rating::{{{CommentRating|}}}|]]&lt;div class =&quot;collabComResRating&quot;&gt;{{#ifexpr: {{{CommentRating|}}} &lt; 2 | {{#ifexpr: {{{CommentRating|}}} &gt; -2 | Article quality rated:&lt;div class=&quot;collabComResRatingIcon&quot;&gt;{{#ifexpr: {{{CommentRating|}}} = -1 | [[File:Bad_active.png]] }}{{#ifexpr: {{{CommentRating|}}} = 0 | [[File:Neutral_active.png]] }}{{#ifexpr: {{{CommentRating|}}} = 1 | [[File:Good_active.png]] }}&lt;/div&gt;|}}| }}&lt;/div&gt;|}}&lt;!-- end comment rating 
+--&gt;&lt;div class=&quot;collabComResRight&quot;&gt;&lt;div class=&quot;collabComResUsername&quot;&gt;
+{{#if: {{{CommentPerson|}}} 
+|{{#ifexist:{{{CommentPerson}}}
+|[[{{{CommentPerson|}}}]], 
+|{{{CommentPerson|}}},&amp;nbsp; 
+}}[[Has comment person::{{{CommentPerson|}}}| ]]|
+}}&lt;/div&gt;
+&lt;!-- start comment date
+--&gt;{{#if: {{{CommentDatetime|}}} 
+| &lt;div class=&quot;collabComResDate&quot;&gt;[[Has comment date::{{{CommentDatetime|}}}]]&lt;/div&gt;
+}}&lt;!-- end comment date
+--&gt;&lt;!-- start comment content
+--&gt;&lt;div class=&quot;collabComResText&quot;&gt;
+{{#if:{{{CommentContent|}}}
+|[[Has comment text::{{{CommentContent|}}}]]}}&lt;/div&gt;
+&lt;!-- end comment content--&gt;&lt;/div&gt;
+[[Comment was deleted::{{{CommentWasDeleted|false}}}]]
+&lt;!-- end comment --&gt;[[Category:Comment]]
+&lt;/includeonly&gt;</text>
+    <hash>06098137991a5150ded9cc272a5cc9b9</hash>
     </revision>
   </page>
 </mediawiki>
