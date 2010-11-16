@@ -28,14 +28,16 @@
 
 	<configs>
 		<new>
-			<require name="wysiwyg"
-				file="extensions/WYSIWYG/WYSIWYG.php" />
+		<require name="wysiwygtab" file="extensions/SMWHalo/includes/SMW_WYSIWYG.php"/>
+		<php>if (array_key_exists('mode', $_REQUEST) &amp;&amp; $_REQUEST['mode'] == 'wysiwyg' || (array_key_exists('action', $_REQUEST) &amp;&amp; $_REQUEST['action'] == 'ajax' &amp;&amp; stripos($_REQUEST['rs'], 'wfSajax') === 0)) {
+require_once ("/extensions/FCKeditor/FCKeditor.php");
+}       </php>
 		</new>
-		<update from="132">
-           <require name="wysiwyg" remove="true"
-                file="extensions/FCKeditor/FCKeditor.php" />
-            <require name="wysiwyg"
-                file="extensions/WYSIWYG/WYSIWYG.php" />
+		<update from="132" removeAll="true">
+          <require name="wysiwygtab" file="extensions/SMWHalo/includes/SMW_WYSIWYG.php"/>
+          <php>if (array_key_exists('mode', $_REQUEST) &amp;&amp; $_REQUEST['mode'] == 'wysiwyg' || (array_key_exists('action', $_REQUEST) &amp;&amp; $_REQUEST['action'] == 'ajax' &amp;&amp; stripos($_REQUEST['rs'], 'wfSajax') === 0)) {
+require_once ("/extensions/FCKeditor/FCKeditor.php");
+}         </php>
         </update>
 	</configs>
 </deploydescriptor>
