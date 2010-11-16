@@ -378,3 +378,18 @@ enableSMWUserManual();
 /*start-ultrapedia*/
 require_once("extensions/Ultrapedia/includes/UP_Initialize.php");
 /*end-ultrapedia*/
+
+/*start-unifiedsearch*/
+/*start-variable-wgSearchType*/$wgSearchType = 'LuceneSearch';/*end-variable-wgSearchType*/
+/*start-variable-wgLuceneHost*/$wgLuceneHost = 'localhost';/*end-variable-wgLuceneHost*/
+/*start-variable-wgLucenePort*/$wgLucenePort = 8123;/*end-variable-wgLucenePort*/
+/*start-variable-wgLuceneSearchVersion*/$wgLuceneSearchVersion = 2.1;/*end-variable-wgLuceneSearchVersion*/
+/*start-variable-wgUSPathSearch*/$wgUSPathSearch=true;/*end-variable-wgUSPathSearch*/
+$wgLuceneSearchTimeout=5;
+require_once('extensions/EnhancedRetrieval/includes/EnhancedRetrieval.php');
+@include( '/extensions/EnhancedRetrieval/OAI/OAIRepo.php' );
+$oaiAgentRegex = '/experimental/';
+$oaiAuth = true;
+$oaiAudit = true;
+$oaiAuditDatabase = 'semwiki_en';
+/*end-unifiedsearch*/
