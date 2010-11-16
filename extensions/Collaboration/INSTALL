@@ -5,8 +5,8 @@ Requirements:
 =============
 
 	MediaWiki 1.15.1 or higher
-	Semantic Mediawiki 1.5
-	Script Manager 1.0 or higher
+	Semantic Mediawiki 1.4.3 or higher
+	Script Manager 1.0.1 or higher
 	ParserFunctions
 	Variables
 
