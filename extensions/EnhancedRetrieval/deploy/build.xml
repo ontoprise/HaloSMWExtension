@@ -58,6 +58,7 @@
 				<include name="COPYING" />
 				<include name="INSTALL" />
 				<include name="deploy.xml" />
+				<include name="patch_for*"/>
 			</fileset>
    			<fileset dir="../../../patches/">
 				<include name="patch.php" />
