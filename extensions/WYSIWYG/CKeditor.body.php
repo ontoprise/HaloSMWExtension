@@ -510,11 +510,12 @@ function initEditor(){
 	if( showFCKEditor & RTE_TOGGLE_LINK ){
 		ckTools.innerHTML='[<a class="fckToogle" id="toggle_wpTextbox1" href="javascript:void(0)" onclick="ToggleCKEditor(\'toggle\',\'wpTextbox1\')">'+ editorLink +'</a>] ';
 	}
+    /*
 	if( showFCKEditor & RTE_POPUP ){
 		var style = (showFCKEditor & RTE_VISIBLE) ? 'style="display:none"' : "";
 		ckTools.innerHTML+='<span ' + style + ' id="popup_wpTextbox1">[<a class="fckPopup" href="javascript:void(0)" onclick="ToggleCKEditor(\'popup\',\'wpTextbox1\')">{$newWinMsg}</a>]</span>';
 	}
-
+    */
 	if( showFCKEditor & RTE_VISIBLE ){
 		if ( toolbar ){	// insert wiki buttons
 			// Remove the mwSetupToolbar onload hook to avoid a JavaScript error with FF.
@@ -546,9 +547,9 @@ if( $this->showFCKEditor & ( RTE_TOGGLE_LINK | RTE_POPUP ) ){
 function ToggleCKEditor( mode, objId ){
 	var SRCtextarea = document.getElementById( objId );
 	if( mode == 'popup' ){
-		if ( ( showFCKEditor & RTE_VISIBLE ) && ( CKEDITOR.status == 'ready' ) ) { // if CKeditor is up-to-date
-			var oEditorIns = CKEDITOR.GetInstance( objId );
-			var text = oEditorIns.GetData( oEditorIns.Config.FormatSource );
+		if ( ( showFCKEditor & RTE_VISIBLE ) && ( CKEDITOR.status == 'basic_ready' ) ) { // if CKeditor is up-to-date
+			var oEditorIns = CKEDITOR.instances[objId];
+			var text = oEditorIns.getData();
 			SRCtextarea.value = text; // copy text to textarea
 		}
 		FCKeditor_OpenPopup('CKEDITOR', objId);
