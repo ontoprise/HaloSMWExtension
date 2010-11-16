@@ -460,8 +460,8 @@ Section "Lucene search" lucene
          ${EndIf}
         
         ;change LocalSettings
-        SetOutPath "$MEDIAWIKIDIR"
-        nsExec::ExecToLog '"$PHP" "$MEDIAWIKIDIR\installer\changeLS.php" importUS=1 ls=LocalSettings.php'
+        ;SetOutPath "$MEDIAWIKIDIR"
+        ;nsExec::ExecToLog '"$PHP" "$MEDIAWIKIDIR\installer\changeLS.php" importUS=1 ls=LocalSettings.php'
         
         ; do not install as service since it does not work at startup
         ;CALL installLuceneAsService
