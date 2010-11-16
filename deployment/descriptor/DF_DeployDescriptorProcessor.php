@@ -86,12 +86,19 @@ class DeployDescriptionProcessor {
 		}
 		list($insertpos, $ext_found) = $this->getInsertPosition($this->dd_parser->getID());
 
-		$prefix = substr($this->localSettingsContent, 0 , $insertpos);
-
-		$suffix = substr($this->localSettingsContent, $insertpos);
-
-		$startTag = $ext_found ? "" : "\n/*start-".$this->dd_parser->getID()."*/";
-		$endTag = $ext_found ? "" : "\n/*end-".$this->dd_parser->getID()."*/\n";
+		if ($ext_found && $this->dd_parser->doRemoveAllConfigs()) {
+			// extension exists but all configs should be replaced 
+            $prefix = substr($this->localSettingsContent, 0 , strpos($this->localSettingsContent, "/*start-".$this->dd_parser->getID()."*/") + strlen("/*start-".$this->dd_parser->getID()."*/"));
+            $suffix = substr($this->localSettingsContent, strpos($this->localSettingsContent, "/*end-".$this->dd_parser->getID()."*/") );
+			$startTag = "";
+            $endTag = "";
+		} else {
+			// add new configblock or append to existing
+			$prefix = substr($this->localSettingsContent, 0 , $insertpos);
+			$suffix = substr($this->localSettingsContent, $insertpos);
+			$startTag = $ext_found ? "" : "\n/*start-".$this->dd_parser->getID()."*/";
+			$endTag = $ext_found ? "" : "\n/*end-".$this->dd_parser->getID()."*/\n";
+		}
 		$this->localSettingsContent = $prefix . $startTag . $insertions . $endTag . $suffix;
 
 		if (!$dryRun) $this->writeLocalSettingsFile($this->localSettingsContent);

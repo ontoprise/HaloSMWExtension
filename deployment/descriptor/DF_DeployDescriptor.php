@@ -41,6 +41,7 @@ class DeployDescriptor {
 	var $resources; // resources: images
 	var $oc_resources; // resources which get only copied
 	var $configs;   // config elements concerning localsettings changes
+	var $removeAllConfigs;
 
 	var $successors; // extensions which are successors of this one in localsettings
 	var $userReqs;  // variables which need to be defined by the user
@@ -87,6 +88,7 @@ class DeployDescriptor {
 		$this->resources_xml = $this->dom->xpath('/deploydescriptor/resources/file[not(@dest)]');
 		$this->resources_onlycopyxml = $this->dom->xpath('/deploydescriptor/resources/file[@dest]');
 		$this->mappings_xml = $this->dom->xpath('/deploydescriptor/mappings/file');
+		$this->removeAllConfigs = false;
 		$this->createConfigElements($fromVersion, $fromPatchlevel); // assume new config, not update
 	}
 
@@ -106,6 +108,15 @@ class DeployDescriptor {
 	 */
 	public function getConfigs() {
 		return $this->configs;
+	}
+	
+	/**
+	 * True if the selected configuration requires to remove all configuration items
+	 * before they are applied.
+	 * @return boolean
+	 */
+	public function doRemoveAllConfigs() {
+		return $this->removeAllConfigs;
 	}
 	
 	/**
@@ -163,6 +174,10 @@ class DeployDescriptor {
 				// if update config missing, do not use anything
 				// should work, otherwise the dd is false.
 				return;
+			}
+			
+			if (isset($update[0]->attributes()->removeAll)) {
+				$this->removeAllConfigs = true;
 			}
 		}
 
