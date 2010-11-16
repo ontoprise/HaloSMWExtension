@@ -35,8 +35,9 @@ function wfSajaxGetImageUrl( $term ) {
 
 	$srcPart = substr( $originalLink, strpos( $originalLink, "src=" )+ 5 );
 	$url = strtok( $srcPart, '"' );
-
-	return $url;
+    if (substr($url, -(strlen($term))) == $term)
+        return $url;
+    return "";
 }
 
 function wfSajaxSearchSpecialTagCKeditor( $empty ) {
