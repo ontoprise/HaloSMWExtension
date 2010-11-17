@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<deploydescriptor>
+    <global>
+        <version>030</version>
+        <id>semanticformsinputs</id>
+        <vendor>Stephan Gambke</vendor>
+        <instdir>extensions/SemanticFormsInputs</instdir>
+        <description>
+            Additional inputs for SemanticForms
+        </description>
+        <dependencies>
+
+            <dependency from="200" to="200">semanticforms</dependency>
+        </dependencies>
+    </global>
+    <codefiles>
+        <!-- TODO: add all others -->
+    </codefiles>
+    <wikidumps>
+        <!-- empty -->
+    </wikidumps>
+    <resources>
+        <!-- empty -->
+    </resources>
+
+    <configs>
+        <successor ext="semanticforms" />
+        <new>
+            <require name="sfi_init"
+                file="extensions/SemanticFormsInputs/SemanticFormsInputs.php" />
+
+        </new>
+        <uninstall>
+
+        </uninstall>
+    </configs>
+
+</deploydescriptor>
+
