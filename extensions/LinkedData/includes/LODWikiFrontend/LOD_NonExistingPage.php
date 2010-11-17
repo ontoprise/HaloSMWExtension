@@ -224,7 +224,7 @@ class  LODNonExistingPage extends Article {
 	 * defined and its content (wiki text) is added to the array $content.
 	 *
 	 * @param string $uri
-	 * 		URI of the Linked Data item that can have types (rdfs:type)
+	 * 		URI of the Linked Data item that can have types (rdf:type)
 	 * @param array<string => string> $content
 	 * 		This array contains key/values pairs for the content. This method
 	 * 		adds the content of the category templates with the key
@@ -298,10 +298,12 @@ SPARQL;
 	 */
 	private static function getCreateLink(Article $article) {
 		$t = $article->getTitle();
-		$link = $t->getFullUrl(array('action' => 'edit', 'preloadNEP' => 'true'));
+		$link = $t->getFullUrl(array('action' => 'edit', 
+									 'preloadNEP' => 'true',
+									 'mode' => 'wysiwyg'));
 		$name = $t->getFullText();
 		$message = wfMsg('lod_nep_link', $name);
-		$link = "[$link $message]";
+		$link = "[$link $message] <br />";
 		return $link;
 	}
 }
