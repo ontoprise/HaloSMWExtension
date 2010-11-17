@@ -28,7 +28,7 @@
 	</resources>
 
 	<configs>
-
+        <successor ext="smw"/>
 		<new>
 			<require name="arclib_init"
 				file="extensions/ARCLibrary/ARCLibrary.php" />
