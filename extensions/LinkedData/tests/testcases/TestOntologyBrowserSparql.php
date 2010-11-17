@@ -98,7 +98,9 @@ class TestOntologyBrowserSparql extends PHPUnit_Framework_TestCase {
 
 	}
 
-	
+	/**
+	 * Tests retrieving all annotations of instances.
+	 */
 	function testGetAnnotations() {
 		$wiki = wfMsg("smw_ob_source_wiki");
 		$prefix = "http://mywiki/a#";
@@ -159,7 +161,9 @@ class TestOntologyBrowserSparql extends PHPUnit_Framework_TestCase {
 
 	}
 
-	
+	/**
+	 * This function tests retrieving all instance with a certain property.
+	 */
 	function testGetInstancesUsingProperty() {
 		$wiki = wfMsg("smw_ob_source_wiki");
 		$r = smwf_ob_OntologyBrowserAccess("getInstancesUsingProperty", "HasPower##80##0", $wiki);
@@ -192,6 +196,9 @@ class TestOntologyBrowserSparql extends PHPUnit_Framework_TestCase {
 
 	}
 
+	/**
+	 * This function tests retrieving all categories for a certain instance.
+	 */
 	function testGetCategoryForInstance() {
 		$prefix = "http://mywiki/a#";
 		
@@ -236,14 +243,15 @@ class TestOntologyBrowserSparql extends PHPUnit_Framework_TestCase {
 
 	}
 
-	
+	/**
+	 * This function tests retrieving all instances that match a given filter.
+	 */
 	function testFilterBrowse() {
 		$source = wfMsg("smw_ob_source_wiki");
 		$r = smwf_ob_OntologyBrowserAccess("filterBrowse", "instance##Pri", $source);
 		$this->assertTrue(strpos($r,'title_url="Prius" title="Prius"') !== false);
 
 		$r = smwf_ob_OntologyBrowserAccess("filterBrowse", "instance##Pri", "Toyota");
-	
 		$this->assertTrue(strpos($r,'title_url="Prius-II" title="Prius-II"') !== false);
 		$this->assertTrue(strpos($r,'title_url="Prius-III" title="Prius-III"') !== false);
 
