@@ -14,6 +14,45 @@ CKEDITOR.plugins.add( 'mediawiki',
 
 	init : function( editor )
 	{
+        // add the CSS for general styles of Mediawiki elements
+        editor.addCss(
+            'img.fck_mw_frame' +
+            '{' +
+                'background-color: #F9F9F9;' +
+                'border: 1px solid #CCCCCC;' +
+                'padding: 3px !important;' +
+            '}\n' +
+            'img.fck_mw_right' +
+            '{' +
+                'margin: 0.5em 5px 0.8em 1.4em;' +
+                'clear: right;'+
+                'float: right;'+
+            '}\n' +
+            'img.fck_mw_left' +
+            '{' +
+                'margin: 0.5em 1.4em 0.8em 0em;' +
+                'clear: left;' +
+                'float: left;' +
+            '}\n' +
+            'img.fck_mw_center' +
+            '{' +
+                'margin-left: auto;' +
+                'margin-right: auto;' +
+                'margin-bottom: 0.5em;' +
+                'display: block;' +
+            '}\n' +
+            'img.fck_mw_notfound' +
+            '{' +
+                'font-size: 1px;' +
+                'height: 25px;' +
+                'width: 25px;' +
+                'overflow: hidden;' +
+            '}\n' +
+            'img.fck_mw_border' +
+            '{' +
+                'border: 1px solid #dddddd;' +
+            '}\n'
+        );
 		// Add the CSS styles for special wiki placeholders.
 		editor.addCss(
 			'img.FCK__MWRef' +
@@ -240,8 +279,6 @@ CKEDITOR.plugins.add( 'mediawiki',
 	}
 
 });
-
-CKEDITOR.config.image_previewText = 'Preview';
 
 CKEDITOR.customprocessor = function( editor )
 {
