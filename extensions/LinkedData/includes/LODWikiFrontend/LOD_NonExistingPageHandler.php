@@ -64,12 +64,21 @@ class  LODNonExistingPageHandler  {
 	 * 
 	 */
 	public static function onArticleFromTitle(Title &$title, &$article) {
-		global $wgRequest;
+		global $wgRequest, $mediaWiki;
+		
+		$action = $wgRequest->getVal('action', 'view');
+		$isView = $action === 'view';
+		$isRedlink = $wgRequest->getVal('redlink', '') === '1';
 		
 		if (!$title->exists()
-			 && $wgRequest->getVal('action', 'view') === 'view'
+			 && ($isView || $isRedlink)
 			 && $wgRequest->getVal('title') === $title->getPrefixedDBkey()) {
 			$article = new LODNonExistingPage($title);
+			// Overwrite the edit mode in case of a redlink
+			if ($action === 'edit') {
+				$action = 'view';
+				$mediaWiki->setVal('action', $action);
+			}
 		}
 		
 		return true;
