@@ -49,4 +49,8 @@ global $asfDisplayPropertiesAndCategoriesAsLinks;
 $asfDisplayPropertiesAndCategoriesAsLinks = true;
 
 
-
+/*
+ * Specify whether to use the Halo autocompletion
+ */
+global $asfUseHaloAutocompletion;
+$asfUseHaloAutocompletion = true;

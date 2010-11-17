@@ -94,6 +94,33 @@ class ASFPropertyFormData {
 		//deal with input type
 		list($inputType, $size, $rows, $cols, $autocompletion, $values) = 
 			$this->getFormFieldInputTypeMetadata();
+		
+		//deal with autocompletion
+		global $asfUseHaloAutocompletion;
+		if($this->autocompletionRange && $autocompletion == 'category'){
+			$this->autocompletionRange = substr($this->autocompletionRange, strpos($this->autocompletionRange, ':')+1);
+			if($asfUseHaloAutocompletion){
+				if($inputType == 'text') $inputType = 'haloACtext';
+				if($inputType == 'textarea') $inputType = 'haloACtextarea';
+				$autocompletion = ' |constraints=ask: [[Category:'.$this->autocompletionRange.']]';
+			} else {
+				$autocompletion = ' |autocomplete on category='.$this->autocompletionRange;
+			}
+		} else if ($autocompletion == 'values'){
+			if($asfUseHaloAutocompletion){
+				if($inputType == 'text') $inputType = 'haloACtext';
+				if($inputType == 'textarea') $inputType = 'haloACtextarea';
+				$autocompletion = ' |constraints=ask: [['.$this->titleObject->getText().'::+]] ,'.$this->titleObject->getText();
+				echo($autocompletion);
+				//error();
+			} else {
+				$autocompletion = ' |autocomplete';
+			}
+		} else {
+			$autocompletion = '';
+		}
+			
+			
 		$syntax .= ' |input type='.$inputType;
 		if($size) $syntax .= ' |size='.$size;
 		if($rows) $syntax .= ' |rows='.$rows;
@@ -101,12 +128,7 @@ class ASFPropertyFormData {
 		if($values) $syntax .= ' |values='.$values;
 		
 		//deal with autocompletion
-		if($this->autocompletionRange && $autocompletion == 'category'){
-			$this->autocompletionRange = substr($this->autocompletionRange, strpos($this->autocompletionRange, ':')+1);
-			$syntax .= ' |autocomplete on category='.$this->autocompletionRange;
-		} else if ($autocompletion == 'values'){
-			$syntax .= ' |autocomplete';
-		}
+		$syntax .= $autocompletion;
 		
 		//deal with uploadable
 		if($this->isUploadable){
