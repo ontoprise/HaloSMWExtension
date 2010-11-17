@@ -64,10 +64,6 @@ CKEDITOR.dialog.add( 'MWImage', function( editor ) {
     var previewPreloader;
     
     var GetImageUrl = function( dialog, img ) {
-        var StartSearchImageUrl = function () {
-            window.parent.sajax_request_type = 'GET' ;
-            window.parent.sajax_do_call( 'wfSajaxGetImageUrl', [img], LoadPreviewImage ) ;
-        }
         var LoadPreviewImage = function(result) {
             var url = result.responseText.Trim();
             if (! url)
@@ -78,19 +74,37 @@ CKEDITOR.dialog.add( 'MWImage', function( editor ) {
 			dialog.preview.setAttribute( 'src', previewPreloader.$.src );
 			updatePreview( dialog );
         }
-        var updatePreview = function( dialog ) {
-			//Don't load before onShow.
-			if ( !dialog.originalElement || !dialog.preview )
-				return 1;
-
-			// Read attributes and update imagePreview;
-			dialog.commitContent( PREVIEW, dialog.preview );
-			return 0;
-		}
-
-        StartSearchImageUrl();
-
+        window.parent.sajax_request_type = 'GET' ;
+        window.parent.sajax_do_call( 'wfSajaxGetImageUrl', [img], LoadPreviewImage ) ;
     }
+
+    var updatePreview = function( dialog ) {
+		//Don't load before onShow.
+		if ( !dialog.originalElement || !dialog.preview )
+			return 1;
+
+		// Read attributes and update imagePreview;
+		dialog.commitContent( PREVIEW, dialog.preview );
+		return 0;
+	}
+
+    var SetSearchMessage = function ( dialog, message ) {
+        message = searchLabel.replace(/%s/, message);
+        var	e = dialog.getContentElement( 'info', 'imgList' ),
+        label = document.getElementById(e.domId).getElementsByTagName('label')[0];
+        e.html = message;
+        label.innerHTML = message;
+    }
+
+    var ClearSearch = function(dialog) {
+        var	e = dialog.getContentElement( 'info', 'imgList' );
+        e.items = [];
+        var div = document.getElementById(e.domId),
+            select = div.getElementsByTagName('select')[0];
+        while ( select.options.length > 0 )
+            select.remove( 0 )
+    }
+
     var OnUrlChange = function( dialog ) {
 
         //var dialog = this.getDialog();
@@ -101,7 +115,7 @@ CKEDITOR.dialog.add( 'MWImage', function( editor ) {
 
             if ( link.length < 2  )
                     return ;
-            SetSearchMessage( 'searching...' ) ;
+            SetSearchMessage( dialog, 'searching...' ) ;
             
             // Make an Ajax search for the pages.
             window.parent.sajax_request_type = 'GET' ;
@@ -112,37 +126,21 @@ CKEDITOR.dialog.add( 'MWImage', function( editor ) {
             var results = result.responseText.split( '\n' ),
                 select = dialog.getContentElement( 'info', 'imgList' );
 
-            ClearSearch() ;
+            ClearSearch(dialog) ;
 
             if ( results.length == 0 || ( results.length == 1 && results[0].length == 0 ) ) {
-                SetSearchMessage( 'no images found' ) ;
+                SetSearchMessage( dialog, 'no images found' ) ;
             }
             else {
                 if ( results.length == 1 )
-                    SetSearchMessage( 'one image found' ) ;
+                    SetSearchMessage( dialog, 'one image found' ) ;
                 else
-                    SetSearchMessage( results.length + ' images found' ) ;
+                    SetSearchMessage( dialog, results.length + ' images found' ) ;
 
                 for ( var i = 0 ; i < results.length ; i++ )
                     select.add ( results[i].replace(/_/g, ' '), results[i] );
             }
 
-        }
-        var ClearSearch = function() {
-            var	e = dialog.getContentElement( 'info', 'imgList' );
-            e.items = [];
-            var div = document.getElementById(e.domId),
-                select = div.getElementsByTagName('select')[0];
-            while ( select.options.length > 0 )
-                select.remove( 0 )
-        }
-
-        var SetSearchMessage = function ( message ) {
-            message = searchLabel.replace(/%s/, message);
-            var	e = dialog.getContentElement( 'info', 'imgList' ),
-            label = document.getElementById(e.domId).getElementsByTagName('label')[0];
-            e.html = message;
-            label.innerHTML = message;
         }
 
         var e = dialog.getContentElement( 'info', 'imgFilename' ),
@@ -152,17 +150,17 @@ CKEDITOR.dialog.add( 'MWImage', function( editor ) {
             window.clearTimeout( searchTimer ) ;
 
         if( /^(http|https):\/\//.test( link ) ) {
-            SetSearchMessage( 'external link... no search for it' ) ;
+            SetSearchMessage( dialog, 'external link... no search for it' ) ;
             return ;
         }
 
         if ( link.length < 1  )	{
-            ClearSearch() ;
-            SetSearchMessage( 'start typing in the above field' ) ;
+            ClearSearch(dialog) ;
+            SetSearchMessage( dialog, 'start typing in the above field' ) ;
             return ;
         }
 
-        SetSearchMessage( 'stop typing to search' ) ;
+        SetSearchMessage( dialog, 'stop typing to search' ) ;
         searchTimer = window.setTimeout( StartSearch, 500 ) ;
 
     }
@@ -276,10 +274,6 @@ CKEDITOR.dialog.add( 'MWImage', function( editor ) {
 											'<div id="' + imagePreviewBoxId + '" class="ImagePreviewBox"><table><tr><td>'+
 											'<a href="javascript:void(0)" target="_blank" onclick="return false;" id="' + previewLinkId + '">'+
 											'<img id="' + previewImageId + '" alt="" /></a>' +
-											( editor.config.image_previewText ||
-											'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. '+
-											'Maecenas feugiat consequat diam. Maecenas metus. Vivamus diam purus, cursus a, commodo non, facilisis vitae, '+
-											'nulla. Aenean dictum lacinia tortor. Nunc iaculis, nibh non iaculis aliquam, orci felis euismod neque, sed ornare massa mauris sed velit. Nulla pretium mi et risus. Fusce mi pede, tempor id, cursus ac, ullamcorper nec, enim. Sed tortor. Curabitur molestie. Duis velit augue, condimentum at, ultrices a, luctus ut, orci. Donec pellentesque egestas eros. Integer cursus, augue in cursus faucibus, eros pede bibendum sem, in tempus tellus justo quis ligula. Etiam eget tortor. Vestibulum rutrum, est ut placerat elementum, lectus nisl aliquam velit, tempor aliquam eros nunc nonummy metus. In eros metus, gravida a, gravida sed, lobortis id, turpis. Ut ultrices, ipsum at venenatis fringilla, sem nulla lacinia tellus, eget aliquet turpis mauris non enim. Nam turpis. Suspendisse lacinia. Curabitur ac tortor ut ipsum egestas elementum. Nunc imperdiet gravida mauris.' ) +
 											'</td></tr></table></div></div>'
 										}
 									]
@@ -344,15 +338,23 @@ CKEDITOR.dialog.add( 'MWImage', function( editor ) {
                                                     switch (this.getValue()) {
                                                         case 'Thumbnail':
                                                             element.setAttribute('_fck_mw_type', 'thumb');
+                                                            element.removeClass('fck_mw_border');
+                                                            element.addClass('fck_mw_frame');
                                                             break;
                                                         case 'Frame' :
                                                             element.setAttribute('_fck_mw_type', 'frame');
+                                                            element.removeClass('fck_mw_border');
+                                                            element.addClass('fck_mw_frame');
                                                             break;
                                                         case 'Border' :
                                                             element.setAttribute('_fck_mw_type', 'border');
+                                                            element.removeClass('fck_mw_frame');
+                                                            element.addClass('fck_mw_border');
                                                             break;
                                                         default:
                                                             element.setAttribute('_fck_mw_type', '');
+                                                            element.removeClass('fck_mw_border');
+                                                            element.addClass('fck_mw_frame');
                                                     }
                                                 }
                                             }
@@ -379,12 +381,16 @@ CKEDITOR.dialog.add( 'MWImage', function( editor ) {
                                         commit : function( type, element ) {
                                             if ( type == IMAGE ) {
                                                 if ( this.getValue() || this.isChanged() ) {
-                                                    var className = element.getAttribute( 'class') || '';
-                                                    if ( className.match(/fck_mw_(right|left|center)/) &&
-                                                         this.getValue() ) {
-                                                        element.setAttribute( 'class',
-                                                            className.replace(/fck_mw_(right|left|center)/, this.getValue().toLowerCase().Trim() )
-                                                        );
+                                                    var newVal = this.getValue().toLowerCase().Trim(),
+                                                        classes = [ 'right', 'left', 'center' ];
+
+                                                    if ( newVal ) {
+                                                        for (var i = 0; i < classes.length; i++ ) {
+                                                            if ( newVal == classes[i] )
+                                                                element.addClass('fck_mw_' + classes[i]);
+                                                            else
+                                                                element.removeClass('fck_mw_' + classes[i]);
+                                                        }
                                                     }
                                                     
                                                 }
@@ -502,6 +508,13 @@ CKEDITOR.dialog.add( 'MWImage', function( editor ) {
                 // Set attributes.
 				this.commitContent( IMAGE, this.imageElement );
 
+                // set some default classes for alignment and border if this is not defined
+                var attrClass = this.imageElement.getAttribute('class');
+                if ( !( attrClass && attrClass.match(/fck_mw_(frame|border)/) ) )
+                    this.imageElement.addClass('fck_mw_border');
+                if ( !( attrClass && attrClass.match(/fck_mw_(left|right|center)/) ) )
+                    this.imageElement.addClass('fck_mw_right');
+
                 // Remove empty style attribute.
 				if ( !this.imageElement.getAttribute( 'style' ) )
 					this.imageElement.removeAttribute( 'style' );
@@ -525,6 +538,12 @@ CKEDITOR.dialog.add( 'MWImage', function( editor ) {
                     select = div.getElementsByTagName('select')[0];
                 while ( select.options.length > 0 )
                     select.remove( 0 );
+                // and set correct label for image list
+                e = this.getContentElement( 'info', 'imgList' ),
+                    label = document.getElementById(e.domId).getElementsByTagName('label')[0];
+                var message = 'Automatic search results (start typing in the above field)';
+                e.html = message;
+                label.innerHTML = message;
 
                 var editor = this.getParentEditor(),
                     selection = editor.getSelection(),
@@ -569,7 +588,25 @@ CKEDITOR.dialog.add( 'MWImage', function( editor ) {
 					this.preview.removeAttribute( 'src' );
 					this.preview.setStyle( 'display', 'none' );
 				}
-        	}
+
+        	},
+			onHide : function()
+			{
+				if ( this.preview )
+					this.commitContent( CLEANUP, this.preview );
+
+				if ( this.originalElement )
+				{
+					this.originalElement.removeListener( 'load', onImgLoadEvent );
+					this.originalElement.removeListener( 'error', onImgLoadErrorEvent );
+					this.originalElement.removeListener( 'abort', onImgLoadErrorEvent );
+					this.originalElement.remove();
+					this.originalElement = false;		// Dialog is closed.
+				}
+
+				delete this.imageElement;
+			}
+
 
         }
 }
