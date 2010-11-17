@@ -162,6 +162,7 @@ class ASFFormGenerator {
 			if(strpos($category, $wgLang->getNSText(NS_CATEGORY).':') === 0){
 				$category = substr($category, strpos($category, ":") +1);
 			}
+			$category = Str_replace('_', ' ', $category);
 			$categoryObject = Category::newFromName($category);
 			$categoryHierarchies[$category] = ASFFormGeneratorUtils::getSuperCategories($categoryObject->getTitle());
 		}
