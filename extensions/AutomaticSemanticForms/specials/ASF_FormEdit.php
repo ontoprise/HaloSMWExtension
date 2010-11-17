@@ -34,7 +34,7 @@ function execute($query) {
 		//Initialize category names array
 		$categoryNames = array();
 		if($categoryParam){
-			$categoryParam = str_replace('_', '', $categoryParam);
+			$categoryParam = str_replace('_', ' ', $categoryParam);
 			$categoryNames = explode(',', $categoryParam);
 			global $wgLang;
 			foreach($categoryNames as $key => $category){

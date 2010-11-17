@@ -81,6 +81,12 @@ class ASFFormPrinter extends SFFormPrinter {
 					$additionalCategoryAnnotations .= "[[".$category."]] ";
 				}
 				
+				//render for fck if necessary
+				global $wgFCKEditorDir;
+    			if ( $wgFCKEditorDir ) {
+					$additionalCategoryAnnotations = SFFormUtils::prepareTextForFCK($additionalCategoryAnnotations);
+    			}
+				
 				//todo:does this work with wysiwyg
 				$startFreeText = strpos($form_text, 'id="free_text"');
 				$endFreeText = strpos($form_text, '</textarea>', $startFreeText);
