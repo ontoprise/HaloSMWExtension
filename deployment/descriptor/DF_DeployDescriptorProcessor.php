@@ -87,11 +87,11 @@ class DeployDescriptionProcessor {
 		list($insertpos, $ext_found) = $this->getInsertPosition($this->dd_parser->getID());
 
 		if ($ext_found && $this->dd_parser->doRemoveAllConfigs()) {
-			// extension exists but all configs should be replaced 
-            $prefix = substr($this->localSettingsContent, 0 , strpos($this->localSettingsContent, "/*start-".$this->dd_parser->getID()."*/") + strlen("/*start-".$this->dd_parser->getID()."*/"));
-            $suffix = substr($this->localSettingsContent, strpos($this->localSettingsContent, "/*end-".$this->dd_parser->getID()."*/") );
+			// extension exists but all configs should be replaced
+			$prefix = substr($this->localSettingsContent, 0 , strpos($this->localSettingsContent, "/*start-".$this->dd_parser->getID()."*/") + strlen("/*start-".$this->dd_parser->getID()."*/"));
+			$suffix = substr($this->localSettingsContent, strpos($this->localSettingsContent, "/*end-".$this->dd_parser->getID()."*/") );
 			$startTag = "";
-            $endTag = "";
+			$endTag = "";
 		} else {
 			// add new configblock or append to existing
 			$prefix = substr($this->localSettingsContent, 0 , $insertpos);
@@ -151,7 +151,7 @@ class DeployDescriptionProcessor {
 				print "\n\nScript ".$rootDir."/".$script." failed!";
 				throw new RollbackInstallation();
 			}
-            $out = array(); // delete output
+			$out = array(); // delete output
 		}
 	}
 
@@ -235,7 +235,7 @@ class DeployDescriptionProcessor {
 				case 'r': throw new RollbackInstallation();
 				case 'n': break; // just ignore the patches completely
 			}
-			
+				
 			// clear patch.php output
 			$out = array();
 
@@ -601,6 +601,29 @@ class RequireConfigElement extends ConfigElement {
 }
 
 /**
+ * A generic replacement command. Useful to remove bugs.
+ *
+ * @author: Kai Kuehn / Ontoprise / 2010
+ *
+ */
+class ReplaceConfigElement extends ConfigElement {
+	var $search;
+	var $replacement;
+	
+	public function __construct($child) {
+		parent::__construct("replace");
+		$this->search = (string) $child[0]->search[0];
+		$this->replacement = (string) $child[0]->replacement[0];
+	}
+
+	public function apply(& $ls, $ext_id, $userValues = array()) {
+		$ls = str_replace($this->search, $this->replacement, $ls);
+		return ""; // do not return anything, just change
+	}
+	 
+}
+
+/**
  * Represents a arbitrary PHP statement in the settings.
  *
  * @author: Kai K�hn / Ontoprise / 2009
@@ -673,11 +696,11 @@ class FunctionCallConfigElement extends ConfigElement {
 			$end = strpos($fragment, '/*param-end-'.$this->functionname."*/");
 			if ($start === false || $end === false) {
 				return $appliedCommand;
-			} 
+			}
 			$mappings = $this->deserialize($this->argumentsAsXML, substr($fragment, $start, $end-$start));
 			$arguments = $this->serializeParameters($this->argumentsAsXML, $mappings);
 			$fragment = $this->replaceFunction($fragment, $arguments);
-    		$this->replaceExtensionFragment($ext_id, $fragment, $ls);
+			$this->replaceExtensionFragment($ext_id, $fragment, $ls);
 		}
 	}
 

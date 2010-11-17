@@ -22,7 +22,7 @@
  * 
  * Rollback an installation.
  *
- * @author: Kai Kühn / ontoprise / 2009
+ * @author: Kai Kï¿½hn / ontoprise / 2009
  *
  */
 class Rollback {
@@ -70,7 +70,7 @@ class Rollback {
 				$line = trim(fgets(STDIN));
 				if (strtolower($line) == 'n') {
 					print "\n\nAbort installation.";
-					die();
+					die(DF_TERMINATION_WITHOUT_FINALIZE);
 				}
 				Tools::remove_dir($this->tmpDir);
 			}

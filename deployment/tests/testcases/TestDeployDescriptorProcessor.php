@@ -14,6 +14,7 @@ class TestDeployDescriptorProcessor extends PHPUnit_Framework_TestCase {
     var $xml_function2;
     var $xml_require;
     var $xml_php;
+    var $xml_replace;
     
 
 	function setUp() {
@@ -22,6 +23,7 @@ class TestDeployDescriptorProcessor extends PHPUnit_Framework_TestCase {
 		$this->xml_function2 = file_get_contents('testcases/resources/test_deploy_function2.xml');
 		$this->xml_require = file_get_contents('testcases/resources/test_deploy_require.xml');
 		$this->xml_php = file_get_contents('testcases/resources/test_deploy_php.xml');
+		$this->xml_replace = file_get_contents('testcases/resources/test_deploy_replace.xml');
 
 	}
 
@@ -212,6 +214,18 @@ class TestDeployDescriptorProcessor extends PHPUnit_Framework_TestCase {
 		$this->assertTrue(!isset($testphp2));
 
 	}
+	
+    function testReplacement() {
+        $ddp2 = new DeployDescriptor($this->xml_replace);
+        $res = $ddp2->applyConfigurations("testcases/resources", true);
+            
+        global $testvar2;
+        eval($res);
+
+        $this->assertTrue(isset($testvar2));
+        $this->assertEquals("Halo rockt echt", $testvar2);
+
+    }
 }
 
 // testfunctions needed
