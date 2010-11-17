@@ -52,10 +52,14 @@
 		</new>
 		<update from="136">
 		    <patch file="patch_for_MW1.16.0.txt"/>
-			<require name="us_init" remove="true"
-				file="extensions/UnifiedSearch/includes/UnifiedSearch.php" />
-			<require name="us_init"
-				file="extensions/EnhancedRetrieval/includes/EnhancedRetrieval.php" />
+		    <replace>
+		      <search>extensions/UnifiedSearch/OAI/OAIRepo.php</search>
+		      <replacement>extensions/EnhancedRetrieval/OAI/OAIRepo.php</replacement>
+		    </replace>
+			<replace>
+              <search>extensions/UnifiedSearch/includes/UnifiedSearch.php</search>
+              <replacement>extensions/EnhancedRetrieval/includes/EnhancedRetrieval.php</replacement>
+            </replace>
 		</update>
 		<uninstall>
 			<script file="maintenance/setup.php" params="--delete" />
