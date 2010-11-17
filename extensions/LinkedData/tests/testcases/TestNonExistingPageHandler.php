@@ -416,12 +416,22 @@ class TestNonExistingPageHandler extends PHPUnit_Framework_TestCase {
     private function checkNonExistingArticles($articleName, array $expectedContent) {
     	global $wgRequest;
     	
+    	global $mediaWiki;
+    	$mediaWiki = new MediaWiki();
+    	
     	// Check article in view mode
 		$wgRequest->setVal('action', 'view');
 		$wgRequest->setVal('title', $articleName);
 		$this->verifyContent($articleName, "view", $expectedContent);
 
+    	// Check article in edit mode with redlink
 		$wgRequest->setVal('action', 'edit');
+		$wgRequest->setVal('redlink', '1');
+		$this->verifyContent($articleName, "view", $expectedContent);
+		
+    	// Check article in edit mode
+		$wgRequest->setVal('action', 'edit');
+		$wgRequest->setVal('redlink', null);
 		$wgRequest->setVal('preloadNEP', 'true');
 		$this->verifyContent($articleName, "edit", $expectedContent);
 		
@@ -439,7 +449,7 @@ class TestNonExistingPageHandler extends PHPUnit_Framework_TestCase {
     	// generate the text for the non-existing page
     	$text = "Foo";
     	switch ($mode) {
-    		case 'view': 
+    		case 'view':
     			$a = MediaWiki::articleFromTitle($t);
     			// Article must be of type LODNonExistingPage
     			$this->assertTrue($a instanceof LODNonExistingPage, 
