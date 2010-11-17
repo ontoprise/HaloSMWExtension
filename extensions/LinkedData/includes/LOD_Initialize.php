@@ -111,7 +111,7 @@ $lodgNEPCategoryPageTemplate = "MediaWiki:NEP/Category";
 ####
 # boolean - If <true>, the generic NEP template is used, even if the Linked Data
 # item has a type.
-$lodgNEPUseGenericTemplateIfCategoryMember = true;
+$lodgNEPUseGenericTemplateIfCategoryMember = false;
 
 ####
 # string - The Linked Data item can have several types which are mapped to wiki
