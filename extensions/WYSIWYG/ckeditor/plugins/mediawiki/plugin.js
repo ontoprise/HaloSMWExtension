@@ -689,10 +689,11 @@ CKEDITOR.customprocessor.prototype =
                                             stringBuilder.push( attribs ) ;
                                         stringBuilder.push( '\n' ) ;
 
-                                        for ( var c = 0 ; c < currentNode.cells.length ; c++ ) {
-                                            attribs = this._GetAttributesStr( currentNode.cells[c] ) ;
+                                        var cell = currentNode.firstElementChild;
+                                        while ( cell ) {
+                                            attribs = this._GetAttributesStr( cell ) ;
 
-                                            if ( currentNode.cells[c].tagName.toLowerCase() == "th" )
+                                            if ( cell.tagName.toLowerCase() == "th" )
                                                 stringBuilder.push( '!' ) ;
                                             else
                                                 stringBuilder.push( '|' ) ;
@@ -703,10 +704,11 @@ CKEDITOR.customprocessor.prototype =
                                             stringBuilder.push( ' ' ) ;
 
                                             this._IsInsideCell = true ;
-                                            this._AppendChildNodes( currentNode.cells[c], stringBuilder, prefix ) ;
+                                            this._AppendChildNodes( cell, stringBuilder, prefix ) ;
                                             this._IsInsideCell = false ;
 
                                             stringBuilder.push( '\n' ) ;
+                                            cell = cell.nextElementSibling;
                                         }
                                     }
                                     // not a <tr> found, then we only accept templates and special functions
