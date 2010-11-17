@@ -671,8 +671,8 @@ class SMWTripleStore extends SMWStore {
 						}
 						// in case of an error
 						// redirect query to the default SMW implementation
-						
-						return $this->smwstore->getQueryResult($query);
+						// currently deactivated
+						//return $this->smwstore->getQueryResult($query);
 						
 				}
 				return $sqr;
