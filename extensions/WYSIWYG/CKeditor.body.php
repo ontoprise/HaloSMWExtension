@@ -577,7 +577,6 @@ function ToggleCKEditor( mode, objId ){
 
 	if( ! CKEDITOR.ready ) return false; // sajax_do_call in action
 	if( ! (CKEDITOR.status == 'basic_ready') ) return false; // not loaded yet
-    var editor1 = objId;
 	var oEditorIns = CKEDITOR.instances[objId];
 	var oEditorIframe  = document.getElementById( 'cke_' + objId );
 	var CKtoolbar = document.getElementById( 'toolbar' );
