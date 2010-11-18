@@ -957,38 +957,41 @@ FunctionEnd
 Function installMemcached
     DetailPrint "Install memcached"
     SetOutPath "$INSTDIR"
-    nsExec::ExecToLog '"$INSTDIR\memcached.exe -d install"'
-    nsExec::ExecToLog '"$INSTDIR\memcached.exe -d start"'
+    nsExec::ExecToLog '"$INSTDIR\memcached\memcached.exe -d install"'
+    nsExec::ExecToLog '"$INSTDIR\memcached\memcached.exe -d start"'
   
+FunctionEnd
+
+Function un.uninstallMemcached
+    DetailPrint "Uninstall memcached"
+    SetOutPath "$INSTDIR"
+    nsExec::ExecToLog '"$INSTDIR\memcached\memcached.exe -d stop"'
+    nsExec::ExecToLog '"$INSTDIR\memcached\memcached.exe -d uninstall"'
+    SetOutPath "c:\temp\halo" #dummy to make installation dir removable
 FunctionEnd
 
 Function installAsWindowsService
 	SetOutPath "$INSTDIR"
     DetailPrint "Apache as service installed."
-    nsExec::ExecToLog '"$INSTDIR\apache\apache_installservice.bat"' 
+    nsExec::ExecToLog '"$INSTDIR\xampp_cli.exe installservice apache"' 
     DetailPrint "MySQL as service installed."
-    nsExec::ExecToLog '"$INSTDIR\mysql\mysql_installservice.bat"' 
+    nsExec::ExecToLog '"$INSTDIR\xampp_cli.exe installservice mysql"' 
     
     # Do not install Lucene as service (does not work) but register it in Autostart folder
     DetailPrint "Start Lucene automatically via AutoStart folder."
     CreateShortCut "$SMSTARTUP\LuceneForSMWPlus.lnk" "$INSTDIR\lucene\lucene-wiki.exe"
 FunctionEnd
 
-Function un.uninstallMemcached
-    DetailPrint "Uninstall memcached"
-    SetOutPath "$INSTDIR"
-    nsExec::ExecToLog '"$INSTDIR\memcached.exe -d stop"'
-    nsExec::ExecToLog '"$INSTDIR\memcached.exe -d uninstall"'
-    SetOutPath "c:\temp\halo" #dummy to make installation dir removable
-FunctionEnd
 
 ; Uninstaller
 Function un.uninstallAsWindowsService
 	SetOutPath "$INSTDIR"
     DetailPrint "Apache as service uninstalled."
-    nsExec::ExecToLog '"$INSTDIR\apache\apache_uninstallservice.bat"' 
+    nsExec::ExecToLog '"$INSTDIR\xampp_cli.exe stopservice apache"'
+    nsExec::ExecToLog '"$INSTDIR\xampp_cli.exe deinstallservice apache"' 
     DetailPrint "MySQL as service uninstalled."
-    nsExec::ExecToLog '"$INSTDIR\mysql\mysql_uninstallservice.bat"' 
+    nsExec::ExecToLog '"$INSTDIR\xampp_cli.exe stopservice mysql"'
+    nsExec::ExecToLog '"$INSTDIR\xampp_cli.exe deinstallservice mysql"' 
     DetailPrint "Delete autostart entry for Lucene"
     Delete "$SMSTARTUP\LuceneForSMWPlus.lnk"
     
