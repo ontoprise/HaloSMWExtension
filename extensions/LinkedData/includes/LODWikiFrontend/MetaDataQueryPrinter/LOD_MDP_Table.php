@@ -113,7 +113,7 @@ class LODMDPTable extends LODMetaDataPrinter {
 		
 		return '<span class="lodMetadata">' 
 				. $wikiText 
-				. '<span class="lodMetadataContent">' 
+				. '<span class="lodMetadataContent" style="display:none">' 
 				.  $metaDataHTML
 				. "</span>"
 				. $specialMetaDataHTML
