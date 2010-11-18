@@ -224,6 +224,7 @@ class WebServiceManager {
 		if($article->getTitle()->getNamespace() != SMW_NS_WEB_SERVICE) {
 			return true;
 		}
+		
 		//deal with case where user replaces a WWSD with a completely empty article
 		if(!self::$mOldWebserviceRemembered){
 			$wwsd = WebService::newFromID($article->getID());;
@@ -250,7 +251,10 @@ class WebServiceManager {
 		if (self::$mNewWebService) {
 			self::$mNewWebService->store();
 			WSTriplifier::getInstance()->addWSAsDataSource($article->getID());
+			smwf_ws_confirmWWSD(self::$mNewWebService->getArticleID());
 		}
+		
+		
 		self::$mNewWebService = null;
 		self::$mOldWebservice = null;
 

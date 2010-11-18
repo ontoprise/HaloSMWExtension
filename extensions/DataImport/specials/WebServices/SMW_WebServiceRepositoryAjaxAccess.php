@@ -43,8 +43,23 @@ $wgAjaxExportList[] = 'smwf_ti_deleteTermImport';
 function smwf_ws_confirmWWSD($wsId){
 	global $smwgDIIP;
 	require_once($smwgDIIP . '/specials/WebServices/SMW_WSStorage.php');
-	WSStorage::getDatabase()->setWWSDConfirmationStatus($wsId, "true");
-	return $wsId;
+	
+	global $wgUser;
+	$user = $wgUser;
+	if($user != null){
+		$groupsOfUser = $user->getGroups();
+		foreach($groupsOfUser as $key => $group) {
+			if($group == 'sysop'){
+				$allowed = true;
+			}
+		}
+	}
+	
+	if($allowed){
+		WSStorage::getDatabase()->setWWSDConfirmationStatus($wsId, "true");
+		return $wsId;
+	}
+	return 0;
 }
 
 function smwf_ws_deleteWWSD($wsId){

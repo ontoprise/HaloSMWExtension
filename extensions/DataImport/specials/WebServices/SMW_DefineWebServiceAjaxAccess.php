@@ -125,16 +125,17 @@ function smwf_ws_processStep6($name, $wwsd, $user, $wsSyntax){
 	
 	//$editResult = explode(",", smwf_om_EditArticle("webservice:".$name, $user, $wwsd.$wsSyntax, ""));
 	$editResult = explode(",", smwf_om_EditArticle("webservice:".$name, $user, $wwsd, ""));
+	
 	if($editResult[0]){
 		$ws = WebService::newFromWWSD($name, $wwsd);
 		if(is_array($ws)){
 			return "isa ".implode(";", $ws);
 		} else {
 			//$res = $ws->validateWWSD();
-			$res = $ws->store();
-			if(!$res){
-				return "error";
-			}
+			// $res = $ws->store();
+			// if(!$res){
+			//	return "error";
+			//}
 			return smwf_om_TouchArticle("webservice:".$name);
 		}
 	} else return "false done";
