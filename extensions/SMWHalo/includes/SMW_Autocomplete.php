@@ -722,8 +722,8 @@ class AutoCompletionHandler {
 	private static function isEqualResults(& $r1, & $r2) {
 		$t1 = is_array($r1) ? reset($r1) : $r1;
 		$t2 = is_array($r2) ? reset($r2) : $r2;
-		$t1_text = $t1 instanceof Title ? $t1->getText() : $t1;
-		$t2_text = $t2 instanceof Title ? $t2->getText() : $t2;
+		$t1_text = $t1 instanceof Title ? $t1->getPrefixedText() : $t1;
+		$t2_text = $t2 instanceof Title ? $t2->getPrefixedText() : $t2;
 		return strcmp($t1_text, $t2_text);
 
 	}
