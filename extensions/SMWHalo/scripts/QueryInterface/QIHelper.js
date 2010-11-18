@@ -423,7 +423,9 @@ QIHelper.prototype = {
 			
 			var reasoner = ( $('usetriplestore') && $('usetriplestore').checked ) ? "sparql" : "ask";
 			var params = ask.replace(',', '%2C') + ",";
-			params +='reasoner='+reasoner+'|';
+			var reasonerAndDs = this.getReasonerAndParams();
+			if (reasonerAndDs.length > 0)
+				params += reasonerAndDs + '|';
 			params += $('layout_sort').value == gLanguage.getMessage('QI_ARTICLE_TITLE')? "" : 'sort=' + $('layout_sort').value + '|';
 			params += 'format=' + $('layout_format').value + '|';
 			params += this.serializeSpecialQPParameters("|");
@@ -488,7 +490,9 @@ QIHelper.prototype = {
 			var triplestoreSwitch = $('usetriplestore');
 			var reasoner = triplestoreSwitch != null && triplestoreSwitch.checked ? "sparql" : "ask";
 			var params = ask + ",";
-			params +='reasoner='+reasoner+'|';
+			var reasonerAndDs = this.getReasonerAndParams();
+			if (reasonerAndDs.length > 0)
+				params += reasonerAndDs + '|';
 			params += "format="+$('layout_format').value + '|';
 			if ($('layout_sort').value != gLanguage.getMessage('QI_ARTICLE_TITLE')) params += "sort="+$('layout_sort').value + '|';
 			params += this.serializeSpecialQPParameters("|");
