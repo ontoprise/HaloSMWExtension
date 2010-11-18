@@ -39,6 +39,7 @@ AdvancedAnnotation.prototype = {
 	 */
 	initialize: function() {
                 this.fck = (typeof FCKeditor != 'undefined') ? 1 : 0;
+                this.cke = (typeof CKEDITOR != 'undefined') ? 1 : 0;
 	
 		this.resetSelection();
 		
@@ -786,7 +787,7 @@ AdvancedAnnotation.prototype = {
                              [wgPageName],
 	                     ajaxResponseLoadWikiText.bind(this));
 		              
-            } else { // FCK mode
+            } else { // FCK or CKE mode
                 // Call the Data Processor to generate the output data.
                 var data = gEditInterface.getValue();
                 this.wikiTextParser = new WikiTextParser(data);
@@ -1560,7 +1561,7 @@ AdvancedAnnotation.prototype = {
 };// End of Class
 
 AdvancedAnnotation.create = function() {
-	if (wgAction == "annotate" || this.fck) {
+	if (wgAction == "annotate" || this.fck || this.cke ) {
 		smwhgAdvancedAnnotation = new AdvancedAnnotation();
 		new PeriodicalExecuter(function(pe) {
 			var content = $('smwh_AAM');
@@ -1587,7 +1588,7 @@ AdvancedAnnotation.unload = function() {
 		}
 	}
         // Semantic toolbar was called within the FCK editor, disable it
-        if (typeof FCKeditor != 'undefined') {
+        if (typeof FCKeditor != 'undefined' || CKEDITOR) {
                 $('ontomenuanchor').innerHTML = '';
                 //stb_control.collapse();
         }
