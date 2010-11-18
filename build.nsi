@@ -46,10 +46,10 @@
 !define MUI_WELCOMEPAGE_TITLE "Welcome to the ${PRODUCT} ${VERSION} Setup Wizard"
 !define MUI_WELCOMEPAGE_TEXT "This wizard will guide you through the installation of ${PRODUCT} ${VERSION}."
 
-;!define MUI_FINISHPAGE_RUN
-;!define MUI_FINISHPAGE_RUN_CHECKED
-;!define MUI_FINISHPAGE_RUN_TEXT "Start Lucene as Windows service"
-;!define MUI_FINISHPAGE_RUN_FUNCTION "startLucene"
+!define MUI_FINISHPAGE_RUN
+!define MUI_FINISHPAGE_RUN_CHECKED
+!define MUI_FINISHPAGE_RUN_TEXT "Run wiki on startup (installs Windows services)"
+!define MUI_FINISHPAGE_RUN_FUNCTION "installAsWindowsService"
 
 !define MUI_FINISHPAGE_SHOWREADME 
 !define MUI_FINISHPAGE_SHOWREADME_FUNCTION showReadme
@@ -463,8 +463,7 @@ Section "Lucene search" lucene
         ;SetOutPath "$MEDIAWIKIDIR"
         ;nsExec::ExecToLog '"$PHP" "$MEDIAWIKIDIR\installer\changeLS.php" importUS=1 ls=LocalSettings.php'
         
-        ; do not install as service since it does not work at startup
-        ;CALL installLuceneAsService
+       
         ${If} $0 == 1
             SetOutPath "$INSTDIR\lucene"
             CreateDirectory "$SMPROGRAMS\$STARTMENU_FOLDER"
@@ -785,6 +784,7 @@ Function configCustomizationsForNew
     ;DetailPrint "Installing helppages"
         DetailPrint "Starting XAMPP"
         SetOutPath "$INSTDIR"
+        CALL installMemcached
         Exec "$INSTDIR\xampp_start.bat"
         CALL waitForApacheAndMySQL
         MessageBox MB_OK|MB_ICONINFORMATION $(FIREWALL_COMPLAIN_INFO)
@@ -877,23 +877,6 @@ FunctionEnd
     ${EndIf}
 FunctionEnd*/
 
-/*
-@deactivated
-Function startLucene
-   SectionGetFlags ${lucene} $0
-   IntOp $0 $0 & ${SF_SELECTED}
-   SetOutPath "$INSTDIR\lucene"
-   StrCmp "yes" $LUCENE_AS_SERVICE LuceneAsService NotAsService
-   LuceneAsService:
-       Exec "net start LuceneWiki"
-   Goto Done
-   NotAsService:
-   ${If} $0 == 1
-       Exec "$INSTDIR\lucene\start.bat"
-   ${EndIf}
-   Done:
-FunctionEnd*/
-
 
 Function FinishPageShow
   SectionGetFlags ${lucene} $0
@@ -923,42 +906,7 @@ Var JAVA_HOME_SHORT
 Var JAVA_VER
 Var JAVA_INSTALLATION_MSG
 
-/*
-@deactivated
-Function installLuceneAsService
-   Call LocateJVM
-   StrCpy $LUCENE_AS_SERVICE "no"
-   StrCmp "" $JAVA_INSTALLATION_MSG Success InstallJava
-    Success:
-        SetOutPath "$INSTDIR\lucene"
-                          
-        StrCpy $PHP "$INSTDIR\php\php.exe"
-        StrCpy $MEDIAWIKIDIR "$INSTDIR\htdocs\mediawiki"
-        
-        ; create install script for windows service registration
-        nsExec::ExecToLog '"$PHP" "$MEDIAWIKIDIR\installer\changeVariable.php" in="template\installAsService.bat.template" out=installAsService.bat noslash=true ip=$IP java_home="$JAVA_HOME"'
-        
-        ; stop lucene
-        DetailPrint "Stopping lucene (if necessary)"
-        nsExec::ExecToLog 'net stop LuceneWiki'
-        
-        ; uninstall service
-        DetailPrint "Uninstall lucene as service (if necessary)"
-        nsExec::ExecToLog '"$INSTDIR\lucene\uninstallAsService.bat"'
-        
-        ; run script and register service 
-        DetailPrint "Register lucene as windows service"
-        nsExec::ExecToLog '"$INSTDIR\lucene\installAsService.bat"'
-        
-        DetailPrint "Lucene service installed."
-        StrCpy $LUCENE_AS_SERVICE "yes"
-        Goto Done
-        
-    InstallJava:
-       MessageBox MB_OK "Lucene is installed but will not work without Java 1.6 Runtime. Furthermore, it is not installed as a service."
-        
-    Done:
-FunctionEnd*/
+
 
 Function LocateJVM
     Push $0
@@ -1005,15 +953,47 @@ Function LocateJVM
         Pop $1
         Pop $0
 FunctionEnd
-/*
-@deactivated 
+
+Function installMemcached
+    DetailPrint "Install memcached"
+    SetOutPath "$INSTDIR"
+    nsExec::ExecToLog '"$INSTDIR\memcached.exe -d install"'
+    nsExec::ExecToLog '"$INSTDIR\memcached.exe -d start"'
+  
+FunctionEnd
+
+Function installAsWindowsService
+	SetOutPath "$INSTDIR"
+    DetailPrint "Apache as service installed."
+    nsExec::ExecToLog '"$INSTDIR\apache\apache_installservice.bat"' 
+    DetailPrint "MySQL as service installed."
+    nsExec::ExecToLog '"$INSTDIR\mysql\mysql_installservice.bat"' 
+    
+    # Do not install Lucene as service (does not work) but register it in Autostart folder
+    DetailPrint "Start Lucene automatically via AutoStart folder."
+    CreateShortCut "$SMSTARTUP\LuceneForSMWPlus.lnk" "$INSTDIR\lucene\lucene-wiki.exe"
+FunctionEnd
+
+Function un.uninstallMemcached
+    DetailPrint "Uninstall memcached"
+    SetOutPath "$INSTDIR"
+    nsExec::ExecToLog '"$INSTDIR\memcached.exe -d stop"'
+    nsExec::ExecToLog '"$INSTDIR\memcached.exe -d uninstall"'
+    SetOutPath "c:\temp\halo" #dummy to make installation dir removable
+FunctionEnd
+
 ; Uninstaller
 Function un.uninstallAsWindowsService
-    SetOutPath "$INSTDIR\lucene"
-    nsExec::ExecToLog '"$INSTDIR\lucene\UninstallAsService.bat"' 
-    DetailPrint "Lucene service uninstalled."
+	SetOutPath "$INSTDIR"
+    DetailPrint "Apache as service uninstalled."
+    nsExec::ExecToLog '"$INSTDIR\apache\apache_uninstallservice.bat"' 
+    DetailPrint "MySQL as service uninstalled."
+    nsExec::ExecToLog '"$INSTDIR\mysql\mysql_uninstallservice.bat"' 
+    DetailPrint "Delete autostart entry for Lucene"
+    Delete "$SMSTARTUP\LuceneForSMWPlus.lnk"
+    
     SetOutPath "c:\temp\halo" #dummy to make installation dir removable
-FunctionEnd*/
+FunctionEnd
 
 Section "Uninstall"
 
@@ -1028,10 +1008,11 @@ Section "Uninstall"
     goto FinalExit
 
     Deinstall:
-#        MessageBox MB_OK "User said OK!"
+	# MessageBox MB_OK "User said OK!"
     
-    ; do not un-install since it was not installed
-    ;Call un.uninstallAsWindowsService
+    ; Un-install services (if installed at all)
+    Call un.uninstallAsWindowsService
+    Call un.uninstallMemcached
     
     ; Unregister scheduled task for lucene update
     nsExec::ExecToLog 'schtasks /delete /TN "LuceneIndexUpdate" /F'
