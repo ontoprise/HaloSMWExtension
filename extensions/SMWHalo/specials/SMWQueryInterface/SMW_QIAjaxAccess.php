@@ -90,10 +90,14 @@ function smwf_qi_QIAccess($method, $params) {
          
             $rawparams = array_merge($rawparams, $fixparams);
             // set some default values, if params are not set
+            $useTsc = (in_array('source', array_keys($fixparams)) && strtolower($fixparams['source']) == 'tsc');
             if (! in_array('format', array_keys($fixparams))) $fixparams['format'] = 'table';
 
-            SMWQueryProcessor::processFunctionParams($rawparams,$querystring,$params,$printouts);
-
+            // use SMW classes or TSC classes and parse params and answer query
+            if ($useTsc)
+                SMWSPARQLQueryProcessor::processFunctionParams($rawparams,$querystring,$params,$printouts);
+            else
+                SMWQueryProcessor::processFunctionParams($rawparams,$querystring,$params,$printouts);
             // check if there is any result and if it corresponds to the selected format
             $mainlabel = (isset($rawparams['mainlabel']) && $rawparams['mainlabel'] == '-');
             $invalidRes = smwf_qi_CheckValidResult($printouts, $fixparams['format'], $mainlabel);
@@ -102,10 +106,15 @@ function smwf_qi_QIAccess($method, $params) {
                 
             // quickfix: unset conflicting params for maps
             if (in_array($fixparams['format'], array( "map", "googlemaps2", "openlayers", "yahoomaps" ) ) ) {
+                if (isset($params['reasoner'])) unset($params['reasoner']);
                 if (isset($params['ajaxcall'])) unset($params['ajaxcall']);
                 if (isset($params['merge'])) unset($params['merge']);
             }
-            $result = SMWQueryProcessor::getResultFromQueryString($querystring,$params,$printouts, SMW_OUTPUT_WIKI);
+            // answer query using the SMW classes or TSC classes
+            if ($useTsc)
+                $result = SMWSPARQLQueryProcessor::getResultFromQueryString($querystring,$params,$printouts, SMW_OUTPUT_WIKI);
+            else
+                $result = SMWQueryProcessor::getResultFromQueryString($querystring,$params,$printouts, SMW_OUTPUT_WIKI);
 
             // check for empty result
             if (is_array($result) && trim($result[0]) == '' || trim($result == '') )
