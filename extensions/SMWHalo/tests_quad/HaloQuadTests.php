@@ -10,6 +10,7 @@
  */
 
 require_once 'testcases/TestQuadStorage.php';
+require_once 'testcases/TestRDFRequest.php';
 
 
 class HaloQuadTests
@@ -19,6 +20,7 @@ class HaloQuadTests
         $suite = new PHPUnit_Framework_TestSuite('SMWHaloQuad');
 
         $suite->addTestSuite("TestQuadStorage");
+        $suite->addTestSuite("TestRDFRequest");
         return $suite;
     }
 }
