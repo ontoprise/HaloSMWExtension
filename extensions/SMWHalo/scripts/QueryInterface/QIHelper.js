@@ -421,11 +421,10 @@ QIHelper.prototype = {
 				ask += "|?" + s
 			});
 			
-			var reasoner = ( $('usetriplestore') && $('usetriplestore').checked ) ? "sparql" : "ask";
-			var params = ask.replace(',', '%2C') + ",";
+			var params = ask.replace(/,/g, '%2C') + ",";
 			var reasonerAndDs = this.getReasonerAndParams();
 			if (reasonerAndDs.length > 0)
-				params += reasonerAndDs + '|';
+				params += reasonerAndDs.replace(/,/g, '%2C') + '|';
 			params += $('layout_sort').value == gLanguage.getMessage('QI_ARTICLE_TITLE')? "" : 'sort=' + $('layout_sort').value + '|';
 			params += 'format=' + $('layout_format').value + '|';
 			params += this.serializeSpecialQPParameters("|");
@@ -482,17 +481,15 @@ QIHelper.prototype = {
 			ask = ask.replace(/\{\{TODAY\}\}/gi, todayDateTime);
 
 			// replace comma in ask query
-			ask = ask.replace(',', '%2C');
+			ask = ask.replace(/,/g, '%2C');
 
 			this.queries[0].getDisplayStatements().each(function(s) {
 				ask += "|?" + s
 			});
-			var triplestoreSwitch = $('usetriplestore');
-			var reasoner = triplestoreSwitch != null && triplestoreSwitch.checked ? "sparql" : "ask";
 			var params = ask + ",";
 			var reasonerAndDs = this.getReasonerAndParams();
 			if (reasonerAndDs.length > 0)
-				params += reasonerAndDs + '|';
+				params += reasonerAndDs.replace(/,/g, '%2C') + '|';
 			params += "format="+$('layout_format').value + '|';
 			if ($('layout_sort').value != gLanguage.getMessage('QI_ARTICLE_TITLE')) params += "sort="+$('layout_sort').value + '|';
 			params += this.serializeSpecialQPParameters("|");
