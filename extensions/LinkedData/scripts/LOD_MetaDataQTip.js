@@ -28,10 +28,7 @@
  * is hidden.
  * 
  */
-jQuery(document).ready( function ($) {
-	// hide all content spans
-	$("span.lodMetadataContent").hide();
-	
+jQuery(document).ready( function ($) {	
 	// install the tool-tips
 	$("span.lodMetadata").each(function () {
 		// get the html of the content span
