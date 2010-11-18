@@ -602,7 +602,8 @@ SPARQL;
 		$params = array("metadata" => "(SWP2_AUTHORITY;IMPORT_GRAPH_CREATED)",
 						"metadataformat" => "xslt",
 						"dataspace" => "Toyota",
-						"metadatastylesheet" => $article);
+						"metadatastylesheet" => $article,
+						"enablerating" => "true");
 	
 		// Create and execute the query
 		$query  = SMWSPARQLQueryProcessor::createQuery($queryString, $params);
@@ -794,7 +795,8 @@ SPARQL;
 						array(
 						"metadata" => "$metaData",
 						"metadataformat" => $metaDataPrinter,
-						"dataspace" => "Toyota"));
+						"dataspace" => "Toyota",
+						"enablerating" => "true"));
 		
 	
 		$query  = SMWSPARQLQueryProcessor::createQuery($queryString, $params);
