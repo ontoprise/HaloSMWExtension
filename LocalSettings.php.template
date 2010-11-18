@@ -198,15 +198,19 @@ $wgGroupPermissions['sysop']['ontologyediting'] = true;
 
 
 // extensions
-#ScriptManager
-require_once('extensions/ScriptManager/SM_Initialize.php');
 
-# ARC Library (needed by SMW, Halo ...)
+/*start-scriptmanager*/
+require_once('extensions/ScriptManager/SM_Initialize.php');
+/*end-scriptmanager*/
+
+/*start-arclibrary*/
 include_once('extensions/ARCLibrary/ARCLibrary.php');
 enableARCLibrary();
+/*end-arclibrary*/
 
-#Misc
+/*start-cite*/
 require_once( "{$IP}/extensions/Cite/Cite.php" );
+/*end-cite*/
 
 /*start-applicationprogramming*/
 require_once( "$IP/extensions/ApplicationProgramming/ParserFunctions/ParserFunctions.php" );
@@ -215,7 +219,6 @@ require_once( "$IP/extensions/ApplicationProgramming/Variables/Variables.php" );
 include_once('extensions/ApplicationProgramming/URLArguments/URLArguments.php');
 /*end-applicationprogramming*/
 
-#SMW
 /*start-smw*/
 include_once('extensions/SemanticMediaWiki/includes/SMW_Settings.php');
 $smwgShowFactbox = SMW_FACTBOX_SHOWN; 
@@ -231,8 +234,6 @@ $smwhgAutoTemplates = array(NS_CATEGORY => "Category", SMW_NS_PROPERTY => "Prope
 include_once('extensions/SemanticForms/includes/SF_Settings.php');
 /*end-semanticforms*/
 
-#SMWHalo
-
 /*start-smwhalo*/
 $smwgQComparators = '<|>|!|~';
 include_once('extensions/SMWHalo/includes/SMW_Initialize.php');
@@ -247,20 +248,17 @@ require_once('extensions/SMWHalo/DataAPI/PageObjectModel/POM.php');
 require_once('extensions/SMWHalo/DataAPI/SemanticFormsAPI/SemanticFormsAPI.php');
 /*end-smwhalo*/
 
-#Semantic Gardening
 /*start-semanticgardening*/
 $phpInterpreter=/*start-variable-phpInterpreter*/"{{xamp-install}}/php/php.exe";/*end-variable-phpInterpreter*/
 include_once('extensions/SemanticGardening/includes/SGA_GardeningInitialize.php');
 /*end-semanticgardening*/
 
-# Semantic Maps and required extensions for maps
 /*start-semanticmaps*/
 require_once( "$IP/extensions/Validator/Validator.php" );
 require_once( "$IP/extensions/Maps/Maps.php" );
 require_once( "$IP/extensions/SemanticMaps/SemanticMaps.php" );
 /*end-semanticmaps*/
 
-#Data import
 /*start-dataimport*/
 include_once('extensions/DataImport/includes/DI_Initialize.php');
 enableDataImportExtension(/*param-start-enableDataImportExtension*//*param-end-enableDataImportExtension*/);
@@ -273,15 +271,14 @@ $wgAllowExternalImages=/*start-variable-wgAllowExternalImages*/true;/*end-variab
 #enableIAI(/*param-start-enableIAI*//*param-end-enableIAI*/);
 /*end-dataimport*/
 
-/*start-automaticsf*/
+/*start-automaticsemanticforms*/
 require_once("$IP/extensions/AutomaticSemanticForms/includes/ASF_Initialize.php");
 enableAutomaticSemanticForms();
-/*end-autmaticsf*/
+/*end-automaticsemanticforms*/
 
+/*start-dynamicpagelist*/
 include("extensions/DynamicPageList/DynamicPageList.php");
-
-# SemanticFormsInputs
-require_once('extensions/SemanticFormsInputs/SemanticFormsInputs.php');
+/*end-dynamicpagelist*/
 
 /*start-semanticresultformats*/
 require_once("extensions/SemanticResultFormats/SRF_Settings.php");
@@ -295,8 +292,9 @@ $wgGoogleMapsKey='ABQIAAAALfJSGT7KuTRZWj3WNooD8xT2yXp_ZAY8_ufC3CFXhHIE1NvwkxSF9P
 require_once("$IP/extensions/SemanticResultFormats/ofc/SRF_OFC_Init.php"); 
 /*end-semanticresultformats*/
 
-#Glossary
+/*start-glossary*/
 require_once( "$IP/extensions/Glossary/Glossary.php" );
+/*end-glossary*/
 
 /*start-haloacl*/
 require_once('extensions/HaloACL/includes/HACL_Initialize.php');
@@ -315,8 +313,9 @@ include_once('extensions/SemanticNotifications/includes/SN_Initialize.php');
 enableSemanticNotifications(); 
 /*end-semanticnotifications*/
 
-# NewUserMessage
+/*start-newusermessage*/
 require_once( "extensions/NewUserMessage/NewUserMessage.php" );
+/*end-newusermessage*/
 
 $wgJobRunRate=0;
 
@@ -343,8 +342,9 @@ $wgTreeViewShowLines = true;
 require_once("$IP/extensions/WYSIWYG/WYSIWYG.php");
 /*end-wysiwyg*/
 
+/*start-imagemap*/
 require_once("$IP/extensions/ImageMap/ImageMap.php");
-
+/*end-imagemap*/
 
 #Enable semantic annotations for pages in the following namespaces
 $smwgNamespacesWithSemanticLinks[NS_TEMPLATE] = true;
