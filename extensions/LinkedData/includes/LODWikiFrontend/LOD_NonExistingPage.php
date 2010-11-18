@@ -266,7 +266,10 @@ SPARQL;
 		// Fetch templates from categories of the entity
 		foreach ($categories as $cat) {
 			$catTemplate = str_replace("{cat}", $cat, $lodgNEPCategoryTemplatePattern);
-			$content["Category:$cat"] = self::getContentOfArticle($catTemplate);
+			$con = self::getContentOfArticle($catTemplate);
+			if (!is_null($con)) {
+				$content["Category:$cat"] = $con;
+			}
 		}
 	}
 
