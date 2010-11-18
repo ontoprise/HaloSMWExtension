@@ -244,10 +244,7 @@ class TSConnectorRESTWebservice extends TSConnection {
 	
 	public function queryRDF($query, $params = "", $graph = "") {
 		global $smwgTripleStoreGraph;
-        if (empty($graph)) {
-            $graph = $smwgTripleStoreGraph;
-        }
-
+        
          // SPARQL, attach common prefixes
         $query = TSNamespaces::getAllPrefixes().$query;
         
