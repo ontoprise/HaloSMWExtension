@@ -83,7 +83,8 @@ class LODMDPTable extends LODMetaDataPrinter {
 		$specialMetaDataHTML = $this->filterSpecialMetaData($md);
 		
 		if (empty($md)) {
-			$metaDataHTML = wfMsg('lod_mdp_no_metadata');
+//			$metaDataHTML = wfMsg('lod_mdp_no_metadata');
+			$metaDataHTML = "";
 		} else {
 			// Generate the HTML for the meta-data as table
 			$tprop  = wfMsg('lod_mdp_property');

@@ -102,7 +102,8 @@ class LODMDPXslt extends LODMetaDataPrinter {
 		$specialMetaDataHTML = $this->filterSpecialMetaData($md);
 		
 		if (empty($md)) {
-			$metaDataHTML = wfMsg('lod_mdp_no_metadata');
+//			$metaDataHTML = wfMsg('lod_mdp_no_metadata');
+			$metaDataHTML = "";
 		} else {
 			$xml  = $this->generateXML($md);
 			$xsl  = $this->getXSL();

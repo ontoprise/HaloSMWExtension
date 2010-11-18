@@ -37,6 +37,9 @@ jQuery(document).ready( function ($) {
 		// get the html of the content span
 		var content = $(this).find('.lodMetadataContent').html(); 
 		// install the tool-tip on the current DOM element
+		if (content.length === 0) {
+			return;
+		}
 		$(this).qtip({
 				content: content,
 				show: {
