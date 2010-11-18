@@ -110,7 +110,7 @@ function execute($query) {
 			$annotatedParentCategories = $title->getParentCategories();
 			if(count($annotatedParentCategories) > 0){
 				foreach($categoryNames as $key => $category){
-					if(array_key_exists($category, $annotatedParentCategories)){
+					if(array_key_exists(str_replace(' ', '_', $category), $annotatedParentCategories)){
 						unset($categoryNames[$key]);
 					} else {
 						$categoryNames[$key] = $category;

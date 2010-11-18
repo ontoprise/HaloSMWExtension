@@ -6,7 +6,7 @@
  * Semantic Forms Extension
  */
 class ASFParserFunctions {
-	
+
 	/*
 	 * Setup parser functions
 	 */
@@ -15,7 +15,9 @@ class ASFParserFunctions {
 			array( 'ASFParserFunctions', 'renderSilentAnnotationsTemplate' ), SFH_NO_HASH + SFH_OBJECT_ARGS);
 		$parser->setFunctionHook( 'shownow', 
 			array( 'ASFParserFunctions', 'renderShowNow' ), SFH_OBJECT_ARGS); 
-		
+		$parser->setFunctionHook( 'asfforminput', 
+			array( 'ASFParserFunctions', 'renderASFFormInput' ) );
+			
 		global $wgHooks;
 		$wgHooks['ParserAfterTidy'][] = 'ASFParserFunctions::finallyRenderShowNow';
 		
@@ -28,6 +30,7 @@ class ASFParserFunctions {
 	static function languageGetMagic( &$magicWords, $langCode = "en" ) {
 		$magicWords['CreateSilentAnnotations']	= array ( 0, 'CreateSilentAnnotations' );
 		$magicWords['shownow']	= array ( 0, 'shownow' );
+		$magicWords['asfforminput'] = array ( 0, 'asfforminput' );
 		
 		return true;
 	}
@@ -171,7 +174,198 @@ class ASFParserFunctions {
 		
 		return true;
 	}
+	
+	
+	static function renderASFFormInput ( &$parser ) {
+		$params = func_get_args();
+		array_shift( $params ); // don't need the parser
+		
+		// set defaults
+		$type = ''; 
+		$categoryName = $pageName = '';
+		$value = $categoryValue = $pageValue = '';
+		$autocompletionQuery = '';
+		$size = $categorySize = $pageSize = 25;
+		$categoryInputIntro = '';
+		$buttonLabel = '';
+		
+		// assign params - support unlabelled params, for backwards compatibility
+		$unresolvedParameters = array();
+		foreach ( $params as $i => $param ) {
+			$elements = explode( '=', $param, 2 );
+			$paramName = null;
+			$paramValue = trim( $param );
+			if ( count( $elements ) > 1 ) {
+				$paramName = trim( $elements[0] );
+				$paramValue = trim( $elements[1] );
+			}
+			
+			if ( $paramName == 'type' )
+				$type = $paramValue;
+			else if ( $paramName == 'category name' )
+				$categoryName = $paramValue;
+			else if ( $paramName == 'page name' )
+				$pageName = $paramValue;
+			else if ( $paramName == 'size' )
+				$size = $paramValue;
+			else if ( $paramName == 'page input size' )
+				$pageSize = $paramValue;
+			else if ( $paramName == 'category input size' )
+				$categorySize = $paramValue;
+			else if ( $paramName == 'default value' )
+				$value = $paramValue;
+			else if ( $paramName == 'default page value' )
+				$pageValue = $paramValue;
+				else if ( $paramName == 'default category value' )
+				$categoryValue = $paramValue;
+			else if ( $paramName == 'button text' )
+				$buttonLabel = $paramValue;
+			else if ( $paramName == 'autocomplete on category' ) {
+				$autocompletionSource = $paramValue;
+				$autocompletionType = 'category';
+			} else if ( $paramName == 'autocomplete on namespace' ) {
+				$autocompletionSource = $paramValue;
+				$autocompletionType = 'namespace';
+			} else if ( $paramName == 'category input intro' ) {
+				$categoryInputIntro = $paramValue;
+				
+			}  else if ( $paramName == 'category input intro' ) {
+				$autocompletionQuery = $paramValue;
+			} else { 
+				$unresolvedParameters[$i] = $param;
+			}
+		}
+		
+		If(strlen($type) == 0 && array_key_exists(0, $unresolvedParameters))
+				$type = $unresolvedParameters[0];
+				
+		$errors = false;
+		if($type == 'category'){
+			If(strlen($pageName) == 0 && array_key_exists(1, $unresolvedParameters))
+				$pageName = $unresolvedParameters[1];
+				
+			//get page name from url if necessary and possible
+			if(strlen($pageName) == 0){
+				global $wgRequest;
+				$target = $wgRequest->getVal('target');
+				$pageName = ($target) ? $target : '';
+			}
+			
+			if($categorySize == 25 && array_key_exists(2, $unresolvedParameters))
+				$categorySize = $unresolvedParameters[2];
+			if($categorySize != 25)
+				$size = $categorySize;
+			$categorySize = $size;
+			
+			if($categoryValue == '' && array_key_exists(3, $unresolvedParameters))
+				$categoryValue = $unresolvedParameters[3];
+			if($categoryValue != '')
+				$value = $categoryValue;
+			$categoryValue = $value;
+			
+			If(strlen($buttonLabel) == 0 && array_key_exists(4, $unresolvedParameters))
+				$buttonLabel = $unresolvedParameters[4];
+		
+		} else if ($type == 'page'){
+			If(strlen($categoryName) == 0 && array_key_exists(1, $unresolvedParameters))
+				$categoryName = $unresolvedParameters[1];
+			
+			if($pageSize == 25 && array_key_exists(2, $unresolvedParameters))
+				$pageSize = $unresolvedParameters[2];
+			if($pageSize != 25)
+				$size = $pageSize;
+			$pageSize = $size;
+			
+			if($pageValue == '' && array_key_exists(3, $unresolvedParameters))
+				$pageValue = $unresolvedParameters[3];
+			if($pageValue != '')
+				$value = $pageValue;
+			$pageValue = $value;
+			
+			If(strlen($autocompletionQuery) == 0 && array_key_exists(4, $unresolvedParameters))
+				$autocompletionQuery = $unresolvedParameters[4];
+			
+			If(strlen($buttonLabel) == 0 && array_key_exists(5, $unresolvedParameters))
+				$buttonLabel = $unresolvedParameters[5];
+		
+		} else {
+			if($pageSize == 25 && array_key_exists(1, $unresolvedParameters))
+				$pageSize = $unresolvedParameters[1];
+			
+			if($categorySize == 25 && array_key_exists(2, $unresolvedParameters))
+				$categorySize = $unresolvedParameters[2];	
+			
+			if($pageValue == '' && array_key_exists(3, $unresolvedParameters))
+				$pageValue = $unresolvedParameters[3];
+			
+			if($categoryValue == '' && array_key_exists(4, $unresolvedParameters))
+				$categoryValue = $unresolvedParameters[4];
+			
+			If(strlen($autocompletionQuery) == 0 && array_key_exists(5, $unresolvedParameters))
+				$autocompletionQuery = $unresolvedParameters[5];
+			
+			if($categoryInputIntro == '' && array_key_exists(6, $unresolvedParameters))
+				$categoryInputIntro = $unresolvedParameters[6];
+			
+			If(strlen($buttonLabel) == 0 && array_key_exists(7, $unresolvedParameters))
+				$buttonLabel = $unresolvedParameters[7];
+		}
+		
+		//open form tag
+		$formEdit = SpecialPage::getPage( 'FormEdit' );
+		$formEditURL = $formEdit->getTitle()->getLocalURL();
+		$str = '<form action="'.$formEditURL.'" method="get" style="display: inline">';
+		
+		//create page input field
+		if($type != 'category'){
+			if(strlen($autocompletionQuery) > 0){
+				if(strtolower($autocompletionQuery) != 'all'){
+					$autocompletionQuery = 'ask: '.$autocompletionQuery;
+				}
+				$autocompletionQuery = 'class="wickEnabled" constraints="'.$autocompletionQuery.'"';
+			}
+			$str .= '<input type="text" name="target" size="'.$pageSize.'" value="'.$pageValue.'" '.$autocompletionQuery.'/>';
+		}
+		
+		//create category input field
+		if($type != 'page'){
+			if($type != 'category'){
+				//both input fields are shown and category input intro must be added
+				$str .= $categoryInputIntro;
+			}
+			$str .= '<input type="text" name="categories" size="'.$categorySize.'" value="'.$categoryValue.'" class="wickEnabled" constraints="ask: [[:Category:+]]"/>';
+		}
+		
+		//add constant article creation data
+		if($type == 'page'){
+			$str .= '<input type="hidden" name="categories" value="' .$categoryName. '">';
+		} else if ($type == 'category'){
+			$str .= '<input type="hidden" name="target" value="' .$pageName. '">';
+		}
+		
+		//add submit button
+		wfLoadExtensionMessages( 'SemanticForms' );
+		$buttonLabel = ( $buttonLabel != '' ) ? $buttonLabel : wfMsg( 'sf_formstart_createoredit' );
+		$str .= '   <input type="submit" value="'.$buttonLabel.'" /></p>';
+		
+		//end form tag
+		$str .= '</form>';
+			
+		return $parser->insertStripItem( $str, $parser->mStripState );
+	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
