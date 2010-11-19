@@ -248,7 +248,9 @@ function srfAddHTMLHeader(& $out) {
 		srfAddJSLanguageScripts($out);
 		$out->addLink(array('rel'   => 'stylesheet','type'  => 'text/css',
                         'media' => 'screen, projection','href'  => $wgScriptPath . '/extensions/SemanticRules/skins/rules.css'));
-
+        $out->addLink(array('rel'   => 'stylesheet','type'  => 'text/css',
+                        'media' => 'screen, projection','href'  => $wgScriptPath . '/extensions/SemanticRules/skins/prettyPrinterForRules.css'));
+		
 
 		$rulesEnabled = isset($smwgEnableObjectLogicRules)
 		? (($smwgEnableObjectLogicRules) ? 'true' : 'false')
@@ -261,7 +263,9 @@ function srfAddHTMLHeader(& $out) {
 		$out->addScript('<script type="text/javascript" src="'.$wgScriptPath . '/extensions/SemanticRules/scripts/SR_Rulewidget.js"></script>');
 		$out->addLink(array('rel'   => 'stylesheet','type'  => 'text/css',
                         'media' => 'screen, projection','href'  => $wgScriptPath . '/extensions/SemanticRules/skins/rules.css'));
-
+        $out->addLink(array('rel'   => 'stylesheet','type'  => 'text/css',
+                        'media' => 'screen, projection','href'  => $wgScriptPath . '/extensions/SemanticRules/skins/prettyPrinterForRules.css'));
+        
 		$SF = ($wgTitle->getNamespace() == -1 &&
 		in_array($wgTitle->getBasetext(), array("AddData", "EditData")));
 		$action = $wgRequest->getVal('action');
