@@ -69,7 +69,7 @@ class LODSourcesPage extends SpecialPage {
 		$html = '<table id="lod_source_table" class="lod_sp_sources_table">';
 		$html .= "<th>".wfMsg('lod_sp_source_label')."</th>";
 		$html .= "<th>".wfMsg('lod_sp_source_source')."</th>";
-		$html .= "<th>".wfMsg('lod_sp_source_lastmod')."</th>";
+		$html .= "<th>".wfMsg('lod_sp_source_lastimport')."</th>";
 		$html .= "<th>".wfMsg('lod_sp_source_changefreq')."</th>";
 		$html .= "<th>".wfMsg('lod_sp_isimported')."</th>";
 		$html .= "<th>".wfMsg('lod_sp_statusmsg')."</th>";
@@ -84,7 +84,7 @@ class LODSourcesPage extends SpecialPage {
             $html .=  $ldSource->getSparqlEndpointLocation() == '' ? $dataDumpLocations : $ldSource->getSparqlEndpointLocation();
             $html .="</td>";
             $html .="<td>";
-            $html .= $ldSource->getLastMod() == '' ? "-" : $ldSource->getLastMod();
+            $html .= $ldSource->getLastImportDate() == '' ? "-" : $ldSource->getLastImportDate();
             $html .="</td>";
             $html .="<td>";
             $html .= $ldSource->getChangeFreq() == '' ? "-" : $ldSource->getChangeFreq();

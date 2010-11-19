@@ -128,7 +128,10 @@ class  LODAdministrationStore  {
 				$status = $status == 'true';
 				$sd->setImported($status);
 			}
-
+		    if (isset($d->lastImportDate[0])) {
+                $sd->setLastImportDate((string) $d->lastImportDate[0]);
+            }
+            
 			if (isset($d->errorMessages[0])) {
 				$sd->setErrorMessagesFromLastImport((string) $d->errorMessages[0]);
 			}

@@ -138,11 +138,14 @@ class LODSourceDefinition  {
 	// boolean
 	// Is true if the datasource was imported at least once.
 	private $mIsImported = false;
-	
-	
+		
 	// string
 	// error message from last import operation
-	private $mErrorMessagesLastImport = NULL;
+	private $mErrorMessagesLastImport = "";
+	
+	// date
+	// last import date
+	private $mLastImportDate = "";
 	
 	
 	/**
@@ -172,6 +175,7 @@ class LODSourceDefinition  {
 	public function getVocabularies()			{ return $this->mVocabularies; }
     public function isImported()               { return $this->mIsImported; }
     public function getErrorMessagesFromLastImport(){ return $this->mErrorMessagesLastImport; }
+    public function getLastImportDate(){ return $this->mLastImportDate; }
 
 	public function setID($val)						{ $this->mID = $val; }
 	public function setDescription($val)			{ $this->mDescription = $val; }
@@ -188,6 +192,7 @@ class LODSourceDefinition  {
 	public function setVocabularies(array $val)		{ $this->mVocabularies = $val; }
     public function setImported($val)               { $this->mIsImported = $val; }
 	public function setErrorMessagesFromLastImport($val){ $this->mErrorMessagesLastImport = $val; }
+    public function setLastImportDate($val){ $this->mLastImportDate = $val; }
 	//--- Public methods ---
 	
 	
