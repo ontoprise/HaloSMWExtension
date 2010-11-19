@@ -82,14 +82,9 @@ function smwhRDFRequest($subject) {
 	// request RDF/XML via CONSTRUCT query
 	$con = TSConnection::getConnector();
 	$con->connect();
-	$rdf = $con->queryRDF("CONSTRUCT { $iri ?p ?o. } WHERE { GRAPH ?g { $iri ?p ?o. } }");
-    
-	//XXX: (ugly hack) create one result out of both
-	$rdfSameAs = $con->queryRDF("CONSTRUCT { $iri owl:sameAs ?o. } WHERE { GRAPH ?g { $iri prop:Imported_from ?o. } }");
-	$rdf = str_replace('</rdf:RDF>', '', $rdf );
-	$rdfSameAs = str_replace('</rdf:RDF>', '', $rdfSameAs );
-	$rdfSameAs = substr($rdfSameAs, strpos($rdfSameAs, "-->") +3);
-	return $rdf.$rdfSameAs."\n</rdf:RDF>";
+	$rdf = $con->queryRDF("CONSTRUCT { $iri ?p ?o. $iri owl:sameAs ?source. } WHERE { GRAPH ?g { $iri ?p ?o. } OPTIONAL { GRAPH ?g2 { $iri prop:Imported_from ?source. } } }");
+    	
+	return $rdf;
 }
 
 /**
