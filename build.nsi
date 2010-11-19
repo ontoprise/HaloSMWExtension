@@ -955,28 +955,23 @@ Function LocateJVM
 FunctionEnd
 
 Function installMemcached
-    DetailPrint "Install memcached"
+    DetailPrint "Install and start memcached"
     SetOutPath "$INSTDIR"
-    ;nsExec::ExecToLog '"$INSTDIR\memcached\memcached.exe -d install"'
-    ;nsExec::ExecToLog '"$INSTDIR\memcached\memcached.exe -d start"'
-    Exec "$INSTDIR\installService.bat"
+    Exec "$INSTDIR\installMemcachedAsService.bat"
 FunctionEnd
 
 Function un.uninstallMemcached
-    DetailPrint "Uninstall memcached"
+    DetailPrint "Stop and uninstall memcached"
     SetOutPath "$INSTDIR"
-    nsExec::ExecToLog '"$INSTDIR\memcached\memcached.exe -d stop"'
-    nsExec::ExecToLog '"$INSTDIR\memcached\memcached.exe -d uninstall"'
+    Exec "$INSTDIR\uninstallMemcachedAsService.bat"
     SetOutPath "c:\temp\halo" #dummy to make installation dir removable
 FunctionEnd
 
 Function installAsWindowsService
 	SetOutPath "$INSTDIR"
-    DetailPrint "Apache as service installed."
-    nsExec::ExecToLog '"$INSTDIR\xampp_cli.exe installservice apache"' 
-    DetailPrint "MySQL as service installed."
-    nsExec::ExecToLog '"$INSTDIR\xampp_cli.exe installservice mysql"' 
-    
+    DetailPrint "Install Apache and MySQL as service."
+    Exec "$INSTDIR\installApacheMySQLAsService.bat"
+       
     # Do not install Lucene as service (does not work) but register it in Autostart folder
     DetailPrint "Start Lucene automatically via AutoStart folder."
     CreateShortCut "$SMSTARTUP\LuceneForSMWPlus.lnk" "$INSTDIR\lucene\lucene-wiki.exe"
@@ -986,12 +981,9 @@ FunctionEnd
 ; Uninstaller
 Function un.uninstallAsWindowsService
 	SetOutPath "$INSTDIR"
-    DetailPrint "Apache as service uninstalled."
-    nsExec::ExecToLog '"$INSTDIR\xampp_cli.exe stopservice apache"'
-    nsExec::ExecToLog '"$INSTDIR\xampp_cli.exe deinstallservice apache"' 
-    DetailPrint "MySQL as service uninstalled."
-    nsExec::ExecToLog '"$INSTDIR\xampp_cli.exe stopservice mysql"'
-    nsExec::ExecToLog '"$INSTDIR\xampp_cli.exe deinstallservice mysql"' 
+    DetailPrint "Stop and uninstall Apache and MySQL as service."
+    Exec "$INSTDIR\uninstallApacheMySQLAsService.bat"
+    
     DetailPrint "Delete autostart entry for Lucene"
     Delete "$SMSTARTUP\LuceneForSMWPlus.lnk"
     
