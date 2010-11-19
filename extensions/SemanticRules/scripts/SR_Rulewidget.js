@@ -71,12 +71,9 @@ SRRuleWidget.prototype = {
 					var wID = w.getAttribute("id");
 					if (id == ruleID) {
 						
-						// escape html
+						
 						var html = ruletextNodes[i].textContent;
-						//html = html.replace(/</g, "&lt;");
-						//html = html.replace(/>/g, "&gt;");
-						
-						
+											
 						if (type == "easyreadible") $(wID+"_easyreadible").innerHTML = html;
 						else if (type == "stylized") $(wID+"_stylized").innerHTML = html;
 						
@@ -110,13 +107,7 @@ SRRuleWidget.prototype = {
 		$$('.ruleSerialization').each(function(c) { if (c.getAttribute("id").indexOf(ruleContentID) == 0) c.hide(); });
 		$(ruleContentID+"_"+mode).show();
 	},
-	
-	escapeHTML: function(html) {
-		html = html.replace(/</g, "&lt;");
-		html = html.replace(/>/g, "&gt;");
-		return html;
-	},
-	
+			
 	changeRuleState : function(event, node, containingPage, ruleName, index) {
 
 		var callbackOnChangeState = function(request) {
