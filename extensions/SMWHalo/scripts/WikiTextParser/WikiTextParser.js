@@ -146,23 +146,23 @@ WikiTextParser.prototype = {
 				wikiText = this.text;
 			}
 		}
-                if (!wikiText || this.parserMode == WTP_EDITAREA_MODE) {
+        if (!wikiText || this.parserMode == WTP_EDITAREA_MODE) {
 
-                        if (typeof FCKeditor == 'undefined') {
-			// no wiki text => retrieve from text area.
-			var txtarea;
-			if (document.editform) {
-				txtarea = document.editform.wpTextbox1;
-			} else {
-				// some alternate form? take the first one we can find
-				var areas = document.getElementsByTagName('textarea');
-				txtarea = areas[0];
-			}
+            if (typeof FCKeditor == 'undefined' && typeof CKEDITOR == 'undefined') {
+                // no wiki text => retrieve from text area.
+                var txtarea;
+            	if (document.editform) {
+        			txtarea = document.editform.wpTextbox1;
+    			} else {
+                    // some alternate form? take the first one we can find
+                	var areas = document.getElementsByTagName('textarea');
+            		txtarea = areas[0];
+        		}
 	
-			if (gEditInterface == null) {
-				gEditInterface = new SMWEditInterface();
-			}
-                        }
+    			if (gEditInterface == null) {
+                    gEditInterface = new SMWEditInterface();
+                }
+            }
 			this.editInterface = gEditInterface;
 			this.text = this.editInterface.getValue();
 			this.parserMode = WTP_EDITAREA_MODE;
