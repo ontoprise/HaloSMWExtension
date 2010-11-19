@@ -783,8 +783,8 @@ Function configCustomizationsForNew
     
     ;DetailPrint "Installing helppages"
         DetailPrint "Starting XAMPP"
-        SetOutPath "$INSTDIR"
         CALL installMemcached
+        SetOutPath "$INSTDIR"
         Exec "$INSTDIR\xampp_start.bat"
         CALL waitForApacheAndMySQL
         MessageBox MB_OK|MB_ICONINFORMATION $(FIREWALL_COMPLAIN_INFO)
@@ -957,9 +957,9 @@ FunctionEnd
 Function installMemcached
     DetailPrint "Install memcached"
     SetOutPath "$INSTDIR"
-    nsExec::ExecToLog '"$INSTDIR\memcached\memcached.exe -d install"'
-    nsExec::ExecToLog '"$INSTDIR\memcached\memcached.exe -d start"'
-  
+    ;nsExec::ExecToLog '"$INSTDIR\memcached\memcached.exe -d install"'
+    ;nsExec::ExecToLog '"$INSTDIR\memcached\memcached.exe -d start"'
+    Exec "$INSTDIR\installService.bat"
 FunctionEnd
 
 Function un.uninstallMemcached
