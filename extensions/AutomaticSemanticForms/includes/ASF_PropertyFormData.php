@@ -111,8 +111,6 @@ class ASFPropertyFormData {
 				if($inputType == 'text') $inputType = 'haloACtext';
 				if($inputType == 'textarea') $inputType = 'haloACtextarea';
 				$autocompletion = ' |constraints=ask: [['.$this->titleObject->getText().'::+]] ,'.$this->titleObject->getText();
-				echo($autocompletion);
-				//error();
 			} else {
 				$autocompletion = ' |autocomplete';
 			}
