@@ -291,7 +291,7 @@ function smwf_om_ExistsArticle($title) {
 		return "true";
 	}
 
-	if ($titleObj->getNamespace() == SMW_NS_RELATION) {
+	if (defined('SMW_NS_RELATION') && $titleObj->getNamespace() == SMW_NS_RELATION) {
 	    // Attributes and relations are deprecated. They are replaced by Properties.
 		$titleObj = Title::newFromText($wgContLang->getNsText(SMW_NS_PROPERTY).":".$titleObj->getText());
 		$article = new Article($titleObj);
@@ -338,7 +338,7 @@ function smwf_om_ExistsArticle($title) {
  */
 
 function smwf_om_ExistsArticleMultiple($titleNames) {
-	$titleNames = split(',', $titleNames);
+	$titleNames = explode(',', $titleNames);
 	$results = array();
 	foreach ($titleNames as $t) {
 		$title = Title::newFromText(trim($t));
@@ -744,7 +744,7 @@ function smwf_om_userCanMultiple($titleNames, $action) {
 	// Special handling if the extension HaloACL is present
 	global $wgUser;
 	
-	$titleNames = split(',', $titleNames);
+	$titleNames = explode(',', $titleNames);
 	if (defined('HACL_HALOACL_VERSION')) {
 		$etc = haclfDisableTitlePatch();
 	}
