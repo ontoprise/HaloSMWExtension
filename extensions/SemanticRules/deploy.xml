@@ -12,7 +12,7 @@
 		</description>
 		<helpurl>http://smwforum.ontoprise.com/smwforum/index.php/Help:Rule_Knowledge_Extension</helpurl>
 		<dependencies>
-			<dependency from="146">smwhalo</dependency>
+			<dependency from="152">smwhalo</dependency>
 		</dependencies>
 		<notice>The Semantic rules extension requires the installation of the Triplestore connector (TSC). Please check smwforum.ontoprise.com for help.</notice>
 	</global>
@@ -24,8 +24,7 @@
 		<!-- empty -->
 	</resources>
 	<configs>
-		<precedes ext="smwhalo" />
-
+		
 		<new>
 			<require name="smwhalo"
 				file="extensions/SemanticRules/includes/SR_Initialize.php" />
