@@ -5,7 +5,7 @@
  * 
  * Language file En
  * 
- * @author: Kai Kühn / ontoprise / 2009
+ * @author: Kai Kï¿½hn / ontoprise / 2009
  *
  */
 require_once("SR_Language.php");
@@ -30,7 +30,7 @@ class SR_LanguageEn extends SR_Language {
     
     #rule widget
     'sr_ruleselector' => 'Rule format: ',
-    'sr_easyreadible' => 'Easy readible',
+    'sr_easyreadible' => 'Pretty print',
     'sr_stylizedenglish' => 'Stylized english',
     'sr_rulesdefinedfor' => 'Rules defined for',
     'sr_rulestatus' => 'Status',

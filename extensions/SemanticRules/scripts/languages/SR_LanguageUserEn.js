@@ -18,7 +18,7 @@
  * @file
  * @ingroup SRLanguage
  * 
- * @author Kai Kühn
+ * @author Kai Kï¿½hn
  */
 var wgUserSR_LanguageStrings = {
   
@@ -102,7 +102,7 @@ var wgUserSR_LanguageStrings = {
     'SR_RULE_TYPE' : 'Rule type',
     'SR_RULE_DEFINES' : 'Rule defines',
     'SR_RULE_USES' : 'Rule uses',
-    'SR_EASYREADIBLE' : 'Easy readible',
+    'SR_EASYREADIBLE' : 'Pretty print',
     'SR_STYLIZED_ENGLISH' : 'Stylized english',
     'SR_RULE_DIRTY' : "Rule was recently changed",
     'SR_RULE_INACTIVE_DESC' : "rule is inactive",
