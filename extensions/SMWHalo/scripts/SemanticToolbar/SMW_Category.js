@@ -64,7 +64,7 @@ var SMW_CAT_ALL_VALID_ANNOTATED =
 
 var SMW_CAT_HINT_CATEGORY =
 	'constraints = "namespace:' + SMW_CATEGORY_NS + '"' +
-	( ( wgAction == 'annotate' || typeof FCKeditor != 'undefined' ) ? '" position="fixed"' : '');
+	( ( wgAction == 'annotate' || typeof FCKeditor != 'undefined' || typeof CKEDITOR != 'undefined' ) ? '" position="fixed"' : '');
 
 var SMW_CAT_SUB_SUPER_CHECK_CATEGORY = 
 	'smwCheckType="category: exists ' +

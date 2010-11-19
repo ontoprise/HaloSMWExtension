@@ -765,7 +765,7 @@ AdvancedAnnotation.prototype = {
 	 * 
 	 */
 	loadWikiText : function() {
-            if (typeof FCKeditor == 'undefined') {
+            if (!( this.fck && this.cke )) {
                 function ajaxResponseLoadWikiText(request) {
                         if (request.status == 200) {
                             // success => store wikitext

@@ -50,7 +50,7 @@ var SMW_PRP_VALID_PROPERTY_NAME =
 		'? (color: white, hideMessage, valid:true) ' +
 	 	': (color: red, showMessage:PROPERTY_NAME_TOO_LONG, valid:false)" ';
 
-var positionFixed = (typeof FCKeditor != 'undefined') ? 'position="fixed"' : ''
+var positionFixed = (typeof FCKeditor != 'undefined' || typeof CKEDITOR !=  'undefined') ? 'position="fixed"' : ''
 var SMW_PRP_HINT_CATEGORY =
 	'constraints = "namespace:' + SMW_CATEGORY_NS + '" ' + positionFixed;
 
@@ -755,7 +755,7 @@ apply: function() {
 	var symmetricAnno = this.wtp.getCategory(gLanguage.getMessage('SYMMETRICAL_RELATION'));
 	
 	// set output buffering if we are in the FCKeditor
-        if (gEditInterface && typeof FCKeditor != 'undefined')
+        if (gEditInterface && typeof FCKeditor != 'undefined' && typeof CKEDITOR != 'undefined')
             gEditInterface.setOutputBuffer();
 
 	// change existing annotations
@@ -873,7 +873,7 @@ apply: function() {
 	}
 
        	// if we are in the FCKeditor, we now flush the outputbuffer
-        if (gEditInterface && typeof FCKeditor != 'undefined')
+        if (gEditInterface && typeof FCKeditor != 'undefined' && typeof CKEDITOR != 'undefined')
             gEditInterface.flushOutputBuffer();
 
 	

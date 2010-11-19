@@ -100,7 +100,7 @@ var SMW_REL_SUB_SUPER_ALL_VALID =
 var SMW_REL_CHECK_PART_OF_RADIO =
 	'smwValid="relToolBar.checkPartOfRadio"';
 
-var positionFixed = (wgAction == 'annotate' || typeof FCKeditor != 'undefined') ? '" position="fixed"' : ''
+var positionFixed = (wgAction == 'annotate' || typeof FCKeditor != 'undefined' || typeof CKEDITOR != 'undefined') ? '" position="fixed"' : ''
 
 var SMW_REL_HINT_CATEGORY =
 	'constraints = "namespace:' + SMW_CATEGORY_NS + '"' + positionFixed;
