@@ -73,8 +73,8 @@ SRRuleWidget.prototype = {
 						
 						// escape html
 						var html = ruletextNodes[i].textContent;
-						html = html.replace(/</g, "&lt;");
-						html = html.replace(/>/g, "&gt;");
+						//html = html.replace(/</g, "&lt;");
+						//html = html.replace(/>/g, "&gt;");
 						
 						
 						if (type == "easyreadible") $(wID+"_easyreadible").innerHTML = html;
@@ -104,7 +104,7 @@ SRRuleWidget.prototype = {
 	selectMode: function(event) {
 		var selectTag = Event.element(event);
 		var selectedIndex = selectTag.selectedIndex;
-		var ruleContentID = selectTag.parentNode.getAttribute("id");
+		var ruleContentID = selectTag.parentNode.parentNode.getAttribute("id");
 		
 		var mode = selectTag.options[selectedIndex].getAttribute("mode");
 		$$('.ruleSerialization').each(function(c) { if (c.getAttribute("id").indexOf(ruleContentID) == 0) c.hide(); });

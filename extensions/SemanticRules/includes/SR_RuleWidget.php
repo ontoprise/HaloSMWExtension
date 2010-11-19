@@ -19,7 +19,7 @@
  * @file
  * @ingroup SemanticRules
  *
- * @author Kai Kühn
+ * @author Kai Kï¿½hn
  */
 /**
  * Rule widget
@@ -70,15 +70,19 @@ class SRRuleWidget {
 		$headline = !is_null($wgTitle) && $wgTitle->getNamespace() != NS_SPECIAL ? '<h2>'.wfMsg('sr_rulesdefinedfor').' '.$this->mContainingPage->getPrefixedText().'</h2>'  : "";
 
 		$onOffSwitch = $this->onOffSwitch($this->mActive, self::$index);
+		$ruleFormatSelector = '<span style="float:right;margin-right:5px;">'.wfMsg('sr_ruleselector').
+                       '<select style="margin-top: 5px;" name="rule_content_selector'.self::$index.'" onchange="sr_rulewidget.selectMode(event)">'.
+                          '<option mode="easyreadible">'.wfMsg('sr_easyreadible').'</option>'.
+                          '<option mode="stylized">'.wfMsg('sr_stylizedenglish').'</option>'.
+                       '</select></span> ';
 		$resultHTML = $headline.'<div id="rule_content_'.self::$index.'" ruleID="'.htmlspecialchars($this->mRuleURI).'" class="ruleWidget"><img style="margin-top: 5px;margin-left: 5px;" src="'.$wgScriptPath.'/extensions/SemanticRules/skins/images/rule.gif"/><span style="margin-left: 5px;font-weight:bold;">
-                         '.htmlspecialchars($this->mRuleName).'</span><span style="float:right;margin-right: 10px;margin-top: 5px;">'.$onOffSwitch.'</span> <span style="float:right;margin-right: 10px;margin-top: 5px;">'.wfMsg('sr_rulestatus').':</span><hr/>'. // tab container
+                         '.htmlspecialchars($this->mRuleName).'</span>'.$ruleFormatSelector.'<span style="float:right;margin-right: 10px;margin-top: 5px;">'.$onOffSwitch.'</span> <span style="float:right;margin-right: 10px;margin-top: 5px;">'.wfMsg('sr_rulestatus').':</span><hr/>'. // tab container
                          '<div id="rule_content_'.self::$index.'_easyreadible" class="ruleSerialization">'.htmlspecialchars($this->mRuletext).'</div>'. // tab 1
                          '<div id="rule_content_'.self::$index.'_stylized" class="ruleSerialization" style="display:none;">Stylized english</div>'.
                          '<div id="'.htmlspecialchars($this->mRuleURI).'" native="'.($this->mNative?"true":"false").'" class="ruleSerialization" style="display:none;">'.htmlspecialchars($this->mRuletext).'</div>'.
                          '</div>';  
 		self::$index++;
-		// FIXME: rule serializer selector removed for current release because it has no effect.
-		//$html .= '<div id="rule_content_'.$i.'" ruleID="'.htmlspecialchars($ruleURI).'" class="ruleWidget"><a style="margin-left: 5px;" href="'.htmlspecialchars($containingPageTitle->getFullURL()).'">'.htmlspecialchars($rulename).'</a> | '.wfMsg('sr_ruleselector').'<select style="margin-top: 5px;" name="rule_content_selector'.$i.'" onchange="sr_rulewidget.selectMode(event)"><option mode="easyreadible">'.wfMsg('sr_easyreadible').'</option><option mode="stylized">'.wfMsg('sr_stylizedenglish').'</option></select> '. // tab container
+	
 		return $resultHTML;
 	}
 

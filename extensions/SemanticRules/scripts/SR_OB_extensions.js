@@ -20,7 +20,7 @@
  * @defgroup SR_OntologyBrowser extensions
  * @ingroup SemanticRules
  * 
- * @author: Kai Kühn / ontoprise / 2010
+ * @author: Kai Kï¿½hn / ontoprise / 2010
  * 
  */
 
@@ -330,6 +330,14 @@ SRRuleActionListener.prototype = {
 			var subTree = sr_transformer.transformResultToHTML(request,
 					$('ruleList'));
 			selectionProvider.fireRefresh();
+			
+			// hack for FF. Its XSLT proc escapes HTML always (not switchable).
+			if (OB_bd.isGecko) {
+				$$('.ruleSerialization').each(function(s) { 
+					var html = s.textContent;
+					s.innerHTML = html;
+				});
+			}
 
 		}
 		selectionProvider.fireSelectionChanged(ruleURI, null, 300, node);
