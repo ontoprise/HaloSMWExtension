@@ -198,6 +198,60 @@ $haclWhitelistGroups = array('sysop','bureaucrat');
 global $haclCrossTemplateAccess;
 $haclCrossTemplateAccess = array('sysop','bureaucrat');
 
+###
+# 
+# If $haclgUseFeaturesForGroupPermissions is <true> the features for 
+# "Global Permissions" that are defined in $haclgFeature will be used in the
+# GUI on "Special:HaloACL". The default values in $haclgFeature will overwrite
+# other conflicting settings in $wgGroupPermissions for all anonymous and 
+# registered users.
+# If you just want to use $wgGroupPermissions with HaloACL and no GUI support
+# set $haclgUseFeaturesForGroupPermissions=false.
+#
+$haclgUseFeaturesForGroupPermissions = true;
+
+// Definition of features in the "Global Permissions" tab of Special:HaloACL
+// Do not remove the surrounding if-condition!
+
+$haclgFeature = array();
+if ($haclgUseFeaturesForGroupPermissions === true) {
+	$haclgFeature['read']['systemfeatures'] = "read";
+	$haclgFeature['read']['name'] = "Read";
+	$haclgFeature['read']['description'] = "This is the feature for reading articles.";
+	$haclgFeature['read']['permissibleBy'] = "admin"; // The other alternative would be "all"
+	$haclgFeature['read']['default'] = "deny"; // The other alternative would be "deny"
+	
+	$haclgFeature['upload']['systemfeatures'] = "upload|reupload|reupload-own|reupload-shared|upload_by_url";
+	$haclgFeature['upload']['name'] = "Upload";
+	$haclgFeature['upload']['description'] = "This is the feature for uploading files into the wiki.";
+	$haclgFeature['upload']['permissibleBy'] = "admin"; // The other alternative would be "all"
+	$haclgFeature['upload']['default'] = "deny"; // The other alternative would be "deny"
+	
+	$haclgFeature['edit']['systemfeatures'] = "edit|createpage|createtalk|move|movefile|move-subpages|move-rootuserpages|createaccount|editprotected";
+	$haclgFeature['edit']['name'] = "Edit";
+	$haclgFeature['edit']['description'] = "This is the feature for editing articles.";
+	$haclgFeature['edit']['permissibleBy'] = "admin"; // The other alternative would be "all"
+	$haclgFeature['edit']['default'] = "deny"; // The other alternative would be "deny"
+	
+	$haclgFeature['manage']['systemfeatures'] = "delete|bigdelete|deletedhistory|undelete|browsearchive|mergehistory|protect|block|blockemail|hideuser|userrights|userrights-interwiki|rollback|markbotedits|patrol|editinterface|editusercssjs|suppressrevision|deleterevision";
+	$haclgFeature['manage']['name'] = "Management";
+	$haclgFeature['manage']['description'] = "This is the feature for managing wiki articles.";
+	$haclgFeature['manage']['permissibleBy'] = "admin"; // The other alternative would be "all"
+	$haclgFeature['manage']['default'] = "deny"; // The other alternative would be "deny"
+	
+	$haclgFeature['administrate']['systemfeatures'] = "siteadmin|import|importupload|trackback|unwatchedpages";
+	$haclgFeature['administrate']['name'] = "Administration";
+	$haclgFeature['administrate']['description'] = "This is the feature for administrating the wiki.";
+	$haclgFeature['administrate']['permissibleBy'] = "admin"; // The other alternative would be "all"
+	$haclgFeature['administrate']['default'] = "deny"; // The other alternative would be "deny"
+	
+	$haclgFeature['technical']['systemfeatures'] = "bot|purge|minoredit|nominornewtalk|noratelimit|ipblock-exempt|proxyunbannable|autopatrol|apihighlimits|writeapi|suppressredirect|autoconfirmed|emailconfirmed";
+	$haclgFeature['technical']['name'] = "Technical";
+	$haclgFeature['technical']['description'] = "This is the feature for technical issues.";
+	$haclgFeature['technical']['permissibleBy'] = "admin"; // The other alternative would be "all"
+	$haclgFeature['technical']['default'] = "deny"; // The other alternative would be "deny"
+}
+
 $wgGroupPermissions['*']['propertyread'] = true;
 $wgGroupPermissions['*']['propertyformedit'] = true;
 $wgGroupPermissions['*']['propertyedit'] = true;
@@ -210,6 +264,12 @@ $wgAvailableRights[] = 'propertyread';
 $wgAvailableRights[] = 'propertyformedit';
 $wgAvailableRights[] = 'propertyedit';
 
+// The logout page must always be accessible
+$wgWhitelistRead[] = "Special:UserLogout";
+
 // Tell the script manager, that we need prototype
 global $smgJSLibs; 
-$smgJSLibs[] = 'prototype'; 
+$smgJSLibs[] = 'prototype';
+$smgJSLibs[] = 'jquery'; 
+$smgJSLibs[] = 'json'; 
+

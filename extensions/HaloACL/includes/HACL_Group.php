@@ -119,20 +119,12 @@ class  HACLGroup {
     public function canBeModified()	{return $this->mCanBeModified;}
     
     /**
-     * Returns the name of the group without the prefix "Group/"
+     * Returns the name of this group without the prefix e.g. "Group/"
      * @return string
      * 		Name of the group without prefix
      */
     public function getGroupNameWithoutPrefix() {
-    	global $haclgContLang;
-    	$prefix = $haclgContLang->getNamingConvention(HACLLanguage::NC_GROUP)."/";
-
-   		if (strpos($this->mGroupName, $prefix) === 0) {
-   			// Remove the prefix of the naming convention e.g. "Group/"
-   			return substr($this->mGroupName, strlen($prefix));
-   		}
-   		 
-    	return $this->mGroupName;
+    	return self::removeNamePrefix($this->mGroupName);
     }
 
     //	public function setXY($xy)               {$this->mXY = $xy;}
@@ -232,6 +224,25 @@ class  HACLGroup {
     public static function nameForID($groupID) {
         return HACLStorage::getDatabase()->groupNameForID($groupID);
     }
+    
+    /**
+     * Returns the name of the group without the prefix e.g. "Group/"
+     * @param string $name
+     * 		A name with the typical group prefix.
+     * @return string
+     * 		Name without prefix
+     */
+    public static function removeNamePrefix($name) {
+    	global $haclgContLang;
+    	$prefix = $haclgContLang->getNamingConvention(HACLLanguage::NC_GROUP)."/";
+
+   		if (strpos($name, $prefix) === 0) {
+   			// Remove the prefix of the naming convention e.g. "Group/"
+   			return substr($name, strlen($prefix));
+   		}
+   		 
+    	return $name;
+    }
 
     /**
      * Checks if the group with the ID $groupID exists in the database.
@@ -279,10 +290,15 @@ class  HACLGroup {
 		
 		// make sure the match is not in the prefix
 		global $haclgContLang;
-    	$prefix = $haclgContLang->getNamingConvention(HACLLanguage::NC_GROUP);
+    	$prefix = $haclgContLang->getNamingConvention(HACLLanguage::NC_GROUP).'/';
+    	$pl = strlen($prefix);
     	foreach ($groups as $gn => $gid) {
-    		if (!preg_match("/($prefix\/)?.*?$search.*/i", $gn)) {
-    			unset($groups[$gn]);
+    		$gno = $gn;
+    		if (strpos($gn, $prefix) === 0) {
+    			$gn = substr($gn, $pl);
+    		}
+    		if (stripos($gn, $search) === false) {
+    			unset($groups[$gno]);
     		}
     	}
     	

@@ -47,10 +47,8 @@ if ( !defined( 'MEDIAWIKI' ) ) {
 class HACLGroupPermissions  {
 	
 	//--- Constants ---
-//	const XY= 0;		
 		
 	//--- Private fields ---
-	private $mXY;    		//string: comment
 	
 	/**
 	 * Constructor for  HACLGroupPermissions
@@ -59,14 +57,10 @@ class HACLGroupPermissions  {
 	 * 		Name of the notification
 	 */		
 	function __construct() {
-//		$this->mXY = $xy;
 	}
 	
 
 	//--- getter/setter ---
-//	public function getXY()           {return $this->mXY;}
-
-//	public function setXY($xy)               {$this->mXY = $xy;}
 	
 	//--- Public methods ---
 	
@@ -86,23 +80,197 @@ class HACLGroupPermissions  {
 	public static function onUserEffectiveGroups(&$user, &$userGroups) {
 		$groups = HACLGroup::getGroupsOfMember($user->getId(), HACLGroup::USER, true);
 		foreach ($groups as $g) {
-			$userGroups[] = $g['name'];
+			$userGroups[] = HACLGroup::removeNamePrefix($g['name']);
 		}
 		return true;
 	}
 	
 	/**
-	 * Description
-	 *
-	 * @param type $x
-	 * 		...
+	 * Upon startup of the wiki the default permissions in all $haclgFeature
+	 * elements have to be translated into values of $wgGroupPermissions.
+	 * This happens in this function. If the default permission is "permit"
+	 * the group permission for '*' and 'user' (all anonymous and registered 
+	 * users) is set to "true", otherwise in case of "deny" it is "false".
 	 * 
-	 * @return type
-	 * 		...
+	 * @throws HACLGroupPermissionsException
+	 * 		MISSING_PARAMETER: if the entry 'systemfeatures' or 'default' of a 
+	 * 			defined	feature is missing or empty.
+	 * 		INVALID_PARAMETER_VALUE: if the default value is invalid
 	 */
-//	public  function ...($x) {
-//		return ...
-//	}
+	public static function initDefaultPermissions() {
+		global $haclgFeature, $wgGroupPermissions;
+		
+		foreach ($haclgFeature as $fname => $feature) {
+			$sfs = $feature['systemfeatures'];
+			$sysFeatures = explode('|', $sfs);
+			if (empty($sfs) || count($sysFeatures) == 0) {
+				throw new HACLGroupPermissionsException(
+					HACLGroupPermissionsException::MISSING_PARAMETER,
+					$fname, 'systemfeatures');
+			}
+			$default = $feature['default'];
+			if (empty($default)) {
+				throw new HACLGroupPermissionsException(
+					HACLGroupPermissionsException::MISSING_PARAMETER,
+					$fname, 'default');
+			}
+			if ($default !== 'permit' && $default !== 'deny') {
+				throw new HACLGroupPermissionsException(
+					HACLGroupPermissionsException::INVALID_PARAMETER_VALUE,
+					$fname, 'default', $default, "'permit' or 'deny'");
+			}
+			$permit = $default == 'permit' ? true : false;
+			foreach ($sysFeatures as $sf) {
+				$wgGroupPermissions['*'][$sf] = $permit;
+				$wgGroupPermissions['user'][$sf] = $permit;
+			}
+		}
+	}
+	
+	/**
+	 * All group permissions that are stored in the database are transferred
+	 * to $wgGroupPermissions. There are some special group IDs:
+	 * -1 => all users (anonymous and registered) (*)
+	 * -2 => registered users (user)
+	 * 
+	 * @throws HACLGroupPermissionsException
+	 * 		UNKNOWN_FEATURE, if the DB contains an unknown feature
+	 */
+	public static function initPermissionsFromDB() {
+		// Get all group permissions from the DB
+		$db = HACLStorage::getDatabase();
+		$permissions = $db->getAllGroupPermissions();
+		
+		// Set $wgGroupPermissions for all permissions from the DB
+		global $wgGroupPermissions, $haclgFeature;
+		foreach ($permissions as $p) {
+			switch ($p['groupID']) {
+			case -1:
+				$group = '*';
+				break;
+			case -2:
+				$group = 'user';
+				break;
+			default:
+				$group = HACLGroup::nameForID($p['groupID']);
+				$group = HACLGroup::removeNamePrefix($group);
+				break;
+			}
+			if (!array_key_exists($p['feature'], $haclgFeature)) {
+				// Unknown feature found
+				throw new HACLGroupPermissionsException(
+					HACLGroupPermissionsException::UNKNOWN_FEATURE,
+					$p['feature']);
+			}
+			$feature = $haclgFeature[$p['feature']]['systemfeatures'];
+			$sysFeatures = explode('|', $feature);
+			$permitted = $p['permission'];
+			
+			foreach ($sysFeatures as $sf) {
+				$wgGroupPermissions[$group][$sf] = $permitted;
+			}
+		}
+		
+		// Special rights for sysop and bureaucrat: They are always able to 
+		// read pages. Otherwise they could lock themselves out.
+		$wgGroupPermissions['sysop']['read'] = true;
+		$wgGroupPermissions['bureaucrat']['read'] = true;
+		
+	}
+	
+	/**
+	 * Stores the group permission of a group for a feature.
+	 * 
+	 * @param int $groupID
+	 * 		ID of the group whose permission is to be stored.
+	 * @param string $feature
+	 * 		Name of the feature whose permission is set.
+	 * @param boolean $permission
+	 * 		true, if the feature is permitted for the group
+	 * 		false, otherwise
+	 */
+	public static function storePermission($groupID, $feature, $permission) {
+		$db = HACLStorage::getDatabase();
+		$db->storeGroupPermission($groupID, $feature, $permission);
+	}
 
+	/**
+	 * Deletes the group permission of a group for a feature.
+	 * 
+	 * @param int $groupID
+	 * 		ID of the group whose permission is to be deleted.
+	 * @param string $feature
+	 * 		Name of the feature whose permission is deleted.
+	 */
+	public static function deletePermission($groupID, $feature) {
+		$db = HACLStorage::getDatabase();
+		$db->deleteGroupPermission($groupID, $feature);
+	}
+
+	/**
+	 * Retrieves the permission of the group with ID $groupID for the feature
+	 * $feature.
+	 * 
+	 * @param int $groupID
+	 * 		The ID of the group whose permission is retrieved.
+	 * @param string $feature
+	 * 		Name of the feature whose permission is retrieved.
+	 * @return boolean
+	 * 		true, if the feature is permitted for the group
+	 * 		false, otherwise
+	 */
+	public static function getPermission($groupID, $feature) {
+		$db = HACLStorage::getDatabase();
+		return $db->getGroupPermission($groupID, $feature);
+	}
+	
+	/**
+	 * Returns all permissions of features that are explicitly specified (i.e.
+	 * stored in the database) for the group with the ID $groupID. 
+	 * 
+	 * @param $groupID
+	 * 		ID of the group
+	 * @return array(string feature => boolean permission)
+	 */
+	public static function getPermissionsForGroup($groupID) {
+		$db = HACLStorage::getDatabase();
+		return $db->getPermissionsForGroup($groupID);
+	}
+	
+	/**
+	 * Deletes all group permissions in the database.
+	 */
+	public static function deleteAllPermissions() {
+		$db = HACLStorage::getDatabase();
+		$db->deleteAllGroupPermissions();
+	}
+	
+	/**
+	 * Saves the group permissions of the given $feature.
+	 * @param string $feature
+	 * 		ID of the feature
+	 * @param array(string groupID => string permission) $permissions
+	 * 		Permissions for groups. Permission must be one of 'permit', 'deny'
+	 * 		or 'default'.
+	 * @return bool
+	 * 		<true> if saving permissions was successful
+	 * 		<false> otherwise
+	 */
+	public static function saveGroupPermissions($feature, $permissions) {
+		$db = HACLStorage::getDatabase();
+		foreach ($permissions as $groupID => $p) {
+			if ($p === 'default' || ($p !== 'permit' && $p !== 'deny')) {
+				// Delete explicit group permission
+				$db->deleteGroupPermission($groupID, $feature);
+			} else {
+				// Store explicit permission
+				$perm = $p === 'permit';
+				$db->storeGroupPermission($groupID, $feature, $perm);
+			}
+		}
+		return true;
+	}
+
+	
 	//--- Private methods ---
 }

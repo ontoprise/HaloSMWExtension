@@ -362,6 +362,31 @@ $messages['en'] = array(
 	//--- Messages for Manage Groups ---
 	'hacl_group_exists'  => "The group $1 already exists. (Its type is $2.)\n You can not create two groups with the same name.",
 	'hacl_group_no_name' => "You entered no group name. A name is required to create a new group.",
+
+	//--- Messages for global permissions ---
+	'hacl_gp_ge_group'		=> "Group",
+	'hacl_gp_ge_info'		=> "Info",
+	'hacl_gp_ge_permission'	=> "Permission",
+	'hacl_gp_group_filter'	=> "Filter:",
+	'hacl_gp_intro'			=> "In this Tab you can define global permissions for HaloACL groups.<br />".
+							   "These permissions affect features of the whole system and not only certain content.",
+	'hacl_gp_permission'	=> "Permission:",
+	'hacl_gp_set_permission'=> "Set permission ",
+	'hacl_gp_select_permission' => "Please select the permission you want to assign to groups.",
+	'hacl_gp_default'			=> "The default setting for all users is: ",
+	'hacl_gp_permit'			=> "permitted",
+	'hacl_gp_deny'				=> "denied",
+	'hacl_gp_comprises_features'=> "This permission comprises the following system features:",
+	'hacl_gp_discard'			=> "Discard changes",
+	'hacl_gp_save'				=> "Save global permissions",
+	'hacl_gp_hint'				=> "Hint:",
+	'hacl_gp_check_default'		=> "Apply default settings",
+	'hacl_gp_check_permit'		=> "Grant permission",
+	'hacl_gp_check_deny'		=> "Deny permission",
+	'hacl_gp_all_users'			=> "All users",
+	'hacl_gp_registered_users'	=> "Registered users",
+	'hacl_gp_permissions_saved' => "The permissions were successfully saved."
+
 );
 
 /** 
@@ -696,4 +721,28 @@ $messages['de'] = array(
 //--- Messages for Manage Groups ---
 	'hacl_group_exists'  => "Die Gruppe $1 existiert bereits. (Ihr Typ ist $2.)\n Sie können nicht zwei Gruppen mit dem selben Namen erzeugen.",
 	'hacl_group_no_name' => "Sie haben keinen Gruppennamen eingegeben. Dieser Name ist zwingend erforderlich.",
+
+	//--- Messages for global permissions ---
+	'hacl_gp_ge_group'		=> "Gruppe",
+	'hacl_gp_ge_info'		=> "Info",
+	'hacl_gp_ge_permission'	=> "Erlaubnis",
+	'hacl_gp_group_filter'	=> "Filter:",
+	'hacl_gp_intro'			=> "In diesem Tab können Sie globale Berechtigungen für HaloACL-Gruppen festlegen.<br />".
+							   "Diese Berechtigungen beziehen sich auf Funktionen des gesamten Systems und nicht nur auf bestimmte Inhalte.",
+	'hacl_gp_permission'	=> "Berechtigung:",
+	'hacl_gp_set_permission'=> "Setze Berechtigung ",
+	'hacl_gp_select_permission' => "Bitte wählen Sie die Berechtigung aus, die sie Gruppen zuweisen möchten.",
+	'hacl_gp_default'			=> "Die Standardeinstellung für alle Benutzer ist: ",
+	'hacl_gp_permit'			=> "erlaubt",
+	'hacl_gp_deny'				=> "verweigert",
+	'hacl_gp_comprises_features'=> "Diese Berechtigung setzt sich aus folgenden Systemfunktionen zusammen:",
+	'hacl_gp_discard'			=> "Änderungen verwerfen",
+	'hacl_gp_save'				=> "Globale Berechtigungen speichern",
+	'hacl_gp_hint'				=> "Hinweis:",
+	'hacl_gp_check_default'		=> "Standardeinstellung verwenden",
+	'hacl_gp_check_permit'		=> "Berechtigung geben",
+	'hacl_gp_check_deny'		=> "Berechtigung verweigern",
+	'hacl_gp_all_users'			=> "Alle Benutzer",
+	'hacl_gp_registered_users'	=> "Registrierte Benutzer",
+	'hacl_gp_permissions_saved' => "Die Berechtigungen wurden erfolgreich gespeichert."
 );

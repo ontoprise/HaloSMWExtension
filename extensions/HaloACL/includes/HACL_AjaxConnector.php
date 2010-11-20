@@ -69,6 +69,11 @@ function unescape($source) {
 /*
  * defining ajax-callable functions
  */
+$wgAjaxExportList[] = "haclGlobalPermissionsPanel";
+$wgAjaxExportList[] = "haclGetGroupChildren";
+$wgAjaxExportList[] = "haclFilterGroups";
+$wgAjaxExportList[] = "haclSaveGroupPermissions";
+
 $wgAjaxExportList[] = "haclAjaxTestFunction";
 $wgAjaxExportList[] = "haclCreateACLPanels";
 $wgAjaxExportList[] = "haclCreateManageACLPanels";
@@ -5535,4 +5540,108 @@ function haclAddGroupPrefix($groupName) {
 	global $haclgContLang;
 	$prefix = $haclgContLang->getNamingConvention(HACLLanguage::NC_GROUP)."/";
 	return $prefix.$groupName;
+}
+
+
+
+/*******************************************************************************
+ * 
+ * Group permissions
+ * 
+ */ 
+
+/**
+ * Returns the HTML of the whole Global Permission panel.
+ * 
+ * @return <string> content for global permissions-tab
+ */
+function haclGlobalPermissionsPanel() {
+
+	// clear temp-right-sessions
+    clearTempSessionRights();
+
+    $response = new AjaxResponse();
+	
+	$html = HACLUIGroupPermissions::getPermissionsPanel();	
+	
+    $response->addText($html);
+    return $response;
+
+}
+
+/**
+ * Returns the children of the given group in JSON format for jQuery.tree
+ * 
+ * @param string $groupID
+ * 		ID of the parent group or "---ROOT---" for the root level
+ * @return string
+ * 		Children of the requested group
+ */
+function haclGetGroupChildren($groupID, $feature) {
+
+	$response = new AjaxResponse();
+	$response->setContentType("json");
+
+	$groupID = urldecode($groupID);
+	$feature = urldecode($feature);
+	$groupID = str_replace("haclgt-", "", $groupID);
+
+	$json = HACLUIGroupPermissions::getGroupChildren($groupID, $feature);
+	$response->addText($json);
+	return $response;
+
+}
+
+/**
+ * Returns the paths to groups that match the given filter.
+ * 
+ * @param string $filter
+ * 		Group names must contain this string
+ * @return string
+ * 		A comma separated list of group IDs that make up the paths to the groups
+ * 		that match the filter
+ */
+function haclFilterGroups($filter) {
+	$response = new AjaxResponse();
+	$response->setContentType("text/plain");
+
+	$filter = urldecode($filter);
+
+	$result = HACLUIGroupPermissions::searchMatchingGroups($filter);
+	if (empty($result)) {
+		// Empty results are allowed but jsTree throws an exception
+		// => return a non-existing ID
+		$result = "non-existing-id";
+	}
+	$response->addText($result);
+	return $response;
+	
+}
+
+/**
+ * Saves changed permissions of the given feature.
+ * 
+ * @param string $feature
+ * 		ID of the feature
+ * @param string $changedPermissions
+ * 		JSON encoded array that contains the changed permissions
+ */
+function haclSaveGroupPermissions($feature, $changedPermissions) {
+	$feature = urldecode($feature);
+	$changedPermissions = urldecode($changedPermissions);
+	$changedPermissions = json_decode($changedPermissions, true);
+	
+	$groupPermission = array();
+	foreach ($changedPermissions as $group => $permission) {
+		$group = str_replace('haclgt-', '', $group);
+		$groupPermission[$group] = $permission;
+	}
+	$result = HACLGroupPermissions::saveGroupPermissions($feature, $groupPermission);
+	
+    $response = new AjaxResponse();
+    $response->setContentType("html");
+    
+    $response->addText(wfMsg('hacl_gp_permissions_saved'));
+	return $response;
+	
 }

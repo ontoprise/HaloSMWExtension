@@ -76,7 +76,8 @@ function enableHaloACL() {
     // UI
     $wgAutoloadClasses['HACL_GenericPanel'] = $haclgIP . '/includes/HACL_GenericPanel.php';
     $wgAutoloadClasses['HACL_helpPopup'] = $haclgIP . '/includes/HACL_helpPopup.php';
-
+    $wgAutoloadClasses['HACLUIGroupPermissions'] = $haclgIP . '/includes/UI/HACL_UIGroupPermissions.php';
+    
     //--- Autoloading for exception classes ---
     $wgAutoloadClasses['HACLException']        = $haclgIP . '/exceptions/HACL_Exception.php';
     $wgAutoloadClasses['HACLStorageException'] = $haclgIP . '/exceptions/HACL_StorageException.php';
@@ -84,6 +85,7 @@ function enableHaloACL() {
     $wgAutoloadClasses['HACLSDException']      = $haclgIP . '/exceptions/HACL_SDException.php';
     $wgAutoloadClasses['HACLRightException']   = $haclgIP . '/exceptions/HACL_RightException.php';
     $wgAutoloadClasses['HACLWhitelistException'] = $haclgIP . '/exceptions/HACL_WhitelistException.php';    
+    $wgAutoloadClasses['HACLGroupPermissionsException'] = $haclgIP . '/exceptions/HACL_GroupPermissionException.php';    
 
     return true;
 }
@@ -99,6 +101,13 @@ function haclfSetupExtension() {
     wfProfileIn('haclfSetupExtension');
     global $haclgIP, $wgHooks, $wgParser, $wgExtensionCredits,
     $wgLanguageCode, $wgVersion, $wgRequest, $wgContLang;
+    
+    // Initialize group permissions
+    global $haclgUseFeaturesForGroupPermissions;
+    if ($haclgUseFeaturesForGroupPermissions === true) {
+	    HACLGroupPermissions::initDefaultPermissions();
+	    HACLGroupPermissions::initPermissionsFromDB();
+    }
     
     global $haclgProtectProperties;
     if ($haclgProtectProperties) {
@@ -392,6 +401,15 @@ function haclAddHTMLHeader(&$out) {
 	        $out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/autoCompleter.js\"></script>");
 	        $out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/notification.js\"></script>");
 	        $out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/quickaclTable.js\"></script>");
+	        
+	        //--- jQuery part ---
+	        $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/scripts/jsTree.v.0.9.9a/jquery.tree.js"></script>');
+	        
+	        //--- HACL ---
+	        $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/scripts/HACL_GroupTree.js"></script>');
+	        $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/scripts/HACL_GroupPermission.js"></script>');
+	        
+	        
 		} else {
 			$out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/specialhacl-packed.js\"></script>");
 		}
@@ -417,6 +435,14 @@ function haclAddHTMLHeader(&$out) {
             'media' => 'screen, projection',
             'href'  => $haclgHaloScriptPath . '/skins/haloacl.css'
         ));
+        
+        $out->addLink(array(
+            'rel'   => 'stylesheet',
+            'type'  => 'text/css',
+            'media' => 'screen, projection',
+            'href'  => $haclgHaloScriptPath . '/skins/haloacl_group_permissions.css'
+        ));
+        
         if(get_class($wgUser->getSkin()) == "SkinMonoBook") {
             $out->addLink(array(
                 'rel'   => 'stylesheet',
