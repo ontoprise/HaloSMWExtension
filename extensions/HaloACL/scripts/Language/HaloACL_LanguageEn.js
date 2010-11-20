@@ -28,6 +28,8 @@ var gHACLUserLanguageStrings = {
     'groups'                : 'Groups',
     'noGroupsAvailable'		: 'No groups are defined yet or existing groups are not accessible for you.',
     'createACL'             : 'Create ACL',
+    'globalPermissions'     : 'Global Permissions',
+    'globalPermissionsTooltip': 'Manage permissions for system features',
     'manageACLs'            : 'Manage ACLs',
     'manageACLTooltip'      : 'Manage existing ACLs, Manage own default user template and Manage quick access ACLs',
     'manageUser'            : 'Manage Groups',

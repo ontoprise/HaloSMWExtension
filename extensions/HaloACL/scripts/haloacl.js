@@ -93,6 +93,7 @@ YAHOO.haloacl.buildMainTabView = function(containerName,requestedTitle,showWhite
     var manageUserActive = false;
     var manageACLActive = false;
     var whitelistActive = false;
+    var globalPermissionsActive = false;
     if(activeTab == "createACL"){
         createACLActive = true;
     }else if(activeTab == "manageACLs"){
@@ -101,11 +102,41 @@ YAHOO.haloacl.buildMainTabView = function(containerName,requestedTitle,showWhite
         manageUserActive = true;
     }else if(activeTab == "whitelists"){
         whitelistActive = true;
+    }else if(activeTab == "globalPermissions"){
+        globalPermissionsActive = true;
     }
 
 
 
+
     YAHOO.haloacl.haloaclTabs = new YAHOO.widget.TabView(containerName);
+	
+	//--- Global permissions tab ---
+    var globalPermissionTab = new YAHOO.widget.Tab({
+        label: gHACLLanguage.getMessage('globalPermissions'),
+        dataSrc:'haclGlobalPermissionsPanel',
+        cacheData:false,
+        active:globalPermissionsActive,
+        id:'globalPermissionsPanel_button'
+    });
+    globalPermissionTab._dataConnect = YAHOO.haloacl.tabDataConnect;
+    YAHOO.haloacl.haloaclTabs.addTab(globalPermissionTab);
+    globalPermissionTab.addListener('click', function(e){});
+    $(globalPermissionTab.get('contentEl')).setAttribute('id','globalpermissionsTab');
+    globalPermissionTab.addListener('click', function(e){
+        try{
+            $('manageaclmainTab').innerHTML = "";
+            $('manageuserTab').innerHTML = "";
+        }catch(e){}
+    });
+    new YAHOO.widget.Tooltip("globalPermissionsPanel_tooltip", {
+        context:"globalPermissionsPanel_button",
+        text:gHACLLanguage.getMessage('globalPermissionsTooltip'),
+        zIndex :10
+    });
+	
+	
+	//--- Create ACL tab ---
     var tab1 = new YAHOO.widget.Tab({
         label: gHACLLanguage.getMessage('createACL'),
         dataSrc:'haclCreateACLPanels',

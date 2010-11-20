@@ -27,6 +27,8 @@ var gHACLUserLanguageStrings = {
     'groups'                : 'Gruppen',
     'noGroupsAvailable'		: 'Es sind noch keine Gruppen definiert oder die existierenden Gruppen sind für Sie nicht zugreifbar.',
     'createACL'             : 'ACL anlegen',
+    'globalPermissions'     : 'Globale Berechtigungen',
+    'globalPermissionsTooltip': 'Verwalten von Berechtigungen für Systemfunktionen',
     'manageACLs'            : 'ACLs verwalten',
     'manageACLTooltip'      : 'ACLs verwalten, eigenes Standard Template verwalten und ACL Favoriten verwalten',
     'manageUser'            : 'Nutzer verwalten',

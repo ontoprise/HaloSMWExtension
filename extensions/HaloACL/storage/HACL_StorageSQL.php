@@ -162,7 +162,7 @@ class HACLStorageSQL {
 		$table = $db->tableName('halo_acl_group_permissions');
 
 		HACLDBHelper::setupTable($table, array(
-            'group_id' 		=> 'INT(8) UNSIGNED NOT NULL',
+            'group_id' 		=> 'INT(8) NOT NULL',
             'feature' 		=> 'VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL',
             'permission'	=> 'BOOL'),
 		$db, $verbose, "group_id,feature");
@@ -1629,6 +1629,21 @@ class HACLStorageSQL {
             'group_id'    	=>  $groupID ,
             'feature'		=>  $feature ,
             'permission '   =>  $permission));
+	}
+
+	/**
+	 * Deletes the group permission of a group for a feature.
+	 * 
+	 * @param int $groupID
+	 * 		ID of the group whose permission is to be deleted.
+	 * @param string $feature
+	 * 		Name of the feature whose permission is deleted.
+	 */
+	public function deleteGroupPermission($groupID, $feature) {
+		$db =& wfGetDB( DB_MASTER );
+		$db->delete($db->tableName('halo_acl_group_permissions'), 
+					array('group_id' => $groupID,
+						  'feature' =>  $feature));
 	}
 
 	/**
