@@ -1655,7 +1655,7 @@ function setTextContent(elem, text) {
 }
 
 var smwhgAdvancedAnnotation = null;
-if (typeof FCKeditor == 'undefined') {
+if (typeof FCKeditor == 'undefined' && typeof CKEDITOR == 'undefined') {
     Event.observe(window, 'load', AdvancedAnnotation.create);
     Event.observe(window, 'unload', AdvancedAnnotation.unload);
 }
