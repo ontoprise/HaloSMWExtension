@@ -246,12 +246,15 @@ class TestMWGroupsStorage extends PHPUnit_Framework_TestCase {
 		);
 		$this->assertEquals($expected, $permissions, "Incorrect permissions were retrieved for a group.");
 		
-		
+		// Delete the permission for a group
+		HACLGroupPermissions::deletePermission($gid, 'read');
+		$permissions = HACLGroupPermissions::getPermissionsForGroup($gid);
+		$this->assertArrayNotHasKey('read', $permissions, "Expected permission <read> to be deleted.");
 		
 		// Delete all permissions and check if they are gone
 		HACLGroupPermissions::deleteAllPermissions();
-		$permission = HACLGroupPermissions::getPermission($gid, 'upload');
-		$this->assertEquals(NULL, $permission, "Expected permission to be 'NULL'");
+		$permissions = HACLGroupPermissions::getPermissionsForGroup($gid);
+		$this->assertEquals(0, count($permissions), "Expected that all permissions are deleted");
 		
 	}
 	
@@ -424,21 +427,85 @@ class TestMWGroupPermissionsUI extends PHPUnit_Framework_TestCase {
 	protected $backupGlobals = FALSE;
 	
 	function setUp() {
-		// U1 is member of "Group" and U2 is member of "SubGroup"
-		TestGroupPermissionsSuite::$mGroup->addUser("U1", "U1");
-		TestGroupPermissionsSuite::$mSubGroup->addUser("U2", "U1");
-		
 		global $haclgFeature, $wgGroupPermissions;
 		$haclgFeature = array();
 		$wgGroupPermissions = array();
+		HACLStorage::reset(HACL_STORE_SQL);
+		HACLStorage::getDatabase()->dropDatabaseTables(false);
+		HACLStorage::getDatabase()->initDatabaseTables(false);
+		
+    	global $wgUser;
+    	$wgUser = User::newFromName("U1");
+    	
+    	//-- Set up groups --
+    	$c = new HACLGroup(42, "Group/Company", null, array("U1"));
+    	$c->save();
+    	$m = new HACLGroup(43, "Group/Marketing", null, array("U1"));
+    	$m->save();
+    	$d = new HACLGroup(44, "Group/Development", null, array("U1"));
+    	$d->save();
+    	$hd = new HACLGroup(45, "Group/HaloDev", null, array("U1"));
+	   	$hd->save();
+    	$dn = new HACLGroup(46, "Group/DevNull", null, array("U1"));
+	   	$dn->save();
+    	$s = new HACLGroup(47, "Group/Services", null, array("U1"));
+    	$s->save();
+    	$ps = new HACLGroup(48, "Group/ProfessionalServices", null, array("U1"));
+    	$ps->save();
+    	$ds = new HACLGroup(49, "Group/DilettantishServices", null, array("U1"));
+    	$ds->save();
+    	
+    	
+    	$c->addGroup("Group/Marketing");
+    	$c->addGroup("Group/Development");
+    	$c->addGroup("Group/Services");
+    	
+    	$d->addGroup("Group/HaloDev");
+    	$d->addGroup("Group/DevNull");
+    	
+    	$s->addGroup("Group/ProfessionalServices");
+    	$s->addGroup("Group/DilettantishServices");
 		
 		HACLGroupPermissions::deleteAllPermissions();
+		
+		// Setup some group permissions
+		global $haclgFeature;
+		$haclgFeature['read']['systemfeatures'] = "read";
+		$haclgFeature['read']['name'] = "Read";
+		
+		$haclgFeature['upload']['systemfeatures'] = "upload|reupload|reupload-own|reupload-shared|upload_by_url";
+		$haclgFeature['upload']['name'] = "Upload";
+
+		$haclgFeature['edit']['systemfeatures'] = "edit|createpage|createtalk";
+		$haclgFeature['edit']['name'] = "Edit";
+		
+		$permissions = array(
+			"Group/Company"					=> array('read|true', 'upload|true', 'edit|true'),
+			"Group/Marketing" 				=> array('read|false', 'upload|true'),
+			"Group/Development" 			=> array('read|true', 'edit|false'),
+			"Group/Services" 				=> array('upload|false', 'edit|true'),
+			"Group/DevNull" 				=> array('upload|true'),
+			"Group/ProfessionalServices"	=> array('edit|true'),
+			"Group/DilettantishServices"	=> array(),
+		);
+		
+		// Store all permission for features
+		foreach ($permissions as $gn => $p) {
+			$gid = HACLGroup::idForGroup($gn);
+			foreach ($p as $allowed) {
+				list($feature, $allowed) = explode('|', $allowed);
+				$allowed = $allowed === 'true';
+				HACLGroupPermissions::storePermission($gid, $feature, $allowed);
+			}
+		}
+		
 	}
 
 	function tearDown() {
-		TestGroupPermissionsSuite::$mGroup->removeUser("U1", "U1");
-		TestGroupPermissionsSuite::$mSubGroup->removeUser("U2", "U1");
-				
+		HACLStorage::reset(HACL_STORE_SQL);
+		HACLStorage::getDatabase()->dropDatabaseTables(false);
+		HACLStorage::getDatabase()->initDatabaseTables(false);
+						
 		global $haclgFeature, $wgGroupPermissions;
 		$haclgFeature = array();
 		$wgGroupPermissions = array();
@@ -459,27 +526,34 @@ class TestMWGroupPermissionsUI extends PHPUnit_Framework_TestCase {
 	 * Checks getting the child groups of a group in JSON format
 	 */
 	public function testUIgetGroupChildren() {
-		$gid = TestGroupPermissionsSuite::$mGroup->getGroupID();
-		$sgid = TestGroupPermissionsSuite::$mSubGroup->getGroupID();
-		
-		HACLGroupPermissions::storePermission($gid, 'read', false);
-		HACLGroupPermissions::storePermission($gid, 'edit', true);
-		HACLGroupPermissions::storePermission($gid, 'move', true);
+		$gid = HACLGroup::idForGroup('Group/Company');
+		$sgid = HACLGroup::idForGroup('Group/Marketing');
 
-		HACLGroupPermissions::storePermission($sgid, 'read', true);
-		HACLGroupPermissions::storePermission($sgid, 'edit', false);
-		HACLGroupPermissions::storePermission($sgid, 'upload', true);
-		
 		// Check generated JSON for ROOT
-		$json = HACLUIGroupPermissions::getGroupChildren("---ROOT---");
+		$json = HACLUIGroupPermissions::getGroupChildren("---ROOT---", "read");
 	
 		$expected = <<<JSON
 [			
 	{
+		attributes: {
+			id:"haclgt--1"
+		},
+		data: "*Allusers*<spanclass=\"tree-haloacl-checknormal\"></span>"
+	},
+	{
+		attributes: {
+			id: "haclgt--2"
+		},
+		data: "*Registeredusers*<spanclass=\"tree-haloacl-checknormal\"></span>"
+	},
+	{
 		attributes: { 
-			id : "$gid" 
+			id : "haclgt-$gid" 
 		}, 
-		data: "Group <span class=\"haclPermittedFeatures\">edit,move</span>", 
+		data: "Company <span class=\"tree-haloacl-permitted-features\"title=\"edit,read,upload\">
+		               </span>
+		               <span class=\"tree-haloacl-checkchecked\">
+		               </span>", 
 		state: "closed"
 	}
 ]
@@ -489,33 +563,70 @@ JSON;
 		$this->assertEquals($expected, $json, "Wrong JSON for ROOT group");
 		
 
-		// Check generated JSON for group "Group"
-		$json = HACLUIGroupPermissions::getGroupChildren($gid);
+		// Check generated JSON for group "Group/Company"
+		$json = HACLUIGroupPermissions::getGroupChildren($gid, "upload");
 		$expected = <<<JSON
-[
+[			
 	{
 		attributes: { 
-			id : "$sgid" 
+			id : "haclgt-43" 
 		}, 
-		data: "SubGroup <span class=\"haclPermittedFeatures\">read,upload</span>"
+		data: "Marketing <span class=\"tree-haloacl-permitted-features\" title=\"upload\"></span>
+				<span class=\"tree-haloacl-check checked\"></span>"
+	},			
+	{
+		attributes: { 
+			id : "haclgt-44" 
+		}, 
+		data: "Development <span class=\"tree-haloacl-permitted-features\" title=\"read\"></span>
+				<span class=\"tree-haloacl-check normal\"></span>"
+		,state: "closed"
+	},
+	{
+		attributes: { 
+			id : "haclgt-47" 
+		}, 
+		data: "Services <span class=\"tree-haloacl-permitted-features\" title=\"edit\"></span>
+				<span class=\"tree-haloacl-check crossed\"></span>"
+		,state: "closed"
 	}
 ]
 JSON;
 		$json = preg_replace("/\s*/", "", $json);
 		$expected = preg_replace("/\s*/", "", $expected);
-		$this->assertEquals($expected, $json, "Wrong JSON for groups in <Group>");
+		$this->assertEquals($expected, $json, "Wrong JSON for groups in <Group/Company>");
 
-		// Check generated JSON for group "SubGroup"
-		$json = HACLUIGroupPermissions::getGroupChildren($sgid);
+		// Check generated JSON for group "Marketing"
+		$json = HACLUIGroupPermissions::getGroupChildren($sgid, "edit");
 		$expected = <<<JSON
 []
 JSON;
 		$json = preg_replace("/\s*/", "", $json);
 		$expected = preg_replace("/\s*/", "", $expected);
-		$this->assertEquals($expected, $json, "Wrong JSON for groups in <SubGroup>");
+		$this->assertEquals($expected, $json, "Wrong JSON for groups in <Group/Marketing>");
 
 		
 	}
 	
+	/**
+	 * Tests finding all groups that match a filter.
+	 */
+	public function testUIsearchMatchingGroups() {
+		 $groups = HACLUIGroupPermissions::searchMatchingGroups('dev');
+		 $exp = "haclgt-42,haclgt-42,haclgt-44,haclgt-42,haclgt-44";
+		 $this->assertEquals($exp, $groups);
+
+		 $groups = HACLUIGroupPermissions::searchMatchingGroups('prof');
+		 $exp = "haclgt-42,haclgt-47";
+		 $this->assertEquals($exp, $groups);
+		 
+		 $groups = HACLUIGroupPermissions::searchMatchingGroups('o');
+		 $exp = "haclgt-42,haclgt-42,haclgt-44,haclgt-42,haclgt-47";
+		 $this->assertEquals($exp, $groups);
+
+		 $groups = HACLUIGroupPermissions::searchMatchingGroups('group');
+		 $exp = "";
+		 $this->assertEquals($exp, $groups);
+	}
 	
 }
