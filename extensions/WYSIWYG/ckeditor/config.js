@@ -35,7 +35,9 @@ CKEDITOR.editorConfig = function( config )
     if (('SMW_HALO_VERSION').InArray(window.parent.wgCKeditorUseBuildin4Extensions)) {
         smwToolbar.push('SMWqi');
         CKEDITOR.plugins.addExternal( 'smw_qi', CKEDITOR.basePath + 'plugins/smwqueryinterface/' );
-        extraPlugins += ",smw_qi";
+        smwToolbar.push('SMWtoolbar');
+        CKEDITOR.plugins.addExternal( 'smw_toolbar', CKEDITOR.basePath + 'plugins/smwtoolbar/' );
+        extraPlugins += ",smw_qi,smwtoolbar";
     }
     // DataImport extension
     if (('SMW_DI_VERSION').InArray(window.parent.wgCKeditorUseBuildin4Extensions)) {
