@@ -176,7 +176,6 @@ CKeditInterface.prototype = {
             }
             else {
                 gEeditor.setData(text);
-                SetEventHandler4AnnotationBox();
             }
         }
     },
@@ -926,30 +925,6 @@ var CKEditorTextArea = function(editor) {
 
 }
 
-function SetEventHandler4AnnotationBox() {
-    var editor = window.parent.wgCKeditorInstance;
-    if ( editor.mode == 'wysiwyg' ) {
-        if (CKEDITOR.env.ie) {
-            var iframe = window.frames[0];
-            var iframeDocument = iframe.document || iframe.contentDocument;
-            iframeDocument.onkeyup = stbCommand.EditorareaChanges;
-            iframeDocument.onmouseup = CheckSelectedAndCallPopup;
-            iframeDocument.onmousedown = HideContextPopup;
-        } else {
-            window.parent.Event.observe(window.frames[0], 'keyup', stbCommand.EditorareaChanges);
-            window.parent.Event.observe(window.frames[0], 'mouseup', CheckSelectedAndCallPopup);
-            window.parent.Event.observe(window.frames[0], 'mousedown', HideContextPopup);
-        }
-        window.parent.obContributor.activateTextArea(window.frames[0]);
-    } else {
-        var Textarea = CKEditorTextArea(editor);
-        window.parent.Event.observe(Textarea, 'keyup', stbCommand.EditorareaChanges);
-        window.parent.Event.observe(Textarea, 'mouseup', CheckSelectedAndCallPopup);
-        window.parent.Event.observe(Textarea, 'mousedown', HideContextPopup);
-        window.parent.obContributor.activateTextArea(Textarea);
-    }
-}
-
 function ClearEventHandler4AnnotationBox() {
     var editor = window.parent.wgCKeditorInstance;
     if ( editor.mode == 'wysiwyg' ) {
@@ -972,18 +947,14 @@ function ClearEventHandler4AnnotationBox() {
     }
 }
 
-// helper variable to disable the semantic toolbar only when the edit mode is changed
-var stbEditorMode;
 
-var stbIsActive = CKEDITOR.TRISTATE_OFF;
-var stbEditorText = '';
-var STB_Toolbar4Wysiwyg = function() {};
-STB_Toolbar4Wysiwyg.prototype = {
-    EditorAreaSaved : '',
-    
+(function(){
+
+CKEDITOR.plugins.smwtoolbar = {
+    stbIsActive : false,
+    stbEditorText : '',
     EnableAnnotationToolbar : function( editor ) {
-        stbIsActive = CKEDITOR.TRISTATE_ON;
-        stbEditorMode = editor.mode;
+        this.stbIsActive = true;
         window.parent.stb_control.initialize();
         window.parent.smwhgAnnotationHints = new window.parent.AnnotationHints();
         window.parent.propToolBar = new window.parent.PropertiesToolBar();
@@ -996,71 +967,114 @@ STB_Toolbar4Wysiwyg.prototype = {
         window.parent.relToolBar.callme();
         window.parent.catToolBar.callme();
         window.parent.propToolBar.callme();
-        // webservice toolbar, only available if DataImport extension is included
-        if (window.parent.wsToolBar)
-            window.parent.wsToolBar.callme();
         // rule toolbar, only available if SemanticRuls extension is included
         // disable it for now, because the rule editor doesn't work with the FCK
-        /*
         if (window.parent.ruleToolBar)
             window.parent.ruleToolBar.callme();
-        */
         // Annotations toolbar, only if SemanticGardening extension is included
         if (window.parent.smwhgGardeningHints)
             window.parent.smwhgGardeningHints.createContainer();
         window.parent.smw_links_callme();
-        SetEventHandler4AnnotationBox();
+        this.SetEventHandler4AnnotationBox( editor );
     },
-    DisableAnnotationToolbar: function() {
-        stbIsActive = CKEDITOR.TRISTATE_OFF;
+    DisableAnnotationToolbar: function( editor ) {
+        this.stbIsActive = false;
         HideContextPopup();
         window.parent.AdvancedAnnotation.unload();
-        ClearEventHandler4AnnotationBox();
-        /*
-        window.parent.stb_control.initialize();
-        window.parent.smwhgAnnotationHints = new window.parent.AnnotationHints();
-        window.parent.propToolBar = new window.parent.PropertiesToolBar();
-        */
+        this.ClearEventHandler4AnnotationBox(editor);
     },
-    /**
-     * When the editor content has been changed, then the annotation toolbar
-     * must be updated to reflect changes that may have occured in the edited
-     * text. This function is called by the event keyup. Because of function
-     * keys that do not change the content, so it's always checked if the edited
-     * text has been changed. Only then the toolbar is rebuild.
-     *
-     * @access private
-     */
     EditorareaChanges : function() {
-        if (stbIsActive == CKEDITOR.TRISTATE_OFF) return;
-        var editorData = window.parent.wgCKeditorInstance.getData();
-        if (stbEditorText != editorData) {
+        if (! this.stbIsActive) return;
+        var editorData = this.editor.getData();
+        if (this.stbEditorText != editorData) {
             window.parent.relToolBar.fillList();
             window.parent.catToolBar.fillList();
-            stbEditorText = editorData;
+            this.stbEditorText = editorData;
         }
     },
-
-    exec : function ( editor ) {
-        if (stbIsActive == CKEDITOR.TRISTATE_OFF) {
+    SetEventHandler4AnnotationBox : function (editor) {
+        //        var element = CKEDITOR.document.getById('cke_contents_' + editor.name);
+        this.editor = editor;
+        if ( editor.mode == 'wysiwyg' ) {
+            if (CKEDITOR.env.ie) {
+                var iframe = window.frames[0];
+                var iframeDocument = iframe.document || iframe.contentDocument;
+                iframeDocument.onkeyup = EditorareaChanges;
+                iframeDocument.onmouseup = CheckSelectedAndCallPopup;
+                iframeDocument.onmousedown = HideContextPopup;
+            } else {
+                window.parent.Event.observe(window.frames[0], 'keyup', this.EditorareaChanges.bind(this));
+                window.parent.Event.observe(window.frames[0], 'mouseup', CheckSelectedAndCallPopup);
+                window.parent.Event.observe(window.frames[0], 'mousedown', HideContextPopup);
+            }
+            window.parent.obContributor.activateTextArea(window.frames[0]);
+        } else {
+            var Textarea = CKEditorTextArea(editor);
+            window.parent.Event.observe(Textarea, 'keyup', this.EditorareaChanges.bind(this));
+            window.parent.Event.observe(Textarea, 'mouseup', CheckSelectedAndCallPopup);
+            window.parent.Event.observe(Textarea, 'mousedown', HideContextPopup);
+            window.parent.obContributor.activateTextArea(Textarea);
+        }
+    },
+    ClearEventHandler4AnnotationBox : function(editor) {
+        this.editor = editor;
+        if ( editor.mode == 'wysiwyg' ) {
+            if (CKEDITOR.env.ie) {
+                var iframe = window.frames[0];
+                var iframeDocument = iframe.document || iframe.contentDocument;
+                iframeDocument.onkeyup = null;
+                iframeDocument.onmouseup = null;
+                iframeDocument.onmousedown = null;
+            } else {
+                window.parent.Event.stopObserving(window.frames[0], 'keyup', this.EditorareaChanges);
+                window.parent.Event.stopObserving(window.frames[0], 'mouseup', CheckSelectedAndCallPopup);
+                window.parent.Event.stopObserving(window.frames[0], 'mousedown', HideContextPopup);
+            }
+        } else {
+            var Textarea = CKEditorTextArea(editor);
+            window.parent.Event.stopObserving(Textarea, 'keyup', this.EditorareaChanges);
+            window.parent.Event.stopObserving(Textarea, 'mouseup', CheckSelectedAndCallPopup);
+            window.parent.Event.stopObserving(Textarea, 'mousedown', HideContextPopup);
+        }
+    },
+    loadToolbar : function ( editor ) {
+        if (this.stbIsActive) {
+            this.DisableAnnotationToolbar(editor);
+        }
+        else {
             gEditInterface = new CKeditInterface(editor);
             window.parent.gEditInterface = gEditInterface;
             this.EnableAnnotationToolbar(editor);
         }
-        else {
-            this.DisableAnnotationToolbar(editor);
-        }
     }
-};
-var stbCommand = new STB_Toolbar4Wysiwyg();
+
+}
+
+var plugin = CKEDITOR.plugins.smwtoolbar;
+var commandDefinition =
+	{
+		preserveState : true,
+		editorFocus : false,
+		canUndo : false,
+
+		exec: function( editor )
+		{
+			plugin.loadToolbar( editor );
+		}
+	};
 
 CKEDITOR.plugins.add('smwtoolbar', {
 
     requires : [ 'mediawiki', 'editingblock' ],
 
+    beforeInit : function( editor ) {
+        // disable STB by default when loading the editor
+        window.parent.AdvancedAnnotation.unload();
+    },
+
 	init : function( editor )
 	{
-		editor.addCommand( 'SMWtoolbar', stbCommand);
+		editor.addCommand( 'SMWtoolbar', commandDefinition);
         if ( editor.ui.addButton ) {
             editor.ui.addButton( 'SMWtoolbar',
                 {
@@ -1069,25 +1083,24 @@ CKEDITOR.plugins.add('smwtoolbar', {
                     icon: this.path + 'images/tb_icon_semtoolbar.png'
                 });
         }
-        // disable STB by default when loading the editor
-        editor.on("editingBlockReady", function(event) {
-            window.parent.AdvancedAnnotation.unload();
-        })
-        // or when switching mode
+
+        // disable toolbar when switching mode
+		editor.on( 'beforeCommandExec', function( ev ) {
+			if ( !plugin.stbIsActive )
+				return;
+			if ( ( ev.data.name == 'source' || ev.data.name == 'newpage' ) && editor.mode == 'wysiwyg' )
+				plugin.DisableAnnotationToolbar( editor );
+			if ( ( ev.data.name == 'wysiwyg' || ev.data.name == 'newpage' ) && editor.mode == 'source' )
+				plugin.DisableAnnotationToolbar( editor );
+		});
         editor.on("dataReady", function(event) {
-
-            if (editor.mode != stbEditorMode) {
-                window.parent.AdvancedAnnotation.unload();
-                stbEditorMode = editor.mode;
-                gEflushedOnce;
-
-            } else {
-               var ot = window.parent.document.getElementById('ontomenuanchor').innerHTML;
-               if (ot) {  // stb is active
-                   SetEventHandler4AnnotationBox();
-               }
+            if (plugin.stbIsActive) {
+                gEditInterface = new CKeditInterface(editor);
+                window.parent.gEditInterface = gEditInterface;
+                plugin.SetEventHandler4AnnotationBox(editor);
             }
         })
 
 	}
 });
+})();
