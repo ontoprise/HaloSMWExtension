@@ -181,8 +181,6 @@ class WebService {
 					$r[] = $rdef;
 				}
 				$this->mParsedResult = $r;
-				$r = print_r($r, true);
-				//$r;
 			}
 		} catch (Exception $e) {
 		}
@@ -624,6 +622,7 @@ class WebService {
 			} else {
 				$parts[1] = ucfirst($parts[1]);
 				$results[$parts[1]] = $this->getResults($response, $rdef, $parts[1]);
+				
 				$tmpResult = $this->evaluateAdditionalPathAttribute(
 					$rdef, $parts[1], $results[$parts[1]]);
 				
@@ -716,6 +715,7 @@ class WebService {
 		if($xpath != null){
 			$newValue = array();
 			foreach($value as $v){
+				
 				$xpathProcessor = new XPathProcessor($v);
 				$newValue = array_merge($newValue, $xpathProcessor->evaluateQuery($xpath));
 			}

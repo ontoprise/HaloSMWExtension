@@ -351,35 +351,42 @@ public static function processSMWQueryASWSCall($parameters){
 		}
 	}
 	
-	public static function formatWSResultWithSMWQPs(
+	/*
+	 * Format error messages as results
+	 */
+	private static function formatErrorMsgAsResult (
 			$wsResults, $configArgs, $wsParameters, $wsReturnValues, $smwQueryMode){
-				
-		if(is_string($wsResults)){
-			$format = 'table';
-			
-			$query = 	SMWQueryProcessor::createQuery( 
-				'[[dummy]]', array(), SMWQueryProcessor::INLINE_QUERY, $format, array());
-			
-			$queryResult = 
-				new SMWWSQueryResult(array(), $query, array(), new SMWWSSMWStore(), false);
+	
+		$format = 'table';
 		
-			$queryResult->addErrors(array($wsResults));
-			
-			if($smwQueryMode){
-				return $queryResult;
-			}
+		$query = 	SMWQueryProcessor::createQuery( 
+			'[[dummy]]', array(), SMWQueryProcessor::INLINE_QUERY, $format, array());
 		
-			$printer = SMWQueryProcessor::getResultPrinter( $format);
-			$result = $printer->getResult( $queryResult, array(), SMW_OUTPUT_WIKI);
+		$queryResult = 
+			new SMWWSQueryResult(array(), $query, array(), new SMWWSSMWStore(), false);
+	
+		$queryResult->addErrors(array($wsResults));
 		
-			if(array_key_exists('format', $configArgs) && $configArgs['format'] == 'xount'){
-				$result = '';
-			}
-			
-			return $result;
+		if($smwQueryMode){
+			return $queryResult;
 		}
 		
-		//do sorting
+		$printer = SMWQueryProcessor::getResultPrinter( $format);
+		$result = $printer->getResult( $queryResult, array(), SMW_OUTPUT_WIKI);
+	
+		if(array_key_exists('format', $configArgs) && $configArgs['format'] == 'xount'){
+			$result = '';
+		}
+		
+		return $result;
+	}
+	
+	
+	/*
+	 * sort wsresult according to sort and order parameter
+	 */
+	private static function sortWSResult($wsResults, $configArgs){
+		
 		if(array_key_exists('sort', $configArgs) && $configArgs['sort'] && array_key_exists(ucfirst($configArgs['sort']), $wsResults)){
 			$sortArray = array();
 			foreach($wsResults[ucfirst($configArgs['sort'])] as $key => $value){
@@ -408,6 +415,16 @@ public static function processSMWQueryASWSCall($parameters){
 			}
 		}
 		
+		return $wsResults;
+	} 
+	
+	/*
+	 * Deal with limit and offset parameter
+	 */
+	private static function formatWithLimitAndOffset($wsResults, $configArgs){
+	
+		$furtherResults = false;
+		
 		if(array_key_exists('offset', $configArgs) && is_int($configArgs['offset'] +1)){
 			$offset = $configArgs['offset'];
 			foreach($wsResults as $key => $values){
@@ -431,26 +448,39 @@ public static function processSMWQueryASWSCall($parameters){
 			$wsResults[$key] = $values;
 		}
 		
+		return array($wsResults, $furtherResults);
+	} 
+	
+	/*
+	 * format ws results with smw result printers
+	 */
+	private static function formatWSResultWithSMWQPs(
+			$wsResults, $configArgs, $wsParameters, $wsReturnValues, $smwQueryMode){
+				
+		//do sorting
+		$wsResults = self::sortWSResult($wsResults, $configArgs);
 		
-		//handle erroneous wwsds
-		foreach($wsResults as $key => $wsResult){
-			if(is_string($wsResult)){
-			} else if(is_array($wsResult)){
-				foreach($wsResult as $subKey => $subWsResult){
-					if(is_string($subWsResult) || is_numeric($subWsResult)){
-					} else if($subWsResult != ""){
-						$wsResults[$key][$subKey] = smwfEncodeMessages(array(wfMsg('smw_wsuse_type_mismatch'))).print_r($subWsResult, true).$subKey;
-					}
-				}
-			} else {
-				$wsResults[$key] = smwfEncodeMessages(array(wfMsg('smw_wsuse_type_mismatch'))).print_r($wsResult, true).$key;
-			}
-		}
+		//deal with limit and offset
+		list($wsResults, $furtherResults) = self::formatWithLimitAndOffset($wsResults, $configArgs);
+		
+		$format = (array_key_exists('format', $configArgs)) ? $configArgs['format'] : '';
 		
 		//todo: create print requests array for constructor below
 		$printRequests = array();
 		$queryResults = array();
+		$typeIds = array();
 		
+		//get Type ids
+		$numTypeFormats = array('sum' => true, 'min' => true, 'max' => true, 'average' => true);
+		foreach($wsResults as $columnLabel => $values){
+			if(array_key_exists(strtolower($format), $numTypeFormats)){
+				$typeIds[$columnLabel] = '_num';	
+			} else {
+				$typeIds[$columnLabel] = '_txt';
+			}
+		}
+		
+		//create print requests
 		foreach($wsReturnValues as $id => $label){
 			$id = ucfirst(substr($id, strpos($id, '.')+1));
 			if(!$label) $label = $id;
@@ -458,6 +488,7 @@ public static function processSMWQueryASWSCall($parameters){
 				new SMWPrintRequest(SMWPrintRequest::PRINT_THIS, $label, $id);
 		}
 		
+		//transpose ws result
 		foreach($wsResults as $columnLabel => $values){
 			foreach($values as $key => $value){
 				$queryResultColumnValues = array();
@@ -466,7 +497,7 @@ public static function processSMWQueryASWSCall($parameters){
 				$title = Title::newFromText(wfMsg('smw_ob_invalidtitle'), '');
 				$resultInstance->setValues($title->getDBkey(), $title->getNamespace(), $title->getArticleID(), false, '', $title->getFragment());
 				
-				$dataValue = SMWDataValueFactory::newTypeIDValue('_txt');
+				$dataValue = SMWDataValueFactory::newTypeIDValue($typeIds[$columnLabel]);
 				$dataValue->setUserValue($value);
 				$queryResultColumnValues[] = $dataValue;
 				
@@ -477,25 +508,18 @@ public static function processSMWQueryASWSCall($parameters){
 			}
 		}
 		
-		$format = (array_key_exists('format', $configArgs)) ? $configArgs['format'] : '';
-		
+		//translate ws call to SMW ask query
 		$queryParams = array();
 		foreach($wsParameters as $param => $value){
-			//$value = (is_null($value)) ? '' : '='.$value;
-			//$queryParams[] = '_'.$param.$value;
 			$queryParams['_'.$param] = $value;
 		}
 		foreach($configArgs as $param => $value){
-			//$value = (is_null($value)) ? '' : '='.$value;
-			//$queryParams[] = $param.$value;
 			$queryParams[$param] = $value;
 		}
-		
 		$queryParams['source'] = 'webservice';
-		
 		$queryParams['webservice'] = 'LDTest';
 		
-		
+		//create query object
 		$query = 	SMWQueryProcessor::createQuery( 
 			'[[dummy]]', 
 			$queryParams, 
@@ -505,22 +529,23 @@ public static function processSMWQueryASWSCall($parameters){
 			
 		$query->params = $queryParams;			
 		
-		//todo: is it necessary to support the limit parameter, respectibely is it sufficient
-		//to use false as the last parameter in the constructor below?
+		
+		//create query result object
 		$queryResult = 
 			new SMWWSQueryResult($printRequests, $query, $queryResults, new SMWWSSMWStore(), $furtherResults);
 		
-		
+		//deal with count mode
 		if($format == 'count'){
 			return count($queryResults);
 		}	
-			
+
+		//return the query result object if this is called by special:ask
 		if($smwQueryMode){
 			return $queryResult;
 		}
 		
-		$printer = SMWQueryProcessor::getResultPrinter( $format, SMWQueryProcessor::INLINE_QUERY);
 		
+		$printer = SMWQueryProcessor::getResultPrinter( $format, SMWQueryProcessor::INLINE_QUERY);
 		$result = $printer->getResult( $queryResult, $configArgs, SMW_OUTPUT_WIKI);
 		
 		return $result;
@@ -528,17 +553,12 @@ public static function processSMWQueryASWSCall($parameters){
 	
 	/**
 	 * format the ws result in the given result format
-	 *
-	 * @param string $wsFormat
-	 * @param string_type $wsResults
-	 * @return string
-	 * 		the formatted result
 	 */
 	public static function formatWSResult($wsResults, $configArgs, $wsParameters, $wsReturnValues, $smwQueryMode = false){
-		//$wsFormat, $wsTemplate, $wsStripTags
 		
+		//deal with error messages
 		if(is_string($wsResults)){
-			return self::formatWSResultWithSMWQPs($wsResults, $configArgs, 
+			return self::formatErrorMsgAsResult($wsResults, $configArgs, 
 				$wsParameters, $wsReturnValues, $smwQueryMode);
 		}
 	
@@ -558,10 +578,7 @@ public static function processSMWQueryASWSCall($parameters){
 		}
 		
 		$stripTags = (array_key_exists('striptags', $configArgs)) ? $configArgs['striptags'] : false;
-		$wsResults = self::getReadyToPrintResult($wsResults, $stripTags, $smwQueryMode);
-		
-		$outputFormat = (array_key_exists('format', $configArgs)) ? $configArgs['format'] : false;
-		$template = (array_key_exists('template', $configArgs)) ? $configArgs['template'] : false;
+		$wsResults = self::getReadyToPrintResult($wsResults, $stripTags);
 		
 		return self::formatWSResultWithSMWQPs($wsResults, $configArgs, $wsParameters, $wsReturnValues, $smwQueryMode);
 	}
@@ -685,13 +702,11 @@ public static function processSMWQueryASWSCall($parameters){
 	
 	
 	/**
-	 * prepares the result for the result printers
-	 *
-	 * @param array $result
-	 * @return array
+	 * deal with striptags and fill short columns with dummies
 	 */
-	public static function getReadyToPrintResult($result, $stripTags, $smwQueryMode){
-		$niceResult = array();
+	public static function getReadyToPrintResult($result, $stripTags){
+		
+		//compute longest column
 		$size = 0;
 		foreach($result as $title => $values){
 			if($size < sizeof($values)){
@@ -699,6 +714,7 @@ public static function processSMWQueryASWSCall($parameters){
 			}
 		}
 	
+		//deal with striptags parameter and fill columns
 		foreach($result as $title => $values){
 			foreach($values as $key => $value){
 				if($stripTags === false){
@@ -711,26 +727,10 @@ public static function processSMWQueryASWSCall($parameters){
 				$result[$title][] = "";
 			}
 		}
-		
-		//todo deal with this
-		if(!$smwQueryMode && false){
-			for($i=0; $i<($size+1); $i++){
-				$niceResult[$i] = array();
-				foreach($result as $title => $values){
-					if($i == 0){
-						$niceResult[$i][] = $title;
-					} else {
-						$keys = array_keys($values);
-						$niceResult[$i][] = $values[$keys[$i-1]];
-					}
-				}
-			}
-			
-			return $niceResult;
-		} else {
-			return $result;
-		}
+	
+		return $result;
 	}
+	
 }
 
 
