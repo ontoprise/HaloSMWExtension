@@ -52,20 +52,21 @@ CKEDITOR.editorConfig = function( config )
     }
 
     config.toolbar_Wiki = [
-        ['Source','-','Save','NewPage','Preview','-','Templates'],
-        ['Cut','Copy','Paste','PasteText','PasteFromWord','-','Print','SpellChecker','Scayt'],
-        ['Undo','Redo','-','Find','Replace','-','SelectAll','RemoveFormat', '-', 'About'],
-        '/',
-        ['Bold','Italic','Underline','Strike','-','Subscript','Superscript'],
-        ['NumberedList','BulletedList', '-', 'Outdent','Indent', 'Blockquote'],
-        ['JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock'],
+        ['Source'],
+        ['PasteText','PasteFromWord','-','Print','SpellChecker','Scayt'],
+        ['Undo','Redo','-','Find','Replace','-','Subscript','Superscript'],
         ['Link','Unlink'],
-        ['Image', 'Table', 'HorizontalRule', 'SpecialChar'],
-        '/',
-        ['Styles','Format','Font','FontSize'],
         ['TextColor','BGColor'],
         ['Maximize', 'ShowBlocks'],
-        smwToolbar
+        ['SelectAll','RemoveFormat', '-'],
+        smwToolbar,
+        ['About'],
+        '/',
+        ['Styles','Format','Font','FontSize'],
+        ['Bold','Italic','Underline','Strike'],
+        ['NumberedList','BulletedList', '-', 'Outdent','Indent', 'Blockquote'],
+        ['JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock'],
+        ['Image', 'Table', 'HorizontalRule', 'SpecialChar']
     ];
     config.extraPlugins = extraPlugins;
 
