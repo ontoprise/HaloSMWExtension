@@ -321,7 +321,7 @@ CKEDITOR.customprocessor.prototype =
         // prevent double transformation because of some weird runtime issues
         // with the event dataReady in the smwtoolbar plugin
         if (!(data.indexOf('<p>') == 0 &&
-              data.match(/<.*?_fck_mw/)) ) {
+              data.match(/<.*?_fck_mw/) || data.match(/class="fck_mw_\w+"/i)) ) {
 
             // Use Ajax to transform the Wikitext to HTML.
             if( window.parent.popup ){
