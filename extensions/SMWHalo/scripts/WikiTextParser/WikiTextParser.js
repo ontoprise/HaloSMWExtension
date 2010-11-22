@@ -414,7 +414,7 @@ WikiTextParser.prototype = {
 	 	if (representation && value != representation) {
 	 		anno += "|" + representation;
 	 	}
-	 	else if (typeof FCKeditor != "undefined")
+	 	else if (typeof FCKeditor != "undefined" || typeof CKEDITOR != "undefined")
 	 	    anno += "|"+(value? value : ' ');
 	 	anno += "]]";
 	 	var posInfo = this.addAnnotation(anno, append);
