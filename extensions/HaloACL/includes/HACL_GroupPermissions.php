@@ -137,6 +137,10 @@ class HACLGroupPermissions  {
 	 * 		UNKNOWN_FEATURE, if the DB contains an unknown feature
 	 */
 	public static function initPermissionsFromDB() {
+		
+		if (defined( 'DO_MAINTENANCE' )) {
+			return;
+		}
 		// Get all group permissions from the DB
 		$db = HACLStorage::getDatabase();
 		$permissions = $db->getAllGroupPermissions();
