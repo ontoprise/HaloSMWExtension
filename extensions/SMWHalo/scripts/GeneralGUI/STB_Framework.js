@@ -90,6 +90,10 @@ ToolbarFramework.prototype = {
 	},
 
 	isToolbarAvailable: function () {
+		if (typeof wgHideSemanticToolbar !== 'undefined' 
+		    && wgHideSemanticToolbar === true) {
+				return false;
+		}
 		if ($("ontomenuanchor") != null) {
 			this.var_onto = $("ontomenuanchor");
 			return true;
@@ -476,7 +480,9 @@ ToolbarFramework.prototype = {
 }
 
 var stb_control = new ToolbarFramework();
-if (typeof FCKeditor == 'undefined') {
+if (typeof FCKeditor == 'undefined' 
+    && (typeof wgHideSemanticToolbar === 'undefined'
+	    ||  wgHideSemanticToolbar !== true)) {
 	Event.observe(window, 'load', stb_control.addOntoMenuAnchor.bind(smwhg_generalGUI));
     Event.observe(window, 'load', stb_control.stbconstructor.bindAsEventListener(stb_control));
     Event.observe(window, 'resize', stb_control.resizeToolbar.bindAsEventListener(stb_control));
