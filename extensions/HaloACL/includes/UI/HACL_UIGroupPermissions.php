@@ -96,6 +96,19 @@ class HACLUIGroupPermissions  {
         </script>
 	
 HTML;
+
+	const GLOBAL_PERMISSIONS_PANEL_ERROR = <<<HTML
+        <div class="yui-skin-sam">
+        	<div class="haclGroupPermission">
+        		<div class="haclGPGeneralDiv">
+        			{{hacl_gp_intro}}
+        		</div>
+        		<div class="haclGPGeneralDiv" id="haclGPPermissions">
+        			<b>***error_message***</b>
+        		</div>
+			</div>
+		</div>
+HTML;
 		
 	//--- Private fields ---
 	
@@ -157,6 +170,9 @@ HTML;
 			$groups = $group->getGroups(HACLGroup::OBJECT);
 		}
 
+		global $haclgFeature;
+		$tttext = wfMsg('hacl_gp_has_permissions');
+		
 		// Encode all children in JSON
 		$json = "[";
 		for ($i = 0, $n = count($groups); $i < $n; ++$i) {
@@ -175,7 +191,11 @@ HTML;
 			$permissionState = " normal";
 			foreach ($permissions as $f => $permitted) {
 				if ($permitted) {
-					$pf[] = $f;
+					if (array_key_exists($f, $haclgFeature)) {
+						$pf[] = $haclgFeature[$f]['name'];
+					} else {
+						$pf[] = $f;
+					}
 				}
 				if ($f === $feature) {
 					$permissionState = $permitted ? " checked" : " crossed";
@@ -184,7 +204,7 @@ HTML;
 			$pf = implode(',', $pf);
 			if (!empty($pf)) {
 				$pf = <<<HTML
- <span class=\"tree-haloacl-permitted-features\" title=\"$pf\"></span>
+ <span class=\"tree-haloacl-permitted-features\" title=\"$tttext $pf\"></span>
 HTML;
 			}
 			 
@@ -283,6 +303,15 @@ HTML;
 			$i++;
 		}
 		
+		if (empty($options)) {
+			$html = self::GLOBAL_PERMISSIONS_PANEL_ERROR;
+			if ($isAdmin) {
+				$html = str_replace("***error_message***", '{{hacl_gp_no_features_defined}}', $html);
+			} else {
+				$html = str_replace("***error_message***", '{{hacl_gp_no_features_for_user}}', $html);
+			}
+			return $html;			
+		}
 		
 		$html = str_replace("***all_permissions***", $options, $html);
 		$html = str_replace("***permission_explanation***", $explanations, $html);
