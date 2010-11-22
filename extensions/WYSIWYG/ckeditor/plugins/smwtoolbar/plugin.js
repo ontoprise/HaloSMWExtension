@@ -1,3 +1,4 @@
+(function(){
 /**
  * Class which has the same functionality as SMWEditInterface except for the fact
  * that this must work for the CKEditor.
@@ -709,6 +710,7 @@ CKeditInterface.prototype = {
      *  @access public
      */
     flushOutputBuffer: function() {
+        gEflushedOnce= false;
         if (gEflushedOnce) {
         function ajaxResponseSetHtmlText(request) {
             if (request.status == 200) {
@@ -726,7 +728,6 @@ CKeditInterface.prototype = {
         }
         gEflushedOnce = true;
         gEeditor.setData(gEnewText);
-        gEditInterface.newText = '';
         gEditInterface.outputBuffering = false;
         gEoutputBuffering = false;
     }
@@ -925,31 +926,6 @@ var CKEditorTextArea = function(editor) {
 
 }
 
-function ClearEventHandler4AnnotationBox() {
-    var editor = window.parent.wgCKeditorInstance;
-    if ( editor.mode == 'wysiwyg' ) {
-        if (CKEDITOR.env.ie) {
-            var iframe = window.frames[0];
-            var iframeDocument = iframe.document || iframe.contentDocument;
-            iframeDocument.onkeyup = null;
-            iframeDocument.onmouseup = null;
-            iframeDocument.onmousedown = null;
-        } else {
-            window.parent.Event.stopObserving(window.frames[0], 'keyup', stbCommand.EditorareaChanges);
-            window.parent.Event.stopObserving(window.frames[0], 'mouseup', CheckSelectedAndCallPopup);
-            window.parent.Event.stopObserving(window.frames[0], 'mousedown', HideContextPopup);
-        }
-    } else {
-        var Textarea = CKEditorTextArea(editor);
-        window.parent.Event.stopObserving(Textarea, 'keyup', fckSemanticToolbar.EditorareaChanges);
-        window.parent.Event.stopObserving(Textarea, 'mouseup', CheckSelectedAndCallPopup);
-        window.parent.Event.stopObserving(Textarea, 'mousedown', HideContextPopup);
-    }
-}
-
-
-(function(){
-
 CKEDITOR.plugins.smwtoolbar = {
     stbIsActive : false,
     stbEditorText : '',
@@ -1039,6 +1015,8 @@ CKEDITOR.plugins.smwtoolbar = {
     },
     loadToolbar : function ( editor ) {
         if (this.stbIsActive) {
+            delete gEditInterface;
+            delete window.parent.gEditInterface;
             this.DisableAnnotationToolbar(editor);
         }
         else {
@@ -1088,13 +1066,18 @@ CKEDITOR.plugins.add('smwtoolbar', {
 		editor.on( 'beforeCommandExec', function( ev ) {
 			if ( !plugin.stbIsActive )
 				return;
-			if ( ( ev.data.name == 'source' || ev.data.name == 'newpage' ) && editor.mode == 'wysiwyg' )
+			if ( ( ev.data.name == 'source' || ev.data.name == 'newpage' ) && editor.mode == 'wysiwyg' ) {
 				plugin.DisableAnnotationToolbar( editor );
-			if ( ( ev.data.name == 'wysiwyg' || ev.data.name == 'newpage' ) && editor.mode == 'source' )
+            }
+			if ( ( ev.data.name == 'wysiwyg' || ev.data.name == 'newpage' ) && editor.mode == 'source' ) {
 				plugin.DisableAnnotationToolbar( editor );
+            }
 		});
         editor.on("dataReady", function(event) {
             if (plugin.stbIsActive) {
+                gEnewText='';
+                delete gEditInterface;
+                delete window.parent.gEditInterface;
                 gEditInterface = new CKeditInterface(editor);
                 window.parent.gEditInterface = gEditInterface;
                 plugin.SetEventHandler4AnnotationBox(editor);
