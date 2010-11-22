@@ -403,7 +403,7 @@ function haclAddHTMLHeader(&$out) {
 	        $out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/quickaclTable.js\"></script>");
 	        
 	        //--- jQuery part ---
-	        $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/scripts/jsTree.v.0.9.9a/jquery.tree.js"></script>');
+	        $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/scripts/jsTree.v.0.9.9a/jquery.tree.min.js"></script>');
 	        
 	        //--- HACL ---
 	        $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/scripts/HACL_GroupTree.js"></script>');
