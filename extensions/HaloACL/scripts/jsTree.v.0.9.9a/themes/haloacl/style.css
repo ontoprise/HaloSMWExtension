@@ -151,7 +151,7 @@
     background: url(info.png) 0 0 no-repeat;
     border: none;
     position: absolute;
-    right: 24px;
+    right: 60px;
     width: 16px;
     height: 16px;
     margin-top: -16px;
@@ -162,5 +162,5 @@
     overflow-x: hidden;
     overflow-y: auto;
     position: relative;
-    width: 300px;
+    width: 450px;
 }

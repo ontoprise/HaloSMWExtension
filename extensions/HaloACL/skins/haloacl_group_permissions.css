@@ -83,17 +83,17 @@
 }
 
 #haclGETGroup {
-    left: 45px;
+    left: 0px;
     position: absolute;
 }
 
 #haclGETInfo {
-    left: 255px;
+    left: 375px;
     position: absolute;
 }
 
 #haclGETPermission {
-    left: 290px;
+    left: 413px;
     position: absolute;
 }
 
