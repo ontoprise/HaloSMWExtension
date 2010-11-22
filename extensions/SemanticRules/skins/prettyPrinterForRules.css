@@ -18,4 +18,61 @@
 
 /* CSS for pretty printing of rules */
 
-/* TODO: add css rules */
+
+.rule_widget_rule {
+background:none repeat scroll 0 0 #FFFFFF;
+color:#000000;
+font-family:Arial,Helvetica,sans-serif;
+font-size:10pt;
+margin:5px;
+}
+.rule_widget_rule span {
+background:none repeat scroll 0 0 #F9F9F9;
+}
+.rule_widget_meta {
+}
+.rule_widget_module {
+color:DarkSlateBlue;
+font-style:italic;
+}
+.rule_widget_var {
+font-style:italic;
+}
+.rule_widget_class {
+color:#0059B5;
+font-weight:bold;
+}
+.rule_widget_property {
+color:#EBA118;
+font-weight:bold;
+
+}
+.rule_widget_instance {
+color:black;
+}
+.rule_widget_predicate {
+color:#6200ae;
+}
+.rule_widget_function {
+color:#5D8A35;
+font-weight:bold;
+}
+.rule_widget_builtin {
+color:#889999;
+}
+.rule_widget_junctor {
+color:#646464;
+font-weight:bold;
+}
+.rule_widget_ruleImpl {
+background:none repeat scroll 0 0 white;
+color:red;
+font-family:"Lucida Console",Monaco,monospace;
+font-weight:bold;
+}
+.rule_widget_op {
+color:black;
+font-family:"Lucida Console",Monaco,monospace;
+font-weight:bold;
+}
+
