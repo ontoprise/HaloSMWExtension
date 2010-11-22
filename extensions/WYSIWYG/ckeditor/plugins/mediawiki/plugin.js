@@ -295,7 +295,6 @@ CKEDITOR.customprocessor.prototype =
 
    toHtml : function( data, fixForBody )
    {
-
         // all converting to html (like: data = data.replace( /</g, '&lt;' );)
         var loadHTMLFromAjax = function( result ){
             if (window.parent.popup &&
@@ -319,13 +318,18 @@ CKEDITOR.customprocessor.prototype =
         loading.style.left = '5px';
         //textarea.parentNode.appendChild( loading, textarea );
 
-        // Use Ajax to transform the Wikitext to HTML.
-        if( window.parent.popup ){
-            window.parent.popup.parent.FCK_sajax( 'wfSajaxWikiToHTML', [data], loadHTMLFromAjax );
-        } else {
-            window.parent.FCK_sajax( 'wfSajaxWikiToHTML', [data], loadHTMLFromAjax );
-        }
+        // prevent double transformation because of some weird runtime issues
+        // with the event dataReady in the smwtoolbar plugin
+        if (!(data.indexOf('<p>') == 0 &&
+              data.match(/<.*?_fck_mw/)) ) {
 
+            // Use Ajax to transform the Wikitext to HTML.
+            if( window.parent.popup ){
+                window.parent.popup.parent.FCK_sajax( 'wfSajaxWikiToHTML', [data], loadHTMLFromAjax );
+            } else {
+                window.parent.FCK_sajax( 'wfSajaxWikiToHTML', [data], loadHTMLFromAjax );
+            }
+        }
         var fragment = CKEDITOR.htmlParser.fragment.fromHtml( data, fixForBody ),
         writer = new CKEDITOR.htmlParser.basicWriter();
 
