@@ -132,6 +132,7 @@ public static function processSMWQueryASWSCall($parameters){
 		//parse web service call parameters
 		list($wsParameters, $wsReturnValues, $configArgs) = 
 			self::parseWSCallParameters($parameters);
+		$configArgs['webservice'] = trim($parameters[1]);
 		$wsTriplify = (array_key_exists('triplify', $configArgs)) ? true : false;
 		$displayTripleSubjects = (array_key_exists('displaytriplesubjects', $configArgs)) 
 			? $configArgs['displaytriplesubjects'] : false;
@@ -291,7 +292,7 @@ public static function processSMWQueryASWSCall($parameters){
 		for($i=2; $i < count($parameters); $i++){
 			$parameter = trim($parameters[$i]);
 			if($parameter{0} == "?"){
-				$wsReturnValues[self::getSpecifiedParameterName(substr($parameter, 1, strlen($parameter)))] 
+				$wsReturnValues[strtolower(self::getSpecifiedParameterName(substr($parameter, 1, strlen($parameter))))] 
 					= self::getSpecifiedParameterValue($parameter);
 			} else if (substr($parameter,0, 22) == "_displayTripleSubjects"){
 				$displayTripleSubjects = explode("=", $parameter, 2);
@@ -308,7 +309,7 @@ public static function processSMWQueryASWSCall($parameters){
 			}else {
 				$specParam = self::getSpecifiedParameterValue($parameter);
 				if($specParam){
-					$wsParameters[self::getSpecifiedParameterName($parameter)] = $specParam;
+					$wsParameters[strtolower(self::getSpecifiedParameterName($parameter))] = $specParam;
 				}
 			}
 		}
@@ -517,7 +518,7 @@ public static function processSMWQueryASWSCall($parameters){
 			$queryParams[$param] = $value;
 		}
 		$queryParams['source'] = 'webservice';
-		$queryParams['webservice'] = 'LDTest';
+		$queryParams['webservice'] = $configArgs['webservice'];
 		
 		//create query object
 		$query = 	SMWQueryProcessor::createQuery( 
@@ -528,7 +529,6 @@ public static function processSMWQueryASWSCall($parameters){
 			$printRequests);
 			
 		$query->params = $queryParams;			
-		
 		
 		//create query result object
 		$queryResult = 
@@ -705,7 +705,6 @@ public static function processSMWQueryASWSCall($parameters){
 	 * deal with striptags and fill short columns with dummies
 	 */
 	public static function getReadyToPrintResult($result, $stripTags){
-		
 		//compute longest column
 		$size = 0;
 		foreach($result as $title => $values){
@@ -713,7 +712,7 @@ public static function processSMWQueryASWSCall($parameters){
 				$size = sizeof($values);
 			}
 		}
-	
+		
 		//deal with striptags parameter and fill columns
 		foreach($result as $title => $values){
 			foreach($values as $key => $value){
@@ -723,7 +722,8 @@ public static function processSMWQueryASWSCall($parameters){
 					$result[$title][$key] = @ str_replace("|", "{{!}}",trim(strip_tag($results[$title][$key], $stripTags)));
 				}
 			}
-			while(sizeof($values) < $size){
+			
+			while(sizeof($result[$title]) < $size){
 				$result[$title][] = "";
 			}
 		}

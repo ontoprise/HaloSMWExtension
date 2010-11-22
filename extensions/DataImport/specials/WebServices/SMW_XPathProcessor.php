@@ -43,6 +43,7 @@ class XPathProcessor {
 	 *  	will be created
 	 */
 	function __construct($xmlString = ""){
+		
 		$domDocument = new DOMDocument();
 		@ $domDocument->loadXML($xmlString);
 
@@ -66,8 +67,8 @@ class XPathProcessor {
 	function evaluateQuery($query){
 		$queryResults = array();
 
-		$entries = @ $this->domXPath->evaluate($query);
-
+		$entries = $this->domXPath->evaluate($query);
+		
 		// check if the result of the query evaluation is an object
 		// or a simple string
 		if(is_object($entries)){

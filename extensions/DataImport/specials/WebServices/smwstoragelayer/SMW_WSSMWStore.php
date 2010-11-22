@@ -14,6 +14,7 @@ class SMWWSSMWStore extends SMWSQLStore2 {
 		$wsCallParameters = $this->parseQueryArgs($query);
 		
 		$result = SMWWebServiceUsage::processSMWQueryASWSCall($wsCallParameters);
+		
 		//echo('<pre>'.print_r($result, true).'</pre>');
 		
 		return $result;
@@ -23,6 +24,9 @@ class SMWWSSMWStore extends SMWSQLStore2 {
 	 * Translate the query into a #ws call. 
 	 */
 	private function parseQueryArgs($query){
+		
+		//echo('<pre>'.print_r($query->params, true).'</pre>');
+		
 		$wsParameters = array();
 		$configParameters = array();
 		$wsName = '';

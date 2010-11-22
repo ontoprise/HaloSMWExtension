@@ -620,7 +620,7 @@ class WebService {
 					}
 				}
 			} else {
-				$parts[1] = ucfirst($parts[1]);
+				$parts[1] = strtolower($parts[1]);
 				$results[$parts[1]] = $this->getResults($response, $rdef, $parts[1]);
 				
 				$tmpResult = $this->evaluateAdditionalPathAttribute(
@@ -762,7 +762,7 @@ class WebService {
 
 	private function getPathForAlias($alias, $resultDef) {
 		foreach ($resultDef->part as $part) {
-			if (ucfirst($alias) == ucfirst(''.$part['name'])) {
+			if (strtolower($alias) == strtolower(''.$part['name'])) {
 				return ''.$part['path'];
 			}
 		}
@@ -1295,7 +1295,7 @@ class WebService {
 			$exists = false;
 			if($this->mParsedParameters != null){
 				foreach($this->mParsedParameters->children() as $child){
-					if(ucfirst("".$child["name"]) == ucfirst($pName)){
+					if(strtolower("".$child["name"]) == strtolower($pName)){
 						$exists = true;
 					}
 				}
@@ -1309,7 +1309,7 @@ class WebService {
 				if("".$child["optional"] == "false" && "".$child["defaultValue"] == null){
 					$exists = false;
 					foreach($specifiedParameters as $pName => $pValue){
-						if(ucfirst("".$child["name"]) == ucfirst($pName)){
+						if(strtolower("".$child["name"]) == strtolower($pName)){
 							$exists = true;
 						}
 					}
@@ -1341,7 +1341,7 @@ class WebService {
 					return $messages;
 				}
 				foreach($resultDef->children() as $child){
-					if(ucfirst("".$child["name"]) == ucfirst($rPathSteps[1])){
+					if(strtolower("".$child["name"]) == strtolower($rPathSteps[1])){
 						$exists = true;
 					}
 				}
@@ -1411,7 +1411,7 @@ class WebService {
 	 */
 	private function getResultDefinition($defName) {
 		foreach ($this->mParsedResult as $rdef) {
-			if (ucfirst($defName) == ucfirst($rdef['name'])) {
+			if (strtolower($defName) == strtolower($rdef['name'])) {
 				return $rdef;
 			}
 		}
@@ -1482,7 +1482,7 @@ class WebService {
 	 */
 	private function getXPathForAlias($alias, $resultDef) {
 		foreach ($resultDef->part as $part) {
-			if (ucfirst($alias) == ucfirst(''.$part['name'])) {
+			if (strtolower($alias) == strtolower(''.$part['name'])) {
 				return ''.$part['xpath'];
 			}
 		}
@@ -1496,7 +1496,7 @@ class WebService {
 	 */
 	private function getJSONForAlias($alias, $resultDef) {
 		foreach ($resultDef->part as $part) {
-			if (ucfirst($alias) == ucfirst(''.$part['name'])) {
+			if (strtolower($alias) == strtolower(''.$part['name'])) {
 				return ''.$part['json'];
 			}
 		}
@@ -1510,7 +1510,7 @@ class WebService {
 	 */
 	private function getPropertyForAlias($alias, $resultDef) {
 		foreach ($resultDef->part as $part) {
-			if (ucfirst($alias) == ucfirst(''.$part['name'])) {
+			if (strtolower($alias) == strtolower(''.$part['name'])) {
 				return ''.$part['property'];
 			}
 		}
@@ -1536,7 +1536,7 @@ class WebService {
 			foreach($this->mParsedParameters->children() as $child){
 				$found = false;
 				foreach($subParameterBundle as $parameterName => $subParameters){
-					if(ucfirst("".$child["name"]) == ucfirst($parameterName)){
+					if(strtolower("".$child["name"]) == strtolower($parameterName)){
 						$found = true;
 					}
 				}
