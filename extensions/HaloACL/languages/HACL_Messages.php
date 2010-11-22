@@ -385,7 +385,15 @@ $messages['en'] = array(
 	'hacl_gp_check_deny'		=> "Deny permission",
 	'hacl_gp_all_users'			=> "All users",
 	'hacl_gp_registered_users'	=> "Registered users",
-	'hacl_gp_permissions_saved' => "The permissions were successfully saved."
+	'hacl_gp_permissions_saved' => "The permissions were successfully saved.",
+	'hacl_gp_has_permissions'	=> "This group has the following permission(s):",
+	'hacl_gp_no_features_for_user'
+								=> "We are sorry.<br />You must be an administrator or bureaucrat to edit global permission.",
+	'hacl_gp_no_features_defined'
+								=> "No features are defined for global permissions. <br />".
+								   "Please edit <tt>/extensions/HaloACL/includes/HACL_Initialize.php</tt>: <br />".
+								   "Set <br /> <tt>\$haclgUseFeaturesForGroupPermissions = true;</tt> <br />".
+								   "and define features in <tt>\$haclgFeature</tt>."
 
 );
 
@@ -744,5 +752,14 @@ $messages['de'] = array(
 	'hacl_gp_check_deny'		=> "Berechtigung verweigern",
 	'hacl_gp_all_users'			=> "Alle Benutzer",
 	'hacl_gp_registered_users'	=> "Registrierte Benutzer",
-	'hacl_gp_permissions_saved' => "Die Berechtigungen wurden erfolgreich gespeichert."
+	'hacl_gp_permissions_saved' => "Die Berechtigungen wurden erfolgreich gespeichert.",
+	'hacl_gp_has_permissions'	=> "Die Gruppe hat die folgende(n) Berechtigung(en):",
+	'hacl_gp_no_features_for_user'
+								=> "Es tut uns leid.<br />Sie müssen ein Administrator oder Bürokrat sein um globale Berechtigungen ändern zu können.",
+	'hacl_gp_no_features_defined'
+								=> "Es sind keine Funktionen für globale Berechtigungen definiert. <br />".
+								   "Bitte editieren Sie <tt>/extensions/HaloACL/includes/HACL_Initialize.php</tt>: <br />".
+								   "Setzen Sie <br /> <tt>\$haclgUseFeaturesForGroupPermissions = true;</tt> <br />".
+								   "und definierten Sie die Funktionen in <tt>\$haclgFeature</tt>."
+								
 );
