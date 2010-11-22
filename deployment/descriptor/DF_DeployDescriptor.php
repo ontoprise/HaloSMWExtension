@@ -633,9 +633,16 @@ class DeployDescriptor {
 		}
 
 		$dp = new DeployDescriptionProcessor($rootDir.'/LocalSettings.php', $this);
-
+		
+		print "\n[Configure LocalSettings.php...";
 		$content = $dp->applyLocalSettingsChanges($userCallback, $this->getUserRequirements(), $dryRun);
-		if (!$dryRun) $dp->applyPatches($userCallback);
+		print "done.]";
+		
+		if (!$dryRun) {
+			print "\n[Applying patches...";
+			$dp->applyPatches($userCallback);
+			print "done.]";	
+		}
 		
 		$this->lastErrors = $dp->getErrorMessages();
 		return $content; // return for testing purposes.
@@ -660,11 +667,19 @@ class DeployDescriptor {
 	 */
 	function unapplyConfigurations($rootDir) {
 		$dp = new DeployDescriptionProcessor($rootDir.'/LocalSettings.php', $this);
-		$dp->unapplySetups();
 		$dp->unapplyPatches();
 		$content = $dp->unapplyLocalSettingsChanges();
         $this->lastErrors = $dp->getErrorMessages();
 		return $content; // return for testing purposes.
+	}
+	
+	/**
+	 * Unapplies the setup scripts
+	 * @param $rootDir
+	 */
+	function unapplySetups($rootDir) {
+		$dp = new DeployDescriptionProcessor($rootDir.'/LocalSettings.php', $this);
+		$dp->unapplySetups();
 	}
 	
 	/**

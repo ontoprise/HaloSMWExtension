@@ -32,7 +32,7 @@ define('DEPLOY_FRAMEWORK_WRONG_MW_VERSION', 11);
 require_once 'DF_PackageRepository.php';
 require_once 'DF_Tools.php';
 require_once 'DF_Rollback.php';
-require_once 'DF_ResourceInstaller.php';
+
 
 /**
  * @file
@@ -80,7 +80,7 @@ class Installer {
 
 	// Helper obejcts
 	private $rollback;
-	private $res_installer;
+	
 
 	//
 	private $errors;
@@ -105,7 +105,7 @@ class Installer {
 
 
 		$this->rollback = Rollback::getInstance($this->instDir);
-		$this->res_installer = ResourceInstaller::getInstance($this->instDir);
+
 
 		$this->force = $force;
 		$this->noAsk = $noAsk;
@@ -155,7 +155,7 @@ class Installer {
 	 */
 	public function deInstall($packageID) {
 
-		print "\nChecking for package $packageID...";
+		print "\n[Checking for package $packageID...";
 		$localPackages = PackageRepository::getLocalPackages($this->rootDir.'/extensions');
 		$ext = NULL;
 		foreach($localPackages as $p) {
@@ -167,9 +167,10 @@ class Installer {
 		if (is_null($ext)) {
 			throw new InstallationError(DEPLOY_FRAMEWORK_PACKAGE_NOT_EXISTS, "Package does not exist", $packageID);
 		}
+		print "done.]";
 
 		// check if there are depending extensions
-		print "\nChecking for dependant packages of $packageID...";
+		print "\n[Checking for dependant packages of $packageID...";
 		$existDependency = false;
 		$dependantPackages = array();
 		foreach($localPackages as $p) {
@@ -184,32 +185,20 @@ class Installer {
 				}
 			}
 		}
-
+		print "done.]";
 		if ($existDependency) {
 			throw new InstallationError(DEPLOY_FRAMEWORK_DEPENDENCY_EXIST, "Can not remove package. Dependency from the following packages exists:", $dependantPackages);
 		}
 
-		// remove ontology
-		print "\nDe-install ontologies...";
-		$this->res_installer->deinstallWikidump($ext);
-
-		print "\nDelete resources...";
-		$this->res_installer->deleteResources($ext);
-
-		// undo all config changes
-		// - from LocalSettings.php
-		// - from database (setup scripts)
-		// - patches
-		print "\nUnapply configurations of $packageID...";
-		$ext->unapplyConfigurations($this->instDir, false);
-		$this->errors = array_merge($this->errors, $ext->getLastErrors());
-
-		// remove extension code
-		print "\nRemove code of $packageID...";
-		Tools::remove_dir($this->instDir."/".$ext->getInstallationDirectory());
-		// may contain files which are not located in the installation directory
-		$this->res_installer->deleteExternalCodefiles($ext);
+		
+	
+		
+		
+		
+		return $ext;
 	}
+	
+	
 
 	/**
 	 * Updates all packages if possible
@@ -225,7 +214,7 @@ class Installer {
 		// are available and collect all depending extension to be updated.
 		$updatesNeeded = array();
 		foreach($localPackages as $tl_ext) {
-		
+
 			$dd = PackageRepository::getLatestDeployDescriptor($tl_ext->getID());
 			if ($dd->getVersion() > $localPackages[$dd->getID()]->getVersion()
 			|| $dd->getPatchlevel() > $localPackages[$dd->getID()]->getPatchlevel()) {
@@ -309,25 +298,25 @@ class Installer {
 	 */
 	public function collectPackagesToInstall($packageID, $version = NULL) {
 		// 1. Check if package is installed
-		print "\nCheck if package installed...";
+		print "\n[Check if package installed...";
 		$localPackages = PackageRepository::getLocalPackages($this->rootDir.'/extensions');
 		$old_package = NULL;
 		foreach($localPackages as $p) {
 			if ($p->getID() == $packageID) {
 				$old_package = $p;
-				print "found!";
+				print "found!]";
 				break;
 			}
 		}
 
 		if (is_null($old_package)) {
-			print "not found.";
+			print "not found.]";
 		}
 
 
 		// 2. Check code integrity of existing package
 		if (!is_null($old_package)) {
-			print "\nCheck code integrity...";
+			print "\n[Check code integrity...";
 			$status = $old_package->validatecode($this->rootDir);
 			if ($status !== true) {
 				if (!$this->force) {
@@ -337,16 +326,18 @@ class Installer {
 				}
 			}
 
-			print "done!";
+			print "done.]";
 		}
 
 		// 3. Get required package descriptor
 		if ($version == NULL) {
-			print "\nRead latest deploy descriptor of $packageID...";
+			print "\n[Read latest deploy descriptor of $packageID...";
 			$new_package = PackageRepository::getLatestDeployDescriptor($packageID);
+			
 		} else {
-			print "\nRead deploy descriptor of $packageID-$version...";
+			print "\n[Read deploy descriptor of $packageID-$version...";
 			$new_package = PackageRepository::getDeployDescriptor($packageID, $version);
+			
 		}
 
 		// 5. check if update is neccessary
@@ -361,15 +352,15 @@ class Installer {
 		// 6. Check dependencies for install/update
 		// get package to install
 		$updatesNeeded = array(array($new_package, $new_package->getVersion(), $new_package->getVersion()));
-		print "\nCheck for necessary updates...";
+		print "\n[Check for necessary updates...";
 		$this->collectDependingExtensions($new_package, $updatesNeeded, $localPackages);
 		$this->collectSuperExtensions($new_package, $updatesNeeded, $localPackages);
-
+		print "done.]";
 
 		// 7. calculate version which matches all depdencies of an extension.
-		print "\nFilter incompatible packages";
+		print "\n[Filter incompatible packages...";
 		$this->filterIncompatiblePackages($updatesNeeded, $extensions_to_update, $contradictions);
-
+		print "done.]";
 
 		return array($new_package, $old_package, $extensions_to_update, $contradictions);
 	}
@@ -423,15 +414,19 @@ class Installer {
 
 
 	}
-    
+
 	/**
-	 * Runs the setups scripts of the extensions and installs all resource files and wikidumps. 
+	 * Runs the setups scripts of the extensions and installs all resource files and wikidumps.
 	 * 
+	 * Note: requires wiki context when called.
+	 *
 	 */
 	public function initializePackages() {
+		require_once 'DF_ResourceInstaller.php';
+		$res_installer = ResourceInstaller::getInstance($this->instDir);
 		$localPackages = PackageRepository::getLocalPackagesToInitialize($this->rootDir.'/extensions');
 		ksort($localPackages, SORT_NUMERIC);
-		
+
 		if (count($localPackages) === 0) {
 			print "\nNo finalization required.\n";
 			return;
@@ -441,18 +436,18 @@ class Installer {
 		foreach($localPackages as $tupl) {
 			list($desc, $fromVersion) = $tupl;
 			try {
-			$desc->applySetups($this->instDir, false);
+				$desc->applySetups($this->instDir, false);
 			} catch(RollbackInstallation $e) {
 				// ignore here
 			}
 		}
-		
-        // do the actual work
+
+		// do the actual work
 		foreach($localPackages as $tupl) {
 			list($desc, $fromVersion) = $tupl;
-			$this->res_installer->installOrUpdateResources($desc);
-			$this->res_installer->installOrUpdateWikidumps($desc, $fromVersion, $this->force ? DEPLOYWIKIREVISION_FORCE : DEPLOYWIKIREVISION_WARN);
-			$this->res_installer->installOrUpdateMappings($desc);
+			$res_installer->installOrUpdateResources($desc);
+			$res_installer->installOrUpdateWikidumps($desc, $fromVersion, $this->force ? DEPLOYWIKIREVISION_FORCE : DEPLOYWIKIREVISION_WARN);
+			$res_installer->installOrUpdateMappings($desc);
 		}
 
 		// print (optional) notices
@@ -460,22 +455,70 @@ class Installer {
 			list($desc, $fromVersion) = $tupl;
 			$notice = $desc->getNotice();
 			if ($notice !== '') {
-				 print "\n\n========================================================="; 
-			     print "\nNOTICE: $notice";	
-			     print "\n\n=========================================================";
+				print "\n\n=========================================================";
+				print "\nNOTICE: $notice";
+				print "\n\n=========================================================";
 			}
 		}
-		
+
 		// remove installation hint files
-		print "\nClean up...";
+		print "\n[Clean up...";
 		foreach($localPackages as $tupl) {
-            list($desc, $fromVersion) = $tupl;
-            unlink($this->rootDir."/".$desc->getInstallationDirectory()."/init$.ext");
+			list($desc, $fromVersion) = $tupl;
+			unlink($this->rootDir."/".$desc->getInstallationDirectory()."/init$.ext");
 		}
-		print "done.\n\n";
+		print "done.]\n\n";
 
 	}
 
+	/**
+	 * Deinitializes the package, ie. 
+	 * 
+	 * 	Note: requires wiki context when called.
+	 * 
+	 * 	(1) remove external codefiles
+	 *  (2) run deinstall setups
+	 *  (3) deinstall ontologies
+	 *  (4) deinstall resources
+	 * 
+	 * @param DeployDescriptor $dd
+	 */
+	public function deinitializePackages($dd) {
+		// unapply setups
+		print "\n[Unapply setups ".$dd->getID()."...";
+		$dd->unapplySetups($this->instDir, false);
+		print "\ndone.]";
+		
+			// undo all config changes
+		// - from LocalSettings.php
+		// - from database (setup scripts)
+		// - patches
+		print "\n[Unapply configurations of ".$dd->getID()."...";
+		$dd->unapplyConfigurations($this->instDir, false);
+		$this->errors = array_merge($this->errors, $dd->getLastErrors());
+		print "done.]";
+		
+		// remove extension code
+		print "\n[Remove code of ".$dd->getID()."...";
+		Tools::remove_dir($this->instDir."/".$dd->getInstallationDirectory());
+		
+		print "done.]";
+		
+		$res_installer = ResourceInstaller::getInstance($this->instDir);
+		// may contain files which are not located in the installation directory
+		$res_installer->deleteExternalCodefiles($dd);
+		// remove ontology
+		print "\n[De-install ontologies...";
+		$res_installer->deinstallWikidump($dd);
+		print "done.]";
+		
+		// delete resources
+		print "\n[Delete resources...";
+		$res_installer->deleteResources($dd);
+		print "done.]";
+		
+	}
+	
 	/**
 	 * Unzips the package denoted by $id and $version
 	 *
@@ -486,13 +529,13 @@ class Installer {
 	 */
 	private function unzip($id, $version) {
 
+		print "\n[unzip ".$id."-$version.zip";
 		if (Tools::isWindows()) {
-			print "\n\nUncompressing:\nunzip -o ".$this->tmpFolder."/".$id."-$version.zip -d ".$this->instDir;
 			exec('unzip -o '.$this->tmpFolder."\\".$id."-$version.zip -d ".$this->instDir);
 		} else {
-			print "\n\nUncompressing:\nunzip -o ".$this->tmpFolder."/".$id."-$version.zip -d ".$this->instDir;
 			exec('unzip -o '.$this->tmpFolder."/".$id."-$version.zip -d ".$this->instDir);
 		}
+		print "done.]";
 	}
 
 	/**
@@ -654,7 +697,7 @@ class Installer {
 		// need to get updated too.
 		foreach($updatesNeeded as $up) {
 			list($id, $minVersion, $maxVersion) = $up;
-			
+
 			$desc_min = PackageRepository::getDeployDescriptorFromRange($id, $minVersion, $maxVersion);
 
 			$packagesToUpdate[] = array($desc_min, $minVersion, $maxVersion);

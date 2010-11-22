@@ -19,7 +19,7 @@
 /**
  * @file
  * @ingroup DFInstaller
- * 
+ *
  * Rollback an installation.
  *
  * @author: Kai K�hn / ontoprise / 2009
@@ -69,7 +69,7 @@ class Rollback {
 				print "\nRemove old rollback data (y/n) ?";
 				$line = trim(fgets(STDIN));
 				if (strtolower($line) == 'n') {
-					print "\n\nAbort installation.";
+					print "\n\nAbort installation.\n\n";
 					die(DF_TERMINATION_WITHOUT_FINALIZE);
 				}
 				Tools::remove_dir($this->tmpDir);
@@ -108,19 +108,19 @@ class Rollback {
 		$localPackages = PackageRepository::getLocalPackages($this->inst_dir."/extensions");
 		if (array_key_exists($id, $localPackages)) {
 			$localExt = $localPackages[$id];
-			print "\nSaving extension ".$localExt->getID()."...";
+			print "\n[Saving extension ".$localExt->getID()."...";
 			Tools::mkpath($this->tmpDir."/stored/".$localExt->getInstallationDirectory());
 			Tools::copy_dir($this->inst_dir."/".$localExt->getInstallationDirectory(), $this->tmpDir."/stored/".$localExt->getInstallationDirectory());
-			print "done.";
-				
+			print "done.]";
+
 			// save external codefiles
 			$codefiles = $localExt->getCodefiles();
-			print "\nSaving external codefiles of ".$localExt->getID()."...";
-			
+			print "\n[Saving external codefiles of ".$localExt->getID()."...";
+
 			Tools::mkpath($this->tmpDir."/stored/".$localExt->getInstallationDirectory()."_externalCodefiles");
 			foreach($codefiles as $f) {
 				if (strpos($f, $localExt->getInstallationDirectory()) === 0) continue; // ignore these
-				 
+					
 				if (is_dir($this->inst_dir."/".$f)) {
 					Tools::copy_dir($this->inst_dir."/".$f, $this->tmpDir."/stored/".$localExt->getInstallationDirectory()."_externalCodefiles/".$f);
 				} else if (file_exists($this->inst_dir."/".$f)) {
@@ -128,11 +128,11 @@ class Rollback {
 					copy($this->inst_dir."/".$f, $this->tmpDir."/stored/".$localExt->getInstallationDirectory()."_externalCodefiles/".$f);
 				}
 			}
-			print "done.";
+			print "done.]";
 
-			print "\nSaving resources of ".$localExt->getID()."...";
+			print "\n[Saving resources of ".$localExt->getID()."...";
 			$this->saveResources($localExt->getID());
-			print "done.";
+			print "done.]";
 		}
 		$this->extToRestore[] = $id;
 	}
@@ -143,17 +143,31 @@ class Rollback {
 	 * @return unknown
 	 */
 	public function saveDatabase() {
+		global $mwrootDir;
+		require_once "$mwrootDir/AdminSettings.php";
 		$this->acquireNewRollback();
 		// make sure to save only once
 		static $savedDataBase = false;
 		if ($savedDataBase) return true;
-		global $wgDBadminuser, $wgDBadminpassword, $wgDBname;
+
 		$savedDataBase = true;
+		$wgDBname = $this->getDatabasename();
 		print "\nSaving database...";
-		//print "\nmysqldump -u $wgDBadminuser --password=$wgDBadminpassword $wgDBname > ".$this->tmpDir."/dump.sql";
+		print "\nmysqldump -u $wgDBadminuser --password=$wgDBadminpassword $wgDBname > ".$this->tmpDir."/dump.sql";
 		exec("mysqldump -u $wgDBadminuser --password=$wgDBadminpassword $wgDBname > ".$this->tmpDir."/dump.sql", $out, $ret);
 		if ($ret != 0) print "\nWarning: Could not save database for rollback"; else print "done.";
 		return $ret == 0;
+	}
+	
+	/**
+	 * 
+	 * Reads databasename from LocalSettings.php
+	 */
+	private function getDatabasename() {
+		global $mwrootDir;
+		$ls_content = file_get_contents("$mwrootDir/LocalSettings.php");
+		preg_match('/\$wgDBname\s*=\s*["\']([^"\']+)["\']/', $ls_content, $matches);
+		return $matches[1];
 	}
 
 	/**
@@ -165,9 +179,9 @@ class Rollback {
 		static $saveLocalSettings = false;
 		if ($saveLocalSettings) return;
 		$saveLocalSettings = true;
-		print "\nSaving LocalSettings.php";
+		print "\n[Saving LocalSettings.php...";
 		copy($this->inst_dir."/LocalSettings.php", $this->tmpDir."/LocalSettings.php");
-
+		print "done.]";
 	}
 
 	/**
@@ -176,13 +190,14 @@ class Rollback {
 	 * @return boolean
 	 */
 	private function restoreDatabase() {
-
-		global $wgDBadminuser, $wgDBadminpassword, $wgDBname;
+		global $mwrootDir;
+		require_once "$mwrootDir/AdminSettings.php";
+		$wgDBname = $this->getDatabasename();
 		if (!file_exists($this->tmpDir."/dump.sql")) return false; // nothing to restore
-		print "\nRestore database...";
-		//print "\nmysql -u $wgDBadminuser --password=$wgDBadminpassword --database=$wgDBname < ".$this->tmpDir."/dump.sql";
+		print "\n[Restore database...";
+		
 		exec("mysql -u $wgDBadminuser --password=$wgDBadminpassword --database=$wgDBname < ".$this->tmpDir."/dump.sql", $out, $ret);
-		if ($ret != 0) print "\nWarning: Could not restore database."; else print "done.";
+		if ($ret != 0) print "\nWarning: Could not restore database."; else print "done.]";
 		return ($ret == 0);
 	}
 
@@ -204,7 +219,7 @@ class Rollback {
 	 *
 	 */
 	public function rollback() {
-		$res_installer = ResourceInstaller::getInstance($this->inst_dir);
+
 
 		// 1. remove patches of the extension to restore
 		if (!file_exists($this->tmpDir)) {
@@ -227,19 +242,65 @@ class Rollback {
 		}
 		print "done.";
 
+
+
+		// 2. Restore the database (if available)
+		$databaseRestored = $this->restoreDatabase();
+
+
+		// 3. remove installed or updated extensions
+		foreach($localPackages as $dd) {
+			if (in_array($dd->getID(), $this->extToRestore)) {
+				Tools::remove_dir($this->inst_dir."/".$dd->getInstallationDirectory());
+				
+			}
+		}
+		// 4. copy old (updated) extensions
+		Tools::copy_dir($this->tmpDir."/stored", $this->inst_dir);
+
+
+		// 5. reload local packages, because they have changed
+		$restoredLocalPackages = PackageRepository::getLocalPackages($this->inst_dir.'/extensions', true);
+
+		// 6. restore external code files if necessary
+		foreach($restoredLocalPackages as $localExt) {
+			if (file_exists($this->tmpDir."/stored/".$localExt->getInstallationDirectory()."_externalCodefiles")) {
+				Tools::copy_dir($this->tmpDir."/stored/".$localExt->getInstallationDirectory()."_externalCodefiles", $this->inst_dir);
+			}
+		}
+
+
+			
+		// 7. restore LocalSettings.php
+		if (file_exists($this->tmpDir."/LocalSettings.php")) {
+			copy($this->tmpDir."/LocalSettings.php", $this->inst_dir."/LocalSettings.php");
+		}
+
+		// 8. clear rollback data
+		if (file_exists($this->tmpDir)) Tools::remove_dir($this->tmpDir);
+		
+		return array($localPackages, $databaseRestored);
+	}
+
+	/**
+	 * Rolls back the last content installation. (requires wiki context)
+	 *
+	 */
+	public function rollbackContent($localPackages, $databaseRestored, $restoredLocalPackages) {
+		
+		if (!isset($localPackages)) return;
 		// 2. deleting the resources of the extension to restore
 		print "\nDeleting resources...";
 		foreach($localPackages as $dd) {
-			if (in_array($dd->getID(), $this->extToRestore)) {
+			if (!isset($res_installer)) $res_installer = ResourceInstaller::getInstance($this->inst_dir);
 
+			if (in_array($dd->getID(), $this->extToRestore)) {
+				$res_installer->deleteExternalCodefiles($dd);
 				$res_installer->deleteResources($dd);
 
 			}
 		}
 		print "done.";
-
-		// 3. Restore the database (if available)
-		$databaseRestored = $this->restoreDatabase();
 
 		// if it was not restored, delete the wiki dumps of all extensions to restore
 		if (!$databaseRestored) {
@@ -251,27 +312,6 @@ class Rollback {
 				}
 			}
 
-		}
-
-		// 4. remove installed or updated extensions
-		foreach($localPackages as $dd) {
-			if (in_array($dd->getID(), $this->extToRestore)) {
-				Tools::remove_dir($this->inst_dir."/".$dd->getInstallationDirectory());
-				$res_installer->deleteExternalCodefiles($dd);
-			}
-		}
-		// 5. copy old (updated) extensions
-		Tools::copy_dir($this->tmpDir."/stored", $this->inst_dir);
-
-
-		// 6. reload local packages, because they have changed
-		$restoredLocalPackages = PackageRepository::getLocalPackages($this->inst_dir.'/extensions', true);
-
-		// restore external code files if necessary
-		foreach($restoredLocalPackages as $localExt) {
-			if (file_exists($this->tmpDir."/stored/".$localExt->getInstallationDirectory()."_externalCodefiles")) {
-				Tools::copy_dir($this->tmpDir."/stored/".$localExt->getInstallationDirectory()."_externalCodefiles", $this->inst_dir);
-			}
 		}
 
 		if (!$databaseRestored) {
@@ -299,15 +339,6 @@ class Rollback {
 			$this->restoreResourceFiles();
 
 		}
-			
-		// 9. restore LocalSettings.php
-		if (file_exists($this->tmpDir."/LocalSettings.php")) {
-			copy($this->tmpDir."/LocalSettings.php", $this->inst_dir."/LocalSettings.php");
-		}
-
-		// 10. clear rollback data
-		if (file_exists($this->tmpDir)) Tools::remove_dir($this->tmpDir);
-
 	}
 
 	/**

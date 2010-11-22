@@ -8,5 +8,5 @@ fi
 
 # Run SMWAdmin tool
 if php smwadmin/smwadmin.php $*
-then smwadmin/smwadmin.php --finalize
+then php smwadmin/smwadmin.php --finalize
 fi

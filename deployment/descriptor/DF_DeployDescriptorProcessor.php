@@ -116,8 +116,8 @@ class DeployDescriptionProcessor {
 
 		if (is_null($fragment)) {
 			$this->errorMessages[] = "Could not find configuration for ".$this->dd_parser->getID();
-			echo "\nCould not find configuration for ".$this->dd_parser->getID();
-			echo "\nAbort changing LocalSettings.php";
+			echo "\n\tCould not find configuration for ".$this->dd_parser->getID();
+			echo "\n\tAbort changing LocalSettings.php";
 			return $this->localSettingsContent;
 		}
 		$ls = str_replace($fragment, "", $this->localSettingsContent);
@@ -139,16 +139,17 @@ class DeployDescriptionProcessor {
 			if (substr($instDir, -1) != '/') $instDir .= "/";
 			$script = $instDir.self::makeUnixPath($setup['script']);
 			if (!file_exists($rootDir."/".$script)) {
-				$this->errorMessages[] = "Warning: setup script at '$rootDir/$script' does not exist";
-				print "\nWarning: setup script at '$rootDir/$script' does not exist";
+				$this->errorMessages[] = "WARNING: setup script at '$rootDir/$script' does not exist";
+				print "\n\tWARNING: setup script at '$rootDir/$script' does not exist";
 				continue;
 			}
-			print "\n\nRun script:\nphp ".$rootDir."/".$script." ".$setup['params'];
+			print "\n[Run script: $script";
 			exec("php ".$rootDir."/".$script." ".$setup['params'], $out, $ret);
+			print "done.]";
 			foreach($out as $line) print "\n".$line;
 			if ($ret != 0) {
 				$this->errorMessages[] = "Script ".$rootDir."/".$script." failed!";
-				print "\n\nScript ".$rootDir."/".$script." failed!";
+				print "\n\tScript ".$rootDir."/".$script." failed!";
 				throw new RollbackInstallation();
 			}
 			$out = array(); // delete output
@@ -172,12 +173,13 @@ class DeployDescriptionProcessor {
 				print "\nWarning: setup script at '$rootDir/$script' does not exist";
 				continue;
 			}
-			print "\n\nRun script:\nphp ".$rootDir."/".$script." ".$setup['params'];
+			print "\n[Run script: $script";
 			exec("php ".$rootDir."/".$script." ".$setup['params'], $out, $ret);
+			print "done.]";
 			foreach($out as $line) print "\n".$line;
 			if ($ret != 0) {
 				$this->errorMessages[] = "Script ".$rootDir."/".$script." failed!";
-				print "\n\nScript ".$rootDir."/".$script." failed!";
+				print "\n\tScript ".$rootDir."/".$script." failed!";
 				throw new RollbackInstallation();
 			}
 
@@ -202,14 +204,14 @@ class DeployDescriptionProcessor {
 			$patch = $instDir.self::makeUnixPath($patch);
 			$patchFailed = false;
 			if (!file_exists($rootDir."/".$patch)) {
-				$this->errorMessages[] = "Warning: patch at '$rootDir/$patch' does not exist";
-				print "\nWarning: patch at '$rootDir/$patch' does not exist";
+				$this->errorMessages[] = "WARNING: patch at '$rootDir/$patch' does not exist";
+				print "\nWARNING: patch at '$rootDir/$patch' does not exist";
 				continue;
 			}
 			// do dry-run at first to check for rejected patches
-			print "\n\nTest patch: ".$rootDir."/".$patch." ...";
+			print "\n[Test patch ".$patch."...";
 			exec("php ".$rootDir."/deployment/tools/patch.php -p ".$rootDir."/".$patch." -d ".$rootDir." --dry-run --onlypatch", $out, $ret);
-			print "done.";
+			print "done.]";
 			$patchFailed = false;
 			foreach($out as $line) {
 				if (strpos($line, "FAILED") !== false) {
@@ -228,9 +230,9 @@ class DeployDescriptionProcessor {
 			switch($result) {
 
 				case 'y': // apply the patches
-			 	print "\n\nApply patch...";
+			 	print "\n[Apply patch...";
 			 	exec("php ".$rootDir."/deployment/tools/patch.php -p ".$rootDir."/".$patch." -d ".$rootDir." --onlypatch", $out, $ret);
-			 	print "done.";
+			 	print "done.]";
 			 	break;
 				case 'r': throw new RollbackInstallation();
 				case 'n': break; // just ignore the patches completely
@@ -259,8 +261,8 @@ class DeployDescriptionProcessor {
 			if (substr($instDir, -1) != '/') $instDir .= "/";
 			$patch = $instDir.self::makeUnixPath($patch);
 			if (!file_exists($rootDir."/".$patch)) {
-				$this->errorMessages[] = "Warning: patch at '$rootDir/$patch' does not exist";
-				print "\nWarning: patch at '$rootDir/$patch' does not exist";
+				$this->errorMessages[] = "WARNING: patch at '$rootDir/$patch' does not exist";
+				print "\n\tWARNING: patch at '$rootDir/$patch' does not exist";
 				continue;
 			}
 			// do dry-run at first to check for rejected patches
@@ -271,10 +273,10 @@ class DeployDescriptionProcessor {
 					$patchFailed = true;
 				}
 			}
-			if ($patchFailed) print "\nWarning: Some patches can not be removed! Reject files are created.";
-			print "\n\nRemove patch:\nphp ".$rootDir."/deployment/tools/patch.php -r -p ".$rootDir."/".$patch." -d ".$rootDir;
+			if ($patchFailed) print "\n\tWARNING: Some patches can not be removed! Reject files are created.";
+			print "\n\t[Remove patch $patch...";
 			exec("php ".$rootDir."/deployment/tools/patch.php -r -p ".$rootDir."/".$patch." -d ".$rootDir);
-
+			print "done.]";
 		}
 	}
 
@@ -284,7 +286,7 @@ class DeployDescriptionProcessor {
 	 */
 	function writeLocalSettingsFile(& $content) {
 		if (empty($content)) {
-			$this->errorMessages[] = "Warning: LocalSettings.php is empty. Nothing done here.";
+			$this->errorMessages[] = "WARNING: LocalSettings.php is empty. Nothing done here.";
 			// do never write an empty localsettings file.
 			return;
 		}

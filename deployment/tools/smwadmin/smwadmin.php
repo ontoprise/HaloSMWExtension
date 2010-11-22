@@ -22,7 +22,7 @@
  *
  * @defgroup DeployFramework Deploy Framework
  * @ingroup DeployFramework
- * 
+ *
  * Installation tool.
  *
  * @author: Kai K�hn / ontoprise / 2009
@@ -41,28 +41,32 @@ $rootDir = dirname(__FILE__);
 $rootDir = str_replace("\\", "/", $rootDir);
 $rootDir = realpath($rootDir."/../../");
 
+$mwrootDir = dirname(__FILE__);
+$mwrootDir = str_replace("\\", "/", $mwrootDir);
+$mwrootDir = realpath($mwrootDir."/../../../");
+
 require_once('DF_Tools.php');
 require_once('DF_Installer.php');
 
 //Load Settings
 if(file_exists($rootDir.'/settings.php'))
 {
-    require_once($rootDir.'/settings.php');
+	require_once($rootDir.'/settings.php');
 }
 
-
+// check PHP version
 $phpver = str_replace(".","",phpversion());
 if ($phpver < 520) {
 	print "\nPHP version must be >= 5.2\n";
-	die(DF_TERMINATION_ERROR); 
+	die(DF_TERMINATION_ERROR);
 }
 
 if (array_key_exists('SERVER_NAME', $_SERVER) && $_SERVER['SERVER_NAME'] != NULL) {
 	echo "Invalid access! A maintenance script MUST NOT accessed from remote.";
-	die(DF_TERMINATION_ERROR); 
+	die(DF_TERMINATION_ERROR);
 }
 
-// check tools
+// check required tools
 $check = Tools::checkEnvironment();
 if ($check !== true) {
 	fatalError($check);
@@ -74,17 +78,12 @@ if ($check !== true) {
 	fatalError($check);
 }
 
-# Attempt to connect to the database as a privileged user
-# This will vomit up an error if there are permissions problems
-$dbclass = 'Database' . ucfirst( $wgDBtype ) ;
-$wgDatabase = new $dbclass( $wgDBserver, $wgDBadminuser, $wgDBadminpassword, $wgDBname, 1 );
-
-if( !$wgDatabase->isOpen() ) {
-	# Appears to have failed
-	echo( "A connection to the database could not be established. Check the\n" );
-	echo( "values of \$wgDBadminuser and \$wgDBadminpassword.\n" );
-	exit();
+// check if LocalSettings.php is writeable
+$success = touch("$rootDir/../LocalSettings.php", "w");
+if ($success === false) {
+	fatalError("LocalSettings.php is not locked. Please close all programs using it.");
 }
+
 
 $packageToInstall = array();
 $packageToDeinstall = array();
@@ -100,17 +99,19 @@ $dfgRestore=false;
 $dfgCheckInst=false;
 $dfgInstallPackages=false;
 
-$help = array_key_exists("help", $options);
-if ($help || count($argv) == 0) {
+$args = $_SERVER['argv'];
+array_shift($args); // remove script name
+if (count($args) === 0) {
 	showHelp();
-	die(DF_TERMINATION_WITHOUT_FINALIZE);  
+	die(DF_TERMINATION_WITHOUT_FINALIZE);
 }
 
 // get command line parameters
-$args = $_SERVER['argv'];
-array_shift($args); // remove script name
 for( $arg = reset( $args ); $arg !== false; $arg = next( $args ) ) {
-
+	if ($arg == '--help') {
+		showHelp();
+		die(DF_TERMINATION_WITHOUT_FINALIZE);
+	} else
 	//-i => Install
 	if ($arg == '-i') {
 		$package = next($args);
@@ -150,10 +151,18 @@ for( $arg = reset( $args ); $arg !== false; $arg = next( $args ) ) {
 		if ($package === false) fatalError("No package found");
 		$packageToInstall[] = $package;
 		continue;
-	} else if ($arg == '--finalize') { // => analyze installed dump
-        $dfgInstallPackages = true;
+	} else if ($arg == '--finalize') { // => finalize installation, ie. run scripts, import pages
+		// include commandLine.inc to be in maintenance mode
+		$mediaWikiLocation = dirname(__FILE__) . '/../../..';
+		require_once "$mediaWikiLocation/maintenance/commandLine.inc";
+		// include the resource installer
+		require_once('DF_ResourceInstaller.php');
+
+		// finalize mode requires a wiki environment, so check and include a few things more
+		checkWikiContext();
+		$dfgInstallPackages = true;
 		continue;
-    } else if ($arg == '-f') { // => force
+	} else if ($arg == '-f') { // => force
 		$dfgForce = true;
 		continue;
 	} else if ($arg == '-r') { // => rollback last installation
@@ -167,13 +176,6 @@ for( $arg = reset( $args ); $arg !== false; $arg = next( $args ) ) {
 }
 
 
-$mediaWikiLocation = dirname(__FILE__) . '/../../..';
-require_once "$mediaWikiLocation/maintenance/commandLine.inc";
-
-// check if AdminSettings.php is available
-if (!isset($wgDBadminuser) && !isset($wgDBadminpassword)) {
-	fatalError("Please set create AdminSettings.php file. Otherwise rollback mechanism will not work properly.");
-}
 
 // create language object
 $langClass = "DF_Language_$wgLanguageCode";
@@ -185,17 +187,26 @@ $dfgLang = new $langClass();
 
 
 
-$mwrootDir = dirname(__FILE__);
-$mwrootDir = str_replace("\\", "/", $mwrootDir);
-$mwrootDir = realpath($mwrootDir."/../../../");
+
 
 $installer = Installer::getInstance($mwrootDir, $dfgForce);
 $rollback = Rollback::getInstance($mwrootDir);
-$res_installer = ResourceInstaller::getInstance($mwrootDir);
+
 
 
 if ($dfgRestore) {
-	handleRollback();
+	print "Rollback...";
+	list($localPackages, $databaseRestored, $restoredLocalPackages) = $rollback->rollback();
+
+	// include commandLine.inc to be in maintenance mode
+	$mediaWikiLocation = dirname(__FILE__) . '/../../..';
+	require_once "$mediaWikiLocation/maintenance/commandLine.inc";
+	// include the resource installer
+	require_once('DF_ResourceInstaller.php');
+
+	// include commandLine.inc to be in maintenance mode
+	checkWikiContext();
+	$rollback->rollbackContent($localPackages, $databaseRestored, $restoredLocalPackages);
 	die(DF_TERMINATION_WITH_FINALIZE);
 }
 
@@ -240,14 +251,28 @@ foreach($packageToInstall as $toInstall) {
 	} catch(RollbackInstallation $e) {
 		fatalError("Installation failed! You can try to rollback: smwadmin -r");
 	}
-	
+
 }
 
 //de-install
 foreach($packageToDeinstall as $toDeInstall) {
 	$toDeInstall = str_replace(".", "", $toDeInstall);
 	try {
-		$installer->deinstall($toDeInstall);
+		$dd = $installer->deinstall($toDeInstall);
+		if (count($dd->getWikidumps()) > 0
+		|| count($dd->getResources()) >  0
+		|| count($dd->getUninstallScripts()) > 0
+		|| count($dd->getCodefiles()) > 0) {
+			// include commandLine.inc to be in maintenance mode
+			$mediaWikiLocation = dirname(__FILE__) . '/../../..';
+			require_once "$mediaWikiLocation/maintenance/commandLine.inc";
+			// include the resource installer
+			require_once('DF_ResourceInstaller.php');
+
+			// include commandLine.inc to be in maintenance mode
+			checkWikiContext();
+			$installer->deinitializePackages($dd);
+		}
 	} catch(InstallationError $e) {
 		fatalError($e);
 	} catch(HttpError $e) {
@@ -257,7 +282,7 @@ foreach($packageToDeinstall as $toDeInstall) {
 	}catch(RepositoryError $e) {
 		fatalError($e);
 	}
-	
+
 }
 
 // update
@@ -277,7 +302,7 @@ foreach($packageToUpdate as $toUpdate) {
 	} catch(RepositoryError $e) {
 		fatalError($e);
 	}
-	
+
 }
 
 if (count($installer->getErrors()) === 0) {
@@ -312,15 +337,11 @@ function showHelp() {
 	echo "\n\tsmwadmin -u --dep: Shows what would be updated.";
 	echo "\n\tsmwadmin -d smw: Removes the package smw.";
 	echo "\n\n";
-   
+
 }
 
 
-function handleRollback() {
-	global $rollback;
-	print "Rollback...";
-	$rollback->rollback();
-}
+
 
 
 function handleGlobalUpdate($dfgCheckDep) {
@@ -363,13 +384,22 @@ function handleGlobalUpdate($dfgCheckDep) {
 	} catch(RepositoryError $e) {
 		fatalError($e);
 	}
-   
+
 }
 
 function handleInstallOrUpdate($packageID, $version) {
 	global $checkDump, $dfgCheckDep, $installer, $res_installer;
 	if (isset($checkDump) && $checkDump == true) {
+		// include commandLine.inc to be in maintenance mode
+		$mediaWikiLocation = dirname(__FILE__) . '/../../..';
+		require_once "$mediaWikiLocation/maintenance/commandLine.inc";
 		// check status of a currently installed wikidump
+		checkWikiContext();
+
+		// include the resource installer
+		require_once('DF_ResourceInstaller.php');
+
+		$res_installer = ResourceInstaller::getInstance($mwrootDir);
 		$res_installer->checkWikidump($packageID, $version);
 		print "\n\n";
 
@@ -391,6 +421,34 @@ function handleInstallOrUpdate($packageID, $version) {
 		// install or update
 		$installer->installOrUpdate($packageID, $version);
 	}
+}
+
+/**
+ * Checks if the wiki context is valid.
+ *
+ */
+function checkWikiContext() {
+
+
+	global $wgDBadminuser,$wgDBadminpassword, $wgDBtype, $wgDBserver, $wgDBadminuser, $wgDBadminpassword, $wgDBname;
+	# Attempt to connect to the database as a privileged user
+	# This will vomit up an error if there are permissions problems
+	$dbclass = 'Database' . ucfirst( $wgDBtype ) ;
+	$wgDatabase = new $dbclass( $wgDBserver, $wgDBadminuser, $wgDBadminpassword, $wgDBname, 1 );
+
+	if( !$wgDatabase->isOpen() ) {
+		# Appears to have failed
+		echo( "A connection to the database could not be established. Check the\n" );
+		echo( "values of \$wgDBadminuser and \$wgDBadminpassword.\n" );
+		exit();
+	}
+
+
+	// check if AdminSettings.php is available
+	if (!isset($wgDBadminuser) && !isset($wgDBadminpassword)) {
+		fatalError("Please set create AdminSettings.php file. Otherwise rollback mechanism will not work properly.");
+	}
+
 }
 /**
  * Shows a fatal error which aborts installation.

@@ -63,17 +63,18 @@ class ResourceInstaller {
 		$reader = new BackupReader($mode);
 		$wikidumps = $dd->getWikidumps();
 		foreach($wikidumps as $file) {
-			print "\nImport ontology: $file";
+			print "\n[Import ontology: $file";
 			$dumpPath = $this->rootDir."/". $dd->getInstallationDirectory()."/".$file;
 			if (!file_exists($dumpPath)) {
 				print "\n\t[WARNING]: dump file '".$dumpPath."' does not exist.";
 				continue;
 			}
 			$result = $reader->importFromFile($dumpPath );
+			print "\ndone.]";
 		}
 		if (!is_null($fromVersion)) {
 			// remove old pages
-			print "\nRemove unused pages...";
+			print "\n[Remove unused pages...";
 			$query = SMWQueryProcessor::createQuery("[[Ontology version::$fromVersion]][[Part of bundle::".$dd->getID()."]]", array());
 			$res = smwfGetStore()->getQueryResult($query);
 			$next = $res->getNext();
@@ -86,8 +87,9 @@ class ResourceInstaller {
 					$id = $title->getArticleID( GAID_FOR_UPDATE );
 					if( wfRunHooks('ArticleDelete', array(&$a, &$wgUser, &$reason, &$error)) ) {
 						if( $a->doDeleteArticle( $reason ) ) {
-							print "\n\tRemove old page from $fromVersion: ".$title->getPrefixedText();
+							print "\n\t[Remove old page from $fromVersion: ".$title->getPrefixedText();
 							wfRunHooks('ArticleDeleteComplete', array(&$a, &$wgUser, $reason, $id));
+							print "done.]";
 						}
 					}
 
@@ -95,6 +97,7 @@ class ResourceInstaller {
 				$next = $res->getNext();
 			}
 		}
+		print "\ndone.]";
 
 	}
 
@@ -136,13 +139,14 @@ class ResourceInstaller {
 			}
 			$im_file->delete("remove resource");
 			$a = new Article($title);
-			print "\n\tRemove resource: ".$title->getPrefixedText();
+			
 			$reason = "remove resource";
 			$id = $title->getArticleID( GAID_FOR_UPDATE );
 			if( wfRunHooks('ArticleDelete', array(&$a, &$wgUser, &$reason, &$error)) ) {
 				if( $a->doDeleteArticle( $reason ) ) {
-					print "\n\tRemove old page: ".$title->getPrefixedText();
+					print "\n\t[Remove old page: ".$title->getPrefixedText();
 					wfRunHooks('ArticleDeleteComplete', array(&$a, &$wgUser, $reason, $id));
+					print "done.]";
 				}
 			}
 
@@ -151,12 +155,13 @@ class ResourceInstaller {
 		if (count($dd->getOnlyCopyResources()) ==  0) return;
 		$resources = $dd->getOnlyCopyResources();
 		foreach($resources as $src => $dest) {
-			print "\n\tRemove resource: ".$dest;
+			print "\n\t[Remove resource: ".$dest;
 			if (is_dir($this->rootDir."/".$dest)) {
 				Tools::remove_dir($this->rootDir."/".$dest);
 			} else {
 				unlink($this->rootDir."/".$dest);
 			}
+			print "done.]";
 		}
 	}
 
@@ -169,17 +174,19 @@ class ResourceInstaller {
 
 		if (count($dd->getCodefiles()) ==  0) return;
 		$codefiles = $dd->getCodefiles();
-		print "\nDeleting external codefiles...";
+		print "\n[Deleting external codefiles...";
 		foreach($codefiles as $f) {
 			if (strpos($f, $dd->getInstallationDirectory()) === 0) continue; // ignore these
-			print "\n\tRemove $f";
+			print "\n\t[Remove $f";
 			$path = $this->rootDir."/".$dd->getInstallationDirectory()."/".$f;
 			if (is_dir($path)) {
 				Tools::remove_dir($path);
 			} else if (file_exists($path)) {
 				unlink($path);
 			}
+			print "done.]";
 		}
+		print "\ndone.]";
 	}
 
 	/**
@@ -199,7 +206,7 @@ class ResourceInstaller {
 			throw new InstallationError(DEPLOY_FRAMEWORK_NOT_INSTALLED, "The specified package is not installed. Nothing to check.");
 		}
 
-		print "\n\nChecking ontology...";
+		print "\n\n[Checking ontology...";
 		$reader = new BackupReader(DEPLOYWIKIREVISION_INFO);
 		$wikidumps = $package->getWikidumps();
 		foreach($wikidumps as $file) {
@@ -209,6 +216,7 @@ class ResourceInstaller {
 			}
 			$result = $reader->importFromFile( $this->rootDir."/".$file );
 		}
+		print "done.]";
 	}
 
 	/**
@@ -223,7 +231,7 @@ class ResourceInstaller {
 		if (count($dd->getResources()) ==  0) return;
 
 		// resources files
-		print "\nUploading resources...";
+		print "\n[Uploading resources...";
 		$resources = $dd->getResources();
 		foreach($resources as $file) {
 			$resourcePath = $this->rootDir."/".$dd->getInstallationDirectory()."/".$file;
@@ -231,18 +239,20 @@ class ResourceInstaller {
 				print "\n\t[WARNING]: '$resourcePath' does not exist.";
 				continue;
 			}
-			print "\n\t[Import] ".Tools::shortenPath($resourcePath);
+			print "\n\t[Import ".Tools::shortenPath($resourcePath)."...";
 			if (is_dir($resourcePath)) {
 				$this->importResources($resourcePath);
 			} else {
 				$im_file = wfLocalFile(Title::newFromText(basename($resourcePath), NS_IMAGE));
 				$im_file->upload($resourcePath, "auto-inserted image", "noText");
 			}
+			print "done.]";
 
 		}
+		print "\ndone.]";
 
 		if (count($dd->getOnlyCopyResources()) ==  0) return;
-		print "\nCopying resources...";
+		print "\n[Copying resources...";
 		$resources = $dd->getOnlyCopyResources();
 		foreach($resources as $file => $dest) {
 			$resourcePathSrc = $this->rootDir."/".$file;
@@ -250,7 +260,7 @@ class ResourceInstaller {
 				print "\n\t[WARNING]: '$resourcePathSrc' does not exist.";
 				continue;
 			}
-			print "\n\t[Copy] '".Tools::shortenPath($resourcePathSrc)."' to '".Tools::shortenPath($this->rootDir."/".$dest)."'";
+			print "\n\t[Copy '".Tools::shortenPath($resourcePathSrc)."' to '".Tools::shortenPath($this->rootDir."/".$dest)."'...";
 			if (is_dir($resourcePathSrc)) {
 				Tools::copy_dir($resourcePathSrc, $this->rootDir."/".$dest);
 			} else {
@@ -258,8 +268,10 @@ class ResourceInstaller {
 				copy($resourcePathSrc, $this->rootDir."/".$dest);
 
 			}
+			print "done.]";
 
 		}
+		print "\ndone.]";
 	}
 
 	/**
@@ -277,7 +289,7 @@ class ResourceInstaller {
         
 		$importedMappings = array();
 		// import mappings
-		print "\nImporting mappings...";
+		print "\n[Importing mappings...";
 		$resources = $dd->getMappings();
 
 		// delete old mapping articles
@@ -291,6 +303,7 @@ class ResourceInstaller {
 				if (!$dryRun) $a->doDeleteArticle("update");
 			}
 		}
+		print "\ndone.]";
 
 		// import new
 		foreach($resources as $source => $list) {
@@ -302,7 +315,7 @@ class ResourceInstaller {
 					print "\n\t[WARNING]: '$resourcePath' does not exist.";
 					continue;
 				}
-				print "\n\tImport '$resourcePath'";
+				print "\n\t[Import '$resourcePath'";
 				if (is_dir($resourcePath)) {
 					print "\n\tMapping location '$resourcePath' must be a file not a directory.";
 				} else {
@@ -311,10 +324,11 @@ class ResourceInstaller {
 					$content .= "<mapping target=\"$target\">\n".$mappingContent."\n</mapping>";
 						
 				}
+				print "done.]";
 			}
 			$mappingTitle = Title::newFromText($source, LOD_NS_MAPPING);
 			$a = new Article($mappingTitle);
-			print "\nInsert mapping [$source]...";
+			print "\n[Insert mapping [$source]...";
 			if (!$a->exists()) {
 				if (!$dryRun) $a->insertNewArticle($content, "auto-generated mapping page", false, false);
 			} else {
@@ -322,7 +336,7 @@ class ResourceInstaller {
 				if (!$dryRun) $a->doEdit($content, "auto-generated mapping page");
 			}
 			$importedMappings[] = array($source, $target, $content);
-			print "done.";
+			print "done.]";
 		}
 		return $importedMappings;
 	}
