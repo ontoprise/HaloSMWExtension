@@ -391,8 +391,14 @@ CKEDITOR.dialog.add( 'MWImage', function( editor ) {
                                                             else
                                                                 element.removeClass('fck_mw_' + classes[i]);
                                                         }
+                                                        element.setAttribute('_fck_mw_location', newVal);
                                                     }
-                                                    
+                                                    else {
+                                                        element.setAttribute('_fck_mw_location', 'none');
+                                                        element.removeClass('fck_mw_left');
+                                                        element.removeClass('fck_mw_center');
+                                                        element.addClass('fck_mw_right');
+                                                    }
                                                 }
                                             }
                                         }
