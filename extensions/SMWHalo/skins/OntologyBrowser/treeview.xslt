@@ -43,15 +43,9 @@
 		************************************ Variables
 		************************************
 	-->
-	<xsl:variable name="var-simple-quote">
-		'
-	</xsl:variable>
-	<xsl:variable name="var-slash-quote">
-		\'
-	</xsl:variable>
-	<xsl:variable name="var-underscore">
-		_
-	</xsl:variable>
+	<xsl:variable name="var-simple-quote">'</xsl:variable>
+	<xsl:variable name="var-slash-quote">\'</xsl:variable>
+	<xsl:variable name="var-underscore">_</xsl:variable>
 	<xsl:variable name="var-blank" select="string(' ')"></xsl:variable>
 	<!--
 		** ** Model "treeview" ** ** This model transforms an XML treeview
