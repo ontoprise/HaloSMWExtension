@@ -852,8 +852,12 @@ saveRule: function(event) {
 				this.annotation.replaceAnnotation(ruleText); 
 			} else {
 				// append the text to the edit field
-				var ei = new SMWEditInterface();
-				ei.setValue(ei.getValue() + ruleText);
+                if (gEditInterface)
+                    gEditInterface.setValue(gEditInterface.getValue() + ruleText);
+                else {
+                    var ei = new SMWEditInterface();
+                    ei.setValue(ei.getValue() + ruleText);
+                }
 			}
 			ruleToolBar.fillList(true);
 						 	

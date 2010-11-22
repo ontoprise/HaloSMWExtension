@@ -195,8 +195,12 @@ PropertyChain.prototype = {
 				// update an existing annotation
 				this.annotation.replaceAnnotation(chainText); 
 			} else {
-				var ei = new SMWEditInterface();
-				ei.setValue(ei.getValue() + chainText);
+                if (gEditInterface)
+                    gEditInterface.setValue(gEditInterface.getValue() + ruleText);
+                else {
+                    var ei = new SMWEditInterface();
+                    ei.setValue(ei.getValue() + ruleText);
+                }
 			}
 			ruleToolBar.fillList(true);
 		}
