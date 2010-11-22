@@ -26,7 +26,7 @@ CKEDITOR.plugins.add('smw_rule', {
             editor.addMenuGroup('mediawiki');
             // Create a menu item
             editor.addMenuItem('SMWruleEdit', {
-                label: 'Edit rule',
+                label: 'Edit rule text',
                 command: 'SMWruleEdit',
                 group: 'mediawiki'
             });
