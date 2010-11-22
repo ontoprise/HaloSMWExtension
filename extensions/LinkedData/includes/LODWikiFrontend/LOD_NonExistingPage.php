@@ -75,6 +75,9 @@ class  LODNonExistingPage extends Article {
 		$this->mArticleID = -1;
 		parent::view();
 		$this->mArticleID = 0;
+		
+		global $wgOut;
+		$wgOut->addScript('<script type="text/javascript">var wgHideSemanticToolbar = true;</script>');
 	}
 	
 	/**
