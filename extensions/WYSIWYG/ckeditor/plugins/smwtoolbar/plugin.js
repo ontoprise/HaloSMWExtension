@@ -1034,6 +1034,7 @@ var commandDefinition =
 		preserveState : true,
 		editorFocus : false,
 		canUndo : false,
+        modes : { wysiwyg : 1, source : 1 },
 
 		exec: function( editor )
 		{
