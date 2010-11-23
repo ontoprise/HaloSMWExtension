@@ -12,17 +12,16 @@
 		<helpurl>http://smwforum.ontoprise.com/smwforum/index.php/Help:Rich_Media_Extension</helpurl>
 		<dependencies>
 			<dependency from="1153" to="1160">MW</dependency>
-			<dependency from="190" to="200">semanticforms</dependency>
+			<dependency from="200" to="200">semanticforms</dependency>
 			<dependency from="101">scriptmanager</dependency>
 		</dependencies>
 	</global>
 	<codefiles>
 		<!-- external codes files -->
-		<file loc="../SemanticForms/skins/graphics" />
 		<!-- TODO: add others in skins/commons/images/icons-->
 	</codefiles>
 	<wikidumps>
-		<file loc="import/RichMediaOntology_v1.4.xml" />
+		<file loc="import/RichMediaOntology_v1.5.xml" />
 	</wikidumps>
 	<resources>
 		<!-- empty -->

@@ -5,10 +5,10 @@ Installation instructions
 #Requirements:
 #
 
-    PHP 5.2.x
-	MediaWiki 1.15.3
+	PHP 5.2.x or 5.3.x
+	MediaWiki 1.15.3 or higher
 	Semantic MediaWiki 1.4.x or higher
-	Semantic Forms 1.9 or 1.9.1
+	Semantic Forms 2.0
 	Parser Functions
 	String Functions 2.0 or higher
 	Deployment Framework (optional)
@@ -21,14 +21,14 @@ Installation instructions
 	1.1 The RichMedia extension comes with several patch files, where two must
     be applied. One file patches Mediawiki and the other the Semantic Forms
     extension. Depending on the version number choose the correct patch file.
-	- '/extensions/RichMediaRichMediaPatchForSF1_9.txt': This file provides the necessary patches for Semantic Forms 1.9
-    - '/extensions/RichMediaRichMediaPatchForSF1_9_1.txt': This file provides the necessary patches for Semantic Forms 1.9.1
+	- '/extensions/RichMediaRichMediaPatchForSF2_0.txt': This file provides the necessary patches for Semantic Forms 2.0
 	- '/extensions/RichMedia/RichMediaPatchForMW1_15_3.txt': This is needed to patch MediaWiki in version 1.15.3
-	
+	- '/extensions/RichMedia/RichMediaPatchForMW1_16_0.txt': This is needed to patch MediaWiki in version 1.16.0
+
 	Note: We can not ensure that this patch works properly for other versions of MediaWiki.
 	These are Eclipse patch files which can be installed using the tool patch.php which itself uses GNU patch. The
-    patch.php script is included in the zip archive or can be copied from the deploy framework (smwhalo-deploy-1.0)
-    which also contains a windows binary of GNU patch.
+	patch.php script is included in the zip archive or can be copied from the deploy framework (smwhalo-deploy)
+	which also contains a windows binary of GNU patch.
 
 		php patch.php -p <patch-file> -d <mw-dir> --onlypatch
 
@@ -37,7 +37,7 @@ Installation instructions
 	- Copy the folder 'SemanticForms' to your '/extensions' folder to make sure, that
 	  among others a new version of the FloatBox is now used by SemanticForms.
 	- Copy the folder 'skins' to your <mw-dir> to make sure, that all needed icons are available.
-	
+
 2. Add to your LocalSettings.php:
 	(if you want pdf, doc and some other document format files to be converted, set this line before RM_Initialize.php is included)
 	---
@@ -54,7 +54,7 @@ Installation instructions
 	$wgAllowExternalImagesFrom=$wgServer;   //This need to be set to allow the templates creating image links.
 	---
 
-4. Go to Special:Import, select and upload '/extensions/RichMedia/import/RichMediaOntology_v1.4.xml'
+4. Go to Special:Import, select and upload '/extensions/RichMedia/import/RichMediaOntology_v1.5.xml'
 
 Now you can enter {{RMList|show=True}} to any article where you want to get a
 list of all 'related documents and media' which also allows you to directly upload new files.

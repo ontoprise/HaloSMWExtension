@@ -54,13 +54,6 @@
 				<include name="patch.php" />
 			</fileset>
 		</copy>
-
-		<copy todir="bin/zip/extensions/SemanticForms">
-			<fileset dir="../patches/SemanticForms/">
-				<exclude name="**/.svn, **/CVS" />
-			</fileset>
-
-		</copy>
 		<copy todir="bin/zip/skins">
 			<fileset dir="../patches/skins/">
 				<exclude name="**/.svn, **/CVS" />
@@ -87,12 +80,6 @@
 		</exec>
 	</target>
 	<target name="install">
-
-		<copy todir="../../SemanticForms/" overwrite="true">
-			<fileset dir="../patches/SemanticForms/">
-				<exclude name="**/.svn, **/CVS" />
-			</fileset>
-		</copy>
 		<copy todir="../../../skins/" overwrite="true">
 			<fileset dir="../patches/skins/">
 				<exclude name="**/.svn, **/CVS" />
