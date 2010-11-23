@@ -864,7 +864,7 @@ CKEDITOR.customprocessor.prototype =
 									return;
 								case 'fck_mw_magic' :
                                     var magicWord = htmlNode.getAttribute( '_fck_mw_tagname' ) || '';
-                                    if ( magicWord ) stringBuilder.push( '__' + magicWord + '__' );
+                                    if ( magicWord ) stringBuilder.push( '__' + magicWord + '__\n' );
 									return;
 
                                 case 'fck_mw_special' :
@@ -884,7 +884,7 @@ CKEDITOR.customprocessor.prototype =
 
 								            break;
 								        case 'c' :
-								            stringBuilder.push( '__' + tagName + '__' );
+								            stringBuilder.push( '__' + tagName + '__\n' );
 								            break;
 								        case 'v' :
 								        case 'w' :
