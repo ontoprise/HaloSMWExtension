@@ -1176,7 +1176,10 @@ CKEDITOR.customprocessor.prototype =
 			case 'fck_mw_property' :
 				var name = htmlNode.getAttribute('property') || '';
 				if (name.indexOf('::') != -1) {
-					if ( emptyVal.exec( name.substring(name.indexOf('::') + 2) ) ) return '';
+                    var ann = name.substring(name.indexOf('::') + 2);
+					if ( emptyVal.exec( ann ) ) return '';
+                    if ( ann.Trim() == text.Trim())
+                        return '[[' + name + ']]';
 					return '[[' + name + '|' + text + ']]' ;
 				}
 				else {
