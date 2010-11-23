@@ -59,7 +59,7 @@ HACL.classes.GroupTree = function (container, feature) {
 	var mFilter = "";
 	
 	// Print debug messages if <true>
-	var mDebug = true;
+	var mDebug = false;
 	
 	// This object contains all permissions that were changed by the user
 	// in form of an associative array
