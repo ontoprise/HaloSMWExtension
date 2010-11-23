@@ -564,7 +564,7 @@ SPARQL;
 	private static function parseRatingKey($ratingKey) {
 		// parse the rating key
 		$rk = null;
-		if (preg_match("/^(\d+)\|(\d+)\|(\S*)$/", $ratingKey, $rk) == 0) {
+		if (preg_match("/^(\d+)\|(\d+)\|(\S+)$/", $ratingKey, $rk) == 0) {
 			throw new LODRatingException(LODRatingException::WRONG_RATING_KEY, $ratingKey);
 		}
 		array_shift($rk);
