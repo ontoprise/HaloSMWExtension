@@ -102,7 +102,7 @@ class Tools {
 	 * @param $options //folderPermission,filePermission
 	 * @return boolean
 	 */
-	public static function copy_dir($source, $dest, $options=array('folderPermission'=>0755,'filePermission'=>0755))
+	public static function copy_dir($source, $dest, $exclude = array(), $options=array('folderPermission'=>0755,'filePermission'=>0755))
 	{
 		$result=false;
 			
@@ -147,6 +147,7 @@ class Tools {
 				{
 					$__dest=$dest."/".$file;
 					//echo "$source/$file ||| $__dest<br />";
+					if (in_array($source."/".$file, $exclude)) continue;
 					$result=self::copy_dir($source."/".$file, $__dest, $options);
 				}
 			}

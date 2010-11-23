@@ -165,29 +165,7 @@ class ResourceInstaller {
 		}
 	}
 
-	/**
-	 * Deletes codefiles which are *not* located in the installation directory.
-	 *
-	 * @param DeployDescriptor $dd
-	 */
-	public function deleteExternalCodefiles($dd) {
-
-		if (count($dd->getCodefiles()) ==  0) return;
-		$codefiles = $dd->getCodefiles();
-		print "\n[Deleting external codefiles...";
-		foreach($codefiles as $f) {
-			if (strpos($f, $dd->getInstallationDirectory()) === 0) continue; // ignore these
-			print "\n\t[Remove $f";
-			$path = $this->rootDir."/".$dd->getInstallationDirectory()."/".$f;
-			if (is_dir($path)) {
-				Tools::remove_dir($path);
-			} else if (file_exists($path)) {
-				unlink($path);
-			}
-			print "done.]";
-		}
-		print "\ndone.]";
-	}
+	
 
 	/**
 	 * Checks if the page contained in the given package are modified and displays those.

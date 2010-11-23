@@ -196,17 +196,7 @@ $rollback = Rollback::getInstance($mwrootDir);
 
 if ($dfgRestore) {
 	print "Rollback...";
-	list($localPackages, $databaseRestored, $restoredLocalPackages) = $rollback->rollback();
-
-	// include commandLine.inc to be in maintenance mode
-	$mediaWikiLocation = dirname(__FILE__) . '/../../..';
-	require_once "$mediaWikiLocation/maintenance/commandLine.inc";
-	// include the resource installer
-	require_once('DF_ResourceInstaller.php');
-
-	// include commandLine.inc to be in maintenance mode
-	checkWikiContext();
-	$rollback->rollbackContent($localPackages, $databaseRestored, $restoredLocalPackages);
+	$rollback->rollback();
 	die(DF_TERMINATION_WITH_FINALIZE);
 }
 

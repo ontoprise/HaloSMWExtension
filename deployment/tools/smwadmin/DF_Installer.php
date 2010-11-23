@@ -66,12 +66,6 @@ class Installer {
 	 */
 	var $rootDir;
 
-	/*
-	 * Installation directory
-	 * Normally identical with $rootDir except for testing or dry runs.
-	 */
-	private $instDir;
-
 	// force installation even on warnings
 	private $force;
 
@@ -80,7 +74,7 @@ class Installer {
 
 	// Helper obejcts
 	private $rollback;
-	
+
 
 	//
 	private $errors;
@@ -101,19 +95,12 @@ class Installer {
 
 		// get root dir
 		$this->rootDir = $rootDir === NULL ? realpath(dirname(__FILE__)."/../../../") : $rootDir;
-		$this->instDir = $rootDir; // normally rootDir == instDir
-
-
-		$this->rollback = Rollback::getInstance($this->instDir);
-
+		
+		$this->rollback = Rollback::getInstance($this->rootDir);
 
 		$this->force = $force;
 		$this->noAsk = $noAsk;
 		$this->noRollback = $noRollback;
-	}
-
-	public function setInstDir($instDir) {
-		$this->instDir = $instDir;
 	}
 
 	/**
@@ -144,14 +131,21 @@ class Installer {
 		}
 		$this->installOrUpdatePackages($extensions_to_update);
 
-		if (!$this->noRollback) $this->rollback->saveRollbackLog();
+		
 			
 	}
 
 	/**
-	 * De-Installs extension
+	 * De-Installs extension. Checks if there are extensions which require the extension
+	 * which is about to be deleted. 
+	 * 
+	 *  It de-initializes the extension by unapplying setup scripts.
+	 *  It removes the configuration code from LocalSettings.php
+	 *  It removes the extension code
 	 *
 	 * @param string $packageID
+	 * 
+	 * @return DeployDescriptor of extension which is deleted
 	 */
 	public function deInstall($packageID) {
 
@@ -190,15 +184,33 @@ class Installer {
 			throw new InstallationError(DEPLOY_FRAMEWORK_DEPENDENCY_EXIST, "Can not remove package. Dependency from the following packages exists:", $dependantPackages);
 		}
 
+
+		// unapply setups
+		print "\n[Unapply setups ".$ext->getID()."...";
+		$ext->unapplySetups($this->rootDir, false);
+		print "\ndone.]";
+
+		// undo all config changes
+		// - from LocalSettings.php
+		// - from database (setup scripts)
+		// - patches
+		print "\n[Unapply configurations of ".$ext->getID()."...";
+		$ext->unapplyConfigurations($this->rootDir, false);
+		$this->errors = array_merge($this->errors, $ext->getLastErrors());
+		print "done.]";
+
+		// remove extension code
+		print "\n[Remove code of ".$ext->getID()."...";
+		Tools::remove_dir($this->rootDir."/".$ext->getInstallationDirectory());
+		print "done.]";
 		
-	
-		
-		
-		
+		// may contain files which are not located in the installation directory
+		$this->deleteExternalCodefiles($ext);
+
 		return $ext;
 	}
-	
-	
+
+
 
 	/**
 	 * Updates all packages if possible
@@ -231,7 +243,6 @@ class Installer {
 			return array($extensions_to_update, $contradictions, false);
 		} else {
 			$this->installOrUpdatePackages($extensions_to_update);
-			if (!$this->noRollback) $this->rollback->saveRollbackLog();
 			return array($extensions_to_update, $contradictions, true);
 
 		}
@@ -333,11 +344,11 @@ class Installer {
 		if ($version == NULL) {
 			print "\n[Read latest deploy descriptor of $packageID...";
 			$new_package = PackageRepository::getLatestDeployDescriptor($packageID);
-			
+				
 		} else {
 			print "\n[Read deploy descriptor of $packageID-$version...";
 			$new_package = PackageRepository::getDeployDescriptor($packageID, $version);
-			
+				
 		}
 
 		// 5. check if update is neccessary
@@ -387,7 +398,7 @@ class Installer {
 				$desc->createConfigElements($fromVersion, $fromPatchlevel);
 			}
 			if (!$this->noRollback) {
-				$this->rollback->saveExtension($desc->getID());
+				$this->rollback->saveInstallation();
 				if (count($desc->getInstallScripts()) > 0) $this->rollback->saveDatabase();
 			}
 
@@ -398,11 +409,8 @@ class Installer {
 
 			// unzip
 			$this->unzip($id, $desc->getVersion());
-
-			if (!$this->noRollback) {
-				if (count($desc->getConfigs()) > 0) $this->rollback->saveLocalSettings();
-			}
-			$desc->applyConfigurations($this->instDir, false, $fromVersion, $this);
+			
+			$desc->applyConfigurations($this->rootDir, false, $fromVersion, $this);
 			$this->errors = array_merge($this->errors, $desc->getLastErrors());
 			$handle = fopen($this->rootDir."/".$desc->getInstallationDirectory()."/init$.ext", "w");
 			fwrite($handle, $num.",".$fromVersion);
@@ -417,13 +425,13 @@ class Installer {
 
 	/**
 	 * Runs the setups scripts of the extensions and installs all resource files and wikidumps.
-	 * 
+	 *
 	 * Note: requires wiki context when called.
 	 *
 	 */
 	public function initializePackages() {
 		require_once 'DF_ResourceInstaller.php';
-		$res_installer = ResourceInstaller::getInstance($this->instDir);
+		$res_installer = ResourceInstaller::getInstance($this->rootDir);
 		$localPackages = PackageRepository::getLocalPackagesToInitialize($this->rootDir.'/extensions');
 		ksort($localPackages, SORT_NUMERIC);
 
@@ -436,7 +444,7 @@ class Installer {
 		foreach($localPackages as $tupl) {
 			list($desc, $fromVersion) = $tupl;
 			try {
-				$desc->applySetups($this->instDir, false);
+				$desc->applySetups($this->rootDir, false);
 			} catch(RollbackInstallation $e) {
 				// ignore here
 			}
@@ -472,53 +480,55 @@ class Installer {
 	}
 
 	/**
-	 * Deinitializes the package, ie. 
-	 * 
+	 * Deinitializes the package, ie.
+	 *
 	 * 	Note: requires wiki context when called.
-	 * 
-	 * 	(1) remove external codefiles
-	 *  (2) run deinstall setups
-	 *  (3) deinstall ontologies
-	 *  (4) deinstall resources
-	 * 
+	 *
+	 * 	(1) deinstall ontologies
+	 *  (2) deinstall resources
+	 *
 	 * @param DeployDescriptor $dd
 	 */
 	public function deinitializePackages($dd) {
-		// unapply setups
-		print "\n[Unapply setups ".$dd->getID()."...";
-		$dd->unapplySetups($this->instDir, false);
-		print "\ndone.]";
+
+		$res_installer = ResourceInstaller::getInstance($this->rootDir);
 		
-			// undo all config changes
-		// - from LocalSettings.php
-		// - from database (setup scripts)
-		// - patches
-		print "\n[Unapply configurations of ".$dd->getID()."...";
-		$dd->unapplyConfigurations($this->instDir, false);
-		$this->errors = array_merge($this->errors, $dd->getLastErrors());
-		print "done.]";
-		
-		// remove extension code
-		print "\n[Remove code of ".$dd->getID()."...";
-		Tools::remove_dir($this->instDir."/".$dd->getInstallationDirectory());
-		
-		print "done.]";
-		
-		$res_installer = ResourceInstaller::getInstance($this->instDir);
-		// may contain files which are not located in the installation directory
-		$res_installer->deleteExternalCodefiles($dd);
 		// remove ontology
 		print "\n[De-install ontologies...";
 		$res_installer->deinstallWikidump($dd);
 		print "done.]";
-		
+
 		// delete resources
 		print "\n[Delete resources...";
 		$res_installer->deleteResources($dd);
 		print "done.]";
-		
+
 	}
 	
+/**
+	 * Deletes codefiles which are *not* located in the installation directory.
+	 *
+	 * @param DeployDescriptor $dd
+	 */
+	public function deleteExternalCodefiles($dd) {
+
+		if (count($dd->getCodefiles()) ==  0) return;
+		$codefiles = $dd->getCodefiles();
+		print "\n[Deleting external codefiles...";
+		foreach($codefiles as $f) {
+			if (strpos($f, $dd->getInstallationDirectory()) === 0) continue; // ignore these
+			print "\n\t[Remove $f...";
+			$path = $this->rootDir."/".$dd->getInstallationDirectory()."/".$f;
+			if (is_dir($path)) {
+				Tools::remove_dir($path);
+			} else if (file_exists($path)) {
+				unlink($path);
+			}
+			print "done.]";
+		}
+		print "\ndone.]";
+	}
+
 	/**
 	 * Unzips the package denoted by $id and $version
 	 *
@@ -531,9 +541,9 @@ class Installer {
 
 		print "\n[unzip ".$id."-$version.zip";
 		if (Tools::isWindows()) {
-			exec('unzip -o '.$this->tmpFolder."\\".$id."-$version.zip -d ".$this->instDir);
+			exec('unzip -o '.$this->tmpFolder."\\".$id."-$version.zip -d ".$this->rootDir);
 		} else {
-			exec('unzip -o '.$this->tmpFolder."/".$id."-$version.zip -d ".$this->instDir);
+			exec('unzip -o '.$this->tmpFolder."/".$id."-$version.zip -d ".$this->rootDir);
 		}
 		print "done.]";
 	}
