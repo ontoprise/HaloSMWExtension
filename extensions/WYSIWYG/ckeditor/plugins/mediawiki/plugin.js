@@ -1174,7 +1174,7 @@ CKEDITOR.customprocessor.prototype =
         var eClassName = htmlNode.getAttribute('class');
 		switch (eClassName) {
 			case 'fck_mw_property' :
-				var name = htmlNode.getAttribute('property');
+				var name = htmlNode.getAttribute('property') || '';
 				if (name.indexOf('::') != -1) {
 					if ( emptyVal.exec( name.substring(name.indexOf('::') + 2) ) ) return '';
 					return '[[' + name + '|' + text + ']]' ;
@@ -1184,7 +1184,7 @@ CKEDITOR.customprocessor.prototype =
 					return '[[' + name + '::' + text + ']]' ;
 				}
 			case 'fck_mw_category' :
-				var sort = htmlNode.getAttribute('sort');
+				var sort = htmlNode.getAttribute('sort') || '';
                 //var labelCategory = smwContentLangForFCK('Category') || 'Category:';
                 var labelCategory = 'Category';
                 if (sort == text) sort = null;
