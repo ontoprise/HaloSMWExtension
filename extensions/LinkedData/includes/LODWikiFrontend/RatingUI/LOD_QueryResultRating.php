@@ -35,18 +35,11 @@ if ( !defined( 'MEDIAWIKI' ) ) {
 }
 
  //--- Includes ---
- global $lodgIP;
+global $lodgIP;
 //require_once("$lodgIP/...");
 
-/**
- * This class manages the HTML structure of the rating UI.
- * 
- * @author Thomas Schweitzer
- * 
- */
-class LODQueryResultRatingUI  {
-		
-	const RATING_HTML = <<<HTML
+global $LOD_QRR_RATING_HTML;
+$LOD_QRR_RATING_HTML = <<<HTML
 	
 <div class="lodDivRatingMain">
 	<div class="lodRatingContent">
@@ -87,6 +80,14 @@ class LODQueryResultRatingUI  {
 </div>
 HTML;
 
+/**
+ * This class manages the HTML structure of the rating UI.
+ * 
+ * @author Thomas Schweitzer
+ * 
+ */
+class LODQueryResultRatingUI  {
+		
 	/**
 	 * Returns the HTML for adding and viewing ratings of triples
 	 * 
@@ -103,7 +104,8 @@ HTML;
 	 * 		The requested HTML structure.
 	 */
 	public static function getRatingHTML($ratingKey, $value, array $triples) {
-		$html = self::RATING_HTML;
+		global $LOD_QRR_RATING_HTML;
+		$html = $LOD_QRR_RATING_HTML;
 		
 		$pm = LODPrefixManager::getInstance();
 		if (!is_null($ratingKey)) {
@@ -281,7 +283,7 @@ HTML;
 	private static function generateTriplesTable($id, $primSec, array $triples) {
 		$html = <<<HTML
 <div class="lodRatingDivTriplesTable">	
-	<table id="lodRatingTriples_$id_$primSec" class="lodRatingTriplesTable">
+	<table id="lodRatingTriples_{$id}_{$primSec}" class="lodRatingTriplesTable">
 	<colgroup>
 		<col width="20px">
 		<col width="20px">
