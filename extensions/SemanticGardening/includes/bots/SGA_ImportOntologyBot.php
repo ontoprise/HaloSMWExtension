@@ -763,7 +763,7 @@ class ImportOntologyBot extends GardeningBot {
 	}
 
 	private static function isXMLSchemaType($type) {
-		return $type == XML_SCHEMA_NS.'integer' || $type == XML_SCHEMA_NS.'string' || $type == XML_SCHEMA_NS.'float'
+		return $type == XML_SCHEMA_NS.'int' || $type == XML_SCHEMA_NS.'integer' || $type == XML_SCHEMA_NS.'string' || $type == XML_SCHEMA_NS.'float'
 		|| $type == XML_SCHEMA_NS.'boolean' || $type == XML_SCHEMA_NS.'number'
 		|| $type == XML_SCHEMA_NS.'date' || $type == XML_SCHEMA_NS.'time' || $type == XML_SCHEMA_NS.'datetime';
 	}
@@ -822,6 +822,7 @@ class ImportOntologyBot extends GardeningBot {
 			case 'string': return 'String';
 			case 'number': return 'Number';
 			case 'int': return 'Number';
+			case 'integer': return 'Number';
 			case 'float': return 'Number';
 			case 'double': return 'Number';
 			case 'datetime': return 'Date';
