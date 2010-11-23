@@ -52,7 +52,9 @@ function enableSMWHalo($store = 'SMWHaloStore2', $tripleStore = NULL, $tripleSto
 		trigger_error("Old 'SMWHaloStore' is not supported anymore. Please upgrade to 'SMWHaloStore2'");
 		die();
 	}
-
+    global $smwghConvertColoumns;
+    if (!isset($smwghConvertColoumns)) $smwghConvertColoumns="utf8";
+    
 	// Register the triple store as source for a query with the alias "tsc"
 	global $smwgQuerySources;
 	$smwgQuerySources += array("tsc" => "SMWTripleStore");
