@@ -1526,11 +1526,8 @@ OBGlobalActionListener.prototype = {
 									}
 								},
 								hide : {
-									effect : {
-										length : 500
-									},
 									when : {
-										event : 'mouseout'
+										event : 'click'
 									},
 									fixed : true
 								},
