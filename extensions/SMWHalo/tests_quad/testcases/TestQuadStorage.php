@@ -98,11 +98,11 @@ class TestQuadStorage extends PHPUnit_Framework_TestCase {
         $properties = $sd->getProperties();
         $locatedIn = $properties['Located_In'];
         $values = $sd->getPropertyValues($locatedIn);
-        $this->assertEquals("Germany", $values['Germany']->getTitle()->getText());
+        $this->assertEquals("Germany", $values[0]->getTitle()->getText());
         
         $population = $properties['Population'];
         $values = $sd->getPropertyValues($population);
-        $dbkey = $values['3450000.0']->getDBkeys();
+        $dbkey = $values[0]->getDBkeys();
         $this->assertEquals("3450000.0", $dbkey[0]);
        
 	}
