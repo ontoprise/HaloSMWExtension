@@ -31,17 +31,8 @@ if ( !defined( 'MEDIAWIKI' ) ) {
  global $lodgIP;
 //require_once("$lodgIP/...");
 
-/**
- * This class defines the UI for managing group permissions. It generates the
- * HTML for the UI and implements the backend for ajax calls.
- * 
- * @author Thomas Schweitzer
- * 
- */
-class HACLUIGroupPermissions  {
-	
-	//--- Constants ---
-	const GLOBAL_PERMISSIONS_PANEL = <<<HTML
+global $HACL_GP_GLOBAL_PERMISSIONS_PANEL;
+$HACL_GP_GLOBAL_PERMISSIONS_PANEL = <<<HTML
         <div class="yui-skin-sam">
         	<div class="haclGroupPermission">
         		<div class="haclGPGeneralDiv">
@@ -97,7 +88,8 @@ class HACLUIGroupPermissions  {
 	
 HTML;
 
-	const GLOBAL_PERMISSIONS_PANEL_ERROR = <<<HTML
+global $HACL_GP_GLOBAL_PERMISSIONS_PANEL_ERROR;
+$HACL_GP_GLOBAL_PERMISSIONS_PANEL_ERROR = <<<HTML
         <div class="yui-skin-sam">
         	<div class="haclGroupPermission">
         		<div class="haclGPGeneralDiv">
@@ -110,6 +102,18 @@ HTML;
 		</div>
 HTML;
 		
+ 
+/**
+ * This class defines the UI for managing group permissions. It generates the
+ * HTML for the UI and implements the backend for ajax calls.
+ * 
+ * @author Thomas Schweitzer
+ * 
+ */
+class HACLUIGroupPermissions {
+	
+	//--- Constants ---
+
 	//--- Private fields ---
 	
 	/**
@@ -131,7 +135,8 @@ HTML;
 	 * Returns the HTML of the Global Permissions panel.
 	 */
 	public static function getPermissionsPanel() {
-		$html = self::GLOBAL_PERMISSIONS_PANEL;
+		global $HACL_GP_GLOBAL_PERMISSIONS_PANEL;
+		$html = $HACL_GP_GLOBAL_PERMISSIONS_PANEL;
 		$html = self::insertPermissions($html);
 		$html = self::replaceLanguageStrings($html);
 		
@@ -304,7 +309,8 @@ HTML;
 		}
 		
 		if (empty($options)) {
-			$html = self::GLOBAL_PERMISSIONS_PANEL_ERROR;
+			global $HACL_GP_GLOBAL_PERMISSIONS_PANEL_ERROR;
+			$html = $HACL_GP_GLOBAL_PERMISSIONS_PANEL_ERROR;
 			if ($isAdmin) {
 				$html = str_replace("***error_message***", '{{hacl_gp_no_features_defined}}', $html);
 			} else {
