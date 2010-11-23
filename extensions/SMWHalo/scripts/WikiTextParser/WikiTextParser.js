@@ -163,7 +163,7 @@ WikiTextParser.prototype = {
                     gEditInterface = new SMWEditInterface();
                 }
             }
-			this.editInterface = gEditInterface;
+			this.editInterface = gEditInterface || new SMWEditInterface();
 			this.text = this.editInterface.getValue();
 			this.parserMode = WTP_EDITAREA_MODE;
 
