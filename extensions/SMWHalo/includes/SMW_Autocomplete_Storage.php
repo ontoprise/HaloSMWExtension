@@ -730,7 +730,7 @@ class AutoCompletionStorageSQL2 extends AutoCompletionStorage {
 		// parse params and answer query
 		SMWQueryProcessor::processFunctionParams($rawparams,$querystring,$params,$printouts);
 		$params['format'] = "xml";
-		//$params['limit'] = SMW_AC_MAX_RESULTS;
+		$params['limit'] = 400;
 		if ($column != "_var0") $params['sort'] = $column;
 		$querystring = str_replace("{{USERINPUT}}", $userInput, $querystring);
 		return SMWQueryProcessor::getResultFromQueryString($querystring,$params,$printouts, SMW_OUTPUT_FILE);
@@ -783,7 +783,7 @@ class AutoCompletionStorageTSC extends AutoCompletionStorageSQL2 {
 		// parse params and answer query
 		SMWSPARQLQueryProcessor::processFunctionParams($rawparams,$querystring,$params,$printouts);
 		$params['format'] = "xml";
-		//$params['limit'] = SMW_AC_MAX_RESULTS;
+		$params['limit'] = 400;
 		if ($column != "_var0") $params['sort'] = $column;
 		$querystring = str_replace("{{USERINPUT}}", $userInput, $querystring);
 		return SMWSPARQLQueryProcessor::getResultFromQueryString($querystring,$params,$printouts, SMW_OUTPUT_FILE);
