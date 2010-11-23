@@ -48,7 +48,7 @@ class HaloACLSpecial extends SpecialPage {
     /**
      * Overloaded function that is responsible for the creation of the Special Page
      */
-    public function execute() {
+    public function execute($par) {
 
         global $wgOut, $wgRequest, $wgLang,$wgUser;
 
