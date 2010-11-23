@@ -77,8 +77,10 @@ class SMWQueryInterface extends SpecialPage {
                     $sourceOptions .
                 '</select>' .
                 '</td><td>' .
+            /*
                 '<input type="checkbox" id="qio_showrating" onchange="qihelper.clickUseTsc();" />' .
                 wfMsg('smw_qi_showdatarating') . '<br/>' .
+             */
                 '<input type="checkbox" id="qio_showmetadata" value="*" onchange="qihelper.clickMetadata();" />' .
                 wfMsg('smw_qi_showmetadata') . '<br/>' .
                 '<div id="qio_showdatasource_div" style="display:none">'.
