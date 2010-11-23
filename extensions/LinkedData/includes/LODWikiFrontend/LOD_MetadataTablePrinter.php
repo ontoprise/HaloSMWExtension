@@ -57,9 +57,11 @@ class LODMetadataTablePrinter extends SMWResultPrinter {
                 if ( ( $alignment == 'right' ) || ( $alignment == 'left' ) || ( $alignment == 'center' ) ) {
                     $result .= ' style="text-align:' . $alignment . ';"';
                 }
-                $firstColumn = current($field->getContent());
-               
-                $sourceID = $firstColumn->getMetadata('swp2_authority_id');
+                $currentColumn = current($field->getContent());
+                
+                if ($firstcol) {
+                    $sourceID = $currentColumn->getMetadata('swp2_authority_id');
+                }
                 $result .= ' style="background-color: '.self::$bgColors[$this->hashtocolor(reset($sourceID))].'"';
                 $result .= ">";
                 
