@@ -49,6 +49,16 @@ CKEDITOR.plugins.add('smw_qi', {
             });
         }
 		
+        editor.on( 'doubleclick', function( evt )
+			{
+				var element = evt.data.element;
+
+				if ( element.is( 'img' ) &&
+                     element.getAttribute( 'class' ) &&
+                     element.getAttribute( 'class' ) == 'FCK__SMWquery' )
+					evt.data.dialog = 'SMWqi';
+            }
+       )
 
 	}
 });
