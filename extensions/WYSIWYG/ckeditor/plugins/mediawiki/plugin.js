@@ -257,6 +257,7 @@ CKEDITOR.plugins.add( 'mediawiki',
                 var name = element.getName();
                 // fake image for some <span> with special tag
                 if ( name == 'img' &&
+                     element.getAttribute( 'class' ) &&
                      element.getAttribute( 'class' ).InArray( [
                         'FCK__MWSpecial',
                         'FCK__MWMagicWord',
