@@ -685,7 +685,13 @@ class SMWTripleStore extends SMWStore {
 					$queryResult = $queryResult->getCount();
 					break;
 				default:
-					wfRunHooks('ProcessQueryResults', array(&$query, &$queryResult) );
+					if (is_array($queryResult)) {
+						foreach ($queryResult as $key => $qr) {
+							wfRunHooks('ProcessQueryResults', array(&$query, &$queryResult[$key]));
+						}
+					} else {
+						wfRunHooks('ProcessQueryResults', array(&$query, &$queryResult) );
+					}
 					break;
 			}
 			return $queryResult;
