@@ -275,9 +275,24 @@ CKEDITOR.plugins.add( 'mediawiki',
 
 				if ( element.is( 'a' ) || ( element.is( 'img' ) && element.getAttribute( '_cke_real_element_type' ) == 'anchor' ) )
 					evt.data.dialog = 'MWLink';
-			});
-
-	}
+                else if ( element.is( 'img' ) ) {
+                    if ( !element.getAttribute( '_cke_real_element_type' ) )
+                        evt.data.dialog = 'MWImage';
+                    else if ( element.getAttribute( 'class' ) &&
+                        element.getAttribute( 'class' ).InArray( [
+                            'FCK__MWSpecial',
+                            'FCK__MWMagicWord',
+                            'FCK__MWNowiki',
+                            'FCK__MWIncludeonly',
+                            'FCK__MWNoinclude',
+                            'FCK__MWOnlyinclude'
+                        ])
+                    )
+                        evt.data.dialog = 'MWSpecialTags';		
+                }
+            }
+       )
+    }
 
 });
 
