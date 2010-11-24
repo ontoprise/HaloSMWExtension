@@ -102,30 +102,34 @@ function tstImportWikiPages() {
 	global $mw_dir, $testDir, $phpExe;
 
 	$pagesDir = $testDir."/pages";
-	$handle = @opendir($pagesDir);
-	if (!$handle) {
-		trigger_error("\nDirectory '$pagesDir' could not be opened.\n");
-	}
-
-	while ( ($entry = readdir($handle)) !== false ){
-		if ($entry[0] == '.'){
-			continue;
+	if(is_dir($pagesDir)) {
+		$handle = @opendir($pagesDir);
+		if (!$handle) {
+			trigger_error("\nDirectory '$pagesDir' could not be opened.\n");
 		}
 
-		if (is_dir($pagesDir."/".$entry)) {
-			// Unterverzeichnis
-			sgagImportBots($pagesDir."/".$entry);
+		while ( ($entry = readdir($handle)) !== false ){
+			if ($entry[0] == '.'){
+				continue;
+			}
 
-		} else{
+			if (is_dir($pagesDir."/".$entry)) {
+				// Unterverzeichnis
+				sgagImportBots($pagesDir."/".$entry);
 
-			if (strpos($entry, ".xml") !== false) {
-				echo "\nAdding: ".$entry;
-				echo "\n".$phpExe." \"".$mw_dir."maintenance/importDump.php\" < \"".$pagesDir."/".$entry."\"";
-				runProcess($phpExe." \"".$mw_dir."maintenance/importDump.php\" < \"".$pagesDir."/".$entry."\"");
+			} else{
+
+				if (strpos($entry, ".xml") !== false) {
+					echo "\nAdding: ".$entry;
+					echo "\n".$phpExe." \"".$mw_dir."maintenance/importDump.php\" < \"".$pagesDir."/".$entry."\"";
+					runProcess($phpExe." \"".$mw_dir."maintenance/importDump.php\" < \"".$pagesDir."/".$entry."\"");
+				}
 			}
 		}
+		closedir($handle);
+	} else {
+		echo "\nNo Directory '$pagesDir' existent.\nSkip import.\n";
 	}
-	closedir($handle);
 
 	echo "\nRun scripts after import...\n";
 	if (file_exists($testDir."/runScriptAfterImport.cfg") && $handle = fopen($testDir."/runScriptAfterImport.cfg", "r")) {
