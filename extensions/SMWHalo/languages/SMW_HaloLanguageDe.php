@@ -280,6 +280,7 @@ protected $smwUserMessages = array(
     'smw_qi_printout_err2' => 'Das ausgew&auml;hlte Format f&uuml; das Ergebnis ben&ouml;tigt mindestens ein Attribut des Typs Datum, dessen Werte im Ergebnis ausgegeben werden.',
     'smw_qi_printout_err3' => 'Das ausgew&auml;hlte Format f&uuml; das Ergebnis ben&ouml;tigt mindestens ein weiteres nummerisches Attribut, dessen Werte im Ergebnis ausgegeben werden.',
     'smw_qi_printout_err4' => 'F&uuml;r diesen Query gibt es keine Ergebnisse.',
+    'smw_qi_printout_err4_lod' => 'Bitte pr&uuml;fen Sie die ausgew&auml;hlte Datenquelle.',
     'smw_qi_printout_notavailable' => 'Das Ergebnis kann f&uuml;r dieses Format nicht im Query Interface angezeigt werden.',
     'smw_qi_datasource_select_header' => 'W&auml;hle eine Datenquelle (dr&uuml;cke STRG um mehrere Quellen auszuw&auml;hlen)',
     'smw_qi_showdatarating' => 'Aktiviere die Bewertung der Daten',

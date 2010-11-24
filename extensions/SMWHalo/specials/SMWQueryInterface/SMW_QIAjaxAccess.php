@@ -117,8 +117,12 @@ function smwf_qi_QIAccess($method, $params) {
                 $result = SMWQueryProcessor::getResultFromQueryString($querystring,$params,$printouts, SMW_OUTPUT_WIKI);
 
             // check for empty result
-            if (is_array($result) && trim($result[0]) == '' || trim($result == '') )
-                return wfMsg('smw_qi_printout_err4');
+            if (is_array($result) && trim($result[0]) == '' || trim($result == '') ) {
+                $msg = wfMsg('smw_qi_printout_err4');
+                if (defined('LOD_LINKEDDATA_VERSION'))
+                    $msg.= ' '.wfMsg('smw_qi_printout_err4_lod');
+                return $msg;
+            }
 
             switch ($fixparams['format']) {
             	case 'timeline':
