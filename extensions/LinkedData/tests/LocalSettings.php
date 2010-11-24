@@ -14,6 +14,7 @@ enableARCLibrary();
 $smwgWebserviceEndpoint='localhost:8092';
 $smwgEnableObjectLogicRules=true;
 $smwgWebserviceProtocol="rest";
+define('SMWH_FORCE_TS_UPDATE', true);
 
 #Import SMW, SMWHalo and the Gardening extension
 include_once('extensions/SemanticMediaWiki/includes/SMW_Settings.php');
