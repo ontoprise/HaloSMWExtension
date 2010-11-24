@@ -11,9 +11,9 @@ $messages = array();
 /** English */
 $messages['en'] = array(
 	'fckeditor-desc' => 'Allow editing using the WYSIWYG editor CKEditor',
-	'textrichditor' => 'Rich Editor',
+	'textrichditor' => 'Show RichTextEditor',
 	'prefs-fckeditor' => 'Rich Editor',
-	'tog-riched_disable' => 'Disable rich editor',
+	'tog-riched_disable' => 'Show WikiTextEditor',
 	'tog-riched_disable_ns_main' => 'Disable rich editor within the main namespace',
 	'tog-riched_disable_ns_talk' => 'Disable rich editor within the "{{ns:talk}}" namespace',
 	'tog-riched_disable_ns_user' => 'Disable rich editor within the "{{ns:user}}" namespace',
