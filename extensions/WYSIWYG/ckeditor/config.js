@@ -26,7 +26,7 @@ CKEDITOR.editorConfig = function( config )
     //CKEDITOR.config.plugins = CKEDITOR.config.plugins.replace( /(?:^|,)link(?=,|$)/, '' );
 	var extraPlugins = "mediawiki,mwtemplate";
 
-	CKEDITOR.config.toolbar = 'Wiki';
+	config.toolbar = 'Wiki';
     // var origToolbar = CKEDITOR.config.toolbar_Full
 
     // custom toolbar for SMW
@@ -69,7 +69,8 @@ CKEDITOR.editorConfig = function( config )
         ['Image', 'Table', 'HorizontalRule', 'SpecialChar']
     ];
     config.extraPlugins = extraPlugins;
+    config.height = '26em';
 
-    CKEDITOR.config.WikiSignature = '--~~~~';
+    config.WikiSignature = '--~~~~';
 
 };
