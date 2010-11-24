@@ -60,6 +60,16 @@ CKEDITOR.plugins.add( 'mwtemplate',
                     return { MWTemplate: CKEDITOR.TRISTATE_ON };
             });
         }
+        editor.on( 'doubleclick', function( evt )
+			{
+				var element = evt.data.element;
+
+				if ( element.is( 'img' ) &&
+                     element.getAttribute( 'class' ) &&
+                     element.getAttribute( 'class' ) == 'FCK__MWTemplate' )
+					evt.data.dialog = 'MWTemplate';
+            }
+       )
 
 	}
 
