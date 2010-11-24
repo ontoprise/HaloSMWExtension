@@ -315,8 +315,9 @@ SPARQL;
 	 */
 	public static function onProcessSPARQLXMLResults(SMWQuery $query, &$sparqlXML) {
 		// The result is only processed if the parameter "enableRating" is set "true".
-		if (!(isset($query->params) && array_key_exists('enablerating', $query->params) && 
-			$query->params['enablerating'] == "true")) {
+		if (!(isset($query->params) 
+			  && array_key_exists('enablerating', $query->params)
+			  && $query->params['enablerating'] == "true")) {
 			return true;
 		}
 		
