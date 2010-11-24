@@ -54,6 +54,7 @@ $messages['en'] = array(
 
 	//--- Labels for meta-data properties ---							
 	'lod_mdpt_swp2_authority'					=> 'Data source',
+	'lod_mdpt_swp2_authority_id'				=> 'Data source',
 	'lod_mdpt_swp2_keyinfo'						=> 'swp2_keyinfo',
 	'lod_mdpt_swp2_signature'					=> 'swp2_signature',
 	'lod_mdpt_swp2_signature_method'			=> 'swp2_signature_method',
@@ -179,6 +180,7 @@ $messages['de'] = array(
 							
 	//--- Labels for meta-data properties ---							
 	'lod_mdpt_swp2_authority'					=> 'Datenquelle',
+	'lod_mdpt_swp2_authority_id'				=> 'Datenquelle',
 	'lod_mdpt_swp2_keyinfo'						=> 'swp2_keyinfo',
 	'lod_mdpt_swp2_signature'					=> 'swp2_signature',
 	'lod_mdpt_swp2_signature_method'			=> 'swp2_signature_method',
