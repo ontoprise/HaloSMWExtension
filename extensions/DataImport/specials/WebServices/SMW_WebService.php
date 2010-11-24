@@ -502,12 +502,14 @@ class WebService {
 	 * @return an array that contains the result
 	 */
 	public function call($parameterSetId, $resultParts) {
+		
 		$resultParts = array_keys($resultParts);
 		
 		//always get parameters although a cached web service result might be used
 		//because some features of the result extraction might want to know about
 		//special parameters like the Linked Data subject and so on.
 		$specParameters = WSStorage::getDatabase()->getParameters($parameterSetId);
+		
 		$this->initializeCallParameters($specParameters);
 
 		$cacheResult = WSStorage::getDatabase()->getResultFromCache($this->mArticleID, $parameterSetId);
@@ -789,8 +791,8 @@ class WebService {
 					$embedInArray = true;
 				}
 				$value = "".$child["defaultValue"];
-				if(array_key_exists("".$child["name"], $specParameters)){
-					$value = $specParameters["".$child["name"]];
+				if(array_key_exists(strtolower("".$child["name"]), $specParameters)){
+					$value = $specParameters[strtolower("".$child["name"])];
 					if(strtolower($this->mProtocol) == "soap"){
 						$this->getPathStepsSoap("".$child["path"], $value);
 					} else {
@@ -811,6 +813,7 @@ class WebService {
 		if($embedInArray && strtolower($this->mProtocol) == "soap"){
 			$this->mCallParameters = array($this->mCallParameters);
 		}
+		
 		return $this->mCallParameters;
 	}
 
