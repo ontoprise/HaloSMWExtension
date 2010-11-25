@@ -107,8 +107,8 @@ class OB_Storage {
 		$instance = Title::newFromText($p_array[0]);
 
 		$properties = smwfGetStore()->getProperties($instance, $reqfilter, true);
-	
-       
+
+		 
 		foreach($properties as $a) {
 			if (!$a->isShown() || !$a->isVisible()) continue;
 			$values = smwfGetStore()->getPropertyValues($instance, $a, $reqfilter, '', true);
@@ -362,7 +362,7 @@ class OB_StorageTS extends OB_Storage {
 
 		$dom = simplexml_load_string($response);
 		$dom->registerXPathNamespace("sparqlxml", "http://www.w3.org/2005/sparql-results#");
-		 
+			
 		$results = $dom->xpath('//sparqlxml:result');
 		foreach ($results as $r) {
 
@@ -373,24 +373,30 @@ class OB_StorageTS extends OB_Storage {
 			if (is_null($sv)) $sv = $b->children()->bnode[0];
 			if (is_null($sv)) continue;
 
-			
-            $metadataMap = $this->parseMetadata($sv->metadata);
+				
+			$metadataMap = $this->parseMetadata($sv->metadata);
 			list($url, $title) = TSHelper::makeLocalURL((string) $sv);
 			$instance = array($title, $sv, $url, $metadataMap);
 
 			$categories = array();
-			$b = $children->binding[1]; // categories
+				
+			if (count($children->binding) > 1) {
+				// category binding node exists
+				$b = $children->binding[1]; // categories
 
-			foreach($b->children()->uri as $sv) {
-				$category = TSHelper::getTitleFromURI((string) $sv);
-				if (!is_null($instance) && !is_null($category)) {
-					$cTitle = TSHelper::getTitleFromURI((string) $sv);
-					$categoryTuple = !is_null($categoryTitle) && $cTitle->equals($categoryTitle) ? array(NULL, NULL) : array((string) $sv, $cTitle);
-					$titles[] = array($instance, $categoryTuple);
-				} else  {
-					$titles[] = array($instance, array(NULL , NULL));
+				foreach($b->children()->uri as $sv) {
+					$category = TSHelper::getTitleFromURI((string) $sv);
+					if (!is_null($instance) && !is_null($category)) {
+						$cTitle = TSHelper::getTitleFromURI((string) $sv);
+						$categoryTuple = !is_null($categoryTitle) && $cTitle->equals($categoryTitle) ? array(NULL, NULL) : array((string) $sv, $cTitle);
+						$titles[] = array($instance, $categoryTuple);
+					} else  {
+						$titles[] = array($instance, array(NULL , NULL));
+					}
+
 				}
-
+			} else {
+				$titles[] = array($instance, array(NULL , NULL));
 			}
 
 
@@ -439,7 +445,7 @@ class OB_StorageTS extends OB_Storage {
 		try {
 			global $smwgTripleStoreGraph;
 			$instanceURI = $p_array[0];
-				
+
 			// actually limit and offset is not used
 			$limit =  isset($p_array[1]) && is_numeric($p_array[1]) ? $p_array[1] : 500;
 			$partition = isset($p_array[2]) && is_numeric($p_array[2]) ? $p_array[2] : 0;
@@ -499,7 +505,7 @@ class OB_StorageTS extends OB_Storage {
 				// add metadata
 				$metadataMap = $this->parseMetadata($sv->metadata);
 				foreach($metadataMap as $mdProperty => $mdValue) {
-						$value->setMetadata(strtoupper($mdProperty), NULL, $mdValue);
+					$value->setMetadata(strtoupper($mdProperty), NULL, $mdValue);
 				}
 
 				$values[] = $value ;
@@ -510,10 +516,10 @@ class OB_StorageTS extends OB_Storage {
 				$value = $this->getLiteral($literal, $predicate);
 
 				// add metadata
-			    $metadataMap = $this->parseMetadata($sv->metadata);
-                foreach($metadataMap as $mdProperty => $mdValue) {
-                        $value->setMetadata(strtoupper($mdProperty), NULL, $mdValue);
-                }
+				$metadataMap = $this->parseMetadata($sv->metadata);
+				foreach($metadataMap as $mdProperty => $mdValue) {
+					$value->setMetadata(strtoupper($mdProperty), NULL, $mdValue);
+				}
 				$values[] = $value;
 			}
 
