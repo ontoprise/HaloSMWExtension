@@ -576,6 +576,7 @@ function CECommentForm() {
 			this.ratingValue = null;
 		}
 		$jq('#collabComForm').get(0).reset();
+		$jq('#collabComForm').toggle('slow');
 	};
 
 	/**
