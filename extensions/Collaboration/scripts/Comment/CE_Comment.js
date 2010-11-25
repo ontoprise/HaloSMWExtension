@@ -652,7 +652,7 @@ function CECommentForm() {
 		var comToggle = $jq('#collabComToggle');
 		var commentResults = $jq('#collabComResults');
 		var newComToggleText = '';
-		if( commentResults.css('display') == 'block' ) {
+		if( commentResults.css('display') === 'block' ) {
 			newComToggleText = ceLanguage.getMessage('ce_com_show');
 		} else {
 			newComToggleText = ceLanguage.getMessage('ce_com_hide');
@@ -1131,6 +1131,20 @@ $jq(document).ready(
 		//clone actual structure without events (bind them again later)
 		ceCommentForm.savedStructure = $jq('#collabComResults').clone();
 		ceCommentForm.showThreaded();
+		// toggle one time
+		var comToggle = $jq('#collabComToggle');
+		var commentResults = $jq('#collabComResults');
+		var newComToggleText = '';
+		if( commentResults.css('display') === 'block' ) {
+			newComToggleText = ceLanguage.getMessage('ce_com_hide');
+		} else {
+			newComToggleText = ceLanguage.getMessage('ce_com_show');
+		}
+		comToggle.html(' | ' + newComToggleText);
+		commentResults.hide();
+		//hide "Add" and "View"
+		$jq('#collabComFormToggle').toggle();
+		$jq('#collabComViewToggle').toggle();
 	}
 );
 

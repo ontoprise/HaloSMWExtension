@@ -57,7 +57,9 @@ div.collabComInternRatingIcon img {
 div.collabComResInfo,div.collabComResInfoSuper {
 	display: none;
 }
-
+div#collabComResults {
+	display: none;
+}
 div.collabComRes {
 	border: 1px solid lightgrey;
 	margin: 5px 0px;
