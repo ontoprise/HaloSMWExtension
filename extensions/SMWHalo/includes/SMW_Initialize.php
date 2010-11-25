@@ -309,7 +309,12 @@ function smwgHaloSetupExtension() {
 
 		$wgSpecialPages['Properties'] = array('SpecialPage','Properties', '', true, 'smwfDoSpecialProperties', $smwgHaloIP . '/specials/SMWQuery/SMWAdvSpecialProperties.php');
 		$wgSpecialPageGroups['Properties'] = 'smwplus_group';
-
+		
+		$wgAutoloadClasses['SMWCheckInstallation'] = $smwgHaloIP . '/specials/SMWCheckInstallation/SMW_CheckInstallation.php';
+		$wgSpecialPages['CheckInstallation'] = array('SMWCheckInstallation');
+		$wgSpecialPageGroups['CheckInstallation'] = 'smwplus_group';
+		
+		
 		global $smwgDefaultStore;
 		if (smwfIsTripleStoreConfigured()) {
 			$wgAutoloadClasses['SMWTripleStoreAdmin'] = $smwgHaloIP . '/specials/SMWTripleStoreAdmin/SMW_TripleStoreAdmin.php';

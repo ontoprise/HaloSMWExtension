@@ -390,7 +390,9 @@ Druk de rechter knop om resultaten te verkrijgen. Enkel <i>Return</i> drukken ge
         'smw_search_this_wiki' => 'Search this wiki',
         'more_functions' => 'more',
         'smw_treeviewleft' => 'Open treeview to the left side',
-        'smw_treeviewright' => 'Open treeview to the right side'
+        'smw_treeviewright' => 'Open treeview to the right side',
+
+	'checkinstallation' => 'Check installation'
 
 );
 
