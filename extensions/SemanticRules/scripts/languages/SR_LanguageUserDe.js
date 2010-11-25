@@ -18,7 +18,7 @@
  * @file
  * @ingroup SRLanguage
  * 
- * @author Kai Kühn
+ * @author Kai Kï¿½hn
  */
 var wgUserSR_LanguageStrings = {
   
@@ -26,7 +26,7 @@ var wgUserSR_LanguageStrings = {
     'RULE_RULES'        : 'Regeln',
     'RULE_CREATE'       : 'Erzeugen Sie eine neue Regel.',
     'RULE_EDIT'         : 'Bearbeiten Sie eine Regel.',
-    'RULE_NAME_TOO_LONG': '(e)Der Name dieser Regel ist zu lang oder enthält ungültige Zeichen.',
+    'RULE_NAME_TOO_LONG': '(e)Der Name dieser Regel ist zu lang oder enthï¿½lt ungï¿½ltige Zeichen.',
     'RULE_TYPE'         : 'Regeltyp:',
     'RULE_TYPE_DEFINITION'    : 'Definition',
     'RULE_TYPE_PROP_CHAINING' : 'Eigenschaftsverkettung',
@@ -39,13 +39,13 @@ var wgUserSR_LanguageStrings = {
     'SR_DERIVE_BY'      : 'Ableitung von $1 $2 durch eine komplexe Regel',
     'SR_HEAD'           : 'Kopf',
     'SR_BODY'           : 'Rumpf',
-    'SR_CAT_HEAD_TEXT'  : 'Alle Artikel $1 die zu $2 $3 gehören, werden definiert durch:',
+    'SR_CAT_HEAD_TEXT'  : 'Alle Artikel $1 die zu $2 $3 gehï¿½ren, werden definiert durch:',
     'SR_PROP_HEAD_TEXT' : 'Alle Artikel $1 haben das Property $2 mit dem Wert $3, falls',
-    'SR_MCATPROP'       : 'Sie gehören zu einer bestimmten $1Kategorie$2 oder einem $3Attribut$4',
+    'SR_MCATPROP'       : 'Sie gehï¿½ren zu einer bestimmten $1Kategorie$2 oder einem $3Attribut$4',
     'SR_RULE_IMPLIES'   : 'Diese Regel impliziert Folgendes:',
     'SR_SAVE_RULE'      : 'Regel speichern',
     'SR_ALL_ARTICLES'   : 'Alle Artikel',
-    'SR_BELONG_TO_CAT'  : 'gehören zur Kategorie',
+    'SR_BELONG_TO_CAT'  : 'gehï¿½ren zur Kategorie',
     'SR_AND'            : 'UND',
     'SR_HAVE_PROP'      : 'haben das Attribut',
     'SR_WITH_VALUE'     : 'mit dem Wert',
@@ -55,7 +55,7 @@ var wgUserSR_LanguageStrings = {
     'SR_SUBMIT'         : 'Absenden...',
     'SR_SPECIFY_VARIABLES' : 'Bitte geben Sie den Wert der folgenden Variablen aus Ihrer Formel ein:',
     'SR_DERIVED_FACTS'  : 'Abgeleitete Fakten (Die Aktualisierung kann eine Weile dauern.)',
-    'SR_SYNTAX_CHECKED' : '(Syntax überprüft)',
+    'SR_SYNTAX_CHECKED' : '(Syntax ï¿½berprï¿½ft)',
     'SR_EDIT_FORMULA'   : 'Formel editieren',
     'SR_NO_VARIABLE'    : 'Es gibt keine Variable in der Formel. Solche Formeln haben keine Bedeutung.',
     'SR_IS_A'           : 'ist ein',
@@ -92,10 +92,11 @@ var wgUserSR_LanguageStrings = {
     
     'SR_EASYREADIBLE' : 'Leicht lesbar',
     'SR_STYLIZED_ENGLISH' : 'Formales Englisch' ,
-    'SR_RULE_DIRTY' : "Regel wurde kürzlich geändert",
+    'SR_RULE_DIRTY' : "Regel wurde kï¿½rzlich geï¿½ndert",
     'SR_RULE_INACTIVE_DESC' : "Regel ist inaktiv",
     'SR_RULE_ISACTIVE_STATE' : "aktiv",
-    'SR_RULE_ISINACTIVE_STATE' : "inaktiv"
+    'SR_RULE_ISINACTIVE_STATE' : "inaktiv",
+    'SR_RULE_ACCESS_NOT_ALLOWED': "Regelzugriff nicht erlaubt."
     	
 };
 

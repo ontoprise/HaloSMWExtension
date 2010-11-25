@@ -348,6 +348,13 @@ SRRuleActionListener.prototype = {
 
 	selectFromExternal : function(node, ruleURI) {
 		var callbackOnRuleRequest = function callbackOnRuleRequest(request) {
+			
+			if ($('ruleContainer') == null) {
+				// no right to watch rules
+				alert(gsrLanguage.getMessage('SR_RULE_ACCESS_NOT_ALLOWED'));
+				return;
+			}
+			
 			this.rulePendingIndicator.hide();
 
 			if (request.responseText.indexOf('error:') != -1) {
@@ -360,7 +367,14 @@ SRRuleActionListener.prototype = {
 			var subTree = sr_transformer.transformResultToHTML(request,
 					$('ruleList'));
 			selectionProvider.fireRefresh();
-
+			
+			// hack for FF. Its XSLT proc escapes HTML always (not switchable).
+			if (OB_bd.isGecko) {
+				$$('.ruleSerialization').each(function(s) { 
+					var html = s.textContent;
+					s.innerHTML = html;
+				});
+			}
 		}
 		this.showRuleContainer();
 		this.rulePendingIndicator.show($('ruleList'));
