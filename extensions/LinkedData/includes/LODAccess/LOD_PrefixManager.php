@@ -164,9 +164,11 @@ class LODPrefixManager  {
 			return ($braced) ? $prefixedURI 
 							 : substr($prefixedURI, 1, strlen($prefixedURI)-2);
 		}
-		preg_match("/^([^:]+):(.*)$/", $prefixedURI, $matches);
-		$prefix = $matches[1];
-		$localName = $matches[2];
+		$matched = preg_match("/^([^:]+):(.*)$/", $prefixedURI, $matches);
+		if ($matched === 1) {
+			$prefix = $matches[1];
+			$localName = $matches[2];
+		}
 		if (empty($localName)) {
 			throw new LODPrefixManagerException(LODPrefixManagerException::MISSING_COLON, $prefixedURI);
 		}
