@@ -172,6 +172,8 @@ class  HACLResultFilter  {
 						} else {
 							$allCellsRemoved = false;
 						}
+					} else {
+						$allCellsRemoved = false;
 					}
 				}
 				if ($cellModified) {
