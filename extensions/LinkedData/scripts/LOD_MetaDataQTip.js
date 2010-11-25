@@ -28,7 +28,7 @@
  * is hidden.
  * 
  */
-jQuery(document).ready( function ($) {	
+jQuery(document).ready( function ($) {  
 	// install the tool-tips
 	$("span.lodMetadata").each(function () {
 		// get the html of the content span
@@ -59,5 +59,19 @@ jQuery(document).ready( function ($) {
 					width: { max: 500 }
 				}
 		});
+	});
+	
+	// propagate background color (which represents the source) to enclosing <td> element
+	$("span.lodMetadata").each(function () {
+		if ($(this).hasClass("lod_background0")) $(this).parent().addClass("lod_background0");
+		if ($(this).hasClass("lod_background1")) $(this).parent().addClass("lod_background1");
+		if ($(this).hasClass("lod_background2")) $(this).parent().addClass("lod_background2");
+		if ($(this).hasClass("lod_background3")) $(this).parent().addClass("lod_background3");
+		if ($(this).hasClass("lod_background4")) $(this).parent().addClass("lod_background4");
+		if ($(this).hasClass("lod_background5")) $(this).parent().addClass("lod_background5");
+		if ($(this).hasClass("lod_background6")) $(this).parent().addClass("lod_background6");
+		if ($(this).hasClass("lod_background7")) $(this).parent().addClass("lod_background7");
+		if ($(this).hasClass("lod_background8")) $(this).parent().addClass("lod_background8");
+		if ($(this).hasClass("lod_background9")) $(this).parent().addClass("lod_background9");
 	});
 });

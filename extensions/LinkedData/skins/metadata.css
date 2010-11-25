@@ -50,3 +50,36 @@
 	padding: 4px;
 }
 
+/* Backgrounds representing different sources */
+.lod_background0 {
+	background-color: #d2d5ee !important;
+}
+.lod_background1 {
+    background-color: #fff6c9 !important;
+}
+.lod_background2 {
+    background-color: #dbd9be !important;
+}
+.lod_background3 {
+    background-color: #bfd8f6 !important;
+}
+.lod_background4 {
+    background-color: #dedede !important;
+}
+.lod_background5 {
+    background-color: #ffe3b0 !important;
+}
+.lod_background6 {
+    background-color: #f2d0cd !important;
+}
+.lod_background7 {
+    background-color: #e6ddee !important;
+}
+.lod_background8 {
+    background-color: #eff9cd !important ;
+}
+.lod_background9 {
+    background-color: #d4e7ec !important;
+}
+
+
