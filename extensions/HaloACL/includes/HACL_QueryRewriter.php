@@ -70,6 +70,10 @@ class  HACLQueryRewriter  {
  	// predicate. If <true>, this restriction is switched off.
 	private static $mAllowVariableForPredicate = false;
 	
+	// array(string->string)
+	// Names of prefixes and their values (namespaces)
+	private $mPrefixes;
+	
 	//--- Public methods ---
 	
 	/**
@@ -272,12 +276,6 @@ class  HACLQueryRewriter  {
 				return;
 			}
 			
-			// replace IRIs in prefixes
-			$prefixes = $q['prefixes'];
-			foreach ($prefixes as $pre => $iri) {
-				$qs = str_replace($iri, "$pre", $qs);
-			}
-
 			$query->setQueryString($qs);
 			
 //			print_r($q);
@@ -510,7 +508,29 @@ class  HACLQueryRewriter  {
 			return '';
 		}
 		
-		$qs = "SELECT ";
+		$qs = "";
+		
+		// BASE
+		$base = "";
+//		if (isset($query['base'])) {
+//			$base = $query['base'];
+//			$qs .= "BASE <$base>\n";
+//		}
+		
+		// PREFIX
+		if (isset($query['prefixes'])) {
+			$prefixes = $query['prefixes'];
+			foreach ($prefixes as $p => $ns) {
+				$this->mPrefixes[$p] = $ns;
+				// Remove the base prefix from the namespace
+				if (!empty($base) && strpos($ns, $base) === 0) {
+					$ns = substr($ns, strlen($base));
+				}
+				$qs .= "PREFIX $p <$ns>\n";
+			}
+		}
+		
+		$qs .= "SELECT ";
 		
 		$vars = $q['result_vars'];
 		foreach ($vars as $v) {
@@ -522,7 +542,6 @@ class  HACLQueryRewriter  {
 		$patterns = $q['pattern'];
 		
 		$qs .= $this->serializePattern($patterns);
-		
 		return $qs;
 	}
 	
@@ -683,27 +702,72 @@ class  HACLQueryRewriter  {
 				// Found a protected triple => do not serialize
 				continue;
 			}
+//			$subj = $t['s'];
+//			if ($t['s_type'] == 'var') {
+//				$subj = '?' . $subj;
+//			}
+//			
+//			$pred = $t['p'];
+//			if ($t['p_type'] == 'var') {
+//				$pred = '?' . $pred;
+//			}
+//			
+//			$obj = $t['o'];
+//			if ($t['o_type'] == 'var') {
+//				$obj = '?' . $obj;
+//			} else if ($t['o_type'] == 'literal') {
+//				$obj = addslashes($obj);
+//				$obj = '"'.$obj.'"^^'.$t['o_datatype'];
+//			}
+
 			$subj = $t['s'];
-			if ($t['s_type'] == 'var') {
-				$subj = '?' . $subj;
+			switch ($t['s_type']) {
+			case 'var':
+				$subj = "?$subj"; break;
+			case 'uri':
+				$subj = $this->makeURI($subj); break;
 			}
 			
 			$pred = $t['p'];
-			if ($t['p_type'] == 'var') {
-				$pred = '?' . $pred;
+			switch ($t['p_type']) {
+			case 'var':
+				$pred = "?$pred"; break;
+			case 'uri':
+				$pred = $this->makeURI($pred); break;
 			}
 			
 			$obj = $t['o'];
-			if ($t['o_type'] == 'var') {
-				$obj = '?' . $obj;
-			} else if ($t['o_type'] == 'literal') {
+			switch ($t['o_type']) {
+			case 'var':
+				$obj = "?$obj"; break;
+			case 'uri':
+				$obj = $this->makeURI($obj); break;
+			case 'literal':
 				$obj = addslashes($obj);
-				$obj = '"'.$obj.'"^^'.$t['o_datatype'];
+				$obj = '"'.$obj.'"^^'.$this->makeURI($t['o_datatype']);
 			}
 			
 			$qs .= "\n$subj $pred $obj .\n";
 		}
 		return $qs;
 	}
+	
+	/**
+	 * Converts the representation of the URI $uriValue to an URI with a known 
+	 * prefix or an absolute URI in <>.
+	 * 
+	 * @param string $uriValue
+	 * 		An absolute URI without embracing <>
+	 */
+	private function makeURI($uriValue) {
+		foreach ($this->mPrefixes as $pre => $ns) {
+			if (strpos($uriValue, $ns) === 0) {
+				$uriValue = $pre.substr($uriValue, strlen($ns));
+				return $uriValue;
+			}
+		}
+		return "<$uriValue>";
+	}
+	
 	
 }
