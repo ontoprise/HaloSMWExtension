@@ -79,9 +79,9 @@ if ($check !== true) {
 }
 
 // check if LocalSettings.php is writeable
-$success = touch("$rootDir/../LocalSettings.php", "w");
+$success = touch("$rootDir/../LocalSettings.php");
 if ($success === false) {
-	fatalError("LocalSettings.php is not locked. Please close all programs using it.");
+	fatalError("LocalSettings.php is locked. Please close all programs using it.");
 }
 
 
@@ -155,6 +155,8 @@ for( $arg = reset( $args ); $arg !== false; $arg = next( $args ) ) {
 		// include commandLine.inc to be in maintenance mode
 		$mediaWikiLocation = dirname(__FILE__) . '/../../..';
 		require_once "$mediaWikiLocation/maintenance/commandLine.inc";
+		
+		initializeLanguage();
 		// include the resource installer
 		require_once('DF_ResourceInstaller.php');
 
@@ -174,19 +176,6 @@ for( $arg = reset( $args ); $arg !== false; $arg = next( $args ) ) {
 	}
 	$params[] = $arg;
 }
-
-
-
-// create language object
-$langClass = "DF_Language_$wgLanguageCode";
-if (!file_exists("../languages/$langClass.php")) {
-	$langClass = "DF_Language_En";
-}
-require_once("../languages/$langClass.php");
-$dfgLang = new $langClass();
-
-
-
 
 
 $installer = Installer::getInstance($mwrootDir, $dfgForce);
@@ -256,6 +245,8 @@ foreach($packageToDeinstall as $toDeInstall) {
 			// include commandLine.inc to be in maintenance mode
 			$mediaWikiLocation = dirname(__FILE__) . '/../../..';
 			require_once "$mediaWikiLocation/maintenance/commandLine.inc";
+			
+			initializeLanguage();
 			// include the resource installer
 			require_once('DF_ResourceInstaller.php');
 
@@ -383,6 +374,9 @@ function handleInstallOrUpdate($packageID, $version) {
 		// include commandLine.inc to be in maintenance mode
 		$mediaWikiLocation = dirname(__FILE__) . '/../../..';
 		require_once "$mediaWikiLocation/maintenance/commandLine.inc";
+		
+		initializeLanguage();
+		
 		// check status of a currently installed wikidump
 		checkWikiContext();
 
@@ -440,6 +434,24 @@ function checkWikiContext() {
 	}
 
 }
+
+
+/**
+ * Initializes the language object
+ * 
+ * Note: Requires wiki context
+ */
+function initializeLanguage() {
+    global $wgLanguageCode, $dfgLang;
+    $langClass = "DF_Language_$wgLanguageCode";
+    if (!file_exists("../languages/$langClass.php")) {
+        $langClass = "DF_Language_En";
+    }
+    require_once("../languages/$langClass.php");
+    $dfgLang = new $langClass();
+}
+
+
 /**
  * Shows a fatal error which aborts installation.
  *

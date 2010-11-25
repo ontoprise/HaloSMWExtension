@@ -60,7 +60,7 @@ class Rollback {
 	public function saveInstallation() {
 		$this->acquireNewRollback();
 		Tools::mkpath($this->tmpDir."/rollback_data/");
-		Tools::copy_dir($this->rootDir, $this->tmpDir."/rollback_data/", array($this->rootDir."/deployment"));
+		Tools::copy_dir($this->rootDir, $this->tmpDir."/rollback_data", array($this->rootDir."/deployment"));
 	}
 
 	/**
@@ -100,7 +100,7 @@ class Rollback {
 	 *
 	 */
 	private function restoreInstallation() {
-		Tools::copy_dir($this->tmpDir."/rollback_data/", $this->rootDir);
+		Tools::copy_dir($this->tmpDir."/rollback_data", $this->rootDir);
 	}
 
 	/**
