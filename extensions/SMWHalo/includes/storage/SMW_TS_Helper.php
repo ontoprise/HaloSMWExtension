@@ -182,7 +182,7 @@ class TSHelper {
 		$res= $smwgTripleStoreGraph;
 		if (strpos($res, -1) != '/')
 		$res .= '/';
-		$res .= TSNamespaces::getNSPrefix($title->getNamespace())
+		$res .= TSNamespaces::getInstance()->getNSPrefix($title->getNamespace())
 		.'#'
 		.str_replace(' ', '_', $title->getText());
 		return $res;
