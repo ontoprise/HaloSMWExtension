@@ -134,6 +134,23 @@
 	 margin: 5px;
 }
 
+.ruleLegend {
+	margin: 5px;
+}
+.ruleLegend span {
+	padding-right: 15px;
+}
+	
+.ruleLegend > .rule_legend_property {
+	background-color: #EBA118;
+	border: 1px solid black;
+}
+
+.ruleLegend > .rule_legend_class {
+	background-color: #0059B5;
+	border: 1px solid black;
+}
+
 #ruleTreeSwitch {
     margin-left:2px;
     vertical-align: top;

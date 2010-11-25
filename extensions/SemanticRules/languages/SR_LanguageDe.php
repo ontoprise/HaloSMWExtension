@@ -5,7 +5,7 @@
  * 
  * Language file De
  * 
- * @author: Kai Kühn / ontoprise / 2009
+ * @author: Kai Kï¿½hn / ontoprise / 2009
  *
  */
 require_once("SR_Language.php");
@@ -17,8 +17,8 @@ class SR_LanguageDe extends SR_Language {
     // Simple Rules formula parser
     'smw_srf_expected_factor' => 'Erwarte eine Funktion, Variable, Konstante oder Klammer bei $1',
     'smw_srf_expected_comma' => 'Erwarte ein Komma bei $1',
-    'smw_srf_expected_(' => 'Erwarte eine öffnende Klammer bei $1',
-    'smw_srf_expected_)' => 'Erwarte eine schließende Klammer bei $1',
+    'smw_srf_expected_(' => 'Erwarte eine ï¿½ffnende Klammer bei $1',
+    'smw_srf_expected_)' => 'Erwarte eine schlieï¿½ende Klammer bei $1',
     'smw_srf_expected_parameter' => 'Erwarte einen Parameter bei $1',
     'smw_srf_missing_operator' => 'Erwarte eine Operator bei $1',
     
@@ -34,10 +34,12 @@ class SR_LanguageDe extends SR_Language {
     'sr_ruleselector' => 'Regelformat: ',
     'sr_easyreadible' => 'Leicht lesbar',
     'sr_stylizedenglish' => 'Formales Englisch',
-    'sr_rulesdefinedfor' => 'Regeln definiert für',
+    'sr_rulesdefinedfor' => 'Regeln definiert fï¿½r',
     'sr_rulestatus' => 'Status',
      'sr_rule_isactive_state' => 'aktiv',
     'sr_rule_isinactive_state' => 'inaktiv',
+    'sr_prop' => 'Property',
+    'sr_cat' => 'Klasse',
     
      #Unified search extension
     'sr_rulesfound' => 'Die folgenden Regeln wurden gefunden:'

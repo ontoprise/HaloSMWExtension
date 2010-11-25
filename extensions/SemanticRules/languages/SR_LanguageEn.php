@@ -36,6 +36,8 @@ class SR_LanguageEn extends SR_Language {
     'sr_rulestatus' => 'Status',
     'sr_rule_isactive_state' => 'active',
     'sr_rule_isinactive_state' => 'inactive',
+    'sr_prop' => 'property',
+    'sr_cat' => 'class',
     
     #Unified search extension
     'sr_rulesfound' => 'The following rules were found:'

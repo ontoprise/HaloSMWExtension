@@ -77,9 +77,12 @@ class SRRuleWidget {
                        '</select></span> ';
 		$resultHTML = $headline.'<div id="rule_content_'.self::$index.'" ruleID="'.htmlspecialchars($this->mRuleURI).'" class="ruleWidget"><img style="margin-top: 5px;margin-left: 5px;" src="'.$wgScriptPath.'/extensions/SemanticRules/skins/images/rule.gif"/><span style="margin-left: 5px;font-weight:bold;">
                          '.htmlspecialchars($this->mRuleName).'</span>'.$ruleFormatSelector.'<span style="float:right;margin-right: 10px;margin-top: 5px;">'.$onOffSwitch.'</span> <span style="float:right;margin-right: 10px;margin-top: 5px;">'.wfMsg('sr_rulestatus').':</span><hr/>'. // tab container
-                         '<div id="rule_content_'.self::$index.'_easyreadible" class="ruleSerialization">'.htmlspecialchars($this->mRuletext).'</div>'. // tab 1
+                         '<div id="rule_content_'.self::$index.'_easyreadible" class="ruleSerialization">'.htmlspecialchars($this->mRuletext).
+                         '</div>'. // tab 1
                          '<div id="rule_content_'.self::$index.'_stylized" class="ruleSerialization" style="display:none;">Stylized english</div>'.
                          '<div id="'.htmlspecialchars($this->mRuleURI).'" native="'.($this->mNative?"true":"false").'" class="ruleSerialization" style="display:none;">'.htmlspecialchars($this->mRuletext).'</div>'.
+                         '<div class="ruleLegend"><span class="rule_legend_property"></span><span>&nbsp;=&nbsp;'.wfMsg('sr_prop').',</span>'.
+                         '<span class="rule_legend_class"></span><span>&nbsp;=&nbsp;'.wfMsg('sr_cat').'</span></div>'. //end legend
                          '</div>';  
 		self::$index++;
 	
