@@ -21,6 +21,12 @@ define('QRC_ISQ_LABEL','QRCIsSPARQLQuery');
 define('QRC_DOP_LABEL','QRCDependsOnProperty');
 define('QRC_DOC_LABEL','QRCDependsOnCategory');
 
+define('QM_UIA_LABEL','QMUsedInArticle');
+define('QM_UQP_LABEL','QMUsedQueryPrinter');
+define('QM_HQN_LABEL','QMHasQueryName');
+
+global $smwgHaloIP;
+require_once( "$smwgHaloIP/includes/QueryManagement/SMW_QM_QueryMetadata.php" ); 
 /*
  * This class is responsible for the Query Results Cache related
  * Query Management metadata
@@ -58,6 +64,10 @@ class SMWQMQueryManagementHandler {
 		SMWPropertyValue::registerProperty('___QRC_HECP', '_boo', QRC_HECP_LABEL , false);
 		SMWPropertyValue::registerProperty('___QRC_ISQ', '_boo', QRC_ISQ_LABEL , false);
 		
+		SMWPropertyValue::registerProperty('___QM_UIA', '_str', QM_UIA_LABEL , false);
+		SMWPropertyValue::registerProperty('___QM_UQP', '_str', QM_UQP_LABEL , false);
+		SMWPropertyValue::registerProperty('___QM_HQN', '_str', QM_HQN_LABEL , false);
+		
 		return true;
 	}
 	
@@ -76,12 +86,13 @@ class SMWQMQueryManagementHandler {
 	 * It appends query related metadata to the article which contains the query.
 	 */
 	public function storeQueryMetadata($query){
+		
 		global $wgParser;
 
 		//get title object and skip processing if query does not stem from an article
 		if($wgParser && $wgParser->getTitle()){
 			$title = $wgParser->getTitle();
-			if($title->getNamespace == NS_SPECIAL){
+			if($title->getNamespace() == NS_SPECIAL){
 				return true;
 			}
 		} else {
@@ -108,10 +119,10 @@ class SMWQMQueryManagementHandler {
 		$dataValue->setExtraCategoryPrintouts($this->isCategoryRequestedInPrintRequests($query->getExtraPrintouts()));
 		
 		if ($query instanceof SMWSPARQLQuery){
-			$dataValue->setIsSPQRQLQuery(true);
+			$dataValue->setIsSPQRQLQuery('true');
 		} else {
 			$prProperties = 
-			$dataValue->setIsSPQRQLQuery(false);
+			$dataValue->setIsSPQRQLQuery('false');
 		}
 			
 		$properties = array();
@@ -129,6 +140,16 @@ class SMWQMQueryManagementHandler {
 		
 		foreach($categories as $c => $dontCare){
 			$dataValue->addCategoryDependency($c);
+		}
+		
+		$dataValue->setUsedInArticle($title->getFullText());
+		
+		if(array_key_exists('format', $query->params)){
+			$dataValue->setUsedQueryPrinter($query->params['format']);
+		}
+		
+		if(array_key_exists('queryname', $query->params)){
+			$dataValue->setQueryName($query->params['queryname']);
 		}
 		
 		$semanticData->addPropertyObjectValue($propertyValue, $dataValue);
@@ -367,4 +388,48 @@ class SMWQMQueryManagementHandler {
 		}
 		return false;
 	}
+	
+	
+	public function searchQueries($queryMetadata){
+		$queryString = $queryMetadata->getMetadaSearchQueryString();
+		
+		SMWQueryProcessor::processFunctionParams(array($queryString) 
+			,$queryString, $params, $printouts);
+		
+		$query = 
+			SMWQueryProcessor::createQuery($queryString,$params);
+		
+		global $smwgBaseStore;
+		$store = new $smwgBaseStore();
+		
+		$queryResults = $store->doGetQueryResult($query)->getResults();
+		
+		$queryMetadataResults = array();
+		foreach($queryResults as $queryResult){
+			
+			$semanticData = $store->getSemanticData($queryResult);
+			
+			$property = SMWPropertyValue::makeProperty('___QRC_UQC');
+			$propVals = $semanticData->getPropertyValues($property);
+			
+			foreach($propVals as $pVs){
+				$pVs = $pVs->getDBKeys();
+				$pVs = $pVs[0];
+			
+				$queryMetadataResult = new SMWQMQueryMetadata();
+				$queryMetadataResult->fillFromPropertyValues($pVs);
+				
+				if($queryMetadataResult->matchesQueryMetadataPattern($queryMetadata)){
+					$queryMetadataResults[] = $queryMetadataResult; 					
+				}
+			}
+		}
+		
+		return $queryMetadataResults;
+	}
+	
+	
+	
+	
+	
 }

@@ -92,6 +92,24 @@ class SMWQueryCallMetadataValue extends SMWContainerValue {
 		$this->m_data->addPropertyObjectValue($propertyValue, $dataValue);
 	}
 	
+	public function setUsedInArticle($uia){
+		$propertyValue = SMWPropertyValue::makeUserProperty(QM_UIA_LABEL);
+		$dataValue = SMWDataValueFactory::newPropertyObjectValue($propertyValue, $uia);
+		$this->m_data->addPropertyObjectValue($propertyValue, $dataValue);
+	}
+	
+	public function setUsedQueryPrinter($uqp){
+		$propertyValue = SMWPropertyValue::makeUserProperty(QM_UQP_LABEL);
+		$dataValue = SMWDataValueFactory::newPropertyObjectValue($propertyValue, $uqp);
+		$this->m_data->addPropertyObjectValue($propertyValue, $dataValue);
+	}
+	
+	public function setQueryName($hqn){
+		$propertyValue = SMWPropertyValue::makeUserProperty(QM_HQN_LABEL);
+		$dataValue = SMWDataValueFactory::newPropertyObjectValue($propertyValue, $hqn);
+		$this->m_data->addPropertyObjectValue($propertyValue, $dataValue);
+	}
+	
 	public function parseUserValue($value){
 		return true;
 	} 
