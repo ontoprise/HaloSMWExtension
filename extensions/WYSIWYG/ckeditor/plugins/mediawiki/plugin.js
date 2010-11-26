@@ -162,8 +162,7 @@ CKEDITOR.plugins.add( 'mediawiki',
 				{
 					span : function( element )
 					{
-                        var attributes = element.attributes;
-                        var eClassName = attributes.class || '';
+                        var eClassName = element.attributes['class'] || '';
                         var className = null;
                         switch ( eClassName ){
                             case 'fck_mw_source' :
