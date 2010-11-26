@@ -594,7 +594,9 @@ class SMWTripleStore extends SMWStore {
     ///// Query answering /////
 
     public function getQueryResult(SMWQuery $query){
-        global $smwgQRCEnabled;
+        SMWQMQueryManagementHandler::getInstance()->storeQueryMetadata($query);
+    	
+    	global $smwgQRCEnabled;
         if($smwgQRCEnabled){
             $qrc = new SMWQRCQueryResultsCache();
             return $qrc->getQueryResult($query);

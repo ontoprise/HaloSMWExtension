@@ -8,9 +8,11 @@ class SMWHaloStore2 extends SMWSQLStore2 {
 	
 	/*
 	 * This method is overwritten in order to hook in
-	 * the Query Results Cache
+	 * the Query Results Cache and the Query Management
 	 */
 	public function getQueryResult(SMWQuery $query){
+		SMWQMQueryManagementHandler::getInstance()->storeQueryMetadata($query);
+		
 		global $smwgQRCEnabled;
 		if($smwgQRCEnabled){	
 			$qrc = new SMWQRCQueryResultsCache();
