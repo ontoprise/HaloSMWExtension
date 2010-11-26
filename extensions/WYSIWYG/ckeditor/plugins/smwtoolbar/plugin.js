@@ -1059,7 +1059,8 @@ CKEDITOR.plugins.add('smwtoolbar', {
                 {
                     label : 'Semantic Toolbar',
                     command : 'SMWtoolbar',
-                    icon: this.path + 'images/tb_icon_semtoolbar.png'
+                    icon: this.path + 'images/tb_icon_semtoolbar.png',
+                    title: 'Semantic Toolbar'
                 });
         }
 
