@@ -50,6 +50,13 @@ CKEDITOR.editorConfig = function( config )
         CKEDITOR.plugins.addExternal( 'smw_rule', CKEDITOR.basePath + 'plugins/smwrule/' );
         extraPlugins += ",smw_rule";
     }
+    // Richmedia extension
+    var rmButton;
+    if (('SMW_RM_VERSION').InArray(window.parent.wgCKeditorUseBuildin4Extensions)) {
+        rmButton = 'SMWrichmedia';
+        CKEDITOR.plugins.addExternal( 'smw_richmedia', CKEDITOR.basePath + 'plugins/smwrichmedia/' );
+        extraPlugins += ",smw_richmedia";
+    }
 
     config.toolbar_Wiki = [
         ['Source'],
@@ -66,7 +73,7 @@ CKEDITOR.editorConfig = function( config )
         ['Bold','Italic','Underline','Strike'],
         ['NumberedList','BulletedList', '-', 'Outdent','Indent', 'Blockquote'],
         ['JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock'],
-        ['Image', 'Table', 'HorizontalRule', 'SpecialChar']
+        [ rmButton,'Image', 'Table', 'HorizontalRule', 'SpecialChar']
     ];
     config.extraPlugins = extraPlugins;
     config.height = '26em';
