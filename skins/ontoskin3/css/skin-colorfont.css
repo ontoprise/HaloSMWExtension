@@ -85,7 +85,7 @@ dt {
 
 
 ul.smwh_menulist div.smwh_menubody_visible {
-    background-color: #fbfbfb;
+	background:url(../img/submenu-background.png) repeat-x scroll center bottom #FFFFFF;
     border-color: #dfdfdc;
 }
 
@@ -101,6 +101,7 @@ ul.smwh_menulist div.smwh_menubody td:hover  {
 
 ul.smwh_menulist div.smwh_menubody td:hover  a{
 	background-color: #E8EDFF;
+	text-decoration: none;
 	text-decoration: none;
 }
 
