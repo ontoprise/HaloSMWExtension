@@ -17,13 +17,13 @@
     padding: 3px;
     background-color:#FFFFFF;
     border-left-width: thin;
-    border-left-color: #000000;
+    border-left-color: #CACAC4;
     border-left-style: solid;
     border-right-width: thin;
-    border-right-color: #000000;
+    border-right-color: #CACAC4;
     border-right-style: solid;
     border-top-width: thin;
-    border-top-color: #000000;
+    border-top-color: #CACAC4;
     border-top-style: solid;
 }
 
@@ -31,15 +31,14 @@
     cursor:pointer;cursor:hand;
     padding: 3px;
     border-width: thin;
-    border-color: #000000;
+    border-color: #CACAC4;
     border-style: solid;
-    background-color:#eeeeee;
 }
 
 .dftTabSpacer {
     padding: 3px;
     border-bottom-width: thin;
-    border-bottom-color: #000000;
+    border-bottom-color: #CACAC4;
     border-bottom-style: solid;
 }
 
@@ -49,13 +48,13 @@
     vertical-align: top;
     background-color:#FFFFFF;
     border-left-width: thin;
-    border-left-color: #000000;
+    border-left-color: #CACAC4;
     border-left-style: solid;
     border-right-width: thin;
-    border-right-color: #000000;
+    border-right-color: #CACAC4;
     border-right-style: solid;
     border-bottom-width: thin;
-    border-bottom-color: #000000;
+    border-bottom-color: #CACAC4;
     border-bottom-style: solid;
 }
 
