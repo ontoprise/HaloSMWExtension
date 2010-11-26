@@ -16,7 +16,6 @@
 
 global $smwgHaloIP;
 require_once( "$smwgHaloIP/includes/QueryResultsCache/SMW_QRC_Store.php" );
-require_once( "$smwgHaloIP/includes/QueryResultsCache/SMW_QRC_QueryManagementHandler.php" );
 require_once( "$smwgHaloIP/includes/QueryResultsCache/SMW_QRC_Settings.php" );
 require_once( "$smwgHaloIP/includes/QueryResultsCache/SMW_QRC_PriorityCalculator.php" );
 
@@ -33,23 +32,9 @@ class SMWQRCQueryResultsCache {
 	 * the cache otherwise.
 	 */
 	public function getQueryResult(SMWQuery $query, $force=false, $cacheThis=true){
-		//get title of article in which query was executed 
-		//or set title to false if query was executed somehow else 
-		global $wgParser;
-		$title = false;
-		if($wgParser && $wgParser->getTitle()){
-			$title = $wgParser->getTitle();
-		}
-		
-		$defaultStore = smwfGetStore();
-		
-		// update the semdata object for this title, respectively 
-		// the query management annotations
-		if($title !== false && $cacheThis){
-			SMWQRCQueryManagementHandler::getInstance()->storeQueryMetadata($title, $query);
-		}
 		
 		//delegate query processing to the responsible store
+		$defaultStore = smwfGetStore();
 		if ($query instanceof SMWSPARQLQuery && !(defined( 'DO_MAINTENANCE' ) && !defined('SMWH_FORCE_TS_UPDATE'))) {
 			$store = $defaultStore;
 		} else {
@@ -69,7 +54,7 @@ class SMWQRCQueryResultsCache {
 				//add the serialized query result to the database
 				$qrcStore = SMWQRCStore::getInstance()->getDB();
 				
-				$queryId = SMWQRCQueryManagementHandler::getInstance()->getQueryId($query);
+				$queryId = SMWQMQueryManagementHandler::getInstance()->getQueryId($query);
 				$lastUpdate = time();
 				$dirty = false;
 				if($queryData){ //results for this query already have been stored in the cache
@@ -120,7 +105,7 @@ class SMWQRCQueryResultsCache {
 	 */
 	private function getQueryData(SMWQuery $query){
 		$qrcStore = SMWQRCStore::getInstance()->getDB();
-		return $qrcStore->getQueryData(SMWQRCQueryManagementHandler::getInstance()->getQueryId($query));
+		return $qrcStore->getQueryData(SMWQMQueryManagementHandler::getInstance()->getQueryId($query));
 	}
 	
 	/*
@@ -168,8 +153,8 @@ class SMWQRCQueryResultsCache {
 	 * called by ajax api to update a query result
 	 */
 	public function updateQueryResult($queryId){
-		$queryString = SMWQRCQueryManagementHandler::getInstance()->getSearchMetadataQueryString($queryId);
-//		
+		$queryString = '[['.QRC_UQC_LABEL.'.'.QRC_HQID_LABEL."::".$queryId."]]";
+		
 		SMWQueryProcessor::processFunctionParams(array($queryString) 
 			,$queryString,$params,$printouts);
 		$query = 
@@ -185,7 +170,7 @@ class SMWQRCQueryResultsCache {
 			$semanticData = $defaultStore->getsemanticData($title);
 
 			$metadata = 
-				SMWQRCQueryManagementHandler::getInstance()->getQueryCallMetadata($semanticData, $queryId);
+				SMWQMQueryManagementHandler::getInstance()->getQueryCallMetadata($semanticData, $queryId);
 			
 			$queryParams = array ($metadata['queryString']);
 			//if($metadata['limit']) $queryParams[] = 'limit='.$metadata['limit'];
@@ -306,8 +291,8 @@ class SMWQRCQueryResultsCache {
 		
 		if(count($properties) > 0 || count($categories) > 0){
 			//query for all articles that use a query which depends on one of the properties
-			$queryString = SMWQRCQueryManagementHandler::getInstance()
-				->getSearchQueriesAffectedByDataModification(array_keys($properties), array_keys($categories));
+			$queryString = 
+				$this->getSearchQueriesAffectedByDataModification(array_keys($properties), array_keys($categories));
 			
 			SMWQueryProcessor::processFunctionParams(array($queryString) 
 				,$queryString,$params,$printouts);
@@ -321,11 +306,11 @@ class SMWQRCQueryResultsCache {
 				$semanticData = $store->getSemanticData($queryResult);
 				
 				$invalidatePC = false;
-				$tQueryIds = SMWQRCQueryManagementHandler::getInstance()->getIdsOfQueriesUsingProperty($semanticData, $properties);
+				$tQueryIds = SMWQMQueryManagementHandler::getInstance()->getIdsOfQueriesUsingProperty($semanticData, $properties);
 				if(count($tQueryIds) > 0) $invalidatePC = true;
 				$queryIds = array_merge($queryIds,	$tQueryIds);
 				
-				$tQueryIds = SMWQRCQueryManagementHandler::getInstance()->getIdsOfQueriesUsingCategory($semanticData, $categories);
+				$tQueryIds = SMWQMQueryManagementHandler::getInstance()->getIdsOfQueriesUsingCategory($semanticData, $categories);
 				if(count($tQueryIds) > 0) $invalidatePC = true;
 				$queryIds = array_merge($queryIds,$tQueryIds);
 				
@@ -342,5 +327,32 @@ class SMWQRCQueryResultsCache {
 		
 		return $store->doUpdateData($data);
 	}
+	
+	
+	/*
+	 * Get query string for searching for articles containing queries
+	 * which must be invalidated becaue of property modifications
+	 */
+	private function getSearchQueriesAffectedByDataModification($propertyNames, $categoryNames){
+		$queryString = '[['.QRC_UQC_LABEL.'::<q>';
+		
+		if(count($propertyNames) > 0){
+			$queryString .= '[['.QRC_DOP_LABEL.'::';
+			$queryString .= implode(']] OR [['.QRC_DOP_LABEL.'::', $propertyNames);
+			$queryString .= ']]';
+		}
+		
+		if(count($categoryNames) > 0){
+			if(count($propertyNames) > 0) $queryString .= ' OR ';
+			$queryString .= '[['.QRC_DOC_LABEL.'::';
+			$queryString .= implode(']] OR [['.QRC_DOC_LABEL.'::', $categoryNames);
+			$queryString .= ']]';
+		}
+		
+		$queryString .= '</q>]]';
+		
+		return $queryString;
+	}
+
 	
 }
