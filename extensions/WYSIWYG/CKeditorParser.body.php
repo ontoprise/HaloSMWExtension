@@ -107,8 +107,12 @@ class CKeditorParser extends CKeditorParserWrapper {
         // add custom parser funtions from extensions to list
         foreach ($wgParser->getFunctionHooks() as $h) {
             // ask and sparql + ws are no special tags and have there own <span> elements in FCK
-            if (!in_array($h, array("ask", "sparql", "ws")) &&
-                !in_array($h, $this->FCKeditorFunctionHooks))
+            // when SMWHalo or the DataImport extension is installed
+            if (defined('SMW_HALO_VERSION') && in_array($h, array("ask", "sparql")))
+                continue;
+            if (defined('SMW_DI_VERSION') && $h == "ws")
+                continue;
+            if (!in_array($h, $this->FCKeditorFunctionHooks))
                 $this->FCKeditorFunctionHooks[] = '#'.$h;
         }
     }
@@ -508,9 +512,9 @@ class CKeditorParser extends CKeditorParserWrapper {
 				} else if( $sum == 0 ) {
 					$stringToParse .= 'Fckmw' . $this->fck_mw_strtr_span_counter . 'fckmw';
 					$inner = htmlspecialchars( strtr( substr( $text, $startingPos, $pos - $startingPos + 19 ), $strtr ) );
-                    if (substr($inner, 0, 7) == '{{#ask:' || substr($inner, 0, 10) == '{{#sparql:')
+                    if (defined('SMW_HALO_VERSION') && substr($inner, 0, 7) == '{{#ask:' || substr($inner, 0, 10) == '{{#sparql:')
                         $fck_mw_template =  'fck_smw_query';
-                    else if (substr($inner, 0, 6) == '{{#ws:' )
+                    else if (defined('SMW_DI_VERSION') && substr($inner, 0, 6) == '{{#ws:' )
 					    $fck_mw_template =  'fck_mw_webservice';
                     else {
                         $funcName = (($fp = strpos($inner, ':', 2)) !== false) ? substr($inner, 2, $fp - 2) : substr($inner, 2, strlen($inner) - 4);
@@ -962,12 +966,17 @@ class CKeditorParser extends CKeditorParserWrapper {
      * @return string replaced placeholder or [[match]]
      */
     private function replaceSpecialLinkValue($match, $orig) {
-        $res = $this->replacePropertyValue($match);
-        if (preg_match('/FCK_PROPERTY_\d+_FOUND/', $res)) // property was replaced, we can quit here.
-            return $res;
-        $res = $this->replaceRichmediaLinkValue($match);
-        if (preg_match('/FCK_RICHMEDIA_\d+_FOUND/', $res)) // richmedia link was replaced, we can quit here.
-            return $res;
+        $res= '[['.$orig.']]';
+        if (defined('SMW_VERSION')) {
+            $res = $this->replacePropertyValue($match);
+            if (preg_match('/FCK_PROPERTY_\d+_FOUND/', $res)) // property was replaced, we can quit here.
+                return $res;
+        }
+        if (defined('SMW_RM_VERSION')) {
+            $res = $this->replaceRichmediaLinkValue($match);
+            if (preg_match('/FCK_RICHMEDIA_\d+_FOUND/', $res)) // richmedia link was replaced, we can quit here.
+                return $res;
+        }
         // an ordinary link. If this is something like [[{{{1}}}]] then this would be an
         // empty link, because during parsing, the parameter will not exist. Therefore
         // do not use the original value but the template replacement
