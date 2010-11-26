@@ -77,6 +77,17 @@ function enableSMWHalo($store = 'SMWHaloStore2', $tripleStore = NULL, $tripleSto
 	global $smgJSLibs;
 	$smgJSLibs[] = 'prototype';
 	$smgJSLibs[] = 'qtip';
+	
+	//initialize query management
+	global $smwgHaloIP;
+	require_once( "$smwgHaloIP/includes/QueryManagement/SMW_QM_QueryManagementHandler.php" );
+	
+	global $wgAutoloadClasses;
+	$wgAutoloadClasses['SMWQueryCallMetadataValue'] =
+		"$smwgHaloIP/includes/QueryManagement/SMW_QM_DV_QueryCallMetadata.php";
+	
+	$wgHooks['smwInitDatatypes'][] = 'SMWQMQueryManagementHandler::initQRCDataTypes';
+	$wgHooks['smwInitProperties'][] = 'SMWQMQueryManagementHandler::initProperties';
 
 }
 
@@ -122,7 +133,7 @@ function smwgHaloSetupExtension() {
 	$wgAutoloadClasses['SMWMathematicalEquationTypeHandler'] = $smwgHaloIP . '/includes/SMW_DV_MathEquation.php';
 
 	require_once $smwgHaloIP.'/includes/queryprinters/SMW_QP_Halo.php';
-
+	
 	global $smwgResultFormats;
 
 
@@ -1669,15 +1680,9 @@ function enableQueryResultsCache(){
 	require_once( "$smwgHaloIP/includes/QueryResultsCache/SMW_QRC_QueryResultsCache.php" );
 	require_once( "$smwgHaloIP/includes/QueryResultsCache/SMW_QRC_AjaxAPI.php" );
 
-	global $wgAutoloadClasses;
-	$wgAutoloadClasses['SMWQueryCallMetadataValue'] =
-		"$smwgHaloIP/includes/QueryResultsCache/SMW_QRC_DV_QueryCallMetadata.php";
-
 	$smwgQRCEnabled = true;
 
 	$wgHooks['smwInitializeTables'][] = 'smwfQRCInitializeTables';
-	$wgHooks['smwInitDatatypes'][] = 'SMWQRCQueryManagementHandler::initQRCDataTypes';
-	$wgHooks['smwInitProperties'][] = 'SMWQRCQueryManagementHandler::initProperties';
 }
 
 /**
