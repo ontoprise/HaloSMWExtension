@@ -65,6 +65,7 @@ class LODLanguageEn extends LODLanguage {
 		LODLanguage::PFP_LSD_SAMPLEURI				=> "sampleuri",
 		LODLanguage::PFP_LSD_SPARQLENDPOINTLOCATION	=> "sparqlendpointlocation",
 		LODLanguage::PFP_LSD_SPARQLGRAPHNAME		=> "sparqlgraphname",
+		LODLanguage::PFP_LSD_SPARQLGRAPHPATTERN		=> "sparqlgraphpattern",
 		LODLanguage::PFP_LSD_URIREGEXPATTERN		=> "uriregexpattern",
 		LODLanguage::PFP_LSD_VOCABULARY				=> "vocabulary",
 		

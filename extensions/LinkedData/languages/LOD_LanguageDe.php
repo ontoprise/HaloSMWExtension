@@ -66,6 +66,7 @@ class LODLanguageDe extends LODLanguage {
 		LODLanguage::PFP_LSD_SAMPLEURI				=> "beispieluri",
 		LODLanguage::PFP_LSD_SPARQLENDPOINTLOCATION	=> "sparqlendpunkt",
 		LODLanguage::PFP_LSD_SPARQLGRAPHNAME		=> "sparqlgraphname",
+		LODLanguage::PFP_LSD_SPARQLGRAPHPATTERN		=> "sparqlgraphpattern",
 		LODLanguage::PFP_LSD_URIREGEXPATTERN		=> "uriregexmuster",
 		LODLanguage::PFP_LSD_VOCABULARY				=> "vokabular",
 		

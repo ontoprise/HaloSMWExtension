@@ -110,6 +110,13 @@ class LODSourceDefinition  {
 	// endpoint's default graph. 
 	private $mSparqlGraphName;
 	
+	// array<string> (URI):
+	// If this optional parameter is present, then it specifies a list of graph
+	// pattern restrictions that refer to the variables ?s, ?p, ?o and are applied
+	// in conjunction.
+	// An exemplary graph pattern restriction is FILTER (?p = <http://www.w3.org/1999/02/22-rdf-syntax-ns#type>).
+	private $mSparqlGraphPatterns;
+
 	// array<string>  (URI):
 	// Indicates the location of an RDF data dump file. There can be any numbers
 	// of data dump location values. The dataset is said to contain the RDF merge
@@ -169,6 +176,7 @@ class LODSourceDefinition  {
 	public function getSampleURIs()				{ return $this->mSampleURIs; }
 	public function getSparqlEndpointLocation()	{ return $this->mSparqlEndpointLocation; }
 	public function getSparqlGraphName()		{ return $this->mSparqlGraphName; }
+	public function getSparqlGraphPatterns()	{ return $this->mSparqlGraphPatterns; }
 	public function getDataDumpLocations()		{ return $this->mDataDumpLocations; }
 	public function getLastMod()				{ return $this->mLastMod; }
 	public function getChangeFreq()				{ return $this->mChangeFreq; }
@@ -186,6 +194,7 @@ class LODSourceDefinition  {
 	public function setSampleURIs(array $val)		{ $this->mSampleURIs = $val; }
 	public function setSparqlEndpointLocation($val)	{ $this->mSparqlEndpointLocation = $val; }
 	public function setSparqlGraphName($val)		{ $this->mSparqlGraphName = $val; }
+	public function setSparqlGraphPatterns(array $val) { $this->mSparqlGraphPatterns = $val; }
 	public function setDataDumpLocations(array $val) { $this->mDataDumpLocations = $val; }
 	public function setLastMod($val)				{ $this->mLastMod = $val; }
 	public function setChangeFreq($val)				{ $this->mChangeFreq = $val; }

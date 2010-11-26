@@ -112,6 +112,7 @@ $messages['en'] = array(
 	'lod_lsd_sampleuri'					=> "Sample URI",
 	'lod_lsd_sparqlendpointlocation'	=> "SPARQL endpoint location",
 	'lod_lsd_sparqlgraphname'			=> "SPARQL graph name",
+	'lod_lsd_sparqlgraphpattern'		=> "SPARQL graph pattern",
 	'lod_lsd_uriregexpattern'			=> "URI regex pattern",
 	'lod_lsd_vocabulary'				=> "Vocabulary",
 
@@ -238,6 +239,7 @@ $messages['de'] = array(
 	'lod_lsd_sampleuri'					=> "Beispiel-URI",
 	'lod_lsd_sparqlendpointlocation'	=> "SPARQL-Endpunktadresse",
 	'lod_lsd_sparqlgraphname'			=> "SPARQL-Graphname",
+	'lod_lsd_sparqlgraphpattern'		=> "SPARQL-Graphpattern",
 	'lod_lsd_uriregexpattern'			=> "URI Regex-Muster",
 	'lod_lsd_vocabulary'				=> "Vokabular",
 

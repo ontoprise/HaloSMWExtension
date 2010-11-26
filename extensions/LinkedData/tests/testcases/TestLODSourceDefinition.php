@@ -27,6 +27,7 @@ class TestLODSourceDefinitionSuite extends PHPUnit_Framework_TestSuite
 		"SampleURIs" => array("http://dbpedia.org/resource/Computer_science", "http://dbpedia.org/resource/Organization"),
 		"SparqlEndpointLocation" => "http://deepblue.rkbexplorer.com/sparql/",
 		"SparqlGraphName" => "http://example.org/deepblue",
+		"SparqlGraphPatterns" => array("FILTER (?p = <http://www.w3.org/1999/02/22-rdf-syntax-ns#type>)"),
 		"UriRegexPattern" => "^http://deepblue.rkbexplorer.com/id/.+",
 		"Vocabularies" => array("http://purl.org/dc/elements/1.1/", "http://xmlns.com/foaf/0.1/", "http://www.w3.org/2000/01/rdf-schema#"),
 	
@@ -78,6 +79,11 @@ class TestLODSourceDefinitionSuite extends PHPUnit_Framework_TestSuite
 			$testCase->assertContains($v, $r);
 		}
 		
+		$r = $lsd->getSparqlGraphPatterns();
+		$testCase->assertEquals(count(self::$mLSD["SparqlGraphPatterns"]), count($r));
+		foreach (self::$mLSD["SparqlGraphPatterns"] as $v) {
+			$testCase->assertContains($v, $r);
+		}
 	}
 	
 	protected function setUp() {
@@ -112,6 +118,7 @@ class TestLODSourceDefinitionSuite extends PHPUnit_Framework_TestSuite
 		$sd->setSampleURIs(self::$mLSD["SampleURIs"]);
 		$sd->setSparqlEndpointLocation(self::$mLSD["SparqlEndpointLocation"]);
 		$sd->setSparqlGraphName(self::$mLSD["SparqlGraphName"]);
+		$sd->setSparqlGraphPatterns(self::$mLSD["SparqlGraphPatterns"]);
 		$sd->setUriRegexPattern(self::$mLSD["UriRegexPattern"]);
 		$sd->setVocabularies(self::$mLSD["Vocabularies"]);
 		return $sd;
@@ -327,6 +334,7 @@ class TestLODSourceDefinition extends PHPUnit_Framework_TestCase {
 	smwDatasources:dbpedia smw-lde:sampleURI <http://dbpedia.org/resource/Organization> . 
 	smwDatasources:dbpedia smw-lde:sparqlEndpointLocation <http://deepblue.rkbexplorer.com/sparql/> . 
 	smwDatasources:dbpedia smw-lde:sparqlGraphName <http://example.org/deepblue> . 
+	smwDatasources:dbpedia smw-lde:sparqlGraphPattern "FILTER (?p = <http://www.w3.org/1999/02/22-rdf-syntax-ns#type>)"^^xsd:string .
 	smwDatasources:dbpedia smw-lde:dataDumpLocation <http://deepblue.rkbexplorer.com/datadDump> . 
 	smwDatasources:dbpedia smw-lde:dataDumpLocation <http://deepblue.rkbexplorer.com/datadDump2> . 
 	smwDatasources:dbpedia smw-lde:lastmod "2007-11-21T14:41:09+12:34"^^xsd:dateTime . 
@@ -385,6 +393,7 @@ class TestLSDParserFunction extends PHPUnit_Framework_TestCase {
 		"SampleURIs" => array("http://dbpedia.org/resource/Computer_science", "http://dbpedia.org/resource/Organization"),
 		"SparqlEndpointLocation" => "http://deepblue.rkbexplorer.com/sparql/",
 		"SparqlGraphName" => "http://example.org/deepblue",
+		"SparqlGraphPatterns" => array("FILTER (?p = <http://www.w3.org/1999/02/22-rdf-syntax-ns#type>)"),
 		"UriRegexPattern" => "^http://deepblue.rkbexplorer.com/id/.+",
 		"Vocabularies" => array("http://purl.org/dc/elements/1.1/", "http://xmlns.com/foaf/0.1/", "http://www.w3.org/2000/01/rdf-schema#"),
 	
@@ -434,6 +443,7 @@ class TestLSDParserFunction extends PHPUnit_Framework_TestCase {
 	smwDatasources:dbpedia smw-lde:sampleURI <http://dbpedia.org/resource/Organization> . 
 	smwDatasources:dbpedia smw-lde:sparqlEndpointLocation <http://deepblue.rkbexplorer.com/sparql/> . 
 	smwDatasources:dbpedia smw-lde:sparqlGraphName <http://example.org/deepblue> . 
+	smwDatasources:dbpedia smw-lde:sparqlGraphPattern "FILTER (?p = <http://www.w3.org/1999/02/22-rdf-syntax-ns#type>)"^^xsd:string .
 	smwDatasources:dbpedia smw-lde:dataDumpLocation <http://deepblue.rkbexplorer.com/datadDump> . 
 	smwDatasources:dbpedia smw-lde:dataDumpLocation <http://deepblue.rkbexplorer.com/datadDump2> . 
 	smwDatasources:dbpedia smw-lde:lastmod "2007-11-21T14:41:09+12:34"^^xsd:dateTime . 
@@ -563,6 +573,7 @@ EXP;
  | SampleURI = http://dbpedia.org/resource/Organization
  | SparqlEndpointLocation = http://deepblue.rkbexplorer.com/sparql/
  | SparqlGraphName = http://example.org/deepblue
+ | SparqlGraphPattern = FILTER (?p = <http://www.w3.org/1999/02/22-rdf-syntax-ns#type>)
  | UriRegexPattern = ^http://deepblue.rkbexplorer.com/id/.+
  | Vocabulary = http://purl.org/dc/elements/1.1/ 
  | Vocabulary = http://xmlns.com/foaf/0.1/ 

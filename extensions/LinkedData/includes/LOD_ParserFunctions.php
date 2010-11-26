@@ -225,6 +225,12 @@ class LODParserFunctions {
 	 * If the tag is omitted, the dataset is assumed to be available through the 
 	 * endpoint's default graph. 
 	 *
+	 * SparqlGraphPattern string 0..*
+	 * If this optional parameter is present, then it specifies a list of graph
+	 * pattern restrictions that refer to the variables ?s, ?p, ?o and are applied
+	 * in conjunction.
+	 * An exemplary graph pattern restriction is FILTER (?p = <http://www.w3.org/1999/02/22-rdf-syntax-ns#type>).
+	 *
 	 * DataDumpLocation (URI) 0..*
 	 * Indicates the location of an RDF data dump file. There can be any numbers
 	 * of data dump location assignments. The dataset is said to contain the RDF 
@@ -429,6 +435,7 @@ class LODParserFunctions {
 			array(LODLanguage::PFP_LSD_SAMPLEURI, 				0, -1, "setSampleURIs", 			"lod_lsd_sampleuri"),
 			array(LODLanguage::PFP_LSD_SPARQLENDPOINTLOCATION,	0,  1, "setSparqlEndpointLocation",	"lod_lsd_sparqlendpointlocation"),
 			array(LODLanguage::PFP_LSD_SPARQLGRAPHNAME, 		0,  1, "setSparqlGraphName", 		"lod_lsd_sparqlgraphname"),
+			array(LODLanguage::PFP_LSD_SPARQLGRAPHPATTERN, 		0, -1, "setSparqlGraphPatterns", 	"lod_lsd_sparqlgraphpattern"),
 			array(LODLanguage::PFP_LSD_DATADUMPLOCATION, 		0, -1, "setDataDumpLocations", 		"lod_lsd_datadumplocation"),
 			array(LODLanguage::PFP_LSD_LASTMOD, 				0,  1, "setLastMod", 				"lod_lsd_lastmod"),
 			array(LODLanguage::PFP_LSD_CHANGEFREQ, 				0,  1, "setChangeFreq",				"lod_lsd_changefreq"),

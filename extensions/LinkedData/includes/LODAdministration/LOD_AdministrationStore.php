@@ -179,6 +179,7 @@ class  LODAdministrationStore  {
 	 * smw-lde:sampleURI 				^^owl:Thing 	(0..*)
 	 * smw-lde:sparqlEndpointLocation 	^^owl:Thing 	(0..1)
 	 * smw-lde:sparqlGraphName 			^^owl:Thing 	(0..1)
+	 * smw-lde:sparqlGraphPattern		^^xsd:string 	(0..*)
 	 * smw-lde:dataDumpLocation 		^^owl:Thing 	(0..*)
 	 * smw-lde:lastmod 					^^xsd:dateTime	(0..1)
 	 * smw-lde:changefreq 				^^xsd:string 	(0..1)
@@ -225,6 +226,12 @@ class  LODAdministrationStore  {
 
 		$triples[] = new LODTriple($subject, $propNS."sparqlEndpointLocation", $sd->getSparqlEndpointLocation(), "__objectURI");
 		$triples[] = new LODTriple($subject, $propNS."sparqlGraphName", $sd->getSparqlGraphName(), "__objectURI");
+		if (is_array($sd->getSparqlGraphPatterns())) {
+			foreach ($sd->getSparqlGraphPatterns() as $pattern) {
+				$triples[] = new LODTriple($subject, $propNS."sparqlGraphPattern", $pattern, "xsd:string");
+			}
+		}
+
 		if (is_array($sd->getDataDumpLocations())) {
 			foreach ($sd->getDataDumpLocations() as $ddl) {
 				$triples[] = new LODTriple($subject, $propNS."dataDumpLocation", $ddl, "__objectURI");
@@ -331,6 +338,9 @@ QUERY;
 		}
 		if (array_key_exists("{$propNS}sparqlGraphName", $properties)) {
 			$sd->setSparqlGraphName($properties["{$propNS}sparqlGraphName"][0]);
+		}
+		if (array_key_exists("{$propNS}sparqlGraphPattern", $properties)) {
+			$sd->setSparqlGraphPatterns($properties["{$propNS}sparqlGraphPattern"]);
 		}
 		if (array_key_exists("{$propNS}dataDumpLocation", $properties)) {
 			$sd->setDataDumpLocations($properties["{$propNS}dataDumpLocation"]);
