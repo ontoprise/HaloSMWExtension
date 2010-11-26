@@ -977,7 +977,7 @@ class SMWTripleStore extends SMWStore {
 
                 // create result row. iterate over variable set and convert binding nodes to SMWDataValue objects
                 foreach ($variableSet as $var) {
-
+                    $var = ucfirst($var);
                     if ($bindingNodeIndex < count($bindingSet)) {
                     	$b = $bindingSet[$bindingNodeIndex];
                         $varOfBinding = ucfirst((string) $bindingSet[$bindingNodeIndex]->attributes()->name);
