@@ -335,11 +335,11 @@ class MockMappingStore implements ILODMappingStore {
 	private static $mMapping;
 	
 	// array(string articlename => array(string source, string target))
-	private static $mMappingsPerPage; 
+	private $mMappingsPerPage; 
 
 	function __construct() {
 		self::$mMapping = array();
-		self::$mMappingsPerPage = array();
+		$this->mMappingsPerPage = array();
 	}
 
 	public function existsMapping($source, $target) {
@@ -411,7 +411,7 @@ class MockMappingStore implements ILODMappingStore {
 	}
 	
 	public function removeAllMappingsFromPage($articleName) {
-		$sourceTargetPairs = $this->mMappingsPerPage[$articleName];
+		$sourceTargetPairs = @$this->mMappingsPerPage[$articleName];
 		if (isset($sourceTargetPairs)) {
 			foreach ($sourceTargetPairs as $stp) {
 				$source = $stp[0];
