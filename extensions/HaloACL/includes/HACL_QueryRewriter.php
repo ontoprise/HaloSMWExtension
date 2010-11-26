@@ -534,6 +534,11 @@ class  HACLQueryRewriter  {
 		
 		$vars = $q['result_vars'];
 		foreach ($vars as $v) {
+			if (!isset($v['value'])) {
+				// All variables are selected
+				$qs .= "* ";
+				break;
+			}
 			$qs .= '?'.$v['value'].' ';
 		}
 		
