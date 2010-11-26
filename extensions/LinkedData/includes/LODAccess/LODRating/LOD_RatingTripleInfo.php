@@ -58,6 +58,7 @@ class LODRatingTripleInfo  {
 	private $mPosition;
 	private $mTriple;
 	private $mBound;
+	private $mUnboundVarInTriple;
 	
 	/**
 	 * Constructor for  LODRatingTripleInfo
@@ -70,12 +71,16 @@ class LODRatingTripleInfo  {
 	 * 		<true> if a value is bound to the variable
 	 * @param LODTriple $triple
 	 * 		The triple that contains the variable
+	 * @param bool $unboundVarInTriple
+	 * 		<true>, if the triple contains at least one unbound variable
+	 * 
 	 */
-	function __construct($variable, $position, $bound, LODTriple $triple) {
+	function __construct($variable, $position, $bound, LODTriple $triple, $unboundVarInTriple) {
 		$this->mVariable = $variable;
 		$this->mPosition = $position;
 		$this->mBound = $bound;
 		$this->mTriple = $triple;
+		$this->mUnboundVarInTriple = $unboundVarInTriple;
 	}
 
 	//--- getter/setter ---
@@ -83,6 +88,7 @@ class LODRatingTripleInfo  {
 	public function getPosition()	{ return $this->mPosition; }
 	public function	isBound()		{ return $this->mBound; }
 	public function getTriple()		{ return $this->mTriple; }
+	public function hasUnboundVarInTriple()	{ return $this->mUnboundVarInTriple; }
 	
 //	public function setXY($xy)               {$this->mXY = $xy;}
 	

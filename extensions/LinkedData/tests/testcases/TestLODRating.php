@@ -231,7 +231,7 @@ PREFIX ex: <http://example.com/>
 SELECT *
 WHERE {
   GRAPH <http://example.com/booksGraph> {
-    ?s ?p ?o .
+    ?subj ?pred ?obj .
   }
 }
 SPARQL;
@@ -245,7 +245,7 @@ SPARQL;
 		// meta-data i.e. the rating key.
 				
 		$rowCount = 0;
-		$vars = array("s", "p", "o");
+		$vars = array("subj", "pred", "obj");
 		// Iterate all rows
 		while ($row = $res->getNext()) {
 			// Iterate all cells in a row
@@ -256,7 +256,7 @@ SPARQL;
 					$metaData = $value->getMetadataMap();
 
 					$this->assertTrue(array_key_exists("rating-key", $metaData), 
-							"Expected to find the rating key at value with index $i.");
+							"Expected to find the rating key at value with index $varIdx.");
 					
 					$ratingKey = $metaData["rating-key"][0];
 					$var = $vars[$varIdx];
@@ -697,6 +697,89 @@ SPARQL;
 		
     }
     
+    /**
+     * Tests getting all triples in a query where all variables are bound by the
+     * query result but one that appears in an OPTIONAL statement
+     */
+    public function testQueryAnalyzer7() {
+
+    	$this->setupAuthorExample();
+    	
+    	// Remove the nationality of HermannHesse
+    	$namespace = "http://example.com/";
+    	$prefixes = "PREFIX ex:<$namespace> ";
+    	$pattern = "ex:HermannHesse ex:nationality ?n";
+		
+		$graph = TestLODRatingSuite::AUTHOR_GRAPH;
+		$tsa = new LODTripleStoreAccess();
+		$tsa->addPrefixes($prefixes);
+		$tsa->deleteTriples($graph, $pattern, $pattern);
+		$tsa->flushCommands();
+    	
+		$query = <<<SPARQL
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+PREFIX ex:  <http://example.com/>
+
+SELECT ?a ?b ?p
+WHERE {
+  GRAPH <http://example.com/authorGraph> {
+    ?a rdf:type ex:Author .
+    ?a ex:authorOf ?b .
+    ?b ex:price ?p .
+    OPTIONAL {
+    	?a ex:nationality ?n .
+    }
+  }
+}
+SPARQL;
+
+		// The following bindings will lead to one result where all variables are
+		// bound.
+		$bindings = array(
+			new LODSparqlResultURI("a", "http://example.com/HermannHesse"),
+			new LODSparqlResultLiteral("p", "17", "http://www.w3.org/2001/XMLSchema#double")
+		);
+		
+		$qa = new LODQueryAnalyzer($query, array(), $bindings);
+		$resultSets = $qa->bindAndGetAllTriples();
+		
+		// There is only one result
+		$this->assertEquals(1, count($resultSets), "Expected exactly one result.");
+		
+		// Verify the triples in the result
+		$result = $resultSets[0];
+		
+		// Three variables are bound		
+		$this->assertEquals(3, count($result), "More than one result found.");
+		foreach ($result as $variable => $tripleInfo) {
+			$numUnbound = 0;
+			foreach ($tripleInfo as $ti) {
+				if ($ti->hasUnboundVarInTriple()) {
+					++$numUnbound;
+				}
+			}
+			
+			switch ($variable) {
+			case 'a':
+				$this->assertEquals(3, count($tripleInfo), "Three triples must be bound to variable a.");
+				$this->assertEquals(1, $numUnbound, "One triple with variable a must contain an unbound variable.");
+				break;
+			case 'b':
+				$this->assertEquals(2, count($tripleInfo), "Two triples must be bound to variable b.");
+				$this->assertEquals(0, $numUnbound, "No triple with variable b must contain an unbound variable.");
+				break;
+			case 'p':
+				$this->assertEquals(1, count($tripleInfo), "One triple must be bound to variable p.");
+				$this->assertEquals(0, $numUnbound, "No triple with variable p must contain an unbound variable.");
+				break;
+			}
+		}
+		
+    	
+    }
+    
+    
     
     /**
      * This function tests the whole rating workflow on the backend level.
@@ -738,10 +821,10 @@ SPARQL;
 		$result = SMWSPARQLQueryProcessor::getResultFromQueryString(
 					$query, 
 					array("graph" => "http://example.com/authorGraph",
-						  "enablerating" => "true"), 
+						  "enablerating" => "true",
+						  'format' => 'table'), 
 					array(), 
 					SMW_OUTPUT_WIKI);
-
     	// Get all values in the row of the vtbr. 
 		// The price of the Hermann Hesse book is 17.0. Get all values in that row.
 		$dom = simplexml_load_string($result);
@@ -983,6 +1066,12 @@ SPARQL;
      * Test storing and retrieving a query result in the database.
      */
     function testStoreQueryResult() {
+   		$queryString1 = <<<SPARQL
+SELECT *
+WHERE {
+    ?s ?p ?o .
+}
+SPARQL;
     	$db = LODStorage::getDatabase();
     	
     	$articleName = "AnArticleWithAQuery";

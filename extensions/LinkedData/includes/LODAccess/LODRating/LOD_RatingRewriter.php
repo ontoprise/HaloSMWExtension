@@ -204,13 +204,14 @@ class LODRatingRewriter extends LODSparqlQueryVisitor {
 								$predValue ? $predValue : "?$predVar", 
 								$objValue  ? $objValue  : "?$objVar", 
 								$objType);
+		$unbound = is_null($subjValue) || is_null($predValue) || is_null($objValue);
 								
 		$this->addTripleInfo($subjVar, $subjValue, LODRatingTripleInfo::SUBJECT,
-							 $triple);
+							 $triple, $unbound);
 		$this->addTripleInfo($predVar, $predValue, LODRatingTripleInfo::PREDICATE,
-							 $triple);
+							 $triple, $unbound);
 		$this->addTripleInfo($objVar, $objValue, LODRatingTripleInfo::OBJECT,
-							 $triple);
+							 $triple, $unbound);
 	}
 	
 	/**
@@ -247,16 +248,17 @@ class LODRatingRewriter extends LODSparqlQueryVisitor {
 	 * 		The position of the variable in the triple.
 	 * @param LODTriple $triple
 	 * 		The triple that is related to the variable.
+	 * @param bool $unbound
+	 * 		<true>, if the triple contains at least one unbound variable
 	 */
-	private function addTripleInfo($var, $value, $position, $triple) {
+	private function addTripleInfo($var, $value, $position, $triple, $unbound) {
 		if (!empty($var)) {
-			$ti = new LODRatingTripleInfo($var, $position, !is_null($value), $triple);
+			$ti = new LODRatingTripleInfo($var, $position, !is_null($value), $triple, $unbound);
 			if (is_null($value)) {
 				$array = &$this->mUnboundVariables;
 			} else {
 				$array = &$this->mBoundVariables;
 			}
-									 
 			if (!array_key_exists($var, $array)) {
 				$array[$var] = array();
 			}

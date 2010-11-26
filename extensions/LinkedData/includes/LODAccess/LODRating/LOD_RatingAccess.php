@@ -240,8 +240,10 @@ SPARQL;
 			$primaryTripleInfo = array();
 			$allTriples = array();
 			foreach ($ptis as $pti) {
-				$primaryTripleInfo[] = $pti->getTriple();
-				$allTriples[] = $pti->getTriple();
+				if (!$pti->hasUnboundVarInTriple()) {
+					$primaryTripleInfo[] = $pti->getTriple();
+					$allTriples[] = $pti->getTriple();
+				}
 			}
 			
 			// Get the secondary triples
@@ -250,7 +252,8 @@ SPARQL;
 				if ($variable !== $var) {
 					foreach ($tripleInfos as $ti) {
 						$t = $ti->getTriple();
-						if (!in_array($t, $allTriples)) {
+						if (!in_array($t, $allTriples)
+						    && !$ti->hasUnboundVarInTriple()) {
 							$secondaryTripleInfo[] = $t;
 							$allTriples[] = $t;
 						}
