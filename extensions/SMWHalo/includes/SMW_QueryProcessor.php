@@ -289,9 +289,10 @@ class SMWQueryProcessor {
 		///TODO: case-insensitive
 		global $smwgQuerySources;
 
+		$query->params = $params; // this is a hack
+		
 		if ( array_key_exists( "source", $params ) && array_key_exists( $params["source"], $smwgQuerySources ) ) {
 			$store = new $smwgQuerySources[$params["source"]]();
-			$query->params = $params; // this is a hack
 		} else {
 			$store = smwfGetStore(); // default store
 		}
