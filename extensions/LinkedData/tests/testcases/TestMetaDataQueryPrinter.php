@@ -358,7 +358,7 @@ SPARQL;
 		
 		$expected = <<<HTML
 <span class="lodMetadata">113
-  <span class="lodMetadataContent">
+  <span class="lodMetadataContent" style="display:none">
     <span class = "lodMdTableTitle">Meta-data for this data value</span>
     <table class="lodMdTable">
       <tr>
@@ -383,7 +383,7 @@ HTML;
 		
 		$expected = <<<HTML
 <span class="lodMetadata">Category:Hybrid
-  <span class="lodMetadataContent">
+  <span class="lodMetadataContent" style="display:none">
     <span class = "lodMdTableTitle">Meta-data for this data value</span>
     <table class="lodMdTable">
       <tr>
@@ -408,7 +408,7 @@ HTML;
 		
 		$expected = <<<HTML
 <span class="lodMetadata">Category:Automobile
-  <span class="lodMetadataContent">
+  <span class="lodMetadataContent" style="display:none">
     <span class = "lodMdTableTitle">Meta-data for this data value</span>
     <table class="lodMdTable">
       <tr>
@@ -632,7 +632,7 @@ SPARQL;
 		
 		$expected = <<<HTML
 <span class="lodMetadata">113
-  <span class="lodMetadataContent">
+  <span class="lodMetadataContent" style="display:none">
     <span class="lodMdTableTitle">Meta-data of this data value:
     </span>
     <table class="lodMdTable">
@@ -651,7 +651,7 @@ HTML;
 		
 		$expected = <<<HTML
 <span class="lodMetadata">Category:Hybrid
-  <span class="lodMetadataContent">
+  <span class="lodMetadataContent" style="display:none">
     <span class = "lodMdTableTitle">Meta-data of this data value:</span>
     <table class="lodMdTable">
       <th>Property</th>
@@ -674,7 +674,7 @@ HTML;
 		
 		$expected = <<<HTML
 <span class="lodMetadata">Category:Automobile
-  <span class="lodMetadataContent">
+  <span class="lodMetadataContent" style="display:none">
     <span class = "lodMdTableTitle">Meta-data of this data value:</span>
     <table class="lodMdTable">
       <th>Property</th>
