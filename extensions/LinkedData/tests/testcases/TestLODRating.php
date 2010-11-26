@@ -830,7 +830,7 @@ SPARQL;
 		$dom = simplexml_load_string($result);
 		$this->assertTrue($dom !== false, "Query processor returned invalid result.");
 		
-		$results = $dom->xpath('//span[@class=\'lodMetadata\']');
+		$results = $dom->xpath('//span[@class=\'lodMetadata \']');
 		$ratingKey = null;
 		foreach ($results as $r) {
 			if ((string) $r == '17') {
