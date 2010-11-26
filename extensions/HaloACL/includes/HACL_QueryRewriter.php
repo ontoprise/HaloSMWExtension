@@ -399,6 +399,23 @@ class  HACLQueryRewriter  {
  	 */
 	private function pruneUnboundFilter(&$patterns) {
 		$constraint = $patterns['constraint'];
+		$constraintType = $constraint['type'];
+		
+		if ($constraintType == 'built_in_call') {
+			$args = $constraint['args'];
+			foreach ($args as $arg) {
+				if ($arg['type'] === 'var') {
+					$var = $arg['value'];
+					if (array_key_exists($var, $this->mBoundVariables)
+						&& $this->mBoundVariables[$var] === false) {
+						$patterns['protected'] = true;
+					}
+				}
+			}
+			return;
+		}
+		
+		// Filter is an expression
 		$expr = $constraint['patterns'];
 		$op1 = $expr[0];
 		$op2 = $expr[1];
@@ -664,31 +681,35 @@ class  HACLQueryRewriter  {
 	/**
 	 * Generates the string representation of a filter pattern. 
 	 *
-	 * @param array $patterns
+	 * @param array $pattern
 	 * 		A filter pattern
 	 * @return string
 	 * 		String representation of the filter pattern.
 	 */
-	private function serializeFilter($patterns) {
-		$constraint = $patterns['constraint'];
-		$expr = $constraint['patterns'];
-		$op1 = $expr[0];
-		$op2 = $expr[1];
+	private function serializeFilter($pattern) {
+		$constraint = $pattern['constraint'];
+		$constraintType = $constraint['type'];
 		$operator = $constraint['operator'];
+		
+		if ($constraintType == 'built_in_call') {
+			 $call = $constraint['call'];
+			 $args = $this->serializeArgs($constraint['args']);
+			 $expr = "$call($args)";
+		} else if ($constraintType == 'expression') {
+			$expr = $constraint['patterns'];
+			$op1 = $this->serializeOperand($expr[0]);
+			$op2 = $this->serializeOperand($expr[1]);
+		}
 
-		if ($op1['type'] == 'var') {
-			$op1 = '?' . $op1['value'];
-		} else if ($ob1['type'] == 'literal') {
-			$op1 = '"'.$op1['value'].'"^^'.$op1['datatype'];
+		if ($operator === '!') {
+			$expr = "$operator$expr";
+		} else if (empty($operator)) {
+			// do nothing
+		} else {
+			$expr = "$op1 $operator $op2";
 		}
 		
-		if ($op2['type'] == 'var') {
-			$op2 = '?' . $op2['value'];
-		} else if ($op2['type'] == 'literal') {
-			$op2 = '"'.$op2['value'].'"^^'.$op2['datatype'];
-		}
-		
-		$qs = "FILTER ($op1 $operator $op2)";
+		$qs = "FILTER ($expr)";
 		return $qs;
 	}
 	
@@ -772,6 +793,30 @@ class  HACLQueryRewriter  {
 			}
 		}
 		return "<$uriValue>";
+	}
+	
+	/**
+	 * 
+	 * Serializes the arguments of a built-in call in a filter
+	 * @param array $args
+	 * 		The arguments to serialize
+	 */
+	private function serializeArgs($args) {
+		$s = "";
+		$num = count($args);
+		$i = 0;
+		foreach ($args as $a) {
+			if ($a['type'] === 'var') {
+				$s .= "?{$a['value']}";
+			} else if ($a['type'] === 'literal') {
+				$s .= "\"{$a['value']}\"";
+			}
+			if (++$i < $num) {
+				$s .= ', ';
+			}
+		}
+		
+		return $s;
 	}
 	
 	
