@@ -108,7 +108,7 @@ class LODRatingRewriter extends LODSparqlQueryVisitor {
 	}
 	
 	/**
-	 * Visitor method for unions. If a query contains a union, the origin on a 
+	 * Visitor method for unions. If a query contains a union, the origin of a 
 	 * triple can not be securely identified. Thus unions are not supported; an
 	 * exception is thrown.
 	 * 
