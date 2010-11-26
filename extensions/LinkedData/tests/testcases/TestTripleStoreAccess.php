@@ -25,6 +25,9 @@ class TestTripleStoreAccessSuite extends PHPUnit_Framework_TestSuite
 		array("ex:HitchhikersGuide", "ex:amazon", "http://www.amazon.com/Hitchhikers-Guide-Galaxy-25th-Anniversary/dp/1400052920/ref=sr_1_1?ie=UTF8&s=books&qid=1272987287&sr=1-1", "xsd:anyURI")
 	);
 	
+	public static $mTriplesOptional = array(
+		array("ex:DirkGently", "ex:title", "Dirk Gently's holistic detective agency", "xsd:string"),
+	);
 	
 	public static function suite() {
 		
@@ -149,26 +152,85 @@ class TestTripleStoreAccess extends PHPUnit_Framework_TestCase {
 		}
 		
 		//***testTripleStore#4***
+		// Test if queries with OPTIONAL parts work
+		// Insert an underspecified book into the graph
+    	$triples = array();
+		foreach (TestTripleStoreAccessSuite::$mTriplesOptional as $t) {		
+			$triples[] = new LODTriple($t[0], $t[1], $t[2], $t[3]);
+		}
+		$graph = TestTripleStoreAccessSuite::GRAPH;
+		
+		// Inserts triples into the triple store
+		$tsa = new LODTripleStoreAccess();
+		$tsa->addPrefixes($prefixes);
+		$tsa->insertTriples($graph, $triples);
+		
+		//***testTripleStore#4.1***
+		// Test if SPARUL commands can be sent to triple store
+		$this->assertTrue($tsa->flushCommands(), "***testTripleStore#4.1*** failed.");
+		
+		// Query inserted triples
+		$query = $prefixes.<<<SPARQL
+SELECT ?book ?title ?price 
+FROM <$graph> 
+WHERE { 
+	?book ex:title ?title .
+	OPTIONAL {
+		?book ex:price ?price . 
+	} 
+}
+SPARQL;
+		
+		$result = $tsa->queryTripleStore($query, $graph);
+		
+		//***testTripleStore#2***
+		// Test if all expected variables are present
+		$variables = $result->getVariables();
+		$this->assertContains("book", $variables, "***testTripleStore#4.2*** failed");
+		$this->assertContains("title", $variables, "***testTripleStore#4.3*** failed");
+		$this->assertContains("price", $variables, "***testTripleStore#4.4*** failed");
+		
+		//***testTripleStore#4.5***
+		// Test if all expected triples are present
+		$expectedTriples = array(
+			array("ex:HitchhikersGuide", "title", "The Hitchhiker's Guide to the Galaxy"),
+			array("ex:HitchhikersGuide", "price", "10.20"),
+			array("ex:DirkGently", "title", "Dirk Gently's holistic detective agency")
+		);
+		
+		
+		$rows = $result->getRows();
+		$this->assertEquals(2, count($rows), "***testTripleStore#4.5.1*** failed");
+		foreach ($expectedTriples as $ep) {
+			$title = str_replace("ex:", $namespace, $ep[0]);
+			$rows = $result->getRowsWhere("book", $title);
+			$this->assertEquals(1, count($rows), "***testTripleStore#4.5.2*** failed");
+			$row = $rows[0];
+			$this->assertEquals($row->getResult($ep[1])->getValue(), $ep[2],
+								"***testTripleStore#4.5.3*** failed");
+		}
+		
+		//***testTripleStore#5***
 		// Test if triples can be deleted
 		
 		$prop = TestTripleStoreAccessSuite::$mTriples[0][1];
 		$tsa->addPrefixes($prefixes);
 		$tsa->deleteTriples($graph, "?s $prop ?o", "?s $prop ?o");
-		$this->assertTrue($tsa->flushCommands(), "***testTripleStore#4.1*** failed.");
+		$this->assertTrue($tsa->flushCommands(), "***testTripleStore#5.1*** failed.");
 		$query = $prefixes."SELECT ?s ?o FROM <$graph> WHERE { ?s $prop ?o . }";
 		
 		$result = $tsa->queryTripleStore($query, $graph);
 		// Make sure the triple is deleted.
-		$this->assertEquals(0, count($result->getRows()), "***testTripleStore#4.2*** failed.");
+		$this->assertEquals(0, count($result->getRows()), "***testTripleStore#5.2*** failed.");
 
 		// Make sure that another triple is still available
 		$prop = TestTripleStoreAccessSuite::$mTriples[1][1];
 		$query = $prefixes."SELECT ?s ?o FROM <$graph> WHERE { ?s $prop ?o . }";
 		$result = $tsa->queryTripleStore($query, $graph);
-		$this->assertNotNull($result, "***testTripleStore#4.3*** failed.");
-		$this->assertEquals(1, count($result->getRows()), "***testTripleStore#4.4*** failed.");
+		$this->assertNotNull($result, "***testTripleStore#5.3*** failed.");
+		$this->assertEquals(1, count($result->getRows()), "***testTripleStore#5.4*** failed.");
 		
-		//***testTripleStore#5***
+		//***testTripleStore#6***
 		// Test if the complete graph can be deleted.
 		$tsa->dropGraph($graph);
 		$tsa->flushCommands();
@@ -177,7 +239,7 @@ class TestTripleStoreAccess extends PHPUnit_Framework_TestCase {
 		
 		$result = $tsa->queryTripleStore($query, $graph);
 		// Make sure the graph is deleted.
-		$this->assertTrue($result == null || count($result->getRows()) == 0, "***testTripleStore#5*** failed.");
+		$this->assertTrue($result == null || count($result->getRows()) == 0, "***testTripleStore#6*** failed.");
 		
     }
     
