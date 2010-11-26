@@ -29,19 +29,22 @@ CKEDITOR.editorConfig = function( config )
 	config.toolbar = 'Wiki';
     // var origToolbar = CKEDITOR.config.toolbar_Full
 
-    // custom toolbar for SMW
-    var smwToolbar = ['MWSpecialTags', 'MWTemplate' ];
-    // if Advanced Annotation is missing, SMWHalo seems not to be installed.
+    // custom toolbar for MW
+    var mwToolbar = ['MWSpecialTags', 'MWTemplate'];
+    // SMWHalo extension
+    var smwQiButton;
+    var smwStbButton;
     if (('SMW_HALO_VERSION').InArray(window.parent.wgCKeditorUseBuildin4Extensions)) {
-        smwToolbar.push('SMWqi');
+        smwQiButton = 'SMWqi';
         CKEDITOR.plugins.addExternal( 'smw_qi', CKEDITOR.basePath + 'plugins/smwqueryinterface/' );
-        smwToolbar.push('SMWtoolbar');
+        smwStbButton = 'SMWtoolbar';
         CKEDITOR.plugins.addExternal( 'smw_toolbar', CKEDITOR.basePath + 'plugins/smwtoolbar/' );
         extraPlugins += ",smw_qi,smwtoolbar";
     }
     // DataImport extension
+    var smwDiButton;
     if (('SMW_DI_VERSION').InArray(window.parent.wgCKeditorUseBuildin4Extensions)) {
-        smwToolbar.push('SMWwebservice');
+        smwDiButton = 'SMWwebservice';
         CKEDITOR.plugins.addExternal( 'smw_webservice', CKEDITOR.basePath + 'plugins/smwwebservice/' );
         extraPlugins += ",smw_webservice";
     }
@@ -51,29 +54,31 @@ CKEDITOR.editorConfig = function( config )
         extraPlugins += ",smw_rule";
     }
     // Richmedia extension
-    var rmButton;
+    var smwRmButton;
     if (('SMW_RM_VERSION').InArray(window.parent.wgCKeditorUseBuildin4Extensions)) {
-        rmButton = 'SMWrichmedia';
+        smwRmButton = 'SMWrichmedia';
         CKEDITOR.plugins.addExternal( 'smw_richmedia', CKEDITOR.basePath + 'plugins/smwrichmedia/' );
         extraPlugins += ",smw_richmedia";
     }
 
     config.toolbar_Wiki = [
-        ['Source'],
-        ['PasteText','PasteFromWord','-','Print','SpellChecker','Scayt'],
-        ['Undo','Redo','-','Find','Replace','-','Subscript','Superscript'],
+        ['Print','SpellChecker','Scayt'],
+        ['PasteText','PasteFromWord', '-','Find','Replace'],
+        ['SelectAll','RemoveFormat'],
+        ['Subscript','Superscript'],
         ['Link','Unlink'],
-        ['TextColor','BGColor'],
-        ['Maximize', 'ShowBlocks'],
-        ['SelectAll','RemoveFormat', '-'],
-        smwToolbar,
+        ['Undo','Redo'],
+        ['Image', 'Table', 'HorizontalRule', 'SpecialChar'],
+        ['MWSpecialTags', 'MWTemplate', smwQiButton, smwDiButton, smwRmButton ],
+        [ smwStbButton ],
         ['About'],
         '/',
         ['Styles','Format','Font','FontSize'],
         ['Bold','Italic','Underline','Strike'],
-        ['NumberedList','BulletedList', '-', 'Outdent','Indent', 'Blockquote'],
         ['JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock'],
-        [ rmButton,'Image', 'Table', 'HorizontalRule', 'SpecialChar']
+        ['NumberedList','BulletedList', '-', 'Outdent','Indent', 'Blockquote'],
+        ['TextColor','BGColor'],
+        ['Maximize', 'ShowBlocks'],
     ];
     config.extraPlugins = extraPlugins;
     config.height = '26em';
