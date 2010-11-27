@@ -381,9 +381,9 @@ protected $smwUserMessages = array(
 	'semanticmaps_abb_south'       => 'S',
 	'semanticmaps_abb_west'        => 'W',
 	'semanticmaps_label_latitude'  => 'Latitude:',
-	'semanticmaps_label_longitude' => 'Longitude:',
+	'semanticmaps_label_longitude' => 'Longitude:'
 
-	'checkinstallation' => 'Prüfe Installation'
+	
 	
 );
 
