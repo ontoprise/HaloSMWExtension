@@ -1,0 +1,9 @@
+.df_checkinst_error {
+	color: red;
+	font-weight:bold;
+}
+
+.df_checkinst_ok {
+	color: green;
+    font-weight:bold;
+}

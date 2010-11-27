@@ -20,6 +20,8 @@ require_once $rootDir.'/tools/maintenance/maintenanceTools.inc';
 require_once($rootDir."/tools/smwadmin/DF_PackageRepository.php");
 require_once($rootDir."/tools/smwadmin/DF_Tools.php");
 
+define ("DF_OUTPUT_FORMAT_TEXT", 0);
+define ("DF_OUTPUT_FORMAT_HTML", 1);
 /**
  * @file
  * @ingroup DFMaintenance
@@ -60,7 +62,7 @@ class MaintenanceTools {
 				// check if dependant package has correct version
 				$ext = $localPackages[$id];
 				if ($ext->getVersion() < $min || $ext->getVersion() > $max) {
-					$out[$p->getID()][]=  "Dep. to '".$id."' has wrong version: ".$ext->getVersion().". \n\t\tExpected range $min-$max";
+					$out[$p->getID()][]=  "Dependency to '".$id."' has wrong version: ".$ext->getVersion().". \n\t\tExpected range $min-$max";
 					$errorInExt = true;
 					$errorFound |= $errorInExt;
 					continue;
@@ -90,11 +92,12 @@ class ConsistencyChecker {
 
 	var $rootDir;
 	var $localPackages;
-	var $errorLog;
+	var $statusLog;
 
 	public function __construct($rootDir) {
 		$this->rootDir = $rootDir;
 		$this->localPackages = PackageRepository::getLocalPackages($this->rootDir."/extensions");
+		$this->statusLog = array();
 	}
 
 	static $instance;
@@ -106,14 +109,18 @@ class ConsistencyChecker {
 		return self::$instance;
 	}
 
-	public function checkInstallation($repair) {
+	public function getStatusLog() {
+		return $this->statusLog;
+	}
 
-		print "\n\n -- CHECK INSTALLATION --\n";
+	public function checkInstallation($repair, $format) {
+
+		
 		$errorFound = false;
-		$errorFound |= $this->checkDependencies($repair);
-		$errorFound |= $this->checkLocalSettings($repair);
+		$errorFound |= $this->checkDependencies($repair, $format);
+		$errorFound |= $this->checkLocalSettings($repair, $format);
 		$errorFound |= $this->checkSpecialConfigs($repair);
-		print "\n\n";
+		$this->statusLog[] = $this->out("\n\n", $format);
 		return $errorFound;
 	}
 
@@ -123,25 +130,25 @@ class ConsistencyChecker {
 	 *
 	 * @param unknown_type $repair
 	 */
-	public  function checkDependencies($repair) {
+	public  function checkDependencies($repair, $format) {
 
 		if (count($this->localPackages) == 0) {
-			print "\nNO extensions found!\n";
+			$this->statusLog[] = $this->out(array("\n","NO extensions found!", "\n"), $format);
 		}
 
-		print "\nchecking consistency of dependencies in installed packages...";
+		$this->statusLog[] = $this->out(array("\n","checking consistency of dependencies in installed packages..."), $format);
 		$errorFound = MaintenanceTools::checkDependencies($this->localPackages, $out);
 
 		if ($errorFound) {
 			foreach($out as $ext => $line) {
-				//if (!is_null(reset($line))) print "\n\n$ext: ";
+				//if (!is_null(reset($line))) $this->statusLog[] = "\n\n$ext: ";
 				foreach($line as $l) {
-					if (is_null($l)) break; else print "\n\t[FAILED] $ext:".$l;
+					if (is_null($l)) break; else $this->statusLog[] = $this->out(array("\n","\t","[FAILED]", $ext.":".$l), $format);
 				}
 			}
-			print "\n";
+			$this->statusLog[] = $this->out(array("\n"), $format);
 		} else {
-			print "\n\tNone.";
+			$this->statusLog[] = $this->out(array("\n", "\t", "none."), $format);
 		}
 		return $errorFound;
 	}
@@ -152,88 +159,77 @@ class ConsistencyChecker {
 	 *
 	 * @param boolean $repair Try to repair problems
 	 */
-	private function checkLocalSettings($repair) {
+	private function checkLocalSettings($repair, $format) {
 
-		print "\ncheck LocalSettings.php...";
+		$this->statusLog[] = $this->out(array("\n","check LocalSettings.php...", "\n"), $format);
 		if (!file_exists($this->rootDir."/LocalSettings.php")) {
-			print "\n\t[FAILED] LocalSettings.php does not exist.\n";
-			if ($repair) print "\n\tCannot repair. Please create LocalSettings.php manually.";
+			$this->statusLog[] = $this->out(array("\n","\t","[FAILED]", "LocalSettings.php does not exist", "\n"), $format);
+				
+			if ($repair) $this->out(array("\n","\t","Cannot repair. Please create LocalSettings.php manually"), $format);
 			return true;
 		}
-		print "done.";
+		$this->statusLog[] = $this->out(array("\t", "done."), $format);
 
-		print "\ncheck AdminSettings.php...";
+		$this->statusLog[] = $this->out(array("\n","check AdminSettings.php...", "\n"), $format);
 		if (!file_exists($this->rootDir."/AdminSettings.php")) {
-			print "\n\t[FAILED] AdminSettings.php does not exist.\n";
-			if ($repair) print "\n\tCannot repair. Please create AdminSettings.php from AdminSettingsTemplate.php";
+			$this->statusLog[] = $this->out(array("\n","\t","[FAILED]", "AdminSettings.php does not exist", "\n"), $format);
+			if ($repair) $this->out(array("\n","\t","Cannot repair. Please create AdminSettings.php from AdminSettingsTemplate.php"), $format);
 			return true;
 		}
-		print "done.";
+		$this->statusLog[] = $this->out(array("\t", "done."), $format);
 
 		$ls = file_get_contents($this->rootDir."/LocalSettings.php");
 		if (trim($ls) == '') {
-			print "\n\t[FAILED]LocalSettings.php exists but is empty.\n";
-			if ($repair) print "\n\tCannot repair. Please create LocalSettings.php manually.";
+			$this->statusLog[] = $this->out(array("\n","\t","[FAILED]", "LocalSettings.php exists but is empty", "\n"), $format);
+			if ($repair) $this->out(array("\n","\t","Cannot repair. Please create LocalSettings.php manually"), $format);
 			return true;
 		}
 
 
-		print "\ncheck if existing extensions are registered in LocalSettings.php...\n";
+		$this->statusLog[] = $this->out(array("\n","check if existing extensions are registered in LocalSettings.php...","\n"), $format);
 		$errorFound1 = false;
 		foreach($this->localPackages as $p) {
 			if ($p->getID() == 'mw') continue;
-				
+
 			$start = strpos($ls, "/*start-".$p->getID()."*/");
 			$end = strpos($ls, "/*end-".$p->getID()."*/");
 
 			if ($start === false && $end === false) {
-				print "\n\t[FAILED] ".$p->getID()." is not configured.";
+				$this->statusLog[] = $this->out(array("\n","\t","[FAILED] ", $p->getID()." is not configured."), $format);
 				$errorFound1 = true;
 
-				if ($repair) {
-					// install extension
-					print "\n\tRepair...";
-					$dd = $this->localPackages[$p->getID()];
-					$dp = new DeployDescriptionProcessor($this->rootDir.'/LocalSettings.php', $dd);
 
-					$dp->applyLocalSettingsChanges($this, $dd->getUserRequirements(), false);
-					$dp->applyPatches($this);
-					$dp->applySetups();
-					$this->lastErrors = $dp->getErrorMessages();
-					print "done.";
-					return;
-				}
 			} else {
 				if ($start === false) {
-					print "\n\t[FAILED] Start tag missing: ".$p->getID();
+					$this->statusLog[] =  $this->out(array("\n","\t","[FAILED]", "Start tag missing: ".$p->getID()), $format);
 					$errorFound1 = true;
 				}
 				if ($end === false) {
-					print "\n\t[FAILED] End tag missing: ".$p->getID();
+					$this->statusLog[] =  $this->out(array("\n","\t","[FAILED]", "End tag missing: ".$p->getID()), $format);
 					$errorFound1 = true;
 				}
 			}
 		}
 
 		if (!$errorFound1) {
-			print "\n\tNone.";
+			$this->statusLog[] = "\n\tnone.";
 		}
 
-		print "\n\ncheck if there are registerings for non-existings extensions...";
+		$this->statusLog[] = $this->out(array("\n","\n","check if there are registerings for non-existings extensions..."), $format);
 		preg_match_all('/\/\*start-(\w+)\*\//', $ls, $matches);
 		$errorFound2 = false;
 		foreach ($matches[1] as $m) {
 			if (!array_key_exists($m, $this->localPackages)) {
 				$errorFound2 = true;
-				print "\n\t[FAILED] configuration for non-existing extension detected: $m";
+				$this->statusLog[] = $this->out(array("\n","\t","[FAILED]","configuration for non-existing extension detected: $m"), $format);
 
 				if ($repair) {
 					// remove config from LocalSettings.php
-					print "\n\tRepair...";
+					$this->statusLog[] = "\n\tRepair...";
 					$start = strpos($ls, '/*start-'.$m.'*/');
 					$end = strpos($ls, '/*end-'.$m.'*/') + strlen('/*end-'.$m.'*/');
 					$ls = substr_replace($ls, "", $start, $end-$start);
-					print "done.";
+					$this->statusLog[] = $this->out(array("\n","done."), $format);
 				}
 			}
 		}
@@ -243,26 +239,26 @@ class ConsistencyChecker {
 			fclose($handle);
 		}
 		if (!$errorFound2) {
-			print "\n\tNone.";
+			$this->statusLog[] = $this->out(array("\n","\t","none."), $format);
 		}
 
 
-		print "\n\ncheck if there are double registered extensions...";
+		$this->statusLog[] = $this->out(array("\n","\n","check if there are double registered extensions..."), $format);
 		$errorFound3 = false;
 		preg_match_all('/\/\*start-(\w+)\*\//', $ls, $matches);
 		$ext_counts = array_count_values($matches[1]);
 		foreach ($ext_counts as $ext => $freq) {
 			if ($freq > 1) {
 				$errorFound3 = true;
-				print "\n\t[FAILED] double registered extension detected: $ext";
-				if ($repair) print "\n\tCannot repair automatically. Please remove '$ext' manually";
+				$this->statusLog[] = $this->out(array("\n","\t","[FAILED]","double registered extension detected: $ext"), $format);
+				if ($repair) $this->statusLog[] = $this->out(array("\n","\t","Cannot repair automatically. Please remove '$ext' manually"), $format);
 			}
 		}
 		if (!$errorFound3) {
-			print "\n\tNone.";
+			$this->statusLog[] = $this->out(array("\n","\t","none."), $format);
 		}
 
-		print "\n\ncheck if there are double require/include statements...";
+		$this->statusLog[] = $this->out(array("\n","\n","check if there are double require/include statements..."), $format);
 		$errorFound4 = false;
 		preg_match_all('/(require|include)(_once)?\s*\(\s*["\']([^"\']*)["\']\s*\)/', $ls, $matches);
 		for($i = 0; $i < count($matches[3]); $i++) $matches[3][$i] = trim($matches[3][$i]);
@@ -270,12 +266,12 @@ class ConsistencyChecker {
 		foreach ($ext_counts as $ext => $freq) {
 			if ($freq > 1) {
 				$errorFound4 = true;
-				print "\n\t[FAILED] double registered extension detected: $ext";
-				if ($repair) print "\n\tCannot repair automatically. Please remove '$ext' manually";
+				$this->statusLog[] = $this->out(array("\n","\t","[FAILED]"," double registered extension detected: $ext"), $format);
+				if ($repair) $this->statusLog[] = $this->out(array("\n","\t","Cannot repair automatically. Please remove '$ext' manually"), $format);
 			}
 		}
 		if (!$errorFound4) {
-			print "\n\tNone.";
+			$this->statusLog[] = $this->out(array("\n","\t","none."), $format);
 		}
 
 		return $errorFound1 || $errorFound2 || $errorFound3 || $errorFound4;
@@ -294,43 +290,29 @@ class ConsistencyChecker {
 		if (in_array("extensions/SemanticRules/includes/SR_Initialize.php", $matches[3])) {
 			if (strpos($ls, "SMWTripleStore") === false) {
 				$errorFound=true;
-				print "\n\t[FAILED] Rule extension installed but no triplestore is active.";
-				if ($repair) print "\n\tCannot activate triplestore automatically. Please take a look in the manual.";
+				$this->statusLog[] = $this->out(array("\n","\t","[FAILED]","Rule extension installed but no triplestore is active."), $format);
+				if ($repair) $this->statusLog[] = $this->out(array("\n","\t","Cannot activate triplestore automatically. Please take a look in the manual."), $format);
 			}
 		}
 	}
 
-	/**
-	 * Callback method. Requests user configs.
-	 * @param has map  $userParams name=>($type, $desc)
-	 * @param hash map $mapping name=>value
-	 */
-	public function getUserReqParams($userParams, & $mapping) {
-		if (count($userParams) == 0) return;
-		print "\n\nRequired parameters:";
-		foreach($userParams as $name => $up) {
-			list($type, $desc) = $up;
-			print "\n$desc\n";
-			print "$name ($type): ";
-			$line = trim(fgets(STDIN));
-			$line = str_replace("\\", "/", $line); // do not allow backslashes
-			$mapping[$name] = $line;
+
+
+	private function out($text, $format) {
+		switch($format) {
+			case DF_OUTPUT_FORMAT_TEXT:
+				return is_array($text) ? implode("", $text) : $text;
+				break;
+			case DF_OUTPUT_FORMAT_HTML:
+				if (is_array($text)) {
+					for($i = 0; $i < count($text); $i++){
+						$text[$i] = str_replace("\n", "<br>", $text[$i]);
+						$text[$i] = str_replace("\t", '<div style="display: inline; margin-left: 10px;"></div>', $text[$i]);
+						$text[$i] = str_replace("[FAILED]", '<span class="df_checkinst_error">[FAILED]</span>', $text[$i]);
+					}
+					return implode("", $text);
+				} else return $text;
+				break;
 		}
-
-	}
-
-	/**
-	 * Callback method. Requests a confirmation by the user.
-	 *
-	 *
-	 * @param string $message
-	 * @param out boolean $result
-	 * @return unknown
-	 */
-	public function getUserConfirmation($message, & $result) {
-
-		print "\n\n$message [ (y)es/(n)o ]";
-		$line = trim(fgets(STDIN));
-		$result = strtolower($line);
 	}
 }

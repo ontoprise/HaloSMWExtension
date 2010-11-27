@@ -18,7 +18,7 @@ require_once('DF_Language.php');
 /**
  * Language abstraction.
  *
- * @author: Kai Kühn / ontoprise / 2009
+ * @author: Kai Kï¿½hn / ontoprise / 2009
  *
  */
 class DF_Language_En extends DF_Language {
@@ -29,7 +29,8 @@ class DF_Language_En extends DF_Language {
 	'df_dependencies'=> 'Dependency',
 	'df_instdir' => 'Installation dir',
 	'df_ontologyvendor' => 'Vendor',
-	'df_description' => 'Description'
+	'df_description' => 'Description',
+	'checkinstallation' => 'Check Installation'
     );
     
 }

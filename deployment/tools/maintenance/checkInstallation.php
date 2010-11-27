@@ -73,11 +73,12 @@ if (isset($help)) {
 
 $cChecker = new ConsistencyChecker($mwRootDir);
 if (isset($onlydep)) {
-	$errorFound = $cChecker->checkDependencies($repair);
+	$errorFound = $cChecker->checkDependencies($repair, DF_OUTPUT_FORMAT_TEXT);
 } else {
-	$errorFound = $cChecker->checkInstallation(isset($repair));
+	$errorFound = $cChecker->checkInstallation(isset($repair), DF_OUTPUT_FORMAT_TEXT);
 }
-
+$statusLog = $cChecker->getStatusLog();
+foreach($statusLog as $s) print $s;
 if ($errorFound) {
  print "\n\nErrors found! See above.\n";
  } else {

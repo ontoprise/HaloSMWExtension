@@ -17,7 +17,7 @@
 /**
  * Language abstraction.
  *
- * @author: Kai Kühn / ontoprise / 2009
+ * @author: Kai Kï¿½hn / ontoprise / 2009
  *
  */
 abstract class DF_Language {
@@ -25,5 +25,9 @@ abstract class DF_Language {
 
 	public function getLanguageString($key) {
 		return $this->language_constants[$key];
+	}
+	
+	public function getLanguageArray() {
+		return $this->language_constants;
 	}
 }
