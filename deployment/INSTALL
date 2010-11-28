@@ -31,7 +31,14 @@ Installation:
   Open the installation directory of the deployment framework in the 
   commandline interface in <mediawiki-install-dir>/deployment/tools/
   and call: smwadmin.bat/sh. You should see the help screen.
-
+  
+(7) This is OPTIONAL!
+    add the following include statement in your LocalSettings.php 
+    
+     require_once('deployment/Deployment.php');
+ 
+    It enables a special page for checking the integrity of the MW installation. 
+    It is NOT required for using the deployment framework.
 
 HowTo use the deployment framework
 ==================================
