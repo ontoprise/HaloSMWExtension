@@ -107,9 +107,9 @@ class TestOntologyBrowserSparql extends PHPUnit_Framework_TestCase {
 
 		// Check the content of the wiki
 		$r = smwf_ob_OntologyBrowserAccess("getAnnotations", "Prius##80##0", $wiki);
-		
+	
 		$this->assertTrue(strpos($r,'title_url="HasPower" title="HasPower"') !== false);
-		$this->assertTrue(strpos($r,'<![CDATA[136.0 ]]>') !== false);
+		$this->assertTrue(strpos($r,'<![CDATA[136 ]]>') !== false);
 
 		$r = smwf_ob_OntologyBrowserAccess("getAnnotations", "Prius-II##80##0", $wiki);
 		$this->assertTrue(strpos($r,'<annotationsList isEmpty="true"') !== false);
