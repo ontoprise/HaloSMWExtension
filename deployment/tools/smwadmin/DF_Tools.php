@@ -64,12 +64,14 @@ class Tools {
 	 * Removes a directory and all its subdirectories.
 	 *
 	 * @param string $current_dir
+	 * @param array directories to exclude
 	 */
-	public static function remove_dir($current_dir) {
+	public static function remove_dir($current_dir, $exclude_dirs = array()) {
 		if (strpos(trim($current_dir), -1) != '/') $current_dir = trim($current_dir)."/";
 		if($dir = @opendir($current_dir)) {
 			while (($f = readdir($dir)) !== false) {
 				if ($f == "." || $f == "..") continue;
+				if (in_array(Tools::normalizePath($current_dir.$f), $exclude_dirs)) continue;
 				if(filetype($current_dir.$f) == "file") {
 					unlink($current_dir.$f);
 				} elseif(filetype($current_dir.$f) == "dir") {
@@ -77,7 +79,7 @@ class Tools {
 				}
 			}
 			closedir($dir);
-			rmdir($current_dir);
+			@rmdir($current_dir); // do not warn cause it may contain excluded files and dirs.
 		}
 	}
 
@@ -162,6 +164,18 @@ class Tools {
 	public static function makeUnixPath($path) {
 		return str_replace("\\", "/", $path);
 	}
+	
+	/**
+	 * Normalizes a path, ie. uses unix file separators (/) and removes a trailing slash.
+	 * 
+	 * @param string $path
+	 * @return string normalized path
+	 */
+    public static function normalizePath($path) {
+    	$path = trim(self::makeUnixPath($path));
+    	$path = (substr($path, -1) == '/') ? substr($path,0, strlen($path)-1) : $path;
+        return $path;
+    }
 
 	/**
 	 * Checks if all needed tools are available.

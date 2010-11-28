@@ -184,7 +184,6 @@ $rollback = Rollback::getInstance($mwrootDir);
 
 
 if ($dfgRestore) {
-	print "Rollback...";
 	$rollback->rollback();
 	die(DF_TERMINATION_WITH_FINALIZE);
 }

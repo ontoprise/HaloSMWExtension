@@ -59,8 +59,10 @@ class Rollback {
 	 */
 	public function saveInstallation() {
 		$this->acquireNewRollback();
+		print "\n[Save installation...";
 		Tools::mkpath($this->tmpDir."/rollback_data/");
 		Tools::copy_dir($this->rootDir, $this->tmpDir."/rollback_data", array($this->rootDir."/deployment"));
+		print "done.]";
 	}
 
 	/**
@@ -78,10 +80,10 @@ class Rollback {
 
 		$savedDataBase = true;
 		$wgDBname = $this->getDatabasename();
-		print "\nSaving database...";
+		print "\n[Saving database...";
 		//print "\nmysqldump -u $wgDBadminuser --password=$wgDBadminpassword $wgDBname > ".$this->tmpDir."/rollback_data/dump.sql";
 		exec("mysqldump -u $wgDBadminuser --password=$wgDBadminpassword $wgDBname > ".$this->tmpDir."/dump.sql", $out, $ret);
-		if ($ret != 0) print "\nWarning: Could not save database for rollback"; else print "done.";
+		if ($ret != 0) print "\nWarning: Could not save database for rollback"; else print "done.]";
 		return $ret == 0;
 	}
 
@@ -100,7 +102,12 @@ class Rollback {
 	 *
 	 */
 	private function restoreInstallation() {
+		print "\n\t[Remove current installation...";
+		Tools::remove_dir($this->rootDir, array(Tools::normalizePath($this->rootDir."/deployment")));
+		print "done.]";
+		print "\n[Restore old installation...";
 		Tools::copy_dir($this->tmpDir."/rollback_data", $this->rootDir);
+		print "\ndone.]";
 	}
 
 	/**
