@@ -58,7 +58,7 @@ class Rollback {
 	 *
 	 */
 	public function saveInstallation() {
-		$this->acquireNewRollback();
+		if (!$this->acquireNewRollback()) return;
 		print "\n[Save installation...";
 		Tools::mkpath($this->tmpDir."/rollback_data/");
 		Tools::copy_dir($this->rootDir, $this->tmpDir."/rollback_data", array($this->rootDir."/deployment"));
@@ -73,7 +73,7 @@ class Rollback {
 	public function saveDatabase() {
 		global $mwrootDir;
 		require_once "$mwrootDir/AdminSettings.php";
-		$this->acquireNewRollback();
+		if (!$this->acquireNewRollback()) return;
 		// make sure to save only once
 		static $savedDataBase = false;
 		if ($savedDataBase) return true;
@@ -113,10 +113,13 @@ class Rollback {
 	/**
 	 * Acquires a new rollback operation. The user has to confirm to
 	 * overwrite exisiting rollback data.
-	 *
+	 * 
+	 * @return boolean True if a rollback should be done.
 	 */
 	private function acquireNewRollback() {
 		static $newRollback = true;
+		static $createRollbackPoint = NULL;
+		if (!is_null($createRollbackPoint)) return $createRollbackPoint;
 		if ($newRollback) { // initialize new rollback
 			$newRollback = false;
 			if (file_exists($this->tmpDir)) {
@@ -124,13 +127,14 @@ class Rollback {
 				$line = trim(fgets(STDIN));
 				if (strtolower($line) == 'n') {
 					print "\n\nDo not create a rollback point.\n\n";
-					return;
+					$createRollbackPoint = false;
+					return false;
 				}
 				Tools::remove_dir($this->tmpDir);
 			}
 			Tools::mkpath($this->tmpDir);
-			$this->saveInstallation();
-
+			$createRollbackPoint=true;
+			return true;
 		}
 	}
 
