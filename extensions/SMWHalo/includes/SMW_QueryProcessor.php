@@ -239,7 +239,7 @@ class SMWQueryProcessor {
 		
 		// make sure the TSC source is selected on the Special:Ask page
 		global $wgTitle;
-		if ( SpecialPage::getTitleFor('Ask')->equals($wgTitle)) {
+		if ( !is_null($wgTitle) && SpecialPage::getTitleFor('Ask')->equals($wgTitle)) {
 		  if (smwfIsTripleStoreConfigured() && !array_key_exists('source', $params)) $params['source'] = "tsc";
 		}
 		
