@@ -166,6 +166,7 @@ var wgUserLanguageStrings = {
 	'AC_CLICK_TO_DRAG'        : 'Auto-Completion - Hier zum Verschieben klicken',
     'AC_MORE_RESULTS_AVAILABLE' : 'Zuviele Treffer gefunden...',
     'AC_MORE_RESULTS_TOOLTIP' : 'Zuviele Treffer. Bitte erweitern Sie die Suchanfrage.',
+    'AC_NO_RESULTS': 'Keine Treffer',
 
 	// Combined search
 	'ADD_COMB_SEARCH_RES'     : 'Zusätzliche Ergebnisse der Combined-Search.',

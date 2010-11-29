@@ -169,6 +169,7 @@ var wgUserLanguageStrings = {
 	'AC_CLICK_TO_DRAG'        : 'Auto-Completion - Klik hier om te slepen',
     'AC_MORE_RESULTS_AVAILABLE' : 'Too much results found...',
     'AC_MORE_RESULTS_TOOLTIP' : 'Too many results. Please expand your search term to get less results.',
+    'AC_NO_RESULTS': 'No results',
     
 	// Combined search
 	'ADD_COMB_SEARCH_RES'     : 'Toegevoegde Combined Search resultaten.',

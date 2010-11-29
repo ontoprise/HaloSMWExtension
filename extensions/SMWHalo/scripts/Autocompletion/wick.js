@@ -354,7 +354,8 @@ AutoCompleter.prototype = {
 
              // stop processing and hide floater if no result
             if (request.responseText.indexOf('noResult') != -1) {
-                this.hideSmartInputFloater();
+            	this.collection = new Array();
+            	this.processSmartInput(inputBox, userInputToMatch);
                 return;
             }
 
@@ -894,10 +895,10 @@ AutoCompleter.prototype = {
         }  //this.siw exists ... uhmkaaayyyyy
     },    //this.setSmartInputData
     getSmartInputBoxContent: function() {
-        var a = null;
+        var a = '';
 
         if (this.siw && this.siw.matchCollection && (this.siw.matchCollection.length > 0)) {
-            a = '';
+            
 
             for (i = 0; i < this.siw.matchCollection.length; i++) {
                 selectedString = this.siw.matchCollection[i].isSelected ? ' selectedSmartInputItem' : '';
@@ -910,7 +911,9 @@ AutoCompleter.prototype = {
                     + '<span class="extraDataSmartInputItem">'+this.siw.matchCollection[i].getExtraData()+'</span></p>';
             }  //
             if (this.siw.matchCollection.length == this.acMaxMatches) a+='<div id="ac_toomuchresults" title="'+gLanguage.getMessage('AC_MORE_RESULTS_TOOLTIP')+'">[...] '+gLanguage.getMessage('AC_MORE_RESULTS_AVAILABLE')+'</div>';
-        }     //this.siw exists
+        } else if (this.siw && this.siw.matchCollection && (this.siw.matchCollection.length == 0)) {
+        	a+='<div id="ac_toomuchresults" title="'+gLanguage.getMessage('AC_NO_RESULTS')+'">'+gLanguage.getMessage('AC_NO_RESULTS')+'</div>';
+        }
 
         return a;
     },        //this.getSmartInputBoxContent
