@@ -14,6 +14,11 @@ Requirements:
 =============
 
 	MediaWiki 1.16.0 see installation guide: http://www.mediawiki.org/wiki/Manual:Installation_guide)
+	
+Compatibility information:
+	Semantic MediaWiki 1.5.2
+	Halo extension 1.5.2	
+	
 
 Installation:
 =============
