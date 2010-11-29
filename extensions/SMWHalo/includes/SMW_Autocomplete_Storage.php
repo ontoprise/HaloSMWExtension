@@ -815,25 +815,25 @@ class AutoCompletionStorageTSC extends AutoCompletionStorageSQL2 {
 			}
 			$response = $client->query("SELECT DISTINCT ?s WHERE { $filter }",  "limit=".SMW_AC_MAX_RESULTS);
 		}
-
 		$result = $this->parseSPARQLResults($response);
+       
 		
 		return $result;
 	}
 
 	protected function parseSPARQLResults($response) {
 		$dom = simplexml_load_string($response);
-
+        $dom->registerXPathNamespace("sparqlxml", "http://www.w3.org/2005/sparql-results#");
 		$result = array();
-		$results = $dom->xpath('//result');
+		$results = $dom->xpath('//sparqlxml:result');
 		foreach ($results as $r) {
 
 			$children = $r->children(); // binding nodes
 			$b = $children->binding[0]; // predicate
 
 			$sv = $b->children()->uri[0];
-			if (!is_null($sv) && $sv !== '') {
 			
+			if (!is_null($sv) && $sv !== '') {
 				$title = TSHelper::getTitleFromURI((string) $sv);
 				if (is_null($title)) {
 					

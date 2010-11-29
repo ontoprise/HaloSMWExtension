@@ -187,6 +187,7 @@ function &smwfGetAutoCompletionStore() {
 		switch ($smwgDefaultStore) {
 
 			case ('SMWTripleStore'):
+			case ('SMWTripleStoreQuad'):
 				global $smwhgAutoCompletionTSC;
 				if (isset($smwhgAutoCompletionTSC) && $smwhgAutoCompletionTSC === true) {
 					// activate TSC autocompletion only explicitly
