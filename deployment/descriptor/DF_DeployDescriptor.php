@@ -20,10 +20,10 @@ require_once ('DF_DeployDescriptorProcessor.php');
 /**
  * @file
  * @ingroup DFDeployDescriptor
- * 
+ *
  * @defgroup DFDeployDescriptor Deploy Descriptor
  * @ingroup DeployFramework
- * 
+ *
  * This class works as a parser of the general
  * description of a deployable entity (aka deploy descriptor).
  *
@@ -59,20 +59,20 @@ class DeployDescriptor {
 	var $resources_xml;
 	var $resources_onlycopyxml;
 	var $mappings_xml;
-	
+
 	// last errors on applying  configurations
 	var $lastErrors;
-	
-	
+
+
 	/**
-	 * Creates a DeployDescriptor from an XML representation. 
-	 * 
+	 * Creates a DeployDescriptor from an XML representation.
+	 *
 	 * @param $xml XML representation
 	 * @param $fromVersion Use the configuration from this version, otherwise use the 'new' configuration is used
 	 * 			ie. if an extension is newly installed.
 	 * @param $fromPatchlevel  Use the configuration from this patchlevel, otherwise use the patchlevel 0 is used
 	 * 			ie. if an extension is newly installed.
-	 * 
+	 *
 	 */
 	function __construct($xml, $fromVersion = NULL, $fromPatchlevel = NULL) {
 
@@ -109,7 +109,7 @@ class DeployDescriptor {
 	public function getConfigs() {
 		return $this->configs;
 	}
-	
+
 	/**
 	 * True if the selected configuration requires to remove all configuration items
 	 * before they are applied.
@@ -118,7 +118,7 @@ class DeployDescriptor {
 	public function doRemoveAllConfigs() {
 		return $this->removeAllConfigs;
 	}
-	
+
 	/**
 	 * Returns installation scripts with parameters.
 	 * @return Array of hash array ('script'=>$script, 'params'=>$params)
@@ -126,7 +126,7 @@ class DeployDescriptor {
 	public function getInstallScripts() {
 		return $this->install_scripts;
 	}
-	
+
 	/**
 	 * Returns uninstallation scripts with parameters.
 	 * @return Array of hash array ('script'=>$script, 'params'=>$params)
@@ -175,7 +175,7 @@ class DeployDescriptor {
 				// should work, otherwise the dd is false.
 				return;
 			}
-			
+				
 			if (isset($update[0]->attributes()->removeAll)) {
 				$this->removeAllConfigs = true;
 			}
@@ -265,7 +265,7 @@ class DeployDescriptor {
 			}
 		}
 	}
-	
+
 	/**
 	 * Returns values which must be provided by the user.
 	 * @return hash array ($nameConfigElement => array($type, $description))
@@ -279,7 +279,7 @@ class DeployDescriptor {
 	function getVersion() {
 		return trim((string) $this->globalElement[0]->version);
 	}
-	
+
 	/**
 	 * Returns patchlevel
 	 * @return int
@@ -288,7 +288,7 @@ class DeployDescriptor {
 		$patchlevel = trim((string) $this->globalElement[0]->patchlevel);
 		return empty($patchlevel) ? 0 : intval($patchlevel);
 	}
-	
+
 	/**
 	 * Returns ID (always lowercase)
 	 * @return string
@@ -296,7 +296,7 @@ class DeployDescriptor {
 	function getID() {
 		return strtolower(trim((string) $this->globalElement[0]->id));
 	}
-	
+
 	/**
 	 * Returns vendor
 	 * @return string
@@ -304,7 +304,7 @@ class DeployDescriptor {
 	function getVendor() {
 		return trim((string) $this->globalElement[0]->vendor);
 	}
-	
+
 	/**
 	 * Returns maintainer (which is optional)
 	 * @return string
@@ -313,7 +313,7 @@ class DeployDescriptor {
 		// maintainer is optional
 		return isset($this->globalElement[0]->maintainer) ? trim((string) $this->globalElement[0]->maintainer) : '';
 	}
-	
+
 	/**
 	 * Returns help URL (which is optional)
 	 * @return string
@@ -322,16 +322,16 @@ class DeployDescriptor {
 		// helpurl is optional
 		return isset($this->globalElement[0]->helpurl) ? trim((string) $this->globalElement[0]->helpurl) : '';
 	}
-	
-    /**
-     * Get notice (which is optional). It is displayed at the end of an installation operation.
-     * @return string
-     */
-    function getNotice() {
-        // helpurl is optional
-        return isset($this->globalElement[0]->notice) ? trim((string) $this->globalElement[0]->notice) : '';
-    }
-	
+
+	/**
+	 * Get notice (which is optional). It is displayed at the end of an installation operation.
+	 * @return string
+	 */
+	function getNotice() {
+		// helpurl is optional
+		return isset($this->globalElement[0]->notice) ? trim((string) $this->globalElement[0]->notice) : '';
+	}
+
 	/**
 	 * Returns installation directory.
 	 * @return string
@@ -339,7 +339,7 @@ class DeployDescriptor {
 	function getInstallationDirectory() {
 		return trim((string) $this->globalElement[0]->instdir);
 	}
-	
+
 	/**
 	 * Returns the extension's description.
 	 * @return string
@@ -347,7 +347,7 @@ class DeployDescriptor {
 	function getDescription() {
 		return trim((string) $this->globalElement[0]->description);
 	}
-	
+
 	/**
 	 * Returns dependant extensions
 	 * @return Array of ($ext_id, $minVersion, $maxVersion)
@@ -369,7 +369,7 @@ class DeployDescriptor {
 		}
 		return $this->dependencies;
 	}
-	
+
 	/**
 	 * Returns the dependency of the given extension.
 	 * @param $ext_id Extension ID
@@ -384,7 +384,7 @@ class DeployDescriptor {
 		}
 		return NULL;
 	}
-	
+
 	/**
 	 * Checks if $ext_id exists as dependecy
 	 * @param $ext_id Extension ID
@@ -397,7 +397,7 @@ class DeployDescriptor {
 	/**
 	 * Returns patches which are suitable for the given local packages.
 	 *
-	 * @param $localPackages array of DeployDescriptor 
+	 * @param $localPackages array of DeployDescriptor
 	 * @return array of string (patch file paths)
 	 */
 	function getPatches($localPackages) {
@@ -443,11 +443,11 @@ class DeployDescriptor {
 		}
 		return $patches;
 	}
-	
+
 	/**
-	 * Returns locations of files explicitly marked as codefiles in the deploy descriptor (relative paths). 
+	 * Returns locations of files explicitly marked as codefiles in the deploy descriptor (relative paths).
 	 * It can be a directory or a single file.
-	 * 
+	 *
 	 * @return array of string
 	 */
 	function getCodefiles() {
@@ -460,7 +460,7 @@ class DeployDescriptor {
 		}
 		return $this->codefiles;
 	}
-	
+
 	/**
 	 * Returns the location of wiki dump files (relative paths)
 	 * @return array of string
@@ -473,27 +473,27 @@ class DeployDescriptor {
 		}
 		return $this->wikidumps;
 	}
-	
-    /**
-     * Returns the location of mappings (relative paths)
-     * @return array of string
-     */
-    function getMappings() {
-        if (!is_null($this->mappings)) return $this->mappings;
-        $this->mappings = array();
-        foreach($this->mappings_xml as $file) {
-            $loc = (string) $file->attributes()->loc;
-            $source = (string) $file->attributes()->source;
-            $target = (string) $file->attributes()->target;
-            if (!isset($this->mappings[$source])) {
-            	$this->mappings[$source] = array();
-            }
-            $this->mappings[$source][] = array($loc, $target);
-           
-        }
-        return $this->mappings;
-    }
-	
+
+	/**
+	 * Returns the location of mappings (relative paths)
+	 * @return array of string
+	 */
+	function getMappings() {
+		if (!is_null($this->mappings)) return $this->mappings;
+		$this->mappings = array();
+		foreach($this->mappings_xml as $file) {
+			$loc = (string) $file->attributes()->loc;
+			$source = (string) $file->attributes()->source;
+			$target = (string) $file->attributes()->target;
+			if (!isset($this->mappings[$source])) {
+				$this->mappings[$source] = array();
+			}
+			$this->mappings[$source][] = array($loc, $target);
+			 
+		}
+		return $this->mappings;
+	}
+
 	/**
 	 * Returns the location of resource files (relative paths)
 	 * @return array of string
@@ -507,7 +507,7 @@ class DeployDescriptor {
 		}
 		return $this->resources;
 	}
-	
+
 	/**
 	 * Returns the location of resource files (relative paths) which get only copied but not imported.
 	 * @return hash array of ($location => $destination)
@@ -523,7 +523,7 @@ class DeployDescriptor {
 		}
 		return $this->oc_resources;
 	}
-	
+
 	/**
 	 * Extracts config elements which are marked as user requirements.
 	 * @param $child
@@ -571,7 +571,7 @@ class DeployDescriptor {
 
 	}
 	/**
-	 * Validates the code files. Calculates MD5 hashes over all codefiles and compares 
+	 * Validates the code files. Calculates MD5 hashes over all codefiles and compares
 	 * to a MD5 checksum. (attribute 'hash' of codefiles node)
 	 *
 	 * @return boolean. True if all files are valid, otherwise false.
@@ -633,24 +633,24 @@ class DeployDescriptor {
 		}
 
 		$dp = new DeployDescriptionProcessor($rootDir.'/LocalSettings.php', $this);
-		
+
 		print "\n[Configure LocalSettings.php...";
 		$content = $dp->applyLocalSettingsChanges($userCallback, $this->getUserRequirements(), $dryRun);
 		print "done.]";
-		
+
 		if (!$dryRun) {
-			print "\n[Applying patches...";
+				
 			$dp->applyPatches($userCallback);
-			print "done.]";	
+				
 		}
-		
+
 		$this->lastErrors = $dp->getErrorMessages();
 		return $content; // return for testing purposes.
 	}
-	
+
 	/**
 	 * Applies the setup script(s)
-	 * 
+	 *
 	 * @param $dryRun If true, nothing gets actually changed or asked.
 	 */
 	function applySetups($rootDir, $dryRun = false) {
@@ -669,10 +669,10 @@ class DeployDescriptor {
 		$dp = new DeployDescriptionProcessor($rootDir.'/LocalSettings.php', $this);
 		$dp->unapplyPatches();
 		$content = $dp->unapplyLocalSettingsChanges();
-        $this->lastErrors = $dp->getErrorMessages();
+		$this->lastErrors = $dp->getErrorMessages();
 		return $content; // return for testing purposes.
 	}
-	
+
 	/**
 	 * Unapplies the setup scripts
 	 * @param $rootDir
@@ -681,10 +681,10 @@ class DeployDescriptor {
 		$dp = new DeployDescriptionProcessor($rootDir.'/LocalSettings.php', $this);
 		$dp->unapplySetups();
 	}
-	
+
 	/**
 	 * Returns last errors occured on applyConfigurations or unapplyConfigurations
-	 * 
+	 *
 	 * @return array of string
 	 */
 	function getLastErrors() {

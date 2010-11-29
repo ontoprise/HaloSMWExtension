@@ -539,7 +539,7 @@ class Installer {
 	 */
 	private function unzip($id, $version) {
 
-		print "\n[unzip ".$id."-$version.zip";
+		print "\n[unzip ".$id."-$version.zip...";
 		if (Tools::isWindows()) {
 			exec('unzip -o '.$this->tmpFolder."\\".$id."-$version.zip -d ".$this->rootDir);
 		} else {
