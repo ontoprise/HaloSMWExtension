@@ -1003,7 +1003,11 @@ function smwfAnnotateTab ($content_actions) {
 	global $wgUser, $wgTitle,  $wgRequest;
 	global $wgTitle;
 
-	wfRunHooks('userCan', array(&$wgTitle, &$wgUser, "annotate", &$allowed));
+	$allowed = $wgUser->isAllowed('annotate');
+	if ($allowed) {
+		// Other extensions may prohibit the annotate action
+		wfRunHooks('userCan', array(&$wgTitle, &$wgUser, "annotate", &$allowed));
+	}
 	if (!$allowed) {
 		return true;
 	}
