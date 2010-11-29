@@ -108,6 +108,8 @@
 			<arg value="--js=../../HaloACL/scripts/autoCompleter.js" />
 			<arg value="--js=../../HaloACL/scripts/notification.js" />
 			<arg value="--js=../../HaloACL/scripts/quickaclTable.js" />
+			<arg value="--js=../../HaloACL/scripts/HACL_GroupPermission.js" />
+			<arg value="--js=../../HaloACL/scripts/HACL_GroupTree.js" />
             <arg value="--js_output_file=../../HaloACL/scripts/specialhacl-packed_custom.js" />
 		</java>
 		<concat destfile="../../HaloACL/scripts/specialhacl-packed.js">
@@ -130,6 +132,7 @@
 			<fileset dir="../../HaloACL/yui" includes="container-min.js" />
 			<fileset dir="../../HaloACL/yui" includes="dragdrop-min.js" />
 			<fileset dir="../../HaloACL/yui" includes="autocomplete-min.js" />
+			<fileset dir="../../HaloACL/scripts/jsTree.v.0.9.9a" includes="jquery.tree.min.js" />
             <fileset dir="../../HaloACL/scripts" includes="specialhacl-packed_custom.js" />
         </concat>
         <delete file="../../HaloACL/scripts/specialhacl-packed_custom.js" />
