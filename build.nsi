@@ -122,7 +122,7 @@ Var MUI_TEMP
 !insertmacro MUI_DEFAULT MUI_LICENSEPAGE_TEXT_TOP "License agreement of third party components"
 !insertmacro MUI_PAGE_LICENSE "..\..\..\Internal__SMWPlusInstaller_and_XAMPP\workspace\SMWPlusInstaller\thirdparty.txt"
 !define MUI_PAGE_CUSTOMFUNCTION_SHOW initComponentsPage
-!define MUI_PAGE_CUSTOMFUNCTION_LEAVE checkForNeededProcess
+!define MUI_PAGE_CUSTOMFUNCTION_LEAVE checkForAlreadyRunningProcess
 !insertmacro MUI_PAGE_COMPONENTS
 
 !define MUI_PAGE_CUSTOMFUNCTION_PRE preDirectory
@@ -495,7 +495,7 @@ LangString LUCENE_PAGE_SUBTITLE ${LANG_ENGLISH} "Set your IP if possible"
 
 LangString SELECT_XAMPP_DIR ${LANG_ENGLISH} "Select an empty directory where to install XAMPP and the wiki."
 LangString SELECT_NEWUPDATE_DIR ${LANG_ENGLISH} "Select an existing installation to update."
-LangString START_SERVERS ${LANG_ENGLISH} "To update your installation to ${PRODUCT} ${VERSION} please start Apache web server $\nand MySQL database management system. $\nIf you have a previous installation of SMW+ on this server, then you $\nwill find a short cut on the desktop named 'SMW+ 1.x Start'. $\nDouble clicking this short cut launches Apache and MySQL."
+LangString STARTED_SERVERS ${LANG_ENGLISH} "There are already running instances of Apache and MySQL. You MUST stop them before continuing with the installation."
 LangString COULD_NOT_START_SERVERS ${LANG_ENGLISH} "Apache and MySQL could not be started for some reason. Installation may not be complete!"
 LangString FIREWALL_COMPLAIN_INFO ${LANG_ENGLISH} "Windows firewall may block the apache and mySQL processes. $\n If this is the case with your installation, then unblock both processes in the pop-up windows $\n and click on 'OK' to finish the installation process."
 
@@ -521,25 +521,25 @@ Function preDirectory
   ${EndIf}
 FunctionEnd
 
-Function checkForNeededProcess
+Function checkForAlreadyRunningProcess
   SectionGetFlags ${xampp} $0
   IntOp $0 $0 & ${SF_SELECTED}
-  ${If} $0 == 0
+  ${If} $0 == 1
     CALL checkForApacheAndMySQL
   ${EndIf}
 FunctionEnd
 
 Function checkForApacheAndMySQL
  checkagain:
-   FindProcDLL::FindProc "apache.exe"
+   FindProcDLL::FindProc "httpd.exe"
    IntOp $0 0 + $R0
    FindProcDLL::FindProc "mysqld.exe"
    IntOp $1 0 + $R0
    FindProcDLL::FindProc "mysqld-nt.exe"
    IntOp $1 $1 + $R0
-   ${If} $0 == 0
-   ${OrIf} $1 == 0
-    MessageBox MB_ICONEXCLAMATION|MB_OKCANCEL $(START_SERVERS) IDOK 0 IDCANCEL skipCheck
+   ${If} $0 == 1
+   ${OrIf} $1 == 1
+    MessageBox MB_ICONEXCLAMATION|MB_OKCANCEL $(STARTED_SERVERS) IDOK 0 IDCANCEL skipCheck
     goto checkagain
    ${EndIf}
    goto out
@@ -695,7 +695,7 @@ Function changeConfigForFullXAMPP
     CALL configCustomizationsForNew
 FunctionEnd
 
-
+; deprecated
 Function changeConfigForSMWPlusUpdate
     
     CALL checkForApacheAndMySQL
