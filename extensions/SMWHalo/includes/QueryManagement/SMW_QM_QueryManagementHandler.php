@@ -369,8 +369,11 @@ class SMWQMQueryManagementHandler {
 		
 		foreach ($printRequests as $printRequest) {
 			if ($printRequest->getMode() == SMWPrintRequest::PRINT_THIS) {
-				$propertyName = $printRequest->getData()->getText();
-				$properties[$propertyName] = true;  
+				$propertyName = $printRequest->getData();
+				if(!is_null($propertyName)){
+					$propertyName = $propertyName->getText();
+					$properties[$propertyName] = true;
+				}  
 			} else if ($printRequest->getMode() == SMWPrintRequest::PRINT_PROP){
 				$propertyName = $printRequest->getData()->getWikiPageValue()->getText();
 				$properties[$propertyName] = true;
