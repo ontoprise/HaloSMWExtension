@@ -186,7 +186,6 @@ function &smwfGetAutoCompletionStore() {
 		global $smwgDefaultStore;
 		switch ($smwgDefaultStore) {
 
-			case ('SMWTripleStore'):
 			case ('SMWTripleStoreQuad'):
 				global $smwhgAutoCompletionTSC;
 				if (isset($smwhgAutoCompletionTSC) && $smwhgAutoCompletionTSC === true) {
@@ -196,6 +195,7 @@ function &smwfGetAutoCompletionStore() {
 					$smwhgAutoCompletionStore = new AutoCompletionStorageSQL2();
 				}
 				break;
+			case ('SMWTripleStore'): // do not search in TSC because wiki and TSC are synchronous
 			case ('SMWHaloStore2'):
 			default:
 				$smwhgAutoCompletionStore = new AutoCompletionStorageSQL2();
