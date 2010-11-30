@@ -39,7 +39,7 @@ How to install manually:
 	include_once('extensions/HaloACL/includes/HACL_Initialize.php');
 	enableHaloACL(); 
 (5) Open a command prompt
-(6) Go to the directory of HaloACL
+(6) Go to the directory of HaloACL 
 (7) Choose the command depending on your MediaWiki installation to patch MediaWiki:
 		- MediaWiki 1.13.2
 		   php patch.php -d <mediawiki-dir> -p patch_for_MW_1.13.2.txt
@@ -95,7 +95,7 @@ Testing your Installation
 =========================
 
 Go to the Special:Version page and you should see HaloACL (Version nn) listed under Other. 
-Go to the Special:Halo Access Control List to start defining access control lists.
+Go to the Special:HaloACL to start defining access control lists.
 
 Options:
 ========
