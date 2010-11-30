@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+
+<project name="test AutomaticSemanticForms" default="testAll">
+	<target name="testAll" description="runs all the tests">
+		<!-- <ant antfile="basicTests.xml"/> -->
+	</target>
+</project>
