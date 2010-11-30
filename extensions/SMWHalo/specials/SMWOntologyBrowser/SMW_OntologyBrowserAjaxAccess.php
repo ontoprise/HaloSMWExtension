@@ -250,6 +250,13 @@ class OB_Storage {
 			return $browserFilter->filterForProperties($hint);
 		}
 	}
+	
+	protected function createErrorMessage($errorCode, $errorMessage) {
+		return "<?xml version='1.0' encoding='UTF-8'?><errorMessage>".
+		"<errorCode>$errorCode</errorCode>".
+		"<errorMessage>$errorMessage</errorMessage>".
+		"</errorMessage>";
+	}
 
 }
 
@@ -311,6 +318,7 @@ class OB_StorageTS extends OB_Storage {
 	}
 
 	public function getInstance($p_array) {
+		
 		global $wgServer, $wgScript, $smwgWebserviceUser, $smwgWebservicePassword, $smwgDeployVersion;
 		$client = TSConnection::getConnector();
 		$client->connect();
@@ -336,7 +344,8 @@ class OB_StorageTS extends OB_Storage {
 
 
 		} catch(Exception $e) {
-			return "Internal error: ".$e->getMessage();
+			global $smwgWebserviceEndpoint;
+			return $this->createErrorMessage($e->getCode(), "Error accessing the TSC at $smwgWebserviceEndpoint");
 		}
 
 		return SMWOntologyBrowserXMLGenerator::encapsulateAsInstancePartition($titles, $limit, $partition);
@@ -460,7 +469,8 @@ class OB_StorageTS extends OB_Storage {
 
 
 		} catch(Exception $e) {
-			return "Internal error: ".$e->getMessage();
+			global $smwgWebserviceEndpoint;
+            return $this->createErrorMessage($e->getCode(), "Error accessing the TSC at $smwgWebserviceEndpoint");
 		}
 
 		return SMWOntologyBrowserXMLGenerator::encapsulateAsAnnotationList($annotations, Title::newFromText("dummy"));
@@ -548,7 +558,8 @@ class OB_StorageTS extends OB_Storage {
 			$this->parseInstances($response, $titles, NULL);
 
 		} catch(Exception $e) {
-			return "Internal error: ".$e->getMessage();
+			global $smwgWebserviceEndpoint;
+            return $this->createErrorMessage($e->getCode(), "Error accessing the TSC at $smwgWebserviceEndpoint");
 		}
 
 		$propertyName_xml = str_replace( array('"'),array('&quot;'),$propertyName);
@@ -574,7 +585,8 @@ class OB_StorageTS extends OB_Storage {
 
 
 		} catch(Exception $e) {
-			return "Internal error: ".$e->getMessage();
+			global $smwgWebserviceEndpoint;
+            return $this->createErrorMessage($e->getCode(), "Error accessing the TSC at $smwgWebserviceEndpoint");
 		}
 
 		$browserFilter = new SMWOntologyBrowserFilter();
@@ -650,7 +662,8 @@ class OB_StorageTS extends OB_Storage {
 
 
 		} catch(Exception $e) {
-			return "Internal error: ".$e->getMessage();
+			global $smwgWebserviceEndpoint;
+            return $this->createErrorMessage($e->getCode(), "Error accessing the TSC at $smwgWebserviceEndpoint");
 		}
 
 		// do not show partitions. 1000 instances is maximum here.
@@ -797,7 +810,8 @@ class OB_StorageTSQuad extends OB_StorageTS {
 
 
 		} catch(Exception $e) {
-			return "Internal error: ".$e->getMessage();
+			global $smwgWebserviceEndpoint;
+            return $this->createErrorMessage($e->getCode(), "Error accessing the TSC at $smwgWebserviceEndpoint");
 		}
 
 		return SMWOntologyBrowserXMLGenerator::encapsulateAsAnnotationList($annotations, Title::newFromText("dummy"));
@@ -826,7 +840,8 @@ class OB_StorageTSQuad extends OB_StorageTS {
 			$this->parseInstances($response, $titles, NULL);
 
 		} catch(Exception $e) {
-			return "Internal error: ".$e->getMessage();
+			global $smwgWebserviceEndpoint;
+            return $this->createErrorMessage($e->getCode(), "Error accessing the TSC at $smwgWebserviceEndpoint");
 		}
 			
 		$propertyURI = str_replace( array('"'),array('&quot;'),$propertyURI);
@@ -852,7 +867,8 @@ class OB_StorageTSQuad extends OB_StorageTS {
 
 
 		} catch(Exception $e) {
-			return "Internal error: ".$e->getMessage();
+			global $smwgWebserviceEndpoint;
+            return $this->createErrorMessage($e->getCode(), "Error accessing the TSC at $smwgWebserviceEndpoint");
 		}
 
 		$browserFilter = new SMWOntologyBrowserFilter();
@@ -899,7 +915,8 @@ class OB_StorageTSQuad extends OB_StorageTS {
 
 
 		} catch(Exception $e) {
-			return "Internal error: ".$e->getMessage();
+			global $smwgWebserviceEndpoint;
+            return $this->createErrorMessage($e->getCode(), "Error accessing the TSC at $smwgWebserviceEndpoint");
 		}
 
 		// do not show partitions. 1000 instances is maximum here.

@@ -51,6 +51,11 @@
 		** ** Model "treeview" ** ** This model transforms an XML treeview
 		into an html treeview **
 	-->
+	<xsl:template match="errorMessage">
+	   <br/>ErrorCode: <xsl:value-of select="errorCode"/>
+	   <br/>ErrorMessage: <xsl:value-of select="errorMessage"/>
+	</xsl:template>
+	
 	<xsl:template match="result">
 		<xsl:choose>
 			<xsl:when test="not (@isEmpty)">
