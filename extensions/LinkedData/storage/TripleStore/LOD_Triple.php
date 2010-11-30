@@ -137,7 +137,7 @@ class  LODTriple  {
 		return array(
 			$this->getPrefix($this->mSubject),
 			$this->getPrefix($this->mPredicate),
-			$this->getPrefix($this->mObject),
+			$this->isObjectLiteral() ? "" : $this->getPrefix($this->mObject),
 			$this->getPrefix($this->mType),
 			
 		);
