@@ -76,8 +76,9 @@ class  LODNonExistingPage extends Article {
 		parent::view();
 		$this->mArticleID = 0;
 		
-		global $wgOut;
-		$wgOut->addScript('<script type="text/javascript">var wgHideSemanticToolbar = true;</script>');
+		// We do not want to show the Semantic Toolbar on non-existing pages
+		global $wgHooks;
+		$wgHooks['MakeGlobalVariablesScript'][] = "LODNonExistingPage::hideSemanticToolbar";
 	}
 	
 	/**
@@ -140,6 +141,18 @@ class  LODNonExistingPage extends Article {
 
 		return $text;
 		
+	}
+	
+	/**
+	 * We do not want to show the Semantic Toolbar on non-existing pages. Add a
+	 * global javascript variable that suppresses the STB.
+	 * @param $vars
+	 * 		This array of global variables is enhanced with "wgHideSemanticToolbar"
+	 */
+	public static function hideSemanticToolbar(&$vars) {
+		$vars['wgHideSemanticToolbar'] = true;
+		
+		return true;
 	}
 
 	//--- Private methods ---
