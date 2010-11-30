@@ -4,15 +4,22 @@
 global $smwgDIIP;
 require_once($smwgDIIP . '/specials/TermImport/SMW_IDAL.php');
 
-//$dal = new DALReadSPARQLXML();
-//$res = $dal->getProperties(null, null);
-//echo('<pre>'.$res.'</pre>');
-//error();
+define('DAL_SXML_RET_ERR_START',
+			'<?xml version="1.0"?>'."\n".
+			'<ReturnValue xmlns="http://www.ontoprise.de/smwplus#">'."\n".
+    		'<value>false</value>'."\n".
+    		'<message>');
+
+define('DAL_SXML_RET_ERR_END',
+			'</message>'."\n".
+    		'</ReturnValue>'."\n");
+
 
 class DALReadSPARQLXML implements IDAL {  
 	
 	private $queryResult;
 	private $queryResultColumns;
+	private $errorMSG;
 
 	
 	public function getSourceSpecification() {
@@ -23,7 +30,7 @@ class DALReadSPARQLXML implements IDAL {
 			'<?xml version="1.0"?>'."\n".
 			'<DataSource xmlns="http://www.ontoprise.de/smwplus#">'."\n".
 			' 	<endpoint display="URL:" type="text" size="56"></endpoint>'."\n".
-			' 	<query display="Query:" type="textarea" cols="70" rows="10"></query>'."\n".
+			' 	<query display="Query:" type="textarea" cols="70" rows="10 	"></query>'."\n".
 			'</DataSource>'."\n";
 	}
 	
@@ -35,8 +42,7 @@ class DALReadSPARQLXML implements IDAL {
 		$importSets = '';
 		if (!$this->readContent($endPointName, $query)
 				|| count($this->queryResultColumns) == 0) {
-			error();
-			//todo: error handling
+			return $this->errorMSG;;
 		}
 		
 		$importSetLabel = '';
@@ -75,8 +81,7 @@ class DALReadSPARQLXML implements IDAL {
 		$importSets = '';
 		if (!$this->readContent($endPointName, $query)
 				|| count($this->queryResultColumns) == 0) {
-			error();
-			//todo: error handling
+			return $this->errorMSG;
 		}
 		
 		$properties = '';
@@ -111,7 +116,10 @@ class DALReadSPARQLXML implements IDAL {
 	private function createTerms($dataSourceSpec, $importSet, $inputPolicy, $createTermList) {
 		$endPointURI = $this->getEndpointURIFromSourceSpec($dataSourceSpec);
 		$query = $this->getQueryFromSourceSpec($dataSourceSpec);
-		$this->readContent($endPointURI, $query);
+		
+		if(!$this->readContent($endPointURI, $query)){
+			return $this->errorMSG;
+		}
 		
 		$importSets = $this->parseImportSets($importSet);
 		$inputPolicy = $this->parseInputPolicy($inputPolicy);
@@ -176,6 +184,10 @@ class DALReadSPARQLXML implements IDAL {
 	
 	private function readContent($endPointURI, $query){
 		
+		if(!is_null($this->errorMSG)){
+			return false;
+		}
+		
 		if(is_array($this->queryResult)){
 			//query already processed
 			return true;
@@ -188,7 +200,12 @@ class DALReadSPARQLXML implements IDAL {
 		
 		//todo add error handling
 		
-		//file_put_contents("d://call-res.rtf", $endPointURI."\n\n".$query."\n\n".print_r($result, true));
+		file_put_contents("d://call-res.rtf", $endPointURI."\n\n".$query."\n\n".print_r($result, true));
+		
+		if(!is_array($result['result'])){
+			$this->errorMSG = DAL_SXML_RET_ERR_START.'No results could be retrieved from the SPARQL endpoint.'.DAL_SXML_RET_ERR_END;
+			return false;
+		}
 		
 		$this->queryResultColumns = array();
 		foreach($result['result']['variables'] as $column){
