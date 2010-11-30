@@ -46,7 +46,7 @@ Index: includes/Namespace.php
 +		// original content is located in else statement.
 +		global $smwgEnableRichMedia;
 +		if( $smwgEnableRichMedia ) {
-+			RMNamespace::isImage( $index, &$rMresult );
++			RMNamespace::isImage( $index, $rMresult );
 +			return !( $index < NS_MAIN || ($rMresult && !$wgAllowImageMoving) );
 +		} else {
 +			return !( $index < NS_MAIN || ($index == NS_FILE && !$wgAllowImageMoving) );
