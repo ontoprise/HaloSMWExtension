@@ -453,8 +453,8 @@ class DALReadTIXML implements IDAL {
 		}
 
 		$impSetIdx = array_key_exists('ImportSet', $indexMap)
-		? $indexMap['ImportSet']
-		: null;
+			? $indexMap['ImportSet']
+			: null;
 
 		for ($i = 1; $i < $len; ++$i) {
 			$impSet = ($impSetIdx === null) ? null

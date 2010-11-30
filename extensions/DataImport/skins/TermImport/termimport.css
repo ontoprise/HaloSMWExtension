@@ -85,6 +85,7 @@ a:hover {text-decoration:underline; cursor: pointer; cursor: hand;}
 	width: 390px;	
 	float: left;
 	height: 360px;
+	border: 1;
 }
 #top-container #source-speci #fileinput{
 	border: 1px solid #AAAAAA;

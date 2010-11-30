@@ -214,24 +214,44 @@ TermImportPage.prototype = {
 					var attrib_type = datasource.getAttribute('type');
 				}
 				if (attrib_display) {
-					// check type
+					var size = "25";
+					var rows = "5";
+					var cols = "5ß";
+					
+					if(datasource.getAttribute('size')){
+						size = datasource.getAttribute('size');
+					}
+					if(datasource.getAttribute('rows')){
+						rows = datasource.getAttribute('rows');
+					}
+					if(datasource.getAttribute('cols')){
+						cols = datasource.getAttribute('cols');
+					}
+					
 					if (attrib_type == "file") {
 						response += "<tr><td>"
 								+ attrib_display
 								+ "</td><td><input name=\"source\" id=\""
 								+ attrib_display
-								+ "\" class=\"inputfield\" type=\"file\" size=\"25\" maxlength=\"100\" value=\""
-								+ datasource.textContent + "\">" + "</td></tr>";
+								+ "\" class=\"inputfield\" type=\"file\" size=\""+ size + "\" maxlength=\"100\" value=\""
+								+ datasource.textContent + "\"/>" + "</td></tr>";
 					} else if(attrib_type == "checkbox"){
 						response += "<tr><td>"
 							+ attrib_display
 							+ "</td><td><input name=\"source\" id=\""
 							+ attrib_display
-							+ "\" class=\"inputfield\" type=\"" + attrib_type + "\" size=\"25\" maxlength=\"100\" checked=\""
-							+ datasource.textContent + "\"></td></tr>";
+							+ "\" class=\"inputfield\" type=\"" + attrib_type + "\"  maxlength=\"100\" checked=\""
+							+ datasource.textContent + "\"/></td></tr>";
+					} else if (attrib_type == "textarea") {
+						response += "<tr><td style=\"vertical-align:top\">"
+							+ attrib_display
+							+ "</td><td><textarea name=\"source\" type=\"text\" id=\""
+							+ attrib_display
+							+ "\" class=\"inputfield\" rows=\"" + rows + "\" cols=\"" + cols + "\" value=\""
+							+ datasource.textContent + "\"></textarea>" + "</td></tr>";
 					} else {
 						//original class was inputfield
-						response += "<tr><td>"
+						response += "<tr><td >"
 								+ attrib_display
 								+ "</td><td><input name=\"source\" id=\""
 								+ attrib_display + "\"";
@@ -240,15 +260,15 @@ TermImportPage.prototype = {
 						}
 						if(datasource.firstChild){
 							if(datasource.firstChild.nodeValue){
-								response += " type=\"" + attrib_type + "\" size=\"25\" maxlength=\"100\" value=\""
-									+ datasource.firstChild.nodeValue + "\"></td></tr>";
+								response += " type=\"" + attrib_type + "\" size=\""+ size + "\" maxlength=\"100\" value=\""
+									+ datasource.firstChild.nodeValue + "\"/></td></tr>";
 							} else {
-								response += " type=\"" + attrib_type + "\" size=\"25\" maxlength=\"100\" value=\""
-								+ "\"></td></tr>";
+								response += " type=\"" + attrib_type + "\" size=\""+ size + "\" maxlength=\"100\" value=\""
+								+ "\"/></td></tr>";
 							}
 						} else {
-							response += " type=\"" + attrib_type + "\" size=\"25\" maxlength=\"100\" value=\""
-							+ "\"></td></tr>";
+							response += " type=\"" + attrib_type + "\" size=\""+ size + "\" maxlength=\"100\" value=\""
+							+ "\"/></td></tr>";
 						}
 					}
 					response += "<input type=\"hidden\" id=\"tag_"
@@ -257,6 +277,7 @@ TermImportPage.prototype = {
 				// }
 			}
 		}
+		
 		response += "</table><br><button id=\"submitSource\" type=\"button\" name=\"run\" " +
 				"onclick=\"termImportPage.getSource(event, this,'"
 				+ tlID + "','" + dalID + "')\">Next step</button>";
@@ -299,7 +320,7 @@ TermImportPage.prototype = {
 						
 					}
 				}
-				if($(source[i].id).type == "text" || $(source[i].id).type == "undefined"){
+				if($(source[i].id).type == "text" || $(source[i].id).type == "undefined" || $(source[i].id).type == "textarea"){
 					dataSource += source[i].id;
 					sourcearray[i] = document.getElementById(source[i].id).value;
 				} else if(document.getElementById(source[i].id).type == "checkbox"){
@@ -309,7 +330,8 @@ TermImportPage.prototype = {
 				if (sourcearray[i] && sourcearray[i] != '') {					
 					//create XML doc
 					tag_array[i] = document.getElementById("tag_" + source[i].id);
-					
+					sourcearray[i] = sourcearray[i].replace(/>/g, "&gt;");
+					sourcearray[i] = sourcearray[i].replace(/</g, "&lt;");
 					dataSource += "<" + tag_array[i].value + ">" + sourcearray[i] + "</" + tag_array[i].value + ">";
 			
 					//change the top-container
@@ -967,6 +989,8 @@ TermImportPage.prototype = {
 				if (sourcearray[i] && sourcearray[i] != '') {
 					tag_array[i] = document.getElementById("tag_" + source[i].id).value;
 					
+					sourcearray[i] = sourcearray[i].replace(/>/g, "&gt;");
+					sourcearray[i] = sourcearray[i].replace(/</g, "&lt;");
 					dataSource += "<" + tag_array[i] + ">" + sourcearray[i] + "</" + tag_array[i] + ">";
 				}
 			}

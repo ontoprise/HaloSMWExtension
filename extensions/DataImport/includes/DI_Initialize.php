@@ -97,7 +97,7 @@ function smwfDISetupExtension() {
 	global $wgHooks, $wgExtensionCredits, $wgAutoloadClasses, $wgSpecialPages; 
 	global $smwgDIIP, $wgSpecialPageGroups, $wgRequest, $smwgEnableDataImportExtension, $wgContLang;
 
-if(defined( 'DO_MAINTENANCE' )){
+	if(defined( 'DO_MAINTENANCE' )){
 		require_once($smwgDIIP . '/specials/WebServices/SMW_WSStorage.php');
 		if(!WSStorage::getDatabase()->isInitialized()){
 			return true;

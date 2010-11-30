@@ -74,8 +74,11 @@ class TermImportBot extends GardeningBot {
 	 */
 	public function run($paramArray, $isAsync, $delay) {
 		echo "Started!\n";
+		
+		print_r($paramArray);
+		
 		$result = "";
-
+		
 		$filename = rawurldecode($paramArray["settings"]);
 				
 		$termImportName = $paramArray["termImportName"];
@@ -113,6 +116,8 @@ class TermImportBot extends GardeningBot {
 	public function importTerms($settings, $termImportName) {
 		echo "Starting to import terms...\n";
 
+		echo("\n".$settings);
+		
 		global $smwgDIIP;
 		require_once($smwgDIIP . '/specials/TermImport/SMW_XMLParser.php');
 
@@ -649,6 +654,7 @@ class TermImportBot extends GardeningBot {
 		$result .= "\n[[Category:TermImportRun]]";
 		
 		$timeInTitle = $this->getDateString();
+		
 		smwf_om_EditArticle("TermImport:".$termImportName
 			."/".$timeInTitle, 'TermImportBot', $result, '');
 		//smwf_om_TouchArticle("TermImport:".$termImportName."/".$timeInTitle);
