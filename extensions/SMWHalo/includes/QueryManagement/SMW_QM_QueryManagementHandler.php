@@ -114,8 +114,10 @@ class SMWQMQueryManagementHandler {
 		if($query->getOffset()) $dataValue->setQueryOffset($query->getOffset());
 		
 		$prProperties = $this->getPrintRequestsProperties($query->getExtraPrintouts());
-		$dataValue->setExtraPropertyPrintouts(implode(';', array_keys($prProperties)));
-			
+		foreach($prProperties as $p => $dontCare){
+			$dataValue->addExtraPropertyPrintouts($p);
+		}
+		
 		$dataValue->setExtraCategoryPrintouts($this->isCategoryRequestedInPrintRequests($query->getExtraPrintouts()));
 		
 		if ($query instanceof SMWSPARQLQuery){
@@ -396,6 +398,8 @@ class SMWQMQueryManagementHandler {
 	public function searchQueries($queryMetadata){
 		$queryString = $queryMetadata->getMetadaSearchQueryString();
 		
+		echo($queryString);
+		
 		SMWQueryProcessor::processFunctionParams(array($queryString) 
 			,$queryString, $params, $printouts);
 		
@@ -409,7 +413,6 @@ class SMWQMQueryManagementHandler {
 		
 		$queryMetadataResults = array();
 		foreach($queryResults as $queryResult){
-			
 			$semanticData = $store->getSemanticData($queryResult);
 			
 			$property = SMWPropertyValue::makeProperty('___QRC_UQC');

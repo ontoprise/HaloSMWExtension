@@ -74,7 +74,7 @@ class SMWQueryCallMetadataValue extends SMWContainerValue {
 		$this->m_data->addPropertyObjectValue($propertyValue, $dataValue);
 	}
 	
-	public function setExtraPropertyPrintouts($epp){
+	public function addExtraPropertyPrintouts($epp){
 		$propertyValue = SMWPropertyValue::makeUserProperty(QRC_HEPP_LABEL);
 		$dataValue = SMWDataValueFactory::newPropertyObjectValue($propertyValue, $epp);
 		$this->m_data->addPropertyObjectValue($propertyValue, $dataValue);
