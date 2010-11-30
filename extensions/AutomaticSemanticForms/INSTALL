@@ -1,0 +1,40 @@
+Installation instructions for AutomaticSemanticForms extension vX.X
+----------------------------------------------------------
+
+Requirements: 
+=============
+
+	
+
+
+Installation:
+=============
+
+The easiest way to install ASF is using the deployment framework:
+
+ smwadmin -i automaticsemanticforms
+
+This installs the extension.
+
+For a manual installation, you have to copy the folder AutomaticSemanticForms into 
+the extensions folder of MediaWiki. AutomaticSemanticForms will then already work, if you 
+activate it in LocalSetting.php (see below). 
+
+Activating AutomaticSemanticForms
+------------------------
+
+The extension is activated by adding the following lines to LocalSettings.php:
+
+include_once('extensions/AutomaticSemanticForms/includes/ASF_Initialize.php');
+enableAutomaticSemanticForms();
+
+
+
+Options:
+========
+
+All configuration options are defined and described in /includes/ASF_Settings.php.
+
+
+Notice
+======
