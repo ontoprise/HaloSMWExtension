@@ -1,23 +1,23 @@
-Installation instructions for HaloACL extension v1.2
+Installation instructions for HaloACL extension v1.3
 ----------------------------------------------------
 
 Install instructions for the latest version of HaloACL are also online:
 
- http://smwforum.ontoprise.com/smwforum/index.php/Help:Installing_HaloACL_1.0
+ http://smwforum.ontoprise.com/smwforum/index.php/Help:Installing_HaloACL_1.3
  
 For the full manual of the HaloACL have a look at:
 
- http://smwforum.ontoprise.com/smwforum/index.php/Help:HaloAccessControlList
+ http://smwforum.ontoprise.com/smwforum/index.php/Help:Access_Control_List_extension
 
 
 Requirements: 
 =============
 
-    MediaWiki 1.13.2 or 1.15.1 - 1.15.3
-    ScriptManager 1.x
-    ARCLibrary 1.x
-    SMW 1.5.0 - SMW 1.5.1 (optional)
-    Semantic Forms 1.9 (optional)
+    MediaWiki 1.13.2, 1.15.1 - 1.15.3 or 1.16.0
+    ScriptManager 1.x (Installation instructions: http://smwforum.ontoprise.com/smwforum/index.php/Help:Installing_the_Script_Manager_Extension_1.0)
+    ARCLibrary 1.x (Installation instructions: http://smwforum.ontoprise.com/smwforum/index.php/Help:Installing_the_ARCLibrary_1.0)
+    SMW 1.5.0 - SMW 1.5.2 (optional)
+    Semantic Forms 1.9 - 2.0 (optional)
     Deployment Framework (optional, but recommended for a fast and easy installation)
 
 Installation:
@@ -25,16 +25,14 @@ Installation:
 
 How to install with deployment framework:
 
-(1) Download the Deployment Framework
-(2) Extract the Deplyoment Framework zip-file into the MediaWiki roots folder
-(3) Open the SMWAdministration tool
-(4) Type 'smwadmin -i haloacl'
+(1) Download and install the Deployment Framework (Installation instructions: http://smwforum.ontoprise.com/smwforum/index.php/Help:Installing_Deployment_Framework)
+(2) Open in your commandline tool the directory: "<deployment-framework-install-dir>/deployment/tools/"
+(3) Type 'smwadmin -i haloacl'
     This installs the extension and patches MediaWiki and SMW.
 
 How to install manually:
 
-(1) Download and install the ARCLibrary and the ScriptManager extension. You can
-    find them at: http://sourceforge.net/projects/halo-extension/files/
+(1) Include the path to php.bin to the system variable PATH (either Windows or Linux), e.g. C:\xampp\php;
 (2) Download and extract the HaloACL ZIP archive.
 (3) Copy the folder 'HaloACL' into the extensions folder of MediaWiki.
 (4) Activate the HaloACL by adding the following lines to LocalSettings.php:
@@ -93,15 +91,11 @@ setup script:
  cd /folder_to_mediawiki/extension/HaloACL/maintenance
  php HACL_Setup.php
 
+Testing your Installation 
+=========================
 
-Activating HaloACL
-------------------
-
-The extension is activated by adding the following lines to LocalSettings.php:
-
-include_once('extensions/HaloACL/includes/HACL_Initialize.php');
-enableHaloACL(); 
-
+Go to the Special:Version page and you should see HaloACL (Version nn) listed under Other. 
+Go to the Special:Halo Access Control List to start defining access control lists.
 
 Options:
 ========
