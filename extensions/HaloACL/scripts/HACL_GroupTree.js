@@ -84,7 +84,7 @@ HACL.classes.GroupTree = function (container, feature) {
 				async : true,
 				opts  : {
 					method : "POST",
-					url : url,
+					url : url
 				}
 			},
 			ui : {
@@ -93,7 +93,7 @@ HACL.classes.GroupTree = function (container, feature) {
 			types : {
 				"default" : {
 	  				draggable : false
-				},
+				}
 			},
 			callback : {
 				beforedata: that.onBeforeData,
