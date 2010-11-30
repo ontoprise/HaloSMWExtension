@@ -1,4 +1,4 @@
-Installation instructions for Collaboration extension v1.2
+Installation instructions for Collaboration extension v1.3
 ----------------------------------------------------------
 
 Requirements: 
@@ -8,6 +8,7 @@ Requirements:
 	Semantic Mediawiki 1.4.3 or higher
 	Script Manager 1.0.1 or higher
 	ParserFunctions
+	StringFunctions
 	Variables
 
 
