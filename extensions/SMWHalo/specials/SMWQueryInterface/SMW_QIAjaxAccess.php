@@ -236,6 +236,60 @@ function smwf_qi_QIAccess($method, $params) {
        
         return $jsonEnc->encode($params);
 	}
+    else if ($method == "searchQueries") {
+        $p_array = func_get_args();
+        if (count($p_array) != 3) return false;
+        $term = $p_array[1];
+        $type = $p_array[2];
+        $result = array();
+
+        // some weird bug allows to send only 3 or conditions. Therefore we must
+        // send two requests when type = * is set.
+        if ($type == 's') {
+            $queryMetadataPattern = new SMWQMQueryMetadata(true, array(ucfirst($term) => true),
+            '0');
+        }
+        else if ($type == 'c') {
+            $queryMetadataPattern = new SMWQMQueryMetadata(true, null,
+            '0', array(ucfirst($term) => true));
+        }
+        else if ($type == 'p') {
+            $queryMetadataPattern = new SMWQMQueryMetadata(true, null,
+            '0', null, array(ucfirst($term) => true));
+        }
+        else if ($type == 'r') {
+            $queryMetadataPattern = new SMWQMQueryMetadata(true, null,
+            '0', null, null, null, $term);
+        }
+        else if ($type == 'i') {
+            $queryMetadataPattern = new SMWQMQueryMetadata(true, null,
+            '0', null, null, ucfirst($term));
+        }
+        else if ($type == 'q') {
+            $queryMetadataPattern = new SMWQMQueryMetadata(true, null,
+            '0', null, null, null, null, $term);
+        }
+        else if ($type == '*') {
+            // type in s c p
+            $queryMetadataPattern = new SMWQMQueryMetadata(true,
+            array(ucfirst($term) => true), '0', array(ucfirst($term) => true),
+            array(ucfirst($term) => true));
+            // type in i q
+            $queryMetadataPattern1 = new SMWQMQueryMetadata(true, null, '0',
+            null, null, ucfirst($term), null, $term);
+        }
+        $queryMetadataResults = SMWQMQueryManagementHandler::getInstance()->searchQueries($queryMetadataPattern);
+
+
+        $result = qiMergeQueryMetadataResults($queryMetadataResults, $result);
+        if (isset($queryMetadataPattern1)) {
+            $queryMetadataResults = SMWQMQueryManagementHandler::getInstance()->searchQueries($queryMetadataPattern1);
+            $result = qiMergeQueryMetadataResults($queryMetadataResults, $result);
+        }
+        $jsonEnc = new Services_JSON();
+
+        return $jsonEnc->encode($result);
+    }
 	//TODO: Save Query functionality
 	/*
 	else if($method == "saveQuery"){
@@ -723,4 +777,46 @@ function qiGetPropertyCustomTypeInformation($typeName) {
         }
     }
     return $units;
+}
+
+/**
+ * Create an array of the query results that were searched for. The result array
+ * is an associative array.
+ *
+ * @global SMWLanguage $smwgQDefaultLimit
+ * @param  array(SMWQMQueryMetadata)
+ * @return array(result)
+ */
+function qiMergeQueryMetadataResults($queryMetadataResults, $result) {
+    global $smwgQDefaultLimit;
+    for ($i = 0; $i < count($queryMetadataResults); $i++) {
+        $queryString = $queryMetadataResults[$i]->queryString;
+        if (is_array($queryMetadataResults[$i]->propertyPrintRequests)) {
+            $key = implode('', array_keys($queryMetadataResults[$i]->propertyPrintRequests));
+            $queryString .= '|?'.str_replace(';', '|?', $key);
+        }
+        $queryString.= '|format='.$queryMetadataResults[$i]->queryPrinter;
+        if ($queryMetadataResults[$i]->limit &&
+            $queryMetadataResults[$i]->limit != $smwgQDefaultLimit)
+            $queryString .= '|limit='.$queryMetadataResults[$i]->limit;
+        if ($queryMetadataResults[$i]->offset)
+                $queryString .= '|offset='.$queryMetadataResults[$i]->offset;
+        if ($queryMetadataResults[$i]->queryName)
+            $queryString .= '|queryname='.$queryMetadataResults[$i]->queryName;
+
+        // check if the result exists already in the list
+        for ($k = 0; $k < count($result); $k++) {
+            if ($result[$k]['name'] == $queryMetadataResults[$i]->queryName &&
+                $result[$k]['name'] == $queryString)
+                    continue 2;
+        }
+
+        $result[] = array(
+            'name' => $queryMetadataResults[$i]->queryName,
+            'format' => $queryMetadataResults[$i]->queryPrinter,
+            'page' => $queryMetadataResults[$i]->usedInArticle,
+            'query' => $queryString,
+        );
+    }
+    return $result;
 }
