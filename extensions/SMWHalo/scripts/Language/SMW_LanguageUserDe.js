@@ -317,6 +317,8 @@ var wgUserLanguageStrings = {
     'QI_TT_ADD_CHAIN'         : 'Sie k&ouml;nnen eine Verkettung von Attributen erzeugen indem Sie einfach Attribute miteinander verbinden. Ein Beispiel: Sie k&ouml;nnen eine Attributkette aus den Attributen &quot;Liegt in&quot; und &quot;Mitglied von&quot; bilden, in welcher eine Werteeinschr&auml;nkung auf &quot;EU&quot; vorgenommen wird, um alle Dinge zu finden die in einer Sache liegen, welche Mitglied von der EU ist.',
     'QI_QP_PARAM_intro'       : 'Kopfzeile',
     'QI_QP_PARAM_outro'       : 'Fu&szlig;note',
+    'QI_NOT_SPECIFIED'        : 'Nicht definiert',
+    'QI_NO_QUERIES_FOUND'     : 'Die Suche hat keine Queries im Wiki gefunden',
     
 	
 	// Wiki text parser

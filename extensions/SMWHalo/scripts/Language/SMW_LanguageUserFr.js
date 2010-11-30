@@ -314,7 +314,9 @@ var wgUserLanguageStrings = {
     'QI_TT_ADD_CHAIN'         : 'You can construct a chain of properties to easy connect properties which can be linked together. For example, you can create a property chain with the property &quot;Located In&quot; and &quot;Member of&quot;, where the property value is restricted to &quot;EU&quot;, to find things which are located in something which is a member of the EU.',
     'QI_QP_PARAM_intro'       : 'header',
     'QI_QP_PARAM_outro'       : 'footer',
-    
+    'QI_NOT_SPECIFIED'        : 'Not specified',
+    'QI_NO_QUERIES_FOUND'     : 'Your search did not match any queries in the wiki',
+
     
     // Find work
     'FW_SEND_ANNOTATIONS'     : 'Merci d\'évaluer les annotations, ',
