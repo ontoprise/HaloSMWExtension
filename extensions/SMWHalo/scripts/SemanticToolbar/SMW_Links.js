@@ -32,6 +32,10 @@ var createLinkList = function() {
     
     
 function smw_links_callme(){
+	var url = location.href;
+	if (url.indexOf('redlink=1') !== false) {
+		return;
+	}
 	if( (wgAction == "edit" || wgAction == 'formedit' || wgAction == 'submit' ||
              wgCanonicalSpecialPageName == 'AddData' || wgCanonicalSpecialPageName == 'EditData' ||
              wgCanonicalSpecialPageName == 'FormEdit')
