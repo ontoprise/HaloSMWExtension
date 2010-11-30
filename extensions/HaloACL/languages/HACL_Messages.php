@@ -39,7 +39,7 @@ $messages['en'] = array(
 	/* general/maintenance messages */
     'haloacl' 			=> 'HaloACL',
     'hacl_special_page' => 'HaloACL',  // Name of the special page for administration
-    'specialpages-group-hacl_group'	=> 'HaloACL',
+    'specialpages-group-hacl_group'	=> 'Halo Access Control List',
     'hacl_tt_initializeDatabase'	=> 'Initialize or update the database tables for HaloACL.',
     'hacl_initializeDatabase'		=> 'Initialize database',
     'hacl_db_setupsuccess'			=> 'Setting up the database for HaloACL was successful.',
@@ -410,7 +410,7 @@ $messages['de'] = array(
 	/* general/maintenance messages */
     'haloacl' 			=> 'HaloACL',
     'hacl_special_page' => 'HaloACL',   // Name of the special page for administration
-    'specialpages-group-hacl_group'	=> 'HaloACL',
+    'specialpages-group-hacl_group'	=> 'Halo Zugriffskontrolle',
     'hacl_tt_initializeDatabase'	=> 'Initialisiert oder aktualisiert die Datenbanktabellen für HaloACL.',
     'hacl_initializeDatabase'		=> 'Datenbank initialisieren',
     'hacl_db_setupsuccess'			=> 'Die Datenbank für HaloACL wurde erfolgreich erstellt.',
