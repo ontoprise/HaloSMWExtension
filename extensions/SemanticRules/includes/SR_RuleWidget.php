@@ -81,8 +81,9 @@ class SRRuleWidget {
                          '</div>'. // tab 1
                          '<div id="rule_content_'.self::$index.'_stylized" class="ruleSerialization" style="display:none;">Stylized english</div>'.
                          '<div id="'.htmlspecialchars($this->mRuleURI).'" native="'.($this->mNative?"true":"false").'" class="ruleSerialization" style="display:none;">'.htmlspecialchars($this->mRuletext).'</div>'.
-                         '<div class="ruleLegend"><span class="rule_legend_property"></span><span>&nbsp;=&nbsp;'.wfMsg('sr_prop').',</span>'.
-                         '<span class="rule_legend_class"></span><span>&nbsp;=&nbsp;'.wfMsg('sr_cat').'</span></div>'. //end legend
+                         '<div class="ruleLegend"><div class="rule_legend_property"></div><span>'.wfMsg('sr_prop').'</span>'.
+                         '<div class="rule_legend_class"></div><span>'.wfMsg('sr_cat').'</span>'.
+                         '<div class="rule_legend_inst"></div><span>'.wfMsg('sr_inst').'</span>'. //end legend
                          '</div>';  
 		self::$index++;
 	

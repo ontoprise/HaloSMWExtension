@@ -39,7 +39,8 @@ class SR_LanguageDe extends SR_Language {
      'sr_rule_isactive_state' => 'aktiv',
     'sr_rule_isinactive_state' => 'inaktiv',
     'sr_prop' => 'Property',
-    'sr_cat' => 'Klasse',
+    'sr_cat' => 'Kategorie',
+    'sr_inst' => 'Instanz',
     
      #Unified search extension
     'sr_rulesfound' => 'Die folgenden Regeln wurden gefunden:'
