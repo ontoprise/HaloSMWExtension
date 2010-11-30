@@ -281,6 +281,24 @@ Druk de rechter knop om resultaten te verkrijgen. Enkel <i>Return</i> drukken ge
     'smw_qi_showdatarating' => 'Enable user ratings',
     'smw_qi_showmetadata' => 'Show meta information of data',
     'smw_qi_showdatasource' => 'Show data source information only',
+    'smw_qi_maintab_query' => 'Create query',
+    'smw_qi_maintab_load' => 'Load query',
+    'smw_qi_load_criteria' => 'Search oder Find (existing) queries with the following condition:',
+    'smw_qi_load_selection_*' => 'query contains',
+    'smw_qi_load_selection_i' => 'article name',
+    'smw_qi_load_selection_q' => 'query name',
+    'smw_qi_load_selection_p' => 'used property',
+    'smw_qi_load_selection_c' => 'used category',
+    'smw_qi_load_selection_r' => 'used query printer',
+    'smw_qi_load_selection_s' => 'used printout',
+    'smw_qi_button_search' => 'Search',
+    'smw_qi_button_load' => 'Load selected query',
+    'smw_qi_queryloaded_dlg' => 'Your query has been loaded into the Query Interface',
+    'smw_qi_link_reset_search' => 'Reset search',
+    'smw_qi_loader_result' => 'Result',
+    'smw_qi_loader_qname' => 'Query-Name',
+    'smw_qi_loader_qprinter' => 'Result Format',
+    'smw_qi_loader_qpage' => 'Used in article',
 
 	/*Tooltips for Query Interface*/
 	'smw_qi_tt_addCategory' => 'Bij het toevoegen van een categorie, worden enkel artikels van deze categorie toegevoegd',
@@ -310,6 +328,8 @@ Druk de rechter knop om resultaten te verkrijgen. Enkel <i>Return</i> drukken ge
     'smw_qi_tt_treeview' => 'Display your query in a tree',
     'smw_qi_tt_textview' => 'Describe the query in stylized English',
     'smw_qi_tt_option' => 'Define general settings for how the query is executed',
+    'smw_qi_tt_maintab_query' => 'Create a new query',
+    'smw_qi_tt_maintab_load' => 'Load an existing query',
 	
 	/* Annotation */
  	'smw_annotation_tab' => 'aantekeningen maken',

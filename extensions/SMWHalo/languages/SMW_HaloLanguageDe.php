@@ -286,6 +286,24 @@ protected $smwUserMessages = array(
     'smw_qi_showdatarating' => 'Aktiviere die Bewertung der Daten',
     'smw_qi_showmetadata' => 'Zeige Metainformationen zu den Daten',
     'smw_qi_showdatasource' => 'Zeige nur Informationen zur Datenquelle',
+    'smw_qi_maintab_query' => 'Neue Query',
+    'smw_qi_maintab_load' => 'Lade Query',
+    'smw_qi_load_criteria' => 'Suche und finde (existierende) Queries mit den folgenden Bedingungen:',
+    'smw_qi_load_selection_*' => 'Query beinhaltet',
+    'smw_qi_load_selection_i' => 'Artikel Name',
+    'smw_qi_load_selection_q' => 'Query Name',
+    'smw_qi_load_selection_p' => 'benutztes Attribut',
+    'smw_qi_load_selection_c' => 'benutzte Kategorie',
+    'smw_qi_load_selection_r' => 'Format des Ergebnis',
+    'smw_qi_load_selection_s' => 'Attribut im Ergebnis',
+    'smw_qi_button_search' => 'Suche',
+    'smw_qi_button_load' => 'Lade ausgew&auml;hlte Query',
+    'smw_qi_queryloaded_dlg' => 'Ihre Query wurde in das Query Interface geladen.',
+    'smw_qi_link_reset_search' => 'Suche zur&uuml;cksetzen',
+    'smw_qi_loader_result' => 'Ergebis',
+    'smw_qi_loader_qname' => 'Query-Name',
+    'smw_qi_loader_qprinter' => 'Ergebis Format',
+    'smw_qi_loader_qpage' => 'aus Artikel',
 
 	/*Tooltips for Query Interface*/
 	'smw_qi_tt_addCategory' => 'Indem man eine Kategorie hinzuf&uuml;gt, werden nur Artikel aus dieser Kategorie ber&uuml;cksichtigt',
@@ -315,6 +333,8 @@ protected $smwUserMessages = array(
     'smw_qi_tt_treeview' => 'Zeige die Query in einem Baum',
     'smw_qi_tt_textview' => 'Beschreibe die Query als Freitext',
     'smw_qi_tt_option' => 'Definieren allgemeiner Einstellungen zum Ausf&uuml;hren der Query',
+    'smw_qi_tt_maintab_query' => 'Erstellen einer neuen Query',
+    'smw_qi_tt_maintab_load' => 'Laden einer im Wiki existierenden Query',
 
 	/* Annotation */
  	'smw_annotation_tab' => 'Seite annotieren',
