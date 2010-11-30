@@ -63,17 +63,19 @@
   </siteinfo>
   <page>
     <title>MediaWiki:NEP/Generic</title>
-    <id>14382</id>
-    <revision>
-      <id>25819</id>
-      <timestamp>2010-11-12T15:46:50Z</timestamp>
-      <contributor>
-        <username>WikiSysop</username>
-        <id>1</id>
-      </contributor>
-      <text xml:space="preserve">This resource is stored in the underlying knowledge-base with the following URI: &lt;$uri$&gt;
+    <id>380</id>
 
-''$name$'' belongs to the following categories:
+    <revision>
+      <id>1127</id>
+      <timestamp>2010-11-30T13:50:08Z</timestamp>
+      <contributor>
+        <username>Michael</username>
+        <id>8</id>
+      </contributor>
+
+      <text xml:space="preserve">This resource is stored in the underlying knowledge-base with the following URI: &lt;$uri$&gt; 
+
+''$name$'' belongs to the following categories: 
 {{#sparql:
  SELECT DISTINCT ?cat
  WHERE { 
@@ -84,38 +86,90 @@
  | ?Cat=
  | format=list
  | default=none
-}}
+}} 
 
+&lt;br&gt; 
 
-{|width=&quot;100%&quot; border=1
+{| width=&quot;100%&quot; border=&quot;1&quot;
 |-
-! Facts about ''$name$'' !! References to ''$name$''
-|-
-|
+! Facts about ''$name$'' 
+! References to ''$name$''
+|- valign=&quot;top&quot;
+
+| 
  {{#sparql:
- SELECT ?P ?O
+ SELECT ?Property ?Object
  WHERE {
      GRAPH ?G {
-         &lt;$uri$&gt; ?P ?O .
+         &lt;$uri$&gt; ?Property ?Object .
      }
  }
  | format=table
  | merge=true
  | default=no facts found
  }}
-|
+
+| 
  {{#sparql:
- SELECT ?S ?P
+ SELECT ?Subject ?Property
  WHERE {
      GRAPH ?G {
-         ?S ?P &lt;$uri$&gt; .
+         ?Subject ?Property &lt;$uri$&gt; .
      }
  }
  | format=table
  | merge=true
  | default=no references to ''$name$'' found
  }}
-|}</text>
+
+|}
+
+&lt;br&gt; 
+
+&lt;!--
+{{#sparql:
+PREFIX smwGraphs: &lt;http://www.example.org/smw-lde/smwGraphs/&gt;
+PREFIX smw-lde: &lt;http://www.example.org/smw-lde/smw-lde.owl#&gt;
+SELECT ?Rating ?User ?Date ?Comment ?Property ?Object
+WHERE {
+  GRAPH smwGraphs:RatingsGraph {
+      ?User smw-lde:rates ?bn .
+      ?bn smw-lde:ratedInformation ?graphName .
+      ?bn smw-lde:created ?Date .
+      ?bn smw-lde:value ?Rating.
+      ?bn smw-lde:comment ?Comment .
+  }
+
+  GRAPH ?graphName {
+   &lt;$uri$&gt; ?Property ?Object .
+  }
+}   
+|format=table
+|merge=true
+|sort=Rating,User,Date
+|default=
+}} 
+--&gt;
+
+{{#sparql:
+PREFIX smwGraphs: &lt;http://www.example.org/smw-lde/smwGraphs/&gt;
+PREFIX smw-lde: &lt;http://www.example.org/smw-lde/smw-lde.owl#&gt;
+SELECT ?Rating ?User ?Date ?Comment ?Property ?Object
+WHERE {
+  GRAPH smwGraphs:RatingsGraph {
+      ?User smw-lde:rates ?bn .
+      ?bn smw-lde:ratedInformation ?graphName .
+      ?bn smw-lde:created ?Date .
+      ?bn smw-lde:value ?Rating.
+      ?bn smw-lde:comment ?Comment .
+  }
+
+  GRAPH ?graphName {
+   &lt;$uri$&gt; ?Property ?Object .
+  }
+}   
+|format=table
+}}</text>
     </revision>
   </page>
   <page>
@@ -148,7 +202,7 @@ Instances of category ''$name$'':
 {|width=&quot;100%&quot; border=1
 |-
 ! super-categories of ''$name$'' !! sub-categories of ''$name$''
-|-
+|- valign="top"
 |
  {{#sparql:
  SELECT DISTINCT ?cat
@@ -184,7 +238,7 @@ Instances of category ''$name$'':
 {|width=&quot;100%&quot; border=1
 |-
 ! properties for ''$name$'' !! properties pointing to ''$name$''
-|-
+|- valign="top"
 |
  {{#sparql:
  SELECT DISTINCT ?p
@@ -231,7 +285,7 @@ Instances of category ''$name$'':
 {|width=&quot;100%&quot; border=1
 |-
 ! domain categories for ''$name$'' !! range categories / types of ''$name$'' 
-|-
+|- valign="top"
 |
  {{#sparql:
  SELECT DISTINCT ?cat
