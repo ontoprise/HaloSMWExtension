@@ -83,7 +83,7 @@ function smwhRDFRequest($subject) {
 	$con = TSConnection::getConnector();
 	$con->connect();
 	$rdf = $con->queryRDF("CONSTRUCT { $iri ?p ?o. $iri owl:sameAs ?source. } WHERE { GRAPH ?g { $iri ?p ?o. } OPTIONAL { GRAPH ?g2 { $iri prop:Imported_from ?source. } } }", 
-	"mapFrom=$smwgTripleStoreGraph/(\\w+)#(.+)|mapTo=$smwgTripleStoreGraph/index.php/\$namespace:\$localname");
+	"mapFrom=$smwgTripleStoreGraph/(\\w+)#(.+)|mapTo=$smwgTripleStoreGraph/resource/\$namespace:\$localname");
     	
 	return $rdf;
 }
