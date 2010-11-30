@@ -136,7 +136,7 @@ HACL.classes.GroupPermission = function () {
 					  	+ encodeURIComponent(permissionsJSON),
 				  success: onPermissionsSaved,
 				  error: onPermissionsSaveError,
-				  type: 'POST',
+				  type: 'POST'
 				});
 		
 	};
