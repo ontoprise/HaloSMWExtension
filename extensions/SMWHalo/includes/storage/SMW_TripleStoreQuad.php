@@ -55,7 +55,7 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 		}
 
 		try {
-			$response = $client->query("SELECT DISTINCT ?p ?o WHERE {  $subj_iri ?p ?o.  } ORDER BY ASC(?p) $limit $offset",  "merge=false");
+			$response = $client->query("SELECT DISTINCT ?p ?o WHERE {  GRAPH ?G { $subj_iri ?p ?o. } } ORDER BY ASC(?p) $limit $offset",  "merge=false");
 		} catch(Exception $e) {
 			wfDebug("Triplestore does probably not run.\n");
 			$response = TSNamespaces::$EMPTY_SPARQL_XML;
@@ -148,7 +148,7 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 		}
 
 		try {
-			$response = $client->query("SELECT DISTINCT ?p WHERE { $subj_iri ?p ?o.  } ORDER BY ASC(?p) $limit $offset",  "merge=false");
+			$response = $client->query("SELECT DISTINCT ?p WHERE { GRAPH ?G {  $subj_iri ?p ?o. } } ORDER BY ASC(?p) $limit $offset",  "merge=false");
 		} catch(Exception $e) {
 			wfDebug("Triplestore does probably not run.\n");
 			$response = TSNamespaces::$EMPTY_SPARQL_XML;
@@ -208,7 +208,7 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 		}
 
 		try {
-			$response = $client->query("PREFIX xsd:<".TSNamespaces::$XSD_NS."> SELECT DISTINCT ?p WHERE {  ?s ?p $objectNode. }  ORDER BY ASC(?p) $limit $offset",  "merge=false");
+			$response = $client->query("PREFIX xsd:<".TSNamespaces::$XSD_NS."> SELECT DISTINCT ?p WHERE { GRAPH ?G {  ?s ?p $objectNode. } }  ORDER BY ASC(?p) $limit $offset",  "merge=false");
 		} catch(Exception $e) {
 			wfDebug("Triplestore does probably not run.\n");
 			$response = TSNamespaces::$EMPTY_SPARQL_XML;
@@ -262,7 +262,7 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 
 
 		try {
-			$response = $client->query("SELECT ?s ?o WHERE {  ?s $property_iri ?o.  } ORDER BY ASC(?s) $limit $offset",  "merge=false");
+			$response = $client->query("SELECT ?s ?o WHERE { GRAPH ?G {  ?s $property_iri ?o. } } ORDER BY ASC(?s) $limit $offset",  "merge=false");
 		} catch(Exception $e) {
 			wfDebug("Triplestore does probably not run.\n");
 			$response = TSNamespaces::$EMPTY_SPARQL_XML;
@@ -357,7 +357,7 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 
 
 		try {
-			$response = $client->query("SELECT ?o WHERE { $subject_iri $property_iri ?o. } $limit $offset",  "merge=false");
+			$response = $client->query("SELECT ?o WHERE { GRAPH ?G {  $subject_iri $property_iri ?o. } } $limit $offset",  "merge=false");
 		} catch(Exception $e) {
 			wfDebug("Triplestore does probably not run.\n");
 			$response = TSNamespaces::$EMPTY_SPARQL_XML;
@@ -438,12 +438,12 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 
 		try {
 			if (is_null($value)) {
-				$response = $client->query("SELECT ?s WHERE {  ?s $propertyIRI ?o. } ORDER BY ASC(?s) $limit $offset",  "merge=false");
+				$response = $client->query("SELECT ?s WHERE { GRAPH ?G {  ?s $propertyIRI ?o. } } ORDER BY ASC(?s) $limit $offset",  "merge=false");
 
 			} else if ($value instanceof SMWWikiPageValue) {
 
 				$objectIRI = $this->tsNamespace->getFullIRI($value->getTitle());
-				$response = $client->query("SELECT ?s WHERE {  ?s $propertyIRI $objectIRI.  } ORDER BY ASC(?s) $limit $offset",  "merge=false");
+				$response = $client->query("SELECT ?s WHERE { GRAPH ?G {  ?s $propertyIRI $objectIRI. } } ORDER BY ASC(?s) $limit $offset",  "merge=false");
 
 			} else {
 				$typeID = $value->getTypeID();
@@ -451,7 +451,7 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 				$dbkey = $value->getDBkeys();
 				$objectValue = '"'.TSHelper::escapeForStringLiteral($dbkey[0]).'"^^'.$xsdType;
 
-				$response = $client->query("SELECT ?s WHERE {  ?s $propertyIRI $objectValue.  } ORDER BY ASC(?s) $limit $offset",  "merge=false");
+				$response = $client->query("SELECT ?s WHERE { GRAPH ?G {  ?s $propertyIRI $objectValue. } } ORDER BY ASC(?s) $limit $offset",  "merge=false");
 
 			}
 		} catch(Exception $e) {
@@ -528,7 +528,7 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 			$slot2 = $this->tsNamespace->getFullIRIByName(SMW_NS_PROPERTY, "_3");
 			$slot3 = $this->tsNamespace->getFullIRIByName(SMW_NS_PROPERTY, "_4");
 			$slot4 = $this->tsNamespace->getFullIRIByName(SMW_NS_PROPERTY, "_5");
-			$response = $client->query("SELECT DISTINCT ?p ?b ?s0 ?s1 ?s2 ?s3 ?s4 WHERE {  $subj_iri ?p ?b. ?b $slot0 ?s0 . ?b $slot1 ?s1 . ?b $slot2 ?s2 . ?b $slot3 ?s3 . ?b $slot4 ?s4  } ORDER BY ASC(?p) $limit $offset",  "merge=false");
+			$response = $client->query("SELECT DISTINCT ?p ?b ?s0 ?s1 ?s2 ?s3 ?s4 WHERE { GRAPH ?G {  $subj_iri ?p ?b. ?b $slot0 ?s0 . ?b $slot1 ?s1 . ?b $slot2 ?s2 . ?b $slot3 ?s3 . ?b $slot4 ?s4 } } ORDER BY ASC(?p) $limit $offset",  "merge=false");
 		} catch(Exception $e) {
 			wfDebug("Triplestore does probably not run.\n");
 			$response = TSNamespaces::$EMPTY_SPARQL_XML;
