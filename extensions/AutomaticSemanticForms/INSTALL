@@ -4,7 +4,11 @@ Installation instructions for AutomaticSemanticForms extension vX.X
 Requirements: 
 =============
 
-	
+	MediaWiki 1.16
+	Semantic MediaWiki 1.5.2
+	SMWHalo 1.5.2
+	Script Manager 1.0 or higher
+	Semantic Forms 2.0
 
 
 Installation:
@@ -27,7 +31,6 @@ The extension is activated by adding the following lines to LocalSettings.php:
 
 include_once('extensions/AutomaticSemanticForms/includes/ASF_Initialize.php');
 enableAutomaticSemanticForms();
-
 
 
 Options:
