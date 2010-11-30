@@ -78,6 +78,7 @@ class EnhancedRetrievalResultPrinter {
 	 * @param array $entries
 	 */
 	public static function serialize(array & $entries, & $terms) {
+		
 		global $wgContLang;
 		$termsarray = split(' ', $terms);
 		// GreyBox
@@ -90,6 +91,10 @@ class EnhancedRetrievalResultPrinter {
 		// GreyBox
 		$html = '<table id="us_queryresults">';
 		foreach($entries as $e) {
+			if (!self::userCan($e->getTitle(), 'read')) {
+				continue;
+			}
+			
 			$html .= '<tr class="us_resultrow"><td>';
 			$html .= '<div class="us_search_result">';
 			// Categories
@@ -191,4 +196,25 @@ class EnhancedRetrievalResultPrinter {
 			default: return "$year-$month-$day $hour:$min:$sec";
 		}
 	}
+	
+	/**
+	 * Checks if the current user can perform the given $action on the article with
+	 * the given $title.
+	 *
+	 * @param Title $title
+	 * 		The title object of the article
+	 * @param string $action
+	 * 		Name of the action
+	 *
+	 * @return bool
+	 * 		<true> if the action is permitted
+	 * 		<false> otherwise
+	 */
+	private static function userCan(Title $title, $action) {
+		global $wgUser;
+		$result = true;
+		wfRunHooks('userCan', array($title, $wgUser, $action, &$result));
+		return $result;
+	}
+	
 }
