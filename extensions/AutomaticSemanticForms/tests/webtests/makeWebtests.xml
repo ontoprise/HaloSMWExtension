@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+
+<project name="AutomaticSemanticForms" default="wt.full">
+
+	<property name="webtest.home" value="c:\Programme\webtest"/>
+
+	<import file="definitions.xml" description="Import custom definitions (if any)"/>
+	<import file="${webtest.home}/webtest.xml" description="Import all functionalities for a full build"/>
+
+	<!-- compatible for Hudson cofig at build server -->
+	<property name="wikipath" value="mediawiki" />
+
+	<!-- set here some typical wiki variables which will be used later in tests -->
+	<property name="wgServer" value="http://localhost" />
+	<property name="wgScriptPath" value="/${wikipath}" />
+	<property name="wgSitename" value="Halo3wiki" />
+	<property name="wgScript" value="${wgScriptPath}/index.php" />
+
+	<property name="wt.testInWork" value="tests/allTests.xml"/>
+
+</project>
