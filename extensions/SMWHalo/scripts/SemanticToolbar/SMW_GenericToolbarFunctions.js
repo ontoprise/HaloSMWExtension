@@ -52,7 +52,6 @@ createList: function(list,id) {
 			if (this.createSubSupAllowed()) {			
 				divlist += "<a href=\"javascript:relToolBar.CreateSubSup()\" class=\"menulink\">"+gLanguage.getMessage('SUB_SUPER')+"</a>";
 			}
-  			divlist += '<a id="rel-menu-has-part" href="javascript:relToolBar.newPart()" class="menulink">'+gLanguage.getMessage('MHAS_PART')+'</a>';
   			divlist += '</div>';
 	  		break;
 		case "rules":

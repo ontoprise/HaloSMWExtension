@@ -97,9 +97,6 @@ var SMW_REL_SUB_SUPER_ALL_VALID =
  		'? (call:relToolBar.createSubSuperLinks) ' +
  		': (call:relToolBar.createSubSuperLinks)"';
  		
-var SMW_REL_CHECK_PART_OF_RADIO =
-	'smwValid="relToolBar.checkPartOfRadio"';
-
 var positionFixed = (wgAction == 'annotate' || typeof FCKeditor != 'undefined' || typeof CKEDITOR != 'undefined') ? '" position="fixed"' : ''
 
 var SMW_REL_HINT_CATEGORY =
@@ -1077,96 +1074,6 @@ deleteItem: function(selindex) {
 		anno.remove(replText);
 	}
 	//show list
-	this.fillList(true);
-},
-
-newPart: function() {
-    this.wtp.initialize();
-    var selection = this.wtp.getSelection(true);
-
-	/*STARTLOG*/
-    smwhgLogger.log(selection,"STB-Properties","haspart_clicked");
-	/*ENDLOG*/
-
-	this.showList = false;
-	this.currentAction = "haspart";
-
-	var path = wgArticlePath;
-	var dollarPos = path.indexOf('$1');
-	if (dollarPos > 0) {
-		path = path.substring(0, dollarPos);
-	}
-	var poLink = "<a href='"+wgServer+path+gLanguage.getMessage('PROP_HAS_PART')+ "' " +
-			     "target='blank'> "+gLanguage.getMessage('HAS_PART')+"</a>";
-	var bsuLink = "<a href='"+wgServer+path+gLanguage.getMessage('PROP_HBSU')+"' " +
-			      "target='blank'> "+gLanguage.getMessage('HBSU')+"</a>";
-
-	var tb = this.createToolbar(SMW_REL_ALL_VALID);	
-	tb.append(tb.createText('rel-help-msg', gLanguage.getMessage('DEFINE_PART_OF'), '' , true));
-	tb.append(tb.createText('rel-help-msg', wgTitle, '' , true));
-	tb.append(tb.createRadio('rel-partof', '', [poLink, bsuLink], -1, 
-							 SMW_REL_CHECK_PART_OF_RADIO, true));
-	
-	tb.append(tb.createInput('rel-name', 
-							 gLanguage.getMessage('OBJECT'), '', '',
-	                         SMW_REL_CHECK_EMPTY_NEV +
-	                         SMW_REL_VALID_PROPERTY_NAME +
-	                         SMW_REL_HINT_INSTANCE,
-	                         true));
-	tb.setInputValue('rel-name', selection);	                         
-	                         
-	tb.append(tb.createText('rel-name-msg', '', '' , true));
-	
-	tb.append(tb.createInput('rel-show', gLanguage.getMessage('SHOW'), 
-	                         '', '', '', true));
-	tb.setInputValue('rel-show', (wgAction == 'annotate') ? selection : '');	                         
-	                         
-	var links = [['relToolBar.addPartOfRelation()',gLanguage.getMessage('ADD'), 'rel-confirm', 
-	                                               gLanguage.getMessage('INVALID_VALUES'), 'rel-invalid'],
-				 ['relToolBar.cancel()', gLanguage.getMessage('CANCEL')]
-				];
-	tb.append(tb.createLink('rel-links', links, '', true));
-				
-	tb.finishCreation();
-	if (wgAction == 'annotate') {
-		$('rel-show').disable();
-		$('rel-value-0').disable();
-	}
-	
-	gSTBEventActions.initialCheck($("relation-content-box"));
-
-	//Sets Focus on first Element
-	setTimeout("$('rel-partof').focus();",50);
-},
-
-checkPartOfRadio: function(element) {
-	var element = $(element).elements["rel-partof"];
-	if (element[0].checked == true || element[1].checked == true) {
-		return true;
-	}
-	return false;
-},
-
-addPartOfRelation: function() {
-	var element = $('rel-partof').elements["rel-partof"];
-	var poType = "";
-	if (element[0].checked == true) {
-		poType = gLanguage.getMessage('HAS_PART');
-	} else if (element[1].checked == true) {
-		poType = gLanguage.getMessage('HBSU');
-	}
-
-	var obj = $("rel-name").value;
-	/*STARTLOG*/
-    smwhgLogger.log(poType+":"+obj,"STB-Properties","haspart_added");
-	/*ENDLOG*/
-	if (obj == "") {
-		alert(gLanguage.getMessage('NO_OBJECT_FOR_POR'));
-	}
-	var show = $("rel-show").value;
-
-	this.wtp.initialize();
-	this.wtp.addRelation(poType, obj, show, false);
 	this.fillList(true);
 },
 
