@@ -15,6 +15,7 @@
 
 
 var qihelper = null;
+var QIHelperSavedQuery;
 
 var QIHelper = Class.create();
 QIHelper.prototype = {
@@ -58,6 +59,8 @@ QIHelper.prototype = {
         // if triplestore is enabled in wiki, the <input id="usetriplestore"> exists
         if ($('usetriplestore'))
             Event.observe($('usetriplestore'),'click', this.resetTscOptions.bind(this));
+        if (! this.queryList)
+            this.queryList = new QIList();
 	},
 
 	/**
@@ -2263,6 +2266,53 @@ QIHelper.prototype = {
                 $(divcontainer[i]).style.display='none';
             }
         }
+    },
+
+    switchMainTab : function() {
+        // change the tabs and visibility and copy the query tree at the correct position
+        if ($('qiMainTab1').className == 'qiDefTabActive') {
+            $('qiMainTab1').className = 'qiDefTabInactive';
+            $('qiMainTab2').className = 'qiDefTabActive';
+            $('qiMaintabQueryCont').style.display = 'none';
+            $('qiMaintabLoadCont').style.display = '';
+            var treeContent = $('qiDefTab').innerHTML;
+            $('qiDefTab').innerHTML = '';
+            $('qiDefTabInLoad').innerHTML = treeContent;
+            // save original query
+            QIHelperSavedQuery = this.getFullParserAsk();
+        }
+        else {
+            $('qiMainTab2').className = 'qiDefTabInactive';
+            $('qiMainTab1').className = 'qiDefTabActive';
+            $('qiMaintabQueryCont').style.display = '';
+            $('qiMaintabLoadCont').style.display = 'none';
+            var treeContent = $('qiDefTabInLoad').innerHTML;
+            $('qiDefTabInLoad').innerHTML = '';
+            $('qiDefTab').innerHTML = treeContent;
+            if (QIHelperSavedQuery) this.initFromQueryString(QIHelperSavedQuery);
+        }
+    },
+
+    searchQueries : function() {
+        this.queryList = new QIList();
+        this.queryList.search();
+    },
+
+    resetSearch : function() {
+        this.queryList = new QIList();
+        this.queryList.reset();
+    },
+
+    loadSelectedQuery : function() {
+        $('shade').toggle();
+		$('queryLoadedDialogue').toggle();
+        QIHelperSavedQuery = null; // purge this variable
+    },
+
+    loadSelectedQueryDone : function() {
+        $('shade').toggle();
+		$('queryLoadedDialogue').toggle();
+        this.switchMainTab();
     },
 
     discardChangesOfSource : function() {
