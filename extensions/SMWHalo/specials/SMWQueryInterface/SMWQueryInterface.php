@@ -38,6 +38,9 @@ class SMWQueryInterface extends SpecialPage {
 		$html = '<div id="qicontent">' .
 				'<div id="shade" style="display:none"></div>';
 
+        $html .= $this->addMainTab();
+
+        $html .= '<div id="qiMaintabQueryCont">';
         $html .= $this->addQueryOption();
         
 		$html .= $this->addQueryDefinition();
@@ -45,13 +48,75 @@ class SMWQueryInterface extends SpecialPage {
         $html .= $this->addResultPart();
 
 		$html .= $this->addAdditionalStuff();
+        $html .= '</div>';
+
+        $html .= '<div id="qiMaintabLoadCont" style="display:none">';
+        $html .= $this->addLoadQuery();
+        $html .= '</div>';
+        
         if ($smwgDeployVersion)
 		      $html .= '<script type="text/javascript" src="' . $smwgHaloScriptPath .  '/scripts/QueryInterface/deploy_qi_tooltip.js"></script>';
 		else
               $html .= '<script type="text/javascript" src="' . $smwgHaloScriptPath .  '/scripts/QueryInterface/qi_tooltip.js"></script>';		
-		$html .= '</div>';
+		$html .= '</div></div>';
 		$wgOut->addHTML($html);
 	}
+
+    private function addMainTab() {
+        return  '<div id="qiMainTab"><table>
+                 <tr>
+                 <td id="qiMainTab1" class="qiDefTabActive" onclick="qihelper.switchMainTab();"
+                     onmouseover="Tip(\'' . wfMsg('smw_qi_tt_maintab_query') . '\')">'.wfMsg('smw_qi_maintab_query').'</td>
+                 <td class="qiDefTabSpacer"> </td>
+                 <td id="qiMainTab2" class="qiDefTabInactive" onclick="qihelper.switchMainTab();"
+                     onmouseover="Tip(\'' . wfMsg('smw_qi_tt_maintab_load') . '\')">'.wfMsg('smw_qi_maintab_load').'</td>
+                 <td class="qiDefTabSpacer" width="100%">&nbsp;</td>
+                 </tr>
+                 </table>';
+    }
+
+    private function addLoadQuery() {
+        $selection = array(
+            '*' => wfMsg('smw_qi_load_selection_*'),
+            'i' => wfMsg('smw_qi_load_selection_i'),
+            'q' => wfMsg('smw_qi_load_selection_q'),
+            'c' => wfMsg('smw_qi_load_selection_c'),
+            'p' => wfMsg('smw_qi_load_selection_p'),
+            's' => wfMsg('smw_qi_load_selection_s'),
+            'r' => wfMsg('smw_qi_load_selection_r')
+        );
+        $html = wfMsg('smw_qi_tt_maintab_query') . '<br/><select id="qiLoadCondition">';
+        foreach ($selection as $key => $val) {
+            $html.= '<option value="'.$key.'">'.$val.'</option>';
+        }
+        $html.= '</select>' .
+                '<input type="text" size="60" name="qiLoadConditionTerm" id="qiLoadConditionTerm" />'.
+                '<input type="submit" name="qiLoadConditionSubmit" value="'.wfMsg('smw_qi_button_search').'" onclick="qihelper.searchQueries();" />'.
+                '&nbsp; | &nbsp;<a href="javascript:void(0);" onclick="qihelper.resetSearch();">'.wfMsg('smw_qi_link_reset_search').'</a>'.
+                '<hr/>'.
+                '<div id="qiLoadTabResult">'.
+                    '<table class="qiLoadTabResultHead">'.
+                        '<tr>'.
+                            '<td class="qiLoadTabResultHeadLeft">'.
+                                wfMsg('smw_qi_loader_result') .
+                            '</td><td class="qiLoadTabResultHeadRight">'.
+                            '</td>'.
+                        '</tr>'.
+                    '</table>'.
+                    '<div class="dragbox">'.
+                        '<table id="qiLoadTabResultTable" class="qiLoadTabResultTable">'.
+                            '<tr class="qiLoadTabResultTableFirstRow">'.
+                                '<th>'.wfMsg('smw_qi_loader_qname').'</th>'.
+                                '<th>'.wfMsg('smw_qi_loader_qprinter').'</th>'.
+                                '<th>'.wfMsg('smw_qi_loader_qpage').'</th>'.
+                            '</tr>'.
+                        '</table>'.
+                    '</div>'.
+                    '<div id="qiDefTabInLoad"></div>'.
+                    '<input type="submit" id="qiLoadQueryButton" value="'.wfMsg('smw_qi_button_load').'" onclick="qihelper.loadSelectedQuery();" />'.
+                '</div>';
+        return $html;
+    }
 
     private function addQueryOption() {
         global $smwgDefaultStore;
@@ -297,6 +362,10 @@ class SMWQueryInterface extends SpecialPage {
 						'Please enter a query name:<br/>' .
 						'<input type="text" id="saveName"/><br/>' .
 						'<span class="qibutton" onclick="qihelper.doSave()">' . wfMsg('smw_qi_confirm') . '</span>&nbsp;<span class="qibutton" onclick="$(\'savedialogue\', \'shade\').invoke(\'toggle\')">' . wfMsg('smw_qi_cancel') . '</span>' .
+						'</div>' .
+				'<div id="queryLoadedDialogue" class="topDialogue" style="display:none">' .
+						wfMsg('smw_qi_queryloaded_dlg').'<br/>' .
+						'<span class="qibutton" onclick="qihelper.loadSelectedQueryDone()">' . wfMsg('smw_qi_confirm') . '</span>'.
 						'</div>' .
 				'<div id="query4DiscardChanges" style="display:none"></div>';
 	}
