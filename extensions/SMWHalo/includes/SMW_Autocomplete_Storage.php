@@ -799,7 +799,7 @@ class AutoCompletionStorageTSC extends AutoCompletionStorageSQL2 {
 
 		if ($namespaces == NULL || count($namespaces) == 0) {
 
-			$response = $client->query("SELECT DISTINCT ?s WHERE { ?s ?p ?o. FILTER(regex(str(?s), \"#[^/:#]*$match\",\"i\")) }",  "limit=".SMW_AC_MAX_RESULTS);
+			$response = $client->query("SELECT DISTINCT ?s WHERE { GRAPH ?G {  ?s ?p ?o. FILTER(regex(str(?s), \"#[^/:#]*$match\",\"i\")) } }",  "limit=".SMW_AC_MAX_RESULTS);
 
 		} else {
 			$tsn = TSNamespaces::getInstance();
@@ -811,7 +811,7 @@ class AutoCompletionStorageTSC extends AutoCompletionStorageSQL2 {
 					$filter .= " UNION ";
 				}
 				$first = false;
-				$filter .= " { ?s ?p ?o. FILTER( regex(str(?s),\"/$namespaceText#[^/:#]*$match\",\"i\") ) } ";
+				$filter .= " { GRAPH ?G { ?s ?p ?o. FILTER( regex(str(?s),\"/$namespaceText#[^/:#]*$match\",\"i\") ) } } ";
 			}
 			$response = $client->query("SELECT DISTINCT ?s WHERE { $filter }",  "limit=".SMW_AC_MAX_RESULTS);
 		}
@@ -860,8 +860,8 @@ class AutoCompletionStorageTSC extends AutoCompletionStorageSQL2 {
 
 		$pos = $matchDomainOrRange ? 0 : 1;
 
-		$response = $client->query("SELECT DISTINCT ?p WHERE { $instance_iri rdf:type ?c. ?p prop:Has_domain_and_range ?blank1 . ?blank1 prop:$pos ?c . ".
-								   " FILTER(regex(str(?p), \"/property#[^/:#]*$userInputToMatch\",\"i\")) }",  "limit=".SMW_AC_MAX_RESULTS);
+		$response = $client->query("SELECT DISTINCT ?p WHERE { GRAPH ?G {  $instance_iri rdf:type ?c. ?p prop:Has_domain_and_range ?blank1 . ?blank1 prop:$pos ?c . ".
+								   " FILTER(regex(str(?p), \"/property#[^/:#]*$userInputToMatch\",\"i\")) } }",  "limit=".SMW_AC_MAX_RESULTS);
 
 		$result = array();
 		$this->parseSPARQLResults($response, $result);
@@ -875,8 +875,8 @@ class AutoCompletionStorageTSC extends AutoCompletionStorageSQL2 {
 		$tsn = TSNamespaces::getInstance();
 		$category_iri = $tsn->getFullIRI($category);
 
-		$response = $client->query("SELECT DISTINCT ?p WHERE { ?s rdf:type $category_iri. ?s ?p ?o . ".
-								   " FILTER(regex(str(?p), \"/property#[^/:#]*$userInputToMatch\",\"i\")) }",  "limit=".SMW_AC_MAX_RESULTS);
+		$response = $client->query("SELECT DISTINCT ?p WHERE { GRAPH ?G { ?s rdf:type $category_iri. ?s ?p ?o . ".
+								   " FILTER(regex(str(?p), \"/property#[^/:#]*$userInputToMatch\",\"i\")) } }",  "limit=".SMW_AC_MAX_RESULTS);
 
 		$result = array();
 		$this->parseSPARQLResults($response, $result);
@@ -890,8 +890,8 @@ class AutoCompletionStorageTSC extends AutoCompletionStorageSQL2 {
 		$property_iri = $tsn->getFullIRI($property);
 
 
-		$response = $client->query("SELECT DISTINCT ?v WHERE { ?s $property_iri ?v. ".
-								   " FILTER(regex(str(?v), \"$userInputToMatch\",\"i\")) }",  "limit=".SMW_AC_MAX_RESULTS);
+		$response = $client->query("SELECT DISTINCT ?v WHERE { GRAPH ?G {  ?s $property_iri ?v. ".
+								   " FILTER(regex(str(?v), \"$userInputToMatch\",\"i\")) } }",  "limit=".SMW_AC_MAX_RESULTS);
 
 		$result = array();
 		$this->parseSPARQLResults($response, $result);
@@ -916,8 +916,8 @@ class AutoCompletionStorageTSC extends AutoCompletionStorageSQL2 {
 			if (!$first) {
 				$constraint .= " UNION ";
 			}
-			$constraint = "{ ?s rdf:type $category_iri . ".
-								   " FILTER(regex(str(?s), \"#[^/:#]*$userInputToMatch\",\"i\")) }";
+			$constraint = "{ GRAPH ?G { ?s rdf:type $category_iri . ".
+								   " FILTER(regex(str(?s), \"#[^/:#]*$userInputToMatch\",\"i\")) } }";
 			$first = false;
 		}
 
