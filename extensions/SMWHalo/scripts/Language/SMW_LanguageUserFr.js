@@ -35,7 +35,6 @@ var wgUserLanguageStrings = {
     'EDIT'                    : 'Editer',
     'ANNOTATE'                : 'Annoter',
     'SUB_SUPER'               : 'Sous/Super',
-    'MHAS_PART'               : 'A la part',
     'INVALID_NAME'            : 'Nom invalide.',
     'CHANGE'                  : 'Modifier',
     'DELETE'                  : 'Supprimer',
@@ -72,16 +71,9 @@ var wgUserLanguageStrings = {
     'ENTER_DOMAIN'            : 'Saisir un domaine.',
     'ENTER_RANGE'             : 'Saisir un champ de valeurs.',
     'ENTER_TYPE'              : 'Sélectionner un type.',
-    'PROP_HAS_PART'           : 'Propriété:A la part', 
-    'HAS_PART'                : 'A la part',
-    'PROP_HBSU'               : 'Propriété:a comme unité structurelle de base', // name of the property
-    'HBSU'                    : 'a comme unité structurelle de base',
-    'DEFINE_PART_OF'          : 'Définir une relation "est une partie de".',
-    'OBJECT'                  : 'Objet:',
     'RENAME_ALL_IN_ARTICLE'   : 'Tout renommer dans cet article.',
     'CHANGE_PROPERTY'         : 'Modifier une propriété.',
     'PROPERTIES'              : 'Propriétés',
-    'NO_OBJECT_FOR_POR'       : 'Aucun objet pour la relation "est une partie de" n\'a été donné.',
     'RETRIEVE_SCHEMA_DATA'    : 'Echec lors de la récupération du schéma de données !',
 
     // Property characteristics toolbar

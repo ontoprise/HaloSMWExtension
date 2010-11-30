@@ -35,7 +35,6 @@ var wgUserLanguageStrings = {
 	'CREATE'                  : 'Aanmaken',
 	'ANNOTATE'                : 'Aantekeningen maken',
 	'SUB_SUPER'               : 'Sub/super',
-	'MHAS_PART'               : 'Heeft een deel',
 	'INVALID_NAME'            : 'Ongeldige naam.',
 	'CHANGE'                  : 'Aanpassen',
 	'DELETE'                  : 'Verwijderen',
@@ -72,16 +71,9 @@ var wgUserLanguageStrings = {
 	'ENTER_DOMAIN'            : 'Vul een domein in.',
 	'ENTER_RANGE'             : 'Vul een waardenbereik in.',
 	'ENTER_TYPE'              : 'Selecteer een type.',
-	'PROP_HAS_PART'           : 'Eigenschap:heeft onderdeel', // name of the has-part property
-	'HAS_PART'                : 'heeft onderdeel',
-	'PROP_HBSU'               : 'Eigenschap:heeft basis structurele eenheid', // name of the property
-	'HBSU'                    : 'heeft basis structurele eenheid',
-	'DEFINE_PART_OF'          : 'Definieer een deel-van relatie.',
-	'OBJECT'                  : 'Object:',
 	'RENAME_ALL_IN_ARTICLE'   : 'Hernoem alles in dit artikel.',
 	'CHANGE_PROPERTY'         : 'Een property aanpassen.',
 	'PROPERTIES'              : 'Eigenschappen',
-	'NO_OBJECT_FOR_POR'       : 'Geen object voor deel-van relatie.',
 	'RETRIEVE_SCHEMA_DATA'    : 'Opvragen van schemadata mislukt!',
 
 	// Property characteristics toolbar

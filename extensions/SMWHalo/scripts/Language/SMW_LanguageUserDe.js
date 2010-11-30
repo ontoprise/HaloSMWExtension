@@ -34,7 +34,6 @@ var wgUserLanguageStrings = {
 	'EDIT'                    : 'Editieren',
 	'ANNOTATE'                : 'Annotieren',
 	'SUB_SUPER'               : 'Sub/Super',
-	'MHAS_PART'               : 'Hat Teil',
 	'INVALID_NAME'            : 'Ungültiger Name.',
 	'CHANGE'                  : 'ändern',
 	'DELETE'                  : 'Löschen',
@@ -72,16 +71,9 @@ var wgUserLanguageStrings = {
 	'ENTER_DOMAIN'            : 'Geben Sie einen Domain ein..',
 	'ENTER_RANGE'             : 'Geben Sie eine Range ein.',
 	'ENTER_TYPE'              : 'Wählen Sie einen Typ.',
-	'PROP_HAS_PART'           : 'Attribut:has part', // name of the has-part property
-	'HAS_PART'                : 'has part',
-	'PROP_HBSU'               : 'Attribut:has basic structural unit', // name of the property
-	'HBSU'                    : 'has basic structural unit',
-	'DEFINE_PART_OF'          : 'Definieren Sie eine Teil-von Relation.',
-	'OBJECT'                  : 'Objekt:',
 	'RENAME_ALL_IN_ARTICLE'   : 'Alle im Artikel umbenennen.',
 	'CHANGE_PROPERTY'         : 'Ändern Sie ein Attribut.',
 	'PROPERTIES'              : 'Attribute',
-	'NO_OBJECT_FOR_POR'       : 'Kein Objekt für die Teil-von Relation gegeben.',
 	'RETRIEVE_SCHEMA_DATA'    : 'Die Schema-Daten konnten nicht ermittelt werden!',
 
 	// Property characteristics toolbar
