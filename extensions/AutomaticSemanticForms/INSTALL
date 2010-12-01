@@ -32,6 +32,8 @@ The extension is activated by adding the following lines to LocalSettings.php:
 include_once('extensions/AutomaticSemanticForms/includes/ASF_Initialize.php');
 enableAutomaticSemanticForms();
 
+IMPORTANT: The Automatic Semantic Forms extension must be included and enabled 
+in LocalSettings.php after the Semantic Forms extension has been included and enabled.
 
 Options:
 ========
