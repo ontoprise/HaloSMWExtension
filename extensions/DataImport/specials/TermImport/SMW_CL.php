@@ -40,13 +40,13 @@ class CL {
 					"<div><div id=\"tl-content\"><b>". wfMsg('smw_ti_tl-heading') ."</b>" .
 						"<div id=\"tlid\">" . $this->getTLIDs($tlModules) . "</div>" . 
 						"<div id=\"tldesc\">" .  "</div></div>" .
-						"<div class=\"arrow\"><img src=\"$wgScriptPath/extensions/DataImport/skins/TermImport/images/arrow.gif\"/></div>".
+						"<div class=\"arrow\"><img src=\"$wgScriptPath/extensions/DataImport/skins/TermImport/images/arrow.png\"/></div>".
 					"</div>";
 			
 		$html .= "<div><div id=\"dal-content\"><b>".wfMsg('smw_ti_dam-heading')."</b>" .
 				 	"<div id=\"dalid\">" . "<div class=\"myinfo\"><i>" . wfMsg('smw_ti_firstselectTLM') . "</i></div>" . "</div>" .
 				 	"<div id=\"daldesc\">" . "</div></div>" .
-					"<div class=\"arrow\"><img src=\"$wgScriptPath/extensions/DataImport/skins/TermImport/images/arrow.gif\"/></div>".
+					"<div class=\"arrow\"><img src=\"$wgScriptPath/extensions/DataImport/skins/TermImport/images/arrow.png\"/></div>".
 				 "</div>";
 
 		$html .= "<div id=\"source-spec\"><b>".wfMsg('smw_ti_module-data-heading')."</b>" .

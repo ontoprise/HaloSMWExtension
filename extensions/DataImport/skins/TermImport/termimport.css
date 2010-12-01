@@ -87,10 +87,20 @@ a:hover {text-decoration:underline; cursor: pointer; cursor: hand;}
 	height: 360px;
 	border: 1;
 }
-#top-container #source-speci #fileinput{
+#top-container #source-spec input, #top-container #source-spec textarea {
 	border: 1px solid #AAAAAA;
-	width: 200px;
+	width: 250px;
 }
+#top-container #source-spec .short{
+	width: 150px;
+}
+#top-container #source-spec .middle{
+	width: 250px;
+}
+#top-container #source-spec .long{
+	width: 350px;
+}
+
 #tlid .entry{
 	padding: 3px 5px 3px 5px;
 	border-bottom: 1px solid #CCC;
@@ -254,9 +264,8 @@ a:hover {text-decoration:underline; cursor: pointer; cursor: hand;}
 }
 .arrow{
 	height: 214px;
-	width: 15px;
 	float: left;
-	padding: 18px 10px 3px 10px;
+	padding: 10px 10px 3px 10px;
 }
 .inputfield{
 	border: 1px solid #AAAAAA;

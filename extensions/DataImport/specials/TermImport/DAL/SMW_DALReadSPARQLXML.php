@@ -29,8 +29,8 @@ class DALReadSPARQLXML implements IDAL {
 		return 
 			'<?xml version="1.0"?>'."\n".
 			'<DataSource xmlns="http://www.ontoprise.de/smwplus#">'."\n".
-			' 	<endpoint display="URL:" type="text" size="56"></endpoint>'."\n".
-			' 	<query display="Query:" type="textarea" cols="70" rows="10 	"></query>'."\n".
+			' 	<endpoint display="URL:" type="text" size="56" class="long"></endpoint>'."\n".
+			' 	<query display="Query:" type="textarea" cols="70" rows="10" class="long"></query>'."\n".
 			'</DataSource>'."\n";
 	}
 	

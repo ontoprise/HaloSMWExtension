@@ -213,10 +213,14 @@ TermImportPage.prototype = {
 				if (datasource.getAttribute('type')) {
 					var attrib_type = datasource.getAttribute('type');
 				}
+				var attrib_class = '';
+				if (datasource.getAttribute('class')) {
+					attrib_class = datasource.getAttribute('class');
+				}
 				if (attrib_display) {
 					var size = "25";
 					var rows = "5";
-					var cols = "5ß";
+					var cols = "5";
 					
 					if(datasource.getAttribute('size')){
 						size = datasource.getAttribute('size');
@@ -233,7 +237,7 @@ TermImportPage.prototype = {
 								+ attrib_display
 								+ "</td><td><input name=\"source\" id=\""
 								+ attrib_display
-								+ "\" class=\"inputfield\" type=\"file\" size=\""+ size + "\" maxlength=\"100\" value=\""
+								+ "\" class=\"inputfield " + attrib_class + "\" type=\"file\" size=\""+ size + "\" maxlength=\"100\" value=\""
 								+ datasource.textContent + "\"/>" + "</td></tr>";
 					} else if(attrib_type == "checkbox"){
 						response += "<tr><td>"
@@ -247,23 +251,23 @@ TermImportPage.prototype = {
 							+ attrib_display
 							+ "</td><td><textarea name=\"source\" type=\"text\" id=\""
 							+ attrib_display
-							+ "\" class=\"inputfield\" rows=\"" + rows + "\" cols=\"" + cols + "\" value=\""
+							+ "\" class=\"inputfield " + attrib_class + "\" rows=\"" + rows + "\" cols=\"" + cols + "\" value=\""
 							+ datasource.textContent + "\"></textarea>" + "</td></tr>";
 					} else {
 						//original class was inputfield
 						response += "<tr><td >"
 								+ attrib_display
 								+ "</td><td><input name=\"source\" id=\""
-								+ attrib_display + "\"";
+								+ attrib_display+ "\" class=\"" + attrib_class + "\"";
 						if(datasource.getAttribute('autocomplete')){
 							response += " class=\"wickEnabled\" typeHint=\"0\" ";
 						}
 						if(datasource.firstChild){
 							if(datasource.firstChild.nodeValue){
-								response += " type=\"" + attrib_type + "\" size=\""+ size + "\" maxlength=\"100\" value=\""
+								response += " type=\"" + attrib_type + "\" size=\"" + size + "\" maxlength=\"100\" value=\""
 									+ datasource.firstChild.nodeValue + "\"/></td></tr>";
 							} else {
-								response += " type=\"" + attrib_type + "\" size=\""+ size + "\" maxlength=\"100\" value=\""
+								response += " type=\"" + attrib_type + "\" size=\"" + size + "\" maxlength=\"100\" value=\""
 								+ "\"/></td></tr>";
 							}
 						} else {
