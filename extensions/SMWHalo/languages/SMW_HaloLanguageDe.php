@@ -276,6 +276,7 @@ protected $smwUserMessages = array(
     'smw_qi_queryastree' => 'Query als Baum',
     'smw_qi_queryastext' => 'Query als Text',
     'smw_qi_querysource' => 'Query Wikitext',
+    'smw_qi_queryname' => 'Query Name',
     'smw_qi_printout_err1' => 'Das ausgew&auml;hlte Format f&uuml; das Ergebnis ben&ouml;tigt mindestens ein weiteres Attribut, dessen Werte im Ergebnis ausgegeben werden.',
     'smw_qi_printout_err2' => 'Das ausgew&auml;hlte Format f&uuml; das Ergebnis ben&ouml;tigt mindestens ein Attribut des Typs Datum, dessen Werte im Ergebnis ausgegeben werden.',
     'smw_qi_printout_err3' => 'Das ausgew&auml;hlte Format f&uuml; das Ergebnis ben&ouml;tigt mindestens ein weiteres nummerisches Attribut, dessen Werte im Ergebnis ausgegeben werden.',
