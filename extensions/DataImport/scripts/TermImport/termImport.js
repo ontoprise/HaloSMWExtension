@@ -244,7 +244,7 @@ TermImportPage.prototype = {
 							+ attrib_display
 							+ "</td><td><input name=\"source\" id=\""
 							+ attrib_display
-							+ "\" class=\"inputfield\" type=\"" + attrib_type + "\"  maxlength=\"100\" checked=\""
+							+ "\" class=\"inputfield\" type=\"" + attrib_type + "\" style=\"width:auto;margin:0;\" checked=\""
 							+ datasource.textContent + "\"/></td></tr>";
 					} else if (attrib_type == "textarea") {
 						response += "<tr><td style=\"vertical-align:top\">"

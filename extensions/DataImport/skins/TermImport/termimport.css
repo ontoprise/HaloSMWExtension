@@ -265,7 +265,7 @@ a:hover {text-decoration:underline; cursor: pointer; cursor: hand;}
 .arrow{
 	height: 214px;
 	float: left;
-	padding: 10px 10px 3px 10px;
+	padding: 40px 5px 0px 5px;
 }
 .inputfield{
 	border: 1px solid #AAAAAA;
