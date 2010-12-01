@@ -143,8 +143,10 @@ class SMWQueryProcessor {
 			$query->sortkeys[''] = ( current( $orders ) != false ) ? current( $orders ) : 'ASC';
 		} // TODO: check and report if there are further order statements?
 		
-		// make sure to copy source parameter. necessary for Special:Ask
+		// make sure to copy source and other LOD relevant parameters. necessary for Special:Ask
         if (array_key_exists('source', $params)) $query->params['source'] = $params['source'];
+        if (array_key_exists('dataspace', $params)) $query->params['dataspace'] = $params['dataspace'];
+        if (array_key_exists('resultintegration', $params)) $query->params['resultintegration'] = $params['resultintegration'];
 		return $query;
 	}
 
@@ -240,7 +242,9 @@ class SMWQueryProcessor {
 		// make sure the TSC source is selected on the Special:Ask page
 		global $wgTitle;
 		if ( !is_null($wgTitle) && SpecialPage::getTitleFor('Ask')->equals($wgTitle)) {
-		  if (smwfIsTripleStoreConfigured() && !array_key_exists('source', $params)) $params['source'] = "tsc";
+		  if (smwfIsTripleStoreConfigured() && !array_key_exists('source', $params)) {
+		  	$params['source'] = "tsc";
+		  } 
 		}
 		
 		$querystring = str_replace( array( '&lt;', '&gt;' ), array( '<', '>' ), $querystring );

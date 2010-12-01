@@ -74,7 +74,52 @@ class SMWHaloQueryResult extends SMWQueryResult {
     	reset($this->mResults);
     }
     
-	
+public function getQueryLink($caption = false) {
+
+        $params = array(trim($this->mQuery->getQueryString()));
+        foreach ($this->mQuery->getExtraPrintouts() as $printout) {
+            $params[] = $printout->getSerialisation();
+        }
+        if ( count($this->mQuery->sortkeys)>0 ) {
+            $psort  = '';
+            $porder = '';
+            $first = true;
+            foreach ( $this->mQuery->sortkeys as $sortkey => $order ) {
+                if ( $first ) {
+                    $first = false;
+                } else {
+                    $psort  .= ',';
+                    $porder .= ',';
+                }
+                $psort .= $sortkey;
+                $porder .= $order;
+            }
+            if (($psort != '')||($porder != 'ASC')) { // do not mention default sort (main column, ascending)
+                $params['sort'] = $psort;
+                $params['order'] = $porder;
+            }
+        }
+        if ($caption == false) {
+            wfLoadExtensionMessages('SemanticMediaWiki');
+            $caption = ' ' . wfMsgForContent('smw_iq_moreresults'); // the space is right here, not in the QPs!
+        }
+        
+        // copy some LOD relevant parameters
+        if (array_key_exists('dataspace', $this->mQuery->params)) {
+            $params['dataspace'] = $this->mQuery->params['dataspace'];
+        }
+        if (array_key_exists('metadata', $this->mQuery->params)) {
+            $params['metadata'] = $this->mQuery->params['metadata'];
+        }
+        if (array_key_exists('resultintegration', $this->mQuery->params)) {
+            $params['resultintegration'] = $this->mQuery->params['resultintegration'];
+        }
+        
+        // Note: the initial : prevents SMW from reparsing :: in the query string
+        $result = SMWInfolink::newInternalLink($caption,':Special:Ask', false, $params);
+        
+        return $result;
+    }
 }
 
 /**
