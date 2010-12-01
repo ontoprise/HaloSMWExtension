@@ -398,8 +398,6 @@ class SMWQMQueryManagementHandler {
 	public function searchQueries($queryMetadata){
 		$queryString = $queryMetadata->getMetadaSearchQueryString();
 		
-		echo($queryString);
-		
 		SMWQueryProcessor::processFunctionParams(array($queryString) 
 			,$queryString, $params, $printouts);
 		
