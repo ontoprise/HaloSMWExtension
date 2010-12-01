@@ -91,6 +91,16 @@ height:100%;
     border: 1px solid #AAAAAA;
     float:left;
 }
+
+.dragboxFloat{
+    float:left;
+    width:59%;
+    height: 300px;
+    border: 1px solid #AAAAAA;
+    float:left;
+    overflow: auto;
+}
+
 #boxcontent {
 width:100%;
 height: 230px;
@@ -506,6 +516,7 @@ cursor: pointer;
 	background-color:#fafafa;
 	border: 1px solid #AAAAAA;
 }
+
 .qiDefTabSpacer {
     padding: 2px;
     border-bottom: 1px solid #cacac4;
@@ -523,7 +534,9 @@ cursor: pointer;
 .qiDisabled {
     color: #AAAAAA;
 }
-
+.qiMainTabLabel {
+    font-size: larger;
+}
 #qistatus {
     padding-left: 5px;
 }

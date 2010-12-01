@@ -715,6 +715,8 @@ QIHelper.prototype = {
         }
         qParams = this.getReasonerAndParams();
         if (qParams.length > 0) fullQuery += "| "+ qParams;
+        if ($('qiQueryName').value)
+            fullQuery += '| queryname=' + $('qiQueryName').value;
 		fullQuery += "| merge=false|}}";
 
 		return fullQuery;
@@ -2268,7 +2270,7 @@ QIHelper.prototype = {
         }
     },
 
-    switchMainTab : function() {
+    switchMainTab : function(noreset) {
         // change the tabs and visibility and copy the query tree at the correct position
         if ($('qiMainTab1').className == 'qiDefTabActive') {
             $('qiMainTab1').className = 'qiDefTabInactive';
@@ -2278,8 +2280,14 @@ QIHelper.prototype = {
             var treeContent = $('qiDefTab').innerHTML;
             $('qiDefTab').innerHTML = '';
             $('qiDefTabInLoad').innerHTML = treeContent;
+            $('qisourceButtons').style.display = 'none';
             // save original query
-            QIHelperSavedQuery = this.getFullParserAsk();
+            if (!this.queries[0].isEmpty())
+                QIHelperSavedQuery = this.getFullParserAsk();
+            // if there was a previous search and results, reset the selected
+            // query and tree but keep the results
+            if (this.queryList)
+                this.queryList.selectRow();
         }
         else {
             $('qiMainTab2').className = 'qiDefTabInactive';
@@ -2289,7 +2297,11 @@ QIHelper.prototype = {
             var treeContent = $('qiDefTabInLoad').innerHTML;
             $('qiDefTabInLoad').innerHTML = '';
             $('qiDefTab').innerHTML = treeContent;
-            if (QIHelperSavedQuery) this.initFromQueryString(QIHelperSavedQuery);
+            $('qisourceButtons').style.display = '';
+            if (QIHelperSavedQuery)
+                this.initFromQueryString(QIHelperSavedQuery);
+            else if (! noreset)
+                this.doReset();
         }
     },
 
@@ -2304,15 +2316,9 @@ QIHelper.prototype = {
     },
 
     loadSelectedQuery : function() {
-        $('shade').toggle();
-		$('queryLoadedDialogue').toggle();
-        QIHelperSavedQuery = null; // purge this variable
-    },
-
-    loadSelectedQueryDone : function() {
-        $('shade').toggle();
-		$('queryLoadedDialogue').toggle();
-        this.switchMainTab();
+        QIHelperSavedQuery = null; // purge saved query to use the current loaded one
+        this.switchMainTab(true);  // do not trigger a reset
+        this.updateTree();         // but update tree to get the node links
     },
 
     discardChangesOfSource : function() {
@@ -2926,7 +2932,7 @@ applyOptionParams : function(query) {
 	var options = query.split('|');
 	// parameters to show
     var mustShow = [];
-	// get printout format of query
+    $('qiQueryName').value = ''; // reset query name
 	var format = "table"; // default format
 	for ( var i = 1; i < options.length; i++) {
             // check for additionl printouts like |?myProp
@@ -2954,6 +2960,8 @@ applyOptionParams : function(query) {
             	format = val;	
             else if (key=="sort")
                 this.sortColumn = val;
+            else if (key=='queryname')
+                $('qiQueryName').value = val;
             else if ( key == "enableRating" && $('qio_showrating') )
                 $('qio_showrating').checked = "checked";
             else if ( key == "metadata" && $('qio_showmetadata') ) {

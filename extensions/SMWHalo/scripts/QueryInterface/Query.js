@@ -91,6 +91,8 @@ Query.prototype = {
         if (this.id == 0 && this.isEmpty()) {
             return gLanguage.getMessage('QI_EMPTY_QUERY');
         }
+        // tree in load query tab doesn't need links
+        var nodeLink = ($('qiMainTab1').className == 'qiDefTabActive');
         var tree = '<table class="qiTree">';
         if (this.id == 0)
             tree += '<tr><td colspan="2">'
@@ -99,28 +101,35 @@ Query.prototype = {
         for(var i=0; i<this.categories.length; i++){
 			tree += '<tr><td width="16"><img src="'+qihelper.imgpath+'../../concept.gif"/></td><td> ';
 			for(var j=0, js = this.categories[i].length; j < js; j++) {
-					tree += '<a href="javascript:void(0)" onclick="qihelper.selectNode(this, \'category-'+this.id+'-'+i+'-'+j+'\')">'
-                        + this.categories[i][j] + '</a>';
-                    if (j < (js - 1) )
-                        tree += ' <span style="font-weight:bold">' + gLanguage.getMessage('QI_OR') + '</span> ';
+                if (nodeLink)
+                    tree += '<a href="javascript:void(0)" onclick="qihelper.selectNode(this, \'category-'+this.id+'-'+i+'-'+j+'\')">'
+                         + this.categories[i][j] + '</a>';
+                else tree += this.categories[i][j];
+                if (j < (js - 1) )
+                    tree += ' <span style="font-weight:bold">' + gLanguage.getMessage('QI_OR') + '</span> ';
 			}
 			tree += '</td></tr>';
 		}
         for(var i=0; i<this.instances.length; i++){
 			tree += '<tr><td width="16"><img src="'+qihelper.imgpath+'../../instance.gif"/></td><td> ';
 			for(var j=0, js = this.instances[i].length; j < js; j++) {
+                if (nodeLink)
 					tree += '<a href="javascript:void(0)" onclick="qihelper.selectNode(this, \'instance-'+this.id+'-'+i+'-'+j+'\')">'
                         + this.instances[i][j] + '</a>';
-                    if (j < (js - 1) )
-                        tree += ' <span style="font-weight:bold">' + gLanguage.getMessage('QI_OR') + '</span> ';
+                else tree += this.instances[i][j];
+                if (j < (js - 1) )
+                    tree += ' <span style="font-weight:bold">' + gLanguage.getMessage('QI_OR') + '</span> ';
 			}
 			tree += '</td></tr>';
 		}
 		for(var i=0; i<this.properties.length; i++){
-			tree += '<tr><td width="16"><img src="'+qihelper.imgpath+'../../property.gif"/></td><td> '
-                + '<a href="javascript:void(0);" onclick="qihelper.selectNode(this, \'property-'+this.id+'-'+i+'\')">'
-                + this.properties[i].getName() + '</a></td></tr>'
-                + '<tr><td><img src="'+qihelper.imgpath+'lastlink.gif"/></td><td>';
+			tree += '<tr><td width="16"><img src="'+qihelper.imgpath+'../../property.gif"/></td><td> ';
+            if (nodeLink)
+                tree += '<a href="javascript:void(0);" onclick="qihelper.selectNode(this, \'property-'+this.id+'-'+i+'\')">';
+            tree += this.properties[i].getName();
+            if (nodeLink) tree += '</a>'
+            tree += '</td></tr>'
+                 + '<tr><td><img src="'+qihelper.imgpath+'lastlink.gif"/></td><td>';
 			propvalues = this.properties[i].getValues();
 			for(var j=0, js= propvalues.length; j < js; j++){
                 

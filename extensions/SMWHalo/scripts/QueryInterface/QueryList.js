@@ -70,16 +70,20 @@ QIList.prototype = {
     selectRow : function(span) {
         var num;
         for ( var i = 1, n = $('qiLoadTabResultTable').rows.length; i < n; i++) {
-            if ($('qiLoadTabResultTable').rows[i] == span.parentNode.parentNode ) {
+            if (span && $('qiLoadTabResultTable').rows[i] == span.parentNode.parentNode ) {
                 num = i;
             }
 			$('qiLoadTabResultTable').rows[i].className = '';
         }
-        $('qiLoadTabResultTable').rows[num].className = 'qiLoadTabResultTableSelected';
-        //var row = span.parentNode.parentNode.className = 'qiLoadTabResultTableSelected';
-        qihelper.initFromQueryString(this.list[num -1].query);
-        $('qiDefTabInLoad').style.display= 'inline'; // show the tree
-        $('qiLoadQueryButton').style.display= 'inline'; // and load button
+        if (span) {
+            $('qiLoadTabResultTable').rows[num].className = 'qiLoadTabResultTableSelected';
+            qihelper.initFromQueryString(this.list[num -1].query);
+            $('qiDefTabInLoad').style.display= 'inline'; // show the tree
+            $('qiLoadQueryButton').style.display= 'inline'; // and load button
+        } else {
+            $('qiDefTabInLoad').style.display= 'none'; // show the tree
+            $('qiLoadQueryButton').style.display= 'none'; // and load button
+        }
 
     },
     reset : function(inSearch) {
