@@ -807,6 +807,7 @@ function qiMergeQueryMetadataResults($queryMetadataResults, $result) {
         // check if the result exists already in the list
         for ($k = 0; $k < count($result); $k++) {
             if ($result[$k]['name'] == $queryMetadataResults[$i]->queryName &&
+                $result[$k]['page'] == $queryMetadataResults[$i]->usedInArticle &&
                 $result[$k]['name'] == $queryString)
                     continue 2;
         }
