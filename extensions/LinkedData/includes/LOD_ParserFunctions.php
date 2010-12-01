@@ -163,10 +163,11 @@ class LODParserFunctions {
 			}
 			$store->addMappingToPage($title->getFullText(), $source, $target);
 			if (!$success) {
-				$msg = wfMsg("lod_saving_mapping_failed.");
+				$msg = wfMsg("lod_saving_mapping_failed");
 			}
 			
 		}
+		$text = htmlentities($text);
 		return "$msg\n\n<pre>$text</pre>";
 	}
 	
