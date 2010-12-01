@@ -9,8 +9,7 @@ $smwgWebserviceEndpoint="localhost:8090";
 $smwhgAutoCompletionTSC=true;
 
 #SemanticGardening
-//TODO: set correct HUDSON path
-$phpInterpreter="C:/Programme/php/php.exe";
+$phpInterpreter="c:\Programme\xampp\php";
 include_once('extensions/SemanticGardening/includes/SGA_GardeningInitialize.php');
 
 #SemanticNotifications
