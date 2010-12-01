@@ -323,7 +323,11 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 
 
 	function getPropertyValues($subject, SMWPropertyValue $property, $requestoptions = NULL, $outputformat = '', $forceSMWStore = false ) {
-	
+	    
+		if (is_null($subject)) {
+			return $this->getAllPropertyAnnotations($property, $requestoptions, $forceSMWStore);
+		}
+		
 		if ( $forceSMWStore || (defined( 'DO_MAINTENANCE' )  && !defined('SMWH_FORCE_TS_UPDATE')) ) {
 			return $this->smwstore->getPropertyValues($subject, $property, $requestoptions, $outputformat);
 		}
