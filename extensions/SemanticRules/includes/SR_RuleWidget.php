@@ -84,7 +84,7 @@ class SRRuleWidget {
                          '<div class="ruleLegend"><div class="rule_legend_property"></div><span>'.wfMsg('sr_prop').'</span>'.
                          '<div class="rule_legend_class"></div><span>'.wfMsg('sr_cat').'</span>'.
                          '<div class="rule_legend_inst"></div><span>'.wfMsg('sr_inst').'</span>'. //end legend
-                         '</div>';  
+                         '</div></div>';  
 		self::$index++;
 	
 		return $resultHTML;
