@@ -719,7 +719,7 @@ public static function processSMWQueryASWSCall($parameters){
 				if($stripTags === false){
 					$result[$title][$key] = @ str_replace("|", "{{!}}",trim($result[$title][$key]));
 				} else {
-					$result[$title][$key] = @ str_replace("|", "{{!}}",trim(strip_tag($results[$title][$key], $stripTags)));
+					$result[$title][$key] = @ str_replace("|", "{{!}}",trim(strip_tags($result[$title][$key], $stripTags)));
 				}
 			}
 			
