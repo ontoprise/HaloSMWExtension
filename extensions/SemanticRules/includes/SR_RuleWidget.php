@@ -76,7 +76,7 @@ class SRRuleWidget {
                           '<option mode="stylized">'.wfMsg('sr_stylizedenglish').'</option>'.
                        '</select></span> ';
 		$resultHTML = $headline.'<div id="rule_content_'.self::$index.'" ruleID="'.htmlspecialchars($this->mRuleURI).'" class="ruleWidget"><img style="margin-top: 5px;margin-left: 5px;" src="'.$wgScriptPath.'/extensions/SemanticRules/skins/images/rule.gif"/><span style="margin-left: 5px;font-weight:bold;">
-                         '.htmlspecialchars($this->mRuleName).'</span>'.$ruleFormatSelector.'<span style="float:right;margin-right: 10px;margin-top: 5px;">'.$onOffSwitch.'</span> <span style="float:right;margin-right: 10px;margin-top: 5px;">'.wfMsg('sr_rulestatus').':</span><hr/>'. // tab container
+                         '.htmlspecialchars($this->mRuleName).'</span>'.$ruleFormatSelector.'<span style="float:right; margin-right: 10px;">'.$onOffSwitch.'</span> <span style="float:right;margin-right: 10px;margin-top: 5px;">'.wfMsg('sr_rulestatus').':</span><hr style="clear:both;"/>'. // tab container
                          '<div id="rule_content_'.self::$index.'_easyreadible" class="ruleSerialization">'.htmlspecialchars($this->mRuletext).
                          '</div>'. // tab 1
                          '<div id="rule_content_'.self::$index.'_stylized" class="ruleSerialization" style="display:none;">Stylized english</div>'.
@@ -99,9 +99,9 @@ class SRRuleWidget {
 	private function onOffSwitch($defaultOn, $i) {
 
 		if ($defaultOn) {
-			return '<select id="rule_content_'.$i.'_switch" style="background-color: lightgreen" onchange="sr_rulewidget.changeRuleState(event, this, \''.$this->mContainingPage->getPrefixedDBkey().'\', \''.$this->mRuleName.'\', '.$i.')"><option selected="true" value="true">'.wfMsg('sr_rule_isactive_state').'</option><option value="false">'.wfMsg('sr_rule_isinactive_state').'</option></select>';
+			return '<select id="rule_content_'.$i.'_switch" style="background-color: lightgreen; margin-top: 5px;" onchange="sr_rulewidget.changeRuleState(event, this, \''.$this->mContainingPage->getPrefixedDBkey().'\', \''.$this->mRuleName.'\', '.$i.')"><option selected="true" value="true">'.wfMsg('sr_rule_isactive_state').'</option><option value="false">'.wfMsg('sr_rule_isinactive_state').'</option></select>';
 		} else {
-			return '<select id="rule_content_'.$i.'_switch" style="background-color: red" onchange="sr_rulewidget.changeRuleState(event, this, \''.$this->mContainingPage->getPrefixedDBkey().'\', \''.$this->mRuleName.'\', '.$i.')"><option value="true">'.wfMsg('sr_rule_isactive_state').'</option><option selected="true" value="false">'.wfMsg('sr_rule_isinactive_state').'</option></select>';
+			return '<select id="rule_content_'.$i.'_switch" style="background-color: red; margin-top: 5px;" onchange="sr_rulewidget.changeRuleState(event, this, \''.$this->mContainingPage->getPrefixedDBkey().'\', \''.$this->mRuleName.'\', '.$i.')"><option value="true">'.wfMsg('sr_rule_isactive_state').'</option><option selected="true" value="false">'.wfMsg('sr_rule_isinactive_state').'</option></select>';
 		}
 
 	}
