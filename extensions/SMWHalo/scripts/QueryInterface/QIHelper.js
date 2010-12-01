@@ -2321,6 +2321,38 @@ QIHelper.prototype = {
         this.updateTree();         // but update tree to get the node links
     },
 
+    updateSearchAc : function() {
+        var constraint,
+            oldConstr = $('qiLoadConditionTerm').getAttribute("constraints");
+        switch ($('qiLoadCondition').value) {
+            case 'p':
+            case 's':
+                constraint = 'namespace: 102';
+                break;
+            case 'c':
+                constraint = 'namespace: 14';
+                break;
+            case 'i':
+                constraint = 'namespace: 0';
+                break;
+            case '*':
+                constraint = 'namespace: 14,102,0';
+                break;
+        }
+        if (constraint != oldConstr) {
+            autoCompleter.deregisterAllInputs();
+            if (constraint) {
+                $('qiLoadConditionTerm').setAttribute("constraints", constraint);
+                $('qiLoadConditionTerm').addClassName('wickEnabled');
+            }
+            else {
+                $('qiLoadConditionTerm').removeAttribute("constraints");
+                $('qiLoadConditionTerm').removeClassName('wickEnabled');
+            }
+            autoCompleter.registerAllInputs();
+        }
+    },
+
     discardChangesOfSource : function() {
         $('fullAskText').value =   $('query4DiscardChanges').innerHTML.unescapeHTML();
         this.sourceChanged=1;

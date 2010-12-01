@@ -85,12 +85,12 @@ class SMWQueryInterface extends SpecialPage {
             's' => wfMsg('smw_qi_load_selection_s'),
             'r' => wfMsg('smw_qi_load_selection_r')
         );
-        $html = wfMsg('smw_qi_load_criteria') . '<br/><select id="qiLoadCondition">';
+        $html = wfMsg('smw_qi_load_criteria') . '<br/><select id="qiLoadCondition" onchange="qihelper.updateSearchAc();">';
         foreach ($selection as $key => $val) {
             $html.= '<option value="'.$key.'">'.$val.'</option>';
         }
         $html.= '</select>' .
-                '<input type="text" size="40" id="qiLoadConditionTerm" />'.
+                '<input type="text" size="40" id="qiLoadConditionTerm" class="wickEnabled" constraints="namespace: 14,102,0" />'.
                 '<input type="submit" name="qiLoadConditionSubmit" value="'.wfMsg('smw_qi_button_search').'" onclick="qihelper.searchQueries();" />'.
                 '&nbsp; | &nbsp;<a href="javascript:void(0);" onclick="qihelper.resetSearch();">'.wfMsg('smw_qi_link_reset_search').'</a>'.
                 '<hr/>'.
