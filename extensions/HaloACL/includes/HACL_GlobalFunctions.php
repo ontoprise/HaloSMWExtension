@@ -180,7 +180,8 @@ function haclfSetupExtension() {
     }
     
     //-- Hooks for ACL toolbar--
-	$wgHooks['EditPageBeforeEditButtons'][] = 'haclfAddToolbarForEditPage';
+//	$wgHooks['EditPageBeforeEditButtons'][] = 'haclfAddToolbarForEditPage';
+	$wgHooks['EditPage::showEditForm:fields'][] = 'haclfAddToolbarForEditPage';
 	$wgHooks['sfHTMLBeforeForm'][]     		= 'haclfAddToolbarForSemanticForms';
 	$wgHooks['sfSetTargetName'][]           = 'haclfOnSfSetTargetName';
 	
@@ -765,7 +766,6 @@ function haclAddJSLanguageScripts(& $jsm, $mode = "all", $namespace = -1, $pages
 *  
 */
 function haclfAddToolbarForEditPage ($content_actions) {
-
     if ($content_actions->mArticle->mTitle->mNamespace == HACL_NS_ACL) {
         return $content_actions;
     }
