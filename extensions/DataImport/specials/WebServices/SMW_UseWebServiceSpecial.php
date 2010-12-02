@@ -175,11 +175,22 @@ class SMWUseWebServiceSpecial extends SpecialPage {
 		$html .= "<option value=\"ul\">ul</option>";
 		$html .= "<option value=\"table\">table</option>";
 		$html .= "<option value=\"broadtable\">broadtable</option>";
+		$html .= "<option value=\"count\">count</option>";
+		
+		$html .= "<option value=\"ofc-pie\">ofc-pie</option>";
+		$html .= "<option value=\"ofc-bar\">ofc-bar</option>";
+		$html .= "<option value=\"ofc-bar-3d\">ofc-bar-3d</option>";
+		$html .= "<option value=\"ofc-line\">ofc-line</option>";
+		
+		$html .= "<option value=\"sum\">sum</option>";
+		$html .= "<option value=\"average\">average</option>";
+		$html .= "<option value=\"min\">min</option>";
+		$html .= "<option value=\"max\">max</option>";
+		
 		$html .= "<option value=\"simpletable\">simpletable</option>";
 		$html .= "<option value=\"template\">template</option>";
 		$html .= "<option value=\"tixml\">tixml</option>";
 		$html .= "<option value=\"transposed\">transposed</option>";
-		$html .= "<option value=\"count\">count</option>";
 		$html .= "<option value=\"csv\">csv</option>";
 		$html .= "</select>";
 		$html .= "</p>";
