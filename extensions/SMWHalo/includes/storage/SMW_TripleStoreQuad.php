@@ -29,7 +29,7 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 	}
 
 	function getSemanticData( $subject, $filter = false, $forceSMWStore = false ) {
-		
+
 		if ( $forceSMWStore || (defined( 'DO_MAINTENANCE' )  && !defined('SMWH_FORCE_TS_UPDATE')) ) {
 			return $this->smwstore->getSemanticData($subject, $filter);
 		}
@@ -123,12 +123,12 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 	}
 
 	function getProperties( $subject, $requestoptions = null, $forceSMWStore = false ) {
-		
+
 		if ( $forceSMWStore || (defined( 'DO_MAINTENANCE' )  && !defined('SMWH_FORCE_TS_UPDATE')) ) {
 			return $this->smwstore->getProperties($subject, $requestoptions);
 		}
 
-		
+
 
 		$client = TSConnection::getConnector();
 		$client->connect();
@@ -183,7 +183,7 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 	}
 
 	function getInProperties( SMWDataValue $object, $requestoptions = null , $forceSMWStore = false) {
-		
+
 		if ( $forceSMWStore || (defined( 'DO_MAINTENANCE' )  && !defined('SMWH_FORCE_TS_UPDATE')) ) {
 			return $this->smwstore->getInProperties($object, $requestoptions);
 		}
@@ -242,9 +242,9 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 	}
 
 	function getAllPropertyAnnotations(SMWPropertyValue $property, $requestoptions = NULL, $forceSMWStore = false) {
-	
+
 		if ( $forceSMWStore || (defined( 'DO_MAINTENANCE' )  && !defined('SMWH_FORCE_TS_UPDATE')) ) {
-			 return array();
+			return array();
 		}
 
 		$client = TSConnection::getConnector();
@@ -260,7 +260,8 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 		// query
 		$property_iri =  $this->tsNamespace->getFullIRI($property->getWikiPageValue()->getTitle());
 
-
+        // add boundary constraint here too?
+        
 		try {
 			$response = $client->query("SELECT ?s ?o WHERE { GRAPH ?G {  ?s $property_iri ?o. } } ORDER BY ASC(?s) $limit $offset",  "merge=false");
 		} catch(Exception $e) {
@@ -323,11 +324,11 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 
 
 	function getPropertyValues($subject, SMWPropertyValue $property, $requestoptions = NULL, $outputformat = '', $forceSMWStore = false ) {
-	    
+	  
 		if (is_null($subject)) {
 			return $this->getAllPropertyAnnotations($property, $requestoptions, $forceSMWStore);
 		}
-		
+
 		if ( $forceSMWStore || (defined( 'DO_MAINTENANCE' )  && !defined('SMWH_FORCE_TS_UPDATE')) ) {
 			return $this->smwstore->getPropertyValues($subject, $property, $requestoptions, $outputformat);
 		}
@@ -416,7 +417,7 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 
 
 	function getPropertySubjects(SMWPropertyValue $property, $value, $requestoptions = NULL, $forceSMWStore=false) {
-		
+
 		if ($forceSMWStore || (defined( 'DO_MAINTENANCE' )  && !defined('SMWH_FORCE_TS_UPDATE')) ) {
 			return $this->smwstore->getPropertySubjects($property, $value, $requestoptions);
 		}
@@ -436,18 +437,27 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 		$propertyName = $property->getWikiPageValue()->getTitle()->getDBkey();
 		$limit =  isset($requestoptions->limit) ? " LIMIT ".$requestoptions->limit : "";
 		$offset =  isset($requestoptions->offset) ? " OFFSET ".$requestoptions->offset : "";
-
+		if ( $requestoptions->ascending ) {
+			$op = $requestoptions->include_boundary ? ' >= ' : ' > ';
+		} else {
+			$op = $requestoptions->include_boundary ? ' <= ' : ' < ';
+		}
+		
+		// FIXME: filter only for instances in the wiki main namespace. 
+		// SPARQL builtin required for selecting localname
+		$nsMainPrefix = TSNamespaces::getInstance()->getNSURI(NS_MAIN);
+		$boundaryFilter = !is_null($requestoptions->boundary) ? "FILTER (str(?s) $op \"".$nsMainPrefix.TSHelper::escapeForStringLiteral($requestoptions->boundary)."\")" : "";
 
 		$propertyIRI = $this->tsNamespace->getFullIRI($property->getWikiPageValue()->getTitle());
 
 		try {
 			if (is_null($value)) {
-				$response = $client->query("SELECT ?s WHERE { GRAPH ?G {  ?s $propertyIRI ?o. } } ORDER BY ASC(?s) $limit $offset",  "merge=false");
+				$response = $client->query("SELECT ?s WHERE { GRAPH ?G {  ?s $propertyIRI ?o. $boundaryFilter } } ORDER BY ASC(?s) $limit $offset",  "merge=false");
 
 			} else if ($value instanceof SMWWikiPageValue) {
 
 				$objectIRI = $this->tsNamespace->getFullIRI($value->getTitle());
-				$response = $client->query("SELECT ?s WHERE { GRAPH ?G {  ?s $propertyIRI $objectIRI. } } ORDER BY ASC(?s) $limit $offset",  "merge=false");
+				$response = $client->query("SELECT ?s WHERE { GRAPH ?G {  ?s $propertyIRI $objectIRI. $boundaryFilter } } ORDER BY ASC(?s) $limit $offset",  "merge=false");
 
 			} else {
 				$typeID = $value->getTypeID();
@@ -455,7 +465,7 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 				$dbkey = $value->getDBkeys();
 				$objectValue = '"'.TSHelper::escapeForStringLiteral($dbkey[0]).'"^^'.$xsdType;
 
-				$response = $client->query("SELECT ?s WHERE { GRAPH ?G {  ?s $propertyIRI $objectValue. } } ORDER BY ASC(?s) $limit $offset",  "merge=false");
+				$response = $client->query("SELECT ?s WHERE { GRAPH ?G {  ?s $propertyIRI $objectValue. $boundaryFilter } } ORDER BY ASC(?s) $limit $offset",  "merge=false");
 
 			}
 		} catch(Exception $e) {
@@ -574,7 +584,7 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 	}
 
 	private function getResultValue($b) {
-	
+
 		if (isset($b->children()->uri)) {
 			$sv = reset($b->children()->uri);
 			if ($sv == "http://__defaultvalue__/doesnotexist") return "";
