@@ -2288,6 +2288,7 @@ QIHelper.prototype = {
             // query and tree but keep the results
             if (this.queryList)
                 this.queryList.selectRow();
+            $('qiLoadConditionTerm').focus();
         }
         else {
             $('qiMainTab2').className = 'qiDefTabInactive';
@@ -2313,6 +2314,7 @@ QIHelper.prototype = {
     resetSearch : function() {
         this.queryList = new QIList();
         this.queryList.reset();
+        $('qiLoadConditionTerm').focus();
     },
 
     loadSelectedQuery : function() {
