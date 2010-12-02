@@ -31,7 +31,9 @@ $messages = array();
  */
 $messages['en'] = array(
 	/* general/maintenance messages */
-	'ce_collaboration'				=> 'Collaboration',
+	'collaboration'					=> 'Collaboration',
+	'collaboration_desc'			=> 'Collaboration',
+	'ce_sp_intro'					=> 'This special page give you a quick overview about the latest comments in your wiki.',
 	'ce_allowed'					=> 'Gratulation! CE works as intended!',
 	'ce_warning'					=> 'Collaboration extension warning',
 	'ce_var_undef'					=> 'The following variable has not been correctly initialized: "$1". <br/> Please check your settings.',
@@ -80,7 +82,9 @@ $messages['en'] = array(
  */
 $messages['de'] = array(
 	/* general/maintenance messages */
-	'ce_collaboration'				=> 'Collaboration',
+	'collaboration'					=> 'Collaboration',
+	'collaboration_desc'			=> 'Collaboration',
+	'ce_sp_intro'					=> 'Diese Spezialseite erlaubt Ihnen einen schnellen Überblick über die neusten Kommentare in Ihrem Wiki.',
 	'ce_allowed'					=> 'Gratulation! CE funktioniert wie erwartet.',
 	'ce_warning'					=> 'Collaboration Extension Warnung',
 	'ce_var_undef'					=> 'Folgende Variable wurde nicht richtig gesetzt: "$1". <br/> Bitte prüfen Sie ihre Einstellungen',

@@ -50,21 +50,17 @@ function enableCollaboration() {
 	$wgHooks['LanguageGetMagic'][] = 'cefAddMagicWords'; // setup names for parser functions (needed here)
 	$wgExtensionMessagesFiles['Collaboration'] = $cegIP . '/languages/CE_Messages.php'; // register messages (requires MW=>1.11)
 
-
-	///// Set up autoloading; essentially all classes should be autoloaded!
-	#$wgAutoloadClasses['CECommentDBHelper'] = $cegIP . '/storage/CE_CommentDBHelper.php';
-
 	//--- Comment classes ---
-	//$wgAutoloadClasses['CECommentStorage'] = $cegIP . '/specials/Comment/CE_CommentStorage.php';
 	$wgAutoloadClasses['CEComment'] = $cegIP . '/specials/Comment/CE_Comment.php';
 	$wgAutoloadClasses['CECommentUtils'] = $cegIP . '/specials/Comment/CE_CommentUtils.php';
 
 	//--- Autoloading for exception classes ---
 	$wgAutoloadClasses['CEException'] = $cegIP . '/exeptions/CE_Exception.php';
-	//$wgAutoloadClasses['CEQueryException'] = $cegIP . '/exeptions/CE_QueryException.php';
-	//$wgAutoloadClasses['CEStorageException'] = $cegIP . '/exeptions/CE_StorageException.php';
 
 	require_once($cegIP . '/specials/Comment/CE_CommentAjaxAccess.php');
+
+	$wgAutoloadClasses['CECommentSpecial'] = $cegIP . '/specials/Comment/CE_CommentSpecial.php';
+
 	//so that other extensions know about the Collaboration-Extension
 	$cegEnableCollaboration = true;
 
@@ -89,7 +85,9 @@ function cefSetupExtension() {
 
 	wfLoadExtensionMessages('Collaboration');
 
-	//TODO: Language files
+	///// Register specials pages
+	global $wgSpecialPages, $wgSpecialPageGroups;
+	$wgSpecialPages['Collaboration'] = array('CECommentSpecial');
 
 	$spns_text = $wgContLang->getNsText(NS_SPECIAL);
 	// register AddHTMLHeader functions for special pages
@@ -162,6 +160,16 @@ function cefAddNonSpecialPageHeader(&$out) {
  * @return bool: true
  */
 function cefAddSpecialPageHeader(&$out) {
+	global $smwgScriptPath;
+	//SMW_sorttableto handle table sorting
+	$out->addScript("<script type=\"text/javascript\" src=\"". $smwgScriptPath .  "/skins/SMW_sorttable.js\"></script>");
+	//css to format sortkeys
+	$out->addLink(array(
+		'rel'   => 'stylesheet',
+		'type'  => 'text/css',
+		'media' => 'screen, projection',
+		'href'  => $smwgScriptPath. '/skins/SMW_custom.css'
+	));
 	return true;
 }
 

@@ -204,8 +204,7 @@ class CECommentParserFunctions {
 
 			// Get users groups and check for Sysop-Rights
 			$groups = $wgUser->getEffectiveGroups();
-			$isAllowed = false;
-			if (in_array( 'sysop', $wgUser->getEffectiveGroups() ) == 1) {
+			if (in_array( 'sysop', $groups ) == 1) {
 				//provide delete link for every existing comment
 				$userIsSysopJSText = 'var wgCEUserIsSysop = true;';
 			} else {
@@ -246,13 +245,17 @@ class CECommentParserFunctions {
 					XML::closeElement('span') .
 				XML::closeElement('div');
 
-		$script = '<script type="'.$wgJsMimeType.'">/*<![CDATA[*/'.
-			'var wgCEEnableRating = true;' .
-			($userIsSysopJSText? $userIsSysopJSText : "") .
-			'/*]]>*/</script>';
-		SMWOutputs::requireHeadItem('CEJS_Variables2', $script);  
+			$script = '<script type="'.$wgJsMimeType.'">/*<![CDATA[*/'.
+				'var wgCEEnableRating = true;' .
+				'/*]]>*/</script>';
+			SMWOutputs::requireHeadItem('CEJS_Variables2', $script);
 		}
 
+		$script = '<script type="'.$wgJsMimeType.'">/*<![CDATA[*/'.
+			($userIsSysopJSText? $userIsSysopJSText : "") .
+			'/*]]>*/</script>';
+		SMWOutputs::requireHeadItem('CEJS_Variables3', $script);  
+		
 		$html = XML::openElement( 'div', array( 'id' => 'collabComFormHeader' )) .
 			XML::openElement( 'form', array( 'method' => 'post', 'id' => 'collabComForm',
 			'style' => 'display:none',		

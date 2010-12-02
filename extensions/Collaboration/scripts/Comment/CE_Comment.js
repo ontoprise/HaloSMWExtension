@@ -501,7 +501,7 @@ function CECommentForm() {
 	 * 
 	 */
 	this.replyCommentForm = function(pageName) {
-		this.replyCommentName = pageName;
+		this.replyCommentName = ceLanguage.getMessage('COMMENT_NS') + pageName;
 		var container = $jq('#' + pageName.replace(/(:|\.)/g,'\\$1'));
 		var commentForm = $jq('#collabComForm');
 		$jq('#collabComFormResetbuttonID').bind('click', function(){
@@ -1132,20 +1132,22 @@ $jq(document).ready(
 		//clone actual structure without events (bind them again later)
 		ceCommentForm.savedStructure = $jq('#collabComResults').clone();
 		ceCommentForm.showThreaded();
-		// toggle one time
-		var comToggle = $jq('#collabComToggle');
-		var commentResults = $jq('#collabComResults');
-		var newComToggleText = '';
-		if( commentResults.css('display') === 'block' ) {
-			newComToggleText = ceLanguage.getMessage('ce_com_hide');
-		} else {
-			newComToggleText = ceLanguage.getMessage('ce_com_show');
+		// toggle one time if there are comments available
+		if (resultComments.length !== 0) {
+			var comToggle = $jq('#collabComToggle');
+			var commentResults = $jq('#collabComResults');
+			var newComToggleText = '';
+			if( commentResults.css('display') === 'block' ) {
+				newComToggleText = ceLanguage.getMessage('ce_com_hide');
+			} else {
+				newComToggleText = ceLanguage.getMessage('ce_com_show');
+			}
+			comToggle.html(' | ' + newComToggleText);
+			commentResults.hide();
+			//hide "Add" and "View"
+			$jq('#collabComFormToggle').toggle();
+			$jq('#collabComViewToggle').toggle();
 		}
-		comToggle.html(' | ' + newComToggleText);
-		commentResults.hide();
-		//hide "Add" and "View"
-		$jq('#collabComFormToggle').toggle();
-		$jq('#collabComViewToggle').toggle();
 	}
 );
 
