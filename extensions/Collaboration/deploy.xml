@@ -22,7 +22,7 @@
 		<!-- TODO: add others -->
 	</codefiles>
 	<wikidumps>
-		<file loc="import/collaboration.xml"/>
+		<file loc="deploy/dump.xml"/>
 	</wikidumps>
 	<resources>
 		<file loc="skins/Comment/icons/defaultuser.gif" />
