@@ -390,8 +390,8 @@ function smwDITBAddHTMLHeader(&$out){
 	
 	$action = $wgRequest->getVal('action');
 	if ($action == 'edit' || $action == 'formedit' || $ns == NS_SPECIAL && $text == "FormEdit") {
-		//$out->addScript("<script type=\"text/javascript\" src=\"".$smwgDIScriptPath .  "/scripts/WebServices/semantic-toolbar-container.js\"></script>");
-		//$out->addScript("<script type=\"text/javascript\" src=\"".$smwgDIScriptPath."/scripts/WebServices/use-webservice.js\"></script>");
+		$out->addScript("<script type=\"text/javascript\" src=\"".$smwgDIScriptPath .  "/scripts/WebServices/semantic-toolbar-container.js\"></script>");
+		$out->addScript("<script type=\"text/javascript\" src=\"".$smwgDIScriptPath."/scripts/WebServices/use-webservice.js\"></script>");
 	}
 	
 	return true;
