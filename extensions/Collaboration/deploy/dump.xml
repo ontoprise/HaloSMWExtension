@@ -885,95 +885,6 @@ desc: [[Description::Add fancy collaboration tools to your wiki]]</text>
     </revision>
   </page>
   <page>
-    <title>Comment:CollabTest1 1288789665891</title>
-    <id>29</id>
-    <revision>
-      <id>91</id>
-      <timestamp>2010-11-03T16:27:40Z</timestamp>
-      <contributor>
-        <username>WikiSysop</username>
-        <id>1</id>
-      </contributor>
-      <comment>Comment has been deleted via Collaboration GUI.</comment>
-      <text xml:space="preserve">{{Comment|CommentPerson=User:WikiSysop|CommentRelatedArticle=CollabTest1|CommentRating=0|CommentDatetime=2010-11-03T13:07:56+00:00|CommentContent=WikiSysop deleted this comment on 2010-11-03T16:27:40+00:00|CommentWasDeleted=true|}}</text>
-    <hash>cd2c58eda25f45f158bb2e7f4c59dca7</hash>
-    </revision>
-  </page>
-  <page>
-    <title>Comment:CollabTest1 1288789777814</title>
-    <id>31</id>
-    <revision>
-      <id>88</id>
-      <timestamp>2010-11-03T16:16:19Z</timestamp>
-      <contributor>
-        <username>WikiSysop</username>
-        <id>1</id>
-      </contributor>
-      <text xml:space="preserve">{{Comment|CommentPerson=User:WikiSysop|CommentRelatedArticle=CollabTest1|CommentDatetime=2010-11-03T13:34:08+00:00|CommentWasDeleted=true|CommentContent=WikiSysopdeleted2010-11-03T16:08:34+00:00|}}</text>
-    <hash>ac0fe9b06439d46f870baf4ef9cc14dc</hash>
-    </revision>
-  </page>
-  <page>
-    <title>Comment:CollabTest1 1288801745778</title>
-    <id>37</id>
-    <revision>
-      <id>93</id>
-      <timestamp>2010-11-03T16:33:19Z</timestamp>
-      <contributor>
-        <username>WikiSysop</username>
-        <id>1</id>
-      </contributor>
-      <comment>Comment has been deleted via Collaboration GUI.</comment>
-      <text xml:space="preserve">{{Comment|CommentPerson=User:WikiSysop|CommentRelatedArticle=CollabTest1|CommentDatetime=2010-11-03T17:29:06+01:00|CommentContent=WikiSysop deleted this comment on Wed, 03 Nov 2010 16:33:18 +0000|CommentWasDeleted=true|}}</text>
-    <hash>a2198d3046d05f9623c292595e612426</hash>
-    </revision>
-  </page>
-  <page>
-    <title>Comment:CollaborationTest1 1289903706637</title>
-    <id>59</id>
-    <revision>
-      <id>128</id>
-      <timestamp>2010-11-16T10:35:07Z</timestamp>
-      <contributor>
-        <username>WikiSysop</username>
-        <id>1</id>
-      </contributor>
-      <comment>This comment article was created by Collaboration Extension.</comment>
-      <text xml:space="preserve">{{Comment|CommentPerson=User:WikiSysop|CommentRelatedArticle=CollaborationTest1|CommentDatetime=2010-11-16T11:35:06+01:00|CommentContent=test #1|}}</text>
-    <hash>d0acef5045daa1257b6b30e68f13f617</hash>
-    </revision>
-  </page>
-  <page>
-    <title>Comment:CollaborationTest1 1289903721788</title>
-    <id>60</id>
-    <revision>
-      <id>129</id>
-      <timestamp>2010-11-16T10:35:22Z</timestamp>
-      <contributor>
-        <username>WikiSysop</username>
-        <id>1</id>
-      </contributor>
-      <comment>This comment article was created by Collaboration Extension.</comment>
-      <text xml:space="preserve">{{Comment|CommentPerson=User:WikiSysop|CommentRelatedArticle=CollaborationTest1|CommentDatetime=2010-11-16T11:35:22+01:00|CommentContent=test #2|}}</text>
-    <hash>5b065a039178797fe7f614c8ba568cdd</hash>
-    </revision>
-  </page>
-  <page>
-    <title>Comment:CollaborationTest1 1289904261152</title>
-    <id>73</id>
-    <revision>
-      <id>145</id>
-      <timestamp>2010-11-16T10:44:22Z</timestamp>
-      <contributor>
-        <username>WikiSysop</username>
-        <id>1</id>
-      </contributor>
-      <comment>This comment article was created by Collaboration Extension.</comment>
-      <text xml:space="preserve">{{Comment|CommentPerson=User:WikiSysop|CommentRelatedArticle=CollaborationTest1|CommentRelatedComment=CollaborationTest1_1289903706637|CommentDatetime=2010-11-16T11:44:21+01:00|CommentContent=fasfsdfa |}}</text>
-    <hash>73b64beffaed2fc9a3b3e496986c7a17</hash>
-    </revision>
-  </page>
-  <page>
     <title>Template:Comment</title>
     <id>87</id>
     <revision>
@@ -1041,6 +952,136 @@ desc: [[Description::Add fancy collaboration tools to your wiki]]</text>
 &lt;!-- end comment --&gt;[[Category:Comment]]
 &lt;/includeonly&gt;</text>
     <hash>06098137991a5150ded9cc272a5cc9b9</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Template:ShowComments</title>
+    <id>11</id>
+    <revision>
+      <id>15</id>
+      <timestamp>2010-11-03T13:05:50Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <minor/>
+      <comment>1 revision</comment>
+      <text xml:space="preserve">&lt;noinclude&gt;{{CE Bundle}}&lt;/noinclude&gt;&lt;noinclude&gt;{{Template
+|PAGENAME=Template:ShowComments
+|Has author=User:WikiSysop
+|part of=SMWplus Basic Ontology Section
+|rationale=Show all comments incl. form.
+|long description=This templates queries for all existing comments created by the Collaboration Extension. Afterwards it calls a parser function to get the comment form for creating new comment.
+|parameters=&lt;pre&gt;{{ShowComments
+|show=True}}&lt;/pre&gt;
+|Calls template=Template:ShowCommentsIntern
+}}
+{{Copyright of article
+|own work=True
+|copyright holder=Ontoprise GmbH
+|year=2009
+}}
+&lt;/noinclude&gt;&lt;includeonly&gt;{{#ifeq:{{{show|}}}|True|{{ShowCommentsIntern}}|}}&lt;/includeonly&gt;</text>
+    </revision>
+  </page>
+  <page>
+    <title>Template:ShowCommentsIntern</title>
+    <id>12</id>
+    <revision>
+      <id>82</id>
+      <timestamp>2010-11-03T16:01:55Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">&lt;noinclude&gt;{{CE Bundle}}&lt;/noinclude&gt;&lt;noinclude&gt;{{Template
+|PAGENAME=Template:ShowCommentsIntern
+|Has author=User:WikiSysop
+|part of=SMWplus Basic Ontology Section
+|rationale=Show all comments incl. form.
+|long description=This templates queries for all existing comments created by the Collaboration Extension. Afterwards it calls a parser function to get the comment form for creating new comment.
+|parameters=&lt;pre&gt;{{ShowCommentsIntern}}&lt;/pre&gt;
+|Calls template=Template:CommentResult
+}}
+{{Copyright of article
+|own work=True
+|copyright holder=Ontoprise GmbH
+|year=2009
+}}
+&lt;/noinclude&gt;&lt;includeonly&gt;
+&lt;!--start surrounding div --&gt;&lt;div class=&quot;collabComInternSurround&quot;&gt;&lt;!-- start header div --&gt;&lt;div class=&quot;collabComInternHeader&quot;&gt;[[File:Comment_icon_crystal.png|text-bottom|nopreview|16px|link=]]&lt;/div&gt;&lt;!-- end header div --&gt;
+{{#showcommentform:}}
+&lt;div id=&quot;collabComResults&quot;&gt;
+{{#ask: [[Belongs to article::{{FULLPAGENAME}}]] [[Comment:+]]
+  | ?Has comment person
+  | ?Has comment date
+  | ?Has comment text
+  | ?Has comment rating
+  | ?Belongs to comment
+  | ?Comment was deleted
+  | format=template
+  | template=CommentResult
+  | sort=Has comment date
+  | order=asc
+  | link=none
+  | limit=100
+}}
+&lt;/div&gt;
+&lt;/div&gt;&lt;!-- end surround div --&gt;&lt;/includeonly&gt;</text>
+    </revision>
+  </page>
+  <page>
+    <title>Template:CommentResult</title>
+    <id>10</id>
+    <revision>
+      <id>90</id>
+      <timestamp>2010-11-03T16:19:15Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">&lt;noinclude&gt;{{CE Bundle}}&lt;/noinclude&gt;&lt;noinclude&gt;{{Template
+|PAGENAME=Template:CommentResult
+|Has author=User:WikiSysop
+|part of=SMWplus Basic Ontology Section
+|rationale=Used as result printer template.
+|long description=This template is used by Collaboration Extension to format the results of the query created by ShowComments template.
+}}
+{{Copyright of article
+|own work=True
+|copyright holder=Ontoprise GmbH
+|year=2009
+}}
+&lt;/noinclude&gt;&lt;includeonly&gt;&lt;!-- start comment (do not change css-classes)
+--&gt;{{#vardefine:resID
+|{{PAGENAMEE:{{#ifeq: {{#pos:{{{6}}}|:}} 
+| 
+| {{{6}}} 
+| {{#sub:{{{6}}}|{{#expr:{{#pos:{{{6}}}|:}}+1}}|0}} }} }} 
+}}
+{{#vardefine:myID
+|{{PAGENAMEE:{{#ifeq: {{#pos:{{{1}}}|:}} | | {{{1}}} | {{#sub:{{{1}}}|{{#expr:{{#pos:{{{1}}}|:}}+1}}|0}} }} }} 
+}}&lt;div class=&quot;collabComRes&quot; id=&quot;{{#var:myID}}&quot;&gt;&lt;!-- start comment information 
+--&gt;&lt;div class=&quot;collabComResInfoSuper&quot;&gt;{{#var:resID}}&lt;/div&gt;
+&lt;div class=&quot;collabComResInfo&quot;&gt;{{#var:myID}}&lt;/div&gt;&lt;!-- end comment information 
+--&gt;&lt;!-- start comment person 
+--&gt;&lt;div class=&quot;collabComResPerson&quot;&gt;{{#if: {{{2|}}} 
+|{{#vardefine:userimage|{{#ask: [[{{{2}}}]] | ?User_image = | link=none}} }} 
+}}
+{{#if:{{#var:userimage}}
+| [[{{#var:userimage}}|frameless|48x48px|nopreview|link={{{2}}}]] 
+| [[File:Defaultuser.gif|frameless|48px|nopreview|link={{{2}}}]] 
+}}&lt;/div&gt;&lt;!-- start comment rating 
+--&gt;{{#if:{{{5}}}
+|&lt;div class =&quot;collabComResRating&quot;&gt;{{#ifexpr: {{{5}}} &lt; 2 | {{#ifexpr: {{{5}}} &gt; -2 | Article quality rated:&lt;div class=&quot;collabComResRatingIcon&quot;&gt;{{#ifexpr: {{{5}}} = -1 | [[File:Bad_active.png|16px|nopreview|link=]] }}{{#ifexpr: {{{5}}} = 0 | [[File:Neutral_active.png|16px|nopreview|link=]] }}{{#ifexpr: {{{5}}} = 1 | [[File:Good_active.png|16px|nopreview|link=]] }}&lt;/div&gt;| }}| }}&lt;/div&gt;| 
+}}&lt;!-- end comment rating 
+--&gt;&lt;div class=&quot;collabComResRight&quot;&gt;&lt;div class=&quot;collabComResUsername&quot;&gt;{{#if:{{{2|}}}|[[{{{2|}}}]], | }}&lt;/div&gt;&lt;!-- end comment person 
+--&gt;&lt;!-- start comment date
+--&gt;&lt;div class=&quot;collabComResDate&quot;&gt; {{{3}}}&lt;/div&gt;&lt;!-- end comment date
+--&gt;&lt;!-- start comment content
+--&gt;&lt;div class=&quot;collabComResText&quot;&gt;{{{4}}}&lt;/div&gt;&lt;/div&gt;&lt;!-- end comment content
+--&gt;{{#if:{{{7|}}}|&lt;div class=&quot;collabComResDeletion&quot;&gt;{{{7|}}}&lt;/div&gt;&lt;!-- end deletion info --&gt;|}}&lt;/div&gt;&lt;!-- end comment 
+--&gt;&lt;/includeonly&gt;</text>
     </revision>
   </page>
 </mediawiki>
