@@ -284,7 +284,7 @@ Druk de rechter knop om resultaten te verkrijgen. Enkel <i>Return</i> drukken ge
     'smw_qi_showdatasource' => 'Show data source information only',
     'smw_qi_maintab_query' => 'Create query',
     'smw_qi_maintab_load' => 'Load query',
-    'smw_qi_load_criteria' => 'Search oder Find (existing) queries with the following condition:',
+    'smw_qi_load_criteria' => 'Search or Find (existing) queries with the following condition:',
     'smw_qi_load_selection_*' => 'query contains',
     'smw_qi_load_selection_i' => 'article name',
     'smw_qi_load_selection_q' => 'query name',
