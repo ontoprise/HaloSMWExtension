@@ -138,7 +138,7 @@ class ASFCategoryFormData {
 		}
 		
 		//create collapsed version of section
-		$sectionId =  'fieldset_'.$this->titleObject->getText();
+		$sectionId =  'fieldset_'.str_replace(' ', '_', $this->titleObject->getText());
 		$intro = "<fieldset id=\"".$sectionId."_hidden\" style=\"display: none\">";
 		$intro .= "<legend>";
 		$intro .= '<img src="ASF_PLUS_ICON" onclick="asf_show_category_section(\''.$sectionId.'\')"></img> ';
