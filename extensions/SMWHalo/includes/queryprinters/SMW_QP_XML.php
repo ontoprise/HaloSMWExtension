@@ -2,7 +2,7 @@
 /**
  * @file
  * @ingroup SMWHaloQueryPrinters
- * 
+ *
  * Print query results in tables.
  * @author Kai
  */
@@ -56,32 +56,41 @@ class SMWXMLResultPrinter extends SMWResultPrinter {
 		$result = "\t<results>\n";
 		while ( $row = $res->getNext() ) {
 			$result .= "\t\t<result>\n";
-			 
+
 			$i = 0;
 			foreach ($row as $field) {
+
+				$content = $field->getContent();
+				if (count($content) === 0) continue; // do not serialize null bindings
+
 				$result .= "\t\t\t<binding name=\"$variables[$i]\">";
-				$first = true;
 
 				while ( ($object = $field->getNextObject()) !== false ) {
 					if ($object->getTypeID() == '_wpg') {  // print whole title with prefix in this case
-						$text = str_replace('&', '&amp;', $object->getTitle()->getPrefixedText());
-						 
-					} else if ($object->getTypeID() == '_dat') {
-						$text = array_shift($object->getDBkeys());
-					} else {
-						if ($object->isNumeric()) { // does this have any effect?
-							$text = $object->getNumericValue();
-						} else {
-							$text = str_replace('&', '&amp;', array_shift($object->getDBkeys()));
-						}
-					}
 
-					$result .= $first ? $text : ";".$text;
-					$first = false;
+						$uri = TSNamespaces::getInstance()->getFullURI($object->getTitle());
+						$uri_enc = htmlspecialchars($uri);
+						$result .= "<uri>$uri_enc</uri>";
+					} else {
+						switch($object->getTypeID()) {
+							case '_geo':
+								// TODO: add all datatypes which have more than
+								// one DBkey
+								$text = implode(",",$object->getDBkeys());
+								break;
+							default:
+								$text = array_shift($object->getDBkeys());
+								break;
+						}
+                        $text_enc = htmlspecialchars($text);
+						$datatype = WikiTypeToXSD::getXSDType($object->getTypeID());
+						$datatype = str_replace("xsd:", "http://www.w3.org/2001/XMLSchema#", $datatype);
+						$result .= "<literal datatype=\"$datatype\">$text_enc</literal>";
+					}
 				}
 
 				$result .= "</binding>\n";
-				 
+					
 				$i++;
 			}
 			$result .= "\t\t</result>\n";
@@ -91,7 +100,7 @@ class SMWXMLResultPrinter extends SMWResultPrinter {
 	}
 
 	private function printHeader() {
-		return "<?xml version=\"1.0\"?>\n<sparql>\n";
+		return "<?xml version=\"1.0\"?>\n<sparql xmlns=\"http://www.w3.org/2005/sparql-results#\">\n";
 	}
 
 	private function printFooter() {
