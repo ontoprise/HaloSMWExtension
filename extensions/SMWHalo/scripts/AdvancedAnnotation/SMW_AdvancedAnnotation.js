@@ -418,7 +418,8 @@ AdvancedAnnotation.prototype = {
 		if (node === this.selection.focusNode) {
 			return node;
 		} else if (node.getAttribute && 
-				   node.getAttribute('type') === 'annotationHighlight') {
+				   (node.getAttribute('type') === 'annotationHighlight'
+				    || node.getAttribute('class') === 'aam_page_link_highlight')) {
 			return node;
 		}
 	},
