@@ -200,13 +200,11 @@ TermImportPage.prototype = {
 		for ( var i = 0, n = datasources.length; i < n; i++) {
 			// get one of the datasources
 			var datasource = datasources[i];
+			
 			if (datasource.nodeType == 1) {
-				//
-				// if ( datasource.hasAttribute ) {
-
 				// TagName bekommen
 				var tag = datasource.tagName;
-
+				
 				if (datasource.getAttribute('display')) {
 					var attrib_display = datasource.getAttribute('display');
 				}
@@ -220,16 +218,9 @@ TermImportPage.prototype = {
 				if (attrib_display) {
 					var size = "25";
 					var rows = "5";
-					var cols = "5";
 					
-					if(datasource.getAttribute('size')){
-						size = datasource.getAttribute('size');
-					}
 					if(datasource.getAttribute('rows')){
 						rows = datasource.getAttribute('rows');
-					}
-					if(datasource.getAttribute('cols')){
-						cols = datasource.getAttribute('cols');
 					}
 					
 					if (attrib_type == "file") {
@@ -237,7 +228,7 @@ TermImportPage.prototype = {
 								+ attrib_display
 								+ "</td><td><input name=\"source\" id=\""
 								+ attrib_display
-								+ "\" class=\"inputfield " + attrib_class + "\" type=\"file\" size=\""+ size + "\" maxlength=\"100\" value=\""
+								+ "\" class=\"inputfield " + attrib_class + "\" type=\"file\" maxlength=\"100\" value=\""
 								+ datasource.textContent + "\"/>" + "</td></tr>";
 					} else if(attrib_type == "checkbox"){
 						response += "<tr><td>"
@@ -251,8 +242,8 @@ TermImportPage.prototype = {
 							+ attrib_display
 							+ "</td><td><textarea name=\"source\" type=\"text\" id=\""
 							+ attrib_display
-							+ "\" class=\"inputfield " + attrib_class + "\" rows=\"" + rows + "\" cols=\"" + cols + "\" value=\""
-							+ datasource.textContent + "\"></textarea>" + "</td></tr>";
+							+ "\" class=\"inputfield " + attrib_class + "\" rows=\"" + rows + "\" value=\""
+							+ datasource.textContent + "\">" + datasource.textContent + "</textarea>" + "</td></tr>";
 					} else {
 						//original class was inputfield
 						response += "<tr><td >"
@@ -267,11 +258,11 @@ TermImportPage.prototype = {
 								response += " type=\"" + attrib_type + "\" size=\"" + size + "\" maxlength=\"100\" value=\""
 									+ datasource.firstChild.nodeValue + "\"/></td></tr>";
 							} else {
-								response += " type=\"" + attrib_type + "\" size=\"" + size + "\" maxlength=\"100\" value=\""
+								response += " type=\"" + attrib_type + "\" maxlength=\"100\" value=\""
 								+ "\"/></td></tr>";
 							}
 						} else {
-							response += " type=\"" + attrib_type + "\" size=\""+ size + "\" maxlength=\"100\" value=\""
+							response += " type=\"" + attrib_type + "\" maxlength=\"100\" value=\""
 							+ "\"/></td></tr>";
 						}
 					}

@@ -196,6 +196,7 @@ class CL {
 		$html = '<span id="editDataSpan" style="display: none">';
 		
 		$xmlString = smwf_om_GetWikiText('TermImport:'.$termImportName);
+		
 		$start = strpos($xmlString, "<ImportSettings>");
 		$end = strpos($xmlString, "</ImportSettings>") + 17 - $start;
 		$xmlString = substr($xmlString, $start, $end);
@@ -211,7 +212,7 @@ class CL {
 		$html .= '<span id="dataSource-ed">'.rawurlencode($dataSource[0]->asXML()).'</span>';
 		
 		$importSet = $simpleXMLElement->xpath("//ImportSets/ImportSet/Name/text()");
-		$html .= '<span id="importSet-ed">'.$importSet[0].'</span>';
+		@ $html .= '<span id="importSet-ed">'.$importSet[0].'</span>';
 		
 		$regex = $simpleXMLElement->xpath("//InputPolicy/terms/regex/text()");
 		$regex = trim(implode(",", $regex));
@@ -235,7 +236,7 @@ class CL {
 				$html .= '<span id="termImportName-ed">'.$termImportName.'</span>';
 		
 		$updatePolicy = $simpleXMLElement->xpath("//UpdatePolicy/maxAge/@value");
-		$updatePolicy = $updatePolicy !== false ? $updatePolicy[0] : "0"; 
+		$updatePolicy = $updatePolicy ? $updatePolicy[0] : "0"; 
 		$html .= '<span id="updatePolicy-ed">'.$updatePolicy.'</span>';
 		
 		$xmlString = @ smwf_ti_connectTL($tlId[0]);
@@ -255,6 +256,7 @@ class CL {
 		} 
 		
 		$html .= "</span>";
+		
 		return $html;	
 	}
 

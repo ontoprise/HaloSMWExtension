@@ -348,7 +348,7 @@ class DALReadCSV implements IDAL {
 			if ($line) {
 				//escape special characters in an XML document:
 				$line = htmlspecialchars($line);
-				$vals = &explode("\t", $line);
+				@ $vals = &explode("\t", $line);
 				$this->csvContent[] = $vals;
 			}
 		}
