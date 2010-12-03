@@ -317,7 +317,7 @@ class  HACLQueryRewriter  {
 		foreach ($this->mBoundVariables as $variable => $bound) {
 			if (!$bound) {
 				foreach ($resultVars as $idx => &$rv) {
-					if ($rv['value'] == $variable) {
+					if (@$rv['value'] == $variable) {
 						unset($resultVars[$idx]);
 						break;
 					}
