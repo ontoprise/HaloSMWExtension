@@ -5,7 +5,7 @@
  *
  * Created on 23.05.2007
  *
- * @author Kai Kühn
+ * @author Kai Kï¿½hn
  */
 if ( !defined( 'MEDIAWIKI' ) ) die;
 
@@ -161,7 +161,9 @@ class AnnotationLevelConsistency {
 				} else if ($target instanceof SMWRecordValue) { // n-ary relation
 
 					$explodedValues = $target->getDVs();
-					$explodedTypes = explode(";", $target->getDVTypeIDs());
+					//$explodedTypes = explode(";", $target->getDVTypeIDs());
+					
+					$explodedTypes = $target->getTypeValues();
 					 
 					//get all range instances and check if their categories are subcategories of the range categories.
 					for($i = 0, $n = count($explodedTypes); $i < $n; $i++) {
