@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @author: Kai Kühn / ontoprise / 2009
+ * @author: Kai Kï¿½hn / ontoprise / 2009
  *
  * derived from
  * MediaWiki page data importer
@@ -309,6 +309,7 @@ class DeployWikiRevision extends WikiRevision {
 			);
 			if( $prior ) {
 				// FIXME: this could fail slightly for multiple matches :P
+				print "\n\t[Skipping existing revision] ".$this->title->getPrefixedText();
 				wfDebug( __METHOD__ . ": skipping existing revision for [[" .
 				$this->title->getPrefixedText() . "]], timestamp " . $this->timestamp . "\n" );
 				return false;

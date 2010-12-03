@@ -58,10 +58,39 @@ class ResourceInstaller {
 
 
 		if (!defined('SMW_VERSION')) throw new InstallationError(DEPLOY_FRAMEWORK_NOT_INSTALLED, "SMW is not installed or at least is not active. The ontology could not be properly installed. Please restart smwadmin using -f (force) to install it.");
+		
+		// remove old pages
+		if (!is_null($fromVersion) && $fromVersion != '') {
+            // remove old pages
+            print "\n[Remove unused pages...";
+            $query = SMWQueryProcessor::createQuery("[[Ontology version::$fromVersion]][[Part of bundle::".$dd->getID()."]]", array());
+            $res = smwfGetStore()->getQueryResult($query);
+            $next = $res->getNext();
+            while($next !== false) {
 
-		// wiki dumps
-		$reader = new BackupReader($mode);
-		$wikidumps = $dd->getWikidumps();
+                $title = $next[0]->getNextObject()->getTitle();
+                if (!is_null($title)) {
+                    $a = new Article($title);
+                    $reason = "ontology removed: ".$dd->getID();
+                    $id = $title->getArticleID( GAID_FOR_UPDATE );
+                    if( wfRunHooks('ArticleDelete', array(&$a, &$wgUser, &$reason, &$error)) ) {
+                        if( $a->doDeleteArticle( $reason ) ) {
+                            print "\n\t[Remove old page from $fromVersion: ".$title->getPrefixedText();
+                            wfRunHooks('ArticleDeleteComplete', array(&$a, &$wgUser, $reason, $id));
+                            print "done.]";
+                        }
+                    }
+
+                }
+                $next = $res->getNext();
+            }
+        }
+        print "\ndone.]";
+        
+        // import new wiki pages
+        $reader = new BackupReader($mode);
+        $wikidumps = $dd->getWikidumps();
+        
 		foreach($wikidumps as $file) {
 			print "\n[Import ontology: $file";
 			$dumpPath = $this->rootDir."/". $dd->getInstallationDirectory()."/".$file;
@@ -72,32 +101,7 @@ class ResourceInstaller {
 			$result = $reader->importFromFile($dumpPath );
 			print "\ndone.]";
 		}
-		if (!is_null($fromVersion)) {
-			// remove old pages
-			print "\n[Remove unused pages...";
-			$query = SMWQueryProcessor::createQuery("[[Ontology version::$fromVersion]][[Part of bundle::".$dd->getID()."]]", array());
-			$res = smwfGetStore()->getQueryResult($query);
-			$next = $res->getNext();
-			while($next !== false) {
-
-				$title = $next[0]->getNextObject()->getTitle();
-				if (!is_null($title)) {
-					$a = new Article($title);
-					$reason = "ontology removed: ".$dd->getID();
-					$id = $title->getArticleID( GAID_FOR_UPDATE );
-					if( wfRunHooks('ArticleDelete', array(&$a, &$wgUser, &$reason, &$error)) ) {
-						if( $a->doDeleteArticle( $reason ) ) {
-							print "\n\t[Remove old page from $fromVersion: ".$title->getPrefixedText();
-							wfRunHooks('ArticleDeleteComplete', array(&$a, &$wgUser, $reason, $id));
-							print "done.]";
-						}
-					}
-
-				}
-				$next = $res->getNext();
-			}
-		}
-		print "\ndone.]";
+		
 
 	}
 
