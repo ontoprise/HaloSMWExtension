@@ -975,7 +975,7 @@ CKEDITOR.plugins.smwtoolbar = {
             if (CKEDITOR.env.ie) {
                 var iframe = window.frames[0];
                 var iframeDocument = iframe.document || iframe.contentDocument;
-                iframeDocument.onkeyup = EditorareaChanges;
+                iframeDocument.onkeyup = this.EditorareaChanges.bind(this);
                 iframeDocument.onmouseup = CheckSelectedAndCallPopup;
                 iframeDocument.onmousedown = HideContextPopup;
             } else {
