@@ -11,6 +11,7 @@
 function saveRichMediaData(mediaTitle, mediaLink) {
 	// get FCK editor instance
 	var inFormEdit = false;
+    var richEditorType;
 	try {
 		// Semantic Forms: either we are in formedit or we add/edit a page via Special:AddData/EditData/CreateForm/FormEdit
 		if (window.top.wgAction == "formedit" || window.parent.wgPageName == 'Special:AddData' 
@@ -21,16 +22,32 @@ function saveRichMediaData(mediaTitle, mediaLink) {
 		}
 		else	// normal WYSIWYG edit
 			oEditor = window.parent.FCKeditorAPI.GetInstance('wpTextbox1');
+        richEditorType = 'fck';
 	}
 	// no instance found, we didn't came from the FCK Editor, reload the main page and quit.
 	catch(err) {
-		// just reload if we're not using a form or doing an edit
-		if (!inFormEdit && window.top.wgAction != "edit") {
-			//not available...
-//			parent.jQuery.fancybox.onClosed ='window.location.reload()';
-		}
-		return;
+        // try CKEditor
+        try {
+    		// Semantic Forms: either we are in formedit or we add/edit a page via Special:AddData/EditData/CreateForm/FormEdit
+        	if (window.top.wgAction == "formedit" || window.top.wgPageName == 'Special:FormEdit'
+                || window.top.wgPageName == 'Special:CreateForm') {
+                inFormEdit = true;
+                oEditor = window.parent.wgCKeditorInstance;
+            }
+            else	// normal WYSIWYG edit
+                oEditor = window.parent.wgCKeditorInstance;
+            richEditorType = 'cke';
+        }
+        catch(err) {
+            // just reload if we're not using a form or doing an edit
+            if (!inFormEdit && window.top.wgAction != "edit") {
+                //not available...
+//              parent.jQuery.fancybox.onClosed ='window.location.reload()';
+            }
+    		return;
+        }
 	}
+    if (richEditorType == 'fck') { // FCK
 	document.write( '<script src="' + oEditor.Config['BasePath'] + 'dialog/common/fck_dialog_common.js" type="text/javascript"><\/script>' ) ;
 
 	var oElement;	// selected element, if any
@@ -83,4 +100,54 @@ function saveRichMediaData(mediaTitle, mediaLink) {
 	}
 	
 	return true;
+    }
+
+    // CKeditor
+   	// check if an image is selected
+	var sel = oEditor.getSelection();
+    if (sel) oElement = sel.getSelectedElement();
+	if ( oElement && oElement.is('img') &&  !oElement.getAttribute( '_cke_realelement' )) {
+		// ok
+	}
+	else { // check if we are inside a link, replace the link, even if it is not a media link
+		oElement = sel.getStartElement();
+		if (oElement && oElement.is('a'))
+			sel.selectElement( oElement );
+		else oElement = null;
+	}
+
+	// create new Element from uploaded file
+	var ns = mediaTitle.substring(0, mediaTitle.indexOf(':'));
+	if (ns == "Image") { // create an image for all images
+		oNew = oEditor.document.createElement( 'img' );
+		oNew.setAttribute('alt', mediaTitle);
+		oNew.setAttribute('_fck_mw_filename', mediaTitle.replace(/^[^:].*:(.*)/, '\$1').replace('_', ' '));
+		oNew.setAttribute('src', mediaLink);
+	}
+	else { // other media (ns != Image:) will be created as a link
+		//var basename = mediaTitle.replace(/^[^:].*:(.*)/, '\$1');
+		var basename = mediaTitle.substring(mediaTitle.indexOf(':') + 1);
+		var ns = mediaTitle.substring(0, mediaTitle.indexOf(':'))
+		oNew = oEditor.document.createElement( 'a' );
+		oNew.addClass('internal');
+		oNew.setAttribute('title', basename);
+		oNew.setAttribute('_fck_mw_type', ns);
+		oNew.setAttribute('_fck_mw_filename', basename);
+		oNew.setAttribute('href', basename);
+		oNew.innerHTML = mediaTitle;
+	}
+
+	// if an element was selected and is from the type Image or Media, then oElement is set
+	// and the selected element will be replaced by the new created element in the editor content
+	if ( oElement ) {
+        oNew.replace( oElement );
+        oEditor.getSelection().selectElement( oNew );
+	}
+	// otherwise insert new element into editor content
+	else {
+		oEditor.insertElement( oNew ) ;
+	}
+
+	return true;
+
 }
