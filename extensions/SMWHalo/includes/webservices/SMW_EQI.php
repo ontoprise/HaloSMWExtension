@@ -55,7 +55,7 @@ function smwhExternalQuery($rawQuery, $format = "xml") {
 		// answer query
 		$query = SMWQueryProcessor::createQuery($queryString, array(), false);
 		if (count($query->getErrors()) > 0) {
-			throw new Exception($query->getErrors());
+			throw new Exception(implode("",$query->getErrors()));
 		} else {
 			return $eqi->answerASK($rawQuery, $format);
 		}
