@@ -24,8 +24,6 @@ class DALReadSPARQLXML implements IDAL {
 	
 	public function getSourceSpecification() {
 		
-		//todo: use language file
-		
 		return 
 			'<?xml version="1.0"?>'."\n".
 			'<DataSource xmlns="http://www.ontoprise.de/smwplus#">'."\n".
@@ -124,8 +122,6 @@ class DALReadSPARQLXML implements IDAL {
 		$importSets = $this->parseImportSets($importSet);
 		$inputPolicy = $this->parseInputPolicy($inputPolicy);
 		
-		//todo add error handling
-		
 		//Get articleName and importSet
 		$articleNameLabel = false;
 		$importSetLabel = false;
@@ -140,8 +136,7 @@ class DALReadSPARQLXML implements IDAL {
 		}
 		
 		if(!$articleNameLabel){
-			//todo: return error message
-			error();
+			return DAL_SXML_RET_ERR_START.'One of the variables in the query must be called "articlename".'.DAL_SXML_RET_ERR_END;
 		}
 		
 		$terms = '';
@@ -167,7 +162,7 @@ class DALReadSPARQLXML implements IDAL {
 				$terms .= $articleNameXML; 
 				foreach($this->queryResultColumns as $columnName => $dontCare){
 					$terms .= '<'.$columnName.'>';
-					$terms .= $row[$columnName];
+					@ $terms .= $row[$columnName];
 					$terms .= '</'.$columnName.'>';					
 				}
 				$terms .= "</term>\n";
@@ -185,6 +180,7 @@ class DALReadSPARQLXML implements IDAL {
 	private function readContent($endPointURI, $query){
 		
 		if(!is_null($this->errorMSG)){
+			//query already processed
 			return false;
 		}
 		
@@ -197,10 +193,6 @@ class DALReadSPARQLXML implements IDAL {
 		$store = ARC2::getRemoteStore($config);
 		
 		$result = $store->query($query);
-		
-		//todo add error handling
-		
-		file_put_contents("d://call-res.rtf", $endPointURI."\n\n".$query."\n\n".print_r($result, true));
 		
 		if(!is_array($result['result'])){
 			$this->errorMSG = DAL_SXML_RET_ERR_START.'No results could be retrieved from the SPARQL endpoint.'.DAL_SXML_RET_ERR_END;
@@ -215,7 +207,7 @@ class DALReadSPARQLXML implements IDAL {
 		$this->queryResult = array();
 		foreach($result['result']['rows'] as $key => $row){
 			foreach($this->queryResultColumns as $column => $oColumn){
-				$this->queryResult[$key][$column] = htmlspecialchars(trim($row[$oColumn]));
+				@ $this->queryResult[$key][$column] = htmlspecialchars(trim($row[$oColumn]));
 			}
 		}
 		
@@ -228,9 +220,6 @@ class DALReadSPARQLXML implements IDAL {
 		preg_match('/<endpoint.*?>(.*?)<\/endpoint>/i', $dataSourceSpec, $endpoint);
 		
 		return (count($endpoint) == 2) ? $endpoint[1] : null;
-		
-		//todo:remove this
-		return 'http://dbpedia.org/sparql';
 	}
 	
 	private function getQueryFromSourceSpec($dataSourceSpec){
