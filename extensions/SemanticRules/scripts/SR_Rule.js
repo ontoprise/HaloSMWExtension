@@ -22,7 +22,7 @@
  * @defgroup SRRuleTypes Semantic rule types
  * @ingroup SemanticRules
  *  
- * @author: Kai Kühn / ontoprise / 2009
+ * @author: Kai Kï¿½hn / ontoprise / 2009
  *
  */
 
@@ -239,7 +239,7 @@ editRule: function(selindex) {
 
 	var rule = rules[selindex];
 	var ruleName = rule.name;
-	var pos = ruleName.lastIndexOf('#');
+	var pos = ruleName.lastIndexOf('/');
 	if (pos != -1) {
 		ruleName = ruleName.substr(pos+1);
 	}

@@ -39,9 +39,9 @@ if (!defined('MEDIAWIKI')) die();
 		$this->_arity = $arity;
 		if ($arity > 0) {
 			if (sizeof($arguments) > 1) {				
-				if ($this->strStartsWith($arguments[1], '#')) {
+				if ($this->strStartsWith($arguments[1], '/')) {
 				} else {
-					$arguments[1] = "#" . $arguments[1];
+					$arguments[1] = "/" . $arguments[1];
 				}
 			}
 		}
@@ -64,17 +64,17 @@ if (!defined('MEDIAWIKI')) die();
 
 	public function getName() {
 		if (!is_array($this->_arguments)) {
-			if ($this->strStartsWith($this->_arguments, '#')) {
+			if ($this->strStartsWith($this->_arguments, '/')) {
 				return substr($this->_arguments, 1);				
 			}			
 			return $this->_arguments;
 		} else if (sizeof($this->_arguments)>1) {
-			if ($this->strStartsWith($this->_arguments[1], '#')) {
+			if ($this->strStartsWith($this->_arguments[1], '/')) {
 				return substr($this->_arguments[1], 1);				
 			}
 			return $this->_arguments[1];
 		} else if (sizeof($this->_arguments)>1) { 
-			if ($this->strStartsWith($this->_arguments[1], '#')) {
+			if ($this->strStartsWith($this->_arguments[1], '/')) {
 				return substr($this->_arguments[0], 1);
 			}
 			return $this->_arguments[0];
@@ -108,7 +108,7 @@ if (!defined('MEDIAWIKI')) die();
 					return $this->_arguments[0] . substr($this->_arguments[1],1);
 				} else if (strpos($this->_arguments[0], "obl:default:") === 0) {
 					// no namespace given, assume instance
-					return $smwgTripleStoreGraph."/a#". ucfirst(substr($this->_arguments[1],1));
+					return $smwgTripleStoreGraph."/a/". ucfirst(substr($this->_arguments[1],1));
 				} else {
 					// only suffix given
 					return $smwgTripleStoreGraph.$this->_arguments[0] . ucfirst(substr($this->_arguments[1],1));	

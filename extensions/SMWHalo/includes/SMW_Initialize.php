@@ -52,9 +52,9 @@ function enableSMWHalo($store = 'SMWHaloStore2', $tripleStore = NULL, $tripleSto
 		trigger_error("Old 'SMWHaloStore' is not supported anymore. Please upgrade to 'SMWHaloStore2'");
 		die();
 	}
-    global $smwghConvertColoumns;
-    if (!isset($smwghConvertColoumns)) $smwghConvertColoumns="utf8";
-    
+	global $smwghConvertColoumns;
+	if (!isset($smwghConvertColoumns)) $smwghConvertColoumns="utf8";
+
 	// Register the triple store as source for a query with the alias "tsc"
 	global $smwgQuerySources;
 	$smwgQuerySources += array("tsc" => "SMWTripleStore");
@@ -77,15 +77,15 @@ function enableSMWHalo($store = 'SMWHaloStore2', $tripleStore = NULL, $tripleSto
 	global $smgJSLibs;
 	$smgJSLibs[] = 'prototype';
 	$smgJSLibs[] = 'qtip';
-	
+
 	//initialize query management
 	global $smwgHaloIP;
 	require_once( "$smwgHaloIP/includes/QueryManagement/SMW_QM_QueryManagementHandler.php" );
-	
+
 	global $wgAutoloadClasses;
 	$wgAutoloadClasses['SMWQueryCallMetadataValue'] =
 		"$smwgHaloIP/includes/QueryManagement/SMW_QM_DV_QueryCallMetadata.php";
-	
+
 	$wgHooks['smwInitDatatypes'][] = 'SMWQMQueryManagementHandler::initQRCDataTypes';
 	$wgHooks['smwInitProperties'][] = 'SMWQMQueryManagementHandler::initProperties';
 
@@ -120,6 +120,7 @@ function smwgHaloSetupExtension() {
 
 	$wgAutoloadClasses['TSConnection']            = $smwgHaloIP . '/includes/storage/SMW_TSConnection.php';
 	$wgAutoloadClasses['TSNamespaces']            = $smwgHaloIP . '/includes/storage/SMW_TS_Helper.php';
+	$wgAutoloadClasses['TSHelper']            = $smwgHaloIP . '/includes/storage/SMW_TS_Helper.php';
 	$wgAutoloadClasses['SMWTripleStore']            = $smwgHaloIP . '/includes/storage/SMW_TripleStore.php';
 	$wgAutoloadClasses['SMWTripleStoreQuad']            = $smwgHaloIP . '/includes/storage/SMW_TripleStoreQuad.php';
 	$wgAutoloadClasses['SMWSPARQLQueryProcessor']            = $smwgHaloIP . '/includes/SMW_SPARQLQueryProcessor.php';
@@ -133,7 +134,7 @@ function smwgHaloSetupExtension() {
 	$wgAutoloadClasses['SMWMathematicalEquationTypeHandler'] = $smwgHaloIP . '/includes/SMW_DV_MathEquation.php';
 
 	require_once $smwgHaloIP.'/includes/queryprinters/SMW_QP_Halo.php';
-	
+
 	global $smwgResultFormats;
 
 
@@ -190,31 +191,46 @@ function smwgHaloSetupExtension() {
 		$wgHooks['BeforePageDisplay'][]='smwPRAddHTMLHeader';
 
 	}
-    
-    // Provide a Linked Data Interface based on the following URI schemata (@see http://www4.wiwiss.fu-berlin.de/bizer/pub/LinkedDataTutorial/):
-    //
-    // Resource URI: http://mywiki/resource/Prius
-    // -> 303 forward to:
-    // 		Information resource (HTML): http://mywiki/index.php/Prius
-    // 		Information resource (RDF): http://mywiki/index.php/Prius?format=rdf
-    // 
-    // Requires a mod_rewrite configuration as follows:
-    // 	RewriteEngine on
-    // 	RewriteBase /HaloSMWExtension
-    // 	RewriteRule ^resource/(.*) index.php?action=ldnegotiate&title=$1 [PT,L,QSA]
 
-    // Perform content negotiation when invoked with action=ldnegotiate
+	// Provide a Linked Data Interface based on the following URI schemata (@see http://www4.wiwiss.fu-berlin.de/bizer/pub/LinkedDataTutorial/):
+	//
+	// Resource URI: http://mywiki/resource/Prius
+	// -> 303 forward to:
+	// 		Information resource (HTML): http://mywiki/index.php/Prius
+	// 		Information resource (RDF): http://mywiki/index.php/Prius?format=rdf
+	//      Information resource (RDF): http://mywiki/index.php/Prius (when requested MIME type is application=rdf/xml)
+	//
+	// Requires a mod_rewrite configuration as follows:
+	// 	RewriteEngine on
+	// 	RewriteBase /HaloSMWExtension
+	// 	RewriteRule ^resource/(.*) index.php?action=ldnegotiate&title=$1 [PT,L,QSA]
+
+	// Perform content negotiation when invoked with action=ldnegotiate
 	if (array_key_exists('action', $_REQUEST) && $_REQUEST['action'] == 'ldnegotiate' ) {
-		$title = Title::newFromText($wgRequest->getVal('title'));
+		global $smwgTripleStoreGraph;
+		// title parameter contains the URI fragement: property/HasName, a/Prius, category/Automobile
+		$uri = $smwgTripleStoreGraph."/".$wgRequest->getVal('title');
+		$title = TSHelper::getTitleFromURI($uri);
 		$location = $title->getLocalURL() . (array_key_exists('HTTP_ACCEPT', $_SERVER) && strpos($_SERVER['HTTP_ACCEPT'], 'application/rdf+xml') !== false ? "?format=rdf" : "");
+		
 		header("HTTP/1.1 303 See Other");
 		header("Location: $location");
 		header("Vary: Accept");
 		exit; // stop any processing here
 	}
-    
-    // Answer format=rdf queries using the external query interface
+
+	// Answer format=rdf queries using the external query interface
 	if (array_key_exists('format', $_REQUEST) && $_REQUEST['format'] == 'rdf' ) {
+		global $IP;
+		require_once( $IP . '/extensions/SMWHalo/includes/webservices/SMW_EQI.php' );
+		header ( "Content-Type: application/rdf+xml" );
+		echo smwhRDFRequest($title->getPrefixedText());
+		exit; // stop any processing here
+	}
+
+	// special handling: application/rdf+xml requests are redirected to
+	// the external query interface
+	if (array_key_exists('HTTP_ACCEPT', $_SERVER) && $_SERVER['HTTP_ACCEPT'] == 'application/rdf+xml') {
 		global $IP;
 		require_once( $IP . '/extensions/SMWHalo/includes/webservices/SMW_EQI.php' );
 		header ( "Content-Type: application/rdf+xml" );
@@ -341,18 +357,18 @@ function smwgHaloSetupExtension() {
 
 		$wgSpecialPages['Properties'] = array('SpecialPage','Properties', '', true, 'smwfDoSpecialProperties', $smwgHaloIP . '/specials/SMWQuery/SMWAdvSpecialProperties.php');
 		$wgSpecialPageGroups['Properties'] = 'smwplus_group';
-		
-		
-		
-		
+
+
+
+
 		global $smwgDefaultStore;
 		if (smwfIsTripleStoreConfigured()) {
 			$wgAutoloadClasses['SMWTripleStoreAdmin'] = $smwgHaloIP . '/specials/SMWTripleStoreAdmin/SMW_TripleStoreAdmin.php';
 			$wgSpecialPages['TSA'] = array('SMWTripleStoreAdmin');
 			$wgSpecialPageGroups['TSA'] = 'smwplus_group';
-		
+
 		}
-      
+
 	}
 
 	// include SMW logger (exported as ajax function but also used locally)
@@ -1293,7 +1309,7 @@ function smwfQIAddHTMLHeader(&$out){
 		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/Logger/smw_logger.js', "all", -1, NS_SPECIAL.":QueryInterface");
 		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/OntologyBrowser/generalTools.js', "all", -1, NS_SPECIAL.":QueryInterface");
 		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/QueryInterface/Query.js', "all", -1, NS_SPECIAL.":QueryInterface");
-        $jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/QueryInterface/QueryList.js', "all", -1, NS_SPECIAL.":QueryInterface");
+		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/QueryInterface/QueryList.js', "all", -1, NS_SPECIAL.":QueryInterface");
 		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/QueryInterface/QIHelper.js', "all", -1, NS_SPECIAL.":QueryInterface");
 		$jsm->addScriptIf($smwgScriptPath .  '/skins/SMW_tooltip.js', "all", -1, NS_SPECIAL.":QueryInterface");
 

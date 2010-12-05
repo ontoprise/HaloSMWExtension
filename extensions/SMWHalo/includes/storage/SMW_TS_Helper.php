@@ -111,10 +111,10 @@ class TSHelper {
 
 
 			$startNS = strlen(TSNamespaces::$UNKNOWN_NS);
-			$length = strpos($sv, "#") - $startNS;
+			$length = strrpos($sv, "/") - $startNS;
 			$ns = intval(substr($sv, $startNS, $length));
 
-			$local = substr($sv, strpos($sv, "#")+1);
+			$local = substr($sv, strrpos($sv, "/")+1);
 
 			return Title::makeTitle($ns, $local);
 
@@ -124,10 +124,10 @@ class TSHelper {
 			// any URI
 				
 			if ($forceTitle) {
-				if (strpos($sv, "#") !== false) {
+				if (strrpos($sv, "/") !== false) {
+                    $local = substr($sv, strrpos($sv, "/")+1);
+                } else if (strpos($sv, "#") !== false) {
 					$local = substr($sv, strpos($sv, "#")+1);
-				} else if (strrpos($sv, "/") !== false) {
-					$local = substr($sv, strrpos($sv, "/")+1);
 				} else {
 					return NULL;
 				}
@@ -183,7 +183,7 @@ class TSHelper {
 		if (strpos($res, -1) != '/')
 		$res .= '/';
 		$res .= TSNamespaces::getInstance()->getNSPrefix($title->getNamespace())
-		.'#'
+		.'/'
 		.str_replace(' ', '_', $title->getText());
 		return $res;
 	}
@@ -251,15 +251,15 @@ class TSNamespaces {
 	public static function getTSCPrefixes() { return self::$TSC_PREFIXES; }
 
 	// general namespace suffixes for different namespaces
-	public static $CAT_NS_SUFFIX = "/category#";
-	public static $PROP_NS_SUFFIX = "/property#";
-	public static $INST_NS_SUFFIX = "/a#";
-	public static $TYPE_NS_SUFFIX = "/type#";
-	public static $IMAGE_NS_SUFFIX = "/image#";
-	public static $HELP_NS_SUFFIX = "/help#";
-	public static $TEMPLATE_NS_SUFFIX = "/template#";
-	public static $USER_NS_SUFFIX = "/user#";
-	public static $UNKNOWN_NS_SUFFIX = "/ns_"; // only fragment. # is missing!
+	public static $CAT_NS_SUFFIX = "/category/";
+	public static $PROP_NS_SUFFIX = "/property/";
+	public static $INST_NS_SUFFIX = "/a/";
+	public static $TYPE_NS_SUFFIX = "/type/";
+	public static $IMAGE_NS_SUFFIX = "/image/";
+	public static $HELP_NS_SUFFIX = "/help/";
+	public static $TEMPLATE_NS_SUFFIX = "/template/";
+	public static $USER_NS_SUFFIX = "/user/";
+	public static $UNKNOWN_NS_SUFFIX = "/ns_"; // only fragment. / is missing!
 
 	public static $initialized = false;
 
@@ -308,7 +308,7 @@ class TSNamespaces {
 		$extraNamespaces = array_diff(array_keys($wgExtraNamespaces), array(NS_CATEGORY, SMW_NS_PROPERTY, SMW_NS_TYPE, NS_IMAGE, NS_HELP, NS_MAIN));
 		foreach($extraNamespaces as $nsIndex) {
 			$nsText = strtolower($wgContLang->getNsText($nsIndex));
-			self::$ALL_PREFIXES .= " PREFIX $nsText:<".$smwgTripleStoreGraph."/ns_$nsIndex#> ";
+			self::$ALL_PREFIXES .= " PREFIX $nsText:<".$smwgTripleStoreGraph."/ns_$nsIndex/> ";
 		}
 	}
 
@@ -337,7 +337,7 @@ class TSNamespaces {
 	 */
 	public function getNSURI($namespace) {
 		global $smwgTripleStoreGraph;
-		return $smwgTripleStoreGraph."/".$this->getNSPrefix($namespace)."#";
+		return $smwgTripleStoreGraph."/".$this->getNSPrefix($namespace)."/";
 	}
 	
 	/**
@@ -349,7 +349,7 @@ class TSNamespaces {
 	public function getFullIRIByName($namespace, $localname) {
 		global $smwgTripleStoreGraph;
 		$localname = str_replace(" ", "_", $localname);
-        return "<".$smwgTripleStoreGraph."/".$this->getNSPrefix($namespace)."#$localname>";
+        return "<".$smwgTripleStoreGraph."/".$this->getNSPrefix($namespace)."/$localname>";
 	}
 
 	/**
@@ -359,7 +359,7 @@ class TSNamespaces {
 	 */
 	public function getFullIRI(Title $t) {
 		global $smwgTripleStoreGraph;
-		return "<".$smwgTripleStoreGraph."/".$this->getNSPrefix($t->getNamespace())."#".$t->getDBkey().">";
+		return "<".$smwgTripleStoreGraph."/".$this->getNSPrefix($t->getNamespace())."/".$t->getDBkey().">";
 	}
 	
     /**
@@ -369,7 +369,7 @@ class TSNamespaces {
      */
     public function getFullURI(Title $t) {
         global $smwgTripleStoreGraph;
-        return $smwgTripleStoreGraph."/".$this->getNSPrefix($t->getNamespace())."#".$t->getDBkey();
+        return $smwgTripleStoreGraph."/".$this->getNSPrefix($t->getNamespace())."/".$t->getDBkey();
     }
 
 	/**
@@ -379,7 +379,7 @@ class TSNamespaces {
 	 */
 	public function getFullIRIFromProperty(SMWPropertyValue $p) {
 		global $smwgTripleStoreGraph;
-		return "<".$smwgTripleStoreGraph."/".$this->getNSPrefix(SMW_NS_PROPERTY)."#".$p->getDBkey().">";
+		return "<".$smwgTripleStoreGraph."/".$this->getNSPrefix(SMW_NS_PROPERTY)."/".$p->getDBkey().">";
 	}
 
 	/**
@@ -388,20 +388,23 @@ class TSNamespaces {
 	 * @param string $prefixForm
 	 */
 	public function prefix2FullURI($prefixForm) {
-		if (strpos($prefixForm, "#") === false) return $prefixForm;
-		list($prefix, $local) = explode("#", $prefixForm);
+		$lastSlashIndex = strrpos($prefixForm, "/");
+		if ( $lastSlashIndex === false) return $prefixForm;
+		$prefix = substr($prefixForm, 0, $lastSlashIndex+1);
+		$local = substr($prefixForm, $lastSlashIndex);
+		
 		$local = ucfirst($local);
-		if (self::$CAT_NS_SUFFIX == ("/".$prefix."#")) {
+		if (self::$CAT_NS_SUFFIX == ("/".$prefix."/")) {
 			return self::$CAT_NS.$local;
-		} else if (self::$PROP_NS_SUFFIX == ("/".$prefix."#")) {
+		} else if (self::$PROP_NS_SUFFIX == ("/".$prefix."/")) {
 			return self::$PROP_NS.$local;
-		} else if (self::$INST_NS_SUFFIX == ("/".$prefix."#")) {
+		} else if (self::$INST_NS_SUFFIX == ("/".$prefix."/")) {
 			return self::$INST_NS.$local;
-		} else if (self::$TYPE_NS_SUFFIX == ("/".$prefix."#")) {
+		} else if (self::$TYPE_NS_SUFFIX == ("/".$prefix."/")) {
 			return self::$TYPE_NS.$local;
-		} else if (self::$IMAGE_NS_SUFFIX == ("/".$prefix."#")) {
+		} else if (self::$IMAGE_NS_SUFFIX == ("/".$prefix."/")) {
 			return self::$IMAGE_NS.$local;
-		} else if (self::$HELP_NS_SUFFIX == ("/".$prefix."#")) {
+		} else if (self::$HELP_NS_SUFFIX == ("/".$prefix."/")) {
 			return self::$HELP_NS.$local;
 		} // FIXME: get other namespaces
 		return $prefixForm;
@@ -416,7 +419,7 @@ class TSNamespaces {
 	public function getUnknownNamespacePrefixes($suffix) {
 		if (substr($suffix, 0, 3) == "ns_") {
 			global $smwgTripleStoreGraph;
-			return " PREFIX $suffix:<$smwgTripleStoreGraph/$suffix#> ";
+			return " PREFIX $suffix:<$smwgTripleStoreGraph/$suffix/> ";
 		}
 		return "";
 	}

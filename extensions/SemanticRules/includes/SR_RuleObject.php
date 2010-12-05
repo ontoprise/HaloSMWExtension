@@ -277,7 +277,7 @@ class SMWRuleObject extends SMWAbstractRuleObject {
 					} else if ($wikiType == '_num') {
 						$value = $args[$i]->getValue();
 					} else if (WikiTypeToXSD::isPageType($wikiType)) {
-						$value = $args[$i]->getFullQualifiedName();
+						$value = "<".$args[$i]->getFullQualifiedName().">";
 					}
 					$tmp .= $value;
 

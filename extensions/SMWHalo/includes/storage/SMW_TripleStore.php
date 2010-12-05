@@ -117,7 +117,7 @@ class SMWTripleStore extends SMWStore {
             $sparulCommands = array();
             $prop_ns = $this->tsNamespace->getNSPrefix(SMW_NS_PROPERTY);
             $naryPropFrag = "<$smwgTripleStoreGraph/$prop_ns";
-            $sparulCommands[] = "DELETE FROM <$smwgTripleStoreGraph> { $subject_iri ?p ?b. ?b $naryPropFrag#_1> ?v1. ?b $naryPropFrag#_2> ?v2. ?b $naryPropFrag#_3> ?v3. ?b $naryPropFrag#_4> ?v4. ?b $naryPropFrag#_5> ?v5.}";
+            $sparulCommands[] = "DELETE FROM <$smwgTripleStoreGraph> { $subject_iri ?p ?b. ?b $naryPropFrag/_1> ?v1. ?b $naryPropFrag/_2> ?v2. ?b $naryPropFrag/_3> ?v3. ?b $naryPropFrag/_4> ?v4. ?b $naryPropFrag/_5> ?v5.}";
             $sparulCommands[] = "DELETE FROM <$smwgTripleStoreGraph> { $subject_iri ?p ?o. }";
             if ($subject->getNamespace() == SMW_NS_PROPERTY) {
                 $sparulCommands[] = TSNamespaces::getW3CPrefixes()."DELETE FROM <$smwgTripleStoreGraph> { ?s owl:onProperty $subject_iri. }";
@@ -181,7 +181,7 @@ class SMWTripleStore extends SMWStore {
             $prefixes = TSNamespaces::$W3C_PREFIXES.TSNamespaces::$TSC_PREFIXES;
             $prop_ns = $this->tsNamespace->getNSPrefix(SMW_NS_PROPERTY);
             $naryPropFrag = "<$smwgTripleStoreGraph/$prop_ns";
-            $sparulCommands[] = "DELETE FROM <$smwgTripleStoreGraph> { $subject_iri ?p ?b. ?b $naryPropFrag#_1> ?v1. ?b $naryPropFrag#_2> ?v2. ?b $naryPropFrag#_3> ?v3. ?b $naryPropFrag#_4> ?v4. ?b $naryPropFrag#_5> ?v5.}";
+            $sparulCommands[] = "DELETE FROM <$smwgTripleStoreGraph> { $subject_iri ?p ?b. ?b $naryPropFrag/_1> ?v1. ?b $naryPropFrag/_2> ?v2. ?b $naryPropFrag/_3> ?v3. ?b $naryPropFrag/_4> ?v4. ?b $naryPropFrag/_5> ?v5.}";
             $sparulCommands[] = "DELETE FROM <$smwgTripleStoreGraph> { $subject_iri ?p ?o. }";
 
             $tripleSerialization = "";
@@ -261,13 +261,13 @@ class SMWTripleStore extends SMWStore {
                         if ($indexOfWhitespace === false) continue; // not a valid measure, ignore
                         $factor = trim(substr($firstMeasure, 0, $indexOfWhitespace));
                         $unit = trim(substr($firstMeasure, $indexOfWhitespace));
-                        $triples[] = array($subject_iri, "$naryPropFrag#$conversionPropertyLabel>", "\"$factor $unit\"");
+                        $triples[] = array($subject_iri, "$naryPropFrag/$conversionPropertyLabel>", "\"$factor $unit\"");
 
                         // add all aliases for this conversion factor using the same factor
                         $nextMeasure = next($measures);
                         while($nextMeasure !== false) {
                             $nextMeasure = str_replace('"', '\"', $nextMeasure);
-                            $triples[] = array($subject_iri, "$naryPropFrag#$conversionPropertyLabel>", "\"$factor ".trim($nextMeasure)."\"");
+                            $triples[] = array($subject_iri, "$naryPropFrag/$conversionPropertyLabel>", "\"$factor ".trim($nextMeasure)."\"");
                             $nextMeasure = next($measures);
                         }
 

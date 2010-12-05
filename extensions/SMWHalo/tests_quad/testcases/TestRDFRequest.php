@@ -26,9 +26,9 @@ class TestRDFRequest extends PHPUnit_Framework_TestCase {
 		list($header, $status, $data) = $this->con->send('', '/Berlin', 'application/rdf+xml' );
 		 
 		$this->assertEquals(200, $status);
-		$this->assertContains("http://mywiki/a#Berlin", $data);
-		$this->assertContains("http://mywiki/a#Germany", $data);
-		$this->assertContains("http://mywiki/category#City", $data);
+		$this->assertContains("http://mywiki/a/Berlin", $data);
+		$this->assertContains("http://mywiki/a/Germany", $data);
+		$this->assertContains("http://mywiki/category/City", $data);
 
 	}
 
@@ -37,9 +37,9 @@ class TestRDFRequest extends PHPUnit_Framework_TestCase {
 		list($header, $status, $data) = $this->con->send('', '?title=Berlin', 'application/rdf+xml' );
 
 		$this->assertEquals(200, $status);
-		$this->assertContains("http://mywiki/a#Berlin", $data);
-		$this->assertContains("http://mywiki/a#Germany", $data);
-		$this->assertContains("http://mywiki/category#City", $data);
+		$this->assertContains("http://mywiki/a/Berlin", $data);
+		$this->assertContains("http://mywiki/a/Germany", $data);
+		$this->assertContains("http://mywiki/category/City", $data);
 
 	}
 }

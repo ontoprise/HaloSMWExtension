@@ -76,7 +76,7 @@ class SMWFullSemanticData {
 		$localName = $subject->getDBkey();
 		
 		$tsn = TSNamespaces::getInstance();
-		$subject_iri = "<".$smwgTripleStoreGraph."/".$tsn->getNSPrefix($subject->getNamespace())."#".$localName.">";
+		$subject_iri = "<".$smwgTripleStoreGraph."/".$tsn->getNSPrefix($subject->getNamespace())."/".$localName.">";
 		
 		// $queryText = "PREFIX a:<$inst> SELECT ?pred ?obj WHERE { a:$subject ?pred ?obj . }";
 		// $queryText = "SELECT ?pred ?obj WHERE { a:$subject ?pred ?obj . }";

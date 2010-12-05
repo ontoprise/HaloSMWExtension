@@ -42,7 +42,7 @@ class SRRuleWidget {
 	/**
 	 *
 	 * @param Title $containingPage Page which contains the rule
-	 * @param string $ruleURI rule URI in format http:://....#Page$$rulename
+	 * @param string $ruleURI rule URI in format http:://..../Page$$rulename
 	 * @param string $ruletext Text of rule
 	 * @param boolean $active rule is active
 	 * @param boolean $native rule is native
