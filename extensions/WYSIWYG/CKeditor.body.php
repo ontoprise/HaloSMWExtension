@@ -542,7 +542,29 @@ HEREDOC;
 
 if( $this->showFCKEditor & ( RTE_TOGGLE_LINK | RTE_POPUP ) ){
 	// add toggle link and handler
+    $script .= $this->ToggleScript();
+}
+
+if( $this->showFCKEditor & RTE_POPUP ){
 	$script .= <<<HEREDOC
+
+function FCKeditor_OpenPopup(jsID, textareaID){
+	popupUrl = wgFCKEditorExtDir + '/CKeditor.popup.html';
+	popupUrl = popupUrl + '?var='+ jsID + '&el=' + textareaID;
+	window.open(popupUrl, null, 'toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=no,resizable=1,dependent=yes');
+	return 0;
+}
+HEREDOC;
+}
+$script .= '</script>';
+
+		$wgOut->addScript( $script );
+
+		return true;
+	}
+
+    public static function ToggleScript() {
+        $script = <<<HEREDOC
 
 function ToggleCKEditor( mode, objId ){
 	var SRCtextarea = document.getElementById( objId );
@@ -613,24 +635,7 @@ function ToggleCKEditor( mode, objId ){
 }
 
 HEREDOC;
+    return $script;
 }
-
-if( $this->showFCKEditor & RTE_POPUP ){
-	$script .= <<<HEREDOC
-
-function FCKeditor_OpenPopup(jsID, textareaID){
-	popupUrl = wgFCKEditorExtDir + '/CKeditor.popup.html';
-	popupUrl = popupUrl + '?var='+ jsID + '&el=' + textareaID;
-	window.open(popupUrl, null, 'toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=no,resizable=1,dependent=yes');
-	return 0;
-}
-HEREDOC;
-}
-$script .= '</script>';
-
-		$wgOut->addScript( $script );
-
-		return true;
-	}
 
 }
