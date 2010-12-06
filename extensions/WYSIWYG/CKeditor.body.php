@@ -436,9 +436,34 @@ CKEDITOR.ready=true;
 ';
 		$script .= '</script>';
 
-		$newWinMsg = Xml::escapeJsString( wfMsgHtml( 'rich_editor_new_window' ) );
-		$script .= <<<HEREDOC
-<script type="text/javascript">
+        $script .= '<script type="text/javascript">';
+        $script .= $this->InitializeScripts('wpTextbox1', Xml::escapeJsString( wfMsgHtml( 'rich_editor_new_window' ) ) );
+
+if( $this->showFCKEditor & ( RTE_TOGGLE_LINK | RTE_POPUP ) ){
+	// add toggle link and handler
+    $script .= $this->ToggleScript();
+}
+
+if( $this->showFCKEditor & RTE_POPUP ){
+	$script .= <<<HEREDOC
+
+function FCKeditor_OpenPopup(jsID, textareaID){
+	popupUrl = wgFCKEditorExtDir + '/CKeditor.popup.html';
+	popupUrl = popupUrl + '?var='+ jsID + '&el=' + textareaID;
+	window.open(popupUrl, null, 'toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=no,resizable=1,dependent=yes');
+	return 0;
+}
+HEREDOC;
+}
+$script .= '</script>';
+
+		$wgOut->addScript( $script );
+
+		return true;
+	}
+
+    public static function InitializeScripts($textfield, $newWinMsg) {
+		$script = <<<HEREDOC
 
 //IE hack to call func from popup
 function FCK_sajax(func_name, args, target) {
@@ -454,7 +479,7 @@ function onLoadCKeditor(){
 	if( !( showFCKEditor & RTE_VISIBLE ) )
 		showFCKEditor += RTE_VISIBLE;
 	firstLoad = false;
-	realTextarea = document.getElementById( 'wpTextbox1' );
+	realTextarea = document.getElementById( '$textfield' );
 	if ( realTextarea ){
 		var height = wgFCKEditorHeight;
 		realTextarea.style.display = 'none';
@@ -503,17 +528,17 @@ function initEditor(){
 		ckTools.setAttribute('id', 'ckTools');
 		toolbar.parentNode.insertBefore( ckTools, toolbar );
 
-		var SRCtextarea = document.getElementById( 'wpTextbox1' );
+		var SRCtextarea = document.getElementById( '$textfield' );
 		if( showFCKEditor & RTE_VISIBLE ) SRCtextarea.style.display = 'none';
 	}
 
 	if( showFCKEditor & RTE_TOGGLE_LINK ){
-		ckTools.innerHTML='[<a class="fckToogle" id="toggle_wpTextbox1" href="javascript:void(0)" onclick="ToggleCKEditor(\'toggle\',\'wpTextbox1\')">'+ editorLink +'</a>] ';
+		ckTools.innerHTML='[<a class="fckToogle" id="toggle_$textfield" href="javascript:void(0)" onclick="ToggleCKEditor(\'toggle\',\'$textfield\')">'+ editorLink +'</a>] ';
 	}
     /*
 	if( showFCKEditor & RTE_POPUP ){
 		var style = (showFCKEditor & RTE_VISIBLE) ? 'style="display:none"' : "";
-		ckTools.innerHTML+='<span ' + style + ' id="popup_wpTextbox1">[<a class="fckPopup" href="javascript:void(0)" onclick="ToggleCKEditor(\'popup\',\'wpTextbox1\')">{$newWinMsg}</a>]</span>';
+		ckTools.innerHTML+='<span ' + style + ' id="popup_$textfield">[<a class="fckPopup" href="javascript:void(0)" onclick="ToggleCKEditor(\'popup\',\'$textfield\')">{$newWinMsg}</a>]</span>';
 	}
     */
 	if( showFCKEditor & RTE_VISIBLE ){
@@ -540,29 +565,8 @@ addOnloadHook( initEditor );
 
 HEREDOC;
 
-if( $this->showFCKEditor & ( RTE_TOGGLE_LINK | RTE_POPUP ) ){
-	// add toggle link and handler
-    $script .= $this->ToggleScript();
-}
-
-if( $this->showFCKEditor & RTE_POPUP ){
-	$script .= <<<HEREDOC
-
-function FCKeditor_OpenPopup(jsID, textareaID){
-	popupUrl = wgFCKEditorExtDir + '/CKeditor.popup.html';
-	popupUrl = popupUrl + '?var='+ jsID + '&el=' + textareaID;
-	window.open(popupUrl, null, 'toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=no,resizable=1,dependent=yes');
-	return 0;
-}
-HEREDOC;
-}
-$script .= '</script>';
-
-		$wgOut->addScript( $script );
-
-		return true;
-	}
-
+        return $script;
+    }
     public static function ToggleScript() {
         $script = <<<HEREDOC
 
