@@ -18,6 +18,7 @@ class TestGroupPermissionsSuite extends PHPUnit_Framework_TestSuite
 	public static $mSubGroup;
 	
 	public static function suite() {
+		define('UNIT_TEST_RUNNING', true);
 		
 		$suite = new TestGroupPermissionsSuite();
 		$suite->addTestSuite('TestMWGroupsStorage');
@@ -550,7 +551,7 @@ class TestMWGroupPermissionsUI extends PHPUnit_Framework_TestCase {
 		attributes: { 
 			id : "haclgt-$gid" 
 		}, 
-		data: "Company <span class=\"tree-haloacl-permitted-features\"title=\"edit,read,upload\">
+		data: "Company <span class=\"tree-haloacl-permitted-features\"title=\"Thisgrouphasthefollowingpermission(s):Edit,Read,Upload\">
 		               </span>
 		               <span class=\"tree-haloacl-checkchecked\">
 		               </span>", 
@@ -571,14 +572,18 @@ JSON;
 		attributes: { 
 			id : "haclgt-43" 
 		}, 
-		data: "Marketing <span class=\"tree-haloacl-permitted-features\" title=\"upload\"></span>
+		data: "Marketing <span class=\"tree-haloacl-permitted-features\" 
+		                      title=\"This group has the following permission(s): Upload\">
+		                 </span>
 				<span class=\"tree-haloacl-check checked\"></span>"
 	},			
 	{
 		attributes: { 
 			id : "haclgt-44" 
 		}, 
-		data: "Development <span class=\"tree-haloacl-permitted-features\" title=\"read\"></span>
+		data: "Development <span class=\"tree-haloacl-permitted-features\" 
+		                         title=\"This group has the following permission(s): Read\">
+		                   </span>
 				<span class=\"tree-haloacl-check normal\"></span>"
 		,state: "closed"
 	},
@@ -586,7 +591,9 @@ JSON;
 		attributes: { 
 			id : "haclgt-47" 
 		}, 
-		data: "Services <span class=\"tree-haloacl-permitted-features\" title=\"edit\"></span>
+		data: "Services <span class=\"tree-haloacl-permitted-features\" 
+		                      title=\"This group has the following permission(s): Edit\">
+		                </span>
 				<span class=\"tree-haloacl-check crossed\"></span>"
 		,state: "closed"
 	}
