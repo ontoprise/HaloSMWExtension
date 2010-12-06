@@ -197,7 +197,7 @@ class CECommentParserFunctions {
 			if(isset($queryResult[1])) {
 				$userImageTitle = Title::newFromText($queryResult[1], NS_FILE);
 				if($userImageTitle->exists()){
-					$image = Image::newFromTitle($userImageTitle);
+					$image = wfLocalFile($userImageTitle);
 					$userImgSrc = $image->getURL();
 				}
 			}
