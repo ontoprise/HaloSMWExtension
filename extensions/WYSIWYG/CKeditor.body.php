@@ -623,6 +623,8 @@ function ToggleCKEditor( mode, objId ){
 		oEditorIframe.style.display = 'none';
 		if (toolbar) toolbar.style.display = '';
 		SRCtextarea.style.display = '';
+        if (CKEDITOR.plugins.smwtoolbar)
+            AdvancedAnnotation.unload();
 	} else {
 		// FCKeditor hidden -> visible
 		//if ( bIsWysiwyg ) oEditorIns.SwitchEditMode(); // switch to plain
@@ -635,6 +637,7 @@ function ToggleCKEditor( mode, objId ){
 		showFCKEditor += RTE_VISIBLE; // showFCKEditor+=RTE_VISIBLE
 		if( oToggleLink ) oToggleLink.innerHTML = editorMsgOff;
 		if( oPopupLink ) oPopupLink.style.display = 'none';
+        if (CKEDITOR.plugins.smwtoolbar) {}
 	}
 	return true;
 }
