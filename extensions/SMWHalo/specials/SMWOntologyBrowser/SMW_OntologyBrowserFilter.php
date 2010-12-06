@@ -6,7 +6,7 @@
  * @ingroup SMWHaloSpecials
  * @ingroup SMWHaloOntologyBrowser
  * 
- * @author Kai Kühn
+ * @author Kai Kï¿½hn
  *
  * SMWOntologyBrowserFilter provides advanced filtering methods for OntologyBrowser
  *
@@ -39,8 +39,7 @@ class SMWOntologyBrowserFilter {
 		if (count($categoryHints) == 0) {
 			return "<result isEmpty=\"true\" textToDisplay=\"".wfMsg('smw_ob_no_categories')."\"/>";
 		}
-		
-		//$reqfilter->limit = MAX_RESULTS;
+				
 		foreach($categoryHints as $hint) {
 			$reqfilter->addStringCondition($hint, SMWStringCondition::STRCOND_MID);
 		}
@@ -81,8 +80,7 @@ class SMWOntologyBrowserFilter {
 	function filterForInstances($instanceHints) {
 		$reqfilter = new SMWRequestOptions();
 		$reqfilter->sort = true;
-		//$reqfilter->limit = MAX_RESULTS;
-			
+					
 		if (count($instanceHints) == 0) {
 			return "<instanceList isEmpty=\"true\" textToDisplay=\"".wfMsg('smw_ob_no_instances')."\"/>";
 		}
@@ -109,15 +107,7 @@ class SMWOntologyBrowserFilter {
 		return $result == '' ? "<instanceList isEmpty=\"true\" textToDisplay=\"".wfMsg('smw_ob_no_instances')."\"/>"  : '<instanceList>'.$result.'</instanceList>';
 	}
 		
-	/*function filterForInstancesUsingProperty(Title $property) {
-	 $instances = smwfGetStore()->getAllRelationSubjects($property);
-	 $result = "";
-	 foreach($instances as $instance) {
-	 $result .= "<instance title=\"".$instance->getDBkey()."\" img=\"$type.gif\" id=\"ID_$id$count\"/>";
-	 }
-	 return '<instanceList>'.$result.'</instanceList>';
-	 }*/
-		
+			
 	/**
 	 * Filters for attribute containg the given hint as substring (case-insensitive)
 	 * Returns the attribute tree from root to this found entities as xml string.
@@ -160,8 +150,9 @@ class SMWOntologyBrowserFilter {
 		// build tree of TreeObjects
 		foreach($reversedPaths as $path) {
 			$node = $root;
-			foreach($path as $c) {
-				$node = $node->addChild($c);
+			foreach($path as $p) {
+				$hasChild = count(smwfGetSemanticStore()->getSubProperties($p)) > 0;
+				$node = $node->addChild($p, $hasChild);
 			}
 		}
 
@@ -202,7 +193,8 @@ class SMWOntologyBrowserFilter {
 	}
 		
 	/**
-	 * Returns the category tree for the given array of categories.
+	 * Returns the category tree for the given array of categories as XML
+	 * @return xml
 	 */
 	public function getCategoryTree($categories) {
 		// create root object
@@ -226,7 +218,8 @@ class SMWOntologyBrowserFilter {
 		foreach($reversedPaths as $path) {
 			$node = $root;
 			foreach($path as $c) {
-				$node = $node->addChild($c);
+				$hasChild = count(smwfGetSemanticStore()->getSubCategories($c)) > 0;
+				$node = $node->addChild($c, $hasChild);
 			}
 		}
 
@@ -298,34 +291,50 @@ class SMWOntologyBrowserFilter {
  * TreeObject represents a node in a tree.
  * It can have other TreeObjects as children.
  *
- * A tree can be serialized as XML.
+ * A tree can be serialized as XML which can be rendered by the OntologyBrowser.
  */
 class TreeObject {
 	private $title;
 	private $children;
-
-	public function __construct($title) {
+	private $hasChild;
+	
+	public function __construct($title, $hasChild = true) {
 		$this->title = $title;
 		$this->children = array();
+		$this->hasChild = $hasChild;
 	}
-
+	
+	/**
+	 * Returns title of node.
+	 * 
+	 * @return Title
+	 */
 	public function getTitle() {
 		return $this->title;
 	}
 
 	/**
 	 * Returns the children of the node.
+	 * 
+	 * @return array of Title
 	 */
 	public function getChildren() {
 		return $this->children;
 	}
-
+	
+	/**
+	 * True if node has at least one child
+	 * @return boolean
+	 */
+	public function hasChild() {
+		return $this->hasChild;
+	}
 	/**
 	 * Adds a child node if it does not already exist.
 	 */
-	public function addChild($childTitle) {
+	public function addChild($childTitle, $hasChild = true) {
 		if (!array_key_exists($childTitle->getText(), $this->children)) {
-			$this->children[$childTitle->getText()] = new TreeObject($childTitle);
+			$this->children[$childTitle->getText()] = new TreeObject($childTitle, $hasChild);
 		}
 		return $this->children[$childTitle->getText()];
 	}
@@ -338,13 +347,15 @@ class TreeObject {
 		$count = 0;
 		$result = "";
 		$gi_store = SGAGardeningIssuesAccess::getGardeningIssuesAccess();
+		$lengthOfPath = count($this->children);
 		foreach($this->children as $title => $treeObject) {
 			$isExpanded = count($treeObject->children) == 0 ? "false" : "true";
 			$title_esc = htmlspecialchars($treeObject->getTitle()->getDBkey());
 			$titleURLEscaped = htmlspecialchars(SMWOntologyBrowserXMLGenerator::urlescape($treeObject->getTitle()->getDBkey()));
 			$issues = $gi_store->getGardeningIssues('smw_consistencybot', NULL, NULL, $treeObject->getTitle());
 			$gi_issues = SMWOntologyBrowserErrorHighlighting::getGardeningIssuesAsXML($issues);
-			$result .= "<$type title_url=\"$titleURLEscaped\" title=\"".$title_esc."\" img=\"$type.gif\" id=\"ID_$id$count\" expanded=\"$isExpanded\">";
+			if (!$treeObject->hasChild()) $isLeaf_att = 'isLeaf="true"'; else $isLeaf_att ='';
+			$result .= "<$type title_url=\"$titleURLEscaped\" $isLeaf_att title=\"".$title_esc."\" img=\"$type.gif\" id=\"ID_$id$count\" expanded=\"$isExpanded\">";
 			$result .= $gi_issues;
 			$result .= $treeObject->serializeAsXML($type);
 			$result .= "</$type>";
@@ -352,6 +363,8 @@ class TreeObject {
 		}
 		return $result;
 	}
+	
+	
 
 	/**
 	 * Sorts the children (possibly recursive!)
