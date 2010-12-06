@@ -701,6 +701,25 @@ function &smwfGetSemanticStore() {
 }
 
 /**
+ * Creates a new instance of the base store and gives other extensions the 
+ * a chance to modify the store.
+ * 
+ * @return
+ * 		A new base store or NULL if $smwgBaseStore is not defined.
+ */
+function &smwfNewBaseStore() {
+	global $smwgBaseStore;
+	if (!isset($smwgBaseStore)) {
+		return NULL;
+	}
+	$store = new $smwgBaseStore();
+	wfRunHooks('SmwhNewBaseStore', array(&$store));
+	
+	return $store;
+}
+
+
+/**
  * Checks if a database function is available (considers only UDF functions).
  */
 function smwfDBSupportsFunction($lib) {
