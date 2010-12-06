@@ -42,6 +42,10 @@ class SMWQRCQueryResultsCache {
 			$store = new $smwgBaseStore();
 		}
 		
+		if(array_key_exists('nocaching', $query->params) && $query->params['nocaching'] == 'true'){
+			return $store->doGetQueryResult($query);
+		}
+		
 		$queryData = $this->getQueryData($query);
 		
 		// execute the query if no valid cache entry is available, if force was 
