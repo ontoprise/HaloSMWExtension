@@ -150,9 +150,11 @@ class SMWOntologyBrowserFilter {
 		// build tree of TreeObjects
 		foreach($reversedPaths as $path) {
 			$node = $root;
+			$nodeIndex=0;
 			foreach($path as $p) {
-				$hasChild = count(smwfGetSemanticStore()->getSubProperties($p)) > 0;
+				$hasChild = $nodeIndex < count($path)-1 ? "true" : count(smwfGetSemanticStore()->getSubProperties($p)) > 0;
 				$node = $node->addChild($p, $hasChild);
+				$nodeIndex++;
 			}
 		}
 
@@ -217,9 +219,11 @@ class SMWOntologyBrowserFilter {
 		// build tree of TreeObjects
 		foreach($reversedPaths as $path) {
 			$node = $root;
+			$nodeIndex = 0;
 			foreach($path as $c) {
-				$hasChild = count(smwfGetSemanticStore()->getSubCategories($c)) > 0;
+				$hasChild = $nodeIndex < count($path)-1 ? "true" : count(smwfGetSemanticStore()->getSubCategories($c)) > 0;
 				$node = $node->addChild($c, $hasChild);
+				$nodeIndex++;
 			}
 		}
 
