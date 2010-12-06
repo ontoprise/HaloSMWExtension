@@ -7,12 +7,6 @@
 		</delete>
 		<mkdir dir="bin/zip" />
 
-		<copy todir="bin/zip/extensions/Collaboration/deploy">
-			<fileset dir="../deploy/">
-				<exclude name="**/.svn, **/CVS" />
-				<exclude name="build.xml" />
-			</fileset>
-		</copy>
 		<copy todir="bin/zip/extensions/Collaboration/exeptions">
 			<fileset dir="../exeptions/">
 				<exclude name="**/.svn, **/CVS" />
