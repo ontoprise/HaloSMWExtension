@@ -108,7 +108,7 @@ class HACLGroupPermissions  {
 					HACLGroupPermissionsException::MISSING_PARAMETER,
 					$fname, 'systemfeatures');
 			}
-			$default = $feature['default'];
+			$default = @$feature['default'];
 			if (empty($default)) {
 				throw new HACLGroupPermissionsException(
 					HACLGroupPermissionsException::MISSING_PARAMETER,
@@ -138,7 +138,7 @@ class HACLGroupPermissions  {
 	 */
 	public static function initPermissionsFromDB() {
 		
-		if (defined( 'DO_MAINTENANCE' )) {
+		if (defined( 'DO_MAINTENANCE' ) && !defined('UNIT_TEST_RUNNING')) {
 			return;
 		}
 		// Get all group permissions from the DB
