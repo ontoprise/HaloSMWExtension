@@ -627,7 +627,9 @@ class SMWTripleStore extends SMWStore {
 
         // check resultintegration status and add metadata constraint for source if is not explicitly defined.
         // without metadata there is no resultintegration because the results can not be assigned to a particular datasource
-        if (array_key_exists('resultintegration', $query->params) && !array_key_exists('metadata', $query->params)) {
+        if (is_array($query->params) 
+            && array_key_exists('resultintegration', $query->params) 
+            && !array_key_exists('metadata', $query->params)) {
             $query->params['metadata'] = "SWP2_AUTHORITY_ID";
         }
 
