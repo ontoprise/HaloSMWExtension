@@ -92,9 +92,9 @@ class LODPrefixManager  {
 		// Add wiki prefixes
 		global $smwgTripleStoreGraph;
 		if (isset($smwgTripleStoreGraph)) {
-			$this->mPrefixMap["a"] 		= "$smwgTripleStoreGraph/a#";
-			$this->mPrefixMap["prop"]	= "$smwgTripleStoreGraph/property#";
-			$this->mPrefixMap["cat"] 	= "$smwgTripleStoreGraph/category#";
+			$this->mPrefixMap["a"] 		= "$smwgTripleStoreGraph/a/";
+			$this->mPrefixMap["prop"]	= "$smwgTripleStoreGraph/property/";
+			$this->mPrefixMap["cat"] 	= "$smwgTripleStoreGraph/category/";
 		}		
 	}
 	
