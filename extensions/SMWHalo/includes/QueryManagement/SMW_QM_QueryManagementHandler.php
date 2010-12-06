@@ -402,16 +402,19 @@ class SMWQMQueryManagementHandler {
 	public function searchQueries($queryMetadata){
 		$queryString = $queryMetadata->getMetadaSearchQueryString();
 		
-		SMWQueryProcessor::processFunctionParams(array($queryString) 
+		 SMWQueryProcessor::processFunctionParams(array($queryString) 
 			,$queryString, $params, $printouts);
 		
 		$query = 
 			SMWQueryProcessor::createQuery($queryString,$params);
+			
+		$query->params['noquerymanagement'] = 'true';
+		$query->params['nocaching'] = 'true';
 		
 		global $smwgBaseStore;
 		$store = new $smwgBaseStore();
 		
-		$queryResults = $store->doGetQueryResult($query)->getResults();
+		$queryResults = $store->getQueryResult($query)->getResults();
 		
 		$queryMetadataResults = array();
 		foreach($queryResults as $queryResult){
