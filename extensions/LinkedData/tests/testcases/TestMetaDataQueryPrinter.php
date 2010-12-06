@@ -256,10 +256,10 @@ SPARQL;
 		$response = $con->query($querystring, "metadata=(SWP2_AUTHORITY)");
 		
 		// Search for the meta data of triples
-		$expect = '<uri _meta_swp2_authority="http://www.example.org/smw-lde/smwDatasources/DataSource1">http://mywiki/category#Automobile</uri>';
+		$expect = '<uri _meta_swp2_authority="http://www.example.org/smw-lde/smwDatasources/DataSource1">http://mywiki/category/Automobile</uri>';
 		$this->assertTrue(strpos($response, $expect) >= 0, "Authority for Automobile not found.");
 
-		$expect = '<uri _meta_swp2_authority="http://www.example.org/smw-lde/smwDatasources/DataSource1">http://mywiki/category#Hybrid</uri>';
+		$expect = '<uri _meta_swp2_authority="http://www.example.org/smw-lde/smwDatasources/DataSource1">http://mywiki/category/Hybrid</uri>';
 		$this->assertTrue(strpos($response, $expect) >= 0, "Authority for Hybrid not found.");
 		
 		$expect = '<literal _meta_swp2_authority="http://www.example.org/smw-lde/smwDatasources/DataSource1" datatype="http://www.w3.org/2001/XMLSchema#int">113</literal>';
