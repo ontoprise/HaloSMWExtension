@@ -417,8 +417,7 @@ class SMWQMQueryManagementHandler {
 		$query->params['noquerymanagement'] = 'true';
 		$query->params['nocaching'] = 'true';
 		
-		global $smwgBaseStore;
-		$store = new $smwgBaseStore();
+		$store = smwfNewBaseStore();
 		
 		$queryResults = $store->getQueryResult($query)->getResults();
 		

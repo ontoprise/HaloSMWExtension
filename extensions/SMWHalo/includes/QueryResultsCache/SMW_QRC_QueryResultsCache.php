@@ -38,8 +38,7 @@ class SMWQRCQueryResultsCache {
 		if ($query instanceof SMWSPARQLQuery && !(defined( 'DO_MAINTENANCE' ) && !defined('SMWH_FORCE_TS_UPDATE'))) {
 			$store = $defaultStore;
 		} else {
-			global $smwgBaseStore;
-			$store = new $smwgBaseStore();
+			$store = smwfNewBaseStore();
 		}
 		
 		if(array_key_exists('nocaching', $query->params) && $query->params['nocaching'] == 'true'){
