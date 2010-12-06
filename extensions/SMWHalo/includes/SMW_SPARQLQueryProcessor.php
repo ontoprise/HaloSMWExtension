@@ -170,11 +170,9 @@ class SMWSPARQLQueryProcessor extends SMWQueryProcessor {
 			$desc->prependPrintRequest(new SMWPrintRequest(SMWPrintRequest::PRINT_THIS, $mainlabel));
 		}
         
-		$mergeResults = array_key_exists('merge', $params) ? $params['merge'] == 'true' : 0;
-		
+				
 		$query = new SMWSPARQLQuery($desc, true);
 		$query->params = $params; 
-		$query->mergeResults = $mergeResults;
 		$query->fromASK = strpos($querystring, 'SELECT') === false;
 		$query->mainLabelMissing = $mainlabel == '-';
 		$query->setQueryString($querystring);

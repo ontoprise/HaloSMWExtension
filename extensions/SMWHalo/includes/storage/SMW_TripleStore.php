@@ -1232,7 +1232,8 @@ class SMWTripleStore extends SMWStore {
     protected function serializeParams($query) {
         $result = "";
         $first = true;
-
+        
+        // serializes printouts
         foreach ($query->getExtraPrintouts() as $printout) {
             if (!$first) $result .= "|";
             if ($printout->getData() == NULL) {
@@ -1247,16 +1248,22 @@ class SMWTripleStore extends SMWStore {
             }
             $first = false;
         }
+        
+        // limit
         if ($query->getLimit() != NULL) {
             if (!$first) $result .= "|";
             $result .= "limit=".$query->getLimit();
             $first = false;
         }
+        
+        // offset
         if ($query->getOffset() != NULL) {
             if (!$first) $result .= "|";
             $result .= "offset=".$query->getOffset();
             $first = false;
         }
+        
+        // sort
         if ($query->sort) {
             if (!$first) $result .= "|";
             $first = false;
@@ -1271,35 +1278,38 @@ class SMWTripleStore extends SMWStore {
             }
             $result .= $sort."|".$order;
         }
-
-        if (!isset($query->mergeResults) || $query->mergeResults !== 0) {
+        
+        // merge: Note that default value is "true" for ASK but "false" for SPARQL queries
+        if (isset($query->fromASK) && $query->fromASK == true) {
             if (!$first) $result .= "|";
-            $result .= 'merge='.(!isset($query->mergeResults) || $query->mergeResults ? "true" : "false");
+            if (!array_key_exists('merge', $query->params)) {
+            	$value = "true";
+            } else {
+	            $value = ($query->params['merge'] == "true") ? "true" : "false";
+            }
+            $result .= 'merge='.$value;
+            $first = false;
+        } else {
+        	if (!$first) $result .= "|";
+            if (!array_key_exists('merge', $query->params)) {
+                $value = "false";
+            } else {
+                $value = ($query->params['merge'] == "true") ? "true" : "false";
+            }
+            $result .= 'merge='.$value;
             $first = false;
         }
 
         if (isset($query->params)) {
-            // Serialize all additional parameters
+            // Serialize all other additional parameters
             foreach ($query->params as $param => $value) {
+            	if ($param == 'sort' || $param == 'order' || $param == 'limit' || $param == 'offset' || $param == 'merge') continue;
                 if (!$first) $result .= "|";
                 $result .= "$param=".trim($value);
                 $first = false;
             }
         }
-        /*
-         if (isset($query->params) && isset($query->params['dataspace'])) {
-            if (!$first) $result .= "|";
-            $result .= 'dataspace='.trim($query->params['dataspace']);
-            $first = false;
-            }
-
-            if (isset($query->params) && isset($query->params['metadata'])) {
-            if (!$first) $result .= "|";
-            $result .= 'metadata='.trim($query->params['metadata']);
-            $first = false;
-            }
-            */
-
+        
         return $result;
     }
 
