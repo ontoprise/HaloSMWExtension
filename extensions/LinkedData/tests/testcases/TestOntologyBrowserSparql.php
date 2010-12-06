@@ -103,7 +103,7 @@ class TestOntologyBrowserSparql extends PHPUnit_Framework_TestCase {
 	 */
 	function testGetAnnotations() {
 		$wiki = wfMsg("smw_ob_source_wiki");
-		$prefix = "http://mywiki/a#";
+		$prefix = "http://mywiki/a/";
 
 		// Check the content of the wiki
 		$r = smwf_ob_OntologyBrowserAccess("getAnnotations", "Prius##80##0", $wiki);
@@ -200,7 +200,7 @@ class TestOntologyBrowserSparql extends PHPUnit_Framework_TestCase {
 	 * This function tests retrieving all categories for a certain instance.
 	 */
 	function testGetCategoryForInstance() {
-		$prefix = "http://mywiki/a#";
+		$prefix = "http://mywiki/a/";
 		
 		$source = wfMsg("smw_ob_source_wiki");
 		$r = smwf_ob_OntologyBrowserAccess("getCategoryForInstance", ":Prius##80##0", $source);
@@ -277,7 +277,7 @@ class TestOntologyBrowserSparql extends PHPUnit_Framework_TestCase {
 
 
 	function testMetadata() {
-		$prefix = "http://mywiki/a#";
+		$prefix = "http://mywiki/a/";
 		$wiki = wfMsg("smw_ob_source_wiki");
 
         // Check the content of the wiki
