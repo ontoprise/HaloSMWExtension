@@ -21,7 +21,7 @@ $asfScriptPath = $wgScriptPath . '/extensions/AutomaticSemanticForms';
 	function enableAutomaticSemanticForms() {
 	global $asfIP, $wgExtensionFunctions, $asfEnableAutomaticSemanticForms;
 
-	define('ASF_VERSION', '{{$VERSION}}');
+	define('ASF_VERSION', '{{$VERSION}} [B{{$BUILDNUMBER}}]');
 	
 	$asfEnableAutomaticSemanticForms = true;
 	
