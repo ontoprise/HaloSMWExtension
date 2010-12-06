@@ -506,7 +506,8 @@ function onLoadCKeditor(){
 		wgCKeditorInstance = CKEDITOR.replace(realTextarea);
 
 		// Hide the default toolbar.
-		document.getElementById( 'toolbar' ).style.display = 'none';
+        var toolbar = document.getElementById( 'toolbar' );
+		if ( toolbar ) toolbar.style.display = 'none';
 
 	}
 }
@@ -526,9 +527,9 @@ function initEditor(){
 		// add new toolbar before wiki toolbar
 		var ckTools = document.createElement( 'div' );
 		ckTools.setAttribute('id', 'ckTools');
-		toolbar.parentNode.insertBefore( ckTools, toolbar );
-
 		var SRCtextarea = document.getElementById( '$textfield' );
+        if (toolbar) toolbar.parentNode.insertBefore( ckTools, toolbar );
+        else SRCtextarea.parentNode.insertBefore( ckTools, SRCtextarea );
 		if( showFCKEditor & RTE_VISIBLE ) SRCtextarea.style.display = 'none';
 	}
 
@@ -605,7 +606,7 @@ function ToggleCKEditor( mode, objId ){
 	if( ! (CKEDITOR.status == 'basic_ready') ) return false; // not loaded yet
 	var oEditorIns = CKEDITOR.instances[objId];
 	var oEditorIframe  = document.getElementById( 'cke_' + objId );
-	var CKtoolbar = document.getElementById( 'toolbar' );
+	var toolbar = document.getElementById( 'toolbar' );
 	var bIsWysiwyg = ( oEditorIns.mode == 'wysiwyg' );
 
 	//CKeditor visible -> hidden
@@ -620,7 +621,7 @@ function ToggleCKEditor( mode, objId ){
 		if( oPopupLink ) oPopupLink.style.display = '';
 		showFCKEditor -= RTE_VISIBLE;
 		oEditorIframe.style.display = 'none';
-		CKtoolbar.style.display = '';
+		if (toolbar) toolbar.style.display = '';
 		SRCtextarea.style.display = '';
 	} else {
 		// FCKeditor hidden -> visible
@@ -628,7 +629,7 @@ function ToggleCKEditor( mode, objId ){
 		SRCtextarea.style.display = 'none';
 		// copy from textarea to FCKeditor
 		oEditorIns.setData( SRCtextarea.value );
-		CKtoolbar.style.display = 'none';
+		if (toolbar) toolbar.style.display = 'none';
 		oEditorIframe.style.display = '';
 		//if ( !bIsWysiwyg ) oEditorIns.SwitchEditMode();	// switch to WYSIWYG
 		showFCKEditor += RTE_VISIBLE; // showFCKEditor+=RTE_VISIBLE
