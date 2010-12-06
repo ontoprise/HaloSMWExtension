@@ -217,6 +217,15 @@ class TestSMWStore extends PHPUnit_Framework_TestCase {
 	}
 	
 	/**
+	 * Tests that the SMWHalo base store is wrapped by the HACLSMWStore
+	 */
+	function testSmwBaseStore() {
+		$store = smwfNewBaseStore();
+		$isSMWStore = $store instanceof HACLSMWStore;
+		$this->assertTrue($isSMWStore);
+	}
+	
+	/**
 	 * Tests the method HACLSMWStore::getSemanticData()
 	 */
 	function testGetSemanticData() {
@@ -1086,7 +1095,7 @@ QUERY;
     	
 		$queryString = $testConfig['query'];
 		$params = array("format" => $testConfig['format'], 
-		                "merge" => false, 
+		                "merge" => "false", 
 		                "mainlabel" => "subject");
 		$printOuts = array();
 		foreach ($testConfig['printouts'] as $po) {
