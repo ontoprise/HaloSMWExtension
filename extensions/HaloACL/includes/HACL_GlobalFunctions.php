@@ -109,10 +109,10 @@ function haclfSetupExtension() {
 	    HACLGroupPermissions::initPermissionsFromDB();
     }
     
-    global $haclgProtectProperties;
-    if ($haclgProtectProperties) {
+//    global $haclgProtectProperties;
+//    if ($haclgProtectProperties) {
     	haclfInitSemanticStores();
-    }
+//    }
 
     global $haclgDoEnableTitleCheck;
     haclfRestoreTitlePatch($haclgDoEnableTitleCheck);
@@ -137,9 +137,11 @@ function haclfSetupExtension() {
 	$wgHooks['SkinTemplateContentActions'][] = 'haclfRemoveProtectTab';
     $wgHooks['UserEffectiveGroups'][]  = 'HACLGroupPermissions::onUserEffectiveGroups';
 
+    $wgHooks['FilterQueryResults'][] = 'HACLResultFilter::filterResult';
+    $wgHooks['SmwhNewBaseStore'][] = 'haclfOnSmwhNewBaseStore';
+    
     global $haclgProtectProperties;
     if ($haclgProtectProperties === true) {
-        $wgHooks['FilterQueryResults'][] = 'HACLResultFilter::filterResult';
         $wgHooks['RewriteQuery'][]       = 'HACLQueryRewriter::rewriteQuery';
         $wgHooks['DiffViewHeader'][]     = 'HACLEvaluator::onDiffViewHeader';
         $wgHooks['EditFilter'][]         = 'HACLEvaluator::onEditFilter';
@@ -736,6 +738,17 @@ function haclfInitSemanticStores() {
 	$wrapper = new HACLSMWStore($smwStore);
 	$smwgMasterStore = $wrapper;
 	
+}
+
+/**
+ * This function is called when a new base store is created in SMWHalo. The
+ * given store is wrapped with a HACLSMWStore.
+ * @param SMWStore $store
+ * 		This is an instance of a SMWStore. It is wrapped by a HACLSMWStore.
+ */
+function haclfOnSmwhNewBaseStore(&$store) {
+	$store = new HACLSMWStore($store);
+	return true;
 }
 
 /**
