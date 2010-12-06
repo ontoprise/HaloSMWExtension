@@ -44,7 +44,7 @@ protected $smwContentMessages = array(
 	'smw_notype' => 'Dem Attribut wurde kein Datentyp zugewiesen.',
 
 	/*Messages for Autocompletion*/
-	'tog-autotriggering' => 'Automatische auto-completion',
+	'tog-autotriggering' => 'Manuelle auto-completion',
 	'smw_ac_typehint'=> 'Typ: $1',
 	'smw_ac_typerangehint'=> 'Typ: $1 | Range: $2',
 

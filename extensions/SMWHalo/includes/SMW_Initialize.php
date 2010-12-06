@@ -253,7 +253,7 @@ function smwgHaloSetupExtension() {
 	$wgGroupPermissions['*']['annotate'] = true;
 
 	// autocompletion option registration
-	$wgHooks['UserToggles'][] = 'smwfAutoCompletionToggles';
+	$wgHooks['GetPreferences'][] = 'smwfAutoCompletionToggles';
 	$wgHooks['UserSaveSettings'][] = 'smwfSetUserDefinedCookies';
 
 	//parser function for multiple template annotations
@@ -1389,15 +1389,24 @@ function smwfGetAjaxMethodPrefix() {
 /**
  * Register extra AC related options in Preferences->Misc
  */
-function smwfAutoCompletionToggles(&$extraToggles) {
-	$extraToggles[] = "autotriggering";
-	return true;
+function smwfAutoCompletionToggles( $user, &$preferences ) {
+        // A checkbox
+    $preferences['smwhactriggering'] = array(
+        'type' => 'toggle',
+        'label-message' => 'tog-autotriggering', // a system message
+        'section' => 'personal/info'
+    
+    );
+    
+    // Required return value of a hook function.
+    return true;
 }
+
 
 function smwfSetUserDefinedCookies($user) {
 	global $wgScriptPath;
 
-	$autoTriggering = $user->getOption( "autotriggering" ) == 1 ? "autotriggering=auto" : "autotriggering=manual";
+	$autoTriggering = $user->getOption( "smwhactriggering", false ) == 1 ? "smwhactriggering=manual" : "smwhactriggering=auto";
 	$namespaceMappings = array();
 	wfRunHooks('smwhACNamespaceMappings', array (&$namespaceMappings));
 	$serializedMappings = "";

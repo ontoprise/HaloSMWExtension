@@ -40,7 +40,7 @@ class SMW_HaloLanguageEn extends SMW_HaloLanguage {
 	'smw_noattribspecial' => 'Special property "$1" is not an attribute (use "::" instead of ":=").',
 	'smw_notype' => 'No type defined for attribute.',
 	/*Messages for Autocompletion*/
-	'tog-autotriggering' => 'Auto-triggered auto-completion',
+	'tog-autotriggering' => 'Manual auto-completion',
     'smw_ac_typehint'=> 'Type: $1',
     'smw_ac_typerangehint'=> 'Type: $1 | Range: $2',
 

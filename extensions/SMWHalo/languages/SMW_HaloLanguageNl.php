@@ -38,7 +38,7 @@ protected $smwContentMessages = array(
 	'smw_noattribspecial' => 'De speciale eigenschap "$1" is geen attribuut (gebruik "::" in plaats van ":=").',
 	'smw_notype' => 'Er is geen type gedefinieerd voor dit attribuut.',
 	/*Messages for Autocompletion*/
-	'tog-autotriggering' => 'Automatische auto-completion',
+	'tog-autotriggering' => 'Manuelle auto-completion',
     'smw_ac_typehint'=> 'Type: $1',
     'smw_ac_typerangehint'=> 'Type: $1 | Range: $2',
 

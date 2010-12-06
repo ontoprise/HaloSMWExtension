@@ -42,7 +42,7 @@ function processAutoCompletionOptions(optionText) {
 	var options = optionText.split(",");
     options.each(function(option) {
         var optionKeyValue = option.split("="); 
-        if (optionKeyValue[0] == 'autotriggering') {
+        if (optionKeyValue[0] == 'smwhactriggering') {
             autoCompleter.autoTriggering = optionKeyValue[1].indexOf('auto') != -1; 
         } else {
             
