@@ -86,6 +86,11 @@ class SMWQMQueryManagementHandler {
 	 * It appends query related metadata to the article which contains the query.
 	 */
 	public function storeQueryMetadata($query){
+		if (!isset($query->params) || !is_array($query->params)) {
+			// No parameters set 
+			// => set an empty array to avoid errors due to E_STRICT
+			$query->params = array();
+		}
 		//check if query should be stored
 		if(array_key_exists('noquerymanagement', $query->params) && $query->params['noquerymanagement'] == 'true'){
 			return;
