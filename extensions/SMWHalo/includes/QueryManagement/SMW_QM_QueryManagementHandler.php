@@ -150,14 +150,15 @@ class SMWQMQueryManagementHandler {
 		
 		$dataValue->setUsedInArticle($title->getFullText());
 		
-		if(array_key_exists('format', $query->params)){
-			$dataValue->setUsedQueryPrinter($query->params['format']);
+		if (isset($query->params) && is_array($query->params)) {
+			if(array_key_exists('format', $query->params)){
+				$dataValue->setUsedQueryPrinter($query->params['format']);
+			}
+
+			if(array_key_exists('queryname', $query->params)){
+				$dataValue->setQueryName($query->params['queryname']);
+			}
 		}
-		
-		if(array_key_exists('queryname', $query->params)){
-			$dataValue->setQueryName($query->params['queryname']);
-		}
-		
 		$semanticData->addPropertyObjectValue($propertyValue, $dataValue);
 		$wgParser->getOutput()->mSMWData = $semanticData;
 	}
