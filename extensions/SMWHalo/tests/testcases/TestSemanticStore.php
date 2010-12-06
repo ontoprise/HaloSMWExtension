@@ -5,7 +5,7 @@
  * @ingroup SMWHaloTests 
  * 
  * Tests the semantic storage layer of HALO.
- * @author Kai Kühn
+ * @author Kai Kï¿½hn
  * 
  */
 class TestSemanticStore extends PHPUnit_Framework_TestCase {
@@ -239,8 +239,8 @@ class TestSemanticStore extends PHPUnit_Framework_TestCase {
 	}
 
 	public function testNumberOfInstancesAndSubcategories() {
-		$exp_usage = 1;
-		$usage = smwfGetSemanticStore()->getNumberOfInstancesAndSubcategories(Title::newFromText("Car", SMW_NS_PROPERTY));
+		$exp_usage = 2;
+		$usage = smwfGetSemanticStore()->getNumberOfInstancesAndSubcategories(Title::newFromText("Car", NS_CATEGORY));
 		$this->assertEquals($exp_usage, $usage);
 			
 	}
