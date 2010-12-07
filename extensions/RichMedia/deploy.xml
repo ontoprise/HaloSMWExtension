@@ -14,6 +14,7 @@
 			<dependency from="1153" to="1160">MW</dependency>
 			<dependency from="200" to="200">semanticforms</dependency>
 			<dependency from="101">scriptmanager</dependency>
+			<dependency from="100">applicationprogramming</dependency>
 		</dependencies>
 	</global>
 	<codefiles>
@@ -35,7 +36,13 @@
 					true
 				</boolean>
 			</variable>
-			<require name="us_init"
+			<variable name="wgAllowExternalImagesFrom">
+				<string name="wgAllowExternalImagesFrom"
+					description="allows external images">
+					$wgServer
+				</string>
+			</variable>
+			<require name="rm_init"
 				file="extensions/RichMedia/includes/RM_Initialize.php" />
 			<function name="enableRichMediaExtension">
 			</function>
