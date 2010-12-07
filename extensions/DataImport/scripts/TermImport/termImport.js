@@ -325,8 +325,10 @@ TermImportPage.prototype = {
 				if (sourcearray[i] && sourcearray[i] != '') {					
 					//create XML doc
 					tag_array[i] = document.getElementById("tag_" + source[i].id);
-					sourcearray[i] = sourcearray[i].replace(/>/g, "&gt;");
-					sourcearray[i] = sourcearray[i].replace(/</g, "&lt;");
+					if(typeof(sourcearray[i]) == 'string'){
+						sourcearray[i] = sourcearray[i].replace(/>/g, "&gt;");
+						sourcearray[i] = sourcearray[i].replace(/</g, "&lt;");
+					}
 					dataSource += "<" + tag_array[i].value + ">" + sourcearray[i] + "</" + tag_array[i].value + ">";
 			
 					//change the top-container
@@ -983,9 +985,10 @@ TermImportPage.prototype = {
 				sourcearray[i] = document.getElementById(source[i].id).value;
 				if (sourcearray[i] && sourcearray[i] != '') {
 					tag_array[i] = document.getElementById("tag_" + source[i].id).value;
-					
-					sourcearray[i] = sourcearray[i].replace(/>/g, "&gt;");
-					sourcearray[i] = sourcearray[i].replace(/</g, "&lt;");
+					if(typeof(sourcearray[i]) == 'string'){
+						sourcearray[i] = sourcearray[i].replace(/>/g, "&gt;");
+						sourcearray[i] = sourcearray[i].replace(/</g, "&lt;");
+					}
 					dataSource += "<" + tag_array[i] + ">" + sourcearray[i] + "</" + tag_array[i] + ">";
 				}
 			}
