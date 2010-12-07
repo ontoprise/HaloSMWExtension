@@ -1,4 +1,4 @@
-Installation instructions for Semantic Treeview extension v1.4.1
+Installation instructions for Semantic Treeview extension v1.4.2
 ----------------------------------------------------------------
 
 Install instructions for the latest version of the Semantic Treeview Extension
@@ -10,17 +10,30 @@ are also online:
 Requirements:
 =============
 
-	MediaWiki 1.15.x
+	MediaWiki 1.15.x or 1.16.0
 	Semantic MediaWiki 1.5.x
 	Halo Extension 1.5.x
 	Basic Triple Store (optional)
+	
 
 
 Installation:
 =============
 
-(1) Add to your LocalSettings.php
-    require_once("extensions/Treeview/Treeview.php");
+How to install with deployment framework:
 
+(1) Download and install the Deployment Framework (Installation instructions: http://smwforum.ontoprise.com/smwforum/index.php/Help:Installing_Deployment_Framework)
+(2) Open in your commandline tool the directory: "<deployment-framework-install-dir>/deployment/tools/"
+(3) Type 'smwadmin -i treeview'
+    This installs the extension.
+
+
+How to install manually:
+
+(1) Download and extract the Treeview ZIP archive.
+(2) Copy the folder 'Treeview' into the extensions folder of MediaWiki.
+(3) Activate the Semantic Treeview by adding the following lines to LocalSettings.php:
+(4) Add to your LocalSettings.php
+    require_once("extensions/Treeview/Treeview.php");
 
 Now the Semantic Treeview Extension is installed and ready to use.
