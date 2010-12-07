@@ -22,7 +22,8 @@ $wgExtensionFunctions[] = 'sgagGardeningSetupExtension';
 $sgagIP = $IP."/extensions/SemanticGardening";
 
 $wgExtensionCredits['other'][] = array(
-        'name' => 'Semantic Gardening extension v'.SGA_GARDENING_EXTENSION_VERSION,
+        'name' => 'Semantic Gardening extension',
+		'version'=> SGA_GARDENING_EXTENSION_VERSION,
         'author' => 'Kai K&uuml;hn',
         'url' => 'http://sourceforge.net/projects/halo-extension/',
         'description' => 'Gardening keeps your wiki clean and consistent and is a basis for '.

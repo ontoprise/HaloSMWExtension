@@ -14,7 +14,8 @@ if ( !defined( 'MEDIAWIKI' ) ) die;
 define('SMW_UP_RATING_VERSION', '1.1');
 
 $wgExtensionCredits['other'][] = array(
-    'name' => 'SMW Ultrapedia Rating v'.SMW_UP_RATING_VERSION,
+    'name' => 'SMW Ultrapedia Rating',
+	'version'=>SMW_UP_RATING_VERSION,
     'author' => 'Ontoprise',
     'url' => 'http://sourceforge.net/projects/halo-extension/',
     'description' => 'Rate data and send feedback to UP'.
