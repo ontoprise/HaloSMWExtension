@@ -995,8 +995,7 @@ class SMWTripleStore extends SMWStore {
                         $resultColumn = current($mapPRTOColumns[$varOfBinding]);
                         next($mapPRTOColumns[$varOfBinding]);
 
-                        $allValues = array();
-                        $allValues[] = SMWDataValueFactory::newTypeIDValue('_wpg'); // a NULL value
+                        $allValues = array(); // a NULL value
 
                         $row[$resultColumn] = new SMWHaloResultArray($resultInstance, $prs[$resultColumn], $this, $allValues);
                         
