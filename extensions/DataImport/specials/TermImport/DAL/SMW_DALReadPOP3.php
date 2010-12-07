@@ -64,6 +64,8 @@ class DALReadPOP3 implements IDAL {
 	private $messageContainsErrors = false;
 	
 	private $noCallPartNr = false; //this flag is used to determine when to skip multipart/related
+	
+	private $processedICalUIDs;
 
 	function __construct() {
 		global $wgNamespaceAliases;
@@ -206,7 +208,7 @@ class DALReadPOP3 implements IDAL {
 		}
 		$messages = imap_search($connection, 'ALL');
 		
-		$this->attachmentMP = $this->getMPFromDataSource($dataSourceSpec, "AttachmentMP");
+		//$this->attachmentMP = $this->getMPFromDataSource($dataSourceSpec, "AttachmentMP");
 
 		$result = "";
 		if(is_array($messages)){
@@ -294,6 +296,7 @@ class DALReadPOP3 implements IDAL {
 	}
 
 	private function getBody($connection, $msg){
+		$this->processedICalUIDs = array();
 		$this->noCallPartNr = false;
 		$structure = imap_fetchstructure($connection, $msg);
 		return $this->handleBodyParts($connection, $msg, $structure, "");
@@ -712,6 +715,7 @@ class DALReadPOP3 implements IDAL {
 		require_once('SMW_ICalParser.php');
 		$iCalParser = new ICalParserForPOP3();
 		$uid = $iCalParser->getUID($iCalString);
+		$this->processedICalUIDs[$uid] = true;
 		if(!is_null($uid)){
 			return $this->createAttachmentTerm($iCalString, $uid.".ics");
 		}
@@ -926,6 +930,17 @@ class DALReadPOP3 implements IDAL {
 	
 	private function createAttachmentTerm($fileContent, $fileName, $extraContent=""){
 		global $smwgDIIP;
+		
+		//special handling for thunderbird invite.ics
+		//since thunderbird sents invitation twice
+		if(strtolower($fileName == 'invite.ics')){
+			require_once('SMW_ICalParser.php');
+			$iCalParser = new ICalParserForPOP3();
+			$uid = $iCalParser->getUID($fileContent);
+			if(array_key_exists($uid, $this->processedICalUIDs)){
+				return 'true';
+			}
+		}
 		
 		$fileFullPath =
 			$smwgDIIP.'/specials/TermImport/DAL/attachments/'.$fileName;
