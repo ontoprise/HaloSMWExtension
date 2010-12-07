@@ -164,18 +164,18 @@ class Tools {
 	public static function makeUnixPath($path) {
 		return str_replace("\\", "/", $path);
 	}
-	
+
 	/**
 	 * Normalizes a path, ie. uses unix file separators (/) and removes a trailing slash.
-	 * 
+	 *
 	 * @param string $path
 	 * @return string normalized path
 	 */
-    public static function normalizePath($path) {
-    	$path = trim(self::makeUnixPath($path));
-    	$path = (substr($path, -1) == '/') ? substr($path,0, strlen($path)-1) : $path;
-        return $path;
-    }
+	public static function normalizePath($path) {
+		$path = trim(self::makeUnixPath($path));
+		$path = (substr($path, -1) == '/') ? substr($path,0, strlen($path)-1) : $path;
+		return $path;
+	}
 
 	/**
 	 * Checks if all needed tools are available.
@@ -217,18 +217,23 @@ class Tools {
 
 	public static function checkPriviledges() {
 		if (self::isWindows()) {
-			return true; // assume root priviledge. FIXME: Howto find out?
+			exec("fsutil", $output, $ret);
+			if  ($ret == 0) return true;
 		} else {
 			exec('who am i', $out);
 			if (count($out) > 0 && strpos(reset($out), "root") !== false) return true; // is root
 
-			// try to create and delete a file.
-			$success = touch("testpriv");
-			$err = exec('rm testpriv');
+			// try to create and delete a file in local dir and temp dir.
+			$touched = touch("foo_bar_test");
+			exec('rm foo_bar_test', $output, $ret);
+			$touched2 = touch("/tmp/foo_bar_test");
+			exec('rm /tmp/foo_bar_test', $output, $ret2);
+			$removed = ($ret == 0) && ($ret2 == 0);
+			
 			// if true, we can assume that the user has proper rights
-			if ($success && $err == 0) return true;
+			if ($removed && $touched && $touched2) return true;
 		}
-		return "Missing rights. Please start as admin or root.";
+		return "You have to run smwadmin as admin or root.";
 	}
 
 	/**
@@ -268,7 +273,7 @@ class Tools {
 	/**
 	 * Provides a shortend (non-functional) form of the URL
 	 * for displaying purposes.
-	 * 
+	 *
 	 * @param string $s
 	 */
 	public static function shortenURL($s) {
@@ -276,17 +281,17 @@ class Tools {
 		if (strlen($s) < 20) return "[$s]";
 		return "[".substr($s, 0, 10)."...".substr($s, -12)."]";
 	}
-	
-    /**
-     * Provides a shortend form of a path
-     * for displaying purposes.
-     * 
-     * @param string $s
-     */
-    public static function shortenPath($s) {
-        if (strlen($s) < 20) return "$s";
-        return substr($s, 0, 10)."...".substr($s, -12);
-    }
+
+	/**
+	 * Provides a shortend form of a path
+	 * for displaying purposes.
+	 *
+	 * @param string $s
+	 */
+	public static function shortenPath($s) {
+		if (strlen($s) < 20) return "$s";
+		return substr($s, 0, 10)."...".substr($s, -12);
+	}
 
 	/**
 	 * Sorts and compacts versions. That means it filters out all doubles.
@@ -332,7 +337,7 @@ class Tools {
 			} else {
 				$last = $versions[$i];
 			}
-				
+
 		}
 
 		$versions = array_diff($versions, array(NULL));

@@ -66,14 +66,14 @@ if (array_key_exists('SERVER_NAME', $_SERVER) && $_SERVER['SERVER_NAME'] != NULL
 	die(DF_TERMINATION_ERROR);
 }
 
-// check required tools
-$check = Tools::checkEnvironment();
-if ($check !== true) {
-	fatalError($check);
-}
-
 // check if the user is allowed to create files, directory.
 $check = Tools::checkPriviledges();
+if ($check !== true) {
+    fatalError($check);
+}
+
+// check required tools
+$check = Tools::checkEnvironment();
 if ($check !== true) {
 	fatalError($check);
 }
