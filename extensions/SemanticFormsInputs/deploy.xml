@@ -24,7 +24,7 @@
     </resources>
 
     <configs>
-        <successor ext="semanticforms" />
+       
         <new>
             <require name="sfi_init"
                 file="extensions/SemanticFormsInputs/SemanticFormsInputs.php" />
