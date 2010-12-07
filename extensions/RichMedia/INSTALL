@@ -6,8 +6,8 @@ Installation instructions
 #
 
 	PHP 5.2.x or 5.3.x
-	MediaWiki 1.15.3 or higher
-	Semantic MediaWiki 1.4.x or higher
+	MediaWiki 1.16
+	Semantic MediaWiki 1.5.2
 	Semantic Forms 2.0
 	Parser Functions
 	String Functions 2.0 or higher
