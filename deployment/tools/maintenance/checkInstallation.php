@@ -49,6 +49,9 @@ for( $arg = reset( $argv ); $arg !== false; $arg = next( $argv ) ) {
 	if ($arg == '--repair') {
 		$repair = true;
 		continue;
+	} else if ($arg == '--ext') {
+		$addChecks = true;
+		continue;
 	} else if ($arg == '--help') {
 		$help = true;
 		continue;
@@ -65,7 +68,7 @@ for( $arg = reset( $argv ); $arg !== false; $arg = next( $argv ) ) {
 if (isset($help)) {
 	print "\n\nUsage";
 	print "\n\t <no option> : Shows all common problems";
-	print "\n\t --repair : Tries to repair common problems.";
+	print "\n\t --ext : Additional checks (requires working wiki in maintenance mode).";
 	print "\n\t --onlydep : Checks only dependencies of deploy descriptors.";
 	print "\n\n";
 	die();
@@ -75,7 +78,12 @@ $cChecker = new ConsistencyChecker($mwRootDir);
 if (isset($onlydep)) {
 	$errorFound = $cChecker->checkDependencies($repair, DF_OUTPUT_FORMAT_TEXT);
 } else {
-	$errorFound = $cChecker->checkInstallation(isset($repair), DF_OUTPUT_FORMAT_TEXT);
+	if (isset($addChecks)) {
+		$mediaWikiLocation = dirname(__FILE__) . '/../../..';
+		require_once "$mediaWikiLocation/maintenance/commandLine.inc";
+		
+	}
+	$errorFound = $cChecker->checkInstallation(isset($repair), DF_OUTPUT_FORMAT_TEXT, isset($addChecks));
 }
 $statusLog = $cChecker->getStatusLog();
 foreach($statusLog as $s) print $s;

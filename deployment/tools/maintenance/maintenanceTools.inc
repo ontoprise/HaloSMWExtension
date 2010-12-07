@@ -30,6 +30,8 @@ define ("DF_SMWFORUM_LINK_MISSING_ADMINSETTINGS", "http://smwforum.ontoprise.de"
 define ("DF_SMWFORUM_LINK_MISSING_NON_REGISTERED", "http://smwforum.ontoprise.de");
 define ("DF_SMWFORUM_LINK_MISSING_NON_EXISTING", "http://smwforum.ontoprise.de");
 define ("DF_SMWFORUM_LINK_MISSING_DOUBLE_REGISTERED", "http://smwforum.ontoprise.de");
+define ("DF_SMWFORUM_LINK_EXISTING_EXTENSION", "http://smwforum.ontoprise.de");
+
 
 
 /**
@@ -123,13 +125,14 @@ class ConsistencyChecker {
 		return $this->statusLog;
 	}
 
-	public function checkInstallation($repair, $format) {
+	public function checkInstallation($repair, $format, $addChecks = true) {
 
 
 		$errorFound = false;
 		$errorFound |= $this->checkDependencies($repair, $format);
 		$errorFound |= $this->checkLocalSettings($repair, $format);
 		$errorFound |= $this->checkSpecialConfigs($repair);
+		$errorFound |= $this->checkExistingExtensions($repair, $format, $addChecks);
 		$this->statusLog[] = $this->out("\n\n", $format);
 		return $errorFound;
 	}
@@ -381,6 +384,167 @@ class ConsistencyChecker {
 		}
 	}
 
+	private function checkExistingExtensions($repair, $format, $addChecks = true) {
+		if (!$addChecks) return false;
+
+		global $wgExtensionCredits;
+		$ls = file_get_contents($this->rootDir."/LocalSettings.php");
+		$this->statusLog[] = $this->out(array("\n","\n","check if there are already existing extensions..."), $format);
+		$errorFound=false;
+		foreach($wgExtensionCredits as $extType) {
+			foreach($extType as $ext) {
+					
+				if (array_key_exists('name', $ext)) {
+					$name = $ext['name'];
+					switch($name) {
+						case 'Semantic MediaWiki':
+
+							if (strpos($ls, 'start-smw') !== false) {
+								$this->statusLog[] = $this->out(array("\n","\t","[FAILED]","Semantic Mediawiki is already installed."), $format);
+								$errorFound=true;
+							}
+							break;
+						case 'SMWHalo&nbsp;Extension':
+
+							if (strpos($ls, 'start-smwhalo') !== false) {
+								$this->statusLog[] = $this->out(array("\n","\t","[FAILED]","SMWHalo Extension is already installed."), $format);
+								$errorFound=true;
+							}
+							break;
+						case 'ScriptManager&nbsp;Extension':
+							if (strpos($ls, 'start-scriptmanager') !== false) {
+								$this->statusLog[] = $this->out(array("\n","\t","[FAILED]","ScriptManager Extension is already installed."), $format);
+								$errorFound=true;
+							}
+							break;
+						case 'Rich&nbsp;Media&nbsp;Extension':
+							if (strpos($ls, 'start-richmedia') !== false) {
+								$this->statusLog[] = $this->out(array("\n","\t","[FAILED]","Richmedia Extension is already installed."), $format);
+								$errorFound=true;
+							}
+							break;
+						case 'Semantic Forms':
+							if (strpos($ls, 'start-semanticforms') !== false) {
+								$this->statusLog[] = $this->out(array("\n","\t","[FAILED]","SemanticForms Extension is already installed."), $format);
+								$errorFound=true;
+							}
+							break;
+						case 'Semantic Forms Input Types':
+							if (strpos($ls, 'start-semanticformsinputs') !== false) {
+								$this->statusLog[] = $this->out(array("\n","\t","[FAILED]","SemanticFormsInputs Extension is already installed."), $format);
+								$errorFound=true;
+							}
+							break;
+						case 'Semantic Notifications':
+							if (strpos($ls, 'start-semanticnotifications') !== false) {
+								$this->statusLog[] = $this->out(array("\n","\t","[FAILED]","Semantic Notifications Extension is already installed."), $format);
+								$errorFound=true;
+							}
+							break;
+						case 'Semantic Gardening extension':
+							if (strpos($ls, 'start-semanticgardening') !== false) {
+								$this->statusLog[] = $this->out(array("\n","\t","[FAILED]","Semantic Gardening Extension is already installed."), $format);
+								$errorFound=true;
+							}
+							break;
+						case 'Semantic Result Formats':
+							if (strpos($ls, 'start-semanticresultsformats') !== false) {
+								$this->statusLog[] = $this->out(array("\n","\t","[FAILED]","Semantic Result Formats Extension is already installed."), $format);
+								$errorFound=true;
+							}
+							break;
+						case 'SemanticRules&nbsp;Extension':
+							if (strpos($ls, 'start-semanticrules') !== false) {
+								$this->statusLog[] = $this->out(array("\n","\t","[FAILED]","Semantic Rules Formats Extension is already installed."), $format);
+								$errorFound=true;
+							}
+							break;
+						case 'Semantic Treeview':
+							if (strpos($ls, 'start-treeview') !== false) {
+								$this->statusLog[] = $this->out(array("\n","\t","[FAILED]","Treeview Formats Extension is already installed."), $format);
+								$errorFound=true;
+							}
+							break;
+						case 'WYSIWYG extension':
+							if (strpos($ls, 'start-wysiwyg') !== false) {
+								$this->statusLog[] = $this->out(array("\n","\t","[FAILED]","WYSIWYG Extension is already installed."), $format);
+								$errorFound=true;
+							}
+							break;
+						case 'Semantic&nbsp;UltraPedia&nbsp;Extension':
+							if (strpos($ls, 'start-ultrapedia') !== false) {
+								$this->statusLog[] = $this->out(array("\n","\t","[FAILED]","Ultrapedia Extension is already installed."), $format);
+								$errorFound=true;
+							}
+							break;
+						case 'LinkedData':
+							if (strpos($ls, 'start-linkeddata') !== false) {
+								$this->statusLog[] = $this->out(array("\n","\t","[FAILED]","LinkedData Extension is already installed."), $format);
+								$errorFound=true;
+							}
+							break;
+						case 'HaloACL':
+							if (strpos($ls, 'start-haloacl') !== false) {
+								$this->statusLog[] = $this->out(array("\n","\t","[FAILED]","HaloACL Extension is already installed."), $format);
+								$errorFound=true;
+							}
+							break;
+						case 'Enhanced Retrieval extension':
+							if (strpos($ls, 'start-unifiedsearch') !== false) {
+								$this->statusLog[] = $this->out(array("\n","\t","[FAILED]","UnifiedSearch Extension is already installed."), $format);
+								$errorFound=true;
+							}
+							break;
+						case 'Data&nbsp;Import&nbsp;Extension':
+							if (strpos($ls, 'start-datatimport') !== false) {
+								$this->statusLog[] = $this->out(array("\n","\t","[FAILED]","DataImport Extension is already installed."), $format);
+								$errorFound=true;
+							}
+							break;
+						case 'Collaboration':
+							if (strpos($ls, 'start-collaboration') !== false) {
+								$this->statusLog[] = $this->out(array("\n","\t","[FAILED]","Collaboration Extension is already installed."), $format);
+								$errorFound=true;
+							}
+							break;
+						case 'Automatic&nbsp;Semantic&nbsp;Forms':
+							if (strpos($ls, 'start-automaticsemanticforms') !== false) {
+								$this->statusLog[] = $this->out(array("\n","\t","[FAILED]","Automatic Semanticforms Extension is already installed."), $format);
+								$errorFound=true;
+							}
+							break;
+						case 'ARCLibrary':
+							if (strpos($ls, 'start-arclibrary') !== false) {
+								$this->statusLog[] = $this->out(array("\n","\t","[FAILED]","ARCLibrary Extension is already installed."), $format);
+								$errorFound=true;
+							}
+							break;
+						case 'ParserFunctions':
+						case 'StringFunctions':
+						case 'URL Arguments':
+						case 'Variables':
+							if (strpos($ls, 'start-applicationprogramming') !== false) {
+								$this->statusLog[] = $this->out(array("\n","\t","[FAILED]","Application programming Extension is already installed (or extensions which are contained in this)."), $format);
+								$errorFound=true;
+							}
+							break;
+								
+					}
+				}
+			}
+		}
+		if (!$errorFound) {
+			$this->statusLog[] = $this->out(array("\n","\t","none."), $format);
+			$this->statusLog[] = $this->out(array("\n", "\t[OK]"), $format);
+		} else {
+			if ($format == DF_OUTPUT_FORMAT_HTML) {
+				// in case of HTML write a link to the SMW-Forum
+				$this->statusLog[] = $this->linkout(array(DF_SMWFORUM_LINK_EXISTING_EXTENSION, "Get help: Existing extensions"));
+			}
+		}
+
+	}
+
 
 	/**
 	 * Prints out a status log message.
@@ -409,7 +573,7 @@ class ConsistencyChecker {
 
 	/**
 	 * Creates an HTML link.
-	 * 
+	 *
 	 * @param array $link
 	 */
 	private function linkout($link) {
