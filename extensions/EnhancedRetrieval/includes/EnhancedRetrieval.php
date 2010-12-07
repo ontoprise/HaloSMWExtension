@@ -19,7 +19,8 @@ define('US_EXACTMATCH', 2);
 
 
 $wgExtensionCredits['other'][] = array(
-        'name' => 'Enhanced Retrieval extension v'.US_SEARCH_EXTENSION_VERSION,
+        'name' => 'Enhanced Retrieval extension',
+		'version' => US_SEARCH_EXTENSION_VERSION,
         'author' => 'Kai K&uuml;hn',
         'url' => 'http://sourceforge.net/projects/halo-extension/',
         'description' => 'Provides access to a Lucene backend.',
