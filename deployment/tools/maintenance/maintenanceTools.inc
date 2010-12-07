@@ -22,6 +22,16 @@ require_once($rootDir."/tools/smwadmin/DF_Tools.php");
 
 define ("DF_OUTPUT_FORMAT_TEXT", 0);
 define ("DF_OUTPUT_FORMAT_HTML", 1);
+
+
+define ("DF_SMWFORUM_LINK_MISSING_DEPENDENCY", "http://smwforum.ontoprise.de");
+define ("DF_SMWFORUM_LINK_MISSING_LOCALSETTINGS", "http://smwforum.ontoprise.de");
+define ("DF_SMWFORUM_LINK_MISSING_ADMINSETTINGS", "http://smwforum.ontoprise.de");
+define ("DF_SMWFORUM_LINK_MISSING_NON_REGISTERED", "http://smwforum.ontoprise.de");
+define ("DF_SMWFORUM_LINK_MISSING_NON_EXISTING", "http://smwforum.ontoprise.de");
+define ("DF_SMWFORUM_LINK_MISSING_DOUBLE_REGISTERED", "http://smwforum.ontoprise.de");
+
+
 /**
  * @file
  * @ingroup DFMaintenance
@@ -115,7 +125,7 @@ class ConsistencyChecker {
 
 	public function checkInstallation($repair, $format) {
 
-		
+
 		$errorFound = false;
 		$errorFound |= $this->checkDependencies($repair, $format);
 		$errorFound |= $this->checkLocalSettings($repair, $format);
@@ -139,6 +149,7 @@ class ConsistencyChecker {
 		$this->statusLog[] = $this->out(array("\n","checking consistency of dependencies in installed packages..."), $format);
 		$errorFound = MaintenanceTools::checkDependencies($this->localPackages, $out);
 
+
 		if ($errorFound) {
 			foreach($out as $ext => $line) {
 				//if (!is_null(reset($line))) $this->statusLog[] = "\n\n$ext: ";
@@ -149,6 +160,15 @@ class ConsistencyChecker {
 			$this->statusLog[] = $this->out(array("\n"), $format);
 		} else {
 			$this->statusLog[] = $this->out(array("\n", "\t", "none."), $format);
+		}
+		if (!$errorFound) {
+			$this->statusLog[] = $this->out(array("\n", "\t[OK]"), $format);
+
+		} else {
+			if ($format == DF_OUTPUT_FORMAT_HTML)    {
+				// in case of HTML write a link to the SMW-Forum
+				$this->statusLog[] = $this->linkout(array(DF_SMWFORUM_LINK_MISSING_DEPENDENCY, "Get help: Dependency issue"));
+			}
 		}
 		return $errorFound;
 	}
@@ -161,31 +181,64 @@ class ConsistencyChecker {
 	 */
 	private function checkLocalSettings($repair, $format) {
 
-		$this->statusLog[] = $this->out(array("\n","check LocalSettings.php...", "\n"), $format);
-		if (!file_exists($this->rootDir."/LocalSettings.php")) {
+		//
+		// check if LocalSettings.php exists
+		//
+		$this->statusLog[] = $this->out(array("\n","check if LocalSettings.php exists...", "\n"), $format);
+		$errorFound = !file_exists($this->rootDir."/LocalSettings.php");
+		if ($errorFound) {
 			$this->statusLog[] = $this->out(array("\n","\t","[FAILED]", "LocalSettings.php does not exist", "\n"), $format);
-				
+
 			if ($repair) $this->out(array("\n","\t","Cannot repair. Please create LocalSettings.php manually"), $format);
 			return true;
 		}
 		$this->statusLog[] = $this->out(array("\t", "done."), $format);
+		if (!$errorFound) {
+			$this->statusLog[] = $this->out(array("\n", "\t[OK]"), $format);
+		} else {
+			if ($format == DF_OUTPUT_FORMAT_HTML)    {
+				// in case of HTML write a link to the SMW-Forum
+				$this->statusLog[] = $this->linkout(array(DF_SMWFORUM_LINK_MISSING_LOCALSETTINGS, "Get help: Missing LocalSettings.php"));
+			}
+		}
 
-		$this->statusLog[] = $this->out(array("\n","check AdminSettings.php...", "\n"), $format);
-		if (!file_exists($this->rootDir."/AdminSettings.php")) {
+		//
+		// check if AdminSettings.php exists
+		//
+		$this->statusLog[] = $this->out(array("\n","check if AdminSettings.php exists...", "\n"), $format);
+		$errorFound =!file_exists($this->rootDir."/AdminSettings.php");
+		if ($errorFound) {
 			$this->statusLog[] = $this->out(array("\n","\t","[FAILED]", "AdminSettings.php does not exist", "\n"), $format);
 			if ($repair) $this->out(array("\n","\t","Cannot repair. Please create AdminSettings.php from AdminSettingsTemplate.php"), $format);
 			return true;
 		}
 		$this->statusLog[] = $this->out(array("\t", "done."), $format);
+		if (!$errorFound) {
+			$this->statusLog[] = $this->out(array("\n", "\t[OK]"), $format);
+		}else {
+			if ($format == DF_OUTPUT_FORMAT_HTML)    {
+				// in case of HTML write a link to the SMW-Forum
+				$this->statusLog[] = $this->linkout(array(DF_SMWFORUM_LINK_MISSING_ADMINSETTINGS, "Get help: Missing AdminSettings.php"));
+			}
+		}
 
+		//
+		// check if LocalSettings.php is not empty
+		//
+		$this->statusLog[] = $this->out(array("\n","check if LocalSettings.php is non-empty...", "\n"), $format);
 		$ls = file_get_contents($this->rootDir."/LocalSettings.php");
+		$errorFound = trim($ls) == '';
 		if (trim($ls) == '') {
 			$this->statusLog[] = $this->out(array("\n","\t","[FAILED]", "LocalSettings.php exists but is empty", "\n"), $format);
 			if ($repair) $this->out(array("\n","\t","Cannot repair. Please create LocalSettings.php manually"), $format);
 			return true;
 		}
+		$this->statusLog[] = $this->out(array("\t", "done."), $format);
+		if (!$errorFound) $this->statusLog[] = $this->out(array("\n", "\t[OK]"), $format);
 
-
+		//
+		// check if existing extensions are registered in LocalSettings.php
+		//
 		$this->statusLog[] = $this->out(array("\n","check if existing extensions are registered in LocalSettings.php...","\n"), $format);
 		$errorFound1 = false;
 		foreach($this->localPackages as $p) {
@@ -213,8 +266,17 @@ class ConsistencyChecker {
 
 		if (!$errorFound1) {
 			$this->statusLog[] = "\n\tnone.";
+			$this->statusLog[] = $this->out(array("\n", "\t[OK]"), $format);
+		} else {
+			if ($format == DF_OUTPUT_FORMAT_HTML)    {
+				// in case of HTML write a link to the SMW-Forum
+				$this->statusLog[] = $this->linkout(array(DF_SMWFORUM_LINK_MISSING_NON_REGISTERED, "Get help: Non-registered extensions"));
+			}
 		}
 
+		//
+		// check if there are registerings for non-existings extensions
+		//
 		$this->statusLog[] = $this->out(array("\n","\n","check if there are registerings for non-existings extensions..."), $format);
 		preg_match_all('/\/\*start-(\w+)\*\//', $ls, $matches);
 		$errorFound2 = false;
@@ -240,9 +302,17 @@ class ConsistencyChecker {
 		}
 		if (!$errorFound2) {
 			$this->statusLog[] = $this->out(array("\n","\t","none."), $format);
+			$this->statusLog[] = $this->out(array("\n", "\t[OK]"), $format);
+		} else {
+		 if ($format == DF_OUTPUT_FORMAT_HTML)    {
+		 	// in case of HTML write a link to the SMW-Forum
+		 	$this->statusLog[] = $this->linkout(array(DF_SMWFORUM_LINK_MISSING_NON_EXISTING, "Get help: Non-existing extensions"));
+		 }
 		}
 
-
+		//
+		// check if there are double registered extensions
+		//
 		$this->statusLog[] = $this->out(array("\n","\n","check if there are double registered extensions..."), $format);
 		$errorFound3 = false;
 		preg_match_all('/\/\*start-(\w+)\*\//', $ls, $matches);
@@ -256,8 +326,17 @@ class ConsistencyChecker {
 		}
 		if (!$errorFound3) {
 			$this->statusLog[] = $this->out(array("\n","\t","none."), $format);
+			$this->statusLog[] = $this->out(array("\n", "\t[OK]"), $format);
+		} else {
+			if ($format == DF_OUTPUT_FORMAT_HTML) {
+				// in case of HTML write a link to the SMW-Forum
+				$this->statusLog[] = $this->linkout(array(DF_SMWFORUM_LINK_MISSING_DOUBLE_REGISTERED, "Get help: Double registered extensions"));
+			}
 		}
 
+		//
+		// check if there are double require/include statements
+		//
 		$this->statusLog[] = $this->out(array("\n","\n","check if there are double require/include statements..."), $format);
 		$errorFound4 = false;
 		preg_match_all('/(require|include)(_once)?\s*\(\s*["\']([^"\']*)["\']\s*\)/', $ls, $matches);
@@ -272,6 +351,12 @@ class ConsistencyChecker {
 		}
 		if (!$errorFound4) {
 			$this->statusLog[] = $this->out(array("\n","\t","none."), $format);
+			$this->statusLog[] = $this->out(array("\n", "\t[OK]"), $format);
+		} else {
+			if ($format == DF_OUTPUT_FORMAT_HTML) {
+				// in case of HTML write a link to the SMW-Forum
+				$this->statusLog[] = $this->linkout(array(DF_SMWFORUM_LINK_MISSING_DOUBLE_REGISTERED, "Get help: Double registered extensions"));
+			}
 		}
 
 		return $errorFound1 || $errorFound2 || $errorFound3 || $errorFound4;
@@ -297,7 +382,12 @@ class ConsistencyChecker {
 	}
 
 
-
+	/**
+	 * Prints out a status log message.
+	 *
+	 * @param array of string $text
+	 * @param string $format DF_OUTPUT_FORMAT_TEXT or DF_OUTPUT_FORMAT_HTML
+	 */
 	private function out($text, $format) {
 		switch($format) {
 			case DF_OUTPUT_FORMAT_TEXT:
@@ -309,10 +399,21 @@ class ConsistencyChecker {
 						$text[$i] = str_replace("\n", "<br>", $text[$i]);
 						$text[$i] = str_replace("\t", '<div style="display: inline; margin-left: 10px;"></div>', $text[$i]);
 						$text[$i] = str_replace("[FAILED]", '<span class="df_checkinst_error">[FAILED]</span>', $text[$i]);
+						$text[$i] = str_replace("[OK]", '<span class="df_checkinst_ok">[OK]</span>', $text[$i]);
 					}
 					return implode("", $text);
 				} else return $text;
 				break;
 		}
+	}
+
+	/**
+	 * Creates an HTML link.
+	 * 
+	 * @param array $link
+	 */
+	private function linkout($link) {
+		list($href, $label) = $link;
+		return "<div class=\"df_checkinst_links\"><a href=\"".htmlspecialchars($href)."\">$label</a></div>";
 	}
 }
