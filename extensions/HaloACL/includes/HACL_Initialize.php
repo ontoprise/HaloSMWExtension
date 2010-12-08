@@ -227,13 +227,13 @@ if ($haclgUseFeaturesForGroupPermissions === true) {
 	$haclgFeature['upload']['permissibleBy'] = "admin"; // The other alternative would be "all"
 	$haclgFeature['upload']['default'] = "permit"; // The other alternative would be "deny"
 	
-	$haclgFeature['edit']['systemfeatures'] = "edit|createpage|createtalk|move|movefile|move-subpages|move-rootuserpages|createaccount|editprotected";
+	$haclgFeature['edit']['systemfeatures'] = "edit|formedit|annotate|wysiwyg|ontologyediting|createpage|createtalk|move|movefile|move-subpages|move-rootuserpages|createaccount|editprotected";
 	$haclgFeature['edit']['name'] = "Edit";
 	$haclgFeature['edit']['description'] = "This is the feature for editing articles.";
 	$haclgFeature['edit']['permissibleBy'] = "admin"; // The other alternative would be "all"
 	$haclgFeature['edit']['default'] = "permit"; // The other alternative would be "deny"
 	
-	$haclgFeature['manage']['systemfeatures'] = "delete|bigdelete|deletedhistory|undelete|browsearchive|mergehistory|protect|block|blockemail|hideuser|userrights|userrights-interwiki|rollback|markbotedits|patrol|editinterface|editusercssjs|suppressrevision|deleterevision";
+	$haclgFeature['manage']['systemfeatures'] = "delete|bigdelete|deletedhistory|undelete|browsearchive|mergehistory|protect|block|blockemail|hideuser|userrights|userrights-interwiki|rollback|markbotedits|patrol|editinterface|editusercssjs|suppressrevision|deleterevision|gardening";
 	$haclgFeature['manage']['name'] = "Management";
 	$haclgFeature['manage']['description'] = "This is the feature for managing wiki articles.";
 	$haclgFeature['manage']['permissibleBy'] = "admin"; // The other alternative would be "all"
