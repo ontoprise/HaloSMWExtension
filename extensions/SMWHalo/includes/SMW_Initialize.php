@@ -212,7 +212,7 @@ function smwgHaloSetupExtension() {
 		$uri = $smwgTripleStoreGraph."/".$wgRequest->getVal('title');
 		$title = TSHelper::getTitleFromURI($uri);
 		$location = $title->getLocalURL() . (array_key_exists('HTTP_ACCEPT', $_SERVER) && strpos($_SERVER['HTTP_ACCEPT'], 'application/rdf+xml') !== false ? "?format=rdf" : "");
-		
+
 		header("HTTP/1.1 303 See Other");
 		header("Location: $location");
 		header("Vary: Accept");
@@ -359,15 +359,11 @@ function smwgHaloSetupExtension() {
 		$wgSpecialPageGroups['Properties'] = 'smwplus_group';
 
 
+		$wgAutoloadClasses['SMWTripleStoreAdmin'] = $smwgHaloIP . '/specials/SMWTripleStoreAdmin/SMW_TripleStoreAdmin.php';
+		$wgSpecialPages['TSA'] = array('SMWTripleStoreAdmin');
+		$wgSpecialPageGroups['TSA'] = 'smwplus_group';
 
 
-		global $smwgDefaultStore;
-		if (smwfIsTripleStoreConfigured()) {
-			$wgAutoloadClasses['SMWTripleStoreAdmin'] = $smwgHaloIP . '/specials/SMWTripleStoreAdmin/SMW_TripleStoreAdmin.php';
-			$wgSpecialPages['TSA'] = array('SMWTripleStoreAdmin');
-			$wgSpecialPageGroups['TSA'] = 'smwplus_group';
-
-		}
 
 	}
 
@@ -701,9 +697,9 @@ function &smwfGetSemanticStore() {
 }
 
 /**
- * Creates a new instance of the base store and gives other extensions the 
+ * Creates a new instance of the base store and gives other extensions the
  * a chance to modify the store.
- * 
+ *
  * @return
  * 		A new base store or NULL if $smwgBaseStore is not defined.
  */
@@ -714,7 +710,7 @@ function &smwfNewBaseStore() {
 	}
 	$store = new $smwgBaseStore();
 	wfRunHooks('SmwhNewBaseStore', array(&$store));
-	
+
 	return $store;
 }
 
@@ -1390,16 +1386,16 @@ function smwfGetAjaxMethodPrefix() {
  * Register extra AC related options in Preferences->Misc
  */
 function smwfAutoCompletionToggles( $user, &$preferences ) {
-        // A checkbox
-    $preferences['smwhactriggering'] = array(
+	// A checkbox
+	$preferences['smwhactriggering'] = array(
         'type' => 'toggle',
         'label-message' => 'tog-autotriggering', // a system message
         'section' => 'personal/info'
     
-    );
-    
-    // Required return value of a hook function.
-    return true;
+        );
+
+        // Required return value of a hook function.
+        return true;
 }
 
 
