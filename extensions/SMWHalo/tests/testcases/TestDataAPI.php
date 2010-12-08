@@ -101,7 +101,8 @@ class TestDataAPI extends PHPUnit_Framework_TestCase {
 
 		$this->pcpDeleteArticle($this->url, "A_complex_project", $this->userName, $this->pw, $lt, $uid);
 		$this->pcpCreateArticle($this->url, "A_complex_project", $this->userName, $this->pw, $lt, $uid, $this->getAComplexProjectText("pcp_create", "True"));
-		$this->sfUpdateForm($this->url, $this->userName, $lt, $uid, $this->getAComplexProjectSFJSONData("sf-update-json"), "json");
+		$response = $this->sfUpdateForm($this->url, $this->userName, $lt, $uid, $this->getAComplexProjectSFJSONData("sf-update-json"), "json");
+		
 		$response = $this->sfGetForm($this->url, "A_complex_project");
 
 		$this->assertEquals(strpos($response, 'cur_value="sf-update-json"') !== false, true);
@@ -442,7 +443,7 @@ class TestDataAPI extends PHPUnit_Framework_TestCase {
 
 		$response = stream_get_contents(
 		@ fopen($this->url,'rb', true, $ctx));
-		//echo("\n\n".$response);
+		return $response;
 	}
 
 	function pomGetTemplates($url, $title, $name = ""){
