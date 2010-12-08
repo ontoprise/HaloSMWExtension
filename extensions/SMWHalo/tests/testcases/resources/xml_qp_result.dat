@@ -1,15 +1,15 @@
 <?xml version="1.0"?>
-<sparql>
+<sparql sparqlxmlns="http://www.w3.org/2005/sparql-results#">
         <head>
                 <variable name="_var0"/>
         </head>
         <results>
                 <result>
-                        <binding name="_var0">AudiTT</binding>
+                        <binding name="_var0"><uri>http://publicbuild/ob/a/Audi_TT</uri></binding>
                 </result>
                 
                 <result>
-                        <binding name="_var0">Peugeot</binding>
+                        <binding name="_var0"><uri>http://publicbuild/ob/a/Peugeot</uri></binding>
                 </result>
                 
         </results>
