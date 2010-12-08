@@ -28,6 +28,10 @@ class SMWTripleStoreAdmin extends SpecialPage {
 		global $wgRequest, $wgOut, $smwgMessageBroker, $smwgWebserviceEndpoint, $wgUser, $smwgEnableObjectLogicRules;
 		$wgOut->setPageTitle(wfMsg('tsa'));
 		$html = "";
+		if (!smwfIsTripleStoreConfigured()) {
+            $wgOut->addWikiText(wfMsg('tsc_advertisment'));		
+			return;
+		}
 		if ($wgRequest->getVal('init') != NULL) {
 			// after init
 			smwfGetStore()->initialize(false);

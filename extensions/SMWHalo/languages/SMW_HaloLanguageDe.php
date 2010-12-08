@@ -353,6 +353,7 @@ protected $smwUserMessages = array(
 	'smw_iqgi_wrongunit' => 'falsche Einheit',
 	
 	'tsa' => 'Triplestore Administration',
+    'tsc_advertisment' => "Connecting the ontoprise products '''TripleStoreConnector Basic''' (free) or '''TripleStoreConnector Professional''' to a Wiki ultimately leads to getting better search results and to making use of data which lives outside this Wiki.  Click [http://smwforum.ontoprise.com/smwforum/index.php/Help:What_is_a_triple_store here] to read what your benefits are and to download a TripleStore.",
     'smw_tsa_welcome' => 'Diese Spezialseite hilft ihnen die Wiki/Triplestore Verbindung zu konfiguieren.',
     'smw_tsa_couldnotconnect' => 'Kann keine Verbindung zu einem Triple store aufbauen.',
     'smw_tsa_notinitalized' => 'Das Wiki ist nicht mit einem Triple store verbunden.',
