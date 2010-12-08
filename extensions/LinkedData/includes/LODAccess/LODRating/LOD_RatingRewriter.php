@@ -94,14 +94,20 @@ class LODRatingRewriter extends LODSparqlQueryVisitor {
 	 * being selected i.e. "SELECT *"
 	 * 
 	 * @param array $pattern
-	 * 		The pattern of a UNION.
+	 * 		The pattern of a QUERY.
 	 * 
 	 */
 	public function preVisitQuery(&$pattern) {
 		$vars = $pattern['result_vars'];
 		$newVars = array();
 		foreach ($vars as $v) {
-			$newVars[] = array("var" => $v['value'], "aggregate" => 0, "alias" => "");
+			if (array_key_exists('value', $v)) {
+				// variable is not selected
+				$newVars[] = array("var" => $v['value'], "aggregate" => 0, "alias" => "");
+			} else {
+				// variable is already selected
+				$newVars[] = $v;
+			}
 		}
 		$pattern['result_vars'] = $newVars;
 		
