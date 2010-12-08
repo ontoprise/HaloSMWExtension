@@ -916,6 +916,13 @@ SPARQL;
     	
     }
     
+    /**
+     * Test for multiple pathways
+     */
+    function testMultiplePathways() {
+    	$this->setupMultiplePathwaysExample();
+    }
+    
   	/**
 	 * Returns the result of the given query.
 	 * 
@@ -963,6 +970,39 @@ SPARQL;
 		$tsa->flushCommands();
 		
 	}
+
+	/**
+	 * Stores the triples with many pathways in the triple store.
+	 */
+	private function setupMultiplePathwaysExample() {
+    	
+		$graph = TestLODRatingSuite::GRAPH;
+		// Needed for tearDown()
+    	$this->mGraphsToDelete[] = $graph;
+    	
+    	// Initialise the triple store for this test
+    	$namespace = "http://example.com/";
+    	$prefixes = "PREFIX ex:<$namespace> ".
+    			  TSNamespaces::getW3CPrefixes();
+    	$triples = array();
+		for ($i = 0; $i < 22; ++$i) {
+			$book = "ex:book$i";
+			$triples[] = new LODTriple("ex:AnAuthor", "ex:authorOf", $book, "__objectURI");
+			$triples[] = new LODTriple($book, "ex:price", "4.2", "xsd:double");
+		}
+		
+		// Inserts triples into the triple store
+		$tsa = new LODTripleStoreAccess();
+		$tsa->addPrefixes($prefixes);
+		$tsa->createGraph($graph);
+		$tsa->insertTriples($graph, $triples);
+		$tsa->flushCommands();
+		
+	}
+	
+	/**
+	 * Loads the N3 file "authors.n3".
+	 */
 	private function setupAuthorExample() {
 		$graph = TestLODRatingSuite::AUTHOR_GRAPH;
 		// Needed for tearDown()
