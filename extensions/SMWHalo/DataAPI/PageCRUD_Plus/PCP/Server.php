@@ -203,10 +203,11 @@ class PCPServer extends PCPAny{
 		$__api = new ApiMain($__request, true);
 		$__api->execute();
 
-		$__result =& $__api->GetResultData();
+		$__result = $__api->GetResultData();
 		
 		if (!isset($__result['query']['pages'])){
 			// error handling
+			error();
 			print ("ERROR: Reading a single page failed".__FILE__);
 		}else{
 			// there could be more than one page in the result

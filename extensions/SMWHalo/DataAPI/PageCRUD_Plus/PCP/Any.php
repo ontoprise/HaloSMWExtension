@@ -84,7 +84,7 @@ abstract class PCPAny{
 	"prop" => "info|revisions",
 	"titles" => ":0",
 	"rvprop" => "timestamp|content|ids",
-	"rvlimit" => "max"
+	//"rvlimit" => "max"
 	);
 
 	/**

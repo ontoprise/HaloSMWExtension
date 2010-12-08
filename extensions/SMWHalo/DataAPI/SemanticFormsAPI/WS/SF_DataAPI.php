@@ -1326,7 +1326,7 @@ class SFDataAPI extends ApiBase {
 		$this->mPageTitle = Title::newFromText("Semantic Forms permissions test");
 		else
 		$this->mPageTitle = Title::newFromText($page_title);
-		if ($wgUser->isAllowed('edit') && $this->mPageTitle->userCanEdit()) {
+		if ($wgUser->isAllowed('edit') && $this->mPageTitle->userCan('edit')) {
 			$form_is_disabled = false;
 			$form_text = "";
 			// show "Your IP address will be recorded" warning if user is
@@ -2010,7 +2010,7 @@ class SFDataAPI extends ApiBase {
 	function toArrayForSerialize($data){
 		if(is_array($data) || is_object($data))
 		{
-			if(get_class($data) =='POMPage'){
+			if(is_object($data) && get_class($data) =='POMPage'){
 				$__pom = new POMPage($data->titel, $data->text);
 				$__result = array();
 				$__elementsIterator = $__pom->getElements()->listIterator();
