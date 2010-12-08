@@ -272,7 +272,7 @@ JSON;
 	 */
 	private static function insertPermissions($html) {
 		global $haclgFeature, $wgUser;
-		$groups = $wgUser->getGroups();
+		$groups = $wgUser->getEffectiveGroups();
 		
 		// Some permissions for features can only be changed by sysops or
 		// bureaucrats 
