@@ -966,7 +966,12 @@ class SMWTripleStore extends SMWStore {
                         $allValues = array();
                         $this->parseBindungs($b, $var_name, $prs[$resultColumn], $allValues);
                         // what happens if first column is merged??
-                        $resultInstance = count($allValues) > 0 ? reset($allValues) : SMWDataValueFactory::newTypeIDValue('_wpg');
+                        $firstValue = count($allValues) > 0 ? reset($allValues) : NULL;
+                        if (!($firstValue instanceof SMWWikiPageValue)) {
+                        	// if resultInstance is not a wiki page title, create a dummy.
+                        	$firstValue = SMWDataValueFactory::newTypeIDValue('_wpg', 'invalid title: no wiki URL');
+                        }
+                        $resultInstance = $firstValue;
                         break;
                     }
                 }
