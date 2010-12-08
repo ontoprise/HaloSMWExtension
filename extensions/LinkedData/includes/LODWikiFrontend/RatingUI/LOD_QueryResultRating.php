@@ -88,6 +88,15 @@ HTML;
  */
 class LODQueryResultRatingUI  {
 		
+	//--- Constants ---
+	
+	// Number of characters that are displayed of the selected value
+	const MAX_VALUE_LENGTH = 40;
+	
+	// Number of pathway links to display.
+	const MAX_NUM_PATHWAYS = 7;
+	
+	//--- Public methods ---
 	/**
 	 * Returns the HTML for adding and viewing ratings of triples
 	 * 
@@ -114,6 +123,10 @@ class LODQueryResultRatingUI  {
 		}
 		
 		// Insert the value that will be rated
+		if (strlen($value) > self::MAX_VALUE_LENGTH) {
+			// Value is too long to be displayed
+			$value = substr($value, 0, self::MAX_VALUE_LENGTH)."...";
+		}
 		$html = str_replace("***value***", $value, $html);
 		
 		// Insert pathway selector for triples if needed
@@ -305,14 +318,14 @@ HTML;
 		$row = 0;
 		foreach ($tripleTable as $subj => $poArray) {
 			$first = true;
-			$s = htmlentities($subj);
+			$s = htmlentities($subj, ENT_COMPAT, "UTF-8");
 			foreach ($poArray as $po) {
-				$p = htmlentities($po[0]);
-				$o = htmlentities($po[1]);
+				$p = htmlentities($po[0], ENT_COMPAT, "UTF-8");
+				$o = htmlentities($po[1], ENT_COMPAT, "UTF-8");
 				
-				$psubj = htmlentities($pm->makePrefixedURI($subj));
-				$ppred = htmlentities($pm->makePrefixedURI($po[0]));
-				$pobj  = htmlentities($pm->makePrefixedURI($po[1]));
+				$psubj = htmlentities($pm->makePrefixedURI($subj), ENT_COMPAT, "UTF-8");
+				$ppred = htmlentities($pm->makePrefixedURI($po[0]), ENT_COMPAT, "UTF-8");
+				$pobj  = htmlentities($pm->makePrefixedURI($po[1]), ENT_COMPAT, "UTF-8");
 				
 				$psubj = $first ? $psubj : "";
 				
@@ -364,17 +377,28 @@ HTML;
 			return "";
 		}
 		
+		$numPathways = $numLinks = count($triples);
+		$fastBack = "";
+		$fastForward = "";
+		$numTriples = "";
+		if ($numPathways > self::MAX_NUM_PATHWAYS) {
+			$numLinks = self::MAX_NUM_PATHWAYS;
+			$numTriples = " ($numPathways)";
+			$fastBack = "<a id=\"lodRatingPathwayFastBack\" class=\"lodRatingActionLink\">&lt;&lt;&nbsp;</a>";
+			$fastForward = "<a id=\"lodRatingPathwayFastForward\" class=\"lodRatingActionLink\">&nbsp;&gt;&gt;</a>";
+		}
+		 
 		$html = <<<HTML
-<div class="lodDivRatingPathway">
-		{{lod_rt_pathways}} <a id="lodRatingPathwayBack" class="lodRatingActionLink">&lt;</a>
+<div class="lodDivRatingPathway" numpathways="$numPathways">
+		{{lod_rt_pathways}}$numTriples $fastBack<a id="lodRatingPathwayBack" class="lodRatingActionLink">&lt;</a>
 HTML;
-		for ($i = 1, $len = count($triples); $i <= $len; ++$i) {
+		for ($i = 1, $len = $numLinks; $i <= $len; ++$i) {
 			$html .= <<<HTML
  <a id="lodRatingPathway_$i" class="lodRatingPathwayIndex lodRatingActionLink">$i</a> 
 HTML;
 		}
 		$html .= <<<HTML
-        <a id="lodRatingPathwayForward" class="lodRatingActionLink">&gt;</a>
+        <a id="lodRatingPathwayForward" class="lodRatingActionLink">&gt;</a>$fastForward
     </div>
 HTML;
 		return $html;

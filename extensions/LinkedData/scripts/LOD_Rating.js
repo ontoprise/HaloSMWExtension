@@ -37,6 +37,9 @@ LOD.classes.RatingEditor = function () {
 	// The HTML-ID of the currently selected result set.
 	var mCurrentResultSet = null;
 	
+	// 0-based index of the first result set (pathway) link
+	var mCurrentResultSetBase = 0;
+	
 	// The currently selected triple and its rating
 	var mCurrentRating = LOD.classes.Rating();
 	
@@ -55,7 +58,14 @@ LOD.classes.RatingEditor = function () {
 	that.initRatingEditor = function (elem) {
 		var url = wgServer + wgScriptPath + "/index.php?action=ajax";
 		var ratingKey = elem.find('.lodRatingKey').html(); 
-		var value = elem.html();
+		var value = "";
+		// Get the text value of <elem> (first text only, not the hidden rating key)
+		elem.contents()
+			.each(function () {
+				if (this.nodeValue !== "" && value === "") {
+					value = this.nodeValue;
+				}
+			});
 
 		// Show the throbber
 		var imgSource = wgServer + wgScriptPath + '/extensions/LinkedData/skins/img/throbber.gif';
@@ -154,8 +164,9 @@ LOD.classes.RatingEditor = function () {
 	that.initRatingEditorEventBindings = function () {
 		var $ = jQuery;
 		
-		// Add click handler for both pathway arrows
-		$('#lodRatingPathwayBack, #lodRatingPathwayForward').click(function () {
+		// Add click handler for all four pathway arrows
+		$('#lodRatingPathwayBack, #lodRatingPathwayForward,'
+		  + '#lodRatingPathwayFastBack, #lodRatingPathwayFastForward').click(function () {
 			that.pathwayArrowClicked($(this));
 			return false;
 		});
@@ -349,18 +360,53 @@ LOD.classes.RatingEditor = function () {
 		var $ = jQuery;
 		
 		// Get the number of results
-		var numResults = $('.lodRatingPathwayIndex').length;
+		var numPathwayLinks = $('.lodRatingPathwayIndex').length;
+		var numResults = $('.lodDivRatingPathway').attr('numpathways')*1;
 		
 		var idx = mCurrentResultSet.substr('"lodRatingResultSet_'.length-1)*1;
+
 		if (elem.attr('id') == 'lodRatingPathwayBack') {
 			// Backward arrow clicked
-			idx = idx === 1 ? numResults : --idx;
-		} else {
+			--idx;
+		} else if (elem.attr('id') == 'lodRatingPathwayForward') {
 			// Forward arrow clicked
-			idx = idx === numResults ? 1 : ++idx;
+			++idx;
+		} else if (elem.attr('id') == 'lodRatingPathwayFastBack') {
+			// Fast backward arrow clicked
+			idx -= numPathwayLinks;
+		} else if (elem.attr('id') == 'lodRatingPathwayFastForward') {
+			// Fast forward arrow clicked
+			idx += numPathwayLinks;
 		}
-		that.pathwayIndexClicked($('#lodRatingPathway_'+idx));
 		
+		// Consistency checks for the new index
+		if (idx < 1) {
+			// Go to the last set of pathway links
+			idx = numResults;
+		} else if (idx > numResults) {
+			// Go to the first set of pathway links
+			idx = 1;
+		}
+		
+		// Show the correct set of pathway links
+		var baseIdx = Math.floor((idx-1) / numPathwayLinks) * numPathwayLinks;
+		if (baseIdx != mCurrentResultSetBase) {
+			// Relabel all pathway links
+			mCurrentResultSetBase = baseIdx;
+			var linkIdx = baseIdx + 1;
+			$('.lodRatingPathwayIndex').each(function () {
+				$(this).text(linkIdx);
+				if (linkIdx > numResults) {
+					$(this).hide();
+				} else {
+					$(this).show();
+				}
+				linkIdx++;
+			});
+		}
+		that.pathwayIndexClicked($('#lodRatingPathway_' + (idx - mCurrentResultSetBase)));
+		
+		return false;
 	};
 	
 	/**
@@ -379,12 +425,22 @@ LOD.classes.RatingEditor = function () {
 		elem.css('font-weight', 'bolder')
 			.css('font-size', '150%');
 		
+		// Remove selection highlight of all triples in the table
+		jQuery('tr.lodRatingHighlightSelection').removeClass('lodRatingHighlightSelection');
+		mCurrentlySelectedTriple = null;
+
 		// Show the div that contains the selected result set
 		var id = elem.attr('id');
 		id = id.substring('"lodRatingPathway_'.length-1);
 		$("#"+mCurrentResultSet).hide();
-		mCurrentResultSet = 'lodRatingResultSet_' + id;
+		mCurrentResultSet = 'lodRatingResultSet_' + (id*1+mCurrentResultSetBase);
 		$("#"+mCurrentResultSet).show();
+		
+		// Hide the link for opening other comments
+		jQuery("#lodRatingShowOtherComments").hide();
+		// Hide other comments
+		jQuery("#lodRatingOtherComments").hide();
+		that.updateShowCommentsLink();
 		
 	};
 	
@@ -438,7 +494,7 @@ LOD.classes.RatingEditor = function () {
 		//Show the link for opening other comments
 		jQuery("#lodRatingShowOtherComments").show();
 
-		// Remove highlights in all triple table
+		// Remove highlights of all triples in the table
 		jQuery('tr.lodRatingHighlightSelection').removeClass('lodRatingHighlightSelection');
 		// Highlight the row of the selected triple
 		elem.addClass('lodRatingHighlightSelection');
