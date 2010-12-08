@@ -30,8 +30,6 @@ function wumInitExtension(){
  * @return unknown_type
  */
 function wum_doAPIEdit($editPage, $text, &$resultArr){
-	file_put_contents("D://apixyz.txt", print_r($editPage, true));
-	
 	$title = $editPage->mArticle->getTitle()->getFullText();
 	$editPage->textbox1 =
 	WUMMergeController::getInstance()->merge($title, $text, $editPage->mArticle->getContent());
