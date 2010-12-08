@@ -203,4 +203,84 @@
     <hash>ff27960e6227b19dac79baf711c9359f</hash>
     </revision>
   </page>
+  <page>
+    <title>ACL:Group/Knowledge architect</title>
+    <id>12</id>
+    <revision>
+      <id>13</id>
+      <timestamp>2010-12-08T10:34:00Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">
+{{#member:members=User:WikiSysop}}
+{{#manage group:assigned to=User:WikiSysop}}
+[[Category:ACL/Group]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>ACL:Group/Knowledge consumer</title>
+    <id>10</id>
+    <revision>
+      <id>11</id>
+      <timestamp>2010-12-08T10:32:45Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">
+{{#member:members=User:WikiSysop}}
+{{#manage group:assigned to=User:WikiSysop}}
+[[Category:ACL/Group]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>ACL:Group/Knowledge provider</title>
+    <id>11</id>
+    <revision>
+      <id>12</id>
+      <timestamp>2010-12-08T10:33:19Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">
+{{#member:members=User:WikiSysop}}
+{{#manage group:assigned to=User:WikiSysop}}
+[[Category:ACL/Group]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>ACL:Group/bureaucrat</title>
+    <id>9</id>
+    <revision>
+      <id>10</id>
+      <timestamp>2010-12-08T10:29:59Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">
+{{#member:members=User:WikiSysop}}
+{{#manage group:assigned to=User:WikiSysop}}
+[[Category:ACL/Group]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>ACL:Group/sysop</title>
+    <id>8</id>
+    <revision>
+      <id>14</id>
+      <timestamp>2010-12-08T10:40:25Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">
+{{#member:members=User:WikiSysop,User:Thomas}}
+{{#manage group:assigned to=User:WikiSysop}}
+[[Category:ACL/Group]]</text>
+    </revision>
+  </page>
 </mediawiki>
