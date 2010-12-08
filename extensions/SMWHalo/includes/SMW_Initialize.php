@@ -173,8 +173,7 @@ function smwgHaloSetupExtension() {
 	// new and functionally enhanced smwfHaloSaveHook
 	$wgHooks['ParserBeforeStrip'][] = 'smwfRegisterSPARQLInlineQueries';
 
-	$wgHooks['OntoSkinTemplateToolboxEnd'][] = 'smwfOntoSkinTemplateToolboxEnd';
-	$wgHooks['OntoSkinTemplateNavigationEnd'][] = 'smwfOntoSkinTemplateNavigationEnd';
+	$wgHooks['SkinTemplateToolboxEnd'][] = 'smwfOntoSkinTemplateToolboxEnd';
 
 	$wgHooks['sfSetTargetName'][]     		= 'smwfOnSfSetTargetName';
 
@@ -1504,10 +1503,10 @@ function smwfCreateLinks($name) {
 
 		//Check if ontoskin is available else return code for new skins
 		global $wgUser;
-		if($wgUser->getSkin() == 'ontoskin'){
-			$result .= '<li><a href="'.Skin::makeUrl($page_title, $query).'" '.$extraAttributes[$name].'>'.$name.'</a></li>';
-		} else {
+		if($wgUser->getSkin() == 'ontoskin2'){
 			$result .= '<tr><td><div class="smwf_naviitem"><a href="'.Skin::makeUrl($page_title, $query).'" '.$extraAttributes[$name].'>'.$name.'</a></div></td></tr>';
+		} else {
+                        $result .= '<li><a href="'.Skin::makeUrl($page_title, $query).'" '.$extraAttributes[$name].'>'.$name.'</a></li>';
 		}
 	}
 	return $result;
