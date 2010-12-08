@@ -185,10 +185,12 @@ $wgGroupPermissions['user']['edit']=true;
 $wgGroupPermissions['user']['wysiwyg']=false;
 $wgGroupPermissions['user']['move']=false;
 
+/*
 $wgGroupPermissions['ontologist']['annotate']=true;
 $wgGroupPermissions['ontologist']['edit']=true;
 $wgGroupPermissions['ontologist']['wysiwyg']=false;
 $wgGroupPermissions['ontologist']['gardening']=true;
+*/
 
 $wgGroupPermissions['sysop']['wysiwyg']=true;
 $wgGroupPermissions['sysop']['gardening']=true;
