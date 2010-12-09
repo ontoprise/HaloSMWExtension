@@ -109,10 +109,7 @@ function haclfSetupExtension() {
 	    HACLGroupPermissions::initPermissionsFromDB();
     }
     
-//    global $haclgProtectProperties;
-//    if ($haclgProtectProperties) {
-    	haclfInitSemanticStores();
-//    }
+   	haclfInitSemanticStores();
 
     global $haclgDoEnableTitleCheck;
     haclfRestoreTitlePatch($haclgDoEnableTitleCheck);
@@ -717,19 +714,13 @@ function haclfArticleID($articleName, $defaultNS = NS_MAIN) {
 }
 
 /**
- * If properties are protected, the semantic store is wrapped so that access to
+ * If SMW is present, its semantic store is wrapped so that access to
  * properties and protected pages can be restricted.
  * The stores of SMW and the Halo extension are wrapped.
  */
 function haclfInitSemanticStores() {
-	if (!defined('SMW_VERSION') && !defined('DO_MAINTENANCE')) {
-		die("<b>HaloACL Setup error!</b><br />"
-		    ."The protection of semantic properties is enabled but SMW is not installed.<br />"
-		    ."You can:<br />"
-		    ."<ol>"
-		    ."<li> Set up and enable SMW in LocalSettings.php before HaloACL or </li>"
-		    ."<li> Disable the protection of semantic properties. (Set <tt>\$haclgProtectProperties = false;</tt> in HACL_Initialize.php) </li>"
-		    ."</ol>");
+	if (!defined('SMW_VERSION')) {
+		return;
 	}
 	
 	// Wrap the semantic store of SMW
