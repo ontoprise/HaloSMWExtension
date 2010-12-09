@@ -31,6 +31,12 @@
 
 	<configs>
 		<new>
+			<variable name="wgEnableUploads">
+				<boolean name="wgEnableUploads"
+					description="enables uploads">
+					true
+				</boolean>
+			</variable>
 			<variable name="smwgEnableUploadConverter">
 				<boolean name="smwgEnableUploadConverter"
 					description="enables the upload converter">
