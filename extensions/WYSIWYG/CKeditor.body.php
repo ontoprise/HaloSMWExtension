@@ -623,8 +623,29 @@ function ToggleCKEditor( mode, objId ){
 		oEditorIframe.style.display = 'none';
 		if (toolbar) toolbar.style.display = '';
 		SRCtextarea.style.display = '';
-        if (CKEDITOR.plugins.smwtoolbar)
+        if (CKEDITOR.plugins.smwtoolbar) {
+            CKEDITOR.plugins.smwtoolbar.stbIsActive = false;
             AdvancedAnnotation.unload();
+            AdvancedAnnotation.create();
+            stb_control.stbconstructor();
+            stb_control.createForcedHeader();
+            obContributor.registerContributor();
+            relToolBar.callme();
+            catToolBar.callme();
+            propToolBar.callme();
+            // webservice toolbar, only available if DataImport extension is included
+            if (typeof wsToolBar != 'undefined')
+                wsToolBar.callme();
+            // rule toolbar, only available if SemanticRuls extension is included
+            if (typeof ruleToolBar != 'undefined')
+                ruleToolBar.callme();
+            // Annotations toolbar, only if SemanticGardening extension is included
+            if (typeof smwhgGardeningHints != 'undefined')
+                smwhgGardeningHints.createContainer();
+            smw_links_callme();
+            gEditInterface = new SMWEditInterface();
+            obContributor.activateTextArea(SRCtextarea);
+        }
 	} else {
 		// FCKeditor hidden -> visible
 		//if ( bIsWysiwyg ) oEditorIns.SwitchEditMode(); // switch to plain
@@ -637,7 +658,8 @@ function ToggleCKEditor( mode, objId ){
 		showFCKEditor += RTE_VISIBLE; // showFCKEditor+=RTE_VISIBLE
 		if( oToggleLink ) oToggleLink.innerHTML = editorMsgOff;
 		if( oPopupLink ) oPopupLink.style.display = 'none';
-        if (CKEDITOR.plugins.smwtoolbar) {}
+        if (CKEDITOR.plugins.smwtoolbar)
+            AdvancedAnnotation.unload();
 	}
 	return true;
 }
