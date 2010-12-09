@@ -102,12 +102,12 @@ class Rollback {
 	 *
 	 */
 	private function restoreInstallation() {
-		print "\n\t[Remove current installation...";
+		print "\n[Remove current installation...";
 		Tools::remove_dir($this->rootDir, array(Tools::normalizePath($this->rootDir."/deployment")));
 		print "done.]";
 		print "\n[Restore old installation...";
 		Tools::copy_dir($this->tmpDir."/rollback_data", $this->rootDir);
-		print "\ndone.]";
+		print "done.]";
 	}
 
 	/**
@@ -123,10 +123,10 @@ class Rollback {
 		if ($newRollback) { // initialize new rollback
 			$newRollback = false;
 			if (file_exists($this->tmpDir)) {
-				print "\nCreate new rollback point (y/n) ?";
+				print "\nCreate new restore point (y/n)? ";
 				$line = trim(fgets(STDIN));
 				if (strtolower($line) == 'n') {
-					print "\n\nDo not create a rollback point.\n\n";
+					print "\n\nDo not create a restore point.\n\n";
 					$createRollbackPoint = false;
 					return false;
 				}

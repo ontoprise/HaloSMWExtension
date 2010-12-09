@@ -301,21 +301,24 @@ function showHelp() {
 	echo "\nsmwhalo admin utility v".DEPLOY_FRAMEWORK_VERSION.", Ontoprise 2009";
 	echo "\n\nUsage: smwadmin [ -i | -d ] <package>[-<version>]";
 	echo "\n       smwadmin -u [ <package>[-<version>] ]";
+	echo "\n       smwadmin -r";
+	echo "\n       smwadmin -l";
 	echo "\n";
 	echo "\n\t-i <package>: Install";
 	echo "\n\t-d <package> ]: De-Install";
 	echo "\n\t-u <package>: Update";
+	echo "\n\t-l [ pattern ] : List installed packages.";
+    echo "\n\t-r : Restore from last wiki-restore-point.";
+    echo "\n\n\tAdvanced options: ";
 	echo "\n\t--finalize: Finalizes installation";
 	echo "\n\t--checkdump <package>: Check only dumps for changes but do not install.";
-	echo "\n\t-l [ pattern ] : List installed packages.";
-	echo "\n\t-r : Rollback last installation.";
 	echo "\n\t--dep : Check only dependencies but do not install.";
 	echo "\n";
-	echo "\nExamples:\n\n\tsmwadmin -i smwhalo-1.4.4 -u smw-142: Installs the given packages";
-	echo "\n\tsmwadmin -i smwhalo: Installs latest version of smwhalo";
+	echo "\nExamples:\n\n\tsmwadmin -i smwhalo Installs the given packages";
 	echo "\n\tsmwadmin -u: Updates complete installation";
 	echo "\n\tsmwadmin -u --dep: Shows what would be updated.";
 	echo "\n\tsmwadmin -d smw: Removes the package smw.";
+	echo "\n\tsmwadmin -r : Restores old installation from last restore point";
 	echo "\n\n";
 
 }

@@ -61,13 +61,28 @@ Usage: smwadmin [ -i | -d ] <package>[-<version>]
 Examples:
 
         smwadmin -i smwhalo: Installs latest version of smwhalo.
-        smwadmin -i smwhalo-1.5.2: Installs the given package in this version (if available)
-        smwadmin --install: Finalizes every installation. Must be called after something was installed or updated.
-        smwadmin -u smw-152: Updates the given package to the specified version. (if possible)
+        smwadmin --finalize: Finalizes every installation. Must be called after something was installed or updated.
+        smwadmin -u smw: Updates the given package to the specified version. (if possible)
         smwadmin -u: Updates complete installation
         smwadmin -u --dep: Shows what would be updated.
         smwadmin -d smw: Removes the package smw.
         smwadmin -l: List all installed/available packages 
+
+===Restore wiki from restore point===
+Whenever the Deployment Framework performs one the following actions,
+it offers to create a "Wiki Restore Point":
+* Installing a package: smwadmin -i <package>
+* De-installing a package: smwadmin -d <package>
+* Updating a package: smwadmin -u <package>
+
+You may create a restore point and do an arbitrarily number of subsequent operations. But be aware
+that a new restore point will delete the old.
+
+Call "smwadmin -r" to bring your Wiki back to the previous Wiki Restore Point.
+Simply said, the Deployment Framework can undo your previous action and bring
+your Wiki back to previous state (including the data, articles and
+configuration).
+
 
 Adding new repositories
 =======================
