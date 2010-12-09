@@ -113,7 +113,9 @@ class HACLSMWStore extends SMWStore {
 			foreach ($values as $v) {
 				$allowed = true;
 				if ($v instanceof SMWWikiPageValue) {
-					$allowed = $this->userCanAccessTitle($v->getTitle(), 'read');
+					if (is_string($v->getDBKey())) {
+						$allowed = $this->userCanAccessTitle($v->getTitle(), 'read');
+					}
 				}
 				if ($allowed) {
 					// Property and its value are not protected 
