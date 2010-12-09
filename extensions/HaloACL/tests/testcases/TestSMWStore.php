@@ -158,6 +158,11 @@ ACL
 	
 	[[NormalProperty::NormalPage]]
 	[[NormalProperty::ProtectedPage]]
+	
+{{#ask: [[HA::+]]
+| ?HB
+}}
+	
 ACL
 ,
 //------------------------------------------------------------------------------		
@@ -170,13 +175,20 @@ ACL
 	
 	[[NormalProperty::NormalPage]]
 	[[NormalProperty::ProtectedPage]]
-		
+
+{{#ask: [[HA::+]]
+| ?HB
+}}
+	
 ACL
 ,
 //------------------------------------------------------------------------------		
 			'NormalPage' =>
 <<<ACL
 	This page contains no properties.
+{{#ask: [[HA::+]]
+| ?HB
+}}
 ACL
 		);
 	}
@@ -869,6 +881,40 @@ QUERY;
 		
 	}
 	
+	/**
+	 * With the query management handler it is possible to find queries on pages.
+	 * This test makes sure that no queries from protected pages are retrieved.
+	 */
+	function testQueryRetrieval() {
+		global $wgUser;
+		
+		//--- Test as normal user ---
+    	$wgUser = User::newFromId(User::idFromName('NormalUser'));
+		
+		$propertyPrintRequests = array('HB' => true);
+		$queryMetadataPattern = new SMWQMQueryMetadata(true, $propertyPrintRequests);
+		$qmr = SMWQMQueryManagementHandler::getInstance()->searchQueries($queryMetadataPattern);
+		
+		$this->assertEquals(3, count($qmr), "Expected to find two unprotected pages with queries.");
+		$pages = array($qmr[0]->usedInArticle, $qmr[1]->usedInArticle, $qmr[2]->usedInArticle);
+		$expected = array("PageWithProtectedProperties", "NormalPage", "ProtectedPage");
+		$diff = array_diff($expected, $pages);
+		$this->assertEquals(0, count($diff), "Expected to find the pages 'PageWithProtectedProperties' and 'NormalPage' with queries.");
+		
+		//--- Test as restricted user ---
+    	$wgUser = User::newFromId(User::idFromName('RestrictedUser'));
+		
+		$propertyPrintRequests = array('HB' => true);
+		$queryMetadataPattern = new SMWQMQueryMetadata(true, $propertyPrintRequests);
+		$qmr = SMWQMQueryManagementHandler::getInstance()->searchQueries($queryMetadataPattern);
+		
+		$this->assertEquals(2, count($qmr), "Expected to find two unprotected pages with queries.");
+		$pages = array($qmr[0]->usedInArticle, $qmr[1]->usedInArticle);
+		$expected = array("PageWithProtectedProperties", "NormalPage");
+		$diff = array_diff($expected, $pages);
+		$this->assertEquals(0, count($diff), "Expected to find the pages 'PageWithProtectedProperties' and 'NormalPage' with queries.");
+		
+	}
 	
 	/**
 	 * Performs the actual tests of the method HACLSMWStore::getSemanticData().
