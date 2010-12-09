@@ -56,6 +56,10 @@ Installation instructions
 
 4. Go to Special:Import, select and upload '/extensions/RichMedia/import/RichMediaOntology_v1.5.xml'
 
+5. Go to Special:Upload, select and upload the following two files:
+	* '/extensions/RichMedia/skins/Calendar.gif'
+	* '/extensions/RichMedia/skins/vcard.gif'
+
 Now you can enter {{RMList|show=True}} to any article where you want to get a
 list of all 'related documents and media' which also allows you to directly upload new files.
 
