@@ -722,7 +722,7 @@ function haclfArticleID($articleName, $defaultNS = NS_MAIN) {
  * The stores of SMW and the Halo extension are wrapped.
  */
 function haclfInitSemanticStores() {
-	if (!defined('SMW_VERSION')) {
+	if (!defined('SMW_VERSION') && !defined('DO_MAINTENANCE')) {
 		die("<b>HaloACL Setup error!</b><br />"
 		    ."The protection of semantic properties is enabled but SMW is not installed.<br />"
 		    ."You can:<br />"
