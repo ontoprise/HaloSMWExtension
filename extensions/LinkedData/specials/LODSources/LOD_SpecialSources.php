@@ -48,7 +48,8 @@ class LODSourcesPage extends SpecialPage {
 		 
 		$allSources = $this->getAllSources();
 	    if (!is_array($allSources)) {
-            $wgOut->addHTML("Error: Triplestore not accessible.");
+	    	global $smwgWebserviceEndpoint;
+            $wgOut->addHTML("Error: Triplestore not accessible at: ".$smwgWebserviceEndpoint);
             return;
         }
 		$wgOut->addHTML( $this->createSourceTable($allSources) );
