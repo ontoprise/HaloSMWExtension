@@ -11,7 +11,7 @@ CKEDITOR.dialog.add( 'MWLink', function( editor ) {
             var	e = dialog.getContentElement( 'mwLinkTab1', 'linkTarget' ),
                 link = e.getValue().Trim();
 
-            if ( link.length < 3  )
+            if ( link.length < 1  )
                     return ;
 
             SetSearchMessage( 'searching...' ) ;
@@ -77,13 +77,9 @@ CKEDITOR.dialog.add( 'MWLink', function( editor ) {
             return ;
         }
 
-        if ( link.length < 3  )	{
+        if ( link.length < 1 ) {
             ClearSearch() ;
-
-            if ( link.length == 0 )
-                SetSearchMessage( 'start typing in the above field' ) ;
-            else
-                SetSearchMessage( 'too short... type more' ) ;
+            SetSearchMessage( 'start typing in the above field' ) ;
             return ;
         }
 
