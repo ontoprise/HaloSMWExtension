@@ -191,7 +191,7 @@ class SMWH_Skin {
 
         $menu = "<!-- Standardmediawiki Menu -->";
         $menu.= "<li class=\"smwh_menulistitem\">";
-        $menu.= "<div id=\"smwh_menuhead_mediawiki\" class=\"smwh_menuhead\"><p>MediaWiki";
+        $menu.= "<div id=\"smwh_menuhead_mediawiki\" class=\"smwh_menuhead smwh_menudropdown\"><p>MediaWiki";
         $menu.= "</p></div>";
         $menu.= "<div id=\"smwh_menubody_mediwiki\" class=\"smwh_menubody\">";
         $menu.= "<div class=\"smwh_menubody_visible\">";
@@ -241,7 +241,7 @@ class SMWH_Skin {
 
         $menu = "<!-- Tools Menu -->";
         $menu.= "<li class=\"smwh_menulistitem\">";
-        $menu.= "<div id=\"smwh_menuhead_toolbar\" class=\"smwh_menuhead\"><p>Administration</p></div>";
+        $menu.= "<div id=\"smwh_menuhead_toolbar\" class=\"smwh_menuhead smwh_menudropdown\"><p>Administration</p></div>";
                
         //Get the content for the administration menu from MediaWiki:haloadministrator
         $content = wfMsgForContent( 'haloadministration' );
