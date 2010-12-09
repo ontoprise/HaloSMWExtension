@@ -47,9 +47,9 @@ class CKeditorEditPage extends EditPage {
 		if( !$this->isConflict ) {
 			return $t;
 		}
-		$options = new FCKeditorParserOptions();
+		$options = new CKeditorParserOptions();
 		$options->setTidy( true );
-		$parser = new FCKeditorParser();
+		$parser = new CKeditorParser();
 		$parser->setOutputType( OT_HTML );
 		$pa = $parser->parse( $t, $this->mTitle, $options );
 		return $pa->mText;
