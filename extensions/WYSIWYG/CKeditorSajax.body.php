@@ -105,7 +105,7 @@ function wfSajaxSearchImageCKeditor( $term ) {
 
 function wfSajaxSearchArticleCKeditor( $term ) {
 	global $wgContLang, $wgExtraNamespaces;
-	$limit = 15;
+	$limit = 30;
 	$ns = NS_MAIN;
 
 	$term = $wgContLang->checkTitleEncoding( $wgContLang->recodeInput( js_unescape( $term ) ) );
@@ -142,7 +142,7 @@ function wfSajaxSearchArticleCKeditor( $term ) {
 	$term4 = str_replace( ' ', '_', $wgContLang->ucfirst( $term2 ) );
 	$term = $term1;
 
-	if ( strlen( str_replace( '_', '', $term ) ) < 3 ) {
+	if ( strlen( str_replace( '_', '', $term ) ) < 1 ) {
 		return '';
 	}
 
