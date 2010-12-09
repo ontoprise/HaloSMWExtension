@@ -45,6 +45,7 @@ function smwf_ws_confirmWWSD($wsId){
 	require_once($smwgDIIP . '/specials/WebServices/SMW_WSStorage.php');
 	
 	global $wgUser;
+	$allowed = false;
 	$user = $wgUser;
 	if($user != null){
 		$groupsOfUser = $user->getGroups();

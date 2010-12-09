@@ -551,7 +551,6 @@ class SMWSoapClient implements IWebServiceClient {
 		$fp = @ fopen($uri, 'rb', true, $ctx);
 		
 		if (!$fp) {
-			error();
 			return false;
 		}
 

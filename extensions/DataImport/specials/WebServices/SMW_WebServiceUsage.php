@@ -157,6 +157,8 @@ public static function processSMWQueryASWSCall($parameters){
 			}
 		}
 		
+		$allAliases = WebService::newFromID($wsId)->getAllResultPartAliases();
+		
 		//process triplification instructions
 		if($wsTriplify || $displayTripleSubjects){
 			if ( !defined( 'LOD_LINKEDDATA_VERSION') && $wsTriplify){
@@ -175,7 +177,6 @@ public static function processSMWQueryASWSCall($parameters){
 			
 			//add triplification subject aliases to result parts if necessary and
 			//remember those special result parts
-			$allAliases = WebService::newFromID($wsId)->getAllResultPartAliases();
 			
 			$subjectCreationPatternParts = array();
 			foreach($allAliases as $alias => $dc){
@@ -189,7 +190,6 @@ public static function processSMWQueryASWSCall($parameters){
 				}
 			}
 		} 
-		
 		
 		//validate ws call parameters
 		list($messages, $wsParameters) = 
@@ -223,11 +223,11 @@ public static function processSMWQueryASWSCall($parameters){
 			if(($wsTriplify || $displayTripleSubjects) && !is_string($wsResults)){
 				$wsResultsForTriplification = $wsResults;
 				foreach($subjectCreationPatternParts as $p){
-					if(array_key_exists($p, $wsResults)){
-						unset($wsResults[$p]);
+					if(array_key_exists(strtolower($p), $wsResults)){
+						unset($wsResults[strtolower($p)]);
+						unset($wsReturnValues['result.'.$p]);
 					}
 				}
-				
 				//only triplify if this is not for the preview
 				if ((!$preview && !$smwQueryMode) || $displayTripleSubjects){
 					if(!is_array($wgsmwRememberedWSTriplifications)){
@@ -238,19 +238,37 @@ public static function processSMWQueryASWSCall($parameters){
 						$wgsmwRememberedWSTriplifications[$wsId] = null;
 						$dropGraph = true;
 					}
+					
+					$tmp = $wsResultsForTriplification;
+					$wsResultsForTriplification = array();
+					foreach($allAliases as $alias => $dontCare){
+						$alias = substr($alias, strpos($alias, '.') + 1);
+						if(array_key_exists(strtolower($alias), $tmp)){
+							$results = $tmp[strtolower(strtolower($alias))];
+							$wsResultsForTriplification[$alias] = $results;
+						} 
+					}
+					
 					$subjects[$displayTripleSubjects] = 
 						WSTriplifier::getInstance()
-							->triplify($wsResultsForTriplification, $triplificationSubject, $wsId, $wsTriplify && !$preview && !smwQueryMode, $articleId, $dropGraph, $subjectCreationPatternParts, $parser);
+							->triplify($wsResultsForTriplification, $triplificationSubject, $wsId, $wsTriplify && !$preview && !$smwQueryMode, $articleId, $dropGraph, $subjectCreationPatternParts, $parser);
 				}
 			}
-		 	
+			
 			if($displayTripleSubjects){
 				$wsResults = array_merge($subjects, $wsResults);
+				$wsReturnValues = array_merge(array( 'result.'.$displayTripleSubjects => ''), $wsReturnValues);
 			} 
+			
+			foreach($allAliases as $alias => $dontCare){
+				if(array_key_exists(strtolower($alias), $wsReturnValues) && strlen($wsReturnValues[strtolower($alias)]) == 0){
+					$wsReturnValues[strtolower($alias)] = substr($alias, strpos($alias, '.') + 1);
+				}
+			}
 			
 			$wsResults = self::formatWSResult($wsResults, $configArgs, $wsParameters, $wsReturnValues, $smwQueryMode);
 		}
-
+		
 		//handle cache issues for previews
 		if(!$preview && !$smwQueryMode){
 			$tmp = array_keys($wsReturnValues);
@@ -501,6 +519,13 @@ public static function processSMWQueryASWSCall($parameters){
 				$dataValue = SMWDataValueFactory::newTypeIDValue($typeIds[$columnLabel]);
 				$dataValue->setUserValue($value);
 				$queryResultColumnValues[] = $dataValue;
+				
+				//this is necessary, because one can edit with the properties
+				//parameter of the LDConnector additional columns
+				if(!array_key_exists(ucfirst($columnLabel), $printRequests)){
+					$printRequests[ucfirst($columnLabel)] = 
+						new SMWPrintRequest(SMWPrintRequest::PRINT_THIS, $columnLabel, ucfirst($columnLabel));
+				}
 				
 				$queryResultColumnValues = 
 					new SMWWSResultArray($resultInstance, $printRequests[ucfirst($columnLabel)], $queryResultColumnValues);
