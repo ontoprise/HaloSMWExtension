@@ -622,105 +622,142 @@
   </page>
   <page>
     <title>Template:DataRMICal</title>
-    <id>552</id>
+    <id>49</id>
     <revision>
-      <id>1247</id>
-      <timestamp>2010-05-17T10:22:04Z</timestamp>
+      <id>54</id>
+      <timestamp>2010-12-09T12:39:00Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
-      <minor/>
-      <comment>1 revision</comment>
-      <text xml:space="preserve">&lt;noinclude&gt;{{RM Bundle}}&lt;/noinclude&gt;{| cellspacing=&quot;0&quot; cellpadding=&quot;3&quot; width=100% style=&quot;background:#aee5db; border:1px solid #aaa; padding-left:5px;&quot;
-! colspan=&quot;2&quot; | '''''ICalendar Data'''''
+      <comment>Created page with &quot;&lt;noinclude&gt;{{Template |PAGENAME=Template:DataRMICal |Has author=User:WikiSysop |part of=Teamwork section |rationale=Used for formatting and annotating uploaded iCalendar files (w...&quot;</comment>
+      <text xml:space="preserve">&lt;noinclude&gt;{{RM Bundle}}&lt;/noinclude&gt;&lt;noinclude&gt;{{Template
+|PAGENAME=Template:DataRMICal
+|Has author=User:WikiSysop
+|part of=Teamwork section
+|rationale=Used for formatting and annotating uploaded iCalendar files (which come into the wiki e.g. via file upload or email import with file attachment).
+|long description=__NOTITLE__
+|parameters=&lt;pre&gt;
+{{RMICalData
+|icTitle=Kickoff meeting
+|start=2009-10-13
+|end=2009-10-15
+|organizer=j.malcolm@email.org
+|organizerName=John Malcolm
+|attendee=j.malcolm@email.org, l.meyer@email.org 
+|attendeeName=John Malcolm, Luca Meyer
+|location=New York, Headquarters
+|categories=Meeting
+|description=Kickoff meeting for initial project status and start.
+}}
+&lt;/pre&gt;
+}}
+&lt;/noinclude&gt;&lt;includeonly&gt;{{Copyright of article
+|own work=True
+}}
+{| cellspacing=&quot;0&quot; cellpadding=&quot;5&quot; style=&quot;border: 1px solid rgb(170, 170, 170); margin: 0pt 0pt 0.5em 1em; background: rgb(255, 255, 255) none repeat scroll 0% 0%; position: relative; border-collapse: collapse; -moz-background-clip: border; -moz-background-origin: padding; -moz-background-inline-policy: continuous; float: right; clear: right; width: 30%;&quot;
 |-
-| width=20% valign=top | '''Title:''' 
-| width=80% valign=top | {{{icTitle|}}}
+! style=&quot;background: rgb(174, 229, 219) none repeat scroll 0% 0%; -moz-background-clip: border; -moz-background-origin: padding; -moz-background-inline-policy: continuous; color: black;&quot; colspan=&quot;2&quot; | &lt;span style=&quot;font-size: 80%; float: right;&quot;&gt;&lt;imagemap&gt;
+Image:Calendar.gif
+poly 0 0 0 0 [[Display]]
+desc none
+&lt;/imagemap&gt;&lt;/span&gt;iCalendar Data
 |-
-| valign=top | '''Start date:''' 
-| valign=top | {{{start|}}}
+{{#if:{{{icTitle|}}}|{{Tablerow||Label=Title: |Value={{{icTitle|}}}}}|}}
 |-
-| valign=top | '''End date:''' 
-| valign=top | {{{end|}}}
+{{#if:{{{start|}}}|{{Tablerow||Label=Start date: |Value={{{start|}}}}}|}}
 |-
-| valign=top | '''Organizer:''' 
-| valign=top | {{{organizer|}}}
+{{#if:{{{end|}}}|{{Tablerow||Label=End date: |Value={{{end|}}}}}|}}
 |-
-| valign=top | '''Organizer name:''' 
-| valign=top | {{{organizerName|}}}
+{{#if:{{{organizer|}}}|{{Tablerow||Label=Organizer: |Value={{{organizer|}}}}}|}}
 |-
-| valign=top | '''Attendee(s):''' 
-| valign=top | {{{attendee|}}}  
+{{#if:{{{organizerName|}}}|{{Tablerow||Label=Organizer name: |Value={{{organizerName|}}}}}|}}
 |-
-| valign=top | '''Attendee(s) name(s):''' 
-| valign=top | {{{attendeeName|}}}
+{{#if:{{{attendee|}}}|{{Tablerow||Label=Attendee(s): |Value={{{attendee|}}}}}|}}&lt;!--
+--&gt;{{#vardefine:eventParticipants|{{#extractEmailID:{{#replace:{{{organizer|}}}, {{{attendee|}}}|,|;}}|Mbox}}}}
 |-
-| valign=top | '''Location:''' 
-| valign=top | {{{location|}}}
+{{#if:{{{attendeeName|}}}|{{Tablerow||Label=Attendee(s) name(s): |Value={{{attendeeName|}}}}}|}}
 |-
-| valign=top | '''Category:''' 
-| valign=top | {{{categories|}}}
+{{#if:{{{location|}}}|{{Tablerow||Label=Location: |Value={{{location|}}}}}|}}
 |-
-| valign=top | '''UID:''' 
-| valign=top | {{{UID|}}} 
+{{#if:{{{categories|}}}|{{Tablerow||Label=Categories: |Value={{{categories|}}}}}|}}
 |-
-| valign=top | '''Description:''' 
-| valign=top | {{{description|}}}
-|}</text>
+{{#if:{{{description|}}}|{{Tablerow||Label=Description: |Value={{{description|}}}}}|}}
+|-
+|}&lt;/includeonly&gt;&lt;noinclude&gt;
+&lt;/noinclude&gt;</text>
     </revision>
   </page>
   <page>
     <title>Template:DataRMVCard</title>
-    <id>553</id>
+    <id>48</id>
     <revision>
-      <id>1249</id>
-      <timestamp>2010-05-17T10:22:05Z</timestamp>
+      <id>53</id>
+      <timestamp>2010-12-09T12:38:08Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
-      <minor/>
-      <comment>1 revision</comment>
-      <text xml:space="preserve">&lt;noinclude&gt;{{RM Bundle}}&lt;/noinclude&gt;{| cellspacing=&quot;0&quot; cellpadding=&quot;3&quot; width=100% style=&quot;background:#aed5db; border:1px solid #aaa; padding-left:5px;&quot;  
-! colspan=&quot;2&quot; | '''''VCard Data'''''
+      <comment>Created page with &quot;&lt;noinclude&gt;{{Template |PAGENAME=Template:DataRMVCard |Has author=User:WikiSysop |part of=Teamwork section |rationale=Used for formatting and annotating uploaded vCard files (whic...&quot;</comment>
+      <text xml:space="preserve">&lt;noinclude&gt;{{RM Bundle}}&lt;/noinclude&gt;&lt;noinclude&gt;{{Template
+|PAGENAME=Template:DataRMVCard
+|Has author=User:WikiSysop
+|part of=Teamwork section
+|rationale=Used for formatting and annotating uploaded vCard files (which come into the wiki e.g. via file upload or email import with file attachment).
+|long description=__NOTITLE__
+|parameters=&lt;pre&gt;
+{{RMVCardData
+|name=Danny Wilkension
+|title=Senore
+|organization=some company
+|nickName=
+|phone=054654-55464
+|address=White chapel 13
+|email=wilkension@myemail.org
+|homepage=www.website.org/wilkension
+|birthday=1970-12-03
+|categories=Project Manager, Seiltanzen
+|note=IPMA certified PM
+}}
+&lt;/pre&gt;
+}}
+&lt;/noinclude&gt;&lt;includeonly&gt;{{Copyright of article
+|own work=True
+}}
+{| cellspacing=&quot;0&quot; cellpadding=&quot;5&quot; style=&quot;border: 1px solid rgb(170, 170, 170); margin: 0pt 0pt 0.5em 1em; background: rgb(255, 255, 255) none repeat scroll 0% 0%; position: relative; border-collapse: collapse; -moz-background-clip: border; -moz-background-origin: padding; -moz-background-inline-policy: continuous; float: right; clear: right; width: 30%;&quot;
 |-
-| width=20% valign=top | '''Name:''' 
-| width=80% valign=top | {{{name|}}}
+! style=&quot;background: rgb(174, 213, 219) none repeat scroll 0% 0%; -moz-background-clip: border; -moz-background-origin: padding; -moz-background-inline-policy: continuous; color: black;&quot; colspan=&quot;2&quot; | &lt;span style=&quot;font-size: 80%; float: right;&quot;&gt;&lt;imagemap&gt;
+Image:vcard.gif
+poly 0 0 0 0 [[Display]]
+desc none
+&lt;/imagemap&gt;&lt;/span&gt;vCard Data
 |-
-| valign=top | '''Formatted Name:''' 
-| valign=top | {{{fullName|}}}
+{{#if:{{{name|}}}|{{Tablerow||Label=Name: |Value={{{name|}}}}}|}}
 |-
-| valign=top | '''Title:''' 
-| valign=top | {{{title|}}}
+{{#if:{{{title|}}}|{{Tablerow||Label=Title: |Value={{{title|}}}}}|}}
 |-
-| valign=top | '''Organization:''' 
-| valign=top | {{{organization|}}}
+{{#if:{{{organization|}}}|{{Tablerow||Label=Organization: |Value={{{organization|}}}}}|}}
 |-
-| valign=top | '''Nickname:''' 
-| valign=top | {{{nickName|}}}
+{{#if:{{{nickName|}}}|{{Tablerow||Label=Nickname: |Value={{{nickName|}}}}}|}}
 |-
-| valign=top | '''Telephone:''' 
-| valign=top | {{{phone|}}}
+{{#if:{{{phone|}}}|{{Tablerow||Label=Phone: |Value={{{phone|}}}}}|}}
 |-
-| valign=top | '''Address:''' 
-| valign=top | {{{address|}}}
+{{#if:{{{address|}}}|{{Tablerow||Label=Address: |Value={{{address|}}}}}|}}
 |-
-| valign=top | '''Email:''' 
-| valign=top | {{{email|}}}
+{{#if:{{{email|}}}|{{Tablerow||Label=Email: |Value={{{email|}}}}}|}}
 |-
-| valign=top | '''URL:''' 
-| valign=top | {{{homepage|}}}
+{{#if:{{{homepage|}}}|{{Tablerow||Label=Homepage: |Value={{{homepage|}}}}}|}}
 |-
-| valign=top | '''birthday:''' 
-| valign=top | {{{birthday|}}} &lt;!-- should be in format &quot;DD-MM-YYYY&quot; for preloading SF field --&gt;
+{{#if:{{{birthday|}}}|{{Tablerow||Label=Birthday: |Value={{{birthday|}}}}}|}}
 |-
-| valign=top | '''category:''' 
-| valign=top | {{{categories|}}} 
+{{#if:{{{categories|}}}|{{Tablerow||Label=Categories: |Value={{{categories|}}}}}|}}
 |-
-| valign=top | '''Note:''' 
-| valign=top | {{{note|}}}
-|}</text>
+{{#if:{{{note|}}}|{{Tablerow||Label=Note: |Value={{{note|}}}}}|}}
+|-
+|}
+
+{{#ifexist:{{#extractEmailID: {{{email}}} | Mbox }} | [[HasRelatedArticle::{{#extractEmailID: {{{email}}} | Mbox }}| ]] | [[HasRelatedArticle::{{{name|}}}| ]] }}&lt;/includeonly&gt;&lt;noinclude&gt;
+&lt;/noinclude&gt;</text>
     </revision>
   </page>
   <page>

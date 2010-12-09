@@ -25,7 +25,8 @@
 		<file loc="import/RichMediaOntology_v1.5.xml" />
 	</wikidumps>
 	<resources>
-		<!-- empty -->
+		<file loc="skins/vcard.gif" />
+		<file loc="skins/Calendar" />
 	</resources>
 
 	<configs>
@@ -62,8 +63,8 @@
 
 		</new>
 		<update from="141">
-            <patch file="RichMediaPatchForSF2_0.txt" />
-            <patch file="RichMediaPatchForMW1_16_0.txt" />
+			<patch file="RichMediaPatchForSF2_0.txt" />
+			<patch file="RichMediaPatchForMW1_16_0.txt" />
 		</update>
 		<uninstall>
 			<patch file="RichMediaPatchForSF1_9.txt" ext="semanticforms"
