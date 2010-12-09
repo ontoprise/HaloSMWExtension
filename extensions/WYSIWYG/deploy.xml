@@ -28,10 +28,7 @@
 
 	<configs>
 		<new>
-		<require name="wysiwygtab" file="extensions/SMWHalo/includes/SMW_WYSIWYG.php"/>
-		<php>if (array_key_exists('mode', $_REQUEST) &amp;&amp; $_REQUEST['mode'] == 'wysiwyg' || (array_key_exists('action', $_REQUEST) &amp;&amp; $_REQUEST['action'] == 'ajax' &amp;&amp; stripos($_REQUEST['rs'], 'wfSajax') === 0)) {
-require_once ("/extensions/WYSIWYG/WYSIWYG.php");
-}       </php>
+		<require name="wysiwygtab" file="extensions/WYSIWYG/WYSIWYG.php"/>
 		</new>
 		<update from="132" removeAll="true">
           <require name="wysiwygtab" file="extensions/SMWHalo/includes/SMW_WYSIWYG.php"/>
