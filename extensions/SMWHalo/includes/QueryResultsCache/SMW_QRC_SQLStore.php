@@ -50,6 +50,8 @@ class SMWQRCSQLStore implements SMWQRCStoreInterface{
 		$db =& wfGetDB( DB_MASTER );
 		$verbose = true;
 		DBHelper::reportProgress("Dropping query results cache tables ...\n",$verbose);
+		
+		global $wgDBtype;
 
 		$tables = array('smw_qrc_cache');
 		foreach ($tables as $table) {
