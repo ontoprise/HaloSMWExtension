@@ -33,7 +33,9 @@ var createLinkList = function() {
     
 function smw_links_callme(){
 	var url = location.href;
-	if (url.indexOf('redlink=1') !== false) {
+	var redlink = url.indexOf('redlink=1');
+	if (redlink !== -1) {
+		// This is a redlink page => don't show the link container
 		return;
 	}
 	if( (wgAction == "edit" || wgAction == 'formedit' || wgAction == 'submit' ||
