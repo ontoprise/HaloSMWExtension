@@ -133,6 +133,13 @@ class HACLParserFunctions {
 
 	// string: Type of the definition: group, right, sd, whitelist, invalid
 	private $mType = 'invalid';
+	
+	// bool: true, if the current article contains definitions that have to be
+	//   saved in the database
+	private $mArticleContainsDefinitions = false;
+	
+	// bool: true, if the article was saved
+	private $mArticleSaved = false;
 
 	// HACLParserFunctions: The only instance of this class
 	private static $mInstance = null;
@@ -180,6 +187,8 @@ class HACLParserFunctions {
 		$this->mFingerprints = array();
 		$this->mDefinitionValid = true;
 		$this->mType = 'invalid';
+		$this->mArticleContainsDefinitions = false;
+		$this->mArticleSaved = false;
 	}
 
 
@@ -211,13 +220,7 @@ class HACLParserFunctions {
 	public static function access(&$parser) {
 		$params = self::$mInstance->getParameters(func_get_args());
 		$fingerprint = self::$mInstance->makeFingerprint("access", $params);
-		$title = $parser->getTitle();
-		if (self::$mInstance->mTitle == null) {
-			self::$mInstance->mTitle = $title;
-		} else if ($title->getArticleID() != self::$mInstance->mTitle->getArticleID()) {
-			throw new HACLException(HACLException::INTERNAL_ERROR,
-                "The parser functions are called for different articles.");
-		}
+		self::$mInstance->prepareTitle($parser);
 
 		// handle the parameter "assigned to".
 		list($users, $groups, $em1, $warnings) = self::$mInstance->assignedTo($params);
@@ -298,13 +301,7 @@ class HACLParserFunctions {
 	public static function propertyAccess(&$parser) {
 		$params = self::$mInstance->getParameters(func_get_args());
 		$fingerprint = self::$mInstance->makeFingerprint("propertyaccess", $params);
-		$title = $parser->getTitle();
-		if (self::$mInstance->mTitle == null) {
-			self::$mInstance->mTitle = $title;
-		} else if ($title->getArticleID() != self::$mInstance->mTitle->getArticleID()) {
-			throw new HACLException(HACLException::INTERNAL_ERROR,
-                "The parser functions are called for different articles.");
-		}
+		self::$mInstance->prepareTitle($parser);
 
 		// handle the parameter "assigned to".
 		list($users, $groups, $em1, $warnings) = self::$mInstance->assignedTo($params);
@@ -375,13 +372,7 @@ class HACLParserFunctions {
 	 * 			... if the parser function is called for different articles
 	 */
 	public static function predefinedRight(&$parser) {
-		$title = $parser->getTitle();
-		if (self::$mInstance->mTitle == null) {
-			self::$mInstance->mTitle = $title;
-		} else if ($title->getArticleID() != self::$mInstance->mTitle->getArticleID()) {
-			throw new HACLException(HACLException::INTERNAL_ERROR,
-                "The parser functions are called for different articles.");
-		}
+		self::$mInstance->prepareTitle($parser);
 
 		$params = self::$mInstance->getParameters(func_get_args());
 		$fingerprint = self::$mInstance->makeFingerprint("predefinedRight", $params);
@@ -438,13 +429,7 @@ class HACLParserFunctions {
 	 * 			... if the parser function is called for different articles
 	 */
 	public static function whitelist(&$parser) {
-		$title = $parser->getTitle();
-		if (self::$mInstance->mTitle == null) {
-			self::$mInstance->mTitle = $title;
-		} else if ($title->getArticleID() != self::$mInstance->mTitle->getArticleID()) {
-			throw new HACLException(HACLException::INTERNAL_ERROR,
-                "The parser functions are called for different articles.");
-		}
+		self::$mInstance->prepareTitle($parser);
 
 		$params = self::$mInstance->getParameters(func_get_args());
 
@@ -512,13 +497,7 @@ class HACLParserFunctions {
 		$params = self::$mInstance->getParameters(func_get_args());
 		$fingerprint = self::$mInstance->makeFingerprint("manageRights", $params);
 
-		$title = $parser->getTitle();
-		if (self::$mInstance->mTitle == null) {
-			self::$mInstance->mTitle = $title;
-		} else if ($title->getArticleID() != self::$mInstance->mTitle->getArticleID()) {
-			throw new HACLException(HACLException::INTERNAL_ERROR,
-                "The parser functions are called for different articles.");
-		}
+		self::$mInstance->prepareTitle($parser);
 
 		// handle the parameter "assigned to".
 		list($users, $groups, $errMsgs, $warnings) = self::$mInstance->assignedTo($params);
@@ -564,13 +543,8 @@ class HACLParserFunctions {
 	public static function addMember(&$parser) {
 		$params = self::$mInstance->getParameters(func_get_args());
 		$fingerprint = self::$mInstance->makeFingerprint("addMember", $params);
-		$title = $parser->getTitle();
-		if (self::$mInstance->mTitle == null) {
-			self::$mInstance->mTitle = $title;
-		} else if ($title->getArticleID() != self::$mInstance->mTitle->getArticleID()) {
-			throw new HACLException(HACLException::INTERNAL_ERROR,
-                "The parser functions are called for different articles.");
-		}
+		
+		self::$mInstance->prepareTitle($parser);
 
 		// handle the parameter "assigned to".
 		list($users, $groups, $errMsgs, $warnings) = self::$mInstance->assignedTo($params, false);
@@ -619,14 +593,8 @@ class HACLParserFunctions {
 		$params = self::$mInstance->getParameters(func_get_args());
 		$fingerprint = self::$mInstance->makeFingerprint("managerGroup", $params);
 
-		$title = $parser->getTitle();
-		if (self::$mInstance->mTitle == null) {
-			self::$mInstance->mTitle = $title;
-		} else if ($title->getArticleID() != self::$mInstance->mTitle->getArticleID()) {
-			throw new HACLException(HACLException::INTERNAL_ERROR,
-                "The parser functions are called for different articles.");
-		}
-
+		self::$mInstance->prepareTitle($parser);
+		
 		// handle the parameter "assigned to".
 		list($users, $groups, $errMsgs, $warnings) = self::$mInstance->assignedTo($params);
 
@@ -650,7 +618,7 @@ class HACLParserFunctions {
 		
 		return $text;
 	}
-
+	
 	/**
 	 * This method is called, after an article has been saved. If the article
 	 * belongs to the namespace ACL (i.e. a right, SD, group or whitelist)
@@ -662,7 +630,6 @@ class HACLParserFunctions {
 	 * @return true
 	 */
 	public static function articleSaveComplete(&$article, &$user, $text) {
-
 		if ($article->getTitle()->getNamespace() == HACL_NS_ACL) {
 			// The article is in the ACL namespace.
 			// Check if there is some corresponding definition in the ACL database.
@@ -716,6 +683,8 @@ class HACLParserFunctions {
 		// generated when the article is displayed for the first time after
 		// saving.
 		$article->mTitle->invalidateCache();
+		self::$mInstance->mArticleSaved = true;
+		
 		return true;
 
 	}
@@ -830,8 +799,22 @@ class HACLParserFunctions {
 	public static function outputPageBeforeHTML(&$out, &$text) {
 		global $haclgContLang;
 		if (self::$mInstance->mTitle == null) {
+			// no parser function in this article
 			return true;
 		}
+		global $wgRequest;
+		$action = $wgRequest->getVal('action', 'view');
+		if (self::$mInstance->mArticleContainsDefinitions 
+		    && !self::$mInstance->mArticleSaved
+		    && $action !== 'view') {
+			// The article contains unsaved definitions (probably during import
+			// of pages)
+			// => save them now
+			global $wgUser;
+			$article = Article::newFromID(self::$mInstance->mTitle->getArticleID());
+			self::articleSaveComplete($article, $wgUser, "");
+		}
+		
 		$msg = self::$mInstance->checkConsistency();
 
 		// Check if this article is already represented in the database
@@ -884,6 +867,43 @@ class HACLParserFunctions {
 	}
 
 	//--- Private methods ---
+	
+	/**
+	 * The parser functions are called for a certain article, which is identified
+	 * by its title. This singleton stores the current title and collects all
+	 * security definitions of the article until the hook articleSaveComplete is
+	 * called. However, in bulk operations like an import of articles this hook
+	 * will not be called and the article changes without any notification. In 
+	 * this case this function stores all collected definitions of the current
+	 * article, resets this singleton and sets the new title.
+	 * 
+	 * @param Parser $parser
+	 * 		The parser contains the title of the currently parsed article.
+	 */
+	private function prepareTitle(Parser $parser) {
+		$title = $parser->getTitle();
+		if ($this->mTitle == null) {
+			$this->mTitle = $title;
+		} else if ($title->getArticleID() != $this->mTitle->getArticleID()) {
+			// The parsed article changed
+			// => store the current definitions
+			global $wgUser;
+			$article = Article::newFromID($this->mTitle->getArticleID());
+			self::articleSaveComplete($article, $wgUser, "");
+			
+			// reset this singleton
+			$this->reset();
+			
+			// Set the new title for the following parsing operations
+			$this->mTitle = $title;
+// Previous versions threw this exception			
+//			throw new HACLException(HACLException::INTERNAL_ERROR,
+//                "The parser functions are called for different articles.");
+		}
+		$this->mArticleContainsDefinitions = true;
+		$this->mArticleSaved = false;
+		
+	}
 
 	/**
 	 * This class collects all functions for ACLs of an article. The collected
