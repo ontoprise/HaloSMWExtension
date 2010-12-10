@@ -662,8 +662,8 @@ class AutoCompletionHandler {
 				$xmlResult = smwfGetAutoCompletionStore()->runASKQuery($query, $userInput,  $column);
 				$dom = simplexml_load_string($xmlResult);
 				$dom->registerXPathNamespace("sparqlxml", "http://www.w3.org/2005/sparql-results#");
-				$queryResults = $dom->xpath('//sparqlxml:binding[@name="'.$column.'"]');
-
+				$queryResults = $dom->xpath('//sparqlxml:binding[@name="'.$column.'"]/sparqlxml:uri');
+                
 				// make titles but eliminate duplicates before
 				$textTitles = array();
 
@@ -677,7 +677,7 @@ class AutoCompletionHandler {
 				$titles = array();
 				foreach($textTitles as $r) {
 					if (smwf_om_userCan($r, 'read') == 'true') {
-						$titles[] = Title::newFromText($r);
+						$titles[] = TSHelper::getTitleFromURI($r, true);
 					}
 				}
 				self::mergeResults($result, $titles);
