@@ -89,7 +89,7 @@ class ExportOntologyBot extends GardeningBot {
 			return "Export ontology bot should not be executed synchronously!";
 		}
 		echo "\nStart export...";
-			
+	    $errorHint = "";
 		// create output directory and generate output filename
 		$writableDir = GardeningBot::getWriteableDir();
 		if (is_null($writableDir)) {
@@ -112,7 +112,20 @@ class ExportOntologyBot extends GardeningBot {
 		if ($this->namespace == '') { // should not happen because it is required
 			$this->namespace = DEFAULT_EXPORT_NS;
 		}
-			
+
+		// check if Property:Has domain and range has correct type
+		$domainRangeTitle = smwfGetSemanticStore()->domainRangeHintProp->getWikiPageValue()->getTitle();
+		$domainRangeProperty = smwfGetStore()->getPropertyValues($domainRangeTitle, SMWPropertyValue::makeProperty("_TYPE"));
+		$domainRangeProperty = reset($domainRangeProperty);
+		$typeValue = $domainRangeProperty !== false ? reset($domainRangeProperty->getTypeValues()) : NULL;
+		$type = $typeValue !== false ? reset($typeValue->getDBkeys()) : NULL;
+		if ($type != '_rec') {
+			global $smwgHaloContLang;
+			$ssp = $smwgHaloContLang->getSpecialSchemaPropertyArray();
+			//FIXME: localize the error message completely
+			$errorHint = "Property '".$ssp[SMW_SSP_HAS_DOMAIN_AND_RANGE_HINT]." must be of type [[has type::Type:Page; Type:Page]]";
+		}
+		
 		// escape user defined namespace
 		$this->namespace = ExportOntologyBot::makeXMLAttributeContent($this->namespace);
 			
@@ -158,7 +171,7 @@ class ExportOntologyBot extends GardeningBot {
 		$im_file->upload($wikiexportDir."/".$outputFile, "auto-inserted file", "noText");
 		$downloadLink = wfMsg('smw_gard_export_download', "[[".$exportFileTitle->getPrefixedText()."|".wfMsg('smw_gard_export_here')."]]");
 			
-		return "\n\n".$downloadLink."\n\n";
+		return "\n\n$errorHint.$downloadLink\n\n";
 	}
 
 	private function writeHeader($filehandle) {
@@ -506,6 +519,7 @@ class ExportOntologyBot extends GardeningBot {
 		} else {
 
 			foreach($domainRange as $dr) {
+				if (!($dr instanceof SMWRecordValue)) continue;
 				$dvs = $dr->getDVs();
 				$domain = array_key_exists(0, $dvs) ? $dvs[0]->getTitle()->getPartialURL() : "";
 				if ($domain == NULL) continue;
@@ -612,6 +626,7 @@ class ExportOntologyBot extends GardeningBot {
 
 
 			foreach($domainRange as $dr) {
+				if (!($dr instanceof SMWRecordValue)) continue;
 				$dvs = $dr->getDVs();
 				$domain = array_key_exists(0, $dvs) ? $dvs[0]->getTitle()->getPartialURL() : "";
 				if ($domain == NULL) continue;
