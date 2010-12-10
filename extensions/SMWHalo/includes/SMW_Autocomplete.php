@@ -661,7 +661,8 @@ class AutoCompletionHandler {
 
 				$xmlResult = smwfGetAutoCompletionStore()->runASKQuery($query, $userInput,  $column);
 				$dom = simplexml_load_string($xmlResult);
-				$queryResults = $dom->xpath('//binding[@name="'.$column.'"]');
+				$dom->registerXPathNamespace("sparqlxml", "http://www.w3.org/2005/sparql-results#");
+				$queryResults = $dom->xpath('//sparqlxml:binding[@name="'.$column.'"]');
 
 				// make titles but eliminate duplicates before
 				$textTitles = array();
