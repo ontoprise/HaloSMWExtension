@@ -17,6 +17,9 @@ if (!defined('MEDIAWIKI')) die();
 
 function smwfDoSpecialProperties() {
     wfProfileIn('smwfDoSpecialProperties (SMW)');
+    global $wgOut;
+    SMWOutputs::requireHeadItem( SMW_HEADER_TOOLTIP );
+    SMWOutputs::commitToOutputPage( $wgOut );
     list( $limit, $offset ) = wfCheckLimits();
     $rep = new SMWPropertiesPage();
     $result = $rep->doQuery( $offset, $limit );
