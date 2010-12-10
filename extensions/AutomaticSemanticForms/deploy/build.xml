@@ -3,7 +3,7 @@
 	<target name="build" depends="versionhint">
 		<delete dir="bin/zip" />
 		<delete>
-			<fileset dir="bin" includes="smwhalo-automaticsemanticforms*.zip" />
+			<fileset dir="bin" includes="automaticsemanticforms*.zip" />
 		</delete>
 		<mkdir dir="bin/zip" />
 
