@@ -1,4 +1,4 @@
-<mediawiki xmlns="http://www.ontoprise.de/halowikiexport/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.ontoprise.de/halowikiexport-1.0.xsd" version="1.0" xml:lang="en">
+<mediawiki xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.ontoprise.de/halowikiexport-1.0.xsd" version="1.0" xml:lang="en">
   <siteinfo>
     <sitename>Halo3wiki</sitename>
     <base>http://localhost/develwiki/index.php/Main_Page</base>
@@ -278,7 +278,7 @@
         <id>1</id>
       </contributor>
       <text xml:space="preserve">
-{{#member:members=User:WikiSysop,User:Thomas}}
+{{#member:members=User:WikiSysop}}
 {{#manage group:assigned to=User:WikiSysop}}
 [[Category:ACL/Group]]</text>
     </revision>
