@@ -25,7 +25,7 @@
         <!-- empty -->
     </resources>
     <configs>
-
+        <successor ext="smw"/>
         <new>
         
             <require name="scriptmanager"
