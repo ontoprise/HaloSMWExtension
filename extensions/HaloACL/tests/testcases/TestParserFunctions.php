@@ -52,7 +52,7 @@ class TestParserFunctions extends PHPUnit_Framework_TestCase {
     	try {
 	    	foreach ($this->mOrderOfArticleCreation as $title) {
 	    		$pf = HACLParserFunctions::getInstance();
-	    		$pf->reset();
+//	    		$pf->reset();
 				self::createArticle($title, $this->mArticles[$title]);
 	    	}
     	} catch (Exception $e) {
