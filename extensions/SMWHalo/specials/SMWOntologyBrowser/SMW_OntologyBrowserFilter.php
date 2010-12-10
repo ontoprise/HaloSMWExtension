@@ -152,7 +152,7 @@ class SMWOntologyBrowserFilter {
 			$node = $root;
 			$nodeIndex=0;
 			foreach($path as $p) {
-				$hasChild = $nodeIndex < count($path)-1 ? "true" : count(smwfGetSemanticStore()->getSubProperties($p)) > 0;
+				$hasChild = $nodeIndex < count($path)-1 ? "true" : count(smwfGetSemanticStore()->getDirectSubProperties($p)) > 0;
 				$node = $node->addChild($p, $hasChild);
 				$nodeIndex++;
 			}
@@ -221,7 +221,7 @@ class SMWOntologyBrowserFilter {
 			$node = $root;
 			$nodeIndex = 0;
 			foreach($path as $c) {
-				$hasChild = $nodeIndex < count($path)-1 ? "true" : count(smwfGetSemanticStore()->getSubCategories($c)) > 0;
+				$hasChild = $nodeIndex < count($path)-1 ? "true" : count(smwfGetSemanticStore()->getDirectSubCategories($c)) > 0;
 				$node = $node->addChild($c, $hasChild);
 				$nodeIndex++;
 			}
