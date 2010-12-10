@@ -1734,4 +1734,28 @@ class HACLStorageSQL {
 		$db->delete($t,'*');
 	}
 	
+	/**
+	 * Returns the names of all pages in the ACL namespace.
+	 * @return array<string>
+	 * 		Names of pages without namespace
+	 */
+	public function getAllACLPages() {
+		global $haclgNamespaceIndex;
+		
+		$db =& wfGetDB( DB_SLAVE );
+		$t = $db->tableName('page');
+		$res = $db->select($t, 
+							array('page_title'), 
+							array('page_namespace' => $haclgNamespaceIndex));
+
+		$pages = array();
+		while ($row = $db->fetchObject($res)) {
+			$pages[] = $row->page_title;
+		}
+		$db->freeResult($res);
+
+		return $pages;
+		
+	}
+	
 }

@@ -45,6 +45,7 @@ $delete = array_key_exists('delete', $options);
 $createUsers = array_key_exists('createUsers', $options);
 $ldapDomain = @$options['ldapDomain'];
 $help = array_key_exists('help', $options) || array_key_exists('h', $options);
+$initDefaults = array_key_exists('initDefaults', $options);
 
 global $haclgBaseStore;
 echo "The current store is: $haclgBaseStore \n";
@@ -54,6 +55,15 @@ if ($help) {
 	echo "======================================\n";
 	echo "no parameter: Setup the database tables for HaloACL\n";
 	echo "--delete: Delete all database tables of HaloACL\n";
+	echo "--initDefaults: Create the following default groups and global permissions:\n";
+	echo "                     Knowledge architect\n";
+	echo "                     Knowledge consumer\n";
+	echo "                     Knowledge provider\n";
+	echo "                     sysop\n";
+	echo "                     bureaucrat\n";
+	echo "                     These groups are a part of HaloACL's ontology bundle.\n";
+	echo "                     You should set the default permissions of all features defined with \$haclgFeature in\n";
+	echo "                     HACL_Initialize.php to 'deny' e.g. \$haclgFeature['read']['default'] = \"deny\";\n";
 	echo "--createUsers --ldapDomain=\"domain name\": Create the users of the LDAP domain with the name \"domain name\" in the wiki. Domain names with spaces must be quoted.\n";
 	echo "\n";
 } else if ($createUsers) {
@@ -79,6 +89,42 @@ if ($help) {
 	echo "Deleting database tables for HaloACL...";
 	HACLStorage::getDatabase()->dropDatabaseTables();
 	echo "done.\n";
+} else if ($initDefaults) {
+		
+		echo "Importing default rights and groups: ";
+		$maintenanceDir = "$mediaWikiLocation/maintenance/";
+		$ontologyBundle = "$haclgIP/ontologyBundle/dump.xml";
+		$output = array();
+		exec("php $maintenanceDir/importDump.php $ontologyBundle", $output);
+		echo implode("\n",$output);
+		echo "Importing done.\n\n";
+		
+		echo "Refreshing all pages in namespace ACL...\n";
+		refreshACLPages();
+		echo "done.\n";
+		
+		echo "Setting global permissions:\n";
+		$permissions = array(
+			"Knowledge architect" => array('read', 'edit', 'manage', 'upload'),
+			"Knowledge consumer" => array('read'),
+			"Knowledge provider" => array('read', 'edit', 'upload'),
+			"sysop" => array('read', 'edit', 'manage', 'upload', 'administrate', 'technical'),
+			"bureaucrat" => array('read', 'edit', 'manage', 'upload', 'administrate', 'technical')
+		);
+		
+		// Store all permission for features
+		foreach ($permissions as $group => $perms) {
+			try {
+				$g = HACLGroup::newFromName("Group/$group");
+				foreach ($perms as $p) {
+					HACLGroupPermissions::storePermission($g->getGroupID(), $p, true);
+				}
+				echo "Setting permissions for group '$group':". implode(',', $perms)."\n";
+			} catch (HACLGroupException $e) {
+				echo "Unknown group '$group'. Setting permissions for this group is skipped.\n";
+			}
+		}
+	
 } else {
 	echo "Setup program for HaloACL\n";
 	echo "=========================\n";
@@ -97,4 +143,20 @@ if ($help) {
 	$a = new Article($t);
 	$a->doEdit($haclgContLang->getPermissionDeniedPageContent(),"", EDIT_NEW);
 	echo "done.\n";
+} 
+
+/**
+ * Parses all pages in the namespace ACL
+ */
+function refreshACLPages() {
+	$pages = HACLStorage::getDatabase()->getAllACLPages();
+	foreach ($pages as $page) {
+		$title = Title::newFromText($page, HACL_NS_ACL);
+		echo "    Refreshing: ".$title->getFullText()."\n";
+		$article = new Article($title);
+		$content = $article->getContent();
+		// Set the article's content
+		$success = $article->doEdit($content, 'Refreshing article during setup', 
+		                            EDIT_UPDATE);
+	}
 }

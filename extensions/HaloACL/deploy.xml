@@ -55,6 +55,8 @@
 			<function name="enableHaloACL">
 			</function>
 			<script file="maintenance/HACL_Setup.php" />
+			<script file="maintenance/HACL_Setup.php"
+				params="--initDefaults" />
 		</new>
 		<update from="120">
             <patch file="patch_for_MW_1.16.0.txt" />

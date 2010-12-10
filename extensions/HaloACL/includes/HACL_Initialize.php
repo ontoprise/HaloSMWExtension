@@ -227,19 +227,19 @@ if ($haclgUseFeaturesForGroupPermissions === true) {
 	$haclgFeature['upload']['permissibleBy'] = "admin"; // The other alternative would be "all"
 	$haclgFeature['upload']['default'] = "permit"; // The other alternative would be "deny"
 	
-	$haclgFeature['edit']['systemfeatures'] = "edit|formedit|annotate|wysiwyg|ontologyediting|createpage|createtalk|move|movefile|move-subpages|move-rootuserpages|createaccount|editprotected";
+	$haclgFeature['edit']['systemfeatures'] = "edit|formedit|annotate|wysiwyg|createpage|delete|rollback|createtalk|move|movefile|move-subpages|move-rootuserpages|createaccount|editprotected";
 	$haclgFeature['edit']['name'] = "Edit";
 	$haclgFeature['edit']['description'] = "This is the feature for editing articles.";
 	$haclgFeature['edit']['permissibleBy'] = "admin"; // The other alternative would be "all"
 	$haclgFeature['edit']['default'] = "permit"; // The other alternative would be "deny"
 	
-	$haclgFeature['manage']['systemfeatures'] = "delete|bigdelete|deletedhistory|undelete|browsearchive|mergehistory|protect|block|blockemail|hideuser|userrights|userrights-interwiki|rollback|markbotedits|patrol|editinterface|editusercssjs|suppressrevision|deleterevision|gardening";
+	$haclgFeature['manage']['systemfeatures'] = "import|importupload|ontologyediting|bigdelete|deletedhistory|undelete|browsearchive|mergehistory|protect|block|blockemail|hideuser|userrights|userrights-interwiki|markbotedits|patrol|editinterface|editusercssjs|suppressrevision|deleterevision|gardening";
 	$haclgFeature['manage']['name'] = "Management";
 	$haclgFeature['manage']['description'] = "This is the feature for managing wiki articles.";
 	$haclgFeature['manage']['permissibleBy'] = "admin"; // The other alternative would be "all"
 	$haclgFeature['manage']['default'] = "permit"; // The other alternative would be "deny"
 	
-	$haclgFeature['administrate']['systemfeatures'] = "siteadmin|import|importupload|trackback|unwatchedpages";
+	$haclgFeature['administrate']['systemfeatures'] = "siteadmin|trackback|unwatchedpages";
 	$haclgFeature['administrate']['name'] = "Administration";
 	$haclgFeature['administrate']['description'] = "This is the feature for administrating the wiki.";
 	$haclgFeature['administrate']['permissibleBy'] = "admin"; // The other alternative would be "all"
@@ -272,4 +272,3 @@ global $smgJSLibs;
 $smgJSLibs[] = 'prototype';
 $smgJSLibs[] = 'jquery'; 
 $smgJSLibs[] = 'json'; 
-
