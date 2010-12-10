@@ -52,6 +52,8 @@ class TestLDConnector extends PHPUnit_Framework_TestCase {
 		$titles = array('TestLD1');
 		di_utils_setupWSUsages($titles);
 		$html = $this->getHTML("TestLD1");
+		$html = str_replace("\n", '', $html);
+		$html = str_replace("\t", '', $html);
 		
 		$this->assertGreaterThan(0, strpos($html, $this->germanAbstractRow));
 		$this->assertGreaterThan(0, strpos($html, $this->hasTypeLink));
@@ -70,6 +72,8 @@ class TestLDConnector extends PHPUnit_Framework_TestCase {
 		di_utils_setupWSUsages($titles);
 		
 		$html = $this->getHTML("TestLD2");
+		$html = str_replace("\n", '', $html);
+		$html = str_replace("\t", '', $html);
 		
 		$this->assertGreaterThan(0, strpos($html, $this->germanAbstractRow));
 		$this->assertGreaterThan(0, strpos($html, $this->hasTypeLink));
@@ -89,6 +93,8 @@ class TestLDConnector extends PHPUnit_Framework_TestCase {
 		di_utils_setupWSUsages($titles);
 	
 		$html = $this->getHTML("TestLD3");
+		$html = str_replace("\n", '', $html);
+		$html = str_replace("\t", '', $html);
 		
 		$this->assertGreaterThan(0, strpos($html, $this->subjectAbstractTypeProductRow));
 		$this->assertGreaterThan(0, strpos($html, $this->subjectProductRow));
@@ -100,6 +106,8 @@ class TestLDConnector extends PHPUnit_Framework_TestCase {
 		di_utils_setupWSUsages($titles);
 	
 		$html = $this->getHTML("TestLD4");
+		$html = str_replace("\n", '', $html);
+		$html = str_replace("\t", '', $html);
 		
 		$this->assertGreaterThan(0, strpos($html, $this->subjectAbstractTypeProductRow));
 		$this->assertGreaterThan(0, strpos($html, $this->subjectProductRow));
