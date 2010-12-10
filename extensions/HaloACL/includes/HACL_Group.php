@@ -389,6 +389,9 @@ class  HACLGroup {
      *
      */
     public function userCanModify($user, $throwException = false) {
+    	if (defined('DO_MAINTENANCE') && !defined('UNIT_TEST_RUNNING')) {
+    		return true;
+    	}
     // Get the ID of the user who wants to add/modify the group
         list($userID, $userName) = haclfGetUserID($user);
         // Check if the user can modify the group

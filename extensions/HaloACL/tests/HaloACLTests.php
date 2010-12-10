@@ -16,7 +16,8 @@ class HaloACLTests
 { 
     public static function suite()
     {
-        $suite = new PHPUnit_Framework_TestSuite('PHPUnit');
+		define('UNIT_TEST_RUNNING', true);
+    	$suite = new PHPUnit_Framework_TestSuite('PHPUnit');
         
         $suite->addTestSuite("TestDatabaseSuite");
         $suite->addTestSuite("TestParserFunctions");
