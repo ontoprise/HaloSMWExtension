@@ -29,7 +29,7 @@ function smwf_ws_callEQIXML($query) {
 	global $IP;
 	require_once( $IP . '/extensions/SMWHalo/includes/webservices/SMW_EQI.php' );
 	$result= new AjaxResponse( smwhExternalQuery($query, "xml") );
-	$result->setContentType( "application/xml" );
+	$result->setContentType( "application/sparql-xml" );
 	return $result;
 }
 
