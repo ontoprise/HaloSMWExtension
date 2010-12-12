@@ -73,13 +73,40 @@
 
 		</copy>
 		<zip destfile="bin/haloacl.zip" basedir="bin/zip" />
-		<delete dir="bin/zip" />
+		
 		<exec executable="php">
 			<arg value="../../../buildtools/renameDeployable.php" />
 			<arg value="../deploy.xml" />
 			<arg value="bin/haloacl.zip" />
 		</exec>
 	</target>
+	
+	<target name="haloacl_bundled_build" depends="HaloACL_build">
+
+	        <delete>
+	            <fileset dir="bin" includes="haloacl-bundled*.zip" />
+	        </delete>
+	        <copy todir="bin/zip/extensions/ARCLibrary">
+	            <fileset dir="../../ARCLibrary/">
+	                <exclude name="**/.svn, **/CVS" />
+	            	<exclude name="**/deploy/**" />
+	            </fileset>
+	        </copy>
+	        <copy todir="bin/zip/extensions/ScriptManager">
+	            <fileset dir="../../ScriptManager/">
+	                <exclude name="**/.svn, **/CVS" />
+	            	<exclude name="**/deploy/**" />
+	            </fileset>
+	        </copy>
+	        <zip destfile="bin/haloacl-bundled.zip" basedir="bin/zip" />
+		<delete dir="bin/zip" />
+	        <exec executable="php">
+	            <arg value="../../../buildtools/renameDeployable.php" />
+	            <arg value="../deploy.xml" />
+	            <arg value="bin/haloacl-bundled.zip" />
+	        </exec>
+
+	    </target>
 
 	<target name="versionhint">
         <property environment="env" />

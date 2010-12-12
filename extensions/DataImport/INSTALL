@@ -27,8 +27,9 @@ Requirements:
     Halo extension 1.5.1 or higher
     Semantic Gardening extension 1.3.2 or higher
     Script Manager 1.0 or higher
-    Linked Data Extension 1.0 (This is only required if you want to use the Triplification Extension)
-    Triple Store Connector (This is only required if you want to use the Triplification Extension)
+    ARCLibrary 1.0 or higher
+    OPTIONAL: Linked Data Extension 1.0 (This is only required if you want to use the Triplification Extension)
+    OPTIONAL: Triple Store Connector (This is only required if you want to use the Triplification Extension)
     
     You also must activate the following two PHP extensions in your 
     php.ini if you want to use the POP3 import feature of the Term Import
@@ -54,6 +55,46 @@ Note: If you already used a prior version of the Web Service extension,
 then you have to replace the dots in the path-attributes of your existing
 WWSDs by slashes, so that the paths are conform to the XPath syntax.
 
+=== Install the bundled version ===
+Requirements: 
+
+    Apache HTTP Server
+    MySQL higher than 4.0.14 (Recommended MySQL 5.x)
+    PHP 5.2.x (PHP 5.3.x is not supported yet)
+    MediaWiki 1.15.x (see installation guide)
+    Semantic MediaWiki 1.5.1
+    OPTIONAL: Linked Data Extension 1.0 (only required if you want to use the Triplification Extension)
+    OPTIONAL: Triple Store Connector (only required if you want to use the Triplification Extension)
+    
+    You also must activate the following two PHP extensions in your 
+    php.ini if you want to use the POP3 import feature of the Term Import
+    Framework.
+    extension=php_imap.dll
+    extension=php_mime_magic.dll (only required if PHP < 5.3.3)
+
+(1) Add to your LocalSettings.php: 
+
+    ---
+    require_once("extensions/ScriptManager/SM_Initialize.php");
+    include_once('extensions/ARCLibrary/ARCLibrary.php');
+    enableARCLibrary();
+    include_once('extensions/SMWHalo/includes/SMW_Initialize.php');
+    enableSMWHalo('SMWHaloStore2', NULL, NULL);
+    $wgUseAjax=true;
+    $phpInterpreter="<path to php executable>";
+    require_once("extensions/SemanticGardening/includes/SGA_GardeningInitialize.php");
+    include_once('extensions/DataImport/includes/DI_Initialize.php');
+    enableDataImportExtension();
+    ---
+    
+    Note: Replace <path to php executable> with the path to your php executable.
+
+(2) Run the scripts: 
+    SemanticGardening/maintenance/SGA_setup.php
+    SMWHalo/maintenance/SMW_setup.php
+    DataImport/maintenance/DI_setup.php
+
+3) That's it.
 
 === Install the Inter Wiki Article Importer ===
 

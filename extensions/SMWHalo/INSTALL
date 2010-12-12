@@ -38,17 +38,21 @@ mechanism is provided). Every serious wiki should be subject to regular
 database backups! If you have any specific questions, please contact
 the authors.
 
-== Requirements ==
+== Requirements (unbundled) ==
 
- * Apache HTTP Server
- * MySQL higher than 4.0.14 (Recommended MySQL 5.x)
- * PHP 5.2.x (PHP 5.3.x is not supported yet)
- * MediaWiki 1.15.x (see installation guide)
- * ScriptManager 1.x (see installation guide)
- * Semantic MediaWiki 1.5 (Please make reference to the installation instructions)
- * ARC Library 1.x (see installation guide)
+ * PHP 5.2 or PHP 5.3
+ * MediaWiki 1.16.x (see installation guide)
+ * ScriptManager 1.0 (see installation guide)
+ * Semantic MediaWiki 1.5.2 (Please make reference to the installation instructions)
+ * ARC Library 1.0 (see installation guide)
  * Web browser (for clients, recommended Firefox 3.x or Internet Explorer 8. There might be glitches with other browsers)
 
+== Requirements (bundled) ==
+
+ * PHP 5.2.x or PHP 5.3.x
+ * MediaWiki 1.16.x (see installation guide)
+ * Semantic MediaWiki 1.5.2 (Please make reference to the installation instructions)
+ * Web browser (for clients, recommended Firefox 3.x or Internet Explorer 8. There might be glitches with other browsers)
 
 == Installation ==
 
@@ -59,13 +63,14 @@ It empowers the convenient administration and automatic setup of extensions for
 MediaWiki and Semantic MediaWiki. If you upgrade an existing installation of
 SMW+, also read the remarks in the section "Notes on Upgrading" below.
 
+ 
 (1) Download and install the ScriptManager extension into your Mediawiki
-    installation.
-
+    installation.  In case you have the bundled version you can omit this step.
+    
 (2) Download and install the ARCLibrary extension into your Mediawiki
-    installation.
+    installation. In case you have the bundled version you can omit this step.
 
-(3) Extract the SMWHalo ZIP archive to the directory
+(3) Extract the ZIP archive to the directory
     <mw-dir>\htdocs\mediawiki\extensions\
 
 	Note: 	Replace <mw-dir> with the path to root directory of MediaWiki.
@@ -80,40 +85,36 @@ SMW+, also read the remarks in the section "Notes on Upgrading" below.
 	 require_once("extensions/ARCLibrary/ARCLibrary.php");
      enableARCLibrary();
 
-(6) Adjust the path to the PHP interpreter accordingly.
-	Specify the path to the file php.exe: $phpInterpreter="<mw-dir>\php\php.exe";
-    On Linux systems the entry usually looks like: $phpInterpreter="/usr/bin/php";
+(6) Change $wgDefaultSkin='ontoskin3';
 
-(7) Change $wgDefaultSkin='ontoskin3';
-
-(8) Add following lines to initialize the Halo Extension:
+(7) Add following lines to initialize the Halo Extension:
 
 	include_once('extensions/SMWHalo/includes/SMW_Initialize.php');
 	enableSMWHalo(/*param-start-enableSMWHalo*/'SMWHaloStore2', NULL, NULL/*param-end-enableSMWHalo*/);
 	$wgUseAjax=true;
 
-(9) Open a command-line interface
+(8) Open a command-line interface
 
-(10) Navigate to the directory
+(9) Navigate to the directory
      <mw-dir>\extensions\SemanticMediaWiki\maintenance\
 
-(11) Run the script SMW_setup.php to initialize the database tables
+(10) Run the script SMW_setup.php to initialize the database tables
 
-(12) Download the Deployment Framework to install the patches:
+(11) Download the Deployment Framework to install the patches:
 	 https://sourceforge.net/projects/halo-extension/files/smwhalo-deploy-1.2.zip/download
 
-(13) Extract the zip-file into the MediaWiki roots folder
+(12) Extract the zip-file into the MediaWiki roots folder
 
-(14) Open a command-line interface to install the patches
+(13) Open a command-line interface to install the patches
      The file patch.txt is an Eclipse patch file which can be installed using the
      tool patch.php from the deploy framework which itself uses GNU patch. The
      file is located in the directory 'extensions\SMWHalo'.
 
-(15) Enter the following command:
+(14) Enter the following command:
      php patch.php -p patch.txt -d <mw-dir> --onlypatch
      replace <mw-dir> with the absolute path of your Mediawiki installation.
 
-(16) To apply the patch for Mediawiki please also run:
+(15) To apply the patch for Mediawiki please also run:
      php patch.php -p patch_for_MW1.16.0.txt -d <mw-dir> --onlypatch
      replace <mw-dir> with the absolute path of your Mediawiki installation.
      replace patch_for_MW1.16.0.txt with the correct version for your Mediawiki
