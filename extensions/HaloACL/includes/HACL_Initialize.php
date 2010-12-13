@@ -225,31 +225,31 @@ if ($haclgUseFeaturesForGroupPermissions === true) {
 	$haclgFeature['upload']['name'] = "Upload";
 	$haclgFeature['upload']['description'] = "This is the feature for uploading files into the wiki.";
 	$haclgFeature['upload']['permissibleBy'] = "admin"; // The other alternative would be "all"
-	$haclgFeature['upload']['default'] = "permit"; // The other alternative would be "deny"
+	$haclgFeature['upload']['default'] = "deny"; // The other alternative would be "deny"
 	
 	$haclgFeature['edit']['systemfeatures'] = "edit|formedit|annotate|wysiwyg|createpage|delete|rollback|createtalk|move|movefile|move-subpages|move-rootuserpages|createaccount|editprotected";
 	$haclgFeature['edit']['name'] = "Edit";
 	$haclgFeature['edit']['description'] = "This is the feature for editing articles.";
 	$haclgFeature['edit']['permissibleBy'] = "admin"; // The other alternative would be "all"
-	$haclgFeature['edit']['default'] = "permit"; // The other alternative would be "deny"
+	$haclgFeature['edit']['default'] = "deny"; // The other alternative would be "deny"
 	
 	$haclgFeature['manage']['systemfeatures'] = "import|importupload|ontologyediting|bigdelete|deletedhistory|undelete|browsearchive|mergehistory|protect|block|blockemail|hideuser|userrights|userrights-interwiki|markbotedits|patrol|editinterface|editusercssjs|suppressrevision|deleterevision|gardening";
 	$haclgFeature['manage']['name'] = "Management";
 	$haclgFeature['manage']['description'] = "This is the feature for managing wiki articles.";
 	$haclgFeature['manage']['permissibleBy'] = "admin"; // The other alternative would be "all"
-	$haclgFeature['manage']['default'] = "permit"; // The other alternative would be "deny"
+	$haclgFeature['manage']['default'] = "deny"; // The other alternative would be "deny"
 	
 	$haclgFeature['administrate']['systemfeatures'] = "siteadmin|trackback|unwatchedpages";
 	$haclgFeature['administrate']['name'] = "Administration";
 	$haclgFeature['administrate']['description'] = "This is the feature for administrating the wiki.";
 	$haclgFeature['administrate']['permissibleBy'] = "admin"; // The other alternative would be "all"
-	$haclgFeature['administrate']['default'] = "permit"; // The other alternative would be "deny"
+	$haclgFeature['administrate']['default'] = "deny"; // The other alternative would be "deny"
 	
 	$haclgFeature['technical']['systemfeatures'] = "bot|purge|minoredit|nominornewtalk|noratelimit|ipblock-exempt|proxyunbannable|autopatrol|apihighlimits|writeapi|suppressredirect|autoconfirmed|emailconfirmed";
 	$haclgFeature['technical']['name'] = "Technical";
 	$haclgFeature['technical']['description'] = "This is the feature for technical issues.";
 	$haclgFeature['technical']['permissibleBy'] = "admin"; // The other alternative would be "all"
-	$haclgFeature['technical']['default'] = "permit"; // The other alternative would be "deny"
+	$haclgFeature['technical']['default'] = "deny"; // The other alternative would be "deny"
 }
 
 $wgGroupPermissions['*']['propertyread'] = true;
