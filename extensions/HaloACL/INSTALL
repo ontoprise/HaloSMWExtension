@@ -101,6 +101,27 @@ Therefore change into the maintenance folder of the HaloACL extension and run th
 setup script:
  cd /folder_to_mediawiki/extension/HaloACL/maintenance
  php HACL_Setup.php
+ 
+Creating default groups with default rights
+-------------------------------------------
+ 
+After the database is updated you can, if you want, create some default groups 
+with default permissions:
+ 
+Group                | Default permissions
+---------------------------------------------
+Knowledge consumer   | read
+Knowledge provider   | read, edit, upload
+Knowledge architect  | read, edit, manage, upload
+sysop                | read, edit, manage, upload, administrate, technical
+bureaucrat           | read, edit, manage, upload, administrate, technical
+
+The user "WikiSysop" is the default member of these groups.
+
+To create these defaults you have to execute the following on the command line:
+ cd /folder_to_mediawiki/extension/HaloACL/maintenance
+ php HACL_Setup.php --initDefaults
+ 
 
 Testing your Installation 
 =========================
