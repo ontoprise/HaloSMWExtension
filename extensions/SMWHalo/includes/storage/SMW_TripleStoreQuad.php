@@ -513,8 +513,8 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 		return $values;
 	}
 
-	function getAllPropertySubjects(SMWPropertyValue $property, $requestoptions = NULL) {
-		return $this->getPropertySubjects($property,NULL,$requestoptions);
+	function getAllPropertySubjects(SMWPropertyValue $property, $requestoptions = NULL, $forceSMWStore=false) {
+		return $this->getPropertySubjects($property,NULL,$requestoptions,$forceSMWStore);
 	}
 
 	private function readRecordPropertyValues($subject) {

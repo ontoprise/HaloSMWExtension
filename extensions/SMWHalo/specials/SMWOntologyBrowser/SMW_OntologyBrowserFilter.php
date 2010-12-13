@@ -359,7 +359,7 @@ class TreeObject {
 			$issues = $gi_store->getGardeningIssues('smw_consistencybot', NULL, NULL, $treeObject->getTitle());
 			$gi_issues = SMWOntologyBrowserErrorHighlighting::getGardeningIssuesAsXML($issues);
 			if (!$treeObject->hasChild()) $isLeaf_att = 'isLeaf="true"'; else $isLeaf_att ='';
-			$result .= "<$type title_url=\"$titleURLEscaped\" $isLeaf_att title=\"".$title_esc."\" img=\"$type.gif\" id=\"ID_$id$count\" expanded=\"$isExpanded\">";
+			$result .= "<$type title_url=\"$titleURLEscaped\" title=\"".$title_esc."\" $isLeaf_att img=\"$type.gif\" id=\"ID_$id$count\" expanded=\"$isExpanded\">";
 			$result .= $gi_issues;
 			$result .= $treeObject->serializeAsXML($type);
 			$result .= "</$type>";
