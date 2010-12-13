@@ -46,7 +46,7 @@
 		<exec executable="php">
 			<arg value="../../../buildtools/renameDeployable.php" />
 			<arg value="../deploy.xml" />
-			<arg value="bin/zip" />
+			<arg value="bin/automaticsemanticforms.zip" />
 		</exec>
 	</target>
 	<target name="versionhint">
