@@ -36,7 +36,8 @@ $HACL_GP_GLOBAL_PERMISSIONS_PANEL = <<<HTML
         <div class="yui-skin-sam">
         	<div class="haclGroupPermission">
         		<div class="haclGPGeneralDiv">
-        			{{hacl_gp_intro}}
+        			{{hacl_gp_intro}}<br />
+        			{{hacl_gp_lgr_intro}}***list_group_rights***
         		</div>
         		<div class="haclGPGeneralDiv" id="haclGPPermissions">
         			<div id="haclGPPermissionsSelectorDiv">
@@ -137,6 +138,13 @@ class HACLUIGroupPermissions {
 	public static function getPermissionsPanel() {
 		global $HACL_GP_GLOBAL_PERMISSIONS_PANEL;
 		$html = $HACL_GP_GLOBAL_PERMISSIONS_PANEL;
+		
+		// Create the link to Special:ListGroupRights
+		$linker = new Linker();
+		$t = SpecialPage::getTitleFor('Listgrouprights');
+		$listGroupRights = $linker->link($t, '{{hacl_gp_listgrouprights}}');
+		$html = str_replace("***list_group_rights***", $listGroupRights, $html);
+		
 		$html = self::insertPermissions($html);
 		$html = self::replaceLanguageStrings($html);
 		

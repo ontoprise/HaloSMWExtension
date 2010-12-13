@@ -201,8 +201,8 @@ $messages['en'] = array(
     'hacl_createGeneralContent_3' => 'Protect:',
     'hacl_createGeneralContent_4' => 'Page',
     'hacl_createGeneralContent_5' => 'Property',
-    'hacl_createGeneralContent_6' => 'Pages in Namespace',
-    'hacl_createGeneralContent_7' => 'Pages in Category',
+    'hacl_createGeneralContent_6' => 'Pages&nbsp;in&nbsp;Namespace',
+    'hacl_createGeneralContent_7' => 'Pages&nbsp;in&nbsp;Category',
     'hacl_createGeneralContent_8' => 'Name:',
     'hacl_createGeneralContent_9' => 'Define for:',
     'hacl_createGeneralContent_10' => 'Me',
@@ -370,6 +370,9 @@ $messages['en'] = array(
 	'hacl_gp_group_filter'	=> "Filter:",
 	'hacl_gp_intro'			=> "In this Tab you can define global permissions for HaloACL groups.<br />".
 							   "These permissions affect features of the whole system and not only certain content.",
+	'hacl_gp_lgr_intro'		=> "You can find a list of all groups with their permissions here: ",
+	'hacl_gp_listgrouprights'
+							=> "List of group permissions",
 	'hacl_gp_permission'	=> "Permission:",
 	'hacl_gp_set_permission'=> "Set permission ",
 	'hacl_gp_select_permission' => "Please select the permission you want to assign to groups.",
@@ -737,6 +740,9 @@ $messages['de'] = array(
 	'hacl_gp_group_filter'	=> "Filter:",
 	'hacl_gp_intro'			=> "In diesem Tab können Sie globale Berechtigungen für HaloACL-Gruppen festlegen.<br />".
 							   "Diese Berechtigungen beziehen sich auf Funktionen des gesamten Systems und nicht nur auf bestimmte Inhalte.",
+	'hacl_gp_lgr_intro'		=> "Hier finden Sie eine Liste alle Gruppen mit ihren Berechtigungen: ",
+	'hacl_gp_listgrouprights'
+							=> "Liste Gruppenberechtigungen",
 	'hacl_gp_permission'	=> "Berechtigung:",
 	'hacl_gp_set_permission'=> "Setze Berechtigung ",
 	'hacl_gp_select_permission' => "Bitte wählen Sie die Berechtigung aus, die sie Gruppen zuweisen möchten.",
