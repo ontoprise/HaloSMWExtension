@@ -841,7 +841,7 @@ CalculateClickPosition = function(event) {
  */
 GetOffsetFromOuterHtml = function() {
     var id = (window.parent.wgAction == "formedit") // Semantic Forms?
-        ? 'free_text___Frame'
+        ? 'free_text'
         : 'editform';
     var el = window.parent.document.getElementById(id);
     var offset = [];
@@ -850,11 +850,6 @@ GetOffsetFromOuterHtml = function() {
     // y ccordinate gets hight of CKeditor toolbar added
     offset[1] = document.getElementById('cke_top_'+editorName).offsetHeight;
     offset[1] += 1;
-
-    // are we in fullscreen mode?
-    if (typeof fckFullscreen != "undefined" && fckFullscreen.GetState()) {
-        return offset;
-    }
 
     if (el.offsetParent) {
         do {
@@ -881,6 +876,22 @@ HideContextPopup = function() {
 }
 
 /**
+ * Get the current frame with the wikipage. Skip the iframe from YUI (this
+ * one has set an id).
+ * This function should be more robust but's working for now.
+ */
+GetWindowOfEditor = function() {
+    var frame;
+    for (var i = 0; i < window.frames.length; i++) {
+        if (window.frames[i].frameElement.id)
+            continue;
+        frame = window.frames[i];
+        break;
+    }
+    return frame;
+}
+
+/**
  * fetches the current selected text from the gEditInterface (i.e. the FCK editor
  * area) and creates a context menu for annotating the selected text or modifying
  * the selected annotation.
@@ -888,7 +899,10 @@ HideContextPopup = function() {
  * @param Event event
  */
 CheckSelectedAndCallPopup = function(event) {
-        if (!event) event = window.frames[0].event;
+        if (!event) {
+            var frame = GetWindowOfEditor();
+            event = frame.event;
+        }
         // handle here if the popup box for a selected annotation must be shown
         var selection = gEditInterface.getSelectionAsArray();
         if (selection == null || selection.length == 0) {
@@ -972,18 +986,19 @@ CKEDITOR.plugins.smwtoolbar = {
         //        var element = CKEDITOR.document.getById('cke_contents_' + editor.name);
         this.editor = editor;
         if ( editor.mode == 'wysiwyg' ) {
+            var frame = GetWindowOfEditor();
             if (CKEDITOR.env.ie) {
-                var iframe = window.frames[0];
+                var iframe = frame;
                 var iframeDocument = iframe.document || iframe.contentDocument;
                 iframeDocument.onkeyup = this.EditorareaChanges.bind(this);
                 iframeDocument.onmouseup = CheckSelectedAndCallPopup;
                 iframeDocument.onmousedown = HideContextPopup;
             } else {
-                window.parent.Event.observe(window.frames[0], 'keyup', this.EditorareaChanges.bind(this));
-                window.parent.Event.observe(window.frames[0], 'mouseup', CheckSelectedAndCallPopup);
-                window.parent.Event.observe(window.frames[0], 'mousedown', HideContextPopup);
+                window.parent.Event.observe(frame, 'keyup', this.EditorareaChanges.bind(this));
+                window.parent.Event.observe(frame, 'mouseup', CheckSelectedAndCallPopup);
+                window.parent.Event.observe(frame, 'mousedown', HideContextPopup);
             }
-            window.parent.obContributor.activateTextArea(window.frames[0]);
+            window.parent.obContributor.activateTextArea(frame);
         } else {
             var Textarea = CKEditorTextArea(editor);
             window.parent.Event.observe(Textarea, 'keyup', this.EditorareaChanges.bind(this));
