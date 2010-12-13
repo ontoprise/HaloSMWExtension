@@ -336,7 +336,7 @@ function srfTripleStoreParserHook(&$parser, &$text, &$strip_state = null) {
 
 			$native = false;
 			$active = true;
-			$type="UNDEFINED";
+			$type="USER_DEFINED";
 			for ($j = 0; $j < count($matchesheader[0]); $j++) {
 				if (trim($matchesheader[1][$j]) == 'native') {
 					$native = trim($matchesheader[2][$j]) == 'true';

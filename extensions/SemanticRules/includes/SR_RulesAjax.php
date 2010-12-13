@@ -218,7 +218,7 @@ function smwf_sr_ChangeRuleState($title, $ruleName, $activate) {
 		for ($j = 0; $j < count($matchesheader[0]); $j++) {
 			$native = "false";
 			$active = "true";
-			$type="UNDEFINED";
+			$type="USER_DEFINED";
 
 			// iterate over parameters
 			$unknown_parameters = "";
