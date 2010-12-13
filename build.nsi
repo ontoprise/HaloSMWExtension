@@ -498,6 +498,7 @@ LangString SELECT_NEWUPDATE_DIR ${LANG_ENGLISH} "Select an existing installation
 LangString STARTED_SERVERS ${LANG_ENGLISH} "There are already running instances of Apache and MySQL. You MUST stop them before continuing with the installation."
 LangString COULD_NOT_START_SERVERS ${LANG_ENGLISH} "Apache and MySQL could not be started for some reason. Installation may not be complete!"
 LangString FIREWALL_COMPLAIN_INFO ${LANG_ENGLISH} "Windows firewall may block the apache and mySQL processes. $\n If this is the case with your installation, then unblock both processes in the pop-up windows $\n and click on 'OK' to finish the installation process."
+LangString DIRECTORY_HINT ${LANG_ENGLISH} "Please note that SMW+ must not be installed in directories containing parantheses, like 'Programs (x86)'"
 
 ;Assign language strings to sections
 !insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
@@ -518,6 +519,15 @@ Function preDirectory
     StrCpy $CHOOSEDIRTEXT $(SELECT_XAMPP_DIR)
   ${Else}
     StrCpy $CHOOSEDIRTEXT $(SELECT_NEWUPDATE_DIR)
+  ${EndIf}
+  
+  ; Hint for directory. Make sure not to install in 32-bit compatibility dir from Windows 7
+  ; because it contains parantheses.
+  ${GetWindowsVersion} $R0
+  ${If} $R0 == "7"
+  ${OrIf} $R0 == "Vista"
+  ${OrIf} $R0 == "2008"
+    MessageBox MB_OK $(DIRECTORY_HINT) IDOK 0 IDCANCEL 0
   ${EndIf}
 FunctionEnd
 
