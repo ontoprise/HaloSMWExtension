@@ -1004,12 +1004,54 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow.php
  }
 Index: extensions/SemanticForms/specials/SF_UploadWindow2.php
 ===================================================================
---- extensions/SemanticForms/specials/SF_UploadWindow2.php	(revision 9121)
+--- extensions/SemanticForms/specials/SF_UploadWindow2.php	(revision 9220)
 +++ extensions/SemanticForms/specials/SF_UploadWindow2.php	(working copy)
-@@ -52,6 +52,11 @@
+@@ -27,31 +27,36 @@
+ 	}
+ 
+ 	/** Misc variables **/
+-	protected $mRequest;			// The WebRequest or FauxRequest this form is supposed to handle
+-	protected $mSourceType;
+-	protected $mUpload;
+-	protected $mLocalFile;
+-	protected $mUploadClicked;
++	public $mRequest;			// The WebRequest or FauxRequest this form is supposed to handle
++	public $mSourceType;
++	public $mUpload;
++	public $mLocalFile;
++	public $mUploadClicked;
+ 
+ 	/** User input variables from the "description" section **/
+-	protected $mDesiredDestName;	// The requested target file name
+-	protected $mComment;
+-	protected $mLicense;
++	public $mDesiredDestName;	// The requested target file name
++	public $mComment;
++	public $mLicense;
+ 
+ 	/** User input variables from the root section **/
+-	protected $mIgnoreWarning;
+-	protected $mWatchThis;
+-	protected $mCopyrightStatus;
+-	protected $mCopyrightSource;
++	public $mIgnoreWarning;
++	public $mWatchThis;
++	public $mCopyrightStatus;
++	public $mCopyrightSource;
+ 
+ 	/** Hidden variables **/
+-	protected $mForReUpload;		// The user followed an "overwrite this file" link
+-	protected $mCancelUpload;		// The user clicked "Cancel and return to upload form" button
+-	protected $mTokenOk;
++	public $mForReUpload;		// The user followed an "overwrite this file" link
++	public $mCancelUpload;		// The user clicked "Cancel and return to upload form" button
++	public $mTokenOk;
+ 
  	/** used by Semantic Forms **/
- 	protected $mInputID;
- 	protected $mDelimiter;
+-	protected $mInputID;
+-	protected $mDelimiter;
++	public $mInputID;
++	public $mDelimiter;
 +	
 +	/*op-patch|BL|2010-10-05|RichMedia|SpecialUploadWindow2|start*/
 +	protected $mDestWarningAck;
@@ -1018,7 +1060,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow2.php
  
  	/**
  	 * Initialize instance variables from request and create an Upload handler
-@@ -70,12 +75,16 @@
+@@ -70,12 +75,15 @@
  
  		// Guess the desired name from the filename if not provided
  		$this->mDesiredDestName   = $request->getText( 'wpDestFile' );
@@ -1031,14 +1073,12 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow2.php
  		$this->mComment	   = $request->getText( 'wpUploadDescription' );
  		$this->mLicense	   = $request->getText( 'wpLicense' );
  
--
-+		/*op-patch|BL|2010-10-05|RichMedia|SpecialUploadWindow2|start*/
+ 
 +		$this->mDestWarningAck    = $request->getText( 'wpDestFileWarningAck' );
-+		/*op-patch|BL|2010-10-05|end*/
  		$this->mIgnoreWarning     = $request->getCheck( 'wpIgnoreWarning' )
  			|| $request->getCheck( 'wpUploadIgnoreWarning' );
  		$this->mWatchthis	 = $request->getBool( 'wpWatchthis' );
-@@ -99,6 +108,9 @@
+@@ -99,6 +107,9 @@
  		}
  		$this->mInputID	   = $request->getText( 'sfInputID' );
  		$this->mDelimiter	 = $request->getText( 'sfDelimiter' );
@@ -1048,7 +1088,52 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow2.php
  	}
  
  	/**
-@@ -168,7 +180,13 @@
+@@ -118,10 +129,10 @@
+ 	 */
+ 	public function execute( $par ) {
+ 		global $wgUser, $wgOut, $wgRequest;
+-	// disable $wgOut - we'll print out the page manually, taking the
+-	// body created by the form, plus the necessary Javascript files,
+-	// and turning them into an HTML page
+-	$wgOut->disable();
++		// disable $wgOut - we'll print out the page manually, taking
++		// the body created by the form, plus the necessary Javascript
++		// files, and turning them into an HTML page
++		$wgOut->disable();
+ 
+ 		$this->setHeaders();
+ 		$this->outputHeader();
+@@ -129,6 +140,7 @@
+ 		# Check uploading enabled
+ 		if ( !UploadBase::isEnabled() ) {
+ 			$wgOut->showErrorPage( 'uploaddisabled', 'uploaddisabledtext' );
++			print $wgOut->getHTML();
+ 			return;
+ 		}
+ 
+@@ -142,18 +154,21 @@
+ 			} else {
+ 				$wgOut->permissionRequired( 'upload' );
+ 			}
++			print $wgOut->getHTML();
+ 			return;
+ 		}
+ 
+ 		# Check blocks
+ 		if ( $wgUser->isBlocked() ) {
+ 			$wgOut->blockedPage();
++			print $wgOut->getHTML();
+ 			return;
+ 		}
+ 
+ 		# Check whether we actually want to allow changing stuff
+ 		if ( wfReadOnly() ) {
+ 			$wgOut->readOnlyPage();
++			print $wgOut->getHTML();
+ 			return;
+ 		}
+ 
+@@ -168,7 +183,13 @@
  		if ( $this->mTokenOk && !$this->mCancelUpload
  				&& ( $this->mUpload && $this->mUploadClicked ) ) {
  			$this->processUpload();
@@ -1062,18 +1147,18 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow2.php
  			$this->showUploadForm( $this->getUploadForm() );
  		}
  
-@@ -208,8 +226,10 @@
+@@ -208,8 +229,10 @@
  			'forreupload' => $this->mForReUpload,
  			'sessionkey' => $sessionKey,
  			'hideignorewarning' => $hideIgnoreWarning,
-+			'destwarningack' => (bool)$this->mDestWarningAck,
++			'destfile' => $this->mDesiredDestName,
  			'sfInputID' => $this->mInputID,
  			'sfDelimiter' => $this->mDelimiter,
-+			'destfile' => $this->mDesiredDestName,
++			'destwarningack' => (bool)$this->mDestWarningAck,
  		) );
  		$form->setTitle( $this->getTitle() );
  
-@@ -288,6 +308,17 @@
+@@ -288,6 +311,17 @@
  	protected function uploadWarning( $warnings ) {
  		global $wgUser;
  
@@ -1091,7 +1176,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow2.php
  		$sessionKey = $this->mUpload->stashSession();
  
  		$sk = $wgUser->getSkin();
-@@ -321,6 +352,50 @@
+@@ -321,6 +355,50 @@
  		$form->addButton( 'wpUploadIgnoreWarning', wfMsg( 'ignorewarning' ) );
  		$form->addButton( 'wpCancelUpload', wfMsg( 'reuploaddesc' ) );
  
@@ -1142,7 +1227,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow2.php
  		$this->showUploadForm( $form );
  	}
  
-@@ -330,9 +405,61 @@
+@@ -330,9 +408,61 @@
  	 * @param string $message
  	 */
  	protected function uploadError( $message ) {
@@ -1207,7 +1292,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow2.php
  	}
  
  	/**
-@@ -362,8 +489,11 @@
+@@ -362,8 +492,11 @@
  		// Check warnings if necessary
  		if ( !$this->mIgnoreWarning ) {
  			$warnings = $this->mUpload->checkWarnings();
@@ -1221,7 +1306,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow2.php
  		}
  
  		// Get the page text if this is not a reupload
-@@ -389,40 +519,91 @@
+@@ -389,40 +522,91 @@
  		}
  
  		$basename = str_replace( '_', ' ', $basename );
@@ -1244,7 +1329,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow2.php
 +		$relatedArticles = $wgRequest->getVal($rMUploadFormName.'[RelatedArticles]');
 +		//set the desired destination form
 +		$rMDestFormName = $smwgRMFormByNamespace[$this->mLocalFile->title->getNamespace()];
- 
++
 +		$myQuery = $rMDestFormName . "/" . $target;
 +		//set wpSave to true (simluates a submitted SF)
 +		$wgRequest->setVal('wpSave', 'true');
@@ -1256,7 +1341,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow2.php
 +		// Title->exists gets the article ID for this Title from the link cache
 +		// and this ID is not correct now (always 0). So do an ID update once.
 +		$testID = $target_title->getArticleID(GAID_FOR_UPDATE);
-+
+ 
 +		if (!$this->mForReUpload){
 +			$wgRequest->setVal($rMDestFormName, $uploadFormContent);
 +		}
@@ -1337,11 +1422,10 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow2.php
  		$img = null; // @todo: added to avoid passing a ref to null - should this be defined somewhere?
  
  		wfRunHooks( 'SpecialUploadComplete', array( &$this ) );
-@@ -685,6 +866,67 @@
- 			return '';
+@@ -686,6 +870,65 @@
  		}
  	}
-+	
+ 
 +	/*op-patch|BL|2010-10-05|RichMedia|SpecialUploadWindow2|start*/
 +	/**
 +	 * The upload was successful and now show the Message for the according file
@@ -1400,10 +1484,11 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow2.php
 +		}
 +	}
 +	/*op-patch|BL|2010-10-05|end*/
- 
++
  }
  
-@@ -696,6 +938,10 @@
+ /**
+@@ -696,6 +939,10 @@
  	protected $mForReUpload;
  	protected $mSessionKey;
  	protected $mHideIgnoreWarning;
@@ -1414,7 +1499,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow2.php
  	
  	protected $mSourceIds;
  
-@@ -707,6 +953,10 @@
+@@ -707,6 +954,10 @@
  		$this->mSessionKey = isset( $options['sessionkey'] )
  				? $options['sessionkey'] : '';
  		$this->mHideIgnoreWarning = !empty( $options['hideignorewarning'] );
@@ -1425,7 +1510,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow2.php
  
  		$sourceDescriptor = $this->getSourceSection();
  		$descriptor = $sourceDescriptor
-@@ -769,12 +1019,12 @@
+@@ -769,12 +1020,12 @@
  				'label-message' => 'sourcefilename',
  				'upload-type' => 'File',
  				'radio' => &$radio,
@@ -1440,7 +1525,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow2.php
  				'checked' => $selectedSourceType == 'file',
  		);
  		if ( $canUploadByUrl ) {
-@@ -795,12 +1045,12 @@
+@@ -795,12 +1046,12 @@
  		}
  		wfRunHooks( 'UploadFormSourceDescriptors', array( &$descriptor, &$radio, $selectedSourceType ) );
  
@@ -1455,7 +1540,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow2.php
  		return $descriptor;
  	}
  
-@@ -935,6 +1185,13 @@
+@@ -935,6 +1186,13 @@
  			);
  		}
  
@@ -1469,7 +1554,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow2.php
  		return $descriptor;
  
  	}
-@@ -944,7 +1201,169 @@
+@@ -944,7 +1202,169 @@
  	 */
  	public function show() {
  		$this->addUploadJS();
@@ -1639,7 +1724,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow2.php
  	// disable $wgOut - we'll print out the page manually, taking the
  	// body created by the form, plus the necessary Javascript files,
  	// and turning them into an HTML page
-@@ -968,6 +1387,36 @@
+@@ -968,6 +1388,36 @@
  	$wikibits_include = "<script type=\"{$wgJsMimeType}\" src=\"{$wgStylePath}/common/wikibits.js?$wgStyleVersion\"></script>";
  	$ajax_include = "<script type=\"{$wgJsMimeType}\" src=\"{$wgStylePath}/common/ajax.js?$wgStyleVersion\"></script>";
  	$ajaxwatch_include = "<script type=\"{$wgJsMimeType}\" src=\"{$wgStylePath}/common/ajaxwatch.js?$wgStyleVersion\"></script>";
@@ -1676,7 +1761,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow2.php
  	$text = <<<END
  <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
  <html xmlns="{$wgXhtmlDefaultNamespace}"
-@@ -977,16 +1426,20 @@
+@@ -977,16 +1427,20 @@
  	}
  	$dir = $wgContLang->isRTL() ? "rtl" : "ltr";
  	$text .= "xml:lang=\"{$wgLanguageCode}\" lang=\"{$wgLanguageCode}\" dir=\"{$dir}\">";
@@ -1700,15 +1785,52 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow2.php
  </head>
  <body>
  {$wgOut->getHTML()}
-@@ -1016,7 +1469,10 @@
+@@ -1006,6 +1460,7 @@
+ 	 */
+ 	protected function addUploadJS( $autofill = true ) {
+ 		global $wgUseAjax, $wgAjaxUploadDestCheck, $wgAjaxLicensePreview;
++		global $wgStrictFileExtensions;
+ 		global $wgEnableFirefogg, $wgEnableJS2system;
+ 		global $wgOut;
+ 
+@@ -1016,21 +1471,29 @@
  			'wgAjaxUploadDestCheck' => $wgUseAjax && $wgAjaxUploadDestCheck,
  			'wgAjaxLicensePreview' => $wgUseAjax && $wgAjaxLicensePreview,
  			'wgEnableFirefogg' => (bool)$wgEnableFirefogg,
 -			'wgUploadAutoFill' => (bool)$autofill,
-+			'wgUploadAutoFill' => !$this->mForReUpload &&
++			'wgUploadAutoFill' => (bool)$autofill &&
 +				// If we received mDestFile from the request, don't autofill
 +				// the wpDestFile textbox
 +				$this->mDestFile === '',
  			'wgUploadSourceIds' => $this->mSourceIds,
++			'wgStrictFileExtensions' => $wgStrictFileExtensions,
++			'wgCapitalizeUploads' => MWNamespace::isCapitalized( NS_FILE ),
  		);
+ 
+ 		$wgOut->addScript( Skin::makeVariablesScript( $scriptVars ) );
+-		
+-		// For <charinsert> support; not provided by js2 yet
+-		$wgOut->addScriptFile( 'edit.js' );
+-		
+-		if ( $wgEnableJS2system ) {
+-			// JS2 upload scripts
+-			$wgOut->addScriptClass( 'uploadPage' );
+-		} else {
+-			// Legacy upload javascript
+-			$wgOut->addScriptFile( 'upload.js' );
++
++		// MW < 1.17
++		if ( ! class_exists( 'ResourceLoader' ) ) {
++			// For <charinsert> support; not provided by js2 yet
++			$wgOut->addScriptFile( 'edit.js' );
++
++			if ( $wgEnableJS2system ) {
++				// JS2 upload scripts
++				$wgOut->addScriptClass( 'uploadPage' );
++			} else {
++				// Legacy upload javascript
++				$wgOut->addScriptFile( 'upload.js' );
++			}
+ 		}
+ 	}
  
