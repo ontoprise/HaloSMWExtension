@@ -443,6 +443,13 @@ function haclAddHTMLHeader(&$out) {
             'href'  => $haclgHaloScriptPath . '/skins/haloacl_group_permissions.css'
         ));
         
+        $out->addLink(array(
+            'rel'   => 'stylesheet',
+            'type'  => 'text/css',
+            'media' => 'screen, projection',
+            'href'  => $haclgHaloScriptPath . '/scripts/jsTree.v.0.9.9a/themes/haloacl/style.css'
+        ));
+        
         if(get_class($wgUser->getSkin()) == "SkinMonoBook") {
             $out->addLink(array(
                 'rel'   => 'stylesheet',
