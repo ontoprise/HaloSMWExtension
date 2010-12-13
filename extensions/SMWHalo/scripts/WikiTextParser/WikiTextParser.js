@@ -148,7 +148,8 @@ WikiTextParser.prototype = {
 		}
         if (!wikiText || this.parserMode == WTP_EDITAREA_MODE) {
 
-            if (typeof FCKeditor == 'undefined' && typeof CKEDITOR == 'undefined') {
+            if (typeof FCKeditor == 'undefined' && typeof CKEDITOR == 'undefined' ||
+                showFCKEditor && RTE_VISIBLE && !(showFCKEditor & RTE_VISIBLE) ) {
                 // no wiki text => retrieve from text area.
                 var txtarea;
             	if (document.editform) {
