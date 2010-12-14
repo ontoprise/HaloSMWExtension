@@ -469,6 +469,7 @@ class HACLEvaluator {
 		self::$mMode = HACLEvaluator::NORMAL;
 		                           
 		$protectedProperties = "";
+		$protectionActive = NULL;
 		if (isset($output->mSMWData)) {
 			foreach ($output->mSMWData->getProperties() as $name => $prop) {
 				$wpv = $prop->getWikiPageValue();
@@ -481,6 +482,10 @@ class HACLEvaluator {
 										$wgUser->getId(),
 										HACLRight::FORMEDIT);
 				if (!$allowed) {
+					$store = smwfGetStore();
+					if ($store instanceof HACLSMWStore) {
+						$protectionActive = $store->setProtectionActive(false);
+					}
 					// Access to property is restricted
 					if (!isset($oldPV)) {
 						// Get all old properties of the page from the semantic store
@@ -493,10 +498,17 @@ class HACLEvaluator {
 			}
 		}
 		if (empty($protectedProperties)) {
+			// No properties are protected 
+			// => switch off property protection for the rest of the saving process
+			global $haclgProtectProperties;
+			$haclgProtectProperties = false;
 			self::$mSavePropertiesAllowed = true;
 			return true;
 		}
 		
+		if (!is_null($protectionActive)) {
+			$store->setProtectionActive($protectionActive);
+		}
 		self::$mSavePropertiesAllowed = false;
 		$error = wfMsgForContent('hacl_sp_cant_save_article', $protectedProperties);
 		
@@ -1198,7 +1210,8 @@ class HACLEvaluator {
 		$oldValues = array();
 		self::$mMode = HACLEvaluator::ALLOW_PROPERTY_READ;
 		foreach ($oldPV as $v) {
-			$oldValues[$v->getHash()] = false;
+			$hash = implode("\t", $v->getDBkeys());
+			$oldValues[$hash] = false;
 		}
 		self::$mMode = HACLEvaluator::NORMAL;
 		
@@ -1211,8 +1224,7 @@ class HACLEvaluator {
 				// A property has an empty value => can be ignored
 				continue;
 			}
-
-			$nv = $v->getHash();
+			$nv = implode("\t", $v->getDBkeys());
 			self::$mMode = HACLEvaluator::NORMAL;
 			if (array_key_exists($nv, $oldValues)) {
 				// Old value was not changed
