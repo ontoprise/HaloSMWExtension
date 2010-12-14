@@ -1014,7 +1014,7 @@ Function un.checkForApacheAndMySQLAndMemcached
    FindProcDLL::FindProc "mysqld-nt.exe"
    IntOp $1 $1 + $R0
    FindProcDLL::FindProc "memcached.exe"
-   IntOp $2 $2 + $R0
+   IntOp $2 0 + $R0
    ${If} $0 == 1
    ${OrIf} $1 == 1
    ${OrIf} $2 == 1
@@ -1023,7 +1023,7 @@ Function un.checkForApacheAndMySQLAndMemcached
    ${EndIf}
    goto out
  skipcheck:
-    Abort
+    
  out:
 FunctionEnd
 
