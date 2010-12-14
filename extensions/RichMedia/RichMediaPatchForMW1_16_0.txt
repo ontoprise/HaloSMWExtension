@@ -498,9 +498,9 @@ Index: includes/ImageQueryPage.php
  	/**
 Index: includes/Linker.php
 ===================================================================
---- includes/Linker.php	(revision 5543)
+--- includes/Linker.php	(revision 9230)
 +++ includes/Linker.php	(working copy)
-@@ -708,7 +708,15 @@
+@@ -445,7 +445,15 @@
  		global $wgContLang, $wgUser, $wgThumbLimits, $wgThumbUpright;
  		if ( $file && !$file->allowInlineDisplay() ) {
  			wfDebug( __METHOD__.': '.$title->getPrefixedDBkey()." does not allow inline display\n" );
@@ -517,6 +517,65 @@ Index: includes/Linker.php
  		}
  
  		// Shortcuts
+@@ -686,9 +694,19 @@
+ 				list( $inside, $trail ) = self::splitTrail( $trail );
+ 
+ 				wfProfileOut( __METHOD__ );
++				/*op-patch|BL|2010-12-14|RichMedia|UploadURL|start*/
++				// content was:
++				// [...] 'class' => 'new', [...]
++				global $smwgEnableRichMedia;
++				if( $smwgEnableRichMedia ) {
++					$class = 'rmAlink';
++				} else {
++					$class = '';
++				}
++				/*op-patch|BL|2010-12-14|end*/
+ 				return Html::element( 'a', array(
+ 					'href' => $href,
+-					'class' => 'new',
++					'class' => 'new' . ' ' . $class,
+ 					'title' => $title->getPrefixedText()
+ 				), $prefix . $text . $inside ) . $trail;
+ 			} else {
+@@ -716,8 +734,18 @@
+ 		if( $wgUploadNavigationUrl ) {
+ 			return wfAppendQuery( $wgUploadNavigationUrl, $q );
+ 		} else {
+-			$upload = SpecialPage::getTitleFor( 'Upload' );
++			/*op-patch|BL|2010-12-14|RichMedia|UploadURL|start*/
++			// content was:
++			// $upload = SpecialPage::getTitleFor( 'Upload' );
++			global $smwgEnableRichMedia;
++			if( $smwgEnableRichMedia ) {
++				$upload = SpecialPage::getTitleFor( 'UploadWindow' );
++			} else {
++				$upload = SpecialPage::getTitleFor( 'Upload' );
++			}
++			/*op-patch|BL|2010-12-14|end*/
+ 			return $upload->getLocalUrl( $q );
++			
+ 		}	
+ 	}
+ 
+@@ -743,7 +771,16 @@
+ 				$class = 'internal';
+ 			} else {
+ 				$url = $this->getUploadUrl( $title );
+-				$class = 'new';
++				/*op-patch|BL|2010-12-14|RichMedia|UploadURL|start*/
++				// content was:
++				// $class = 'new';
++				global $smwgEnableRichMedia;
++				if( $smwgEnableRichMedia ) {
++					$class = 'new rmAlink';
++				} else {
++					$class = 'new';
++				}
++				/*op-patch|BL|2010-12-14|end*/
+ 			}
+ 			$alt = htmlspecialchars( $title->getText() );
+ 			if( $text == '' ) {
 Index: includes/MediaTransformOutput.php
 ===================================================================
 --- includes/MediaTransformOutput.php	(revision 8227)
