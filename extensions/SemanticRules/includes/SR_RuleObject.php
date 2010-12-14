@@ -98,7 +98,7 @@ class SMWRuleObject extends SMWAbstractRuleObject {
 					// do not add further instance variable
 					//					$internalvar = "_X" . $count;
 					//					$oblstring .= ", " . $internalvar;
-					$variableassignments .= $ruleobject->argtostring(new SMWPredicateSymbol(P_ATTRIBUTE,3), $ruleobject->createPropertyAssignment("_XRES", $bndvars[$j][2], $bndvars[$j][0]));
+					$variableassignments .= $ruleobject->argtostring(new SMWPredicateSymbol(P_ATTRIBUTE,3), $ruleobject->createPropertyAssignment("_XRES", $bndvars[$j][2], $bndvars[$j][0]), "BODY");
 				}
 
 			}
@@ -110,7 +110,7 @@ class SMWRuleObject extends SMWAbstractRuleObject {
 			
 
 		// fetch rule head
-		$head = $ruleobject->argtostring(new SMWPredicateSymbol(P_ATTRIBUTE,3), $ruleobject->createPropertyAssignment("_XRES", $resultprop, "_RESULT"));
+		$head = $ruleobject->argtostring(new SMWPredicateSymbol(P_ATTRIBUTE,3), $ruleobject->createPropertyAssignment("_XRES", $resultprop, "_RESULT"), "HEAD");
 		$oblstring .= " ". $head . " :- ";
 
 		// don't foget the "." :)
