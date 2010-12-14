@@ -11,7 +11,7 @@
 		</description>
 		<helpurl>http://smwforum.ontoprise.com/smwforum/index.php/Help:Automatic_Semantic_Forms_Extension</helpurl>
 		<dependencies>
-			<dependency from="1160" to="1160">MW</dependency>
+			<dependency from="1160" to="1160">mw</dependency>
 			<dependency from="152" to="152">smw</dependency>
 			<dependency from="152" to="152">smwhalo</dependency>
 			<dependency from="100" to="199">scriptmanager</dependency>

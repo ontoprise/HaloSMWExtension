@@ -11,10 +11,10 @@
 		</description>
 		<helpurl>http://smwforum.ontoprise.com/smwforum/index.php/Help:Semantic_Notifications_Extension</helpurl>
 		<dependencies>
-			<dependency from="1132" to="1160">MW</dependency>
-			<dependency from="140" to="152">SMW</dependency>
+			<dependency from="1132" to="1160">mw</dependency>
+			<dependency from="140" to="152">smw</dependency>
 			<dependency from="142" to="152">smwhalo</dependency>
-			<dependency from="100" to="133">SemanticGardening</dependency>
+			<dependency from="100" to="133">semanticgardening</dependency>
 			<dependency from="101">scriptmanager</dependency>
 		</dependencies>
 		<patchlevel>0</patchlevel>
