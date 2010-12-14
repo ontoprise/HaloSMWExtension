@@ -35,8 +35,8 @@ class ASFUnresolvedAnnotationsFormData extends ASFCategoryFormData {
 	private function getSilentAnnotations($instanceTitleObject){
 		global $asfSilentAnnotations, $wgParser;
 		$asfSilentAnnotations = array();
-		
-		$wgParser->startExternalParse($title, new ParserOptions(), Parser::OT_HTML);
+
+		$wgParser->startExternalParse($instanceTitleObject, new ParserOptions(), Parser::OT_HTML);
 		$wgParser->replaceVariables(Article::newFromID($instanceTitleObject->getArticleID())->getContent());
 		
 		return $asfSilentAnnotations;
