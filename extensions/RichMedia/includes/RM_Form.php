@@ -33,7 +33,7 @@ class RMForm {
 	 * @return HTML
 	 */
 	static function createRichMediaForm($parser, &$parameter) {
-		global $wgOut, $smwgRMScriptPath, $sfgScriptPath, $sfgFancyBoxIncluded;
+		global $wgOut;
 
 		$uploadWindowPage = SpecialPage::getPage('UploadWindow');
 
@@ -54,17 +54,8 @@ class RMForm {
 <script type="text/javascript">
 var wgRMUploadUrl = "{$uploadWindowUrl}";</script>
 END;
-		SMWOutputs::requireHeadItem('rmlinkheaditem',
-			$fancybox_js);
-		
-		$script = $sfgScriptPath . '/libs/jquery.fancybox-1.3.1.js';
-		SMWOutputs::requireHeadItem($script,
-			'<script type="text/javascript" src="'.$script.'"></script>');
-		$script = $smwgRMScriptPath . '/scripts/richmedia_links.js';
-		SMWOutputs::requireHeadItem($script,
-			'<script type="text/javascript" src="'.$script.'"></script>');
+		SMWOutputs::requireHeadItem('rmlinkheaditem', $fancybox_js);
 
-		//return array($html, 'noparse' => true, 'isHTML' => true);
 		return $parser->insertStripItem( $html, $parser->mStripState );
 	}
 	/**
@@ -79,7 +70,7 @@ END;
 	 * @return HTML the text embraced by "richmedialink"-tags that will be removed again later in createRichMediaLinkAfterTidy
 	 */
 	static function createRichMediaLink($parser, &$parameters) {
-		global $wgOut, $wgRequest, $smwgRMFormByNamespace, $sfgScriptPath, $smwgRMScriptPath;
+		global $wgOut, $wgRequest, $smwgRMFormByNamespace;
 		$rMUploadFormName = $smwgRMFormByNamespace['RMUpload'];
 
 		if ( array_key_exists( 0, $parameters ) && isset( $parameters[0] ) ) {
@@ -121,13 +112,6 @@ END;
 		$uploadWindowPage = SpecialPage::getPage('UploadWindow');
 		$uploadWindowUrl = $uploadWindowPage->getTitle()->getFullURL($queryString);
 		$fancyboxClass = 'rmAlink';
-		
-		$script = $sfgScriptPath . '/libs/jquery.fancybox-1.3.1.js';
-		SMWOutputs::requireHeadItem($script,
-			'<script type="text/javascript" src="'.$script.'"></script>');
-		$script = $smwgRMScriptPath . '/scripts/richmedia_links.js';
-		SMWOutputs::requireHeadItem($script,
-			'<script type="text/javascript" src="'.$script.'"></script>');
 
 		$output = "<a href=\"$uploadWindowUrl\" title=\"$linkTitle\" class=\"$fancyboxClass\">$linkText</a>";
 

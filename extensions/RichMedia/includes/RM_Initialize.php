@@ -92,7 +92,7 @@ function enableRichMediaExtension() {
 	// see: http://www.mediawiki.org/wiki/Manual:Tag_extensions#How_can_I_avoid_modification_of_my_extension.27s_HTML_output.3F for more infos
 	$wgHooks['ParserBeforeStrip'][] = 'smwfRegisterRMLink';
 	$wgHooks['ParserAfterTidy'][] = 'RMForm::createRichMediaLinkAfterTidy';
-	
+
 	$wgHooks['ParserBeforeStrip'][] = 'smwfRegisterRMEmbedWindowLink';
 
 	//Add a hook to initialise the magic word for the {{#rmf:}} Syntax Parser
@@ -144,7 +144,7 @@ function smwfRMSetupExtension() {
 		'author'=>"Benjamin&nbsp;Langguth, Sascha&nbsp;Wagner and Daniel&nbsp;Hansch. Maintained by [http://www.ontoprise.de Ontoprise].", 
 		'url'=>'https://sourceforge.net/projects/halo-extension', 
 		'description' => 'The Rich Media Extension provides an ontology to allow easy handling of media such as documents, images, doc, pdf etc. The ontology comprises templates and forms and examples. It enhances a one-click media upload of files and enables annotation of media in a simple way.');
-	
+
 	return true;
 }
 
@@ -210,8 +210,8 @@ function smwfProcessRMEmbedWindowLinkParserFunction(&$parser) {
  * @return boolean
  */
 function RMLinkBegin($this, $target, &$text, &$customAttribs, &$query, &$options, &$ret) {
-
 	global $wgNamespaceByExtension,$wgCanonicalNamespaceNames;
+
 	$ext = explode( '.', $target->mTextform );
 	array_shift( $ext );
 	if( count( $ext ) ) {
@@ -228,12 +228,12 @@ function RMLinkBegin($this, $target, &$text, &$customAttribs, &$query, &$options
 				$target->mNamespace = $ns;
 		}
 	}
-	if ($target->mPrefixedText)
+	if ($target->mPrefixedText) {
 		$target->mPrefixedText = str_replace('File:',$wgCanonicalNamespaceNames[$ns].":",$target->mPrefixedText);
-	if($text)
+	}
+	if($text) {
 		$text = str_replace('File:',$wgCanonicalNamespaceNames[$ns].":",$text);
-	//$result = str_replace('File:',$wgCanonicalNamespaceNames[$ns],$customAttribs['title']);
-	
+	}
 	return true;
 }
 
@@ -276,7 +276,7 @@ function RMLinkEnd($skin, $target, $options, &$text, &$attribs, &$ret) {
 		$attribs['id'] = 'upload_window';
 		$attribs['class'] = 'rmAlink';
 	}
-	
+
 	return true;
 }
 
@@ -294,14 +294,7 @@ function RMLinkerMakeExternalLink(&$url, &$text, &$link, &$attribs) {
 		$url = preg_replace('/'.$uploadText.'/', SpecialPage::getLocalNameFor( 'UploadWindow' ), $url, 1);
 		$attribs['class'] = 'rmAlink';
 		$link = '<a href="'.$url.'"'.Html::expandAttributes( $attribs ).'>'.$text.'</a>';
-	
-		$script = $sfgScriptPath . '/libs/jquery.fancybox-1.3.1.js';
-		SMWOutputs::requireHeadItem($script,
-			'<script type="text/javascript" src="'.$script.'"></script>');
-		$script = $smwgRMScriptPath . '/scripts/richmedia_links.js';
-		SMWOutputs::requireHeadItem($script,
-			'<script type="text/javascript" src="'.$script.'"></script>');
-		SMWOutputs::commitToOutputPage($wgOut);
+
 		return false;
 	}
 	return true;
@@ -334,21 +327,18 @@ function RMImagePreviewUsage_Magic(&$magicWords, $langCode){
  * @return boolean
  */
 function smwRMFormAddHTMLHeader(&$out){
-	global $smwgRMScriptPath, $sfgScriptPath;
-	
+	global $smwgRMScriptPath, $sfgScriptPath, $sfgFancyBoxIncluded;
 	static $rmScriptLoaded = false;
-	
+
 	if(!$rmScriptLoaded){
-		
-		# Prototype needed!
-		
-		
+		if ( !$sfgFancyBoxIncluded ) {
+			$sfgFancyBoxIncluded = true;
+			$out->addScript( '<script type="text/javascript" src="' . $sfgScriptPath . '/libs/jquery.fancybox-1.3.1.js"</script>');
+		}
 		$out->addScript('<script type="text/javascript" src="'.$smwgRMScriptPath. '/scripts/richmedia.js"></script>');
 		$out->addScript('<script type="text/javascript" src="'.$smwgRMScriptPath. '/scripts/fck_connect.js"></script>');
-		# Floatbox needed!
-		//$out->addScript('<script type="text/javascript" src="'.$sfgScriptPath .  '/libs/floatbox.js"></script>');
-		
-	
+		$out->addScript('<script type="text/javascript" src="'.$smwgRMScriptPath. '/scripts/richmedia_links.js"></script>');
+
 		#Fancybox css file:
 		$out->addLink(array(
 			'rel'   => 'stylesheet',
