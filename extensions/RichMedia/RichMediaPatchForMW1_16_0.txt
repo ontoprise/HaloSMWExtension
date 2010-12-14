@@ -344,12 +344,12 @@ Index: includes/ImageGallery.php
  			// $linkTarget = Title::newFromText( $wgContLang->getNsText( MWNamespace::getUser() ) . ":{$ut}" );
 Index: includes/ImagePage.php
 ===================================================================
---- includes/ImagePage.php	(revision 5543)
+--- includes/ImagePage.php	(revision 9237)
 +++ includes/ImagePage.php	(working copy)
 @@ -63,27 +63,92 @@
  		global $wgOut, $wgShowEXIF, $wgRequest, $wgUser;
  		$this->loadFile();
-
+ 
 -		if( $this->mTitle->getNamespace() == NS_FILE && $this->img->getRedirected() ) {
 -			if( $this->mTitle->getDBkey() == $this->img->getName() ) {
 -				// mTitle is the same as the redirect target so ask Article
@@ -365,7 +365,7 @@ Index: includes/ImagePage.php
 +			if( count( $ext ) ) {
 +				$finalExt = $ext[count( $ext ) - 1];
  			} else {
--				// mTitle is not the same as the redirect target so it is
+-				// mTitle is not the same as the redirect target so it is 
 -				// probably the redirect page itself. Fake the redirect symbol
 -				$wgOut->setPageTitle( $this->mTitle->getPrefixedText() );
 -				$wgOut->addHTML( $this->viewRedirect( Title::makeTitle( NS_FILE, $this->img->getName() ),
@@ -403,13 +403,11 @@ Index: includes/ImagePage.php
 +					// probably the redirect page itself. Fake the redirect symbol
 +					$wgOut->setPageTitle( $this->mTitle->getPrefixedText() );
 +					$wgOut->addHTML( $this->viewRedirect( Title::makeTitle( NS_FILE, $this->img->getName() ),
- 					/* $appendSubtitle */ true, /* $forceKnown */ true ) );
--				$this->viewUpdates();
--				return;
++					/* $appendSubtitle */ true, /* $forceKnown */ true ) );
 +					$this->viewUpdates();
 +					return;
 +				}
- 			}
++			}
 +		} else {
 +			if( $this->mTitle->getNamespace() == NS_FILE && $this->img->getRedirected() ) {
 +				if( $this->mTitle->getDBkey() == $this->img->getName() ) {
@@ -421,18 +419,20 @@ Index: includes/ImagePage.php
 +					// probably the redirect page itself. Fake the redirect symbol
 +					$wgOut->setPageTitle( $this->mTitle->getPrefixedText() );
 +					$wgOut->addHTML( $this->viewRedirect( Title::makeTitle( NS_FILE, $this->img->getName() ),
-+					/* $appendSubtitle */ true, /* $forceKnown */ true ) );
+ 					/* $appendSubtitle */ true, /* $forceKnown */ true ) );
+-				$this->viewUpdates();
+-				return;
 +					$this->viewUpdates();
 +					return;
 +				}
-+			}
+ 			}
 +			$displayArticleText = true;
  		}
 +		/*op-patch|BL|2009-10-07|end*/
-
+ 
  		$diff = $wgRequest->getVal( 'diff' );
  		$diffOnly = $wgRequest->getBool( 'diffonly', $wgUser->getOption( 'diffonly' ) );
-
+ 
 -		if( $this->mTitle->getNamespace() != NS_FILE || ( isset( $diff ) && $diffOnly ) )
 -			return Article::view();
 +		/*op-patch|BL|2009-10-07|RichMedia|AdditionalNamespaceCheck|start*/
@@ -449,10 +449,10 @@ Index: includes/ImagePage.php
 +				return Article::view();
 +		}
 +		/*op-patch|BL|2009-10-07|end*/
-
+ 			
  		$this->showRedirectedFromHeader();
-
-@@ -388,6 +451,15 @@
+ 
+@@ -388,6 +453,15 @@
  						$thumbnail->toHtml( $options ) .
  						$anchorclose . "</div>\n" );
  				}
@@ -465,9 +465,35 @@ Index: includes/ImagePage.php
 +						$icon->toHtml( array( 'desc-link' => true ) ) . '</div>' );
 +				}
 +				/*op-patch|BL|2009-10-08|end*/
-
+ 
  				if( $isMulti ) {
  					$count = $this->displayImg->pageCount();
+@@ -450,13 +524,24 @@
+ 				}
+ 			} else {
+ 				#if direct link is allowed but it's not a renderable image, show an icon.
+-				if( $this->displayImg->isSafeFile() ) {
++				/*op-patch|BL|2010-12-14|RichMedia|IconThumbs|start*/
++				global $smwgEnableRichMedia;
++				if( $smwgEnableRichMedia ) {
+ 					$icon= $this->displayImg->iconThumb();
+ 
+ 					$wgOut->addHTML( '<div class="fullImageLink" id="file">' .
+ 					$icon->toHtml( array( 'file-link' => true ) ) .
+ 					"</div>\n" );
++				} else {
++					if( $this->displayImg->isSafeFile() ) {
++						$icon= $this->displayImg->iconThumb();
++
++						$wgOut->addHTML( '<div class="fullImageLink" id="file">' .
++						$icon->toHtml( array( 'file-link' => true ) ) .
++					"</div>\n" );
++					}
+ 				}
++				/*op-patch|BL|2010-12-14|end*/
+ 
+ 				$showLink = true;
+ 			}
 Index: includes/ImageQueryPage.php
 ===================================================================
 --- includes/ImageQueryPage.php	(revision 5543)
