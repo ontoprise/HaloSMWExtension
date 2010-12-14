@@ -11,7 +11,15 @@ class TestUserCanHookSuite extends PHPUnit_Framework_TestSuite
 	}
 	
 	protected function setUp() {
-		HACLStorage::reset(HACL_STORE_SQL);
+    	// reset group permissions
+    	global $wgGroupPermissions;
+    	foreach ($wgGroupPermissions as $group => $permissions) {
+    		foreach ($permissions as $p => $value) {
+    			$wgGroupPermissions[$group][$p] = true;
+    		}
+    	}
+		
+    	HACLStorage::reset(HACL_STORE_SQL);
 		HACLStorage::getDatabase()->dropDatabaseTables(false);
 		HACLStorage::getDatabase()->initDatabaseTables(false);
 		

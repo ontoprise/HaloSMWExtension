@@ -11,6 +11,14 @@ class TestParserFunctions extends PHPUnit_Framework_TestCase {
 	protected $backupGlobals = FALSE;
 	
     function setUp() {
+    	// reset group permissions
+    	global $wgGroupPermissions;
+    	foreach ($wgGroupPermissions as $group => $permissions) {
+    		foreach ($permissions as $p => $value) {
+    			$wgGroupPermissions[$group][$p] = true;
+    		}
+    	}
+    	
     	HACLStorage::reset(HACL_STORE_SQL);
     	
     	User::createNew("U1");
