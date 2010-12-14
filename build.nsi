@@ -18,6 +18,7 @@
 !include "LogicLib.nsh"
 !include "FileFunc.nsh"
 !include "TextFunc.nsh"
+!include "EnvVarUpdate.nsh"
 !insertmacro ConfigWrite
 !insertmacro GetFileName
 
@@ -794,18 +795,19 @@ Function configCustomizationsForNew
         wgSitename="$WIKINAME" wgDBname="semwiki_$WIKILANG" wgLogo=$$wgScriptPath/url:("$WIKILOGO") wgLanguageCode=$WIKILANG wgDefaultSkin="$WIKISKIN" \
         smwgAllowNewHelpQuestions="true" ls=LocalSettings.php'
     
-    ;DetailPrint "Installing helppages"
+    
         DetailPrint "Starting XAMPP"
         CALL installMemcached
         SetOutPath "$INSTDIR"
         Exec "$INSTDIR\xampp_start.bat"
         CALL waitForApacheAndMySQL
         MessageBox MB_OK|MB_ICONINFORMATION $(FIREWALL_COMPLAIN_INFO)
-    /*    SetOutPath "$INSTDIR\htdocs\mediawiki\extensions\SMWHaloHelp\maintenance"
-        nsExec::ExecToLog '"$INSTDIR\php\php.exe" "$INSTDIR\htdocs\mediawiki\extensions\SMWHaloHelp\maintenance\setup.php" --install'
-    */
+    
         DetailPrint "Import wiki database"
         nsExec::ExecToLog ' "$INSTDIR\import_smwplus_db.bat" "$INSTDIR" root m8nix semwiki_en "$INSTDIR\smwplus_database.sql" '
+        
+        DetailPrint "Set php.exe in PATH Variable"
+        ${EnvVarUpdate} $0 "PATH" "A" "HKLM" "$INSTDIR\php" 
 FunctionEnd
 
 
@@ -1048,6 +1050,9 @@ Section "Uninstall"
     nsExec::ExecToLog 'schtasks /delete /TN "LuceneIndexUpdate" /F'
     
     Call un.checkForApacheAndMySQLAndMemcached
+    
+    # Delete from PATH variable
+    ${un.EnvVarUpdate} $0 "PATH" "R" "HKLM" "$INSTDIR\php"      
     
     # Delete all start menu entries
     Delete "$SMPROGRAMS\$MUI_TEMP\Uninstall.lnk"
