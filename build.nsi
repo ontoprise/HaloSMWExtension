@@ -495,7 +495,7 @@ LangString LUCENE_PAGE_SUBTITLE ${LANG_ENGLISH} "Set your IP if possible"
 
 LangString SELECT_XAMPP_DIR ${LANG_ENGLISH} "Select an empty directory where to install XAMPP and the wiki."
 LangString SELECT_NEWUPDATE_DIR ${LANG_ENGLISH} "Select an existing installation to update."
-LangString STARTED_SERVERS ${LANG_ENGLISH} "There are already running instances of Apache and MySQL. You MUST stop them before continuing with the installation."
+LangString STARTED_SERVERS ${LANG_ENGLISH} "There are already running instances of Apache, MySQL and/or memcached. You MUST stop them before continuing."
 LangString COULD_NOT_START_SERVERS ${LANG_ENGLISH} "Apache and MySQL could not be started for some reason. Installation may not be complete!"
 LangString FIREWALL_COMPLAIN_INFO ${LANG_ENGLISH} "Windows firewall may block the apache and mySQL processes. $\n If this is the case with your installation, then unblock both processes in the pop-up windows $\n and click on 'OK' to finish the installation process."
 LangString DIRECTORY_HINT ${LANG_ENGLISH} "Please note that SMW+ must not be installed in directories containing parantheses, like 'Programs (x86)'"
@@ -535,11 +535,11 @@ Function checkForAlreadyRunningProcess
   SectionGetFlags ${xampp} $0
   IntOp $0 $0 & ${SF_SELECTED}
   ${If} $0 == 1
-    CALL checkForApacheAndMySQL
+    CALL checkForApacheAndMySQLAndMemcached
   ${EndIf}
 FunctionEnd
 
-Function checkForApacheAndMySQL
+Function checkForApacheAndMySQLAndMemcached
  checkagain:
    FindProcDLL::FindProc "httpd.exe"
    IntOp $0 0 + $R0
@@ -547,8 +547,11 @@ Function checkForApacheAndMySQL
    IntOp $1 0 + $R0
    FindProcDLL::FindProc "mysqld-nt.exe"
    IntOp $1 $1 + $R0
+   FindProcDLL::FindProc "memcached.exe"
+   IntOp $2 $2 + $R0
    ${If} $0 == 1
    ${OrIf} $1 == 1
+   ${OrIf} $2 == 1
     MessageBox MB_ICONEXCLAMATION|MB_OKCANCEL $(STARTED_SERVERS) IDOK 0 IDCANCEL skipCheck
     goto checkagain
    ${EndIf}
@@ -708,7 +711,7 @@ FunctionEnd
 ; deprecated
 Function changeConfigForSMWPlusUpdate
     
-    CALL checkForApacheAndMySQL
+    CALL checkForApacheAndMySQLAndMemcached
     ; update MediaWiki
     DetailPrint "Update MediaWiki database"
     nsExec::ExecToLog '"$INSTDIR\php\php.exe" "$INSTDIR\htdocs\mediawiki\maintenance\update.php"'
@@ -1000,6 +1003,28 @@ Function un.uninstallAsWindowsService
     SetOutPath "c:\temp\halo" #dummy to make installation dir removable
 FunctionEnd
 
+Function un.checkForApacheAndMySQLAndMemcached
+ checkagain:
+   FindProcDLL::FindProc "httpd.exe"
+   IntOp $0 0 + $R0
+   FindProcDLL::FindProc "mysqld.exe"
+   IntOp $1 0 + $R0
+   FindProcDLL::FindProc "mysqld-nt.exe"
+   IntOp $1 $1 + $R0
+   FindProcDLL::FindProc "memcached.exe"
+   IntOp $2 $2 + $R0
+   ${If} $0 == 1
+   ${OrIf} $1 == 1
+   ${OrIf} $2 == 1
+    MessageBox MB_ICONEXCLAMATION|MB_OKCANCEL $(STARTED_SERVERS) IDOK 0 IDCANCEL skipCheck
+    goto checkagain
+   ${EndIf}
+   goto out
+ skipcheck:
+    Abort
+ out:
+FunctionEnd
+
 Section "Uninstall"
 
     !insertmacro MUI_STARTMENU_GETFOLDER Application $MUI_TEMP
@@ -1013,6 +1038,7 @@ Section "Uninstall"
     goto FinalExit
 
     Deinstall:
+    Call un.checkForApacheAndMySQLAndMemcached
 	# MessageBox MB_OK "User said OK!"
     
     ; Un-install services (if installed at all)
