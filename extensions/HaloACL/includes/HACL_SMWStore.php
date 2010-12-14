@@ -141,6 +141,10 @@ class HACLSMWStore extends SMWStore {
 	 * If called with $subject == NULL, all values for the given property are returned.
 	 */
 	public function getPropertyValues( $subject, SMWPropertyValue $property, $requestoptions = null, $outputformat = '' ) {
+		if (!$this->mProtectionActive) {
+			return $this->mWrappedStore->getPropertyValues($subject, $property, $requestoptions, $outputformat);
+		}
+		
 		if (!$this->isSubjectAccessible($subject) || !$this->isPropertyAccessible($property)) {
 			return array();
 		}
