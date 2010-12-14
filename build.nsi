@@ -804,7 +804,7 @@ Function configCustomizationsForNew
         MessageBox MB_OK|MB_ICONINFORMATION $(FIREWALL_COMPLAIN_INFO)
     
         DetailPrint "Import wiki database"
-        nsExec::ExecToLog ' "$INSTDIR\import_smwplus_db.bat" "$INSTDIR" root m8nix semwiki "$INSTDIR\smwplus_database.sql" '
+        nsExec::ExecToLog ' "$INSTDIR\import_smwplus_db.bat" "$INSTDIR" root m8nix semwiki_en "$INSTDIR\smwplus_database.sql" '
         
         DetailPrint "Set php.exe in PATH Variable"
         ${EnvVarUpdate} $0 "PATH" "A" "HKLM" "$INSTDIR\php" 
