@@ -125,14 +125,14 @@ class ConsistencyChecker {
 		return $this->statusLog;
 	}
 
-	public function checkInstallation($repair, $format, $addChecks = true) {
+	public function checkInstallation($format, $addChecks = true) {
 
 
 		$errorFound = false;
-		$errorFound |= $this->checkDependencies($repair, $format);
-		$errorFound |= $this->checkLocalSettings($repair, $format);
-		$errorFound |= $this->checkSpecialConfigs($repair);
-		$errorFound |= $this->checkExistingExtensions($repair, $format, $addChecks);
+		$errorFound |= $this->checkDependencies($format);
+		$errorFound |= $this->checkLocalSettings($format);
+		$errorFound |= $this->checkSpecialConfigs();
+		$errorFound |= $this->checkExistingExtensions($format, $addChecks);
 		$this->statusLog[] = $this->out("\n\n", $format);
 		return $errorFound;
 	}
@@ -141,9 +141,8 @@ class ConsistencyChecker {
 	/**
 	 * Checks for missing dependencies of deploy descriptors.
 	 *
-	 * @param unknown_type $repair
 	 */
-	public  function checkDependencies($repair, $format) {
+	public  function checkDependencies($format) {
 
 		if (count($this->localPackages) == 0) {
 			$this->statusLog[] = $this->out(array("\n","NO extensions found!", "\n"), $format);
@@ -179,10 +178,8 @@ class ConsistencyChecker {
 	/**
 	 * Checks LocalSettings.php for common problems.
 	 *
-	 *
-	 * @param boolean $repair Try to repair problems
-	 */
-	private function checkLocalSettings($repair, $format) {
+     */
+	private function checkLocalSettings($format) {
 
 		//
 		// check if LocalSettings.php exists
@@ -191,8 +188,6 @@ class ConsistencyChecker {
 		$errorFound = !file_exists($this->rootDir."/LocalSettings.php");
 		if ($errorFound) {
 			$this->statusLog[] = $this->out(array("\n","\t","[FAILED]", "LocalSettings.php does not exist", "\n"), $format);
-
-			if ($repair) $this->out(array("\n","\t","Cannot repair. Please create LocalSettings.php manually"), $format);
 			return true;
 		}
 		$this->statusLog[] = $this->out(array("\t", "done."), $format);
@@ -212,7 +207,7 @@ class ConsistencyChecker {
 		$errorFound =!file_exists($this->rootDir."/AdminSettings.php");
 		if ($errorFound) {
 			$this->statusLog[] = $this->out(array("\n","\t","[FAILED]", "AdminSettings.php does not exist", "\n"), $format);
-			if ($repair) $this->out(array("\n","\t","Cannot repair. Please create AdminSettings.php from AdminSettingsTemplate.php"), $format);
+			
 			return true;
 		}
 		$this->statusLog[] = $this->out(array("\t", "done."), $format);
@@ -233,7 +228,7 @@ class ConsistencyChecker {
 		$errorFound = trim($ls) == '';
 		if (trim($ls) == '') {
 			$this->statusLog[] = $this->out(array("\n","\t","[FAILED]", "LocalSettings.php exists but is empty", "\n"), $format);
-			if ($repair) $this->out(array("\n","\t","Cannot repair. Please create LocalSettings.php manually"), $format);
+			
 			return true;
 		}
 		$this->statusLog[] = $this->out(array("\t", "done."), $format);
@@ -288,21 +283,10 @@ class ConsistencyChecker {
 				$errorFound2 = true;
 				$this->statusLog[] = $this->out(array("\n","\t","[FAILED]","configuration for non-existing extension detected: $m"), $format);
 
-				if ($repair) {
-					// remove config from LocalSettings.php
-					$this->statusLog[] = "\n\tRepair...";
-					$start = strpos($ls, '/*start-'.$m.'*/');
-					$end = strpos($ls, '/*end-'.$m.'*/') + strlen('/*end-'.$m.'*/');
-					$ls = substr_replace($ls, "", $start, $end-$start);
-					$this->statusLog[] = $this->out(array("\n","done."), $format);
-				}
+				
 			}
 		}
-		if ($repair) {
-			$handle = fopen($this->rootDir."/LocalSettings.php", "wb");
-			fwrite($handle, $ls);
-			fclose($handle);
-		}
+		
 		if (!$errorFound2) {
 			$this->statusLog[] = $this->out(array("\n","\t","none."), $format);
 			$this->statusLog[] = $this->out(array("\n", "\t[OK]"), $format);
@@ -324,7 +308,7 @@ class ConsistencyChecker {
 			if ($freq > 1) {
 				$errorFound3 = true;
 				$this->statusLog[] = $this->out(array("\n","\t","[FAILED]","double registered extension detected: $ext"), $format);
-				if ($repair) $this->statusLog[] = $this->out(array("\n","\t","Cannot repair automatically. Please remove '$ext' manually"), $format);
+				
 			}
 		}
 		if (!$errorFound3) {
@@ -349,7 +333,7 @@ class ConsistencyChecker {
 			if ($freq > 1) {
 				$errorFound4 = true;
 				$this->statusLog[] = $this->out(array("\n","\t","[FAILED]"," double registered extension detected: $ext"), $format);
-				if ($repair) $this->statusLog[] = $this->out(array("\n","\t","Cannot repair automatically. Please remove '$ext' manually"), $format);
+				
 			}
 		}
 		if (!$errorFound4) {
@@ -369,7 +353,7 @@ class ConsistencyChecker {
 	 * Contains several specific tests on problems already occured. Can be extended in future.
 	 *
 	 */
-	private function checkSpecialConfigs($repair) {
+	private function checkSpecialConfigs() {
 		$ls = file_get_contents($this->rootDir."/LocalSettings.php");
 		preg_match_all('/(require|include)(_once)?\s*\(\s*["\']([^"\']*)["\']\s*\)/', $ls, $matches);
 		for($i = 0; $i < count($matches[3]); $i++) $matches[3][$i] = trim($matches[3][$i]);
@@ -379,12 +363,12 @@ class ConsistencyChecker {
 			if (strpos($ls, "SMWTripleStore") === false) {
 				$errorFound=true;
 				$this->statusLog[] = $this->out(array("\n","\t","[FAILED]","Rule extension installed but no triplestore is active."), $format);
-				if ($repair) $this->statusLog[] = $this->out(array("\n","\t","Cannot activate triplestore automatically. Please take a look in the manual."), $format);
+				
 			}
 		}
 	}
 
-	private function checkExistingExtensions($repair, $format, $addChecks = true) {
+	private function checkExistingExtensions($format, $addChecks = true) {
 		if (!$addChecks) return false;
 
 		global $wgExtensionCredits;
@@ -579,5 +563,10 @@ class ConsistencyChecker {
 	private function linkout($link) {
 		list($href, $label) = $link;
 		return "<div class=\"df_checkinst_links\"><a href=\"".htmlspecialchars($href)."\">$label</a></div>";
+	}
+	
+	
+	public function liftInstallation() {
+		//TODO: implement lifting
 	}
 }

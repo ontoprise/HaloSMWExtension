@@ -40,7 +40,7 @@ class SMWCheckInstallation extends SpecialPage {
 		$cc = new ConsistencyChecker($IP);
 		$errorsFound = false;
 		//$errorsFound |= $cc->checkDependencies(false, DF_OUTPUT_FORMAT_HTML);
-		$errorsFound |=$cc->checkInstallation(false, DF_OUTPUT_FORMAT_HTML);
+		$errorsFound |=$cc->checkInstallation(DF_OUTPUT_FORMAT_HTML);
 		$out = $cc->getStatusLog();
 		if ($errorsFound) {
 			$wgOut->addHTML('<div class="df_checkinst_error">ERRORS FOUND. check below.</div>');

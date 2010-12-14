@@ -21,7 +21,7 @@
  *
  * Checks installation for common problems.
  *
- * Usage:   php checkInstallation.php [ --repair | --onlydep | --help ]
+ * Usage:   php checkInstallation.php [ --onlydep | --help | --ext | --lift ]
  *
  * 	Process terminates with exit code 0 if all dependecies are fulfilled, otherwise 1.
  *
@@ -42,54 +42,76 @@ $mwRootDir = realpath($mwRootDir."/../../..");
 
 if (substr($mwRootDir, -1) != "/") $mwRootDir .= "/";
 
-$first = true;
+// parse parameters
+array_shift($argv); // remove path
 for( $arg = reset( $argv ); $arg !== false; $arg = next( $argv ) ) {
 
-			
-	if ($arg == '--repair') {
-		$repair = true;
+
+	if ($arg == '--ext') {
+		$dfAddChecks = true;
 		continue;
-	} else if ($arg == '--ext') {
-		$addChecks = true;
+	} else if ($arg == '--lift') {
+		$dfLift = true;
 		continue;
 	} else if ($arg == '--help') {
-		$help = true;
+		$dfHelp = true;
 		continue;
 	} else if ($arg == '--onlydep') {
-		$onlydep = true;
+		$dfOnlydep = true;
 		continue;
-	} else if (!$first) {
+	} else {
 		print "\n\nUnknown option: $arg\n";
 		die();
 	}
-	$first = false;
+
 }
 
-if (isset($help)) {
+// show help
+if (isset($dfHelp)) {
 	print "\n\nUsage";
 	print "\n\t <no option> : Shows all common problems";
 	print "\n\t --ext : Additional checks (requires working wiki in maintenance mode).";
+	print "\n\t --lift : Tries to make the existing installation compatible to the deployment framework.";
 	print "\n\t --onlydep : Checks only dependencies of deploy descriptors.";
 	print "\n\n";
 	die();
 }
 
+// initialize checker tool
 $cChecker = new ConsistencyChecker($mwRootDir);
-if (isset($onlydep)) {
-	$errorFound = $cChecker->checkDependencies($repair, DF_OUTPUT_FORMAT_TEXT);
+
+// lift installation
+if (isset($dfLift)) {
+	$mediaWikiLocation = dirname(__FILE__) . '/../../..';
+    require_once "$mediaWikiLocation/maintenance/commandLine.inc";
+    print "\nLift installation";
+    $cChecker->liftInstallation();
+    
+	die();
+}
+
+
+if (isset($dfOnlydep)) {
+	$errorFound = $cChecker->checkDependencies(DF_OUTPUT_FORMAT_TEXT);
 } else {
-	if (isset($addChecks)) {
+	if (isset($dfAddChecks)) {
 		$mediaWikiLocation = dirname(__FILE__) . '/../../..';
 		require_once "$mediaWikiLocation/maintenance/commandLine.inc";
-		
+
 	}
-	$errorFound = $cChecker->checkInstallation(isset($repair), DF_OUTPUT_FORMAT_TEXT, isset($addChecks));
+	$errorFound = $cChecker->checkInstallation(DF_OUTPUT_FORMAT_TEXT, isset($dfAddChecks));
 }
+
+// show log
 $statusLog = $cChecker->getStatusLog();
 foreach($statusLog as $s) print $s;
+
+// show error message
 if ($errorFound) {
- print "\n\nErrors found! See above.\n";
- } else {
- print "\n\nOK.\n";
- }
- die($errorFound ? 1 : 0);
+	print "\n\nErrors found! See above.\n";
+} else {
+	print "\n\nOK.\n";
+}
+
+// die with exit code != 0 if error
+die($errorFound ? 1 : 0);
