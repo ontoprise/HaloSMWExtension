@@ -178,7 +178,7 @@ class ConsistencyChecker {
 	/**
 	 * Checks LocalSettings.php for common problems.
 	 *
-     */
+	 */
 	private function checkLocalSettings($format) {
 
 		//
@@ -207,7 +207,7 @@ class ConsistencyChecker {
 		$errorFound =!file_exists($this->rootDir."/AdminSettings.php");
 		if ($errorFound) {
 			$this->statusLog[] = $this->out(array("\n","\t","[FAILED]", "AdminSettings.php does not exist", "\n"), $format);
-			
+
 			return true;
 		}
 		$this->statusLog[] = $this->out(array("\t", "done."), $format);
@@ -228,7 +228,7 @@ class ConsistencyChecker {
 		$errorFound = trim($ls) == '';
 		if (trim($ls) == '') {
 			$this->statusLog[] = $this->out(array("\n","\t","[FAILED]", "LocalSettings.php exists but is empty", "\n"), $format);
-			
+
 			return true;
 		}
 		$this->statusLog[] = $this->out(array("\t", "done."), $format);
@@ -283,10 +283,10 @@ class ConsistencyChecker {
 				$errorFound2 = true;
 				$this->statusLog[] = $this->out(array("\n","\t","[FAILED]","configuration for non-existing extension detected: $m"), $format);
 
-				
+
 			}
 		}
-		
+
 		if (!$errorFound2) {
 			$this->statusLog[] = $this->out(array("\n","\t","none."), $format);
 			$this->statusLog[] = $this->out(array("\n", "\t[OK]"), $format);
@@ -308,7 +308,7 @@ class ConsistencyChecker {
 			if ($freq > 1) {
 				$errorFound3 = true;
 				$this->statusLog[] = $this->out(array("\n","\t","[FAILED]","double registered extension detected: $ext"), $format);
-				
+
 			}
 		}
 		if (!$errorFound3) {
@@ -333,7 +333,7 @@ class ConsistencyChecker {
 			if ($freq > 1) {
 				$errorFound4 = true;
 				$this->statusLog[] = $this->out(array("\n","\t","[FAILED]"," double registered extension detected: $ext"), $format);
-				
+
 			}
 		}
 		if (!$errorFound4) {
@@ -363,7 +363,7 @@ class ConsistencyChecker {
 			if (strpos($ls, "SMWTripleStore") === false) {
 				$errorFound=true;
 				$this->statusLog[] = $this->out(array("\n","\t","[FAILED]","Rule extension installed but no triplestore is active."), $format);
-				
+
 			}
 		}
 	}
@@ -383,122 +383,122 @@ class ConsistencyChecker {
 					switch($name) {
 						case 'Semantic MediaWiki':
 
-							if (strpos($ls, 'start-smw') !== false) {
+							if (strpos($ls, '/*start-smw*/') !== false) {
 								$this->statusLog[] = $this->out(array("\n","\t","[FAILED]","Semantic Mediawiki is already installed."), $format);
 								$errorFound=true;
 							}
 							break;
 						case 'SMWHalo&nbsp;Extension':
 
-							if (strpos($ls, 'start-smwhalo') !== false) {
+							if (strpos($ls, '/*start-smwhalo*/') !== false) {
 								$this->statusLog[] = $this->out(array("\n","\t","[FAILED]","SMWHalo Extension is already installed."), $format);
 								$errorFound=true;
 							}
 							break;
 						case 'ScriptManager&nbsp;Extension':
-							if (strpos($ls, 'start-scriptmanager') !== false) {
+							if (strpos($ls, '/*start-scriptmanager*/') !== false) {
 								$this->statusLog[] = $this->out(array("\n","\t","[FAILED]","ScriptManager Extension is already installed."), $format);
 								$errorFound=true;
 							}
 							break;
 						case 'Rich&nbsp;Media&nbsp;Extension':
-							if (strpos($ls, 'start-richmedia') !== false) {
+							if (strpos($ls, '/*start-richmedia*/') !== false) {
 								$this->statusLog[] = $this->out(array("\n","\t","[FAILED]","Richmedia Extension is already installed."), $format);
 								$errorFound=true;
 							}
 							break;
 						case 'Semantic Forms':
-							if (strpos($ls, 'start-semanticforms') !== false) {
+							if (strpos($ls, '/*start-semanticforms*/') !== false) {
 								$this->statusLog[] = $this->out(array("\n","\t","[FAILED]","SemanticForms Extension is already installed."), $format);
 								$errorFound=true;
 							}
 							break;
 						case 'Semantic Forms Input Types':
-							if (strpos($ls, 'start-semanticformsinputs') !== false) {
+							if (strpos($ls, '/*start-semanticformsinputs*/') !== false) {
 								$this->statusLog[] = $this->out(array("\n","\t","[FAILED]","SemanticFormsInputs Extension is already installed."), $format);
 								$errorFound=true;
 							}
 							break;
 						case 'Semantic Notifications':
-							if (strpos($ls, 'start-semanticnotifications') !== false) {
+							if (strpos($ls, '/*start-semanticnotifications*/') !== false) {
 								$this->statusLog[] = $this->out(array("\n","\t","[FAILED]","Semantic Notifications Extension is already installed."), $format);
 								$errorFound=true;
 							}
 							break;
 						case 'Semantic Gardening extension':
-							if (strpos($ls, 'start-semanticgardening') !== false) {
+							if (strpos($ls, '/*start-semanticgardening*/') !== false) {
 								$this->statusLog[] = $this->out(array("\n","\t","[FAILED]","Semantic Gardening Extension is already installed."), $format);
 								$errorFound=true;
 							}
 							break;
 						case 'Semantic Result Formats':
-							if (strpos($ls, 'start-semanticresultsformats') !== false) {
+							if (strpos($ls, '/*start-semanticresultsformats*/') !== false) {
 								$this->statusLog[] = $this->out(array("\n","\t","[FAILED]","Semantic Result Formats Extension is already installed."), $format);
 								$errorFound=true;
 							}
 							break;
 						case 'SemanticRules&nbsp;Extension':
-							if (strpos($ls, 'start-semanticrules') !== false) {
+							if (strpos($ls, '/*start-semanticrules*/') !== false) {
 								$this->statusLog[] = $this->out(array("\n","\t","[FAILED]","Semantic Rules Formats Extension is already installed."), $format);
 								$errorFound=true;
 							}
 							break;
 						case 'Semantic Treeview':
-							if (strpos($ls, 'start-treeview') !== false) {
+							if (strpos($ls, '/*start-treeview*/') !== false) {
 								$this->statusLog[] = $this->out(array("\n","\t","[FAILED]","Treeview Formats Extension is already installed."), $format);
 								$errorFound=true;
 							}
 							break;
 						case 'WYSIWYG extension':
-							if (strpos($ls, 'start-wysiwyg') !== false) {
+							if (strpos($ls, '/*start-wysiwyg*/') !== false) {
 								$this->statusLog[] = $this->out(array("\n","\t","[FAILED]","WYSIWYG Extension is already installed."), $format);
 								$errorFound=true;
 							}
 							break;
 						case 'Semantic&nbsp;UltraPedia&nbsp;Extension':
-							if (strpos($ls, 'start-ultrapedia') !== false) {
+							if (strpos($ls, '/*start-ultrapedia*/') !== false) {
 								$this->statusLog[] = $this->out(array("\n","\t","[FAILED]","Ultrapedia Extension is already installed."), $format);
 								$errorFound=true;
 							}
 							break;
 						case 'LinkedData':
-							if (strpos($ls, 'start-linkeddata') !== false) {
+							if (strpos($ls, '/*start-linkeddata*/') !== false) {
 								$this->statusLog[] = $this->out(array("\n","\t","[FAILED]","LinkedData Extension is already installed."), $format);
 								$errorFound=true;
 							}
 							break;
 						case 'HaloACL':
-							if (strpos($ls, 'start-haloacl') !== false) {
+							if (strpos($ls, '/*start-haloacl*/') !== false) {
 								$this->statusLog[] = $this->out(array("\n","\t","[FAILED]","HaloACL Extension is already installed."), $format);
 								$errorFound=true;
 							}
 							break;
 						case 'Enhanced Retrieval extension':
-							if (strpos($ls, 'start-unifiedsearch') !== false) {
+							if (strpos($ls, '/*start-unifiedsearch*/') !== false) {
 								$this->statusLog[] = $this->out(array("\n","\t","[FAILED]","UnifiedSearch Extension is already installed."), $format);
 								$errorFound=true;
 							}
 							break;
 						case 'Data&nbsp;Import&nbsp;Extension':
-							if (strpos($ls, 'start-datatimport') !== false) {
+							if (strpos($ls, '/*start-datatimport*/') !== false) {
 								$this->statusLog[] = $this->out(array("\n","\t","[FAILED]","DataImport Extension is already installed."), $format);
 								$errorFound=true;
 							}
 							break;
 						case 'Collaboration':
-							if (strpos($ls, 'start-collaboration') !== false) {
+							if (strpos($ls, '/*start-collaboration*/') !== false) {
 								$this->statusLog[] = $this->out(array("\n","\t","[FAILED]","Collaboration Extension is already installed."), $format);
 								$errorFound=true;
 							}
 							break;
 						case 'Automatic&nbsp;Semantic&nbsp;Forms':
-							if (strpos($ls, 'start-automaticsemanticforms') !== false) {
+							if (strpos($ls, '/*start-automaticsemanticforms*/') !== false) {
 								$this->statusLog[] = $this->out(array("\n","\t","[FAILED]","Automatic Semanticforms Extension is already installed."), $format);
 								$errorFound=true;
 							}
 							break;
 						case 'ARCLibrary':
-							if (strpos($ls, 'start-arclibrary') !== false) {
+							if (strpos($ls, '/*start-arclibrary*/') !== false) {
 								$this->statusLog[] = $this->out(array("\n","\t","[FAILED]","ARCLibrary Extension is already installed."), $format);
 								$errorFound=true;
 							}
@@ -507,12 +507,12 @@ class ConsistencyChecker {
 						case 'StringFunctions':
 						case 'URL Arguments':
 						case 'Variables':
-							if (strpos($ls, 'start-applicationprogramming') !== false) {
+							if (strpos($ls, '/*start-applicationprogramming*/') !== false) {
 								$this->statusLog[] = $this->out(array("\n","\t","[FAILED]","Application programming Extension is already installed (or extensions which are contained in this)."), $format);
 								$errorFound=true;
 							}
 							break;
-								
+
 					}
 				}
 			}
@@ -564,9 +564,74 @@ class ConsistencyChecker {
 		list($href, $label) = $link;
 		return "<div class=\"df_checkinst_links\"><a href=\"".htmlspecialchars($href)."\">$label</a></div>";
 	}
-	
-	
+
+	/**
+	 * To lift an installation means to make it fit for the DF. That means:
+	 *
+	 * 	- create a deploy descriptor for the extension
+	 *  - change LocalSettings.php (add DF tags)
+	 *
+	 */
 	public function liftInstallation() {
-		//TODO: implement lifting
+
+		global $wgExtensionCredits;
+		global $smwgIP;
+		$ls = file_get_contents($this->rootDir."/LocalSettings.php");
+		$lifted = false;
+		foreach($wgExtensionCredits as $extType) {
+			foreach($extType as $ext) {
+					
+				if (array_key_exists('name', $ext)) {
+					$name = $ext['name'];
+					list($version) = explode(" ", $ext['version']);
+					$version = str_replace(".","", $version);
+					switch($name) {
+						case 'Semantic MediaWiki':
+
+							if (strpos($ls, '/*start-smw*/') === false) {
+
+								// create deploy descriptor
+								$dd = file_get_contents("resources/dd_templates/deploy_smw.xml");
+								$dd = str_replace("{{version}}", $version, $dd);
+								$this->statusLog[] = $this->out(array("\n","\t[done]","Creating SMW deploy descriptor."), $format);
+
+								$handle = fopen($smwgIP."deploy.xml", "w");
+								if ($handle !== false) {
+									fwrite($handle, $dd);
+									fclose($handle);
+								}
+
+								// change LocalSetings.php
+								$startIndex = strpos($ls, "/SemanticMediaWiki/includes/SMW_Settings.php");
+								if ($startIndex === false) {
+									$this->statusLog[] = $this->out(array("\n","\t[FAILED]","Adding DF tags to LocalSettings.php not possible.", "\n"), $format);
+									continue;
+								}
+								$startIndex = strrpos(substr($ls,0, $startIndex), "\n");
+								$endIndex = strpos($ls, "enableSemantics");
+								if ($endIndex === false) {
+									$this->statusLog[] = $this->out(array("\n","\t[FAILED]","Adding DF tags to LocalSettings.php not possible.", "\n"), $format);
+									continue;
+								}
+								$endIndex = strpos(substr($ls,$endIndex), "\n")+$endIndex;
+
+								$ls = substr($ls, 0, $startIndex) . "\n/*start-smw*/\n" . substr($ls, $startIndex, $endIndex-$startIndex) . "\n/*end-smw*/\n" . substr($ls, $endIndex);
+								$handle = fopen($this->rootDir."/LocalSettings.php", "w");
+								if ($handle !== false) {
+									fwrite($handle, $ls);
+									fclose($handle);
+								}
+								$this->statusLog[] = $this->out(array("\n","\t[done]","Adding DF tags to LocalSettings.php for SMW.", "\n"), $format);
+
+								$lifted=true;
+							}
+							break;
+					}
+				}
+			}
+		}
+		if (!$lifted) {
+			$this->statusLog[] = $this->out(array("\nNothing to do.\n"), $format);
+		}
 	}
 }

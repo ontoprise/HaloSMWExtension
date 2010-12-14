@@ -21,9 +21,14 @@
  *
  * Checks installation for common problems.
  *
- * Usage:   php checkInstallation.php [ --onlydep | --help | --ext | --lift ]
+ * Usage:   php checkInstallation.php [ --onlydep | --ext | --lift | --help ]
+ * 
+ *  --onlydep: Show only dependency issues
+ *  --ext: Do additional checks which require a working wiki.
+ *  --lift: Lift installation to be able to work with DF.
+ *  --help: Show help
  *
- * 	Process terminates with exit code 0 if all dependecies are fulfilled, otherwise 1.
+ * 	Process terminates with exit code 0 if no errors are found, otherwise 1.
  *
  * @author: Kai Kuehn / ontoprise / 2010
  */
@@ -83,10 +88,10 @@ $cChecker = new ConsistencyChecker($mwRootDir);
 // lift installation
 if (isset($dfLift)) {
 	$mediaWikiLocation = dirname(__FILE__) . '/../../..';
-    require_once "$mediaWikiLocation/maintenance/commandLine.inc";
-    print "\nLift installation";
-    $cChecker->liftInstallation();
-    
+	require_once "$mediaWikiLocation/maintenance/commandLine.inc";
+	$cChecker->liftInstallation();
+	$statusLog = $cChecker->getStatusLog();
+	foreach($statusLog as $s) print $s;
 	die();
 }
 
