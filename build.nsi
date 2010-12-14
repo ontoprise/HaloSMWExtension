@@ -1038,7 +1038,6 @@ Section "Uninstall"
     goto FinalExit
 
     Deinstall:
-    Call un.checkForApacheAndMySQLAndMemcached
 	# MessageBox MB_OK "User said OK!"
     
     ; Un-install services (if installed at all)
@@ -1047,6 +1046,8 @@ Section "Uninstall"
     
     ; Unregister scheduled task for lucene update
     nsExec::ExecToLog 'schtasks /delete /TN "LuceneIndexUpdate" /F'
+    
+    Call un.checkForApacheAndMySQLAndMemcached
     
     # Delete all start menu entries
     Delete "$SMPROGRAMS\$MUI_TEMP\Uninstall.lnk"
