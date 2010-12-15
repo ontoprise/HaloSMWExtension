@@ -39,10 +39,29 @@ Installation:
  
     It enables a special page for checking the integrity of the MW installation. 
     It is NOT required for using the deployment framework.
+    
+I already have SMW installed. Can I use the DF though?
+======================================================
+The DF requires extensions to have some metadata around. If you have SMW 
+installed manually and you want to use the DF you may "lift" your installation
+automatically. There is a tool called checkInstallation.php which can do that.
+
+(1) Open a console in admin mode and change to deployment/tools/maintenance
+(2) Run: 
+        php checkInstallation.php --lift
+          
+        (assuming php lies in your PATH variable)
+
+After that you can run smwadmin tool to see if it recognizes SMW as installed.
+
+    deployment/tools/smwadmin -l
+
+Note that the lifting process does only work for SMW. If you have other extensions
+that should be handled by the DF, you should remove them from the LocalSettings.php
+and re-install them via DF. They get overwritten then!
 
 HowTo use the deployment framework
 ==================================
-
 
 smwhalo admin utility v1.3, Ontoprise 2010
 
