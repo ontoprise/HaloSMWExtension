@@ -88,8 +88,9 @@ CKeditInterface.prototype = {
         // or category text there is a ancestor SPAN node. If this is not the
         // case, oSpan will be null. Then we create a new element. This will be
         // inserted at cursor position.
-        var oSpan = ckeditor.getSelection().getStartElement();
-        if (oSpan.$.nodeName.toUpperCase() == 'SPAN')
+        var selection = ckeditor.getSelection();
+        var oSpan = (selection) ? selection.getStartElement() : null;
+        if (oSpan && oSpan.$.nodeName.toUpperCase() == 'SPAN')
             ckeditor.getSelection().selectElement( oSpan )
         else
             oSpan = new CKEDITOR.dom.element( 'span', ckeditor.document );
@@ -219,8 +220,14 @@ CKeditInterface.prototype = {
         }
 
         // selection text only without any html mark up etc.
-        var ckSel = gEeditor.getSelection(),
-            browserSel = ckSel.getNative(),
+        var ckSel = gEeditor.getSelection();
+		if (ckSel == null) {
+			// nothing selected
+			gEselection[0] = '';
+			return gEselection;
+		}
+		
+        var browserSel = ckSel.getNative(),
             selTextCont;
 
         if(browserSel.createRange) {
@@ -248,7 +255,10 @@ CKeditInterface.prototype = {
         var goodNodes = ['P', 'B', 'I', 'U', 'S'];
 
         // selection is the same as the innerHTML -> no html was selected
-        if (selTextCont == html) {
+		// trim strings to compare
+		var tstc = selTextCont.replace(/^\s*(.*?)\s*$/,'$1');
+		var thtml = html.replace(/^\s*(.*?)\s*$/,'$1');
+        if (tstc == thtml) {
             // if the parent node is <a> or a <span> (property, category) then
             // we automatically select *all* of the inner html and the annotation
             // works for the complete node content (this is a must for these nodes)
