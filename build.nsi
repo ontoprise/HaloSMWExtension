@@ -18,7 +18,7 @@
 !include "LogicLib.nsh"
 !include "FileFunc.nsh"
 !include "TextFunc.nsh"
-!include "EnvVarUpdate.nsh"
+;!include "EnvVarUpdate.nsh"
 !insertmacro ConfigWrite
 !insertmacro GetFileName
 
@@ -549,10 +549,13 @@ Function checkForApacheAndMySQLAndMemcached
    FindProcDLL::FindProc "mysqld-nt.exe"
    IntOp $1 $1 + $R0
    FindProcDLL::FindProc "memcached.exe"
-   IntOp $2 $2 + $R0
+   IntOp $2 0 + $R0
+   FindProcDLL::FindProc "lucene-wiki.exe"
+   IntOp $3 0 + $R0
    ${If} $0 == 1
    ${OrIf} $1 == 1
    ${OrIf} $2 == 1
+   ${OrIf} $3 == 1
     MessageBox MB_ICONEXCLAMATION|MB_OKCANCEL $(STARTED_SERVERS) IDOK 0 IDCANCEL skipCheck
     goto checkagain
    ${EndIf}
@@ -806,8 +809,8 @@ Function configCustomizationsForNew
         DetailPrint "Import wiki database"
         nsExec::ExecToLog ' "$INSTDIR\import_smwplus_db.bat" "$INSTDIR" root m8nix semwiki_en "$INSTDIR\smwplus_database.sql" '
         
-        DetailPrint "Set php.exe in PATH Variable"
-        ${EnvVarUpdate} $0 "PATH" "A" "HKLM" "$INSTDIR\php" 
+        ;DetailPrint "Set php.exe in PATH Variable"
+        ;${EnvVarUpdate} $0 "PATH" "A" "HKLM" "$INSTDIR\php" 
 FunctionEnd
 
 
@@ -1015,9 +1018,12 @@ Function un.checkForApacheAndMySQLAndMemcached
    IntOp $1 $1 + $R0
    FindProcDLL::FindProc "memcached.exe"
    IntOp $2 0 + $R0
+   FindProcDLL::FindProc "lucene-wiki.exe"
+   IntOp $3 0 + $R0
    ${If} $0 == 1
    ${OrIf} $1 == 1
    ${OrIf} $2 == 1
+   ${OrIf} $3 == 1
     MessageBox MB_ICONEXCLAMATION|MB_OKCANCEL $(STARTED_SERVERS) IDOK 0 IDCANCEL skipCheck
     goto checkagain
    ${EndIf}
@@ -1052,7 +1058,7 @@ Section "Uninstall"
     Call un.checkForApacheAndMySQLAndMemcached
     
     # Delete from PATH variable
-    ${un.EnvVarUpdate} $0 "PATH" "R" "HKLM" "$INSTDIR\php"      
+    ;${un.EnvVarUpdate} $0 "PATH" "R" "HKLM" "$INSTDIR\php"      
     
     # Delete all start menu entries
     Delete "$SMPROGRAMS\$MUI_TEMP\Uninstall.lnk"
