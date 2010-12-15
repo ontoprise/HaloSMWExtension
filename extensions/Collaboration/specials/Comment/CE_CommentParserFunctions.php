@@ -158,10 +158,6 @@ class CECommentParserFunctions {
 				throw new CEException(CEException::INTERNAL_ERROR, __METHOD__ . ": Unknown value `{$status}` <br/>" );
 		}
 
-		$params = self::$mInstance->getParameters(func_get_args());
-		// handle the (optional) parameter "ratingstyle".
-		#list($style) = self::$mInstance->mStyle($params);
-		
 		$encPreComment = htmlspecialchars(wfMsg('ce_cf_predef'));
 		$comment_disabled = '';
 
@@ -255,7 +251,7 @@ class CECommentParserFunctions {
 			($userIsSysopJSText? $userIsSysopJSText : "") .
 			'/*]]>*/</script>';
 		SMWOutputs::requireHeadItem('CEJS_Variables3', $script);  
-		
+
 		$html = XML::openElement( 'div', array( 'id' => 'collabComFormHeader' )) .
 			XML::openElement( 'form', array( 'method' => 'post', 'id' => 'collabComForm',
 			'style' => 'display:none',		
@@ -268,8 +264,7 @@ class CECommentParserFunctions {
 				XML::openElement( 'div', array( 'id' => 'collabComFormUser') ) .
 					'<span class="userkey">' .wfMsg('ce_cf_author') . '</span>' . 
 					'<span class="uservalue">' . 
-						$parser->parse('[['.$wgUser->getUserPage()->getPrefixedText().'|'.$currentUser.']]',
-							$parser->mTitle, new ParserOptions(), false, true)->getText() . '</span>' .
+						$parser->recursiveTagParse('[['.$wgUser->getUserPage()->getPrefixedText().'|'.$currentUser.']]') . '</span>' .
 				XML::closeElement('div') .
 				$ratingHTML .
 				XML::openElement('div', array( 'id' => 'collabComFormHelp')) .
