@@ -18,7 +18,7 @@
 !include "LogicLib.nsh"
 !include "FileFunc.nsh"
 !include "TextFunc.nsh"
-;!include "EnvVarUpdate.nsh"
+!include "EnvVarUpdate.nsh"
 !insertmacro ConfigWrite
 !insertmacro GetFileName
 
@@ -794,10 +794,17 @@ Function configCustomizationsForNew
         StrCpy $WIKILOGO $DEFAULTLOGO
     updateLocalSettings:    
         ${GetFileName} $WIKILOGO $R0
+        DetailPrint "Configuring LocalSettings.php"
+        DetailPrint "Instdir: $INSTDIR\php\php.exe"
+        DetailPrint "Wikiname: $WIKINAME"
+        DetailPrint "Wikilang: $WIKILANG"
+        DetailPrint "Wikilogo: $WIKILOGO"
+        DetailPrint "Wikiskin: $WIKISKIN"
+   
+        SetOutPath "$INSTDIR\htdocs\mediawiki"
         nsExec::ExecToLog ' "$INSTDIR\php\php.exe" "$INSTDIR\htdocs\mediawiki\installer\changeLS.php" \
         wgSitename="$WIKINAME" wgDBname="semwiki_$WIKILANG" wgLogo=$$wgScriptPath/url:("$WIKILOGO") wgLanguageCode=$WIKILANG wgDefaultSkin="$WIKISKIN" \
         smwgAllowNewHelpQuestions="true" ls=LocalSettings.php'
-    
     
         DetailPrint "Starting XAMPP"
         CALL installMemcached
@@ -809,8 +816,8 @@ Function configCustomizationsForNew
         DetailPrint "Import wiki database"
         nsExec::ExecToLog ' "$INSTDIR\import_smwplus_db.bat" "$INSTDIR" root m8nix semwiki_en "$INSTDIR\smwplus_database.sql" '
         
-        ;DetailPrint "Set php.exe in PATH Variable"
-        ;${EnvVarUpdate} $0 "PATH" "A" "HKLM" "$INSTDIR\php" 
+        DetailPrint "Set php.exe in PATH Variable"
+        ${EnvVarUpdate} $0 "PATH" "A" "HKLM" "$INSTDIR\php" 
 FunctionEnd
 
 
@@ -1058,7 +1065,7 @@ Section "Uninstall"
     Call un.checkForApacheAndMySQLAndMemcached
     
     # Delete from PATH variable
-    ;${un.EnvVarUpdate} $0 "PATH" "R" "HKLM" "$INSTDIR\php"      
+    ${un.EnvVarUpdate} $0 "PATH" "R" "HKLM" "$INSTDIR\php"      
     
     # Delete all start menu entries
     Delete "$SMPROGRAMS\$MUI_TEMP\Uninstall.lnk"
