@@ -27,15 +27,26 @@ SMWEditInterface.prototype ={
 
 	},
 
+	/**
+	 * Sets the name of the edit area. All subsequent actions of the edit interface
+	 * will operate on the text area with this ID.
+	 * @param ean
+	 * 		ID of the edit area
+	 * 
+	 */
+	setEditAreaName: function (ean) {
+		this.editAreaName = ean;	
+	},
+	
 	focus: function(){
-		if ( $(editAreaName) && $(editAreaName).getStyle('display')!='none'){
-			$(editAreaName).focus();
+		if ( $(this.editAreaName) && $(this.editAreaName).getStyle('display')!='none'){
+			$(this.editAreaName).focus();
 		} 
 	},
 
 	setSelectionRange: function(start, end){
-		if ( $(editAreaName) && $(editAreaName).getStyle('display')!='none'){
-			SMWEditArea = $(editAreaName);
+		if ( $(this.editAreaName) && $(this.editAreaName).getStyle('display')!='none'){
+			SMWEditArea = $(this.editAreaName);
 			if (document.selection  && !is_gecko) {
 				var rng = SMWEditArea.createTextRange();
 				var text = rng.text;
@@ -67,8 +78,8 @@ SMWEditInterface.prototype ={
 	 * the end are skipped.
 	 */
 	selectCompleteAnnotation: function(){
-		if ( $(editAreaName) && $(editAreaName).getStyle('display')!='none'){
-			SMWEditArea = $(editAreaName);
+		if ( $(this.editAreaName) && $(this.editAreaName).getStyle('display')!='none'){
+			SMWEditArea = $(this.editAreaName);
 			var found = false;
 			if (document.selection  && !is_gecko) {
 				var rng = document.selection.createRange();
@@ -163,8 +174,8 @@ SMWEditInterface.prototype ={
 	},
 	
 	getSelectedText: function(){
-		if ( $(editAreaName) && $(editAreaName).getStyle('display')!='none'){
-			SMWEditArea = $(editAreaName);
+		if ( $(this.editAreaName) && $(this.editAreaName).getStyle('display')!='none'){
+			SMWEditArea = $(this.editAreaName);
 			if (document.selection  && !is_gecko) {
 				// IE - store the current range
 				var range = document.selection.createRange();
@@ -187,8 +198,8 @@ SMWEditInterface.prototype ={
 	},
 
 	setSelectedText: function(text){
-		if ( $(editAreaName) && $(editAreaName).getStyle('display')!='none'){
-			SMWEditArea = $(editAreaName);
+		if ( $(this.editAreaName) && $(this.editAreaName).getStyle('display')!='none'){
+			SMWEditArea = $(this.editAreaName);
 			if (document.selection  && !is_gecko) {
 				// IE
 				var theSelection = document.selection.createRange().text;
@@ -244,18 +255,18 @@ SMWEditInterface.prototype ={
 	},
 
 	getValue: function(){
-		if ( $(editAreaName) && $(editAreaName).getStyle('display')!='none')
-			return $(editAreaName).value;
+		if ( $(this.editAreaName) && $(this.editAreaName).getStyle('display')!='none')
+			return $(this.editAreaName).value;
 		return "";
 	},
 
 	setValue: function(text){
-		if ( $(editAreaName) && $(editAreaName).getStyle('display')!='none')
-			$(editAreaName).value = text;
+		if ( $(this.editAreaName) && $(this.editAreaName).getStyle('display')!='none')
+			$(this.editAreaName).value = text;
 	},
 
 	getTextBeforeCursor: function() {
-		if ( $(editAreaName) && $(editAreaName).getStyle('display')!='none'){
+		if ( $(this.editAreaName) && $(this.editAreaName).getStyle('display')!='none'){
 	        if (OB_bd.isIE) {
 				var selection_range = document.selection.createRange();
 

@@ -151,18 +151,27 @@ WikiTextParser.prototype = {
             if (typeof FCKeditor == 'undefined' && typeof CKEDITOR == 'undefined' ||
                 showFCKEditor && RTE_VISIBLE && !(showFCKEditor & RTE_VISIBLE) ) {
                 // no wiki text => retrieve from text area.
+
                 var txtarea;
             	if (document.editform) {
-        			txtarea = document.editform.wpTextbox1;
+        			txtarea = 'wpTextbox1';
     			} else {
-                    // some alternate form? take the first one we can find
-                	var areas = document.getElementsByTagName('textarea');
-            		txtarea = areas[0];
+					txtarea = document.getElementById('free_text');
+					if (typeof txtarea === 'undefined') {
+						// some alternate form? take the first one we can find
+						var areas = document.getElementsByTagName('textarea');
+						txtarea = areas[0];
+						txtarea = $(txtarea).readAttribute('id');
+					} else {
+						txtarea = 'free_text';
+					}
         		}
 	
     			if (gEditInterface == null) {
                     gEditInterface = new SMWEditInterface();
-                }
+                } else {
+					gEditInterface.setEditAreaName(txtarea);
+				}			
             }
 			this.editInterface = gEditInterface || new SMWEditInterface();
 			this.text = this.editInterface.getValue();
