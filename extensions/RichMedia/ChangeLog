@@ -6,12 +6,14 @@ VERSION 1.5
   CHANGES:
 	Issue 12237 - Text "Description page" changed to "File details"
 	Issue 12568. Disabled aggressively preload of all images in links to Special:EmbedWindow.
-	Issue 11837 - WebDAV now uses /imnages as upload directory
+	Issue 11837 - WebDAV now uses /images as upload directory
 	Added support for Semantic Forms 2.0
 	Provided new patches to let Rich Media extension be compatible with MediaWiki 1.16.
 
   BUGFIXES:
 	Issue 12322 - Key for error when uploading a filetype which is not permitted has changed
+	Issue 13262 - $wgEnableUploads is set to true by default
+	Issue 12816 - Upload on Special:Gardening now opens in overlay.
 
 
 VERSION 1.4.1
@@ -23,7 +25,6 @@ VERSION 1.4.1
 
 
   CHANGES:
-	* Removed dependency on SMWHalo.
 	* Update patches to be compatible with Semantic Forms 1.9.1
 
 

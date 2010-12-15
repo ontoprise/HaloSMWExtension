@@ -15,7 +15,7 @@
             <dependency from="152">smwhalo</dependency>
 			<dependency from="200" to="200">semanticforms</dependency>
 			<dependency from="101">scriptmanager</dependency>
-			<dependency from="100">applicationprogramming</dependency>
+			<dependency from="102">applicationprogramming</dependency>
 		</dependencies>
 	</global>
 	<codefiles>
