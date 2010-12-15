@@ -44,9 +44,10 @@
 				file="extensions/DataImport/IAI/includes/IAI_Initialize.php" />
 			<function name="enableIAI">
 			</function>
+			<script file="maintenance/DI_setup.php" params="" />
 		</new>
 		<uninstall>
-
+			<script file="maintenance/DI_setup.php" params="--delete" />
 		</uninstall>
 	</configs>
 </deploydescriptor>
