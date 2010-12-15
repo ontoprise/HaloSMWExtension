@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<deploydescriptor>
+    <global>
+        <version>{{version}}</version>
+        <patchlevel>1</patchlevel>
+        <id>semanticforms</id>
+        <vendor>Ontoprise GmbH / Yaron Koren</vendor>
+        <maintainer>Ontoprise GmbH</maintainer>
+        <instdir>extensions/SemanticForms</instdir>
+        <description>
+            Forms for adding and editing semantic data.
+        </description>
+		<helpurl>http://smwforum.ontoprise.com/smwforum/index.php/Help:Semantic_Forms_Extension</helpurl>
+        <dependencies>
+            <dependency from="1120" to="1169">MW</dependency>
+            <dependency from="142" to="152">smw</dependency>
+        </dependencies>
+    </global>
+    <codefiles>
+
+        <file loc="deploy.xml" />
+        <!-- TODO: add all others -->
+    </codefiles>
+    <wikidumps>
+        <!-- empty -->
+    </wikidumps>
+    <resources>
+        <!-- empty -->
+    </resources>
+
+    <configs>
+   
+        <new>
+            <require name="sf_init"
+                file="extensions/SemanticForms/includes/SF_Settings.php" />
+            <patch file="patch.txt" />
+        </new>
+         <update from="191">
+            <patch file="patch.txt" />
+         </update>
+         <uninstall>
+            <patch file="patch.txt" />
+         </uninstall>
+    </configs>
+
+</deploydescriptor>
+

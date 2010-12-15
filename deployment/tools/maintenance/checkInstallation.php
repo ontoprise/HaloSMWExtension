@@ -21,10 +21,10 @@
  *
  * Checks installation for common problems.
  *
- * Usage:   php checkInstallation.php [ --onlydep | --ext | --lift | --help ]
+ * Usage:   php checkInstallation.php [ --onlydep | --nowiki | --lift | --help ]
  * 
  *  --onlydep: Show only dependency issues
- *  --ext: Do additional checks which require a working wiki.
+ *  --nowiki: No wiki is initialized
  *  --lift: Lift installation to be able to work with DF.
  *  --help: Show help
  *
@@ -52,8 +52,8 @@ array_shift($argv); // remove path
 for( $arg = reset( $argv ); $arg !== false; $arg = next( $argv ) ) {
 
 
-	if ($arg == '--ext') {
-		$dfAddChecks = true;
+	if ($arg == '--nowiki') {
+		$dfNoWiki = true;
 		continue;
 	} else if ($arg == '--lift') {
 		$dfLift = true;
@@ -73,9 +73,9 @@ for( $arg = reset( $argv ); $arg !== false; $arg = next( $argv ) ) {
 
 // show help
 if (isset($dfHelp)) {
-	print "\n\nUsage";
+	print "\nUsage";
 	print "\n\t <no option> : Shows all common problems";
-	print "\n\t --ext : Additional checks (requires working wiki in maintenance mode).";
+	print "\n\t --nowiki : Do not initialize the wiki (less checks if wiki is broken).";
 	print "\n\t --lift : Tries to make the existing installation compatible to the deployment framework.";
 	print "\n\t --onlydep : Checks only dependencies of deploy descriptors.";
 	print "\n\n";
@@ -95,16 +95,16 @@ if (isset($dfLift)) {
 	die();
 }
 
-
+// normal checking
 if (isset($dfOnlydep)) {
 	$errorFound = $cChecker->checkDependencies(DF_OUTPUT_FORMAT_TEXT);
 } else {
-	if (isset($dfAddChecks)) {
+	if (!isset($dfNoWiki)) {
 		$mediaWikiLocation = dirname(__FILE__) . '/../../..';
 		require_once "$mediaWikiLocation/maintenance/commandLine.inc";
 
 	}
-	$errorFound = $cChecker->checkInstallation(DF_OUTPUT_FORMAT_TEXT, isset($dfAddChecks));
+	$errorFound = $cChecker->checkInstallation(DF_OUTPUT_FORMAT_TEXT, isset($dfNoWiki));
 }
 
 // show log
