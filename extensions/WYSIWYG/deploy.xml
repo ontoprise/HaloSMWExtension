@@ -12,6 +12,7 @@
 		<helpurl>http://smwforum.ontoprise.com/smwforum/index.php/Help:WYSIWYG_Extension</helpurl>
 		<dependencies>
             <dependency from="1160" to="1160">mw</dependency>
+			<dependency from="150" optional="true">smwhalo</dependency>
 		</dependencies>
 	</global>
 	<codefiles>
