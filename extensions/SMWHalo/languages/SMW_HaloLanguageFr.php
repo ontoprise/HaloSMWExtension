@@ -387,7 +387,7 @@ en cliquant sur les grosses flà¨ches situées entre les colonnes.",
     
     // Triple Store Admin
     'tsa' => 'Administration Triple Store',
-    'tsc_advertisment' => "Connecting the ontoprise products '''TripleStoreConnector Basic''' (free) or '''TripleStoreConnector Professional''' to a Wiki ultimately leads to getting better search results and to making use of data which lives outside this Wiki.  Click [http://smwforum.ontoprise.com/smwforum/index.php/Help:What_is_a_triple_store here] to read what your benefits are and to download a TripleStore.",
+    'tsc_advertisment' => "'''This special page helps you to administrate the Wiki to triplestore connection.'''<br><br>''You have no triplestore attached to this Wiki.''<br><br>You make this Wiki smarter by connecting a TripleStore to it!<br><br>Connecting the ontoprise products '''TripleStoreConnector Basic''' (free) or '''TripleStoreConnector Professional''' ultimately leads to getting better search results and to making use of data which lives outside this Wiki. <br><br> '''[http://smwforum.ontoprise.com/smwforum/index.php/List_of_Extensions/Triple_store_connector Click here to read what your benefits are and to download a TripleStore!]'''",
     'smw_tsa_welcome' => 'Cette page spéciale vous aide à  administrer le wiki/la connection triplestore.',
     'smw_tsa_couldnotconnect' => 'La connection vers le triple store est impossible.',
     'smw_tsa_notinitalized' => 'Votre wiki n\'est pas initialisé au triplestore.',
