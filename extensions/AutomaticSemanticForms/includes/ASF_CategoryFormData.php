@@ -26,8 +26,7 @@ class ASFCategoryFormData {
 	public function __construct($categoryTitleObject, $includedCategories = null){
 		$this->titleObject = $categoryTitleObject;
 
-		global $smwgBaseStore;
-		$store = new $smwgBaseStore();
+		$store = smwfNewBaseStore();
 		$this->semanticData = $store->getSemanticData($this->titleObject);
 		
 		$this->initializeFormCreationMetadata();

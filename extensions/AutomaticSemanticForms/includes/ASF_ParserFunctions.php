@@ -41,8 +41,7 @@ class ASFParserFunctions {
 	static function renderSilentAnnotationsTemplate( &$parser, $frame, $args) {
 		$result = "";
 		
-		global $smwgBaseStore;
-		$store = new $smwgBaseStore();
+		$store = smwfNewBaseStore();
 		
 		global $asfSilentAnnotations;
 		if(!is_array($asfSilentAnnotations)) $asfSilentAnnotations = array();

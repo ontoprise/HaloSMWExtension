@@ -38,8 +38,7 @@ class ASFPropertyFormData {
 	public function __construct($propertyTitleObject){
 		$this->titleObject = $propertyTitleObject;
 		
-		global $smwgBaseStore;
-		$store = new $smwgBaseStore();
+		$store = smwfNewBaseStore();
 		$this->semanticData = $store->getSemanticData($this->titleObject);
 		
 		$this->initializeFormCreationMetadata();
