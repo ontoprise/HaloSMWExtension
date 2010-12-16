@@ -86,6 +86,7 @@ class SMWFullSemanticData {
 		wfRunHooks('BeforeDerivedPropertyQuery', array(&$queryText) );
 		// Ask for all properties of the subject (derived and ground facts)
 		$q = SMWSPARQLQueryProcessor::createQuery($queryText, array());
+		$q->setLimit(500, false); // restrict the maximum of inferred facts to 500
 		$res = smwfGetStore()->getQueryResult($q); // SMWQueryResult
 		wfRunHooks('AfterDerivedPropertyQuery', array() );
 		wfRunHooks('FilterQueryResults', array(&$res, array('pred')) );
