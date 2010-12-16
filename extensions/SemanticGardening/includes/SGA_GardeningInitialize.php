@@ -25,7 +25,7 @@ $wgExtensionCredits['other'][] = array(
         'name' => 'Semantic Gardening extension',
 		'version'=> SGA_GARDENING_EXTENSION_VERSION,
         'author' => 'Kai K&uuml;hn',
-        'url' => 'http://sourceforge.net/projects/halo-extension/',
+        'url' => 'http://smwforum.ontoprise.com/smwforum/index.php/Help:Semantic_Gardening_Extension',
         'description' => 'Gardening keeps your wiki clean and consistent and is a basis for '.
             'several other features like term import, webservice import or semantic notifications.',
 );
