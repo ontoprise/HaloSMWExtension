@@ -3215,7 +3215,7 @@ PropertyList.prototype = {
 				this.pgroup[i] = pgroup;
 				this.subqueries[i] = (subqueries) ? subqueries : [];
 				this.type[i] = type;
-				this.range = (range) ? range : "";
+				this.range[i] = (range) ? range : "";
 				return;
 			}
 		}
