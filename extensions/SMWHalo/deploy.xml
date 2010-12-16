@@ -49,15 +49,11 @@
 			</function>
 			<variable name="wgUseAjax">
 				<boolean name="wgUseAjax"
-					description="enables ajax calls">
-					true
-				</boolean>
+					description="enables ajax calls">true</boolean>
 			</variable>
 			<variable name="wgDefaultSkin">
 				<string name="wgDefaultSkin"
-					description="Default skin used">
-					ontoskin3
-				</string>
+					description="Default skin used">ontoskin3</string>
 			</variable>
 			<script file="maintenance/SMW_setup.php" />
 		</new>
