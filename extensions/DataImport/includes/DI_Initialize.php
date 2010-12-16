@@ -178,7 +178,7 @@ function smwfDISetupExtension() {
 		// Register Credits
 		$wgExtensionCredits['parserhook'][]=array('name'=>'Data&nbsp;Import&nbsp;Extension', 'version'=>SMW_DI_VERSION,
 			'author'=>"Thomas&nbsp;Schweitzer, Ingo&nbsp;Steinbauer, Sascha&nbsp;Wagner and Daniel&nbsp;Hansch. Maintained by [http://www.ontoprise.de Ontoprise].", 
-			'url'=>'https://sourceforge.net/projects/halo-extension', 
+			'url'=>'http://smwforum.ontoprise.com/smwforum/index.php/Help:Data_Import_Extension', 
 			'description' => 'Allows to import data from a lot of different sources.');
 	}
 
