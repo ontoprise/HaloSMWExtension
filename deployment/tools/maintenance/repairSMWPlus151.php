@@ -49,7 +49,7 @@ function deleteLinkedData($mw_root) {
 	Tools::remove_dir($mw_root."/extensions/LinkedData");
 }
 
-print "\nDo you use SMW+ 1.5.1? Please say only yes if you use it, otherwise it might harm your system. (y)/(n)";
+print "\nDo you use SMW+ 1.5.1? Please answer 'y' to fix some known issues ";
 $line = trim(fgets(STDIN));
 if ($line != 'y') exit;
 
