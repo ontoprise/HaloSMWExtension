@@ -161,10 +161,23 @@ class SMWFullSemanticData {
 								$isDerived = false;
 								break;
 							}
-						} else {
+
+							// special handling for _num because triplestore adds .0 to any int number. 
+						} else if ($dv->getTypeID() == '_num' && $v->getTypeID() == '_num') {
+                            // compare first dbkeys
+                            $v1_dbkeys = $dv->getDBkeys();
+                            $v2_dbkeys = $v->getDBkeys();
+                            $v1 = array_shift($v1_dbkeys);
+                            $v2 = array_shift($v2_dbkeys);
+                            if ($v1 == $v2 || $v1.".0" == $v2) {
+                                $isDerived = false;
+                                break;
+                            }
+                        } else {
                             // all other datavalues
                             $v1_dbkeys = $dv->getDBkeys();
 							$v2_dbkeys = $v->getDBkeys();
+						
 							if (count(array_diff($v1_dbkeys, $v2_dbkeys)) == 0) {
 								$isDerived = false;
 								break;
