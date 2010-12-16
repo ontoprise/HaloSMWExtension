@@ -71,7 +71,7 @@ function arclibfSetupExtension() {
         'name'=>'ARCLibrary',
         'version'=>ARCLIB_ARCLIBRARY_VERSION,
         'author'=>"Benjamin Novack, Ingo Steinbauer",
-        'url'=>'http://smwforum.ontoprise.com',
+        'url'=>'http://smwforum.ontoprise.com/smwforum/index.php/Help:ARCLibrary_extension',
         'description' => 'Provides ARC library to other MW extensions.');
 
     wfProfileOut('arclibfSetupExtension');
