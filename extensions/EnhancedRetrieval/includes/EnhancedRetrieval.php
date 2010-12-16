@@ -22,7 +22,7 @@ $wgExtensionCredits['other'][] = array(
         'name' => 'Enhanced Retrieval extension',
 		'version' => US_SEARCH_EXTENSION_VERSION,
         'author' => 'Kai K&uuml;hn',
-        'url' => 'http://sourceforge.net/projects/halo-extension/',
+        'url' => 'http://smwforum.ontoprise.com/smwforum/index.php/Help:Enhanced_Retrieval_Extension',
         'description' => 'Provides access to a Lucene backend.',
 );
 
