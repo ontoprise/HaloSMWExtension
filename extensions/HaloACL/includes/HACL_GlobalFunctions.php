@@ -202,7 +202,7 @@ function haclfSetupExtension() {
         'name'=>'HaloACL',
         'version'=>HACL_HALOACL_VERSION,
         'author'=>"Thomas Schweitzer",
-        'url'=>'http://smwforum.ontoprise.de',
+        'url'=>'http://smwforum.ontoprise.com/smwforum/index.php/Help:Access_Control_List_extension',
         'description' => 'Protect the content of your wiki.');
 
     // Register autocompletion icon
