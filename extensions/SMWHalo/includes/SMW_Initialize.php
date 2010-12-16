@@ -132,7 +132,8 @@ function smwgHaloSetupExtension() {
 	$wgAutoloadClasses['SMWChemicalFormulaTypeHandler'] = $smwgHaloIP . '/includes/SMW_DV_ChemFormula.php';
 	$wgAutoloadClasses['SMWChemicalEquationTypeHandler'] = $smwgHaloIP . '/includes/SMW_DV_ChemEquation.php';
 	$wgAutoloadClasses['SMWMathematicalEquationTypeHandler'] = $smwgHaloIP . '/includes/SMW_DV_MathEquation.php';
-
+	$wgAutoloadClasses['SMWIsExtensionInstalledPF'] = $smwgHaloIP . '/includes/SMW_IsExtensionInstalledPF.php';
+	
 	require_once $smwgHaloIP.'/includes/queryprinters/SMW_QP_Halo.php';
 
 	global $smwgResultFormats;
@@ -142,7 +143,9 @@ function smwgHaloSetupExtension() {
 	$smwgResultFormats['aggregation'] = 'SMWAggregationResultPrinter';
 	$smwgResultFormats['csv'] = 'SMWHaloCsvResultPrinter';
 
-
+	//Set up the IsExtensionInstalled PG
+	$wgHooks['ParserFirstCallInit'][] = 'SMWIsExtensionInstalledPF::registerFunctions';
+	$wgHooks['LanguageGetMagic'][] = 'SMWIsExtensionInstalledPF::languageGetMagic';
 
 	#
 	# Handle webservice calls.
