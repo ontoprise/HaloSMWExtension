@@ -1533,9 +1533,9 @@ class HACLStorageSQL {
 		$gmt = $db->tableName('halo_acl_group_members');
 
                 if($extendWhere != null){
-                    $sql = "SELECT DISTINCT page_id, page_title FROM $ut WHERE lower(page_title) LIKE lower('%$subName%') AND page_namespace = '$extendWhere'";
+                    $sql = "SELECT DISTINCT page_id, page_title FROM $ut WHERE lower(CONVERT(page_title USING latin1)) LIKE lower('%$subName%') AND page_namespace = '$extendWhere'";
                 }else{
-                    $sql = "SELECT DISTINCT page_id, page_title FROM $ut WHERE lower(page_title) LIKE lower('%$subName%')";
+                    $sql = "SELECT DISTINCT page_id, page_title FROM $ut WHERE lower(CONVERT(page_title USING latin1)) LIKE lower('%$subName%')";
                 }
                 if($noACLs){
                 	global $haclgNamespaceIndex;
