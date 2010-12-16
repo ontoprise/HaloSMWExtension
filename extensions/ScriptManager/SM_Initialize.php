@@ -41,7 +41,7 @@ function smgSetupExtension() {
 	// Register Credits
     $wgExtensionCredits['parserhook'][]= array('name'=>'ScriptManager&nbsp;Extension', 'version'=>SCM_VERSION,
             'author'=>"Kai&nbsp;K&uuml;hn. Maintained by [http://www.ontoprise.de Ontoprise].", 
-            'url'=>'https://sourceforge.net/projects/halo-extension', 
+            'url'=>'http://smwforum.ontoprise.com/smwforum/index.php/Help:Script_Manager_Extension',
             'description' => 'Organizes javascript libraries.');
 }
 
