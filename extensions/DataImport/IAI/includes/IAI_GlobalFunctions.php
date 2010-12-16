@@ -105,7 +105,7 @@ iaifStartLog("enableIAI");
         'name'=>'IAI',
         'version'=>IAI_VERSION,
         'author'=>"Thomas Schweitzer",
-        'url'=>'http://smwforum.ontoprise.de',
+        'url'=>'http://smwforum.ontoprise.com/smwforum/index.php/Help:Data_Import_Extension',
         'description' => 'Import articles from other Mediawikis.');
 
     wfProfileOut('iaifSetupExtension');
