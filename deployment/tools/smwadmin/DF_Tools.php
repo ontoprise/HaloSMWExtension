@@ -229,7 +229,7 @@ class Tools {
 			$touched2 = touch("/tmp/foo_bar_test");
 			exec('rm /tmp/foo_bar_test', $output, $ret2);
 			$removed = ($ret == 0) && ($ret2 == 0);
-			
+
 			// if true, we can assume that the user has proper rights
 			if ($removed && $touched && $touched2) return true;
 		}
@@ -379,9 +379,14 @@ class Tools {
 		}
 
 		$pDependencyTypes = reset(smwfGetStore()->getPropertyValues( $pDependency->getWikiPageValue(), SMWPropertyValue::makeProperty( '_LIST' ) ));
-		$typeIDs = explode(";",reset($pDependencyTypes->getDBkeys()));
-		if (count($typeIDs) != 3) {
-			print "\n'".$pDependencyTitle->getPrefixedText()."' wrong number of fields.";
+		if ($pDependencyTypes !== false) {
+			$typeIDs = explode(";",reset($pDependencyTypes->getDBkeys()));
+			if (count($typeIDs) != 3) {
+				print "\n'".$pDependencyTitle->getPrefixedText()."' wrong number of fields.";
+				$check = false;
+			}
+		} else {
+			print "\nCould not read fields of '".$pDependencyTitle->getPrefixedText();
 			$check = false;
 		}
 		list($ext_id, $from, $to) = $typeIDs;
