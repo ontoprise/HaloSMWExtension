@@ -42,15 +42,18 @@ Installation:
     
 I already have SMW installed. Can I use the DF though?
 ======================================================
-The DF requires extensions to have some metadata around. If you have SMW 
+The DF requires extensions to have some metadata around. If you have SMW and/or SemanticForms
 installed manually and you want to use the DF you may "lift" your installation
 automatically. There is a tool called checkInstallation.php which can do that.
 
+(the following instructions assume the "php" command lies in your PATH variable)
+
 (1) Open a console in admin mode and change to deployment/tools/maintenance
-(2) Run: 
+(2) Run: php checkInstallation.php
+        The tools does some checks and tell you if there are extensions to be lifted.
+(2) If that is the case, run:
+ 
         php checkInstallation.php --lift
-          
-        (assuming php lies in your PATH variable)
 
 After that you can run smwadmin tool to see if it recognizes SMW as installed.
 
