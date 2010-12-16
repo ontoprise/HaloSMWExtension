@@ -579,6 +579,8 @@ class ConsistencyChecker {
 		}
 		if (!$lifted) {
 			$this->statusLog[] = $this->out(array("\nNothing to do.\n"), $format);
+		} else {
+			$this->statusLog[] = $this->out(array("\nPlease visit: http://smwforum.ontoprise.com/smwforum/index.php/Help:Lifting_installation_for_use_with_DF\n"), $format);
 		}
 	}
 
