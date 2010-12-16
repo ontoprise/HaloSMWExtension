@@ -6,7 +6,7 @@
  * @defgroup AnomaliesBot
  * @ingroup SemanticGardeningBots
  * 
- * @author Kai Kühn
+ * @author Kai Kï¿½hn
  * 
  * Created on 18.06.2007
  *
@@ -32,6 +32,8 @@ if ( !defined( 'MEDIAWIKI' ) ) die;
  	// global log which contains wiki-markup
  	private $globalLog;
  	private $store;
+ 	
+ 	private $formerSuperCategories = array();
  	
  	function AnomaliesBot() {
  		parent::GardeningBot("smw_anomaliesbot");
@@ -341,7 +343,7 @@ if ( !defined( 'MEDIAWIKI' ) ) die;
  	/**
  	 * Removes all category leaves
  	 */
- 	public function removeCategoryLeaves($categories = NULL, array & $deletedCategories) {
+ 	public function removeCategoryLeaves($categories = NULL, array &$deletedCategories) {
  		$db =& wfGetDB( DB_SLAVE );
  		$mw_page = $db->tableName('page');
 	 	$categorylinks = $db->tableName('categorylinks');
@@ -365,17 +367,23 @@ if ( !defined( 'MEDIAWIKI' ) ) die;
 		
 		$db->freeResult($res);
  		} else {
- 				
- 				$result = $this->getCategoryLeafsBelow($categories, $db);
-		
+ 			$result = $this->getCategoryLeafsBelow($categories, $db);
+			
+ 			if(count($result) > 0){
+	 			foreach($categories as $c){
+	 				$this->formerSuperCategories[$c->getText()] = true;
+	 			}
+ 			}
+ 			
+ 			foreach($result as $c) {
+				if(array_key_exists($c->getText(), $this->formerSuperCategories)) continue;
 				
-				foreach($result as $c) {
-					$superCatgeories = smwfGetSemanticStore()->getDirectSuperCategories($c);
-					$deletedCategories[] = array($c, $superCatgeories);
-					$categoryArticle = new Article($c);
-					$categoryArticle->doDeleteArticle(wfMsg('smw_gard_category_leaf_deleted', $categoryTitle->getText()));
-				}
+				$superCatgeories = smwfGetSemanticStore()->getDirectSuperCategories($c);
+				$deletedCategories[] = array($c, $superCatgeories);
+				$categoryArticle = new Article($c);
+				$categoryArticle->doDeleteArticle(wfMsg('smw_gard_category_leaf_deleted', $c->getText()));
 			}
+		}
 			
  		
 		
