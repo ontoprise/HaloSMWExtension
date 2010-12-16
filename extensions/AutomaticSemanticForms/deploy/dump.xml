@@ -1,0 +1,239 @@
+<mediawiki xmlns="http://www.mediawiki.org/halowikiexport/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.ontoprise.de/halowikiexport-1.0.xsd" version="1.0" xml:lang="en">
+  <siteinfo>
+    <sitename>Halo3wiki</sitename>
+    <base>http://localhost/mediawiki/index.php/Main_Page</base>
+    <generator>MediaWiki 1.16.0</generator>
+    <case>first-letter</case>
+    <namespaces>
+      <namespace key="-2" case="first-letter">Media</namespace>
+      <namespace key="-1" case="first-letter">Special</namespace>
+      <namespace key="0" case="first-letter" />
+      <namespace key="1" case="first-letter">Talk</namespace>
+      <namespace key="2" case="first-letter">User</namespace>
+      <namespace key="3" case="first-letter">User talk</namespace>
+      <namespace key="4" case="first-letter">Halo3wiki</namespace>
+      <namespace key="5" case="first-letter">Halo3wiki talk</namespace>
+      <namespace key="6" case="first-letter">File</namespace>
+      <namespace key="7" case="first-letter">File talk</namespace>
+      <namespace key="8" case="first-letter">MediaWiki</namespace>
+      <namespace key="9" case="first-letter">MediaWiki talk</namespace>
+      <namespace key="10" case="first-letter">Template</namespace>
+      <namespace key="11" case="first-letter">Template talk</namespace>
+      <namespace key="12" case="first-letter">Help</namespace>
+      <namespace key="13" case="first-letter">Help talk</namespace>
+      <namespace key="14" case="first-letter">Category</namespace>
+      <namespace key="15" case="first-letter">Category talk</namespace>
+      <namespace key="102" case="first-letter">Property</namespace>
+      <namespace key="103" case="first-letter">Property talk</namespace>
+      <namespace key="104" case="first-letter">Type</namespace>
+      <namespace key="105" case="first-letter">Type talk</namespace>
+      <namespace key="106" case="first-letter">Form</namespace>
+      <namespace key="107" case="first-letter">Form talk</namespace>
+      <namespace key="108" case="first-letter">Concept</namespace>
+      <namespace key="109" case="first-letter">Concept talk</namespace>
+      <namespace key="120" case="first-letter">Document</namespace>
+      <namespace key="121" case="first-letter">Document talk</namespace>
+      <namespace key="122" case="first-letter">Audio</namespace>
+      <namespace key="123" case="first-letter">Audio talk</namespace>
+      <namespace key="124" case="first-letter">Video</namespace>
+      <namespace key="125" case="first-letter">Video talk</namespace>
+      <namespace key="126" case="first-letter">Pdf</namespace>
+      <namespace key="127" case="first-letter">Pdf talk</namespace>
+      <namespace key="128" case="first-letter">ICalendar</namespace>
+      <namespace key="129" case="first-letter">ICalendar talk</namespace>
+      <namespace key="130" case="first-letter">VCard</namespace>
+      <namespace key="131" case="first-letter">VCard talk</namespace>
+      <namespace key="200" case="first-letter">WebService</namespace>
+      <namespace key="201" case="first-letter">WebService talk</namespace>
+      <namespace key="202" case="first-letter">TermImport</namespace>
+      <namespace key="203" case="first-letter">TermImport talk</namespace>
+      <namespace key="220" case="first-letter">E-mail</namespace>
+      <namespace key="221" case="first-letter">E-mail talk</namespace>
+      <namespace key="400" case="first-letter">IAI</namespace>
+      <namespace key="401" case="first-letter">IAI talk</namespace>
+    </namespaces>
+  </siteinfo>
+  <page>
+    <title>Property:Use input type</title>
+    <id>133</id>
+    <revision>
+      <id>205</id>
+      <timestamp>2010-12-15T10:30:13Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <text xml:space="preserve">The Automatic Semantic Forms Extension detects the form input field type for a property based on the property's characteristics, e.g. its ''Has type'' value. You can use the ''Use input type'' annotation, if you want to choose a different form field input type than the one which is automatically chosen, e.g. ''radiobutton'' instead of dropdown.
+
+[[Has type::Type:Text| ]] [[Has max cardinality::1| ]] [[Part of bundle::Automaticsemanticforms| ]]</text>
+    <hash>d2fe2d6970bf45b16ca726bada546d0c</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Is uploadable</title>
+    <id>134</id>
+    <revision>
+      <id>206</id>
+      <timestamp>2010-12-15T10:30:57Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <text xml:space="preserve">The Automatic Semantic Forms Extension will add a file upload button next to a property's form input field if the property has the ''Is uploadable::true'' annotation.
+
+[[Has type::Type:Boolean| ]] [[Has max cardinality::1| ]] [[Part of bundle::Automaticsemanticforms| ]]</text>
+    <hash>b94e1442750233d136099b654d74bc82</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Form input help</title>
+    <id>135</id>
+    <revision>
+      <id>207</id>
+      <timestamp>2010-12-15T10:31:45Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <text xml:space="preserve">The Automatic Semantic Forms Extension will add a help icon with a help message next to a property's form input field if the property has the ''Form input help'' annotation. The value of the annotation will be shown as a tooltip, if a user hoovers over the help icon.
+
+[[Has type::Type:Text| ]] [[Has max cardinality::1| ]] [[Part of bundle::Automaticsemanticforms| ]]</text>
+    <hash>a11cb8a1c69f7f074b7e35d870d95766</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Delimiter</title>
+    <id>136</id>
+    <revision>
+      <id>208</id>
+      <timestamp>2010-12-15T10:32:53Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <text xml:space="preserve">The Automatic Semantic Forms Extension by defautl chooses a comma as delimiter for form input fields. You can use ''Delimiter'' annotation for a property if you want to choose a special delimiter for that property's form input field.
+
+[[Has type::Type:Text| ]] [[Has max cardinality::1| ]] [[Part of bundle::Automaticsemanticforms| ]]</text>
+    <hash>acc83c65f333505680d2178b796a51f5</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Field sequence number</title>
+    <id>137</id>
+    <revision>
+      <id>209</id>
+      <timestamp>2010-12-15T10:34:12Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <text xml:space="preserve">The Automatic Semantic Forms Extension orders form input fields for properties alphabetically. This may be inappropriate in some cases. You can use the ''Field sequence number'' annotation on property articles to reorder their form input fields. Properties with a lower field sequence number will be shown before those with a higher one.
+
+[[Has type::Type:Number| ]] [[Has max cardinality::1| ]] [[Part of bundle::Automaticsemanticforms| ]]</text>
+    <hash>d9c4c7d53611c367f7a835932eaebcd7</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Default value</title>
+    <id>138</id>
+    <revision>
+      <id>210</id>
+      <timestamp>2010-12-15T10:35:19Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <text xml:space="preserve">You can use this property to annotate a property article, if you want that the form input field for that property contains a default value in an automatically created Semantic Form. The value of the annotation will be used as default value.
+
+[[Has type::Type:Text| ]] [[Has max cardinality::1| ]] [[Part of bundle::Automaticsemanticforms| ]]</text>
+    <hash>c23b8c4a84808ac91cf58333376b9db0</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Validator</title>
+    <id>139</id>
+    <revision>
+      <id>211</id>
+      <timestamp>2010-12-15T10:36:16Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <text xml:space="preserve">The Semantic Forms Input Extension enables you to attach a regular expression to a form input field in order to validate a user's input. Use the ''Validator'' property to annotate a property, if you want to validate a user's input into the property's form input field in an automatically created Semantic form with a regular expression. The Semantic Forms Input Extension must be installed.
+
+[[Has type::Type:Text| ]] [[Has max cardinality::1|| ]] [[Part of bundle::Automaticsemanticforms| ]]</text>
+    <hash>47c73fbdc2915368cfd03e74e0583aba</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Property:No automatic formedit</title>
+    <id>140</id>
+    <revision>
+      <id>212</id>
+      <timestamp>2010-12-15T10:46:52Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <text xml:space="preserve">Use this property to annotate a category if you don't want that Semantic Forms are created automatically for instances in this category. Please note, that this annotation is not inherited to subcategories.
+
+[[Has type::Type:Boolean| ]] [[Has max cardinality::1| ]][[Part of bundle::Automaticsemanticforms| ]]</text>
+    <hash>8eefd4a7266d2ebe0e4e12b7b47eba97</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Use display template</title>
+    <id>141</id>
+    <revision>
+      <id>213</id>
+      <timestamp>2010-12-15T10:49:07Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <text xml:space="preserve">The Automatic Semantic Forms Extension creates silent annotations, i.e. ammotations that are only displayed in the factbox and not in the rendered article. Use the ''Use display template'' to assign a template to a category so that the data which is entered for that category is displayed via a template. The template then will be added to the rendered article and it will be populated with the data, which was entered in the form.
+
+[[Has type::Type:Text| ]] [[Has max cardinality::1| ]] [[Part of bundle::Automaticsemanticforms| ]]</text>
+    <hash>174b895a1d688be00c9b34614179692f</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Use class</title>
+    <id>142</id>
+    <revision>
+      <id>214</id>
+      <timestamp>2010-12-15T10:49:58Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <text xml:space="preserve">One can use this property to annotate a category or a property in order to tell the Automatic Semantic Forms Extension to use a specific CSS-class when creating a property's input field, respectively a category's table of input fields.
+
+[[Has type::Type:Text| ]] [[Has max cardinality::1| ]] [[Part of bundle::Automaticsemanticforms| ]]</text>
+    <hash>5fd8b8c02b0d27240a3191017bd85698</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Automaticsemanticforms</title>
+    <id>143</id>
+    <revision>
+      <id>219</id>
+      <timestamp>2010-12-16T09:09:14Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <text xml:space="preserve">* Ontology version: [[Ontology version::100]] 
+* Install dir: [[Installation dir::extensions/AutomaticSemanticForms]] 
+* Vendor: [[Vendor::Ontoprise]] 
+* Description: [[Description::This bundle contains build-in properties used by the Automatic Semantic Forms Extension.]]
+
+[[Part of bundle::Automaticsemanticforms| ]]</text>
+    <hash>29f4bad4307af2895be6b35c56ff3a00</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Form input label</title>
+    <id>144</id>
+    <revision>
+      <id>204</id>
+      <timestamp>2010-12-15T10:28:58Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <text xml:space="preserve">When the Automatic Semantic Forms Extension creates a form input field for a property, then it uses the property's name as lable for the form input field. If the property for which the form input field is created has a ''Form input label'' annotation, then the value of this annotation instead will be used as label.
+
+[[Has type::Type:Text| ]] [[Has max cardinality::1| ]] [[Part of bundle::Automaticsemanticforms| ]]</text>
+    <hash>82da91214b32e075d211c132cd82de0e</hash>
+    </revision>
+  </page>
+</mediawiki>
