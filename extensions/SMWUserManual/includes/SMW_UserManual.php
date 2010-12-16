@@ -16,7 +16,8 @@ if ( !defined( 'MEDIAWIKI' ) ) die;
 define('SMW_USER_MANUAL_VERSION', '{{$VERSION}} [B{{$BUILDNUMBER}}]');
 
 $wgExtensionCredits['other'][] = array(
-    'name' => 'SMW User Manual v'.SMW_USER_MANUAL_VERSION,
+    'name' => 'SMW User Manual',
+    'version' => SMW_USER_MANUAL_VERSION,
     'author' => 'Ontoprise',
     'url' => 'http://smwforum.ontoprise.com/smwforum/index.php/Help:Semantic_MediaWiki_User_Manual',
     'description' => 'A context sensitive help for SemanticMediaWiki, '.
