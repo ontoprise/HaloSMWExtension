@@ -92,7 +92,7 @@ function ruleSetupExtension() {
 
 	$wgExtensionCredits['parserhook'][]= array('name'=>'SemanticRules&nbsp;Extension', 'version'=>SEMANTIC_RULES_VERSION,
             'author'=>"Thomas&nbsp;Schweitzer, Kai&nbsp;K&uuml;hn. Maintained by [http://www.ontoprise.de Ontoprise].", 
-            'url'=>'https://sourceforge.net/projects/halo-extension', 
+            'url'=>'http://smwforum.ontoprise.com/smwforum/index.php/Help:Rule_Knowledge_Extension',
             'description' => 'Enables the power of rules to SMWHalo');
 
 
