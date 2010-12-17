@@ -1636,7 +1636,7 @@ class WebService {
 	public function getTriplificationSubject(){
 		$xml = new SimpleXMLElement($this->mResult);
 		$tmp = $xml->xpath("//triplification/@subject");
-		if(array_key_exists(0, $tmp)){
+		if((is_array($tmp) || is_object($tmp)) && array_key_exists(0, $tmp)){
 			return ''.$tmp[0];
 		}
 		return null;
