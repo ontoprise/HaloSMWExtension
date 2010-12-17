@@ -5,7 +5,7 @@
  * 
  * Created on 28.03.2007
  *
- * @author Kai Kühn
+ * @author Kai Kï¿½hn
  */
  define('SMW_GARD_PARAM_REQUIRED', 1);
  define('SMW_GARD_PARAM_OPTIONAL' , 2);
@@ -307,7 +307,7 @@
  	public function validate($value) {
  		if ($value == null && ($this->options & SMW_GARD_PARAM_REQUIRED) != 0) {
  			return wfMsg('smw_gard_missing_parameter');
- 		} else if (value != null && !in_array($value, $this->listOfValues) && ($this->options & SMW_GARD_PARAM_REQUIRED) != 0) {
+ 		} else if ($value != null && !in_array($value, $this->listOfValues) && ($this->options & SMW_GARD_PARAM_REQUIRED) != 0) {
  			return wfMsg('smw_unknown_value');
  		}
  		return true;
