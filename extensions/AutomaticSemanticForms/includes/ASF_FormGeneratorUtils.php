@@ -17,7 +17,9 @@ class ASFFormGeneratorUtils {
 		if(array_key_exists($propertyName, $properties)){
 			$values = $semanticData->getPropertyValues($properties[$propertyName]);
 			if(!$getAll){
-				$result = $values[0]->getShortWikiText();
+				$idx = array_keys($values);
+				$idx = $idx[0];
+				$result = $values[$idx]->getShortWikiText();
 			} else {
 				$result = array();
 				foreach($values as $v){
