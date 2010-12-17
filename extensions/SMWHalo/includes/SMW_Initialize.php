@@ -405,7 +405,7 @@ function smwgHaloSetupExtension() {
 	$wgAjaxExportList[] = 'smwf_ts_triggerAsynchronousLoading';
 
 	// make hook for red links
-	$wgHooks['BrokenLink'][] = 'smwfBrokenLinkForPage';
+	$wgHooks['LinkEnd'][] = 'smwfBrokenLinkForPage';
 
 	// make hook for RichMedia
 	$wgHooks['CheckNamespaceForImage'][] = 'smwfRichMediaIsImage';
@@ -1702,20 +1702,22 @@ function smwfAddDerivedFacts(& $text, $semdata) {
  * and if the page to create is within the main namespace
  * This function is a parser hook for "BrokenLink" and works with Mediawiki 1.13 and higher
  */
-function smwfBrokenLinkForPage(&$linker, $title, $query, &$u, &$style, &$prefix, &$text, &$inside, &$trail) {
+function smwfBrokenLinkForPage( $skin, $target, $options, &$text, &$attribs, &$ret ) {
+
 	// check if page Create_new_page exists in the wiki, if not quit here
 	if (!Title::newFromDBkey('Create_new_page')->exists())
-	return true;
+        return true;
 	// check if this is an unmodified red link, if not, quit here
-	if (strpos($u, 'action=edit&amp;redlink=1') === false)
-	return true;
+	if (!(isset($attribs['href']) &&
+	    strpos($attribs['href'], 'action=edit&redlink=1') !== false))
+        return true;
 	// get the namespace of the new page, if it's not NS_MAIN, quit
-	if ( NS_MAIN != $title->getNamespace())
-	return true;
+	if ( NS_MAIN != $target->getNamespace())
+        return true;
 	// build title string for new page and create link to Create_new_page with target param
-	$title_text = ucfirst($title->getText());
+	$title_text = ucfirst($target->getText());
 	global $wgScript;
-	$u = $wgScript.'?title=Create_new_page&target='.urlencode($title_text);
+	$attribs['href'] = $wgScript.'?title=Create_new_page&target='.urlencode($title_text);
 	return true;
 }
 /**
