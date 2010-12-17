@@ -78,13 +78,18 @@ class SMWXMLResultPrinter extends SMWResultPrinter {
 								// one DBkey
 								$text = implode(",",$object->getDBkeys());
 								break;
+							
 							default:
 								$text = array_shift($object->getDBkeys());
+								$unit = $object->getUnit();
+								if (!is_null($unit)) $text .= " $unit";
+								
 								break;
 						}
                         $text_enc = htmlspecialchars($text);
 						$datatype = WikiTypeToXSD::getXSDType($object->getTypeID());
 						$datatype = str_replace("xsd:", "http://www.w3.org/2001/XMLSchema#", $datatype);
+						$datatype = str_replace("tsctype:", "http://www.ontoprise.de/smwplus/tsc/unittype#", $datatype);
 						$result .= "<literal datatype=\"$datatype\">$text_enc</literal>";
 					}
 				}
