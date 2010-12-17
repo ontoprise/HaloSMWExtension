@@ -131,6 +131,8 @@ if ($GLOBALS['wgDefaultSkin'] == 'ontoskin') {
      $wgLogo = "$wgStylePath/ontoskin3/img/wiki.jpg";
 }
 
+$wgFavicon=$wgScriptPath.'/favicon.gif';
+
 ## For attaching licensing metadata to pages, and displaying an
 ## appropriate copyright notice / icon. GNU Free Documentation
 ## License and Creative Commons licenses are supported so far.
