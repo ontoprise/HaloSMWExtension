@@ -10,6 +10,8 @@
  */
 
 require_once 'testcases/TestSemanticStore.php';
+require_once 'testcases/TestWikiEQI.php';
+require_once 'testcases/TestTSCEQI.php';
 require_once 'testcases/TestAutocompletionTSCStore.php';
 require_once 'testcases/TestAutocompletionStore.php';
 require_once 'testcases/TestWikiJobs.php';
@@ -25,6 +27,8 @@ class HaloTests
 		$suite = new PHPUnit_Framework_TestSuite('SMWHalo');
 
 		$suite->addTestSuite("TestSemanticStore");
+		$suite->addTestSuite("TestWikiEQI");
+		$suite->addTestSuite("TestTSCEQI");
 		$suite->addTestSuite("TestAutocompletionTSCStore");
 		$suite->addTestSuite("TestAutocompletionStore");
 		$suite->addTestSuite("TestQueryPrinters");
