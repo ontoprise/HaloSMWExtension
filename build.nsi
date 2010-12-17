@@ -802,7 +802,7 @@ Function configCustomizationsForNew
         DetailPrint "Wikiskin: $WIKISKIN"
    
         SetOutPath "$INSTDIR\htdocs\mediawiki"
-        Exec ' "$INSTDIR\php\php.exe" "$INSTDIR\htdocs\mediawiki\installer\changeLS.php" \
+        nsExec::ExecToLog ' "$INSTDIR\php\php.exe" "$INSTDIR\htdocs\mediawiki\installer\changeLS.php" \
         wgSitename="$WIKINAME" wgDBname="semwiki_$WIKILANG" wgLogo=$$wgScriptPath/url:("$WIKILOGO") wgLanguageCode=$WIKILANG wgDefaultSkin="$WIKISKIN" \
         smwgAllowNewHelpQuestions="true" ls=LocalSettings.php'
     
@@ -814,7 +814,7 @@ Function configCustomizationsForNew
         MessageBox MB_OK|MB_ICONINFORMATION $(FIREWALL_COMPLAIN_INFO)
     
         DetailPrint "Import wiki database"
-        Exec ' "$INSTDIR\import_smwplus_db.bat" "$INSTDIR" root m8nix semwiki_en "$INSTDIR\smwplus_database.sql" '
+        nsExec::ExecToLog ' "$INSTDIR\import_smwplus_db.bat" "$INSTDIR" root m8nix semwiki_en "$INSTDIR\smwplus_database.sql" '
         
         DetailPrint "Set php.exe in PATH Variable"
         ${EnvVarUpdate} $0 "PATH" "A" "HKLM" "$INSTDIR\php" 
