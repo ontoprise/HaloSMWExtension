@@ -1000,6 +1000,7 @@ class CKeditorParser extends CKeditorParserWrapper {
 	 */
 	private function replacePropertyValue($match) {
 		$prop = explode('::', $match);
+        if (count($prop) < 2) $prop = explode(':=', $match); // support old syntax [[prop:=val]]
   		if ((count($prop) == 2) && (strlen($prop[0]) > 0) && (strlen($prop[1]) > 0)) {
   			if (($p = strpos($prop[1], '|')) !== false) {
   				$prop[0] .= '::'.substr($prop[1], 0, $p);
