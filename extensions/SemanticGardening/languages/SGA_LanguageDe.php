@@ -135,7 +135,7 @@ class SGA_LanguageDe {
     /* Anomalies */
     'smw_gard_anomaly_checknumbersubcat' => 'Überprüfe Anzahl der Subkategorien',
     'smw_gard_anomaly_checkcatleaves' => 'Prüfe auf Kategorie-Blätter',
-    'smw_gard_anomaly_restrictcat' => 'Nur unterhalb der Kategorie(n) (separiert durch Komma)',
+    'smw_gard_anomaly_restrictcat' => 'Nur unterhalb der Kategorie(n) (separiert durch ;)',
     'smw_gard_anomaly_deletecatleaves' => 'Lösche Kategorie-Blätter',
     'smw_gard_anomaly_docu' => 'Dieser Bot identifiziert Anomalien im semantischen Modell. Anomalien sind derzeit: Kategorien-Blätter (Kategorien, die weder Subkategorien noch Instanzen enthalten), sowie ungewühnliche Anzahlen von Subkategorien (Kateogorien mit nur einer oder mehr als 8 Subkategorien).',
     'smw_gard_anomalylog' => 'Folgende Anomalien konnten im Wiki gefunden werden.',

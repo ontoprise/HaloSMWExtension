@@ -165,10 +165,11 @@ if ( !defined( 'MEDIAWIKI' ) ) die;
  	          	}
        		} else {
        			
-       			foreach($categories as $c) {
+       			foreach($categoryTitles as $c) {
+       				echo('start:'.$c->getText());
        				$deletedCategories = array();
        				       			
-       				$this->store->removeCategoryLeaves($categoryTitles, $deletedCategories);
+       				$this->store->removeCategoryLeaves(array($c), $deletedCategories);
        				foreach($deletedCategories as $dc) {
        					list($cat, $superCats) = $dc;
        					$leafOf = count($superCats) > 0 ? "(".wfMsg('smw_gard_was_leaf_of')." [[:".$superCats[0]->getPrefixedText()."]])" : "";
@@ -375,8 +376,12 @@ if ( !defined( 'MEDIAWIKI' ) ) die;
 	 			}
  			}
  			
+ 			print_r($this->formerSuperCategories);
+ 			
  			foreach($result as $c) {
 				if(array_key_exists($c->getText(), $this->formerSuperCategories)) continue;
+				
+				echo("\n".$c->getText());
 				
 				$superCatgeories = smwfGetSemanticStore()->getDirectSuperCategories($c);
 				$deletedCategories[] = array($c, $superCatgeories);

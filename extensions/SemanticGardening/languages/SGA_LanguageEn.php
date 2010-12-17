@@ -147,7 +147,7 @@ of the tools click on this link: $1.',
     /* Anomalies */
     'smw_gard_anomaly_checknumbersubcat' => 'Check number of sub categories',
     'smw_gard_anomaly_checkcatleaves' => 'Check for category leafs',
-    'smw_gard_anomaly_restrictcat' => 'Restrict to categories (separated by :)',
+    'smw_gard_anomaly_restrictcat' => 'Restrict to categories (separated by ;)',
     'smw_gard_anomaly_deletecatleaves' => 'Delete category leaves',
     'smw_gard_anomaly_docu' => 'This bot identifies  Category leafs (Categories that contain neither subcategories nor instances) and Subcategory number anomalies (Categories with only one or more than eight subcategories).',
     'smw_gard_anomalylog' => 'The anomaly bot removed the following pages',

@@ -3,7 +3,7 @@
  * @file
  * @ingroup SemanticGardeningLanguages
  * 
- * @author: Kai Kühn
+ * @author: Kai Kï¿½hn
  * 
  * Created on: 17.04.2009
  *
