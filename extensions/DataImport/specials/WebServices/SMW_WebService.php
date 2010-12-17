@@ -1548,16 +1548,17 @@ class WebService {
 				}
 			}
 		}
-
+		
 		foreach($subParameterBundle as $parameterName => $subParameters){
 			$parameterDefinition = "";
 			if($this->mParsedParameters != null){
 				foreach($this->mParsedParameters->children() as $child){
-					if("".$child["name"] == $parameterName){
+					if(strtolower("".$child["name"]) == strtolower($parameterName)){
 						$parameterDefinition = $child->asXML();
 					}
 				}
 			}
+			
 			if($parameterDefinition == ""){
 				$messages[] = wfMsg('smw_wsuse_wrong_parameter', $parameterName);
 				//handle this!!!
@@ -1565,7 +1566,7 @@ class WebService {
 			}
 
 			$subParameterProcessor = new SMWSubParameterProcessor(
-			$parameterDefinition, $subParameters);
+				$parameterDefinition, $subParameters);
 
 			$subParameterProcessor->getMissingSubParameters();
 

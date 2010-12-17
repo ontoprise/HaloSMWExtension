@@ -60,6 +60,13 @@ class SMWSubParameterProcessor {
 		$xpathProcessor = new XPathProcessor($parameterDefinition);
 		$availableSubParameters = $xpathProcessor->evaluateQuery("//subparameter/@name");
 		$availableSubParameters = array_flip($availableSubParameters);
+		
+		$availableSubParametersTMP = $availableSubParameters;
+		$availableSubParameters = array();
+		foreach($availableSubParametersTMP as $key => $value){
+			$availableSubParameters[strtolower($key)] = $value;
+		}
+		
 		foreach($subParameters as $key => $value){
 			if(!array_key_exists($key, $availableSubParameters)){
 				$this->unavailableSubParameters[$key] = null;

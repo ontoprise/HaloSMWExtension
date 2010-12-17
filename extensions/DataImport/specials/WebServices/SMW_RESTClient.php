@@ -164,10 +164,10 @@ class SMWRestClient implements IWebServiceClient {
 		} else {
 			return "unknown method name";
 		}
-
+		
 		$ctx = stream_context_create($params);
 
-		$fp = @ fopen($uri, 'rb', true, $ctx);
+		$fp = fopen($uri, 'rb', true, $ctx);
 		
 		if (!$fp) {
 			return wfMsg('smw_wws_client_connect_failure').$uri;

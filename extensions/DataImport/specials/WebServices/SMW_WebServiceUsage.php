@@ -628,6 +628,7 @@ public static function processSMWQueryASWSCall($parameters){
 		}
 		
 		$result = $ws->validateSpecifiedSubParameters($subParameters);
+		
 		$mSP = $result[0];
 		if(!is_null($result[1])){
 			foreach($result[1] as $key => $value){
@@ -644,6 +645,7 @@ public static function processSMWQueryASWSCall($parameters){
 		$mP = $ws->validateSpecifiedParameters($wsParameters);
 		$mR = $ws->validateSpecifiedResults($wsReturnValues);
 	
+		
 		return array(array_merge($mSP, $mP, $mR), $wsParameters);
 	}
 	
