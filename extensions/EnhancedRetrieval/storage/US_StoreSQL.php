@@ -3,7 +3,7 @@
  * @file
  * @ingroup EnhancedRetrievalStorage 
  * 
- * @author Kai Kühn
+ * @author Kai Kï¿½hn
  */
 require_once('US_Store.php');
 
@@ -115,7 +115,7 @@ class USStoreSQL extends USStore {
 	public function getSingleTitle($term, $ns = NULL) {
 		$db =& wfGetDB( DB_SLAVE );
 		$page = $db->tableName('page');
-		$term = mysql_real_escape_string(strtoupper(str_replace(" ", "_", $term)));
+		$term = mysql_real_escape_string(str_replace(" ", "_", $term));
 
 		if ($ns !== NULL) {
 			$namespaceCond = " AND page_namespace = ".$ns;
@@ -124,8 +124,8 @@ class USStoreSQL extends USStore {
 		}
 		global $smwgUseEditDistance;
 		if (isset($smwgUseEditDistance) && $smwgUseEditDistance === true) {
-			$res = $db->query('SELECT page_title, page_namespace, JAROWINKLER(UPPER(page_title), '.$db->addQuotes($term).') AS score FROM '.$page.
-		                      ' WHERE JAROWINKLER(UPPER(page_title), '.$db->addQuotes($term).") > 0.90 $namespaceCond ORDER BY score DESC");
+			$res = $db->query('SELECT page_title, page_namespace, JAROWINKLER(page_title, '.$db->addQuotes($term).') AS score FROM '.$page.
+		                      ' WHERE JAROWINKLER(page_title, '.$db->addQuotes($term).") > 0.80 $namespaceCond ORDER BY score DESC");
 		} else {
 			$res = $db->query('SELECT page_title, page_namespace FROM '.$page.' WHERE UPPER(page_title) = '.$db->addQuotes($term));
 		}
