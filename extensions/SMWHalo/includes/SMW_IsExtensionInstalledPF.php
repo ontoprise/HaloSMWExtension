@@ -12,12 +12,6 @@ class SMWIsExtensionInstalledPF {
 		return true;
 	}
 	
-	static function languageGetMagic( &$magicWords, $langCode = "en" ) {
-		$magicWords['isExtensionInstalled']	= array ( 0, 'isExtensionInstalled' );
-		
-		return true;
-	}
-	
 	static function renderIEIPF( &$parser, $frame, $args) {
 		if(defined($args[0])){
 			return 'true';

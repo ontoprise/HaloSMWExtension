@@ -10,7 +10,7 @@
  */
 if ( !defined( 'MEDIAWIKI' ) ) die;
 
-define('SMW_HALO_VERSION', '{{$VERSION}}-for-SMW-1.5.2 [B{{$BUILDNUMBER}}]');
+define('SMW_HALO_VERSION', '1.5.2_0-for-SMW-1.5.2 [B203]');
 
 // constant for special schema properties
 define('SMW_SSP_HAS_DOMAIN_AND_RANGE_HINT', 1);
@@ -74,6 +74,9 @@ function enableSMWHalo($store = 'SMWHaloStore2', $tripleStore = NULL, $tripleSto
 	$wgHooks['LanguageGetMagic'][]             = 'smwfAddHaloMagicWords';
 	$wgHooks['ParserGetVariableValueSwitch'][] = 'wfGetCustomVariable';
 
+	//init is ExtensionInstalled PF
+	$wgHooks['LanguageGetMagic'][] = 'smwfAddIsExtensionInstalledMagic';
+	
 	global $smgJSLibs;
 	$smgJSLibs[] = 'prototype';
 	$smgJSLibs[] = 'qtip';
@@ -145,8 +148,7 @@ function smwgHaloSetupExtension() {
 
 	//Set up the IsExtensionInstalled PG
 	$wgHooks['ParserFirstCallInit'][] = 'SMWIsExtensionInstalledPF::registerFunctions';
-	$wgHooks['LanguageGetMagic'][] = 'SMWIsExtensionInstalledPF::languageGetMagic';
-
+	
 	#
 	# Handle webservice calls.
 	#   wsmethod URL parameter indicates a SOAP webservice call. All such calls are handeled by
@@ -168,7 +170,7 @@ function smwgHaloSetupExtension() {
 	$wgHooks['smwInitProperties'][] = 'smwfInitSpecialPropertyOfSMWHalo';
 
 	global $smwgDefaultStore, $smwgShowDerivedFacts, $wgRequest;
-	if ($smwgShowDerivedFacts === true) {
+	if (smwfIsTripleStoreConfigured() && $smwgShowDerivedFacts === true) {
 		$wgHooks['smwShowFactbox'][] = 'smwfAddDerivedFacts';
 	}
 
@@ -1807,3 +1809,14 @@ function smwfOnSfSetTargetName($titleName) {
 	}
 	return true;
 }
+
+
+/*
+ * initialize magic word for
+ * isExtensionInstalled parser function
+ */
+function smwfAddIsExtensionInstalledMagic(&$magicWords, $langCode = "en"){
+	$magicWords['isExtensionInstalled']	= array ( 0, 'isExtensionInstalled' );
+	return true;	
+}
+
