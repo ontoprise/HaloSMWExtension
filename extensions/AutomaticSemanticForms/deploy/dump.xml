@@ -51,189 +51,644 @@
       <namespace key="221" case="first-letter">E-mail talk</namespace>
       <namespace key="400" case="first-letter">IAI</namespace>
       <namespace key="401" case="first-letter">IAI talk</namespace>
+      <namespace key="500" case="first-letter">LOD</namespace>
+      <namespace key="501" case="first-letter">LOD talk</namespace>
+      <namespace key="502" case="first-letter">Mapping</namespace>
+      <namespace key="503" case="first-letter">Mapping talk</namespace>
     </namespaces>
   </siteinfo>
   <page>
     <title>Property:Use input type</title>
     <id>133</id>
     <revision>
-      <id>205</id>
-      <timestamp>2010-12-15T10:30:13Z</timestamp>
+      <id>371</id>
+      <timestamp>2010-12-20T16:17:01Z</timestamp>
       <contributor>
-        <ip>127.0.0.1</ip>
+        <username>WikiSysop</username>
+        <id>1</id>
       </contributor>
-      <text xml:space="preserve">The Automatic Semantic Forms Extension detects the form input field type for a property based on the property's characteristics, e.g. its ''Has type'' value. You can use the ''Use input type'' annotation, if you want to choose a different form field input type than the one which is automatically chosen, e.g. ''radiobutton'' instead of dropdown.
-
-[[Has type::Type:Text| ]] [[Has max cardinality::1| ]] [[Part of bundle::Automaticsemanticforms| ]]</text>
-    <hash>d2fe2d6970bf45b16ca726bada546d0c</hash>
+      <minor/>
+      <comment>1 revision</comment>
+      <text xml:space="preserve">{{Property
+|PAGENAME=Property:Use input type
+|rationale=Use this property to annotate a property article if you want to choose a different input type for that property in automatically created Semantic Forms.
+|part of=Automaticsemanticforms
+|Has_author=User:217.110.222.148
+}}
+[[Has type::Type:Text| ]] [[Has max cardinality::1| ]] [[Part of bundle::Automaticsemanticforms| ]] [[Has domain and range::Category:Property; | ]]</text>
+    <hash>db6f450abf3ac179294e634bcc61ea55</hash>
     </revision>
   </page>
   <page>
     <title>Property:Is uploadable</title>
     <id>134</id>
     <revision>
-      <id>206</id>
-      <timestamp>2010-12-15T10:30:57Z</timestamp>
+      <id>373</id>
+      <timestamp>2010-12-20T16:17:04Z</timestamp>
       <contributor>
-        <ip>127.0.0.1</ip>
+        <username>WikiSysop</username>
+        <id>1</id>
       </contributor>
-      <text xml:space="preserve">The Automatic Semantic Forms Extension will add a file upload button next to a property's form input field if the property has the ''Is uploadable::true'' annotation.
-
-[[Has type::Type:Boolean| ]] [[Has max cardinality::1| ]] [[Part of bundle::Automaticsemanticforms| ]]</text>
-    <hash>b94e1442750233d136099b654d74bc82</hash>
+      <minor/>
+      <comment>1 revision</comment>
+      <text xml:space="preserve">{{Property
+|PAGENAME=Property:Is uploadable
+|rationale=Use this property to annotate a property if you want that a file upload button appears next to the form input field of the property in an automatically created Semantic Form.
+|part of=Automaticsemanticforms
+|Has_author=User:217.110.222.148
+}}
+[[Has type::Type:Boolean| ]] [[Has max cardinality::1| ]] [[Part of bundle::Automaticsemanticforms| ]] [[Has domain and range::Category:Property; | ]]</text>
+    <hash>a692279116cf95dc6f3f84dad63f462a</hash>
     </revision>
   </page>
   <page>
     <title>Property:Form input help</title>
     <id>135</id>
     <revision>
-      <id>207</id>
-      <timestamp>2010-12-15T10:31:45Z</timestamp>
+      <id>375</id>
+      <timestamp>2010-12-20T16:17:08Z</timestamp>
       <contributor>
-        <ip>127.0.0.1</ip>
+        <username>WikiSysop</username>
+        <id>1</id>
       </contributor>
-      <text xml:space="preserve">The Automatic Semantic Forms Extension will add a help icon with a help message next to a property's form input field if the property has the ''Form input help'' annotation. The value of the annotation will be shown as a tooltip, if a user hoovers over the help icon.
-
-[[Has type::Type:Text| ]] [[Has max cardinality::1| ]] [[Part of bundle::Automaticsemanticforms| ]]</text>
-    <hash>a11cb8a1c69f7f074b7e35d870d95766</hash>
+      <minor/>
+      <comment>1 revision</comment>
+      <text xml:space="preserve">{{Property
+|PAGENAME=Property:Form input help
+|rationale=Use this property to annotate a property if you want that a help icon with a help message appears next to the form input field of the property in an automatically created Semantic Form.
+|part of=Automaticsemanticforms
+|Has_author=User:217.110.222.148
+}}
+[[Has type::Type:Text| ]] [[Has max cardinality::1| ]] [[Part of bundle::Automaticsemanticforms| ]] [[Has domain and range::Category:Property; | ]]</text>
+    <hash>d861c95ed02d4d4ea04a9d82f87e9599</hash>
     </revision>
   </page>
   <page>
     <title>Property:Delimiter</title>
     <id>136</id>
     <revision>
-      <id>208</id>
-      <timestamp>2010-12-15T10:32:53Z</timestamp>
+      <id>377</id>
+      <timestamp>2010-12-20T16:17:11Z</timestamp>
       <contributor>
-        <ip>127.0.0.1</ip>
+        <username>WikiSysop</username>
+        <id>1</id>
       </contributor>
-      <text xml:space="preserve">The Automatic Semantic Forms Extension by defautl chooses a comma as delimiter for form input fields. You can use ''Delimiter'' annotation for a property if you want to choose a special delimiter for that property's form input field.
-
-[[Has type::Type:Text| ]] [[Has max cardinality::1| ]] [[Part of bundle::Automaticsemanticforms| ]]</text>
-    <hash>acc83c65f333505680d2178b796a51f5</hash>
+      <minor/>
+      <comment>1 revision</comment>
+      <text xml:space="preserve">{{Property
+|PAGENAME=Property:Delimiter
+|rationale=Users may enter several values in a fprm input field for a property in an automatically created Semantic Form. Use the ''delimiter'' annotation to choose the delimiter.
+|part of=Automaticsemanticforms
+|Has_author=User:217.110.222.148
+}}
+[[Has type::Type:Text| ]] [[Has max cardinality::1| ]] [[Part of bundle::Automaticsemanticforms| ]] [[Has domain and range::Category:Property; | ]]</text>
+    <hash>57baa640c7fb4a0fb0b2c6928d69f4de</hash>
     </revision>
   </page>
   <page>
     <title>Property:Field sequence number</title>
     <id>137</id>
     <revision>
-      <id>209</id>
-      <timestamp>2010-12-15T10:34:12Z</timestamp>
+      <id>379</id>
+      <timestamp>2010-12-20T16:17:15Z</timestamp>
       <contributor>
-        <ip>127.0.0.1</ip>
+        <username>WikiSysop</username>
+        <id>1</id>
       </contributor>
-      <text xml:space="preserve">The Automatic Semantic Forms Extension orders form input fields for properties alphabetically. This may be inappropriate in some cases. You can use the ''Field sequence number'' annotation on property articles to reorder their form input fields. Properties with a lower field sequence number will be shown before those with a higher one.
-
-[[Has type::Type:Number| ]] [[Has max cardinality::1| ]] [[Part of bundle::Automaticsemanticforms| ]]</text>
-    <hash>d9c4c7d53611c367f7a835932eaebcd7</hash>
+      <minor/>
+      <comment>1 revision</comment>
+      <text xml:space="preserve">{{Property
+|PAGENAME=Property:Field sequence number
+|rationale=The Automatic Semantic Forms Extension orders form input fields for properties alphabetically. Use the ''Field sequence number'' annotation on property articles to reorder their form input fields.
+|part of=Automaticsemanticforms
+|Has_author=User:217.110.222.148
+}}
+[[Has type::Type:Number| ]] [[Has max cardinality::1| ]] [[Part of bundle::Automaticsemanticforms| ]] [[Has domain and range::Category:Property; | ]]</text>
+    <hash>995000ca69043248693e4a603a7a8acd</hash>
     </revision>
   </page>
   <page>
     <title>Property:Default value</title>
     <id>138</id>
     <revision>
-      <id>210</id>
-      <timestamp>2010-12-15T10:35:19Z</timestamp>
+      <id>381</id>
+      <timestamp>2010-12-20T16:17:19Z</timestamp>
       <contributor>
-        <ip>127.0.0.1</ip>
+        <username>WikiSysop</username>
+        <id>1</id>
       </contributor>
-      <text xml:space="preserve">You can use this property to annotate a property article, if you want that the form input field for that property contains a default value in an automatically created Semantic Form. The value of the annotation will be used as default value.
-
-[[Has type::Type:Text| ]] [[Has max cardinality::1| ]] [[Part of bundle::Automaticsemanticforms| ]]</text>
-    <hash>c23b8c4a84808ac91cf58333376b9db0</hash>
+      <minor/>
+      <comment>1 revision</comment>
+      <text xml:space="preserve">{{Property
+|PAGENAME=Property:Default value
+|rationale=You can use this property to annotate a property article, if you want that the form input field for that property contains a default value in an automatically created Semantic Form.
+|part of=Automaticsemanticforms
+|Has_author=User:217.110.222.148
+}}
+[[Has type::Type:Text| ]] [[Has max cardinality::1| ]] [[Part of bundle::Automaticsemanticforms| ]] [[Has domain and range::Category:Property; | ]]</text>
+    <hash>f98bfb1cee57199e4b341b62ba90d041</hash>
     </revision>
   </page>
   <page>
     <title>Property:Validator</title>
     <id>139</id>
     <revision>
-      <id>211</id>
-      <timestamp>2010-12-15T10:36:16Z</timestamp>
+      <id>383</id>
+      <timestamp>2010-12-20T16:17:22Z</timestamp>
       <contributor>
-        <ip>127.0.0.1</ip>
+        <username>WikiSysop</username>
+        <id>1</id>
       </contributor>
-      <text xml:space="preserve">The Semantic Forms Input Extension enables you to attach a regular expression to a form input field in order to validate a user's input. Use the ''Validator'' property to annotate a property, if you want to validate a user's input into the property's form input field in an automatically created Semantic form with a regular expression. The Semantic Forms Input Extension must be installed.
-
-[[Has type::Type:Text| ]] [[Has max cardinality::1|| ]] [[Part of bundle::Automaticsemanticforms| ]]</text>
-    <hash>47c73fbdc2915368cfd03e74e0583aba</hash>
+      <minor/>
+      <comment>1 revision</comment>
+      <text xml:space="preserve">{{Property
+|PAGENAME=Property:Validator
+|rationale=Use the ''Validator'' property to annotate a property, if you want to validate a user's input into the property's form input field in an automatically created Semantic form with a regular expression.
+|part of=Automaticsemanticforms
+|Has_author=User:217.110.222.148
+}}
+[[Has type::Type:Text| ]] [[Has max cardinality::1|:1]] [[Part of bundle::Automaticsemanticforms| ]] [[Has domain and range::Category:Property; | ]]</text>
+    <hash>5ba29bd7071c5b671d2f3a7150083e16</hash>
     </revision>
   </page>
   <page>
     <title>Property:No automatic formedit</title>
     <id>140</id>
     <revision>
-      <id>212</id>
-      <timestamp>2010-12-15T10:46:52Z</timestamp>
+      <id>385</id>
+      <timestamp>2010-12-20T16:17:26Z</timestamp>
       <contributor>
-        <ip>127.0.0.1</ip>
+        <username>WikiSysop</username>
+        <id>1</id>
       </contributor>
-      <text xml:space="preserve">Use this property to annotate a category if you don't want that Semantic Forms are created automatically for instances in this category. Please note, that this annotation is not inherited to subcategories.
-
-[[Has type::Type:Boolean| ]] [[Has max cardinality::1| ]][[Part of bundle::Automaticsemanticforms| ]]</text>
-    <hash>8eefd4a7266d2ebe0e4e12b7b47eba97</hash>
+      <minor/>
+      <comment>1 revision</comment>
+      <text xml:space="preserve">{{Property
+|PAGENAME=Property:No automatic formedit
+|rationale=Use this property to annotate a category if you don't want that Semantic Forms are created automatically for instances in this category. Please note, that this annotation is not inherited to subcategories.
+|part of=Automaticsemanticforms
+}}
+[[Has type::Type:Boolean| ]] [[Has max cardinality::1| ]] [[Part of bundle::Automaticsemanticforms| ]] [[Has domain and range::Category:Category; | ]]</text>
+    <hash>26aa06546c9fdeb0020c8deca45eaca4</hash>
     </revision>
   </page>
   <page>
     <title>Property:Use display template</title>
     <id>141</id>
     <revision>
-      <id>213</id>
-      <timestamp>2010-12-15T10:49:07Z</timestamp>
+      <id>387</id>
+      <timestamp>2010-12-20T16:17:27Z</timestamp>
       <contributor>
-        <ip>127.0.0.1</ip>
+        <username>WikiSysop</username>
+        <id>1</id>
       </contributor>
-      <text xml:space="preserve">The Automatic Semantic Forms Extension creates silent annotations, i.e. ammotations that are only displayed in the factbox and not in the rendered article. Use the ''Use display template'' to assign a template to a category so that the data which is entered for that category is displayed via a template. The template then will be added to the rendered article and it will be populated with the data, which was entered in the form.
-
-[[Has type::Type:Text| ]] [[Has max cardinality::1| ]] [[Part of bundle::Automaticsemanticforms| ]]</text>
-    <hash>174b895a1d688be00c9b34614179692f</hash>
+      <minor/>
+      <comment>1 revision</comment>
+      <text xml:space="preserve">{{Property
+|PAGENAME=Property:Use display template
+|rationale=The Automatic Semantic Forms Extension creates silent annotations, i.e. ammotations that are only displayed in the factbox and not in the rendered article. Use the ''Use display template'' to assign a template to a category so that the data which is entered for that category is displayed via a template.
+|part of=Automaticsemanticforms
+|Has_author=User:217.110.222.148
+}}
+[[Has type::Type:Text| ]] [[Has max cardinality::1| ]] [[Part of bundle::Automaticsemanticforms| ]] [[Has domain and range::Category:Category; | ]]</text>
+    <hash>6ee59c956d6b56c23ddab41cb887e65a</hash>
     </revision>
   </page>
   <page>
     <title>Property:Use class</title>
     <id>142</id>
     <revision>
-      <id>214</id>
-      <timestamp>2010-12-15T10:49:58Z</timestamp>
+      <id>389</id>
+      <timestamp>2010-12-20T16:17:30Z</timestamp>
       <contributor>
-        <ip>127.0.0.1</ip>
+        <username>WikiSysop</username>
+        <id>1</id>
       </contributor>
-      <text xml:space="preserve">One can use this property to annotate a category or a property in order to tell the Automatic Semantic Forms Extension to use a specific CSS-class when creating a property's input field, respectively a category's table of input fields.
-
-[[Has type::Type:Text| ]] [[Has max cardinality::1| ]] [[Part of bundle::Automaticsemanticforms| ]]</text>
-    <hash>5fd8b8c02b0d27240a3191017bd85698</hash>
+      <minor/>
+      <comment>1 revision</comment>
+      <text xml:space="preserve">{{Property
+|PAGENAME=Property:Use class
+|rationale=One can use this property to annotate a category or a property in order to tell the Automatic Semantic Forms Extension to use a specific CSS-class when creating a property's input field, respectively a category's table of input fields.
+|part of=Automaticsemanticforms
+}}
+[[Has type::Type:Text| ]] [[Has max cardinality::1| ]] [[Part of bundle::Automaticsemanticforms| ]] [[Has domain and range::Category:Property; | ]] [[Has domain and range::Category:Category; | ]]</text>
+    <hash>bc2c55b14754d5eef4c2479ab99c9306</hash>
     </revision>
   </page>
   <page>
     <title>Automaticsemanticforms</title>
     <id>143</id>
     <revision>
-      <id>219</id>
-      <timestamp>2010-12-16T09:09:14Z</timestamp>
+      <id>367</id>
+      <timestamp>2010-12-20T16:16:53Z</timestamp>
       <contributor>
-        <ip>127.0.0.1</ip>
+        <username>WikiSysop</username>
+        <id>1</id>
       </contributor>
-      <text xml:space="preserve">* Ontology version: [[Ontology version::100]] 
-* Install dir: [[Installation dir::extensions/AutomaticSemanticForms]] 
-* Vendor: [[Vendor::Ontoprise]] 
-* Description: [[Description::This bundle contains build-in properties used by the Automatic Semantic Forms Extension.]]
+      <minor/>
+      <comment>1 revision</comment>
+      <text xml:space="preserve">{{CreateSilentAnnotations:}}
+{{Content bundle
+|Vendor=Ontoprise
+|Version=100
+|rationale=This bundle contains build-in properties used by the Automatic Semantic Forms Extension.
+|Installation=extensions/AutomaticSemanticForms
+|Dependency=smwhalo;152;152, semanticforms;200;200, baseontologybundle;100;100
+}}
 
-[[Part of bundle::Automaticsemanticforms| ]]</text>
-    <hash>29f4bad4307af2895be6b35c56ff3a00</hash>
+[[Ontology version::100| ]][[Installation dir::extensions/AutomaticSemanticForms| ]][[Vendor::Ontoprise| ]][[Part of bundle::Automaticsemanticforms| ]] [[Dependency::smwhalo;152;152| ]] [[Dependency::baseontologybundle;100;100| ]][[Dependency::semanticforms;200;200| ]]
+[[Category:Content bundle]]
+
+;This bundle contains these articles:
+
+{{#ask:[[Part of bundle::{{FULLPAGENAME}}]]
+|?=Link
+|?Rationale
+|link=subject
+|default=''none''
+|mainlabel=-
+}}</text>
+    <hash>5ee2768aa5d9a2ff1185871408c06d5a</hash>
     </revision>
   </page>
   <page>
     <title>Property:Form input label</title>
     <id>144</id>
     <revision>
-      <id>204</id>
-      <timestamp>2010-12-15T10:28:58Z</timestamp>
+      <id>369</id>
+      <timestamp>2010-12-20T16:16:57Z</timestamp>
       <contributor>
-        <ip>127.0.0.1</ip>
+        <username>WikiSysop</username>
+        <id>1</id>
       </contributor>
-      <text xml:space="preserve">When the Automatic Semantic Forms Extension creates a form input field for a property, then it uses the property's name as lable for the form input field. If the property for which the form input field is created has a ''Form input label'' annotation, then the value of this annotation instead will be used as label.
+      <minor/>
+      <comment>1 revision</comment>
+      <text xml:space="preserve">{{Property
+|PAGENAME=Property:Form input label
+|rationale=Use this property to annotate a property article if you want to choose an alternative label for its form input field in an automatically created Semantic Form.
+|part of=Automaticsemanticforms
+|Has_author=User:WikiSysop
+}}
+[[Has type::Type:Text| ]] [[Has max cardinality::1| ]] [[ [[Part of bundle::Automaticsemanticforms| ]] [[Has domain and range::Category:Property; | ]]</text>
+    <hash>5f5150e36fd9a738b6d1656e9ec0cd45</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Template:!</title>
+    <id>198</id>
+    <revision>
+      <id>340</id>
+      <timestamp>2010-12-20T13:24:39Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <minor/>
+      <comment>1 revision</comment>
+      <text xml:space="preserve">|&lt;noinclude&gt;
+&lt;!-- Add cats and interwikis to the /doc subpage, not here! --&gt;
+helper template for pipe symbol, which can e.g. not be used directly in template parameter calls.[[Part of bundle::Baseontologybundle| ]]
+&lt;/noinclude&gt;</text>
+    <hash>5fb9b20c2825d7743e58540992c213ec</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Template:Header for wiki parts</title>
+    <id>199</id>
+    <revision>
+      <id>342</id>
+      <timestamp>2010-12-20T13:24:42Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <minor/>
+      <comment>1 revision</comment>
+      <text xml:space="preserve">&lt;noinclude&gt;{{Template
+|PAGENAME=Template:Header for wiki parts
+|Has author=WikiSysop
+|part of=Baseontologybundle
+|rationale=This template is used to display a nice header for all wiki parts, i.e. forms, templates etc
+|parameters=&lt;pre&gt;
+{{Header for wiki parts
+|Category=Form
+|Icon=Image:Cog-green.png
+|Pagetitle={{PAGENAME}}
+|Thumbnail image={{{Form thumbnail|}}}
+|Short description={{#ifeq:{{{rationale|}}}|||[[rationale::{{{rationale|}}}]]}}
+|author={{#ifeq:{{{Has author|}}}|||[[has author::{{{Has author|}}}]]}}
+|Wiki section={{#ifeq:{{{part of|}}}|||[[part of::{{{part of|}}}]]}}
+|Example article={{#ifeq:{{{Example article|}}}|||[[Example article::{{{Example article|}}}]]}}
+|Has special namespace={{#ifeq:{{{Has special namespace|}}}|||[[Has special namespace::{{{Has special namespace|}}}]]}}
+}}
+&lt;/pre&gt;
+|Calls template=Template:Tablelongrow, Template:Tablerow,
+|hints_for_templates_and_forms=The following values for category are allowed: Form, Template
+|own_work=True
+|copyright_holder=Ontoprise GmbH
+|year=2009
+}}
+&lt;/noinclude&gt;&lt;includeonly&gt;{{#switch: {{{Category}}}
+|Template=&lt;!--
 
-[[Has type::Type:Text| ]] [[Has max cardinality::1| ]] [[Part of bundle::Automaticsemanticforms| ]]</text>
-    <hash>82da91214b32e075d211c132cd82de0e</hash>
+case: Template
+
+--&gt;&lt;div class=&quot;round&quot; style=&quot;padding-bottom: 2px; padding-left: 2px; padding-right: 2px; padding-top: 5px; font-family: tahoma, sans-serif; font-weight: bold; font-size: 120%; color: rgb(255,255,255); background-color: #999999; margin-bottom: 5px;&quot;&gt;&lt;!-- --&gt;
+{{{!}} width=&quot;100%&quot; cellspacing=&quot;1&quot; cellpadding=&quot;1&quot; border=&quot;0&quot; align=&quot;center&quot;     
+{{!}}- 
+{{!}} &lt;div style=&quot;padding: 2px; font-family: tahoma,sans-serif; font-weight: bold; font-size: 120%; color: rgb(250, 250, 250); margin-bottom: 2px;&quot; class=&quot;round&quot;&gt;
+{{{!}} width=&quot;100%&quot; cellspacing=&quot;1&quot; cellpadding=&quot;1&quot; border=&quot;0&quot; align=&quot;center&quot;
+{{!}}-
+{{!}} width=&quot;10%&quot; valign=&quot;left&quot; align=&quot;center&quot; rowspan=&quot;2&quot; {{!}} [[{{{Icon}}}|40px]]
+{{!}} '''Template ''{{{Pagetitle}}}'' '''
+{{!}}}&lt;/div&gt;
+{{!}}}&lt;/div&gt;
+{{{!}} cellspacing=&quot;0&quot; cellpadding=&quot;5&quot; style=&quot;position:relative; margin: 0 0 0.5em 1em; border-collapse: collapse; border: 1px solid #999999; background: rgb(255,255,255); float: right; clear: none; width: 20em&quot;
+{{#ifeq:{{{Thumbnail image|}}}|||
+{{!}}-
+{{Tablelongrow|Label=Overview:|Value=[[{{{Thumbnail image|}}}|150px]]}} }}
+{{!}}-
+{{#ifeq:{{{Short description|}}}||
+{{Tablelongrow|Label=Overview:|Value=}}
+|
+{{Tablelongrow|Label=Overview:|Value=''{{{Short description}}}''}} }}
+{{!}}-
+{{#ifeq:{{{Wiki section|}}}||
+{{Tablerow|Label=Content bundle:|Value=''not specified...''}}
+|{{Tablerow|Label=Content bundle:|Value={{{Wiki section|}}} }} }}
+{{!}}-
+{{Tablerow|Label=Author:|Value={{{author|}}} }}
+{{!}}}&lt;!--
+
+end case: Template
+
+--&gt;
+|Form=&lt;!--
+
+case: Form
+
+--&gt;&lt;div class=&quot;round&quot; style=&quot;padding-bottom: 2px; padding-left: 2px; padding-right: 2px; padding-top: 5px; font-family: tahoma, sans-serif; font-weight: bold; font-size: 120%; color: rgb(255,255,255); background-color: #999999; margin-bottom: 5px;&quot;&gt;&lt;!-- --&gt;
+{{{!}} width=&quot;100%&quot; cellspacing=&quot;1&quot; cellpadding=&quot;1&quot; border=&quot;0&quot; align=&quot;center&quot;     
+{{!}}- 
+{{!}} &lt;div style=&quot;padding: 2px; font-family: tahoma,sans-serif; font-weight: bold; font-size: 120%; color: rgb(250, 250, 250); margin-bottom: 2px;&quot; class=&quot;round&quot;&gt;
+{{{!}} width=&quot;100%&quot; cellspacing=&quot;1&quot; cellpadding=&quot;1&quot; border=&quot;0&quot; align=&quot;center&quot;
+{{!}}-
+{{!}} width=&quot;10%&quot; valign=&quot;left&quot; align=&quot;center&quot; rowspan=&quot;2&quot; {{!}} [[{{{Icon}}}|40px]]
+{{!}} '''Semantic form ''{{{Pagetitle}}}'' '''
+{{!}}}&lt;/div&gt;
+{{!}}}&lt;/div&gt;
+{{{!}} cellspacing=&quot;0&quot; cellpadding=&quot;5&quot; style=&quot;position:relative; margin: 0 0 0.5em 1em; border-collapse: collapse; border: 1px solid #999999; background: rgb(255,255,255); float: right; clear: none; width: 20em&quot;
+{{#ifeq:{{{Thumbnail image|}}}|||
+{{!}}-
+{{Tablelongrow|Label=Overview:|Value=[[{{{Thumbnail image|}}}|150px]]}} }}
+{{!}}-
+{{Tablelongrow|Label=Overview:|Value=''{{{Short description}}}''}}
+{{!}}-
+{{#ifeq:{{{Wiki section|}}}||
+{{Tablerow|Label=Content bundle:|Value=''not specified...''}}
+|{{Tablerow|Label=Content bundle:|Value={{{Wiki section|}}} }} }}
+{{!}}-
+{{#ifeq:{{{Has special namespace|}}}||
+{{Tablerow|Label=Namespace:|Value=''main namespace''}}
+|{{Tablerow|Label=Namespace:|Value={{{Has special namespace|}}} }} }}
+{{!}}-
+{{#ifeq:{{{Example article|}}}||
+{{Tablerow|Label=Example:|Value=''not specified...''}}
+|{{Tablerow|Label=Example:|Value={{{Example article|}}} }} }}
+{{!}}-
+{{Tablerow|Label=Author:|Value={{{author|}}} }}
+{{!}}}&lt;!--
+
+end case: Form
+
+--&gt;
+|Category=&lt;!--
+
+case: Category
+
+--&gt;&lt;div class=&quot;round&quot; style=&quot;padding-bottom: 2px; padding-left: 2px; padding-right: 2px; padding-top: 5px; font-family: tahoma, sans-serif; font-weight: bold; font-size: 120%; color: rgb(255,255,255); background-color: #999999; margin-bottom: 5px;&quot;&gt;&lt;!-- --&gt;
+{{{!}} width=&quot;100%&quot; cellspacing=&quot;1&quot; cellpadding=&quot;1&quot; border=&quot;0&quot; align=&quot;center&quot;     
+{{!}}- 
+{{!}} &lt;div style=&quot;padding: 2px; font-family: tahoma,sans-serif; font-weight: bold; font-size: 120%; color: rgb(250, 250, 250); margin-bottom: 2px;&quot; class=&quot;round&quot;&gt;
+{{{!}} width=&quot;100%&quot; cellspacing=&quot;1&quot; cellpadding=&quot;1&quot; border=&quot;0&quot; align=&quot;center&quot;
+{{!}}-
+{{!}} width=&quot;10%&quot; valign=&quot;left&quot; align=&quot;center&quot; rowspan=&quot;2&quot; {{!}} [[{{{Icon}}}|40px]]
+{{!}} '''Category ''{{{Pagetitle}}}'' '''
+{{!}}}&lt;/div&gt;
+{{!}}}&lt;/div&gt;
+{{{!}} cellspacing=&quot;0&quot; cellpadding=&quot;5&quot; style=&quot;position:relative; margin: 0 0 0.5em 1em; border-collapse: collapse; border: 1px solid #999999; background: rgb(255,255,255); float: right; clear: none; width: 20em&quot;
+{{#ifeq:{{{Thumbnail image|}}}|||
+{{!}}-
+{{Tablelongrow|Label=Overview:|Value=[[{{{Thumbnail image|}}}|150px]]}} }}
+{{!}}-
+{{Tablelongrow|Label=Overview:|Value=''{{{Short description}}}''}}
+{{!}}-
+{{#ifeq:{{{Wiki section|}}}||
+{{Tablerow|Label=Content bundle:|Value=''not specified...''}}
+|{{Tablerow|Label=Content bundle:|Value={{{Wiki section|}}} }} }}
+{{!}}-
+{{Tablerow|Label=Author:|Value={{{author|}}} }}
+{{!}}}&lt;!--
+
+end case: Category
+
+--&gt;
+|Content bundle=&lt;!--
+
+case: Content bundle
+
+--&gt;&lt;div class=&quot;round&quot; style=&quot;padding-bottom: 2px; padding-left: 2px; padding-right: 2px; padding-top: 5px; font-family: tahoma, sans-serif; font-weight: bold; font-size: 120%; color: rgb(255,255,255); background-color: #999999; margin-bottom: 5px;&quot;&gt;&lt;!-- --&gt;
+{{{!}} width=&quot;100%&quot; cellspacing=&quot;1&quot; cellpadding=&quot;1&quot; border=&quot;0&quot; align=&quot;center&quot;     
+{{!}}- 
+{{!}} &lt;div style=&quot;padding: 2px; font-family: tahoma,sans-serif; font-weight: bold; font-size: 120%; color: rgb(250, 250, 250); margin-bottom: 2px;&quot; class=&quot;round&quot;&gt;
+{{{!}} width=&quot;100%&quot; cellspacing=&quot;1&quot; cellpadding=&quot;1&quot; border=&quot;0&quot; align=&quot;center&quot;
+{{!}}-
+{{!}} width=&quot;10%&quot; valign=&quot;left&quot; align=&quot;center&quot; rowspan=&quot;2&quot; {{!}} [[{{{Icon}}}|40px]]
+{{!}} '''Content bundle ''{{{Pagetitle}}}'' '''
+{{!}}}&lt;/div&gt;
+{{!}}}&lt;/div&gt;
+{{{!}} cellspacing=&quot;0&quot; cellpadding=&quot;5&quot; style=&quot;position:relative; margin: 0 0 0.5em 1em; border-collapse: collapse; border: 1px solid #999999; background: rgb(255,255,255); float: right; clear: none; width: 20em&quot;
+{{#ifeq:{{{Thumbnail image|}}}|||
+{{!}}-
+{{Tablelongrow|Label=Overview:|Value=[[{{{Thumbnail image|}}}|150px]]}} }}
+{{!}}-
+{{Tablelongrow|Label=Overview:|Value=''{{{Short description}}}''}}
+{{!}}-
+{{Tablerow|Label=Vendor:|Value={{{author|}}} }}
+{{!}}-
+{{Tablerow|Label=Version:|Value={{{Version|}}} }}
+{{!}}-
+{{Tablerow|Label=Installation dir:|Value={{{Installation dir|}}} }}
+{{!}}-
+{{Tablerow|Label=Dependency:|Value={{{Dependency|}}} }}
+{{!}}}&lt;!--
+
+case: Content bundle END
+
+--&gt;
+|Property=&lt;!--
+
+case: Property
+
+--&gt;&lt;div class=&quot;round&quot; style=&quot;padding-bottom: 2px; padding-left: 2px; padding-right: 2px; padding-top: 5px; font-family: tahoma, sans-serif; font-weight: bold; font-size: 120%; color: rgb(255,255,255); background-color: #999999; margin-bottom: 5px;&quot;&gt;&lt;!-- --&gt;
+{{{!}} width=&quot;100%&quot; cellspacing=&quot;1&quot; cellpadding=&quot;1&quot; border=&quot;0&quot; align=&quot;center&quot;     
+{{!}}- 
+{{!}} &lt;div style=&quot;padding: 2px; font-family: tahoma,sans-serif; font-weight: bold; font-size: 120%; color: rgb(250, 250, 250); margin-bottom: 2px;&quot; class=&quot;round&quot;&gt;
+{{{!}} width=&quot;100%&quot; cellspacing=&quot;1&quot; cellpadding=&quot;1&quot; border=&quot;0&quot; align=&quot;center&quot;
+{{!}}-
+{{!}} width=&quot;10%&quot; valign=&quot;left&quot; align=&quot;center&quot; rowspan=&quot;2&quot; {{!}} [[{{{Icon}}}|40px]]
+{{!}} '''Property ''{{{Pagetitle}}}'' '''
+{{!}}}&lt;/div&gt;
+{{!}}}&lt;/div&gt;
+{{{!}} cellspacing=&quot;0&quot; cellpadding=&quot;5&quot; style=&quot;position:relative; margin: 0 0 0.5em 1em; border-collapse: collapse; border: 1px solid #999999; background: rgb(255,255,255); float: right; clear: none; width: 20em&quot;
+{{#ifeq:{{{Thumbnail image|}}}|||
+{{!}}-
+{{Tablelongrow|Label=Overview:|Value=[[{{{Thumbnail image|}}}|150px]]}} }}
+{{!}}-
+{{Tablelongrow|Label=Overview:|Value=''{{{Short description}}}''}}
+{{!}}-
+{{#ifeq:{{{Wiki section|}}}||
+{{Tablerow|Label=Content bundle:|Value=''not specified...''}}
+|{{Tablerow|Label=Content bundle:|Value={{{Wiki section|}}} }} }}
+{{!}}-
+{{Tablerow|Label=Author:|Value={{{author|}}} }}
+{{!}}}&lt;!--
+
+case: Property END
+
+--&gt;
+|User defined rule=&lt;!--
+
+case: User defined rule
+
+--&gt;&lt;div class=&quot;round&quot; style=&quot;padding-bottom: 2px; padding-left: 2px; padding-right: 2px; padding-top: 5px; font-family: tahoma, sans-serif; font-weight: bold; font-size: 120%; color: rgb(255,255,255); background-color: #999999; margin-bottom: 5px;&quot;&gt;&lt;!-- --&gt;
+{{{!}} width=&quot;100%&quot; cellspacing=&quot;1&quot; cellpadding=&quot;1&quot; border=&quot;0&quot; align=&quot;center&quot;     
+{{!}}- 
+{{!}} &lt;div style=&quot;padding: 2px; font-family: tahoma,sans-serif; font-weight: bold; font-size: 120%; color: rgb(250, 250, 250); margin-bottom: 2px;&quot; class=&quot;round&quot;&gt;
+{{{!}} width=&quot;100%&quot; cellspacing=&quot;1&quot; cellpadding=&quot;1&quot; border=&quot;0&quot; align=&quot;center&quot;
+{{!}}-
+{{!}} width=&quot;10%&quot; valign=&quot;left&quot; align=&quot;center&quot; rowspan=&quot;2&quot; {{!}} [[{{{Icon}}}|40px]]
+{{!}} '''User defined rule ''{{{Pagetitle}}}'' '''
+{{!}}}&lt;/div&gt;
+{{!}}}&lt;/div&gt;
+{{{!}} cellspacing=&quot;0&quot; cellpadding=&quot;5&quot; style=&quot;position:relative; margin: 0 0 0.5em 1em; border-collapse: collapse; border: 1px solid #999999; background: rgb(255,255,255); float: right; clear: none; width: 20em&quot;
+{{#ifeq:{{{Thumbnail image|}}}|||
+{{!}}-
+{{Tablelongrow|Label=Overview:|Value=[[{{{Thumbnail image|}}}|150px]]}} }}
+{{!}}-
+{{Tablelongrow|Label=Overview:|Value=''{{{Short description}}}''}}
+{{!}}-
+{{#ifeq:{{{Wiki section|}}}||
+{{Tablerow|Label=Content bundle:|Value=''not specified...''}}
+|{{Tablerow|Label=Content bundle:|Value={{{Wiki section|}}} }} }}
+{{!}}-
+{{Tablerow|Label=Author:|Value={{{author|}}} }}
+{{!}}}&lt;!--
+
+case: User defined rule END
+
+--&gt;
+|All content bundles=&lt;!--
+
+case: All content bundles
+
+--&gt;&lt;div class=&quot;round&quot; style=&quot;padding-bottom: 2px; padding-left: 2px; padding-right: 2px; padding-top: 5px; font-family: tahoma, sans-serif; font-weight: bold; font-size: 120%; color: rgb(255,255,255); background-color: #999999; margin-bottom: 5px;&quot;&gt;&lt;!-- --&gt;
+{{{!}} width=&quot;100%&quot; cellspacing=&quot;1&quot; cellpadding=&quot;1&quot; border=&quot;0&quot; align=&quot;center&quot;     
+{{!}}- 
+{{!}} &lt;div style=&quot;padding: 2px; font-family: tahoma,sans-serif; font-weight: bold; font-size: 120%; color: rgb(250, 250, 250); margin-bottom: 2px;&quot; class=&quot;round&quot;&gt;
+{{{!}} width=&quot;100%&quot; cellspacing=&quot;1&quot; cellpadding=&quot;1&quot; border=&quot;0&quot; align=&quot;center&quot;
+{{!}}-
+{{!}} width=&quot;10%&quot; valign=&quot;left&quot; align=&quot;center&quot; rowspan=&quot;2&quot; {{!}} [[{{{Icon}}}|40px]]
+{{!}} '''All Content Bundles of ''{{SITENAME}}'' '''
+{{!}}}&lt;/div&gt;
+{{!}}}&lt;/div&gt;
+{{{!}} cellspacing=&quot;0&quot; cellpadding=&quot;5&quot; style=&quot;position:relative; margin: 0 0 0.5em 1em; border-collapse: collapse; border: 1px solid #999999; background: rgb(255,255,255); float: right; clear: none; width: 20em&quot;
+{{!}}-
+{{Tablelongrow|Label=Overview:|Value=''{{{Short description}}}''}}
+{{!}}-
+{{Tablerow|Label=Author:|Value={{{author|}}} }}
+{{!}}}&lt;!--
+
+case: All content bundles END
+
+--&gt;
+|#default=&lt;!-- unknown category
+--&gt;&lt;div class=&quot;round&quot; style=&quot;padding-bottom: 5px; padding-left: 5px; padding-right: 5px; padding-top: 10px; font-family: tahoma, sans-serif; font-weight: bold; font-size: 120%; color: rgb(255,255,255); background-color: rgb(159,80,0); margin-bottom: 5px;float: right; clear: none; &quot;&gt;&lt;!-- --&gt;
+{{{!}} width=&quot;100%&quot; cellspacing=&quot;1&quot; cellpadding=&quot;1&quot; border=&quot;0&quot; align=&quot;center&quot;     
+{{!}}- 
+{{!}} &lt;div style=&quot;padding: 2px; font-family: tahoma,sans-serif; font-weight: bold; font-size: 120%; color: rgb(250, 250, 250); margin-bottom: 2px;&quot; class=&quot;round&quot;&gt;
+{{{!}} width=&quot;100%&quot; cellspacing=&quot;1&quot; cellpadding=&quot;1&quot; border=&quot;0&quot; align=&quot;center&quot;
+{{!}}-
+{{!}} width=&quot;10%&quot; valign=&quot;left&quot; align=&quot;center&quot; {{!}} [[Image:Stockage.png|40px]]
+{{!}} '''{{#show:{{{PAGENAME}}}|?Content title=}}'''
+{{!}}}&lt;/div&gt;
+{{!}}}&lt;/div&gt;
+{{{!}} cellspacing=&quot;0&quot; cellpadding=&quot;5&quot; style=&quot;position:relative; margin: 0 0 0.5em 1em; border-collapse: collapse; border: 1px solid rgb(159,80,0); background: rgb(255,255,255); float: right; clear: none; width: 20em&quot;
+}}&lt;/includeonly&gt;&lt;noinclude&gt;
+&lt;/noinclude&gt;</text>
+    <hash>919551dcfcdaf67199e683a77bb484b0</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Template:Tablelongrow</title>
+    <id>200</id>
+    <revision>
+      <id>344</id>
+      <timestamp>2010-12-20T13:24:46Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <minor/>
+      <comment>1 revision</comment>
+      <text xml:space="preserve">&lt;noinclude&gt;{{Template
+|PAGENAME=Template:Tablelongrow
+|part of=Baseontologybundle
+|rationale=This is a helper template to display a table row spanning 2 columns.
+|Has author=User:WikiSysop
+|parameters=&lt;pre&gt;
+{{Tablelongrow
+|Align=center|left|right
+|Color=white|..
+|Font size=100%
+|Value=text to display
+}}
+&lt;/pre&gt;
+}}
+&lt;/noinclude&gt;&lt;includeonly&gt;
+| colspan=&quot;2&quot; style=&quot;text-align: {{{Align|center}}}; background: {{{Color|white}}}&quot;|&lt;div style=&quot;font-size: {{{Font size|100%}}}&quot;&gt;{{{Value}}}&lt;/div&gt;
+&lt;/includeonly&gt;</text>
+    <hash>59bbdcf2f1da27a71628d714cc9cc137</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Template:Tablerow</title>
+    <id>201</id>
+    <revision>
+      <id>346</id>
+      <timestamp>2010-12-20T13:24:49Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <minor/>
+      <comment>1 revision</comment>
+      <text xml:space="preserve">&lt;noinclude&gt;{{Template
+|PAGENAME=Template:Tablerow
+|part of=Baseontologybundle
+|rationale=This is helper template to display a table row containing two columns.
+|Has author=User:WikiSysop
+|parameters=&lt;pre&gt;
+{{Tablerow
+|Label=name of the label
+|Value=text right to the label
+}}&lt;/pre&gt;
+}}
+&lt;/noinclude&gt;&lt;includeonly&gt;
+{{!}}style=&quot;vertical-align: top;&quot; {{!}}{{{Label}}}
+{{!}} {{{Value|undefined}}}&lt;/includeonly&gt;&lt;noinclude&gt;
+&lt;/noinclude&gt;</text>
+    <hash>04a785c66e24891734671fb6f4dbe8f2</hash>
     </revision>
   </page>
 </mediawiki>
