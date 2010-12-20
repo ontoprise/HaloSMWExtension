@@ -62,7 +62,7 @@ CKEDITOR.editorConfig = function( config )
     }
 
     config.toolbar_Wiki = [
-        ['Print','SpellChecker','Scayt'],
+        ['Source', '-', 'Print','SpellChecker','Scayt'],
         ['PasteText','PasteFromWord', '-','Find','Replace'],
         ['SelectAll','RemoveFormat'],
         ['Subscript','Superscript'],
