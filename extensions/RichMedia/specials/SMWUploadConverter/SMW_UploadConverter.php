@@ -88,14 +88,18 @@ class UploadConverter {
 			} else {
 				$text = wfMsg('uc_not_converted', $mimeType, $converterApp);
 			}
-			$title = $file->getTitle();
 			$article = new Article($title);
-	
+
 			if ($article->exists()) {
+				// temporarily disable the parser cache
+				global $wgEnableParserCache;
+				$enableParserCacheTemp = $wgEnableParserCache;
+				$wgEnableParserCache = false;
 				// Set the article's content
 				$success = $article->doEdit($text, wfMsg('uc_edit_comment'));
+				// set parser cache to previous value
+				$wgEnableParserCache = $enableParserCacheTemp;
 			}
-	
 			return true;
 		} else if(array_key_exists($mimeType, $smwgUploadConverterInternal)){
 			global $wgUploadConverterTemplateMapping;
@@ -115,10 +119,15 @@ class UploadConverter {
 			$article = new Article($title);
 	
 			if ($article->exists()) {
+				// temporarily disable the parser cache
+				global $wgEnableParserCache;
+				$enableParserCacheTemp = $wgEnableParserCache;
+				$wgEnableParserCache = false;
 				// Set the article's content
 				$success = $article->doEdit($text, wfMsg('uc_edit_comment'));
+				// set parser cache to previous value
+				$wgEnableParserCache = $enableParserCacheTemp;
 			}
-			
 			return true;
 		} else {
 			// no converter specified for the mime type

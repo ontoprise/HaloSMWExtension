@@ -1004,7 +1004,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow.php
  }
 Index: extensions/SemanticForms/specials/SF_UploadWindow2.php
 ===================================================================
---- extensions/SemanticForms/specials/SF_UploadWindow2.php	(revision 9220)
+--- extensions/SemanticForms/specials/SF_UploadWindow2.php	(revision 9321)
 +++ extensions/SemanticForms/specials/SF_UploadWindow2.php	(working copy)
 @@ -27,31 +27,36 @@
  	}
@@ -1334,7 +1334,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow2.php
 +		//set wpSave to true (simluates a submitted SF)
 +		$wgRequest->setVal('wpSave', 'true');
 +		//This needs to be set, otherwise the page content (created by UploadConverter e.g.) is ignored
-+		$wgRequest->setVal('query', 'true');
++		$wgRequest->setVal('query', 'false');
 +		$wgRequest->setVal('SFviaRichMedia', 'true');
 +
 +		$target_title = Title::newFromText($target);
