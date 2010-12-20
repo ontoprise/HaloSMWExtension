@@ -82,9 +82,9 @@ class ASFFormPrinter extends SFFormPrinter {
 				}
 				
 				//render for fck if necessary
-				global $wgFCKEditorDir;
-    			if ( $wgFCKEditorDir ) {
-					$additionalCategoryAnnotations = SFFormUtils::prepareTextForFCK($additionalCategoryAnnotations);
+				$showFCKEditor = SFFormUtils::getShowFCKEditor();
+      			if ( $showFCKEditor & RTE_VISIBLE ) {
+   					$additionalCategoryAnnotations = SFFormUtils::prepareTextForFCK($additionalCategoryAnnotations);
     			}
 				
 				//todo:does this work with wysiwyg
