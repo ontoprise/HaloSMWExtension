@@ -217,8 +217,8 @@ enableSemantics(/*param-start-enableSemantics*/'localhost:8080'/*param-end-enabl
 /*end-smw*/
 
 // auto-templates
-$smwhgAutoTemplatesParameters = array (NS_CATEGORY => array("PAGENAME"=>'$FULLPAGENAME', "Has author"=>'$USERNAME'),
-                                       SMW_NS_PROPERTY => array("PAGENAME"=>'$FULLPAGENAME', "Has author"=>'$USERNAME'));
+$smwhgAutoTemplatesParameters = array (NS_CATEGORY => array("PAGENAME"=>'$FULLPAGENAME'),
+                                       SMW_NS_PROPERTY => array("PAGENAME"=>'$FULLPAGENAME'));
 $smwhgAutoTemplates = array(NS_CATEGORY => "Category", SMW_NS_PROPERTY => "Property");
 
 /*start-semanticforms*/
