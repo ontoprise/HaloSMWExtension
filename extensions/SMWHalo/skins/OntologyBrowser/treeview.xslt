@@ -43,6 +43,7 @@
 		************************************ Variables
 		************************************
 	-->
+	<xsl:variable name="var-nonbreakspace">&#160;</xsl:variable>
 	<xsl:variable name="var-simple-quote">'</xsl:variable>
 	<xsl:variable name="var-slash-quote">\'</xsl:variable>
 	<xsl:variable name="var-underscore">_</xsl:variable>
@@ -340,9 +341,7 @@
 							name="from" select="$var-simple-quote" /><xsl:with-param
 							name="to" select="$var-slash-quote" /></xsl:call-template>')</xsl:attribute>
 						<xsl:variable name="superCategory" select="@superCat" />
-						&lt;
-						<xsl:value-of select="translate($superCategory, '_', ' ')"></xsl:value-of>
-						&gt;
+						&lt;<xsl:value-of select="translate($superCategory, '_', $var-nonbreakspace)"></xsl:value-of>&gt;
 					</a>
 				</xsl:if>
 			</td>
