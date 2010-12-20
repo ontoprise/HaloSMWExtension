@@ -2,7 +2,7 @@ Index: extensions/SemanticForms/includes/SF_EmbeddedFormClasses.php
 ===================================================================
 --- extensions/SemanticForms/includes/SF_EmbeddedFormClasses.php	(revision 0)
 +++ extensions/SemanticForms/includes/SF_EmbeddedFormClasses.php	(revision 0)
-@@ -0,0 +1,262 @@
+@@ -0,0 +1,257 @@
 +<?php
 +/**
 + * Two classes - SFForm and SFTemplateInForm - that represent a user-defined
@@ -16,14 +16,12 @@ Index: extensions/SemanticForms/includes/SF_EmbeddedFormClasses.php
 +class SFEmbeddedForm {
 +	var $form_name;
 +	var $templates;
-+  var $partof_wikisection;
 +  var $rationale;
 +	
-+	static function create($form_name, $templates, $partof_wikisection, $rationale) {
++	static function create($form_name, $templates, $rationale) {
 +		$form = new SFEmbeddedForm();
 +		$form->form_name = ucfirst(str_replace('_', ' ', $form_name));
 +		$form->templates = $templates;
-+    $form->partof_wikisection = $partof_wikisection;
 +    $form->rationale = $rationale;
 +
 +		return $form;
@@ -53,11 +51,8 @@ Index: extensions/SemanticForms/includes/SF_EmbeddedFormClasses.php
 +		$form_input = "{{#forminput:" . $this->form_name . "}}\n";
 +    $form_header ="{{Form
 +|PAGENAME=".$namespace_labels[SF_NS_FORM].":".$this->form_name."
-+|Has author=".$wgUser->getUserPage()."
 +|Form needs context=true
-+|part of=".$this->partof_wikisection."
 +|rationale=".$this->rationale."
-+|long description=__NOTITLE__
 +|transcludable=true
 +|show in template picker=true
 +|Populates template=";
@@ -920,7 +915,7 @@ Index: extensions/SemanticForms/specials/SF_CreateEmbeddedForm.php
 ===================================================================
 --- extensions/SemanticForms/specials/SF_CreateEmbeddedForm.php	(revision 0)
 +++ extensions/SemanticForms/specials/SF_CreateEmbeddedForm.php	(revision 0)
-@@ -0,0 +1,213 @@
+@@ -0,0 +1,212 @@
 +<?php
 +/**
 + * A special page holding a form that allows the user to create a data-entry
@@ -962,7 +957,6 @@ Index: extensions/SemanticForms/specials/SF_CreateEmbeddedForm.php
 +
 +	# handle inputs
 +	$form_name = $wgRequest->getVal('form_name');
-+	$partof_wikisection = $wgRequest->getVal('partof_wikisection');
 +	$rationale = $wgRequest->getVal('rationale');
 +	foreach ($wgRequest->getValues() as $var => $val) {
 +		# ignore variables that are not of the right form
@@ -1045,7 +1039,7 @@ Index: extensions/SemanticForms/specials/SF_CreateEmbeddedForm.php
 +			$field->autocompletion = $wgRequest->getVal("autocompletion_" . $old_i . "_" . $j);
 +		}
 +	}
-+	$form = SFEmbeddedForm::create($form_name, $form_templates,	$partof_wikisection,	$rationale);
++	$form = SFEmbeddedForm::create($form_name, $form_templates, $rationale);
 +
 +
 +	# if submit button was pressed, create the form definitions file, then redirect
@@ -1320,7 +1314,7 @@ Index: extensions/SemanticForms/includes/SF_TemplateField.php
 ===================================================================
 --- extensions/SemanticForms/includes/SF_TemplateField.php	2010-09-23 14:46:26.000000000 +0200
 +++ extensions/SemanticForms/includes/SF_TemplateField.php	2010-09-23 14:48:19.000000000 +0200
-@@ -103,9 +103,33 @@
+@@ -103,9 +103,31 @@
                  $page_type = $datatypeLabels[$type_constant];
  		return ( $this->field_type == $page_type );
  	}
@@ -1330,14 +1324,14 @@ Index: extensions/SemanticForms/includes/SF_TemplateField.php
 +		global $wgUser;
 +		global $wgContLang;
 +		$namespace_labels = $wgContLang->getNamespaces();
-+
+
+-	function createTemplateText( $template_name, $template_fields, $category, $aggregating_property, $aggregating_label, $template_format ) {
+-		$template_header = wfMsgForContent( 'sf_template_docu', $template_name );
 +		$template_header ="{{Template
 +|PAGENAME=".$namespace_labels[NS_TEMPLATE].":".$template_name."
-+|Has author=".$wgUser->getUserPage()."
 +|part of=".$partof_wikisection."
 +|rationale=".$rationale."
 +|defines category=".$namespace_labels[NS_CATEGORY].":".$category."
-+|long description=__NOTITLE__
 +|parameters=";
 +
 +$examplecall = '<pre>{{' . $template_name;
@@ -1346,9 +1340,7 @@ Index: extensions/SemanticForms/includes/SF_TemplateField.php
 +			$examplecall .= "|" . $field->field_name . "=\n";
 +		}
 +$examplecall .= '}}</pre>';
- 
--	function createTemplateText( $template_name, $template_fields, $category, $aggregating_property, $aggregating_label, $template_format ) {
--		$template_header = wfMsgForContent( 'sf_template_docu', $template_name );
++
 +$template_header .= $examplecall."
 +|Calls template=
 +}}";
