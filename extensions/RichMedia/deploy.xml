@@ -28,7 +28,7 @@
 	</wikidumps>
 	<resources>
 		<file loc="skins/vcard.gif" />
-		<file loc="skins/Calendar" />
+		<file loc="skins/Calendar.gif" />
 	</resources>
 
 	<configs>
