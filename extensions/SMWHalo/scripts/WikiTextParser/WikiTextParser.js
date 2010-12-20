@@ -149,6 +149,8 @@ WikiTextParser.prototype = {
         if (!wikiText || this.parserMode == WTP_EDITAREA_MODE) {
 
             if (typeof FCKeditor == 'undefined' && typeof CKEDITOR == 'undefined' ||
+                typeof showFCKEditor == 'undefined' ||
+                typeof RTE_VISIBLE == 'undefined' ||
                 showFCKEditor && RTE_VISIBLE && !(showFCKEditor & RTE_VISIBLE) ) {
                 // no wiki text => retrieve from text area.
 
