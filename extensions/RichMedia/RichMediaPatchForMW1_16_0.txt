@@ -1329,9 +1329,9 @@ Index: includes/specials/SpecialFilepath.php
  	} else {
 Index: includes/specials/SpecialSearch.php
 ===================================================================
---- includes/specials/SpecialSearch.php	(revision 5543)
+--- includes/specials/SpecialSearch.php	(revision 9321)
 +++ includes/specials/SpecialSearch.php	(working copy)
-@@ -471,7 +471,17 @@
+@@ -561,7 +561,18 @@
  		}
  
  		// Include a thumbnail for media files...
@@ -1341,7 +1341,8 @@ Index: includes/specials/SpecialSearch.php
 +		// original content is located in else statement.
 +		global $smwgEnableRichMedia;
 +		if( $smwgEnableRichMedia ) {
-+			RMNamespace::isImage( title-ding, $rMresult );
++			$temp_var = $t->getNamespace();
++			RMNamespace::isImage( $temp_var, $rMresult );
 +		} else {
 +			$rMresult = false;
 +		}
