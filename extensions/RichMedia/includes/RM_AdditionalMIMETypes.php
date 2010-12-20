@@ -138,7 +138,8 @@ $smwgNamespacesWithSemanticLinks = $smwgNamespacesWithSemanticLinks +
 		NS_VIDEO => true,
 		NS_PDF	=> true,
 		NS_ICAL	=> true,
-		NS_VCARD	=> true
+		NS_VCARD	=> true,
+		NS_FILE	=> true
 	);
 
 $wgHooks['CheckNamespaceForImage'][] = 'RMNamespace::isImage';
