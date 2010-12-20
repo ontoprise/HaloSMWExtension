@@ -63,8 +63,8 @@
     <title>Category:Comment</title>
     <id>237</id>
     <revision>
-      <id>1506</id>
-      <timestamp>2010-12-17T13:21:00Z</timestamp>
+      <id>1562</id>
+      <timestamp>2010-12-20T08:07:47Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -79,16 +79,16 @@
 |copyright_holder=Ontoprise GmbH
 |year=2009
 }}
-{{Collaboration bundle}}</text>
-    <hash>ddf2f2c0075bd8ea6b4c4f0d63692007</hash>
+[[part of bundle::Collaboration| ]]</text>
+    <hash>bd63fa3abc2b2f069e2e285ede27ced6</hash>
     </revision>
   </page>
   <page>
     <title>Property:Has comment rating</title>
     <id>238</id>
     <revision>
-      <id>1516</id>
-      <timestamp>2010-12-17T13:35:28Z</timestamp>
+      <id>1568</id>
+      <timestamp>2010-12-20T08:10:37Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -102,17 +102,17 @@
 |PAGENAME=Property:Has rating
 |own_work=True
 }}
-{{Collaboration bundle}}
+[[part of bundle::Collaboration| ]]
 [[has domain and range::Category:Comment; | ]][[has type::Type:Number| ]] [[Allows value::1| ]] [[Allows value::0| ]] [[Allows value::-1| ]]</text>
-    <hash>c8e7e5f2f6f48c4623b620a7620681fc</hash>
+    <hash>81895514267e88b351e4fc4cb974d92e</hash>
     </revision>
   </page>
   <page>
     <title>Property:Has comment date</title>
     <id>239</id>
     <revision>
-      <id>1517</id>
-      <timestamp>2010-12-17T13:36:07Z</timestamp>
+      <id>1566</id>
+      <timestamp>2010-12-20T08:09:42Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -128,17 +128,17 @@
 |copyright_holder=Ontoprise GmbH
 |year=2009
 }}
-{{Collaboration bundle}}
+[[part of bundle::Collaboration| ]]
 [[has domain and range::Category:Comment; | ]][[has type::Type:Date| ]]</text>
-    <hash>e8eb7f9a02d1299782fd845481bccf32</hash>
+    <hash>4c306bc5bde613cd5be6f6934131f837</hash>
     </revision>
   </page>
   <page>
     <title>Property:Has comment text</title>
     <id>240</id>
     <revision>
-      <id>1515</id>
-      <timestamp>2010-12-17T13:34:46Z</timestamp>
+      <id>1569</id>
+      <timestamp>2010-12-20T08:11:03Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -152,17 +152,17 @@
 |PAGENAME=Property:Has comment text
 |own_work=True
 }}
-{{Collaboration bundle}}
+[[part of bundle::Collaboration| ]]
 [[has domain and range::Category:Comment; | ]][[has type::Type:Text| ]]</text>
-    <hash>f6a2c79a3c6cbda3ec7cd24564ef7986</hash>
+    <hash>80369545c5af23bed5847007b8581846</hash>
     </revision>
   </page>
   <page>
     <title>Property:Has comment person</title>
     <id>241</id>
     <revision>
-      <id>1514</id>
-      <timestamp>2010-12-17T13:33:37Z</timestamp>
+      <id>1567</id>
+      <timestamp>2010-12-20T08:10:11Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -176,17 +176,17 @@
 |PAGENAME=Property:Has comment person
 |own_work=True
 }}
-{{Collaboration bundle}}
+[[part of bundle::Collaboration| ]]
 [[has domain and range::Category:Comment; | ]][[has type::Type:String| ]]</text>
-    <hash>c32d2fe382982f6fcd0f71a72e4d27d2</hash>
+    <hash>f7e0cf61311f6284c7c21c2f134ada68</hash>
     </revision>
   </page>
   <page>
     <title>Template:CommentResult</title>
     <id>244</id>
     <revision>
-      <id>1510</id>
-      <timestamp>2010-12-17T13:31:34Z</timestamp>
+      <id>1565</id>
+      <timestamp>2010-12-20T08:09:12Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -201,7 +201,7 @@
 |copyright_holder=Ontoprise GmbH
 |year=2009
 }}
-{{Collaboration bundle}}
+[[part of bundle::Collaboration| ]]
 &lt;/noinclude&gt;&lt;includeonly&gt;&lt;!-- start comment (do not change css-classes)
 --&gt;{{#vardefine:resID
 |{{PAGENAMEE:{{#ifeq: {{#pos:{{{6}}}|:}} 
@@ -232,15 +232,15 @@
 --&gt;&lt;div class=&quot;collabComResText&quot;&gt;{{{4}}}&lt;/div&gt;&lt;/div&gt;&lt;!-- end comment content
 --&gt;{{#if:{{{7|}}}|&lt;div class=&quot;collabComResDeletion&quot;&gt;{{{7|}}}&lt;/div&gt;&lt;!-- end deletion info --&gt;|}}&lt;/div&gt;&lt;!-- end comment 
 --&gt;&lt;/includeonly&gt;</text>
-    <hash>14028ffebae019f4e7586ee8833bd280</hash>
+    <hash>7b9cdf62413010df349b21cac4faef68</hash>
     </revision>
   </page>
   <page>
     <title>Property:Belongs to article</title>
     <id>245</id>
     <revision>
-      <id>1519</id>
-      <timestamp>2010-12-17T13:37:06Z</timestamp>
+      <id>1560</id>
+      <timestamp>2010-12-20T08:06:45Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -256,17 +256,17 @@
 |copyright_holder=Ontoprise GmbH
 |year=2009
 }}
-{{Collaboration bundle}}
+[[part of bundle::Collaboration| ]]
 [[has type::Type:Page| ]][[Has max cardinality::1| ]][[Has min cardinality::1| ]][[has domain and range::Category:Comment; | ]]</text>
-    <hash>a3d19d48e71343565686973b11144020</hash>
+    <hash>9e03f0e693c93de2a34703a3cedd207a</hash>
     </revision>
   </page>
   <page>
     <title>Template:ShowCommentsIntern</title>
     <id>247</id>
     <revision>
-      <id>1513</id>
-      <timestamp>2010-12-17T13:33:02Z</timestamp>
+      <id>1571</id>
+      <timestamp>2010-12-20T08:12:00Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -280,7 +280,7 @@
 |parameters=&lt;pre&gt;{{ShowCommentsIntern}}&lt;/pre&gt;
 |Calls template=Template:CommentResult
 }}
-{{Collaboration bundle}}
+[[part of bundle::Collaboration| ]]
 &lt;/noinclude&gt;&lt;includeonly&gt;
 &lt;!--start surrounding div --&gt;&lt;div class=&quot;collabComInternSurround&quot;&gt;&lt;!-- start header div --&gt;&lt;div class=&quot;collabComInternHeader&quot;&gt;[[File:Comment_icon_crystal.png|text-bottom|nopreview|16px|link=]]&lt;/div&gt;&lt;!-- end header div --&gt;
 {{#showcommentform:}}
@@ -301,15 +301,15 @@
 }}
 &lt;/div&gt;
 &lt;/div&gt;&lt;!-- end surround div --&gt;&lt;/includeonly&gt;</text>
-    <hash>d1360dbfeafdaa40693da50b2e713d67</hash>
+    <hash>89061a6dc1e45147d9680f004ddd6c1d</hash>
     </revision>
   </page>
   <page>
     <title>Property:Comment was deleted</title>
     <id>284</id>
     <revision>
-      <id>1518</id>
-      <timestamp>2010-12-17T13:36:38Z</timestamp>
+      <id>1564</id>
+      <timestamp>2010-12-20T08:08:48Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -325,17 +325,17 @@
 |copyright_holder=Ontoprise GmbH
 |year=2009
 }}
-{{Collaboration bundle}}
+[[part of bundle::Collaboration| ]]
 [[has domain and range::Category:Comment; | ]][[has type::Type:Boolean| ]]</text>
-    <hash>01f486d170beea25828be0d4b863104a</hash>
+    <hash>bd8585d42423aa57a91be8d3464661ac</hash>
     </revision>
   </page>
   <page>
     <title>Property:Belongs to comment</title>
     <id>285</id>
     <revision>
-      <id>1520</id>
-      <timestamp>2010-12-17T13:37:37Z</timestamp>
+      <id>1561</id>
+      <timestamp>2010-12-20T08:07:19Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -351,17 +351,17 @@
 |copyright_holder=Ontoprise GmbH
 |year=2009
 }}
-{{Collaboration bundle}}
+[[part of bundle::Collaboration| ]]
 [[has type::Type:Page| ]][[Has max cardinality::1| ]][[Has min cardinality::1| ]][[has domain and range::Category:Comment;Category:Comment | ]]</text>
-    <hash>8f09f1aa7a888253a14fad6d4ec3415a</hash>
+    <hash>65b985eefd306e40cc6d9a1d8ce50ee4</hash>
     </revision>
   </page>
   <page>
     <title>Template:Comment</title>
     <id>358</id>
     <revision>
-      <id>1509</id>
-      <timestamp>2010-12-17T13:30:56Z</timestamp>
+      <id>1563</id>
+      <timestamp>2010-12-20T08:08:21Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -384,7 +384,7 @@
 |copyright_holder=Ontoprise GmbH
 |year=2009
 }}
-{{Collaboration bundle}}
+[[part of bundle::Collaboration| ]]
 &lt;/noinclude&gt;&lt;includeonly&gt;''Comment for {{#if: {{{CommentRelatedArticle|}}} 
 | [[Belongs to article::{{{CommentRelatedArticle|}}}]] | nothing
 }}{{#if: {{{CommentRelatedComment|}}} 
@@ -421,15 +421,15 @@
 [[Comment was deleted::{{{CommentWasDeleted|false}}}]]
 &lt;!-- end comment --&gt;[[Category:Comment]]
 &lt;/includeonly&gt;</text>
-    <hash>a7053d1eae17924aff760ba24c4b7ad7</hash>
+    <hash>cd52485710ce8c36fd08afa8390b42f2</hash>
     </revision>
   </page>
   <page>
     <title>Template:ShowComments</title>
     <id>359</id>
     <revision>
-      <id>1512</id>
-      <timestamp>2010-12-17T13:32:32Z</timestamp>
+      <id>1570</id>
+      <timestamp>2010-12-20T08:11:30Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -444,60 +444,50 @@
 |Calls template=Template:ShowCommentsIntern
 |PAGENAME=Template:ShowComments
 }}
-{{Collaboration bundle}}
+[[part of bundle::Collaboration| ]]
 &lt;/noinclude&gt;&lt;includeonly&gt;{{#ifeq:{{{show|}}}|True|{{ShowCommentsIntern}}|}}&lt;/includeonly&gt;&lt;noinclude&gt;
 &lt;/noinclude&gt;</text>
-    <hash>d30907987225cb17bf95a0e8ce478a7a</hash>
+    <hash>088aaebe7b99a8bb4e4d894888897000</hash>
     </revision>
   </page>
   <page>
     <title>Collaboration</title>
     <id>444</id>
     <revision>
-      <id>1503</id>
-      <timestamp>2010-12-17T13:12:55Z</timestamp>
+      <id>1637</id>
+      <timestamp>2010-12-20T09:34:50Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
-      <comment>Created page with &quot;{{Content bundle |Vendor=Ontoprise |Version=130 |Description=This content bundle features a set of basic elements that are necessary to for the Collaboration extension. |Installa...&quot;</comment>
       <text xml:space="preserve">{{Content bundle
 |Vendor=Ontoprise
 |Version=130
 |Description=This content bundle features a set of basic elements that are necessary to for the Collaboration extension.
 |Installation=extensions/Collaboration
+|Dependency=mw;1160;1160, smw;152;152, smwhalo;152;152, scriptmanager;101;101, applicationprogramming;102;102
 }}
-[[Part of bundle::Collaboration| ]]</text>
-    <hash>bbb5eca5434586a5dad48128e4d36435</hash>
-    </revision>
-  </page>
-  <page>
-    <title>Template:Collaboration bundle</title>
-    <id>445</id>
-    <revision>
-      <id>1504</id>
-      <timestamp>2010-12-17T13:15:54Z</timestamp>
-      <contributor>
-        <username>WikiSysop</username>
-        <id>1</id>
-      </contributor>
-      <comment>Created page with &quot;[[Vendor::Ontoprise| ]] [[Ontology version::130| ]] [[Installation dir::extensions/Collaboration| ]] [[part of bundle::Collaboration| ]] &lt;noinclude&gt; ;This bundle contains these a...&quot;</comment>
-      <text xml:space="preserve">[[Vendor::Ontoprise| ]]
+[[Vendor::Ontoprise| ]]
 [[Ontology version::130| ]]
 [[Installation dir::extensions/Collaboration| ]]
 [[part of bundle::Collaboration| ]]
-&lt;noinclude&gt;
+[[Dependency::mw;1160;1160| ]]
+[[Dependency::smw;152;152| ]]
+[[Dependency::smwhalo;152;152| ]]
+[[Dependency::scriptmanager;101;101| ]]
+[[Dependency::applicationprogramming;102;102| ]]
+[[Category:Content bundle]]
+
 ;This bundle contains these articles:
-{{#ask:[[Part of bundle::Collaboration]]
+
+{{#ask:[[Part of bundle::{{FULLPAGENAME}}]]
 |?=Link
 |?Rationale
 |link=subject
 |default=''none''
 |mainlabel=-
-}} 
-[[Category:Content bundle]]
-&lt;/noinclude&gt;</text>
-    <hash>86cf73cd833ffcf712d7efe442446256</hash>
+}}</text>
+    <hash>0f91477605d9447d75fb0c128dcb3080</hash>
     </revision>
   </page>
   <page>
@@ -515,81 +505,6 @@
 helper template for pipe symbol, which can e.g. not be used directly in template parameter calls.[[Part of bundle::Baseontologybundle| ]]
 &lt;/noinclude&gt;</text>
     <hash>5fb9b20c2825d7743e58540992c213ec</hash>
-    </revision>
-  </page>
-  <page>
-    <title>Template:Content bundle</title>
-    <id>363</id>
-    <revision>
-      <id>1341</id>
-      <timestamp>2010-12-10T17:48:32Z</timestamp>
-      <contributor>
-        <username>WikiSysop</username>
-        <id>1</id>
-      </contributor>
-      <text xml:space="preserve">&lt;noinclude&gt;{{Template
-|PAGENAME=Template:Content bundle
-|Has author=User:WikiSysop
-|part of=Baseontologybundle
-|rationale=Content bundle template
-|parameters=&lt;pre&gt;{{Content bundle
-|Version=
-}}&lt;/pre&gt;
-|defines category=Category:Content bundle
-}}
-&lt;/noinclude&gt;&lt;includeonly&gt;{{Header for wiki parts
-|Category=Content bundle
-|Pagetitle={{PAGENAME}}
-|Icon=File:Smw_plus_contentsection_icon_100x100.gif
-|Short description={{#ifeq:{{{Description|}}}|||[[Description::{{{Description|}}}]]}}
-|author={{#ifeq:{{{Vendor|}}}|||[[Vendor::{{{Vendor|}}}]]}}
-|Wiki section={{#ifeq:{{{part of|}}}|||[[part of bundle::{{{part of|}}}]]}}
-|Version={{#ifeq:{{{Version|}}}|||[[Ontology version::{{{Version|}}}]]}}
-|Installation dir={{#ifeq:{{{Installation|}}}|||[[Installation dir::{{{Installation|}}}]]}}
-|Dependency={{#ifeq:{{{Dependency|}}}|||[[Dependency::{{{Dependency|}}}]]}}
-}} __NOTOC__ 
-
-;This bundle contains these articles:
-
-{{#ask:[[Part of bundle::{{FULLPAGENAME}}]]
-|?=Link
-|?Rationale
-|link=subject
-|default=''none''
-|mainlabel=-
-}} 
-[[Category:Content bundle]]&lt;/includeonly&gt;&lt;noinclude&gt;
-&lt;/noinclude&gt;</text>
-    <hash>43cf28e687ef06866a31457fb29075ad</hash>
-    </revision>
-  </page>
-  <page>
-    <title>Template:Collaboration bundle</title>
-    <id>445</id>
-    <revision>
-      <id>1504</id>
-      <timestamp>2010-12-17T13:15:54Z</timestamp>
-      <contributor>
-        <username>WikiSysop</username>
-        <id>1</id>
-      </contributor>
-      <comment>Created page with &quot;[[Vendor::Ontoprise| ]] [[Ontology version::130| ]] [[Installation dir::extensions/Collaboration| ]] [[part of bundle::Collaboration| ]] &lt;noinclude&gt; ;This bundle contains these a...&quot;</comment>
-      <text xml:space="preserve">[[Vendor::Ontoprise| ]]
-[[Ontology version::130| ]]
-[[Installation dir::extensions/Collaboration| ]]
-[[part of bundle::Collaboration| ]]
-&lt;noinclude&gt;
-;This bundle contains these articles:
-{{#ask:[[Part of bundle::Collaboration]]
-|?=Link
-|?Rationale
-|link=subject
-|default=''none''
-|mainlabel=-
-}} 
-[[Category:Content bundle]]
-&lt;/noinclude&gt;</text>
-    <hash>86cf73cd833ffcf712d7efe442446256</hash>
     </revision>
   </page>
 </mediawiki>
