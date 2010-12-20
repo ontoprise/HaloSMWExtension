@@ -372,11 +372,10 @@ CKEDITOR.customprocessor.prototype =
         data = '<body>' + data.htmlEntities()+ '</body>';
         // fix <img> tags
         data = data.replace(/(<img[^>]*)([^/])>/gi, '$1$2/>' );
-        // fix <hr> tags
-        data = data.replace(/<hr>/gi, '<hr/>' );
-        data = data.replace(/(<hr[^>]*)([^/])>/gi, '$1$2/>' );
-        // and fix <br> tags
-        data = data.replace(/<br>/gi, '<br/>' );
+        // fix <hr> and <br> tags
+        data = data.replace(/<(hr|br)>/gi, '<$1/>' );
+        // and the same with attributes
+        data = data.replace(/<(hr|br)([^>]*)([^/])>/gi, '<$1$2$3/>' );
         // remove some unncessary br tags that are followed by a </p> or </li>
         data = data.replace(/<br\/>(\s*<\/(p|li)>)/gi, '$1');
         // also remove <br/> before nested lists
@@ -392,7 +391,7 @@ CKEDITOR.customprocessor.prototype =
 
 		var stringBuilder = new Array();
 		this._AppendNode( rootNode, stringBuilder, '' );
-		return stringBuilder.join( '' ).Trim();
+		return stringBuilder.join( '' ).Trim() + '\n';
 	},
 
     _getNodeFromHtml : function( data ) {
@@ -482,6 +481,12 @@ CKEDITOR.customprocessor.prototype =
 				// Remove the <br> if it is a bogus node.
 				if ( sNodeName == 'br' && htmlNode.getAttribute( 'type', 2 ) == '_moz' )
 					return;
+
+                // Translate the <br fckLR="true"> into \n
+				if ( sNodeName == 'br' && htmlNode.getAttribute( 'fcklr', 2 ) == 'true' ) {
+                    stringBuilder.push("\n");
+					return;
+                }
 
 				// The already processed nodes must be marked to avoid then to be duplicated (bad formatted HTML).
 				// So here, the "mark" is checked... if the element is Ok, then mark it.
@@ -1269,8 +1274,8 @@ if (!String.prototype.EndsWith) {
 }
 
 if (!String.prototype.Trim) {
-    String.prototype.Trim = function(str)
-    {return (this.replace(/^\s*(.*)\s*$/, '$1'))}
+    String.prototype.Trim = function()
+    {return this.replace(/^\s*/, '').replace(/\s*$/, '')}
 }
 if (!String.prototype.IEquals) {
     String.prototype.IEquals = function() {
