@@ -192,6 +192,8 @@ class CKeditor_MediaWiki {
 	public function onParserAfterTidy( &$parser, &$text ) {
 		global $wgUseTeX, $wgUser, $wgTitle, $wgFCKEditorIsCompatible;
 
+        MagicWord::get( 'NORICHEDITOR' )->matchAndRemove( $text );
+        
 		# Don't initialize for users that have chosen to disable the toolbar, rich editor or that do not have a FCKeditor-compatible browser
 		if( !$wgUser->getOption( 'showtoolbar' ) || $wgUser->getOption( 'riched_disable' ) || !$wgFCKEditorIsCompatible ) {
 			return true;
