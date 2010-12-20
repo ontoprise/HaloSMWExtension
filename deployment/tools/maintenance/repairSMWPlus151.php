@@ -73,6 +73,6 @@ fwrite($handle, $ls);
 fclose($handle);
 print "done.";
 print "\nRemove LinkedData extension...";
-//deleteLinkedData($mwRootDir);
+deleteLinkedData($mwRootDir);
 print "done.";
 
