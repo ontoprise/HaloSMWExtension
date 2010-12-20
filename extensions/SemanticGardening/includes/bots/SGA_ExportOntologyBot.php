@@ -179,9 +179,9 @@ class ExportOntologyBot extends GardeningBot {
 		$header .= '<!DOCTYPE owl ['.LINE_FEED;
 		$header .=	'<!ENTITY xsd  "http://www.w3.org/2001/XMLSchema#" >'.LINE_FEED;
 		$header .=  '<!ENTITY owl  "http://www.w3.org/2002/07/owl#" >'.LINE_FEED;
-		$header .=	'<!ENTITY a  "'.$this->namespace.'#" >'.LINE_FEED;
-		$header .=	'<!ENTITY prop  "'.$this->namespace.'/property#" >'.LINE_FEED;
-		$header .=	'<!ENTITY cat  "'.$this->namespace.'/category#" > ]>'.LINE_FEED;
+		$header .=	'<!ENTITY a  "'.$this->namespace.'/" >'.LINE_FEED;
+		$header .=	'<!ENTITY prop  "'.$this->namespace.'/property/" >'.LINE_FEED;
+		$header .=	'<!ENTITY cat  "'.$this->namespace.'/category/" > ]>'.LINE_FEED;
 
 		$header .=	'<rdf:RDF'.LINE_FEED;
 		$header .=	'xmlns:a   ="&a;"'.LINE_FEED;
