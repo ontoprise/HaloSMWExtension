@@ -59,7 +59,6 @@ class SNStorage {
         if (self::$mDatabase == NULL) {
             global $smwgBaseStore;
             switch ($smwgBaseStore) {
-                case (SMW_STORE_MWDB): 
                 default:
                     require_once("$sngIP/storage/SN_StorageSQL.php");
                     self::$mDatabase = new SNStorageSQL();
