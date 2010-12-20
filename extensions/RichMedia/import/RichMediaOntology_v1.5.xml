@@ -1920,7 +1920,7 @@ desc none
       <text xml:space="preserve">{{Content bundle
 |Vendor=Ontoprise
 |Version=150
-|Description=This content bundle features a set of basic elements that are necessary to for the RichMedia extension.
+|rationale=This content bundle features a set of basic elements that are necessary for the RichMedia extension.
 |Installation=extensions/RichMedia
 |Dependency=mw;1160;1160, smw;152;152, smwhalo;152;152, semanticforms;200;200, scriptmanager;101;101, applicationprogramming;102;102
 }}
