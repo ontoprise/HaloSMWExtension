@@ -80,7 +80,7 @@ class SemanticNotificationManager {
 
 		//--- Hooks ---
 		global $wgHooks;
-		$wgHooks['smwInitializeTables'][] = 'SemanticNotificationManager::initDatabaseTables';
+//		$wgHooks['smwInitializeTables'][] = 'SemanticNotificationManager::initDatabaseTables';
 		$wgHooks['QI_AddButtons'][] = 'SemanticNotificationManager::addQueryInterfaceButton';
 		
 		//--- Include files for ajax calls if necessary ---

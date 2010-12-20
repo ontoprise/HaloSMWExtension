@@ -35,8 +35,11 @@
 				file="extensions/SemanticNotifications/includes/SN_Initialize.php" />
 			<function name="enableSemanticNotifications">
 			</function>
+			<script file="maintenance/SN_Setup.php" />
 		</new>
 		<uninstall>
+			<script file="maintenance/SN_Setup.php"
+				params="--delete" />			
 		</uninstall>
 	</configs>
 </deploydescriptor>
