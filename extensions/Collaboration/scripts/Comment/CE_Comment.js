@@ -254,7 +254,7 @@ function CECommentForm() {
 		var ratingDiv, ratingExistent, editRatingValue;
 		this.editCommentName = pageName;
 		this.editCommentRelatedComment = $jq('#' + pageName.replace(/(:|\.)/g,'\\$1') + ' .collabComResInfoSuper').html();
-		if (this.editMode) {
+		if( this.editMode ) {
 			//already editing. cancel first!
 			return false;
 		}
@@ -689,6 +689,10 @@ function CECommentForm() {
 	 * so we can use the cloned and stored version and just rebind the events.
 	 */
 	this.showFlat = function() {
+		// cancel edit action first
+		if( this.editMode ) {
+			this.cancelCommentEditForm(this.editCommentName);
+		}
 		$jq('#collabComResults').html($jq(this.savedStructure.html()));
 		// rebind events
 		var resultComments = $jq('.collabComRes');
