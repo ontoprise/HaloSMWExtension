@@ -333,7 +333,6 @@ $wgNamespacesToBeSearchedDefault = array(
 
 /*start-treeview*/
 include('extensions/Treeview/Treeview.php');
-$wgTreeViewImages['plus'] = "Plus.gif";
 $wgTreeViewShowLines = true;
 /*end-treeview*/
 
