@@ -396,6 +396,7 @@ clicking the big arrows between the columns.',
 	'smw_df_loading_df'			 => 'Loading derived facts...',
 	'smw_df_invalid_title'		 => 'Invalid article. No derived facts available.',
 	'smw_df_no_df_found'		 => 'No derived facts found for this article.',
+	'smw_df_tsc_advertisment'    => "''You have no triplestore attached to this Wiki.''\n\nYou make this Wiki smarter by connecting a TripleStore to it! Connecting the ontoprise products '''TripleStoreConnector Basic''' (free) or '''TripleStoreConnector Professional''' ultimately leads to getting better search results and to making use of data which lives outside this Wiki.\nClick here to read what your benefits are and to download a [http://smwforum.ontoprise.com/smwforum/index.php/List_of_Extensions/Triple_store_connector TripleStore]!",
 	
     //skin
     'smw_search_this_wiki' => 'Search this wiki',

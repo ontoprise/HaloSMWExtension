@@ -784,6 +784,13 @@ function smwf_om_GetDerivedFacts($titleName) {
 		// invalid title
 		return wfMsg('smw_df_invalid_title');
 	}
+	
+	if (!smwfIsTripleStoreConfigured()) {
+		global $wgParser;
+		$parserOutput = $wgParser->parse( wfMsg('smw_df_tsc_advertisment'), $t, new ParserOptions,
+            true, true, 0 );   
+		return $parserOutput->getText();
+	}
 
 	$semdata = smwfGetStore()->getSemanticData($t);
 	wfLoadExtensionMessages('SemanticMediaWiki');

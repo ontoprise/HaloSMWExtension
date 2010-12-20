@@ -55,6 +55,10 @@
 				<string name="wgDefaultSkin"
 					description="Default skin used">ontoskin3</string>
 			</variable>
+			<variable name="smwgShowDerivedFacts">
+                <boolean name="smwgShowDerivedFacts"
+                    description="Shows derived factbox as new tab besides the normal factbox.">true</boolean>
+            </variable>
 			<script file="maintenance/SMW_setup.php" />
 		</new>
 		<update from="151">

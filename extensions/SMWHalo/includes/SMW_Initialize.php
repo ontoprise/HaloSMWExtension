@@ -168,7 +168,7 @@ function smwgHaloSetupExtension() {
 	$wgHooks['smwInitProperties'][] = 'smwfInitSpecialPropertyOfSMWHalo';
 
 	global $smwgDefaultStore, $smwgShowDerivedFacts, $wgRequest;
-	if (smwfIsTripleStoreConfigured() && $smwgShowDerivedFacts === true) {
+	if ($smwgShowDerivedFacts === true) {
 		$wgHooks['smwShowFactbox'][] = 'smwfAddDerivedFacts';
 	}
 

@@ -387,7 +387,7 @@ protected $smwUserMessages = array(
 	'smw_df_loading_df'			 => 'Abgeleitete Fakten werden geladen ...',
 	'smw_df_invalid_title'		 => 'Ungültiger Artikel. Es sind keine abgeleiteten Fakten verfügbar.',
 	'smw_df_no_df_found'		 => 'Es wurden keine abgeleiteten Fakten für diesen Artikel gefunden.',
-
+    'smw_df_tsc_advertisment'    => "''Sie haben keinen Triplestore an diesem Wiki angeschlossen.''\n\nConnecting the ontoprise products '''TripleStoreConnector Basic''' (free) or '''TripleStoreConnector Professional''' ultimately leads to getting better search results and to making use of data which lives outside this Wiki.\nClick here to read what your benefits are and to download a [http://smwforum.ontoprise.com/smwforum/index.php/List_of_Extensions/Triple_store_connector TripleStore]!",
 
         //skin
         'smw_search_this_wiki' => 'Wiki durchsuchen',
