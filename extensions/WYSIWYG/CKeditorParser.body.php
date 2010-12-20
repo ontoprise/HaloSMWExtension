@@ -581,6 +581,9 @@ class CKeditorParser extends CKeditorParserWrapper {
 		$text = $this->fck_replaceTemplates( $text );
 		// as well as properties
 		$text = $this->fck_replaceSpecialLinks( $text );
+        
+        // preserve linebreaks
+        $text = strtr($text, array("\n" => 'FCKLR_fcklr', "\r" => ''));
 
 		$finalString = parent::internalParse( $text, $isMain );
 		return $finalString;
@@ -631,6 +634,8 @@ class CKeditorParser extends CKeditorParserWrapper {
 	function parse( $text, Title $title, ParserOptions $options, $linestart = true, $clearState = true, $revid = null ) {
 		$text = preg_replace( "/^#REDIRECT/", '<!--FCK_REDIRECT-->', $text );
 		$parserOutput = parent::parse( $text, $title, $options, $linestart, $clearState, $revid );
+
+        $parserOutput->setText( strtr( $parserOutput->getText(), array('FCKLR_fcklr' => '<br fcklr="true"/>') ) );
 
 		$categories = $parserOutput->getCategories();
 		if( $categories ) {
