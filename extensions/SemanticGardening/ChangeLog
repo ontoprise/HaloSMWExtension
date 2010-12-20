@@ -1,6 +1,19 @@
 Semantic Gardening extension ChangeLog
 ======================================
 
+VERSION 1.3.3
+
+  FEATURES:
+    None new.
+    
+  CHANGES:
+    Export Ontology Bot now produces URIs that do not contain a hash (#) anymore. Basically, the hash
+    is replaced by a slash.
+    
+     Example:
+        Previously: http://mywiki/property#Has_name
+        Now:        http://mywiki/property/Has_name 
+
 
 VERSION 1.3.2 Patch Level 1
 
@@ -10,7 +23,6 @@ VERSION 1.3.2 Patch Level 1
 
 
   CHANGES:
-
 
 
   BUGFIXES:
