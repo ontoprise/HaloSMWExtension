@@ -337,6 +337,7 @@ class CKeditor_MediaWiki {
 		}
 
 		if( ( !empty( $_SESSION['showMyFCKeditor'] ) ) && ( $wgUser->getOption( 'riched_toggle_remember_state', $wgDefaultUserOptions['riched_toggle_remember_state'] ) ) ){
+            $rteSettingsFromSession=true;
 			// Clear RTE_VISIBLE flag
 			$this->showFCKEditor &= ~RTE_VISIBLE;
 			// Get flag from session
@@ -365,7 +366,7 @@ class CKeditor_MediaWiki {
             return true;
         }
         # If mode=wysiwyg is set then start with the WYSIWYG editor
-        if ( $wgRequest->getVal('mode') && $wgRequest->getVal('mode') == 'wysiwyg') {
+        if ( $wgRequest->getVal('mode') && $wgRequest->getVal('mode') == 'wysiwyg' && !isset($rteSettingsFromSession)) {
             $this->showFCKEditor |= RTE_VISIBLE;
         }
 
