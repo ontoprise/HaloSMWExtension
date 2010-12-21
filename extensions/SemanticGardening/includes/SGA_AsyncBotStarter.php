@@ -5,7 +5,7 @@
  *
  * Created on 12.03.2007
  * 
- * @author Kai Kühn
+ * @author Kai Kï¿½hn
  * 
  */
 
@@ -104,6 +104,14 @@ if ($bot != null) {
 		// 	3. decode URL
 		//  4. convert string of the form (key=value,)* to a hash array
 		$log = $bot->run(GardeningBot::convertParamStringToArray(urldecode(str_replace("{{percentage}}", "%", implode($params,"")))), true, isset($sgagGardeningBotDelay) ? $sgagGardeningBotDelay : 0);
+		
+		//sync with tsc
+		global $smwgDefaultStore;
+		if($smwgDefaultStore == 'SMWTripleStore' || $smwgDefaultStore == 'SMWTripleStoreQuad'){
+			define('SMWH_FORCE_TS_UPDATE', 'TRUE');
+			smwfGetStore()->initialize(true);
+		}
+		
 		global $smwgAbortBotPortRange;
         if (isset($smwgAbortBotPortRange)) @socket_close($bot->getTermSignalSocket());
 			
