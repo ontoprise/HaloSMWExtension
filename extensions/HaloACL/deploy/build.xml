@@ -7,7 +7,7 @@
 		</delete>
 		<mkdir dir="bin/zip" />
 
-		
+
 		<copy todir="bin/zip/extensions/HaloACL/exceptions">
 			<fileset dir="../exceptions/">
 				<exclude name="**/.svn, **/CVS" />
@@ -65,66 +65,66 @@
 				<include name="INSTALL" />
 				<include name="deploy.xml" />
 				<include name="patch_for_*" />
-				
+
 			</fileset>
-   			<fileset dir="../../../patches/">
+			<fileset dir="../../../patches/">
 				<include name="patch.php" />
 			</fileset>
 
 		</copy>
 		<zip destfile="bin/haloacl.zip" basedir="bin/zip" />
-		
+
 		<exec executable="php">
 			<arg value="../../../buildtools/renameDeployable.php" />
 			<arg value="../deploy.xml" />
 			<arg value="bin/haloacl.zip" />
 		</exec>
 	</target>
-	
+
 	<target name="haloacl_bundled_build" depends="HaloACL_build">
-
-	        <delete>
-	            <fileset dir="bin" includes="haloacl-bundled*.zip" />
-	        </delete>
-	        <copy todir="bin/zip/extensions/ARCLibrary">
-	            <fileset dir="../../ARCLibrary/">
-	                <exclude name="**/.svn, **/CVS" />
-	            	<exclude name="**/deploy/**" />
-	            </fileset>
-	        </copy>
-	        <copy todir="bin/zip/extensions/ScriptManager">
-	            <fileset dir="../../ScriptManager/">
-	                <exclude name="**/.svn, **/CVS" />
-	            	<exclude name="**/deploy/**" />
-	            </fileset>
-	        </copy>
-	        <zip destfile="bin/haloacl-bundled.zip" basedir="bin/zip" />
+		<ant antfile="../../ARCLibrary/deploy/build.xml" inheritall="true" dir="../../ARCLibrary/deploy" target="build">
+		</ant>
+		<ant antfile="../../ScriptManager/deploy/build.xml" inheritall="true" dir="../../ScriptManager/deploy" target="scriptmanager_build">
+		</ant>
+		<delete>
+			<fileset dir="bin" includes="haloacl-bundled*.zip" />
+		</delete>
+		<copy todir="bin/zip/extensions/ARCLibrary">
+			<fileset dir="../../ARCLibrary/">
+				<exclude name="**/.svn, **/CVS" />
+				<exclude name="**/deploy/**" />
+			</fileset>
+		</copy>
+		<copy todir="bin/zip/extensions/ScriptManager">
+			<fileset dir="../../ScriptManager/">
+				<exclude name="**/.svn, **/CVS" />
+				<exclude name="**/deploy/**" />
+			</fileset>
+		</copy>
+		<zip destfile="bin/haloacl-bundled.zip" basedir="bin/zip" />
 		<delete dir="bin/zip" />
-	        <exec executable="php">
-	            <arg value="../../../buildtools/renameDeployable.php" />
-	            <arg value="../deploy.xml" />
-	            <arg value="bin/haloacl-bundled.zip" />
-	        </exec>
+		<exec executable="php">
+			<arg value="../../../buildtools/renameDeployable.php" />
+			<arg value="../deploy.xml" />
+			<arg value="bin/haloacl-bundled.zip" />
+		</exec>
 
-	    </target>
+	</target>
 
 	<target name="versionhint">
-        <property environment="env" />
+		<property environment="env" />
 		<exec executable="php">
 			<arg value="../../../buildtools/replaceVersionHint.php" />
 			<arg value="../deploy.xml" />
 			<arg value="../includes/HACL_Initialize.php" />
-            <arg value="${env.BUILD_NUMBER}" />
+			<arg value="${env.BUILD_NUMBER}" />
 		</exec>
 	</target>
 
 	<target name="deployscripts" depends="versionhint">
-        <echo>Pack javasacript for special pages</echo>
-        <!-- complile custom scripts only, yui stuff is obfuscated already -->
-        <java
-            fork="true"
-            jar="../../../buildtools/closure/compiler.jar"
-            failonerror="true">
+		<echo>Pack javasacript for special pages</echo>
+		<!-- complile custom scripts only, yui stuff is obfuscated already -->
+		<java fork="true" jar="../../../buildtools/closure/compiler.jar" failonerror="true">
 			<arg value="--js=../../HaloACL/scripts/haloacl.js" />
 			<arg value="--js=../../HaloACL/scripts/groupuserTree.js" />
 			<arg value="--js=../../HaloACL/scripts/rightsTree.js" />
@@ -137,7 +137,7 @@
 			<arg value="--js=../../HaloACL/scripts/quickaclTable.js" />
 			<arg value="--js=../../HaloACL/scripts/HACL_GroupPermission.js" />
 			<arg value="--js=../../HaloACL/scripts/HACL_GroupTree.js" />
-            <arg value="--js_output_file=../../HaloACL/scripts/specialhacl-packed_custom.js" />
+			<arg value="--js_output_file=../../HaloACL/scripts/specialhacl-packed_custom.js" />
 		</java>
 		<concat destfile="../../HaloACL/scripts/specialhacl-packed.js">
 			<fileset dir="../../HaloACL/yui" includes="yahoo-min.js" />
@@ -160,23 +160,20 @@
 			<fileset dir="../../HaloACL/yui" includes="dragdrop-min.js" />
 			<fileset dir="../../HaloACL/yui" includes="autocomplete-min.js" />
 			<fileset dir="../../HaloACL/scripts/jsTree.v.0.9.9a" includes="jquery.tree.min.js" />
-            <fileset dir="../../HaloACL/scripts" includes="specialhacl-packed_custom.js" />
-        </concat>
-        <delete file="../../HaloACL/scripts/specialhacl-packed_custom.js" />
+			<fileset dir="../../HaloACL/scripts" includes="specialhacl-packed_custom.js" />
+		</concat>
+		<delete file="../../HaloACL/scripts/specialhacl-packed_custom.js" />
 
-        <echo>Pack javasacript for all other pages</echo>
-        <java
-            fork="true"
-            jar="../../../buildtools/closure/compiler.jar"
-            failonerror="true">
+		<echo>Pack javasacript for all other pages</echo>
+		<java fork="true" jar="../../../buildtools/closure/compiler.jar" failonerror="true">
 			<arg value="--js=../../HaloACL/scripts/toolbar.js" />
 			<arg value="--js=../../HaloACL/scripts/haloacl.js" />
 			<arg value="--js=../../HaloACL/scripts/groupuserTree.js" />
 			<arg value="--js=../../HaloACL/scripts/userTable.js" />
 			<arg value="--js=../../HaloACL/scripts/notification.js" />
-            <arg value="--js_output_file=../../HaloACL/scripts/hacl-packed_custom.js" />
+			<arg value="--js_output_file=../../HaloACL/scripts/hacl-packed_custom.js" />
 		</java>
-        <concat destfile="../../HaloACL/scripts/hacl-packed.js">
+		<concat destfile="../../HaloACL/scripts/hacl-packed.js">
 			<fileset dir="../../HaloACL/yui" includes="yahoo-min.js" />
 			<fileset dir="../../HaloACL/yui" includes="yuiloader-min.js" />
 			<fileset dir="../../HaloACL/yui" includes="event-min.js" />
@@ -195,8 +192,8 @@
 			<fileset dir="../../HaloACL/yui" includes="container-min.js" />
 			<fileset dir="../../HaloACL/yui" includes="dragdrop-min.js" />
 			<fileset dir="../../HaloACL/scripts" includes="hacl-packed_custom.js" />
-        </concat>
-        <delete file="../../HaloACL/scripts/hacl-packed_custom.js" />
+		</concat>
+		<delete file="../../HaloACL/scripts/hacl-packed_custom.js" />
 	</target>
 
 </project>

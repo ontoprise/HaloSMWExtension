@@ -42,20 +42,42 @@
 			</fileset>
 		</copy>
 		<zip destfile="bin/automaticsemanticforms.zip" basedir="bin/zip" />
-		<delete dir="bin/zip" />
+
 		<exec executable="php">
 			<arg value="../../../buildtools/renameDeployable.php" />
 			<arg value="../deploy.xml" />
 			<arg value="bin/automaticsemanticforms.zip" />
 		</exec>
 	</target>
+
+	<target name="automaticsemanticforms_bundled" depends="build">
+		<ant antfile="../../SemanticForms/deploy/build.xml" inheritall="true" dir="../../SemanticForms/deploy" target="sf_build">
+		</ant>
+		<delete>
+			<fileset dir="bin" includes="automaticsemanticforms_bundled*.zip" />
+		</delete>
+		<copy todir="bin/zip/extensions/SemanticForms">
+			<fileset dir="../../SemanticForms/">
+				<exclude name="**/.svn, **/CVS" />
+				<exclude name="**/deploy/**" />
+			</fileset>
+		</copy>
+		<zip destfile="bin/automaticsemanticforms_bundled.zip" basedir="bin/zip" />
+		<delete dir="bin/zip" />
+		<exec executable="php">
+			<arg value="../../../buildtools/renameDeployable.php" />
+			<arg value="../deploy.xml" />
+			<arg value="bin/automaticsemanticforms_bundled.zip" />
+		</exec>
+	</target>
+
 	<target name="versionhint">
-        <property environment="env" />
+		<property environment="env" />
 		<exec executable="php">
 			<arg value="../../../buildtools/replaceVersionHint.php" />
 			<arg value="../deploy.xml" />
 			<arg value="../includes/ASF_Initialize.php" />
-            <arg value="${env.BUILD_NUMBER}" />
+			<arg value="${env.BUILD_NUMBER}" />
 		</exec>
 	</target>
 </project>

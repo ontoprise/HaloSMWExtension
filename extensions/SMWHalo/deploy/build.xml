@@ -94,10 +94,29 @@
 	</target>
 
 	<target name="smwhalo_bundled_build" depends="smwhalo_build">
-
+		<ant antfile="../../ApplicationProgramming/deploy/build.xml" inheritall="true" dir="../../ApplicationProgramming/deploy" target="build">
+		</ant>
+		<ant antfile="../../ARCLibrary/deploy/build.xml" inheritall="true" dir="../../ARCLibrary/deploy" target="build">
+		</ant>
+		<ant antfile="../../ScriptManager/deploy/build.xml" inheritall="true" dir="../../ScriptManager/deploy" target="scriptmanager_build">
+		</ant>
+		<ant antfile="../../deployment/deploy/build.xml" inheritall="true" dir="../../../deployment/deploy" target="deploymentframework">
+		</ant>
 		<delete>
 			<fileset dir="bin" includes="smwhalo-bundled*.zip" />
 		</delete>
+		<copy todir="bin/zip/deployment">
+			<fileset dir="../../../deployment/">
+				<exclude name="**/.svn, **/CVS" />
+				<exclude name="**/deploy/**" />
+			</fileset>
+		</copy>
+		<copy todir="bin/zip/extensions/ApplicationProgramming">
+			<fileset dir="../../ApplicationProgramming/">
+				<exclude name="**/.svn, **/CVS" />
+				<exclude name="**/deploy/**" />
+			</fileset>
+		</copy>
 		<copy todir="bin/zip/extensions/ARCLibrary">
 			<fileset dir="../../ARCLibrary/">
 				<exclude name="**/.svn, **/CVS" />

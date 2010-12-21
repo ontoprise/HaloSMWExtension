@@ -51,7 +51,7 @@
 			</fileset>
 		</copy>
 		<zip destfile="bin/collaboration.zip" basedir="bin/zip" />
-		<delete dir="bin/zip" />
+	
 		<exec executable="php">
 			<arg value="../../../buildtools/renameDeployable.php" />
 			<arg value="../deploy.xml" />
@@ -59,13 +59,32 @@
 		</exec>
 	</target>
 
+	<target name="collaboration_bundled" depends="Collaboration_build">
+		<ant antfile="../../ApplicationProgramming/deploy/build.xml" inheritall="true" dir="../../ApplicationProgramming/deploy" target="build">
+		        </ant>
+		       
+		<copy todir="bin/zip/extensions/ApplicationProgramming">
+			<fileset dir="../../ApplicationProgramming/">
+				<exclude name="**/.svn, **/CVS" />
+				<exclude name="**/deploy/**" />
+			</fileset>
+		</copy>
+		<zip destfile="bin/collaboration_bundled.zip" basedir="bin/zip" />
+		<delete dir="bin/zip" />
+		<exec executable="php">
+			<arg value="../../../buildtools/renameDeployable.php" />
+			<arg value="../deploy.xml" />
+			<arg value="bin/collaboration_bundled.zip" />
+		</exec>
+	</target>
+
 	<target name="versionhint">
-        <property environment="env" />
+		<property environment="env" />
 		<exec executable="php">
 			<arg value="../../../buildtools/replaceVersionHint.php" />
 			<arg value="../deploy.xml" />
 			<arg value="../includes/CE_Initialize.php" />
-            <arg value="${env.BUILD_NUMBER}" />
+			<arg value="${env.BUILD_NUMBER}" />
 		</exec>
 	</target>
 

@@ -46,11 +46,11 @@
 				<include name="COPYING" />
 				<include name="INSTALL" />
 				<include name="RichMediaPatchForSF*.txt" />
-                <include name="RichMediaPatchForMW*.txt" />
-                
+				<include name="RichMediaPatchForMW*.txt" />
+
 				<include name="deploy.xml" />
 			</fileset>
-   			<fileset dir="../../../patches/">
+			<fileset dir="../../../patches/">
 				<include name="patch.php" />
 			</fileset>
 		</copy>
@@ -61,7 +61,7 @@
 		</copy>
 
 		<zip destfile="bin/richmedia.zip" basedir="bin/zip" />
-		<delete dir="bin/zip" />
+		
 		<exec executable="php">
 			<arg value="../../../buildtools/renameDeployable.php" />
 			<arg value="../deploy.xml" />
@@ -69,14 +69,42 @@
 		</exec>
 
 	</target>
-	
+
+	<target name="richmedida_bundled" depends="build">
+		<ant antfile="../../ApplicationProgramming/deploy/build.xml" inheritall="true" dir="../../ApplicationProgramming/deploy" target="build">
+		</ant>
+		<ant antfile="../../SemanticForms/deploy/build.xml" inheritall="true" dir="../../SemanticForms/deploy" target="sf_build">
+		</ant>
+
+		<copy todir="bin/zip/extensions/ApplicationProgramming">
+			<fileset dir="../../ApplicationProgramming/">
+				<exclude name="**/.svn, **/CVS" />
+				<exclude name="**/deploy/**" />
+			</fileset>
+		</copy>
+		<copy todir="bin/zip/extensions/SemanticForms">
+			<fileset dir="../../SemanticForms/">
+				<exclude name="**/.svn, **/CVS" />
+				<exclude name="**/deploy/**" />
+			</fileset>
+		</copy>
+		<zip destfile="bin/richmedida_bundled.zip" basedir="bin/zip" />
+		<delete dir="bin/zip" />
+		<exec executable="php">
+			<arg value="../../../buildtools/renameDeployable.php" />
+			<arg value="../deploy.xml" />
+			<arg value="bin/richmedida_bundled.zip" />
+		</exec>
+	</target>
+
+
 	<target name="versionhint">
-        <property environment="env" />
+		<property environment="env" />
 		<exec executable="php">
 			<arg value="../../../buildtools/replaceVersionHint.php" />
 			<arg value="../deploy.xml" />
 			<arg value="../includes/RM_Initialize.php" />
-            <arg value="${env.BUILD_NUMBER}" />
+			<arg value="${env.BUILD_NUMBER}" />
 		</exec>
 	</target>
 	<target name="install">

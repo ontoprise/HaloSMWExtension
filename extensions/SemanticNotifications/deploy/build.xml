@@ -39,13 +39,35 @@
 			</fileset>
 		</copy>
 		<zip destfile="bin/semanticnotifications.zip" basedir="bin/zip" />
-		<delete dir="bin/zip" />
+		
 		<exec executable="php">
 			<arg value="../../../buildtools/renameDeployable.php" />
 			<arg value="../deploy.xml" />
 			<arg value="bin/semanticnotifications.zip" />
 		</exec>
 	</target>
+	
+	<target name="semanticnotifications_bundled" depends="semnot">
+	      
+	        <ant antfile="../../SemanticGardening/deploy/build.xml" inheritall="true" dir="../../SemanticGardening/deploy" target="semanticgardening">
+	        </ant>
+
+	        <copy todir="bin/zip/extensions/SemanticGardening">
+	            <fileset dir="../../SemanticGardening/">
+	                <exclude name="**/.svn, **/CVS" />
+	                <exclude name="**/deploy/**" />
+	            </fileset>
+	        </copy>
+	      
+	        <zip destfile="bin/semanticnotifications_bundled.zip" basedir="bin/zip" />
+	        <delete dir="bin/zip" />
+	        <exec executable="php">
+	            <arg value="../../../buildtools/renameDeployable.php" />
+	            <arg value="../deploy.xml" />
+	            <arg value="bin/semanticnotifications_bundled.zip" />
+	        </exec>
+	    </target>
+	
 	<target name="versionhint">
         <property environment="env" />
 		<exec executable="php">
