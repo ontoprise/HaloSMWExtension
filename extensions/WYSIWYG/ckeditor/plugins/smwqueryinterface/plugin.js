@@ -15,8 +15,10 @@ CKEDITOR.plugins.add('smw_qi', {
 				'height: 18px !important;' +
 			'}\n'
         );
-        
-		editor.addCommand( 'SMWqi', new CKEDITOR.dialogCommand( 'SMWqi' ) );
+
+        var qiDlg = new CKEDITOR.dialogCommand( 'SMWqi' );
+        //qiDlg.modes = { wysiwyg : 1, source : 1 };
+		editor.addCommand( 'SMWqi',  qiDlg);
         CKEDITOR.dialog.add( 'SMWqi', this.path + 'dialogs/smwQiDlg.js');
 
         if (editor.addMenuItem) {
