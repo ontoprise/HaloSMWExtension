@@ -102,7 +102,7 @@ function CECommentForm() {
 
 		var relatedCommentString = '';
 		if( this.replyCommentName !== null ) {
-			relatedCommentString = '|CommentRelatedComment=' + escape(this.replyCommentName);
+			relatedCommentString = '|CommentRelatedComment=' + this.replyCommentName;
 		}
 
 		var pageContent = '{{Comment' +
