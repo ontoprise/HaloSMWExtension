@@ -94,7 +94,9 @@ class BackupReader {
 
     function importFromHandle( $handle ) {
         $this->startTime = wfTime();
-
+        
+        $this->importContentHashTemplate();
+        
         $source = new ImportStreamSource( $handle );
         $importer = new DeployWikiImporter( $source, $this->mode, $this );
 
@@ -137,5 +139,18 @@ class BackupReader {
                 break;
             default: $result = false;
         }
+    }
+    
+    /**
+     * Creates the content hash template if it does not exist.
+     * 
+     */
+    private function importContentHashTemplate() {
+    	$t = Title::newFromText("Content hash", NS_TEMPLATE);
+    	if ($t->exists()) return;
+    	$a = new Article($t);
+    	print "\n\tCreating Template:Content hash...";
+    	$a->insertNewArticle("[[Content hash::{{{value|}}}| ]]", "auto-generated", false, false);
+    	print "done.";
     }
 }
