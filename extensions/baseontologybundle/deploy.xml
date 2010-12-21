@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<deploydescriptor>
+  <global>
+    <version>100</version>
+    <id>baseontologybundle</id>
+    <instdir>extensions/baseontologybundle</instdir>
+    <vendor>Ontoprise</vendor>
+    <description>Basic ontology bundle</description>
+    <dependencies>
+      <dependency from="120" to="160">smw</dependency>
+    </dependencies>
+  </global>
+  <wikidumps>
+    <file loc="dump.xml"/>
+  </wikidumps>
+  <resources>
+    <file loc="images/e/e1/Smw_plus_category_icon_100x100.gif"/>
+    <file loc="images/d/d1/Smw_plus_property_icon_100x100.gif"/>
+    <file loc="images/d/dc/Smw_plus_template_icon_100x100.gif"/>
+    <file loc="images/d/d9/Content_created_with_form.png"/>
+    <file loc="images/8/83/Smw_plus_form_icon_100x100.gif"/>
+    <file loc="images/2/25/Person_created_with_form.png"/>
+    <file loc="images/b/b5/Term_created_with_form.png"/>
+    <file loc="images/6/63/Smw_plus_contentsection_icon_100x100.gif"/>
+    <file loc="images/c/c9/Creating_and_editing_thumb.gif"/>
+    <file loc="images/d/d0/Contribution.gif"/>
+    <file loc="images/a/a4/Person.gif"/>
+    <file loc="images/3/3d/Preferences.gif"/>
+    <file loc="images/9/94/Talk.gif"/>
+    <file loc="images/0/0a/Upoaded_files.gif"/>
+    <file loc="images/b/bd/Watchlist.gif"/>
+    <file loc="images/8/83/Browsedata.gif"/>
+    <file loc="images/9/9f/Forms.gif"/>
+    <file loc="images/1/1c/Mediaandfiles.gif"/>
+    <file loc="images/e/e2/Siteinfo.gif"/>
+    <file loc="images/c/ce/Template.gif"/>
+    <file loc="images/d/db/Wiki_help_32x32.png"/>
+    <file loc="images/0/03/Application.gif"/>
+    <file loc="images/8/81/User_and-accessrigts.gif"/>
+    <file loc="images/a/aa/Web-services.gif"/>
+    <file loc="images/9/90/Vcard.gif"/>
+  </resources>
+</deploydescriptor>
