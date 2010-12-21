@@ -49,20 +49,14 @@
       <namespace key="203" case="first-letter">TermImport talk</namespace>
       <namespace key="220" case="first-letter">E-mail</namespace>
       <namespace key="221" case="first-letter">E-mail talk</namespace>
-      <namespace key="400" case="first-letter">IAI</namespace>
-      <namespace key="401" case="first-letter">IAI talk</namespace>
-      <namespace key="500" case="first-letter">LOD</namespace>
-      <namespace key="501" case="first-letter">LOD talk</namespace>
-      <namespace key="502" case="first-letter">Mapping</namespace>
-      <namespace key="503" case="first-letter">Mapping talk</namespace>
     </namespaces>
   </siteinfo>
   <page>
     <title>Property:Use input type</title>
     <id>133</id>
     <revision>
-      <id>371</id>
-      <timestamp>2010-12-20T16:17:01Z</timestamp>
+      <id>455</id>
+      <timestamp>2010-12-21T15:56:37Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -75,16 +69,18 @@
 |part of=Automaticsemanticforms
 |Has_author=User:217.110.222.148
 }}
-[[Has type::Type:Text| ]] [[Has max cardinality::1| ]] [[Part of bundle::Automaticsemanticforms| ]] [[Has domain and range::Category:Property; | ]]</text>
-    <hash>db6f450abf3ac179294e634bcc61ea55</hash>
+{{Part of bundle|value=automaticsemanticforms}}
+
+[[Has type::Type:Text| ]] [[Has max cardinality::1| ]] [[Has domain and range::Category:Property; | ]]</text>
+    <hash>1d622c3b3ccff40e83ba92079f8c4d34</hash>
     </revision>
   </page>
   <page>
     <title>Property:Is uploadable</title>
     <id>134</id>
     <revision>
-      <id>373</id>
-      <timestamp>2010-12-20T16:17:04Z</timestamp>
+      <id>457</id>
+      <timestamp>2010-12-21T15:56:37Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -97,16 +93,18 @@
 |part of=Automaticsemanticforms
 |Has_author=User:217.110.222.148
 }}
-[[Has type::Type:Boolean| ]] [[Has max cardinality::1| ]] [[Part of bundle::Automaticsemanticforms| ]] [[Has domain and range::Category:Property; | ]]</text>
-    <hash>a692279116cf95dc6f3f84dad63f462a</hash>
+{{Part of bundle|value=automaticsemanticforms}}
+
+[[Has type::Type:Boolean| ]] [[Has max cardinality::1| ]] [[Has domain and range::Category:Property; | ]]</text>
+    <hash>cbd9686e624080b56e08698dfd20605a</hash>
     </revision>
   </page>
   <page>
     <title>Property:Form input help</title>
     <id>135</id>
     <revision>
-      <id>375</id>
-      <timestamp>2010-12-20T16:17:08Z</timestamp>
+      <id>459</id>
+      <timestamp>2010-12-21T15:56:37Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -119,16 +117,18 @@
 |part of=Automaticsemanticforms
 |Has_author=User:217.110.222.148
 }}
-[[Has type::Type:Text| ]] [[Has max cardinality::1| ]] [[Part of bundle::Automaticsemanticforms| ]] [[Has domain and range::Category:Property; | ]]</text>
-    <hash>d861c95ed02d4d4ea04a9d82f87e9599</hash>
+{{Part of bundle|value=automaticsemanticforms}}
+
+[[Has type::Type:Text| ]] [[Has max cardinality::1| ]] [[Has domain and range::Category:Property; | ]]</text>
+    <hash>e1e54fa57bac512efc7253b917a0dda6</hash>
     </revision>
   </page>
   <page>
     <title>Property:Delimiter</title>
     <id>136</id>
     <revision>
-      <id>377</id>
-      <timestamp>2010-12-20T16:17:11Z</timestamp>
+      <id>461</id>
+      <timestamp>2010-12-21T15:56:38Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -141,16 +141,19 @@
 |part of=Automaticsemanticforms
 |Has_author=User:217.110.222.148
 }}
-[[Has type::Type:Text| ]] [[Has max cardinality::1| ]] [[Part of bundle::Automaticsemanticforms| ]] [[Has domain and range::Category:Property; | ]]</text>
-    <hash>57baa640c7fb4a0fb0b2c6928d69f4de</hash>
+
+{{Part of bundle|value=automaticsemanticforms}}
+
+[[Has type::Type:Text| ]] [[Has max cardinality::1| ]] [[Has domain and range::Category:Property; | ]]</text>
+    <hash>b09ef4afc0574370801f6c2274d2b90b</hash>
     </revision>
   </page>
   <page>
     <title>Property:Field sequence number</title>
     <id>137</id>
     <revision>
-      <id>379</id>
-      <timestamp>2010-12-20T16:17:15Z</timestamp>
+      <id>463</id>
+      <timestamp>2010-12-21T15:56:38Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -163,16 +166,19 @@
 |part of=Automaticsemanticforms
 |Has_author=User:217.110.222.148
 }}
-[[Has type::Type:Number| ]] [[Has max cardinality::1| ]] [[Part of bundle::Automaticsemanticforms| ]] [[Has domain and range::Category:Property; | ]]</text>
-    <hash>995000ca69043248693e4a603a7a8acd</hash>
+
+{{Part of bundle|value=automaticsemanticforms}}
+
+[[Has type::Type:Number| ]] [[Has max cardinality::1| ]] [[Has domain and range::Category:Property; | ]]</text>
+    <hash>17b94a58597be8a96c6649203b707822</hash>
     </revision>
   </page>
   <page>
     <title>Property:Default value</title>
     <id>138</id>
     <revision>
-      <id>381</id>
-      <timestamp>2010-12-20T16:17:19Z</timestamp>
+      <id>465</id>
+      <timestamp>2010-12-21T15:56:38Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -185,16 +191,19 @@
 |part of=Automaticsemanticforms
 |Has_author=User:217.110.222.148
 }}
-[[Has type::Type:Text| ]] [[Has max cardinality::1| ]] [[Part of bundle::Automaticsemanticforms| ]] [[Has domain and range::Category:Property; | ]]</text>
-    <hash>f98bfb1cee57199e4b341b62ba90d041</hash>
+
+{{Part of bundle|value=automaticsemanticforms}}
+
+[[Has type::Type:Text| ]] [[Has max cardinality::1| ]] [[Has domain and range::Category:Property; | ]]</text>
+    <hash>26c95d6aba69b431b79dabb2d0097e40</hash>
     </revision>
   </page>
   <page>
     <title>Property:Validator</title>
     <id>139</id>
     <revision>
-      <id>383</id>
-      <timestamp>2010-12-20T16:17:22Z</timestamp>
+      <id>467</id>
+      <timestamp>2010-12-21T15:56:38Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -207,16 +216,19 @@
 |part of=Automaticsemanticforms
 |Has_author=User:217.110.222.148
 }}
-[[Has type::Type:Text| ]] [[Has max cardinality::1|:1]] [[Part of bundle::Automaticsemanticforms| ]] [[Has domain and range::Category:Property; | ]]</text>
-    <hash>5ba29bd7071c5b671d2f3a7150083e16</hash>
+
+{{Part of bundle|value=automaticsemanticforms}}
+
+[[Has type::Type:Text| ]] [[Has max cardinality::1| ]] [[Has domain and range::Category:Property; | ]]</text>
+    <hash>a7a3ec283b774a90922299ce186dc13c</hash>
     </revision>
   </page>
   <page>
     <title>Property:No automatic formedit</title>
     <id>140</id>
     <revision>
-      <id>385</id>
-      <timestamp>2010-12-20T16:17:26Z</timestamp>
+      <id>469</id>
+      <timestamp>2010-12-21T15:56:38Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -228,16 +240,19 @@
 |rationale=Use this property to annotate a category if you don't want that Semantic Forms are created automatically for instances in this category. Please note, that this annotation is not inherited to subcategories.
 |part of=Automaticsemanticforms
 }}
-[[Has type::Type:Boolean| ]] [[Has max cardinality::1| ]] [[Part of bundle::Automaticsemanticforms| ]] [[Has domain and range::Category:Category; | ]]</text>
-    <hash>26aa06546c9fdeb0020c8deca45eaca4</hash>
+
+{{Part of bundle|value=automaticsemanticforms}}
+
+[[Has type::Type:Boolean| ]] [[Has max cardinality::1| ]] [[Has domain and range::Category:Category; | ]]</text>
+    <hash>ca0da38cb6fe15b35ed823e027a7fdc7</hash>
     </revision>
   </page>
   <page>
     <title>Property:Use display template</title>
     <id>141</id>
     <revision>
-      <id>387</id>
-      <timestamp>2010-12-20T16:17:27Z</timestamp>
+      <id>471</id>
+      <timestamp>2010-12-21T15:56:38Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -250,16 +265,19 @@
 |part of=Automaticsemanticforms
 |Has_author=User:217.110.222.148
 }}
-[[Has type::Type:Text| ]] [[Has max cardinality::1| ]] [[Part of bundle::Automaticsemanticforms| ]] [[Has domain and range::Category:Category; | ]]</text>
-    <hash>6ee59c956d6b56c23ddab41cb887e65a</hash>
+
+{{Part of bundle|value=automaticsemanticforms}}
+
+[[Has type::Type:Text| ]] [[Has max cardinality::1| ]] [[Has domain and range::Category:Category; | ]]</text>
+    <hash>2c2df622e490047b054fc6709fe7f2eb</hash>
     </revision>
   </page>
   <page>
     <title>Property:Use class</title>
     <id>142</id>
     <revision>
-      <id>389</id>
-      <timestamp>2010-12-20T16:17:30Z</timestamp>
+      <id>473</id>
+      <timestamp>2010-12-21T15:56:38Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -271,36 +289,38 @@
 |rationale=One can use this property to annotate a category or a property in order to tell the Automatic Semantic Forms Extension to use a specific CSS-class when creating a property's input field, respectively a category's table of input fields.
 |part of=Automaticsemanticforms
 }}
-[[Has type::Type:Text| ]] [[Has max cardinality::1| ]] [[Part of bundle::Automaticsemanticforms| ]] [[Has domain and range::Category:Property; | ]] [[Has domain and range::Category:Category; | ]]</text>
-    <hash>bc2c55b14754d5eef4c2479ab99c9306</hash>
+
+{{Part of bundle|value=automaticsemanticforms}}
+
+[[Has type::Type:Text| ]] [[Has max cardinality::1| ]] [[Has domain and range::Category:Property; | ]] [[Has domain and range::Category:Category; | ]]</text>
+    <hash>b5d0e24ba0104f07eadea62b9d49f552</hash>
     </revision>
   </page>
   <page>
     <title>Automaticsemanticforms</title>
     <id>143</id>
     <revision>
-      <id>367</id>
-      <timestamp>2010-12-20T16:16:53Z</timestamp>
+      <id>476</id>
+      <timestamp>2010-12-21T15:57:45Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
-      <minor/>
-      <comment>1 revision</comment>
-      <text xml:space="preserve">{{CreateSilentAnnotations:}}
-{{Content bundle
+      <text xml:space="preserve">{{Content bundle
 |Vendor=Ontoprise
 |Version=100
-|rationale=This bundle contains build-in properties used by the Automatic Semantic Forms Extension.
+|Description=This bundle contains build-in properties used by the Automatic Semantic Forms Extension.
 |Installation=extensions/AutomaticSemanticForms
 |Dependency=smwhalo;152;152, semanticforms;200;200, baseontologybundle;100;100
 }}
 
-[[Ontology version::100| ]][[Installation dir::extensions/AutomaticSemanticForms| ]][[Vendor::Ontoprise| ]][[Part of bundle::Automaticsemanticforms| ]] [[Dependency::smwhalo;152;152| ]] [[Dependency::baseontologybundle;100;100| ]][[Dependency::semanticforms;200;200| ]]
+{{Part of bundle|value=automaticsemanticforms}}
+
+[[Ontology version::100| ]][[Installation dir::extensions/AutomaticSemanticForms| ]][[Vendor::Ontoprise| ]][[Dependency::smwhalo;152;152| ]] [[Dependency::baseontologybundle;100;100| ]][[Dependency::semanticforms;200;200| ]]
 [[Category:Content bundle]]
 
 ;This bundle contains these articles:
-
+ 
 {{#ask:[[Part of bundle::{{FULLPAGENAME}}]]
 |?=Link
 |?Rationale
@@ -308,15 +328,15 @@
 |default=''none''
 |mainlabel=-
 }}</text>
-    <hash>5ee2768aa5d9a2ff1185871408c06d5a</hash>
+    <hash>8d6394675bbfc63ed77ebdb921dc67eb</hash>
     </revision>
   </page>
   <page>
     <title>Property:Form input label</title>
     <id>144</id>
     <revision>
-      <id>369</id>
-      <timestamp>2010-12-20T16:16:57Z</timestamp>
+      <id>453</id>
+      <timestamp>2010-12-21T15:56:37Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -329,366 +349,27 @@
 |part of=Automaticsemanticforms
 |Has_author=User:WikiSysop
 }}
-[[Has type::Type:Text| ]] [[Has max cardinality::1| ]] [[ [[Part of bundle::Automaticsemanticforms| ]] [[Has domain and range::Category:Property; | ]]</text>
-    <hash>5f5150e36fd9a738b6d1656e9ec0cd45</hash>
+
+{{Part of bundle|value=automaticsemanticforms}}
+
+[[Has type::Type:Text| ]] [[Has max cardinality::1| ]] [[ [[Has domain and range::Category:Property; | ]]</text>
+    <hash>44679fc147c14075b13c6f9892561ef8</hash>
     </revision>
   </page>
   <page>
-    <title>Template:!</title>
-    <id>198</id>
+    <title>Template:Part of bundle</title>
+    <id>212</id>
     <revision>
-      <id>340</id>
-      <timestamp>2010-12-20T13:24:39Z</timestamp>
+      <id>425</id>
+      <timestamp>2010-12-21T15:19:27Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
       <minor/>
       <comment>1 revision</comment>
-      <text xml:space="preserve">|&lt;noinclude&gt;
-&lt;!-- Add cats and interwikis to the /doc subpage, not here! --&gt;
-helper template for pipe symbol, which can e.g. not be used directly in template parameter calls.[[Part of bundle::Baseontologybundle| ]]
-&lt;/noinclude&gt;</text>
-    <hash>5fb9b20c2825d7743e58540992c213ec</hash>
-    </revision>
-  </page>
-  <page>
-    <title>Template:Header for wiki parts</title>
-    <id>199</id>
-    <revision>
-      <id>342</id>
-      <timestamp>2010-12-20T13:24:42Z</timestamp>
-      <contributor>
-        <username>WikiSysop</username>
-        <id>1</id>
-      </contributor>
-      <minor/>
-      <comment>1 revision</comment>
-      <text xml:space="preserve">&lt;noinclude&gt;{{Template
-|PAGENAME=Template:Header for wiki parts
-|Has author=WikiSysop
-|part of=Baseontologybundle
-|rationale=This template is used to display a nice header for all wiki parts, i.e. forms, templates etc
-|parameters=&lt;pre&gt;
-{{Header for wiki parts
-|Category=Form
-|Icon=Image:Cog-green.png
-|Pagetitle={{PAGENAME}}
-|Thumbnail image={{{Form thumbnail|}}}
-|Short description={{#ifeq:{{{rationale|}}}|||[[rationale::{{{rationale|}}}]]}}
-|author={{#ifeq:{{{Has author|}}}|||[[has author::{{{Has author|}}}]]}}
-|Wiki section={{#ifeq:{{{part of|}}}|||[[part of::{{{part of|}}}]]}}
-|Example article={{#ifeq:{{{Example article|}}}|||[[Example article::{{{Example article|}}}]]}}
-|Has special namespace={{#ifeq:{{{Has special namespace|}}}|||[[Has special namespace::{{{Has special namespace|}}}]]}}
-}}
-&lt;/pre&gt;
-|Calls template=Template:Tablelongrow, Template:Tablerow,
-|hints_for_templates_and_forms=The following values for category are allowed: Form, Template
-|own_work=True
-|copyright_holder=Ontoprise GmbH
-|year=2009
-}}
-&lt;/noinclude&gt;&lt;includeonly&gt;{{#switch: {{{Category}}}
-|Template=&lt;!--
-
-case: Template
-
---&gt;&lt;div class=&quot;round&quot; style=&quot;padding-bottom: 2px; padding-left: 2px; padding-right: 2px; padding-top: 5px; font-family: tahoma, sans-serif; font-weight: bold; font-size: 120%; color: rgb(255,255,255); background-color: #999999; margin-bottom: 5px;&quot;&gt;&lt;!-- --&gt;
-{{{!}} width=&quot;100%&quot; cellspacing=&quot;1&quot; cellpadding=&quot;1&quot; border=&quot;0&quot; align=&quot;center&quot;     
-{{!}}- 
-{{!}} &lt;div style=&quot;padding: 2px; font-family: tahoma,sans-serif; font-weight: bold; font-size: 120%; color: rgb(250, 250, 250); margin-bottom: 2px;&quot; class=&quot;round&quot;&gt;
-{{{!}} width=&quot;100%&quot; cellspacing=&quot;1&quot; cellpadding=&quot;1&quot; border=&quot;0&quot; align=&quot;center&quot;
-{{!}}-
-{{!}} width=&quot;10%&quot; valign=&quot;left&quot; align=&quot;center&quot; rowspan=&quot;2&quot; {{!}} [[{{{Icon}}}|40px]]
-{{!}} '''Template ''{{{Pagetitle}}}'' '''
-{{!}}}&lt;/div&gt;
-{{!}}}&lt;/div&gt;
-{{{!}} cellspacing=&quot;0&quot; cellpadding=&quot;5&quot; style=&quot;position:relative; margin: 0 0 0.5em 1em; border-collapse: collapse; border: 1px solid #999999; background: rgb(255,255,255); float: right; clear: none; width: 20em&quot;
-{{#ifeq:{{{Thumbnail image|}}}|||
-{{!}}-
-{{Tablelongrow|Label=Overview:|Value=[[{{{Thumbnail image|}}}|150px]]}} }}
-{{!}}-
-{{#ifeq:{{{Short description|}}}||
-{{Tablelongrow|Label=Overview:|Value=}}
-|
-{{Tablelongrow|Label=Overview:|Value=''{{{Short description}}}''}} }}
-{{!}}-
-{{#ifeq:{{{Wiki section|}}}||
-{{Tablerow|Label=Content bundle:|Value=''not specified...''}}
-|{{Tablerow|Label=Content bundle:|Value={{{Wiki section|}}} }} }}
-{{!}}-
-{{Tablerow|Label=Author:|Value={{{author|}}} }}
-{{!}}}&lt;!--
-
-end case: Template
-
---&gt;
-|Form=&lt;!--
-
-case: Form
-
---&gt;&lt;div class=&quot;round&quot; style=&quot;padding-bottom: 2px; padding-left: 2px; padding-right: 2px; padding-top: 5px; font-family: tahoma, sans-serif; font-weight: bold; font-size: 120%; color: rgb(255,255,255); background-color: #999999; margin-bottom: 5px;&quot;&gt;&lt;!-- --&gt;
-{{{!}} width=&quot;100%&quot; cellspacing=&quot;1&quot; cellpadding=&quot;1&quot; border=&quot;0&quot; align=&quot;center&quot;     
-{{!}}- 
-{{!}} &lt;div style=&quot;padding: 2px; font-family: tahoma,sans-serif; font-weight: bold; font-size: 120%; color: rgb(250, 250, 250); margin-bottom: 2px;&quot; class=&quot;round&quot;&gt;
-{{{!}} width=&quot;100%&quot; cellspacing=&quot;1&quot; cellpadding=&quot;1&quot; border=&quot;0&quot; align=&quot;center&quot;
-{{!}}-
-{{!}} width=&quot;10%&quot; valign=&quot;left&quot; align=&quot;center&quot; rowspan=&quot;2&quot; {{!}} [[{{{Icon}}}|40px]]
-{{!}} '''Semantic form ''{{{Pagetitle}}}'' '''
-{{!}}}&lt;/div&gt;
-{{!}}}&lt;/div&gt;
-{{{!}} cellspacing=&quot;0&quot; cellpadding=&quot;5&quot; style=&quot;position:relative; margin: 0 0 0.5em 1em; border-collapse: collapse; border: 1px solid #999999; background: rgb(255,255,255); float: right; clear: none; width: 20em&quot;
-{{#ifeq:{{{Thumbnail image|}}}|||
-{{!}}-
-{{Tablelongrow|Label=Overview:|Value=[[{{{Thumbnail image|}}}|150px]]}} }}
-{{!}}-
-{{Tablelongrow|Label=Overview:|Value=''{{{Short description}}}''}}
-{{!}}-
-{{#ifeq:{{{Wiki section|}}}||
-{{Tablerow|Label=Content bundle:|Value=''not specified...''}}
-|{{Tablerow|Label=Content bundle:|Value={{{Wiki section|}}} }} }}
-{{!}}-
-{{#ifeq:{{{Has special namespace|}}}||
-{{Tablerow|Label=Namespace:|Value=''main namespace''}}
-|{{Tablerow|Label=Namespace:|Value={{{Has special namespace|}}} }} }}
-{{!}}-
-{{#ifeq:{{{Example article|}}}||
-{{Tablerow|Label=Example:|Value=''not specified...''}}
-|{{Tablerow|Label=Example:|Value={{{Example article|}}} }} }}
-{{!}}-
-{{Tablerow|Label=Author:|Value={{{author|}}} }}
-{{!}}}&lt;!--
-
-end case: Form
-
---&gt;
-|Category=&lt;!--
-
-case: Category
-
---&gt;&lt;div class=&quot;round&quot; style=&quot;padding-bottom: 2px; padding-left: 2px; padding-right: 2px; padding-top: 5px; font-family: tahoma, sans-serif; font-weight: bold; font-size: 120%; color: rgb(255,255,255); background-color: #999999; margin-bottom: 5px;&quot;&gt;&lt;!-- --&gt;
-{{{!}} width=&quot;100%&quot; cellspacing=&quot;1&quot; cellpadding=&quot;1&quot; border=&quot;0&quot; align=&quot;center&quot;     
-{{!}}- 
-{{!}} &lt;div style=&quot;padding: 2px; font-family: tahoma,sans-serif; font-weight: bold; font-size: 120%; color: rgb(250, 250, 250); margin-bottom: 2px;&quot; class=&quot;round&quot;&gt;
-{{{!}} width=&quot;100%&quot; cellspacing=&quot;1&quot; cellpadding=&quot;1&quot; border=&quot;0&quot; align=&quot;center&quot;
-{{!}}-
-{{!}} width=&quot;10%&quot; valign=&quot;left&quot; align=&quot;center&quot; rowspan=&quot;2&quot; {{!}} [[{{{Icon}}}|40px]]
-{{!}} '''Category ''{{{Pagetitle}}}'' '''
-{{!}}}&lt;/div&gt;
-{{!}}}&lt;/div&gt;
-{{{!}} cellspacing=&quot;0&quot; cellpadding=&quot;5&quot; style=&quot;position:relative; margin: 0 0 0.5em 1em; border-collapse: collapse; border: 1px solid #999999; background: rgb(255,255,255); float: right; clear: none; width: 20em&quot;
-{{#ifeq:{{{Thumbnail image|}}}|||
-{{!}}-
-{{Tablelongrow|Label=Overview:|Value=[[{{{Thumbnail image|}}}|150px]]}} }}
-{{!}}-
-{{Tablelongrow|Label=Overview:|Value=''{{{Short description}}}''}}
-{{!}}-
-{{#ifeq:{{{Wiki section|}}}||
-{{Tablerow|Label=Content bundle:|Value=''not specified...''}}
-|{{Tablerow|Label=Content bundle:|Value={{{Wiki section|}}} }} }}
-{{!}}-
-{{Tablerow|Label=Author:|Value={{{author|}}} }}
-{{!}}}&lt;!--
-
-end case: Category
-
---&gt;
-|Content bundle=&lt;!--
-
-case: Content bundle
-
---&gt;&lt;div class=&quot;round&quot; style=&quot;padding-bottom: 2px; padding-left: 2px; padding-right: 2px; padding-top: 5px; font-family: tahoma, sans-serif; font-weight: bold; font-size: 120%; color: rgb(255,255,255); background-color: #999999; margin-bottom: 5px;&quot;&gt;&lt;!-- --&gt;
-{{{!}} width=&quot;100%&quot; cellspacing=&quot;1&quot; cellpadding=&quot;1&quot; border=&quot;0&quot; align=&quot;center&quot;     
-{{!}}- 
-{{!}} &lt;div style=&quot;padding: 2px; font-family: tahoma,sans-serif; font-weight: bold; font-size: 120%; color: rgb(250, 250, 250); margin-bottom: 2px;&quot; class=&quot;round&quot;&gt;
-{{{!}} width=&quot;100%&quot; cellspacing=&quot;1&quot; cellpadding=&quot;1&quot; border=&quot;0&quot; align=&quot;center&quot;
-{{!}}-
-{{!}} width=&quot;10%&quot; valign=&quot;left&quot; align=&quot;center&quot; rowspan=&quot;2&quot; {{!}} [[{{{Icon}}}|40px]]
-{{!}} '''Content bundle ''{{{Pagetitle}}}'' '''
-{{!}}}&lt;/div&gt;
-{{!}}}&lt;/div&gt;
-{{{!}} cellspacing=&quot;0&quot; cellpadding=&quot;5&quot; style=&quot;position:relative; margin: 0 0 0.5em 1em; border-collapse: collapse; border: 1px solid #999999; background: rgb(255,255,255); float: right; clear: none; width: 20em&quot;
-{{#ifeq:{{{Thumbnail image|}}}|||
-{{!}}-
-{{Tablelongrow|Label=Overview:|Value=[[{{{Thumbnail image|}}}|150px]]}} }}
-{{!}}-
-{{Tablelongrow|Label=Overview:|Value=''{{{Short description}}}''}}
-{{!}}-
-{{Tablerow|Label=Vendor:|Value={{{author|}}} }}
-{{!}}-
-{{Tablerow|Label=Version:|Value={{{Version|}}} }}
-{{!}}-
-{{Tablerow|Label=Installation dir:|Value={{{Installation dir|}}} }}
-{{!}}-
-{{Tablerow|Label=Dependency:|Value={{{Dependency|}}} }}
-{{!}}}&lt;!--
-
-case: Content bundle END
-
---&gt;
-|Property=&lt;!--
-
-case: Property
-
---&gt;&lt;div class=&quot;round&quot; style=&quot;padding-bottom: 2px; padding-left: 2px; padding-right: 2px; padding-top: 5px; font-family: tahoma, sans-serif; font-weight: bold; font-size: 120%; color: rgb(255,255,255); background-color: #999999; margin-bottom: 5px;&quot;&gt;&lt;!-- --&gt;
-{{{!}} width=&quot;100%&quot; cellspacing=&quot;1&quot; cellpadding=&quot;1&quot; border=&quot;0&quot; align=&quot;center&quot;     
-{{!}}- 
-{{!}} &lt;div style=&quot;padding: 2px; font-family: tahoma,sans-serif; font-weight: bold; font-size: 120%; color: rgb(250, 250, 250); margin-bottom: 2px;&quot; class=&quot;round&quot;&gt;
-{{{!}} width=&quot;100%&quot; cellspacing=&quot;1&quot; cellpadding=&quot;1&quot; border=&quot;0&quot; align=&quot;center&quot;
-{{!}}-
-{{!}} width=&quot;10%&quot; valign=&quot;left&quot; align=&quot;center&quot; rowspan=&quot;2&quot; {{!}} [[{{{Icon}}}|40px]]
-{{!}} '''Property ''{{{Pagetitle}}}'' '''
-{{!}}}&lt;/div&gt;
-{{!}}}&lt;/div&gt;
-{{{!}} cellspacing=&quot;0&quot; cellpadding=&quot;5&quot; style=&quot;position:relative; margin: 0 0 0.5em 1em; border-collapse: collapse; border: 1px solid #999999; background: rgb(255,255,255); float: right; clear: none; width: 20em&quot;
-{{#ifeq:{{{Thumbnail image|}}}|||
-{{!}}-
-{{Tablelongrow|Label=Overview:|Value=[[{{{Thumbnail image|}}}|150px]]}} }}
-{{!}}-
-{{Tablelongrow|Label=Overview:|Value=''{{{Short description}}}''}}
-{{!}}-
-{{#ifeq:{{{Wiki section|}}}||
-{{Tablerow|Label=Content bundle:|Value=''not specified...''}}
-|{{Tablerow|Label=Content bundle:|Value={{{Wiki section|}}} }} }}
-{{!}}-
-{{Tablerow|Label=Author:|Value={{{author|}}} }}
-{{!}}}&lt;!--
-
-case: Property END
-
---&gt;
-|User defined rule=&lt;!--
-
-case: User defined rule
-
---&gt;&lt;div class=&quot;round&quot; style=&quot;padding-bottom: 2px; padding-left: 2px; padding-right: 2px; padding-top: 5px; font-family: tahoma, sans-serif; font-weight: bold; font-size: 120%; color: rgb(255,255,255); background-color: #999999; margin-bottom: 5px;&quot;&gt;&lt;!-- --&gt;
-{{{!}} width=&quot;100%&quot; cellspacing=&quot;1&quot; cellpadding=&quot;1&quot; border=&quot;0&quot; align=&quot;center&quot;     
-{{!}}- 
-{{!}} &lt;div style=&quot;padding: 2px; font-family: tahoma,sans-serif; font-weight: bold; font-size: 120%; color: rgb(250, 250, 250); margin-bottom: 2px;&quot; class=&quot;round&quot;&gt;
-{{{!}} width=&quot;100%&quot; cellspacing=&quot;1&quot; cellpadding=&quot;1&quot; border=&quot;0&quot; align=&quot;center&quot;
-{{!}}-
-{{!}} width=&quot;10%&quot; valign=&quot;left&quot; align=&quot;center&quot; rowspan=&quot;2&quot; {{!}} [[{{{Icon}}}|40px]]
-{{!}} '''User defined rule ''{{{Pagetitle}}}'' '''
-{{!}}}&lt;/div&gt;
-{{!}}}&lt;/div&gt;
-{{{!}} cellspacing=&quot;0&quot; cellpadding=&quot;5&quot; style=&quot;position:relative; margin: 0 0 0.5em 1em; border-collapse: collapse; border: 1px solid #999999; background: rgb(255,255,255); float: right; clear: none; width: 20em&quot;
-{{#ifeq:{{{Thumbnail image|}}}|||
-{{!}}-
-{{Tablelongrow|Label=Overview:|Value=[[{{{Thumbnail image|}}}|150px]]}} }}
-{{!}}-
-{{Tablelongrow|Label=Overview:|Value=''{{{Short description}}}''}}
-{{!}}-
-{{#ifeq:{{{Wiki section|}}}||
-{{Tablerow|Label=Content bundle:|Value=''not specified...''}}
-|{{Tablerow|Label=Content bundle:|Value={{{Wiki section|}}} }} }}
-{{!}}-
-{{Tablerow|Label=Author:|Value={{{author|}}} }}
-{{!}}}&lt;!--
-
-case: User defined rule END
-
---&gt;
-|All content bundles=&lt;!--
-
-case: All content bundles
-
---&gt;&lt;div class=&quot;round&quot; style=&quot;padding-bottom: 2px; padding-left: 2px; padding-right: 2px; padding-top: 5px; font-family: tahoma, sans-serif; font-weight: bold; font-size: 120%; color: rgb(255,255,255); background-color: #999999; margin-bottom: 5px;&quot;&gt;&lt;!-- --&gt;
-{{{!}} width=&quot;100%&quot; cellspacing=&quot;1&quot; cellpadding=&quot;1&quot; border=&quot;0&quot; align=&quot;center&quot;     
-{{!}}- 
-{{!}} &lt;div style=&quot;padding: 2px; font-family: tahoma,sans-serif; font-weight: bold; font-size: 120%; color: rgb(250, 250, 250); margin-bottom: 2px;&quot; class=&quot;round&quot;&gt;
-{{{!}} width=&quot;100%&quot; cellspacing=&quot;1&quot; cellpadding=&quot;1&quot; border=&quot;0&quot; align=&quot;center&quot;
-{{!}}-
-{{!}} width=&quot;10%&quot; valign=&quot;left&quot; align=&quot;center&quot; rowspan=&quot;2&quot; {{!}} [[{{{Icon}}}|40px]]
-{{!}} '''All Content Bundles of ''{{SITENAME}}'' '''
-{{!}}}&lt;/div&gt;
-{{!}}}&lt;/div&gt;
-{{{!}} cellspacing=&quot;0&quot; cellpadding=&quot;5&quot; style=&quot;position:relative; margin: 0 0 0.5em 1em; border-collapse: collapse; border: 1px solid #999999; background: rgb(255,255,255); float: right; clear: none; width: 20em&quot;
-{{!}}-
-{{Tablelongrow|Label=Overview:|Value=''{{{Short description}}}''}}
-{{!}}-
-{{Tablerow|Label=Author:|Value={{{author|}}} }}
-{{!}}}&lt;!--
-
-case: All content bundles END
-
---&gt;
-|#default=&lt;!-- unknown category
---&gt;&lt;div class=&quot;round&quot; style=&quot;padding-bottom: 5px; padding-left: 5px; padding-right: 5px; padding-top: 10px; font-family: tahoma, sans-serif; font-weight: bold; font-size: 120%; color: rgb(255,255,255); background-color: rgb(159,80,0); margin-bottom: 5px;float: right; clear: none; &quot;&gt;&lt;!-- --&gt;
-{{{!}} width=&quot;100%&quot; cellspacing=&quot;1&quot; cellpadding=&quot;1&quot; border=&quot;0&quot; align=&quot;center&quot;     
-{{!}}- 
-{{!}} &lt;div style=&quot;padding: 2px; font-family: tahoma,sans-serif; font-weight: bold; font-size: 120%; color: rgb(250, 250, 250); margin-bottom: 2px;&quot; class=&quot;round&quot;&gt;
-{{{!}} width=&quot;100%&quot; cellspacing=&quot;1&quot; cellpadding=&quot;1&quot; border=&quot;0&quot; align=&quot;center&quot;
-{{!}}-
-{{!}} width=&quot;10%&quot; valign=&quot;left&quot; align=&quot;center&quot; {{!}} [[Image:Stockage.png|40px]]
-{{!}} '''{{#show:{{{PAGENAME}}}|?Content title=}}'''
-{{!}}}&lt;/div&gt;
-{{!}}}&lt;/div&gt;
-{{{!}} cellspacing=&quot;0&quot; cellpadding=&quot;5&quot; style=&quot;position:relative; margin: 0 0 0.5em 1em; border-collapse: collapse; border: 1px solid rgb(159,80,0); background: rgb(255,255,255); float: right; clear: none; width: 20em&quot;
-}}&lt;/includeonly&gt;&lt;noinclude&gt;
-&lt;/noinclude&gt;</text>
-    <hash>919551dcfcdaf67199e683a77bb484b0</hash>
-    </revision>
-  </page>
-  <page>
-    <title>Template:Tablelongrow</title>
-    <id>200</id>
-    <revision>
-      <id>344</id>
-      <timestamp>2010-12-20T13:24:46Z</timestamp>
-      <contributor>
-        <username>WikiSysop</username>
-        <id>1</id>
-      </contributor>
-      <minor/>
-      <comment>1 revision</comment>
-      <text xml:space="preserve">&lt;noinclude&gt;{{Template
-|PAGENAME=Template:Tablelongrow
-|part of=Baseontologybundle
-|rationale=This is a helper template to display a table row spanning 2 columns.
-|Has author=User:WikiSysop
-|parameters=&lt;pre&gt;
-{{Tablelongrow
-|Align=center|left|right
-|Color=white|..
-|Font size=100%
-|Value=text to display
-}}
-&lt;/pre&gt;
-}}
-&lt;/noinclude&gt;&lt;includeonly&gt;
-| colspan=&quot;2&quot; style=&quot;text-align: {{{Align|center}}}; background: {{{Color|white}}}&quot;|&lt;div style=&quot;font-size: {{{Font size|100%}}}&quot;&gt;{{{Value}}}&lt;/div&gt;
-&lt;/includeonly&gt;</text>
-    <hash>59bbdcf2f1da27a71628d714cc9cc137</hash>
-    </revision>
-  </page>
-  <page>
-    <title>Template:Tablerow</title>
-    <id>201</id>
-    <revision>
-      <id>346</id>
-      <timestamp>2010-12-20T13:24:49Z</timestamp>
-      <contributor>
-        <username>WikiSysop</username>
-        <id>1</id>
-      </contributor>
-      <minor/>
-      <comment>1 revision</comment>
-      <text xml:space="preserve">&lt;noinclude&gt;{{Template
-|PAGENAME=Template:Tablerow
-|part of=Baseontologybundle
-|rationale=This is helper template to display a table row containing two columns.
-|Has author=User:WikiSysop
-|parameters=&lt;pre&gt;
-{{Tablerow
-|Label=name of the label
-|Value=text right to the label
-}}&lt;/pre&gt;
-}}
-&lt;/noinclude&gt;&lt;includeonly&gt;
-{{!}}style=&quot;vertical-align: top;&quot; {{!}}{{{Label}}}
-{{!}} {{{Value|undefined}}}&lt;/includeonly&gt;&lt;noinclude&gt;
-&lt;/noinclude&gt;</text>
-    <hash>04a785c66e24891734671fb6f4dbe8f2</hash>
+      <text xml:space="preserve">[[Part of bundle::{{{value|}}}| ]]</text>
+    <hash>5cf85fbe02e47a89b26e95572ab39d8c</hash>
     </revision>
   </page>
 </mediawiki>
