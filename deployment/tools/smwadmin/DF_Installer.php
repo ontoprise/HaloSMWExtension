@@ -230,7 +230,7 @@ class Installer {
 			$dd = PackageRepository::getLatestDeployDescriptor($tl_ext->getID());
 			if ($dd->getVersion() > $localPackages[$dd->getID()]->getVersion()
 			|| $dd->getPatchlevel() > $localPackages[$dd->getID()]->getPatchlevel()) {
-				$this->collectDependingExtensions($dd, $updatesNeeded, $localPackages);
+				$this->collectDependingExtensions($dd, $updatesNeeded, $localPackages, true);
 				$updatesNeeded[] = array($dd, $dd->getVersion(), $dd->getVersion());
 			}
 
@@ -664,8 +664,9 @@ class Installer {
 	 * @param DeployDescriptor $dd
 	 * @param array $packagesToUpdate
 	 * @param array of DeployDescriptor $localPackages
+	 * @param boolean $globalUpdate Global update or not (-u)
 	 */
-	private function collectDependingExtensions($dd, & $packagesToUpdate, $localPackages) {
+	private function collectDependingExtensions($dd, & $packagesToUpdate, $localPackages, $globalUpdate = false) {
 		$dependencies = $dd->getDependencies();
 		$updatesNeeded = array();
 
@@ -674,8 +675,9 @@ class Installer {
 
 		foreach($dependencies as $dep) {
 			list($id, $from, $to, $optional, $message) = $dep;
-			if ($optional) {
-				// ask for installation
+			if ($optional && !$globalUpdate) {
+				// ask for installation of optional packages
+				// do not ask if it is a global update
 				$this->getUserConfirmation("$message\nInstall optional extension '$id'? ", $result);
 				if ($result != 'y') {
 					continue;
@@ -711,7 +713,7 @@ class Installer {
 			$desc_min = PackageRepository::getDeployDescriptorFromRange($id, $minVersion, $maxVersion);
 
 			$packagesToUpdate[] = array($desc_min, $minVersion, $maxVersion);
-			$this->collectDependingExtensions($desc_min, $packagesToUpdate, $localPackages);
+			$this->collectDependingExtensions($desc_min, $packagesToUpdate, $localPackages, $globalUpdate);
 		}
 
 	}
