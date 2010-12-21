@@ -44,12 +44,13 @@ if (substr($mwRootDir, -1) != "/") $mwRootDir .= "/";
 
 
 $cChecker = new ConsistencyChecker($mwRootDir);
-$errorFound = $cChecker->checkDependencies(false);
-
+$errorFound = $cChecker->checkDependencies(DF_OUTPUT_FORMAT_TEXT);
+$statusLog = $cChecker->getStatusLog();
+foreach($statusLog as $s) print $s;
 
 if ($errorFound) {
- print "\n\nErrors found! See above.\n";
- } else {
- print "\n\nOK.\n";
- }
- die($errorFound ? 1 : 0);
+	print "\n\nErrors found! See above.\n";
+} else {
+	print "\n\nOK.\n";
+}
+die($errorFound ? 1 : 0);
