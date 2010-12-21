@@ -58,7 +58,7 @@ class ASFFormGenerator {
 	 * Generates a Semantic Form based on a given
 	 * title object and its category annotations
 	 */
-	public function generateFromTitle(Title $title, $createInNSCategory = false){
+	public function generateFromTitle(Title $title, $createInNSCategory = false, $justCheck = false){
 		$categories = $title->getParentCategories();
 		
 		//Do not create forms in NS_Category if not explicitly stated
@@ -66,13 +66,13 @@ class ASFFormGenerator {
 			return false;
 		}
 		
-		return $this->generateFormForCategories(array_keys($categories), $title);
+		return $this->generateFormForCategories(array_keys($categories), $title, $justCheck);
 	}
 	
 	/*
 	 * Generate form for an instance based on some given category names
 	 */
-	public function generateFormForCategories($categories, $instanceTitle = null){
+	public function generateFormForCategories($categories, $instanceTitle = null, $justCheck = false){
 		//check if an automatic form can be created
 		if(count($categories) == 0) return false;
 		
@@ -80,6 +80,9 @@ class ASFFormGenerator {
 		$categories = $this->removeSuperCategories(array_flip($categories));
 		
 		$categories = $this->initializeCategoryFormData($categories);
+		
+		if(!$categories) return false;
+		if($justCheck) return true;
 		
 		if(!is_null($instanceTitle)){
 			$unresolvedAnnotationsSection = 
@@ -113,6 +116,8 @@ class ASFFormGenerator {
 			//sections to create
 			$categorySections = 
 				ASFCategorySectionStructureProcessor::getInstance()->getCategorySectionStructure($categories);
+			
+			if(!$categorySections) return false;
 
 			$categories = array();
 			foreach($categorySections as $categoryName => $categorySection){

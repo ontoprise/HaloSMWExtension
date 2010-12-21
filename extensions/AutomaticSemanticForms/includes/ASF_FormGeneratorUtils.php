@@ -80,17 +80,7 @@ class ASFFormGeneratorUtils {
 	 * for this article
 	 */
 	public static function canFormForArticleBeCreated(Title $title, $createInNSCategory = false){
-	
-		//Do not create forms in NS_Category if not explicitly stated
-		if($title->getNamespace() == NS_CATEGORY && !$createInNSCategory){
-			return false;
-		}
-		
-		$categories = $title->getParentCategories();
-		
-		if(count($categories) == 0) return false;
-		
-		return true;
+		return ASFFormGenerator::getInstance()->generateFromTitle($title, false, true);
 	}
 	
 	/*

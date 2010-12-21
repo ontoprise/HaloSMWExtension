@@ -28,6 +28,10 @@ class ASFCategorySectionStructureProcessor {
 		
 		$this->removeCategoriesWithNoProperties();
 		
+		if(count($this->categorySectionStructure) == 0){
+			return false;
+		}
+		
 		$this->removeUnnecesserayEdges();
 		
 		global $asfCombineCategorySectionsWherePossible;
@@ -54,6 +58,8 @@ class ASFCategorySectionStructureProcessor {
 	private function initCategorySectionStructure($categories){
 		$this->categorySectionStructure = array();
 		
+		$store = smwfNewBaseStore();
+		
 		//init category section structure with data from ontology
 		global $wgLang;
 		foreach($categories as $category){
@@ -64,6 +70,12 @@ class ASFCategorySectionStructureProcessor {
 			$categoryTitle = $categoryObject->getTitle();
 			
 			if(!$categoryTitle->exists()){
+				continue;
+			}
+			
+			$semanticData = $store->getSemanticData($categoryTitle);
+			$noASF = ASFFormGeneratorUtils::getPropertyValue($semanticData, ASF_PROP_NO_AUTOMATIC_FORMEDIT);
+			if($noASF){
 				continue;
 			}
 			
@@ -136,6 +148,15 @@ class ASFCategorySectionStructureProcessor {
 			}
 			
 			unset($this->categorySectionStructure[$emptyCategoryName]);
+		}
+		
+		foreach($this->categorySectionStructure as $categoryName => $item){
+			$title = Title::newFromText($categoryName, NS_CATEGORY);
+			$properties = ASFFormGeneratorUtils::getPropertiesWithDomain(array($title));
+			
+			if(count($properties) == 0 && count($item->children) == 0 && count($item->parents) == 0){
+				unset($this->categorySectionStructure[$categoryName]);
+			}
 		}
 	}
 	
