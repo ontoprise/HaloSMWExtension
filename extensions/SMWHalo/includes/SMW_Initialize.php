@@ -10,7 +10,7 @@
  */
 if ( !defined( 'MEDIAWIKI' ) ) die;
 
-define('SMW_HALO_VERSION', '1.5.2_0-for-SMW-1.5.2 [B203]');
+define('SMW_HALO_VERSION', '{{$VERSION}}-for-SMW-1.5.2 [B{{$BUILDNUMBER}}]');
 
 // constant for special schema properties
 define('SMW_SSP_HAS_DOMAIN_AND_RANGE_HINT', 1);
@@ -170,7 +170,7 @@ function smwgHaloSetupExtension() {
 	$wgHooks['smwInitProperties'][] = 'smwfInitSpecialPropertyOfSMWHalo';
 
 	global $smwgDefaultStore, $smwgShowDerivedFacts, $wgRequest;
-	if (smwfIsTripleStoreConfigured() && $smwgShowDerivedFacts === true) {
+	if ($smwgShowDerivedFacts === true) {
 		$wgHooks['smwShowFactbox'][] = 'smwfAddDerivedFacts';
 	}
 
