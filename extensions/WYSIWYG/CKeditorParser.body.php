@@ -583,7 +583,8 @@ class CKeditorParser extends CKeditorParserWrapper {
 		$text = $this->fck_replaceSpecialLinks( $text );
         
         // preserve linebreaks
-        $text = strtr($text, array("\n" => 'FCKLR_fcklr_FCKLR', "\r" => ''));
+        //$text = strtr($text, array("\n" => "\nFCKLR_fcklr_FCKLR", "\r" => ''));
+        // this doesn't work when inside tables. So leave this for later.
 
 		$finalString = parent::internalParse( $text, $isMain );
 		return $finalString;
