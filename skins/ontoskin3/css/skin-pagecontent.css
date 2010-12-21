@@ -156,7 +156,7 @@ div.tright {
 	border-width: .5em 0 .8em 1.4em;
 }
 div.tleft {
-	float: left;
+	/* float: left; */
 	clear: left;
 	margin-right: .5em;
 	border-width: .5em 1.4em .8em 0;
