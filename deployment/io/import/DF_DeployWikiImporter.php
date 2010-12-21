@@ -227,7 +227,7 @@ class DeployWikiRevision extends WikiRevision {
 			// FIXME: must reside in a noinclude section, but only 1 is allowed.
 			//$this->text .= "\n<noinclude>[[".$dfgLang->getLanguageString('df_contenthash')."::".$this->md5_hash."| ]]</noinclude>";
 		} else {
-			$this->text .= "\n[[".$dfgLang->getLanguageString('df_contenthash')."::".$this->md5_hash."| ]]";
+			$this->text .= "\n{{".$dfgLang->getLanguageString('df_contenthash')."|value=".$this->md5_hash."}}";
 		}
 
 
@@ -250,7 +250,7 @@ class DeployWikiRevision extends WikiRevision {
 				$ontversion = SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString('df_contenthash'));
 				$values = smwfGetStore()->getPropertyValues($this->title, $ontversion);
 				if (count($values) > 0) $exp_hash = strtolower(Tools::getXSDValue(reset($values))); else $exp_hash = NULL;
-				$rawtext = preg_replace('/\n\[\['.$dfgLang->getLanguageString('df_contenthash').'\s*::\s*\w+(\s*\|)?[^]]*\]\]/', "", $prior->getRawText());
+				$rawtext = preg_replace('/\n\{\{\s*'.$dfgLang->getLanguageString('df_contenthash').'\s*\|\s*value\s*=\s*\w+(\s*\|)?[^}]*\}\}/', "", $prior->getRawText());
 				$hash = md5($rawtext);
 
 				if (is_null($exp_hash)) {
