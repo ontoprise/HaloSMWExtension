@@ -366,7 +366,7 @@ class CKeditor_MediaWiki {
         }
         # If mode=wysiwyg is set then start with the WYSIWYG editor
         if ( $wgRequest->getVal('mode') && $wgRequest->getVal('mode') == 'wysiwyg') {
-            $this->showFCKEditor &= RTE_VISIBLE;
+            $this->showFCKEditor |= RTE_VISIBLE;
         }
 
 		$wgFCKWikiTextBeforeParse = $form->textbox1;
