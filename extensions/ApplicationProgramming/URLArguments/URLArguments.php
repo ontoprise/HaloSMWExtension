@@ -18,7 +18,7 @@ $wgExtensionCredits['parserhook'][] = array(
 	'version' => '1.0',
 	'url' => '',
 	'author' => 'Thomas Schweitzer',   
-	'description' => 'Defines a new parser function that retrieves arguments from the URL.'
+	'description' => 'Defines the new parser function "arg" that retrieves arguments from the URL of the current article. These values can be used in the wikitext of the article.'
 );
  
 $wgHooks['LanguageGetMagic'][]  = 'wfURLArgumentsLanguageGetMagic';
