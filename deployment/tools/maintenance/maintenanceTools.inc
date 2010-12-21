@@ -24,13 +24,13 @@ define ("DF_OUTPUT_FORMAT_TEXT", 0);
 define ("DF_OUTPUT_FORMAT_HTML", 1);
 
 
-define ("DF_SMWFORUM_LINK_MISSING_DEPENDENCY", "http://smwforum.ontoprise.de");
-define ("DF_SMWFORUM_LINK_MISSING_LOCALSETTINGS", "http://smwforum.ontoprise.de");
-define ("DF_SMWFORUM_LINK_MISSING_ADMINSETTINGS", "http://smwforum.ontoprise.de");
-define ("DF_SMWFORUM_LINK_MISSING_NON_REGISTERED", "http://smwforum.ontoprise.de");
-define ("DF_SMWFORUM_LINK_MISSING_NON_EXISTING", "http://smwforum.ontoprise.de");
-define ("DF_SMWFORUM_LINK_MISSING_DOUBLE_REGISTERED", "http://smwforum.ontoprise.de");
-define ("DF_SMWFORUM_LINK_EXISTING_EXTENSION", "http://smwforum.ontoprise.de");
+define ("DF_SMWFORUM_LINK_MISSING_DEPENDENCY", "http://smwforum.ontoprise.com/smwforum/index.php/Help:Troubleshooting_for_common_problems_with_the_Deployment_Framework#Missing_dependency_in_an_extension");
+define ("DF_SMWFORUM_LINK_MISSING_LOCALSETTINGS", "http://smwforum.ontoprise.com/smwforum/index.php/Help:Troubleshooting_for_common_problems_with_the_Deployment_Framework#No_LocalSettings.php");
+define ("DF_SMWFORUM_LINK_MISSING_ADMINSETTINGS", "http://smwforum.ontoprise.com/smwforum/index.php/Help:Troubleshooting_for_common_problems_with_the_Deployment_Framework#No_AdminSettings.php");
+define ("DF_SMWFORUM_LINK_MISSING_NON_REGISTERED", "http://smwforum.ontoprise.com/smwforum/index.php/Help:Troubleshooting_for_common_problems_with_the_Deployment_Framework#An_extension_is_installed_but_not_referenced_in_the_LocalSettings.php");
+define ("DF_SMWFORUM_LINK_MISSING_NON_EXISTING", "http://smwforum.ontoprise.com/smwforum/index.php/Help:Troubleshooting_for_common_problems_with_the_Deployment_Framework#An_extension_is_referenced_but_not_installed");
+define ("DF_SMWFORUM_LINK_MISSING_DOUBLE_REGISTERED", "http://smwforum.ontoprise.com/smwforum/index.php/Help:Troubleshooting_for_common_problems_with_the_Deployment_Framework#An_extension_is_referenced_twice");
+define ("DF_SMWFORUM_LINK_EXISTING_EXTENSION", "http://smwforum.ontoprise.com/smwforum/index.php/Help:Lifting_installation_for_use_with_DF");
 
 
 
