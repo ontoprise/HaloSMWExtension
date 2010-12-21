@@ -112,11 +112,11 @@ class CKeditorParser extends CKeditorParserWrapper {
                 continue;
             if (defined('SMW_DI_VERSION') && $h == "ws")
                 continue;
-            if (!in_array($h, $this->FCKeditorFunctionHooks))
+            if (!in_array('#'.$h, $this->FCKeditorFunctionHooks))
                 $this->FCKeditorFunctionHooks[] = '#'.$h;
         }
     }
-
+    
     public function getSpecialTags() {
         return $this->FCKeditorWikiTags;
     }
@@ -515,7 +515,7 @@ class CKeditorParser extends CKeditorParserWrapper {
                     if (defined('SMW_HALO_VERSION') && substr($inner, 0, 7) == '{{#ask:' || substr($inner, 0, 10) == '{{#sparql:')
                         $fck_mw_template =  'fck_smw_query';
                     else if (defined('SMW_DI_VERSION') && substr($inner, 0, 6) == '{{#ws:' )
-					    $fck_mw_template =  'fck_mw_webservice';
+					    $fck_mw_template =  'fck_smw_webservice';
                     else {
                         $funcName = (($fp = strpos($inner, ':', 2)) !== false) ? substr($inner, 2, $fp - 2) : substr($inner, 2, strlen($inner) - 4);
                         if (in_array($funcName, $this->FCKeditorDateTimeVariables))
@@ -583,7 +583,7 @@ class CKeditorParser extends CKeditorParserWrapper {
 		$text = $this->fck_replaceSpecialLinks( $text );
         
         // preserve linebreaks
-        $text = strtr($text, array("\n" => 'FCKLR_fcklr', "\r" => ''));
+        $text = strtr($text, array("\n" => 'FCKLR_fcklr_FCKLR', "\r" => ''));
 
 		$finalString = parent::internalParse( $text, $isMain );
 		return $finalString;
@@ -635,7 +635,7 @@ class CKeditorParser extends CKeditorParserWrapper {
 		$text = preg_replace( "/^#REDIRECT/", '<!--FCK_REDIRECT-->', $text );
 		$parserOutput = parent::parse( $text, $title, $options, $linestart, $clearState, $revid );
 
-        $parserOutput->setText( strtr( $parserOutput->getText(), array('FCKLR_fcklr' => '<br fcklr="true"/>') ) );
+        $parserOutput->setText( strtr( $parserOutput->getText(), array('FCKLR_fcklr_FCKLR' => '<br fcklr="true"/>') ) );
 
 		$categories = $parserOutput->getCategories();
 		if( $categories ) {
