@@ -364,6 +364,10 @@ class CKeditor_MediaWiki {
         if ( $wgCKEditorUrlparamMode && !( $wgRequest->getVal('mode') && $wgRequest->getVal('mode') == 'wysiwyg' ) ) {
             return true;
         }
+        # If mode=wysiwyg is set then start with the WYSIWYG editor
+        if ( $wgRequest->getVal('mode') && $wgRequest->getVal('mode') == 'wysiwyg') {
+            $this->showFCKEditor &= RTE_VISIBLE;
+        }
 
 		$wgFCKWikiTextBeforeParse = $form->textbox1;
 		if( $this->showFCKEditor & RTE_VISIBLE ){
