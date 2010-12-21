@@ -17,6 +17,7 @@
 			<dependency from="200" to="200">semanticforms</dependency>
 			<dependency from="101">scriptmanager</dependency>
 			<dependency from="102">applicationprogramming</dependency>
+			<dependency from="100" to="100" optional="true">baseontologybundle</dependency> 
 		</dependencies>
 	</global>
 	<codefiles>

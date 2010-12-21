@@ -12,16 +12,17 @@ Installation instructions
 	Parser Functions
 	String Functions 2.0 or higher
 	Deployment Framework (optional)
-	
+	Base ontology bundle (optional)
+
 #
 # Installation
 #
 
 1. Patch process:
-	1.1 The RichMedia extension comes with several patch files, where two must
+	1.1 The Rich Media extension comes with several patch files, where two must
     be applied. One file patches Mediawiki and the other the Semantic Forms
     extension. Depending on the version number choose the correct patch file.
-	- '/extensions/RichMediaRichMediaPatchForSF2_0.txt': This file provides the necessary patches for Semantic Forms 2.0
+	- '/extensions/RichMedia/RichMediaPatchForSF2_0.txt': This file provides the necessary patches for Semantic Forms 2.0
 	- '/extensions/RichMedia/RichMediaPatchForMW1_15_3.txt': This is needed to patch MediaWiki in version 1.15.3
 	- '/extensions/RichMedia/RichMediaPatchForMW1_16_0.txt': This is needed to patch MediaWiki in version 1.16.0
 
@@ -32,7 +33,7 @@ Installation instructions
 
 		php patch.php -p <patch-file> -d <mw-dir> --onlypatch
 
-	1.2 The RichMedia extension contains several new files which need to be copied.
+	1.2 The Rich Media extension contains several new files which need to be copied.
 	All these files are located in subdirectories of '/extensions/RichMedia/patches'.
 	- Copy the folder 'SemanticForms' to your '/extensions' folder to make sure, that
 	  among others a new version of the FloatBox is now used by SemanticForms.
@@ -77,7 +78,7 @@ install the JSON modules from php pear.
 #
 	* There are several settings that need to be recognized when you want to upload files to your MediaWiki.
 	* All these informations can be found at http://www.mediawiki.org/wiki/Uploads.
-	* The RichMedia extension only sets: $wgEnableUploads = true;
+	* The Rich Media extension only sets: $wgEnableUploads = true;
 	* All other configurations that have impact on the upload process have to be set by yourself.
 
 #
@@ -87,7 +88,7 @@ install the JSON modules from php pear.
 
 	* The template call has changed since version 1.0. Please make sure that you are using the right call now. {{RMList|show=True}}
 
-	* If you have already used a prior version of RichMedia extension and you have done changes to your templates, make sure that you merge them with the new ones delivered in this version. 
+	* If you have already used a prior version of Rich Media extension and you have done changes to your templates, make sure that you merge them with the new ones delivered in this version. 
 
 	* If you are running Semantic Wiki on Unix and want to use the UploadConverter make sure that you have installed the right packages of AbiWord (http://www.abisource.com/) and xpdf (http://www.foolabs.com/xpdf/). 
 
