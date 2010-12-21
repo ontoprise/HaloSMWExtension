@@ -79,9 +79,9 @@ function wfSajaxSearchImageCKeditor( $term ) {
 		'page_title',
 		array(
 			'page_namespace IN (' . NS_IMAGE . ',' . NS_FILE . ')',
-			"LOWER (page_title) LIKE '%". $dbr->strencode( $term1 ) ."%'".
-			"OR (page_title LIKE '%". $dbr->strencode( $term2 ) ."%') ".
-			"OR (page_title LIKE '%". $dbr->strencode( $term3 ) ."%') ".
+			"page_title LIKE '%". $dbr->strencode( $term1 ) ."%'".
+			"OR (LOWER(page_title) LIKE '%". $dbr->strencode( $term2 ) ."%') ".
+			"OR (UPPER(page_title) LIKE '%". $dbr->strencode( $term3 ) ."%') ".
 			"OR (page_title LIKE '%". $dbr->strencode( $term4 ) ."%') "
 		),
 		__METHOD__,
@@ -152,8 +152,8 @@ function wfSajaxSearchArticleCKeditor( $term ) {
 		array(
 			'page_namespace' => $ns,
 			"page_title LIKE '%". $dbr->strencode( $term1 ) ."%' ".
-			"OR (page_title LIKE '%". $dbr->strencode( $term2 ) ."%') ".
-			"OR (page_title LIKE '%". $dbr->strencode( $term3 ) ."%') ".
+			"OR (LOWER(page_title) LIKE '%". $dbr->strencode( $term2 ) ."%') ".
+			"OR (UPPER(page_title) LIKE '%". $dbr->strencode( $term3 ) ."%') ".
 			"OR (page_title LIKE '%". $dbr->strencode( $term4 ) ."%') "
 		),
 		__METHOD__,
