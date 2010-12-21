@@ -1017,7 +1017,9 @@ AdvancedAnnotation.prototype = {
 		// => update the class
 		var span = wrapper.down('span');
 		if (span) {
-			span.writeAttribute('class', cssClass);
+//			span.writeAttribute('class', cssClass);
+			span.className = cssClass;
+
 		}
 		
 		// Show the hidden edit and delete icons
