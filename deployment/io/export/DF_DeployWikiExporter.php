@@ -36,10 +36,11 @@ class DeployBackupDumper extends BackupDumper {
 
 	private $bundleToExport;
 	private $noCat = false;
-
+	private $notemplates = false;
 	function __construct($argv) {
 		parent::__construct($argv);
 		$this->noCat = false;
+		$this->notemplates = false;
 		for( $arg = reset( $argv ); $arg !== false; $arg = next( $argv ) ) {
 
 			//-b => Bundle to export
@@ -50,9 +51,14 @@ class DeployBackupDumper extends BackupDumper {
 				$this->bundleToExport = $bundleToExport;
 				continue;
 			}
-			// --nocat means: do not consider member of categories beloning to a bundle 
+			// --nocat means: do not consider member of categories beloning to a bundle
 			else if ($arg == '--nocat') {
 				$this->noCat = true;
+			}
+				
+			// --notemplates means: do not consider member of categories beloning to a bundle
+			else if ($arg == '--notemplates') {
+				$this->notemplates = true;
 			}
 		}
 	}
@@ -76,7 +82,7 @@ class DeployBackupDumper extends BackupDumper {
 		$exporter->openStream();
 
 		if (isset($this->bundleToExport)) {
-			$exporter->exportBundle($this->bundleToExport, $this->noCat);
+			$exporter->exportBundle($this->bundleToExport, $this->noCat, $this->notemplates);
 		} else {
 			if( is_null( $this->pages ) ) {
 				if( $this->startId || $this->endId ) {
@@ -132,7 +138,7 @@ class DeployWikiExporter extends WikiExporter {
 	 *
 	 * @param string $bundleID
 	 */
-	function exportBundle($bundeID, $noCat) {
+	function exportBundle($bundeID, $noCat, $noTemplates) {
 		global $dfgLang;
 
 		$partOfBundlePropertyID = smwfGetStore()->getSMWPropertyID(SMWPropertyValue::makeProperty($dfgLang->getLanguageString("df_partofbundle")));
@@ -148,14 +154,16 @@ class DeployWikiExporter extends WikiExporter {
 		$cond = "s_id = smw_id AND page_title = smw_title AND page_namespace = smw_namespace ".
                 "AND p_id = ".$partOfBundlePropertyID." AND o_id = ".$partOfBundleID;
 		$this->dumpFrom($joint, $cond);
-		
+
 		// all templates used by pages of bundle
-		$joint = "$templatelinks";
-		$cond = "page_title = tl_title AND page_namespace = tl_namespace ".
+		if (!$noTemplates) {
+			$joint = "$templatelinks";
+			$cond = "page_title = tl_title AND page_namespace = tl_namespace ".
                 "AND tl_from IN (SELECT tl_from FROM $page,$templatelinks,$smwids,$smwrels WHERE smw_title = page_title AND smw_namespace = page_namespace AND smw_id = s_id ".
                 " AND p_id = $partOfBundlePropertyID AND o_id = $partOfBundleID AND page_id = tl_from)";
-        $this->dumpFrom($joint, $cond);
-
+			$this->dumpFrom($joint, $cond);
+		}
+		
 		if (!$noCat) {
 			// export all instances of categories belonging to this bundle
 			// (except if they are from cat or prop namespace)
@@ -163,16 +171,16 @@ class DeployWikiExporter extends WikiExporter {
 			$cond = "page_id = cl_from AND page_namespace != ".NS_CATEGORY." AND page_namespace != ".SMW_NS_PROPERTY.
                 " AND cl_to IN (SELECT smw_title FROM $smwids,$smwrels WHERE smw_id = s_id ".
                 " AND p_id = $partOfBundlePropertyID AND o_id = $partOfBundleID)";
-				
+
 			$this->dumpFrom($joint, $cond);
-			
+				
 			// export templates used by instances of category belonging to this bundle
 			$joint = "$categorylinks,$templatelinks";
-            $cond = "page_title = tl_title AND page_namespace = tl_namespace AND cl_from = tl_from ".
+			$cond = "page_title = tl_title AND page_namespace = tl_namespace AND cl_from = tl_from ".
                 " AND cl_to IN (SELECT smw_title FROM $smwids,$smwrels WHERE smw_id = s_id ".
                 " AND p_id = $partOfBundlePropertyID AND o_id = $partOfBundleID)";
-                
-            $this->dumpFrom($joint, $cond);
+
+			$this->dumpFrom($joint, $cond);
 		}
 
 
@@ -248,7 +256,7 @@ class DeployWikiExporter extends WikiExporter {
 			$joinTables
 			WHERE $where $join 
 			$groupby $order $limit";
-            
+
 		} else {
 
 			$sql = "SELECT $straight * FROM
@@ -297,7 +305,7 @@ class DeployXmlDumpWriter extends XmlDumpWriter {
 	function schemaVersion() {
 		return "1.0";
 	}
-	
+
 	// namespace must not be changed
 	// otherwise MW import won't work.
 	function openStream() {
