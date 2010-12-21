@@ -20,7 +20,9 @@ function execute($query) {
 		$targetName = $wgRequest->getVal('target');
 		$formName = $wgRequest->getVal('form');
 		
-		if(!$categoryParam){
+		echo('<pre>'.print_r($categoryParam, true).'</pre>');
+		
+		if(is_null($categoryParam)){
 			$requestURL = $wgRequest->getRequestURL();
 			$requestURL = explode('/', $requestURL);
 			
@@ -46,10 +48,18 @@ function execute($query) {
 			}
 		}
 		
+		if(count($categoryNames) == 0 && !is_null($categoryParam)){
+			global $wgOut;
+			$wgOut->addHTML( '<p><b>Error:</b> No category name was passed for automatic form creation</p>');
+			return;
+		}
+		
 		//Automatically create a new target name if category names
 		//but no target name was passed
 		if(count($categoryNames) > 0 && !$targetName){
-			//todo: Implement this
+			global $wgOut;
+			$wgOut->addHTML( '<p><b>Error:</b> No target article name was given for automatic form creation</p>');
+			return;
 		}
 		
 		if(count($categoryNames) > 0 && $targetName){
@@ -76,6 +86,10 @@ function execute($query) {
 				if(count($categoryNames) > 0){
 					$asfFormDefData['additional catehory annotations'] = $categoryNames;
 				}
+			} else {
+				global $wgOut;
+				$wgOut->addHTML( '<p><b>Error:</b> No automatic form could be created for given category name(s).</p>');
+				return;
 			}
 		} else if(count($categoryNames) == 0 && $targetName && !$formName){
 			//Automatically create a form for this instance based on its category annotations
@@ -93,7 +107,15 @@ function execute($query) {
 					global $asfDummyFormName;
 					ASFFormGeneratorUtils::createFormDummyIfNecessary();
 					$wgRequest->setVal('form', $asfDummyFormName); 
+				} else {
+					global $wgOut;
+					$wgOut->addHTML( '<p><b>Error:</b> No automatic form could be created for given article name.</p>');
+					return;
 				}
+			} else {
+				global $wgOut;
+				$wgOut->addHTML( '<p><b>Error:</b> No automatic form could be created for given article name.</p>');
+				return;
 			}
 		}
 		
