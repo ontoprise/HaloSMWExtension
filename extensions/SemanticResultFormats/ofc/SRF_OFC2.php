@@ -189,7 +189,7 @@ class SRFOFC extends SMWResultPrinter {
 	protected function getResultText($res, $outputmode) {
 		global $smwgIQRunningNumber;
 		$outputmode = SMW_OUTPUT_HTML;
-		$this->isHTML = ($outputmode == SMW_OUTPUT_HTML); // yes, our code can be viewed as HTML if requested, no more parsing needed
+//Bugfix 13446:		$this->isHTML = ($outputmode == SMW_OUTPUT_HTML); // yes, our code can be viewed as HTML if requested, no more parsing needed
 
         // if there is only one column in the results then stop right away
         if ($res->getColumnCount() == 1) return "";
@@ -657,13 +657,15 @@ class SRFOFC extends SMWResultPrinter {
 		for($i=0;$i<count($this->m_charts);++$i) {
 			$chart = $this->m_charts[$i];
 			if($chart['type'] == 'pie') continue;
-			foreach($chart['minmax'] as $yIdx=>$v) {
-				$max = floatval($v['max']);
-				$min = floatval($v['min']);
-				$this->getScale($min, $max, $step);
-				$this->m_charts[$i]['minmax'][$yIdx]['min'] = $min;
-				$this->m_charts[$i]['minmax'][$yIdx]['max'] = $max;
-				$chart['minmax'][$yIdx]['step'] = $step;
+			if (array_key_exists('minmax', $chart)) {
+				foreach($chart['minmax'] as $yIdx=>$v) {
+					$max = floatval($v['max']);
+					$min = floatval($v['min']);
+					$this->getScale($min, $max, $step);
+					$this->m_charts[$i]['minmax'][$yIdx]['min'] = $min;
+					$this->m_charts[$i]['minmax'][$yIdx]['max'] = $max;
+					$chart['minmax'][$yIdx]['step'] = $step;
+				}
 			}
 			if(!$chart['autoratio']) continue;
 			$maxstep = 0;
