@@ -1004,7 +1004,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow.php
  }
 Index: extensions/SemanticForms/specials/SF_UploadWindow2.php
 ===================================================================
---- extensions/SemanticForms/specials/SF_UploadWindow2.php	(revision 9321)
+--- extensions/SemanticForms/specials/SF_UploadWindow2.php	(revision 9355)
 +++ extensions/SemanticForms/specials/SF_UploadWindow2.php	(working copy)
 @@ -27,31 +27,36 @@
  	}
@@ -1306,7 +1306,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow2.php
  		}
  
  		// Get the page text if this is not a reupload
-@@ -389,40 +522,91 @@
+@@ -389,40 +522,94 @@
  		}
  
  		$basename = str_replace( '_', ' ', $basename );
@@ -1336,12 +1336,12 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow2.php
 +		//This needs to be set, otherwise the page content (created by UploadConverter e.g.) is ignored
 +		$wgRequest->setVal('query', 'false');
 +		$wgRequest->setVal('SFviaRichMedia', 'true');
-+
+ 
 +		$target_title = Title::newFromText($target);
 +		// Title->exists gets the article ID for this Title from the link cache
 +		// and this ID is not correct now (always 0). So do an ID update once.
 +		$testID = $target_title->getArticleID(GAID_FOR_UPDATE);
- 
++
 +		if (!$this->mForReUpload){
 +			$wgRequest->setVal($rMDestFormName, $uploadFormContent);
 +		}
@@ -1403,14 +1403,17 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow2.php
 +		// </script>
 +		// END;
 +		// print $output;
++		// maybe we have to enter a link in FCK
++		$imageURL = $this->mLocalFile->getURL();
 +		$uploadWindowPage = SpecialPage::getPage('UploadWindow');
 +		$relatedArticles = urlencode($relatedArticles);
 +		$successString = "filestatus=uploaded&uploadedFile=".urlencode($target)."&RelatedArticles=$relatedArticles&sfInputID=$this->mInputID";
 +		$uploadWindowUrlSuccess = $uploadWindowPage->getTitle()->getFullURL($successString);
  		$output .= <<<END
 -		parent.jQuery.fancybox.close();
++		top.saveRichMediaData('{$target}', '{$imageURL}');
 +		//load the upload success message
-+		parent.jQuery('#fancybox-inner').load('{$uploadWindowUrlSuccess}');
++		top.jQuery('#fancybox-inner').load('{$uploadWindowUrlSuccess}');
  	</script>
 -
  END;
@@ -1422,7 +1425,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow2.php
  		$img = null; // @todo: added to avoid passing a ref to null - should this be defined somewhere?
  
  		wfRunHooks( 'SpecialUploadComplete', array( &$this ) );
-@@ -686,6 +870,65 @@
+@@ -686,6 +873,47 @@
  		}
  	}
  
@@ -1432,19 +1435,15 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow2.php
 +	 */
 +	public static function showSuccessfulMsg() {
 +
-+		global $wgRequest, $wgScriptPath;
++		global $wgRequest, $wgScriptPath, $smwgRMScriptPath;
 +
 +		$filename = $wgRequest->getText( 'uploadedFile' );
-+		$inputID = $wgRequest->getText( 'sfInputID' );
++
 +		// create the message for the successsful upload
 +		global $wgUser, $wgOut;
 +		$sk = $wgUser->getSkin();
 +		$nt = Title::newFromText($filename);
 +		$imageDescLink = $sk->makeKnownLinkObj( $nt, '','','','','target="_top"' );
-+		$image = wfFindFile($nt);
-+		//$image = Image::newFromTitle($nt);
-+		$imagePath = $image->getURL();
-+		unset($image);
 +
 +		$relatedArticles = $wgRequest->getText('RelatedArticles');
 +
@@ -1468,27 +1467,13 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow2.php
 +		$uploadSuccessHTML .= wfMsgNoTrans( 'smw_rm_uploadsuccess_closewindow' ) . '</div><br/>';
 +
 +		print($uploadSuccessHTML);
-+
-+		if ( $inputID ) {
-+			// upload is triggered from an SF input field, so do nothing special.
-+		}
-+		else {
-+			// maybe we have to enter a link in FCK
-+			$script = '	<script type="text/javascript" src="'.$wgScriptPath.'/extensions/RichMedia/scripts/fck_connect.js"></script>' . "\n";
-+			$script .=<<<END
-+<script type="text/javascript">
-+saveRichMediaData('$filename', '$imagePath');
-+</script>
-+END;
-+//		$wgOut->addHTML( $script );
-+		}
 +	}
 +	/*op-patch|BL|2010-10-05|end*/
 +
  }
  
  /**
-@@ -696,6 +939,10 @@
+@@ -696,6 +924,10 @@
  	protected $mForReUpload;
  	protected $mSessionKey;
  	protected $mHideIgnoreWarning;
@@ -1499,7 +1484,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow2.php
  	
  	protected $mSourceIds;
  
-@@ -707,6 +954,10 @@
+@@ -707,6 +939,10 @@
  		$this->mSessionKey = isset( $options['sessionkey'] )
  				? $options['sessionkey'] : '';
  		$this->mHideIgnoreWarning = !empty( $options['hideignorewarning'] );
@@ -1510,7 +1495,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow2.php
  
  		$sourceDescriptor = $this->getSourceSection();
  		$descriptor = $sourceDescriptor
-@@ -769,12 +1020,12 @@
+@@ -769,12 +1005,12 @@
  				'label-message' => 'sourcefilename',
  				'upload-type' => 'File',
  				'radio' => &$radio,
@@ -1525,7 +1510,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow2.php
  				'checked' => $selectedSourceType == 'file',
  		);
  		if ( $canUploadByUrl ) {
-@@ -795,12 +1046,12 @@
+@@ -795,12 +1031,12 @@
  		}
  		wfRunHooks( 'UploadFormSourceDescriptors', array( &$descriptor, &$radio, $selectedSourceType ) );
  
@@ -1540,7 +1525,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow2.php
  		return $descriptor;
  	}
  
-@@ -935,6 +1186,13 @@
+@@ -935,6 +1171,13 @@
  			);
  		}
  
@@ -1554,7 +1539,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow2.php
  		return $descriptor;
  
  	}
-@@ -944,7 +1202,169 @@
+@@ -944,7 +1187,169 @@
  	 */
  	public function show() {
  		$this->addUploadJS();
@@ -1724,7 +1709,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow2.php
  	// disable $wgOut - we'll print out the page manually, taking the
  	// body created by the form, plus the necessary Javascript files,
  	// and turning them into an HTML page
-@@ -968,6 +1388,36 @@
+@@ -968,6 +1373,36 @@
  	$wikibits_include = "<script type=\"{$wgJsMimeType}\" src=\"{$wgStylePath}/common/wikibits.js?$wgStyleVersion\"></script>";
  	$ajax_include = "<script type=\"{$wgJsMimeType}\" src=\"{$wgStylePath}/common/ajax.js?$wgStyleVersion\"></script>";
  	$ajaxwatch_include = "<script type=\"{$wgJsMimeType}\" src=\"{$wgStylePath}/common/ajaxwatch.js?$wgStyleVersion\"></script>";
@@ -1761,7 +1746,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow2.php
  	$text = <<<END
  <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
  <html xmlns="{$wgXhtmlDefaultNamespace}"
-@@ -977,16 +1427,20 @@
+@@ -977,16 +1412,20 @@
  	}
  	$dir = $wgContLang->isRTL() ? "rtl" : "ltr";
  	$text .= "xml:lang=\"{$wgLanguageCode}\" lang=\"{$wgLanguageCode}\" dir=\"{$dir}\">";
@@ -1785,7 +1770,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow2.php
  </head>
  <body>
  {$wgOut->getHTML()}
-@@ -1006,6 +1460,7 @@
+@@ -1006,6 +1445,7 @@
  	 */
  	protected function addUploadJS( $autofill = true ) {
  		global $wgUseAjax, $wgAjaxUploadDestCheck, $wgAjaxLicensePreview;
@@ -1793,7 +1778,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow2.php
  		global $wgEnableFirefogg, $wgEnableJS2system;
  		global $wgOut;
  
-@@ -1016,21 +1471,29 @@
+@@ -1016,21 +1456,29 @@
  			'wgAjaxUploadDestCheck' => $wgUseAjax && $wgAjaxUploadDestCheck,
  			'wgAjaxLicensePreview' => $wgUseAjax && $wgAjaxLicensePreview,
  			'wgEnableFirefogg' => (bool)$wgEnableFirefogg,
