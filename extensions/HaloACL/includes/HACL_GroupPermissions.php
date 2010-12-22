@@ -47,6 +47,8 @@ if ( !defined( 'MEDIAWIKI' ) ) {
 class HACLGroupPermissions  {
 	
 	//--- Constants ---
+	const ALL_USERS = -1;
+	const REGISTERED_USERS = -2;
 		
 	//--- Private fields ---
 	
@@ -130,8 +132,8 @@ class HACLGroupPermissions  {
 	/**
 	 * All group permissions that are stored in the database are transferred
 	 * to $wgGroupPermissions. There are some special group IDs:
-	 * -1 => all users (anonymous and registered) (*)
-	 * -2 => registered users (user)
+	 * ALL_USERS => all users (anonymous and registered) (*)
+	 * REGISTERED_USERS => registered users (user)
 	 * 
 	 * @throws HACLGroupPermissionsException
 	 * 		UNKNOWN_FEATURE, if the DB contains an unknown feature
@@ -149,10 +151,10 @@ class HACLGroupPermissions  {
 		global $wgGroupPermissions, $haclgFeature;
 		foreach ($permissions as $p) {
 			switch ($p['groupID']) {
-			case -1:
+			case self::ALL_USERS:
 				$group = '*';
 				break;
-			case -2:
+			case self::REGISTERED_USERS:
 				$group = 'user';
 				break;
 			default:
