@@ -20,8 +20,6 @@ function execute($query) {
 		$targetName = $wgRequest->getVal('target');
 		$formName = $wgRequest->getVal('form');
 		
-		echo('<pre>'.print_r($categoryParam, true).'</pre>');
-		
 		if(is_null($categoryParam)){
 			$requestURL = $wgRequest->getRequestURL();
 			$requestURL = explode('/', $requestURL);
