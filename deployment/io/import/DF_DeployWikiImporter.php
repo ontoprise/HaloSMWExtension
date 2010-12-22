@@ -221,14 +221,10 @@ class DeployWikiRevision extends WikiRevision {
 		$linkCache->clear();
 
 		global $dfgLang;
-		// add annotations FIXME: as template?
-		if ($this->title->getNamespace() == NS_TEMPLATE) {
-			// add content hash with <noinclude> tag
-			// FIXME: must reside in a noinclude section, but only 1 is allowed.
-			//$this->text .= "\n<noinclude>[[".$dfgLang->getLanguageString('df_contenthash')."::".$this->md5_hash."| ]]</noinclude>";
-		} else {
-			$this->text .= "\n{{".$dfgLang->getLanguageString('df_contenthash')."|value=".$this->md5_hash."}}";
-		}
+		if ($this->title->getNamespace() == NS_TEMPLATE && $this->title->getText() === $dfgLang->getLanguageString('df_contenthash')) return false;
+		if ($this->title->getNamespace() == NS_TEMPLATE && $this->title->getText() === $dfgLang->getLanguageString('df_partofbundle')) return false;
+		
+		$this->text = $this->replaceOrAddContentHash();
 
 
 		$article = new Article( $this->title );
@@ -240,7 +236,7 @@ class DeployWikiRevision extends WikiRevision {
 				return false;
 			} else {
 				print "\n\t[Imported page] ".$this->title->getPrefixedText();
-			    return parent::importOldRevision();
+				return parent::importOldRevision();
 			}
 		} else {
 
@@ -250,11 +246,11 @@ class DeployWikiRevision extends WikiRevision {
 				$ontversion = SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString('df_contenthash'));
 				$values = smwfGetStore()->getPropertyValues($this->title, $ontversion);
 				if (count($values) > 0) $exp_hash = strtolower(Tools::getXSDValue(reset($values))); else $exp_hash = NULL;
-				$rawtext = preg_replace('/\n\{\{\s*'.$dfgLang->getLanguageString('df_contenthash').'\s*\|\s*value\s*=\s*\w+(\s*\|)?[^}]*\}\}/', "", $prior->getRawText());
+				$rawtext = preg_replace('/\n\{\{\s*'.$dfgLang->getLanguageString('df_contenthash').'\s*\|\s*value\s*=\s*\w*(\s*\|)?[^}]*\}\}/', "", $prior->getRawText());
 				$hash = md5($rawtext);
 
 				if (is_null($exp_hash)) {
-						
+
 					return $this->mode == DEPLOYWIKIREVISION_INFO ? false : $this->importAsNewRevision();
 				}
 				if ($hash != $exp_hash) {
@@ -272,6 +268,18 @@ class DeployWikiRevision extends WikiRevision {
 		}
 		return false;
 
+	}
+
+	function replaceOrAddContentHash($text) {
+		global $dfgLang;
+		$matchNums = preg_match('/\{\{\s*'.$dfgLang->getLanguageString('df_contenthash').'\s*\|\s*value\s*=\s*\w*(\s*\|)?[^}]*\}\}/', $text);
+		if ($matchNums === 0) {
+			$text .= "\n{{".$dfgLang->getLanguageString('df_contenthash')."|value=".md5($text)."}}";
+		} else {
+			$rawtext = preg_replace('/\{\{\s*'.$dfgLang->getLanguageString('df_contenthash').'\s*\|\s*value\s*=\s*\w*(\s*\|)?[^}]*\}\}/', "", $text);
+			$text = preg_replace('/\{\{\s*'.$dfgLang->getLanguageString('df_contenthash').'\s*\|\s*value\s*=\s*\w*(\s*\|)?[^}]*\}\}/', "{{".$dfgLang->getLanguageString('df_contenthash')."|value=".md5($rawtext)."}}", $text);
+		}
+		return $text;
 	}
 
 	function importAsNewRevision() {
