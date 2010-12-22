@@ -224,7 +224,7 @@ class DeployWikiRevision extends WikiRevision {
 		if ($this->title->getNamespace() == NS_TEMPLATE && $this->title->getText() === $dfgLang->getLanguageString('df_contenthash')) return false;
 		if ($this->title->getNamespace() == NS_TEMPLATE && $this->title->getText() === $dfgLang->getLanguageString('df_partofbundle')) return false;
 		
-		$this->text = $this->replaceOrAddContentHash();
+		$this->text = $this->replaceOrAddContentHash($this->text);
 
 
 		$article = new Article( $this->title );
@@ -242,25 +242,28 @@ class DeployWikiRevision extends WikiRevision {
 
 			$prior = Revision::loadFromTitle( $dbw, $this->title );
 			if( !is_null( $prior ) ) {
-
-				$ontversion = SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString('df_contenthash'));
-				$values = smwfGetStore()->getPropertyValues($this->title, $ontversion);
+                
+				// revision already exists. 
+				// that means we have to check if the page was changed in the meantime.
+				$contenthashProperty = SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString('df_contenthash'));
+				$values = smwfGetStore()->getPropertyValues($this->title, $contenthashProperty);
 				if (count($values) > 0) $exp_hash = strtolower(Tools::getXSDValue(reset($values))); else $exp_hash = NULL;
-				$rawtext = preg_replace('/\n\{\{\s*'.$dfgLang->getLanguageString('df_contenthash').'\s*\|\s*value\s*=\s*\w*(\s*\|)?[^}]*\}\}/', "", $prior->getRawText());
+				$rawtext = preg_replace('/\{\{\s*'.$dfgLang->getLanguageString('df_contenthash').'\s*\|\s*value\s*=\s*\w*(\s*\|)?[^}]*\}\}/', "", $prior->getRawText());
 				$hash = md5($rawtext);
 
-				if (is_null($exp_hash)) {
-
+				if (is_null($exp_hash) || $hash === $exp_hash) {
+                    // either no hash annotation given and no check possible
+                    // or site is as it is expected.
 					return $this->mode == DEPLOYWIKIREVISION_INFO ? false : $this->importAsNewRevision();
 				}
 				if ($hash != $exp_hash) {
+					// let the user confirm overwrite 
 					$result = false;
 					if (!is_null($this->callback)) {
 						$this->callback->modifiedPage($this, $this->mode, $result);
-						//@call_user_func(array(&$this->callback,"modifiedPage"), $this, $this->mode, & $result);
 					}
 					if ($result == true) {
-
+						// if confirmed overwrite
 						return $this->importAsNewRevision();
 					}
 				}
@@ -269,7 +272,19 @@ class DeployWikiRevision extends WikiRevision {
 		return false;
 
 	}
-
+    
+	/**
+	 * Adds a content hash template call at the end of the text or replaces an existing.
+	 * 
+	 * {{Content hash|value=<md5 of $text>}}
+	 * 
+	 * If the template call already exists, it is only changed where it is located.
+	 *  
+	 * Note: The MD5 value is calculated assuming there is no template call for obvious reasons.
+	 * 
+	 * @param $text
+	 * @return $text with added or changed template call
+	 */
 	function replaceOrAddContentHash($text) {
 		global $dfgLang;
 		$matchNums = preg_match('/\{\{\s*'.$dfgLang->getLanguageString('df_contenthash').'\s*\|\s*value\s*=\s*\w*(\s*\|)?[^}]*\}\}/', $text);
@@ -362,7 +377,7 @@ class DeployWikiRevision extends WikiRevision {
 			$revId );
 		}
 		$GLOBALS['wgTitle'] = $tempTitle;
-		print "\n\t[Imported page] ".$this->title->getPrefixedText();
+		print "\n\t[Imported new revision of page] ".$this->title->getPrefixedText();
 		return true;
 	}
 }
