@@ -294,10 +294,6 @@ $wgGoogleMapsKey='ABQIAAAALfJSGT7KuTRZWj3WNooD8xT2yXp_ZAY8_ufC3CFXhHIE1NvwkxSF9P
 require_once("$IP/extensions/SemanticResultFormats/ofc/SRF_OFC_Init.php"); 
 /*end-semanticresultformats*/
 
-/*start-glossary*/
-require_once( "$IP/extensions/Glossary/Glossary.php" );
-/*end-glossary*/
-
 /*start-haloacl*/
 require_once('extensions/HaloACL/includes/HACL_Initialize.php');
 /*php-start-MasterTemplate*/
