@@ -653,7 +653,11 @@ class CKeditorParser extends CKeditorParserWrapper {
 					$appendString .= '<span ' . $args . 'class="fck_mw_category">' . str_replace('_', ' ', $cat) . '</span> ';
 				}
 			}
-			$parserOutput->setText( $parserOutput->getText() . $appendString );
+            $oldText = $parserOutput->getText();
+            if (!preg_match('/<br ?\/?>\s*<\/p>\s*$/i', $oldText))
+                $oldText .= '<br/>';
+            $appendString .= '<br/>';
+			$parserOutput->setText( $oldText . $appendString );
 		}
 
 		if( !empty( $this->fck_mw_strtr_span ) ) {
