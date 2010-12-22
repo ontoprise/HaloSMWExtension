@@ -63,145 +63,125 @@
     <title>Category:Comment</title>
     <id>237</id>
     <revision>
-      <id>1562</id>
-      <timestamp>2010-12-20T08:07:47Z</timestamp>
+      <id>2263</id>
+      <timestamp>2010-12-22T16:33:01Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
       <text xml:space="preserve">{{Category
-|Has author=WikiSysop
-|part of=Collaboration
-|rationale=Contains all comments.
-|long description=This category contains all comments created by the Collaboration Extension.
 |PAGENAME=Category:Comment
-|own_work=True
-|copyright_holder=Ontoprise GmbH
-|year=2009
+|rationale=This category contains all comments created by the Collaboration Extension.
+|No automatic formedit=Yes
+|part of=Collaboration
 }}
-[[part of bundle::Collaboration| ]]</text>
-    <hash>bd63fa3abc2b2f069e2e285ede27ced6</hash>
+{{Part of bundle|value=Collaboration}}
+{{Content hash|value=}}
+[[Category:Entity]]</text>
+    <hash>1f283ee49ebbef1cc1422e1d83c96a1d</hash>
     </revision>
   </page>
   <page>
     <title>Property:Has comment rating</title>
     <id>238</id>
     <revision>
-      <id>1568</id>
-      <timestamp>2010-12-20T08:10:37Z</timestamp>
+      <id>2258</id>
+      <timestamp>2010-12-22T16:30:39Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
       <text xml:space="preserve">{{Property
-|Has author=WikiSysop
 |part of=Collaboration
-|Has default form=Form:Add and edit Property
 |rationale=The rating value of a comment.
-|long description=This is used by the Collaboration Extension and contains the values of the individual ratings.
 |PAGENAME=Property:Has rating
-|own_work=True
 }}
-[[part of bundle::Collaboration| ]]
+{{Part of bundle|value=Collaboration}}
+{{Content hash|value=}}
 [[has domain and range::Category:Comment; | ]][[has type::Type:Number| ]] [[Allows value::1| ]] [[Allows value::0| ]] [[Allows value::-1| ]]</text>
-    <hash>81895514267e88b351e4fc4cb974d92e</hash>
+    <hash>adc51d785938fb68ac93e3af91bed26c</hash>
     </revision>
   </page>
   <page>
     <title>Property:Has comment date</title>
     <id>239</id>
     <revision>
-      <id>1566</id>
-      <timestamp>2010-12-20T08:09:42Z</timestamp>
+      <id>2256</id>
+      <timestamp>2010-12-22T16:28:43Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
       <text xml:space="preserve">{{Property
-|Has author=WikiSysop
 |part of=Collaboration
-|Has default form=Form:Add and edit Property
 |rationale=The date of a comment.
-|long description=This property contains a datetime string of a comment created by the Collaboration Extension.
 |PAGENAME=Property:Has comment date
-|own_work=True
-|copyright_holder=Ontoprise GmbH
-|year=2009
 }}
-[[part of bundle::Collaboration| ]]
+{{Part of bundle|value=Collaboration}}
+{{Content hash|value=}}
 [[has domain and range::Category:Comment; | ]][[has type::Type:Date| ]]</text>
-    <hash>4c306bc5bde613cd5be6f6934131f837</hash>
+    <hash>1e08daf77bd63ea166d43a204419b961</hash>
     </revision>
   </page>
   <page>
     <title>Property:Has comment text</title>
     <id>240</id>
     <revision>
-      <id>1569</id>
-      <timestamp>2010-12-20T08:11:03Z</timestamp>
+      <id>2259</id>
+      <timestamp>2010-12-22T16:31:04Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
       <text xml:space="preserve">{{Property
-|Has author=WikiSysop
 |part of=Collaboration
-|Has default form=Form:Add and edit Property
 |rationale=Contains a comment text.
-|long description=This porperty contains the comment text of a comment created by the Collaboration Extension.
 |PAGENAME=Property:Has comment text
-|own_work=True
 }}
-[[part of bundle::Collaboration| ]]
+{{Part of bundle|value=Collaboration}}
+{{Content hash|value=}}
 [[has domain and range::Category:Comment; | ]][[has type::Type:Text| ]]</text>
-    <hash>80369545c5af23bed5847007b8581846</hash>
+    <hash>42415065dce696d9f88de042c2a77af5</hash>
     </revision>
   </page>
   <page>
     <title>Property:Has comment person</title>
     <id>241</id>
     <revision>
-      <id>1567</id>
-      <timestamp>2010-12-20T08:10:11Z</timestamp>
+      <id>2257</id>
+      <timestamp>2010-12-22T16:29:19Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
       <text xml:space="preserve">{{Property
-|Has author=WikiSysop
 |part of=Collaboration
-|Has default form=Form:Add and edit Property
 |rationale=Contains the commenting person.
-|long description=This property contains the person who has created the comment with the Collaboration Extension.
 |PAGENAME=Property:Has comment person
-|own_work=True
 }}
-[[part of bundle::Collaboration| ]]
+{{Part of bundle|value=Collaboration}}
+{{Content hash|value=}}
 [[has domain and range::Category:Comment; | ]][[has type::Type:String| ]]</text>
-    <hash>f7e0cf61311f6284c7c21c2f134ada68</hash>
+    <hash>7dcf5f3557020199d3b41539199c5b0c</hash>
     </revision>
   </page>
   <page>
     <title>Template:CommentResult</title>
     <id>244</id>
     <revision>
-      <id>1565</id>
-      <timestamp>2010-12-20T08:09:12Z</timestamp>
+      <id>2255</id>
+      <timestamp>2010-12-22T16:28:15Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
       <text xml:space="preserve">&lt;noinclude&gt;{{Template
-|Has author=WikiSysop
 |part of=Collaboration
 |rationale=Used as result printer template.
-|long description=This template is used by Collaboration Extension to format the results of the query created by ShowComments template.
 |PAGENAME=Template:CommentResult
-|own_work=True
-|copyright_holder=Ontoprise GmbH
-|year=2009
 }}
-[[part of bundle::Collaboration| ]]
+{{Part of bundle|value=Collaboration}}
+{{Content hash|value=}}
 &lt;/noinclude&gt;&lt;includeonly&gt;&lt;!-- start comment (do not change css-classes)
 --&gt;{{#vardefine:resID
 |{{PAGENAMEE:{{#ifeq: {{#pos:{{{6}}}|:}} 
@@ -232,55 +212,47 @@
 --&gt;&lt;div class=&quot;collabComResText&quot;&gt;{{{4}}}&lt;/div&gt;&lt;/div&gt;&lt;!-- end comment content
 --&gt;{{#if:{{{7|}}}|&lt;div class=&quot;collabComResDeletion&quot;&gt;{{{7|}}}&lt;/div&gt;&lt;!-- end deletion info --&gt;|}}&lt;/div&gt;&lt;!-- end comment 
 --&gt;&lt;/includeonly&gt;</text>
-    <hash>7b9cdf62413010df349b21cac4faef68</hash>
+    <hash>e67336323bc7fe485ed7c424f193ef07</hash>
     </revision>
   </page>
   <page>
     <title>Property:Belongs to article</title>
     <id>245</id>
     <revision>
-      <id>1560</id>
-      <timestamp>2010-12-20T08:06:45Z</timestamp>
+      <id>2247</id>
+      <timestamp>2010-12-22T16:18:43Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
       <text xml:space="preserve">{{Property
-|Has author=WikiSysop
 |part of=Collaboration
-|Has default form=Form:Add and edit Property
 |rationale=Used to create a relation between comments and articles.
-|long description=This is used to create a relation between comments created by the Collaboration Extension and the articles that have been commented.
 |PAGENAME=Property:Belongs to article
-|own_work=True
-|copyright_holder=Ontoprise GmbH
-|year=2009
 }}
-[[part of bundle::Collaboration| ]]
+{{Part of bundle|value=Collaboration}}
+{{Content hash|value=}}
 [[has type::Type:Page| ]][[Has max cardinality::1| ]][[Has min cardinality::1| ]][[has domain and range::Category:Comment; | ]]</text>
-    <hash>9e03f0e693c93de2a34703a3cedd207a</hash>
+    <hash>e404bff7c9b2d0bfce778da940d0c6e8</hash>
     </revision>
   </page>
   <page>
     <title>Template:ShowCommentsIntern</title>
     <id>247</id>
     <revision>
-      <id>1571</id>
-      <timestamp>2010-12-20T08:12:00Z</timestamp>
+      <id>2262</id>
+      <timestamp>2010-12-22T16:32:15Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
       <text xml:space="preserve">&lt;noinclude&gt;{{Template
 |PAGENAME=Template:ShowCommentsIntern
-|Has author=WikiSysop
 |part of=Collaboration
 |rationale=Show all comments incl. form.
-|long description=This templates queries for all existing comments created by the Collaboration Extension. Afterwards it calls a parser function to get the comment form for creating new comment.
-|parameters=&lt;pre&gt;{{ShowCommentsIntern}}&lt;/pre&gt;
-|Calls template=Template:CommentResult
 }}
-[[part of bundle::Collaboration| ]]
+{{Part of bundle|value=Collaboration}}
+{{Content hash|value=}}
 &lt;/noinclude&gt;&lt;includeonly&gt;
 &lt;!--start surrounding div --&gt;&lt;div class=&quot;collabComInternSurround&quot;&gt;&lt;!-- start header div --&gt;&lt;div class=&quot;collabComInternHeader&quot;&gt;[[File:Comment_icon_crystal.png|text-bottom|nopreview|16px|link=]]&lt;/div&gt;&lt;!-- end header div --&gt;
 {{#showcommentform:}}
@@ -301,76 +273,64 @@
 }}
 &lt;/div&gt;
 &lt;/div&gt;&lt;!-- end surround div --&gt;&lt;/includeonly&gt;</text>
-    <hash>89061a6dc1e45147d9680f004ddd6c1d</hash>
+    <hash>10c0686a36bb32baef5565ecca092f71</hash>
     </revision>
   </page>
   <page>
     <title>Property:Comment was deleted</title>
     <id>284</id>
     <revision>
-      <id>1564</id>
-      <timestamp>2010-12-20T08:08:48Z</timestamp>
+      <id>2253</id>
+      <timestamp>2010-12-22T16:23:56Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
       <text xml:space="preserve">{{Property
-|Has author=WikiSysop
 |part of=Collaboration
-|Has default form=Form:Add and edit Property
 |rationale=Flag for comment deletion.
-|long description=This property shows if the comment has been deleted with the Collaboration Extension.
 |PAGENAME=Property:Comment was deleted
-|own_work=True
-|copyright_holder=Ontoprise GmbH
-|year=2009
 }}
-[[part of bundle::Collaboration| ]]
+{{Part of bundle|value=Collaboration}}
+{{Content hash|value=}}
 [[has domain and range::Category:Comment; | ]][[has type::Type:Boolean| ]]</text>
-    <hash>bd8585d42423aa57a91be8d3464661ac</hash>
+    <hash>03ad88cd0cd5d081ef1c85d467f0c613</hash>
     </revision>
   </page>
   <page>
     <title>Property:Belongs to comment</title>
     <id>285</id>
     <revision>
-      <id>1561</id>
-      <timestamp>2010-12-20T08:07:19Z</timestamp>
+      <id>2248</id>
+      <timestamp>2010-12-22T16:20:18Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
       <text xml:space="preserve">{{Property
-|Has author=WikiSysop
 |part of=Collaboration
-|Has default form=Form:Add and edit Property
 |rationale=Used to create a relation between comments and other comments.
-|long description=This is used to create a relation between comments created by the Collaboration Extension and other existing comments.
 |PAGENAME=Property:Belongs to comment
-|own_work=True
-|copyright_holder=Ontoprise GmbH
-|year=2009
 }}
-[[part of bundle::Collaboration| ]]
+{{Part of bundle|value=Collaboration}}
+{{Content hash|value=}}
 [[has type::Type:Page| ]][[Has max cardinality::1| ]][[Has min cardinality::1| ]][[has domain and range::Category:Comment;Category:Comment | ]]</text>
-    <hash>65b985eefd306e40cc6d9a1d8ce50ee4</hash>
+    <hash>f208e8ea95c0d6ec2a58ee67cbcec4e3</hash>
     </revision>
   </page>
   <page>
     <title>Template:Comment</title>
     <id>358</id>
     <revision>
-      <id>1563</id>
-      <timestamp>2010-12-20T08:08:21Z</timestamp>
+      <id>2252</id>
+      <timestamp>2010-12-22T16:23:25Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
       <text xml:space="preserve">&lt;noinclude&gt;{{Template
-|Has author=WikiSysop
 |part of=Collaboration
 |rationale=Creates a comment.
-|long description=This template is used to create a comment with the Collaboration Extension.
 |parameters=&lt;pre&gt;{{Comment
 |CommentPerson
 |CommentContent
@@ -378,13 +338,10 @@
 |CommentRelatedArticle
 |CommentRating
 }}&lt;/pre&gt;
-|defines category=Category:Comment
 |PAGENAME=Template:Comment
-|own_work=True
-|copyright_holder=Ontoprise GmbH
-|year=2009
 }}
-[[part of bundle::Collaboration| ]]
+{{Part of bundle|value=Collaboration}}
+{{Content hash|value=}}
 &lt;/noinclude&gt;&lt;includeonly&gt;''Comment for {{#if: {{{CommentRelatedArticle|}}} 
 | [[Belongs to article::{{{CommentRelatedArticle|}}}]] | nothing
 }}{{#if: {{{CommentRelatedComment|}}} 
@@ -421,41 +378,37 @@
 [[Comment was deleted::{{{CommentWasDeleted|false}}}]]
 &lt;!-- end comment --&gt;[[Category:Comment]]
 &lt;/includeonly&gt;</text>
-    <hash>cd52485710ce8c36fd08afa8390b42f2</hash>
+    <hash>46677a7bb0900eb16de91f9462ccac29</hash>
     </revision>
   </page>
   <page>
     <title>Template:ShowComments</title>
     <id>359</id>
     <revision>
-      <id>1570</id>
-      <timestamp>2010-12-20T08:11:30Z</timestamp>
+      <id>2261</id>
+      <timestamp>2010-12-22T16:31:37Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
       <text xml:space="preserve">&lt;noinclude&gt;{{Template
-|Has author=WikiSysop
-|part of=Collaboration
-|rationale=Show all comments incl. form.
-|long description=This templates queries for all existing comments created by the Collaboration Extension. Afterwards it calls a parser function to get the comment form for creating new comment.
-|parameters=&lt;pre&gt;{{ShowComments
-|show=True}}&lt;/pre&gt;
-|Calls template=Template:ShowCommentsIntern
 |PAGENAME=Template:ShowComments
+|part of=Collaboration
+|rationale=Shows all comments incl. a form entry field for the given article.
 }}
-[[part of bundle::Collaboration| ]]
-&lt;/noinclude&gt;&lt;includeonly&gt;{{#ifeq:{{{show|}}}|True|{{ShowCommentsIntern}}|}}&lt;/includeonly&gt;&lt;noinclude&gt;
-&lt;/noinclude&gt;</text>
-    <hash>088aaebe7b99a8bb4e4d894888897000</hash>
+{{Part of bundle|value=Collaboration}}
+{{Content hash|value=}}
+&lt;/noinclude&gt;&lt;includeonly&gt;
+{{#ifeq:{{{show|}}}|True|{{ShowCommentsIntern}}|}}&lt;/includeonly&gt;</text>
+    <hash>58bb12f67ca2382598f0417699c638b9</hash>
     </revision>
   </page>
   <page>
     <title>Collaboration</title>
     <id>444</id>
     <revision>
-      <id>1637</id>
-      <timestamp>2010-12-20T09:34:50Z</timestamp>
+      <id>1973</id>
+      <timestamp>2010-12-21T20:53:41Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -467,10 +420,10 @@
 |Installation=extensions/Collaboration
 |Dependency=mw;1160;1160, smw;152;152, smwhalo;152;152, scriptmanager;101;101, applicationprogramming;102;102
 }}
+{{Part of bundle|value=Collaboration}}
 [[Vendor::Ontoprise| ]]
 [[Ontology version::130| ]]
 [[Installation dir::extensions/Collaboration| ]]
-[[part of bundle::Collaboration| ]]
 [[Dependency::mw;1160;1160| ]]
 [[Dependency::smw;152;152| ]]
 [[Dependency::smwhalo;152;152| ]]
@@ -487,7 +440,7 @@
 |default=''none''
 |mainlabel=-
 }}</text>
-    <hash>0f91477605d9447d75fb0c128dcb3080</hash>
+    <hash>1963378c5f9798d41ddbc274efb84266</hash>
     </revision>
   </page>
   <page>
