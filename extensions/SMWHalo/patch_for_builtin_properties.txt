@@ -18,7 +18,7 @@ Index: extensions/SemanticMediaWiki/includes/SMW_ParseData.php
 +			if ($title->getPreviousRevisionID($thisRev) === false) {
 +				// Article is about to be created
 +				// => add creator and creation date
-+				$dvCreator = SMWDataValueFactory::newPropertyObjectValue($pcreator, $wgUser->getName());
++				$dvCreator = SMWDataValueFactory::newPropertyObjectValue($pcreator, $wgUser->getUserPage()->getFullText());
 +				$dvCreationDate = SMWDataValueFactory::newPropertyObjectValue($pcreationDate, $wgContLang->sprintfDate('d M Y G:i:s',$article->getTimestamp()));
 +			} else {
 +				// Article already exists but creation properties do not change
@@ -38,7 +38,7 @@ Index: extensions/SemanticMediaWiki/includes/SMW_ParseData.php
 +
 +			// store who modified the article
 +			$pmod = SMWPropertyValue::makeProperty('___MOD');
-+			$dv = SMWDataValueFactory::newPropertyObjectValue($pmod,  $wgUser->getName());
++			$dv = SMWDataValueFactory::newPropertyObjectValue($pmod,  $wgUser->getUserPage()->getFullText());
 +			$semdata->addPropertyObjectValue($pmod,$dv);
 +
 +		}
