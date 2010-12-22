@@ -1012,7 +1012,7 @@ CKEDITOR.plugins.smwtoolbar = {
                 window.parent.Event.observe(frame, 'mouseup', CheckSelectedAndCallPopup);
                 window.parent.Event.observe(frame, 'mousedown', HideContextPopup);
             }
-            window.parent.obContributor.activateTextArea(frame);
+//            window.parent.obContributor.activateTextArea(frame);
         } else {
             var Textarea = CKEditorTextArea(editor);
             window.parent.Event.observe(Textarea, 'keyup', this.EditorareaChanges.bind(this));
