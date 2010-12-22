@@ -31,8 +31,6 @@ CKEDITOR.plugins.add( 'mediawiki',
             'img.fck_mw_left' +
             '{' +
                 'margin: 0.5em 1.4em 0.8em 0em;' +
-                'clear: left;' +
-                'float: left;' +
             '}\n' +
             'img.fck_mw_center' +
             '{' +
