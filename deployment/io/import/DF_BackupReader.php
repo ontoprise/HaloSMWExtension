@@ -127,7 +127,7 @@ class BackupReader {
 			case DEPLOYWIKIREVISION_WARN:
 				$result = true;
 				if ($overwrite) break;
-				print "\n".$deployRevision->title->getText()." has been changed.";
+				print "\nPage '".$deployRevision->title->getText()."' has been changed.";
 				print "Overwrite? [(y)es/(n)o/(a)ll]?";
 				$line = trim(fgets(STDIN));
 				$overwrite = (strtolower($line) == 'a');
@@ -135,7 +135,7 @@ class BackupReader {
 				break;
 			case DEPLOYWIKIREVISION_INFO:
 				$result = false;
-				print "\n".$deployRevision->title->getText()." has been changed";
+				print "\nPage '".$deployRevision->title->getText()."' has been changed";
 				break;
 			default: $result = false;
 		}
