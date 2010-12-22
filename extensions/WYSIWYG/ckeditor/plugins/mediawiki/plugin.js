@@ -380,6 +380,9 @@ CKEDITOR.customprocessor.prototype =
         data = data.replace(/<br\/>(\s*<\/(p|li)>)/gi, '$1');
         // also remove <br/> before nested lists
         data = data.replace(/<br\/>(\s*<(ol|ul)>)/gi, '$1');
+		// in IE the values of the class attribute is not quotes 
+        data = data.replace(/class=([^\"].*?)\s/gi, 'class="$1" ');
+		
 
         var rootNode = this._getNodeFromHtml( data );
 		// rootNode is <body>.
@@ -479,7 +482,9 @@ CKEDITOR.customprocessor.prototype =
 				}
 
 				// Remove the <br> if it is a bogus node.
-				if ( CKEDITOR.env.gecko && sNodeName == 'br' && htmlNode.getAttribute( 'type', 2 ) == '_moz' )
+//				if ( CKEDITOR.env.gecko && sNodeName == 'br' && htmlNode.getAttribute( 'type', 2 ) == '_moz' )
+//					return;
+				if ( CKEDITOR.env.gecko && sNodeName == 'br' && htmlNode.getAttribute( 'type' ) == '_moz' )
 					return;
 
                 // Translate the <br fckLR="true"> into \n
@@ -591,15 +596,17 @@ CKEDITOR.customprocessor.prototype =
 
 						case 'a' :
                             // if there is no inner HTML in the Link, do not add it to the wikitext
-                            if (! htmlNode.textContent.Trim() ) break;
+                            if (! jQuery(htmlNode).text().Trim() ) break;
                             
 							var pipeline = true;
 							// Get the actual Link href.
 							var href = htmlNode.getAttribute( '_cke_saved_href' );
 							var hrefType = htmlNode.getAttribute( '_cke_mw_type' ) || '';
 
-							if ( href == null )
-								href = htmlNode.getAttribute( 'href', 2 ) || '';
+							if ( href == null ) {
+//								href = htmlNode.getAttribute( 'href', 2 ) || '';
+								href = htmlNode.getAttribute( 'href' ) || '';
+							}
 
                             if ( hrefType == '' && href.indexOf(':') > -1) {
                                 hrefType = href.substring(0, href.indexOf(':')).toLowerCase();
@@ -621,7 +628,7 @@ CKEDITOR.customprocessor.prototype =
 							// #2223
 							if( htmlNode.getAttribute( '_fcknotitle' ) && htmlNode.getAttribute( '_fcknotitle' ) == "true" ){
 								var testHref = htmlNode.getAttribute('href').urldecode();
-								var testInner = htmlNode.textContent || '';
+								var testInner = jQuery(htmlNode).text() || '';
 								if ( href.toLowerCase().StartsWith( 'category:' ) )
 									testInner = 'Category:' + testInner;
 								if ( testHref.toLowerCase().StartsWith( 'rtecolon' ) )
@@ -845,7 +852,7 @@ CKEDITOR.customprocessor.prototype =
 									stringBuilder.push( '<source' );
 									stringBuilder.push( ' lang="' + refLang + '"' );
 									stringBuilder.push( '>' );
-									stringBuilder.push( unescape(htmlNode.textContent).replace(/fckLR/g,'\r\n') );
+									stringBuilder.push( unescape(jQuery(htmlNode).text()).replace(/fckLR/g,'\r\n') );
 									stringBuilder.push( '</source>' );
 									return;
 
@@ -861,7 +868,7 @@ CKEDITOR.customprocessor.prototype =
 										stringBuilder.push( ' />' );
 									else {
 										stringBuilder.push( '>' );
-										stringBuilder.push( htmlNode.textContent );
+										stringBuilder.push( jQuery(htmlNode).text() );
 										stringBuilder.push( '</ref>' );
 									}
 									return;
@@ -876,11 +883,11 @@ CKEDITOR.customprocessor.prototype =
 
 								case 'fck_mw_template' :
                                 case 'fck_smw_query' :
-									stringBuilder.push( unescape(htmlNode.textContent).replace(/fckLR/g,'\r\n') );
+									stringBuilder.push( unescape(jQuery(htmlNode).text()).replace(/fckLR/g,'\r\n') );
 									return;
                                 case 'fck_smw_webservice' :
                                 case 'fck_smw_rule' :
-									stringBuilder.push( htmlNode.textContent.htmlDecode().replace(/fckLR/g,'\r\n') );
+									stringBuilder.push( jQuery(htmlNode).text().htmlDecode().replace(/fckLR/g,'\r\n') );
 									return;
 								case 'fck_mw_magic' :
                                     var magicWord = htmlNode.getAttribute( '_fck_mw_tagname' ) || '';
@@ -899,7 +906,7 @@ CKEDITOR.customprocessor.prototype =
                                                 stringBuilder.push( attribs ) ;
 
                 							stringBuilder.push( '>' ) ;
-                                			stringBuilder.push( unescape(htmlNode.textContent).replace(/fckLR/g,'\r\n').replace(/_$/, '') );
+                                			stringBuilder.push( unescape(jQuery(htmlNode).text()).replace(/fckLR/g,'\r\n').replace(/_$/, '') );
                                             stringBuilder.push( '<\/' + tagName + '>' ) ;
 
 								            break;
@@ -912,8 +919,8 @@ CKEDITOR.customprocessor.prototype =
 								            break;
 								        case 'p' :
 								            stringBuilder.push( '{{' + tagName );
-								            if (htmlNode.textContent.length > 0)
-								                stringBuilder.push( ':' + unescape(htmlNode.textContent).replace(/fckLR/g,'\r\n').replace(/_$/, '') );
+								            if (jQuery(htmlNode).text().length > 0)
+								                stringBuilder.push( ':' + unescape(jQuery(htmlNode).text()).replace(/fckLR/g,'\r\n').replace(/_$/, '') );
 								            stringBuilder.push( '}}');
 								            break;
 								    }
@@ -1081,7 +1088,7 @@ CKEDITOR.customprocessor.prototype =
 			case 8 :
 				// IE catches the <!DOTYPE ... > as a comment, but it has no
 				// innerHTML, so we can catch it, and ignore it.
-				if ( CKEDITOR.env.ie && !htmlNode.textContent )
+				if ( CKEDITOR.env.ie && !jQuery(htmlNode).text() )
 					return;
 
 				stringBuilder.push( "<!--"  );
@@ -1161,8 +1168,10 @@ CKEDITOR.customprocessor.prototype =
 				// XHTML doens't support attribute minimization like "CHECKED". It must be trasformed to cheched="checked".
 				else if ( oAttribute.nodeValue === true )
 					sAttValue = sAttName;
-				else
-					sAttValue = htmlNode.getAttribute( sAttName, 2 );	// We must use getAttribute to get it exactly as it is defined.
+				else {
+//					sAttValue = htmlNode.getAttribute( sAttName, 2 );	// We must use getAttribute to get it exactly as it is defined.
+					sAttValue = htmlNode.getAttribute( sAttName );	// We must use getAttribute to get it exactly as it is defined.
+				}
 
 				// leave templates
 				if ( sAttName.StartsWith( '{{' ) && sAttName.EndsWith( '}}' ) ) {
@@ -1178,7 +1187,7 @@ CKEDITOR.customprocessor.prototype =
 	// Property and Category values must be of a certain format. Otherwise this will break
 	// the semantic annotation when switching between wikitext and WYSIWYG view
 	_formatSemanticValues : function (htmlNode) {
-		var text = htmlNode.textContent;
+		var text = jQuery(htmlNode).text();
 
 		// remove any &nbsp;
 		text = text.replace('&nbsp;', ' ');
