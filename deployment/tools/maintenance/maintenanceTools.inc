@@ -30,7 +30,7 @@ define ("DF_SMWFORUM_LINK_MISSING_ADMINSETTINGS", "http://smwforum.ontoprise.com
 define ("DF_SMWFORUM_LINK_MISSING_NON_REGISTERED", "http://smwforum.ontoprise.com/smwforum/index.php/Help:Troubleshooting_for_common_problems_with_the_Deployment_Framework#An_extension_is_installed_but_not_referenced_in_the_LocalSettings.php");
 define ("DF_SMWFORUM_LINK_MISSING_NON_EXISTING", "http://smwforum.ontoprise.com/smwforum/index.php/Help:Troubleshooting_for_common_problems_with_the_Deployment_Framework#An_extension_is_referenced_but_not_installed");
 define ("DF_SMWFORUM_LINK_MISSING_DOUBLE_REGISTERED", "http://smwforum.ontoprise.com/smwforum/index.php/Help:Troubleshooting_for_common_problems_with_the_Deployment_Framework#An_extension_is_referenced_twice");
-define ("DF_SMWFORUM_LINK_EXISTING_EXTENSION", "http://smwforum.ontoprise.com/smwforum/index.php/Help:Lifting_installation_for_use_with_DF");
+define ("DF_SMWFORUM_LINK_EXISTING_EXTENSION", "http://smwforum.ontoprise.com/smwforum/index.php/Help:Troubleshooting_for_common_problems_with_the_Deployment_Framework#Already_existing_extensions");
 
 
 
