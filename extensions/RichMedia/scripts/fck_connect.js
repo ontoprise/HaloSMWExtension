@@ -50,7 +50,7 @@ function saveRichMediaData(mediaTitle, mediaLink) {
 			}
 		}
 	} finally {
-		if (richEditorType == 'fck') { // FCK
+		if (richEditorType == 'fck' && typeof(oEditor) !== 'undefined') { // FCK
 			document.write( '<script src="' + oEditor.Config['BasePath'] + 'dialog/common/fck_dialog_common.js" type="text/javascript"><\/script>' ) ;
 
 			var oElement;	// selected element, if any
@@ -106,7 +106,7 @@ function saveRichMediaData(mediaTitle, mediaLink) {
 
 			return true;
 		}
-		if (richEditorType == 'cke') { // CK
+		if (richEditorType == 'cke' && typeof(oEditor) !== 'undefined') { // CK
 			// CKeditor
 			// check if an image is selected
 			var sel = oEditor.getSelection();
