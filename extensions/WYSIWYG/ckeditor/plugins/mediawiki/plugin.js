@@ -479,11 +479,11 @@ CKEDITOR.customprocessor.prototype =
 				}
 
 				// Remove the <br> if it is a bogus node.
-				if ( sNodeName == 'br' && htmlNode.getAttribute( 'type', 2 ) == '_moz' )
+				if ( CKEDITOR.env.gecko && sNodeName == 'br' && htmlNode.getAttribute( 'type', 2 ) == '_moz' )
 					return;
 
                 // Translate the <br fckLR="true"> into \n
-				if ( sNodeName == 'br' && htmlNode.getAttribute( 'fcklr', 2 ) == 'true' ) {
+				if ( sNodeName == 'br' && htmlNode.getAttribute( 'fcklr' ) == 'true' ) {
                     stringBuilder.push("\n");
 					return;
                 }
