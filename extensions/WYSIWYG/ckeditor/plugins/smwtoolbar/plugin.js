@@ -131,6 +131,10 @@ CKeditInterface.prototype = {
         }
         HideContextPopup();
     },
+	
+	setEditAreaName: function (ean) {
+		// not needed in this implementation
+	},
 
     /**
      * returns the text of the edit window. This is wiki text.
@@ -1041,7 +1045,11 @@ CKEDITOR.plugins.smwtoolbar = {
     loadToolbar : function ( editor ) {
         if (this.stbIsActive) {
             delete gEditInterface;
-            delete window.parent.gEditInterface;
+			if (CKEDITOR.env.ie) {
+				window.parent.gEditInterface = null;
+			} else {
+	            delete window.parent.gEditInterface;
+			}
             this.DisableAnnotationToolbar(editor);
         }
         else {
@@ -1104,8 +1112,12 @@ CKEDITOR.plugins.add('smwtoolbar', {
             if (plugin.stbIsActive) {
                 gEnewText='';
                 delete gEditInterface;
-                delete window.parent.gEditInterface;
-                gEditInterface = new CKeditInterface(editor);
+				if (CKEDITOR.env.ie) {
+					window.parent.gEditInterface = null;
+				} else {
+		            delete window.parent.gEditInterface;
+				}
+				gEditInterface = new CKeditInterface(editor);
                 window.parent.gEditInterface = gEditInterface;
                 plugin.SetEventHandler4AnnotationBox(editor);
             }
