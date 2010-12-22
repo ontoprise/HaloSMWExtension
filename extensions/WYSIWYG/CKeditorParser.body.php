@@ -648,15 +648,14 @@ class CKeditorParser extends CKeditorParserWrapper {
 					$val = $cat;
 				}
 				if( $val != $title->mTextform ) {
-					$appendString .= '<span ' . $args . 'class="fck_mw_category" sort="' . $val . '">' . str_replace('_', ' ', $cat) . '</span> ';
+					$appendString .= '<span ' . $args . 'class="fck_mw_category" sort="' . $val . '">' . str_replace('_', ' ', $cat) . '</span><br/>';
 				} else {
-					$appendString .= '<span ' . $args . 'class="fck_mw_category">' . str_replace('_', ' ', $cat) . '</span> ';
+					$appendString .= '<span ' . $args . 'class="fck_mw_category">' . str_replace('_', ' ', $cat) . '</span><br/>';
 				}
 			}
             $oldText = $parserOutput->getText();
             if (!preg_match('/<br ?\/?>\s*<\/p>\s*$/i', $oldText))
                 $oldText .= '<br/>';
-            $appendString .= '<br/>';
 			$parserOutput->setText( $oldText . $appendString );
 		}
 
