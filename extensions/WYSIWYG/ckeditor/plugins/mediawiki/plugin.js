@@ -1235,10 +1235,10 @@ CKEDITOR.customprocessor.prototype =
     // Get real element from a fake element.
     _getRealElement : function( element ) {
 
-        var attributes = element.attributes,
-            realHtml = attributes && attributes._cke_realelement,
-            realNode = realHtml && decodeURIComponent( realHtml.nodeValue ),
-            realElement = realNode && this._getNodeFromHtml( realNode );
+        var attributes = element.attributes;
+        var realHtml = attributes && attributes.getNamedItem('_cke_realelement');
+		var realNode = realHtml && decodeURIComponent( realHtml.nodeValue );
+        var realElement = realNode && this._getNodeFromHtml( realNode );
 
  	    // If we have width/height in the element, we must move it into
  	    // the real element.
