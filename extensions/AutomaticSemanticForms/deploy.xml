@@ -24,7 +24,7 @@
 		<file loc="deploy.xml" />
 	</codefiles>
 	<wikidumps>
-		<file loc="deploy/dump.xml"/>
+		<file loc="import/dump.xml"/>
 	</wikidumps>
 	<resources>
 		<!-- empty -->
