@@ -152,13 +152,20 @@ class ASFCategoryFormData {
 		$intro .= wfMsg('asf_category_section_label', $categoryLabel);
 		$intro .= "</legend>";
 		
-		$intro .= "\n\n{|";
+		$intro .= "\n\n".'{| width="100%" align="center"';
 
 		if($this->useCSSClass){
 			$intro .= ' class="'.$this->useCSSClass.'"';
+		} else {
+			$intro .= ' class="formtable"';
 		}
 		
 		$intro .= "\n";
+		$intro .= "|-";
+		$intro .= "\n".'| width="20%" |';
+		$intro .= "\n".'| width="80%" |';
+		$intro .= "\n|";
+		
 		
 		$this->categorySectionIntro = $intro;
 		return $this->categorySectionIntro;

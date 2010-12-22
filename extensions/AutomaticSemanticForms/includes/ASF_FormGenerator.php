@@ -204,7 +204,7 @@ class ASFFormGenerator {
 	 */
 	private function getFormDefinitionIntro($categories){
 		
-		$intro = "{{{info";
+		$intro = "{{{info|add title=Add|edit title=Edit";
 		
 		global $asfWYSIWYG;
 		if(defined('WYSIWYG_EDITOR_VERSION')){

@@ -187,7 +187,7 @@ class ASFPropertyFormData {
 		
 		$intro = "\n|-";
 		
-		$intro .= "\n|<span class=\"asf_property_link\">";
+		$intro .= "\n".'| valign="top" |<span class="asf_property_link">';
 		
 		//add form field label
 		global $asfDisplayPropertiesAndCategoriesAsLinks;
@@ -207,7 +207,7 @@ class ASFPropertyFormData {
 		$intro .= $this->getPropertyToolTip();
 		$intro .= '</span></span>';
 		
-		$intro .= "\n|";
+		$intro .= "\n".'| valign="top" |';
 		
 		$this->formFieldIntro = $intro;
 		return $this->formFieldIntro;
