@@ -106,7 +106,8 @@ if ($help) {
 		echo "Setting global permissions:\n";
 		$permissions = array(
 			"Knowledge architect" => array('read', 'edit', 'manage', 'upload'),
-			"Knowledge consumer" => array('read'),
+			"Knowledge consumer" => array('read', 'edit'),
+			"user" => array('read', 'edit'),  // all registered users
 			"Knowledge provider" => array('read', 'edit', 'upload'),
 			"sysop" => array('read', 'edit', 'manage', 'upload', 'administrate', 'technical'),
 			"bureaucrat" => array('read', 'edit', 'manage', 'upload', 'administrate', 'technical')
@@ -115,9 +116,14 @@ if ($help) {
 		// Store all permission for features
 		foreach ($permissions as $group => $perms) {
 			try {
-				$g = HACLGroup::newFromName("Group/$group");
+				if ($group === "user") {
+					$gid = HACLGroupPermissions::REGISTERED_USERS;
+				} else {
+					$g = HACLGroup::newFromName("Group/$group");
+					$gid = $g->getGroupID();
+				}
 				foreach ($perms as $p) {
-					HACLGroupPermissions::storePermission($g->getGroupID(), $p, true);
+					HACLGroupPermissions::storePermission($gid, $p, true);
 				}
 				echo "Setting permissions for group '$group':". implode(',', $perms)."\n";
 			} catch (HACLGroupException $e) {
