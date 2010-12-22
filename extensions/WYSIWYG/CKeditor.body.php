@@ -628,8 +628,12 @@ function ToggleCKEditor( mode, objId ){
 		if( oPopupLink ) oPopupLink.style.display = '';
 		showFCKEditor -= RTE_VISIBLE;
 		oEditorIframe.style.display = 'none';
-		if (toolbar) toolbar.style.display = '';
-		SRCtextarea.style.display = '';
+		if (toolbar) {
+            toolbar.style.display = 'inline';
+            toolbar.style.visibility = 'visible';
+        }
+		SRCtextarea.style.display = 'inline';
+        SRCtextarea.style.visibility = 'visible';
         if (CKEDITOR.plugins.smwtoolbar) {
             CKEDITOR.plugins.smwtoolbar.stbIsActive = false;
             AdvancedAnnotation.unload();
