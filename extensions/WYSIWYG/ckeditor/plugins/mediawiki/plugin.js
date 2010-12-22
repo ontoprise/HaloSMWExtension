@@ -362,13 +362,13 @@ CKEDITOR.customprocessor.prototype =
 	 *            for human reading. Not all Data Processors may provide it.
 	 */
 	toDataFormat : function( data, fixForBody ){
-        if ( window.parent.wgCKeditorCurrentMode ) {
+        
+        if (window.parent.wgCKeditorCurrentMode)
             window.parent.wgCKeditorCurrentMode = 'source';
-        }
-        else if (window.parent.popup &&
-                 window.parent.popup.parent.wgCKeditorCurrentMode ) {
+       	else if (window.parent.popup &&
+            window.parent.popup.parent.wgCKeditorCurrentMode)
             window.parent.popup.parent.wgCKeditorCurrentMode = 'source';
-        }
+        
         data = '<body>' + data.htmlEntities()+ '</body>';
         // fix <img> tags
         data = data.replace(/(<img[^>]*)([^/])>/gi, '$1$2/>' );
