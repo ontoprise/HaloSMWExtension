@@ -448,7 +448,7 @@ CKEDITOR.customprocessor.prototype =
 					return;
 
                 // get real element from fake element
-                if ( htmlNode.hasAttribute( '_cke_realelement' ) ) {
+                if ( htmlNode.getAttribute( '_cke_realelement' ) ) {
                     this._AppendNode( this._getRealElement( htmlNode ), stringBuilder, prefix );
                     return;
                 }
