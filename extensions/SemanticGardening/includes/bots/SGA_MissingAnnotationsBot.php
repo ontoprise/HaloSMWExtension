@@ -6,7 +6,7 @@
  * @defgroup MissingAnnotationsBot
  * @ingroup SemanticGardeningBots
  * 
- * @author Kai Kühn
+ * @author Kai Kï¿½hn
  * 
  * Created on 18.06.2007
  *
@@ -67,7 +67,7 @@ class MissingAnnotationsBot extends GardeningBot {
 		$notAnnotatedPages = array();
 			
 		echo "Checking for pages without annotations...\n";
-		if ($categoryRestriction == '') {
+		if ($categoryRestriction == '' || (count($categoryRestriction) == 1 && strlen(trim($categoryRestriction[1])) == 0)) {
 			$notAnnotatedPages = $this->store->getPagesWithoutAnnotations($term == '' ? NULL : $term, NULL);
 		} else {
 			$categories = explode(";", $categoryRestriction);
@@ -307,9 +307,9 @@ class MissingAnnotationStorageSQL2 extends MissingAnnotationStorageSQL {
 		$excludeAtts = $this->excludePreProperties("a.p_id");
 		$excludeRels = $this->excludePreProperties("r.p_id");
 		
+		
 		if ($categories == NULL) {
 			if ($term == NULL) {
-
 				$sql = 'SELECT DISTINCT p.page_title FROM '.$mw_page.' p JOIN '.$smw_ids.' i ON p.page_title = i.smw_title AND p.page_namespace = i.smw_namespace  LEFT JOIN '.$smw_atts2.' a ON i.smw_id=a.s_id AND '.$excludeAtts.' LEFT JOIN '.$smw_rels2.' r ON i.smw_id=r.s_id AND '.$excludeRels.' ' .
 
                         'WHERE i.smw_namespace = '.NS_MAIN.' AND (a.s_id IS NULL AND r.s_id IS NULL) AND p.page_is_redirect = 0';
