@@ -551,7 +551,7 @@ class ConsistencyChecker {
 
 		global $wgExtensionCredits;
 
-		$ls = file_get_contents($this->rootDir."/LocalSettings.php");
+
 		$lifted = false;
 		foreach($wgExtensionCredits as $extType) {
 			foreach($extType as $ext) {
@@ -560,20 +560,11 @@ class ConsistencyChecker {
 					$name = $ext['name'];
 					list($version) = explode(" ", $ext['version']);
 					$version = str_replace(".","", $version);
-					switch($name) {
-						case 'Semantic MediaWiki':
-
-							if (strpos($ls, '/*start-smw*/') !== false) continue;
-							$lifted |= $this->liftSMW($ls, $version, $format);
-
-							break;
-
-						case 'Semantic Forms':
-
-							if (strpos($ls, '/*start-semanticforms*/') !== false) continue;
-							$lifted |= $this->liftSF($ls, $version, $format);
-
-							break;
+						
+					if (stripos($name, "semantic") !== false && stripos($name, "mediawiki") !== false) {
+						$lifted |= $this->liftSMW($version, $format);
+					} else if (stripos($name, "semantic") !== false && stripos($name, "forms") !== false) {
+						$lifted |= $this->liftSF($version, $format);
 					}
 				}
 			}
@@ -581,22 +572,23 @@ class ConsistencyChecker {
 		if (!$lifted) {
 			$this->statusLog[] = $this->out(array("\nNothing to do.\n"), $format);
 		} else {
-			$this->statusLog[] = $this->out(array("\nPlease visit: http://smwforum.ontoprise.com/smwforum/index.php/Help:Lifting_installation_for_use_with_DF\n"), $format);
+			$this->statusLog[] = $this->out(array("\nPlease visit:\nhttp://smwforum.ontoprise.com/smwforum/index.php/Help:Lifting_installation_for_use_with_DF\n"), $format);
 		}
 	}
 
 	/**
 	 * Lifts the Semantic Mediawiki (SMW) extension, ie. makes it compatible to DF.
-	 * 
+	 *
 	 * 	adds a deploy.xml
 	 *  adds DF tags to LocalSettings.php
-	 *  
-	 * @param string $ls LocalSettings.php content
+	 *
 	 * @param int $version
 	 * @param int $format
 	 */
-	private function liftSMW($ls, $version, $format) {
+	private function liftSMW($version, $format) {
 		global $smwgIP;
+		$ls = file_get_contents($this->rootDir."/LocalSettings.php");
+		if (strpos($ls, '/*start-smw*/') !== false) continue;
 		// create deploy descriptor
 		$dd = file_get_contents("resources/dd_templates/deploy_smw.xml");
 		$dd = str_replace("{{version}}", $version, $dd);
@@ -631,19 +623,20 @@ class ConsistencyChecker {
 		$this->statusLog[] = $this->out(array("\n","\t[done]","Adding DF tags to LocalSettings.php for SMW.", "\n"), $format);
 		return true;
 	}
-	
+
 	/**
 	 * Lifts the SemanticForms (SF) extension, ie. makes it compatible to DF
-	 *  
+	 *
 	 *  adds a deploy.xml
 	 *  adds DF tags to LocalSettings.php
-	 *  
-	 * @param string $ls LocalSettings.php content
+	 *
 	 * @param int $version
 	 * @param int $format
 	 */
-	private function liftSF($ls, $version, $format) {
+	private function liftSF($version, $format) {
 		global $sfgIP;
+		$ls = file_get_contents($this->rootDir."/LocalSettings.php");
+		if (strpos($ls, '/*start-semanticforms*/') !== false) continue;
 		// create deploy descriptor
 		$dd = file_get_contents("resources/dd_templates/deploy_sf.xml");
 		$dd = str_replace("{{version}}", $version, $dd);
