@@ -648,9 +648,9 @@ class CKeditorParser extends CKeditorParserWrapper {
 					$val = $cat;
 				}
 				if( $val != $title->mTextform ) {
-					$appendString .= '<span ' . $args . 'class="fck_mw_category" sort="' . $val . '">' . str_replace('_', ' ', $cat) . '</span><br/>';
+					$appendString .= '<span ' . $args . 'class="fck_mw_category" sort="' . $val . '">' . str_replace('_', ' ', $cat) . '</span> <br/>';
 				} else {
-					$appendString .= '<span ' . $args . 'class="fck_mw_category">' . str_replace('_', ' ', $cat) . '</span><br/>';
+					$appendString .= '<span ' . $args . 'class="fck_mw_category">' . str_replace('_', ' ', $cat) . '</span> <br/>';
 				}
 			}
             $oldText = $parserOutput->getText();
