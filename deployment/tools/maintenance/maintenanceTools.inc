@@ -280,6 +280,7 @@ class ConsistencyChecker {
 		$errorFound2 = false;
 		foreach ($matches[1] as $m) {
 			if (!array_key_exists($m, $this->localPackages)) {
+				if ($m === 'deploymentframework') continue; // ignore the DF itself
 				$errorFound2 = true;
 				$this->statusLog[] = $this->out(array("\n","\t","[FAILED]","configuration for non-existing extension detected: $m"), $format);
 

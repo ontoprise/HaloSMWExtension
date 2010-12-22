@@ -181,6 +181,9 @@ $wgGroupPermissions['sysop']['userrights']=true;
 $wgGroupPermissions['sysop']['ontologyediting'] = true; 
 
 
+// ontologies
+/*start-baseontologybundle*/
+/*end-baseontologybundle*/
 
 // extensions
 
