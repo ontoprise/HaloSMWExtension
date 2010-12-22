@@ -362,15 +362,11 @@ CKEDITOR.customprocessor.prototype =
 	 *            for human reading. Not all Data Processors may provide it.
 	 */
 	toDataFormat : function( data, fixForBody ){
-        if (typeof window.parent.wgCKeditorCurrentMode != 'undefined') {
-            if (window.parent.wgCKeditorCurrentMode == 'source')
-                return window.parent.document.getElementById(wgCKeditorInstance.name).value;
+        if ( window.parent.wgCKeditorCurrentMode ) {
             window.parent.wgCKeditorCurrentMode = 'source';
         }
         else if (window.parent.popup &&
-                 typeof window.parent.popup.parent.wgCKeditorCurrentMode != 'undefined') {
-            if (window.parent.popup.parent.wgCKeditorCurrentMode == 'source')
-                return window.parent.popup.parent.document.getElementById(wgCKeditorInstance.name).value;
+                 window.parent.popup.parent.wgCKeditorCurrentMode ) {
             window.parent.popup.parent.wgCKeditorCurrentMode = 'source';
         }
         data = '<body>' + data.htmlEntities()+ '</body>';
