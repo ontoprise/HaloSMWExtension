@@ -173,8 +173,8 @@ class HACLUIGroupPermissions {
 			// Add special groups
 			$alu = wfMsg('hacl_gp_all_users');
 			$ru = wfMsg('hacl_gp_registered_users');
-			$groups[] = new HACLGroup(-1, "* $alu *", null, null);
-			$groups[] = new HACLGroup(-2, "* $ru *", null, null);
+			$groups[] = new HACLGroup(HACLGroupPermissions::ALL_USERS, "* $alu *", null, null);
+			$groups[] = new HACLGroup(HACLGroupPermissions::REGISTERED_USERS, "* $ru *", null, null);
 			// Get all top level groups
 			$groups = array_merge($groups, HACLStorage::getDatabase()->getGroups());
 		} else {
