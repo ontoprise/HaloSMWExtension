@@ -1,13 +1,26 @@
 <?php
+define( 'DF_VERSION', '1.3.0_0 [B${env.BUILD_NUMBER}]' );
+
 $wgExtensionFunctions[] = 'dfgSetupExtension';
 $smwgDFIP = $IP . '/deployment';
 
+
+    
 function dfgSetupExtension() {
 	dfgInitializeLanguage();
-	global $wgAutoloadClasses, $wgSpecialPages, $wgSpecialPageGroups,$smwgDFIP;
+	global $wgAutoloadClasses, $wgSpecialPages, $wgSpecialPageGroups,$smwgDFIP, $wgExtensionCredits;
 	$wgAutoloadClasses['SMWCheckInstallation'] = $smwgDFIP . '/specials/SMWCheckInstallation/SMW_CheckInstallation.php';
 	$wgSpecialPages['CheckInstallation'] = array('SMWCheckInstallation');
 	$wgSpecialPageGroups['CheckInstallation'] = 'smwplus_group';
+	
+	$wgExtensionCredits['other'][] = array(
+        'path' => __FILE__,
+        'name' => 'Deployment framework',
+        'version' => DF_VERSION,
+        'author' => "Kai K&uuml;hn. Maintained by [http://www.ontoprise.de Ontoprise].",
+        'url' => 'http://smwforum.ontoprise.com/smwforum/index.php/Deployment_Framework',
+	    'description' => 'Eases the installation and updating of extensions.'
+    );
 }
 
 function dfgInitializeLanguage() {

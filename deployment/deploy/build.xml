@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <project basedir="." default="deploymentframework" name="Deployment_framework">
-	<target name="deploymentframework">
-        <property environment="env" />
+	<target name="deploymentframework" depends="versionhint">
+		<property environment="env" />
 		<delete dir="bin/zip" />
-		<delete file="bin/smwhalo-deploy-${version}.zip" />
+		<delete file="bin/smwhalo-deploy.zip" />
 		<mkdir dir="bin/zip" />
 		<copy todir="bin/zip/deployment/descriptor">
 			<fileset dir="../descriptor/">
@@ -28,25 +28,36 @@
 				<include name="patch.php" />
 			</fileset>
 		</copy>
-        <copy file="../tools/smwadmin/smwadmin.php"
-            tofile="bin/zip/deployment/tools/smwadmin/smwadmin.php"
-            filtering="on"
-            overwrite="true"
-            verbose="true"
-            failonerror="false">
-            <filterset>
-                <filter token="VERSION" value="${version}" />
-                <filter token="BUILD_NUMBER" value="${env.BUILD_NUMBER}" />
-            </filterset>
-        </copy>
+		<copy file="../tools/smwadmin/smwadmin.php" tofile="bin/zip/deployment/tools/smwadmin/smwadmin.php" filtering="on" overwrite="true" verbose="true" failonerror="false">
+			<filterset>
+				<filter token="VERSION" value="${version}" />
+				<filter token="BUILD_NUMBER" value="${env.BUILD_NUMBER}" />
+			</filterset>
+		</copy>
 		<copy todir="bin/zip/deployment">
 			<fileset dir="../">
 				<include name="COPYING" />
 				<include name="INSTALL" />
 				<include name="settings.php" />
+				<include name="Deployment.php" />
 			</fileset>
 		</copy>
-		<zip destfile="bin/smwhalo-deploy-${version}.zip" basedir="bin/zip" />
+		<zip destfile="bin/smwhalo-deploy.zip" basedir="bin/zip" />
 		<delete dir="bin/zip" />
+		<exec executable="php">
+			<arg value="../../buildtools/renameDeployableDF.php" />
+			<arg value="deploy.xml" />
+			<arg value="bin/smwhalo-deploy.zip" />
+		</exec>
+	</target>
+
+	<target name="versionhint">
+		<property environment="env" />
+		<exec executable="php">
+			<arg value="../../buildtools/replaceVersionHintDF.php" />
+			<arg value="deploy.xml" />
+			<arg value="../Deployment.php" />
+			<arg value="${env.BUILD_NUMBER}" />
+		</exec>
 	</target>
 </project>
