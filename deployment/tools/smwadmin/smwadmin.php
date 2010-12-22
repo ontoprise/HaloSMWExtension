@@ -69,7 +69,7 @@ if (array_key_exists('SERVER_NAME', $_SERVER) && $_SERVER['SERVER_NAME'] != NULL
 // check if the user is allowed to create files, directory.
 $check = Tools::checkPriviledges();
 if ($check !== true) {
-    fatalError($check);
+	fatalError($check);
 }
 
 // check required tools
@@ -155,7 +155,7 @@ for( $arg = reset( $args ); $arg !== false; $arg = next( $args ) ) {
 		// include commandLine.inc to be in maintenance mode
 		$mediaWikiLocation = dirname(__FILE__) . '/../../..';
 		require_once "$mediaWikiLocation/maintenance/commandLine.inc";
-		
+
 		initializeLanguage();
 		// include the resource installer
 		require_once('DF_ResourceInstaller.php');
@@ -184,8 +184,17 @@ $rollback = Rollback::getInstance($mwrootDir);
 
 
 if ($dfgRestore) {
-	$rollback->rollback();
-	die(DF_TERMINATION_WITH_FINALIZE);
+	print "\nThis operation will restore the wiki from the last restore point.";
+	print "\nThat means the Mediawiki installation is overwritten as well as the";
+	print "\ndatabase content!\n\n Do you really want to continue (y/n)? ";
+	$line = trim(fgets(STDIN));
+	$result = strtolower($line);
+	if ($result === 'y') {
+		$rollback->rollback();
+		die(DF_TERMINATION_WITH_FINALIZE);
+	} else {
+		die(DF_TERMINATION_WITHOUT_FINALIZE);
+	}
 }
 
 // Global update (ie. updates all packages to the latest possible version)
@@ -244,7 +253,7 @@ foreach($packageToDeinstall as $toDeInstall) {
 			// include commandLine.inc to be in maintenance mode
 			$mediaWikiLocation = dirname(__FILE__) . '/../../..';
 			require_once "$mediaWikiLocation/maintenance/commandLine.inc";
-			
+
 			initializeLanguage();
 			// include the resource installer
 			require_once('DF_ResourceInstaller.php');
@@ -308,8 +317,8 @@ function showHelp() {
 	echo "\n\t-d <package> ]: De-Install";
 	echo "\n\t-u <package>: Update";
 	echo "\n\t-l [ pattern ] : List installed packages.";
-    echo "\n\t-r : Restore from last wiki-restore-point.";
-    echo "\n\n\tAdvanced options: ";
+	echo "\n\t-r : Restore from last wiki-restore-point.";
+	echo "\n\n\tAdvanced options: ";
 	echo "\n\t--finalize: Finalizes installation";
 	echo "\n\t--checkdump <package>: Check only dumps for changes but do not install.";
 	echo "\n\t--dep : Check only dependencies but do not install.";
@@ -376,9 +385,9 @@ function handleInstallOrUpdate($packageID, $version) {
 		// include commandLine.inc to be in maintenance mode
 		$mediaWikiLocation = dirname(__FILE__) . '/../../..';
 		require_once "$mediaWikiLocation/maintenance/commandLine.inc";
-		
+
 		initializeLanguage();
-		
+
 		// check status of a currently installed wikidump
 		checkWikiContext();
 
@@ -440,17 +449,17 @@ function checkWikiContext() {
 
 /**
  * Initializes the language object
- * 
+ *
  * Note: Requires wiki context
  */
 function initializeLanguage() {
-    global $wgLanguageCode, $dfgLang;
-    $langClass = "DF_Language_$wgLanguageCode";
-    if (!file_exists("../languages/$langClass.php")) {
-        $langClass = "DF_Language_En";
-    }
-    require_once("../languages/$langClass.php");
-    $dfgLang = new $langClass();
+	global $wgLanguageCode, $dfgLang;
+	$langClass = "DF_Language_$wgLanguageCode";
+	if (!file_exists("../languages/$langClass.php")) {
+		$langClass = "DF_Language_En";
+	}
+	require_once("../languages/$langClass.php");
+	$dfgLang = new $langClass();
 }
 
 
