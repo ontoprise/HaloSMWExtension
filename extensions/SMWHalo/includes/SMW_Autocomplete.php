@@ -554,7 +554,9 @@ class AutoCompletionHandler {
 		$acStore = smwfGetAutoCompletionStore();
 
 		$result = array();
+		$first = true;
 		foreach($parsedCommands as $c) {
+				
 			list($commandText, $params) = $c;
 
 			if ($commandText == 'values') {
@@ -575,7 +577,7 @@ class AutoCompletionHandler {
 					$category = Title::newFromText($params[0]);
 					if (!is_null($category)) {
 						$pages = $acStore->getPropertyForCategory($userInput, $category);
-						$result = self::mergeResults($result, $pages );
+						$result = self::mergeResults($result, self::setInferred($pages, !$first));
 
 					}
 				}
@@ -586,7 +588,7 @@ class AutoCompletionHandler {
 					$instance = Title::newFromText($params[0]);
 					if (!is_null($instance)) {
 						$pages = $acStore->getPropertyForInstance($userInput, $instance, false);
-						$result = self::mergeResults($result, $pages);
+						$result = self::mergeResults($result, self::setInferred($pages, !$first));
 
 					}
 				}
@@ -597,7 +599,7 @@ class AutoCompletionHandler {
 					$category = Title::newFromText($params[0]);
 					if (!is_null($category)) {
 						$pages = $acStore->getPropertyForAnnotation($userInput, $category, false);
-						$result = self::mergeResults($result, $pages);
+						$result = self::mergeResults($result, self::setInferred($pages, !$first));
 					}
 				}
 				if (count($result) >= SMW_AC_MAX_RESULTS) break;
@@ -607,7 +609,7 @@ class AutoCompletionHandler {
 					$property = Title::newFromText($params[0]);
 					if (!is_null($property)) {
 						$pages = $acStore->getValueForAnnotation($userInput, $property);
-						$result = self::mergeResults($result, $pages);
+						$result = self::mergeResults($result, self::setInferred($pages, !$first));
 
 					}
 				}
@@ -620,32 +622,31 @@ class AutoCompletionHandler {
 					if (!is_null($property)) {
 						$domainRangeAnnotations = smwfGetStore()->getPropertyValues($property, smwfGetSemanticStore()->domainRangeHintProp);
 						$pages = $acStore->getInstanceAsTarget($userInput, $domainRangeAnnotations);
-						$result = self::mergeResults($result, $pages);
+						$result = self::mergeResults($result, self::setInferred($pages, !$first));
 
 					}
 				}
 				if (count($result) >= SMW_AC_MAX_RESULTS) break;
 			} else if ($commandText == 'namespace') {
 				$pages = smwfGetAutoCompletionStore()->getPages($userInput, $params);
-				$result = self::mergeResults($result, $pages);
-
+				$result = self::mergeResults($result, self::setInferred($pages, !$first));
 				if (count($result) >= SMW_AC_MAX_RESULTS) break;
 			} else if ($commandText == 'lexical') {
 				$pages = smwfGetAutoCompletionStore()->getPages($userInput);
-				$result = self::mergeResults($result, $pages);
+				$result = self::mergeResults($result, self::setInferred($pages, !$first));
 
 				if (count($result) >= SMW_AC_MAX_RESULTS) break;
 			} else if ($commandText == 'schema-property-type') {
 				if (empty($params[0]) || is_null($params[0])) continue;
 				$datatype = $params[0];
 				$pages = smwfGetAutoCompletionStore()->getPropertyWithType($userInput, $datatype);
-				$result = self::mergeResults($result, $pages);
+				$result = self::mergeResults($result, self::setInferred($pages, !$first));
 				if (count($result) >= SMW_AC_MAX_RESULTS) break;
 
 				global $smwgContLang;
 				$dtl = $smwgContLang->getDatatypeLabels();
 				$pages = smwfGetAutoCompletionStore()->getPropertyWithType($userInput, $dtl['_str']);
-				$result = self::mergeResults($result, $pages);
+				$result = self::mergeResults($result, self::setInferred($pages, !$first));
 				if (count($result) >= SMW_AC_MAX_RESULTS) break;
 
 			} else if ($commandText == 'ask') {
@@ -663,7 +664,7 @@ class AutoCompletionHandler {
 				$dom = simplexml_load_string($xmlResult);
 				$dom->registerXPathNamespace("sparqlxml", "http://www.w3.org/2005/sparql-results#");
 				$queryResults = $dom->xpath('//sparqlxml:binding[@name="'.$column.'"]/sparqlxml:uri');
-                
+
 				// make titles but eliminate duplicates before
 				$textTitles = array();
 
@@ -680,11 +681,11 @@ class AutoCompletionHandler {
 						$titles[] = TSHelper::getTitleFromURI($r, true);
 					}
 				}
-				self::mergeResults($result, $titles);
+				self::mergeResults($result, self::setInferred($titles, !$first));
 				if (count($result) >= SMW_AC_MAX_RESULTS) break;
 			}
 
-
+			$first = false;
 		}
 
 		return $result;
@@ -728,6 +729,27 @@ class AutoCompletionHandler {
 		$t2_text = $t2 instanceof Title ? $t2->getPrefixedText() : $t2;
 		return strcmp($t1_text, $t2_text);
 
+	}
+    
+	/**
+	 * Sets the inferred flag of an AC match 
+	 * FIXME: should be moved into a separated ACMatch class
+	 * 
+	 * @param mixed $acMatches (see encapsulateAsXML)
+	 * @param boolean $inferred
+	 */
+	private static function setInferred($acMatches, $inferred) {
+		$newmatches = array();
+		foreach($acMatches as $t) {
+			if ($t instanceof Title) {
+				$newmatches[] = array($t, $inferred);
+			} else {
+				$t[1] = $inferred;
+				$newmatches[] = $t;
+				
+			}
+		}
+		return $newmatches;
 	}
 }
 
