@@ -107,6 +107,7 @@
 			<arg value="../../../buildtools/renameDeployable.php" />
 			<arg value="../deploy.xml" />
 			<arg value="bin/haloacl-bundled.zip" />
+            <arg value="bin/haloacl-%s_including_dependencies.zip" />
 		</exec>
 
 	</target>
