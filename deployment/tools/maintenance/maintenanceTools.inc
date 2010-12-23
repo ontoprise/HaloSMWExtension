@@ -127,7 +127,7 @@ class ConsistencyChecker {
 
 	public function checkInstallation($format, $addChecks = true) {
 
-
+		$this->statusLog[] = $this->out(array("\n","The checkInstallation tool helps you with identifying some common problems which may occur with the Deployment Framework, e.g. missing dependencies. It verifies that your installation is stable and configured correctly. You should use this tool after the installation of SMW+, when installing a Halo extension and also if there are any problems with your installation.","\n"), $format);
 		$errorFound = false;
 		$errorFound |= $this->checkDependencies($format);
 		$errorFound |= $this->checkLocalSettings($format);
@@ -148,7 +148,7 @@ class ConsistencyChecker {
 			$this->statusLog[] = $this->out(array("\n","NO extensions found!", "\n"), $format);
 		}
 
-		$this->statusLog[] = $this->out(array("\n","checking consistency of dependencies in installed packages..."), $format);
+		$this->statusLog[] = $this->out(array("\n","Are the dependencies of all installed extensions consistent?..."), $format);
 		$errorFound = MaintenanceTools::checkDependencies($this->localPackages, $out);
 
 
@@ -169,7 +169,7 @@ class ConsistencyChecker {
 		} else {
 			if ($format == DF_OUTPUT_FORMAT_HTML)    {
 				// in case of HTML write a link to the SMW-Forum
-				$this->statusLog[] = $this->linkout(array(DF_SMWFORUM_LINK_MISSING_DEPENDENCY, "Get help: Dependency issue"));
+				$this->statusLog[] = $this->linkout(array(DF_SMWFORUM_LINK_MISSING_DEPENDENCY, "Read here how to resolve this error: Dependency issue"));
 			}
 		}
 		return $errorFound;
@@ -184,7 +184,7 @@ class ConsistencyChecker {
 		//
 		// check if LocalSettings.php exists
 		//
-		$this->statusLog[] = $this->out(array("\n","check if LocalSettings.php exists...", "\n"), $format);
+		$this->statusLog[] = $this->out(array("\n","Does LocalSettings.php exist?...", "\n"), $format);
 		$errorFound = !file_exists($this->rootDir."/LocalSettings.php");
 		if ($errorFound) {
 			$this->statusLog[] = $this->out(array("\n","\t","[FAILED]", "LocalSettings.php does not exist", "\n"), $format);
@@ -203,7 +203,7 @@ class ConsistencyChecker {
 		//
 		// check if AdminSettings.php exists
 		//
-		$this->statusLog[] = $this->out(array("\n","check if AdminSettings.php exists...", "\n"), $format);
+		$this->statusLog[] = $this->out(array("\n","Does AdminSettings.php exist?...", "\n"), $format);
 		$errorFound =!file_exists($this->rootDir."/AdminSettings.php");
 		if ($errorFound) {
 			$this->statusLog[] = $this->out(array("\n","\t","[FAILED]", "AdminSettings.php does not exist", "\n"), $format);
@@ -223,7 +223,7 @@ class ConsistencyChecker {
 		//
 		// check if LocalSettings.php is not empty
 		//
-		$this->statusLog[] = $this->out(array("\n","check if LocalSettings.php is non-empty...", "\n"), $format);
+		$this->statusLog[] = $this->out(array("\n","Does LocalSettings.php have content?...", "\n"), $format);
 		$ls = file_get_contents($this->rootDir."/LocalSettings.php");
 		$errorFound = trim($ls) == '';
 		if (trim($ls) == '') {
@@ -237,7 +237,7 @@ class ConsistencyChecker {
 		//
 		// check if existing extensions are registered in LocalSettings.php
 		//
-		$this->statusLog[] = $this->out(array("\n","check if existing extensions are registered in LocalSettings.php...","\n"), $format);
+		$this->statusLog[] = $this->out(array("\n","Are all existing extensions also registered in LocalSettings.php?...","\n"), $format);
 		$errorFound1 = false;
 		foreach($this->localPackages as $p) {
 			if ($p->getID() == 'mw') continue;
@@ -268,14 +268,14 @@ class ConsistencyChecker {
 		} else {
 			if ($format == DF_OUTPUT_FORMAT_HTML)    {
 				// in case of HTML write a link to the SMW-Forum
-				$this->statusLog[] = $this->linkout(array(DF_SMWFORUM_LINK_MISSING_NON_REGISTERED, "Get help: Non-registered extensions"));
+				$this->statusLog[] = $this->linkout(array(DF_SMWFORUM_LINK_MISSING_NON_REGISTERED, "Read here how to resolve this error: register extensions"));
 			}
 		}
 
 		//
 		// check if there are registerings for non-existings extensions
 		//
-		$this->statusLog[] = $this->out(array("\n","\n","check if there are registerings for non-existings extensions..."), $format);
+		$this->statusLog[] = $this->out(array("\n","\n","Are there registerings for non-existings extensions?..."), $format);
 		preg_match_all('/\/\*start-(\w+)\*\//', $ls, $matches);
 		$errorFound2 = false;
 		foreach ($matches[1] as $m) {
@@ -294,14 +294,14 @@ class ConsistencyChecker {
 		} else {
 		 if ($format == DF_OUTPUT_FORMAT_HTML)    {
 		 	// in case of HTML write a link to the SMW-Forum
-		 	$this->statusLog[] = $this->linkout(array(DF_SMWFORUM_LINK_MISSING_NON_EXISTING, "Get help: Non-existing extensions"));
+		 	$this->statusLog[] = $this->linkout(array(DF_SMWFORUM_LINK_MISSING_NON_EXISTING, "Read here how to resolve this error: remove configuration of a non-existing extension. "));
 		 }
 		}
 
 		//
 		// check if there are double registered extensions
 		//
-		$this->statusLog[] = $this->out(array("\n","\n","check if there are double registered extensions..."), $format);
+		$this->statusLog[] = $this->out(array("\n","\n","Are there double configuration blocks in the LocalSettings.php?..."), $format);
 		$errorFound3 = false;
 		preg_match_all('/\/\*start-(\w+)\*\//', $ls, $matches);
 		$ext_counts = array_count_values($matches[1]);
@@ -318,14 +318,14 @@ class ConsistencyChecker {
 		} else {
 			if ($format == DF_OUTPUT_FORMAT_HTML) {
 				// in case of HTML write a link to the SMW-Forum
-				$this->statusLog[] = $this->linkout(array(DF_SMWFORUM_LINK_MISSING_DOUBLE_REGISTERED, "Get help: Double registered extensions"));
+				$this->statusLog[] = $this->linkout(array(DF_SMWFORUM_LINK_MISSING_DOUBLE_REGISTERED, "Read here how to resolve this error: remove configuration of a non-existing extension."));
 			}
 		}
 
 		//
 		// check if there are double require/include statements
 		//
-		$this->statusLog[] = $this->out(array("\n","\n","check if there are double require/include statements..."), $format);
+		$this->statusLog[] = $this->out(array("\n","\n","Are there double references to an extension in the LocalSettings.php? ..."), $format);
 		$errorFound4 = false;
 		preg_match_all('/(require|include)(_once)?\s*\(\s*["\']([^"\']*)["\']\s*\)/', $ls, $matches);
 		for($i = 0; $i < count($matches[3]); $i++) $matches[3][$i] = trim($matches[3][$i]);
@@ -343,7 +343,7 @@ class ConsistencyChecker {
 		} else {
 			if ($format == DF_OUTPUT_FORMAT_HTML) {
 				// in case of HTML write a link to the SMW-Forum
-				$this->statusLog[] = $this->linkout(array(DF_SMWFORUM_LINK_MISSING_DOUBLE_REGISTERED, "Get help: Double registered extensions"));
+				$this->statusLog[] = $this->linkout(array(DF_SMWFORUM_LINK_MISSING_DOUBLE_REGISTERED, "Read here how to resolve this error: Double registered extensions"));
 			}
 		}
 
