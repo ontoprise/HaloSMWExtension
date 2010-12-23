@@ -78,7 +78,7 @@ CKEDITOR.dialog.add( 'SMWqi', function( editor ) {
                 qiDocument = window.frames['CKeditorQueryInterface'];
                 
 			// Fill in all the relevant fields if there's already one item selected.
-    		if ( editor == 'wysiwyg' &&
+    		if ( editor.mode == 'wysiwyg' &&
                  ( element = selection.getSelectedElement() ) && element.is( 'img' )
         			&& element.getAttribute( 'class' ) == 'FCK__SMWquery' )
             {
