@@ -7,8 +7,9 @@
     <vendor>Ontoprise</vendor>
     <description>Basic ontology bundle</description>
     <dependencies>
-      <dependency from="120" to="160">smw</dependency>
-    </dependencies>
+		<dependency from="152" >smwhalo</dependency>
+		<dependency from="200" >semanticforms</dependency>
+	</dependencies>
   </global>
   <wikidumps>
     <file loc="dump.xml"/>

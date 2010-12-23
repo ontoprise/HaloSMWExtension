@@ -11,10 +11,7 @@
 		</description>
 		<helpurl>http://smwforum.ontoprise.com/smwforum/index.php/Help:Collaboration_Extension</helpurl>
 		<dependencies>
-			<dependency from="1160">mw</dependency>
-			<dependency from="152">smw</dependency>
 			<dependency from="152">smwhalo</dependency>
-			<dependency from="101">scriptmanager</dependency>
 			<dependency from="102">applicationprogramming</dependency>
 			<dependency from="100" to="100" optional="true">baseontologybundle</dependency> 
 		</dependencies>
