@@ -371,6 +371,9 @@ CKEDITOR.customprocessor.prototype =
         else if (window.parent.popup && window.parent.popup.parent.wgCKeditorCurrentMode)
             window.parent.popup.parent.wgCKeditorCurrentMode = 'source';
         
+		if (CKEDITOR.env.ie) {
+			data = this.ieFixHTML(data);
+		}
 
         data = '<body>' + data.htmlEntities()+ '</body>';
         // fix <img> tags
@@ -1154,8 +1157,10 @@ CKEDITOR.customprocessor.prototype =
 
 					if ( sAttValue.length == 0 )
 						continue;
-				} else if ( sAttName == 'style' && CKEDITOR.env.ie ) {
-					sAttValue = htmlNode.style.cssText.toLowerCase();
+//				} else if ( sAttName == 'style' && CKEDITOR.env.ie ) {
+				} else if (CKEDITOR.env.ie ) {
+//					sAttValue = htmlNode.style.cssText.toLowerCase();
+					sAttValue = oAttribute.nodeValue.toLowerCase();
 				} else if ( sAttName == 'style' && CKEDITOR.env.gecko ) {
                     // the Mozilla leave style attributes such as -moz in the text, remove them
                     var styleVals = oAttribute.nodeValue.split(/;/),
@@ -1261,7 +1266,35 @@ CKEDITOR.customprocessor.prototype =
  	    }
 
  	    return realElement;
-    }
+    },
+	
+	ieFixHTML: function(html, convertToLowerCase){
+		var zz = html;
+		var z = zz.match(/<\/?\w+((\s+\w+(\s*=\s*(?:".*?"|'.*?'|[^'">\s]+))?)+\s*|\s*)\/?>/g);
+		
+		if (z) {
+			for (var i = 0; i < z.length; i++) {
+				var y, zSaved = z[i], attrRE = /\=[a-zA-Z\.\:\[\]_\(\)\&\$\%#\@\!0-9]+[?\s+|?>]/g;
+				z[i] = z[i].replace(/(<?\w+)|(<\/?\w+)\s/, function(a){
+					return a.toLowerCase();
+				});
+				y = z[i].match(attrRE);//deze match
+				if (y) {
+					var j = 0, len = y.length
+					while (j < len) {
+						var replaceRE = /(\=)([a-zA-Z\.\:\[\]_\(\)\&\$\%#\@\!0-9]+)?([\s+|?>])/g, replacer = function(){
+							var args = Array.prototype.slice.call(arguments);
+							return '="' + (convertToLowerCase ? args[2].toLowerCase() : args[2]) + '"' + args[3];
+						};
+						z[i] = z[i].replace(y[j], y[j].replace(replaceRE, replacer));
+						j++;
+					}
+				}
+				zz = zz.replace(zSaved, z[i]);
+			}
+		}
+		return zz;
+	}
 
 };
 
