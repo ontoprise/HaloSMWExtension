@@ -43,6 +43,7 @@ $asfScriptPath = $wgScriptPath . '/extensions/AutomaticSemanticForms';
 	$wgAutoloadClasses['ASFFormEdit'] = $asfIP . '/specials/ASF_FormEdit.php';
 	$wgAutoloadClasses['ASFCategorySectionStructureProcessor'] = $asfIP . '/includes/ASF_CategorySectionStructureProcessor.php';
 	$wgAutoloadClasses['ASFUnresolvedAnnotationsFormData'] = $asfIP . '/includes/ASF_UnresolvedAnnotationsFormData.php';
+	$wgAutoloadClasses['ASFRedLinkHandler'] = $asfIP . '/includes/ASF_RedLinkHandler.php';
 	
 	global $wgHooks;
 	//create edit with form tab
@@ -62,6 +63,12 @@ $asfScriptPath = $wgScriptPath . '/extensions/AutomaticSemanticForms';
 	
 	//load form generator in order to initialize constants
 	ASFFormGenerator::getInstance();
+	
+	//deal with red links
+	global $asfEnableRedLinkHandler;
+	if($asfEnableRedLinkHandler){
+		$wgHooks['LinkEnd'][] = 'ASFRedLinkHandler::handleRedLinks';
+	}
 }
 
 /*
@@ -142,4 +149,11 @@ function asfInitContentLanguage($langcode) {
 	}
 	$asfContLang = new $langClass();
 }
+
+
+
+
+
+
+
 

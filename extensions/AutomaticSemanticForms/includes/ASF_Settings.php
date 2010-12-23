@@ -54,3 +54,11 @@ $asfDisplayPropertiesAndCategoriesAsLinks = true;
  */
 global $asfUseHaloAutocompletion;
 $asfUseHaloAutocompletion = true;
+
+
+/*
+ * Set this to true, if you want ASF to deal with red-links
+ */
+global $asfEnableRedLinkHandler;
+$asfEnableRedLinkHandler = true;
+ 
