@@ -70,7 +70,7 @@
 
 	</target>
 
-	<target name="richmedida_bundled" depends="build">
+	<target name="richmedia_bundled" depends="build">
 		<ant antfile="../../ApplicationProgramming/deploy/build.xml" inheritall="true" dir="../../ApplicationProgramming/deploy" target="build">
 		</ant>
 		<ant antfile="../../SemanticForms/deploy/build.xml" inheritall="true" dir="../../SemanticForms/deploy" target="sf_build">
@@ -88,12 +88,13 @@
 				<exclude name="**/deploy/**" />
 			</fileset>
 		</copy>
-		<zip destfile="bin/richmedida_bundled.zip" basedir="bin/zip" />
+		<zip destfile="bin/richmedia_bundled.zip" basedir="bin/zip" />
 		<delete dir="bin/zip" />
 		<exec executable="php">
 			<arg value="../../../buildtools/renameDeployable.php" />
 			<arg value="../deploy.xml" />
-			<arg value="bin/richmedida_bundled.zip" />
+			<arg value="bin/richmedia_bundled.zip" />
+            <arg value="bin/richmedia-%s_including_dependencies.zip" />
 		</exec>
 	</target>
 
