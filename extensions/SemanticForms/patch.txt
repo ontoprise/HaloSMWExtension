@@ -1314,7 +1314,7 @@ Index: extensions/SemanticForms/includes/SF_TemplateField.php
 ===================================================================
 --- extensions/SemanticForms/includes/SF_TemplateField.php	2010-09-23 14:46:26.000000000 +0200
 +++ extensions/SemanticForms/includes/SF_TemplateField.php	2010-09-23 14:48:19.000000000 +0200
-@@ -103,9 +103,31 @@
+@@ -103,9 +103,20 @@
                  $page_type = $datatypeLabels[$type_constant];
  		return ( $this->field_type == $page_type );
  	}
@@ -1332,17 +1332,6 @@ Index: extensions/SemanticForms/includes/SF_TemplateField.php
 +|part of=".$partof_wikisection."
 +|rationale=".$rationale."
 +|defines category=".$namespace_labels[NS_CATEGORY].":".$category."
-+|parameters=";
-+
-+$examplecall = '<pre>{{' . $template_name;
-+		if (count($template_fields) > 0) {  $examplecall.= "\n"; }
-+		foreach ($template_fields as $field) {
-+			$examplecall .= "|" . $field->field_name . "=\n";
-+		}
-+$examplecall .= '}}</pre>';
-+
-+$template_header .= $examplecall."
-+|Calls template=
 +}}";
 +		/*op-patch|DH|2009-09-08|Special:CreateTemplate adapted to SMWplus|end*/
  		$text = <<<END
