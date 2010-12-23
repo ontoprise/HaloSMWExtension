@@ -1,4 +1,4 @@
-<?php 
+<?php
 /*  Copyright 2010, ontoprise GmbH
  *
  *   The deployment tool is free software; you can redistribute it and/or modify
@@ -26,8 +26,8 @@ $mwRootDir = str_replace("\\", "/", $mwRootDir);
 $mwRootDir = realpath($mwRootDir."/../../..");
 
 /**
- * There are some errors in the LocalSettings.php file which needs to get 
- * repaired before an update takes place. 
+ * There are some errors in the LocalSettings.php file which needs to get
+ * repaired before an update takes place.
  *
  * @param string $ls
  */
@@ -38,18 +38,19 @@ function repairLocalSettings($ls) {
 	$ls = str_replace("# SemanticFormsInputs", "", $ls);
 	$ls = str_replace("require_once('extensions/SemanticFormsInputs/SemanticFormsInputs.php');", "", $ls);
 	$ls = str_replace("/*start-semanticformsinputs*/","/*start-semanticformsinputs*/\nrequire_once('extensions/SemanticFormsInputs/SemanticFormsInputs.php');", $ls);
-	
+
 	$ls = str_replace("#Set default searching for document and pdf namespace", "", $ls);
 	$startIndex = strpos($ls, "\$wgNamespacesToBeSearchedDefault");
-	$i = 0;
-	$endIndex = $startIndex;
-	while ($i <= 4) { 
-	   $endIndex = strpos($ls, "\n", $endIndex)+1;
-	   $i++;	
+	if ($startIndex !== false) {
+		$i = 0;
+		$endIndex = $startIndex;
+		while ($i <= 4) {
+			$endIndex = strpos($ls, "\n", $endIndex)+1;
+			$i++;
+		}
+		$ls = substr($ls, 0, $startIndex).substr($ls, $endIndex);
+		$ls = str_replace("/*end-richmedia*/","/*end-richmedia*/\n#Set default searching for document and pdf namespace\n\$wgNamespacesToBeSearchedDefault = array(NS_MAIN => true,NS_DOCUMENT => true,NS_PDF => true);", $ls);
 	}
-	$ls = substr($ls, 0, $startIndex).substr($ls, $endIndex);
-	$ls = str_replace("/*end-richmedia*/","/*end-richmedia*/\n#Set default searching for document and pdf namespace\n\$wgNamespacesToBeSearchedDefault = array(NS_MAIN => true,NS_DOCUMENT => true,NS_PDF => true);", $ls);
-	
 	return $ls;
 }
 
@@ -73,6 +74,6 @@ fwrite($handle, $ls);
 fclose($handle);
 print "done.";
 print "\nRemove LinkedData extension...";
-deleteLinkedData($mwRootDir);
+//deleteLinkedData($mwRootDir);
 print "done.";
 
