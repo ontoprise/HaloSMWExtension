@@ -337,6 +337,7 @@ $wgTreeViewShowLines = true;
 
 /*start-wysiwyg*/
 require_once("$IP/extensions/WYSIWYG/WYSIWYG.php");
+$wgCKEditorUrlparamMode = true;
 /*end-wysiwyg*/
 
 /*start-imagemap*/
