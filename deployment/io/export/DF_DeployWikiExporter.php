@@ -55,7 +55,7 @@ class DeployBackupDumper extends BackupDumper {
 			else if ($arg == '--nocat') {
 				$this->noCat = true;
 			}
-				
+
 			// --notemplates means: do not consider member of categories beloning to a bundle
 			else if ($arg == '--notemplates') {
 				$this->notemplates = true;
@@ -163,7 +163,7 @@ class DeployWikiExporter extends WikiExporter {
                 " AND p_id = $partOfBundlePropertyID AND o_id = $partOfBundleID AND page_id = tl_from)";
 			$this->dumpFrom($joint, $cond);
 		}
-		
+
 		if (!$noCat) {
 			// export all instances of categories belonging to this bundle
 			// (except if they are from cat or prop namespace)
@@ -173,14 +173,16 @@ class DeployWikiExporter extends WikiExporter {
                 " AND p_id = $partOfBundlePropertyID AND o_id = $partOfBundleID)";
 
 			$this->dumpFrom($joint, $cond);
-				
-			// export templates used by instances of category belonging to this bundle
-			$joint = "$categorylinks,$templatelinks";
-			$cond = "page_title = tl_title AND page_namespace = tl_namespace AND cl_from = tl_from ".
+
+			if (!$noTemplates) {
+				// export templates used by instances of category belonging to this bundle
+				$joint = "$categorylinks,$templatelinks";
+				$cond = "page_title = tl_title AND page_namespace = tl_namespace AND cl_from = tl_from ".
                 " AND cl_to IN (SELECT smw_title FROM $smwids,$smwrels WHERE smw_id = s_id ".
                 " AND p_id = $partOfBundlePropertyID AND o_id = $partOfBundleID)";
 
-			$this->dumpFrom($joint, $cond);
+				$this->dumpFrom($joint, $cond);
+			}
 		}
 
 
