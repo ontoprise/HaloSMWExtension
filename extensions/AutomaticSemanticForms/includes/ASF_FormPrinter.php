@@ -82,11 +82,14 @@ class ASFFormPrinter extends SFFormPrinter {
 				}
 				
 				//render for fck if necessary
-				$showFCKEditor = SFFormUtils::getShowFCKEditor();
-      			if ( $showFCKEditor & RTE_VISIBLE ) {
-   					$additionalCategoryAnnotations = SFFormUtils::prepareTextForFCK($additionalCategoryAnnotations);
+				global $wgFCKEditorDir;
+    			if ( $wgFCKEditorDir ) {
+					$showFCKEditor = SFFormUtils::getShowFCKEditor();
+      				if ( $showFCKEditor & RTE_VISIBLE ) {
+   						$additionalCategoryAnnotations = SFFormUtils::prepareTextForFCK($additionalCategoryAnnotations);
+    				}
     			}
-				
+    			
 				//todo:does this work with wysiwyg
 				$startFreeText = strpos($form_text, 'id="free_text"');
 				$endFreeText = strpos($form_text, '</textarea>', $startFreeText);
