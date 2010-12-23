@@ -2,6 +2,7 @@ CKEDITOR.dialog.add( 'SMWqi', function( editor ) {
     var wgScript = window.parent.wgScript;
     var locationQi =  wgScript + '?action=ajax&rs=smwf_qi_getPage&rsargs[]=CKE';
     var querySource;
+	var height = (window.outerHeight == undefined) ? 400 : parseInt(window.outerHeight * 0.6);
     
 	return {
 		title: 'Insert Query',
@@ -19,9 +20,9 @@ CKEDITOR.dialog.add( 'SMWqi', function( editor ) {
 						id: 'qiframe',
 						type: 'html',
 						label: "Text",
-                        style: 'width:100%; height:100%;',
+                        style: 'width:100%; height:'+height+'px;',
 						html: '<iframe name="CKeditorQueryInterface" \
-                                       style="width:100%; height:100%" \
+                                       style="width:100%; height:'+height+'px;" \
                                        scrolling="auto" src="'+locationQi+'"></iframe>'
 					}
 				 ]
@@ -55,7 +56,9 @@ CKEDITOR.dialog.add( 'SMWqi', function( editor ) {
 
          onShow : function() {
             // fix size of inner window for iframe
-            var node = document.getElementsByName('tab1_smw_qi')[0];
+			
+			var node = document.getElementsByName('tab1_smw_qi');
+			var node = document.getElementsByName('tab1_smw_qi')[0];
             var child = node.firstChild;
             while ( child && (child.nodeType != 1 || child.nodeName.toUpperCase() != 'TABLE') )
                 child = child.nextSibling;
