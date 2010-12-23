@@ -2,7 +2,7 @@ Index: extensions/SemanticForms/includes/SF_EmbeddedFormClasses.php
 ===================================================================
 --- extensions/SemanticForms/includes/SF_EmbeddedFormClasses.php	(revision 0)
 +++ extensions/SemanticForms/includes/SF_EmbeddedFormClasses.php	(revision 0)
-@@ -0,0 +1,257 @@
+@@ -0,0 +1,256 @@
 +<?php
 +/**
 + * Two classes - SFForm and SFTemplateInForm - that represent a user-defined
@@ -51,10 +51,7 @@ Index: extensions/SemanticForms/includes/SF_EmbeddedFormClasses.php
 +		$form_input = "{{#forminput:" . $this->form_name . "}}\n";
 +    $form_header ="{{Form
 +|PAGENAME=".$namespace_labels[SF_NS_FORM].":".$this->form_name."
-+|Form needs context=true
 +|rationale=".$this->rationale."
-+|transcludable=true
-+|show in template picker=true
 +|Populates template=";
 +    
 +    foreach ($this->templates as $template) {
@@ -67,7 +64,7 @@ Index: extensions/SemanticForms/includes/SF_EmbeddedFormClasses.php
 +</noinclude><includeonly><!--
 +
 +-->{{#ifeq:{{{1|}}}|transcluded||<!--
-+       -->{{{info|includeonly free text|add title=Add|edit title=Edit}}}<!--    
++       -->{{{info|includeonly free text|add title=Add|edit title=Edit|WYSIWYG}}}<!--
 +-->}} 
 +END;
 +		
@@ -75,7 +72,9 @@ Index: extensions/SemanticForms/includes/SF_EmbeddedFormClasses.php
 +			$text .= $template->createMarkup() . "\n";
 +		}
 +		$text .=<<<END
-+{{#ifeq:{{{1|}}}|transcluded||{{{standard input|save}}} {{{standard input|cancel}}} }}
++{{#ifeq:{{{1|}}}|transcluded||
++{{{field|free text|input type=textarea|rows=15|cols=135}}}
++{{{standard input|save}}} {{{standard input|cancel}}} }}
 +</includeonly><noinclude></noinclude>
 +
 +END;
@@ -915,7 +914,7 @@ Index: extensions/SemanticForms/specials/SF_CreateEmbeddedForm.php
 ===================================================================
 --- extensions/SemanticForms/specials/SF_CreateEmbeddedForm.php	(revision 0)
 +++ extensions/SemanticForms/specials/SF_CreateEmbeddedForm.php	(revision 0)
-@@ -0,0 +1,212 @@
+@@ -0,0 +1,214 @@
 +<?php
 +/**
 + * A special page holding a form that allows the user to create a data-entry
@@ -1071,9 +1070,11 @@ Index: extensions/SemanticForms/specials/SF_CreateEmbeddedForm.php
 +  $text .= '<tr>'."\n";
 +	$text .= '	<td align="right">' . wfMsg('sf_createform_nameinput') . '</td><td> <input size=50 tabindex="1" name="form_name" value="' . $form_name . '"></td><td><font color="red">' . $form_name_error_str . '</font></td>' . "\n";
 +	$text .= '</tr>'."\n";
++   /*
 +	$text .= '<tr>'."\n";
 +  $text .= '	<td align="right">Part of wiki section:</td><td><input id="input_3" tabindex="3" class="createboxInput wickEnabled" name="partof_wikisection" type="text" value="'.$partof_wikisection.'" size="50" constraints="ask: [[Category:Content section]]"  pasteNS="true"/></td>' . "\n";
 +  $text .= '</tr>'."\n";
++   */
 +  $text .= '<tr>'."\n";
 +  $text .= '	<td align="right">Rationale of this form:</td><td> <textarea id="input_5" tabindex="4" name="rationale" cols="80" rows="3">'.$rationale.'</textarea></td>' . "\n";
 +	$text .= '</tr></table>'."\n";
@@ -1314,7 +1315,7 @@ Index: extensions/SemanticForms/includes/SF_TemplateField.php
 ===================================================================
 --- extensions/SemanticForms/includes/SF_TemplateField.php	2010-09-23 14:46:26.000000000 +0200
 +++ extensions/SemanticForms/includes/SF_TemplateField.php	2010-09-23 14:48:19.000000000 +0200
-@@ -103,9 +103,20 @@
+@@ -103,9 +103,19 @@
                  $page_type = $datatypeLabels[$type_constant];
  		return ( $this->field_type == $page_type );
  	}
@@ -1329,7 +1330,6 @@ Index: extensions/SemanticForms/includes/SF_TemplateField.php
 -		$template_header = wfMsgForContent( 'sf_template_docu', $template_name );
 +		$template_header ="{{Template
 +|PAGENAME=".$namespace_labels[NS_TEMPLATE].":".$template_name."
-+|part of=".$partof_wikisection."
 +|rationale=".$rationale."
 +|defines category=".$namespace_labels[NS_CATEGORY].":".$category."
 +}}";
