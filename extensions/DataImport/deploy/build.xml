@@ -100,6 +100,7 @@
 			<arg value="../../../buildtools/renameDeployable.php" />
 			<arg value="../deploy.xml" />
 			<arg value="bin/dataimport-bundled.zip" />
+            <arg value="bin/dataimport-%s_including_dependencies.zip" />
 		</exec>
 
 	</target>
