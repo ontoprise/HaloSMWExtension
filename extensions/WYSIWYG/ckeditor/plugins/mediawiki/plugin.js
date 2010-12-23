@@ -362,13 +362,13 @@ CKEDITOR.customprocessor.prototype =
 	 *            for human reading. Not all Data Processors may provide it.
 	 */
 	toDataFormat : function( data, fixForBody ){
-        
+
         if (window.parent.wgCKeditorCurrentMode)
             window.parent.wgCKeditorCurrentMode = 'source';
-       	else if (window.parent.popup &&
-            window.parent.popup.parent.wgCKeditorCurrentMode)
+        else if (window.parent.popup && window.parent.popup.parent.wgCKeditorCurrentMode)
             window.parent.popup.parent.wgCKeditorCurrentMode = 'source';
         
+
         data = '<body>' + data.htmlEntities()+ '</body>';
         // fix <img> tags
         data = data.replace(/(<img[^>]*)([^/])>/gi, '$1$2/>' );
@@ -380,7 +380,7 @@ CKEDITOR.customprocessor.prototype =
         data = data.replace(/<br\/>(\s*<\/(p|li)>)/gi, '$1');
         // also remove <br/> before nested lists
         data = data.replace(/<br\/>(\s*<(ol|ul)>)/gi, '$1');
-		// in IE the values of the class attribute is not quotes 
+		// in IE the values of the class attribute is not quoted 
         data = data.replace(/class=([^\"].*?)\s/gi, 'class="$1" ');
 		
 
@@ -1317,17 +1317,17 @@ if (!String.prototype.htmlDecode) {
 
 if (!String.prototype.htmlEntities) {
   String.prototype.htmlEntities = function() {
-    var chars = new Array ('&','à','á','â','ã','ä','å','æ','ç','è','é',
+    var chars = new Array ('à','á','â','ã','ä','å','æ','ç','è','é',
                            'ê','ë','ì','í','î','ï','ð','ñ','ò','ó','ô',
                            'õ','ö','ø','ù','ú','û','ü','ý','þ','ÿ','À',
                            'Á','Â','Ã','Ä','Å','Æ','Ç','È','É','Ê','Ë',
                            'Ì','Í','Î','Ï','Ð','Ñ','Ò','Ó','Ô','Õ','Ö',
-                           'Ø','Ù','Ú','Û','Ü','Ý','Þ','€','\"','ß','<',
-                           '>','¢','£','¤','¥','¦','§','¨','©','ª','«',
+                           'Ø','Ù','Ú','Û','Ü','Ý','Þ','€','\"','ß',
+                           '¢','£','¤','¥','¦','§','¨','©','ª','«',
                            '¬','­','®','¯','°','±','²','³','´','µ','¶',
                            '·','¸','¹','º','»','¼','½','¾');
 
-    var entities = new Array ('amp','agrave','aacute','acirc','atilde','auml','aring',
+    var entities = new Array ('agrave','aacute','acirc','atilde','auml','aring',
                               'aelig','ccedil','egrave','eacute','ecirc','euml','igrave',
                               'iacute','icirc','iuml','eth','ntilde','ograve','oacute',
                               'ocirc','otilde','ouml','oslash','ugrave','uacute','ucirc',
@@ -1336,10 +1336,33 @@ if (!String.prototype.htmlEntities) {
                               'Ecirc','Euml','Igrave','Iacute','Icirc','Iuml','ETH','Ntilde',
                               'Ograve','Oacute','Ocirc','Otilde','Ouml','Oslash','Ugrave',
                               'Uacute','Ucirc','Uuml','Yacute','THORN','euro','quot','szlig',
-                              'lt','gt','cent','pound','curren','yen','brvbar','sect','uml',
+                              'cent','pound','curren','yen','brvbar','sect','uml',
                               'copy','ordf','laquo','not','shy','reg','macr','deg','plusmn',
                               'sup2','sup3','acute','micro','para','middot','cedil','sup1',
                               'ordm','raquo','frac14','frac12','frac34');
+//    var chars = new Array ('&','à','á','â','ã','ä','å','æ','ç','è','é',
+//                           'ê','ë','ì','í','î','ï','ð','ñ','ò','ó','ô',
+//                           'õ','ö','ø','ù','ú','û','ü','ý','þ','ÿ','À',
+//                           'Á','Â','Ã','Ä','Å','Æ','Ç','È','É','Ê','Ë',
+//                           'Ì','Í','Î','Ï','Ð','Ñ','Ò','Ó','Ô','Õ','Ö',
+//                           'Ø','Ù','Ú','Û','Ü','Ý','Þ','€','\"','ß','<',
+//                           '>','¢','£','¤','¥','¦','§','¨','©','ª','«',
+//                           '¬','­','®','¯','°','±','²','³','´','µ','¶',
+//                           '·','¸','¹','º','»','¼','½','¾');
+//
+//    var entities = new Array ('amp','agrave','aacute','acirc','atilde','auml','aring',
+//                              'aelig','ccedil','egrave','eacute','ecirc','euml','igrave',
+//                              'iacute','icirc','iuml','eth','ntilde','ograve','oacute',
+//                              'ocirc','otilde','ouml','oslash','ugrave','uacute','ucirc',
+//                              'uuml','yacute','thorn','yuml','Agrave','Aacute','Acirc',
+//                              'Atilde','Auml','Aring','AElig','Ccedil','Egrave','Eacute',
+//                              'Ecirc','Euml','Igrave','Iacute','Icirc','Iuml','ETH','Ntilde',
+//                              'Ograve','Oacute','Ocirc','Otilde','Ouml','Oslash','Ugrave',
+//                              'Uacute','Ucirc','Uuml','Yacute','THORN','euro','quot','szlig',
+//                              'lt','gt','cent','pound','curren','yen','brvbar','sect','uml',
+//                              'copy','ordf','laquo','not','shy','reg','macr','deg','plusmn',
+//                              'sup2','sup3','acute','micro','para','middot','cedil','sup1',
+//                              'ordm','raquo','frac14','frac12','frac34');
 
     string = this;
     for (var i = 0; i < entities.length; i++) {
