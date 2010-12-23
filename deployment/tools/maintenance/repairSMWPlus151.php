@@ -62,18 +62,24 @@ function deleteLinkedData($mw_root) {
 	Tools::remove_dir($mw_root."/extensions/LinkedData");
 }
 
-print "\nDo you use SMW+ 1.5.1? Please answer 'y' to fix some known issues ";
-$line = trim(fgets(STDIN));
-if ($line != 'y') exit;
+// question if user uses SMW+ 1.5.1
+//print "\nDo you use SMW+ 1.5.1? Please answer 'y' to fix some known issues ";
+//$line = trim(fgets(STDIN));
+//if ($line != 'y') exit;
+print "\nFixing some known issues on SMW+ 1.5.1...";
 
 print "\nUpdate LocalSettings.php...";
 $ls = file_get_contents($mwRootDir."/LocalSettings.php");
-$ls = repairLocalSettings($ls);
-$handle = fopen($mwRootDir."/LocalSettings.php", "w");
-fwrite($handle, $ls);
-fclose($handle);
-print "done.";
+if ($ls !== false) {
+	$ls = repairLocalSettings($ls);
+	$handle = fopen($mwRootDir."/LocalSettings.php", "w");
+	fwrite($handle, $ls);
+	fclose($handle);
+    print "done.";
+} else {
+	print "\n[FAILED] Could not read LocalSettings.php";
+}
 print "\nRemove LinkedData extension...";
-//deleteLinkedData($mwRootDir);
+deleteLinkedData($mwRootDir);
 print "done.";
 
