@@ -65,6 +65,7 @@
 	            <arg value="../../../buildtools/renameDeployable.php" />
 	            <arg value="../deploy.xml" />
 	            <arg value="bin/semanticnotifications_bundled.zip" />
+                <arg value="bin/semanticnotifications-%s_including_dependencies.zip" />
 	        </exec>
 	    </target>
 	
