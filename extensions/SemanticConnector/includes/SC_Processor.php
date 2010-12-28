@@ -155,6 +155,136 @@ class SCProcessor {
 		wfProfileOut($fname);
 		return SCProcessor::$enabledForms[$page_name];
 	}
+	static function getDefaultValues($form_name, $page_title) {
+		$fname = 'SCProcessor::getDefaultValues (SMW)';
+		wfProfileIn($fname);
+		
+		$result = array();
+		$form_title = Title::makeTitleSafe(SF_NS_FORM, $form_name);
+		$form_article = new Article($form_title);
+		$form_def = $form_article->getContent();
+
+		$form_def = StringUtils::delimiterReplace('<noinclude>', '</noinclude>', '', $form_def);
+		$form_def = strtr($form_def, array('<includeonly>' => '', '</includeonly>' => ''));
+
+		global $sfgDisableWikiTextParsing;
+		if (! $sfgDisableWikiTextParsing) {
+			$form_def = "__NOEDITSECTION__" . strtr($form_def, array('{{{' => '<nowiki>{{{', '}}}' => '}}}</nowiki>'));
+		}
+
+		// turn form definition file into an array of sections, one for each
+		// template definition (plus the first section)
+		$form_def_sections = array();
+		$start_position = 0;
+		$section_start = 0;
+
+		$form_def = str_replace(array('&#123;', '&#124;', '&#125;'), array('{', '|', '}'), $form_def);
+		$form_def = str_replace('standard input|free text', 'field|<freetext>', $form_def);
+		while ($brackets_loc = strpos($form_def, "{{{", $start_position)) {
+			$brackets_end_loc = strpos($form_def, "}}}", $brackets_loc);
+			$bracketed_string = substr($form_def, $brackets_loc + 3, $brackets_end_loc - ($brackets_loc + 3));
+			$tag_components = explode('|', $bracketed_string);
+			$tag_title = trim($tag_components[0]);
+			if ($tag_title == 'for template' || $tag_title == 'end template') {
+				// create a section for everything up to here
+				$section = substr($form_def, $section_start, $brackets_loc - $section_start);
+				$form_def_sections[] = $section;
+				$section_start = $brackets_loc;
+	        }
+			$start_position = $brackets_loc + 1;
+		} // end while
+		$form_def_sections[] = trim(substr($form_def, $section_start));
+
+		$template_name = "";
+		for ($section_num = 0; $section_num < count($form_def_sections); $section_num++) {
+			$start_position = 0;
+			$template_text = "";
+			// the append is there to ensure that the original array doesn't get
+			// modified; is it necessary?
+			$section = " " . $form_def_sections[$section_num];
+
+			while ($brackets_loc = strpos($section, '{{{', $start_position)) {
+				$brackets_end_loc = strpos($section, "}}}", $brackets_loc);
+				$bracketed_string = substr($section, $brackets_loc + 3, $brackets_end_loc - ($brackets_loc + 3));
+				$tag_components = explode('|', $bracketed_string);
+				$tag_title = trim($tag_components[0]);
+				// =====================================================
+				// for template processing
+				// =====================================================
+				if ($tag_title == 'for template') {
+					$template_name = trim($tag_components[1]);
+				// =====================================================
+		        // field processing
+		        // =====================================================  
+		        } elseif ($tag_title == 'field') {
+		        	$field_name = trim($tag_components[1]);
+		        	// cycle through the other components
+		        	$input_type = null;
+		        	$default_value = "";
+		        	for ($i = 2; $i < count($tag_components); $i++) {
+		        		$component = trim($tag_components[$i]);
+		        		$sub_components = explode('=', $component);
+		        		if (count($sub_components) != 2) continue;
+		        		if ($sub_components[0] == 'input type') {
+		        			$input_type = $sub_components[1];
+		        		} elseif ($sub_components[0] == 'default') {
+		        			$default_value = $sub_components[1];
+		        		}
+		        	}
+		        	if ($default_value == 'always now' || $default_value == 'now') {
+		        		// get current time, for the time zone specified in the wiki
+		        		global $wgLocaltimezone;
+		        		putenv('TZ=' . $wgLocaltimezone);
+		        		$cur_time = time();
+		        		$year = date("Y", $cur_time);
+		        		$month = date("n", $cur_time);
+		        		$day = date("j", $cur_time);
+		        		global $wgAmericanDates, $sfg24HourTime;
+		        		if ($wgAmericanDates == true) {
+		        			$month_names = SFFormUtils::getMonthNames();
+		        			$month_name = $month_names[$month - 1];
+		        			$default_value = "$month_name $day, $year";
+		        		} else {
+		        			$default_value = "$year/$month/$day";
+		        		}
+		        		if ($input_type ==  'datetime' || $input_type == 'datetime with timezone') {
+		        			if ($sfg24HourTime) {
+		        				$hour = str_pad(intval(substr(date("G", $cur_time),0,2)),2,'0',STR_PAD_LEFT);
+		        			} else {
+		        				$hour = str_pad(intval(substr(date("g", $cur_time),0,2)),2,'0',STR_PAD_LEFT);
+		        			}
+		        			$minute = str_pad(intval(substr(date("i", $cur_time),0,2)),2,'0',STR_PAD_LEFT);
+		        			$second = str_pad(intval(substr(date("s", $cur_time),0,2)),2,'0',STR_PAD_LEFT);
+		        			if ($sfg24HourTime) {
+		        				$default_value .= " $hour:$minute:$second";
+		        			} else {
+		        				$ampm = date("A", $cur_time);
+		        				$default_value .= " $hour:$minute:$second $ampm";
+		        			}
+		        		}
+		        		if ($input_type == 'datetime with timezone') {
+		        			$timezone = date("T", $cur_time);
+		        			$default_value .= " $timezone";
+		        		}
+		        	} elseif ($default_value == 'always current user' || $default_value == 'current user') {
+		        		if ($input_type == 'text' || $input_type == '') {
+		        			$default_value = $wgUser->getName();
+		        		}
+		        	} elseif ($default_value == 'revision id') {
+		        		if ($input_type == 'text' || $input_type == '') {
+		        			$revision = Revision::newFromTitle( $page_title );
+		        			if($revision !== NULL) $default_value = $revision->getId();
+		        		}
+		        	}
+		        	if($default_value != '') $result[$template_name][$field_name] = $default_value;
+				}
+				$start_position = $brackets_end_loc;
+			} // end while
+		}
+
+		wfProfileOut($fname);
+		return $result;
+	}
 	static public function getTemplateField($form_name) {
 		$fname = 'SCProcessor::getTemplateField (SMW)';
 		wfProfileIn($fname);
@@ -190,7 +320,7 @@ class SCProcessor {
 				$section = substr($form_def, $section_start, $brackets_loc - $section_start);
 				$form_def_sections[] = $section;
 				$section_start = $brackets_loc;
-			}
+	        }
 			$start_position = $brackets_loc + 1;
 		} // end while
 		$form_def_sections[] = trim(substr($form_def, $section_start));
@@ -353,7 +483,7 @@ class SCProcessor {
 		foreach($templates as $template) {
 			if(is_string($template)) $freetext .= $template;
 		}
-		if($current_form == $form_name) {
+		if($current_form == null || $current_form == $form_name) {
 			foreach($templates as $template) {
 				if(!is_array($template)) continue;
 				$fields = $template['fields'];
@@ -517,7 +647,11 @@ class SCProcessor {
 		wfProfileIn($fname);
 
 		$current_form = Title::newFromText($current_form)->getText();
-		$pid = Title::newFromText($page_name)->getArticleID();
+		$title = Title::newFromText($page_name);
+		if(!$title->exists()) {
+			return '{success:false, msg:"The page does not exist."}';
+		}
+		$pid = $title->getArticleID();
 		$sStore = SCStorage::getDatabase();
 		if(!is_array($enabled_forms)) $enabled_forms = array();
 		$sStore->saveEnabledForms($pid, $current_form, $enabled_forms);
@@ -531,6 +665,7 @@ class SCProcessor {
 		$pid = $page_title->getArticleID();
 		$sStore = SCStorage::getDatabase();
 //		$form = $sStore->getCurrentForm($pid);
+
 		$activeForms = SFLinkUtils::getFormsForArticle(new Article($page_title));
 		if($activeForms == NULL || count($activeForms)==0) {
 			wfProfileOut($fname);
@@ -542,7 +677,9 @@ class SCProcessor {
 			wfProfileOut($fname);
 			return $text;
 		}
-
+		
+		// apply default values to active form
+		$defaultValues = SCProcessor::getDefaultValues($mapped_form_name, $page_title);
 		$tmplNames = SCProcessor::getTemplateField($mapped_form_name);
 		$templates = SCArticleUtils::parseToTemplates($text);
 		$tmplData = array();
@@ -613,6 +750,12 @@ class SCProcessor {
 		if(count($tmplMap) == 0) {
 			$newText = $text;
 		} else {
+			foreach($defaultValues as $t => $fv) {
+				if(!isset($tmplData[$t])) continue;
+				foreach($fv as $f => $v) {
+					if(!isset($tmplData[$t][$f])) $tmplData[$t][$f] = $v;
+				}
+			}
 			$addedUnmappedText = false;
 			foreach($templates as $template) {
 				if(is_string($template)) {

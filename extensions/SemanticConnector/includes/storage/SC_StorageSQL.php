@@ -48,7 +48,22 @@ class ConnectorStorageSQL {
 
 		SCDBHelper::reportProgress("... done!\n",$verbose);
 	}
+	
+	public function deleteDatabaseTables() {
+		$db =& wfGetDB( DB_MASTER );
+		$verbose = true;
+		SCDBHelper::reportProgress("Dropping Semantic Connector tables ...\n",$verbose);
 
+		$tables = array('smw_sc_mapping', 'smw_sc_mapfield', 'smw_sc_pageformset');
+		foreach ($tables as $table) {
+			$name = $db->tableName($table);
+			$db->query('DROP TABLE' . ($wgDBtype=='postgres'?'':' IF EXISTS'). $name, 'ConnectorStorageSQL::drop');
+			SCDBHelper::reportProgress(" ... dropped table $name.\n", $verbose);
+		}
+		
+		SCDBHelper::reportProgress("   ... done!\n",$verbose);
+	}
+	
 	public function getAllForms() {
 		$fname = 'Connector::getAllForms';
 		wfProfileIn( $fname );
@@ -340,7 +355,7 @@ class ConnectorStorageSQL {
 		try{
 			$res = $db->select( $db->tableName('smw_sc_pageformset'),
 			array('form', 'history'),
-			array('page_id'=>$page_id), $fname);
+			array('page_id'=>$page_id), $fname, array('ORDER BY' => 'history ASC') );
 			if($db->numRows( $res ) > 0) {
 				while($row = $db->fetchObject($res)) {
 					$result[$row->form] = $row->history;

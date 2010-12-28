@@ -121,19 +121,24 @@ class SCArticleUtils {
 		$pid = $title->getArticleID();
 		$sStore = SCStorage::getDatabase();
 
-		$target_forms = $sStore->getEnabledForms($pid);
-		$target_forms = array_flip($target_forms);
-		if(!$target_forms) $target_forms = array();
-		ksort($target_forms);
+		$tmp = $sStore->getEnabledForms($pid);
+		if(!$tmp) {
+			wfProfileOut($fname);
+			return false;
+		}
+		// already order by history, asc
+		$target_forms = array();
+		foreach($tmp as $f => $h) {
+			$target_forms[] = $f;
+		}
 		$current_form = array_pop($target_forms);
-		
 		$mapped_tfs = $sStore->getMappingTFs($current_form, $target_forms);
 		if(count($mapped_tfs) == 0) {
 			wfProfileOut($fname);
 			return false;
 		}
 		$tfs = SCArticleUtils::parseToTemplates($text);
-		
+
 		$addon = '';
 		foreach($mapped_tfs as $template => $fields) {
 			if(!is_array($fields)) continue;

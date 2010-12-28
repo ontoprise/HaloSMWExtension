@@ -18,10 +18,15 @@ class SCRESTful extends SpecialPage {
 			$rest = $query;
 		}
 
-		global $wgOut;
+		global $wgOut, $wgUser;
 		if($rest == '') {
 			$this->setHeaders();
 			$text = '<p class="error">' . wfMsg('sc_restful_badurl') . "</p>\n";
+
+			$wgOut->addHTML($text);
+		} elseif ( !in_array('edit', $wgUser->getRights() ) ) {		
+			$this->setHeaders();
+			$text = '<p class="error">' . wfMsg('sc_restful_forbidden') . "</p>\n";
 
 			$wgOut->addHTML($text);
 		} else {

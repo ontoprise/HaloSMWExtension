@@ -1,0 +1,655 @@
+<mediawiki xmlns="http://www.mediawiki.org/xml/export-0.3/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mediawiki.org/xml/export-0.3/ http://www.mediawiki.org/xml/export-0.3.xsd" version="0.3" xml:lang="en">
+  <siteinfo>
+    <sitename>Blank Site</sitename>
+    <base>http://localhost/dev/index.php/Main_Page</base>
+    <generator>MediaWiki 1.15.1</generator>
+    <case>first-letter</case>
+    <namespaces>
+      <namespace key="-2">Media</namespace>
+      <namespace key="-1">Special</namespace>
+      <namespace key="0" />
+      <namespace key="1">Talk</namespace>
+      <namespace key="2">User</namespace>
+      <namespace key="3">User talk</namespace>
+      <namespace key="4">Blank Site</namespace>
+      <namespace key="5">Blank Site talk</namespace>
+      <namespace key="6">File</namespace>
+      <namespace key="7">File talk</namespace>
+      <namespace key="8">MediaWiki</namespace>
+      <namespace key="9">MediaWiki talk</namespace>
+      <namespace key="10">Template</namespace>
+      <namespace key="11">Template talk</namespace>
+      <namespace key="12">Help</namespace>
+      <namespace key="13">Help talk</namespace>
+      <namespace key="14">Category</namespace>
+      <namespace key="15">Category talk</namespace>
+      <namespace key="102">Property</namespace>
+      <namespace key="103">Property talk</namespace>
+      <namespace key="104">Type</namespace>
+      <namespace key="105">Type talk</namespace>
+      <namespace key="106">Form</namespace>
+      <namespace key="107">Form talk</namespace>
+      <namespace key="108">Concept</namespace>
+      <namespace key="109">Concept talk</namespace>
+      <namespace key="170">Filter</namespace>
+      <namespace key="171">Filter talk</namespace>
+      <namespace key="200">WebService</namespace>
+      <namespace key="201">WebService talk</namespace>
+      <namespace key="202">TermImport</namespace>
+      <namespace key="203">TermImport talk</namespace>
+      <namespace key="220">E-mail</namespace>
+      <namespace key="221">E-mail talk</namespace>
+      <namespace key="400">IAI</namespace>
+      <namespace key="401">IAI talk</namespace>
+    </namespaces>
+  </siteinfo>
+  <page>
+    <title>Category:Project bugs</title>
+    <id>12</id>
+    <revision>
+      <id>319</id>
+      <timestamp>2008-11-08T08:26:47Z</timestamp>
+      <contributor>
+        <ip>58.247.32.74</ip>
+      </contributor>
+      <text xml:space="preserve">This is the Project bugs category.
+
+[[Has default form::Form:Project Bug]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Project bug</title>
+    <id>30</id>
+    <revision>
+      <id>4235</id>
+      <timestamp>2010-05-17T08:34:24Z</timestamp>
+      <contributor>
+        <username>Justin</username>
+        <id>5</id>
+      </contributor>
+      <text xml:space="preserve">[[Has type:=Type:Page]]
+[[Has default form::Form:Project Bug]]
+
+This property is mapped (linked) to other properties in other forms/templates.
+
+The following template indicates how the mapping is done.</text>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Project story</title>
+    <id>41</id>
+    <revision>
+      <id>138</id>
+      <timestamp>2008-11-07T07:03:04Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <text xml:space="preserve">This property has been created but not edited. Please enter meaningful content.
+[[Has type:=Type:Page]]
+[[Has default form::Form:Project Story]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Bug reporter</title>
+    <id>58</id>
+    <revision>
+      <id>142</id>
+      <timestamp>2008-11-07T07:10:26Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <comment>This property was created for category &lt;&gt;. Please enter meaningful content.</comment>
+      <text xml:space="preserve">This property has been created but not edited. Please enter meaningful content.
+[[Has type:=Type:Page]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Bug report date</title>
+    <id>59</id>
+    <revision>
+      <id>143</id>
+      <timestamp>2008-11-07T07:13:23Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <comment>This property was created for category &lt;&gt;. Please enter meaningful content.</comment>
+      <text xml:space="preserve">This property has been created but not edited. Please enter meaningful content.
+[[Has type:=Type:Date]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Bug fix date</title>
+    <id>60</id>
+    <revision>
+      <id>144</id>
+      <timestamp>2008-11-07T07:13:47Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <comment>This property was created for category &lt;&gt;. Please enter meaningful content.</comment>
+      <text xml:space="preserve">This property has been created but not edited. Please enter meaningful content.
+[[Has type:=Type:Date]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Debugger</title>
+    <id>61</id>
+    <revision>
+      <id>145</id>
+      <timestamp>2008-11-07T07:14:19Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <comment>This property was created for category &lt;&gt;. Please enter meaningful content.</comment>
+      <text xml:space="preserve">This property has been created but not edited. Please enter meaningful content.
+[[Has type:=Type:Page]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Template:Project Bug</title>
+    <id>62</id>
+    <revision>
+      <id>4386</id>
+      <timestamp>2010-10-13T10:41:00Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <text xml:space="preserve">&lt;noinclude&gt;
+This is the 'Project Bug' template.
+It should be called in the following format:
+&lt;pre&gt;
+{{Project Bug
+|story=
+|reporter=
+|report date=
+|debugger=
+|fix date=
+|priority=
+|status=
+|attachment=
+}}
+&lt;/pre&gt;
+Edit the page to see the template text.
+&lt;/noinclude&gt;&lt;includeonly&gt;
+{| style=&quot;width: 30em; font-size: 90%; border: 1px solid #aaaaaa; background-color: #f9f9f9; color: black; margin-bottom: 0.5em; margin-left: 1em; padding: 0.2em; float: right; clear: right; text-align:left;&quot;
+! {{head color box|#ccccff|{{#if:{{{priority|}}}|{{#ifexpr: {{{priority|}}} &lt; 2 
+|red}}}}|font-size:medium;}} colspan=&quot;2&quot; |{{PAGENAME}}
+|-
+! Related story
+| [[Project story::{{{story|}}}]]
+|-
+! Reporter
+| [[Bug reporter::{{{reporter|}}}]]
+|-
+! Report date
+| [[Bug report date::{{{report date|}}}]]
+{{#arraymap:{{{sprint output|}}}|/|y|*[[Sprint output::y]]|\n}}
+|-
+{{#if:{{{priority|}}}|
+! Priority
+{{!}} [[Bug priority::{{{priority|}}}]]
+}}
+|-
+! Debugger
+| [[Debugger::{{{debugger|}}}]]
+|-
+! Fix date
+| [[Bug fix date::{{{fix date|}}}]]
+|-
+! Status
+| [[Project bug status::{{{status|}}}]]
+|}
+
+{{#if:{{{attachment|}}}|
+==Attachment(s)==
+{{#arraymap:{{{attachment|}}}|,|x|x|&lt;br&gt;}}
+}}
+[[Category:Project bugs]]
+&lt;/includeonly&gt;</text>
+    </revision>
+  </page>
+  <page>
+    <title>:Project Bug</title>
+    <id>63</id>
+    <revision>
+      <id>315</id>
+      <timestamp>2008-11-08T08:02:20Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">&lt;noinclude&gt;
+This is the 'Project Bug' form.
+To add a page with this form, enter the page name below;
+if a page with that name already exists, you will be sent to a form to edit that page.
+
+{{#forminput:Project Bug}}
+
+&lt;/noinclude&gt;&lt;includeonly&gt;
+{{{for template|Project Bug}}}
+{| class=&quot;formtable&quot;
+! Related story:
+| {{{field|story}}}
+|-
+! Reporter:
+| {{{field|reporter}}}
+|-
+! Report date:
+| {{{field|report date}}}
+|-
+! Debugger:
+| {{{field|debugger}}}
+|-
+! Fix date:
+| {{{field|fix date}}}
+|-
+! Status:
+| {{{field|status}}}
+|}
+{{{end template}}}
+
+'''Free text:'''
+
+{{{field|free text}}}
+
+
+{{{standard input|summary}}}
+
+{{{standard input|minor edit}}} {{{standard input|watch}}}
+
+{{{standard input|save}}} {{{standard input|preview}}} {{{standard input|changes}}} {{{standard input|cancel}}}
+&lt;/includeonly&gt;</text>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Project bug status</title>
+    <id>81</id>
+    <revision>
+      <id>436</id>
+      <timestamp>2008-11-12T04:13:00Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">This property has been created but not edited. Please enter meaningful content.
+[[Has type:=Type:String]]
+
+The allowed values for this property are:
+* [[Allows value::Opened]]
+* [[Allows value::Fixed]]
+* [[Allows value::Reopened]]
+* [[Allows value::Closed]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Category:Project tasks</title>
+    <id>92</id>
+    <revision>
+      <id>413</id>
+      <timestamp>2008-11-11T08:38:19Z</timestamp>
+      <contributor>
+        <ip>58.247.32.74</ip>
+      </contributor>
+      <text xml:space="preserve">[[Has default form::Form:Project Task]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Project task owner</title>
+    <id>93</id>
+    <revision>
+      <id>402</id>
+      <timestamp>2008-11-11T08:20:33Z</timestamp>
+      <contributor>
+        <ip>58.247.32.74</ip>
+      </contributor>
+      <comment>This property was created for category &lt;&gt;. Please enter meaningful content.</comment>
+      <text xml:space="preserve">This property has been created but not edited. Please enter meaningful content.
+[[Has type:=Type:Page]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Project task start date</title>
+    <id>94</id>
+    <revision>
+      <id>403</id>
+      <timestamp>2008-11-11T08:24:02Z</timestamp>
+      <contributor>
+        <ip>58.247.32.74</ip>
+      </contributor>
+      <comment>This property was created for category &lt;&gt;. Please enter meaningful content.</comment>
+      <text xml:space="preserve">This property has been created but not edited. Please enter meaningful content.
+[[Has type:=Type:Date]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Project task end date</title>
+    <id>95</id>
+    <revision>
+      <id>404</id>
+      <timestamp>2008-11-11T08:24:16Z</timestamp>
+      <contributor>
+        <ip>58.247.32.74</ip>
+      </contributor>
+      <comment>This property was created for category &lt;&gt;. Please enter meaningful content.</comment>
+      <text xml:space="preserve">This property has been created but not edited. Please enter meaningful content.
+[[Has type:=Type:Date]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Project task status</title>
+    <id>96</id>
+    <revision>
+      <id>2159</id>
+      <timestamp>2009-09-08T09:15:21Z</timestamp>
+      <contributor>
+        <username>Ning</username>
+        <id>4</id>
+      </contributor>
+      <text xml:space="preserve">This property has been created but not edited. Please enter meaningful content.
+[[Has type:=Type:String]]
+
+The allowed values for this property are:
+* [[Allows value::Not started]]
+* [[Allows value::In progress]]
+* [[Allows value::Finished]]
+* [[Allows value::Postponed]]
+* [[Allows value::Cancelled]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Project task description</title>
+    <id>97</id>
+    <revision>
+      <id>406</id>
+      <timestamp>2008-11-11T08:25:52Z</timestamp>
+      <contributor>
+        <ip>58.247.32.74</ip>
+      </contributor>
+      <comment>This property was created for category &lt;&gt;. Please enter meaningful content.</comment>
+      <text xml:space="preserve">This property has been created but not edited. Please enter meaningful content.
+[[Has type:=Type:Text]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Template:Project Task</title>
+    <id>98</id>
+    <revision>
+      <id>4083</id>
+      <timestamp>2010-05-06T00:19:23Z</timestamp>
+      <contributor>
+        <username>Ning</username>
+        <id>4</id>
+      </contributor>
+      <text xml:space="preserve">&lt;noinclude&gt;
+This is the 'Project Task' template.
+It should be called in the following format:
+&lt;pre&gt;
+{{Project Task
+|story=
+|owner=
+|start date=
+|end date=
+|status=
+|description=
+}}
+&lt;/pre&gt;
+Edit the page to see the template text.
+&lt;/noinclude&gt;&lt;includeonly&gt;
+{| style=&quot;width: 30em; font-size: 90%; border: 1px solid #aaaaaa; background-color: #f9f9f9; color: black; margin-bottom: 0.5em; margin-left: 1em; padding: 0.2em; float: right; clear: right; text-align:left;&quot;
+! colspan=&quot;2&quot; |{{PAGENAME}}
+|-
+! Story
+| [[Project story::{{{story|}}}]]
+|-
+! Owner
+| [[Project task owner::{{{owner|}}}]]
+|-
+! Start date
+| [[Project task start date::{{{start date|}}}]]
+|-
+! End date
+| [[Project task end date::{{{end date|}}}]]
+|-
+! Status
+| [[Project task status::{{{status|}}}]]
+|}
+
+==Description==
+[[Project task description::{{{description|}}}]]
+
+[[Category:Project tasks]]
+&lt;/includeonly&gt;</text>
+    </revision>
+  </page>
+  <page>
+    <title>:Project Task</title>
+    <id>99</id>
+    <revision>
+      <id>408</id>
+      <timestamp>2008-11-11T08:27:17Z</timestamp>
+      <contributor>
+        <ip>58.247.32.74</ip>
+      </contributor>
+      <comment>New page: &lt;noinclude&gt; This is the 'Project Task' form. To add a page with this form, enter the page name below; if a page with that name already exists, you will be sent to a form to edit that page....</comment>
+      <text xml:space="preserve">&lt;noinclude&gt;
+This is the 'Project Task' form.
+To add a page with this form, enter the page name below;
+if a page with that name already exists, you will be sent to a form to edit that page.
+
+{{#forminput:Project Task}}
+
+&lt;/noinclude&gt;&lt;includeonly&gt;
+{{{for template|Project Task}}}
+{| class=&quot;formtable&quot;
+! Story:
+| {{{field|story}}}
+|-
+! Owner:
+| {{{field|owner}}}
+|-
+! Start date:
+| {{{field|start date}}}
+|-
+! End date :
+| {{{field|end date }}}
+|-
+! Status:
+| {{{field|status|default=In progress}}}
+|-
+! Description:
+| {{{field|description}}}
+|}
+{{{end template}}}
+
+'''Free text:'''
+
+{{{field|free text}}}
+
+
+{{{standard input|summary}}}
+
+{{{standard input|minor edit}}} {{{standard input|watch}}}
+
+{{{standard input|save}}} {{{standard input|preview}}} {{{standard input|changes}}} {{{standard input|cancel}}}
+&lt;/includeonly&gt;</text>
+    </revision>
+  </page>
+  <page>
+    <title>Template:Wiki Mail</title>
+    <id>160</id>
+    <revision>
+      <id>3042</id>
+      <timestamp>2010-03-13T13:02:27Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">&lt;noinclude&gt;
+This is the 'Wiki Mail' template.
+It should be called in the following format:
+&lt;pre&gt;
+{{Wiki Mail
+|subject=
+|from=
+|to=
+|cc=
+|sent=
+|attachment=
+}}
+&lt;/pre&gt;
+Edit the page to see the template text.
+&lt;/noinclude&gt;&lt;includeonly&gt;
+----
+{| 
+{{#if:{{{subject|}}}|
+! Subject
+{{!}} [[Mail subject::{{{subject|}}}]]
+{{!}}-
+}}
+{{#if:{{{from|}}}|
+! From
+{{!}} [[Mail from::{{{from|}}}]]
+{{!}}-
+}}
+{{#if:{{{to|}}}|
+! To
+{{!}} {{#arraymap:{{{to|}}}|,|x|[[Mail to::x]]}}
+{{!}}-
+}}
+{{#if:{{{cc|}}}|
+! Cc
+{{!}} {{#arraymap:{{{cc|}}}|,|x|[[Mail cc::x]]}}
+{{!}}-
+}}
+{{#if:{{{sent|}}}|
+! Sent
+{{!}} [[Mail sent::{{{sent|}}}]]
+}}
+|}
+----
+{{#if:{{{attachment|}}}|
+==Attachment(s)==
+{{#arraymap:{{{attachment|}}}|,|x|x|&lt;br&gt;}}
+}}
+&lt;/includeonly&gt;</text>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Mail sent</title>
+    <id>161</id>
+    <revision>
+      <id>651</id>
+      <timestamp>2008-12-17T07:05:32Z</timestamp>
+      <contributor>
+        <username>Ning</username>
+        <id>4</id>
+      </contributor>
+      <comment>New page: [[has type::Type:Date]]</comment>
+      <text xml:space="preserve">[[has type::Type:Date]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Mail cc</title>
+    <id>162</id>
+    <revision>
+      <id>652</id>
+      <timestamp>2008-12-17T07:05:35Z</timestamp>
+      <contributor>
+        <username>Ning</username>
+        <id>4</id>
+      </contributor>
+      <comment>New page: [[has type::Type:Email]]</comment>
+      <text xml:space="preserve">[[has type::Type:Email]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Mail to</title>
+    <id>163</id>
+    <revision>
+      <id>653</id>
+      <timestamp>2008-12-17T07:05:38Z</timestamp>
+      <contributor>
+        <username>Ning</username>
+        <id>4</id>
+      </contributor>
+      <comment>New page: [[has type::Type:Email]]</comment>
+      <text xml:space="preserve">[[has type::Type:Email]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Mail from</title>
+    <id>164</id>
+    <revision>
+      <id>654</id>
+      <timestamp>2008-12-17T07:05:41Z</timestamp>
+      <contributor>
+        <username>Ning</username>
+        <id>4</id>
+      </contributor>
+      <comment>New page: [[has type::Type:Email]]</comment>
+      <text xml:space="preserve">[[has type::Type:Email]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>:Wiki Mail</title>
+    <id>165</id>
+    <revision>
+      <id>655</id>
+      <timestamp>2008-12-17T07:06:12Z</timestamp>
+      <contributor>
+        <username>Ning</username>
+        <id>4</id>
+      </contributor>
+      <comment>New page: &lt;noinclude&gt; This is the 'Wiki Mail' form. To add a page with this form, enter the page name below; if a page with that name already exists, you will be sent to a form to edit that page.  {...</comment>
+      <text xml:space="preserve">&lt;noinclude&gt;
+This is the 'Wiki Mail' form.
+To add a page with this form, enter the page name below;
+if a page with that name already exists, you will be sent to a form to edit that page.
+
+{{#forminput:Wiki Mail}}
+
+&lt;/noinclude&gt;&lt;includeonly&gt;
+{{{for template|Wiki Mail}}}
+{| class=&quot;formtable&quot;
+! From:
+| {{{field|from}}}
+|-
+! To:
+| {{{field|to}}}
+|-
+! Cc:
+| {{{field|cc}}}
+|-
+! Sent:
+| {{{field|sent}}}
+|}
+{{{end template}}}
+
+'''Free text:'''
+
+{{{field|free text}}}
+
+
+{{{standard input|summary}}}
+
+{{{standard input|minor edit}}} {{{standard input|watch}}}
+
+{{{standard input|save}}} {{{standard input|preview}}} {{{standard input|changes}}} {{{standard input|cancel}}}
+&lt;/includeonly&gt;</text>
+    </revision>
+  </page>
+  <page>
+    <title>Template:!</title>
+    <id>168</id>
+    <revision>
+      <id>662</id>
+      <timestamp>2008-12-17T07:20:29Z</timestamp>
+      <contributor>
+        <username>Ning</username>
+        <id>4</id>
+      </contributor>
+      <comment>New page: |</comment>
+      <text xml:space="preserve">|</text>
+    </revision>
+  </page>
+</mediawiki>

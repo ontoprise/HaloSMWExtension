@@ -32,6 +32,7 @@ class SC_LanguageEn extends SC_Language {
 	protected $smwUserMessages = array(
 		'viewrest' => 'REST Sandbox',
 		'restful' => 'REST-ful Apis',
+		'sc_restful_forbidden' => 'You\'ve got no privilege to edit, please contact Wiki administrator.',
 		'sc_restful_badurl' => 'You must specify the rest-ful api in the URL; the URL should look like \'Special:RESTful/&lt;rest command&gt;\'.',
 		'sc_editmapping' => 'Edit form schema map',
 		'sc_loading' => 'Loading...',
