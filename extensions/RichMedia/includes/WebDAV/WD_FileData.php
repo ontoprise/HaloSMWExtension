@@ -106,7 +106,8 @@ class FileData {
 			}
 			
 			$isFileNS = false;
-			RMNamespace::isImage($this->getNamespaceId(true, $folderName), $isFileNS);
+			$namespaceID = $this->getNamespaceId(true, $folderName);
+			RMNamespace::isImage($namespaceID, $isFileNS);
 			return $isFileNS;
 		} else {
 			//todo: implement this method
