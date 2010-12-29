@@ -44,7 +44,7 @@ function doSpecialEmbedWindow() {
 	$user_js =<<<HTML
 	<script type="{$wgJsMimeType}">
 	
-var headID = document.getElementsByTagName("head")[0];         
+var headID = document.getElementsByTagName("head")[0];
 var cssNode = document.createElement('link');
 	
 cssNode.type = 'text/css';
@@ -54,12 +54,9 @@ cssNode.media = 'screen, projection';
 headID.appendChild(cssNode);
 </script>
 HTML;
-	$prototype_include = "<script type=\"text/javascript\" src=\"{$smwgRMScriptPath}/scripts/prototype.js?$wgStyleVersion\"></script>";
 	$text = <<<END
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-{$wgOut->getScript()}
-$prototype_include
 $user_js
 </head>
 <body>
@@ -109,9 +106,10 @@ class EmbedWindowForm {
 
 		
 		$image = wfLocalFile($nt);
-		$imagePath = $image->getURL();
+		$imagePath = $image->getFullUrl();
 		$embedWidth = $image->getWidth();
 		$embedHeight = $image->getHeight();
+		$embedMIMEType = $image->getMimeType();
 		
 		$imageToSmall = false;
 		if ($embedHeight <= 500 || $embedWidth <= 700) {
@@ -164,11 +162,20 @@ END;
 				</td></tr>
 			</table>
 END;
-		}
-		else{
+		} else {
 			# for all other embedded objects
+			// We could also use the new HTML5 tags <audio> and <video>.
+			// But they are not supported by IE and Firefox is already playing
+			// some audio files (i.e. ogg vorbis) without the need of an additional plugins.
+			$noEmbedMsg = wfMsg('smw_rm_noembed', $embedMIMEType);
+			$embedLoading = wfMsg('smw_rm_embedload');
 			$embedObject = <<<END
-				<embed autostart="0" showcontrols="1" showstatusbar="1" id="rmEWEmbeddedObject" src="{$imagePath}" style="width:{$embedWidth}; height:{$embedHeight}" align="middle"/>
+			<div id="rmEWEmbedded">
+				<object data="{$imagePath}" type="{$embedMIMEType}" id="rmEWEmbeddedObject"
+					width="95%" height="85%" declare standby="{$embedLoading}">
+					<p>{$noEmbedMsg}</p>
+				</object>
+			</div>
 END;
 		}
 

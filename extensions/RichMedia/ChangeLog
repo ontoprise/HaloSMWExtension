@@ -1,19 +1,32 @@
 Rich Media extension ChangeLog
 =============================
 
+VERSION 1.X
+
+  FEATURES:
+	-none-
+
+  CHANGES:
+	* Added mime info and mime type (video/x-ms-wmv) for .wmv
+
+  BUGFIXES:
+	* Issue 13164 - WebDAV not working due to strict standards warning.
+	* Issue 12704 - Changed embedding of files in FileViewer
+
+
 VERSION 1.5
 
   CHANGES:
-	Issue 12237 - Text "Description page" changed to "File details"
-	Issue 12568. Disabled aggressively preload of all images in links to Special:EmbedWindow.
-	Issue 11837 - WebDAV now uses /images as upload directory
-	Added support for Semantic Forms 2.0
-	Provided new patches to let Rich Media extension be compatible with MediaWiki 1.16.
+	* Issue 12237 - Text "Description page" changed to "File details"
+	* Issue 12568. Disabled aggressively preload of all images in links to Special:EmbedWindow.
+	* Issue 11837 - WebDAV now uses /images as upload directory
+	* Added support for Semantic Forms 2.0
+	* Provided new patches to let Rich Media extension be compatible with MediaWiki 1.16.
 
   BUGFIXES:
-	Issue 12322 - Key for error when uploading a filetype which is not permitted has changed
-	Issue 13262 - $wgEnableUploads is set to true by default
-	Issue 12816 - Upload on Special:Gardening now opens in overlay.
+	* Issue 12322 - Key for error when uploading a filetype which is not permitted has changed
+	* Issue 13262 - $wgEnableUploads is set to true by default
+	* Issue 12816 - Upload on Special:Gardening now opens in overlay.
 
 
 VERSION 1.4.1
@@ -23,25 +36,22 @@ VERSION 1.4.1
 	* All style definitions are now collected in one CSS file (collaboration.css).
 	  This is part of preparations for standardization of GUI elements.
 
-
   CHANGES:
 	* Update patches to be compatible with Semantic Forms 1.9.1
 
-
   BUGFIXES:
+	-none-
 
 
 VERSION 1.4
 
   FEATURES:
-
+	-none-
 
   CHANGES:
 	* Replaced AntiWord (outdated since 2005) with AbiWord (regularly maintained and available under the terms of the GPL)
 	  because this tool is able to convert additional doc types to text.
 	* Provided new patches to let Rich Media extension be compatible with MediaWiki 1.15.3 and Semantic Forms 1.9.
 
-
   BUGFIXES:
-
-
+	-none-

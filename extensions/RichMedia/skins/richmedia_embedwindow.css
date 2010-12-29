@@ -59,6 +59,10 @@ a {
 	align: center;
 }
 
+#rmEWEmbedded {
+	text-align: center;
+	margin: 5px;
+}
 #rmEWEmbeddedObject {
 	margin-top:5px;
 	vertical-align:middle;

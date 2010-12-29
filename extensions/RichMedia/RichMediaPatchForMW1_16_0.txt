@@ -1132,7 +1132,7 @@ Index: includes/filerepo/FileRepo.php
  	
 Index: includes/parser/Parser.php
 ===================================================================
---- includes/parser/Parser.php	(revision 8227)
+--- includes/parser/Parser.php	(revision 9458)
 +++ includes/parser/Parser.php	(working copy)
 @@ -1736,32 +1736,65 @@
  				}
@@ -1247,7 +1247,7 @@ Index: includes/parser/Parser.php
  		}
  		return $ig->toHTML();
  	}
-@@ -4441,13 +4486,29 @@
+@@ -4441,13 +4487,30 @@
  		}
  		if ( !isset( $this->mImageParams[$handlerClass]  ) ) {
  			// Initialise static lists
@@ -1262,13 +1262,14 @@ Index: includes/parser/Parser.php
 +			// original content is located in else statement.
 +			global $smwgEnableRichMedia;
 +			if( $smwgEnableRichMedia ) {
-+				static $internalParamNames = array(
-+					'nopreview' => array('nopreview'),
++				static $internalParamNames;
++				$internalParamNames = array(
 +					'horizAlign' => array( 'left', 'right', 'center', 'none' ),
 +					'vertAlign' => array( 'baseline', 'sub', 'super', 'top', 'text-top', 'middle',
 +						'bottom', 'text-bottom' ),
 +					'frame' => array( 'thumbnail', 'manualthumb', 'framed', 'frameless',
 +						'upright', 'border', 'link', 'alt' ),
++					'nopreview' => array( 'nopreview' ),
 +				);
 +			} else {
 +				static $internalParamNames = array(
@@ -1284,7 +1285,7 @@ Index: includes/parser/Parser.php
  			static $internalParamMap;
  			if ( !$internalParamMap ) {
  				$internalParamMap = array();
-@@ -4667,6 +4728,19 @@
+@@ -4667,6 +4730,19 @@
  			$params['frame']['title'] = $this->stripAltText( $caption, $holders );
  		}
  
@@ -1482,9 +1483,17 @@ Index: includes/specials/SpecialUndelete.php
  			return self::UNDELETE_UNKNOWNERR;
 Index: includes/mime.info
 ===================================================================
---- includes/mime.info	(revision 6683)
+--- includes/mime.info	(revision 9458)
 +++ includes/mime.info	(working copy)
-@@ -77,3 +77,22 @@
+@@ -49,6 +49,7 @@
+ model/vrml	[MULTIMEDIA]
+ video/quicktime	[MULTIMEDIA]
+ video/x-msvideo	[MULTIMEDIA]
++video/x-ms-wmv	[MULTIMEDIA]
+ 
+ text/plain	[TEXT]
+ text/html application/xhtml+xml	[TEXT]
+@@ -77,3 +78,22 @@
  application/vnd.ms-powerpoint	[OFFICE]
  application/x-director		[OFFICE]
  text/rtf			[OFFICE]
@@ -1510,7 +1519,7 @@ Index: includes/mime.info
 \ No newline at end of file
 Index: includes/mime.types
 ===================================================================
---- includes/mime.types	(revision 6683)
+--- includes/mime.types	(revision 9458)
 +++ includes/mime.types	(working copy)
 @@ -15,6 +15,7 @@
  application/vnd.mif mif
@@ -1529,7 +1538,15 @@ Index: includes/mime.types
  application/x-rar rar
  audio/basic au snd
  audio/midi mid midi kar
-@@ -133,4 +134,6 @@
+@@ -117,6 +118,7 @@
+ video/x-msvideo avi
+ video/x-ogg ogm ogg
+ video/x-sgi-movie movie
++video/x-ms-wmv wmv
+ x-conference/x-cooltalk ice
+ application/vnd.oasis.opendocument.text odt
+ application/vnd.oasis.opendocument.text-template ott
+@@ -133,4 +135,6 @@
  application/vnd.oasis.opendocument.formula odf
  application/vnd.oasis.opendocument.formula-template otf
  application/vnd.oasis.opendocument.text-master odm

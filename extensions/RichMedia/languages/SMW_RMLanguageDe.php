@@ -62,8 +62,9 @@ class SMW_RMLanguageDe extends SMW_RMLanguage {
 		'smw_rm_uploadsuccess_closewindow' => 'Sie können jetzt dieses Fenster schließen.',
 
 		'smw_rm_embed_desc_link' => 'Klicken Sie um zur Beschreibungsseite von $1 im Hauptfenster zu gelangen.',
-		'smw_rm_noembed' => 'Ihr Browser unterst�tzt keine eingebetteten Objekte.<br>Klicken Sie <a href="$1">hier</a> um die Datei herunterzuladen.',
-		'smw_rm_embed_notarget' => 'Dies ist der FileViewer. Sie m�ssen ein Zeilseite in der URL angeben;<br/>z.B. \'Special:EmbedWindow?target=Image:File.ext\'.',
+		'smr_rm_embedload' => 'Objekt wird geladen...',
+		'smw_rm_noembed' => 'Ihr Browser unterstützt keine eingebetteten Objekte vom Type <code>$1</code>.',
+		'smw_rm_embed_notarget' => 'Dies ist der FileViewer. Sie müssen ein Zeilseite in der URL angeben;<br/>z.B. \'Special:EmbedWindow?target=Image:File.ext\'.',
 		'smw_rm_embed_save' => '$1 speichern.',
 		'smw_rm_embed_view' => 'Ansicht',
 		'smw_rm_embed_fullres'=> 'Volle Aufl�sung',

@@ -39,7 +39,23 @@ global $smwgRMIP, $wgHooks;
 $smwgRMIP = $IP . '/extensions/RichMedia';
 $smwgRMScriptPath = $wgScriptPath . '/extensions/RichMedia';
 
-include_once('RM_AdditionalMIMETypes.php');
+// Add file extensions to this array to open them via preview overlay.
+// Please also take notice of $smwgRMIgnoreWhitelistForPF
+// Default contents are audio, video and pdf files.
+global $smwgRMPreviewWhitelist;
+$smwgRMPreviewWhitelist = array( 'gif', 'svg', 'bmp', 'jpg', 'jpeg', 'png', 
+	'pdf', 'ac3', 'avi', 'mp3', 'ogg', 'mpg', 'mpeg', 'mpp', 'mov', 'wmv');
+
+// Handles the behaviour of the #rmew parser function.
+// Setting this to "true" means that the parser function will ignore the
+// white list and set every link to the embed window.
+// When set to "false" only files contained in the white list
+// are linked to the embed window. All other will directly link to the "file details page". 
+global $smwgRMIgnoreWhitelistForPF;
+$smwgRMIgnoreWhitelistForPF = false;
+
+
+require_once('RM_AdditionalMIMETypes.php');
 global $smwgRMFormByNamespace;
 
 $smwgRMFormByNamespace = array(
@@ -220,12 +236,11 @@ function RMLinkBegin($this, $target, &$text, &$customAttribs, &$query, &$options
 		$finalExt = '';
 	}
 	$ns = NS_FILE;
-	if ( isset( $finalExt ) ) {
-		if ( isset( $wgNamespaceByExtension[$finalExt] ) ) {
-			$ns = $wgNamespaceByExtension[$finalExt];
-			//Just change it for NS_FILE... not for specialpages etc
-			if ($target->mNamespace == NS_FILE)
-				$target->mNamespace = $ns;
+	if ( isset( $finalExt ) && isset( $wgNamespaceByExtension[$finalExt] ) ) {
+		$ns = $wgNamespaceByExtension[$finalExt];
+		//Just change it for NS_FILE... not for specialpages etc
+		if ($target->mNamespace == NS_FILE) {
+			$target->mNamespace = $ns;
 		}
 	}
 	if ($target->mPrefixedText) {
@@ -251,12 +266,15 @@ function RMLinkBegin($this, $target, &$text, &$customAttribs, &$query, &$options
  * @return boolean
  */
 function RMLinkEnd($skin, $target, $options, &$text, &$attribs, &$ret) {
-	
-	global $wgRMImagePreview;
+	global $wgRMImagePreview, $smwgRMPreviewWhitelist;
+
 	$temp_var = $target->getNamespace();
 	RMNamespace::isImage( $temp_var, $rMresult );
 	if ( $rMresult ) {
-		if ( $wgRMImagePreview ) {
+		$file = wfFindFile($target);
+		$ext = $file->getExtension();
+		if ( $wgRMImagePreview && is_array($smwgRMPreviewWhitelist)
+			&& in_array($ext, $smwgRMPreviewWhitelist) ) {
 			$linkID = $target->getPrefixedText() . rand(0, 1024);
 			$queryString = "target=".urlencode($target->getPrefixedText());
 			$embedWindowPage = SpecialPage::getPage('EmbedWindow');
@@ -267,7 +285,8 @@ function RMLinkEnd($skin, $target, $options, &$text, &$attribs, &$ret) {
 		}
 	}
 	//Change Special:Upload to Special:UploadWindow
-	if ( $target->getPrefixedText() == 'Special:Upload' && $target->getNamespace() == NS_SPECIAL ) {
+	if ( $target->getPrefixedText() == 'Special:Upload'
+		&& $target->getNamespace() == NS_SPECIAL ) {
 		$uploadWindowPage = SpecialPage::getPage('UploadWindow');
 		$queryString = "wpIgnoreWarning=true";
 		$uploadWindowUrl = $uploadWindowPage->getTitle()->getLocalURL($queryString);

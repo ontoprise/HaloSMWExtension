@@ -78,7 +78,6 @@ END;
 		} else {
 			$linkText = 'Link';
 		}
-
 		if ( array_key_exists( 1, $parameters ) && isset( $parameters[1] ) ) {
 			$linkTitle = $parameters[1];
 		} else {
@@ -145,39 +144,54 @@ END;
 
 	/**
 	 * Parser function that creates a link to the EmbedWindow
+	 * 
+	 * The file extension needs to be contained in (global) $smwgRMPreviewWhitelist
+	 * or $smwgRMIgnoreWhitelistForPF must be set to true.
+	 * Otherwise a link to the original file details page is generated.
 	 *
 	 * @param array $parameter
 	 * @return HTML
 	 */
 	static function createRichMediaEmbedWindowLink($parser, &$parameter) {
-		global $wgOut, $wgRequest;
+		global $wgOut, $wgRequest, $wgUser;
+		global $wgRMImagePreview, $smwgRMPreviewWhitelist, $smwgRMIgnoreWhitelistForPF;
 
-		if ( array_key_exists( 0, $parameter ) && isset( $parameter[0] ) )
+		if ( array_key_exists( 0, $parameter ) && isset( $parameter[0] ) ) {
 			$link_name = $parameter[0];
-		else
+		} else {
 			$link_name = 'Link';
-
-		if ( array_key_exists( 1, $parameter ) && isset( $parameter[1] ) )
+		}
+		if ( array_key_exists( 1, $parameter ) && isset( $parameter[1] ) ) {
 			$link_title = $parameter[1];
-		else
+		} else {
 			$link_title = wfMsgNoTrans('smw_rm_uploadheadline');
-		
-		if ( array_key_exists( 2, $parameter ) && isset( $parameter[2] ) )
+		}
+		if ( array_key_exists( 2, $parameter ) && isset( $parameter[2] ) ) {
 			$rev_width = 'width:' . $parameter[2];
-		else
+		} else {
 			$rev_width = 'width:700';
-
-		if ( array_key_exists( 3, $parameter ) && isset( $parameter[3] ) )
+		}
+		if ( array_key_exists( 3, $parameter ) && isset( $parameter[3] ) ) {
 			$rev_height = 'height:' . $parameter[3];
-		else
+		} else {
 			$rev_height = 'height:500';
-		
-		$queryString = "target=".urlencode($link_name);
-		$embedWindowPage = SpecialPage::getPage('EmbedWindow');
-		$embedWindowUrl = $embedWindowPage->getTitle()->getFullURL($queryString);
+		}
 
-		$html = "<a href=\"$embedWindowUrl\" title=\"$link_title\" class=\"rmAlink\">$link_title</a>";
-		
+		$title = Title::newFromText($link_name);
+		$temp_var = $title->getNamespace();
+		$file = wfFindFile($title);
+		$ext = $file->getExtension();
+
+		RMNamespace::isImage( $temp_var, $rMresult );
+		if ( $rMresult && ( $smwgRMIgnoreWhitelistForPF ||
+			(is_array($smwgRMPreviewWhitelist) && in_array( $ext, $smwgRMPreviewWhitelist ) ) ) ) {
+			$queryString = "target=".urlencode($link_name);
+			$embedWindowPage = SpecialPage::getPage('EmbedWindow');
+			$embedWindowUrl = $embedWindowPage->getTitle()->getFullURL($queryString);
+			$html = "<a href=\"$embedWindowUrl\" title=\"$link_title\" class=\"rmAlink\">$link_title</a>";
+		} else {
+			$html = $wgUser->getSkin()->link($title, $link_title);
+		}
 		return $parser->insertStripItem( $html, $parser->mStripState );
 	}
 }
