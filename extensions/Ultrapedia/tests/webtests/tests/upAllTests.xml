@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+
+<project name="all semantic connector extension tests" default="testAll">
+	<property name="wikipath" value="smw"/>
+	
+	<target name="testAll" description="runs all the tests">
+		<ant antfile="upPageTest.xml"/>
+	</target>
+</project>

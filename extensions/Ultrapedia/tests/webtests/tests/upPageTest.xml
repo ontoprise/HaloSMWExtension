@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+
+<!DOCTYPE project SYSTEM "../dtd/Project.dtd">
+
+<project default="testUPPage">
+	
+	<!--
+	&goToLogin;
+	-->
+
+	<target name="testUPPage">
+
+		<webtest name="View Ultrapedia">
+			<config host="localhost">
+				<option name="ThrowExceptionOnFailingStatusCode" value="false" />
+				<option name="ThrowExceptionOnScriptError" value="false"/>
+			</config>
+			<!--
+			<antcall target="goToLogin" />
+			-->
+			<invoke
+					url="http://localhost:7072/smw/index.php/Ultrapedia_Test"
+					description="Ultrapedia view" />
+
+			<verifyText text="Ultrapedia 1" description="ask tab" />
+			
+			<enableJavaScript enable="true"/>
+			<sleep seconds="5"/>
+			<verifyXPath xpath="//div[@id='AjaxAsk2']//a[contains(text() ,'Ultrapedia 3')]" description="ajaxask to fetch ajax query" />
+			
+			<clickElement xpath="//li[@id='ext-comp-1001__ext-comp-1003']/a[2]"
+				description="Choose ajaxask tab" />
+			<sleep seconds="1" />
+			<verifyXPath xpath="//div[@id='ext-comp-1003']//a[contains(text() ,'Ultrapedia 3')]" description="switch to ajaxask tab" />
+			
+			<clickElement xpath="//li[@id='ext-comp-1001__ext-comp-1004']/a[2]"
+				description="Choose internal tab" />
+			<verifyXPath xpath="//div[@id='ext-comp-1004']//div[contains(text() ,'Loading...')]" description="switch to internal lazy-load tab" />
+			<sleep seconds="5" />
+			<verifyXPath xpath="//div[@id='ext-comp-1004']//b[contains(text() ,'This is a demo page to show off internal UP tab.')]" description="lazy load successfully" />
+		</webtest>
+
+	</target>
+</project>
