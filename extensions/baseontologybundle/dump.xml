@@ -1,0 +1,3732 @@
+<mediawiki xmlns="http://www.mediawiki.org/halowikiexport/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.ontoprise.de/halowikiexport-1.0.xsd" version="1.0" xml:lang="en">
+  <siteinfo>
+    <sitename>Contentwiki</sitename>
+    <base>http://localhost/index.php/Main_Page</base>
+    <generator>MediaWiki 1.16.0</generator>
+    <case>first-letter</case>
+    <namespaces>
+      <namespace key="-2" case="first-letter">Media</namespace>
+      <namespace key="-1" case="first-letter">Special</namespace>
+      <namespace key="0" case="first-letter" />
+      <namespace key="1" case="first-letter">Talk</namespace>
+      <namespace key="2" case="first-letter">User</namespace>
+      <namespace key="3" case="first-letter">User talk</namespace>
+      <namespace key="4" case="first-letter">Contentwiki</namespace>
+      <namespace key="5" case="first-letter">Contentwiki talk</namespace>
+      <namespace key="6" case="first-letter">File</namespace>
+      <namespace key="7" case="first-letter">File talk</namespace>
+      <namespace key="8" case="first-letter">MediaWiki</namespace>
+      <namespace key="9" case="first-letter">MediaWiki talk</namespace>
+      <namespace key="10" case="first-letter">Template</namespace>
+      <namespace key="11" case="first-letter">Template talk</namespace>
+      <namespace key="12" case="first-letter">Help</namespace>
+      <namespace key="13" case="first-letter">Help talk</namespace>
+      <namespace key="14" case="first-letter">Category</namespace>
+      <namespace key="15" case="first-letter">Category talk</namespace>
+      <namespace key="102" case="first-letter">Property</namespace>
+      <namespace key="103" case="first-letter">Property talk</namespace>
+      <namespace key="104" case="first-letter">Type</namespace>
+      <namespace key="105" case="first-letter">Type talk</namespace>
+      <namespace key="106" case="first-letter">Form</namespace>
+      <namespace key="107" case="first-letter">Form talk</namespace>
+      <namespace key="108" case="first-letter">Concept</namespace>
+      <namespace key="109" case="first-letter">Concept talk</namespace>
+      <namespace key="120" case="first-letter">Document</namespace>
+      <namespace key="121" case="first-letter">Document talk</namespace>
+      <namespace key="122" case="first-letter">Audio</namespace>
+      <namespace key="123" case="first-letter">Audio talk</namespace>
+      <namespace key="124" case="first-letter">Video</namespace>
+      <namespace key="125" case="first-letter">Video talk</namespace>
+      <namespace key="126" case="first-letter">Pdf</namespace>
+      <namespace key="127" case="first-letter">Pdf talk</namespace>
+      <namespace key="128" case="first-letter">ICalendar</namespace>
+      <namespace key="129" case="first-letter">ICalendar talk</namespace>
+      <namespace key="130" case="first-letter">VCard</namespace>
+      <namespace key="131" case="first-letter">VCard talk</namespace>
+      <namespace key="200" case="first-letter">WebService</namespace>
+      <namespace key="201" case="first-letter">WebService talk</namespace>
+      <namespace key="202" case="first-letter">TermImport</namespace>
+      <namespace key="203" case="first-letter">TermImport talk</namespace>
+      <namespace key="220" case="first-letter">E-mail</namespace>
+      <namespace key="221" case="first-letter">E-mail talk</namespace>
+      <namespace key="300" case="first-letter">ACL</namespace>
+      <namespace key="301" case="first-letter">ACL talk</namespace>
+      <namespace key="400" case="first-letter">IAI</namespace>
+      <namespace key="401" case="first-letter">IAI talk</namespace>
+      <namespace key="700" case="first-letter">Comment</namespace>
+      <namespace key="701" case="first-letter">Comment talk</namespace>
+      <namespace key="702" case="first-letter">UserManual</namespace>
+      <namespace key="703" case="first-letter">UserManual talk</namespace>
+    </namespaces>
+  </siteinfo>
+  <page>
+    <title>Main Page</title>
+    <id>1</id>
+    <revision>
+      <id>2489</id>
+      <timestamp>2010-12-23T11:29:32Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">__NOEDITSECTION__
+__NOTOC__
+&lt;big&gt;'''''SMW+ 1.5.2 has been successfully installed!'''''&lt;/big&gt;
+&lt;div style=&quot;line-height: 1.5em;  text-align: justify&quot;&gt;
+== About SMW&lt;sup&gt;+&lt;/sup&gt; ==
+
+{| style=&quot;width: 97%&quot; border=&quot;0&quot; cellpadding=&quot;5&quot; cellspacing=&quot;5&quot;
+|-
+| valign=&quot;top&quot; width=&quot;250&quot; align=&quot;center&quot; | [[Image:Mainpage.gif|link=]]
+| valign=&quot;top&quot; width=&quot;auto&quot; align=&quot;left&quot; | 
+SMW&lt;sup&gt;+&lt;/sup&gt; is a semantic enterprise wiki that is distributed by Ontoprise GmbH, Karlsruhe, Germany. This tool is well suited for organizations or teams dealing with heterogeneous and informal workflows and offers a rich feature set to create, share, publish and re-use knowledge contained in content. Ontoprise develops extensions to MediaWiki and carefully picks other useful extensions and, if having passed our quality assurance procedure, casts them into SMW&lt;sup&gt;+&lt;/sup&gt;.
+
+&lt;br/&gt;SMW&lt;sup&gt;+&lt;/sup&gt; includes Semantic MediaWiki (developed by Markus Krötzsch and Denny Vrandecic at the university of Karlsruhe) and the halo-Extension which is developed by Ontoprise in the HALO project, a Paul G. Allen initiative which is sponsored by his Seattle-based Vulcan Inc. (''[http://smwforum.ontoprise.com/smwforum/index.php/Faq/overview Read more...]'')&lt;br/&gt; '''[[SMW+ 1.5|Overview of SMW+]]'''
+
+|}
+
+== Getting started ==
+
+{| style=&quot;width: 90%&quot; border=&quot;0&quot; cellpadding=&quot;5&quot; cellspacing=&quot;5&quot;
+|-
+| valign=&quot;middle&quot; width=&quot;250&quot; align=&quot;center&quot; | 
+[[Image:Trafficlight.png|center|65px|link=]]
+
+| valign=&quot;top&quot; width=&quot;auto&quot; align=&quot;left&quot; | 
+To get you started with SMW&lt;sup&gt;+&lt;/sup&gt;, we included a guide that features step-by-step instructions about creating and using annotations in your SMW&lt;sup&gt;+&lt;/sup&gt; installation. This guide shows you how to annotate a wiki article and how to query for these annotations.
+
+'''[[Getting started|See how to create your first annotation with SMW&lt;sup&gt;+&lt;/sup&gt;]]'''
+
+|}
+
+== Getting help ==
+
+{| style=&quot;width: 90%&quot; border=&quot;0&quot; cellpadding=&quot;5&quot; cellspacing=&quot;5&quot;
+|-
+| valign=&quot;top&quot; width=&quot;250&quot; align=&quot;center&quot; | [[Image:Join.png|link=]]
+| valign=&quot;top&quot; width=&quot;auto&quot; align=&quot;left&quot; | 
+Find the complete user manual for SMW+ here: '''[http://smwforum.ontoprise.com SMW+ user forum]'''
+
+Visit the SMW&lt;sup&gt;+&lt;/sup&gt; User Community, which is hosted by Ontoprise, Vulcan Inc. and Monitor. Join in our regular user group meetings in north america and europe.
+
+*'''Share your experience:''' debate in the online forum and learn how others are using SMW&lt;sup&gt;+&lt;/sup&gt;
+
+*'''Learn to apply and customize:''' browse the comprehensive user manuals, read about the wealth of business applications and best practices and find out how to deploy, customize and integrate SMW+
+
+*'''Contribute to the project:''' add and publish own materials and discuss with the engineering team or even contribute software
+
+'''[http://smwforum.ontoprise.com Enter the user forum here] '''&lt;br/&gt; '''[http://smwforum.ontoprise.com/smwbugs/ Report Bugs here]''' ''(Read this before filing bugs: [http://smwforum.ontoprise.com/smwforum/index.php/Help:How_to_report_a_bug Help:How to report a bug])''
+
+|}
+
+== Getting More Information ==
+
+{| style=&quot;width: 90%&quot; border=&quot;0&quot; cellpadding=&quot;5&quot; cellspacing=&quot;5&quot;
+|-
+| valign=&quot;top&quot; width=&quot;75%&quot; align=&quot;left&quot; | 
+*You can get more information on SMW&lt;sup&gt;+&lt;/sup&gt; [http://smwforum.ontoprise.com here], including history and documentation
+
+*You can contact people from ontoprise via [http://www.ontoprise.de this page]
+
+*If you have any comments or questions, please feel free to contact us via smw@ontoprise.de or on SMW&lt;sup&gt;+&lt;/sup&gt; Discussion Board: [http://smwforum.ontoprise.com/smwboard/index.php http://smwforum.ontoprise.com/smwboard/index.php]
+
+*Don't forget to visit the website from colleagues at the University of Karlsruhe: [http://semantic-mediawiki.org http://semantic-mediawiki.org]
+
+|}
+
+----
+
+'''Now go semantic and have fun!'''
+&lt;/div&gt;
+{{Part of bundle|value=Baseontologybundle}}</text>
+    <hash>d96450ba8f026ebcc712c995c022df6f</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Description</title>
+    <id>10</id>
+    <revision>
+      <id>2433</id>
+      <timestamp>2010-12-23T09:32:18Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">{{Property
+|part of=Baseontologybundle
+|rationale=Attribute for describing an entity textually (e.g. an organization, a person, an event or a project).
+|PAGENAME=Property:Description
+}}
+[[has type::Type:String| ]]
+[[has domain and range::Category:Content bundle; | ]]
+{{Part of bundle|value=Baseontologybundle}}
+{{Content hash|value=}}</text>
+    <hash>d78f38d018f221e787e231732575ecee</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Property:DiscourseState</title>
+    <id>11</id>
+    <revision>
+      <id>2434</id>
+      <timestamp>2010-12-23T09:33:12Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">{{Property
+|part of=Baseontologybundle
+|rationale=Identifies the author of an instance of a particular Wiki section.
+|PAGENAME=Property:DiscourseState
+}}
+[[has type::Type:Page| ]] [[Has max cardinality::1| ]] [[Has min cardinality::1| ]] [[has domain and range::Category:Context sensitive help article; Category:DiscourseStates| ]]
+{{Part of bundle|value=Baseontologybundle}}
+{{Content hash|value=}}</text>
+    <hash>224357a5bf290101ddf7fb1080a4a363</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Category:GardeningLog</title>
+    <id>12</id>
+    <revision>
+      <id>2240</id>
+      <timestamp>2010-12-22T15:58:27Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">{{Category
+|PAGENAME=Category:GardeningLog
+|rationale=This is the Gardening log category
+|No automatic formedit=Yes
+|part of=Baseontologybundle
+}}
+{{Part of bundle|value=Baseontologybundle}}
+[[Category:Entity]]</text>
+    <hash>f17aecc7396ccd31e66f5653a7d9649e</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Related to</title>
+    <id>46</id>
+    <revision>
+      <id>2463</id>
+      <timestamp>2010-12-23T10:18:30Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">{{Property
+|PAGENAME=Property:Related to
+|part of=Baseontologybundle
+|rationale=Relates an entity to another entity (e.g. a task to a project).
+}}
+[[Has type::Type:Page| ]]
+[[Has domain and range::Category:User| ]]
+[[Has domain and range::Category:Content| ]] 
+[[Category:Transitive properties]]
+{{Part of bundle|value=Baseontologybundle}}
+{{Content hash|value=}}</text>
+    <hash>d9c83a8bbbd65b65f65221a2d59ffd57</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Phone</title>
+    <id>49</id>
+    <revision>
+      <id>2460</id>
+      <timestamp>2010-12-23T10:14:40Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">{{Property
+|part of=Baseontologybundle
+|rationale=Attribute for specifying a phone number (e.g. of a person or an organization).
+|PAGENAME=Property:Phone
+}}
+[[Has domain and range::Category:User| ]]
+[[Has type::Type:String| ]]
+{{Part of bundle|value=Baseontologybundle}}
+{{Content hash|value=}}</text>
+    <hash>4d231b0843e89a5350907a9f5dfe95af</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Knows</title>
+    <id>50</id>
+    <revision>
+      <id>2453</id>
+      <timestamp>2010-12-23T10:08:51Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">{{Property
+|part of=Baseontologybundle
+|Has default form=
+|rationale=Describes the knows relation between two persons.
+|PAGENAME=Property:Knows
+}}
+[[Has type::Type:Page| ]]
+[[Has domain and range::Category:User; Category:User| ]]
+[[Category:Symmetrical properties]]
+{{Part of bundle|value=Baseontologybundle}}
+{{Content hash|value=}}</text>
+    <hash>25b8a8d5817ef0fcd544d53f8d14cc2e</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Birth date</title>
+    <id>51</id>
+    <revision>
+      <id>2198</id>
+      <timestamp>2010-12-22T14:30:12Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">{{Property
+|Has author=WikiSysop
+|part of=Baseontologybundle
+|rationale=Denotes the birth date of a person.
+|PAGENAME=Property:Birth date
+}}
+{{Part of bundle|value=Baseontologybundle}}
+[[Has type::Type:Date| ]] [[Has domain and range::Category:User| ]]</text>
+    <hash>00900699a11c1a57903d11074f552847</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Template:Tablerow</title>
+    <id>53</id>
+    <revision>
+      <id>2405</id>
+      <timestamp>2010-12-22T20:31:21Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">&lt;noinclude&gt;{{Template
+|PAGENAME=Template:Tablerow
+|rationale=This is helper template to display a table row containing two columns.
+|part of=Baseontologybundle
+}}
+&lt;/noinclude&gt;&lt;includeonly&gt;{{!}}style=&quot;vertical-align: top;&quot; {{!}}{{{Label}}}
+{{!}} {{{Value|undefined}}}__NORICHEDITOR__&lt;/includeonly&gt;&lt;noinclude&gt;
+{{Part of bundle|value=Baseontologybundle}}
+{{Content hash|value=}}
+&lt;/noinclude&gt;</text>
+    <hash>964b1281b1ce1d2f61cfef95549b04db</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Template:Tablelongrow</title>
+    <id>54</id>
+    <revision>
+      <id>2404</id>
+      <timestamp>2010-12-22T20:30:57Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">&lt;noinclude&gt;{{Template
+|PAGENAME=Template:Tablelongrow
+|part of=Baseontologybundle
+|rationale=This is a helper template to display a table row spanning 2 columns.
+Parameters are:
+Align=center,left,right
+Color=white,...
+Font size=100%
+Value=text to display
+}}
+&lt;/noinclude&gt;&lt;includeonly&gt;__NORICHEDITOR__
+| colspan=&quot;2&quot; style=&quot;text-align: {{{Align|center}}}; background: {{{Color|white}}}&quot;|&lt;div style=&quot;font-size: {{{Font size|100%}}}&quot;&gt;{{{Value}}}&lt;/div&gt;
+&lt;/includeonly&gt;&lt;noinclude&gt;
+{{Part of bundle|value=Baseontologybundle}}
+{{Content hash|value=}}
+&lt;/noinclude&gt;</text>
+    <hash>663eea33f8dc8107facd2ec4b8b8c7d6</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Category:Content</title>
+    <id>56</id>
+    <revision>
+      <id>2418</id>
+      <timestamp>2010-12-22T21:10:49Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">{{Category
+|PAGENAME=Category:Content
+|rationale=This category is used for classifying (textual) content which does not fit in any of the other categories.
+|No automatic formedit=Yes
+|part of=Baseontologybundle
+}}
+[[Category:Entity|Entity]]
+{{Part of bundle|value=Baseontologybundle}}
+{{Content hash|value=}}</text>
+    <hash>be6034fc8dc098dfc980755a07528ed4</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Content title</title>
+    <id>57</id>
+    <revision>
+      <id>2429</id>
+      <timestamp>2010-12-23T09:27:41Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">{{Property
+|part of=Baseontologybundle
+|rationale=Attribute for specifying the title of a content item.
+|PAGENAME=Property:Content title
+}}
+[[Has max cardinality::1| ]] [[Has min cardinality::1| ]] [[Has type::Type:String| ]] [[Has domain and range::Category:Content| ]]
+{{Part of bundle|value=Baseontologybundle}}
+{{Content hash|value=}}</text>
+    <hash>580e92772d3821f2b4ef5cf4df811c7a</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Category:Category</title>
+    <id>62</id>
+    <revision>
+      <id>1891</id>
+      <timestamp>2010-12-21T16:34:20Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">{{Category
+|PAGENAME=Category:Category
+|rationale=In order to allow easy book keeping of your custom categories in your wiki you should assign them to this Category. This allows you to attach metadata to all of them which makes administration easier.
+|Has default form=Form:Add and edit Category
+|part of=Baseontologybundle
+}}
+This page does not open in form mode (due to a bug); use this link instead to open this article in edit mode: [http://contentwiki.ontoprise.com/index.php/Special:FormEdit/Add_and_edit_Category/Category:Category]
+
+== Categories  ==
+
+{{#ask:[[:Category:+]] [[Modification date::+]]
+|?=
+|?Part of
+|link=subject
+|mainlabel=-
+|limit=250
+|format=outline
+|outlineproperties=Part of
+}} 
+
+[[Category:Wiki part|Category]]
+{{Part of bundle|value=Baseontologybundle}}
+{{Content hash|value=}}</text>
+    <hash>e4b744ce670737a103cf0923f294b83a</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Category:Wiki part</title>
+    <id>64</id>
+    <revision>
+      <id>2330</id>
+      <timestamp>2010-12-22T17:55:15Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">{{Category
+|PAGENAME=Category:Wiki part
+|rationale=Denotes the elements that form the structure of the ontology and are responsible for the layout and entering of the data.
+|No automatic formedit=Yes
+|part of=Baseontologybundle
+}}
+{{Part of bundle|value=Baseontologybundle}}
+[[Category:Entity]]
+__NORICHEDITOR__</text>
+    <hash>1147b48c7c2a46172d3420b21d60d05c</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Category:Form</title>
+    <id>65</id>
+    <revision>
+      <id>1970</id>
+      <timestamp>2010-12-21T20:49:46Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">{{Category
+|PAGENAME=Category:Form
+|rationale=This category is used to allow easy bookkeeping of Forms. You should always assign your Forms to this category. Doing so, you can use a special form for your forms allowing you to provide all necessary metadata and tags for your wiki community to understand the forms.
+|Has default form=Form:Add and edit Form
+|No automatic formedit=Yes
+|part of=Baseontologybundle
+|Example_article=Form:Add and edit Form
+}}
+[[Category:Wiki part|Form]]</text>
+    <hash>44c1ab0e7b4a06db020c651a6c073c38</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Category:Template</title>
+    <id>68</id>
+    <revision>
+      <id>2377</id>
+      <timestamp>2010-12-22T20:06:36Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">{{Category
+|part of=Baseontologybundle
+|Has default form=Form:Add and edit Template
+|rationale=You should always assign your templates to this category. Doing so, you can use a special form for your templates allowing you to provide all necessary metadata and tags for your wiki community to understand the templates.
+|PAGENAME=Form:Add and edit Form
+}}
+[[Category:Wiki part]]
+{{Part of bundle|value=Baseontologybundle}}
+{{Content hash|value=}}</text>
+    <hash>f8fbd20572520bd5c033a494346076b1</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Part of</title>
+    <id>69</id>
+    <revision>
+      <id>2458</id>
+      <timestamp>2010-12-23T10:12:13Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">{{Property
+|part of=Baseontologybundle
+|rationale=Relates a wiki part to its superordinate wiki part (e.g. a content section). E.g. part of(Property:Narrower term, Terminology management section).
+|PAGENAME=Property:Part of
+}}
+[[Has type::Type:Page| ]] 
+[[Is inverse of::Property:Has part| ]] [[has domain and range::Category:Wiki_part; Category:Wiki_part| ]]  
+[[Category:Transitive properties]]
+{{Part of bundle|value=Baseontologybundle}}
+{{Content hash|value=}}</text>
+    <hash>610c2150d0672894175e7acfa63186a3</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Has author</title>
+    <id>71</id>
+    <revision>
+      <id>2441</id>
+      <timestamp>2010-12-23T09:44:43Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">{{Property
+|part of=Baseontologybundle
+|rationale=Specifies the author of a particular wiki section or a wiki article in general (i.e. content).
+|PAGENAME=Property:Has author
+}}
+[[Has type::Type:Page| ]] [[Has domain and range::; Category:User| ]]
+{{Part of bundle|value=Baseontologybundle}}
+{{Content hash|value=}}</text>
+    <hash>c2b4ec0572d8582661102f69ad8429e8</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Calls template</title>
+    <id>73</id>
+    <revision>
+      <id>2428</id>
+      <timestamp>2010-12-23T09:25:31Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">{{Property
+|part of=Baseontologybundle
+|rationale=Relates a wiki-part (e.g. a template or form) to a template which is being called from within the wiki-part.
+|PAGENAME=Property:Calls template
+}}
+[[Has type::Type:Page| ]] [[Is inverse of::Property:Is called by template or form| ]] [[has domain and range::Category:Template; Category:Template| ]] [[has domain and range::Category:Form; Category:Template| ]]
+{{Part of bundle|value=Baseontologybundle}}
+{{Content hash|value=}}</text>
+    <hash>2661b5487d2bcbb5e27810913384a4e5</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Example article</title>
+    <id>75</id>
+    <revision>
+      <id>2436</id>
+      <timestamp>2010-12-23T09:36:21Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">{{Property
+|part of=Baseontologybundle
+|rationale=Relates a form with an example article which was generated using this form.
+|PAGENAME=Property:Example article
+}}
+[[has domain and range::Category:Form;| ]][[has type::Type:Page| ]]
+{{Part of bundle|value=Baseontologybundle}}
+{{Content hash|value=}}</text>
+    <hash>bcfa19352d0020bb32538ddc8e443bca</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Form thumbnail</title>
+    <id>76</id>
+    <revision>
+      <id>2438</id>
+      <timestamp>2010-12-23T09:37:48Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">{{Property
+|part of=Baseontologybundle
+|rationale=Provides a thumbnail picture of a form.
+|PAGENAME=Property:Form thumbnail
+}}
+[[Has type::Type:Page| ]] [[has domain and range::Category:Form; Category:Image| ]]
+{{Part of bundle|value=Baseontologybundle}}
+{{Content hash|value=}}</text>
+    <hash>fba4a943032b4ea09e4918f5d7766901</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Has special namespace</title>
+    <id>77</id>
+    <revision>
+      <id>2444</id>
+      <timestamp>2010-12-23T09:48:16Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">{{Property
+|part of=Baseontologybundle
+|rationale=Denotes a special namespace for a given form. The special namespace is used upon page creation via the belonging form.
+|PAGENAME=Property:Has special namespace
+}}
+[[Has max cardinality::1| ]] [[Has type::Type:String| ]] [[Has domain and range::Category:Form| ]]
+{{Part of bundle|value=Baseontologybundle}}
+{{Content hash|value=}}</text>
+    <hash>8422e690b9ef07c50fbf0ee1ab217005</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Hints for templates and forms</title>
+    <id>78</id>
+    <revision>
+      <id>2447</id>
+      <timestamp>2010-12-23T09:50:49Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">{{Property
+|part of=Baseontologybundle
+|rationale=Provides hints (e.g. best practices or known pitfalls) for an entity (e.g. a template or form).
+|PAGENAME=Property:Hints for templates and forms
+}}
+[[Has type::Type:Text| ]] [[Has domain and range::Category:Form| ]] [[Has domain and range::Category:Template| ]]
+{{Part of bundle|value=Baseontologybundle}}
+{{Content hash|value=}}</text>
+    <hash>49b8bf32879d2e3487dbd11c12215615</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Populates template</title>
+    <id>81</id>
+    <revision>
+      <id>2461</id>
+      <timestamp>2010-12-23T10:15:24Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">{{Property
+|part of=Baseontologybundle
+|rationale=Relates a form to the template it is populating (upon form invocation).
+|PAGENAME=Property:Populates template
+}}
+[[Has type::Type:Page| ]] [[Is inverse of::Property:Is populated by| ]] [[has domain and range::Category:Form; Category:Template| ]]
+{{Part of bundle|value=Baseontologybundle}}
+{{Content hash|value=}}</text>
+    <hash>6c84b45d74f7617cb9dce89afe0d2e38</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Is populated by</title>
+    <id>82</id>
+    <revision>
+      <id>2452</id>
+      <timestamp>2010-12-23T10:06:13Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">{{Property
+|part of=Baseontologybundle
+|rationale=Relates a template to a form which is populating the template (when the form is filled in).
+|PAGENAME=Property:Is populated by
+}}
+[[Has type::Type:Page| ]] [[Is inverse of::Property:Populates template| ]] [[has domain and range::Category:Template; Category:Form| ]]
+{{Part of bundle|value=Baseontologybundle}}
+{{Content hash|value=}}</text>
+    <hash>165158f9f208277364df065bdcfd3ceb</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Form:Add and edit Category</title>
+    <id>88</id>
+    <revision>
+      <id>2407</id>
+      <timestamp>2010-12-22T20:33:21Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">&lt;noinclude&gt;{{Form
+|PAGENAME=Form:Add and edit Category
+|rationale=You should always use this form to modify a category for your wiki. This form allows you providing all necessary for your wiki community to understand the category. Open the Ontology browser to create a new category!
+|Has special namespace=Category:
+|Populates template=Template:Category
+|Show in create new page=No
+|Hide input field=Yes
+|part of=Baseontologybundle
+}}
+&lt;/noinclude&gt;&lt;includeonly&gt;__NORICHEDITOR__
+{{{info|add title=Add|edit title=Edit|WYSIWYG}}}
+{{{for template|Category|label=Describe the category|collapsible}}}
+{{Forms/Generate hidden form field including PAGENAME|fieldname=PAGENAME}}
+{| width=&quot;100%&quot; align=&quot;center&quot; class=&quot;formtable&quot;
+|-
+| width=&quot;20%&quot; | 
+| width=&quot;80%&quot; | 
+|-
+| valign=&quot;top&quot; |Rationale:
+| valign=&quot;top&quot; |{{{field|rationale|input type=textarea|rows=2|cols=80|}}}&lt;br&gt;&lt;small&gt;(Enter a short description explaining why this category is part of this ontology.)&lt;/small&gt;
+|-
+| valign=&quot;top&quot; |Has default form:
+| valign=&quot;top&quot; |{{{field|Has default form|input type=haloACtext|size=100|constraints=namespace: 106}}}&lt;br&gt;&lt;small&gt;(Enter the name of the form which is used to populate instances of this category. Auto-completes on pages in the namespace &quot;Form&quot;.)&lt;/small&gt;
+|-
+| valign=&quot;top&quot; |Exclude from automatic semantic forms:
+|{{{field|No automatic formedit|input type=checkbox|default=false|values=true,false}}}&lt;br&gt;&lt;small&gt;Tick this on to avoid that a form is created automatically for this category.&lt;br&gt;'''Note:{{#ifeq:{{#isExtensionInstalled:automaticsemanticforms}}|true|Automatic Semantic Forms extension is installed; you can use this feature.|Automatic Semantic Forms extension is NOT installed; you cannot use this feature.}}&lt;/small&gt;
+|}
+{{{field|part of|hidden}}}
+{{{end template}}}
+{| width=&quot;100%&quot; align=&quot;center&quot;
+|-
+| align=&quot;center&quot; |'''Put in free text and wiki-text here:'''
+|-
+| align=&quot;center&quot;|{{{field|free text|input type=textarea|rows=15|cols=135}}}
+|}
+{{{standard input|save}}} {{{standard input|preview}}} {{{standard input|changes}}} {{{standard input|cancel}}}&lt;/includeonly&gt;&lt;noinclude&gt;
+{{Part of bundle|value=Baseontologybundle}}
+{{Content hash|value=}}
+&lt;/noinclude&gt;</text>
+    <hash>4dfc47a661f3de5285c7fc930ea98cf9</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Form:Add and edit Form</title>
+    <id>90</id>
+    <revision>
+      <id>2408</id>
+      <timestamp>2010-12-22T20:33:41Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">&lt;noinclude&gt;{{Form
+|PAGENAME=Form:Add and edit Form
+|rationale=You should always use this form to create a new semantic form for your wiki. This form allows you providing all necessary metadata and tags for your wiki community to understand the form.
+|Form thumbnail=Image:Creating and editing thumb.gif
+|Has special namespace=Form:
+|Populates template=Template:Form
+|Show in create new page=No
+|Hide input field=Yes
+|part of=Baseontologybundle
+}}
+&lt;/noinclude&gt;&lt;includeonly&gt;__NORICHEDITOR__
+{{{info|includeonly free text|add title=Add|edit title=Edit|WYSIWYG}}}
+{{{for template|Form|label=Describe the form|collapsible}}}
+{{Forms/Generate hidden form field including PAGENAME|fieldname=PAGENAME}} 
+{| width=&quot;100%&quot; align=&quot;center&quot; class=&quot;formtable&quot;
+|-
+| width=&quot;20%&quot; | 
+| width=&quot;80%&quot; | 
+|-
+| valign=&quot;top&quot; |Rationale:
+| valign=&quot;top&quot; |{{{field|rationale|input type=textarea|rows=2|cols=80|}}}&lt;br&gt;&lt;small&gt;(Enter a short description explaining why this form is used in this wiki.)&lt;/small&gt;
+|-
+| valign=&quot;top&quot; |Example article:
+| valign=&quot;top&quot; |{{{field|Example article|input type=haloACtext|size=80|constraints=all}}}&lt;br&gt;&lt;small&gt;(Enter the name of an article which was generated using this form.)&lt;/small&gt;
+|-
+| valign=&quot;top&quot; |Thumbnail image of an example article:
+| valign=&quot;top&quot; |{{{field|Form thumbnail|input type=haloACtext|size=80|constraints=namespace: 6|uploadable}}}&lt;br&gt;&lt;small&gt;Please provide an image depicting an example article generated by this form. (NOTE: starts with &quot;Image:&quot;)&lt;/small&gt;
+|-
+| valign=&quot;top&quot; |Namespace of generated articles:
+| valign=&quot;top&quot; |{{{field|Has special namespace|input type=listbox|default=true|values=Help:,Rule:,Category:,Property:,Form:,Template:, }}}&lt;br&gt;&lt;small&gt;Select the namespace of articles which are generated by this form. If this form generates articles of the &quot;Main namespace&quot; then choose the blank value.&lt;/small&gt;
+|-
+| valign=&quot;top&quot; |Populates templates:
+| valign=&quot;top&quot; |{{{field|Populates template|input type=haloACtextarea|rows=1|cols=80|constraints=namespace: 10|list}}}&lt;br&gt;&lt;small&gt;Enter the name of the templates which are populated by this form. Auto-completes on pages in the namespace &quot;Template&quot;.&lt;/small&gt;
+|-
+| valign=&quot;top&quot; |Visible in &quot;Create new page&quot;:
+|{{{field|Show in create new page|mandatory|input type=checkbox|default=false|values=true,false}}}&lt;br&gt;&lt;small&gt;Tick this OFF to avoid that this form is offered in the &quot;Create new page&quot;.&lt;/small&gt;
+|-
+| valign=&quot;top&quot; |Hide form input field:
+|{{{field|Hide input field|mandatory|input type=checkbox|default=true|values=true,false}}}&lt;br&gt;&lt;small&gt;Tick this OFF to show the form input field on the form page.&lt;/small&gt;
+|}
+{{{field|part of|hidden}}}
+{{{end template}}}
+{| width=&quot;100%&quot; align=&quot;center&quot;
+|-
+| align=&quot;center&quot; |'''Enter the wiki-text for the form here:'''
+|-
+| align=&quot;center&quot;|{{{field|free text|input type=textarea|rows=15|cols=135}}}
+|}
+{{{standard input|save}}} {{{standard input|preview}}} {{{standard input|changes}}} {{{standard input|cancel}}}
+{{{for template|Part of bundle}}}{{{field|value|hidden}}}{{{end template}}}
+{{{for template|Content hash}}}{{{field|value|hidden}}}{{{end template}}}&lt;/includeonly&gt;&lt;noinclude&gt;
+{{Part of bundle|value=Baseontologybundle}}
+{{Content hash|value=}}
+&lt;/noinclude&gt;</text>
+    <hash>a18f40326c74b8e7122076f8b8e8398c</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Form:Add and edit Property</title>
+    <id>91</id>
+    <revision>
+      <id>2409</id>
+      <timestamp>2010-12-22T20:34:10Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">&lt;noinclude&gt;{{Form
+|PAGENAME=Form:Add and edit Property
+|rationale=This form allows creating or modifying properties and entering metadata about them.
+|Has special namespace=Property:
+|Populates template=Template:Property
+|Show in create new page=No
+|Hide input field=Yes
+|part of=Baseontologybundle
+}}
+&lt;/noinclude&gt;&lt;includeonly&gt;__NORICHEDITOR__
+{{{info|add title=Add|edit title=Edit|WYSIWYG}}}
+{{{for template|Property|label=Describe the property|collapsible}}}
+{{Forms/Generate hidden form field including PAGENAME|fieldname=PAGENAME}} 
+{| width=&quot;100%&quot; align=&quot;center&quot; class=&quot;formtable&quot;
+|-
+| width=&quot;20%&quot; | 
+| width=&quot;80%&quot; | 
+|-
+| valign=&quot;top&quot; |Rationale:
+| valign=&quot;top&quot; |{{{field|rationale|input type=textarea|rows=2|cols=80|}}}&lt;br&gt;&lt;small&gt;(Enter a short description explaining why this property is part of this ontology.)&lt;/small&gt;
+|-
+| valign=&quot;top&quot; |Has default form:
+| valign=&quot;top&quot; |{{{field|Has default form|input type=haloACtext|size=100|constraints=namespace: 106}}}&lt;br&gt;&lt;small&gt;(Enter the name of the form which is used to populate new pages (i.e. redlinks) which are linked via this property. Auto-completes on pages in the namespace &quot;Form:&quot;.)&lt;/small&gt;
+|}
+{{{field|part of|hidden}}}
+{{{end template}}} 
+{| width=&quot;100%&quot; align=&quot;center&quot;
+|-
+| align=&quot;center&quot; |'''Put in wiki-text here to define the property:'''
+|-
+| align=&quot;center&quot;|{{{field|free text|input type=textarea|rows=15|cols=135}}}
+|}
+{{{standard input|save}}} {{{standard input|preview}}} {{{standard input|changes}}} {{{standard input|cancel}}}
+{{Part of bundle
+|value=Baseontologybundle
+}}&lt;/includeonly&gt;&lt;noinclude&gt;
+{{Part of bundle|value=Baseontologybundle}}
+{{Content hash|value=}}
+&lt;/noinclude&gt;</text>
+    <hash>d9cf64560bbf9c655e0b442953925434</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Form:Add and edit Template</title>
+    <id>92</id>
+    <revision>
+      <id>2479</id>
+      <timestamp>2010-12-23T11:02:14Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">&lt;noinclude&gt;{{Form
+|PAGENAME=Form:Add and edit Template
+|rationale=You should always use this form to create a new template. It allows you to enter all metadata needed to provide your wiki-community with a proper documentation.
+|Form thumbnail=Image:Creating and editing thumb.gif
+|Has special namespace=Template:
+|Populates template=Template:Template
+|Show in create new page=No
+|Hide input field=Yes
+|part of=Baseontologybundle
+}}
+&lt;/noinclude&gt;&lt;includeonly&gt;__NORICHEDITOR__{{{info|includeonly free text|WYSIWYG|add title=Add|edit title=Edit}}}
+{{{for template|Template|label=Describe the template|collapsible=true}}} {{Forms/Generate hidden form field including PAGENAME|fieldname=PAGENAME}} 
+
+{| align=&quot;center&quot; width=&quot;100%&quot; class=&quot;formtable&quot;
+|-
+| width=&quot;20%&quot; | 
+| width=&quot;80%&quot; | 
+|-
+| valign=&quot;top&quot; |Rationale:
+| valign=&quot;top&quot; |{{{field|rationale|input type=textarea|rows=2|cols=80|}}}&lt;br&gt;&lt;small&gt;(Enter a short description explaining why this template is part of this ontology.)&lt;/small&gt;
+|-
+| valign=&quot;top&quot; |Example article:
+| valign=&quot;top&quot; |{{{field|Example article|input type=haloACtext|size=100|constraints=all}}}&lt;br&gt;&lt;small&gt;Specify the name of an example article which was generated via this template. Auto-completes on all pages.&lt;/small&gt;
+|-
+| valign=&quot;top&quot; |Defines categories:
+| valign=&quot;top&quot; |{{{field|defines category|input type=haloACtext|size=100|constraints=namespace: 14|list}}}&lt;br&gt;&lt;small&gt;Enter the names of the categories which are defined in this template. Auto-completes on pages in the namespace &quot;Category:&quot;.&lt;/small&gt;
+|}
+{{{field|part of|hidden}}}
+{{{end template}}}
+{| width=&quot;100%&quot; align=&quot;center&quot;
+|-
+| align=&quot;center&quot; |'''Enter the wiki-text for the template here:'''
+|-
+| align=&quot;center&quot;|{{{field|free text|input type=textarea|rows=15|cols=135}}}
+|}
+{{{standard input|save}}} {{{standard input|preview}}} {{{standard input|changes}}} {{{standard input|cancel}}}
+{{{for template|Part of bundle}}}{{{field|value|hidden}}}{{{end template}}}
+{{{for template|Content hash}}}{{{field|value|hidden}}}{{{end template}}}&lt;/includeonly&gt;&lt;noinclude&gt;
+{{Part of bundle
+|value=Baseontologybundle
+}}
+{{Content hash}}
+&lt;/noinclude&gt;</text>
+    <hash>6c63e1633ae243062afecb70cdb0f2b8</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Template:Category</title>
+    <id>100</id>
+    <revision>
+      <id>2381</id>
+      <timestamp>2010-12-22T20:13:42Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">&lt;noinclude&gt;{{Template
+|PAGENAME=Template:Category
+|rationale=You should use this template to provide your wiki-community with a proper documentation of the categories used in the wiki.
+|part of=Baseontologybundle
+}}
+&lt;/noinclude&gt;&lt;includeonly&gt;__NOTOC__
+{{Header for wiki parts
+|Category=Category
+|Icon=Image:Smw_plus_category_icon_100x100.gif
+|Pagetitle={{PAGENAME}}
+|Short description={{#ifeq:{{{rationale|}}}|||[[rationale::{{{rationale|}}}]]}}
+|author={{#ifeq:{{{Has author|}}}|||{{#arraymap:{{{Has author|}}}|,|x|[[has author::x]]|,}}}}
+|Wiki section={{#ifeq:{{{part of|}}}|||{{#arraymap:{{{part of|}}}|,|x|[[part of bundle::x]]|,}}}}
+}}
+
+=== Semantic Form ===
+
+Create an instance of this category:&lt;br/&gt;
+{{#ifeq:{{FULLPAGENAME}}|Category:Category&lt;!--
+ --&gt;|{{#ifeq:{{{Has default form|}}}|&lt;!--
+    --&gt;|''No default form defined for this category.''&lt;!--
+    --&gt;|* Use the default form of this category: [[Page has default form::{{{Has default form|}}}]]&lt;!--
+  --&gt;}}&lt;!--
+ --&gt;|
+}}
+{{#ifeq:{{FULLPAGENAME}}|Category:Category|&lt;!--
+ --&gt;|{{#ifeq:{{{Has default form|}}}|&lt;!--
+    --&gt;|* No default form defined for this category.&lt;!--
+    --&gt;|* Use the default form of this category: [[Has default form::{{{Has default form|}}}]]&lt;!--
+    --&gt;}}&lt;!--
+    --&gt;{{#ifeq:{{{No automatic formedit|}}}|Yes&lt;!--
+      --&gt;|* No automatic semantic form for this category [[No automatic formedit::true| ]]&lt;!--
+      --&gt;|{{#ifeq:{{#isExtensionInstalled:automaticsemanticforms}}|true&lt;!--
+         --&gt;|* Use the automatically created form for this category:&lt;br&gt;&lt;!--
+             --&gt;{{#asfforminput:page|{{PAGENAME}}|50|Enter name of the new article}}&lt;!--
+         --&gt;|* ''Install the AutomaticSemanticForms extensions to use auto-generated forms.''&lt;!--
+       --&gt;}}&lt;!-- endif isExtensionInstalled:
+     --&gt;}}&lt;!-- endif {No automatic formedit
+  --&gt;}}&lt;!-- endif Has default form --&gt;
+
+[[Page has default form::Form:Add and edit Category| ]]
+
+=== Templates ===
+
+This category is used for category annotations in the templates:
+
+{{#ifeq:{{#ask:[[Category:Template]][[Defines category::{{FULLPAGENAME}}]]|default=}}||* none ''(you can create a new template using this category by clicking here: &lt;span class=&quot;plainlinks&quot;&gt;[{{SERVER}}{{SCRIPTPATH}}/index.php/Special:CreateTemplate?category={{urlencode:{{PAGENAME}}}} create template]&lt;/span&gt;)''|&lt;ul&gt;{{#ask:[[Category:Template]][[Defines category::{{FULLPAGENAME}}]]|format=template|template=Show defining template|link=none}}&lt;/ul&gt; }}&lt;!-- category annotations --&gt;&lt;!--
+--&gt;{{#ifeq:{{FULLPAGENAME}}|Category:Category|[[Category:Wiki part| ]]|}}[[Is category::true| ]]&lt;!--
+--&gt;
+&lt;/includeonly&gt;&lt;noinclude&gt;
+{{Part of bundle|value=Baseontologybundle}}
+{{Content hash|value=}}
+&lt;/noinclude&gt;</text>
+    <hash>a1e6adc59e867777e5ef72d520460318</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Template:Header for wiki parts</title>
+    <id>101</id>
+    <revision>
+      <id>2394</id>
+      <timestamp>2010-12-22T20:23:23Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">&lt;noinclude&gt;{{Template
+|PAGENAME=Template:Header for wiki parts
+|part of=Baseontologybundle
+|rationale=This template is used to display a nice header for all wiki parts, i.e. forms, templates etc
+}}
+&lt;/noinclude&gt;&lt;includeonly&gt;{{#switch: {{{Category}}}
+|Template=&lt;!--
+
+case: Template
+
+--&gt;&lt;div class=&quot;round&quot; style=&quot;padding-bottom: 2px; padding-left: 2px; padding-right: 2px; padding-top: 5px; font-family: tahoma, sans-serif; font-weight: bold; font-size: 120%; color: rgb(255,255,255); background-color: #999999; margin-bottom: 5px;&quot;&gt;&lt;!-- --&gt;
+{{{!}} width=&quot;100%&quot; cellspacing=&quot;1&quot; cellpadding=&quot;1&quot; border=&quot;0&quot; align=&quot;center&quot;     
+{{!}}- 
+{{!}} &lt;div style=&quot;padding: 2px; font-family: tahoma,sans-serif; font-weight: bold; font-size: 120%; color: rgb(250, 250, 250); margin-bottom: 2px;&quot; class=&quot;round&quot;&gt;
+{{{!}} width=&quot;100%&quot; cellspacing=&quot;1&quot; cellpadding=&quot;1&quot; border=&quot;0&quot; align=&quot;center&quot;
+{{!}}-
+{{!}} width=&quot;10%&quot; valign=&quot;left&quot; align=&quot;center&quot; rowspan=&quot;2&quot; {{!}} [[{{{Icon}}}|40px]]
+{{!}} '''Template ''{{{Pagetitle}}}'' '''
+{{!}}}&lt;/div&gt;
+{{!}}}&lt;/div&gt;
+{{{!}} cellspacing=&quot;0&quot; cellpadding=&quot;5&quot; style=&quot;position:relative; margin: 0 0 0.5em 1em; border-collapse: collapse; border: 1px solid #999999; background: rgb(255,255,255); float: right; clear: none; width: 20em&quot;
+{{#ifeq:{{{Thumbnail image|}}}|||
+{{!}}-
+{{Tablelongrow|Label=Overview:|Value=[[{{{Thumbnail image|}}}|150px]]}} }}
+{{!}}-
+{{#ifeq:{{{Short description|}}}||
+{{Tablelongrow|Label=Overview:|Value=}}
+|
+{{Tablelongrow|Label=Overview:|Value=''{{{Short description}}}''}} }}
+{{!}}-
+{{#ifeq:{{{Wiki section|}}}||
+{{Tablerow|Label=Content bundle:|Value=''not specified...''}}
+|{{Tablerow|Label=Content bundle:|Value={{{Wiki section|}}} }} }}
+{{!}}-
+{{Tablerow|Label=Author:|Value={{{author|}}} }}
+{{!}}}&lt;!--
+
+end case: Template
+
+--&gt;
+|Form=&lt;!--
+
+case: Form
+
+--&gt;&lt;div class=&quot;round&quot; style=&quot;padding-bottom: 2px; padding-left: 2px; padding-right: 2px; padding-top: 5px; font-family: tahoma, sans-serif; font-weight: bold; font-size: 120%; color: rgb(255,255,255); background-color: #999999; margin-bottom: 5px;&quot;&gt;&lt;!-- --&gt;
+{{{!}} width=&quot;100%&quot; cellspacing=&quot;1&quot; cellpadding=&quot;1&quot; border=&quot;0&quot; align=&quot;center&quot;     
+{{!}}- 
+{{!}} &lt;div style=&quot;padding: 2px; font-family: tahoma,sans-serif; font-weight: bold; font-size: 120%; color: rgb(250, 250, 250); margin-bottom: 2px;&quot; class=&quot;round&quot;&gt;
+{{{!}} width=&quot;100%&quot; cellspacing=&quot;1&quot; cellpadding=&quot;1&quot; border=&quot;0&quot; align=&quot;center&quot;
+{{!}}-
+{{!}} width=&quot;10%&quot; valign=&quot;left&quot; align=&quot;center&quot; rowspan=&quot;2&quot; {{!}} [[{{{Icon}}}|40px]]
+{{!}} '''Semantic form ''{{{Pagetitle}}}'' '''
+{{!}}}&lt;/div&gt;
+{{!}}}&lt;/div&gt;
+{{{!}} cellspacing=&quot;0&quot; cellpadding=&quot;5&quot; style=&quot;position:relative; margin: 0 0 0.5em 1em; border-collapse: collapse; border: 1px solid #999999; background: rgb(255,255,255); float: right; clear: none; width: 20em&quot;
+{{#ifeq:{{{Thumbnail image|}}}|||
+{{!}}-
+{{Tablelongrow|Label=Overview:|Value=[[{{{Thumbnail image|}}}|150px]]}} }}
+{{!}}-
+{{Tablelongrow|Label=Overview:|Value=''{{{Short description}}}''}}
+{{!}}-
+{{#ifeq:{{{Wiki section|}}}||
+{{Tablerow|Label=Content bundle:|Value=''not specified...''}}
+|{{Tablerow|Label=Content bundle:|Value={{{Wiki section|}}} }} }}
+{{!}}-
+{{#ifeq:{{{Has special namespace|}}}||
+{{Tablerow|Label=Namespace:|Value=''main namespace''}}
+|{{Tablerow|Label=Namespace:|Value={{{Has special namespace|}}} }} }}
+{{!}}-
+{{#ifeq:{{{Example article|}}}||
+{{Tablerow|Label=Example:|Value=''not specified...''}}
+|{{Tablerow|Label=Example:|Value={{{Example article|}}} }} }}
+{{!}}-
+{{Tablerow|Label=Author:|Value={{{author|}}} }}
+{{!}}}&lt;!--
+
+end case: Form
+
+--&gt;
+|Category=&lt;!--
+
+case: Category
+
+--&gt;&lt;div class=&quot;round&quot; style=&quot;padding-bottom: 2px; padding-left: 2px; padding-right: 2px; padding-top: 5px; font-family: tahoma, sans-serif; font-weight: bold; font-size: 120%; color: rgb(255,255,255); background-color: #999999; margin-bottom: 5px;&quot;&gt;&lt;!-- --&gt;
+{{{!}} width=&quot;100%&quot; cellspacing=&quot;1&quot; cellpadding=&quot;1&quot; border=&quot;0&quot; align=&quot;center&quot;     
+{{!}}- 
+{{!}} &lt;div style=&quot;padding: 2px; font-family: tahoma,sans-serif; font-weight: bold; font-size: 120%; color: rgb(250, 250, 250); margin-bottom: 2px;&quot; class=&quot;round&quot;&gt;
+{{{!}} width=&quot;100%&quot; cellspacing=&quot;1&quot; cellpadding=&quot;1&quot; border=&quot;0&quot; align=&quot;center&quot;
+{{!}}-
+{{!}} width=&quot;10%&quot; valign=&quot;left&quot; align=&quot;center&quot; rowspan=&quot;2&quot; {{!}} [[{{{Icon}}}|40px]]
+{{!}} '''Category ''{{{Pagetitle}}}'' '''
+{{!}}}&lt;/div&gt;
+{{!}}}&lt;/div&gt;
+{{{!}} cellspacing=&quot;0&quot; cellpadding=&quot;5&quot; style=&quot;position:relative; margin: 0 0 0.5em 1em; border-collapse: collapse; border: 1px solid #999999; background: rgb(255,255,255); float: right; clear: none; width: 20em&quot;
+{{#ifeq:{{{Thumbnail image|}}}|||
+{{!}}-
+{{Tablelongrow|Label=Overview:|Value=[[{{{Thumbnail image|}}}|150px]]}} }}
+{{!}}-
+{{Tablelongrow|Label=Overview:|Value=''{{{Short description}}}''}}
+{{!}}-
+{{#ifeq:{{{Wiki section|}}}||
+{{Tablerow|Label=Content bundle:|Value=''not specified...''}}
+|{{Tablerow|Label=Content bundle:|Value={{{Wiki section|}}} }} }}
+{{!}}-
+{{Tablerow|Label=Author:|Value={{{author|}}} }}
+{{!}}}&lt;!--
+
+end case: Category
+
+--&gt;
+|Content bundle=&lt;!--
+
+case: Content bundle
+
+--&gt;&lt;div class=&quot;round&quot; style=&quot;padding-bottom: 2px; padding-left: 2px; padding-right: 2px; padding-top: 5px; font-family: tahoma, sans-serif; font-weight: bold; font-size: 120%; color: rgb(255,255,255); background-color: #999999; margin-bottom: 5px;&quot;&gt;&lt;!-- --&gt;
+{{{!}} width=&quot;100%&quot; cellspacing=&quot;1&quot; cellpadding=&quot;1&quot; border=&quot;0&quot; align=&quot;center&quot;     
+{{!}}- 
+{{!}} &lt;div style=&quot;padding: 2px; font-family: tahoma,sans-serif; font-weight: bold; font-size: 120%; color: rgb(250, 250, 250); margin-bottom: 2px;&quot; class=&quot;round&quot;&gt;
+{{{!}} width=&quot;100%&quot; cellspacing=&quot;1&quot; cellpadding=&quot;1&quot; border=&quot;0&quot; align=&quot;center&quot;
+{{!}}-
+{{!}} width=&quot;10%&quot; valign=&quot;left&quot; align=&quot;center&quot; rowspan=&quot;2&quot; {{!}} [[{{{Icon}}}|40px]]
+{{!}} '''Content bundle ''{{{Pagetitle}}}'' '''
+{{!}}}&lt;/div&gt;
+{{!}}}&lt;/div&gt;
+{{{!}} cellspacing=&quot;0&quot; cellpadding=&quot;5&quot; style=&quot;position:relative; margin: 0 0 0.5em 1em; border-collapse: collapse; border: 1px solid #999999; background: rgb(255,255,255); float: right; clear: none; width: 20em&quot;
+{{#ifeq:{{{Thumbnail image|}}}|||
+{{!}}-
+{{Tablelongrow|Label=Overview:|Value=[[{{{Thumbnail image|}}}|150px]]}} }}
+{{!}}-
+{{Tablelongrow|Label=Overview:|Value=''{{{Short description}}}''}}
+{{!}}-
+{{Tablerow|Label=Vendor:|Value={{{author|}}} }}
+{{!}}-
+{{Tablerow|Label=Version:|Value={{{Version|}}} }}
+{{!}}-
+{{Tablerow|Label=Installation dir:|Value={{{Installation dir|}}} }}
+{{!}}-
+{{Tablerow|Label=Dependency:|Value={{{Dependency|}}} }}
+{{!}}}&lt;!--
+
+case: Content bundle END
+
+--&gt;
+|Property=&lt;!--
+
+case: Property
+
+--&gt;&lt;div class=&quot;round&quot; style=&quot;padding-bottom: 2px; padding-left: 2px; padding-right: 2px; padding-top: 5px; font-family: tahoma, sans-serif; font-weight: bold; font-size: 120%; color: rgb(255,255,255); background-color: #999999; margin-bottom: 5px;&quot;&gt;&lt;!-- --&gt;
+{{{!}} width=&quot;100%&quot; cellspacing=&quot;1&quot; cellpadding=&quot;1&quot; border=&quot;0&quot; align=&quot;center&quot;     
+{{!}}- 
+{{!}} &lt;div style=&quot;padding: 2px; font-family: tahoma,sans-serif; font-weight: bold; font-size: 120%; color: rgb(250, 250, 250); margin-bottom: 2px;&quot; class=&quot;round&quot;&gt;
+{{{!}} width=&quot;100%&quot; cellspacing=&quot;1&quot; cellpadding=&quot;1&quot; border=&quot;0&quot; align=&quot;center&quot;
+{{!}}-
+{{!}} width=&quot;10%&quot; valign=&quot;left&quot; align=&quot;center&quot; rowspan=&quot;2&quot; {{!}} [[{{{Icon}}}|40px]]
+{{!}} '''Property ''{{{Pagetitle}}}'' '''
+{{!}}}&lt;/div&gt;
+{{!}}}&lt;/div&gt;
+{{{!}} cellspacing=&quot;0&quot; cellpadding=&quot;5&quot; style=&quot;position:relative; margin: 0 0 0.5em 1em; border-collapse: collapse; border: 1px solid #999999; background: rgb(255,255,255); float: right; clear: none; width: 20em&quot;
+{{#ifeq:{{{Thumbnail image|}}}|||
+{{!}}-
+{{Tablelongrow|Label=Overview:|Value=[[{{{Thumbnail image|}}}|150px]]}} }}
+{{!}}-
+{{Tablelongrow|Label=Overview:|Value=''{{{Short description}}}''}}
+{{!}}-
+{{#ifeq:{{{Wiki section|}}}||
+{{Tablerow|Label=Content bundle:|Value=''not specified...''}}
+|{{Tablerow|Label=Content bundle:|Value={{{Wiki section|}}} }} }}
+{{!}}-
+{{Tablerow|Label=Author:|Value={{{author|}}} }}
+{{!}}}&lt;!--
+
+case: Property END
+
+--&gt;
+|User defined rule=&lt;!--
+
+case: User defined rule
+
+--&gt;&lt;div class=&quot;round&quot; style=&quot;padding-bottom: 2px; padding-left: 2px; padding-right: 2px; padding-top: 5px; font-family: tahoma, sans-serif; font-weight: bold; font-size: 120%; color: rgb(255,255,255); background-color: #999999; margin-bottom: 5px;&quot;&gt;&lt;!-- --&gt;
+{{{!}} width=&quot;100%&quot; cellspacing=&quot;1&quot; cellpadding=&quot;1&quot; border=&quot;0&quot; align=&quot;center&quot;     
+{{!}}- 
+{{!}} &lt;div style=&quot;padding: 2px; font-family: tahoma,sans-serif; font-weight: bold; font-size: 120%; color: rgb(250, 250, 250); margin-bottom: 2px;&quot; class=&quot;round&quot;&gt;
+{{{!}} width=&quot;100%&quot; cellspacing=&quot;1&quot; cellpadding=&quot;1&quot; border=&quot;0&quot; align=&quot;center&quot;
+{{!}}-
+{{!}} width=&quot;10%&quot; valign=&quot;left&quot; align=&quot;center&quot; rowspan=&quot;2&quot; {{!}} [[{{{Icon}}}|40px]]
+{{!}} '''User defined rule ''{{{Pagetitle}}}'' '''
+{{!}}}&lt;/div&gt;
+{{!}}}&lt;/div&gt;
+{{{!}} cellspacing=&quot;0&quot; cellpadding=&quot;5&quot; style=&quot;position:relative; margin: 0 0 0.5em 1em; border-collapse: collapse; border: 1px solid #999999; background: rgb(255,255,255); float: right; clear: none; width: 20em&quot;
+{{#ifeq:{{{Thumbnail image|}}}|||
+{{!}}-
+{{Tablelongrow|Label=Overview:|Value=[[{{{Thumbnail image|}}}|150px]]}} }}
+{{!}}-
+{{Tablelongrow|Label=Overview:|Value=''{{{Short description}}}''}}
+{{!}}-
+{{#ifeq:{{{Wiki section|}}}||
+{{Tablerow|Label=Content bundle:|Value=''not specified...''}}
+|{{Tablerow|Label=Content bundle:|Value={{{Wiki section|}}} }} }}
+{{!}}-
+{{Tablerow|Label=Author:|Value={{{author|}}} }}
+{{!}}}&lt;!--
+
+case: User defined rule END
+
+--&gt;
+|All content bundles=&lt;!--
+
+case: All content bundles
+
+--&gt;&lt;div class=&quot;round&quot; style=&quot;padding-bottom: 2px; padding-left: 2px; padding-right: 2px; padding-top: 5px; font-family: tahoma, sans-serif; font-weight: bold; font-size: 120%; color: rgb(255,255,255); background-color: #999999; margin-bottom: 5px;&quot;&gt;&lt;!-- --&gt;
+{{{!}} width=&quot;100%&quot; cellspacing=&quot;1&quot; cellpadding=&quot;1&quot; border=&quot;0&quot; align=&quot;center&quot;     
+{{!}}- 
+{{!}} &lt;div style=&quot;padding: 2px; font-family: tahoma,sans-serif; font-weight: bold; font-size: 120%; color: rgb(250, 250, 250); margin-bottom: 2px;&quot; class=&quot;round&quot;&gt;
+{{{!}} width=&quot;100%&quot; cellspacing=&quot;1&quot; cellpadding=&quot;1&quot; border=&quot;0&quot; align=&quot;center&quot;
+{{!}}-
+{{!}} width=&quot;10%&quot; valign=&quot;left&quot; align=&quot;center&quot; rowspan=&quot;2&quot; {{!}} [[{{{Icon}}}|40px]]
+{{!}} '''All Content Bundles of ''{{SITENAME}}'' '''
+{{!}}}&lt;/div&gt;
+{{!}}}&lt;/div&gt;
+{{{!}} cellspacing=&quot;0&quot; cellpadding=&quot;5&quot; style=&quot;position:relative; margin: 0 0 0.5em 1em; border-collapse: collapse; border: 1px solid #999999; background: rgb(255,255,255); float: right; clear: none; width: 20em&quot;
+{{!}}-
+{{Tablelongrow|Label=Overview:|Value=''{{{Short description}}}''}}
+{{!}}-
+{{Tablerow|Label=Author:|Value={{{author|}}} }}
+{{!}}}&lt;!--
+
+case: All content bundles END
+
+--&gt;
+|#default=&lt;!-- unknown category
+--&gt;&lt;div class=&quot;round&quot; style=&quot;padding-bottom: 5px; padding-left: 5px; padding-right: 5px; padding-top: 10px; font-family: tahoma, sans-serif; font-weight: bold; font-size: 120%; color: rgb(255,255,255); background-color: rgb(159,80,0); margin-bottom: 5px;float: right; clear: none; &quot;&gt;&lt;!-- --&gt;
+{{{!}} width=&quot;100%&quot; cellspacing=&quot;1&quot; cellpadding=&quot;1&quot; border=&quot;0&quot; align=&quot;center&quot;     
+{{!}}- 
+{{!}} &lt;div style=&quot;padding: 2px; font-family: tahoma,sans-serif; font-weight: bold; font-size: 120%; color: rgb(250, 250, 250); margin-bottom: 2px;&quot; class=&quot;round&quot;&gt;
+{{{!}} width=&quot;100%&quot; cellspacing=&quot;1&quot; cellpadding=&quot;1&quot; border=&quot;0&quot; align=&quot;center&quot;
+{{!}}-
+{{!}} width=&quot;10%&quot; valign=&quot;left&quot; align=&quot;center&quot; {{!}} [[Image:Stockage.png|40px]]
+{{!}} '''{{#show:{{{PAGENAME}}}|?Content title=}}'''
+{{!}}}&lt;/div&gt;
+{{!}}}&lt;/div&gt;
+{{{!}} cellspacing=&quot;0&quot; cellpadding=&quot;5&quot; style=&quot;position:relative; margin: 0 0 0.5em 1em; border-collapse: collapse; border: 1px solid rgb(159,80,0); background: rgb(255,255,255); float: right; clear: none; width: 20em&quot;
+}}&lt;/includeonly&gt;&lt;noinclude&gt;
+{{Part of bundle|value=Baseontologybundle}}
+{{Content hash|value=}}
+&lt;/noinclude&gt;</text>
+    <hash>e3c3e1cd58b8aedabd5e1b40a5b2c6b7</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Template:Form</title>
+    <id>104</id>
+    <revision>
+      <id>2385</id>
+      <timestamp>2010-12-22T20:16:38Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">&lt;noinclude&gt;{{Template
+|PAGENAME=Template:Form
+|rationale=This template is used to display and annotate a Form.
+|part of=Baseontologybundle
+}}
+&lt;/noinclude&gt;&lt;includeonly&gt;__NOTOC__ {{Header for wiki parts
+|Category=Form
+|Icon=Image:smw_plus_form_icon_100x100.gif
+|Pagetitle={{PAGENAME}}
+|Thumbnail image={{{Form thumbnail|}}}
+|Short description={{#ifeq:{{{rationale|}}}|||[[rationale::{{{rationale|}}}]]}}
+|author={{#ifeq:{{{Has author|}}}|||{{#arraymap:{{{Has author|}}}|,|x|[[has author::x]]|,}}}}
+|Wiki section={{#ifeq:{{{part of|}}}|||{{#arraymap:{{{part of|}}}|,|x|[[part of bundle::x]]|,}}}}
+|Example article={{#ifeq:{{{Example article|}}}|||[[Example article::{{{Example article|}}}]]}}
+|Has special namespace={{#ifeq:{{{Has special namespace|}}}|||[[Has special namespace::{{{Has special namespace|}}}]]}}
+}} 
+
+== Using this form to create a new wiki page ==
+Is this form visible in the &quot;Create new page&quot;-article? 
+*{{#ifeq:{{{Show in create new page|}}}||not visible|[[Show in create new page::{{{Show in create new page|}}}]]}}
+
+You can create or edit a wiki page using this form by entering the name of the page and clicking on &quot;Create or edit page&quot;:
+*{{#ifeq:{{{Hide input field|}}}|&lt;!--
+  --&gt;|Create article:{{#forminput:{{PAGENAME}}|40|{{{Has special namespace|}}}|Create or edit page|}}&lt;!--
+  --&gt;|[[Hide input field::{{{Hide input field|}}}| ]]&lt;!--
+     --&gt;{{#ifeq:{{{Hide input field|}}}|Yes&lt;!--
+       --&gt;|''the form input field is hidden for this form.''&lt;!--
+       --&gt;|Create article:{{#forminput:{{PAGENAME}}|40|{{{Has special namespace|}}}|Create or edit page|}}&lt;!--
+     --&gt;}}
+}}
+{{#ifeq:{{{Has special namespace|}}}|||
+::'''Please note:''' the name of the article must start with &quot;{{{Has special namespace|}}}&quot;.
+}}
+
+== Interaction with templates ==
+
+This form populates templates: {{#ifeq:{{{Populates template|}}}||* none
+|
+&lt;ul&gt;
+{{#arraymap:{{{Populates template|}}}|,|x|&lt;li&gt;[[Populates template::x]]|}}
+&lt;/ul&gt;
+}} 
+[[Page has default form::Form:Add and edit Form| ]] &lt;!-- default form for the form page itself --&gt; 
+{{#ifeq:{{{Form thumbnail|}}}|||[[Form thumbnail::{{{Form thumbnail|}}}| ]]}} 
+Edit the page to see the wikitext of this form.[[Category:Form]]&lt;/includeonly&gt;&lt;noinclude&gt;
+{{Part of bundle|value=Baseontologybundle}}
+{{Content hash|value=}}
+&lt;/noinclude&gt;</text>
+    <hash>95533a614903ac3aca9c9807ffa7dbc1</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Template:!</title>
+    <id>105</id>
+    <revision>
+      <id>2380</id>
+      <timestamp>2010-12-22T20:13:14Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">&lt;noinclude&gt;{{Template
+|PAGENAME=Template:!
+|rationale=Help template to print out the pipesymbol.
+}}
+&lt;/noinclude&gt;&lt;includeonly&gt;|&lt;/includeonly&gt;&lt;noinclude&gt;
+{{Part of bundle|value=Baseontologybundle}}
+{{Content hash|value=}}
+&lt;/noinclude&gt;</text>
+    <hash>4dc788ce82a8c564aedfb6fb3a5d4d0c</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Template:Forms/Generate form field including PAGENAME</title>
+    <id>108</id>
+    <revision>
+      <id>2388</id>
+      <timestamp>2010-12-22T20:18:04Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">&lt;noinclude&gt;{{Template
+|part of=Baseontologybundle
+|rationale=This template generates a form field containing the pagename of the article.
+}}
+&lt;/noinclude&gt;&lt;includeonly&gt;&lt;nowiki&gt;{{{field|&lt;/nowiki&gt;{{{fieldname}}}&lt;nowiki&gt;|input type=text|default=&lt;/nowiki&gt;{{#ifeq: {{PAGENAME}}|Semantic Forms permissions test||{{PAGENAME}} }}&lt;nowiki&gt;|&lt;/nowiki&gt;{{{params|}}}&lt;nowiki&gt;}}}&lt;/nowiki&gt;&lt;/includeonly&gt;&lt;noinclude&gt;
+{{Part of bundle|value=Baseontologybundle}}
+{{Content hash|value=}}
+&lt;/noinclude&gt;</text>
+    <hash>be556158ab837f4599968244b21407c2</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Template:Forms/Generate hidden form field</title>
+    <id>109</id>
+    <revision>
+      <id>2389</id>
+      <timestamp>2010-12-22T20:18:29Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">&lt;noinclude&gt;{{Template
+|part of=Baseontologybundle
+|rationale=This template generates a form field containing the a form field and a field value for it.
+|PAGENAME=Template:Forms/Generate form field including PAGENAME
+}}
+{{Part of bundle|value=Baseontologybundle}}
+&lt;/noinclude&gt;&lt;includeonly&gt;&lt;nowiki&gt;{{{field|&lt;/nowiki&gt;{{{fieldname}}}&lt;nowiki&gt;|input type=text|hidden|mandatory|default=&lt;/nowiki&gt;{{{fieldvalue}}}&lt;nowiki&gt;}}}&lt;/nowiki&gt;&lt;/includeonly&gt;&lt;noinclude&gt;
+{{Part of bundle|value=Baseontologybundle}}
+{{Content hash|value=}}
+&lt;/noinclude&gt;</text>
+    <hash>d26dc2fbe791268d455c95af66853c1a</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Template:Forms/Generate hidden form field including PAGENAME</title>
+    <id>110</id>
+    <revision>
+      <id>2390</id>
+      <timestamp>2010-12-22T20:19:01Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">&lt;noinclude&gt;{{Template
+|PAGENAME=Template:Forms/Generate hidden form field including PAGENAME
+|part of=Baseontologybundle
+|rationale=It generates a hidden form field containing PAGENAME.
+}}
+&lt;/noinclude&gt;&lt;includeonly&gt;{{#ifeq:{{NAMESPACE}}||
+&lt;nowiki&gt;{{{field|&lt;/nowiki&gt;{{{fieldname}}}&lt;nowiki&gt;|input type=text|mandatory|hidden|default=&lt;/nowiki&gt;{{PAGENAME}}&lt;nowiki&gt;|&lt;/nowiki&gt;{{{params|}}}&lt;nowiki&gt;}}}&lt;/nowiki&gt;
+|
+&lt;nowiki&gt;{{{field|&lt;/nowiki&gt;{{{fieldname}}}&lt;nowiki&gt;|input type=text|mandatory|hidden|default=&lt;/nowiki&gt;{{NAMESPACE}}:{{PAGENAME}}&lt;nowiki&gt;|&lt;/nowiki&gt;{{{params|}}}&lt;nowiki&gt;}}}&lt;/nowiki&gt;
+}}&lt;/includeonly&gt;&lt;noinclude&gt;
+{{Part of bundle|value=Baseontologybundle}}
+{{Content hash|value=}}
+&lt;/noinclude&gt;</text>
+    <hash>041422f8562651ca505cc8f1caecf82c</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Template:Forms/Get PAGENAME</title>
+    <id>112</id>
+    <revision>
+      <id>2391</id>
+      <timestamp>2010-12-22T20:19:42Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">&lt;noinclude&gt;{{Template
+|part of=Baseontologybundle
+|rationale=It yields the pagename of the current article including the namespace if the article is not in the main namespace.
+|PAGENAME=Template:Forms/Get PAGENAME
+}}
+&lt;/noinclude&gt;&lt;includeonly&gt;__NORICHEDITOR__{{#ifeq:{{NAMESPACE}}||
+{{PAGENAME}}
+|
+{{NAMESPACE}}:{{PAGENAME}}
+}}&lt;/includeonly&gt;&lt;noinclude&gt;
+{{Part of bundle|value=Baseontologybundle}}
+{{Content hash|value=}}
+&lt;/noinclude&gt;</text>
+    <hash>5dc09baef51dcae7309f047bb4ea215b</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Template:Property</title>
+    <id>113</id>
+    <revision>
+      <id>2397</id>
+      <timestamp>2010-12-22T20:25:56Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">&lt;noinclude&gt;{{Template
+|PAGENAME=Template:Property
+|rationale=Displays a property and some essential metadata.
+|part of=Baseontologybundle
+}}
+&lt;/noinclude&gt;&lt;includeonly&gt;__NOTOC__ {{Header for wiki parts
+|Category=Property
+|Icon=Image:smw_plus_property_icon_100x100.gif
+|Pagetitle={{PAGENAME}}
+|Short description={{#ifeq:{{{rationale|}}}|||[[rationale::{{{rationale|}}}]]}}
+|author={{#ifeq:{{{Has author|}}}|||{{#arraymap:{{{Has author|}}}|,|x|[[has author::x]]|,}}}}
+|Wiki section={{#ifeq:{{{part of|}}}|||{{#arraymap:{{{part of|}}}|,|x|[[part of bundle::x]]|,}}}}
+}}
+
+=== Default form  ===
+
+New pages (i.e. &quot;redlinks&quot;) which are related via this property shall use the form: 
+
+*{{#ifeq:{{{Has default form|}}}||''not specified''|[[Has default form::{{{Has default form|}}}]]}}
+
+[[Page has default form::Form:Add and edit Property| ]] &lt;!-- default form for the property page itself --&gt; 
+&lt;!-- type and category annotations --&gt;&lt;br&gt; 
+[[Category:Property]]
+
+if this property does not open with Form:Add and edit Property then click here: [http://contentwiki.ontoprise.com/index.php/Special:FormEdit/Add_and_edit_Property/{{urlencode:{{FULLPAGENAME}}}}]&lt;/includeonly&gt;&lt;noinclude&gt;
+{{Part of bundle|value=Baseontologybundle}}
+{{Content hash|value=}}
+&lt;/noinclude&gt;</text>
+    <hash>dc3f1a8fec1933ae73ab5632b6ce236c</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Template:Template</title>
+    <id>114</id>
+    <revision>
+      <id>2378</id>
+      <timestamp>2010-12-22T20:11:34Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">&lt;noinclude&gt;{{Template
+|PAGENAME=Template:Template
+|rationale=Call this template whenever making a template accessible for other wiki users. It helps bookkeeping of the templates belonging to a particular wiki section.
+|Example article=Template:Person
+|defines category=Category:Template
+|part of=Baseontologybundle
+}}
+&lt;/noinclude&gt;&lt;includeonly&gt;{{Header for wiki parts
+|Category=Template
+|Icon=Image:Smw_plus_template_icon_100x100.gif
+|Pagetitle={{PAGENAME}}
+|Thumbnail image={{#ifeq:{{{Form thumbnail|}}}|||[[Form thumbnail::{{{Form thumbnail|}}}]]}}
+|Short description={{#ifeq:{{{rationale|}}}|||[[rationale::{{{rationale|}}}]]}}
+|author={{#ifeq:{{{Has author|}}}|||{{#arraymap:{{{Has author|}}}|,|x|[[has author::x]]|,}}}}
+|Wiki section={{#ifeq:{{{part of|}}}|||{{#arraymap:{{{part of|}}}|,|x|[[part of bundle::x]]|,}}}}
+|Example article={{#ifeq:{{{Example article|}}}|||[[Example article::{{{Example article|}}}]]}}
+}} 
+
+=== Defines categories  ===
+
+This template uses these categories in category annotations: {{#ifeq:{{{defines category|}}}||* none|
+&lt;ul&gt;
+{{#arraymap:{{{defines category|}}}|,|x|&lt;li&gt;[[Defines category::x]]|}}
+&lt;/ul&gt;
+}} 
+
+=== Interaction with forms  ===
+
+This template is populated by form(s): {{#ifeq:{{#ask:[[Category:Form]][[Populates template::{{FULLPAGENAME}}]]|default=}}||&lt;!--
+   --&gt;* none ''(you can create a new form populating this template by clicking here: &lt;span class=&quot;plainlinks&quot;&gt;[{{SERVER}}{{SCRIPTPATH}}/index.php/Special:CreateEmbeddedForm?for+template={{urlencode:{{PAGENAME}}}} create form]&lt;/span&gt;)''&lt;!--
+   --&gt;|&lt;!--
+   --&gt;&lt;ul&gt;&lt;!--
+     --&gt;{{#ask:[[Category:Form]][[Populates template::{{FULLPAGENAME}}]]&lt;!--
+     --&gt;|format=template|template=Show defining form|link=none}}&lt;!--
+   --&gt;&lt;/ul&gt;
+}} [[Page has default form::Form:Add and edit Template| ]] &lt;!-- default form for the template page itself --&gt; 
+[[Category:Template]]&lt;/includeonly&gt;&lt;noinclude&gt;
+{{Part of bundle|value=Baseontologybundle}}
+{{Content hash|value=}}
+&lt;/noinclude&gt;</text>
+    <hash>4f7f0d9cb3bfa1d54457b08471a4fd06</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Category:User</title>
+    <id>151</id>
+    <revision>
+      <id>2210</id>
+      <timestamp>2010-12-22T14:46:24Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">{{Category
+|PAGENAME=Category:User
+|rationale=This category is used to tag wiki users.
+|Has default form=Form:User
+|No automatic formedit=Yes
+|part of=Baseontologybundle
+}}
+{{Part of bundle|value=Baseontologybundle}}</text>
+    <hash>21a4868833737dbdafc5dc006c9211d3</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Category:Entity</title>
+    <id>162</id>
+    <revision>
+      <id>2254</id>
+      <timestamp>2010-12-22T16:25:16Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">{{Category
+|PAGENAME=Category:Entity
+|rationale=Denotes the default root concept of the built-in ontology. This root concept can be used in domain axioms of generic properties (e.g. Property:Description), so that these properties appear in the intelligent auto-completion of the QueryInterface.
+|No automatic formedit=Yes
+|part of=Baseontologybundle
+}}
+{{Part of bundle|value=Baseontologybundle}}</text>
+    <hash>8ca0ccfb4979149c02bd94fbada97d01</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Has type</title>
+    <id>163</id>
+    <revision>
+      <id>2445</id>
+      <timestamp>2010-12-23T09:49:06Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">{{Property
+|part of=Baseontologybundle
+|rationale=Defines the type of a property.
+|PAGENAME=Property:Has type
+}}
+[[Has domain and range::Category:Property; | ]]
+{{Part of bundle|value=Baseontologybundle}}
+{{Content hash|value=}}</text>
+    <hash>7f2cf69054df918980fcd62e96699449</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Template has parameter</title>
+    <id>164</id>
+    <revision>
+      <id>2466</id>
+      <timestamp>2010-12-23T10:23:25Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">{{Property
+|part of=Baseontologybundle
+|rationale=Attribute for specifying a parameter of a template.
+|PAGENAME=Property:Template has parameter
+}}
+This property is deprecated.
+[[Has type::Type:String| ]] [[Has domain and range::Category:Template| ]]
+{{Part of bundle|value=Baseontologybundle}}
+{{Content hash|value=}}</text>
+    <hash>415888c31a0d2ac3e5341d97befed042</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Property:HasSubsection</title>
+    <id>166</id>
+    <revision>
+      <id>2440</id>
+      <timestamp>2010-12-23T09:42:35Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">{{Property
+|PAGENAME=Property:HasSubsection
+|part of=Baseontologybundle
+|rationale=Connects a content item with a subordinate content item. E.g. hasSubsection('SMW manual', 'Inline query tutorial').
+}}
+[[Has type::Type:Page| ]] [[Is inverse of::Property:Subsection of| ]] [[has domain and range::Category:Content; Category:Content| ]]
+{{Part of bundle|value=Baseontologybundle}}
+{{Content hash|value=}}</text>
+    <hash>01ab2a9df483adac1f5e2f2b73e86e13</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Has part</title>
+    <id>167</id>
+    <revision>
+      <id>2443</id>
+      <timestamp>2010-12-23T09:47:31Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">{{Property
+|part of=Baseontologybundle
+|rationale=Relates a wiki part to a subordinate wiki part.
+|PAGENAME=Property:Has part
+}}
+[[Has type::Type:Page| ]] 
+
+[[Is inverse of::Property:Part of| ]] [[has domain and range::Category:Wiki_part; Category:Wiki part| ]] 
+
+[[Category:Transitive properties]]
+{{Part of bundle|value=Baseontologybundle}}
+{{Content hash|value=}}</text>
+    <hash>ca918ba080424fda4e37aebf0826bc72</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Template is called by</title>
+    <id>168</id>
+    <revision>
+      <id>2467</id>
+      <timestamp>2010-12-23T10:24:09Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">{{Property
+|part of=Baseontologybundle
+|rationale=Relates a template to a wiki-part (e.g. another template or form) which calls the first template.
+|PAGENAME=Property:Template is called by
+}}
+[[Has type::Type:Page| ]] 
+[[Is inverse of::Property:Calls template| ]] [[has domain and range::Category:Template; Category:Wiki part| ]]
+{{Part of bundle|value=Baseontologybundle}}
+{{Content hash|value=}}</text>
+    <hash>beabc5c2b13816a889ef9ccda870022b</hash>
+    </revision>
+  </page>
+  <page>
+    <title>MediaWiki:Haloquicklinks</title>
+    <id>172</id>
+    <revision>
+      <id>2497</id>
+      <timestamp>2010-12-23T11:37:47Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">&lt;div style=&quot;font-size: 10pt; margin-top: 15px; &quot;&gt;&lt;div style=&quot;border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: rgb(255, 255, 255); line-height: 2.5; &quot;&gt;'''Quicklinks'''&lt;/div&gt; 
+{| cellspacing=&quot;1&quot; cellpadding=&quot;1&quot; border=&quot;0&quot; style=&quot;line-height: 1.8em; &quot; summary=&quot;Halo Quicklinks&quot;
+|-
+| style=&quot;vertical-align: top; width: 350px; &quot; | [[About_SMW%2B|About SMW+]] 
+| style=&quot;vertical-align: top; width: 350px; &quot; | [[Special:SpecialPages|Special pages]] 
+| style=&quot;vertical-align: top; width: 350px; &quot; | [[Special:OntologyBrowser|Ontology Browser]] 
+| style=&quot;vertical-align: top; width: 350px; &quot; | [[Special:RecentChanges|Recent changes]]
+|-
+| style=&quot;vertical-align: top; width: 350px; &quot; | [[Privacy_policy|Privacy policy]] 
+| style=&quot;vertical-align: top; width: 350px; &quot; | [[Special:Gardening|Gardening]] 
+| style=&quot;vertical-align: top; width: 350px; &quot; | [[Special:DataImportRepository|Data Import Repository]] 
+| style=&quot;vertical-align: top; width: 350px; &quot; | [[Special:NewPages|New pages]]
+|-
+| style=&quot;vertical-align: top; width: 350px; &quot; | [[Disclaimer|Disclaimer]] 
+| style=&quot;vertical-align: top; width: 350px; &quot; | [[Special:QueryInterface|QueryInterface]] 
+| style=&quot;vertical-align: top; width: 350px; &quot; | [[Special:Preferences|Preferences]] 
+| style=&quot;vertical-align: top; width: 350px; &quot; | [[Special:PopularPages|Popular pages]]
+|}
+&lt;/div&gt; 
+&lt;div style=&quot;display:none;&quot;&gt;{{Part of bundle|value=Baseontologybundle}}
+{{Content hash|value=}}
+[[Rationale::This article defines the contents of the &quot;Quicklinks&quot; menubar.| ]]&lt;/div&gt;</text>
+    <hash>1f6aa753dc5f6081a10c8645fe1cf817</hash>
+    </revision>
+  </page>
+  <page>
+    <title>About SMW+</title>
+    <id>175</id>
+    <revision>
+      <id>2147</id>
+      <timestamp>2010-12-22T11:21:12Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">__NOTOC__
+
+== About SMW+ ==
+==== What is SMW&lt;sup&gt;+&lt;/sup&gt;? ====
+
+SMW&lt;sup&gt;+&lt;/sup&gt; is a semantic enterprise wiki that is distributed by Ontoprise GmbH, Karlsruhe, Germany. SMW&lt;sup&gt;+&lt;/sup&gt; is well suited for organizations or teams dealing with heterogeneous and informal workflows. SMW&lt;sup&gt;+&lt;/sup&gt; offers a rich feature set to create, share, publish and re-use knowledge contained in content. Ontoprise develops extensions to MediaWiki and carefully picks other useful extensions and, if having passed our quality assurance procedure, casts them into SMW&lt;sup&gt;+&lt;/sup&gt;. [http://smwforum.ontoprise.com/smwforum/index.php/Faq/SMW%2B ''Read more...'']
+
+==== Who is Ontoprise? ====
+
+Ontoprise GmbH based in Karlsruhe, Germany, is a leading software provider of ontology-based solutions. Ontologies structure relevant know-how of your company, no matter how complex the relations are and how widely the information is scattered throughout the enterprise. [http://smwforum.ontoprise.com/smwforum/index.php/Faq/Ontoprise ''Read more...'']
+
+==== What is &quot;Project Halo&quot;? ====
+
+Vulcan Inc, based in Seattle, has established the long-term research program Project Halo to develop a “Digital Aristotle” that can serve as a comprehensive computer knowledge base and problem-solving system for natural sciences. Ontoprise GmbH has been elected as Vulcan's prime contractor to develop an extension (named &quot;halo extension&quot;) to Semantic MediaWiki for Project Halo. The extended Semantic MediaWiki is serving as a web-based collaboration tool for the user-friendly and low-cost acquisition of scientific knowledge for Project Halo. [http://smwforum.ontoprise.com/smwforum/index.php/Faq/project_halo ''Read more...'']
+
+==== Why are you claiming SMW&lt;sup&gt;+&lt;/sup&gt; is a &quot;semantic enterprise wiki&quot;? ====
+
+A wiki is a collection of web pages designed to enable anyone who accesses it to contribute or modify content quickly. Enterprises are adopting wikis more and more over the last years to make use of the wiki principle. Compared with other enterprise wikis SMW&lt;sup&gt;+&lt;/sup&gt; ranks under the top three enterprise wikis. SMW&lt;sup&gt;+&lt;/sup&gt; is a semantic enterprise wiki allowing casual users to include structured data into articles and, thus, organize articles in a graspable manner and to instantaneously exploit the data. Therefore SMW&lt;sup&gt;+&lt;/sup&gt; is a full blown knowledge management system combining a wiki's social authoring approach with proven semantic technology. [http://smwforum.ontoprise.com/smwforum/index.php/Faq/Enterprise_semantic_wiki ''Read more...'']
+
+==== How does SMW&lt;sup&gt;+&lt;/sup&gt; compare to other enterprise wikis? ====
+
+SMW&lt;sup&gt;+&lt;/sup&gt; is providing a competitive level for requirements requested by professional users in the fields of reliability in daily operation, ease of procurement, commercial support contracts, minimal training efforts, access control and scalability. Thanks to its semantic technologies SMW&lt;sup&gt;+&lt;/sup&gt; clearly outpaces non-semantic wikis in the fields of interoperability and expressivity. [http://smwforum.ontoprise.com/smwforum/index.php/Faq/Comparison_of_SMW%2B_with_other_enterprise_wikis ''Read more...'']
+
+==== How does SMW&lt;sup&gt;+&lt;/sup&gt; compare to other semantic wikis? ====
+
+SMW&lt;sup&gt;+&lt;/sup&gt; is a semantic wiki since it heavily employs semantic technologies (i.e. typed links, taxonomy and inferencing). SMW&lt;sup&gt;+&lt;/sup&gt; outpaces other semantic wikis with respect to requirements requested by professional users (ease of procurement, commercial support contracts, interoperability). Thanks to its semantic technologies SMW&lt;sup&gt;+&lt;/sup&gt; competes with other semantic wikis regarding expressivity level but it offers the best trade off between expressivity and computability. Also, SMW&lt;sup&gt;+&lt;/sup&gt; users are efficiently supported with usability features to efficiently make use of the high level of expressivity. [http://smwforum.ontoprise.com/smwforum/index.php/Faq/Comparison_of_SMW%2B_with_other_semantic_wikis ''Read more...'']
+
+==== Do you provide professional support? ====
+
+When enterprises consider deploying a wiki then the availability of commercial support is imperative. Ontoprise accounts for the special needs of commercial implementations of SMW&lt;sup&gt;+&lt;/sup&gt; (and Semantic MediaWiki) by offering technical support contracts, training for administrators and end-users and consulting, custom software development and system integration. [http://smwforum.ontoprise.com/smwforum/index.php/Faq/Professional_support_contracts ''Read more...'']
+
+==== What does &quot;GPL&quot; mean? ====
+
+SMW+ is open source software. It is licenced under the GPL General Public License. This license grants you the right to distribute SMW&lt;sup&gt;+&lt;/sup&gt; in compliance with the conditions which are named in the GPL text. [http://smwforum.ontoprise.com/smwforum/index.php/Faq/GPL ''Read more...'']
+
+==== What is the &quot;Halo extension&quot;? ====
+
+Seattle-based Vulcan Inc has selected ontoprise GmbH as its prime contractor to develop an extension to Semantic MediaWiki for Project Halo; the extension is named Halo extension. The Halo extension improves Semantic MediaWiki in terms of interoperability and usability compared to competing semantic wikis. SMW&lt;sup&gt;+&lt;/sup&gt;, ontoprise's business-ready distribution of Semantic MediaWiki including essential enhancements to it, comprises the Halo extension, too. [http://smwforum.ontoprise.com/smwforum/index.php/Faq/halo_extension ''Read more...'']
+
+==== Where can I get more information? ====
+
+You can browse the SMW&lt;sup&gt;+&lt;/sup&gt; community web site to find user manuals and examples of applications: [http://smwforum.ontoprise.com http://smwforum.ontoprise.com].
+
+Or simply drop us an email: [mailto:smw@ontoprise.de smw@ontoprise.de].
+
+{{Part of bundle|value=Baseontologybundle}} [[Rationale::A simple promo article explaining what SMW+ and project halo are.| ]]</text>
+    <hash>921b2a0671129b5106b33e9313370828</hash>
+    </revision>
+  </page>
+  <page>
+    <title>MediaWiki:Mydashboard</title>
+    <id>176</id>
+    <revision>
+      <id>2498</id>
+      <timestamp>2010-12-23T11:39:04Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">&lt;table border=&quot;0&quot; cellpadding=&quot;3&quot; style=&quot;empty-cells:hide; margin-top:10px; width:400px; height:auto;&quot;&gt;&lt;!--
+
+--&gt;{{#ifeq:{{Get personal page}}|&lt;!--
+  --&gt;|&lt;!--
+     --&gt;&lt;tr&gt;&lt;th style=&quot;text-align:center; background-color:#e9e9e4; color: rgb(38, 159, 178); font-size:smaller;&quot; colspan=&quot;2&quot; height=&quot;32px&quot;&gt;''Please login or create an account.''&lt;/th&gt;&lt;/tr&gt;&lt;/table&gt;&lt;!--
+  --&gt;|&lt;!--
+
+--&gt;&lt;tr&gt;&lt;th style=&quot;font-size: smaller; color: rgb(38, 159, 178); text-align:left; border-bottom:1px solid #EBEBEB;vertical-align:middle;width:27px;&quot;&gt;[[Image:Myarticlesandfiles.png|link=]]&lt;/th&gt;&lt;th style=&quot;font-size: smaller; color: rgb(38, 159, 178); text-align:left; border-bottom:1px solid #EBEBEB;vertical-align:middle;&quot;&gt;  '''My articles and files''' &lt;/th&gt;
+&lt;th style=&quot;font-size: smaller; color: rgb(38, 159, 178); text-align:left; border-bottom:1px solid #EBEBEB;vertical-align:middle;width:27px;&quot;&gt;[[Image:Thingsimwatching32.png|link=]]&lt;/th&gt;&lt;th style=&quot;font-size: smaller; color: rgb(38, 159, 178); text-align:left; border-bottom:1px solid #EBEBEB;vertical-align:middle;&quot;&gt;'''Things I'm watching'''&lt;/th&gt;
+    &lt;/tr&gt;
+    &lt;!--&lt;tr&gt;
+&lt;th style=&quot;border-top-width:2px; border-top-style:solid; border-color:rgb(255, 255, 255);&quot; colspan=&quot;6&quot;&gt;&lt;/th&gt;
+    &lt;/tr&gt;--&gt;
+    &lt;tr&gt;
+	&lt;td style=&quot;vertical-align:middle;padding-left:6px;&quot; colspan=&quot;2&quot;&gt;[[Image:Userpage.png|link={{CURRENTUSERNS}}]]&amp;nbsp;&amp;nbsp;&amp;nbsp;[[{{CURRENTUSERNS}}|Personal page]] &lt;/td&gt;
+	&lt;td style=&quot;vertical-align:middle;padding-left:6px;&quot; colspan=&quot;4&quot;&gt;[[Image:Watchlist.png|link=Special:Watchlist]]&amp;nbsp;&amp;nbsp;&amp;nbsp;[[Special:Watchlist|My watchlist]]&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+	&lt;td style=&quot;vertical-align:middle;padding-left:6px;&quot; colspan=&quot;2&quot;&gt;[[Image:Talkpage.png|link=User_talk:{{CURRENTUSER}}]]&amp;nbsp;&amp;nbsp;&amp;nbsp;[[User_talk:{{CURRENTUSER}}|Talk page]]&lt;/td&gt;
+	&lt;td style=&quot;vertical-align:middle;padding-left:6px;&quot; colspan=&quot;4&quot;&gt;[[Image:Semnotifications.png|link=Special:SemanticNotifications]]&amp;nbsp;&amp;nbsp;&amp;nbsp;[[Special:SemanticNotifications|My semantic notifications]]&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+	&lt;td style=&quot;vertical-align:middle;padding-left:6px;&quot; colspan=&quot;2&quot;&gt;[[Image:Preferences.png|link=Special:Preferences]]&amp;nbsp;&amp;nbsp;&amp;nbsp;[[Special:Preferences|Preferences]] &lt;/td&gt;
+	&lt;td colspan=&quot;4&quot;&gt;  &lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+	&lt;td style=&quot;vertical-align:middle;padding-left:6px;&quot; colspan=&quot;2&quot;&gt;[[Image:Myuploadedfiles.png|link={{SERVER}}{{SCRIPTPATH}}/index.php?limit=50&amp;title=Special%3AContributions&amp;contribs=user&amp;target={{urlencode:{{CURRENTUSER}}}}&amp;namespace=6]]&amp;nbsp;&amp;nbsp;&amp;nbsp;[{{SERVER}}{{SCRIPTPATH}}/index.php?limit=50&amp;title=Special%3AContributions&amp;contribs=user&amp;target={{urlencode:{{CURRENTUSER}}}}&amp;namespace=6 My uploaded files]&lt;/td&gt;
+	&lt;td&gt;&lt;/td&gt;
+	&lt;td colspan=&quot;3&quot;&gt;&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+	&lt;td style=&quot;vertical-align:middle;padding-left:6px;&quot; colspan=&quot;2&quot;&gt;[[Image:Lastedits.png|link=Special:Contributions/{{CURRENTUSER}}]]&amp;nbsp;&amp;nbsp;&amp;nbsp;[[Special:Contributions/{{CURRENTUSER}}|My last edits]]&lt;/td&gt;
+	&lt;td&gt; &lt;/td&gt;
+	&lt;td colspan=&quot;4&quot;&gt;&lt;/td&gt;
+    &lt;/tr&gt;
+&lt;/table&gt;
+}}&lt;div style=&quot;display:none;&quot;&gt;__NORICHEDITOR__
+{{Part of bundle|value=Baseontologybundle}}
+[[Rationale::This is the My dashboard menu.| ]]&lt;/div&gt;</text>
+    <hash>1af9c0db248e1f2f36e0e1b2b107cf37</hash>
+    </revision>
+  </page>
+  <page>
+    <title>MediaWiki:Articlesanddata</title>
+    <id>177</id>
+    <revision>
+      <id>2494</id>
+      <timestamp>2010-12-23T11:37:11Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">&lt;table border=&quot;0&quot; cellpadding=&quot;3&quot; style=&quot;empty-cells:hide; margin-top:10px; width:400px; height:auto;&quot;&gt;
+&lt;tr&gt;&lt;th style=&quot;font-size: smaller; color: rgb(38, 159, 178); text-align:left; border-bottom:1px solid #EBEBEB;vertical-align:middle;width:27px;&quot;&gt;[[Image:Browsedata.gif|link=]]&lt;/th&gt;&lt;th style=&quot;font-size: smaller; color: rgb(38, 159, 178); text-align:left; border-bottom:1px solid #EBEBEB;vertical-align:middle;&quot;&gt;  '''Browse data'''  &lt;/th&gt;
+&lt;th style=&quot;font-size: smaller; color: rgb(38, 159, 178); text-align:left; border-bottom:1px solid #EBEBEB;vertical-align:middle;width:27px;&quot;&gt;[[Image:Siteinfo.gif|link=]]&lt;/th&gt;&lt;th style=&quot;font-size: smaller; color: rgb(38, 159, 178); text-align:left; border-bottom:1px solid #EBEBEB;vertical-align:middle;&quot;&gt;'''Site info'''&lt;/th&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+&lt;th style=&quot;border-top-width:2px; border-top-style:solid; border-color:rgb(255, 255, 255);&quot; colspan=&quot;6&quot;&gt;&lt;/th&gt;
+    &lt;/tr&gt;
+    &lt;tr height=&quot;28px&quot; &gt;&lt;td style=&quot;vertical-align: middle; &quot; colspan=&quot;2&quot;&gt; [[Special:OntologyBrowser|Browse the ontology]] &lt;/td&gt;
+&lt;td style=&quot;vertical-align: middle; &quot; colspan=&quot;2&quot;&gt; [[Special:AllPages|All pages]] &lt;/td&gt;&lt;/tr&gt;
+    &lt;tr height=&quot;28px&quot; &gt;
+&lt;td style=&quot;vertical-align: middle; &quot; colspan=&quot;2&quot;&gt; [[Special:QueryInterface|Query interface]] &lt;/td&gt;
+&lt;td style=&quot;vertical-align: middle; &quot; colspan=&quot;2&quot;&gt; [[Special:NewPages|New pages]]&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr height=&quot;28px&quot; &gt;
+&lt;td style=&quot;vertical-align: middle; &quot; colspan=&quot;2&quot;&gt; [[Special:Types|List all data types]] &lt;/td&gt;
+&lt;td style=&quot;vertical-align: middle; &quot; colspan=&quot;2&quot;&gt; [[Special:EnhancedRetrievalStatistics|Search statistics]]&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr height=&quot;28px&quot; &gt;
+&lt;td style=&quot;vertical-align: middle; &quot; colspan=&quot;2&quot;&gt; [[Special:Gardening|Access gardening bots]] &lt;/td&gt;
+&lt;td style=&quot;vertical-align: middle; &quot; colspan=&quot;2&quot;&gt; [[Special:SemanticStatistics|Semantic statistics]]&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr height=&quot;28px&quot; &gt;
+&lt;td style=&quot;vertical-align: middle; &quot; colspan=&quot;2&quot;&gt; [[Special:FindWork|Find gardening work]] &lt;/td&gt;
+&lt;td style=&quot;vertical-align: middle; &quot; colspan=&quot;2&quot;&gt; [[All_content_bundles|All content bundles]]&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr height=&quot;28px&quot; &gt;
+&lt;td style=&quot;vertical-align: middle; &quot; colspan=&quot;2&quot;&gt; &lt;/td&gt;
+&lt;td style=&quot;vertical-align: middle; &quot; colspan=&quot;2&quot;&gt; [[Special:RecentChanges|Recent changes]]&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr height=&quot;28px&quot; &gt;
+&lt;td style=&quot;vertical-align: middle; &quot; colspan=&quot;2&quot;&gt; &lt;!-- [[Special:FindWork|Find gardening work]] --&gt;&lt;/td&gt;
+&lt;td style=&quot;vertical-align: middle; &quot; colspan=&quot;2&quot;&gt; &lt;!--[[Template:Comments_overview|All comments]]--&gt; &lt;/td&gt;&lt;/tr&gt;
+    &lt;tr height=&quot;28px&quot; &gt;
+&lt;td colspan=&quot;4&quot;&gt;&lt;/td&gt;&lt;/tr&gt; 
+	&lt;tr&gt;
+&lt;th style=&quot;font-size: smaller; color: rgb(38, 159, 178); text-align:left; border-bottom:1px solid #EBEBEB;vertical-align:middle;width:27px;&quot;&gt;[[Image:Template.gif|link=]]&lt;/th&gt;
+&lt;th style=&quot;font-size: smaller; color: rgb(38, 159, 178); text-align:left; border-bottom:1px solid #EBEBEB;vertical-align:middle;&quot;&gt;'''Templates'''&lt;/th&gt;
+&lt;th style=&quot;font-size: smaller; color: rgb(38, 159, 178); text-align:left; border-bottom:1px solid #EBEBEB;vertical-align:middle;width:27px;&quot;&gt;
+[[Image:Mediaandfiles.gif|link=]]&lt;/th&gt;&lt;th style=&quot;font-size: smaller; color: rgb(38, 159, 178); text-align:left; border-bottom:1px solid #EBEBEB;vertical-align:middle;&quot;&gt;   '''Media and files'''&lt;/th&gt;
+&lt;tr height=&quot;28px&quot; &gt;	
+&lt;td style=&quot;vertical-align: middle; &quot; colspan=&quot;2&quot; &gt; [[Special:Templates|All templates]]&lt;/td&gt;
+&lt;td style=&quot;vertical-align: middle; &quot; colspan=&quot;2&quot; &gt; [[Special:NewImages|Gallery of new files]]
+&lt;tr height=&quot;28px&quot; &gt;	
+&lt;td style=&quot;vertical-align: middle; &quot; colspan=&quot;2&quot;&gt; [[Special:CreateTemplate|Create new template]]&lt;/td&gt;
+&lt;td style=&quot;vertical-align: middle; &quot; colspan=&quot;2&quot; &gt; [[Special:ImageList|All files]]
+&lt;tr height=&quot;28px&quot; &gt;	
+&lt;td colspan=&quot;2&quot; &gt;	
+&lt;td style=&quot;vertical-align: middle; &quot; colspan=&quot;2&quot; &gt; [[Special:Upload|Upload file]]&lt;/td&gt;
+&lt;tr height=&quot;28px&quot; &gt;
+&lt;td  colspan=&quot;4&quot;&gt;
+&lt;tr&gt;
+&lt;th style=&quot;font-size: smaller; color: rgb(38, 159, 178); text-align:left; border-bottom:1px solid #EBEBEB;vertical-align:middle;width:27px;&quot;&gt;[[Image:Forms.gif|link=]]&lt;/th&gt;&lt;th style=&quot;font-size: smaller; color: rgb(38, 159, 178); text-align:left; border-bottom:1px solid #EBEBEB;vertical-align:middle;&quot;&gt;  '''Forms'''&lt;/th&gt;
+&lt;th style=&quot;font-size: smaller; color: rgb(38, 159, 178); text-align:left; border-bottom:1px solid #EBEBEB;vertical-align:middle;width:27px;&quot;&gt;[[Image:Wiki_help_32x32.png|26px|link=]]&lt;/th&gt;&lt;th style=&quot;font-size: smaller; color: rgb(38, 159, 178); text-align:left; border-bottom:1px solid #EBEBEB;vertical-align:middle;&quot;&gt; '''Help'''&lt;/th&gt;&lt;/tr&gt;
+&lt;tr height=&quot;28px&quot; &gt;
+&lt;td style=&quot;vertical-align: middle; &quot; colspan=&quot;2&quot; &gt; [[Special:Forms|All forms]]&lt;/td&gt;
+&lt;td style=&quot;vertical-align: middle; &quot; colspan=&quot;2&quot; &gt; [http://smwforum.ontoprise.com/smwforum/index.php/Semantic_MediaWiki_User_Group SMW+ Community]&lt;/td&gt;
+&lt;tr height=&quot;28px&quot; &gt;
+&lt;td style=&quot;vertical-align: middle; &quot; colspan=&quot;2&quot;&gt; [[Special:CreateForm|Create new form]]&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/table&gt;&lt;div style=&quot;display:none;&quot;&gt;
+__NORICHEDITOR__
+{{Part of bundle|value=Baseontologybundle}}
+[[Rationale::This article is the &quot;Articles and data&quot; menu.| ]]&lt;/div&gt;</text>
+    <hash>b7977ba0489284005d69412adfa2a827</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Property:WasAddedDuringTermImport</title>
+    <id>195</id>
+    <revision>
+      <id>2474</id>
+      <timestamp>2010-12-23T10:52:56Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">{{Property
+|part of=Baseontologybundle
+|rationale=Relates a wiki article to term import run, in which the article was generated. This property is set by the system and should not be changed by users.
+|PAGENAME=Property:WasAddedDuringTermImport
+}}
+[[has type::Type:Page | ]]
+{{Part of bundle|value=Baseontologybundle}}
+{{Content hash|value=}}</text>
+    <hash>28671e093e7b022a2513a04ef5416791</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Property:BelongsToTermImport</title>
+    <id>196</id>
+    <revision>
+      <id>2427</id>
+      <timestamp>2010-12-23T09:24:17Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">{{Property
+|part of=Baseontologybundle
+|rationale=Relates a term import run to its term import definition. This property is set by the system and should not be changed by the user.
+|PAGENAME=Property:BelongsToTermImport
+}}
+[[has type::Type:Page| ]]
+{{Part of bundle|value=Baseontologybundle}}
+{{Content hash|value=}}</text>
+    <hash>a814d303cda111b4fa7c32b8d61586c4</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Property:HasImportDate</title>
+    <id>197</id>
+    <revision>
+      <id>2439</id>
+      <timestamp>2010-12-23T09:41:47Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">{{Property
+|PAGENAME=Property:HasImportDate
+|part of=Baseontologybundle
+|rationale=Denotes the import date of a term import run. This property is set by the system and should not be changed by the user.
+}}
+[[has type::Type:Date| ]]
+{{Part of bundle|value=Baseontologybundle}}
+{{Content hash|value=}}</text>
+    <hash>d68aac4fcc3cd67827146c27dfc1b912</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Property:WasUpdatedDuringTermImport</title>
+    <id>198</id>
+    <revision>
+      <id>2475</id>
+      <timestamp>2010-12-23T10:53:27Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">{{Property
+|part of=Baseontologybundle
+|rationale=Relates a wiki article to term import run, in which the article was updated. This property is set by the system and should not be changed by users.
+|PAGENAME=Property:WasUpdatedDuringTermImport
+}}
+[[has type::Type:Page| ]]
+{{Part of bundle|value=Baseontologybundle}}
+{{Content hash|value=}}</text>
+    <hash>ead30f778f88de97a474ecbe02c8cb6e</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Form:User</title>
+    <id>200</id>
+    <revision>
+      <id>2412</id>
+      <timestamp>2010-12-22T20:35:44Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">&lt;noinclude&gt;{{Form
+|PAGENAME=Form:User
+|rationale=The form 'User' is used for editing the personal data of users.
+|Form thumbnail=Image:Person created with form.png
+|Populates template=Template:User
+|Show in create new page=No
+|Hide input field=Yes
+|part of=Baseontologybundle
+}}
+&lt;/noinclude&gt;&lt;includeonly&gt;__NORICHEDITOR__{{{info|WYSIWYG||page name=&lt;Person[Firstname]&gt; &lt;Person[Lastname]&gt; &lt;unique number;start=1&gt;}}} 
+
+{{{for template|User|label=Enter user data}}} 
+{| width=&quot;100%&quot; class=&quot;formtable&quot;
+|-
+| width=&quot;20%&quot; | 
+| width=&quot;80%&quot; | 
+|-
+! valign=&quot;top&quot; | First name*: 
+| valign=&quot;top&quot; | {{Forms/Generate form field including PAGENAME|fieldname=Firstname|params=mandatory{{!}}size=59}}
+|-
+! valign=&quot;top&quot; | Last name: 
+| valign=&quot;top&quot; | {{{field|Lastname|size=59}}}
+|-
+! valign=&quot;top&quot; | Picture: 
+| valign=&quot;top&quot; | {{{field|Picture|uploadable|size=59}}}
+|-
+! 
+| valign=&quot;top&quot; | &lt;small&gt;''Here you can upload a picture of the user.''&lt;/small&gt;
+|-
+! valign=&quot;top&quot; | Homepage &lt;nowiki&gt;(include 'http://')&lt;/nowiki&gt;: 
+| valign=&quot;top&quot; | {{{field|Homepage|size=59}}}
+|-
+! valign=&quot;top&quot; | Homepage label (optional): 
+| valign=&quot;top&quot; | {{{field|Homepage label|size=59}}}
+|-
+! valign=&quot;top&quot; | Phone number: 
+| valign=&quot;top&quot; | {{{field|Phone|size=59}}}
+|-
+! valign=&quot;top&quot; | Birthday: 
+| valign=&quot;top&quot; | {{{field|Birthday|size=59}}}
+|-
+! valign=&quot;top&quot; | People this user knows: 
+| valign=&quot;top&quot; | {{{field|Knows|input type=haloACtextarea||rows=1|cols=45|constraints=ask: [[Category:User]]|list}}}
+|-
+! 
+| valign=&quot;top&quot; | &lt;small&gt;''Enter a comma delimited list of persons. (Auto-completes on pages in the category 'User'.)''&lt;/small&gt;
+|}
+{{{end template}}}
+{| width=&quot;100%&quot; align=&quot;center&quot;
+|-
+| align=&quot;center&quot; |'''Enter the wiki-text for the form here:'''
+|-
+| align=&quot;center&quot;|{{{field|free text|input type=textarea|rows=15|cols=135}}}
+|}
+{{{standard input|save}}} {{{standard input|preview}}} {{{standard input|changes}}} {{{standard input|cancel}}}&lt;/includeonly&gt;&lt;noinclude&gt;
+{{Part of bundle|value=Baseontologybundle}}
+{{Content hash|value=}}
+&lt;/noinclude&gt;</text>
+    <hash>a853b4dc642b99e3b5f9dc2390644502</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Template:GenerateFormFieldEndTemplate</title>
+    <id>203</id>
+    <revision>
+      <id>2363</id>
+      <timestamp>2010-12-22T19:13:45Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">&lt;noinclude&gt;{{Template
+|part of=Baseontologybundle
+|rationale=Generates the &quot;end template&quot; form field used in a form which can be embedded into other forms.
+|PAGENAME=Template:GenerateFormFieldEndTemplate
+}}
+&lt;/noinclude&gt;&lt;includeonly&gt;&lt;nowiki&gt;{{{end template}}}&lt;/nowiki&gt;&lt;/includeonly&gt;&lt;noinclude&gt;
+{{Part of bundle|value=Baseontologybundle}}
+{{Content hash|value=}}
+&lt;/noinclude&gt;</text>
+    <hash>2a35a4f0ef33dc27517b7d44ca158986</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Defines category</title>
+    <id>205</id>
+    <revision>
+      <id>2431</id>
+      <timestamp>2010-12-23T09:30:03Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">{{Property
+|PAGENAME=Property:Defines category
+|part of=Baseontologybundle
+|Has default form=Form:Add and edit Category
+|rationale=Specifies which category annotation is contained in this template.
+}}
+[[Has type::Type:Page| ]] [[Has domain and range::Category:Template; Category:Category| ]] [[Is inverse of::Property:Used in template| ]]
+{{Part of bundle|value=Baseontologybundle}}
+{{Content hash|value=}}</text>
+    <hash>c6cdec2f9b39eda9232454c01e3e6e5f</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Transcludable</title>
+    <id>206</id>
+    <revision>
+      <id>2470</id>
+      <timestamp>2010-12-23T10:47:38Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">{{Property
+|PAGENAME=Property:Transcludable
+|part of=Baseontologybundle
+|rationale=specifies if a form can be transcluded.
+}}
+[[Has max cardinality::1| ]] [[Has min cardinality::1| ]] [[Has type::Type:Boolean| ]] [[Has domain and range::Category:Form| ]]
+{{Part of bundle|value=Baseontologybundle}}
+{{Content hash|value=}}</text>
+    <hash>922685cdab527dacd9aaac10dd2888e7</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Show in template picker</title>
+    <id>207</id>
+    <revision>
+      <id>2465</id>
+      <timestamp>2010-12-23T10:21:50Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">{{Property
+|PAGENAME=Property:Show in template picker
+|part of=Baseontologybundle
+|rationale=specifies if a template should be shown in the template picker of the WYSIWYG editor.
+}}
+This property is deprecated. 
+[[Has max cardinality::1| ]] [[Has min cardinality::1| ]] [[Has type::Type:Boolean| ]] [[Has domain and range::Category:Form| ]]
+{{Part of bundle|value=Baseontologybundle}}
+{{Content hash|value=}}</text>
+    <hash>005c589f2cbc5e4b0c5f6c5ee6edbdee</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Used in template</title>
+    <id>213</id>
+    <revision>
+      <id>2471</id>
+      <timestamp>2010-12-23T10:50:08Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">{{Property
+|PAGENAME=Property:Used in template
+|part of=Baseontologybundle
+|rationale=Template that defines this category.
+}}
+[[Has type::Type:Page| ]] [[Has domain and range::Category:Category;Category:Template| ]] [[Is inverse of::Property:Defines category| ]]
+{{Part of bundle|value=Baseontologybundle}}
+{{Content hash|value=}}</text>
+    <hash>f2c65c416da616aad746ffa176b90efc</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Template:Get personal page</title>
+    <id>216</id>
+    <revision>
+      <id>2392</id>
+      <timestamp>2010-12-22T20:21:13Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">&lt;noinclude&gt;{{Template
+|part of=Baseontologybundle
+|rationale=Returns the personal page (e.g. User:WikiSysop) of the current user (or emptry string).
+|PAGENAME=Template:Get personal page
+}}
+&lt;/noinclude&gt;&lt;includeonly&gt;{{#ifexist:{{CURRENTUSERNS}}|{{CURRENTUSERNS}}|}}&lt;/includeonly&gt;&lt;noinclude&gt;
+{{Part of bundle|value=Baseontologybundle}}
+{{Content hash|value=}}
+&lt;/noinclude&gt;</text>
+    <hash>44eb1f7f98c789d48c8160160db00569</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Template:TODAY for ask</title>
+    <id>218</id>
+    <revision>
+      <id>2403</id>
+      <timestamp>2010-12-22T20:30:10Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">&lt;noinclude&gt;{{Template
+|part of=Baseontologybundle
+|rationale=Returns the current date in the format: 21 September 2009
+|PAGENAME=Template:TODAY for ask
+}}
+&lt;/noinclude&gt;&lt;includeonly&gt;{{#time: d F Y}}&lt;/includeonly&gt;&lt;noinclude&gt;
+{{Part of bundle|value=Baseontologybundle}}
+{{Content hash|value=}}
+&lt;/noinclude&gt;</text>
+    <hash>d42f7b7f805924fa9f38d45dce20065b</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Page has default form</title>
+    <id>226</id>
+    <revision>
+      <id>2457</id>
+      <timestamp>2010-12-23T10:11:22Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">{{Property
+|part of=Baseontologybundle
+|Has default form=Form:Add and edit Property
+|rationale=associates the given page directly with a default form.
+|PAGENAME=Property:Page has default form
+}}
+{{Part of bundle|value=Baseontologybundle}}
+{{Content hash|value=}}</text>
+    <hash>7a4c23b314648d44b01df68746d29c04</hash>
+    </revision>
+  </page>
+  <page>
+    <title>MediaWiki:Haloadministration</title>
+    <id>234</id>
+    <revision>
+      <id>2495</id>
+      <timestamp>2010-12-23T11:37:24Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">{| cellpadding=&quot;3&quot; border=&quot;0&quot; style=&quot;empty-cells: hide; margin-top: 10px; width: 235px; height: auto; &quot;
+|-
+! style=&quot;font-size: smaller; color: rgb(38, 159, 178); text-align: left; border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: rgb(235, 235, 235); vertical-align: middle; width: 27px; &quot; | [[Image:Application.gif]]
+! style=&quot;font-size: smaller; color: rgb(38, 159, 178); text-align: left; border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: rgb(235, 235, 235); vertical-align: middle; &quot; | '''Application'''
+|-
+! colspan=&quot;2&quot; style=&quot;border-top-width: 2px; border-top-style: solid; border-top-color: rgb(255, 255, 255); &quot; | 
+|-
+| colspan=&quot;2&quot; style=&quot;vertical-align: middle; &quot; | [[Special:AllMessages|System messages]] 
+|-
+| colspan=&quot;2&quot; style=&quot;vertical-align: middle; &quot; | [[Special:Version|Version]]
+|-
+| colspan=&quot;2&quot; style=&quot;vertical-align: middle; &quot; | [[Special:Statistics|Statistics]]
+|-
+| colspan=&quot;2&quot; style=&quot;vertical-align: middle; &quot; | [[Special:SMWAdmin|Semantic MediaWiki administration]]
+|-
+| colspan=&quot;2&quot; style=&quot;vertical-align: middle; &quot; | [[Special:TSA|Triple store connector]]
+|-
+| colspan=&quot;2&quot; style=&quot;vertical-align: middle; &quot; | [[Special:GardeningLog|Gardening bot logs]] 
+|-
+| colspan=&quot;2&quot; style=&quot;vertical-align: middle; &quot; | [[Special:CheckInstallation|Check the configuration]]
+|-
+| colspan=&quot;2&quot; style=&quot;vertical-align: middle; &quot; | [[Special:SpecialPages|Special pages]]
+|-
+! style=&quot;font-size: smaller; color: rgb(38, 159, 178); text-align: left; border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: rgb(235, 235, 235); vertical-align: middle; width: 27px; &quot; | [[Image:User and-accessrigts.gif]]
+! style=&quot;font-size: smaller; color: rgb(38, 159, 178); text-align: left; border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: rgb(235, 235, 235); vertical-align: middle; &quot; | '''User and access right'''
+|-
+| colspan=&quot;2&quot; style=&quot;vertical-align: middle; &quot; | [[Special:ListUsers|User list]]
+|-
+| colspan=&quot;2&quot; style=&quot;vertical-align: middle; &quot; | [[Special:Contributions|User contributions]]
+|-
+| colspan=&quot;2&quot; style=&quot;vertical-align: middle; &quot; | [[Special:IPBlockList|Blocked IP adresses and usernames]]
+|-
+| colspan=&quot;2&quot; style=&quot;vertical-align: middle; &quot; | [[Special:BlockIP|Block user]]
+|-
+| colspan=&quot;2&quot; style=&quot;vertical-align: middle; &quot; | [[Special:HaloACL|Access rights administration]]
+|-
+| 
+|-
+! style=&quot;font-size: smaller; color: rgb(38, 159, 178); text-align: left; border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: rgb(235, 235, 235); vertical-align: middle; width: 27px; &quot; | [[Image:Web-services.gif]]
+! style=&quot;font-size: smaller; color: rgb(38, 159, 178); text-align: left; border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: rgb(235, 235, 235); vertical-align: middle; &quot; | '''Data sources'''
+|-
+| colspan=&quot;2&quot; style=&quot;vertical-align: middle; &quot; | [[Special:DataImportRepository|Defined data sources]]
+|-
+| colspan=&quot;2&quot; style=&quot;vertical-align: middle; &quot; | [[Special:UseWebService|Integrate data via web service]]
+|-
+| colspan=&quot;2&quot; style=&quot;vertical-align: middle; &quot; | [[Special:TermImport|Import data via term import]]
+|}&lt;div style=&quot;display:none;&quot;&gt;__NORICHEDITOR__
+{{Part of bundle|value=Baseontologybundle}}
+[[Rationale::This article represents the Administration-menu.| ]]&lt;/div&gt;</text>
+    <hash>3e7a65ed7c997acdb36f05188c03e66a</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Is not disjunct with</title>
+    <id>246</id>
+    <revision>
+      <id>2451</id>
+      <timestamp>2010-12-23T09:58:06Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">{{Property
+|part of=Baseontologybundle
+|Has default form=Form:Add and edit Category
+|rationale=This property denotes if a category is not disjunct with another category. E.g. a category document may be stated as &quot;not disjunct with&quot; a category deliverable.
+|PAGENAME=Property:Is not disjunct with
+}}
+[[Has type::Type:Page| ]] [[Has domain and range::Category:Category; Category:Category| ]]
+{{Part of bundle|value=Baseontologybundle}}
+{{Content hash|value=}}</text>
+    <hash>77206be71c6bc2c7e03a3d4d737b94d6</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Property:User image</title>
+    <id>250</id>
+    <revision>
+      <id>2472</id>
+      <timestamp>2010-12-23T10:51:01Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">{{Property
+|part of=Baseontologybundle
+|rationale=Links a user to an image depicting the user.
+|PAGENAME=Property:User image
+}}
+[[Has domain and range::Category:User; | ]]
+{{Part of bundle|value=Baseontologybundle}}
+{{Content hash|value=}}</text>
+    <hash>89dd4ec62cdb1871c88cb6b93c8a3574</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Baseontologybundle</title>
+    <id>257</id>
+    <revision>
+      <id>2504</id>
+      <timestamp>2010-12-23T13:21:20Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">{{Content bundle
+|Vendor=Ontoprise
+|Version=100
+|rationale=This content bundle features a set of basic elements that are necessary to build a working ontology on a new SMW+ installation.
+|Installation=extensions/Base
+|Dependency=smw;120;150, semanticforms;200;200
+}} [[Vendor::Ontoprise| ]][[Ontology version::100| ]][[Installation dir::extensions/Base| ]][[Dependency::smwhalo;152;152| ]] [[Dependency::semanticforms;200;200| ]]{{Part of bundle|value=Baseontologybundle}}
+
+;This bundle contains these articles
+:
+
+{{#ask:[[Part of bundle::{{FULLPAGENAME}}]]
+|?=Link
+|?Category
+|?Rationale
+|link=subject
+|default=''none''
+|mainlabel=-
+|limit=500
+}}
+
+
+
+[[Category:Content bundle|Content_bundle]]</text>
+    <hash>6309dbceefeb8afc3be2ac135e6054ca</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Part of bundle</title>
+    <id>258</id>
+    <revision>
+      <id>2459</id>
+      <timestamp>2010-12-23T10:12:52Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">{{Property
+|part of=Baseontologybundle
+|rationale=Links a Wiki page to a content bundle.
+|PAGENAME=Property:Part of bundle
+}}
+[[has type::Type:Page| ]]
+{{Part of bundle|value=Baseontologybundle}}
+{{Content hash|value=}}</text>
+    <hash>b8ac07e6cdf7d1fdbc24a4d8c0385e0f</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Vendor</title>
+    <id>259</id>
+    <revision>
+      <id>2473</id>
+      <timestamp>2010-12-23T10:52:01Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">{{Property
+|part of=Baseontologybundle
+|rationale=Specifies the vendor or creator of the content bundle
+|PAGENAME=Property:Vendor
+}}
+[[has type::Type:String| ]]
+[[has domain and range::Category:Content bundle; | ]]
+{{Part of bundle|value=Baseontologybundle}}
+{{Content hash|value=}}</text>
+    <hash>adc1a4ae40a65b0998f98240b7416502</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Ontology version</title>
+    <id>260</id>
+    <revision>
+      <id>2456</id>
+      <timestamp>2010-12-23T10:10:36Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">{{Property
+|part of=Baseontologybundle
+|rationale=Specifies the version number of your (ontology) content bundle
+|PAGENAME=Property:Ontology version
+}}
+[[has type::Type:Number| ]]
+[[has domain and range::Category:Content bundle; | ]]
+{{Part of bundle|value=Baseontologybundle}}
+{{Content hash|value=}}</text>
+    <hash>509843f737686d238c2b9e3ad5e8ac8b</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Installation dir</title>
+    <id>261</id>
+    <revision>
+      <id>2449</id>
+      <timestamp>2010-12-23T09:52:11Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">{{Property
+|part of=Baseontologybundle
+|rationale=Specifies the directory where the content bundle shall be installed later on
+|PAGENAME=Property:Installation dir
+}}
+[[has type::Type:String| ]] [[has domain and range::Category:Content bundle; | ]] 
+{{Part of bundle|value=Baseontologybundle}}
+{{Content hash|value=}}</text>
+    <hash>9f228a4c525a8258502459ed850edc0b</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Dependency</title>
+    <id>262</id>
+    <revision>
+      <id>2432</id>
+      <timestamp>2010-12-23T09:31:10Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">{{Property
+|part of=Baseontologybundle
+|rationale=Specifies another package and its allowed version range that is required for this package.
+|PAGENAME=Property:Dependency
+}}
+[[has type::Type:Record| ]] [[has fields::Type:String; Type:Number; Type:Number| ]]
+[[has domain and range::Category:Content bundle; | ]]
+
+{{Part of bundle|value=Baseontologybundle}}
+{{Content hash|value=}}</text>
+    <hash>0ad55d882222b17b326aa1b64fc90755</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Content hash</title>
+    <id>264</id>
+    <revision>
+      <id>2099</id>
+      <timestamp>2010-12-21T23:59:37Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">{{Property
+|Has author=WikiSysop
+|part of=Baseontologybundle
+|rationale=Hash value about the text of this page.
+|PAGENAME=Property:Content hash
+}}
+[[has type::Type:String| ]]
+{{Part of bundle|value=Baseontologybundle}}</text>
+    <hash>54e8c7326074e9ee23a7c80b0153e681</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Template:Subsections</title>
+    <id>273</id>
+    <revision>
+      <id>2402</id>
+      <timestamp>2010-12-22T20:29:35Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">&lt;noinclude&gt;{{Template
+|PAGENAME=Template:Subsections
+|part of=Baseontologybundle
+|rationale=Shows the content and media-files which are directly and indirectly related to an entity (e.g. a project)
+|Calls template=Template:Related content row
+}}
+&lt;/noinclude&gt;&lt;includeonly&gt;&lt;!--
+--&gt;
+&lt;!-- 
+old query {{#vardefine:query|[[Category:Content]] [[Subsection of::{{FULLPAGENAME}}]] OR [[HasRelatedArticle::{{FULLPAGENAME}}]] OR [[Subsection of::&lt;q&gt;[[Related to::{{FULLPAGENAME}}]]&lt;/q&gt;]] OR [[HasRelatedArticle::&lt;q&gt;[[Related to::{{FULLPAGENAME}}]]&lt;/q&gt;]]}}
+--&gt;
+{{#vardefine:query|[[Category:Content]] [[Related to::{{FULLPAGENAME}}]]}}
+
+{{#vardefine:resultLimit|5}}
+{{#vardefine:resultNumber|{{#sparql: {{#var:query}} | ?Subsection of | ?HasRelatedArticle | ?Modification date | sort=Modification date | order=desc | merge=false | format=count}}}}&lt;!--
+--&gt;
+{| cellspacing=&quot;0&quot; cellpadding=&quot;5&quot; style=&quot;position:relative; margin: 0 0 0.5em 1em; border-collapse: collapse; border: 1px solid #aaa; background: #fff; float: right; clear: right; width: 35%&quot;
+! colspan=&quot;2&quot; style=&quot;background: #aaa; color: black&quot; |Attached&amp;nbsp;and&amp;nbsp;Related&amp;nbsp;Content&amp;nbsp;({{#var:resultNumber}})&lt;!-- &lt;div style=&quot;font-size: 80%; float: right;&quot;&gt;{{Create content}}&lt;/div&gt; --&gt;
+|- &lt;!-- query for content and media directly and indirectly attached --&gt;
+|{{#ajaxsparql: {{#var:query}} 
+| ?Subsection of 
+| ?HasRelatedArticle 
+| ?Modification date 
+| format=template 
+| template=Related content row 
+| limit={{#var:resultLimit}}
+| sort=Modification date 
+| order=desc  
+| searchlabel= 
+| link=none
+| merge=false 
+| default=*''none''}}
+|-
+| colspan=&quot;2&quot; | {{#iferror: {{#expr: {{#var:resultNumber}} &gt; {{#var:resultLimit}} }} |   | {{#ifexpr: {{RemoveACLWarning|{{#var:resultNumber}}}} &gt; {{#var:resultLimit}} | &lt;small&gt;For all related content click [{{fullurl:Template:Related content for entity|entity={{urlencode:{{FULLPAGENAME}}}}}} here...]&lt;/small&gt; }} }}
+|}&lt;/includeonly&gt;&lt;noinclude&gt;
+{{Part of bundle|value=Baseontologybundle}}
+{{Content hash|value=}}
+&lt;/noinclude&gt;</text>
+    <hash>4479d8e9cd3828f1c85e53cea2759b74</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Template:Is instance of</title>
+    <id>277</id>
+    <revision>
+      <id>2395</id>
+      <timestamp>2010-12-22T20:24:07Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">&lt;noinclude&gt;{{Template
+|part of=Baseontologybundle
+|rationale=This template checks if a wiki-page is instance of a given category. If so the full category name (e.g. Category:Fruit) is returned, otherwise 'false'.
+parameters=
+*instance=myApple
+*category=Category:Fruit
+|PAGENAME=Template:Is instance of
+}}
+&lt;/noinclude&gt;&lt;includeonly&gt;{{#ifeq:{{#ask: [[{{{category|}}}]] [[{{{instance|}}}]] | format=count}}|1|{{{category|}}}|false}}&lt;/includeonly&gt;&lt;noinclude&gt;
+{{Part of bundle|value=Baseontologybundle}}
+{{Content hash|value=}}
+&lt;/noinclude&gt;</text>
+    <hash>f9fa92d2a0a14ef2dcb0c869bd8785fc</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Template:RemoveACLWarning</title>
+    <id>279</id>
+    <revision>
+      <id>2111</id>
+      <timestamp>2010-12-22T00:20:03Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">{{#ifeq:{{#pos:{{{1|}}}|&lt;span}}||{{{1|}}}|{{#sub:{{{1|}}}|0|{{#pos:{{{1|}}}|&lt;span}}}}}}
+{{Part of bundle|value=Baseontologybundle}}</text>
+    <hash>d257124b099bd5ec900034b52be0749f</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Name</title>
+    <id>323</id>
+    <revision>
+      <id>2455</id>
+      <timestamp>2010-12-23T10:10:00Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">{{Property
+|part of=Baseontologybundle
+|rationale=Provides a name for an entity (e.g. a user)
+|PAGENAME=Property:Name
+}}
+[[Has type::Type:String| ]]
+{{Part of bundle|value=Baseontologybundle}}
+{{Content hash|value=}}</text>
+    <hash>d959b5a8d78efb0d9899a5d61427d06b</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Is category</title>
+    <id>326</id>
+    <revision>
+      <id>2450</id>
+      <timestamp>2010-12-23T09:53:39Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">{{Property
+|part of=Baseontologybundle
+|rationale=Boolean attribute which defines a thing as being a category (i.e. a page in the namespace Category:).
+|PAGENAME=Property:Is category
+}}
+[[Has max cardinality::1| ]] [[Has min cardinality::1| ]] [[Has type::Type:Boolean| ]] 
+{{Part of bundle|value=Baseontologybundle}}
+{{Content hash|value=}}</text>
+    <hash>0f846551abe07c4714d12cf7b1295605</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Rationale</title>
+    <id>327</id>
+    <revision>
+      <id>2462</id>
+      <timestamp>2010-12-23T10:16:58Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">{{Property
+|rationale=Used to provide a (short) explanation or description of a wiki part.
+|PAGENAME=Property:Rationale
+|part of=Baseontologybundle
+}}
+[[Has max cardinality::1| ]] [[Has min cardinality::1| ]] [[Has type::Type:Text| ]]
+{{Part of bundle|value=Baseontologybundle}}
+{{Content hash|value=}}</text>
+    <hash>afac5220ff6fedc2712897bce64be348</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Firstname</title>
+    <id>333</id>
+    <revision>
+      <id>2437</id>
+      <timestamp>2010-12-23T09:37:01Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">{{Property
+|part of=Baseontologybundle
+|rationale=Denotes the first name of a person.
+|PAGENAME=Property:Firstname
+}}
+[[Has domain and range::Category:User| ]]
+[[Has type::Type:String| ]]
+{{Part of bundle|value=Baseontologybundle}}
+{{Content hash|value=}}</text>
+    <hash>44f06dfaa9ee630f7e804cb4c9d4507d</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Lastname</title>
+    <id>334</id>
+    <revision>
+      <id>2454</id>
+      <timestamp>2010-12-23T10:09:19Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">{{Property
+|part of=Baseontologybundle
+|rationale=Attribute for specifying the last name of a person.
+|PAGENAME=Property:Lastname
+}}
+[[Has domain and range::Category:User| ]]
+[[Has type::Type:String| ]]
+{{Part of bundle|value=Baseontologybundle}}
+{{Content hash|value=}}</text>
+    <hash>9190b9a51e2033f85eb216eb5ecdd68c</hash>
+    </revision>
+  </page>
+  <page>
+    <title>SMW+ 1.5</title>
+    <id>346</id>
+    <revision>
+      <id>2230</id>
+      <timestamp>2010-12-22T15:26:19Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">__NOTOC__ 
+&lt;div style=&quot;line-height: 1.5em; text-align: justify; padding-right: 20px;&quot;&gt;
+This page provides an overview and access to the most important features of SMW&lt;sup&gt;+&lt;/sup&gt;. 
+
+== Editing&lt;br&gt;  ==
+
+{| cellspacing=&quot;5&quot; cellpadding=&quot;10&quot; border=&quot;0&quot; align=&quot;center&quot; style=&quot;width: 200px; height: 122px;&quot;
+|-
+| align=&quot;center&quot; width=&quot;25%&quot; valign=&quot;middle&quot; | [[Image:SMWplus151_WYSIWYG.png|250px]] 
+| align=&quot;center&quot; width=&quot;25%&quot; valign=&quot;middle&quot; | [[Image:SMWplus151_annotationmode.png|250px]] 
+| align=&quot;center&quot; width=&quot;25%&quot; valign=&quot;middle&quot; | [[Image:SMWplus151_semantictoolbar.png|250px]]
+|-
+| align=&quot;left&quot; valign=&quot;top&quot; | 
+=== Easy Editing and Formatting  ===
+
+| align=&quot;left&quot; valign=&quot;top&quot; | 
+=== User-Friendly Annotation  ===
+
+| align=&quot;left&quot; valign=&quot;top&quot; | 
+=== Inspecting Semantic Annotations  ===
+
+|-
+| align=&quot;left&quot; valign=&quot;top&quot; | The WYSIWYG editor can be accessed via the '''tab ''Edit''''' at an article's page. With the WYSIWYG editor users can intuitively format text, create tables, embed images and other media into an article without having to cope with the wiki source text.&lt;br&gt; 
+| align=&quot;left&quot; valign=&quot;top&quot; | The Advanced Annotation Mode provides a user-friendly method for annotating articles in the wiki. It can be accessed via the ''''annotate' link''' within the ''More'' tab and lets you annotate an article without the need to directly edit the plain wiki text. Instead, annotations can be made in-place by simply marking the text and assigning a value to it. 
+| align=&quot;left&quot; valign=&quot;top&quot; | The Semantic Toolbar enables the easy creation of category annotations, property annotations and property attributes and frees the user from having to know the specific wiki text mark-up. It can be accessed via the '''Semantic Toolbar''' button in the WYSIWYG editor and is displayed alongside the text. &lt;br&gt;
+|}
+
+== Creating new articles  ==
+
+{| cellspacing=&quot;5&quot; cellpadding=&quot;10&quot; border=&quot;0&quot; align=&quot;center&quot; style=&quot;width: 200px; height: 122px;&quot;
+|-
+| align=&quot;middle&quot; width=&quot;25%&quot; valign=&quot;middle&quot; | [[Image:SMWplus151_createnewpage.png|250px]] 
+| align=&quot;center&quot; width=&quot;25%&quot; valign=&quot;middle&quot; | [[Image:SMWplus151_semanticforms.png|250px]]
+|-
+| align=&quot;left&quot; valign=&quot;top&quot; | 
+=== Creating new pages  ===
+
+| align=&quot;left&quot; valign=&quot;top&quot; | 
+=== Adding Data with Semantic Forms  ===
+
+|-
+| align=&quot;left&quot; valign=&quot;top&quot; | The dialog guides you through the creation process of a new page. You can choose if you like to create the page either with an editor or predefined forms. Access the '''[[Create_new_page|Create new page-Dialog]]'''&lt;br&gt; 
+| align=&quot;left&quot; valign=&quot;top&quot; | Semantic Forms allow users to add and edit data using simple forms. It is suitable for recurring, structured data such as meeting minutes or data about persons and events. Choose one of the forms on the left hand side and start entering data.'''&lt;br&gt;'''
+|}
+
+== Querying  ==
+
+{| cellspacing=&quot;5&quot; cellpadding=&quot;10&quot; border=&quot;0&quot; align=&quot;center&quot; style=&quot;width: 200px; height: 122px;&quot;
+|-
+| align=&quot;center&quot; width=&quot;25%&quot; valign=&quot;middle&quot; | [[Image:SMWplus151_enhancedretrieval.png|250px]] 
+| align=&quot;center&quot; width=&quot;25%&quot; valign=&quot;middle&quot; | [[Image:SMWplus151_queryinterface.png|250px]] 
+| align=&quot;center&quot; width=&quot;25%&quot; valign=&quot;middle&quot; | [[Image:SMWplus151_tsc.png|250px]]
+|-
+| align=&quot;left&quot; valign=&quot;top&quot; | 
+=== Powerful Searching  ===
+
+| align=&quot;left&quot; valign=&quot;top&quot; | 
+=== Dynamic Querying  ===
+
+| align=&quot;left&quot; valign=&quot;top&quot; | 
+=== Storing and Retrieving RDF Data  ===
+
+| align=&quot;left&quot; valign=&quot;top&quot; | &lt;br&gt;
+|-
+| align=&quot;left&quot; valign=&quot;top&quot; | The search capability of SMW&lt;sup&gt;+&lt;/sup&gt; is powered by the Enhanced Retrieval component. It is based on the state-of-the-art search engine Lucene (which is also used in the Wikipedia search) and enables users to better find relevant contents scattered across a wiki. Just type a term in Search field in the header or go to '''[[Special:Search|Specialpage Search]]''' 
+| align=&quot;left&quot; valign=&quot;top&quot; | The Query interface helps you to exploit the full power of Semantic MediaWiki's query mechanism. It provides a graphical user interface that supports you in building such queries in an intuitive manner. Access this tool via the '''[[Special:QueryInterface|Specialpage QueryInterface]]'''&lt;br&gt; 
+| align=&quot;left&quot; valign=&quot;top&quot; | Triple stores are special databases that allow to store and retrieve RDF data efficiently. With a triple store enabled SMW&lt;sup&gt;+&lt;/sup&gt; you can query the knowledge base directly within the wiki or from remote by using SPARQL queries. The latter method is useful if other applications shall exploit the semantically annotated data residing in your wiki. The '''[[Special:TSA|special page TSA]]''' helps you to administrate the wiki/triplestore connection.&lt;br&gt; ''(Learn more about attaching a triple store to SMW+ here: [http://smwforum.ontoprise.com/smwforum/index.php/Help:TripleStoreConnector_Basic Help:Working with Triple store])''
+|}
+
+== Curating  ==
+
+{| cellspacing=&quot;5&quot; cellpadding=&quot;10&quot; border=&quot;0&quot; align=&quot;center&quot; style=&quot;width: 200px; height: 122px;&quot;
+|-
+| align=&quot;center&quot; width=&quot;25%&quot; valign=&quot;middle&quot; | [[Image:SMWplus151_ontologybrowser.png|250px]] 
+| align=&quot;center&quot; width=&quot;25%&quot; valign=&quot;middle&quot; | [[Image:SMWplus151_gardening.png|250px]] 
+| align=&quot;center&quot; width=&quot;25%&quot; valign=&quot;middle&quot; | [[Image:SMWplus151_haloacl.png|250px]]
+|-
+| align=&quot;left&quot; valign=&quot;top&quot; | 
+=== Navigating through Ontology  ===
+
+| align=&quot;left&quot; valign=&quot;top&quot; | 
+=== Maintaining Quality  ===
+
+| align=&quot;left&quot; valign=&quot;top&quot; | 
+=== Managing User Rights  ===
+
+| align=&quot;left&quot; valign=&quot;top&quot; | &lt;br&gt;
+|-
+| align=&quot;left&quot; valign=&quot;top&quot; | The Ontology Browser gives a fast and precise overview of the wiki's ontology (i.e. its semantic knowledge model). It allows users to navigate through the category and property hierarchy and to inspect instances and their characteristics. It can be accessed via the '''[[Special:OntologyBrowser|Specialpage OntologyBrowser]]'''&lt;br&gt; 
+| align=&quot;left&quot; valign=&quot;top&quot; | The Gardening tool suite of SMW&lt;sup&gt;+&lt;/sup&gt; is a set of programs that allow you to improve the quality of your wiki. With the help of the Gardening Framework you can check the knowledge base for inconsistencies and detect anomalies such as undefined entities, pages without annotations or empty categories. It can be accessed via the '''[[Special:Gardening|Specialpage Gardening]]''' &lt;br&gt; 
+| align=&quot;left&quot; valign=&quot;top&quot; | With the Access Control Lists component you can restrict the access to different elements of your wiki for single users or entire user groups. It enables the protection of namespaces (e.g. the namespace of 'special' pages), categories (e.g. for articles belonging to the category 'protected') and single article pages (e.g. for the article 'internal administration'). It can be accessed via the '''[[Special:HaloACL|Specialpage Halo ACL]]'''&lt;br&gt; 
+| align=&quot;left&quot; valign=&quot;top&quot; | &lt;br&gt;
+|}
+
+== Connectivity and Importing Features  ==
+
+{| cellspacing=&quot;5&quot; cellpadding=&quot;10&quot; border=&quot;0&quot; align=&quot;center&quot; style=&quot;width: 200px; height: 122px;&quot;
+|-
+| align=&quot;middle&quot; width=&quot;25%&quot; valign=&quot;middle&quot; | [[Image:Excel install1.jpg|250px]] 
+| align=&quot;center&quot; width=&quot;25%&quot; valign=&quot;middle&quot; | [[Image:SMWplus151_dataimport.png|250px]] 
+| align=&quot;center&quot; width=&quot;25%&quot; valign=&quot;middle&quot; | [[Image:Project install1.jpg|250px]]
+|-
+| align=&quot;left&quot; valign=&quot;top&quot; | 
+=== Exporting Data to Excel  ===
+
+| align=&quot;left&quot; valign=&quot;top&quot; | 
+=== Importing External Data  ===
+
+| align=&quot;left&quot; valign=&quot;top&quot; | 
+=== Synchronizing Data with MS Project  ===
+
+|-
+| align=&quot;left&quot; valign=&quot;top&quot; | The MS Excel Bridge allows you to query an SMW&lt;sup&gt;+&lt;/sup&gt; knowledge base and import the results into Excel spreadsheets. This way you can e. g. easily transfer project data gathered in your wiki and reuse it for further calculations in Excel. The client is shipped as a separate Windows installer for easy deployment. &lt;div&gt;'''[http://shop.ontoprise.com/ Download MS Excel Bridge]''' &lt;br&gt;'''[http://smwforum.ontoprise.com/smwforum/index.php?title=Help:Administration_of_MS_Excel_Bridge How to install MS Excel Bridge]''' &lt;br&gt;'''[http://smwforum.ontoprise.com/smwforum/index.php/Help:MS_Excel_Bridge Documentation]''' &lt;/div&gt;
+| align=&quot;left&quot; valign=&quot;top&quot; | 
+This feature allows you to call external web services from the wiki and integrate the web service results directly into your wiki articles. This way you can e.g. hook in the Bugzilla web service, in order to include bug entries from Bugzilla in those wiki pages that describe your affected software components. You can see '''[http://smwforum.ontoprise.com/smwforum/index.php/Example:Library_of_webservices examples of the web services here]'''. 
+
+| align=&quot;left&quot; valign=&quot;top&quot; | With the MS Project Connector you can easily export your project data from the Wiki into your MS Project client. This is especially usefull when you use the Wiki to collaboratively set up the project and you move then into the project performance phase to monitor the progress. The client is shipped as a separate Windows installer for easy deployment.&lt;br&gt;'''[http://shop.ontoprise.com/ Download MS Project Connector]'''&lt;br&gt;'''[http://smwforum.ontoprise.com/smwforum/index.php?title=Help:Installing_MS_Project_Connector How to install MS Project Connector]''' &lt;br&gt;'''[http://smwforum.ontoprise.com/smwforum/index.php/Help:MS_Project_Connector Documentation]'''
+|}
+
+&lt;br&gt; 
+&lt;/div&gt;
+{{Part of bundle|value=Baseontologybundle}}
+[[Rationale::Promo article explaining the main features of SMW+.| ]]</text>
+    <hash>f7cb8f8e3cd2c4d956f39bb12c63409f</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Template:GenerateFormField</title>
+    <id>351</id>
+    <revision>
+      <id>2362</id>
+      <timestamp>2010-12-22T19:12:30Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">&lt;noinclude&gt;{{Template
+|part of=Baseontologybundle
+|rationale=Generates a formfield used in a semantic form which can be embedded into other forms.
+NOTE: don't change this template since it is used by Special:CreateForm!
+Parameters:
+1 fieldname=cityfield
+2 default=berlin
+3 input type=haloACtext
+4 constraints=annotation-value:Property:Cityprop
+|PAGENAME=Template:GenerateFormField
+}}
+&lt;/noinclude&gt;&lt;includeonly&gt;&lt;!--
+
+--&gt;&lt;nowiki&gt;{{{field&lt;/nowiki&gt;&lt;!--
+--&gt;&lt;nowiki&gt;|&lt;/nowiki&gt;{{{fieldname|}}}&lt;!--
+--&gt;&lt;nowiki&gt;|&lt;/nowiki&gt;{{{mandatory|}}}&lt;!--
+--&gt;{{#ifeq:{{{default|}}}|||&lt;nowiki{{{default|}}}&gt;&lt;/nowiki{{{default|}}}&gt;}}&lt;!--
+--&gt;{{#ifeq:{{{size|}}}|||&lt;nowiki{{{size|}}}&gt;&lt;/nowiki{{{size|}}}&gt;}}&lt;!--
+--&gt;{{#ifeq:{{{input type|}}}|||&lt;nowiki{{{input type|}}}=&quot;&quot;&gt;&lt;/nowiki{{{input&gt;}}&lt;!--
+--&gt;{{#ifeq:{{{constraints|}}}|||&lt;nowiki{{{constraints|}}}&gt;&lt;/nowiki{{{constraints|}}}&gt;}}&lt;!--
+--&gt;{{#ifeq:{{{pasteNS|}}}||&lt;nowiki|&gt;&lt;nowiki{{{pastens|}}}&gt;&lt;/nowiki{{{pastens|}}}&gt;&lt;/nowiki|&gt;}}&lt;!--
+--&gt;&lt;nowiki&gt;|&lt;/nowiki&gt;{{{list|}}}&lt;!--
+--&gt;&lt;nowiki&gt;|&lt;/nowiki&gt;{{{hidden|}}}&lt;!--
+--&gt;&lt;nowiki&gt;|&lt;/nowiki&gt;{{{restricted|}}}&lt;!--
+--&gt;{{#ifeq:{{{values|}}}|||&lt;nowiki{{{values|}}}&gt;&lt;/nowiki{{{values|}}}&gt;}}&lt;!--
+--&gt;&lt;nowiki&gt;}}}&lt;/nowiki&gt;&lt;!--
+
+--&gt;&lt;/includeonly&gt;&lt;noinclude&gt;
+{{Part of bundle|value=Baseontologybundle}}
+{{Content hash|value=}}
+&lt;/noinclude&gt;</text>
+    <hash>a497506eb39f77961069e96d5ada773d</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Template:GenerateFormFieldForTemplate</title>
+    <id>352</id>
+    <revision>
+      <id>2361</id>
+      <timestamp>2010-12-22T19:09:14Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">&lt;noinclude&gt;{{Template
+|part of=Baseontologybundle
+|rationale=Generates the &quot;for template&quot; form field used in a semantic form which can be embedded into other semantic forms.
+Parameters:
+1: template w/o NS
+2: label text
+3: collapsible 
+4: forceopen=true
+|PAGENAME=Template:GenerateFormFieldForTemplate
+}}
+&lt;/noinclude&gt;&lt;includeonly&gt;&lt;!--
+
+--&gt;&lt;nowiki&gt;{{{for template&lt;/nowiki&gt;&lt;!--
+--&gt;&lt;nowiki&gt;|&lt;/nowiki&gt;{{{1|}}}&lt;!--
+--&gt;&lt;nowiki&gt;|label=&lt;/nowiki&gt;{{{2|}}}&lt;!--
+--&gt;&lt;nowiki&gt;|&lt;/nowiki&gt;{{{3|}}}&lt;!--
+--&gt;&lt;nowiki&gt;|&lt;/nowiki&gt;forceopen={{{forceopen|}}}&lt;!--
+--&gt;&lt;nowiki&gt;}}}&lt;/nowiki&gt;&lt;!--
+
+--&gt;&lt;/includeonly&gt;&lt;noinclude&gt;
+{{Part of bundle|value=Baseontologybundle}}
+{{Content hash|value=}}
+&lt;/noinclude&gt;</text>
+    <hash>c77e6caa5442bde6bfe228a9f4538219</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Template:Show defining template</title>
+    <id>354</id>
+    <revision>
+      <id>2400</id>
+      <timestamp>2010-12-22T20:28:07Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">&lt;noinclude&gt;{{Template
+|part of=Baseontologybundle
+|rationale=Show the defining template.
+|PAGENAME=Template:Show defining template
+}}
+&lt;/noinclude&gt;&lt;includeonly&gt;&lt;!--
+
+--&gt; 
+
+*[[{{{1|}}}]] ''(you can replace this template by clicking here: &lt;span class=&quot;plainlinks&quot;&gt;[{{SERVER}}{{SCRIPTPATH}}/index.php/Special:CreateTemplate?category={{urlencode:{{PAGENAME}}}}&amp;template+name={{urlencode:{{Get value from list|list={{{1|}}}|delimiter=:|pos=2}}}} create new template]&lt;/span&gt;)''&lt;!--
+
+--&gt;&lt;/includeonly&gt;&lt;noinclude&gt;
+{{Part of bundle|value=Baseontologybundle}}
+{{Content hash|value=}}
+&lt;/noinclude&gt;</text>
+    <hash>54e8fa31323b488e4617bbd8c46152d9</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Template:Get value from list</title>
+    <id>355</id>
+    <revision>
+      <id>2393</id>
+      <timestamp>2010-12-22T20:22:50Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">&lt;noinclude&gt;{{Template
+|part of=Baseontologybundle
+|rationale=This template is useful if you have a list of values separated by an arbitrary delimiter (e.g. &quot;,&quot;) and you need a value at a particular position in the list.
+|long description=This template is useful if you have a list of values separated by an arbitrary delimiter (e.g. &quot;,&quot;) and you need a value at a particular position in the list.
+
+parameters:
+*list=a,b,c,d
+*deliminiter=,
+*pos=3
+|PAGENAME=Template:Get value from list
+}}
+&lt;/noinclude&gt;&lt;includeonly&gt;{{#titleparts:{{#arraymap:{{{list}}}|{{{delimiter}}}|x|x|/}}|1|{{{pos}}}}}&lt;/includeonly&gt;&lt;noinclude&gt;
+{{Part of bundle|value=Baseontologybundle}}
+{{Content hash|value=}}
+&lt;/noinclude&gt;</text>
+    <hash>8be7f6fa0568d1b73fd2fae52a32c133</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Template:Show defining form</title>
+    <id>356</id>
+    <revision>
+      <id>2399</id>
+      <timestamp>2010-12-22T20:27:34Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">&lt;noinclude&gt;{{Template
+|part of=Baseontologybundle
+|rationale=Show the defining form.
+|PAGENAME=Template:Show defining form
+}}
+&lt;/noinclude&gt;&lt;includeonly&gt;&lt;!--
+
+--&gt; 
+
+*[[{{{1|}}}]] ''(you can replace this form by clicking here: &lt;span class=&quot;plainlinks&quot;&gt;[{{SERVER}}{{SCRIPTPATH}}/index.php/Special:CreateEmbeddedForm?form+name={{urlencode:{{Get value from list|list={{{1|}}}|delimiter=:|pos=2}}}}&amp;for+template={{urlencode:{{Get value from list|list={{{1|}}}|delimiter=:|pos=2}}}} create new form]&lt;/span&gt;)''&lt;!--
+
+--&gt;&lt;/includeonly&gt;&lt;noinclude&gt;
+{{Part of bundle|value=Baseontologybundle}}
+{{Content hash|value=}}
+&lt;/noinclude&gt;</text>
+    <hash>2eb5c24baa5d059c64757f6adb5d5f4e</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Category:Content bundle</title>
+    <id>360</id>
+    <revision>
+      <id>2233</id>
+      <timestamp>2010-12-22T15:30:32Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">{{Category
+|PAGENAME=Category:Content bundle
+|rationale=This category is used to identify a content bundle.
+|No automatic formedit=Yes
+|part of=Baseontologybundle
+}}
+{{Part of bundle|value=Baseontologybundle}}
+[[Category:Entity]]</text>
+    <hash>1ff0dce7ff678b155decee1b985ba849</hash>
+    </revision>
+  </page>
+  <page>
+    <title>All content bundles</title>
+    <id>362</id>
+    <revision>
+      <id>2161</id>
+      <timestamp>2010-12-22T12:02:44Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">{{Header for wiki parts
+|Category=All content bundles
+|Icon=File:Smw_plus_contentsection_icon_100x100.gif
+|Pagetitle={{PAGENAME}}
+|Short description=[[rationale::This article lists all content bundles which are contained in this wiki.]]
+}}
+Find here all content bundles which are installed in this Wiki.&lt;br/&gt;
+
+{{#ask:[[Category:Content bundle]]
+|?=
+|?Ontology version=version
+|?Rationale=
+|format=table
+}}
+
+Click on a content bundle to inspect the associated categorie, templates, forms, properties and rules.
+{{Part of bundle|value=Baseontologybundle}}</text>
+    <hash>12f055034083ea76fe1d92f00a688a9c</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Template:Content bundle</title>
+    <id>363</id>
+    <revision>
+      <id>2383</id>
+      <timestamp>2010-12-22T20:15:35Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">&lt;noinclude&gt;{{Template
+|PAGENAME=Template:Content bundle
+|rationale=Content bundle template
+|defines category=Category:Content bundle
+|part of=Baseontologybundle
+}}
+&lt;/noinclude&gt;&lt;includeonly&gt;{{Header for wiki parts
+|Category=Content bundle
+|Pagetitle={{PAGENAME}}
+|Icon=File:Smw_plus_contentsection_icon_100x100.gif
+|Short description={{#ifeq:{{{rationale|}}}|||[[Rationale::{{{rationale|}}}]]}}
+|author={{#ifeq:{{{Vendor|}}}|||[[Vendor::{{{Vendor|}}}]]}}
+|Wiki section={{#ifeq:{{{part of|}}}|||[[part of bundle::{{{part of|}}}]]}}
+|Version={{#ifeq:{{{Version|}}}|||[[Ontology version::{{{Version|}}}]]}}
+|Installation dir={{#ifeq:{{{Installation|}}}|||[[Installation dir::{{{Installation|}}}]]}}
+|Dependency={{#ifeq:{{{Dependency|}}}|||{{#arraymap:{{{Dependency|}}}|,|x|[[Dependency::x]]|,}}}}
+}} __NOTOC__ 
+[[Category:Content bundle]]&lt;/includeonly&gt;&lt;noinclude&gt;
+{{Part of bundle|value=Baseontologybundle}}
+{{Content hash|value=}}
+&lt;/noinclude&gt;</text>
+    <hash>a3a57fa640de417d2c2d93e526f60498</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Template:Tablesection</title>
+    <id>366</id>
+    <revision>
+      <id>2379</id>
+      <timestamp>2010-12-22T20:11:51Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">&lt;noinclude&gt;{{Template
+|PAGENAME=Template:Tablesection
+|rationale=Help template for generating tables
+|part of=Baseontologybundle
+}}
+&lt;/noinclude&gt;&lt;includeonly&gt;
+! colspan=&quot;2&quot; style=&quot;text-align: center; background: {{{Color|#eee}}}&quot;| {{{Label}}}
+&lt;/includeonly&gt;&lt;noinclude&gt;
+{{Part of bundle|value=Baseontologybundle}}
+{{Content hash|value=}}
+&lt;/noinclude&gt;</text>
+    <hash>e53c20a1a76c213891bf2b9ea57a68da</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Template:ShowAttachedContent</title>
+    <id>369</id>
+    <revision>
+      <id>2401</id>
+      <timestamp>2010-12-22T20:28:50Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">&lt;noinclude&gt;{{Template
+|part of=Baseontologybundle
+|rationale=Displays the attached content to this article.
+|Calls template=Template:Subsections,
+|PAGENAME=Template:ShowAttachedContent
+}}
+&lt;/noinclude&gt;&lt;includeonly&gt;{{#ifeq:{{{show|}}}|True|{{Subsections}}|}}&lt;/includeonly&gt;&lt;noinclude&gt;
+{{Part of bundle|value=Baseontologybundle}}
+{{Content hash|value=}}
+&lt;/noinclude&gt;</text>
+    <hash>0f996092045fc2fa5cda981beeacda23</hash>
+    </revision>
+  </page>
+  <page>
+    <title>User:WikiSysop</title>
+    <id>373</id>
+    <revision>
+      <id>2216</id>
+      <timestamp>2010-12-22T15:12:29Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">{{User
+|Firstname=WikiSysop
+}}</text>
+    <hash>4a37d79357afc1d0058af5b942825106</hash>
+    </revision>
+  </page>
+  <page>
+    <title>File:Bookmarks32.png</title>
+    <id>383</id>
+    <revision>
+      <id>913</id>
+      <timestamp>2010-11-18T17:11:13Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">{{RMImage
+|Filename=File:Bookmarks32.png
+|CreationDate=2010/11/18
+|Uploader=User:WikiSysop
+|UploadDate=2010/11/18
+|Format=image/png
+|RelatedArticles=User:WikiSysop
+}}</text>
+    <hash>14f033fa5d1080cb7a7be469af718051</hash>
+    </revision>
+  </page>
+  <page>
+    <title>File:Thingsimwatching32.png</title>
+    <id>386</id>
+    <revision>
+      <id>928</id>
+      <timestamp>2010-11-18T17:35:39Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">{{RMImage
+|Filename=File:Thingsimwatching32.png
+|CreationDate=2010/11/18
+|Uploader=User:WikiSysop
+|UploadDate=2010/11/18
+|Format=image/png
+|RelatedArticles=User:WikiSysop
+}}</text>
+    <hash>706b410d2fc13f219c5d543835dddff3</hash>
+    </revision>
+  </page>
+  <page>
+    <title>File:Myarticlesandfiles.png</title>
+    <id>393</id>
+    <revision>
+      <id>972</id>
+      <timestamp>2010-11-19T16:11:30Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">{{RMImage
+|Filename=File:Myarticlesandfiles.png
+|CreationDate=2010/11/19
+|Uploader=User:WikiSysop
+|UploadDate=2010/11/19
+|Format=image/png
+|RelatedArticles=User:WikiSysop
+}}</text>
+    <hash>9dc7236e387bd7665354d2f5abd4e110</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Template:Related content row</title>
+    <id>397</id>
+    <revision>
+      <id>2398</id>
+      <timestamp>2010-12-22T20:26:38Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">&lt;noinclude&gt;{{Template
+|PAGENAME=Template:Related content row
+|rationale=Formats a row for the related content infobox (generated via Template:Subsections).
+|part of=Baseontologybundle
+|Calls template=Template:Is instance of
+}}
+{{Part of bundle|value=Baseontologybundle}}
+&lt;/noinclude&gt;&lt;includeonly&gt;{{#ifeq:{{Is instance of|instance={{{1|}}}|category=Category:Pdf}}|Category:Pdf|{{#vardefine:image|Image:Pdf.gif}}|
+&lt;!-- --&gt;{{#ifeq:{{Is instance of|instance={{{1|}}}|category=Category:Document}}|Category:Document|{{#vardefine:image|Image:Document.gif}}|
+&lt;!--   --&gt;{{#ifeq:{{Is instance of|instance={{{1|}}}|category=Category:Image}}|Category:Image|{{#vardefine:image|Image:Image.gif}}|
+&lt;!--     --&gt;{{#ifeq:{{Is instance of|instance={{{1|}}}|category=Category:Audio}}|Category:Audio|{{#vardefine:image|Image:Audio.gif}}|
+&lt;!--       --&gt;{{#ifeq:{{Is instance of|instance={{{1|}}}|category=Category:Video}}|Category:Video|{{#vardefine:image|Image:Video.gif}}|{{#vardefine:image|Image:Instances.gif}}}}}}}}}}}}
+{|
+|{{#tag:imagemap|{{#var:image}}
+ default [[{{{1|}}}]]
+ desc none }}
+| width=100% | {{#ifeq: {{#sub:{{{1|}}}|0|5}}|{{ns:image}}:|[[:{{{1|}}}]]|[[{{{1|}}}]]}} &lt;br/&gt; &lt;small&gt;attached to: {{#if:{{{2|}}}|{{#arraymap:{{{2|}}}|,|xyz|[[xyz]]}}|{{#arraymap:{{{3|}}}|,|xyz|[[xyz]]}}}}&lt;/small&gt; &lt;br/&gt; &lt;small&gt;last change: {{{4|}}}&lt;/small&gt;
+|}&lt;/includeonly&gt;&lt;noinclude&gt;
+{{Part of bundle|value=Baseontologybundle}}
+{{Content hash|value=}}
+&lt;/noinclude&gt;</text>
+    <hash>e8b2f3fd539d26c2662846d10aedc185</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Homepage</title>
+    <id>406</id>
+    <revision>
+      <id>2448</id>
+      <timestamp>2010-12-23T09:51:23Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">{{Property
+|PAGENAME=Property:Homepage
+|part of=Baseontologybundle
+|rationale=Attribute for providing an URL to the homepage of entity (e.g. a person, project or organization).
+}}
+[[Has domain and range::Category:User| ]]
+[[Has type::Type:URL| ]]
+{{Part of bundle|value=Baseontologybundle}}
+{{Content hash|value=}}</text>
+    <hash>e75f302d0136fe6c5d04a135a85ff5af</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Create new page</title>
+    <id>410</id>
+    <revision>
+      <id>2478</id>
+      <timestamp>2010-12-23T11:01:09Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">This dialog guides you through the creation process of a new page. You can choose if you like to create the page either with an editor or predefined forms.
+
+----
+
+Create page {{#if: {{#arg:target}}|'''''{{#arg:target}}'''''|'''''New_article'''''}} either with:
+
+:1. the {{#if: {{#arg:target}} | [{{fullurl:{{urlencode:{{#replace:{{#arg:target}}| |_}}}}|action=edit&amp;mode=wysiwyg}} '''WYSIWYG Editor'''] | [{{fullurl:{{urlencode:New_article}}|action=edit&amp;mode=wysiwyg}} '''WYSIWYG Editor'''] }} or the {{#if: {{#arg:target}} | [{{fullurl:{{urlencode:{{#replace:{{#arg:target}}| |_}}}}|action=edit}} '''Wiki Text Editor'''] | [{{fullurl:{{urlencode:New_article}}|action=edit}} '''Wiki Text Editor'''] }}
+
+:2. one of the '''Forms''' below &lt;!-- Define local variables --&gt;
+{{#vardefine:formAskQuery|[[Category:Form]][[Show in create new page::true]] }} {{#vardefine:numberOfForms|{{#ask:{{#var:formAskQuery}} | format=count }}}}
+{| border=&quot;0&quot; cellspacing=&quot;10px&quot;
+|-
+| style=&quot;vertical-align: top&quot; align=&quot;left&quot; width=&quot;550px&quot; | {{Form overview table | askQuery={{#var:formAskQuery}} | resultStart=0 | resultLimit={{#ifeq: {{#expr: {{#var:numberOfForms}} mod 2}} | 0 | {{#expr: {{#var:numberOfForms}} / 2}} | {{#expr: {{#var:numberOfForms}} / 2 round 0}}}}}}
+| style=&quot;vertical-align: top&quot; align=&quot;left&quot; width=&quot;550px&quot; | {{Form overview table | askQuery={{#var:formAskQuery}} | resultStart={{#ifeq: {{#expr: {{#var:numberOfForms}} mod 2}} | 0 | {{#expr: {{#var:numberOfForms}} / 2}} | {{#expr: {{#var:numberOfForms}} / 2 round 0}}}} | resultLimit={{#var:numberOfForms}}}}
+|}
+::&lt;small&gt;Note: If you don't see forms above then you must create a form.&lt;/small&gt;
+
+:3. an '''automatically created Form''' (Note: this feature is experimental)
+{{#ifeq:{{#isExtensionInstalled:automaticsemanticforms}}|true&lt;!--
+ --&gt;|::Category name(s): {{#asfforminput:category||60||Create}}
+::&lt;small&gt;Note: Autocompletes on all categories. Certain category may be excluded from automatic form generation.&lt;/small&gt;&lt;!--
+ --&gt;|::''The Automatic Semantic Forms extension is not installed in this Wiki.''
+}}
+
+
+{{Part of bundle|value=Baseontologybundle}}
+[[Rationale::This article is called automatically if the user wants to create a new article.| ]]
+__NORICHEDITOR__</text>
+    <hash>4189099ca564af22c9f55d5b75a4b08a</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Template:Form overview table</title>
+    <id>421</id>
+    <revision>
+      <id>2386</id>
+      <timestamp>2010-12-22T20:17:05Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">&lt;noinclude&gt;{{Template
+|PAGENAME=Template:Form overview table
+|rationale=This template queries for forms and prints the results in a table.
+Three parameters must be given: 
+0) the ASK query 
+
+1) the offset (i.e. the start of the query results) 
+
+2) the limit (i.e. the maximum number of query results displayed)
+
+This templates is used on page Create_new_page for generating a table of forms, when the user clicks on an undefined page (i.e. a red link).
+|part of=Baseontologybundle
+}}
+&lt;/noinclude&gt;&lt;includeonly&gt;{| border=&quot;0&quot; width=&quot;100%&quot;
+|-
+{{#ask: {{{askQuery|[[Category:Form]]}}}
+  | ?Rationale
+  | ?Form thumbnail
+  | link=none
+  | format=template
+  | template=Form table row
+  | offset={{{resultStart|0}}}
+  | limit={{{resultLimit|100}}}
+  | searchlabel=
+ }}
+|-
+| 
+|}&lt;/includeonly&gt;&lt;noinclude&gt;
+{{Part of bundle|value=Baseontologybundle}}
+{{Content hash|value=}}
+&lt;/noinclude&gt;</text>
+    <hash>a3f62b57f32e26691309154c7c60a5d6</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Template:Form table row</title>
+    <id>422</id>
+    <revision>
+      <id>2387</id>
+      <timestamp>2010-12-22T20:17:38Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">&lt;noinclude&gt;{{Template
+|PAGENAME=Template:Form table row
+|rationale=This template is used to generate a table row, displayed as a box with a frame.
+parameters are:
+
+1=Pagename (e.g. Form:Person)
+
+2=description (e.g. this form is used for adding or editing data about a person)
+
+3=descriptive image (e.g. Image:Person_template.jpg
+|part of=Baseontologybundle
+}}
+&lt;/noinclude&gt;&lt;includeonly&gt;__NORICHEDITOR__
+{{!}}-
+{{!}} width=&quot;100%&quot; bgcolor=&quot;#ffffff&quot; border=&quot;0&quot; bordercolor=&quot;#9ece19&quot; valign=&quot;top&quot;  align=&quot;top&quot;|
+{{{!}} width=&quot;100%&quot; cellspacing=&quot;0&quot; cellpadding=&quot;5&quot; style=&quot;margin: 0 0 0.5em 1em; border-collapse: collapse; border: 1px solid rgb(95,158,160); background: rgb(255,255,255); &quot;
+{{!}}-
+{{!}} colspan=&quot;2&quot; width=&quot;100%&quot; bgcolor=&quot;#ffffff&quot; border=&quot;0&quot; align=&quot;left&quot; valign=&quot;top&quot;|&lt;!--
+
+title container start
+
+--&gt;&lt;div class=&quot;round&quot; style=&quot;padding: 5px; font-family: tahoma, sans-serif; font-weight: bold; font-size: 100%; color: rgb(255,255,255); background-color: rgb(95,158,160); margin-bottom: 5px;&quot;&gt;&lt;!-- --&gt;
+{{{!}} width=&quot;100%&quot; cellspacing=&quot;0&quot; cellpadding=&quot;0&quot; border=&quot;0&quot; align=&quot;center&quot;     
+{{!}}- 
+{{!}} &lt;div class=&quot;round&quot; style=&quot;padding-left: 5px; padding-right: 5px; font-family: tahoma,sans-serif; font-weight: bold; font-size: 100%; color: rgb(250, 250, 250); margin-bottom: 2px;&quot; &gt;
+{{{!}} width=&quot;100%&quot; cellspacing=&quot;1&quot; cellpadding=&quot;1&quot; border=&quot;0&quot; align=&quot;center&quot;
+{{!}}-
+{{!}} width=&quot;10%&quot; valign=&quot;left&quot; align=&quot;center&quot; rowspan=&quot;2&quot; {{!}} [[Image:Smw plus form icon 100x100.gif|20px]]
+{{!}} '''{{{1|}}}'''
+{{!}}}&lt;/div&gt;
+{{!}}}&lt;/div&gt;&lt;!--
+
+title container end
+
+--&gt;
+{{!}}-
+{{#ifeq:{{{3|}}}||
+{{!}} colspan=&quot;2&quot; width=&quot;100%&quot; bgcolor=&quot;#ffffff&quot; border=&quot;0&quot; valign=&quot;top&quot; align=&quot;top&quot;{{!}}{{{2|}}}
+{{#if: {{#arg:target}} | [{{SERVER}}{{SCRIPTPATH}}/index.php/Special:FormEdit?form={{#urlencode:{{#replace:{{#sub:{{{1}}}|5}}| |_}}}}&amp;target={{#urlencode:{{#arg:target}}}} ''create page with this form...''] | [{{SERVER}}{{SCRIPTPATH}}/index.php/Special:FormEdit?form={{#urlencode:{{#replace:{{#sub:{{{1}}}|5}}| |_}}}} ''create page with this form...'']}}
+|
+{{!}} width=&quot;100%&quot; bgcolor=&quot;#ffffff&quot; border=&quot;0&quot; valign=&quot;top&quot; align=&quot;top&quot;{{!}}{{{2|}}}
+{{#if: {{#arg:target}} | [{{SERVER}}{{SCRIPTPATH}}/index.php/Special:FormEdit?form={{#urlencode:{{#replace:{{#sub:{{{1}}}|5}}| |_}}}}&amp;target={{#urlencode:{{#arg:target}}}} ''create page with this form...''] | [{{SERVER}}{{SCRIPTPATH}}/index.php/Special:FormEdit?form={{#urlencode:{{#replace:{{#sub:{{{1}}}|5}}| |_}}}} ''create page with this form...'']}}
+{{!}} [[{{{3|}}}|center|180px]]  
+}}
+{{!}}-
+{{!}}
+{{!}}}
+{{!}}-
+&lt;/includeonly&gt;&lt;noinclude&gt;
+{{Part of bundle|value=Baseontologybundle}}
+{{Content hash|value=}}
+&lt;/noinclude&gt;</text>
+    <hash>820d4e320330a1f0845ad465e73aa71b</hash>
+    </revision>
+  </page>
+  <page>
+    <title>MediaWiki:Halopageoptions</title>
+    <id>423</id>
+    <revision>
+      <id>2496</id>
+      <timestamp>2010-12-23T11:37:37Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">&lt;div style=&quot;line-height:1.5em;&quot;&gt;
+{{#ifeq:{{NAMESPACE}}|Special||&lt;!--
+--&gt;&lt;span class=&quot;plainlinks&quot;&gt;{{#rml:Upload&amp;nbsp;and&amp;nbsp;attach&amp;nbsp;file&amp;nbsp;or&amp;nbsp;image|Upload&amp;nbsp;and&amp;nbsp;attach&amp;nbsp;file&amp;nbsp;or&amp;nbsp;image|RMUpload[RelatedArticles]={{FULLPAGENAME}}}}&lt;/span&gt;&lt;br&gt;
+&lt;!-- &lt;nowiki&gt; &lt;span class=&quot;plainlinks&quot;&gt;{{Create content for Halopageoptions}}&lt;/span&gt;&lt;br&gt; &lt;/nowiki&gt; --&gt;
+}}
+&lt;span class=&quot;plainlinks&quot;&gt;[{{fullurl:{{FULLPAGENAME}}|printable=yes}} Printable&amp;nbsp;version]&lt;/span&gt;&lt;br&gt;
+&lt;span class=&quot;plainlinks&quot;&gt;[mailto:?subject={{fullurl:{{FULLPAGENAME}}}} Mail link]&lt;/span&gt;&lt;br&gt;
+&lt;span class=&quot;plainlinks&quot;&gt;[[Special:WhatLinksHere/{{FULLPAGENAME}}|What&amp;nbsp;links&amp;nbsp;here]]&lt;/span&gt;&lt;br&gt;
+&lt;span class=&quot;plainlinks&quot;&gt;[[Special:RecentChangesLinked/{{fullurl:{{FULLPAGENAME}}}}|Related&amp;nbsp;changes]]&lt;/span&gt;
+&lt;/div&gt;&lt;div style=&quot;display:none;&quot;&gt;
+{{Part of bundle|value=Baseontologybundle}}
+{{Content hash|value=}}
+[[Rationale::This article represents the &quot;More&quot; menu for each page.| ]]&lt;/div&gt;</text>
+    <hash>1ec4ee5769d0982f2bcefcc0af1f8c65</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Template:Create content for Halopageoptions</title>
+    <id>424</id>
+    <revision>
+      <id>2384</id>
+      <timestamp>2010-12-22T20:16:09Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">&lt;noinclude&gt;{{Template
+|PAGENAME=Template:Create content for Halopageoptions
+|rationale=Generates a link in the &quot;content navigation&quot; box allowing to create new content and attach it to any other article.
+|part of=Baseontologybundle
+}}
+&lt;/noinclude&gt;&lt;includeonly&gt;__NORICHEDITOR__[{{SERVER}}{{SCRIPTPATH}}/index.php/Special:FormEdit?form=Content&amp;{{urlencode:Content[SubsectionOf]}}={{urlencode:{{SUBJECTPAGENAME}}}}&amp;{{urlencode:Content[Title]}}={{urlencode:Content for article {{SUBJECTPAGENAME}}}} Create&amp;nbsp;and&amp;nbsp;attach&amp;nbsp;new&amp;nbsp;content]&lt;/includeonly&gt;&lt;noinclude&gt;
+{{Part of bundle|value=Baseontologybundle}}
+{{Content hash|value=}}
+&lt;/noinclude&gt;</text>
+    <hash>a94a723e32084fef347902a89f571237</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Has default form</title>
+    <id>425</id>
+    <revision>
+      <id>2442</id>
+      <timestamp>2010-12-23T09:46:05Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">{{Property
+|PAGENAME=Property:Has default form
+|rationale=Pre-defined property which associates a category, a namespace or a single wiki page with a default form.
+|part of=Baseontologybundle
+}}
+[[has type::Type:page| ]] 
+
+[[has domain and range::;Category:Form| ]]
+{{Part of bundle|value=Baseontologybundle}}
+{{Content hash|value=}}</text>
+    <hash>10b6745f367155d073aa8c8b3e9f1bbd</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Show in create new page</title>
+    <id>489</id>
+    <revision>
+      <id>2464</id>
+      <timestamp>2010-12-23T10:20:14Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">{{Property
+|rationale=Set this true to offer this form in the &quot;Create new page&quot; article.
+|part of=Baseontologybundle
+|Has default form=
+|PAGENAME=Property:Show in create new page
+}}
+[[Has max cardinality::1]]
+[[Has min cardinality::1]]
+[[Has type::Type:Boolean]]
+[[Has domain and range::Category:Form]]
+{{Part of bundle|value=Baseontologybundle}}
+{{Content hash|value=}}</text>
+    <hash>aced9680e63009700eaa715867c55190</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Contentwiki:Property</title>
+    <id>491</id>
+    <revision>
+      <id>2484</id>
+      <timestamp>2010-12-23T11:15:20Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">This page defines the default form for pages within the namespace ''Property:''. This counts also for linked, non-existing pages in form of red-links. See [http://www.mediawiki.org/wiki/Extension:Semantic_Forms#Pointing_red_links_to_.27add_data.27_form Semantic Forms manual] for further information. The default form is [[Has default form::Form:Add and edit Property]].
+
+'''NOTE:''' When you change the name of your wiki in the LocalSettings.php via changing the variable [http://www.mediawiki.org/wiki/Manual:$wgMetaNamespace $wgMetaNamespace] or [http://www.mediawiki.org/wiki/Manual:$wgSitename $wgSitename] you have to rename this article to &quot;&lt;new site name&gt;:Property&quot;.
+
+{{Part of bundle|value=Baseontologybundle}}
+{{Content hash|value=}}
+[[Rationale::This is the namespace which contains all property-articles.| ]]</text>
+    <hash>c6645c43f9b115167912b09d373797ef</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Contentwiki:Category</title>
+    <id>492</id>
+    <revision>
+      <id>2486</id>
+      <timestamp>2010-12-23T11:15:53Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">This page defines the default form for pages within the namespace ''Category:''. This counts also for linked, non-existing pages in form of red-links. See [http://www.mediawiki.org/wiki/Extension:Semantic_Forms#Pointing_red_links_to_.27add_data.27_form Semantic Forms manual] for further information. The default form is [[Has default form::Form:Add and edit Category]].
+
+'''NOTE:''' When you change the name of your wiki in the LocalSettings.php via changing the variable [http://www.mediawiki.org/wiki/Manual:$wgMetaNamespace $wgMetaNamespace] or [http://www.mediawiki.org/wiki/Manual:$wgSitename $wgSitename] you have to rename this article to &quot;&lt;new site name&gt;:Category&quot;.
+
+{{Part of bundle|value=Baseontologybundle}}
+{{Content hash|value=}}
+[[Rationale::This is the namespace which contains all category-articles.| ]]</text>
+    <hash>3c8d2f0283d1a8cb144f6279c3f5c333</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Contentwiki:Form</title>
+    <id>493</id>
+    <revision>
+      <id>2485</id>
+      <timestamp>2010-12-23T11:15:36Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">This page defines the default form for pages within the namespace ''Form:''. This counts also for linked, non-existing pages in form of red-links. See [http://www.mediawiki.org/wiki/Extension:Semantic_Forms#Pointing_red_links_to_.27add_data.27_form Semantic Forms manual] for further information. The default form is [[Has default form::Form:Add and edit Form]].
+
+'''NOTE:''' When you change the name of your wiki in the LocalSettings.php via changing the variable [http://www.mediawiki.org/wiki/Manual:$wgMetaNamespace $wgMetaNamespace] or [http://www.mediawiki.org/wiki/Manual:$wgSitename $wgSitename] you have to rename this article to &quot;&lt;new site name&gt;:Form&quot;.
+
+{{Part of bundle|value=Baseontologybundle}}
+{{Content hash|value=}}
+[[Rationale::This is the namespace which contains all form-articles.| ]]</text>
+    <hash>039c5202bb683363a2d840c2f615f284</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Contentwiki:Template</title>
+    <id>494</id>
+    <revision>
+      <id>2487</id>
+      <timestamp>2010-12-23T11:16:10Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">This page defines the default form for pages within the namespace ''Template:''. This counts also for linked, non-existing pages in form of red-links. See [http://www.mediawiki.org/wiki/Extension:Semantic_Forms#Pointing_red_links_to_.27add_data.27_form Semantic Forms manual] for further information. The default form is [[Has default form::Form:Add and edit Template]].
+
+'''NOTE:''' When you change the name of your wiki in the LocalSettings.php via changing the variable [http://www.mediawiki.org/wiki/Manual:$wgMetaNamespace $wgMetaNamespace] or [http://www.mediawiki.org/wiki/Manual:$wgSitename $wgSitename] you have to rename this article to &quot;&lt;new site name&gt;:Template&quot;.
+
+{{Part of bundle|value=Baseontologybundle}}
+{{Content hash|value=}}
+[[Rationale::This is the namespace which contains all template-articles.| ]]</text>
+    <hash>198bcb3816b8e52d80b0cf4c3cf1eaa3</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Template:NoteInText</title>
+    <id>502</id>
+    <revision>
+      <id>2396</id>
+      <timestamp>2010-12-22T20:25:19Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">&lt;noinclude&gt;{{Template
+|PAGENAME=Template:NoteIntext
+|part of=Baseontologybundle
+}}
+&lt;/noinclude&gt;&lt;includeonly&gt;
+{{#if: {{{1|}}}|&lt;table cellspacing=&quot;0&quot; cellpadding=&quot;10&quot; border=&quot;0&quot; bgcolor=&quot;#ebf2e4&quot; style=&quot;color:#358c33;&quot;&gt;&lt;tr&gt;&lt;td nowrap=&quot;true&quot; valign=&quot;top&quot; &gt;}}[[Image:Information.png|20px|link=]]{{#if: {{{1|}}}|&lt;/td&gt;&lt;td valign=&quot;top&quot; style=&quot;padding-left:0.5em;&quot;&gt;}} '''Note''': {{#if: {{{1|}}}|&lt;/td&gt;&lt;td valign=&quot;top&quot; style=&quot;padding-left:0.5em;&quot;&gt;{{{1|}}}&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;}}
+
+&lt;/includeonly&gt;&lt;noinclude&gt;
+{{Part of bundle|value=Baseontologybundle}}
+{{Content hash|value=}}
+&lt;/noinclude&gt;</text>
+    <hash>8d6dc7f69cf7d2e8d86389e10e28a895</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Template:User</title>
+    <id>504</id>
+    <revision>
+      <id>2406</id>
+      <timestamp>2010-12-22T20:32:11Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">&lt;noinclude&gt;{{Template
+|PAGENAME=Template:User
+|rationale=This template is used for displaying and annotating user articles nicely.
+|part of=Baseontologybundle
+}}
+&lt;/noinclude&gt;&lt;includeonly&gt;__NORICHEDITOR__
+{| cellspacing=&quot;0&quot; cellpadding=&quot;5&quot; style=&quot;border-top-width: 1px; border-bottom-width: 1px; border-top-style: solid; border-bottom-style: solid; border-top-color: rgb(170, 170, 170); border-bottom-color: rgb(170, 170, 170); margin-top: 0pt; margin-bottom: 0.5em; background-color: rgb(255, 255, 255); background-image: none; background-repeat: repeat; background-attachment: scroll; background-position: 0% 0%; position: relative; border-collapse: collapse; float: right; clear: right; width: 35%; &quot;
+|-
+! style=&quot;background-color: rgb(116, 221, 130); background-image: none; background-repeat: repeat; background-attachment: scroll; background-position: 0% 0%; color: white; &quot; colspan=&quot;2&quot; | &lt;span style=&quot;font-size: 80%; float: right; &quot;&gt;&lt;imagemap&gt;
+Image:vcard.gif
+poly 0 0 0 0 [[Display|Display]]
+desc none
+&lt;/imagemap&gt;{{#ask: [[{{FULLPAGENAME}}]] 
+| format=vcard
+| ?Firstname=firstname
+| ?Lastname=lastname
+| ?Mbox=email
+| ?Phone=workphone
+| ?Homepage=homepage
+| searchlabel=vCard
+}}&lt;/span&gt;{{#if:{{{Firstname|}}} {{{Lastname|}}}|[[Name::{{{Firstname|}}} {{{Lastname|}}}]]|{{PAGENAME}}}}
+|-
+{{#ifeq:{{{Picture|}}}|||{{Tablelongrow|Value=[[Image:{{{Picture}}}|150px|{{{Name|{{PAGENAME}}}}}]] [[User image::{{ns:image}}:{{{Picture}}}| ]]|Color=white}}}}
+|-
+{{#ifeq:{{{Firstname|}}}|||{{Tablerow||Label=First name:|Value=[[Firstname::{{{Firstname|}}}]]}}}}
+|-
+{{#ifeq:{{{Lastname|}}}|||{{Tablerow||Label=Last name:|Value=[[Lastname::{{{Lastname|}}}]]}}}}
+|-
+{{#ifeq:{{{Homepage|}}}|||{{Tablerow|Label=Homepage: |Value=[[homepage::{{{Homepage}}}|{{{Homepage label|{{{Homepage}}}}}}]]}}}}
+|-
+{{#ifeq:{{{Phone|}}}|||{{Tablerow|Label=Phone:|Value=[[phone::{{{Phone}}}]]}}}}
+|-
+{{#ifeq:{{{Birthday|}}}|||{{Tablerow|Label=Birthday: |Value=[[Birth date::{{{Birthday}}}]]}}}}
+|}
+
+{| cellspacing=&quot;0&quot; cellpadding=&quot;5&quot; style=&quot;border-top-width: 1px; border-bottom-width: 1px; border-top-style: solid; border-bottom-style: solid; border-top-color: rgb(170, 170, 170); border-bottom-color: rgb(170, 170, 170); margin-top: 0pt; margin-bottom: 0.5em; background-color: rgb(255, 255, 255); background-image: none; background-repeat: repeat; background-attachment: scroll; background-position: 0% 0%; position: relative; border-collapse: collapse; float: right; clear: right; width: 35%; &quot;
+|-
+{{Tablesection|Label=Social Network|Color=#b5edbc}}
+|-
+{{#ifeq: {{{Knows|}}} |||{{Tablelongrow|Align=left|Value={{SUBJECTPAGENAME}} knows: }} }}
+|-
+{{#ifeq: {{{Knows|}}} |||{{Tablerow|Label= |Value={{#arraymap:{{{Knows}}}|,|x|[[knows::x]]}} }} }}
+|-
+{{#ifeq: {{#ask:[[knows::{{SUBJECTPAGENAME}}]]}} |||{{Tablelongrow|Align=left|Value=Users who say they know {{SUBJECTPAGENAME}}:}} }}
+|-
+{{#ifeq: {{#ask:[[knows::{{SUBJECTPAGENAME}}]]}} |||{{Tablerow|Label= |Value={{#ask:[[knows::{{SUBJECTPAGENAME}}]] }} }} }}
+|}
+
+{{#ifeq:{{FULLPAGENAME}}|{{ns:template}}:Welcome| |[[Category:User]]}}&lt;/includeonly&gt;&lt;noinclude&gt;
+{{Part of bundle|value=Baseontologybundle}}
+{{Content hash|value=}}
+&lt;/noinclude&gt;</text>
+    <hash>cdf761463bbc08c66bef94ec22470826</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Hide input field</title>
+    <id>513</id>
+    <revision>
+      <id>2446</id>
+      <timestamp>2010-12-23T09:50:02Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">{{Property
+|PAGENAME=Property:Hide input field
+|rationale=Set this property true to hide the input field on the forms article.
+|part of=Baseontologybundle
+}}
+[[Has max cardinality::1]]
+[[Has type::Type:Boolean]]
+[[Has domain and range::Category:Form]]
+{{Part of bundle|value=Baseontologybundle}}
+{{Content hash|value=}}</text>
+    <hash>9eabcd5a0ded84d1f4d9a7a4af424233</hash>
+    </revision>
+  </page>
+  <page>
+    <title>MediaWiki:NavTree</title>
+    <id>527</id>
+    <revision>
+      <id>2499</id>
+      <timestamp>2010-12-23T11:39:57Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">{{#tree:id=test|root=Tree|
+*This is examplaric content of the tree view
+**Read here how to adjust it to your needs: [http://smwforum.ontoprise.com/smwforum/index.php/Help:TreeView_Extension]
+*You can adjust the contents of this tree in this article:
+** [[MediaWiki:NavTree]]
+}}&lt;div style=&quot;display:none;&quot;&gt;
+{{Part of bundle|value=Baseontologybundle}}
+{{Content hash|value=}}
+[[Rationale::This article contains the specification how to build the tree view.| ]]&lt;/div&gt;</text>
+    <hash>0776df0c4110f4048e0496e5dd06fef6</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Template:Welcome</title>
+    <id>532</id>
+    <revision>
+      <id>2511</id>
+      <timestamp>2010-12-23T14:49:31Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <comment>Created page with &quot;&lt;noinclude&gt;{{Template |PAGENAME=Template:Welcome |rationale=This template is copied into the user article after the user has logged in the first time. |part of=Baseontologybundle...&quot;</comment>
+      <text xml:space="preserve">&lt;noinclude&gt;{{Template
+|PAGENAME=Template:Welcome
+|rationale=This template is copied into the user article after the user has logged in the first time.
+|part of=Baseontologybundle
+}}
+&lt;/noinclude&gt;&lt;includeonly&gt;__NORICHEDITOR__
+'''Welcome!'''
+
+Click on &quot;edit&quot; to enter personal data into this article.
+[[Category:User]]&lt;/includeonly&gt;&lt;noinclude&gt;
+{{Part of bundle|value=Baseontologybundle}}
+{{Content hash|value=}}
+&lt;/noinclude&gt;</text>
+    <hash>37962972ce6f180a229e9af99b1a740f</hash>
+    </revision>
+  </page>
+</mediawiki>
