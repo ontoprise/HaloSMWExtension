@@ -3,7 +3,7 @@
 	<global>
 		<version>100</version>
 		<id>baseontologybundle</id>
-		<instdir>extensions/baseontologybundle</instdir>
+		<instdir>extensions/Baseontologybundle</instdir>
 		<vendor>Ontoprise</vendor>
 		<description>Basic ontology bundle</description>
 		<dependencies>
