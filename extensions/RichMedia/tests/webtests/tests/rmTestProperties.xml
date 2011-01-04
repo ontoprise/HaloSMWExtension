@@ -4,7 +4,7 @@
 	<target name="rmTestProperties">
 
 		<webtest name="rmTestPropertyHasCreationDate">
-			<invoke url="http://localhost/${wikipath}/index.php/Property:HasCreationDate" />
+			<invoke url="${wgServer}${wgScript}/Property:HasCreationDate" />
 			<not>
 				<verifyXPath description="this id must not be the class 'selected new'!" 
 					xpath="//li[@id='ca-nstab-property'][contains(@class, 'new')]" />
@@ -12,15 +12,15 @@
 		</webtest>
 
 		<webtest name="rmTestPropertyHasFilename">
-			<invoke url="http://localhost/${wikipath}/index.php/Property:HasFilename" />
+			<invoke url="${wgServer}${wgScript}/Property:HasFilename" />
 			<not>
 				<verifyXPath description="this id must not be the class 'selected new'!"
 					xpath="//li[@id='ca-nstab-property'][contains(@class, 'new')]" />
 			</not>
 		</webtest>
 
-		<webtest name="rmTestPropertyHasRelatedArticles">
-			<invoke url="http://localhost/${wikipath}/index.php/Property:HasRelatedArticles" />
+		<webtest name="rmTestPropertyHasRelatedArticle">
+			<invoke url="${wgServer}${wgScript}/Property:HasRelatedArticle" />
 			<not>
 				<verifyXPath description="this id must not be the class 'selected new'!" 
 					xpath="//li[@id='ca-nstab-property'][contains(@class, 'new')]" />
@@ -28,7 +28,7 @@
 		</webtest>
 
 		<webtest name="rmTestPropertyHasUploadDate">
-			<invoke url="http://localhost/${wikipath}/index.php/Property:HasUploadDate" />
+			<invoke url="${wgServer}${wgScript}/Property:HasUploadDate" />
 			<not>
 				<verifyXPath description="this id must not be the class 'selected new'!" 
 					xpath="//li[@id='ca-nstab-property'][contains(@class, 'new')]" />
@@ -36,7 +36,7 @@
 		</webtest>
 
 		<webtest name="rmTestPropertyHasUploader">
-			<invoke url="http://localhost/${wikipath}/index.php/Property:HasUploader" />
+			<invoke url="${wgServer}${wgScript}/Property:HasUploader" />
 			<not>
 				<verifyXPath description="this id must not be the class 'selected new'!" 
 					xpath="//li[@id='ca-nstab-property'][contains(@class, 'new')]" />
@@ -44,7 +44,7 @@
 		</webtest>
 
 		<webtest name="rmTestPropertyHasCopyrightBy">
-			<invoke url="http://localhost/${wikipath}/index.php/Property:HasCopyrightBy" />
+			<invoke url="${wgServer}${wgScript}/Property:HasCopyrightBy" />
 			<not>
 				<verifyXPath description="this id must not be the class 'selected new'!" 
 					xpath="//li[@id='ca-nstab-property'][contains(@class, 'new')]" />
@@ -52,15 +52,15 @@
 		</webtest>
 
 		<webtest name="rmTestPropertyHasDescription">
-			<invoke url="http://localhost/${wikipath}/index.php/Property:HasDescription" />
+			<invoke url="${wgServer}${wgScript}/Property:HasDescription" />
 			<not>
 				<verifyXPath description="this id must not be the class 'selected new'!" 
 					xpath="//li[@id='ca-nstab-property'][contains(@class, 'new')]" />
 			</not>
 		</webtest>
 
-		<webtest name="rmTestPropertyIsSubSectionOf">
-			<invoke url="http://localhost/${wikipath}/index.php/Property:IsSubSectionOf" />
+		<webtest name="rmTestPropertySubsectionOf">
+			<invoke url="${wgServer}${wgScript}/Property:Subsection of" />
 			<not>
 				<verifyXPath description="this id must not be the class 'selected new'!" 
 					xpath="//li[@id='ca-nstab-property'][contains(@class, 'new')]" />

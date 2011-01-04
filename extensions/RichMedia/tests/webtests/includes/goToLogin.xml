@@ -1,6 +1,6 @@
 <target name="goToLogin">
 	<invoke
-		url="http://localhost/${wikipath}/index.php?title=Special:UserLogin"
+		url="${wgServer}${wgScript}?title=Special:UserLogin"
 		description="Login into the wiki" />
 	<setInputField htmlId="wpName1" value="WikiSysop" />
 	<setInputField htmlId="wpPassword1" value="root" />

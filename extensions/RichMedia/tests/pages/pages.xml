@@ -1,0 +1,1871 @@
+<mediawiki xmlns="http://www.mediawiki.org/halowikiexport/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.ontoprise.de/halowikiexport-1.0.xsd" version="1.0" xml:lang="en">
+  <siteinfo>
+    <sitename>Contentwiki</sitename>
+    <base>http://localhost/index.php/Main_Page</base>
+    <generator>MediaWiki 1.16.0</generator>
+    <case>first-letter</case>
+    <namespaces>
+      <namespace key="-2" case="first-letter">Media</namespace>
+      <namespace key="-1" case="first-letter">Special</namespace>
+      <namespace key="0" case="first-letter" />
+      <namespace key="1" case="first-letter">Talk</namespace>
+      <namespace key="2" case="first-letter">User</namespace>
+      <namespace key="3" case="first-letter">User talk</namespace>
+      <namespace key="4" case="first-letter">Contentwiki</namespace>
+      <namespace key="5" case="first-letter">Contentwiki talk</namespace>
+      <namespace key="6" case="first-letter">File</namespace>
+      <namespace key="7" case="first-letter">File talk</namespace>
+      <namespace key="8" case="first-letter">MediaWiki</namespace>
+      <namespace key="9" case="first-letter">MediaWiki talk</namespace>
+      <namespace key="10" case="first-letter">Template</namespace>
+      <namespace key="11" case="first-letter">Template talk</namespace>
+      <namespace key="12" case="first-letter">Help</namespace>
+      <namespace key="13" case="first-letter">Help talk</namespace>
+      <namespace key="14" case="first-letter">Category</namespace>
+      <namespace key="15" case="first-letter">Category talk</namespace>
+      <namespace key="102" case="first-letter">Property</namespace>
+      <namespace key="103" case="first-letter">Property talk</namespace>
+      <namespace key="104" case="first-letter">Type</namespace>
+      <namespace key="105" case="first-letter">Type talk</namespace>
+      <namespace key="106" case="first-letter">Form</namespace>
+      <namespace key="107" case="first-letter">Form talk</namespace>
+      <namespace key="108" case="first-letter">Concept</namespace>
+      <namespace key="109" case="first-letter">Concept talk</namespace>
+      <namespace key="120" case="first-letter">Document</namespace>
+      <namespace key="121" case="first-letter">Document talk</namespace>
+      <namespace key="122" case="first-letter">Audio</namespace>
+      <namespace key="123" case="first-letter">Audio talk</namespace>
+      <namespace key="124" case="first-letter">Video</namespace>
+      <namespace key="125" case="first-letter">Video talk</namespace>
+      <namespace key="126" case="first-letter">Pdf</namespace>
+      <namespace key="127" case="first-letter">Pdf talk</namespace>
+      <namespace key="128" case="first-letter">ICalendar</namespace>
+      <namespace key="129" case="first-letter">ICalendar talk</namespace>
+      <namespace key="130" case="first-letter">VCard</namespace>
+      <namespace key="131" case="first-letter">VCard talk</namespace>
+      <namespace key="200" case="first-letter">WebService</namespace>
+      <namespace key="201" case="first-letter">WebService talk</namespace>
+      <namespace key="202" case="first-letter">TermImport</namespace>
+      <namespace key="203" case="first-letter">TermImport talk</namespace>
+      <namespace key="220" case="first-letter">E-mail</namespace>
+      <namespace key="221" case="first-letter">E-mail talk</namespace>
+      <namespace key="300" case="first-letter">ACL</namespace>
+      <namespace key="301" case="first-letter">ACL talk</namespace>
+      <namespace key="400" case="first-letter">IAI</namespace>
+      <namespace key="401" case="first-letter">IAI talk</namespace>
+      <namespace key="700" case="first-letter">Comment</namespace>
+      <namespace key="701" case="first-letter">Comment talk</namespace>
+      <namespace key="702" case="first-letter">UserManual</namespace>
+      <namespace key="703" case="first-letter">UserManual talk</namespace>
+    </namespaces>
+  </siteinfo>
+  <page>
+    <title>Property:Subsection of</title>
+    <id>41</id>
+    <revision>
+      <id>2317</id>
+      <timestamp>2010-12-22T17:08:43Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">{{Property
+|part of=Richmedia
+|rationale=Allows attaching content to other content (e.g. projects, tasks, events and persons) in a hierarchical manner.
+|PAGENAME=Property:Subsection of
+}}
+{{Part of bundle|value=Richmedia}}
+{{Content hash|value=}}
+[[Is inverse of::Property:HasSubsection| ]] [[has domain and range::Category:Content;| ]] [[Has type::Type:Page| ]] 
+
+[[Category:Transitive properties]]</text>
+    <hash>a9a24e3465dee13dfd14ee04a9f5abc3</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Template:RMListInnerTable</title>
+    <id>131</id>
+    <revision>
+      <id>2302</id>
+      <timestamp>2010-12-22T17:00:45Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">&lt;noinclude&gt;{{Template
+|part of=Richmedia
+|rationale=Builds the inner table
+|PAGENAME=Template:RMListInnerTable
+}}
+{{Part of bundle|value=Richmedia}}
+{{Content hash|value=}}
+&lt;/noinclude&gt;&lt;includeonly&gt;
+|-
+| align=&quot;center&quot; |&lt;span style=&quot;display: none;&quot;&gt;{{{1}}}&lt;/span&gt;&lt;span class=&quot;plainlinks&quot; title=&quot;This indicates the category of the file.&quot;&gt;{{RMCategoryLinkIcon|{{{1}}}}}&lt;/span&gt;
+|&lt;span class=&quot;plainlinks&quot;&gt;{{#rmew:{{{1}}}|{{RMNoNamespace|{{{2}}} }}|700|500}}&lt;/span&gt;
+|[[{{{3}}}]]
+|&lt;span style=&quot;display: none;&quot;&gt;{{#formatdate:{{{4}}}|ISO 8601}}&lt;/span&gt;{{{4}}}
+| align=&quot;center&quot; |&lt;span class=&quot;plainlinks rmListInfoIcon&quot;&gt;[{{fullurl:{{{1}}}}} {{SERVER}}{{SCRIPTPATH}}/skins/common/images/icons/smw_plus_info_icon_16x16.png]&lt;/span&gt;&lt;span class=&quot;plainlinks&quot;&gt;[{{fullurl:{{{1}}}|action=formedit}} {{SERVER}}{{SCRIPTPATH}}/skins/common/images/icons/smw_plus_edit_with_forms_icon_16x16.gif]&lt;/span&gt;
+| align=&quot;center&quot; |&lt;span class=&quot;plainlinks&quot; title=&quot;delete description&quot;&gt;[{{fullurl:{{{1}}}|action=delete}} {{SERVER}}{{SCRIPTPATH}}/skins/common/images/icons/smw_plus_delete_icon_16x16.png]&lt;/span&gt;&lt;/includeonly&gt;</text>
+    <hash>a0d4653cd6c7b6ffcf35dcbfb9abbe60</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Template:RMCategoryLinkIcon</title>
+    <id>132</id>
+    <revision>
+      <id>2288</id>
+      <timestamp>2010-12-22T16:55:20Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">&lt;noinclude&gt;{{Template
+|part of=Richmedia
+|rationale=detects the right icon for the file
+|PAGENAME=Template:RMCategoryLinkIcon
+}}
+{{Part of bundle|value=Richmedia}}
+{{Content hash|value=}}
+&lt;/noinclude&gt;&lt;includeonly&gt;{{#switch:
+  {{#sub:
+    {{lc: {{{1}}} }} 
+    | 0
+    |{{#pos:{{lc: {{{1}}} }}|:}}  
+  }}
+  | file={{SERVER}}/{{SCRIPTPATH}}/skins/common/images/icons/smw_plus_image_icon_16x16.png
+  | image={{SERVER}}/{{SCRIPTPATH}}/skins/common/images/icons/smw_plus_image_icon_16x16.png
+  | pdf={{SERVER}}/{{SCRIPTPATH}}/skins/common/images/icons/smw_plus_pdf_icon_16x16.png
+  | document={{SERVER}}/{{SCRIPTPATH}}/skins/common/images/icons/smw_plus_document_icon_16x16.png
+  | audio={{SERVER}}/{{SCRIPTPATH}}/skins/common/images/icons/smw_plus_music_icon_16x16.png
+  | video={{SERVER}}/{{SCRIPTPATH}}/skins/common/images/icons/smw_plus_video_icon_16x16.png
+  | vcard={{SERVER}}/{{SCRIPTPATH}}/skins/common/images/icons/smw_plus_vcard_icon_16x16.gif
+  | icalendar={{SERVER}}/{{SCRIPTPATH}}/skins/common/images/icons/smw_plus_icalendar_icon_16x16.gif
+  | default {{SERVER}}/{{SCRIPTPATH}}/skins/common/images/icons/smw_plus_image_icon_16x16.png
+}}&lt;/includeonly&gt;&lt;noinclude&gt;
+&lt;/noinclude&gt;</text>
+    <hash>14108f0ee96e3dcf09c863eb465999e3</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Form:RMUpload</title>
+    <id>133</id>
+    <revision>
+      <id>2310</id>
+      <timestamp>2010-12-22T17:06:09Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">&lt;noinclude&gt;{{Form
+|PAGENAME=Form:RMUpload
+|part of=Richmedia
+|rationale=This form is used to edit the information of rm uploads.
+}}
+{{Part of bundle|value=Richmedia}}
+{{Content hash|value=}}
+&lt;/noinclude&gt;&lt;includeonly&gt;__NORICHEDITOR__
+{{{info|page name=RMUploadPage&lt;unique number;start=1&gt;}}} {{{for template|RMUpload|label=Meta information|collapsible}}} 
+
+{| width=&quot;100%&quot; align=&quot;center&quot;
+|-
+| width=&quot;30%&quot; | 
+| width=&quot;70%&quot; | 
+|-
+| align=&quot;right&quot; style=&quot;font-size: 100%; font-weight: bold; &quot; | Uploaded by&lt;span style=&quot;color: red; &quot;&gt;*&lt;/span&gt;: 
+| {{{field|Uploader|mandatory|input type=haloACtext|constraints=ask: [[Category:Person]]|default=current user|size=40|maxlength=40}}}
+|-
+| &amp;nbsp; 
+| style=&quot;padding-bottom: 5px; font-size: 80%; font-style: italic; &quot; | (The name of the uploader.)
+|-
+| align=&quot;right&quot; style=&quot;font-size: 100%; font-weight: bold; &quot; | Copyright by: 
+| {{{field|CopyrightBy|size=40|maxlength=40}}}
+|-
+| &amp;nbsp; 
+| style=&quot;padding-bottom: 5px; font-size: 80%; font-style: italic; &quot; | (The name of the person/company who holds the rights of this file)
+|-
+| align=&quot;right&quot; style=&quot;font-size: 100%; font-weight: bold; &quot; | Creation date: 
+| {{{field|CreationDate|input type=date|default=now}}}
+|-
+| &amp;nbsp; 
+| style=&quot;padding-bottom: 5px; font-size: 80%; font-style: italic; &quot; | (The date when this file has been created or recently changed)
+|-
+| style=&quot;display: none; &quot; | {{{field|UploadDate|input type=date|mandatory|default=now}}}
+|-
+| align=&quot;right&quot; style=&quot;font-size: 100%; font-weight: bold; &quot; | Short description: 
+| {{{field|Description|input type=textarea|rows=3|cols=40}}}
+|-
+| &amp;nbsp; 
+| style=&quot;padding-bottom: 5px; font-size: 80%; font-style: italic; &quot; | (Here you can enter a short description of this file)
+|-
+| align=&quot;right&quot; style=&quot;font-size: 100%; font-weight: bold; &quot; | Keywords: 
+| {{{field|Keywords|multiple|size=40}}}
+|-
+| &amp;nbsp; 
+| style=&quot;padding-bottom: 5px; font-size: 80%; font-style: italic; &quot; | (Here you can tag the file with different keywords)
+|-
+| align=&quot;right&quot; style=&quot;font-size: 100%; font-weight: bold; &quot; | Related articles: 
+| {{{field|RelatedArticles|input type=haloACtext|constraints=namespace:0|size=40}}}
+|-
+| &amp;nbsp; 
+| style=&quot;padding-bottom: 5px; font-size: 80%; font-style: italic; &quot; | (Articles which are attached to this file)
+|-
+| {{{field|Filename|hidden}}}
+|-
+| style=&quot;color: red; &quot; colspan=&quot;2&quot; | Fields marked with a &quot;*&quot; are mandatory
+|}
+
+{{{end template}}}&lt;/includeonly&gt;&lt;noinclude&gt;
+&lt;/noinclude&gt;</text>
+    <hash>3f3d1f26f22bf4d235aa591284352280</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Form:RMImage</title>
+    <id>134</id>
+    <revision>
+      <id>2335</id>
+      <timestamp>2010-12-22T18:09:25Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">&lt;noinclude&gt;{{Form
+|PAGENAME=Form:RMPdf
+|part of=Richmedia
+|rationale=This form is used to edit the information of uploaded images.
+|Has default form=Form:RMImage
+|No automatic formedit=Yes
+}}
+{{Part of bundle|value=Richmedia}}
+{{Content hash|value=}}
+&lt;/noinclude&gt;&lt;includeonly&gt;__NORICHEDITOR__
+{{{for template|RMImage|label=Meta Information|collapsible}}} 
+
+{| width=&quot;100%&quot; align=&quot;center&quot;
+|-
+| width=&quot;30%&quot; | 
+| width=&quot;70%&quot; | 
+|-
+| align=&quot;right&quot; style=&quot;font-size: 100%; font-weight: bold; &quot; | Filename&lt;span style=&quot;color: red; &quot;&gt;*&lt;/span&gt;: 
+| {{{field|Filename|mandatory}}}
+|-
+| &amp;nbsp; 
+| style=&quot;padding-bottom: 5px; font-size: 80%; font-style: italic; &quot; | (The full name of this file including the namespace and its extension)
+|-
+| align=&quot;right&quot; style=&quot;font-size: 100%; font-weight: bold; &quot; | Copyright by: 
+| {{{field|CopyrightBy}}}
+|-
+| &amp;nbsp; 
+| style=&quot;padding-bottom: 5px; font-size: 80%; font-style: italic; &quot; | (The name of the person/company who holds the rights of this file)
+|-
+| align=&quot;right&quot; style=&quot;font-size: 100%; font-weight: bold; &quot; | Creation date: 
+| {{{field|CreationDate|input type=date|default=now}}}
+|-
+| &amp;nbsp; 
+| style=&quot;padding-bottom: 5px; font-size: 80%; font-style: italic; &quot; | (The date when this file has been created or recently changed)
+|-
+| align=&quot;right&quot; style=&quot;font-size: 100%; font-weight: bold; &quot; | Uploaded by&lt;span style=&quot;color: red; &quot;&gt;*&lt;/span&gt;: 
+| {{{field|Uploader|mandatory|size=40|input type=haloACtext|constraints=ask: [[Category:Person]]|default=current user}}}
+|-
+| &amp;nbsp; 
+| style=&quot;padding-bottom: 5px; font-size: 80%; font-style: italic; &quot; | (The name of the uploader.)
+|-
+| align=&quot;right&quot; style=&quot;font-size: 100%; font-weight: bold; &quot; | Upload date&lt;span style=&quot;color: red; &quot;&gt;*&lt;/span&gt;: 
+| {{{field|UploadDate|input type=date|default=now}}}
+|-
+| align=&quot;right&quot; style=&quot;font-size: 100%; font-weight: bold; &quot; | Short description: 
+| {{{field|Description|input type=textarea|rows=3|cols=40}}}
+|-
+| &amp;nbsp; 
+| style=&quot;padding-bottom: 5px; font-size: 80%; font-style: italic; &quot; | (Here you can enter a short description of this file)
+|-
+| align=&quot;right&quot; style=&quot;font-size: 100%; font-weight: bold; &quot; | Keywords: 
+| {{{field|Keywords|multiple|size=40}}}
+|-
+| &amp;nbsp; 
+| style=&quot;padding-bottom: 5px; font-size: 80%; font-style: italic; &quot; | (Here you can tag the file with different keywords)
+|-
+| align=&quot;right&quot; style=&quot;font-size: 100%; font-weight: bold; &quot; | Format: 
+| {{{field|Format|size=40}}}
+|-
+| &amp;nbsp; 
+| style=&quot;padding-bottom: 5px; font-size: 80%; font-style: italic; &quot; | (The MIME type of this file)
+|-
+| align=&quot;right&quot; style=&quot;font-size: 100%; font-weight: bold; &quot; | Related articles: 
+| {{{field|RelatedArticles|input type=haloACtext|constraints=namespace:0|size=40}}}
+|-
+| &amp;nbsp; 
+| style=&quot;padding-bottom: 5px; font-size: 80%; font-style: italic; &quot; | (Articles which are attached to this file)
+|-
+| align=&quot;center&quot; style=&quot;color: red; &quot; colspan=&quot;2&quot; | Fields marked with a &quot;*&quot; are mandatory
+|}
+
+{{{end template}}} {{{standard input|minor edit}}} {{{standard input|watch}}} 
+
+{{{standard input|save}}} {{{standard input|preview}}} {{{standard input|changes}}} {{{standard input|cancel}}}&lt;/includeonly&gt;&lt;noinclude&gt;
+&lt;/noinclude&gt;</text>
+    <hash>097c9ff8b0f50596aae3e2601f3cd273</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Form:RMPdf</title>
+    <id>135</id>
+    <revision>
+      <id>2309</id>
+      <timestamp>2010-12-22T17:04:35Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">&lt;noinclude&gt;{{Form
+|PAGENAME=Form:RMPdf
+|rationale=This form is used to edit the information of uploaded pdf files.
+|part of=Richmedia
+}}
+{{Part of bundle|value=Richmedia}}
+{{Content hash|value=}}
+&lt;/noinclude&gt;&lt;includeonly&gt;__NORICHEDITOR__
+{{{info|WYSIWYG}}} {{{for template|RMPdf|label=Meta information|collapsible}}} 
+
+{| width=&quot;100%&quot; align=&quot;center&quot;
+|-
+| width=&quot;30%&quot; | 
+| width=&quot;70%&quot; | 
+|-
+| align=&quot;right&quot; style=&quot;font-size: 100%; font-weight: bold; &quot; | Filename&lt;span style=&quot;color: red; &quot;&gt;*&lt;/span&gt;: 
+| {{{field|Filename|mandatory}}}
+|-
+| &amp;nbsp; 
+| style=&quot;padding-bottom: 5px; font-size: 80%; font-style: italic; &quot; | (The full name of this file including the namespace and its extension)
+|-
+| align=&quot;right&quot; style=&quot;font-size: 100%; font-weight: bold; &quot; | Copyright by: 
+| {{{field|CopyrightBy}}}
+|-
+| &amp;nbsp; 
+| style=&quot;padding-bottom: 5px; font-size: 80%; font-style: italic; &quot; | (The name of the person/company who holds the rights of this file)
+|-
+| align=&quot;right&quot; style=&quot;font-size: 100%; font-weight: bold; &quot; | Creation date: 
+| {{{field|CreationDate|input type=date|default=now}}}
+|-
+| &amp;nbsp; 
+| style=&quot;padding-bottom: 5px; font-size: 80%; font-style: italic; &quot; | (The date when this file has been created or recently changed)
+|-
+| align=&quot;right&quot; style=&quot;font-size: 100%; font-weight: bold; &quot; | Uploaded by&lt;span style=&quot;color: red; &quot;&gt;*&lt;/span&gt;: 
+| {{{field|Uploader|mandatory|size=40|input type=haloACtext|constraints=aks: [[Category:Person]]|default=current user}}}
+|-
+| &amp;nbsp; 
+| style=&quot;padding-bottom: 5px; font-size: 80%; font-style: italic; &quot; | (The name of the uploader.)
+|-
+| align=&quot;right&quot; style=&quot;font-size: 100%; font-weight: bold; &quot; | Upload date&lt;span style=&quot;color: red; &quot;&gt;*&lt;/span&gt;: 
+| {{{field|UploadDate|input type=date|default=now}}}
+|-
+| align=&quot;right&quot; style=&quot;font-size: 100%; font-weight: bold; &quot; | Short description: 
+| {{{field|Description|input type=textarea|rows=3|cols=40}}}
+|-
+| &amp;nbsp; 
+| style=&quot;padding-bottom: 5px; font-size: 80%; font-style: italic; &quot; | (Here you can enter a short description of this file)
+|-
+| align=&quot;right&quot; style=&quot;font-size: 100%; font-weight: bold; &quot; | Keywords: 
+| {{{field|Keywords|multiple|size=40}}}
+|-
+| &amp;nbsp; 
+| style=&quot;padding-bottom: 5px; font-size: 80%; font-style: italic; &quot; | (Here you can tag the file with different keywords)
+|-
+| align=&quot;right&quot; style=&quot;font-size: 100%; font-weight: bold; &quot; | Format: 
+| {{{field|Format|size=40}}}
+|-
+| &amp;nbsp; 
+| style=&quot;padding-bottom: 5px; font-size: 80%; font-style: italic; &quot; | (The MIME type of this file)
+|-
+| align=&quot;right&quot; style=&quot;font-size: 100%; font-weight: bold; &quot; | Related articles: 
+| {{{field|RelatedArticles|input type=haloACtext|constraints=namespace:0|size=40}}}
+|-
+| &amp;nbsp; 
+| style=&quot;padding-bottom: 5px; font-size: 80%; font-style: italic; &quot; | (Articles which are attached to this file)
+|-
+| align=&quot;center&quot; colspan=&quot;2&quot; style=&quot;color: red; &quot; | Fields marked with a &quot;*&quot; are mandatory
+|}
+
+{{{end template}}} '''Free text:''' 
+
+{{{standard input|free text}}} 
+
+{{{standard input|minor edit}}} {{{standard input|watch}}} 
+
+{{{standard input|save}}} {{{standard input|preview}}} {{{standard input|changes}}} {{{standard input|cancel}}}&lt;/includeonly&gt;</text>
+    <hash>9677425574bb0fbf64853de9904dc663</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Form:RMDocument</title>
+    <id>136</id>
+    <revision>
+      <id>2291</id>
+      <timestamp>2010-12-22T16:56:16Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">&lt;noinclude&gt;{{Form
+|PAGENAME=Form:RMDocument
+|part of=Richmedia
+|rationale=This form is used to edit the information of uploaded documents.
+}}
+{{Part of bundle|value=Richmedia}}
+{{Content hash|value=}}
+&lt;/noinclude&gt;&lt;includeonly&gt;__NORICHEDITOR__
+{{{info|WYSIWYG}}} {{{for template|RMDocument|label=Meta information|collapsible}}} 
+
+{| width=&quot;100%&quot; align=&quot;center&quot; class=&quot;FCK__ShowTableBorders&quot;
+|-
+| width=&quot;30%&quot; | 
+| width=&quot;70%&quot; | 
+|-
+| align=&quot;right&quot; style=&quot;font-size: 100%; font-weight: bold; &quot; | Filename&lt;span style=&quot;color: red; &quot;&gt;*&lt;/span&gt;: 
+| {{{field|Filename|mandatory}}}
+|-
+| &amp;nbsp; 
+| style=&quot;padding-bottom: 5px; font-style: italic; font-size: 80%; &quot; | (The full name of this file including the namespace and its extension)
+|-
+| align=&quot;right&quot; style=&quot;font-size: 100%; font-weight: bold; &quot; | Copyright by: 
+| {{{field|CopyrightBy}}}
+|-
+| &amp;nbsp; 
+| style=&quot;padding-bottom: 5px; font-style: italic; font-size: 80%; &quot; | (The name of the person/company who holds the rights of this file)
+|-
+| align=&quot;right&quot; style=&quot;font-size: 100%; font-weight: bold; &quot; | Creation date: 
+| {{{field|CreationDate|input type=date|default=now}}}
+|-
+| &amp;nbsp; 
+| style=&quot;padding-bottom: 5px; font-style: italic; font-size: 80%; &quot; | (The date when this file has been created or recently changed)
+|-
+| align=&quot;right&quot; style=&quot;font-size: 100%; font-weight: bold; &quot; | Uploaded by&lt;span style=&quot;color: red; &quot;&gt;*&lt;/span&gt;: 
+| {{{field|Uploader|mandatory|size=40|input type=haloACtext|constraints=ask: [[Category:Person]]|default=current user}}}
+|-
+| &amp;nbsp; 
+| style=&quot;padding-bottom: 5px; font-style: italic; font-size: 80%; &quot; | (The name of the uploader.)
+|-
+| align=&quot;right&quot; style=&quot;font-size: 100%; font-weight: bold; &quot; | Upload date&lt;span style=&quot;color: red; &quot;&gt;*&lt;/span&gt;: 
+| {{{field|UploadDate|input type=date|default=now}}}
+|-
+| align=&quot;right&quot; style=&quot;font-size: 100%; font-weight: bold; &quot; | Short description: 
+| {{{field|Description|input type=textarea|rows=3|cols=40}}}
+|-
+| &amp;nbsp; 
+| style=&quot;padding-bottom: 5px; font-style: italic; font-size: 80%; &quot; | (Here you can enter a short description of this file)
+|-
+| align=&quot;right&quot; style=&quot;font-size: 100%; font-weight: bold; &quot; | Keywords: 
+| {{{field|Keywords|multiple|size=40}}}
+|-
+| &amp;nbsp; 
+| style=&quot;padding-bottom: 5px; font-style: italic; font-size: 80%; &quot; | (Here you can tag the file with different keywords)
+|-
+| align=&quot;right&quot; style=&quot;font-size: 100%; font-weight: bold; &quot; | Format: 
+| {{{field|Format|size=40}}}
+|-
+| &amp;nbsp; 
+| style=&quot;padding-bottom: 5px; font-style: italic; font-size: 80%; &quot; | (The MIME type of this file)
+|-
+| align=&quot;right&quot; style=&quot;font-size: 100%; font-weight: bold; &quot; | Related articles: 
+| {{{field|RelatedArticles|input type=haloACtext|constraints=namespace:0|size=40}}}
+|-
+| &amp;nbsp; 
+| style=&quot;padding-bottom: 5px; font-style: italic; font-size: 80%; &quot; | (Articles which are attached to this file)
+|-
+| align=&quot;right&quot; style=&quot;font-size: 100%; font-weight: bold; &quot; | Sub section of: 
+| {{{field|SubSectionOf|input type=haloACtext|constraints=namespace:120}}}
+|-
+| align=&quot;center&quot; colspan=&quot;2&quot; style=&quot;color: red; &quot; | Fields marked with a &quot;*&quot; are mandatory 
+| &amp;nbsp;
+|}
+
+{{{end template}}} '''Free text:''' 
+
+{{{standard input|free text}}} 
+
+{{{standard input|minor edit}}} {{{standard input|watch}}} 
+
+{{{standard input|save}}} {{{standard input|preview}}} {{{standard input|changes}}} {{{standard input|cancel}}}&lt;/includeonly&gt;&lt;noinclude&gt;
+&lt;/noinclude&gt;</text>
+    <hash>8a7c5292ce4bf51a08d3d0e642df95b7</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Form:RMAudio</title>
+    <id>137</id>
+    <revision>
+      <id>2307</id>
+      <timestamp>2010-12-22T17:02:56Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">&lt;noinclude&gt;{{Form
+|PAGENAME=Form:RMAudio
+|rationale=This form is used to edit the information of uploaded audio files.
+|Show in create new page=No
+|Hide input field=Yes
+|part of=Richmedia
+}}
+&lt;/noinclude&gt;&lt;includeonly&gt;__NORICHEDITOR__
+{{{for template|RMAudio|label=Meta information|collapsible}}} 
+
+{| width=&quot;100%&quot; align=&quot;center&quot;
+|-
+| width=&quot;30%&quot; | 
+| width=&quot;70%&quot; | 
+|-
+| align=&quot;right&quot; style=&quot;font-size: 100%; font-weight: bold; &quot; | Filename&lt;span style=&quot;color: red; &quot;&gt;*&lt;/span&gt;: 
+| {{{field|Filename|mandatory}}}
+|-
+| &amp;nbsp; 
+| style=&quot;padding-bottom: 5px; font-size: 80%; font-style: italic; &quot; | (The full name of this file including the namespace and its extension)
+|-
+| align=&quot;right&quot; style=&quot;font-size: 100%; font-weight: bold; &quot; | Copyright by: 
+| {{{field|CopyrightBy}}}
+|-
+| &amp;nbsp; 
+| style=&quot;padding-bottom: 5px; font-size: 80%; font-style: italic; &quot; | (The name of the person/company who holds the rights of this file)
+|-
+| align=&quot;right&quot; style=&quot;font-size: 100%; font-weight: bold; &quot; | Creation date: 
+| {{{field|CreationDate|input type=date|default=now}}}
+|-
+| &amp;nbsp; 
+| style=&quot;padding-bottom: 5px; font-size: 80%; font-style: italic; &quot; | (The date when this file has been created or recently changed)
+|-
+| align=&quot;right&quot; style=&quot;font-size: 100%; font-weight: bold; &quot; | Uploaded by&lt;span style=&quot;color: red; &quot;&gt;*&lt;/span&gt;: 
+| {{{field|Uploader|mandatory|size=40|input type=haloACtext|constraints=ask: [[Category:Person]]|default=current user}}}
+|-
+| &amp;nbsp; 
+| style=&quot;padding-bottom: 5px; font-size: 80%; font-style: italic; &quot; | (The name of the uploader.)
+|-
+| align=&quot;right&quot; style=&quot;font-size: 100%; font-weight: bold; &quot; | Upload date&lt;span style=&quot;color: red; &quot;&gt;*&lt;/span&gt;: 
+| {{{field|UploadDate|input type=date|default=now}}}
+|-
+| align=&quot;right&quot; style=&quot;font-size: 100%; font-weight: bold; &quot; | Short description: 
+| {{{field|Description|input type=textarea|rows=3|cols=40}}}
+|-
+| &amp;nbsp; 
+| style=&quot;padding-bottom: 5px; font-size: 80%; font-style: italic; &quot; | (Here you can enter a short description of this file)
+|-
+| align=&quot;right&quot; style=&quot;font-size: 100%; font-weight: bold; &quot; | Keywords: 
+| {{{field|Keywords|multiple|size=40}}}
+|-
+| &amp;nbsp; 
+| style=&quot;padding-bottom: 5px; font-size: 80%; font-style: italic; &quot; | (Here you can tag the file with different keywords)
+|-
+| align=&quot;right&quot; style=&quot;font-size: 100%; font-weight: bold; &quot; | Format: 
+| {{{field|Format|size=40}}}
+|-
+| &amp;nbsp; 
+| style=&quot;padding-bottom: 5px; font-size: 80%; font-style: italic; &quot; | (The MIME type of this file)
+|-
+| align=&quot;right&quot; style=&quot;font-size: 100%; font-weight: bold; &quot; | Related articles: 
+| {{{field|RelatedArticles|input type=haloACtext|constraints=namespace:0|size=40}}}
+|-
+| &amp;nbsp; 
+| style=&quot;padding-bottom: 5px; font-size: 80%; font-style: italic; &quot; | (Articles which are attached to this file)
+|-
+| align=&quot;center&quot; colspan=&quot;2&quot; style=&quot;color: red; &quot; | Fields marked with a &quot;*&quot; are mandatory
+|}
+
+{{{end template}}}&lt;/includeonly&gt;&lt;noinclude&gt;
+{{Part of bundle
+|value=Richmedia
+}}
+{{Content hash}}
+&lt;/noinclude&gt;</text>
+    <hash>52d0024d9ca5eb7808a722b9abc04ace</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Form:RMVideo</title>
+    <id>138</id>
+    <revision>
+      <id>2316</id>
+      <timestamp>2010-12-22T17:08:15Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">&lt;noinclude&gt;{{Form
+|PAGENAME=Form:RMVideo
+|part of=Richmedia
+|rationale=This form is used to edit the information of uploaded video files.
+}}
+{{Part of bundle|value=Richmedia}}
+{{Content hash|value=}}
+&lt;/noinclude&gt;&lt;includeonly&gt;__NORICHEDITOR__
+{{{for template|RMVideo|label=Meta information|collapsible}}} 
+
+{| width=&quot;100%&quot; align=&quot;center&quot;
+|-
+| width=&quot;30%&quot; | 
+| width=&quot;70%&quot; | 
+|-
+| align=&quot;right&quot; style=&quot;font-size: 100%; font-weight: bold; &quot; | Filename&lt;span style=&quot;color: red; &quot;&gt;*&lt;/span&gt;: 
+| {{{field|Filename|mandatory}}}
+|-
+| &amp;nbsp; 
+| style=&quot;padding-bottom: 5px; font-size: 80%; font-style: italic; &quot; | (The full name of this file including the namespace and its extension)
+|-
+| align=&quot;right&quot; style=&quot;font-size: 100%; font-weight: bold; &quot; | Copyright by: 
+| {{{field|CopyrightBy}}}
+|-
+| &amp;nbsp; 
+| style=&quot;padding-bottom: 5px; font-size: 80%; font-style: italic; &quot; | (The name of the person/company who holds the rights of this file)
+|-
+| align=&quot;right&quot; style=&quot;font-size: 100%; font-weight: bold; &quot; | Creation date: 
+| {{{field|CreationDate|input type=date|default=now}}}
+|-
+| &amp;nbsp; 
+| style=&quot;padding-bottom: 5px; font-size: 80%; font-style: italic; &quot; | (The date when this file has been created or recently changed)
+|-
+| align=&quot;right&quot; style=&quot;font-size: 100%; font-weight: bold; &quot; | Uploaded by&lt;span style=&quot;color: red; &quot;&gt;*&lt;/span&gt;: 
+| {{{field|Uploader|mandatory|size=40|input type=haloACtext|constraints=ask: [[Category:Person]]|default=current user}}}
+|-
+| &amp;nbsp; 
+| style=&quot;padding-bottom: 5px; font-size: 80%; font-style: italic; &quot; | (The name of the uploader.)
+|-
+| align=&quot;right&quot; style=&quot;font-size: 100%; font-weight: bold; &quot; | Upload date&lt;span style=&quot;color: red; &quot;&gt;*&lt;/span&gt;: 
+| {{{field|UploadDate|input type=date|default=now}}}
+|-
+| align=&quot;right&quot; style=&quot;font-size: 100%; font-weight: bold; &quot; | Short description: 
+| {{{field|Description|input type=textarea|rows=3|cols=40}}}
+|-
+| &amp;nbsp; 
+| style=&quot;padding-bottom: 5px; font-size: 80%; font-style: italic; &quot; | (Here you can enter a short description of this file)
+|-
+| align=&quot;right&quot; style=&quot;font-size: 100%; font-weight: bold; &quot; | Keywords: 
+| {{{field|Keywords|multiple|size=40}}}
+|-
+| &amp;nbsp; 
+| style=&quot;padding-bottom: 5px; font-size: 80%; font-style: italic; &quot; | (Here you can tag the file with different keywords)
+|-
+| align=&quot;right&quot; style=&quot;font-size: 100%; font-weight: bold; &quot; | Format: 
+| {{{field|Format|size=40}}}
+|-
+| &amp;nbsp; 
+| style=&quot;padding-bottom: 5px; font-size: 80%; font-style: italic; &quot; | (The MIME type of this file)
+|-
+| align=&quot;right&quot; style=&quot;font-size: 100%; font-weight: bold; &quot; | Related articles: 
+| {{{field|RelatedArticles|input type=haloACtext|constraints=namespace:0|size=40}}}
+|-
+| &amp;nbsp; 
+| style=&quot;padding-bottom: 5px; font-size: 80%; font-style: italic; &quot; | (Articles which are attached to this file)
+|-
+| align=&quot;center&quot; colspan=&quot;2&quot; style=&quot;color: red; &quot; | Fields marked with a &quot;*&quot; are mandatory
+|}
+
+{{{end template}}}&lt;/includeonly&gt;&lt;noinclude&gt;
+&lt;/noinclude&gt;</text>
+    <hash>6dbacf87fdca8b3ae5a1aeb9c6c68dcf</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Property:HasCreationDate</title>
+    <id>139</id>
+    <revision>
+      <id>2272</id>
+      <timestamp>2010-12-22T16:43:25Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">{{Property
+|part of=Richmedia
+|rationale=Attribute for specifying the creation date of a media file.
+|PAGENAME=Property:HasCreationDate
+}}
+{{Part of bundle|value=Richmedia}}
+{{Content hash|value=}}
+[[Has type::Date| ]] [[has domain and range::Category:Media; | ]]</text>
+    <hash>b8dc68d104f870147e011a8b14acb878</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Property:HasFilename</title>
+    <id>140</id>
+    <revision>
+      <id>2274</id>
+      <timestamp>2010-12-22T16:44:34Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">{{Property
+|PAGENAME=Property:HasFilename
+|part of=Richmedia
+|rationale=Used to specify a file name for a media file. The file name will be used as page title for the uploaded file.
+}}
+{{Part of bundle|value=Richmedia}}
+{{Content hash|value=}}
+[[has type::Type:String| ]] [[has domain and range::Category:Media; | ]]</text>
+    <hash>b6d2cbe6c2b99b71cba63cc578db2a7e</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Property:HasUploadDate</title>
+    <id>141</id>
+    <revision>
+      <id>2278</id>
+      <timestamp>2010-12-22T16:46:42Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">{{Property
+|part of=Richmedia
+|rationale=Denotes the date at which a media file was uploaded. The property value is automatically determined by the system upon uploading.
+|PAGENAME=Property:HasUploadDate
+}}
+{{Part of bundle|value=Richmedia}}
+{{Content hash|value=}}
+[[Has type::Type:Date| ]] [[has domain and range::Category:Media; | ]]</text>
+    <hash>053a0693054182de9a0ec0e672e14208</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Property:HasUploader</title>
+    <id>142</id>
+    <revision>
+      <id>2279</id>
+      <timestamp>2010-12-22T16:47:06Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">{{Property
+|part of=Richmedia
+|rationale=Relates a media file with the person who uploaded the file (e.g. User:WikiSysop).
+|PAGENAME=Property:HasUploader
+}}
+{{Part of bundle|value=Richmedia}}
+{{Content hash|value=}}
+[[Has type::Type:Page| ]] [[has domain and range::Category:Media;Category:Person| ]]</text>
+    <hash>63f21bdb3790dead47388b9302be0a40</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Property:HasCopyrightBy</title>
+    <id>143</id>
+    <revision>
+      <id>2271</id>
+      <timestamp>2010-12-22T16:42:12Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">{{Property
+|PAGENAME=Property:HasCopyrightBy
+|part of=Richmedia
+|rationale=Relates a media file with its copyright owner (e.g. a wiki-user).
+}}
+{{Part of bundle|value=Richmedia}}
+{{Content hash|value=}}
+[[Has type::Type:Page| ]] [[has domain and range::Category:Media;Category:Person| ]]</text>
+    <hash>39976d6148c1b5d6bb8ff781ba6d985a</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Property:HasDescription</title>
+    <id>144</id>
+    <revision>
+      <id>2273</id>
+      <timestamp>2010-12-22T16:44:08Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">{{Property
+|part of=Richmedia
+|rationale=Used for giving a textual description of a media file (see Category:Media).
+|PAGENAME=Property:HasDescription
+}}
+{{Part of bundle|value=Richmedia}}
+{{Content hash|value=}}
+[[Has type::Type:Text| ]] [[Subproperty of::Property:Description| ]] [[has domain and range::Category:Media; | ]]</text>
+    <hash>f22c1fb1e2b11aca486a1c39bd8b5e47</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Category:Media</title>
+    <id>145</id>
+    <revision>
+      <id>2349</id>
+      <timestamp>2010-12-22T18:15:47Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">{{Category
+|part of=Richmedia
+|rationale=This category subsumes media content coming from media files (e.g. document, audio, image and video files).
+|PAGENAME=Category:Media
+}}
+{{Part of bundle|value=Richmedia}}
+{{Content hash|value=}}
+[[Category:Content|Content]]</text>
+    <hash>34992f88d70e9a5e3276ead08811a745</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Category:Image</title>
+    <id>146</id>
+    <revision>
+      <id>2340</id>
+      <timestamp>2010-12-22T18:11:01Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">{{Category
+|part of=Richmedia
+|rationale=Denotes all images.
+|PAGENAME=Category:Image
+|Has default form=Form:RMImage
+|No automatic formedit=Yes
+}}
+{{Part of bundle|value=Richmedia}}
+{{Content hash|value=}}
+[[Category:Media|Image]]</text>
+    <hash>81a04e05960a4c75b4f90622f2ed4393</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Category:Pdf</title>
+    <id>147</id>
+    <revision>
+      <id>2350</id>
+      <timestamp>2010-12-22T18:16:11Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">{{Category
+|part of=Richmedia
+|rationale=Contains all PDF documents.
+|PAGENAME=Category:Pdf
+|Has default form=Form:RMPdf
+|No automatic formedit=Yes
+}}
+{{Part of bundle|value=Richmedia}}
+{{Content hash|value=}}
+[[Category:Media|Media]]</text>
+    <hash>f252574fc74fcd858c90eb3850c9b849</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Category:Document</title>
+    <id>148</id>
+    <revision>
+      <id>2346</id>
+      <timestamp>2010-12-22T18:14:36Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">{{Category
+|part of=Richmedia
+|rationale=Contains all documents.
+|PAGENAME=Category:Document
+|Has default form=Form:RMDocument
+|No automatic formedit=Yes
+}}
+{{Part of bundle|value=Richmedia}}
+{{Content hash|value=}}
+[[Category:Media|Document]]</text>
+    <hash>75eea4385aa83fa78da17718fad57c24</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Category:Audio</title>
+    <id>149</id>
+    <revision>
+      <id>2334</id>
+      <timestamp>2010-12-22T18:08:45Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">{{Category
+|part of=Richmedia
+|rationale=Contains all audio documents.
+|PAGENAME=Category:Audio
+|Has default form=Form:RMAudio
+|No automatic formedit=Yes
+}}
+{{Part of bundle|value=Richmedia}}
+{{Content hash|value=}}
+[[Category:Media|Media]]</text>
+    <hash>e5cc7c24085e9c45c361c49374b92abd</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Category:Video</title>
+    <id>150</id>
+    <revision>
+      <id>2352</id>
+      <timestamp>2010-12-22T18:19:44Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">{{Category
+|PAGENAME=Category:Video
+|part of=Richmedia
+|rationale=Category which is used for tagging video files.
+|Has default form=Form:RMVideo
+|No automatic formedit=Yes
+}}
+{{Part of bundle|value=Richmedia}}
+{{Content hash|value=}}
+[[Category:Media|Video]]</text>
+    <hash>5caddcb7e2b3b726534d42b06150d83a</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Template:RMMedia</title>
+    <id>152</id>
+    <revision>
+      <id>2305</id>
+      <timestamp>2010-12-22T17:02:13Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">&lt;noinclude&gt;{{Template
+|part of=Richmedia
+|rationale=This template displays information of media (i.e. document, image, etc) in a box.
+|parameters=&lt;pre&gt;
+{{RMMedia
+|Media subcategory
+|CopyrightBy
+|CreationDate
+|RelatedArticles
+|Filename
+|Description
+|Keywords
+|Format
+|Uploader
+|UploadDate
+|SubSectionOf
+}}
+&lt;/pre&gt;
+|PAGENAME=Template:RMMedia
+}}
+{{Part of bundle|value=Richmedia}}
+{{Content hash|value=}}
+&lt;/noinclude&gt;&lt;includeonly&gt;{| cellspacing=&quot;0&quot; cellpadding=&quot;5&quot; class=&quot;rmMetadataTable&quot;
+! colspan=&quot;2&quot; class=&quot;rmMetadataTH&quot; | ''{{{Media subcategory|}}}&amp;nbsp;Metadata''
+|-
+| valign=&quot;top&quot; | Filename:
+| valign=&quot;top&quot; | {{#if:{{{Filename|}}}|[[HasFilename::{{{Filename|}}}]]|undefined}}
+|-
+| valign=&quot;top&quot; | Copyright&amp;nbsp;by:
+| valign=&quot;top&quot; | {{#if:{{{CopyrightBy|}}}|[[HasCopyrightBy::{{{CopyrightBy|}}}]]|undefined}}
+|-
+| valign=&quot;top&quot; | Creation&amp;nbsp;date:
+| valign=&quot;top&quot; | {{#if:{{{CreationDate|}}}|[[HasCreationDate::{{{CreationDate|}}}]]|undefined}}
+|-
+| valign=&quot;top&quot; | Uploaded&amp;nbsp;by:
+| valign=&quot;top&quot; | {{#if:{{{Uploader|}}}|[[HasUploader::{{{Uploader|}}}]]|undefined}}
+|-
+| valign=&quot;top&quot; | Upload&amp;nbsp;date:
+| valign=&quot;top&quot; | {{#if:{{{UploadDate|}}}|[[HasUploadDate::{{{UploadDate|}}}]]|undefined}}
+|-
+| valign=&quot;top&quot; | Description:
+| valign=&quot;top&quot; | {{#if:{{{Description|}}}|[[HasDescription::{{{Description|}}}]]|undefined}}
+|-
+| valign=&quot;top&quot; | Keyword(s):
+| valign=&quot;top&quot; | {{#if:{{{Keywords|}}}|{{#arraymap:{{{Keywords|}}}|,|x|[[HasKeywords::x]]}}|undefined}}
+|-
+| valign=&quot;top&quot; | Format:
+| valign=&quot;top&quot; | {{#if:{{{Format|}}}|[[HasFormat::{{{Format|}}}]]|undefined}}
+|-
+| valign=&quot;top&quot; | Related&amp;nbsp;article(s):
+| valign=&quot;top&quot; | {{#if:{{{RelatedArticles|}}}|{{#arraymap:{{{RelatedArticles|}}}|,|x|[[HasRelatedArticle::x]] [[Related to::x| ]]}}|undefined}}
+|-
+{{#ifeq:{{lc:{{NAMESPACE}}}}|document|
+{{!}} valign=&quot;top&quot; {{!}} Subsection of:
+{{!}} valign=&quot;top&quot; {{!}} {{#if:{{{SubSectionOf|}}}|{{#arraymap:{{{SubSectionOf|}}}|,|x|[[subsection of::x]]}}|undefined}} }}
+|}&lt;/includeonly&gt;&lt;noinclude&gt;
+&lt;/noinclude&gt;</text>
+    <hash>ca50c63d75785bed9eaccb0f868d8b5f</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Property:HasRelatedArticle</title>
+    <id>165</id>
+    <revision>
+      <id>2277</id>
+      <timestamp>2010-12-22T16:46:07Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">{{Property
+|PAGENAME=Property:HasRelatedArticle
+|part of=Richmedia
+|rationale=Used to attach a wiki article with an uploaded media file.
+}}
+{{Part of bundle|value=Richmedia}}
+{{Content hash|value=}}
+[[Is inverse of::Property:Attachment| ]] [[Has domain and range::Category:Media; | ]]</text>
+    <hash>508c624fa12e4366b4ef52dfcfe972f7</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Form:RMICalendar</title>
+    <id>181</id>
+    <revision>
+      <id>2293</id>
+      <timestamp>2010-12-22T16:57:04Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">&lt;noinclude&gt;{{Form
+|PAGENAME=Form:RMICalendar
+|part of=Richmedia
+|rationale=This form is used to edit the information of uploaded ICalendar files.
+}}
+{{Part of bundle|value=Richmedia}}
+{{Content hash|value=}}
+&lt;/noinclude&gt;&lt;includeonly&gt;__NORICHEDITOR__
+{{{info|WYSIWYG}}} {{{for template|RMICalendar|label=Meta information|collapsible}}} 
+
+{| width=&quot;100%&quot; align=&quot;center&quot;
+|-
+| width=&quot;30%&quot; | 
+| width=&quot;70%&quot; | 
+|-
+| align=&quot;right&quot; style=&quot;font-size: 100%; font-weight: bold; &quot; | Filename&lt;span style=&quot;color: red; &quot;&gt;*&lt;/span&gt;: 
+| {{{field|Filename|mandatory}}}
+|-
+| &amp;nbsp; 
+| style=&quot;padding-bottom: 5px; font-size: 80%; font-style: italic; &quot; | (The full name of this file including the namespace and its extension)
+|-
+| align=&quot;right&quot; style=&quot;font-size: 100%; font-weight: bold; &quot; | Copyright by: 
+| {{{field|CopyrightBy}}}
+|-
+| &amp;nbsp; 
+| style=&quot;padding-bottom: 5px; font-size: 80%; font-style: italic; &quot; | (The name of the person/company who holds the rights of this file)
+|-
+| align=&quot;right&quot; style=&quot;font-size: 100%; font-weight: bold; &quot; | Creation date: 
+| {{{field|CreationDate|input type=date|default=now}}}
+|-
+| &amp;nbsp; 
+| style=&quot;padding-bottom: 5px; font-size: 80%; font-style: italic; &quot; | (The date when this file has been created or recently changed)
+|-
+| align=&quot;right&quot; style=&quot;font-size: 100%; font-weight: bold; &quot; | Uploaded by&lt;span style=&quot;color: red; &quot;&gt;*&lt;/span&gt;: 
+| {{{field|Uploader|mandatory|size=40|input type=haloACtext|constraints=aks: [[Category:Person]]|default=current user}}}
+|-
+| &amp;nbsp; 
+| style=&quot;padding-bottom: 5px; font-size: 80%; font-style: italic; &quot; | (The name of the uploader.)
+|-
+| align=&quot;right&quot; style=&quot;font-size: 100%; font-weight: bold; &quot; | Upload date&lt;span style=&quot;color: red; &quot;&gt;*&lt;/span&gt;: 
+| {{{field|UploadDate|input type=date|default=now}}}
+|-
+| align=&quot;right&quot; style=&quot;font-size: 100%; font-weight: bold; &quot; | Short description: 
+| {{{field|Description|input type=textarea|rows=3|cols=40}}}
+|-
+| &amp;nbsp; 
+| style=&quot;padding-bottom: 5px; font-size: 80%; font-style: italic; &quot; | (Here you can enter a short description of this file)
+|-
+| align=&quot;right&quot; style=&quot;font-size: 100%; font-weight: bold; &quot; | Keywords: 
+| {{{field|Keywords|multiple|size=40}}}
+|-
+| &amp;nbsp; 
+| style=&quot;padding-bottom: 5px; font-size: 80%; font-style: italic; &quot; | (Here you can tag the file with different keywords)
+|-
+| align=&quot;right&quot; style=&quot;font-size: 100%; font-weight: bold; &quot; | Format: 
+| {{{field|Format|size=40}}}
+|-
+| &amp;nbsp; 
+| style=&quot;padding-bottom: 5px; font-size: 80%; font-style: italic; &quot; | (The MIME type of this file)
+|-
+| align=&quot;right&quot; style=&quot;font-size: 100%; font-weight: bold; &quot; | Related articles: 
+| {{{field|RelatedArticles|input type=haloACtext|constraints=namespace:0|size=40}}}
+|-
+| &amp;nbsp; 
+| style=&quot;padding-bottom: 5px; font-size: 80%; font-style: italic; &quot; | (Articles which are attached to this file)
+|-
+| align=&quot;center&quot; style=&quot;color: red; &quot; colspan=&quot;2&quot; | Fields marked with a &quot;*&quot; are mandatory
+|}
+
+{{{end template}}} '''Free text:''' 
+
+{{{standard input|free text}}} 
+
+{{{standard input|minor edit}}} {{{standard input|watch}}} 
+
+{{{standard input|save}}} {{{standard input|preview}}} {{{standard input|changes}}} {{{standard input|cancel}}}&lt;/includeonly&gt;&lt;noinclude&gt;
+&lt;/noinclude&gt;</text>
+    <hash>2a97014601207593055aac7e735dbf74</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Template:RMVCard</title>
+    <id>182</id>
+    <revision>
+      <id>2314</id>
+      <timestamp>2010-12-22T17:07:20Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">&lt;noinclude&gt;{{Template
+|part of=Richmedia
+|rationale=Displays and annotates the metadata of an uploaded VCard.
+|PAGENAME=Template:RMVCard
+}}
+{{Part of bundle|value=Richmedia}}
+{{Content hash|value=}}
+&lt;/noinclude&gt;&lt;includeonly&gt;{{RMMedia
+|Media subcategory=VCard
+|Filename={{{Filename|}}}
+|CopyrightBy={{{CopyrightBy|}}}
+|CreationDate={{{CreationDate|}}}
+|Uploader={{{Uploader|}}}
+|UploadDate={{{UploadDate|}}}
+|Description={{{Description|}}}
+|Keywords={{{Keywords|}}}
+|Format={{{Format|}}}
+|RelatedArticles={{{RelatedArticles|}}}
+|SubSectionOf={{{SubSectionOf|}}}
+}} 
+
+[[Category:VCard]]&lt;/includeonly&gt;&lt;noinclude&gt;
+&lt;/noinclude&gt;</text>
+    <hash>e2d0ef72e484138c3e39fefc9475a54c</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Template:RMICalendar</title>
+    <id>183</id>
+    <revision>
+      <id>2292</id>
+      <timestamp>2010-12-22T16:56:44Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">&lt;noinclude&gt;{{Template
+|part of=Richmedia
+|rationale=Displays and annotates the metadata of an uploaded ICalendar.
+|PAGENAME=Template:RMICalendar
+}}
+{{Part of bundle|value=Richmedia}}
+{{Content hash|value=}}
+&lt;/noinclude&gt;&lt;includeonly&gt;{{RMMedia
+|Media subcategory=ICalendar
+|Filename={{{Filename|}}}
+|CopyrightBy={{{CopyrightBy|}}}
+|CreationDate={{{CreationDate|}}}
+|Uploader={{{Uploader|}}}
+|UploadDate={{{UploadDate|}}}
+|Description={{{Description|}}}
+|Keywords={{{Keywords|}}}
+|Format={{{Format|}}}
+|RelatedArticles={{{RelatedArticles|}}}
+|SubSectionOf={{{SubSectionOf|}}}
+}} 
+
+[[Category:ICalendar]]&lt;/includeonly&gt;&lt;noinclude&gt;
+&lt;/noinclude&gt;</text>
+    <hash>c2e102cafd99fa95f3a2e6621b73c7de</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Category:ICalendar</title>
+    <id>184</id>
+    <revision>
+      <id>2347</id>
+      <timestamp>2010-12-22T18:15:07Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">{{Category
+|part of=Richmedia
+|rationale=Denotes all Calendars.
+|PAGENAME=Category:ICalendar
+|Has default form=Form:RMICalendar
+|No automatic formedit=Yes
+}}
+{{Part of bundle|value=Richmedia}}
+{{Content hash|value=}}
+[[Category:Media|ICalendar]]</text>
+    <hash>f5c43fc2125f98aef027c978876600d9</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Category:VCard</title>
+    <id>185</id>
+    <revision>
+      <id>2351</id>
+      <timestamp>2010-12-22T18:16:37Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">{{Category
+|PAGENAME=Category:VCard
+|part of=Richmedia
+|rationale=Denotes vcards
+|Has default form=Form:RMVCard
+|No automatic formedit=Yes
+}}
+{{Part of bundle|value=Richmedia}}
+{{Content hash|value=}}
+[[Category:Media|VCard]]</text>
+    <hash>18a76ca6dc6fc258277761c585252dd2</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Property:HasFormat</title>
+    <id>186</id>
+    <revision>
+      <id>2275</id>
+      <timestamp>2010-12-22T16:45:17Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">{{Property
+|PAGENAME=Property:HasFormat
+|part of=Richmedia
+|rationale=Displays the format of this file as it's MIME type.
+}}
+{{Part of bundle|value=Richmedia}}
+{{Content hash|value=}}
+[[has type::Type:String| ]] [[has domain and range::Category:Media; | ]]</text>
+    <hash>7360bbf54a55805ce48207a314ffa2f6</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Property:HasKeywords</title>
+    <id>187</id>
+    <revision>
+      <id>2276</id>
+      <timestamp>2010-12-22T16:45:43Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">{{Property
+|PAGENAME=Property:HasKeywords
+|part of=Richmedia
+|rationale=Keywords associated with this file.
+}}
+{{Part of bundle|value=Richmedia}}
+{{Content hash|value=}}
+[[has type::Type:String| ]] [[has domain and range::Category:Media; | ]]</text>
+    <hash>c8b16e28c891ce68e8860e7c888cb855</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Template:RMUpload</title>
+    <id>338</id>
+    <revision>
+      <id>2311</id>
+      <timestamp>2010-12-22T17:06:33Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">&lt;noinclude&gt;{{Template
+|part of=Richmedia
+|rationale=This template displays and annotates the metadata of uploaded media.
+|PAGENAME=Template:RMUpload
+}}
+{{Part of bundle|value=Richmedia}}
+{{Content hash|value=}}
+&lt;/noinclude&gt;&lt;includeonly&gt;{{RMMedia
+|Media subcategory=Media
+|Filename={{{Filename|}}}
+|CopyrightBy={{{CopyrightBy|}}}
+|CreationDate={{{CreationDate|}}}
+|Uploader={{{Uploader|}}}
+|UploadDate={{{UploadDate|}}}
+|Description={{{Description|}}}
+|Keywords={{{Keywords|}}}
+|Format={{{Format|}}}
+|RelatedArticles={{{RelatedArticles|}}}
+|SubSectionOf={{{SubSectionOf|}}}
+}} 
+
+[[Category:Media]]&lt;/includeonly&gt;&lt;noinclude&gt;
+&lt;/noinclude&gt;</text>
+    <hash>3699b857f2f1f6710e3dfa936279e541</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Template:RMImage</title>
+    <id>339</id>
+    <revision>
+      <id>2294</id>
+      <timestamp>2010-12-22T16:57:29Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">&lt;noinclude&gt;{{Template
+|part of=Richmedia
+|rationale=Displays and annotates the metadata of an uploaded image.
+|PAGENAME=Template:RMImage
+}}
+{{Part of bundle|value=Richmedia}}
+{{Content hash|value=}}
+&lt;/noinclude&gt;&lt;includeonly&gt;{{RMMedia
+|Media subcategory=Image
+|Filename={{{Filename|}}}
+|CopyrightBy={{{CopyrightBy|}}}
+|CreationDate={{{CreationDate|}}}
+|Uploader={{{Uploader|}}}
+|UploadDate={{{UploadDate|}}}
+|Description={{{Description|}}}
+|Keywords={{{Keywords|}}}
+|Format={{{Format|}}}
+|RelatedArticles={{{RelatedArticles|}}}
+|SubSectionOf={{{SubSectionOf|}}}
+}} 
+
+[[Category:Image]]&lt;/includeonly&gt;&lt;noinclude&gt;
+&lt;/noinclude&gt;</text>
+    <hash>2aa583b2fb5759ac99b07287170721c0</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Template:RMPdf</title>
+    <id>340</id>
+    <revision>
+      <id>2308</id>
+      <timestamp>2010-12-22T17:03:13Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">&lt;noinclude&gt;{{Template
+|part of=Richmedia
+|rationale=Displays and annotates the metadata of an uploaded pdf file.
+|PAGENAME=Template:RMPdf
+}}
+{{Part of bundle|value=Richmedia}}
+{{Content hash|value=}}
+&lt;/noinclude&gt;&lt;includeonly&gt;{{RMMedia
+|Media subcategory=Pdf
+|Filename={{{Filename|}}}
+|CopyrightBy={{{CopyrightBy|}}}
+|CreationDate={{{CreationDate|}}}
+|Uploader={{{Uploader|}}}
+|UploadDate={{{UploadDate|}}}
+|Description={{{Description|}}}
+|Keywords={{{Keywords|}}}
+|Format={{{Format|}}}
+|RelatedArticles={{{RelatedArticles|}}}
+|SubSectionOf={{{SubSectionOf|}}}
+}} 
+
+[[Category:Pdf]]&lt;/includeonly&gt;&lt;noinclude&gt;
+&lt;/noinclude&gt;</text>
+    <hash>62ba6cad7ac97d07259ccf23b50b2361</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Template:RMDocument</title>
+    <id>341</id>
+    <revision>
+      <id>2290</id>
+      <timestamp>2010-12-22T16:55:48Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">&lt;noinclude&gt;{{Template
+|part of=Richmedia
+|rationale=Annotates and displays the metadata of a document.
+|PAGENAME=Template:RMDocument
+}}
+{{Part of bundle|value=Richmedia}}
+{{Content hash|value=}}
+&lt;/noinclude&gt;&lt;includeonly&gt;{{RMMedia
+|Media subcategory=Document
+|Filename={{{Filename|}}}
+|CopyrightBy={{{CopyrightBy|}}}
+|CreationDate={{{CreationDate|}}}
+|Uploader={{{Uploader|}}}
+|UploadDate={{{UploadDate|}}}
+|Description={{{Description|}}}
+|Keywords={{{Keywords|}}}
+|Format={{{Format|}}}
+|RelatedArticles={{{RelatedArticles|}}}
+|SubSectionOf={{{SubSectionOf|}}}
+}}
+[[Category:Document]]&lt;/includeonly&gt;&lt;noinclude&gt;
+&lt;/noinclude&gt;</text>
+    <hash>ab5e8963fc50123d11215dc8f96eb193</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Template:RMAudio</title>
+    <id>342</id>
+    <revision>
+      <id>2285</id>
+      <timestamp>2010-12-22T16:49:59Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">&lt;noinclude&gt;{{Template
+|part of=Richmedia
+|rationale=Displays and annotates the metadata of an uploaded audio file.
+|PAGENAME=Template:RMAudio
+}}
+{{Part of bundle|value=Richmedia}}
+{{Content hash|value=}}
+&lt;/noinclude&gt;&lt;includeonly&gt;{{RMMedia
+|Media subcategory=Audio
+|Filename={{{Filename|}}}
+|CopyrightBy={{{CopyrightBy|}}}
+|CreationDate={{{CreationDate|}}}
+|Uploader={{{Uploader|}}}
+|UploadDate={{{UploadDate|}}}
+|Description={{{Description|}}}
+|Keywords={{{Keywords|}}}
+|Format={{{Format|}}}
+|RelatedArticles={{{RelatedArticles|}}}
+|SubSectionOf={{{SubSectionOf|}}}
+}} 
+
+[[Category:Audio]]&lt;/includeonly&gt;&lt;noinclude&gt;
+&lt;/noinclude&gt;</text>
+    <hash>dae7b87d65eb60fb4977ecfa1faf2851</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Template:RMVideo</title>
+    <id>343</id>
+    <revision>
+      <id>2315</id>
+      <timestamp>2010-12-22T17:07:50Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">&lt;noinclude&gt;{{Template
+|part of=Richmedia
+|rationale=Displays and annotates the metadata of an uploaded video file.
+|PAGENAME=Template:RMVideo
+}}
+{{Part of bundle|value=Richmedia}}
+{{Content hash|value=}}
+&lt;/noinclude&gt;&lt;includeonly&gt;{{RMMedia
+|Media subcategory=Video
+|Filename={{{Filename|}}}
+|CopyrightBy={{{CopyrightBy|}}}
+|CreationDate={{{CreationDate|}}}
+|Uploader={{{Uploader|}}}
+|UploadDate={{{UploadDate|}}}
+|Description={{{Description|}}}
+|Keywords={{{Keywords|}}}
+|Format={{{Format|}}}
+|RelatedArticles={{{RelatedArticles|}}}
+|SubSectionOf={{{SubSectionOf|}}}
+}} 
+
+[[Category:Video]]&lt;/includeonly&gt;&lt;noinclude&gt;
+&lt;/noinclude&gt;</text>
+    <hash>17e4c07a973fef705d9be596a60e0c6e</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Template:RMList</title>
+    <id>344</id>
+    <revision>
+      <id>2299</id>
+      <timestamp>2010-12-22T17:00:20Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">&lt;noinclude&gt;{{Template
+|part of=Richmedia
+|rationale=This template lists all media which has been uploaded and attached to a particular article.
+|parameters=&lt;pre&gt;
+{{RMList
+|show=True}}
+&lt;/pre&gt;
+|PAGENAME=Template:RMList
+}}
+{{Part of bundle|value=Richmedia}}
+{{Content hash|value=}}
+&lt;/noinclude&gt;&lt;includeonly&gt;&lt;div style=&quot;float: left; width: 100%; &quot;&gt;
+{{#ifeq:{{{show|}}}|True|{{RMListOuterTable}}|}} 
+&lt;/div&gt;&lt;/includeonly&gt;&lt;noinclude&gt;
+&lt;/noinclude&gt;</text>
+    <hash>43308c45a0993f01b85e2c8f4a61c488</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Template:RMListOuterTable</title>
+    <id>345</id>
+    <revision>
+      <id>2303</id>
+      <timestamp>2010-12-22T17:01:14Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">&lt;noinclude&gt;{{Template
+|part of=Richmedia
+|rationale=Builds the outer table
+|PAGENAME=Template:RMListOuterTable
+}}
+{{Part of bundle|value=Richmedia}}
+{{Content hash|value=}}
+&lt;/noinclude&gt;&lt;includeonly&gt;
+{| cellpadding=&quot;5&quot; border=&quot;0&quot; width=&quot;100%&quot; class=&quot;rmListTable&quot;
+|-
+! class=&quot;rmListInfoText&quot; colspan=&quot;6&quot; |Attached documents, images and media
+|}
+{| class=&quot;wikitable sortable rmListTable&quot; cellpadding=&quot;5&quot; border=&quot;0&quot; width=&quot;100%&quot; style=&quot;margin:0;&quot;
+|-
+! class=&quot;rmListInnerTableHeaderItem&quot; |Category 
+! class=&quot;rmListInnerTableHeaderItem&quot; |Filename 
+! class=&quot;rmListInnerTableHeaderItem&quot; |Uploaded by 
+! class=&quot;rmListInnerTableHeaderItem&quot; |Creation date 
+! class=&quot;unsortable rmListInnerTableHeaderItem&quot; |Metainformation 
+! class=&quot;unsortable rmListInnerTableHeaderItem&quot; |Delete
+|-
+{{#ask: [[Category:Media]][[HasRelatedArticle::{{FULLPAGENAME}}]] &lt;q&gt;[[Image:+]]OR[[Document:+]]OR[[Pdf:+]]OR[[Video:+]]OR[[Audio:+]]OR[[ICalendar:+]]OR[[VCard:+]]&lt;/q&gt;
+  | ?HasFilename
+  | ?HasUploader
+  | ?HasCreationDate
+  | format=template
+  | template=RMListInnerTable
+  | link=none
+  | limit=250
+}}
+|}
+{| cellpadding=&quot;5&quot; border=&quot;0&quot; width=&quot;100%&quot; class=&quot;rmListTable&quot;
+|-
+| colspan=&quot;2&quot; | Manual refresh list: &lt;span class=&quot;plainlinks rmListRefreshIcon&quot;&gt;[{{fullurl:{{FULLPAGENAME}}|action=purge}} {{SERVER}}/{{SCRIPTPATH}}/skins/common/images/icons/smw_plus_refresh_icon_16x16.gif]&lt;/span&gt; 
+| class=&quot;rmListButton&quot; | {{#rmf: {{FULLPAGENAME}} }}
+|-
+! class=&quot;rmListTableEnding&quot; colspan=&quot;6&quot; | 
+|}
+&lt;/includeonly&gt;</text>
+    <hash>0d96728263f087cb0a874cb85487c4d1</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Form:RMVCard</title>
+    <id>348</id>
+    <revision>
+      <id>2313</id>
+      <timestamp>2010-12-22T17:06:56Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">&lt;noinclude&gt;{{Form
+|PAGENAME=Form:RMVCard
+|part of=Richmedia
+|rationale=This form is used to edit the information of uploaded VCards.
+}}
+{{Part of bundle|value=Richmedia}}
+{{Content hash|value=}}
+&lt;/noinclude&gt;&lt;includeonly&gt;__NORICHEDITOR__
+{{{info|WYSIWYG}}} {{{for template|RMVCard|label=Meta information|collapsible}}} 
+
+{| width=&quot;100%&quot; align=&quot;center&quot;
+|-
+| width=&quot;30%&quot; | 
+| width=&quot;70%&quot; | 
+|-
+| align=&quot;right&quot; style=&quot;font-size: 100%; font-weight: bold; &quot; | Filename&lt;span style=&quot;color: red; &quot;&gt;*&lt;/span&gt;: 
+| {{{field|Filename|mandatory}}}
+|-
+| &amp;nbsp; 
+| style=&quot;padding-bottom: 5px; font-size: 80%; font-style: italic; &quot; | (The full name of this file including the namespace and its extension)
+|-
+| align=&quot;right&quot; style=&quot;font-size: 100%; font-weight: bold; &quot; | Copyright by: 
+| {{{field|CopyrightBy}}}
+|-
+| &amp;nbsp; 
+| style=&quot;padding-bottom: 5px; font-size: 80%; font-style: italic; &quot; | (The name of the person/company who holds the rights of this file)
+|-
+| align=&quot;right&quot; style=&quot;font-size: 100%; font-weight: bold; &quot; | Creation date: 
+| {{{field|CreationDate|input type=date|mandatory|default=now}}}
+|-
+| &amp;nbsp; 
+| style=&quot;padding-bottom: 5px; font-size: 80%; font-style: italic; &quot; | (The date when this file has been created or recently changed)
+|-
+| align=&quot;right&quot; style=&quot;font-size: 100%; font-weight: bold; &quot; | Uploaded by&lt;span style=&quot;color: red; &quot;&gt;*&lt;/span&gt;: 
+| {{{field|Uploader|mandatory|size=40|input type=haloACtext|constraints=aks: [[Category:Person]]|default=current user}}}
+|-
+| &amp;nbsp; 
+| style=&quot;padding-bottom: 5px; font-size: 80%; font-style: italic; &quot; | (The name of the uploader.)
+|-
+| align=&quot;right&quot; style=&quot;font-size: 100%; font-weight: bold; &quot; | Upload date&lt;span style=&quot;color: red; &quot;&gt;*&lt;/span&gt;: 
+| {{{field|UploadDate|input type=date|default=now}}}
+|-
+| align=&quot;right&quot; style=&quot;font-size: 100%; font-weight: bold; &quot; | Short description: 
+| {{{field|Description|input type=textarea|rows=3|cols=40}}}
+|-
+| &amp;nbsp; 
+| style=&quot;padding-bottom: 5px; font-size: 80%; font-style: italic; &quot; | (Here you can enter a short description of this file)
+|-
+| align=&quot;right&quot; style=&quot;font-size: 100%; font-weight: bold; &quot; | Keywords: 
+| {{{field|Keywords|multiple|size=40}}}
+|-
+| &amp;nbsp; 
+| style=&quot;padding-bottom: 5px; font-size: 80%; font-style: italic; &quot; | (Here you can tag the file with different keywords)
+|-
+| align=&quot;right&quot; style=&quot;font-size: 100%; font-weight: bold; &quot; | Format: 
+| {{{field|Format|size=40}}}
+|-
+| &amp;nbsp; 
+| style=&quot;padding-bottom: 5px; font-size: 80%; font-style: italic; &quot; | (The MIME type of this file)
+|-
+| align=&quot;right&quot; style=&quot;font-size: 100%; font-weight: bold; &quot; | Related articles: 
+| {{{field|RelatedArticles|input type=haloACtext|constraints=namespace:0|size=40}}}
+|-
+| &amp;nbsp; 
+| style=&quot;padding-bottom: 5px; font-size: 80%; font-style: italic; &quot; | (Articles which are attached to this file)
+|-
+| align=&quot;center&quot; style=&quot;color: red; &quot; colspan=&quot;2&quot; | Fields marked with a &quot;*&quot; are mandatory
+|}
+
+{{{end template}}} '''Free text:''' 
+
+{{{standard input|free text}}} 
+
+{{{standard input|minor edit}}} {{{standard input|watch}}} 
+
+{{{standard input|save}}} {{{standard input|preview}}} {{{standard input|changes}}} {{{standard input|cancel}}} 
+
+&lt;/includeonly&gt;&lt;noinclude&gt;
+&lt;/noinclude&gt;</text>
+    <hash>29523194e6d17a0f7edd35d0d96571d4</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Template:DataRMICal</title>
+    <id>408</id>
+    <revision>
+      <id>2268</id>
+      <timestamp>2010-12-22T16:39:33Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">&lt;noinclude&gt;{{Template
+|PAGENAME=Template:DataRMICal
+|part of=Richmedia
+|rationale=Used for formatting and annotating uploaded iCalendar files (which come into the wiki e.g. via file upload or email import with file attachment).
+|parameters=&lt;pre&gt;
+{{RMICalData
+|icTitle=Kickoff meeting
+|start=2009-10-13
+|end=2009-10-15
+|organizer=j.malcolm@email.org
+|organizerName=John Malcolm
+|attendee=j.malcolm@email.org, l.meyer@email.org 
+|attendeeName=John Malcolm, Luca Meyer
+|location=New York, Headquarters
+|categories=Meeting
+|description=Kickoff meeting for initial project status and start.
+}}
+&lt;/pre&gt;
+}}
+{{Part of bundle|value=Richmedia}}
+{{Content hash|value=}}
+&lt;/noinclude&gt;&lt;includeonly&gt;
+{| cellspacing=&quot;0&quot; cellpadding=&quot;5&quot; style=&quot;border: 1px solid rgb(170, 170, 170); margin: 0pt 0pt 0.5em 1em; background: rgb(255, 255, 255) none repeat scroll 0% 0%; position: relative; border-collapse: collapse; -moz-background-clip: border; -moz-background-origin: padding; -moz-background-inline-policy: continuous; float: right; clear: right; width: 30%;&quot;
+|-
+! style=&quot;background: rgb(174, 229, 219) none repeat scroll 0% 0%; -moz-background-clip: border; -moz-background-origin: padding; -moz-background-inline-policy: continuous; color: black;&quot; colspan=&quot;2&quot; | &lt;span style=&quot;font-size: 80%; float: right;&quot;&gt;&lt;imagemap&gt;
+Image:Calendar.gif
+poly 0 0 0 0 [[Display]]
+desc none
+&lt;/imagemap&gt;&lt;/span&gt;iCalendar Data
+|-
+{{#if:{{{icTitle|}}}|{{Tablerow||Label=Title: |Value={{{icTitle|}}}}}|}}
+|-
+{{#if:{{{start|}}}|{{Tablerow||Label=Start date: |Value={{{start|}}}}}|}}
+|-
+{{#if:{{{end|}}}|{{Tablerow||Label=End date: |Value={{{end|}}}}}|}}
+|-
+{{#if:{{{organizer|}}}|{{Tablerow||Label=Organizer: |Value={{{organizer|}}}}}|}}
+|-
+{{#if:{{{organizerName|}}}|{{Tablerow||Label=Organizer name: |Value={{{organizerName|}}}}}|}}
+|-
+{{#if:{{{attendee|}}}|{{Tablerow||Label=Attendee(s): |Value={{{attendee|}}}}}|}}&lt;!--
+--&gt;{{#vardefine:eventParticipants|{{#extractEmailID:{{#replace:{{{organizer|}}}, {{{attendee|}}}|,|;}}|Mbox}}}}
+|-
+{{#if:{{{attendeeName|}}}|{{Tablerow||Label=Attendee(s) name(s): |Value={{{attendeeName|}}}}}|}}
+|-
+{{#if:{{{location|}}}|{{Tablerow||Label=Location: |Value={{{location|}}}}}|}}
+|-
+{{#if:{{{categories|}}}|{{Tablerow||Label=Categories: |Value={{{categories|}}}}}|}}
+|-
+{{#if:{{{description|}}}|{{Tablerow||Label=Description: |Value={{{description|}}}}}|}}
+|-
+|}&lt;/includeonly&gt;&lt;noinclude&gt;
+&lt;/noinclude&gt;</text>
+    <hash>3a09b26492a8e7b9fc88214ac58ebfc4</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Template:DataRMVCard</title>
+    <id>409</id>
+    <revision>
+      <id>2269</id>
+      <timestamp>2010-12-22T16:40:45Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">&lt;noinclude&gt;{{Template
+|PAGENAME=Template:DataRMVCard
+|part of=Richmedia
+|rationale=Used for formatting and annotating uploaded vCard files (which come into the wiki e.g. via file upload or email import with file attachment).
+|parameters=&lt;pre&gt;
+{{RMVCardData
+|name=Danny Wilkension
+|title=Senore
+|organization=some company
+|nickName=
+|phone=054654-55464
+|address=White chapel 13
+|email=wilkension@myemail.org
+|homepage=www.website.org/wilkension
+|birthday=1970-12-03
+|categories=Project Manager, Seiltanzen
+|note=IPMA certified PM
+}}
+&lt;/pre&gt;
+}}
+{{Part of bundle|value=Richmedia}}
+{{Content hash|value=}}
+&lt;/noinclude&gt;&lt;includeonly&gt;
+{| cellspacing=&quot;0&quot; cellpadding=&quot;5&quot; style=&quot;border: 1px solid rgb(170, 170, 170); margin: 0pt 0pt 0.5em 1em; background: rgb(255, 255, 255) none repeat scroll 0% 0%; position: relative; border-collapse: collapse; -moz-background-clip: border; -moz-background-origin: padding; -moz-background-inline-policy: continuous; float: right; clear: right; width: 30%;&quot;
+|-
+! style=&quot;background: rgb(174, 213, 219) none repeat scroll 0% 0%; -moz-background-clip: border; -moz-background-origin: padding; -moz-background-inline-policy: continuous; color: black;&quot; colspan=&quot;2&quot; | &lt;span style=&quot;font-size: 80%; float: right;&quot;&gt;&lt;imagemap&gt;
+Image:vcard.gif
+poly 0 0 0 0 [[Display]]
+desc none
+&lt;/imagemap&gt;&lt;/span&gt;vCard Data
+|-
+{{#if:{{{name|}}}|{{Tablerow||Label=Name: |Value={{{name|}}}}}|}}
+|-
+{{#if:{{{title|}}}|{{Tablerow||Label=Title: |Value={{{title|}}}}}|}}
+|-
+{{#if:{{{organization|}}}|{{Tablerow||Label=Organization: |Value={{{organization|}}}}}|}}
+|-
+{{#if:{{{nickName|}}}|{{Tablerow||Label=Nickname: |Value={{{nickName|}}}}}|}}
+|-
+{{#if:{{{phone|}}}|{{Tablerow||Label=Phone: |Value={{{phone|}}}}}|}}
+|-
+{{#if:{{{address|}}}|{{Tablerow||Label=Address: |Value={{{address|}}}}}|}}
+|-
+{{#if:{{{email|}}}|{{Tablerow||Label=Email: |Value={{{email|}}}}}|}}
+|-
+{{#if:{{{homepage|}}}|{{Tablerow||Label=Homepage: |Value={{{homepage|}}}}}|}}
+|-
+{{#if:{{{birthday|}}}|{{Tablerow||Label=Birthday: |Value={{{birthday|}}}}}|}}
+|-
+{{#if:{{{categories|}}}|{{Tablerow||Label=Categories: |Value={{{categories|}}}}}|}}
+|-
+{{#if:{{{note|}}}|{{Tablerow||Label=Note: |Value={{{note|}}}}}|}}
+|-
+|}
+
+{{#ifexist:{{#extractEmailID: {{{email}}} | Mbox }} | [[HasRelatedArticle::{{#extractEmailID: {{{email}}} | Mbox }}| ]] | [[HasRelatedArticle::{{{name|}}}| ]] }}&lt;/includeonly&gt;&lt;noinclude&gt;
+&lt;/noinclude&gt;</text>
+    <hash>36107e31f01c535f8e5eb21efcf105fa</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Richmedia</title>
+    <id>442</id>
+    <revision>
+      <id>2032</id>
+      <timestamp>2010-12-21T21:23:46Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">{{Content bundle
+|Vendor=Ontoprise
+|Version=150
+|rationale=This content bundle features a set of basic elements that are necessary for the RichMedia extension.
+|Installation=extensions/RichMedia
+|Dependency=mw;1160;1160, smw;152;152, smwhalo;152;152, semanticforms;200;200, scriptmanager;101;101, applicationprogramming;102;102
+}}
+{{Part of bundle|value=Richmedia}}
+[[Vendor::Ontoprise| ]]
+[[Ontology version::150| ]]
+[[Installation dir::extensions/RichMedia| ]]
+[[Dependency::mw;1160;1160| ]]
+[[Dependency::smw;152;152| ]]
+[[Dependency::smwhalo;152;152| ]]
+[[Dependency::semanticforms;200;200| ]]
+[[Dependency::scriptmanager;101;101| ]]
+[[Dependency::applicationprogramming;102;102| ]]
+
+[[Category:Content bundle]]
+
+;This bundle contains these articles:
+{{#ask:[[Part of bundle::{{FULLPAGENAME}}]]
+|?=Link
+|?Rationale
+|link=subject
+|default=''none''
+|mainlabel=-
+}}</text>
+    <hash>bc95692c807da8f035a49bcae82bcecf</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Template:RMNoNamespace</title>
+    <id>443</id>
+    <revision>
+      <id>2306</id>
+      <timestamp>2010-12-22T17:02:40Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">&lt;noinclude&gt;{{Template
+|part of=Richmedia
+|rationale=Removes namespace from article.
+|PAGENAME=Template:RMNoNamespace
+}}
+{{Part of bundle|value=Richmedia}}
+{{Content hash|value=}}
+&lt;/noinclude&gt;&lt;includeonly&gt;{{#ifeq: {{#pos:{{{1}}}|:}} | | {{{1}}} | {{#sub:{{{1}}}|{{#expr:{{#pos:{{{1}}}|:}}+1}}|0}} }}&lt;/includeonly&gt;</text>
+    <hash>2c424c5c1422c4b41d5bdc2708fe075f</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Template:!</title>
+    <id>105</id>
+    <revision>
+      <id>1115</id>
+      <timestamp>2010-11-24T10:44:01Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">|&lt;noinclude&gt;
+&lt;!-- Add cats and interwikis to the /doc subpage, not here! --&gt;
+helper template for pipe symbol, which can e.g. not be used directly in template parameter calls.[[Part of bundle::Baseontologybundle| ]]
+&lt;/noinclude&gt;</text>
+    <hash>5fb9b20c2825d7743e58540992c213ec</hash>
+    </revision>
+  </page>
+</mediawiki>

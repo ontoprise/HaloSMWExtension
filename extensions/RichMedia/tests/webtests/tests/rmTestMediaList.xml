@@ -12,7 +12,7 @@
 			<antcall target="goToLogin" />
 
 			<invoke
-				url="http://localhost/${wikipath}/index.php/MyNewMediaListTest?action=edit" />
+				url="${wgServer}${wgScript}/MyNewMediaListTest?action=edit" />
 			<!--<verifyXPath description="this id has to be the class 'selected new'!"
 				xpath="//li[@id='ca-nstab-main'][contains(@class, 'new')]" />-->
 			<setInputField htmlId="wpTextbox1" value="{{RMList|show=True}}" />
@@ -24,7 +24,7 @@
 			<config browser="FF3"/>
 			<antcall target="goToLogin" />
 
-			<invoke url="http://localhost/${wikipath}/index.php/MyNewMediaListTest"/>
+			<invoke url="${wgServer}${wgScript}/MyNewMediaListTest"/>
 			<!-- check list now -->
 			<verifyXPath description="Is there a table in the body content?"
 				xpath="//div[@id='bodyContent']/div[3]/table[1]" />

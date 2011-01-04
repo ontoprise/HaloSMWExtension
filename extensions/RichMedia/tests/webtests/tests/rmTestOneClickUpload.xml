@@ -8,18 +8,20 @@
 	<target name="rmTestOneClickUpload">
 
 		<webtest name="rmOneClick">
-			<config browser="FF3"/>
-
+			<config browser="FF3" easyajax="true">
+				<option name="ThrowExceptionOnFailingStatusCode" value="false" />
+				<option name="ThrowExceptionOnScriptError" value="false"/>
+			</config>
 			<antcall target="goToLogin" />
 			
 			<invoke
-				url="http://localhost/${wikipath}/index.php/MyNewMediaListTest" />
-			<clickButton description="Attach file" xpath="/html/body/div[@id='globalWrapper']/table[@id='shadows']/tbody/tr/td[@id='shadow_center']/div[@id='mainpage']/table[@id='mainpagetable']/tbody/tr/td/div[@id='column-content']/div[@id='content']/div[@id='bodyContent']/div[3]/table[3]/tbody/tr[1]/td[2]/form/input	" />
-			<sleep seconds="5"/>
+				url="${wgServer}${wgScript}/MyNewMediaListTest?action=purge" />
+			<clickButton htmlid="rmFormButton" description="Click Attach file button"/>
+			<sleep seconds="10"/>
 			
 			<!-- Click: //div[@id='innerContent']//img[@id='RMUpload_sec_1_img'] -->
 			
-			<followframe htmlId="fbContent"/>
+			<followframe htmlId="fancybox-frame" />
 			<verifyInputField description="Related Article correct?"
 				htmlId="input_8" value="MyNewMediaListTest" />
 			<setFileField description="Set the value of the file input field" htmlId="wpUploadFile" 
@@ -65,7 +67,7 @@
 				text=".*Kurzanleitung.*" />
 			
 			<invoke
-				url="http://localhost/${wikipath}/index.php/MyNewMediaListTest?action=purge" />
+				url="${wgServer}${wgScript}/MyNewMediaListTest?action=purge" />
 			<verifyXPath description="Check list entry now"
 				xpath="//table[@id='sortable_table_id_0']/tbody/tr[2]/td[2]/span/a"
 				text="Test.pdf" />

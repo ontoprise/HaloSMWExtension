@@ -6,7 +6,7 @@
 
 		<webtest name="rmTestFormUpload">
 			<invoke
-				url="http://localhost/${wikipath}/index.php/Form:RMUpload" />
+				url="${wgServer}${wgScript}/Form:RMUpload" />
 			<not>
 				<verifyXPath description="this id must not be the class 'selected new'!"
 					xpath="//li[@id='ca-nstab-form'][contains(@class, 'new')]" />
@@ -15,7 +15,7 @@
 
 		<webtest name="rmTestFormImage">
 			<invoke
-						url="http://localhost/${wikipath}/index.php/Form:RMImage" />
+						url="${wgServer}${wgScript}/Form:RMImage" />
 			<not>
 				<verifyXPath description="this id must not be the class 'selected new'!"
 										xpath="//li[@id='ca-nstab-form'][contains(@class, 'new')]" />
@@ -24,7 +24,7 @@
 
 		<webtest name="rmTestFormPdf">
 			<invoke
-						url="http://localhost/${wikipath}/index.php/Form:RMPdf" />
+						url="${wgServer}${wgScript}/Form:RMPdf" />
 			<not>
 				<verifyXPath description="this id must not be the class 'selected new'!"
 										xpath="//li[@id='ca-nstab-form'][contains(@class, 'new')]" />
@@ -33,7 +33,7 @@
 
 		<webtest name="rmTestFormDocument">
 			<invoke
-						url="http://localhost/${wikipath}/index.php/Form:RMDocument" />
+						url="${wgServer}${wgScript}/Form:RMDocument" />
 			<not>
 				<verifyXPath description="this id must not be the class 'selected new'!"
 										xpath="//li[@id='ca-nstab-form'][contains(@class, 'new')]" />
@@ -42,7 +42,7 @@
 
 		<webtest name="rmTestFormAudio">
 			<invoke
-						url="http://localhost/${wikipath}/index.php/Form:RMAudio" />
+						url="${wgServer}${wgScript}/Form:RMAudio" />
 			<not>
 				<verifyXPath description="this id must not be the class 'selected new'!"
 										xpath="//li[@id='ca-nstab-form'][contains(@class, 'new')]" />
@@ -51,7 +51,7 @@
 
 		<webtest name="rmTestFormVideo">
 			<invoke
-						url="http://localhost/${wikipath}/index.php/Form:RMVideo" />
+						url="${wgServer}${wgScript}/Form:RMVideo" />
 			<not>
 				<verifyXPath description="this id must not be the class 'selected new'!"
 										xpath="//li[@id='ca-nstab-form'][contains(@class, 'new')]" />

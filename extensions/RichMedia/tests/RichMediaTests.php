@@ -1,15 +1,27 @@
 <?php
+/**
+ * @file
+ * @ingroup RichMediaTests
+ * 
+ * @defgroup RichMediaTests Rich Media unit tests
+ * @ingroup RichMedia
+ * 
+ * @author Benjamin Langguth
+ */
+
+require_once 'testcases/TestRM.php';
 
 class RichMediaTests
 {
-    public static function suite()
-    {
-        $suite = new PHPUnit_Framework_TestSuite('RichMedia');
+	static $PAGE_NAME = 'RM_Test';
 
-        // add test suites
-        $suite->addTestSuite("TestOneClickUpload");
+	public static function suite()
+	{
+		$suite = new PHPUnit_Framework_TestSuite('PHPUnit');
 
-        return $suite;
-    }
+		// add test suites
+		$suite->addTestSuite("TestRM");
+
+		return $suite;
+	}
 }
-?>

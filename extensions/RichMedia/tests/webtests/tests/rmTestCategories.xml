@@ -5,7 +5,7 @@
 
 		<webtest name="rmTestCategoryMedia">
 			<invoke
-				url="http://localhost/${wikipath}/index.php/Category:Media" />
+				url="${wgServer}${wgScript}/Category:Media" />
 			<not>
 				<verifyXPath description="this id must not be the class 'selected new'!"
 					xpath="//li[@id='ca-nstab-category'][contains(@class, 'new')]" />
@@ -14,7 +14,7 @@
 
 		<webtest name="rmTestCategoryImage">
 			<invoke
-						url="http://localhost/${wikipath}/index.php/Category:Image" />
+						url="${wgServer}${wgScript}/Category:Image" />
 			<not>
 				<verifyXPath description="this id must not be the class 'selected new'!"
 							xpath="//li[@id='ca-nstab-category'][contains(@class, 'new')]" />
@@ -23,7 +23,7 @@
 
 		<webtest name="rmTestCategoryPdf">
 			<invoke
-						url="http://localhost/${wikipath}/index.php/Category:Pdf" />
+						url="${wgServer}${wgScript}/Category:Pdf" />
 			<not>
 				<verifyXPath description="this id must not be the class 'selected new'!"
 							xpath="//li[@id='ca-nstab-category'][contains(@class, 'new')]" />
@@ -32,7 +32,7 @@
 
 		<webtest name="rmTestCategoryDocument">
 			<invoke
-						url="http://localhost/${wikipath}/index.php/Category:Document" />
+						url="${wgServer}${wgScript}/Category:Document" />
 			<not>
 				<verifyXPath description="this id must not be the class 'selected new'!"
 							xpath="//li[@id='ca-nstab-category'][contains(@class, 'new')]" />
@@ -41,7 +41,7 @@
 
 		<webtest name="rmTestCategoryAudio">
 			<invoke
-						url="http://localhost/${wikipath}/index.php/Category:Audio" />
+						url="${wgServer}${wgScript}/Category:Audio" />
 			<not>
 				<verifyXPath description="this id must not be the class 'selected new'!"
 							xpath="//li[@id='ca-nstab-category'][contains(@class, 'new')]" />
@@ -50,7 +50,7 @@
 
 		<webtest name="rmTestCategoryVideo">
 			<invoke
-						url="http://localhost/${wikipath}/index.php/Category:Video" />
+						url="${wgServer}${wgScript}/Category:Video" />
 			<not>
 				<verifyXPath description="this id must not be the class 'selected new'!"
 							xpath="//li[@id='ca-nstab-category'][contains(@class, 'new')]" />
