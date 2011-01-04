@@ -4,9 +4,9 @@
 
 <project default="testUPPage">
 	
-	<!--
+	
 	&goToLogin;
-	-->
+	
 
 	<target name="testUPPage">
 
@@ -15,11 +15,11 @@
 				<option name="ThrowExceptionOnFailingStatusCode" value="false" />
 				<option name="ThrowExceptionOnScriptError" value="false"/>
 			</config>
-			<!--
+			
 			<antcall target="goToLogin" />
-			-->
+			
 			<invoke
-					url="http://localhost:7072/smw/index.php/Ultrapedia_Test"
+					url="${wgServer}${wgScript}/Ultrapedia_Test?action=purge"
 					description="Ultrapedia view" />
 
 			<verifyText text="Ultrapedia 1" description="ask tab" />

@@ -2,7 +2,7 @@
 
 <project name="semantic connector extension tests" default="wt.full">
 
-	<property name="webtest.home" value="d:\Program Files\webtest"/>
+	<property name="webtest.home" value="c:\Programme\webtest"/>
 
 	<import file="definitions.xml" description="Import custom definitions (if any)"/> 
 	<import file="${webtest.home}/webtest.xml" description="Import all functionalities for a full build"/>
