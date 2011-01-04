@@ -6,7 +6,7 @@
  */
 if ( !defined( 'MEDIAWIKI' ) ) die;
 
-define('SMW_WT_VERSION', '2.0');
+define('SMW_WT_VERSION', '{{$VERSION}} [B{{$BUILDNUMBER}}]');
 
 global $smwgWTIP;
 $smwgWTIP = $IP . '/extensions/SemanticWikiTag';

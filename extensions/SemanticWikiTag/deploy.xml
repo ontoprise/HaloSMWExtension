@@ -1,36 +1,36 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <deploydescriptor>
-	<global>
-		<version>200</version>
-		<id>SemanticWikitag</id>
-		<vendor>Vulcan</vendor>
+    <global>
+        <version>200</version>
+        <id>semanticwikitag</id>
+        <vendor>Vulcan</vendor>
         <maintainer>Vulcan</maintainer>
-		<instdir>extensions/SemanticWikitag</instdir>
-		<description>
-			The webservice endpoint for office wikitag add-in.
-		</description>
-		<helpurl>http://smwforum.ontoprise.com/smwforum/index.php/Help:WikiTags</helpurl>
-		<dependencies>
-			<dependency from="1153">mw</dependency>
-			<dependency from="151">smw</dependency>
-		</dependencies>
-	</global>
-	<codefiles>
-		<!-- empty -->
-	</codefiles>
-	<wikidumps>
-		<!-- empty -->
-	</wikidumps>
-	<resources>
-		<!-- empty -->
-	</resources>
-	<configs>
-		<new>
-			<require name="SemanticWikitag" file="extensions/SemanticWikiTag/includes/SWT_Initialize.php"/>
-			<script file="maintenance/SWT_setup.php"/>
-		</new>
-		<uninstall>
-			<!-- empty -->
-		</uninstall>
-	</configs>
+        <instdir>extensions/SemanticWikiTag</instdir>
+        <description>
+            The webservice endpoint for office wikitag add-in.
+        </description>
+        <helpurl>http://smwforum.ontoprise.com/smwforum/index.php/Help:WikiTags</helpurl>
+        <dependencies>
+            <dependency from="1153">mw</dependency>
+            <dependency from="151">smw</dependency>
+        </dependencies>
+    </global>
+    <codefiles>
+        <!-- empty -->
+    </codefiles>
+    <wikidumps>
+        <!-- empty -->
+    </wikidumps>
+    <resources>
+        <!-- empty -->
+    </resources>
+    <configs>
+        <new>
+            <require name="SemanticWikiTag" file="extensions/SemanticWikiTag/includes/SWT_Initialize.php"/>
+            <script file="maintenance/SWT_setup.php"/>
+        </new>
+        <uninstall>
+            <!-- empty -->
+        </uninstall>
+    </configs>
 </deploydescriptor>
