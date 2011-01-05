@@ -12,9 +12,9 @@
 		<!--<ant antfile="rmTestTemplates.xml" />
 		<ant antfile="rmTestForms.xml" />
 		<ant antfile="rmTestProperties.xml" />
-		<ant antfile="rmTestCategories.xml" />
-		<ant antfile="rmTestMediaList.xml" />-->
-		<ant antfile="rmTestOneClickUpload.xml" />
+		<ant antfile="rmTestCategories.xml" />-->
+		<ant antfile="rmTestMediaList.xml" />
+		<ant antfile="rmTestUpload.xml" />
 		<!-- FCK functions can not be tested.. -->
 		<!--<ant antfile="rmTestFCKUpload.xml" />-->
 	</target>

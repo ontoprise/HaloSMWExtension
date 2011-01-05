@@ -1,27 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE project SYSTEM "../dtd/Project.dtd">
 	
-<project default="rmTestOneClickUpload">
+<project default="rmTestUpload">
 
 	&goToLogin;
 	
-	<target name="rmTestOneClickUpload">
+	<target name="rmTestUpload">
 
-		<webtest name="rmOneClick">
-			<config browser="FF3" easyajax="true">
-				<option name="ThrowExceptionOnFailingStatusCode" value="false" />
-				<option name="ThrowExceptionOnScriptError" value="false"/>
+		<webtest name="rmTestUpload">
+			<config easyajax="true" />
+			<config browser="FF3">
+				<option name="ThrowExceptionOnScriptError" value="false" />
 			</config>
 			<antcall target="goToLogin" />
-			
+			<!-- Problem with dynamically (ajax) loaded iFrames
+from http://webtest.canoo.com/webtest/manual/syntaxCore.html:
+A newly loaded page becomes the new "current response" if one of the following conditions applies:
+
+* the page is loaded in the window of the current response
+* the page is loaded in a new window
+* the page is loaded in a frame which enclosing page is already loaded and the load was not triggered by JavaScript
+-> third list point is the fact. :(
+
+So the upload process can not be tested via overlay. We do it with Special:Upload in main window.
+The overlay has to be tested manually. -->
 			<invoke
-				url="${wgServer}${wgScript}/MyNewMediaListTest?action=purge" />
-			<clickButton htmlid="rmFormButton" description="Click Attach file button"/>
-			<sleep seconds="10"/>
-			
-			<!-- Click: //div[@id='innerContent']//img[@id='RMUpload_sec_1_img'] -->
-			
-			<followframe htmlId="fancybox-frame" />
+				url="${wgServer}${wgScript}/Special:UploadWindow?RMUpload[RelatedArticles]=MyNewMediaListTest&amp;wpIgnoreWarning=true" />
 			<verifyInputField description="Related Article correct?"
 				htmlId="input_8" value="MyNewMediaListTest" />
 			<setFileField description="Set the value of the file input field" htmlId="wpUploadFile" 
@@ -32,10 +36,17 @@
 				value="Test description field value..." />
 			<setInputField description="Set Keywords field" htmlId="input_7" 
 				value="keyword 1, keyword 2" />
-			<clickButton description="Upload file and save metadata" xpath="//div[@id='globalWrapper']/table[1]/tbody/tr/td/input" />
-			<sleep seconds="2"/>
-			
-			<!-- Template:Tablerow adds a whitespace around the entries -->
+				<clickButton description="Upload file and save metadata" xpath="//table[@id='rmUploadButtonTable']//input" />
+		</webtest>
+
+		<webtest name="rmVerifyUploadOnFilePage">
+			<config easyajax="true" />
+			<config browser="FF3">
+				<option name="ThrowExceptionOnScriptError" value="false" />
+			</config>
+			<antcall target="goToLogin" />
+			<invoke
+				url="${wgServer}${wgScript}/Pdf:Test.pdf?action=purge" />
 			<verifyXPath description="Check if Namespace is correct"
 				xpath="//div[@id='bodyContent']/table[1]/tbody/tr[2]/td[2]"
 				regex="true"
@@ -65,7 +76,14 @@
 				xpath="//div[@id='bodyContent']/p[1]" 
 				regex="true"
 				text=".*Kurzanleitung.*" />
-			
+		</webtest>
+
+		<webtest name="rmVerifyUploadOnMediaList">
+			<config easyajax="true" />
+			<config browser="FF3">
+				<option name="ThrowExceptionOnScriptError" value="false" />
+			</config>
+			<antcall target="goToLogin" />
 			<invoke
 				url="${wgServer}${wgScript}/MyNewMediaListTest?action=purge" />
 			<verifyXPath description="Check list entry now"
