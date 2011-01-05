@@ -1,0 +1,96 @@
+<?xml version="1.0"?>
+
+<!DOCTYPE project SYSTEM "../dtd/Project.dtd">
+
+<project default="ceOntologyTests">
+
+	<target name="ceOntologyTests">
+
+		<webtest name="ceTestTemplates">
+			<config easyajax="true" />
+			<config browser="FF3">
+				<option name="ThrowExceptionOnFailingStatusCode" value="true" />
+				<option name="ThrowExceptionOnScriptError" value="false" />
+			</config>
+			<invoke
+				url="${wgServer}${wgScript}/Template:CommentResult" />
+			<not>
+				<verifyXPath description="this id must not be the class 'selected new'!"
+					xpath="//li[@id='ca-nstab-category'][contains(@class, 'new')]" />
+			</not>
+			<invoke url="${wgServer}${wgScript}/Template:ShowComments" />
+			<not>
+				<verifyXPath description="this id must not be the class 'selected new'!" 
+					xpath="//li[@id='ca-nstab-category'][contains(@class, 'new')]" />
+			</not>
+			<invoke url="${wgServer}${wgScript}/Template:ShowCommentsIntern" />
+			<not>
+				<verifyXPath description="this id must not be the class 'selected new'!" 
+					xpath="//li[@id='ca-nstab-category'][contains(@class, 'new')]" />
+			</not>
+			<invoke url="${wgServer}${wgScript}/Template:Comment" />
+			<not>
+				<verifyXPath description="this id must not be the class 'selected new'!" 
+					xpath="//li[@id='ca-nstab-category'][contains(@class, 'new')]" />
+			</not>
+		</webtest>
+
+		<webtest name="ceTestProperties">
+			<config easyajax="true" />
+			<config browser="FF3">
+				<option name="ThrowExceptionOnFailingStatusCode" value="true" />
+				<option name="ThrowExceptionOnScriptError" value="false" />
+			</config>
+			<invoke
+				url="${wgServer}${wgScript}/Property:Has comment rating" />
+			<not>
+				<verifyXPath description="this id must not be the class 'selected new'!"
+					xpath="//li[@id='ca-nstab-category'][contains(@class, 'new')]" />
+			</not>
+			<invoke url="${wgServer}${wgScript}/Property:Has comment date" />
+			<not>
+				<verifyXPath description="this id must not be the class 'selected new'!" 
+					xpath="//li[@id='ca-nstab-category'][contains(@class, 'new')]" />
+			</not>
+			<invoke url="${wgServer}${wgScript}/Property:Has comment text" />
+			<not>
+				<verifyXPath description="this id must not be the class 'selected new'!" 
+					xpath="//li[@id='ca-nstab-category'][contains(@class, 'new')]" />
+			</not>
+			<invoke url="${wgServer}${wgScript}/Property:Has comment person" />
+			<not>
+				<verifyXPath description="this id must not be the class 'selected new'!" 
+					xpath="//li[@id='ca-nstab-category'][contains(@class, 'new')]" />
+			</not>
+			<invoke url="${wgServer}${wgScript}/Property:Belongs to article" />
+			<not>
+				<verifyXPath description="this id must not be the class 'selected new'!" 
+					xpath="//li[@id='ca-nstab-category'][contains(@class, 'new')]" />
+			</not>
+			<invoke url="${wgServer}${wgScript}/Property:Comment was deleted" />
+			<not>
+				<verifyXPath description="this id must not be the class 'selected new'!" 
+					xpath="//li[@id='ca-nstab-category'][contains(@class, 'new')]" />
+			</not>
+			<invoke url="${wgServer}${wgScript}/Property:Belongs to comment" />
+			<not>
+				<verifyXPath description="this id must not be the class 'selected new'!" 
+					xpath="//li[@id='ca-nstab-category'][contains(@class, 'new')]" />
+			</not>
+		</webtest>
+
+		<webtest name="ceTestCategory">
+			<config easyajax="true" />
+			<config browser="FF3">
+				<option name="ThrowExceptionOnFailingStatusCode" value="true" />
+				<option name="ThrowExceptionOnScriptError" value="false" />
+			</config>
+			<invoke
+				url="${wgServer}${wgScript}/Category:Comment" />
+			<not>
+				<verifyXPath description="this id must not be the class 'selected new'!"
+					xpath="//li[@id='ca-nstab-category'][contains(@class, 'new')]" />
+			</not>
+		</webtest>
+	</target>
+</project>

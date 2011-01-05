@@ -5,4 +5,5 @@ This file is generated automatically from the information contained in the folde
 Do not edit it else you risk to lose your changes.
 -->
 
+<!ENTITY goToLogin SYSTEM "../includes/goToLogin.xml">
 

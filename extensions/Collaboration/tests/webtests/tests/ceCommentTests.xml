@@ -1,0 +1,118 @@
+<?xml version="1.0"?>
+
+<!DOCTYPE project SYSTEM "../dtd/Project.dtd">
+
+<project default="ceCommentTests">
+
+	&goToLogin;
+
+	<target name="ceCommentTests">
+
+		<webtest name="ceCreateCommentPage">
+			<config easyajax="true" />
+			<config browser="FF3">
+				<option name="ThrowExceptionOnFailingStatusCode" value="true" />
+				<option name="ThrowExceptionOnScriptError" value="true" />
+			</config>
+			<invoke
+				url="${wgServer}${wgScript}/${cePagename}?action=edit" />
+			<setInputField htmlId="wpTextbox1" value="{{ShowComments|show=True}}" />
+			<clickButton description="Save page" htmlId="wpSave" />
+		</webtest>
+
+		<webtest name="ceTestCommentPage">
+			<config easyajax="true" />
+			<config browser="FF3">
+				<option name="ThrowExceptionOnFailingStatusCode" value="true" />
+				<option name="ThrowExceptionOnScriptError" value="true" />
+			</config>
+			<invoke url="${wgServer}${wgScript}/${cePagename}" />
+			<verifyXPath description="Does the comment form toggler exist?" 
+				xpath="//span[@id='collabComFormToggle']" />
+		</webtest>
+
+		<webtest name="ceCreateComment1">
+			<config easyajax="true" />
+			<config browser="FF3">
+				<option name="ThrowExceptionOnFailingStatusCode" value="true" />
+				<option name="ThrowExceptionOnScriptError" value="true" />
+			</config>
+			<antcall target="goToLogin" />
+			<invoke url="${wgServer}${wgScript}/${cePagename}?action=purge" />
+			<clickElement htmlId="collabComFormToggle" 
+				description="Click the form toggler"/>
+			<sleep seconds="2" />
+			<setInputField htmlId="collabComFormTextarea" value="First test comment created by automatic WebTest." />
+			<scriptStep description="simulate a pressed key on textarea to make it nodefault" language="javascript">
+				step.context.currentResponse.getHtmlElementById('collabComFormTextarea').type('\n') 
+			</scriptStep>
+			<clickButton description="Click 'Add comment' button" htmlId="collabComFormSubmitbuttonID" />
+		</webtest>
+
+		<webtest name="ceCreateComment2">
+			<config easyajax="true" />
+			<config browser="FF3">
+				<option name="ThrowExceptionOnFailingStatusCode" value="true" />
+				<option name="ThrowExceptionOnScriptError" value="true" />
+			</config>
+			<antcall target="goToLogin" />
+			<invoke url="${wgServer}${wgScript}/${cePagename}?action=purge" />
+			<clickElement htmlId="collabComFormToggle" 
+				description="Click the form toggler"/>
+			<sleep seconds="2" />
+			<setInputField htmlId="collabComFormTextarea" value="Second test comment created by automatic WebTest." />
+			<scriptStep description="simulate a pressed key on textarea to make it nodefault" language="javascript">
+				step.context.currentResponse.getHtmlElementById('collabComFormTextarea').type('\n') 
+			</scriptStep>
+			<clickButton description="Click 'Add comment' button" htmlId="collabComFormSubmitbuttonID" />
+		</webtest>
+
+		
+		<webtest name="ceCreateReply">
+			<config easyajax="true" />
+			<config browser="FF3">
+				<option name="ThrowExceptionOnFailingStatusCode" value="true" />
+				<option name="ThrowExceptionOnScriptError" value="false" />
+			</config>
+			<antcall target="goToLogin" />
+			<invoke url="${wgServer}${wgScript}/${cePagename}?action=purge" />
+			<clickElement xpath="//div[@class='collabComRes'][1]//span[@class='collabComReply']" />
+			<sleep seconds="2" />
+			<setInputField htmlId="collabComFormTextarea" value="Test reply to first comment created by automatic WebTest." />
+			<scriptStep description="simulate a pressed key on textarea to make it nodefault" language="javascript">
+				step.context.currentResponse.getHtmlElementById('collabComFormTextarea').type('\n') 
+			</scriptStep>
+			<clickButton description="Click 'Add comment' button" htmlId="collabComFormSubmitbuttonID" />
+		</webtest>
+		
+		<webtest name="ceTestComments">
+			<config easyajax="true" />
+			<config browser="FF3">
+				<option name="ThrowExceptionOnFailingStatusCode" value="true" />
+				<option name="ThrowExceptionOnScriptError" value="true" />
+			</config>
+			<antcall target="goToLogin" />
+			<invoke url="${wgServer}${wgScript}/${cePagename}?action=purge" />
+			<!-- default view is threaded. So the "reply" is between the other two comments -->
+			<verifyXPath description="The first comment must contain 'First' in comment text." 
+				xpath="//div[contains(concat(' ', @class, ' '),' collabComRes ')][1][contains(.,'First')]" />
+			<verifyXPath description="The second comment must contain 'reply' in comment text." 
+				xpath="//div[contains(concat(' ', @class, ' '),' collabComRes ')][2][contains(.,'reply')]" />
+			<!-- This one needs to be intended (margin-left existence) -->
+			<verifyXPath description="The second comment must contain 'reply' in comment text." 
+				xpath="//div[contains(concat(' ', @class, ' '),' collabComRes ')][2][contains(@style,'margin-left')]" />
+			<verifyXPath description="The third comment must contain 'Second' in comment text."
+				xpath="//div[contains(concat(' ', @class, ' '),' collabComRes ')][3][contains(.,'Second')]" />
+
+			<!-- now change the view 
+			<not>
+				<verifyXPath description="The third comment must contain 'Second' in comment text."
+					xpath="//div[contains(concat(' ', @class, ' '),' collabComRes ')][contains(.,'Second')]" />
+			</not> -->
+		</webtest>
+
+		<!--<webtest name="ceEditComment">
+			
+		<webtest name="ceDeleteComment">-->
+	</target>
+</project>

@@ -1,0 +1,463 @@
+<mediawiki xmlns="http://www.mediawiki.org/halowikiexport/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.ontoprise.de/halowikiexport-1.0.xsd" version="1.0" xml:lang="en">
+  <siteinfo>
+    <sitename>Contentwiki</sitename>
+    <base>http://localhost/index.php/Main_Page</base>
+    <generator>MediaWiki 1.16.0</generator>
+    <case>first-letter</case>
+    <namespaces>
+      <namespace key="-2" case="first-letter">Media</namespace>
+      <namespace key="-1" case="first-letter">Special</namespace>
+      <namespace key="0" case="first-letter" />
+      <namespace key="1" case="first-letter">Talk</namespace>
+      <namespace key="2" case="first-letter">User</namespace>
+      <namespace key="3" case="first-letter">User talk</namespace>
+      <namespace key="4" case="first-letter">Contentwiki</namespace>
+      <namespace key="5" case="first-letter">Contentwiki talk</namespace>
+      <namespace key="6" case="first-letter">File</namespace>
+      <namespace key="7" case="first-letter">File talk</namespace>
+      <namespace key="8" case="first-letter">MediaWiki</namespace>
+      <namespace key="9" case="first-letter">MediaWiki talk</namespace>
+      <namespace key="10" case="first-letter">Template</namespace>
+      <namespace key="11" case="first-letter">Template talk</namespace>
+      <namespace key="12" case="first-letter">Help</namespace>
+      <namespace key="13" case="first-letter">Help talk</namespace>
+      <namespace key="14" case="first-letter">Category</namespace>
+      <namespace key="15" case="first-letter">Category talk</namespace>
+      <namespace key="102" case="first-letter">Property</namespace>
+      <namespace key="103" case="first-letter">Property talk</namespace>
+      <namespace key="104" case="first-letter">Type</namespace>
+      <namespace key="105" case="first-letter">Type talk</namespace>
+      <namespace key="106" case="first-letter">Form</namespace>
+      <namespace key="107" case="first-letter">Form talk</namespace>
+      <namespace key="108" case="first-letter">Concept</namespace>
+      <namespace key="109" case="first-letter">Concept talk</namespace>
+      <namespace key="120" case="first-letter">Document</namespace>
+      <namespace key="121" case="first-letter">Document talk</namespace>
+      <namespace key="122" case="first-letter">Audio</namespace>
+      <namespace key="123" case="first-letter">Audio talk</namespace>
+      <namespace key="124" case="first-letter">Video</namespace>
+      <namespace key="125" case="first-letter">Video talk</namespace>
+      <namespace key="126" case="first-letter">Pdf</namespace>
+      <namespace key="127" case="first-letter">Pdf talk</namespace>
+      <namespace key="128" case="first-letter">ICalendar</namespace>
+      <namespace key="129" case="first-letter">ICalendar talk</namespace>
+      <namespace key="130" case="first-letter">VCard</namespace>
+      <namespace key="131" case="first-letter">VCard talk</namespace>
+      <namespace key="200" case="first-letter">WebService</namespace>
+      <namespace key="201" case="first-letter">WebService talk</namespace>
+      <namespace key="202" case="first-letter">TermImport</namespace>
+      <namespace key="203" case="first-letter">TermImport talk</namespace>
+      <namespace key="220" case="first-letter">E-mail</namespace>
+      <namespace key="221" case="first-letter">E-mail talk</namespace>
+      <namespace key="300" case="first-letter">ACL</namespace>
+      <namespace key="301" case="first-letter">ACL talk</namespace>
+      <namespace key="400" case="first-letter">IAI</namespace>
+      <namespace key="401" case="first-letter">IAI talk</namespace>
+      <namespace key="700" case="first-letter">Comment</namespace>
+      <namespace key="701" case="first-letter">Comment talk</namespace>
+      <namespace key="702" case="first-letter">UserManual</namespace>
+      <namespace key="703" case="first-letter">UserManual talk</namespace>
+    </namespaces>
+  </siteinfo>
+  <page>
+    <title>Category:Comment</title>
+    <id>237</id>
+    <revision>
+      <id>2263</id>
+      <timestamp>2010-12-22T16:33:01Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">{{Category
+|PAGENAME=Category:Comment
+|rationale=This category contains all comments created by the Collaboration Extension.
+|No automatic formedit=Yes
+|part of=Collaboration
+}}
+{{Part of bundle|value=Collaboration}}
+{{Content hash|value=}}
+[[Category:Entity]]</text>
+    <hash>1f283ee49ebbef1cc1422e1d83c96a1d</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Has comment rating</title>
+    <id>238</id>
+    <revision>
+      <id>2258</id>
+      <timestamp>2010-12-22T16:30:39Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">{{Property
+|part of=Collaboration
+|rationale=The rating value of a comment.
+|PAGENAME=Property:Has rating
+}}
+{{Part of bundle|value=Collaboration}}
+{{Content hash|value=}}
+[[has domain and range::Category:Comment; | ]][[has type::Type:Number| ]] [[Allows value::1| ]] [[Allows value::0| ]] [[Allows value::-1| ]]</text>
+    <hash>adc51d785938fb68ac93e3af91bed26c</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Has comment date</title>
+    <id>239</id>
+    <revision>
+      <id>2256</id>
+      <timestamp>2010-12-22T16:28:43Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">{{Property
+|part of=Collaboration
+|rationale=The date of a comment.
+|PAGENAME=Property:Has comment date
+}}
+{{Part of bundle|value=Collaboration}}
+{{Content hash|value=}}
+[[has domain and range::Category:Comment; | ]][[has type::Type:Date| ]]</text>
+    <hash>1e08daf77bd63ea166d43a204419b961</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Has comment text</title>
+    <id>240</id>
+    <revision>
+      <id>2259</id>
+      <timestamp>2010-12-22T16:31:04Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">{{Property
+|part of=Collaboration
+|rationale=Contains a comment text.
+|PAGENAME=Property:Has comment text
+}}
+{{Part of bundle|value=Collaboration}}
+{{Content hash|value=}}
+[[has domain and range::Category:Comment; | ]][[has type::Type:Text| ]]</text>
+    <hash>42415065dce696d9f88de042c2a77af5</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Has comment person</title>
+    <id>241</id>
+    <revision>
+      <id>2257</id>
+      <timestamp>2010-12-22T16:29:19Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">{{Property
+|part of=Collaboration
+|rationale=Contains the commenting person.
+|PAGENAME=Property:Has comment person
+}}
+{{Part of bundle|value=Collaboration}}
+{{Content hash|value=}}
+[[has domain and range::Category:Comment; | ]][[has type::Type:String| ]]</text>
+    <hash>7dcf5f3557020199d3b41539199c5b0c</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Template:CommentResult</title>
+    <id>244</id>
+    <revision>
+      <id>2255</id>
+      <timestamp>2010-12-22T16:28:15Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">&lt;noinclude&gt;{{Template
+|part of=Collaboration
+|rationale=Used as result printer template.
+|PAGENAME=Template:CommentResult
+}}
+{{Part of bundle|value=Collaboration}}
+{{Content hash|value=}}
+&lt;/noinclude&gt;&lt;includeonly&gt;&lt;!-- start comment (do not change css-classes)
+--&gt;{{#vardefine:resID
+|{{PAGENAMEE:{{#ifeq: {{#pos:{{{6}}}|:}} 
+| 
+| {{{6}}} 
+| {{#sub:{{{6}}}|{{#expr:{{#pos:{{{6}}}|:}}+1}}|0}} }} }} 
+}}
+{{#vardefine:myID
+|{{PAGENAMEE:{{#ifeq: {{#pos:{{{1}}}|:}} | | {{{1}}} | {{#sub:{{{1}}}|{{#expr:{{#pos:{{{1}}}|:}}+1}}|0}} }} }} 
+}}&lt;div class=&quot;collabComRes&quot; id=&quot;{{#var:myID}}&quot;&gt;&lt;!-- start comment information 
+--&gt;&lt;div class=&quot;collabComResInfoSuper&quot;&gt;{{#var:resID}}&lt;/div&gt;
+&lt;div class=&quot;collabComResInfo&quot;&gt;{{#var:myID}}&lt;/div&gt;&lt;!-- end comment information 
+--&gt;&lt;!-- start comment person 
+--&gt;&lt;div class=&quot;collabComResPerson&quot;&gt;{{#if: {{{2|}}} 
+|{{#vardefine:userimage|{{#ask: [[{{{2}}}]] | ?User_image = | link=none}} }} 
+}}
+{{#if:{{#var:userimage}}
+| [[{{#var:userimage}}|frameless|48x48px|nopreview|link={{{2}}}]] 
+| [[File:Defaultuser.gif|frameless|48px|nopreview|link={{{2}}}]] 
+}}&lt;/div&gt;&lt;!-- start comment rating 
+--&gt;{{#if:{{{5}}}
+|&lt;div class =&quot;collabComResRating&quot;&gt;{{#ifexpr: {{{5}}} &lt; 2 | {{#ifexpr: {{{5}}} &gt; -2 | Article quality rated:&lt;div class=&quot;collabComResRatingIcon&quot;&gt;{{#ifexpr: {{{5}}} = -1 | [[File:Bad_active.png|16px|nopreview|link=]] }}{{#ifexpr: {{{5}}} = 0 | [[File:Neutral_active.png|16px|nopreview|link=]] }}{{#ifexpr: {{{5}}} = 1 | [[File:Good_active.png|16px|nopreview|link=]] }}&lt;/div&gt;| }}| }}&lt;/div&gt;| 
+}}&lt;!-- end comment rating 
+--&gt;&lt;div class=&quot;collabComResRight&quot;&gt;&lt;div class=&quot;collabComResUsername&quot;&gt;{{#if:{{{2|}}}|[[{{{2|}}}]], | }}&lt;/div&gt;&lt;!-- end comment person 
+--&gt;&lt;!-- start comment date
+--&gt;&lt;div class=&quot;collabComResDate&quot;&gt; {{{3}}}&lt;/div&gt;&lt;!-- end comment date
+--&gt;&lt;!-- start comment content
+--&gt;&lt;div class=&quot;collabComResText&quot;&gt;{{{4}}}&lt;/div&gt;&lt;/div&gt;&lt;!-- end comment content
+--&gt;{{#if:{{{7|}}}|&lt;div class=&quot;collabComResDeletion&quot;&gt;{{{7|}}}&lt;/div&gt;&lt;!-- end deletion info --&gt;|}}&lt;/div&gt;&lt;!-- end comment 
+--&gt;&lt;/includeonly&gt;</text>
+    <hash>e67336323bc7fe485ed7c424f193ef07</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Belongs to article</title>
+    <id>245</id>
+    <revision>
+      <id>2247</id>
+      <timestamp>2010-12-22T16:18:43Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">{{Property
+|part of=Collaboration
+|rationale=Used to create a relation between comments and articles.
+|PAGENAME=Property:Belongs to article
+}}
+{{Part of bundle|value=Collaboration}}
+{{Content hash|value=}}
+[[has type::Type:Page| ]][[Has max cardinality::1| ]][[Has min cardinality::1| ]][[has domain and range::Category:Comment; | ]]</text>
+    <hash>e404bff7c9b2d0bfce778da940d0c6e8</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Template:ShowCommentsIntern</title>
+    <id>247</id>
+    <revision>
+      <id>2262</id>
+      <timestamp>2010-12-22T16:32:15Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">&lt;noinclude&gt;{{Template
+|PAGENAME=Template:ShowCommentsIntern
+|part of=Collaboration
+|rationale=Show all comments incl. form.
+}}
+{{Part of bundle|value=Collaboration}}
+{{Content hash|value=}}
+&lt;/noinclude&gt;&lt;includeonly&gt;
+&lt;!--start surrounding div --&gt;&lt;div class=&quot;collabComInternSurround&quot;&gt;&lt;!-- start header div --&gt;&lt;div class=&quot;collabComInternHeader&quot;&gt;[[File:Comment_icon_crystal.png|text-bottom|nopreview|16px|link=]]&lt;/div&gt;&lt;!-- end header div --&gt;
+{{#showcommentform:}}
+&lt;div id=&quot;collabComResults&quot;&gt;
+{{#ask: [[Belongs to article::{{FULLPAGENAME}}]] [[Comment:+]]
+  | ?Has comment person
+  | ?Has comment date
+  | ?Has comment text
+  | ?Has comment rating
+  | ?Belongs to comment
+  | ?Comment was deleted
+  | format=template
+  | template=CommentResult
+  | sort=Has comment date
+  | order=asc
+  | link=none
+  | limit=100
+}}
+&lt;/div&gt;
+&lt;/div&gt;&lt;!-- end surround div --&gt;&lt;/includeonly&gt;</text>
+    <hash>10c0686a36bb32baef5565ecca092f71</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Comment was deleted</title>
+    <id>284</id>
+    <revision>
+      <id>2253</id>
+      <timestamp>2010-12-22T16:23:56Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">{{Property
+|part of=Collaboration
+|rationale=Flag for comment deletion.
+|PAGENAME=Property:Comment was deleted
+}}
+{{Part of bundle|value=Collaboration}}
+{{Content hash|value=}}
+[[has domain and range::Category:Comment; | ]][[has type::Type:Boolean| ]]</text>
+    <hash>03ad88cd0cd5d081ef1c85d467f0c613</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Belongs to comment</title>
+    <id>285</id>
+    <revision>
+      <id>2248</id>
+      <timestamp>2010-12-22T16:20:18Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">{{Property
+|part of=Collaboration
+|rationale=Used to create a relation between comments and other comments.
+|PAGENAME=Property:Belongs to comment
+}}
+{{Part of bundle|value=Collaboration}}
+{{Content hash|value=}}
+[[has type::Type:Page| ]][[Has max cardinality::1| ]][[Has min cardinality::1| ]][[has domain and range::Category:Comment;Category:Comment | ]]</text>
+    <hash>f208e8ea95c0d6ec2a58ee67cbcec4e3</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Template:Comment</title>
+    <id>358</id>
+    <revision>
+      <id>2252</id>
+      <timestamp>2010-12-22T16:23:25Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">&lt;noinclude&gt;{{Template
+|part of=Collaboration
+|rationale=Creates a comment.
+|parameters=&lt;pre&gt;{{Comment
+|CommentPerson
+|CommentContent
+|CommentDatetime
+|CommentRelatedArticle
+|CommentRating
+}}&lt;/pre&gt;
+|PAGENAME=Template:Comment
+}}
+{{Part of bundle|value=Collaboration}}
+{{Content hash|value=}}
+&lt;/noinclude&gt;&lt;includeonly&gt;''Comment for {{#if: {{{CommentRelatedArticle|}}} 
+| [[Belongs to article::{{{CommentRelatedArticle|}}}]] | nothing
+}}{{#if: {{{CommentRelatedComment|}}} 
+| &amp;nbsp;and a reply to [[Belongs to comment::{{{CommentRelatedComment|}}}]] | 
+}}''&lt;!-- start comment (do not change css-classes)--&gt;
+&lt;!-- start comment person (do not change css-class.) --&gt;
+&lt;div class=&quot;collabComResPerson&quot;&gt;
+{{#if: {{{CommentPerson|}}} 
+| {{#vardefine:userimage|{{#ask: [[{{{CommentPerson}}}]] | ?User_image = | link=none}} }} 
+}}
+{{#if:{{#var:userimage}}
+| [[{{#var:userimage}}|frameless|48x48px|nopreview|link={{{CommentPerson}}}]] 
+| [[File:Defaultuser.gif|frameless|48px|nopreview|link={{{CommentPerson}}}]] 
+}}&lt;/div&gt;&lt;!-- end comment person 
+--&gt;&lt;!-- start comment rating 
+--&gt;{{#if:{{{CommentRating|}}}
+| [[Has comment rating::{{{CommentRating|}}}|]]&lt;div class =&quot;collabComResRating&quot;&gt;{{#ifexpr: {{{CommentRating|}}} &lt; 2 | {{#ifexpr: {{{CommentRating|}}} &gt; -2 | Article quality rated:&lt;div class=&quot;collabComResRatingIcon&quot;&gt;{{#ifexpr: {{{CommentRating|}}} = -1 | [[File:Bad_active.png]] }}{{#ifexpr: {{{CommentRating|}}} = 0 | [[File:Neutral_active.png]] }}{{#ifexpr: {{{CommentRating|}}} = 1 | [[File:Good_active.png]] }}&lt;/div&gt;|}}| }}&lt;/div&gt;|}}&lt;!-- end comment rating 
+--&gt;&lt;div class=&quot;collabComResRight&quot;&gt;&lt;div class=&quot;collabComResUsername&quot;&gt;
+{{#if: {{{CommentPerson|}}} 
+|{{#ifexist:{{{CommentPerson}}}
+|[[{{{CommentPerson|}}}]], 
+|{{{CommentPerson|}}},&amp;nbsp; 
+}}[[Has comment person::{{{CommentPerson|}}}| ]]|
+}}&lt;/div&gt;
+&lt;!-- start comment date
+--&gt;{{#if: {{{CommentDatetime|}}} 
+| &lt;div class=&quot;collabComResDate&quot;&gt;[[Has comment date::{{{CommentDatetime|}}}]]&lt;/div&gt;
+}}&lt;!-- end comment date
+--&gt;&lt;!-- start comment content
+--&gt;&lt;div class=&quot;collabComResText&quot;&gt;
+{{#if:{{{CommentContent|}}}
+|[[Has comment text::{{{CommentContent|}}}]]}}&lt;/div&gt;
+&lt;!-- end comment content--&gt;&lt;/div&gt;
+[[Comment was deleted::{{{CommentWasDeleted|false}}}]]
+&lt;!-- end comment --&gt;[[Category:Comment]]
+&lt;/includeonly&gt;</text>
+    <hash>46677a7bb0900eb16de91f9462ccac29</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Template:ShowComments</title>
+    <id>359</id>
+    <revision>
+      <id>2261</id>
+      <timestamp>2010-12-22T16:31:37Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">&lt;noinclude&gt;{{Template
+|PAGENAME=Template:ShowComments
+|part of=Collaboration
+|rationale=Shows all comments incl. a form entry field for the given article.
+}}
+{{Part of bundle|value=Collaboration}}
+{{Content hash|value=}}
+&lt;/noinclude&gt;&lt;includeonly&gt;
+{{#ifeq:{{{show|}}}|True|{{ShowCommentsIntern}}|}}&lt;/includeonly&gt;</text>
+    <hash>58bb12f67ca2382598f0417699c638b9</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Collaboration</title>
+    <id>444</id>
+    <revision>
+      <id>1973</id>
+      <timestamp>2010-12-21T20:53:41Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">{{Content bundle
+|Vendor=Ontoprise
+|Version=130
+|rationale=This content bundle features a set of basic elements that are necessary to for the Collaboration extension.
+|Installation=extensions/Collaboration
+|Dependency=mw;1160;1160, smw;152;152, smwhalo;152;152, scriptmanager;101;101, applicationprogramming;102;102
+}}
+{{Part of bundle|value=Collaboration}}
+[[Vendor::Ontoprise| ]]
+[[Ontology version::130| ]]
+[[Installation dir::extensions/Collaboration| ]]
+[[Dependency::mw;1160;1160| ]]
+[[Dependency::smw;152;152| ]]
+[[Dependency::smwhalo;152;152| ]]
+[[Dependency::scriptmanager;101;101| ]]
+[[Dependency::applicationprogramming;102;102| ]]
+[[Category:Content bundle]]
+
+;This bundle contains these articles:
+
+{{#ask:[[Part of bundle::{{FULLPAGENAME}}]]
+|?=Link
+|?Rationale
+|link=subject
+|default=''none''
+|mainlabel=-
+}}</text>
+    <hash>1963378c5f9798d41ddbc274efb84266</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Template:!</title>
+    <id>105</id>
+    <revision>
+      <id>1115</id>
+      <timestamp>2010-11-24T10:44:01Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">|&lt;noinclude&gt;
+&lt;!-- Add cats and interwikis to the /doc subpage, not here! --&gt;
+helper template for pipe symbol, which can e.g. not be used directly in template parameter calls.[[Part of bundle::Baseontologybundle| ]]
+&lt;/noinclude&gt;</text>
+    <hash>5fb9b20c2825d7743e58540992c213ec</hash>
+    </revision>
+  </page>
+</mediawiki>

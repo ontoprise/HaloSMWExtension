@@ -253,7 +253,7 @@ class CECommentParserFunctions {
 		SMWOutputs::requireHeadItem('CEJS_Variables3', $script);  
 
 		$html = XML::openElement( 'div', array( 'id' => 'collabComFormHeader' )) .
-			XML::openElement( 'form', array( 'method' => 'post', 'id' => 'collabComForm',
+			XML::openElement( 'form', array( 'id' => 'collabComForm',
 			'style' => 'display:none',		
 			'onSubmit' => 'return ceCommentForm.processForm()' ) ) . 
 			XML::openElement('div', array('id' => 'collabComFormUserIcon')) .

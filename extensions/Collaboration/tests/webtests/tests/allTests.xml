@@ -2,6 +2,7 @@
 
 <project name="test Collaboration" default="testAll">
 	<target name="testAll" description="runs all the tests">
-		<ant antfile="basicTests.xml"/>
+		<!--<ant antfile="ceOntologyTests.xml"/>-->
+		<ant antfile="ceCommentTests.xml"/>
 	</target>
 </project>
