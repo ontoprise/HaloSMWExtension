@@ -47,7 +47,7 @@ class RMForm {
 		$fancyboxClass = 'rmlink';
 		$uploadLabel = wfMsgNoTrans('smw_rm_uploadheadline');
 		$buttonText = '>> ' . wfMsgNoTrans('smw_rm_formbuttontext');
-		$html = "<input class=\"$fancyboxClass rmUploadButton\" type=\"submit\"". 
+		$html = "<input class=\"$fancyboxClass rmUploadButton\" type=\"button\" id=\"rmFormButton\"". 
 			"value=\"$buttonText\" title=\"$uploadLabel\" />";
 
 		$fancybox_js =<<<END
@@ -58,6 +58,7 @@ END;
 
 		return $parser->insertStripItem( $html, $parser->mStripState );
 	}
+
 	/**
 	 * Parser funtion that creates a link to the upload overlay
 	 * 
