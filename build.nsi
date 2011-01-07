@@ -706,7 +706,7 @@ Function changeConfigForFullXAMPP
     
     ; Set PHP path for deployment framework
     DetailPrint "Set PHP path for deployment framework"  
-    ${ConfigWrite} "$INSTDIR\htdocs\mediawiki\deployment\tools\smwadmin.bat" "SET PHP=" "$INSTDIR\php\php.exe" $R0
+    ${ConfigWrite} "$INSTDIR\htdocs\mediawiki\deployment\tools\smwadmin.bat" "SET PHP=" '"$INSTDIR\php\php.exe"' $R0
     
     DetailPrint "Config customizations"
     CALL configCustomizationsForNew
@@ -817,7 +817,8 @@ Function configCustomizationsForNew
         nsExec::ExecToLog ' "$INSTDIR\import_smwplus_db.bat" "$INSTDIR" root m8nix semwiki_en "$INSTDIR\smwplus_database.sql" '
         
         DetailPrint "Set php.exe in PATH Variable"
-        ${EnvVarUpdate} $0 "PATH" "A" "HKLM" "$INSTDIR\php" 
+        ${EnvVarUpdate} $0 "PATH" "A" "HKLM" "$INSTDIR\php"
+        ${EnvVarUpdate} $0 "PATH" "A" "HKLM" "$INSTDIR\mysql\bin" 
 FunctionEnd
 
 
@@ -1065,7 +1066,8 @@ Section "Uninstall"
     Call un.checkForApacheAndMySQLAndMemcached
     
     # Delete from PATH variable
-    ${un.EnvVarUpdate} $0 "PATH" "R" "HKLM" "$INSTDIR\php"      
+    ${un.EnvVarUpdate} $0 "PATH" "R" "HKLM" "$INSTDIR\php"
+    ${un.EnvVarUpdate} $0 "PATH" "R" "HKLM" "$INSTDIR\mysql\bin"      
     
     # Delete all start menu entries
     Delete "$SMPROGRAMS\$MUI_TEMP\Uninstall.lnk"
