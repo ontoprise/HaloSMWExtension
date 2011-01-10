@@ -27,144 +27,161 @@
  */
 class Rollback {
 
-	// installation directory of Mediawiki
-	var $rootDir;
+    // installation directory of Mediawiki
+    var $rootDir;
 
-	// temporary directory where rollback data is stored.
-	var $tmpDir;
-
-
-	static $instance;
-
-	public static function getInstance($rootDir) {
-		if (is_null(self::$instance)) {
-			self::$instance = new Rollback($rootDir);
-		}
-		return self::$instance;
-	}
-
-	private function __construct($rootDir) {
-
-		$this->rootDir = $rootDir;
-		$this->tmpDir = Tools::isWindows() ? 'c:/temp/rollback_smwadmin' : '/tmp/rollback_smwadmin';
-
-	}
+    // temporary directory where rollback data is stored.
+    var $tmpDir;
 
 
+    static $instance;
 
-	/**
-	 * Copy complete code base of installation including LocalSettings.php
-	 * (but excluding deployment folder)
-	 *
-	 */
-	public function saveInstallation() {
-		if (!$this->acquireNewRollback()) return;
-		print "\n[Save installation...";
-		Tools::mkpath($this->tmpDir."/rollback_data/");
-		Tools::copy_dir($this->rootDir, $this->tmpDir."/rollback_data", array($this->rootDir."/deployment"));
-		print "done.]";
-	}
+    public static function getInstance($rootDir) {
+        if (is_null(self::$instance)) {
+            self::$instance = new Rollback($rootDir);
+        }
+        return self::$instance;
+    }
 
-	/**
-	 * Save the database to the rollback directory
-	 *
-	 * @return error code of mysqldump process
-	 */
-	public function saveDatabase() {
-		global $mwrootDir;
-		require_once "$mwrootDir/AdminSettings.php";
-		if (!$this->acquireNewRollback()) return;
-		// make sure to save only once
-		static $savedDataBase = false;
-		if ($savedDataBase) return true;
+    private function __construct($rootDir) {
 
-		$savedDataBase = true;
-		$wgDBname = $this->getDatabasename();
-		print "\n[Saving database...";
-		//print "\nmysqldump -u $wgDBadminuser --password=$wgDBadminpassword $wgDBname > ".$this->tmpDir."/rollback_data/dump.sql";
-		exec("mysqldump -u $wgDBadminuser --password=$wgDBadminpassword $wgDBname > ".$this->tmpDir."/dump.sql", $out, $ret);
-		if ($ret != 0) print "\nWarning: Could not save database for rollback"; else print "done.]";
-		return $ret == 0;
-	}
+        $this->rootDir = $rootDir;
+        $this->tmpDir = Tools::isWindows() ? 'c:/temp/rollback_smwadmin' : '/tmp/rollback_smwadmin';
 
-	/**
-	 * Rolls back from the latest rollback point.
-	 *
-	 */
-	public function rollback() {
+    }
 
-		$this->restoreInstallation();
-		$this->restoreDatabase();
-	}
 
-	/**
-	 * Restores complete code base of installation including LocalSettings.php
-	 *
-	 */
-	private function restoreInstallation() {
-		print "\n[Remove current installation...";
-		Tools::remove_dir($this->rootDir, array(Tools::normalizePath($this->rootDir."/deployment")));
-		print "done.]";
-		print "\n[Restore old installation...";
-		Tools::copy_dir($this->tmpDir."/rollback_data", $this->rootDir);
-		print "done.]";
-	}
 
-	/**
-	 * Acquires a new rollback operation. The user has to confirm to
-	 * overwrite exisiting rollback data.
-	 * 
-	 * @return boolean True if a rollback should be done.
-	 */
-	private function acquireNewRollback() {
-		static $newRollback = true;
-		static $createRollbackPoint = NULL;
-		if (!is_null($createRollbackPoint)) return $createRollbackPoint;
-		if ($newRollback) { // initialize new rollback
-			$newRollback = false;
-			if (file_exists($this->tmpDir)) {
-				print "\nCreate new restore point (y/n)? ";
-				$line = trim(fgets(STDIN));
-				if (strtolower($line) == 'n') {
-					print "\n\nDo not create a restore point.\n\n";
-					$createRollbackPoint = false;
-					return false;
-				}
-				Tools::remove_dir($this->tmpDir);
-			}
-			Tools::mkpath($this->tmpDir);
-			$createRollbackPoint=true;
-			return true;
-		}
-	}
+    /**
+     * Copy complete code base of installation including LocalSettings.php
+     * (but excluding deployment folder)
+     *
+     */
+    public function saveInstallation() {
+        if (!$this->acquireNewRollback()) return;
+        print "\n[Save installation...";
+        Tools::mkpath($this->tmpDir."/rollback_data/");
+        Tools::copy_dir($this->rootDir, $this->tmpDir."/rollback_data", array($this->rootDir."/deployment"));
+        print "done.]";
+    }
 
-	/**
-	 * Restore the database dump from the rollback directory.
-	 *
-	 * @return boolean
-	 */
-	private function restoreDatabase() {
-		global $mwrootDir;
-		require_once "$mwrootDir/AdminSettings.php";
-		$wgDBname = $this->getDatabasename();
-		if (!file_exists($this->tmpDir."/dump.sql")) return false; // nothing to restore
-		print "\n[Restore database...";
+    /**
+     * Save the database to the rollback directory
+     *
+     * @return error code of mysqldump process
+     */
+    public function saveDatabase() {
+        global $mwrootDir;
+        if (file_exists("$mwrootDir/AdminSettings.php")) {
+            require_once "$mwrootDir/AdminSettings.php";
+        } else {
+            // possible since MW 1.16
+            $wgDBadminuser = $this->getVariableValue("LocalSettings.php", "wgDBadminuser");
+            $wgDBadminpassword = $this->getVariableValue("LocalSettings.php", "wgDBadminpassword");
+        }
 
-		exec("mysql -u $wgDBadminuser --password=$wgDBadminpassword --database=$wgDBname < ".$this->tmpDir."/dump.sql", $out, $ret);
-		if ($ret != 0) print "\nWarning: Could not restore database."; else print "done.]";
-		return ($ret == 0);
-	}
 
-	/**
-	 *
-	 * Reads databasename from LocalSettings.php
-	 */
-	private function getDatabasename() {
-		global $mwrootDir;
-		$ls_content = file_get_contents("$mwrootDir/LocalSettings.php");
-		preg_match('/\$wgDBname\s*=\s*["\']([^"\']+)["\']/', $ls_content, $matches);
-		return $matches[1];
-	}
+        if (!$this->acquireNewRollback()) return;
+        // make sure to save only once
+        static $savedDataBase = false;
+        if ($savedDataBase) return true;
+
+        $savedDataBase = true;
+        $wgDBname = $this->getVariableValue("LocalSettings.php", "wgDBname");
+        print "\n[Saving database...";
+        print "\nmysqldump -u $wgDBadminuser --password=$wgDBadminpassword $wgDBname > ".$this->tmpDir."/rollback_data/dump.sql";
+        exec("mysqldump -u $wgDBadminuser --password=$wgDBadminpassword $wgDBname > ".$this->tmpDir."/dump.sql", $out, $ret);
+        if ($ret != 0) print "\nWarning: Could not save database for rollback"; else print "done.]";
+        return $ret == 0;
+    }
+
+    /**
+     * Rolls back from the latest rollback point.
+     *
+     */
+    public function rollback() {
+
+        $this->restoreInstallation();
+        $this->restoreDatabase();
+    }
+
+    /**
+     * Restores complete code base of installation including LocalSettings.php
+     *
+     */
+    private function restoreInstallation() {
+        print "\n[Remove current installation...";
+        Tools::remove_dir($this->rootDir, array(Tools::normalizePath($this->rootDir."/deployment")));
+        print "done.]";
+        print "\n[Restore old installation...";
+        Tools::copy_dir($this->tmpDir."/rollback_data", $this->rootDir);
+        print "done.]";
+    }
+
+    /**
+     * Acquires a new rollback operation. The user has to confirm to
+     * overwrite exisiting rollback data.
+     *
+     * @return boolean True if a rollback should be done.
+     */
+    private function acquireNewRollback() {
+        static $newRollback = true;
+        static $createRollbackPoint = NULL;
+        if (!is_null($createRollbackPoint)) return $createRollbackPoint;
+        if ($newRollback) { // initialize new rollback
+            $newRollback = false;
+            if (file_exists($this->tmpDir)) {
+                print "\nCreate new restore point (y/n)? ";
+                $line = trim(fgets(STDIN));
+                if (strtolower($line) == 'n') {
+                    print "\n\nDo not create a restore point.\n\n";
+                    $createRollbackPoint = false;
+                    return false;
+                }
+                Tools::remove_dir($this->tmpDir);
+            }
+            Tools::mkpath($this->tmpDir);
+            $createRollbackPoint=true;
+            return true;
+        }
+    }
+
+    /**
+     * Restore the database dump from the rollback directory.
+     *
+     * @return boolean
+     */
+    private function restoreDatabase() {
+        global $mwrootDir;
+        if (file_exists("$mwrootDir/AdminSettings.php")) {
+            require_once "$mwrootDir/AdminSettings.php";
+        } else {
+            // possible since MW 1.16
+            $wgDBadminuser = $this->getVariableValue("LocalSettings.php", "wgDBadminuser");
+            $wgDBadminpassword = $this->getVariableValue("LocalSettings.php", "wgDBadminpassword");
+        }
+        $wgDBname = $this->getVariableValue("LocalSettings.php", "wgDBname");
+        if (!file_exists($this->tmpDir."/dump.sql")) return false; // nothing to restore
+        print "\n[Restore database...";
+
+        exec("mysql -u $wgDBadminuser --password=$wgDBadminpassword --database=$wgDBname < ".$this->tmpDir."/dump.sql", $out, $ret);
+        if ($ret != 0) print "\nWarning: Could not restore database."; else print "done.]";
+        return ($ret == 0);
+    }
+
+    /**
+     *
+     * Reads variables value.
+     *
+     * @param $file File path (relative to MW directory)
+     * @param $varname Variable name
+     */
+    private function getVariableValue($file,$varname) {
+        global $mwrootDir;
+        $ls_content = file_get_contents("$mwrootDir/$file");
+        preg_match('/\$'.$varname.'\s*=\s*["\']([^"\']+)["\']/', $ls_content, $matches);
+        return $matches[1];
+    }
 
 
 
