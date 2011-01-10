@@ -1015,6 +1015,7 @@ function CECommentForm() {
 		preloadImages[1] = wgCEScriptPath + '/skins/Comment/icons/neutral_active.png';
 		preloadImages[2] = wgCEScriptPath + '/skins/Comment/icons/bad_active.png';
 		preloadImages[3] = wgCEScriptPath + '/skins/Comment/icons/Edit_button2_Active.png';
+		preloadImages[4] = wgCEScriptPath + '/skins/Comment/icons/DeletedComment.png';
 		for (i = 0; i < preloadImages.length; i++) {
 			var preloadImage = new Image();
 			preloadImage.src = preloadImages[i];
@@ -1084,8 +1085,6 @@ $jq(document).ready(
 $jq(document).ready(
 	function(){
 		ceCommentForm.preloadImages();
-		// build header
-		ceCommentForm.buildHeader();
 		// format comments
 		var resultComments = $jq('.collabComRes');
 		$jq.each(resultComments, function(i, resCom ){
@@ -1095,6 +1094,8 @@ $jq(document).ready(
 			var resComDeleted = $jq('.collabComResDeletion', resCom);
 			if( resComDeleted.html() === 'true' ) {
 				$jq('.collabComResText', resCom).addClass('collabComDeleted');
+				$jq('.collabComResPerson img', resCom).attr('src', wgCEScriptPath + '/skins/Comment/icons/DeletedComment.png');
+				$jq('.collabComResRating', resCom).remove();
 				// this comment has been marked as deleted -> step out
 				return true;
 			}
@@ -1159,6 +1160,8 @@ $jq(document).ready(
 				$jq('.collabComResText', resCom).after(divEl);
 			}
 		});
+		// build header
+		ceCommentForm.buildHeader();
 		//clone actual structure without events (bind them again later)
 		ceCommentForm.savedStructure = $jq('#collabComResults').clone();
 		ceCommentForm.showThreaded();
