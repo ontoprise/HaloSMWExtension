@@ -264,7 +264,7 @@ div#collabComFormHelp span {
 }
 
 /*the two buttons in the form*/
-#collabComFormSubmitbuttonID {
+#collabComFormSubmitbuttonID, #collabComEditFormSubmit {
 	font-weight: bold;
 }
 

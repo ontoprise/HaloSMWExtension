@@ -367,6 +367,11 @@ function CECommentForm() {
 		if(ratingExistent) {
 			ceCommentForm.switchEditRating('#collabComEditFormRating' + (parseInt(editRatingValue) + 2), editRatingValue);
 		}
+		var editIcon = $jq('#' + pageName.replace(/(:|\.)/g,'\\$1') + ' .collabComEdit > img');
+		editIcon.attr('src', wgCEScriptPath + '/skins/Comment/icons/Edit_button2_Active.png');
+		$jq('#' + pageName.replace(/(:|\.)/g,'\\$1') + ' .collabComEdit').bind('click', function() {
+			ceCommentForm.cancelCommentEditForm(pageName);
+		});
 		$jq('#' + pageName.replace(/(:|\.)/g,'\\$1') + ' .collabComResText').toggle();
 		$jq('.collabComReply', $jq('#' + pageName.replace(/(:|\.)/g,'\\$1'))).hide();
 		return true;
@@ -493,7 +498,12 @@ function CECommentForm() {
 		$jq('#' + pageName.replace(/(:|\.)/g,'\\$1') + ' .collabComResRight').css(
 				'width', ''
 		);
+		var editIcon = $jq('#' + pageName.replace(/(:|\.)/g,'\\$1') + ' .collabComEdit > img');
+		editIcon.attr('src', wgCEScriptPath + '/skins/Comment/icons/Edit_button2.png');
 		$jq('.collabComReply', $jq('#' + pageName.replace(/(:|\.)/g,'\\$1'))).show();
+		$jq('#' + pageName.replace(/(:|\.)/g,'\\$1') + ' .collabComEdit').bind('click', function() {
+			ceCommentForm.editCommentForm(pageName);
+		});
 		return true;
 	};
 
@@ -995,6 +1005,21 @@ function CECommentForm() {
 		$jq(overlayDivEl).append($jq(deleteButtonDiv));
 		return overlayDivEl;
 	};
+	
+	/**
+	 * This function preloads images to prevent 'loading gap'.
+	 */
+	this.preloadImages = function() {
+		var preloadImages = new Array();
+		preloadImages[0] = wgCEScriptPath + '/skins/Comment/icons/good_active.png';
+		preloadImages[1] = wgCEScriptPath + '/skins/Comment/icons/neutral_active.png';
+		preloadImages[2] = wgCEScriptPath + '/skins/Comment/icons/bad_active.png';
+		preloadImages[3] = wgCEScriptPath + '/skins/Comment/icons/Edit_button2_Active.png';
+		for (i = 0; i < preloadImages.length; i++) {
+			var preloadImage = new Image();
+			preloadImage.src = preloadImages[i];
+		}
+	};
 
 	/**
 	 * MW 1.16.x comes with jQuery version 1.3.
@@ -1058,6 +1083,7 @@ $jq(document).ready(
  */
 $jq(document).ready(
 	function(){
+		ceCommentForm.preloadImages();
 		// build header
 		ceCommentForm.buildHeader();
 		// format comments
