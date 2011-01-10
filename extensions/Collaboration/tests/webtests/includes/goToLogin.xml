@@ -1,0 +1,8 @@
+<target name="goToLogin">
+	<invoke
+		url="${wgServer}${wgScript}?title=Special:UserLogin"
+		description="Login into the wiki" />
+	<setInputField htmlId="wpName1" value="WikiSysop" />
+	<setInputField htmlId="wpPassword1" value="root" />
+	<clickButton htmlId="wpLoginAttempt" />
+</target>
