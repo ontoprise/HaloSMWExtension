@@ -64,21 +64,6 @@ class LODSourceDefinition  {
 	// An optional label that provides the name of the dataset. 
 	private $mLabel;
 	
-	// string:
-	// A prefix for Linked Data hosted on a server. URIs that begin with this 
-	// prefix MUST resolve to RDF descriptions. There can be any number of 
-	// <sc:linkedDataPrefix> tags in a dataset. The dataset is said to contain 
-	// all RDF data that can be retrieved from any URI that start with any of 
-	// the prefixes. 
-	private $mLinkedDataPrefix;
-	
-	// string:
-	// This is complementary SiteMap's to $mLinkedDataPrefix. A regular expression 
-	// pattern that matches one or more URI in the dataset. The pattern should 
-	// use the same regular expression syntax as SPARQL, which uses the syntax 
-	// definition of XML Schema 2: Regular Expressions. 
-	private $mUriRegexPattern;
-	
 	// string (URI):
 	// The homepage of the dataset. Note, this must be different from the 
 	// homepage of the creator or publisher to avoid incorrect 'smushing'. If the
@@ -154,6 +139,10 @@ class LODSourceDefinition  {
 	// last import date
 	private $mLastImportDate = "";
 	
+	// array<string> (URI):
+	// When importing from URIs, this property allows to specify a predicate
+	// that should be followed by the crawler.
+	private $mPredicatesToCrawl;
 	
 	/**
 	 * Constructor for LODSourceDefinition.
@@ -170,8 +159,6 @@ class LODSourceDefinition  {
 	public function getID()						{ return $this->mID; }
 	public function getDescription()			{ return $this->mDescription; }
 	public function getLabel()					{ return $this->mLabel; }
-	public function getLinkedDataPrefix()		{ return $this->mLinkedDataPrefix; }
-	public function getUriRegexPattern()		{ return $this->mUriRegexPattern; }
 	public function getHomepage()				{ return $this->mHomepage; }
 	public function getSampleURIs()				{ return $this->mSampleURIs; }
 	public function getSparqlEndpointLocation()	{ return $this->mSparqlEndpointLocation; }
@@ -184,12 +171,11 @@ class LODSourceDefinition  {
     public function isImported()               { return $this->mIsImported; }
     public function getErrorMessagesFromLastImport(){ return $this->mErrorMessagesLastImport; }
     public function getLastImportDate(){ return $this->mLastImportDate; }
+	public function getPredicatesToCrawl()		{ return $this->mPredicatesToCrawl; }
 
 	public function setID($val)						{ $this->mID = $val; }
 	public function setDescription($val)			{ $this->mDescription = $val; }
 	public function setLabel($val)					{ $this->mLabel = $val; }
-	public function setLinkedDataPrefix($val)		{ $this->mLinkedDataPrefix = $val; }
-	public function setUriRegexPattern($val)		{ $this->mUriRegexPattern = $val; }
 	public function setHomepage($val)				{ $this->mHomepage = $val; }
 	public function setSampleURIs(array $val)		{ $this->mSampleURIs = $val; }
 	public function setSparqlEndpointLocation($val)	{ $this->mSparqlEndpointLocation = $val; }
@@ -202,6 +188,7 @@ class LODSourceDefinition  {
     public function setImported($val)               { $this->mIsImported = $val; }
 	public function setErrorMessagesFromLastImport($val){ $this->mErrorMessagesLastImport = $val; }
     public function setLastImportDate($val){ $this->mLastImportDate = $val; }
+	public function setPredicatesToCrawl(array $val){ $this->mPredicatesToCrawl = $val; }
 	//--- Public methods ---
 	
 	

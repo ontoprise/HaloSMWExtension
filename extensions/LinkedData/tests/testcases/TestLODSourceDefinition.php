@@ -23,14 +23,12 @@ class TestLODSourceDefinitionSuite extends PHPUnit_Framework_TestSuite
 		"Homepage" => "http://deepblue.rkbexplorer.com/",
 		"Label" => "deepblue.rkbexplorer.com Linked Data Repository",
 		"LastMod" => "2007-11-21T14:41:09+12:34",
-		"LinkedDataPrefix" => "http://dbpedia.org/resource/",
 		"SampleURIs" => array("http://dbpedia.org/resource/Computer_science", "http://dbpedia.org/resource/Organization"),
 		"SparqlEndpointLocation" => "http://deepblue.rkbexplorer.com/sparql/",
 		"SparqlGraphName" => "http://example.org/deepblue",
 		"SparqlGraphPatterns" => array("FILTER (?p = <http://www.w3.org/1999/02/22-rdf-syntax-ns#type>)"),
-		"UriRegexPattern" => "^http://deepblue.rkbexplorer.com/id/.+",
 		"Vocabularies" => array("http://purl.org/dc/elements/1.1/", "http://xmlns.com/foaf/0.1/", "http://www.w3.org/2000/01/rdf-schema#"),
-	
+		"PredicatesToCrawl" => array("http://dbpedia.org/property/deathdate"),
 	);
 	
 	public static function suite() {
@@ -55,10 +53,8 @@ class TestLODSourceDefinitionSuite extends PHPUnit_Framework_TestSuite
 		$testCase->assertEquals(self::$mLSD["Homepage"], $lsd->getHomepage());
 		$testCase->assertEquals(self::$mLSD["Label"], $lsd->getLabel());
 		$testCase->assertEquals(self::$mLSD["LastMod"], $lsd->getLastMod());
-		$testCase->assertEquals(self::$mLSD["LinkedDataPrefix"], $lsd->getLinkedDataPrefix());
 		$testCase->assertEquals(self::$mLSD["SparqlEndpointLocation"], $lsd->getSparqlEndpointLocation());
 		$testCase->assertEquals(self::$mLSD["SparqlGraphName"], $lsd->getSparqlGraphName());
-		$testCase->assertEquals(self::$mLSD["UriRegexPattern"], $lsd->getUriRegexPattern());
 
 		// Compare results that are arrays
 		$r = $lsd->getDataDumpLocations();
@@ -82,6 +78,12 @@ class TestLODSourceDefinitionSuite extends PHPUnit_Framework_TestSuite
 		$r = $lsd->getSparqlGraphPatterns();
 		$testCase->assertEquals(count(self::$mLSD["SparqlGraphPatterns"]), count($r));
 		foreach (self::$mLSD["SparqlGraphPatterns"] as $v) {
+			$testCase->assertContains($v, $r);
+		}
+
+		$r =  $lsd->getPredicatesToCrawl();
+		$testCase->assertEquals(count(self::$mLSD["PredicatesToCrawl"]), count($r));
+		foreach (self::$mLSD["PredicatesToCrawl"] as $v) {
 			$testCase->assertContains($v, $r);
 		}
 	}
@@ -114,13 +116,12 @@ class TestLODSourceDefinitionSuite extends PHPUnit_Framework_TestSuite
 		$sd->setHomepage(self::$mLSD["Homepage"]);
 		$sd->setLabel(self::$mLSD["Label"]);
 		$sd->setLastMod(self::$mLSD["LastMod"]);
-		$sd->setLinkedDataPrefix(self::$mLSD["LinkedDataPrefix"]);
 		$sd->setSampleURIs(self::$mLSD["SampleURIs"]);
 		$sd->setSparqlEndpointLocation(self::$mLSD["SparqlEndpointLocation"]);
 		$sd->setSparqlGraphName(self::$mLSD["SparqlGraphName"]);
 		$sd->setSparqlGraphPatterns(self::$mLSD["SparqlGraphPatterns"]);
-		$sd->setUriRegexPattern(self::$mLSD["UriRegexPattern"]);
 		$sd->setVocabularies(self::$mLSD["Vocabularies"]);
+		$sd->setPredicatesToCrawl(self::$mLSD["PredicatesToCrawl"]);
 		return $sd;
 	}
 	
@@ -327,8 +328,6 @@ class TestLODSourceDefinition extends PHPUnit_Framework_TestCase {
 	smwDatasources:dbpedia smw-lde:ID "dbpedia"^^xsd:string . 
 	smwDatasources:dbpedia smw-lde:description "This repository contains data supplied from Deep Blue."^^xsd:string . 
 	smwDatasources:dbpedia smw-lde:label "deepblue.rkbexplorer.com Linked Data Repository"^^xsd:string . 
-	smwDatasources:dbpedia smw-lde:linkedDataPrefix "http://dbpedia.org/resource/"^^xsd:string . 
-	smwDatasources:dbpedia smw-lde:uriRegexPattern "^http://deepblue.rkbexplorer.com/id/.+" . 
 	smwDatasources:dbpedia smw-lde:homepage <http://deepblue.rkbexplorer.com/> . 
 	smwDatasources:dbpedia smw-lde:sampleURI <http://dbpedia.org/resource/Computer_science> . 
 	smwDatasources:dbpedia smw-lde:sampleURI <http://dbpedia.org/resource/Organization> . 
@@ -342,6 +341,7 @@ class TestLODSourceDefinition extends PHPUnit_Framework_TestCase {
 	smwDatasources:dbpedia smw-lde:vocabulary <http://purl.org/dc/elements/1.1/> . 
 	smwDatasources:dbpedia smw-lde:vocabulary <http://xmlns.com/foaf/0.1/> . 
 	smwDatasources:dbpedia smw-lde:vocabulary <http://www.w3.org/2000/01/rdf-schema#> . 
+	smwDatasources:dbpedia smw-lde:predicateToCrawl <http://dbpedia.org/property/deathdate> . 
 }		
 EXP;
 		$id = $persistencyID === true ? $sd->getID() : $persistencyID;
@@ -389,14 +389,12 @@ class TestLSDParserFunction extends PHPUnit_Framework_TestCase {
 		"Homepage" => "http://deepblue.rkbexplorer.com/",
 		"Label" => "deepblue.rkbexplorer.com Linked Data Repository",
 		"LastMod" => "2007-11-21T14:41:09+12:34",
-		"LinkedDataPrefix" => "http://dbpedia.org/resource/",
 		"SampleURIs" => array("http://dbpedia.org/resource/Computer_science", "http://dbpedia.org/resource/Organization"),
 		"SparqlEndpointLocation" => "http://deepblue.rkbexplorer.com/sparql/",
 		"SparqlGraphName" => "http://example.org/deepblue",
 		"SparqlGraphPatterns" => array("FILTER (?p = <http://www.w3.org/1999/02/22-rdf-syntax-ns#type>)"),
-		"UriRegexPattern" => "^http://deepblue.rkbexplorer.com/id/.+",
 		"Vocabularies" => array("http://purl.org/dc/elements/1.1/", "http://xmlns.com/foaf/0.1/", "http://www.w3.org/2000/01/rdf-schema#"),
-	
+		"PredicatesToCrawl" => array("http://dbpedia.org/property/deathdate"),
 	);
 	
     function setUp() {
@@ -436,8 +434,6 @@ class TestLSDParserFunction extends PHPUnit_Framework_TestCase {
 	smwDatasources:dbpedia smw-lde:ID "dbpedia"^^xsd:string . 
 	smwDatasources:dbpedia smw-lde:description "This repository contains data supplied from Deep Blue."^^xsd:string . 
 	smwDatasources:dbpedia smw-lde:label "deepblue.rkbexplorer.com Linked Data Repository"^^xsd:string . 
-	smwDatasources:dbpedia smw-lde:linkedDataPrefix "http://dbpedia.org/resource/"^^xsd:string . 
-	smwDatasources:dbpedia smw-lde:uriRegexPattern "^http://deepblue.rkbexplorer.com/id/.+" . 
 	smwDatasources:dbpedia smw-lde:homepage <http://deepblue.rkbexplorer.com/> . 
 	smwDatasources:dbpedia smw-lde:sampleURI <http://dbpedia.org/resource/Computer_science> . 
 	smwDatasources:dbpedia smw-lde:sampleURI <http://dbpedia.org/resource/Organization> . 
@@ -451,6 +447,7 @@ class TestLSDParserFunction extends PHPUnit_Framework_TestCase {
 	smwDatasources:dbpedia smw-lde:vocabulary <http://purl.org/dc/elements/1.1/> . 
 	smwDatasources:dbpedia smw-lde:vocabulary <http://xmlns.com/foaf/0.1/> . 
 	smwDatasources:dbpedia smw-lde:vocabulary <http://www.w3.org/2000/01/rdf-schema#> . 
+	smwDatasources:dbpedia smw-lde:predicateToCrawl <http://dbpedia.org/property/deathdate> . 
 }
 EXP;
     	TestLODSourceDefinitionSuite::checkPersistentTriples($this, $id, $expected, 
@@ -568,16 +565,15 @@ EXP;
  | Homepage = http://deepblue.rkbexplorer.com/
  | Label = deepblue.rkbexplorer.com Linked Data Repository
  | LastMod = 2007-11-21T14:41:09+12:34
- | LinkedDataPrefix = http://dbpedia.org/resource/
  | SampleURI = http://dbpedia.org/resource/Computer_science 
  | SampleURI = http://dbpedia.org/resource/Organization
  | SparqlEndpointLocation = http://deepblue.rkbexplorer.com/sparql/
  | SparqlGraphName = http://example.org/deepblue
  | SparqlGraphPattern = FILTER (?p = <http://www.w3.org/1999/02/22-rdf-syntax-ns#type>)
- | UriRegexPattern = ^http://deepblue.rkbexplorer.com/id/.+
  | Vocabulary = http://purl.org/dc/elements/1.1/ 
  | Vocabulary = http://xmlns.com/foaf/0.1/ 
  | Vocabulary = http://www.w3.org/2000/01/rdf-schema#
+ | PredicateToCrawl = http://dbpedia.org/property/deathdate
 }}
 LODMD
 

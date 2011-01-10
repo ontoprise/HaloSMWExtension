@@ -173,8 +173,6 @@ class  LODAdministrationStore  {
 	 * smw-lde:ID 						^^xsd:string 	(1)
 	 * smw-lde:description				^^xsd:string 	(0..1)
 	 * smw-lde:label 					^^xsd:string 	(0..1)
-	 * smw-lde:linkedDataPrefix 		^^xsd:string 	(0..1)
-	 * smw-lde:uriRegexPattern 			^^xsd:string 	(0..1)
 	 * smw-lde:homepage 				^^owl:Thing 	(0..1)
 	 * smw-lde:sampleURI 				^^owl:Thing 	(0..*)
 	 * smw-lde:sparqlEndpointLocation 	^^owl:Thing 	(0..1)
@@ -184,6 +182,7 @@ class  LODAdministrationStore  {
 	 * smw-lde:lastmod 					^^xsd:dateTime	(0..1)
 	 * smw-lde:changefreq 				^^xsd:string 	(0..1)
 	 * smw-lde:vocabulary 				^^owl:Thing 	(0..*)
+	 * smw-lde:predicateToCrawl			^^owl:Thing 	(0..*)
 	 *
 	 * @param LODSourceDefinition $sd
 	 * 		This object defines a linked data source.
@@ -214,8 +213,6 @@ class  LODAdministrationStore  {
 		$triples[] = new LODTriple($subject, $propNS."ID", $sd->getID(), "xsd:string");
 		$triples[] = new LODTriple($subject, $propNS."description", $sd->getDescription(), "xsd:string");
 		$triples[] = new LODTriple($subject, $propNS."label", $sd->getLabel(), "xsd:string");
-		$triples[] = new LODTriple($subject, $propNS."linkedDataPrefix", $sd->getLinkedDataPrefix(), "xsd:string");
-		$triples[] = new LODTriple($subject, $propNS."uriRegexPattern", $sd->getUriRegexPattern());
 		$triples[] = new LODTriple($subject, $propNS."homepage", $sd->getHomepage(), "__objectURI");
 
 		if (is_array($sd->getSampleURIs())) {
@@ -244,6 +241,12 @@ class  LODAdministrationStore  {
 		if (is_array($sd->getVocabularies())) {
 			foreach ($sd->getVocabularies() as $voc) {
 				$triples[] = new LODTriple($subject, $propNS."vocabulary", $voc, "__objectURI");
+			}
+		}
+		
+		if (is_array($sd->getPredicatesToCrawl())) {
+			foreach ($sd->getPredicatesToCrawl() as $uri) {
+				$triples[] = new LODTriple($subject, $propNS."predicateToCrawl", $uri, "__objectURI");
 			}
 		}
 
@@ -321,12 +324,6 @@ QUERY;
 		if (array_key_exists("{$propNS}label", $properties)) {
 			$sd->setLabel($properties["{$propNS}label"][0]);
 		}
-		if (array_key_exists("{$propNS}linkedDataPrefix", $properties)) {
-			$sd->setLinkedDataPrefix($properties["{$propNS}linkedDataPrefix"][0]);
-		}
-		if (array_key_exists("{$propNS}uriRegexPattern", $properties)) {
-			$sd->setUriRegexPattern($properties["{$propNS}uriRegexPattern"][0]);
-		}
 		if (array_key_exists("{$propNS}homepage", $properties)) {
 			$sd->setHomepage($properties["{$propNS}homepage"][0]);
 		}
@@ -356,6 +353,9 @@ QUERY;
 		}
 		if (array_key_exists("{$propNS}imported", $properties)) {
 			$sd->setImported($properties["{$propNS}imported"]);
+		}
+		if (array_key_exists("{$propNS}predicateToCrawl", $properties)) {
+			$sd->setPredicatesToCrawl($properties["{$propNS}predicateToCrawl"]);
 		}
 
 		return $sd;

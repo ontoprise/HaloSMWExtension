@@ -187,19 +187,6 @@ class LODParserFunctions {
 	 * Label (string) 0..1
 	 * An optional label that provides the name of the dataset. 
 	 *
-	 * LinkedDataPrefix string 0..1
-	 * A prefix for Linked Data hosted on a server. URIs that begin with this 
-	 * prefix MUST resolve to RDF descriptions. There can be any number of 
-	 * <sc:linkedDataPrefix> tags in a dataset. The dataset is said to contain 
-	 * all RDF data that can be retrieved from any URI that start with any of 
-	 * the prefixes. 
-	 *
-	 * UriRegexPattern string 0..1
-	 * This is complementary SiteMap's to LinkedDataPrefix. A regular expression 
-	 * pattern that matches one or more URIs in the dataset. The pattern should 
-	 * use the same regular expression syntax as SPARQL, which uses the syntax 
-	 * definition of XML Schema 2: Regular Expressions. 
-	 *
 	 * Homepage (URI) 0..1
 	 * The homepage of the dataset. Note, this must be different from the 
 	 * homepage of the creator or publisher to avoid incorrect 'smushing'. 
@@ -252,6 +239,10 @@ class LODParserFunctions {
 	 * The vocabulary provides the terms (classes and properties) for expressing 
 	 * the data. The vocabulary property can be used to list vocabularies used in 
 	 * a dataset. 
+	 *
+	 * PredicateToCrawl (URI) 0..*
+	 * When importing from URIs, this property allows to specify a predicate
+	 * that should be followed by the crawler.
 	 *
 	 * @param Parser $parser
 	 * 		The parser object
@@ -430,8 +421,6 @@ class LODParserFunctions {
 		$paramDescr = array(
 			array(LODLanguage::PFP_LSD_DESCRIPTION, 			0,  1, "setDescription", 			"lod_lsd_description"),
 			array(LODLanguage::PFP_LSD_LABEL, 					0,  1, "setLabel", 					"lod_lsd_label"),
-			array(LODLanguage::PFP_LSD_LINKEDDATAPREFIX, 		0,  1, "setLinkedDataPrefix", 		"lod_lsd_linkeddataprefix"),
-			array(LODLanguage::PFP_LSD_URIREGEXPATTERN, 		0,  1, "setUriRegexPattern", 		"lod_lsd_uriregexpattern"),
 			array(LODLanguage::PFP_LSD_HOMEPAGE, 				0,  1, "setHomepage", 				"lod_lsd_homepage"),
 			array(LODLanguage::PFP_LSD_SAMPLEURI, 				0, -1, "setSampleURIs", 			"lod_lsd_sampleuri"),
 			array(LODLanguage::PFP_LSD_SPARQLENDPOINTLOCATION,	0,  1, "setSparqlEndpointLocation",	"lod_lsd_sparqlendpointlocation"),
@@ -441,6 +430,7 @@ class LODParserFunctions {
 			array(LODLanguage::PFP_LSD_LASTMOD, 				0,  1, "setLastMod", 				"lod_lsd_lastmod"),
 			array(LODLanguage::PFP_LSD_CHANGEFREQ, 				0,  1, "setChangeFreq",				"lod_lsd_changefreq"),
 			array(LODLanguage::PFP_LSD_VOCABULARY, 				0, -1, "setVocabularies", 			"lod_lsd_vocabulary"),
+			array(LODLanguage::PFP_LSD_PREDICATETOCRAWL, 		0, -1, "setPredicatesToCrawl",		"lod_lsd_predicatetocrawl"),
 			);
 		
 		// Retrieve and set all parameters of $lsd

@@ -69,6 +69,7 @@ class LODLanguageDe extends LODLanguage {
 		LODLanguage::PFP_LSD_SPARQLGRAPHPATTERN		=> "sparqlgraphpattern",
 		LODLanguage::PFP_LSD_URIREGEXPATTERN		=> "uriregexmuster",
 		LODLanguage::PFP_LSD_VOCABULARY				=> "vokabular",
+		LODLanguage::PFP_LSD_PREDICATETOCRAWL		=> "zufolgendesprÃ¤dikat",
 		
 	);
 		

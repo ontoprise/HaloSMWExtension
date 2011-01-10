@@ -68,6 +68,7 @@ class LODLanguageEn extends LODLanguage {
 		LODLanguage::PFP_LSD_SPARQLGRAPHPATTERN		=> "sparqlgraphpattern",
 		LODLanguage::PFP_LSD_URIREGEXPATTERN		=> "uriregexpattern",
 		LODLanguage::PFP_LSD_VOCABULARY				=> "vocabulary",
+		LODLanguage::PFP_LSD_PREDICATETOCRAWL		=> "predicatetocrawl",
 		
 	);
 		

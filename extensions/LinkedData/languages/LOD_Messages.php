@@ -115,6 +115,7 @@ $messages['en'] = array(
 	'lod_lsd_sparqlgraphpattern'		=> "SPARQL graph pattern",
 	'lod_lsd_uriregexpattern'			=> "URI regex pattern",
 	'lod_lsd_vocabulary'				=> "Vocabulary",
+	'lod_lsd_predicatetocrawl'			=> "Predicate to crawl",
 
 	//--- LOD special pages ---
 	'lodsources'	=> 'LOD sources',
@@ -242,6 +243,7 @@ $messages['de'] = array(
 	'lod_lsd_sparqlgraphpattern'		=> "SPARQL-Graphpattern",
 	'lod_lsd_uriregexpattern'			=> "URI Regex-Muster",
 	'lod_lsd_vocabulary'				=> "Vokabular",
+	'lod_lsd_predicatetocrawl'			=> "Beim Crawling zu folgendes PrÃ¤dikat",
 
 	//--- LOD special pages ---
     'lodsources'    => 'LOD-Quellen',

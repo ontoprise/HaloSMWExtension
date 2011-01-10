@@ -51,6 +51,7 @@ abstract class LODLanguage {
 	const PFP_LSD_URIREGEXPATTERN			= 211;
 	const PFP_LSD_VOCABULARY				= 212;
 	const PFP_LSD_SPARQLGRAPHPATTERN		= 213;
+	const PFP_LSD_PREDICATETOCRAWL			= 214;
 	
 	
 	// the special message arrays ...
