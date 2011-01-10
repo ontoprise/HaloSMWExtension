@@ -8,16 +8,51 @@
 
 	<target name="ceCommentTests">
 
+		<webtest name="ceUploadImages">
+			<config easyajax="true" />
+			<config browser="FF3">
+				<option name="ThrowExceptionOnFailingStatusCode" value="true" />
+				<option name="ThrowExceptionOnScriptError" value="false" />
+			</config>
+			<antcall target="goToLogin" />
+			<!-- File:Good_active.png -->
+			<invoke description="Visit 'Special:Upload'."
+				url="${wgServer}${wgScript}/Special:Upload" />
+			<setFileField description="Set the value of the file input field"
+				htmlId="wpUploadFile" 
+				fileName="../../../skins/Comment/icons/good_active.png"/>
+			<clickButton description="Click 'Save page' button." 
+				label="Upload file" />
+			<!-- File:Neutral_active.png -->
+			<invoke description="Visit 'Special:Upload'."
+				url="${wgServer}${wgScript}/Special:Upload" />
+			<setFileField description="Set the value of the file input field"
+				htmlId="wpUploadFile" 
+				fileName="../../../skins/Comment/icons/neutral_active.png"/>
+			<clickButton description="Click 'Save page' button." 
+				label="Upload file" />
+			<!-- File:Bad_active.png -->
+			<invoke description="Visit 'Special:Upload'."
+				url="${wgServer}${wgScript}/Special:Upload" />
+			<setFileField description="Set the value of the file input field"
+				htmlId="wpUploadFile" 
+				fileName="../../../skins/Comment/icons/bad_active.png"/>
+			<clickButton description="Click 'Save page' button." 
+				label="Upload file" />
+		</webtest>
+
 		<webtest name="ceCreateCommentPage">
 			<config easyajax="true" />
 			<config browser="FF3">
 				<option name="ThrowExceptionOnFailingStatusCode" value="true" />
-				<option name="ThrowExceptionOnScriptError" value="true" />
+				<option name="ThrowExceptionOnScriptError" value="false" />
 			</config>
-			<invoke
+			<antcall target="goToLogin" />
+			<invoke description="Visit testpage."
 				url="${wgServer}${wgScript}/${cePagename}?action=edit" />
-			<setInputField htmlId="wpTextbox1" value="{{ShowComments|show=True}}" />
-			<clickButton description="Save page" htmlId="wpSave" />
+			<setInputField description="Set the content (template call) of the testpage."
+				htmlId="wpTextbox1" value="{{ShowComments|show=True}}" />
+			<clickButton description="Click 'Save page' button." htmlId="wpSave" />
 		</webtest>
 
 		<webtest name="ceTestCommentPage">
@@ -26,7 +61,8 @@
 				<option name="ThrowExceptionOnFailingStatusCode" value="true" />
 				<option name="ThrowExceptionOnScriptError" value="true" />
 			</config>
-			<invoke url="${wgServer}${wgScript}/${cePagename}" />
+			<invoke description="Visit testpage."
+				url="${wgServer}${wgScript}/${cePagename}" />
 			<verifyXPath description="Does the comment form toggler exist?" 
 				xpath="//span[@id='collabComFormToggle']" />
 		</webtest>
@@ -35,39 +71,49 @@
 			<config easyajax="true" />
 			<config browser="FF3">
 				<option name="ThrowExceptionOnFailingStatusCode" value="true" />
-				<option name="ThrowExceptionOnScriptError" value="true" />
+				<option name="ThrowExceptionOnScriptError" value="false" />
 			</config>
 			<antcall target="goToLogin" />
-			<invoke url="${wgServer}${wgScript}/${cePagename}?action=purge" />
-			<clickElement htmlId="collabComFormToggle" 
-				description="Click the form toggler"/>
+			<invoke description="Visit testpage."
+				url="${wgServer}${wgScript}/${cePagename}?action=purge" />
+			<clickElement description="Click the form toggler"
+				htmlId="collabComFormToggle" />
 			<sleep seconds="2" />
-			<setInputField htmlId="collabComFormTextarea" value="First test comment created by automatic WebTest." />
-			<scriptStep description="simulate a pressed key on textarea to make it nodefault" language="javascript">
+			<setInputField description="Set the content of the first comment."
+				htmlId="collabComFormTextarea"
+				value="First test comment created by automatic WebTest." />
+			<scriptStep description="simulate a pressed key on textarea to make it no-default" language="javascript">
 				step.context.currentResponse.getHtmlElementById('collabComFormTextarea').type('\n') 
 			</scriptStep>
-			<clickButton description="Click 'Add comment' button" htmlId="collabComFormSubmitbuttonID" />
+			<clickElement description="Set rating to 'good'."
+				htmlId="collabComFormRating3" />
+			<clickButton description="Click 'Add comment' button"
+				htmlId="collabComFormSubmitbuttonID" />
 		</webtest>
 
 		<webtest name="ceCreateComment2">
 			<config easyajax="true" />
 			<config browser="FF3">
 				<option name="ThrowExceptionOnFailingStatusCode" value="true" />
-				<option name="ThrowExceptionOnScriptError" value="true" />
+				<option name="ThrowExceptionOnScriptError" value="false" />
 			</config>
 			<antcall target="goToLogin" />
-			<invoke url="${wgServer}${wgScript}/${cePagename}?action=purge" />
+			<invoke description="Visit testpage."
+				url="${wgServer}${wgScript}/${cePagename}?action=purge" />
 			<clickElement htmlId="collabComFormToggle" 
 				description="Click the form toggler"/>
 			<sleep seconds="2" />
-			<setInputField htmlId="collabComFormTextarea" value="Second test comment created by automatic WebTest." />
-			<scriptStep description="simulate a pressed key on textarea to make it nodefault" language="javascript">
+			<setInputField description="Set the content of the second comment."
+				htmlId="collabComFormTextarea"
+				value="Second test comment created by automatic WebTest." />
+			<scriptStep description="simulate a pressed key on textarea to make it no-default" language="javascript">
 				step.context.currentResponse.getHtmlElementById('collabComFormTextarea').type('\n') 
 			</scriptStep>
+			<clickElement description="Set rating to 'neutral'."
+				htmlId="collabComFormRating2" />
 			<clickButton description="Click 'Add comment' button" htmlId="collabComFormSubmitbuttonID" />
 		</webtest>
 
-		
 		<webtest name="ceCreateReply">
 			<config easyajax="true" />
 			<config browser="FF3">
@@ -75,44 +121,167 @@
 				<option name="ThrowExceptionOnScriptError" value="false" />
 			</config>
 			<antcall target="goToLogin" />
-			<invoke url="${wgServer}${wgScript}/${cePagename}?action=purge" />
-			<clickElement xpath="//div[@class='collabComRes'][1]//span[@class='collabComReply']" />
+			<invoke description="Visit testpage."
+				url="${wgServer}${wgScript}/${cePagename}?action=purge" />
+			<clickElement htmlId="collabComToggle" 
+				description="Click the comment toggler"/>
+			<clickElement description="Click the 'reply' link."
+				xpath="//div[@class='collabComRes'][1]//span[@class='collabComReply']" />
 			<sleep seconds="2" />
-			<setInputField htmlId="collabComFormTextarea" value="Test reply to first comment created by automatic WebTest." />
-			<scriptStep description="simulate a pressed key on textarea to make it nodefault" language="javascript">
+			<setInputField description="Set the content of the reply comment."
+				htmlId="collabComFormTextarea"
+			value="Test reply to first comment created by automatic WebTest." />
+			<scriptStep description="simulate a pressed key on textarea to make it no-default" language="javascript">
 				step.context.currentResponse.getHtmlElementById('collabComFormTextarea').type('\n') 
 			</scriptStep>
+			<clickElement description="Set rating to 'bad'."
+				htmlId="collabComFormRating1" />
 			<clickButton description="Click 'Add comment' button" htmlId="collabComFormSubmitbuttonID" />
 		</webtest>
-		
+
 		<webtest name="ceTestComments">
 			<config easyajax="true" />
 			<config browser="FF3">
 				<option name="ThrowExceptionOnFailingStatusCode" value="true" />
-				<option name="ThrowExceptionOnScriptError" value="true" />
+				<option name="ThrowExceptionOnScriptError" value="false" />
 			</config>
 			<antcall target="goToLogin" />
-			<invoke url="${wgServer}${wgScript}/${cePagename}?action=purge" />
+			<invoke description="Visit testpage."
+				url="${wgServer}${wgScript}/${cePagename}?action=purge" />
+			<clickElement htmlId="collabComToggle" 
+				description="Click the comment toggler"/>
+			<verifyXPath description="Average rating should be neutral." 
+				xpath="//div[@class='collabComInternRatingIcon']//img[contains(@src,'neutral')]" />
+			<verifyXPath description="There should be the number 3 in the header." 
+				xpath="//span[contains(concat(' ', @class, ' '),' collabComInternComment ')][1][contains(.,'3')]" />
+			<verifyXPath description="There should be the number 3 in the header." 
+				xpath="//span[contains(concat(' ', @class, ' '),' collabComInternAvg ')][1][contains(.,'3')]" />
+
 			<!-- default view is threaded. So the "reply" is between the other two comments -->
-			<verifyXPath description="The first comment must contain 'First' in comment text." 
+			<verifyXPath description="The first comment in list must contain 'First' in comment text." 
 				xpath="//div[contains(concat(' ', @class, ' '),' collabComRes ')][1][contains(.,'First')]" />
-			<verifyXPath description="The second comment must contain 'reply' in comment text." 
+			<verifyXPath description="The second comment in list must contain 'reply' in comment text." 
 				xpath="//div[contains(concat(' ', @class, ' '),' collabComRes ')][2][contains(.,'reply')]" />
 			<!-- This one needs to be intended (margin-left existence) -->
-			<verifyXPath description="The second comment must contain 'reply' in comment text." 
+			<verifyXPath description="The second comment in list must have 'margin-left' in its style." 
 				xpath="//div[contains(concat(' ', @class, ' '),' collabComRes ')][2][contains(@style,'margin-left')]" />
-			<verifyXPath description="The third comment must contain 'Second' in comment text."
+			<verifyXPath description="The third comment in list must contain 'Second' in comment text."
 				xpath="//div[contains(concat(' ', @class, ' '),' collabComRes ')][3][contains(.,'Second')]" />
 
-			<!-- now change the view 
-			<not>
-				<verifyXPath description="The third comment must contain 'Second' in comment text."
-					xpath="//div[contains(concat(' ', @class, ' '),' collabComRes ')][contains(.,'Second')]" />
-			</not> -->
+			<!-- now change the view to flat (threaded=0, flat=1)-->
+			<setSelectField description="Change view to flat."
+				xpath="//span[@id='collabComViewToggle']/select"
+				value="1" />
+			<!-- check order -->
+			<verifyXPath description="The first comment in list must contain 'First' in comment text." 
+				xpath="//div[contains(concat(' ', @class, ' '),' collabComRes ')][1][contains(.,'First')]" />
+			<verifyXPath description="The first comment in list must have a 'good' rating." 
+				xpath="//div[contains(concat(' ', @class, ' '),' collabComRes ')][1]//div[@class='collabComResRating']//img[contains(@src,'Good')]" />
+
+			<verifyXPath description="The second comment in list must contain 'Second' in comment text." 
+				xpath="//div[contains(concat(' ', @class, ' '),' collabComRes ')][2][contains(.,'Second')]" />
+			<verifyXPath description="The second comment in list must have a 'neutral' rating." 
+				xpath="//div[contains(concat(' ', @class, ' '),' collabComRes ')][2]//div[@class='collabComResRating']//img[contains(@src,'Neutral')]" />
+
+			<verifyXPath description="The third comment in list must contain 'reply' in comment text." 
+				xpath="//div[contains(concat(' ', @class, ' '),' collabComRes ')][3][contains(.,'reply')]" />
+			<verifyXPath description="The third comment in list must havea 'bad' rating." 
+				xpath="//div[contains(concat(' ', @class, ' '),' collabComRes ')][3]//div[@class='collabComResRating']//img[contains(@src,'Bad')]" />
+
+			<not description="No comment must have 'margin-left' in style.">
+				<verifyXPath description="This xpath must fail." 
+					xpath="//div[contains(concat(' ', @class, ' '),' collabComRes ') and contains(@style,'margin-left')]" />
+			</not>
 		</webtest>
 
-		<!--<webtest name="ceEditComment">
-			
-		<webtest name="ceDeleteComment">-->
+		<webtest name="ceEditComment">
+			<config easyajax="true" />
+			<config browser="FF3">
+				<option name="ThrowExceptionOnFailingStatusCode" value="true" />
+				<option name="ThrowExceptionOnScriptError" value="false" />
+			</config>
+			<antcall target="goToLogin" />
+			<invoke description="Visit testpage."
+				url="${wgServer}${wgScript}/${cePagename}?action=purge" />
+			<clickElement htmlId="collabComToggle" 
+				description="Click the comment toggler"/>
+			<!-- edit the third comment -->
+			<clickElement description="Click the edit icon of the last comment."
+				xpath="//div[contains(concat(' ', @class, ' '),' collabComRes ')][3]//div[@class='collabComEdit']" />
+			<sleep seconds="2" />
+			<setInputField description="Set the content of the editing comment."
+				htmlId="collabComEditFormTextarea"
+				value="_EDITED_ Second test comment created by automatic WebTest." />
+			<scriptStep description="simulate a pressed key on textarea to make it no-default" language="javascript">
+				step.context.currentResponse.getHtmlElementById('collabComEditFormTextarea').type('\n') 
+			</scriptStep>
+			<clickButton description="Click 'Update comment' button"
+				htmlId="collabComEditFormSubmit" />
+		</webtest>
+
+		<webtest name="ceTestCommentEdit">
+			<config easyajax="true" />
+			<config browser="FF3">
+				<option name="ThrowExceptionOnFailingStatusCode" value="true" />
+				<option name="ThrowExceptionOnScriptError" value="false" />
+			</config>
+			<antcall target="goToLogin" />
+			<invoke description="Visit testpage."
+				url="${wgServer}${wgScript}/${cePagename}?action=purge" />
+			<clickElement htmlId="collabComToggle" 
+				description="Click the comment toggler"/>
+			<verifyXPath description="The third comment must now contain 'Second' in comment text."
+				xpath="//div[contains(concat(' ', @class, ' '),' collabComRes ')][3][contains(.,'_EDITED_')]" />
+		</webtest>
+
+		<webtest name="ceDeleteComment">
+			<config easyajax="true" />
+			<config browser="FF3">
+				<option name="ThrowExceptionOnFailingStatusCode" value="true" />
+				<option name="ThrowExceptionOnScriptError" value="false" />
+			</config>
+			<antcall target="goToLogin" />
+			<invoke description="Visit testpage."
+				url="${wgServer}${wgScript}/${cePagename}?action=purge" />
+			<clickElement htmlId="collabComToggle" 
+				description="Click the comment toggler"/>
+			<!-- delete the first comment -->
+			<clickElement description="Click the delete icon of the first comment."
+				xpath="//div[contains(concat(' ', @class, ' '),' collabComRes ')][1]//div[@class='collabComDel']" />
+			<sleep seconds="2" />
+			<!-- overlay now visible? -->
+			<verifyXPath description="Is the overlay of the first comment now visible?" 
+				xpath="//div[@id='overlay_0'][contains(@style,'display: block')]" />
+			<clickButton description="Click 'Delete comment' button."
+				xpath="//div[@id='overlay_0']//input[@class='ceOverlayDeleteButton']" />
+		</webtest>
+
+		<webtest name="ceTestCommentDeletion">
+			<config easyajax="true" />
+			<config browser="FF3">
+				<option name="ThrowExceptionOnFailingStatusCode" value="true" />
+				<option name="ThrowExceptionOnScriptError" value="false" />
+			</config>
+			<antcall target="goToLogin" />
+			<invoke description="Visit testpage."
+				url="${wgServer}${wgScript}/${cePagename}?action=purge" />
+			<clickElement htmlId="collabComToggle" 
+				description="Click the comment toggler"/>
+			<verifyXPath description="The first comment should now be flagged as deleted and contain the correct text."
+				xpath="//div[contains(concat(' ', @class, ' '),' collabComDeleted ')][1][contains(.,'WikiSysop deleted this comment')]" />
+			<!-- There should not be icons for editing, deleting or replying for the deleted comment! -->
+			<not description="There should not be an icon for editing.">
+				<verifyXPath description="This xpath must fail."
+					xpath="//div[contains(concat(' ', @class, ' '),' collabComRes ')][1]//div[@class='collabComEdit']" />
+			</not>
+			<not description="There should not be an icon for deleting.">
+				<verifyXPath description="This xpath must fail."
+					xpath="//div[contains(concat(' ', @class, ' '),' collabComRes ')][1]//div[@class='collabComDel']" />
+			</not>
+			<not description="There should not be a link for replying.">
+				<verifyXPath description="This xpath must fail."
+					xpath="//div[contains(concat(' ', @class, ' '),' collabComRes ')][1]//span[@class='collabComReply']" />
+			</not>
+		</webtest>
 	</target>
 </project>

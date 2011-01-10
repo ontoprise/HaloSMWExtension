@@ -15,3 +15,5 @@ enableSMWHalo('SMWHaloStore2');
 #Collaboration
 include_once('extensions/Collaboration/includes/CE_Initialize.php');
 enableCollaboration();
+
+$cegEnableRatingForArticles = true;
