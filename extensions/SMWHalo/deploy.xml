@@ -40,6 +40,8 @@
                 ext="mw" from="1153" to="1153" />
             <patch file="patch_for_MW1.16.0.txt"
                 ext="mw" from="1160" to="1160" />
+            <patch file="patch_for_MW1.16.1.txt"
+                ext="mw" from="1161" to="1161" />    
 			<require name="smwhalo"
 				file="extensions/SMWHalo/includes/SMW_Initialize.php" />
 			<function name="enableSMWHalo">
@@ -71,6 +73,8 @@
                 ext="mw" from="1153" to="1153" />
             <patch file="patch_for_MW1.16.0.txt"
                 ext="mw" from="1160" to="1160" />
+            <patch file="patch_for_MW1.16.1.txt"
+                ext="mw" from="1161" to="1161" />
 			<script file="maintenance/SMW_setup.php"
 				params="--delete" />
 		</uninstall>
