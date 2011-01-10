@@ -53,13 +53,14 @@
 
 			<sleep description="4s pause" seconds="4" />
 			<verifyXPath description="Check if the parameters appear" xpath="//div[@id='gardening-tooldetails-content']/div" text="This bot exports the wiki ontology in the OWL format." />
-			<setCheckbox description="Export only schema" xpath="//form[@id='gardeningParamForm']/span[2]/input" value="Export only schema" />
+			<setCheckbox description="Export only schema" xpath="//form[@id='gardeningParamForm']/span[@id='parentOf_GARD_EO_ONLYSCHEMA']/input" value="Export only schema" />
 			<clickButton htmlId="runBotButton" description="Start the export bot" />
-			<sleep description="4s pause" seconds="4" />
+			<sleep description="8s pause" seconds="8" />
 			<verifyXPath description="Check if bot log entry appears" xpath="//div[@id='gardening-runningbots']/table/tbody/tr[2]/td[2]" text="Export ontology" />
 			<antcall target="goToGardening" />
 			<clickLink xpath="//div[@id='gardening-runningbots']/table/tbody/tr[2]/td[5]/a" />
 			<clickLink xpath="//div[@id='bodyContent']/p/a" />
+			<clickLink xpath="//div[@id='bodyContent']/div/p/span/a" />
 			<verifyContent referenceFile="resources/exporttest.owl" />
 		</webtest>
 
