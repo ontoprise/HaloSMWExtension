@@ -1,0 +1,109 @@
+Index: includes/AjaxDispatcher.php
+===================================================================
+--- includes/AjaxDispatcher.php	(revision 9464)
++++ includes/AjaxDispatcher.php	(working copy)
+@@ -113,6 +113,9 @@
+ 				else {
+ 					if ( is_string( $result ) ) {
+ 						$result = new AjaxResponse( $result );
++						$mimeType = NULL;
++						wfRunHooks('ajaxMIMEtype', array($func, & $mimeType));
++						if (!is_null($mimeType)) $result->setContentType($mimeType);
+ 					}
+ 
+ 					$result->sendHeaders();
+Index: includes/Article.php
+===================================================================
+--- includes/Article.php	(revision 9494)
++++ includes/Article.php	(working copy)
+@@ -4021,8 +4021,14 @@
+ 		}
+ 
+ 		$time = - wfTime();
++		/*op-patch|TS|2009-06-19|SMWHalo|Parsing context|start*/
++		$parserOptions->setParsingContext("Main article");
++		/*op-patch|TS|2009-06-19|end*/
+ 		$this->mParserOutput = $wgParser->parse( $text, $this->mTitle,
+ 			$parserOptions, true, true, $this->getRevIdFetched() );
++		/*op-patch|TS|2009-06-19|SMWHalo|Parsing context|start*/
++		$parserOptions->setParsingContext("");
++		/*op-patch|TS|2009-06-19|end*/
+ 		$time += wfTime();
+ 
+ 		# Timing hack
+Index: includes/Linker.php
+===================================================================
+--- includes/Linker.php	(revision 9464)
++++ includes/Linker.php	(working copy)
+@@ -239,6 +239,10 @@
+ 		and $target->getNamespace() != NS_SPECIAL ) {
+ 			$query['action'] = 'edit';
+ 			$query['redlink'] = '1';
++            global $IP;
++            if ((defined('SMWHALO_WYSIWYG_EDITOR_WRAPPER') || defined('WYSIWYG_EDITOR_VERSION')) &&
++                empty( $query['mode']))
++                $query['mode']= 'wysiwyg';
+ 		}
+ 		$ret = $target->getLinkUrl( $query );
+ 		wfProfileOut( __METHOD__ );
+Index: includes/Namespace.php
+===================================================================
+--- includes/Namespace.php	(revision 9464)
++++ includes/Namespace.php	(working copy)
+@@ -60,7 +60,17 @@
+ 	 */
+ 	public static function isMovable( $index ) {
+ 		global $wgAllowImageMoving;
+-		return !( $index < NS_MAIN || ($index == NS_FILE && !$wgAllowImageMoving)  || $index == NS_CATEGORY );
++		/*op-patch|BL|2009-10-07|RichMedia|AdditionalNamespaceCheck|start*/
++		// NS_FILE is not the only Namespace now, so check them all
++		// original content is located in else statement.
++		global $smwgEnableRichMedia;
++		if( $smwgEnableRichMedia ) {
++			RMNamespace::isImage( $index, $rMresult );
++			return !( $index < NS_MAIN || ($rMresult && !$wgAllowImageMoving) );
++		} else {
++			return !( $index < NS_MAIN || ($index == NS_FILE && !$wgAllowImageMoving) );
++		}
++		/*op-patch|BL|2009-10-07|end*/
+ 	}
+ 
+ 	/**
+Index: includes/parser/ParserOptions.php
+===================================================================
+--- includes/parser/ParserOptions.php	(revision 9464)
++++ includes/parser/ParserOptions.php	(working copy)
+@@ -28,6 +28,9 @@
+ 	var $mTemplateCallback;          # Callback for template fetching
+ 	var $mEnableLimitReport;         # Enable limit report in an HTML comment on output
+ 	var $mTimestamp;                 # Timestamp used for {{CURRENTDAY}} etc.
++	/*op-patch|TS|2009-06-19|SMWHalo|Parsing context|start*/
++    var $mParsingContext;           # Reason/context why the parser has been invoked
++	/*op-patch|TS|2009-06-19|end*/
+ 	var $mExternalLinkTarget;        # Target attribute for external links
+ 
+ 	var $mUser;                      # Stored user object, just used to initialise the skin
+@@ -57,7 +60,10 @@
+ 	function getIsPreview()                     { return $this->mIsPreview; }
+ 	function getIsSectionPreview()              { return $this->mIsSectionPreview; }
+ 	function getIsPrintable()                   { return $this->mIsPrintable; }
+-
++    /*op-patch|TS|2009-06-19|SMWHalo|Parsing context|start*/
++    function getParsingContext()                { return $this->mParsingContext; }
++    /*op-patch|TS|2009-06-19|end*/
++    
+ 	function getSkin() {
+ 		if ( !isset( $this->mSkin ) ) {
+ 			$this->mSkin = $this->mUser->getSkin();
+@@ -104,7 +110,10 @@
+ 	function setIsPreview( $x )                 { return wfSetVar( $this->mIsPreview, $x ); }
+ 	function setIsSectionPreview( $x )          { return wfSetVar( $this->mIsSectionPreview, $x ); }
+ 	function setIsPrintable( $x )               { return wfSetVar( $this->mIsPrintable, $x ); }
+-
++    /*op-patch|TS|2009-06-19|SMWHalo|Parsing context|start*/
++    function setParsingContext($pc)             { return wfSetVar( $this->mParsingContext, $pc); }
++    /*op-patch|TS|2009-06-19|end*/
++    
+ 	function __construct( $user = null ) {
+ 		$this->initialiseFromUser( $user );
+ 	}
