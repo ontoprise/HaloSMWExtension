@@ -17,7 +17,7 @@ class Image extends LocalFile {
 	 * Do not use in core code.
 	 * @deprecated
 	 */
-	static function newFromTitle( $title, $time = false, $unused = null ) {
+	static function newFromTitle( $title, $time = false ) {
 		wfDeprecated( __METHOD__ );
 		$img = wfFindFile( $title, array( 'time' => $time ) );
 		if ( !$img ) {
