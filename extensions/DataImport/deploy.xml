@@ -11,7 +11,7 @@
 		</description>
 		<helpurl>http://smwforum.ontoprise.com/smwforum/index.php/Help:Data_Import_Extension</helpurl>
 		<dependencies>
-			<dependency from="1150" to="1160">mw</dependency>
+			<dependency from="1150" to="1169">mw</dependency>
 			<dependency from="150" to="152">smw</dependency>
 			<dependency from="150" to="152">smwhalo</dependency>
 			<dependency from="132" to="133">semanticgardening</dependency>

@@ -11,7 +11,7 @@
 		</description>
 		<helpurl>http://smwforum.ontoprise.com/smwforum/index.php/Help:Linked_Data_extension</helpurl>
 		<dependencies>
-			<dependency from="1150" to="1160">mw</dependency>
+			<dependency from="1150" to="1169">mw</dependency>
 			<dependency from="101" to="101">scriptmanager</dependency>
 			<dependency from="100" to="100">arclibrary</dependency>
 			<dependency from="140" to="152">smw</dependency>
