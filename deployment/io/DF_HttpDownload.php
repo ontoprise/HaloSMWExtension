@@ -73,12 +73,12 @@ class HttpDownload {
 		$address = gethostbyname($host);
 		$handle = fopen($filename, "wb");
 		$socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
+		$this->useProxy($path, $port, $address);
 		socket_connect($socket, $address, $port);
 		$in = "GET $path HTTP/1.0\r\n";
 		$in .= "Host: $host\r\n";
 		if ($credentials != '') $in .= "Authorization: Basic ".base64_encode(trim($credentials))."\r\n";
 		$in .= "\r\n";
-		$this->useProxy($path, $port, $address);
 		socket_write($socket, $in, strlen($in));
 		$this->headerFound = false;
 		$this->header = "";
@@ -218,7 +218,7 @@ class HttpDownload {
 		//Is the proxy set?
 		if($this->proxy_addr != "" && $this->proxy_port != ""){
 			//use the full url of the resource for the HTTP GET
-			$path = $host.":".$port.$path;
+			$path = "http://".$host.":".$port.$path;
 			//use the proxy address and port for socket connect
 			$host = $this->proxy_addr;
 			$port = $this->proxy_port;
