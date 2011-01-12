@@ -552,6 +552,15 @@ EXP;
 				"Triples were not deleted from the triple store for $graph.");
 				
 		
+		// Cleanup: delete the book graphs
+		$graph = "http://example.com/anotherBooksGraph";
+		$ptsa->dropGraph($graph);
+
+		$graph = "http://example.com/yetAnotherBooksGraph";
+		$ptsa->dropGraph($graph);
+		
+		$ptsa->flushCommands();
+		
     }
     
     /**
