@@ -39,6 +39,7 @@ class Rollback {
     public static function getInstance($rootDir) {
         if (is_null(self::$instance)) {
             self::$instance = new Rollback($rootDir);
+
         }
         return self::$instance;
     }
@@ -58,11 +59,17 @@ class Rollback {
      *
      */
     public function saveInstallation() {
-        if (!$this->acquireNewRollback()) return;
+
+        // make sure to save only once
+        static $savedInstallation = false;
+        if ($savedInstallation) return true;
+
+        if (!$this->acquireNewRestorePoint()) return;
         print "\n[Save installation...";
         Tools::mkpath($this->tmpDir."/rollback_data/");
         Tools::copy_dir($this->rootDir, $this->tmpDir."/rollback_data", array($this->rootDir."/deployment"));
         print "done.]";
+        $savedInstallation = true;
     }
 
     /**
@@ -71,6 +78,7 @@ class Rollback {
      * @return error code of mysqldump process
      */
     public function saveDatabase() {
+
         global $mwrootDir;
         if (file_exists("$mwrootDir/AdminSettings.php")) {
             require_once "$mwrootDir/AdminSettings.php";
@@ -81,17 +89,18 @@ class Rollback {
         }
 
 
-        if (!$this->acquireNewRollback()) return;
+        if (!$this->acquireNewRestorePoint()) return;
         // make sure to save only once
         static $savedDataBase = false;
         if ($savedDataBase) return true;
 
-        $savedDataBase = true;
         $wgDBname = $this->getVariableValue("LocalSettings.php", "wgDBname");
         print "\n[Saving database...";
         print "\nmysqldump -u $wgDBadminuser --password=$wgDBadminpassword $wgDBname > ".$this->tmpDir."/rollback_data/dump.sql";
         exec("mysqldump -u $wgDBadminuser --password=$wgDBadminpassword $wgDBname > ".$this->tmpDir."/dump.sql", $out, $ret);
         if ($ret != 0) print "\nWarning: Could not save database for rollback"; else print "done.]";
+        $savedDataBase = true;
+
         return $ret == 0;
     }
 
@@ -119,31 +128,36 @@ class Rollback {
     }
 
     /**
-     * Acquires a new rollback operation. The user has to confirm to
-     * overwrite exisiting rollback data.
+     * Acquires a new restore point. The user has to confirm to
+     * overwrite an exisiting restore point. Can be called several
+     * times but will always return the result of the first call. All
+     * subsequent calls will have to further effects.
      *
-     * @return boolean True if a rollback should be done.
+     *@return boolean True if a restore point should be created/overwritten.
      */
-    private function acquireNewRollback() {
-        static $newRollback = true;
-        static $createRollbackPoint = NULL;
-        if (!is_null($createRollbackPoint)) return $createRollbackPoint;
-        if ($newRollback) { // initialize new rollback
-            $newRollback = false;
-            if (file_exists($this->tmpDir)) {
-                print "\nCreate new restore point (y/n)? ";
-                $line = trim(fgets(STDIN));
-                if (strtolower($line) == 'n') {
-                    print "\n\nDo not create a restore point.\n\n";
-                    $createRollbackPoint = false;
-                    return false;
-                }
-                Tools::remove_dir($this->tmpDir);
-            }
-            Tools::mkpath($this->tmpDir);
-            $createRollbackPoint=true;
-            return true;
+    private function acquireNewRestorePoint() {
+        static $calledOnce = false;
+        static $answer;
+
+        if ($calledOnce) return $answer;
+        $calledOnce = true;
+
+        print "\nCreate new restore point (y/n)? ";
+        $line = trim(fgets(STDIN));
+        if (strtolower($line) == 'n') {
+            print "\n\nDo not create a restore point.\n\n";
+            $answer = false;
+            return $answer;
         }
+
+        // clear if it already exists
+        if (file_exists($this->tmpDir)) {
+            Tools::remove_dir($this->tmpDir);
+        }
+        Tools::mkpath($this->tmpDir);
+        $answer = true;
+        return $answer;
+
     }
 
     /**
