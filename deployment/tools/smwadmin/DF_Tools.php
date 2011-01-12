@@ -276,10 +276,10 @@ class Tools {
 	 *
 	 * @param string $s
 	 */
-	public static function shortenURL($s) {
+	public static function shortenURL($s, $maxLength = 20) {
 		$s = substr($s, 7); // cut off http://
-		if (strlen($s) < 20) return "[$s]";
-		return "[".substr($s, 0, 10)."...".substr($s, -12)."]";
+		if (strlen($s) < $maxLength) return "[$s]";
+		return "[".substr($s, 0, intval($maxLength/2))."...".substr($s, -intval($maxLength/2))."]";
 	}
 
 	/**

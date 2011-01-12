@@ -293,7 +293,7 @@ class Installer {
 			foreach($versions as $v) $sep_v[] = Tools::addVersionSeparators($v);
 			$versionsShown = "(".implode(", ", $sep_v).")";
 			$versionsShown .= str_repeat(" ", 12-strlen($versionsShown) >= 0 ? 12-strlen($versionsShown) : 0);
-			print "\n $instTag $id_shown  $versionsShown ".Tools::shortenURL($v[2]);
+			print "\n $instTag $id_shown  $versionsShown ".Tools::shortenURL($v[2], 70);
 
 			if ($showDescription && array_key_exists($p_id, $localPackages)) print "\n ".$localPackages[$p_id]->getDescription()."\n\n";
 		}
