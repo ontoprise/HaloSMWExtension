@@ -70,7 +70,7 @@ class SMWQueryResult {
 	 * @param SMWStore $store
 	 * @param boolean $furtherRes
 	 */
-	public function SMWQueryResult( array $printRequests, SMWQuery $query, array $results, SMWStore $store, $furtherRes = false ) {
+	public function __construct( array $printRequests, SMWQuery $query, array $results, SMWStore $store, $furtherRes = false ) {
 		$this->mResults = $results;
 		reset( $this->mResults );
 		$this->mPrintRequests = $printRequests;
@@ -83,7 +83,7 @@ class SMWQueryResult {
 	 * Return the next result row as an array of SMWResultArray objects, and
 	 * advance the internal pointer.
 	 * 
-	 * @return SMWResultArray or false
+	 * @return array of SMWResultArray or false
 	 */
 	public function getNext() {
 		$page = current( $this->mResults );
@@ -255,7 +255,7 @@ class SMWResultArray {
 	 * @param SMWPrintRequest $printRequest
 	 * @param SMWStore $store
 	 */
-	public function SMWResultArray( SMWWikiPageValue $resultPage, SMWPrintRequest $printRequest, SMWStore $store ) {
+	public function __construct( SMWWikiPageValue $resultPage, SMWPrintRequest $printRequest, SMWStore $store ) {
 		$this->mResult = $resultPage;
 		$this->mPrintRequest = $printRequest;
 		$this->mStore = $store;

@@ -386,16 +386,8 @@ class SMWValueDescription extends SMWDescription {
 
 	public function getQueryString( $asvalue = false ) {
 		if ( $this->m_datavalue !== null ) {
-			switch ( $this->m_comparator ) {
-				case SMW_CMP_LEQ:  $comparator = '<'; break;
-				case SMW_CMP_GEQ:  $comparator = '>'; break;
-				case SMW_CMP_NEQ:  $comparator = '!'; break;
-				case SMW_CMP_LIKE: $comparator = '~'; break;
-				case SMW_CMP_NLKE: $comparator = '!~'; break;
-				default: case SMW_CMP_EQ:
-					$comparator = '';
-				break;
-			}
+			$comparator = SMWQueryLanguage::getStringForComparator( $this->m_comparator );
+			
 			if ( $asvalue ) {
 				return $comparator . $this->m_datavalue->getWikiValue();
 			} else { // this only is possible for values of Type:Page

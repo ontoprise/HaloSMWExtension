@@ -248,12 +248,18 @@ abstract class SMWDataValue {
 	 * particular datatype in mind.
 	 */
 	public function addServiceLinks() {
-		if ( $this->mHasServiceLinks ) return;
-		if ( ( $this->m_property === null ) || ( $this->m_property->getWikiPageValue() === null ) ) return; // no property known
+		if ( $this->mHasServiceLinks ) {
+			return;
+		}
+		if ( ( $this->m_property === null ) || ( $this->m_property->getWikiPageValue() === null ) ) {
+			return; // no property known
+		}
 
 		$args = $this->getServiceLinkParams();
 
-		if ( $args === false ) return; // no services supported
+		if ( $args === false ) {
+			return; // no services supported
+		}
 
 		array_unshift( $args, '' ); // add a 0 element as placeholder
 		$servicelinks = smwfGetStore()->getPropertyValues( $this->m_property->getWikiPageValue(), SMWPropertyValue::makeProperty( '_SERV' ) );
@@ -392,21 +398,12 @@ abstract class SMWDataValue {
 	 * @param string $comparator
 	 */
 	static protected function prepareValue( &$value, &$comparator ) {
-		global $smwgQComparators;
-
-		$list = preg_split( '/^(' . $smwgQComparators . ')/u', $value, 2, PREG_SPLIT_DELIM_CAPTURE );
-		$comparator = SMW_CMP_EQ;
-
-		if ( count( $list ) == 3 ) { // Initial comparator found ($list[0] should be empty).
-			$value = $list[2];
-
-			switch ( $list[1] ) {
-				case '<': $comparator = SMW_CMP_LEQ; break;
-				case '>': $comparator = SMW_CMP_GEQ; break;
-				case '!': $comparator = SMW_CMP_NEQ; break;
-				case '~': $comparator = SMW_CMP_LIKE; break;
-				case '!~': $comparator = SMW_CMP_NLKE; break;
-				// default: not possible
+		// Loop over the comparators to determine which one is used and what the actual value is. 
+		foreach ( SMWQueryLanguage::getComparatorStrings() as $srting ) {
+			if ( strpos( $value, $srting ) === 0 ) {
+				$comparator = SMWQueryLanguage::getComparatorFromString( substr( $value, 0, strlen( $srting ) ) );
+				$value = substr( $value, strlen( $srting ) );
+				break;
 			}
 		}
 	}
@@ -550,8 +547,12 @@ abstract class SMWDataValue {
 	 */
 	public function getShortText( $outputformat, $linker = null ) {
 		switch ( $outputformat ) {
-			case SMW_OUTPUT_WIKI: return $this->getShortWikiText( $linker );
-			case SMW_OUTPUT_HTML: case SMW_OUTPUT_FILE: default: return $this->getShortHTMLText( $linker );
+			case SMW_OUTPUT_WIKI:
+				return $this->getShortWikiText( $linker );
+			case SMW_OUTPUT_HTML:
+			case SMW_OUTPUT_FILE:
+			default:
+				return $this->getShortHTMLText( $linker );
 		}
 	}
 
@@ -565,8 +566,12 @@ abstract class SMWDataValue {
 	 */
 	public function getLongText( $outputformat, $linker = null ) {
 		switch ( $outputformat ) {
-			case SMW_OUTPUT_WIKI: return $this->getLongWikiText( $linker );
-			case SMW_OUTPUT_HTML: case SMW_OUTPUT_FILE: default: return $this->getLongHTMLText( $linker );
+			case SMW_OUTPUT_WIKI:
+				return $this->getLongWikiText( $linker );
+			case SMW_OUTPUT_HTML:
+			case SMW_OUTPUT_FILE:
+			default:
+				return $this->getLongHTMLText( $linker );
 		}
 	}
 
@@ -750,11 +755,18 @@ abstract class SMWDataValue {
 	 * Creates an error if the value is illegal.
 	 */
 	protected function checkAllowedValues() {
-		if ( ( $this->m_property === null ) || ( $this->m_property->getWikiPageValue() === null ) ) return; // no property known
+		if ( ( $this->m_property === null ) || ( $this->m_property->getWikiPageValue() === null ) ) {
+			return; // no property known
+		}
 
-		$allowedvalues = smwfGetStore()->getPropertyValues( $this->m_property->getWikiPageValue(), SMWPropertyValue::makeProperty( '_PVAL' ) );
+		$allowedvalues = smwfGetStore()->getPropertyValues(
+			$this->m_property->getWikiPageValue(),
+			SMWPropertyValue::makeProperty( '_PVAL' )
+		);
 
-		if ( count( $allowedvalues ) == 0 ) return;
+		if ( count( $allowedvalues ) == 0 ) {
+			return;
+		}
 
 		$hash = $this->getHash();
 		$value = SMWDataValueFactory::newTypeIDValue( $this->getTypeID() );
@@ -778,7 +790,9 @@ abstract class SMWDataValue {
 
 		if ( !$accept ) {
 			smwfLoadExtensionMessages( 'SemanticMediaWiki' );
-			$this->addError( wfMsgForContent( 'smw_notinenum', $this->getWikiValue(), $valuestring ) );
+			$this->addError(
+				wfMsgForContent( 'smw_notinenum', $this->getWikiValue(), $valuestring )
+			);
 		}
 	}
 

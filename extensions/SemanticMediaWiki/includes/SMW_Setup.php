@@ -1,11 +1,16 @@
 <?php
+
 /**
  * Global functions used for setting up the Semantic MediaWiki extension.
- * @file
+ * 
+ * @file SMW_Setup.php
  * @ingroup SMW
  */
 
-define( 'SMW_VERSION', '{{$VERSION}} [B{{$BUILDNUMBER}}]' );
+// The SMW version number.
+define( 'SMW_VERSION', '1.5.4' );
+
+// A flag used to indicate SMW defines a semantic extension type for extension crdits.
 define( 'SEMANTIC_EXTENSION_TYPE', true );
 
 require_once( 'SMW_GlobalFunctions.php' );
@@ -19,21 +24,24 @@ require_once( 'SMW_GlobalFunctions.php' );
  *
  * This function also sets up all autoloading, such that all SMW classes are
  * available as early on. Moreover, jobs and special pages are registered.
- * 
+ *
  * @param mixed $namespace
  * @param boolean $complete
- * 
+ *
  * @return true
  */
 function enableSemantics( $namespace = null, $complete = false ) {
-	global $wgVersion, $wgExtensionFunctions, $wgAutoloadClasses, $wgSpecialPages, $wgSpecialPageGroups, $wgHooks, $wgExtensionMessagesFiles;
-	global $smwgIP, $smwgNamespace, $wgJobClasses, $wgExtensionAliasesFiles, $wgServerName;
-	
+	global $wgVersion, $wgExtensionFunctions, $wgAutoloadClasses, $wgSpecialPages;
+	global $wgSpecialPageGroups, $wgHooks, $wgExtensionMessagesFiles;
+	global $smwgIP, $smwgNamespace, $wgJobClasses, $wgExtensionAliasesFiles, $wgServer;
+	global $wgResourceModules, $smwgScriptPath;
+
 	// The dot tells that the domain is not complete. It will be completed
 	// in the Export since we do not want to create a title object here when
 	// it is not needed in many cases.
 	if ( $namespace === null ) {
-		$namespace = $wgServerName;
+		wfWarn( 'You should be providing the domain name to enableSemantics()' );
+		$namespace = parse_url( $wgServer, PHP_URL_HOST );
 	}
 	if ( !$complete && ( $smwgNamespace !== '' ) ) {
 		$smwgNamespace = '.' . $namespace;
@@ -52,12 +60,35 @@ function enableSemantics( $namespace = null, $complete = false ) {
 	if ( version_compare( $wgVersion, '1.17alpha', '>=' ) ) {
 		// For MediaWiki 1.17 alpha and later.
 		$wgHooks['ExtensionTypes'][] = 'smwfAddSemanticExtensionType';
-	}
-	else {
+	} else {
 		// For pre-MediaWiki 1.17 alpha.
-		$wgHooks['SpecialVersionExtensionTypes'][] = 'smwfOldAddSemanticExtensionType';		
+		$wgHooks['SpecialVersionExtensionTypes'][] = 'smwfOldAddSemanticExtensionType';
 	}
-	
+
+	// Register client-side modules
+	$moduleTemplate = array(
+		'localBasePath' => $smwgIP . '/skins',
+		'remoteBasePath' => $smwgScriptPath . '/skins',
+		'group' => 'ext.smw'
+	);
+	$wgResourceModules['ext.smw.style'] = $moduleTemplate + array(
+		'styles' => 'SMW_custom.css'
+	);
+	$wgResourceModules['ext.smw.tooltips'] = $moduleTemplate + array(
+		'scripts' => 'SMW_tooltip.js',
+		'dependencies' => array(
+			'mediawiki.legacy.wikibits',
+			'ext.smw.style'
+		)
+	);
+	$wgResourceModules['ext.smw.sorttable'] = $moduleTemplate + array(
+		'scripts' => 'SMW_sorttable.js',
+		'dependencies' => array(
+			'mediawiki.legacy.wikibits',
+			'ext.smw.style'
+		)
+	);
+
 	// Register special pages aliases file
 	$wgExtensionAliasesFiles['SemanticMediaWiki'] = $smwgIP . 'languages/SMW_Aliases.php';
 
@@ -68,69 +99,98 @@ function enableSemantics( $namespace = null, $complete = false ) {
 	$wgAutoloadClasses['SMWParseData']              = $smwgIP . 'includes/SMW_ParseData.php';
 	$wgAutoloadClasses['SMWOutputs']                = $smwgIP . 'includes/SMW_Outputs.php';
 	$wgAutoloadClasses['SMWSemanticData']           = $smwgIP . 'includes/SMW_SemanticData.php';
-	$wgAutoloadClasses['SMWOrderedListPage']        = $smwgIP . 'includes/articlepages/SMW_OrderedListPage.php';
-	$wgAutoloadClasses['SMWTypePage']               = $smwgIP . 'includes/articlepages/SMW_TypePage.php';
-	$wgAutoloadClasses['SMWPropertyPage']           = $smwgIP . 'includes/articlepages/SMW_PropertyPage.php';
-	$wgAutoloadClasses['SMWConceptPage']            = $smwgIP . 'includes/articlepages/SMW_ConceptPage.php';
-	// Printers
 	$wgAutoloadClasses['SMWResultPrinter']          = $smwgIP . 'includes/SMW_QueryPrinter.php';
-	$wgAutoloadClasses['SMWAutoResultPrinter']      = $smwgIP . 'includes/SMW_QP_Auto.php';
-	$wgAutoloadClasses['SMWTableResultPrinter']     = $smwgIP . 'includes/SMW_QP_Table.php';
-	$wgAutoloadClasses['SMWListResultPrinter']      = $smwgIP . 'includes/SMW_QP_List.php';
-	$wgAutoloadClasses['SMWCategoryResultPrinter']  = $smwgIP . 'includes/SMW_QP_Category.php';
-	$wgAutoloadClasses['SMWEmbeddedResultPrinter']  = $smwgIP . 'includes/SMW_QP_Embedded.php';
-	$wgAutoloadClasses['SMWRSSResultPrinter']       = $smwgIP . 'includes/SMW_QP_RSSlink.php';
-	$wgAutoloadClasses['SMWCsvResultPrinter']       = $smwgIP . 'includes/SMW_QP_CSV.php';
-	$wgAutoloadClasses['SMWJSONResultPrinter']      = $smwgIP . 'includes/SMW_QP_JSONlink.php';
+	$wgAutoloadClasses['SMWDataValueFactory']   	= $smwgIP . 'includes/SMW_DataValueFactory.php';
+	$wgAutoloadClasses['SMWDataValue']           	= $smwgIP . 'includes/SMW_DataValue.php';
+	$wgAutoloadClasses['SMWQueryLanguage']          = $smwgIP . 'includes/SMW_QueryLanguage.php';
+
+	// Article pages
+	$apDir = $smwgIP . 'includes/articlepages/';
+	$wgAutoloadClasses['SMWOrderedListPage']        = $apDir . 'SMW_OrderedListPage.php';
+	$wgAutoloadClasses['SMWTypePage']               = $apDir . 'SMW_TypePage.php';
+	$wgAutoloadClasses['SMWPropertyPage']           = $apDir . 'SMW_PropertyPage.php';
+	$wgAutoloadClasses['SMWConceptPage']            = $apDir . 'SMW_ConceptPage.php';
+
+	// Printers
+	$qpDir = $smwgIP . 'includes/queryprinters/';
+	$wgAutoloadClasses['SMWAutoResultPrinter']      = $qpDir . 'SMW_QP_Auto.php';
+	$wgAutoloadClasses['SMWTableResultPrinter']     = $qpDir . 'SMW_QP_Table.php';
+	$wgAutoloadClasses['SMWListResultPrinter']      = $qpDir . 'SMW_QP_List.php';
+	$wgAutoloadClasses['SMWCategoryResultPrinter']  = $qpDir . 'SMW_QP_Category.php';
+	$wgAutoloadClasses['SMWEmbeddedResultPrinter']  = $qpDir . 'SMW_QP_Embedded.php';
+	$wgAutoloadClasses['SMWRSSResultPrinter']       = $qpDir . 'SMW_QP_RSSlink.php';
+	$wgAutoloadClasses['SMWCsvResultPrinter']       = $qpDir . 'SMW_QP_CSV.php';
+	$wgAutoloadClasses['SMWJSONResultPrinter']      = $qpDir . 'SMW_QP_JSONlink.php';
+
 	// Datavalues
-	$wgAutoloadClasses['SMWDataValueFactory']    =  $smwgIP . 'includes/SMW_DataValueFactory.php';
-	$wgAutoloadClasses['SMWDataValue']           =  $smwgIP . 'includes/SMW_DataValue.php';
-	$wgAutoloadClasses['SMWContainerValue']      =  $smwgIP . 'includes/SMW_DV_Container.php';
-	$wgAutoloadClasses['SMWRecordValue']         =  $smwgIP . 'includes/SMW_DV_Record.php';
-	$wgAutoloadClasses['SMWErrorvalue']          =  $smwgIP . 'includes/SMW_DV_Error.php';
-	$wgAutoloadClasses['SMWStringValue']         =  $smwgIP . 'includes/SMW_DV_String.php';
-	$wgAutoloadClasses['SMWWikiPageValue']       =  $smwgIP . 'includes/SMW_DV_WikiPage.php';
-	$wgAutoloadClasses['SMWSimpleWikiPageValue'] =  $smwgIP . 'includes/SMW_DV_SimpleWikiPage.php';
-	$wgAutoloadClasses['SMWPropertyValue']       =  $smwgIP . 'includes/SMW_DV_Property.php';
-	$wgAutoloadClasses['SMWURIValue']            =  $smwgIP . 'includes/SMW_DV_URI.php';
-	$wgAutoloadClasses['SMWTypesValue']          =  $smwgIP . 'includes/SMW_DV_Types.php';
-	$wgAutoloadClasses['SMWTypeListValue']       =  $smwgIP . 'includes/SMW_DV_TypeList.php';
-	$wgAutoloadClasses['SMWErrorValue']          =  $smwgIP . 'includes/SMW_DV_Error.php';
-	$wgAutoloadClasses['SMWNumberValue']         =  $smwgIP . 'includes/SMW_DV_Number.php';
-	$wgAutoloadClasses['SMWTemperatureValue']    =  $smwgIP . 'includes/SMW_DV_Temperature.php';
-	$wgAutoloadClasses['SMWLinearValue']         =  $smwgIP . 'includes/SMW_DV_Linear.php';
-	$wgAutoloadClasses['SMWTimeValue']           =  $smwgIP . 'includes/SMW_DV_Time.php';
-	$wgAutoloadClasses['SMWBoolValue']           =  $smwgIP . 'includes/SMW_DV_Bool.php';
-	$wgAutoloadClasses['SMWConceptValue']        =  $smwgIP . 'includes/SMW_DV_Concept.php';
-	$wgAutoloadClasses['SMWImportValue']         =  $smwgIP . 'includes/SMW_DV_Import.php';
+	$dvDir = $smwgIP . 'includes/datavalues/';
+	$wgAutoloadClasses['SMWContainerValue']			= $dvDir . 'SMW_DV_Container.php';
+	$wgAutoloadClasses['SMWRecordValue']         	= $dvDir . 'SMW_DV_Record.php';
+	$wgAutoloadClasses['SMWErrorvalue']          	= $dvDir . 'SMW_DV_Error.php';
+	$wgAutoloadClasses['SMWStringValue']         	= $dvDir . 'SMW_DV_String.php';
+	$wgAutoloadClasses['SMWWikiPageValue']       	= $dvDir . 'SMW_DV_WikiPage.php';
+	$wgAutoloadClasses['SMWSimpleWikiPageValue'] 	= $dvDir . 'SMW_DV_SimpleWikiPage.php';
+	$wgAutoloadClasses['SMWPropertyValue']       	= $dvDir . 'SMW_DV_Property.php';
+	$wgAutoloadClasses['SMWURIValue']            	= $dvDir . 'SMW_DV_URI.php';
+	$wgAutoloadClasses['SMWTypesValue']          	= $dvDir . 'SMW_DV_Types.php';
+	$wgAutoloadClasses['SMWTypeListValue']      	= $dvDir . 'SMW_DV_TypeList.php';
+	$wgAutoloadClasses['SMWErrorValue']         	= $dvDir . 'SMW_DV_Error.php';
+	$wgAutoloadClasses['SMWNumberValue']         	= $dvDir . 'SMW_DV_Number.php';
+	$wgAutoloadClasses['SMWTemperatureValue']    	= $dvDir . 'SMW_DV_Temperature.php';
+	$wgAutoloadClasses['SMWLinearValue']         	= $dvDir . 'SMW_DV_Linear.php';
+	$wgAutoloadClasses['SMWTimeValue']           	= $dvDir . 'SMW_DV_Time.php';
+	$wgAutoloadClasses['SMWBoolValue']           	= $dvDir . 'SMW_DV_Bool.php';
+	$wgAutoloadClasses['SMWConceptValue']        	= $dvDir . 'SMW_DV_Concept.php';
+	$wgAutoloadClasses['SMWImportValue']         	= $dvDir . 'SMW_DV_Import.php';
+
 	// Export
-	$wgAutoloadClasses['SMWExporter']               = $smwgIP . 'includes/export/SMW_Exporter.php';
-	$wgAutoloadClasses['SMWExpData']                = $smwgIP . 'includes/export/SMW_Exp_Data.php';
-	$wgAutoloadClasses['SMWExpElement']             = $smwgIP . 'includes/export/SMW_Exp_Element.php';
-	$wgAutoloadClasses['SMWExpLiteral']             = $smwgIP . 'includes/export/SMW_Exp_Element.php';
-	$wgAutoloadClasses['SMWExpResource']            = $smwgIP . 'includes/export/SMW_Exp_Element.php';
+	$expDir = $smwgIP . 'includes/export/';
+	$wgAutoloadClasses['SMWExporter']               = $expDir . 'SMW_Exporter.php';
+	$wgAutoloadClasses['SMWExpData']                = $expDir . 'SMW_Exp_Data.php';
+	$wgAutoloadClasses['SMWExpElement']             = $expDir . 'SMW_Exp_Element.php';
+	$wgAutoloadClasses['SMWExpLiteral']             = $expDir . 'SMW_Exp_Element.php';
+	$wgAutoloadClasses['SMWExpResource']            = $expDir . 'SMW_Exp_Element.php';
+
+	// Parser hooks
+	$phDir = $smwgIP . 'includes/parserhooks/';
+	$wgAutoloadClasses['SMWAsk']               		= $phDir . 'SMW_Ask.php';
+	$wgAutoloadClasses['SMWShow']               	= $phDir . 'SMW_Show.php';
+	$wgAutoloadClasses['SMWInfo']               	= $phDir . 'SMW_Info.php';
+	$wgAutoloadClasses['SMWConcept']               	= $phDir . 'SMW_Concept.php';
+	$wgAutoloadClasses['SMWSet']               		= $phDir . 'SMW_Set.php';
+	$wgAutoloadClasses['SMWSetRecurringEvent']      = $phDir . 'SMW_SetRecurringEvent.php';
+	$wgAutoloadClasses['SMWDeclare']              	= $phDir . 'SMW_Declare.php';
+	
 	// Stores & queries
 	$wgAutoloadClasses['SMWQueryProcessor']         = $smwgIP . 'includes/SMW_QueryProcessor.php';
 	$wgAutoloadClasses['SMWQueryParser']            = $smwgIP . 'includes/SMW_QueryParser.php';
-	$wgAutoloadClasses['SMWQuery']                  = $smwgIP . 'includes/storage/SMW_Query.php';
-	$wgAutoloadClasses['SMWQueryResult']            = $smwgIP . 'includes/storage/SMW_QueryResult.php';
-	$wgAutoloadClasses['SMWStore']                  = $smwgIP . 'includes/storage/SMW_Store.php';
-	$wgAutoloadClasses['SMWStringCondition']        = $smwgIP . 'includes/storage/SMW_Store.php';
-	$wgAutoloadClasses['SMWRequestOptions']         = $smwgIP . 'includes/storage/SMW_Store.php';
-	$wgAutoloadClasses['SMWPrintRequest']           = $smwgIP . 'includes/storage/SMW_PrintRequest.php';
-	$wgAutoloadClasses['SMWThingDescription']       = $smwgIP . 'includes/storage/SMW_Description.php';
-	$wgAutoloadClasses['SMWClassDescription']       = $smwgIP . 'includes/storage/SMW_Description.php';
-	$wgAutoloadClasses['SMWConceptDescription']     = $smwgIP . 'includes/storage/SMW_Description.php';
-	$wgAutoloadClasses['SMWNamespaceDescription']   = $smwgIP . 'includes/storage/SMW_Description.php';
-	$wgAutoloadClasses['SMWValueDescription']       = $smwgIP . 'includes/storage/SMW_Description.php';
-	$wgAutoloadClasses['SMWConjunction']            = $smwgIP . 'includes/storage/SMW_Description.php';
-	$wgAutoloadClasses['SMWDisjunction']            = $smwgIP . 'includes/storage/SMW_Description.php';
-	$wgAutoloadClasses['SMWSomeProperty']           = $smwgIP . 'includes/storage/SMW_Description.php';
 	$wgAutoloadClasses['SMWRecordDescription']      = $smwgIP . 'includes/SMW_Record_Descriptions.php';
 	$wgAutoloadClasses['SMWRecordFieldDescription'] = $smwgIP . 'includes/SMW_Record_Descriptions.php';
-	$wgAutoloadClasses['SMWSQLStore2']              = $smwgIP . 'includes/storage/SMW_SQLStore2.php';
-	$wgAutoloadClasses['SMWSQLStore2Table']         = $smwgIP . 'includes/storage/SMW_SQLStore2Table.php';
-	$wgAutoloadClasses['SMWSQLHelpers']             = $smwgIP . 'includes/storage/SMW_SQLHelpers.php';
+
+	$stoDir = $smwgIP . 'includes/storage/';
+	$wgAutoloadClasses['SMWQuery']                  = $stoDir . 'SMW_Query.php';
+	$wgAutoloadClasses['SMWQueryResult']            = $stoDir . 'SMW_QueryResult.php';
+	$wgAutoloadClasses['SMWStore']                  = $stoDir . 'SMW_Store.php';
+	$wgAutoloadClasses['SMWStringCondition']        = $stoDir . 'SMW_Store.php';
+	$wgAutoloadClasses['SMWRequestOptions']         = $stoDir . 'SMW_Store.php';
+	$wgAutoloadClasses['SMWPrintRequest']           = $stoDir . 'SMW_PrintRequest.php';
+	$wgAutoloadClasses['SMWThingDescription']       = $stoDir . 'SMW_Description.php';
+	$wgAutoloadClasses['SMWClassDescription']       = $stoDir . 'SMW_Description.php';
+	$wgAutoloadClasses['SMWConceptDescription']     = $stoDir . 'SMW_Description.php';
+	$wgAutoloadClasses['SMWNamespaceDescription']   = $stoDir . 'SMW_Description.php';
+	$wgAutoloadClasses['SMWValueDescription']       = $stoDir . 'SMW_Description.php';
+	$wgAutoloadClasses['SMWConjunction']            = $stoDir . 'SMW_Description.php';
+	$wgAutoloadClasses['SMWDisjunction']            = $stoDir . 'SMW_Description.php';
+	$wgAutoloadClasses['SMWSomeProperty']           = $stoDir . 'SMW_Description.php';
+	$wgAutoloadClasses['SMWSQLStore2']              = $stoDir . 'SMW_SQLStore2.php';
+	$wgAutoloadClasses['SMWSQLStore2Table']         = $stoDir . 'SMW_SQLStore2Table.php';
+	$wgAutoloadClasses['SMWSQLHelpers']             = $stoDir . 'SMW_SQLHelpers.php';
+
+	// To ensure SMW remains compatible with pre 1.16.
+	if ( !class_exists( 'Html' ) ) {
+		$wgAutoloadClasses['Html'] = $smwgIP . 'compat/Html.php';
+	}
+	
 	// Do not autoload RAPStore, since some special pages load all autoloaded classes, which causes
 	// troubles with RAP store if RAP is not installed (require_once fails).
 	// $wgAutoloadClasses['SMWRAPStore']             = $smwgIP . 'includes/storage/SMW_RAPStore.php';
@@ -221,22 +281,15 @@ function smwfSetupExtension() {
 	$wgHooks['NewRevisionFromEditComplete'][] = 'SMWParseData::onNewRevisionFromEditComplete'; // fetch some MediaWiki data for replication in SMW's store
 	$wgHooks['OutputPageParserOutput'][] = 'SMWFactbox::onOutputPageParserOutput'; // copy some data for later Factbox display
 	$wgHooks['ArticleFromTitle'][] = 'smwfOnArticleFromTitle'; // special implementations for property/type articles
-	$wgHooks['ParserFirstCallInit'][] = 'SMWParserExtensions::registerParserFunctions';
+	$wgHooks['ParserFirstCallInit'][] = 'smwfRegisterParserFunctions';
 
 	if ( $smwgToolboxBrowseLink ) {
-		if ( version_compare( $wgVersion, '1.13', '>=' ) ) {
-			$wgHooks['SkinTemplateToolboxEnd'][] = 'smwfShowBrowseLink'; // introduced only in 1.13
-		} else {
-			$wgHooks['MonoBookTemplateToolboxEnd'][] = 'smwfShowBrowseLink';
-		}
+		$wgHooks['SkinTemplateToolboxEnd'][] = 'smwfShowBrowseLink';
 	}
-	if ( version_compare( $wgVersion, '1.14alpha', '>=' ) ) {
-		$wgHooks['SkinAfterContent'][] = 'SMWFactbox::onSkinAfterContent'; // draw Factbox below categories
-		$smwgMW_1_14 = true; // assume latest 1.14 API
-	} else {
-		$wgHooks['OutputPageBeforeHTML'][] = 'SMWFactbox::onOutputPageBeforeHTML'; // draw Factbox right below page content
-		$smwgMW_1_14 = false; // assume <= 1.13 API
-	}
+
+	$wgHooks['SkinAfterContent'][] = 'SMWFactbox::onSkinAfterContent'; // draw Factbox below categories
+	$wgHooks['SkinGetPoweredBy'][] = 'smwfAddPoweredBySMW';
+	$smwgMW_1_14 = true; // assume latest 1.14 API
 
 	// Registration of the extension credits, see Special:Version.
 	$wgExtensionCredits['semantic'][] = array(
@@ -254,11 +307,11 @@ function smwfSetupExtension() {
 
 /**
  * Adds the 'semantic' extension type to the type list.
- * 
+ *
  * @since 1.5.2
- * 
+ *
  * @param $aExtensionTypes Array
- * 
+ *
  * @return true
  */
 function smwfAddSemanticExtensionType( array &$aExtensionTypes ) {
@@ -269,12 +322,12 @@ function smwfAddSemanticExtensionType( array &$aExtensionTypes ) {
 
 /**
  * @see smwfAddSemanticExtensionType
- * 
+ *
  * @since 1.5.2
- * 
+ *
  * @param $oSpecialVersion SpecialVersion
  * @param $aExtensionTypes Array
- * 
+ *
  * @return true
  */
 function smwfOldAddSemanticExtensionType( SpecialVersion &$oSpecialVersion, array &$aExtensionTypes ) {
@@ -283,38 +336,38 @@ function smwfOldAddSemanticExtensionType( SpecialVersion &$oSpecialVersion, arra
 
 /**
  * Adds links to Admin Links page.
- **/
+ */
 function smwfAddToAdminLinks( &$admin_links_tree ) {
 	smwfLoadExtensionMessages( 'SemanticMediaWiki' );
-	
+
 	$data_structure_section = new ALSection( wfMsg( 'smw_adminlinks_datastructure' ) );
-	
+
 	$smw_row = new ALRow( 'smw' );
 	$smw_row->addItem( ALItem::newFromSpecialPage( 'Categories' ) );
 	$smw_row->addItem( ALItem::newFromSpecialPage( 'Properties' ) );
 	$smw_row->addItem( ALItem::newFromSpecialPage( 'UnusedProperties' ) );
 	$smw_row->addItem( ALItem::newFromSpecialPage( 'SemanticStatistics' ) );
-	
+
 	$data_structure_section->addRow( $smw_row );
 	$smw_admin_row = new ALRow( 'smw_admin' );
 	$smw_admin_row->addItem( ALItem::newFromSpecialPage( 'SMWAdmin' ) );
-	
+
 	$data_structure_section->addRow( $smw_admin_row );
 	$smw_docu_row = new ALRow( 'smw_docu' );
 	$smw_name = wfMsg( 'specialpages-group-smw_group' );
 	$smw_docu_label = wfMsg( 'adminlinks_documentation', $smw_name );
-	$smw_docu_row->addItem( AlItem::newFromExternalLink( "http://semantic-mediawiki.org/wiki/Help:User_manual", $smw_docu_label ) );
-	
+	$smw_docu_row->addItem( AlItem::newFromExternalLink( 'http://semantic-mediawiki.org/wiki/Help:User_manual', $smw_docu_label ) );
+
 	$data_structure_section->addRow( $smw_docu_row );
 	$admin_links_tree->addSection( $data_structure_section, wfMsg( 'adminlinks_browsesearch' ) );
 	$smw_row = new ALRow( 'smw' );
 	$displaying_data_section = new ALSection( wfMsg( 'smw_adminlinks_displayingdata' ) );
-	$smw_row->addItem( AlItem::newFromExternalLink( "http://semantic-mediawiki.org/wiki/Help:Inline_queries", wfMsg( 'smw_adminlinks_inlinequerieshelp' ) ) );
+	$smw_row->addItem( AlItem::newFromExternalLink( 'http://semantic-mediawiki.org/wiki/Help:Inline_queries', wfMsg( 'smw_adminlinks_inlinequerieshelp' ) ) );
 
 	$displaying_data_section->addRow( $smw_row );
 	$admin_links_tree->addSection( $displaying_data_section, wfMsg( 'adminlinks_browsesearch' ) );
 	$browse_search_section = $admin_links_tree->getSection( wfMsg( 'adminlinks_browsesearch' ) );
-	
+
 	$smw_row = new ALRow( 'smw' );
 	$smw_row->addItem( ALItem::newFromSpecialPage( 'Browse' ) );
 	$smw_row->addItem( ALItem::newFromSpecialPage( 'Ask' ) );
@@ -328,15 +381,13 @@ function smwfAddToAdminLinks( &$admin_links_tree ) {
 /**
  * Register special classes for displaying semantic content on Property/Type
  * pages.
- * 
+ *
  * @param $title: Title
  * @param $article: Article or null
- * 
+ *
  * @return true
  */
 function smwfOnArticleFromTitle( Title &$title, /* Article */ &$article ) {
-	global $smwgIP;
-	
 	if ( $title->getNamespace() == SMW_NS_TYPE ) {
 		$article = new SMWTypePage( $title );
 	} elseif ( $title->getNamespace() == SMW_NS_PROPERTY ) {
@@ -344,7 +395,7 @@ function smwfOnArticleFromTitle( Title &$title, /* Article */ &$article ) {
 	} elseif ( $title->getNamespace() == SMW_NS_CONCEPT ) {
 		$article = new SMWConceptPage( $title );
 	}
-	
+
 	return true;
 }
 
@@ -376,10 +427,10 @@ function smwfShowBrowseLink( $skintemplate ) {
 	if ( $skintemplate->data['isarticle'] ) {
 		smwfLoadExtensionMessages( 'SemanticMediaWiki' );
 		$browselink = SMWInfolink::newBrowsingLink( wfMsg( 'smw_browselink' ),
-		               $skintemplate->data['titleprefixeddbkey'], false );
-    	echo "<li id=\"t-smwbrowselink\">" . $browselink->getHTML() . "</li>";
-    }
-    return true;
+						$skintemplate->data['titleprefixeddbkey'], false );
+		echo '<li id="t-smwbrowselink">' . $browselink->getHTML() . '</li>';
+	}
+	return true;
 }
 
 /**********************************************/
@@ -409,7 +460,9 @@ function smwfInitNamespaces() {
 	smwfInitContentLanguage( $wgLanguageCode );
 
 	// Register namespace identifiers
-	if ( !is_array( $wgExtraNamespaces ) ) { $wgExtraNamespaces = array(); }
+	if ( !is_array( $wgExtraNamespaces ) ) {
+		$wgExtraNamespaces = array();
+	}
 	$wgExtraNamespaces = $wgExtraNamespaces + $smwgContLang->getNamespaces();
 	$wgNamespaceAliases = $wgNamespaceAliases + $smwgContLang->getNamespaceAliases();
 
@@ -455,23 +508,64 @@ function smwfAddMagicWords( &$magicWords, $langCode ) {
  */
 function smwfInitContentLanguage( $langcode ) {
 	global $smwgIP, $smwgContLang;
-	
-	if ( !empty( $smwgContLang ) ) { return; }
+
+	if ( !empty( $smwgContLang ) ) {
+		return;
+	}
 	wfProfileIn( 'smwfInitContentLanguage (SMW)' );
 
 	$smwContLangFile = 'SMW_Language' . str_replace( '-', '_', ucfirst( $langcode ) );
 	$smwContLangClass = 'SMWLanguage' . str_replace( '-', '_', ucfirst( $langcode ) );
-	
+
 	if ( file_exists( $smwgIP . 'languages/' . $smwContLangFile . '.php' ) ) {
 		include_once( $smwgIP . 'languages/' . $smwContLangFile . '.php' );
 	}
 
-	// fallback if language not supported
+	// Fallback if language not supported.
 	if ( !class_exists( $smwContLangClass ) ) {
 		include_once( $smwgIP . 'languages/SMW_LanguageEn.php' );
 		$smwContLangClass = 'SMWLanguageEn';
 	}
+
 	$smwgContLang = new $smwContLangClass();
 
 	wfProfileOut( 'smwfInitContentLanguage (SMW)' );
+}
+
+/**
+ * This hook registers parser functions and hooks to the given parser. It is
+ * called during SMW initialisation. Note that parser hooks are something different
+ * than MW hooks in general, which explains the two-level registration.
+ * 
+ * @since 1.5.3
+ */
+function smwfRegisterParserFunctions( Parser &$parser ) {
+	$parser->setFunctionHook( 'ask', array( 'SMWAsk', 'render' ) );
+	$parser->setFunctionHook( 'show', array( 'SMWShow', 'render' ) );
+	$parser->setFunctionHook( 'info', array( 'SMWInfo', 'render' ) );
+	$parser->setFunctionHook( 'concept', array( 'SMWConcept', 'render' ) );
+	$parser->setFunctionHook( 'set', array( 'SMWSet', 'render' ) );
+	$parser->setFunctionHook( 'set_recurring_event', array( 'SMWSetRecurringEvent', 'render' ) );
+	$parser->setFunctionHook( 'declare', array( 'SMWDeclare', 'render' ), SFH_OBJECT_ARGS );
+
+	return true; // Always return true, in order not to stop MW's hook processing!
+}
+
+/**
+ * Adds the 'Powered by Semantic MediaWiki' button right next to the default
+ * 'Powered by MediaWiki' button at the bottom of every page. This works
+ * only with MediaWiki 1.17+.
+ * It might make sense to make this configurable via a variable, if some
+ * admins don't want it.
+ *
+ * @since 1.5.4
+ *
+ * @return true
+ */
+function smwfAddPoweredBySMW( &$text, $skin ) {
+	global $smwgScriptPath;
+	$url = htmlspecialchars( "$smwgScriptPath/skins/images/smw_button.png" );
+	$text .= ' <a href="http://www.semantic-mediawiki.org/wiki/Semantic_MediaWiki"><img src="'. $url . '" alt="Powered by Semantic MediaWiki" /></a>';
+
+	return true; // Always return true, in order not to stop MW's hook processing!
 }

@@ -87,8 +87,10 @@ class SMWSQLStore2QueryEngine {
 	 * Refresh the concept cache for the given concept.
 	 *
 	 * @param $concept Title
+	 * 
+	 * @return array
 	 */
-	public function refreshConceptCache( $concept ) {
+	public function refreshConceptCache( Title $concept ) {
 		global $smwgQMaxLimit, $smwgQConceptFeatures, $wgDBtype;
 
 		$cid = $this->m_store->getSMWPageID( $concept->getDBkey(), SMW_NS_CONCEPT, '' );
@@ -498,6 +500,8 @@ class SMWSQLStore2QueryEngine {
 					switch ( $description->getComparator() ) {
 						case SMW_CMP_LEQ: $comp = '<='; break;
 						case SMW_CMP_GEQ: $comp = '>='; break;
+						case SMW_CMP_LESS: $comp = '<'; break;
+						case SMW_CMP_GRTR: $comp = '>'; break;
 						case SMW_CMP_NEQ: $comp = '!='; break;
 						case SMW_CMP_LIKE: case SMW_CMP_NLKE:
 							$comp = ' LIKE ';
@@ -505,7 +509,6 @@ class SMWSQLStore2QueryEngine {
 							$value =  str_replace( array( '%', '_', '*', '?' ), array( '\%', '\_', '%', '_' ), $value );
 						break;
 					}
-
 					$query->where = "$query->alias.smw_sortkey$comp" . $this->m_dbs->addQuotes( $value );
 				}
 			}
@@ -765,8 +768,10 @@ class SMWSQLStore2QueryEngine {
 
 						switch ( $description->getComparator() ) {
 							case SMW_CMP_EQ: $comparator = '='; break;
+							case SMW_CMP_LESS: $comparator = '<'; break;
+							case SMW_CMP_GRTR: $comparator = '>'; break;
 							case SMW_CMP_LEQ: $comparator = '<='; break;
-							case SMW_CMP_GEQ: $comparator = '>='; break;
+							case SMW_CMP_GEQ: $comparator = '>='; break;							
 							case SMW_CMP_NEQ: $comparator = '!='; break;
 							case SMW_CMP_LIKE: case SMW_CMP_NLKE:
 								$comparator = ' LIKE ';

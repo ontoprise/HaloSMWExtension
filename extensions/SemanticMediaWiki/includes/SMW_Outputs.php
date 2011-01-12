@@ -1,12 +1,4 @@
 <?php
-/**
- * This file contains the SMWOutputs class.
- *
- * @author Markus Krötzsch
- *
- * @file
- * @ingroup SMW
- */
 
 /**
  * This class attempts to provide safe yet simple means for managing data that is relevant
@@ -28,14 +20,66 @@
  * that creates SMW outputs that may require head items must afterwards clear the temporal store by
  * writing its contents to the according output.
  *
+ * @file SMW_Ouputs.php
  * @ingroup SMW
+ *
+ * @author Markus Krötzsch
  */
 class SMWOutputs {
 
-	/// Protected member function for temporarily storing header items
-	static protected $mHeadItems = array();
+	/// Protected member function for temporarily storing header items.
+	protected static $mHeadItems = array();
+	
+	/// Protected member function for temporarily storing resource modules.
+	protected static $resourceModules = array();	
 
 	/**
+	 * Adds a resource module to the parser output.
+	 * 
+	 * @since 1.5.3
+	 * 
+	 * @param string $moduleName
+	 */
+	public static function requireResource( $moduleName ) {
+		self::$resourceModules[$moduleName] = $moduleName;
+	}
+	
+	/**
+	 * Adds rousource loader modules or other head items.
+	 * Falls back on requireHeadItemOld if the Resource Loader (MW >1.17) is not available.
+	 * 
+	 * @param mixed $id
+	 * @param string $item
+	 */
+	public static function requireHeadItem( $id, $item = '' ) {
+		global $wgVersion;
+		
+		// Use the b/c method when the resource loader is not available.
+		if ( !method_exists( 'OutputPage', 'addModules' ) ) {
+			return self::requireHeadItemOld( $id, $item );
+		}
+		
+		if ( is_numeric( $id ) ) {  // compatibility with older extensions; eventually the numeric constants should vanish
+			switch ( $id ) {	
+				case SMW_HEADER_TOOLTIP:
+					self::requireResource( 'ext.smw.tooltips' );
+					break;
+				case SMW_HEADER_SORTTABLE:
+					self::requireResource( 'ext.smw.sorttable' );
+					break;
+				case SMW_HEADER_STYLE:
+					self::requireResource( 'ext.smw.style' );
+					break;
+			}	
+		}
+		else { // normal case: treat ID as a ResourceLoader ID
+			self::$mHeadItems[$id] = $item;
+		}
+	}
+	
+	/**
+	 * Method for backward compatibility with MW pre-1.17.
+	 * 
 	 * Announce that some head item (usually CSS or JavaScript) is required to
 	 * display the content just created. The function is called with an ID that
 	 * is one of SMW's SMW_HEADER_... constants, or a string ID followed by the
@@ -51,22 +95,24 @@ class SMWOutputs {
 	 * to be called "soon" -- there might always be other hooks first that commit the
 	 * existing data wrongly, depending on installed extensions and background jobs!
 	 *
+	 * @since 1.5.3
+	 * 
 	 * @param $id string or predefined constant for identifying a head item
 	 * @param $item string containing a complete HTML-compatibly text snippet that
 	 * should go into the HTML header; only required if $id is no built-in constant.
 	 */
-	static public function requireHeadItem( $id, $item = '' ) {
+	protected static function requireHeadItemOld( $id, $item ) {
 		if ( is_numeric( $id ) ) {
 			global $smwgScriptPath;
 
 			switch ( $id ) {
 				case SMW_HEADER_TOOLTIP:
 					self::requireHeadItem( SMW_HEADER_STYLE );
-					self::$mHeadItems['smw_tt'] = '<script type="text/javascript" src="' . $smwgScriptPath .  '/skins/SMW_tooltip.js"></script>';
+					self::$mHeadItems['smw_tt'] = '<script type="text/javascript" src="' . $smwgScriptPath . '/skins/SMW_tooltip.js"></script>';
 				break;
 				case SMW_HEADER_SORTTABLE:
 					self::requireHeadItem( SMW_HEADER_STYLE );
-					self::$mHeadItems['smw_st'] = '<script type="text/javascript" src="' . $smwgScriptPath .  '/skins/SMW_sorttable.js"></script>';
+					self::$mHeadItems['smw_st'] = '<script type="text/javascript" src="' . $smwgScriptPath . '/skins/SMW_sorttable.js"></script>';
 				break;
 				case SMW_HEADER_STYLE:
 					global $wgContLang;
@@ -80,7 +126,7 @@ class SMWOutputs {
 			}
 		} else { // custom head item
 			self::$mHeadItems[$id] = $item;
-		}
+		}		
 	}
 
 	/**
@@ -120,7 +166,9 @@ class SMWOutputs {
 			$po = $parser->mOutput;
 		}
 
-		if ( isset( $po ) ) self::commitToParserOutput( $po );
+		if ( isset( $po ) ) {
+			self::commitToParserOutput( $po );
+		}
 	}
 
 	/**
@@ -129,9 +177,13 @@ class SMWOutputs {
 	 * @param ParserOutput $parserOutput
 	 */
 	static public function commitToParserOutput( ParserOutput $parserOutput ) {
-		// debug_zval_dump(self::$mItems);
 		foreach ( self::$mHeadItems as $key => $item ) {
 			$parserOutput->addHeadItem( "\t\t" . $item . "\n", $key );
+		}		
+		
+		// Check if the resource loader can be used or not.
+		if ( method_exists( $parserOutput, 'addModules' ) ) {
+			$parserOutput->addModules( array_values( self::$resourceModules ) );
 		}
 
 		self::$mHeadItems = array();
@@ -152,6 +204,12 @@ class SMWOutputs {
 			$output->addHeadItem( $key, "\t\t" . $item . "\n" );
 		}
 
+		// Check if the resource loader can be used or not.
+		if ( method_exists( $output, 'addModules' ) ) {
+			$output->addModules( array_values( self::$resourceModules ) );
+		}		
+
 		self::$mHeadItems = array();
 	}
+
 }
