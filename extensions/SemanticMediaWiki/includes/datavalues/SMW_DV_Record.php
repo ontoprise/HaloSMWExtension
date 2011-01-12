@@ -187,7 +187,8 @@ class SMWRecordValue extends SMWContainerValue {
 			$propname = $prop->getPropertyID();
 			$propnum = substr( $propname, 1 );
 			if ( ( $propname != false ) && ( is_numeric( $propnum ) ) ) {
-				$result[( $propnum - 1 )] = reset( $this->m_data->getPropertyValues( $prop ) );
+				$dummy = array_values($this->m_data->getPropertyValues( $prop ));
+                $result[( $propnum - 1 )] =reset($dummy);
 			}
 		}
 		return $result;
