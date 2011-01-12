@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <deploydescriptor>
 	<global>
-		<version>152</version>
+		<version>154</version>
 		<id>smwhalo</id>
 		<vendor>Ontoprise GmbH</vendor>
 		<maintainer>Ontoprise GmbH</maintainer>
@@ -13,7 +13,7 @@
 		<helpurl>http://smwforum.ontoprise.com/smwforum/index.php/Help:Halo_Extension_User_Manual</helpurl>
 		<dependencies>
 		    <dependency from="1150" to="1169">mw</dependency>
-			<dependency from="152">smw</dependency>
+			<dependency from="154">smw</dependency>
 			<dependency from="101" to="101">scriptmanager</dependency>
             <dependency from="100" to="100">arclibrary</dependency>
 		</dependencies>
@@ -35,7 +35,8 @@
 	<configs>
 
 		<new>
-			<patch file="patch.txt" />
+			<patch file="patch_for_SMW1.5.2.txt" ext="smw" from="152" to="152"/>
+            <patch file="patch_for_SMW1.5.4.txt" ext="smw" from="154" to="154"/>
             <patch file="patch_for_MW1.15.3.txt"
                 ext="mw" from="1153" to="1153" />
             <patch file="patch_for_MW1.16.0.txt"
@@ -68,7 +69,8 @@
             <patch file="patch_for_MW1.16.0.txt"/>
 		</update>
 		<uninstall>
-			<patch file="patch.txt" />
+			<patch file="patch_for_SMW1.5.2.txt" ext="smw" from="152" to="152"/>
+            <patch file="patch_for_SMW1.5.4.txt" ext="smw" from="154" to="154"/>
             <patch file="patch_for_MW1.15.3.txt"
                 ext="mw" from="1153" to="1153" />
             <patch file="patch_for_MW1.16.0.txt"

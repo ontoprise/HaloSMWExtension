@@ -1,4 +1,4 @@
-Index: extensions/SemanticMediaWiki/includes/SMW_DV_WikiPage.php
+Index: extensions/SemanticMediaWiki/includes/datavalues/SMW_DV_WikiPage.php
 ===================================================================
 --- extensions/SemanticMediaWiki/includes/SMW_DV_WikiPage.php	2010-06-07 09:48:39.000000000 +0200
 +++ extensions/SemanticMediaWiki/includes/SMW_DV_WikiPage.php	2010-07-08 11:10:37.000000000 +0200
