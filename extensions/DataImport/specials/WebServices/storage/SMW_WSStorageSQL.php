@@ -126,6 +126,9 @@ class WSStorageSQL {
 
 		$query = "ALTER TABLE ".$cacheTable." MODIFY result LONGTEXT NOT NULL";
 		$db->query($query);
+		
+		$query = "ALTER TABLE ".$cacheTable." MODIFY param_set_id VARCHAR(32) NOT NULL";
+		$db->query($query);
 
 		DBHelper::reportProgress("   ... done!\n",$verbose);
 
@@ -142,6 +145,9 @@ class WSStorageSQL {
 
 		$query = "ALTER TABLE ".$paramTable." ENGINE=MyISAM; ";
 		$db->query($query);
+		
+		$query = "ALTER TABLE ".$paramTable." MODIFY param_set_id VARCHAR(32) NOT NULL";
+		$db->query($query);
 
 		DBHelper::reportProgress("   ... done!\n",$verbose);
 
@@ -155,6 +161,9 @@ class WSStorageSQL {
 		$db, $verbose, 'web_service_id,param_set_id,page_id');
 
 		$query = "ALTER TABLE ".$articlesTable." ENGINE=MyISAM; ";
+		$db->query($query);
+		
+		$query = "ALTER TABLE ".$articlesTable." MODIFY param_set_id VARCHAR(32) NOT NULL";
 		$db->query($query);
 
 		DBHelper::reportProgress("   ... done!\n",$verbose);
@@ -339,39 +348,20 @@ class WSStorageSQL {
 		$db =& wfGetDB( DB_SLAVE );
 		$ptbl = $db->tableName('smw_ws_parameters');
 
-		// check if an appropriate parameter set exists
-		$whereConstruct="";
-		$i=0;
-		foreach($parameters as $name => $value){
-			if($i != 0){
-				$whereConstruct.= " OR ";
-			} else {
-				$whereConstruct.= "(";
-			}
-				
-			$whereConstruct.= "(parameters.name='".mysql_real_escape_string($name)."' AND parameters.value='".mysql_real_escape_string($value)."')";
-			$i++;
-		}
-		$whereConstruct.= ") AND parameters.param_set_id in ".
-			"(SELECT p.param_set_id FROM ".$ptbl." p ".
-			"GROUP BY p.param_set_id HAVING count(p.name) = ".$i.")";
-
-		$sql = "SELECT parameters.param_set_id, count(parameters.name)".
+		
+		$parameterSetId = md5(implode(',',array_keys($parameters)).implode(',', $parameters));
+		
+		$sql = "SELECT parameters.param_set_id ".
 			 "FROM ".$ptbl." parameters ".
-			"WHERE ".$whereConstruct.
-			"GROUP BY parameters.param_set_id HAVING count(parameters.name) =".$i.";";
+			'WHERE parameters.param_set_id = "'.$parameterSetId.'"';
 
 		$res = $db->query($sql);
-
-		$parameterSetId = " an error occured";
 
 		if ($db->numRows($res) >= 1){
 			// an appropriate parameter set exists
 			$row = $db->fetchObject($res);
 			$parameterSetId = "#".$row->param_set_id;
 		} else {
-			// a new parameter set has to be created
-			$parameterSetId = self::generateParameterSetId();
 			$db =& wfGetDB( DB_MASTER );
 			foreach($parameters as $name => $value){
 				try {
@@ -385,34 +375,6 @@ class WSStorageSQL {
 				}
 			}
 		}
-		return $parameterSetId;
-	}
-
-	/**
-	 * this function generates a new parameter set id
-	 *
-	 * @return string
-	 * 		a new parameter set id
-	 */
-	public function generateParameterSetId(){
-		$parameterSetId = "";
-		$done = false;
-
-		$db =& wfGetDB( DB_SLAVE );
-		$ptb = $db->tableName('smw_ws_parameters');
-
-		while(!$done){
-			$parameterSetId = rand(0, 9999999);
-			$sql = "SELECT parameters.name FROM ".$ptb." parameters ".
-			"WHERE parameters.param_set_id ='".$parameterSetId."'";
-
-			$res = $db->query($sql);
-			if($db->numRows($res) == 0){
-				$done = true;
-			}
-			$db->freeResult($res);
-		}
-
 		return $parameterSetId;
 	}
 
@@ -479,7 +441,7 @@ class WSStorageSQL {
 
 		$sql = "SELECT wsArticles.param_set_id"
 		." FROM ".$ptb." wsArticles ".
-		"WHERE wsArticles.param_set_id = ".$parameterSetId."";
+		'WHERE wsArticles.param_set_id = "'.$parameterSetId.'"';
 
 		$webServices = array();
 		$res = $db->query($sql);
@@ -534,7 +496,7 @@ class WSStorageSQL {
 
 		$sql = "SELECT param.name, param.value"
 		." FROM ".$ptb." param ".
-		"WHERE param.param_set_id = ".$parameterSetId."";
+		'WHERE param.param_set_id = "'.$parameterSetId.'"';
 
 		$parameters = array();
 		$res = $db->query($sql);
