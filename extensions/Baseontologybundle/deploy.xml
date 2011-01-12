@@ -3,10 +3,12 @@
 	<global>
 		<version>100</version>
 		<id>baseontologybundle</id>
+		<patchlevel>1</patchlevel>
 		<instdir>extensions/Baseontologybundle</instdir>
 		<vendor>Ontoprise</vendor>
 		<description>Basic ontology bundle</description>
 		<dependencies>
+		    <dependency from="102">applicationprogramming</dependency>
 			<dependency from="152">smwhalo</dependency>
 			<dependency from="200">semanticforms</dependency>
 		</dependencies>
