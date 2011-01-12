@@ -37,6 +37,7 @@
 		<copy todir="bin/zip/deployment">
 			<fileset dir="../">
 				<include name="COPYING" />
+				<include name="CHANGELOG" />
 				<include name="INSTALL" />
 				<include name="settings.php" />
 				<include name="Deployment.php" />

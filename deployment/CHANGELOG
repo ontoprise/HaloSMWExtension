@@ -1,0 +1,16 @@
+#
+# ChangeLog
+#
+
+Since DF 1.3.0 patchlevel 1
+
+Bugfixes:
+
+#13541: DF access via proxy server
+#13530: AdminSettings.php is optional since MW 1.16
+#13553: Display the full URL of the repository when using "smwadmin -l" 
+
+New:
+
+ChangeLog added 
+
