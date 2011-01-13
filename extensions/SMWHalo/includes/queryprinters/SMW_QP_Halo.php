@@ -1,6 +1,6 @@
 <?php
 global $smwgIP;
-require_once "$smwgIP/includes/SMW_QP_CSV.php";
+require_once "$smwgIP/includes/queryprinters/SMW_QP_CSV.php";
 
 /**
  * Contains SMW QPs which needs to get overridden for some reason.

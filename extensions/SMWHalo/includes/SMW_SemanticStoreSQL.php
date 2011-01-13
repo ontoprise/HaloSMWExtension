@@ -12,7 +12,7 @@ if ( !defined( 'MEDIAWIKI' ) ) die;
 
 global $smwgIP,$smwgHaloIP;
 require_once( "$smwgIP/includes/storage/SMW_Store.php" );
-require_once( "$smwgIP/includes/SMW_DV_WikiPage.php" );
+require_once( "$smwgIP/includes/datavalues/SMW_DV_WikiPage.php" );
 require_once( "$smwgIP/includes/SMW_DataValueFactory.php" );
 require_once  "$smwgHaloIP/includes/SMW_DBHelper.php";
 require_once( "SMW_SemanticStore.php");
