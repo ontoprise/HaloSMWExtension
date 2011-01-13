@@ -14,8 +14,8 @@
 			<dependency from="1150" to="1169">mw</dependency>
 			<dependency from="101" to="101">scriptmanager</dependency>
 			<dependency from="100" to="100">arclibrary</dependency>
-			<dependency from="140" to="152">smw</dependency>
-			<dependency from="142" to="152">smwhalo</dependency>
+			<dependency from="140" to="154">smw</dependency>
+			<dependency from="152" to="154">smwhalo</dependency>
 		</dependencies>
 		<patchlevel>0</patchlevel>
 	</global>

@@ -9,7 +9,7 @@
 		<description>Helps to keep the wiki clean and consistent. Allows to run asynchronous bots.</description>
 		<helpurl>http://smwforum.ontoprise.com/smwforum/index.php/Help:Semantic_Gardening_Extension</helpurl>
 		<dependencies>
-			<dependency from="146" to="152">smwhalo</dependency>
+			<dependency from="152" to="154">smwhalo</dependency>
 		</dependencies>
 	</global>
 	<codefiles>

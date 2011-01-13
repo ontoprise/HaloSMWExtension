@@ -104,6 +104,28 @@ abstract class SMWDataValue {
 	 */
 	private $mHasServiceLinks;
 
+	/// Patch:KK|Metadata data|Start
+	private $m_metadata = array();
+	private $m_metadataTypes = array();
+
+	public function setMetadata($mdProperty, $mdType, $mdValue) {
+		$this->m_metadata[$mdProperty] = $mdValue;
+		$this->m_metadataTypes[$mdProperty] = $mdType;
+	}
+
+	public function getMetadata($mdProperty) {
+		return array_key_exists($mdProperty, $this->m_metadata) ? $this->m_metadata[$mdProperty] : '';
+	}
+
+	public function getMetadataType($mdProperty) {
+		return array_key_exists($mdProperty, $this->m_metadataTypes) ? $this->m_metadataTypes[$mdProperty] : '';
+	}
+
+	public function getMetadataMap() {
+		return $this->m_metadata;
+	}
+	/// Patch:KK|Metadata data|End
+
 	/**
 	 * Array of error text messages. Private to allow us to track error insertion
 	 * (PHP's count() is too slow when called often) by using $mHasErrors.

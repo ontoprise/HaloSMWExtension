@@ -120,6 +120,7 @@ class SMWWikiPageValue extends SMWDataValue {
 		$this->m_namespace = array_key_exists( 1, $args ) ? $args[1]:$this->m_fixNamespace;
 		$this->m_interwiki = array_key_exists( 2, $args ) ? $args[2]:'';
 		$this->m_sortkey   = array_key_exists( 3, $args ) ? $args[3]:'';
+		$this->m_fragment  = array_key_exists( 4, $args ) ? $args[4]:'';
 		$this->m_textform = str_replace( '_', ' ', $this->m_dbkeyform );
 		$this->m_id = false;
 		$this->m_title = null;
@@ -168,6 +169,21 @@ class SMWWikiPageValue extends SMWDataValue {
 		} elseif ( $this->m_namespace == NS_IMAGE ) { // embed images instead of linking to their page
 			 return '[[' . str_replace( "'", '&#x0027;', $this->getPrefixedText() ) . '|' . $this->m_textform . '|frameless|border|text-top]]';
 		} else { // this takes care of all other cases, esp. it is right for Media:
+			if ( $this->m_fragment != NULL) {
+				if (strpos($this->m_fragment, "##") === false) {
+					// only fragment set
+					$fragment = $this->m_fragment;
+					$label = $this->m_textform;
+				} else {
+					// fragment set with alternative label encoded
+					list($label, $fragment) = explode("##",$this->m_fragment);
+				}
+			} else {
+				// no fragment at all set
+				$label = $this->m_textform;
+				$fragment = "";
+			}
+			$fragment = str_replace("'", '&#x0027;', $fragment);
 			return '[[:' . str_replace( "'", '&#x0027;', $this->getPrefixedText() ) . '|' . $this->m_textform . ']]';
 		}
 	}
@@ -371,8 +387,8 @@ class SMWWikiPageValue extends SMWDataValue {
 	/**
 	 * @deprecated Use setDBkeys()
 	 */
-	public function setValues( $dbkey, $namespace, $id = false, $interwiki = '', $sortkey = '' ) {
-		$this->setDBkeys( array( $dbkey, $namespace, $interwiki, $sortkey ) );
+	public function setValues( $dbkey, $namespace, $id = false, $interwiki = '', $sortkey = '', $fragment = '' ) {
+		$this->setDBkeys( array( $dbkey, $namespace, $interwiki, $sortkey, $fragment ) );
 	}
 
 }
