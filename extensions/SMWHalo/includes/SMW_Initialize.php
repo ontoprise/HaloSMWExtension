@@ -515,7 +515,7 @@ function smwfHaloInitDatatypes() {
  */
 function smwf_ts_getWikiNamespaces() {
 	global $wgExtraNamespaces;
-	$builtinNS = array(SMW_NS_PROPERTY, SMW_NS_PROPERTY_TALK, SMW_NS_TYPE, SMW_NS_TYPE_TALK, SMW_NS_CONCEPT, SMW_NS_CONCEPT_TALK);
+	$builtinNS = array(SMW_NS_PROPERTY, SMW_NS_PROPERTY_TALK, SMW_NS_TYPE, SMW_NS_TYPE_TALK, SMW_NS_CONCEPT, SMW_NS_CONCEPT_TALK, SF_NS_FORM, SF_NS_FORM_TALK);
 	$result = "";
 	$first = true;
 	foreach($wgExtraNamespaces as $nsIndex => $nsText) {

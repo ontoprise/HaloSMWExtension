@@ -230,17 +230,21 @@ class TSNamespaces {
 	public static $RDFS_NS = "http://www.w3.org/2000/01/rdf-schema#";
 	public static $XSD_NS = "http://www.w3.org/2001/XMLSchema#";
 	public static $TSCTYPE_NS = "http://www.ontoprise.de/smwplus/tsc/unittype#";
-
+    
+	// MW + SMW namespaces
 	public static $CAT_NS;
 	public static $PROP_NS;
+	public static $FORM_NS;
+	public static $CONC_NS;
 	public static $INST_NS;
 	public static $TYPE_NS;
-	public static $IMAGE_NS;
+	public static $FILE_NS;
 	public static $HELP_NS;
 	public static $TEMPLATE_NS;
 	public static $USER_NS;
 	public static $UNKNOWN_NS;
-
+    
+	// collections of namespaces
 	public static $ALL_NAMESPACES;
 	public static function getAllNamespaces() { return self::$ALL_NAMESPACES; }
 	public static $ALL_PREFIXES;
@@ -253,9 +257,11 @@ class TSNamespaces {
 	// general namespace suffixes for different namespaces
 	public static $CAT_NS_SUFFIX = "/category/";
 	public static $PROP_NS_SUFFIX = "/property/";
+	public static $FORM_NS_SUFFIX = "/form/";
+	public static $CONC_NS_SUFFIX = "/concept/";
 	public static $INST_NS_SUFFIX = "/a/";
 	public static $TYPE_NS_SUFFIX = "/type/";
-	public static $IMAGE_NS_SUFFIX = "/image/";
+	public static $FILE_NS_SUFFIX = "/file/";
 	public static $HELP_NS_SUFFIX = "/help/";
 	public static $TEMPLATE_NS_SUFFIX = "/template/";
 	public static $USER_NS_SUFFIX = "/user/";
@@ -281,23 +287,32 @@ class TSNamespaces {
 			
 		self::$CAT_NS = $smwgTripleStoreGraph.self::$CAT_NS_SUFFIX;
 		self::$PROP_NS = $smwgTripleStoreGraph.self::$PROP_NS_SUFFIX;
+		self::$FORM_NS = $smwgTripleStoreGraph.self::$FORM_NS_SUFFIX;
+		self::$CONC_NS = $smwgTripleStoreGraph.self::$CONC_NS_SUFFIX;
 		self::$INST_NS = $smwgTripleStoreGraph.self::$INST_NS_SUFFIX;
 		self::$TYPE_NS = $smwgTripleStoreGraph.self::$TYPE_NS_SUFFIX;
-		self::$IMAGE_NS = $smwgTripleStoreGraph.self::$IMAGE_NS_SUFFIX;
+		self::$FILE_NS = $smwgTripleStoreGraph.self::$FILE_NS_SUFFIX;
 		self::$HELP_NS = $smwgTripleStoreGraph.self::$HELP_NS_SUFFIX;
 		self::$TEMPLATE_NS = $smwgTripleStoreGraph.self::$TEMPLATE_NS_SUFFIX;
 		self::$USER_NS = $smwgTripleStoreGraph.self::$USER_NS_SUFFIX;
 		self::$UNKNOWN_NS = $smwgTripleStoreGraph.self::$UNKNOWN_NS_SUFFIX;
 
-		self::$ALL_NAMESPACES = array(NS_MAIN=>self::$INST_NS, NS_CATEGORY => self::$CAT_NS, SMW_NS_PROPERTY => self::$PROP_NS,
-		SMW_NS_TYPE => self::$TYPE_NS, NS_IMAGE => self::$IMAGE_NS, NS_HELP => self::$HELP_NS, NS_TEMPLATE => self::$TEMPLATE_NS,
-		NS_USER => self::$USER_NS);
+		self::$ALL_NAMESPACES = array(NS_MAIN=>self::$INST_NS, 
+		                              NS_CATEGORY => self::$CAT_NS, 
+		                              SMW_NS_PROPERTY => self::$PROP_NS,
+		                              SMW_NS_TYPE => self::$TYPE_NS,
+		                              SMW_NS_CONCEPT=>self::$CONC_NS,
+		                              SF_NS_FORM=>self::$FORM_NS,
+		                              NS_IMAGE => self::$FILE_NS,
+		                              NS_HELP => self::$HELP_NS,
+		                              NS_TEMPLATE => self::$TEMPLATE_NS,
+		                              NS_USER => self::$USER_NS);
 
 		// declare all common namespaces as SPARQL PREFIX statement (W3C + standard wiki + SMW)
 		self::$ALL_PREFIXES = 'PREFIX xsd:<'.self::$XSD_NS.'> PREFIX owl:<'.self::$OWL_NS.'> PREFIX rdfs:<'.
 		self::$RDFS_NS.'> PREFIX rdf:<'.self::$RDF_NS.'> PREFIX cat:<'.self::$CAT_NS.'> PREFIX category:<'.self::$CAT_NS.'> PREFIX property:<'.self::$PROP_NS.'> PREFIX prop:<'.
-		self::$PROP_NS.'> PREFIX a:<'.self::$INST_NS.'> PREFIX type:<'.self::$TYPE_NS.'> PREFIX image:<'.
-		self::$IMAGE_NS.'> PREFIX help:<'.self::$HELP_NS.'> PREFIX template:<'.self::$TEMPLATE_NS.'> PREFIX user: <'.self::$USER_NS.'> ';
+		self::$PROP_NS.'> PREFIX a:<'.self::$INST_NS.'> PREFIX type:<'.self::$TYPE_NS.'> PREFIX form:<'.self::$FORM_NS.'> PREFIX concept:<'.self::$CONC_NS.'> PREFIX image:<'.
+		self::$FILE_NS.'> PREFIX help:<'.self::$HELP_NS.'> PREFIX template:<'.self::$TEMPLATE_NS.'> PREFIX user: <'.self::$USER_NS.'> ';
 
 		self::$W3C_PREFIXES = 'PREFIX xsd:<'.self::$XSD_NS.'> PREFIX owl:<'.self::$OWL_NS.'> PREFIX rdfs:<'.
 		self::$RDFS_NS.'> PREFIX rdf:<'.self::$RDF_NS.'> ';
@@ -305,7 +320,7 @@ class TSNamespaces {
 		self::$TSC_PREFIXES = "PREFIX tsctype:<".self::$TSCTYPE_NS."> ";
 
 		// declare all other namespaces using ns_$index as prefix
-		$extraNamespaces = array_diff(array_keys($wgExtraNamespaces), array(NS_CATEGORY, SMW_NS_PROPERTY, SMW_NS_TYPE, NS_IMAGE, NS_HELP, NS_MAIN));
+		$extraNamespaces = array_diff(array_keys($wgExtraNamespaces), array_keys(self::$ALL_NAMESPACES));
 		foreach($extraNamespaces as $nsIndex) {
 			$nsText = strtolower($wgContLang->getNsText($nsIndex));
 			self::$ALL_PREFIXES .= " PREFIX $nsText:<".$smwgTripleStoreGraph."/ns_$nsIndex/> ";
@@ -402,8 +417,8 @@ class TSNamespaces {
 			return self::$INST_NS.$local;
 		} else if (self::$TYPE_NS_SUFFIX == ("/".$prefix."/")) {
 			return self::$TYPE_NS.$local;
-		} else if (self::$IMAGE_NS_SUFFIX == ("/".$prefix."/")) {
-			return self::$IMAGE_NS.$local;
+		} else if (self::$FILE_NS_SUFFIX == ("/".$prefix."/")) {
+			return self::$FILE_NS.$local;
 		} else if (self::$HELP_NS_SUFFIX == ("/".$prefix."/")) {
 			return self::$HELP_NS.$local;
 		} // FIXME: get other namespaces

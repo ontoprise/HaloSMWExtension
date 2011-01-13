@@ -336,6 +336,13 @@ class SMWTripleStore extends SMWStore {
                     $triples[] = array($subject_iri, $property_iri, "\"".TSHelper::escapeForStringLiteral($firstValue)."\"^^xsd:string");
                 }
                 continue;
+            } elseif ($property->getPropertyID() == "_CONC") {
+                foreach($propertyValueArray as $value) {
+                    $dbkeys = $value->getDBkeys();
+                    $firstValue = array_shift($dbkeys);
+                    $triples[] = array($subject_iri, "tsctype:concept", "\"".TSHelper::escapeForStringLiteral($firstValue)."\"^^xsd:string");
+                }
+                continue;
             } elseif ($property->getPropertyID() == "_LIST") {
                 foreach($propertyValueArray as $value) {
 
