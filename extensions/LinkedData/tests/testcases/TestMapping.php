@@ -59,6 +59,10 @@ text;
 		$store->removeAllMappings();
 		$store->removeAllMappingsFromPage($articleName);
 		
+		$tsa = new LODTripleStoreAccess();
+		$tsa->dropGraph("http://www.example.org/smw-lde/smwGraphs/MappingRepository");
+		$tsa->flushCommands();
+		
 	}
 
 	/**

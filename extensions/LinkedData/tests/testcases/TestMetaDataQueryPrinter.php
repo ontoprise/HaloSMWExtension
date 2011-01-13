@@ -78,7 +78,7 @@ class TestMetaDataQueryPrinterSuite extends PHPUnit_Framework_TestSuite
 		$tsa->dropGraph($this->mGraph2);
 		$tsa->dropGraph($this->mGraph3);
 		$tsa->dropGraph($this->mProvGraph);
-		$tsa->createGraph($this->mDSIGraph);
+		$tsa->dropGraph($this->mDSIGraph);
 		$tsa->flushCommands();
 		
 	}
@@ -354,6 +354,7 @@ SPARQL;
 	 * data printer. 
 	 */
 	function testMDPTableContent() {
+		
 		$res = self::getQueryResult("(SWP2_AUTHORITY;IMPORT_GRAPH_CREATED)", "table");
 		
 		$expected = <<<HTML
@@ -431,81 +432,132 @@ HTML;
 		self::checkMetaDataOfValue("Category:Automobile", $res, $expected);
 
 //-------------------------
-/*
+
 		// Retrieve all available meta-data
 		$res = self::getQueryResult("*", "table");
 		
 		$expected = <<<HTML
-<span class="lodMetadata">113
-  <span class="lodMetadataContent">
-    <span class = "lodMdTableTitle">Meta-data for this data value</span>
-    <table class="lodMdTable">
+<spanclass="lodMetadatalod_background2">113
+  <spanclass="lodMetadataContent"style="display:none">
+    <spanclass="lodMdTableTitle">Meta-dataforthisdatavalue</span>
+    <tableclass="lodMdTable">
       <tr>
         <th>Property</th>
         <th>Value</th>
       </tr>
       <tr>
-        <td>import_graph_created</td>
+        <td>LocationoftheRDFdatadump</td>
+        <td>http://www.example/nullvalue</td>
+      </tr>
+      <tr>
+        <td>Homepageofthedatasource</td>
+        <td>http://www.example/nullvalue</td>
+      </tr>
+      <tr>
+        <td>Importdate</td>
         <td>2010-05-19T08:33:19</td>
       </tr>
       <tr>
-        <td>swp2_authority</td>
-        <td>http://www.example.org/smw-lde/smwDatasources/DataSource1</td>
+        <td>RepresentativesampleURIforcrawling</td>
+        <td>http://www.example/nullvalue</td>
+      </tr>
+      <tr>
+        <td>SPARQLprotocolendpoint</td>
+        <td>http://sparql.toyota.org</td>
+      </tr>
+      <tr>
+        <td>Datasource</td>
+        <td>Toyota</td>
       </tr>
     </table>
   </span>
+  <spanclass="lodRatingKey"style="display:none">***</span>
 </span>
 HTML;
 		self::checkMetaDataOfValue("113", $res, $expected);
 		
 		
 		$expected = <<<HTML
-<span class="lodMetadata">Category:Hybrid
-  <span class="lodMetadataContent">
-    <span class = "lodMdTableTitle">Meta-data for this data value</span>
-    <table class="lodMdTable">
+<spanclass="lodMetadatalod_background2">Category:Hybrid
+  <spanclass="lodMetadataContent"style="display:none">
+    <spanclass="lodMdTableTitle">Meta-dataforthisdatavalue</span>
+    <tableclass="lodMdTable">
       <tr>
         <th>Property</th>
         <th>Value</th>
       </tr>
       <tr>
-        <td>import_graph_created</td>
+        <td>LocationoftheRDFdatadump</td>
+        <td>http://www.example/nullvalue</td>
+      </tr>
+      <tr>
+        <td>Homepageofthedatasource</td>
+        <td>http://www.example/nullvalue</td>
+      </tr>
+      <tr>
+        <td>Importdate</td>
         <td>2010-05-19T08:33:19</td>
       </tr>
       <tr>
-        <td>swp2_authority</td>
-        <td>http://www.example.org/smw-lde/smwDatasources/DataSource1</td>
+        <td>RepresentativesampleURIforcrawling</td>
+        <td>http://www.example/nullvalue</td>
+      </tr>
+      <tr>
+        <td>SPARQLprotocolendpoint</td>
+        <td>http://sparql.toyota.org</td>
+      </tr>
+      <tr>
+        <td>Datasource</td>
+        <td>Toyota</td>
       </tr>
     </table>
   </span>
+  <spanclass="lodRatingKey"style="display:none">***</span>
 </span>
 HTML;
 		self::checkMetaDataOfValue("Category:Hybrid", $res, $expected);
 		
 		
 		$expected = <<<HTML
-<span class="lodMetadata">Category:Automobile
-  <span class="lodMetadataContent">
-    <span class = "lodMdTableTitle">Meta-data for this data value</span>
-    <table class="lodMdTable">
+<spanclass="lodMetadatalod_background2">Category:Automobile
+  <spanclass="lodMetadataContent"style="display:none">
+    <spanclass="lodMdTableTitle">Meta-dataforthisdatavalue</span>
+    <tableclass="lodMdTable">
       <tr>
         <th>Property</th>
         <th>Value</th>
       </tr>
       <tr>
-        <td>import_graph_created</td>
+        <td>LocationoftheRDFdatadump</td>
+        <td>http://www.example/nullvalue</td>
+      </tr>
+      <tr>
+        <td>Homepageofthedatasource</td>
+        <td>http://www.example/nullvalue</td>
+      </tr>
+      <tr>
+        <td>Importdate</td>
         <td>2010-05-19T08:33:19</td>
       </tr>
       <tr>
-        <td>swp2_authority</td>
-        <td>http://www.example.org/smw-lde/smwDatasources/DataSource1</td>
+        <td>RepresentativesampleURIforcrawling</td>
+        <td>http://www.example/nullvalue</td>
+      </tr>
+      <tr>
+        <td>SPARQLprotocolendpoint</td>
+        <td>http://sparql.toyota.org</td>
+      </tr>
+      <tr>
+        <td>Datasource</td>
+        <td>Toyota</td>
       </tr>
     </table>
   </span>
+  <spanclass="lodRatingKey"style="display:none">***</span>
 </span>
 HTML;
 		self::checkMetaDataOfValue("Category:Automobile", $res, $expected);
-*/		
+
 	}
 	
 	/**

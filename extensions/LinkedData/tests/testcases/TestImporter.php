@@ -54,6 +54,17 @@ END;
 	}
 
 	function tearDown() {
+		$graphs = array(
+			"http://www.example.org/smw-lde/smwGraphs/ProvenanceGraph",
+			"http://www.example.org/smw-lde/smwGraphs/DataSourceInformationGraph",
+		);
+		
+		$tsa = new LODTripleStoreAccess();
+		foreach ($graphs as $g) {
+			$tsa->dropGraph($g);
+		}
+		$tsa->flushCommands();
+		
 	}
 
 	function testLoadDataFromDumpTranslateResolve() {

@@ -69,11 +69,11 @@ class TestLODRating extends PHPUnit_Framework_TestCase {
 
     function tearDown() {
 		$tsa = new LODPersistentTripleStoreAccess();
-		foreach ($this->mGraphsToDelete as $g) {
-			$tsa->dropGraph($g);
-		}
 		foreach ($this->mPersistenceToDelete as $p) {
 			$tsa->deletePersistentTriples($p[0], $p[1]);
+		}
+		foreach ($this->mGraphsToDelete as $g) {
+			$tsa->dropGraph($g);
 		}
 		$tsa->flushCommands();
 		$mGraphsToDelete = array();
@@ -138,8 +138,8 @@ class TestLODRating extends PHPUnit_Framework_TestCase {
     	// The hash values must be changed if the method for hashing triples
     	// in LODRatingAccess is changed.
     	$this->mGraphsToDelete[] = "http://www.example.org/smw-lde/smwGraphs/RatingsGraph";
-    	$this->mGraphsToDelete[] = "http://www.example.org/smw-lde/smwGraphs/RatingGraph_957d27efdf7797e127662ff5da52f32b";
-    	$this->mPersistenceToDelete[] = array("LODRating", "957d27efdf7797e127662ff5da52f32b");
+    	$this->mGraphsToDelete[] = "http://www.example.org/smw-lde/smwGraphs/RatingGraph_95b4513ad80be8d1eccaabb17f902534";
+    	$this->mPersistenceToDelete[] = array("LODRating", "95b4513ad80be8d1eccaabb17f902534");
     	
     	$pm = LODPrefixManager::getInstance();
     	$pm->addPrefix("ex", "http://example.com/");
@@ -189,8 +189,10 @@ class TestLODRating extends PHPUnit_Framework_TestCase {
     	// The hash values must be changed if the method for hashing triples
     	// in LODRatingAccess is changed.
     	$this->mGraphsToDelete[] = "http://www.example.org/smw-lde/smwGraphs/RatingsGraph";
-    	$this->mGraphsToDelete[] = "http://www.example.org/smw-lde/smwGraphs/RatingGraph_957d27efdf7797e127662ff5da52f32b";
-    	$this->mPersistenceToDelete[] = array("LODRating", "957d27efdf7797e127662ff5da52f32b");
+    	$this->mGraphsToDelete[] = "http://www.example.org/smw-lde/smwGraphs/RatingGraph_7c6af33be89056381bff218c50b9b311";
+    	$this->mGraphsToDelete[] = "http://www.example.org/smw-lde/smwGraphs/RatingGraph_95b4513ad80be8d1eccaabb17f902534";
+    	$this->mPersistenceToDelete[] = array("LODRating", "7c6af33be89056381bff218c50b9b311");
+    	$this->mPersistenceToDelete[] = array("LODRating", "95b4513ad80be8d1eccaabb17f902534");
     	
     	
     	$pm = LODPrefixManager::getInstance();
@@ -802,7 +804,11 @@ SPARQL;
     function testRatingWorkflow() {
     	
     	$this->setupAuthorExample();
- 
+    	
+    	$this->mGraphsToDelete[] = "http://www.example.org/smw-lde/smwGraphs/RatingsGraph";
+    	$this->mGraphsToDelete[] = "http://www.example.org/smw-lde/smwGraphs/RatingGraph_7c6af33be89056381bff218c50b9b311";
+    	$this->mPersistenceToDelete[] = array("LODRating", "7c6af33be89056381bff218c50b9b311");
+    	
 		$query = <<<SPARQL
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
@@ -912,7 +918,7 @@ SPARQL;
     	$this->assertEquals($r->getValue(), $rating->getValue());
     	$this->assertEquals($r->getAuthor(), $rating->getAuthor());
     	$this->assertEquals($r->getComment(), $rating->getComment());
-    	$this->assertEquals($r->getCreationTime(), $rating->getCreationTime());
+    	$this->assertEquals($r->getCreationTime(), $rating->getCreationTime());    	
     	
     }
     

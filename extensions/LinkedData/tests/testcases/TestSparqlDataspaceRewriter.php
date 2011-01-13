@@ -49,7 +49,7 @@ class TestSparqlDataspaceRewriter extends PHPUnit_Framework_TestCase {
 		$tsa->dropGraph($this->mGraph2);
 		$tsa->dropGraph($this->mGraph3);
 		$tsa->dropGraph($this->mProvGraph);
-		$tsa->createGraph($this->mDSIGraph);
+		$tsa->dropGraph($this->mDSIGraph);
 		$tsa->flushCommands();
     	
     }

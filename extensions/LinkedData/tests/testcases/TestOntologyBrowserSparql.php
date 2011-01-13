@@ -53,7 +53,7 @@ class TestOntologyBrowserSparql extends PHPUnit_Framework_TestCase {
 		$tsa->dropGraph($this->mGraph1);
 		$tsa->dropGraph($this->mGraph2);
 		$tsa->dropGraph($this->mProvGraph);
-		$tsa->createGraph($this->mDSIGraph);
+		$tsa->dropGraph($this->mDSIGraph);
 		$tsa->flushCommands();
 			
 	}
