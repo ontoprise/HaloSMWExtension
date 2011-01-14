@@ -15,7 +15,7 @@ class SFCreateCategory extends SpecialPage {
 	 */
 	function __construct() {
 		parent::__construct( 'CreateCategory' );
-		wfLoadExtensionMessages( 'SemanticForms' );
+		SFUtils::loadMessages();
 	}
 
 	function execute( $query ) {
@@ -24,7 +24,7 @@ class SFCreateCategory extends SpecialPage {
 	}
 
 	static function createCategoryText( $default_form, $category_name, $parent_category ) {
-		wfLoadExtensionMessages( 'SemanticForms' );
+		SFUtils::loadMessages();
 
 		if ( $default_form == '' ) {
 			$text = wfMsgForContent( 'sf_category_desc', $category_name );
@@ -47,7 +47,7 @@ class SFCreateCategory extends SpecialPage {
 function doSpecialCreateCategory() {
 	global $wgOut, $wgRequest, $wgUser, $sfgScriptPath;
 
-	wfLoadExtensionMessages( 'SemanticForms' );
+	SFUtils::loadMessages();
 
 	# cycle through the query values, setting the appropriate local variables
 	$category_name = $wgRequest->getVal( 'category_name' );
@@ -97,7 +97,7 @@ END;
 	}
 
 	$subcategory_label = wfMsg( 'sf_createcategory_makesubcategory' );
-	$categories = SFLinkUtils::getCategoriesForArticle();
+	$categories = SFUtils::getCategoriesForPage();
 	$sk = $wgUser->getSkin();
 	$cf = SpecialPage::getPage( 'CreateForm' );
 	$create_form_link = $sk->makeKnownLinkObj( $cf->getTitle(), $cf->getDescription() );

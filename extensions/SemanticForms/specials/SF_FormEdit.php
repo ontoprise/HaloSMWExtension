@@ -14,7 +14,7 @@ class SFFormEdit extends SpecialPage {
 	 */
 	function __construct() {
 		parent::__construct( 'FormEdit' );
-		wfLoadExtensionMessages( 'SemanticForms' );
+		SFUtils::loadMessages();
 	}
 
 	function execute( $query ) {
@@ -49,10 +49,15 @@ class SFFormEdit extends SpecialPage {
 		return $text;
 	}
 
+	static function makeRandomNumber() {
+		srand( time() );
+		return rand() % 1000000;
+	}
+
 	static function printForm( $form_name, $target_name, $alt_forms = array() ) {
 		global $wgOut, $wgRequest, $wgScriptPath, $sfgScriptPath, $sfgFormPrinter;
 
-		wfLoadExtensionMessages( 'SemanticForms' );
+		SFUtils::loadMessages();
 
 		// initialize some variables
 		$target_title = null;
@@ -61,7 +66,7 @@ class SFFormEdit extends SpecialPage {
 		// get contents of form and target page - if there's only one,
 		// it might be a target with only alternate forms
 		if ( $form_name == '' ) {
-			$wgOut->addHTML( "<p class='error'>" . wfMsg( 'sf_formedit_badurl' ) . '</p>' );
+			$wgOut->addHTML( Xml::element( 'p', array( 'class' => 'error' ), wfMsg( 'sf_formedit_badurl' ) ) );
 			return;
 		} elseif ( $target_name == '' ) {
 			// parse the form to see if it has a 'page name' value set
@@ -70,15 +75,11 @@ class SFFormEdit extends SpecialPage {
 			$form_definition = $form_article->getContent();
 			$form_definition = StringUtils::delimiterReplace( '<noinclude>', '</noinclude>', '', $form_definition );
 			$matches;
-			if ( preg_match( '/{{{info.*page name\s*=\s*([^\|]*)/m', $form_definition, $matches ) ) {
-				$page_name_formula = str_replace( '_', ' ', $matches[1] );
-				// if the tag close ('}}}') is in here, chop off
-				// that and everything after it
-				if ( $pos = strpos( $page_name_formula, '}}}' ) ) {
-					$page_name_formula = substr( $page_name_formula, 0, $pos );
-				}
+			if ( preg_match( '/{{{info.*page name\s*=\s*(.*)}}}/m', $form_definition, $matches ) ) {
+				$page_name_elements = SFUtils::getFormTagComponents( $matches[1] );
+				$page_name_formula = $page_name_elements[0];
 			} elseif ( count( $alt_forms ) == 0 ) {
-				$wgOut->addWikiText( "<p class='error'>" . wfMsg( 'sf_formedit_badurl' ) . '</p>' );
+				$wgOut->addHTML( Xml::element( 'p', array( 'class' => 'error' ), wfMsg( 'sf_formedit_badurl' ) ) );
 				return;
 			}
 		}
@@ -112,19 +113,19 @@ class SFFormEdit extends SpecialPage {
 
 		if ( ! $form_title || ! $form_title->exists() ) {
 			if ( $form_name == '' ) {
-				$text = '<p class="error">' . wfMsg( 'sf_formedit_badurl' ) . "</p>\n";
+				$text = Xml::element( 'p', array( 'class' => 'error' ), wfMsg( 'sf_formedit_badurl' ) ) . "\n";
 			} else {
 				if ( count( $alt_forms ) > 0 ) {
 					$text .= '<div class="infoMessage">' . wfMsg( 'sf_formedit_altformsonly' ) . ' ';
 					$text .= self::printAltFormsList( $alt_forms, $form_name );
 					$text .= "</div>\n";
-				} else
-					$text = '<p class="error">' . wfMsg( 'sf_formstart_badform', SFUtils::linkText( SF_NS_FORM, $form_name ) ) . ".</p>\n";
+				} else {
+					$text = Xml::tags( 'p', array( 'class' => 'error' ), wfMsg( 'sf_formstart_badform', SFUtils::linkText( SF_NS_FORM, $form_name ) ) ) . "\n";
+				}
 			}
 		} elseif ( $target_name == '' && $page_name_formula == '' ) {
-			$text = '<p class="error">' . wfMsg( 'sf_formedit_badurl' ) . "</p>\n";
+			$text = Xml::element( 'p', array( 'class' => 'error' ), wfMsg( 'sf_formedit_badurl' ) ) . "\n";
 		} else {
-			SFUtils::addJavascriptAndCSS();
 			$form_article = new Article( $form_title );
 			$form_definition = $form_article->getContent();
 
@@ -178,15 +179,22 @@ class SFFormEdit extends SpecialPage {
 					$target_name = $wgParser->recursiveTagParse( $target_name );
 
 					if ( strpos( $target_name, '{num' ) ) {
+						$title_number = "";
+						$isRandom = false;
 						// get unique number start value
 						// from target name; if it's not
 						// there, or it's not a positive
 						// number, start it out as blank
 						preg_match( '/{num.*start[_]*=[_]*([^;]*).*}/', $target_name, $matches );
 						if ( count( $matches ) == 2 && is_numeric( $matches[1] ) && $matches[1] >= 0 ) {
+							// the "start" value"
 							$title_number = $matches[1];
 						} else {
-							$title_number = "";
+							// random number
+							if ( preg_match( '/{num;random}/', $target_name, $matches ) ) {
+								$isRandom = true;
+								$title_number = self::makeRandomNumber();
+							}
 						}
 						// cycle through numbers for
 						// this tag until we find one
@@ -194,11 +202,18 @@ class SFFormEdit extends SpecialPage {
 						// title
 						do {
 							$target_title = Title::newFromText( preg_replace( '/{num.*}/', $title_number, $target_name ) );
+							// create another title
+							// number in case we
+							// need it for the
+							// next loop
+							if ( $isRandom ) {
+								$title_number = self::makeRandomNumber();
+							}
 							// if title number is blank,
 							// change it to 2; otherwise,
 							// increment it, and if necessary
 							// pad it with leading 0s as well
-							if ( $title_number == "" ) {
+							elseif ( $title_number == "" ) {
 								$title_number = 2;
 							} else {
 								$title_number = str_pad( $title_number + 1, strlen( $title_number ), '0', STR_PAD_LEFT );
@@ -230,11 +245,11 @@ class SFFormEdit extends SpecialPage {
 					$text .= "</div>\n";
 				}
 				$text .= <<<END
-				<form name="createbox" onsubmit="return validate_all()" action="" method="post" class="createbox">
+				<form name="createbox" id="sfForm" action="" method="post" class="createbox">
 
 END;
 				$pre_form_html = '';
-				wfRunHooks( 'sfHTMLBeforeForm', array( &$page_title, &$pre_form_html ) );
+				wfRunHooks( 'sfHTMLBeforeForm', array( &$target_title, &$pre_form_html ) );
 				$text .= $pre_form_html;
 				$text .= $form_text;
 			}
@@ -249,8 +264,9 @@ END;
 		// if (! empty($javascript_text))
 		//	$wgOut->addScript('		<script type="text/javascript">' . "\n" . $javascript_text . '</script>' . "\n");
 		$wgOut->addHTML( $text );
+		SFUtils::addJavascriptAndCSS();
 		if ( ! empty( $javascript_text ) ) {
-			$wgOut->addHTML( '		<script type="text/javascript">' . "\n" . $javascript_text . '</script>' . "\n" );
+			$wgOut->addHTML( '		<script type="text/javascript">' . "\n$javascript_text\n" . '</script>' . "\n" );
 		}
 	}
 

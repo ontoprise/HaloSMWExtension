@@ -7,7 +7,7 @@
 
 if ( !defined( 'MEDIAWIKI' ) ) die();
 
-define( 'SF_VERSION', '{{$VERSION}} [B{{$BUILDNUMBER}}]' );
+define( 'SF_VERSION', '2.0.8' );
 
 $wgExtensionCredits[defined( 'SEMANTIC_EXTENSION_TYPE' ) ? 'semantic' : 'specialpage'][] = array(
 	'path' => __FILE__,
@@ -31,17 +31,17 @@ $wgExtensionFunctions[] = 'sfgSetupExtension';
 $wgHooks['LanguageGetMagic'][] = 'SFParserFunctions::languageGetMagic';
 // the 'BrokenLink' hook exists only in MediaWiki v1.13 - it was replaced
 // by 'LinkBegin' and 'LinkEnd'
-$wgHooks['BrokenLink'][] = 'SFLinkUtils::setBrokenLink_1_13';
-$wgHooks['LinkEnd'][] = 'SFLinkUtils::setBrokenLink';
+$wgHooks['BrokenLink'][] = 'SFFormLinker::setBrokenLink_1_13';
+$wgHooks['LinkEnd'][] = 'SFFormLinker::setBrokenLink';
 $wgHooks['UnknownAction'][] = 'SFFormEditTab::displayForm';
-// 'SkinTemplateNavigation' replaced 'SkinTemplateTabs' in the 'Vector' skin
-// for MediaWiki v1.16
+// 'SkinTemplateNavigation' replaced 'SkinTemplateTabs' in the Vector skin
 $wgHooks['SkinTemplateTabs'][] = 'SFFormEditTab::displayTab';
 $wgHooks['SkinTemplateNavigation'][] = 'SFFormEditTab::displayTab2';
 $wgHooks['smwInitProperties'][] = 'SFUtils::initProperties';
 $wgHooks['AdminLinks'][] = 'sffAddToAdminLinks';
 $wgHooks['ParserBeforeStrip'][] = 'SFUtils::cacheFormDefinition';
 $wgHooks['ParserFirstCallInit'][] = 'SFParserFunctions::registerFunctions';
+$wgHooks['MakeGlobalVariablesScript'][] = 'SFFormUtils::setGlobalJSVariables';
 
 $wgAPIModules['sfautocomplete'] = 'SFAutocompleteAPI';
 
@@ -89,12 +89,24 @@ $wgAutoloadClasses['SFForm'] = $sfgIP . '/includes/SF_FormClasses.php';
 $wgAutoloadClasses['SFTemplateInForm'] = $sfgIP . '/includes/SF_FormClasses.php';
 $wgAutoloadClasses['SFFormField'] = $sfgIP . '/includes/SF_FormField.php';
 $wgAutoloadClasses['SFFormPrinter'] = $sfgIP . '/includes/SF_FormPrinter.php';
-$wgAutoloadClasses['SFFormInputs'] = $sfgIP . '/includes/SF_FormInputs.php';
+$wgAutoloadClasses['SFTextInput'] = $sfgIP . '/includes/SF_FormInputs.php';
+$wgAutoloadClasses['SFTextAreaInput'] = $sfgIP . '/includes/SF_FormInputs.php';
+$wgAutoloadClasses['SFTextWithAutocompleteInput'] = $sfgIP . '/includes/SF_FormInputs.php';
+$wgAutoloadClasses['SFDateInput'] = $sfgIP . '/includes/SF_FormInputs.php';
+$wgAutoloadClasses['SFDateTimeInput'] = $sfgIP . '/includes/SF_FormInputs.php';
+$wgAutoloadClasses['SFDropdownInput'] = $sfgIP . '/includes/SF_FormInputs.php';
+$wgAutoloadClasses['SFRadioButtonInput'] = $sfgIP . '/includes/SF_FormInputs.php';
+$wgAutoloadClasses['SFListBoxInput'] = $sfgIP . '/includes/SF_FormInputs.php';
+$wgAutoloadClasses['SFCheckboxesInput'] = $sfgIP . '/includes/SF_FormInputs.php';
+$wgAutoloadClasses['SFCheckboxInput'] = $sfgIP . '/includes/SF_FormInputs.php';
+$wgAutoloadClasses['SFComboBoxInput'] = $sfgIP . '/includes/SF_FormInputs.php';
+$wgAutoloadClasses['SFCategoryInput'] = $sfgIP . '/includes/SF_FormInputs.php';
+$wgAutoloadClasses['SFCategoriesInput'] = $sfgIP . '/includes/SF_FormInputs.php';
 $wgAutoloadClasses['SFFormUtils'] = $sfgIP . '/includes/SF_FormUtils.php';
 $wgAutoloadClasses['SFFormEditTab'] = $sfgIP . '/includes/SF_FormEditTab.php';
 $wgAutoloadClasses['SFFormEditPage'] = $sfgIP . '/includes/SF_FormEditPage.php';
 $wgAutoloadClasses['SFUtils'] = $sfgIP . '/includes/SF_Utils.php';
-$wgAutoloadClasses['SFLinkUtils'] = $sfgIP . '/includes/SF_LinkUtils.php';
+$wgAutoloadClasses['SFFormLinker'] = $sfgIP . '/includes/SF_FormLinker.php';
 $wgAutoloadClasses['SFParserFunctions'] = $sfgIP . '/includes/SF_ParserFunctions.php';
 $wgAutoloadClasses['SFAutocompleteAPI'] = $sfgIP . '/includes/SF_AutocompleteAPI.php';
 $wgJobClasses['createPage'] = 'SFCreatePageJob';
@@ -103,6 +115,39 @@ require_once( $sfgIP . '/languages/SF_Language.php' );
 
 $wgExtensionMessagesFiles['SemanticForms'] = $sfgIP . '/languages/SF_Messages.php';
 $wgExtensionAliasesFiles['SemanticForms'] = $sfgIP . '/languages/SF_Aliases.php';
+// Allow for file-upload windows for MW >= 1.16.1
+$wgEditPageFrameOptions = 'SAMEORIGIN';
+
+// register client-side modules
+if ( defined( 'MW_SUPPORTS_RESOURCE_MODULES' ) ) {
+	$sfgResourceTemplate = array(
+		'localBasePath' => $sfgIP,
+		'remoteExtPath' => 'SemanticForms'
+	);
+	$wgResourceModules += array(
+		'ext.semanticforms.main' => $sfgResourceTemplate + array(
+			'scripts' => array(
+				'libs/SemanticForms.js',
+				'libs/SF_ajax_form_preview.js',
+			),
+			'styles' => array(
+				'skins/SemanticForms.css',
+				'skins/SF_jquery_ui_overrides.css',
+			),
+			'dependencies' => array(
+				'jquery.ui.autocomplete',
+				'jquery.ui.button'
+			),
+		),
+		'ext.semanticforms.fancybox' => $sfgResourceTemplate + array(
+			'scripts' => 'libs/jquery.fancybox-1.3.1.js',
+			'styles' => 'skins/jquery.fancybox-1.3.1.css',
+		),
+		'ext.semanticforms.autogrow' => $sfgResourceTemplate + array(
+			'scripts' => 'libs/SF_autogrow.js',
+		),
+	);
+}
 
 /**
  *  Do the actual intialization of the extension. This is just a delayed init that makes sure

@@ -13,7 +13,8 @@ if ( !defined( 'MEDIAWIKI' ) ) die();
 # seen from the web. Change it if required ($wgScriptPath is the
 # path to the base directory of your wiki). No final slash.
 # #
-$sfgScriptPath = $wgScriptPath . '/extensions/SemanticForms';
+$sfgPartialPath = '/extensions/SemanticForms';
+$sfgScriptPath = $wgScriptPath . $sfgPartialPath;
 # #
 
 # ##
@@ -38,6 +39,14 @@ sffInitNamespaces();
 # slow down the database, and Javascript's completion
 # ##
 $sfgMaxAutocompleteValues = 1000;
+
+# ##
+# Whether to autocomplete on all characters in a string, not just the
+# beginning of words - this is especially important for Unicode strings,
+# since the use of the '\b' regexp character to match on the beginnings
+# of words fails for them.
+# ##
+$sfgAutocompleteOnAllChars = false;
 
 # ##
 # Global variables for handling the two edit tabs (for traditional editing
@@ -94,12 +103,20 @@ $sfg24HourTime = false;
 $sfgCacheFormDefinitions = false;
 
 # ##
+# When modifying red links to potentially point to a form to edit that page,
+# check only the properties pointing to that missing page from the page the
+# user is currently on, instead of from all pages in the wiki.
+# ##
+$sfgRedLinksCheckOnlyLocalProps = false;
+
+# ##
 # Page properties, used for the API
 # ##
 $wgPageProps['formdefinition'] = 'Definition of the semantic form used on the page';
 
 # ##
-# Ensures that the FancyBox Javascript library is only included once
+# Global variables for Javascript
 # ##
-$sfgFancyBoxIncluded = false;
-
+$sfgAdderButtons = array();
+$sfgShowOnSelect = array();
+$sfgAutocompleteValues = array();

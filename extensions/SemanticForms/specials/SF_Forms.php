@@ -14,18 +14,30 @@ class SFForms extends SpecialPage {
 	 */
 	function __construct() {
 		parent::__construct( 'Forms' );
-		wfLoadExtensionMessages( 'SemanticForms' );
+		SFUtils::loadMessages();
 	}
 
 	function execute( $query ) {
 		$this->setHeaders();
 		list( $limit, $offset ) = wfCheckLimits();
 		$rep = new FormsPage();
-		return $rep->doQuery( $offset, $limit );
+		// execute() method added in 1.18
+		if ( method_exists( $rep, 'execute' ) ) {
+			return $rep->execute( $query );
+		} else {
+			return $rep->doQuery( $offset, $limit );
+		}
 	}
 }
 
 class FormsPage extends QueryPage {
+	public function __construct( $name = 'Forms' ) {
+		// For MW <= 1.17
+		if ( $this instanceof SpecialPage ) {
+			parent::__construct( $name );
+		}
+	}
+	
 	function getName() {
 		return "Forms";
 	}
@@ -37,7 +49,7 @@ class FormsPage extends QueryPage {
 	function getPageHeader() {
 		global $wgUser;
 		
-		wfLoadExtensionMessages( 'SemanticForms' );
+		SFUtils::loadMessages();
 		
 		$sk = $wgUser->getSkin();
 		$cf = SpecialPage::getPage( 'CreateForm' );
@@ -62,6 +74,15 @@ class FormsPage extends QueryPage {
 			FROM $page
 			WHERE page_namespace = {$NSform}
 			AND page_is_redirect = 0";
+	}
+	
+	// For MW 1.18+
+	function getQueryInfo() {
+		return array(
+			'tables' => array( 'page' ),
+			'fields' => array( 'page_title AS title', 'page_title AS value' ),
+			'conds' => array( 'page_namespace' => SF_NS_FORM, 'page_is_redirect' => 0 )
+		);
 	}
 
 	function sortDescending() {

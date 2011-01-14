@@ -9,6 +9,74 @@ if ( !defined( 'MEDIAWIKI' ) ) die();
 
 class SFUtils {
 
+	/**
+	 * Creates the name of the page that appears in the URL;
+	 * this method is necessary because Title::getPartialURL(), for
+	 * some reason, doesn't include the namespace
+	 */
+	static function titleURLString( $title ) {
+		global $wgCapitalLinks;
+
+		$namespace = wfUrlencode( $title->getNsText() );
+		if ( $namespace != '' ) {
+			$namespace .= ':';
+		}
+		if ( $wgCapitalLinks ) {
+			global $wgContLang;
+			return $namespace . $wgContLang->ucfirst( $title->getPartialURL() );
+		} else {
+			return $namespace . $title->getPartialURL();
+		}
+	}
+
+	/**
+	 * A very similar function to titleURLString(), to get the
+	 * non-URL-encoded title string
+	 */
+	static function titleString( $title ) {
+		global $wgCapitalLinks;
+
+		$namespace = $title->getNsText();
+		if ( $namespace != '' ) {
+			$namespace .= ':';
+		}
+		if ( $wgCapitalLinks ) {
+			global $wgContLang;
+			return $namespace . $wgContLang->ucfirst( $title->getText() );
+		} else {
+			return $namespace . $title->getText();
+		}
+	}
+
+	/**
+	 * Helper function - gets names of categories for a page;
+	 * based on Title::getParentCategories(), but simpler
+	 * - this function doubles as a function to get all categories on
+	 * the site, if no article is specified
+	 */
+	static function getCategoriesForPage( $title = NULL ) {
+		$categories = array();
+		$db = wfGetDB( DB_SLAVE );
+		$conditions = null;
+		if ( !is_null( $title ) ) {
+			$titlekey = $title->getArticleId();
+			if ( $titlekey == 0 ) {
+				// Something's wrong - exit
+				return $categories;
+			}
+			$conditions = "cl_from='$titlekey'";
+		}
+		$res = $db->select( $db->tableName( 'categorylinks' ),
+			'distinct cl_to', $conditions, __METHOD__ );
+		if ( $db->numRows( $res ) > 0 ) {
+			while ( $row = $db->fetchRow( $res ) ) {
+				$categories[] = $row[0];
+			}
+		}
+		$db->freeResult( $res );
+		return $categories;
+	}
+
 	static function initProperties() {
 		global $sfgContLang;
 		$sf_props = $sfgContLang->getPropertyLabels();
@@ -102,12 +170,30 @@ END;
 	}
 
 	/**
+	 * Uses the ResourceLoader (available with MediaWiki 1.17 and higher)
+	 * to load all the necessary JS and CSS files for Semantic Forms.
+	 */
+	static function loadJavascriptAndCSS() {
+		global $wgOut;
+		$wgOut->addModules( 'ext.semanticforms.main' );
+		$wgOut->addModules( 'ext.semanticforms.fancybox' );
+		$wgOut->addModules( 'ext.semanticforms.autogrow' );
+		$wgOut->addModules( 'ext.smw.tooltips' );
+		$wgOut->addModules( 'ext.smw.sorttable' );
+	}
+
+	/**
 	 * Includes the necessary Javascript and CSS files for the form
 	 * to display and work correctly
 	 * 
 	 * Accepts an optional Parser instance, or uses $wgOut if omitted.
 	 */
 	static function addJavascriptAndCSS( $parser = NULL ) {
+		// MW 1.17 +
+		if ( class_exists( 'ResourceLoader' ) ) {
+			self::loadJavascriptAndCSS();
+			return;
+		}
 		global $wgOut, $sfgScriptPath, $smwgScriptPath, $wgScriptPath, $wgFCKEditorDir, $wgJsMimeType, $sfgUseFormEditPage;
 		global $smwgJQueryIncluded, $smwgJQUIAutoIncluded;
 		// jQuery and jQuery UI are used so often in forms, we might as
@@ -134,13 +220,17 @@ END;
 			else
 				$wgOut->addLink( $link );
 		}
-		$wgOut->addStyle( "$sfgScriptPath/skins/SF_IEfixes.css", 'screen', 'IE' );
 		
 		$scripts = array();
 		if ( !$sfgUseFormEditPage )
 			$scripts[] = "$sfgScriptPath/libs/SF_ajax_form_preview.js";
-		$scripts[] = "$smwgScriptPath/skins/SMW_tooltip.js";
-		$scripts[] = "$smwgScriptPath/skins/SMW_sorttable.js";
+		if ( method_exists( 'SMWOutputs', 'requireHeadItem' ) ) {
+			SMWOutputs::requireHeadItem( SMW_HEADER_TOOLTIP );
+			SMWOutputs::requireHeadItem( SMW_HEADER_SORTTABLE );
+		} else {
+			$scripts[] = "$smwgScriptPath/skins/SMW_tooltip.js";
+			$scripts[] = "$smwgScriptPath/skins/SMW_sorttable.js";
+		}
 		if ( method_exists( 'OutputPage', 'includeJQuery' ) ) {
 			$wgOut->includeJQuery();
 		} else {
@@ -151,10 +241,14 @@ END;
 		$scripts[] = "$sfgScriptPath/libs/jquery-ui/jquery.ui.button.min.js";
 		$scripts[] = "$sfgScriptPath/libs/jquery-ui/jquery.ui.position.min.js";
 		$scripts[] = "$sfgScriptPath/libs/jquery-ui/jquery.ui.autocomplete.min.js";
-		$scripts[] = "$sfgScriptPath/libs/SemanticForms.js";
+		$scripts[] = "$sfgScriptPath/libs/jquery.fancybox-1.3.1.js";
+		$scripts[] = "$sfgScriptPath/libs/SF_autogrow.js";
 
 		if ( $wgFCKEditorDir )
 			$scripts[] = "$wgScriptPath/$wgFCKEditorDir/fckeditor.js";
+		$scripts[] = "$sfgScriptPath/libs/SemanticForms.js";
+
+		global $wgOut;
 		foreach ( $scripts as $js ) {
 			if ( $parser ) {
 				$script = "<script type=\"$wgJsMimeType\" src=\"$js\"></script>\n";
@@ -172,11 +266,12 @@ END;
  	*/
 	static function getAllForms() {
 		$dbr = wfGetDB( DB_SLAVE );
-		$query = "SELECT page_title FROM " . $dbr->tableName( 'page' ) .
-			" WHERE page_namespace = " . SF_NS_FORM .
-			" AND page_is_redirect = 0" .
-			" ORDER BY page_title";
-		$res = $dbr->query( $query );
+		$res = $dbr->select( 'page',
+			'page_title',
+			array( 'page_namespace' => SF_NS_FORM,
+				'page_is_redirect' => false ),
+			__METHOD__,
+			array( 'ORDER BY' => 'page_title' ) );
 		$form_names = array();
 		while ( $row = $dbr->fetchRow( $res ) ) {
 			$form_names[] = str_replace( '_', ' ', $row[0] );
@@ -266,7 +361,8 @@ END;
 									$newcategories[] = $new_category;
 								}
 							} else {
-								$cur_value = str_replace( "_", " ", $row['page_title'] );
+								$cur_title = Title::makeTitleSafe( $row['page_namespace'], $row['page_title'] );
+								$cur_value = self::titleString( $cur_title );
 								if ( ! in_array( $cur_value, $pages ) ) {
 									if ( $substring == null )
 										$pages[] = $cur_value;
@@ -343,10 +439,10 @@ END;
 					$substring = str_replace( "'", "\'", $substring );
 					$conditions .= " AND (LOWER(CONVERT(`page_title` USING utf8)) LIKE '$substring%' OR LOWER(CONVERT(`page_title` USING utf8)) LIKE '%\_$substring%')";
 				}
-				$sql_options['ORDER BY'] = 'page_title';
-				$res = $db->select( $db->tableNames( 'page' ),
+				$res = $db->select( 'page',
 					'page_title',
-					$conditions, __METHOD__, $sql_options );
+					$conditions, __METHOD__,
+					array( 'ORDER BY' => 'page_title' ) );
 				while ( $row = $db->fetchRow( $res ) ) {
 					$cur_value = str_replace( '_', ' ', $row[0] );
 					if ( $substring == null ) {
@@ -359,6 +455,42 @@ END;
 			}
 		}
 		return $pages;
+	}
+
+	/**
+	 * Creates an array of values that match the specified source name and type,
+	 * for use by both Javascript autocompletion and comboboxes.
+	 */
+	static function getAutocompleteValues( $source_name, $source_type ) {
+		$names_array = array();
+		// the query depends on whether this is a property, category, concept
+		// or namespace
+		if ( $source_type == 'property' || $source_type == 'attribute' || $source_type == 'relation' ) {
+			$names_array = self::getAllValuesForProperty( $source_name );
+		} elseif ( $source_type == 'category' ) {
+			$names_array = self::getAllPagesForCategory( $source_name, 10 );
+		} elseif ( $source_type == 'concept' ) {
+			$names_array = self::getAllPagesForConcept( $source_name );
+		} else { // i.e., $source_type == 'namespace'
+			// switch back to blank for main namespace
+			if ( $source_name == "Main" )
+				$source_name = "";
+			$names_array = self::getAllPagesForNamespace( $source_name );
+		}
+		return $names_array;
+	}
+
+	/**
+	 * Helper function to get an array of values out of what may be either
+	 * an array or a delimited string
+	 */
+	static function getValuesArray( $value, $delimiter ) {
+		if ( is_array( $value ) ) {
+			return $value;
+		} else {
+			// remove extra spaces
+			return array_map( 'trim', explode( $delimiter, $value ) );
+		}
 	}
 
 	static function getValuesFromExternalURL( $external_url_alias, $substring ) {
@@ -376,6 +508,30 @@ END;
 			$return_values[] = (array)$val;
 		}
 		return $return_values;
+	}
+
+	/**
+	 * A helper function, used by getFormTagComponents().
+	 */
+	static function convertBackToPipes( $s ) {
+		return str_replace( "\1", '|', $s );
+	}
+
+	/**
+	 * This function is basically equivalent to calling
+	 * explode( '|', $str ), except that it doesn't split on pipes
+	 * that are within parser function calls - i.e., pipes within
+	 * double curly brackets.
+	 */
+	static function getFormTagComponents( $str ) {
+		// Turn each pipe within double curly brackets into another,
+		// unused character (here, "\1"), then do the explode, then
+		// convert them back.
+		$pattern = '/({{.*)\|(.*}})/';
+		while ( preg_match($pattern, $str, $matches) ) {
+			$str = preg_replace($pattern, "$1" . "\1" . "$2", $str);
+		}
+		return array_map( array('SFUtils', 'convertBackToPipes'), explode('|', $str) );
 	}
 
 	/**
@@ -405,5 +561,15 @@ END;
 
 		$parser->mOutput->setProperty( 'formdefinition', $form_def );
 		return true;
+	}
+
+	/*
+	 * Loads messages only for MediaWiki versions that need it (< 1.16)
+	 */
+	public static function loadMessages() {
+		global $wgVersion;
+		if ( version_compare( $wgVersion, '1.16', '<' ) ) {
+			wfLoadExtensionMessages( 'SemanticForms' );
+		}
 	}
 }

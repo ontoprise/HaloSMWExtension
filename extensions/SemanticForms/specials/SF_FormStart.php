@@ -15,7 +15,7 @@ class SFFormStart extends SpecialPage {
 	 */
 	function __construct() {
 		parent::__construct( 'FormStart' );
-		wfLoadExtensionMessages( 'SemanticForms' );
+		SFUtils::loadMessages();
 	}
 
 	function execute( $query ) {
@@ -23,7 +23,7 @@ class SFFormStart extends SpecialPage {
 
 		$this->setHeaders();
 
-		wfLoadExtensionMessages( 'SemanticForms' );
+		SFUtils::loadMessages();
 		$form_name = $wgRequest->getVal( 'form' );
 		$target_namespace = $wgRequest->getVal( 'namespace' );
 		$super_page = $wgRequest->getVal( 'super_page' );
@@ -66,8 +66,8 @@ class SFFormStart extends SpecialPage {
 			}
 			if ( $page_name != '' ) {
 				// Append the namespace prefix to the page name,
-				// if a namespace was not already entered.
-				if ( strpos( $page_name, ":" ) === false && $target_namespace != '' )
+				// if this namespace was not already entered.
+				if ( strpos( $page_name, $target_namespace . ":" ) === false && $target_namespace != '' )
 					$page_name = $target_namespace . ":" . $page_name;
 				// find out whether this page already exists,
 				// and send user to the appropriate form
@@ -127,8 +127,8 @@ END;
 
 		$page_title = Title::newFromText( $page_name );
 		if ( $page_title->exists() ) {
-			// it exists - see if page is a redirect; if
-			// it is, edit the target page instead
+			// It exists - see if page is a redirect; if
+			// it is, edit the target page instead.
 			$article = new Article( $page_title );
 			$article->loadContent();
 			$redirect_title = Title::newFromRedirect( $article->fetchContent() );
@@ -142,7 +142,7 @@ END;
 			// Is this logic necessary? Or should we just
 			// out-guess the user and always send to the
 			// standard form-edit page, with the 'correct' form?
-			$default_forms = SFLinkUtils::getFormsForArticle( $article );
+			$default_forms = SFFormLinker::getDefaultFormsForPage( $page_title );
 			if ( count( $default_forms ) > 0 )
 				$default_form_name = $default_forms[0];
 			else
@@ -151,11 +151,11 @@ END;
 				$redirect_url = $page_title->getLocalURL( 'action=formedit' );
 			} else {
 				$fe = SpecialPage::getPage( 'FormEdit' );
-				$redirect_url = $fe->getTitle()->getFullURL() . "/" . $form_name . "/" . SFLinkUtils::titleURLString( $page_title );
+				$redirect_url = $fe->getTitle()->getFullURL() . "/" . $form_name . "/" . SFUtils::titleURLString( $page_title );
 			}
 		} else {
 			$fe = SpecialPage::getPage( 'FormEdit' );
-			$redirect_url = $fe->getTitle()->getFullURL() . "/" . $form_name . "/" . SFLinkUtils::titleURLString( $page_title );
+			$redirect_url = $fe->getTitle()->getFullURL() . "/" . $form_name . "/" . SFUtils::titleURLString( $page_title );
 			// of all the request values, send on to 'FormEdit'
 			// only 'preload' and specific form fields - we can
 			// tell the latter because they show up as arrays

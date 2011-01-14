@@ -14,18 +14,30 @@ class SFTemplates extends SpecialPage {
 	 */
 	function __construct() {
 		parent::__construct( 'Templates' );
-		wfLoadExtensionMessages( 'SemanticForms' );
+		SFUtils::loadMessages();
 	}
 
 	function execute( $query ) {
 		$this->setHeaders();
 		list( $limit, $offset ) = wfCheckLimits();
 		$rep = new TemplatesPage();
-		return $rep->doQuery( $offset, $limit );
+		// execute() method added in MW 1.18
+		if ( method_exists( $rep, 'execute' ) ) {
+			$rep->execute( $query );
+		} else {
+			return $rep->doQuery( $offset, $limit );
+		}
 	}
 }
 
 class TemplatesPage extends QueryPage {
+	public function __construct( $name = 'Templates' ) {
+		// For MW <= 1.17
+                if ( $this instanceof SpecialPage ) {
+			parent::__construct( $name );
+		}
+	}
+	
 	function getName() {
 		return "Templates";
 	}
@@ -37,7 +49,7 @@ class TemplatesPage extends QueryPage {
 	function getPageHeader() {
 		global $wgUser;
 		
-		wfLoadExtensionMessages( 'SemanticForms' );
+		SFUtils::loadMessages();
 		
 		$sk = $wgUser->getSkin();
 		$ct = SpecialPage::getPage( 'CreateTemplate' );
@@ -63,6 +75,15 @@ class TemplatesPage extends QueryPage {
 			WHERE page_namespace = {$NStemp}";
 	}
 
+	// For MW 1.18+
+	function getQueryInfo() {
+		return array(
+			'tables' => array( 'page' ),
+			'fields' => array( 'page_title AS title', 'page_title AS value' ),
+			'conds' => array( 'page_namespace' => NS_TEMPLATE )
+		);
+	}
+
 	function sortDescending() {
 		return false;
 	}
@@ -83,7 +104,7 @@ class TemplatesPage extends QueryPage {
 	}
 
 	function formatResult( $skin, $result ) {
-		wfLoadExtensionMessages( 'SemanticForms' );
+		SFUtils::loadMessages();
 		$title = Title::makeTitle( NS_TEMPLATE, $result->value );
 		$text = $skin->makeLinkObj( $title, $title->getText() );
 		$category = $this->getCategoryDefinedByTemplate( new Article( $title ) );

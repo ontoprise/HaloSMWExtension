@@ -28,7 +28,7 @@ class SFForm {
 	function createMarkup() {
 		$title = Title::makeTitle( SF_NS_FORM, $this->form_name );
 		$fs = SpecialPage::getPage( 'FormStart' );
-		$form_start_url = SFLinkUtils::titleURLString( $fs->getTitle() ) . "/" . $title->getPartialURL();
+		$form_start_url = SFUtils::titleURLString( $fs->getTitle() ) . "/" . $title->getPartialURL();
 		$form_description = wfMsgForContent( 'sf_form_docu', $this->form_name, $form_start_url );
 		$form_input = "{{#forminput:form=" . $this->form_name . "}}\n";
 		$text = <<<END
@@ -72,84 +72,118 @@ class SFTemplateInForm {
 	var $max_allowed;
 	var $fields;
 
+	/**
+	 * For a field name and its attached property name located in the
+	 * template text, create an SFTemplateField object out of it, and
+	 * add it to the $templateFields array.
+	 */
+	function handlePropertySettingInTemplate( $fieldName, $propertyName, $isList, &$templateFields, $templateText ) {
+		global $wgContLang;
+		$templateField = SFTemplateField::create( $fieldName, $wgContLang->ucfirst( $fieldName ) );
+		$templateField->setSemanticProperty( $propertyName );
+		$templateField->is_list = $isList;
+		$cur_pos = stripos( $templateText, $fieldName );
+		$templateFields[$cur_pos] = $templateField;
+	}
+
+	/**
+	 * Get the fields of the template, along with the semantic property
+	 * attached to each one (if any), by parsing the text of the template.
+	 */
 	function getAllFields() {
 		global $wgContLang;
-		$template_fields = array();
-		$field_names_array = array();
+		$templateFields = array();
+		$fieldNamesArray = array();
 
-		// Get the fields of the template, both semantic and otherwise, by parsing
-		// the text of the template.
-		// The way this works is that fields are found and then stored in an
-		// array based on their location in the template text, so that they
-		// can be returned in the order in which they appear in the template, even
-		// though they were found in a different order.
-		// Some fields can be found more than once (especially if they're part
-		// of an "#if" statement), so they're only recorded the first time they're
-		// found. Also, every field gets replaced with a string of x's after
-		// being found, so it doesn't interfere with future parsing.
+		// The way this works is that fields are found and then stored
+		// in an array based on their location in the template text, so
+		// that they can be returned in the order in which they appear
+		// in the template, not the order in which they were found.
+		// Some fields can be found more than once (especially if
+		// they're part of an "#if" statement), so they're only
+		// recorded the first time they're found.
 		$template_title = Title::makeTitleSafe( NS_TEMPLATE, $this->template_name );
 		$template_article = null;
 		if ( isset( $template_title ) ) $template_article = new Article( $template_title );
 		if ( isset( $template_article ) ) {
-			$template_text = $template_article->getContent();
-			// ignore 'noinclude' sections and 'includeonly' tags
-			$template_text = StringUtils::delimiterReplace( '<noinclude>', '</noinclude>', '', $template_text );
-			$template_text = strtr( $template_text, array( '<includeonly>' => '', '</includeonly>' => '' ) );
+			$templateText = $template_article->getContent();
+			// Ignore 'noinclude' sections and 'includeonly' tags.
+			$templateText = StringUtils::delimiterReplace( '<noinclude>', '</noinclude>', '', $templateText );
+			$templateText = strtr( $templateText, array( '<includeonly>' => '', '</includeonly>' => '' ) );
 	
-			// first, look for "arraymap" parser function calls that map a
-			// property onto a list
-			if ( preg_match_all( '/{{#arraymap:{{{([^|}]*:?[^|}]*)[^\[]*\[\[([^:=]*:?[^:=]*)(:[:=])/mis', $template_text, $matches ) ) {
-				// this is a two-dimensional array; we need the last three of the four
-				// sub-arrays; we also have to remove redundant values
+			// First, look for "arraymap" parser function calls
+			// that map a property onto a list.
+			if ( preg_match_all( '/{{#arraymap:{{{([^|}]*:?[^|}]*)[^\[]*\[\[([^:]*:?[^:]*)::/mis', $templateText, $matches ) ) {
 				foreach ( $matches[1] as $i => $field_name ) {
-					$semantic_property = $matches[2][$i];
-					$full_field_text = $matches[0][$i];
-					if ( ! in_array( $field_name, $field_names_array ) ) {
-						$template_field = SFTemplateField::create( $field_name, $wgContLang->ucfirst( $field_name ) );
-						$template_field->setSemanticProperty( $semantic_property );
-						$template_field->is_list = true;
-						$cur_pos = stripos( $template_text, $full_field_text );
-						$template_fields[$cur_pos] = $template_field;
-						$field_names_array[] = $field_name;
-						$replacement = str_repeat( "x", strlen( $full_field_text ) );
-						$template_text = str_replace( $full_field_text, $replacement, $template_text );
+					if ( ! in_array( $field_name, $fieldNamesArray ) ) {
+						$propertyName = $matches[2][$i];
+						self::handlePropertySettingInTemplate( $field_name, $propertyName, true, $templateFields, $templateText );
+						$fieldNamesArray[] = $field_name;
 					}
 				}
 			}
 	
-			// second, look for normal property calls
-			if ( preg_match_all( '/\[\[([^:=]*:*?[^:=]*)(:[:=]){{{([^\]\|}]*).*?\]\]/mis', $template_text, $matches ) ) {
-				// this is a two-dimensional array; we need the last three of the four
-				// sub-arrays; we also have to remove redundant values
-				foreach ( $matches[1] as $i => $semantic_property ) {
-					$field_name = $matches[3][$i];
-					$full_field_text = $matches[0][$i];
-					if ( ! in_array( $field_name, $field_names_array ) ) {
-						$template_field = SFTemplateField::create( $field_name, $wgContLang->ucfirst( $field_name ) );
-						$template_field->setSemanticProperty( $semantic_property );
-						$cur_pos = stripos( $template_text, $full_field_text );
-						$template_fields[$cur_pos] = $template_field;
-						$field_names_array[] = $field_name;
-						$replacement = str_repeat( "x", strlen( $full_field_text ) );
-						$template_text = str_replace( $full_field_text, $replacement, $template_text );
+			// Second, look for normal property calls.
+			if ( preg_match_all( '/\[\[([^:|\[\]]*:*?[^:|\[\]]*)::{{{([^\]\|}]*).*?\]\]/mis', $templateText, $matches ) ) {
+				foreach ( $matches[1] as $i => $propertyName ) {
+					$field_name = trim( $matches[2][$i] );
+					if ( ! in_array( $field_name, $fieldNamesArray ) ) {
+						$propertyName = trim( $propertyName );
+						self::handlePropertySettingInTemplate( $field_name, $propertyName, false, $templateFields, $templateText );
+						$fieldNamesArray[] = $field_name;
+					}
+				}
+			}
+
+			// Then, get calls to #set and #set_internal
+			// (thankfully, they have basically the same syntax).
+			if ( preg_match_all( '/#(set|set_internal):(.*?}}})\s*}}/mis', $templateText, $matches ) ) {
+				foreach ( $matches[2] as $i => $match ) {
+					if ( preg_match_all( '/([^|{]*?)=\s*{{{([^|}]*)/mis', $match, $matches2 ) ) {
+						foreach ( $matches2[1] as $i => $propertyName ) {
+							$fieldName = trim( $matches2[2][$i] );
+							if ( ! in_array( $fieldName, $fieldNamesArray ) ) {
+								$propertyName = trim( $propertyName );
+								self::handlePropertySettingInTemplate( $fieldName, $propertyName, false, $templateFields, $templateText );
+								$fieldNamesArray[] = $fieldName;
+							}
+						}
+					}
+				}
+			}
+
+			// Then, get calls to #declare.
+			if ( preg_match_all( '/#declare:(.*?)}}/mis', $templateText, $matches ) ) {
+				foreach ( $matches[1] as $i => $match ) {
+					$setValues = explode( '|', $match );
+					foreach( $setValues as $valuePair ) {
+						$keyAndVal = explode( '=', $valuePair );
+						if ( count( $keyAndVal ) == 2) {
+							$propertyName = trim( $keyAndVal[0] );
+							$fieldName = trim( $keyAndVal[1] );
+							if ( ! in_array( $fieldName, $fieldNamesArray ) ) {
+								self::handlePropertySettingInTemplate( $fieldName, $propertyName, false, $templateFields, $templateText );
+								$fieldNamesArray[] = $fieldName;
+							}
+						}
 					}
 				}
 			}
 	
-			// finally, get any non-semantic fields defined
-			if ( preg_match_all( '/{{{([^|}]*)/mis', $template_text, $matches ) ) {
-				foreach ( $matches[1] as $i => $field_name ) {
-					$full_field_text = $matches[0][$i];
-					if ( ( $full_field_text != '' ) && ( ! in_array( $field_name, $field_names_array ) ) ) {
-						$cur_pos = stripos( $template_text, $full_field_text );
-						$template_fields[$cur_pos] = SFTemplateField::create( $field_name, $wgContLang->ucfirst( $field_name ) );
-						$field_names_array[] = $field_name;
+			// Finally, get any non-semantic fields defined.
+			if ( preg_match_all( '/{{{([^|}]*)/mis', $templateText, $matches ) ) {
+				foreach ( $matches[1] as $i => $fieldName ) {
+					$fieldName = trim( $fieldName );
+					if ( !empty( $fieldName ) && ( ! in_array( $fieldName, $fieldNamesArray ) ) ) {
+						$cur_pos = stripos( $templateText, $fieldName );
+						$templateFields[$cur_pos] = SFTemplateField::create( $fieldName, $wgContLang->ucfirst( $fieldName ) );
+						$fieldNamesArray[] = $fieldName;
 					}
 				}
 			}
 		}
-		ksort( $template_fields );
-		return $template_fields;
+		ksort( $templateFields );
+		return $templateFields;
 	}
 
 	static function create( $name, $label, $allow_multiple, $max_allowed = null ) {
