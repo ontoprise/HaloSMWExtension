@@ -21,7 +21,8 @@ class ASFFormEditTab {
 		if ( isset( $obj->mTitle ) &&
 				( $obj->mTitle->getNamespace() != NS_SPECIAL ) ) {
 			
-			$form_names = SFLinkUtils::getFormsForArticle( $obj );
+				$title = $obj->getTitle();
+				$form_names = SFFormLinker::getDefaultFormsForPage( $title);
 			
 			//Check if no default form is set and if an automatic semantic form can be created
 			if ( count( $form_names ) == 0 
@@ -90,7 +91,7 @@ class ASFFormEditTab {
 			$asfFormDefData['formdef'] = $formDefinition;
 
 			$target_title = $article->getTitle();
-			$target_name = SFLinkUtils::titleString( $target_title );
+			$target_name = SFUtils::titleString( $target_title );
 			SFFormEdit::printForm( $form_name, $target_name );
 		
 			return false;
