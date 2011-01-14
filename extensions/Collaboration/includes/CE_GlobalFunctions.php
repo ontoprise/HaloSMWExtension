@@ -48,6 +48,7 @@ function enableCollaboration() {
 
 	$wgExtensionFunctions[] = 'cefSetupExtension';
 	$wgHooks['LanguageGetMagic'][] = 'cefAddMagicWords'; // setup names for parser functions (needed here)
+	$wgHooks['MakeGlobalVariablesScript'][] = 'cefAddGlobalJSVariables';
 	$wgExtensionMessagesFiles['Collaboration'] = $cegIP . '/languages/CE_Messages.php'; // register messages (requires MW=>1.11)
 
 	//--- Comment classes ---
@@ -342,5 +343,14 @@ function cefAddJSLanguageScripts(&$out, $mode = "all", $namespace = -1, $pages =
  */
 function cefRegisterACIcon( &$namespaceMappings) {
 	$namespaceMappings[CE_COMMENT_NS] = "/extensions/Collaboration/skins/Comment/icons/smw_plus_comment_icon_16x16.gif";
+	return true;
+}
+
+function cefAddGlobalJSVariables( &$vars ) {
+	global $cegScriptPath;
+	$ns = MWNamespace::getCanonicalName(NS_USER);
+
+	$vars['wgCEScriptPath'] = $cegScriptPath;
+	$vars['wgCEUserNS'] = $ns;
 	return true;
 }

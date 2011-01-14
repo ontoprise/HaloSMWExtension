@@ -127,13 +127,6 @@ class CECommentParserFunctions {
 	public static function showcommentform(&$parser) {
 		global $cegContLang, $wgUser, $cegScriptPath, $cegEnableRatingForArticles, $wgJsMimeType;
 
-		$ns = MWNamespace::getCanonicalName(NS_USER);
-		$jsText = '<script type="'.$wgJsMimeType.'">/*<![CDATA[*/' .
-			'var wgCEScriptPath = "'.$cegScriptPath.'";' .
-			'var wgCEUserNS = "'.$ns.'";' .
-			'/*]]>*/</script>';
-		SMWOutputs::requireHeadItem('CEJS_Variables', $jsText);
-
 		# do checks #
 		$status = self::$mInstance->doInitialChecks($parser);
 
@@ -171,7 +164,6 @@ class CECommentParserFunctions {
 
 		#user#
 		$currentUser = $wgUser->getName();
-		
 		if($wgUser->isAnon()) {
 			$userImageTitle = Title::newFromText('defaultuser.gif', NS_FILE);
 			$userIsSysopJSText = 'var wgCEUserIsSysop = false;';
@@ -181,14 +173,13 @@ class CECommentParserFunctions {
 			}
 		} else {
 			//user should be saved with Namespace!
+			$ns = MWNamespace::getCanonicalName(NS_USER);
 			SMWQueryProcessor::processFunctionParams(array("[[".$ns.":".$wgUser->getName()."]]", "[[User_image::+]]", "?User_image=")
 				,$querystring,$params,$printouts);
 			$queryResult = explode("|",
 				SMWQueryProcessor::getResultFromQueryString($querystring,$params,
 				$printouts, SMW_OUTPUT_WIKI));
-
 			unset($queryResult[0]);
-
 			//just get the first property value and use this
 			if(isset($queryResult[1])) {
 				$userImageTitle = Title::newFromText($queryResult[1], NS_FILE);
@@ -197,7 +188,6 @@ class CECommentParserFunctions {
 					$userImgSrc = $image->getURL();
 				}
 			}
-
 			// Get users groups and check for Sysop-Rights
 			$groups = $wgUser->getEffectiveGroups();
 			if (in_array( 'sysop', $groups ) == 1) {
