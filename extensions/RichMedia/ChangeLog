@@ -8,6 +8,7 @@ VERSION 1.X
 
   CHANGES:
 	* Added mime info and mime type (video/x-ms-wmv) for .wmv
+	* Provided new patches to let Rich Media extension be compatible with MediaWiki 1.16.1 and SF 2.0.8
 
   BUGFIXES:
 	* Issue 13164 - WebDAV not working due to strict standards warning.

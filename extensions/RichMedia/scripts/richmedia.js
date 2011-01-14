@@ -30,7 +30,7 @@ var RichMediaPage = Class.create({
 			destFormName = 'upload';
 		}
 		//validate the form fields!
-		var error = validate_all();
+		var error = validateAll();
 
 		if (!error) {
 			return false;
