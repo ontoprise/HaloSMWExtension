@@ -324,7 +324,9 @@ class SMWH_Skin {
                                                ) {
                                                 # check if there are forms available for the current article
                                     global $asfAutomaticFormExists;
-                        			if (count(SFLinkUtils::getFormsForArticle($this->skintemplate->skin)) > 0 || isset($asfAutomaticFormExists))
+                                    //@FIXME: Fatal error, Class SFLinkUtisl not existent in SF 2.0.8 
+//                        			if (count(SFLinkUtils::getFormsForArticle($this->skintemplate->skin)) > 0 || isset($asfAutomaticFormExists))
+                        			if ( false )
                                                     $link = htmlspecialchars(
                                                                 str_replace('action=edit',
                                                                     'action=formedit',
