@@ -2,7 +2,7 @@ WYSIWYG extension ChangeLog
 ===========================
 
 
-VERSION 1.4.0_1
+VERSION 1.4.x
 
 
   FEATURES:
@@ -10,13 +10,14 @@ VERSION 1.4.0_1
   CHANGES:
 
   BUGFIXES:
+    * Fix bug http://smwforum.ontoprise.com/smwbugs/show_bug.cgi?id=13194
+      IE 8 page error (transformation into wikitext didn't work in IE 8)
     * Fix bug http://smwforum.ontoprise.com/smwbugs/show_bug.cgi?id=13507
       Parse error leads to empty wiki page
     * Fix bug http://smwforum.ontoprise.com/smwbugs/show_bug.cgi?id=13523
       Reopening a query in QI from Wysiwyg shows an empty query
     * Fix bug http://smwforum.ontoprise.com/smwbugs/show_bug.cgi?id=13591
       Interwiki links break in WYSIWYG
-
 
 
 VERSION 1.4.0
