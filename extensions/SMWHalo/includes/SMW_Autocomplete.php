@@ -556,7 +556,7 @@ class AutoCompletionHandler {
 		$result = array();
 		$first = true;
 		foreach($parsedCommands as $c) {
-				
+
 			list($commandText, $params) = $c;
 
 			if ($commandText == 'values') {
@@ -628,7 +628,19 @@ class AutoCompletionHandler {
 				}
 				if (count($result) >= SMW_AC_MAX_RESULTS) break;
 			} else if ($commandText == 'namespace') {
-				$pages = smwfGetAutoCompletionStore()->getPages($userInput, $params);
+				$namespaceIndexes = array();
+				global $wgContLang;
+				foreach($params as $p) {
+					if (is_numeric($p)) {
+						$namespaceIndexes[] = $p;
+					} else if (strtolower($p) == "main") { 
+						$namespaceIndexes[] = 0;
+					} else {
+						$ns = $wgContLang->getNsIndex( $p );
+						$namespaceIndexes[] = $ns;
+					}
+				}
+				$pages = smwfGetAutoCompletionStore()->getPages($userInput, $namespaceIndexes);
 				$result = self::mergeResults($result, self::setInferred($pages, !$first));
 				if (count($result) >= SMW_AC_MAX_RESULTS) break;
 			} else if ($commandText == 'lexical') {
@@ -730,11 +742,11 @@ class AutoCompletionHandler {
 		return strcmp($t1_text, $t2_text);
 
 	}
-    
+
 	/**
-	 * Sets the inferred flag of an AC match 
+	 * Sets the inferred flag of an AC match
 	 * FIXME: should be moved into a separated ACMatch class
-	 * 
+	 *
 	 * @param mixed $acMatches (see encapsulateAsXML)
 	 * @param boolean $inferred
 	 */
@@ -746,7 +758,7 @@ class AutoCompletionHandler {
 			} else {
 				$t[1] = $inferred;
 				$newmatches[] = $t;
-				
+
 			}
 		}
 		return $newmatches;
