@@ -577,7 +577,8 @@ class AutoCompletionHandler {
 					$category = Title::newFromText($params[0]);
 					if (!is_null($category)) {
 						$pages = $acStore->getPropertyForCategory($userInput, $category);
-						$result = self::mergeResults($result, self::setInferred($pages, !$first));
+						$inf = self::setInferred($pages, !$first);
+						$result = self::mergeResults($result, $inf);
 
 					}
 				}
@@ -588,7 +589,8 @@ class AutoCompletionHandler {
 					$instance = Title::newFromText($params[0]);
 					if (!is_null($instance)) {
 						$pages = $acStore->getPropertyForInstance($userInput, $instance, false);
-						$result = self::mergeResults($result, self::setInferred($pages, !$first));
+						$inf = self::setInferred($pages, !$first);
+						$result = self::mergeResults($result, $inf);
 
 					}
 				}
@@ -599,7 +601,8 @@ class AutoCompletionHandler {
 					$category = Title::newFromText($params[0]);
 					if (!is_null($category)) {
 						$pages = $acStore->getPropertyForAnnotation($userInput, $category, false);
-						$result = self::mergeResults($result, self::setInferred($pages, !$first));
+						$inf = self::setInferred($pages, !$first);
+						$result = self::mergeResults($result, $inf);
 					}
 				}
 				if (count($result) >= SMW_AC_MAX_RESULTS) break;
@@ -609,7 +612,8 @@ class AutoCompletionHandler {
 					$property = Title::newFromText($params[0]);
 					if (!is_null($property)) {
 						$pages = $acStore->getValueForAnnotation($userInput, $property);
-						$result = self::mergeResults($result, self::setInferred($pages, !$first));
+						$inf = self::setInferred($pages, !$first);
+						$result = self::mergeResults($result, $inf);
 
 					}
 				}
@@ -622,8 +626,8 @@ class AutoCompletionHandler {
 					if (!is_null($property)) {
 						$domainRangeAnnotations = smwfGetStore()->getPropertyValues($property, smwfGetSemanticStore()->domainRangeHintProp);
 						$pages = $acStore->getInstanceAsTarget($userInput, $domainRangeAnnotations);
-						$result = self::mergeResults($result, self::setInferred($pages, !$first));
-
+						$inf = self::setInferred($pages, !$first);
+						$result = self::mergeResults($result, $inf);
 					}
 				}
 				if (count($result) >= SMW_AC_MAX_RESULTS) break;
@@ -641,24 +645,27 @@ class AutoCompletionHandler {
 					}
 				}
 				$pages = smwfGetAutoCompletionStore()->getPages($userInput, $namespaceIndexes);
-				$result = self::mergeResults($result, self::setInferred($pages, !$first));
+				$inf = self::setInferred($pages, !$first);
+				$result = self::mergeResults($result, $inf);
 				if (count($result) >= SMW_AC_MAX_RESULTS) break;
 			} else if ($commandText == 'lexical') {
 				$pages = smwfGetAutoCompletionStore()->getPages($userInput);
-				$result = self::mergeResults($result, self::setInferred($pages, !$first));
-
+				$inf = self::setInferred($pages, !$first);
+				$result = self::mergeResults($result, $inf);
 				if (count($result) >= SMW_AC_MAX_RESULTS) break;
 			} else if ($commandText == 'schema-property-type') {
 				if (empty($params[0]) || is_null($params[0])) continue;
 				$datatype = $params[0];
 				$pages = smwfGetAutoCompletionStore()->getPropertyWithType($userInput, $datatype);
-				$result = self::mergeResults($result, self::setInferred($pages, !$first));
+				$inf = self::setInferred($pages, !$first);
+				$result = self::mergeResults($result, $inf);
 				if (count($result) >= SMW_AC_MAX_RESULTS) break;
 
 				global $smwgContLang;
 				$dtl = $smwgContLang->getDatatypeLabels();
 				$pages = smwfGetAutoCompletionStore()->getPropertyWithType($userInput, $dtl['_str']);
-				$result = self::mergeResults($result, self::setInferred($pages, !$first));
+				$inf = self::setInferred($pages, !$first);
+				$result = self::mergeResults($result, $inf);
 				if (count($result) >= SMW_AC_MAX_RESULTS) break;
 
 			} else if ($commandText == 'ask') {
@@ -693,7 +700,8 @@ class AutoCompletionHandler {
 						$titles[] = TSHelper::getTitleFromURI($r, true);
 					}
 				}
-				self::mergeResults($result, self::setInferred($titles, !$first));
+				$inf = self::setInferred($pages, !$first);
+				self::mergeResults($result, $inf);
 				if (count($result) >= SMW_AC_MAX_RESULTS) break;
 			}
 
