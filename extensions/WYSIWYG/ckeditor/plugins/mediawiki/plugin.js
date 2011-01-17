@@ -602,7 +602,7 @@ CKEDITOR.customprocessor.prototype =
 
 						case 'a' :
                             // if there is no inner HTML in the Link, do not add it to the wikitext
-                            if (! jQuery(htmlNode).text().Trim() ) break;
+                            if (! this._GetNodeText(htmlNode).Trim() ) break;
                             
 							var pipeline = true;
 							// Get the actual Link href.
@@ -634,7 +634,7 @@ CKEDITOR.customprocessor.prototype =
 							// #2223
 							if( htmlNode.getAttribute( '_fcknotitle' ) && htmlNode.getAttribute( '_fcknotitle' ) == "true" ){
 								var testHref = htmlNode.getAttribute('href').urldecode();
-								var testInner = jQuery(htmlNode).text() || '';
+								var testInner = this._GetNodeText(htmlNode) || '';
 								if ( href.toLowerCase().StartsWith( 'category:' ) )
 									testInner = 'Category:' + testInner;
 								if ( testHref.toLowerCase().StartsWith( 'rtecolon' ) )
@@ -860,7 +860,7 @@ CKEDITOR.customprocessor.prototype =
 									stringBuilder.push( '<source' );
 									stringBuilder.push( ' lang="' + refLang + '"' );
 									stringBuilder.push( '>' );
-									stringBuilder.push( unescape(jQuery(htmlNode).text()).replace(/fckLR/g,'\r\n') );
+									stringBuilder.push( unescape(this._GetNodeText(htmlNode)).replace(/fckLR/g,'\r\n') );
 									stringBuilder.push( '</source>' );
 									return;
 
@@ -876,7 +876,7 @@ CKEDITOR.customprocessor.prototype =
 										stringBuilder.push( ' />' );
 									else {
 										stringBuilder.push( '>' );
-										stringBuilder.push( jQuery(htmlNode).text() );
+										stringBuilder.push( this._GetNodeText(htmlNode) );
 										stringBuilder.push( '</ref>' );
 									}
 									return;
@@ -891,11 +891,11 @@ CKEDITOR.customprocessor.prototype =
 
 								case 'fck_mw_template' :
                                 case 'fck_smw_query' :
-									stringBuilder.push( unescape(jQuery(htmlNode).text()).replace(/fckLR/g,'\r\n') );
+									stringBuilder.push( unescape(this._GetNodeText(htmlNode)).replace(/fckLR/g,'\r\n') );
 									return;
                                 case 'fck_smw_webservice' :
                                 case 'fck_smw_rule' :
-									stringBuilder.push( jQuery(htmlNode).text().htmlDecode().replace(/fckLR/g,'\r\n') );
+									stringBuilder.push( this._GetNodeText(htmlNode).htmlDecode().replace(/fckLR/g,'\r\n') );
 									return;
 								case 'fck_mw_magic' :
                                     var magicWord = htmlNode.getAttribute( '_fck_mw_tagname' ) || '';
@@ -914,7 +914,7 @@ CKEDITOR.customprocessor.prototype =
                                                 stringBuilder.push( attribs ) ;
 
                 							stringBuilder.push( '>' ) ;
-                                			stringBuilder.push( unescape(jQuery(htmlNode).text()).replace(/fckLR/g,'\r\n').replace(/_$/, '') );
+                                			stringBuilder.push( unescape(this._GetNodeText(htmlNode)).replace(/fckLR/g,'\r\n').replace(/_$/, '') );
                                             stringBuilder.push( '<\/' + tagName + '>' ) ;
 
 								            break;
@@ -927,8 +927,8 @@ CKEDITOR.customprocessor.prototype =
 								            break;
 								        case 'p' :
 								            stringBuilder.push( '{{' + tagName );
-								            if (jQuery(htmlNode).text().length > 0)
-								                stringBuilder.push( ':' + unescape(jQuery(htmlNode).text()).replace(/fckLR/g,'\r\n').replace(/_$/, '') );
+								            if (this._GetNodeText(htmlNode).length > 0)
+								                stringBuilder.push( ':' + unescape(this._GetNodeText(htmlNode)).replace(/fckLR/g,'\r\n').replace(/_$/, '') );
 								            stringBuilder.push( '}}');
 								            break;
 								    }
@@ -1096,7 +1096,7 @@ CKEDITOR.customprocessor.prototype =
 			case 8 :
 				// IE catches the <!DOTYPE ... > as a comment, but it has no
 				// innerHTML, so we can catch it, and ignore it.
-				if ( CKEDITOR.env.ie && !jQuery(htmlNode).text() )
+				if ( CKEDITOR.env.ie && !this._GetNodeText(htmlNode) )
 					return;
 
 				stringBuilder.push( "<!--"  );
@@ -1193,11 +1193,20 @@ CKEDITOR.customprocessor.prototype =
 		}
 		return attStr;
 	},
+    // in FF htmlNode.textContent is set, while IE needs htmlNode.text;
+    _GetNodeText : function( htmlNode ) {
+        var text = '';
+        if (CKEDITOR.env.ie)
+            text = htmlNode.text;
+        else
+            text = htmlNode.textContent;
+        return (typeof text == 'undefined') ? '' : text;
+    },
 
 	// Property and Category values must be of a certain format. Otherwise this will break
 	// the semantic annotation when switching between wikitext and WYSIWYG view
 	_formatSemanticValues : function (htmlNode) {
-		var text = jQuery(htmlNode).text();
+		var text = this._GetNodeText(htmlNode);
 
 		// remove any &nbsp;
 		text = text.replace('&nbsp;', ' ');
