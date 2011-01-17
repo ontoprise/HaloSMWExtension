@@ -1,0 +1,33 @@
+WYSIWYG extension ChangeLog
+===============================
+
+VERSION 1.4.0_1
+
+
+  FEATURES:
+
+  CHANGES:
+
+  BUGFIXES:
+    * Fix bug http://smwforum.ontoprise.com/smwbugs/show_bug.cgi?id=13507
+      Parse error leads to empty wiki page
+    * Fix bug http://smwforum.ontoprise.com/smwbugs/show_bug.cgi?id=13523
+      Reopening a query in QI from Wysiwyg shows an empty query
+    * Fix bug http://smwforum.ontoprise.com/smwbugs/show_bug.cgi?id=13591
+      Interwiki links break in WYSIWYG
+
+
+
+VERSION 1.4.0
+
+
+  FEATURES:
+    * Update from the FCKeditor to the new CKEditor 3.4
+    * Applying changes from the official FCKeditor extension (see
+      http://www.mediawiki.org/wiki/Extension:FCKeditor_(Official) for details)
+
+  CHANGES:
+
+  BUGFIXES:
+
+
