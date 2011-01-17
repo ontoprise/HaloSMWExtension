@@ -5,7 +5,7 @@
  * 
  * Created on 19.10.2007
  *
- * @author: Kai Kühn
+ * @author: Kai Kï¿½hn
  */
 
 
@@ -48,7 +48,7 @@ class DBHelper {
 			if (!empty($primaryKeys)) {
 				$sql .= ", PRIMARY KEY(".$primaryKeys.")";
 			}
-			$sql .= ') TYPE=innodb';
+			$sql .= ') ENGINE=innodb';
 			$db->query( $sql, 'DBHelper::setupTable' );
 			DBHelper::reportProgress("   ... new table created\n",$verbose);
 			return array();
