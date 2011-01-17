@@ -18,6 +18,15 @@ function execute($query) {
 		global $wgRequest;
 		$categoryParam = $wgRequest->getVal('categories');
 		$targetName = $wgRequest->getVal('target');
+		
+		if(!$categoryParam && !$targetName){
+			$queryparts = explode( '/', $query, 2 );
+			if(isset($queryparts[0]) && strpos($queryparts[0], 'categories=') === 0){
+				$categoryParam = substr($queryparts[0], strlen('categories='));
+				$targetName = isset( $queryparts[1] ) ? $queryparts[1] : '';
+			}
+		}
+		
 		$formName = $wgRequest->getVal('form');
 		
 		if(is_null($categoryParam)){
