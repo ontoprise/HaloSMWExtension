@@ -1037,9 +1037,10 @@ class CKeditorParser extends CKeditorParserWrapper {
 	 * @return string replacement or "[[$match]]"
 	 */
 	private function replaceRichmediaLinkValue($match) {
+        $orig = "[[".$match."]]";
 		if ($match && $match{0} == ":") $match = substr($match, 1);
 		if (strpos($match, ":") === false)
-			return "[[".$match."]]";
+			return $orig;
 		$ns = substr($match, 0, strpos($match, ':'));
 		if (in_array(strtolower($ns), array('pdf', 'document', 'audio', 'video'))) { //$wgExtraNamespaces doesn't help really
   			$link = explode('|', $match);
@@ -1050,7 +1051,7 @@ class CKeditorParser extends CKeditorParserWrapper {
     			((count($link) > 1) ? $link[1] : str_replace('_', ' ', $link[0])).'</a>';
     		return 'FCK_RICHMEDIA_'.$p.'_FOUND';
   		}
-  		return "[[".$match."]]";
+  		return $orig;
 	}
 
     /**
