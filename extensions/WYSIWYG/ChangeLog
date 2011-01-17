@@ -1,5 +1,6 @@
 WYSIWYG extension ChangeLog
-===============================
+===========================
+
 
 VERSION 1.4.0_1
 
@@ -27,6 +28,24 @@ VERSION 1.4.0
       http://www.mediawiki.org/wiki/Extension:FCKeditor_(Official) for details)
 
   CHANGES:
+    * New installation directory is <mw_install_dir>/extensions/WYSIWYG
+
+  BUGFIXES:
+
+
+
+VERSION 1.3.2
+
+
+  FEATURES:
+
+  CHANGES:
+    * Query Interface popup has not tabs anymore because in the SMWHalo
+      extension 1.5.1 the query interface will support modifying the query
+      source directly.
+      Use this version only if you have the SMWHalo extension 1.5.1 installed.
+    * A define has been added so that other extensions may easily check whether
+      the WYSIWYG extension is available or not.
 
   BUGFIXES:
 
