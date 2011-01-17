@@ -12,7 +12,7 @@
 		<helpurl>http://smwforum.ontoprise.com/smwforum/index.php/Help:Automatic_Semantic_Forms_Extension</helpurl>
 		<dependencies>
 			<dependency from="152" to="154">smwhalo</dependency>
-			<dependency from="200" to="200">semanticforms</dependency>
+			<dependency from="200" to="208">semanticforms</dependency>
 			<dependency from="100" to="100" optional="true">baseontologybundle</dependency>
 		</dependencies>
 		<patchlevel>0</patchlevel>
