@@ -366,23 +366,19 @@ class SMWSemanticStoreSQL extends SMWSemanticStore {
 	 * @param boolean $onlyMain True, if only articles from NS_MAIN should be returned. False, if all namespaces (except category) should be returned.
 	 */
 	protected function createVirtualTableWithInstances($categoryTitle, & $db, $onlyMain = true) {
-		global $smwgDefaultCollation;
+		
 
 		$page = $db->tableName('page');
 		$categorylinks = $db->tableName('categorylinks');
 
-		if (!isset($smwgDefaultCollation)) {
-			$collation = '';
-		} else {
-			$collation = 'COLLATE '.$smwgDefaultCollation;
-		}
+		
 		// create virtual tables
-		$db->query( 'CREATE TEMPORARY TABLE smw_ob_instances (instance VARCHAR(255), namespace INT(11), category VARCHAR(255) '.$collation.')
+		$db->query( 'CREATE TEMPORARY TABLE smw_ob_instances (instance VARBINARY(255), namespace INT(11), category VARBINARY(255))
 		            TYPE=MEMORY', 'SMW::createVirtualTableWithInstances' );
 
-		$db->query( 'CREATE TEMPORARY TABLE smw_ob_instances_sub (category VARCHAR(255) '.$collation.' NOT NULL)
+		$db->query( 'CREATE TEMPORARY TABLE smw_ob_instances_sub (category VARBINARY(255) NOT NULL)
 		            TYPE=MEMORY', 'SMW::createVirtualTableWithInstances' );
-		$db->query( 'CREATE TEMPORARY TABLE smw_ob_instances_super (category VARCHAR(255) '.$collation.' NOT NULL)
+		$db->query( 'CREATE TEMPORARY TABLE smw_ob_instances_super (category VARBINARY(255) NOT NULL)
 		            TYPE=MEMORY', 'SMW::createVirtualTableWithInstances' );
 
 		// initialize with direct instances
@@ -587,17 +583,12 @@ class SMWSemanticStoreSQL extends SMWSemanticStore {
 	 *
 	 */
 	protected function createVirtualTableWithPropertiesByName($requestoptions, & $db) {
-		global $smwgDefaultCollation;
-		if (!isset($smwgDefaultCollation)) {
-			$collation = '';
-		} else {
-			$collation = 'COLLATE '.$smwgDefaultCollation;
-		}
+		
 
 		$page = $db->tableName('page');
 		$redirect = $db->tableName('redirect');
 		$redirects = $db->tableName('redirect');
-		$db->query( 'CREATE TEMPORARY TABLE smw_ob_properties (id INT(8) NOT NULL, property VARCHAR(255) '.$collation.')
+		$db->query( 'CREATE TEMPORARY TABLE smw_ob_properties (id INT(8) NOT NULL, property VARBINARY(255))
 		            TYPE=MEMORY', 'SMW::createVirtualTableForInstances' );
 		$sql = DBHelper::getSQLConditions($requestoptions,'page_title','page_title');
 		// add properties which match and which are no redirects
@@ -614,20 +605,16 @@ class SMWSemanticStoreSQL extends SMWSemanticStore {
 	 * @param & $db
 	 */
 	protected function createVirtualTableWithPropertiesByCategory(Title $categoryTitle, & $db) {
-		global $smwgDefaultCollation;
+		
 
 		$page = $db->tableName('page');
 		$categorylinks = $db->tableName('categorylinks');
 		$smw_nary = $db->tableName('smw_nary');
 		$smw_nary_relations = $db->tableName('smw_nary_relations');
 
-		if (!isset($smwgDefaultCollation)) {
-			$collation = '';
-		} else {
-			$collation = 'COLLATE '.$smwgDefaultCollation;
-		}
+		
 		// create virtual tables
-		$db->query( 'CREATE TEMPORARY TABLE smw_ob_properties (id INT(8) NOT NULL, property VARCHAR(255) '.$collation.')
+		$db->query( 'CREATE TEMPORARY TABLE smw_ob_properties (id INT(8) NOT NULL, property VARBINARY(255))
 		            TYPE=MEMORY', 'SMW::createVirtualTableWithPropertiesByCategory' );
 
 		$db->query( 'CREATE TEMPORARY TABLE smw_ob_properties_sub (category INT(8) NOT NULL)
@@ -1119,11 +1106,11 @@ class SMWSemanticStoreSQL extends SMWSemanticStore {
 		DBHelper::setupTable($smw_logging, array(
 				  'id'				=>	'INT(10) UNSIGNED NOT NULL auto_increment PRIMARY KEY' ,
 				  'timestamp'      	=>  'TIMESTAMP DEFAULT CURRENT_TIMESTAMP' ,
-				  'user'      		=>  'VARCHAR(255)' ,
-				  'location'		=>	'VARCHAR(255)' ,
-				  'type'			=>	'VARCHAR(255)' ,
-				  'function'		=>	'VARCHAR(255)' ,
-				  'remotetimestamp'	=>	'VARCHAR(255)' ,
+				  'user'      		=>  'VARBINARY(255)' ,
+				  'location'		=>	'VARBINARY(255)' ,
+				  'type'			=>	'VARBINARY(255)' ,
+				  'function'		=>	'VARBINARY(255)' ,
+				  'remotetimestamp'	=>	'VARBINARY(255)' ,
 				  'text'			=>  'LONGTEXT' 
 				  ), $db, $verbose);
 

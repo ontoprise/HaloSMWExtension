@@ -268,7 +268,7 @@ class AutoCompletionStorageSQL2 extends AutoCompletionStorage {
 
 
 	public function getPropertyForInstance($userInputToMatch, $instance, $matchDomainOrRange) {
-		global $smwgDefaultCollation;
+		
 		$db =& wfGetDB( DB_SLAVE );
 		$page = $db->tableName('page');
 		$categorylinks = $db->tableName('categorylinks');
@@ -278,18 +278,14 @@ class AutoCompletionStorageSQL2 extends AutoCompletionStorage {
 
 		$nary_pos = $matchDomainOrRange ? '"_1"' : '"_2"';
 
-		if (!isset($smwgDefaultCollation)) {
-			$collation = '';
-		} else {
-			$collation = 'COLLATE '.$smwgDefaultCollation;
-		}
+		
 		// create virtual tables
-		$db->query( 'CREATE TEMPORARY TABLE smw_ob_properties (id INT(8) NOT NULL, property VARCHAR(255), inferred ENUM(\'true\',\'false\') '.$collation.')
+		$db->query( 'CREATE TEMPORARY TABLE smw_ob_properties (id INT(8) NOT NULL, property VARBINARY(255), inferred ENUM(\'true\',\'false\'))
                     TYPE=MEMORY', 'SMW::createVirtualTableWithPropertiesByCategory' );
 
-		$db->query( 'CREATE TEMPORARY TABLE smw_ob_properties_sub (category VARCHAR(255) NOT NULL)
+		$db->query( 'CREATE TEMPORARY TABLE smw_ob_properties_sub (category VARBINARY(255) NOT NULL)
                     TYPE=MEMORY', 'SMW::createVirtualTableWithPropertiesByCategory' );
-		$db->query( 'CREATE TEMPORARY TABLE smw_ob_properties_super (category VARCHAR(255) NOT NULL)
+		$db->query( 'CREATE TEMPORARY TABLE smw_ob_properties_super (category VARBINARY(255) NOT NULL)
                     TYPE=MEMORY', 'SMW::createVirtualTableWithPropertiesByCategory' );
 
 		$domainAndRange = $db->selectRow($db->tableName('smw_ids'), array('smw_id'), array('smw_title' => smwfGetSemanticStore()->domainRangeHintRelation->getDBkey()) );
@@ -351,7 +347,7 @@ class AutoCompletionStorageSQL2 extends AutoCompletionStorage {
 	}
 
 	public function getPropertyForCategory($userInputToMatch, $category) {
-		global $smwgDefaultCollation;
+		
 		$db =& wfGetDB( DB_SLAVE );
 		$page = $db->tableName('page');
 		$categorylinks = $db->tableName('categorylinks');
@@ -361,18 +357,14 @@ class AutoCompletionStorageSQL2 extends AutoCompletionStorage {
 
 		$nary_pos = '"_1"';
 
-		if (!isset($smwgDefaultCollation)) {
-			$collation = '';
-		} else {
-			$collation = 'COLLATE '.$smwgDefaultCollation;
-		}
+		
 		// create virtual tables
-		$db->query( 'CREATE TEMPORARY TABLE smw_ob_properties (id INT(8) NOT NULL, property VARCHAR(255), inferred ENUM(\'true\',\'false\') '.$collation.')
+		$db->query( 'CREATE TEMPORARY TABLE smw_ob_properties (id INT(8) NOT NULL, property VARBINARY(255), inferred ENUM(\'true\',\'false\'))
                     TYPE=MEMORY', 'SMW::createVirtualTableWithPropertiesByCategory' );
 
-		$db->query( 'CREATE TEMPORARY TABLE smw_ob_properties_sub (category VARCHAR(255) NOT NULL)
+		$db->query( 'CREATE TEMPORARY TABLE smw_ob_properties_sub (category VARBINARY(255) NOT NULL)
                     TYPE=MEMORY', 'SMW::createVirtualTableWithPropertiesByCategory' );
-		$db->query( 'CREATE TEMPORARY TABLE smw_ob_properties_super (category VARCHAR(255) NOT NULL)
+		$db->query( 'CREATE TEMPORARY TABLE smw_ob_properties_super (category VARBINARY(255) NOT NULL)
                     TYPE=MEMORY', 'SMW::createVirtualTableWithPropertiesByCategory' );
 
 		$domainAndRange = $db->selectRow($db->tableName('smw_ids'), array('smw_id'), array('smw_title' => smwfGetSemanticStore()->domainRangeHintRelation->getDBkey()) );
@@ -434,7 +426,7 @@ class AutoCompletionStorageSQL2 extends AutoCompletionStorage {
 	}
 
 	public function getPropertyForAnnotation($userInputToMatch, $category) {
-		global $smwgDefaultCollation;
+		
 		$db =& wfGetDB( DB_SLAVE );
 		$page = $db->tableName('page');
 		$categorylinks = $db->tableName('categorylinks');
@@ -445,18 +437,14 @@ class AutoCompletionStorageSQL2 extends AutoCompletionStorage {
 
 		$nary_pos = 0;
 
-		if (!isset($smwgDefaultCollation)) {
-			$collation = '';
-		} else {
-			$collation = 'COLLATE '.$smwgDefaultCollation;
-		}
+	
 		// create virtual tables
-		$db->query( 'CREATE TEMPORARY TABLE smw_ob_properties (id INT(8) NOT NULL, property VARCHAR(255), inferred ENUM(\'true\',\'false\') '.$collation.')
+		$db->query( 'CREATE TEMPORARY TABLE smw_ob_properties (id INT(8) NOT NULL, property VARBINARY(255), inferred ENUM(\'true\',\'false\'))
                     TYPE=MEMORY', 'SMW::createVirtualTableWithPropertiesByCategory' );
 
-		$db->query( 'CREATE TEMPORARY TABLE smw_ob_properties_sub (category VARCHAR(255) NOT NULL)
+		$db->query( 'CREATE TEMPORARY TABLE smw_ob_properties_sub (category VARBINARY(255) NOT NULL)
                     TYPE=MEMORY', 'SMW::createVirtualTableWithPropertiesByCategory' );
-		$db->query( 'CREATE TEMPORARY TABLE smw_ob_properties_super (category VARCHAR(255) NOT NULL)
+		$db->query( 'CREATE TEMPORARY TABLE smw_ob_properties_super (category VARBINARY(255) NOT NULL)
                     TYPE=MEMORY', 'SMW::createVirtualTableWithPropertiesByCategory' );
 
 		$domainAndRange = $db->selectRow($db->tableName('smw_ids'), array('smw_id'), array('smw_title' => smwfGetSemanticStore()->domainRangeHintRelation->getDBkey()) );
@@ -524,7 +512,7 @@ class AutoCompletionStorageSQL2 extends AutoCompletionStorage {
 	}
 
 	public function getValueForAnnotation($userInputToMatch, $property) {
-		global $smwgDefaultCollation;
+		
 		$db =& wfGetDB( DB_SLAVE );
 
 		$smw_ids = $db->tableName('smw_ids');
@@ -533,19 +521,15 @@ class AutoCompletionStorageSQL2 extends AutoCompletionStorage {
 		$smw_subs2 = $db->tableName('smw_subp2');
 		$smw_spec2 = $db->tableName('smw_spec2');
 
-		if (!isset($smwgDefaultCollation)) {
-			$collation = '';
-		} else {
-			$collation = 'COLLATE '.$smwgDefaultCollation;
-		}
+		
 		// create virtual tables
-		$db->query( 'CREATE TEMPORARY TABLE smw_cc_propertyinst (title VARCHAR(255), namespace INT(11), inferred ENUM(\'true\',\'false\'))
+		$db->query( 'CREATE TEMPORARY TABLE smw_cc_propertyinst (title VARBINARY(255), namespace INT(11), inferred ENUM(\'true\',\'false\'))
                     TYPE=MEMORY', 'SMW::getNumberOfPropertyInstantiations' );
 
 
-		$db->query( 'CREATE TEMPORARY TABLE smw_cc_properties_sub (property VARCHAR(255) '.$collation.' NOT NULL)
+		$db->query( 'CREATE TEMPORARY TABLE smw_cc_properties_sub (property VARBINARY(255)  NOT NULL)
                     TYPE=MEMORY', 'SMW::getNumberOfPropertyInstantiations' );
-		$db->query( 'CREATE TEMPORARY TABLE smw_cc_properties_super (property VARCHAR(255) '.$collation.' NOT NULL)
+		$db->query( 'CREATE TEMPORARY TABLE smw_cc_properties_super (property VARBINARY(255)  NOT NULL)
                     TYPE=MEMORY', 'SMW::getNumberOfPropertyInstantiations' );
 
 		$db->query('INSERT INTO smw_cc_properties_super VALUES ('.$db->addQuotes($property->getDBkey()).')');
@@ -629,23 +613,19 @@ class AutoCompletionStorageSQL2 extends AutoCompletionStorage {
 
 
 	public function getInstanceAsTarget($userInputToMatch, $domainRangeAnnotations) {
-		global $smwgDefaultCollation;
+		
 		$db =& wfGetDB( DB_SLAVE );
 		$page = $db->tableName('page');
 		$categorylinks = $db->tableName('categorylinks');
 
-		if (!isset($smwgDefaultCollation)) {
-			$collation = '';
-		} else {
-			$collation = 'COLLATE '.$smwgDefaultCollation;
-		}
+		
 		// create virtual tables
-		$db->query( 'CREATE TEMPORARY TABLE smw_ob_instances (instance VARCHAR(255) '.$collation.', namespace INTEGER(11))
+		$db->query( 'CREATE TEMPORARY TABLE smw_ob_instances (instance VARBINARY(255), namespace INTEGER(11))
                     TYPE=MEMORY', 'SMW::createVirtualTableWithInstances' );
 
-		$db->query( 'CREATE TEMPORARY TABLE smw_ob_instances_sub (category VARCHAR(255) '.$collation.' NOT NULL)
+		$db->query( 'CREATE TEMPORARY TABLE smw_ob_instances_sub (category VARBINARY(255) NOT NULL)
                     TYPE=MEMORY', 'SMW::createVirtualTableWithInstances' );
-		$db->query( 'CREATE TEMPORARY TABLE smw_ob_instances_super (category VARCHAR(255) '.$collation.' NOT NULL)
+		$db->query( 'CREATE TEMPORARY TABLE smw_ob_instances_super (category VARBINARY(255) NOT NULL)
                     TYPE=MEMORY', 'SMW::createVirtualTableWithInstances' );
 
 		// initialize with direct instances

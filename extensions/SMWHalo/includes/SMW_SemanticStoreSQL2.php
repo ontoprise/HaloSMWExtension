@@ -112,7 +112,7 @@ class SMWSemanticStoreSQL2 extends SMWSemanticStoreSQL {
 			$collation = 'COLLATE '.$smwgDefaultCollation;
 		}
 		// create virtual tables
-		$db->query( 'CREATE TEMPORARY TABLE smw_ob_properties (id INT(8) NOT NULL, property VARCHAR(255) '.$collation.', inherited SET(\'no\', \'yes\') NOT NULL )
+		$db->query( 'CREATE TEMPORARY TABLE smw_ob_properties (id INT(8) NOT NULL, property VARBINARY(255) '.$collation.', inherited SET(\'no\', \'yes\') NOT NULL )
                     TYPE=MEMORY', 'SMW::createVirtualTableWithPropertiesByCategory' );
 
 		$db->query( 'CREATE TEMPORARY TABLE smw_ob_properties_sub (category INT(8) NOT NULL)
@@ -186,7 +186,7 @@ class SMWSemanticStoreSQL2 extends SMWSemanticStoreSQL {
 		$page = $db->tableName('page');
 		$redirect = $db->tableName('redirect');
 		$redirects = $db->tableName('redirect');
-		$db->query( 'CREATE TEMPORARY TABLE smw_ob_properties (id INT(8) NOT NULL, property VARCHAR(255) '.$collation.')
+		$db->query( 'CREATE TEMPORARY TABLE smw_ob_properties (id INT(8) NOT NULL, property VARBINARY(255) '.$collation.')
                     TYPE=MEMORY', 'SMW::createVirtualTableForInstances' );
 		$sql = DBHelper::getSQLConditions($requestoptions,'smw_title','smw_title');
 		// add properties which match and which are no redirects
