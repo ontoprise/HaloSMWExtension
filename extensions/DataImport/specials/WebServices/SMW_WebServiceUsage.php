@@ -180,7 +180,7 @@ public static function processSMWQueryASWSCall($parameters){
 			
 			$subjectCreationPatternParts = array();
 			foreach($allAliases as $alias => $dc){
-				if(strpos($triplificationSubject, "?".$alias."?") !== false){
+				if(strpos(strtolower($triplificationSubject), "?".$alias."?") !== false){
 					$alias = explode('.', $alias);
 					if(!array_key_exists($alias[0].".".$alias[1], $wsReturnValues)
 							&& !array_key_exists($alias[0], $wsReturnValues)){
