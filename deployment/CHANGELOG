@@ -9,8 +9,10 @@ Bugfixes:
 #13541: DF access via proxy server
 #13530: AdminSettings.php is optional since MW 1.16
 #13553: Display the full URL of the repository when using "smwadmin -l" 
+#13569: Restore points are generated multiple times.
 
 New:
 
-ChangeLog added 
+- ChangeLog added 
+- FR #12508 Multiple different restore points supported.
 

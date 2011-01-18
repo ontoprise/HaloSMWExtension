@@ -67,7 +67,7 @@ class Tools {
 	 * @param array directories to exclude
 	 */
 	public static function remove_dir($current_dir, $exclude_dirs = array()) {
-		if (strpos(trim($current_dir), -1) != '/') $current_dir = trim($current_dir)."/";
+		if (substr(trim($current_dir), -1) != '/') $current_dir = trim($current_dir)."/";
 		if($dir = @opendir($current_dir)) {
 			while (($f = readdir($dir)) !== false) {
 				if ($f == "." || $f == "..") continue;
@@ -81,6 +81,28 @@ class Tools {
 			closedir($dir);
 			@rmdir($current_dir); // do not warn cause it may contain excluded files and dirs.
 		}
+	}
+
+
+	/**
+	 * Returns all subdirectories of the given dir.
+	 *
+	 * @param $current_dir
+	 */
+	public static function get_all_dirs($current_dir) {
+		$dirs = array();
+		if (substr(trim($current_dir), -1) != '/') $current_dir = trim($current_dir)."/";
+		if($dir = @opendir($current_dir)) {
+			while (($f = readdir($dir)) !== false) {
+				if ($f == "." || $f == "..") continue;
+				if (is_dir($current_dir.$f)) {
+					$dirs[] = $current_dir.$f;
+				}
+			}
+			closedir($dir);
+			 
+		}
+		return $dirs;
 	}
 
 	/**

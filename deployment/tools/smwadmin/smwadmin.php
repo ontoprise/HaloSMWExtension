@@ -190,7 +190,24 @@ if ($dfgRestore) {
 	$line = trim(fgets(STDIN));
 	$result = strtolower($line);
 	if ($result === 'y') {
-		$rollback->rollback();
+		$restorePoints = $rollback->getAllRestorePoints();
+		if (count($restorePoints) === 0) {
+			print "\nNothing to restore.";
+			die(DF_TERMINATION_WITHOUT_FINALIZE);
+		}
+        print "\nThe following restore points are available:\n";
+		do {
+			$i = 1;
+			foreach($restorePoints as $rp) {
+				$timestamp = filemtime($rp);
+				print "\n($i) ".basename($rp)." [".date(DATE_RSS, $timestamp)."]";
+				$i++;
+			}
+			print "\n\nChoose one: ";
+			$num = intval(trim(fgets(STDIN)));
+		} while(!(is_int($num) && $num < $i && $num > 0));
+
+		$rollback->rollback(basename($restorePoints[$num-1]));
 		die(DF_TERMINATION_WITH_FINALIZE);
 	} else {
 		die(DF_TERMINATION_WITHOUT_FINALIZE);
