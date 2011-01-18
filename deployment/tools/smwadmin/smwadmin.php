@@ -98,6 +98,7 @@ $dfgCheckDep=false;
 $dfgRestore=false;
 $dfgCheckInst=false;
 $dfgInstallPackages=false;
+$dfgRestoreList=false;
 
 $args = $_SERVER['argv'];
 array_shift($args); // remove script name
@@ -168,7 +169,11 @@ for( $arg = reset( $args ); $arg !== false; $arg = next( $args ) ) {
 		$dfgForce = true;
 		continue;
 	} else if ($arg == '-r') { // => rollback last installation
+		$dfgRestorePoint = next($args);
 		$dfgRestore = true;
+		continue;
+	} else if ($arg == '-rlist') {
+		$dfgRestoreList = true;
 		continue;
 	} else {
 		print "\nUnknown command: $arg. Try --help\n\n";
@@ -192,26 +197,47 @@ if ($dfgRestore) {
 	if ($result === 'y') {
 		$restorePoints = $rollback->getAllRestorePoints();
 		if (count($restorePoints) === 0) {
-			print "\nNothing to restore.";
+			print "\nNothing to restore.\n";
 			die(DF_TERMINATION_WITHOUT_FINALIZE);
 		}
-        print "\nThe following restore points are available:\n";
-		do {
-			$i = 1;
-			foreach($restorePoints as $rp) {
-				$timestamp = filemtime($rp);
-				print "\n($i) ".basename($rp)." [".date(DATE_RSS, $timestamp)."]";
-				$i++;
-			}
-			print "\n\nChoose one: ";
-			$num = intval(trim(fgets(STDIN)));
-		} while(!(is_int($num) && $num < $i && $num > 0));
-
-		$rollback->rollback(basename($restorePoints[$num-1]));
+		if ($dfgRestorePoint === false) {
+			print "\nThe following restore points are available:\n";
+			do {
+				$i = 1;
+				foreach($restorePoints as $rp) {
+					$timestamp = filemtime($rp);
+					print "\n($i) ".basename($rp)." [".date(DATE_RSS, $timestamp)."]";
+					$i++;
+				}
+				print "\n\nChoose one: ";
+				$num = intval(trim(fgets(STDIN)));
+			} while(!(is_int($num) && $num < $i && $num > 0));
+			$dfgRestorePoint = basename($restorePoints[$num-1]);
+		}
+		$success = $rollback->rollback($dfgRestorePoint);
+		if (!$success) {
+			print "\nCould not restore '$dfgRestorePoint'. Does it exist?\n";
+		}
 		die(DF_TERMINATION_WITH_FINALIZE);
 	} else {
 		die(DF_TERMINATION_WITHOUT_FINALIZE);
 	}
+}
+
+if ($dfgRestoreList) {
+	$restorePoints = $rollback->getAllRestorePoints();
+	if (count($restorePoints) === 0) {
+		print "\nNo restore point exist.\n";
+		die(DF_TERMINATION_WITHOUT_FINALIZE);
+	}
+	$i = 1;
+	foreach($restorePoints as $rp) {
+		$timestamp = filemtime($rp);
+		print "\n($i) ".basename($rp)." [".date(DATE_RSS, $timestamp)."]";
+		$i++;
+	}
+	print "\n";
+	die(DF_TERMINATION_WITHOUT_FINALIZE);
 }
 
 // Global update (ie. updates all packages to the latest possible version)

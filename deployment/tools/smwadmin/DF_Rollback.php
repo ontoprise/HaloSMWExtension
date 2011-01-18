@@ -53,7 +53,7 @@ class Rollback {
 
 
 	public function getAllRestorePoints() {
-		if (!file_exists($this->tmpDir."/rollback_data/")) return 0;
+		if (!file_exists($this->tmpDir."/rollback_data/")) return array();
 		$dirs = Tools::get_all_dirs($this->tmpDir."/rollback_data/");
 		return $dirs;
 	}
@@ -113,11 +113,13 @@ class Rollback {
 	 * Rolls back from the latest rollback point.
 	 *
 	 * @param string Name of restore point.
+	 * @return bool true on success.
 	 */
 	public function rollback($name) {
-
+		if (!file_exists($this->tmpDir."/rollback_data/$name")) return false;
 		$this->restoreInstallation($name);
 		$this->restoreDatabase($name);
+		return true;
 	}
 
 	/**
@@ -168,11 +170,11 @@ class Rollback {
 		return $answer;
 
 	}
-    
+
 	/**
 	 * Asks for the name of a restore point.
-	 * If it exists it asks for permission to overwrite. 
-	 * 
+	 * If it exists it asks for permission to overwrite.
+	 *
 	 * @return string Name of restore point directory.
 	 */
 	private function getRestorePointName() {
@@ -181,29 +183,29 @@ class Rollback {
 			print "\nPlease enter a name for the restore point: ";
 			$name = trim(fgets(STDIN));
 			$name = str_replace(" ","_", $name);
-            
+
 			if (preg_match('/\w+/', $name, $matches) === false) continue;
 			if ($name !== $matches[0]) {
 				print "\nForbidden characters. Please use only alphanumeric chars and spaces";
 				continue;
 			}
-			
+				
 			// clear if it already exists
 			if (file_exists($this->tmpDir.$name)) {
 				print "\nA restore point with this name already exists. Overwrite? (y/n) ";
 				$line = trim(fgets(STDIN));
 				if (strtolower($line) == 'n') {
-					 continue;
+					continue;
 				}
 			}
-                $done = true;
+			$done = true;
 		} while(!$done);
 		return $name;
 	}
 
 	/**
 	 * Restore the database dump from the rollback directory.
-	 * 
+	 *
 	 * @param string Name of restore point.
 	 * @return boolean
 	 */
