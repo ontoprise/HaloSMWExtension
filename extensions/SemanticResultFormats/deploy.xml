@@ -28,7 +28,7 @@
         <new>
             <patch file="patch.txt" />
             <require name="srf"
-                file="extensions/SemanticResultFormats/SRF_Settings.php" />
+                file="extensions/SemanticResultFormats/SemanticResultFormats.php" />
      
         </new>
         <uninstall>

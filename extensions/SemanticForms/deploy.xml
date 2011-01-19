@@ -32,7 +32,7 @@
    
         <new>
             <require name="sf_init"
-                file="extensions/SemanticForms/includes/SF_Settings.php" />
+                file="extensions/SemanticForms/SemanticForms.php" />
             <patch file="patch.txt" />
         </new>
          <update from="191">

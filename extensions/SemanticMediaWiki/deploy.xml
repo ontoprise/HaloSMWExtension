@@ -27,7 +27,7 @@
 
         <new>
             <require name="smw"
-                file="extensions/SemanticMediaWiki/SMW_Settings.php" />
+                file="extensions/SemanticMediaWiki/SemanticMediaWiki.php" />
             <function name="enableSemantics">
                 <string name="namespace" userValueRequired="true"
                     description="Namespace of wiki (arbitrary value)">
