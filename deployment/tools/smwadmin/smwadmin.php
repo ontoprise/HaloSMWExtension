@@ -214,7 +214,7 @@ if ($dfgRestore) {
 			} while(!(is_int($num) && $num < $i && $num > 0));
 			$dfgRestorePoint = basename($restorePoints[$num-1]);
 		}
-		$success = $rollback->rollback($dfgRestorePoint);
+		$success = $rollback->restore($dfgRestorePoint);
 		if (!$success) {
 			print "\nCould not restore '$dfgRestorePoint'. Does it exist?\n";
 		}
@@ -350,7 +350,7 @@ if (count($installer->getErrors()) === 0) {
 }
 
 function showHelp() {
-	echo "\nsmwhalo admin utility v".DEPLOY_FRAMEWORK_VERSION.", Ontoprise 2009";
+	echo "\nsmwhalo admin utility v".DEPLOY_FRAMEWORK_VERSION.", Ontoprise 2009-2011";
 	echo "\n\nUsage: smwadmin [ -i | -d ] <package>[-<version>]";
 	echo "\n       smwadmin -u [ <package>[-<version>] ]";
 	echo "\n       smwadmin -r";
@@ -360,7 +360,8 @@ function showHelp() {
 	echo "\n\t-d <package> ]: De-Install";
 	echo "\n\t-u <package>: Update";
 	echo "\n\t-l [ pattern ] : List installed packages.";
-	echo "\n\t-r : Restore from last wiki-restore-point.";
+	echo "\n\t-r [ name ]: Restore from a wiki-restore-point.";
+	echo "\n\t-rlist : Shows all existing wiki-restore-points";
 	echo "\n\n\tAdvanced options: ";
 	echo "\n\t--finalize: Finalizes installation";
 	echo "\n\t--checkdump <package>: Check only dumps for changes but do not install.";
@@ -370,7 +371,7 @@ function showHelp() {
 	echo "\n\tsmwadmin -u: Updates complete installation";
 	echo "\n\tsmwadmin -u --dep: Shows what would be updated.";
 	echo "\n\tsmwadmin -d smw: Removes the package smw.";
-	echo "\n\tsmwadmin -r : Restores old installation from last restore point";
+	echo "\n\tsmwadmin -r : Restores old installation from a restore point. User is prompted for which.";
 	echo "\n\n";
 
 }

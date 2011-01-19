@@ -20,7 +20,8 @@
  * @file
  * @ingroup DFInstaller
  *
- * Rollback an installation.
+ * Restore tool. Creates and restores wiki installations (aka 'restore points).
+ * Can handle several restore points. 
  *
  * @author: Kai K�hn / ontoprise / 2009
  *
@@ -51,7 +52,11 @@ class Rollback {
 
 	}
 
-
+    /**
+     * Returns the absolute paths of all restore points.
+     * 
+     * @return array of string
+     */
 	public function getAllRestorePoints() {
 		if (!file_exists($this->tmpDir."/rollback_data/")) return array();
 		$dirs = Tools::get_all_dirs($this->tmpDir."/rollback_data/");
@@ -101,7 +106,7 @@ class Rollback {
 
 		$wgDBname = $this->getVariableValue("LocalSettings.php", "wgDBname");
 		print "\n[Saving database...";
-		print "\nmysqldump -u $wgDBadminuser --password=$wgDBadminpassword $wgDBname > ".$this->tmpDir."/rollback_data/$name/dump.sql";
+		//print "\nmysqldump -u $wgDBadminuser --password=$wgDBadminpassword $wgDBname > ".$this->tmpDir."/rollback_data/$name/dump.sql";
 		exec("mysqldump -u $wgDBadminuser --password=$wgDBadminpassword $wgDBname > ".$this->tmpDir."/$name/dump.sql", $out, $ret);
 		if ($ret != 0) print "\nWarning: Could not save database for rollback"; else print "done.]";
 		$savedDataBase = true;
@@ -115,38 +120,32 @@ class Rollback {
 	 * @param string Name of restore point.
 	 * @return bool true on success.
 	 */
-	public function rollback($name) {
+	public function restore($name) {
 		if (!file_exists($this->tmpDir."/rollback_data/$name")) return false;
 		$this->restoreInstallation($name);
 		$this->restoreDatabase($name);
 		return true;
 	}
 
-	/**
-	 * Restores complete code base of installation including LocalSettings.php
-	 *
-	 * @param string Name of restore point.
-	 */
-	private function restoreInstallation($name) {
-		print "\n[Remove current installation...";
-		Tools::remove_dir($this->rootDir, array(Tools::normalizePath($this->rootDir."/deployment")));
-		print "done.]";
-		print "\n[Restore old installation...";
-		Tools::copy_dir($this->tmpDir."/rollback_data/$name", $this->rootDir);
-		print "done.]";
-	}
+
 
 	/**
-	 * Acquires a new restore point. The user has to confirm to
+	 * Acquires a new restore point. The user has to enter a name and to confirm to
 	 * overwrite an exisiting restore point. Can be called several
-	 * times but will always return the result of the first call. All
-	 * subsequent calls will have to further effects.
+	 * times but will always return the result of the first call (holds
+	 * also for all out parameters. All subsequent calls will have no 
+	 * further effects.
+	 * 
+	 * Note: REQUIRES user interaction
 	 *
-	 *@return boolean True if a restore point should be created/overwritten.
+	 * @param string (out) name of the restore point
+	 * @return boolean True if a restore point should be created/overwritten.
 	 */
-	private function acquireNewRestorePoint(& $name) {
+	protected function acquireNewRestorePoint(& $name) {
 		static $calledOnce = false;
 		static $answer;
+		static $namedStored;
+		$name = $namedStored;
 
 		if ($calledOnce) return $answer;
 		$calledOnce = true;
@@ -159,7 +158,8 @@ class Rollback {
 			return $answer;
 		}
 
-		$name = $this->getRestorePointName();
+		$namedStored = $this->getRestorePointName();
+		$name = $namedStored;
 
 		// clear if it already exists
 		if (file_exists($this->tmpDir."/".$name)) {
@@ -175,9 +175,11 @@ class Rollback {
 	 * Asks for the name of a restore point.
 	 * If it exists it asks for permission to overwrite.
 	 *
+	 * Note: REQUIRES user interaction
+	 * 
 	 * @return string Name of restore point directory.
 	 */
-	private function getRestorePointName() {
+	protected function getRestorePointName() {
 		$done = false;
 		do {
 			print "\nPlease enter a name for the restore point: ";
@@ -189,7 +191,7 @@ class Rollback {
 				print "\nForbidden characters. Please use only alphanumeric chars and spaces";
 				continue;
 			}
-				
+
 			// clear if it already exists
 			if (file_exists($this->tmpDir.$name)) {
 				print "\nA restore point with this name already exists. Overwrite? (y/n) ";
@@ -201,6 +203,31 @@ class Rollback {
 			$done = true;
 		} while(!$done);
 		return $name;
+	}
+    
+	/**
+	 * Asks for confirmation.
+	 * 
+	 * Note: REQUIRES user interaction
+	 * 
+	 * @param $msg
+	 */
+	protected function askForConfirmation($msg) {
+		return Tools::consoleConfirm($msg);
+	}
+
+	/**
+	 * Restores complete code base of installation including LocalSettings.php
+	 *
+	 * @param string Name of restore point.
+	 */
+	private function restoreInstallation($name) {
+		print "\n[Remove current installation...";
+		Tools::remove_dir($this->rootDir, array(Tools::normalizePath($this->rootDir."/deployment")));
+		print "done.]";
+		print "\n[Restore old installation...";
+		Tools::copy_dir($this->tmpDir."/rollback_data/$name", $this->rootDir);
+		print "done.]";
 	}
 
 	/**
@@ -220,6 +247,7 @@ class Rollback {
 		}
 		$wgDBname = $this->getVariableValue("LocalSettings.php", "wgDBname");
 		if (!file_exists($this->tmpDir."/$name/dump.sql")) return false; // nothing to restore
+		if (!$this->askForConfirmation("Restore database? (y/n) ")) return false;
 		print "\n[Restore database...";
 
 		exec("mysql -u $wgDBadminuser --password=$wgDBadminpassword --database=$wgDBname < ".$this->tmpDir."/$name/dump.sql", $out, $ret);

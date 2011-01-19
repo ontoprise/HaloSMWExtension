@@ -451,4 +451,13 @@ class Tools {
 		}
 		return $check;
 	}
+	
+	/**
+	 * Asks for a confirmation.
+	 */
+	public static function consoleConfirm($msg = "") {
+		if ($msg !== '') print "\n$msg";
+		$a = trim(fgets(STDIN));
+		return strtolower($a) === 'y';
+	}
 }
