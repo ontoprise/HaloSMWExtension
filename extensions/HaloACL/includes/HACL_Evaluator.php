@@ -417,7 +417,10 @@ class HACLEvaluator {
 	 */
 	public static function hasPropertyRight($propertyTitle, $userID, $actionID) {
 		global $haclgProtectProperties;
-		if (!$haclgProtectProperties || $propertyTitle == null) {
+		if (!$haclgProtectProperties 
+		    || $propertyTitle == null 
+		    || (self::$mMode == self::ALLOW_PROPERTY_READ 
+		        && $actionID == HACLRight::READ)) {
 			// Protection of properties is disabled or property has no page.
 			return true;
 		}
@@ -1210,7 +1213,11 @@ class HACLEvaluator {
 		$oldValues = array();
 		self::$mMode = HACLEvaluator::ALLOW_PROPERTY_READ;
 		foreach ($oldPV as $v) {
-			$hash = implode("\t", $v->getDBkeys());
+//			$hash = implode("\t", $v->getDBkeys());
+			$hash = $v->getHash();
+			if ($v instanceof SMWNumberValue) {
+				$hash = strval(floatval($hash));
+			}
 			$oldValues[$hash] = false;
 		}
 		self::$mMode = HACLEvaluator::NORMAL;
@@ -1224,7 +1231,11 @@ class HACLEvaluator {
 				// A property has an empty value => can be ignored
 				continue;
 			}
-			$nv = implode("\t", $v->getDBkeys());
+//			$nv = implode("\t", $v->getDBkeys());
+			$nv = $v->getHash();
+			if ($v instanceof SMWNumberValue) {
+				$nv = strval(floatval($nv));
+			}
 			self::$mMode = HACLEvaluator::NORMAL;
 			if (array_key_exists($nv, $oldValues)) {
 				// Old value was not changed
