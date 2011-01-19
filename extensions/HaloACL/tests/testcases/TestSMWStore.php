@@ -62,7 +62,8 @@ class TestSMWStoreSuite extends PHPUnit_Framework_TestSuite
     	if (!isset($content)) {
     		return;
     	}
-		$title = Title::newFromText($title);
+    	global $wgTitle;
+		$wgTitle = $title = Title::newFromText($title);
 		$article = new Article($title);
 		// Set the article's content
 		$success = $article->doEdit($content, 'Created for test case', 
@@ -674,6 +675,8 @@ QUERY;
 						)
 		));
 		
+		// This test currently fails because of bug
+		// 13615 - Graph and URI-prefix must not be the same
 		$this->doTestSPARQLGetQueryResult(array(
 		    'query'		=> "[[NormalProperty::+]][[ProtectedProperty::+]]",
 			'format'	=> "table",
