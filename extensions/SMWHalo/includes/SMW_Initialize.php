@@ -136,6 +136,10 @@ function smwgHaloSetupExtension() {
 	$wgAutoloadClasses['SMWChemicalEquationTypeHandler'] = $smwgHaloIP . '/includes/SMW_DV_ChemEquation.php';
 	$wgAutoloadClasses['SMWMathematicalEquationTypeHandler'] = $smwgHaloIP . '/includes/SMW_DV_MathEquation.php';
 	$wgAutoloadClasses['SMWIsExtensionInstalledPF'] = $smwgHaloIP . '/includes/SMW_IsExtensionInstalledPF.php';
+	$wgAutoloadClasses['SMWQMSpecialBrowse'] = $smwgHaloIP.'/specials/SearchTriple/SMW_QM_SpecialBrowse.php';
+	
+	//patch Special:Browse in order to hide special Query Management Property
+	$wgSpecialPages['Browse']  = array( 'SMWQMSpecialBrowse' );
 	
 	require_once $smwgHaloIP.'/includes/queryprinters/SMW_QP_Halo.php';
 
