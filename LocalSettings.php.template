@@ -188,15 +188,15 @@ $wgGroupPermissions['sysop']['ontologyediting'] = true;
 // extensions
 
 /*start-deploymentframework*/
-require_once('deployment/Deployment.php');
+require_once($IP.'/deployment/Deployment.php');
 /*end-deploymentframework*/
 
 /*start-scriptmanager*/
-require_once('extensions/ScriptManager/SM_Initialize.php');
+require_once($IP.'/extensions/ScriptManager/SM_Initialize.php');
 /*end-scriptmanager*/
 
 /*start-arclibrary*/
-include_once('extensions/ARCLibrary/ARCLibrary.php');
+include_once($IP.'/extensions/ARCLibrary/ARCLibrary.php');
 enableARCLibrary();
 /*end-arclibrary*/
 
@@ -206,15 +206,15 @@ require_once( "{$IP}/extensions/Cite/Cite.php" );
 
 /*start-applicationprogramming*/
 require_once( "$IP/extensions/ApplicationProgramming/ParserFunctions/ParserFunctions.php" );
-require_once ("$IP/extensions/ApplicationProgramming/StringFunctions/StringFunctions.php");
+require_once( "$IP/extensions/ApplicationProgramming/StringFunctions/StringFunctions.php");
 require_once( "$IP/extensions/ApplicationProgramming/Variables/Variables.php" );
-include_once('extensions/ApplicationProgramming/URLArguments/URLArguments.php');
+include_once( $IP.'/extensions/ApplicationProgramming/URLArguments/URLArguments.php');
 /*end-applicationprogramming*/
 
 /*start-smw*/
 $smwgIQEnabled=true;
 $smwgOWLFullExport = true;
-include_once('extensions/SemanticMediaWiki/SemanticMediaWiki.php');
+include_once($IP.'/extensions/SemanticMediaWiki/SemanticMediaWiki.php');
 $smwgShowFactbox = SMW_FACTBOX_SHOWN; 
 enableSemantics(/*param-start-enableSemantics*/'localhost:8080'/*param-end-enableSemantics*/);
 /*end-smw*/
@@ -225,7 +225,7 @@ $smwhgAutoTemplatesParameters = array (NS_CATEGORY => array("PAGENAME"=>'$FULLPA
 $smwhgAutoTemplates = array(NS_CATEGORY => "Category", SMW_NS_PROPERTY => "Property");
 
 /*start-semanticforms*/
-include_once('extensions/SemanticForms/SemanticForms.php');
+include_once($IP.'/extensions/SemanticForms/SemanticForms.php');
 /*end-semanticforms*/
 
 /*start-smwhalo*/
@@ -235,24 +235,24 @@ $smwgEnableUploadConverter = true;
 $smwgUseEditDistance = false;
 $smwgShowDerivedFacts = true;
 $smwgQComparators = '<|>|!|~';
-include_once('extensions/SMWHalo/includes/SMW_Initialize.php');
+include_once($IP.'/extensions/SMWHalo/includes/SMW_Initialize.php');
 enableSMWHalo(/*param-start-enableSMWHalo*/'SMWHaloStore2', NULL, NULL/*param-end-enableSMWHalo*/);
 $wgUseAjax = /*start-variable-wgUseAjax*/true;/*end-variable-wgUseAjax*/
 $smwgShowDerivedFacts=true;
 # Data-API
 $wgEnableWriteAPI = true;
 $pcpWSServer = true;
-require_once('extensions/SMWHalo/DataAPI/PageCRUD_Plus/PCP.php');
+require_once($IP.'/extensions/SMWHalo/DataAPI/PageCRUD_Plus/PCP.php');
 $pomWSServer = true;
-require_once('extensions/SMWHalo/DataAPI/PageObjectModel/POM.php');
-require_once('extensions/SMWHalo/DataAPI/SemanticFormsAPI/SemanticFormsAPI.php');
+require_once($IP.'/extensions/SMWHalo/DataAPI/PageObjectModel/POM.php');
+require_once($IP.'/extensions/SMWHalo/DataAPI/SemanticFormsAPI/SemanticFormsAPI.php');
 /*end-smwhalo*/
 
 /*start-semanticgardening*/
 $sgagKeepGardeningConsole=false;
 $sgagGardeningBotDelay=100;
 $phpInterpreter=/*start-variable-phpInterpreter*/"{{xamp-install}}/php/php.exe";/*end-variable-phpInterpreter*/
-include_once('extensions/SemanticGardening/includes/SGA_GardeningInitialize.php');
+require_once($IP.'/extensions/SemanticGardening/includes/SGA_GardeningInitialize.php');
 /*end-semanticgardening*/
 
 /*start-semanticmaps*/
@@ -262,7 +262,7 @@ require_once( "$IP/extensions/SemanticMaps/SemanticMaps.php" );
 /*end-semanticmaps*/
 
 /*start-dataimport*/
-include_once('extensions/DataImport/includes/DI_Initialize.php');
+require_once($IP.'/extensions/DataImport/includes/DI_Initialize.php');
 enableDataImportExtension(/*param-start-enableDataImportExtension*//*param-end-enableDataImportExtension*/);
 $wgAllowExternalImages=/*start-variable-wgAllowExternalImages*/true;/*end-variable-wgAllowExternalImages*/
 
@@ -279,11 +279,11 @@ enableAutomaticSemanticForms();
 /*end-automaticsemanticforms*/
 
 /*start-dynamicpagelist*/
-include("extensions/DynamicPageList/DynamicPageList.php");
+require_once($IP.'/extensions/DynamicPageList/DynamicPageList.php');
 /*end-dynamicpagelist*/
 
 /*start-semanticresultformats*/
-require_once("extensions/SemanticResultFormats/SemanticResultFormats.php");
+require_once($IP."/extensions/SemanticResultFormats/SemanticResultFormats.php");
 $srfgFormats[] = 'googlepie';
 $srfgFormats[] = 'googlebar';
 $srfgFormats[] = 'math';
@@ -295,7 +295,7 @@ require_once("$IP/extensions/SemanticResultFormats/ofc/SRF_OFC_Init.php");
 /*end-semanticresultformats*/
 
 /*start-haloacl*/
-require_once('extensions/HaloACL/includes/HACL_Initialize.php');
+require_once($IP.'/extensions/HaloACL/includes/HACL_Initialize.php');
 /*php-start-MasterTemplate*/
 // Remove the comments from the following line to enable the ACL master template
             // for private user spaces. Every new article of a user will only be accessible
@@ -307,21 +307,21 @@ enableHaloACL(/*param-start-enableHaloACL*//*param-end-enableHaloACL*/);
 /*end-haloacl*/ 
 
 /*start-semanticnotifications*/
-include_once('extensions/SemanticNotifications/includes/SN_Initialize.php');
+require_once($IP.'/extensions/SemanticNotifications/includes/SN_Initialize.php');
 enableSemanticNotifications(); 
 /*end-semanticnotifications*/
 
 /*start-newusermessage*/
-require_once( "extensions/NewUserMessage/NewUserMessage.php" );
+require_once( $IP."/extensions/NewUserMessage/NewUserMessage.php" );
 /*end-newusermessage*/
 
 $wgJobRunRate=0;
 
 /*start-richmedia*/
-include_once('extensions/RichMedia/includes/RM_Initialize.php');
+require_once($IP.'/extensions/RichMedia/includes/RM_Initialize.php');
 enableRichMediaExtension();
 $wgAllowExternalImages=true;
-include_once('extensions/RichMedia/includes/WebDAV/WD_Initialize.php');
+require_once($IP.'/extensions/RichMedia/includes/WebDAV/WD_Initialize.php');
 #Set default searching for document and pdf namespace
 $wgNamespacesToBeSearchedDefault = array(
         NS_MAIN => true,
@@ -331,17 +331,17 @@ $wgNamespacesToBeSearchedDefault = array(
 /*end-richmedia*/
 
 /*start-treeview*/
-include('extensions/Treeview/Treeview.php');
+require_once($IP.'/extensions/Treeview/Treeview.php');
 $wgTreeViewShowLines = true;
 /*end-treeview*/
 
 /*start-wysiwyg*/
-require_once("$IP/extensions/WYSIWYG/WYSIWYG.php");
+require_once($IP."/extensions/WYSIWYG/WYSIWYG.php");
 $wgCKEditorUrlparamMode = true;
 /*end-wysiwyg*/
 
 /*start-imagemap*/
-require_once("$IP/extensions/ImageMap/ImageMap.php");
+require_once($IP."/extensions/ImageMap/ImageMap.php");
 /*end-imagemap*/
 
 #Enable semantic annotations for pages in the following namespaces
@@ -357,21 +357,21 @@ $smwgNamespacesWithSemanticLinks[SF_NS_FORM] = true;
 
 
 /*start-semanticformsinputs*/
-require_once('extensions/SemanticFormsInputs/SemanticFormsInputs.php');
+require_once($IP.'/extensions/SemanticFormsInputs/SemanticFormsInputs.php');
 /*end-semanticformsinputs*/
 
 /*start-collaboration*/
-include_once('extensions/Collaboration/includes/CE_Initialize.php');
+include_once($IP.'/extensions/Collaboration/includes/CE_Initialize.php');
 enableCollaboration();
 /*end-collaboration*/
 
 /*start-smwusermanual*/
-include_once('extensions/SMWUserManual/includes/SMW_UserManual.php');
+include_once($IP.'/extensions/SMWUserManual/includes/SMW_UserManual.php');
 enableSMWUserManual();
 /*end-smwusermanual*/
 
 /*start-ultrapedia*/
-require_once("extensions/Ultrapedia/includes/UP_Initialize.php");
+require_once($IP."/extensions/Ultrapedia/includes/UP_Initialize.php");
 /*end-ultrapedia*/
 
 /*start-unifiedsearch*/
@@ -381,8 +381,8 @@ require_once("extensions/Ultrapedia/includes/UP_Initialize.php");
 /*start-variable-wgLuceneSearchVersion*/$wgLuceneSearchVersion = 2.1;/*end-variable-wgLuceneSearchVersion*/
 /*start-variable-wgUSPathSearch*/$wgUSPathSearch=true;/*end-variable-wgUSPathSearch*/
 $wgLuceneSearchTimeout=5;
-require_once('extensions/EnhancedRetrieval/includes/EnhancedRetrieval.php');
-@include( '/extensions/EnhancedRetrieval/OAI/OAIRepo.php' );
+require_once($IP.'/extensions/EnhancedRetrieval/includes/EnhancedRetrieval.php');
+@require_once( $IP.'/extensions/EnhancedRetrieval/OAI/OAIRepo.php' );
 $oaiAgentRegex = '/experimental/';
 $oaiAuth = true;
 $oaiAudit = true;
