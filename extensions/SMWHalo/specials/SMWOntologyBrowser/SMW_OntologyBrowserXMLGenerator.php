@@ -18,32 +18,33 @@ class SMWOntologyBrowserXMLGenerator {
 	/**
 	 * Encapsulate an array of categories as a category partition in XML.
 	 *
-	 * @param array & $titles. Category titles
+	 * @param array of CategoryTreeElements.
 	 * @param $limit Max number of categories per partition
 	 * @param $partitionNum Number of partition (0 <= $partitionNum <= total number / limit)
 	 * @param $rootLevel True, if partition on root level. Otherwise false.
 	 *
 	 * @return XML string
 	 */
-	public static function encapsulateAsConceptPartition(array & $titles, array & $resourceAttachments, $limit, $partitionNum, $rootLevel = false) {
+	public static function encapsulateAsConceptPartition(array & $categoryTreeElements, array & $resourceAttachments, $limit, $partitionNum, $rootLevel = false) {
 		$id = uniqid (rand());
 		$count = 0;
 		$result = "";
-		if (count($titles) == $limit) {
+		if (count($categoryTreeElements) == $limit) {
 			if ($partitionNum == 0) {
 				$result .= "<categoryPartition id=\"ID_$id$count\" partitionNum=\"$partitionNum\" length=\"$limit\" hidePreviousArrow=\"true\"/>";
 			} else {
 				$result .= "<categoryPartition id=\"ID_$id$count\" partitionNum=\"$partitionNum\" length=\"$limit\"/>";
 			}
 		}
-		if (count($titles) < $limit && $partitionNum > 0) {
+		if (count($categoryTreeElements) < $limit && $partitionNum > 0) {
 			$result .= "<categoryPartition id=\"ID_$id$count\" partitionNum=\"$partitionNum\" length=\"$limit\" hideNextArrow=\"true\"/>";
 		}
 		$count++;
 		$ts = TSNamespaces::getInstance();
 		$gi_store = SGAGardeningIssuesAccess::getGardeningIssuesAccess();
-		foreach($titles as $e) {
-			list($t, $isLeaf) = $e;
+		foreach($categoryTreeElements as $e) {
+			$t = $e->getTitle();
+			$isLeaf = $e->isLeaf();
 			if (SMWOntologyBrowserXMLGenerator::isPredefined($t)) {
 				continue;
 			}
@@ -57,7 +58,7 @@ class SMWOntologyBrowserXMLGenerator {
 			$titleURLEscaped = htmlspecialchars(self::urlescape($t->getDBkey()));
 			$issues = $gi_store->getGardeningIssues('smw_consistencybot', NULL, NULL, $t);
 			$gi_issues = SMWOntologyBrowserErrorHighlighting::getGardeningIssuesAsXML($issues);
-			$uri_att = 'uri="'.htmlspecialchars($ts->getFullURI($t)).'"';
+			$uri_att = 'uri="'.htmlspecialchars($e->getURI()).'"';
 			$result = $result."<conceptTreeElement $leaf $uri_att title_url=\"$titleURLEscaped\" title=\"".$title_esc."\" img=\"concept.gif\" id=\"ID_$id$count\">$gi_issues$definingRulesXML</conceptTreeElement>";
 			$count++;
 		}
@@ -98,9 +99,18 @@ class SMWOntologyBrowserXMLGenerator {
 		$gi_store = SGAGardeningIssuesAccess::getGardeningIssuesAccess();
 		foreach($instances as $t) {
 
-			list($instanceData, $categoryData) = $t;
-			list($categoryURI, $categoryTitle) = $categoryData;
-			list($instanceTitle, $instanceURI, $url, $metadata) = $instanceData;
+
+			$instanceTitle = $t->getTitle();
+			$instanceURI = $t->getURI();
+			$url = $t->getURL();
+			$categoryTreeElement = $t->getCategoryTreeElement();
+			$categoryURI = NULL;
+			$categoryTitle = NULL;
+			if (!is_null($categoryTreeElement)) {
+				$categoryURI = $categoryTreeElement->getURI();
+				$categoryTitle = $categoryTreeElement->getTitle();
+			}
+			$metadata = $t->getMetadata();
 
 			if ($instanceTitle instanceof SMWWikiPageValue) { // also accept SMW datavalue here
 				$instanceTitle = $instanceTitle->getTitle();
@@ -180,7 +190,12 @@ class SMWOntologyBrowserXMLGenerator {
 		$gi_store = SGAGardeningIssuesAccess::getGardeningIssuesAccess();
 		foreach($titles as $e) {
 
-			list($t, $isLeaf, $propertyURI, $localURL) = $e;
+			//list($t, $isLeaf, $propertyURI, $localURL) = $e;
+			$t = $e->getTitle();
+			$isLeaf = $e->isLeaf();
+			$propertyURI = $e->getURI();
+			$localURL = $e->getURL();
+			
 			if (SMWOntologyBrowserXMLGenerator::isPredefined($t)) {
 				continue;
 			}
@@ -215,23 +230,33 @@ class SMWOntologyBrowserXMLGenerator {
 	 *
 	 * @return XML string
 	 */
-	public static function encapsulateAsAnnotationList(array & $propertyAnnotations, Title $instance) {
+	public static function encapsulateAsAnnotationList(array & $propertyAnnotations, $instanceListElement) {
 		$result = "";
 		$gi_store = SGAGardeningIssuesAccess::getGardeningIssuesAccess();
+		$instance = !is_null($instanceListElement) ? $instanceListElement->getTitle() : NULL;
 		foreach($propertyAnnotations as $a) {
-			list($property, $values) = $a;
-			$val = $property->getDBkeys();
-			$propertyTitle = Title::newFromText($val[0], SMW_NS_PROPERTY);
-			$result .= SMWOntologyBrowserXMLGenerator::encapsulateAsAnnotation($instance, $propertyTitle, $values);
+		
+			$property = $a->getProperty();
+			$values = $a->getValues();
+			
+			//$val = $property->getDBkeys();
+			//$propertyTitle = Title::newFromText($val[0], SMW_NS_PROPERTY);
+				
+			$result .= SMWOntologyBrowserXMLGenerator::encapsulateAsAnnotation($instance, $property, $values);
+
 		}
 		// get low cardinality issues and "highlight" missing annotations. This is an exception because missing annotations do not exist.
-		$issues = $gi_store->getGardeningIssues('smw_consistencybot', SMW_GARDISSUE_MISSING_ANNOTATIONS, NULL, $instance);
-		$result .= SMWOntologyBrowserErrorHighlighting::getMissingAnnotations($issues);
-		$instanceTitleEscaped = htmlspecialchars($instance->getDBkey());
-		$namespaceInstance = $instance->getNsText();
-		$titleURLEscaped = htmlspecialchars(self::urlescape($instance->getDBkey()));
+		if (!is_null($instance)) {
+			$issues = $gi_store->getGardeningIssues('smw_consistencybot', SMW_GARDISSUE_MISSING_ANNOTATIONS, NULL, $instance);
+			$result .= SMWOntologyBrowserErrorHighlighting::getMissingAnnotations($issues);
+			$instanceTitleEscaped = htmlspecialchars($instance->getDBkey());
+			$namespaceInstance = $instance->getNsText();
+			$titleURLEscaped = htmlspecialchars(self::urlescape($instance->getDBkey()));
 
-		return $result == '' ? "<annotationsList isEmpty=\"true\" textToDisplay=\"".wfMsg('smw_ob_no_annotations')."\" title_url=\"$titleURLEscaped\" title=\"$instanceTitleEscaped\" namespace=\"$namespaceInstance\"/>" : "<annotationsList>".$result."</annotationsList>";
+			return $result == '' ? "<annotationsList isEmpty=\"true\" textToDisplay=\"".wfMsg('smw_ob_no_annotations')."\" title_url=\"$titleURLEscaped\" title=\"$instanceTitleEscaped\" namespace=\"$namespaceInstance\"/>" : "<annotationsList>".$result."</annotationsList>";
+		} else{
+			return $result == '' ? "<annotationsList isEmpty=\"true\" textToDisplay=\"".wfMsg('smw_ob_no_annotations')."\"/>" : "<annotationsList>".$result."</annotationsList>";
+		}
 	}
 
 
@@ -248,7 +273,7 @@ class SMWOntologyBrowserXMLGenerator {
 		$propertiesXML = "";
 		$gi_store = SGAGardeningIssuesAccess::getGardeningIssuesAccess();
 		foreach($properties as $t) {
-			$directIssues = $gi_store->getGardeningIssues('smw_consistencybot', NULL, NULL, $t[0]);
+			$directIssues = $gi_store->getGardeningIssues('smw_consistencybot', NULL, NULL, $t->getTitle());
 			$propertiesXML .= SMWOntologyBrowserXMLGenerator::encapsulateAsProperty($t, $count, $directIssues);
 			$count++;
 		}
@@ -265,19 +290,20 @@ class SMWOntologyBrowserXMLGenerator {
 	 *
 	 * @return XML string (fragment)
 	 */
-	private static function encapsulateAsProperty(array & $schemaData, $count, array & $issues) {
+	private static function encapsulateAsProperty($schemaData, $count, array & $issues) {
 		$id = uniqid (rand());
 		$content = "";
 
 		// unpack schemaData array
-		$title = $schemaData[0];
-		$minCardinality = $schemaData[1];
-		$maxCardinality = $schemaData[2];
-		$type = $schemaData[3];
-		$isMemberOfSymCat = $schemaData[4];
-		$isMemberOfTransCat = $schemaData[5];
-		$range = $schemaData[6];
-		$inherited = $schemaData[7] == true ? "inherited=\"true\"" : "";
+		$title =$schemaData->getTitle();
+		$minCardinality = $schemaData->getMinCard();
+		$maxCardinality = $schemaData->getMaxCard();
+		$type = $schemaData->getType();
+		$isMemberOfSymCat = $schemaData->isSymetrical();
+		$isMemberOfTransCat = $schemaData->isTransitive();
+		$range = $schemaData->getRange();
+		$inherited = $schemaData->isInherited() ? "inherited=\"true\"" : "";
+		
 		$ts = TSNamespaces::getInstance();
 		//FIXME: show primitive type as links to Type pages.
 		if ($type == '_wpg') { // binary relation?
@@ -327,22 +353,23 @@ class SMWOntologyBrowserXMLGenerator {
 	 *
 	 * @param $instance
 	 * @param $annotation
-	 * @param $smwValues
+	 * @param mixed array of $smwValues or single SMWDataValue object
 	 *
 	 * @return XML string (fragment)
 	 */
-	private static function encapsulateAsAnnotation(Title $instance, Title $annotationTitle, $smwValues) {
+	private static function encapsulateAsAnnotation($instance, $annotationTitle, $smwValues) {
 		$id = uniqid (rand());
 		$count = 0;
 		$annotations = "";
-		
+
 		$isFormula = false;
 		$chemistryParser = new ChemEqParser();
 		$gi_store = SGAGardeningIssuesAccess::getGardeningIssuesAccess();
 		$ts = TSNamespaces::getInstance();
 			
+		if (!is_array($smwValues)) $smwValues = array($smwValues);
 		foreach($smwValues as $smwValue) {
-				
+
 			if ($smwValue instanceof SMWRecordValue) { // n-ary property
 
 				$needRepaste = false;
@@ -356,46 +383,55 @@ class SMWOntologyBrowserXMLGenerator {
 
 					// check if re-paste is needed
 					$needRepaste |= html_entity_decode(array_shift($params->getDBkeys())) != array_shift($params->getDBkeys()) || $params->getUnit() != '';
-				
+
 				}
-				
+
 				// repaste marker indicates if the generated HTML should be refreshed after rendering (FF bug)
 				$repasteMarker = $isFormula || $needRepaste ? "needRepaste=\"true\"" : "";
-				
+
 				// serialize titles
-				$title = htmlspecialchars($annotationTitle->getDBkey());
-				$titleURLEscaped = htmlspecialchars(self::urlescape($annotationTitle->getDBkey()));
-				
+				$title = htmlspecialchars($annotationTitle->getPropertyValue()->getDBkey());
+				$titleURLEscaped = htmlspecialchars(self::urlescape($annotationTitle->getPropertyValue()->getDBkey()));
+
 				// serialize gardening issues
-				$issues = $gi_store->getGardeningIssuesForPairs('smw_consistencybot', array(SMW_GARDISSUE_WRONG_DOMAIN_VALUE, SMW_GARDISSUE_TOO_LOW_CARD, SMW_GARDISSUE_TOO_HIGH_CARD,
-				SMW_GARD_ISSUE_MISSING_PARAM, SMW_GARDISSUE_WRONG_TARGET_VALUE), NULL, array($instance, $annotationTitle));
-				$gi_issues = SMWOntologyBrowserErrorHighlighting::getAnnotationIssuesAsXML($issues, $smwValue);
+				if (!is_null($instance)) {
+						
+					$issues = $gi_store->getGardeningIssuesForPairs('smw_consistencybot', array(SMW_GARDISSUE_WRONG_DOMAIN_VALUE, SMW_GARDISSUE_TOO_LOW_CARD, SMW_GARDISSUE_TOO_HIGH_CARD,
+					SMW_GARD_ISSUE_MISSING_PARAM, SMW_GARDISSUE_WRONG_TARGET_VALUE), NULL, array($instance, $annotationTitle->getPropertyTitle()));
+					$gi_issues = SMWOntologyBrowserErrorHighlighting::getAnnotationIssuesAsXML($issues, $smwValue);
+				} else{
+					$gi_issues = "";
+				}
 
 				// no metadata available on n-ary properties
 				$annotations .= "<annotation  title_url=\"$titleURLEscaped\" title=\"".$title."\" id=\"ID_$id$count\" $repasteMarker>".$parameters."$gi_issues</annotation>";
 
 			} else { // all other properties
-				
+
 				// get annotation value (param node)
-			    $value = self::createValueAsXML($smwValue);
-				
+				$value = self::createValueAsXML($smwValue);
+
 				//special attribute mark for all things needed to get re-pasted in FF.
 				$dbkeys = $smwValue->getDBkeys();
 				$repasteMarker = $isFormula || strip_tags(array_shift($dbkeys)) != array_shift($dbkeys) || $smwValue->getUnit() != '' ? "needRepaste=\"true\"" : "";
 
-				$title = htmlspecialchars($annotationTitle->getDBkey());
-				$titleURLEscaped = htmlspecialchars(self::urlescape($annotationTitle->getDBkey()));
-				$issues = $gi_store->getGardeningIssuesForPairs('smw_consistencybot', array(SMW_GARDISSUE_WRONG_DOMAIN_VALUE, SMW_GARDISSUE_TOO_LOW_CARD, SMW_GARDISSUE_TOO_HIGH_CARD,
-				SMW_GARDISSUE_WRONG_UNIT), NULL, array($instance, $annotationTitle));
-					
+				$title = htmlspecialchars($annotationTitle->getPropertyValue()->getDBkey());
+				$titleURLEscaped = htmlspecialchars(self::urlescape($annotationTitle->getPropertyValue()->getDBkey()));
+
+				if (!is_null($instance)) {
+					$issues = $gi_store->getGardeningIssuesForPairs('smw_consistencybot', array(SMW_GARDISSUE_WRONG_DOMAIN_VALUE, SMW_GARDISSUE_TOO_LOW_CARD, SMW_GARDISSUE_TOO_HIGH_CARD,
+					SMW_GARDISSUE_WRONG_UNIT), NULL, array($instance, $annotationTitle->getPropertyTitle()));
+				} else{
+					$issues = array();
+				}
 				// gardening issues
 				$gi_issues = SMWOntologyBrowserErrorHighlighting::getAnnotationIssuesAsXML($issues, $smwValue);
-				
+
 				// metadata
 				// check if metadata patch is applied
 				$metadataTags = "<metadata id=\"".$id."_meta_".$count."\">";
 				if (method_exists($smwValue, "getMetadataMap")) {
-					
+
 					foreach($smwValue->getMetadataMap() as $mdProperty => $mdValues) {
 						foreach($mdValues as $mdValue) {
 							$metadataTags .= "<property name=\"".htmlspecialchars($mdProperty)."\">".htmlspecialchars($mdValue)."</property>";
@@ -404,11 +440,11 @@ class SMWOntologyBrowserXMLGenerator {
 				}
 				$metadataTags .= "</metadata>";
 
-				$propertyURI_att = 'uri="'.htmlspecialchars($ts->getFullURI($annotationTitle)).'"';
+				$propertyURI_att = 'uri="'.htmlspecialchars($annotationTitle->getURI()).'"';
 				$annotations .= "<annotation $propertyURI_att title_url=\"$titleURLEscaped\" title=\"".$title."\" id=\"ID_".$id.$count."\" $repasteMarker>".
-				                        $value.         // values
-				                        $gi_issues.     // gardening issues
-				                        $metadataTags.  // metadata
+				$value.         // values
+				$gi_issues.     // gardening issues
+				$metadataTags.  // metadata
 				                "</annotation>";
 			}
 			$count++;
@@ -416,23 +452,23 @@ class SMWOntologyBrowserXMLGenerator {
 		return $annotations;
 	}
 
-    /**
-     * Creates the annotation value in XML.
-     * 
-     * @param unknown_type $smwValue
-     */
+	/**
+	 * Creates the annotation value in XML.
+	 *
+	 * @param unknown_type $smwValue
+	 */
 	private static function createValueAsXML($smwValue) {
 		$ts = TSNamespaces::getInstance();
-	
+
+
 		if ($smwValue instanceof SMWWikiPageValue || $smwValue->getTypeID() == '_uri') { // relation
-            
-			
+
+
 			if ($smwValue instanceof SMWWikiPageValue && !is_null($smwValue->getTitle())) {
 				$targetNotExists = $smwValue->getTitle()->exists() ?  "" : "notexists=\"true\"";
 				$uri_att = 'uri="'.htmlspecialchars($ts->getFullURI($smwValue->getTitle())).'"';
 				$url_att = 'url="'.htmlspecialchars($smwValue->getTitle()->getFullURL()).'"';
 				$value = "<param isLink=\"true\" $uri_att $url_att $targetNotExists><![CDATA[".$smwValue->getTitle()->getPrefixedDBkey()."]]></param>";
-				
 			} else if ($smwValue->getTypeID() == '_uri') {
 				// any URI. External (=non wiki instances) are always of type _uri
 				$uri = $smwValue->getWikiValue();
@@ -447,7 +483,7 @@ class SMWOntologyBrowserXMLGenerator {
 				$uri_att = 'uri="'.htmlspecialchars($uri).'"';
 				$url_att = 'url="'.htmlspecialchars($uri).'"';
 				$value = "<param isLink=\"true\" $uri_att $url_att><![CDATA[".$local."]]></param>";
-                
+
 			}
 
 		} else if ($smwValue != NULL){ // normal attribute
@@ -522,4 +558,104 @@ class SMWOntologyBrowserXMLGenerator {
 		return str_replace("%2F", "/", $url_esc);
 	}
 }
+
+/**
+ * XMLTreeObject represents a node in a tree.
+ * It can have other XMLTreeObjects as children.
+ *
+ * A tree can be serialized as XML which can be rendered by the OntologyBrowser.
+ */
+class XMLTreeObject {
+    private $title;
+    private $children;
+    private $hasChild;
+    
+    public function __construct($title, $hasChild = true) {
+        $this->title = $title;
+        $this->children = array();
+        $this->hasChild = $hasChild;
+    }
+    
+    /**
+     * Returns title of node.
+     * 
+     * @return Title
+     */
+    public function getTitle() {
+        return $this->title;
+    }
+
+    /**
+     * Returns the children of the node.
+     * 
+     * @return array of Title
+     */
+    public function getChildren() {
+        return $this->children;
+    }
+    
+    /**
+     * True if node has at least one child
+     * @return boolean
+     */
+    public function hasChild() {
+        return $this->hasChild;
+    }
+    /**
+     * Adds a child node if it does not already exist.
+     */
+    public function addChild($childTitle, $hasChild = true) {
+        if (!array_key_exists($childTitle->getText(), $this->children)) {
+            $this->children[$childTitle->getText()] = new XMLTreeObject($childTitle, $hasChild);
+        }
+        return $this->children[$childTitle->getText()];
+    }
+
+    /**
+     * Serializes the tree structure (without root node)
+     */
+    public function serializeAsXML($type) {
+        $id = uniqid (rand());
+        $count = 0;
+        $result = "";
+        $gi_store = SGAGardeningIssuesAccess::getGardeningIssuesAccess();
+        $lengthOfPath = count($this->children);
+        foreach($this->children as $title => $treeObject) {
+            $isExpanded = count($treeObject->children) == 0 ? "false" : "true";
+            $title_esc = htmlspecialchars($treeObject->getTitle()->getDBkey());
+            $titleURLEscaped = htmlspecialchars(SMWOntologyBrowserXMLGenerator::urlescape($treeObject->getTitle()->getDBkey()));
+            $issues = $gi_store->getGardeningIssues('smw_consistencybot', NULL, NULL, $treeObject->getTitle());
+            $gi_issues = SMWOntologyBrowserErrorHighlighting::getGardeningIssuesAsXML($issues);
+            if (!$treeObject->hasChild()) $isLeaf_att = 'isLeaf="true"'; else $isLeaf_att ='';
+            $result .= "<$type title_url=\"$titleURLEscaped\" title=\"".$title_esc."\" $isLeaf_att img=\"$type.gif\" id=\"ID_$id$count\" expanded=\"$isExpanded\">";
+            $result .= $gi_issues;
+            $result .= $treeObject->serializeAsXML($type);
+            $result .= "</$type>";
+            $count++;
+        }
+        return $result;
+    }
+    
+    
+
+    /**
+     * Sorts the children (possibly recursive!)
+     */
+    public function sortChildren($recursive = true) {
+        if ($recursive) {
+            $this->_sortChildren($this);
+        } else {
+            ksort($this->children);
+        }
+    }
+
+    private function _sortChildren($treeObject) {
+        foreach($treeObject->children as $title => $to) {
+            $this->_sortChildren($to);
+        }
+        ksort($treeObject->children);
+    }
+
+}
+
 

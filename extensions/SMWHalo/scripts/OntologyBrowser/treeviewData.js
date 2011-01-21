@@ -238,6 +238,13 @@ getAnnotations: function(instanceName, callback) {
 	sajax_do_call('smwf_ob_OntologyBrowserAccess', ['getAnnotations',instanceName+"##500##0##"+requestMetaproperties, obAdvancedOptions.getDataSource()], callback);
 },
 
+getPropertyValues: function(propertyName, callback) {
+	// set a default of 500 requested annotations
+	// set a default partition of 0. (actually partitions are not used)
+	var requestMetaproperties = obAdvancedOptions.requestedMetaproperties();
+	sajax_do_call('smwf_ob_OntologyBrowserAccess', ['getPropertyValues',propertyName+"##500##0##"+requestMetaproperties, obAdvancedOptions.getDataSource()], callback);
+},
+
 getAnnotationsByURI: function(instanceURI, callback) {
 	// set a default of 500 requested annotations
 	// set a default partition of 0. (actually partitions are not used)
@@ -270,6 +277,11 @@ getPropertyPartition: function(isRootLevel, partition, attributeName, selectPart
 getInstancesUsingProperty: function(propertyName, partition, callback) {
 	var requestMetaproperties = obAdvancedOptions.requestedMetaproperties();
 	sajax_do_call('smwf_ob_OntologyBrowserAccess', ['getInstancesUsingProperty',propertyName+"##"+OB_partitionSize+"##"+partition+"##"+requestMetaproperties, obAdvancedOptions.getDataSource()], callback);
+},
+
+getInstanceUsingPropertyValue: function(propertyName, propertyValue, partition, callback) {
+	var requestMetaproperties = obAdvancedOptions.requestedMetaproperties();
+	sajax_do_call('smwf_ob_OntologyBrowserAccess', ['getInstanceUsingPropertyValue',propertyName+"##"+propertyValue+"##"+OB_partitionSize+"##"+partition+"##"+requestMetaproperties, obAdvancedOptions.getDataSource()], callback);
 },
 
 filterBrowseCategories: function(title) {

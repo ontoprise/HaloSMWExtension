@@ -892,6 +892,8 @@ OBInstanceActionListener.prototype = {
 				selectionProvider.fireRefresh();
 				selectionProvider.fireSelectionChanged(null, null,
 						SMW_PROPERTY_NS, null);
+				
+				
 			}
 
 			function callbackOnInstanceSelectToLeft(request) {
@@ -1198,6 +1200,8 @@ OBPropertyTreeActionListener.prototype = Object
 								transformer.transformResultToHTML(request,
 										instanceDIV, true);
 								selectionProvider.fireRefresh();
+								
+							
 							}
 
 							function callbackOnPropertySelect2(request) {
@@ -1214,7 +1218,76 @@ OBPropertyTreeActionListener.prototype = Object
 								transformer.transformResultToHTML(request,
 										relattDIV);
 								selectionProvider.fireRefresh();
-
+								// add links to select property operation
+								jQuery(".annotation")
+								.each(
+										function() {
+											var node = $(this.getAttribute('id'));
+											var propertyURI = node.getAttribute("uri");
+											var propertyTitle = node.getAttribute("title");
+											var valueNode = node.parentNode.nextSibling;
+											var valueURI = valueNode.getAttribute("uri");
+											var valueTypeURI = valueNode.getAttribute("typeURI");
+											var valueString = valueNode.textContent.trim();
+											var objectValue = valueURI == null ? '"' + valueString + '"^^'
+													+ valueTypeURI : valueURI;							
+											// content for menu tooltip
+											var html = jQuery('<a onclick="schemaActionPropertyListener.selectedNavigationSwitch(event, this, \''
+													+ propertyURI
+													+ '\', '
+													+ '\''
+													+ propertyTitle
+													+ '\', '
+													+ '\''
+													+ valueURI
+													+ '\''
+													+ ', 0, \''
+													+ valueString
+													+ '\')">Select all</a>'
+													+ '<br><a onclick="schemaActionPropertyListener.selectedNavigationSwitch(event, this, \''
+													+ propertyURI
+													+ '\', '
+													+ '\''
+													+ propertyTitle
+													+ '\', '
+													+ '\''
+													+ valueURI
+													+ '\''
+													+ ', 1, \''
+													+ valueString
+													+ '\')">Select one</a>');
+													
+											// install the tool-tip on the current DOM element
+											jQuery(this).qtip( {
+												content : html,
+												show : {
+													effect : {
+														length : 500
+													},
+													when : {
+														event : 'mouseover'
+													}
+												},
+												hide : {
+													when : {
+														event : 'mouseout'
+													},
+													fixed : true
+												},
+												position : {
+													corner : {
+														target : 'topLeft',
+														tooltip : 'bottomLeft'
+													}
+												},
+												style : {
+													tip : 'bottomLeft',
+													width : {
+														max : 500
+													}
+												}
+											});
+										});
 							}
 
 							if (OB_LEFT_ARROW == 0) {
@@ -1232,7 +1305,7 @@ OBPropertyTreeActionListener.prototype = Object
 										.getMessage('PROPERTY_NS')
 										+ propertyName
 										: node.getAttribute("uri");
-								dataAccess.getAnnotations(property,
+								dataAccess.getPropertyValues(property,
 										callbackOnPropertySelect2);
 
 							}
@@ -1299,11 +1372,15 @@ OBAnnotationActionListener.prototype = {
 		var valueString = valueNode.textContent.trim();
 		var objectValue = valueURI == null ? '"' + valueString + '"^^'
 				+ valueTypeURI : valueURI;
+		
 		selectionProvider.fireSelectedTripleChanged(
 				instanceActionListener.selectedInstanceURI, propertyURI,
 				objectValue);
 		schemaActionPropertyListener.selectProperty(event, node, propertyName);
 	},
+	
+	
+
 
 	toggleMetadata : function(event, node, id) {
 		var metaContainer = $(id);
@@ -1432,6 +1509,73 @@ OBSchemaPropertyActionListener.prototype = {
 		if (event["ctrlKey"]) {
 			GeneralBrowserTools.navigateToPage(gLanguage
 					.getMessage('CATEGORY_NS_WOC'), categoryName);
+		}
+	},
+	
+	selectedNavigationSwitch: function(event, node, propertyURI, propertyTitle, valueURI, mode, valueString) {
+		var categoryDIV = $("categoryTree");
+		var instanceDIV = $("instanceList");
+	
+		
+		function callbackOnPropertySelectForCategory(request) {
+			OB_tree_pendingIndicator.hide();
+			if (categoryDIV.firstChild) {
+				GeneralBrowserTools.purge(categoryDIV.firstChild);
+				categoryDIV.removeChild(categoryDIV.firstChild);
+			}
+			dataAccess.OB_cachedCategoryTree = GeneralXMLTools
+					.createDocumentFromString(request.responseText);
+			dataAccess.OB_currentlyDisplayedTree = dataAccess.updateTree(
+					request.responseText, categoryDIV);
+			selectionProvider.fireSelectionChanged(null, null, SMW_CATEGORY_NS,
+					null);
+		}
+		function callbackOnPropertySelectForInstance(request) {
+			OB_instance_pendingIndicator.hide();
+			if (instanceDIV.firstChild) {
+				GeneralBrowserTools.purge(instanceDIV.firstChild);
+				instanceDIV.removeChild(instanceDIV.firstChild);
+			}
+
+			var xmlFragmentInstanceList = GeneralXMLTools
+					.createDocumentFromString(request.responseText);
+			dataAccess.OB_cachedInstances = xmlFragmentInstanceList;
+			selectionProvider.fireBeforeRefresh();
+			transformer.transformResultToHTML(request, instanceDIV, true);
+			selectionProvider.fireRefresh();
+			selectionProvider.fireSelectionChanged(null, null, SMW_INSTANCE_NS,
+					null);
+		}
+		if (mode== 0) {
+			if (OB_LEFT_ARROW == 1) {
+				OB_tree_pendingIndicator.show();
+				// TODO: externalize in dataAccess
+				sajax_do_call('smwf_ob_OntologyBrowserAccess', [
+						'getCategoryForProperty', propertyTitle,
+						obAdvancedOptions.getDataSource() ],
+						callbackOnPropertySelectForCategory);
+			}
+			if (OB_RIGHT_ARROW == 1) {
+				OB_instance_pendingIndicator.show();
+
+				dataAccess.getInstancesUsingProperty(propertyTitle, 0,
+						callbackOnPropertySelectForInstance);
+			}
+		} else if (mode== 1) {
+			if (OB_LEFT_ARROW == 1) {
+				OB_tree_pendingIndicator.show();
+				// TODO: externalize in dataAccess
+				sajax_do_call('smwf_ob_OntologyBrowserAccess', [
+						'getCategoryForProperty', propertyTitle,
+						obAdvancedOptions.getDataSource() ],
+						callbackOnPropertySelectForCategory);
+			}
+			if (OB_RIGHT_ARROW == 1) {
+				OB_instance_pendingIndicator.show();
+
+				dataAccess.getInstanceUsingPropertyValue(propertyTitle, valueURI == "null" ? valueString : valueURI, 0,
+						callbackOnPropertySelectForInstance);
+			}
 		}
 	}
 }
