@@ -44,19 +44,23 @@ class WSTriplifier {
 		if($triplify && defined( 'LOD_LINKEDDATA_VERSION') && $articleId != 0){
 			global $IP;
 			require_once($IP."/extensions/LinkedData/storage/TripleStore/LOD_Triple.php");
-			require_once($IP."/extensions/LinkedData/storage/TripleStore/LOD_TripleStoreAccess.php");
+			require_once($IP."/extensions/LinkedData/storage/TripleStore/LOD_PersistentTripleStoreAccess.php");
 			
 			//create triples
 			$triples = array();
 			foreach($tripleData as $td){
 				$td['subject'] = $this->getSubjectIRI($td['subject']);
 				$td['property'] = $this->getPropertyIRI($td['property']);
-				$td['object'] = str_replace('"', '\\"', $td['object']);
+				if($td['type'] == '__objectURI'){
+					$td['object'] = $this->getSubjectIRI($td['object']);
+				} else {
+					$td['object'] = str_replace('"', '\\"', $td['object']);
+				}
 				$triple = new LODTriple($td['subject'], $td['property'], $td['object'], $td['type']);
 				$triples[] = $triple;
 			}
 			
-			$tsA = new LODTripleStoreAccess();
+			$tsA = new LODPersistentTripleStoreAccess(true);
 			
 			$tsA->addPrefixes(LODAdministrationStore::getInstance()->getSourceDefinitionPrefixes());
 			
@@ -64,14 +68,24 @@ class WSTriplifier {
 				//new graph only needs to be created if this is the first usage
 				//of this ws in this article 
 				$tsA->dropGraph($this->getGraphName($wsId, $articleId));
+				$tsA->deletePersistentTriples('di_ws',$wsId.'_'.$articleId.'_use');
+				
 				$tsA->createGraph($this->getGraphName($wsId, $articleId));
+				
 				$this->dropProvenanceData($wsId, $articleId);
 				$this->addProvenanceData($wsId, $articleId);	
 			}
 			
+			//echo('<pre>'.urldecode(print_r($triples, true)).'</pre>');
+			
+			$tsA = new LODPersistentTripleStoreAccess(true);
+			$tsA->addPrefixes(TSNamespaces::getAllPrefixes());
+			
+			//todo: id = wsid + articleid
 			$tsA->insertTriples($this->getGraphName($wsId, $articleId), $triples);
-			$tsA->flushCommands();
-		}
+			$tsA->flushCommands('di_ws',$wsId.'_'.$articleId.'_use');
+			
+		}	
 		
 		return $subjects;		
 	}
@@ -85,9 +99,18 @@ class WSTriplifier {
 	}
 	
 	private function getSubjectIRI($subject){
+		$subject = str_replace('[', '', $subject);
+		$subject = str_replace(']', '', $subject);
+		$subject = str_replace('|', '', $subject);
+		$subject = str_replace('<', '', $subject);
+		$subject = str_replace('>', '', $subject);
+		$subject = str_replace(':', '', $subject);
+		$subject = urlencode($subject);
+		
 		$tsN = new TSNamespaces();
 		$uri = $tsN->getAllNamespaces();
 		$uri = $uri[NS_MAIN];
+		
 		return '<'.$uri.$subject.'>';
 	}
 	
@@ -127,14 +150,21 @@ class WSTriplifier {
 		$lineCount = 0;
 		$types = array();
 		
-		foreach($wsResult as $property => $resultPart){
+		foreach($wsResult as $propertyName => $resultPart){
 			$lineCount = max($lineCount, count($resultPart));
-			$title = Title::newFromText($property, SMW_NS_PROPERTY);
+			$title = Title::newFromText($propertyName, SMW_NS_PROPERTY);
 			$semData = smwfGetStore()->getSemanticData(SMWWikiPageValue::makePageFromTitle($title));
-			$property = SMWPropertyValue::makeProperty('Has type');
+			$property = SMWPropertyValue::makeProperty('Has_type');
 			$value = $semData->getPropertyValues($property);
-			@ $types[$property] = (count($value) > 0) ? 
-				SMWDataValueFactory::findTypeID($value[0]->getShortWikiText()) : '';
+			 if(count($value) > 0) { 
+				$fK = array_keys($value);
+			 	$fK = $fK[0];
+				@ $types[$propertyName] = ''.$value[$fK]->getShortWikiText();
+				$types[$propertyName] = str_replace('http://www.w3.org/2001/XMLSchema#','xsd:', $types[$propertyName]);
+				 //@ $types[$propertyName] = SMWDataValueFactory::findTypeID($value[$fK]->getShortWikiText()); 
+			} else {
+				$types[$propertyName] = '';
+			} 
 		}
 		
 		$triples = array();
@@ -159,14 +189,16 @@ class WSTriplifier {
 					$triple['property'] = $property;
 					$triple['object'] = $objects[$i];
 					if(!array_key_exists($property, $types) || strlen($types[$property]) == 0){
-						$triple['type'] = null;
+						$triple['type'] = '__objectURI';
+						$triple['object'] = trim($triple['object']);
 					} else {
-						$typeDataValue = SMWDataValueFactory::newTypeIDValue($types[$property], $objects[$i]);
-						if($typeDataValue->isValid()){
-							$triple['type'] = WikiTypeToXSD::getXSDType($types[$property]);
-						} else {
-							$triple['type'] = null;
-						}
+						//$typeDataValue = SMWDataValueFactory::newTypeIDValue($types[$property], $triple['object']);
+						//if($typeDataValue->isValid()){
+						//	$triple['type'] = WikiTypeToXSD::getXSDType($types[$property]);
+						//} else {
+						//	$triple['type'] = null;
+						//}
+						$triple['type'] = $types[$property];
 					}
 					
 					if(!array_key_exists($property, $unwantedPropertys)){
@@ -187,9 +219,9 @@ class WSTriplifier {
 	
 				$subject = $wgParser->internalParse($subject);
 				//$subject = $wgParser->doBlockLevels($subject, true);
-				$subject = urlencode(trim($subject));	
+				$subject = trim($subject);	
 			} else {
-					$subject = urlencode(trim($wgParser->replaceVariables($subject)));
+					$subject = trim($wgParser->replaceVariables($subject));
 			}
 			
 			if(strlen($subject) > 0){
@@ -213,17 +245,19 @@ class WSTriplifier {
 	public function removeWSUsage($wsId, $articleId){
 		if(defined( 'LOD_LINKEDDATA_VERSION')){
 			global $IP;
-			require_once($IP."/extensions/LinkedData/storage/TripleStore/LOD_TripleStoreAccess.php");
+			require_once($IP."/extensions/LinkedData/storage/TripleStore/LOD_PersistentTripleStoreAccess.php");
 			require_once($IP."/extensions/LinkedData/storage/TripleStore/LOD_Triple.php");
 		
 			$this->dropProvenanceData($wsId, $articleId);
 			
-			$tsA = new LODTripleStoreAccess();
+			$tsA = new LODPersistentTripleStoreAccess(true);
 			
 			$tsA->addPrefixes(LODAdministrationStore::getInstance()->getSourceDefinitionPrefixes());
 			
+			
 			$tsA->dropGraph($this->getGraphName($wsId, $articleId));
-			$tsA->flushCommands();
+			$tsA->flushCommands('di_ws',$wsId.'_'.$articleId.'_use');
+			$tsA->deletePersistentTriples('di_ws',$wsId.'_'.$articleId.'_use');
 		}		
 	}
 	
@@ -231,7 +265,7 @@ class WSTriplifier {
 	 * Adds provenance data for a WS Usage
 	 */
 	private function addProvenanceData($wsId, $articleId){
-		$tsA = new LODTripleStoreAccess();
+		$tsA = new LODPersistentTripleStoreAccess(true);
 		
 		$tsA->addPrefixes(LODAdministrationStore::getInstance()->getSourceDefinitionPrefixes());
 		$tsA->addPrefixes(LODAdministrationStore::getInstance()->getProvenanceGraphPrefixes());
@@ -257,14 +291,14 @@ class WSTriplifier {
 		 
 		$tsA->insertTriples($lAS->getSMWGraphsURI().'ProvenanceGraph', $triples);
 		
-		$tsA->flushCommands();	
+		$tsA->flushCommands('di_ws',$wsId.'_'.$articleId.'_prov');	
 	}
 	
 	/*
 	 * Drop provenance data related to a WS usage
 	 */
 	private function dropProvenanceData($wsId, $articleId){
-		$tsA = new LODTripleStoreAccess();
+		$tsA = new LODPersistentTripleStoreAccess(true);
 		
 		$tsA->addPrefixes(LODAdministrationStore::getInstance()->getSourceDefinitionPrefixes());
 		
@@ -276,9 +310,8 @@ class WSTriplifier {
 			'<'.$this->getGraphName($wsId, $articleId).'> ?p ?o. ?sw ?x <'.$dataSourceURI.'WS_'.$wsId.'>. ?sw ?y ?z .'
 			, '<'.$this->getGraphName($wsId, $articleId).'> ?p ?o. ?sw ?y ?z.');
 		
-		//todo: delete blank nodes xyz	
-		
-		$tsA->flushCommands();
+		$tsA->flushCommands('di_ws',$wsId.'_'.$articleId.'_prov');
+		$tsA->deletePersistentTriples('di_ws',$wsId.'_'.$articleId.'_prov');
 	}
 	
 	/*
@@ -287,18 +320,21 @@ class WSTriplifier {
 	private function removeWSFromDataSourceInformationGraph($wsId){
 		if(defined( 'LOD_LINKEDDATA_VERSION')){
 			global $IP;
-			require_once($IP."/extensions/LinkedData/storage/TripleStore/LOD_TripleStoreAccess.php");
+			require_once($IP."/extensions/LinkedData/storage/TripleStore/LOD_PersistentTripleStoreAccess.php");
 			require_once($IP."/extensions/LinkedData/storage/TripleStore/LOD_Triple.php");
-			$tsA = new LODTripleStoreAccess();
+			
+			$tsA = new LODPersistentTripleStoreAccess(true);
 			
 			$tsA->addPrefixes(LODAdministrationStore::getInstance()->getSourceDefinitionPrefixes());
 			
 			$lAS = LODAdministrationStore::getInstance();;
 			
+			//todo:deal with persistency id=wsid 
 			$tsA->deleteTriples($lAS->getSMWGraphsURI().'DataSourceInformationGraph', 
 				$this->getDataSourceURI("WS_".$wsId)." ?p ?o", $this->getDataSourceURI("WS_".$wsId)." ?p ?o");
 			
-			$tsA->flushCommands();
+			$tsA->flushCommands('di_ws',$wsId.'_dsinfo');
+			$tsA->deletePersistentTriples('di_ws',$wsId.'_dsinfo');
 		}
 	}
 	
@@ -324,10 +360,13 @@ class WSTriplifier {
 	public function addWSAsDataSource($wsId){
 		if(defined( 'LOD_LINKEDDATA_VERSION')){
 			global $IP;
-			require_once($IP."/extensions/LinkedData/storage/TripleStore/LOD_TripleStoreAccess.php");
-			require_once($IP."/extensions/LinkedData/storage/TripleStore/LOD_Triple.php");
+			
+			$this->removeWSFromDataSourceInformationGraph($wsId);
+			
+			//require_once($IP."/extensions/LinkedData/storage/TripleStore/LOD_PersistentTripleStoreAccess.php");
+			//require_once($IP."/extensions/LinkedData/storage/TripleStore/LOD_Triple.php");
 		
-			$tsA = new LODTripleStoreAccess();
+			$tsA = new LODPersistentTripleStoreAccess(true);
 			
 			$lAS = LODAdministrationStore::getInstance();
 			
@@ -345,9 +384,10 @@ class WSTriplifier {
 			$triples[] = new LODTriple(
 				$this->getDataSourceURI("WS_".$wsId), "smw-lde:ID", Title::newFromID($wsId)->getFullText(), "xsd:string");
 			
+			//todo: deal with persistency id=wsid
 			$tsA->insertTriples($lAS->getSMWGraphsURI().'DataSourceInformationGraph', $triples);
 			
-			$tsA->flushCommands();
+			$tsA->flushCommands('di_ws',$wsId.'_dsinfo');
 		}
 	}
 }
