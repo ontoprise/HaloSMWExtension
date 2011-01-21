@@ -55,21 +55,6 @@ CKEDITOR.dialog.add( 'SMWqi', function( editor ) {
          },
 
          onShow : function() {
-            // fix size of inner window for iframe
-			
-			var node = document.getElementsByName('tab1_smw_qi');
-			var node = document.getElementsByName('tab1_smw_qi')[0];
-            var child = node.firstChild;
-            while ( child && (child.nodeType != 1 || child.nodeName.toUpperCase() != 'TABLE') )
-                child = child.nextSibling;
-            if (child) {
-                child.style.height = '100%';
-                var cells = child.getElementsByTagName('td');
-                for (var i= 0; i < cells.length; i++)
-                    cells[i].style.height = '100%';
-            }
-
-			// start here the normal operation
 			this.fakeObj = false;
 
     		var editor = this.getParentEditor(),
