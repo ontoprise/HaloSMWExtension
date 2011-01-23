@@ -13,15 +13,22 @@ if ( !defined( 'MEDIAWIKI' ) ) die;
 require_once($smwgHaloIP . '/includes/SMW_ChemistryParser.php');
 require_once("SMW_OntologyBrowserErrorHighlighting.php");
 
+/**
+ * 
+ * Serializes OntologyBrowser GUI objects to XML so they can transformed to HTML by a XSLT processor.
+ * @author kuehn / ontoprise / 2008
+ *
+ */
 class SMWOntologyBrowserXMLGenerator {
 
 	/**
-	 * Encapsulate an array of categories as a category partition in XML.
+	 * Create a XML tree structure for visualizing a category tree.
 	 *
-	 * @param array of CategoryTreeElements.
-	 * @param $limit Max number of categories per partition
-	 * @param $partitionNum Number of partition (0 <= $partitionNum <= total number / limit)
-	 * @param $rootLevel True, if partition on root level. Otherwise false.
+	 * @param array & CategoryTreeElement $categoryTreeElement
+	 * @param array & $resourceAttachments (Category title => array of rule URIs)
+	 * @param int $limit  Max number of categories per partition
+	 * @param int $partitionNum  Number of partition (0 <= $partitionNum <= total number / limit)
+	 * @param boolean $rootLevel True, if partition on root level. Otherwise false.
 	 *
 	 * @return XML string
 	 */
@@ -70,13 +77,13 @@ class SMWOntologyBrowserXMLGenerator {
 	}
 
 	/**
-	 * Encapsulate an array of instances as an instance partition in XML.
+	 * Create a XML structure for visualizing an instance list.
 	 *
-	 * @param Tuple $instances
-	 *         ((instanceTitle, $instanceURI, $localInstanceURL, $metadataMap) , ($localCategoryURL, $categoryTitle))
-	 * @param $limit Max number of instances per partition
-	 * @param $partitionNum Number of partition (0 <= $partitionNum <= total number / limit)
-	 *
+	 * @param array & InstanceListElement $instances
+	 * @param int $limit Max number of instances per partition
+	 * @param int $partitionNum Number of partition (0 <= $partitionNum <= total number / limit)
+	 * @param string $dataSrc Denotes by which method the instance list was created.
+	 * 
 	 * @return XML string
 	 */
 	public static function encapsulateAsInstancePartition(array & $instances, $limit, $partitionNum, $dataSrc = NULL) {
@@ -162,33 +169,33 @@ class SMWOntologyBrowserXMLGenerator {
 	}
 
 	/**
-	 * Encapsulate an array of properties as a property partition in XML.
+	 * Create an XML tree structure for visualizing the property tree. 
 	 *
-	 * @param array & $titles. Tuple (Title of property, boolean hasSubProperties, string URI, string local URL)
+	 * @param array & PropertyTreeElement $propertyTreeElements 
 	 * @param array & $resourceAttachments (Property title => array of rule URIs)
-	 * @param $limit Max number of properties per partition
-	 * @param $partitionNum Number of partition (0 <= $partitionNum <= total number / limit)
-	 * @param $rootLevel True, if partition on root level. Otherwise false
+	 * @param int $limit Max number of properties per partition
+	 * @param int $partitionNum Number of partition (0 <= $partitionNum <= total number / limit)
+	 * @param boolean $rootLevel True, if partition on root level. Otherwise false
 	 *
 	 * @return XML string
 	 */
-	public static function encapsulateAsPropertyPartition(array & $titles, array & $resourceAttachments, $limit, $partitionNum, $rootLevel = false) {
+	public static function encapsulateAsPropertyPartition(array & $propertyTreeElements, array & $resourceAttachments, $limit, $partitionNum, $rootLevel = false) {
 		$id = uniqid (rand());
 		$count = 0;
 		$result = "";
-		if (count($titles) == $limit) {
+		if (count($propertyTreeElements) == $limit) {
 			if ($partitionNum == 0) {
 				$result .= "<propertyPartition id=\"ID_$id$count\" partitionNum=\"$partitionNum\" length=\"$limit\" hidePreviousArrow=\"true\"/>";
 			} else {
 				$result .= "<propertyPartition id=\"ID_$id$count\" partitionNum=\"$partitionNum\" length=\"$limit\"/>";
 			}
 		}
-		if (count($titles) < $limit && $partitionNum > 0) {
+		if (count($propertyTreeElements) < $limit && $partitionNum > 0) {
 			$result .= "<propertyPartition id=\"ID_$id$count\" partitionNum=\"$partitionNum\" length=\"$limit\" hideNextArrow=\"true\"/>";
 		}
 		$count++;
 		$gi_store = SGAGardeningIssuesAccess::getGardeningIssuesAccess();
-		foreach($titles as $e) {
+		foreach($propertyTreeElements as $e) {
 
 			//list($t, $isLeaf, $propertyURI, $localURL) = $e;
 			$t = $e->getTitle();
@@ -223,10 +230,10 @@ class SMWOntologyBrowserXMLGenerator {
 	}
 
 	/**
-	 * Encapsulate an array of annotations as XML.
+	 * Creates an XML structure for visualizing a list of annotations.
 	 *
-	 * @param array & $propertyAnnotations: Tuple of ($property, $value)
-	 * @param Title $instance
+	 * @param array & Annotation $propertyAnnotations
+	 * @param InstanceListElement $instanceListElement Subject of annotation (may be null, if annotations for multiple subjects)
 	 *
 	 * @return XML string
 	 */
@@ -261,9 +268,9 @@ class SMWOntologyBrowserXMLGenerator {
 
 
 	/**
-	 * Encapsulate an array of properties as XML
+	 * Creates an XML structure for visualizing a list schema properties
 	 *
-	 * @param array & $properties: Tuple of (title, minCard, maxCard, type, isSym, isTrans, range)
+	 * @param array & PropertySchemaElement $properties
 	 *
 	 * @return XML string
 	 */
@@ -273,7 +280,7 @@ class SMWOntologyBrowserXMLGenerator {
 		$propertiesXML = "";
 		$gi_store = SGAGardeningIssuesAccess::getGardeningIssuesAccess();
 		foreach($properties as $t) {
-			$directIssues = $gi_store->getGardeningIssues('smw_consistencybot', NULL, NULL, $t->getTitle());
+			$directIssues = $gi_store->getGardeningIssues('smw_consistencybot', NULL, NULL, $t->getPropertyTitle());
 			$propertiesXML .= SMWOntologyBrowserXMLGenerator::encapsulateAsProperty($t, $count, $directIssues);
 			$count++;
 		}
@@ -282,19 +289,20 @@ class SMWOntologyBrowserXMLGenerator {
 	}
 
 	/**
-	 * Returns an XML represenatation of a schema property
+	 * Creates an XML structure for visualizing a schema property
 	 *
-	 * @param array & schemaData. Tuple of (title, minCard, maxCard, type, isSym, isTrans, range)
-	 * @param count continuous number for generating new IDs
+	 * @param PropertySchemaElement $propertySchemaElement
+	 * @param int count continuous number for generating new IDs
 	 * @param array & issues Gardening issues for that property
 	 *
 	 * @return XML string (fragment)
 	 */
-	private static function encapsulateAsProperty($schemaData, $count, array & $issues) {
+	private static function encapsulateAsProperty($propertySchemaElement, $count, array & $issues) {
 		$id = uniqid (rand());
 		$content = "";
 
 		// unpack schemaData array
+		$schemaData=$propertySchemaElement->getSchemaData();
 		$title =$schemaData->getTitle();
 		$minCardinality = $schemaData->getMinCard();
 		$maxCardinality = $schemaData->getMaxCard();
@@ -340,7 +348,7 @@ class SMWOntologyBrowserXMLGenerator {
 		$numberofUsage = smwfGetSemanticStore()->getNumberOfUsage($title);
 		$numberOfUsageAtt = 'num="'.$numberofUsage.'"';
 		$gi_issues = SMWOntologyBrowserErrorHighlighting::getGardeningIssuesAsXML($issues);
-		$uri_att = 'uri="'.htmlspecialchars($ts->getFullURI($title)).'"';
+		$uri_att = !is_null($propertySchemaElement->getURI()) ? 'uri="'.htmlspecialchars($propertySchemaElement->getURI()).'"': "";
 		return "<property $uri_att title_url=\"$titleURLEscaped\" title=\"".$title_esc."\" id=\"ID_".$id.$count."\" " .
 					"$minCardText $maxCardText $isSymetricalText $isTransitiveText $numberOfUsageAtt $inherited>".
 		$content.$gi_issues.
@@ -349,15 +357,15 @@ class SMWOntologyBrowserXMLGenerator {
 	}
 
 	/**
-	 * Encapsulates an annotation as XML.
+	 * Creates an XML structure for visualizing an annotation.
 	 *
-	 * @param $instance
-	 * @param $annotation
-	 * @param mixed array of $smwValues or single SMWDataValue object
+	 * @param $instance Title of subject
+	 * @param $annotation Annotation
+	 * @param mixed array of tuple ($smwValues,$uri) or single tuple ($smwValues,$uri)
 	 *
 	 * @return XML string (fragment)
 	 */
-	private static function encapsulateAsAnnotation($instance, $annotationTitle, $smwValues) {
+	private static function encapsulateAsAnnotation($instance, $annotation, $smwValues) {
 		$id = uniqid (rand());
 		$count = 0;
 		$annotations = "";
@@ -368,8 +376,8 @@ class SMWOntologyBrowserXMLGenerator {
 		$ts = TSNamespaces::getInstance();
 			
 		if (!is_array($smwValues)) $smwValues = array($smwValues);
-		foreach($smwValues as $smwValue) {
-
+		foreach($smwValues as $v) {
+            list($smwValue, $uri) = $v;
 			if ($smwValue instanceof SMWRecordValue) { // n-ary property
 
 				$needRepaste = false;
@@ -379,7 +387,7 @@ class SMWOntologyBrowserXMLGenerator {
 						$parameters .= "<param></param>";
 						continue;
 					}
-					$parameters .= self::createValueAsXML($params);
+					$parameters .= self::createValueAsXML($params, $uri);
 
 					// check if re-paste is needed
 					$needRepaste |= html_entity_decode(array_shift($params->getDBkeys())) != array_shift($params->getDBkeys()) || $params->getUnit() != '';
@@ -390,14 +398,14 @@ class SMWOntologyBrowserXMLGenerator {
 				$repasteMarker = $isFormula || $needRepaste ? "needRepaste=\"true\"" : "";
 
 				// serialize titles
-				$title = htmlspecialchars($annotationTitle->getPropertyValue()->getDBkey());
-				$titleURLEscaped = htmlspecialchars(self::urlescape($annotationTitle->getPropertyValue()->getDBkey()));
+				$title = htmlspecialchars($annotation->getPropertyValue()->getDBkey());
+				$titleURLEscaped = htmlspecialchars(self::urlescape($annotation->getPropertyValue()->getDBkey()));
 
 				// serialize gardening issues
 				if (!is_null($instance)) {
 						
 					$issues = $gi_store->getGardeningIssuesForPairs('smw_consistencybot', array(SMW_GARDISSUE_WRONG_DOMAIN_VALUE, SMW_GARDISSUE_TOO_LOW_CARD, SMW_GARDISSUE_TOO_HIGH_CARD,
-					SMW_GARD_ISSUE_MISSING_PARAM, SMW_GARDISSUE_WRONG_TARGET_VALUE), NULL, array($instance, $annotationTitle->getPropertyTitle()));
+					SMW_GARD_ISSUE_MISSING_PARAM, SMW_GARDISSUE_WRONG_TARGET_VALUE), NULL, array($instance, $annotation->getPropertyTitle()));
 					$gi_issues = SMWOntologyBrowserErrorHighlighting::getAnnotationIssuesAsXML($issues, $smwValue);
 				} else{
 					$gi_issues = "";
@@ -409,18 +417,18 @@ class SMWOntologyBrowserXMLGenerator {
 			} else { // all other properties
 
 				// get annotation value (param node)
-				$value = self::createValueAsXML($smwValue);
+				$value = self::createValueAsXML($smwValue, $uri);
 
 				//special attribute mark for all things needed to get re-pasted in FF.
 				$dbkeys = $smwValue->getDBkeys();
 				$repasteMarker = $isFormula || strip_tags(array_shift($dbkeys)) != array_shift($dbkeys) || $smwValue->getUnit() != '' ? "needRepaste=\"true\"" : "";
 
-				$title = htmlspecialchars($annotationTitle->getPropertyValue()->getDBkey());
-				$titleURLEscaped = htmlspecialchars(self::urlescape($annotationTitle->getPropertyValue()->getDBkey()));
+				$title = htmlspecialchars($annotation->getPropertyValue()->getDBkey());
+				$titleURLEscaped = htmlspecialchars(self::urlescape($annotation->getPropertyValue()->getDBkey()));
 
 				if (!is_null($instance)) {
 					$issues = $gi_store->getGardeningIssuesForPairs('smw_consistencybot', array(SMW_GARDISSUE_WRONG_DOMAIN_VALUE, SMW_GARDISSUE_TOO_LOW_CARD, SMW_GARDISSUE_TOO_HIGH_CARD,
-					SMW_GARDISSUE_WRONG_UNIT), NULL, array($instance, $annotationTitle->getPropertyTitle()));
+					SMW_GARDISSUE_WRONG_UNIT), NULL, array($instance, $annotation->getPropertyTitle()));
 				} else{
 					$issues = array();
 				}
@@ -440,7 +448,7 @@ class SMWOntologyBrowserXMLGenerator {
 				}
 				$metadataTags .= "</metadata>";
 
-				$propertyURI_att = 'uri="'.htmlspecialchars($annotationTitle->getURI()).'"';
+				$propertyURI_att = 'uri="'.htmlspecialchars($annotation->getURI()).'"';
 				$annotations .= "<annotation $propertyURI_att title_url=\"$titleURLEscaped\" title=\"".$title."\" id=\"ID_".$id.$count."\" $repasteMarker>".
 				$value.         // values
 				$gi_issues.     // gardening issues
@@ -455,9 +463,10 @@ class SMWOntologyBrowserXMLGenerator {
 	/**
 	 * Creates the annotation value in XML.
 	 *
-	 * @param unknown_type $smwValue
+	 * @param SMWDataValue $smwValue
+	 * @param URI (in case of a SMWWikiPageValue or SMWURIValue otherwise NULL)
 	 */
-	private static function createValueAsXML($smwValue) {
+	private static function createValueAsXML($smwValue, $uri) {
 		$ts = TSNamespaces::getInstance();
 
 
@@ -466,7 +475,7 @@ class SMWOntologyBrowserXMLGenerator {
 
 			if ($smwValue instanceof SMWWikiPageValue && !is_null($smwValue->getTitle())) {
 				$targetNotExists = $smwValue->getTitle()->exists() ?  "" : "notexists=\"true\"";
-				$uri_att = 'uri="'.htmlspecialchars($ts->getFullURI($smwValue->getTitle())).'"';
+				$uri_att = 'uri="'.htmlspecialchars($uri).'"';
 				$url_att = 'url="'.htmlspecialchars($smwValue->getTitle()->getFullURL()).'"';
 				$value = "<param isLink=\"true\" $uri_att $url_att $targetNotExists><![CDATA[".$smwValue->getTitle()->getPrefixedDBkey()."]]></param>";
 			} else if ($smwValue->getTypeID() == '_uri') {
@@ -536,7 +545,7 @@ class SMWOntologyBrowserXMLGenerator {
 	}
 
 	/**
-	 * Returns true, if $t is a pre-defined title.
+	 * Returns true, if $t is a pre-defined title of SMWHalo.
 	 */
 	private static function isPredefined($t) {
 		return ($t->getDBkey()== smwfGetSemanticStore()->domainRangeHintRelation->getDBkey())
@@ -550,8 +559,8 @@ class SMWOntologyBrowserXMLGenerator {
 	/**
 	 * Encode URL, but do not escape slashes (/)
 	 *
-	 * @param unknown_type $url
-	 * @return unknown
+	 * @param string $url
+	 * @return string
 	 */
 	public static function urlescape($url) {
 		$url_esc = urlencode($url);
@@ -564,10 +573,24 @@ class SMWOntologyBrowserXMLGenerator {
  * It can have other XMLTreeObjects as children.
  *
  * A tree can be serialized as XML which can be rendered by the OntologyBrowser.
+ * 
+ * @author Kai Kühn 
  */
 class XMLTreeObject {
+	
+	/*
+	 * Title
+	 */
     private $title;
+    
+    /*
+     * array of Title
+     */
     private $children;
+    
+    /*
+     * boolean
+     */
     private $hasChild;
     
     public function __construct($title, $hasChild = true) {

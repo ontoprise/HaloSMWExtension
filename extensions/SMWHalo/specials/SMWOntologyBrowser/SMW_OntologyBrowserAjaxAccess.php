@@ -129,8 +129,12 @@ class OB_Storage {
 		foreach($properties as $property) {
 			if (!$property->isShown() || !$property->isVisible()) continue;
 			$values = smwfGetStore()->getPropertyValues($instance, $property, $reqfilter, '', true);
+			$values_tuple = array();
+			foreach($values as $v) {
+				$values_tuple[] = array($v, NULL); 
+			}
 			$propertyElement = new PropertySchemaElement($property, NULL, NULL);
-			$propertyAnnotations[] = new Annotation($propertyElement, $values);
+			$propertyAnnotations[] = new Annotation($propertyElement, $values_tuple);
 		}
 
 		return SMWOntologyBrowserXMLGenerator::encapsulateAsAnnotationList($propertyAnnotations, $instanceListElement);
@@ -146,12 +150,13 @@ class OB_Storage {
 		$dIndex = $p_array[2];
 		$properties = smwfGetSemanticStore()->getPropertiesWithSchemaByCategory($cat, $onlyDirect, $dIndex, $reqfilter);
 
-		$schemaData = array();
+		$propertySchemaElement = array();
 		foreach($properties as $p) {
-			$schemaData[] = new SchemaData($p[0], $p[1], $p[2], $p[3], $p[4], $p[5], $p[6], $p[7] == true);
+			$schemaData = new SchemaData($p[0], $p[1], $p[2], $p[3], $p[4], $p[5], $p[6], $p[7] == true);
+			$propertySchemaElement[] = new PropertySchemaElement(SMWPropertyValue::makeUserProperty($p[0]->getText()), NULL, $schemaData);
 		}
 
-		return SMWOntologyBrowserXMLGenerator::encapsulateAsPropertyList($schemaData);
+		return SMWOntologyBrowserXMLGenerator::encapsulateAsPropertyList($propertySchemaElement);
 
 	}
 
@@ -278,7 +283,7 @@ class OB_Storage {
 		$propertyAnnotations = array();
 		foreach($attvalues as $v) {
 			$propertyElement = new PropertySchemaElement($property, NULL, NULL);
-			$propertyAnnotations[] = new Annotation($propertyElement, $v);
+			$propertyAnnotations[] = new Annotation($propertyElement, array($v, NULL));
 		}
 			
 		return SMWOntologyBrowserXMLGenerator::encapsulateAsAnnotationList($propertyAnnotations, NULL);
@@ -690,6 +695,26 @@ class OB_StorageTS extends OB_Storage {
 		return SMWOntologyBrowserXMLGenerator::encapsulateAsPropertyPartition($propertyTreeElements, $resourceAttachments, $reqfilter->limit, $partitionNum, false);
 
 	}
+	
+public function getProperties($p_array) {
+        //param0: category name
+        $reqfilter = new SMWRequestOptions();
+        $reqfilter->sort = true;
+        $cat = Title::newFromText($p_array[0], NS_CATEGORY);
+        $onlyDirect = $p_array[1] == "true";
+        $dIndex = $p_array[2];
+        $properties = smwfGetSemanticStore()->getPropertiesWithSchemaByCategory($cat, $onlyDirect, $dIndex, $reqfilter);
+
+        $ts = TSNamespaces::getInstance();
+        $propertySchemaElement = array();
+        foreach($properties as $p) {
+            $schemaData = new SchemaData($p[0], $p[1], $p[2], $p[3], $p[4], $p[5], $p[6], $p[7] == true);
+            $propertySchemaElement[] = new PropertySchemaElement(SMWPropertyValue::makeUserProperty($p[0]->getText()), $ts->getFullURI($p[0]), $schemaData);
+        }
+
+        return SMWOntologyBrowserXMLGenerator::encapsulateAsPropertyList($propertySchemaElement);
+
+    }
 
 	public function getInstance($p_array) {
 
@@ -884,8 +909,10 @@ class OB_StorageTS extends OB_Storage {
 				$object = TSHelper::getTitleFromURI((string) $sv);
 				if (TSHelper::isLocalURI((string) $sv)) {
 					$value = SMWDataValueFactory::newPropertyObjectValue($predicate, $object);
+					$uri = (string) $sv;
 				} else {
 					$value = SMWDataValueFactory::newTypeIDValue('_uri', (string) $sv);
+					$uri = (string) $sv;
 				}
 				// add metadata
 				$metadataMap = $this->parseMetadata($sv->metadata);
@@ -893,7 +920,7 @@ class OB_StorageTS extends OB_Storage {
 					$value->setMetadata(strtoupper($mdProperty), NULL, $mdValue);
 				}
 
-				$values[] = $value ;
+				$values[] = array($value,$uri);
 
 			}
 			foreach($b->children()->literal as $sv) {
@@ -905,7 +932,7 @@ class OB_StorageTS extends OB_Storage {
 				foreach($metadataMap as $mdProperty => $mdValue) {
 					$value->setMetadata(strtoupper($mdProperty), NULL, $mdValue);
 				}
-				$values[] = $value;
+				$values[] = array($value, NULL);
 			}
 
 
@@ -939,8 +966,10 @@ class OB_StorageTS extends OB_Storage {
 				$object = TSHelper::getTitleFromURI((string) $sv);
 				if (TSHelper::isLocalURI((string) $sv)) {
 					$value = SMWDataValueFactory::newPropertyObjectValue($predicate, $object);
+					$uri = (string) $sv;
 				} else {
 					$value = SMWDataValueFactory::newTypeIDValue('_uri', (string) $sv);
+					$uri = (string) $sv;
 				}
 				// add metadata
 				$metadataMap = $this->parseMetadata($sv->metadata);
@@ -948,7 +977,7 @@ class OB_StorageTS extends OB_Storage {
 					$value->setMetadata(strtoupper($mdProperty), NULL, $mdValue);
 				}
 
-				$values[] = $value ;
+				$values[] = array($value, $uri) ;
 
 			}
 			foreach($b->children()->literal as $sv) {
@@ -960,7 +989,7 @@ class OB_StorageTS extends OB_Storage {
 				foreach($metadataMap as $mdProperty => $mdValue) {
 					$value->setMetadata(strtoupper($mdProperty), NULL, $mdValue);
 				}
-				$values[] = $value;
+				$values[] = array($value, $NULL);
 			}
 
 
@@ -1597,7 +1626,7 @@ class PropertyTreeElement {
  */
 class SchemaData {
 	/*
-	 * Title
+	 * Property Title
 	 * MW Title object
 	 */
 	private $title;
