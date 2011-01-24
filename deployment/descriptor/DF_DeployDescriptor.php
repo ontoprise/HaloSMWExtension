@@ -175,7 +175,7 @@ class DeployDescriptor {
 				// should work, otherwise the dd is false.
 				return;
 			}
-				
+
 			if (isset($update[0]->attributes()->removeAll)) {
 				$this->removeAllConfigs = true;
 			}
@@ -489,7 +489,7 @@ class DeployDescriptor {
 				$this->mappings[$source] = array();
 			}
 			$this->mappings[$source][] = array($loc, $target);
-			 
+
 		}
 		return $this->mappings;
 	}
@@ -639,9 +639,10 @@ class DeployDescriptor {
 		print "done.]";
 
 		if (!$dryRun) {
-				
-			$dp->applyPatches($userCallback);
-				
+			$alreadyApplied = array();
+			$dp->checkIfPatchesAlreadyApplied($alreadyApplied);
+			$dp->applyPatches($userCallback, $alreadyApplied);
+
 		}
 
 		$this->lastErrors = $dp->getErrorMessages();

@@ -193,15 +193,16 @@ class DeployDescriptionProcessor {
 	 *
 	 * @param callback $userCallback Callback function for user confirmation. Returns 'y' or 'n'.
 	 */
-	function applyPatches($userCallback) {
+	function applyPatches($userCallback, $patchesToSkip = array()) {
 		$rootDir = self::makeUnixPath(dirname($this->ls_loc));
 		$localPackages = PackageRepository::getLocalPackages($rootDir.'/extensions');
 
 		foreach($this->dd_parser->getPatches($localPackages) as $patch) {
-
+            
 			$instDir = trim(self::makeUnixPath($this->dd_parser->getInstallationDirectory()));
 			if (substr($instDir, -1) != '/') $instDir .= "/";
 			$patch = $instDir.self::makeUnixPath($patch);
+            if (in_array($patch, $patchesToSkip)) continue;
 			$patchFailed = false;
 			if (!file_exists($rootDir."/".$patch)) {
 				$this->errorMessages[] = "WARNING: patch at '$rootDir/$patch' does not exist";
@@ -237,7 +238,7 @@ class DeployDescriptionProcessor {
 				case 'r': throw new RollbackInstallation();
 				case 'n': break; // just ignore the patches completely
 			}
-				
+
 			// clear patch.php output
 			$out = array();
 
@@ -277,6 +278,45 @@ class DeployDescriptionProcessor {
 			print "\n\t[Remove patch $patch...";
 			exec("php ".$rootDir."/deployment/tools/patch.php -r -p ".$rootDir."/".$patch." -d ".$rootDir);
 			print "done.]";
+		}
+	}
+    
+	/**
+	 * Checks if patches are already applied. Returns a list of patches of this deployable
+	 * already applied.
+	 * 
+	 * @param (out) array & $alreadyApplied List of patch files (paths relative to MW folder).
+	 */
+	function checkIfPatchesAlreadyApplied(& $alreadyApplied) {
+		$rootDir = self::makeUnixPath(dirname($this->ls_loc));
+		$localPackages = PackageRepository::getLocalPackages($rootDir.'/extensions');
+
+		foreach($this->dd_parser->getPatches($localPackages) as $patch) {
+
+			$instDir = trim(self::makeUnixPath($this->dd_parser->getInstallationDirectory()));
+			if (substr($instDir, -1) != '/') $instDir .= "/";
+			$patch = $instDir.self::makeUnixPath($patch);
+			$patchFailed = false;
+			if (!file_exists($rootDir."/".$patch)) {
+				$this->errorMessages[] = "WARNING: patch at '$rootDir/$patch' does not exist";
+				print "\nWARNING: patch at '$rootDir/$patch' does not exist";
+				continue;
+			}
+			// do dry-run at first to check for rejected patches
+			print "\n[Check if patch is already applied ".$patch."...";
+			exec("php ".$rootDir."/deployment/tools/patch.php -r -p ".$rootDir."/".$patch." -d ".$rootDir." --dry-run --onlypatch", $out, $ret);
+			print "done.]";
+			$patchFailed = false;
+			foreach($out as $line) {
+				if (strpos($line, "FAILED") !== false) {
+					$patchFailed = true;
+				}
+			}
+
+			if (!$patchFailed) {
+				print "\n[$patch seems to be applied already. Skipped]";
+				$alreadyApplied[] = $patch;
+			}
 		}
 	}
 
@@ -611,7 +651,7 @@ class RequireConfigElement extends ConfigElement {
 class ReplaceConfigElement extends ConfigElement {
 	var $search;
 	var $replacement;
-	
+
 	public function __construct($child) {
 		parent::__construct("replace");
 		$this->search = (string) $child[0]->search[0];
@@ -622,7 +662,7 @@ class ReplaceConfigElement extends ConfigElement {
 		$ls = str_replace($this->search, $this->replacement, $ls);
 		return ""; // do not return anything, just change
 	}
-	 
+
 }
 
 /**
