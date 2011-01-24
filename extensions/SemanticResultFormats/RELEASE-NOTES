@@ -1,6 +1,16 @@
 For a documentation of all features, see
 http://semantic-mediawiki.org/wiki/Semantic_Result_Formats
 
+
+== SRF 1.5.2 ==
+
+Released on January 11 2011.
+
+Changes in this version:
+* Handling for ResourceLoader in MediaWiki 1.17+ added for
+  'timeline', 'eventline', 'jqplotbar' and 'jqplotpie' formats.
+* Visualization improvments for 'process' format.
+
 == SRF 1.5.1 ==
 
 Released on August 26 2010.

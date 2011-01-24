@@ -4,7 +4,7 @@
  * Main entry point for the SemanticResultFormats extension.
  * http://www.mediawiki.org/wiki/Extension:Semantic_Result_Formats
  * 
- * @file SemanticresultFormats.php
+ * @file SemanticResultFormats.php
  * @ingroup SemanticResultFormats
  * 
  * @author Jeroen De Dauw
@@ -20,14 +20,20 @@ if ( !defined( 'MEDIAWIKI' ) ) {
 	die( 'Not an entry point.' );
 }
 
-define( 'SRF_VERSION', '{{$VERSION}} [B{{$BUILDNUMBER}}]' );
+define( 'SRF_VERSION', '1.5.2.1' );
 
 // Require the settings file.
 require dirname( __FILE__ ) . '/SRF_Settings.php';
 
-srffInitFormats();
+// Initialize the formats later on, so the $srfgFormats setting can be manipulated in LocalSettings.
+$wgExtensionFunctions[] = 'srffInitFormats';
 
 $wgExtensionMessagesFiles['SemanticResultFormats'] = dirname( __FILE__ ) . '/SRF_Messages.php';
+
+// To ensure Semantic Result Formats works with pre-1.16 MediaWiki versions.
+if ( !class_exists( 'Html' ) ) {
+	$wgAutoloadClasses['Html'] = dirname( __FILE__ ) . '/compat/Html.php';
+}	
 
 // FIXME: hardcoded path
 $srfgScriptPath = $wgScriptPath . '/extensions/SemanticResultFormats';
@@ -39,6 +45,8 @@ $wgHooks['ParserFirstCallInit'][] = 'SRFParserFunctions::registerFunctions';
 $wgAutoloadClasses['SRFParserFunctions'] = $srfgIP . '/SRF_ParserFunctions.php';
 // FIXME: Can be removed when new style magic words are used (introduced in r52503)
 $wgHooks['LanguageGetMagic'][] = 'SRFParserFunctions::languageGetMagic';
+
+$wgExtensionFunctions[] = 'efSRFSetup';
 
 $wgExtensionCredits[defined( 'SEMANTIC_EXTENSION_TYPE' ) ? 'semantic' : 'other'][] = array(
 	'path' => __FILE__,
@@ -52,11 +60,10 @@ $wgExtensionCredits[defined( 'SEMANTIC_EXTENSION_TYPE' ) ? 'semantic' : 'other']
 		'Yaron Koren',
 		'[http://korrekt.org Markus Krötzsch]',
 		'David Loomer',
-		'Joel Natividad',
 		'[http://simia.net Denny Vrandecic]',
-		'Nathan Yergler',
 		'Hans-Jörg Happel',
-		'Rowan Rodrik van der Molen'
+		'Rowan Rodrik van der Molen',
+		'[http://www.mediawiki.org/wiki/User:Jeroen_De_Dauw Jeroen De Dauw]'
 	),
 	'url' => 'http://semantic-mediawiki.org/wiki/Help:Semantic_Result_Formats',
 	'descriptionmsg' => 'srf-desc'
@@ -111,15 +118,38 @@ function srffInitFormats() {
 		'ploticusvbar' => 'SRFPloticusVBar',
 		'gallery' => 'SRFGallery',
 	);
-	
+
 	foreach ( $srfgFormats as $format ) {
 		if ( array_key_exists( $format, $formatClasses ) ) {
 			$smwgResultFormats[$format] = $formatClasses[$format];
+			
+			if ( method_exists( $formatClasses[$format], 'registerResourceModules' ) ) {
+				call_user_func( array( $formatClasses[$format], 'registerResourceModules' ) );
+			}
 		}
 		else {
 			wfDebug( "There is not result format class associated with the format '$format'." );
 		}
 	}
+}
+
+/**
+ * Extension initialization hook.
+ * 
+ * @since 0.5.3
+ * 
+ * @return true
+ */
+function efSRFSetup() {
+	global $wgVersion;
+	
+	// This function has been deprecated in 1.16, but needed for earlier versions.
+	// It's present in 1.16 as a stub, but lets check if it exists in case it gets removed at some point.
+	if ( version_compare( $wgVersion, '1.15', '<=' ) ) {
+		wfLoadExtensionMessages( 'SemanticResultFormats' );
+	}	
+	
+	return true;
 }
 
 /**
@@ -134,7 +164,6 @@ function srffAddToAdminLinks( &$admin_links_tree ) {
 	}
 		
 	$smw_docu_row = $displaying_data_section->getRow( 'smw' );
-	wfLoadExtensionMessages( 'SemanticResultFormats' );
 	$srf_docu_label = wfMsg( 'adminlinks_documentation', wfMsg( 'srf-name' ) );
 	$smw_docu_row->addItem( AlItem::newFromExternalLink( 'http://www.mediawiki.org/wiki/Extension:Semantic_Result_Formats', $srf_docu_label ) );
 	

@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Settings file for the Semantic Result Formats extension.
  * http://www.mediawiki.org/wiki/Extension:Semantic_Result_Formats
