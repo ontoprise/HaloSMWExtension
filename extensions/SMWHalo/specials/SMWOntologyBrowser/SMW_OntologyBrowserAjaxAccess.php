@@ -131,7 +131,7 @@ class OB_Storage {
 			$values = smwfGetStore()->getPropertyValues($instance, $property, $reqfilter, '', true);
 			$values_tuple = array();
 			foreach($values as $v) {
-				$values_tuple[] = array($v, NULL); 
+				$values_tuple[] = array($v, NULL);
 			}
 			$propertyElement = new PropertySchemaElement($property, NULL, NULL);
 			$propertyAnnotations[] = new Annotation($propertyElement, $values_tuple);
@@ -695,26 +695,26 @@ class OB_StorageTS extends OB_Storage {
 		return SMWOntologyBrowserXMLGenerator::encapsulateAsPropertyPartition($propertyTreeElements, $resourceAttachments, $reqfilter->limit, $partitionNum, false);
 
 	}
-	
-public function getProperties($p_array) {
-        //param0: category name
-        $reqfilter = new SMWRequestOptions();
-        $reqfilter->sort = true;
-        $cat = Title::newFromText($p_array[0], NS_CATEGORY);
-        $onlyDirect = $p_array[1] == "true";
-        $dIndex = $p_array[2];
-        $properties = smwfGetSemanticStore()->getPropertiesWithSchemaByCategory($cat, $onlyDirect, $dIndex, $reqfilter);
 
-        $ts = TSNamespaces::getInstance();
-        $propertySchemaElement = array();
-        foreach($properties as $p) {
-            $schemaData = new SchemaData($p[0], $p[1], $p[2], $p[3], $p[4], $p[5], $p[6], $p[7] == true);
-            $propertySchemaElement[] = new PropertySchemaElement(SMWPropertyValue::makeUserProperty($p[0]->getText()), $ts->getFullURI($p[0]), $schemaData);
-        }
+	public function getProperties($p_array) {
+		//param0: category name
+		$reqfilter = new SMWRequestOptions();
+		$reqfilter->sort = true;
+		$cat = Title::newFromText($p_array[0], NS_CATEGORY);
+		$onlyDirect = $p_array[1] == "true";
+		$dIndex = $p_array[2];
+		$properties = smwfGetSemanticStore()->getPropertiesWithSchemaByCategory($cat, $onlyDirect, $dIndex, $reqfilter);
 
-        return SMWOntologyBrowserXMLGenerator::encapsulateAsPropertyList($propertySchemaElement);
+		$ts = TSNamespaces::getInstance();
+		$propertySchemaElement = array();
+		foreach($properties as $p) {
+			$schemaData = new SchemaData($p[0], $p[1], $p[2], $p[3], $p[4], $p[5], $p[6], $p[7] == true);
+			$propertySchemaElement[] = new PropertySchemaElement(SMWPropertyValue::makeUserProperty($p[0]->getText()), $ts->getFullURI($p[0]), $schemaData);
+		}
 
-    }
+		return SMWOntologyBrowserXMLGenerator::encapsulateAsPropertyList($propertySchemaElement);
+
+	}
 
 	public function getInstance($p_array) {
 
@@ -735,7 +735,7 @@ public function getProperties($p_array) {
 			$dataSpace = $this->getDataSourceParameters();
 
 			// query
-			$response = $client->query("[[Category:$categoryName]]", "?Category|limit=$limit|offset=$offset|merge=false$dataSpace$metadataRequest");
+			$response = $client->query("[[Category:$categoryName]]", "?Category|limit=$limit|offset=$offset|merge=false$dataSpace$metadataRequest", $smwgTripleStoreGraph);
 
 			$categoryTitle = Title::newFromText($categoryName, NS_CATEGORY);
 			$titles = array();
@@ -861,8 +861,8 @@ public function getProperties($p_array) {
 			$metadata = isset($p_array[3]) ? $p_array[3] : false;
 			$metadataRequest = $metadata != false ? "|metadata=$metadata" : "";
 
-
-			$response = $client->query("SELECT ?p ?o WHERE { <$instanceURI> ?p ?o. }",  "limit=$limit|offset=$offset$metadataRequest");
+			global $smwgTripleStoreGraph;
+			$response = $client->query("SELECT ?p ?o WHERE { <$instanceURI> ?p ?o. }",  "limit=$limit|offset=$offset$metadataRequest", $smwgTripleStoreGraph);
 			$annotations = array();
 			$this->parseAnnotations($response, $annotations);
 
@@ -957,7 +957,7 @@ public function getProperties($p_array) {
 		foreach ($results as $r) {
 
 			$children = $r->children(); // binding nodes
-			 
+
 
 			$categories = array();
 			$b = $children->binding[0]; // values
@@ -1011,7 +1011,7 @@ public function getProperties($p_array) {
 			$offset = $partition * $limit;
 
 			// query
-			$response = $client->query("[[$propertyName::+]]",  "?Category|limit=$limit|offset=$offset|merge=false");
+			$response = $client->query("[[$propertyName::+]]",  "?Category|limit=$limit|offset=$offset|merge=false", $smwgTripleStoreGraph);
 
 			$titles = array();
 			$this->parseInstances($response, $titles, NULL);
@@ -1039,7 +1039,7 @@ public function getProperties($p_array) {
 			$offset = $partition * $limit;
 
 			// query
-			$response = $client->query("[[$propertyName::$value]]",  "?Category|limit=$limit|offset=$offset|merge=false");
+			$response = $client->query("[[$propertyName::$value]]",  "?Category|limit=$limit|offset=$offset|merge=false", $smwgTripleStoreGraph);
 
 			$titles = array();
 			$this->parseInstances($response, $titles, NULL);
@@ -1069,7 +1069,7 @@ public function getProperties($p_array) {
 			$metadataRequest = $metadata != false ? "|metadata=$metadata" : "";
 
 
-			$response = $client->query("SELECT ?o WHERE { ?s <$propertyURI> ?o. }",  "limit=$limit|offset=$offset$metadataRequest");
+			$response = $client->query("SELECT ?o WHERE { ?s <$propertyURI> ?o. }",  "limit=$limit|offset=$offset$metadataRequest", $smwgTripleStoreGraph);
 			$annotations = array();
 			$property = TSHelper::getTitleFromURI($p_array[0]);
 
@@ -1099,7 +1099,7 @@ public function getProperties($p_array) {
 			$instanceURI = $p_array[0];
 
 			// query
-			$response = $client->query(TSNamespaces::getW3CPrefixes()." SELECT ?cat WHERE { <$instanceURI> rdf:type ?cat.  }",  "");
+			$response = $client->query(TSNamespaces::getW3CPrefixes()." SELECT ?cat WHERE { <$instanceURI> rdf:type ?cat.  }",  "", $smwgTripleStoreGraph);
 
 			$categories = array();
 			$this->parseCategories($response, $categories);
@@ -1175,7 +1175,7 @@ public function getProperties($p_array) {
 			}
 
 
-			$response = $client->query(TSNamespaces::getW3CPrefixes()." SELECT ?s ?cat WHERE { ?s ?p ?o. OPTIONAL { ?s rdf:type ?cat. } $filter }",  "limit=1000");
+			$response = $client->query(TSNamespaces::getW3CPrefixes()." SELECT ?s ?cat WHERE { ?s ?p ?o. OPTIONAL { ?s rdf:type ?cat. } $filter }",  "limit=1000", $smwgTripleStoreGraph);
 
 
 			$titles = array();
@@ -1447,7 +1447,7 @@ class OB_StorageTSQuad extends OB_StorageTS {
 
 /**
  * Represents OntologyBrowser category tree element (1st column)
- * 
+ *
  *@author kuehn
  *
  */
@@ -1501,7 +1501,7 @@ class CategoryTreeElement {
 
 /**
  * Represents OntologyBrowser instance list element (2nd column)
- * 
+ *
  *@author kuehn
  *
  */
@@ -1566,7 +1566,7 @@ class InstanceListElement {
 
 /**
  * Represents OntologyBrowser property tree element (1st column)
- * 
+ *
  *@author kuehn
  *
  */
@@ -1620,7 +1620,7 @@ class PropertyTreeElement {
 
 /**
  * Represents OntologyBrowser schema data of a property (3rd column)
- * 
+ *
  *@author kuehn
  *
  */
@@ -1678,10 +1678,10 @@ class SchemaData {
 
 /**
  * Represents a OntologyBrowser property (3rd column)
- * 
+ *
  * A property with schema information (when clicking on a category)
  * A property as part of an annotation.
- * 
+ *
  * @author kuehn
  *
  */
@@ -1740,7 +1740,7 @@ class PropertySchemaElement {
 
 /**
  * Represents a OntologyBrowser annotation (3rd column)
- * 
+ *
  * @author kuehn
  *
  */

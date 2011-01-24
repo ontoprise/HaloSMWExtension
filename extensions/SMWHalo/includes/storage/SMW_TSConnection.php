@@ -223,10 +223,7 @@ class TSConnectorRESTWebservice extends TSConnection {
 
 	public function query($query, $params = "", $graph = "") {
 		global $smwgTripleStoreGraph;
-		if (empty($graph)) {
-			$graph = $smwgTripleStoreGraph;
-		}
-
+		
 		if (stripos(trim($query), 'SELECT') === 0 || stripos(trim($query), 'PREFIX') === 0) {
 			// SPARQL, attach common prefixes
 			$query = TSNamespaces::getAllPrefixes().$query;
