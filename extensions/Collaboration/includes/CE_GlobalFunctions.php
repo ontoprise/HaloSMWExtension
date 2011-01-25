@@ -95,7 +95,7 @@ function cefSetupExtension() {
 	// to include javascript and css files (only on special page requests).
 
 	if (stripos($wgRequest->getRequestURL(), $spns_text.":Collaboration") !== false
-	|| stripos($wgRequest->getRequestURL(), $spns_text."%3ACollaboration") !== false) {
+		|| stripos($wgRequest->getRequestURL(), $spns_text."%3ACollaboration") !== false) {
 		$wgHooks['BeforePageDisplay'][]='cefAddSpecialPageHeader';
 	}else {
 		$wgHooks['BeforePageDisplay'][]='cefAddNonSpecialPageHeader';
@@ -130,8 +130,16 @@ function cefSetupExtension() {
  * @return bool: true
  */
 function cefAddNonSpecialPageHeader(&$out) {
-	global $cegScriptPath;
+	global $cegScriptPath, $wgRequest,$wgContLang;
 
+	$spns_text = $wgContLang->getNsText(NS_SPECIAL);
+	// register AddHTMLHeader functions for special pages
+	// to include javascript and css files (only on special page requests).
+	if (stripos($wgRequest->getRequestURL(), $spns_text.":Collaboration") == false
+		|| stripos($wgRequest->getRequestURL(), $spns_text."%3ACollaboration") == false
+		|| ($wgRequest->getText('action', 'view') !== 'view') ) {
+		return true;
+	}
 	cefAddJSLanguageScripts($out);
 	$out->addScript("<script type=\"text/javascript\" src=\"". $cegScriptPath .  "/scripts/overlay.js\"></script>");
 	$out->addScript("<script type=\"text/javascript\" src=\"". $cegScriptPath .  "/scripts/Comment/CE_Comment.js\"></script>");
@@ -161,17 +169,21 @@ function cefAddNonSpecialPageHeader(&$out) {
  * @return bool: true
  */
 function cefAddSpecialPageHeader(&$out) {
-	global $smwgScriptPath;
+	global $smwgScriptPath, $wgTitle, $wgUser;
 	//SMW_sorttableto handle table sorting
-	$out->addScript("<script type=\"text/javascript\" src=\"". $smwgScriptPath .  "/skins/SMW_sorttable.js\"></script>");
-	//css to format sortkeys
-	$out->addLink(array(
-		'rel'   => 'stylesheet',
-		'type'  => 'text/css',
-		'media' => 'screen, projection',
-		'href'  => $smwgScriptPath. '/skins/SMW_custom.css'
-	));
-	return true;
+	if ($wgTitle->getNamespace() != NS_SPECIAL) {
+		return true;
+	} else {
+		$out->addScript("<script type=\"text/javascript\" src=\"". $smwgScriptPath .  "/skins/SMW_sorttable.js\"></script>");
+		//css to format sortkeys
+		$out->addLink(array(
+			'rel'   => 'stylesheet',
+			'type'  => 'text/css',
+			'media' => 'screen, projection',
+			'href'  => $smwgScriptPath. '/skins/SMW_custom.css'
+		));
+		return true;
+	}
 }
 
 /*********************************/
