@@ -135,11 +135,12 @@ function cefAddNonSpecialPageHeader(&$out) {
 	$spns_text = $wgContLang->getNsText(NS_SPECIAL);
 	// register AddHTMLHeader functions for special pages
 	// to include javascript and css files (only on special page requests).
-	if (stripos($wgRequest->getRequestURL(), $spns_text.":Collaboration") == false
-		|| stripos($wgRequest->getRequestURL(), $spns_text."%3ACollaboration") == false
-		|| ($wgRequest->getText('action', 'view') !== 'view') ) {
-		return true;
-	}
+	// That lead to no JS at all.
+//	if (stripos($wgRequest->getRequestURL(), $spns_text.":Collaboration") == false
+//		|| stripos($wgRequest->getRequestURL(), $spns_text."%3ACollaboration") == false
+//		|| ($wgRequest->getText('action', 'view') !== 'view') ) {
+//		return true;
+//	}
 	cefAddJSLanguageScripts($out);
 	$out->addScript("<script type=\"text/javascript\" src=\"". $cegScriptPath .  "/scripts/overlay.js\"></script>");
 	$out->addScript("<script type=\"text/javascript\" src=\"". $cegScriptPath .  "/scripts/Comment/CE_Comment.js\"></script>");
