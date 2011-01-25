@@ -15,6 +15,7 @@ $reversePatch = "";
 $dryRun = "";
 $onlypatch = false;
 $returnCode = 0;
+$patchTool = "patch";
 
 // prevent that the script can be started from the webserver
  if (array_key_exists('SERVER_NAME', $_SERVER) && $_SERVER['SERVER_NAME'] != NULL) {
@@ -55,6 +56,12 @@ for( $arg = reset( $argv ); $arg !== false; $arg = next( $argv ) ) {
     //--no error
     if ($arg == '--noerror') {
         $noerror = true;
+        continue;
+    }
+    
+    //--location of patch tool
+    if ($arg == '--patchtool') {
+        $patchTool = next($argv);
         continue;
     }
 }
@@ -118,7 +125,7 @@ foreach($patches as $p) {
 	//If you do not want the function to append elements, call unset() on the array before passing it to exec().
 	unset($out); 
 	if (!$onlypatch) echo "\nExecute patch:\n ".'patch -u -l -f -s '.$dryRun.' '.$reversePatch.' --no-backup-if-mismatch -i __patch__.txt -d "'.$absPath.$path.'"';
-	exec('patch -u -l -f -s '.$dryRun.' '.$reversePatch.' --no-backup-if-mismatch -i __patch__.txt -d "'.$absPath.$path.'"', $out, $ret);
+	exec($patchTool.' -u -l -f -s '.$dryRun.' '.$reversePatch.' --no-backup-if-mismatch -i __patch__.txt -d "'.$absPath.$path.'"', $out, $ret);
 	
 	foreach($out as $line) print "\n".$line;
 	
