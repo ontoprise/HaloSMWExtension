@@ -13,27 +13,26 @@ Index: extensions/SemanticResultFormats/Outline/SRF_Outline.php
  
 Index: extensions/SemanticResultFormats/Timeline/SRF_Timeline.php
 ===================================================================
---- extensions/SemanticResultFormats/Timeline/SRF_Timeline.php	2010-07-06 18:27:55.000000000 +0200
-+++ extensions/SemanticResultFormats/Timeline/SRF_Timeline.php	2010-07-07 10:43:52.000000000 +0200
-@@ -121,6 +121,7 @@
+--- extensions/SemanticResultFormats/Timeline/SRF_Timeline.php	(revision 9595)
++++ extensions/SemanticResultFormats/Timeline/SRF_Timeline.php	(working copy)
+@@ -148,6 +148,7 @@
  							$objectlabel = $object->getLongText( $outputmode, $l );
  						} else {
  							$objectlabel = $object->getShortText( $outputmode, $l );
 +							if ($objectlabel == '') continue;
  						}
+ 						
  						$urlobject =  ( $l !== null );
- 						$header = '';
-@@ -226,4 +227,12 @@
- 		$params[] = array( 'name' => 'timelinesize', 'type' => 'string', 'description' => wfMsg( 'srf_paramdesc_timelinesize' ) );
- 		 return $params;
+@@ -315,4 +316,11 @@
+ 		);
  	}
-+
+ 	
 +	function getScripts() {
-+	        global $srfgScriptPath;
-+                $scripts [] = '<script type="text/javascript" src="' . $srfgScriptPath .  '/Timeline/SRF_timeline.js"></script>' . "\n";
-+                $scripts [] = '<script type="text/javascript" src="' . $srfgScriptPath .  '/Timeline/SimileTimeline/timeline-api.js"></script>' . "\n";
-+                return $scripts;
-+        }
++		global $srfgScriptPath;
++		$scripts [] = '<script type="text/javascript" src="' . $srfgScriptPath .  '/Timeline/SRF_timeline.js"></script>' . "\n";
++		$scripts [] = '<script type="text/javascript" src="' . $srfgScriptPath .  '/Timeline/SimileTimeline/timeline-api.js"></script>' . "\n";
++		return $scripts;
++	}
 +
  }
 Index: extensions/SemanticResultFormats/GoogleCharts/SRF_GoogleBar.php
