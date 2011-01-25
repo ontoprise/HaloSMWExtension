@@ -258,15 +258,49 @@ if ($haclgUseFeaturesForGroupPermissions === true) {
 	$haclgFeature['technical']['default'] = "deny"; // The other alternative would be "deny"
 }
 
+##
+# The array $haclgDynamicSD holds all rules for dynamic Security Descriptors. 
+# With these rules the system can create security descriptors automatically if
+# certain users add an article to a certain category.
+# Each rule is an associative array with these properties:
+# user
+#    The current user of the system must match the list of users in this property. 
+#    Users are given by their name (without the namespace User, e.g. 'WikiSysop'). 
+#    Use an array to specify several users e.g. array('U1', 'U2', 'U3'). 
+#    The special values * and # represent anonymous and registered users, 
+#    respectively. 
+# category
+#    The rule can only match, if the article is annotated with this category. 
+#    The name of the category must be given without namespace. 
+# sd
+#    If the rule matches, then the content of this right template is copied as 
+#    new SD for the article. The name of the right template must be fully 
+#    specified with namespace (ACL) and the naming convention for templates (Right). 
+# allowUnauthorizedSDChange
+#    This may be true or false. 
+#    Every SD has a modification right i.e. only certain users may change the 
+#    access rights for an article. (Otherwise access rights would be meaningless.) 
+#    The rules of dynamic SD might violate these modification rights.
+#
+#    Example
+#        The access rights for article Project X can only be modified by the 
+#        user ProjectManager. A dynamic SD rule defines that the rights are 
+#        modified by any registered user who add the category Project. This is a conflict. 
+#    Normally, the system will prohibit unauthorized changes of an SD. By setting
+#    the property allowUnauthorizedSDChange to true the rule can be applied 
+#    successfully. However, other rights should make sure that only certain users 
+#    can change the access rights. You can achieve this by giving edit rights 
+#    only to those users who are authorized to trigger dynamic SD rules. 
+#    This property may be missing. Its default value is false. 
 
-$haclgDynamicSD = array(
-    array(
-        "user"     => "#",
-        "category" => "Project",
-        "sd"       => "ACL:Right/SDForNewProject",
-        "allowUnauthorizedSDChange" => false
-    )
-);
+//$haclgDynamicSD = array(
+//    array(
+//        "user"     => "#",
+//        "category" => "Project",
+//        "sd"       => "ACL:Right/SDForNewProject",
+//        "allowUnauthorizedSDChange" => false
+//    )
+//);
 
 
 $wgGroupPermissions['*']['propertyread'] = true;
