@@ -278,18 +278,35 @@
 			<arg value="--patchtool" />
 			<arg value="${patchtool}"/>
 		</exec>
-		<!--<exec dir="../../../deployment/tools" patchfile="../patch_for_MW1.16.1.txt" />
-		<exec dir="../../../deployment/tools" patchfile="../patch_for_SMW1.5.4.txt" />-->
+		<exec executable="php">
+			<arg value="../../../patches/patch.php"/>
+			<arg value="-d"/>
+			<arg value="${basedir}/../../../"/>
+			<arg value="-p" />
+			<arg value="../patch_for_SMW1.5.4.txt"/>
+			<arg value="--patchtool" />
+			<arg value="${patchtool}"/>
+		</exec>
+		<exec executable="php">
+			<arg value="../../../patches/patch.php"/>
+			<arg value="-d"/>
+			<arg value="${basedir}/../../../"/>
+			<arg value="-p" />
+			<arg value="../patch_for_MW1.16.1.txt"/>
+			<arg value="--patchtool" />
+			<arg value="${patchtool}"/>
+		</exec>
+
 	</target>
-	
-	
+
+
 	<target name="checkos">
-	        <condition property="patchtool" value="${basedir}/../../../deployment/tools/patch.exe">
-	                <os family="windows" />
-	        </condition>
-	        <condition property="patchtool" value="patch">
-	                <os family="unix" />
-	        </condition>
+		<condition property="patchtool" value="${basedir}/../../../deployment/tools/patch.exe">
+			<os family="windows" />
+		</condition>
+		<condition property="patchtool" value="patch">
+			<os family="unix" />
+		</condition>
 	</target>
 
 </project>

@@ -196,5 +196,43 @@
 		</concat>
 		<delete file="../../HaloACL/scripts/hacl-packed_custom.js" />
 	</target>
+	<target name="patches" depends="checkos">
+			<echo message="${patchtool}" />
+			<exec executable="php">
+				<arg value="../../../patches/patch.php" />
+				<arg value="-d" />
+				<arg value="${basedir}/../../../" />
+				<arg value="-p" />
+				<arg value="../patch_for_MW_1.16.0.txt.txt" />
+				<arg value="--patchtool" />
+				<arg value="${patchtool}" />
+			</exec>
+			<exec executable="php">
+				<arg value="../../../patches/patch.php" />
+				<arg value="-d" />
+				<arg value="${basedir}/../../../" />
+				<arg value="-p" />
+				<arg value="../patch_for_SF_2.0.txt" />
+				<arg value="--patchtool" />
+				<arg value="${patchtool}" />
+			</exec>
+			<exec executable="php">
+				<arg value="../../../patches/patch.php" />
+				<arg value="-d" />
+				<arg value="${basedir}/../../../" />
+				<arg value="-p" />
+				<arg value="../patch_for_SMW_1.5.4.txt" />
+				<arg value="--patchtool" />
+				<arg value="${patchtool}" />
+			</exec>
+		</target>
 
+		<target name="checkos">
+			<condition property="patchtool" value="${basedir}/../../../deployment/tools/patch.exe">
+				<os family="windows" />
+			</condition>
+			<condition property="patchtool" value="patch">
+				<os family="unix" />
+			</condition>
+		</target>
 </project>

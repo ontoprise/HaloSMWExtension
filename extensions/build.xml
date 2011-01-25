@@ -1,0 +1,10 @@
+<project basedir="." default="apply_patches" name="BuildDeploySystem">
+
+	<target name="apply_patches">
+		<ant antfile="build.xml" dir="SMWHalo/deploy" target="patches" />
+		<ant antfile="build.xml" dir="SemanticForms/deploy" target="patches" />
+		<ant antfile="build.xml" dir="RichMedia/deploy" target="patches" />
+		<ant antfile="build.xml" dir="HaloACL/deploy" target="patches" />
+
+	</target>
+</project>

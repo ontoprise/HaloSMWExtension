@@ -61,7 +61,7 @@
 		</copy>
 
 		<zip destfile="bin/richmedia.zip" basedir="bin/zip" />
-		
+
 		<exec executable="php">
 			<arg value="../../../buildtools/renameDeployable.php" />
 			<arg value="../deploy.xml" />
@@ -94,7 +94,7 @@
 			<arg value="../../../buildtools/renameDeployable.php" />
 			<arg value="../deploy.xml" />
 			<arg value="bin/richmedia_bundled.zip" />
-            <arg value="bin/richmedia-%s_including_dependencies.zip" />
+			<arg value="bin/richmedia-%s_including_dependencies.zip" />
 		</exec>
 	</target>
 
@@ -114,5 +114,45 @@
 				<exclude name="**/.svn, **/CVS" />
 			</fileset>
 		</copy>
+	</target>
+
+	<target name="patches" depends="checkos">
+		<echo message="${patchtool}" />
+		<exec executable="php">
+			<arg value="../../../patches/patch.php" />
+			<arg value="-d" />
+			<arg value="${basedir}/../../../" />
+			<arg value="-p" />
+			<arg value="../patch.txt" />
+			<arg value="--patchtool" />
+			<arg value="${patchtool}" />
+		</exec>
+		<exec executable="php">
+			<arg value="../../../patches/patch.php" />
+			<arg value="-d" />
+			<arg value="${basedir}/../../../" />
+			<arg value="-p" />
+			<arg value="../RichMediaPatchForMW1_16_1.txt" />
+			<arg value="--patchtool" />
+			<arg value="${patchtool}" />
+		</exec>
+		<exec executable="php">
+			<arg value="../../../patches/patch.php" />
+			<arg value="-d" />
+			<arg value="${basedir}/../../../" />
+			<arg value="-p" />
+			<arg value="../RichMediaPatchForSF2_0_8.txt" />
+			<arg value="--patchtool" />
+			<arg value="${patchtool}" />
+		</exec>
+	</target>
+
+	<target name="checkos">
+		<condition property="patchtool" value="${basedir}/../../../deployment/tools/patch.exe">
+			<os family="windows" />
+		</condition>
+		<condition property="patchtool" value="patch">
+			<os family="unix" />
+		</condition>
 	</target>
 </project>
