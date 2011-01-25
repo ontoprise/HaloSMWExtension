@@ -11,6 +11,7 @@ require_once 'testcases/TestDefaultSecurityDescriptor.php';
 require_once 'testcases/TestLDAPStorage.php';
 require_once 'testcases/TestSMWStore.php';
 require_once 'testcases/TestGroupPermissions.php';
+require_once 'testcases/TestDynamicHaloACL.php';
 
 class HaloACLTests
 { 
@@ -26,6 +27,7 @@ class HaloACLTests
         $suite->addTestSuite("TestLDAPStorageSuite");
         $suite->addTestSuite("TestSMWStoreSuite"); 
         $suite->addTestSuite("TestGroupPermissionsSuite"); 
+        $suite->addTestSuite("TestDynamicHaloACLSuite"); 
         
         return $suite;
     }

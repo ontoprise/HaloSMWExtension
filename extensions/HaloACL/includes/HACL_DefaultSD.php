@@ -106,6 +106,7 @@ class  HACLDefaultSD  {
 	 * belongs to the namespace ACL (i.e. a right, SD, group or whitelist)
 	 * it is ignored. Otherwise the following happens:
 	 * - Check the namespace of the article (must not be ACL)
+	 * - Check if a dynamic SD has to be created because if a category in the article
 	 * - Check if $user is a registered user
 	 * - Check if the article already has an SD
 	 * - Check if the user has defined a default SD
@@ -121,10 +122,16 @@ class  HACLDefaultSD  {
 	 * @return true
 	 */
 	public static function articleSaveComplete(&$article, &$user, $text) {
-            global $wgUser;
+		global $wgUser;
 		
 		if ($article->getTitle()->getNamespace() == HACL_NS_ACL) {
 			// No default SD for articles in the namespace ACL
+			return true;
+		}
+		
+		// Dynamic SDs have precedence over a users default SD
+		if (self::createDynamicSD($article, $user)) {
+			// A dynamic SD was created => return
 			return true;
 		}
 		
@@ -142,7 +149,7 @@ class  HACLDefaultSD  {
             $sdAlreadyDefinied = true;
         }
 
-        // has user defined anohter template than default sd
+        // has user defined another template than default sd
         $articleContent = $article->getContent();
 
         /*
@@ -161,20 +168,22 @@ class  HACLDefaultSD  {
 
         #$article->doEdit($articleContent, "processed by defaultsd-generation");
         */
-		if (isset($_SESSION)) {
-			if (isset($_SESSION['haloacl_toolbar'])  && isset($_SESSION['haloacl_toolbar'][$user->getName()])){
-				$templateToProtectWith = $_SESSION['haloacl_toolbar'][$user->getName()];
-                                if(strpos($templateToProtectWith, 'Right/') !== false || $templateToProtectWith== 'unprotected'){
-                                    $createCustomSD = true;
-                                }
-				unset($_SESSION['haloacl_toolbar'][$user->getName()]);
-			}
-		}
+        if (isset($_SESSION)) {
+        	if (isset($_SESSION['haloacl_toolbar'])
+        	    && isset($_SESSION['haloacl_toolbar'][$user->getName()])) {
+        		$templateToProtectWith = $_SESSION['haloacl_toolbar'][$user->getName()];
+        		if (strpos($templateToProtectWith, 'Right/') !== false 
+        		    || $templateToProtectWith== 'unprotected'){
+        			$createCustomSD = true;
+        		}
+        		unset($_SESSION['haloacl_toolbar'][$user->getName()]);
+        	}
+        }
 		
 		// Did the user define a default SD
         // adding default sd to article
 		
-		if(!$sdAlreadyDefinied && !$createCustomSD) {
+		if (!$sdAlreadyDefinied && !$createCustomSD) {
 			global $haclgContLang;
 
 			$ns = $haclgContLang->getNamespaces();
@@ -366,7 +375,8 @@ class  HACLDefaultSD  {
 		$ns = $ns[HACL_NS_ACL];
 		$template = $haclgContLang->getSDTemplateName();
 		$defaultTemplateName = "$ns:$template/{$newUser->getName()}";
-		self::copyTemplate($haclgNewUserTemplate, $defaultTemplateName, $newUser->getName());
+		self::copyTemplate($haclgNewUserTemplate, $defaultTemplateName, 
+						   array("user" => $newUser->getUserPage()->getFullText()));
 	}
 	
 	/**
@@ -398,7 +408,8 @@ class  HACLDefaultSD  {
 			$destRight = $userRightPrefix
 						 .$newUser->getName().'/'
 						 .substr($right, strlen($rightPrefix));
-			self::copyTemplate($right, $destRight, $newUser->getName());
+			self::copyTemplate($right, $destRight, 
+			                   array("user" => $newUser->getUserPage()->getFullText()));
 			
 			$sdID = HACLSecurityDescriptor::idForSD($destRight);
 			if ($sdID) {
@@ -414,31 +425,32 @@ class  HACLDefaultSD  {
 	/**
 	 * Copies the content of the right template with the name $source into the
 	 * article with the name $dest. If $source does not exist or if $dest already
-	 * exists, the operation is aborted. The source template may contain the 
-	 * variable {{{user}}}. It will be replace with the given $username.
+	 * exists, the operation is aborted. The source template may contain
+	 * variables whose values are defined in $variables.
 	 *
 	 * @param string $source
 	 * 		Name of the article that will be copied.
 	 * @param string $dest
 	 * 		Name of the article that will be created as copy of $source.
-	 * @param string $username
-	 * 		Name of the user that is inserted as {{{user}}}. The namespace
-	 * 		for users (e.g. User:) will be prepended.
+	 * @param array<string, string> $variables
+	 * 		The names of variables that may appear in the template and the values
+	 * 		that replace these variables
 	 * 
 	 * @return bool
 	 * 		<true> if the operation was successful or
 	 * 		<false> if copying the articles failed
 	 */
-	private static function copyTemplate($source, $dest, $username) {
+	private static function copyTemplate($source, $dest, $variables) {
 		
 		// Check if destination article already exists
 		$etc = haclfDisableTitlePatch();
 		$destTitle = Title::newFromText($dest);
 		haclfRestoreTitlePatch($etc);
-		if ($destTitle->exists()) {
-			// The destination article already exists
-			return true;
-		}
+		$destExists = $destTitle->exists();
+//		if ($destTitle->exists()) {
+//			// The destination article already exists
+//			return true;
+//		}
 
 		//-- Copy the content of the source article --
 		// Get the content of the source article
@@ -452,18 +464,204 @@ class  HACLDefaultSD  {
 		}
 		$content = $sourceArticle->getContent();
 		
-		// Replace the variable {{{user}}} by the actual name of the user
-		global $wgContLang;
-		$userNs = $wgContLang->getNsText(NS_USER);
-		$content = str_replace('{{{user}}}', $userNs.':'.$username, $content);
+		// Replace all variables by their values
+		foreach ($variables as $var => $value) {
+			$content = str_replace("{{{".$var."}}}", $value, $content);
+		}
 		
 		HACLParserFunctions::getInstance()->reset();
 		// Create the destination article
 		$newArticle = new Article($destTitle);
-		$newArticle->doEdit($content, "Default access control template.", EDIT_NEW);
+		$newArticle->doEdit($content, "Default access control template.", 
+		                    $destExists? EDIT_UPDATE : EDIT_NEW);
 		
 		return true;
 	}
 	
+	/**
+	 * Checks if the $article contains a category that is associated with a dynamic
+	 * SD for the giver $user.
+	 * If this is the case, the new corresponding SD is created or an existing
+	 * SD is replaced.
+	 * 
+	 * @param Article $article
+	 * 		This article may get dynamic SD
+	 * @param User $user
+	 * 		The user who saves the article.
+	 * 
+	 * @return Returns
+	 * 		<true>, if an SD was created or modified
+	 * 		<false>, if not
+	 */
+	private static function createDynamicSD(Article $article, User $user) {
+		
+		$dsd = self::getMatchingDynamicSD($article, $user);
+		if (is_null($dsd)) {
+			// no matching dynamic SD found
+			return false;
+		}
+		
+		// Create the SD for the article
+		self::createDynamicSDForArticle($article, $user, $dsd);
+		
+		return true;
+	}
 	
+	/**
+	 * Creates the dynamic SD for the $article and the given $user. The dynamic
+	 * SD is described by the associative array $dynamicSDRule.
+	 * If the article already has an SD it is replaced by the new SD.
+	 * 
+	 * @param Article $article
+	 * 		Article whose SD is set
+	 * @param User $user
+	 * 		User who sets the SD
+	 * @param array $dynamicSDRule
+	 * 		This descriptor contains the following keys:
+	 * 		category => Name of the category to which the article must belong
+	 * 		sd       => Name of the SD template whose content is copied
+	 * 		user     => User(s) for whom this this rule can be applied
+	 */
+	private static function createDynamicSDForArticle(Article $article, User $user, 
+	                                                  $dynamicSDRule) {
+		// By default unauthorized users can not change the SD
+		$allowSDChange = array_key_exists("allowUnauthorizedSDChange", $dynamicSDRule)
+							? $dynamicSDRule["allowUnauthorizedSDChange"]
+							: false;
+		try {					
+			HACLSecurityDescriptor::setAllowUnauthorizedSDChange($allowSDChange);				
+		                                                  	// Delete the current SD of the article, if present
+			$sdID = HACLSecurityDescriptor::getSDForPE($article->getID(),
+													   HACLSecurityDescriptor::PET_PAGE);
+			if ($sdID !== false) {
+				// Delete the SD article
+				$sd = HACLSecurityDescriptor::newFromID($sdID);
+				$sd->delete($user);
+			}
+	
+			$sdName = HACLSecurityDescriptor::nameOfSD($article->getTitle()->getFullText(),
+													   HACLSecurityDescriptor::PET_PAGE);
+	
+			// Assemble the name of the template which is copied
+			global $haclgContLang;
+			$source = $dynamicSDRule['sd'];
+			$catName = Title::makeTitle(NS_CATEGORY, $dynamicSDRule['category']);
+			$catName = $catName->getFullText();
+			$variables = array(
+				"user"        => $user->getUserPage()->getFullText(),
+				"articleName" => $article->getTitle()->getFullText(),
+				"category"    => $catName
+			);
+			
+			self::copyTemplate($source, $sdName, $variables);
+		} catch (Exception$e) {
+			// Make sure that unauthorized changes are prohibited at the end 
+			// of this method.
+			HACLSecurityDescriptor::setAllowUnauthorizedSDChange(false);
+			throw $e;
+		}				
+		HACLSecurityDescriptor::setAllowUnauthorizedSDChange(false);
+		
+	}
+	
+	/**
+	 * Tries to find the dynamic SD description that matches the conditions given
+	 * by the $article and the $user.
+	 * 
+	 * @param Article $article
+	 * 		This article may get dynamic SD
+	 * @param User $user
+	 * 		The user who saves the article.
+	 * 
+	 * @return The matching dynamic SD description or <null> if there is none.
+	 */
+	private static function getMatchingDynamicSD(Article $article, User $user) {
+		global $haclgDynamicSD;
+		
+		$categories = self::getCategories($article);
+		if (empty($categories) || !isset($haclgDynamicSD)) {
+			return null;
+		}
+		
+		$matchingDSD = null;
+		// Is there a rule for Dynamic SDs for this article?
+		foreach ($haclgDynamicSD as $dsd) {
+			
+			// Verify the dynamic SD rule
+			if (!(array_key_exists('user', $dsd)
+			      && array_key_exists('category', $dsd)
+			      && array_key_exists('sd', $dsd) )) {
+				// dynamic SD rule is incomplete
+				throw new HACLSDException(HACLSDException::INCOMPLETE_DYNAMIC_SD_RULE, $dsd);
+			}
+			
+			// Does the category match the article's categories?
+			if (!in_array($dsd['category'], $categories)) {
+				// Categories do not match
+				continue;
+			}
+			
+			// Does the current user match?
+			$validUser = false;
+			$currentUserID = $user->getId();
+			$dsdUsers = $dsd['user'];
+			if (!is_array($dsdUsers)) {
+				$dsdUsers = array($dsdUsers);
+			}
+			foreach ($dsdUsers as $u) {
+				$uid = haclfGetUserID($u);
+				$uid = $uid[0];
+				if ($uid === 0 && $currentUserID === 0) {
+					//granted for anonymous users
+					$validUser = true;
+				} else if ($uid === -1 && $currentUserID > 0) {
+					//granted for registered users
+					$validUser = true;
+				} else if ($uid === $currentUserID) {
+					// user matches exactly
+					$validUser = true;
+				}
+				if ($validUser) {
+					break;
+				}
+			}
+			if (!$validUser) {
+				// user does not match
+				continue;
+			}
+			
+			// Found a matching dynamic SD
+			$matchingDSD = $dsd;
+			break;
+		}
+		
+		return $matchingDSD;
+		
+	}
+
+	/**
+	 * Returns the names of categories of the given $article.
+	 * 
+	 * @param Article $article
+	 * 		Article whose categories are retrieve
+	 * 
+	 */
+	private static function getCategories(Article $article) {
+	
+		// Does the article belong to a category
+		$cat = $article->getTitle()->getParentCategories();
+		if (empty($cat)) {
+			// no categories
+			return $cat;
+		}
+		
+		// Transform the array of categories
+		$categories = array();
+		foreach ($cat as $c => $a) {
+			// Remove the namespace from the category.
+			$c = explode(':', $c);
+			$categories[] = $c[1];
+		}
+		return $categories;
+	}
 }

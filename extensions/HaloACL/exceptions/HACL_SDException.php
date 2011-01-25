@@ -73,6 +73,12 @@ class HACLSDException extends HACLException {
 	// 1 - Name of the SD to which the other SD is added
 	// 2 - Name of the SD that is added to the other SD
 	const CANNOT_ADD_SD = 6;
+	
+	// A rule for dynamic SDs is incomplete
+	// Parameters:
+	// 1 - The incomplete rule (which is an array of properties)
+	const INCOMPLETE_DYNAMIC_SD_RULE = 7;
+	
 	/**
 	 * Constructor of the SD exception.
 	 *
@@ -105,6 +111,15 @@ class HACLSDException extends HACLException {
     			break;
     		case self::CANNOT_ADD_SD:
     			$msg = "You can not add the security descriptor \"$args[2]\" as right to the security descriptor \"$args[1]\"";
+    			break;
+    		case self::INCOMPLETE_DYNAMIC_SD_RULE:
+    			$rule = print_r($args[1], true);
+    			$msg = <<<MSG
+The following rule for dynamic security descriptors which was specified in "\$haclgDynamicSD" is incomplete:
+$rule
+At least the properties "user", "category" and "sd" must be specified!\n
+MSG;
+    			break;
     			
     	}
     	return $msg;

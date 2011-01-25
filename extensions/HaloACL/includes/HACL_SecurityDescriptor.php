@@ -77,6 +77,11 @@ class  HACLSecurityDescriptor  {
 							//		the definition of this SD
 	private $mManageUsers;	// array(int): IDs of the users that can modify 
 							//		the definition of this SD
+							
+	private static $mAllowUnauthorizedSDChange = false;
+							// Under certain circumstances (e.g.
+							// when using dynamic SDs) it must be possible that
+							// unauthorized users can change the SD
 	
 	/**
 	 * Constructor for HACLSecurityDescriptor. If your create a new security
@@ -141,6 +146,8 @@ class  HACLSecurityDescriptor  {
 	public function getPEType()			{return $this->mPEType;}
 	public function getManageGroups()	{return $this->mManageGroups;}
 	public function getManageUsers()	{return $this->mManageUsers;}
+	public static function setAllowUnauthorizedSDChange($auSCD)
+										{ self::$mAllowUnauthorizedSDChange = $auSCD; }
 		
 //	public function setXY($xy)               {$this->mXY = $xy;}
 	
@@ -717,6 +724,10 @@ class  HACLSecurityDescriptor  {
 	 * 
 	 */
 	public function userCanModify($user, $throwException = false) {
+		if (self::$mAllowUnauthorizedSDChange === true) {
+			// Unauthorized change is temporarily allowed
+			return true;
+		}
 		// Get the ID of the user who wants to add/modify the SD
 		list($userID, $userName) = haclfGetUserID($user);
 		// Check if the user can modify the SD

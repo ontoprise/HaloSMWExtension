@@ -585,7 +585,7 @@ function haclfGetUserID($user = null) {
                     } else {
                     // name of user given
                         $etc = haclfDisableTitlePatch();
-                        $userID = User::idFromName($user);
+                        $userID = (int) User::idFromName($user);
                         haclfRestoreTitlePatch($etc);
                         if (!$userID) {
                             $userID = false;
