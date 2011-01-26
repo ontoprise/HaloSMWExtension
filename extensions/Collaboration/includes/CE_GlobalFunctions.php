@@ -145,19 +145,8 @@ function cefAddNonSpecialPageHeader(&$out) {
 	$out->addScript("<script type=\"text/javascript\" src=\"". $cegScriptPath .  "/scripts/overlay.js\"></script>");
 	$out->addScript("<script type=\"text/javascript\" src=\"". $cegScriptPath .  "/scripts/Comment/CE_Comment.js\"></script>");
 
-	$out->addLink(array(
-		'rel'   => 'stylesheet',
-		'type'  => 'text/css',
-		'media' => 'screen, projection',
-		'href'  => $cegScriptPath. '/skins/Comment/collaboration-comment.css'
-	));
-
-	$out->addLink(array(
-		'rel'   => 'stylesheet',
-		'type'  => 'text/css',
-		'media' => 'screen, projection',
-		'href'  => $cegScriptPath. '/skins/Comment/collaboration-overlay.css'
-	));
+	$out->addStyle($cegScriptPath. '/skins/Comment/collaboration-comment.css', 'screen, projection');
+    $out->addStyle($cegScriptPath. '/skins/Comment/collaboration-overlay.css', 'screen, projection');
 
 	return true;
 }
