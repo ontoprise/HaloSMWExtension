@@ -107,13 +107,8 @@ class SemanticTreeview {
 
         # Add link to output to load dtree.js script
         $wgOut->addScript("<script type=\"$wgJsMimeType\" src=\"{$this->baseUrl}/dtree.js\"><!-- Semantic Treeview ".SEMANTIC_TREEVIEW_VERSION." --></script>\n");
-        $wgOut->addLink(array(
-                    'rel'   => 'stylesheet',
-                    'type'  => 'text/css',
-                    'media' => 'screen, projection',
-                    'href'  => "{$this->baseUrl}/dtree.css"
-                ));
-        }
+        $wgOut->addStyle($this->baseUrl.'/dtree.css', 'screen, projection');
+    }
 
 
     /**
