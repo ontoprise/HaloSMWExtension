@@ -16,6 +16,7 @@ class TestGroupPermissionsSuite extends PHPUnit_Framework_TestSuite
 {
 	public static $mGroup;
 	public static $mSubGroup;
+	public static $mGroupPermissions;
 	
 	public static function suite() {
 		define('UNIT_TEST_RUNNING', true);
@@ -27,6 +28,8 @@ class TestGroupPermissionsSuite extends PHPUnit_Framework_TestSuite
 	}
 	
 	protected function setUp() {
+		global $wgGroupPermissions;
+		self::$mGroupPermissions = $wgGroupPermissions;
 		
     	User::createNew("U1");
     	User::createNew("U2");
@@ -84,7 +87,7 @@ class TestMWGroupsStorage extends PHPUnit_Framework_TestCase {
 		
 		global $haclgFeature, $wgGroupPermissions;
 		$haclgFeature = array();
-		$wgGroupPermissions = array();
+		$wgGroupPermissions = TestGroupPermissionsSuite::$mGroupPermissions;
 		
 		HACLGroupPermissions::deleteAllPermissions();
 		
@@ -510,6 +513,7 @@ class TestMWGroupPermissionsUI extends PHPUnit_Framework_TestCase {
 		global $haclgFeature, $wgGroupPermissions;
 		$haclgFeature = array();
 		$wgGroupPermissions = array();
+		$wgGroupPermissions = TestGroupPermissionsSuite::$mGroupPermissions;
 		
 		HACLGroupPermissions::deleteAllPermissions();
 		
