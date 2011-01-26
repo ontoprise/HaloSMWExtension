@@ -1619,9 +1619,19 @@ function smwfTripleStoreParserHook(&$parser, &$text, &$strip_state = null) {
 		}
 	}
 
-
+	global $magicWords;
+	list($i, $redirectText) = $magicWords['redirect'];
+	$redirectText = substr($redirectText, 1); // cut off hash #
+	
 	// parse redirects
-	$redirectLinkPattern = '/\#REDIRECT          # REDIRECT command
+	$redirectLinkPattern = '/\#'.$redirectText.' # REDIRECT command
+                            \[\[                # Beginning of the link
+                            ([^]]+)               # target
+                            \]\]                # End of link
+                            /ixu';              # case-insensitive, ignore whitespaces, UTF-8 compatible
+
+	// fallback pattern with canonical language
+	$redirectLinkPattern2 = '/\#REDIRECT          # REDIRECT command
                             \[\[                # Beginning of the link
                             ([^]]+)               # target
                             \]\]                # End of link
@@ -1632,6 +1642,14 @@ function smwfTripleStoreParserHook(&$parser, &$text, &$strip_state = null) {
 	if (isset($matches[1])) {
 		foreach($matches[1] as $m) {
 			$redirects[] = Title::newFromText($m);
+		}
+	}
+	if (strtolower($redirectText) !== 'redirect') {
+		preg_match_all($redirectLinkPattern2, $text, $matches);
+		if (isset($matches[1])) {
+			foreach($matches[1] as $m) {
+				$redirects[] = Title::newFromText($m);
+			}
 		}
 	}
 
