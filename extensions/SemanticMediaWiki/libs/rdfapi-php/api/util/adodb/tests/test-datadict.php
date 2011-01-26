@@ -21,7 +21,7 @@ foreach(array('sybase','mysqlt','access','oci8','postgres','odbc_mssql','odbc','
 	if (!$dict) continue;
 	$dict->debug = 1;
 	
-	$opts = array('REPLACE','mysql' => 'TYPE=INNODB', 'oci8' => 'TABLESPACE USERS');
+	$opts = array('REPLACE','mysql' => 'ENGINE=INNODB', 'oci8' => 'TABLESPACE USERS');
 	
 /*	$flds = array(
 		array('id',	'I',								

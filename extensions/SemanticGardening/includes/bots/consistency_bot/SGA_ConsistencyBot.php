@@ -8,7 +8,7 @@
  * 
  * Created on 13.03.2007
  *
- * @author Kai Kühn
+ * @author Kai Kï¿½hn
  */
 if ( !defined( 'MEDIAWIKI' ) ) die;
 
@@ -616,12 +616,12 @@ abstract class ConsistencyBotStorageSQL extends ConsitencyBotStorage {
 		}
 		// create virtual tables
 		$db->query( 'CREATE TEMPORARY TABLE smw_cc_propertyinst (instance VARCHAR(255) '.$collation.', namespace INTEGER, property VARCHAR(255) '.$collation.', num INTEGER(8))
-                    TYPE=MEMORY', 'SMW::getNumberOfPropertyInstantiations' );
+                    ENGINE=MEMORY', 'SMW::getNumberOfPropertyInstantiations' );
 
 		$db->query( 'CREATE TEMPORARY TABLE smw_cc_properties_sub (property VARCHAR(255) '.$collation.' NOT NULL)
-                    TYPE=MEMORY', 'SMW::getNumberOfPropertyInstantiations' );
+                    ENGINE=MEMORY', 'SMW::getNumberOfPropertyInstantiations' );
 		$db->query( 'CREATE TEMPORARY TABLE smw_cc_properties_super (property VARCHAR(255) '.$collation.' NOT NULL)
-                    TYPE=MEMORY', 'SMW::getNumberOfPropertyInstantiations' );
+                    ENGINE=MEMORY', 'SMW::getNumberOfPropertyInstantiations' );
 
 		// initialize with direct property instantiations
 			
@@ -699,14 +699,14 @@ abstract class ConsistencyBotStorageSQL extends ConsitencyBotStorage {
 		}
 		// create virtual tables
 		$db->query( 'CREATE TEMPORARY TABLE smw_cc_propertyinst (id INTEGER(8))
-                    TYPE=MEMORY', 'SMW::getNumberOfPropertyInstantiations' );
+                    ENGINE=MEMORY', 'SMW::getNumberOfPropertyInstantiations' );
 		$db->query( 'CREATE TEMPORARY TABLE smw_cc_allinst (id INTEGER(8), namespace INTEGER, instance VARCHAR(255) '.$collation.')
-                    TYPE=MEMORY', 'SMW::getNumberOfPropertyInstantiations' );
+                    ENGINE=MEMORY', 'SMW::getNumberOfPropertyInstantiations' );
 
 		$db->query( 'CREATE TEMPORARY TABLE smw_cc_properties_sub (property VARCHAR(255) '.$collation.' NOT NULL)
-                    TYPE=MEMORY', 'SMW::getNumberOfPropertyInstantiations' );
+                    ENGINE=MEMORY', 'SMW::getNumberOfPropertyInstantiations' );
 		$db->query( 'CREATE TEMPORARY TABLE smw_cc_properties_super (property VARCHAR(255) '.$collation.' NOT NULL)
-                    TYPE=MEMORY', 'SMW::getNumberOfPropertyInstantiations' );
+                    ENGINE=MEMORY', 'SMW::getNumberOfPropertyInstantiations' );
 
 		$db->query('INSERT INTO smw_cc_properties_super VALUES ('.$db->addQuotes($property->getDBkey()).')');
 
@@ -880,12 +880,12 @@ class ConsistencyBotStorageSQL2 extends ConsistencyBotStorageSQL {
 		}
 		// create virtual tables
 		$db->query( 'CREATE TEMPORARY TABLE smw_cc_propertyinst (instance VARCHAR(255) '.$collation.', namespace INTEGER, property VARCHAR(255) '.$collation.', num INTEGER(8))
-                    TYPE=MEMORY', 'SMW::getNumberOfPropertyInstantiations' );
+                    ENGINE=MEMORY', 'SMW::getNumberOfPropertyInstantiations' );
 
 		$db->query( 'CREATE TEMPORARY TABLE smw_cc_properties_sub (property VARCHAR(255) '.$collation.' NOT NULL)
-                    TYPE=MEMORY', 'SMW::getNumberOfPropertyInstantiations' );
+                    ENGINE=MEMORY', 'SMW::getNumberOfPropertyInstantiations' );
 		$db->query( 'CREATE TEMPORARY TABLE smw_cc_properties_super (property VARCHAR(255) '.$collation.' NOT NULL)
-                    TYPE=MEMORY', 'SMW::getNumberOfPropertyInstantiations' );
+                    ENGINE=MEMORY', 'SMW::getNumberOfPropertyInstantiations' );
 
 		// initialize with direct property instantiations
 			
@@ -962,14 +962,14 @@ class ConsistencyBotStorageSQL2 extends ConsistencyBotStorageSQL {
 		}
 		// create virtual tables
 		$db->query( 'CREATE TEMPORARY TABLE smw_cc_propertyinst (id INTEGER(8))
-                    TYPE=MEMORY', 'SMW::getNumberOfPropertyInstantiations' );
+                    ENGINE=MEMORY', 'SMW::getNumberOfPropertyInstantiations' );
 		$db->query( 'CREATE TEMPORARY TABLE smw_cc_allinst (id INTEGER(8), namespace INTEGER, instance VARCHAR(255) '.$collation.')
-                    TYPE=MEMORY', 'SMW::getNumberOfPropertyInstantiations' );
+                    ENGINE=MEMORY', 'SMW::getNumberOfPropertyInstantiations' );
 
 		$db->query( 'CREATE TEMPORARY TABLE smw_cc_properties_sub (property VARCHAR(255) '.$collation.' NOT NULL)
-                    TYPE=MEMORY', 'SMW::getNumberOfPropertyInstantiations' );
+                    ENGINE=MEMORY', 'SMW::getNumberOfPropertyInstantiations' );
 		$db->query( 'CREATE TEMPORARY TABLE smw_cc_properties_super (property VARCHAR(255) '.$collation.' NOT NULL)
-                    TYPE=MEMORY', 'SMW::getNumberOfPropertyInstantiations' );
+                    ENGINE=MEMORY', 'SMW::getNumberOfPropertyInstantiations' );
 
 		$db->query('INSERT INTO smw_cc_properties_super VALUES ('.$db->addQuotes($property->getDBkey()).')');
 
@@ -1058,12 +1058,12 @@ class ConsistencyBotStorageSQL2 extends ConsistencyBotStorageSQL {
 		}
 		// create virtual tables
 		$db->query( 'CREATE TEMPORARY TABLE smw_ob_instances (instance VARCHAR(255), namespace INT(11))
-                    TYPE=MEMORY', 'SMW::createVirtualTableWithInstances' );
+                    ENGINE=MEMORY', 'SMW::createVirtualTableWithInstances' );
 
 		$db->query( 'CREATE TEMPORARY TABLE smw_ob_instances_sub (category VARCHAR(255) '.$collation.' NOT NULL)
-                    TYPE=MEMORY', 'SMW::createVirtualTableWithInstances' );
+                    ENGINE=MEMORY', 'SMW::createVirtualTableWithInstances' );
 		$db->query( 'CREATE TEMPORARY TABLE smw_ob_instances_super (category VARCHAR(255) '.$collation.' NOT NULL)
-                    TYPE=MEMORY', 'SMW::createVirtualTableWithInstances' );
+                    ENGINE=MEMORY', 'SMW::createVirtualTableWithInstances' );
 
 		// initialize with direct instances
 		if ($onlyMain) {

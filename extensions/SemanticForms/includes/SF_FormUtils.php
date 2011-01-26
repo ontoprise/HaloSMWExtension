@@ -320,15 +320,21 @@ END;
 		global $wgUser, $wgDefaultUserOptions;
 
 		$showFCKEditor = 0;
-		if ( !$wgUser->getOption( 'riched_start_disabled', $wgDefaultUserOptions['riched_start_disabled'] ) ) {
+		/*op-patch|SR|2009-10-19|FCKeditor|eliminate some warnings|start*/
+		/*op-patch|SR|2009-10-19|FCKeditor|eliminate some warnings|doc http://dmwiki.ontoprise.com:8888/dmwiki/index.php/Eliminate_warnings_of_empty_settings_variables */
+		$defaultOption = in_array('riched_start_disabled', array_keys($wgDefaultUserOptions)) ? $wgDefaultUserOptions['riched_start_disabled'] : null;
+		if ( !$wgUser->getOption( 'riched_start_disabled', $defaultOption ) ) {
 			$showFCKEditor += RTE_VISIBLE;
 		}
-		if ( $wgUser->getOption( 'riched_use_popup', $wgDefaultUserOptions['riched_use_popup'] ) ) {
+		$defaultOption = in_array('riched_use_popup', array_keys($wgDefaultUserOptions)) ? $wgDefaultUserOptions['riched_use_popup'] : null;
+		if ( $wgUser->getOption( 'riched_use_popup', $defaultOption ) ) {
 			$showFCKEditor += RTE_POPUP;
 		}
-		if ( $wgUser->getOption( 'riched_use_toggle', $wgDefaultUserOptions['riched_use_toggle'] ) ) {
+		$defaultOption = in_array('riched_use_toggle', array_keys($wgDefaultUserOptions)) ? $wgDefaultUserOptions['riched_use_toggle'] : null;
+		if ( $wgUser->getOption( 'riched_use_toggle', $defaultOption ) ) {
 			$showFCKEditor += RTE_TOGGLE_LINK;
 		}
+		/*op-patch|SR|2009-10-19|FCKeditor|eliminate some warnings|end*/
 
 		if ( ( !empty( $_SESSION['showMyFCKeditor'] ) ) && ( $wgUser->getOption( 'riched_toggle_remember_state' ) ) )
 		{
@@ -342,19 +348,32 @@ END;
 
 	static function prepareTextForFCK( $text ) {
 		global $wgTitle;
-
-		$options = new FCKeditorParserOptions();
+        /*op-patch|SR|2010-12-06|CKeditor|check for FCK or CK|start*/
+        if (class_exists('FCKeditor')) {
+            $classParser = 'FCKeditorParser';
+            $classParserOptions = 'FCKeditorParserOptions';
+        }
+        else if (class_exists('CKEditor')) {
+            $classParser = 'CKeditorParser';
+            $classParserOptions = 'CKeditorParserOptions';
+        }
+		$options = new $classParserOptions();
 		$options->setTidy( true );
-		$parser = new FCKeditorParser();
+		$parser = new $classParser();
+        /*op-patch|SR|2010-12-06|CKeditor|check for FCK or CK|end*/
 		$parser->setOutputType( OT_HTML );
 		$text = $parser->parse( $text, $wgTitle, $options )->getText();
 		return $text;
 	}
 
-	static function mainFCKJavascript( $showFCKEditor ) {
+	static function mainFCKJavascript( $showFCKEditor, $rowsHeight= 5 ) {
 		global $wgUser, $wgScriptPath, $wgFCKEditorExtDir, $wgFCKEditorDir, $wgFCKEditorToolbarSet, $wgFCKEditorHeight;
 		global $wgHooks, $wgExtensionFunctions;
 
+		/*op-patch|SR|2009-06-04|FCKeditor|use rows parameter for editor window height|start*/
+		/*op-patch|SR|2009-06-04|FCKeditor|use rows parameter for editor window height|doc|http://dmwiki.ontoprise.com:8888/dmwiki/index.php/Use_rows_parameter_for_FCK_editor_window_height_in_SF*/
+		$FCKEditorHeight = ($wgFCKEditorHeight < 300) ? 300 : $wgFCKEditorHeight;
+		/*op-patch|SR|2009-06-04|FCKeditor|use rows parameter for editor window height|end*/
 		$newWinMsg = wfMsg( 'rich_editor_new_window' );
 		$javascript_text = '
 var showFCKEditor = ' . $showFCKEditor . ';
@@ -386,7 +405,10 @@ var RTE_POPUP = ' . RTE_POPUP . ';
 		if ( substr( $wgFCKEditorDir, -1 ) != '/' ) {
 			$wgFCKEditorDir .= '/';
 		}
-		
+		/*op-patch|SR|2010-12-06|CKeditor|check for FCK or CK|start*/
+        $RichEditor = class_exists('CKEditor') ? 'cke' : 'fck';
+        if ($RichEditor == 'fck') {
+        /*op-patch|SR|2010-12-06|CKeditor|check for FCK or CK|end*/
 		$javascript_text .= <<<END
 var oFCKeditor = new FCKeditor( "free_text" );
 
@@ -399,6 +421,17 @@ oFCKeditor.Config["showsource"] = '$showSource';
 oFCKeditor.ToolbarSet = "$wgFCKEditorToolbarSet"; 
 oFCKeditor.ready = true;
 
+END;
+        } else {
+   		$javascript_text .= <<<END
+var wgCKeditorInstance = null; //CKEDITOR.replace( 'free_text' );
+var wgCKeditorCurrentMode = "wysiwyg";
+CKEDITOR.ready=true;
+
+END;
+
+        }
+        $javascript_text .= <<<END
 //IE hack to call func from popup
 function FCK_sajax(func_name, args, target) {
 	sajax_request_type = 'POST' ;
@@ -408,7 +441,36 @@ function FCK_sajax(func_name, args, target) {
 		}
 	);
 }
+/*op-patch|SR|2009-06-04|FCKeditor|use rows parameter for editor window height|start*/
+// if the rows attribute was defined in the form, use fontsize to calculate the editor window height
+function getfontsize(el) {
+	var x = document.getElementById(el);
+ 	if (x.currentStyle) {
+		// IE
+		var y = x.currentStyle['lineheight'];
+ 	} else if (window.getComputedStyle) {
+		// FF, Opera
+  		var y = document.defaultView.getComputedStyle(x,null).getPropertyValue('line-height');
+ 	}
+ 	return y;
+}
+function getWindowHeight4editor() {
+	var fsize = getfontsize('free_text');
+	// if value was not determined, return default val from $wgFCKEditorHeight
+	if (!fsize) return $FCKEditorHeight;
+	if (fsize.indexOf('px') == -1)  // we didn't get pixels
+		// arbitary value, don't hassle with caluclating
+		return $FCKEditorHeight;
+	var px = parseFloat(fsize.replace(/\w{2}$/, ''));
+	// the text in the edit window is slightly larger than the determined value
+	px = px * 1.25;
+	return Math.round (px * $rowsHeight);
+}
+/*op-patch|SR|2009-06-04|FCKeditor|use rows parameter for editor window height|end*/
 
+END;
+        if ($RichEditor == 'fck') {
+        $javascript_text .= <<<END
 function onLoadFCKeditor()
 {
 	if (!(showFCKEditor & RTE_VISIBLE)) 
@@ -418,14 +480,15 @@ function onLoadFCKeditor()
 	if ( realTextarea )
 	{
 		// Create the editor instance and replace the textarea.
-		var height = $wgFCKEditorHeight;
-		if (height == 0) {
-			// the original onLoadFCKEditor() has a bunch of
-			// browser-based calculations here, but let's just
-			// keep it simple
-			height = 300;
-		}
+		/*op-patch|SR|2009-06-04|FCKeditor|use rows parameter for editor window height|start*/
+		var height = getWindowHeight4editor();
+		// apply caluclations of height from the FCKEditor function itself
+		// Add the height to the offset of the toolbar.
+		height += 50;
+		// Add a small space to be left in the bottom.
+		height += 20 ;
 		oFCKeditor.Height = height;
+		/*op-patch|SR|2009-06-04|FCKeditor|use rows parameter for editor window height|end*/
 		oFCKeditor.ReplaceTextarea() ;
 		
 		FCKeditorInsertTags = function (tagOpen, tagClose, sampleText, oDoc)
@@ -606,11 +669,15 @@ function initEditor()
 addOnloadHook( initEditor );
 
 END;
+        } else { // ckeditor
+            $javascript_text .= CKeditor_MediaWiki::InitializeScripts('free_text', $newWinMsg);
+        }
 		return $javascript_text;
 	}
 
 	static function FCKToggleJavascript() {
 		// add toggle link and handler
+        if ( class_exists('FCKeditor') ) {
 		$javascript_text = <<<END
 
 function ToggleFCKEditor(mode, objId)
@@ -716,6 +783,9 @@ function ToggleFCKEditor(mode, objId)
 }
 
 END;
+        } else { // ckeditor
+            $javascript_text = CKeditor_MediaWiki::ToggleScript();
+        }
 		return $javascript_text;
 	}
 

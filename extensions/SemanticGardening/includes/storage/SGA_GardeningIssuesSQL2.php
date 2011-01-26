@@ -3,7 +3,7 @@
  * @file
  * @ingroup SemanticGardeningStorage
  * 
- * @author Kai Kühn
+ * @author Kai Kï¿½hn
  *
  */
 class SGAGardeningIssuesAccessSQL2 extends SGAGardeningIssuesAccessSQL {
@@ -19,11 +19,11 @@ class SGAGardeningIssuesAccessSQL2 extends SGAGardeningIssuesAccessSQL {
                 
         // create virtual tables
         $db->query( 'CREATE TEMPORARY TABLE smw_prop_gardissues ( id INT(8) UNSIGNED NOT NULL)
-                    TYPE=MEMORY', 'SMW::createVirtualTableForPropagationIssues' );
+                    ENGINE=MEMORY', 'SMW::createVirtualTableForPropagationIssues' );
         $db->query( 'CREATE TEMPORARY TABLE smw_prop_gardissues_to (id INT(8) UNSIGNED NOT NULL)
-                    TYPE=MEMORY', 'SMW::createVirtualTableForPropagationIssues' );
+                    ENGINE=MEMORY', 'SMW::createVirtualTableForPropagationIssues' );
         $db->query( 'CREATE TEMPORARY TABLE smw_prop_gardissues_from ( id INT(8) UNSIGNED NOT NULL)
-                    TYPE=MEMORY', 'SMW::createVirtualTableForPropagationIssues' );
+                    ENGINE=MEMORY', 'SMW::createVirtualTableForPropagationIssues' );
         
         // initialize with:
         // 1. All (super-/member-)categories of articles having issues with instances or categories

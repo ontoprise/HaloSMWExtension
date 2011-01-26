@@ -5,7 +5,7 @@
  * 
  * Created on 19.10.2007
  *
- * @author Kai Kühn
+ * @author Kai Kï¿½hn
  */
 
 class USDBHelper {
@@ -47,7 +47,7 @@ class USDBHelper {
 			if (!empty($primaryKeys)) {
 				$sql .= ", PRIMARY KEY(".$primaryKeys.")";
 			}
-			$sql .= ') TYPE=innodb';
+			$sql .= ') ENGINE=INNODB';
 			$db->query( $sql, 'self::setupTable' );
 			self::reportProgress("   ... new table created\n",$verbose);
 			return array();

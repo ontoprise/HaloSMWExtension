@@ -72,7 +72,7 @@ if (!empty($testpgodbc)) {
 	if ($db->PConnect('Postgresql')) {
 		$db->hasTransactions = true;
 		testdb($db,
-		"create table ADOXYZ (id int, firstname char(24), lastname char(24), created date) type=innodb");
+		"create table ADOXYZ (id int, firstname char(24), lastname char(24), created date) ENGINE=INNODB");
 	} else print "ERROR: PostgreSQL requires a database called test on server, user tester, password test.<BR>".$db->ErrorMsg();
 }
 
@@ -182,7 +182,7 @@ if (!empty($testmysqlodbc)) { // MYSQL
 	else $server = "mangrove";
 	if ($db->PConnect('mysql', "root", ""))
 		testdb($db,
-		"create table ADOXYZ (id int, firstname char(24), lastname char(24), created date) type=innodb");
+		"create table ADOXYZ (id int, firstname char(24), lastname char(24), created date) ENGINE=INNODB");
 	else print "ERROR: MySQL test requires a MySQL server on localhost, userid='admin', password='', database='test'".'<BR>'.$db->ErrorMsg();
 }
 
@@ -193,7 +193,7 @@ if (!empty($testproxy)){
 
 	if ($db->PConnect('http://localhost/php/phplens/adodb/server.php'))
 		testdb($db,
-		"create table ADOXYZ (id int, firstname char(24), lastname char(24), created date) type=innodb");
+		"create table ADOXYZ (id int, firstname char(24), lastname char(24), created date) ENGINE=INNODB");
 	else print "ERROR: MySQL test requires a MySQL server on localhost, userid='admin', password='', database='test'".'<BR>'.$db->ErrorMsg();
 
 }

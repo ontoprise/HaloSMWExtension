@@ -5,7 +5,7 @@
  *
  * Created on 19.10.2007
  * 
- * @author Kai Kühn
+ * @author Kai Kï¿½hn
  * 
  */
 
@@ -50,7 +50,7 @@ class SGADBHelper {
             if (!empty($primaryKeys)) {
                 $sql .= ", PRIMARY KEY(".$primaryKeys.")";
             }
-            $sql .= ') TYPE=myisam';
+            $sql .= ') ENGINE=MYISAM';
             $db->query( $sql, 'SGADBHelper::setupTable' );
             SGADBHelper::reportProgress("   ... new table created\n",$verbose);
             return array();

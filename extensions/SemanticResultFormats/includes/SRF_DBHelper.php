@@ -46,7 +46,7 @@ class SRFDBHelper {
 			if (!empty($primaryKeys)) {
 				$sql .= ", PRIMARY KEY(".$primaryKeys.")";
 			}
-			$sql .= ') TYPE=myisam';
+			$sql .= ') ENGINE=MYISAM';
 			$db->query( $sql, 'SRFDBHelper::setupTable' );
 			SRFDBHelper::reportProgress("   ... new table created\n",$verbose);
 			return array();

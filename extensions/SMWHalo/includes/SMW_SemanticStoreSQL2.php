@@ -113,12 +113,12 @@ class SMWSemanticStoreSQL2 extends SMWSemanticStoreSQL {
 		}
 		// create virtual tables
 		$db->query( 'CREATE TEMPORARY TABLE smw_ob_properties (id INT(8) NOT NULL, property VARBINARY(255) '.$collation.', inherited SET(\'no\', \'yes\') NOT NULL )
-                    TYPE=MEMORY', 'SMW::createVirtualTableWithPropertiesByCategory' );
+                    ENGINE=MEMORY', 'SMW::createVirtualTableWithPropertiesByCategory' );
 
 		$db->query( 'CREATE TEMPORARY TABLE smw_ob_properties_sub (category INT(8) NOT NULL)
-                    TYPE=MEMORY', 'SMW::createVirtualTableWithPropertiesByCategory' );
+                    ENGINE=MEMORY', 'SMW::createVirtualTableWithPropertiesByCategory' );
 		$db->query( 'CREATE TEMPORARY TABLE smw_ob_properties_super (category INT(8) NOT NULL)
-                    TYPE=MEMORY', 'SMW::createVirtualTableWithPropertiesByCategory' );
+                    ENGINE=MEMORY', 'SMW::createVirtualTableWithPropertiesByCategory' );
 
 		$domainAndRange = $db->selectRow($db->tableName('smw_ids'), array('smw_id'), array('smw_title' => $this->domainRangeHintRelation->getDBkey()) );
 		if ($domainAndRange == NULL) {
@@ -187,7 +187,7 @@ class SMWSemanticStoreSQL2 extends SMWSemanticStoreSQL {
 		$redirect = $db->tableName('redirect');
 		$redirects = $db->tableName('redirect');
 		$db->query( 'CREATE TEMPORARY TABLE smw_ob_properties (id INT(8) NOT NULL, property VARBINARY(255) '.$collation.')
-                    TYPE=MEMORY', 'SMW::createVirtualTableForInstances' );
+                    ENGINE=MEMORY', 'SMW::createVirtualTableForInstances' );
 		$sql = DBHelper::getSQLConditions($requestoptions,'smw_title','smw_title');
 		// add properties which match and which are no redirects
 		$db->query('INSERT INTO smw_ob_properties (SELECT smw_id, smw_title FROM '.$smw_ids.' JOIN '.$page.' ON smw_title = page_title AND page_namespace='.SMW_NS_PROPERTY.' WHERE smw_iw != ":smw-redi" AND smw_namespace = '.SMW_NS_PROPERTY.' '. $sql.')');

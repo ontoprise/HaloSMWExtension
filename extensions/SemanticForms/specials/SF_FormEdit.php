@@ -126,6 +126,11 @@ class SFFormEdit extends SpecialPage {
 		} elseif ( $target_name == '' && $page_name_formula == '' ) {
 			$text = Xml::element( 'p', array( 'class' => 'error' ), wfMsg( 'sf_formedit_badurl' ) ) . "\n";
 		} else {
+			/*op-patch|BL|2009-09-16|CollapsingForms|SaveFormnameGlobally|start*/
+			/*op-patch|BL|2009-09-16|CollapsingForms|doc|http://dmwiki.ontoprise.com:8888/dmwiki/index.php/CollapsingForms*/
+			global $smwgRMActFormName;
+			$smwgRMActFormName = $form_name;
+			/*op-patch|BL|2009-09-16|end*/
 			$form_article = new Article( $form_title );
 			$form_definition = $form_article->getContent();
 
@@ -145,8 +150,20 @@ class SFFormEdit extends SpecialPage {
 					$page_is_source = ( $page_contents != null );
 				}
 			} else {
+			/*op-patch|BL|2010-04-16|RMCombiningFormentriesWithFreeText|start*/
+			// Any page content created by the upload converter is already stored
+			// in the article but also the form is submitted.
+			// content was:
+			// $page_is_source = false;
+			// $page_contents = null;
+			$fromRichMedia = $wgRequest->getCheck('SFviaRichMedia');
+			if ($fromRichMedia) {
+				// do nothing.
+			} else {
 				$page_is_source = false;
 				$page_contents = null;
+			}
+			/*op-patch|BL|2010-04-16||end*/
 			}
 			list ( $form_text, $javascript_text, $data_text, $form_page_title, $generated_page_name ) =
 				$sfgFormPrinter->formHTML( $form_definition, $form_submitted, $page_is_source, $form_article->getID(), $page_contents, $target_name, $page_name_formula );
@@ -253,6 +270,8 @@ END;
 				$text .= $pre_form_html;
 				$text .= $form_text;
 			}
+		global $sfgScriptPath, $wgJsMimeType;
+		$wgOut->addHTML("<script type=\"{$wgJsMimeType}\" src=\"{$sfgScriptPath}/libs/collapse.js\"></script>");
 		}
 		// instead of adding the Javascript using addScript(), which is
 		// the standard approach, we add it using addHTML(), below the

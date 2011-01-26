@@ -10,7 +10,7 @@
  *
  * GardeningIssues interface implementation for SQL.
  *
- * @author Kai Kühn
+ * @author Kai Kï¿½hn
  */
 if ( !defined( 'MEDIAWIKI' ) ) die;
 
@@ -478,11 +478,11 @@ class SGAGardeningIssuesAccessSQL extends SGAGardeningIssuesAccess {
 
 		// create virtual tables
 		$db->query( 'CREATE TEMPORARY TABLE smw_prop_gardissues ( id INT(8) UNSIGNED NOT NULL)
-		            TYPE=MEMORY', 'SMW::createVirtualTableForPropagationIssues' );
+		            ENGINE=MEMORY', 'SMW::createVirtualTableForPropagationIssues' );
 		$db->query( 'CREATE TEMPORARY TABLE smw_prop_gardissues_to (id INT(8) UNSIGNED NOT NULL)
-		            TYPE=MEMORY', 'SMW::createVirtualTableForPropagationIssues' );
+		            ENGINE=MEMORY', 'SMW::createVirtualTableForPropagationIssues' );
 		$db->query( 'CREATE TEMPORARY TABLE smw_prop_gardissues_from ( id INT(8) UNSIGNED NOT NULL)
-		            TYPE=MEMORY', 'SMW::createVirtualTableForPropagationIssues' );
+		            ENGINE=MEMORY', 'SMW::createVirtualTableForPropagationIssues' );
 
 		// initialize with:
 		// 1. All (super-/member-)categories of articles having issues with instances or categories

@@ -446,6 +446,7 @@ class SRFExhibit extends SMWResultPrinter {
 		$params[] = array( 'name' => 'views', 'type' => 'enum-list', 'description' => wfMsg( 'srf_paramdesc_views' ), 'values' => array( 'tiles', 'tabular', 'timeline', 'maps' ) );
 		$params[] = array( 'name' => 'facets', 'type' => 'string', 'description' => wfMsg( 'srf_paramdesc_facets' ) );
 		$params[] = array( 'name' => 'lens', 'type' => 'string', 'description' => wfMsg( 'srf_paramdesc_lens' ) );
+		$params[] = array('name' => 'order', 'type' => 'enumeration', 'description' => wfMsg('srf_paramdesc_order'), 'values' => array('ascending','descending'));
 		return $params;
 	}
 

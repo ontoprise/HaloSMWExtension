@@ -72,6 +72,18 @@ $messages['en'] = array(
 	'srf_paramdesc_barnumbersaxislabel' => 'The label for the numbers axis',
 	// format "gallery"
 	'srf_printername_gallery' => 'Gallery',
+
+	// format "graph"
+	'srf_paramdesc_graphname' => 'Title',
+	'srf_paramdesc_graphsize' => 'Graph size (in px)',
+	'srf_paramdesc_graphlegend' => 'Show graph legend or not',
+	'srf_paramdesc_graphlabel' => 'Graph label',
+	'srf_paramdesc_rankdir' => 'Rank dir',
+	'srf_paramdesc_graphlink' => 'Graph link',
+	'srf_paramdesc_graphcolor' => 'Graph color',
+	
+	// general params for "order"
+	'srf_paramdesc_order' => 'Sort order',
 );
 
 /** Message documentation (Message documentation)

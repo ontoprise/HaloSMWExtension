@@ -407,12 +407,12 @@ if ( !defined( 'MEDIAWIKI' ) ) die;
 		}
 		// create virtual tables
 		$db->query( 'CREATE TEMPORARY TABLE smw_gard_ab_leaves (category VARCHAR(255) '.$collation.')
-		            TYPE=MEMORY', 'SMW::getCategoryLeafsBelow' );
+		            ENGINE=MEMORY', 'SMW::getCategoryLeafsBelow' );
 		
 		$db->query( 'CREATE TEMPORARY TABLE smw_gard_ab_sub (category VARCHAR(255) '.$collation.' NOT NULL)
-		            TYPE=MEMORY', 'SMW::getCategoryLeafsBelow' );
+		            ENGINE=MEMORY', 'SMW::getCategoryLeafsBelow' );
 		$db->query( 'CREATE TEMPORARY TABLE smw_gard_ab_super (category VARCHAR(255) '.$collation.' NOT NULL)
-		            TYPE=MEMORY', 'SMW::getCategoryLeafsBelow' );
+		            ENGINE=MEMORY', 'SMW::getCategoryLeafsBelow' );
 		
 		// initialize with direct instances
 		
@@ -482,12 +482,12 @@ if ( !defined( 'MEDIAWIKI' ) ) die;
 		}
 		// create virtual tables
 		$db->query( 'CREATE TEMPORARY TABLE smw_gard_ab_anomalies (category VARCHAR(255) '.$collation.', subCatNum INTEGER)
-		            TYPE=MEMORY', 'SMW::getCategoryLeafsBelow' );
+		            ENGINE=MEMORY', 'SMW::getCategoryLeafsBelow' );
 		
 		$db->query( 'CREATE TEMPORARY TABLE smw_gard_ab_sub (category VARCHAR(255) '.$collation.' NOT NULL)
-		            TYPE=MEMORY', 'SMW::getCategoryLeafsBelow' );
+		            ENGINE=MEMORY', 'SMW::getCategoryLeafsBelow' );
 		$db->query( 'CREATE TEMPORARY TABLE smw_gard_ab_super (category VARCHAR(255) '.$collation.' NOT NULL)
-		            TYPE=MEMORY', 'SMW::getCategoryLeafsBelow' );
+		            ENGINE=MEMORY', 'SMW::getCategoryLeafsBelow' );
 		
 		// initialize with direct instances
 		

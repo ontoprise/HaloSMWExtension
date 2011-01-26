@@ -218,11 +218,11 @@ class MissingAnnotationStorageSQL extends MissingAnnotationStorage {
 				$collation = 'COLLATE '.$smwgDefaultCollation;
 			}
 			$db->query( 'CREATE TEMPORARY TABLE smw_ob_categories ( category VARCHAR(255) '.$collation.')
-		            TYPE=MEMORY', 'SMW::getPagesWithoutAnnotations' );
+		            ENGINE=MEMORY', 'SMW::getPagesWithoutAnnotations' );
 			$db->query( 'CREATE TEMPORARY TABLE smw_ob_categories_sub (category VARCHAR(255) '.$collation.' NOT NULL)
-		            TYPE=MEMORY', 'SMW::getPagesWithoutAnnotations' );
+		            ENGINE=MEMORY', 'SMW::getPagesWithoutAnnotations' );
 			$db->query( 'CREATE TEMPORARY TABLE smw_ob_categories_super (category VARCHAR(255) '.$collation.' NOT NULL)
-		            TYPE=MEMORY', 'SMW::getPagesWithoutAnnotations' );
+		            ENGINE=MEMORY', 'SMW::getPagesWithoutAnnotations' );
 
 			foreach($categories as $category) {
 				$categoryTitle = Title::newFromText($category, NS_CATEGORY);
@@ -339,11 +339,11 @@ class MissingAnnotationStorageSQL2 extends MissingAnnotationStorageSQL {
 				$collation = 'COLLATE '.$smwgDefaultCollation;
 			}
 			$db->query( 'CREATE TEMPORARY TABLE smw_ob_categories ( category VARCHAR(255) '.$collation.')
-                    TYPE=MEMORY', 'SMW::getPagesWithoutAnnotations' );
+                    ENGINE=MEMORY', 'SMW::getPagesWithoutAnnotations' );
 			$db->query( 'CREATE TEMPORARY TABLE smw_ob_categories_sub (category VARCHAR(255) '.$collation.' NOT NULL)
-                    TYPE=MEMORY', 'SMW::getPagesWithoutAnnotations' );
+                    ENGINE=MEMORY', 'SMW::getPagesWithoutAnnotations' );
 			$db->query( 'CREATE TEMPORARY TABLE smw_ob_categories_super (category VARCHAR(255) '.$collation.' NOT NULL)
-                    TYPE=MEMORY', 'SMW::getPagesWithoutAnnotations' );
+                    ENGINE=MEMORY', 'SMW::getPagesWithoutAnnotations' );
 
 			foreach($categories as $category) {
 				$categoryTitle = Title::newFromText($category, NS_CATEGORY);

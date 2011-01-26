@@ -137,9 +137,20 @@ class SFFormEditTab {
 		}
 		if ( count( $form_names ) > 1 ) {
 			SFUtils::loadMessages();
-			$warning_text = '    <div class="warningMessage">' . wfMsg( 'sf_formedit_morethanoneform' ) . "</div>\n";
+			/*op-patch|SR|2010-01-15|selection when several default forms exist|start*/
+			/*op-patch|SR|2010-01-15|selection when several default forms exist|doc|http://dmwiki.ontoprise.com:8888/dmwiki/index.php/Choose_form_for_several_default_forms*/
+			global $wgContLang;
+			$jsCode = "javascript:top.location.href=wgScript+'/"
+				.$wgContLang->getNsText(NS_SPECIAL)
+				.":EditData/'+this[selectedIndex].text+'/'+wgPageName; return false";
+			$selection = '<b>'.wfMsg('sf_several_forms_notice').'</b><br/>'
+				.wfMsg('sf_several_forms_label').'<select onchange="'.$jsCode.'">'."\n";
+			for ($i =0, $is=count($form_names); $i < $is; $i++)
+				$selection .= "<option>".$form_names[$i]."</option>\n";
+			$selection.="</select>\n";
 			global $wgOut;
-			$wgOut->addHTML( $warning_text );
+			$wgOut->addHTML( $selection );
+			/*op-patch|SR|2010-01-15|selection when several default forms exist|end*/
 		}
 		$form_name = $form_names[0];
 

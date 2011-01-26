@@ -16,6 +16,16 @@ $messages = array();
  */
 $messages['en'] = array(
 	// user messages
+        /*op-patch|DH|2009-09-17|Embedded Forms|start*/
+        'createembeddedform'                 => 'Create an embedded form',
+        /*op-patch|DH|2009-09-17|Embedded Forms|end*/
+        /*op-patch|SR|2009-09-21|magic word __NORICHEDITOR__ was not checked by SF|start*/
+        'sf_fck_NORICHEDITOR'                => 'The WYSIWYG editor cannot be used for this article. You can either edit the form fields now or load the article into the standard wikitext editor (open here: $1).',
+        /*op-patch|SR|2009-09-21|magic word __NORICHEDITOR__ was not checked by SF|end*/
+       /*op-patch|SR|2010-01-15|selection when several default forms exist|start*/
+       'sf_several_forms_notice'             => 'There is more than one form defined for this page. You can select another form to edit the page.',
+       'sf_several_forms_label'              => 'Select form: ',
+       /*op-patch|SR|2010-01-15|selection when several default forms exist|end*/
 	'semanticforms-desc'                 => 'Forms for adding and editing semantic data',
 	'specialpages-group-sf_group'        => 'Semantic Forms',
 	'createproperty'                     => 'Create a property',

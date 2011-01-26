@@ -52,6 +52,16 @@ $wgSpecialPageGroups['Forms'] = 'pages';
 $wgSpecialPages['CreateForm'] = 'SFCreateForm';
 $wgAutoloadClasses['SFCreateForm'] = $sfgIP . '/specials/SF_CreateForm.php';
 $wgSpecialPageGroups['CreateForm'] = 'sf_group';
+/*op-patch|DH|2009-09-17|SF|Embedded forms|start*/
+/*op-patch|DH|2009-09-17|SF|Embedded forms|doc|http://dmwiki.ontoprise.com:8888/dmwiki/index.php/Embedded_Forms*/
+$wgSpecialPages['CreateEmbeddedForm'] = 'SFCreateEmbeddedForm';
+$wgAutoloadClasses['SFCreateEmbeddedForm'] = $sfgIP . '/specials/SF_CreateEmbeddedForm.php';
+$wgSpecialPageGroups['CreateEmbeddedForm'] = 'sf_group';
+
+$wgAutoloadClasses['SFEmbeddedForm'] = $sfgIP . '/includes/SF_EmbeddedFormClasses.php';
+$wgAutoloadClasses['SFTemplateInEmbeddedForm'] = $sfgIP . '/includes/SF_EmbeddedFormClasses.php';
+$wgAutoloadClasses['SFEmbeddedFormField'] = $sfgIP . '/includes/SF_EmbeddedFormField.php';
+/*op-patch|DH|2009-09-17|SF|Embedded forms|end*/
 $wgSpecialPages['Templates'] = 'SFTemplates';
 $wgAutoloadClasses['SFTemplates'] = $sfgIP . '/specials/SF_Templates.php';
 $wgSpecialPageGroups['Templates'] = 'pages';

@@ -245,7 +245,11 @@ END;
 		$scripts[] = "$sfgScriptPath/libs/SF_autogrow.js";
 
 		if ( $wgFCKEditorDir )
-			$scripts[] = "$wgScriptPath/$wgFCKEditorDir/fckeditor.js";
+            /*op-patch|SR|2010-12-06|CKeditor|check for FCK or CK|start*/
+            $scripts[] = class_exists('CKEditor')
+                ? "$wgScriptPath/$wgFCKEditorDir/ckeditor.js"
+                : "$wgScriptPath/$wgFCKEditorDir/fckeditor.js";
+            /*op-patch|SR|2010-12-06|CKeditor|check for FCK or CK|end*/
 		$scripts[] = "$sfgScriptPath/libs/SemanticForms.js";
 
 		global $wgOut;

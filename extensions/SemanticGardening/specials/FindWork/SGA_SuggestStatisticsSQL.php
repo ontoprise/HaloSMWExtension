@@ -5,7 +5,7 @@
  * 
  * Created on 26.11.2007
  *
- * @author Kai Kühn
+ * @author Kai Kï¿½hn
  */
 
 if ( !defined( 'MEDIAWIKI' ) ) die;
@@ -166,7 +166,7 @@ if ( !defined( 'MEDIAWIKI' ) ) die;
 			$collation = 'COLLATE '.$smwgDefaultCollation;
 		}
 		$db->query( 'CREATE TEMPORARY TABLE smw_fw_lowratedannotations (title VARCHAR(255) '.$collation.' NOT NULL, namespace INT(11) NOT NULL, property VARCHAR(255) '.$collation.', value VARCHAR(255) '.$collation.', type VARCHAR(255) '.$collation.', rating INT(8) )
-		            TYPE=MEMORY', 'SMW::getLowRatedAnnotations' );
+		            ENGINE=MEMORY', 'SMW::getLowRatedAnnotations' );
 		if ($username == NULL) {
 			// look for any low rated annotations
 			$res = $db->query(	'INSERT INTO smw_fw_lowratedannotations (title, namespace, property, value, type, rating)  (SELECT subject_title AS title, subject_namespace AS namespace, attribute_title AS property, value_xsd AS value, \'string\' AS type, rating AS rt FROM '.$smw_attributes. ' WHERE rating < 0) ' .
@@ -240,7 +240,7 @@ if ( !defined( 'MEDIAWIKI' ) ) die;
 			$collation = 'COLLATE '.$smwgDefaultCollation;
 		}
 		$db->query( 'CREATE TEMPORARY TABLE smw_fw_categories (category VARCHAR(255) '.$collation.' NOT NULL, lastrevision VARCHAR(14) '.$collation.' NOT NULL)
-		            TYPE=MEMORY', 'SMW::createVirtualTableForCategoriesOfLastEditedPages' );
+		            ENGINE=MEMORY', 'SMW::createVirtualTableForCategoriesOfLastEditedPages' );
 		
 		
  		

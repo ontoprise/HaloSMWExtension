@@ -39,7 +39,7 @@ class SCDBHelper {
             if (!empty($primaryKeys)) {
                 $sql .= ", PRIMARY KEY(".$primaryKeys.")";
             }
-            $sql .= ') TYPE=myisam';
+            $sql .= ') ENGINE=MYISAM';
             $db->query( $sql, 'SCDBHelper::setupTable' );
             SCDBHelper::reportProgress("   ... new table created\n",$verbose);
             return array();

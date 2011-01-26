@@ -374,12 +374,12 @@ class SMWSemanticStoreSQL extends SMWSemanticStore {
 		
 		// create virtual tables
 		$db->query( 'CREATE TEMPORARY TABLE smw_ob_instances (instance VARBINARY(255), namespace INT(11), category VARBINARY(255))
-		            TYPE=MEMORY', 'SMW::createVirtualTableWithInstances' );
+		            ENGINE=MEMORY', 'SMW::createVirtualTableWithInstances' );
 
 		$db->query( 'CREATE TEMPORARY TABLE smw_ob_instances_sub (category VARBINARY(255) NOT NULL)
-		            TYPE=MEMORY', 'SMW::createVirtualTableWithInstances' );
+		            ENGINE=MEMORY', 'SMW::createVirtualTableWithInstances' );
 		$db->query( 'CREATE TEMPORARY TABLE smw_ob_instances_super (category VARBINARY(255) NOT NULL)
-		            TYPE=MEMORY', 'SMW::createVirtualTableWithInstances' );
+		            ENGINE=MEMORY', 'SMW::createVirtualTableWithInstances' );
 
 		// initialize with direct instances
 		if ($onlyMain) {
@@ -589,7 +589,7 @@ class SMWSemanticStoreSQL extends SMWSemanticStore {
 		$redirect = $db->tableName('redirect');
 		$redirects = $db->tableName('redirect');
 		$db->query( 'CREATE TEMPORARY TABLE smw_ob_properties (id INT(8) NOT NULL, property VARBINARY(255))
-		            TYPE=MEMORY', 'SMW::createVirtualTableForInstances' );
+		            ENGINE=MEMORY', 'SMW::createVirtualTableForInstances' );
 		$sql = DBHelper::getSQLConditions($requestoptions,'page_title','page_title');
 		// add properties which match and which are no redirects
 		$db->query('INSERT INTO smw_ob_properties (SELECT page_id, page_title FROM '.$page.' WHERE page_is_redirect = 0 AND page_namespace = '.SMW_NS_PROPERTY.' '. $sql.')');
@@ -615,12 +615,12 @@ class SMWSemanticStoreSQL extends SMWSemanticStore {
 		
 		// create virtual tables
 		$db->query( 'CREATE TEMPORARY TABLE smw_ob_properties (id INT(8) NOT NULL, property VARBINARY(255))
-		            TYPE=MEMORY', 'SMW::createVirtualTableWithPropertiesByCategory' );
+		            ENGINE=MEMORY', 'SMW::createVirtualTableWithPropertiesByCategory' );
 
 		$db->query( 'CREATE TEMPORARY TABLE smw_ob_properties_sub (category INT(8) NOT NULL)
-		            TYPE=MEMORY', 'SMW::createVirtualTableWithPropertiesByCategory' );
+		            ENGINE=MEMORY', 'SMW::createVirtualTableWithPropertiesByCategory' );
 		$db->query( 'CREATE TEMPORARY TABLE smw_ob_properties_super (category INT(8) NOT NULL)
-		            TYPE=MEMORY', 'SMW::createVirtualTableWithPropertiesByCategory' );
+		            ENGINE=MEMORY', 'SMW::createVirtualTableWithPropertiesByCategory' );
 
 		$db->query('INSERT INTO smw_ob_properties (SELECT n.subject_id AS id, n.subject_title AS property FROM '.$smw_nary.' n JOIN '.$smw_nary_relations.' r ON n.subject_id = r.subject_id JOIN '.$page.' p ON n.subject_id = p.page_id '.
 					' WHERE r.nary_pos = 0 AND n.attribute_title = '. $db->addQuotes($this->domainRangeHintRelation->getDBkey()). ' AND r.object_title = ' .$db->addQuotes($categoryTitle->getDBkey()).' AND p.page_is_redirect = 0)');

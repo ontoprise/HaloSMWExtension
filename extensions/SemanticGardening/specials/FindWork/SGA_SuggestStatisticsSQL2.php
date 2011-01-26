@@ -29,7 +29,7 @@ class SMWSuggestStatisticsSQL2 extends SMWSuggestStatisticsSQL {
 			$collation = 'COLLATE '.$smwgDefaultCollation;
 		}
 		$db->query( 'CREATE TEMPORARY TABLE smw_fw_lowratedannotations (title VARCHAR(255) '.$collation.' NOT NULL, namespace INT(11) NOT NULL, property VARCHAR(255) '.$collation.', value VARCHAR(255) '.$collation.', type VARCHAR(255) '.$collation.', rating INT(8) )
-                    TYPE=MEMORY', 'SMW::getLowRatedAnnotations' );
+                    ENGINE=MEMORY', 'SMW::getLowRatedAnnotations' );
 		if ($username == NULL) {
 			// look for any low rated annotations
 

@@ -231,7 +231,7 @@ class SRFOutline extends SMWResultPrinter {
 
 	public function getParameters() {
                 $params = parent::getParameters();
-                $params[] = array( 'name' => 'outlineproperties', 'type' => 'string', 'description' => wfMsg( 'srf_paramdesc_outlineproperties' ) );
+                $params[] = array( 'name' => 'outlineproperties', 'type' => 'string', 'description' => wfMsg( 'srf_paramdesc_outlineproperties' ), 'constraints' => "namespace: ".SMW_NS_PROPERTY );
                 return $params;
 	}
 
