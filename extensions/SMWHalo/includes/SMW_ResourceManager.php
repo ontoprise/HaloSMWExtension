@@ -5,7 +5,7 @@
  * 
  * Created on 09.07.2007
  *
- * @author: Kai Kühn
+ * @author: Kai Kï¿½hn
  */
  
  /**
@@ -119,12 +119,7 @@
  		$alreadyRegistered = array();
  		foreach($this->css as $css) {
  			if ($this->matchesAction($css) && $this->matchesNamespace($css) && $this->matchesPage($css) && !array_key_exists($css->path, $alreadyRegistered)) {
- 				$out->addLink(array(
-					'rel'   => 'stylesheet',
-					'type'  => 'text/css',
-					'media' => 'screen, projection',
-					'href'  => $css->path
-				));
+ 				$out->addStyle($css->path, 'screen, projection');
  				$alreadyRegistered[$css->path] = 1;
  			}
  		}
