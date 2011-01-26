@@ -5,6 +5,8 @@
 		<ant antfile="build.xml" dir="SemanticForms/deploy" target="patches" />
 		<ant antfile="build.xml" dir="RichMedia/deploy" target="patches" />
 		<ant antfile="build.xml" dir="HaloACL/deploy" target="patches" />
+		<ant antfile="build.xml" dir="EnhancedRetrieval/deploy" target="patches" />
+		<ant antfile="build.xml" dir="SemanticResultFormats/deploy" target="patches" />
 
 	</target>
 </project>
