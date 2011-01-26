@@ -628,6 +628,34 @@ class HACLEvaluator {
 		return true;
 	}
 	
+	/**
+	 * This hook function is called before a template or a transclusion is
+	 * inserted by the parser. It checks if the $title has read access rights for
+	 * the current user. If not, the template is skipped.
+	 * 
+	 * @param unknown_type $parser
+	 * @param unknown_type $title
+	 * @param unknown_type $skip
+	 * @param unknown_type $id
+	 */
+	public static function onBeforeParserFetchTemplateAndtitle($parser, $title, $skip, $id) {
+		// Check if the title is accessible (read) for the current user
+		global $wgUser;
+		$allowed = true;
+		self::userCan($title, $wgUser, "read", $allowed);
+		if ($allowed) {
+			return true;
+		}
+		$skip = true;
+		return true;
+		// Template or page must not be included => return permission denied page.
+//		global $haclgContLang;
+//		$pdp = $haclgContLang->getPermissionDeniedPage();
+//		$title = Title::newFromText($pdp);
+//		
+//		return true;
+	}
+
 
 	/**
 	 * This method is important if the mode of the access control is 

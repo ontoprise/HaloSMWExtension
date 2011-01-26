@@ -133,6 +133,8 @@ function haclfSetupExtension() {
     $wgHooks['SpecialMovepageAfterMove'][] = 'HACLParserFunctions::articleMove';
 	$wgHooks['SkinTemplateContentActions'][] = 'haclfRemoveProtectTab';
     $wgHooks['UserEffectiveGroups'][]  = 'HACLGroupPermissions::onUserEffectiveGroups';
+    $wgHooks['BeforeParserFetchTemplateAndtitle'][] = 'HACLEvaluator::onBeforeParserFetchTemplateAndtitle';
+    
 
     $wgHooks['FilterQueryResults'][] = 'HACLResultFilter::filterResult';
     $wgHooks['SmwhNewBaseStore'][] = 'haclfOnSmwhNewBaseStore';
