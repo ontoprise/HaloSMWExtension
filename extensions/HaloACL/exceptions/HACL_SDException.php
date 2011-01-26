@@ -79,6 +79,11 @@ class HACLSDException extends HACLException {
 	// 1 - The incomplete rule (which is an array of properties)
 	const INCOMPLETE_DYNAMIC_SD_RULE = 7;
 	
+	// A rule for dynamic groups is incomplete
+	// Parameters:
+	// 1 - The incomplete rule (which is an array of properties)
+	const INCOMPLETE_DYNAMIC_GROUP_RULE = 8;
+	
 	/**
 	 * Constructor of the SD exception.
 	 *
@@ -118,6 +123,14 @@ class HACLSDException extends HACLException {
 The following rule for dynamic security descriptors which was specified in "\$haclgDynamicSD" is incomplete:
 $rule
 At least the properties "user", "category" and "sd" must be specified!\n
+MSG;
+    			break;
+    		case self::INCOMPLETE_DYNAMIC_GROUP_RULE:
+    			$rule = print_r($args[1], true);
+    			$msg = <<<MSG
+The following rule for dynamic groups which was specified in "\$haclgDynamicGroup" is incomplete:
+$rule
+At least the properties "user", "category", "name" and "groupTemplate" must be specified!\n
 MSG;
     			break;
     			

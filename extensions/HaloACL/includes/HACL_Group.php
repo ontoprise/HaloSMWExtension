@@ -66,7 +66,13 @@ class  HACLGroup {
     private $mManageUsers;		// array(int): IDs of the users that can modify
 							    //		the definition of this group
 	private $mCanBeModified;	// bool: <true> if this group can be modified
-	private $mType;				// string: The type of this group e.g. HaloACL or LDAP							    
+	private $mType;				// string: The type of this group e.g. HaloACL or LDAP
+
+	private static $mAllowUnauthorizedGroupChange = false;
+							// Under certain circumstances (e.g.
+							// when using dynamic groups) it must be possible that
+							// unauthorized users can change the group
+	
 
     /**
      * Constructor for HACLGroup
@@ -117,6 +123,8 @@ class  HACLGroup {
     public function getManageUsers() {return $this->mManageUsers;}
     public function getType() 		{return $this->mType;}
     public function canBeModified()	{return $this->mCanBeModified;}
+	public static function setAllowUnauthorizedGroupChange($aucg)
+										{ self::$mAllowUnauthorizedGroupChange = $aucg; }
     
     /**
      * Returns the name of this group without the prefix e.g. "Group/"
@@ -389,6 +397,11 @@ class  HACLGroup {
      *
      */
     public function userCanModify($user, $throwException = false) {
+		if (self::$mAllowUnauthorizedGroupChange === true) {
+			// Unauthorized change is temporarily allowed
+			return true;
+		}
+    	
     	if (defined('DO_MAINTENANCE') && !defined('UNIT_TEST_RUNNING')) {
     		return true;
     	}

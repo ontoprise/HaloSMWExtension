@@ -128,6 +128,9 @@ class  HACLDefaultSD  {
 			// No default SD for articles in the namespace ACL
 			return true;
 		}
+
+		// Create a dynamic group if requested
+		self::createDynamicGroup($article, $user);
 		
 		// Dynamic SDs have precedence over a users default SD
 		if (self::createDynamicSD($article, $user)) {
@@ -472,7 +475,7 @@ class  HACLDefaultSD  {
 		HACLParserFunctions::getInstance()->reset();
 		// Create the destination article
 		$newArticle = new Article($destTitle);
-		$newArticle->doEdit($content, "Default access control template.", 
+		$newArticle->doEdit($content, "Changed/created by HaloACL.", 
 		                    $destExists? EDIT_UPDATE : EDIT_NEW);
 		
 		return true;
@@ -503,6 +506,35 @@ class  HACLDefaultSD  {
 		
 		// Create the SD for the article
 		self::createDynamicSDForArticle($article, $user, $dsd);
+		
+		return true;
+	}
+	
+	/**
+	 * Checks if the $article contains a category that is associated with a dynamic
+	 * group for the giver $user.
+	 * If this is the case, the new corresponding group is created. If the group
+	 * already exists, it is not changed.
+	 * 
+	 * @param Article $article
+	 * 		This article may get dynamic group
+	 * @param User $user
+	 * 		The user who saves the article.
+	 * 
+	 * @return Returns
+	 * 		<true>, if a group was created or modified
+	 * 		<false>, if not
+	 */
+	private static function createDynamicGroup(Article $article, User $user) {
+		
+		$dgroup = self::getMatchingDynamicGroup($article, $user);
+		if (is_null($dgroup)) {
+			// no matching dynamic group found
+			return false;
+		}
+		
+		// Create the group for the article
+		self::createDynamicGroupForArticle($article, $user, $dgroup);
 		
 		return true;
 	}
@@ -565,7 +597,61 @@ class  HACLDefaultSD  {
 	}
 	
 	/**
-	 * Tries to find the dynamic SD description that matches the conditions given
+	 * Creates the dynamic group for the $article and the given $user. The dynamic
+	 * group is described by the associative array $dynamicGroupRule.
+	 * If the article already has an associated group, it is not changed.
+	 * 
+	 * @param Article $article
+	 * 		Article whose group is created
+	 * @param User $user
+	 * 		User who saves the article
+	 * @param array $dynamicGroupRule
+	 * 		This descriptor contains the following keys:
+	 * 		category => Name of the category to which the article must belong
+	 * 		groupTemplate => Name of the group template whose content is copied
+	 * 		user     => User(s) for whom this this rule can be applied
+	 * 		name	 => The pattern of the group's name. It may contain the
+	 * 					variable {{{articleName}}} which will be replaced by
+	 * 					the name of the article $article (without namespace).
+	 */
+	private static function createDynamicGroupForArticle(Article $article, User $user, 
+	                                                     array $dynamicGroupRule) {
+
+	    // Get the name of the new group
+	    $articleName = $article->getTitle()->getText();
+		$groupName = $dynamicGroupRule['name'];
+		$groupName = str_replace('{{{articleName}}}', $articleName, $groupName);
+		
+		// Does the group already exist?
+		$groupTitle = Title::newFromText($groupName);
+		if ($groupTitle->exists()) {
+			// existing group is not changed
+			return;
+		}
+		
+		// Find values of all variables
+		$source = $dynamicGroupRule['groupTemplate'];
+		$catName = Title::makeTitle(NS_CATEGORY, $dynamicGroupRule['category']);
+		$catName = $catName->getFullText();
+		$variables = array(
+			"user"        => $user->getUserPage()->getFullText(),
+			"articleName" => $article->getTitle()->getFullText(),
+			"category"    => $catName
+		);
+		
+		HACLGroup::setAllowUnauthorizedGroupChange(true);
+		try {
+			self::copyTemplate($source, $groupName, $variables);
+		} catch (Exception $e) {
+			HACLGroup::setAllowUnauthorizedGroupChange(false);
+			throw $e;
+		}
+		HACLGroup::setAllowUnauthorizedGroupChange(false);
+		
+	}
+	
+	/**
+	 * Tries to find the dynamic SD rule that matches the conditions given
 	 * by the $article and the $user.
 	 * 
 	 * @param Article $article
@@ -583,7 +669,6 @@ class  HACLDefaultSD  {
 			return null;
 		}
 		
-		$matchingDSD = null;
 		// Is there a rule for Dynamic SDs for this article?
 		foreach ($haclgDynamicSD as $dsd) {
 			
@@ -596,49 +681,61 @@ class  HACLDefaultSD  {
 			}
 			
 			// Does the category match the article's categories?
-			if (!in_array($dsd['category'], $categories)) {
-				// Categories do not match
-				continue;
+			if (in_array($dsd['category'], $categories)
+			    && self::validUserInRule($dsd, $user)) {
+				// Found a matching dynamic SD
+				return $dsd;
 			}
-			
-			// Does the current user match?
-			$validUser = false;
-			$currentUserID = $user->getId();
-			$dsdUsers = $dsd['user'];
-			if (!is_array($dsdUsers)) {
-				$dsdUsers = array($dsdUsers);
-			}
-			foreach ($dsdUsers as $u) {
-				$uid = haclfGetUserID($u);
-				$uid = $uid[0];
-				if ($uid === 0 && $currentUserID === 0) {
-					//granted for anonymous users
-					$validUser = true;
-				} else if ($uid === -1 && $currentUserID > 0) {
-					//granted for registered users
-					$validUser = true;
-				} else if ($uid === $currentUserID) {
-					// user matches exactly
-					$validUser = true;
-				}
-				if ($validUser) {
-					break;
-				}
-			}
-			if (!$validUser) {
-				// user does not match
-				continue;
-			}
-			
-			// Found a matching dynamic SD
-			$matchingDSD = $dsd;
-			break;
 		}
 		
-		return $matchingDSD;
+		return null;
 		
 	}
 
+	/**
+	 * Tries to find the dynamic group rule that matches the conditions given
+	 * by the $article and the $user.
+	 * 
+	 * @param Article $article
+	 * 		This article may get dynamic group
+	 * @param User $user
+	 * 		The user who saves the article.
+	 * 
+	 * @return The matching dynamic group rule or <null> if there is none.
+	 */
+	private static function getMatchingDynamicGroup(Article $article, User $user) {
+		global $haclgDynamicGroup;
+		
+		$categories = self::getCategories($article);
+		if (empty($categories) || !isset($haclgDynamicGroup)) {
+			return null;
+		}
+		
+		// Is there a rule for Dynamic Groups for this article?
+		foreach ($haclgDynamicGroup as $dgr) {
+			
+			// Verify the dynamic group rule
+			if (!(array_key_exists('user', $dgr)
+			      && array_key_exists('category', $dgr)
+			      && array_key_exists('name', $dgr)
+			      && array_key_exists('groupTemplate', $dgr) )) {
+				// dynamic SD rule is incomplete
+				throw new HACLSDException(HACLSDException::INCOMPLETE_DYNAMIC_GROUP_RULE, $dgr);
+			}
+			
+			// Does the category match the article's categories?
+			// Does the current user match?
+			if (in_array($dgr['category'], $categories)
+			    && self::validUserInRule($dgr, $user)) {
+				// Found a match
+				return $dgr;
+			}
+		}
+		
+		return null;
+		
+	}
+	
 	/**
 	 * Returns the names of categories of the given $article.
 	 * 
@@ -663,5 +760,38 @@ class  HACLDefaultSD  {
 			$categories[] = $c[1];
 		}
 		return $categories;
+	}
+	
+	/**
+	 * Checks if the current $user matches the user(s) given in the $rule for
+	 * dynamic SDs or groups.
+	 * 
+	 * @param array<string=>mixed> $rule
+	 * 		This array must contain the key 'user' whose value is a user name or 
+	 * 		array of user names.
+	 * @param User $currentUser
+	 * 		The current user
+	 * 
+	 * @return bool
+	 * 		<true> if the current user matches one of the users in the rule and
+	 * 		<false> if not
+	 */
+	private static function validUserInRule(array $rule, User $currentUser) {
+		$currentUserID = $currentUser->getId();
+		$dgrUsers = $rule['user'];
+		if (!is_array($dgrUsers)) {
+			$dgrUsers = array($dgrUsers);
+		}
+		foreach ($dgrUsers as $u) {
+			$uid = haclfGetUserID($u);
+			$uid = $uid[0];
+			if (($uid === 0 && $currentUserID === 0)   // granted for anonymous users
+				|| ($uid === -1 && $currentUserID > 0) // granted for registered users
+				|| ($uid === $currentUserID)) { 	   // user matches exactly
+				return true;
+			}
+		}
+
+		return false;
 	}
 }
