@@ -67,6 +67,7 @@ class Rollback {
 	 * Copy complete code base of installation including LocalSettings.php
 	 * (but excluding deployment folder)
 	 *
+	 * @boolean True if no error occured 
 	 */
 	public function saveInstallation() {
 
@@ -76,16 +77,17 @@ class Rollback {
 
 		if (!$this->acquireNewRestorePoint($name)) return;
 		print "\n[Save installation...";
-		Tools::mkpath($this->tmpDir."/rollback_data/$name");
-		Tools::copy_dir($this->rootDir, $this->tmpDir."/rollback_data/$name", array($this->rootDir."/deployment"));
+		$success = Tools::mkpath($this->tmpDir."/rollback_data/$name");
+		$success = $success && Tools::copy_dir($this->rootDir, $this->tmpDir."/rollback_data/$name", array($this->rootDir."/deployment"));
 		print "done.]";
 		$savedInstallation = true;
+		return $success;
 	}
 
 	/**
 	 * Save the database to the rollback directory
 	 *
-	 * @return error code of mysqldump process
+	 * @return boolean True if no error occured on creating a database dump
 	 */
 	public function saveDatabase() {
 
@@ -108,7 +110,7 @@ class Rollback {
 		print "\n[Saving database...";
 		//print "\nmysqldump -u $wgDBadminuser --password=$wgDBadminpassword $wgDBname > ".$this->tmpDir."/rollback_data/$name/dump.sql";
 		exec("mysqldump -u $wgDBadminuser --password=$wgDBadminpassword $wgDBname > ".$this->tmpDir."/$name/dump.sql", $out, $ret);
-		if ($ret != 0) print "\nWarning: Could not save database for rollback"; else print "done.]";
+		
 		$savedDataBase = true;
 
 		return $ret == 0;

@@ -128,7 +128,7 @@ class Tools {
 	 */
 	public static function copy_dir($source, $dest, $exclude = array(), $options=array('folderPermission'=>0755,'filePermission'=>0755))
 	{
-		$result=false;
+		$result=true;
 			
 		if (is_file($source)) {
 			if ($dest[strlen($dest)-1]=='/') {
@@ -139,7 +139,7 @@ class Tools {
 			} else {
 				$__dest=$dest;
 			}
-			$result=copy($source, $__dest);
+			$result = $result && copy($source, $__dest);
 			chmod($__dest,$options['filePermission']);
 
 		} elseif(is_dir($source)) {
@@ -172,7 +172,7 @@ class Tools {
 					$__dest=$dest."/".$file;
 					//echo "$source/$file ||| $__dest<br />";
 					if (in_array($source."/".$file, $exclude)) continue;
-					$result=self::copy_dir($source."/".$file, $__dest, $options);
+					$result = $result && self::copy_dir($source."/".$file, $__dest, $options);
 				}
 			}
 			closedir($dirHandle);

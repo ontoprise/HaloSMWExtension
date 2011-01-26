@@ -28,6 +28,7 @@ define('DEPLOY_FRAMEWORK_ALREADY_INSTALLED', 8);
 define('DEPLOY_FRAMEWORK_NOT_INSTALLED', 9);
 define('DEPLOY_FRAMEWORK_PRECEDING_CYCLE', 10);
 define('DEPLOY_FRAMEWORK_WRONG_MW_VERSION', 11);
+define('DEPLOY_FRAMEWORK_CREATING_RESTOREPOINT_FAILED', 12);
 
 require_once 'DF_PackageRepository.php';
 require_once 'DF_Tools.php';
@@ -398,8 +399,16 @@ class Installer {
 				$desc->createConfigElements($fromVersion, $fromPatchlevel);
 			}
 			if (!$this->noRollback) {
-				$this->rollback->saveInstallation();
-				if (count($desc->getInstallScripts()) > 0) $this->rollback->saveDatabase();
+				$success = $this->rollback->saveInstallation();
+				if (!$success) {
+					throw new InstallationError(DEPLOY_FRAMEWORK_CREATING_RESTOREPOINT_FAILED, "Could not copy the installation");
+				}
+				if (count($desc->getInstallScripts()) > 0) {
+				    $success = $this->rollback->saveDatabase();
+				    if (!$success) {
+				    	throw new InstallationError(DEPLOY_FRAMEWORK_CREATING_RESTOREPOINT_FAILED, "Could not save the database.");
+				    }	
+				}
 			}
 
 
