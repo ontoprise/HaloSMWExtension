@@ -25,13 +25,34 @@
 		</exec>
 	</target>
 	<target name="versionhint">
-        <property environment="env" />
+		<property environment="env" />
 		<exec executable="php">
 			<arg value="../../../buildtools/replaceVersionHint.php" />
 			<arg value="../deploy.xml" />
 			<arg value="../SemanticResultFormats.php" />
-            <arg value="${env.BUILD_NUMBER}" />
+			<arg value="${env.BUILD_NUMBER}" />
+		</exec>
+	</target>
+	<target name="patches" depends="checkos">
+		<echo message="${patchtool}" />
+		<exec executable="php">
+			<arg value="../../../patches/patch.php" />
+			<arg value="-d" />
+			<arg value="${basedir}/../../../" />
+			<arg value="-p" />
+			<arg value="../patch.txt" />
+			<arg value="--patchtool" />
+			<arg value="${patchtool}" />
 		</exec>
 	</target>
 
+
+	<target name="checkos">
+		<condition property="patchtool" value="${basedir}/../../../deployment/tools/patch.exe">
+			<os family="windows" />
+		</condition>
+		<condition property="patchtool" value="patch">
+			<os family="unix" />
+		</condition>
+	</target>
 </project>
