@@ -76,7 +76,7 @@ function enableSMWHalo($store = 'SMWHaloStore2', $tripleStore = NULL, $tripleSto
 
 	//init is ExtensionInstalled PF
 	$wgHooks['LanguageGetMagic'][] = 'smwfAddIsExtensionInstalledMagic';
-	
+
 	global $smgJSLibs;
 	$smgJSLibs[] = 'prototype';
 	$smgJSLibs[] = 'qtip';
@@ -137,10 +137,10 @@ function smwgHaloSetupExtension() {
 	$wgAutoloadClasses['SMWMathematicalEquationTypeHandler'] = $smwgHaloIP . '/includes/SMW_DV_MathEquation.php';
 	$wgAutoloadClasses['SMWIsExtensionInstalledPF'] = $smwgHaloIP . '/includes/SMW_IsExtensionInstalledPF.php';
 	$wgAutoloadClasses['SMWQMSpecialBrowse'] = $smwgHaloIP.'/specials/SearchTriple/SMW_QM_SpecialBrowse.php';
-	
+
 	//patch Special:Browse in order to hide special Query Management Property
 	$wgSpecialPages['Browse']  = array( 'SMWQMSpecialBrowse' );
-	
+
 	require_once $smwgHaloIP.'/includes/queryprinters/SMW_QP_Halo.php';
 
 	global $smwgResultFormats;
@@ -152,7 +152,7 @@ function smwgHaloSetupExtension() {
 
 	//Set up the IsExtensionInstalled PG
 	$wgHooks['ParserFirstCallInit'][] = 'SMWIsExtensionInstalledPF::registerFunctions';
-	
+
 	#
 	# Handle webservice calls.
 	#   wsmethod URL parameter indicates a SOAP webservice call. All such calls are handeled by
@@ -588,7 +588,7 @@ function smwfHaloFormInput($cur_value, $input_name, $is_mandatory, $is_disabled,
 		$cur_value = !is_null($wgUser) ? $wgUser->getName() : "anonymous";
 	}
 	// call now the general function of SF that creates the <input> field
-//	$html = SFFormInput::$method($cur_value, $input_name, $is_mandatory, $is_disabled, $other_args);
+	//	$html = SFFormInput::$method($cur_value, $input_name, $is_mandatory, $is_disabled, $other_args);
 	if($method == 'textEntryHTML') {
 		$html = SFTextInput::getText($cur_value, $input_name, $is_mandatory, $is_disabled, $other_args);
 	} else {
@@ -1520,7 +1520,7 @@ function smwfCreateLinks($name) {
 		if($wgUser->getSkin() == 'ontoskin2'){
 			$result .= '<tr><td><div class="smwf_naviitem"><a href="'.Skin::makeUrl($page_title, $query).'" '.$extraAttributes[$name].'>'.$name.'</a></div></td></tr>';
 		} else {
-                        $result .= '<li><a href="'.Skin::makeUrl($page_title, $query).'" '.$extraAttributes[$name].'>'.$name.'</a></li>';
+			$result .= '<li><a href="'.Skin::makeUrl($page_title, $query).'" '.$extraAttributes[$name].'>'.$name.'</a></li>';
 		}
 	}
 	return $result;
@@ -1589,6 +1589,14 @@ function smwfTripleStoreParserHook(&$parser, &$text, &$strip_state = null) {
                             ([^\[\]]*)                 # category
                             \]\]                       # End of link
                             /ixu';              # case-insensitive, ignore whitespaces, UTF-8 compatible
+
+	// fallback pattern with canonical language
+	$categoryLinkPattern2 = '/\[\[\s*                   # Beginning of the link
+                            category\s*:      # category link (case insensitive!)
+                            ([^\[\]]*)                 # category
+                            \]\]                       # End of link
+                            /ixu';              # case-insensitive, ignore whitespaces, UTF-8 compatible
+
 	$categories = array();
 	$matches = array();
 	preg_match_all($categoryLinkPattern, $text, $matches);
@@ -1597,6 +1605,17 @@ function smwfTripleStoreParserHook(&$parser, &$text, &$strip_state = null) {
 			$labelIndex = strpos($m, '|');
 			$m = $labelIndex !== false ? substr($m, 0, $labelIndex) : $m;
 			$categories[] = Title::newFromText(trim($m), NS_CATEGORY);
+		}
+	}
+
+	if (strtolower($categoryText) !== 'category') {
+		preg_match_all($categoryLinkPattern2, $text, $matches);
+		if (isset($matches[1])) {
+			foreach($matches[1] as $m) {
+				$labelIndex = strpos($m, '|');
+				$m = $labelIndex !== false ? substr($m, 0, $labelIndex) : $m;
+				$categories[] = Title::newFromText(trim($m), NS_CATEGORY);
+			}
 		}
 	}
 
@@ -1717,14 +1736,14 @@ function smwfBrokenLinkForPage( $skin, $target, $options, &$text, &$attribs, &$r
 
 	// check if page Create_new_page exists in the wiki, if not quit here
 	if (!Title::newFromDBkey('Create_new_page')->exists())
-        return true;
+	return true;
 	// check if this is an unmodified red link, if not, quit here
 	if (!(isset($attribs['href']) &&
-	    strpos($attribs['href'], 'action=edit&redlink=1') !== false))
-        return true;
+	strpos($attribs['href'], 'action=edit&redlink=1') !== false))
+	return true;
 	// get the namespace of the new page, if it's not NS_MAIN, quit
 	if ( NS_MAIN != $target->getNamespace())
-        return true;
+	return true;
 	// build title string for new page and create link to Create_new_page with target param
 	$title_text = ucfirst($target->getText());
 	global $wgScript;
@@ -1826,6 +1845,6 @@ function smwfOnSfSetTargetName($titleName) {
  */
 function smwfAddIsExtensionInstalledMagic(&$magicWords, $langCode = "en"){
 	$magicWords['isExtensionInstalled']	= array ( 0, 'isExtensionInstalled' );
-	return true;	
+	return true;
 }
 
