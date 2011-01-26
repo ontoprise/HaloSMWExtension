@@ -241,27 +241,9 @@ function addNonSpecialPageHeader(&$out) {
         $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/event-min.js"></script>');
         $out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/toolbar.js\"></script>");
 
-        $out->addLink(array(
-        'rel'   => 'stylesheet',
-        'type'  => 'text/css',
-        'media' => 'screen, projection',
-        'href'  => $haclgHaloScriptPath . '/skins/haloacl.css'
-        ));
-
-        $out->addLink(array(
-        'rel'   => 'stylesheet',
-        'type'  => 'text/css',
-        'media' => 'screen, projection',
-        'href'  => $haclgHaloScriptPath.'/skins/haloacl_toolbar.css'
-        ));
-
-        $out->addLink(array(
-        'rel'   => 'stylesheet',
-        'type'  => 'text/css',
-        'media' => 'screen, projection',
-        'href'  => $haclgHaloScriptPath. '/yui/container.css'
-        ));
-
+        $out->addStyle($haclgHaloScriptPath . '/skins/haloacl.css', 'screen, projection');
+        $out->addStyle($haclgHaloScriptPath . '/skins/haloacl_toolbar.css', 'screen, projection');
+        $out->addStyle($haclgHaloScriptPath . '/yui/container.css', 'screen, projection');
 
         $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/yuiloader-min.js"></script>');
         $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/event-min.js"></script>');
@@ -300,27 +282,10 @@ function addNonSpecialPageHeader(&$out) {
 
     } else {
         $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/scripts/hacl-packed.js"></script>');
+        $out->addStyle($haclgHaloScriptPath . '/skins/haloacl.css', 'screen, projection');
+        $out->addStyle($haclgHaloScriptPath . '/skins/haloacl_toolbar.css', 'screen, projection');
+        $out->addStyle($haclgHaloScriptPath . '/yui/container.css', 'screen, projection');
 
-        $out->addLink(array(
-        'rel'   => 'stylesheet',
-        'type'  => 'text/css',
-        'media' => 'screen, projection',
-        'href'  => $haclgHaloScriptPath . '/skins/haloacl.css'
-        ));
-
-        $out->addLink(array(
-        'rel'   => 'stylesheet',
-        'type'  => 'text/css',
-        'media' => 'screen, projection',
-        'href'  => $haclgHaloScriptPath.'/skins/haloacl_toolbar.css'
-        ));
-
-        $out->addLink(array(
-        'rel'   => 'stylesheet',
-        'type'  => 'text/css',
-        'media' => 'screen, projection',
-        'href'  => $haclgHaloScriptPath. '/yui/container.css'
-        ));
     }
     // -------------------
 
