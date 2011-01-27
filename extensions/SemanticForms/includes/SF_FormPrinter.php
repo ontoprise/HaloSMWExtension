@@ -175,7 +175,7 @@ class SFFormPrinter {
     $new_text = "";
     // flag for placing "<onlyinclude>" tags in form output
     $onlyinclude_free_text = false;
-
+    
     // if we have existing content and we're not in an active replacement
     // situation, preserve the original content. We do this because we want
     // to pass the original content on IF this is a partial form
@@ -272,7 +272,7 @@ class SFFormPrinter {
       $form_def = $wgParser->parse( $form_def, $this->mPageTitle, $wgParser->mOptions )->getText();
     }
     $wgParser->mStripState = $old_strip_state;
-
+    
     // turn form definition file into an array of sections, one for each
     // template definition (plus the first section)
     $form_def_sections = array();
@@ -522,7 +522,7 @@ class SFFormPrinter {
           $instance_num = 0;
         // =====================================================
         // field processing
-        // =====================================================
+        // =====================================================  
         } elseif ( $tag_title == 'field' ) {
           $field_name = trim( $tag_components[1] );
           // cycle through the other components
@@ -992,7 +992,7 @@ END;
           $input_name = $tag_components[1];
           $input_label = null;
           $attr = array();
-
+          
           // if it's a query, ignore all standard inputs except run query
           if ( ( $is_query && $input_name != 'run query' ) || ( !$is_query && $input_name == 'run query' ) ) {
             $new_text = "";
@@ -1105,15 +1105,15 @@ END;
           // doing a replace
           if ( $existing_page_content && strpos( $existing_page_content, '{{{insertionpoint}}}', 0 ) !== false ) {
             $existing_page_content = preg_replace( '/\{\{\{insertionpoint\}\}\}(\r?\n?)/',
-              preg_replace( '/\}\}/m', '}ï¿½',
-                preg_replace( '/\{\{/m', 'ï¿½{', $template_text ) ) .
+              preg_replace( '/\}\}/m', '}²',
+                preg_replace( '/\{\{/m', '²{', $template_text ) ) .
               "\n{{{insertionpoint}}}",
               $existing_page_content );
           // otherwise, if it's a partial form, we have to add the new
           // text somewhere
           } elseif ( $form_is_partial && $wgRequest->getCheck( 'partial' ) ) {
-            $existing_page_content = preg_replace( '/\}\}/m', '}ï¿½',
-              preg_replace( '/\{\{/m', 'ï¿½{', $template_text ) ) .
+            $existing_page_content = preg_replace( '/\}\}/m', '}²',
+              preg_replace( '/\{\{/m', '²{', $template_text ) ) .
                 "\n{{{insertionpoint}}}\n" . $existing_page_content;
           }
         }
@@ -1176,7 +1176,7 @@ END;
          $form_text .= SFFormUtils::hiddenFieldHTML( 'partial', 1 );
        } else {
          $free_text = null;
-         $existing_page_content = preg_replace( array( '/ï¿½\{/m','/\}ï¿½/m' ),
+         $existing_page_content = preg_replace( array( '/²\{/m','/\}²/m' ),
            array( '{{','}}' ),
            $existing_page_content );
          $existing_page_content = preg_replace( '/\{\{\{insertionpoint\}\}\}/', '', $existing_page_content );
@@ -1276,7 +1276,7 @@ END;
     if ( $form_submitted ) {
       $javascript_text = '';
     }
-
+    
     return array( $form_text, $javascript_text, $data_text, $new_text, $generated_page_name );
   }
 

@@ -35,13 +35,13 @@ class SFCreateTemplate extends SpecialPage {
 		$options = new SMWRequestOptions();
 		$options->limit = 10000;
 		$used_properties = smwfGetStore()->getPropertiesSpecial( $options );
-
+		
 		foreach ( $used_properties as $property ) {
 			$all_properties[] = $property[0]->getWikiValue();
 		}
-
+		
 		$unused_properties = smwfGetStore()->getUnusedPropertiesSpecial( $options );
-
+		
 		foreach ( $unused_properties as $property ) {
 			$all_properties[] = $property->getWikiValue();
 		}
@@ -54,32 +54,32 @@ class SFCreateTemplate extends SpecialPage {
 	public static function printPropertiesDropdown( $all_properties, $id, $selected_property ) {
 		$dropdown_str = "<select name=\"semantic_property_$id\">\n";
 		$dropdown_str .= "<option value=\"\"></option>\n";
-
+		
 		foreach ( $all_properties as $prop_name ) {
 			$selected = ( $selected_property == $prop_name ) ? "selected" : "";
 			$dropdown_str .= "<option value=\"$prop_name\" $selected>$prop_name</option>\n";
 		}
-
+		
 		$dropdown_str .= "</select>\n";
-
+		
 		return $dropdown_str;
 	}
 
 	public static function printFieldEntryBox( $id, $f, $all_properties ) {
 		SFUtils::loadMessages();
 		$dropdown_html = SFCreateTemplate::printPropertiesDropdown( $all_properties, $id, $f->semantic_property );
-
+		
 		$text = '	<div class="fieldBox">' . "\n";
 		$text .= '	<p>' . wfMsg( 'sf_createtemplate_fieldname' ) . ' <input size="15" name="name_' . $id . '" value="' . $f->field_name . '">' . "\n";
 		$text .= '	' . wfMsg( 'sf_createtemplate_displaylabel' ) . ' <input size="15" name="label_' . $id . '" value="' . $f->label . '">' . "\n";
 		$text .= '	' . wfMsg( 'sf_createtemplate_semanticproperty' ) . ' ' . $dropdown_html . "</p>\n";
 		$checked_str = ( $f->is_list ) ? " checked" : "";
 		$text .= '	<p><input type="checkbox" name="is_list_' . $id . '"' .  $checked_str . '> ' . wfMsg( 'sf_createtemplate_fieldislist' ) . "\n";
-
+	
 		if ( $id != "new" ) {
 			$text .= '	&#160;&#160;<input name="del_' . $id . '" type="submit" value="' . wfMsg( 'sf_createtemplate_deletefield' ) . '">' . "\n";
 		}
-
+		
 		$text .= <<<END
 </p>
 </div>
@@ -87,7 +87,7 @@ class SFCreateTemplate extends SpecialPage {
 END;
 		return $text;
 	}
-
+	
 }
 
 function doSpecialCreateTemplate() {
@@ -96,7 +96,7 @@ function doSpecialCreateTemplate() {
 	SFUtils::loadMessages();
 
 	$all_properties = SFCreateTemplate::getAllPropertyNames();
-
+	
 	$template_name = $wgRequest->getVal( 'template_name' );
 	$template_name_error_str = "";
 	$category = $wgRequest->getVal( 'category' );

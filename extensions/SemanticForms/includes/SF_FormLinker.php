@@ -114,12 +114,12 @@ class SFFormLinker {
 		}
 
 		global $sfgContLang;
-
+		
 		// Produce a useful error message if SMW isn't installed.
 		if ( ! function_exists( 'smwfGetStore' ) ) {
 			die( "ERROR: <a href=\"http://semantic-mediawiki.org\">Semantic MediaWiki</a> must be installed for Semantic Forms to run!" );
 		}
-
+			
 		$store = smwfGetStore();
 		$title = Title::makeTitleSafe( $page_namespace, $page_name );
 		$property = SMWPropertyValue::makeProperty( $prop_smw_id );

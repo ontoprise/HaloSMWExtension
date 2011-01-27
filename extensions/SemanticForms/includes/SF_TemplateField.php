@@ -103,19 +103,9 @@ class SFTemplateField {
                 $page_type = $datatypeLabels[$type_constant];
 		return ( $this->field_type == $page_type );
 	}
-	/*op-patch|DH|2009-09-08|Special:CreateTemplate adapted to SMWplus|start*/
-    /*op-patch|DH|2009-09-08|Special:CreateTemplate adapted to SMWplus|doc|http://dmwiki.ontoprise.com:8888/dmwiki/index.php/Special_CreateTemplate_adapted_to_SMWplus*/
-	function createTemplateText( $template_name, $template_fields, $category, $aggregating_property, $aggregating_label, $template_format, $partof_wikisection, $rationale, $headerlabel) {
-		global $wgUser;
-		global $wgContLang;
-		$namespace_labels = $wgContLang->getNamespaces();
 
-		$template_header ="{{Template
-|PAGENAME=".$namespace_labels[NS_TEMPLATE].":".$template_name."
-|rationale=".$rationale."
-|defines category=".$namespace_labels[NS_CATEGORY].":".$category."
-}}";
-		/*op-patch|DH|2009-09-08|Special:CreateTemplate adapted to SMWplus|end*/
+	function createTemplateText( $template_name, $template_fields, $category, $aggregating_property, $aggregating_label, $template_format ) {
+		$template_header = wfMsgForContent( 'sf_template_docu', $template_name );
 		$text = <<<END
 <noinclude>
 $template_header
