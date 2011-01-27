@@ -12,8 +12,6 @@
  */
 if ( !defined( 'MEDIAWIKI' ) ) die();
 
-/*op-patch|DH|2009-09-08|Special:CreateTemplate adapted to SMWplus|start*/
-/*op-patch|DH|2009-09-08|Special:CreateTemplate adapted to SMWplus|doc|http://dmwiki.ontoprise.com:8888/dmwiki/index.php/Special_CreateTemplate_adapted_to_SMWplus*/
 class SFCreateTemplate extends SpecialPage {
 
 	/**
@@ -37,13 +35,13 @@ class SFCreateTemplate extends SpecialPage {
 		$options = new SMWRequestOptions();
 		$options->limit = 10000;
 		$used_properties = smwfGetStore()->getPropertiesSpecial( $options );
-		
+
 		foreach ( $used_properties as $property ) {
 			$all_properties[] = $property[0]->getWikiValue();
 		}
-		
+
 		$unused_properties = smwfGetStore()->getUnusedPropertiesSpecial( $options );
-		
+
 		foreach ( $unused_properties as $property ) {
 			$all_properties[] = $property->getWikiValue();
 		}
@@ -56,32 +54,32 @@ class SFCreateTemplate extends SpecialPage {
 	public static function printPropertiesDropdown( $all_properties, $id, $selected_property ) {
 		$dropdown_str = "<select name=\"semantic_property_$id\">\n";
 		$dropdown_str .= "<option value=\"\"></option>\n";
-		
+
 		foreach ( $all_properties as $prop_name ) {
 			$selected = ( $selected_property == $prop_name ) ? "selected" : "";
 			$dropdown_str .= "<option value=\"$prop_name\" $selected>$prop_name</option>\n";
 		}
-		
+
 		$dropdown_str .= "</select>\n";
-		
+
 		return $dropdown_str;
 	}
 
 	public static function printFieldEntryBox( $id, $f, $all_properties ) {
 		SFUtils::loadMessages();
 		$dropdown_html = SFCreateTemplate::printPropertiesDropdown( $all_properties, $id, $f->semantic_property );
-		
+
 		$text = '	<div class="fieldBox">' . "\n";
 		$text .= '	<p>' . wfMsg( 'sf_createtemplate_fieldname' ) . ' <input size="15" name="name_' . $id . '" value="' . $f->field_name . '">' . "\n";
 		$text .= '	' . wfMsg( 'sf_createtemplate_displaylabel' ) . ' <input size="15" name="label_' . $id . '" value="' . $f->label . '">' . "\n";
 		$text .= '	' . wfMsg( 'sf_createtemplate_semanticproperty' ) . ' ' . $dropdown_html . "</p>\n";
 		$checked_str = ( $f->is_list ) ? " checked" : "";
 		$text .= '	<p><input type="checkbox" name="is_list_' . $id . '"' .  $checked_str . '> ' . wfMsg( 'sf_createtemplate_fieldislist' ) . "\n";
-	
+
 		if ( $id != "new" ) {
 			$text .= '	&#160;&#160;<input name="del_' . $id . '" type="submit" value="' . wfMsg( 'sf_createtemplate_deletefield' ) . '">' . "\n";
 		}
-		
+
 		$text .= <<<END
 </p>
 </div>
@@ -89,7 +87,7 @@ class SFCreateTemplate extends SpecialPage {
 END;
 		return $text;
 	}
-	
+
 }
 
 function doSpecialCreateTemplate() {
@@ -98,7 +96,7 @@ function doSpecialCreateTemplate() {
 	SFUtils::loadMessages();
 
 	$all_properties = SFCreateTemplate::getAllPropertyNames();
-	
+
 	$template_name = $wgRequest->getVal( 'template_name' );
 	$template_name_error_str = "";
 	$category = $wgRequest->getVal( 'category' );
@@ -128,10 +126,6 @@ function doSpecialCreateTemplate() {
 	$aggregation_label = $wgRequest->getVal( 'aggregation_label' );
 	$template_format = $wgRequest->getVal( 'template_format' );
 
-	$partof_wikisection = $wgRequest->getVal('partof');
-	$rationale = $wgRequest->getVal('rationale');
-	$headerlabel = $wgRequest->getVal('headerlabel');
-
 	$text = "";
 	$save_button_text = wfMsg( 'savearticle' );
 	$preview_button_text = wfMsg( 'preview' );
@@ -145,7 +139,7 @@ function doSpecialCreateTemplate() {
 			// redirect to wiki interface
 			$wgOut->setArticleBodyOnly( true );
 			$title = Title::makeTitleSafe( NS_TEMPLATE, $template_name );
-			$full_text = SFTemplateField::createTemplateText( $template_name, $fields, $category, $aggregating_property, $aggregation_label, $template_format, $partof_wikisection, $rationale, $headerlabel);
+			$full_text = SFTemplateField::createTemplateText( $template_name, $fields, $category, $aggregating_property, $aggregation_label, $template_format );
 			$text = SFUtils::printRedirectForm( $title, $full_text, "", $save_page, $preview_page, false, false, false, null, null );
 			$wgOut->addHTML( $text );
 			return;
@@ -157,31 +151,17 @@ function doSpecialCreateTemplate() {
 	$mw_namespace_labels = $wgContLang->getNamespaces();
 	$special_namespace = $mw_namespace_labels[NS_SPECIAL];
 	$text .= '    <input type="hidden" name="title" value="' . $special_namespace . ':CreateTemplate">' . "\n";
-	$text .= '<table border="0">'."\n";
-	$text .= '<tr>'."\n";
-	$text .= '	<td align="right">' . wfMsg('sf_createtemplate_namelabel') . '</td><td> <input id="input_1" tabindex="1" size="50" name="template_name" value="' . $template_name . '"></td><td><font color="red">' . $template_name_error_str . '</font></td>' . "\n";
-	$text .= '</tr>'."\n";
-	$text .= '<tr>'."\n";
-	$text .= '	<td align="right">' . wfMsg('sf_createtemplate_categorylabel') . '</td><td> <input id="input_2" tabindex="2" class="createboxInput wickEnabled" name="category" type="text" value="'.$category.'" size="50" constraints="namespace: 14"  pasteNS="false"/></td><td>(you must reload the page if entered or changed.)</td>' . "\n";
-	$text .= '</tr>'."\n";
-	$text .= '<tr>'."\n";
-	$text .= '	<td align="right">Part of wiki section:</td><td><input id="input_3" tabindex="3" class="createboxInput wickEnabled" name="partof" type="text" value="'.$partof_wikisection.'" size="50" constraints="ask: [[Category:Content section]]"  pasteNS="true"/></td>' . "\n";
-	$text .= '</tr>'."\n";
-	$text .= '</tr>'."\n";
-	$text .= '	<td align="right">Label for the table header:</td><td><input id="input_4" tabindex="4" size="50" name="headerlabel" value="' . $headerlabel . '"></td>' . "\n";
-	$text .= '</tr>'."\n";
-	$text .= '<tr>'."\n";
-	$text .= '	<td align="right">Rationale of this template:</td><td> <textarea id="input_5" tabindex="5" name="rationale" cols="80" rows="3">'.$rationale.'</textarea></td>' . "\n";
-	$text .= '</tr></table>'."\n";
+	$text .= '	<p>' . wfMsg( 'sf_createtemplate_namelabel' ) . ' <input size="25" name="template_name" value="' . $template_name . '"> <font color="red">' . $template_name_error_str . '</font></p>' . "\n";
+	$text .= '	<p>' . wfMsg( 'sf_createtemplate_categorylabel' ) . ' <input size="25" name="category" value="' . $category . '"></p>' . "\n";
 	$text .= "	<fieldset>\n";
 	$text .= '	' . Xml::element( 'legend', null, wfMsg( 'sf_createtemplate_templatefields' ) ) . "\n";
 	$text .= '	' . Xml::element( 'p', null, wfMsg( 'sf_createtemplate_fieldsdesc' ) ) . "\n";
 
 	foreach ( $fields as $i => $field ) {
-		$text .= SFCreateTemplate::printFieldEntryBox( $i + 1, $field, $all_properties, $category );
+		$text .= SFCreateTemplate::printFieldEntryBox( $i + 1, $field, $all_properties );
 	}
 	$new_field = new SFTemplateField();
-	$text .= SFCreateTemplate::printFieldEntryBox( "new", $new_field, $all_properties, $category );
+	$text .= SFCreateTemplate::printFieldEntryBox( "new", $new_field, $all_properties );
 
 	$text .= '	<p><input type="submit" value="' . wfMsg( 'sf_createtemplate_addfield' ) . '"></p>' . "\n";
 	$text .= "	</fieldset>\n";
@@ -211,4 +191,3 @@ END;
 	$wgOut->addExtensionStyle( $sfgScriptPath . "/skins/SemanticForms.css" );
 	$wgOut->addHTML( $text );
 }
-/*op-patch|DH|2009-09-08|Special:CreateTemplate adapted to SMWplus|end*/
