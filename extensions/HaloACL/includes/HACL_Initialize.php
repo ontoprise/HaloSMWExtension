@@ -302,6 +302,32 @@ if ($haclgUseFeaturesForGroupPermissions === true) {
 //    )
 //);
 
+##
+# The array $haclgDynamicGroup holds all rules for dynamic groups. 
+# With these rules the system can create groups automatically if
+# certain users add an article to a certain category.
+# Each rule is an associative array with these properties:
+# user
+#    The current user of the system must match the list of users in this property. 
+#    Users are given by their name (without the namespace User, e.g. 'WikiSysop'). 
+#    Use an array to specify several users e.g. array('U1', 'U2', 'U3'). 
+#    The special values * and # represent anonymous and registered users, 
+#    respectively. 
+# category
+#    The rule can only match, if the article is annotated with this category. 
+#    The name of the category must be given without namespace. 
+# groupTemplate
+#    If the rule matches, then the content of this group template is copied as 
+#    new group for the article. The name of the group template must be fully 
+#    specified with namespace (ACL) and the naming convention for groups (Group). 
+//$haclgDynamicGroup = array(
+//    array(
+//		"user"     => '#',	
+//	  	"category" => "Project",  // dynamic groups are generated for articles with category "Project"
+//	    "groupTemplate" => "ACL:Group/ProjectGroupTemplate", // this is the template for all automatically created groups
+//	    "name" => "ACL:Group/MembersOf{{{articleName}}}",  // Naming scheme for dynamic groups
+//    )
+//);
 
 $wgGroupPermissions['*']['propertyread'] = true;
 $wgGroupPermissions['*']['propertyformedit'] = true;
