@@ -38,16 +38,13 @@ function wfUSPathSearchSetup() {
  * @return unknown
  */
 function wfUSPathSearchAddHeader(& $out) {
-	global $wgScriptPath;
-	$out->addLink(array(
-                    'rel'   => 'stylesheet',
-                    'type'  => 'text/css',
-                    'media' => 'screen, projection',
-                    'href'  => $wgScriptPath . '/extensions/EnhancedRetrieval/skin/pathsearch.css'
-                 )
-    );
-    $out->addScript('<script type="text/javascript" src="'.$wgScriptPath . '/extensions/EnhancedRetrieval/scripts/pathsearch.js"></script>'."\n");
-    $out->addScript('<script type="text/javascript">var US_PATHSEARCH_DIR="'.$wgScriptPath.'/extensions/EnhancedRetrieval/PathSearch";</script>'."\n");
+	global $wgScriptPath, $wgRequest, $wgTitle;
+    $action = $wgRequest->getVal('action');
+    if ($action == 'ajax' || !is_null($wgTitle) && SpecialPage::getTitleFor('Search')->equals($wgTitle)) {
+        $out->addStyle($wgScriptPath . '/extensions/EnhancedRetrieval/skin/pathsearch.css', 'screen, projection');
+        $out->addScript('<script type="text/javascript" src="'.$wgScriptPath . '/extensions/EnhancedRetrieval/scripts/pathsearch.js"></script>'."\n");
+        $out->addScript('<script type="text/javascript">var US_PATHSEARCH_DIR="'.$wgScriptPath.'/extensions/EnhancedRetrieval/PathSearch";</script>'."\n");
+    }
     return true;
 }
 
