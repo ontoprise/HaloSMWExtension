@@ -185,7 +185,7 @@ END;
 	/**
 	 * Includes the necessary Javascript and CSS files for the form
 	 * to display and work correctly
-	 *
+	 * 
 	 * Accepts an optional Parser instance, or uses $wgOut if omitted.
 	 */
 	static function addJavascriptAndCSS( $parser = NULL ) {
@@ -220,7 +220,7 @@ END;
 			else
 				$wgOut->addLink( $link );
 		}
-
+		
 		$scripts = array();
 		if ( !$sfgUseFormEditPage )
 			$scripts[] = "$sfgScriptPath/libs/SF_ajax_form_preview.js";
