@@ -279,12 +279,7 @@ function umefAddHtml2Page(&$out) {
             /*]]>*/</script>
         ');
     }
-    $out->addLink(array(
-        'rel'   => 'stylesheet',
-        'type'  => 'text/css',
-        'media' => 'screen, projection',
-        'href'  => SMW_UME_PATH . '/skins/usermanual_csh.css'
-    ));
+    $out->addStyle(SMW_UME_PATH . '/skins/usermanual_csh.css', 'screen, projection' );
 
     $out->addHTML(umefDivBox().'
         <script type="text/javascript">/*<![CDATA[*/
