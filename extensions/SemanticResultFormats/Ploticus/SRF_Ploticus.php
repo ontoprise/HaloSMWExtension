@@ -383,27 +383,4 @@ class SRFPloticus extends SMWResultPrinter {
 
 		return ( $rtnstr );
 	}
-	
-	function getParameters() {
-	        return array(
-	                array('name' => 'ploticusmode', 'type' => 'enumeration', 'values' => array('preftab', 'script')),
-	                array('name' => 'ploticusparams', 'type' => 'string'),
-                	array('name' => 'imageformat', 'type' => 'enumeration', 'values' => array('png', ' gif', 'jpeg', 'svg', 'svgz', 'swf', 'eps', 'ps', 'drawdump', 'drawdumpa'), 'defaultValue'=>'png'),
-                	array('name' => 'titletext', 'type' => 'string'),
-                	array('name' => 'showcsv', 'type' => 'boolean'), 
-                	array('name' => 'ploticusmode', 'type' => 'string'),
-                	array('name' => 'debug', 'type' => 'boolean'),
-                	array('name' => 'liveupdating', 'type' => 'boolean'),
-                	array('name' => 'updatefrequency', 'type' => 'int'), 
-                	array('name' => 'showtimestamp', 'type' => 'boolean'),
-                	array('name' => 'showimagelink', 'type' => 'boolean'),
-                	array('name' => 'showrefresh', 'type' => 'boolean'),  
-                	array('name' => 'drawdumpoutput', 'type' => 'string'),
-                	array('name' => 'tblwidth', 'type' => 'int'),
-                	array('name' => 'tblheight', 'type' => 'int'),
-                	array('name' => 'width', 'type' => 'int'),
-                	array('name' => 'height', 'type' => 'int')
-        	);      
-	}
-	
 }

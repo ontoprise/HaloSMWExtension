@@ -148,7 +148,6 @@ class SRFTimeline extends SMWResultPrinter {
 							$objectlabel = $object->getLongText( $outputmode, $l );
 						} else {
 							$objectlabel = $object->getShortText( $outputmode, $l );
-							if ($objectlabel == '') continue;
 						}
 						
 						$urlobject =  ( $l !== null );
@@ -316,11 +315,4 @@ class SRFTimeline extends SMWResultPrinter {
 		);
 	}
 	
-	function getScripts() {
-		global $srfgScriptPath;
-		$scripts [] = '<script type="text/javascript" src="' . $srfgScriptPath .  '/Timeline/SRF_timeline.js"></script>' . "\n";
-		$scripts [] = '<script type="text/javascript" src="' . $srfgScriptPath .  '/Timeline/SimileTimeline/timeline-api.js"></script>' . "\n";
-		return $scripts;
-	}
-
 }
