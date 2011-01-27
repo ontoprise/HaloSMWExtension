@@ -63,6 +63,11 @@ class MaintenanceTools {
 			foreach($dependencies as $dep) {
 				list($id, $min, $max, $optional, $message) = $dep;
 
+				if ($optional)  {
+					// ignore optional extensions
+					continue;
+				}
+
 				// check if dependant package exists
 				if (!array_key_exists($id, $localPackages)) {
 					$out[$p->getID()][]= "Extension missing: ".$id;
@@ -203,23 +208,34 @@ class ConsistencyChecker {
 		//
 		// check if AdminSettings.php exists
 		//
-		$this->statusLog[] = $this->out(array("\n","Does AdminSettings.php exist?...", "\n"), $format);
-		$errorFound =!file_exists($this->rootDir."/AdminSettings.php");
-		if ($errorFound) {
-			$this->statusLog[] = $this->out(array("\n","\t","[FAILED]", "AdminSettings.php does not exist", "\n"), $format);
-
-			return true;
+		if( !defined( 'MEDIAWIKI' ) ) {
+			global $mwRootDir;
+			$version = Tools::getMediawikiVersion($mwRootDir);
+			$version = intval(str_replace(".","",$version));
+		} else {
+			global $wgVersion;
+			$version = intval(str_replace(".","",$wgVersion));
 		}
-		$this->statusLog[] = $this->out(array("\t", "done."), $format);
-		if (!$errorFound) {
-			$this->statusLog[] = $this->out(array("\n", "\t[OK]"), $format);
-		}else {
-			if ($format == DF_OUTPUT_FORMAT_HTML)    {
-				// in case of HTML write a link to the SMW-Forum
-				$this->statusLog[] = $this->linkout(array(DF_SMWFORUM_LINK_MISSING_ADMINSETTINGS, "Get help: Missing AdminSettings.php"));
+		
+		// only check for AdminSettings.php if MW version is < 1.16
+		if ($version < 1160) {
+			$this->statusLog[] = $this->out(array("\n","Does AdminSettings.php exist?...", "\n"), $format);
+			$errorFound =!file_exists($this->rootDir."/AdminSettings.php");
+			if ($errorFound) {
+				$this->statusLog[] = $this->out(array("\n","\t","[FAILED]", "AdminSettings.php does not exist", "\n"), $format);
+
+				return true;
+			}
+			$this->statusLog[] = $this->out(array("\t", "done."), $format);
+			if (!$errorFound) {
+				$this->statusLog[] = $this->out(array("\n", "\t[OK]"), $format);
+			}else {
+				if ($format == DF_OUTPUT_FORMAT_HTML)    {
+					// in case of HTML write a link to the SMW-Forum
+					$this->statusLog[] = $this->linkout(array(DF_SMWFORUM_LINK_MISSING_ADMINSETTINGS, "Get help: Missing AdminSettings.php"));
+				}
 			}
 		}
-
 		//
 		// check if LocalSettings.php is not empty
 		//
@@ -292,10 +308,10 @@ class ConsistencyChecker {
 			$this->statusLog[] = $this->out(array("\n","\t","none."), $format);
 			$this->statusLog[] = $this->out(array("\n", "\t[OK]"), $format);
 		} else {
-		 if ($format == DF_OUTPUT_FORMAT_HTML)    {
-		 	// in case of HTML write a link to the SMW-Forum
-		 	$this->statusLog[] = $this->linkout(array(DF_SMWFORUM_LINK_MISSING_NON_EXISTING, "Read here how to resolve this error: remove configuration of a non-existing extension. "));
-		 }
+			if ($format == DF_OUTPUT_FORMAT_HTML)    {
+				// in case of HTML write a link to the SMW-Forum
+				$this->statusLog[] = $this->linkout(array(DF_SMWFORUM_LINK_MISSING_NON_EXISTING, "Read here how to resolve this error: remove configuration of a non-existing extension. "));
+			}
 		}
 
 		//
@@ -384,7 +400,7 @@ class ConsistencyChecker {
 		$errorFound=false;
 		foreach($wgExtensionCredits as $extType) {
 			foreach($extType as $ext) {
-					
+
 				if (array_key_exists('name', $ext)) {
 					$name = $ext['name'];
 					switch($name) {
@@ -555,12 +571,12 @@ class ConsistencyChecker {
 		$lifted = false;
 		foreach($wgExtensionCredits as $extType) {
 			foreach($extType as $ext) {
-					
+
 				if (array_key_exists('name', $ext)) {
 					$name = $ext['name'];
 					list($version) = explode(" ", $ext['version']);
 					$version = str_replace(".","", $version);
-						
+
 					if (stripos($name, "semantic") !== false && stripos($name, "mediawiki") !== false) {
 						$lifted |= $this->liftSMW($version, $format);
 					} else if (stripos($name, "semantic") !== false && stripos($name, "forms") !== false) {

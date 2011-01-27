@@ -485,7 +485,7 @@ function checkWikiContext() {
 
 	// check if AdminSettings.php is available
 	if (!isset($wgDBadminuser) && !isset($wgDBadminpassword)) {
-		fatalError("Please set create AdminSettings.php file. Otherwise rollback mechanism will not work properly.");
+		fatalError("Please set create AdminSettings.php file (on MW < 1.16). On MW >= 1.16 set both variables in LocalSettings.php.");
 	}
 
 }
