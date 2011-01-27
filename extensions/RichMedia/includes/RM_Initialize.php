@@ -359,18 +359,8 @@ function smwRMFormAddHTMLHeader(&$out){
 		$out->addScript('<script type="text/javascript" src="'.$smwgRMScriptPath. '/scripts/richmedia_links.js"></script>');
 
 		#Fancybox css file:
-		$out->addLink(array(
-			'rel'   => 'stylesheet',
-			'type'  => 'text/css',
-			'media' => 'screen, projection',
-			'href'  => $sfgScriptPath . '/skins/jquery.fancybox-1.3.1.css'
-		));
-		$out->addLink(array(
-			'rel'   => 'stylesheet',
-			'type'  => 'text/css',
-			'media' => 'screen, projection',
-			'href'  => $smwgRMScriptPath . '/skins/richmedia.css'
-		));
+        $out->addStyle($sfgScriptPath . '/skins/jquery.fancybox-1.3.1.css', 'screen, projection');
+        $out->addStyle($smwgRMScriptPath . '/skins/richmedia.css', 'screen, projection');
 
 		$rmScriptLoaded = true;
 	}
