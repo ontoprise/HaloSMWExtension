@@ -9,12 +9,6 @@
  * @author Daniel Hansch
  */
 
-// patches included:
-// 1. WYSIWYG parameter in info tag
-//    tag of patch: op-patch|DH|2009-04-22|"WYSIWYG" in info tag
-//    usage: {{{info|WYSIWYG}}} switches on the FCKeditor, if available
-//    doc: op-patch|DH|2009-04-22|"WYSIWYG" in info tag|http://dmwiki.ontoprise.com:8888/dmwiki/index.php/WYSIWYG_in_info_tag
-
 class SFFormPrinter {
 
   var $mSemanticTypeHooks;
@@ -165,13 +159,8 @@ class SFFormPrinter {
     global $sfgTabIndex; // used to represent the current tab index in the form
     global $sfgFieldNum; // used for setting various HTML IDs
     global $sfgAdderButtons;
-    global $wgContLang;
 
     // initialize some variables
-    /*op-patch|KK|2009-11-04|FCKeditor|use separate variable for FCK Options|start*/
-    /*op-patch|KK|2009-11-04|FCKeditor|use separate variable for FCK Options|doc|http://dmwiki.ontoprise.com:8888/dmwiki/index.php/Use_rows_parameter_for_FCK_editor_window_height_in_SF*/
-    $fck_options = array();
-    /*op-patch|KK|2009-11-04|FCKeditor|use separate variable for FCK Options|end*/
     $sfgTabIndex = 1;
     $sfgFieldNum = 1;
     $source_page_matches_this_form = false;
@@ -186,19 +175,6 @@ class SFFormPrinter {
     $new_text = "";
     // flag for placing "<onlyinclude>" tags in form output
     $onlyinclude_free_text = false;
-    /*op-patch|DH|2009-26-08|SF|free text in includeonly tags and rest in noinclude tags|start*/
-    /*op-patch|DH|2009-26-08|SF|free text in includeonly tags and rest in noinclude tags|doc|http://dmwiki.ontoprise.com:8888/dmwiki/index.php/Patch_free_text_in_includeonly_tags*/
-    $includeonly_free_text = false;
-    /*op-patch|DH|2009-26-08|SF|free text in includeonly tags and rest in noinclude tags|end*/
-    
-    /*op-patch|DH|2009-04-22|"WYSIWYG" in info tag|start*/
-    $show_FCKEditor = false;
-    /*op-patch|DH|2009-04-22|"WYSIWYG" in info tag|end*/
-
-    /*op-patch|DH|2009-09-18|SF|include namespace for current user|start*/
-    $namespace_labels = $wgContLang->getNamespaces();
-    $user_namespace = $namespace_labels[NS_USER];
-    /*op-patch|DH|2009-09-18|SF|include namespace for current user|end*/
 
     // if we have existing content and we're not in an active replacement
     // situation, preserve the original content. We do this because we want
@@ -296,7 +272,7 @@ class SFFormPrinter {
       $form_def = $wgParser->parse( $form_def, $this->mPageTitle, $wgParser->mOptions )->getText();
     }
     $wgParser->mStripState = $old_strip_state;
-    
+
     // turn form definition file into an array of sections, one for each
     // template definition (plus the first section)
     $form_def_sections = array();
@@ -343,10 +319,6 @@ class SFFormPrinter {
       $tif = new SFTemplateInForm();
       $start_position = 0;
       $template_text = "";
-      /*op-patch|BL|2009-10-09|CollapsingForms|AddCollapsibleTag|start*/
-      /*op-patch|BL|2009-10-09|CollapsingForms|doc|http://dmwiki.ontoprise.com:8888/dmwiki/index.php/CollapsingForms*/
-      $collapsible = false;
-      /*op-patch|BL|2009-10-09|CollapsingForms|AddCollapsibleTag|end*/
       // the append is there to ensure that the original array doesn't get
       // modified; is it necessary?
       $section = " " . $form_def_sections[$section_num];
@@ -368,17 +340,11 @@ class SFFormPrinter {
           // Also replace periods with underlines, since that's what
           // POST does to strings anyway.
           $query_template_name = str_replace( '.', '_', $query_template_name );
-          /*op-patch|BL|2009-08-28|CollapsingForms|AddForceOpen|start*/
-          $force_open = false;
-          /*op-patch|BL|2009-10-09|CollapsingForms|AddForceOpen|end*/
           // Cycle through the other components.
           for ( $i = 2; $i < count( $tag_components ); $i++ ) {
             $component = $tag_components[$i];
             if ( $component == 'multiple' ) $allow_multiple = true;
             if ( $component == 'strict' ) $strict_parsing = true;
-            /*op-patch|BL|2009-08-28|CollapsingForms|AddCollapsibleTag|start*/
-            if ($component == 'collapsible') $collapsible = true;
-            /*op-patch|BL|2009-08-28|CollapsingForms|AddCollapsibleTag|end*/
             $sub_components = explode( '=', $component, 2 );
             if ( count( $sub_components ) == 2 ) {
               if ( $sub_components[0] == 'label' ) {
@@ -386,58 +352,14 @@ class SFFormPrinter {
               } elseif ( $sub_components[0] == 'add button text' ) {
                 $add_button_text = $sub_components[1];
               }
-              /*op-patch|BL|2009-09-16|CollapsingForms|AddForceopenTag|start*/
-              elseif ( $sub_components[0] == 'forceopen' ) {
-                if ($sub_components[1] && strtolower($sub_components[1] == 'true'))
-                  $force_open = true;
             }
-              /*op-patch|BL|2009-09-16|CollapsingForms|AddForceopenTag|end*/
-          }
           }
           // If this is the first instance, add the label into the form, if
           // there is one.
           if ( ( $old_template_name != $template_name ) && isset( $template_label ) ) {
             $form_text .= "<fieldset>\n";
-            /*op-patch|BL|2009-08-28|CollapsingForms|AddCollapseFunctionality|start*/
-            // Add Javascript, curser style and sfgTabIndex for each legend
-            // content was:
-            // $form_text .= "<legend>$template_label</legend>\n";
-            // }
-            global $smwgRMActFormName, $sfgScriptPath;
-            //only if collapsible
-            if ($collapsible) {
-              #cookie processing
-              $cookie_json = in_array('CollapsingForm', array_keys($_COOKIE)) ? $_COOKIE['CollapsingForm'] : null;
-              if ($cookie_json)
-                $cookie_obj = json_decode($cookie_json,true);
-              if (isset($cookie_obj) && array_key_exists($smwgRMActFormName.'_sec_'.$section_num, $cookie_obj)) {
-                $cookie_open = $cookie_obj[$smwgRMActFormName.'_sec_'.$section_num];
-              }
-              else {
-              	$cookie_open = false;
-              }
-              if ($force_open || $cookie_open) {
-                $section_visibility ='';
-                $img = 'minus';
-              }
-              else {
-                $section_visibility = 'none';
-                $img = 'plus';
-              }
-              $form_text .= "<legend tabindex=\"$sfgTabIndex\" style=\"cursor: pointer;font-weight:bold;\"
-                onKeyDown=\"javascript:if (event.keyCode == 32){ smwCollapsingForm.switchVisibilityWithImg('{$smwgRMActFormName}_sec_{$section_num}');}\"
-                onClick=\"smwCollapsingForm.switchVisibilityWithImg('{$smwgRMActFormName}_sec_{$section_num}');\">
-                <img id=\"{$smwgRMActFormName}_sec_{$section_num}_img\" onmouseout=\"(src='$sfgScriptPath/skins/$img.gif')\"
-                onmouseover=\"(src='$sfgScriptPath/skins/$img-act.gif')\" src=\"$sfgScriptPath/skins/$img.gif\"/>&nbsp;$template_label</legend>\n";
-              $sfgTabIndex++;
-              #This DIV provides the functionality for collapsing forms
-              $form_text .= "<div id=\"{$smwgRMActFormName}_sec_".$section_num."\" style=\"display:".$section_visibility."\">";
-            }
-            else {
             $form_text .= "<legend>$template_label</legend>\n";
           }
-          } // end collabsible
-          /*op-patch|BL|2009-08-28|CollapsingForms|AddCollapseFunctionality|end*/
           $template_text .= "{{" . $tif->template_name;
           $all_fields = $tif->getAllFields();
           // remove template tag
@@ -600,7 +522,7 @@ class SFFormPrinter {
           $instance_num = 0;
         // =====================================================
         // field processing
-        // =====================================================  
+        // =====================================================
         } elseif ( $tag_title == 'field' ) {
           $field_name = trim( $tag_components[1] );
           // cycle through the other components
@@ -785,31 +707,11 @@ class SFFormPrinter {
               $new_text = SFFormUtils::hiddenFieldHTML( 'free_text', '!free_text!' );
             } else {
               if ( ! array_key_exists( 'rows', $field_args ) )
-              /*op-patch|KK|2009-11-04|FCKeditor|use rows parameter for editor window height|start*/
-              /*op-patch|KK|2009-11-04|FCKeditor|use rows parameter for editor window height|doc|http://dmwiki.ontoprise.com:8888/dmwiki/index.php/Use_rows_parameter_for_FCK_editor_window_height_in_SF*/
-                $fck_options['rows'] = 5;
-              else
-                $fck_options['rows'] = $field_args['rows'];
-              /*op-patch|KK|2009-11-04|FCKeditor|use rows parameter for editor window height|end*/
-              if (! array_key_exists('cols', $field_args))
-              /*op-patch|KK|2009-11-04|FCKeditor|use cols parameter for editor window width|start*/
-              /*op-patch|KK|2009-11-04|FCKeditor|use rows parameter for editor window width|doc|http://dmwiki.ontoprise.com:8888/dmwiki/index.php/Use_rows_parameter_for_FCK_editor_window_height_in_SF*/
-                $fck_options['cols'] = 80;
-              else
-                $fck_options['cols'] = $field_args['cols'];
-              /*op-patch|KK|2009-11-04|FCKeditor|use cols parameter for editor window width|end*/
+                $field_args['rows'] = 5;
+              if ( ! array_key_exists( 'cols', $field_args ) )
+                $field_args['cols'] = 80;
               $sfgTabIndex++;
               $sfgFieldNum++;
-              /*op-patch|BL|2009-10-12|RichMedia|HideStandardInputsInUploadWindow|start*/
-              global $smwgEnableRichMedia, $smwgRMHideStandardInputs;
-              if ( $smwgEnableRichMedia && $smwgRMHideStandardInputs) {
-                $sfgFieldNum++;
-                $new_text= '';
-                $free_text_was_included = true;
-                $section = substr_replace($section, $new_text, $brackets_loc, $brackets_end_loc + 3 - $brackets_loc);
-                continue;
-              }
-              /*op-patch|BL|2009-10-12|end*/
               if ( $cur_value == '' ) {
                 $default_value = '!free_text!';
               } else {
@@ -1050,13 +952,10 @@ END;
                 // if the date is hidden, cur_value will already be set
                 // to the default value
                 ( $cur_value == '' || $cur_value == 'current user' ) ) {
-              /*op-patch|DH|2009-09-18|SF|include namespace for current user|start*/
-              if ($input_type == 'text' || $input_type == '' ||
-                  $input_type == 'haloACtext' || $input_type == 'haloACtextarea') {
-                $cur_value_in_template = $user_namespace.":".$wgUser->getName();
+              if ( $input_type == 'text' || $input_type == '' ) {
+                $cur_value_in_template = $wgUser->getName();
                 $cur_value = $cur_value_in_template;
               }
-              /*op-patch|DH|2009-09-18|SF|include namespace for current user|end*/
             }
             $new_text = $this->formFieldHTML( $form_field, $cur_value );
 
@@ -1093,13 +992,9 @@ END;
           $input_name = $tag_components[1];
           $input_label = null;
           $attr = array();
-          
+
           // if it's a query, ignore all standard inputs except run query
-          /*op-patch|BL|2009-10-12|RichMedia|HideStandardInputsInUploadWindow|start*/
-          global $smwgEnableRichMedia, $smwgRMHideStandardInputs;
-          if ( ( $is_query && $input_name != 'run query' ) || ( !$is_query && $input_name == 'run query' ) ||
-               ( $smwgEnableRichMedia && $smwgRMHideStandardInputs ) ) {
-            /*op-patch|BL|2009-10-12|end*/
+          if ( ( $is_query && $input_name != 'run query' ) || ( !$is_query && $input_name == 'run query' ) ) {
             $new_text = "";
             $section = substr_replace( $section, $new_text, $brackets_loc, $brackets_end_loc + 3 - $brackets_loc );
             continue;
@@ -1177,21 +1072,9 @@ END;
               $form_is_partial = true;
               // replacement pages may have minimal matches...
               $source_page_matches_this_form = true;
-            }
-            /*op-patch|DH|2009-26-08|SF|free text in includeonly tags and rest in noinclude tags|start*/
-            /*op-patch|DH|2009-26-08|SF|free text in includeonly tags and rest in noinclude tags|doc|http://dmwiki.ontoprise.com:8888/dmwiki/index.php/Patch_free_text_in_includeonly_tags*/
-            elseif($tag == 'includeonly free text') {
-              $includeonly_free_text = true;
-            }
-            elseif($tag == 'onlyinclude free text') {
+            } elseif ( $tag == 'includeonly free text' || $tag == 'onlyinclude free text' ) {
               $onlyinclude_free_text = true;
             }
-            /*op-patch|DH|2009-26-08|SF|free text in includeonly tags and rest in noinclude tags|end*/
-            /*op-patch|DH|2009-04-22|"WYSIWYG" in info tag|start*/
-            elseif (($tag == 'WYSIWYG') && (strpos($existing_page_content, '__NORICHEDITOR__') === false)) {
-              $show_FCKEditor = true;
-          }
-            /*op-patch|DH|2009-04-22|"WYSIWYG" in info tag|end*/
           }
           $section = substr_replace( $section, '', $brackets_loc, $brackets_end_loc + 3 - $brackets_loc );
         // =====================================================
@@ -1222,15 +1105,15 @@ END;
           // doing a replace
           if ( $existing_page_content && strpos( $existing_page_content, '{{{insertionpoint}}}', 0 ) !== false ) {
             $existing_page_content = preg_replace( '/\{\{\{insertionpoint\}\}\}(\r?\n?)/',
-              preg_replace( '/\}\}/m', '}²',
-                preg_replace( '/\{\{/m', '²{', $template_text ) ) .
+              preg_replace( '/\}\}/m', '}ï¿½',
+                preg_replace( '/\{\{/m', 'ï¿½{', $template_text ) ) .
               "\n{{{insertionpoint}}}",
               $existing_page_content );
           // otherwise, if it's a partial form, we have to add the new
           // text somewhere
           } elseif ( $form_is_partial && $wgRequest->getCheck( 'partial' ) ) {
-            $existing_page_content = preg_replace( '/\}\}/m', '}²',
-              preg_replace( '/\{\{/m', '²{', $template_text ) ) .
+            $existing_page_content = preg_replace( '/\}\}/m', '}ï¿½',
+              preg_replace( '/\{\{/m', 'ï¿½{', $template_text ) ) .
                 "\n{{{insertionpoint}}}\n" . $existing_page_content;
           }
         }
@@ -1273,10 +1156,6 @@ END;
       } else {
         $form_text .= $section;
       }
-      /*op-patch|BL|2009-08-14|CollapsingForms|AddDivForCollapsingForms|start*/
-      if($collapsible)
-        $form_text .= "</div>"; //closing div for collapsing
-      /*op-patch|BL|2009-08-14|end*/
 
     } // end for
 
@@ -1297,7 +1176,7 @@ END;
          $form_text .= SFFormUtils::hiddenFieldHTML( 'partial', 1 );
        } else {
          $free_text = null;
-         $existing_page_content = preg_replace( array( '/²\{/m','/\}²/m' ),
+         $existing_page_content = preg_replace( array( '/ï¿½\{/m','/\}ï¿½/m' ),
            array( '{{','}}' ),
            $existing_page_content );
          $existing_page_content = preg_replace( '/\{\{\{insertionpoint\}\}\}/', '', $existing_page_content );
@@ -1318,17 +1197,6 @@ END;
     } else {
       $free_text = null;
     }
-    /*op-patch|DH|2009-26-08|SF|free text in includeonly tags and rest in noinclude tags|start*/
-    if ( $includeonly_free_text ) {
-     $free_text = str_replace("<noinclude>",'', $free_text);
-     $free_text = str_replace("</noinclude>",'', $free_text);
-     $free_text = str_replace("<includeonly>",'', $free_text);
-     $free_text = str_replace("</includeonly>",'', $free_text);
-     $free_text = trim ($free_text);
-     $data_text = str_replace('!free_text!','</noinclude><includeonly>!free_text!</includeonly><noinclude>', $data_text);
-     $data_text = "<noinclude>".$data_text."</noinclude>";
-    }
-    /*op-patch|DH|2009-26-08|SF|free text in includeonly tags and rest in noinclude tags|end*/
     if ( $onlyinclude_free_text ) {
       // modify free text and data text to insert <onlyinclude> tags
       $free_text = str_replace( "<onlyinclude>", '', $free_text );
@@ -1338,9 +1206,7 @@ END;
     }
     // if the FCKeditor extension is installed, use that for the free text input
     global $wgFCKEditorDir;
-    /*op-patch|DH|2009-04-22|"WYSIWYG" in info tag|start*/
-    if ( $wgFCKEditorDir && strpos( $existing_page_content, '__NORICHEDITOR__' ) === false && $show_FCKEditor ) {
-    /*op-patch|DH|2009-04-22|"WYSIWYG" in info tag|end*/
+    if ( $wgFCKEditorDir && strpos( $existing_page_content, '__NORICHEDITOR__' ) === false ) {
       $showFCKEditor = SFFormUtils::getShowFCKEditor();
       if ( !$form_submitted && ( $showFCKEditor & RTE_VISIBLE ) ) {
         $free_text = SFFormUtils::prepareTextForFCK( $free_text );
@@ -1350,17 +1216,6 @@ END;
     }
     // now that we have it, substitute free text into the form and page
     $escaped_free_text = Sanitizer::safeEncodeAttribute( $free_text );
-    /*op-patch|SR|2009-09-21|magic word __NORICHEDITOR__ was not checked by SF|start*/
-    /*op-patch|SR|2009-09-21|magic word __NORICHEDITOR__ was not checked by SF|doc|http://dmwiki.ontoprise.com:8888/dmwiki/index.php/Magic_word_NORICHEDITOR*/
-    // we wanted the FCK but were not allowed to, add a warning and make textarea readonly
-    if ( $wgFCKEditorDir && strpos( $existing_page_content, '__NORICHEDITOR__' ) !== false) {
-      $editUrl = $this->mPageTitle->getFullURL().'?action=edit';
-      $form_text .= '<div class="warningMessage">'
-                 .wfMsg('sf_fck_NORICHEDITOR', '<a href="'.$editUrl.'">'.$editUrl.'</a>')
-                 ."</div>\n";
-      $form_text = str_replace(' id="free_text" ', ' readonly="readonly" id="free_text" ', $form_text);
-    }
-    /*op-patch|SR|2009-09-21|magic word __NORICHEDITOR__ was not checked by SF|end*/
     $form_text = str_replace( '!free_text!', $escaped_free_text, $form_text );
     $data_text = str_replace( '!free_text!', $free_text, $data_text );
 
@@ -1372,19 +1227,10 @@ END;
 
     // add form bottom, if no custom "standard inputs" have been defined
     if ( !$this->standardInputsIncluded ) {
-      if ( $is_query ) {
-         $form_text .= SFFormUtils::queryFormBottom($form_is_disabled);
-      } else {
-        /*op-patch|BL|2009-06-05|RichMedia|HideStandardInputs|start*/
-        // get the upload form name and do not display standard inputs for that
-        // code was:
-        // $form_text .= SFFormUtils::formBottom($form_is_disabled);
-        global $smwgRMFormByNamespace, $smwgRMHideStandardInputs;
-        if ( $query_template_name != $smwgRMFormByNamespace['RMUpload'] && !$smwgRMHideStandardInputs) {
-          $form_text .= SFFormUtils::formBottom($form_is_disabled);
-        }
-        /*op-patch|BL|2009-06-05|RichMedia|HideStandardInputs|end*/
-      }
+      if ( $is_query )
+        $form_text .= SFFormUtils::queryFormBottom( $form_is_disabled );
+      else
+        $form_text .= SFFormUtils::formBottom( $form_is_disabled );
     }
     $starttime = wfTimestampNow();
     $page_article = new Article( $this->mPageTitle );
@@ -1404,11 +1250,7 @@ END;
     // add Javascript code for form-wide use
     $javascript_text = "";
     if ( $free_text_was_included && $showFCKEditor > 0 ) {
-      /*op-patch|SR|2009-06-04|FCKeditor|use rows parameter for editor window height|start*/
-      /*op-patch|SR|2009-06-04|FCKeditor|use rows parameter for editor window height|doc|http://dmwiki.ontoprise.com:8888/dmwiki/index.php/Use_rows_parameter_for_FCK_editor_window_height_in_SF*/
-      $rowParam = isset( $fck_options['rows'] ) && $fck_options['rows'] > 0 ? $fck_options['rows'] : 5;
-      $javascript_text .= SFFormUtils::mainFCKJavascript( $showFCKEditor, $rowParam );
-      /*op-patch|SR|2009-06-04|FCKeditor|use rows parameter for editor window height|end*/
+      $javascript_text .= SFFormUtils::mainFCKJavascript( $showFCKEditor );
       if ( $showFCKEditor & ( RTE_TOGGLE_LINK | RTE_POPUP ) ) {
         $javascript_text .= SFFormUTils::FCKToggleJavascript();
       }
@@ -1434,7 +1276,7 @@ END;
     if ( $form_submitted ) {
       $javascript_text = '';
     }
-    
+
     return array( $form_text, $javascript_text, $data_text, $new_text, $generated_page_name );
   }
 
