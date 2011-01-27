@@ -105,7 +105,7 @@ END;
 		$sfgTabIndex++;
 		$checked_text = "";
 		$disabled_text = ( $is_disabled ) ? " disabled" : "";
-		// figure out if the checkbox should be checked - 
+		// figure out if the checkbox should be checked -
 		// this code borrowed from /includes/EditPage.php
 		if ( $wgUser->getOption( 'watchdefault' ) ) {
 			# Watch all edits
@@ -218,7 +218,7 @@ END;
 		$text = "		<span class='editHelp'>$cancel</span>\n";
 		return $text;
 	}
-	
+
 	static function runQueryButtonHTML( $is_disabled = false, $label = null, $attr = array() ) {
 		// is_disabled is currently ignored
 		global $sfgTabIndex;
@@ -320,21 +320,15 @@ END;
 		global $wgUser, $wgDefaultUserOptions;
 
 		$showFCKEditor = 0;
-		/*op-patch|SR|2009-10-19|FCKeditor|eliminate some warnings|start*/
-		/*op-patch|SR|2009-10-19|FCKeditor|eliminate some warnings|doc http://dmwiki.ontoprise.com:8888/dmwiki/index.php/Eliminate_warnings_of_empty_settings_variables */
-		$defaultOption = in_array('riched_start_disabled', array_keys($wgDefaultUserOptions)) ? $wgDefaultUserOptions['riched_start_disabled'] : null;
-		if ( !$wgUser->getOption( 'riched_start_disabled', $defaultOption ) ) {
+		if ( !$wgUser->getOption( 'riched_start_disabled', $wgDefaultUserOptions['riched_start_disabled'] ) ) {
 			$showFCKEditor += RTE_VISIBLE;
 		}
-		$defaultOption = in_array('riched_use_popup', array_keys($wgDefaultUserOptions)) ? $wgDefaultUserOptions['riched_use_popup'] : null;
-		if ( $wgUser->getOption( 'riched_use_popup', $defaultOption ) ) {
+		if ( $wgUser->getOption( 'riched_use_popup', $wgDefaultUserOptions['riched_use_popup'] ) ) {
 			$showFCKEditor += RTE_POPUP;
 		}
-		$defaultOption = in_array('riched_use_toggle', array_keys($wgDefaultUserOptions)) ? $wgDefaultUserOptions['riched_use_toggle'] : null;
-		if ( $wgUser->getOption( 'riched_use_toggle', $defaultOption ) ) {
+		if ( $wgUser->getOption( 'riched_use_toggle', $wgDefaultUserOptions['riched_use_toggle'] ) ) {
 			$showFCKEditor += RTE_TOGGLE_LINK;
 		}
-		/*op-patch|SR|2009-10-19|FCKeditor|eliminate some warnings|end*/
 
 		if ( ( !empty( $_SESSION['showMyFCKeditor'] ) ) && ( $wgUser->getOption( 'riched_toggle_remember_state' ) ) )
 		{
@@ -348,32 +342,19 @@ END;
 
 	static function prepareTextForFCK( $text ) {
 		global $wgTitle;
-        /*op-patch|SR|2010-12-06|CKeditor|check for FCK or CK|start*/
-        if (class_exists('FCKeditor')) {
-            $classParser = 'FCKeditorParser';
-            $classParserOptions = 'FCKeditorParserOptions';
-        }
-        else if (class_exists('CKEditor')) {
-            $classParser = 'CKeditorParser';
-            $classParserOptions = 'CKeditorParserOptions';
-        }
-		$options = new $classParserOptions();
+
+		$options = new FCKeditorParserOptions();
 		$options->setTidy( true );
-		$parser = new $classParser();
-        /*op-patch|SR|2010-12-06|CKeditor|check for FCK or CK|end*/
+		$parser = new FCKeditorParser();
 		$parser->setOutputType( OT_HTML );
 		$text = $parser->parse( $text, $wgTitle, $options )->getText();
 		return $text;
 	}
 
-	static function mainFCKJavascript( $showFCKEditor, $rowsHeight= 5 ) {
+	static function mainFCKJavascript( $showFCKEditor ) {
 		global $wgUser, $wgScriptPath, $wgFCKEditorExtDir, $wgFCKEditorDir, $wgFCKEditorToolbarSet, $wgFCKEditorHeight;
 		global $wgHooks, $wgExtensionFunctions;
 
-		/*op-patch|SR|2009-06-04|FCKeditor|use rows parameter for editor window height|start*/
-		/*op-patch|SR|2009-06-04|FCKeditor|use rows parameter for editor window height|doc|http://dmwiki.ontoprise.com:8888/dmwiki/index.php/Use_rows_parameter_for_FCK_editor_window_height_in_SF*/
-		$FCKEditorHeight = ($wgFCKEditorHeight < 300) ? 300 : $wgFCKEditorHeight;
-		/*op-patch|SR|2009-06-04|FCKeditor|use rows parameter for editor window height|end*/
 		$newWinMsg = wfMsg( 'rich_editor_new_window' );
 		$javascript_text = '
 var showFCKEditor = ' . $showFCKEditor . ';
@@ -381,7 +362,7 @@ var popup = false;		//pointer to popup document
 var firstLoad = true;
 var editorMsgOn = "' . wfMsg( 'textrichditor' ) . '";
 var editorMsgOff = "' . wfMsg( 'tog-riched_disable' ) . '";
-var editorLink = "' . ( ( $showFCKEditor & RTE_VISIBLE ) ? wfMsg( 'tog-riched_disable' ): wfMsg( 'textrichditor' ) ) . '";		
+var editorLink = "' . ( ( $showFCKEditor & RTE_VISIBLE ) ? wfMsg( 'tog-riched_disable' ): wfMsg( 'textrichditor' ) ) . '";
 var saveSetting = ' . ( $wgUser->getOption( 'riched_toggle_remember_state' ) ?  1 : 0 ) . ';
 var RTE_VISIBLE = ' . RTE_VISIBLE . ';
 var RTE_TOGGLE_LINK = ' . RTE_TOGGLE_LINK . ';
@@ -405,10 +386,7 @@ var RTE_POPUP = ' . RTE_POPUP . ';
 		if ( substr( $wgFCKEditorDir, -1 ) != '/' ) {
 			$wgFCKEditorDir .= '/';
 		}
-		/*op-patch|SR|2010-12-06|CKeditor|check for FCK or CK|start*/
-        $RichEditor = class_exists('CKEditor') ? 'cke' : 'fck';
-        if ($RichEditor == 'fck') {
-        /*op-patch|SR|2010-12-06|CKeditor|check for FCK or CK|end*/
+
 		$javascript_text .= <<<END
 var oFCKeditor = new FCKeditor( "free_text" );
 
@@ -418,20 +396,9 @@ oFCKeditor.Config["CustomConfigurationsPath"] = "$wgScriptPath/$wgFCKEditorExtDi
 oFCKeditor.Config["EditorAreaCSS"] = "$wgScriptPath/$wgFCKEditorExtDir/css/fckeditor.css" ;
 oFCKeditor.Config["showreferences"] = '$showRef';
 oFCKeditor.Config["showsource"] = '$showSource';
-oFCKeditor.ToolbarSet = "$wgFCKEditorToolbarSet"; 
+oFCKeditor.ToolbarSet = "$wgFCKEditorToolbarSet";
 oFCKeditor.ready = true;
 
-END;
-        } else {
-   		$javascript_text .= <<<END
-var wgCKeditorInstance = null; //CKEDITOR.replace( 'free_text' );
-var wgCKeditorCurrentMode = "wysiwyg";
-CKEDITOR.ready=true;
-
-END;
-
-        }
-        $javascript_text .= <<<END
 //IE hack to call func from popup
 function FCK_sajax(func_name, args, target) {
 	sajax_request_type = 'POST' ;
@@ -441,56 +408,26 @@ function FCK_sajax(func_name, args, target) {
 		}
 	);
 }
-/*op-patch|SR|2009-06-04|FCKeditor|use rows parameter for editor window height|start*/
-// if the rows attribute was defined in the form, use fontsize to calculate the editor window height
-function getfontsize(el) {
-	var x = document.getElementById(el);
- 	if (x.currentStyle) {
-		// IE
-		var y = x.currentStyle['lineheight'];
- 	} else if (window.getComputedStyle) {
-		// FF, Opera
-  		var y = document.defaultView.getComputedStyle(x,null).getPropertyValue('line-height');
- 	}
- 	return y;
-}
-function getWindowHeight4editor() {
-	var fsize = getfontsize('free_text');
-	// if value was not determined, return default val from $wgFCKEditorHeight
-	if (!fsize) return $FCKEditorHeight;
-	if (fsize.indexOf('px') == -1)  // we didn't get pixels
-		// arbitary value, don't hassle with caluclating
-		return $FCKEditorHeight;
-	var px = parseFloat(fsize.replace(/\w{2}$/, ''));
-	// the text in the edit window is slightly larger than the determined value
-	px = px * 1.25;
-	return Math.round (px * $rowsHeight);
-}
-/*op-patch|SR|2009-06-04|FCKeditor|use rows parameter for editor window height|end*/
 
-END;
-        if ($RichEditor == 'fck') {
-        $javascript_text .= <<<END
 function onLoadFCKeditor()
 {
-	if (!(showFCKEditor & RTE_VISIBLE)) 
+	if (!(showFCKEditor & RTE_VISIBLE))
 		showFCKEditor += RTE_VISIBLE;
 	firstLoad = false;
 	realTextarea = document.getElementById('free_text');
 	if ( realTextarea )
 	{
 		// Create the editor instance and replace the textarea.
-		/*op-patch|SR|2009-06-04|FCKeditor|use rows parameter for editor window height|start*/
-		var height = getWindowHeight4editor();
-		// apply caluclations of height from the FCKEditor function itself
-		// Add the height to the offset of the toolbar.
-		height += 50;
-		// Add a small space to be left in the bottom.
-		height += 20 ;
+		var height = $wgFCKEditorHeight;
+		if (height == 0) {
+			// the original onLoadFCKEditor() has a bunch of
+			// browser-based calculations here, but let's just
+			// keep it simple
+			height = 300;
+		}
 		oFCKeditor.Height = height;
-		/*op-patch|SR|2009-06-04|FCKeditor|use rows parameter for editor window height|end*/
 		oFCKeditor.ReplaceTextarea() ;
-		
+
 		FCKeditorInsertTags = function (tagOpen, tagClose, sampleText, oDoc)
 		{
 			var txtarea;
@@ -511,16 +448,16 @@ function onLoadFCKeditor()
 							SRCdoc = window.frames[SRCiframe].oDoc ;
 						else
 							SRCdoc = SRCiframe.contentDocument ;
-							
+
 						var SRCarea = SRCdoc.getElementById ('xEditingArea').firstChild ;
-						
+
 						if (SRCarea)
 							txtarea = SRCarea ;
 						else
 							return false ;
-							
-					} 
-					else 
+
+					}
+					else
 					{
 						return false ;
 					}
@@ -539,7 +476,7 @@ function onLoadFCKeditor()
 
 			var selText, isSample = false ;
 
-			if ( oDoc.selection  && oDoc.selection.createRange ) 
+			if ( oDoc.selection  && oDoc.selection.createRange )
 			{ // IE/Opera
 
 				//save window scroll position
@@ -570,8 +507,8 @@ function onLoadFCKeditor()
 				else if ( oDoc.body )
 					oDoc.body.scrollTop = winScroll ;
 
-			} 
-			else if ( txtarea.selectionStart || txtarea.selectionStart == '0' ) 
+			}
+			else if ( txtarea.selectionStart || txtarea.selectionStart == '0' )
 			{ // Mozilla
 
 				//save textarea scroll position
@@ -581,27 +518,27 @@ function onLoadFCKeditor()
 				var startPos = txtarea.selectionStart ;
 				var endPos = txtarea.selectionEnd ;
 				selText = txtarea.value.substring( startPos, endPos ) ;
-				
+
 				//insert tags
-				if (!selText) 
+				if (!selText)
 				{
 					selText = sampleText ;
 					isSample = true ;
-				} 
+				}
 				else if (selText.charAt(selText.length - 1) == ' ')
 				{ //exclude ending space char
 					selText = selText.substring(0, selText.length - 1) ;
 					tagClose += ' ' ;
 				}
-				txtarea.value = txtarea.value.substring(0, startPos) + tagOpen + selText + tagClose + 
+				txtarea.value = txtarea.value.substring(0, startPos) + tagOpen + selText + tagClose +
 								txtarea.value.substring(endPos, txtarea.value.length) ;
 				//set new selection
-				if (isSample) 
+				if (isSample)
 				{
 					txtarea.selectionStart = startPos + tagOpen.length ;
 					txtarea.selectionEnd = startPos + tagOpen.length + selText.length ;
-				} 
-				else 
+				}
+				else
 				{
 					txtarea.selectionStart = startPos + tagOpen.length + selText.length + tagClose.length ;
 					txtarea.selectionEnd = txtarea.selectionStart;
@@ -620,16 +557,16 @@ function checkSelected()
 	} else if (selText.charAt(selText.length - 1) == ' ') { //exclude ending space char
 		selText = selText.substring(0, selText.length - 1);
 		tagClose += ' '
-	} 
+	}
 }
 function initEditor()
-{	
+{
 	var toolbar = document.getElementById('free_text');
 	//show popup or toogle link
 	if (showFCKEditor & (RTE_POPUP|RTE_TOGGLE_LINK)){
 		var fckTools = document.createElement('div');
 		fckTools.setAttribute('id', 'fckTools');
-		
+
 		var SRCtextarea = document.getElementById( "free_text" ) ;
 		if (showFCKEditor & RTE_VISIBLE) SRCtextarea.style.display = "none";
 	}
@@ -669,15 +606,11 @@ function initEditor()
 addOnloadHook( initEditor );
 
 END;
-        } else { // ckeditor
-            $javascript_text .= CKeditor_MediaWiki::InitializeScripts('free_text', $newWinMsg);
-        }
 		return $javascript_text;
 	}
 
 	static function FCKToggleJavascript() {
 		// add toggle link and handler
-        if ( class_exists('FCKeditor') ) {
 		$javascript_text = <<<END
 
 function ToggleFCKEditor(mode, objId)
@@ -693,7 +626,7 @@ function ToggleFCKEditor(mode, objId)
 		FCKeditor_OpenPopup('oFCKeditor',objId);
 		return true;
 	}
-	
+
 	var oToggleLink = document.getElementById('toggle_'+ objId );
 	var oPopupLink = document.getElementById('popup_'+ objId );
 
@@ -726,7 +659,7 @@ function ToggleFCKEditor(mode, objId)
 		});
 		return true;
 	}
-	
+
 	if (!oFCKeditor.ready) return false;		//sajax_do_call in action
 	if (!FCKeditorAPI) return false;			//not loaded yet
 	var oEditorIns = FCKeditorAPI.GetInstance( objId );
@@ -783,9 +716,6 @@ function ToggleFCKEditor(mode, objId)
 }
 
 END;
-        } else { // ckeditor
-            $javascript_text = CKeditor_MediaWiki::ToggleScript();
-        }
 		return $javascript_text;
 	}
 
