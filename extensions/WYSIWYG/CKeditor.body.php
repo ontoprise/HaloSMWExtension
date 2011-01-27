@@ -146,6 +146,62 @@ class CKeditor_MediaWiki {
 		return true;
 	}
 
+    // we need to move our hook onBeforePageDisplay at the end of the list so that
+    // style sheets are already inserted into the out object.
+    public static function onOutputPageParserOutput( &$out, $parseroutput ) {
+        global $wgHooks;
+        $noHooks = count($wgHooks['BeforePageDisplay']);
+        if ($wgHooks['BeforePageDisplay'][$noHooks - 1] != 'CKeditor_MediaWiki::onBeforePageDisplay') {
+            $BeforePageDisplay = array();
+            for ( $i = 0; $i < $noHooks; $i++ ) {
+                if ($wgHooks['BeforePageDisplay'][$i] == 'CKeditor_MediaWiki::onBeforePageDisplay')
+                    continue;
+                $BeforePageDisplay[] = $wgHooks['BeforePageDisplay'][$i];
+            }
+            $wgHooks['BeforePageDisplay'] = $BeforePageDisplay;
+            $wgHooks['BeforePageDisplay'][] = 'CKeditor_MediaWiki::onBeforePageDisplay';
+            return true;
+        }
+        return true;
+    }
+
+    // take content of css files and put this as inline text into the page, instead
+    // of using the link elements to fetch css files separate from the server.
+    // The latter causes IE to hang when more than 31 style sheets are processed this way.
+    public static function onBeforePageDisplay( &$out, &$text ) {
+        global $wgRequest, $wgScriptPath;
+        //var_dump($out->styles);
+        $action = $wgRequest->getText( 'action' );
+        if (! in_array($action, array('edit', 'submit'))) return $out;
+        foreach ( $out->styles as $key => $val ) {
+            $inlineStyles = array();
+            if (count($out->styles[$key]) > 0) {
+                if (isset($out->styles[$key]['condition']) ||
+                    isset($out->styles[$key]['dir']) ||
+                    strpos($key, '?') !== false ||
+                    strpos($key, 'jquery.fancybox') !== false) continue;
+                $count = 1;
+                $cssFile = dirname(__FILE__) . '/../../' . str_replace($wgScriptPath, '', $key, $count);
+                $cssFile = str_replace('//', '/', $cssFile);
+                if (isset($out->styles[$key]['media']) &&
+                    file_exists($cssFile)) {
+                    $cssCont = file_get_contents($cssFile);
+                    if ($cssCont !== false) {
+                        if (! isset($inlineStyles[$out->styles[$key]['media']]))
+                            $inlineStyles[$out->styles[$key]['media']] = '';
+                        $inlineStyles[$out->styles[$key]['media']] .= $cssCont."\n";
+                        unset($out->styles[$key]);
+                    }
+                }
+            }
+            foreach($inlineStyles as $media => $css ) {
+                $out->addInlineStyle( $css );
+            }
+        }
+        //var_dump( $out->styles );
+        return $out;
+    }
+
 	public function onCustomEditor( $article, $user ) {
 		global $wgRequest, $mediaWiki;
 

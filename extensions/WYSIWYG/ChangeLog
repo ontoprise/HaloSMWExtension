@@ -14,6 +14,8 @@ VERSION 1.4.x
       IE 8 page error (transformation into wikitext didn't work in IE 8)
     * Fix bug http://smwforum.ontoprise.com/smwbugs/show_bug.cgi?id=13507
       Parse error leads to empty wiki page
+    * Fix bug http://smwforum.ontoprise.com/smwbugs/show_bug.cgi?id=13511
+      Query Interface (and other tools) do not open from Wysiwyg in IE8
     * Fix bug http://smwforum.ontoprise.com/smwbugs/show_bug.cgi?id=13523
       Reopening a query in QI from Wysiwyg shows an empty query
     * Fix bug http://smwforum.ontoprise.com/smwbugs/show_bug.cgi?id=13540
