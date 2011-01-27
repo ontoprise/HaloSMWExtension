@@ -185,7 +185,7 @@ END;
 	/**
 	 * Includes the necessary Javascript and CSS files for the form
 	 * to display and work correctly
-	 * 
+	 *
 	 * Accepts an optional Parser instance, or uses $wgOut if omitted.
 	 */
 	static function addJavascriptAndCSS( $parser = NULL ) {
@@ -220,7 +220,7 @@ END;
 			else
 				$wgOut->addLink( $link );
 		}
-		
+
 		$scripts = array();
 		if ( !$sfgUseFormEditPage )
 			$scripts[] = "$sfgScriptPath/libs/SF_ajax_form_preview.js";
@@ -245,11 +245,7 @@ END;
 		$scripts[] = "$sfgScriptPath/libs/SF_autogrow.js";
 
 		if ( $wgFCKEditorDir )
-            /*op-patch|SR|2010-12-06|CKeditor|check for FCK or CK|start*/
-            $scripts[] = class_exists('CKEditor')
-                ? "$wgScriptPath/$wgFCKEditorDir/ckeditor.js"
-                : "$wgScriptPath/$wgFCKEditorDir/fckeditor.js";
-            /*op-patch|SR|2010-12-06|CKeditor|check for FCK or CK|end*/
+			$scripts[] = "$wgScriptPath/$wgFCKEditorDir/fckeditor.js";
 		$scripts[] = "$sfgScriptPath/libs/SemanticForms.js";
 
 		global $wgOut;
