@@ -8,11 +8,6 @@
  * @author Yaron Koren
  */
 
-// patches included:
-// 1. "edit with form"-tab for Categories. DH Apr 22 09
-//    tag of patch: op-patch|DH|2009-04-22|"edit with form"-tab for Categories
-//    doc: op-patch|DH|2009-04-22|"edit with form"-tab for Categories|doc|
-
 if ( !defined( 'MEDIAWIKI' ) ) die();
 
 class SFFormLinker {
@@ -119,12 +114,12 @@ class SFFormLinker {
 		}
 
 		global $sfgContLang;
-		
+
 		// Produce a useful error message if SMW isn't installed.
 		if ( ! function_exists( 'smwfGetStore' ) ) {
 			die( "ERROR: <a href=\"http://semantic-mediawiki.org\">Semantic MediaWiki</a> must be installed for Semantic Forms to run!" );
 		}
-			
+
 		$store = smwfGetStore();
 		$title = Title::makeTitleSafe( $page_namespace, $page_name );
 		$property = SMWPropertyValue::makeProperty( $prop_smw_id );
@@ -317,10 +312,7 @@ class SFFormLinker {
 		// If this is not a category page, look for a default form
 		// for its parent category or categories.
 		$namespace = $title->getNamespace();
-		/*op-patch|DH|2009-04-22|"edit with form"-tab for Categories|start*/
-		//if (NS_CATEGORY !== $namespace) {
-		/*op-patch|DH|2009-04-22|"edit with form"-tab for Categories|end*/
-		
+		if ( NS_CATEGORY !== $namespace ) {
 			$default_forms = array();
 			$categories = SFUtils::getCategoriesForPage( $title );
 			foreach ( $categories as $category ) {
@@ -329,10 +321,7 @@ class SFFormLinker {
 			if ( count( $default_forms ) > 0 ) {
 				return $default_forms;
 			}
-		/*op-patch|DH|2009-04-22|"edit with form"-tab for Categories|start*/
-		//}
-		/*op-patch|DH|2009-04-22|"edit with form"-tab for Categories|end*/
-			
+		}
 		// If we're still here, just return the default form for the
 		// namespace, which may well be null.
 		if ( NS_MAIN === $namespace ) {
