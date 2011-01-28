@@ -42,6 +42,7 @@
 				<include name="README" />
 				<include name="patch.txt" />
 				<include name="deploy.xml" />
+				<include name="SemanticForms.php" />
 			</fileset>
 			<fileset dir="../../../patches/">
 				<include name="patch.php" />
