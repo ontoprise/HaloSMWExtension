@@ -47,6 +47,7 @@ $mwrootDir = realpath($mwrootDir."/../../../");
 
 require_once('DF_Tools.php');
 require_once('DF_Installer.php');
+require_once($mwrootDir.'/deployment/io/DF_Log.php');
 
 //Load Settings
 if(file_exists($rootDir.'/settings.php'))
@@ -182,7 +183,7 @@ for( $arg = reset( $args ); $arg !== false; $arg = next( $args ) ) {
 	$params[] = $arg;
 }
 
-
+$logger = Logger::getInstance();
 $installer = Installer::getInstance($mwrootDir, $dfgForce);
 $rollback = Rollback::getInstance($mwrootDir);
 
@@ -214,10 +215,13 @@ if ($dfgRestore) {
 			} while(!(is_int($num) && $num < $i && $num > 0));
 			$dfgRestorePoint = basename($restorePoints[$num-1]);
 		}
+		$logger->info("Start restore operation on '$dfgRestorePoint'");
 		$success = $rollback->restore($dfgRestorePoint);
 		if (!$success) {
+			$logger->error("Could not restore '$dfgRestorePoint'");
 			print "\nCould not restore '$dfgRestorePoint'. Does it exist?\n";
 		}
+		$logger->info("End restore operation");
 		die(DF_TERMINATION_WITH_FINALIZE);
 	} else {
 		die(DF_TERMINATION_WITHOUT_FINALIZE);
@@ -242,7 +246,9 @@ if ($dfgRestoreList) {
 
 // Global update (ie. updates all packages to the latest possible version)
 if ($dfgGlobalUpdate) {
+	$logger->info("Start global update");
 	handleGlobalUpdate($dfgCheckDep);
+	$logger->info("End global update");
 	die($dfgCheckDep === true  ? DF_TERMINATION_WITHOUT_FINALIZE : DF_TERMINATION_WITH_FINALIZE);
 }
 
@@ -253,7 +259,9 @@ if ($dfgListPackages) {
 }
 
 if ($dfgInstallPackages) {
+	$logger->info("Start initializing packages");
 	$installer->initializePackages();
+	$logger->info("End initializing packages");
 	die(DF_TERMINATION_WITHOUT_FINALIZE);  // 2 is normal termination but no further action
 } else {
 	// check for non-initialized extensions
@@ -271,14 +279,20 @@ foreach($packageToInstall as $toInstall) {
 	$packageID = $parts[0];
 	$version = count($parts) > 1 ? $parts[1] : NULL;
 	try {
+		$logger->info("Start install package '$packageID'".(is_null($version) ? "" : "-$version"));
 		handleInstallOrUpdate($packageID, $version);
+		$logger->info("End install package '$packageID'".(is_null($version) ? "" : "-$version"));
 	} catch(InstallationError $e) {
+		$logger->fatal($e);
 		fatalError($e);
 	} catch(HttpError $e) {
+		$logger->fatal($e);
 		fatalError($e);
 	} catch(RepositoryError $e) {
+		$logger->fatal($e);
 		fatalError($e);
 	} catch(RollbackInstallation $e) {
+		$logger->fatal($e);
 		fatalError("Installation failed! You can try to rollback: smwadmin -r");
 	}
 
@@ -303,15 +317,21 @@ foreach($packageToDeinstall as $toDeInstall) {
 
 			// include commandLine.inc to be in maintenance mode
 			checkWikiContext();
+			$logger->info("Start un-install package '$packageID'".(is_null($version) ? "" : "-$version"));
 			$installer->deinitializePackages($dd);
+			$logger->info("End un-install package '$packageID'".(is_null($version) ? "" : "-$version"));
 		}
 	} catch(InstallationError $e) {
+		$logger->fatal($e);
 		fatalError($e);
 	} catch(HttpError $e) {
+		$logger->fatal($e);
 		fatalError($e);
 	} catch(RollbackInstallation $e) {
-		// currently not supported
+		$logger->fatal($e);
+		fatalError("Installation failed! You can try to rollback: smwadmin -r");
 	}catch(RepositoryError $e) {
+		$logger->fatal($e);
 		fatalError($e);
 	}
 
@@ -324,14 +344,20 @@ foreach($packageToUpdate as $toUpdate) {
 	$packageID = $parts[0];
 	$version = count($parts) > 1 ? $parts[1] : NULL;
 	try {
+		$logger->info("Start update package '$packageID'".(is_null($version) ? "" : "-$version"));
 		handleInstallOrUpdate($packageID, $version);
+		$logger->info("End update package '$packageID'".(is_null($version) ? "" : "-$version"));
 	} catch(InstallationError $e) {
+		$logger->fatal($e);
 		fatalError($e);
 	} catch(HttpError $e) {
+		$logger->fatal($e);
 		fatalError($e);
 	} catch(RollbackInstallation $e) {
+		$logger->fatal($e);
 		fatalError("Installation failed! You can try to rollback: smwadmin -r");
 	} catch(RepositoryError $e) {
+		$logger->fatal($e);
 		fatalError($e);
 	}
 

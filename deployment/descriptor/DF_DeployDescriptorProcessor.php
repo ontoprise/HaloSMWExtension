@@ -40,6 +40,7 @@ class DeployDescriptionProcessor {
 	// error messages which occur during processing
 	private $errorMessages;
 
+	private $logger;
 
 	/**
 	 * Creates new DeployDescriptorProcessor.
@@ -52,6 +53,7 @@ class DeployDescriptionProcessor {
 		$this->dd_parser = $dd_parser;
 		$this->errorMessages = array();
 		$this->ls_loc = $ls_loc;
+		$this->logger = Logger::getInstance();
 		if (file_exists($ls_loc)) {
 			$this->localSettingsContent = file_get_contents($ls_loc);
 			// strip php endtag (if existing)
@@ -101,6 +103,7 @@ class DeployDescriptionProcessor {
 		}
 		$this->localSettingsContent = $prefix . $startTag . $insertions . $endTag . $suffix;
 
+		$this->logger->info("Added to LocalSettings.php: $startTag . $insertions . $endTag");
 		if (!$dryRun) $this->writeLocalSettingsFile($this->localSettingsContent);
 		return $this->localSettingsContent;
 	}
@@ -115,11 +118,13 @@ class DeployDescriptionProcessor {
 		$fragment = ConfigElement::getExtensionFragment($this->dd_parser->getID(), $this->localSettingsContent);
 
 		if (is_null($fragment)) {
+			$this->logger->error("Could not find configuration for ".$this->dd_parser->getID());
 			$this->errorMessages[] = "Could not find configuration for ".$this->dd_parser->getID();
 			echo "\n\tCould not find configuration for ".$this->dd_parser->getID();
 			echo "\n\tAbort changing LocalSettings.php";
 			return $this->localSettingsContent;
 		}
+		$this->logger->info("Remove from LocalSettings.php: $fragment");
 		$ls = str_replace($fragment, "", $this->localSettingsContent);
 		$ls = Tools::removeTrailingWhitespaces($ls);
 		$this->writeLocalSettingsFile($ls);
@@ -143,11 +148,13 @@ class DeployDescriptionProcessor {
 				print "\n\tWARNING: setup script at '$rootDir/$script' does not exist";
 				continue;
 			}
+			$this->logger->info("Run script: $script");
 			print "\n[Run script: $script";
 			exec("php ".$rootDir."/".$script." ".$setup['params'], $out, $ret);
 			print "done.]";
 			foreach($out as $line) print "\n".$line;
 			if ($ret != 0) {
+				$this->logger->error("Script: '$script' failed.");
 				$this->errorMessages[] = "Script ".$rootDir."/".$script." failed!";
 				print "\n\tScript ".$rootDir."/".$script." failed!";
 				throw new RollbackInstallation();
@@ -198,11 +205,11 @@ class DeployDescriptionProcessor {
 		$localPackages = PackageRepository::getLocalPackages($rootDir.'/extensions');
 
 		foreach($this->dd_parser->getPatches($localPackages) as $patch) {
-            
+
 			$instDir = trim(self::makeUnixPath($this->dd_parser->getInstallationDirectory()));
 			if (substr($instDir, -1) != '/') $instDir .= "/";
 			$patch = $instDir.self::makeUnixPath($patch);
-            if (in_array($patch, $patchesToSkip)) continue;
+			if (in_array($patch, $patchesToSkip)) continue;
 			$patchFailed = false;
 			if (!file_exists($rootDir."/".$patch)) {
 				$this->errorMessages[] = "WARNING: patch at '$rootDir/$patch' does not exist";
@@ -232,7 +239,11 @@ class DeployDescriptionProcessor {
 
 				case 'y': // apply the patches
 			 	print "\n[Apply patch...";
+			 	$this->logger->info("Apply patch: $patch");
 			 	exec("php ".$rootDir."/deployment/tools/patch.php -p ".$rootDir."/".$patch." -d ".$rootDir." --onlypatch", $out, $ret);
+			 	if ($ret !== 0) {
+			 		$this->logger->warn("Patch failed: '$patch'. Output: ".Tools::arraytostring($out));
+			 	}
 			 	print "done.]";
 			 	break;
 				case 'r': throw new RollbackInstallation();
@@ -275,16 +286,23 @@ class DeployDescriptionProcessor {
 				}
 			}
 			if ($patchFailed) print "\n\tWARNING: Some patches can not be removed! Reject files are created.";
+			$this->logger->info("Unapply patch: $patch");
 			print "\n\t[Remove patch $patch...";
-			exec("php ".$rootDir."/deployment/tools/patch.php -r -p ".$rootDir."/".$patch." -d ".$rootDir);
+			exec("php ".$rootDir."/deployment/tools/patch.php -r -p ".$rootDir."/".$patch." -d ".$rootDir, $out, $ret);
+			if ($ret !== 0) {
+				$this->logger->warn("Patch failed: '$patch'. Output: ".Tools::arraytostring($out));
+			}
 			print "done.]";
+			
+			// clear patch.php output
+            $out = array();
 		}
 	}
-    
+
 	/**
 	 * Checks if patches are already applied. Returns a list of patches of this deployable
 	 * already applied.
-	 * 
+	 *
 	 * @param (out) array & $alreadyApplied List of patch files (paths relative to MW folder).
 	 */
 	function checkIfPatchesAlreadyApplied(& $alreadyApplied) {

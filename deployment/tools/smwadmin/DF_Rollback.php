@@ -21,7 +21,7 @@
  * @ingroup DFInstaller
  *
  * Restore tool. Creates and restores wiki installations (aka 'restore points).
- * Can handle several restore points. 
+ * Can handle several restore points.
  *
  * @author: Kai K�hn / ontoprise / 2009
  *
@@ -52,11 +52,11 @@ class Rollback {
 
 	}
 
-    /**
-     * Returns the absolute paths of all restore points.
-     * 
-     * @return array of string
-     */
+	/**
+	 * Returns the absolute paths of all restore points.
+	 *
+	 * @return array of string
+	 */
 	public function getAllRestorePoints() {
 		if (!file_exists($this->tmpDir."/rollback_data/")) return array();
 		$dirs = Tools::get_all_dirs($this->tmpDir."/rollback_data/");
@@ -67,7 +67,7 @@ class Rollback {
 	 * Copy complete code base of installation including LocalSettings.php
 	 * (but excluding deployment folder)
 	 *
-	 * @boolean True if no error occured 
+	 * @boolean True if no error occured
 	 */
 	public function saveInstallation() {
 
@@ -75,12 +75,18 @@ class Rollback {
 		static $savedInstallation = false;
 		if ($savedInstallation) return true;
 
-		if (!$this->acquireNewRestorePoint($name)) return;
+		if (!$this->acquireNewRestorePoint($name)) return true;
+
+		$logger = Logger::getInstance();
+		$logger->info("Save installation to ".$this->tmpDir."/rollback_data/$name");
 		print "\n[Save installation...";
 		$success = Tools::mkpath($this->tmpDir."/rollback_data/$name");
 		$success = $success && Tools::copy_dir($this->rootDir, $this->tmpDir."/rollback_data/$name", array($this->rootDir."/deployment"));
 		print "done.]";
 		$savedInstallation = true;
+		if (!$success) {
+			$logger->error("Could not copy the MW installation.");
+		}
 		return $success;
 	}
 
@@ -101,18 +107,24 @@ class Rollback {
 		}
 
 
-		if (!$this->acquireNewRestorePoint($name)) return;
+		if (!$this->acquireNewRestorePoint($name)) return true;
 		// make sure to save only once
 		static $savedDataBase = false;
 		if ($savedDataBase) return true;
+
+		$logger = Logger::getInstance();
+		$logger->info("Save database to ".$this->tmpDir."/$name/dump.sql");
 
 		$wgDBname = $this->getVariableValue("LocalSettings.php", "wgDBname");
 		print "\n[Saving database...";
 		//print "\nmysqldump -u $wgDBadminuser --password=$wgDBadminpassword $wgDBname > ".$this->tmpDir."/rollback_data/$name/dump.sql";
 		exec("mysqldump -u $wgDBadminuser --password=$wgDBadminpassword $wgDBname > ".$this->tmpDir."/$name/dump.sql", $out, $ret);
-		
+
 		$savedDataBase = true;
 
+		if ($ret !== 0) {
+			$logger->error("Could not save the database.");
+		}
 		return $ret == 0;
 	}
 
@@ -135,9 +147,9 @@ class Rollback {
 	 * Acquires a new restore point. The user has to enter a name and to confirm to
 	 * overwrite an exisiting restore point. Can be called several
 	 * times but will always return the result of the first call (holds
-	 * also for all out parameters. All subsequent calls will have no 
+	 * also for all out parameters. All subsequent calls will have no
 	 * further effects.
-	 * 
+	 *
 	 * Note: REQUIRES user interaction
 	 *
 	 * @param string (out) name of the restore point
@@ -178,7 +190,7 @@ class Rollback {
 	 * If it exists it asks for permission to overwrite.
 	 *
 	 * Note: REQUIRES user interaction
-	 * 
+	 *
 	 * @return string Name of restore point directory.
 	 */
 	protected function getRestorePointName() {
@@ -206,12 +218,12 @@ class Rollback {
 		} while(!$done);
 		return $name;
 	}
-    
+
 	/**
 	 * Asks for confirmation.
-	 * 
+	 *
 	 * Note: REQUIRES user interaction
-	 * 
+	 *
 	 * @param $msg
 	 */
 	protected function askForConfirmation($msg) {
@@ -224,11 +236,19 @@ class Rollback {
 	 * @param string Name of restore point.
 	 */
 	private function restoreInstallation($name) {
+		$logger = Logger::getInstance();
+		
+		$logger->info("Remove current installation");
 		print "\n[Remove current installation...";
 		Tools::remove_dir($this->rootDir, array(Tools::normalizePath($this->rootDir."/deployment")));
 		print "done.]";
+		
+		$logger->info("Restore old installation");
 		print "\n[Restore old installation...";
-		Tools::copy_dir($this->tmpDir."/rollback_data/$name", $this->rootDir);
+		$success = Tools::copy_dir($this->tmpDir."/rollback_data/$name", $this->rootDir);
+		if (!$success) {
+			$logger->error("Restore old installation faild. Could not copy from ".$this->tmpDir."/rollback_data/$name");
+		}
 		print "done.]";
 	}
 
@@ -251,9 +271,13 @@ class Rollback {
 		if (!file_exists($this->tmpDir."/$name/dump.sql")) return false; // nothing to restore
 		if (!$this->askForConfirmation("Restore database? (y/n) ")) return false;
 		print "\n[Restore database...";
-
+		$logger = Logger::getInstance();
+		$logger->info("Restore database");
 		exec("mysql -u $wgDBadminuser --password=$wgDBadminpassword --database=$wgDBname < ".$this->tmpDir."/$name/dump.sql", $out, $ret);
-		if ($ret != 0) print "\nWarning: Could not restore database."; else print "done.]";
+		if ($ret != 0){
+			$logger->error("Could not restore database.");
+			print "\nError: Could not restore database.";
+		}  else print "done.]";
 		return ($ret == 0);
 	}
 

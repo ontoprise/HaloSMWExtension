@@ -34,12 +34,13 @@ class DeployWikiImporter extends WikiImporter {
 
 	var $mode;
 	var $callback;
-
+    var $logger;
+    
 	function __construct($source, $mode, $callback) {
 		parent::__construct($source);
 		$this->mode = $mode;
 		$this->callback = $callback;
-
+        $this->logger = Logger::getInstance();
 	}
 
 	function in_page( $parser, $name, $attribs ) {
@@ -188,10 +189,13 @@ class DeployWikiRevision extends WikiRevision {
 
 	// callback function for user interaction
 	var $callback;
+	
+	var $logger;
 
 	public function __construct($mode = 0, $callback = NULL) {
 		$this->mode = $mode;
 		$this->callback = $callback;
+		$this->logger = Logger::getInstance();
 	}
 
 	public function setVersion($version) {
@@ -235,6 +239,7 @@ class DeployWikiRevision extends WikiRevision {
 			if ($this->mode == DEPLOYWIKIREVISION_INFO) {
 				return false;
 			} else {
+				$this->logger-info("Imported page: ".$this->title->getPrefixedText());
 				print "\n\t[Imported page] ".$this->title->getPrefixedText();
 				return parent::importOldRevision();
 			}
@@ -332,6 +337,7 @@ class DeployWikiRevision extends WikiRevision {
 			);
 			if( $prior ) {
 				// FIXME: this could fail slightly for multiple matches :P
+				$this->logger-info("Skipping existing revision: ".$this->title->getPrefixedText());
 				print "\n\t[Skipping existing revision] ".$this->title->getPrefixedText();
 				wfDebug( __METHOD__ . ": skipping existing revision for [[" .
 				$this->title->getPrefixedText() . "]], timestamp " . $this->timestamp . "\n" );
@@ -377,6 +383,7 @@ class DeployWikiRevision extends WikiRevision {
 			$revId );
 		}
 		$GLOBALS['wgTitle'] = $tempTitle;
+		$this->logger-info("Imported new revision of page: ".$this->title->getPrefixedText());
 		print "\n\t[Imported new revision of page] ".$this->title->getPrefixedText();
 		return true;
 	}

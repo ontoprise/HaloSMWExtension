@@ -35,7 +35,8 @@ class ResourceInstaller {
 	static $instance; // singleton
 
 	var $rootDir; // MW installation dir
-
+    var $logger;
+    
 	public static function getInstance($rootDir) {
 		if (is_null(self::$instance)) {
 			self::$instance = new ResourceInstaller($rootDir);
@@ -45,6 +46,7 @@ class ResourceInstaller {
 
 	public function __construct($rootDir) {
 		$this->rootDir = $rootDir;
+		$this->logger = Logger::getInstance();
 	}
 
 	/**
@@ -62,6 +64,7 @@ class ResourceInstaller {
 		// remove old pages
 		if (!is_null($fromVersion) && $fromVersion != '') {
             // remove old pages
+            $this->logger->info("Remove unused pages from ".$dd->getID());
             print "\n[Remove unused pages...";
             $query = SMWQueryProcessor::createQuery("[[Ontology version::$fromVersion]][[Part of bundle::".$dd->getID()."]]", array());
             $res = smwfGetStore()->getQueryResult($query);
@@ -75,6 +78,7 @@ class ResourceInstaller {
                     $id = $title->getArticleID( GAID_FOR_UPDATE );
                     if( wfRunHooks('ArticleDelete', array(&$a, &$wgUser, &$reason, &$error)) ) {
                         if( $a->doDeleteArticle( $reason ) ) {
+                        	$this->logger->info("Remove old page from $fromVersion: ".$title->getPrefixedText());
                             print "\n\t[Remove old page from $fromVersion: ".$title->getPrefixedText();
                             wfRunHooks('ArticleDeleteComplete', array(&$a, &$wgUser, $reason, $id));
                             print "done.]";
@@ -92,9 +96,11 @@ class ResourceInstaller {
         $wikidumps = $dd->getWikidumps();
         
 		foreach($wikidumps as $file) {
+			$this->logger->info("Import ontology: $file");
 			print "\n[Import ontology: $file";
 			$dumpPath = $this->rootDir."/". $dd->getInstallationDirectory()."/".$file;
 			if (!file_exists($dumpPath)) {
+				$this->logger->warn("dump file '".$dumpPath."' does not exist.");
 				print "\n\t[WARNING]: dump file '".$dumpPath."' does not exist.";
 				continue;
 			}
@@ -148,6 +154,7 @@ class ResourceInstaller {
 			$id = $title->getArticleID( GAID_FOR_UPDATE );
 			if( wfRunHooks('ArticleDelete', array(&$a, &$wgUser, &$reason, &$error)) ) {
 				if( $a->doDeleteArticle( $reason ) ) {
+					$this->logger->info("Remove old page: ".$title->getPrefixedText());
 					print "\n\t[Remove old page: ".$title->getPrefixedText();
 					wfRunHooks('ArticleDeleteComplete', array(&$a, &$wgUser, $reason, $id));
 					print "done.]";
@@ -159,6 +166,7 @@ class ResourceInstaller {
 		if (count($dd->getOnlyCopyResources()) ==  0) return;
 		$resources = $dd->getOnlyCopyResources();
 		foreach($resources as $src => $dest) {
+			$this->logger->info("Remove resource: ".$dest);
 			print "\n\t[Remove resource: ".$dest;
 			if (is_dir($this->rootDir."/".$dest)) {
 				Tools::remove_dir($this->rootDir."/".$dest);
@@ -213,14 +221,17 @@ class ResourceInstaller {
 		if (count($dd->getResources()) ==  0) return;
 
 		// resources files
+		$this->logger->info("Uploading resources for ".$dd->getID());
 		print "\n[Uploading resources...";
 		$resources = $dd->getResources();
 		foreach($resources as $file) {
 			$resourcePath = $this->rootDir."/".$dd->getInstallationDirectory()."/".$file;
 			if (!file_exists($resourcePath)) {
+				$this->logger->warn("'$resourcePath' does not exist.");
 				print "\n\t[WARNING]: '$resourcePath' does not exist.";
 				continue;
 			}
+			$this->logger->info("Import ".$resourcePath);
 			print "\n\t[Import ".Tools::shortenPath($resourcePath)."...";
 			if (is_dir($resourcePath)) {
 				$this->importResources($resourcePath);
@@ -234,14 +245,18 @@ class ResourceInstaller {
 		print "\ndone.]";
 
 		if (count($dd->getOnlyCopyResources()) ==  0) return;
+		
+		$this->logger->info("Copying resources for ".$dd->getID());
 		print "\n[Copying resources...";
 		$resources = $dd->getOnlyCopyResources();
 		foreach($resources as $file => $dest) {
 			$resourcePathSrc = $this->rootDir."/".$file;
 			if (!file_exists($resourcePathSrc)) {
+				$this->logger->warn("'$resourcePathSrc' does not exist.");
 				print "\n\t[WARNING]: '$resourcePathSrc' does not exist.";
 				continue;
 			}
+			$this->logger->info("Copy '".$resourcePathSrc."' to '".$this->rootDir."/".$dest);
 			print "\n\t[Copy '".Tools::shortenPath($resourcePathSrc)."' to '".Tools::shortenPath($this->rootDir."/".$dest)."'...";
 			if (is_dir($resourcePathSrc)) {
 				Tools::copy_dir($resourcePathSrc, $this->rootDir."/".$dest);
@@ -265,12 +280,14 @@ class ResourceInstaller {
 		if (count($dd->getMappings()) ==  0) return;
 
 		if (!defined('LOD_NS_MAPPING')) {
+			$this->logger->warn("LinkedData extension is not installed. Can not install mappings.");
 			print "\n\t[WARNING]: LinkedData extension is not installed. Can not install mappings.";
 			return;
 		}
         
 		$importedMappings = array();
 		// import mappings
+		$this->logger->info("Import mappings for ".$dd->getID());
 		print "\n[Importing mappings...";
 		$resources = $dd->getMappings();
 
@@ -294,6 +311,7 @@ class ResourceInstaller {
 				list($file, $target) = $tuple;
 				$resourcePath = $this->rootDir."/".$dd->getInstallationDirectory()."/".$file;
 				if (!file_exists($resourcePath)) {
+					$this->logger->warn("'$resourcePath' does not exist.");
 					print "\n\t[WARNING]: '$resourcePath' does not exist.";
 					continue;
 				}
@@ -310,6 +328,7 @@ class ResourceInstaller {
 			}
 			$mappingTitle = Title::newFromText($source, LOD_NS_MAPPING);
 			$a = new Article($mappingTitle);
+			$this->logger->info("Insert mapping: $source");
 			print "\n[Insert mapping [$source]...";
 			if (!$a->exists()) {
 				if (!$dryRun) $a->insertNewArticle($content, "auto-generated mapping page", false, false);

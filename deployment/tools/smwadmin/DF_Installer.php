@@ -75,9 +75,10 @@ class Installer {
 
 	// Helper obejcts
 	private $rollback;
-
-
-	//
+    
+	// global logger
+    private $logger;
+    
 	private $errors;
 
 	/**
@@ -96,12 +97,13 @@ class Installer {
 
 		// get root dir
 		$this->rootDir = $rootDir === NULL ? realpath(dirname(__FILE__)."/../../../") : $rootDir;
-		
+
 		$this->rollback = Rollback::getInstance($this->rootDir);
 
 		$this->force = $force;
 		$this->noAsk = $noAsk;
 		$this->noRollback = $noRollback;
+		$this->logger = Logger::getInstance();
 	}
 
 	/**
@@ -132,20 +134,20 @@ class Installer {
 		}
 		$this->installOrUpdatePackages($extensions_to_update);
 
-		
+
 			
 	}
 
 	/**
 	 * De-Installs extension. Checks if there are extensions which require the extension
-	 * which is about to be deleted. 
-	 * 
+	 * which is about to be deleted.
+	 *
 	 *  It de-initializes the extension by unapplying setup scripts.
 	 *  It removes the configuration code from LocalSettings.php
 	 *  It removes the extension code
 	 *
 	 * @param string $packageID
-	 * 
+	 *
 	 * @return DeployDescriptor of extension which is deleted
 	 */
 	public function deInstall($packageID) {
@@ -160,6 +162,7 @@ class Installer {
 			}
 		}
 		if (is_null($ext)) {
+			$this->logger->error("Package does not exist $packageID");
 			throw new InstallationError(DEPLOY_FRAMEWORK_PACKAGE_NOT_EXISTS, "Package does not exist", $packageID);
 		}
 		print "done.]";
@@ -182,11 +185,13 @@ class Installer {
 		}
 		print "done.]";
 		if ($existDependency) {
+			$this->logger->error("Can not remove package. Dependency from the following packages exists: ".implode(",", $dependantPackages));
 			throw new InstallationError(DEPLOY_FRAMEWORK_DEPENDENCY_EXIST, "Can not remove package. Dependency from the following packages exists:", $dependantPackages);
 		}
 
 
 		// unapply setups
+		$this->logger->info("Unapply setups for ".$ext->getID());
 		print "\n[Unapply setups ".$ext->getID()."...";
 		$ext->unapplySetups($this->rootDir, false);
 		print "\ndone.]";
@@ -195,17 +200,20 @@ class Installer {
 		// - from LocalSettings.php
 		// - from database (setup scripts)
 		// - patches
+		$this->logger->info("Unapply configs for ".$ext->getID());
 		print "\n[Unapply configurations of ".$ext->getID()."...";
 		$ext->unapplyConfigurations($this->rootDir, false);
 		$this->errors = array_merge($this->errors, $ext->getLastErrors());
 		print "done.]";
 
 		// remove extension code
+		$this->logger->info("Remove code of ".$ext->getID());
 		print "\n[Remove code of ".$ext->getID()."...";
 		Tools::remove_dir($this->rootDir."/".$ext->getInstallationDirectory());
 		print "done.]";
-		
+
 		// may contain files which are not located in the installation directory
+		$this->logger->info("Delete external codefiles of ".$ext->getID());
 		$this->deleteExternalCodefiles($ext);
 
 		return $ext;
@@ -345,11 +353,11 @@ class Installer {
 		if ($version == NULL) {
 			print "\n[Read latest deploy descriptor of $packageID...";
 			$new_package = PackageRepository::getLatestDeployDescriptor($packageID);
-				
+
 		} else {
 			print "\n[Read deploy descriptor of $packageID-$version...";
 			$new_package = PackageRepository::getDeployDescriptor($packageID, $version);
-				
+
 		}
 
 		// 5. check if update is neccessary
@@ -404,21 +412,25 @@ class Installer {
 					throw new InstallationError(DEPLOY_FRAMEWORK_CREATING_RESTOREPOINT_FAILED, "Could not copy the installation");
 				}
 				if (count($desc->getInstallScripts()) > 0) {
-				    $success = $this->rollback->saveDatabase();
-				    if (!$success) {
-				    	throw new InstallationError(DEPLOY_FRAMEWORK_CREATING_RESTOREPOINT_FAILED, "Could not save the database.");
-				    }	
+					$success = $this->rollback->saveDatabase();
+					if (!$success) {
+						throw new InstallationError(DEPLOY_FRAMEWORK_CREATING_RESTOREPOINT_FAILED, "Could not save the database.");
+					}
 				}
 			}
 
 
 			list($url,$repo_url) = PackageRepository::getVersion($id, $desc->getVersion());
 			$credentials = PackageRepository::getCredentials($repo_url);
+				
+			$this->logger->info("Download $id-".$desc->getVersion().".zip");
 			$d->downloadAsFileByURL($url, $this->tmpFolder."/$id-".$desc->getVersion().".zip", $credentials);
 
 			// unzip
+			$this->logger->info("Unzip $id-".$desc->getVersion().".zip");
 			$this->unzip($id, $desc->getVersion());
-			
+				
+			$this->logger->info("Apply configs for $id-".$desc->getVersion().".zip");
 			$desc->applyConfigurations($this->rootDir, false, $fromVersion, $this);
 			$this->errors = array_merge($this->errors, $desc->getLastErrors());
 			$handle = fopen($this->rootDir."/".$desc->getInstallationDirectory()."/init$.ext", "w");
@@ -453,6 +465,7 @@ class Installer {
 		foreach($localPackages as $tupl) {
 			list($desc, $fromVersion) = $tupl;
 			try {
+				$this->logger->info("Apply setups for: ".$desc->getID());
 				$desc->applySetups($this->rootDir, false);
 			} catch(RollbackInstallation $e) {
 				// ignore here
@@ -482,6 +495,7 @@ class Installer {
 		print "\n[Clean up...";
 		foreach($localPackages as $tupl) {
 			list($desc, $fromVersion) = $tupl;
+			$this->logger->info("Mark extension as initialized: ".$desc->getID());
 			unlink($this->rootDir."/".$desc->getInstallationDirectory()."/init$.ext");
 		}
 		print "done.]\n\n";
@@ -501,20 +515,22 @@ class Installer {
 	public function deinitializePackages($dd) {
 
 		$res_installer = ResourceInstaller::getInstance($this->rootDir);
-		
+
 		// remove ontology
+		$this->logger->info("De-install ontologies: ".$dd->getID());
 		print "\n[De-install ontologies...";
 		$res_installer->deinstallWikidump($dd);
 		print "done.]";
 
 		// delete resources
+		$this->logger->info("Delete resourcs: ".$dd->getID());
 		print "\n[Delete resources...";
 		$res_installer->deleteResources($dd);
 		print "done.]";
 
 	}
-	
-/**
+
+	/**
 	 * Deletes codefiles which are *not* located in the installation directory.
 	 *
 	 * @param DeployDescriptor $dd
@@ -702,7 +718,7 @@ class Installer {
 					}
 					if ($p->getVersion() > $to) {
 
-						 throw new InstallationError(DEPLOY_FRAMEWORK_INSTALL_LOWER_VERSION, "Requires '$id' to be installed at most in version ".Tools::addVersionSeparators($to).". Downgrades are not supported.");
+						throw new InstallationError(DEPLOY_FRAMEWORK_INSTALL_LOWER_VERSION, "Requires '$id' to be installed at most in version ".Tools::addVersionSeparators($to).". Downgrades are not supported.");
 					}
 				}
 			}

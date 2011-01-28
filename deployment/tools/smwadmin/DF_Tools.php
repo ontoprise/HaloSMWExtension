@@ -460,4 +460,18 @@ class Tools {
 		$a = trim(fgets(STDIN));
 		return strtolower($a) === 'y';
 	}
+	
+	/**
+	 * Converts an array of string to a string.
+	 * 
+	 * @param array of string $arr
+	 * @return string
+	 */
+	public static function arraytostring($arr) {
+		$res = "";
+		foreach($arr as $a) {
+			$res .= "\n".$a;
+		}
+		return $res;
+	}
 }

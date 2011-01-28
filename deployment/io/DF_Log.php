@@ -29,33 +29,31 @@
  *
  */
 
-class DFLog {
+class Logger {
 
 	var $logDir;
 	var $logFileHandle;
 	static $instance;
 
 	/**
-	 * Acquires the logger. First call must provide
-	 * a valid root directory.
+	 * Acquires the logger. 
 	 *
 	 * @param string  $rootDir
 	 */
-	public static function getInstance($rootDir = NULL) {
+	public static function getInstance() {
 		if (is_null(self::$instance)) {
-			self::$instance = new DFLog($rootDir);
+			self::$instance = new Logger();
 
 		}
 		return self::$instance;
 	}
 
 	private function __construct($rootDir) {
-
-		$this->rootDir = $rootDir;
+	
 		$this->logDir = Tools::isWindows() ? 'c:/temp/df_log' : '/tmp/df_log';
 		Tools::mkpath($this->logDir);
 		$currentDate = $this->createDateForFileName();
-		$this->logFileHandle = fopen("log_$currentDate", "w");
+		$this->logFileHandle = fopen($this->logDir."/log_$currentDate", "w");
 	}
 
 	/**
@@ -113,6 +111,7 @@ class DFLog {
 		$currentDate = str_replace(",","_",$currentDate);
 		$currentDate = str_replace(" ","_",$currentDate);
 		$currentDate = str_replace(":","_",$currentDate);
+		$currentDate = str_replace("+","_",$currentDate);
 		return $currentDate;
 	}
 }
