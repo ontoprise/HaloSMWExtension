@@ -99,7 +99,7 @@ Requirements:
 === Install the Inter Wiki Article Importer ===
 
 (1) Add the following two lines to your LocalSettings.php
-	include_once('extensions/DataImport/IAI/includes/IAI_GlobalFunctions.php');
+	include_once('extensions/DataImport/IAI/includes/IAI_Initialize.php');
 	enableIAI();
 
 (2) Go to extensions/DataImport/specials/TermImport/TL/ConnectLocal.cfg and add the following:
