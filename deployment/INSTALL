@@ -13,8 +13,18 @@ Requirements:
 =============
     MediaWiki 1.16 installed
     
-Installation:
-=============
+Table of contents
+=================
+1. Installation
+2. I already have SMW installed. Can I use the DF though?
+3. HowTo use the deployment framework
+4. Restore wiki from restore point
+5. Adding new repositories
+6. Using Deployment Framework with a Proxy
+7. Deployment Framework log
+
+(1) Installation:
+=================
 
 (1) Unzip smwhalo-deploy-1.3.zip in the MediaWiki root folder.
 (2) Replace in AdminSettings.php the example values given for  $wgDBadminuser (e.g. 'wikiadmin') and 
@@ -40,8 +50,8 @@ Installation:
     It enables a special page for checking the integrity of the MW installation. 
     It is NOT required for using the deployment framework.
     
-I already have SMW installed. Can I use the DF though?
-======================================================
+(2) I already have SMW installed. Can I use the DF though?
+==========================================================
 The DF requires extensions to have some metadata around. If you have SMW and/or SemanticForms
 installed manually and you want to use the DF you may "lift" your installation
 automatically. There is a tool called checkInstallation.php which can do that.
@@ -63,8 +73,8 @@ Note that the lifting process does only work for SMW. If you have other extensio
 that should be handled by the DF, you should remove them from the LocalSettings.php
 and re-install them via DF. They get overwritten then!
 
-HowTo use the deployment framework
-==================================
+(3) HowTo use the deployment framework
+======================================
 
 smwhalo admin utility v1.3, Ontoprise 2010
 
@@ -78,7 +88,9 @@ Usage: smwadmin [ -i | -d ] <package>[-<version>]
         -u <package>: Update
         --dep : Check only dependencies but do not install.
         -l [ pattern ] : List installed packages.
-        -r : Rollback last installation (does not work for un-installed extensions)
+        -r [name] : Restore installation. If name is missing, user is prompted.
+        -rcreate [name]: Creates a restore point. If name is missing, a unique ID is created.
+        -rlist: Lists existing restore points.
 
 Examples:
 
@@ -90,23 +102,33 @@ Examples:
         smwadmin -d smw: Removes the package smw.
         smwadmin -l: List all installed/available packages 
 
-===Restore wiki from restore point===
+(4) Restore wiki from restore point
+===================================
 Whenever the Deployment Framework performs one the following actions,
 it offers to create a "Wiki Restore Point":
 * Installing a package: smwadmin -i <package>
 * De-installing a package: smwadmin -d <package>
 * Updating a package: smwadmin -u <package>
 
-You may create a restore point and do an arbitrarily number of subsequent operations. But be aware
-that a new restore point will delete the old.
+You may create a restore point and do an arbitrarily number of subsequent operations. You
+can create as many restore points as you want.
 
-Call "smwadmin -r" to bring your Wiki back to the previous Wiki Restore Point.
+You can create a restore point without changing the wiki by using this command:
+
+smwadmin -rcreate [name] 
+
+If name is missing a unique ID will be created. This can be useful if you want to 
+save your wiki periodically.
+
+Call "smwadmin -r [name]" to bring your Wiki back to a Wiki Restore Point. If name
+is missing, you will be prompted which should be restored.
+
 Simply said, the Deployment Framework can undo your previous action and bring
 your Wiki back to previous state (including the data, articles and
 configuration).
 
 
-Adding new repositories
+(5) Adding new repositories
 =======================
         
 File for repository links:
@@ -115,8 +137,21 @@ File for repository links:
 You may add new repositories here, the Ontoprise repo is already configured.
 
 
-Using Deployment Framework with a Proxy
-=======================================
+(6) Using Deployment Framework with a Proxy
+===========================================
 
 Open <mediawiki-install-dir>/deployment/settings.php and set the proxy server address for
 'df_proxy'. For Example: 'df_proxy' => 'proxy.example.com:8080'
+
+
+(7) Deployment Framework log
+============================
+The DF writes a log about the operations. It is stored in your system's temporary folder:
+
+On Windows:
+    C:\temp\df_log
+On Linux:
+    /tmp/df_log
+    
+The are usually two log files for each run of smwadmin. One for the installation process and
+one for the initialization process.

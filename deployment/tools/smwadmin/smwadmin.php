@@ -403,6 +403,7 @@ function showHelp() {
 	echo "\n\t-u <package>: Update";
 	echo "\n\t-l [ pattern ] : List installed packages.";
 	echo "\n\t-r [ name ]: Restore from a wiki-restore-point.";
+	echo "\n\t-rcreate [ name ]: Explicitly creates a wiki-restore-point.";
 	echo "\n\t-rlist : Shows all existing wiki-restore-points";
 	echo "\n\n\tAdvanced options: ";
 	echo "\n\t--finalize: Finalizes installation";
@@ -413,7 +414,7 @@ function showHelp() {
 	echo "\n\tsmwadmin -u: Updates complete installation";
 	echo "\n\tsmwadmin -u --dep: Shows what would be updated.";
 	echo "\n\tsmwadmin -d smw: Removes the package smw.";
-	echo "\n\tsmwadmin -r : Restores old installation from a restore point. User is prompted for which.";
+	echo "\n\tsmwadmin -r [name] : Restores old installation from a restore point. User is prompted for which.";
 	echo "\n\n";
 
 }
