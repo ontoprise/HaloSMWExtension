@@ -100,6 +100,7 @@ $dfgRestore=false;
 $dfgCheckInst=false;
 $dfgInstallPackages=false;
 $dfgRestoreList=false;
+$dfgCreateRestorePoint=false;
 
 $args = $_SERVER['argv'];
 array_shift($args); // remove script name
@@ -176,7 +177,11 @@ for( $arg = reset( $args ); $arg !== false; $arg = next( $args ) ) {
 	} else if ($arg == '-rlist') {
 		$dfgRestoreList = true;
 		continue;
-	} else {
+	} else if ($arg == '-rcreate') {
+        $dfgCreateRestorePoint = true;
+        $dfgRestorePoint = next($args);
+        continue;
+    } else {
 		print "\nUnknown command: $arg. Try --help\n\n";
 		die(DF_TERMINATION_ERROR);
 	}
@@ -226,6 +231,17 @@ if ($dfgRestore) {
 	} else {
 		die(DF_TERMINATION_WITHOUT_FINALIZE);
 	}
+}
+
+if ($dfgCreateRestorePoint) {
+	if (empty($dfgRestorePoint)) {
+		$dfgRestorePoint = "autogen_".uniqid();
+	}
+	$logger->info("Create restore point: $dfgRestorePoint");
+	$rollback->saveInstallation($dfgRestorePoint);
+	$rollback->saveDatabase($dfgRestorePoint);
+	$logger->info("Restore point created");
+	die(DF_TERMINATION_WITHOUT_FINALIZE);
 }
 
 if ($dfgRestoreList) {

@@ -67,15 +67,19 @@ class Rollback {
 	 * Copy complete code base of installation including LocalSettings.php
 	 * (but excluding deployment folder)
 	 *
+	 * @param boolean $name Do not ask the user for confirmation, use this name
+	 *
 	 * @boolean True if no error occured
 	 */
-	public function saveInstallation() {
+	public function saveInstallation($name = NULL) {
 
 		// make sure to save only once
 		static $savedInstallation = false;
 		if ($savedInstallation) return true;
 
-		if (!$this->acquireNewRestorePoint($name)) return true;
+		if (is_null($name)) {
+			if (!$this->acquireNewRestorePoint($name)) return true;
+		} 
 
 		$logger = Logger::getInstance();
 		$logger->info("Save installation to ".$this->tmpDir."/rollback_data/$name");
@@ -93,9 +97,11 @@ class Rollback {
 	/**
 	 * Save the database to the rollback directory
 	 *
+	 * @param boolean $name Do not ask the user for confirmation, use this name
+	 *
 	 * @return boolean True if no error occured on creating a database dump
 	 */
-	public function saveDatabase() {
+	public function saveDatabase($name = NULL) {
 
 		global $mwrootDir;
 		if (file_exists("$mwrootDir/AdminSettings.php")) {
@@ -106,8 +112,9 @@ class Rollback {
 			$wgDBadminpassword = $this->getVariableValue("LocalSettings.php", "wgDBadminpassword");
 		}
 
-
-		if (!$this->acquireNewRestorePoint($name)) return true;
+		if (is_null($name)) {
+			if (!$this->acquireNewRestorePoint($name)) return true;
+		} 
 		// make sure to save only once
 		static $savedDataBase = false;
 		if ($savedDataBase) return true;
@@ -118,11 +125,11 @@ class Rollback {
 		$wgDBname = $this->getVariableValue("LocalSettings.php", "wgDBname");
 		print "\n[Saving database...";
 		//print "\nmysqldump -u $wgDBadminuser --password=$wgDBadminpassword $wgDBname > ".$this->tmpDir."/rollback_data/$name/dump.sql";
-		exec("mysqldump -u $wgDBadminuser --password=$wgDBadminpassword $wgDBname > ".$this->tmpDir."/$name/dump.sql", $out, $ret);
-
+		exec("mysqldump -u $wgDBadminuser --password=$wgDBadminpassword $wgDBname > ".$this->tmpDir."/rollback_data/$name/dump.sql");
+		print "done.]";
 		$savedDataBase = true;
 
-		if ($ret !== 0) {
+		if ($ret != 0) {
 			$logger->error("Could not save the database.");
 		}
 		return $ret == 0;
@@ -237,12 +244,12 @@ class Rollback {
 	 */
 	private function restoreInstallation($name) {
 		$logger = Logger::getInstance();
-		
+
 		$logger->info("Remove current installation");
 		print "\n[Remove current installation...";
 		Tools::remove_dir($this->rootDir, array(Tools::normalizePath($this->rootDir."/deployment")));
 		print "done.]";
-		
+
 		$logger->info("Restore old installation");
 		print "\n[Restore old installation...";
 		$success = Tools::copy_dir($this->tmpDir."/rollback_data/$name", $this->rootDir);
