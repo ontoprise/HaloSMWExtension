@@ -336,7 +336,9 @@ function smwgHaloSetupExtension() {
 			require_once($smwgHaloIP . '/includes/QueryResultsCache/SMW_QRC_AjaxAPI.php');
 			break;
 
-			case '_ts_' : break; // contained in this file
+			case '_ts_' :
+				smwfHaloInitMessages();
+				break; // contained in this file
 
 			default: // default case just imports everything (should be avoided)
 				smwfHaloInitMessages();
@@ -408,6 +410,7 @@ function smwgHaloSetupExtension() {
 		$wgHooks['InternalParseBeforeLinks'][] = 'smwfTripleStoreParserHook';
 	}
 	$wgAjaxExportList[] = 'smwf_ts_getWikiNamespaces';
+	$wgAjaxExportList[] = 'smwf_ts_getWikiSpecialProperties';
 	$wgAjaxExportList[] = 'smwf_ts_triggerAsynchronousLoading';
 
 	// make hook for red links
@@ -510,23 +513,76 @@ function smwfHaloInitDatatypes() {
 }
 
 /**
- * Returns a comma separated list of extra namespace mappings.
- * Exported as ajax call. Need by TSC to get extra namespaces (besides the default of MW + SMW)
+ * Returns a list of namespace mappings.
+ * Exported as ajax call.
  *
- * nsText => nsIndex
+ * Need by TSC to get extra namespaces (besides the default of MW + SMW + SF) and required
+ * to support other content languages than english.
+ *
+ * nsText(content language) => nsKey
  *
  * @return string
  */
 function smwf_ts_getWikiNamespaces() {
-	global $wgExtraNamespaces;
-	$builtinNS = array(SMW_NS_PROPERTY, SMW_NS_PROPERTY_TALK, SMW_NS_TYPE, SMW_NS_TYPE_TALK, SMW_NS_CONCEPT, SMW_NS_CONCEPT_TALK, SF_NS_FORM, SF_NS_FORM_TALK);
+	global $wgExtraNamespaces, $wgContLang;
+
+	$allNS = array(NS_CATEGORY, SMW_NS_PROPERTY,SF_NS_FORM, SMW_NS_CONCEPT, NS_MAIN ,
+	SMW_NS_TYPE,NS_FILE, NS_HELP, NS_TEMPLATE, NS_USER, NS_MEDIAWIKI, NS_PROJECT,	SMW_NS_PROPERTY_TALK,
+	SF_NS_FORM_TALK,NS_TALK, NS_USER_TALK, NS_PROJECT_TALK, NS_FILE_TALK, NS_MEDIAWIKI_TALK,
+	NS_TEMPLATE_TALK, NS_HELP_TALK, NS_CATEGORY_TALK, SMW_NS_CONCEPT_TALK, SMW_NS_TYPE_TALK);
+
+	$extraNamespaces = array_diff(array_keys($wgExtraNamespaces), $allNS);
+	$allNS = array_merge($allNS, $extraNamespaces);
 	$result = "";
 	$first = true;
-	foreach($wgExtraNamespaces as $nsIndex => $nsText) {
-		if (in_array($nsIndex, $builtinNS)) continue;
-		$result .= (!$first ? "," : "").$nsText."=".$nsIndex;
+	foreach($allNS as $nsKey) {
+
+		$nsText = $wgContLang->getNSText($nsKey);
+		if (empty($nsText) && $nsKey !== NS_MAIN) continue;
+		$result .= (!$first ? "," : "").$nsText."=".$nsKey;
 		$first = false;
 	}
+	return $result;
+}
+
+/**
+ * Maps language constants of special properties/categories to content language.
+ * Exported as ajax call.
+ *
+ * Need by TSC.
+ *
+ * Language constant representing a special property/category = Name in wiki's content language
+ *
+ * @return string
+ */
+function smwf_ts_getWikiSpecialProperties() {
+
+	global $wgContLang, $smwgHaloContLang, $smwgContLang;
+	$specialProperties = $smwgHaloContLang->getSpecialSchemaPropertyArray();
+	$specialCategories = $smwgHaloContLang->getSpecialCategoryArray();
+	$specialPropertiesSMW = $smwgContLang->getPropertyLabels();
+
+	$result = "HAS_DOMAIN_AND_RANGE=".$specialProperties[SMW_SSP_HAS_DOMAIN_AND_RANGE_HINT].",".
+				"HAS_MIN_CARDINALITY=".$specialProperties[SMW_SSP_HAS_MIN_CARD].",".
+				"HAS_MAX_CARDINALITY=".$specialProperties[SMW_SSP_HAS_MAX_CARD].",".
+				"IS_INVERSE_OF=".$specialProperties[SMW_SSP_IS_INVERSE_OF].",".
+				"TRANSITIVE_PROPERTIES=".$specialCategories[SMW_SC_TRANSITIVE_RELATIONS].",".
+				"SYMETRICAL_PROPERTIES=".$specialCategories[SMW_SC_SYMMETRICAL_RELATIONS].",".
+				"CORRESPONDS_TO=".$specialPropertiesSMW['_CONV'].",".
+				"HAS_TYPE=".$specialPropertiesSMW['_TYPE'].",".
+				"HAS_FIELDS=".$specialPropertiesSMW['_LIST'].",".
+				"MODIFICATION_DATE=".$specialPropertiesSMW['_MDAT'].",".
+				"EQUIVALENT_URI=".$specialPropertiesSMW['_URI'].",".
+				"DISPLAY_UNITS=".$specialPropertiesSMW['_UNIT'].",".
+				"IMPORTED_FROM=".$specialPropertiesSMW['_IMPO'].",".
+				"PROVIDES_SERVICE=".$specialPropertiesSMW['_SERV'].",".
+				"ALLOWS_VALUE=".$specialPropertiesSMW['_PVAL'].",".
+				"HAS_IMPROPER_VALUE_FOR=".$specialPropertiesSMW['_ERRP'];
+
+	// these two namespaces are required for ASK queries
+	$result .= "CATEGORY=".$wgContLang->getNSText(NS_CATEGORY).",";
+	$result .= "CONCEPT=".$wgContLang->getNSText(SMW_NS_CONCEPT);
+
 	return $result;
 }
 
@@ -740,11 +796,11 @@ function smwfDBSupportsFunction($lib) {
 	// a config variable. However, it may happen that the SimilarEntitiesBot crashes,
 	// because the EDITDISTANCE function is not available.
 	/*
-	 $dbr =& wfGetDB( DB_SLAVE );
-	 $res = $dbr->query('SELECT * FROM mysql.func WHERE dl LIKE '.$dbr->addQuotes($lib.'.%'));
-	 $hasSupport = ($dbr->numRows($res) > 0);
-	 $dbr->freeResult( $res );
-	 return $hasSupport; */
+	$dbr =& wfGetDB( DB_SLAVE );
+	$res = $dbr->query('SELECT * FROM mysql.func WHERE dl LIKE '.$dbr->addQuotes($lib.'.%'));
+	$hasSupport = ($dbr->numRows($res) > 0);
+	$dbr->freeResult( $res );
+	return $hasSupport; */
 }
 
 /**
@@ -1622,7 +1678,7 @@ function smwfTripleStoreParserHook(&$parser, &$text, &$strip_state = null) {
 	global $magicWords;
 	list($i, $redirectText) = $magicWords['redirect'];
 	$redirectText = substr($redirectText, 1); // cut off hash #
-	
+
 	// parse redirects
 	$redirectLinkPattern = '/\#'.$redirectText.' # REDIRECT command
                             \[\[                # Beginning of the link

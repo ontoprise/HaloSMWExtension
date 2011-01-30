@@ -41,7 +41,7 @@ class WikiTypeToXSD {
 			case '_wpf' :
 			case '_wpp' :
 			case '_wpg' : return 'tsctype:page' ;
-			
+
 			case '_rec' : return 'tsctype:record';
 
 			// unknown or composite type
@@ -122,11 +122,11 @@ class TSHelper {
 
 		} else {
 			// any URI
-				
+
 			if ($forceTitle) {
 				if (strrpos($sv, "/") !== false) {
-                    $local = substr($sv, strrpos($sv, "/")+1);
-                } else if (strpos($sv, "#") !== false) {
+					$local = substr($sv, strrpos($sv, "/")+1);
+				} else if (strpos($sv, "#") !== false) {
 					$local = substr($sv, strpos($sv, "#")+1);
 				} else {
 					return NULL;
@@ -187,37 +187,37 @@ class TSHelper {
 		.str_replace(' ', '_', $title->getText());
 		return $res;
 	}
-	
-    /**
-     * Escapes double quotes, backslash and line feeds for a SPARUL string literal.
-     *
-     * @param string $literal
-     * @return string
-     */
-    public static function escapeForStringLiteral($literal) {
-        return str_replace(array("\\", "\"", "\n", "\r"), array("\\\\", "\\\"", "\\n" ,"\\r"), $literal);
-    }
-    
-    /**
-     * Set metadata values (if available)
-     *
-     *
-     * @param SMWDataValue $v
-     * @param array of SimpleXMLElement $metadata
-     */
-    public static function setMetadata(SMWDataValue $v, $metadata) {
-        if (!is_null($metadata) && $metadata !== '') {
-            foreach($metadata as $m) {
-                $name = (string) $m->attributes()->name;
-                $datatype = (string) $m->attributes()->datatype;
-                $mdValues = array();
-                foreach($m->value as $mdValue) {
-                    $mdValues[] = (string) $mdValue;
-                }
-                $v->setMetadata($name, $datatype, $mdValues);
-            }
-        }
-    }
+
+	/**
+	 * Escapes double quotes, backslash and line feeds for a SPARUL string literal.
+	 *
+	 * @param string $literal
+	 * @return string
+	 */
+	public static function escapeForStringLiteral($literal) {
+		return str_replace(array("\\", "\"", "\n", "\r"), array("\\\\", "\\\"", "\\n" ,"\\r"), $literal);
+	}
+
+	/**
+	 * Set metadata values (if available)
+	 *
+	 *
+	 * @param SMWDataValue $v
+	 * @param array of SimpleXMLElement $metadata
+	 */
+	public static function setMetadata(SMWDataValue $v, $metadata) {
+		if (!is_null($metadata) && $metadata !== '') {
+			foreach($metadata as $m) {
+				$name = (string) $m->attributes()->name;
+				$datatype = (string) $m->attributes()->datatype;
+				$mdValues = array();
+				foreach($m->value as $mdValue) {
+					$mdValues[] = (string) $mdValue;
+				}
+				$v->setMetadata($name, $datatype, $mdValues);
+			}
+		}
+	}
 
 }
 
@@ -230,20 +230,7 @@ class TSNamespaces {
 	public static $RDFS_NS = "http://www.w3.org/2000/01/rdf-schema#";
 	public static $XSD_NS = "http://www.w3.org/2001/XMLSchema#";
 	public static $TSCTYPE_NS = "http://www.ontoprise.de/smwplus/tsc/unittype#";
-    
-	// MW + SMW namespaces
-	public static $CAT_NS;
-	public static $PROP_NS;
-	public static $FORM_NS;
-	public static $CONC_NS;
-	public static $INST_NS;
-	public static $TYPE_NS;
-	public static $FILE_NS;
-	public static $HELP_NS;
-	public static $TEMPLATE_NS;
-	public static $USER_NS;
-	public static $UNKNOWN_NS;
-    
+
 	// collections of namespaces
 	public static $ALL_NAMESPACES;
 	public static function getAllNamespaces() { return self::$ALL_NAMESPACES; }
@@ -254,77 +241,71 @@ class TSNamespaces {
 	public static $TSC_PREFIXES;
 	public static function getTSCPrefixes() { return self::$TSC_PREFIXES; }
 
-	// general namespace suffixes for different namespaces
-	public static $CAT_NS_SUFFIX = "/category/";
-	public static $PROP_NS_SUFFIX = "/property/";
-	public static $FORM_NS_SUFFIX = "/form/";
-	public static $CONC_NS_SUFFIX = "/concept/";
-	public static $INST_NS_SUFFIX = "/a/";
-	public static $TYPE_NS_SUFFIX = "/type/";
-	public static $FILE_NS_SUFFIX = "/file/";
-	public static $HELP_NS_SUFFIX = "/help/";
-	public static $TEMPLATE_NS_SUFFIX = "/template/";
-	public static $USER_NS_SUFFIX = "/user/";
-	public static $UNKNOWN_NS_SUFFIX = "/ns_"; // only fragment. / is missing!
 
-	public static $initialized = false;
+	// general namespace suffixes for different namespaces
+	public static $UNKNOWN_NS;
+	public static $UNKNOWN_NS_SUFFIX = "ns_"; // only fragment. / is missing!
+
+	// MW + SMW + SF namespaces (including talk namespaces)
+	public static $ALL_NAMESPACE_KEYS = array(NS_CATEGORY, SMW_NS_PROPERTY,SF_NS_FORM, SMW_NS_CONCEPT, NS_MAIN ,
+	SMW_NS_TYPE,NS_FILE, NS_HELP, NS_TEMPLATE, NS_USER, NS_MEDIAWIKI, NS_PROJECT,	SMW_NS_PROPERTY_TALK,
+	SF_NS_FORM_TALK,NS_TALK, NS_USER_TALK, NS_PROJECT_TALK, NS_FILE_TALK, NS_MEDIAWIKI_TALK,
+	NS_TEMPLATE_TALK, NS_HELP_TALK, NS_CATEGORY_TALK, SMW_NS_CONCEPT_TALK, SMW_NS_TYPE_TALK);
 
 	public static $EMPTY_SPARQL_XML = '<?xml version="1.0"?><sparql></sparql>';
 	public static $DEFAULT_VALUE_URI = 'http://__defaultvalue__/doesnotexist';
-    
+
+	public static $initialized = false;
 	private static $INSTANCE = NULL;
+	
+
 	public static function getInstance() {
 		if (is_null(self::$INSTANCE)) {
-		  self::$INSTANCE = new TSNamespaces();
+			self::$INSTANCE = new TSNamespaces();
 		}
 		return self::$INSTANCE;
 	}
+
 	function __construct() {
 		global $smwgTripleStoreGraph, $smwgDefaultStore, $smwgBaseStore, $wgContLang, $wgExtraNamespaces;
 
 		// use initialize flag because PHP classes do not have static initializers.
 		if (self::$initialized) return;
-			
-		self::$CAT_NS = $smwgTripleStoreGraph.self::$CAT_NS_SUFFIX;
-		self::$PROP_NS = $smwgTripleStoreGraph.self::$PROP_NS_SUFFIX;
-		self::$FORM_NS = $smwgTripleStoreGraph.self::$FORM_NS_SUFFIX;
-		self::$CONC_NS = $smwgTripleStoreGraph.self::$CONC_NS_SUFFIX;
-		self::$INST_NS = $smwgTripleStoreGraph.self::$INST_NS_SUFFIX;
-		self::$TYPE_NS = $smwgTripleStoreGraph.self::$TYPE_NS_SUFFIX;
-		self::$FILE_NS = $smwgTripleStoreGraph.self::$FILE_NS_SUFFIX;
-		self::$HELP_NS = $smwgTripleStoreGraph.self::$HELP_NS_SUFFIX;
-		self::$TEMPLATE_NS = $smwgTripleStoreGraph.self::$TEMPLATE_NS_SUFFIX;
-		self::$USER_NS = $smwgTripleStoreGraph.self::$USER_NS_SUFFIX;
+
 		self::$UNKNOWN_NS = $smwgTripleStoreGraph.self::$UNKNOWN_NS_SUFFIX;
 
-		self::$ALL_NAMESPACES = array(NS_MAIN=>self::$INST_NS, 
-		                              NS_CATEGORY => self::$CAT_NS, 
-		                              SMW_NS_PROPERTY => self::$PROP_NS,
-		                              SMW_NS_TYPE => self::$TYPE_NS,
-		                              SMW_NS_CONCEPT=>self::$CONC_NS,
-		                              SF_NS_FORM=>self::$FORM_NS,
-		                              NS_IMAGE => self::$FILE_NS,
-		                              NS_HELP => self::$HELP_NS,
-		                              NS_TEMPLATE => self::$TEMPLATE_NS,
-		                              NS_USER => self::$USER_NS);
+		// SET $ALL_PREFIXES constant
+		// add W3C namespaces
+		self::$ALL_PREFIXES = "PREFIX xsd:<".self::$XSD_NS."> \nPREFIX owl:<".self::$OWL_NS."> \nPREFIX rdfs:<".
+		self::$RDFS_NS."> \nPREFIX rdf:<".self::$RDF_NS."> ";
 
-		// declare all common namespaces as SPARQL PREFIX statement (W3C + standard wiki + SMW)
-		self::$ALL_PREFIXES = 'PREFIX xsd:<'.self::$XSD_NS.'> PREFIX owl:<'.self::$OWL_NS.'> PREFIX rdfs:<'.
-		self::$RDFS_NS.'> PREFIX rdf:<'.self::$RDF_NS.'> PREFIX cat:<'.self::$CAT_NS.'> PREFIX category:<'.self::$CAT_NS.'> PREFIX property:<'.self::$PROP_NS.'> PREFIX prop:<'.
-		self::$PROP_NS.'> PREFIX a:<'.self::$INST_NS.'> PREFIX type:<'.self::$TYPE_NS.'> PREFIX form:<'.self::$FORM_NS.'> PREFIX concept:<'.self::$CONC_NS.'> PREFIX image:<'.
-		self::$FILE_NS.'> PREFIX help:<'.self::$HELP_NS.'> PREFIX template:<'.self::$TEMPLATE_NS.'> PREFIX user: <'.self::$USER_NS.'> ';
+		// add all namespaces (including talk namespaces)
+		global $wgContLang;
+		
+		$extraNamespaces = array_diff(array_keys($wgExtraNamespaces), self::$ALL_NAMESPACE_KEYS);
+		self::$ALL_NAMESPACE_KEYS = array_merge(self::$ALL_NAMESPACE_KEYS, $extraNamespaces);
+		
+		foreach(self::$ALL_NAMESPACE_KEYS as $nsKey) {
+			$uri = $smwgTripleStoreGraph."/".str_replace(" ","_",strtolower($wgContLang->getNSText($nsKey)))."/";
+			$prefix = $wgContLang->getNSText($nsKey);
+			if (empty($prefix)) continue;
+			$prefix = $nsKey === NS_MAIN ? "a" : str_replace(" ","_",strtolower($prefix));
+			self::$ALL_PREFIXES .= "\nPREFIX $prefix:<$uri> ";
+			self::$ALL_NAMESPACES[$nsKey] = $uri;
+		}
 
+		// add special prefixes "cat" and "prop" for compatibility with < SMWHalo 1.5.2
+		self::$ALL_PREFIXES .= "\nPREFIX cat:<".$smwgTripleStoreGraph."/".str_replace(" ","_",strtolower($wgContLang->getNSText(NS_CATEGORY))).'/> '.
+							   "\nPREFIX prop:<".$smwgTripleStoreGraph."/".str_replace(" ","_",strtolower($wgContLang->getNSText(SMW_NS_PROPERTY))).'/> ';
+				
+		// SET $W3C_PREFIXES constant
 		self::$W3C_PREFIXES = 'PREFIX xsd:<'.self::$XSD_NS.'> PREFIX owl:<'.self::$OWL_NS.'> PREFIX rdfs:<'.
 		self::$RDFS_NS.'> PREFIX rdf:<'.self::$RDF_NS.'> ';
 
+		// SET $TSC_PREFIXES constant
 		self::$TSC_PREFIXES = "PREFIX tsctype:<".self::$TSCTYPE_NS."> ";
 
-		// declare all other namespaces using ns_$index as prefix
-		$extraNamespaces = array_diff(array_keys($wgExtraNamespaces), array_keys(self::$ALL_NAMESPACES));
-		foreach($extraNamespaces as $nsIndex) {
-			$nsText = strtolower($wgContLang->getNsText($nsIndex));
-			self::$ALL_PREFIXES .= " PREFIX $nsText:<".$smwgTripleStoreGraph."/ns_$nsIndex/> ";
-		}
+
 	}
 
 	/**
@@ -334,15 +315,8 @@ class TSNamespaces {
 	 * @return string
 	 */
 	public function getNSPrefix($namespace) {
-		if ($namespace == SMW_NS_PROPERTY) return "property";
-		elseif ($namespace == NS_CATEGORY) return "category";
-		elseif ($namespace == NS_MAIN) return "a";
-		elseif ($namespace == SMW_NS_TYPE) return "type";
-		elseif ($namespace == NS_IMAGE) return "image";
-		elseif ($namespace == NS_TEMPLATE) return "template";
-		elseif ($namespace == NS_USER) return "user";
-		elseif ($namespace == NS_HELP) return "help";
-		else return "ns_$namespace";
+		global $wgContLang;
+		return $wgContLang->getNSText($namespace);
 	}
 
 	/**
@@ -354,7 +328,7 @@ class TSNamespaces {
 		global $smwgTripleStoreGraph;
 		return $smwgTripleStoreGraph."/".$this->getNSPrefix($namespace)."/";
 	}
-	
+
 	/**
 	 * Returns the full IRI used by the TS for a namespace index and a localname.
 	 *
@@ -364,7 +338,7 @@ class TSNamespaces {
 	public function getFullIRIByName($namespace, $localname) {
 		global $smwgTripleStoreGraph;
 		$localname = str_replace(" ", "_", $localname);
-        return "<".$smwgTripleStoreGraph."/".$this->getNSPrefix($namespace)."/$localname>";
+		return "<".$smwgTripleStoreGraph."/".$this->getNSPrefix($namespace)."/$localname>";
 	}
 
 	/**
@@ -376,16 +350,16 @@ class TSNamespaces {
 		global $smwgTripleStoreGraph;
 		return "<".$smwgTripleStoreGraph."/".$this->getNSPrefix($t->getNamespace())."/".$t->getDBkey().">";
 	}
-	
-    /**
-     * Returns the full URI used by the TS for $t
-     *
-     * @param Title $t
-     */
-    public function getFullURI(Title $t) {
-        global $smwgTripleStoreGraph;
-        return $smwgTripleStoreGraph."/".$this->getNSPrefix($t->getNamespace())."/".$t->getDBkey();
-    }
+
+	/**
+	 * Returns the full URI used by the TS for $t
+	 *
+	 * @param Title $t
+	 */
+	public function getFullURI(Title $t) {
+		global $smwgTripleStoreGraph;
+		return $smwgTripleStoreGraph."/".$this->getNSPrefix($t->getNamespace())."/".$t->getDBkey();
+	}
 
 	/**
 	 * Returns the full IRI used by the TS for $p
@@ -407,37 +381,20 @@ class TSNamespaces {
 		if ( $lastSlashIndex === false) return $prefixForm;
 		$prefix = substr($prefixForm, 0, $lastSlashIndex+1);
 		$local = substr($prefixForm, $lastSlashIndex);
-		
+
 		$local = ucfirst($local);
-		if (self::$CAT_NS_SUFFIX == ("/".$prefix."/")) {
-			return self::$CAT_NS.$local;
-		} else if (self::$PROP_NS_SUFFIX == ("/".$prefix."/")) {
-			return self::$PROP_NS.$local;
-		} else if (self::$INST_NS_SUFFIX == ("/".$prefix."/")) {
-			return self::$INST_NS.$local;
-		} else if (self::$TYPE_NS_SUFFIX == ("/".$prefix."/")) {
-			return self::$TYPE_NS.$local;
-		} else if (self::$FILE_NS_SUFFIX == ("/".$prefix."/")) {
-			return self::$FILE_NS.$local;
-		} else if (self::$HELP_NS_SUFFIX == ("/".$prefix."/")) {
-			return self::$HELP_NS.$local;
-		} // FIXME: get other namespaces
+
+		foreach(self::$ALL_NAMESPACE_KEYS as $nsKey) {
+			$suffix = $this->getNSPrefix($nsKey);
+			if ($suffix == $prefix) {
+				return $this>getNSURI($nsKey).$local;
+			}
+		}
+
 		return $prefixForm;
 	}
 
-	/**
-	 * Create a SPARQL PREFIX statement for unknown namespaces.
-	 *
-	 * @param string $suffix which serves also as prefix.
-	 * @return string
-	 */
-	public function getUnknownNamespacePrefixes($suffix) {
-		if (substr($suffix, 0, 3) == "ns_") {
-			global $smwgTripleStoreGraph;
-			return " PREFIX $suffix:<$smwgTripleStoreGraph/$suffix/> ";
-		}
-		return "";
-	}
+
 }
 
 
