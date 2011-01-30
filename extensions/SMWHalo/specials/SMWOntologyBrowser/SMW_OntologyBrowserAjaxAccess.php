@@ -1346,7 +1346,7 @@ class OB_StorageTSQuad extends OB_StorageTS {
 		try {
 			global $smwgTripleStoreGraph;
 
-			$propertyURI = TSNamespaces::$PROP_NS.$p_array[0];
+			$propertyURI = TSNamespaces::getInstance()->getNSURI(SMW_NS_PROPERTY).$p_array[0];
 			$limit =  intval($p_array[1]);
 			$partition =  intval($p_array[2]);
 			$offset = $partition * $limit;
