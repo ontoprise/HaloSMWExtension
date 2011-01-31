@@ -766,6 +766,7 @@ HTML;
 */
 function haclfAddToolbarForSemanticForms($pageTitle, $html) {
     global $haclgIP;
+    if (empty($pageTitle)) return true;
     $html = <<<HTML
     		<script>
 	            YAHOO.haloacl.toolbar.actualTitle = '$pageTitle';
