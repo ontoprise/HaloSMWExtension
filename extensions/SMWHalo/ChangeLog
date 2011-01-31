@@ -1,7 +1,11 @@
 SMWHalo extension ChangeLog
 ===========================
 VERSION 1.5.2
-
+    CHANGES:
+        The prefixes category, property, a can be used in both the wiki and on the
+        remote console. The prefixes cat, prop, a still exist for compatibility in the
+        wiki.
+        
 	BUGFIXES
 		Bugfix 12370 -  Create Super/Subproperty missing
 		
