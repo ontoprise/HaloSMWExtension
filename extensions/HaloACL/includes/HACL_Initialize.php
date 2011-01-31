@@ -329,6 +329,27 @@ if ($haclgUseFeaturesForGroupPermissions === true) {
 //    )
 //);
 
+##
+# Groups that are created automatically can be sorted in a hierarchy of groups. 
+# A root group contains all groups for categories which contain the actual dynamic
+# groups.
+# $haclgDynamicRootGroup
+#    This is the name of the root group for dynamic groups.
+# $haclgDynamicCategoryGroup
+#    This is the base name of the groups for each category. The name of the 
+#    actual category is appended e.g. 'Dynamic groups for Project', where the 
+#    category is 'Project'.
+# $haclgDynamicGroupManager
+#    This array has the two keys 'users' and 'groups'. The string value of each 
+#    key contains a comma separated list of all user names and all group names. 
+#    User and groups names have no namespace (i.e. User and ACL). The full group 
+#    name must be given i.e. with the naming convention e.g. "Group/My Group". 
+#    The prefix "Group" depends on the content language of the wiki.
+//$haclgDynamicRootGroup = "Dynamic groups";
+//$haclgDynamicCategoryGroup = "Dynamic groups for ";
+//$haclgDynamicGroupManager = array("users" => "Peter", "groups" => "Group/Knowledge architect");
+
+
 $wgGroupPermissions['*']['propertyread'] = true;
 $wgGroupPermissions['*']['propertyformedit'] = true;
 $wgGroupPermissions['*']['propertyedit'] = true;

@@ -16,6 +16,7 @@ class TestDynamicHaloACLSuite extends PHPUnit_Framework_TestSuite
 		$suite->addTestSuite('TestDynamicSD');
 		$suite->addTestSuite('TestDynamicGroup');
 		$suite->addTestSuite('TestDynamicSDWithGroup');
+		$suite->addTestSuite('TestDynamicGroupStructure');
 		return $suite;
 	}
 	
@@ -28,6 +29,8 @@ class TestDynamicHaloACLSuite extends PHPUnit_Framework_TestSuite
     	User::createNew("U2");
         User::idFromName("U1");  
         User::idFromName("U2");  
+        Skin::getSkinNames();
+        
         
    		global $wgUser;
     	$wgUser = User::newFromName("U1");
@@ -118,6 +121,7 @@ class TestDynamicHaloACLSuite extends PHPUnit_Framework_TestSuite
 			'ACL:Group/ProjectGroupTemplate',
 			'ACL:Group/RequestGroupTemplate',
 			'ACL:Right/SDWithGroup',
+			'ACL:Group/DynamicGroupManagers'
 		);
 		
 		$this->mArticles = array(
@@ -219,6 +223,14 @@ ACL
 
 The article {{{articleName}}} belongs to the category {{{category}}} and was created
 by user {{{user}}}.
+ACL
+,
+//------------------------------------------------------------------------------		
+			'ACL:Group/DynamicGroupManagers' =>
+<<<ACL
+{{#member:members=User:U1}}
+{{#manage group:assigned to=User:U1}}
+[[Category:ACL/Group]]
 ACL
 ,
 		);
@@ -744,6 +756,7 @@ class TestDynamicGroup extends PHPUnit_Framework_TestCase {
     	$wgUser = User::newFromName("U1");
     	
     	try {
+    		$this->mAddedArticles[] = "ACL:Page/ProjectA";
     		TestDynamicHaloACLSuite::createArticle("ProjectA", $content);
     	} catch (Exception $e) {
     		if (!$exceptionExpected) {
@@ -783,7 +796,6 @@ class TestDynamicGroup extends PHPUnit_Framework_TestCase {
     	}
     }
 }
-
 
 /**
  * This class tests the automatic creation of Security Descriptors and a group
@@ -876,3 +888,285 @@ class TestDynamicSDWithGroup extends PHPUnit_Framework_TestCase {
     }
     
 }
+
+/**
+ * This class tests the automatic creation of the hierarchical structure of groups
+ * for dynamically created groups.
+ * 
+ * It assumes that the HaloACL extension is enabled in LocalSettings.php
+ * 
+ * @author thsc
+ *
+ */
+class TestDynamicGroupStructure extends PHPUnit_Framework_TestCase {
+
+	protected $backupGlobals = FALSE;
+	
+	// List of articles that were added during a test.
+	private $mAddedArticles = array();
+	
+    function setUp() {
+    	LinkCache::singleton()->clear();
+    }
+
+    /**
+     * Delete all articles that were created during a test.
+     */
+    function tearDown() {
+   		global $wgUser, $wgOut;
+    	$wgUser = User::newFromName("U1");
+    	HACLGroup::setAllowUnauthorizedGroupChange(true);
+		foreach ($this->mAddedArticles as $a) {
+		    $t = Title::newFromText($a);
+		    $wgOut->setTitle($t); // otherwise doDelete() will throw an exception
+	    	$article = new Article($t);
+			$article->doDelete("Testing");
+		}
+    	HACLGroup::setAllowUnauthorizedGroupChange(false);
+    }
+
+    
+    /**
+     * Data provider for testCreateDynamicGroupStructure
+     */
+    function providerForCreateDynamicGroupStructure() {
+    	return array(
+    		// $article, $category, $group, $parentGroup, $grandparentGroup
+    		// $groupManagers, $expectGroupsCreated, $expectedGroupManagers
+
+    		array("My Request", "Request", "GroupForMy Request", 
+    		      "Dynamic groups for ", "Dynamic groups",
+    		      null, false, null),
+    		array("My Request", "Request", "GroupForMy Request", 
+    		      null, "Dynamic groups",
+    		      array("users" => "WikiSysop"), false, null),
+    		array("My Request", "Request", "GroupForMy Request", 
+    		      "Dynamic groups for ", null,
+    		      array("users" => "WikiSysop"), false, null),
+    		array("My Request", "Request", "GroupForMy Request", 
+    		      "Dynamic groups for ", "Dynamic groups",
+    		      array("users" => "U1"), true, 
+    		      array(array("WikiSysop", true),
+    		            array("U1", true),
+    		            array("U2", false))),
+    		array("My Request", "Request", "GroupForMy Request", 
+    		      "Dynamic groups for ", "Dynamic groups",
+    		      array("groups" => "Group/DynamicGroupManagers"), true, 
+    		      array(array("WikiSysop", true),
+    		            array("U1", true),
+    		            array("U2", false))),
+    		array("My Request", "Request", "GroupForMy Request", 
+    		      "Dynamic groups for ", "Dynamic groups",
+    		      array("groups" => "Group/DynamicGroupManagers",
+    		            "users" => "U2"), true, 
+    		      array(array("WikiSysop", true),
+    		            array("U1", true),
+    		            array("U2", true))),
+    		array("My Request", "Request", "GroupForMy Request", 
+    		      "Dynamic groups for ", "Dynamic groups",
+    		      array("users" => "U2"), true, 
+    		      array(array("WikiSysop", true),
+    		            array("U1", false),
+    		            array("U2", true))),
+    		            
+			array("My Project", "Project", "GroupForMy Project", 
+				  "Dynamic groups for ", "Dynamic groups",
+				  array("users" => "U1,U2"), true,
+				  array(array("WikiSysop", true),
+    		            array("U1", true),
+    		            array("U2", true))),
+    	);
+    }
+    
+    /**
+     * Creates articles that are associated with a dynamic group and checks
+     * if all super groups are created.
+     * 
+     * @dataProvider providerForCreateDynamicGroupStructure
+     */
+    function testCreateDynamicGroupStructure($article, $category, $group, 
+                                             $parentGroup, $grandparentGroup,
+                                             $groupManagers,
+                                             $expectGroupsCreated,
+                                             $expectedGroupManagers) {
+    	global $haclgDynamicGroup, $haclgDynamicRootGroup, 
+    	       $haclgDynamicCategoryGroup, $haclgDynamicGroupManager;
+    	
+    	$haclgDynamicRootGroup = $grandparentGroup;
+    	$haclgDynamicCategoryGroup = $parentGroup;
+    	$haclgDynamicGroupManager = $groupManagers;
+    	
+    	// Configuration for dynamic groups
+    	$haclgDynamicGroup = array(
+	    	array(
+				"user"     => '#',	
+			  	"category" => "Project",
+			    "groupTemplate" => "ACL:Group/ProjectGroupTemplate",
+			    "name" => "ACL:Group/GroupFor{{{articleName}}}",
+	    	),
+	    	array(
+				"user"     => '#',	
+			  	"category" => "Request",
+			    "groupTemplate" => "ACL:Group/ProjectGroupTemplate",
+			    "name" => "ACL:Group/GroupFor{{{articleName}}}",
+	    	),
+	    );
+	    
+    	global $wgUser;
+    	$wgUser = User::newFromName('U1');
+    	
+    	$content = "This is an article. [[Category:$category]]";
+    	$parentGroup .= "$category";
+    	
+    	TestDynamicHaloACLSuite::createArticle($article, $content);
+    	$this->mAddedArticles[] = $article;
+    	$this->mAddedArticles[] = "ACL:Group/".$grandparentGroup;
+    	$this->mAddedArticles[] = "ACL:Group/".$parentGroup;
+    	$this->mAddedArticles[] = "ACL:Group/".$group;
+
+    	// Verify that group and its parent groups exist
+    	$this->assertTrue(TestDynamicHaloACLSuite::articleExists("ACL:Group/".$group));
+    	$this->assertEquals($expectGroupsCreated, TestDynamicHaloACLSuite::articleExists("ACL:Group/".$parentGroup));
+    	$this->assertEquals($expectGroupsCreated, TestDynamicHaloACLSuite::articleExists("ACL:Group/".$grandparentGroup));
+    	
+    	// Verify the hierarchy of groups
+    	if ($expectGroupsCreated) {
+			$checkGroups = array(
+				array("Group/".$group, "Group/".$parentGroup, true),
+				array("Group/".$parentGroup, "Group/".$grandparentGroup, true),
+				);
+			
+			$this->checkGroupMembers("testCreateDynamicGroupStructure", $checkGroups);
+			
+			
+			$checkGroupManagers = array();
+			foreach ($expectedGroupManagers as $egm) {
+				$checkGroupManagers[] = array("Group/".$parentGroup, $egm[0], $egm[1]);
+				$checkGroupManagers[] = array("Group/".$grandparentGroup, $egm[0], $egm[1]);
+			}
+			$this->checkGroupManagers("testCreateDynamicGroupStructure", $checkGroupManagers);
+    	}
+    }
+    
+    /**
+     * Creates several articles that are associated with dynamic groups and checks
+     * if all super groups are created.
+     * 
+     */
+    function testCreateDynamicGroupStructure2() {
+    	global $haclgDynamicGroup, $haclgDynamicRootGroup, 
+    	       $haclgDynamicCategoryGroup, $haclgDynamicGroupManager;
+    	
+    	$haclgDynamicRootGroup = "Dynamic groups";
+    	$haclgDynamicCategoryGroup = "Dynamic groups for ";
+    	$haclgDynamicGroupManager = array("users" => "WikiSysop");
+    	
+    	// Configuration for dynamic groups
+    	$haclgDynamicGroup = array(
+	    	array(
+				"user"     => '#',	
+			  	"category" => "Project",
+			    "groupTemplate" => "ACL:Group/ProjectGroupTemplate",
+			    "name" => "ACL:Group/GroupFor{{{articleName}}}",
+	    	),
+	    	array(
+				"user"     => '#',	
+			  	"category" => "Request",
+			    "groupTemplate" => "ACL:Group/ProjectGroupTemplate",
+			    "name" => "ACL:Group/GroupFor{{{articleName}}}",
+	    	),
+	    );
+	    
+    	global $wgUser;
+    	$wgUser = User::newFromName('U1');
+    	
+    	// Create two projects and two requests
+    	TestDynamicHaloACLSuite::createArticle("ProjectA", "This is an article. [[Category:Project]]");
+    	TestDynamicHaloACLSuite::createArticle("ProjectB", "This is an article. [[Category:Project]]");
+    	TestDynamicHaloACLSuite::createArticle("RequestA", "This is an article. [[Category:Request]]");
+    	TestDynamicHaloACLSuite::createArticle("RequestB", "This is an article. [[Category:Request]]");
+    	$this->mAddedArticles[] = "ProjectA";
+    	$this->mAddedArticles[] = "ProjectB";
+    	$this->mAddedArticles[] = "RequestA";
+    	$this->mAddedArticles[] = "RequestB";
+    	$this->mAddedArticles[] = "ACL:Group/".$haclgDynamicRootGroup;
+    	$this->mAddedArticles[] = "ACL:Group/{$haclgDynamicCategoryGroup}Project";
+    	$this->mAddedArticles[] = "ACL:Group/{$haclgDynamicCategoryGroup}Request";
+    	$this->mAddedArticles[] = "ACL:Group/GroupForProjectA";
+    	$this->mAddedArticles[] = "ACL:Group/GroupForProjectB";
+    	$this->mAddedArticles[] = "ACL:Group/GroupForRequestA";
+    	$this->mAddedArticles[] = "ACL:Group/GroupForRequestB";
+    	
+
+    	// Verify that all articles exist
+    	foreach ($this->mAddedArticles as $a) {
+	    	$this->assertTrue(TestDynamicHaloACLSuite::articleExists($a));
+    	} 
+    	
+    	// Verify the hierarchy of groups
+    	$gpa = "Group/GroupForProjectA";
+    	$gpb = "Group/GroupForProjectB";
+    	$gra = "Group/GroupForRequestA";
+    	$grb = "Group/GroupForRequestA";
+    	$gp = "Group/{$haclgDynamicCategoryGroup}Project";
+    	$gr = "Group/{$haclgDynamicCategoryGroup}Request";
+    	$root = "Group/$haclgDynamicRootGroup";
+		$checkGroups = array(
+			array($gpa, $gp, true),
+			array($gpb, $gp, true),
+			array($gra, $gr, true),
+			array($grb, $gr, true),
+			array($gp, $root, true),
+			array($gr, $root, true),
+			);
+		
+		$this->checkGroupMembers("testCreateDynamicGroupStructure2", $checkGroups);
+    	
+    }
+    
+    
+    /**
+     * Tests if a group is member of a group.
+     * @param string $testcase
+     * 		Name of the test case
+     * @param array<array<>> $config
+     * 		This array contains arrays with sub group name, parent group name and expected
+     * 		membership.
+     */
+    private function checkGroupMembers($testcase, array $config) {
+    	foreach ($config as $c) {
+    		$subGroup = $c[0];
+    		$parentGroup = $c[1];
+    		$expectedMember = $c[2];
+    		
+    		$group = HACLGroup::newFromName($parentGroup);
+			$this->assertEquals($expectedMember, $group->hasGroupMember($subGroup, false), 
+				"Test of group membership failed for group $subGroup in group $parentGroup\n"
+			    ." (Testcase: $testcase)\n");
+    	}
+    }
+    
+    /**
+     * Tests if a group can be managed by a user or a group.
+     * @param string $testcase
+     * 		Name of the test case
+     * @param array<array<>> $config
+     * 		This array contains arrays with a group name, the name of a user
+     * 		that may or may not manage the groups and the expected value.
+     */
+    private function checkGroupManagers($testcase, array $config) {
+    	foreach ($config as $c) {
+    		$group = $c[0];
+    		$user = $c[1];
+    		$expected = $c[2];
+    		
+    		$g = HACLGroup::newFromName($group);
+    		$canModify = $g->userCanModify($user, false);
+			$this->assertEquals($expected, $canModify, 
+				"Test of group manager failed for user $user in group $group\n"
+			    ." (Testcase: $testcase)\n");
+    	}
+    }
+    
+}
+

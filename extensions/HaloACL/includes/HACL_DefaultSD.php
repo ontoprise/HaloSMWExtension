@@ -642,6 +642,9 @@ class  HACLDefaultSD  {
 		HACLGroup::setAllowUnauthorizedGroupChange(true);
 		try {
 			self::copyTemplate($source, $groupName, $variables);
+			// remove namespace from $groupname
+			$groupName = substr($groupName, strpos($groupName, ':')+1);
+			self::createParentGroups($groupName, $dynamicGroupRule['category']);
 		} catch (Exception $e) {
 			HACLGroup::setAllowUnauthorizedGroupChange(false);
 			throw $e;
@@ -793,5 +796,71 @@ class  HACLDefaultSD  {
 		}
 
 		return false;
+	}
+	
+	/**
+	 * Creates the parent groups for a group with name $groupName that was 
+	 * created automatically. 
+	 * The parent group will be named "Automatic groups for $category". The parent
+	 * group of this will be "Automatic groups". The strings "Automatic groups( for )"
+	 * are specified in the global variables $haclgDynamicRootGroup and 
+	 * $haclgDynamicCategoryGroup. The manager of the new groups is given in
+	 * $haclgDynamicGroupManager.
+	 * If any of these global variables is not defined, no parent groups will be
+	 * created.
+	 * 
+	 * @param string $groupName
+	 * 		Name of the group whose parents are created  (without namespace)
+	 * @param string $category
+	 * 		Name of the category for which the group was created (without namespace).
+	 * 
+	 */
+	private static function createParentGroups($groupName, $category) {
+		global $haclgDynamicRootGroup, $haclgDynamicCategoryGroup, 
+		       $haclgDynamicGroupManager;
+		
+		if (!isset($haclgDynamicRootGroup) 
+		    || !isset($haclgDynamicCategoryGroup) 
+		    || !isset($haclgDynamicGroupManager)
+		    || (!array_key_exists("groups", $haclgDynamicGroupManager) && 
+		        !array_key_exists("users", $haclgDynamicGroupManager)) ) {
+		    // Important global variables missing
+		    	return;
+		}
+		$userManager = array_key_exists("users", $haclgDynamicGroupManager)
+						? $haclgDynamicGroupManager['users']
+						: null;
+		$groupManager = array_key_exists("groups", $haclgDynamicGroupManager)
+						? $haclgDynamicGroupManager['groups']
+						: null;
+						
+		global $haclgContLang;
+    	$prefix = $haclgContLang->getNamingConvention(HACLLanguage::NC_GROUP);
+    	
+    	$grandparentGroup = "$prefix/$haclgDynamicRootGroup";
+    	$parentGroup      = "$prefix/$haclgDynamicCategoryGroup$category";
+    	
+    	// Create/update parent group
+    	try {
+    		$group = HACLGroup::newFromName($parentGroup);
+    	} catch (HACLGroupException $e) {
+    		// group does not exist yet => create it
+    		HACLGroup::createEmptyArticle($parentGroup);
+    		$group = new HACLGroup(null, $parentGroup, $groupManager, $userManager);
+    	}
+    	$group->addGroup($groupName);
+    	$group->saveArticle();
+    	
+    	// Create/update root group
+    	try {
+    		$group = HACLGroup::newFromName($grandparentGroup);
+    	} catch (HACLGroupException $e) {
+    		// group does not exist yet => create it
+    		HACLGroup::createEmptyArticle($grandparentGroup);
+    		$group = new HACLGroup(null, $grandparentGroup, $groupManager, $userManager);
+    	}
+    	$group->addGroup($parentGroup);
+    	$group->saveArticle();
+    	
 	}
 }

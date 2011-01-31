@@ -123,8 +123,11 @@ class  HACLGroup {
     public function getManageUsers() {return $this->mManageUsers;}
     public function getType() 		{return $this->mType;}
     public function canBeModified()	{return $this->mCanBeModified;}
-	public static function setAllowUnauthorizedGroupChange($aucg)
-										{ self::$mAllowUnauthorizedGroupChange = $aucg; }
+	public static function setAllowUnauthorizedGroupChange($aucg) { 
+		$current = self::$mAllowUnauthorizedGroupChange;
+		self::$mAllowUnauthorizedGroupChange = $aucg; 
+		return $current;
+	}
     
     /**
      * Returns the name of this group without the prefix e.g. "Group/"
@@ -231,6 +234,50 @@ class  HACLGroup {
      */
     public static function nameForID($groupID) {
         return HACLStorage::getDatabase()->groupNameForID($groupID);
+    }
+    
+    /**
+     * Creates an empty article for the group with the name $groupName (without
+     * namespace). If the article already exist, no new article is created.
+     * This is needed for groups that have no ID yet.
+     * 
+     * @param $groupName
+     * 		Name of the group
+     * 
+     * @return bool success
+     * 		<true>, if the article already exists or if it was successfully created
+     * 		<false>, if creation failed.
+     */
+    public static function createEmptyArticle($groupName) {
+		global $haclgContLang;
+    	$articleName = $haclgContLang->getNamespaces();
+    	$articleName = $articleName[HACL_NS_ACL];
+    	$articleName .= ':'.$groupName;
+    	
+		// save the article
+		$title = Title::newFromText($articleName);
+		$article = new Article($title);
+		
+		if ($article->exists()) {
+			return true;
+		}
+		$status = $article->doEdit("", 'Group initialization', 
+		                            $article->exists() ? EDIT_UPDATE : EDIT_NEW);
+
+		if (!$status->isOK()) {
+			return false;
+		}		
+		                            
+		// Create an empty group to combine the page ID with the group name in
+		// the database
+		$id = $article->getID();
+		$group = new HACLGroup($id, $groupName, "", "");
+		$augc = self::setAllowUnauthorizedGroupChange(true);
+		$group->save();
+		self::setAllowUnauthorizedGroupChange($augc);
+		
+		return true;
+    	
     }
     
     /**
@@ -466,7 +513,7 @@ class  HACLGroup {
      */
     public function save($user = null) {
 
-    // Get the page ID of the article that defines the group
+    	// Get the page ID of the article that defines the group
         if ($this->mGroupID == 0) {
             throw new HACLGroupException(HACLGroupException::NO_GROUP_ID, $this->mGroupName);
         }
@@ -595,13 +642,13 @@ class  HACLGroup {
      *
      */
     public function addGroup($group, $mgUser=null) {
-    // Check if $mgUser can modifiy this group.
+    	// Check if $mgUser can modifiy this group.
         $this->userCanModify($mgUser, true);
 
         $groupID = self::idForGroup($group);
         if ($groupID == 0) {
             throw new HACLGroupException(HACLGroupException::INVALID_GROUP_ID,
-            $groupID);
+            							 $groupID);
         }
 
         HACLStorage::getDatabase()->addGroupToGroup($this->mGroupID, $groupID);
@@ -883,6 +930,87 @@ class  HACLGroup {
     		}
     	}
     	return $result;
+    }
+    
+    /**
+     * Saves the definition of this group as article. If the article already exists
+     * it is overwritten.
+     * 
+     * @return bool success
+     * 		<true>, if the article was saved successfully and
+     * 		<false> otherwise.
+     */
+    public function saveArticle() {
+    	global $haclgContLang;
+    	$articleName = $haclgContLang->getNamespaces();
+    	$articleName = $articleName[HACL_NS_ACL];
+    	$articleName .= ':'.$this->mGroupName;
+    	
+    	// serialize members
+    	global $wgContLang;
+    	$userNS = $wgContLang->getNsText(NS_USER);
+    	$members = array();
+    	
+    	$users = $this->getUsers(self::NAME);
+    	foreach ($users as $u) {
+    		$members[] = "$userNS:$u";
+    	}
+    	
+    	$groups = $this->getGroups(self::NAME);
+    	foreach ($groups as $g) {
+    		$members[] = $g;
+    	}
+    	
+    	$members = implode(', ', $members);
+    	
+    	// serialize managers
+    	$managers = array();
+    	
+    	$users = $this->getManageUsers();
+		foreach ($users as $uid) {
+			if ($uid > 0) {
+				$u = User::whoIs($uid);
+				if ($u !== false) {
+					$managers[] = "$userNS:$u";
+				}
+			} 
+		}
+			    	
+    	$groups = $this->getManageGroups();
+    	foreach ($groups as $gid) {
+    		$g = self::nameForID($gid);
+    		if (!is_null($g)) {
+    			$managers[] = $g;
+    		}
+    	}
+    	
+    	$managers = implode(', ', $managers);
+    	
+
+    	// Serialization as wiki text
+    	$wikitext = <<<GROUP
+{{#{$haclgContLang->getParserFunction(HACLLanguage::PF_MEMBER)}:
+{$haclgContLang->getParserFunctionParameter(HACLLanguage::PFP_MEMBERS)}=$members
+}}
+
+{{#{$haclgContLang->getParserFunction(HACLLanguage::PF_MANAGE_GROUP)}:
+{$haclgContLang->getParserFunctionParameter(HACLLanguage::PFP_ASSIGNED_TO)}=$managers
+}}
+
+[[{$haclgContLang->getCategory(HACLLanguage::CAT_GROUP)}]]
+GROUP
+;
+
+		// save the article
+		$title = Title::newFromText($articleName);
+		$article = new Article($title);
+		// Set the article's content
+		
+		$status = $article->doEdit($wikitext, 'Group serialization', 
+		                            $article->exists() ? EDIT_UPDATE : EDIT_NEW);
+
+		return $status->isOK();
+    	
     }
     //--- Private methods ---
 
