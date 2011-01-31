@@ -6,7 +6,7 @@ php import.php -f %1 -m %2
 goto end
 
 :notexist
-echo Dump file does not exist
+echo File %1 does not exist
 goto end
 
 :help
