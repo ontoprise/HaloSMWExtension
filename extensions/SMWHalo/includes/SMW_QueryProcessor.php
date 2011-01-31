@@ -228,6 +228,8 @@ class SMWQueryProcessor {
 					$parts = explode( '=', $param, 2 );
 					if ( count( $parts ) == 2 ) $lastprintout->setParameter( trim( $parts[0] ), $parts[1] );
 				}
+			} elseif ( $param[0] == '#'){ //for tabular form result printer
+				$params[$param] = ''; 
 			} else { // parameter or query
 				$parts = explode( '=', $param, 2 );
 				
