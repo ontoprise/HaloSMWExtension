@@ -47,6 +47,7 @@ for( $arg = reset( $argv ); $arg !== false; $arg = next( $argv ) ) {
 	//-m => mode
 	if ($arg == '-m') {
 		$mode = next($argv);
+		if ($mode === false) $mode = DEPLOYWIKIREVISION_WARN;
 		continue;
 	}
 	//-f => mode

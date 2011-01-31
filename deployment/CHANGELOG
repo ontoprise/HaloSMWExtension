@@ -16,4 +16,5 @@ New:
 - ChangeLog added 
 - FR #12508 Multiple different restore points supported.
 - FR #13200 DF writes log about all operations
+- FR #12330: Shell scripts for import of dumps. 
 
