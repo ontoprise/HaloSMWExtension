@@ -577,7 +577,7 @@ function smwf_ts_getWikiSpecialProperties() {
 				"IMPORTED_FROM=".$specialPropertiesSMW['_IMPO'].",".
 				"PROVIDES_SERVICE=".$specialPropertiesSMW['_SERV'].",".
 				"ALLOWS_VALUE=".$specialPropertiesSMW['_PVAL'].",".
-				"HAS_IMPROPER_VALUE_FOR=".$specialPropertiesSMW['_ERRP'];
+				"HAS_IMPROPER_VALUE_FOR=".$specialPropertiesSMW['_ERRP'].",";
 
 	// these two namespaces are required for ASK queries
 	$result .= "CATEGORY=".$wgContLang->getNSText(NS_CATEGORY).",";

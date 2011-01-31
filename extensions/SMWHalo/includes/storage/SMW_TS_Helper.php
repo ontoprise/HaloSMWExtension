@@ -316,7 +316,8 @@ class TSNamespaces {
 	 */
 	public function getNSPrefix($namespace) {
 		global $wgContLang;
-		return $wgContLang->getNSText($namespace);
+		if ($namespace == NS_MAIN) return "a";
+		return str_replace(" ","_",strtolower($wgContLang->getNSText($namespace)));
 	}
 
 	/**
