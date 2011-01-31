@@ -1,6 +1,6 @@
 Index: extensions/SemanticForms/specials/SF_UploadWindow.php
 ===================================================================
---- extensions/SemanticForms/specials/SF_UploadWindow.php	(revision 9539)
+--- extensions/SemanticForms/specials/SF_UploadWindow.php	(revision 9674)
 +++ extensions/SemanticForms/specials/SF_UploadWindow.php	(working copy)
 @@ -40,7 +40,8 @@
  	global $wgRequest, $wgOut, $wgUser, $wgServer;
@@ -768,7 +768,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow.php
  		}
  
  		if ( $wgUseCopyrightUpload ) {
-@@ -1081,21 +1504,22 @@
+@@ -1081,21 +1504,21 @@
  					<td><input tabindex='6' type='text' name='wpUploadSource' id='wpUploadCopyStatus' 
  					  value=\"$uploadsource\" size='40' /></td>
  			</tr>
@@ -790,13 +790,13 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow.php
 +			"</label><img title=\"".wfMsg("smw_rm_ignore_warning_help_tooltip")."\" class=\"help-image\" src=\"".$smwgRMScriptPath."/skins/help.gif\"></img>
  		</td>
  	</tr>
- 	$warningRow
+-	$warningRow
 -	<tr>
 +	<tr style='display:none'>
  		<td></td>
  		<td align='$align2'><input tabindex='9' type='submit' name='wpUpload' value=\"{$ulb}\"" . $wgUser->getSkin()->tooltipAndAccesskey( 'upload' ) . " /></td>
  	</tr>
-@@ -1111,8 +1535,59 @@
+@@ -1111,8 +1534,59 @@
  	</table>
  	<input type='hidden' name='wpDestFileWarningAck' id='wpDestFileWarningAck' value=''/>
  	<input type='hidden' name='sfInputID' value=\"" . htmlspecialchars( $this->mInputID ) . "\" />
@@ -857,7 +857,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow.php
  	}
  
  	/* -------------------------------------------------------------- */
-@@ -1576,4 +2051,60 @@
+@@ -1576,4 +2050,60 @@
  		}
  		return $pageText;
  	}
