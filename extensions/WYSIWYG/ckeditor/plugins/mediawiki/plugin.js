@@ -375,7 +375,7 @@ CKEDITOR.customprocessor.prototype =
 			data = this.ieFixHTML(data);
 		}
 
-        data = '<body>' + data.htmlEntities()+ '</body>';
+        data = '<body xmlns:x="http://excel">' + data.htmlEntities()+ '</body>';
         // fix <img> tags
         data = data.replace(/(<img[^>]*)([^/])>/gi, '$1$2/>' );
         // fix <hr> and <br> tags
@@ -388,6 +388,8 @@ CKEDITOR.customprocessor.prototype =
         data = data.replace(/<br\/>(\s*<(ol|ul)>)/gi, '$1');
 		// in IE the values of the class attribute is not quoted 
         data = data.replace(/class=([^\"].*?)\s/gi, 'class="$1" ');
+        // when inserting data with Excel an unmatched <col> element exists, thus remove it
+        data = data.replace(/<col[^>]*>/gi, '' );
 		
 
         var rootNode = this._getNodeFromHtml( data );
