@@ -52,9 +52,14 @@ class UploadConverter {
 		global $smwgRMIP, $smwgUploadConverterExternal;
 		require_once("$smwgRMIP/specials/SMWUploadConverter/SMW_UploadConverterSettings.php");
 		
-		// $uploadedFile->mLocalfile is protected so use this instead
-		$title = $uploadedFile->getTitle();
-		$file = wfLocalFile($title);
+		if ( class_exists( 'HTMLTextField' ) ) {
+			// $uploadedFile->mLocalfile is protected so use this instead
+			$title = $uploadedFile->getTitle();
+			$file = wfLocalFile($title);
+		} else {
+			$file = $uploadedFile->mLocalFile; // can't avoid to access private field :(
+			$title = $file->getTitle();
+		}
 		$mimeType = $file->getMimeType();
 		$fileNameArray = explode(".", $file->getFullPath());
 		$ext = $fileNameArray[count($fileNameArray)-1];	
