@@ -151,7 +151,7 @@ class SMWRecordValue extends SMWContainerValue {
 	public function getExportData() {
 		if ( !$this->isValid() ) return null;
 
-		$result = new SMWExpData( new SMWExpElement( '', $this ) ); // bnode
+		$result = new SMWExpData( new SMWExpResource( '', $this ) ); // bnode
 		$ed = new SMWExpData( SMWExporter::getSpecialElement( 'swivt', 'Container' ) );
 		$result->addPropertyObjectValue( SMWExporter::getSpecialElement( 'rdf', 'type' ), $ed );
 		$count = 0;
@@ -187,8 +187,8 @@ class SMWRecordValue extends SMWContainerValue {
 			$propname = $prop->getPropertyID();
 			$propnum = substr( $propname, 1 );
 			if ( ( $propname != false ) && ( is_numeric( $propnum ) ) ) {
-				$dummy = array_values($this->m_data->getPropertyValues( $prop ));
-                $result[( $propnum - 1 )] =reset($dummy);
+				$propertyvalues = $this->m_data->getPropertyValues( $prop ); // combining this with next line violates PHP strict standards 
+				$result[( $propnum - 1 )] = reset( $propertyvalues );
 			}
 		}
 		return $result;
@@ -229,7 +229,8 @@ class SMWRecordValue extends SMWContainerValue {
 				$result .= ( $type == 4 ) ? '; ':", ";
 			}
 			$property = SMWPropertyValue::makeProperty( '_' . ( $i + 1 ) );
-			$dv = reset( $this->m_data->getPropertyValues( $property ) );
+			$propertyvalues = $this->m_data->getPropertyValues( $property ); // combining this with next line violates PHP strict standards 
+			$dv = reset( $propertyvalues );
 			$result .= ( $dv !== false ) ? $this->makeValueOutputText( $type, $dv, $linker ): '?';
 		}
 		if ( ( $i > 1 ) && ( $type != 4 ) ) $result .= ')';

@@ -8,7 +8,7 @@
  */
 
 // The SMW version number.
-define( 'SMW_VERSION', '1.5.4' );
+define( 'SMW_VERSION', '{{$VERSION}} [B{{$BUILDNUMBER}}]' );
 
 // A flag used to indicate SMW defines a semantic extension type for extension crdits.
 define( 'SEMANTIC_EXTENSION_TYPE', true );
@@ -31,11 +31,17 @@ require_once( 'SMW_GlobalFunctions.php' );
  * @return true
  */
 function enableSemantics( $namespace = null, $complete = false ) {
-	global $wgVersion, $wgExtensionFunctions, $wgAutoloadClasses, $wgSpecialPages;
+	global $wgVersion, $wgFooterIcons, $wgExtensionFunctions, $wgAutoloadClasses, $wgSpecialPages;
 	global $wgSpecialPageGroups, $wgHooks, $wgExtensionMessagesFiles;
 	global $smwgIP, $smwgNamespace, $wgJobClasses, $wgExtensionAliasesFiles, $wgServer;
 	global $wgResourceModules, $smwgScriptPath;
-
+	
+	$wgFooterIcons["poweredby"]["semanticmediawiki"] = array(
+		"src" => null,
+		"url" => "http://www.semantic-mediawiki.org/wiki/Semantic_MediaWiki",
+		"alt" => "Powered by Semantic MediaWiki",
+	);
+	
 	// The dot tells that the domain is not complete. It will be completed
 	// in the Export since we do not want to create a title object here when
 	// it is not needed in many cases.
@@ -121,6 +127,7 @@ function enableSemantics( $namespace = null, $complete = false ) {
 	$wgAutoloadClasses['SMWRSSResultPrinter']       = $qpDir . 'SMW_QP_RSSlink.php';
 	$wgAutoloadClasses['SMWCsvResultPrinter']       = $qpDir . 'SMW_QP_CSV.php';
 	$wgAutoloadClasses['SMWJSONResultPrinter']      = $qpDir . 'SMW_QP_JSONlink.php';
+	$wgAutoloadClasses['SMWRDFResultPrinter']       = $qpDir . 'SMW_QP_RDF.php';
 
 	// Datavalues
 	$dvDir = $smwgIP . 'includes/datavalues/';
@@ -150,6 +157,10 @@ function enableSemantics( $namespace = null, $complete = false ) {
 	$wgAutoloadClasses['SMWExpElement']             = $expDir . 'SMW_Exp_Element.php';
 	$wgAutoloadClasses['SMWExpLiteral']             = $expDir . 'SMW_Exp_Element.php';
 	$wgAutoloadClasses['SMWExpResource']            = $expDir . 'SMW_Exp_Element.php';
+	$wgAutoloadClasses['SMWExportController']		= $expDir . 'SMW_ExportController.php';
+	$wgAutoloadClasses['SMWSerializer']		        = $expDir . 'SMW_Serializer.php';
+	$wgAutoloadClasses['SMWRDFXMLSerializer']       = $expDir . 'SMW_Serializer_RDFXML.php';
+	$wgAutoloadClasses['SMWTurtleSerializer']       = $expDir . 'SMW_Serializer_Turtle.php';
 
 	// Parser hooks
 	$phDir = $smwgIP . 'includes/parserhooks/';
@@ -225,7 +236,6 @@ function enableSemantics( $namespace = null, $complete = false ) {
 	$wgSpecialPages['SemanticStatistics']           = array( 'SMWSpecialSemanticStatistics' );
 	$wgSpecialPageGroups['SemanticStatistics']      = 'wiki'; // Similar to Special:Statistics
 
-	$wgAutoloadClasses['SMWOWLExport']       		= $smwgIP . 'includes/export/SMW_OWLExport.php';
 	$wgAutoloadClasses['SMWSpecialOWLExport']       = $smwgIP . 'specials/Export/SMW_SpecialOWLExport.php';
 	$wgSpecialPages['ExportRDF']                    = array( 'SMWSpecialOWLExport' );
 	$wgSpecialPageGroups['ExportRDF']               = 'smw_group';
@@ -265,7 +275,7 @@ function enableSemantics( $namespace = null, $complete = false ) {
  */
 function smwfSetupExtension() {
 	wfProfileIn( 'smwfSetupExtension (SMW)' );
-	global $smwgIP, $wgHooks, $wgParser, $wgExtensionCredits, $smwgEnableTemplateSupport, $smwgMasterStore, $smwgIQRunningNumber, $wgLanguageCode, $wgVersion, $smwgToolboxBrowseLink, $smwgMW_1_14;
+	global $smwgIP, $smwgScriptPath, $wgHooks, $wgFooterIcons, $wgParser, $wgExtensionCredits, $smwgEnableTemplateSupport, $smwgMasterStore, $smwgIQRunningNumber, $wgLanguageCode, $wgVersion, $smwgToolboxBrowseLink, $smwgMW_1_14;
 
 	$smwgMasterStore = null;
 	$smwgIQRunningNumber = 0;
@@ -289,6 +299,11 @@ function smwfSetupExtension() {
 
 	$wgHooks['SkinAfterContent'][] = 'SMWFactbox::onSkinAfterContent'; // draw Factbox below categories
 	$wgHooks['SkinGetPoweredBy'][] = 'smwfAddPoweredBySMW';
+	if ( isset($wgFooterIcons["poweredby"])
+	  && isset($wgFooterIcons["poweredby"]["semanticmediawiki"])
+	  && $wgFooterIcons["poweredby"]["semanticmediawiki"]["src"] === null ) {
+		$wgFooterIcons["poweredby"]["semanticmediawiki"]["src"] = "$smwgScriptPath/skins/images/smw_button.png";
+	}
 	$smwgMW_1_14 = true; // assume latest 1.14 API
 
 	// Registration of the extension credits, see Special:Version.

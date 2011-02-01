@@ -38,7 +38,7 @@ class SMWShow {
 		}
 
 		// Starting from MW 1.16, there is a more suited method available: Title::isSpecialPage
-		if ( !is_null($wgTitle) && $wgTitle->getNamespace() == NS_SPECIAL ) {
+		if ( $wgTitle->getNamespace() == NS_SPECIAL ) {
 			global $wgOut;
 			SMWOutputs::commitToOutputPage( $wgOut );
 		}

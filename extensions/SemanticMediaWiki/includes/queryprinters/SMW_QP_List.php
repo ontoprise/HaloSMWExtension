@@ -111,8 +111,9 @@ class SMWListResultPrinter extends SMWResultPrinter {
 			$rows_in_cur_column = 0;
 		}
 
-		$result .= "\t\t\t\t$header\n";
-
+		if ( $header != '' ) {
+			$result .= "\t\t\t\t$header\n";
+		} 
 		
 		if ( $this->mIntroTemplate != '' ) {
 			$result .= "{{" . $this->mIntroTemplate . "}}";
@@ -137,7 +138,9 @@ class SMWListResultPrinter extends SMWResultPrinter {
 		}
 
 		// Print footer
-		$result .= "\t\t\t\t$footer\n";
+		if ( $footer != '' ) {
+			$result .= "\t\t\t\t$footer\n";
+		}
 		
 		if ( $this->mColumns > 1 ) {
 			$result .= "\t\t\t\t</div>\n";
@@ -182,7 +185,6 @@ END;
 			$rows_in_cur_column++;
 		}
 		
-		$result .= "\t\t\t\t\t";
 		if ( $rownum > 0 && $plainlist )  {
 			$result .=  ( $rownum <= $res->getCount() ) ? $listsep : $finallistsep; // the comma between "rows" other than the last one
 		} else {
