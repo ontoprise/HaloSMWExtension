@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <project basedir="." default="semanticrules" name="Semantic Rules">
-	<target name="semanticrules" depends="deployscripts">
+	<target name="semanticrules" depends="versionhint">
 		<delete dir="bin/zip" />
 		<delete>
 			<fileset dir="bin" includes="smwhalo-rules*.zip" />
@@ -55,7 +55,7 @@
 		</exec>
 	</target>
 	
-	<target name="deployscripts" depends="versionhint">
+	<target name="deployscripts" >
         <echo>Pack javascripts for Semantic Rules</echo>
         <java
             fork="true"
@@ -70,7 +70,7 @@
         </java>
 	</target>
 
-	<target name="versionhint">
+	<target name="versionhint" depends="deployscripts">
         <property environment="env" />
 		<exec executable="php">
 			<arg value="../../../buildtools/replaceVersionHint.php" />

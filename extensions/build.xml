@@ -1,5 +1,7 @@
-<project basedir="." default="apply_patches" name="BuildDeploySystem">
-
+<project basedir="." default="apply_all" name="BuildDeploySystem">
+    
+    <target name="apply_all" depends="apply_patches,apply_deployscripts"/>
+	
 	<target name="apply_patches">
 		<ant antfile="build.xml" dir="SMWHalo/deploy" target="patches" />
 		<ant antfile="build.xml" dir="SemanticForms/deploy" target="patches" />
@@ -8,5 +10,11 @@
 		<ant antfile="build.xml" dir="EnhancedRetrieval/deploy" target="patches" />
 		<ant antfile="build.xml" dir="SemanticResultFormats/deploy" target="patches" />
 
+	</target>
+	
+	<target name="apply_deployscripts">
+		<ant antfile="build.xml" dir="SMWHalo/deploy" target="deployscripts" />
+		<ant antfile="build.xml" dir="HaloACL/deploy" target="deployscripts" />
+		<ant antfile="build.xml" dir="SemanticRules/deploy" target="deployscripts" />
 	</target>
 </project>

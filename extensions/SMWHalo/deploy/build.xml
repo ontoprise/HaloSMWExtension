@@ -2,7 +2,7 @@
 <project basedir="." default="smwhalo_build" name="SMWHalo">
 
 
-	<target name="smwhalo_build" depends="deployscripts">
+	<target name="smwhalo_build" depends="versionhint">
 		<delete dir="bin/zip" />
 		<delete>
 			<fileset dir="bin" includes="smwhalo-*.zip" />
@@ -178,7 +178,7 @@
 		</exec>
 	</target>
 
-	<target name="deployscripts" depends="versionhint">
+	<target name="deployscripts" >
 		<echo>General Tools</echo>
 		<java fork="true" jar="../../../buildtools/closure/compiler.jar" failonerror="true">
 			<arg value="--js=../../SMWHalo/scripts/ajaxhalo.js" />
@@ -250,7 +250,7 @@
 
 	</target>
 
-	<target name="versionhint">
+	<target name="versionhint" depends="deployscripts">
 		<property environment="env" />
 		<exec executable="php">
 			<arg value="../../../buildtools/replaceVersionHint.php" />

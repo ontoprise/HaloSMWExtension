@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <project basedir="." default="HaloACL_build" name="HaloACL">
-	<target name="HaloACL_build" depends="deployscripts">
+	<target name="HaloACL_build" depends="versionhint">
 		<delete dir="bin/zip" />
 		<delete>
 			<fileset dir="bin" includes="smwhalo-HaloACL*.zip" />
@@ -112,7 +112,7 @@
 
 	</target>
 
-	<target name="versionhint">
+	<target name="versionhint" depends="deployscripts">
 		<property environment="env" />
 		<exec executable="php">
 			<arg value="../../../buildtools/replaceVersionHint.php" />
@@ -122,7 +122,7 @@
 		</exec>
 	</target>
 
-	<target name="deployscripts" depends="versionhint">
+	<target name="deployscripts" >
 		<echo>Pack javasacript for special pages</echo>
 		<!-- complile custom scripts only, yui stuff is obfuscated already -->
 		<java fork="true" jar="../../../buildtools/closure/compiler.jar" failonerror="true">
