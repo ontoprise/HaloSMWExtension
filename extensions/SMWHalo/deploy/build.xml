@@ -274,7 +274,7 @@
 			<arg value="-d"/>
 			<arg value="${basedir}/../../../"/>
 			<arg value="-p" />
-			<arg value="../patch_for_builtin_properties_SMW_1.5.4.txt"/>
+			<arg value="../patch_for_builtin_properties_SMW_1.5.5.txt"/>
 			<arg value="--patchtool" />
 			<arg value="${patchtool}"/>
 		</exec>
@@ -283,7 +283,7 @@
 			<arg value="-d"/>
 			<arg value="${basedir}/../../../"/>
 			<arg value="-p" />
-			<arg value="../patch_for_SMW1.5.4.txt"/>
+			<arg value="../patch_for_SMW1.5.5.txt"/>
 			<arg value="--patchtool" />
 			<arg value="${patchtool}"/>
 		</exec>
