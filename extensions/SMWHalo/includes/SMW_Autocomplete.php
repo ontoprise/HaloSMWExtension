@@ -595,7 +595,12 @@ class AutoCompletionHandler {
 					}
 				}
 				if (count($result) >= SMW_AC_MAX_RESULTS) break;
-			} else if ($commandText == 'annotation-property') {
+			} else if ($commandText == 'domainless-property') {
+                $pages = $acStore->getDomainLessProperty($userInput);
+                $result = self::mergeResults($result, self::setInferred($pages, !$first));
+
+                if (count($result) >= SMW_AC_MAX_RESULTS) break;
+            } else if ($commandText == 'annotation-property') {
 				if (empty($params[0]) || is_null($params[0])) continue;
 				if (smwf_om_userCan($params[0], 'read') == 'true') {
 					$category = Title::newFromText($params[0]);

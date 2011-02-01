@@ -122,6 +122,14 @@ abstract class AutoCompletionStorage {
 	 * @return array of (Title instance)
 	 */
 	public abstract function getInstanceAsTarget($userInputToMatch, $domainRangeAnnotations);
+	
+	/**
+     * Returns properties which do not have domain/range annotations.
+     * 
+     * @param string $userInputToMatch
+     * @return array of (Property title, false, NULL, array(types, range categories))
+     */
+    public abstract function getDomainLessProperty($userInputToMatch);
 }
 
 /**
@@ -696,6 +704,46 @@ class AutoCompletionStorageSQL2 extends AutoCompletionStorage {
 		return $results;
 	}
 
+public function getDomainLessProperty($userInputToMatch) {
+        
+        $db =& wfGetDB( DB_SLAVE );
+        
+        $smw_rels2 = $db->tableName('smw_rels2');
+        $smw_ids = $db->tableName('smw_ids');
+        
+        $requestoptions = new SMWRequestOptions();
+        $requestoptions->limit = SMW_AC_MAX_RESULTS;
+        $options = DBHelper::getSQLOptionsAsString($requestoptions);
+
+        $domainAndRange = $db->selectRow($db->tableName('smw_ids'), array('smw_id'), array('smw_title' => smwfGetSemanticStore()->domainRangeHintRelation->getDBkey()) );
+        if ($domainAndRange == NULL) {
+            $domainAndRangeID = -1; // does never exist
+        } else {
+            $domainAndRangeID = $domainAndRange->smw_id;
+        }
+
+        $sql = 'SELECT smw_title FROM '.$smw_ids.' q LEFT JOIN '.$smw_rels2.' s ON q.smw_id = s.s_id AND s.p_id = '.$domainAndRangeID.' '.
+        'WHERE smw_namespace = '.SMW_NS_PROPERTY.' AND s.p_id IS NULL AND UPPER('.DBHelper::convertColumn('smw_title').') LIKE UPPER('.$db->addQuotes('%'.$userInputToMatch.'%').') '.$options;
+
+
+        $result = array();
+        $res = $db->query($sql);
+
+        if($db->numRows( $res ) > 0) {
+            while($row = $db->fetchObject($res)) {
+                if (smwf_om_userCan($row->smw_title, 'read', SMW_NS_PROPERTY) == 'true') {
+                        
+                    $propertyTitle = Title::newFromText($row->smw_title, SMW_NS_PROPERTY);
+                    $result[] = array($propertyTitle, false, NULL, $this->getPropertyData($propertyTitle));
+                        
+                }
+            }
+        }
+        $db->freeResult($res);
+        return $result;
+
+    }
+    
 	public  function runASKQuery($rawquery, $userInput, $column = "_var0") {
 
 		global $smwgResultFormats, $smwgHaloIP;
@@ -717,6 +765,14 @@ class AutoCompletionStorageSQL2 extends AutoCompletionStorage {
 
 	}
 
+	/**
+     * Returns type labels and range categories of a property as comma-separated
+     * list.
+     * 
+     * @param Title $property
+     * 
+     * @return array(types, range categories)
+     */
 	protected function getPropertyData(Title $property) {
 		$ranges = array();
 		$pv = SMWPropertyValue::makeUserProperty($property->getText());
