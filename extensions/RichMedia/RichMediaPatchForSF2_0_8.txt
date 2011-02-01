@@ -1651,3 +1651,16 @@ Index: extensions/SemanticForms/includes/SF_FormPrinter.php
      }
      $starttime = wfTimestampNow();
      $page_article = new Article( $this->mPageTitle );
+Index: extensions/SemanticForms/libs/SemanticForms.js
+===================================================================
+--- extensions/SemanticForms/libs/SemanticForms.js	(revision 9539)
++++ extensions/SemanticForms/libs/SemanticForms.js	(working copy)
+@@ -785,7 +785,7 @@
+
+ 	// Could this be done via classes and attributes, instead of a
+ 	// global variable?
+-	for (var i in sfgAdderButtons) {
++	for (var i=0; i <= sfgAdderButtons.length-1; i++) {
+ 		var components = sfgAdderButtons[i].split(',');
+ 		adderID = components[0];
+ 		templateName = components[1];
