@@ -11,7 +11,7 @@
         </description>
 		<helpurl>http://smwforum.ontoprise.com/smwforum/index.php/Help:Ultrapedia_Extension</helpurl>
         <dependencies>
-            <dependency from="142" to="154">smw</dependency>
+            <dependency from="142" to="155">smw</dependency>
         </dependencies>
     </global>
     <codefiles>
