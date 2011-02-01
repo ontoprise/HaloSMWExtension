@@ -43,6 +43,7 @@
 			<patch file="patch_for_SMW_1.5.1.txt" ext="smw" from="151" to="151" />
             <patch file="patch_for_SMW_1.5.2.txt" ext="smw" from="152" to="152" />
             <patch file="patch_for_SMW_1.5.4.txt" ext="smw" from="154" to="154" />
+            <patch file="patch_for_SMW_1.5.5.txt" ext="smw" from="155" to="155" />
 			<patch file="patch_for_SF_1.9.txt" ext="semanticforms" from="190" to="190" />
 			<patch file="patch_for_SF_1.9.1.txt" ext="semanticforms" from="191" to="191" />
             <patch file="patch_for_SF_2.0.txt" ext="semanticforms" from="200" to="200" />
@@ -76,6 +77,7 @@
 			<patch file="patch_for_SMW_1.5.1.txt" ext="smw" from="151" to="151" />
             <patch file="patch_for_SMW_1.5.2.txt" ext="smw" from="152" to="152" />
             <patch file="patch_for_SMW_1.5.4.txt" ext="smw" from="154" to="154" />
+            <patch file="patch_for_SMW_1.5.5.txt" ext="smw" from="155" to="155" />
 			<patch file="patch_for_SF_1.9.txt" ext="semanticforms" from="190" to="190" />
    			<patch file="patch_for_SF_1.9.1.txt" ext="semanticforms" from="191" to="191" />
             <patch file="patch_for_SF_2.0.txt" ext="semanticforms" from="200" to="200" />
