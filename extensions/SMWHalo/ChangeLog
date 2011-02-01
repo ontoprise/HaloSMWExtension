@@ -1,5 +1,11 @@
 SMWHalo extension ChangeLog
 ===========================
+VERSION 1.5.3
+    FR #12720 added parameter to SPARQL parser function to turn inferencing off/on 
+     *infer=true/false
+     
+    FR #13018 Syntax of Halo Autocompletion: constraints-parameter shall support "namespace:Form"  
+
 VERSION 1.5.2
     CHANGES:
         The prefixes category, property, a can be used in both the wiki and on the
