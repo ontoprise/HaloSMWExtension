@@ -651,7 +651,8 @@ CKEDITOR.customprocessor.prototype =
 							}
                             if ( isWikiUrl ) href = href.urldecode();
 							stringBuilder.push( href );
-							if ( pipeline && htmlNode.innerHTML != '[n]' && ( !isWikiUrl || href != htmlNode.innerHTML || !href.toLowerCase().StartsWith( "category:" ) ) ){
+                            var innerHTML = this._GetNodeText(htmlNode) 
+							if ( pipeline && innerHTML != '[n]' && ( !isWikiUrl || href != innerHTML || !href.toLowerCase().StartsWith( "category:" ) ) ){
 								stringBuilder.push( isWikiUrl? '|' : ' ' );
 								this._AppendChildNodes( htmlNode, stringBuilder, prefix );
 							}
@@ -701,7 +702,7 @@ CKEDITOR.customprocessor.prototype =
 								stringBuilder.push( attribs );
 							stringBuilder.push( '\n' );
 
-							if ( htmlNode.caption && htmlNode.caption.innerHTML.length > 0 ){
+							if ( htmlNode.caption && this._GetNodeText(htmlNode.caption).length > 0 ){
 								stringBuilder.push( '|+ ' );
 								this._AppendChildNodes( htmlNode.caption, stringBuilder, prefix );
 								stringBuilder.push( '\n' );
@@ -874,7 +875,7 @@ CKEDITOR.customprocessor.prototype =
 									if ( refName && refName.length > 0 )
 										stringBuilder.push( ' name="' + refName + '"' );
 
-									if ( htmlNode.innerHTML.length == 0 )
+									if ( this._GetNodeText(htmlNode).length == 0 )
 										stringBuilder.push( ' />' );
 									else {
 										stringBuilder.push( '>' );
@@ -996,7 +997,7 @@ CKEDITOR.customprocessor.prototype =
 
 								if ( attribs.length > 0 )
 									stringBuilder.push( attribs );
-								if( htmlNode.innerHTML == '' )
+								if( this._GetNodeText(htmlNode) == '' )
 									stringBuilder.push( ' />' );
 								else {
 									stringBuilder.push( '>' );
