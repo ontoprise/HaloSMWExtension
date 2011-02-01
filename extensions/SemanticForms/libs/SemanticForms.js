@@ -785,7 +785,7 @@ jQuery(document).ready(function() {
 
 	// Could this be done via classes and attributes, instead of a
 	// global variable?
-	for (var i=0; i <= sfgAdderButtons.length-1; i++) {
+	for (var i in sfgAdderButtons) {
 		var components = sfgAdderButtons[i].split(',');
 		adderID = components[0];
 		templateName = components[1];
