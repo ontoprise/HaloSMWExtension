@@ -100,7 +100,7 @@ class Tools {
 				}
 			}
 			closedir($dir);
-			 
+
 		}
 		return $dirs;
 	}
@@ -451,7 +451,7 @@ class Tools {
 		}
 		return $check;
 	}
-	
+
 	/**
 	 * Asks for a confirmation.
 	 */
@@ -460,10 +460,10 @@ class Tools {
 		$a = trim(fgets(STDIN));
 		return strtolower($a) === 'y';
 	}
-	
+
 	/**
 	 * Converts an array of string to a string.
-	 * 
+	 *
 	 * @param array of string $arr
 	 * @return string
 	 */
@@ -473,5 +473,21 @@ class Tools {
 			$res .= "\n".$a;
 		}
 		return $res;
+	}
+
+	/**
+	 * Returns the home directory.
+	 * (path with slashes only also on Windows)
+	 * 
+	 * @return string 
+	 */
+	public static function getHomeDir() {
+		if (self::isWindows()) {
+            exec("echo %UserProfile%", $out, $ret);
+            return str_replace("\\", "/", reset($out));
+		} else {
+			exec('echo $HOME', $out, $ret);
+            return reset($out);
+		}
 	}
 }

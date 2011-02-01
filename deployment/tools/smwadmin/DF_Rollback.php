@@ -48,7 +48,8 @@ class Rollback {
 	private function __construct($rootDir) {
 
 		$this->rootDir = $rootDir;
-		$this->tmpDir = Tools::isWindows() ? 'c:/temp/rollback_smwadmin' : '/tmp/rollback_smwadmin';
+		$homeDir = Tools::getHomeDir();
+		$this->tmpDir = "$homeDir/rollback_smwadmin";
 
 	}
 
@@ -58,8 +59,8 @@ class Rollback {
 	 * @return array of string
 	 */
 	public function getAllRestorePoints() {
-		if (!file_exists($this->tmpDir."/rollback_data/")) return array();
-		$dirs = Tools::get_all_dirs($this->tmpDir."/rollback_data/");
+		if (!file_exists($this->tmpDir."/")) return array();
+		$dirs = Tools::get_all_dirs($this->tmpDir."/");
 		return $dirs;
 	}
 
@@ -82,10 +83,10 @@ class Rollback {
 		} 
 
 		$logger = Logger::getInstance();
-		$logger->info("Save installation to ".$this->tmpDir."/rollback_data/$name");
+		$logger->info("Save installation to ".$this->tmpDir."/$name");
 		print "\n[Save installation...";
-		$success = Tools::mkpath($this->tmpDir."/rollback_data/$name");
-		$success = $success && Tools::copy_dir($this->rootDir, $this->tmpDir."/rollback_data/$name", array($this->rootDir."/deployment"));
+		$success = Tools::mkpath($this->tmpDir."/$name");
+		$success = $success && Tools::copy_dir($this->rootDir, $this->tmpDir."/$name", array($this->rootDir."/deployment"));
 		print "done.]";
 		$savedInstallation = true;
 		if (!$success) {
@@ -124,8 +125,8 @@ class Rollback {
 
 		$wgDBname = $this->getVariableValue("LocalSettings.php", "wgDBname");
 		print "\n[Saving database...";
-		//print "\nmysqldump -u $wgDBadminuser --password=$wgDBadminpassword $wgDBname > ".$this->tmpDir."/rollback_data/$name/dump.sql";
-		exec("mysqldump -u $wgDBadminuser --password=$wgDBadminpassword $wgDBname > ".$this->tmpDir."/rollback_data/$name/dump.sql");
+		//print "\nmysqldump -u $wgDBadminuser --password=$wgDBadminpassword $wgDBname > ".$this->tmpDir."/$name/dump.sql";
+		exec("mysqldump -u $wgDBadminuser --password=$wgDBadminpassword $wgDBname > ".$this->tmpDir."/$name/dump.sql");
 		print "done.]";
 		$savedDataBase = true;
 
@@ -142,7 +143,7 @@ class Rollback {
 	 * @return bool true on success.
 	 */
 	public function restore($name) {
-		if (!file_exists($this->tmpDir."/rollback_data/$name")) return false;
+		if (!file_exists($this->tmpDir."/$name")) return false;
 		$this->restoreInstallation($name);
 		$this->restoreDatabase($name);
 		return true;
@@ -252,9 +253,9 @@ class Rollback {
 
 		$logger->info("Restore old installation");
 		print "\n[Restore old installation...";
-		$success = Tools::copy_dir($this->tmpDir."/rollback_data/$name", $this->rootDir);
+		$success = Tools::copy_dir($this->tmpDir."/$name", $this->rootDir);
 		if (!$success) {
-			$logger->error("Restore old installation faild. Could not copy from ".$this->tmpDir."/rollback_data/$name");
+			$logger->error("Restore old installation faild. Could not copy from ".$this->tmpDir."/$name");
 		}
 		print "done.]";
 	}

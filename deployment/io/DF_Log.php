@@ -50,7 +50,8 @@ class Logger {
 
 	private function __construct($rootDir) {
 	
-		$this->logDir = Tools::isWindows() ? 'c:/temp/df_log' : '/tmp/df_log';
+		$homeDir = Tools::getHomeDir();
+		$this->logDir = "$homeDir/df_log";
 		Tools::mkpath($this->logDir);
 		$currentDate = $this->createDateForFileName();
 		$this->logFileHandle = fopen($this->logDir."/log_$currentDate", "w");
