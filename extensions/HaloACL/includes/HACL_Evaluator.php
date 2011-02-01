@@ -192,6 +192,15 @@ class HACLEvaluator {
 					self::finishLog("Checked right for creating a security descriptor.", $result, false);
 					return false;
 				}
+				
+				// Check if page is a subpage whose parent prohibits create or
+				// edit
+				if ($title->isSubpage() && $title->getNamespace() != HACL_NS_ACL) {
+					$parentTitleText = $title->getBaseText();
+					$parentTitle = Title::newFromText($parentTitleText, $title->getNamespace());
+					return self::userCan($parentTitle, $user, $action, $result);
+				}
+				
 			}
 
 			// Check if the article belongs to a namespace with an SD
@@ -240,7 +249,7 @@ class HACLEvaluator {
 			// Second condition:
 			// The requested article is edited. Nevertheless, the passed $action
 			// might be "read" as MW tries to show the articles source
-			// => prophibit this, if it contains properties without read-access
+			// => prohibit this, if it contains properties without read-access
 			$allowed = self::checkProperties($title, $userID, HACLRight::EDIT);
 		} else {
 			$allowed = $savePage || self::checkProperties($title, $userID, $actionID);
@@ -317,6 +326,13 @@ class HACLEvaluator {
 // let other hooks decide			$result = true;
 			self::finishLog("Action allowed by a category right.", $result, true);
 			return true;
+		}
+
+		// Check if this is a subpage that inherits rights from its parent
+		if ($title->isSubpage()) {
+			$parentTitleText = $title->getBaseText();
+			$parentTitle = Title::newFromText($parentTitleText, $title->getNamespace());
+			return self::userCan($parentTitle, $user, $action, $result);	
 		}
 		
 		// check the whitelist

@@ -60,8 +60,14 @@ class TestUserCanHookSuite extends PHPUnit_Framework_TestSuite
 	private function initArticleContent() {
 		$this->mOrderOfArticleCreation = array(
 			'A',
+			'A/sub1',
+			'A/sub1/sub2',
 			'B',
+			'B/sub1',
+			'B/sub1/sub2',
 			'C',
+			'C/sub1',
+			'C/sub1/sub2',
 			'anon',
 			'Whitelist',
 			'Category:B',
@@ -89,6 +95,18 @@ This page is protected by [[ACL:Page/A]].
 ACL
 ,
 //------------------------------------------------------------------------------		
+			'A/sub1' =>
+<<<ACL
+This page is protected by [[ACL:Page/A]] if subpages are enabled.
+ACL
+,
+//------------------------------------------------------------------------------		
+			'A/sub2' =>
+<<<ACL
+This page is protected by [[ACL:Page/A]] if subpages are enabled.
+ACL
+,
+//------------------------------------------------------------------------------		
 			'B' =>
 <<<ACL
 This page is protected by [[ACL:Category/B]]
@@ -97,11 +115,35 @@ This page is protected by [[ACL:Category/B]]
 ACL
 ,
 //------------------------------------------------------------------------------		
+			'B/sub1' =>
+<<<ACL
+This page is protected by [[ACL:Category/B]] if subpages are enabled.
+ACL
+,
+//------------------------------------------------------------------------------		
+			'B/sub1/sub2' =>
+<<<ACL
+This page is protected by [[ACL:Category/B]] if subpages are enabled.
+ACL
+,
+//------------------------------------------------------------------------------		
 			'C' =>
 <<<ACL
 This is page C.
 
 [[Category:C]]
+ACL
+,
+//------------------------------------------------------------------------------		
+			'C/sub1' =>
+<<<ACL
+This is page C.
+ACL
+,
+//------------------------------------------------------------------------------		
+			'C/sub1/sub2' =>
+<<<ACL
+This is page C.
 ACL
 ,
 //------------------------------------------------------------------------------		
@@ -533,6 +575,82 @@ class TestUserCanHook extends PHPUnit_Framework_TestCase {
 		} catch (Exception $e) {
 			$this->assertTrue(false, "Unexpected exception while testing ".basename($file)."::testPropertyAccess():".$e->getMessage());
 		}
+    }
+    
+    /**
+     * Data provider for testSubpageProtection
+     */
+    function providerForSubpageProtection() {
+    	// $article, $user, $action, $subpageEnabled, $expected (, $nospExpected)
+    	return array(
+//    			// Test reading page A and subpages
+//				array('A', '*', 'read', false),
+//				array('A', 'U1', 'read', true),
+//				array('A', 'U2', 'read', false),
+//				
+//    			// Test editing page A subpages
+//				array('A', '*', 'edit', false),
+//				array('A', 'U1', 'edit', true),
+//				array('A', 'U2', 'edit', false),
+
+    			// Test creating subpages of A
+				array('A/create', '*', 'create', false, true),
+				array('A/create', 'U1', 'create', true, true),
+				array('A/create', 'U2', 'create', false, true),
+				
+    			// Test editing non existing subpages of A
+				array('A/create', '*', 'edit', false, true),
+				array('A/create', 'U1', 'edit', true, true),
+				array('A/create', 'U2', 'edit', false, true),
+				
+				// Test accessing page B subpages
+//				array('B', '*', 'read', true),
+//				array('B', 'U1', 'read', false),
+//				array('B', 'U2', 'edit', false),
+//
+//				// Test accessing page C subpagess
+//				array('C', '*', 'read', true),
+//				array('C', 'U1', 'read', false),
+//				array('C', 'U2', 'edit', true),
+				);
+    }
+    
+    /**
+     * Tests if a subpage correctly inherits the access rights of its parent page.
+     * 
+     * @dataProvider providerForSubpageProtection
+     */
+    function testSubpageProtection($article, $user, $action, $expected, $nospExpected = null) {
+    	global $wgNamespacesWithSubpages;
+    	
+    	$subpageEnabled = true;
+    	for ($i = 0; $i < 2; ++$i) {
+	    	// Enable subpages in namespace 'Main'
+	    	$wgNamespacesWithSubpages[NS_MAIN] = $subpageEnabled;
+	    	
+	    	$file = __FILE__;
+	    	global $wgGroupPermissions;
+	    	try {
+	    		// If subpages are not enabled, they inherit no rights and thus
+	    		// every operation is allowed.
+	    		if (!is_null($nospExpected) && $subpageEnabled == false) {
+	    			// expected result if subpages are disabled
+	    			$expected = $nospExpected;
+	    		}
+	    		$spExpected = $subpageEnabled ? $expected : true;
+				$checkRights = array(
+					array($article, $user, $action, $expected),
+					array("$article/sub1", $user, $action, $spExpected),
+					array("$article/sub1/sub2", $user, $action, $spExpected),
+				);
+				$wgGroupPermissions['*']['read'] = true;
+				$this->doCheckRights("testSubpageProtection", $checkRights);
+	    	} catch (Exception $e) {
+				$this->assertTrue(false, "Unexpected exception while testing ".basename($file)."::testSubpageProtection():".$e->getMessage());
+			}
+			$subpageEnabled = false;
+    	}
+    	
     }
 
     private function doCheckRights($testcase, $expectedResults) {
