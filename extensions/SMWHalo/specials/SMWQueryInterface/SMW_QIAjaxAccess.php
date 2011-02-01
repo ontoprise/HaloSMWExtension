@@ -603,9 +603,10 @@ function doHttpRequestWithFsockuopen($server, $port, $file) {
  *
  * @param string server i.e. http://www.domain.com (incl protocol prefix) 
  * @param string file	i.e. /path/to/script.cgi or /some/file.html
+ * @param boolean debug turn on debugging - default is off
  * @return array(int, string) with httpCode, page 
  */
-function doHttpRequestWithCurl($server, $file) {
+function doHttpRequestWithCurl($server, $file, $debug = false) {
 	if ($file{0} != "/") $file = "/".$file;
 	$c = curl_init();
 	curl_setopt($c, CURLOPT_URL, $server.$file);
@@ -619,7 +620,12 @@ function doHttpRequestWithCurl($server, $file) {
 		curl_setopt($c, CURLOPT_USERAGENT, $_SERVER['HTTP_USER_AGENT']);
 
 	$page = curl_exec($c); 
-	$httpErr = curl_getinfo($c, CURLINFO_HTTP_CODE); 
+	$httpErr = curl_getinfo($c, CURLINFO_HTTP_CODE);
+    $contentType = curl_getinfo($c, CURLINFO_CONTENT_TYPE);
+    if ($debug) {
+        $curlErr = curl_errno ( $c );
+        var_dump($httpErr, $contentType, $curlErr);
+    }
 	curl_close($c);
 	return array($httpErr, $page);
 }
