@@ -621,8 +621,8 @@ function doHttpRequestWithCurl($server, $file, $debug = false) {
 
 	$page = curl_exec($c); 
 	$httpErr = curl_getinfo($c, CURLINFO_HTTP_CODE);
-    $contentType = curl_getinfo($c, CURLINFO_CONTENT_TYPE);
     if ($debug) {
+        $contentType = curl_getinfo($c, CURLINFO_CONTENT_TYPE);
         $curlErr = curl_errno ( $c );
         var_dump($httpErr, $contentType, $curlErr);
     }
