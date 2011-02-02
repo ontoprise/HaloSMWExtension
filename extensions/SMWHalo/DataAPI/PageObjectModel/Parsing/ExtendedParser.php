@@ -293,7 +293,7 @@ class POMExtendedParser extends POMParser{
 				// $tmplDescr[2]: start index of the template
 				// $tmplDescr[3]: end index of the template
 				// $tmplDescr[4]: content
-				if (ereg('^#',$tmplDescr[1])) {// we have an extension parser function
+				if (preg_match('/^#/',$tmplDescr[1])) {// we have an extension parser function
 					if ($tmplDescr[1] == '#ask:') {
 						$page->addElement(new POMAskFunction($tmplDescr[4]));
 					}else if($tmplDescr[1] == '#language:'

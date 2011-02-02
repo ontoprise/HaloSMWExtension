@@ -43,8 +43,8 @@ class POMTemplate extends POMDcbElement
 		$text = substr($text, 2, strlen($text) - 4);
 
 		# Split by pipe
-		$parts = split('\|', $text);
-
+		$parts = preg_split('/\|/', $text);
+		
 		$this->title = new POMUtilTrimTriple(array_shift($parts));
 		$this->id = "template".POMElement::$elementCounter;
 		POMElement::$elementCounter++;

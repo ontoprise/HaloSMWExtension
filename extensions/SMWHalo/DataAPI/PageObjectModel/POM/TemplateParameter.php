@@ -19,7 +19,7 @@ abstract class POMTemplateParameter extends POMDcbElement
 	public static function &parse($text)
 	{
 
-		$pair = split('=', $text, 2);
+		$pair = preg_split('/=/', $text, 2);
 
 		# if it's a name/value pair, create POMTemplateNamedParameter, otherwise, create POMTemplateNumberedParameter
 		# if neither can be created, return POMTemplateInvalidParameter
@@ -36,11 +36,13 @@ abstract class POMTemplateParameter extends POMDcbElement
 				return new POMTemplateInvalidParameter($text);
 			}
 
-			return new POMTemplateNamedParameter($name, $value);
+			$tmp = new POMTemplateNamedParameter($name, $value);
+			return $tmp;
 		}
 		else
 		{
-			return new POMTemplateNumberedParameter($text);
+			$tmp = new POMTemplateNumberedParameter($text);
+			return $tmp;
 		}
 	}
 }

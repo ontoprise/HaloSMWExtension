@@ -93,9 +93,10 @@ class POMUtilTrimParameterValueTriple extends POMUtilTrimTriple
 		$__pomPage = new POMPage("temporarypage", $__trimmed);
 		$this->trimmed = &$__pomPage;
 
+		
 		if (strlen($this->trimmed->toString()) > 0)
 		{
-			$this->leading_space = substr($text, 0, strpos($text, $this->trimmed));
+			$this->leading_space = substr($text, 0, strpos($text, $this->trimmed->text));
 			if (strpos($text, $this->trimmed->toString()) + strlen($this->trimmed->toString()) < strlen($text))
 			{
 				$this->trailing_space = substr($text, strpos($text, $this->trimmed->toString()) + strlen($this->trimmed->toString()));
