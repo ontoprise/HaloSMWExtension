@@ -13,6 +13,8 @@ VERSION 1.X
   BUGFIXES:
 	* Issue 13164 - WebDAV not working due to strict standards warning.
 	* Issue 12704 - Changed embedding of files in FileViewer
+	* Issue 13549 - Small GUI improvements
+	* Issue 11339 - Updated XPdf to 3.02pl5
 
 
 VERSION 1.5

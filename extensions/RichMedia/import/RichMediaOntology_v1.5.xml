@@ -1552,7 +1552,7 @@
 |}
 {| cellpadding=&quot;5&quot; border=&quot;0&quot; width=&quot;100%&quot; class=&quot;rmListTable&quot;
 |-
-| colspan=&quot;2&quot; | Manual refresh list: &lt;span class=&quot;plainlinks rmListRefreshIcon&quot;&gt;[{{fullurl:{{FULLPAGENAME}}|action=purge}} {{SERVER}}/{{SCRIPTPATH}}/skins/common/images/icons/smw_plus_refresh_icon_16x16.gif]&lt;/span&gt; 
+| colspan=&quot;2&quot; | Manually refresh list: &lt;span class=&quot;plainlinks rmListRefreshIcon&quot;&gt;[{{fullurl:{{FULLPAGENAME}}|action=purge}} {{SERVER}}/{{SCRIPTPATH}}/skins/common/images/icons/smw_plus_refresh_icon_16x16.gif]&lt;/span&gt; 
 | class=&quot;rmListButton&quot; | {{#rmf: {{FULLPAGENAME}} }}
 |-
 ! class=&quot;rmListTableEnding&quot; colspan=&quot;6&quot; | 

@@ -272,6 +272,9 @@ function RMLinkEnd($skin, $target, $options, &$text, &$attribs, &$ret) {
 	RMNamespace::isImage( $temp_var, $rMresult );
 	if ( $rMresult ) {
 		$file = wfFindFile($target);
+		if(!$file) {
+			return true;
+		}
 		$ext = $file->getExtension();
 		if ( $wgRMImagePreview && is_array($smwgRMPreviewWhitelist)
 			&& in_array($ext, $smwgRMPreviewWhitelist) ) {
