@@ -88,4 +88,5 @@
 # Set the command used to run a web browser when a URL hyperlink is
 # clicked.
 
+#launchCommand  viewer-script
 #urlCommand	"netscape -remote 'openURL(%s)'"

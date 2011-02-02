@@ -16,7 +16,9 @@ DESCRIPTION
        (PBM) format.
 
        Pdftoppm reads the PDF file, PDF-file, and writes one PPM file for each
-       page, PPM-root-nnnnnn.ppm, where nnnnnn is the page number.
+       page, PPM-root-nnnnnn.ppm, where nnnnnn is the page  number.   If  PPM-
+       root  is '-', the image is sent to stdout (this is probably only useful
+       when converting a single page).
 
 CONFIGURATION FILE
        Pdftoppm reads a configuration file at startup.  It first tries to find
@@ -90,8 +92,8 @@ AUTHOR
        Cog, LLC.
 
 SEE ALSO
-       xpdf(1),  pdftops(1),  pdftotext(1),  pdfinfo(1),  pdffonts(1),  pdfim-
-       ages(1), xpdfrc(5)
+       xpdf(1),  pdftops(1),  pdftotext(1),  pdfinfo(1),  pdffonts(1),  pdfde-
+       tach(1), pdfimages(1), xpdfrc(5)
        http://www.foolabs.com/xpdf/
 
 

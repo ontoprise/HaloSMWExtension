@@ -27,6 +27,7 @@ DESCRIPTION
        In addition, the following information is printed:
 
               tagged (yes/no)
+              form (AcroForm / XFA / none)
               page count
               encrypted flag (yes/no)
               print and copy permissions (if encrypted)
@@ -64,14 +65,18 @@ OPTIONS
        -meta  Prints document-level metadata.  (This is the "Metadata"  stream
               from the PDF file's Catalog object.)
 
+       -rawdates
+              Prints  the  raw (undecoded) date strings, directly from the PDF
+              file.
+
        -enc encoding-name
-              Sets  the  encoding  to  use for text output.  The encoding-name
-              must be defined with the  unicodeMap  command  (see  xpdfrc(5)).
+              Sets the encoding to use for  text  output.   The  encoding-name
+              must  be  defined  with  the unicodeMap command (see xpdfrc(5)).
               This defaults to "Latin1" (which is a built-in encoding).  [con-
               fig file: textEncoding]
 
        -opw password
-              Specify the owner password for the  PDF  file.   Providing  this
+              Specify  the  owner  password  for the PDF file.  Providing this
               will bypass all security restrictions.
 
        -upw password
@@ -99,12 +104,12 @@ EXIT CODES
        99     Other error.
 
 AUTHOR
-       The pdfinfo software and documentation are copyright 1996-2007 Glyph  &
+       The  pdfinfo software and documentation are copyright 1996-2007 Glyph &
        Cog, LLC.
 
 SEE ALSO
-       xpdf(1),  pdftops(1),  pdftotext(1),  pdffonts(1),  pdftoppm(1), pdfim-
-       ages(1), xpdfrc(5)
+       xpdf(1),   pdftops(1),   pdftotext(1),    pdffonts(1),    pdfdetach(1),
+       pdftoppm(1), pdfimages(1), xpdfrc(5)
        http://www.foolabs.com/xpdf/
 
 

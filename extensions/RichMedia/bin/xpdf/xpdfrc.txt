@@ -246,6 +246,15 @@ POSTSCRIPT CONTROL
               CID  font,  for  lower  levels  it generates a non-CID composite
               font.
 
+       psFontPassthrough yes | no
+              If set to "yes", pass 8-bit fonts through to the PostScript out-
+              put  without  substitution.  Fonts which are embedded in the PDF
+              file will be embedded in the PS file.  8-bit fonts which are not
+              embedded  in  the  PDF file will not be embedded in the PS file,
+              i.e., they are expected to be available on  the  printer.   This
+              option  does not affect handling of CID fonts.  This defaults to
+              "no".
+
        psPreload yes | no
               If set to "yes", PDF forms are converted to PS  procedures,  and
               image  data  is  preloaded.   This uses more memory in the Post-
@@ -268,6 +277,19 @@ POSTSCRIPT CONTROL
               pressed.  If set to "no", the original compressed images will be
               used when possible.  The "yes" setting is useful to work  around
               certain buggy PostScript interpreters.  This defaults to "no".
+
+       psRasterResolution float
+              Set  the  resolution (in dpi) for rasterized pages in PostScript
+              output.  (Pdftops will rasterize pages which use  transparency.)
+              This defaults to 300.
+
+       psRasterMono yes | no
+              If set to "yes", rasterized pages in PS files will be monochrome
+              (8-bit gray) instead of color.  This defaults to "no".
+
+       psAlwaysRasterize yes | no
+              If set to "yes", all PostScript output will be rasterized.  This
+              defaults to "no".
 
        psFile file-or-command
               Sets  the  default  PostScript  file  or print command for xpdf.
@@ -333,6 +355,16 @@ MISCELLANEOUS SETTINGS
               with  FreeType  support.   ("enableFreeType"  replaces  the  old
               "freetypeControl" option.)  This option defaults to "yes".
 
+       enableFreeType yes | no
+              Enables  or  disables  use of FreeType (a TrueType / Type 1 font
+              rasterizer).  This is only relevant if the Xpdf tools were built
+              with  FreeType  support.   ("enableFreeType"  replaces  the  old
+              "freetypeControl" option.)  This option defaults to "yes".
+
+       disableFreeTypeHinting yes | no
+              If this is set to "yes", FreeType hinting will  be  forced  off.
+              This option defaults to "no".
+
        antialias yes | no
               Enables  or  disables  font anti-aliasing in the PDF rasterizer.
               This option affects all font rasterizers.  ("antialias" replaces
@@ -343,74 +375,95 @@ MISCELLANEOUS SETTINGS
               Enables or disables anti-aliasing of vector graphics in the  PDF
               rasterizer.  This defaults to "yes".
 
+       antialiasPrinting yes | no
+              If   this  is  "yes",  bitmaps  sent  to  the  printer  will  be
+              antialiased (according to the "antialias" and  "vectorAntialias"
+              settings).   If  this  is  "no",  printed  bitmaps  will  not be
+              antialiased.  This defaults to "no".
+
        strokeAdjust yes | no
-              Enables  or disables stroke adjustment.  Stroke adjustment moves
+              Enables or disables stroke adjustment.  Stroke adjustment  moves
               horizontal and vertical lines by up to half a pixel to make them
-              look  "cleaner"  when  vector  anti-aliasing  is  enabled.  This
+              look "cleaner"  when  vector  anti-aliasing  is  enabled.   This
               defaults to "yes".
 
        screenType dispersed | clustered | stochasticClustered
-              Sets the halftone screen type, which will be used when  generat-
-              ing  a  monochrome  (1-bit)  bitmap.  The three options are dis-
-              persed-dot dithering, clustered-dot dithering (with a round  dot
-              and   45-degree  screen  angle),  and  stochastic  clustered-dot
-              dithering.  By default, "stochasticClustered" is used for  reso-
+              Sets  the halftone screen type, which will be used when generat-
+              ing a monochrome (1-bit) bitmap.  The  three  options  are  dis-
+              persed-dot  dithering, clustered-dot dithering (with a round dot
+              and  45-degree  screen  angle),  and  stochastic   clustered-dot
+              dithering.   By default, "stochasticClustered" is used for reso-
               lutions of 300 dpi and higher, and "dispersed" is used for reso-
               lutions lower then 300 dpi.
 
        screenSize integer
-              Sets the size of the (square) halftone screen threshold  matrix.
-              By  default, this is 4 for dispersed-dot dithering, 10 for clus-
-              tered-dot  dithering,  and  100  for  stochastic   clustered-dot
+              Sets  the size of the (square) halftone screen threshold matrix.
+              By default, this is 4 for dispersed-dot dithering, 10 for  clus-
+              tered-dot   dithering,  and  100  for  stochastic  clustered-dot
               dithering.
 
        screenDotRadius integer
-              Sets  the  halftone  screen  dot radius.  This is only used when
-              screenType is set to stochasticClustered, and it defaults to  2.
-              In  clustered-dot  mode,  the  dot  radius is half of the screen
+              Sets the halftone screen dot radius.  This  is  only  used  when
+              screenType  is set to stochasticClustered, and it defaults to 2.
+              In clustered-dot mode, the dot radius  is  half  of  the  screen
               size.  Dispersed-dot dithering doesn't have a dot radius.
 
        screenGamma float
               Sets the halftone screen gamma correction parameter.  Gamma val-
-              ues  greater  than 1 make the output brighter; gamma values less
+              ues greater than 1 make the output brighter; gamma  values  less
               than 1 make it darker.  The default value is 1.
 
        screenBlackThreshold float
-              When halftoning, all values below this threshold are  forced  to
+              When  halftoning,  all values below this threshold are forced to
               solid black.  This parameter is a floating point value between 0
               (black) and 1 (white).  The default value is 0.
 
        screenWhiteThreshold float
-              When halftoning, all values above this threshold are  forced  to
+              When  halftoning,  all values above this threshold are forced to
               solid white.  This parameter is a floating point value between 0
               (black) and 1 (white).  The default value is 1.
 
        drawAnnotations yes | no
-              If set to "no", annotations will not be drawn or  printed.   The
+              If  set  to "no", annotations will not be drawn or printed.  The
               default value is "yes".
 
+       overprintPreview yes | no
+              If set to "yes", generate overprint preview output, honoring the
+              OP/op/OPM  settings  in the PDF file.  Ignored for non-CMYK out-
+              put.  The default value is "no".
+
+       launchCommand command
+              Sets the command executed when  you  click  on  a  "launch"-type
+              link.   The  intent  is  for  the command to be a program/script
+              which determines the file type and runs the appropriate  viewer.
+              The  command  line will consist of the file to be launched, fol-
+              lowed by any parameters specified with the  link.   Do  not  use
+              "%s"  in  "command".   By  default, this is unset, and Xpdf will
+              simply try to execute the file (after prompting the user).
+
        urlCommand command
-              Sets  the  command  executed  when you click on a URL link.  The
-              string "%s" will be replaced with the  URL.   (See  the  example
+              Sets the command executed when you click on  a  URL  link.   The
+              string  "%s"  will  be  replaced with the URL.  (See the example
               below.)  This has no default value.
 
        movieCommand command
-              Sets  the command executed when you click on a movie annotation.
+              Sets the command executed when you click on a movie  annotation.
               The string "%s" will be replaced with the movie file name.  This
               has no default value.
 
        mapNumericCharNames yes | no
-              If  set  to  "yes",  the  Xpdf tools will attempt to map various
+              If set to "yes", the Xpdf tools  will  attempt  to  map  various
               numeric character names sometimes used in font subsets.  In some
-              cases  this leads to usable text, and in other cases it leads to
+              cases this leads to usable text, and in other cases it leads  to
               gibberish -- there is no way for Xpdf to tell.  This defaults to
               "yes".
 
        mapUnknownCharNames yes | no
-              If  set  to  "yes",  and mapNumericCharNames is set to "no", the
-              Xpdf tools will apply a  simple  pass-through  mapping  (Unicode
-              index  =  character  code) for all unrecognized glyph names.  In
-              some cases, this leads to usable text, and  in  other  cases  it
+              If set to "yes", and mapNumericCharNames is  set  to  "no",  the
+              Xpdf  tools  will  apply  a simple pass-through mapping (Unicode
+              index = character code) for all unrecognized glyph names.   (For
+              CID  fonts, setting mapNumericCharNames to "no" is unnecessary.)
+              In some cases, this leads to usable text, and in other cases  it
               leads  to  gibberish  -- there is no way for Xpdf to tell.  This
               defaults to "no".
 
@@ -537,6 +590,7 @@ EXAMPLES
        # misc options
        enableT1lib     yes
        enableFreeType  yes
+       launchCommand   viewer-script
        urlCommand      "netscape -remote 'openURL(%s)'"
 
 
@@ -554,8 +608,8 @@ AUTHOR
        Cog, LLC.
 
 SEE ALSO
-       xpdf(1),  pdftops(1),  pdftotext(1),  pdfinfo(1),  pdftoppm(1),  pdfim-
-       ages(1)
+       xpdf(1),  pdftops(1),  pdftotext(1),  pdfinfo(1),  pdffonts(1),  pdfde-
+       tach(1), pdftoppm(1), pdfimages(1)
        http://www.foolabs.com/xpdf/
 
 

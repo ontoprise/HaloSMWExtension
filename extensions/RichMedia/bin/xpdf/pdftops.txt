@@ -193,8 +193,8 @@ AUTHOR
        Cog, LLC.
 
 SEE ALSO
-       xpdf(1),  pdftotext(1),  pdfinfo(1),  pdffonts(1),  pdftoppm(1), pdfim-
-       ages(1), xpdfrc(5)
+       xpdf(1),    pdftotext(1),    pdfinfo(1),   pdffonts(1),   pdfdetach(1),
+       pdftoppm(1), pdfimages(1), xpdfrc(5)
        http://www.foolabs.com/xpdf/
 
 

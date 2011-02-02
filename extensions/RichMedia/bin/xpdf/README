@@ -42,17 +42,18 @@ confusing, the basic idea is good.
 In order to cut down on the confusion a little bit, here are some
 informal clarifications:
 
-- I don't mind if you redistribute Xpdf in source and/or binary form,
-  as long as you include all of the documentation: README, man pages
-  (or help files), and COPYING.  (Note that the README file contains a
-  pointer to a web page with the source code.)
+- If you are redistributing unmodified copies of Xpdf (or any of the
+  Xpdf tools) in binary form, you need to include all of the
+  documentation: README, man pages (or help files), and COPYING.  The
+  README file contains a pointer to a web page with the source code,
+  which satisfies the GPL requirement as far as I am concerned.  You
+  are, of course, welcome to distribute the source code as well.
 
-- Selling a CD-ROM that contains Xpdf is fine with me, as long as it
-  includes the documentation.  I wouldn't mind receiving a sample
-  copy, but it's not necessary.
-
-- If you make useful changes to Xpdf, please make the source code
-  available -- post it on a web site, email it to me, whatever.
+- If you are incorporating the Xpdf source code into another program,
+  and you are distributing that program, you'll need to release your
+  program under the GPL, which means you'll have to make the full
+  source available.  This also applies if you are making changes to
+  the Xpdf tools.
 
 If you're interested in commercial licensing, please see the Glyph &
 Cog web site:
@@ -72,8 +73,8 @@ X11 and has Unix-like libraries.  You'll need ANSI C++ and C compilers
 to compile it.
 
 The non-X components of Xpdf (pdftops, pdftotext, pdfinfo, pdffonts,
-pdftoppm, and pdfimages) can also be compiled on Win32 systems.  See
-the Xpdf web page for details.
+pdfdetach, pdftoppm, and pdfimages) can also be compiled on Win32
+systems.  See the Xpdf web page for details.
 
 If you compile Xpdf for a system not listed on the web page, please
 let me know.  If you're willing to make your binary available by ftp
@@ -130,6 +131,8 @@ their man pages):
              useful information)
   pdffonts -- lists the fonts used in a PDF file along with various
               information for each font
+  pdfdetach -- lists or extracts embedded files (attachments) from a
+               PDF file
   pdftoppm -- converts a PDF file to a series of PPM/PGM/PBM-format
               bitmaps
   pdfimages -- extracts the images from a PDF file
