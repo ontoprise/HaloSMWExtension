@@ -1531,7 +1531,7 @@
 |-
 ! class=&quot;rmListInfoText&quot; colspan=&quot;6&quot; |Attached documents, images and media
 |}
-{| class=&quot;wikitable sortable rmListTable&quot; cellpadding=&quot;5&quot; border=&quot;0&quot; width=&quot;100%&quot; style=&quot;margin:0;&quot;
+{| class=&quot;sortable rmListTable&quot; cellpadding=&quot;5&quot; border=&quot;0&quot; width=&quot;100%&quot; style=&quot;margin:0;&quot;
 |-
 ! class=&quot;rmListInnerTableHeaderItem&quot; |Category 
 ! class=&quot;rmListInnerTableHeaderItem&quot; |Filename 
