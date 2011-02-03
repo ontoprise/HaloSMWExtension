@@ -115,7 +115,7 @@ function smwf_ac_AutoCompletionDispatcher($articleName, $userInputToMatch, $user
 		// ------------------------
 		if (stripos(strtolower($userContext), strtolower($wgLang->getNsText(NS_CATEGORY)).":") > 0) {
 			$result = AutoCompletionRequester::getCategoryProposals($userInputToMatch);
-			AutoCompletionRequester::logResult($result, $articleName);
+				
 			return $result;
 		}
 		// ------------------------------------------------
@@ -123,14 +123,50 @@ function smwf_ac_AutoCompletionDispatcher($articleName, $userInputToMatch, $user
 		// ------------------------------------------------
 		else if (stripos($userContext,":=") > 0 || stripos($userContext,"::") > 0) {
 
-			$propertyTargets = AutoCompletionRequester::getPropertyTargetProposals($userContext, $userInputToMatch);
+			// get property name
+			$propertyText = trim(substr($userContext, 2, stripos($userContext,"::")-2));
+			$pv = SMWPropertyValue::makeUserProperty($propertyText);
+			$typeID = $pv->getPropertyTypeID();
 
+			// returns syntax examples for several datatypes
+			if ($typeID == '_dat') {
+				return AutoCompletionRequester::encapsulateConstantMatchesAsXML(explode("|",(wfMsg('smw_ac_datetime_proposal'))));
+			} else if ($typeID == '_boo') {
+				return AutoCompletionRequester::encapsulateConstantMatchesAsXML(array_merge(explode(",",wfMsg('smw_true_words')), explode(",",wfMsg('smw_false_words'))));
+			} else if ($typeID == '_geo') {
+				return AutoCompletionRequester::encapsulateConstantMatchesAsXML(explode("|",(wfMsg('smw_ac_geocoord_proposal'))));
+			} else if ($typeID == '_rec') {
+				
+				// request expected types of record property
+				$values = smwfGetStore()->getPropertyValues(Title::newFromText($propertyText, SMW_NS_PROPERTY), SMWPropertyValue::makeProperty("_LIST"));
+				$typeValues = $values[0]->getTypeValues();
+
+				$proposal = "";
+				for($i = 0; $i < count($typeValues); $i++) {
+					$tv = $typeValues[$i];
+					$proposal .= $tv->getWikiValue();
+					if ($i < count($typeValues)-1) $proposal .= "; ";
+				}
+
+				return AutoCompletionRequester::encapsulateConstantMatchesAsXML(array($proposal));
+			} else if ($typeID == '_ema') {
+				return AutoCompletionRequester::encapsulateConstantMatchesAsXML(array(wfMsg('smw_ac_email_proposal')));
+			} else if ($typeID == '_tem') {
+				return AutoCompletionRequester::encapsulateConstantMatchesAsXML(explode(",",wfMsg('smw_ac_temperature_proposal')));
+			} else if ($typeID == '_tel') {
+				return AutoCompletionRequester::encapsulateConstantMatchesAsXML(array(wfMsg('smw_ac_telephone_proposal')));
+			}
+
+			// try enumeration values and units
 			$attributeValues = AutoCompletionRequester::getPropertyValueProposals($userContext, $userInputToMatch);
-
-			// if there is a unit or possible values, show them. Otherwise show instances.
-			$result = $attributeValues != SMW_AC_NORESULT ? $attributeValues : $propertyTargets;
-			AutoCompletionRequester::logResult($result, $articleName);
-			return $result;
+				
+			if ($attributeValues != SMW_AC_NORESULT) {
+				return $attributeValues;
+			} else {
+				// try instance values that match
+				$propertyTargets = AutoCompletionRequester::getPropertyTargetProposals($userContext, $userInputToMatch);
+				return $propertyTargets;
+			}
 
 
 			// --------------------------------
@@ -138,7 +174,7 @@ function smwf_ac_AutoCompletionDispatcher($articleName, $userInputToMatch, $user
 			// --------------------------------
 		} else {
 			$result = AutoCompletionRequester::getPropertyProposals($articleName, $userInputToMatch);
-			AutoCompletionRequester::logResult($result, $articleName);
+
 			return $result;
 
 		}
@@ -154,7 +190,7 @@ function smwf_ac_AutoCompletionDispatcher($articleName, $userInputToMatch, $user
 			}
 		}
 		$result = AutoCompletionRequester::getTemplateOrFormProposals($userContext, $userInputToMatch , $namespace );
-		AutoCompletionRequester::logResult($result, $articleName);
+
 		return $result;
 
 	}
@@ -287,10 +323,10 @@ class AutoCompletionRequester {
 		$property = Title::newFromText($propertyText, SMW_NS_PROPERTY);
 		$unitsList = smwfGetAutoCompletionStore()->getUnits($property, $userInput);
 		if (count($unitsList) > 0) {
-			$attvalues = AutoCompletionRequester::encapsulateEnumsOrUnitsAsXML($unitsList);
+			$attvalues = AutoCompletionRequester::encapsulateConstantMatchesAsXML($unitsList);
 		} else {
 			$possibleValues = smwfGetAutoCompletionStore()->getPossibleValues($property);
-			$attvalues = AutoCompletionRequester::encapsulateEnumsOrUnitsAsXML($possibleValues);
+			$attvalues = AutoCompletionRequester::encapsulateConstantMatchesAsXML($possibleValues);
 		}
 		return $attvalues;
 	}
@@ -437,34 +473,21 @@ class AutoCompletionRequester {
 	}
 
 	/**
-	 *  Encapsulate an array of enums or units in a xml string.
+	 *  Encapsulate an array of constant matches in a XML string.
+	 *
+	 *  @param array $constantMatches
 	 */
-	public static function encapsulateEnumsOrUnitsAsXML($arrayofEnumsOrUnits) {
-		if (empty($arrayofEnumsOrUnits)) {
+	public static function encapsulateConstantMatchesAsXML($constantMatches) {
+		if (empty($constantMatches)) {
 			return SMW_AC_NORESULT;
 		}
 
 		$xmlResult = '';
-		foreach($arrayofEnumsOrUnits as $eou) {
-			$xmlResult .= "<match type=\"500\">".htmlspecialchars($eou)."</match>";
+		foreach($constantMatches as $eou) {
+			$xmlResult .= "<match type=\"500\"><display>".htmlspecialchars($eou)."</display><pasteContent/><extraData/></match>";
 		}
 		return '<result maxMatches="'.SMW_AC_MAX_RESULTS.'">'.$xmlResult.'</result>';
 	}
-
-
-
-
-
-
-
-	public static function logResult(& $result, $articleName) {
-		if ($result == SMW_AC_NORESULT) {
-			smwLog("","AC","no result", $articleName);
-		} else {
-			smwLog("","AC","opened", $articleName);
-		}
-	}
-
 }
 
 class TemplateReader {
@@ -596,11 +619,11 @@ class AutoCompletionHandler {
 				}
 				if (count($result) >= SMW_AC_MAX_RESULTS) break;
 			} else if ($commandText == 'domainless-property') {
-                $pages = $acStore->getDomainLessProperty($userInput);
-                $result = self::mergeResults($result, self::setInferred($pages, !$first));
+				$pages = $acStore->getDomainLessProperty($userInput);
+				$result = self::mergeResults($result, self::setInferred($pages, !$first));
 
-                if (count($result) >= SMW_AC_MAX_RESULTS) break;
-            } else if ($commandText == 'annotation-property') {
+				if (count($result) >= SMW_AC_MAX_RESULTS) break;
+			} else if ($commandText == 'annotation-property') {
 				if (empty($params[0]) || is_null($params[0])) continue;
 				if (smwf_om_userCan($params[0], 'read') == 'true') {
 					$category = Title::newFromText($params[0]);
@@ -642,7 +665,7 @@ class AutoCompletionHandler {
 				foreach($params as $p) {
 					if (is_numeric($p)) {
 						$namespaceIndexes[] = $p;
-					} else if (strtolower($p) == "main") { 
+					} else if (strtolower($p) == "main") {
 						$namespaceIndexes[] = 0;
 					} else {
 						$ns = $wgContLang->getNsIndex( $p );
