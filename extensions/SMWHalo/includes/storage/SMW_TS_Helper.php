@@ -286,10 +286,10 @@ class TSNamespaces {
 		self::$ALL_NAMESPACE_KEYS = array_merge(self::$ALL_NAMESPACE_KEYS, $extraNamespaces);
 		
 		foreach(self::$ALL_NAMESPACE_KEYS as $nsKey) {
-			$uri = $smwgTripleStoreGraph."/".str_replace(" ","_",strtolower($wgContLang->getNSText($nsKey)))."/";
 			$prefix = $wgContLang->getNSText($nsKey);
+			$prefix = $nsKey == NS_MAIN ? "a" : str_replace(" ","_",strtolower($prefix));
 			if (empty($prefix)) continue;
-			$prefix = $nsKey === NS_MAIN ? "a" : str_replace(" ","_",strtolower($prefix));
+			$uri = $smwgTripleStoreGraph."/$prefix/";
 			self::$ALL_PREFIXES .= "\nPREFIX $prefix:<$uri> ";
 			self::$ALL_NAMESPACES[$nsKey] = $uri;
 		}
