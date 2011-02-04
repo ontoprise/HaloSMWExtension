@@ -133,11 +133,14 @@ function smwf_qi_QIAccess($method, $params) {
             	case 'gallery':
             	case 'googlepie':
             	case 'googlebar':
+                case 'ofc':
             	case 'ofc-pie':
            		case 'ofc-bar':
            		case 'ofc-bar_3d':
            		case 'ofc-line':
            	    case 'ofc-scatterline':
+                case 'jqplotbar':
+                case 'jqplotpie':
                     return (is_array($result)) ? $result[0] : $result;
                     break;   
                 case 'map':
