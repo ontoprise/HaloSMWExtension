@@ -44,7 +44,6 @@ class DeployWikiImporter extends WikiImporter {
 	}
 
 	function in_page( $parser, $name, $attribs ) {
-
 		$name = $this->stripXmlNamespace($name);
 		$this->debug( "in_page $name" );
 		switch( $name ) {
@@ -218,7 +217,7 @@ class DeployWikiRevision extends WikiRevision {
 	 */
 	function importOldRevision() {
 
-
+   
 		$dbw = wfGetDB( DB_MASTER );
 		// check revision here
 		$linkCache = LinkCache::singleton();
@@ -233,13 +232,14 @@ class DeployWikiRevision extends WikiRevision {
 
 		$article = new Article( $this->title );
 		$pageId = $article->getId();
-
+		
 		if( $pageId == 0 ) {
+
 			# must create the page...
 			if ($this->mode == DEPLOYWIKIREVISION_INFO) {
 				return false;
 			} else {
-				$this->logger-info("Imported page: ".$this->title->getPrefixedText());
+				$this->logger->info("Imported page: ".$this->title->getPrefixedText());
 				print "\n\t[Imported page] ".$this->title->getPrefixedText();
 				return parent::importOldRevision();
 			}
@@ -303,6 +303,7 @@ class DeployWikiRevision extends WikiRevision {
 	}
 
 	function importAsNewRevision() {
+		
 		$dbw = wfGetDB( DB_MASTER );
 
 		# Sneak a single revision into place
@@ -337,7 +338,7 @@ class DeployWikiRevision extends WikiRevision {
 			);
 			if( $prior ) {
 				// FIXME: this could fail slightly for multiple matches :P
-				$this->logger-info("Skipping existing revision: ".$this->title->getPrefixedText());
+				$this->logger->info("Skipping existing revision: ".$this->title->getPrefixedText());
 				print "\n\t[Skipping existing revision] ".$this->title->getPrefixedText();
 				wfDebug( __METHOD__ . ": skipping existing revision for [[" .
 				$this->title->getPrefixedText() . "]], timestamp " . $this->timestamp . "\n" );
@@ -383,7 +384,7 @@ class DeployWikiRevision extends WikiRevision {
 			$revId );
 		}
 		$GLOBALS['wgTitle'] = $tempTitle;
-		$this->logger-info("Imported new revision of page: ".$this->title->getPrefixedText());
+		$this->logger->info("Imported new revision of page: ".$this->title->getPrefixedText());
 		print "\n\t[Imported new revision of page] ".$this->title->getPrefixedText();
 		return true;
 	}
