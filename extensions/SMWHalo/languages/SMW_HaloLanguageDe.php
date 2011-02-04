@@ -47,6 +47,11 @@ protected $smwContentMessages = array(
 	'tog-autotriggering' => 'Manuelle auto-completion',
 	'smw_ac_typehint'=> 'Typ: $1',
 	'smw_ac_typerangehint'=> 'Typ: $1 | Range: $2',
+    'smw_ac_datetime_proposal'=>'<Monat> <Tag>, <Jahr>|<Tag>-<Monat>-<Jahr>',
+    'smw_ac_geocoord_proposal'=>'<Breitengrad>° N, <Längengrad>° W|<Breitengrad>, <Längengrad>',
+    'smw_ac_email_proposal'=>'irgendwer@irgendwo.com',
+    'smw_ac_temperature_proposal'=>'<Zahl> K, <Zahl> °C, <Zahl> °F, <Zahl> °R',
+    'smw_ac_telephone_proposal'=>'tel:+49-721-5453334',
 
 	// Messages for SI unit parsing
 	'smw_no_si_unit' => 'Einheit nicht in SI-Representation. ',

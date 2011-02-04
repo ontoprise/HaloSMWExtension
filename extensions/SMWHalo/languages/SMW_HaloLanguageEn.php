@@ -43,6 +43,11 @@ class SMW_HaloLanguageEn extends SMW_HaloLanguage {
 	'tog-autotriggering' => 'Manual auto-completion',
     'smw_ac_typehint'=> 'Type: $1',
     'smw_ac_typerangehint'=> 'Type: $1 | Range: $2',
+	'smw_ac_datetime_proposal'=>'<Month> <day>, <year>|<year>-<month>-<day>',
+	'smw_ac_geocoord_proposal'=>'<latitude>° N, <longitude>° W|<latitude>, <longitude>',
+	'smw_ac_email_proposal'=>'somebody@somewhere.com',
+	'smw_ac_temperature_proposal'=>'<number> K, <number> °C, <number> °F, <number> °R',
+	'smw_ac_telephone_proposal'=>'tel:+1-201-555-0123',
 
 	// Messages for SI unit parsing
 	'smw_no_si_unit' => 'No unit given in SI representation. ',
