@@ -124,11 +124,11 @@ class TSHelper {
 			// any URI
 
 			if ($forceTitle) {
-				if (strrpos($sv, "/") !== false) {
-					$local = substr($sv, strrpos($sv, "/")+1);
-				} else if (strpos($sv, "#") !== false) {
+				 if (strpos($sv, "#") !== false) {
 					$local = substr($sv, strpos($sv, "#")+1);
-				} else {
+				} else if (strrpos($sv, "/") !== false) {
+                    $local = substr($sv, strrpos($sv, "/")+1);
+                } else {
 					return NULL;
 				}
 				return Title::newFromText($local, NS_MAIN);

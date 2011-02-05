@@ -82,8 +82,10 @@ class SMWSPARQLQueryProcessor extends SMWQueryProcessor {
 					}
 				}
 				if (count($propparts) == 1) { // no outputformat found, leave empty
-					$propparts[] = '';
-				}
+					$propparts[] = false;
+				} elseif ( trim( $propparts[1] ) == '' ) { // "plain printout", avoid empty string to avoid confusions with "false"
+                    $propparts[1] = '-';
+                }
 			if (count($parts) > 1) { // label found, use this instead of default
                     $label = trim($parts[1]);
                 }

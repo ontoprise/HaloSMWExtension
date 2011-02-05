@@ -53,7 +53,7 @@ class SMWFullSemanticData {
 	public function getRedirects() {
 		return $this->redirects;
 	}
-	 
+
 	/**
 	 * Get derived properties.
 	 * @param SMWSemanticData $semData
@@ -74,15 +74,12 @@ class SMWFullSemanticData {
 		global $wgContLang;
 		$subject = $semData->getSubject();
 		$localName = $subject->getDBkey();
-		
+
 		$tsn = TSNamespaces::getInstance();
 		$subject_iri = "<".$smwgTripleStoreGraph."/".$tsn->getNSPrefix($subject->getNamespace())."/".$localName.">";
 		
-		// $queryText = "PREFIX a:<$inst> SELECT ?pred ?obj WHERE { a:$subject ?pred ?obj . }";
-		// $queryText = "SELECT ?pred ?obj WHERE { a:$subject ?pred ?obj . }";
 		$queryText = "SELECT ?pred ?obj WHERE { $subject_iri ?pred ?obj . }";
-		// echo $queryText;
-
+		
 		wfRunHooks('BeforeDerivedPropertyQuery', array(&$queryText) );
 		// Ask for all properties of the subject (derived and ground facts)
 		$q = SMWSPARQLQueryProcessor::createQuery($queryText, array());
@@ -94,6 +91,7 @@ class SMWFullSemanticData {
 		$propVal = array();
 		while ( $row = $res->getNext() ) { //$row: SMWResultArray[]
 			$i = 0;
+			$stopped = false;
 			$valuesForProperty = array();
 			$key = false;
 			if (count($row) == 2) {
@@ -102,20 +100,31 @@ class SMWFullSemanticData {
 				// There may be several properties with the same values
 				$p = $row[0];
 				while ( ($object = $p->getNextObject()) !== false ) {
-					if ($object instanceof SMWURIValue) {
-						$keys = $object->getDBkeys();
-						$properties[] = $keys[0];
-					} else {
-						$properties[] = $object->getDBkey();
-					}
+                      
+				    if ($object instanceof SMWURIValue) {
+				    	// non-wiki property. What to do? For now, skip it.
+				    	$stopped = true;
+				    	break;
+                       /* $keys = $object->getDBkeys();
+                        $title = TSHelper::getTitleFromURI($keys[0], true);
+                        $properties[] = $title->getText();*/
+                    } else {
+                        $keys = $object->getDBkeys();
+                        $properties[] = $keys[0];
+                    }
+				
 				}
+				
+				if ($stopped) continue;
+				
 				// Retrieve the values of the properties
 				$v = $row[1];
 				while ( ($object = $v->getNextObject()) !== false ) {
-					$values[] = $object;
+				 $values[] = $object;
+					
 				}
 			}
-				
+
 			foreach ($properties as $p) {
 				if (array_key_exists($p, $propVal)) {
 					// The same property may appear several times
@@ -125,74 +134,93 @@ class SMWFullSemanticData {
 				}
 			}
 		}
-
+  
 		// Check is a property is derived or directly annotated
 		foreach ($propVal as $propName => $derivedValues) {
-			 
+
 			// does the property already exist?
 			$prop = SMWPropertyValue::makeUserProperty(str_replace("_"," ",$propName));
 			$values = $semData->getPropertyValues($prop);
-			foreach ($derivedValues as $dv) {
-				$isDerived = true;
-				$val = null;
-				foreach ($values as $v) {
-					if ($dv->getTypeID() == '_wpg' && $v->getTypeID() == '_wpg') {
-						$vt1 = $dv->getTitle();
-						$vt2 = $v->getTitle();
-						if (isset($vt1)
-						&& isset($vt2)
-						&& $vt1->getText() == $vt2->getText()) {
-							$isDerived = false;
-							break;
-						}
-					} else if ($dv->getTypeID() == '_wpg' && $v->getTypeID() != '_wpg') {
-						// how can this happen?
-						$isDerived = false;
-						break;
-					} else {
-						
-						// special handling for _dat because time (00:00:00) may be omitted 
-						if ($dv->getTypeID() == '_dat' && $v->getTypeID() == '_dat') {
-							// compare first dbkeys
-							$v1_dbkeys = $dv->getDBkeys();
-							$v2_dbkeys = $v->getDBkeys();
-							$v1 = array_shift($v1_dbkeys);
-							$v2 = array_shift($v2_dbkeys);
-							if ($v1 == $v2 || $v1."00:00:00" == $v2) {
-								$isDerived = false;
-								break;
-							}
-
-							// special handling for _num because triplestore adds .0 to any int number. 
-						} else if ($dv->getTypeID() == '_num' && $v->getTypeID() == '_num') {
-                            // compare first dbkeys
-                            $v1_dbkeys = $dv->getDBkeys();
-                            $v2_dbkeys = $v->getDBkeys();
-                            $v1 = array_shift($v1_dbkeys);
-                            $v2 = array_shift($v2_dbkeys);
-                            if ($v1 == $v2 || $v1.".0" == $v2) {
-                                $isDerived = false;
-                                break;
-                            }
-                        } else {
-                            // all other datavalues
-                            $v1_dbkeys = $dv->getDBkeys();
-							$v2_dbkeys = $v->getDBkeys();
-						
-							if (count(array_diff($v1_dbkeys, $v2_dbkeys)) == 0) {
-								$isDerived = false;
-								break;
-							}
-						}
-					}
-				}
-				if ($isDerived) {
-					$property = SMWPropertyValue::makeUserProperty(str_replace("_"," ",$propName));
-					$derivedProperties->addPropertyObjectValue($property, $dv);
-				}
+			
+			$diff = self::getDataValueDiff($derivedValues, $values, $prop);
+			
+			foreach($diff as $dv) {
+                $derivedProperties->addPropertyObjectValue($prop, $dv);
 			}
 		}
 		return $derivedProperties;
+	}
+
+	/**
+	 * Calculates the differenc of two SMWDataValue sets.
+	 *  
+	 * @param array SMWDataValue $derivedValues Set of SMWDataValue objects.
+	 * @param array SMWDataValue $values Set of SMWDataValue objects.
+	 * @param SMWPropertyValue $prop 
+	 * 
+	 * @return All property value from $derivedValues which are not contained in $values. 
+	 */
+	public static function getDataValueDiff($derivedValues, $values, $prop) {
+		$result = array();
+		foreach ($derivedValues as $dv) {
+			$isDerived = true;
+			$val = null;
+			foreach ($values as $v) {
+				if ($dv->getTypeID() == '_wpg' && $v->getTypeID() == '_wpg') {
+					$vt1 = $dv->getTitle();
+					$vt2 = $v->getTitle();
+					if (isset($vt1)
+					&& isset($vt2)
+					&& $vt1->getText() == $vt2->getText()) {
+						$isDerived = false;
+						break;
+					}
+				} else if ($dv->getTypeID() == '_wpg' && $v->getTypeID() != '_wpg') {
+					// how can this happen?
+					$isDerived = false;
+					break;
+				} else {
+
+					// special handling for _dat because time (00:00:00) may be omitted
+					if ($dv->getTypeID() == '_dat' && $v->getTypeID() == '_dat') {
+						// compare first dbkeys
+						$v1_dbkeys = $dv->getDBkeys();
+						$v2_dbkeys = $v->getDBkeys();
+						$v1 = array_shift($v1_dbkeys);
+						$v2 = array_shift($v2_dbkeys);
+						if ($v1 == $v2 || $v1."00:00:00" == $v2) {
+							$isDerived = false;
+							break;
+						}
+
+						// special handling for _num because triplestore adds .0 to any int number.
+					} else if ($dv->getTypeID() == '_num' && $v->getTypeID() == '_num') {
+						// compare first dbkeys
+						$v1_dbkeys = $dv->getDBkeys();
+						$v2_dbkeys = $v->getDBkeys();
+						$v1 = array_shift($v1_dbkeys);
+						$v2 = array_shift($v2_dbkeys);
+						if ($v1 == $v2 || $v1.".0" == $v2) {
+							$isDerived = false;
+							break;
+						}
+					} else {
+						// all other datavalues
+						$v1_dbkeys = $dv->getDBkeys();
+						$v2_dbkeys = $v->getDBkeys();
+
+						if (count(array_diff($v1_dbkeys, $v2_dbkeys)) == 0) {
+							$isDerived = false;
+							break;
+						}
+					}
+				}
+			}
+			if ($isDerived) {
+				$result[] =  $dv;
+			}
+		}
+		return $result;
 	}
 
 }
