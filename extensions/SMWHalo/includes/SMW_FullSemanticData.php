@@ -142,9 +142,10 @@ class SMWFullSemanticData {
 			$prop = SMWPropertyValue::makeUserProperty(str_replace("_"," ",$propName));
 			$values = $semData->getPropertyValues($prop);
 			
-			$diff = self::getDataValueDiff($derivedValues, $values, $prop);
+			$derivedValuesResult=array();
+			self::getDataValueDiff($derivedValues, $values, $prop, $derivedValuesResult, $assertedValuesResult);
 			
-			foreach($diff as $dv) {
+			foreach($derivedValuesResult as $dv) {
                 $derivedProperties->addPropertyObjectValue($prop, $dv);
 			}
 		}
@@ -154,18 +155,31 @@ class SMWFullSemanticData {
 	/**
 	 * Calculates the differenc of two SMWDataValue sets.
 	 *  
-	 * @param array SMWDataValue $derivedValues Set of SMWDataValue objects.
-	 * @param array SMWDataValue $values Set of SMWDataValue objects.
+	 * @param array SMWDataValue $allValues All values.
+	 * @param array SMWDataValue $assertedValues assertedValues.
 	 * @param SMWPropertyValue $prop 
+	 * @param (out) array & $derivedValuesResult derived values
+	 * @param (out) array & $ $assertedValuesResult asserted values.
 	 * 
-	 * @return All property value from $derivedValues which are not contained in $values. 
+	 *  All property value from $allValues which are not contained in $assertedValues.
+	 *  
+	 *  $allValues does not necessarily be an array of SMWDataValue object but
+	 *  can be an array of tuples which contain an SMWDataValue object at first 
+	 *  place.
+	 * 
+	 * @return 
 	 */
-	public static function getDataValueDiff($derivedValues, $values, $prop) {
-		$result = array();
-		foreach ($derivedValues as $dv) {
+	public static function getDataValueDiff($allValues, $assertedValues, $prop, & $derivedValuesResult, & $assertedValuesResult) {
+
+		foreach ($allValues as $tuple) {
+			if (is_array($tuple)) {
+				$dv = reset($tuple);
+			} else {
+				$dv = $tuple;
+			}
 			$isDerived = true;
 			$val = null;
-			foreach ($values as $v) {
+			foreach ($assertedValues as $v) {
 				if ($dv->getTypeID() == '_wpg' && $v->getTypeID() == '_wpg') {
 					$vt1 = $dv->getTitle();
 					$vt2 = $v->getTitle();
@@ -217,10 +231,12 @@ class SMWFullSemanticData {
 				}
 			}
 			if ($isDerived) {
-				$result[] =  $dv;
+				$derivedValuesResult[] =  $tuple;
+			} else {
+				$assertedValuesResult[] = $tuple;
 			}
 		}
-		return $result;
+		
 	}
 
 }

@@ -245,11 +245,13 @@ class SMWOntologyBrowserXMLGenerator {
 		
 			$property = $a->getProperty();
 			$values = $a->getValues();
+			$inferred_values = $a->getInferredValues();
 			
 			//$val = $property->getDBkeys();
 			//$propertyTitle = Title::newFromText($val[0], SMW_NS_PROPERTY);
 				
-			$result .= SMWOntologyBrowserXMLGenerator::encapsulateAsAnnotation($instance, $property, $values);
+			$result .= SMWOntologyBrowserXMLGenerator::encapsulateAsAnnotation($instance, $property, $values, false);
+			$result .= SMWOntologyBrowserXMLGenerator::encapsulateAsAnnotation($instance, $property, $inferred_values, true);
 
 		}
 		// get low cardinality issues and "highlight" missing annotations. This is an exception because missing annotations do not exist.
@@ -365,7 +367,7 @@ class SMWOntologyBrowserXMLGenerator {
 	 *
 	 * @return XML string (fragment)
 	 */
-	private static function encapsulateAsAnnotation($instance, $annotation, $smwValues) {
+	private static function encapsulateAsAnnotation($instance, $annotation, $smwValues, $inferred = false) {
 		$id = uniqid (rand());
 		$count = 0;
 		$annotations = "";
@@ -374,7 +376,7 @@ class SMWOntologyBrowserXMLGenerator {
 		$chemistryParser = new ChemEqParser();
 		$gi_store = SGAGardeningIssuesAccess::getGardeningIssuesAccess();
 		$ts = TSNamespaces::getInstance();
-			
+		$inferred_att = $inferred ? 'inferred="true"' : '';	
 		if (!is_array($smwValues)) $smwValues = array($smwValues);
 		foreach($smwValues as $v) {
             list($smwValue, $uri) = $v;
@@ -410,9 +412,10 @@ class SMWOntologyBrowserXMLGenerator {
 				} else{
 					$gi_issues = "";
 				}
-
+                
+				
 				// no metadata available on n-ary properties
-				$annotations .= "<annotation  title_url=\"$titleURLEscaped\" title=\"".$title."\" id=\"ID_$id$count\" $repasteMarker>".$parameters."$gi_issues</annotation>";
+				$annotations .= "<annotation  title_url=\"$titleURLEscaped\" title=\"".$title."\" id=\"ID_$id$count\" $repasteMarker $inferred_att>".$parameters."$gi_issues</annotation>";
 
 			} else { // all other properties
 
@@ -449,7 +452,7 @@ class SMWOntologyBrowserXMLGenerator {
 				$metadataTags .= "</metadata>";
 
 				$propertyURI_att = 'uri="'.htmlspecialchars($annotation->getURI()).'"';
-				$annotations .= "<annotation $propertyURI_att title_url=\"$titleURLEscaped\" title=\"".$title."\" id=\"ID_".$id.$count."\" $repasteMarker>".
+				$annotations .= "<annotation $propertyURI_att title_url=\"$titleURLEscaped\" title=\"".$title."\" id=\"ID_".$id.$count."\" $repasteMarker $inferred_att>".
 				$value.         // values
 				$gi_issues.     // gardening issues
 				$metadataTags.  // metadata

@@ -392,6 +392,9 @@
 					<xsl:if test="gissues">
 						<xsl:attribute name="class">gardeningissue</xsl:attribute>
 					</xsl:if>
+					<xsl:if test="@inferred">
+                        <xsl:attribute name="class">inherited</xsl:attribute>
+                    </xsl:if>
 					<xsl:if test="@uri">
                     <xsl:attribute name="uri"><xsl:value-of
                             select="@uri" /></xsl:attribute>

@@ -864,7 +864,7 @@ class OB_StorageTS extends OB_Storage {
 			global $smwgTripleStoreGraph;
 			$response = $client->query("SELECT ?p ?o WHERE { <$instanceURI> ?p ?o. }",  "limit=$limit|offset=$offset$metadataRequest", $smwgTripleStoreGraph);
 			$annotations = array();
-			$this->parseAnnotations($response, $annotations);
+			$this->parseAnnotations($response, $instanceURI, $annotations);
 
 
 		} catch(Exception $e) {
@@ -878,7 +878,7 @@ class OB_StorageTS extends OB_Storage {
 
 
 
-	protected function parseAnnotations($response, & $annotations) {
+	protected function parseAnnotations($response, $instanceURI, & $annotations) {
 		global $smwgSPARQLResultEncoding;
 		// PHP strings are always interpreted in ISO-8859-1 but may be actually encoded in
 		// another charset.
@@ -890,6 +890,14 @@ class OB_StorageTS extends OB_Storage {
 		$dom->registerXPathNamespace("sparqlxml", "http://www.w3.org/2005/sparql-results#");
 
 		$results = $dom->xpath('//sparqlxml:result');
+		
+		$instanceTitle = TSHelper::getTitleFromURI($instanceURI);
+		if ($instanceTitle instanceof Title) {
+		  $semData = smwfGetStore()->getSemanticData($instanceTitle);
+		  
+		} else {
+			$assertedValues = array();
+		}
 		foreach ($results as $r) {
 
 			$children = $r->children(); // binding nodes
@@ -935,8 +943,13 @@ class OB_StorageTS extends OB_Storage {
 				$values[] = array($value, NULL);
 			}
 
-
-			$annotations[] = new Annotation(new PropertySchemaElement($predicate, $predicateURI), $values);
+			//echo print_r($assertedValues, true);die();
+			$assertedValues = $semData->getPropertyValues($predicate);
+			$derivedValuesResult=array();
+			$assertedValuesResult=array();
+            SMWFullSemanticData::getDataValueDiff($values, $assertedValues, $predicate, $derivedValuesResult, $assertedValuesResult);
+            
+			$annotations[] = new Annotation(new PropertySchemaElement($predicate, $predicateURI), $assertedValuesResult, $derivedValuesResult);
 		}
 
 	}
@@ -1327,7 +1340,7 @@ class OB_StorageTSQuad extends OB_StorageTS {
 
 			$response = $client->query("SELECT ?p ?o WHERE { <$instanceURI> ?p ?o. }",  "limit=$limit|offset=$offset$dataSpace$metadataRequest");
 			$annotations = array();
-			$this->parseAnnotations($response, $annotations);
+			$this->parseAnnotations($response, $instanceURI, $annotations);
 
 
 		} catch(Exception $e) {
@@ -1756,11 +1769,13 @@ class Annotation {
 	 * array of SMWDataValue
 	 */
 	private $smw_values;
+	private $smw_inferredvalues;
 
-	public function __construct($property, $smw_values) {
+	public function __construct($property, $smw_values, $smw_inferredvalues =  array()) {
 
 		$this->property = $property;
 		$this->smw_values = $smw_values;
+		$this->smw_inferredvalues = $smw_inferredvalues;
 	}
 
 
@@ -1769,6 +1784,10 @@ class Annotation {
 	}
 	public function getValues() {
 		return $this->smw_values;
+	}
+
+	public function getInferredValues() {
+		return $this->smw_inferredvalues;
 	}
 
 }
