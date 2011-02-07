@@ -19,19 +19,20 @@ jQuery(document).ready(function() {
 	});
 
 	// links
-	var test = jQuery("a.rmAlink");
 	jQuery("a.rmAlink").live('click', function(){
 		jQuery.fancybox({
 			'href' : jQuery(this).attr('href'),
-			'width'		: '75%',
-			'height'	: '75%',
-			'autoScale'	: false,
-			'transitionIn'	: 'none',
-			'transitionOut'	: 'none',
-			'type'		: 'iframe',
-			'overlayColor'  : '#222',
+			'width' : '75%',
+			'height' : '75%',
+			'autoScale' : true,
+			'autoDimensions' : true,
+			'transitionIn' : 'none',
+			'transitionOut' : 'none',
+			'type' : 'iframe',
+			'overlayColor' : '#222',
 			'overlayOpacity' : '0.8',
-			'hideOnContentClick' : true
+			'hideOnContentClick' : true,
+			'scrolling' : 'no'
 		});
 		return false;
 	});

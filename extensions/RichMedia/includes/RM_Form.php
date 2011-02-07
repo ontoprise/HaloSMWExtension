@@ -52,7 +52,10 @@ class RMForm {
 
 		$fancybox_js =<<<END
 <script type="text/javascript">
-var wgRMUploadUrl = "{$uploadWindowUrl}";</script>
+/* <![CDATA[ */
+var wgRMUploadUrl = "{$uploadWindowUrl}";
+/* ]]> */
+</script>
 END;
 		SMWOutputs::requireHeadItem('rmlinkheaditem', $fancybox_js);
 

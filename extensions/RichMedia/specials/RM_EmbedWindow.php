@@ -31,16 +31,25 @@ class RMEmbedWindow extends UnlistedSpecialPage {
  * Entry point
  */
 function doSpecialEmbedWindow() {
-	global $wgRequest, $wgOut, $wgUser, $wgServer, $wgStyleVersion,
-		$wgJsMimeType;
+	global $wgRequest, $wgOut, $wgUser, $wgServer, $wgXhtmlDefaultNamespace;
 
 	// disable $wgOut - we'll print out the page manually, taking the
 	// body created by the form, plus the necessary Javascript files,
 	// and turning them into an HTML page
 	$wgOut->disable();
+	$sk = $wgUser->getSkin();
+	$sk->initPage( $wgOut ); // need to call this to set skin name correctly
 	$form = new EmbedWindowForm( $wgRequest );
 	$form->execute();
 	global $smwgHaloScriptPath, $smwgRMScriptPath;
+	if ( method_exists( $wgOut, 'addModules' ) ) {
+		$head_scripts = '';
+		$body_scripts = $wgOut->getHeadScripts( $sk );
+	} else {
+		global $wgJsMimeType, $wgStylePath, $wgStyleVersion;
+		$head_scripts = '';
+		$body_scripts = '';
+	}
 	$user_js =<<<HTML
 	<script type="{$wgJsMimeType}">
 	
@@ -55,12 +64,16 @@ headID.appendChild(cssNode);
 </script>
 HTML;
 	$text = <<<END
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="{$wgXhtmlDefaultNamespace}"
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+$head_scripts
 $user_js
 </head>
 <body>
 {$wgOut->getHTML()}
+$body_scripts
 </body>
 </html>
 
@@ -93,8 +106,8 @@ class EmbedWindowForm {
 	 * @access public
 	 */
 	function execute(){
-		global $wgOut, $wgUser, $smwgRMScriptPath, $wgServer;
-		$sk = $wgUser->getSkin();
+		global $wgOut, $wgUser, $smwgRMScriptPath, 
+			$smwgRMEWEnableResizing, $smwgRMEWAllowScroll, $wgServer, $wgJsMimeType;
 		if (isset( $this->mTarget ) && $this->mTarget != "" ) {
 			$nt = Title::newFromText($this->mTarget);
 		}
@@ -104,57 +117,15 @@ class EmbedWindowForm {
 			return;
 		}
 
-		
 		$image = wfLocalFile($nt);
 		$imagePath = $image->getFullUrl();
 		$embedWidth = $image->getWidth();
 		$embedHeight = $image->getHeight();
 		$embedMIMEType = $image->getMimeType();
-		
-		$imageToSmall = false;
-		if ($embedHeight <= 500 || $embedWidth <= 700) {
-			$imageToSmall = true;
-		}
-		if ( $this->mfullResSize) {
-			$fullResNow = "font-weight:bold;";
-			$fitNow = "";
-		} else {
-			$embedWidth = "670px;";
-			$embedHeight = "450px;";
-			$fullResNow = "";
-			$fitNow = "font-weight:bold;";
-		}
 
 		$fullRes_fit_section = "";
 		list( $major, $minor ) = LocalFile::splitMime( $image->getMimeType() );
 		if ($major == "image") {
-			if (!$imageToSmall) {
-				# fullResSize and FitToWindow links for images
-				$embedWindowPage = SpecialPage::getPage('EmbedWindow');
-				$targetString = "target=".urlencode($this->mTarget);
-				$fullResSizeString = "&fullRes=true";
-				$fullResSizeURL = $embedWindowPage->getTitle()->getFullURL($targetString.$fullResSizeString);
-				$fitToWindowURL = $embedWindowPage->getTitle()->getFullURL($targetString);
-				$fullResText = wfMsg('smw_rm_embed_fullres');
-				$fitWinText = wfMsg('smw_rm_embed_fittowindow');
-				$viewText = wfMsg('smw_rm_embed_view');
-				$fullRes_fit_section = <<<END
-				<td id="rmEWtdViewText">
-				{$viewText}:
-				</td>
-				<td id="rmEWtdFullRes">
-				<a class="rmEWWhite" href="{$fullResSizeURL}" rel="sameBox:true" style="{$fullResNow}">{$fullResText}</a>
-				</td>
-				<td class="rmEWSep">|</td>
-				<td id="rmEWtdFitTo">
-				<a class="rmEWWhite" href="$fitToWindowURL" rel="sameBox:true" style="{$fitNow}">{$fitWinText}</a>
-				</td>
-END;
-			}
-			else {
-				$embedWidth = $image->getWidth();
-				$embedHeight = $image->getHeight();
-			}
 			$embedObject = <<<END
 			<table id="rmEWEmbedTable">
 				<tr><td id="rmEWAlCenter">
@@ -162,6 +133,49 @@ END;
 				</td></tr>
 			</table>
 END;
+			if($smwgRMEWEnableResizing) {
+				switch($smwgRMEWAllowScroll) {
+					case true:
+						$scroll = 1;
+						break;
+					case false:
+						$scroll = 0;
+						break;
+				}
+				
+				$embedObject .= <<<HTML
+	<script type="{$wgJsMimeType}">
+	var screenHeight = top.screen.availHeight, screenWidth = top.screen.availWidth,
+		paddingTotal = 20, extraHeight = 60; // some extra space to avoid Scrollbars
+		extraWidth = 20, outer = top.jQuery('#fancybox-wrap'), 
+		inner = top.jQuery('#fancybox-inner');
+
+		if ({$scroll} !== 1 && ( {$embedWidth} > screenWidth || {$embedHeight} > screenHeight) ) {
+		outer.css({ 
+			height: screenHeight - 250, 
+			width: screenWidth - 100 
+		}); 
+		inner.css({ 
+			height: screenHeight - 220 - extraHeight, 
+			width: screenWidth - 100 - extraWidth 
+		});
+		picture = document.getElementById('rmEWEmbeddedObject');
+		picture.setAttribute( 'height', screenHeight - 220 - extraHeight - paddingTotal );
+		picture.setAttribute( 'width', screenWidth - 100 - extraWidth - paddingTotal );
+	} else {
+		outer.css({ 
+			height: {$embedHeight} + paddingTotal + extraHeight, 
+			width: {$embedWidth} + paddingTotal + extraWidth 
+		}); 
+		inner.css({ 
+			height: {$embedHeight} + extraHeight, 
+			width: {$embedWidth} + extraWidth 
+		});
+	}
+	top.jQuery.fancybox.center(); 
+</script>
+HTML;
+			}
 		} else {
 			# for all other embedded objects
 			// We could also use the new HTML5 tags <audio> and <video>.
@@ -187,24 +201,11 @@ END;
 
 		$html = <<<END
 		<div id="rmEWMainDiv">
-			<table id="rmEWMainTable" cellspacing="0" cellpadding="0">
-				<tr id="rmEWtr">
-					<td class="rmEWtd" id="rmEWtdL">
-						FileViewer
-					</td>
-					{$fullRes_fit_section}
-					<td>&nbsp;</td>
-					<!--<td class="rmEWtd" id="rmEWtdM">
-						<a href="{$imagePath}" class="rmEWWhite" title="{$saveLinkAlt}">{$saveLinkText}
-							<img id="rmEWSaveIcon" title="{$saveLinkAlt}" src="{$wgServer}{$smwgRMScriptPath}/skins/save_icon.png"></img>
-						</a>
-					</td>-->
-					<td class="rmEWtd" id="rmEWtdR">
-						<a class="rmEWWhite" href="{$nt->getFullURL()}" title="{$descLinkAlt}" target="_top">>>&nbsp;{$descText}
-						</a>
-					</td>
-				</tr>
-			</table>
+			<span id="rmEWMainText">FileViewer</span>
+			{$fullRes_fit_section}
+			<span id="rmEWright">
+				<a class="rmEWWhite" href="{$nt->getFullURL()}" title="{$descLinkAlt}" target="_top">>>&nbsp;{$descText}</a>
+			</span>
 		</div>
 END;
 		$html .= $embedObject;
@@ -224,4 +225,3 @@ END;
 		$wgOut->addWikiText( $description );		
 	}
 }
-?>

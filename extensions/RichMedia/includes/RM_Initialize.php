@@ -43,7 +43,7 @@ $smwgRMScriptPath = $wgScriptPath . '/extensions/RichMedia';
 // Please also take notice of $smwgRMIgnoreWhitelistForPF
 // Default contents are audio, video and pdf files.
 global $smwgRMPreviewWhitelist;
-$smwgRMPreviewWhitelist = array( 'gif', 'svg', 'bmp', 'jpg', 'jpeg', 'png', 
+$smwgRMPreviewWhitelist = array( 'doc','gif', 'svg', 'bmp', 'jpg', 'jpeg', 'png', 
 	'pdf', 'ac3', 'avi', 'mp3', 'ogg', 'mpg', 'mpeg', 'mpp', 'mov', 'wmv');
 
 // Handles the behaviour of the #rmew parser function.
@@ -51,11 +51,17 @@ $smwgRMPreviewWhitelist = array( 'gif', 'svg', 'bmp', 'jpg', 'jpeg', 'png',
 // white list and set every link to the embed window.
 // When set to "false" only files contained in the white list
 // are linked to the embed window. All other will directly link to the "file details page". 
-global $smwgRMIgnoreWhitelistForPF;
+global $smwgRMIgnoreWhitelistForPF, $smwgRMEWEnableResizing, $smwgRMEWAllowScroll;
 $smwgRMIgnoreWhitelistForPF = false;
 
+// Allow resizing of the overlay window for image files. Allowed values: true, false
+$smwgRMEWEnableResizing = true;
+// Try not to display the overlay larger than the available viewport.
+// - false means you do not want to scroll and the images should be scaled down.
+// - true shows the image with its native resolution. This can lead to scrollbars.
+$smwgRMEWAllowScroll = false;
 
-require_once('RM_AdditionalMIMETypes.php');
+require_once($smwgRMIP . '/includes/RM_AdditionalMIMETypes.php');
 global $smwgRMFormByNamespace;
 
 $smwgRMFormByNamespace = array(

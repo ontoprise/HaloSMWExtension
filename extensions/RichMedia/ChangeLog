@@ -4,7 +4,7 @@ Rich Media extension ChangeLog
 VERSION 1.X
 
   FEATURES:
-	-none-
+	* FR 12239: Overlay window automatically resize based on the image properties.
 
   CHANGES:
 	* Added mime info and mime type (video/x-ms-wmv) for .wmv
