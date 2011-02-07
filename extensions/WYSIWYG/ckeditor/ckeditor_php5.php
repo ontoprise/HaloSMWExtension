@@ -599,17 +599,20 @@ class CKEditor
  */
 function CKEditor_IsCompatibleBrowser()
 {
-        if ( isset( $_SERVER ) ) {
+        if ( isset( $_SERVER ) && isset($_SERVER['HTTP_USER_AGENT']) ) {
                 $sAgent = $_SERVER['HTTP_USER_AGENT'] ;
         }
         else {
                 global $HTTP_SERVER_VARS ;
-                if ( isset( $HTTP_SERVER_VARS ) ) {
+                if ( isset( $HTTP_SERVER_VARS ) && isset($HTTP_SERVER_VARS['HTTP_USER_AGENT']) ) {
                         $sAgent = $HTTP_SERVER_VARS['HTTP_USER_AGENT'] ;
                 }
                 else {
                         global $HTTP_USER_AGENT ;
-                        $sAgent = $HTTP_USER_AGENT ;
+                        if ( isset($HTTP_USER_AGENT) )
+                            $sAgent = ($HTTP_USER_AGENT) ;
+                        else
+                            return false;
                 }
         }
 
