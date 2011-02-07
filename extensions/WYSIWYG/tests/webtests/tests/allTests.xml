@@ -1,7 +1,8 @@
 <?xml version="1.0"?>
 
-<project name="test WYSIWYG" default="testAll">
-	<target name="testAll" description="runs all the tests">
-		<ant antfile="basicTests.xml"/>
-	</target>
+<project name="test CK Editor in SMWHalo" default="testAll">
+    <target name="testAll" description="runs all the tests">
+        <ant antfile="basicTests.xml"/>
+        <ant antfile="basicEdit.xml"/>
+    </target>
 </project>

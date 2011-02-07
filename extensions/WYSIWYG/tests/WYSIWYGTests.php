@@ -9,7 +9,7 @@
  * @author OP
  */
 
-require_once 'testcases/TestWYSIWYG.php';
+require_once 'testcases/TestWYSIWYGparser.php';
 
 class WYSIWYGTests
 {
@@ -17,7 +17,7 @@ class WYSIWYGTests
 	{
 		$suite = new PHPUnit_Framework_TestSuite('WYSIWYG');
 
-		$suite->addTestSuite("TestWYSIWYG");
+		$suite->addTestSuite("TestWYSIWYGparser");
 		return $suite;
 	}
 }

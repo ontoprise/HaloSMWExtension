@@ -1,13 +1,22 @@
 <?xml version="1.0"?>
 
-<!DOCTYPE project SYSTEM "../dtd/Project.dtd">
+<!DOCTYPE project SYSTEM "../dtd/Project.dtd"> 
 
-<project default="basicTests">
+<project default="testBasic">
+    
+    <target name="testBasic">
 
-	<target name="basicTests">
+        <webtest name="LoadMainPage">
+            <invoke
+                url="${wgServer}${wgScript}/Main_Page"
+                description="Tests if wiki responds at all by loading the main page" 
+            />
+            <verifyTitle text="Main Page - ${wgSitename}" />
+            <verifyXPath
+                description="Check if edit link contains mode WYSIWYG"
+                xpath="//div[@id='ca-edit']/a/@href"
+                text="${wgScript}?title=Main_Page&amp;action=edit&amp;mode=wysiwyg" />
+        </webtest>
 
-		<webtest name="Test">
-		</webtest>
-
-	</target>
+    </target>
 </project>
