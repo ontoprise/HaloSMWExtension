@@ -23,7 +23,7 @@ class TestMappingLanguageAPI extends PHPUnit_Framework_TestCase {
 		 * In the following, deprecated errors are temporarily ok'ed until ARC2 is updated
 		 */
 		$previousErrorLevel = error_reporting();
-		error_reporting($previousErrorLevel ^ E_DEPRECATED);
+		error_reporting($previousErrorLevel^ E_DEPRECATED);
 	}
 
 	function tearDown() {

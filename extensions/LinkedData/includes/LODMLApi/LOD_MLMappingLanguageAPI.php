@@ -32,7 +32,7 @@ define("LOD_ML_R2R_SOURCEPATTERN", LOD_ML_NS_R2R . "sourcePattern");
 define("LOD_ML_R2R_TARGETPATTERN", LOD_ML_NS_R2R . "targetPattern");
 define("LOD_ML_R2R_PREFIXDEFINITIONS", LOD_ML_NS_R2R . "prefixDefinitions");
 define("LOD_ML_R2R_TRANSFORMATION", LOD_ML_NS_R2R . "transformation");
-define("LOD_ML_R2R_CLASSMAPPINGREF", LOD_ML_NS_R2R . "classMappingRef");
+define("LOD_ML_R2R_MAPPINGREF", LOD_ML_NS_R2R . "mappingRef");
 
 /**
  * Creates mapping language objects from RDF serialization
@@ -66,7 +66,8 @@ class LODMLMappingLanguageAPI {
 			foreach (self::$classes as $class) {
 				/*PHP 5.3: if ($class::handles($properties)) { */
 				$instance = new $class(null, null, null);
-				if ($instance->handles($properties)) {
+				/*PHP 5.2: if ($instance->handles($properties)) { */
+                if ($class::handles($properties)) {
 					$mappings[$uri] = new $class($uri, $properties, $mappings);
 					$handled = true;
 					break;

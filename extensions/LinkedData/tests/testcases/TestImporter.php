@@ -13,7 +13,7 @@ class TestImporter extends PHPUnit_Framework_TestCase {
 	protected $backupGlobals = FALSE;
 	
 	private static $inUrl = "http://mes.cdn.s3.amazonaws.com/smw-lde/ABA-Ace.rdf";
-	private static $inContentType = "application/rdf+xml";
+    private static $inContentType = "application/rdf+xml";
 	private $importer;
 	private $store;
 	private $mappingStore;

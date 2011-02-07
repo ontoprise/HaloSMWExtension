@@ -38,7 +38,8 @@ abstract class LODMLMapping {
 		$this->uri = $uri;
 		$this->properties = $properties;
 		/*PHP 5.3: if (!static::handles($properties)) {*/
-		if ($uri && $properties && !$this->handles($properties)) {
+		/*PHP 5.2: if (!$this->handles($properties)) {*/
+		if ($uri && $properties && !static::handles($properties)) {
 			throw new Exception("$uri can not be handled by this class");
 		}
 	}
@@ -56,15 +57,16 @@ abstract class LODMLMapping {
 	 * @param	array<property> => array<string>	$properties
 	 * @return	boolean
 	 */
-	public /*PHP 5.3: static*/ function handles($properties) {
+	public /*PHP 5.3:*/ static function handles($properties) {
 		if (!$properties) {
 			return;
 		}
 
-		if ($properties[LOD_ML_RDF_TYPE]) {
+		if (array_key_exists(LOD_ML_RDF_TYPE, $properties)) {
 			foreach ($properties[LOD_ML_RDF_TYPE] as $type) {
 				/*PHP 5.3: if (static::handlesType($type)) {*/
-				if ($this->handlesType($type)) {
+				/*PHP 5.2: if ($this->handlesType($type)) {*/
+				if (static::handlesType($type)) {
 					return true;
 				}
 			}
@@ -72,7 +74,8 @@ abstract class LODMLMapping {
 
 		foreach (array_keys($properties) as $property) {
 			/*PHP 5.3: if (static::handlesProperty($property)) {*/
-			if ($this->handlesProperty($property)) {
+			/*PHP 5.2: if ($this->handlesProperty($property)) {*/
+			if (static::handlesProperty($property)) {
 				return true;
 			}
 		}
@@ -84,9 +87,10 @@ abstract class LODMLMapping {
 	 * @param	string	$type
 	 * @return	boolean
 	 */
-	public /*PHP 5.3: static*/ function handlesType($type) {
+	public /*PHP 5.3:*/ static function handlesType($type) {
 		/*PHP 5.3: return (static::type() && static::type() == $type);*/
-		return ($this->type() && $this->type() == $type);
+		/*PHP 5.2: return ($this->type() && $this->type() == $type); */
+		return (static::type() && static::type() == $type);
 	}
 
 	/**
@@ -94,9 +98,10 @@ abstract class LODMLMapping {
 	 * @param	string	$property
 	 * @return	boolean
 	 */
-	public /*PHP 5.3: static*/ function handlesProperty($property) {
+	public /*PHP 5.3: */ static function handlesProperty($property) {
 		/*PHP 5.3: return (static::property() && static::property() == $property);*/
-		return ($this->property() && $this->property() == $property);
+		/*PHP 5.2: return ($this->property() && $this->property() == $property); */
+		return (static::property() && static::property() == $property);
 	}
 
 	/**

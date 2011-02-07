@@ -15,6 +15,7 @@ require_once 'testcases/TestNonExistingPageHandler.php';
 require_once 'testcases/TestMetaDataQueryPrinter.php';
 require_once 'testcases/TestLODRating.php';
 require_once 'testcases/TestSparqlParser.php';
+require_once 'testcases/TestLODPolicy.php';
 
 class LODTests
 { 
@@ -37,6 +38,7 @@ class LODTests
         $suite->addTestSuite("TestNonExistinPageSuite");
         $suite->addTestSuite("TestMetaDataQueryPrinterSuite");
         $suite->addTestSuite("TestSparqlParserSuite");
+        $suite->addTestSuite("TestLODPolicySuite");
         $suite->addTestSuite("TestLODRatingSuite");
         
         return $suite;

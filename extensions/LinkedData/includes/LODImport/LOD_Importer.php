@@ -63,7 +63,7 @@ class LODImporter {
 	 * @return	string	Temporary graph URI; null on error
 	 */
 	public function loadData(LODSourceDefinition $dataSource, $inputHandleOrString, $inContentType, $update) {
-		$paramMap = array("dataSourceId" => $dataSource->getID(), "update" => $update);
+		$paramMap = array("dataSourceId" => $dataSource->getID(), "update" => $update ? "true" : "false");
 		$payload = $this->serializeParameters($paramMap);
 		list($header, $status, $res) =  $this->_client->sendData($payload, "/loadData", $inputHandleOrString, $inContentType);
 		if ($status != 200) {

@@ -120,6 +120,7 @@ $messages['en'] = array(
 	//--- LOD special pages ---
 	'lodsources'	=> 'LOD sources',
 	'specialpages-group-lod_group' => 'Linked Data extension',
+    //--- LOD Source editor
 	'lod_sp_source_label' => 'Name',
 	'lod_sp_source_source' => 'Data source',
 	'lod_sp_source_lastimport' => 'Last import',
@@ -129,7 +130,18 @@ $messages['en'] = array(
 	'lod_sp_source_update' => 'Update',
 	'lod_sp_isimported' => 'Imported',
 	'lod_sp_statusmsg' => 'Status message',
-								
+    //--- LOD Policy editor
+	'lodtrust'	=> 'LOD Trust Policies',
+    'lod_sp_policy_label' => 'ID',
+	'lod_sp_policy_description' => 'Policy',
+    'lod_sp_policy_action_edit' => 'Edit',
+    'lod_sp_policy_action_remove' => 'Remove',
+    'lod_sp_policy_action_new' => 'New policy',
+    'lod_sp_policy_action_remove_par' => 'Remove parameter',
+    'lod_sp_policy_action_define_par' => 'Define parameter',
+    'lod_sp_policy_action_new_par' => 'New parameter',
+    'lod_sp_policy_action_cancel_edit' => 'Cancel editing',
+
 	//--- LOD rating ---
 	'lod_rt_heading'			=> 'Selected value:',
 	'lod_rt_flagged_correct'	=> 'In your opinion the flagged fact is <b>correct</b>.',
@@ -243,7 +255,7 @@ $messages['de'] = array(
 	'lod_lsd_sparqlgraphpattern'		=> "SPARQL-Graphpattern",
 	'lod_lsd_uriregexpattern'			=> "URI Regex-Muster",
 	'lod_lsd_vocabulary'				=> "Vokabular",
-	'lod_lsd_predicatetocrawl'			=> "Beim Crawling zu folgendes PrÃ¤dikat",
+	'lod_lsd_predicatetocrawl'			=> "Beim Crawling zu folgendes Prädikat",
 
 	//--- LOD special pages ---
     'lodsources'    => 'LOD-Quellen',
@@ -257,6 +269,17 @@ $messages['de'] = array(
     'lod_sp_source_update' => 'Aktualisiere',
 	'lod_sp_isimported' => 'Ist importiert',
 	'lod_sp_statusmsg' => 'Statusnachricht',
+    //--- LOD Policy editor
+	'lodtrust'	=> 'LOD Trust Policies',
+    'lod_sp_policy_label' => 'ID',
+	'lod_sp_policy_description' => 'Policy',
+    'lod_sp_policy_action_edit' => 'Löschen',
+    'lod_sp_policy_action_remove' => 'Remove',
+    'lod_sp_policy_action_new' => 'Neu',
+    'lod_sp_policy_action_remove_par' => 'Parameter löschen',
+    'lod_sp_policy_action_define_par' => 'Parameter definieren',
+    'lod_sp_policy_action_new_par' => 'Neuer Parameter',
+    'lod_sp_policy_action_cancel_edit' => 'Abbrechen',
 								
 	//--- LOD rating ---
 	'lod_rt_heading'			=> 'Ausgewählter Wert:',

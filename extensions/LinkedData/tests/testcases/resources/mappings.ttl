@@ -22,7 +22,7 @@ mp:DBpediaToFoafPersonMapping
 mp:labelToNameMapping
    a r2r:PropertyMapping ;
    r2r:sourcePattern      "?SUBJ rdfs:label ?o . FILTER(lang(?o)='en')" ;
-   r2r:classMappingRef    mp:DBpediaToFoafPersonMapping ; # This is necessary and means that this mapping makes only sense in a "Person context"
+   r2r:mappingRef    mp:DBpediaToFoafPersonMapping ; # This is necessary and means that this mapping makes only sense in a "Person context"
    r2r:prefixDefinitions  "foaf: <http://xmlns.com/foaf/0.1/>" ;
    r2r:targetPattern      "?SUBJ foaf:name ?o" ;
    r2r:targetPattern      "?SUBJ <http://www.w3.org/2006/vcard/ns#n> ?o" .

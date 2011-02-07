@@ -64,6 +64,11 @@ function enableLinkedData() {
     
 	$wgAutoloadClasses['LODSourceDefinition'] = $lodgIP . '/includes/LODAdministration/LOD_SourceDefinition.php';
 	$wgAutoloadClasses['LODAdministrationStore'] = $lodgIP . '/includes/LODAdministration/LOD_AdministrationStore.php';
+	$wgAutoloadClasses['LODPolicyStore'] = $lodgIP . '/includes/LODTrust/LOD_PolicyStore.php';
+	$wgAutoloadClasses['LODPolicy'] = $lodgIP . '/includes/LODTrust/LOD_Policy.php';
+	$wgAutoloadClasses['LODHeuristic'] = $lodgIP . '/includes/LODTrust/LOD_Heuristic.php';
+	$wgAutoloadClasses['LODParameter'] = $lodgIP . '/includes/LODTrust/LOD_Parameter.php';
+	$wgAutoloadClasses['LODResource'] = $lodgIP . '/includes/LODTrust/LOD_Resource.php';
 
 	$wgAutoloadClasses['LODSparqlQueryResult']   = $lodgIP . '/storage/TripleStore/LOD_SparqlQueryResult.php';
 	$wgAutoloadClasses['LODSparqlResultURI'] 	 = $lodgIP . '/storage/TripleStore/LOD_SparqlQueryResult.php';
@@ -150,6 +155,9 @@ function enableLinkedData() {
 	$wgAutoloadClasses['LODSourcesPage']       = $lodgIP . '/specials/LODSources/LOD_SpecialSources.php';
     $wgSpecialPages['LODSources']       = array( 'LODSourcesPage' );
     $wgSpecialPageGroups['LODSources']  = 'lod_group';
+	$wgAutoloadClasses['LODTrustPage']       = $lodgIP . '/specials/LODTrust/LOD_SpecialTrust.php';
+    $wgSpecialPages['LODTrust']       = array( 'LODTrustPage' );
+    $wgSpecialPageGroups['LODTrust']  = 'lod_group';
 
     return true;
 }

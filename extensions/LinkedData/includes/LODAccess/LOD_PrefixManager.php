@@ -54,6 +54,8 @@ class LODPrefixManager  {
 	const LOD_SMW_GRAPHS = "smwGraphs/";
 	// data sources of the LDE
 	const LOD_SMW_DATASOURCES = "smwDatasources/";
+	// trust stuff
+    const LOD_SMW_TRUSTPOLICIES = "smwTrustPolicies/";
 	const LOD_SMW_USERS = "smwUsers/";
 	
 	
@@ -87,6 +89,7 @@ class LODPrefixManager  {
 		$this->mPrefixMap['smw-lde']		= self::LOD_BASE_URI.self::LOD_SMW_LDE;
 		$this->mPrefixMap['smwGraphs']		= self::LOD_BASE_URI.self::LOD_SMW_GRAPHS;
 		$this->mPrefixMap['smwDatasources']	= self::LOD_BASE_URI.self::LOD_SMW_DATASOURCES;
+		$this->mPrefixMap['smwTrustPolicies']	= self::LOD_BASE_URI.self::LOD_SMW_TRUSTPOLICIES;
 		$this->mPrefixMap['smwUsers']		= self::LOD_BASE_URI.self::LOD_SMW_USERS;
 		
 		// Add wiki prefixes

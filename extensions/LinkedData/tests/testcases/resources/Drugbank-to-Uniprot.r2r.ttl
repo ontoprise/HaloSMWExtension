@@ -16,7 +16,7 @@ mp:Target
 
 mp:GeneName
    a r2r:PropertyMapping;
-   r2r:classMappingRef    mp:Target;
+   r2r:mappingRef    mp:Target;
    r2r:sourcePattern      "?SUBJ drugbank:geneName ?o";
    r2r:targetPattern     
 		"?SUBJ uniprot:encodedBy <_:1>",
@@ -26,7 +26,7 @@ mp:GeneName
 
 mp:CellularLocation
    a r2r:PropertyMapping;
-   r2r:classMappingRef    mp:Target;
+   r2r:mappingRef    mp:Target;
    r2r:sourcePattern      "?SUBJ drugbank:cellularLocation ?o";
    r2r:targetPattern
 		"?SUBJ uniprot:annotation <_:1>",
@@ -36,7 +36,7 @@ mp:CellularLocation
 # TODO crc64sequence would be a good example for an R2R transformation
 mp:ProteinSequence
    a r2r:PropertyMapping;
-   r2r:classMappingRef    mp:Target;
+   r2r:mappingRef    mp:Target;
    r2r:sourcePattern      "?SUBJ drugbank:proteinSequence ?o";
    r2r:targetPattern 
 		"?SUBJ uniprot:sequence <_:1>",
@@ -49,7 +49,7 @@ mp:ProteinSequence
 # <http://purl.uniprot.org/hgnc/10600>  a :Resource, :database "HGNC" .
 #mp:HgncId
 #   a r2r:PropertyMapping;
-#   r2r:classMappingRef    mp:Target;
+#   r2r:mappingRef    mp:Target;
 #   r2r:sourcePattern      "?SUBJ drugbank:hgncId ?o";
 #   r2r:targetPattern      "?SUBJ rdfs:seeAlso ?uniprotURL";
 #   r2r:transformation     "?uniprotURL = concat('<http://purl.uniprot.org/hgnc/', '10600>')";
@@ -57,7 +57,7 @@ mp:ProteinSequence
 
 mp:Label
    a r2r:PropertyMapping;
-   r2r:classMappingRef    mp:Target;
+   r2r:mappingRef    mp:Target;
    r2r:sourcePattern      "?SUBJ rdfs:label ?o";
    r2r:targetPattern 
 		"?SUBJ uniprot:recommendedName <_:1>",
@@ -70,7 +70,7 @@ mp:Label
 # <http://purl.uniprot.org/pfam/PF00858> a :Resource, :database "Pfam"
 #mp:PfamDomainFunction
 #   a r2r:PropertyMapping;
-#   r2r:classMappingRef    mp:Target;
+#   r2r:mappingRef    mp:Target;
 #   r2r:sourcePattern      "?SUBJ drugbank:pfamDomainFunction ?o";
 #   r2r:targetPattern      "?SUBJ rdfs:seeAlso ?pfamURL";
 #   r2r:transformation     "?pfamURL = concat('<http://purl.uniprot.org/pfam/', 'PF00858>')";
@@ -78,7 +78,7 @@ mp:Label
 
 mp:SpecificFunction
    a r2r:PropertyMapping;
-   r2r:classMappingRef    mp:Target;
+   r2r:mappingRef    mp:Target;
    r2r:sourcePattern      "?SUBJ drugbank:specificFunction ?o";
    r2r:targetPattern 
 		"?SUBJ uniprot:annotation <_:1>",
@@ -93,7 +93,7 @@ mp:SpecificFunction
 # TODO Here, <_:1> must be global
 mp:Synonym
    a r2r:PropertyMapping;
-   r2r:classMappingRef    mp:Target;
+   r2r:mappingRef    mp:Target;
    r2r:sourcePattern      "?SUBJ drugbank:synonym ?o";
    r2r:targetPattern 
 		"?SUBJ uniprot:alternativeName <_:1>",
