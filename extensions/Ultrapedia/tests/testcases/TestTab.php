@@ -44,7 +44,9 @@ class TestTab extends PHPUnit_Framework_TestCase {
     	$page_title = Title::newFromText( UltrapediaTests::$TEST_PAGE_NAME );
 		$article = new Article($page_title);
 		$text = $article->getContent();
-		
+		global $wgTitle;
+		$wgTitle = $page_title;
+
 		global $wgParser;
 		$options = new ParserOptions;
 		$options->setTidy( true );
