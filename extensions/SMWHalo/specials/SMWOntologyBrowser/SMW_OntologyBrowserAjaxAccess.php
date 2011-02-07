@@ -860,11 +860,11 @@ class OB_StorageTS extends OB_Storage {
 			$offset = $partition * $limit;
 			$metadata = isset($p_array[3]) ? $p_array[3] : false;
 			$metadataRequest = $metadata != false ? "|metadata=$metadata" : "";
-
+            $onlyDirect = $p_array[4] == "true";
 			global $smwgTripleStoreGraph;
 			$response = $client->query("SELECT ?p ?o WHERE { <$instanceURI> ?p ?o. }",  "limit=$limit|offset=$offset$metadataRequest", $smwgTripleStoreGraph);
 			$annotations = array();
-			$this->parseAnnotations($response, $instanceURI, $annotations);
+			$this->parseAnnotations($response, $instanceURI, $annotations, $onlyDirect);
 
 
 		} catch(Exception $e) {
@@ -878,7 +878,7 @@ class OB_StorageTS extends OB_Storage {
 
 
 
-	protected function parseAnnotations($response, $instanceURI, & $annotations) {
+	protected function parseAnnotations($response, $instanceURI, & $annotations, $onlyDirect = false) {
 		global $smwgSPARQLResultEncoding;
 		// PHP strings are always interpreted in ISO-8859-1 but may be actually encoded in
 		// another charset.
@@ -949,6 +949,9 @@ class OB_StorageTS extends OB_Storage {
 			$assertedValuesResult=array();
             SMWFullSemanticData::getDataValueDiff($values, $assertedValues, $predicate, $derivedValuesResult, $assertedValuesResult);
             
+            if ($onlyDirect) {
+            	$derivedValuesResult=array();
+            }
 			$annotations[] = new Annotation(new PropertySchemaElement($predicate, $predicateURI), $assertedValuesResult, $derivedValuesResult);
 		}
 

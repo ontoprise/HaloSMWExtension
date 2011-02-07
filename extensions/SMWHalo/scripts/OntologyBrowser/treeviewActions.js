@@ -917,8 +917,8 @@ OBInstanceActionListener.prototype = {
 				var instanceParam = node.getAttribute("uri") == null ? instanceNamespace
 						+ ":" + instanceName
 						: node.getAttribute("uri");
-
-				dataAccess.getAnnotations(instanceParam,
+				var onlyDirect = $('directPropertySwitch').checked;
+				dataAccess.getAnnotations(instanceParam, onlyDirect,
 						callbackOnInstanceSelectToRight);
 
 			}

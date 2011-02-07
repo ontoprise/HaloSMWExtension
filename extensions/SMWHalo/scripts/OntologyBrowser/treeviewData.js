@@ -231,11 +231,11 @@ getProperties: function(categoryName, onlyDirect, dIndex, callback) {
 	sajax_do_call('smwf_ob_OntologyBrowserAccess', ['getProperties',categoryName+"##"+onlyDirect+"##"+dIndex, obAdvancedOptions.getDataSource()], callback);
 },
 
-getAnnotations: function(instanceName, callback) {
+getAnnotations: function(instanceName, onlyDirect, callback) {
 	// set a default of 500 requested annotations
 	// set a default partition of 0. (actually partitions are not used)
 	var requestMetaproperties = obAdvancedOptions.requestedMetaproperties();
-	sajax_do_call('smwf_ob_OntologyBrowserAccess', ['getAnnotations',instanceName+"##500##0##"+requestMetaproperties, obAdvancedOptions.getDataSource()], callback);
+	sajax_do_call('smwf_ob_OntologyBrowserAccess', ['getAnnotations',instanceName+"##500##0##"+requestMetaproperties+"##"+onlyDirect, obAdvancedOptions.getDataSource()], callback);
 },
 
 getPropertyValues: function(propertyName, callback) {
