@@ -1,4 +1,4 @@
-Installation instructions for Application Programming Extension 1.0.2
+Installation instructions for Application Programming Extension 1.0.3
 ---------------------------------------------------------------------
 
 The Application Programming extension is not an extension by itself, it bundles the following extensions:
@@ -25,14 +25,9 @@ Installation:
    4. Enter the following code to the bottom: 
 
 		require_once( "$IP/extensions/ApplicationProgramming/ParserFunctions/ParserFunctions.php" );
-		require_once ("$IP/extensions/ApplicationProgramming/StringFunctions/StringFunctions.php");
+		require_once( "$IP/extensions/ApplicationProgramming/StringFunctions/StringFunctions.php");
 		require_once( "$IP/extensions/ApplicationProgramming/Variables/Variables.php" );	
-		include_once('extensions/ApplicationProgramming/URLArguments/URLArguments.php');
+		require_once( "$IP/extensions/ApplicationProgramming/URLArguments/URLArguments.php" );
 		
 Go to the Special:Version page and you should see StringFunctions (Version nn), URL Arguments (Version nn) 
 and Variables (Version nn) listed under ParserHooks.
-
-
-
-
-
