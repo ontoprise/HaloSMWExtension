@@ -10,6 +10,8 @@ VERSION 1.4.x
   CHANGES:
 
   BUGFIXES:
+    * Fix bug http://smwforum.ontoprise.com/smwbugs/show_bug.cgi?id=13521
+      Creating a template using Special:Createtemplate generates wrong code
     * Fix bug http://smwforum.ontoprise.com/smwbugs/show_bug.cgi?id=13194
       IE 8 page error (transformation into wikitext didn't work in IE 8)
     * Fix bug http://smwforum.ontoprise.com/smwbugs/show_bug.cgi?id=13507
