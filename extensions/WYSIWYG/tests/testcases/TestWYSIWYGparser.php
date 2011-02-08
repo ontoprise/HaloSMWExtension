@@ -144,6 +144,38 @@ class TestWYSIWYGparser extends PHPUnit_Framework_TestCase {
         $this->assertEquals($expected, $res);
     }
 
+    function testPage6() {
+        $text= '<noinclude>
+{{Template
+|PAGENAME=Template:Test4
+|rationale=Some test
+|defines category=Category:
+}}
+<pre>
+{{Test4
+|Name=
+|vorname=
+}}
+</pre>
+Edit the page to see the template text.
+</noinclude><includeonly>
+{| class="wikitable"
+! Name
+| [[name::{{{Name|}}}]]
+|-
+! vorname
+| [[vorname_df::{{{vorname|}}}]]
+|-
+!
+| {{#ask:[[Belongs to comment::{{SUBJECTPAGENAME}}]]|format=list}}
+|}
+</includeonly>';
+        $expected = '<p><span class="fck_mw_noinclude" _fck_mw_customtag="true" _fck_mw_tagname="noinclude">fckLR{{TemplatefckLR|PAGENAME=Template:Test4fckLR|rationale=Some testfckLR|defines category=Category:fckLR}}fckLR&lt;pre&gt;fckLR{{Test4fckLR|Name=fckLR|vorname=fckLR}}fckLR&lt;/pre&gt;fckLREdit the page to see the template text.fckLR</span><span class="fck_mw_includeonly" _fck_mw_customtag="true" _fck_mw_tagname="includeonly">fckLR{| class=&quot;wikitable&quot;fckLR! NamefckLR| [[name::{{{Name|}}}]]fckLR|-fckLR! vornamefckLR| [[vorname_df::{{{vorname|}}}]]fckLR|-fckLR!fckLR| {{#ask:[[Belongs to comment::{{SUBJECTPAGENAME}}]]|format=list}}fckLR|}fckLR</span>
+</p>';
+        $res = $this->parsePage($text);
+        $this->assertEquals($expected, $res);
+
+    }
     private function parsePage($text) {
         return $this->parser->parse($text, $this->title, $this->options)->getText();
     }
