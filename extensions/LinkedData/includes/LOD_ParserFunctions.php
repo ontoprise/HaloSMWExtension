@@ -78,10 +78,7 @@ class LODParserFunctions {
 
 	// LODParserFunctions: The only instance of this class
 	private static $mInstance = null;
-	
-	// bool: <true>, if the first mapping on a page is parsed
-	private static $mFirstMapping = true;
-	
+		
 	/**
 	 * Constructor for HACLParserFunctions. This object is a singleton.
 	 */
@@ -128,10 +125,6 @@ class LODParserFunctions {
 		} else {
 			// All mappings for previous version of the page must be deleted.
 			$store = LODMappingStore::getStore();
-			if (self::$mFirstMapping) {
-				$store->removeAllMappingsFromPage($title->getText());
-				self::$mFirstMapping = false;
-			}
 
 			// Get the "target" parameter
 			global $lodgContLang;
@@ -270,7 +263,6 @@ class LODParserFunctions {
 		return $wikiText;
 	}
 	
-	
 	/**
 	 * This method is called, when an article is deleted. If the article
 	 * belongs to the namespace "Mapping", the LOD mappings for the article are
@@ -284,13 +276,7 @@ class LODParserFunctions {
 	 * 		The reason, why the article is deleted.
 	 */
 	public static function articleDelete(&$article, &$user, &$reason) {
-		if ($article->getTitle()->getNamespace() == LOD_NS_MAPPING) {
-			// The article is in the "Mapping" namespace. 
-			// => delete the mappings that are defined in the article.
-			$source = $article->getTitle()->getFullText();
-			$store = LODMappingStore::getStore();
-			$store->removeAllMappingsFromPage($source);
-		}
+		self::deleteMappingsForArticle($article);
 		
 		// Delete the triples of LOD source definitions
 		$store = LODAdministrationStore::getInstance();
@@ -315,7 +301,7 @@ class LODParserFunctions {
 		$title = $wgTitle;
 		if (isset($title) && $title->getNamespace() == LOD_NS_MAPPING) {
 			$store = LODMappingStore::getStore();
-			if (count($store->getAllMappings($title->getText())) == 0) {
+			if (count($store->getMappingsInArticle($title->getFullText())) == 0) {
 				$msg = wfMsg("lod_no_mapping_in_ns");
 				$out->addHTML("<div><b>$msg</b></div>");
 			}
@@ -324,28 +310,23 @@ class LODParserFunctions {
 	}
 	
 	/**
-	 * Resets the singleton instance of this class. Normally this instance is
-	 * only used for parsing ONE article. If several articles are parsed in
-	 * one invokation of the wiki system, this singleton has to be reset (e.g.
-	 * for unit tests).
-	 *
-	 */
-	public function reset() {
-		self::$mFirstMapping = true;
-	}
-
-	/**
 	 * 
 	 * Occurs whenever the software receives a request to save an article.
 	 * The article may contain LOD source definitions that are no longer present
 	 * or that changed in the new version of the article. All source definitions
 	 * for the article are deleted in the triple store and the persistency layer.
+	 * 
+	 * If the article belongs to the Mapping namespace, all existing mappings for
+	 * that article are deleted before new mappings are created.
 	 */
 	public static function onArticleSave(&$article) {
 		
 		$store = LODAdministrationStore::getInstance();
 		$persistencyID = $article->getTitle()->getFullText();
 		$store->deleteSourceDefinition(NULL, $persistencyID);
+		
+		self::deleteMappingsForArticle($article);
+		
 		return true;
 	}
 
@@ -566,6 +547,23 @@ class LODParserFunctions {
 		}
 		return $value;
 		
+	}
+	
+	/**
+	 * Deletes all mappings that are stored for $article.
+	 * 
+	 * @param Article $article
+	 * 		This article may contain mappings if it belongs to the mapping 
+	 * 		namespace.
+	 */
+	private static function deleteMappingsForArticle($article) {
+		if ($article->getTitle()->getNamespace() == LOD_NS_MAPPING) {
+			// The article is in the "Mapping" namespace.
+			// => delete the mappings that are defined in the article.
+			$source = $article->getTitle()->getFullText();
+			$store = LODMappingStore::getStore();
+			$store->removeAllMappingsFromPage($source);
+		}
 	}
 
 
