@@ -30,7 +30,10 @@ class DF_Language_En extends DF_Language {
 	'df_instdir' => 'Installation dir',
 	'df_ontologyvendor' => 'Vendor',
 	'df_description' => 'Description',
-	'checkinstallation' => 'Check Installation'
+	'df_part_of_ontology' => 'Part of ontology',
+	'df_ontology_id' => 'Ontology ID',
+	'checkinstallation' => 'Check Installation',
+	'category' => 'Category'
     );
     
 }

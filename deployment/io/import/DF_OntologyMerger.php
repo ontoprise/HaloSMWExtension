@@ -1,168 +1,189 @@
 <?php
-
 /**
- * Detector
- * Enter description here ...
- * @author kai
+ * @author: Kai Kühn / ontoprise / 2011
+ *
+ * derived from
+ * MediaWiki page data importer
+ * Copyright (C) 2003,2005 Brion Vibber <brion@pobox.com>
+ * http://www.mediawiki.org/
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * http://www.gnu.org/copyleft/gpl.html
+ *
+ *
+ * Checks if an ontology can be properly imported and provides means to merge
+ * it with existing versions.
+ *
  *
  */
-class DeployWikiImporterDetector extends WikiImporter {
-	
-	var $result;
-	var $ontologyID;
-	var $mode;
-	var $callback;
-	var $logger;
 
-	function __construct($source, $ontologyID, $mode, $callback) {
-		parent::__construct($source);
-		$this->mode = $mode;
-		$this->callback = $callback;
-		$this->ontologyID = $ontologyID;
-		$this->logger = Logger::getInstance();
-	}
+/**
+ * @file
+ * @ingroup DFIO
+ *
+ * The ontology merger component does 2 things:
+ *
+ *  (1) Transforms an wikitext so that all elements referenced in annotations
+ *  get prefixes to distinguish them from others.
+ *
+ *  (2) Merges annotations in wiki text.
+ *
+ * @author Kai Kühn / ontoprise / 2011
+ *
+ */
+class OntologyMerger {
 
-	function in_page( $parser, $name, $attribs ) {
+	private $prefix;
 
-		$name = $this->stripXmlNamespace($name);
-		$this->debug( "in_page $name" );
-		switch( $name ) {
-			case "id":
-			case "title":
-			case "restrictions":
-				$this->appendfield = $name;
-				$this->appenddata = "";
-				xml_set_element_handler( $parser, "in_nothing", "out_append" );
-				xml_set_character_data_handler( $parser, "char_append" );
-				break;
-			case "revision":
-				$this->push( "revision" );
-				if( is_object( $this->pageTitle ) ) {
-					$this->workRevision = new DeployWikiRevisionDetector($this->mode, $this->ontologyID, $this->callback);
-					$this->workRevision->setTitle( $this->pageTitle );
-					$this->workRevisionCount++;
-				} else {
-					// Skipping items due to invalid page title
-					$this->workRevision = null;
-				}
-				xml_set_element_handler( $parser, "in_revision", "out_revision" );
-				break;
-			case "upload":
-				$this->push( "upload" );
-				if( is_object( $this->pageTitle ) ) {
-					$this->workRevision = new DeployWikiRevision($this->mode, $this->callback);
-					$this->workRevision->setTitle( $this->pageTitle );
-					$this->uploadCount++;
-				} else {
-					// Skipping items due to invalid page title
-					$this->workRevision = null;
-				}
-				xml_set_element_handler( $parser, "in_upload", "out_upload" );
-				break;
-			default:
-				return $this->throwXMLerror( "Element <$name> not allowed in a <page>." );
-		}
-	}
+	private static $PROPERTY_LINK_PATTERN;
 
-	function out_page( $parser, $name ) {
-		$name = $this->stripXmlNamespace($name);
-		$this->debug( "out_page $name" );
-		$this->pop();
-		if( $name != "page" ) {
-			return $this->throwXMLerror( "Expected </page>, got </$name>" );
-		}
-		xml_set_element_handler( $parser, "in_mediawiki", "out_mediawiki" );
+	private static  $CATEGORY_LINK_PATTERN;
 
-		$this->pageOutCallback( $this->pageTitle, $this->origTitle,
-		$this->workRevisionCount, $this->workSuccessCount );
-		
-		$this->result[] = $this->workRevision->getResult();
-		$this->workTitle = null;
-		$this->workRevision = null;
-		$this->workRevisionCount = 0;
-		$this->workSuccessCount = 0;
-		$this->pageTitle = null;
-		$this->origTitle = null;
-	}
-}
-class DeployWikiRevisionDetector extends WikiRevision {
-	
-	// tuple describes the result of detection
-	var $result;
-	
-	// ontology ID
-	var $ontologyID;
-	
-	// callback function for user interaction
-	var $callback;
-
-	var $logger;
-
-	public function __construct($mode = 0, $ontologyID, $callback = NULL) {
-		$this->mode = $mode;
-		$this->callback = $callback;
-		$this->ontologyID = $ontologyID;
-		$this->logger = Logger::getInstance();
-	}
-
-
-	public function getResult() {
-		return $this->result;
-	}
-	
-	/**
-	 *
-	 *
-	 * @return unknown
-	 */
-	function importOldRevision() {
-
-
-		$dbw = wfGetDB( DB_MASTER );
-		// check revision here
-		$linkCache = LinkCache::singleton();
-		$linkCache->clear();
+	public function __construct($prefix, $objectProperties = array(), $naryProperties = array()) {
+		$this->prefix = $prefix;
+		$this->objectProperties = $objectProperties;
+		$this->naryProperties = $naryProperties;
+		self::$PROPERTY_LINK_PATTERN = '/\[\[                 # Beginning of the link
+                                    (?:([^:][^]]*):[=:])+ # Property name (or a list of those)
+                                    ([^\[\]]*)            # content: anything but [, |, ]
+                                    \]\]                  # End of link
+                                    /xu';;
 
 		global $dfgLang;
-		if ($this->title->getNamespace() == NS_TEMPLATE && $this->title->getText() === $dfgLang->getLanguageString('df_contenthash')) return false;
-		if ($this->title->getNamespace() == NS_TEMPLATE && $this->title->getText() === $dfgLang->getLanguageString('df_partofbundle')) return false;
+		self::$CATEGORY_LINK_PATTERN = '/\[\[                 # Beginning of the link
+                                    (?:\s*'.$dfgLang->getLanguageString('category').'\s*:)+  # Property name (or a list of those)
+                                    ([^\[\]]*)            # content: anything but [, |, ]
+                                    \]\]                  # End of link
+                                    /ixu';
 
-		$this->text = $this->replaceOrAddContentHash($this->text);
+		$this->fixProperties = array("Has domain and range");
+	}
+
+	public function transformOntologyElements($text) {
+		$t = $this->modifyCategoryAnnotations($text);
+		$t = $this->modifyPropertyAnnotations($t);
+		return $t;
+	}
+
+	public function stripAnnotations($text) {
+		$text = preg_replace(self::$PROPERTY_LINK_PATTERN, "", $text);
+		$text = preg_replace(self::$CATEGORY_LINK_PATTERN, "", $text);
+		return $text;
+	}
+
+	public function extractAnnotations($text) {
+		$propertyMatches = array();
+		$categoryMatches = array();
+		preg_match_all(self::$PROPERTY_LINK_PATTERN, $text, $propertyMatches);
+		preg_match_all(self::$CATEGORY_LINK_PATTERN, $text, $categoryMatches);
+		return array_merge($propertyMatches[0], $categoryMatches[0]);
+	}
+
+	private function modifyCategoryAnnotations($prefix, $text) {
+		return preg_replace_callback( self::$CATEGORY_LINK_PATTERN, array( $this, 'simpleParseCategoriesCallback' ), $text );
+	}
+
+	private function modifyPropertyAnnotations($text) {
+		return preg_replace_callback( self::$PROPERTY_LINK_PATTERN, array( $this, 'simpleParsePropertiesCallback' ), $text );
+	}
 
 
-		$article = new Article( $this->title );
-		$pageId = $article->getId();
+	/**
+	 * This callback function inserts the prefix.
+	 */
+	public function simpleParseCategoriesCallback( $categoryLink ) {
+		$value = '';
+		$caption = false;
 
-		if( $pageId == 0 ) {
-			# page does not exist
-			$this->result = array($this->title, "notexist");
-			return false;
-		} else {
-
-			$prior = Revision::loadFromTitle( $dbw, $this->title );
-			if( !is_null( $prior ) ) {
-
-				// revision already exists.
-
-				$contenthashProperty = SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString('df_part_of_ontology'));
-				$values = smwfGetStore()->getPropertyValues($this->title, $contenthashProperty);
-
-				if (count($values) > 0) {
-					$v = reset($values);
-					$ontologyID = $v->getDBkey();
-					if ($ontologyID === $this->ontologyID) {
-						// same ontology, no conflict but merging necessary
-						$this->result = array($this->title, "merge");
-					} else {
-						// conflict
-						$this->result = array($this->title, "conflict");
-					}
-				}
-
+		if ( array_key_exists( 1, $categoryLink ) ) {
+			$parts = explode( '|', $categoryLink[1] );
+			if ( array_key_exists( 0, $parts ) ) {
+				$value = trim($parts[0]);
+			}
+			if ( array_key_exists( 1, $parts ) ) {
+				$caption = trim($parts[1]);
 			}
 		}
-		return false;
+		$prefix = $this->prefix;
+		global $dfgLang;
 
+		$category = $dfgLang->getLanguageString('category');
+		if ( $caption !== false ) {
+			return  "[[$category:$prefix$value|$caption]]";
+		} else {
+			return  "[[$category:$prefix$value]]";
+		}
+	}
+
+
+	/**
+	 * This callback function inserts the prefix.
+	 */
+	public function simpleParsePropertiesCallback( $semanticLink ) {
+		$value = '';
+		$caption = false;
+
+		if ( array_key_exists( 2, $semanticLink ) ) {
+			$parts = explode( '|', $semanticLink[2] );
+			if ( array_key_exists( 0, $parts ) ) {
+				$value = $parts[0];
+			}
+			if ( array_key_exists( 1, $parts ) ) {
+				$caption = $parts[1];
+			}
+		}
+		$prefix = $this->prefix;
+		$property = trim($semanticLink[1]);
+		$orig_property = $property;
+		if (!in_array($property, $this->fixProperties)) {
+			$property = $prefix.$property;
+		}
+
+		if (in_array($orig_property, $this->objectProperties)) {
+			$value = $this->attachPrefix($value);
+			if ( $caption !== false ) {
+				return  "[[$property::$value|$caption]]";
+			} else {
+				return  "[[$property::$value]]";
+			}
+		} else if (array_key_exists($orig_property, $this->naryProperties)) {
+			$values = explode(";", $value);
+			$types = $this->naryProperties[$property];
+			for($i = 0; $i < count($values); $i++) {
+				if (isset($types[$i]) && ($types[$i] == "Type:Page" || is_null($types[$i]))) {
+					$values[$i] = $this->attachPrefix($values[$i]);
+				}
+			}
+			$value = implode("; ", $values);
+			if ( $caption !== false ) {
+				return  "[[$property::$value|$caption]]";
+			} else {
+				return  "[[$property::$value]]";
+			}
+		} else {
+			if ( $caption !== false ) {
+				return  "[[$property::$value|$caption]]";
+			} else {
+				return  "[[$property::$value]]";
+			}
+		}
+	}
+
+	private function attachPrefix($titlestring) {
+		$title = Title::newFromText(trim($titlestring));
+		return $title->getNsText().":".$this->prefix.$title->getText();
 	}
 
 }
