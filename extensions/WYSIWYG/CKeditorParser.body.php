@@ -1155,6 +1155,16 @@ class CKeditorParser extends CKeditorParserWrapper {
             }
             $matches[1] = substr($matches[1], $f);
         }
+        // check for uniqe makers that should be reverted
+        if (strpos($matches[1], $this->mUniqPrefix) !== false) {
+            foreach( $this->fck_matches as $key => $m ) {
+				$replacement = str_replace( $key, $m[3], $matches[1] );
+                if ($replacement != $matches[1]) { // we did replace something
+                    $matches[1] = $replacement;
+                    unset($this->fck_matches[$key]);
+                }
+			}
+        }
         return $this->fck_wikiTag($this->fck_allTagsCurrentTagReplaced, substr($matches[1], 1), $attr);
     }
 
