@@ -1109,7 +1109,7 @@ class SMWTripleStore extends SMWStore {
 					
 				if (is_null($title) || $title instanceof Title) {
 					if ($plainFormat) {
-						$allValues[] = $this->createSMWDataValue(NULL, $title->getText(), TSNamespaces::$XSD_NS."string", $metadata);
+						$allValues[] = $this->createSMWDataValue(NULL, $title->getPrefixedText(), TSNamespaces::$XSD_NS."string", $metadata);
 					} else {
 						$allValues[] = $this->createSMWPageValue($title, $metadata);
 					}
