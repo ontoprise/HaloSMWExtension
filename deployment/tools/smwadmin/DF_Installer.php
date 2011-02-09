@@ -823,6 +823,12 @@ class Installer {
 		$line = trim(fgets(STDIN));
 		$result = strtolower($line);
 	}
+	
+	public function askForOntologyPrefix(& $result) {
+		print "\n\nOntology conflict. Please enter prefix: ";
+		$line = trim(fgets(STDIN));
+		$result = strtolower($line);
+	}
 
 	public function getErrors() {
 		return $this->errors;

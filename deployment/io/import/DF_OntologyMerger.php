@@ -211,7 +211,8 @@ class OntologyMerger {
 
 	private function attachPrefix($titlestring) {
 		$title = Title::newFromText(trim($titlestring));
-		return $title->getNsText().":".$this->prefix.$title->getText();
+		$nsText = $title->getNamespace() !== NS_MAIN ? $title->getNsText().":" : "";
+		return $nsText.$this->prefix.$title->getText();
 	}
 
 }

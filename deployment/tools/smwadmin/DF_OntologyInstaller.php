@@ -49,17 +49,54 @@ class OntologyInstaller {
 		$this->logger = Logger::getInstance();
 	}
 
-	public function installOntologies($desc) {
+	public function installOntologies($desc, $callback) {
 		$ontologies = $desc->getOntologies();
 		foreach($ontologies as $tuple) {
 			list($loc, $ontologyID) = $tuple;
 			
+			// convert ontology 
+			
+			
+			// read possible existing prefix if this is an update
+			
+			
 			// verifies the ontologies
 			print "\n[Verifying ontology $loc...";
-			$result = $this->verifyOntology($desc->getInstallationDirectory()."/".$loc, $ontologyID);
-			var_dump($result);
+			$prefix='';
+			do {
+				$verificationLog = $this->verifyOntology($desc->getInstallationDirectory()."/".$loc, $ontologyID, $prefix);
+				$conflict = $this->checkForConflict($verificationLog, $callback);
+				$prefix = $conflict;
+			} while ($conflict !== false);
+				
 			print "done.";
+			
+			// do actual install/update
 		}
+	}
+
+	/**
+	 * Checks for a conflict.
+	 *
+	 * @param array ($title, $msg) $verificationLog
+	 * @param object $callback method askForOntologyPrefix(& $answer)
+	 *
+	 * @return mixed false if no conflict otherwise prefix to make solve conflict.
+	 */
+	private function checkForConflict($verificationLog, $callback) {
+		$conflict = true;
+		foreach($verificationLog as $l) {
+			list($title, $msg) = $l;
+			if ($msg == 'conflict') {
+				$conflict = true;
+				break;
+			}
+		}
+		$answer=false;
+		if ($conflict) {
+			$callback->askForOntologyPrefix(& $answer);
+		}
+		return $answer;
 	}
 
 	/**
@@ -68,20 +105,20 @@ class OntologyInstaller {
 	 * @param $file filepath relative to extension
 	 * @param string ontologyID
 	 */
-	public function verifyOntology($filepath, $ontologyID) {
+	public function verifyOntology($filepath, $ontologyID, $prefix = '') {
 
 		if( preg_match( '/\.gz$/', $filepath ) ) {
 			$filename = 'compress.zlib://' . $filepath;
 		}
 		$fileHandle = fopen( $this->rootDir."/".$filepath, 'rt' );
-		return $this->importFromHandle( $fileHandle, $ontologyID );
+		return $this->importFromHandle( $fileHandle, $ontologyID , $prefix);
 	}
 
-	private function importFromHandle( $handle, $ontologyID ) {
+	private function importFromHandle( $handle, $ontologyID , $prefix) {
 			
 
 		$source = new ImportStreamSource( $handle );
-		$importer = new DeployWikiImporterDetector( $source, $ontologyID, 1, $this );
+		$importer = new DeployWikiImporterDetector( $source, $ontologyID, $prefix, 1, $this );
 
 		$importer->setDebug( false );
 
