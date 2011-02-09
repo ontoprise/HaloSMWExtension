@@ -970,7 +970,8 @@ CKEDITOR.customprocessor.prototype =
 							// Change the node name and fell in the "default" case.
 							if ( htmlNode.getAttribute( '_fck_mw_customtag' ) )
 								sNodeName = htmlNode.getAttribute( '_fck_mw_tagname' );
-
+                            this._AppendTextNode( htmlNode, stringBuilder, sNodeName, prefix )
+							break;
 						case 'pre' :
 							var attribs = this._GetAttributesStr( htmlNode );
                             var eClassName = htmlNode.getAttribute('class')
@@ -1013,19 +1014,7 @@ CKEDITOR.customprocessor.prototype =
 
 							break;
 						default :
-							var attribs = this._GetAttributesStr( htmlNode );
-
-							stringBuilder.push( '<' );
-							stringBuilder.push( sNodeName );
-
-							if ( attribs.length > 0 )
-								stringBuilder.push( attribs );
-
-							stringBuilder.push( '>' );
-							this._AppendChildNodes( htmlNode, stringBuilder, prefix );
-							stringBuilder.push( '<\/' );
-							stringBuilder.push( sNodeName );
-							stringBuilder.push( '>' );
+                            this._AppendTextNode( htmlNode, stringBuilder, sNodeName, prefix )
 							break;
 					}
 				}
