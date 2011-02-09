@@ -756,6 +756,8 @@ AutoCompleter.prototype = {
             var textBeforeCursor = this.getTextBeforeCursor();
 
             var userContextStart = Math.max(textBeforeCursor.lastIndexOf("[["), textBeforeCursor.lastIndexOf("{{"));
+            userContextStart = Math.max(textBeforeCursor.lastIndexOf("|"), userContextStart);
+            userContextStart = Math.max(textBeforeCursor.lastIndexOf("?"), userContextStart);
             var closingSemTag = Math.max(textBeforeCursor.lastIndexOf("]]"), textBeforeCursor.lastIndexOf("}}"));
 
             if (userContextStart != -1 && userContextStart > closingSemTag) {
@@ -1052,10 +1054,13 @@ AutoCompleter.prototype = {
         var userContext = this.getUserContext();
 
         if (this.siw.customFloater) {
+        	//FIXME: localize category
             if ((userContext.match(/:=/) || userContext.match(/::/) || userContext.match(/category:/i)) 
                 && !this.getTextAfterCursor().match(/^(\s|\r|\n)*\]\]|^(\s|\r|\n)*\||^(\s|\r|\n)*;/)) {
                 addedValue += "]]";
-            } else if (type == SMW_PROPERTY_NS && gLanguage.getMessage('PROPERTY_NS_WOC') != addedValue) {
+            } else if (userContext.match(/\?/) || userContext.match(/\|/)) {
+            	 // query parameter/printout context. do not add anything in this case
+            }else if (type == SMW_PROPERTY_NS && gLanguage.getMessage('PROPERTY_NS_WOC') != addedValue) {
                 addedValue += "::"; // context is a property but not the namespace itself
             } else if (type == SMW_INSTANCE_NS) {
                 if (!userContext.match(/|(\s|\r|\n)*$/)) { 

@@ -115,7 +115,7 @@ function smwf_ac_AutoCompletionDispatcher($articleName, $userInputToMatch, $user
 		// ------------------------
 		if (stripos(strtolower($userContext), strtolower($wgLang->getNsText(NS_CATEGORY)).":") > 0) {
 			$result = AutoCompletionRequester::getCategoryProposals($userInputToMatch);
-				
+
 			return $result;
 		}
 		// ------------------------------------------------
@@ -136,7 +136,7 @@ function smwf_ac_AutoCompletionDispatcher($articleName, $userInputToMatch, $user
 			} else if ($typeID == '_geo') {
 				return AutoCompletionRequester::encapsulateConstantMatchesAsXML(explode("|",(wfMsg('smw_ac_geocoord_proposal'))));
 			} else if ($typeID == '_rec') {
-				
+
 				// request expected types of record property
 				$values = smwfGetStore()->getPropertyValues(Title::newFromText($propertyText, SMW_NS_PROPERTY), SMWPropertyValue::makeProperty("_LIST"));
 				$typeValues = $values[0]->getTypeValues();
@@ -159,7 +159,7 @@ function smwf_ac_AutoCompletionDispatcher($articleName, $userInputToMatch, $user
 
 			// try enumeration values and units
 			$attributeValues = AutoCompletionRequester::getPropertyValueProposals($userContext, $userInputToMatch);
-				
+
 			if ($attributeValues != SMW_AC_NORESULT) {
 				return $attributeValues;
 			} else {
@@ -190,10 +190,30 @@ function smwf_ac_AutoCompletionDispatcher($articleName, $userInputToMatch, $user
 			}
 		}
 		$result = AutoCompletionRequester::getTemplateOrFormProposals($userContext, $userInputToMatch , $namespace );
-
 		return $result;
 
-	}
+	} else if (preg_match('/\|\s*template\s*=/', $userContext) > 0) {
+		// template query parameter context
+		$pages = AutoCompletionHandler::executeCommand("namespace: ".NS_TEMPLATE, $userInputToMatch);
+		$result = AutoCompletionRequester::encapsulateAsXML($pages);
+		return $result;
+	} else if (preg_match('/\|\s*format\s*=/', $userContext) > 0) {
+		// format query parameter context
+		global $smwgResultFormats;
+        $pages = AutoCompletionHandler::executeCommand("values: ".implode(",",array_keys($smwgResultFormats)), $userInputToMatch);
+        $result = AutoCompletionRequester::encapsulateAsXML($pages);
+        return $result;
+    } else if (stripos($userContext, "?") === 0) {
+    	// query printout context
+		$pages = AutoCompletionHandler::executeCommand("namespace: ".SMW_NS_PROPERTY, $userInputToMatch);
+		$result = AutoCompletionRequester::encapsulateAsXML($pages);
+		return $result;
+	} else if (stripos($userContext, "|") === 0) {
+		// general query parameter context
+        $pages = AutoCompletionHandler::executeCommand("values: sort=,order=asc/desc/reverse,limit=,offset=,format=,headers=,mainlabel=,link=,default=,intro=,outro=,searchlabel=,template=", $userInputToMatch);
+        $result = AutoCompletionRequester::encapsulateAsXML($pages);
+        return $result;
+    }
 }
 
 /**
@@ -410,6 +430,12 @@ class AutoCompletionRequester {
 		if (stripos($userContext, "[[") === 0 && stripos($userContext, "]]") === false) {
 			return true;
 		}
+		if (stripos($userContext, "|") === 0 && stripos($userContext, "]]") === false) {
+			return true;
+		}
+		if (stripos($userContext, "?") === 0 && stripos($userContext, "]]") === false) {
+			return true;
+		}
 		return false;
 	}
 
@@ -584,7 +610,7 @@ class AutoCompletionHandler {
 
 			if ($commandText == 'values') {
 				foreach($params as $p) {
-					if (stripos($p, $userInput) !== false) $result[] = $p;
+					if (empty($userInput) || stripos($p, $userInput) !== false) $result[] = $p;
 				}
 
 				// continue to fill in results if possible
