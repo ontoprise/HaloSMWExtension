@@ -37,6 +37,7 @@ class DeployDescriptor {
 	var $codefiles; // code files or directories (which are controlled by hash)
 	var $codeHash; // accumalted hash over all codefiles
 	var $wikidumps; // wiki XML dump file (Halo format)
+	var $ontologies; // ontologies 
 	var $mappings; // mappings (LOD)
 	var $resources; // resources: images
 	var $oc_resources; // resources which get only copied
@@ -55,6 +56,7 @@ class DeployDescriptor {
 	// xml
 	var $dom;
 	var $wikidumps_xml;
+	var $ontologies_xml;
 	var $codefiles_xml;
 	var $resources_xml;
 	var $resources_onlycopyxml;
@@ -85,6 +87,7 @@ class DeployDescriptor {
 		$this->codeHash = isset($codeElement[0]) ? $codeElement[0]->attributes()->hash : NULL;
 
 		$this->wikidumps_xml = $this->dom->xpath('/deploydescriptor/wikidumps/file');
+		$this->ontologies_xml = $this->dom->xpath('/deploydescriptor/ontologies/file');
 		$this->resources_xml = $this->dom->xpath('/deploydescriptor/resources/file[not(@dest)]');
 		$this->resources_onlycopyxml = $this->dom->xpath('/deploydescriptor/resources/file[@dest]');
 		$this->mappings_xml = $this->dom->xpath('/deploydescriptor/mappings/file');
@@ -473,6 +476,19 @@ class DeployDescriptor {
 		}
 		return $this->wikidumps;
 	}
+	
+    /**
+     * Returns the location of ontology files (relative paths)
+     * @return array of string
+     */
+    function getOntologies() {
+        if (!is_null($this->ontologies)) return $this->ontologies;
+        $this->ontologies = array();
+        foreach($this->ontologies_xml as $file) {
+            $this->ontologies[] = array( (string) $file->attributes()->loc, (string) $file->attributes()->ontologyid) ;
+        }
+        return $this->ontologies;
+    }
 
 	/**
 	 * Returns the location of mappings (relative paths)

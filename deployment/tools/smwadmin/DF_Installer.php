@@ -452,7 +452,9 @@ class Installer {
 	 */
 	public function initializePackages() {
 		require_once 'DF_ResourceInstaller.php';
+		require_once 'DF_OntologyInstaller.php';
 		$res_installer = ResourceInstaller::getInstance($this->rootDir);
+		$ont_installer = OntologyInstaller::getInstance($this->rootDir);
 		$localPackages = PackageRepository::getLocalPackagesToInitialize($this->rootDir.'/extensions');
 		ksort($localPackages, SORT_NUMERIC);
 
@@ -475,6 +477,7 @@ class Installer {
 		// do the actual work
 		foreach($localPackages as $tupl) {
 			list($desc, $fromVersion) = $tupl;
+			$ont_installer->installOntologies($desc);
 			$res_installer->installOrUpdateResources($desc);
 			$res_installer->installOrUpdateWikidumps($desc, $fromVersion, $this->force ? DEPLOYWIKIREVISION_FORCE : DEPLOYWIKIREVISION_WARN);
 			$res_installer->installOrUpdateMappings($desc);
