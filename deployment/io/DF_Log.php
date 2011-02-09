@@ -37,9 +37,8 @@ class Logger {
 
 	/**
 	 * Acquires the logger. 
-	 *
-	 * @param string  $rootDir
-	 */
+	 * 
+	 * */
 	public static function getInstance() {
 		if (is_null(self::$instance)) {
 			self::$instance = new Logger();
@@ -48,7 +47,7 @@ class Logger {
 		return self::$instance;
 	}
 
-	private function __construct($rootDir) {
+	private function __construct() {
 	
 		$homeDir = Tools::getHomeDir();
 		$this->logDir = "$homeDir/df_log";
