@@ -50,9 +50,16 @@ class OntologyMerger {
 	private static $PROPERTY_LINK_PATTERN;
 
 	private static  $CATEGORY_LINK_PATTERN;
-
-	public function __construct($prefix, $objectProperties = array(), $naryProperties = array()) {
-		$this->prefix = $prefix;
+    
+	/**
+	 * Creates a ontology merger object.
+	 *  
+	 * @param array $objectProperties Array of binary properties
+	 * @param hash array $naryProperties Array of nary properties pointing to a tuple of types
+	 *             Example: 'Has domain and range'=> array('Type:Page','Type:Page')
+	 */
+	public function __construct($objectProperties = array(), $naryProperties = array()) {
+		
 		$this->objectProperties = $objectProperties;
 		$this->naryProperties = $naryProperties;
 		self::$PROPERTY_LINK_PATTERN = '/\[\[                 # Beginning of the link
@@ -70,19 +77,38 @@ class OntologyMerger {
 
 		$this->fixProperties = array("Has domain and range");
 	}
-
-	public function transformOntologyElements($text) {
+    
+	/**
+	 * Transforms ontology elements from wikitext $text using the given $prefix.
+	 *  
+	 * @param string $text
+	 * @return string 
+	 */
+	public function transformOntologyElements($prefix, $text) {
+		$this->prefix = $prefix;
 		$t = $this->modifyCategoryAnnotations($text);
 		$t = $this->modifyPropertyAnnotations($t);
 		return $t;
 	}
 
+	/**
+	 * Removes all annotation from wikitext $text
+	 * 
+	 * @param $text
+	 * @return string 
+	 */
 	public function stripAnnotations($text) {
 		$text = preg_replace(self::$PROPERTY_LINK_PATTERN, "", $text);
 		$text = preg_replace(self::$CATEGORY_LINK_PATTERN, "", $text);
 		return $text;
 	}
-
+    
+	/**
+	 * Extract all annotations from wikitext $text.
+	 * @param $text
+	 * 
+	 * @return string
+	 */
 	public function extractAnnotations($text) {
 		$propertyMatches = array();
 		$categoryMatches = array();
@@ -91,7 +117,7 @@ class OntologyMerger {
 		return array_merge($propertyMatches[0], $categoryMatches[0]);
 	}
 
-	private function modifyCategoryAnnotations($prefix, $text) {
+	private function modifyCategoryAnnotations($text) {
 		return preg_replace_callback( self::$CATEGORY_LINK_PATTERN, array( $this, 'simpleParseCategoriesCallback' ), $text );
 	}
 
@@ -101,7 +127,8 @@ class OntologyMerger {
 
 
 	/**
-	 * This callback function inserts the prefix.
+	 * This callback function inserts the prefix. 
+	 * Could be replaced by a lambda-function but then it is restricted to PHP 5.3.x
 	 */
 	public function simpleParseCategoriesCallback( $categoryLink ) {
 		$value = '';
@@ -130,6 +157,7 @@ class OntologyMerger {
 
 	/**
 	 * This callback function inserts the prefix.
+	 * Could be replaced by a lambda-function but then it is restricted to PHP 5.3.x
 	 */
 	public function simpleParsePropertiesCallback( $semanticLink ) {
 		$value = '';
