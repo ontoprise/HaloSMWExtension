@@ -5,7 +5,7 @@ CKEDITOR.dialog.add( 'SMWqi', function( editor ) {
 	var height = (window.outerHeight == undefined) ? 400 : parseInt(window.outerHeight * 0.6);
     
 	return {
-		title: 'Insert Query',
+		title: 'Query Interface',
 
 		minWidth: 900,
 		minHeight: (window.outerHeight == undefined) ? 400 : parseInt(window.outerHeight * 0.6),
