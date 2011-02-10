@@ -281,7 +281,6 @@ function smwgHaloSetupExtension() {
 			$wgHooks['TripleStorePropertyUpdate'][] = 'smwfTripleStorePropertyUpdate';
 		}
 		$wgHooks['TripleStoreCategoryUpdate'][] = 'smwfTripleStoreCategoryUpdate';
-			
 	}
 
 
@@ -426,6 +425,19 @@ function smwgHaloSetupExtension() {
 		$sfgFormPrinter->setInputTypeHook('haloACtextarea', 'smwfHaloFormInputTextarea', array());
 	}
 
+	//Initialize Tabular Forms
+	require_once($smwgHaloIP.'/includes/TabularForms/TF_AjaxAccess.php');
+	$wgAutoloadClasses['TFTabularFormQueryPrinter'] = 
+		$smwgHaloIP.'/includes/TabularForms/TF_QP_TabularForm.php';
+	$wgAutoloadClasses['TFDataAPIAccess'] = 
+		$smwgHaloIP.'/includes/TabularForms/TF_DataAPIAccess.php';
+	$wgAutoloadClasses['TFAnnotationData'] = 
+		$smwgHaloIP.'/includes/TabularForms/TF_DataAPIAccess.php';
+	$wgAutoloadClasses['TFAnnotationData'] = 
+		$smwgHaloIP.'/includes/TabularForms/TF_DataAPIAccess.php';
+	$smwgResultFormats['tabularform'] = 'TFTabularFormQueryPrinter';
+	
+	
 	return true;
 }
 
@@ -849,6 +861,8 @@ function smwfHaloAddHTMLHeader(&$out) {
 
 	//    $jsm->addCSSIf($smwgHaloScriptPath . '/skins/Glossary/glossary.css');
 
+	    $jsm->addCSSIf($smwgHaloScriptPath . '/skins/TabularForms/tabularforms.css');
+	
 	// serialize the css
 	$jsm->serializeCSS($out);
 
@@ -867,6 +881,9 @@ function smwfHaloAddHTMLHeader(&$out) {
 	$isQIF = ($pagetitle == "$spec_ns:QueryInterface");
 	// end of hack
 
+	//todo: deal with deploy version
+	$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/TabularForms/tabularforms.js');
+	
 	if (!isset($smwgDeployVersion) || $smwgDeployVersion === false || $isQIF) {
 
 		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/ajaxhalo.js');
