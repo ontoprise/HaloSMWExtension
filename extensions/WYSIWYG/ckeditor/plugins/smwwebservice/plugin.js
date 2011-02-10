@@ -20,13 +20,13 @@ CKEDITOR.plugins.add('smw_webservice', {
         pluginLang['en'] = {
             titleWsDef      : 'Webservice definition',
             titleWsEdit     : 'Edit webservice definition',
-            defineWs        : 'Define here the webservice definition:',
+            defineWs        : 'Define here the webservice definition:'
         }
 
         pluginLang['de'] = {
             titleWsDef      : 'Webservice Definition',
             titleWsEdit     : 'Ändere Webservice Definition',
-            defineWs        : 'Spezifiziere die Webservice Definition:',
+            defineWs        : 'Spezifiziere die Webservice Definition:'
         }
         if (typeof pluginLang[editor.langCode] != 'undefined' )
             editor.lang.smwwebservice = pluginLang[editor.langCode];
