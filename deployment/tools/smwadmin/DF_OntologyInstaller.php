@@ -18,6 +18,7 @@
 
 global $rootDir;
 require_once($rootDir.'/../maintenance/commandLine.inc' );
+require_once($rootDir.'/io/import/DF_DeployWikiOntologyImporter.php');
 require_once($rootDir.'/io/import/DF_OntologyDetector.php');
 require_once($rootDir.'/io/import/DF_OntologyMerger.php');
 
@@ -53,25 +54,53 @@ class OntologyInstaller {
 		$ontologies = $desc->getOntologies();
 		foreach($ontologies as $tuple) {
 			list($loc, $ontologyID) = $tuple;
-			
-			// convert ontology 
-			
-			
+
+			// convert ontology
+			print "\n[Convert ontology...";
+			$inputfile = $this->rootDir."/".$desc->getInstallationDirectory()."/".$loc;
+			$outputfile = $inputfile.".xml";
+			$cwd = getcwd();
+			$onto2mwxml_dir = $this->rootDir."/deployment/tools/onto2mwxml";
+			chdir($onto2mwxml_dir);
+			if (Tools::isWindows()) {
+				exec("$onto2mwxml_dir/onto2mwxml.exe $inputfile -o $outputfile");
+			} else {
+				exec("$onto2mwxml_dir/onto2mwxml.sh $inputfile -o $outputfile");
+			}
+			chdir($cwd);
+			print "done.]";
+
 			// read possible existing prefix if this is an update
-			
-			
+			$prefixFile = $this->rootDir."/".$desc->getInstallationDirectory()."/".$loc.".prefix";
+			if (file_exists($prefixFile)) {
+				$prefix = trim(file_get_contents($prefixFile));
+			} else {
+				$prefix='';
+			}
+
 			// verifies the ontologies
 			print "\n[Verifying ontology $loc...";
-			$prefix='';
 			do {
 				$verificationLog = $this->verifyOntology($desc->getInstallationDirectory()."/".$loc, $ontologyID, $prefix);
 				$conflict = $this->checkForConflict($verificationLog, $callback);
 				$prefix = $conflict;
 			} while ($conflict !== false);
-				
+
 			print "done.";
-			
+
+			if ($prefix !== '') {
+				// write prefix file
+				print "\n[Conflict detected. Using prefix '$prefix']";
+				$handle = fopen($prefixFile, "w");
+				fwrite($handle, $prefix);
+				fclose($handle);
+			} else {
+				print "\n[No Conflict detected]";
+			}
+
 			// do actual install/update
+			print "\n[Installing/updating ontology $loc...";
+			$this->installOrUpdateOntology($desc->getInstallationDirectory()."/".$loc, $ontologyID, $prefix);
 		}
 	}
 
@@ -111,10 +140,29 @@ class OntologyInstaller {
 			$filename = 'compress.zlib://' . $filepath;
 		}
 		$fileHandle = fopen( $this->rootDir."/".$filepath, 'rt' );
+		return $this->readFromHandle( $fileHandle, $ontologyID , $prefix);
+	}
+
+	/**
+	 * Install/update ontology
+	 *
+	 * @param $file filepath relative to extension
+	 * @param string ontologyID
+	 */
+	public function installOrUpdateOntology($filepath, $ontologyID, $prefix = '') {
+
+		// remove ontology elements which do not exist anymore.
+		 
+		 
+		// install new or updated ontology
+		if( preg_match( '/\.gz$/', $filepath ) ) {
+			$filename = 'compress.zlib://' . $filepath;
+		}
+		$fileHandle = fopen( $this->rootDir."/".$filepath, 'rt' );
 		return $this->importFromHandle( $fileHandle, $ontologyID , $prefix);
 	}
 
-	private function importFromHandle( $handle, $ontologyID , $prefix) {
+	private function readFromHandle( $handle, $ontologyID , $prefix) {
 			
 
 		$source = new ImportStreamSource( $handle );
@@ -124,6 +172,22 @@ class OntologyInstaller {
 
 		$importer->doImport();
 			
+		$result = $importer->getResult();
+		return $result;
+
+
+	}
+
+	private function importFromHandle( $handle, $ontologyID , $prefix) {
+
+
+		$source = new ImportStreamSource( $handle );
+		$importer = new DeployWikiOntologyImporter( $source, $ontologyID, $prefix, 1, $this );
+
+		$importer->setDebug( false );
+
+		$importer->doImport();
+
 		$result = $importer->getResult();
 		return $result;
 

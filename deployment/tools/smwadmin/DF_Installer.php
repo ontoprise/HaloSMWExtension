@@ -477,7 +477,7 @@ class Installer {
 		// do the actual work
 		foreach($localPackages as $tupl) {
 			list($desc, $fromVersion) = $tupl;
-			$ont_installer->installOntologies($desc);
+			$ont_installer->installOntologies($desc, $this);
 			$res_installer->installOrUpdateResources($desc);
 			$res_installer->installOrUpdateWikidumps($desc, $fromVersion, $this->force ? DEPLOYWIKIREVISION_FORCE : DEPLOYWIKIREVISION_WARN);
 			$res_installer->installOrUpdateMappings($desc);
