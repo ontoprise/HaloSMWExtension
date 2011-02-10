@@ -1,7 +1,7 @@
 CKEDITOR.dialog.add( 'SMWruleEdit', function( editor ) {
 
 	return {
-		title: 'Edit semantic rule',
+		title: editor.lang.smwrule.titleRuleEdit,
 
 		minWidth: 600,
 		minHeight:200,
@@ -16,7 +16,7 @@ CKEDITOR.dialog.add( 'SMWruleEdit', function( editor ) {
                     {
                         id: 'tagDefinition',
                         type: 'textarea',
-                        label: 'Edit your rule definition:',
+                        label: editor.lang.smwrule.editRule,
                         title: 'Edit semantic rule',
                         className: 'swmf_class',
                         style: 'border: 1px;'

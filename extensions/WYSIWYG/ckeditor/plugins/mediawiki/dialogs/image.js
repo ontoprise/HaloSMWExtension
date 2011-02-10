@@ -51,7 +51,7 @@ CKEDITOR.dialog.add( 'MWImage', function( editor ) {
 	};
 
     var searchTimer,
-        searchLabel = 'Automatic search results (%s)',
+        searchLabel = editor.lang.mwplugin.searchLabel,
         numbering = function( id )
 		{
 			return CKEDITOR.tools.getNextId() + '_' + id;
@@ -115,7 +115,7 @@ CKEDITOR.dialog.add( 'MWImage', function( editor ) {
 
             if ( link.length < 2  )
                     return ;
-            SetSearchMessage( dialog, 'searching...' ) ;
+            SetSearchMessage( dialog, editor.lang.mwplugin.searching ) ;
             
             // Make an Ajax search for the pages.
             window.parent.sajax_request_type = 'GET' ;
@@ -129,13 +129,13 @@ CKEDITOR.dialog.add( 'MWImage', function( editor ) {
             ClearSearch(dialog) ;
 
             if ( results.length == 0 || ( results.length == 1 && results[0].length == 0 ) ) {
-                SetSearchMessage( dialog, 'no images found' ) ;
+                SetSearchMessage( dialog, editor.lang.mwplugin.noImgFound ) ;
             }
             else {
                 if ( results.length == 1 )
-                    SetSearchMessage( dialog, 'one image found' ) ;
+                    SetSearchMessage( dialog, editor.lang.mwplugin.oneImgFound ) ;
                 else
-                    SetSearchMessage( dialog, results.length + ' images found' ) ;
+                    SetSearchMessage( dialog, results.length + editor.lang.mwplugin.manyImgFound ) ;
 
                 for ( var i = 0 ; i < results.length ; i++ )
                     select.add ( results[i].replace(/_/g, ' '), results[i] );
@@ -150,23 +150,23 @@ CKEDITOR.dialog.add( 'MWImage', function( editor ) {
             window.clearTimeout( searchTimer ) ;
 
         if( /^(http|https):\/\//.test( link ) ) {
-            SetSearchMessage( dialog, 'external link... no search for it' ) ;
+            SetSearchMessage( dialog, editor.lang.mwplugin.externalLink ) ;
             return ;
         }
 
         if ( link.length < 1  )	{
             ClearSearch(dialog) ;
-            SetSearchMessage( dialog, 'start typing in the above field' ) ;
+            SetSearchMessage( dialog, editor.lang.mwplugin.startTyping ) ;
             return ;
         }
 
-        SetSearchMessage( dialog, 'stop typing to search' ) ;
+        SetSearchMessage( dialog, editor.lang.mwplugin.searching ) ;
         searchTimer = window.setTimeout( StartSearch, 500 ) ;
 
     }
 
         return {
-            title : 'Mediawiki Image',
+            title : editor.lang.mwplugin.imgTitle,
             minWidth : 420,
             minHeight : 310,
 			contents : [
@@ -185,7 +185,7 @@ CKEDITOR.dialog.add( 'MWImage', function( editor ) {
                                         {
                                             id: 'imgFilename',
                                             type: 'text',
-                                            label: 'Image file name',
+                                            label: editor.lang.mwplugin.fileName,
                                             title: 'image file name',
                                             style: 'border: 1px;',
                                             onKeyUp: function () {
@@ -228,7 +228,7 @@ CKEDITOR.dialog.add( 'MWImage', function( editor ) {
                                             id: 'imgList',
                                             type: 'select',
                                             size: 5,
-                                            label: 'Automatic search results (start typing in the above field)',
+                                            label: editor.lang.mwplugin.startSearch,
                                             title: 'image list',
                                             required: false,
                                             style: 'border: 1px; width:100%;',
@@ -284,7 +284,7 @@ CKEDITOR.dialog.add( 'MWImage', function( editor ) {
                         {
                             id: 'imgCaption',
                             type: 'text',
-                            label: 'Caption',
+                            label: editor.lang.mwplugin.caption,
                             style: 'border: 1px;',
 							onChange : function()
 							{
@@ -315,7 +315,7 @@ CKEDITOR.dialog.add( 'MWImage', function( editor ) {
                                     {
                                         id: 'imgSpecialType',
                                         type: 'select',
-                                        label: 'Special Type',
+                                        label: editor.lang.mwplugin.imgType,
                                         items: [
                                             [ ' ' ],
                                             [ 'Thumbnail' ],
@@ -365,12 +365,12 @@ CKEDITOR.dialog.add( 'MWImage', function( editor ) {
                                     {
                                         id: 'imgAlign',
                                         type: 'select',
-                                        label: 'Align',
+                                        label: editor.lang.image.align,
                                         items: [
                                             [ ' ' ],
-                                            [ 'Right' ],
-                                            [ 'Left' ],
-                                            [ 'Center' ]
+                                            [ editor.lang.image.alignRight, 'Right' ],
+                                            [ editor.lang.image.alignLeft , 'Left' ],
+                                            [ editor.lang.mwplugin.alignCenter, 'Center' ]
                                         ],
                                         setup : function( type, element ) {
                                             var className = element.getAttribute( 'class') || '',
@@ -406,7 +406,7 @@ CKEDITOR.dialog.add( 'MWImage', function( editor ) {
                                     {
                                         id: 'imgWidth',
                                         type: 'text',
-                                        label: 'Width',
+                                        label: editor.lang.image.width,
                                         size: '4',
                                         setup : function( type, element ) {
                                             var imgStyle = element.getAttribute( 'style') || '',
@@ -449,7 +449,7 @@ CKEDITOR.dialog.add( 'MWImage', function( editor ) {
                                     {
                                         id: 'imgHeight',
                                         type: 'text',
-                                        label: 'Height',
+                                        label: editor.lang.image.height,
                                         size: '4',
                                         setup : function( type, element ) {
                                             var imgStyle = element.getAttribute( 'style') || '',
@@ -547,12 +547,12 @@ CKEDITOR.dialog.add( 'MWImage', function( editor ) {
                 // and set correct label for image list
                 e = this.getContentElement( 'info', 'imgList' ),
                     label = document.getElementById(e.domId).getElementsByTagName('label')[0];
-                var message = 'Automatic search results (start typing in the above field)';
+                var editor = this.getParentEditor(),
+                    message = editor.lang.mwplugin.searchLabel.replace(/%s/, editor.lang.mwplugin.startTyping);
                 e.html = message;
                 label.innerHTML = message;
 
-                var editor = this.getParentEditor(),
-                    selection = editor.getSelection(),
+                var selection = editor.getSelection(),
     				element = selection.getSelectedElement();
 
                 //Hide loader.

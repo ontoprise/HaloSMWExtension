@@ -1,7 +1,7 @@
 CKEDITOR.dialog.add( 'MWSpecialTags', function( editor ) {
 {
         return {
-            title : 'Special Tags Dialog',
+            title : editor.lang.mwplugin.specialTagTitle,
             minWidth : 350,
             minHeight : 140,
             resizable: CKEDITOR.DIALOG_RESIZE_BOTH,
@@ -15,7 +15,7 @@ CKEDITOR.dialog.add( 'MWSpecialTags', function( editor ) {
                         {
                             id: 'tagDefinition',
                             type: 'textarea',
-                            label: 'Define any special tag, magic word or parser function:',
+                            label: editor.lang.mwplugin.specialTagDef,
                             title: 'Special Tag definition',
                             className: 'swmf_class',
                             style: 'border: 1px;'
@@ -83,7 +83,7 @@ CKEDITOR.dialog.add( 'MWSpecialTags', function( editor ) {
                     className = 'FCK__MWTemplate';
                 }
                 else {
-                    alert ('invalid content');
+                    alert (editor.lang.mwplugin.invalidContent);
                     return false;
                 }
                 var element = CKEDITOR.dom.element.createFromHtml(tag, editor.document),

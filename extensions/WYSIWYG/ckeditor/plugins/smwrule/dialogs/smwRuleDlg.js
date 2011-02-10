@@ -1,9 +1,9 @@
-CKEDITOR.dialog.add( 'SMWwebservice', function( editor ) {
+CKEDITOR.dialog.add( 'SMWrule', function( editor ) {
     var wgScript = window.parent.wgScript;
     var location =  wgScript + '?action=ajax&rs=smwf_uws_getPage';
     
 	return {
-		title: 'Webservice definition',
+		title: editor.lang.smwrule.titleRule,
 
 		minWidth: 900,
 		minHeight: (window.outerHeight == undefined) ? 400 : parseInt(window.outerHeight * 0.6),
@@ -11,7 +11,7 @@ CKEDITOR.dialog.add( 'SMWwebservice', function( editor ) {
 
 		contents: [
 			{
-				id: 'tab1_smw_wws',
+				id: 'tab1_smw_rule',
 				label: 'Tab1',
 				title: 'Tab1',
 				elements : [
@@ -20,7 +20,7 @@ CKEDITOR.dialog.add( 'SMWwebservice', function( editor ) {
 						type: 'html',
 						label: "Text",
                         style: 'width:100%; height:100%;',
-						html: '<iframe name="CKeditorWebserviceDef" \
+						html: '<iframe name="CKeditorSmwRuleDef" \
                                        style="width:100%; height:100%" \
                                        scrolling="auto" src="'+location+'"></iframe>'
 					}
@@ -30,14 +30,14 @@ CKEDITOR.dialog.add( 'SMWwebservice', function( editor ) {
 
 
 		onOk: function() {
-			var wwsFrame = window.frames['CKeditorWebserviceDef'];
+			var wwsFrame = window.frames['CKeditorSmwRuleDef'];
             var content = wwsFrame.useWSSpecial.createWSSyn();
             content = content.replace(/\r?\n/, 'fckLR');
 			
-            content = '<span class="fck_smw_webservice">' + content + '</span>';
+            content = '<span class="fck_smw_rule">' + content + '</span>';
 
 			var element = CKEDITOR.dom.element.createFromHtml(content, editor.document),
-				newFakeObj = editor.createFakeElement( element, 'FCK__SMWwebservice', 'span' );
+				newFakeObj = editor.createFakeElement( element, 'FCK__SMWrule', 'span' );
 			if ( this.fakeObj ) {
 				newFakeObj.replace( this.fakeObj );
 				editor.getSelection().selectElement( newFakeObj );
@@ -47,7 +47,7 @@ CKEDITOR.dialog.add( 'SMWwebservice', function( editor ) {
 
         onShow: function() {
             // fix size of inner window for iframe
-            var node = document.getElementsByName('tab1_smw_wws')[0];
+            var node = document.getElementsByName('tab1_smw_rule')[0];
             var child = node.firstChild;
             while ( child && (child.nodeType != 1 || child.nodeName.toUpperCase() != 'TABLE') )
                 child = child.nextSibling;

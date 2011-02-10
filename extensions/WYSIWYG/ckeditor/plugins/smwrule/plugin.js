@@ -15,6 +15,24 @@ CKEDITOR.plugins.add('smw_rule', {
 				'height: 18px !important;' +
 			'}\n'
         );
+        // language logic for additional messages
+        var pluginLang = []
+        pluginLang['en'] = {
+            titleRule       : 'Semantic Rule',
+            titleRuleEdit   : 'Edit semantic rule',
+            editRule        : 'Edit your rule definition:'
+        }
+
+        pluginLang['de'] = {
+            titleRule       : 'semantische Regel',
+            titleRuleEdit   : 'Ändere semantische Regel',
+            editRule        : 'Definiere den Regeltext:'
+        }
+        if (typeof pluginLang[editor.langCode] != 'undefined' )
+            editor.lang.smwrule = pluginLang[editor.langCode];
+        else
+            editor.lang.smwrule = pluginLang['en'];
+
 		//editor.addCommand( 'SMWrule', new CKEDITOR.dialogCommand( 'SMWrule' ) );
         //CKEDITOR.dialog.add( 'SMWrule', this.path + 'dialogs/smwRuleDlg.js');
 		editor.addCommand( 'SMWruleEdit', new CKEDITOR.dialogCommand( 'SMWruleEdit' ) );
@@ -26,7 +44,7 @@ CKEDITOR.plugins.add('smw_rule', {
             editor.addMenuGroup('mediawiki');
             // Create a menu item
             editor.addMenuItem('SMWruleEdit', {
-                label: 'Edit rule text',
+                label: editor.lang.smwrule.titleRuleEdit ,
                 command: 'SMWruleEdit',
                 group: 'mediawiki'
             });

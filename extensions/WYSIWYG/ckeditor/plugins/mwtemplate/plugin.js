@@ -71,6 +71,19 @@ CKEDITOR.plugins.add( 'mwtemplate',
             }
        )
 
-	}
+        var MWpluginLang = []
+        MWpluginLang['en'] = {
+            title      : 'Mediawiki Template Dialogue',
+            defineTmpl : 'Define any template calls for Mediawiki'
+        }
+        MWpluginLang['de'] = {
+            title      : 'Mediawiki Template Dialog',
+            defineTmpl : 'Templateaufruf in Wikitext'
+        }
 
+        if (typeof MWpluginLang[editor.langCode] != 'undefined' )
+            editor.lang.mwtemplateplugin = MWpluginLang[editor.langCode];
+        else
+            editor.lang.mwtemplateplugin = MWpluginLang['en'];
+	}
 });

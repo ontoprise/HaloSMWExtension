@@ -1,7 +1,7 @@
 CKEDITOR.dialog.add( 'MWTemplate', function( editor ) {
 {
         return {
-            title : 'Mediawiki Template Dialog',
+            title : editor.lang.mwtemplateplugin.title,
             minWidth : 350,
             minHeight : 140,
             resizable: CKEDITOR.DIALOG_RESIZE_BOTH,
@@ -15,7 +15,7 @@ CKEDITOR.dialog.add( 'MWTemplate', function( editor ) {
                         {
                             id: 'tagDefinition',
                             type: 'textarea',
-                            label: 'Define any template calls for Mediawiki',
+                            label: editor.lang.mwtemplateplugin.defineTmpl,
                             title: 'Template Tag definition',
                             className: 'swmf_class',
                             style: 'border: 1px;'

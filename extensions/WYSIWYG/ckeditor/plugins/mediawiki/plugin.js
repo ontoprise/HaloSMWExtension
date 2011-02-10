@@ -220,6 +220,75 @@ CKEDITOR.plugins.add( 'mediawiki',
         dataProcessor.dataFilter.addRules( wikiFilterRules );
         //dataProcessor.htmlFilter.addRules( htmlFilterRules );
 
+        // language logic for additional messages
+        var MWpluginLang = []
+        MWpluginLang['en'] = {
+            invalidContent  : 'invalid content',
+            searching       : 'searching...',
+            externalLink    : 'external link... no search for it',
+            startTyping     : 'start typing in the above field',
+            stopTyping      : 'stop typing to search',
+            // image
+            imgTitle        : 'Mediawiki Image',
+            fileName        : 'Image file name',
+            searchLabel     : 'Automatic search results (%s)',
+            noImgFound      : 'no images found',
+            oneImgFound     : 'one image found',
+            manyImgFound    : ' images found',
+            caption         : 'Caption',
+            imgType         : 'Special type',
+            alignCenter     : 'Center',
+            // special tags
+            specialTags     : 'Special Tags',
+            specialTagTitle : 'Special Tags Dialogue',
+            specialTagDef   : 'Define any special tag, magic word or parser function:',
+            // link
+            linkTitle       : 'Mediawiki Link',
+            noPageFound     : 'no article found',
+            onePageFound    : 'one article found',
+            manyPageFound   : ' articles found',
+            emailLink       : 'e-mail link... no search for it',
+            anchorLink      : 'anchor link... no search for it',
+            defineTarget    : 'Define the wiki page for the link target:',
+            chooseTarget    : 'Choose an existing wikipage for the link target:'
+        }
+
+        MWpluginLang['de'] = {
+            invalidContent  : 'invalid content',
+            searching       : 'suche...',
+            externalLink    : 'externer Link... es wird nicht danach gesucht',
+            startTyping     : 'Eingabe im oberen Feld',
+            stopTyping      : 'Tippen beenden um zu suchen',
+            // image
+            imgTitle        : 'Mediawiki Bild',
+            fileName        : 'Dateiname',
+            searchLabel     : 'automatische Suchergebnisse (%s)',
+            noImgFound      : 'keine Bilder gefunden',
+            oneImgFound     : '1 Bild gefunden',
+            manyImgFound    : ' Bilder gefunden',
+            caption         : 'Beschreibung',
+            imgType         : 'Bildtyp',
+            alignCenter     : 'Mitte',
+            // special tags
+            specialTags     : 'Spezial Tags',
+            specialTagTitle : 'Spezial Tags Dialog',
+            specialTagDef   : 'Definiere einen Spezialtag, ein magisches Wort oder eine Parserfunktion:',
+            // link
+            linkTitle       : 'Mediawiki Link',
+            noPageFound     : 'keinen Artikel gefunden',
+            onePageFound    : '1 Artikel gefunden',
+            manyPageFound   : ' Artikel gefunden',
+            emailLink       : 'e-mail link... es wird nicht danach gesucht',
+            anchorLink      : 'anchor link... es wird nicht danach gesucht',
+            defineTarget    : 'Definiere eine Wikiseite als Linkziel:',
+            chooseTarget    : 'Wähle eine existierende Wikiseite als Linkziel:'
+        }
+        if (typeof MWpluginLang[editor.langCode] != 'undefined' )
+            editor.lang.mwplugin = MWpluginLang[editor.langCode];
+        else
+            editor.lang.mwplugin = MWpluginLang['en'];
+
+        // define commands and dialogues
         editor.addCommand( 'link', new CKEDITOR.dialogCommand( 'MWLink' ) );
         CKEDITOR.dialog.add( 'MWLink', this.path + 'dialogs/link.js' );
         editor.addCommand( 'image', new CKEDITOR.dialogCommand( 'MWImage' ) );
@@ -232,7 +301,7 @@ CKEDITOR.plugins.add( 'mediawiki',
             editor.addMenuGroup('mediawiki');
                 // Create a menu item
                 editor.addMenuItem('MWSpecialTags', {
-                    label: 'Special Tags',
+                    label: editor.lang.mwplugin.specialTags,
                     command: 'MWSpecialTags',
                     group: 'mediawiki'
                 });
@@ -241,7 +310,7 @@ CKEDITOR.plugins.add( 'mediawiki',
 		{
 			editor.ui.addButton( 'MWSpecialTags',
 				{
-					label : 'Special Tags',
+					label : editor.lang.mwplugin.specialTags,
 					command : 'MWSpecialTags',
                     icon: this.path + 'images/tb_icon_special.gif'
 				});
@@ -288,7 +357,7 @@ CKEDITOR.plugins.add( 'mediawiki',
                         evt.data.dialog = 'MWSpecialTags';		
                 }
             }
-       )
+        )
     }
 
 });

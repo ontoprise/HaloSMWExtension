@@ -14,7 +14,7 @@ CKEDITOR.dialog.add( 'MWLink', function( editor ) {
             if ( link.length < 1  )
                     return ;
 
-            SetSearchMessage( 'searching...' ) ;
+            SetSearchMessage( editor.lang.mwplugin.searching ) ;
 
             // Make an Ajax search for the pages.
             window.parent.sajax_request_type = 'GET' ;
@@ -28,13 +28,13 @@ CKEDITOR.dialog.add( 'MWLink', function( editor ) {
             ClearSearch() ;
 
             if ( results.length == 0 || ( results.length == 1 && results[0].length == 0 ) ) {
-                SetSearchMessage( 'no articles found' ) ;
+                SetSearchMessage( editor.lang.mwplugin.noPageFound ) ;
             }
             else {
                 if ( results.length == 1 )
-                    SetSearchMessage( 'one article found' ) ;
+                    SetSearchMessage( editor.lang.mwplugin.onePageFound ) ;
                 else
-                    SetSearchMessage( results.length + ' articles found' ) ;
+                    SetSearchMessage( results.length + editor.lang.mwplugin.manyPageFound ) ;
 
                 for ( var i = 0 ; i < results.length ; i++ )
                     select.add ( results[i].replace(/_/g, ' '), results[i] );
@@ -63,27 +63,27 @@ CKEDITOR.dialog.add( 'MWLink', function( editor ) {
             window.clearTimeout( searchTimer ) ;
         
         if ( link.StartsWith( '#' ) ) {
-            SetSearchMessage( 'anchor link... no search for it' ) ;
+            SetSearchMessage( editor.lang.mwplugin.anchorLink ) ;
             return ;
         }
         
         if ( link.StartsWith( 'mailto:' ) )	{
-            SetSearchMessage( 'e-mail link... no search for it' ) ;
+            SetSearchMessage( editor.lang.mwplugin.emailLink ) ;
             return ;
         }
 
         if( /^(http|https|news|ftp):\/\//.test( link ) ) {
-            SetSearchMessage( 'external link... no search for it' ) ;
+            SetSearchMessage( editor.lang.mwplugin.externalLink ) ;
             return ;
         }
 
         if ( link.length < 1 ) {
             ClearSearch() ;
-            SetSearchMessage( 'start typing in the above field' ) ;
+            SetSearchMessage( editor.lang.mwplugin.startTyping ) ;
             return ;
         }
 
-        SetSearchMessage( 'stop typing to search' ) ;
+        SetSearchMessage( editor.lang.mwplugin.stopTyping ) ;
         searchTimer = window.setTimeout( StartSearch, 500 ) ;
 
     }
@@ -95,7 +95,7 @@ CKEDITOR.dialog.add( 'MWLink', function( editor ) {
     }
 
         return {
-            title : 'Mediawiki Link',
+            title : editor.lang.mwplugin.linkTitle,
             minWidth : 350,
             minHeight : 140,
             resizable: CKEDITOR.DIALOG_RESIZE_BOTH,
@@ -109,7 +109,7 @@ CKEDITOR.dialog.add( 'MWLink', function( editor ) {
                         {
                             id: 'linkTarget',
                             type: 'text',
-                            label: 'Define the wiki page for the link target:',
+                            label: editor.lang.mwplugin.defineTarget,
                             title: 'Link target',
                             style: 'border: 1px;',
                             onKeyUp: OnUrlChange
@@ -118,13 +118,13 @@ CKEDITOR.dialog.add( 'MWLink', function( editor ) {
                             id: 'searchMsg',
                             type: 'html',
                             style: 'font-size: smaller; font-style: italic;',
-                            html: 'start typing in the above field'
+                            html: editor.lang.mwplugin.startTyping
                         },
                         {
                             id: 'linkList',
                             type: 'select',
                             size: 5,
-                            label: 'Choose an existing wikipage for the link target:',
+                            label: editor.lang.mwplugin.chooseTarget,
                             title: 'Page list',
                             required: false,
                             style: 'border: 1px; width:100%;',
@@ -199,7 +199,7 @@ CKEDITOR.dialog.add( 'MWLink', function( editor ) {
                 while ( select.options.length > 0 )
                     select.remove( 0 );
                 e = this.getContentElement( 'mwLinkTab1', 'searchMsg' );
-                var message = 'start typing in the above field';
+                var message = editor.lang.mwplugin.startTyping;
                 e.html = message;
                 document.getElementById(e.domId).innerHTML = message;
 
