@@ -41,10 +41,12 @@ class ASFFormGeneratorUtils {
 		
 		if(array_key_exists($propertyName, $properties)){
 			$values = $semanticData->getPropertyValues($properties[$propertyName]);
-			if($values[0] instanceof SMWRecordValue){
-				$dVs = $values[0]->getDVs();
-				if(count($dVs) >= $index+1){
-					$result = $dVs[$index]->getShortWikiText();
+			if(is_array($values) && array_key_exists(0, $values)){	
+				if($values[0] instanceof SMWRecordValue){
+					$dVs = $values[0]->getDVs();
+					if(count($dVs) >= $index+1){
+						$result = $dVs[$index]->getShortWikiText();
+					}
 				}
 			}
 		}
