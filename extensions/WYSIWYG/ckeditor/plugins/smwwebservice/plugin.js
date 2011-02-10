@@ -15,6 +15,23 @@ CKEDITOR.plugins.add('smw_webservice', {
 				'height: 18px !important;' +
 			'}\n'
         );
+        // language logic for additional messages
+        var pluginLang = []
+        pluginLang['en'] = {
+            titleWsDef      : 'Webservice definition',
+            titleWsEdit     : 'Edit webservice definition',
+            defineWs        : 'Define here the webservice definition:',
+        }
+
+        pluginLang['de'] = {
+            titleWsDef      : 'Webservice Definition',
+            titleWsEdit     : 'Ändere Webservice Definition',
+            defineWs        : 'Spezifiziere die Webservice Definition:',
+        }
+        if (typeof pluginLang[editor.langCode] != 'undefined' )
+            editor.lang.smwwebservice = pluginLang[editor.langCode];
+        else
+            editor.lang.smwwebservice = pluginLang['en'];
         
 		editor.addCommand( 'SMWwebservice', new CKEDITOR.dialogCommand( 'SMWwebservice' ) );
         CKEDITOR.dialog.add( 'SMWwebservice', this.path + 'dialogs/smwWebserviceDlg.js');
@@ -27,7 +44,7 @@ CKEDITOR.plugins.add('smw_webservice', {
             editor.addMenuGroup('mediawiki');
             // Create a menu item
             editor.addMenuItem('SMWwebserviceEdit', {
-                label: 'Edit webservice definition',
+                label: editor.lang.smwwebservice.titleWsEdit,
                 command: 'SMWwebserviceEdit',
                 group: 'mediawiki'
             });
@@ -36,7 +53,7 @@ CKEDITOR.plugins.add('smw_webservice', {
         if ( editor.ui.addButton ) {
             editor.ui.addButton( 'SMWwebservice',
                 {
-                    label : 'Webservice definition',
+                    label : editor.lang.smwwebservice.titleWsDef,
                     command : 'SMWwebservice',
                     icon: this.path + 'images/tb_icon_webservice.gif'
                 });
@@ -59,8 +76,7 @@ CKEDITOR.plugins.add('smw_webservice', {
                      element.getAttribute( 'class' ) == 'FCK__SMWwebservice' )
 					evt.data.dialog = 'SMWwebserviceEdit';
             }
-       )
+        )
 		
-
 	}
 });

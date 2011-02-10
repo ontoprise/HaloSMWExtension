@@ -3,7 +3,7 @@ CKEDITOR.dialog.add( 'SMWwebservice', function( editor ) {
     var location =  wgScript + '?action=ajax&rs=smwf_uws_getPage';
     
 	return {
-		title: 'Webservice definition',
+		title: editor.lang.smwwebservice.titleWsDef,
 
 		minWidth: 900,
 		minHeight: (window.outerHeight == undefined) ? 400 : parseInt(window.outerHeight * 0.6),

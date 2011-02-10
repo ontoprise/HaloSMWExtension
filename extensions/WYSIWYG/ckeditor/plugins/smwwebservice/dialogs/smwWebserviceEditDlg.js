@@ -1,7 +1,7 @@
 CKEDITOR.dialog.add( 'SMWwebserviceEdit', function( editor ) {
 
 	return {
-		title: 'Edit webservice definition',
+		title: editor.lang.smwwebservice.titleWsEdit,
 
 		minWidth: 600,
 		minHeight:200,
@@ -16,7 +16,7 @@ CKEDITOR.dialog.add( 'SMWwebserviceEdit', function( editor ) {
                     {
                         id: 'tagDefinition',
                         type: 'textarea',
-                        label: 'Define here the webservice definition:',
+                        label: editor.lang.smwwebservice.defineWs,
                         title: 'Edit webservice definition',
                         className: 'swmf_class',
                         style: 'border: 1px;'
