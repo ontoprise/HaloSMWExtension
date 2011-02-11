@@ -148,7 +148,10 @@ class DeployWikiOntologyRevision extends WikiRevision {
 	// ontology ID
 	var $ontologyID;
 
+	// prefix used for import
 	var $prefix;
+
+	var $ontologyMerger;
 
 	// callback function for user interaction
 	var $callback;
@@ -156,10 +159,17 @@ class DeployWikiOntologyRevision extends WikiRevision {
 	var $logger;
 
 	public function __construct($mode = 0, $ontologyID, $prefix, $callback = NULL) {
+		global $dfgLang;
+
 		$this->mode = $mode;
 		$this->callback = $callback;
 		$this->ontologyID = $ontologyID;
 		$this->prefix = $prefix;
+		$this->ontologyMerger = new OntologyMerger(
+		      array($dfgLang->getLanguageString('is_inverse_of')),
+		      array($dfgLang->getLanguageString('has_domain_and_range') => array('Type:Page', 'Type:Page')),
+		      array($dfgLang->getLanguageString('has_domain_and_range'), $dfgLang->getLanguageString('imported_from'), $dfgLang->getLanguageString('part_of_ontology'))
+		);
 		$this->logger = Logger::getInstance();
 	}
 
@@ -186,9 +196,9 @@ class DeployWikiOntologyRevision extends WikiRevision {
 		if ($this->title->getNamespace() == NS_TEMPLATE && $this->title->getText() === $dfgLang->getLanguageString('df_partofbundle')) return false;
 
 
-		if ($this->prefix !== '') {
+		if ($this->prefix != '') {
 			$nsText = $this->title->getNamespace() !== NS_MAIN ? $this->title->getNsText().":" : "";
-			$this->setTitle(Title::newFromText($nsText.$this->title->getText()));
+			$this->setTitle(Title::newFromText($nsText.$this->prefix.$this->title->getText()));
 		}
 
 		$article = new Article( $this->title );
@@ -197,36 +207,45 @@ class DeployWikiOntologyRevision extends WikiRevision {
 		if( $pageId == 0 ) {
 			# page does not exist
 
-
-			# must create the page...
-				
 			$this->logger->info("Imported page: ".$this->title->getPrefixedText());
 			print "\n\t[Imported page] ".$this->title->getPrefixedText();
 			return parent::importOldRevision();
-				
+
 		} else {
 
 			$prior = Revision::loadFromTitle( $dbw, $this->title );
 			if( !is_null( $prior ) ) {
 
-				// revision already exists.
-				// that means we have to check if the page was changed in the meantime.
-				$contenthashProperty = SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString('df_contenthash'));
-				$values = smwfGetStore()->getPropertyValues($this->title, $contenthashProperty);
-				if (count($values) > 0) $exp_hash = strtolower(Tools::getXSDValue(reset($values))); else $exp_hash = NULL;
-				$rawtext = preg_replace('/\{\{\s*'.$dfgLang->getLanguageString('df_contenthash').'\s*\|\s*value\s*=\s*\w*(\s*\|)?[^}]*\}\}/', "", $prior->getRawText());
-				$hash = md5($rawtext);
+				// merge annotations and wikitext
+				$wikitext = $prior->getRawText();
+				$wikitext = $this->ontologyMerger->stripAnnotations($wikitext);
 
-				if (is_null($exp_hash) || $hash === $exp_hash) {
+				$extractAnnotations = $this->ontologyMerger->extractAnnotations($this->getText());
+				$wikitext .= implode("\n", $extractAnnotations);
+				$wikitext = $this->ontologyMerger->transformOntologyElements($this->prefix, $wikitext);
+
+				$this->text = $wikitext;
+				print "\n\t[Updated page] ".$this->title->getPrefixedText();
+				return $this->importAsNewRevision();
+
+				/*// revision already exists.
+				 // that means we have to check if the page was changed in the meantime.
+				 $contenthashProperty = SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString('df_contenthash'));
+				 $values = smwfGetStore()->getPropertyValues($this->title, $contenthashProperty);
+				 if (count($values) > 0) $exp_hash = strtolower(Tools::getXSDValue(reset($values))); else $exp_hash = NULL;
+				 $rawtext = preg_replace('/\{\{\s*'.$dfgLang->getLanguageString('df_contenthash').'\s*\|\s*value\s*=\s*\w*(\s*\|)?[^}]*\}\}/', "", $prior->getRawText());
+				 $hash = md5($rawtext);
+
+				 if (is_null($exp_hash) || $hash === $exp_hash) {
 					// either no hash annotation given and no check possible
 					// or site is as it is expected.
 					return $this->importAsNewRevision();
-				}
-				if ($hash != $exp_hash) {
-					
-					return $this->importAsNewRevision();
+					}
+					if ($hash != $exp_hash) {
 						
-				}
+					return $this->importAsNewRevision();
+
+					}*/
 			}
 		}
 		return false;
@@ -265,11 +284,11 @@ class DeployWikiOntologyRevision extends WikiRevision {
 		# Sneak a single revision into place
 		$user = User::newFromName( $this->getUser() );
 		if( $user ) {
-			$userId = intval( $user->getId() );
-			$userText = $user->getName();
+		$userId = intval( $user->getId() );
+		$userText = $user->getName();
 		} else {
-			$userId = 0;
-			$userText = $this->getUser();
+		$userId = 0;
+		$userText = $this->getUser();
 		}
 
 		// avoid memory leak...?
@@ -279,39 +298,39 @@ class DeployWikiOntologyRevision extends WikiRevision {
 		$article = new Article( $this->title );
 		$pageId = $article->getId();
 		if( $pageId == 0 ) {
-			# must create the page...
-			$pageId = $article->insertOn( $dbw );
-			$created = true;
+		# must create the page...
+		$pageId = $article->insertOn( $dbw );
+		$created = true;
 		} else {
-			$created = false;
+		$created = false;
 
-			$prior = $dbw->selectField( 'revision', '1',
-			array( 'rev_page' => $pageId,
-                    'rev_timestamp' => $dbw->timestamp( $this->timestamp ),
-                    'rev_user_text' => $userText,
-                    'rev_comment'   => $this->getComment() ),
-			__METHOD__
-			);
-			if( $prior ) {
-				// FIXME: this could fail slightly for multiple matches :P
-				$this->logger->info("Skipping existing revision: ".$this->title->getPrefixedText());
-				print "\n\t[Skipping existing revision] ".$this->title->getPrefixedText();
-				wfDebug( __METHOD__ . ": skipping existing revision for [[" .
-				$this->title->getPrefixedText() . "]], timestamp " . $this->timestamp . "\n" );
-				return false;
-			}
+		$prior = $dbw->selectField( 'revision', '1',
+		array( 'rev_page' => $pageId,
+		'rev_timestamp' => $dbw->timestamp( $this->timestamp ),
+		'rev_user_text' => $userText,
+		'rev_comment'   => $this->getComment() ),
+		__METHOD__
+		);
+		if( $prior ) {
+		// FIXME: this could fail slightly for multiple matches :P
+		$this->logger->info("Skipping existing revision: ".$this->title->getPrefixedText());
+		print "\n\t[Skipping existing revision] ".$this->title->getPrefixedText();
+		wfDebug( __METHOD__ . ": skipping existing revision for [[" .
+		$this->title->getPrefixedText() . "]], timestamp " . $this->timestamp . "\n" );
+		return false;
+		}
 		}
 
 		# FIXME: Use original rev_id optionally (better for backups)
 		# Insert the row
 		$revision = new Revision( array(
-            'page'       => $pageId,
-            'text'       => $this->getText(),
-            'comment'    => $this->getComment(),
-            'user'       => $userId,
-            'user_text'  => $userText,
-            'timestamp'  => $this->timestamp,
-            'minor_edit' => $this->minor,
+		'page'       => $pageId,
+		'text'       => $this->getText(),
+		'comment'    => $this->getComment(),
+		'user'       => $userId,
+		'user_text'  => $userText,
+		'timestamp'  => $this->timestamp,
+		'minor_edit' => $this->minor,
 		) );
 		$revId = $revision->insertOn( $dbw );
 		$changed = $article->updateIfNewerOn( $dbw, $revision );
@@ -321,23 +340,23 @@ class DeployWikiOntologyRevision extends WikiRevision {
 		$GLOBALS['wgTitle'] = $this->title;
 
 		if( $created ) {
-			wfDebug( __METHOD__ . ": running onArticleCreate\n" );
-			Article::onArticleCreate( $this->title );
+		wfDebug( __METHOD__ . ": running onArticleCreate\n" );
+		Article::onArticleCreate( $this->title );
 
-			wfDebug( __METHOD__ . ": running create updates\n" );
-			$article->createUpdates( $revision );
+		wfDebug( __METHOD__ . ": running create updates\n" );
+		$article->createUpdates( $revision );
 
 		} elseif( $changed ) {
-			wfDebug( __METHOD__ . ": running onArticleEdit\n" );
-			Article::onArticleEdit( $this->title );
+		wfDebug( __METHOD__ . ": running onArticleEdit\n" );
+		Article::onArticleEdit( $this->title );
 
-			wfDebug( __METHOD__ . ": running edit updates\n" );
-			$article->editUpdates(
-			$this->getText(),
-			$this->getComment(),
-			$this->minor,
-			$this->timestamp,
-			$revId );
+		wfDebug( __METHOD__ . ": running edit updates\n" );
+		$article->editUpdates(
+		$this->getText(),
+		$this->getComment(),
+		$this->minor,
+		$this->timestamp,
+		$revId );
 		}
 		$GLOBALS['wgTitle'] = $tempTitle;
 		$this->logger->info("Imported new revision of page: ".$this->title->getPrefixedText());

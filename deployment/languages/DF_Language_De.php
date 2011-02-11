@@ -33,6 +33,9 @@ class DF_Language_De extends DF_Language {
 	'df_part_of_ontology' => 'Teil der Ontologie',
     'df_ontology_id' => 'Ontologie-ID',
 	'checkinstallation' => 'Prüfe Installation',
-	'category' => 'Kategorie'
+	'category' => 'Kategorie',
+	'is_inverse_of' => 'Ist invers zu',
+    'has_domain_and_range' => 'Hat Domain und Range',
+	'imported_from'=>'Importiert aus'
 	);
 }

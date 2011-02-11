@@ -29,6 +29,7 @@ define('DEPLOY_FRAMEWORK_NOT_INSTALLED', 9);
 define('DEPLOY_FRAMEWORK_PRECEDING_CYCLE', 10);
 define('DEPLOY_FRAMEWORK_WRONG_MW_VERSION', 11);
 define('DEPLOY_FRAMEWORK_CREATING_RESTOREPOINT_FAILED', 12);
+define('DEPLOY_FRAMEWORK_ONTOLOGYCONVERSION_FAILED', 13);
 
 require_once 'DF_PackageRepository.php';
 require_once 'DF_Tools.php';
@@ -827,7 +828,7 @@ class Installer {
 	public function askForOntologyPrefix(& $result) {
 		print "\n\nOntology conflict. Please enter prefix: ";
 		$line = trim(fgets(STDIN));
-		$result = strtolower($line);
+		$result = $line;
 	}
 
 	public function getErrors() {

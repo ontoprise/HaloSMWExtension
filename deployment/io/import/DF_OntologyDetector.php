@@ -34,6 +34,8 @@
  * if two ontology elements from two different ontology are going to have the
  * same name in the wiki.  
  * 
+ * The detector is based on MW's XML import mechanism.
+ * 
  * @author Kai Kühn / ontoprise / 2011
  *
  */
@@ -53,6 +55,7 @@ class DeployWikiImporterDetector extends WikiImporter {
         $this->ontologyID = $ontologyID;
         $this->prefix = $prefix;
         $this->logger = Logger::getInstance();
+        $this->result = array();
     }
 
 
@@ -186,9 +189,9 @@ class DeployWikiRevisionDetector extends WikiRevision {
         if ($this->title->getNamespace() == NS_TEMPLATE && $this->title->getText() === $dfgLang->getLanguageString('df_partofbundle')) return false;
 
         
-		if ($this->prefix !== '') {
+		if ($this->prefix != '') {
 			$nsText = $this->title->getNamespace() !== NS_MAIN ? $this->title->getNsText().":" : "";
-			$this->setTitle(Title::newFromText($nsText.$this->title->getText()));
+			$this->setTitle(Title::newFromText($nsText.$this->prefix.$this->title->getText()));
 		}
 
         $article = new Article( $this->title );
@@ -206,13 +209,13 @@ class DeployWikiRevisionDetector extends WikiRevision {
 
                 // revision already exists.
 
-                $contenthashProperty = SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString('df_part_of_ontology'));
-                $values = smwfGetStore()->getPropertyValues($this->title, $contenthashProperty);
+                $partOfOntology = SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString('df_part_of_ontology'));
+                $values = smwfGetStore()->getPropertyValues($this->title, $partOfOntology);
 
                 if (count($values) > 0) {
                     $v = reset($values);
-                    $ontologyID = $v->getDBkey();
-                    if ($ontologyID === $this->ontologyID) {
+                    $ontologyID = strtolower($v->getDBkey());
+                    if ($ontologyID == $this->ontologyID) {
                         // same ontology, no conflict but merging necessary
                     
                         $this->result = array($this->title, "merge");
@@ -221,6 +224,8 @@ class DeployWikiRevisionDetector extends WikiRevision {
                         
                         $this->result = array($this->title, "conflict");
                     }
+                } else {
+                	$this->result = array($this->title, "conflict");
                 }
 
             }

@@ -54,11 +54,17 @@ class OntologyMerger {
 	/**
 	 * Creates a ontology merger object.
 	 *  
-	 * @param array $objectProperties Array of binary properties
-	 * @param hash array $naryProperties Array of nary properties pointing to a tuple of types
+	 * @param array of string $objectProperties 
+	 *             All binary properties
+	 *             
+	 * @param hash array $naryProperties 
+	 *             Array of nary properties pointing to a tuple of types
 	 *             Example: 'Has domain and range'=> array('Type:Page','Type:Page')
+	 *             
+	 * @param array of string 
+	 *             $fixProperties which do not get modified with any prefixes.
 	 */
-	public function __construct($objectProperties = array(), $naryProperties = array()) {
+	public function __construct($objectProperties = array(), $naryProperties = array(), $fixProperties = array()) {
 		
 		$this->objectProperties = $objectProperties;
 		$this->naryProperties = $naryProperties;
@@ -66,7 +72,7 @@ class OntologyMerger {
                                     (?:([^:][^]]*):[=:])+ # Property name (or a list of those)
                                     ([^\[\]]*)            # content: anything but [, |, ]
                                     \]\]                  # End of link
-                                    /xu';;
+                                    /xu';
 
 		global $dfgLang;
 		self::$CATEGORY_LINK_PATTERN = '/\[\[                 # Beginning of the link
@@ -75,7 +81,7 @@ class OntologyMerger {
                                     \]\]                  # End of link
                                     /ixu';
 
-		$this->fixProperties = array("Has domain and range");
+		$this->fixProperties = $fixProperties;
 	}
     
 	/**
