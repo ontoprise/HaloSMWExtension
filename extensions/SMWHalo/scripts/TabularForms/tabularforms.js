@@ -249,21 +249,21 @@ var TF = Class.create({
 		var parentRow = jQuery(node).parent('td').parent('tr');
 		
 		if(jQuery(node).attr('originalValue') != jQuery.trim(jQuery(node).attr('value'))){
-			jQuery(node).addClass('tabularform_modified_value');
+			jQuery(node).addClass('tabf_modified_value');
 			jQuery(node).attr('isModified', true);
 			
 			parentRow.attr('isModified', true);
-			parentRow.addClass('tabularform_modified_row');
+			parentRow.addClass('tabf_modified_row');
 			
 			jQuery('td:last-child .tabularforms_ok_status', parentRow).css('display', 'none');
 			jQuery('td:last-child .tabularforms_modified_status', parentRow).css('display', 'inline');
 		} else {
-			jQuery(node).removeClass('tabularform_modified_value');
+			jQuery(node).removeClass('tabf_modified_value');
 			jQuery(node).attr('isModified', false);
 			
 			if(jQuery('.tabf_modified_value', parentRow).length == 0){
 				parentRow.attr('isModified', false);
-				parentRow.removeClass('tabularform_modified_row');
+				parentRow.removeClass('tabf_modified_row');
 				
 				jQuery('td:last-child .tabularforms_ok_status', parentRow).css('display', 'inline');
 				jQuery('td:last-child .tabularforms_modified_status', parentRow).css('display', 'none');
@@ -302,17 +302,13 @@ var TF = Class.create({
 						modifiedValue['newValue'] = jQuery(fieldValues[i]).attr('value');
 						modifiedValue['originalValue'] = jQuery(fieldValues[i]).attr('originalValue');
 						
-						var templateId = jQuery('th:nth-child(' + (fieldNr + 1) + ') .tabf_template_field_metadata'
-									, jQuery(this).parent());
-						if(jQuery(templateId).html() == null){
-							modifiedValue['isTemplateParam'] = false;
-							modifiedValue['address'] = 
-								jQuery('th:nth-child(' + (fieldNr + 1) + ') .tabf_annotation_field_metadata'
-										, jQuery(this).parent()).html();
-						} else {
-							modifiedValue['isTemplateParam'] = true;
-							modifiedValue['address'] = jQuery(templateId).html();
-						}
+						modifiedValue['address'] = jQuery('th:nth-child(' + (fieldNr + 1) + ')'
+									, jQuery(this).parent()).attr('field-address');
+						modifiedValue['isTemplateParam'] = jQuery('th:nth-child(' + (fieldNr + 1) + ')'
+								, jQuery(this).parent()).attr('is-template');
+						
+						alert(modifiedValue['isTemplateParam']);
+						alert(modifiedValue['address']);
 						
 						modifiedValues.push(modifiedValue);						
 					}
@@ -321,6 +317,7 @@ var TF = Class.create({
 			
 			//this is uglay
 			var tabularFormId = jQuery(this).parent().parent().parent().parent().attr('id');
+			var articleTitle = jQuery('td:first-child ',this).attr('article-name');
 			
 			//todo:add ajax error handling
 			var url = wgServer + wgScriptPath + "/index.php";
@@ -328,7 +325,7 @@ var TF = Class.create({
 				data: {
 					'action' : 'ajax',
 					'rs' : 'tff_updateInstanceData',
-					'rsargs[]' : [JSON.stringify(modifiedValues), rowNr, tabularFormId],
+					'rsargs[]' : [JSON.stringify(modifiedValues), articleTitle, rowNr, tabularFormId],
 				},
 				success: tf.saveFormRowDataCallback,
 				

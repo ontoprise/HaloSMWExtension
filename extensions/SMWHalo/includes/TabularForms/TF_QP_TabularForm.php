@@ -52,6 +52,7 @@ class TFTabularFormData {
 	private $queryParams;
 	private $linker;
 	private $subjectColumnLabel;
+	private $getSubjectFromFirstPrintRequest = true;
 	
 	public function __construct($queryResult, $queryParams, $linker){
 		$this->queryResult = $queryResult;
@@ -68,6 +69,7 @@ class TFTabularFormData {
 	 * Returns the HTML of the Ajax loader
 	 */
 	public function getAjaxLoaderHTML(){
+		
 		global $tfgTabularFormCount;
 		$tfgTabularFormCount += 1;
 		
@@ -119,7 +121,7 @@ class TFTabularFormData {
 		
 		// process each query result row
 		while ( $row = $this->queryResult->getNext() ) {
-			$this->initializeFormRowData($row);
+			$this->initializeFormRowData($row, $this->getSubjectFromFirstPrintRequest);
 		}
 		$this->mergeTemplateParametersRowData();
 		
@@ -153,23 +155,20 @@ class TFTabularFormData {
 		
 		//add annotation columns
 		foreach($this->annotationPrintRequests as $annotation){
-			$html .= '<th class="tabf_column_header">'.$annotation['label'];
-			$html .= '<span class="tabf_annotation_field_metadata" style="display: none">'
-				.$annotation['title'].'</span>';
-			$html .= '</th>';
+			$html .= '<th class="tabf_column_header" field-address="'.$annotation['title'].'" is-template="false">'
+				.$annotation['label'].'</th>';
 		}
 		
 		//add template parameter columns
 		foreach($this->templateParameterPrintRequests as $template => $params){
 			foreach($params as $param => $dC){
+				$html .= '<th class="tabf_column_header" field-address="'.$template.'#'.$param.'" is-template="true">';
 				if(array_key_exists($template, $this->templateParameterPrintRequestLabels) 
 						&& array_key_exists($param, $this->templateParameterPrintRequestLabels[$template])){
-					$html .= '<th class="tabf_column_header">'.$this->templateParameterPrintRequestLabels[$template][$param];	
+					$html .= $this->templateParameterPrintRequestLabels[$template][$param];	
 				} else {
-					$html .= '<th class="tabf_column_header">'.$template.'#'.$param;
+					$html .= $template.'#'.$param;
 				}
-				$html .= '<span class="tabf_template_field_metadata" style="display: none">'
-					.$template.'#'.$param.'</span>';
 				$html .= '</th>';
 			}
 		}
@@ -226,13 +225,18 @@ class TFTabularFormData {
 		/*
 	 * Initializes the form row data for a given query result row
 	 */
-	private function initializeFormRowData($row){
+	private function initializeFormRowData($row, $subjectFromFirstRow){
+		
 		//get instance behind query result row
-		//it's ok to consider the first row as the instance row, since we do not allow 'mainlabel=-'
-		$title = $row[0]->getNextObject()->getLongText($this->outputMode, null);
-		unset( $row[0]);
+		if($subjectFromFirstRow){
+			$title = $row[0]->getNextObject()->getLongText($this->outputMode, null);
+			unset( $row[0]);
+		} else {
+			$title = $row[0]->getResultSubject()->getLongText();
+		}
+		
 		$formRowData = new TFTabularFormRowData($title);
-			
+		
 		//process row fields
 		foreach ( $row as $key => $field ) {
 			
@@ -274,10 +278,40 @@ class TFTabularFormData {
 		
 		$count = -1;
 		foreach($this->queryResult->getPrintRequests() as $printRequest){
+			
+			//This crap is necessary because, first column is subject, if mainlabel=1 is
+			//not used and )) more than one resilt is returned or if only one result is
+			//returned but there are no additional print requests
 			$count += 1;
 			if($count == 0){
-				//this can be done, since we do not allow 'mainlabel=-'
-				$this->subjectColumnLabel = $printRequest->getText($this->outputMode, $this->linker);
+				if($this->queryResult->getCount() < 2){
+					$this->getSubjectFromFirstPrintRequest = false;
+					
+					if(!(array_key_exists('mainlabel', $this->queryParams) || $this->queryParams['mainlabel'] == '-')){
+						$this->subjectColumnLabel = '';
+					} else {
+						$this->subjectColumnLabel = $this->queryParams['mainlabel'];
+					}
+					
+					if(count($this->queryResult->getPrintRequests()) == 1){
+						continue;
+					}
+				} else {
+					if(!(array_key_exists('mainlabel', $this->queryParams) && $this->queryParams['mainlabel'] == '-')){
+						//this can be done, since we do not allow 'mainlabel=-'
+						$this->subjectColumnLabel = $printRequest->getText($this->outputMode, $this->linker);
+						
+						if(count($this->queryResult->getPrintRequests()) == 1){
+							$this->getSubjectFromFirstPrintRequest = false;	
+						}
+			
+						continue;
+					}
+				}
+			}
+			
+			if(count($this->queryResult->getPrintRequests()) == 1){
+				$this->getSubjectFromFirstPrintRequest = false;	
 				continue;
 			}
 			
@@ -287,6 +321,7 @@ class TFTabularFormData {
 				'label' => $printRequest->getText($this->outputMode, $this->linker),
 				'rawlabel' => $printRequest->getText($this->outputMode, null));
 		}
+		
 	}
 	
 	
@@ -338,7 +373,6 @@ class TFTabularFormData {
 		}
 		
 		//echo('<pre>MERGED'.print_r($this->templateParameterPrintRequests, true).'</pre>');
-		
 		foreach($this->templateParameterPrintRequests as $template => $params){
 			$tmpParams = array();
 			foreach($params as $param => $subParams){
@@ -371,7 +405,7 @@ class TFTabularFormRowData {
 	
 	private $title;
 	private $annotations = array();
-	private $templateParameters = array();
+	public $templateParameters = array();
 	
 	
 	/*
@@ -394,6 +428,8 @@ class TFTabularFormRowData {
 	 * are writable and which are read-only.
 	 */
 	public function detectWritableAnnotations(){
+		//todo: class not available if query does not contain annotations
+		
 		$collection = new TFAnnotationDataCollection();
 		$collection->addAnnotations($this->annotations);
 		$this->annotations = TFDataAPIAccess::getInstance($this->title)->getWritableAnnotations($collection);
@@ -414,6 +450,7 @@ class TFTabularFormRowData {
 		}
 		
 		$this->templateParameters = TFDataAPIAccess::getInstance($this->title)->readTemplateParameters($collection);
+		
 		//echo('<pre>'.print_r($this->templateParameters, true).'</pre>');
 	}
 	
@@ -471,7 +508,7 @@ class TFTabularFormRowData {
 		
 		//Add subject
 		$linker = new Linker();
-		$html .= '<td class="tabf_table_cell">'.$linker->makeLinkObj($this->title).'</td>';
+		$html .= '<td class="tabf_table_cell" article-name="'.$this->title->getFullText().'" >'.$linker->makeLinkObj($this->title).'</td>';
 
 		//Add cells for annotations
 		foreach($annotationPrintRequests as $annotation){

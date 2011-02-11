@@ -18,7 +18,7 @@
 .tabf_column_header{
 }
 
-,tabf_table_row {
+.tabf_table_row {
 	vertical-align: top;
 }
 
@@ -29,10 +29,10 @@
 }
 
 
-,tabf_modified_value {
+.tabf_modified_value {
 	font-weight: bold;
 }
 
-,tabf_modified_row td:nth-child(1){
+.tabf_modified_row td:nth-child(1){
 	font-weight: bold;
 }

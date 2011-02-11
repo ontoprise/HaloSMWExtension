@@ -101,6 +101,7 @@ class TFDataAPIACCESS {
 		 * @param: Title $title : Title object of article to read or write
 		 */
 		public static function getInstance($title){
+			
 			if(self::$instance == null){
 				self::$instance = new self();
 			}
@@ -208,8 +209,6 @@ class TFDataAPIACCESS {
 			}
 			
 			$parameters = $parameters->getParameters();
-			
-			//echo('<pre>'.print_r($parameters, true).'</pre>');
 			
 			return $parameters;
 		}
@@ -466,7 +465,7 @@ class TFTemplateParameterCollection {
 			
 			if(array_key_exists($template, $this->allTemplateParameters)
 					&& !array_key_exists($name, $this->templateParameters[$template])){
-				$this->templateParameters[$template][$name] = new TFTemplateParameter($template.'.'.$name);
+				$this->templateParameters[$template][$name] = new TFTemplateParameter($template.'#'.$name);
 			}
 			
 			if(array_key_exists($name, $this->templateParameters[$template])){

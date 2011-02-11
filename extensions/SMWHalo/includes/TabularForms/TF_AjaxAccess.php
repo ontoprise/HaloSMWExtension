@@ -30,15 +30,30 @@ function tff_getTabularForm($querySerialization, $tabularFormId){
 }
 
 
-function tff_updateInstanceData($updates, $rowNr, $tabularFormId){
+function tff_updateInstanceData($updates, $articleTitle, $rowNr, $tabularFormId){
 	
-	//file_put_contents('d://stf.txt', print_r($updates, true));
+	//$updates = json_decode($updates, true);
 	
 	$result = array('success' => false, 'rowNr' => $rowNr, 'tabularFormId' => $tabularFormId);
 	$result = json_encode($result);
 	
 	return '--##starttf##--' . $result . '--##endtf##--';
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
