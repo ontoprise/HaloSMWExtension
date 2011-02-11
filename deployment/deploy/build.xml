@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <project basedir="." default="deploymentframework" name="Deployment_framework">
-	<target name="deploymentframework" depends="versionhint, onto2mwxml">
+	<target name="deploymentframework" depends="versionhint">
 		<property environment="env" />
 		<delete dir="bin/zip" />
 		<delete file="bin/smwhalo-deploy.zip" />
@@ -63,7 +63,6 @@
 	</target>
 
 	<target name="onto2mwxml">
-		<property environment="onto2mwxml_path" />
 		<ant antfile="${onto2mwxml_path}/build.xml" dir="${onto2mwxml_path}" target="build" />
 		<ant antfile="${onto2mwxml_path}/build.xml" dir="${onto2mwxml_path}" target="pack" />
 		<copy todir="../tools/onto2mwxml">
