@@ -1,13 +1,69 @@
 <?php
+
+require_once 'CommonClasses.php';
+
 /**
  * @file
  * @ingroup HaloACL_Tests
  */
 
+/**
+ * This suite tests the parser functions of HaloACL.
+ * 
+ * @author thsc
+ *
+ */
+class TestParserFunctionsSuite extends PHPUnit_Framework_TestSuite
+{
+	
+	private $mArticleManager;
+	
+	public static function suite() {
+		define('UNIT_TEST_RUNNING', true);
+		
+		$suite = new TestParserFunctionsSuite();
+		$suite->addTestSuite('TestParserFunctions');
+		return $suite;
+	}
+	
+	protected function setUp() {
+    	HACLStorage::reset(HACL_STORE_SQL);
+		HACLStorage::getDatabase()->dropDatabaseTables(false);
+		HACLStorage::getDatabase()->initDatabaseTables(false);
+		
+		User::createNew("U1");
+    	User::createNew("U2");
+        User::idFromName("U1");  
+        User::idFromName("U2");  
+        Skin::getSkinNames();
+        
+        $this->mArticleManager = new ArticleManager();
+    	$this->mArticleManager->createACLBaseArticles("U1");
+	}
+	
+	protected function tearDown() {
+        $this->mArticleManager->deleteArticles("U1");
+
+        HACLStorage::getDatabase()->dropDatabaseTables(false);
+		HACLStorage::getDatabase()->initDatabaseTables(false);
+        
+	}
+	
+    
+}
+
+/**
+ * This class test the parser functions of HaloACL.
+ * 
+ * @author thsc
+ *
+ */
 class TestParserFunctions extends PHPUnit_Framework_TestCase {
 
 	private $mArticles;
+	private $mArticleManager;
 	private $mOrderOfArticleCreation;
+	
 	protected $backupGlobals = FALSE;
 	
     function setUp() {
@@ -35,41 +91,26 @@ class TestParserFunctions extends PHPUnit_Framework_TestCase {
         User::idFromName("U6");  
         
         $this->initArticleContent();
+        $this->mArticleManager = new ArticleManager();
+        $this->mArticleManager->createArticles($this->mArticles, "U1", $this->mOrderOfArticleCreation);
     }
 
     function tearDown() {
-    	$this->removeArticles();
+    	$this->mArticleManager->deleteArticles("U1");
     }
 
     function testACLParserFunctionTest() {
     	global $wgUser;
     	$wgUser = User::newFromName("U1");
     	
-    	$this->createArticles();
     	$this->checkRights();
 	   	$this->removeRights();
     	$this->removeGroups();
     	
     }
     
-    public function createArticles() {
-    	global $wgUser;
-    	$wgUser = User::newFromName("U1");
-    	
-    	$file = __FILE__;
-    	try {
-	    	foreach ($this->mOrderOfArticleCreation as $title) {
-	    		$pf = HACLParserFunctions::getInstance();
-//	    		$pf->reset();
-				self::createArticle($title, $this->mArticles[$title]);
-	    	}
-    	} catch (Exception $e) {
-			$this->assertTrue(false, "Unexpected exception while testing ".basename($file)."::createArticles():".$e->getMessage());
-		}
-    	
-    }
     
-    function removeRights() {
+    private function removeRights() {
     	$file = __FILE__;
     	try {
     		$t = Title::newFromText("ACL:Right/PR3");
@@ -187,7 +228,7 @@ class TestParserFunctions extends PHPUnit_Framework_TestCase {
 				array('B', 'U6', 'delete', false),
 				array('B', 'U6', 'move', false),
 			);
-			$this->doCheckRights("TPF_CR_2", $checkRights);			
+			HaloACLCommon::checkRights($this, "TPF_CR_2", $checkRights);			
 			
     		$t = Title::newFromText("ACL:Category/B");
     		$article = new Article($t);
@@ -308,7 +349,7 @@ class TestParserFunctions extends PHPUnit_Framework_TestCase {
 				array('B', 'U6', 'delete', $haclgOpenWikiAccess),
 				array('B', 'U6', 'move', $haclgOpenWikiAccess),
 			);
-			$this->doCheckRights("TPF_CR_3", $checkRights);			
+			HaloACLCommon::checkRights($this, "TPF_CR_3", $checkRights);			
 			
     		$t = Title::newFromText("ACL:Right/PR2");
     		$article = new Article($t);
@@ -424,7 +465,7 @@ class TestParserFunctions extends PHPUnit_Framework_TestCase {
 				array('B', 'U6', 'delete', $haclgOpenWikiAccess),
 				array('B', 'U6', 'move', $haclgOpenWikiAccess),
 			);
-			$this->doCheckRights("TPF_CR_4", $checkRights);
+			HaloACLCommon::checkRights($this, "TPF_CR_4", $checkRights);
 						
     		$t = Title::newFromText("ACL:Page/A");
     		$article = new Article($t);
@@ -539,7 +580,7 @@ class TestParserFunctions extends PHPUnit_Framework_TestCase {
 				array('B', 'U6', 'delete', $haclgOpenWikiAccess),
 				array('B', 'U6', 'move', $haclgOpenWikiAccess),
 			);
-			$this->doCheckRights("TPF_CR_5", $checkRights);
+			HaloACLCommon::checkRights($this, "TPF_CR_5", $checkRights);
 			
 		} catch (Exception $e) {
 			$this->assertTrue(false, "Unexpected exception while testing ".basename($file)."::removeRights():".$e->getMessage());
@@ -547,7 +588,7 @@ class TestParserFunctions extends PHPUnit_Framework_TestCase {
     	
     }
     
-    function removeGroups() {
+    private function removeGroups() {
     	$file = __FILE__;
     	global $wgUser;
     	$wgUser = User::newFromName("U1");
@@ -589,17 +630,7 @@ class TestParserFunctions extends PHPUnit_Framework_TestCase {
 		}
 	}
 	
-	public function removeArticles() {
-				
-		foreach ($this->mOrderOfArticleCreation as $a) {
-		    $t = Title::newFromText($a);
-	    	$article = new Article($t);
-			$article->doDelete("Testing");
-		}
-		
-	}
-    
-    function checkRights() {
+    private function checkRights() {
     	$file = __FILE__;
     	try {
 			$checkRights = array(
@@ -747,33 +778,18 @@ class TestParserFunctions extends PHPUnit_Framework_TestCase {
 				array('B', 'U6', 'delete', false),
 				array('B', 'U6', 'move', false),
 			);
-			$this->doCheckRights("TPF_CR_1", $checkRights);
+			HaloACLCommon::checkRights($this, "TPF_CR_1", $checkRights);
 		} catch (Exception $e) {
 			$this->assertTrue(false, "Unexpected exception while testing ".basename($file)."::checkRights():".$e->getMessage());
 		}
 			
     }
 	
-	private function createArticle($title, $content) {
-	
-		$title = Title::newFromText($title);
-		$article = new Article($title);
-		// Set the article's content
-		$success = $article->doEdit($content, 'Created for test case', 
-		                            $article->exists() ? EDIT_UPDATE : EDIT_NEW);
-		if (!$success) {
-			echo "Creating article ".$title->getFullText()." failed\n";
-		}
-	}
-    
 	private function initArticleContent() {
 		$this->mOrderOfArticleCreation = array(
 			'A',
 			'B',
 			'Category:B',
-			'Category:ACL/Group',
-			'Category:ACL/Right',
-			'Category:ACL/ACL',
 			'anonymous',
 			'registered',
 			'ACL:Page/anonymous',
@@ -792,24 +808,6 @@ class TestParserFunctions extends PHPUnit_Framework_TestCase {
 		);
 		
 		$this->mArticles = array(
-//------------------------------------------------------------------------------		
-			'Category:ACL/Group' =>
-<<<ACL
-This is the category for groups.
-ACL
-,
-//------------------------------------------------------------------------------		
-			'Category:ACL/Right' =>
-<<<ACL
-This is the category for rights.
-ACL
-,
-//------------------------------------------------------------------------------		
-			'Category:ACL/ACL' =>
-<<<ACL
-This is the category for security descriptors.
-ACL
-,
 //------------------------------------------------------------------------------		
 			'Category:B' =>
 <<<ACL
@@ -1021,28 +1019,6 @@ ACL
 		);
 	}
 
-	private function doCheckRights($testcase, $expectedResults) {
-		foreach ($expectedResults as $er) {
-			$articleName = $er[0];
-			$user = $username = $er[1];
-			$action = $er[2];
-			$res = $er[3];
-			
-			$etc = haclfDisableTitlePatch();			
-			$article = Title::newFromText($articleName);
-			haclfRestoreTitlePatch($etc);			
-			
-			$user = $user == '*' ? new User() : User::newFromName($user);
-			unset($result);
-			HACLEvaluator::userCan($article, $user, $action, $result);
-			if (is_null($result)) {
-				$result = true;
-			}
-			
-			$this->assertEquals($res, $result, "Test of rights failed for: $article, $username, $action (Testcase: $testcase)\n");
-			
-		}
-	}
 	private function checkGroupMembers($testcase, $group, $mode, $membersAndResults) {
 		$group = HACLGroup::newFromName($group);
 		for ($i = 0; $i < count($membersAndResults); $i+=2) {
@@ -1063,3 +1039,4 @@ ACL
 	
 	
 }
+

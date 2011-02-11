@@ -96,6 +96,9 @@ class  HACLRight  {
 								//             right applies
 	private $mUsers;			// array(int): IDs of the users for which this
 								//             right applies
+	private $mDynamicAssigneeQueries; 
+								// array(string): Queries for dynamic assignees
+								//  			  (Groups and users)								
 	private $mDescription;		// string: A decription of this right
 	private $mOriginID;			// int: ID of the security descriptor or
 								//      predefined right that defines this right
@@ -118,6 +121,9 @@ class  HACLRight  {
 	 * 		An array or a string of comma separated of user names or IDs that
 	 *      get this right. User names are converted and 
 	 *      internally stored as user IDs. Invalid values cause an exception.
+	 * @param array<string> $dynamicAssigneeQueries
+	 * 		This array may contain queries whose results assign users and groups
+	 * 		to this right dynamically.
 	 * @param string $description
 	 * 		A description of this right
 	 * @param int originID
@@ -131,13 +137,18 @@ class  HACLRight  {
 	 * 			... if the user is invalid
 	 * 	 
 	 */		
-	function __construct($actions, $groups, $users, $description, $name, $originID=0) {
+	function __construct($actions, $groups, $users, $dynamicAssigneeQueries, 
+	                     $description, $name, $originID=0) {
 				
 		$this->mActions = $this->completeActions($actions);
 		
 		$this->setGroups($groups);
 		$this->setUsers($users);
 		
+		if (!$dynamicAssigneeQueries) {
+			$dynamicAssigneeQueries = array();
+		}
+		$this->mDynamicAssigneeQueries = $dynamicAssigneeQueries;
 		$this->mDescription = $description;
 		$this->mOriginID    = $originID;
 		$this->mName		= $name;
@@ -153,7 +164,9 @@ class  HACLRight  {
 	public function getDescription()	{return $this->mDescription;}
 	public function getName()			{return $this->mName;}
 	public function getOriginID()		{return $this->mOriginID;}
-	
+	public function getDynamicAssigneeQueries()	
+										{ return $this->mDynamicAssigneeQueries; }
+		
 	/**
 	 * Don't call this method!!
 	 * Sets the ID of this inline right. The ID is set when the right is stored 
@@ -317,10 +330,27 @@ class  HACLRight  {
 		// Check if the user belongs to a group that gets this right
 		$db = HACLStorage::getDatabase();
 		foreach ($this->mGroups as $groupID) {
-			if ($db->hasGroupMember($groupID, $userID, HACLGroup::USER, true)) {
+			$group = HACLGroup::newFromID($groupID);
+			if ($group->hasUserMember($userID, true)) {
 				return true;
 			}
 		}
+		
+		// Check dynamic assignees
+		$da = $this->queryDynamicAssignees();
+		// Is the user a dynamically assigned user?
+		if (in_array($userID, $da['users'])) {
+			return true;
+		}
+
+		// Is the user a member of a dynamically assigned group?
+		foreach ($da['groups'] as $groupID) {
+			$group = HACLGroup::newFromID($groupID);
+			if ($group->hasUserMember($userID, true)) {
+				return true;
+			}
+		}
+		
 		if ($throwException) {
 			if (empty($userName)) {
 				// only user id is given => retrieve the name of the user
@@ -494,6 +524,43 @@ class  HACLRight  {
 		
 	}
 	
+	/**
+	 * Executes the queries for dynamic assignees and returns them in an array.
+	 * 
+	 * @param int $mode
+	 * 		HACLRight::NAME:   The names of all user and groups are returned.
+	 * 		HACLRight::ID:     The IDs of all users and groups are returned (default).
+	 * 		HACLRight::OBJECT: User/Group-objects for all users and groups are returned.
+	 * 
+	 * @return array(string => array(string/int/User/HACLGroup))
+	 * 		List of all dynamic assignees of this right. This array has the following
+	 * 		layout:
+	 * 		array("groups" => array(List of groups),
+	 * 		      "users"  => array(List of users) )
+	 * 		There may be duplicate users and groups in the result.
+	 */
+	public function queryDynamicAssignees($mode = HACLRight::ID) {
+		$result = array(
+			"groups" => array(),
+			"users"  => array()
+		);
+		
+    	// Iterate over all queries
+		foreach ($this->mDynamicAssigneeQueries as $daq) {
+			$assignees = $this->executeDAQuery($daq);
+			// convert names of assignees according to $mode
+			
+			foreach ($assignees as $a) {
+				list($obj, $type) = $this->convertName($a, $mode);
+				$type = ($type == HACLGroup::USER)
+							? 'users' : 'groups';
+				$result[$type][] = $obj;
+			}
+		}
+		
+		return $result;
+	}	
+	
 	
 	/**
 	 * Deletes this right from the database. All references to this right are 
@@ -544,4 +611,102 @@ class  HACLRight  {
 		return $actions;
 	}
 	
+	/**
+	 * Executes a query for dynamic assignees and returns the resulting user and
+	 * group names.
+	 * 
+	 * @param string $query
+	 * 		The query for assignees.
+	 * @return array<string>
+	 * 		An array of group and user names. May be empty.
+	 */
+	private function executeDAQuery($query) {
+		
+		$smwStore = smwfGetStore();
+		if ($smwStore instanceof HACLSMWStore) {
+			// disable protection of query results to avoid recursion
+			$pa = $smwStore->setProtectionActive(false);
+		} else {
+			$smwStore = null;
+		}
+		// Disable the result filter for the same reason
+		$rfd = HACLResultFilter::setDisabled(true);
+
+		if (preg_match('/{{#ask:\s*(.*?)\s*}}/', $query, $matches) == 1) {
+			// Query is in ask format
+			$query = $matches[1];
+			$params = explode('|', $query);
+			$params[] = "format=list";
+			$res = SMWQueryProcessor::getResultFromFunctionParams($params, SMW_OUTPUT_WIKI);
+		} else if (preg_match('/{{#sparql:\s*(.*?)\s*}}/', $query, $matches) == 1) {
+			// Query is in sparql format
+			$query = $matches[1];
+			$params = explode('|', $query);
+			$params[] = "format=list";
+			$res = SMWSPARQLQueryProcessor::getResultFromFunctionParams($params,SMW_OUTPUT_WIKI);
+		}
+		
+		if (!is_null($smwStore)) {
+			$smwStore->setProtectionActive($pa);
+		}
+		HACLResultFilter::setDisabled($rfd);
+
+		if (empty($res)) {
+			return array();
+		}
+		$res = explode(',', $res);
+		foreach ($res as $k => $v) {
+			$res[$k] = trim($v);
+		}
+		return $res;
+		
+	}
+	
+	/**
+	 * Converts a full user or group name to an ID, a simple name (without namespace),
+	 * or an object (User or HACLGroup).
+	 * 
+	 * @param string $name
+	 * 		Full name of a user (e.g. User:Peter) or a group (e.g. ACL:Group/TeamA)
+	 * @param HACLRight::Mode $mode
+	 * 		Wanted conversion to HACLRight::ID, HACLRight::NAME or HACLRight::OBJECT.
+	 * @return array(Object, string)
+	 * 		Object is the representation as name, ID or object and type is one of
+	 * 		HACLGroup::USER or HACLGroup::GROUP.
+	 * 		<null> if name is neither a group nor a user
+	 */
+	private function convertName($name, $mode) {
+    	global $wgContLang, $haclgContLang;
+		$userNS = $wgContLang->getNsText(NS_USER);
+    	$aclNS = $haclgContLang->getNamespaces();
+    	$aclNS = $aclNS[HACL_NS_ACL];
+    	
+    	// All names start with their namespaces
+    	if (strpos($name, $userNS) === 0) {
+    		// found a user name
+    		$plainName = substr($name, strlen($userNS)+1);
+	    	switch ($mode) {
+	    		case HACLRight::NAME:
+	    			return array($plainName, HACLGroup::USER);
+	    		case HACLRight::ID:
+	    			return array(USER::idFromName($plainName), HACLGroup::USER);
+	    		case HACLRight::OBJECT:
+	    			return array(USER::newFromName($plainName), HACLGroup::USER);
+	    	}
+    	} else if (strpos($name, $aclNS) === 0) {
+    		// found an ACL name
+    		$plainName = substr($name, strlen($aclNS)+1);
+	    	switch ($mode) {
+	    		case HACLRight::NAME:
+	    			return array($plainName, HACLGroup::GROUP);
+	    		case HACLRight::ID:
+	    			return array(HACLGroup::idForGroup($plainName), HACLGroup::GROUP);
+	    		case HACLRight::OBJECT:
+	    			return array(HACLGroup::newFromName($plainName), HACLGroup::GROUP);
+	    	}
+    	}
+    	 
+    	return null;
+	}
+
 }

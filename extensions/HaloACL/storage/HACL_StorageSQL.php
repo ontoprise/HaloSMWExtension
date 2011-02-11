@@ -74,6 +74,7 @@ class HACLStorageSQL {
             'actions' 		=> 'INT(8) NOT NULL',
             'groups' 		=> 'Text CHARACTER SET utf8 COLLATE utf8_bin',
             'users' 		=> 'Text CHARACTER SET utf8 COLLATE utf8_bin',
+            'dynamic_assignees' => 'Text CHARACTER SET utf8 COLLATE utf8_bin',
             'description' 	=> 'Text CHARACTER SET utf8 COLLATE utf8_bin',
             'name' 			=> 'Text CHARACTER SET utf8 COLLATE utf8_bin',
             'origin_id' 	=> 'INT(8) UNSIGNED NOT NULL'),
@@ -132,10 +133,11 @@ class HACLStorageSQL {
 
 		HACLDBHelper::setupTable($table, array(
             'parent_group_id' 	=> 'INT(8) UNSIGNED NOT NULL',
-            'child_type' 		=> 'ENUM(\'group\', \'user\') DEFAULT \'user\' NOT NULL',
-            'child_id' 			=> 'INT(8) NOT NULL'),
-		$db, $verbose, "parent_group_id,child_type,child_id");
-		HACLDBHelper::reportProgress("   ... done!\n",$verbose, "parent_group_id, child_type, child_id");
+            'child_type' 		=> 'ENUM(\'group\', \'user\', \'dynamic\') DEFAULT \'user\' NOT NULL',
+            'child_id' 			=> 'INT(8) NOT NULL',
+			'dynamic_member_query'  => 'TEXT CHARACTER SET utf8 COLLATE utf8_bin DEFAULT \'\' NOT NULL'),
+		$db, $verbose, "parent_group_id,child_type,child_id,dynamic_member_query(32)");
+		HACLDBHelper::reportProgress("   ... done!\n",$verbose, "parent_group_id, child_type, child_id, dynamic_member_query");
 
 		// halo_acl_special_pages:
 		//		stores the IDs of special pages that have no article ID
@@ -447,6 +449,29 @@ class HACLStorageSQL {
 	}
 
 	/**
+     * Adds the queries for dynamic members $dmq to the group with the ID
+     * $parentGroupID.
+	 *
+	 * @param $parentGroupID
+	 * 		The group with this ID gets the new child with the ID $childGroupID.
+     * @param array(string) $dmq
+     * 		Array of ask or sparql queries.
+	 *
+	 */
+	public function addDynamicMemberQueriesToGroup($parentGroupID, $dmq) {
+		$db =& wfGetDB( DB_MASTER );
+		
+		foreach ($dmq as $q) {
+			$db->replace($db->tableName('halo_acl_group_members'), null, array(
+	            'parent_group_id'       => $parentGroupID ,
+	            'child_type'	        => 'dynamic' ,
+			    'child_id '             => 0,
+	            'dynamic_member_query ' => $q));
+		}
+
+	}
+	
+	/**
 	 * Removes the user with the ID $userID from the group with the ID $groupID.
 	 *
 	 * @param $groupID
@@ -675,6 +700,34 @@ class HACLStorageSQL {
 			$db->freeResult($res);
 		}
 
+	}
+	
+	/**
+	 * Return an array of dynamic member queries for the group with the ID
+	 * $groupID.
+	 * @param int $groupID
+	 * 		ID of the group
+	 * @return array(string)
+	 * 		The member queries
+	 */
+	public function getDynamicMemberQueriesForGroup($groupID) {
+		$db =& wfGetDB( DB_SLAVE );
+		$gt = $db->tableName('halo_acl_group_members');
+
+		// Ask for the immediate parents of $childID
+		$sql = "SELECT dynamic_member_query FROM $gt ".
+            "WHERE parent_group_id = '$groupID' AND ".
+            "child_type='dynamic';";
+
+		$res = $db->query($sql);
+
+		$dmq = array();
+		while ($row = $db->fetchObject($res)) {
+			$dmq[] = $row->dynamic_member_query;
+		}
+		$db->freeResult($res);
+		
+		return $dmq;
 	}
 
 	/**
@@ -1184,11 +1237,13 @@ class HACLStorageSQL {
 
 		$groups = implode(',', $right->getGroups());
 		$users  = implode(',', $right->getUsers());
+		$dynamicAssignees = implode('##daq##', $right->getDynamicAssigneeQueries());
 		$rightID = $right->getRightID();
 		$setValues = array(
             'actions'     => $right->getActions(),
-            'groups'	    => $groups,
-            'users'	    => $users,
+            'groups'	  => $groups,
+            'users'	      => $users,
+            'dynamic_assignees' => $dynamicAssignees,
             'description' => $right->getDescription(),
             'name'        => $right->getName(),
             'origin_id'   => $right->getOriginID());
@@ -1232,11 +1287,16 @@ class HACLStorageSQL {
 			$actions = $row->actions;
 			$groups = self::strToIntArray($row->groups);
 			$users  = self::strToIntArray($row->users);
+			$dynamicAssignees = $row->dynamic_assignees;
+			$dynamicAssignees = empty($dynamicAssignees)
+								? array()
+								: explode('##daq##', $dynamicAssignees);
 			$description = $row->description;
 			$name        = $row->name;
 			$originID    = $row->origin_id;
 
-			$sd = new HACLRight($actions, $groups, $users, $description, $name, $originID);
+			$sd = new HACLRight($actions, $groups, $users, $dynamicAssignees,
+			                    $description, $name, $originID);
 			$sd->setRightID($rightID);
 		}
 		$db->freeResult($res);

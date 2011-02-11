@@ -72,6 +72,10 @@ class  HACLGroup {
 							// Under certain circumstances (e.g.
 							// when using dynamic groups) it must be possible that
 							// unauthorized users can change the group
+	// array(string): Queries for dynamic members (Groups and users)								
+	private $mDynamicMemberQueries = array(); 
+	
+	
 	
 
     /**
@@ -108,7 +112,6 @@ class  HACLGroup {
         }
         $this->mGroupID = 0+$groupID;
         $this->mGroupName = $groupName;
-
         $this->setManageGroups($manageGroups);
         $this->setManageUsers($manageUsers);
 		$this->mCanBeModified = $canBeModified;
@@ -122,6 +125,7 @@ class  HACLGroup {
     public function getManageGroups() {return $this->mManageGroups;}
     public function getManageUsers() {return $this->mManageUsers;}
     public function getType() 		{return $this->mType;}
+    public function getDynamicMemberQueries()	{ return $this->mDynamicMemberQueries; }
     public function canBeModified()	{return $this->mCanBeModified;}
 	public static function setAllowUnauthorizedGroupChange($aucg) { 
 		$current = self::$mAllowUnauthorizedGroupChange;
@@ -162,6 +166,8 @@ class  HACLGroup {
         if ($group === null) {
             throw new HACLGroupException(HACLGroupException::UNKNOWN_GROUP, $groupName);
         }
+        $group->initDynamicMemberQueriesFromDB();        
+        
         return $group;
     }
 
@@ -184,6 +190,7 @@ class  HACLGroup {
         if ($group === null) {
             throw new HACLGroupException(HACLGroupException::INVALID_GROUP_ID, $groupID);
         }
+        $group->initDynamicMemberQueriesFromDB();        
         return $group;
     }
 
@@ -521,6 +528,7 @@ class  HACLGroup {
         $this->userCanModify($user, true);
 
         HACLStorage::getDatabase()->saveGroup($this);
+        HACLDynamicMemberCache::getInstance()->clearCache($this->mGroupID);
 
     }
 
@@ -653,6 +661,29 @@ class  HACLGroup {
 
         HACLStorage::getDatabase()->addGroupToGroup($this->mGroupID, $groupID);
     }
+    
+    /**
+     * Adds the queries for dynamic members $dmq to this group. The new queries
+     * are immediately added to the group's definition in the database.
+     * 
+     * @param array(string) $dmq
+     * 		Array of ask or sparql queries.
+     * @param User/string/int $mgUser
+     * 		User-object, name of a user or ID of a user who wants to modify this
+     * 		group. If <null>, the currently logged in user is assumed.
+     * 
+     * @throws
+     * 		HACLGroupException(HACLGroupException::USER_CANT_MODIFY_GROUP)
+     */
+	public function addDynamicMemberQueries($dmq, $mgUser=null) {
+    	// Check if $mgUser can modifiy this group.
+        $this->userCanModify($mgUser, true);
+        
+        HACLStorage::getDatabase()->addDynamicMemberQueriesToGroup($this->mGroupID, $dmq);
+        $this->mDynamicMemberQueries = array_merge($this->mDynamicMemberQueries, $dmq);
+        HACLDynamicMemberCache::getInstance()->clearCache($this->mGroupID);
+        
+	}    
 
     /**
      * Removes all members (groups and users) from this group. They are
@@ -667,7 +698,7 @@ class  HACLGroup {
      *
      */
     public function removeAllMembers($mgUser=null) {
-    // Check if $mgUser can modifiy this group.
+	    // Check if $mgUser can modifiy this group.
         $this->userCanModify($mgUser, true);
         HACLStorage::getDatabase()->removeAllMembersFromGroup($this->mGroupID);
     }
@@ -740,7 +771,11 @@ class  HACLGroup {
     public function getUsers($mode) {
     // retrieve the IDs of all users in this group
         $users = HACLStorage::getDatabase()->getMembersOfGroup($this->mGroupID, self::USER);
-
+		$dynamicUsers = $this->queryDynamicMembers(self::ID);
+		$dynamicUsers = $dynamicUsers['users'];
+		$users = array_merge($users, $dynamicUsers);
+		$users = array_merge(array_unique($users, SORT_NUMERIC));
+		
         if ($mode === self::ID) {
             return $users;
         }
@@ -807,9 +842,15 @@ class  HACLGroup {
      *
      */
     public function getGroups($mode) {
-    // retrieve the IDs of all groups in this group
+    	// retrieve the IDs of all groups in this group
         $groups = HACLStorage::getDatabase()->getMembersOfGroup($this->mGroupID, self::GROUP);
 
+        // retrieve all dynamic member groups
+		$dynamicGroups = $this->queryDynamicMembers(self::ID);
+		$dynamicGroups = $dynamicGroups['groups'];
+		$groups = array_merge($groups, $dynamicGroups);
+        $groups = array_merge(array_unique($groups, SORT_NUMERIC));
+        
         if ($mode === self::ID) {
             return $groups;
         }
@@ -823,6 +864,46 @@ class  HACLGroup {
         return $groups;
 
     }
+    
+	/**
+	 * Executes the queries for dynamic members and returns them in an array.
+	 * 
+	 * @param int $mode
+	 * 		HACLGroup::NAME:   The names of all user and groups are returned.
+	 * 		HACLGroup::ID:     The IDs of all users and groups are returned (default).
+	 * 		HACLGroup::OBJECT: User/Group-objects for all users and groups are returned.
+	 * 
+	 * @return array(string => array(string/int/User/HACLGroup))
+	 * 		List of all dynamic members of this group. This array has the following
+	 * 		layout:
+	 * 		array("groups" => array(List of groups),
+	 * 		      "users"  => array(List of users) )
+	 * 		There may be duplicate users and groups in the result.
+	 */
+	public function queryDynamicMembers($mode = HACLGroup::ID) {
+		
+		$memberCache = HACLDynamicMemberCache::getInstance();
+		if ($memberCache->isCached($this->mGroupID)) {
+			return $memberCache->getMembers($this->mGroupID, $mode);
+		}
+		
+    	// Members are not cached 
+    	// => Iterate over all queries and fill the cache 
+    	if (empty($this->mDynamicMemberQueries)) {
+    		// There are no dynamic member queries
+    		// => cache an empty array for faster access
+			$memberCache->addMembers($this->mGroupID, array());
+    	} else {
+			foreach ($this->mDynamicMemberQueries as $dmq) {
+				$members = $this->executeDMQuery($dmq);
+				$memberCache->addMembers($this->mGroupID, $members);
+			}
+    	}
+		
+		return $memberCache->getMembers($this->mGroupID, $mode);
+	}	
+	
+    
 
     /**
      * Checks if this group has the given group as member.
@@ -851,10 +932,15 @@ class  HACLGroup {
         if ($groupID === 0) {
             throw new HACLGroupException(HACLGroupException::INVALID_GROUP_ID,
             $groupID);
-
         }
-        return HACLStorage::getDatabase()
-        ->hasGroupMember($this->mGroupID, $groupID, self::GROUP, $recursive);
+
+        if (HACLStorage::getDatabase()
+        		->hasGroupMember($this->mGroupID, $groupID, self::GROUP, $recursive)) {
+			return true;
+		}
+        	
+		return $this->hasDynamicMember($groupID, self::GROUP, $recursive);
+        	
     }
 
     /**
@@ -878,10 +964,84 @@ class  HACLGroup {
      */
     public function hasUserMember($user, $recursive) {
         $userID = haclfGetUserID($user);
-        return HACLStorage::getDatabase()
-        ->hasGroupMember($this->mGroupID, $userID[0], self::USER, $recursive);
+        $userID= $userID[0];
+		// Do a quick check in the database
+        if (HACLStorage::getDatabase()
+        	   ->hasGroupMember($this->mGroupID, $userID, 
+        	                    self::USER, $recursive)) {
+			return true;        	                    	
+		}
+        
+		return $this->hasDynamicMember($userID, self::USER, $recursive);
+        	
     }
 
+    /**
+     * Checks if this group has the given dynamic member with the ID $id.
+     * @param int $id
+     * 		Group or user ID
+     * @param string $mode
+     * 		HACLGroup::USER - search for a user
+     * 		HACLGroup::GROUP - search for a group
+     * @param bool $recursive
+     * 		If <true>, perform a recursive search
+     * @return bool
+     * 		<true>, if $id is a member of this group
+     * 		<false> otherwise 
+     */
+    public  function hasDynamicMember($id, $mode, $recursive) {
+        // Search for dynamic members
+        $processedGroups = array();
+        $pendingGroups = array($this->mGroupID);
+        while (!empty($pendingGroups)) {
+        	$gid = array_shift($pendingGroups);
+        	try {
+        		$group = ($gid == $this->mGroupID) ? $this : HACLGroup::newFromID($gid);
+        	} catch (HACLGroupException $e) {
+        		// The group does not exist
+        		continue;
+        	}
+        	
+        	// Get all static and dynamic member users
+        	if ($mode === self::USER) {
+	        	$users = $group->getUsers(self::ID);
+	        	// Check if user is present 
+	        	if (in_array($id, $users)) {
+	        		return true;
+	        	}
+	        	if (!$recursive) {
+	        		// No recursion => don't examine other groups
+	        		return false;
+	        	}
+        	}
+        	
+        	// mark the current group as processed
+        	$processedGroups[$gid] = true;
+        	
+        	// Get all static and dynamic group members and add them to the
+        	// list of pending groups.
+        	$groups = $group->getGroups(self::ID);
+        	if ($mode === self::GROUP) {
+        		if (in_array($id, $groups)) {
+        			return true;
+        		}
+        	}
+        	if (!$recursive) {
+        		return false;
+        	}
+        	foreach ($groups as $g) {
+        		if (!array_key_exists($g, $processedGroups) 
+        		    && !in_array($g, $pendingGroups)) {
+        		    // group is not yet processed and not pending
+        		    $pendingGroups[] = $g;
+				}
+        	}
+        }
+        
+        // user or group not found
+        return false;
+    }
+    
 
     /**
      * Deletes this group from the database. All references to this group in the
@@ -1012,6 +1172,65 @@ GROUP
 		return $status->isOK();
     	
     }
+    
+    /**
+     * Reads all dynamic member queries of this group from the database. The
+     * current array of queries is overwritten. 
+     */
+    public function initDynamicMemberQueriesFromDB() {
+        $this->mDynamicMemberQueries = 
+        	HACLStorage::getDatabase()->getDynamicMemberQueriesForGroup($this->mGroupID);
+    }
+    
     //--- Private methods ---
 
+	/**
+	 * Executes a query for dynamic members and returns the resulting user and
+	 * group names.
+	 * 
+	 * @param string $query
+	 * 		The query for members.
+	 * @return array<string>
+	 * 		An array of group and user names. May be empty.
+	 */
+	private function executeDMQuery($query) {
+		$smwStore = smwfGetStore();
+		if ($smwStore instanceof HACLSMWStore) {
+			// disable protection of query results to avoid recursion
+			$pa = $smwStore->setProtectionActive(false);
+		} else {
+			$smwStore = null;
+		}
+		// Disable the result filter for the same reason
+		$rfd = HACLResultFilter::setDisabled(true);
+		
+		if (preg_match('/{{#ask:\s*(.*?)\s*}}/', $query, $matches) == 1) {
+			// Query is in ask format
+			$query = $matches[1];
+			$params = explode('|', $query);
+			$params[] = "format=list";
+			$res = SMWQueryProcessor::getResultFromFunctionParams($params, SMW_OUTPUT_WIKI);
+		} else if (preg_match('/{{#sparql:\s*(.*?)\s*}}/', $query, $matches) == 1) {
+			// Query is in sparql format
+			$query = $matches[1];
+			$params = explode('|', $query);
+			$params[] = "format=list";
+			$res = SMWSPARQLQueryProcessor::getResultFromFunctionParams($params,SMW_OUTPUT_WIKI);
+		}
+		
+		if (!is_null($smwStore)) {
+			$smwStore->setProtectionActive($pa);
+		}
+		HACLResultFilter::setDisabled($rfd);
+		
+		
+		$res = explode(',', $res);
+		foreach ($res as $k => $v) {
+			$res[$k] = trim($v);
+		}
+		return $res;
+		
+	}
+	
+    
 }

@@ -63,6 +63,7 @@ function enableHaloACL() {
     $wgAutoloadClasses['HACLStorage'] = $haclgIP . '/includes/HACL_Storage.php';
     $wgAutoloadClasses['HACLSMWStore'] = $haclgIP . '/includes/HACL_SMWStore.php';
     $wgAutoloadClasses['HACLGroup'] = $haclgIP . '/includes/HACL_Group.php';
+    $wgAutoloadClasses['HACLDynamicMemberCache'] = $haclgIP . '/includes/HACL_DynamicMemberCache.php';
     $wgAutoloadClasses['HACLSecurityDescriptor'] = $haclgIP . '/includes/HACL_SecurityDescriptor.php';
     $wgAutoloadClasses['HACLRight'] = $haclgIP . '/includes/HACL_Right.php';
     $wgAutoloadClasses['HACLWhitelist'] = $haclgIP . '/includes/HACL_Whitelist.php';

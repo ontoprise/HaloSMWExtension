@@ -482,7 +482,7 @@ class TestDatabase extends PHPUnit_Framework_TestCase {
 			$prPR1->save();
 
 			$ir = new HACLRight(HACLRight::EDIT,
-			                    array("Group/G4"), null, 
+			                    array("Group/G4"), null, null,
 			                    "IR for PR1", "Right 1");
 			$prPR1->addInlineRights(array($ir));
 						
@@ -492,7 +492,7 @@ class TestDatabase extends PHPUnit_Framework_TestCase {
 			$prPR2->save();
 			                                    
 			$ir = new HACLRight(HACLRight::DELETE,
-			                    null, array("U2"), 
+			                    null, array("U2"), null,
 			                    "IR for PR2", "Right 2");
 			$prPR2->addInlineRights(array($ir));
 			                                    
@@ -504,7 +504,7 @@ class TestDatabase extends PHPUnit_Framework_TestCase {
 			$sdA->addPredefinedRights(array($prPR1, $prPR2));
 			
 			$ir = new HACLRight(HACLRight::READ,
-			                    array("Group/G1"), array("U1"), 
+			                    array("Group/G1"), array("U1"), null,
 			                    "IR for page A", "Right 3");
 			$sdA->addInlineRights(array($ir));
 			

@@ -48,6 +48,8 @@ class  HACLResultFilter  {
 	//--- Constants ---
 		
 	//--- Private fields ---
+	// The result filter can be temporarily disabled to avoid infinite recursions
+	private static $mDisabled = false;
 	
 	/**
 	 * Constructor for  HACLResultFilter
@@ -60,6 +62,12 @@ class  HACLResultFilter  {
 	
 
 	//--- getter/setter ---
+	
+	public static function setDisabled($disabled) { 
+		$d = self::$mDisabled;
+		self::$mDisabled = $disabled; 
+		return $d;
+	}
 	
 	//--- Public methods ---
 	
@@ -78,6 +86,9 @@ class  HACLResultFilter  {
 	 * 
 	 */
 	public static function filterResult(SMWQueryResult &$qr, array $properties = null) {
+		if (self::$mDisabled) {
+			return true;
+		}
 		
 		if ($qr instanceof SMWHaloQueryResult) {
 			self::filterSPARQLQueryResult($qr, $properties);

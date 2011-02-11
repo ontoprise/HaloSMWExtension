@@ -45,12 +45,12 @@ function haclfInitParserfunctions() {
 
 	HACLParserFunctions::getInstance();
 
-	$wgParser->setFunctionHook('haclaccess', array('HACLParserFunctions', 'access'));
-	$wgParser->setFunctionHook('haclpropertyaccess', array('HACLParserFunctions', 'propertyAccess'));
+	$wgParser->setFunctionHook('haclaccess', array('HACLParserFunctions', 'access'), SFH_OBJECT_ARGS);
+	$wgParser->setFunctionHook('haclpropertyaccess', array('HACLParserFunctions', 'propertyAccess'), SFH_OBJECT_ARGS);
 	$wgParser->setFunctionHook('haclpredefinedright', array('HACLParserFunctions', 'predefinedRight'));
 	$wgParser->setFunctionHook('haclwhitelist', array('HACLParserFunctions', 'whitelist'));
 	$wgParser->setFunctionHook('haclmanagerights', array('HACLParserFunctions', 'manageRights'));
-	$wgParser->setFunctionHook('haclmember', array('HACLParserFunctions', 'addMember'));
+	$wgParser->setFunctionHook('haclmember', array('HACLParserFunctions', 'addMember'), SFH_OBJECT_ARGS);
 	$wgParser->setFunctionHook('haclmanagegroup', array('HACLParserFunctions', 'manageGroup'));
 
 }
@@ -127,6 +127,10 @@ class HACLParserFunctions {
 
 	// array(string): Groups who are member of a group
 	private $mGroupMembers = array();
+	
+	// array(string): Queries for dynamic members of groups. These members can
+	// be groups and users.								
+	private $mDynamicMemberQueries = array(); 
 
 	// bool: true if all parser functions of an article are valid
 	private $mDefinitionValid = true;
@@ -152,12 +156,17 @@ class HACLParserFunctions {
 	/**
 	 * Constructor for HACLParserFunctions. This object is a singleton.
 	 */
-	public function __construct() {
+	private function __construct() {
 	}
 
+	//--- Getters / setters
+	public function getInlineRights() { return $this->mInlineRights; }
+	public function getUserMembers()	{ return $this->mUserMembers; }
+	public function getGroupMembers()	{ return $this->mGroupMembers; }
+	public function getDynamicMemberQueries()	{ return $this->mDynamicMemberQueries; }
 
 	//--- Public methods ---
-
+	
 	public static function getInstance() {
 		if (is_null(self::$mInstance)) {
 			self::$mInstance = new self;
@@ -184,6 +193,7 @@ class HACLParserFunctions {
 		$this->mGroupManagerGroups = array();
 		$this->mUserMembers = array();
 		$this->mGroupMembers = array();
+		$this->mDynamicMemberQueries = array();
 		$this->mFingerprints = array();
 		$this->mDefinitionValid = true;
 		$this->mType = 'invalid';
@@ -223,7 +233,8 @@ class HACLParserFunctions {
 		self::$mInstance->prepareTitle($parser);
 
 		// handle the parameter "assigned to".
-		list($users, $groups, $em1, $warnings) = self::$mInstance->assignedTo($params);
+		list($users, $groups, $dynamicAssignees, $em1, $warnings) 
+			= self::$mInstance->assignedTo($params);
 
 		// handle the parameter 'action'
 		list($actions, $em2) = self::$mInstance->actions($params);
@@ -248,7 +259,9 @@ class HACLParserFunctions {
 			// no errors
 			// => create and store the new right for later use.
 			if (!in_array($fingerprint, self::$mInstance->mFingerprints)) {
-				$ir = new HACLRight(self::$mInstance->actionNamesToIDs($actions), $groups, $users, $description, $name);
+				$ir = new HACLRight(self::$mInstance->actionNamesToIDs($actions), 
+				                    $groups, $users, $dynamicAssignees, 
+				                    $description, $name);
 				self::$mInstance->mInlineRights[] = $ir;
 				self::$mInstance->mFingerprints[] = $fingerprint;
 			}
@@ -304,7 +317,8 @@ class HACLParserFunctions {
 		self::$mInstance->prepareTitle($parser);
 
 		// handle the parameter "assigned to".
-		list($users, $groups, $em1, $warnings) = self::$mInstance->assignedTo($params);
+		list($users, $groups, $dynamicAssignees, $em1, $warnings) 
+			= self::$mInstance->assignedTo($params);
 
 		// handle the parameter 'action'
 		list($actions, $em2) = self::$mInstance->actions($params);
@@ -329,7 +343,9 @@ class HACLParserFunctions {
 			// no errors
 			// => create and store the new right for later use.
 			if (!in_array($fingerprint, self::$mInstance->mFingerprints)) {
-				$ir = new HACLRight(self::$mInstance->actionNamesToIDs($actions), $groups, $users, $description, $name);
+				$ir = new HACLRight(self::$mInstance->actionNamesToIDs($actions), 
+				                    $groups, $users, $dynamicAssignees, 
+				                    $description, $name);
 				self::$mInstance->mPropertyRights[] = $ir;
 				self::$mInstance->mFingerprints[] = $fingerprint;
 			}
@@ -500,7 +516,8 @@ class HACLParserFunctions {
 		self::$mInstance->prepareTitle($parser);
 
 		// handle the parameter "assigned to".
-		list($users, $groups, $errMsgs, $warnings) = self::$mInstance->assignedTo($params);
+		list($users, $groups, $dynamicAssignees, $errMsgs, $warnings) = 
+			self::$mInstance->assignedTo($params);
 
 		if (count($errMsgs) == 0) {
 			// no errors
@@ -547,7 +564,8 @@ class HACLParserFunctions {
 		self::$mInstance->prepareTitle($parser);
 
 		// handle the parameter "assigned to".
-		list($users, $groups, $errMsgs, $warnings) = self::$mInstance->assignedTo($params, false);
+		list($users, $groups, $dynamicMemberQueries, $errMsgs, $warnings) 
+			= self::$mInstance->assignedTo($params, false);
 
 		if (count($errMsgs) == 0) {
 			// no errors
@@ -555,6 +573,7 @@ class HACLParserFunctions {
 			if (!in_array($fingerprint, self::$mInstance->mFingerprints)) {
 				self::$mInstance->mUserMembers  = array_merge(self::$mInstance->mUserMembers, $users);
 				self::$mInstance->mGroupMembers = array_merge(self::$mInstance->mGroupMembers, $groups);
+				self::$mInstance->mDynamicMemberQueries = array_merge(self::$mInstance->mDynamicMemberQueries, $dynamicMemberQueries);
 				self::$mInstance->mFingerprints[] = $fingerprint;
 			}
 		} else {
@@ -596,7 +615,8 @@ class HACLParserFunctions {
 		self::$mInstance->prepareTitle($parser);
 		
 		// handle the parameter "assigned to".
-		list($users, $groups, $errMsgs, $warnings) = self::$mInstance->assignedTo($params);
+		list($users, $groups, $dynamicAssignees, $errMsgs, $warnings)
+			= self::$mInstance->assignedTo($params);
 
 		if (count($errMsgs) == 0) {
 			// no errors
@@ -889,7 +909,9 @@ class HACLParserFunctions {
 			// => store the current definitions
 			global $wgUser;
 			$article = Article::newFromID($this->mTitle->getArticleID());
-			self::articleSaveComplete($article, $wgUser, "");
+			if (isset($article)) {
+				self::articleSaveComplete($article, $wgUser, "");
+			}
 			
 			// reset this singleton
 			$this->reset();
@@ -963,6 +985,7 @@ class HACLParserFunctions {
 		foreach ($this->mUserMembers as $m) {
 			$group->addUser($m);
 		}
+		$group->addDynamicMemberQueries($this->mDynamicMemberQueries);
 
 		return true;
 	}
@@ -1107,7 +1130,8 @@ class HACLParserFunctions {
 		if ($isGroup) {
 			// check for members
 			if (count($this->mGroupMembers) == 0 &&
-			count($this->mUserMembers) == 0) {
+			    count($this->mUserMembers) == 0 &&
+			    count($this->mDynamicMemberQueries) == 0) {
 				$msg[] = wfMsgForContent('hacl_group_must_have_members');
 			}
 			// check for managers
@@ -1280,13 +1304,64 @@ class HACLParserFunctions {
 	 */
 	private function getParameters($args) {
 		$parameters = array();
-
-		foreach ($args as $arg) {
-			if (!is_string($arg)) {
-				continue;
+		$parser = $args[0];
+		
+		if (is_string($args[1])) {
+			// Arguments are given as strings
+			for ($i = 1, $len = count($args); $i < $len; ++$i) {
+				$arg = $args[$i];
+				if (preg_match('/^\s*(.*?)\s*=\s*(.*?)\s*$/', $arg, $p) == 1) {
+					$parameters[strtolower($p[1])] = $p[2];
+				}
 			}
-			if (preg_match('/^\s*(.*?)\s*=\s*(.*?)\s*$/', $arg, $p) == 1) {
-				$parameters[strtolower($p[1])] = $p[2];
+			return $parameters;
+		}
+		
+		// Arguments are given as preprocessor nodes and possibly string
+		$frame = $args[1];
+		$pfParameters = $args[2];
+		
+		foreach ($pfParameters as $p) {
+			if (is_string($p)) {
+				if (preg_match('/^\s*(.*?)\s*=\s*(.*?)\s*$/', $p, $matches) == 1) {
+					$parameters[strtolower($matches[1])] = $matches[2];
+				}
+			} else if ($p instanceof PPNode_DOM) {
+				$children = $p->getChildren();
+				// three children expected: parameter name, =, value
+				if ($children->getLength() !== 3) {
+					// unexpected number of children
+					continue;
+				}
+				$paramName = trim($children->item(0)->getFirstChild()->__toString());
+				$values = array();
+				$valueNode = $children->item(2);
+				// The value may contain names of groups and users, but also
+				// templates and parser functions
+				$parts = $valueNode->getChildren();
+				$length = $parts->getLength();
+				for ($i = 0; $i < $length; ++$i) {
+					$child = $parts->item($i);
+					// Get the type of the child node. Possible values are
+					// #text and template 
+					$name = $child->getName();
+					if ($name === '#text') {
+						$value = $child->__toString();
+					} else if ($name === 'template') {
+						$text = $frame->expand($child, PPFrame::NO_ARGS | PPFrame::NO_TEMPLATES);
+						if (strpos($text, "{{#ask") === false
+						    && strpos($text, "{{#sparql") === false) {
+							// normal templates have to be expanded
+							$text = $frame->expand($child); 	
+						}
+						$value = $text;
+					}
+					if (!empty($value)) {
+						$values[] = $value;
+					}
+				}
+				$parameters[$paramName] = count($values) == 1 
+											? $values[0] : $values;
 			}
 		}
 
@@ -1307,7 +1382,8 @@ class HACLParserFunctions {
 	 * @param bool $isAssignedTo
 	 * 		true  => parse the parameter "assignedTo"
 	 * 		false => parse the parameter "members"
-	 * @return array(users:array(string), groups:array(string), 
+	 * @return array(users:array(string), groups:array(string),
+	 * 				 dynamic assignees: array(string), 
 	 *               error messages:array(string), warnings: array(string))
 	 */
 	private function assignedTo($params, $isAssignedTo = true) {
@@ -1330,11 +1406,28 @@ class HACLParserFunctions {
 
 		$etc = haclfDisableTitlePatch();
 
+		$dynamicAssignees = array();
 		$assignedTo = $params[$assignedToPN];
+		if (is_array(($assignedTo))) {
+			// The array might contain queries for dynamic assignees
+			// => sort them out
+			foreach ($assignedTo as $k => $at) {
+				if (strpos($at, '{{#ask') === 0 
+				    || strpos($at, '{{#sparql') === 0) {
+				   	$dynamicAssignees[] = $at;
+				   	unset($assignedTo[$k]);
+				}
+			}
+			$assignedTo = implode('', $assignedTo);
+		}
+		
 		$assignedTo = explode(',', $assignedTo);
 		// read assigned users and groups
 		foreach ($assignedTo as $assignee) {
 			$assignee = trim($assignee);
+			if (empty($assignee)) {
+				continue;
+			}
 			if (strpos($assignee, $userNs) === 0 ||
 				$assignee == '*' || $assignee == '#') {
 				// user found
@@ -1373,13 +1466,13 @@ class HACLParserFunctions {
 				}
 			}
 		}
-		if (count($users) == 0 && count($groups) == 0) {
+		if (count($users) == 0 && count($groups) == 0 && count($dynamicAssignees) == 0) {
 			// No users/groups specified at all => add error message
 			$errMsgs[] = wfMsgForContent('hacl_missing_parameter_values', $assignedToPN);
 		}
 		haclfRestoreTitlePatch($etc);
 
-		return array($users, $groups, $errMsgs, $warnings);
+		return array($users, $groups, $dynamicAssignees, $errMsgs, $warnings);
 	}
 
 	/**
@@ -1670,7 +1763,7 @@ class HACLParserFunctions {
 	 *
 	 * @param string $functionName
 	 * 		Name of the parser function
-	 * @param array(string=>string) $params
+	 * @param array(string=>string|array) $params
 	 * 		Parameters of the parser function
 	 * @return string
 	 * 		The fingerprint
@@ -1678,6 +1771,9 @@ class HACLParserFunctions {
 	private static function makeFingerprint($functionName, $params) {
 		$fingerprint = "$functionName";
 		foreach ($params as $k => $v) {
+			if (is_array($v)) {
+				$v = implode('|', $v);
+			}
 			$fingerprint .= $k.$v;
 		}
 		return $fingerprint;

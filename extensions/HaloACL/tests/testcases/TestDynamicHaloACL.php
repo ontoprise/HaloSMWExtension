@@ -8,6 +8,7 @@
  */
 class TestDynamicHaloACLSuite extends PHPUnit_Framework_TestSuite
 {
+	private $mArticleManager;
 	
 	public static function suite() {
 		define('UNIT_TEST_RUNNING', true);
@@ -17,6 +18,10 @@ class TestDynamicHaloACLSuite extends PHPUnit_Framework_TestSuite
 		$suite->addTestSuite('TestDynamicGroup');
 		$suite->addTestSuite('TestDynamicSDWithGroup');
 		$suite->addTestSuite('TestDynamicGroupStructure');
+		$suite->addTestSuite('TestDynamicAssignees');
+		$suite->addTestSuite('TestDynamicMembers');
+		$suite->addTestSuite('TestDynamicMembersHierarchy');
+		$suite->addTestSuite('TestMembersAssigneesExample');
 		return $suite;
 	}
 	
@@ -25,10 +30,7 @@ class TestDynamicHaloACLSuite extends PHPUnit_Framework_TestSuite
 		HACLStorage::getDatabase()->dropDatabaseTables(false);
 		HACLStorage::getDatabase()->initDatabaseTables(false);
 		
-		User::createNew("U1");
-    	User::createNew("U2");
-        User::idFromName("U1");  
-        User::idFromName("U2");  
+		HaloACLCommon::createUsers(array("U1", "U2"));
         Skin::getSkinNames();
         
         
@@ -40,27 +42,27 @@ class TestDynamicHaloACLSuite extends PHPUnit_Framework_TestSuite
 	}
 	
 	protected function tearDown() {
-        $this->removeArticles();
+        $this->mArticleManager->deleteArticles("U1");
 
         HACLStorage::getDatabase()->dropDatabaseTables(false);
 		HACLStorage::getDatabase()->initDatabaseTables(false);
         
 	}
 
-	public static function createArticle($title, $content) {
-	
-		HACLParserFunctions::getInstance()->reset();
-		
-		$title = Title::newFromText($title);
-		$article = new Article($title);
-		// Set the article's content
-		
-		$success = $article->doEdit($content, 'Created for test case', 
-		                            $article->exists() ? EDIT_UPDATE : EDIT_NEW);
-		if (!$success) {
-			echo "Creating article ".$title->getFullText()." failed\n";
-		}
-	}
+//	public static function createArticle($title, $content) {
+//	
+//		HACLParserFunctions::getInstance()->reset();
+//		
+//		$title = Title::newFromText($title);
+//		$article = new Article($title);
+//		// Set the article's content
+//		
+//		$success = $article->doEdit($content, 'Created for test case', 
+//		                            $article->exists() ? EDIT_UPDATE : EDIT_NEW);
+//		if (!$success) {
+//			echo "Creating article ".$title->getFullText()." failed\n";
+//		}
+//	}
 	
 	/**
 	 * Checks if the article with the given name $title exists.
@@ -77,72 +79,10 @@ class TestDynamicHaloACLSuite extends PHPUnit_Framework_TestSuite
 	}
     
 	
-    /**
-     * Checks the rights of a resource for the given $testcase.
-     * 
-     * @param string $testcase
-     * 		The name of the test case is printed if the test fails. 
-     * @param $expectedResults
-     * @param $testInstance
-     * 		The instance of a test class that performs the test.
-     * 		
-     */
-	public static function doCheckRights($testcase, $expectedResults, $testInstance) {
-		foreach ($expectedResults as $er) {
-			$articleName = $er[0];
-			$user = $username = $er[1];
-			$action = $er[2];
-			$res = $er[3];
-			
-			$etc = haclfDisableTitlePatch();			
-			$article = Title::newFromText($articleName);
-			haclfRestoreTitlePatch($etc);			
-			
-			$user = $user == '*' ? new User() : User::newFromName($user);
-			unset($result);
-			HACLEvaluator::userCan($article, $user, $action, $result);
-			if (is_null($result)) {
-				$result = true;
-			}
-			
-			$testInstance->assertEquals($res, $result, "Test of rights failed for: $article, $username, $action (Testcase: $testcase)\n");
-			
-		}
-	}
 	
 	private function initArticleContent() {
-		$this->mOrderOfArticleCreation = array(
-			'Category:ACL/Group',
-			'Category:ACL/Right',
-			'Category:ACL/ACL',
-			'ACL:Right/SDForNewProject',
-			'ACL:Right/SDForNewRequest',
-			'ACL:Right/DynamicSD',
-			'ACL:Group/ProjectGroupTemplate',
-			'ACL:Group/RequestGroupTemplate',
-			'ACL:Right/SDWithGroup',
-			'ACL:Group/DynamicGroupManagers'
-		);
 		
 		$this->mArticles = array(
-//------------------------------------------------------------------------------		
-			'Category:ACL/Group' =>
-<<<ACL
-This is the category for groups.
-ACL
-,
-//------------------------------------------------------------------------------		
-			'Category:ACL/Right' =>
-<<<ACL
-This is the category for rights.
-ACL
-,
-//------------------------------------------------------------------------------		
-			'Category:ACL/ACL' =>
-<<<ACL
-This is the category for security descriptors.
-ACL
-,
 //------------------------------------------------------------------------------		
 			'ACL:Right/SDForNewProject' =>
 <<<ACL
@@ -237,32 +177,11 @@ ACL
 	}
 
     private function createArticles() {
-    	global $wgUser;
-    	$wgUser = User::newFromName("U1");
-    	
-    	$file = __FILE__;
-    	foreach ($this->mOrderOfArticleCreation as $title) {
-    		$pf = HACLParserFunctions::getInstance();
-    		$pf->reset();
-			self::createArticle($title, $this->mArticles[$title]);
-    	}
-    	
+        $this->mArticleManager = new ArticleManager();
+        $this->mArticleManager->createArticles($this->mArticles, "U1");
+        $this->mArticleManager->createACLBaseArticles("U1");
     }
- 
-    
-	private function removeArticles() {
-		
-		$articles = $this->mOrderOfArticleCreation;
-		
-		foreach ($articles as $a) {
-		    $t = Title::newFromText($a);
-	    	$article = new Article($t);
-			$article->doDeleteArticle("Testing");
-		}
-		
-	}
-	
-	
+ 	
 }
 
 /**
@@ -279,24 +198,17 @@ class TestDynamicSD extends PHPUnit_Framework_TestCase {
 	protected $backupGlobals = FALSE;
 	
 	// List of articles that were added during a test.
-	private $mAddedArticles = array();
+	private $mArticleManager;
 	
     function setUp() {
+    	$this->mArticleManager = new ArticleManager();
     }
 
     /**
      * Delete all articles that were created during a test.
      */
     function tearDown() {
-   		global $wgUser, $wgOut;
-    	$wgUser = User::newFromName("U1");
-    	
-		foreach ($this->mAddedArticles as $a) {
-		    $t = Title::newFromText($a);
-		    $wgOut->setTitle($t); // otherwise doDelete() will throw an exception
-	    	$article = new Article($t);
-			$article->doDelete("Testing");
-		}
+    	$this->mArticleManager->deleteArticles("U1");
     }
 
     /**
@@ -305,8 +217,8 @@ class TestDynamicSD extends PHPUnit_Framework_TestCase {
     function testCreateNormalArticle() {
 
     	// User U1 creates a public article
-    	TestDynamicHaloACLSuite::createArticle("Normal", "This is a public article.");
-    	$this->mAddedArticles[] = "Normal";
+    	$this->mArticleManager->createArticles(
+    		array("Normal" => "This is a public article."), "U1");
     	
     	$this->assertFalse(TestDynamicHaloACLSuite::articleExists("ACL:Page/Normal"));
     }
@@ -315,6 +227,7 @@ class TestDynamicSD extends PHPUnit_Framework_TestCase {
      * Data provider for testCreateDynamicCategorySD
      */
     function providerForCreateDynamicCategorySD() {
+		// $userName, $article, $category, $SDexpected    	
     	return array(
     		array('U1', 'ProjectA', 'Project', true),
     		array('U2', 'ProjectA', 'Project', true),
@@ -351,15 +264,11 @@ class TestDynamicSD extends PHPUnit_Framework_TestCase {
 	    	)
     	);
 
-    	global $wgUser;
-    	$wgUser = User::newFromName($userName);
-    	
    		$catAnno = is_null($category) ? '' : "[[Category:$category]]";
     	$content = "This is an article. $catAnno";
     	
-    	TestDynamicHaloACLSuite::createArticle($article, $content);
-    	$this->mAddedArticles[] = $article;
-    	$this->mAddedArticles[] = "ACL:Page/$article";
+    	$this->mArticleManager->createArticles(array($article => $content), $userName);
+    	$this->mArticleManager->addArticle("ACL:Page/$article");
     	
     	if (!$SDexpected) {
     		// expected that NO SD is created
@@ -391,7 +300,7 @@ class TestDynamicSD extends PHPUnit_Framework_TestCase {
 			array($article, 'U1', 'edit', true),
 			array($article, 'U2', 'edit', false),
 			);
-		TestDynamicHaloACLSuite::doCheckRights("testCreateDynamicCategorySD", $checkRights, $this);
+		HaloACLCommon::checkRights($this, "testCreateDynamicCategorySD", $checkRights);
     }
 
     /**
@@ -436,19 +345,17 @@ class TestDynamicSD extends PHPUnit_Framework_TestCase {
     		$haclgDynamicSD[0]["allowUnauthorizedSDChange"] = $allowUnauthorizedSDChange;
     	}
     	$content = "This is an article. [[Category:Project]]";
-    	global $wgUser;
+
     	// Create article as user 1
-    	$wgUser = User::newFromName($user1);
-    	TestDynamicHaloACLSuite::createArticle("ProjectA", $content);
-    	$this->mAddedArticles[] = "ProjectA";
-    	$this->mAddedArticles[] = "ACL:Page/ProjectA";
+    	$this->mArticleManager->createArticles(array("ProjectA" => $content), $user1);
+    	$this->mArticleManager->addArticle("ACL:Page/ProjectA");
+    	
    		// expected that an SD is created
     	$this->assertTrue(TestDynamicHaloACLSuite::articleExists("ACL:Page/ProjectA"));
     	
     	// Create article as user 2
-    	$wgUser = User::newFromName($user2);
     	try {
-    		TestDynamicHaloACLSuite::createArticle("ProjectA", $content);
+    		$this->mArticleManager->createArticles(array("ProjectA" => $content), $user2);
     	} catch (Exception $e) {
     		if (!$exceptionExpected) {
     			// No exception expected => fail
@@ -498,10 +405,9 @@ class TestDynamicSD extends PHPUnit_Framework_TestCase {
     	
     	// Create an article that triggers a dynamic SD rule
     	$content = "This is an article. [[Category:Project]]";
-    	$wgUser = User::newFromName("U1");
     	
     	try {
-    		TestDynamicHaloACLSuite::createArticle("ProjectA", $content);
+    		$this->mArticleManager->createArticles(array("ProjectA" => $content), "U1");
     	} catch (Exception $e) {
     		if (!$exceptionExpected) {
     			// No exception expected => fail
@@ -554,24 +460,20 @@ class TestDynamicSD extends PHPUnit_Framework_TestCase {
 			);
 		
 		// Make "ProjectA" accessible for U1
-    	$wgUser = User::newFromName("U1");
-    	TestDynamicHaloACLSuite::createArticle("ProjectA", $content);
-		TestDynamicHaloACLSuite::doCheckRights("testSequenceofSDs_1", $checkRightsU1, $this);
+    	$this->mArticleManager->createArticles(array("ProjectA" => $content), "U1");
+		HaloACLCommon::checkRights($this, "testSequenceofSDs_1", $checkRightsU1);
 		
 		// Make "ProjectA" accessible for U2
-    	$wgUser = User::newFromName("U2");
-    	TestDynamicHaloACLSuite::createArticle("ProjectA", $content);
-		TestDynamicHaloACLSuite::doCheckRights("testSequenceofSDs_2", $checkRightsU2, $this);
+    	$this->mArticleManager->createArticles(array("ProjectA" => $content), "U2");
+		HaloACLCommon::checkRights($this, "testSequenceofSDs_2", $checkRightsU2);
 		
 		// Make "ProjectA" accessible for U1
-    	$wgUser = User::newFromName("U1");
-    	TestDynamicHaloACLSuite::createArticle("ProjectA", $content);
-		TestDynamicHaloACLSuite::doCheckRights("testSequenceofSDs_3", $checkRightsU1, $this);
+    	$this->mArticleManager->createArticles(array("ProjectA" => $content), "U1");
+		HaloACLCommon::checkRights($this, "testSequenceofSDs_3", $checkRightsU1);
 		
 		// Make "ProjectA" accessible for U2
-    	$wgUser = User::newFromName("U2");
-    	TestDynamicHaloACLSuite::createArticle("ProjectA", $content);
-		TestDynamicHaloACLSuite::doCheckRights("testSequenceofSDs_2", $checkRightsU2, $this);
+    	$this->mArticleManager->createArticles(array("ProjectA" => $content), "U2");
+		HaloACLCommon::checkRights($this, "testSequenceofSDs_2", $checkRightsU2);
 				
     }
     
@@ -593,26 +495,17 @@ class TestDynamicGroup extends PHPUnit_Framework_TestCase {
 
 	protected $backupGlobals = FALSE;
 	
-	// List of articles that were added during a test.
-	private $mAddedArticles = array();
-	
+	private $mArticleManager;
+		
     function setUp() {
+    	$this->mArticleManager = new ArticleManager();
     }
 
     /**
      * Delete all articles that were created during a test.
      */
     function tearDown() {
-		
-   		global $wgUser, $wgOut;
-    	$wgUser = User::newFromName("U1");
-    	
-		foreach ($this->mAddedArticles as $a) {
-		    $t = Title::newFromText($a);
-		    $wgOut->setTitle($t); // otherwise doDelete() will throw an exception
-	    	$article = new Article($t);
-			$article->doDelete("Testing");
-		}
+		$this->mArticleManager->deleteArticles("U1");
     }
 
     /**
@@ -630,8 +523,8 @@ class TestDynamicGroup extends PHPUnit_Framework_TestCase {
 		);
     	
     	// User U1 creates a public article
-    	TestDynamicHaloACLSuite::createArticle("Normal", "This is a normal article.");
-    	$this->mAddedArticles[] = "Normal";
+    	$this->mArticleManager->createArticles(
+    		array("Normal" => "This is a normal article."), "U1");
     	
     	$this->assertFalse(TestDynamicHaloACLSuite::articleExists("ACL:Group/MembersOfNormal"));
     }
@@ -674,16 +567,12 @@ class TestDynamicGroup extends PHPUnit_Framework_TestCase {
 	    	)
 	    );
     	
-    	global $wgUser;
-    	$wgUser = User::newFromName($userName);
-    	
    		$catAnno = is_null($category) ? '' : "[[Category:$category]]";
     	$content = "This is an article. $catAnno";
     	$groupName = "ACL:Group/MembersOf$article";
     	
-    	TestDynamicHaloACLSuite::createArticle($article, $content);
-    	$this->mAddedArticles[] = $article;
-    	$this->mAddedArticles[] = $groupName;
+    	$this->mArticleManager->createArticles(array($article => $content), $userName);
+    	$this->mArticleManager->addArticle($groupName);
     	
     	if (!$groupExpected) {
     		// expected that NO group is created
@@ -730,7 +619,7 @@ class TestDynamicGroup extends PHPUnit_Framework_TestCase {
     		            "groupTemplate" => "ACL:Group/ProjectGroupTemplate"), true),
     		array(array("user" => "U1", "category" => "Project", 
     		            "groupTemplate" => "ACL:Group/ProjectGroupTemplate",
-    		            "name" => "MemberOf{{{articleName}}}"), false),
+    		            "name" => "ACL:Group/MemberOf{{{articleName}}}"), false),
     	);
     }
     
@@ -753,11 +642,12 @@ class TestDynamicGroup extends PHPUnit_Framework_TestCase {
     	
     	// Create an article that triggers a dynamic SD rule
     	$content = "This is an article. [[Category:Project]]";
-    	$wgUser = User::newFromName("U1");
     	
     	try {
-    		$this->mAddedArticles[] = "ACL:Page/ProjectA";
-    		TestDynamicHaloACLSuite::createArticle("ProjectA", $content);
+    		$this->mArticleManager->addArticle("ACL:Page/ProjectA");
+    		$this->mArticleManager->addArticle("ACL:Group/MemberOfProjectA");
+    		$this->mArticleManager->createArticles(array("ProjectA" => $content), "U1");
+    		
     	} catch (Exception $e) {
     		if (!$exceptionExpected) {
     			// No exception expected => fail
@@ -811,27 +701,19 @@ class TestDynamicSDWithGroup extends PHPUnit_Framework_TestCase {
 
 	protected $backupGlobals = FALSE;
 	
-	// List of articles that were added during a test.
-	private $mAddedArticles = array();
-	
+	private $mArticleManager;
+		
     function setUp() {
+    	$this->mArticleManager = new ArticleManager();
     }
 
     /**
      * Delete all articles that were created during a test.
      */
     function tearDown() {
-   		global $wgUser, $wgOut;
-    	$wgUser = User::newFromName("U1");
-    	
-		foreach ($this->mAddedArticles as $a) {
-		    $t = Title::newFromText($a);
-		    $wgOut->setTitle($t); // otherwise doDelete() will throw an exception
-	    	$article = new Article($t);
-			$article->doDelete("Testing");
-		}
+		$this->mArticleManager->deleteArticles("U1");
     }
-
+	
     /**
      * Creates an article that is associated with a dynamic SD and a dynamic group.
      */
@@ -859,18 +741,14 @@ class TestDynamicSDWithGroup extends PHPUnit_Framework_TestCase {
 	    	),
 	    );
 	    
-    	global $wgUser;
-    	$wgUser = User::newFromName('U1');
-    	
     	$article = "My Project";
     	$content = "This is an article. [[Category:Project]]";
     	$groupName = "ACL:Group/GroupFor$article";
     	$sdName = "ACL:Page/$article";
     	
-    	TestDynamicHaloACLSuite::createArticle($article, $content);
-    	$this->mAddedArticles[] = $article;
-    	$this->mAddedArticles[] = $groupName;
-    	$this->mAddedArticles[] = $sdName;
+    	$this->mArticleManager->createArticles(array($article => $content), "U1");
+    	$this->mArticleManager->addArticle($groupName);
+    	$this->mArticleManager->addArticle($sdName);
 
     	// Verify that group and SD were created according to the rule
     	$this->assertTrue(TestDynamicHaloACLSuite::articleExists($groupName));
@@ -883,7 +761,7 @@ class TestDynamicSDWithGroup extends PHPUnit_Framework_TestCase {
 			array($article, 'U2', 'edit', false),
 			);
 		
-		TestDynamicHaloACLSuite::doCheckRights("testCreateSDWithGroup", $checkRights, $this);
+		HaloACLCommon::checkRights($this, "testCreateSDWithGroup", $checkRights);
     	
     }
     
@@ -902,29 +780,25 @@ class TestDynamicGroupStructure extends PHPUnit_Framework_TestCase {
 
 	protected $backupGlobals = FALSE;
 	
-	// List of articles that were added during a test.
-	private $mAddedArticles = array();
-	
+	private $mArticleManager;
+		
     function setUp() {
     	LinkCache::singleton()->clear();
+    	$this->mArticleManager = new ArticleManager();
     }
 
     /**
      * Delete all articles that were created during a test.
      */
     function tearDown() {
-   		global $wgUser, $wgOut;
-    	$wgUser = User::newFromName("U1");
     	HACLGroup::setAllowUnauthorizedGroupChange(true);
-		foreach ($this->mAddedArticles as $a) {
-		    $t = Title::newFromText($a);
-		    $wgOut->setTitle($t); // otherwise doDelete() will throw an exception
-	    	$article = new Article($t);
-			$article->doDelete("Testing");
-		}
+		$this->mArticleManager->deleteArticles("U1");
     	HACLGroup::setAllowUnauthorizedGroupChange(false);
+    	unset($GLOBALS['haclgDynamicGroup']); 	
+    	unset($GLOBALS['haclgDynamicRootGroup']); 	
+    	unset($GLOBALS['haclgDynamicCategoryGroup']); 	
+    	unset($GLOBALS['haclgDynamicGroupManager']); 	
     }
-
     
     /**
      * Data provider for testCreateDynamicGroupStructure
@@ -1012,17 +886,13 @@ class TestDynamicGroupStructure extends PHPUnit_Framework_TestCase {
 	    	),
 	    );
 	    
-    	global $wgUser;
-    	$wgUser = User::newFromName('U1');
-    	
     	$content = "This is an article. [[Category:$category]]";
     	$parentGroup .= "$category";
     	
-    	TestDynamicHaloACLSuite::createArticle($article, $content);
-    	$this->mAddedArticles[] = $article;
-    	$this->mAddedArticles[] = "ACL:Group/".$grandparentGroup;
-    	$this->mAddedArticles[] = "ACL:Group/".$parentGroup;
-    	$this->mAddedArticles[] = "ACL:Group/".$group;
+    	$this->mArticleManager->createArticles(array($article => $content), "U1");
+    	$this->mArticleManager->addArticle("ACL:Group/".$grandparentGroup);
+    	$this->mArticleManager->addArticle("ACL:Group/".$parentGroup);
+    	$this->mArticleManager->addArticle("ACL:Group/".$group);
 
     	// Verify that group and its parent groups exist
     	$this->assertTrue(TestDynamicHaloACLSuite::articleExists("ACL:Group/".$group));
@@ -1077,29 +947,22 @@ class TestDynamicGroupStructure extends PHPUnit_Framework_TestCase {
 	    	),
 	    );
 	    
-    	global $wgUser;
-    	$wgUser = User::newFromName('U1');
-    	
     	// Create two projects and two requests
-    	TestDynamicHaloACLSuite::createArticle("ProjectA", "This is an article. [[Category:Project]]");
-    	TestDynamicHaloACLSuite::createArticle("ProjectB", "This is an article. [[Category:Project]]");
-    	TestDynamicHaloACLSuite::createArticle("RequestA", "This is an article. [[Category:Request]]");
-    	TestDynamicHaloACLSuite::createArticle("RequestB", "This is an article. [[Category:Request]]");
-    	$this->mAddedArticles[] = "ProjectA";
-    	$this->mAddedArticles[] = "ProjectB";
-    	$this->mAddedArticles[] = "RequestA";
-    	$this->mAddedArticles[] = "RequestB";
-    	$this->mAddedArticles[] = "ACL:Group/".$haclgDynamicRootGroup;
-    	$this->mAddedArticles[] = "ACL:Group/{$haclgDynamicCategoryGroup}Project";
-    	$this->mAddedArticles[] = "ACL:Group/{$haclgDynamicCategoryGroup}Request";
-    	$this->mAddedArticles[] = "ACL:Group/GroupForProjectA";
-    	$this->mAddedArticles[] = "ACL:Group/GroupForProjectB";
-    	$this->mAddedArticles[] = "ACL:Group/GroupForRequestA";
-    	$this->mAddedArticles[] = "ACL:Group/GroupForRequestB";
-    	
+    	$this->mArticleManager->createArticles(
+    		array("ProjectA" => "This is an article. [[Category:Project]]",
+    		      "ProjectB" => "This is an article. [[Category:Project]]",
+    		      "RequestA" => "This is an article. [[Category:Request]]",
+    		      "RequestB" => "This is an article. [[Category:Request]]"), "U1");
+    	$this->mArticleManager->addArticle("ACL:Group/".$haclgDynamicRootGroup);
+    	$this->mArticleManager->addArticle("ACL:Group/{$haclgDynamicCategoryGroup}Project");
+    	$this->mArticleManager->addArticle("ACL:Group/{$haclgDynamicCategoryGroup}Request");
+    	$this->mArticleManager->addArticle("ACL:Group/GroupForProjectA");
+    	$this->mArticleManager->addArticle("ACL:Group/GroupForProjectB");
+    	$this->mArticleManager->addArticle("ACL:Group/GroupForRequestA");
+    	$this->mArticleManager->addArticle("ACL:Group/GroupForRequestB");
 
     	// Verify that all articles exist
-    	foreach ($this->mAddedArticles as $a) {
+    	foreach ($this->mArticleManager->getAddedArticles() as $a) {
 	    	$this->assertTrue(TestDynamicHaloACLSuite::articleExists($a));
     	} 
     	
@@ -1123,7 +986,6 @@ class TestDynamicGroupStructure extends PHPUnit_Framework_TestCase {
 		$this->checkGroupMembers("testCreateDynamicGroupStructure2", $checkGroups);
     	
     }
-    
     
     /**
      * Tests if a group is member of a group.
@@ -1167,6 +1029,1477 @@ class TestDynamicGroupStructure extends PHPUnit_Framework_TestCase {
 			    ." (Testcase: $testcase)\n");
     	}
     }
+
     
 }
 
+
+/**
+ * This class tests the dynamic assignees in access rights. 
+ * Members are set as result of a query.
+ * 
+ * 
+ * It assumes that the HaloACL extension is enabled in LocalSettings.php and that 
+ * the triples store is running.
+ * 
+ * @author thsc
+ *
+ */
+class TestDynamicAssignees extends PHPUnit_Framework_TestCase {
+
+
+	private static $mArticles = array(
+//------------------------------------------------------------------------------		
+			'Property:TeamMembers' =>
+<<<ACL
+This is the property for team members.
+
+[[has type::Type:Page| ]]
+[[has domain and range::Category:Team; Category:User| ]]
+[[has domain and range::Category:Team; Category:ACL/Group| ]]
+
+ACL
+,	
+//------------------------------------------------------------------------------		
+			'Property:ProjectMembers' =>
+<<<ACL
+This is the property for project members.
+
+[[has type::Type:Page| ]]
+[[has domain and range::Category:Team; Category:User| ]]
+[[has domain and range::Category:Team; Category:ACL/Group| ]]
+
+ACL
+,	
+//------------------------------------------------------------------------------		
+			'ACL:Group/A' =>
+<<<ACL
+{{#manage group: assigned to=User:U1}}
+{{#member:members=User:U2,User:U3}}
+
+[[Category:ACL/Group]]
+
+ACL
+,
+//------------------------------------------------------------------------------		
+			'ACL:Group/B' =>
+<<<ACL
+{{#manage group: assigned to=User:U1}}
+{{#member:members=User:U4,User:U5 }}
+
+[[Category:ACL/Group]]
+
+ACL
+,
+//------------------------------------------------------------------------------		
+			'TeamA' =>
+<<<ACL
+This is team A.
+[[TeamMembers::User:U1]]
+[[TeamMembers::ACL:Group/A]]
+
+[[ProjectMembers::User:U1]]
+[[ProjectMembers::User:U2]]
+[[ProjectMembers::User:U3]]
+[[ProjectMembers::ACL:Group/A]]
+[[ProjectMembers::ACL:Group/B]]
+{{#ask: [[TeamMembers::+]]
+| ?TeamMembers = Team 
+}}
+{{#ask: [[ProjectMembers::+]]
+| ?ProjectMembers = Project
+}}
+ACL
+,	
+//------------------------------------------------------------------------------		
+			'TeamB' =>
+<<<ACL
+This is the page for Team B.
+
+ACL
+,	
+//------------------------------------------------------------------------------		
+			'ACL:Page/TeamB' =>
+<<<ACL
+This is the security descriptor for page TeamB.
+{{#access:
+| assigned to =User:U5, {{#ask: [[TeamA]][[TeamMembers::+]]|?TeamMembers # =}}
+|actions=wysiwyg
+|description=Allows wysiwyg
+}}
+
+{{#access:
+| assigned to =User:U5, 
+    {{#sparql: SELECT ?m WHERE { a:TeamA property:ProjectMembers ?m .} |?m # =}}
+|actions=formedit
+|description=Allows formedit
+}}
+
+{{#access:
+| assigned to =User:U5, 
+    {{#ask: [[TeamA]][[TeamMembers::+]]|?TeamMembers # =}},
+    {{#sparql: SELECT ?m WHERE { a:TeamA property:ProjectMembers ?m .} |?m # =}}
+|actions=read
+|description=Allows read
+}}
+
+{{#manage rights: assigned to=User:U1}}s
+
+[[Category:ACL/ACL]]
+ACL
+,	
+	);
+	
+	private static $mArticleManager;
+	protected $backupGlobals = FALSE;
+
+	public static function setUpBeforeClass() {
+    	// reset group permissions
+    	global $wgGroupPermissions;
+    	foreach ($wgGroupPermissions as $group => $permissions) {
+    		foreach ($permissions as $p => $value) {
+    			$wgGroupPermissions[$group][$p] = true;
+    		}
+    	}
+    	
+    	HACLStorage::reset(HACL_STORE_SQL);
+    	
+    	HaloACLCommon::createUsers(array("U1", "U2", "U3", "U4", "U5"));
+    	
+        self::$mArticleManager = new ArticleManager();
+        self::$mArticleManager->createArticles(self::$mArticles, "U1");
+    }
+
+	public static function tearDownAfterClass() {
+       	self::$mArticleManager->deleteArticles("U1");
+    }
+    
+    /**
+     * Checks if the parameter "assigned to" is parsed correctly if it contains
+     * queries for dynamic assignees.
+     */
+    function testAssignedToParameter() {
+    	$popts = new ParserOptions();
+		$parser = new Parser();
+
+		global $wgTitle;
+		$wgTitle = Title::newFromText("Some Page");
+    	
+		$teamQuery = <<<ASK
+{{#ask: [[TeamMembers::+]]
+| ?TeamMembers = Team 
+}}
+ASK
+;
+		$projectQuery = <<<ASK
+{{#sparql:
+SELECT ?pm
+WHERE {
+	?s property:ProjectMembers ?pm .
+}
+}}
+ASK
+;
+		
+		$wikiText = <<<ACL
+{{#access:
+| assigned to =User:U1,User:U2, $teamQuery, Group/A, $projectQuery
+|actions=edit
+|description=Allows edit
+}}
+
+ACL
+;		
+		$pf = HACLParserFunctions::getInstance();
+
+		// Parse the wiki text
+		global $wgParser;
+		$popts = new ParserOptions();
+		$po = $wgParser->parse($wikiText, $wgTitle, $popts );
+		
+		// verify that dynamic assignees are set
+		$rights = $pf->getInlineRights();
+		
+		// expect one inline right
+		$this->assertEquals(1, count($rights), "Expected exactly one inline right.");
+		
+		$right = $rights[0];
+		
+		// Check for expected queries
+		$daqs = $right->getDynamicAssigneeQueries();
+		$this->assertEquals(2, count($daqs), "Expected 2 queries for dynamic assignees.");
+		
+		// Remove whitespaces
+		$qe = preg_replace("/\s*/", "", $teamQuery);
+		$qa = preg_replace("/\s*/", "", $daqs[0]);
+		$this->assertEquals($qe, $qa, "Expected the team query.");
+		
+		$qe = preg_replace("/\s*/", "", $projectQuery);
+		$qa = preg_replace("/\s*/", "", $daqs[1]);
+		$this->assertEquals($qe, $qa, "Expected the project query.");
+		
+		// Check for expected users
+		$users = $right->getUsers();
+		$this->assertEquals(2, count($users), "Expected 2 users.");
+		
+		$this->assertContains(User::idFromName("U1"), $users, "Expected ID of user U1");
+		$this->assertContains(User::idFromName("U2"), $users, "Expected ID of user U2");
+
+		// Check for expected groups
+		$groups = $right->getGroups();
+		$this->assertEquals(1, count($groups), "Expected one group.");
+		
+		$this->assertContains(HACLGroup::idForGroup("Group/A"), $groups, "Expected ID of group Group/A");
+    	
+    }
+    
+    /**
+     * Data provider for testDynamicAssignees
+     */
+    function providerForDynamicAssignees() {
+		// $daq, $expectedAssignees
+    	return array(
+    		array(
+    			array(
+		    		"{{#ask: [[TeamA]][[TeamMembers::+]]|?TeamMembers # =}}",
+		    	), 
+		    	array("users"  => array("U1"), 
+		    	      "groups" => array("Group/A"))
+		   ),
+    		array(
+    			array(
+		    		"{{#sparql: SELECT ?tm WHERE { a:TeamA property:TeamMembers ?tm .} |?tm # =}}"
+		    	), 
+		    	array("users"  => array("U1"), 
+		    	      "groups" => array("Group/A"))
+		   ),
+    		array(
+    			array(
+		    		"{{#ask: [[TeamA]][[ProjectMembers::+]]|?ProjectMembers # =}}",
+		    	), 
+		    	array("users"  => array("U1", "U2", "U3"), 
+		    	      "groups" => array("Group/A", "Group/B"))
+		   ),
+    		array(
+    			array(
+		    		"{{#sparql: SELECT ?tm WHERE { a:TeamA property:ProjectMembers ?tm .} |?tm # =}}"
+		    	), 
+		    	array("users"  => array("U1", "U2", "U3"), 
+		    	      "groups" => array("Group/A", "Group/B"))
+		   ),
+    	);
+    }
+    
+    
+    /**
+     * This function tests if the queries for dynamic assignees are correctly
+     * evaluated.
+     * 
+     * @param array(string) $daq
+     * 		Array of queries for dynamic assignees
+	 * @param array(string/int/object) $expectedAssignees
+	 * 		Expected assignees of the right
+     * @dataProvider providerForDynamicAssignees
+     */
+    public function testDynamicAssigneesTest($daq, $expectedAssignees) {
+    	
+    	$modes = array(HACLRight::NAME, HACLRight::ID, HACLRight::OBJECT);
+    	
+    	foreach ($modes as $mode) {
+	    	// Create a right with dynamic assignees
+	    	$right = new HACLRight(HACLRight::READ, null, null, $daq, "Test", "Test");
+	    	
+	    	$da = $right->queryDynamicAssignees($mode);
+	    	$groups = $da['groups'];
+	    	$users  = $da['users'];
+	    	$expGroups = $expectedAssignees['groups']; 
+	    	$expUsers  = $expectedAssignees['users']; 
+	    	$numExpected = count($groups);
+	    	$this->assertEquals($numExpected, count($expGroups), "Expected $numExpected dynamic groups.");
+	    	$numExpected = count($users);
+	    	$this->assertEquals($numExpected, count($expUsers), "Expected $numExpected dynamic users.");
+	
+	    	// Check expected groups
+	    	if ($mode == HACLRight::ID || $mode == HACLRight::OBJECT) {
+	    		// convert all expected group names to IDs
+	    		foreach ($expGroups as $k => $g) {
+	    			$expGroups[$k] = HACLGroup::idForGroup($g);	
+	    		}
+	    	}
+	    	if ($mode == HACLRight::OBJECT) {
+	    		// convert all actual group objects to IDs
+	    		foreach ($groups as $k => $g) {
+	    			$this->assertTrue($g instanceof HACLGroup, "Expected an instance of HACLGroup.");
+	    			$groups[$k] = $g->getGroupID();	
+	    		}
+	    	}
+	    	// Check expected groups
+	    	foreach ($expGroups as $eg) {
+	    		if ($mode == HACLRight::NAME) {
+	    			$this->assertContains($eg, $groups, "Expected group <$eg> to be a dynamic member.");
+	    		} else {
+	    			// ID or OBJECT
+	    			$this->assertContains($eg, $groups, "Expected group with ID <$eg> to be a dynamic member.");
+	    		}
+	    	}
+
+	    	// Check expected users
+	    	if ($mode == HACLRight::ID || $mode == HACLRight::OBJECT) {
+	    		// convert all expected user names to IDs
+	    		foreach ($expUsers as $k => $u) {
+	    			$expUsers[$k] = User::idFromName($u);	
+	    		}
+	    	}
+	    	if ($mode == HACLRight::OBJECT) {
+	    		// convert all actual user objects to IDs
+	    		foreach ($users as $k => $u) {
+	    			$this->assertTrue($u instanceof User, "Expected an instance of User.");
+	    			$users[$k] = $u->getId();	
+	    		}
+	    	}
+	    	// Check expected users
+	    	foreach ($expUsers as $eu) {
+	    		if ($mode == HACLRight::NAME) {
+	    			$this->assertContains($eu, $users, "Expected user <$eu> to be a dynamic member.");
+	    		} else {
+	    			// ID or OBJECT
+	    			$this->assertContains($eu, $users, "Expected user with ID <$eu> to be a dynamic member.");
+	    		}
+	    	}
+    	}
+    }
+    
+    
+    /**
+     * Data provider for testDynamicAssigneeRights
+     */
+    function providerForDynamicAssigneeRights() {
+		// $daq, $grantedForUsers, $deniedForUsers
+    	return array(
+    		array(
+    			array(
+		    		"{{#ask: [[TeamA]][[TeamMembers::+]]|?TeamMembers # =}}",
+		    	), 
+		    	array("U1", "U2", "U3"),
+		    	array("U4", "U5"),
+			),
+    		array(
+    			array(
+		    		"{{#sparql: SELECT ?tm WHERE { a:TeamA property:TeamMembers ?tm .} |?tm # =}}"
+		    	), 
+		    	array("U1", "U2", "U3"),
+		    	array("U4", "U5"),
+		    ),
+    		array(
+    			array(
+		    		"{{#ask: [[TeamA]][[ProjectMembers::+]]|?ProjectMembers # =}}",
+		    	), 
+		    	array("U1", "U2", "U3", "U4", "U5"),
+		    	array()
+		   ),
+    		array(
+    			array(
+		    		"{{#sparql: SELECT ?tm WHERE { a:TeamA property:ProjectMembers ?tm .} |?tm # =}}"
+		    	), 
+		    	array("U1", "U2", "U3", "U4", "U5"),
+		    	array()
+			),
+    	);
+    }
+    
+    
+    
+	/**
+     * This function tests if rights for dynamic assignees are correctly
+     * evaluated.
+     * 
+     * @param array(string) $daq
+     * 		Array of queries for dynamic assignees
+	 * @param array(string) $grantedForUsers
+	 * 		Users who get the right
+	 * @param array(string) $deniedForUsers
+	 * 		Users who do not get the right
+	 * 
+     * @dataProvider providerForDynamicAssigneeRights
+     */
+    public function testDynamicAssigneeRights($daq, $grantedForUsers, $deniedForUsers) {
+    	
+    	// Create a right with dynamic assignees
+    	$right = new HACLRight(HACLRight::READ, null, null, $daq, "Test", "Test");
+    	
+    	// Check the granted rights for users
+    	foreach ($grantedForUsers as $u) {
+    		$this->assertTrue($right->grantedForUser($u), "Expected that the right is granted for user $u");
+    	}
+    	// Check the denied rights for users
+    	foreach ($deniedForUsers as $u) {
+    		$this->assertFalse($right->grantedForUser($u), "Expected that the right is denied for user $u");
+    	}
+    	
+    }
+    
+    /**
+     * Checks if the queries for assignees are stored correctly in the database.
+     */
+    public function testDynamicAssigneeDB() {
+    	// Get the Security Descriptor of "TeamB"
+    	$sd = HACLSecurityDescriptor::newFromName("ACL:Page/TeamB");
+    	
+    	// Get all three rights of the SD
+    	$rightIDs = $sd->getInlineRights();
+    	
+    	$r1 = HACLRight::newFromID($rightIDs[0]);
+    	$r2 = HACLRight::newFromID($rightIDs[1]);
+    	$r3 = HACLRight::newFromID($rightIDs[2]);
+    	
+    	$daq1 = $r1->getDynamicAssigneeQueries();
+    	$daq2 = $r2->getDynamicAssigneeQueries();
+    	$daq3 = $r3->getDynamicAssigneeQueries();
+    	
+    	$this->assertEquals(4, count($daq1) + count($daq2) + count($daq3), 
+    						"Expected four queries for dynamic assignees.");
+    	
+    }
+    
+    /**
+     * Data provider for testDynamicAssigneeRightsUserCan
+     */
+    function providerForDynamicAssigneeRightsUserCan() {
+    	// $action, $grantedForUsers, $deniedForUsers
+    	return array(
+    		array("read", 
+    		      array("U1", "U2", "U3", "U4", "U5"),
+    		      array()),
+    		array("formedit", 
+    		      array("U1", "U2", "U3", "U4", "U5"),
+    		      array()),
+    		array("wysiwyg", 
+    		      array("U1", "U2", "U3", "U5"),
+    		      array("U4")),
+    	);
+    }
+    
+    
+    /**
+     * Checks if the rights with dynamic assignees from the database are correctly
+     * evaluated in the userCan function for article TeamB.
+     * 
+     * @param string $action
+     * 		The action to test
+     * @param array<string> $grantedForUsers
+     * 		List of users with granted access
+     * @param unknown_type $deniedForUsers
+     * 		List of users with denied access
+     * 
+     * @dataProvider providerForDynamicAssigneeRightsUserCan
+     */
+    public function testDynamicAssigneeRightsUserCan($action, $grantedForUsers, $deniedForUsers) {
+    	$test = array(array("TeamB", null, $action, null));
+    	
+    	// Check the granted rights for users
+    	foreach ($grantedForUsers as $u) {
+    		$test[0][1] = $u;
+    		$test[0][3] = true;
+     		HaloACLCommon::checkRights($this, 'testDynamicAssigneeRightsUserCan-granted', $test);
+    	}
+    	
+    	// Check the denied rights for users
+    	foreach ($deniedForUsers as $u) {
+    		$test[0][1] = $u;
+    		$test[0][3] = false;
+     		HaloACLCommon::checkRights($this, 'testDynamicAssigneeRightsUserCan-denied', $test);
+    	}
+    	
+    }
+}
+        
+/**
+ * This class tests the dynamic membership of groups and users in groups. 
+ * Members are set as result of a query.
+ * 
+ * 
+ * It assumes that the HaloACL extension is enabled in LocalSettings.php and that 
+ * the triples store is running.
+ * 
+ * @author thsc
+ *
+ */
+class TestDynamicMembers extends PHPUnit_Framework_TestCase {
+
+
+	private static $mArticles = array(
+//------------------------------------------------------------------------------		
+			'Property:TeamMembers' =>
+<<<ACL
+This is the property for team members.
+
+[[has type::Type:Page| ]]
+[[has domain and range::Category:Team; Category:User| ]]
+[[has domain and range::Category:Team; Category:ACL/Group| ]]
+
+ACL
+,	
+//------------------------------------------------------------------------------		
+			'Property:ProjectMembers' =>
+<<<ACL
+This is the property for project members.
+
+[[has type::Type:Page| ]]
+[[has domain and range::Category:Team; Category:User| ]]
+[[has domain and range::Category:Team; Category:ACL/Group| ]]
+
+ACL
+,	
+//------------------------------------------------------------------------------		
+			'ACL:Group/A' =>
+<<<ACL
+{{#manage group: assigned to=User:U1}}
+{{#member:members=User:U2,User:U3}}
+
+[[Category:ACL/Group]]
+
+ACL
+,
+//------------------------------------------------------------------------------		
+			'ACL:Group/B' =>
+<<<ACL
+{{#manage group: assigned to=User:U1}}
+{{#member:members=User:U4,User:U5 }}
+
+[[Category:ACL/Group]]
+
+ACL
+,
+//------------------------------------------------------------------------------		
+			'TeamA' =>
+<<<ACL
+This is team A.
+[[TeamMembers::User:U1]]
+[[TeamMembers::ACL:Group/A]]
+
+[[ProjectMembers::User:U1]]
+[[ProjectMembers::User:U2]]
+[[ProjectMembers::User:U3]]
+[[ProjectMembers::ACL:Group/A]]
+[[ProjectMembers::ACL:Group/B]]
+{{#ask: [[TeamMembers::+]]
+| ?TeamMembers = Team 
+}}
+{{#ask: [[ProjectMembers::+]]
+| ?ProjectMembers = Project
+}}
+ACL
+,	
+	);
+	
+	private static $mArticleManager;
+	protected $backupGlobals = FALSE;
+
+	public static function setUpBeforeClass() {
+    	// reset group permissions
+    	global $wgGroupPermissions;
+    	foreach ($wgGroupPermissions as $group => $permissions) {
+    		foreach ($permissions as $p => $value) {
+    			$wgGroupPermissions[$group][$p] = true;
+    		}
+    	}
+    	
+    	HACLStorage::reset(HACL_STORE_SQL);
+    	
+    	HaloACLCommon::createUsers(array("U1", "U2", "U3", "U4", "U5"));
+    	        
+        self::$mArticleManager = new ArticleManager();
+        self::$mArticleManager->createArticles(self::$mArticles, "U1");
+    }
+
+	public static function tearDownAfterClass() {
+       	self::$mArticleManager->deleteArticles("U1");
+       	// Delete groups that were create during tests
+       	HACLStorage::getDatabase()->deleteGroup(42);
+    }
+    
+
+    /**
+     * Checks if the parameter "members" is parsed correctly if it contains
+     * queries for dynamic assignees.
+     */
+    function testMembersParameter() {
+    	$popts = new ParserOptions();
+		$parser = new Parser();
+
+		global $wgTitle;
+		$wgTitle = Title::newFromText("Some Page");
+    	
+		$teamQuery = <<<ASK
+{{#ask: [[TeamA]][[TeamMembers::+]]|?TeamMembers # =}}
+ASK;
+		$projectQuery = <<<ASK
+{{#sparql: SELECT ?tm WHERE { a:TeamA property:ProjectMembers ?tm .} |?tm # =}}
+ASK;
+		
+		$wikiText = <<<ACL
+{{#member:
+| members =User:U1,User:U2, $teamQuery, Group/A, $projectQuery
+}}
+
+{{#member:
+| members =$teamQuery
+}}
+
+ACL
+;		
+		$pf = HACLParserFunctions::getInstance();
+
+		// Parse the wiki text
+		global $wgParser;
+		$popts = new ParserOptions();
+		$po = $wgParser->parse($wikiText, $wgTitle, $popts );
+		
+		// verify that dynamic members are set
+		$dmq = $pf->getDynamicMemberQueries();
+		
+		// expect three dynamic member queries
+		$this->assertEquals(3, count($dmq), "Expected exactly three dynamic member query.");
+		
+		// Remove whitespaces
+		$qe = preg_replace("/\s*/", "", $teamQuery);
+		$qa = preg_replace("/\s*/", "", $dmq[0]);
+		$this->assertEquals($qe, $qa, "Expected the team query.");
+		
+		$qe = preg_replace("/\s*/", "", $projectQuery);
+		$qa = preg_replace("/\s*/", "", $dmq[1]);
+		$this->assertEquals($qe, $qa, "Expected the project query.");
+		
+		$qe = preg_replace("/\s*/", "", $teamQuery);
+		$qa = preg_replace("/\s*/", "", $dmq[2]);
+		$this->assertEquals($qe, $qa, "Expected the team query.");
+		
+		// Check for expected users
+		$users = $pf->getUserMembers();
+		$this->assertEquals(2, count($users), "Expected 2 users.");
+		
+		$this->assertContains("U1", $users, "Expected user U1");
+		$this->assertContains("U2", $users, "Expected user U2");
+
+		// Check for expected groups
+		$groups = $pf->getGroupMembers();
+		$this->assertEquals(1, count($groups), "Expected one group.");
+		
+		$this->assertContains("Group/A", $groups, "Expected group Group/A");
+    	
+    }
+    
+    /**
+     * Tests adding and retrieving dynamic member queries to/from a group.
+     */
+    function testDynamicGroupMemberDB() {
+    	$group = new HACLGroup(42, "TestGroup", null, array("U1"));
+    	$group->save("U1");
+    	
+    	$queries = array("Query1", "Query2");
+    	$group->addDynamicMemberQueries($queries);
+    	$queries = array("Query3", "Query4");
+    	$group->addDynamicMemberQueries($queries);
+    	
+    	for ($i = 0; $i < 2; $i++) {
+	    	// First iteration: test the original group object
+	    	// Second iteration: Recreate the group object from the database	
+	    	$dmq = $group->getDynamicMemberQueries();
+	    	
+	    	$this->assertEquals(4, count($dmq), "Expected four queries in the group (iteration $i).");
+	    	$this->assertContains("Query1", $dmq, "Expected group <Query1> to be a dynamic member query (iteration $i).");
+	    	$this->assertContains("Query2", $dmq, "Expected group <Query2> to be a dynamic member query (iteration $i).");
+	    	$this->assertContains("Query3", $dmq, "Expected group <Query3> to be a dynamic member query (iteration $i).");
+	    	$this->assertContains("Query4", $dmq, "Expected group <Query4> to be a dynamic member query (iteration $i).");
+
+	    	$group = HACLGroup::newFromID(42);
+    	}
+    	
+    }
+    
+    /**
+     * Data provider for testDynamicMembers
+     */
+    public function providerForDynamicMembers() {
+		// $daq, $expectedAssignees
+    	return array(
+    		array(
+    			array(
+		    		"{{#ask: [[TeamA]][[TeamMembers::+]]|?TeamMembers # =}}",
+		    	), 
+		    	array("users"  => array("U1"), 
+		    	      "groups" => array("Group/A"))
+		   ),
+    		array(
+    			array(
+		    		"{{#sparql: SELECT ?tm WHERE { a:TeamA property:TeamMembers ?tm .} |?tm # =}}"
+		    	), 
+		    	array("users"  => array("U1"), 
+		    	      "groups" => array("Group/A"))
+		   ),
+    		array(
+    			array(
+		    		"{{#ask: [[TeamA]][[ProjectMembers::+]]|?ProjectMembers # =}}",
+		    	), 
+		    	array("users"  => array("U1", "U2", "U3"), 
+		    	      "groups" => array("Group/A", "Group/B"))
+		   ),
+    		array(
+    			array(
+		    		"{{#sparql: SELECT ?tm WHERE { a:TeamA property:ProjectMembers ?tm .} |?tm # =}}"
+		    	), 
+		    	array("users"  => array("U1", "U2", "U3"), 
+		    	      "groups" => array("Group/A", "Group/B"))
+		   ),
+    	);
+    }
+    
+    /**
+     * This function tests if the queries for dynamic members are correctly
+     * evaluated.
+     * 
+     * @param array(string) $daq
+     * 		Array of queries for dynamic members
+	 * @param array(string/int/object) $expectedMembers
+	 * 		Expected members of the group
+	 * 
+     * @dataProvider providerForDynamicMembers
+     */
+    public function testDynamicMembersTest($daq, $expectedMembers) {
+   	
+    	$modes = array(HACLGroup::NAME, HACLGroup::ID, HACLGroup::OBJECT);
+    	
+    	foreach ($modes as $mode) {
+	    	// Create a group with dynamic members
+	    	$group = new HACLGroup(42, "TestGroup", null, "U1");
+	    	$group->addDynamicMemberQueries($daq);
+	    	
+	    	$dm = $group->queryDynamicMembers($mode);
+	    	$groups = $dm['groups'];
+	    	$users  = $dm['users'];
+	    	$expGroups = $expectedMembers['groups']; 
+	    	$expUsers  = $expectedMembers['users']; 
+	    	$numExpected = count($groups);
+	    	$this->assertEquals($numExpected, count($expGroups), "Expected $numExpected dynamic groups.");
+	    	$numExpected = count($users);
+	    	$this->assertEquals($numExpected, count($expUsers), "Expected $numExpected dynamic users.");
+	
+	    	// Check expected groups
+	    	if ($mode == HACLGroup::ID || $mode == HACLGroup::OBJECT) {
+	    		// convert all expected group names to IDs
+	    		foreach ($expGroups as $k => $g) {
+	    			$expGroups[$k] = HACLGroup::idForGroup($g);	
+	    		}
+	    	}
+	    	if ($mode == HACLGroup::OBJECT) {
+	    		// convert all actual group objects to IDs
+	    		foreach ($groups as $k => $g) {
+	    			$this->assertTrue($g instanceof HACLGroup, "Expected an instance of HACLGroup.");
+	    			$groups[$k] = $g->getGroupID();	
+	    		}
+	    	}
+	    	// Check expected groups
+	    	foreach ($expGroups as $eg) {
+	    		if ($mode == HACLGroup::NAME) {
+	    			$this->assertContains($eg, $groups, "Expected group <$eg> to be a dynamic member.");
+	    		} else {
+	    			// ID or OBJECT
+	    			$this->assertContains($eg, $groups, "Expected group with ID <$eg> to be a dynamic member.");
+	    		}
+	    	}
+
+	    	// Check expected users
+	    	if ($mode == HACLGroup::ID || $mode == HACLGroup::OBJECT) {
+	    		// convert all expected user names to IDs
+	    		foreach ($expUsers as $k => $u) {
+	    			$expUsers[$k] = User::idFromName($u);	
+	    		}
+	    	}
+	    	if ($mode == HACLGroup::OBJECT) {
+	    		// convert all actual user objects to IDs
+	    		foreach ($users as $k => $u) {
+	    			$this->assertTrue($u instanceof User, "Expected an instance of User.");
+	    			$users[$k] = $u->getId();	
+	    		}
+	    	}
+	    	// Check expected users
+	    	foreach ($expUsers as $eu) {
+	    		if ($mode == HACLGroup::NAME) {
+	    			$this->assertContains($eu, $users, "Expected user <$eu> to be a dynamic member.");
+	    		} else {
+	    			// ID or OBJECT
+	    			$this->assertContains($eu, $users, "Expected user with ID <$eu> to be a dynamic member.");
+	    		}
+	    	}
+    	}
+    }
+    
+    /**
+     * Tests the life cycle of a group article with dynamic queries:
+     * 1. Article solely with static members
+     * 2. Article with one dynamic member query
+     * 3. Article with two dynamic member queries
+     * 4. Article with one dynamic member query
+     */
+    public function testGroupArticleLifeCycle() {
+		$teamQuery = <<<ASK
+{{#ask: [[TeamA]][[TeamMembers::+]]|?TeamMembers # =}}
+ASK;
+		$projectQuery = <<<ASK
+{{#sparql: SELECT ?tm WHERE { a:TeamA property:ProjectMembers ?tm .} |?tm # =}}
+ASK;
+		$groupSkeleton = <<<TEXT
+{{#manage group: assigned to=User:U1}}
+[[Category:ACL/Group]]
+TEXT;
+    	
+    	global $wgUser;
+    	$wgUser = User::newFromName("U1");
+		
+//--- Create article without dynamic members ---
+		$text = <<<text
+{{#member:
+| members =User:U1,User:U2, Group/A
+}}
+$groupSkeleton
+text;
+
+		$article = array("ACL:Group/TestGroup" => $text);
+		self::$mArticleManager->createArticles($article, "U1");
+		
+		$this->checkGroupMembers("testGroupArticleLifeCycle-1", "Group/TestGroup", 
+								 array("U1", "U2"), array("Group/A"), array());
+		
+//--- Create article with one dynamic member query ---
+		$text = <<<text
+{{#member:
+| members =User:U1,User:U2, $teamQuery, Group/A
+}}
+$groupSkeleton
+text;
+
+		$article = array("ACL:Group/TestGroup" => $text);
+		self::$mArticleManager->createArticles($article, "U1");
+		
+		$this->checkGroupMembers("testGroupArticleLifeCycle-2", "Group/TestGroup", 
+								 array("U1", "U2"), array("Group/A"), array($teamQuery));
+		
+    
+//--- Create article with two dynamic member queries ---
+		$text = <<<text
+{{#member:
+| members =User:U1,User:U2, $teamQuery, Group/A
+}}
+{{#member:
+| members = $projectQuery
+}}
+$groupSkeleton
+text;
+
+		$article = array("ACL:Group/TestGroup" => $text);
+		self::$mArticleManager->createArticles($article, "U1");
+		
+		$this->checkGroupMembers("testGroupArticleLifeCycle-3", "Group/TestGroup", 
+								 array("U1", "U2", "U3"), array("Group/A", "Group/B"), 
+								 array($teamQuery, $projectQuery));
+		
+//--- Create article with one dynamic member query ---
+		$text = <<<text
+{{#member:
+| members = $projectQuery
+}}
+$groupSkeleton
+text;
+
+		$article = array("ACL:Group/TestGroup" => $text);
+		self::$mArticleManager->createArticles($article, "U1");
+		
+		$this->checkGroupMembers("testGroupArticleLifeCycle-4", "Group/TestGroup", 
+								 array("U1", "U2", "U3"), array("Group/A", "Group/B"), 
+								 array($projectQuery));
+								 
+		
+    }
+    
+    /**
+     * Checks the members of a group.
+     * 
+     * @param string $testCaseName
+     * @param string $groupName
+     * @param array<string> $expUsers
+     * @param array<string> $expGroups
+     * @param array<string> $expDMQs
+     * 		Expected dynamic member queries
+     */
+    private function checkGroupMembers($testCaseName, $groupName, array $expUsers,
+    								   array $expGroups, array $expDMQs) {
+
+		$group = HACLGroup::newFromName($groupName);
+
+		// Compare set of users
+		$users = $group->getUsers(HACLGroup::NAME);
+		$equal =    count(array_diff($expUsers, $users)) == 0 
+		         && count(array_diff($users, $expUsers)) == 0;
+		$this->assertTrue($equal, "Wrong set of users in test <$testCaseName>.");
+
+		// Compare set of groups
+		$groups = $group->getGroups(HACLGroup::NAME);
+		$equal =    count(array_diff($expGroups, $groups)) == 0 
+				 && count(array_diff($groups, $expGroups)) == 0;
+		$this->assertEquals($equal, "Wrong set of groups in test <$testCaseName>");
+		
+		// Compare set of dynamic member queries
+		$dmqs = $group->getDynamicMemberQueries();
+		foreach ($dmqs as $k => $q) {
+			$dmqs[$k] = preg_replace("/\s*/", "", $q);
+		}
+		foreach ($expDMQs as $k => $q) {
+			$expDMQs[$k] = preg_replace("/\s*/", "", $q);
+		}
+		$equal =    count(array_diff($expDMQs, $dmqs)) == 0 
+				 && count(array_diff($dmqs, $expDMQs)) == 0;
+		$this->assertEquals($equal, "Wrong set of dynamic member queries in test <$testCaseName>");
+		
+	}
+        
+}
+
+/**
+ * This class tests the dynamic membership of groups and users in groups. 
+ * The groups are organized in a dynamic hierarchy that bases on query results.
+ * 
+ * 
+ * It assumes that the HaloACL extension is enabled in LocalSettings.php and that 
+ * the triples store is running.
+ * 
+ * @author thsc
+ *
+ */
+class TestDynamicMembersHierarchy extends PHPUnit_Framework_TestCase {
+
+
+	private static $mArticles = array(
+//------------------------------------------------------------------------------		
+			'Property:Members' =>
+<<<ACL
+This is the property for members.
+
+[[has type::Type:Page| ]]
+[[has domain and range::; Category:User| ]]
+[[has domain and range::; Category:ACL/Group| ]]
+
+ACL
+,	
+//------------------------------------------------------------------------------		
+			'ACL:Group/A' =>
+<<<ACL
+{{#member: |members={{#ask: [[A]][[Members::+]]|?Members # =}} }}
+
+{{#manage group: assigned to=User:U1}}
+[[Category:ACL/Group]]
+
+ACL
+,
+//------------------------------------------------------------------------------		
+			'ACL:Group/B' =>
+<<<ACL
+{{#manage group: assigned to=User:U1}}
+{{#member: |members={{#sparql: SELECT ?m WHERE { a:B property:Members ?m .} |?m # =}} }}
+
+[[Category:ACL/Group]]
+
+ACL
+,
+//------------------------------------------------------------------------------		
+			'ACL:Group/C' =>
+<<<ACL
+{{#member: |members={{#ask: [[C]][[Members::+]]|?Members # =}} }}
+
+{{#manage group: assigned to=User:U1}}
+[[Category:ACL/Group]]
+
+ACL
+,
+//------------------------------------------------------------------------------		
+			'ACL:Group/D' =>
+<<<ACL
+{{#manage group: assigned to=User:U1}}
+{{#member: |members={{#sparql: SELECT ?m WHERE { a:D property:Members ?m .} |?m # =}} }}
+
+[[Category:ACL/Group]]
+
+ACL
+,
+//------------------------------------------------------------------------------		
+			'ACL:Group/E' =>
+<<<ACL
+{{#member: |members={{#ask: [[E]][[Members::+]]|?Members # =}} }}
+
+{{#manage group: assigned to=User:U1}}
+[[Category:ACL/Group]]
+
+ACL
+,
+//------------------------------------------------------------------------------		
+			'A' =>
+<<<ACL
+[[Members::ACL:Group/B]]
+[[Members::ACL:Group/C]]
+ACL
+,	
+//------------------------------------------------------------------------------		
+			'B' =>
+<<<ACL
+[[Members::User:U1]]
+[[Members::ACL:Group/E]]
+ACL
+,	
+//------------------------------------------------------------------------------		
+			'C' =>
+<<<ACL
+[[Members::User:U2]]
+[[Members::ACL:Group/D]]
+ACL
+,	
+//------------------------------------------------------------------------------		
+			'D' =>
+<<<ACL
+[[Members::User:U3]]
+[[Members::ACL:Group/A]]
+ACL
+,	
+//------------------------------------------------------------------------------		
+			'E' =>
+<<<ACL
+[[Members::User:U4]]
+ACL
+,	
+//------------------------------------------------------------------------------		
+			'Protected' =>
+<<<ACL
+This article is protected.
+ACL
+,	
+//------------------------------------------------------------------------------		
+			'ACL:Page/Protected' =>
+<<<ACL
+{{#access: assigned to=Group/A
+ |actions=read
+ |description=read for Group/A
+ |name=FA}}
+
+{{#manage rights: assigned to=User:U1}}
+[[Category:ACL/Right]]
+}}
+ACL
+,	
+	);
+	
+	private static $mArticleManager;
+	protected $backupGlobals = FALSE;
+
+	public static function setUpBeforeClass() {
+    	// reset group permissions
+    	global $wgGroupPermissions;
+    	foreach ($wgGroupPermissions as $group => $permissions) {
+    		foreach ($permissions as $p => $value) {
+    			$wgGroupPermissions[$group][$p] = true;
+    		}
+    	}
+    	
+    	HACLStorage::reset(HACL_STORE_SQL);
+    	
+    	HaloACLCommon::createUsers(array("U1", "U2", "U3", "U4", "U5"));
+    	        
+        self::$mArticleManager = new ArticleManager();
+        self::$mArticleManager->createArticles(self::$mArticles, "U1");
+    }
+
+	public static function tearDownAfterClass() {
+       	self::$mArticleManager->deleteArticles("U1");
+    }
+    
+    /**
+     * Data provider for test testGroupHasUser
+     */
+    public function providerForGroupHasUser() {
+    	return array(
+    		array("Group/A",
+    		      array("U1" => true,
+    		            "U2" => true,
+    		            "U3" => true,
+    		            "U4" => true,
+    		            "U5" => false,
+    		      )),
+    		array("Group/B",
+    		      array("U1" => true,
+    		            "U2" => false,
+    		            "U3" => false,
+    		            "U4" => true,
+    		            "U5" => false,
+    		      )),
+    		array("Group/C",
+    		      array("U1" => true,
+    		            "U2" => true,
+    		            "U3" => true,
+    		            "U4" => true,
+    		            "U5" => false,
+    		      )),
+    		array("Group/D",
+    		      array("U1" => true,
+    		            "U2" => true,
+    		            "U3" => true,
+    		            "U4" => true,
+    		            "U5" => false,
+    		      )),
+    		array("Group/E",
+    		      array("U1" => false,
+    		            "U2" => false,
+    		            "U3" => false,
+    		            "U4" => true,
+    		            "U5" => false,
+    		      )),
+    	);
+    }
+    /**
+     * Tests if the group with the name $groupName has the members (users) given in
+     * $memberSpec. Membership is evaluated recursively.
+     * 
+     * @param $groupName
+     * 		Name of the group
+     * @param array(string username => bool) $memberSpec
+     * 		Expected members
+     * 		
+     * @dataProvider providerForGroupHasUser
+     */
+    public function testGroupHasUser($groupName, $memberSpec) {
+    	$group = HACLGroup::newFromName($groupName);
+    	
+    	foreach ($memberSpec as $user => $expMember) {
+    		$this->assertEquals($expMember, $group->hasUserMember($user, true), 
+    			"Expected that user <$user> is "
+    		    .($expMember ? "" : "not ")
+    		    ."a member of group <$groupName>.");
+    	}
+    }
+    
+    /**
+     * Data provider for test testGroupHasGroup
+     */
+    public function providerForGroupHasGroup() {
+    	return array(
+    		array("Group/A",
+    		      array("Group/A" => true,
+    		            "Group/B" => true,
+    		            "Group/C" => true,
+    		            "Group/D" => true,
+    		            "Group/E" => true,
+    		      )),
+    		array("Group/B",
+    		      array("Group/A" => false,
+    		            "Group/B" => false,
+    		            "Group/C" => false,
+    		            "Group/D" => false,
+    		            "Group/E" => true,
+    		      )),
+       		array("Group/C",
+    		      array("Group/A" => true,
+    		            "Group/B" => true,
+    		            "Group/C" => true,
+    		            "Group/D" => true,
+    		            "Group/E" => true,
+    		      )),
+    		array("Group/D",
+    		      array("Group/A" => true,
+    		            "Group/B" => true,
+    		            "Group/C" => true,
+    		            "Group/D" => true,
+    		            "Group/E" => true,
+    		      )),
+    		array("Group/E",
+    		      array("Group/A" => false,
+    		            "Group/B" => false,
+    		            "Group/C" => false,
+    		            "Group/D" => false,
+    		            "Group/E" => false,
+    		      )),
+    		);
+    }
+    
+    /**
+     * Tests if the group with the name $groupName has the members (groups) given in
+     * $memberSpec. Membership is evaluated recursively.
+     * 
+     * @param $groupName
+     * 		Name of the group
+     * @param array(string groupname => bool) $memberSpec
+     * 		Expected members
+     * 		
+     * @dataProvider providerForGroupHasGroup
+     */
+    public function testGroupHasGroup($groupName, $memberSpec) {
+    	$group = HACLGroup::newFromName($groupName);
+    	
+    	foreach ($memberSpec as $g => $expMember) {
+    		$this->assertEquals($expMember, $group->hasGroupMember($g, true), 
+    			"Expected that group <$g> is "
+    		    .($expMember ? "" : "not ")
+    		    ."a member of group <$groupName>.");
+    	}
+    }
+    
+    /**
+     * Data provider for testDynamicAssigneeRightsUserCan
+     */
+    function providerForDynamicAssigneeRightsUserCan() {
+    	// $action, $grantedForUsers, $deniedForUsers
+    	return array(
+    		array("read", 
+    		      array("U1", "U2", "U3", "U4"),
+    		      array("U5")),
+    	);
+    }
+    
+    
+    /**
+     * Checks if the rights with assigned dynamic group members are evaluated
+     * correctly
+     * 
+     * @param string $action
+     * 		The action to test
+     * @param array<string> $grantedForUsers
+     * 		List of users with granted access
+     * @param unknown_type $deniedForUsers
+     * 		List of users with denied access
+     * 
+     * @dataProvider providerForDynamicAssigneeRightsUserCan
+     */
+    public function testDynamicMemberRightsUserCan($action, $grantedForUsers, $deniedForUsers) {
+    	$test = array(array("Protected", null, $action, null));
+    	
+    	// Check the granted rights for users
+    	foreach ($grantedForUsers as $u) {
+    		$test[0][1] = $u;
+    		$test[0][3] = true;
+     		HaloACLCommon::checkRights($this, 'testDynamicMemberRightsUserCan-granted', $test);
+    	}
+    	
+    	// Check the denied rights for users
+    	foreach ($deniedForUsers as $u) {
+    		$test[0][1] = $u;
+    		$test[0][3] = false;
+     		HaloACLCommon::checkRights($this, 'testDynamicMemberRightsUserCan-denied', $test);
+    	}
+    	
+    }
+    
+}
+
+/**
+ * This class tests a complex example with dynamic group members and dynamic
+ * assignees.
+ * 
+ * 
+ * It assumes that the HaloACL extension is enabled in LocalSettings.php and that 
+ * the triples store is running.
+ * 
+ * @author thsc
+ *
+ */
+class TestMembersAssigneesExample extends PHPUnit_Framework_TestCase {
+
+
+	private static $mArticles = array(
+//------------------------------------------------------------------------------		
+			'Property:HasProjectManager' =>
+<<<ACL
+This is the property for managers of a project.
+
+[[has type::Type:Page| ]]
+[[has domain and range::Category:Project; Category:Person| ]]
+
+ACL
+,	
+//------------------------------------------------------------------------------		
+			'Property:HasProjectMember' =>
+<<<ACL
+This is the property for members of a project.
+
+[[has type::Type:Page| ]]
+[[has domain and range::Category:Project; Category:Person| ]]
+[[has domain and range::Category:Project; Category:Group| ]]
+
+ACL
+,
+//------------------------------------------------------------------------------		
+			'Property:WorksFor' =>
+<<<ACL
+This is the property for persons who work for something e.g. a project.
+
+[[has type::Type:Page| ]]
+[[has domain and range::Category:Person; | ]]
+[[has domain and range::Category:Person; | ]]
+
+ACL
+,
+//------------------------------------------------------------------------------		
+			'User:Jane' =>
+<<<ACL
+This is the page of user Jane.
+
+[[WorksFor::ProjectA]]
+
+[[Category:Person]]
+ACL
+,
+//------------------------------------------------------------------------------		
+			'User:John' =>
+<<<ACL
+This is the page of user John.
+
+[[WorksFor::ProjectA]]
+
+[[Category:Person]]
+ACL
+,
+//------------------------------------------------------------------------------		
+			'User:Peter' =>
+<<<ACL
+This is the page of user Peter.
+
+[[WorksFor::ProjectA]]
+
+[[Category:Person]]
+ACL
+,
+//------------------------------------------------------------------------------		
+			'User:Manolo' =>
+<<<ACL
+This is the page of user Manolo.
+
+[[Category:Dog]]
+ACL
+,
+//------------------------------------------------------------------------------		
+			'ProjectA' =>
+<<<ACL
+This is the page for Project A
+
+[[ProjectManager::User:Jane]]
+[[HasProjectMember::ACL:Group/MembersOfProjectA]]
+
+[[Category:Project]]
+ACL
+,
+//------------------------------------------------------------------------------		
+			'ACL:Group/MembersOfProjectA' =>
+<<<ACL
+{{#member: 
+| members={{#sparql: SELECT ?p WHERE { ?p property:WorksFor a:ProjectA .} |?p # =}}
+}}
+
+{{#manage group: assigned to=User:Jane}}
+[[Category:ACL/Group]]
+
+ACL
+,
+//------------------------------------------------------------------------------		
+			'ACL:Page/ProjectA' =>
+<<<ACL
+{{#access: 
+ |assigned to={{#ask: [[ProjectA]][[ProjectManager::+]]|?projectManager # =}}
+ |actions=read,edit,formedit,wysiwyg,create,move,delete,annotate
+ |description=Full access for project manager
+ |name=FA
+}}
+
+{{#access: 
+ |assigned to={{#sparql: SELECT ?m WHERE { a:ProjectA property:HasProjectMember ?m .} |?m # =}}
+ |actions=edit
+ |description=Edit right for project members
+ |name=Edit
+}}
+
+{{#manage rights: assigned to=User:Jane}}
+[[Category:ACL/Right]]
+
+ACL
+,	
+	);
+	
+	private static $mArticleManager;
+	protected $backupGlobals = FALSE;
+
+	public static function setUpBeforeClass() {
+    	// reset group permissions
+    	global $wgGroupPermissions;
+    	foreach ($wgGroupPermissions as $group => $permissions) {
+    		foreach ($permissions as $p => $value) {
+    			$wgGroupPermissions[$group][$p] = true;
+    		}
+    	}
+    	
+    	HACLStorage::reset(HACL_STORE_SQL);
+    	
+    	HaloACLCommon::createUsers(array("Peter", "John", "Jane", "Manolo"));
+        
+        self::$mArticleManager = new ArticleManager();
+        self::$mArticleManager->createArticles(self::$mArticles, "Jane");
+    }
+
+	public static function tearDownAfterClass() {
+       	self::$mArticleManager->deleteArticles("Jane");
+    }
+
+    /**
+     * Data provider for testExampleRights
+     */
+    function providerForExampleRights() {
+    	// $action, $grantedForUsers, $deniedForUsers
+    	return array(
+    		array("read", 
+    		      array("Jane", "John", "Peter"),
+    		      array("Manolo")),
+    		array("edit", 
+    		      array("Jane", "John", "Peter"),
+    		      array("Manolo")),
+    		array("delete", 
+    		      array("Jane"),
+    		      array("Manolo", "John", "Peter")),
+    	);
+    }
+    
+    
+    /**
+     * Checks if the rights with assigned dynamic group members are evaluated
+     * correctly.
+     * 
+     * @param string $action
+     * 		The action to test
+     * @param array<string> $grantedForUsers
+     * 		List of users with granted access
+     * @param unknown_type $deniedForUsers
+     * 		List of users with denied access
+     * 
+     * @dataProvider providerForExampleRights
+     */ 
+    public function testExampleRights($action, $grantedForUsers, $deniedForUsers) {
+    	$test = array(array("ProjectA", null, $action, null));
+    	
+    	// Check the granted rights for users
+    	foreach ($grantedForUsers as $u) {
+    		$test[0][1] = $u;
+    		$test[0][3] = true;
+     		HaloACLCommon::checkRights($this, 'testExampleRights-granted', $test);
+    	}
+    	
+    	// Check the denied rights for users
+    	foreach ($deniedForUsers as $u) {
+    		$test[0][1] = $u;
+    		$test[0][3] = false;
+     		HaloACLCommon::checkRights($this, 'testExampleRights-denied', $test);
+    	}
+    	
+    }
+    
+}

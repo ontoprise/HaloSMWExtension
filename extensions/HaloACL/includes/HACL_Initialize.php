@@ -340,7 +340,8 @@ if ($haclgUseFeaturesForGroupPermissions === true) {
 #    actual category is appended e.g. 'Dynamic groups for Project', where the 
 #    category is 'Project'.
 # $haclgDynamicGroupManager
-#    This array has the two keys 'users' and 'groups'. The string value of each 
+#    This array defines the managers of the dynamic root and category groups.
+#    It has the two keys 'users' and 'groups'. The string value of each 
 #    key contains a comma separated list of all user names and all group names. 
 #    User and groups names have no namespace (i.e. User and ACL). The full group 
 #    name must be given i.e. with the naming convention e.g. "Group/My Group". 

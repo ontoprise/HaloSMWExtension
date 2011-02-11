@@ -21,15 +21,15 @@ class HaloACLTests
 		define('UNIT_TEST_RUNNING', true);
     	$suite = new PHPUnit_Framework_TestSuite('PHPUnit');
         
-        $suite->addTestSuite("TestDatabaseSuite");
-        $suite->addTestSuite("TestParserFunctions");
-	    $suite->addTestSuite("TestUserCanHookSuite");
-        $suite->addTestSuite("TestDefaultSecurityDescriptorSuite");
-        $suite->addTestSuite("TestLDAPStorageSuite");
-        $suite->addTestSuite("TestSMWStoreSuite"); 
-        $suite->addTestSuite("TestGroupPermissionsSuite"); 
+//        $suite->addTestSuite("TestDatabaseSuite");
+//        $suite->addTestSuite("TestParserFunctionsSuite");
+//	    $suite->addTestSuite("TestUserCanHookSuite");
+//        $suite->addTestSuite("TestDefaultSecurityDescriptorSuite");
+//        $suite->addTestSuite("TestLDAPStorageSuite");
+//        $suite->addTestSuite("TestSMWStoreSuite"); 
+//        $suite->addTestSuite("TestGroupPermissionsSuite"); 
         $suite->addTestSuite("TestDynamicHaloACLSuite"); 
-        $suite->addTestSuite("TestRenderArticlesSuite"); 
+//        $suite->addTestSuite("TestRenderArticlesSuite"); 
         
         return $suite;
     }
