@@ -32,7 +32,38 @@ function tff_getTabularForm($querySerialization, $tabularFormId){
 
 function tff_updateInstanceData($updates, $articleTitle, $rowNr, $tabularFormId){
 	
-	//$updates = json_decode($updates, true);
+	//dom't know why, but this has to be done twice
+	$updates = json_decode(print_r($updates, true), true);
+	if(!is_array($updates)){
+		$updates = json_decode(print_r($updates, true), true);
+	}
+	
+	//todo: aggregate template parameter values
+	//todo deal with null /new value
+	
+	$annotations = new TFAnnotationDataCollection();
+	$params = array();
+	foreach($updates as $update){
+		if($update['isTemplateParam'] == 'true'){
+			if(strlen($update['originalValue']) == 0) $update['originalValue'] = null;
+			$params[$update['address']]['originalValues'][$update['templateId']] = $update['originalValue'];
+			$params[$update['address']]['newValues'][$update['templateId']] = $update['newValue'];
+		} else {
+			$annotations->addAnnotation(new TFAnnotationData(
+				$update['address'], $update['originalValue'], null, $update['newValue']));
+		}
+	}
+	
+	$parameters = new TFTemplateParameterCollection();
+	foreach($params as $param => $values){
+		$parameters->addTemplateParameter(new 
+			TFTemplateParameter(	$param, $values['originalValues'], $values['newValues']));
+	}
+	
+	//file_put_contents('d://uos.rtf', print_r($parameters, true));
+	
+	$title = Title::newFromText($articleTitle);
+	TFDataAPIAccess::getInstance($title)->updateValues($annotations, $parameters);
 	
 	$result = array('success' => false, 'rowNr' => $rowNr, 'tabularFormId' => $tabularFormId);
 	$result = json_encode($result);

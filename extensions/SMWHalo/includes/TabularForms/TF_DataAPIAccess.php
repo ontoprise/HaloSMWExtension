@@ -116,6 +116,7 @@ class TFDataAPIACCESS {
 
 		private $title = null;
 		private $pomPage = '';
+		private $article = null;
 		
 		/*
 		 * Parse article and initialize the POMPage object
@@ -124,8 +125,11 @@ class TFDataAPIACCESS {
 			
 			//think about when and where to initialize POM. LocalSettings is not good.
 			
-			$article = Article::newFromID($this->title->getArticleID());
-			$text = $article->getContent();
+			$this->article = Article::newFromID($this->title->getArticleID());
+			$text = $this->article->getContent();
+			
+			POMElement::$elementCounter = 0;
+			
 			$this->pomPage = new POMPage($this->title->getFullText(), $text);
 			
 		}
@@ -324,9 +328,7 @@ class TFDataAPIACCESS {
 				$text .= '[['.$newAnnotation['name'].'::'.$newAnnotation['value'].'| ]]';
 			}
 			
-			//echo('<pre>'.$text.'</pre>');
-	
-			//$article->doEdit($pomPage->text, 'tabular forms');
+			$this->article->doEdit($text, 'tabular forms');
 		}
 }
 

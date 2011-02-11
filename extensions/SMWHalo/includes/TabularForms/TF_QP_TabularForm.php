@@ -535,10 +535,10 @@ class TFTabularFormRowData {
 				$html .= '<td class="tabf_table_cell">';
 				
 				if(count($this->templateParameters[$template][$param]->currentValues) == 0){
-					$html .= "<textarea rows='1' value=''></textarea>";
+					$html .= "<textarea rows='1' ></textarea>";
 				} else {
-					foreach($this->templateParameters[$template][$param]->currentValues as $currentValue){
-						$html .= "<textarea rows='1' >".$currentValue."</textarea>";
+					foreach($this->templateParameters[$template][$param]->currentValues as $templateId => $currentValue){
+						$html .= "<textarea rows='1' template-id=".'"'.$templateId.'"'."'>".$currentValue."</textarea>";
 					}
 				}
 			

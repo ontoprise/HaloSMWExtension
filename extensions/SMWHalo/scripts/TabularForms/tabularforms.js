@@ -306,9 +306,7 @@ var TF = Class.create({
 									, jQuery(this).parent()).attr('field-address');
 						modifiedValue['isTemplateParam'] = jQuery('th:nth-child(' + (fieldNr + 1) + ')'
 								, jQuery(this).parent()).attr('is-template');
-						
-						alert(modifiedValue['isTemplateParam']);
-						alert(modifiedValue['address']);
+						modifiedValue['templateId'] = jQuery(fieldValues[i]).attr('template-id');
 						
 						modifiedValues.push(modifiedValue);						
 					}

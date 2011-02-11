@@ -435,6 +435,10 @@ function smwgHaloSetupExtension() {
 		$smwgHaloIP.'/includes/TabularForms/TF_DataAPIAccess.php';
 	$wgAutoloadClasses['TFAnnotationData'] = 
 		$smwgHaloIP.'/includes/TabularForms/TF_DataAPIAccess.php';
+	$wgAutoloadClasses['TFAnnotationDataCollection'] = 
+		$smwgHaloIP.'/includes/TabularForms/TF_DataAPIAccess.php';
+	$wgAutoloadClasses['TFTemplateParameterCollection'] = 
+		$smwgHaloIP.'/includes/TabularForms/TF_DataAPIAccess.php';
 	$smwgResultFormats['tabularform'] = 'TFTabularFormQueryPrinter';
 	
 	
