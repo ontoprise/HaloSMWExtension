@@ -99,20 +99,14 @@ class SMWSemanticStoreSQL2 extends SMWSemanticStoreSQL {
 	}
 
 	protected function createVirtualTableWithPropertiesByCategory(Title $categoryTitle, & $db, $onlyDirect = false, $dIndex = '_1') {
-		global $smwgDefaultCollation;
         
 		$page = $db->tableName('page');
 		$categorylinks = $db->tableName('categorylinks');
 		$smw_ids = $db->tableName('smw_ids');
 		$smw_rels2 = $db->tableName('smw_rels2');
 
-		if (!isset($smwgDefaultCollation)) {
-			$collation = '';
-		} else {
-			$collation = 'COLLATE '.$smwgDefaultCollation;
-		}
 		// create virtual tables
-		$db->query( 'CREATE TEMPORARY TABLE smw_ob_properties (id INT(8) NOT NULL, property VARBINARY(255) '.$collation.', inherited SET(\'no\', \'yes\') NOT NULL )
+		$db->query( 'CREATE TEMPORARY TABLE smw_ob_properties (id INT(8) NOT NULL, property VARBINARY(255), inherited SET(\'no\', \'yes\') NOT NULL )
                     ENGINE=MEMORY', 'SMW::createVirtualTableWithPropertiesByCategory' );
 
 		$db->query( 'CREATE TEMPORARY TABLE smw_ob_properties_sub (category INT(8) NOT NULL)
@@ -175,18 +169,12 @@ class SMWSemanticStoreSQL2 extends SMWSemanticStoreSQL {
 	}
 
 	protected function createVirtualTableWithPropertiesByName($requestoptions, & $db) {
-		global $smwgDefaultCollation;
-		if (!isset($smwgDefaultCollation)) {
-			$collation = '';
-		} else {
-			$collation = 'COLLATE '.$smwgDefaultCollation;
-		}
 
 		$smw_ids = $db->tableName('smw_ids');
 		$page = $db->tableName('page');
 		$redirect = $db->tableName('redirect');
 		$redirects = $db->tableName('redirect');
-		$db->query( 'CREATE TEMPORARY TABLE smw_ob_properties (id INT(8) NOT NULL, property VARBINARY(255) '.$collation.')
+		$db->query( 'CREATE TEMPORARY TABLE smw_ob_properties (id INT(8) NOT NULL, property VARBINARY(255) )
                     ENGINE=MEMORY', 'SMW::createVirtualTableForInstances' );
 		$sql = DBHelper::getSQLConditions($requestoptions,'smw_title','smw_title');
 		// add properties which match and which are no redirects
