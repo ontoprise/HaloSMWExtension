@@ -42,7 +42,7 @@ abstract class POMElement {
 	 * 
 	 * @var int
 	 */
-	static protected $elementCounter = 0;
+	static public $elementCounter = 0;
 
 	/**
 	 * Convert the element to string.
