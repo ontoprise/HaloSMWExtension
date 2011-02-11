@@ -1,6 +1,19 @@
 HaloACL extension ChangeLog
 ===========================
 
+Version 1.5.3
+
+  FEATURE:
+    - Create security descriptors automatically based on the category of an article
+    - Create groups automatically based on the category of an article
+    - Structure of automatically created groups
+    - Automatic protection of sub-pages
+    - Dynamic assignees for groups and security descriptors
+  	
+  CHANGES:
+  	
+  BUGFIXES: (Bug numbers according to http://smwforum.ontoprise.com/smwbugs/)
+
 Version 1.5.2
 
   FEATURE:
