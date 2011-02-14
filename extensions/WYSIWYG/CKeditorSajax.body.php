@@ -71,22 +71,31 @@ function wfSajaxSearchImageCKeditor( $term ) {
 	$term4 = str_replace( ' ', '_', $wgContLang->ucfirst( $term2 ) );
 	$term = $term1;
 
-	if ( strlen( str_replace( '_', '', $term ) ) < 1 )
-		return '';
-
 	$dbr = wfGetDB( DB_SLAVE );
-	$res = $dbr->select( 'page',
-		'page_title',
-		array(
-			'page_namespace IN (' . NS_IMAGE . ',' . NS_FILE . ')',
-			"page_title LIKE '%". $dbr->strencode( $term1 ) ."%'".
-			"OR (LOWER(page_title) LIKE '%". $dbr->strencode( $term2 ) ."%') ".
-			"OR (UPPER(page_title) LIKE '%". $dbr->strencode( $term3 ) ."%') ".
-			"OR (page_title LIKE '%". $dbr->strencode( $term4 ) ."%') "
-		),
-		__METHOD__,
-		array( 'LIMIT' => $limit + 1 )
-	);
+    // nothing yet typed in, get all images (actually up to $limit only)
+   	if ( strlen( str_replace( '_', '', $term ) ) < 1 )
+        $res = $dbr->select( 'page',
+            'page_title',
+    		array(
+        		'page_namespace IN (' . NS_IMAGE . ',' . NS_FILE . ')'
+            ),
+            __METHOD__,
+            array( 'LIMIT' => $limit + 1 )
+        );
+    // get list depending on the input
+    else
+        $res = $dbr->select( 'page',
+            'page_title',
+    		array(
+        		'page_namespace IN (' . NS_IMAGE . ',' . NS_FILE . ')',
+            	"page_title LIKE '%". $dbr->strencode( $term1 ) ."%'".
+                "OR (LOWER(page_title) LIKE '%". $dbr->strencode( $term2 ) ."%') ".
+    			"OR (UPPER(page_title) LIKE '%". $dbr->strencode( $term3 ) ."%') ".
+        		"OR (page_title LIKE '%". $dbr->strencode( $term4 ) ."%') "
+            ),
+            __METHOD__,
+            array( 'LIMIT' => $limit + 1 )
+        );
 
 	$ret = array();
 	$i = 0;
@@ -99,6 +108,8 @@ function wfSajaxSearchImageCKeditor( $term ) {
             continue;
 		$ret[] = $row->page_title;
 	}
+    if (count($ret) == $limit )
+        $ret[]= '___TOO__MANY__RESULTS___';
 
 	return join("\n", $ret);
 }
