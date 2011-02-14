@@ -192,9 +192,10 @@ CKEDITOR.dialog.add( 'MWLink', function( editor ) {
     		onShow : function()
         	{
                 // clear old selection list from a previous call
-                var	e = this.getContentElement( 'mwLinkTab1', 'linkList' );
-                    e.items = [];
-                var div = document.getElementById(e.domId),
+                var editor = this.getParentEditor(),
+                    e = this.getContentElement( 'mwLinkTab1', 'linkList' );
+                    e.items = [],
+                    div = document.getElementById(e.domId),
                     select = div.getElementsByTagName('select')[0];
                 while ( select.options.length > 0 )
                     select.remove( 0 );
@@ -205,8 +206,7 @@ CKEDITOR.dialog.add( 'MWLink', function( editor ) {
 
             	this.fakeObj = false;
 
-                var editor = this.getParentEditor(),
-                    selection = editor.getSelection(),
+                var selection = editor.getSelection(),
     				element = null;
 
         		// Fill in all the relevant fields if there's already one link selected.
