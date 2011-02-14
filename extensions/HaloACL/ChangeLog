@@ -9,6 +9,8 @@ Version 1.5.3
     - Structure of automatically created groups
     - Automatic protection of sub-pages
     - Dynamic assignees for groups and security descriptors
+    - Show dynamic members in ACL articles
+    
   	
   CHANGES:
   	
