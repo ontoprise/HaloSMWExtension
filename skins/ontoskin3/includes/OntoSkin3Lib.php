@@ -318,13 +318,13 @@ class SMWH_Skin {
                                             # build the edit link
                                             $link = '';
                                             # if the SF forms are in use, make the edit with semantic forms
-                                            if (defined('SF_VERSION') &&  # SF are included
+                                            if (defined('SF_VERSION') && class_exists(SFFormLinker) &&  # SF are included
                                                 isset($wgTitle) && # title obj exists and we are not on a special page
                                                 $wgTitle->getNamespace() != NS_SPECIAL
                                                ) {
                                                 # check if there are forms available for the current article
-                                    global $asfAutomaticFormExists;
-                                    if (count(SFFormLinker::getDefaultFormsForPage($this->skintemplate->skin->getTitle())) > 0 || isset($asfAutomaticFormExists))
+                                                global $asfAutomaticFormExists;
+                                                if (count(SFFormLinker::getDefaultFormsForPage($this->skintemplate->skin->getTitle())) > 0 || isset($asfAutomaticFormExists))
                         			                $link = htmlspecialchars(
                                                                 str_replace('action=edit',
                                                                     'action=formedit',
