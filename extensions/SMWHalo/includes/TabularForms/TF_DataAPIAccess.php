@@ -133,6 +133,10 @@ class TFDataAPIACCESS {
 			$this->pomPage = new POMPage($this->title->getFullText(), $text);
 			
 		}
+		
+		public function getRevisionId(){
+				return $this->article->getRevIdFetched();
+		}
 
 		
 		public function getWritableAnnotations($annotations){
@@ -220,8 +224,12 @@ class TFDataAPIACCESS {
 		
 		
 		
-		public function updateValues($annotations, $parameters){
+		public function updateValues($annotations, $parameters, $revisionId){
 		
+			if($this->getRevisionId() != $revisionId){
+				return false;
+			}
+			
 			//todo: revision check
 			
 			//todo can edit check
@@ -329,6 +337,8 @@ class TFDataAPIACCESS {
 			}
 			
 			$this->article->doEdit($text, 'tabular forms');
+			
+			return true;
 		}
 }
 

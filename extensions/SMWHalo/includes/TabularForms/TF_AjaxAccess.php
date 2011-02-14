@@ -30,7 +30,7 @@ function tff_getTabularForm($querySerialization, $tabularFormId){
 }
 
 
-function tff_updateInstanceData($updates, $articleTitle, $rowNr, $tabularFormId){
+function tff_updateInstanceData($updates, $articleTitle, $revisionId, $rowNr, $tabularFormId){
 	
 	//dom't know why, but this has to be done twice
 	$updates = json_decode(print_r($updates, true), true);
@@ -63,9 +63,9 @@ function tff_updateInstanceData($updates, $articleTitle, $rowNr, $tabularFormId)
 	//file_put_contents('d://uos.rtf', print_r($parameters, true));
 	
 	$title = Title::newFromText($articleTitle);
-	TFDataAPIAccess::getInstance($title)->updateValues($annotations, $parameters);
+	$result = TFDataAPIAccess::getInstance($title)->updateValues($annotations, $parameters, $revisionId);
 	
-	$result = array('success' => false, 'rowNr' => $rowNr, 'tabularFormId' => $tabularFormId);
+	$result = array('success' => $result, 'rowNr' => $rowNr, 'tabularFormId' => $tabularFormId, $revisionId);
 	$result = json_encode($result);
 	
 	return '--##starttf##--' . $result . '--##endtf##--';

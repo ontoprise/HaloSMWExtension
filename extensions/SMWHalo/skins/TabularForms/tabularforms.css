@@ -22,6 +22,15 @@
 	vertical-align: top;
 }
 
+.tabf_table_row_saved{
+}
+
+.tabf_table_row_saved_successfull{
+}
+
+.tabf_table_row_saved_error{
+}
+
 .tabf_table_cell{
 	padding: 0px !important;
 	margin: 0px !important;

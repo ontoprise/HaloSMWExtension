@@ -255,8 +255,8 @@ var TF = Class.create({
 			parentRow.attr('isModified', true);
 			parentRow.addClass('tabf_modified_row');
 			
-			jQuery('td:last-child .tabularforms_ok_status', parentRow).css('display', 'none');
-			jQuery('td:last-child .tabularforms_modified_status', parentRow).css('display', 'inline');
+			jQuery('td:last-child .tabf_ok_status', parentRow).css('display', 'none');
+			jQuery('td:last-child .tabf_modified_status', parentRow).css('display', 'inline');
 		} else {
 			jQuery(node).removeClass('tabf_modified_value');
 			jQuery(node).attr('isModified', false);
@@ -265,8 +265,8 @@ var TF = Class.create({
 				parentRow.attr('isModified', false);
 				parentRow.removeClass('tabf_modified_row');
 				
-				jQuery('td:last-child .tabularforms_ok_status', parentRow).css('display', 'inline');
-				jQuery('td:last-child .tabularforms_modified_status', parentRow).css('display', 'none');
+				jQuery('td:last-child .tabf_ok_status', parentRow).css('display', 'inline');
+				jQuery('td:last-child .tabf_modified_status', parentRow).css('display', 'none');
 			}
 		}
 	},
@@ -285,10 +285,13 @@ var TF = Class.create({
 	},
 	
 	saveFormRowData : function(rowNr){
+		jQuery(this).addClass('tabf_table_row_saved');
+		jQuery('textarea', this).attr('readonly', 'true');
+		
 		if(jQuery(this).attr('isModified')){
 			
-			jQuery('td:last-child .tabularforms_modified_status', this).css('display', 'none');
-			jQuery('td:last-child .tabularforms_pending_status', this).css('display', 'inline');
+			jQuery('td:last-child .tabf_modified_status', this).css('display', 'none');
+			jQuery('td:last-child .tabf_pending_status', this).css('display', 'inline');
 			
 			var modifiedValues = new Array();
 			
@@ -316,6 +319,7 @@ var TF = Class.create({
 			//this is uglay
 			var tabularFormId = jQuery(this).parent().parent().parent().parent().attr('id');
 			var articleTitle = jQuery('td:first-child ',this).attr('article-name');
+			var revisionId = jQuery('td:first-child ',this).attr('revision-id');
 			
 			//todo:add ajax error handling
 			var url = wgServer + wgScriptPath + "/index.php";
@@ -323,13 +327,11 @@ var TF = Class.create({
 				data: {
 					'action' : 'ajax',
 					'rs' : 'tff_updateInstanceData',
-					'rsargs[]' : [JSON.stringify(modifiedValues), articleTitle, rowNr, tabularFormId],
+					'rsargs[]' : [JSON.stringify(modifiedValues), articleTitle, revisionId, rowNr, tabularFormId],
 				},
 				success: tf.saveFormRowDataCallback,
 				
 			});
-			
-			
 		}
 	},
 	
@@ -342,11 +344,13 @@ var TF = Class.create({
 		
 		var row = jQuery('#' + data.tabularFormId + ' tr:nth-child(' + data.rowNr + ')');
 		if(data.success == true){
-			jQuery('td:last-child .tabularforms_pending_status', row).css('display', 'none');
-			jQuery('td:last-child .tabularforms_saved_status', row).css('display', 'inline');
+			jQuery(row).addClass('tabf_table_row_saved_successfull');
+			jQuery('td:last-child .tabf_pending_status', row).css('display', 'none');
+			jQuery('td:last-child .tabf_saved_status', row).css('display', 'inline');
 		} else {
-			jQuery('td:last-child .tabularforms_pending_status', row).css('display', 'none');
-			jQuery('td:last-child .tabularforms_error_status', row).css('display', 'inline');
+			jQuery(row).addClass('.tabf_table_row_saved_error');
+			jQuery('td:last-child .tabf_pending_status', row).css('display', 'none');
+			jQuery('td:last-child .tabf_error_status', row).css('display', 'inline');
 		}
 	}
 

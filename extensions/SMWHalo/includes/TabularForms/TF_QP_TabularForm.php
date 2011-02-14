@@ -79,7 +79,11 @@ class TFTabularFormData {
 		
 		//todo:LANGUAGE
 		//todo:ICON pending
-		$html .= '<div class="tabf_loader">Tabular form is loading</div>';
+		global $smwgHaloScriptPath;
+		$html .= '<div class="tabf_loader">';
+		$html .= 'Tabular form is loading'.' ';
+		$html .= '<img title="Loading Tabular Form" src="'.$smwgHaloScriptPath.'/skins/TabularForms/Pending.gif"></img>';
+		$html .= '</div>';
 		
 		//display serialized query
 		$html .= '<span class="tabf_query_serialization" style="display: none">';
@@ -404,6 +408,8 @@ class TFTabularFormData {
 class TFTabularFormRowData {
 	
 	private $title;
+	private $dataAPIAccess = null;
+	private $revisionId = 0;
 	private $annotations = array();
 	public $templateParameters = array();
 	
@@ -413,7 +419,9 @@ class TFTabularFormRowData {
 	 * represented by this row
 	 */
 	public function __construct($title){
-		$this->title = Title::newFromText($title); 
+		$this->title = Title::newFromText($title);
+		$this->dataAPIAccess = TFDataAPIAccess::getInstance($this->title);
+		$this->revisionId = $this->dataAPIAccess->getRevisionId();
 	}
 	
 	/*
@@ -432,7 +440,7 @@ class TFTabularFormRowData {
 		
 		$collection = new TFAnnotationDataCollection();
 		$collection->addAnnotations($this->annotations);
-		$this->annotations = TFDataAPIAccess::getInstance($this->title)->getWritableAnnotations($collection);
+		$this->annotations = $this->dataAPIAccess->getWritableAnnotations($collection);
 		
 		//echo('<pre>'.print_r($this->annotations, true).'</pre>');
 		
@@ -449,7 +457,7 @@ class TFTabularFormRowData {
 			}
 		}
 		
-		$this->templateParameters = TFDataAPIAccess::getInstance($this->title)->readTemplateParameters($collection);
+		$this->templateParameters = $this->dataAPIAccess->readTemplateParameters($collection);
 		
 		//echo('<pre>'.print_r($this->templateParameters, true).'</pre>');
 	}
@@ -508,20 +516,18 @@ class TFTabularFormRowData {
 		
 		//Add subject
 		$linker = new Linker();
-		$html .= '<td class="tabf_table_cell" article-name="'.$this->title->getFullText().'" >'.$linker->makeLinkObj($this->title).'</td>';
+		$html .= '<td class="tabf_table_cell" revision-id="'.$this->revisionId.'" article-name="'.$this->title->getFullText().'" >'.$linker->makeLinkObj($this->title).'</td>';
 
 		//Add cells for annotations
 		foreach($annotationPrintRequests as $annotation){
 			$html .= '<td class="tabf_table_cell">';
 			
 			$annotations = $this->annotations[$annotation['title']];
-			$first = true;
 			foreach($annotations as $annotation){
 				if($annotation->isWritable){
 					$html .= "<textarea rows='1'>".$annotation->currentValue."</textarea>";
 				} else {
-					if(!$first) $html .= '<br/>';
-					$html .= '<span>'.$annotation->renderedValue.'</span>';
+				$html .= '<div style="height: 3em; width: 100%">'.$annotation->renderedValue.'</div>';
 				}
 				$first = false;
 			}
@@ -547,12 +553,14 @@ class TFTabularFormRowData {
 		}
 		
 		//add status column
+		//Todo:Language
+		global $smwgHaloScriptPath;
 		$html .= '<td>';
-		$html .= '<span class="tabularforms_pending_status" style="display: none">Pending</span>';
-		$html .= '<span class="tabularforms_ok_status" none">OK</span>';
-		$html .= '<span class="tabularforms_modified_status" none" style="display: none">Modified</span>';
-		$html .= '<span class="tabularforms_saved_status" none" style="display: none">Saved</span>';
-		$html .= '<span class="tabularforms_error_status" style="display: none">Error</span>';
+		$html .= '<img class="tabf_ok_status" title="Not yet modified" src="'.$smwgHaloScriptPath.'/skins/TabularForms/Unmodified.png"></img>';
+		$html .= '<img class="tabf_modified_status" title="Modified" style="display: none" src="'.$smwgHaloScriptPath.'/skins/TabularForms/Modified.png"></img>';
+		$html .= '<img class="tabf_saved_status" title="Saved" style="display: none" src="'.$smwgHaloScriptPath.'/skins/TabularForms/Saved.png"></img>';
+		$html .= '<img class="tabf_error_status" title="An error occured" style="display: none" src="'.$smwgHaloScriptPath.'/skins/TabularForms/Error.png"></img>';
+		$html .= '<img class="tabf_pending_status" title="Updating" style="display: none" src="'.$smwgHaloScriptPath.'/skins/TabularForms/Pending.gif"></img>';
 		$html .= '</td>';
 		
 		return $html;
