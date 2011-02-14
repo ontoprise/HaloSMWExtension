@@ -113,8 +113,6 @@ CKEDITOR.dialog.add( 'MWImage', function( editor ) {
             var	e = dialog.getContentElement( 'info', 'imgFilename' ),
                 link = e.getValue().Trim();
 
-            if ( link.length < 2  )
-                    return ;
             SetSearchMessage( dialog, editor.lang.mwplugin.searching ) ;
             
             // Make an Ajax search for the pages.
@@ -137,8 +135,13 @@ CKEDITOR.dialog.add( 'MWImage', function( editor ) {
                 else
                     SetSearchMessage( dialog, results.length + editor.lang.mwplugin.manyImgFound ) ;
 
-                for ( var i = 0 ; i < results.length ; i++ )
-                    select.add ( results[i].replace(/_/g, ' '), results[i] );
+                for ( var i = 0 ; i < results.length ; i++ ) {
+                    if (results[i] == '___TOO__MANY__RESULTS___')
+                        select.add ( editor.lang.mwplugin.tooManyResults );
+                    else
+                        select.add ( results[i].replace(/_/g, ' '), results[i] );
+
+                }
             }
 
         }
@@ -154,13 +157,10 @@ CKEDITOR.dialog.add( 'MWImage', function( editor ) {
             return ;
         }
 
-        if ( link.length < 1  )	{
-            ClearSearch(dialog) ;
+        if ( link.length < 1  )
             SetSearchMessage( dialog, editor.lang.mwplugin.startTyping ) ;
-            return ;
-        }
-
-        SetSearchMessage( dialog, editor.lang.mwplugin.searching ) ;
+        else
+            SetSearchMessage( dialog, editor.lang.mwplugin.searching ) ;
         searchTimer = window.setTimeout( StartSearch, 500 ) ;
 
     }
@@ -237,6 +237,7 @@ CKEDITOR.dialog.add( 'MWImage', function( editor ) {
                                                 var dialog = this.getDialog(),
                                                     newImg = this.getValue(),
                                                     e = dialog.getContentElement( 'info', 'imgFilename' );
+                                                if ( newImg == editor.lang.mwplugin.tooManyResults ) return;
 
                                                 e.setValue(newImg.replace(/_/g, ' '));
                                                 GetImageUrl( dialog, newImg );
@@ -573,6 +574,9 @@ CKEDITOR.dialog.add( 'MWImage', function( editor ) {
 					this.imageElement = element;
 					SrcInWiki = element.getAttribute( 'src' );
 				}
+                else {
+                    OnUrlChange( this );
+                }
 
 				if ( this.imageEditMode )
 				{
