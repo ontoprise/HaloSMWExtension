@@ -427,21 +427,21 @@ function smwgHaloSetupExtension() {
 
 	//Initialize Tabular Forms
 	require_once($smwgHaloIP.'/includes/TabularForms/TF_AjaxAccess.php');
-	$wgAutoloadClasses['TFTabularFormQueryPrinter'] = 
-		$smwgHaloIP.'/includes/TabularForms/TF_QP_TabularForm.php';
-	$wgAutoloadClasses['TFDataAPIAccess'] = 
-		$smwgHaloIP.'/includes/TabularForms/TF_DataAPIAccess.php';
-	$wgAutoloadClasses['TFAnnotationData'] = 
-		$smwgHaloIP.'/includes/TabularForms/TF_DataAPIAccess.php';
-	$wgAutoloadClasses['TFAnnotationData'] = 
-		$smwgHaloIP.'/includes/TabularForms/TF_DataAPIAccess.php';
-	$wgAutoloadClasses['TFAnnotationDataCollection'] = 
-		$smwgHaloIP.'/includes/TabularForms/TF_DataAPIAccess.php';
-	$wgAutoloadClasses['TFTemplateParameterCollection'] = 
-		$smwgHaloIP.'/includes/TabularForms/TF_DataAPIAccess.php';
+	$wgAutoloadClasses['TFTabularFormQueryPrinter'] =
+	$smwgHaloIP.'/includes/TabularForms/TF_QP_TabularForm.php';
+	$wgAutoloadClasses['TFDataAPIAccess'] =
+	$smwgHaloIP.'/includes/TabularForms/TF_DataAPIAccess.php';
+	$wgAutoloadClasses['TFAnnotationData'] =
+	$smwgHaloIP.'/includes/TabularForms/TF_DataAPIAccess.php';
+	$wgAutoloadClasses['TFAnnotationData'] =
+	$smwgHaloIP.'/includes/TabularForms/TF_DataAPIAccess.php';
+	$wgAutoloadClasses['TFAnnotationDataCollection'] =
+	$smwgHaloIP.'/includes/TabularForms/TF_DataAPIAccess.php';
+	$wgAutoloadClasses['TFTemplateParameterCollection'] =
+	$smwgHaloIP.'/includes/TabularForms/TF_DataAPIAccess.php';
 	$smwgResultFormats['tabularform'] = 'TFTabularFormQueryPrinter';
-	
-	
+
+
 	return true;
 }
 
@@ -812,11 +812,11 @@ function smwfDBSupportsFunction($lib) {
 	// a config variable. However, it may happen that the SimilarEntitiesBot crashes,
 	// because the EDITDISTANCE function is not available.
 	/*
-	$dbr =& wfGetDB( DB_SLAVE );
-	$res = $dbr->query('SELECT * FROM mysql.func WHERE dl LIKE '.$dbr->addQuotes($lib.'.%'));
-	$hasSupport = ($dbr->numRows($res) > 0);
-	$dbr->freeResult( $res );
-	return $hasSupport; */
+	 $dbr =& wfGetDB( DB_SLAVE );
+	 $res = $dbr->query('SELECT * FROM mysql.func WHERE dl LIKE '.$dbr->addQuotes($lib.'.%'));
+	 $hasSupport = ($dbr->numRows($res) > 0);
+	 $dbr->freeResult( $res );
+	 return $hasSupport; */
 }
 
 /**
@@ -839,6 +839,11 @@ function smwfHaloAddHTMLHeader(&$out) {
 			// Don't use the STB when special pages are submitted
 			$allowStbOnSubmit = false;
 		}
+	}
+
+	if (smwfIsTripleStoreConfigured()) {
+		global $smwgTripleStoreGraph;
+		$wgOut->addScript('<script type="text/javascript">var smwghTripleStoreGraph="'.$smwgTripleStoreGraph.'"</script>');
 	}
 
 	$skin = $wgUser->getSkin();
@@ -865,8 +870,8 @@ function smwfHaloAddHTMLHeader(&$out) {
 
 	//    $jsm->addCSSIf($smwgHaloScriptPath . '/skins/Glossary/glossary.css');
 
-	    $jsm->addCSSIf($smwgHaloScriptPath . '/skins/TabularForms/tabularforms.css');
-	
+	$jsm->addCSSIf($smwgHaloScriptPath . '/skins/TabularForms/tabularforms.css');
+
 	// serialize the css
 	$jsm->serializeCSS($out);
 
@@ -887,7 +892,7 @@ function smwfHaloAddHTMLHeader(&$out) {
 
 	//todo: deal with deploy version
 	$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/TabularForms/tabularforms.js');
-	
+
 	if (!isset($smwgDeployVersion) || $smwgDeployVersion === false || $isQIF) {
 
 		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/ajaxhalo.js');
