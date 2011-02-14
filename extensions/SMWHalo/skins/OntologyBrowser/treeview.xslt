@@ -323,6 +323,26 @@
 					</xsl:choose>
 					{{SMW_OB_OPEN}}
 				</a>
+				
+				<a class="navigationLink" style="margin-left:5px;">
+                    <xsl:choose>
+                        <xsl:when test="@localurl">
+                            <xsl:attribute name="href"><xsl:value-of
+                                select="@localurl" />?action=edit</xsl:attribute>
+                        </xsl:when>
+                        <xsl:when test="@namespace=''">
+                            <xsl:attribute name="href"><xsl:value-of
+                                select="substring-before($param-wiki-path,'$1')" /><xsl:value-of
+                                select="@title_url" />?action=edit</xsl:attribute>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:attribute name="href"><xsl:value-of
+                                select="substring-before($param-wiki-path,'$1')" /><xsl:value-of
+                                select="@namespace" />:<xsl:value-of select="@title_url" />?action=edit</xsl:attribute>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                    {{SMW_OB_EDIT}}
+                </a>
 				</td>
 				<td>
 				<xsl:if test="count(metadata/property) > 0">

@@ -809,13 +809,21 @@ OBInstanceActionListener.prototype = {
 			this.oldSelectedInstance = GeneralBrowserTools.toggleHighlighting(
 					this.oldSelectedInstance, node);
 
+		} else if (ns == SMW_CATEGORY_NS) {
+			this.selectedCategory = title;
+
 		}
 	},
 
 	showSubMenu : function(commandID) {
-		if (this.selectedInstance == null) {
+		if (this.selectedInstance == null && commandID != SMW_OB_COMMAND_INSTANCE_CREATE) {
 			alert(gLanguage.getMessage('OB_SELECT_INSTANCE'));
 			return;
+		} else {
+			if (this.selectedCategory == null && commandID == SMW_OB_COMMAND_INSTANCE_CREATE) {
+				alert(gLanguage.getMessage('OB_SELECT_CATEGORY'));
+				return;
+			}
 		}
 
 		obInstanceMenuProvider.showContent(commandID, 'instanceList');

@@ -189,6 +189,7 @@ protected $smwUserMessages = array(
 	'smw_ob_cmd_renameproperty' => 'Umbenennen',
 	'smw_ob_cmd_renameinstance' => 'Instanz umbenennen',
 	'smw_ob_cmd_deleteinstance' => 'Instanz löschen',
+    'smw_ob_cmd_createinstance' => 'Instanz erzeugen',
 	'smw_ob_cmd_addpropertytodomain' => 'Attribut hinzufügen zur Kategorie: ',
 	
 	/* Advanced options in the ontology browser */

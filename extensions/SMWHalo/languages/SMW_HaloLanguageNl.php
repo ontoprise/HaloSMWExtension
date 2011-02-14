@@ -185,6 +185,7 @@ Druk de rechter knop om resultaten te verkrijgen. Enkel <i>Return</i> drukken ge
 	'smw_ob_cmd_renameproperty' => 'Hernoemen',
 	'smw_ob_cmd_renameinstance' => 'Entiteit hernoemen',
 	'smw_ob_cmd_deleteinstance' => 'Entiteit verwijderen',
+    'smw_ob_cmd_createinstance' => 'Create instance',
 	'smw_ob_cmd_addpropertytodomain' => 'Eigenschappen toevoegen aan domein: ',
 
 //TODO: Translate strings

@@ -7,7 +7,7 @@
  * 
  * Provides predefined text for different kinds of pages.
  * 
- * @author: Kai Kühn
+ * @author: Kai Kï¿½hn
  * 
  * Configure in LocalSettings.php (example):
  * 
@@ -38,12 +38,12 @@ class SMWPredefinitions {
 		 // serialize template with predefined values
 		$resultText = "\n{{".$template;
 		$parameters = array_unique($matches[1]);
-		
-		for($i = 0; $i < count($parameters); $i++) {
-			$parameters[$i] = trim(str_replace("|", "", $parameters[$i]));
+		$normalizedParameters=array();
+		foreach($parameters as $p) {
+			$normalizedParameters[] = trim(str_replace("|", "", $p));
 		}
-		
-		foreach($parameters as $m) {
+				
+		foreach($normalizedParameters as $m) {
 			if ($m == '') continue;
 			if (array_key_exists($m, $parameterMappings)) {
 				$mappedValue = self::mappedValue($parameterMappings[$m]);
@@ -54,7 +54,7 @@ class SMWPredefinitions {
 		}
 		
 		// adds additional parameters not found in the template
-		$additionalParameters = array_diff(array_keys($parameterMappings), $parameters);
+		$additionalParameters = array_diff(array_keys($parameterMappings), $normalizedParameters);
 		
 		foreach($additionalParameters as $sp) {
 			$mappedValue = self::mappedValue($parameterMappings[$sp]);

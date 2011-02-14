@@ -25,6 +25,7 @@ define('SMW_OB_COMMAND_ADDSUBPROPERTY_SAMELEVEL', 5);
 define('SMW_OB_COMMAND_PROPERTY_RENAME', 6);
 
 define('SMW_OB_COMMAND_INSTANCE_DELETE', 7);
+define('SMW_OB_COMMAND_INSTANCE_CREATE', 10);
 define('SMW_OB_COMMAND_INSTANCE_RENAME', 8);
 
 define('SMW_OB_COMMAND_ADD_SCHEMAPROPERTY', 9);
@@ -150,7 +151,7 @@ TEXT;
 		$html .= "<!-- Instance List hook -->	
 		<div id=\"instanceContainer\">
 		  <span class=\"OB-header\"><img style=\"margin-bottom: -3px\" src=\"$wgScriptPath/extensions/SMWHalo/skins/instance.gif\"></img> ".wfMsg('smw_ob_instanceList')."</span>
-		  ".($showMenuBar ? "<span class=\"menuBar menuBarInstance\" id=\"menuBarInstance\"><a onclick=\"instanceActionListener.showSubMenu(".SMW_OB_COMMAND_INSTANCE_RENAME.")\">".wfMsg('smw_ob_cmd_renameinstance')."</a> | <a onclick=\"instanceActionListener.showSubMenu(".SMW_OB_COMMAND_INSTANCE_DELETE.")\">".wfMsg('smw_ob_cmd_deleteinstance')."</a><div id=\"instanceListMenu\"></div></span>" : "")."			
+		  ".($showMenuBar ? "<span class=\"menuBar menuBarInstance\" id=\"menuBarInstance\"><a onclick=\"instanceActionListener.showSubMenu(".SMW_OB_COMMAND_INSTANCE_RENAME.")\">".wfMsg('smw_ob_cmd_renameinstance')."</a> | <a onclick=\"instanceActionListener.showSubMenu(".SMW_OB_COMMAND_INSTANCE_DELETE.")\">".wfMsg('smw_ob_cmd_deleteinstance')."</a> | <a onclick=\"instanceActionListener.showSubMenu(".SMW_OB_COMMAND_INSTANCE_CREATE.")\">".wfMsg('smw_ob_cmd_createinstance')."</a><div id=\"instanceListMenu\"></div></span>" : "")."			
 		  <div id=\"instanceList\" class=\"instanceListColors\">
 		  </div>
 		  <span class=\"OB-filters\"><span>".wfMsg('smw_ob_filter')."</span><input type=\"text\" id=\"instanceFilter\"><button type=\"button\" name=\"filterInstances\" onclick=\"globalActionListener.filterInstances(event)\">".wfMsg('smw_ob_filter')."</button></span>

@@ -516,6 +516,38 @@ GeneralTools.matchArrayOfRegExp = function (term, regexArray) {
     }
     return doesMatch;
 }
+
+/**
+ * Create a wiki URL from a prefixed title.
+ * 
+ * @param string Prefixed title (e.g. Property:Name) 
+ * @return string
+ */
+GeneralTools.makeWikiURL = function(prefixedTitle) {
+	return wgServer + wgArticlePath.replace(/\$1/, prefixedTitle);
+},
+
+/**
+ * Creates a wiki TSC URI. If no TSC is configured it returns false.
+ * @param string Prefixed title (e.g. Property:Name) 
+ * 
+ * @return mixed Either a URI as string or false
+ */
+GeneralTools.makeTSCURI = function(prefixedTitle) {
+	if(typeof(smwghTripleStoreGraph)=="undefined"){ 
+	
+		return false;
+	}
+	var parts = prefixedTitle.split(":");
+	var title_esc = encodeURIComponent(parts[0]);
+	if (parts.length == 1) {
+		return smwghTripleStoreGraph+"/a/"+ title_esc;
+	} else {
+		var nsText = parts[1].toLowerCase();
+		return smwghTripleStoreGraph+"/"+nsText+"/"+ title_esc;
+		
+	}
+},
   
 GeneralTools.URLEncode = function ( str ) {
     // version: 904.1412

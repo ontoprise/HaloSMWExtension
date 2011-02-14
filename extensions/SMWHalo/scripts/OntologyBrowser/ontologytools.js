@@ -1,5 +1,5 @@
 /*  Copyright 2007, ontoprise GmbH
- *   Author: Kai Kühn
+ *   Author: Kai Kï¿½hn
  *   This file is part of the halo-Extension.
  *
  *   The halo-Extension is free software; you can redistribute it and/or modify
@@ -21,7 +21,7 @@
  * @ingroup SMWHaloSpecials
  * @ingroup SMWHaloOntologyBrowser
  * 
- * @author Kai Kühn
+ * @author Kai Kï¿½hn
  */
 
 // commandIDs
@@ -34,6 +34,7 @@ var SMW_OB_COMMAND_ADDSUBPROPERTY_SAMELEVEL = 5;
 var SMW_OB_COMMAND_SUBPROPERTY_RENAME = 6;
 
 var SMW_OB_COMMAND_INSTANCE_DELETE = 7;
+var SMW_OB_COMMAND_INSTANCE_CREATE = 10;
 var SMW_OB_COMMAND_INSTANCE_RENAME = 8;
 
 var SMW_OB_COMMAND_ADD_SCHEMAPROPERTY = 9;
@@ -898,6 +899,32 @@ OBOntologyModifier.prototype = {
 		articleCreator.deleteArticle(instanceTitle, "OB", callback.bind(this),
 				$(instanceID));
 	},
+	
+	/**
+	 * @public
+	 * 
+	 * Creates an instance.
+	 * 
+	 * @param instanceTitle
+	 * @param instanceID
+	 *            ID of instance node in OB data model (XML)
+	 */
+	createInstance : function(instanceTitle, categoryTitle, categoryID) {
+		function callback() {
+			this.addInstanceNode(instanceTitle, categoryTitle);
+			selectionProvider.fireBeforeRefresh();
+			transformer.transformXMLToHTML(dataAccess.OB_cachedInstances,
+					$('instanceList'), true);
+
+			selectionProvider.fireSelectionChanged(null, null, SMW_INSTANCE_NS,
+					null)
+			selectionProvider.fireRefresh();
+		}
+		articleCreator.createArticle(instanceTitle, "[[" + gLanguage.getMessage('CATEGORY_NS')
+				+ categoryTitle + "]]", '', gLanguage
+				.getMessage('CREATE_OB_ARTICLE'), callback.bind(this),
+				$(categoryID));
+	},
 
 	/**
 	 * @private
@@ -912,6 +939,27 @@ OBOntologyModifier.prototype = {
 				+ '" title="' + subCategoryTitle + '" id="ID_'
 				+ (this.date.getTime() + this.count)
 				+ '" isLeaf="true" expanded="true"/>';
+	},
+	
+	/**
+	 * @private
+	 * 
+	 * Creates a conceptTreeElement for internal OB data model (XML)
+	 */
+	createInstanceNode : function(instanceTitle, categoryTitle) {
+		this.count++;
+		var instanceTitle_esc = encodeURIComponent(instanceTitle);
+		instanceTitle_esc = instanceTitle_esc.replace(/%2F/g, "/");
+		var categoryTitle_esc = encodeURIComponent(categoryTitle);
+		categoryTitle_esc = categoryTitle_esc.replace(/%2F/g, "/");
+		var localURL = GeneralTools.makeWikiURL(instanceTitle);
+		var uri = GeneralTools.makeTSCURI(instanceTitle);
+		var uri_att = uri != false ? 'uri="'+uri+'"' : '';
+		return '<instance '+uri_att+' title_url="' + instanceTitle_esc
+				+ '" localurl="'+localURL+'" title="' + instanceTitle
+				+ '" superCat="' + categoryTitle + '" id="ID_'
+				+ (this.date.getTime() + this.count)
+				+ '" inherited="false" />';
 	},
 
 	/**
@@ -984,6 +1032,23 @@ OBOntologyModifier.prototype = {
 		var instanceNode = GeneralXMLTools.getNodeById(
 				dataAccess.OB_cachedInstances, instanceID);
 		instanceNode.parentNode.removeChild(instanceNode);
+	},
+	
+	/**
+	 * @private
+	 * 
+	 * Adds an instance node in internal OB data model (XML)
+	 */
+	addInstanceNode : function(instanceTitle, categoryTitle) {
+		
+		var newInstanceXML = GeneralXMLTools.createDocumentFromString(this
+				.createInstanceNode(instanceTitle, categoryTitle));
+		
+		// insert in cache and displayed tree
+		GeneralXMLTools.importNode(dataAccess.OB_cachedInstances.documentElement,
+				newInstanceXML.documentElement, true);
+	
+		//alert("TODO: implement");
 	},
 
 	/**
@@ -1895,6 +1960,9 @@ OBInstanceSubMenu.prototype = Object
 						if (ns == SMW_INSTANCE_NS) {
 							this.selectedTitle = title;
 							this.selectedID = id;
+						} else if (ns == SMW_CATEGORY_NS) {
+							this.selectedCategoryTitle = title;
+							this.selectedCategoryID = id;
 						}
 					},
 
@@ -1916,6 +1984,13 @@ OBInstanceSubMenu.prototype = Object
 							this.cancel();
 							break;
 						}
+						case SMW_OB_COMMAND_INSTANCE_CREATE: {
+							ontologyTools.createInstance($F(this.id + '_input_ontologytools'),
+									this.selectedCategoryTitle,
+									this.selectedCategoryID);
+							this.cancel();
+							break;
+						}
 						default:
 							alert('Unknown command!');
 						}
@@ -1926,6 +2001,8 @@ OBInstanceSubMenu.prototype = Object
 
 						case SMW_OB_COMMAND_INSTANCE_RENAME:
 							return 'OB_RENAME';
+						case SMW_OB_COMMAND_INSTANCE_CREATE:
+							return 'OB_CREATE';
 						default:
 							return 'Unknown command';
 						}
@@ -1933,10 +2010,10 @@ OBInstanceSubMenu.prototype = Object
 					},
 
 					getUserDefinedControls : function() {
-						var titlevalue = this.selectedTitle.replace(/_/g, " ");
 
 						var html = "";
 						if (this.commandID == SMW_OB_COMMAND_INSTANCE_RENAME) {
+							var titlevalue = this.selectedTitle.replace(/_/g, " ");
 							html += '<div id="'
 									+ this.id
 									+ '">'
@@ -1958,6 +2035,8 @@ OBInstanceSubMenu.prototype = Object
 									+ '</a>' + '</div>'
 									+ '<div id="preview_instance_list"/></div>';
 						} else if (this.commandID == SMW_OB_COMMAND_INSTANCE_DELETE) {
+							var titlevalue = this.selectedTitle.replace(/_/g, " ");
+
 							html += '<div id="'
 									+ this.id
 									+ '">'
@@ -1977,7 +2056,25 @@ OBInstanceSubMenu.prototype = Object
 									+ gLanguage.getMessage('OB_PREVIEW')
 									+ '</a>' + '</div>'
 									+ '<div id="preview_instance_list"/></div>';
-						}
+						}  else if (this.commandID == SMW_OB_COMMAND_INSTANCE_CREATE) {
+							var titlevalue = this.selectedCategoryTitle.replace(/_/g, " ");
+
+							html += '<div id="'
+								+ this.id
+								+ '">'
+								+ '<div style="display: block; height: 22px;">'
+								+ '<input style="display:block; width:45%; float:left" id="'
+								+ this.id
+								+ '_input_ontologytools" type="text" value="'
+								 + '"/>'
+								+ '<span style="margin-left: 10px;" id="'
+								+ this.id + '_apply_ontologytools">'
+								+ gLanguage.getMessage('OB_ENTER_TITLE')
+								+ '</span> | ' + '<a onclick="'
+								+ this.objectname + '.cancel()">'
+								+ gLanguage.getMessage('CANCEL')
+								+ '</a> <div id="preview_instance_list"/></div>';
+					}
 						return html;
 					},
 

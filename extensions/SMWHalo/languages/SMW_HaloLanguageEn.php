@@ -190,6 +190,7 @@ clicking the big arrows between the columns.',
 	'smw_ob_cmd_renameproperty' => 'Rename',
 	'smw_ob_cmd_renameinstance' => 'Rename instance',
 	'smw_ob_cmd_deleteinstance' => 'Delete instance',
+	'smw_ob_cmd_createinstance' => 'Create instance',
 	'smw_ob_cmd_addpropertytodomain' => 'Add property to domain: ',
 	
 	/* Advanced options in the ontology browser */

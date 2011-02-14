@@ -363,11 +363,7 @@ function smwf_om_ExistsArticleIgnoreRedirect($title) {
 		return "false,denied,$title";
 	}	
 	
-	if (strpos($title,"Attribute:") == 0) {
-		$title = str_replace("Attribute:",
-		                     $wgContLang->getNsText(SMW_NS_PROPERTY).":",
-		                     $title);
-	}
+	
 	$titleObj = Title::newFromText($title);
 	$article = new Article($titleObj);
 
@@ -375,15 +371,7 @@ function smwf_om_ExistsArticleIgnoreRedirect($title) {
 		return "true";
 	}
 
-	if ($titleObj->getNamespace() == SMW_NS_RELATION) {
-	    // Attributes and relations are deprecated. They are replaced by Properties.
-		$titleObj = Title::newFromText($wgContLang->getNsText(SMW_NS_PROPERTY).":".$titleObj->getText());
-		$article = new Article($titleObj);
-
-		if ($article->exists() && !smwf_om_IsRedirect($titleObj)) {
-			return "true";
-		}
-	}
+	
 	
 	// Is the article a special property?
 	$title = str_replace($wgContLang->getNsText(SMW_NS_PROPERTY).":", "", $title);

@@ -190,6 +190,7 @@ en cliquant sur les grosses flà¨ches situées entre les colonnes.",
     'smw_ob_cmd_renameproperty' => 'Renommer',
     'smw_ob_cmd_renameinstance' => 'Renommer l\'instance',
     'smw_ob_cmd_deleteinstance' => 'Supprimer l\'instance',
+    'smw_ob_cmd_createinstance' => 'Create instance',
     'smw_ob_cmd_addpropertytodomain' => 'Ajouter la propriété au domaine: ',
 
 //TODO: Translate strings
