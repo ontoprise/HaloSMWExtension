@@ -45,3 +45,8 @@
 .tabf_modified_row td:nth-child(1){
 	font-weight: bold;
 }
+
+.tabf_further_results{
+	text-align: center;	
+}
+

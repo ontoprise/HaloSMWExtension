@@ -18,7 +18,8 @@ class TFTabularFormQueryPrinter extends SMWResultPrinter {
 	protected function getResultText( $queryResult, $outputMode ) {
 		$this->isHTML = true;
 		
-		$tabularFormData = new TFTabularFormData($queryResult, $this->m_params, $this->mLinker);
+		$tabularFormData = new TFTabularFormData($queryResult, $this->m_params, $this->mLinker,
+			$this->linkFurtherResults( $queryResult));
 		
 		if(array_key_exists(TF_SHOW_AJAX_LOADER_HTML_PARAM, $this->m_params) 
 				&& $this->m_params[TF_SHOW_AJAX_LOADER_HTML_PARAM] == 'false'){
@@ -53,14 +54,20 @@ class TFTabularFormData {
 	private $linker;
 	private $subjectColumnLabel;
 	private $getSubjectFromFirstPrintRequest = false;
+	private $hasFurtherResults;
 	
-	public function __construct($queryResult, $queryParams, $linker){
+	public function __construct($queryResult, $queryParams, $linker, $hasFurtherResults){
 		$this->queryResult = $queryResult;
 		$this->outputMode = SMW_OUTPUT_HTML;
 		$this->queryParams = $queryParams;
 		$this->linker = $linker;
+		$this->hasFurtherResults = $hasFurtherResults;
 		
 		$this->initializeAnnotationPrintRequests();
+		
+		$link = $this->queryResult->getQueryLink();
+		
+		//Lecho('<pre>'.print_r($link, true).'</pre>');
 		
 		$this->initializeTemplateParameterPrintRequests();
 	}
@@ -102,6 +109,11 @@ class TFTabularFormData {
 		$query[] = $this->queryResult->getQueryString();
 		
 		foreach($this->annotationPrintRequests as $annotation){
+			if($annotation['title'] == '__Category__'){
+				//replace internal category id
+				$annotation['title'] = 'Category';	
+			} 
+			
 			if(strlen($annotation['rawlabel']) > 0){
 				$query[] = '?'.$annotation['title'].'='.$annotation['rawlabel'];
 			} else {
@@ -220,8 +232,27 @@ class TFTabularFormData {
 		foreach($this->templateParameterPrintRequests as $template => $parameters){
 			$colSpan += count($parameters);
 		}
+		
 		//todo:language file
-		$html .= '<td style="text-align: right" colspan="'.$colSpan.'">';
+		$html .= '<td colspan="'.$colSpan.'">';
+		
+		if ( $this->hasFurtherResults){
+			$link = $this->queryResult->getQueryLink();
+			
+			$link->setParameter('tabularform', 'format');
+			$link->setParameter('1', 'limit');
+			
+			//add template parameter printrequests
+			foreach($this->queryParams as $param => $label){
+				if($param[0] == '#'){
+					$link->setParameter($label, $param);
+				}
+			}
+			
+			$html .= '<span class="tabf_further_results">'.$link->getText( $this->outputMode, $this->linker).'</span>';
+		}
+		
+		
 		$html .= '<input type="button" value="Refresh" onclick="tf.refreshForm('."'".$tabularFormId."'".')"/>';
 		$html .= '<input type="button" value="Save" onclick="tf.saveFormData(event,'."'".$tabularFormId."'".')"/>';
 		$html .= '</td>';
@@ -250,6 +281,7 @@ class TFTabularFormData {
 		foreach ( $row as $key => $field ) {
 			
 			$noResults = true;
+			
 			while ( ( $fieldValue = $field->getNextObject() ) !== false ) {
 				if(( $fieldValue->getTypeID() == '_wpg') || ($fieldValue->getTypeID() == '__sin' )){
 					$rawFieldValue = $fieldValue->getLongText( $this->outputMode, null);
@@ -259,8 +291,8 @@ class TFTabularFormData {
 					$renderedFieldValue = $fieldValue->getShortText( $this->outputMode, $this->linker);
 				}
 					
-				$formRowData->addAnnotation($this
-					->annotationPrintRequests[$key]['title'], $rawFieldValue, $renderedFieldValue);
+				$formRowData->addAnnotation(
+					$this->annotationPrintRequests[$key]['title'], $rawFieldValue, $renderedFieldValue);
 					
 				$noResults = false;
 			}
@@ -274,7 +306,7 @@ class TFTabularFormData {
 		$formRowData->detectWritableAnnotations();
 			
 		$formRowData->readTemplateParameters($this->templateParameterPrintRequests);
-			
+
 		$this->formRowsData[] = $formRowData;	
 	}
 	
@@ -294,12 +326,21 @@ class TFTabularFormData {
 			
 			$count += 1;
 			if($count == 0){
-				if(is_null($printRequest->getData())){	
+				if(is_null($printRequest->getData()) && $printRequest->getHash() != '0:Category::'){	
 					$this->getSubjectFromFirstPrintRequest = true; 
 				}	
 			}
 			
 			if(is_null($printRequest->getData())){
+				
+				//deal with category print requests
+				if($printRequest->getHash() == '0:Category::'){
+					$this->annotationPrintRequests[$count] = 
+						array('title' => '__Category__', 
+						'label' => $printRequest->getText($this->outputMode, $this->linker),
+						'rawlabel' => $printRequest->getText($this->outputMode, null));
+				} 
+				
 				continue;
 			}
 			

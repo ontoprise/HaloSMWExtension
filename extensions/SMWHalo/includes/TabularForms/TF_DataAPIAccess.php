@@ -143,8 +143,8 @@ class TFDataAPIACCESS {
 			
 			//todo: deal with asf and delimiters
 			
-			$elements = $this->pomPage->getElements()->listIterator(); 
-			
+			$elements = $this->pomPage->getElements()->listIterator();
+
 			while($elements->hasNext()){
 				$element = $elements->getNext()->getNodeValue();
 				
@@ -152,6 +152,8 @@ class TFDataAPIACCESS {
 				
 				if($element instanceof POMProperty){
 					$annotations->setWritable($element->name, $element->value);
+				} else if($element instanceof POMCategory){
+					$annotations->setWritable('__Category__', $element->value);
 				} else if ($element instanceof POMExtensionParserFunction){
 					if(strpos($element->nodeText, '{{#set:') === 0){
 						$sets = trim(substr($element->nodeText, strlen('{{#set:')));
@@ -247,6 +249,10 @@ class TFDataAPIACCESS {
 					if(!is_null($newValue = $annotations->getNewValue($element->name, $element->value))){
 						$element->value = $newValue;
 					}
+				} else if($element instanceof POMCategory){
+					if(!is_null($newValue = $annotations->getNewValue('__Category__', $element->value))){
+						$element->value = $newValue;
+					}
 				} else if ($element instanceof POMExtensionParserFunction){
 					if(strpos($element->nodeText, '{{#set:') === 0){
 						$sets = trim(substr($element->nodeText, strlen('{{#set:')));
@@ -333,7 +339,11 @@ class TFDataAPIACCESS {
 			
 			$newAnnotations = $annotations->getNewAnnotations();
 			foreach($newAnnotations as $newAnnotation){
-				$text .= '[['.$newAnnotation['name'].'::'.$newAnnotation['value'].'| ]]';
+				if($newAnnotation['name'] == '__Category__'){
+					$text .= '[[Category:'.$newAnnotation['value'].'| ]]';
+				} else {
+					$text .= '[['.$newAnnotation['name'].'::'.$newAnnotation['value'].'| ]]';
+				}
 			}
 			
 			$this->article->doEdit($text, 'tabular forms');
@@ -368,13 +378,13 @@ class TFAnnotationDataCollection {
 	}
 	
 	public function setWritable($name, $value){
-		if(!is_null($annotation = $this->getAnnotationByReference($name, $value))){
+		if(!is_null($annotation = $this->getAnnotationByReference(ucfirst($name), ucfirst($value)))){
 			$annotation->isWritable = true;
 		}
 	}
 	
 	public function getNewValue($name, $value){
-		if(!is_null($annotation = $this->getAnnotationByReference($name, $value))){
+		if(!is_null($annotation = $this->getAnnotationByReference(ucfirst($name), ucfirst/$value)))){
 			return $annotation->newValue;
 		}
 		return null;
@@ -425,7 +435,7 @@ class TFAnnotationData {
 	
 	public function __construct($name, $currentValue = null, $renderedValue = null, $newValue = null){
 		$this->name = $name;
-		$this->currentValue = $currentValue;
+		$this->currentValue = ucfirst($currentValue);
 		$this->renderedValue = $renderedValue;
 		$this->newValue = $newValue;	
 		
