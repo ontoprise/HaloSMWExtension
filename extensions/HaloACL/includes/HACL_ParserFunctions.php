@@ -264,6 +264,8 @@ class HACLParserFunctions {
 				                    $description, $name);
 				self::$mInstance->mInlineRights[] = $ir;
 				self::$mInstance->mFingerprints[] = $fingerprint;
+				$dynamicAssignees = $ir->queryDynamicAssignees(HACLRight::NAME);
+				$dynamicAssignees['queries'] = $ir->getDynamicAssigneeQueries();
 			}
 		} else {
 			self::$mInstance->mDefinitionValid = false;
@@ -271,12 +273,12 @@ class HACLParserFunctions {
 
 		// Format the defined right in Wikitext
 		if (!empty($name)) {
-			$text = wfMsgForContent('hacl_pf_rightname_title', $name)
-			.wfMsgForContent('hacl_pf_rights', implode(' ,', $actions));
+			$text = wfMsgForContent('hacl_pf_rightname_title', trim($name))
+					.wfMsgForContent('hacl_pf_rights', implode(' ,', $actions));
 		} else {
 			$text = wfMsgForContent('hacl_pf_rights_title', implode(' ,', $actions));
 		}
-		$text .= self::$mInstance->showAssignees($users, $groups);
+		$text .= self::$mInstance->showAssignees($users, $groups, $dynamicAssignees);
 		$text .= self::$mInstance->showDescription($description);
 		$text .= self::$mInstance->showErrors($errMsgs);
 		$text .= self::$mInstance->showWarnings($warnings);
@@ -348,6 +350,9 @@ class HACLParserFunctions {
 				                    $description, $name);
 				self::$mInstance->mPropertyRights[] = $ir;
 				self::$mInstance->mFingerprints[] = $fingerprint;
+				// get all dynamic assignees of this right
+				$dynamicAssignees = $ir->queryDynamicAssignees(HACLRight::NAME);
+				$dynamicAssignees['queries'] = $ir->getDynamicAssigneeQueries();
 			}
 		} else {
 			self::$mInstance->mDefinitionValid = false;
@@ -355,12 +360,12 @@ class HACLParserFunctions {
 
 		// Format the defined right in Wikitext
 		if (!empty($name)) {
-			$text = wfMsgForContent('hacl_pf_rightname_title', $name)
+			$text = wfMsgForContent('hacl_pf_rightname_title', trim($name))
 					.wfMsgForContent('hacl_pf_rights', implode(' ,', $actions));
 		} else {
 			$text = wfMsgForContent('hacl_pf_rights_title', implode(' ,', $actions));
 		}
-		$text .= self::$mInstance->showAssignees($users, $groups);
+		$text .= self::$mInstance->showAssignees($users, $groups, $dynamicAssignees);
 		$text .= self::$mInstance->showDescription($description);
 		$text .= self::$mInstance->showErrors($errMsgs);
 		$text .= self::$mInstance->showWarnings($warnings);
@@ -533,7 +538,7 @@ class HACLParserFunctions {
 
 		// Format the right managers in Wikitext
 		$text = wfMsgForContent('hacl_pf_right_managers_title');
-		$text .= self::$mInstance->showAssignees($users, $groups);
+		$text .= self::$mInstance->showAssignees($users, $groups, null);
 		$text .= self::$mInstance->showErrors($errMsgs);
 		$text .= self::$mInstance->showWarnings($warnings);
 		
@@ -567,6 +572,7 @@ class HACLParserFunctions {
 		list($users, $groups, $dynamicMemberQueries, $errMsgs, $warnings) 
 			= self::$mInstance->assignedTo($params, false);
 
+		$dynamicMembers = array();
 		if (count($errMsgs) == 0) {
 			// no errors
 			// => store the list of members for later use.
@@ -574,6 +580,17 @@ class HACLParserFunctions {
 				self::$mInstance->mUserMembers  = array_merge(self::$mInstance->mUserMembers, $users);
 				self::$mInstance->mGroupMembers = array_merge(self::$mInstance->mGroupMembers, $groups);
 				self::$mInstance->mDynamicMemberQueries = array_merge(self::$mInstance->mDynamicMemberQueries, $dynamicMemberQueries);
+
+				// Get all dynamic members for this member definition
+				$memberCache = HACLDynamicMemberCache::getInstance(); 
+				foreach ($dynamicMemberQueries as $dmq) {
+					$members = HACLGroup::executeDMQuery($dmq);
+					$memberCache->addMembers(-1, $members);
+				}
+				$dynamicMembers = $memberCache->getMembers(-1, HACLRight::NAME);
+				$dynamicMembers['queries'] = $dynamicMemberQueries;
+				$memberCache->clearCache(-1);
+				
 				self::$mInstance->mFingerprints[] = $fingerprint;
 			}
 		} else {
@@ -583,7 +600,7 @@ class HACLParserFunctions {
 
 		// Format the group members in Wikitext
 		$text = wfMsgForContent('hacl_pf_group_members_title');
-		$text .= self::$mInstance->showAssignees($users, $groups, false);
+		$text .= self::$mInstance->showAssignees($users, $groups, $dynamicMembers, false);
 		$text .= self::$mInstance->showErrors($errMsgs);
 		$text .= self::$mInstance->showWarnings($warnings);
 		
@@ -632,7 +649,7 @@ class HACLParserFunctions {
 
 		// Format the right managers in Wikitext
 		$text = wfMsgForContent('hacl_pf_group_managers_title');
-		$text .= self::$mInstance->showAssignees($users, $groups);
+		$text .= self::$mInstance->showAssignees($users, $groups, null);
 		$text .= self::$mInstance->showErrors($errMsgs);
 		$text .= self::$mInstance->showWarnings($warnings);
 		
@@ -646,7 +663,7 @@ class HACLParserFunctions {
 	 *
 	 * @param Article $article
 	 * @param User $user
-	 * @param strinf $text
+	 * @param string $text
 	 * @return true
 	 */
 	public static function articleSaveComplete(&$article, &$user, $text) {
@@ -1595,21 +1612,27 @@ class HACLParserFunctions {
 	 * 		Array of user names (without namespace "User"). May be empty.
 	 * @param array(string) $groups
 	 * 		Array of group names (without namespace "ACL"). May be emtpy.
+	 * @param array('users' => array(string), 
+	 *              'groups' => array(string),
+	 *              'queries' => array(string)) $dynamicAssignees
+	 * 		Array of dynamic assignees with users or groups. May be <null>.
 	 * @param bool $isAssignedTo
 	 * 		true  => output for "assignedTo"
 	 * 		false => output for "members"
 	 * @return string
 	 * 		A formatted wikitext with users and groups
 	 */
-	private function showAssignees($users, $groups, $isAssignedTo = true) {
+	private function showAssignees($users, $groups, $dynamicAssignees, $isAssignedTo = true) {
+		global $wgContLang;
+		$userNS = $wgContLang->getNsText(NS_USER);
+		$aclNS  = $wgContLang->getNsText(HACL_NS_ACL);
+		
 		$text = "";
 		if (count($users) > 0) {
-			global $wgContLang;
-			$userNS = $wgContLang->getNsText(NS_USER);
 
 			$text .= $isAssignedTo
-			? ':;'.wfMsgForContent('hacl_assigned_user')
-			: ':;'.wfMsgForContent('hacl_user_member');
+				? ':;'.wfMsgForContent('hacl_assigned_user')
+				: ':;'.wfMsgForContent('hacl_user_member');
 			$first = true;
 			foreach ($users as $u) {
 				if (!$first) {
@@ -1628,11 +1651,9 @@ class HACLParserFunctions {
 			$text .= "\n";
 		}
 		if (count($groups) > 0) {
-			global $wgContLang;
-			$aclNS = $wgContLang->getNsText(HACL_NS_ACL);
 			$text .= $isAssignedTo
-			? ':;'.wfMsgForContent('hacl_assigned_groups')
-			: ':;'.wfMsgForContent('hacl_group_member');
+				? ':;'.wfMsgForContent('hacl_assigned_groups')
+				: ':;'.wfMsgForContent('hacl_group_member');
 			$first = true;
 			foreach ($groups as $g) {
 				if (!$first) {
@@ -1644,6 +1665,36 @@ class HACLParserFunctions {
 			}
 			$text .= "\n";
 
+		}
+		
+		$msgDynTitle = $isAssignedTo 
+						? 'hacl_dynamic_assignees' : 'hacl_dynamic_members';
+		$msgDynQueries = $isAssignedTo 
+						? 'hacl_dyn_assigned_queries' : 'hacl_dyn_member_queries';
+		$msgDynUsers  = $isAssignedTo 
+						? 'hacl_dyn_assigned_users' : 'hacl_dyn_member_users';
+		$msgDynGroups = $isAssignedTo 
+						? 'hacl_dyn_assigned_groups' : 'hacl_dyn_member_groups';
+		if (!is_null($dynamicAssignees) && count($dynamicAssignees['queries']) > 0) {
+			$text .= ':;'.wfMsgForContent($msgDynTitle).":\n";
+			$text .= '::;'.wfMsgForContent($msgDynQueries)."\n";
+			foreach ($dynamicAssignees['queries'] as $q) {
+				global $wgParser;
+				$text .= $wgParser->insertStripItem("::*<code>$q</code>\n", $wgParser->mStripState);
+			}
+			if (count($dynamicAssignees['users']) > 0) {
+				$text .= '::;'.wfMsgForContent($msgDynUsers)."\n";
+				foreach ($dynamicAssignees['users'] as $u) {
+					$text .= "::* [[$userNS:$u|$u]]\n";
+				}
+			}
+			if (count($dynamicAssignees['groups']) > 0) {
+				$text .= '::;'.wfMsgForContent($msgDynGroups)."\n";
+				foreach ($dynamicAssignees['groups'] as $g) {
+					$text .= "::* [[$aclNS:$g|$g]]\n";
+				}
+			}
+			
 		}
 		return $text;
 	}

@@ -22,6 +22,7 @@ class TestDynamicHaloACLSuite extends PHPUnit_Framework_TestSuite
 		$suite->addTestSuite('TestDynamicMembers');
 		$suite->addTestSuite('TestDynamicMembersHierarchy');
 		$suite->addTestSuite('TestMembersAssigneesExample');
+		$suite->addTestSuite('TestShowDynamicMembers');
 		return $suite;
 	}
 	
@@ -2498,6 +2499,288 @@ ACL
     		$test[0][1] = $u;
     		$test[0][3] = false;
      		HaloACLCommon::checkRights($this, 'testExampleRights-denied', $test);
+    	}
+    	
+    }
+    
+}
+
+
+/**
+ * This class tests that dynamic group members and dynamic assignees are shown
+ * in the rendered view of security descriptors or group articles.
+ * 
+ * 
+ * It assumes that the HaloACL extension is enabled in LocalSettings.php and that 
+ * the triples store is running.
+ * 
+ * @author thsc
+ *
+ */
+class TestShowDynamicMembers extends PHPUnit_Framework_TestCase {
+
+
+	private static $mArticles = array(
+//------------------------------------------------------------------------------		
+			'Property:HasProjectManager' =>
+<<<ACL
+This is the property for managers of a project.
+
+[[has type::Type:Page| ]]
+[[has domain and range::Category:Project; Category:Person| ]]
+
+ACL
+,	
+//------------------------------------------------------------------------------		
+			'Property:HasProjectMember' =>
+<<<ACL
+This is the property for members of a project.
+
+[[has type::Type:Page| ]]
+[[has domain and range::Category:Project; Category:Person| ]]
+[[has domain and range::Category:Project; Category:Group| ]]
+
+ACL
+,
+//------------------------------------------------------------------------------		
+			'Property:WorksFor' =>
+<<<ACL
+This is the property for persons who work for something e.g. a project.
+
+[[has type::Type:Page| ]]
+[[has domain and range::Category:Person; | ]]
+[[has domain and range::Category:Person; | ]]
+
+ACL
+,
+//------------------------------------------------------------------------------		
+			'User:Jane' =>
+<<<ACL
+This is the page of user Jane.
+
+[[WorksFor::ProjectA]]
+
+[[Category:Person]]
+ACL
+,
+//------------------------------------------------------------------------------		
+			'User:John' =>
+<<<ACL
+This is the page of user John.
+
+[[WorksFor::ProjectA]]
+
+[[Category:Person]]
+ACL
+,
+//------------------------------------------------------------------------------		
+			'User:Peter' =>
+<<<ACL
+This is the page of user Peter.
+
+[[WorksFor::ProjectA]]
+
+[[Category:Person]]
+ACL
+,
+//------------------------------------------------------------------------------		
+			'User:Manolo' =>
+<<<ACL
+This is the page of user Manolo.
+
+[[Category:Dog]]
+ACL
+,
+//------------------------------------------------------------------------------		
+			'ProjectA' =>
+<<<ACL
+This is the page for Project A
+
+[[ProjectManager::User:Jane]]
+[[HasProjectMember::ACL:Group/MembersOfProjectA]]
+
+[[Category:Project]]
+ACL
+,
+//------------------------------------------------------------------------------		
+			'ACL:Group/MembersOfProjectA' =>
+<<<ACL
+{{#member: 
+| members={{#ask: [[ProjectA]][[ProjectManager::+]]|?projectManager # =}},
+User:John
+}}
+
+{{#member: 
+| members={{#sparql: SELECT ?pm WHERE { a:ProjectA property:HasProjectMember ?pm .} |?pm # =}}
+}}
+
+{{#member: 
+| members={{#sparql: SELECT ?p WHERE { ?p property:WorksFor a:ProjectA .} |?p # =}}
+}}
+
+{{#manage group: assigned to=User:Jane}}
+[[Category:ACL/Group]]
+
+ACL
+,
+//------------------------------------------------------------------------------		
+			'ACL:Page/ProjectA' =>
+<<<ACL
+{{#access: 
+ |assigned to={{#ask: [[ProjectA]][[ProjectManager::+]]|?projectManager # =}},
+  {{#sparql: SELECT ?m WHERE { a:ProjectA property:HasProjectMember ?m .} |?m # =}},
+  User:John
+ |actions=read,edit,formedit,wysiwyg,create,move,delete,annotate
+ |description=Full access for project manager
+ |name=FA
+}}
+
+{{#access: 
+ |assigned to={{#sparql: SELECT ?m WHERE { a:ProjectA property:HasProjectMember ?m .} |?m # =}},
+ {{#ask: [[ProjectA]][[ProjectManager::+]]|?projectManager # =}}, Group/MembersOfProjectA
+ |actions=edit
+ |description=Edit right for project members
+ |name=Edit
+}}
+
+{{#manage rights: assigned to=User:Jane}}
+[[Category:ACL/Right]]
+
+ACL
+,	
+	);
+	
+	private static $mArticleManager;
+	protected $backupGlobals = FALSE;
+
+	public static function setUpBeforeClass() {
+    	// reset group permissions
+    	global $wgGroupPermissions;
+    	foreach ($wgGroupPermissions as $group => $permissions) {
+    		foreach ($permissions as $p => $value) {
+    			$wgGroupPermissions[$group][$p] = true;
+    		}
+    	}
+    	
+    	HACLStorage::reset(HACL_STORE_SQL);
+    	
+    	HaloACLCommon::createUsers(array("Peter", "John", "Jane", "Manolo"));
+        
+        self::$mArticleManager = new ArticleManager();
+        self::$mArticleManager->createArticles(self::$mArticles, "Jane");
+    }
+
+	public static function tearDownAfterClass() {
+       	self::$mArticleManager->deleteArticles("Jane");
+    }
+
+    /**
+     * Data provider for testShowDynamicMembers
+     */
+    function providerForShowDynamicMembers() {
+    	// $articleName, $expectedMembers
+    	return array(
+    		array('ACL:Group/MembersOfProjectA', 
+    		      array(
+	<<<EXP
+Group members
+    Users who are member of this group
+        John 
+    Dynamic members
+        Queries for dynamic members
+            {{#ask: [[ProjectA]][[ProjectManager::+]]|?projectManager # =}} 
+        Dynamic user members
+            Jane 
+EXP
+,
+	<<<EXP
+Group members
+    Dynamic members
+        Queries for dynamic members
+            {{#sparql: SELECT ?pm WHERE { a:ProjectA property:HasProjectMember ?pm .} |?pm # =}} 
+        Dynamic group members
+            Group/MembersOfProjectA 
+EXP
+,
+	<<<EXP
+Group members
+    Dynamic members
+        Queries for dynamic members
+            {{#sparql: SELECT ?p WHERE { ?p property:WorksFor a:ProjectA .} |?p # =}} 
+        Dynamic user members
+            John
+            Peter
+            Jane 
+EXP
+    		      )),
+    		array("ACL:Page/ProjectA", 
+    		      array(
+<<<EXP
+FA
+    Right(s)
+        read ,edit ,formedit ,wysiwyg ,create ,move ,delete ,annotate 
+    Assigned users
+        John 
+    Dynamic assignees
+        Queries for dynamic assignees
+             {{#ask: [[ProjectA]][[ProjectManager::+]]|?projectManager # =}}
+             {{#sparql: SELECT ?m WHERE { a:ProjectA property:HasProjectMember ?m .} |?m # =}} 
+        Dynamically assigned users
+             Jane 
+        Dynamically assigned groups
+             Group/MembersOfProjectA 
+    Description
+        Full access for project manager 
+EXP
+,
+	<<<EXP
+Edit
+    Right(s)
+        edit 
+    Assigned groups
+        Group/MembersOfProjectA 
+    Dynamic assignees
+        Queries for dynamic assignees
+             {{#sparql: SELECT ?m WHERE { a:ProjectA property:HasProjectMember ?m .} |?m # =}}
+             {{#ask: [[ProjectA]][[ProjectManager::+]]|?projectManager # =}} 
+        Dynamically assigned users
+             Jane 
+        Dynamically assigned groups
+             Group/MembersOfProjectA 
+    Description
+        Edit right for project members 
+EXP
+
+			)),
+    	);
+    }
+    
+    
+    /**
+     * Checks if the dynamic members and assignees are correctly displayed in
+     * the given article.
+     * 
+     * @param string $articleName
+     * 		The article to check
+     * @param array<string> $expected
+     * 		Expected strings
+     * 
+     * @dataProvider providerForShowDynamicMembers
+     */ 
+    public function testShowDynamicMembersTest($articleName, $expected) {
+    	$t = Title::newFromText($articleName);
+    	$article = new Article($t);
+    	global $wgOut;
+    	$wgOut = new OutputPage();
+    	$article->view();
+    	$html = $wgOut->getHTML();
+    	
+    	// remove all HTML tags, whitespaces and &nbsp; from generated HTML
+    	$html  = preg_replace("/<\/*.*?>|\s*|&nbsp;/", "", $html);
+    	
+    	foreach ($expected as $exp) {
+    		$exp = preg_replace("/\s*/", "", $exp);
+    		$this->assertContains($exp, $html);
     	}
     	
     }

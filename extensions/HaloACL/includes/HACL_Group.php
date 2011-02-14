@@ -895,7 +895,7 @@ class  HACLGroup {
 			$memberCache->addMembers($this->mGroupID, array());
     	} else {
 			foreach ($this->mDynamicMemberQueries as $dmq) {
-				$members = $this->executeDMQuery($dmq);
+				$members = self::executeDMQuery($dmq);
 				$memberCache->addMembers($this->mGroupID, $members);
 			}
     	}
@@ -1182,8 +1182,6 @@ GROUP
         	HACLStorage::getDatabase()->getDynamicMemberQueriesForGroup($this->mGroupID);
     }
     
-    //--- Private methods ---
-
 	/**
 	 * Executes a query for dynamic members and returns the resulting user and
 	 * group names.
@@ -1193,7 +1191,7 @@ GROUP
 	 * @return array<string>
 	 * 		An array of group and user names. May be empty.
 	 */
-	private function executeDMQuery($query) {
+	public static function executeDMQuery($query) {
 		$smwStore = smwfGetStore();
 		if ($smwStore instanceof HACLSMWStore) {
 			// disable protection of query results to avoid recursion
@@ -1232,5 +1230,7 @@ GROUP
 		
 	}
 	
-    
+    //--- Private methods ---
+
+	
 }
