@@ -43,7 +43,7 @@ var TF = Class.create({
 		jQuery('#' + data.tabularFormId + ' .tabf_loader').css('display', 'none');
 		jQuery('#' + data.tabularFormId + ' .tabf_table_container').html(data.result);
 		
-		jQuery('#' + data.tabularFormId + ' .tabf_table_container').css('display', 'table');
+		jQuery('#' + data.tabularFormId + ' .tabf_table_container').css('display', 'block');
 		
 		jQuery('#' + data.tabularFormId + ' .tabf_table_container td textarea').each(tf.initializeLoadedCell)
 	},

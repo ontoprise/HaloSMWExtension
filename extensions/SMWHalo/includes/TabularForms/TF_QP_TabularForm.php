@@ -52,7 +52,7 @@ class TFTabularFormData {
 	private $queryParams;
 	private $linker;
 	private $subjectColumnLabel;
-	private $getSubjectFromFirstPrintRequest = true;
+	private $getSubjectFromFirstPrintRequest = false;
 	
 	public function __construct($queryResult, $queryParams, $linker){
 		$this->queryResult = $queryResult;
@@ -76,6 +76,7 @@ class TFTabularFormData {
 		$html = '';
 		
 		$html .= '<div id="tabf_container_'.$tfgTabularFormCount.'" class="tabf_container">';
+		
 		
 		//todo:LANGUAGE
 		//todo:ICON pending
@@ -111,7 +112,11 @@ class TFTabularFormData {
 		$html .= json_encode($query);
 		$html .= '</span>';
 		
-		$html .= '<div class="tabf_table_container" style="display: none"></span>';
+		$html .= '<div class="tabf_table_container" width="100%" style="display: none">';
+		
+		$html .= $this->getTabularFormHTML(1);
+		
+		$html .= '</div>';
 		
 		$html .= '</div>';
 		
@@ -229,10 +234,10 @@ class TFTabularFormData {
 		/*
 	 * Initializes the form row data for a given query result row
 	 */
-	private function initializeFormRowData($row, $subjectFromFirstRow){
+	private function initializeFormRowData($row, $subjectFromFirstColumn){
 		
 		//get instance behind query result row
-		if($subjectFromFirstRow){
+		if($subjectFromFirstColumn){
 			$title = $row[0]->getNextObject()->getLongText($this->outputMode, null);
 			unset( $row[0]);
 		} else {
@@ -280,44 +285,24 @@ class TFTabularFormData {
 	private function initializeAnnotationPrintRequests(){
 		//todo: deal with category print requests
 		
+		if(array_key_exists('mainlabel', $this->queryParams) && $this->queryParams['mainlabel'] != '-'){
+			$this->subjectColumnLabel = $this->queryParams['mainlabel'];
+		}
+		
 		$count = -1;
 		foreach($this->queryResult->getPrintRequests() as $printRequest){
 			
-			//This crap is necessary because, first column is subject, if mainlabel=1 is
-			//not used and )) more than one resilt is returned or if only one result is
-			//returned but there are no additional print requests
 			$count += 1;
 			if($count == 0){
-				if($this->queryResult->getCount() < 2){
-					$this->getSubjectFromFirstPrintRequest = false;
-					
-					if(!(array_key_exists('mainlabel', $this->queryParams) || $this->queryParams['mainlabel'] == '-')){
-						$this->subjectColumnLabel = '';
-					} else {
-						$this->subjectColumnLabel = $this->queryParams['mainlabel'];
-					}
-					
-					if(count($this->queryResult->getPrintRequests()) == 1){
-						continue;
-					}
-				} else {
-					if(!(array_key_exists('mainlabel', $this->queryParams) && $this->queryParams['mainlabel'] == '-')){
-						//this can be done, since we do not allow 'mainlabel=-'
-						$this->subjectColumnLabel = $printRequest->getText($this->outputMode, $this->linker);
-						
-						if(count($this->queryResult->getPrintRequests()) == 1){
-							$this->getSubjectFromFirstPrintRequest = false;	
-						}
-			
-						continue;
-					}
-				}
+				if(is_null($printRequest->getData())){	
+					$this->getSubjectFromFirstPrintRequest = true; 
+				}	
 			}
 			
-			if(count($this->queryResult->getPrintRequests()) == 1){
-				$this->getSubjectFromFirstPrintRequest = false;	
+			if(is_null($printRequest->getData())){
 				continue;
 			}
+			
 			
 			//todo: deal with labels for print requests
 			$this->annotationPrintRequests[$count] = 
