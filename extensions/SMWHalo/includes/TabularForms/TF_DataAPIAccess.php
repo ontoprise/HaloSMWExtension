@@ -384,7 +384,7 @@ class TFAnnotationDataCollection {
 	}
 	
 	public function getNewValue($name, $value){
-		if(!is_null($annotation = $this->getAnnotationByReference(ucfirst($name), ucfirst/$value)))){
+		if(!is_null($annotation = $this->getAnnotationByReference(ucfirst($name), ucfirst($value)))){
 			return $annotation->newValue;
 		}
 		return null;
