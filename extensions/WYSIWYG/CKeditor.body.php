@@ -275,7 +275,8 @@ class CKeditor_MediaWiki {
 	 * @return true
 	 */
 	public static function onMakeGlobalVariablesScript( $vars ){
-		global $wgFCKEditorDir, $wgFCKEditorExtDir, $wgFCKEditorToolbarSet, $wgFCKEditorHeight;
+		global $wgFCKEditorDir, $wgFCKEditorExtDir, $wgFCKEditorToolbarSet, $wgFCKEditorHeight,
+               $wgAllowExternalImages, $wgAllowExternalImagesFrom;
 
 		$vars['wgFCKEditorDir'] = $wgFCKEditorDir;
 		$vars['wgFCKEditorExtDir'] = $wgFCKEditorExtDir;
@@ -299,6 +300,11 @@ class CKeditor_MediaWiki {
         if (defined('SEMANTIC_RULES_VERSION'))
             $instExt[] = 'SEMANTIC_RULES_VERSION';
         $vars['wgCKeditorUseBuildin4Extensions'] = $instExt;
+        // check if external images are allowed
+        if ($wgAllowExternalImages)
+            $vars['wgAllowExternalImages'] = true;
+        else if ($wgAllowExternalImagesFrom)
+            $vars['wgAllowExternalImagesFrom'] = $wgAllowExternalImagesFrom;
 		return true;
 	}
 
