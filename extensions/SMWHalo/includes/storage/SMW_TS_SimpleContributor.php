@@ -2,7 +2,7 @@
 /**
  * @file
  * @ingroup SMWHaloTriplestore
- * 
+ *
  * Simple contributor only updates the 'has type' annotations.
  *
  * Called when property annotations get updated in a triple store.
@@ -16,7 +16,7 @@
  * Otherwise normal processing goes on.
  */
 function smwfTripleStorePropertyUpdate(& $data, & $property, & $propertyValueArray, & $triplesFromHook) {
-    global $smwgTripleStoreGraph;
+	global $smwgTripleStoreGraph;
 	if (!($property instanceof SMWPropertyValue)) {
 		// error. should not happen
 		trigger_error("Triple store update: property is not SMWPropertyValue");
@@ -31,17 +31,35 @@ function smwfTripleStorePropertyUpdate(& $data, & $property, & $propertyValueArr
 	$subj_iri = $tsNamespace->getFullIRI($data->getSubject()->getTitle());
 	$allProperties = $data->getProperties();
 	$dbkeys = $property->getDBkeys();
-	if (smwfGetSemanticStore()->inverseOf->getDBkey() == array_shift($dbkeys)) {
-        foreach($propertyValueArray as $inv) {
-            if (count($propertyValueArray) == 1) {
-            	$invprop_iri = $tsNamespace->getFullIRI($inv->getTitle());
-                $triplesFromHook[] = array($subj_iri, "owl:inverseOf", $invprop_iri);
-            }
-        }
-    } elseif ($property->getPropertyID() == "_TYPE") {
+	$propertyName = array_shift($dbkeys);
+	if (smwfGetSemanticStore()->inverseOf->getDBkey() == $propertyName) {
+		foreach($propertyValueArray as $inv) {
+			if (count($propertyValueArray) == 1) {
+				$invprop_iri = $tsNamespace->getFullIRI($inv->getTitle());
+				$triplesFromHook[] = array($subj_iri, "owl:inverseOf", $invprop_iri);
+			}
+		}
+	} elseif (smwfGetSemanticStore()->domainRangeHintProp->getDBkey() == $propertyName) {
+
+		if (count($propertyValueArray) > 0) {
+			$datavalues = reset($propertyValueArray);
+			$dvs = $datavalues->getDVs();
+			$domain = reset($dvs);
+			$domain_iri = $tsNamespace->getFullIRI($domain->getTitle());
+			$triplesFromHook[] = array($subj_iri, "haloprop:domainAndRange", "_:1");
+			$triplesFromHook[] = array("_:1", "haloprop:domain", $domain_iri);
+			$range = next($dvs);
+				
+			if ($range !== false) {
+				$range_iri = $tsNamespace->getFullIRI($range->getTitle());
+				$triplesFromHook[] = array("_:1", "haloprop:range", $range_iri);
+			}
+		}
+
+	} elseif ($property->getPropertyID() == "_TYPE") {
 
 		$hasType_iri = $tsNamespace->getFullIRIByName(SMW_NS_PROPERTY, "Has_type");
-		
+
 		foreach($propertyValueArray as $value) {
 			$dbkeys = $value->getDBkeys();
 			$typeID = array_shift($dbkeys);
@@ -51,7 +69,7 @@ function smwfTripleStorePropertyUpdate(& $data, & $property, & $propertyValueArr
 				$triplesFromHook[] = array($subj_iri, $hasType_iri, "tsctype:page");
 			} else if ($typeID === '_rec') {
 				$triplesFromHook[] = array($subj_iri, $hasType_iri, "tsctype:record");
-			} 
+			}
 
 		}
 
@@ -62,7 +80,7 @@ function smwfTripleStorePropertyUpdate(& $data, & $property, & $propertyValueArr
 /**
  * Called when category annotations get updated in a triple store.
  *
- * @param $subject SMWWikiPageValue 
+ * @param $subject SMWWikiPageValue
  * @param $c Title of category
  * @param $triplesFromHook Triples which are returned.
  *

@@ -230,6 +230,7 @@ class TSNamespaces {
 	public static $RDFS_NS = "http://www.w3.org/2000/01/rdf-schema#";
 	public static $XSD_NS = "http://www.w3.org/2001/XMLSchema#";
 	public static $TSCTYPE_NS = "http://www.ontoprise.de/smwplus/tsc/unittype#";
+	public static $HALOPROP_NS = "http://www.ontoprise.de/smwplus/tsc/haloprop#";
 
 	// collections of namespaces
 	public static $ALL_NAMESPACES;
@@ -304,6 +305,7 @@ class TSNamespaces {
 
 		// SET $TSC_PREFIXES constant
 		self::$TSC_PREFIXES = "PREFIX tsctype:<".self::$TSCTYPE_NS."> ";
+		self::$TSC_PREFIXES .= "PREFIX haloprop:<".self::$HALOPROP_NS."> ";
 
 
 	}
