@@ -170,8 +170,19 @@ class CKeditorParser extends CKeditorParserWrapper {
 	 * DML
 	 * @private
 	 */
-	function doMagicLinks( $text ) {
-		return $text;
+	function magicLinkCallback( $m ) {
+		if ( isset( $m[1] ) && $m[1] !== '' ) {
+			# Skip anchor
+			return $m[0];
+		} elseif ( isset( $m[2] ) && $m[2] !== '' ) {
+			# Skip HTML element
+			return $m[0];
+		} elseif ( isset( $m[3] ) && $m[3] !== '' ) {
+			# Free external link
+			return $this->makeFreeExternalLink( $m[0] );
+		} else { # skip the rest
+			return $m[0];
+		}
 	}
 
 	/**
@@ -637,7 +648,7 @@ class CKeditorParser extends CKeditorParserWrapper {
 		$parserOutput = parent::parse( $text, $title, $options, $linestart, $clearState, $revid );
 
         $parserOutput->setText( strtr( $parserOutput->getText(), array('FCKLR_fcklr_FCKLR' => '<br fcklr="true"/>') ) );
-
+        
 		$categories = $parserOutput->getCategories();
 		if( $categories ) {
 			$appendString = '';
