@@ -164,7 +164,24 @@ CKEDITOR.dialog.add( 'MWImage', function( editor ) {
         searchTimer = window.setTimeout( StartSearch, 500 ) ;
 
     }
+    // return 0 create no image link, 1 image with local url, 2 image link with ext. url
+    var createImageLink = function ( uri ) {
+        uri = decodeURI( uri ).toLowerCase();
+        // external link and wgAllowExternalImages is not set
+        if (! uri.match(/^https?:\/\//))
+            return 1;
+        if (typeof window.parent.wgAllowExternalImages != 'undefined' &&
+            window.parent.wgAllowExternalImages )
+            return 2;
+        if (typeof window.parent.wgAllowExternalImagesFrom != 'undefined') {
+            for (var i = 0; i < window.parent.wgAllowExternalImagesFrom.length; i++ ) {
+                if (uri.startsWith(window.parent.wgAllowExternalImagesFrom[i].toLowerCase()))
+                    return 2;
+            }
+        }
+        return 0;
 
+    }
         return {
             title : editor.lang.mwplugin.imgTitle,
             minWidth : 420,
@@ -211,14 +228,25 @@ CKEDITOR.dialog.add( 'MWImage', function( editor ) {
 											{
 												if ( type == IMAGE && ( this.getValue() || this.isChanged() ) )
 												{
-													element.setAttribute( '_cke_saved_src', decodeURI( this.getValue() ) );
-													element.setAttribute( 'src', SrcInWiki );
-                                                    element.setAttribute( '_fck_mw_filename', decodeURI( this.getValue() ) );
+                                                    var doImageLink = createImageLink( this.getValue() );
+                                                    if ( doImageLink > 0) {
+                                                        element.setAttribute( '_cke_saved_src', decodeURI( this.getValue() ) );
+                                                        element.setAttribute( '_fck_mw_filename', decodeURI( this.getValue() ) );
+                                                        if ( doImageLink > 1 )
+                                                            element.setAttribute( 'src', decodeURI( this.getValue() ) );
+                                                        else
+                                                            element.setAttribute( 'src', SrcInWiki );
+                                                    }
+                                                    else {
+                                                        element.setAttribute( 'href', decodeURI( this.getValue() ) );
+                                                    }
 												}
 												else if ( type == CLEANUP )
 												{
 													element.setAttribute( 'src', '' );	// If removeAttribute doesn't work.
 													element.removeAttribute( 'src' );
+                                                    element.setAttribute('href', '');
+                                                    element.removeAttribute( 'href' );
 												}
 											},
 											validate : CKEDITOR.dialog.validate.notEmpty( editor.lang.image.urlMissing )
@@ -298,7 +326,6 @@ CKEDITOR.dialog.add( 'MWImage', function( editor ) {
 							commit : function( type, element ) {
 								if ( type == IMAGE ) {
 									if ( this.getValue() || this.isChanged() ) {
-                                        var test = this.getValue();
 										element.setAttribute( 'alt', this.getValue() );
                                     }
 								}
@@ -514,14 +541,22 @@ CKEDITOR.dialog.add( 'MWImage', function( editor ) {
                 }
                 // Set attributes.
 				this.commitContent( IMAGE, this.imageElement );
-
-                // set some default classes for alignment and border if this is not defined
-                var attrClass = this.imageElement.getAttribute('class');
-                if ( !( attrClass && attrClass.match(/fck_mw_(frame|border)/) ) )
-                    this.imageElement.addClass('fck_mw_border');
-                if ( !( attrClass && attrClass.match(/fck_mw_(left|right|center)/) ) )
-                    this.imageElement.addClass('fck_mw_right');
-
+                // Change the image element into a link when it's an external URL
+                if ( this.imageElement.getAttribute('href') ) {
+                    var link = editor.document.createElement( 'a' );
+                    link.setAttribute('href', this.imageElement.getAttribute('href'));
+                    var text = this.imageElement.getAttribute('alt') || this.imageElement.getAttribute('href');
+                    link.setText( text );
+                    this.imageElement = link;
+                }
+                else {
+                    // set some default classes for alignment and border if this is not defined
+                    var attrClass = this.imageElement.getAttribute('class');
+                    if ( !( attrClass && attrClass.match(/fck_mw_(frame|border)/) ) )
+                        this.imageElement.addClass('fck_mw_border');
+                    if ( !( attrClass && attrClass.match(/fck_mw_(left|right|center)/) ) )
+                        this.imageElement.addClass('fck_mw_right');
+                }
                 // Remove empty style attribute.
 				if ( !this.imageElement.getAttribute( 'style' ) )
 					this.imageElement.removeAttribute( 'style' );
