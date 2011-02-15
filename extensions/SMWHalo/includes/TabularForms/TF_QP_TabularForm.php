@@ -140,6 +140,8 @@ class TFTabularFormData {
 	 */
 	public function getTabularFormHTML($tabularFormId){
 		
+		$this->initializeAnnotationAutocompletion();
+		
 		// process each query result row
 		while ( $row = $this->queryResult->getNext() ) {
 			$this->initializeFormRowData($row, $this->getSubjectFromFirstPrintRequest);
@@ -162,6 +164,58 @@ class TFTabularFormData {
 		$html .= '</table>';
 		
 		return $html;
+	}
+	
+	
+	/*
+	 * Get range property for annotation print requests
+	 */
+	private function initializeAnnotationAutocompletion(){
+		foreach($this->annotationPrintRequests as $key => $annotation){
+			if($annotation['title'] == '__Category__'){
+				$this->annotationPrintRequests[$key]['autocomplete'] = 'ask: [[:Category:+]]';
+			} else {
+				//default autocompletion for properties is all
+				$this->annotationPrintRequests[$key]['autocomplete'] = 'all';
+				
+				$prop = Title::newFromText($this->annotationPrintRequests[$key]['title'], SMW_NS_PROPERTY);
+				if($prop->exists()){
+					$store = smwfNewBaseStore();
+					$semanticData = $store->getSemanticData($prop);
+					$annotations = $semanticData->getProperties();
+					
+					//get type
+					$type = null;
+					if(array_key_exists('Has_type', $annotations)){
+						$type = $semanticData->getPropertyValues($annotations['Has_type']);
+						$idx = array_keys($type);
+						$idx = $idx[0];
+						$type = $type[$idx]->getShortWikiText();
+					}
+					
+					
+					if($type == null || strtolower($type) == 'page'){
+						//check if there is a range defined
+						if(array_key_exists('Has_domain_and_range', $annotations)){
+							$range = $semanticData->getPropertyValues($annotations['Has_domain_and_range']);
+							if(is_array($range) && array_key_exists(0, $range)){
+								if($range[0] instanceof SMWRecordValue){
+									$range = $range[0]->getDVs();
+									if(array_key_exists(1, $range)){
+										$range = $range[1]->getShortWikiText();
+										
+										$this->annotationPrintRequests[$key]['autocomplete'] = 'ask: [['.$range.']]';
+									}
+								}
+							}
+						}		
+					} else {
+						$this->annotationPrintRequests[$key]['autocomplete'] =  
+							'annotation-value: Property:'.$this->annotationPrintRequests[$key]['title'];
+					}
+				}
+			}
+		}
 	}
 	
 	
@@ -225,8 +279,6 @@ class TFTabularFormData {
 		
 		$html .= '<tr class="smwfooter">';
 		
-		//todo: deal with further results
-		
 		$colSpan = 2;
 		$colSpan += count($this->annotationPrintRequests);
 		foreach($this->templateParameterPrintRequests as $template => $parameters){
@@ -249,7 +301,7 @@ class TFTabularFormData {
 				}
 			}
 			
-			$html .= '<span class="tabf_further_results">'.$link->getText( $this->outputMode, $this->linker).'</span>';
+			$html .= '<span class="tabf_further_results" width="100%">'.$link->getText( $this->outputMode, $this->linker).'</span>';
 		}
 		
 		
@@ -548,10 +600,17 @@ class TFTabularFormRowData {
 		foreach($annotationPrintRequests as $annotation){
 			$html .= '<td class="tabf_table_cell">';
 			
+			$autocomplete = '';
+			if(!is_null($annotation['autocomplete'])){
+				$autocompletion = 'class="wickEnabled" constraints="';
+				$autocompletion .= $annotation['autocomplete'];
+				$autocompletion .= '"';
+			}
+			
 			$annotations = $this->annotations[$annotation['title']];
 			foreach($annotations as $annotation){
 				if($annotation->isWritable){
-					$html .= "<textarea rows='1'>".$annotation->currentValue."</textarea>";
+					$html .= "<textarea ".$autocompletion." rows='1'>".$annotation->currentValue."</textarea>";
 				} else {
 				$html .= '<div style="height: 3em; width: 100%">'.$annotation->renderedValue.'</div>';
 				}

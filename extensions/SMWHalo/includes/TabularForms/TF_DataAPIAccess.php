@@ -437,7 +437,7 @@ class TFAnnotationData {
 		$this->name = $name;
 		$this->currentValue = ucfirst($currentValue);
 		$this->renderedValue = $renderedValue;
-		$this->newValue = $newValue;	
+		$this->newValue = $newValue;
 		
 		if(is_null($this->currentValue) || $this->currentValue == ''){
 			$this->isWritable = true;
