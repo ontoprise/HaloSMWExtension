@@ -875,7 +875,13 @@ CKEDITOR.customprocessor.prototype =
 								stringBuilder.push( '</math>' );
 								return;
 							}
-
+                            // external image?
+                            var src = htmlNode.getAttribute( 'src' );
+                            if (src.toLowerCase().match(/^https?:\/\//)) {
+                                stringBuilder.push( src );
+                                return;
+                            }
+                            
 							var imgName		= htmlNode.getAttribute( '_fck_mw_filename' );
 							var imgCaption	= htmlNode.getAttribute( 'alt' ) || '';
 							var imgType		= htmlNode.getAttribute( '_fck_mw_type' ) || '';
