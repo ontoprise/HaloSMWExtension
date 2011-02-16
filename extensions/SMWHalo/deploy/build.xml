@@ -111,6 +111,8 @@
 				<exclude name="**/deploy/**" />
 			</fileset>
 		</copy>
+        <copy file="../../../patches/patch.php" tofile="bin/zip/deployment/tools/patch.php" overwrite="true" verbose="true" failonerror="true"/>
+
 		<copy todir="bin/zip/extensions/ApplicationProgramming">
 			<fileset dir="../../ApplicationProgramming/">
 				<exclude name="**/.svn, **/CVS" />
