@@ -163,6 +163,10 @@ class SGA_LanguageDe {
     'smw_gard_export_ns' => 'Exportiere in Namensraum',
     'smw_gard_export_download' => 'Der Export war erfolgreich! Klicke $1 um den Wiki-Export als OWL-Datei herunterzuladen.',
     'smw_gard_export_here' => 'hier',
+    
+    /*Message for ExportObjectLogicBot*/
+    'smw_exportobjectlogicbot'=>'Exportiere ObjectLogic',
+    'smw_gard_exportobl_docu' => 'Dieser Bot exportiert die Ontologien des TSCs als ObjectLogic.',
 
     /*Message for TemplateMaterializerBot*/
     'smw_gard_templatemat_docu' => 'Dieser Bot aktualisiert alle Seiten, die Templates verwenden welche seit der letzten Materialisierung geändert wurden. Dies ist notwendig damit ASK-Queries in allen Fällen korrekte Ergebnisse liefern.',

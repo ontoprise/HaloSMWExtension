@@ -169,6 +169,10 @@ class SGA_LanguageNl {
     'smw_gard_export_ns' => 'Naar namespace exporteren',
     'smw_gard_export_download' => 'De export is succesvol verlopen! Klik op $1 om de wiki export te downloaden als OWL bestand.',
     'smw_gard_export_here' => 'hier',
+    
+    /*Message for ExportObjectLogicBot*/
+    'smw_exportobjectlogicbot'=>'Export ObjectLogic',
+    'smw_gard_exportobl_docu' => 'This bot exports the TSC\'s ontologies as ObjectLogic',
 
     /*Message for TemplateMateriazerBot*/
     'smw_gard_templatemat_docu' => 'Deze bot actualiseert de wikipagina´s die templates gebruiken die sinds de laatste materialisering veranderd zijn. Dit is noodzakelijk om altijd juiste resultaten te krijgen van ASK queries.',

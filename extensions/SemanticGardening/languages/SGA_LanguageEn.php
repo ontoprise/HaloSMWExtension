@@ -175,7 +175,11 @@ of the tools click on this link: $1.',
     'smw_gard_export_ns' => 'Export to namespace',
     'smw_gard_export_download' => 'Export was successful! Click $1 to download the wiki export as OWL file.',
     'smw_gard_export_here' => 'here',
-
+    
+    /*Message for ExportObjectLogicBot*/
+    'smw_exportobjectlogicbot'=>'Export ObjectLogic',
+    'smw_gard_exportobl_docu' => 'This bot exports the TSC\'s ontologies as ObjectLogic',
+    
     /*Message for TemplateMateriazerBot*/
     'smw_gard_templatemat_docu' => 'This bot updates the wikipages which use templates that got new annotations to includes these annotations in the results of an ASK query.',
     'smw_gard_templatemat_applytotouched' => 'Apply only to touched templates',
