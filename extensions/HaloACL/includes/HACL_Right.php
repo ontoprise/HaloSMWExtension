@@ -98,7 +98,8 @@ class  HACLRight  {
 								//             right applies
 	private $mDynamicAssigneeQueries; 
 								// array(string): Queries for dynamic assignees
-								//  			  (Groups and users)								
+								//  			  (Groups and users)
+	private $mDynamicAssignees;	// array of IDs of dynamic users and groups
 	private $mDescription;		// string: A decription of this right
 	private $mOriginID;			// int: ID of the security descriptor or
 								//      predefined right that defines this right
@@ -159,13 +160,71 @@ class  HACLRight  {
 
 	public function getRightID()		{return $this->mRightID;}
 	public function getActions()		{return $this->mActions;}
-	public function getGroups()			{return $this->mGroups;}
-	public function getUsers()			{return $this->mUsers;}
 	public function getDescription()	{return $this->mDescription;}
 	public function getName()			{return $this->mName;}
 	public function getOriginID()		{return $this->mOriginID;}
+	
+	/**
+	 * Returns <true> if this right has queries for dynamic assignees.
+	 */
+	public function hasDynamicAssignees() {
+		return count($this->mDynamicAssigneeQueries) > 0;
+	}
+	
 	public function getDynamicAssigneeQueries()	
 										{ return $this->mDynamicAssigneeQueries; }
+	
+	/**
+	 * Returns an array of IDs of dynamically assigned users and groups.
+	 * This array has the following	layout:
+	 * 		array("groups" => array(List of groups),
+	 * 		      "users"  => array(List of users) )
+	 * This array is stored in an internal field so that the query for members
+	 * must only be performed once.
+	 */
+	public function getDynamicAssignees() {
+		if (!isset($this->mDynamicAssignees)) {
+			$this->mDynamicAssignees = $this->queryDynamicAssignees();
+		}
+		return $this->mDynamicAssignees;
+	}
+	
+	/**
+	 * Returns an array of IDs of assigned groups. If $dynamicAssignees is <true>,
+	 * all dynamic groups are returned as well.
+	 * 
+	 * @param int $dynamicAssignees
+	 * 		Default value is <false>.
+	 * @return array<int>
+	 * 		IDs of all assigned groups.
+	 * 	
+	 */
+	public function getGroups($dynamicAssignees = false) {
+		if ($dynamicAssignees) {
+			$da = $this->getDynamicAssignees();
+			return array_merge($this->mGroups, $da['groups']);
+		}
+		return $this->mGroups;
+	}
+	
+	
+	/**
+	 * Returns an array of IDs of assigned users. If $dynamicAssignees is <true>,
+	 * all dynamic users are returned as well.
+	 * 
+	 * @param int $dynamicAssignees
+	 * 		Default value is <false>.
+	 * @return array<int>
+	 * 		IDs of all assigned users.
+	 * 	
+	 */
+	public function getUsers($dynamicAssignees = false)	{
+		if ($dynamicAssignees) {
+			$da = $this->getDynamicAssignees();
+			return array_merge($this->mUsers, $da['users']);
+		}
+		return $this->mUsers;
+	}
 		
 	/**
 	 * Don't call this method!!

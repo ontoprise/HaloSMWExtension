@@ -326,6 +326,8 @@ $messages['en'] = array(
 
     'hacl_discard_changes' => "Discard changes",
     'hacl_save_acl' => "Save ACL",
+	'hacl_dynamic_group_not_editable' => "This group contains dynamic members. It can not be edited.",
+	'hacl_dynamic_right_not_editable' => "This ACL has rights with dynamic assignees. It can not be edited in the GUI.<br />To edit its definition click here: $1",
     'hacl_create_right' => "Create right",
     'hacl_add_template' => "Add template",
     'hacl_groupsettings' => "Group settings",
@@ -704,7 +706,9 @@ $messages['de'] = array(
 
     'hacl_discard_changes' => "&Auml;nderungen verwerfen",
     'hacl_save_acl' => "ACL speichern",
-    'hacl_create_right' => "Recht erstellen",
+	'hacl_dynamic_group_not_editable' => "Diese Gruppe enthält dynamische Mitglieder und kann nicht editiert werden.",
+	'hacl_dynamic_right_not_editable' => "Dieses Rechte hat dynamisch definierte Berechtigte. Es kann nicht in dieser Benutzeroberfläche bearbeitet werden.<br />Klicken Sie hier zum Bearbeiten der Definition: $1",
+	'hacl_create_right' => "Recht erstellen",
     'hacl_add_template' => "Template hinzuf&uuml;gen",
     'hacl_groupsettings' => "Gruppeneinstellungen",
 	'hacl_popup_invalid_no_group_members' => "Bitte wählen Sie mindestens einen Benutzer oder eine Gruppe aus!",

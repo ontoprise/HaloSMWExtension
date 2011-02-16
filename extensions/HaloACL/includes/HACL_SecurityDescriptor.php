@@ -589,6 +589,22 @@ class  HACLSecurityDescriptor  {
 	}
 	
 	/**
+	 * Returns <true> if at least one inline right has dynamic assignees.
+	 * @return boolean
+	 * 	<true> if an inline right has dynamic assignees.
+	 *  <false> otherwise
+	 */
+	public function hasDynamicInlineRights() {
+		$inlineRights = $this->getInlineRights();
+		foreach ($inlineRights as $irID) {
+			$ir = HACLRight::newFromID($irID);
+			if ($ir->hasDynamicAssignees()) {
+				return true;
+			}
+		}
+	}
+	
+	/**
 	 * Returns an array of IDs of predefined rights of this SD.
 	 *
 	 * @param bool $recursively

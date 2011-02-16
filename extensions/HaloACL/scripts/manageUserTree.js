@@ -784,8 +784,20 @@ YAHOO.haloacl.manageUsers_handleEdit = function (groupname) {
 				manageGroups: magic['manageGroups']
 			});
 			$('haloacl_manageUser_editing_container').show();
-			$('ManageACLDetail').scrollTo();
-
+			
+			// Remove the buttons for saving / discarding the group if it has
+			// dynamic members.
+			if (magic.hasDynamicMembers === true) {
+				$('haloacl_save_discard_form').hide();
+				$('haloacl_dynamic_group_msg').show();
+			} else {
+				$('haloacl_save_discard_form').show();		
+				$('haloacl_dynamic_group_msg').hide();	
+			}
+			
+			if ($('ManageACLDetail')) {
+				$('ManageACLDetail').scrollTo();
+			}
 		}
 	});
 
@@ -799,6 +811,8 @@ YAHOO.haloacl.manageUsers_handleEdit = function (groupname) {
 		});
 		$('haloacl_manageUser_editing_container').show();
 		$('manageUserGroupSettingsModificationRight').scrollTo();
+		$('haloacl_save_discard_form').show();		
+		$('haloacl_dynamic_group_msg').hide();	
 
 	}
 }

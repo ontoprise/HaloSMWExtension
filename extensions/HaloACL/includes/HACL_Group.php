@@ -74,9 +74,6 @@ class  HACLGroup {
 							// unauthorized users can change the group
 	// array(string): Queries for dynamic members (Groups and users)								
 	private $mDynamicMemberQueries = array(); 
-	
-	
-	
 
     /**
      * Constructor for HACLGroup
@@ -132,6 +129,7 @@ class  HACLGroup {
 		self::$mAllowUnauthorizedGroupChange = $aucg; 
 		return $current;
 	}
+	public function hasDynamicMembers() { return count($this->mDynamicMemberQueries) > 0; }
     
     /**
      * Returns the name of this group without the prefix e.g. "Group/"

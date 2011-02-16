@@ -224,6 +224,14 @@ abbr,acronym { border:0;
     margin:0 0 10px 0;
 }
 
+.haloacl_dynamic_group_msg {
+	color:red;
+}
+
+.haloacl_dynamic_right_msg {
+	color:red;
+}
+
 .haloacl_discard_button {
 	color:red;
 }

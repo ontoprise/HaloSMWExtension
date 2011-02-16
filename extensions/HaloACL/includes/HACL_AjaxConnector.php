@@ -1426,6 +1426,13 @@ function haclGetRightsPanel($panelid, $predefine, $readOnly = false, $preload = 
     if ($readOnly === "true") $readOnly = true;
     if ($readOnly === "false") $readOnly = false;
 
+    if ($predefine !== "modification") {
+	    $right = HACLRight::newFromID($preloadRightId);
+	    if ($right->hasDynamicAssignees()) {
+	    	$readOnly = true;
+	    }
+    }
+    
     if ($readOnly) {
         $expandMode = "expand";
     } else {
@@ -1486,9 +1493,9 @@ HTML;
     if ($preload) {
         if ($predefine <> "modification") {
             $right = HACLRight::newFromID($preloadRightId);
-            $users = $right->getUsers();
+            $users = $right->getUsers(true);
             #print_r($users);
-            $groups = $right->getGroups();
+            $groups = $right->getGroups(true);
         } else {
             $SD = HACLSecurityDescriptor::newFromID($preloadRightId);
             $users = $SD->getManageUsers();
@@ -2921,6 +2928,13 @@ function haclGetSDRightsPanelContainer($sdId, $sdName, $readOnly=false) {
 
     if ($readOnly == "true") $readOnly = true;
     if ($readOnly == "false") $readOnly = false;
+    
+    $isDynamicSD = false;
+    $sd = HACLSecurityDescriptor::newFromID($sdId);
+    if ($sd->hasDynamicInlineRights()) {
+    	$readOnly = true;
+    	$isDynamicSD = true;
+    }
 
     $sdName = "$ns:".$sdName;
     $panelid = "SDRightsPanel_$sdId";
@@ -2971,6 +2985,28 @@ HTML;
 
     $aclsavedmsg = wfMsg('hacl_createSaveContent_3');
     
+    if ($readOnly) {
+    	$buttonBox = "";
+    	if ($isDynamicSD) {
+    		$linker = new Linker();
+    		$sdLink = $linker->link(Title::newFromText($sdName));
+			$msg = wfMsg('hacl_dynamic_right_not_editable', $sdLink);
+			$buttonBox = <<<HTML
+        <div class="haloacl_button_box haloacl_dynamic_right_msg" style="margin-bottom: 10px;">
+        	$msg
+        </div>
+HTML;
+    	}
+    					
+    } else {
+    	$buttonBox = <<<HTML
+        <div class="haloacl_button_box haloacl_three_buttons" style="height: 18px; margin-bottom: 10px;">
+            <div><input type="button" style="margin-left:10px" value="$hacl_SDRightsPanelContainer_2" onclick="javascript:YAHOO.haloacl.deleteSD('$sdId');" /></div>
+            <div><input type="button" class="haloacl_discard_button" value="$hacl_SDRightsPanelContainer_3" onclick="javascript:YAHOO.haloacl.removePanel('$panelid');YAHOO.haloacl.createacl_addRightPanel();" /></div>
+            <div><input id="haloacl_save_right" type="button" name="safeRight" value="$hacl_SDRightsPanelContainer_4" onclick="YAHOO.haloacl.buildCreateAcl_SecDesc();" /></div>
+        </div>
+HTML;
+    }
     $html .= <<<HTML
         <div class="haloacl_sd_container_$readOnly" id="SDRightsPanelContainer_$sdId">
         </div>
@@ -2978,12 +3014,7 @@ HTML;
             YAHOO.haloacl.loadContentToDiv('SDRightsPanelContainer_$sdId','haclGetSDRightsPanel',{sdId:'$sdId', readOnly:'$readOnly',autosave:'true'});
         </script>
         <div class="haloacl_greyline">&nbsp;</div>
-        <div class="haloacl_button_box haloacl_three_buttons" style="height: 18px; margin-bottom: 10px;">
-            <div><input type="button" style="margin-left:10px" value="$hacl_SDRightsPanelContainer_2" onclick="javascript:YAHOO.haloacl.deleteSD('$sdId');" /></div>
-            <div><input type="button" class="haloacl_discard_button" value="$hacl_SDRightsPanelContainer_3" onclick="javascript:YAHOO.haloacl.removePanel('$panelid');YAHOO.haloacl.createacl_addRightPanel();" /></div>
-            <div><input id="haloacl_save_right" type="button" name="safeRight" value="$hacl_SDRightsPanelContainer_4" onclick="YAHOO.haloacl.buildCreateAcl_SecDesc();" /></div>
-        </div>
-  
+ 		$buttonBox 
         <script type="javascript">
 
             var callback2 = function(result){
@@ -4888,6 +4919,7 @@ HTML;
             </div>
 HTML;
     $discard = wfMsg('hacl_discard_changes');
+	$msgDynamicGroup = wfMsg('hacl_dynamic_group_not_editable');
 
     $groupPanelContent = <<<HTML
         <div id="content_manageUserGroupsettings">
@@ -4909,7 +4941,10 @@ HTML;
             <div class="haloacl_tab_section_content">
                 <div class="haloacl_tab_section_content_row">
                    <div class="haloacl_button_box">
-                    <form>
+                    <div id="haloacl_dynamic_group_msg" class="haloacl_dynamic_group_msg" style="display:none;">
+                    	$msgDynamicGroup
+                    </div>
+                    <form id="haloacl_save_discard_form">
                      <input type="button" class="haloacl_discard_button" id="haloacl_discardacl_button" value="$discard"
                         onclick="javascript:YAHOO.haloacl.discardChanges_users();"/>
                     &nbsp;<input id="haloacl_managegroups_save" type="button" value="$hacl_manageUser_10" onClick="YAHOO.haloacl.manageUsers_saveGroup();" />
@@ -5206,7 +5241,8 @@ function haclGetGroupDetails($groupname) {
         'memberGroups'=>$groupMembers,
         'description'=>$g->getGroupDescription(),
         'manageUsers'=>array(),
-        'manageGroups'=>array()
+        'manageGroups'=>array(),
+    	'hasDynamicMembers' => $g->hasDynamicMembers()
     );
     foreach ($g->getManageUsers() as $id) {
         $db =& wfGetDB( DB_SLAVE );
