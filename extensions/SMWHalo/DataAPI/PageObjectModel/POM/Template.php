@@ -74,10 +74,15 @@ class POMTemplate extends POMDcbElement
 	{
 		$text = '{{'.$this->title->toString();
 
-		for ($i = 0; $i < count($this->parameters); $i++)
-		{
+//		for ($i = 0; $i < count($this->parameters); $i++)
+//		{
+//			$text .= '|';			
+//			$text .= $this->parameters[$i]->toString();
+//		}
+		
+		foreach ($this->parameters as $param){
 			$text .= '|';			
-			$text .= $this->parameters[$i]->toString();
+			$text .= $param->toString();
 		}
 
 		$text .= '}}';

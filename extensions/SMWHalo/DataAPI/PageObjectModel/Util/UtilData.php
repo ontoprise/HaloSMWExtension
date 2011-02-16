@@ -231,8 +231,12 @@ class DLList{
 					$__previousNode = &$__node->getPrevious();
 					$__nextNode = &$__node->getNext();
 					//updates the references for the before and after node.
-					$__previousNode->setNext($__nextNode);
-					$__nextNode->setPrevious($__previousNode);
+					if(!is_null($__previousNode)){
+						$__previousNode->setNext($__nextNode);
+					}
+					if(!is_null($__nextNode)){
+						$__nextNode->setPrevious($__previousNode);
+					}
 
 					if($__i === 0){
 						// the head should be set correctly

@@ -247,11 +247,19 @@ class TFDataAPIACCESS {
 				
 				if($element instanceof POMProperty){
 					if(!is_null($newValue = $annotations->getNewValue($element->name, $element->value))){
-						$element->value = $newValue;
+						if(strlen($newValue) == 0){
+							$this->pomPage->delete($element);
+						} else {
+							$element->value = $newValue;
+						}
 					}
 				} else if($element instanceof POMCategory){
 					if(!is_null($newValue = $annotations->getNewValue('__Category__', $element->value))){
-						$element->value = $newValue;
+						if(strlen($newValue) == 0){
+							$this->pomPage->delete($element);
+						} else {
+							$element->value = $newValue;
+						}
 					}
 				} else if ($element instanceof POMExtensionParserFunction){
 					if(strpos($element->nodeText, '{{#set:') === 0){
@@ -264,7 +272,11 @@ class TFDataAPIACCESS {
 							if(count($set) == 2){
 								if(!is_null($newValue = $annotations->getNewValue(trim($set[0]), trim($set[1])))){
 									$modified = true;
-									$sets[$key] = $set[0].'='.$newValue;
+									if(strlen($newValue) == 0){
+										unset($sets[$key]);	
+									} else {
+										$sets[$key] = $set[0].'='.$newValue;
+									}
 								}
 							}
 						}
@@ -285,7 +297,11 @@ class TFDataAPIACCESS {
 							if(count($silent == 2)){
 								if(!is_null($newValue = $annotations->getNewValue(trim($silent[0]), trim($silent[1])))){
 									$modified = true;
-									$silents[$key] = $silent[0].'='.$newValue;
+									if(strlen($newValue) == 0){
+										unset($silents[$key]);
+									} else {
+										$silents[$key] = $silent[0].'='.$newValue;
+									}
 								}
 							}
 						}
@@ -314,7 +330,11 @@ class TFDataAPIACCESS {
 							$element->getTitle(), $name, $parameter->getValue()->text, $element->id);
 						
 						if(!is_null($newValue)){
-							$element->setParameter($name, $newValue);
+							if(strlen($newValue) == 0){
+								unset($element->parameters[$key]);
+							} else {
+								$element->setParameter($name, $newValue);
+							}
 						}
 					}
 				}
@@ -483,16 +503,18 @@ class TFTemplateParameterCollection {
 	}
 	
 	public function setTemplateParameterValue($template, $name, $value, $pomTemplateId){
-		if(array_key_exists($template, $this->templateParameters) ){
-			
-			if(array_key_exists($template, $this->allTemplateParameters)
-					&& !array_key_exists($name, $this->templateParameters[$template])){
-				$this->templateParameters[$template][$name] = new TFTemplateParameter($template.'#'.$name);
+		if(strlen($value) > 0){
+			if(array_key_exists($template, $this->templateParameters) ){
+				
+				if(array_key_exists($template, $this->allTemplateParameters)
+						&& !array_key_exists($name, $this->templateParameters[$template])){
+					$this->templateParameters[$template][$name] = new TFTemplateParameter($template.'#'.$name);
+				}
+				
+				if(array_key_exists($name, $this->templateParameters[$template])){
+					$this->templateParameters[$template][$name]->currentValues[$pomTemplateId] = $value;
+				} 
 			}
-			
-			if(array_key_exists($name, $this->templateParameters[$template])){
-				$this->templateParameters[$template][$name]->currentValues[$pomTemplateId] = $value;
-			} 
 		}
 	}
 	

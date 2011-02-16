@@ -351,7 +351,7 @@ class TFTabularFormData {
 				
 			//add annotation also if no results have been found	
 			if($noResults){
-				$formRowData->addAnnotation($this->annotationPrintRequests[$key]['title'], '', '');
+				$formRowData->addAnnotation($this->annotationPrintRequests[$key]['title'], null, null);
 			}
 		}
 			
