@@ -295,7 +295,7 @@ class TFTabularFormData {
 		//Todo:Language
 		global $smwgHaloScriptPath;
 		$html .= '<td>';
-		$html .= '<img class="tabf_added_status" title="added" src="'.$smwgHaloScriptPath.'/skins/TabularForms/Added.png">Added</img>';
+		$html .= '<img class="tabf_added_status" title="added" src="'.$smwgHaloScriptPath.'/skins/TabularForms/Added.png"></img>';
 		$html .= '<img class="tabf_saved_status" title="Saved" style="display: none" src="'.$smwgHaloScriptPath.'/skins/TabularForms/Saved.png"></img>';
 		$html .= '<img class="tabf_error_status" title="An error occured" style="display: none" src="'.$smwgHaloScriptPath.'/skins/TabularForms/Error.png"></img>';
 		$html .= '<img class="tabf_pending_status" title="Updating" style="display: none" src="'.$smwgHaloScriptPath.'/skins/TabularForms/Pending.gif"></img>';

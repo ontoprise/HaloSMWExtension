@@ -300,9 +300,10 @@ var TF = Class.create({
 		jQuery(this).addClass('tabf_table_row_saved');
 		jQuery('textarea', this).attr('readonly', 'true');
 		
-		if(jQuery(this).attr('isModified')){
+		if(jQuery(this).attr('isModified') == 'true' || jQuery(this).attr('isNew') == 'true' ){
 			
 			jQuery('td:last-child .tabf_modified_status', this).css('display', 'none');
+			jQuery('td:last-child .tabf_added_status', this).css('display', 'none');
 			jQuery('td:last-child .tabf_pending_status', this).css('display', 'inline');
 			
 			var modifiedValues = new Array();
@@ -330,8 +331,13 @@ var TF = Class.create({
 			
 			//this is uglay
 			var tabularFormId = jQuery(this).parent().parent().parent().parent().attr('id');
-			var articleTitle = jQuery('td:first-child ',this).attr('article-name');
 			var revisionId = jQuery('td:first-child ',this).attr('revision-id');
+			if(revisionId == '-1'){
+				var articleTitle = jQuery('td:first-child ',this).attr('value');
+			} else {
+				var articleTitle = jQuery('td:first-child ',this).attr('article-name');
+			}
+			
 			
 			//todo:add ajax error handling
 			var url = wgServer + wgScriptPath + "/index.php";
@@ -372,6 +378,7 @@ var TF = Class.create({
 		
 		var newRow = jQuery('#' + tabfId + ' .tabf_table_container .smwfooter').prev();
 		jQuery(newRow).addClass('tabf_new_row');
+		jQuery(newRow).attr('isNew', true);
 		jQuery('td:first-child textarea', newRow).addClass('tabf_erronious_instance_name');
 		jQuery('td', newRow).addClass('tabf_table_cell');
 		

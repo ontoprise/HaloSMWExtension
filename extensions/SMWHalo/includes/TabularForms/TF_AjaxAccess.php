@@ -64,7 +64,14 @@ function tff_updateInstanceData($updates, $articleTitle, $revisionId, $rowNr, $t
 	//file_put_contents('d://uos.rtf', print_r($parameters, true));
 	
 	$title = Title::newFromText($articleTitle);
-	$result = TFDataAPIAccess::getInstance($title)->updateValues($annotations, $parameters, $revisionId);
+	
+	if($revisionId == '-1'){
+		//add instance
+		$result = true;
+	} else {
+		//edit instance
+		$result = TFDataAPIAccess::getInstance($title)->updateValues($annotations, $parameters, $revisionId);
+	}
 	
 	$result = array('success' => $result, 'rowNr' => $rowNr, 'tabularFormId' => $tabularFormId, $revisionId);
 	$result = json_encode($result);
