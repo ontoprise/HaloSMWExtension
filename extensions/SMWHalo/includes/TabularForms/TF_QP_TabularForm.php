@@ -161,6 +161,8 @@ class TFTabularFormData {
 		
 		$html .= $this->addTabularFormFooterHTML($tabularFormId);
 		
+		$html .= $this->addTabularFormAddRowTemplateHTML($tabularFormId);
+		
 		$html .= '</table>';
 		
 		return $html;
@@ -256,6 +258,53 @@ class TFTabularFormData {
 	}
 	
 	/*
+	 * Adds invisible row add the end of table. This row is used as
+	 * template for adding new instances.
+	 */
+	private function addTabularFormAddRowTemplateHTML(){
+		$html = '<tr style="display: none">';
+		
+		$html .= '<td revision-id="-1" ><textarea rows="1"></textarea></td>';
+
+		//Add cells for annotations
+		foreach($this->annotationPrintRequests as $annotation){
+			$html .= '<td>';
+			
+			$autocomplete = '';
+			if(!is_null($annotation['autocomplete'])){
+				$autocompletion = 'class="wickEnabled" constraints="';
+				$autocompletion .= $annotation['autocomplete'];
+				$autocompletion .= '"';
+			}
+			
+			$html .= "<textarea ".$autocompletion." rows='1'></textarea>";
+			
+			$html .= '</td>';
+		}
+		
+		//Add template cells
+		foreach($this->templateParameterPrintRequests as $template => $params){
+			$html .= '<td>';
+			
+			$html .= "<textarea rows='1' template-id=".'"'.TF_NEW_TEMPLATE_CALL.'"'."></textarea>";
+			
+			$html .= '</td>';
+		}
+		
+		//add status column
+		//Todo:Language
+		global $smwgHaloScriptPath;
+		$html .= '<td>';
+		$html .= '<img class="tabf_added_status" title="added" src="'.$smwgHaloScriptPath.'/skins/TabularForms/Added.png">Added</img>';
+		$html .= '<img class="tabf_saved_status" title="Saved" style="display: none" src="'.$smwgHaloScriptPath.'/skins/TabularForms/Saved.png"></img>';
+		$html .= '<img class="tabf_error_status" title="An error occured" style="display: none" src="'.$smwgHaloScriptPath.'/skins/TabularForms/Error.png"></img>';
+		$html .= '<img class="tabf_pending_status" title="Updating" style="display: none" src="'.$smwgHaloScriptPath.'/skins/TabularForms/Pending.gif"></img>';
+		$html .= '</td>';
+		
+		return $html;
+	}
+	
+	/*
 	 * Get HTML for tabular form rows
 	 */
 	private function addRowHTML($rowData){
@@ -304,9 +353,9 @@ class TFTabularFormData {
 			$html .= '<span class="tabf_further_results" width="100%">'.$link->getText( $this->outputMode, $this->linker).'</span>';
 		}
 		
-		
+		$html .= '<input type="button" value="Add instance" onclick="tf.addInstance('."'".$tabularFormId."'".')"/>';
 		$html .= '<input type="button" value="Refresh" onclick="tf.refreshForm('."'".$tabularFormId."'".')"/>';
-		$html .= '<input type="button" value="Save" onclick="tf.saveFormData(event,'."'".$tabularFormId."'".')"/>';
+		$html .= '<input class="tabf_save_button" style="display:none" type="button" value="Save" onclick="tf.saveFormData(event,'."'".$tabularFormId."'".')"/>';
 		$html .= '</td>';
 		
 		$html .= '</tr>';

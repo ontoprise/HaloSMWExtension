@@ -6,6 +6,7 @@ define('TF_TABULAR_FORM_ID_PARAM', '__tf_tabular_form_id');
 global $wgAjaxExportList;
 $wgAjaxExportList[] = 'tff_getTabularForm';
 $wgAjaxExportList[] = 'tff_updateInstanceData';
+$wgAjaxExportList[] = 'tff_checkArticleName';
 
 function tff_getTabularForm($querySerialization, $tabularFormId){
 	$querySerialization = json_decode($querySerialization, true);
@@ -69,6 +70,22 @@ function tff_updateInstanceData($updates, $articleTitle, $revisionId, $rowNr, $t
 	$result = json_encode($result);
 	
 	return '--##starttf##--' . $result . '--##endtf##--';
+}
+
+function tff_checkArticleName($articleName, $rowNr, $tabularFormId){
+	$validTitle = false;
+	
+	$title = Title::newFromText($articleName);
+	if(!is_null($title)){
+		if(!$title->exists()){
+			$validTitle = true;
+		}
+	}  
+	
+	$result = array('validTitle' => $validTitle, 'rowNr' => $rowNr, 'tabularFormId' => $tabularFormId);
+	$result = json_encode($result);
+	
+	return '--##starttf##--' . $result . '--##endtf##--';	
 }
 
 

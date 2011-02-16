@@ -8,7 +8,7 @@
 	width: 100%;
 }
 
-.tabf_table_container textarea{
+.tabf_table_cell textarea{
 	padding: 0px;
 	margin: 0px;
 	min-width: 125px;
@@ -50,3 +50,13 @@
 	text-align: right| important;
 }
 
+.tabf_new_row {
+	
+}
+
+.tabf_erronious_instance_name {
+	font-weight: bold;
+}
+
+.tabf_valid_instance_name {
+}

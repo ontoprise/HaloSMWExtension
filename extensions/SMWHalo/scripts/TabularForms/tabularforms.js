@@ -1,8 +1,5 @@
 
 
-
-
-
 var TF = Class.create({
 
 	init: function(){ 
@@ -66,6 +63,8 @@ var TF = Class.create({
 		tf.navigateCells(this, event.which);
 		
 		tf.cellValueChangeHandler(this);
+		
+		tf.checkNewInstanceName(this, event.which);
 	},
 	
 	cellKeyDownHandler : function(event){
@@ -248,6 +247,10 @@ var TF = Class.create({
 	cellValueChangeHandler : function(node){
 		var parentRow = jQuery(node).parent('td').parent('tr');
 		
+		if(jQuery(parentRow).attr('class') == 'tabf_new_row'){
+			return;
+		};
+		
 		if(jQuery(node).attr('originalValue') != jQuery.trim(jQuery(node).attr('value'))){
 			jQuery(node).addClass('tabf_modified_value');
 			jQuery(node).attr('isModified', true);
@@ -257,6 +260,10 @@ var TF = Class.create({
 			
 			jQuery('td:last-child .tabf_ok_status', parentRow).css('display', 'none');
 			jQuery('td:last-child .tabf_modified_status', parentRow).css('display', 'inline');
+			
+			if(jQuery('..tabf_erronious_instance_name', jQuery(parentRow).parent().parent()).length == 0){
+				jQuery('.tabf_save_button', jQuery(parentRow).parent().parent()).css('display', 'inline');
+			}
 		} else {
 			jQuery(node).removeClass('tabf_modified_value');
 			jQuery(node).attr('isModified', false);
@@ -267,6 +274,11 @@ var TF = Class.create({
 				
 				jQuery('td:last-child .tabf_ok_status', parentRow).css('display', 'inline');
 				jQuery('td:last-child .tabf_modified_status', parentRow).css('display', 'none');
+				
+				if(jQuery('.tabf_modified_row', jQuery(parentRow).parent().parent()).length == 0
+						&& jQuery('.tabf_new_row .tabf_valid_instance_name', jQuery(parentRow).parent().parent()).length == 0){
+					jQuery('.tabf_save_button', jQuery(parentRow).parent().parent()).css('display', 'none');
+				}
 			}
 		}
 	},
@@ -352,6 +364,71 @@ var TF = Class.create({
 			jQuery('td:last-child .tabf_pending_status', row).css('display', 'none');
 			jQuery('td:last-child .tabf_error_status', row).css('display', 'inline');
 		}
+	},
+	
+	addInstance : function(tabfId){
+		jQuery('#' + tabfId + ' .tabf_table_container .smwfooter').
+			before('<tr>' + jQuery('#' + tabfId + ' .tabf_table_container table tr:last-child').html() + '</tr>');
+		
+		var newRow = jQuery('#' + tabfId + ' .tabf_table_container .smwfooter').prev();
+		jQuery(newRow).addClass('tabf_new_row');
+		jQuery('td:first-child textarea', newRow).addClass('tabf_erronious_instance_name');
+		jQuery('td', newRow).addClass('tabf_table_cell');
+		
+		jQuery('td textarea', newRow).each(tf.initializeLoadedCell)
+		
+		jQuery('td:first-child textarea', newRow).focus();
+		
+		jQuery('.tabf_save_button', jQuery(newRow).parent().parent()).css('display', 'none');
+		
+	},
+	
+	checkNewInstanceName : function(element, keyCode){
+		if(jQuery(element).attr('class') != 'tabf_erronious_instance_name' 
+				&& jQuery(element).attr('class') != 'tabf_valid_instance_name'){
+			return;
+		}
+		
+		if(keyCode == 'tab' || keyCode == 'shift-tab' || (keyCode >= '38' && keyCode <= '40')){
+			return;
+		}
+		
+		var articleName = jQuery(element).attr('value');
+		var tabularFormId = jQuery(element).parent().parent().parent().parent().parent().parent().attr('id');
+		var rowNr = tf.getChildNumber(jQuery(element).parent().parent(), 1) 
+		
+		var url = wgServer + wgScriptPath + "/index.php";
+		jQuery.ajax({ url:  url, 
+			data: {
+				'action' : 'ajax',
+				'rs' : 'tff_checkArticleName',
+				'rsargs[]' : [articleName, rowNr, tabularFormId],
+			},
+			success: tf.checkNewInstanceNameCallBack,
+			
+		});
+	},
+	
+	
+	checkNewInstanceNameCallBack : function(data){
+		data = data.substr(data.indexOf('--##starttf##--') + 15, data.indexOf('--##endtf##--') - data.indexOf('--##starttf##--') - 15); 
+		data = JSON.parse(data);
+		
+		var row =  jQuery('#' + data.tabularFormId + ' table tr:nth-child(' + data.rowNr + ')');
+		if(data.validTitle == true){
+			jQuery('td:first-child textarea', jQuery(row)).removeClass('tabf_erronious_instance_name');
+			jQuery('td:first-child textarea', jQuery(row)).addClass('tabf_valid_instance_name');
+		} else {
+			jQuery('td:first-child textarea', jQuery(row)).removeClass('tabf_valid_instance_name');
+			jQuery('td:first-child textarea', jQuery(row)).addClass('tabf_erronious_instance_name');
+		}
+		
+		if(jQuery('.tabf_new_row .tabf_erronious_instance_name', jQuery(row).parent().parent()).length == 0){
+			jQuery('.tabf_save_button', jQuery(row).parent().parent()).css('display', 'inline');
+		} else {
+			jQuery('.tabf_save_button', jQuery(row).parent().parent()).css('display', 'none');
+		} 
+			
 	}
 
 });
