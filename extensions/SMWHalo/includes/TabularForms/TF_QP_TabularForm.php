@@ -459,9 +459,11 @@ class TFTabularFormData {
 			$tmpParams = array();
 			foreach($params as $param => $subParams){
 				if($param == ''){
-					ksort($subParams);
-					foreach($subParams as $subParam => $dontCare){
-						$tmpParams[$subParam] = true;
+					if(is_array($subParams)){ //otherwise no params for this template have been found
+						ksort($subParams);
+						foreach($subParams as $subParam => $dontCare){
+							$tmpParams[$subParam] = true;
+						}
 					}
 				} else {
 					$tmpParams[$param] = true;
@@ -626,7 +628,7 @@ class TFTabularFormRowData {
 				$html .= '<td class="tabf_table_cell">';
 				
 				if(count($this->templateParameters[$template][$param]->currentValues) == 0){
-					$html .= "<textarea rows='1' ></textarea>";
+					$html .= "<textarea rows='1' template-id=".'"'.TF_NEW_TEMPLATE_CALL.'"'."></textarea>";
 				} else {
 					foreach($this->templateParameters[$template][$param]->currentValues as $templateId => $currentValue){
 						$html .= "<textarea rows='1' template-id=".'"'.$templateId.'"'."'>".$currentValue."</textarea>";
