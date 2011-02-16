@@ -125,23 +125,31 @@ class TFDataAPIACCESS {
 			
 			//think about when and where to initialize POM. LocalSettings is not good.
 			
-			$this->article = Article::newFromID($this->title->getArticleID());
-			$text = $this->article->getContent();
+			$this->article = new Article($this->title);
+			if($this->title->exists()){
+				$text = $this->article->getContent();
 			
-			POMElement::$elementCounter = 0;
+				POMElement::$elementCounter = 0;
 			
-			$this->pomPage = new POMPage($this->title->getFullText(), $text);
+				$this->pomPage = new POMPage($this->title->getFullText(), $text);
+			} else {
+				$this->pomPage = null;
+			}
 			
 		}
 		
 		public function getRevisionId(){
-				return $this->article->getRevIdFetched();
+			return $this->article->getRevIdFetched();
 		}
 
 		
 		public function getWritableAnnotations($annotations){
 			
-			//todo: deal with asf and delimiters
+			//todo: deal woth acls
+			
+			if(!$this->title->exists()){
+				return $annotations; 
+			}
 			
 			$elements = $this->pomPage->getElements()->listIterator();
 
@@ -195,6 +203,10 @@ class TFDataAPIACCESS {
 			
 			//todo:markAsRead-only depending on acls
 			
+			if(!$this->title->exists()){
+				return $parameters->getParameters();
+			}
+			
 			$elements = $this->pomPage->getElements()->listIterator(); 
 			
 			while($elements->hasNext()){
@@ -228,6 +240,12 @@ class TFDataAPIACCESS {
 		
 		public function updateValues($annotations, $parameters, $revisionId){
 		
+			//todo: deal with deleted and moved articles
+			
+			if(!$this->title->exists()){
+				return false; 
+			}
+			
 			if($this->getRevisionId() != $revisionId){
 				return false;
 			}
@@ -370,6 +388,18 @@ class TFDataAPIACCESS {
 			
 			return true;
 		}
+		
+	public function createInstance($annotations, $parameters){
+		
+		//todo: deal with acls
+		
+		//todo: deal woth articles created in the meantime
+		
+		$this->article->doEdit('text', 'tabular forms');
+			
+		return true;
+	}
+		
 }
 
 class TFAnnotationDataCollection {

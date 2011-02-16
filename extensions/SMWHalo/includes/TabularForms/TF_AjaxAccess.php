@@ -67,7 +67,7 @@ function tff_updateInstanceData($updates, $articleTitle, $revisionId, $rowNr, $t
 	
 	if($revisionId == '-1'){
 		//add instance
-		$result = true;
+		$result = TFDataAPIAccess::getInstance($title)->createInstance($annotations, $parameters);
 	} else {
 		//edit instance
 		$result = TFDataAPIAccess::getInstance($title)->updateValues($annotations, $parameters, $revisionId);

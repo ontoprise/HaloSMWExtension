@@ -333,7 +333,7 @@ var TF = Class.create({
 			var tabularFormId = jQuery(this).parent().parent().parent().parent().attr('id');
 			var revisionId = jQuery('td:first-child ',this).attr('revision-id');
 			if(revisionId == '-1'){
-				var articleTitle = jQuery('td:first-child ',this).attr('value');
+				var articleTitle = jQuery('td:first-child textarea',this).attr('value');
 			} else {
 				var articleTitle = jQuery('td:first-child ',this).attr('article-name');
 			}
