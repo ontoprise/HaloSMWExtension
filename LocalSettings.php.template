@@ -257,7 +257,7 @@ require_once( "$IP/extensions/SemanticMaps/SemanticMaps.php" );
 /*start-dataimport*/
 require_once($IP.'/extensions/DataImport/includes/DI_Initialize.php');
 enableDataImportExtension(/*param-start-enableDataImportExtension*//*param-end-enableDataImportExtension*/);
-$wgAllowExternalImages=/*start-variable-wgAllowExternalImages*/true;/*end-variable-wgAllowExternalImages*/
+$wgAllowExternalImages=/*start-variable-wgAllowExternalImages*/false;/*end-variable-wgAllowExternalImages*/
 
 #IAI
 # Uncomment this if you want to import external wikis 
@@ -313,7 +313,6 @@ $wgJobRunRate=0;
 /*start-richmedia*/
 require_once($IP.'/extensions/RichMedia/includes/RM_Initialize.php');
 enableRichMediaExtension();
-$wgAllowExternalImages=true;
 require_once($IP.'/extensions/RichMedia/includes/WebDAV/WD_Initialize.php');
 #Set default searching for document and pdf namespace
 $wgNamespacesToBeSearchedDefault = array(
