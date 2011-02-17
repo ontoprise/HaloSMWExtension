@@ -15,6 +15,7 @@
 	width: 100%;
 }
 
+
 .tabf_column_header{
 }
 
@@ -40,6 +41,9 @@
 
 .tabf_modified_value {
 	font-weight: bold;
+}
+
+.tabf_deleted_row {
 }
 
 .tabf_modified_row td:nth-child(1){

@@ -4,7 +4,7 @@ var TF = Class.create({
 
 	init: function(){ 
 		this.xyz = 'abc';
-		},
+	},
 	
 	loadForms : function(){
 		jQuery('.tabf_container').each( function (){
@@ -43,6 +43,8 @@ var TF = Class.create({
 		jQuery('#' + data.tabularFormId + ' .tabf_table_container').css('display', 'block');
 		
 		jQuery('#' + data.tabularFormId + ' .tabf_table_container td textarea').each(tf.initializeLoadedCell)
+		
+		jQuery('#' + data.tabularFormId + ' tr td:first-child').each(tf.initializeDeleteButtons);
 	},
 	
 	initializeLoadedCell : function(){
@@ -51,6 +53,11 @@ var TF = Class.create({
 		jQuery(this).change(tf.cellChangeHandler);
 		jQuery(this).keyup(tf.cellKeyUpHandler);
 		jQuery(this).keydown(tf.cellKeyDownHandler);
+	},
+	
+	initializeDeleteButtons : function(){
+		jQuery(this).mouseover(tf.displayDeleteButton);
+		jQuery(this).mouseout(tf.hideDeleteButton);
 	},
 	
 	cellChangeHandler : function(){
@@ -400,11 +407,11 @@ var TF = Class.create({
 		jQuery('td', newRow).addClass('tabf_table_cell');
 		
 		jQuery('td textarea', newRow).each(tf.initializeLoadedCell)
+		jQuery('td:first-child', newRow).each(tf.initializeDeleteButtons)
 		
 		jQuery('td:first-child textarea', newRow).focus();
 		
 		jQuery('.tabf_save_button', jQuery(newRow).parent().parent()).css('display', 'none');
-		
 	},
 	
 	checkNewInstanceName : function(element, keyCode){
@@ -453,9 +460,60 @@ var TF = Class.create({
 			jQuery('.tabf_save_button', jQuery(row).parent().parent()).css('display', 'none');
 		} 
 			
+	},
+	
+	displayDeleteButton : function(event){
+		jQuery('.tabf-delete-button', this).css('position', 'absolute');
+		//todo: re,pve minus 3
+		var bottomPos = jQuery(this).position().top + jQuery(this).innerHeight() - jQuery('input', this).height() - 3;
+		jQuery('.tabf-delete-button', this).css('top', bottomPos);
+		//todo: remove minus 1
+		jQuery('.tabf-delete-button', this).css('width', jQuery(this).innerWidth() - 1);
+		jQuery('.tabf-delete-button', this).css('display', 'block');
+	},
+	
+	hideDeleteButton : function(){
+		jQuery('.tabf-delete-button', this).css('display', 'none');
+	},
+	
+	deleteInstance : function (event){
+		var input = Event.element(event);
+		var row = jQuery(input).parent().parent();
+		
+		
+		if(jQuery(row).attr('isNew') == 'true'){
+			jQuery(row).remove();
+		} else {
+			if(jQuery(row).attr('isDeleted') == 'true'){
+				jQuery(row).attr('isDeleted', false);
+				jQuery(row).removeClass('tabf_deleted_row');
+				jQuery(input).attr('value', 'Delete');
+				
+				jQuery('.tabf_deleted_status', row).css('display', 'none');
+				if(jQuery(row).attr('isModified') == 'true'){
+					jQuery('.tabf_modified_status', row).css('display', 'block');
+				} else {
+					jQuery('.tabf_ok_status', row).css('display', 'block');
+				}
+				
+				jQuery('td textarea', row).attr('readonly', '');
+			} else {
+				jQuery(row).attr('isDeleted', true);
+				jQuery(row).addClass('tabf_deleted_row');
+				jQuery(input).attr('value', 'Undelete');
+				
+				jQuery('.tabf_deleted_status', row).css('display', 'block');
+				jQuery('.tabf_modified_status', row).css('display', 'none');
+				jQuery('.tabf_ok_status', row).css('display', 'none');
+				
+				jQuery('td textarea', row).attr('readonly', 'true');
+			}
+		}
 	}
-
 });
+
+
+
 
 var tf = new TF();
 

@@ -265,7 +265,7 @@ class TFTabularFormData {
 		$html = '<tr style="display: none">';
 		
 		$html .= '<td revision-id="-1" ><textarea rows="1"></textarea>';
-		$html .= '<span>'.$this->linker->makeLinkObj(Title::newFromText('Main_Page')).'</span>'; 
+		$html .= '<input class="tabf-delete-button" type="button" value="Delete" style="z-index: 10; display: none" onclick="tf.deleteInstance(event)"/>';
 		$html .= '</td>';
 
 		//Add cells for annotations
@@ -648,7 +648,12 @@ class TFTabularFormRowData {
 		//Add subject
 		$linker = new Linker();
 		$html .= '<td class="tabf_table_cell" revision-id="'.$this->revisionId.
-			'" article-name="'.$this->title->getFullText().'" >'.$linker->makeLinkObj($this->title).'</td>';
+			'" article-name="'.$this->title->getFullText().'">';
+		$html .= $linker->makeLinkObj($this->title);
+		$html .= '<input class="tabf-delete-button" type="button" value="Delete" style="z-index: 10; display: none" onclick="tf.deleteInstance(event)"/>';
+		//$html .= '</div>';
+		
+		$html .= '</td>';
 
 		//Add cells for annotations
 		foreach($annotationPrintRequests as $annotation){
@@ -700,6 +705,7 @@ class TFTabularFormRowData {
 		$html .= '<img class="tabf_saved_status" title="Saved" style="display: none" src="'.$smwgHaloScriptPath.'/skins/TabularForms/Saved.png"></img>';
 		$html .= '<img class="tabf_error_status" title="An error occured" style="display: none" src="'.$smwgHaloScriptPath.'/skins/TabularForms/Error.png"></img>';
 		$html .= '<img class="tabf_pending_status" title="Updating" style="display: none" src="'.$smwgHaloScriptPath.'/skins/TabularForms/Pending.gif"></img>';
+		$html .= '<img class="tabf_deleted_status" title="Updating" style="display: none" src="'.$smwgHaloScriptPath.'/skins/TabularForms/Deleted.gif"></img>';
 		$html .= '</td>';
 		
 		return $html;
