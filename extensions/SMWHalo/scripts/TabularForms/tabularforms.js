@@ -247,13 +247,18 @@ var TF = Class.create({
 	cellValueChangeHandler : function(node){
 		var parentRow = jQuery(node).parent('td').parent('tr');
 		
-		if(jQuery(parentRow).attr('class') == 'tabf_new_row'){
+		if(jQuery(node).attr('class') == 'tabf_erronious_instance_name'
+				|| jQuery(node).attr('class') == 'tabf_valid_instance_name'){
 			return;
-		};
+		}
 		
 		if(jQuery(node).attr('originalValue') != jQuery.trim(jQuery(node).attr('value'))){
 			jQuery(node).addClass('tabf_modified_value');
 			jQuery(node).attr('isModified', true);
+		
+			if(jQuery(parentRow).attr('class') == 'tabf_new_row'){
+				return;
+			}
 			
 			parentRow.attr('isModified', true);
 			parentRow.addClass('tabf_modified_row');
@@ -267,6 +272,10 @@ var TF = Class.create({
 		} else {
 			jQuery(node).removeClass('tabf_modified_value');
 			jQuery(node).attr('isModified', false);
+			
+			if(jQuery(parentRow).attr('class') == 'tabf_new_row'){
+				return;
+			}
 			
 			if(jQuery('.tabf_modified_value', parentRow).length == 0){
 				parentRow.attr('isModified', false);
@@ -313,7 +322,7 @@ var TF = Class.create({
 				
 				var fieldValues = jQuery('textarea', jQuery(fields[fieldNr])).get();
 				for(var i=0; i < fieldValues.length; i++){
-					if(jQuery(fieldValues[i]).attr('isModified')){
+					if(jQuery(fieldValues[i]).attr('isModified') == 'true'){
 						var modifiedValue = new Object();
 						modifiedValue['newValue'] = jQuery(fieldValues[i]).attr('value');
 						modifiedValue['originalValue'] = jQuery(fieldValues[i]).attr('originalValue');
@@ -365,6 +374,14 @@ var TF = Class.create({
 			jQuery(row).addClass('tabf_table_row_saved_successfull');
 			jQuery('td:last-child .tabf_pending_status', row).css('display', 'none');
 			jQuery('td:last-child .tabf_saved_status', row).css('display', 'inline');
+			//replace article name input of new instance with textarea
+			
+			if(jQuery('td:first-child textarea', row).attr('class') == 'tabf_valid_instance_name'){
+				var text = '<a href="' + wgServer + wgScriptPath + "/index.php" + "?title=";
+				text += encodeURI(jQuery('td:first-child textarea', row).attr('value'));
+				text += '">' + jQuery('td:first-child textarea', row).attr('value') + '</a>';
+				jQuery('td:first-child', row).html(text);
+			}
 		} else {
 			jQuery(row).addClass('.tabf_table_row_saved_error');
 			jQuery('td:last-child .tabf_pending_status', row).css('display', 'none');

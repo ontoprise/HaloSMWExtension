@@ -39,6 +39,8 @@ function tff_updateInstanceData($updates, $articleTitle, $revisionId, $rowNr, $t
 		$updates = json_decode(print_r($updates, true), true);
 	}
 	
+	file_put_contents('D://q3.rtf', print_r($updates, true));
+	
 	//todo: aggregate template parameter values
 	//todo deal with null /new value
 	

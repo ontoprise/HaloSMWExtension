@@ -264,7 +264,9 @@ class TFTabularFormData {
 	private function addTabularFormAddRowTemplateHTML(){
 		$html = '<tr style="display: none">';
 		
-		$html .= '<td revision-id="-1" ><textarea rows="1"></textarea></td>';
+		$html .= '<td revision-id="-1" ><textarea rows="1"></textarea>';
+		$html .= '<span>'.$this->linker->makeLinkObj(Title::newFromText('Main_Page')).'</span>'; 
+		$html .= '</td>';
 
 		//Add cells for annotations
 		foreach($this->annotationPrintRequests as $annotation){
@@ -277,7 +279,7 @@ class TFTabularFormData {
 				$autocompletion .= '"';
 			}
 			
-			$html .= "<textarea ".$autocompletion." rows='1'></textarea>";
+			$html .= "<textarea ".$autocompletion." rows='1' originalValue='' ></textarea>";
 			
 			$html .= '</td>';
 		}
@@ -286,7 +288,7 @@ class TFTabularFormData {
 		foreach($this->templateParameterPrintRequests as $template => $params){
 			$html .= '<td>';
 			
-			$html .= "<textarea rows='1' template-id=".'"'.TF_NEW_TEMPLATE_CALL.'"'."></textarea>";
+			$html .= "<textarea rows='1' template-id=".'"'.TF_NEW_TEMPLATE_CALL.'"'." originalValue=''></textarea>";
 			
 			$html .= '</td>';
 		}
@@ -645,7 +647,8 @@ class TFTabularFormRowData {
 		
 		//Add subject
 		$linker = new Linker();
-		$html .= '<td class="tabf_table_cell" revision-id="'.$this->revisionId.'" article-name="'.$this->title->getFullText().'" >'.$linker->makeLinkObj($this->title).'</td>';
+		$html .= '<td class="tabf_table_cell" revision-id="'.$this->revisionId.
+			'" article-name="'.$this->title->getFullText().'" >'.$linker->makeLinkObj($this->title).'</td>';
 
 		//Add cells for annotations
 		foreach($annotationPrintRequests as $annotation){

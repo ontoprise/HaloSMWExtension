@@ -395,7 +395,33 @@ class TFDataAPIACCESS {
 		
 		//todo: deal woth articles created in the meantime
 		
-		$this->article->doEdit('text', 'tabular forms');
+		file_put_contents('D://q1.rtf', print_r($annotations, reur).print_r($parameters, true));
+		
+		$text = '';
+		
+		$annotations = $annotations->getNewAnnotations();
+		foreach($annotations as $annotation){
+			if($annotation['name'] == '__Category__'){
+				$text .= '[[Category:'.$annotation['value'].'| ]]';
+			} else {
+				$text .= '[['.$annotation['name'].'::'.$annotation['value'].'| ]]';
+			}
+		}
+		
+		$newTemplateCalls = $parameters->getNewTemplateCalls();
+		foreach($newTemplateCalls as $template => $parameters){
+			if(count($parameters) > 0){
+				$text .= "{{".$template;
+				foreach($parameters as $parameter => $value){
+					$text .= "\n|".$parameter."=".$value;
+				}
+				$text .= "\n}}";
+			}
+		}
+		
+		file_put_contents('D://q2 .rtf', $text);
+		
+		$this->article->doEdit($text, 'tabular forms');
 			
 		return true;
 	}
