@@ -36,7 +36,7 @@ include_once($haclgIP . '/includes/HACL_SecurityDescriptor.php');
 /**
  * English language labels for important HaloACL labels (namespaces, ,...).
  *
- * @author Thomas Schweitzer
+ * @author Facundo Ezequiel Grande / Thomas Schweitzer
  */
 class HACLLanguageEs extends HACLLanguage {
 
