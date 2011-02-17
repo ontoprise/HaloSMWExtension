@@ -14,17 +14,31 @@
  abstract class SMWSemanticStore {
  	
  	/**
- 	 * Domain hint relation. 
- 	 * Determines the domain of an attribute or relation. 
+ 	 * SMWHalo defines some properties with special semantics 
+ 	 */
+ 	
+ 	
+ 	/**
+ 	 * Domain hint property. 
+ 	 * Determines the domain and range of a property.
+ 	 * 
+ 	 * It is a n-ary properties with take the domain as first parameter
+ 	 * and the range as second. The range is optional.
+ 	 * 
+ 	 * It is defined as: 
+ 	 *    [[has type::Type:Record]] 
+ 	 *    [[has fields::Type:Page; Type:Page]]
+ 	 * 
+ 	 * @var Title 
  	 */
  	public $domainRangeHintRelation;
- 	
- 	
-	
+ 		
 	/**
 	 * Minimum cardinality. 
 	 * Determines how often an attribute or relations must be instantiated per instance at least.
 	 * Allowed values: 0..n, default is 0.
+	 * 
+	 * @var Title
 	 */
 	public $minCard;
 	
@@ -32,21 +46,44 @@
 	 * Maximum cardinality. 
 	 * Determines how often an attribute or relations may instantiated per instance at most.
 	 * Allowed values: 1..*, default is *, which means unlimited.
+	 * 
+	 * @var Title
 	 */
 	public $maxCard;
 	
 	/**
-	 * Transitive category
+	 * Transitive category.
 	 * All relations of this category are transitive.
+	 * 
+	 * @var Title
 	 */
 	public $transitiveCat;
 	
 	/**
+	 * Symmtric category.
 	 * All relations of this category are symetrical.
+	 * 
+	 * @var Title
 	 */
 	public $symetricalCat;
 	
+	/**
+	 * Inverse property. Binary property which defines the inverse property.
+	 * 
+	 * [[has type::Type:Page]]
+	 * 
+	 * @var Title
+	 */
 	public $inverseOf;
+	
+	/**
+	 * Ontology representation in OntoStudio.
+	 *  
+	 * [[has type::Type:URL]]
+	 * 
+	 * @var Title
+	 */
+	public $ontologyURI;
 	
 	/**
 	 * SMWPropertyValue version of properties above 
@@ -55,13 +92,14 @@
 	public $minCardProp;
 	public $maxCardProp;
 	public $inverseOfProp;
+	public $ontologyURIProp;
 	
 	/**
 	 * Must be called from derived class to initialize the member variables.
 	 */
 	protected function SMWSemanticStore(Title $domainRangeHintRelation,
 									 Title $minCard, Title $maxCard, 
-									 Title $transitiveCat, Title $symetricalCat, Title $inverseOf) {
+									 Title $transitiveCat, Title $symetricalCat, Title $inverseOf, Title $ontologyURI) {
 		$this->domainRangeHintRelation = $domainRangeHintRelation;
 	
 		$this->maxCard = $maxCard;
@@ -69,11 +107,13 @@
 		$this->transitiveCat = $transitiveCat;
 		$this->symetricalCat = $symetricalCat;
 		$this->inverseOf = $inverseOf;
+		$this->ontologyURI = $ontologyURI;
 		
 		$this->domainRangeHintProp = SMWPropertyValue::makeUserProperty($this->domainRangeHintRelation->getDBkey());
         $this->minCardProp = SMWPropertyValue::makeUserProperty($this->minCard->getDBkey());
         $this->maxCardProp = SMWPropertyValue::makeUserProperty($this->maxCard->getDBkey());
         $this->inverseOfProp = SMWPropertyValue::makeUserProperty($this->inverseOf->getDBkey());
+		$this->ontologyURIProp = SMWPropertyValue::makeUserProperty($this->ontologyURI->getDBkey());;
         
 	}
  	

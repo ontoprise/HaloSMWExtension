@@ -439,7 +439,8 @@ clicking the big arrows between the columns.',
 	SMW_SSP_HAS_MAX_CARD => 'Has max cardinality',
 	SMW_SSP_HAS_MIN_CARD => 'Has min cardinality',
 	SMW_SSP_IS_INVERSE_OF => 'Is inverse of',
-	SMW_SSP_IS_EQUAL_TO => 'Is equal to'
+	SMW_SSP_IS_EQUAL_TO => 'Is equal to',
+	SMW_SSP_ONTOLOGY_URI => 'Ontology URI'
 	);
 
 	var $smwSpecialCategories = array (

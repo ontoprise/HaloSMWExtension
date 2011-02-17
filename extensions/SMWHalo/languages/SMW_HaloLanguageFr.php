@@ -462,7 +462,8 @@ en cliquant sur les grosses flà¨ches situées entre les colonnes.",
     SMW_SSP_HAS_MAX_CARD => 'A pour cardinalité max',
     SMW_SSP_HAS_MIN_CARD => 'A pour cardinalité min',
     SMW_SSP_IS_INVERSE_OF => 'Est l\'inverse de',
-    SMW_SSP_IS_EQUAL_TO => 'Est égal à '
+    SMW_SSP_IS_EQUAL_TO => 'Est égal à ',
+    SMW_SSP_ONTOLOGY_URI => 'Ontology URI'
     );
 
     var $smwSpecialCategories = array (

@@ -18,6 +18,7 @@ define('SMW_SSP_HAS_MAX_CARD', 2);
 define('SMW_SSP_HAS_MIN_CARD', 3);
 define('SMW_SSP_IS_INVERSE_OF', 4);
 define('SMW_SSP_IS_EQUAL_TO', 5);
+define('SMW_SSP_ONTOLOGY_URI', 6);
 
 // constants for special categories
 define('SMW_SC_TRANSITIVE_RELATIONS', 0);

@@ -160,6 +160,7 @@ class SMWTripleStore extends SMWStore {
 		$this->handlePropertyAnnotations($data, $triples);
 		$this->handleCategoryAnnotations($data, $triples);
 		$this->handleRedirects($data, $triples);
+		
 
 		// create rules
 		$subject = $data->getSubject()->getTitle();
@@ -602,7 +603,7 @@ class SMWTripleStore extends SMWStore {
 
 	public function getQueryResult(SMWQuery $query){
 		SMWQMQueryManagementHandler::getInstance()->storeQueryMetadata($query);
-			
+
 		global $smwgQRCEnabled;
 		if($smwgQRCEnabled){
 			$qrc = new SMWQRCQueryResultsCache();
@@ -1106,7 +1107,7 @@ class SMWTripleStore extends SMWStore {
 				list($sv, $metadata) = $uri;
 
 				$title = TSHelper::getTitleFromURI($sv, false);
-					
+
 				if (is_null($title) || $title instanceof Title) {
 					if ($plainFormat) {
 						$allValues[] = $this->createSMWDataValue(NULL, $title->getPrefixedText(), TSNamespaces::$XSD_NS."string", $metadata);
@@ -1119,7 +1120,7 @@ class SMWTripleStore extends SMWStore {
 						$v = $this->createSMWDataValue(NULL, $sv, TSNamespaces::$XSD_NS."string", $metadata);
 					} else {
 						$v = $this->createSMWDataValue(NULL, $sv, TSNamespaces::$XSD_NS."anyURI", $metadata);
-					 
+
 					}
 					$allValues[] = $v;
 
@@ -1150,7 +1151,7 @@ class SMWTripleStore extends SMWStore {
 						$value = $this->createSMWDataValue(NULL, $literalValue, TSNamespaces::$XSD_NS."string", $metadata);
 					} else {
 						$value = $this->createSMWDataValue($property, $literalValue, $literalType, $metadata);
-							
+
 					}
 					$allValues[] = $value;
 				}

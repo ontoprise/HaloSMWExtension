@@ -429,7 +429,8 @@ var $smwSpecialSchemaProperties = array (
 	SMW_SSP_HAS_MAX_CARD => 'Hat max Kardinalität',
 	SMW_SSP_HAS_MIN_CARD => 'Hat min Kardinalität',
 	SMW_SSP_IS_INVERSE_OF => 'Ist invers zu',
-	SMW_SSP_IS_EQUAL_TO => 'Ist gleich zu'
+	SMW_SSP_IS_EQUAL_TO => 'Ist gleich zu',
+	SMW_SSP_ONTOLOGY_URI => 'Ontologie URI'
 	);
 
 var $smwSpecialCategories = array (

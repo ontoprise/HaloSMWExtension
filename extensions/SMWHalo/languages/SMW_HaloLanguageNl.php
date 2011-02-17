@@ -440,7 +440,8 @@ var $smwSpecialSchemaProperties = array (
 	SMW_SSP_HAS_MAX_CARD => 'Heeft max kardinaliteit',
 	SMW_SSP_HAS_MIN_CARD => 'Heeft min kardinaliteit',
 	SMW_SSP_IS_INVERSE_OF => 'Is het omgekeerde van',
-	SMW_SSP_IS_EQUAL_TO => 'Is gelijk aan'
+	SMW_SSP_IS_EQUAL_TO => 'Is gelijk aan',
+	SMW_SSP_ONTOLOGY_URI => 'Ontology URI'
 );
 
 var $smwSpecialCategories = array (
