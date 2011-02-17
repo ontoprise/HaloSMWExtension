@@ -34,7 +34,6 @@ if (!defined('MEDIAWIKI')) {
 
 //--- Includes ---
 global $lodgIP;
-//require_once("$lodgIP/...");
 
 /**
  * This class describes a Linked Data Trust Policy.
@@ -45,30 +44,6 @@ global $lodgIP;
 class LODPolicy extends LODResource {
 
     //--- Constants ---
-//	const XY= 0;		// the result has been added since the last time
-
-
-    /*
-     * 		a smw-lde:TrustPolicy ;
-      smw-lde:ID "P2"^^xsd:string ;
-      smw-lde:description "Just an example policy for testing purposes" ;
-      smw-lde:parameter smwTrustPolicies:ParUsername ;
-      smw-lde:heuristic smwTrustPolicies:PreferCurrentInformation ;
-      smw-lde:pattern """{
-      GRAPH smwGraphs:ProvenanceGraph {
-      ?GRAPH swp:assertedBy ?warrant .
-      ?warrant swp:authority ?dataSource .
-      ?GRAPH smw-lde:created ?retrievalDate .
-      }
-
-      GRAPH smwGraphs:UserGraph {
-      ?PAR_USER smw-lde:trusts ?trustStatement .
-      ?trustStatement smw-lde:authority ?dataSource .
-      }
-      }""" ;
-      .
-
-     */
 
     //--- Private fields ---
     // string:

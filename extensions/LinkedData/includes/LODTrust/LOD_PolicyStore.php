@@ -35,7 +35,6 @@ if (!defined('MEDIAWIKI')) {
 
 //--- Includes ---
 global $lodgIP;
-//require_once("$lodgIP/...");
 
 /**
  * This class handles the storage of a Linked Data source description in the

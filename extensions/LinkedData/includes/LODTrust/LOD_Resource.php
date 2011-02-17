@@ -35,7 +35,6 @@ if ( !defined( 'MEDIAWIKI' ) ) {
 
  //--- Includes ---
  global $lodgIP;
-//require_once("$lodgIP/...");
 
 /**
  * This class describes a common URI-based resource.

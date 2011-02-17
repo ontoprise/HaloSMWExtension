@@ -34,7 +34,6 @@ if (!defined('MEDIAWIKI')) {
 
 //--- Includes ---
 global $lodgIP;
-//require_once("$lodgIP/...");
 
 /**
  * This class describes a conflict resolution heuristic.

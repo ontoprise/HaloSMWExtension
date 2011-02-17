@@ -1,6 +1,6 @@
 <?php
 
-/*  Copyright 2010, MES GmbH
+/*  Copyright 2010, MediaEvent Services GmbH & Co. KG
  *  This file is part of the LinkedData-Extension.
  *
  *   The LinkedData-Extension is free software; you can redistribute it and/or modify
