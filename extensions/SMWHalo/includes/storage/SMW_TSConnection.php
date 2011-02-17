@@ -84,7 +84,17 @@ abstract class TSConnection {
 	 * @return String (HTML) or false on an error
 	 */
 	public abstract function getStatus($graph);
-
+    
+	/**
+	 * Run a management command.
+	 * 
+	 * @param string $command
+	 * @param array $params
+	 * 
+	 * @return string
+	 */
+	public abstract function manage($command, $params = array());
+		
 	/**
 	 * Translates an ASK query into SPARQL.
 	 *
@@ -250,6 +260,17 @@ class TSConnectorRESTWebservice extends TSConnection {
         $queryRequest .= "&params=".urlencode($params);
 
         list($header, $status, $result) = $this->queryClient->send($queryRequest, '', 'application/rdf+xml');
+        if ($status != 200) {
+            throw new Exception(strip_tags($result), $status);
+        }
+        return $result;
+	}
+	
+	public function manage($command, $params = array()) {
+       
+        $request = wfArrayToCGI($params);
+
+        list($header, $status, $result) = $this->manageClient->send($request, "/$command");
         if ($status != 200) {
             throw new Exception(strip_tags($result), $status);
         }
