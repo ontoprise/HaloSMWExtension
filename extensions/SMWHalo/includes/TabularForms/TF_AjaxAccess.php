@@ -9,6 +9,9 @@ $wgAjaxExportList[] = 'tff_updateInstanceData';
 $wgAjaxExportList[] = 'tff_checkArticleName';
 $wgAjaxExportList[] = 'tff_deleteInstance';
 
+/*
+ * Called by UI in order to load a tabular form
+ */
 function tff_getTabularForm($querySerialization, $tabularFormId){
 	$querySerialization = json_decode($querySerialization, true);
 	
@@ -32,6 +35,9 @@ function tff_getTabularForm($querySerialization, $tabularFormId){
 }
 
 
+/*
+ * Called by UI in order to add or modify a particular insatnce
+ */
 function tff_updateInstanceData($updates, $articleTitle, $revisionId, $rowNr, $tabularFormId){
 	
 	//dom't know why, but this has to be done twice
@@ -39,11 +45,6 @@ function tff_updateInstanceData($updates, $articleTitle, $revisionId, $rowNr, $t
 	if(!is_array($updates)){
 		$updates = json_decode(print_r($updates, true), true);
 	}
-	
-	file_put_contents('D://q3.rtf', print_r($updates, true));
-	
-	//todo: aggregate template parameter values
-	//todo deal with null /new value
 	
 	$annotations = new TFAnnotationDataCollection();
 	$params = array();
@@ -64,10 +65,9 @@ function tff_updateInstanceData($updates, $articleTitle, $revisionId, $rowNr, $t
 			TFTemplateParameter(	$param, $values['originalValues'], $values['newValues']));
 	}
 	
-	//file_put_contents('d://uos.rtf', print_r($parameters, true));
-	
 	$title = Title::newFromText($articleTitle);
 	
+	//todo: add meaningful error messages
 	if($revisionId == '-1'){
 		//add instance
 		$result = TFDataAPIAccess::getInstance($title)->createInstance($annotations, $parameters);
@@ -82,13 +82,24 @@ function tff_updateInstanceData($updates, $articleTitle, $revisionId, $rowNr, $t
 	return '--##starttf##--' . $result . '--##endtf##--';
 }
 
+/*
+ * Called by UI in order to cecck if article name is new and valid
+ */
 function tff_checkArticleName($articleName, $rowNr, $tabularFormId){
-	$validTitle = false;
+	$articleName = trim($articleName);
+	$articleName = explode(':', $articleName, 2);
+	foreach($articleName as $key => $value){
+		$articleName[$key] = ucfirst($value);
+	}
+	$articleName = implode(':', $articleName);
 	
+	$validTitle = false;
 	$title = Title::newFromText($articleName);
-	if(!is_null($title)){
-		if(!$title->exists()){
-			$validTitle = true;
+	if($title){
+		if($title->getFullText() == $articleName){
+			if(!$title->exists()){
+				$validTitle = true;
+			}
 		}
 	}  
 	
@@ -99,28 +110,21 @@ function tff_checkArticleName($articleName, $rowNr, $tabularFormId){
 }
 
 
+/*
+ * This method is called by the UI in order to delete an instance
+ */
 function tff_deleteInstance($articleTitle, $revisionId, $rowNr, $tabularFormId){
+	
+	//todo: add meaningful error messages
+	
 	$title = Title::newFromText($articleTitle);
-	$result = TFDataAPIAccess::getInstance($title)->deleteInstance($annotations, $parameters);
+	$result = TFDataAPIAccess::getInstance($title)->deleteInstance($revisionId);
 	
 	$result = array('success' => $result, 'rowNr' => $rowNr, 'tabularFormId' => $tabularFormId, $revisionId);
 	$result = json_encode($result);
 	
 	return '--##starttf##--' . $result . '--##endtf##--';
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

@@ -36,12 +36,17 @@ class TFTabularFormQueryPrinter extends SMWResultPrinter {
 
 	public function getParameters() {
 		//todo: deal with parameters
+		//todo: add no edit and no delete parameter
 		return array();
 	}
 
 }
 
 
+/*
+ * Represents a tabular form and prints its
+ * HTML representations
+ */
 class TFTabularFormData {
 	
 	private $formRowsData = array();
@@ -67,8 +72,6 @@ class TFTabularFormData {
 		
 		$link = $this->queryResult->getQueryLink();
 		
-		//Lecho('<pre>'.print_r($link, true).'</pre>');
-		
 		$this->initializeTemplateParameterPrintRequests();
 	}
 	
@@ -76,7 +79,6 @@ class TFTabularFormData {
 	 * Returns the HTML of the Ajax loader
 	 */
 	public function getAjaxLoaderHTML(){
-		
 		global $tfgTabularFormCount;
 		$tfgTabularFormCount += 1;
 		
@@ -84,9 +86,7 @@ class TFTabularFormData {
 		
 		$html .= '<div id="tabf_container_'.$tfgTabularFormCount.'" class="tabf_container">';
 		
-		
 		//todo:LANGUAGE
-		//todo:ICON pending
 		global $smwgHaloScriptPath;
 		$html .= '<div class="tabf_loader">';
 		$html .= 'Tabular form is loading'.' ';
@@ -139,7 +139,6 @@ class TFTabularFormData {
 	 * Returns the HTML for this tabular form
 	 */
 	public function getTabularFormHTML($tabularFormId){
-		
 		$this->initializeAnnotationAutocompletion();
 		
 		// process each query result row
@@ -286,11 +285,13 @@ class TFTabularFormData {
 		
 		//Add template cells
 		foreach($this->templateParameterPrintRequests as $template => $params){
-			$html .= '<td>';
+			foreach($params as $param){
+				$html .= '<td>';
 			
-			$html .= "<textarea rows='1' template-id=".'"'.TF_NEW_TEMPLATE_CALL.'"'." originalValue=''></textarea>";
+				$html .= "<textarea rows='1' template-id=".'"'.TF_NEW_TEMPLATE_CALL.'"'." originalValue=''></textarea>";
 			
-			$html .= '</td>';
+				$html .= '</td>';
+			}
 		}
 		
 		//add status column
@@ -336,7 +337,7 @@ class TFTabularFormData {
 			$colSpan += count($parameters);
 		}
 		
-		//todo:language file
+		//todo:LANGUAGE
 		$html .= '<td colspan="'.$colSpan.'">';
 		
 		if ( $this->hasFurtherResults){
@@ -355,7 +356,7 @@ class TFTabularFormData {
 			$html .= '<span class="tabf_further_results" width="100%">'.$link->getText( $this->outputMode, $this->linker).'</span>';
 		}
 		
-		$html .= '<input type="button" value="Add instance" onclick="tf.addInstance('."'".$tabularFormId."'".')"/>';
+		$html .= '<input class="tabf_add_button" type="button" value="Add instance" onclick="tf.addInstance('."'".$tabularFormId."'".')"/>';
 		$html .= '<input type="button" value="Refresh" onclick="tf.refreshForm('."'".$tabularFormId."'".')"/>';
 		$html .= '<input class="tabf_save_button" style="display:none" type="button" value="Save" onclick="tf.saveFormData(event,'."'".$tabularFormId."'".')"/>';
 		$html .= '</td>';
@@ -369,7 +370,6 @@ class TFTabularFormData {
 	 * Initializes the form row data for a given query result row
 	 */
 	private function initializeFormRowData($row, $subjectFromFirstColumn){
-		
 		//get instance behind query result row
 		if($subjectFromFirstColumn){
 			$title = $row[0]->getNextObject()->getLongText($this->outputMode, null);
@@ -418,8 +418,6 @@ class TFTabularFormData {
 	 * Extract the names of the requested annotations
 	 */
 	private function initializeAnnotationPrintRequests(){
-		//todo: deal with category print requests
-		
 		if(array_key_exists('mainlabel', $this->queryParams) && $this->queryParams['mainlabel'] != '-'){
 			$this->subjectColumnLabel = $this->queryParams['mainlabel'];
 		}
@@ -447,8 +445,6 @@ class TFTabularFormData {
 				continue;
 			}
 			
-			
-			//todo: deal with labels for print requests
 			$this->annotationPrintRequests[$count] = 
 				array('title' => $printRequest->getData()->getText(), 
 				'label' => $printRequest->getText($this->outputMode, $this->linker),
@@ -498,14 +494,11 @@ class TFTabularFormData {
 	 * that have been found in any of the instances
 	 */
 	private function mergeTemplateParametersRowData(){
-		//echo('<pre>START'.print_r($this->templateParameterPrintRequests, true).'</pre>');
-		
 		foreach($this->formRowsData as $row){
 			$this->templateParameterPrintRequests = 
 				$row->getMissingTemplateParameters($this->templateParameterPrintRequests);
 		}
 		
-		//echo('<pre>MERGED'.print_r($this->templateParameterPrintRequests, true).'</pre>');
 		foreach($this->templateParameterPrintRequests as $template => $params){
 			$tmpParams = array();
 			foreach($params as $param => $subParams){
@@ -522,8 +515,6 @@ class TFTabularFormData {
 			}
 			$this->templateParameterPrintRequests[$template] = $tmpParams;
 		}
-		
-		//echo('<pre>FINAL'.print_r($this->templateParameterPrintRequests, true).'</pre>');
 		
 		foreach($this->formRowsData as $row){
 			$row->addMissingTemplateParameters($this->templateParameterPrintRequests);
@@ -567,14 +558,9 @@ class TFTabularFormRowData {
 	 * are writable and which are read-only.
 	 */
 	public function detectWritableAnnotations(){
-		//todo: class not available if query does not contain annotations
-		
 		$collection = new TFAnnotationDataCollection();
 		$collection->addAnnotations($this->annotations);
 		$this->annotations = $this->dataAPIAccess->getWritableAnnotations($collection);
-		
-		//echo('<pre>'.print_r($this->annotations, true).'</pre>');
-		
 	}
 	
 	/*
@@ -589,8 +575,6 @@ class TFTabularFormRowData {
 		}
 		
 		$this->templateParameters = $this->dataAPIAccess->readTemplateParameters($collection);
-		
-		//echo('<pre>'.print_r($this->templateParameters, true).'</pre>');
 	}
 	
 	
@@ -631,7 +615,6 @@ class TFTabularFormRowData {
 			
 			foreach($parameterNames As $name => $dC){
 				if(!array_key_exists($name, $this->templateParameters[$template])){
-					//todo: create empty value instead of no value?
 					$this->templateParameters[$template][$name] = new TFTemplateParameter($template.'.'.$name); 
 				}
 			}
@@ -684,6 +667,7 @@ class TFTabularFormRowData {
 			foreach($params as $param => $dC){
 				$html .= '<td class="tabf_table_cell">';
 				
+				ksort($this->templateParameters[$template][$param]->currentValues);
 				if(count($this->templateParameters[$template][$param]->currentValues) == 0){
 					$html .= "<textarea rows='1' template-id=".'"'.TF_NEW_TEMPLATE_CALL.'"'."></textarea>";
 				} else {

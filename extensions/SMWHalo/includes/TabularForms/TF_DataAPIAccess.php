@@ -7,90 +7,10 @@ include_once('extensions/SMWHalo/DataAPI/PageCRUD_Plus/PCP.php');
 include_once('extensions/SMWHalo/DataAPI/PageObjectModel/POM.php');
 
 
-class TFTest {
-
-	public static function test(){
-		//test is writable
-		$annotations = new TFAnnotationDataCollection();
-		
-		$annotations = array();
-		$annotations[] = new TFAnnotationData('PropA', '500');
-		$annotations[] = new TFAnnotationData('PropA', '501');
-		$annotations[] = new TFAnnotationData('PropA', '503');
-		$annotations[] = new TFAnnotationData('PropA', '504');
-		$annotations[] = new TFAnnotationData('PropB', '505');
-		$annotations[] = new TFAnnotationData('PropA', '506');
-		$annotations[] = new TFAnnotationData('PropA', '507');
-		$annotations[] = new TFAnnotationData('PropB', '508');
-		$annotations[] = new TFAnnotationData('PropA', '509');
-		$annotations[] = new TFAnnotationData('PropC', '510');
-		$annotations[] = new TFAnnotationData('PropD', '');
-		
-		
-		$annotations->addAnnotations($annotations);
-		
-		$title = Title::newFromText('TestTF');
-		
-		TFDataAPIAccess::getInstance($title)->getWritableAnnotations($annotations);
-		
-		
-		//read template parameters
-		
-		$parameters = new TFTemplateParameterCollection();
-		$parameters->addTemplateParameter(new TFTemplateParameter('TFTemplateA'));
-		$parameters->addTemplateParameter(new TFTemplateParameter('TFTemplateB.1'));
-		$parameters->addTemplateParameter(new TFTemplateParameter('TFTemplateB.2'));
-		$parameters->addTemplateParameter(new TFTemplateParameter('TFTemplateC.A'));
-		$parameters->addTemplateParameter(new TFTemplateParameter('TFTemplateD.A'));
-		$parameters->addTemplateParameter(new TFTemplateParameter('TFTemplateE'));
-		$parameters->addTemplateParameter(new TFTemplateParameter('TFTemplateF'));
-		
-		$title = Title::newFromText('TestTF');
-		
-		TFDataAPIAccess::getInstance($title)->readTemplateParameters($parameters);
-		
-		
-		
-		//test write
-		$annotations = new TFAnnotationDataCollection();
-		
-		$annotations = array();
-		$annotations[] = new TFAnnotationData('PropA', '500', null, 'MOD500');
-		$annotations[] = new TFAnnotationData('PropA', '501', null, 'MOD501');
-		$annotations[] = new TFAnnotationData('PropA', '503', null, 'MOD503');
-		$annotations[] = new TFAnnotationData('PropA', '504', null, 'MOD504');
-		$annotations[] = new TFAnnotationData('PropB', '505', null, 'MOD505');
-		$annotations[] = new TFAnnotationData('PropA', '506', null, 'MOD506');
-		$annotations[] = new TFAnnotationData('PropA', '507', null, 'MOD507');
-		$annotations[] = new TFAnnotationData('PropB', '508', null, 'MOD508');
-		$annotations[] = new TFAnnotationData('PropD', '', null, 'MODNEW');
-		
-		$annotations->addAnnotations($annotations);
-		
-		$parameters = new TFTemplateParameterCollection();
-		
-		$parameters->addTemplateParameter(new TFTemplateParameter('CA.1', array('template4' => 'A45'), array('template4' => 'MOD')));
-		$parameters->addTemplateParameter(new TFTemplateParameter('TFTemplateA.Param1',	
-			array('template10' => '600', 'template16' => '602', 'template20' => null), 
-			array('template10' => 'MOD600', 'template16' => 'MOD602', 'template20' => 'NEWMOD1')));
-		$parameters->addTemplateParameter(new TFTemplateParameter('TFTemplateA.Param2',	
-			array('template10' => '601', 'template16' => null, 'template20' => null), 
-			array('template10' => 'MOD601', 'template16' => 'NEWMOD2', 'template20' => 'NEWMOD3')));		
-		$parameters->addTemplateParameter(new TFTemplateParameter('TFTemplateB.1', array('template22' => '603'), array('template22' => 'MOD603')));
-		$parameters->addTemplateParameter(new TFTemplateParameter('TFTemplateB.2', array('template22' => '604'), array('template22' => 'MOD604')));
-		$parameters->addTemplateParameter(new TFTemplateParameter('TFTemplateC.A', array('template28' => '605'), array('template28' => 'MOD605')));
-		$parameters->addTemplateParameter(new TFTemplateParameter('TFTemplateD.A', array('template34' => null), array('template34' => 'NEWMOD4')));
-		
-		
-		$title = Title::newFromText('TestTF');
-
-		TFDataAPIAccess::getInstance($title)->updateValues($annotations, $parameters);
-	}
-}
-
-
-
-
+/*
+ * Provides methods for modifying and reading instance data
+ * via the Data API
+ */
 class TFDataAPIACCESS {
 
 		private static $instance = null;
@@ -138,14 +58,26 @@ class TFDataAPIACCESS {
 			
 		}
 		
+		/*
+		 * Returns the Revision Id fo this article
+		 */
 		public function getRevisionId(){
 			return $this->article->getRevIdFetched();
 		}
 
 		
+		/*
+		 * Check for the given annotations, if they can be edited
+		 * via the Data API
+		 * 
+		 * Only annotations, that can be found directly in the article and
+		 * not encapsulated in parser functions or templates can be edited.
+		 */
 		public function getWritableAnnotations($annotations){
 			
 			//todo: deal woth acls
+			
+			//todo:check if annotations with special types, e.g. date work
 			
 			if(!$this->title->exists()){
 				return $annotations; 
@@ -155,8 +87,6 @@ class TFDataAPIACCESS {
 
 			while($elements->hasNext()){
 				$element = $elements->getNext()->getNodeValue();
-				
-				//echo('<pre>'.print_r($element, true).'</pre>');
 				
 				if($element instanceof POMProperty){
 					$annotations->setWritable($element->name, $element->value);
@@ -190,18 +120,20 @@ class TFDataAPIACCESS {
 				}
 			}
 			
-			//todo:implement a getAnnotationsMethod
-			
-			//echo('<pre>'.print_r($annotations, true).'</pre>');
-			
 			return $annotations->getAnnotations();
 		}
 		
 		
 		
+		/*
+		 * This method fills the parameter print requests with values.
+		 * 
+		 * only parameters of templates, which are not encapsulated in parser
+		 * functions or other templates are supported.
+		 */
 		public function readTemplateParameters($parameters){
 			
-			//todo:markAsRead-only depending on acls
+			//todo: deal with ACLs
 			
 			if(!$this->title->exists()){
 				return $parameters->getParameters();
@@ -237,10 +169,15 @@ class TFDataAPIACCESS {
 		
 		
 		
-		
+		/*
+		 * Updates the annotations and template parameters of an instance
+		 * and adds new ones
+		 */
 		public function updateValues($annotations, $parameters, $revisionId){
 		
-			//todo: deal with deleted and moved articles
+			//todo: Deal with ACLs
+			
+			//todo: annotation labels
 			
 			if(!$this->title->exists()){
 				return false; 
@@ -249,14 +186,6 @@ class TFDataAPIACCESS {
 			if($this->getRevisionId() != $revisionId){
 				return false;
 			}
-			
-			//todo: revision check
-			
-			//todo can edit check
-			
-			//todo: annotation labels
-			
-			//todo category annotations
 			
 			$elements = $this->pomPage->getElements()->listIterator(); 
 			
@@ -362,6 +291,7 @@ class TFDataAPIACCESS {
 			
 			$text = $this->pomPage->text;
 			
+			//Reininitialization required after edit
 			$this->title = null;
 			
 			$newTemplateCalls = $parameters->getNewTemplateCalls();
@@ -389,14 +319,17 @@ class TFDataAPIACCESS {
 			return true;
 		}
 		
+	/*
+	 * This method creates a new instance 
+	 */
 	public function createInstance($annotations, $parameters){
 		
 		//todo: deal with acls
 		
-		//todo: deal woth articles created in the meantime
-		
-		//file_put_contents('D://q1.rtf', print_r($annotations, reur).print_r($parameters, true));
-		
+		if($this->title->exists()){
+			return false; 
+		}
+			
 		$text = '';
 		
 		$annotations = $annotations->getNewAnnotations();
@@ -419,14 +352,26 @@ class TFDataAPIACCESS {
 			}
 		}
 		
-		//file_put_contents('D://q2 .rtf', $text);
-		
 		$this->article->doEdit($text, 'tabular forms');
 			
 		return true;
 	}
 	
-	public function deleteInstance($articleName){
+	/*
+	 * Deletes an instance
+	 */
+	public function deleteInstance($revisionId){
+		
+		//todo: Deal with ACLS
+		
+		if(!$this->title->exists()){
+			return true; 
+		}
+		
+		if($this->getRevisionId() != $revisionId){
+			return false;
+		}	
+		
 		$this->article->doDelete('tabular forms');
 		
 		return true;
@@ -566,8 +511,7 @@ class TFTemplateParameterCollection {
 	
 	public function setTemplateParameterValue($template, $name, $value, $pomTemplateId){
 		if(strlen($value) > 0){
-			if(array_key_exists($template, $this->templateParameters) ){
-				
+			if(array_key_exists($template, $this->templateParameters)){
 				if(array_key_exists($template, $this->allTemplateParameters)
 						&& !array_key_exists($name, $this->templateParameters[$template])){
 					$this->templateParameters[$template][$name] = new TFTemplateParameter($template.'#'.$name);

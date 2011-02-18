@@ -393,10 +393,11 @@ var TF = Class.create({
 	 */
 	saveFormData : function(event, containerId){
 		var container = jQuery('#' + containerId);
+	
+		jQuery(Event.element(event)).css('display', 'none');
+		jQuery('.tabf_add_button', jQuery(Event.element(event)).parent()).css('display', 'none');
 		
 		jQuery('.tabf_table_container tr', container).each( tf.saveFormRowData);
-		
-		jQuery(Event.element(event)).css('display', 'none');		
 	},
 	
 	/*
