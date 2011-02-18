@@ -3,15 +3,23 @@
 var TF = Class.create({
 
 	init: function(){ 
-		this.xyz = 'abc';
 	},
 	
+	/*
+	 * Loads all Tabular Forms included in the page
+	 */
 	loadForms : function(){
 		jQuery('.tabf_container').each( function (){
 			tf.loadForm(this);
 		});
 	},
 	
+	/*
+	 * Loads a particular Tabular Form via an Ajax call
+	 * 
+	 * Method is called on page load and when someone
+	 * presses the refresh button of a tabular form.
+	 */
 	loadForm : function(container){
 		jQuery('.tabf_table_container', container).css('display', 'none');
 		jQuery('.tabf_loader').css('display', 'table', container);
@@ -32,6 +40,9 @@ var TF = Class.create({
 		});
 	},
 	
+	/*
+	 * Callback function for Ajax call that loads a tabular form
+	 */
 	displayLoadedForm : function(data){
 		
 		data = data.substr(data.indexOf('--##starttf##--') + 15, data.indexOf('--##endtf##--') - data.indexOf('--##starttf##--') - 15); 
@@ -47,6 +58,12 @@ var TF = Class.create({
 		jQuery('#' + data.tabularFormId + ' tr td:first-child').each(tf.initializeDeleteButtons);
 	},
 	
+	/*
+	 * This method is called after a tabular form has been loaded.
+	 * 
+	 * It adds required event listeners to all input foelds for modifying 
+	 * instance data.
+	 */
 	initializeLoadedCell : function(){
 		jQuery(this).attr('originalValue', jQuery(this).attr('value'));
 			
@@ -55,17 +72,36 @@ var TF = Class.create({
 		jQuery(this).keydown(tf.cellKeyDownHandler);
 	},
 	
+	/*
+	 * This method is called after a tabular form has been loaded.
+	 * 
+	 * It adds a listener for deleting instances to instance titles, i.e.
+	 * the cell of the first column in each row.
+	 */
 	initializeDeleteButtons : function(){
 		jQuery(this).mouseover(tf.displayDeleteButton);
 		jQuery(this).mouseout(tf.hideDeleteButton);
 	},
 	
+	/*
+	 * listener for checking if cell value has been modified.
+	 * 
+	 * Required for paste values with mouse.
+	 */
 	cellChangeHandler : function(){
 		tf.cellValueChangeHandler(this);
 	},
 	
+	/*
+	 * Key up listener, which is required for detecting
+	 * - value changes
+	 * - navigation
+	 * - article name changes (detecting valid article names)
+	 */
 	cellKeyUpHandler : function(event){
-		tf.shiftKeyPressed = false;
+		if(event.which == '16'){
+			tf.shiftKeyPressed = false;
+		}
 		
 		tf.navigateCells(this, event.which);
 		
@@ -74,6 +110,10 @@ var TF = Class.create({
 		tf.checkNewInstanceName(this, event.which);
 	},
 	
+	/*
+	 * Key down listener which is required for detecting navigation
+	 * between cells
+	 */
 	cellKeyDownHandler : function(event){
 		tf.selectionStartPosition = jQuery(this).attr('selectionStart');
 		tf.selectionEndPosition = jQuery(this).attr('selectionEnd');
@@ -90,6 +130,10 @@ var TF = Class.create({
 		}
 	},
 	
+	/*
+	 * This method is called by the key listeners and
+	 * implements the navigation between table cells
+	 */
 	navigateCells : function(cell, keyCode){
 		
 		if(keyCode == '39' || keyCode == 'tab'){ //key right
@@ -106,8 +150,9 @@ var TF = Class.create({
 				cellNumber = maxCellNumber;
 			}
 			
-			jQuery('textarea:nth-child(' + cellNumber +')', column).focus();
-			jQuery('textarea:nth-child(' + cellNumber +')', column).select();
+			var newCell = jQuery('textarea', column).get(cellNumber-1);
+			jQuery(newCell).focus();
+			jQuery(newCell).select();
 		
 		} else if(keyCode == 'shift+tab'){ 
 			
@@ -115,12 +160,14 @@ var TF = Class.create({
 			
 			var maxCellNumber = jQuery('textarea', column).get().length;
 			var cellNumber = tf.getChildNumber(cell, 1);
+			
 			if(maxCellNumber < cellNumber){
 				cellNumber = maxCellNumber;
 			}
 			
-			jQuery('textarea:nth-child(' + cellNumber +')', column).focus();
-			jQuery('textarea:nth-child(' + cellNumber +')', column).select();
+			var newCell = jQuery('textarea', column).get(cellNumber-1);
+			jQuery(newCell).focus();
+			jQuery(newCell).select();
 						
 		} else if(keyCode == '40'){ //key down
 			
@@ -136,10 +183,11 @@ var TF = Class.create({
 			}
 			
 			if(column != null){
-				jQuery('textarea:nth-child(' + cellNumber +')', column).focus();
-				jQuery('textarea:nth-child(' + cellNumber +')', column).select();
+				var newCell = jQuery('textarea', column).get(cellNumber-1);
+				jQuery(newCell).focus();
+				jQuery(newCell).select();
 			}
-		} else if(keyCode == '38'){ //key down
+		} else if(keyCode == '38'){ //key up
 			
 			var column = jQuery(cell).parent();
 			
@@ -154,25 +202,40 @@ var TF = Class.create({
 			}
 			
 			if(column != null){
-				jQuery('textarea:nth-child(' + cellNumber +')', column).focus();
-				jQuery('textarea:nth-child(' + cellNumber +')', column).select();
+				var newCell = jQuery('textarea', column).get(cellNumber-1);
+				jQuery(newCell).focus();
+				jQuery(newCell).select();
 			}
 		}
 	},
 	
-	getChildNumber : function(node, nr){
-		node = jQuery(node).prev();
-		if(jQuery(node).html() == null){
+	/*
+	 * Returns the number of a node from the 
+	 * perspective of its parent.
+	 */
+	getChildNumber : function(node, nr, tagName){
+		if(!tagName){
+			tagName = jQuery(node).get(0).tagName;
+		}
+		
+		var newNode = jQuery(node).prev();
+		if(jQuery(newNode).html() == null){
 			return nr;
 		} else {
-			nr += 1;
-			return tf.getChildNumber(node, nr);
+			if(jQuery(newNode).get(0).tagName == tagName){
+				nr += 1;
+			}
+			return tf.getChildNumber(newNode, nr, tagName);
 		}
 	},
 	
+	/*
+	 * Get target of navigation right
+	 */
 	getNextColumn : function(column, firstCall ){
 		var nextColumn = jQuery(column).next();
-		if(jQuery(nextColumn).html() == null){
+		if(jQuery(nextColumn).html() == null
+				|| jQuery(nextColumn).parent().attr('isDeleted') == 'true'){
 			var row = jQuery(column).parent().next()
 			if(jQuery('td', row).get().length == 0){
 				return null
@@ -192,10 +255,13 @@ var TF = Class.create({
 		}
 	},
 	
-	
+	/*
+	 * Get target of navigation left
+	 */
 	getPrevColumn : function(column, firstCall ){
 		var nextColumn = jQuery(column).prev();
-		if(jQuery(nextColumn).html() == null){
+		if(jQuery(nextColumn).html() == null
+				|| jQuery(nextColumn).parent().attr('isDeleted') == 'true'){
 			var row = jQuery(column).parent().prev()
 			if(jQuery('td', row).get().length == 0){
 				return null
@@ -215,6 +281,9 @@ var TF = Class.create({
 		}
 	},
 
+	/*
+	 * Get target of navigation down
+	 */
 	getColumnBeyond : function(column, columnNumber){
 		var row = jQuery(column).parent().next();
 		if(jQuery(row).html() == null){
@@ -226,13 +295,18 @@ var TF = Class.create({
 			return null;
 		}
 		
-		if(jQuery('textarea:first-child', column).html() == null){
+		var children = jQuery('textarea', column).get();
+		if(children.length == 0 || jQuery(children[0]).html() == null
+				|| jQuery(row).attr('isDeleted') == 'true'){
 			return tf.getColumnBeyond(column, columnNumber);
 		} else {
 			return column;
 		}
 	},
 	
+	/*
+	 * Get target of navigation up
+	 */
 	getColumnAbove : function(column, columnNumber){
 		var row = jQuery(column).parent().prev();
 		if(jQuery(row).html() == null){
@@ -244,13 +318,18 @@ var TF = Class.create({
 			return null;
 		}
 		
-		if(jQuery('textarea:first-child', column).html() == null){
+		var children = jQuery('textarea', column).get();
+		if(children.length == 0 || jQuery(children[children.length - 1]).html() == null
+				|| jQuery(row).attr('isDeleted') == 'true'){
 			return tf.getColumnAbove(column, columnNumber);
 		} else {
 			return column;
 		}
 	},
 	
+	/*
+	 * Detect if a cell value has been changed
+	 */
 	cellValueChangeHandler : function(node){
 		var parentRow = jQuery(node).parent('td').parent('tr');
 		
@@ -300,11 +379,18 @@ var TF = Class.create({
 		}
 	},
 	
+	/*
+	 * Called if refresh button has been pressed.
+	 * Reloads the Tabular Form.
+	 */
 	refreshForm : function(containerId){
 		var container = jQuery('#' + containerId);
 		tf.loadForm(container);
 	},
 	
+	/*
+	 * Called if Save button has been pressed.
+	 */
 	saveFormData : function(event, containerId){
 		var container = jQuery('#' + containerId);
 		
@@ -313,6 +399,10 @@ var TF = Class.create({
 		jQuery(Event.element(event)).css('display', 'none');		
 	},
 	
+	/*
+	 * Called by method saveFormData. Saves, adds or deletes 
+	 * each row, respectively instance.
+	 */
 	saveFormRowData : function(rowNr){
 		jQuery(this).addClass('tabf_table_row_saved');
 		jQuery('textarea', this).attr('readonly', 'true');
@@ -392,6 +482,9 @@ var TF = Class.create({
 	},
 	
 	
+	/*
+	 * Callback for save, create or delete actions.
+	 */
 	saveFormRowDataCallback : function(data){
 		data = data.substr(data.indexOf('--##starttf##--') + 15, data.indexOf('--##endtf##--') - data.indexOf('--##starttf##--') - 15); 
 		data = JSON.parse(data);
@@ -418,6 +511,10 @@ var TF = Class.create({
 		}
 	},
 	
+	/*
+	 * Called if 'Add instance' button has been pressed. Adds a new row to the
+	 * Tabular Form.
+	 */
 	addInstance : function(tabfId){
 		jQuery('#' + tabfId + ' .tabf_table_container .smwfooter').
 			before('<tr>' + jQuery('#' + tabfId + ' .tabf_table_container table tr:last-child').html() + '</tr>');
@@ -436,6 +533,11 @@ var TF = Class.create({
 		jQuery('.tabf_save_button', jQuery(newRow).parent().parent()).css('display', 'none');
 	},
 	
+	/*
+	 * Listener for instance name input field of new instances.
+	 * 
+	 * checks if instance name is valid and new via an Ajax Call.
+	 */
 	checkNewInstanceName : function(element, keyCode){
 		if(jQuery(element).attr('class') != 'tabf_erronious_instance_name' 
 				&& jQuery(element).attr('class') != 'tabf_valid_instance_name'){
@@ -463,6 +565,9 @@ var TF = Class.create({
 	},
 	
 	
+	/*
+	 * Callback function for new instance name check
+	 */
 	checkNewInstanceNameCallBack : function(data){
 		data = data.substr(data.indexOf('--##starttf##--') + 15, data.indexOf('--##endtf##--') - data.indexOf('--##starttf##--') - 15); 
 		data = JSON.parse(data);
@@ -484,9 +589,12 @@ var TF = Class.create({
 			
 	},
 	
+	/*
+	 * Displays delete/undelete button if one moves mouse over a subject name
+	 */
 	displayDeleteButton : function(event){
 		jQuery('.tabf-delete-button', this).css('position', 'absolute');
-		//todo: re,pve minus 3
+		//todo: rempve minus 3
 		var bottomPos = jQuery(this).position().top + jQuery(this).innerHeight() - jQuery('input', this).height() - 3;
 		jQuery('.tabf-delete-button', this).css('top', bottomPos);
 		//todo: remove minus 1
@@ -494,10 +602,16 @@ var TF = Class.create({
 		jQuery('.tabf-delete-button', this).css('display', 'block');
 	},
 	
+	/*
+	 * Hides delete/undelete button if mouse is moved out of subject name
+	 */
 	hideDeleteButton : function(){
 		jQuery('.tabf-delete-button', this).css('display', 'none');
 	},
 	
+	/*
+	 * Called if obe presses the Delete/Undelete Button
+	 */
 	deleteInstance : function (event){
 		var input = Event.element(event);
 		var row = jQuery(input).parent().parent();

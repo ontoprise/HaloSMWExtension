@@ -671,7 +671,7 @@ class TFTabularFormRowData {
 				if($annotation->isWritable){
 					$html .= "<textarea ".$autocompletion." rows='1'>".$annotation->currentValue."</textarea>";
 				} else {
-				$html .= '<div style="height: 3em; width: 100%">'.$annotation->renderedValue.'</div>';
+					$html .= '<div style="height: 3em; width: 100%">'.$annotation->renderedValue.'</div>';
 				}
 				$first = false;
 			}
