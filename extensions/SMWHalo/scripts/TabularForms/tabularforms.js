@@ -292,6 +292,7 @@ var TF = Class.create({
 				jQuery('td:last-child .tabf_modified_status', parentRow).css('display', 'none');
 				
 				if(jQuery('.tabf_modified_row', jQuery(parentRow).parent().parent()).length == 0
+						&& jQuery('.tabf_deleted_row', jQuery(parentRow).parent().parent()).length == 0
 						&& jQuery('.tabf_new_row .tabf_valid_instance_name', jQuery(parentRow).parent().parent()).length == 0){
 					jQuery('.tabf_save_button', jQuery(parentRow).parent().parent()).css('display', 'none');
 				}
@@ -316,7 +317,28 @@ var TF = Class.create({
 		jQuery(this).addClass('tabf_table_row_saved');
 		jQuery('textarea', this).attr('readonly', 'true');
 		
-		if(jQuery(this).attr('isModified') == 'true' || jQuery(this).attr('isNew') == 'true' ){
+		if(jQuery(this).attr('isDeleted') == 'true'){
+			jQuery('td:last-child .tabf_deleted_status', this).css('display', 'none');
+			jQuery('td:last-child .tabf_pending_status', this).css('display', 'inline');
+			
+			var tabularFormId = jQuery(this).parent().parent().parent().parent().attr('id');
+			var revisionId = jQuery('td:first-child ',this).attr('revision-id');
+			var articleTitle = jQuery('td:first-child ',this).attr('article-name');
+			
+			
+			//todo:add ajax error handling
+			var url = wgServer + wgScriptPath + "/index.php";
+			jQuery.ajax({ url:  url, 
+				data: {
+					'action' : 'ajax',
+					'rs' : 'tff_deleteInstance',
+					'rsargs[]' : [articleTitle, revisionId, rowNr, tabularFormId],
+				},
+				success: tf.saveFormRowDataCallback,
+				
+			});
+			
+		} else if(jQuery(this).attr('isModified') == 'true' || jQuery(this).attr('isNew') == 'true' ){
 			
 			jQuery('td:last-child .tabf_modified_status', this).css('display', 'none');
 			jQuery('td:last-child .tabf_added_status', this).css('display', 'none');
@@ -497,6 +519,12 @@ var TF = Class.create({
 				}
 				
 				jQuery('td textarea', row).attr('readonly', '');
+				
+				if(jQuery('.tabf_modified_row', jQuery(row).parent().parent()).length == 0
+						&& jQuery('.tabf_deleted_row', jQuery(row).parent().parent()).length == 0
+						&& jQuery('.tabf_new_row .tabf_valid_instance_name', jQuery(row).parent().parent()).length == 0){
+					jQuery('.tabf_save_button', jQuery(row).parent().parent()).css('display', 'none');
+				}
 			} else {
 				jQuery(row).attr('isDeleted', true);
 				jQuery(row).addClass('tabf_deleted_row');
@@ -507,6 +535,10 @@ var TF = Class.create({
 				jQuery('.tabf_ok_status', row).css('display', 'none');
 				
 				jQuery('td textarea', row).attr('readonly', 'true');
+				
+				if(jQuery('..tabf_erronious_instance_name', jQuery(row).parent().parent()).length == 0){
+					jQuery('.tabf_save_button', jQuery(row).parent().parent()).css('display', 'inline');
+				}
 			}
 		}
 	}

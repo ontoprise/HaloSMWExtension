@@ -705,7 +705,7 @@ class TFTabularFormRowData {
 		$html .= '<img class="tabf_saved_status" title="Saved" style="display: none" src="'.$smwgHaloScriptPath.'/skins/TabularForms/Saved.png"></img>';
 		$html .= '<img class="tabf_error_status" title="An error occured" style="display: none" src="'.$smwgHaloScriptPath.'/skins/TabularForms/Error.png"></img>';
 		$html .= '<img class="tabf_pending_status" title="Updating" style="display: none" src="'.$smwgHaloScriptPath.'/skins/TabularForms/Pending.gif"></img>';
-		$html .= '<img class="tabf_deleted_status" title="Updating" style="display: none" src="'.$smwgHaloScriptPath.'/skins/TabularForms/Deleted.gif"></img>';
+		$html .= '<img class="tabf_deleted_status" title="Updating" style="display: none" src="'.$smwgHaloScriptPath.'/skins/TabularForms/Deleted.png"></img>';
 		$html .= '</td>';
 		
 		return $html;

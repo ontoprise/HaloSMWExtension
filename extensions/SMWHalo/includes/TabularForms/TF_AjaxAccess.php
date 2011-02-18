@@ -7,6 +7,7 @@ global $wgAjaxExportList;
 $wgAjaxExportList[] = 'tff_getTabularForm';
 $wgAjaxExportList[] = 'tff_updateInstanceData';
 $wgAjaxExportList[] = 'tff_checkArticleName';
+$wgAjaxExportList[] = 'tff_deleteInstance';
 
 function tff_getTabularForm($querySerialization, $tabularFormId){
 	$querySerialization = json_decode($querySerialization, true);
@@ -98,6 +99,15 @@ function tff_checkArticleName($articleName, $rowNr, $tabularFormId){
 }
 
 
+function tff_deleteInstance($articleTitle, $revisionId, $rowNr, $tabularFormId){
+	$title = Title::newFromText($articleTitle);
+	$result = TFDataAPIAccess::getInstance($title)->deleteInstance($annotations, $parameters);
+	
+	$result = array('success' => $result, 'rowNr' => $rowNr, 'tabularFormId' => $tabularFormId, $revisionId);
+	$result = json_encode($result);
+	
+	return '--##starttf##--' . $result . '--##endtf##--';
+}
 
 
 

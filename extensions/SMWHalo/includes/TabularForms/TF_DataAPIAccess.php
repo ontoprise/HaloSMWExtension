@@ -395,7 +395,7 @@ class TFDataAPIACCESS {
 		
 		//todo: deal woth articles created in the meantime
 		
-		file_put_contents('D://q1.rtf', print_r($annotations, reur).print_r($parameters, true));
+		//file_put_contents('D://q1.rtf', print_r($annotations, reur).print_r($parameters, true));
 		
 		$text = '';
 		
@@ -419,10 +419,16 @@ class TFDataAPIACCESS {
 			}
 		}
 		
-		file_put_contents('D://q2 .rtf', $text);
+		//file_put_contents('D://q2 .rtf', $text);
 		
 		$this->article->doEdit($text, 'tabular forms');
 			
+		return true;
+	}
+	
+	public function deleteInstance($articleName){
+		$this->article->doDelete('tabular forms');
+		
 		return true;
 	}
 		
