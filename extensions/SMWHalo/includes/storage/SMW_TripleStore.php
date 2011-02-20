@@ -115,6 +115,7 @@ class SMWTripleStore extends SMWStore {
 		try {
 			$con = TSConnection::getConnector();
 			$sparulCommands = array();
+			//TODO: delete Wiki/TSC mapping
 			$prop_ns = $this->tsNamespace->getNSPrefix(SMW_NS_PROPERTY);
 			$naryPropFrag = "<$smwgTripleStoreGraph/$prop_ns";
 			$sparulCommands[] = "DELETE FROM <$smwgTripleStoreGraph> { $subject_iri ?p ?b. ?b $naryPropFrag/_1> ?v1. ?b $naryPropFrag/_2> ?v2. ?b $naryPropFrag/_3> ?v3. ?b $naryPropFrag/_4> ?v4. ?b $naryPropFrag/_5> ?v5.}";
@@ -179,6 +180,10 @@ class SMWTripleStore extends SMWStore {
 		try {
 			$con = TSConnection::getConnector();
 			$sparulCommands = array();
+			if (!is_null($this->smwstore->getMapping())) {
+				list($wikiURI, $tscURI) = $this->smwstore->getMapping();
+				$sparulCommands[] = "INSERT MAPPING <".$wikiURI."> : <".$tscURI.">";
+			}
 			$prefixes = TSNamespaces::$W3C_PREFIXES.TSNamespaces::$TSC_PREFIXES;
 			$prop_ns = $this->tsNamespace->getNSPrefix(SMW_NS_PROPERTY);
 			$naryPropFrag = "<$smwgTripleStoreGraph/$prop_ns";
@@ -585,6 +590,7 @@ class SMWTripleStore extends SMWStore {
 			$con = TSConnection::getConnector();
 
 			$sparulCommands = array();
+			//TODO: delete and re-create Wiki/TSC mapping
 			$prop_ns = $this->tsNamespace->getNSPrefix(SMW_NS_PROPERTY);
 			$naryPropFrag = "<$smwgTripleStoreGraph/$prop_ns";
 

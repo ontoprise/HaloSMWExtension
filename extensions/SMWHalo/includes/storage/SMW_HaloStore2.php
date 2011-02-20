@@ -5,7 +5,8 @@
  *
  */
 class SMWHaloStore2 extends SMWSQLStore2 {
-
+	
+	var $mapping;
 	/*
 	 * This method is overwritten in order to hook in
 	 * the Query Results Cache and the Query Management
@@ -38,6 +39,7 @@ class SMWHaloStore2 extends SMWSQLStore2 {
 
 	function doUpdateData(SMWSemanticData $data) {
 		$updateData = parent::updateData($data);
+		$this->mapping = NULL;
 		$this->handleURIMappings($data);
 		return $updateData;
 	}
@@ -71,9 +73,17 @@ class SMWHaloStore2 extends SMWSQLStore2 {
 				$uriValue = reset($propertyValueArray);
 				$uriDBkeys = $uriValue->getDBkeys();
 				$db->delete($smw_urimapping, array('smw_id' => $id->smw_id));
-				$db->insert($smw_urimapping, array('smw_id' => $id->smw_id, 'page_id' => $subjectTitle->getArticleID(), 'smw_uri'=>array_shift($uriDBkeys)));
+				$tscURI = array_shift($uriDBkeys);
+				$db->insert($smw_urimapping, array('smw_id' => $id->smw_id, 'page_id' => $subjectTitle->getArticleID(), 'smw_uri'=>$tscURI));
+				
+				$wikiURI = TSNamespaces::getInstance()->getFullURI($subjectTitle);
+				$this->mapping = array($wikiURI, $tscURI);
 			}
 		}
+	}
+	
+	public function getMapping() {
+		return $this->mapping;
 	}
 }
 
