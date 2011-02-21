@@ -126,8 +126,6 @@ class TFTabularFormData {
 		
 		$html .= '<div class="tabf_table_container" width="100%" style="display: none">';
 		
-		$html .= $this->getTabularFormHTML(1);
-		
 		$html .= '</div>';
 		
 		$html .= '</div>';
@@ -172,6 +170,7 @@ class TFTabularFormData {
 	 * Get range property for annotation print requests
 	 */
 	private function initializeAnnotationAutocompletion(){
+		
 		foreach($this->annotationPrintRequests as $key => $annotation){
 			if($annotation['title'] == '__Category__'){
 				$this->annotationPrintRequests[$key]['autocomplete'] = 'ask: [[:Category:+]]';
@@ -261,7 +260,7 @@ class TFTabularFormData {
 	 * template for adding new instances.
 	 */
 	private function addTabularFormAddRowTemplateHTML(){
-		$html = '<tr style="display: none">';
+		$html = '<tr style="display: none" class="tabf_table_row">';
 		
 		$html .= '<td revision-id="-1" ><textarea rows="1"></textarea>';
 		$html .= '<input class="tabf-delete-button" type="button" value="Delete" style="z-index: 10; display: none" onclick="tf.deleteInstance(event)"/>';
@@ -313,11 +312,7 @@ class TFTabularFormData {
 	private function addRowHTML($rowData){
 		$html = '';
 		
-		$html .= '<tr class="tabf_table_row">';
-		
 		$html .= $rowData->getHTML($this->annotationPrintRequests, $this->templateParameterPrintRequests);
-		
-		$html .= '</tr>';
 		
 		return $html;
 	}
@@ -626,16 +621,24 @@ class TFTabularFormRowData {
 	 */
 	public function getHTML($annotationPrintRequests, $parameterPrintRequests){
 		
-		$html = '';
+		if($this->title->exists()){
+			$html .= '<tr class="tabf_table_row">';
+		} else {
+			$html .= '<tr class="tabf_table_row tabf_new_row" isNew="true">';
+		}
 		
 		//Add subject
-		$linker = new Linker();
-		$html .= '<td class="tabf_table_cell" revision-id="'.$this->revisionId.
-			'" article-name="'.$this->title->getFullText().'">';
-		$html .= $linker->makeLinkObj($this->title);
-		$html .= '<input class="tabf-delete-button" type="button" value="Delete" style="z-index: 10; display: none" onclick="tf.deleteInstance(event)"/>';
-		//$html .= '</div>';
-		
+		if($this->title->exists()){
+			$linker = new Linker();
+			$html .= '<td class="tabf_table_cell" revision-id="'.$this->revisionId.
+				'" article-name="'.$this->title->getFullText().'">';
+			$html .= $linker->makeLinkObj($this->title);
+			$html .= '<input class="tabf-delete-button" type="button" value="Delete" style="z-index: 10; display: none" onclick="tf.deleteInstance(event)"/>';
+		} else {
+			$html .= '<td class="tabf_table_cell" revision-id="-1">';
+			$html .= '<textarea class="tabf_valid_instance_name" rows="1">'.$this->title->getFullText().'</textarea>';
+			$html .= '<input class="tabf-delete-button" type="button" value="Delete" style="z-index: 10; display: none" onclick="tf.deleteInstance(event)"/>';
+		}
 		$html .= '</td>';
 
 		//Add cells for annotations
@@ -684,13 +687,21 @@ class TFTabularFormRowData {
 		//Todo:Language
 		global $smwgHaloScriptPath;
 		$html .= '<td>';
-		$html .= '<img class="tabf_ok_status" title="Not yet modified" src="'.$smwgHaloScriptPath.'/skins/TabularForms/Unmodified.png"></img>';
-		$html .= '<img class="tabf_modified_status" title="Modified" style="display: none" src="'.$smwgHaloScriptPath.'/skins/TabularForms/Modified.png"></img>';
+		if($this->title->exists()){
+			$html .= '<img class="tabf_ok_status" title="Not yet modified" src="'.$smwgHaloScriptPath.'/skins/TabularForms/Unmodified.png"></img>';
+			$html .= '<img class="tabf_modified_status" title="Modified" style="display: none" src="'.$smwgHaloScriptPath.'/skins/TabularForms/Modified.png"></img>';
+			$html .= '<img class="tabf_deleted_status" title="Updating" style="display: none" src="'.$smwgHaloScriptPath.'/skins/TabularForms/Deleted.png"></img>';
+		} else {
+			$html .= '<img class="tabf_added_status" title="Updating" src="'.$smwgHaloScriptPath.'/skins/TabularForms/Added.png"></img>';
+		}
+		
 		$html .= '<img class="tabf_saved_status" title="Saved" style="display: none" src="'.$smwgHaloScriptPath.'/skins/TabularForms/Saved.png"></img>';
 		$html .= '<img class="tabf_error_status" title="An error occured" style="display: none" src="'.$smwgHaloScriptPath.'/skins/TabularForms/Error.png"></img>';
 		$html .= '<img class="tabf_pending_status" title="Updating" style="display: none" src="'.$smwgHaloScriptPath.'/skins/TabularForms/Pending.gif"></img>';
-		$html .= '<img class="tabf_deleted_status" title="Updating" style="display: none" src="'.$smwgHaloScriptPath.'/skins/TabularForms/Deleted.png"></img>';
+		
 		$html .= '</td>';
+		
+		$html .= '</tr>';
 		
 		return $html;
 	}

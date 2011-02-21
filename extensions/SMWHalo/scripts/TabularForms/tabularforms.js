@@ -56,6 +56,10 @@ var TF = Class.create({
 		jQuery('#' + data.tabularFormId + ' .tabf_table_container td textarea').each(tf.initializeLoadedCell)
 		
 		jQuery('#' + data.tabularFormId + ' tr td:first-child').each(tf.initializeDeleteButtons);
+		
+		if(jQuery('#' + data.tabularFormId + ' .tabf_new_row').get().length > 0){
+			jQuery('#' + data.tabularFormId + ' .tabf_save_button').css('display', 'inline');
+		}
 	},
 	
 	/*
@@ -616,7 +620,6 @@ var TF = Class.create({
 	deleteInstance : function (event){
 		var input = Event.element(event);
 		var row = jQuery(input).parent().parent();
-		
 		
 		if(jQuery(row).attr('isNew') == 'true'){
 			jQuery(row).remove();

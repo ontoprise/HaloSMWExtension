@@ -80,7 +80,7 @@ class TFDataAPIACCESS {
 			//todo:check if annotations with special types, e.g. date work
 			
 			if(!$this->title->exists()){
-				return $annotations; 
+				return $annotations->getAnnotations(); 
 			}
 			
 			$elements = $this->pomPage->getElements()->listIterator();
