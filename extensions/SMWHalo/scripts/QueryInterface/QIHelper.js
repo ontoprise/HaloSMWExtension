@@ -582,6 +582,9 @@ QIHelper.prototype = {
             if (resultCode != null) eval(resultCode);
             resetOfc();
             break;
+        case 'tabularform':
+            tf.loadForms();
+            break;
         }
 	},
     // ofc stuff can be once at a page only. If the full preview is closed,
