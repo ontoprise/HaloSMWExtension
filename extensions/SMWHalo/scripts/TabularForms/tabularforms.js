@@ -622,7 +622,24 @@ var TF = Class.create({
 		var row = jQuery(input).parent().parent();
 		
 		if(jQuery(row).attr('isNew') == 'true'){
+			
+			var rowParent = jQuery(row).parent().parent();
+			
 			jQuery(row).remove();
+			
+			if(jQuery('.tabf_modified_row', jQuery(rowParent)).length == 0
+					&& jQuery('.tabf_deleted_row', jQuery(rowParent)).length == 0
+					&& jQuery('.tabf_new_row .tabf_valid_instance_name', jQuery(rowParent)).length == 0){
+				jQuery('.tabf_save_button', jQuery(rowParent)).css('display', 'none');
+			} else if ((jQuery('.tabf_modified_row', jQuery(rowParent)).length > 0
+					|| jQuery('.tabf_deleted_row', jQuery(rowParent)).length > 0
+					|| jQuery('.tabf_new_row .tabf_valid_instance_name', jQuery(rowParent)).length > 0)
+					&& jQuery('.tabf_new_row .tabf_valid_instance_name', jQuery(rowParent)).length == 0){
+				jQuery('.tabf_save_button', jQuery(rowParent)).css('display', 'inline');
+			}
+			
+			
+			
 		} else {
 			if(jQuery(row).attr('isDeleted') == 'true'){
 				jQuery(row).attr('isDeleted', false);
