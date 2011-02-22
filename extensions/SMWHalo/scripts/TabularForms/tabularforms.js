@@ -26,6 +26,7 @@ var TF = Class.create({
 		
 		var querySerialization = jQuery('.tabf_query_serialization', container).html();
 		var tabularFormId = jQuery(container).attr('id');
+		var isSPARQL = jQuery('.tabf_query_serialization', container).attr('isSPARQL');
 		
 		//todo:add ajax error handling
 		var url = wgServer + wgScriptPath + "/index.php";
@@ -33,7 +34,7 @@ var TF = Class.create({
 			data: {
 				'action' : 'ajax',
 				'rs' : 'tff_getTabularForm',
-				'rsargs[]' : [querySerialization, tabularFormId],
+				'rsargs[]' : [querySerialization, isSPARQL, tabularFormId],
 			},
 			success: tf.displayLoadedForm,
 			

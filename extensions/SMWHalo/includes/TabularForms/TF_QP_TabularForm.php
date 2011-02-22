@@ -60,6 +60,7 @@ class TFTabularFormData {
 	private $subjectColumnLabel;
 	private $getSubjectFromFirstPrintRequest = false;
 	private $hasFurtherResults;
+	private $isSPARQLQuery = false;
 	
 	public function __construct($queryResult, $queryParams, $linker, $hasFurtherResults){
 		$this->queryResult = $queryResult;
@@ -67,6 +68,11 @@ class TFTabularFormData {
 		$this->queryParams = $queryParams;
 		$this->linker = $linker;
 		$this->hasFurtherResults = $hasFurtherResults;
+		
+		if($this->queryResult instanceof SMWHaloQueryResult && 
+				$this->queryResult->getQuery() instanceof SMWSPARQLQuery && $this->queryResult->getQuery()->fromASK){
+			$this->isSPARQLQuery = true;			
+		}
 		
 		$this->initializeAnnotationPrintRequests();
 		
@@ -94,7 +100,7 @@ class TFTabularFormData {
 		$html .= '</div>';
 		
 		//display serialized query
-		$html .= '<span class="tabf_query_serialization" style="display: none">';
+		$html .= '<span class="tabf_query_serialization" style="display: none" isSPARQL="'.$this->isSPARQLQuery.'">';
 		
 		$query = array();
 		foreach($this->queryParams as $param => $value){
@@ -137,6 +143,13 @@ class TFTabularFormData {
 	 * Returns the HTML for this tabular form
 	 */
 	public function getTabularFormHTML($tabularFormId){
+		
+		//this must be done since we use the first print request as subject column
+		//in the SPARQL case
+		if($this->isSPARQLQuery){
+			unset($this->annotationPrintRequests[0]);
+		}
+		
 		$this->initializeAnnotationAutocompletion();
 		
 		// process each query result row
@@ -413,6 +426,7 @@ class TFTabularFormData {
 	 * Extract the names of the requested annotations
 	 */
 	private function initializeAnnotationPrintRequests(){
+		
 		if(array_key_exists('mainlabel', $this->queryParams) && $this->queryParams['mainlabel'] != '-'){
 			$this->subjectColumnLabel = $this->queryParams['mainlabel'];
 		}
@@ -422,8 +436,14 @@ class TFTabularFormData {
 			
 			$count += 1;
 			if($count == 0){
-				if(is_null($printRequest->getData()) && $printRequest->getHash() != '0:Category::'){	
-					$this->getSubjectFromFirstPrintRequest = true; 
+				if((is_null($printRequest->getData()) && $printRequest->getHash() != '0:Category::')
+						|| $this->isSPARQLQuery){	
+					
+					$this->getSubjectFromFirstPrintRequest = true;
+					
+					if($this->isSPARQLQuery){
+						$this->subjectColumnLabel = $printRequest->getText($this->outputMode, $this->linker);
+					}
 				}	
 			}
 			
@@ -445,7 +465,6 @@ class TFTabularFormData {
 				'label' => $printRequest->getText($this->outputMode, $this->linker),
 				'rawlabel' => $printRequest->getText($this->outputMode, null));
 		}
-		
 	}
 	
 	
@@ -621,14 +640,14 @@ class TFTabularFormRowData {
 	 */
 	public function getHTML($annotationPrintRequests, $parameterPrintRequests){
 		
-		if($this->title->exists()){
+		if($this->title instanceof Title && $this->title->exists()){
 			$html .= '<tr class="tabf_table_row">';
 		} else {
-			$html .= '<tr class="tabf_table_row tabf_new_row" isNew="true">';
+			$html = '<tr class="tabf_table_row tabf_new_row" isNew="true">';
 		}
 		
 		//Add subject
-		if($this->title->exists()){
+		if($this->title instanceof Title && $this->title->exists()){
 			$linker = new Linker();
 			$html .= '<td class="tabf_table_cell" revision-id="'.$this->revisionId.
 				'" article-name="'.$this->title->getFullText().'">';
@@ -636,7 +655,11 @@ class TFTabularFormRowData {
 			$html .= '<input class="tabf-delete-button" type="button" value="Delete" style="z-index: 10; display: none" onclick="tf.deleteInstance(event)"/>';
 		} else {
 			$html .= '<td class="tabf_table_cell" revision-id="-1">';
-			$html .= '<textarea class="tabf_valid_instance_name" rows="1">'.$this->title->getFullText().'</textarea>';
+			$html .= '<textarea class="tabf_valid_instance_name" rows="1">';
+			if($this->title instanceof Title){ 
+				$html .= $this->title->getFullText();
+			}
+			$html .= '</textarea>';
 			$html .= '<input class="tabf-delete-button" type="button" value="Delete" style="z-index: 10; display: none" onclick="tf.deleteInstance(event)"/>';
 		}
 		$html .= '</td>';
@@ -687,7 +710,7 @@ class TFTabularFormRowData {
 		//Todo:Language
 		global $smwgHaloScriptPath;
 		$html .= '<td>';
-		if($this->title->exists()){
+		if($this->title instanceof Title && $this->title->exists()){
 			$html .= '<img class="tabf_ok_status" title="Not yet modified" src="'.$smwgHaloScriptPath.'/skins/TabularForms/Unmodified.png"></img>';
 			$html .= '<img class="tabf_modified_status" title="Modified" style="display: none" src="'.$smwgHaloScriptPath.'/skins/TabularForms/Modified.png"></img>';
 			$html .= '<img class="tabf_deleted_status" title="Updating" style="display: none" src="'.$smwgHaloScriptPath.'/skins/TabularForms/Deleted.png"></img>';

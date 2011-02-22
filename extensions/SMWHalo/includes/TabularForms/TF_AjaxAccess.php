@@ -12,21 +12,35 @@ $wgAjaxExportList[] = 'tff_deleteInstance';
 /*
  * Called by UI in order to load a tabular form
  */
-function tff_getTabularForm($querySerialization, $tabularFormId){
+function tff_getTabularForm($querySerialization, $isSPARQL, $tabularFormId){
 	$querySerialization = json_decode($querySerialization, true);
 	
-	$querySerialization[] = TF_SHOW_AJAX_LOADER_HTML_PARAM.'=false';
-	$querySerialization[] = TF_TABULAR_FORM_ID_PARAM.'='.$tabularFormId;
+	//todo: avoid this
+	$querySerialization = str_replace('&nbsp;', ' ', $querySerialization);
 	
 	$queryString = '';
 	$queryParams = array();
 	$printRequests = array();
+
+	if($isSPARQL){
+		SMWSPARQLQueryProcessor::processFunctionParams( 
+			$querySerialization, $queryString, $queryParams, $printRequests);
 		
-	SMWQueryProcessor::processFunctionParams( 
-		$querySerialization, $queryString, $queryParams, $printRequests);
-	
-	$result = SMWQueryProcessor::getResultFromQueryString
-		( $queryString, $queryParams, $printRequests, 0);
+		$queryParams[TF_SHOW_AJAX_LOADER_HTML_PARAM] = 'false';
+		$queryParams[TF_TABULAR_FORM_ID_PARAM] = $tabularFormId;	
+			
+		$result = SMWSPARQLQueryProcessor::getResultFromQueryString
+			( $queryString, $queryParams, $printRequests, 0);	
+	} else {
+		$querySerialization[] = TF_SHOW_AJAX_LOADER_HTML_PARAM.'=false';
+		$querySerialization[] = TF_TABULAR_FORM_ID_PARAM.'='.$tabularFormId;
+		
+		SMWQueryProcessor::processFunctionParams( 
+			$querySerialization, $queryString, $queryParams, $printRequests);
+		
+		$result = SMWQueryProcessor::getResultFromQueryString
+			( $queryString, $queryParams, $printRequests, 0);
+	}
 	
 	$result = array('result' => $result, 'tabularFormId' => $tabularFormId);
 	$result = json_encode($result);

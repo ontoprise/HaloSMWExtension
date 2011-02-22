@@ -45,8 +45,11 @@ class TFDataAPIACCESS {
 			
 			//think about when and where to initialize POM. LocalSettings is not good.
 			
-			$this->article = new Article($this->title);
-			if($this->title->exists()){
+			$this->article = null;
+			
+			if(!is_null($this->title) && $this->title->exists()){
+				$this->article = new Article($this->title);
+				
 				$text = $this->article->getContent();
 			
 				POMElement::$elementCounter = 0;
@@ -62,7 +65,11 @@ class TFDataAPIACCESS {
 		 * Returns the Revision Id fo this article
 		 */
 		public function getRevisionId(){
-			return $this->article->getRevIdFetched();
+			if(!is_null($this->article)){
+				return $this->article->getRevIdFetched();
+			} else {
+				return null;
+			}
 		}
 
 		
@@ -79,7 +86,7 @@ class TFDataAPIACCESS {
 			
 			//todo:check if annotations with special types, e.g. date work
 			
-			if(!$this->title->exists()){
+			if(is_null($this->title) || !$this->title->exists()){
 				return $annotations->getAnnotations(); 
 			}
 			
@@ -135,7 +142,7 @@ class TFDataAPIACCESS {
 			
 			//todo: deal with ACLs
 			
-			if(!$this->title->exists()){
+			if(is_null($this->title) || !$this->title->exists()){
 				return $parameters->getParameters();
 			}
 			
@@ -179,7 +186,7 @@ class TFDataAPIACCESS {
 			
 			//todo: annotation labels
 			
-			if(!$this->title->exists()){
+			if(is_null($this->title) || !$this->title->exists()){
 				return false; 
 			}
 			
@@ -326,7 +333,7 @@ class TFDataAPIACCESS {
 		
 		//todo: deal with acls
 		
-		if($this->title->exists()){
+		if(is_null($this->title) || $this->title->exists()){
 			return false; 
 		}
 			
@@ -364,7 +371,7 @@ class TFDataAPIACCESS {
 		
 		//todo: Deal with ACLS
 		
-		if(!$this->title->exists()){
+		if(is_null($this->title) || !$this->title->exists()){
 			return true; 
 		}
 		
