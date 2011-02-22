@@ -157,7 +157,7 @@ class TestSolrFullIndex extends PHPUnit_Framework_TestCase {
     }
 
     public function testSolrPresent() {
-http://localhost:8983/solr/admin/ping    	
+//http://localhost:8983/solr/admin/ping    	
 //    	$url = "http://localhost:8983/solr/dataimport?command=full-import&clean=true";
 //    	$result = $this->fetchURLviaCURL($url, $resultCode);
 //    	
