@@ -168,7 +168,7 @@ class DeployWikiOntologyRevision extends WikiRevision {
 		$this->ontologyMerger = new OntologyMerger(
 		      array($dfgLang->getLanguageString('is_inverse_of')),
 		      array($dfgLang->getLanguageString('has_domain_and_range') => array('Type:Page', 'Type:Page')),
-		      array($dfgLang->getLanguageString('has_domain_and_range'), $dfgLang->getLanguageString('imported_from'), $dfgLang->getLanguageString('part_of_ontology'))
+		      array($dfgLang->getLanguageString('has_domain_and_range'), $dfgLang->getLanguageString('imported_from'), $dfgLang->getLanguageString('df_part_of_ontology'))
 		);
 		$this->logger = Logger::getInstance();
 	}
