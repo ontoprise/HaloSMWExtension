@@ -63,8 +63,7 @@
 	</target>
 
 	<target name="onto2mwxml">
-		<ant antfile="${onto2mwxml_path}/build.xml" dir="${onto2mwxml_path}" target="build" />
-		<ant antfile="${onto2mwxml_path}/build.xml" dir="${onto2mwxml_path}" target="pack" />
+		<ant antfile="${onto2mwxml_path}/build.xml" dir="${onto2mwxml_path}" target="pack_jena" />
 		<copy todir="../tools/onto2mwxml">
 			<fileset dir="${onto2mwxml_path}/deploy/bin/zip">
 				<exclude name="**/.svn, **/CVS" />
