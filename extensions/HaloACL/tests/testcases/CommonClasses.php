@@ -142,7 +142,7 @@ ACL
 	    	$article = new Article($t);
 			$article->doDelete("Testing");
 		}
-		$this->mAddedArticles[] = array();
+		$this->mAddedArticles = array();
     }
 	
 	/**
