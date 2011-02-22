@@ -620,10 +620,10 @@ class TFTemplateParameter {
 		
 		if(count($address) == 2){
 			$this->name = $address[1];
-			
-			$this->currentValues = $currentValues;
-			$this->newValues = $newValues;
 		}
+		
+		$this->currentValues = $currentValues;
+		$this->newValues = $newValues;
 	}
 }
 

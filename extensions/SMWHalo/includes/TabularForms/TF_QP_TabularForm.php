@@ -629,7 +629,21 @@ class TFTabularFormRowData {
 			
 			foreach($parameterNames As $name => $dC){
 				if(!array_key_exists($name, $this->templateParameters[$template])){
-					$this->templateParameters[$template][$name] = new TFTemplateParameter($template.'.'.$name); 
+					
+					//check if this template already is used in the article
+					//and use one of the other parameters current values
+					//in order to get template Ids
+					if(count($this->templateParameters[$template]) > 0){
+						$idx = array_keys($this->templateParameters[$template]);
+						$currentValues = $this->templateParameters[$template][$idx[0]]->currentValues;
+						foreach($currentValues as $templateId => $value){
+							$currentValues[$templateId] = ''; 
+						}
+					} else {
+						$currentValues = array();
+					}
+					
+					$this->templateParameters[$template][$name] = new TFTemplateParameter($template.'.'.$name, $currentValues); 
 				}
 			}
 		}

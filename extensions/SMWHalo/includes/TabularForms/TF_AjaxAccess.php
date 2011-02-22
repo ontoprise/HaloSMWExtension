@@ -15,9 +15,6 @@ $wgAjaxExportList[] = 'tff_deleteInstance';
 function tff_getTabularForm($querySerialization, $isSPARQL, $tabularFormId){
 	$querySerialization = json_decode($querySerialization, true);
 	
-	//todo: avoid this
-	$querySerialization = str_replace('&nbsp;', ' ', $querySerialization);
-	
 	$queryString = '';
 	$queryParams = array();
 	$printRequests = array();
@@ -26,8 +23,11 @@ function tff_getTabularForm($querySerialization, $isSPARQL, $tabularFormId){
 		SMWSPARQLQueryProcessor::processFunctionParams( 
 			$querySerialization, $queryString, $queryParams, $printRequests);
 		
+		//todo: avoid this
+		$queryString = str_replace('&nbsp;', ' ', $queryString);	
+			
 		$queryParams[TF_SHOW_AJAX_LOADER_HTML_PARAM] = 'false';
-		$queryParams[TF_TABULAR_FORM_ID_PARAM] = $tabularFormId;	
+		$queryParams[TF_TABULAR_FORM_ID_PARAM] = $tabularFormId;
 			
 		$result = SMWSPARQLQueryProcessor::getResultFromQueryString
 			( $queryString, $queryParams, $printRequests, 0);	
