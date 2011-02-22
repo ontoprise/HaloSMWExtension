@@ -104,7 +104,7 @@ class SMWTripleStore extends SMWStore {
 		}
 
 		$subject_iri = $this->tsNamespace->getFullIRI($subject);
-
+        
 		// clear rules
 		global $smwgEnableObjectLogicRules;
 		if (isset($smwgEnableObjectLogicRules)) {
@@ -115,7 +115,8 @@ class SMWTripleStore extends SMWStore {
 		try {
 			$con = TSConnection::getConnector();
 			$sparulCommands = array();
-			//TODO: delete Wiki/TSC mapping
+			$sparulCommands[] = "DELETE MAPPING $subject_iri";
+			
 			$prop_ns = $this->tsNamespace->getNSPrefix(SMW_NS_PROPERTY);
 			$naryPropFrag = "<$smwgTripleStoreGraph/$prop_ns";
 			$sparulCommands[] = "DELETE FROM <$smwgTripleStoreGraph> { $subject_iri ?p ?b. ?b $naryPropFrag/_1> ?v1. ?b $naryPropFrag/_2> ?v2. ?b $naryPropFrag/_3> ?v3. ?b $naryPropFrag/_4> ?v4. ?b $naryPropFrag/_5> ?v5.}";
@@ -182,6 +183,7 @@ class SMWTripleStore extends SMWStore {
 			$sparulCommands = array();
 			if (!is_null($this->smwstore->getMapping())) {
 				list($wikiURI, $tscURI) = $this->smwstore->getMapping();
+				$sparulCommands[] = "DELETE MAPPING <".$wikiURI.">";
 				$sparulCommands[] = "INSERT MAPPING <".$wikiURI."> : <".$tscURI.">";
 			}
 			$prefixes = TSNamespaces::$W3C_PREFIXES.TSNamespaces::$TSC_PREFIXES;
@@ -590,7 +592,8 @@ class SMWTripleStore extends SMWStore {
 			$con = TSConnection::getConnector();
 
 			$sparulCommands = array();
-			//TODO: delete and re-create Wiki/TSC mapping
+			$sparulCommands[] = "MODIFY MAPPING $old_iri : $new_iri";
+						
 			$prop_ns = $this->tsNamespace->getNSPrefix(SMW_NS_PROPERTY);
 			$naryPropFrag = "<$smwgTripleStoreGraph/$prop_ns";
 
@@ -893,6 +896,7 @@ class SMWTripleStore extends SMWStore {
 						} else {
 							$mapPRTOColumns[$label] = array($index);
 						}
+						//var_dump($pr);
 						$rewritten_pr = $this->rewritePrintrequest($pr);
 						$prs[] = $rewritten_pr;
 						$index++;
@@ -1067,6 +1071,9 @@ class SMWTripleStore extends SMWStore {
 		$rewritten_prs = $pr;
 		if ($data instanceof Title) { // property chain appear as Title
 			$titleText = $data->getText();
+		} else {
+			$titleText = $data->getDBkey();
+		}
 			$chain = explode(".",$titleText);
 
 			if (count($chain) > 1) {
@@ -1083,7 +1090,7 @@ class SMWTripleStore extends SMWStore {
 				$rewritten_prs->getHash();
 
 			}
-		}
+		
 		return $rewritten_prs;
 	}
 
