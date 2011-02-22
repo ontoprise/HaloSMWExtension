@@ -1,0 +1,155 @@
+<dataConfig>
+	<dataSource 
+		type="JdbcDataSource" 
+		driver="com.mysql.jdbc.Driver"
+		url="jdbc:mysql://localhost:3306/semwiki_en" 
+		user="root" 
+		password="m8nix"
+		batchSize="-1" 
+		/>
+	<script>
+        <![CDATA[
+        	function Relations(row) {
+        	  // The values of all properties are stored as string.
+        		var prop = 'smwh_'+row.get('prop')+'_s';
+        		var val = row.get('obj');
+        		row.remove('prop');
+        		row.remove('obj');
+        		// Add the property and its value
+        		row.put(prop, val);
+        		// Store the names of all properties in the article
+        		row.put('smwh_properties', prop);
+        		return row;
+        	}
+        	
+        	function Attributes(row) {
+        		var prop    = row.get('prop');
+        		var valXSD  = row.get('valueXSD');
+        		var valNum  = row.get('valueNum');
+        		var valUnit = row.get('valueUnit');
+        		var type    = row.get('type');
+        		row.remove('prop');
+        		row.remove('valueXSD');
+        		row.remove('valueNum');
+        		row.remove('valueUnit');
+        		row.remove('type');
+        		var typeSuffix = 't';
+        		var isNumeric = false;
+        		if (type == '_dat' ||
+              prop == 'Modification_date') {
+              // Given format of a date: 1995/12/31T23:59:59
+              // Required format: 1995-12-31T23:59:59Z
+              var dateTime = valXSD.split("T");
+              var date = dateTime[0];
+              date = date.replace('/', '-');
+              time = dateTime.length > 1 ? dateTime[1] : '00:00:00';
+              valXSD = date + 'T' + time + 'Z';
+              typeSuffix = 'dt';
+            } else if (
+              type == '_txt' ||
+        	    type == '_cod' ||
+        	    type == '_str' ||
+        	    type == '_ema' ||
+        	    type == '_uri' ||
+        	    type == '_anu' ||
+        	    type == '_tel' ||
+        	    type == '_tem' ||
+        	    type == '_rec') {
+              typeSuffix = 't';
+        	  } else if (type == '_num') {
+              typeSuffix = 'd';
+              isNumeric = true;
+        	  } else if (type == '_boo') {
+              typeSuffix = 'b';
+            }
+
+            var propXSD = 'smwh_'+prop+'_xsdvalue_'+typeSuffix;
+        		row.put(propXSD, valXSD);
+        		row.put('smwh_attributes', propXSD);
+        		if (isNumeric) {
+        		  row.put('smwh_'+prop+'_numvalue_d', valNum);
+        		  if (valUnit.length > 0) {
+                row.put('smwh_'+prop+'_unit_s', valUnit);
+              }
+            }
+        		
+        		return row;
+        	}
+        ]]>
+	</script>
+	<document>
+		<!-- Find all pages in the <page> table. They will be our documents. -->
+		<entity 
+			name="pages"
+			query="SELECT p.page_id as pid,
+			              p.page_namespace as pns,
+			              CAST(p.page_title AS CHAR) as pt
+             FROM page as p
+      ">
+			<field column="pid" name="id" />
+			<field column="pns" name="smwh_namespace_id" />
+			<field column="pt"  name="smwh_title" />
+			
+			<!-- Store all categories for each subject -->
+			<entity 
+				name="categories"
+				query="SELECT CAST(c.cl_to AS CHAR) cat
+               FROM categorylinks c
+               WHERE cl_from='${pages.pid}'">
+				<field column="cat" name="smwh_categories" />
+			</entity>
+			
+			<!-- Store all SMW IDs for pages -->
+			<entity 
+				name="smwids" 
+				query="SELECT s.smw_id as smwID
+               FROM smw_ids s
+               WHERE s.smw_namespace='${pages.pns}' AND 
+                     s.smw_title='${pages.pt}'">
+				<field column="smwID" name="smwh_smw_id" />
+
+  			<!-- Store all subject, predicate and object names for each subject of a
+             relation. -->
+  			<entity 
+  				name="rels" 
+  				transformer="script:Relations"
+  				query="SELECT CAST(pids.smw_title AS CHAR) as prop, 
+  				              CAST(oids.smw_title AS CHAR) as obj
+  				       FROM smw_rels2 AS r
+  				       LEFT JOIN (smw_ids as pids) ON (pids.smw_id = r.p_id)
+  				       LEFT JOIN (smw_ids as oids) ON (oids.smw_id = r.o_id)
+  				       WHERE r.s_id='${smwids.smwID}'">
+  			</entity>
+  			
+  			<!-- Store all subject and attribute names and the values for each subject
+             of an attribute. -->
+  			<entity 
+  				name="atts" 
+  				transformer="script:Attributes"
+  				query="SELECT CAST(pids.smw_title AS CHAR) as prop,
+                        CAST(a.value_xsd AS CHAR) as valueXSD,
+                        a.value_num as valueNum,
+                        a.value_unit as valueUnit,
+                        CAST(spec.value_string AS CHAR) as type
+                  FROM smw_atts2 AS a
+                  LEFT JOIN (smw_ids as pids) ON (pids.smw_id = a.p_id)
+                  LEFT JOIN (smw_spec2 as spec) ON (a.p_id = spec.s_id)
+                  WHERE a.s_id='${smwids.smwID}' AND 
+                        (LEFT(spec.value_string,1) ='_' OR spec.s_id IS NULL)">
+        </entity>
+        
+        <!-- Store all text values for each subject -->
+  			<entity 
+  				name="text"
+  				transformer="script:Relations"
+  				query="SELECT CAST(pids.smw_title AS CHAR) as prop,
+  				              CAST(t.value_blob AS CHAR) as obj
+  				       FROM smw_text2 AS t
+  				       LEFT JOIN (smw_ids as pids) ON (pids.smw_id = t.p_id)
+  				       WHERE t.s_id='${smwids.smwID}'">
+  			</entity>
+      </entity>
+			
+		</entity>
+	</document>
+</dataConfig>

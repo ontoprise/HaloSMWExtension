@@ -10,6 +10,7 @@
  */
 
 require_once 'testcases/TestER.php';
+require_once 'testcases/TestFacettedSearchIndexer.php';
 
 class ERTests
 {
@@ -18,6 +19,7 @@ class ERTests
 		$suite = new PHPUnit_Framework_TestSuite('EnhancedRetrieval');
 
 		$suite->addTestSuite("TestER");
+		$suite->addTestSuite("TestFacettedSearchIndexerSuite");
 		return $suite;
 	}
 }

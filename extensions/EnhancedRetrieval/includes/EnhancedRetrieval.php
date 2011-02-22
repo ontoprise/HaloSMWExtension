@@ -123,7 +123,19 @@ function wfUSSetupExtension() {
 	$wgAutoloadClasses['LuceneSearch'] = $dir . 'MWSearch/MWSearch_body.php';
 	$wgAutoloadClasses['LuceneResult'] = $dir . 'MWSearch/MWSearch_body.php';
 	$wgAutoloadClasses['LuceneSearchSet'] = $dir . 'MWSearch/MWSearch_body.php';
-
+	
+	// Classes for Facetted Search
+	$wgAutoloadClasses['FSIndexerFactory'] = $dir . 'includes/FacettedSearch/FS_IndexerFactory.php';
+	$wgAutoloadClasses['FSSolrSMWDB'] = $dir . 'includes/FacettedSearch/FS_SolrSMWDB.php';
+	$wgAutoloadClasses['FSSolrIndexer'] = $dir . 'includes/FacettedSearch/FS_SolrIndexer.php';
+	$wgAutoloadClasses['IFSIndexer'] = $dir . 'includes/FacettedSearch/IFS_Indexer.php';
+	$wgAutoloadClasses['IFSIndexer'] = $dir . 'includes/FacettedSearch/IFS_Indexer.php';
+	
+	// Exceptions
+	$wgAutoloadClasses['ERException'] = $dir . 'exceptions/ER_Exception.php';
+	$wgAutoloadClasses['ERFSException'] = $dir . 'exceptions/ER_FSException.php';
+	
+	
 	$wgSpecialPages['EnhancedRetrievalStatistics'] = array('SpecialPage','EnhancedRetrievalStatistics', '', true, 'smwfDoSpecialUSSearch', $dir . 'includes/EnhancedRetrievalStatistics.php');
 	//$wgSpecialPageGroups['EnhancedRetrievalStatistics'] = 'maintenance';
 
