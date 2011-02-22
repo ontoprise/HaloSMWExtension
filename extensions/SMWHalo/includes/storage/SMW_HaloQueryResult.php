@@ -120,6 +120,15 @@ public function getQueryLink($caption = false) {
         
         return $result;
     }
+    
+    
+/*
+     * Returns the Query Object 
+     */
+    public function getQuery(){
+    	return $this->mQuery;
+    }
+    
 }
 
 /**
