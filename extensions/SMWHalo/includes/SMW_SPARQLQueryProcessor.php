@@ -90,6 +90,10 @@ class SMWSPARQLQueryProcessor extends SMWQueryProcessor {
                     $label = trim($parts[1]);
                 }
 				$printouts[] = new SMWPrintRequest($printmode, $label, $data, trim($propparts[1]));
+			} else if($param{0} == '#') { //param of the tabular forms result printer 
+				$param = explode('=', $param, 2);
+				if(count($param) == 1) $param[1] = '';
+				$params[trim($param[0])] = trim($param[1]);
 			} else { // parameter or query
 				// FIX:KK special handling for SPARQL queries here
 				if (strpos($param, "SELECT ") !== false) {
