@@ -94,6 +94,8 @@ EOT;
                 break;
             case 'save': $this->doSave();
                 break;
+            case 'duplicate': $this->doDuplicate();
+                break;
             case 'list': $this->doList();
                 break;
         }
@@ -124,7 +126,7 @@ EOT;
             $this->errorPage("The policy with the id $id could not be found.");
             return;
         }
-        $wgOut->addHTML($this->createPolicyEditor($policy));
+        $wgOut->addHTML($this->createPolicyEditor($policy, false));
     }
 
     public function doSave() {
@@ -177,6 +179,36 @@ EOT;
         return $parr;
     }
 
+    public function doDuplicate() {
+        global $wgOut;
+        $origid = $_GET["id"];
+        $origpolicy = $this->getPolicy($origid);
+        if (!$origpolicy) {
+            $this->errorPage("The policy with the id $origid could not be found.");
+            return;
+        }
+        $id = uniqid("P_");
+        $uri = $origpolicy->getURI() . "_";
+        $des = $origpolicy->getDescription();
+        $heu = $origpolicy->getHeuristic()->getLabel();
+        $pat = $origpolicy->getPattern();
+        $pars = array();
+        foreach($origpolicy->getParameters() as $p) {
+            $pars[] = array("uri" => $p->getURI(),
+                    "name" => $p->getName(),
+                    "label" => $p->getLabel(),
+                    "description" => $p->getDescription());
+        }
+        $lodPolicyStore = LODPolicyStore::getInstance();
+        $success = $lodPolicyStore->storePolicy($uri, $id, $des, $pat, $heu, $pars);
+        if ($success) {
+            $wgOut->addHTML("<div id=\"tpee_message\">Policy $id saved.</div>");
+        } else {
+            $wgOut->addHTML("<div id=\"tpee_error\">Policy $id could not be saved.</div>");
+        }
+        $this->doList();
+    }
+
     public function doNew() {
         global $wgOut;
         $id = uniqid("P_");
@@ -184,7 +216,7 @@ EOT;
         $policy = new LODPolicy($id, $uri);
         $policy->setDescription($this->lod_trust_defaultdescription);
         $policy->setPattern($this->lod_trust_defaultpattern);
-        $wgOut->addHTML($this->createPolicyEditor($policy));
+        $wgOut->addHTML($this->createPolicyEditor($policy, true));
     }
 
     public function doRemove() {
@@ -210,7 +242,7 @@ EOT;
         return $result;
     }
 
-    public function createPolicyEditor($policy) {
+    public function createPolicyEditor($policy, $isnew) {
         // print_r($policy);
         global $wgScript;
         $id = $policy->getID();
@@ -224,25 +256,16 @@ EOT;
         }
         $remAction = wfMsg('lod_sp_policy_action_remove_par');
         $defAction = wfMsg('lod_sp_policy_action_define_par');
-        $html = <<<HTML
-<div id="tpee_parameter_template" class="tpee_parameter" style="display: none">
-    <h5 id="tpee_parameter_title">$defAction</h5>
-    Name: <input name="name" /><br />
-    Label: <input name="label" /><br />
-    Description: <textarea rows="3" cols="40" name="pdescription"></textarea><br />
-    <input type="button" value="$remAction"
-		onclick="this.parentNode.parentNode.removeChild(this.parentNode);" /><br />
-</div>
-HTML;
+        $html = "";
         $html .= "<div id=\"tpee_policy\">\n";
-        $html .= "<form action=\"" . $wgScript . "/Special:LODTrust\" method=\"post\">\n";
+        $html .= "<form action=\"" . $wgScript . "/Special:LODTrust\" method=\"post\" onsubmit=\"return validate();\">\n";
         $html .= "<input type=\"hidden\" name=\"uri\" value=\"$puri\" />";
         $html .= "<input type=\"hidden\" name=\"action\" value=\"save\" />";
         $html .= "<input type=\"hidden\" name=\"id\" value=\"$id\" />\n";
         $html .= "<h4 id=\"tpee_policy_id\">$id</h4>\n";
         $html .= "<p id=\"tpee_policy_description\">Description: <input type=\"text\" size=\"50\" name=\"description\" value=\"" . $policy->getDescription() . "\"/></p>\n";
+        $html .= $this->createHeuristicSelection($heuristic, $isnew);
         $html .= "<p id=\"tpee_policy_pattern\">Pattern: <textarea id=\"tpee_pattern\" name=\"pattern\" cols=\"50\" rows=\"30\">" . $policy->getPattern() . "</textarea></p>\n";
-        $html .= $this->createHeuristicSelection($heuristic);
         $html .= $this->createParameterList($parameters);
         $html .= "<div id=\"tpee_parameter_insert\"><input type=\"button\" onclick=\"newParameter()\" value=\"" . wfMsg('lod_sp_policy_action_new_par') . "\" /></div>\n";
         $html .= "<div id=\"tpee_parameter_insert\"><input type=\"submit\" value=\"Save policy\" /></div>&nbsp;";
@@ -280,23 +303,27 @@ HTML;
 		    </tr>
 			<tr>
 		<td style="width:120px" valign="top">
-				<div class="button-subcontainer" style="margin-top: 0px">
+<!--
+        <div class="button-subcontainer" style="margin-top: 0px">
 		  <input type="button" class="button sort-table"
 		         value="GRAPH"  onclick="insertHere('GRAPH')"
 		         onmouseover="mouseOver(this)" onmouseout="mouseOut(this)"
 		         onmousedown="mouseDown(this)" onmouseup="mouseUp(this)" />
 			</div>
+-->
 			<div class="button-subcontainer">
 		  <input type="button" class="button sort-table"
 		         value="Make Optional"  onclick="optional()"
 		         onmouseover="mouseOver(this)" onmouseout="mouseOut(this)"
 		         onmousedown="mouseDown(this)" onmouseup="mouseUp(this)" />
-
+<!--
 		  <input type="button" class="button sort-table"
 		         value="UNION"  onclick="insertHere('UNION')"
 		         onmouseover="mouseOver(this)" onmouseout="mouseOut(this)"
 		         onmousedown="mouseDown(this)" onmouseup="mouseUp(this)" />
 	        </div>
+-->
+<!--
    			<div class="button-subcontainer">
 		  <input type="button" class="button sort-table"
 		         value="ORDER BY"  onclick="insertHere('ORDER BY')"
@@ -319,26 +346,31 @@ HTML;
 		         onmouseover="mouseOver(this)" onmouseout="mouseOut(this)"
 		         onmousedown="mouseDown(this)" onmouseup="mouseUp(this)" />
 		</div>
+-->
 					<div class="button-subcontainer">
-		  <input type="button" class="button sort-table"
+<!--
+          <input type="button" class="button sort-table"
 		         value="Simple Filter"  onclick="insertHere('FILTER ( ?x &lt; 3 ) .')"
 		         onmouseover="mouseOver(this)" onmouseout="mouseOut(this)"
 		         onmousedown="mouseDown(this)" onmouseup="mouseUp(this)" />
+-->
 		  <input type="button" class="button sort-table"
 		         value="Regex Filter"  onclick="insertHere('FILTER regex( str(?name), &#34;Jane&#34;, &#34;i&#34; ) .')"
 		         onmouseover="mouseOver(this)" onmouseout="mouseOut(this)"
 		         onmousedown="mouseDown(this)" onmouseup="mouseUp(this)" />
 
+<!--
 		  <input type="button" class="button sort-table"
 		         value="Bound Filter"  onclick="insertHere('FILTER ( bound(?x) ) .')"
 		         onmouseover="mouseOver(this)" onmouseout="mouseOut(this)"
 		         onmousedown="mouseDown(this)" onmouseup="mouseUp(this)" />
+-->
 		  <input type="button" class="button sort-table"
 		         value="Date Filter"  onclick="insertHere('FILTER ( ?retrievalDate &gt; &#34;2010-01-01T00:00:00Z&#34;^^xsd:dateTime ) .')"
 		         onmouseover="mouseOver(this)" onmouseout="mouseOut(this)"
 		         onmousedown="mouseDown(this)" onmouseup="mouseUp(this)" />
 		         </div>
-		         			<div class="button-subcontainer">
+		  <div class="button-subcontainer">
 		         		  <input type="button" class="button sort-table"
 		         value="Comment Region"  onclick="comment()"
 		         onmouseover="mouseOver(this)" onmouseout="mouseOut(this)"
@@ -375,12 +407,15 @@ HTML;
         return $txt;
     }
 
-    private function createHeuristicSelection($heuristic) {
+    private function createHeuristicSelection($heuristic, $isnew) {
         // FIXME actual possible heuristics should be taken from the triple store
         $html = "<p id=\"tpee_heuristic\">Heuristic: ";
-        $html .= "<select name=\"heuristic\" size=\"1\">\n";
+        $html .= "<select id=\"tpee_selected_heuristic\" name=\"heuristic\" size=\"1\">\n";
+        if($isnew) {
+            $html .= "<option value='000' selected>-- Select a heuristic --</option>\n";
+        }
         foreach ($this->getHeuristics() as $h) {
-            $html .= "<option" . ($h == $heuristic ? " selected" : "") . ">$h</option>\n";
+            $html .= "<option" . ($h == $heuristic && !$isnew ? " selected" : "") . ">$h</option>\n";
         }
         $html .= "</select>\n";
         $html .= "</p>\n";
@@ -392,31 +427,66 @@ HTML;
      */
 
     private function createParameterList($list) {
-        $html = "";
+        $remAction = wfMsg('lod_sp_policy_action_remove_par');
+        $editAction = wfMsg('lod_sp_policy_action_edit_par');
+        $defAction = wfMsg('lod_sp_policy_action_define_par');
+        $html = <<<HTML
+<div id="tpee_parameter_form" style="display: none">
+    <input type="hidden" name="uri_" value="" />
+    Name: <input type="text" name="name_" value="" /> </br>
+    Label: <input type="text" name="label_" value="" /> </br>
+    Description: <textarea name="pdescription_" cols="30" rows="3"></textarea> </br>
+    <input id="tpee_parameter_form_button" type="button" value="Save parameter" onclick="setParameter(this.parentNode);"/>
+</div>
+<table id='tpee_parameters_table'>
+<tr>
+<th>Name</th><th>Label</th><th>Description</th><th colspan="3">&nbsp;</th>
+</tr>
+HTML;
         $count = 0;
         if (!is_array($list)) {
             return $html;
         }
         foreach ($list as $parameter) {
-            $name = $parameter->getName();
+            $n = $parameter->getName();
             $d = $parameter->getDescription();
-            $label = $parameter->getLabel();
+            $l = $parameter->getLabel();
             $uri = $parameter->getURI();
             $count++;
-            $remAction = wfMsg('lod_sp_policy_action_remove_par');
-            $defAction = wfMsg('lod_sp_policy_action_define_par');
-            $html = <<<HTML
-<div class="tpee_parameter" style="display: block">
-    <h5 class="tpee_parameter_title">$defAction</h5>
+            $html .= <<<HTML
+<tr id="tpee_parameter_$count" class="tpee_parameter_row">
     <input type="hidden" name="uri_$count" value="$uri" />
-    Name: <input name="name_$count" value="$name" /><br />
-    Label: <input name="label_$count" value="$label" /><br />
-    Description: <textarea rows="3" cols="40" name="pdescription_$count">$d</textarea><br />
-    <input type="button" value="$remAction"
-		onclick="this.parentNode.parentNode.removeChild(this.parentNode);" /><br />
-</div>
+    <input type="hidden" name="name_$count" value="$n" />
+    <input type="hidden" name="label_$count" value="$l" />
+    <input type="hidden" name="pdescription_$count" value="$d" />
+    <td id="name_$count">$n</td>
+    <td id="label_$count">$l</td>
+    <td id="pdescription_$count">$d</td>
+    <td><input type="button" value="$editAction"
+		onclick="editParameter(this.parentNode.parentNode);" /></td>
+    <td><input type="button" value="$remAction"
+		onclick="this.parentNode.parentNode.parentNode.removeChild(this.parentNode.parentNode);" /></td>
+</tr>
 HTML;
         }
+        $html .= <<<HTML
+<tr id="tpee_parameter_template" style="display: none">
+    <input type="hidden" name="uri_" value="" />
+    <input type="hidden" name="name_" value="" />
+    <input type="hidden" name="label_" value="" />
+    <input type="hidden" name="pdescription_" value="" />
+    <td id="name_"></td>
+    <td id="label_"></td>
+    <td id="pdescription_"></td>
+    <td><input type="button" value="$editAction"
+		onclick="editParameter(this.parentNode.parentNode);" /></td>
+    <td><input type="button" value="$remAction"
+		onclick="this.parentNode.parentNode.parentNode.removeChild(this.parentNode.parentNode);" /></td>
+</tr>
+<input type="hidden" name="lastcount" value="$count" />
+HTML;
+
+        $html .= "</table>";
         return $html;
     }
 
@@ -455,11 +525,14 @@ HTML;
             $html .= $this->linkButton(wfMsg('lod_sp_policy_action_edit'), $wgScript . "/Special:LODTrust?id=$id&action=edit");
             $html .="</td>\n";
             $html .="<td>";
+            $html .= $this->linkButton(wfMsg('lod_sp_policy_action_duplicate'), $wgScript . "/Special:LODTrust?id=$id&action=duplicate");
+            $html .="</td>\n";
+            $html .="<td>";
             $html .= $this->removeButton($id);
-            $html .="</td>";
+            $html .="</td>\n";
             $html .= "</tr>\n";
         }
-        $html .= "</table>";
+        $html .= "</table>\n";
         return $html;
     }
 

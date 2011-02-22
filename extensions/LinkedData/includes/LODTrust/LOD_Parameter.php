@@ -91,6 +91,12 @@ class LODParameter extends LODResource {
         $this->mLabel = $val;
     }
 
+    public function copy() {
+        $par = clone $this;
+        $par->setURI($uri+"_");
+        return $par;
+    }
+
     //--- Public methods ---
     //--- Private methods ---
 }

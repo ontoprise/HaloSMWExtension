@@ -16,27 +16,26 @@
 */
 var counter=0;
 
-function newParameter() {
-    counter++;
-    var newFields = document.getElementById('tpee_parameter_template').cloneNode(true);
-    newFields.id = '';
-    newFields.style.display = 'block';
-    var newField = newFields.childNodes;
-    for (var i=0;i<newField.length;i++) {
-        var theName = newField[i].name
-        if (theName)
-            newField[i].name = theName + counter;
-    }
-    var insertHere = document.getElementById('tpee_parameter_insert');
-    insertHere.parentNode.insertBefore(newFields, insertHere);
-}
-
 function removeOrNot(id, linkYes, linkNo) {
     if(confirm('Remove '+id+"?")) {
         window.location = linkYes;
     } else {
         windows.location = linkNo;
     }
+}
+
+var submitted = 0;
+function validate() {
+    if(submitted) {
+        alert("Form already submitted, please be patient");
+        return false;
+    }
+    var value = document.getElementById('tpee_selected_heuristic').value;
+    if(value == '000') {
+        alert("Please select a heuristic");
+        return false;
+    }
+    return true;
 }
 
 var editArea;
@@ -182,4 +181,62 @@ function mouseDown(ctrl){
 
 function mouseUp(ctrl){
 //  	ctrl.style.backgroundColor = '#B5BED6';
+}
+
+// copy the parameters from a table row to an editor form
+function editParameter(row) {
+    var form = jQuery('#tpee_parameter_form').clone();
+    var count = row.id.match('\\d+$');
+    row = jQuery(row);
+    form.attr('id', 'tpee_parameter_form_'+count);
+    form.css({
+        display: 'block'
+    });
+    form.find(':text,textarea').each(function(i, input) {
+        if(input.type != "button") {
+            input.value = row.find('#'+input.name+count).text();
+        }
+    });
+    var insertHere = jQuery('#tpee_parameter_insert');
+    form.insertAfter(insertHere);
+}
+
+// copy the parameters from an editor form to the table row
+function setParameter(form) {
+    var count = form.id.match('\\d+$');
+    var row = jQuery('#tpee_parameter_'+count);
+    var jform = jQuery(form);
+    jform.find(':text,textarea').each(function(i, input) {
+        var value = input.value;
+        row.find('input[name^="'+input.name+'"]').val(value);
+        row.find('td[id^="'+input.name+'"]').text(value);
+    });
+    form.parentNode.removeChild(form);
+}
+
+// create a new parameter row
+function newParameter() {
+    counter = jQuery('input[name="lastcount"]').val();
+    counter++;
+    var newRow = jQuery('#tpee_parameter_template').clone();
+    newRow.attr('id', 'tpee_parameter_'+counter);
+    newRow.css({
+        display: ''
+    });
+    newRow.find('td').each(function(i, td) {
+        td = jQuery(td);
+        td.attr('id', td.attr('id')+counter);
+    });
+    newRow.find('input').each(function(i, input){
+        if(input.type != "button") {
+            input.name =input.name+counter;
+        }
+    });
+    // create a new URI for the parameter
+    var policyURI = jQuery('input[name="uri"]').val();
+    policyURI = policyURI.substr(policyURI.lastIndexOf('/')+1);
+    newRow.find('input[name="uri_'+counter+'"]').val('http://www.example.org/smw-lde/smwTrustPolicies/Par_'+policyURI+'_'+counter);
+    var insertHere = jQuery('#tpee_parameter_template');
+    newRow.insertBefore(insertHere);
+    jQuery('input[name="lastcount"]').val(counter);
 }
