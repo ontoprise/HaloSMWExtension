@@ -236,33 +236,57 @@ class TFTabularFormData {
 	 * Get column headings html
 	 */
 	private function addTableHeaderHTML(){
+		global $smwgScriptPath;
+		
 		$html ='<tr>';
 		
 		//add subject column
-		$html .= '<th>'.$this->subjectColumnLabel.'</th>';
+		$html .= '<th class="tabf_column_header">';
+		$html .= '<a href="#" class="sortheader" onclick="tf.startRowSort(event);return false;">';
+		$html .= '<span class="sortarrow"><img alt="[&lt;&gt;]" src="'.$smwgScriptPath.'/skins/images/sort_none.gif"/>';
+		$html .= '</span></a>&nbsp;';
+		$html .= '<span style="margin-left: 0.3em; margin-right: 1em;">';
+		$html .= $this->subjectColumnLabel;
+		$html .= '</span>';
+		$html .= '</th>';
 		
 		//add annotation columns
 		foreach($this->annotationPrintRequests as $annotation){
-			$html .= '<th class="tabf_column_header" field-address="'.$annotation['title'].'" is-template="false">'
-				.$annotation['label'].'</th>';
+			$html .= '<th class="tabf_column_header" field-address="'.$annotation['title'].'" is-template="false">';
+			$html .= '<a href="#" class="sortheader" onclick="tf.startRowSort(event);return false;">';
+			$html .= '<span class="sortarrow"><img alt="[&lt;&gt;]" src="'.$smwgScriptPath.'/skins/images/sort_none.gif"/>';
+			$html .= '</span></a>&nbsp;';
+			$html .= '<span style="margin-left: 0.3em; margin-right: 1em;">';
+			$html .= $annotation['label'];
+			$html .= '</span>';
+			$html .= '</th>';
 		}
 		
 		//add template parameter columns
 		foreach($this->templateParameterPrintRequests as $template => $params){
 			foreach($params as $param => $dC){
 				$html .= '<th class="tabf_column_header" field-address="'.$template.'#'.$param.'" is-template="true">';
+				$html .= '<a href="#" class="sortheader" onclick="tf.startRowSort(event);return false;">';
+				$html .= '<span class="sortarrow"><img alt="[&lt;&gt;]" src="'.$smwgScriptPath.'/skins/images/sort_none.gif"/>';
+				$html .= '</span></a>&nbsp;';
+				$html .= '<span style="margin-left: 0.3em; margin-right: 1em;">';
 				if(array_key_exists($template, $this->templateParameterPrintRequestLabels) 
 						&& array_key_exists($param, $this->templateParameterPrintRequestLabels[$template])){
 					$html .= $this->templateParameterPrintRequestLabels[$template][$param];	
 				} else {
 					$html .= $template.'#'.$param;
 				}
+				$html .= '</span>';
 				$html .= '</th>';
 			}
 		}
 		
 		//add status column
-		$html .= '<th></th>';
+		$html .= '<th>';
+		$html .= '<a href="#" class="sortheader" onclick="tf.startRowSort(event);return false;">';
+		$html .= '<span class="sortarrow"><img alt="[&lt;&gt;]" src="'.$smwgScriptPath.'/skins/images/sort_none.gif"/>';
+		$html .= '</span></a>&nbsp;';
+		$html .= '</th>';
 		
 		$html.= '</tr>';
 		return $html;

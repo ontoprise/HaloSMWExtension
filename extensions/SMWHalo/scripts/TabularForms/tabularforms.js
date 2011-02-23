@@ -677,7 +677,196 @@ var TF = Class.create({
 				}
 			}
 		}
+	},
+	
+	/*
+	 * Starts the sorting. Called if a user clicks on one of the sort buttons
+	 */
+	startRowSort : function(event){
+		var column = jQuery(Event.element(event)).parent().parent().parent();
+		
+		var table = jQuery(column).parent().parent();
+		
+		var sortImgPath = wgScriptPath + '/extensions/SemanticMediaWiki/skins/images/';
+		
+		if(jQuery('img', column).attr('src') == sortImgPath +'sort_none.gif'
+					|| jQuery('img', column).attr('src') == sortImgPath +'sort_up.gif'){
+			jQuery('th img', table).attr('src', sortImgPath +'sort_none.gif');
+			jQuery('img', column).attr('src', sortImgPath +'sort_down.gif');
+			tf.currentSortOrder = 1;
+		} else {
+			jQuery('th img', table).attr('src', sortImgPath +'sort_none.gif');
+			jQuery('img', column).attr('src', sortImgPath +'sort_up.gif');
+			tf.currentSortOrder = -1;
+		}
+		
+		tf.currentSortColumnNr = tf.getChildNumber(column, 1);
+		tf.currentLastSortColumnNumber = jQuery('th', jQuery(column).parent()).get().length;
+		
+		//make sure that also cell values will be sorted again
+		jQuery('td[values-already-sorted=true]', table).attr('values-already-sorted', 'false');
+		
+		var rows = jQuery('tr', table).get();
+		jQuery(rows[0]).attr('isSpecialRow', 'header');
+		jQuery(rows[rows.length-1]).attr('isSpecialRow', 'footer');
+		jQuery(rows[rows.length-2]).attr('isSpecialRow', 'add-template');
+		rows.sort(tf.sortRows);
+		
+		var newTableHTML = '';
+		for(var nr=0; nr < rows.length; nr++){
+			jQuery(table).append(rows[nr]);
+		}
+	},
+	
+	/*
+	 * Callback for sort function to detect which row
+	 * to place before the other
+	 */
+	sortRows : function(a, b){
+		//first deal with special rows
+		if(jQuery(a).attr('isSpecialRow') == 'header'){
+			return -1;
+		} else if(jQuery(b).attr('isSpecialRow') == 'header'){
+			return 1;
+		} else if(jQuery(a).attr('isSpecialRow') == 'footer'){
+			return 1;
+		} else if(jQuery(b).attr('isSpecialRow') == 'footer'){
+			return -1;
+		} else if(jQuery(a).attr('isSpecialRow') == 'add-template'){
+			return 1;
+		} else if(jQuery(b).attr('isSpecialRow') == 'add-template'){
+			return -1;
+		}
+		
+		//now deal with notmal rows
+		var firstKey = tf.getRowSortKey(jQuery('td:nth-child(' + tf.currentSortColumnNr + ')', a)).toLowerCase();
+		var secondKey = tf.getRowSortKey(jQuery('td:nth-child(' + tf.currentSortColumnNr + ')', b)).toLowerCase();
+		
+		if(firstKey == secondKey) {
+			return 0;
+		} else if (firstKey < secondKey) {
+			return -1 * tf.currentSortOrder;
+		} else {
+			return 1 * tf.currentSortOrder;
+		}
+	},
+	
+	/*
+	 * Called by sortRow to get the sort key of a row
+	 */
+	getRowSortKey : function(cell){
+		var sortKey = '';
+		if(tf.currentSortColumnNr == 1){ //the subkect column
+			if(jQuery('*:first-child', cell).get(0).tagName == 'A'){
+				sortKey = jQuery('*:first-child', cell).html();
+			} else {
+				sortKey = jQuery('*:first-child', cell).attr('value');
+			}
+		} else if (tf.currentSortColumnNr == tf.currentLastSortColumnNumber){ //status row
+			var images = jQuery('img', cell).get();
+			for(var i=0; i < images.length; i++){
+				if(jQuery(images[i]).css('display') != 'none'){
+					sortKey = jQuery(images[i]).attr('class');
+					break;
+				}
+			}
+		} else { //annotation or template column
+			var isTemplateParam = jQuery('th:nth-child(' + tf.currentSortColumnNr + ')'
+					, jQuery(cell).parent().parent().parent()).attr('is-template');
+			
+			var children = jQuery(cell).children().get();
+			
+			if(jQuery(cell).attr('values-already-sorted') != 'true'){
+			
+				children.sort(tf.sortCell);
+				for(var i=0; i < children.length; i++){
+					jQuery(cell).append(children[i]);
+				}
+				
+				if(isTemplateParam == 'true'){
+					
+					//todo: make sure, that this does not happen each time the value of this cell is compared
+					
+					var templateName = jQuery('th:nth-child(' + tf.currentSortColumnNr + ')', 
+							jQuery(cell).parent().parent().parent()).attr('field-address');
+					templateName = templateName.substr(0, templateName.indexOf('#'));
+					tf.resortTemplateParamsInRow(jQuery(cell).parent(), templateName, children);
+				}
+				
+				jQuery(cell).attr('values-already-sorted', 'true');			
+			}
+			
+			return tf.getCellSortKey(children[0]);
+		}
+		
+		return sortKey;
+	},
+	
+	/*
+	 * Called by getRowSortKey to also sort the values
+	 * within the cells
+	 */
+	sortCell : function(a, b){
+		var firstKey = tf.getCellSortKey(a).toLowerCase();
+		var secondKey = tf.getCellSortKey(b).toLowerCase();
+		
+		if(firstKey == secondKey) {
+			return 0;
+		} else if (firstKey < secondKey) {
+			return -1 * tf.currentSortOrder;
+		} else {
+			return 1 * tf.currentSortOrder;
+		}
+	},
+	
+	/*
+	 * Callback function for sort function
+	 * to detect which cell value to place
+	 * before the other
+	 */
+	getCellSortKey : function(element){
+		if(jQuery(element).get(0).tagName == 'TEXTAREA'){
+			return jQuery(element).attr('value');
+		} else if(jQuery(element).get(0).tagName == 'DIV'){
+			return jQuery(element).html();
+		}
+	},
+	
+	/*
+	 * called by getRowSortKey if the cell values of a template
+	 * parameter have been sorted. This function makes sure, that
+	 * other cells in the same row, that relate to the same template
+	 * are reordered appropriately
+	 */ 
+	resortTemplateParamsInRow : function(row, templateName, pattern){
+		
+		var cols = jQuery('th', row.parent().parent()).get();
+		
+		for(var i = 0; i < cols.length; i++){
+			if(jQuery(cols[i]).attr('is-template') != 'true') continue;
+			
+			if(jQuery(cols[i]).attr('field-address').substr(0, 
+				jQuery(cols[i]).attr('field-address').indexOf('#')) != templateName) continue;
+			
+			var cell = jQuery('td:nth-child(' + (i + 1) + ')', row);
+			var children = jQuery(cell).children().get();
+			
+			for(var k=0; k < pattern.length; k++){
+				for(var m=0; m < children.length; m++){
+					if(jQuery(pattern[k]).attr('template-id') == jQuery(children[m]).attr('template-id')){
+						jQuery(cell).append(children[m]);
+					}
+	
+				}
+			}
+			
+			
+		}
+
 	}
+	
+	
+	
 });
 
 
