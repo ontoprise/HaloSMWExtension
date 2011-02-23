@@ -6,6 +6,12 @@ VERSION 1.4.1
 
 
   FEATURES:
+    * Any wiki markup that is inserted by the user in the wysiwyg mode of the
+      Richtext editor will be escaped when saving the page. Therefore the input
+      is not rendered in the wiki page but displayed as it was entered in the
+      editor. To use wiki markup and html tags in a wiki page, the user can do
+      this in the source mode of the Richtext editor or use the default wiki
+      text editor.
 
   CHANGES:
     * Fix bug http://smwforum.ontoprise.com/smwbugs/show_bug.cgi?id=10987
