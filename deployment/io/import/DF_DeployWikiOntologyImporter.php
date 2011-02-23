@@ -200,6 +200,10 @@ class DeployWikiOntologyRevision extends WikiRevision {
 			$nsText = $this->title->getNamespace() !== NS_MAIN ? $this->title->getNsText().":" : "";
 			$this->setTitle(Title::newFromText($nsText.$this->prefix.$this->title->getText()));
 		}
+		
+		// replace http://$$__graph__$$
+		global $smwgTripleStoreGraph;
+		$this->text = str_replace('http://$$_graph_$$', $smwgTripleStoreGraph, $this->text);
 
 		$article = new Article( $this->title );
 		$pageId = $article->getId();
@@ -214,9 +218,11 @@ class DeployWikiOntologyRevision extends WikiRevision {
 		} else {
 
 			$prior = Revision::loadFromTitle( $dbw, $this->title );
+			
+			
 			if( !is_null( $prior ) ) {
-
-				// merge annotations and wikitext
+				
+				// merge new annotations with existing wikitext
 				$wikitext = $prior->getRawText();
 				$wikitext = $this->ontologyMerger->stripAnnotations($wikitext);
 
@@ -224,8 +230,24 @@ class DeployWikiOntologyRevision extends WikiRevision {
 				$wikitext .= implode("\n", $extractAnnotations);
 				$wikitext = $this->ontologyMerger->transformOntologyElements($this->prefix, $wikitext);
 
+				// strip rules from existing revision
+				$wikitext = $this->ontologyMerger->stripRules($wikitext);
+   				
+				// extract rules from new
+                $rules =  $this->ontologyMerger->extractRules($this->text);
+                
+                // update text
 				$this->text = $wikitext;
-				print "\n\t[Updated page] ".$this->title->getPrefixedText();
+                foreach($rules as $r) {
+                	list($name, $ruletag) = $r;
+                	$pos = strpos($this->text, "==$name==");
+                	$start = substr($this->text, 0, $pos + strlen("==$name=="));
+                	$end = substr($this->text, $pos + strlen("==$name=="));
+                	$this->text = "$start\n$ruletag$end";
+	                
+                }
+                
+				//print "\n\t[Updated page] ".$this->title->getPrefixedText();
 				return $this->importAsNewRevision();
 
 				/*// revision already exists.
@@ -361,6 +383,7 @@ class DeployWikiOntologyRevision extends WikiRevision {
 		$GLOBALS['wgTitle'] = $tempTitle;
 		$this->logger->info("Imported new revision of page: ".$this->title->getPrefixedText());
 		print "\n\t[Imported new revision of page] ".$this->title->getPrefixedText();
+	
 		return true;
 	}
 }

@@ -40,6 +40,8 @@
  *
  *  (2) Merges annotations in wiki text.
  *
+ *  (3) Merges rules
+ *
  * @author Kai Kühn / ontoprise / 2011
  *
  */
@@ -50,22 +52,22 @@ class OntologyMerger {
 	private static $PROPERTY_LINK_PATTERN;
 
 	private static  $CATEGORY_LINK_PATTERN;
-    
+
 	/**
 	 * Creates a ontology merger object.
-	 *  
-	 * @param array of string $objectProperties 
+	 *
+	 * @param array of string $objectProperties
 	 *             All binary properties
-	 *             
-	 * @param hash array $naryProperties 
+	 *
+	 * @param hash array $naryProperties
 	 *             Array of nary properties pointing to a tuple of types
 	 *             Example: 'Has domain and range'=> array('Type:Page','Type:Page')
-	 *             
-	 * @param array of string 
+	 *
+	 * @param array of string
 	 *             $fixProperties which do not get modified with any prefixes.
 	 */
 	public function __construct($objectProperties = array(), $naryProperties = array(), $fixProperties = array()) {
-		
+
 		$this->objectProperties = $objectProperties;
 		$this->naryProperties = $naryProperties;
 		self::$PROPERTY_LINK_PATTERN = '/\[\[                 # Beginning of the link
@@ -83,12 +85,12 @@ class OntologyMerger {
 
 		$this->fixProperties = $fixProperties;
 	}
-    
+
 	/**
 	 * Transforms ontology elements from wikitext $text using the given $prefix.
-	 *  
+	 *
 	 * @param string $text
-	 * @return string 
+	 * @return string
 	 */
 	public function transformOntologyElements($prefix, $text) {
 		$this->prefix = $prefix;
@@ -98,22 +100,66 @@ class OntologyMerger {
 	}
 
 	/**
-	 * Removes all annotation from wikitext $text
-	 * 
+	 * Removes all rules from wikitext $text
+	 *
 	 * @param $text
-	 * @return string 
+	 */
+	public function stripRules($text) {
+	   $ruleTagPattern = '/<rule(.*?>)(.*?.)<\/rule>/ixus';
+		preg_match_all($ruleTagPattern, trim($text), $matches);
+		foreach($matches[0] as $m) {
+			$text = str_replace($m, "", $text);
+		}
+		return $text;
+	}
+
+	/**
+	 * Extract all rules from wikitext $text.
+	 * @param $text
+	 *
+	 * @return array of string
+	 */
+	public function extractRules($text) {
+		$rules = array();
+		$ruleTagPattern = '/<rule(.*?>)(.*?.)<\/rule>/ixus';
+		preg_match_all($ruleTagPattern, trim($text), $matches);
+		$i=0;
+		for($i = 0; $i < count($matches[0]); $i++) {
+			$header = trim($matches[1][$i]);
+			$ruletext = trim($matches[2][$i]);
+
+			// parse header parameters
+			$ruleparamterPattern = "/([^=]+)=\"([^\"]*)\"/ixus";
+			preg_match_all($ruleparamterPattern, $header, $matchesheader);
+		    $name = NULL;
+			for ($j = 0; $j < count($matchesheader[0]); $j++) {
+				if (trim($matchesheader[1][$j]) == 'name') {
+					$name = $matchesheader[2][$j];
+				}
+			}
+			
+			$rules[] = array($name, $matches[0][$i]);
+		}
+		return $rules;
+	}
+
+	/**
+	 * Removes all annotation from wikitext $text
+	 *
+	 * @param $text
+	 * @return string
 	 */
 	public function stripAnnotations($text) {
 		$text = preg_replace(self::$PROPERTY_LINK_PATTERN, "", $text);
 		$text = preg_replace(self::$CATEGORY_LINK_PATTERN, "", $text);
 		return $text;
 	}
-    
+
 	/**
 	 * Extract all annotations from wikitext $text.
 	 * @param $text
-	 * 
-	 * @return string
+	 *
+	 * @return array
 	 */
 	public function extractAnnotations($text) {
 		$propertyMatches = array();
@@ -133,7 +179,7 @@ class OntologyMerger {
 
 
 	/**
-	 * This callback function inserts the prefix. 
+	 * This callback function inserts the prefix.
 	 * Could be replaced by a lambda-function but then it is restricted to PHP 5.3.x
 	 */
 	public function simpleParseCategoriesCallback( $categoryLink ) {
