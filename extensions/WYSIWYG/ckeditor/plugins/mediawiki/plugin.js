@@ -1131,8 +1131,10 @@ CKEDITOR.customprocessor.prototype =
 					if ( !htmlNode.nextSibling && !this._inLSpace && !this._inPre && ( !htmlNode.parentNode || !htmlNode.parentNode.nextSibling ) )
 						textValue = textValue.replace(/\s*$/, ''); // rtrim
 
-					if( !this._inLSpace && !this._inPre )
+					if( !this._inLSpace && !this._inPre ) {
 						textValue = textValue.replace( / {2,}/g, ' ' );
+                        textValue = this._EscapeWikiMarkup(textValue);
+                    }
 
 					if ( this._inLSpace && textValue.length == 1 && textValue.charCodeAt(0) == 13 )
 						textValue = textValue + " ";
@@ -1346,6 +1348,41 @@ CKEDITOR.customprocessor.prototype =
  	    }
 
  	    return realElement;
+    },
+
+    _EscapeWikiMarkup : function (text) {
+
+        // wiki links
+        var result, pattern = new RegExp( "\\[\\[.*?\\]\\]", "g" );
+		while( result = pattern.exec( text ) ) {
+            text = text.replace( result, result.toString().replace( /\[/g, "&#x5B;" ).replace( /\]/g, "&#x5D;") );
+        }
+        // parameter names (that are written with three curly brackets)
+        pattern = new RegExp( "\\{{3}.*?\\}{3}", "g" );
+		while( result = pattern.exec( text ) ) {
+            text = text.replace( result, result.toString().replace( /\{/g, "&#x7B;" ).replace( /\}/g, "&#x7D;") );
+        }
+        // all two curly brackets (used for template calls and parser functions)
+        while (true) {
+            var z = text.match(/\{{2}(.*?)\}{2}/g);
+            if (z) {
+                for (var i = 0; i < z.length; i++) {
+                    text = text.replace(z[i], '&#x7B;&#x7B;' + z[i].substr(2, z[i].length-4) + '&#x7D;&#x7D;');
+                }
+            }
+            else break;
+        }
+        // escape <> of any html or wiki tag
+        text = text.replace( /<(\/?[^>]+)>/g, "&lt;$1&gt;")
+        // replace any __MAGICWORD__ with &#95;&#95;MAGICWORD&#95;&#95; - check first if there is any
+        if (text.match(/__[A-Z]+__/)) {
+            for (var i = 0; i < window.parent.wgCKeditorMagicWords.magicwords.length; i++) {
+                pattern = new RegExp('__(' + window.parent.wgCKeditorMagicWords.magicwords[i] + ')__', 'g');
+                text = text.replace( pattern, "&#95;&#95;$1&#95;&#95;")
+            }
+        }
+        
+        return text;
     },
 	
 	ieFixHTML: function(html, convertToLowerCase){
