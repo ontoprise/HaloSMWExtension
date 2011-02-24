@@ -97,7 +97,7 @@ CKEDITOR.dialog.add( 'SMWqi', function( editor ) {
 
             if ( editor.mode == 'wysiwyg') {
                 ask = ask.replace(/\r?\n/g, 'fckLR');
-                ask = '<span class="fck_smw_query">' + ask + '<span>';
+                ask = '<span class="fck_smw_query">' + ask + '</span>';
                 var element = CKEDITOR.dom.element.createFromHtml(ask, editor.document),
                     newFakeObj = editor.createFakeElement( element, 'FCK__SMWquery', 'span' );
                 if ( this.fakeObj ) {
