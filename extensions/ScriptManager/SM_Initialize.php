@@ -46,7 +46,7 @@ function smgSetupExtension() {
 }
 
 function smfAddHTMLHeader(& $out) {
-	global $smgJSLibs, $smgSMPath;
+	global $smgJSLibs, $smgSMPath, $smwgDeployVersion;
     static $outputSend;
     if (isset($outputSend) || !is_array($smgJSLibs)) return true;
 	$smgJSLibs = array_unique($smgJSLibs);
@@ -69,34 +69,25 @@ function smfAddHTMLHeader(& $out) {
 				}
 				break;
 			case 'qtip':
-				$out->addScript("<script type=\"text/javascript\" src=\"". "$smgSMPath/scripts/qTip/jquery.qtip-1.0.0-rc3.min.js\"></script>");
-//Debug version				$out->addScript("<script type=\"text/javascript\" src=\"". "$smgSMPath/scripts/qTip/jquery.qtip-1.0.0-rc3.js\"></script>");
+                if (isset($smwgDeployVersion) && $smwgDeployVersion !== false)
+					$out->addScript("<script type=\"text/javascript\" src=\"". "$smgSMPath/scripts/qTip/jquery.qtip-1.0.0-rc3.min.js\"></script>");
+                else
+					$out->addScript("<script type=\"text/javascript\" src=\"". "$smgSMPath/scripts/qTip/jquery.qtip-1.0.0-rc3.js\"></script>");
 				break;
 			case 'json':
-				$out->addScript("<script type=\"text/javascript\" src=\"". "$smgSMPath/scripts/json2.min.js\"></script>");
-//Debug version				$out->addScript("<script type=\"text/javascript\" src=\"". "$smgSMPath/scripts/json2.js\"></script>");
+                if (isset($smwgDeployVersion) && $smwgDeployVersion !== false)
+					$out->addScript("<script type=\"text/javascript\" src=\"". "$smgSMPath/scripts/json2.min.js\"></script>");
+                else
+					$out->addScript("<script type=\"text/javascript\" src=\"". "$smgSMPath/scripts/json2.js\"></script>");
 				break;
 			case 'fancybox':
 				$out->addScript("<script type=\"text/javascript\" src=\"". "$smgSMPath/scripts/fancybox/jquery.fancybox-1.3.1.js\"></script>");
-				$out->addLink(array(
-							'rel'   => 'stylesheet',
-							'type'  => 'text/css',
-							'media' => 'screen, projection',
-							'href'  => "$smgSMPath/scripts/fancybox/jquery.fancybox-1.3.1.css"
-						));		
+				$out->addStyle($smgSMPath."/scripts/fancybox/jquery.fancybox-1.3.1.css", 'screen, projection');
 				break;
 			case 'ext':
-			
-				$out->addLink(array(
-					'rel'   => 'stylesheet',
-					'type'  => 'text/css',
-					'media' => 'screen, projection',
-					'href'  => $smgSMPath.'/scripts/extjs/resources/css/ext-all.css'
-					));
-
-					$out->addScript('<script type="text/javascript" src="' . $smgSMPath . '/scripts/extjs/adapter/ext/ext-base.js"></script>');
-					$out->addScript('<script type="text/javascript" src="' . $smgSMPath . '/scripts/extjs/ext-all.js"></script>');
-
+				$out->addLink($smgSMPath.'/scripts/extjs/resources/css/ext-all.css', 'screen, projection');
+				$out->addScript('<script type="text/javascript" src="' . $smgSMPath . '/scripts/extjs/adapter/ext/ext-base.js"></script>');
+				$out->addScript('<script type="text/javascript" src="' . $smgSMPath . '/scripts/extjs/ext-all.js"></script>');
 				break;
 						
 		}
