@@ -337,6 +337,7 @@ function srfTripleStoreParserHook(&$parser, &$text, &$strip_state = null) {
 			$native = false;
 			$active = true;
 			$type="USER_DEFINED";
+		    $tsc_uri = "";
 			for ($j = 0; $j < count($matchesheader[0]); $j++) {
 				if (trim($matchesheader[1][$j]) == 'native') {
 					$native = trim($matchesheader[2][$j]) == 'true';
@@ -347,6 +348,9 @@ function srfTripleStoreParserHook(&$parser, &$text, &$strip_state = null) {
 				if (trim($matchesheader[1][$j]) == 'type') {
 					$type = $matchesheader[2][$j];
 				}
+			    if (trim($matchesheader[1][$j]) == 'uri') {
+                    $tsc_uri = $matchesheader[2][$j];
+                }
 			}
 
 			// normalize $type which is given in content language to TSC internal constants.
@@ -385,7 +389,7 @@ function srfTripleStoreParserHook(&$parser, &$text, &$strip_state = null) {
 					// check if rule already exists. If so, use date of last change to
 					// indicate that the rule was actually not changed.
 					list($exist, $last_changed) = SMWRuleStore::getInstance()->existsRule(array($uri, $ruletext, $native, $active, $type));
-					$ruleTuple = array($uri, $ruletext, $native, $active, $type, $last_changed);
+					$ruleTuple = array($uri, $ruletext, $native, $active, $type, $last_changed, $tsc_uri);
 
 					$rules[] = $ruleTuple;
 				}

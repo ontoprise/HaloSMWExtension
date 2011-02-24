@@ -74,7 +74,7 @@ class SRRuleStore extends SMWRuleStore {
 		$db =& wfGetDB( DB_MASTER );
 		$smw_rules = $db->tableName('smw_rules');
 		foreach($new_rules as $rule) {
-			list($rule_id, $ruleText, $native, $active, $type, $changeDate) = $rule;
+			list($rule_id, $ruleText, $native, $active, $type, $changeDate, $tsc_uri) = $rule;
 			$currentDate = getDate();
 			if (is_null($changeDate)) {
 			$dateAsSQLString = $currentDate["year"].
@@ -88,6 +88,7 @@ class SRRuleStore extends SMWRuleStore {
 			}
 			$db->insert($smw_rules, array('subject_id' => $article_id,
 										  'rule_id' => $rule_id, 
+			                              'tsc_uri' => $tsc_uri, 
 										  'rule_text' => $ruleText, 
 										  'is_native' => $native ? "true" : "false", 
 										  'is_active' => $active ? "true" : "false", 
@@ -109,15 +110,32 @@ class SRRuleStore extends SMWRuleStore {
 	}
 
 	/**
-	 * Updates article IDs. In case of a renaming operation.
+	 * Updates article IDs and rule IDs (=URIs) . In case of a renaming operation.
 	 *
-	 * @param int $old_article_id
 	 * @param int $new_article_id
+	 * @param int $old_article_id
+	 * @param Title $newtitle
+	 * 
+	 * @return tuple(old rule URI, new rule URI)
 	 */
-	public function updateRules($old_article_id, $new_article_id) {
+	public function updateRules($new_article_id, $old_article_id, $newTitle) {
 		$db =& wfGetDB( DB_MASTER );
 		$smw_rules = $db->tableName('smw_rules');
+		$modifiedRules = array();
+		$rules = $this->getRules($old_article_id);
+	
+		// update page id
 		$db->update($smw_rules, array('subject_id' => $new_article_id), array('subject_id' => $old_article_id));
+		
+		// update rule IDs
+		$uri = TSNamespaces::getInstance()->getFullURI($newTitle);
+		foreach($rules as $old_ruleID) {
+			list($containedPage, $localname) = explode("$$",$old_ruleID);
+			$new_ruleID = $uri."$$".$localname;
+			$db->update($smw_rules, array('rule_id' => $new_ruleID), array('rule_id' => $old_ruleID));
+			$modifiedRules[] = array($old_ruleID, $new_ruleID);
+		}
+		return $modifiedRules;
 	}
 
 	public function setup($verbose) {
@@ -134,6 +152,7 @@ class SRRuleStore extends SMWRuleStore {
 		DBHelper::setupTable($ruleTableName,
 		array('subject_id'    => 'INT(8) UNSIGNED NOT NULL',
                             'rule_id'       => 'VARCHAR(255) binary NOT NULL',
+		                    'tsc_uri'       => 'VARCHAR(255) binary',
                             'rule_text'      => 'TEXT NOT NULL',
 		                    'is_native'      => 'enum(\'false\', \'true\')',
 							'is_active'      => 'enum(\'false\', \'true\')',
