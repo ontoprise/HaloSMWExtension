@@ -224,6 +224,14 @@ class CKeditor_MediaWiki {
 		return false;
 	}
 
+    public function onDoEditSectionLink ($skin, $title, $section, $tooltip, $result, $lang = false ) {
+        global $wgCKEditorUrlparamMode;
+        if (isset($wgCKEditorUrlparamMode) && $wgCKEditorUrlparamMode === true) {
+            $result = str_replace( '&amp;action=edit', '&amp;action=edit&amp;mode=wysiwyg', $result);
+        }
+        return true;
+    }
+    
 	public function onEditPageBeforePreviewText( &$editPage, $previewOnOpen ) {
 		global $wgUser, $wgRequest;
 
