@@ -470,7 +470,7 @@ ToolbarFramework.prototype = {
 	},
 
 	addOntoMenuAnchor: function(){
-		var ontomenuAnchor = $("ontomenuachor");
+		var ontomenuAnchor = $("ontomenuanchor");
 		if (ontomenuAnchor == null) {
 			var ontomenuAnchor = new Element('div', {
 				'id' : 'ontomenuanchor'} )
