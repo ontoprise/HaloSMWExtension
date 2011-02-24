@@ -359,6 +359,7 @@ class TFDataAPIACCESS {
 			}
 		}
 		
+		$this->article = new Article($this->title);
 		$this->article->doEdit($text, 'tabular forms');
 			
 		return true;
@@ -427,7 +428,7 @@ class TFAnnotationDataCollection {
 	private function &getAnnotationByReference($name, $value){
 		if(array_key_exists($name, $this->annotations)){
 			foreach($this->annotations[$name] as $key => $dc){
-				if($this->annotations[$name][$key]->currentValue == $value){
+				if($this->annotations[$name][$key]->equals($value)){
 					return $this->annotations[$name][$key];
 				}
 			}
@@ -465,18 +466,41 @@ class TFAnnotationData {
 	public $renderedValue;
 	public $newValue = null;
 	public $isWritable = false;
+	public $hash = null;
+	public $dataValue = null;
+	public $typeId = null;
 	
 	
-	public function __construct($name, $currentValue = null, $renderedValue = null, $newValue = null){
+	public function __construct($name, $currentValue = null, $renderedValue = null, $hash = null, $typeId=null, $newValue = null){
 		$this->name = $name;
 		$this->currentValue = ucfirst($currentValue);
 		$this->renderedValue = $renderedValue;
 		$this->newValue = $newValue;
+		$this->hash = $hash;
+		$this->typeId = $typeId;
+		
+		if(!is_null($this->typeId)){
+			$this->dataValue = SMWDataValueFactory::newTypeIDValue($typeId);
+		}
 		
 		if(is_null($this->currentValue) || $this->currentValue == ''){
 			$this->isWritable = true;
 		}
 		
+	}
+	
+	public function equals($value){
+		if(!is_null($this->dataValue)){
+			return false;
+		}
+		
+		$this->dataValue->setUserValue($value);
+		
+		if($this->hash == $this->dataValue->getHash()){
+			return true;
+		} else {
+			return false;
+		}
 	}
 }
 

@@ -457,6 +457,8 @@ var TF = Class.create({
 						modifiedValue['isTemplateParam'] = jQuery('th:nth-child(' + (fieldNr + 1) + ')'
 								, jQuery(this).parent()).attr('is-template');
 						modifiedValue['templateId'] = jQuery(fieldValues[i]).attr('template-id');
+						modifiedValue['hash'] = jQuery(fieldValues[i]).attr('annotation-hash');
+						modifiedValue['typeId'] = jQuery(fieldValues[i]).attr('annotation-type-id');
 						
 						modifiedValues.push(modifiedValue);						
 					}

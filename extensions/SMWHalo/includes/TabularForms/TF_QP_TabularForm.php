@@ -425,9 +425,12 @@ class TFTabularFormData {
 					$rawFieldValue = $fieldValue->getShortText( $this->outputMode, null);
 					$renderedFieldValue = $fieldValue->getShortText( $this->outputMode, $this->linker);
 				}
-					
+				
+				$hash = $fieldValue->getHash();
+				$typeId = $fieldValue->getTypeID();
+				
 				$formRowData->addAnnotation(
-					$this->annotationPrintRequests[$key]['title'], $rawFieldValue, $renderedFieldValue);
+					$this->annotationPrintRequests[$key]['title'], $rawFieldValue, $renderedFieldValue,$hash, $typeId );
 					
 				$noResults = false;
 			}
@@ -587,8 +590,8 @@ class TFTabularFormRowData {
 	/*
 	 * Add am annotation, which is shown in this row
 	 */
-	public function addAnnotation($name, $value, $renderedValue){
-		$this->annotations[] = new TFAnnotationData($name, $value, $renderedValue);
+	public function addAnnotation($name, $value, $renderedValue, $hash, $typeId){
+		$this->annotations[] = new TFAnnotationData($name, $value, $renderedValue, $hash, $typeId);
 	}
 	
 	/*
@@ -716,7 +719,8 @@ class TFTabularFormRowData {
 			$annotations = $this->annotations[$annotation['title']];
 			foreach($annotations as $annotation){
 				if($annotation->isWritable){
-					$html .= "<textarea ".$autocompletion." rows='1'>".$annotation->currentValue."</textarea>";
+					$html .= "<textarea ".$autocompletion." rows='1' annotation-hash='".$annotation->hash
+						."' annotation-type-id='".$annotation->typeId."'>".$annotation->currentValue."</textarea>";
 				} else {
 					$html .= '<div style="height: 3em; width: 100%">'.$annotation->renderedValue.'</div>';
 				}
