@@ -119,6 +119,7 @@ $wgHooks['EditPageBeforeConflictDiff'][]		= 'CKeditor_MediaWiki::onEditPageBefor
 $wgHooks['SanitizerAfterFixTagAttributes'][]	= 'CKeditor_MediaWiki::onSanitizerAfterFixTagAttributes';
 $wgHooks['MakeGlobalVariablesScript'][]			= 'CKeditor_MediaWiki::onMakeGlobalVariablesScript';
 $wgHooks['GetPreferences'][]					= 'CKeditor_MediaWiki::onGetPreferences';
+$wgHooks['DoEditSectionLink'][]					= 'CKeditor_MediaWiki::onDoEditSectionLink';
 // bugfix for http://smwforum.ontoprise.com/smwbugs/show_bug.cgi?id=13511
 $wgHooks['OutputPageParserOutput'][]            = 'CKeditor_MediaWiki::onOutputPageParserOutput';
 $wgHooks['BeforePageDisplay'][]                 = 'CKeditor_MediaWiki::onBeforePageDisplay';
