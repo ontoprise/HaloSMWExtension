@@ -158,29 +158,26 @@ the FAQ section, then contact the user support list (see the Contact section).
 1.  Deploy version uses packed version of scripts
     $smwgDeployVersion=false;
 
-2.  Default collation for SMWHalo database tables
-    $smwgDefaultCollation="latin1_bin";
-
-3.  Uses EDITDISTANCE function for near matching.
+2.  Uses EDITDISTANCE function for near matching.
     Take a look in libs/mysqlUDFs/INSTALL.TXT for more information.
     $smwgUseEditDistance = true;
 
-4.  Show derived facts in a tab next to explicit facts. Makes only sense when a
+3.  Show derived facts in a tab next to explicit facts. Makes only sense when a
     TSC is connected. Note that the factbox must be switch on.
     Refer to SemanticMediaWiki/includes/Settings.php
     $smwgShowDerivedFacts=true;
 
-5.  $smwgPropertyPageFromTSC: Reads annotations on property pages from the TSC,
+4.  $smwgPropertyPageFromTSC: Reads annotations on property pages from the TSC,
     not from the MySQL store.
     
-6.  Enable the Query Results Cache. Please note that the full feature richness
+5.  Enable the Query Results Cache. Please note that the full feature richness
     of the Query Results Cache is only available, if the Query Updator, which is
     deployed together with the Triple Store Connector is installed. The behaviour
     of the Query Results Cache can be configured
     in ./includes/QueryResultsCache/QRC_Settings.php
  	enableQueryResultsCache();
 
-7.  One may use the OntologyBrowser to modify the ontology. Specify the appropriate 
+6.  One may use the OntologyBrowser to modify the ontology. Specify the appropriate 
 	rights (in this example for the WikiSysop) for modifying the ontology, otherwise 
 	you can only browse through.
 
