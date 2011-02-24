@@ -483,6 +483,7 @@ CKEDITOR.customprocessor.prototype =
         }
         else // Internet Explorer
         {
+            data = this.ieFixHTML(data);
             var xmlDoc=new ActiveXObject("Microsoft.XMLDOM");
             xmlDoc.async="false";
             xmlDoc.loadXML(data);
