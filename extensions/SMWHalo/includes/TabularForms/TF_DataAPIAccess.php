@@ -490,7 +490,7 @@ class TFAnnotationData {
 	}
 	
 	public function equals($value){
-		if(!is_null($this->dataValue)){
+		if(is_null($this->dataValue)){
 			return false;
 		}
 		
