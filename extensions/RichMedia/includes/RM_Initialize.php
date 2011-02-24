@@ -361,14 +361,13 @@ function smwRMFormAddHTMLHeader(&$out){
 	if(!$rmScriptLoaded){
 		if ( !$sfgFancyBoxIncluded ) {
 			$sfgFancyBoxIncluded = true;
-			$out->addScript( '<script type="text/javascript" src="' . $sfgScriptPath . '/libs/jquery.fancybox-1.3.1.js"</script>');
+			$out->addScript( '<script type="text/javascript" src="' . $sfgScriptPath . '/libs/jquery.fancybox-1.3.1.js"></script>');
+            $out->addStyle($sfgScriptPath . '/skins/jquery.fancybox-1.3.1.css', 'screen, projection');
 		}
 		$out->addScript('<script type="text/javascript" src="'.$smwgRMScriptPath. '/scripts/richmedia.js"></script>');
 		$out->addScript('<script type="text/javascript" src="'.$smwgRMScriptPath. '/scripts/fck_connect.js"></script>');
 		$out->addScript('<script type="text/javascript" src="'.$smwgRMScriptPath. '/scripts/richmedia_links.js"></script>');
 
-		#Fancybox css file:
-        $out->addStyle($sfgScriptPath . '/skins/jquery.fancybox-1.3.1.css', 'screen, projection');
         $out->addStyle($smwgRMScriptPath . '/skins/richmedia.css', 'screen, projection');
 
 		$rmScriptLoaded = true;
