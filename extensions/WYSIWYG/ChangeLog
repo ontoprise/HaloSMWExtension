@@ -23,6 +23,9 @@ VERSION 1.4.1
       mode and the image dialog inserts the correct html element.
 
   BUGFIXES:
+    * Fix bug http://smwforum.ontoprise.com/smwbugs/show_bug.cgi?id=13579
+      Edit sections: no wysiwyg-editor appears
+      This bug occurred only if $wgCKEditorUrlparamMode was set.
     * Fix bug http://smwforum.ontoprise.com/smwbugs/show_bug.cgi?id=13775
       Queries are not saved when using WYSIWYG and IE8
     * Fix bug http://smwforum.ontoprise.com/smwbugs/show_bug.cgi?id=13580
