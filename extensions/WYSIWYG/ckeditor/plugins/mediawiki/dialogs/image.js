@@ -291,8 +291,7 @@ CKEDITOR.dialog.add( 'MWImage', function( editor ) {
                                 },
                                 {
 									type : 'vbox',
-									height : '250px',
-                                    style : 'width:60%;',
+                                    style : 'width:60%; height:250px;',
 									children :
 									[
 										{
@@ -306,7 +305,7 @@ CKEDITOR.dialog.add( 'MWImage', function( editor ) {
 											'</td></tr></table></div></div>'
 										}
 									]
-                                },
+                                }
 
                             ]
                         },
