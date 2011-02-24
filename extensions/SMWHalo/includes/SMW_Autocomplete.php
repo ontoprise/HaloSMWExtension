@@ -754,7 +754,7 @@ class AutoCompletionHandler {
 						$titles[] = TSHelper::getTitleFromURI($r, true);
 					}
 				}
-				$inf = self::setInferred($pages, !$first);
+				$inf = self::setInferred($titles, !$first);
 				self::mergeResults($result, $inf);
 				if (count($result) >= SMW_AC_MAX_RESULTS) break;
 			}
