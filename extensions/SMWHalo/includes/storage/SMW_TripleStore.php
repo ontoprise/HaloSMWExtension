@@ -127,7 +127,8 @@ class SMWTripleStore extends SMWStore {
 			if (isset($smwgEnableObjectLogicRules)) {
 				// delete old rules...
 				foreach($old_rules as $ruleID) {
-					$sparulCommands[] = "DELETE RULE $ruleID FROM <$smwgTripleStoreGraph>";
+					$sparulCommands[] = "DELETE MAPPING <$ruleID>";
+					$sparulCommands[] = "DELETE RULE <$ruleID> FROM <$smwgTripleStoreGraph>";
 				}
 			}
 			$con->connect();
@@ -202,16 +203,18 @@ class SMWTripleStore extends SMWStore {
 			if (isset($smwgEnableObjectLogicRules)) {
 				// delete old rules...
 				foreach($old_rules as $ruleID) {
+					$sparulCommands[] = "DELETE MAPPING <$ruleID>";
 					$sparulCommands[] = "DELETE RULE <$ruleID> FROM <$smwgTripleStoreGraph>";
 				}
 				// ...and add new
 				foreach($new_rules as $rule) {
 					// The F-Logic parser does not accept linebreaks
 					// => remove them
-					list($ruleID, $ruleText, $native, $active, $type) = $rule;
+					list($ruleID, $ruleText, $native, $active, $type, $last_changed, $tsc_uri) = $rule;
 					$ruleText = preg_replace("/[\n\r]/", " ", $ruleText);
 					$nativeText = $native ? "NATIVE" : "";
 					$activeText = !$active ? "INACTIVE" : "";
+					$sparulCommands[] = "INSERT MAPPING <$ruleID> : <$tsc_uri>";
 					$sparulCommands[] = "INSERT $nativeText $activeText RULE <$ruleID> INTO <$smwgTripleStoreGraph> : \"".TSHelper::escapeForStringLiteral($ruleText)."\" TYPE \"$type\"";
 				}
 			}
@@ -580,18 +583,23 @@ class SMWTripleStore extends SMWStore {
 		$old_iri = $this->tsNamespace->getFullIRI($oldtitle);
 		$new_iri = $this->tsNamespace->getFullIRI($newtitle);
 
+		$sparulCommands = array();
+		
 		// update local rule store
 		global $smwgEnableObjectLogicRules;
 		if (isset($smwgEnableObjectLogicRules)) {
-			SMWRuleStore::getInstance()->updateRules($redirid, $pageid);
+			$modifiedRules = SMWRuleStore::getInstance()->updateRules($redirid, $pageid, $newtitle);
+			foreach($modifiedRules as $r) {
+				list($old_rule_uri, $new_rule_uri) = $r;
+				$sparulCommands[] = "MODIFY MAPPING $old_rule_uri : $new_rule_uri";
+			}
 		}
 
 		// update triple store
 		global $smwgMessageBroker, $smwgTripleStoreGraph;
 		try {
 			$con = TSConnection::getConnector();
-
-			$sparulCommands = array();
+			
 			$sparulCommands[] = "MODIFY MAPPING $old_iri : $new_iri";
 						
 			$prop_ns = $this->tsNamespace->getNSPrefix(SMW_NS_PROPERTY);
