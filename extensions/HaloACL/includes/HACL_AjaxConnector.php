@@ -1426,7 +1426,7 @@ function haclGetRightsPanel($panelid, $predefine, $readOnly = false, $preload = 
     if ($readOnly === "true") $readOnly = true;
     if ($readOnly === "false") $readOnly = false;
 
-    if ($predefine !== "modification") {
+    if ($predefine !== "modification" && $preload) {
 	    $right = HACLRight::newFromID($preloadRightId);
 	    if ($right->hasDynamicAssignees()) {
 	    	$readOnly = true;
