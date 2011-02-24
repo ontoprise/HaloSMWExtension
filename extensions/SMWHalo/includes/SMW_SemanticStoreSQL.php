@@ -53,8 +53,8 @@ class SMWSemanticStoreSQL extends SMWSemanticStore {
 	function setup($verbose) {
 		DBHelper::reportProgress("Setting up smwhalo storage ...\n",$verbose);
 		$this->setupLogging($verbose);
-		$this->createPreDefinedPages($verbose);
 		$this->setupURIMapping($verbose);
+		$this->createPreDefinedPages($verbose);
 		DBHelper::reportProgress(" ... done!\n",$verbose);
 	}
 
