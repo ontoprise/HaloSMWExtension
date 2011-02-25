@@ -90,7 +90,15 @@ function tff_updateInstanceData($updates, $articleTitle, $revisionId, $rowNr, $t
 		$result = TFDataAPIAccess::getInstance($title)->updateValues($annotations, $parameters, $revisionId);
 	}
 	
-	$result = array('success' => $result, 'rowNr' => $rowNr, 'tabularFormId' => $tabularFormId, $revisionId);
+	//a error msg is returnd if not successfull
+	if(is_string($result)){
+		$msg = $result;
+		$result = false;
+	} else {
+		$msg = '';
+	}
+	
+	$result = array('success' => $result, 'msg' => $msg, 'rowNr' => $rowNr, 'tabularFormId' => $tabularFormId, $revisionId);
 	$result = json_encode($result);
 	
 	return '--##starttf##--' . $result . '--##endtf##--';

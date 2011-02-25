@@ -61,7 +61,9 @@ class TFTabularFormData {
 	private $getSubjectFromFirstPrintRequest = false;
 	private $hasFurtherResults;
 	private $isSPARQLQuery = false;
-	
+	private $enableInstanceDelete = false;
+	private $enableInstanceAdd = false;
+		
 	public function __construct($queryResult, $queryParams, $linker, $hasFurtherResults){
 		$this->queryResult = $queryResult;
 		$this->outputMode = SMW_OUTPUT_HTML;
@@ -79,6 +81,16 @@ class TFTabularFormData {
 		$link = $this->queryResult->getQueryLink();
 		
 		$this->initializeTemplateParameterPrintRequests();
+		
+		if(array_key_exists('enable add', $this->queryParams)
+				&& $this->queryParams['enable add'] == 'true'){
+			$this->enableInstanceAdd = true;
+		}
+		
+		if(array_key_exists('enable delete', $this->queryParams)
+				&& $this->queryParams['enable delete'] == 'true'){
+			$this->enableInstanceDelete = true;
+		}
 	}
 	
 	/*
@@ -334,7 +346,7 @@ class TFTabularFormData {
 		//Todo:Language
 		global $smwgHaloScriptPath;
 		$html .= '<td>';
-		$html .= '<img class="tabf_added_status" title="added" src="'.$smwgHaloScriptPath.'/skins/TabularForms/Added.png"></img>';
+		$html .= '<img class="tabf_added_status" title="added" src="'.$smwgHaloScriptPath.'/skins/TabularForms/Modified.png"></img>';
 		$html .= '<img class="tabf_saved_status" title="Saved" style="display: none" src="'.$smwgHaloScriptPath.'/skins/TabularForms/Saved.png"></img>';
 		$html .= '<img class="tabf_error_status" title="An error occured" style="display: none" src="'.$smwgHaloScriptPath.'/skins/TabularForms/Error.png"></img>';
 		$html .= '<img class="tabf_pending_status" title="Updating" style="display: none" src="'.$smwgHaloScriptPath.'/skins/TabularForms/Pending.gif"></img>';
@@ -349,7 +361,8 @@ class TFTabularFormData {
 	private function addRowHTML($rowData){
 		$html = '';
 		
-		$html .= $rowData->getHTML($this->annotationPrintRequests, $this->templateParameterPrintRequests);
+		$html .= $rowData->getHTML($this->annotationPrintRequests, $this->templateParameterPrintRequests
+			, $this->enableInstanceDelete, $this->enableInstanceAdd);
 		
 		return $html;
 	}
@@ -388,7 +401,12 @@ class TFTabularFormData {
 			$html .= '<span class="tabf_further_results" width="100%">'.$link->getText( $this->outputMode, $this->linker).'</span>';
 		}
 		
-		$html .= '<input class="tabf_add_button" type="button" value="Add instance" onclick="tf.addInstance('."'".$tabularFormId."'".')"/>';
+		//todo:LANGUAGE
+		
+		if($this->enableInstanceAdd){
+			$html .= '<input class="tabf_add_button" type="button" value="Add instance" onclick="tf.addInstance('."'".$tabularFormId."'".')"/>';
+		}
+		
 		$html .= '<input type="button" value="Refresh" onclick="tf.refreshForm('."'".$tabularFormId."'".')"/>';
 		$html .= '<input class="tabf_save_button" style="display:none" type="button" value="Save" onclick="tf.saveFormData(event,'."'".$tabularFormId."'".')"/>';
 		$html .= '</td>';
@@ -602,6 +620,16 @@ class TFTabularFormRowData {
 		$collection = new TFAnnotationDataCollection();
 		$collection->addAnnotations($this->annotations);
 		$this->annotations = $this->dataAPIAccess->getWritableAnnotations($collection);
+		
+		//All values are read-only if article does not exist and add is not enabled
+		if((!($this->title instanceof Title && $this->title->exists()) && !$enableInstanceAdd)
+				|| $this->dataAPIAccess->isReadProtected || $this->dataAPIAccess->isWriteProtected){
+			foreach($this->annotations as $key => $annotations){
+				foreach($annotations as $k => $annotation){
+					$this->annotations[$key][$k]->isWritable = false;
+				}
+			}
+		}
 	}
 	
 	/*
@@ -674,26 +702,55 @@ class TFTabularFormRowData {
 				}
 			}
 		}
+		
+		//Template parameters are read-only if article does not exist and add is not enabled
+		if((!($this->title instanceof Title && $this->title->exists()) && !$enableInstanceAdd)
+				|| $this->dataAPIAccess->isReadProtected || $this->dataAPIAccess->isWriteProtected){
+			foreach($this->templateParameters as $key => $parameters){
+				foreach($parameters as $k => $parameter){
+					$this->templateParameters[$key][$k]->isWritable = false;
+				}
+			}
+		}
 	}
 	
 	/*
 	 * Returns tabular form HTML for this row
 	 */
-	public function getHTML($annotationPrintRequests, $parameterPrintRequests){
+	public function getHTML($annotationPrintRequests, $parameterPrintRequests, 
+			$enableInstanceDelete, $enableInstanceAdd){
 		
+		$html = '';
+		
+		//Add table row tag
+		$class = 'tabf_table_row';
 		if($this->title instanceof Title && $this->title->exists()){
-			$html .= '<tr class="tabf_table_row">';
+			if($this->dataAPIAccess->isReadProtected){
+				$class .= ' tabf_read_protected_row';
+			} else if($this->dataAPIAccess->isWriteProtected){
+				$class .= ' tabf_write_protected_row';
+			}
 		} else {
-			$html = '<tr class="tabf_table_row tabf_new_row" isNew="true">';
+			if($enableInstanceAdd){
+				$class .= ' tabf_new_row';
+			} else {
+				$class = ' tabf_non_existing_row';
+			}
 		}
 		
+		$html .= '<tr class="'.$class.'" isNew="true">';
+		
 		//Add subject
-		if($this->title instanceof Title && $this->title->exists()){
+		if(($this->title instanceof Title && $this->title->exists()) || !$enableInstanceAdd){
 			$linker = new Linker();
 			$html .= '<td class="tabf_table_cell" revision-id="'.$this->revisionId.
 				'" article-name="'.$this->title->getFullText().'">';
-			$html .= $linker->makeLinkObj($this->title);
-			$html .= '<input class="tabf-delete-button" type="button" value="Delete" style="z-index: 10; display: none" onclick="tf.deleteInstance(event)"/>';
+			if($this->title instanceof Title){
+				$html .= $linker->makeLinkObj($this->title);
+			}
+			if($enableInstanceDelete && ($this->title instanceof Title && $this->title->exists())){
+				$html .= '<input class="tabf-delete-button" type="button" value="Delete" style="z-index: 10; display: none" onclick="tf.deleteInstance(event)"/>';
+			}
 		} else {
 			$html .= '<td class="tabf_table_cell" revision-id="-1">';
 			$html .= '<textarea class="tabf_valid_instance_name" rows="1">';
@@ -737,10 +794,18 @@ class TFTabularFormRowData {
 				
 				ksort($this->templateParameters[$template][$param]->currentValues);
 				if(count($this->templateParameters[$template][$param]->currentValues) == 0){
-					$html .= "<textarea rows='1' template-id=".'"'.TF_NEW_TEMPLATE_CALL.'"'."></textarea>";
+					if($this->templateParameters[$template][$param]->isWritable){
+						$html .= "<textarea rows='1' template-id=".'"'.TF_NEW_TEMPLATE_CALL.'"'."></textarea>";
+					} else {
+						$html .= '<div style="height: 3em; width: 100%"></div>';
+					}
 				} else {
 					foreach($this->templateParameters[$template][$param]->currentValues as $templateId => $currentValue){
-						$html .= "<textarea rows='1' template-id=".'"'.$templateId.'"'."'>".$currentValue."</textarea>";
+						if($this->templateParameters[$template][$param]->isWritable){
+							$html .= "<textarea rows='1' template-id=".'"'.$templateId.'"'."'>".$currentValue."</textarea>";
+						} else {
+							$html .= '<div style="height: 3em; width: 100%">'.$currentValue.'</div>';
+						}
 					}
 				}
 			
@@ -752,17 +817,67 @@ class TFTabularFormRowData {
 		//Todo:Language
 		global $smwgHaloScriptPath;
 		$html .= '<td>';
+		
+		$okDisplay = $readProtectedDisplay = $writeProtectedDisplay = 
+			$addedDisplay = $notExistsDisplay = 'none';
+		
 		if($this->title instanceof Title && $this->title->exists()){
-			$html .= '<img class="tabf_ok_status" title="Not yet modified" src="'.$smwgHaloScriptPath.'/skins/TabularForms/Unmodified.png"></img>';
-			$html .= '<img class="tabf_modified_status" title="Modified" style="display: none" src="'.$smwgHaloScriptPath.'/skins/TabularForms/Modified.png"></img>';
-			$html .= '<img class="tabf_deleted_status" title="Updating" style="display: none" src="'.$smwgHaloScriptPath.'/skins/TabularForms/Deleted.png"></img>';
+			if($this->dataAPIAccess->isReadProtected == true){
+				$readProtectedDisplay = '';
+			} else if($this->dataAPIAccess->isWriteProtected == true){
+				$writeProtectedDisplay = '';
+			} else {
+				// I think it is not necessary to have an ICON for this staus
+				//$okDisplay = '';
+			}
 		} else {
-			$html .= '<img class="tabf_added_status" title="Updating" src="'.$smwgHaloScriptPath.'/skins/TabularForms/Added.png"></img>';
+			if($enableInstanceAdd){
+				$addedDisplay = '';
+			} else {
+				$notExistsDisplay = '';
+			}
 		}
 		
-		$html .= '<img class="tabf_saved_status" title="Saved" style="display: none" src="'.$smwgHaloScriptPath.'/skins/TabularForms/Saved.png"></img>';
-		$html .= '<img class="tabf_error_status" title="An error occured" style="display: none" src="'.$smwgHaloScriptPath.'/skins/TabularForms/Error.png"></img>';
-		$html .= '<img class="tabf_pending_status" title="Updating" style="display: none" src="'.$smwgHaloScriptPath.'/skins/TabularForms/Pending.gif"></img>';
+		//todo: LANGUAGE
+		$title = 'Not yet modified.';
+		$html .= '<img class="tabf_ok_status" title="'.$title.'" style="display: '.$okDisplay.'" src="'.
+			$smwgHaloScriptPath.'/skins/TabularForms/Unmodified.png"></img>';
+		
+		$title = 'Instance does not exist and will be created.';
+		$html .= '<img class="tabf_added_status" title="'.$title.'" style="display: '.$addedDisplay.'" src="'
+			.$smwgHaloScriptPath.'/skins/TabularForms/Added.png"></img>';
+		
+		$title = 'Instance does not exist.';
+		$html .= '<img class="tabf_exists_not_status" title="'.$title.'" style="display: '.$notExistsDisplay.'" src="'
+			.$smwgHaloScriptPath.'/skins/TabularForms/Warning.png"></img>';
+		
+		$title = 'Instance is read protected.';
+		$html .= '<img class="tabf_exists_not_status" title="'.$title.'" style="display: '.$readProtectedDisplay.'" src="'
+			.$smwgHaloScriptPath.'/skins/TabularForms/Warning.png"></img>';
+
+		$title = 'Instance is write protected.';
+		$html .= '<img class="tabf_exists_not_status" title="'.$title.'" style="display: '.$writeProtectedDisplay.'" src="'
+			.$smwgHaloScriptPath.'/skins/TabularForms/Warning.png"></img>';
+			
+		$title = "Instance will be deleted.";	
+		$html .= '<img class="tabf_deleted_status" title="'.$title.'" style="display: none" src="'
+			.$smwgHaloScriptPath.'/skins/TabularForms/Deleted.png"></img>';
+		
+		$title = 'Instance has been modified.';
+		$html .= '<img class="tabf_modified_status" title="'.$title.'" style="display: none" src="'
+			.$smwgHaloScriptPath.'/skins/TabularForms/Modified.png"></img>';
+		
+		$title = 'Instance has been saved successfully.';
+		$html .= '<img class="tabf_saved_status" title="'.$title.'" style="display: none" src="'
+			.$smwgHaloScriptPath.'/skins/TabularForms/Saved.png"></img>';
+		
+		$title = '';
+		$html .= '<img class="tabf_error_status" title="'.$title.'" style="display: none" src="'
+			.$smwgHaloScriptPath.'/skins/TabularForms/Error.png"></img>';
+		
+		$title = 'Updating instance.';
+		$html .= '<img class="tabf_pending_status" title="'.$title.'" style="display: none" src="'
+			.$smwgHaloScriptPath.'/skins/TabularForms/Pending.gif"></img>';
 		
 		$html .= '</td>';
 		

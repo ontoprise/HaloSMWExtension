@@ -1,4 +1,5 @@
-
+//todo: do not display the ok status
+//todo: adjust sorting according to new states
 
 var TF = Class.create({
 
@@ -61,6 +62,8 @@ var TF = Class.create({
 		if(jQuery('#' + data.tabularFormId + ' .tabf_new_row').get().length > 0){
 			jQuery('#' + data.tabularFormId + ' .tabf_save_button').css('display', 'inline');
 		}
+		
+		//todo: validate subject title textarea values 
 	},
 	
 	/*
@@ -637,7 +640,7 @@ var TF = Class.create({
 			} else if ((jQuery('.tabf_modified_row', jQuery(rowParent)).length > 0
 					|| jQuery('.tabf_deleted_row', jQuery(rowParent)).length > 0
 					|| jQuery('.tabf_new_row .tabf_valid_instance_name', jQuery(rowParent)).length > 0)
-					&& jQuery('.tabf_new_row .tabf_valid_instance_name', jQuery(rowParent)).length == 0){
+					&& jQuery('.tabf_new_row .tabf_erronious_instance_name', jQuery(rowParent)).length == 0){
 				jQuery('.tabf_save_button', jQuery(rowParent)).css('display', 'inline');
 			}
 			

@@ -38,16 +38,26 @@ class TFDataAPIACCESS {
 		private $pomPage = '';
 		private $article = null;
 		
+		public $isReadProtected;
+		public $isWriteProtected;
+		
 		/*
 		 * Parse article and initialize the POMPage object
 		 */
 		private function initialize(){
 			
-			//think about when and where to initialize POM. LocalSettings is not good.
+			//todo:think about when and where to initialize POM. LocalSettings is not good.
 			
 			$this->article = null;
 			
+			//update access rights information
+			if(!is_null($this->title)){
+				$this->isReadProtected = !$this->title->userCan('read');
+				$this->isWriteProtected = !$this->title->userCan('edit');
+			}
+			
 			if(!is_null($this->title) && $this->title->exists()){
+				
 				$this->article = new Article($this->title);
 				
 				$text = $this->article->getContent();
@@ -56,9 +66,10 @@ class TFDataAPIACCESS {
 			
 				$this->pomPage = new POMPage($this->title->getFullText(), $text);
 			} else {
+				$this->articleDoesNotExist = true;
+				
 				$this->pomPage = null;
 			}
-			
 		}
 		
 		/*
@@ -82,12 +93,16 @@ class TFDataAPIACCESS {
 		 */
 		public function getWritableAnnotations($annotations){
 			
-			//todo: deal woth acls
-			
-			//todo:check if annotations with special types, e.g. date work
-			
 			if(is_null($this->title) || !$this->title->exists()){
 				return $annotations->getAnnotations(); 
+			}
+			
+			if($this->isReadProtected){
+				return $annotations->getAnnotations();
+			}
+			
+			if($this->isWriteProtected){
+				return $annotations->getAnnotations();
 			}
 			
 			$elements = $this->pomPage->getElements()->listIterator();
@@ -140,9 +155,11 @@ class TFDataAPIACCESS {
 		 */
 		public function readTemplateParameters($parameters){
 			
-			//todo: deal with ACLs
-			
 			if(is_null($this->title) || !$this->title->exists()){
+				return $parameters->getParameters();
+			}
+			
+			if($this->isReadProtected){
 				return $parameters->getParameters();
 			}
 			
@@ -182,16 +199,23 @@ class TFDataAPIACCESS {
 		 */
 		public function updateValues($annotations, $parameters, $revisionId){
 		
-			//todo: Deal with ACLs
-			
 			//todo: annotation labels
 			
+			//todo: LANGUAGE
 			if(is_null($this->title) || !$this->title->exists()){
-				return false; 
+				return 'This instance has been deleted in the meantime.'; 
 			}
 			
 			if($this->getRevisionId() != $revisionId){
-				return false;
+				return 'This instance has been deleted in the meantime.';
+			}
+			
+			if($this->isReadProtected){
+				return 'This instance has been made read-protected in the meantime.';
+			}
+			
+			if($this->isWriteProtected){
+				return 'This instance has been made write-protected in the meantime.';
 			}
 			
 			$elements = $this->pomPage->getElements()->listIterator(); 
@@ -635,6 +659,7 @@ class TFTemplateParameter {
 	public $template;
 	public $currentValues = array();
 	public $newValues = array();
+	public $isWritable = true;
 	
 	public function __construct($address, $currentValues = array(), $newValues = array()){
 		$address = explode('#', $address, 2);
