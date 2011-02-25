@@ -13,7 +13,7 @@ Index: extensions/SemanticResultFormats/Outline/SRF_Outline.php
  
 Index: extensions/SemanticResultFormats/Timeline/SRF_Timeline.php
 ===================================================================
---- extensions/SemanticResultFormats/Timeline/SRF_Timeline.php	(revision 9595)
+--- extensions/SemanticResultFormats/Timeline/SRF_Timeline.php	(revision 9726)
 +++ extensions/SemanticResultFormats/Timeline/SRF_Timeline.php	(working copy)
 @@ -148,6 +148,7 @@
  							$objectlabel = $object->getLongText( $outputmode, $l );
@@ -33,7 +33,7 @@ Index: extensions/SemanticResultFormats/Timeline/SRF_Timeline.php
 +		$scripts [] = '<script type="text/javascript" src="' . $srfgScriptPath .  '/Timeline/SimileTimeline/timeline-api.js"></script>' . "\n";
 +		return $scripts;
 +	}
-+
++	
  }
 Index: extensions/SemanticResultFormats/GoogleCharts/SRF_GoogleBar.php
 ===================================================================
