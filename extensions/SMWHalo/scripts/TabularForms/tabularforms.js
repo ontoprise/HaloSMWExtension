@@ -1,6 +1,3 @@
-//todo: do not display the ok status
-//todo: adjust sorting according to new states
-
 var TF = Class.create({
 
 	init: function(){ 
@@ -357,7 +354,7 @@ var TF = Class.create({
 			parentRow.attr('isModified', true);
 			parentRow.addClass('tabf_modified_row');
 			
-			jQuery('td:last-child .tabf_ok_status', parentRow).css('display', 'none');
+			//jQuery('td:last-child .tabf_ok_status', parentRow).css('display', 'none');
 			jQuery('td:last-child .tabf_modified_status', parentRow).css('display', 'inline');
 			
 			if(jQuery('..tabf_erronious_instance_name', jQuery(parentRow).parent().parent()).length == 0){
@@ -375,7 +372,7 @@ var TF = Class.create({
 				parentRow.attr('isModified', false);
 				parentRow.removeClass('tabf_modified_row');
 				
-				jQuery('td:last-child .tabf_ok_status', parentRow).css('display', 'inline');
+				//jQuery('td:last-child .tabf_ok_status', parentRow).css('display', 'inline');
 				jQuery('td:last-child .tabf_modified_status', parentRow).css('display', 'none');
 				
 				if(jQuery('.tabf_modified_row', jQuery(parentRow).parent().parent()).length == 0
@@ -438,6 +435,8 @@ var TF = Class.create({
 			});
 			
 		} else if(jQuery(this).attr('isModified') == 'true' || jQuery(this).attr('isNew') == 'true' ){
+			
+			alert('a');
 			
 			jQuery('td:last-child .tabf_modified_status', this).css('display', 'none');
 			jQuery('td:last-child .tabf_added_status', this).css('display', 'none');
@@ -518,6 +517,7 @@ var TF = Class.create({
 		} else {
 			jQuery(row).addClass('.tabf_table_row_saved_error');
 			jQuery('td:last-child .tabf_pending_status', row).css('display', 'none');
+			jQuery('td:last-child .tabf_error_status', row).attr('title', data.msg);
 			jQuery('td:last-child .tabf_error_status', row).css('display', 'inline');
 		}
 	},
@@ -656,7 +656,7 @@ var TF = Class.create({
 				if(jQuery(row).attr('isModified') == 'true'){
 					jQuery('.tabf_modified_status', row).css('display', 'block');
 				} else {
-					jQuery('.tabf_ok_status', row).css('display', 'block');
+					//jQuery('.tabf_ok_status', row).css('display', 'block');
 				}
 				
 				jQuery('td textarea', row).attr('readonly', '');
@@ -673,7 +673,7 @@ var TF = Class.create({
 				
 				jQuery('.tabf_deleted_status', row).css('display', 'block');
 				jQuery('.tabf_modified_status', row).css('display', 'none');
-				jQuery('.tabf_ok_status', row).css('display', 'none');
+				//jQuery('.tabf_ok_status', row).css('display', 'none');
 				
 				jQuery('td textarea', row).attr('readonly', 'true');
 				

@@ -343,13 +343,16 @@ class TFTabularFormData {
 		}
 		
 		//add status column
-		//Todo:Language
-		global $smwgHaloScriptPath;
 		$html .= '<td>';
-		$html .= '<img class="tabf_added_status" title="added" src="'.$smwgHaloScriptPath.'/skins/TabularForms/Modified.png"></img>';
-		$html .= '<img class="tabf_saved_status" title="Saved" style="display: none" src="'.$smwgHaloScriptPath.'/skins/TabularForms/Saved.png"></img>';
-		$html .= '<img class="tabf_error_status" title="An error occured" style="display: none" src="'.$smwgHaloScriptPath.'/skins/TabularForms/Error.png"></img>';
-		$html .= '<img class="tabf_pending_status" title="Updating" style="display: none" src="'.$smwgHaloScriptPath.'/skins/TabularForms/Pending.gif"></img>';
+		
+		$okDisplay = $readProtectedDisplay = $writeProtectedDisplay = 
+			$addedDisplay = $notExistsDisplay = 'none';
+		
+		$addedDisplay = '';
+		
+		$html .= TFTabularFormRowData::getStatusColumnHTML($okDisplay, $readProtectedDisplay, $writeProtectedDisplay, 
+			$addedDisplay, $notExistsDisplay);
+			
 		$html .= '</td>';
 		
 		return $html;
@@ -724,6 +727,7 @@ class TFTabularFormRowData {
 		
 		//Add table row tag
 		$class = 'tabf_table_row';
+		$additionalAttributes = "";
 		if($this->title instanceof Title && $this->title->exists()){
 			if($this->dataAPIAccess->isReadProtected){
 				$class .= ' tabf_read_protected_row';
@@ -733,12 +737,13 @@ class TFTabularFormRowData {
 		} else {
 			if($enableInstanceAdd){
 				$class .= ' tabf_new_row';
+				$additionalAttributes .= ' isNew="true" ';
 			} else {
 				$class = ' tabf_non_existing_row';
 			}
 		}
 		
-		$html .= '<tr class="'.$class.'" isNew="true">';
+		$html .= '<tr class="'.$class.'" '.$additionalAttributes.' >';
 		
 		//Add subject
 		if(($this->title instanceof Title && $this->title->exists()) || !$enableInstanceAdd){
@@ -814,8 +819,6 @@ class TFTabularFormRowData {
 		}
 		
 		//add status column
-		//Todo:Language
-		global $smwgHaloScriptPath;
 		$html .= '<td>';
 		
 		$okDisplay = $readProtectedDisplay = $writeProtectedDisplay = 
@@ -837,6 +840,26 @@ class TFTabularFormRowData {
 				$notExistsDisplay = '';
 			}
 		}
+		
+		$html .= self::getStatusColumnHTML($okDisplay, $readProtectedDisplay, $writeProtectedDisplay, 
+			$addedDisplay, $notExistsDisplay);
+		
+		$html .= '</td>';
+		
+		$html .= '</tr>';
+		
+		return $html;
+	}
+	
+	/* 
+	 * Returns the status icons for the last column
+	 */static 
+	public function getStatusColumnHTML($okDisplay, $readProtectedDisplay, $writeProtectedDisplay, 
+			$addedDisplay, $notExistsDisplay){
+
+		global $smwgHaloScriptPath;
+				
+		$html = '';
 		
 		//todo: LANGUAGE
 		$title = 'Not yet modified.';
@@ -878,12 +901,8 @@ class TFTabularFormRowData {
 		$title = 'Updating instance.';
 		$html .= '<img class="tabf_pending_status" title="'.$title.'" style="display: none" src="'
 			.$smwgHaloScriptPath.'/skins/TabularForms/Pending.gif"></img>';
-		
-		$html .= '</td>';
-		
-		$html .= '</tr>';
-		
-		return $html;
+	
+		return $html;	
 	}
 	
 	
