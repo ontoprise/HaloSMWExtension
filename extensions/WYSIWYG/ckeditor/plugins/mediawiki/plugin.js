@@ -551,7 +551,7 @@ CKEDITOR.customprocessor.prototype =
 				// Check if the node name is valid, otherwise ignore this tag.
 				// If the nodeName starts with a slash, it is a orphan closing tag.
 				// On some strange cases, the nodeName is empty, even if the node exists.
-				if ( sNodeName == "" || sNodeName.substring(0, 1) == '/'  )
+				if ( sNodeName == "" || sNodeName.substring(0, 1) == '/' || sNodeName == "style")
 					return;
 
 				if ( sNodeName == 'br' && ( this._inPre || this._inLSpace ) ){
