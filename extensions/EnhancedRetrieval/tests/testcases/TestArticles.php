@@ -56,7 +56,7 @@ ARTICLE
 //------------------------------------------------------------------------------	
 			'Property:Image' =>
 <<<ARTICLE
-[[has type::Type:String| ]]	
+	[[has type::Type:String| ]]	
 ARTICLE
 ,
 //------------------------------------------------------------------------------	
@@ -81,8 +81,18 @@ ARTICLE
 ARTICLE
 ,
 //------------------------------------------------------------------------------	
+			'Property:Description' =>
+<<<ARTICLE
+	[[has type::Type:Text| ]]
+	
+ARTICLE
+,
+
+//------------------------------------------------------------------------------	
 			'_1201_Third_Avenue' =>
 <<<ARTICLE
+	[[Description::This is the description of _1201_Third_Avenue.]]
+	[[Description::This is the description of _1201_Third_Avenue.]]
 	[[Category:_1988_architecture]]
 	[[Category:Building]]
 	[[Category:Kohn_Pedersen_Fox_buildings]]
@@ -101,6 +111,7 @@ ARTICLE
 //------------------------------------------------------------------------------	
 			'_1801_California_Street' =>
 <<<ARTICLE
+	[[Description::This is the description of _1801_California_Street.]]
 	[[Category:Buildings_and_structures_completed_in_1982]]
 	[[Category:Office_buildings_in_Denver,_Colorado]]
 	[[Category:Qwest]]
@@ -112,6 +123,7 @@ ARTICLE
 //------------------------------------------------------------------------------	
 			'_191_Peachtree_Tower' =>
 <<<ARTICLE
+	[[Description::This is the description of _191_Peachtree_Tower.]]
 	[[Category:Atlanta,_Georgia_stubs]]
 	[[Category:Buildings_and_structures_completed_in_1990]]
 	[[Category:Georgia_(U.S._state)_building_and_structure_stubs]]
@@ -126,6 +138,7 @@ ARTICLE
 //------------------------------------------------------------------------------	
 			'_20_Exchange_Place' =>
 <<<ARTICLE
+	[[Description::This is the description of _20_Exchange_Place.]]
 	[[Category:Art_Deco_buildings_in_New_York_City]]
 	[[Category:Buildings_and_structures_completed_in_1931]]
 	[[Category:Buildings_and_structures_in_Manhattan]]
@@ -138,6 +151,7 @@ ARTICLE
 //------------------------------------------------------------------------------	
 			'_300_North_LaSalle' =>
 <<<ARTICLE
+	[[Description::This is the description of _300_North_LaSalle.]]
 	[[Category:Leadership_in_Energy_and_Environmental_Design_gold_certified_buildings]]
 	[[Category:Office_buildings_in_Chicago,_Illinois]]
 	[[Category:Skyscrapers_between_200_and_249_meters]]
@@ -147,6 +161,7 @@ ARTICLE
 //------------------------------------------------------------------------------	
 			'_311_South_Wacker_Drive' =>
 <<<ARTICLE
+	[[Description::This is the description of _311_South_Wacker_Drive.]]
 	[[Category:Buildings_and_structures_completed_in_1990]]
 	[[Category:Office_buildings_in_Chicago,_Illinois]]
 	[[Category:Skyscrapers_between_250_and_299_meters]]
@@ -156,6 +171,7 @@ ARTICLE
 //------------------------------------------------------------------------------	
 			'_383_Madison_Avenue' =>
 <<<ARTICLE
+	[[Description::This is the description of _383_Madison_Avenue.]]
 	[[Category:Bear_Stearns]]
 	[[Category:Buildings_and_structures_completed_in_2002]]
 	[[Category:Financial_services_company_headquarters_in_the_United_States]]
@@ -170,6 +186,7 @@ ARTICLE
 //------------------------------------------------------------------------------	
 			'_40_Wall_Street' =>
 <<<ARTICLE
+	[[Description::This is the description of _40_Wall_Street.]]
 	[[Category:_1930_architecture]]
 	[[Category:Art_Deco_buildings_in_New_York_City]]
 	[[Category:Buildings_and_structures_on_the_National_Register_of_Historic_Places_in_Manhattan]]
@@ -182,6 +199,7 @@ ARTICLE
 //------------------------------------------------------------------------------	
 			'_500_Fifth_Avenue' =>
 <<<ARTICLE
+	[[Description::This is the description of _500_Fifth_Avenue.]]
 	[[Category:_1931_architecture]]
 	[[Category:Art_Deco_buildings_in_New_York_City]]
 	[[Category:New_York_building_and_structure_stubs]]
@@ -193,6 +211,7 @@ ARTICLE
 //------------------------------------------------------------------------------	
 			'_555_California_Street' =>
 <<<ARTICLE
+	[[Description::This is the description of _555_California_Street.]]
 	[[Category:_1969_architecture]]
 	[[Category:Bank_of_America]]
 	[[Category:Bank_of_America_buildings]]
@@ -212,6 +231,7 @@ ARTICLE
 //------------------------------------------------------------------------------	
 			'_60_Wall_Street' =>
 <<<ARTICLE
+	[[Description::This is the description of _60_Wall_Street.]]
 	[[Category:Buildings_and_structures_completed_in_1989]]
 	[[Category:Skyscrapers_in_New_York_City]]
 	[[Category:Wall_Street]]
@@ -220,6 +240,7 @@ ARTICLE
 //------------------------------------------------------------------------------	
 			'_777_Tower' =>
 <<<ARTICLE
+	[[Description::This is the description of _777_Tower.]]
 	[[Category:Buildings_and_structures_completed_in_1991]]
 	[[Category:C%C3%A9sar_Pelli_buildings]]
 	[[Category:Office_buildings_in_Los_Angeles,_California]]
@@ -230,6 +251,7 @@ ARTICLE
 //------------------------------------------------------------------------------	
 			'_7_World_Trade_Center' =>
 <<<ARTICLE
+	[[Description::This is the description of _7_World_Trade_Center.]]
 	[[Category:Buildings_and_structures_completed_in_1987]]
 	[[Category:Buildings_and_structures_completed_in_2006]]
 	[[Category:Buildings_destroyed_in_the_September_11_attacks]]
@@ -246,6 +268,7 @@ ARTICLE
 //------------------------------------------------------------------------------	
 			'_8_Spruce_Street' =>
 <<<ARTICLE
+	[[Description::This is the description of _8_Spruce_Street.]]
 	[[Category:Buildings_and_structures_in_Manhattan]]
 	[[Category:Buildings_and_structures_under_construction_in_the_United_States]]
 	[[Category:Frank_Gehry_buildings]]
@@ -254,6 +277,7 @@ ARTICLE
 //------------------------------------------------------------------------------	
 			'_900_North_Michigan' =>
 <<<ARTICLE
+	[[Description::This is the description of _900_North_Michigan.]]
 	[[Category:Buildings_and_structures_completed_in_1989]]
 	[[Category:Condo-hotels_in_the_United_States]]
 	[[Category:Condominiums_in_Chicago,_Illinois]]
@@ -265,6 +289,7 @@ ARTICLE
 //------------------------------------------------------------------------------	
 			'AXA_Center' =>
 <<<ARTICLE
+	[[Description::This is the description of AXA_Center.]]
 	[[Category:_1986_architecture]]
 	[[Category:AXA]]
 	[[Category:Seventh_Avenue_(Manhattan)]]
@@ -276,6 +301,7 @@ ARTICLE
 //------------------------------------------------------------------------------	
 			'Alabama' =>
 <<<ARTICLE
+	[[Description::This is the description of Alabama.]]
 	[[Category:Alabama]]
 	[[Category:Former_British_colonies]]
 	[[Category:States_and_territories_established_in_1819]]
@@ -287,6 +313,7 @@ ARTICLE
 //------------------------------------------------------------------------------	
 			'American_International_Building' =>
 <<<ARTICLE
+	[[Description::This is the description of American_International_Building.]]
 	[[Category:_1932_architecture]]
 	[[Category:American_International_Group]]
 	[[Category:Art_Deco_buildings_in_New_York_City]]
@@ -303,6 +330,7 @@ ARTICLE
 //------------------------------------------------------------------------------	
 			'Aon_Center' =>
 <<<ARTICLE
+	[[Description::This is the description of Aon_Center.]]
 	[[Category:All_article_disambiguation_pages]]
 	[[Category:All_disambiguation_pages]]
 	[[Category:Disambiguation_pages]]
@@ -311,6 +339,7 @@ ARTICLE
 //------------------------------------------------------------------------------	
 			'Aon_Center_(Chicago)' =>
 <<<ARTICLE
+	[[Description::This is the description of Aon_Center_(Chicago).]]
 	[[Category:Amoco]]
 	[[Category:BP_buildings_and_structures]]
 	[[Category:Building]]
@@ -329,6 +358,7 @@ ARTICLE
 //------------------------------------------------------------------------------	
 			'Aon_Center_(Los_Angeles)' =>
 <<<ARTICLE
+	[[Description::This is the description of Aon_Center_(Los_Angeles).]]
 	[[Category:Building]]
 	[[Category:Buildings_and_structures_completed_in_1973]]
 	[[Category:Office_buildings_in_Los_Angeles,_California]]
@@ -343,6 +373,7 @@ ARTICLE
 //------------------------------------------------------------------------------	
 			'Aqua' =>
 <<<ARTICLE
+	[[Description::This is the description of Aqua.]]
 	[[Category:All_article_disambiguation_pages]]
 	[[Category:All_disambiguation_pages]]
 	[[Category:Disambiguation_pages]]
@@ -351,6 +382,7 @@ ARTICLE
 //------------------------------------------------------------------------------	
 			'Aqua_(skyscraper)' =>
 <<<ARTICLE
+	[[Description::This is the description of Aqua_(skyscraper).]]
 	[[Category:Apartments_in_Chicago,_Illinois]]
 	[[Category:Building]]
 	[[Category:Condo-hotels_in_the_United_States]]
@@ -368,6 +400,7 @@ ARTICLE
 //------------------------------------------------------------------------------	
 			'Atlanta' =>
 <<<ARTICLE
+	[[Description::This is the description of Atlanta.]]
 	[[Category:Atlanta,_Georgia]]
 	[[Category:Atlanta_metropolitan_area]]
 	[[Category:Cities_in_Georgia_(U.S._state)]]
@@ -383,6 +416,7 @@ ARTICLE
 //------------------------------------------------------------------------------	
 			'Atlantic_City,_New_Jersey' =>
 <<<ARTICLE
+	[[Description::This is the description of Atlantic_City,_New_Jersey.]]
 	[[Category:Atlantic_City,_New_Jersey]]
 	[[Category:Cities_in_New_Jersey]]
 	[[Category:Culture_of_Philadelphia,_Pennsylvania]]
@@ -400,6 +434,7 @@ ARTICLE
 //------------------------------------------------------------------------------	
 			'Bank_of_America_Center' =>
 <<<ARTICLE
+	[[Description::This is the description of Bank_of_America_Center.]]
 	[[Category:All_article_disambiguation_pages]]
 	[[Category:All_disambiguation_pages]]
 	[[Category:Bank_of_America_buildings]]
@@ -409,6 +444,7 @@ ARTICLE
 //------------------------------------------------------------------------------	
 			'Bank_of_America_Center_(Houston)' =>
 <<<ARTICLE
+	[[Description::This is the description of Bank_of_America_Center_(Houston).]]
 	[[Category:Bank_of_America]]
 	[[Category:Bank_of_America_buildings]]
 	[[Category:Building]]
@@ -429,6 +465,7 @@ ARTICLE
 //------------------------------------------------------------------------------	
 			'Bank_of_America_Corporate_Center' =>
 <<<ARTICLE
+	[[Description::This is the description of Bank_of_America_Corporate_Center.]]
 	[[Category:Bank_of_America]]
 	[[Category:Bank_of_America_buildings]]
 	[[Category:Buildings_and_structures_completed_in_1992]]
@@ -441,6 +478,7 @@ ARTICLE
 //------------------------------------------------------------------------------	
 			'Bank_of_America_Plaza' =>
 <<<ARTICLE
+	[[Description::This is the description of Bank_of_America_Plaza.]]
 	[[Category:All_article_disambiguation_pages]]
 	[[Category:All_disambiguation_pages]]
 	[[Category:Bank_of_America_buildings]]
@@ -450,6 +488,7 @@ ARTICLE
 //------------------------------------------------------------------------------	
 			'Bank_of_America_Plaza_(Atlanta)' =>
 <<<ARTICLE
+	[[Description::This is the description of Bank_of_America_Plaza_(Atlanta).]]
 	[[Category:Bank_of_America]]
 	[[Category:Bank_of_America_buildings]]
 	[[Category:Building]]
@@ -466,6 +505,7 @@ ARTICLE
 //------------------------------------------------------------------------------	
 			'Bank_of_America_Plaza_(Dallas)' =>
 <<<ARTICLE
+	[[Description::This is the description of Bank_of_America_Plaza_(Dallas).]]
 	[[Category:Bank_of_America]]
 	[[Category:Bank_of_America_buildings]]
 	[[Category:Building]]
@@ -483,6 +523,7 @@ ARTICLE
 //------------------------------------------------------------------------------	
 			'Bank_of_America_Tower' =>
 <<<ARTICLE
+	[[Description::This is the description of Bank_of_America_Tower.]]
 	[[Category:All_article_disambiguation_pages]]
 	[[Category:All_disambiguation_pages]]
 	[[Category:Bank_of_America_buildings]]
@@ -492,6 +533,7 @@ ARTICLE
 //------------------------------------------------------------------------------	
 			'Bank_of_America_Tower_(New_York_City)' =>
 <<<ARTICLE
+	[[Description::This is the description of Bank_of_America_Tower_(New_York_City).]]
 	[[Category:Bank_of_America]]
 	[[Category:Bank_of_America_buildings]]
 	[[Category:Building]]
@@ -508,6 +550,7 @@ ARTICLE
 //------------------------------------------------------------------------------	
 			'Bell_Atlantic_Tower' =>
 <<<ARTICLE
+	[[Description::This is the description of Bell_Atlantic_Tower.]]
 	[[Category:_1991_architecture]]
 	[[Category:Pennsylvania_building_and_structure_stubs]]
 	[[Category:Philadelphia_stubs]]
@@ -519,6 +562,7 @@ ARTICLE
 //------------------------------------------------------------------------------	
 			'Bertelsmann_Building' =>
 <<<ARTICLE
+	[[Description::This is the description of Bertelsmann_Building.]]
 	[[Category:Bertelsmann_AG]]
 	[[Category:Buildings_and_structures_completed_in_1990]]
 	[[Category:Office_buildings_in_New_York_City]]
@@ -530,6 +574,7 @@ ARTICLE
 //------------------------------------------------------------------------------	
 			'Bloomberg_Tower' =>
 <<<ARTICLE
+	[[Description::This is the description of Bloomberg_Tower.]]
 	[[Category:Bloomberg_L.P.]]
 	[[Category:Buildings_and_structures_completed_in_2005]]
 	[[Category:Condominiums_in_New_York_City]]
@@ -544,6 +589,7 @@ ARTICLE
 //------------------------------------------------------------------------------	
 			'Blue_Cross_Blue_Shield_Tower' =>
 <<<ARTICLE
+	[[Description::This is the description of Blue_Cross_Blue_Shield_Tower.]]
 	[[Category:Chicago,_Illinois_stubs]]
 	[[Category:Insurance_company_headquarters_in_the_United_States]]
 	[[Category:Office_buildings_in_Chicago,_Illinois]]
@@ -554,6 +600,7 @@ ARTICLE
 //------------------------------------------------------------------------------	
 			'Boston' =>
 <<<ARTICLE
+	[[Description::This is the description of Boston.]]
 	[[Category:Boston,_Massachusetts]]
 	[[Category:Cities_in_Massachusetts]]
 	[[Category:County_seats_in_Massachusetts]]
@@ -571,6 +618,7 @@ ARTICLE
 //------------------------------------------------------------------------------	
 			'California' =>
 <<<ARTICLE
+	[[Description::This is the description of California.]]
 	[[Category:California_navigational_boxes]]
 	[[Category:United_States_State]]
 	[[Category:All_pages_needing_cleanup]]
@@ -585,6 +633,7 @@ ARTICLE
 //------------------------------------------------------------------------------	
 			'Capella_Tower' =>
 <<<ARTICLE
+	[[Description::This is the description of Capella_Tower.]]
 	[[Category:Buildings_and_structures_completed_in_1992]]
 	[[Category:James_Ingo_Freed_buildings]]
 	[[Category:Skyscrapers_between_200_and_249_meters]]
@@ -594,6 +643,7 @@ ARTICLE
 //------------------------------------------------------------------------------	
 			'Carnegie_Hall_Tower' =>
 <<<ARTICLE
+	[[Description::This is the description of Carnegie_Hall_Tower.]]
 	[[Category:_1991_architecture]]
 	[[Category:C%C3%A9sar_Pelli_buildings]]
 	[[Category:New_York_City_building_and_structure_stubs]]
@@ -605,6 +655,7 @@ ARTICLE
 //------------------------------------------------------------------------------	
 			'Charlotte,_North_Carolina' =>
 <<<ARTICLE
+	[[Description::This is the description of Charlotte,_North_Carolina.]]
 	[[Category:Charlotte,_North_Carolina]]
 	[[Category:Charlotte_metropolitan_area]]
 	[[Category:Cities_in_North_Carolina]]
@@ -617,6 +668,7 @@ ARTICLE
 //------------------------------------------------------------------------------	
 			'Chase_Tower_(Chicago)' =>
 <<<ARTICLE
+	[[Description::This is the description of Chase_Tower_(Chicago).]]
 	[[Category:Building]]
 	[[Category:Buildings_and_structures_completed_in_1969]]
 	[[Category:JPMorgan_Chase_buildings]]
@@ -632,6 +684,7 @@ ARTICLE
 //------------------------------------------------------------------------------	
 			'Chase_Tower_(Indianapolis)' =>
 <<<ARTICLE
+	[[Description::This is the description of Chase_Tower_(Indianapolis).]]
 	[[Category:Building]]
 	[[Category:Buildings_and_structures_completed_in_1990]]
 	[[Category:JPMorgan_Chase_buildings]]
@@ -648,6 +701,7 @@ ARTICLE
 //------------------------------------------------------------------------------	
 			'Chicago' =>
 <<<ARTICLE
+	[[Description::This is the description of Chicago.]]
 	[[Category:Chicago,_Illinois]]
 	[[Category:Chicago_metropolitan_area]]
 	[[Category:Cities_in_Illinois]]
@@ -670,6 +724,7 @@ ARTICLE
 //------------------------------------------------------------------------------	
 			'Chicago_Title_and_Trust_Center' =>
 <<<ARTICLE
+	[[Description::This is the description of Chicago_Title_and_Trust_Center.]]
 	[[Category:Buildings_and_structures_completed_in_1992]]
 	[[Category:Chicago,_Illinois_stubs]]
 	[[Category:Kohn_Pedersen_Fox_buildings]]
@@ -680,6 +735,7 @@ ARTICLE
 //------------------------------------------------------------------------------	
 			'Chrysler_Building' =>
 <<<ARTICLE
+	[[Description::This is the description of Chrysler_Building.]]
 	[[Category:_1930_architecture]]
 	[[Category:All_pages_needing_cleanup]]
 	[[Category:Art_Deco_buildings_in_New_York_City]]
@@ -703,6 +759,7 @@ ARTICLE
 //------------------------------------------------------------------------------	
 			'Citigroup_Center' =>
 <<<ARTICLE
+	[[Description::This is the description of Citigroup_Center.]]
 	[[Category:_1977_architecture]]
 	[[Category:Bank_buildings_in_the_United_States]]
 	[[Category:Citigroup_buildings]]
@@ -714,6 +771,7 @@ ARTICLE
 //------------------------------------------------------------------------------	
 			'CitySpire_Center' =>
 <<<ARTICLE
+	[[Description::This is the description of CitySpire_Center.]]
 	[[Category:_1987_architecture]]
 	[[Category:Apartments_in_New_York_City]]
 	[[Category:Buildings_and_structures_in_Manhattan]]
@@ -724,6 +782,7 @@ ARTICLE
 //------------------------------------------------------------------------------	
 			'Cleveland' =>
 <<<ARTICLE
+	[[Description::This is the description of Cleveland.]]
 	[[Category:Cities_in_Ohio]]
 	[[Category:Cleveland,_Ohio]]
 	[[Category:County_seats_in_Ohio]]
@@ -740,6 +799,7 @@ ARTICLE
 //------------------------------------------------------------------------------	
 			'Colorado' =>
 <<<ARTICLE
+	[[Description::This is the description of Colorado.]]
 	[[Category:Colorado_navigational_boxes]]
 	[[Category:United_States_State]]
 	[[Category:Colorado]]
@@ -751,6 +811,7 @@ ARTICLE
 //------------------------------------------------------------------------------	
 			'Columbia_Center' =>
 <<<ARTICLE
+	[[Description::This is the description of Columbia_Center.]]
 	[[Category:Bank_of_America_buildings]]
 	[[Category:Building]]
 	[[Category:Buildings_and_structures_completed_in_1985]]
@@ -766,6 +827,7 @@ ARTICLE
 //------------------------------------------------------------------------------	
 			'Comcast_Center' =>
 <<<ARTICLE
+	[[Description::This is the description of Comcast_Center.]]
 	[[Category:All_article_disambiguation_pages]]
 	[[Category:All_disambiguation_pages]]
 	[[Category:Disambiguation_pages]]
@@ -774,6 +836,7 @@ ARTICLE
 //------------------------------------------------------------------------------	
 			'Comcast_Center_(office_building)' =>
 <<<ARTICLE
+	[[Description::This is the description of Comcast_Center_(office_building).]]
 	[[Category:_2008_architecture]]
 	[[Category:_2008_establishments]]
 	[[Category:Building]]
@@ -793,6 +856,7 @@ ARTICLE
 //------------------------------------------------------------------------------	
 			'Comerica_Bank_Tower' =>
 <<<ARTICLE
+	[[Description::This is the description of Comerica_Bank_Tower.]]
 	[[Category:Bank_buildings_in_the_United_States]]
 	[[Category:Buildings_and_structures_completed_in_1987]]
 	[[Category:Buildings_and_structures_in_Dallas,_Texas]]
@@ -806,6 +870,7 @@ ARTICLE
 //------------------------------------------------------------------------------	
 			'Dallas' =>
 <<<ARTICLE
+	[[Description::This is the description of Dallas.]]
 	[[Category:All_pages_needing_cleanup]]
 	[[Category:Cities_in_Texas]]
 	[[Category:Collin_County,_Texas]]
@@ -825,6 +890,7 @@ ARTICLE
 //------------------------------------------------------------------------------	
 			'Denver' =>
 <<<ARTICLE
+	[[Description::This is the description of Denver.]]
 	[[Category:All_pages_needing_cleanup]]
 	[[Category:Cities_in_Colorado]]
 	[[Category:Colorado_counties]]
@@ -841,6 +907,7 @@ ARTICLE
 //------------------------------------------------------------------------------	
 			'Detroit' =>
 <<<ARTICLE
+	[[Description::This is the description of Detroit.]]
 	[[Category:Cities_in_Michigan]]
 	[[Category:County_seats_in_Michigan]]
 	[[Category:Detroit,_Michigan]]
@@ -862,6 +929,7 @@ ARTICLE
 //------------------------------------------------------------------------------	
 			'Duke_Energy_Center' =>
 <<<ARTICLE
+	[[Description::This is the description of Duke_Energy_Center.]]
 	[[Category:_2006_architecture]]
 	[[Category:Buildings_and_structures_under_construction_in_the_United_States]]
 	[[Category:Office_buildings_in_North_Carolina]]
@@ -872,6 +940,7 @@ ARTICLE
 //------------------------------------------------------------------------------	
 			'Empire_State_Building' =>
 <<<ARTICLE
+	[[Description::This is the description of Empire_State_Building.]]
 	[[Category:_1931_architecture]]
 	[[Category:Accidents_involving_fog]]
 	[[Category:Art_Deco_buildings_in_New_York_City]]
@@ -897,6 +966,7 @@ ARTICLE
 //------------------------------------------------------------------------------	
 			'Enterprise_Plaza' =>
 <<<ARTICLE
+	[[Description::This is the description of Enterprise_Plaza.]]
 	[[Category:_1980_architecture_in_the_United_States]]
 	[[Category:Buildings_and_structures_completed_in_1980]]
 	[[Category:Hines_Interests_Limited_Partnership]]
@@ -908,6 +978,7 @@ ARTICLE
 //------------------------------------------------------------------------------	
 			'Figueroa_at_Wilshire' =>
 <<<ARTICLE
+	[[Description::This is the description of Figueroa_at_Wilshire.]]
 	[[Category:_1990_architecture]]
 	[[Category:Office_buildings_in_Los_Angeles,_California]]
 	[[Category:Skyscrapers_between_200_and_249_meters]]
@@ -917,6 +988,7 @@ ARTICLE
 //------------------------------------------------------------------------------	
 			'Florida' =>
 <<<ARTICLE
+	[[Description::This is the description of Florida.]]
 	[[Category:Florida_navigational_boxes]]
 	[[Category:United_States_State]]
 	[[Category:All_pages_needing_cleanup]]
@@ -933,6 +1005,7 @@ ARTICLE
 //------------------------------------------------------------------------------	
 			'Fontainebleau_Resort_Las_Vegas' =>
 <<<ARTICLE
+	[[Description::This is the description of Fontainebleau_Resort_Las_Vegas.]]
 	[[Category:Buildings_and_structures_in_Paradise,_Nevada]]
 	[[Category:Casinos_in_Las_Vegas]]
 	[[Category:Companies_that_have_filed_for_Chapter_11_bankruptcy]]
@@ -946,6 +1019,7 @@ ARTICLE
 //------------------------------------------------------------------------------	
 			'Fountain_Place' =>
 <<<ARTICLE
+	[[Description::This is the description of Fountain_Place.]]
 	[[Category:_1986_architecture]]
 	[[Category:Buildings_and_structures_in_Dallas,_Texas]]
 	[[Category:I._M._Pei_buildings]]
@@ -957,6 +1031,7 @@ ARTICLE
 //------------------------------------------------------------------------------	
 			'Franklin_Center_(Chicago)' =>
 <<<ARTICLE
+	[[Description::This is the description of Franklin_Center_(Chicago).]]
 	[[Category:AT%26T_buildings]]
 	[[Category:Building]]
 	[[Category:Buildings_and_structures_completed_in_1989]]
@@ -974,6 +1049,7 @@ ARTICLE
 //------------------------------------------------------------------------------	
 			'GE_Building' =>
 <<<ARTICLE
+	[[Description::This is the description of GE_Building.]]
 	[[Category:_1933_architecture]]
 	[[Category:Art_Deco_buildings_in_New_York_City]]
 	[[Category:Buildings_and_structures_on_the_National_Register_of_Historic_Places_in_Manhattan]]
@@ -989,6 +1065,7 @@ ARTICLE
 //------------------------------------------------------------------------------	
 			'Gas_Company_Tower' =>
 <<<ARTICLE
+	[[Description::This is the description of Gas_Company_Tower.]]
 	[[Category:Headquarters_in_the_United_States]]
 	[[Category:Office_buildings_in_Los_Angeles,_California]]
 	[[Category:Skidmore,_Owings_and_Merrill_buildings]]
@@ -999,6 +1076,7 @@ ARTICLE
 //------------------------------------------------------------------------------	
 			'Georgia' =>
 <<<ARTICLE
+	[[Description::This is the description of Georgia.]]
 	[[Category:Georgia_(U.S._state)_navigational_boxes]]
 	[[Category:United_States_State]]
 	[[Category:All_article_disambiguation_pages]]
@@ -1010,6 +1088,7 @@ ARTICLE
 //------------------------------------------------------------------------------	
 			'Goldman_Sachs_Tower' =>
 <<<ARTICLE
+	[[Description::This is the description of Goldman_Sachs_Tower.]]
 	[[Category:Building]]
 	[[Category:Buildings_and_structures_completed_in_2004]]
 	[[Category:C%C3%A9sar_Pelli_buildings]]
@@ -1025,6 +1104,7 @@ ARTICLE
 //------------------------------------------------------------------------------	
 			'Heritage_Plaza' =>
 <<<ARTICLE
+	[[Description::This is the description of Heritage_Plaza.]]
 	[[Category:_1987_architecture]]
 	[[Category:Chevron_Corporation]]
 	[[Category:Office_buildings_in_Houston,_Texas]]
@@ -1037,6 +1117,7 @@ ARTICLE
 //------------------------------------------------------------------------------	
 			'Houston' =>
 <<<ARTICLE
+	[[Description::This is the description of Houston.]]
 	[[Category:Cities_in_Texas]]
 	[[Category:Houston,_Texas]]
 	[[Category:Populated_coastal_places_in_Texas]]
@@ -1048,6 +1129,7 @@ ARTICLE
 //------------------------------------------------------------------------------	
 			'IDS_Center' =>
 <<<ARTICLE
+	[[Description::This is the description of IDS_Center.]]
 	[[Category:Buildings_and_structures_completed_in_1974]]
 	[[Category:John_Burgee_buildings]]
 	[[Category:Philip_Johnson_buildings]]
@@ -1059,6 +1141,7 @@ ARTICLE
 //------------------------------------------------------------------------------	
 			'Illinois' =>
 <<<ARTICLE
+	[[Description::This is the description of Illinois.]]
 	[[Category:Illinois_navigational_boxes]]
 	[[Category:United_States_State]]
 	[[Category:Illinois]]
@@ -1070,6 +1153,7 @@ ARTICLE
 //------------------------------------------------------------------------------	
 			'Indiana' =>
 <<<ARTICLE
+	[[Description::This is the description of Indiana.]]
 	[[Category:Indiana_navigational_boxes]]
 	[[Category:United_States_State]]
 	[[Category:Indiana]]
@@ -1080,6 +1164,7 @@ ARTICLE
 //------------------------------------------------------------------------------	
 			'Indianapolis' =>
 <<<ARTICLE
+	[[Description::This is the description of Indianapolis.]]
 	[[Category:Cities_in_Indiana]]
 	[[Category:Consolidated_city%E2%80%93counties_in_the_United_States]]
 	[[Category:County_seats_in_Indiana]]
@@ -1099,6 +1184,7 @@ ARTICLE
 //------------------------------------------------------------------------------	
 			'JPMorgan_Chase_Tower_(Houston)' =>
 <<<ARTICLE
+	[[Description::This is the description of JPMorgan_Chase_Tower_(Houston).]]
 	[[Category:_1981_architecture]]
 	[[Category:Building]]
 	[[Category:I._M._Pei_buildings]]
@@ -1116,6 +1202,7 @@ ARTICLE
 //------------------------------------------------------------------------------	
 			'Jersey_City,_New_Jersey' =>
 <<<ARTICLE
+	[[Description::This is the description of Jersey_City,_New_Jersey.]]
 	[[Category:Cities_in_New_Jersey]]
 	[[Category:County_seats_in_New_Jersey]]
 	[[Category:Faulkner_Act_Mayor-Council]]
@@ -1132,6 +1219,7 @@ ARTICLE
 //------------------------------------------------------------------------------	
 			'John_Hancock_Center' =>
 <<<ARTICLE
+	[[Description::This is the description of John_Hancock_Center.]]
 	[[Category:Building]]
 	[[Category:Buildings_and_structures_completed_in_1970]]
 	[[Category:Condominiums_in_Chicago,_Illinois]]
@@ -1149,6 +1237,7 @@ ARTICLE
 //------------------------------------------------------------------------------	
 			'Key_Tower' =>
 <<<ARTICLE
+	[[Description::This is the description of Key_Tower.]]
 	[[Category:_1991_architecture]]
 	[[Category:Building]]
 	[[Category:C%C3%A9sar_Pelli_buildings]]
@@ -1163,6 +1252,7 @@ ARTICLE
 //------------------------------------------------------------------------------	
 			'Las_Vegas' =>
 <<<ARTICLE
+	[[Description::This is the description of Las_Vegas.]]
 	[[Category:All_article_disambiguation_pages]]
 	[[Category:All_disambiguation_pages]]
 	[[Category:Disambiguation_pages]]
@@ -1171,6 +1261,7 @@ ARTICLE
 //------------------------------------------------------------------------------	
 			'Las_Vegas,_Nevada' =>
 <<<ARTICLE
+	[[Description::This is the description of Las_Vegas,_Nevada.]]
 	[[Category:Cities_in_Nevada]]
 	[[Category:Cities_in_the_Mojave_Desert]]
 	[[Category:Clark_County,_Nevada]]
@@ -1186,6 +1277,7 @@ ARTICLE
 //------------------------------------------------------------------------------	
 			'Legacy_Tower' =>
 <<<ARTICLE
+	[[Description::This is the description of Legacy_Tower.]]
 	[[Category:Building]]
 	[[Category:Condominiums_in_Chicago,_Illinois]]
 	[[Category:Skyscrapers_between_250_and_299_meters]]
@@ -1200,6 +1292,7 @@ ARTICLE
 //------------------------------------------------------------------------------	
 			'Los_Angeles' =>
 <<<ARTICLE
+	[[Description::This is the description of Los_Angeles.]]
 	[[Category:All_accuracy_disputes]]
 	[[Category:Cities_in_California]]
 	[[Category:Cities_in_Los_Angeles_County,_California]]
@@ -1220,6 +1313,7 @@ ARTICLE
 //------------------------------------------------------------------------------	
 			'Massachusetts' =>
 <<<ARTICLE
+	[[Description::This is the description of Massachusetts.]]
 	[[Category:Massachusetts_navigational_boxes]]
 	[[Category:United_States_State]]
 	[[Category:Former_British_colonies]]
@@ -1233,6 +1327,7 @@ ARTICLE
 //------------------------------------------------------------------------------	
 			'MetLife_Building' =>
 <<<ARTICLE
+	[[Description::This is the description of MetLife_Building.]]
 	[[Category:_1963_architecture]]
 	[[Category:Aviation_in_New_York_City]]
 	[[Category:Heliports_in_New_York]]
@@ -1250,6 +1345,7 @@ ARTICLE
 //------------------------------------------------------------------------------	
 			'Metropolitan_Life_Insurance_Company_Tower' =>
 <<<ARTICLE
+	[[Description::This is the description of Metropolitan_Life_Insurance_Company_Tower.]]
 	[[Category:_1909_architecture]]
 	[[Category:Buildings_and_structures_on_the_National_Register_of_Historic_Places_in_Manhattan]]
 	[[Category:Clock_towers_in_the_United_States]]
@@ -1266,6 +1362,7 @@ ARTICLE
 //------------------------------------------------------------------------------	
 			'Metropolitan_Tower' =>
 <<<ARTICLE
+	[[Description::This is the description of Metropolitan_Tower.]]
 	[[Category:All_article_disambiguation_pages]]
 	[[Category:All_disambiguation_pages]]
 	[[Category:Disambiguation_pages]]
@@ -1274,6 +1371,7 @@ ARTICLE
 //------------------------------------------------------------------------------	
 			'Miami' =>
 <<<ARTICLE
+	[[Description::This is the description of Miami.]]
 	[[Category:Bermuda_Triangle]]
 	[[Category:Cities_in_Miami-Dade_County,_Florida]]
 	[[Category:County_seats_in_Florida]]
@@ -1293,6 +1391,7 @@ ARTICLE
 //------------------------------------------------------------------------------	
 			'Michigan' =>
 <<<ARTICLE
+	[[Description::This is the description of Michigan.]]
 	[[Category:Michigan_navigational_boxes]]
 	[[Category:United_States_State]]
 	[[Category:Michigan]]
@@ -1303,6 +1402,7 @@ ARTICLE
 //------------------------------------------------------------------------------	
 			'Minneapolis' =>
 <<<ARTICLE
+	[[Description::This is the description of Minneapolis.]]
 	[[Category:Cities_in_Minnesota]]
 	[[Category:County_seats_in_Minnesota]]
 	[[Category:Hennepin_County,_Minnesota]]
@@ -1317,6 +1417,7 @@ ARTICLE
 //------------------------------------------------------------------------------	
 			'Minnesota' =>
 <<<ARTICLE
+	[[Description::This is the description of Minnesota.]]
 	[[Category:Minnesota_navigational_boxes]]
 	[[Category:United_States_State]]
 	[[Category:Minnesota]]
@@ -1327,6 +1428,7 @@ ARTICLE
 //------------------------------------------------------------------------------	
 			'Mobile,_Alabama' =>
 <<<ARTICLE
+	[[Description::This is the description of Mobile,_Alabama.]]
 	[[Category:Cities_in_Alabama]]
 	[[Category:County_seats_in_Alabama]]
 	[[Category:Infobox_Settlement_US_maintenance]]
@@ -1340,6 +1442,7 @@ ARTICLE
 //------------------------------------------------------------------------------	
 			'Nevada' =>
 <<<ARTICLE
+	[[Description::This is the description of Nevada.]]
 	[[Category:Former_Spanish_colonies]]
 	[[Category:Nevada]]
 	[[Category:States_and_territories_established_in_1864]]
@@ -1352,6 +1455,7 @@ ARTICLE
 //------------------------------------------------------------------------------	
 			'New_Jersey' =>
 <<<ARTICLE
+	[[Description::This is the description of New_Jersey.]]
 	[[Category:Former_British_colonies]]
 	[[Category:New_Jersey]]
 	[[Category:Peninsulas_of_the_United_States]]
@@ -1365,6 +1469,7 @@ ARTICLE
 //------------------------------------------------------------------------------	
 			'New_York' =>
 <<<ARTICLE
+	[[Description::This is the description of New_York.]]
 	[[Category:New_York_templates]]
 	[[Category:United_States_State]]
 	[[Category:Former_British_colonies]]
@@ -1376,6 +1481,7 @@ ARTICLE
 //------------------------------------------------------------------------------	
 			'New_York_City' =>
 <<<ARTICLE
+	[[Description::This is the description of New_York_City.]]
 	[[Category:_1624_establishments_in_the_Thirteen_Colonies]]
 	[[Category:Cities_in_New_York]]
 	[[Category:Former_United_States_state_capitals]]
@@ -1397,6 +1503,7 @@ ARTICLE
 //------------------------------------------------------------------------------	
 			'North_Carolina' =>
 <<<ARTICLE
+	[[Description::This is the description of North_Carolina.]]
 	[[Category:Former_British_colonies]]
 	[[Category:North_Carolina]]
 	[[Category:Spanish_colonization_of_the_Americas]]
@@ -1411,6 +1518,7 @@ ARTICLE
 //------------------------------------------------------------------------------	
 			'Ohio' =>
 <<<ARTICLE
+	[[Description::This is the description of Ohio.]]
 	[[Category:Ohio_navigational_boxes]]
 	[[Category:United_States_State]]
 	[[Category:Midwestern_United_States]]
@@ -1422,6 +1530,7 @@ ARTICLE
 //------------------------------------------------------------------------------	
 			'Olympia_Centre' =>
 <<<ARTICLE
+	[[Description::This is the description of Olympia_Centre.]]
 	[[Category:_1986_architecture]]
 	[[Category:Condominiums_in_Chicago,_Illinois]]
 	[[Category:Office_buildings_in_Chicago,_Illinois]]
@@ -1434,6 +1543,7 @@ ARTICLE
 //------------------------------------------------------------------------------	
 			'One_Astor_Plaza' =>
 <<<ARTICLE
+	[[Description::This is the description of One_Astor_Plaza.]]
 	[[Category:Buildings_and_structures_completed_in_1972]]
 	[[Category:Skyscrapers_between_200_and_249_meters]]
 	[[Category:Skyscrapers_in_New_York_City]]
@@ -1443,6 +1553,7 @@ ARTICLE
 //------------------------------------------------------------------------------	
 			'One_Atlantic_Center' =>
 <<<ARTICLE
+	[[Description::This is the description of One_Atlantic_Center.]]
 	[[Category:Buildings_and_structures_completed_in_1987]]
 	[[Category:Hines_Interests_Limited_Partnership]]
 	[[Category:IBM_facilities]]
@@ -1456,6 +1567,7 @@ ARTICLE
 //------------------------------------------------------------------------------	
 			'One_Chase_Manhattan_Plaza' =>
 <<<ARTICLE
+	[[Description::This is the description of One_Chase_Manhattan_Plaza.]]
 	[[Category:_1961_architecture]]
 	[[Category:Buildings_associated_with_the_Rockefeller_family]]
 	[[Category:JPMorgan_Chase_buildings]]
@@ -1468,6 +1580,7 @@ ARTICLE
 //------------------------------------------------------------------------------	
 			'One_Liberty_Place' =>
 <<<ARTICLE
+	[[Description::This is the description of One_Liberty_Place.]]
 	[[Category:_1987_architecture]]
 	[[Category:Building]]
 	[[Category:Skyscrapers_between_250_and_299_meters]]
@@ -1481,6 +1594,7 @@ ARTICLE
 //------------------------------------------------------------------------------	
 			'One_Liberty_Plaza' =>
 <<<ARTICLE
+	[[Description::This is the description of One_Liberty_Plaza.]]
 	[[Category:Buildings_and_structures_completed_in_1973]]
 	[[Category:New_York_City_stubs]]
 	[[Category:Office_buildings_in_New_York_City]]
@@ -1491,6 +1605,7 @@ ARTICLE
 //------------------------------------------------------------------------------	
 			'One_Museum_Park' =>
 <<<ARTICLE
+	[[Description::This is the description of One_Museum_Park.]]
 	[[Category:_2007_architecture]]
 	[[Category:_2010_establishments]]
 	[[Category:Condominiums_in_Chicago,_Illinois]]
@@ -1502,6 +1617,7 @@ ARTICLE
 //------------------------------------------------------------------------------	
 			'One_Penn_Plaza' =>
 <<<ARTICLE
+	[[Description::This is the description of One_Penn_Plaza.]]
 	[[Category:Buildings_and_structures_completed_in_1972]]
 	[[Category:Pennsylvania_Plaza]]
 	[[Category:Skyscrapers_between_200_and_249_meters]]
@@ -1511,6 +1627,7 @@ ARTICLE
 //------------------------------------------------------------------------------	
 			'One_Prudential_Plaza' =>
 <<<ARTICLE
+	[[Description::This is the description of One_Prudential_Plaza.]]
 	[[Category:_1955_architecture]]
 	[[Category:Insurance_company_headquarters_in_the_United_States]]
 	[[Category:Office_buildings_in_Chicago,_Illinois]]
@@ -1522,6 +1639,7 @@ ARTICLE
 //------------------------------------------------------------------------------	
 			'One_Shell_Plaza' =>
 <<<ARTICLE
+	[[Description::This is the description of One_Shell_Plaza.]]
 	[[Category:_1971_architecture]]
 	[[Category:Office_buildings_in_Houston,_Texas]]
 	[[Category:Oil_company_headquarters_in_the_United_States]]
@@ -1534,6 +1652,7 @@ ARTICLE
 //------------------------------------------------------------------------------	
 			'One_Worldwide_Plaza' =>
 <<<ARTICLE
+	[[Description::This is the description of One_Worldwide_Plaza.]]
 	[[Category:Buildings_and_structures_completed_in_1989]]
 	[[Category:Skidmore,_Owings_and_Merrill_buildings]]
 	[[Category:Skyscrapers_between_200_and_249_meters]]
@@ -1543,6 +1662,7 @@ ARTICLE
 //------------------------------------------------------------------------------	
 			'Park_Tower' =>
 <<<ARTICLE
+	[[Description::This is the description of Park_Tower.]]
 	[[Category:All_article_disambiguation_pages]]
 	[[Category:All_disambiguation_pages]]
 	[[Category:Disambiguation_pages]]
@@ -1551,6 +1671,7 @@ ARTICLE
 //------------------------------------------------------------------------------	
 			'Park_Tower_(Chicago)' =>
 <<<ARTICLE
+	[[Description::This is the description of Park_Tower_(Chicago).]]
 	[[Category:Condo-hotels_in_the_United_States]]
 	[[Category:Condominiums_in_Chicago,_Illinois]]
 	[[Category:Residential_skyscrapers_in_Chicago,_Illinois]]
@@ -1560,6 +1681,7 @@ ARTICLE
 //------------------------------------------------------------------------------	
 			'Pennsylvania' =>
 <<<ARTICLE
+	[[Description::This is the description of Pennsylvania.]]
 	[[Category:Pennsylvania_navigational_boxes]]
 	[[Category:United_States_State]]
 	[[Category:Former_British_colonies]]
@@ -1572,6 +1694,7 @@ ARTICLE
 //------------------------------------------------------------------------------	
 			'Philadelphia' =>
 <<<ARTICLE
+	[[Description::This is the description of Philadelphia.]]
 	[[Category:_1682_establishments_in_the_Thirteen_Colonies]]
 	[[Category:All_pages_needing_cleanup]]
 	[[Category:Cities_in_Pennsylvania]]
@@ -1595,6 +1718,7 @@ ARTICLE
 //------------------------------------------------------------------------------	
 			'Pittsburgh' =>
 <<<ARTICLE
+	[[Description::This is the description of Pittsburgh.]]
 	[[Category:_1794_establishments]]
 	[[Category:Cities_in_Pennsylvania]]
 	[[Category:County_seats_in_Pennsylvania]]
@@ -1612,6 +1736,7 @@ ARTICLE
 //------------------------------------------------------------------------------	
 			'Prudential_Tower' =>
 <<<ARTICLE
+	[[Description::This is the description of Prudential_Tower.]]
 	[[Category:_1964_architecture]]
 	[[Category:Back_Bay,_Boston]]
 	[[Category:Landmarks_in_Boston,_Massachusetts]]
@@ -1625,6 +1750,7 @@ ARTICLE
 //------------------------------------------------------------------------------	
 			'RSA_Battle_House_Tower' =>
 <<<ARTICLE
+	[[Description::This is the description of RSA_Battle_House_Tower.]]
 	[[Category:Buildings_and_structures_completed_in_2007]]
 	[[Category:Skyscrapers_between_200_and_249_meters]]
 	[[Category:Skyscrapers_in_Mobile,_Alabama]]
@@ -1633,6 +1759,7 @@ ARTICLE
 //------------------------------------------------------------------------------	
 			'Renaissance_Tower' =>
 <<<ARTICLE
+	[[Description::This is the description of Renaissance_Tower.]]
 	[[Category:All_article_disambiguation_pages]]
 	[[Category:All_disambiguation_pages]]
 	[[Category:Disambiguation_pages]]
@@ -1641,6 +1768,7 @@ ARTICLE
 //------------------------------------------------------------------------------	
 			'Renaissance_Tower_(Dallas)' =>
 <<<ARTICLE
+	[[Description::This is the description of Renaissance_Tower_(Dallas).]]
 	[[Category:_1974_architecture]]
 	[[Category:Building]]
 	[[Category:Buildings_and_structures_in_Dallas,_Texas]]
@@ -1657,6 +1785,7 @@ ARTICLE
 //------------------------------------------------------------------------------	
 			'Republic_Plaza' =>
 <<<ARTICLE
+	[[Description::This is the description of Republic_Plaza.]]
 	[[Category:All_article_disambiguation_pages]]
 	[[Category:All_disambiguation_pages]]
 	[[Category:Place_name_disambiguation_pages]]
@@ -1665,6 +1794,7 @@ ARTICLE
 //------------------------------------------------------------------------------	
 			'San_Francisco' =>
 <<<ARTICLE
+	[[Description::This is the description of San_Francisco.]]
 	[[Category:California_counties]]
 	[[Category:Consolidated_city%E2%80%93counties_in_the_United_States]]
 	[[Category:County_seats_in_California]]
@@ -1683,6 +1813,7 @@ ARTICLE
 //------------------------------------------------------------------------------	
 			'Seattle' =>
 <<<ARTICLE
+	[[Description::This is the description of Seattle.]]
 	[[Category:Cities_in_Washington_(U.S._state)]]
 	[[Category:Cities_in_the_Seattle_metropolitan_area]]
 	[[Category:County_seats_in_Washington_(U.S._state)]]
@@ -1699,6 +1830,7 @@ ARTICLE
 //------------------------------------------------------------------------------	
 			'Seattle_Municipal_Tower' =>
 <<<ARTICLE
+	[[Description::This is the description of Seattle_Municipal_Tower.]]
 	[[Category:_1990_architecture]]
 	[[Category:Building]]
 	[[Category:Office_buildings_in_Seattle,_Washington]]
@@ -1713,6 +1845,7 @@ ARTICLE
 //------------------------------------------------------------------------------	
 			'SunTrust_Plaza' =>
 <<<ARTICLE
+	[[Description::This is the description of SunTrust_Plaza.]]
 	[[Category:Bank_company_headquarters_in_the_United_States]]
 	[[Category:Buildings_and_structures_completed_in_1992]]
 	[[Category:John_C._Portman,_Jr._buildings]]
@@ -1723,6 +1856,7 @@ ARTICLE
 //------------------------------------------------------------------------------	
 			'Terminal_Tower' =>
 <<<ARTICLE
+	[[Description::This is the description of Terminal_Tower.]]
 	[[Category:Forest_City_Enterprises]]
 	[[Category:Skyscrapers_between_200_and_249_meters]]
 	[[Category:Skyscrapers_in_Cleveland,_Ohio]]
@@ -1731,6 +1865,7 @@ ARTICLE
 //------------------------------------------------------------------------------	
 			'Texas' =>
 <<<ARTICLE
+	[[Description::This is the description of Texas.]]
 	[[Category:United_States_State]]
 	[[Category:Former_Spanish_colonies]]
 	[[Category:States_and_territories_established_in_1845]]
@@ -1743,6 +1878,7 @@ ARTICLE
 //------------------------------------------------------------------------------	
 			'The_New_York_Times_Building' =>
 <<<ARTICLE
+	[[Description::This is the description of The_New_York_Times_Building.]]
 	[[Category:Building]]
 	[[Category:Buildings_and_structures_completed_in_2007]]
 	[[Category:Eighth_Avenue_(Manhattan)]]
@@ -1765,6 +1901,7 @@ ARTICLE
 //------------------------------------------------------------------------------	
 			'Three_First_National_Plaza' =>
 <<<ARTICLE
+	[[Description::This is the description of Three_First_National_Plaza.]]
 	[[Category:_1981_architecture]]
 	[[Category:Chicago,_Illinois_stubs]]
 	[[Category:Illinois_building_and_structure_stubs]]
@@ -1777,6 +1914,7 @@ ARTICLE
 //------------------------------------------------------------------------------	
 			'Three_World_Financial_Center' =>
 <<<ARTICLE
+	[[Description::This is the description of Three_World_Financial_Center.]]
 	[[Category:_1985_architecture]]
 	[[Category:American_Express]]
 	[[Category:Lehman_Brothers]]
@@ -1788,6 +1926,7 @@ ARTICLE
 //------------------------------------------------------------------------------	
 			'Times_Square_Tower' =>
 <<<ARTICLE
+	[[Description::This is the description of Times_Square_Tower.]]
 	[[Category:Buildings_and_structures_completed_in_2004]]
 	[[Category:New_York_City_building_and_structure_stubs]]
 	[[Category:Office_buildings_in_New_York_City]]
@@ -1799,6 +1938,7 @@ ARTICLE
 //------------------------------------------------------------------------------	
 			'Transamerica_Pyramid' =>
 <<<ARTICLE
+	[[Description::This is the description of Transamerica_Pyramid.]]
 	[[Category:Building]]
 	[[Category:Buildings_and_structures_completed_in_1972]]
 	[[Category:Headquarters_in_the_United_States]]
@@ -1818,6 +1958,7 @@ ARTICLE
 //------------------------------------------------------------------------------	
 			'Trump_International_Hotel_and_Tower' =>
 <<<ARTICLE
+	[[Description::This is the description of Trump_International_Hotel_and_Tower.]]
 	[[Category:All_article_disambiguation_pages]]
 	[[Category:All_disambiguation_pages]]
 	[[Category:Disambiguation_pages]]
@@ -1826,6 +1967,7 @@ ARTICLE
 //------------------------------------------------------------------------------	
 			'Trump_International_Hotel_and_Tower_(Chicago)' =>
 <<<ARTICLE
+	[[Description::This is the description of Trump_International_Hotel_and_Tower_(Chicago).]]
 	[[Category:_2009_architecture]]
 	[[Category:Building]]
 	[[Category:Condo-hotels_in_the_United_States]]
@@ -1844,6 +1986,7 @@ ARTICLE
 //------------------------------------------------------------------------------	
 			'Trump_World_Tower' =>
 <<<ARTICLE
+	[[Description::This is the description of Trump_World_Tower.]]
 	[[Category:Buildings_and_structures_in_Manhattan]]
 	[[Category:Condominiums_in_New_York_City]]
 	[[Category:Residential_skyscrapers_in_New_York_City]]
@@ -1853,6 +1996,7 @@ ARTICLE
 //------------------------------------------------------------------------------	
 			'Two_California_Plaza' =>
 <<<ARTICLE
+	[[Description::This is the description of Two_California_Plaza.]]
 	[[Category:_1992_architecture]]
 	[[Category:Arthur_Erickson_buildings]]
 	[[Category:Office_buildings_in_Los_Angeles,_California]]
@@ -1863,6 +2007,7 @@ ARTICLE
 //------------------------------------------------------------------------------	
 			'Two_Liberty_Place' =>
 <<<ARTICLE
+	[[Description::This is the description of Two_Liberty_Place.]]
 	[[Category:_1987_architecture]]
 	[[Category:Skyscrapers_between_250_and_299_meters]]
 	[[Category:Skyscrapers_in_Philadelphia,_Pennsylvania]]
@@ -1871,6 +2016,7 @@ ARTICLE
 //------------------------------------------------------------------------------	
 			'Two_Prudential_Plaza' =>
 <<<ARTICLE
+	[[Description::This is the description of Two_Prudential_Plaza.]]
 	[[Category:Building]]
 	[[Category:Buildings_and_structures_completed_in_1990]]
 	[[Category:Office_buildings_in_Chicago,_Illinois]]
@@ -1886,6 +2032,7 @@ ARTICLE
 //------------------------------------------------------------------------------	
 			'U.S._Bank_Tower' =>
 <<<ARTICLE
+	[[Description::This is the description of U.S._Bank_Tower.]]
 	[[Category:All_article_disambiguation_pages]]
 	[[Category:All_disambiguation_pages]]
 	[[Category:Disambiguation_pages]]
@@ -1894,6 +2041,7 @@ ARTICLE
 //------------------------------------------------------------------------------	
 			'U.S._Bank_Tower_(Los_Angeles)' =>
 <<<ARTICLE
+	[[Description::This is the description of U.S._Bank_Tower_(Los_Angeles).]]
 	[[Category:Building]]
 	[[Category:Buildings_and_structures_completed_in_1989]]
 	[[Category:Office_buildings_in_Los_Angeles,_California]]
@@ -1909,6 +2057,7 @@ ARTICLE
 //------------------------------------------------------------------------------	
 			'U.S._Steel_Tower' =>
 <<<ARTICLE
+	[[Description::This is the description of U.S._Steel_Tower.]]
 	[[Category:_1970_architecture]]
 	[[Category:Buildings_and_structures_completed_in_1970]]
 	[[Category:Headquarters_in_the_United_States]]
@@ -1922,6 +2071,7 @@ ARTICLE
 //------------------------------------------------------------------------------	
 			'Union_Square_(Seattle)' =>
 <<<ARTICLE
+	[[Description::This is the description of Union_Square_(Seattle).]]
 	[[Category:Building]]
 	[[Category:Buildings_and_structures_completed_in_1981]]
 	[[Category:Buildings_and_structures_completed_in_1989]]
@@ -1941,6 +2091,7 @@ ARTICLE
 //------------------------------------------------------------------------------	
 			'Wachovia_Financial_Center' =>
 <<<ARTICLE
+	[[Description::This is the description of Wachovia_Financial_Center.]]
 	[[Category:_1984_architecture]]
 	[[Category:Bank_buildings_in_the_United_States]]
 	[[Category:Office_buildings_in_Miami,_Florida]]
@@ -1952,6 +2103,7 @@ ARTICLE
 //------------------------------------------------------------------------------	
 			'Washington' =>
 <<<ARTICLE
+	[[Description::This is the description of Washington.]]
 	[[Category:United_States_State]]
 	[[Category:Washington_(U.S._state)_navigational_boxes]]
 	[[Category:All_article_disambiguation_pages]]
@@ -1963,6 +2115,7 @@ ARTICLE
 //------------------------------------------------------------------------------	
 			'Water_Tower_Place' =>
 <<<ARTICLE
+	[[Description::This is the description of Water_Tower_Place.]]
 	[[Category:_1975_architecture]]
 	[[Category:Condo-hotels_in_the_United_States]]
 	[[Category:Condominiums_in_Chicago,_Illinois]]
@@ -1978,6 +2131,7 @@ ARTICLE
 //------------------------------------------------------------------------------	
 			'Wells_Fargo_Center' =>
 <<<ARTICLE
+	[[Description::This is the description of Wells_Fargo_Center.]]
 	[[Category:All_article_disambiguation_pages]]
 	[[Category:All_disambiguation_pages]]
 	[[Category:Disambiguation_pages]]
@@ -1987,6 +2141,7 @@ ARTICLE
 //------------------------------------------------------------------------------	
 			'Wells_Fargo_Center_(Minneapolis)' =>
 <<<ARTICLE
+	[[Description::This is the description of Wells_Fargo_Center_(Minneapolis).]]
 	[[Category:_1988_architecture]]
 	[[Category:Art_Deco_architecture_in_Minnesota]]
 	[[Category:Building]]
@@ -2003,6 +2158,7 @@ ARTICLE
 //------------------------------------------------------------------------------	
 			'Wells_Fargo_Plaza' =>
 <<<ARTICLE
+	[[Description::This is the description of Wells_Fargo_Plaza.]]
 	[[Category:All_article_disambiguation_pages]]
 	[[Category:All_disambiguation_pages]]
 	[[Category:Disambiguation_pages]]
@@ -2012,6 +2168,7 @@ ARTICLE
 //------------------------------------------------------------------------------	
 			'Wells_Fargo_Plaza_(Houston)' =>
 <<<ARTICLE
+	[[Description::This is the description of Wells_Fargo_Plaza_(Houston).]]
 	[[Category:_1983_architecture]]
 	[[Category:Building]]
 	[[Category:Office_buildings_in_Houston,_Texas]]
@@ -2029,6 +2186,7 @@ ARTICLE
 //------------------------------------------------------------------------------	
 			'Wells_Fargo_Tower' =>
 <<<ARTICLE
+	[[Description::This is the description of Wells_Fargo_Tower.]]
 	[[Category:All_article_disambiguation_pages]]
 	[[Category:All_disambiguation_pages]]
 	[[Category:Disambiguation_pages]]
@@ -2038,6 +2196,7 @@ ARTICLE
 //------------------------------------------------------------------------------	
 			'Westin_Peachtree_Plaza_Hotel' =>
 <<<ARTICLE
+	[[Description::This is the description of Westin_Peachtree_Plaza_Hotel.]]
 	[[Category:Buildings_and_structures_completed_in_1976]]
 	[[Category:Hotels_established_in_1976]]
 	[[Category:Hotels_in_Atlanta,_Georgia]]
@@ -2051,6 +2210,7 @@ ARTICLE
 //------------------------------------------------------------------------------	
 			'Williams_Tower' =>
 <<<ARTICLE
+	[[Description::This is the description of Williams_Tower.]]
 	[[Category:_1983_architecture]]
 	[[Category:John_Burgee_buildings]]
 	[[Category:Office_buildings_in_Houston,_Texas]]
@@ -2063,6 +2223,7 @@ ARTICLE
 //------------------------------------------------------------------------------	
 			'Willis_Tower' =>
 <<<ARTICLE
+	[[Description::This is the description of Willis_Tower.]]
 	[[Category:_1973_architecture]]
 	[[Category:Building]]
 	[[Category:Buildings_and_structures_on_U.S._Route_66]]
@@ -2085,6 +2246,7 @@ ARTICLE
 //------------------------------------------------------------------------------	
 			'Woolworth_Building' =>
 <<<ARTICLE
+	[[Description::This is the description of Woolworth_Building.]]
 	[[Category:_1913_architecture]]
 	[[Category:Buildings_and_structures_on_the_National_Register_of_Historic_Places_in_Manhattan]]
 	[[Category:Cass_Gilbert_buildings]]

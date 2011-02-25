@@ -1,6 +1,6 @@
 <?php
 /*  Copyright 2011, ontoprise GmbH
-*  This file is part of the Facetted Search Module of the Enhanced Retrieval Extension.
+*  This file is part of the Faceted Search Module of the Enhanced Retrieval Extension.
 *
 *   The Enhanced Retrieval Extension is free software; you can redistribute it and/or modify
 *   it under the terms of the GNU General Public License as published by
@@ -17,43 +17,29 @@
 */
 
 /**
- * This file contains the class FSSolrSMWDB. It creates the index from the database
- * tables of SMW.
+ * This file contains the settings for Faceted Search
  * 
  * @author Thomas Schweitzer
- * Date: 22.02.2011
+ * Date: 24.02.2011
  * 
  */
 if ( !defined( 'MEDIAWIKI' ) ) {
 	die( "This file is part of the Enhanced Retrieval Extension extension. It is not a valid entry point.\n" );
 }
 
-/**
- * This class is the indexer for the SMW database tables.
- * 
- * @author thsc
- *
- */
-class FSSolrSMWDB extends FSSolrIndexer {
-
-	//--- Private fields ---
-	
-	
-	//--- getter/setter ---
-	
-	//--- Public methods ---
-
-	
-	/**
-	 * Creates a new FSSolrSMWDB indexer object.
-	 * @param string $host
-	 * 		Name or IP address of the host of the server
-	 * @param int $port
-	 * 		Server port of the Solr server
-	 */
-	public function __construct($host, $port) {
-		parent::__construct($host, $port);
-	}
-	
-	
-}
+###
+# This array configures the indexer that is used for faceted search. It has the
+# following key-value pairs:
+# indexer: Type of the indexer. Currently only 'SOLR' is supported.
+# source:  The source for indexing semantic data. Currently only the database
+#          of SMW is supported: 'SMWDB'
+# host:    Name or IP address of the indexer server e.g. 'localhost'
+# port:    The port number of the indexer server e.g. 8983
+#
+##
+$fsgFacetedSearchConfig = array(
+    'indexer' => 'SOLR',
+    'source'  => 'SMWDB',
+    'host'    => 'localhost',
+    'port'    => 8983
+);

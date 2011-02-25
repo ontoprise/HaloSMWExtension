@@ -2,7 +2,7 @@
 	<dataSource 
 		type="JdbcDataSource" 
 		driver="com.mysql.jdbc.Driver"
-		url="jdbc:mysql://localhost:3306/semwiki_en" 
+		url="jdbc:mysql://localhost:3306/testdb" 
 		user="root" 
 		password="m8nix"
 		batchSize="-1" 
@@ -11,7 +11,7 @@
         <![CDATA[
         	function Relations(row) {
         	  // The values of all properties are stored as string.
-        		var prop = 'smwh_'+row.get('prop')+'_s';
+        		var prop = 'smwh_'+row.get('prop')+'_t';
         		var val = row.get('obj');
         		row.remove('prop');
         		row.remove('obj');
@@ -19,6 +19,19 @@
         		row.put(prop, val);
         		// Store the names of all properties in the article
         		row.put('smwh_properties', prop);
+        		return row;
+        	}
+
+        	function TextAttributes(row) {
+        	  // The values of all text attributes are stored as string.
+        		var attr = 'smwh_'+row.get('attr')+'_xsdvalue_t';
+        		var text = row.get('text');
+        		row.remove('attr');
+        		row.remove('text');
+        		// Add the attribute and its value
+        		row.put(attr, text);
+        		// Store the names of all attributes in the article
+        		row.put('smwh_attributes', attr);
         		return row;
         	}
         	
@@ -36,7 +49,8 @@
         		var typeSuffix = 't';
         		var isNumeric = false;
         		if (type == '_dat' ||
-              prop == 'Modification_date') {
+              prop == 'Modification_date' ||
+              prop == 'Creation_date') {
               // Given format of a date: 1995/12/31T23:59:59
               // Required format: 1995-12-31T23:59:59Z
               var dateTime = valXSD.split("T");
@@ -141,9 +155,9 @@
         <!-- Store all text values for each subject -->
   			<entity 
   				name="text"
-  				transformer="script:Relations"
-  				query="SELECT CAST(pids.smw_title AS CHAR) as prop,
-  				              CAST(t.value_blob AS CHAR) as obj
+  				transformer="script:TextAttributes"
+  				query="SELECT CAST(pids.smw_title AS CHAR) as attr,
+  				              CAST(t.value_blob AS CHAR) as text
   				       FROM smw_text2 AS t
   				       LEFT JOIN (smw_ids as pids) ON (pids.smw_id = t.p_id)
   				       WHERE t.s_id='${smwids.smwID}'">

@@ -1,6 +1,6 @@
 <?php
 /*  Copyright 2011, ontoprise GmbH
-*  This file is part of the Facetted Search Module of the Enhanced Retrieval Extension.
+*  This file is part of the Faceted Search Module of the Enhanced Retrieval Extension.
 *
 *   The Enhanced Retrieval Extension is free software; you can redistribute it and/or modify
 *   it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@
 */
 
 /**
- * This file contains the factory class for the Facetted Search Indexer.
+ * This file contains the factory class for the Faceted Search Indexer.
  * 
  * @author Thomas Schweitzer
  * Date: 22.02.2011
@@ -31,7 +31,7 @@ if ( !defined( 'MEDIAWIKI' ) ) {
 
 /**
  * This factory creates indexer objects that encapsulate access to index servers
- * for facetted search.
+ * for faceted search.
  * 
  * @author Thomas Schweitzer
  * 
@@ -47,6 +47,8 @@ class FSIndexerFactory  {
      *    'source'  => 'SMWDB'
 	 *    'host'    => hostname
      *    'port'    => portnumber
+     *  If <null> (default), the global configuration which is stored in the 
+     *  variable $fsgFacetedSearchConfig is used.
      *    
      * @return IFSIndexer
      * 	An instance of the interface IFSIndexer
@@ -54,9 +56,10 @@ class FSIndexerFactory  {
      * 	INCOMPLETE_CONFIG: If the configuration is incomplete
      *  UNSUPPORTED_VALUE: If a value for a field in the configuration is not supported
 	 */
-	public static function create(array $indexerConfig) {
+	public static function create(array $indexerConfig = null) {
 		if (is_null($indexerConfig)) {
-			$indexerConfig = array();
+			global $fsgFacetedSearchConfig;
+			$indexerConfig = $fsgFacetedSearchConfig;
 		}
 		// Check if the configuration is complete
 		$expKeys = array('indexer' => 0, 'source' => 0, 'host' => 0, 'port' => 0);

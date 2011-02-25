@@ -17,6 +17,7 @@ define('US_HIGH_TOLERANCE', 0);
 define('US_LOWTOLERANCE', 1);
 define('US_EXACTMATCH', 2);
 
+require_once 'FacetedSearch/FS_GlobalFunctions.php';
 
 $wgExtensionCredits['other'][] = array(
         'name' => 'Enhanced Retrieval extension',
@@ -124,18 +125,6 @@ function wfUSSetupExtension() {
 	$wgAutoloadClasses['LuceneResult'] = $dir . 'MWSearch/MWSearch_body.php';
 	$wgAutoloadClasses['LuceneSearchSet'] = $dir . 'MWSearch/MWSearch_body.php';
 	
-	// Classes for Facetted Search
-	$wgAutoloadClasses['FSIndexerFactory'] = $dir . 'includes/FacettedSearch/FS_IndexerFactory.php';
-	$wgAutoloadClasses['FSSolrSMWDB'] = $dir . 'includes/FacettedSearch/FS_SolrSMWDB.php';
-	$wgAutoloadClasses['FSSolrIndexer'] = $dir . 'includes/FacettedSearch/FS_SolrIndexer.php';
-	$wgAutoloadClasses['IFSIndexer'] = $dir . 'includes/FacettedSearch/IFS_Indexer.php';
-	$wgAutoloadClasses['IFSIndexer'] = $dir . 'includes/FacettedSearch/IFS_Indexer.php';
-	
-	// Exceptions
-	$wgAutoloadClasses['ERException'] = $dir . 'exceptions/ER_Exception.php';
-	$wgAutoloadClasses['ERFSException'] = $dir . 'exceptions/ER_FSException.php';
-	
-	
 	$wgSpecialPages['EnhancedRetrievalStatistics'] = array('SpecialPage','EnhancedRetrievalStatistics', '', true, 'smwfDoSpecialUSSearch', $dir . 'includes/EnhancedRetrievalStatistics.php');
 	//$wgSpecialPageGroups['EnhancedRetrievalStatistics'] = 'maintenance';
 
@@ -158,6 +147,10 @@ function wfUSSetupExtension() {
 		if (defined("CE_COMMENT_NS")) $usgAllNamespaces[CE_COMMENT_NS] = "smw_plus_comment_icon_16x16.png";
         if (defined("SMW_NS_USER_MANUAL")) $usgAllNamespaces[SMW_NS_USER_MANUAL] = "smw_plus_help_icon_16x16.png";
 	}
+	
+	// Set up Faceted Search
+	fsfSetupFacetedSearch();
+	
 	return true;
 }
 

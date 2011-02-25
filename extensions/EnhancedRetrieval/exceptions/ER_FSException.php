@@ -22,7 +22,7 @@
 */
 
 /**
- * This file contains the exception class for Facetted Search
+ * This file contains the exception class for Faceted Search
  * 
  * @author Thomas Schweitzer
  * Date: 22.02.2011
@@ -33,7 +33,7 @@ if ( !defined( 'MEDIAWIKI' ) ) {
 }
 
 /**
- * Exceptions for the Facetted Search.
+ * Exceptions for the Faceted Search.
  *
  */
 class ERFSException extends ERException {
@@ -66,10 +66,10 @@ class ERFSException extends ERException {
     	$msg = "";
     	switch ($args[0]) {
     		case self::INCOMPLETE_CONFIG:
-    			$msg = "The configuration for creating a Facetted Search Indexer is incomplete:\n $args[1]";
+    			$msg = "The configuration for creating a Faceted Search Indexer is incomplete:\n $args[1]";
     			break;
     		case self::UNSUPPORTED_VALUE:
-    			$msg = "The configuration for creating a Facetted Search Indexer contains unsupported values:\n $args[1]";
+    			$msg = "The configuration for creating a Faceted Search Indexer contains unsupported values:\n $args[1]";
     			break;
     	}
     	return $msg;

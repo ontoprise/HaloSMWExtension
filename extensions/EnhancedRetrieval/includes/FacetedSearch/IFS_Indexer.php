@@ -1,6 +1,6 @@
 <?php
 /*  Copyright 2011, ontoprise GmbH
-*  This file is part of the Facetted Search Module of the Enhanced Retrieval Extension.
+*  This file is part of the Faceted Search Module of the Enhanced Retrieval Extension.
 *
 *   The Enhanced Retrieval Extension is free software; you can redistribute it and/or modify
 *   it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@
 */
 
 /**
- * This file contains the interface for all facetted search indexers.
+ * This file contains the interface for all faceted search indexers.
  * 
  * @author Thomas Schweitzer
  * Date: 22.02.2011
@@ -28,14 +28,22 @@ if ( !defined( 'MEDIAWIKI' ) ) {
 }
 
 /**
- * Interface of indexers for facetted search. The indexer indexes the semantic
- * data of the wiki and processes it for facetted search. Queries for facets are
+ * Interface of indexers for faceted search. The indexer indexes the semantic
+ * data of the wiki and processes it for faceted search. Queries for facets are
  * answered by the indexer.
  * 
  * @author thsc
  *
  */
 interface IFSIndexer {
+	
+	/**
+	 * Pings the server of the indexer and checks if it is responding.
+	 * @return bool
+	 * 	<true>, if the server is responding
+	 * 	<false> otherwise
+	 */
+	public function ping();
 	
 	/**
 	 * Creates a full index of all available semantic data.
@@ -50,5 +58,14 @@ interface IFSIndexer {
 	 * Deletes the complete index.
 	 */
 	public function deleteIndex();
+	
+	/**
+	 * Updates the index for the given $article.
+	 * It retrieves all semantic data of the new version and adds it to the index.
+	 * 
+	 * @param Article $article
+	 * 		The article that changed.
+	 */
+	public function updateIndexForArticle(Article $article);
 	
 }
