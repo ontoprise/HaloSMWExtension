@@ -23,8 +23,10 @@ VERSION 1.4.1
       mode and the image dialog inserts the correct html element.
 
   BUGFIXES:
+    * Fix bug http://smwforum.ontoprise.com/smwbugs/show_bug.cgi?id=13539
+      Language of UI in CKeditor
     * Fix bug http://smwforum.ontoprise.com/smwbugs/show_bug.cgi?id=13797
-      Remove unwanted <style> attributes from WYSIWYG text.
+      Remove unwanted <style> elements from WYSIWYG text.
     * Fix bug http://smwforum.ontoprise.com/smwbugs/show_bug.cgi?id=13579
       Edit sections: no wysiwyg-editor appears
       This bug occurred only if $wgCKEditorUrlparamMode was set.
