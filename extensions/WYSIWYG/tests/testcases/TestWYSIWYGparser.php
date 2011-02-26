@@ -176,6 +176,33 @@ Edit the page to see the template text.
         $this->assertEquals($expected, $res);
 
     }
+
+    function testPage7() {
+        $text= 'Super
+
+[[Image:SMWplus151 enhancedretrieval.png|My dashboard menu of {{SMW+}}]]
+
+and
+
+[[Image:SMWplus151 enhancedretrieval.png|My dashboard menu]]';
+        $expected = '<p>Super
+</p><p><img src="ef=" _fck_mw_filename="SMWplus151 enhancedretrieval.png" alt="My dashboard menu of {{SMW+}}" />
+</p><p>and
+</p><p><img src="ef=" _fck_mw_filename="SMWplus151 enhancedretrieval.png" alt="My dashboard menu" />
+</p>';
+        $res = $this->parsePage($text);
+        $this->assertEquals($expected, $res);
+
+    }
+
+    function testPage8() {
+        $text= 'Sometimes we also have a link like [[{{PAGENAME}}|hier]] or [[{{{1}}}]] or [[{{{param1}}}-{{{param2}}}]] that goes some where.';
+        $expected = '<p>Sometimes we also have a link like <a href="{{PAGENAME}}">hier</a> or <a _fcknotitle="true" href="{{{1}}}">{{{1}}}</a> or <a _fcknotitle="true" href="{{{param1}}}-{{{param2}}}">{{{param1}}}-{{{param2}}}</a> that goes some where.
+</p>';
+        $res = $this->parsePage($text);
+        $this->assertEquals($expected, $res);
+
+    }
     private function parsePage($text) {
         return $this->parser->parse($text, $this->title, $this->options)->getText();
     }
