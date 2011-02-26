@@ -597,7 +597,7 @@ class CKeditorParser extends CKeditorParserWrapper {
         //$text = strtr($text, array("\n" => "\nFCKLR_fcklr_FCKLR", "\r" => ''));
         // this doesn't work when inside tables. So leave this for later.
 
-		$finalString = parent::internalParse( $text, $isMain );
+        $finalString = parent::internalParse( $text, $isMain );
 		return $finalString;
 	}
 
@@ -913,14 +913,14 @@ class CKeditorParser extends CKeditorParserWrapper {
 		);
 		$text = $this->replace_callback($text, $callback);
 
-		// now each property string is prefixed with <!--FCK_SKIP_START--> and
+        // now each property string is prefixed with <!--FCK_SKIP_START--> and
 		// tailed with <!--FCK_SKIP_END-->
 		// use this knowledge to find properties within these comments
 		// and replace them with FCK_PROPERTY_X_FOUND that will be used later to be replaced
 		// by the current property string
 		while (preg_match('/\<\!--FCK_SKIP_START--\>\[\[(.*?)\]\]\<\!--FCK_SKIP_END--\>/', $text, $matches)) {
             $replacedVal = $this->revertEncapsulatedString($matches[1]);
-			$replacement = $this->replaceSpecialLinkValue($replacedVal, $matches[1]);
+			$replacement = $this->replaceSpecialLinkValue($replacedVal);
 			$pos = strpos($text, $matches[0]);
 			$before = substr($text, 0, $pos);
 			$after = substr($text, $pos + strlen($matches[0]));
@@ -978,15 +978,14 @@ class CKeditorParser extends CKeditorParserWrapper {
 
     /**
      * Checks for replacments by replacePropertyValue() and replaceRichmediaLinkValue()
-     * If a property was replaces, don't try to find and replace a richmedia link
+     * If a property was replaced, don't try to find and replace a richmedia link
      *
      * @access private
      * @param  string match
      * @param  string orig (maybe FckmwXfckmw)
      * @return string replaced placeholder or [[match]]
      */
-    private function replaceSpecialLinkValue($match, $orig) {
-        $res= '[['.$orig.']]';
+    private function replaceSpecialLinkValue($match) {
         if (defined('SMW_VERSION')) {
             $res = $this->replacePropertyValue($match);
             if (preg_match('/FCK_PROPERTY_\d+_FOUND/', $res)) // property was replaced, we can quit here.
@@ -1000,11 +999,15 @@ class CKeditorParser extends CKeditorParserWrapper {
         // an ordinary link. If this is something like [[{{{1}}}]] then this would be an
         // empty link, because during parsing, the parameter will not exist. Therefore
         // do not use the original value but the template replacement
-        if ('[['.$orig.']]' == $res) return $res;
-        $key = 'Fckmw'.$this->fck_mw_strtr_span_counter.'fckmw';
-        $this->fck_mw_strtr_span_counter++;
-        $this->fck_mw_strtr_span[$key] = $res;
-        return $key;
+        if (preg_match_all('/\{{2,3}.*?\}{2,3}+/', $match, $matches)) {
+            for ($i = 0, $is = count($matches[0]); $i < $is; $i++) {
+                $key = 'Fckmw'.$this->fck_mw_strtr_span_counter.'fckmw';
+                $this->fck_mw_strtr_span_counter++;
+                $this->fck_mw_strtr_span[$key] = $matches[0][$i];
+                $match = str_replace($matches[0][$i], $key, $match);
+            }
+        }
+        return '[[' . $match . ']]';
     }
 
 	/**
