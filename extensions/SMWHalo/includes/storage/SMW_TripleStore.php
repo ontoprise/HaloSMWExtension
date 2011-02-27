@@ -104,7 +104,7 @@ class SMWTripleStore extends SMWStore {
 		}
 
 		$subject_iri = $this->tsNamespace->getFullIRI($subject);
-        
+
 		// clear rules
 		global $smwgEnableObjectLogicRules;
 		if (isset($smwgEnableObjectLogicRules)) {
@@ -116,7 +116,7 @@ class SMWTripleStore extends SMWStore {
 			$con = TSConnection::getConnector();
 			$sparulCommands = array();
 			$sparulCommands[] = "DELETE MAPPING $subject_iri";
-			
+				
 			$prop_ns = $this->tsNamespace->getNSPrefix(SMW_NS_PROPERTY);
 			$naryPropFrag = "<$smwgTripleStoreGraph/$prop_ns";
 			$sparulCommands[] = "DELETE FROM <$smwgTripleStoreGraph> { $subject_iri ?p ?b. ?b $naryPropFrag/_1> ?v1. ?b $naryPropFrag/_2> ?v2. ?b $naryPropFrag/_3> ?v3. ?b $naryPropFrag/_4> ?v4. ?b $naryPropFrag/_5> ?v5.}";
@@ -141,7 +141,17 @@ class SMWTripleStore extends SMWStore {
 
 	function updateData(SMWSemanticData $data) {
 		$this->smwstore->updateData($data);
+		
+		// update rules in internal store
+		$subject = $data->getSubject()->getTitle();
 
+		global $smwgEnableObjectLogicRules;
+		if (isset($smwgEnableObjectLogicRules)) {
+			$new_rules = self::$fullSemanticData->getRules();
+			$old_rules = SMWRuleStore::getInstance()->getRules($subject->getArticleId());
+			SMWRuleStore::getInstance()->clearRules($subject->getArticleId());
+			SMWRuleStore::getInstance()->addRules($subject->getArticleId(), $new_rules);
+		}
 		// make sure that TS is not update in maintenace mode
 		if ( defined( 'DO_MAINTENANCE' ) && !defined('SMWH_FORCE_TS_UPDATE') ) {
 			return;
@@ -163,18 +173,9 @@ class SMWTripleStore extends SMWStore {
 		$this->handlePropertyAnnotations($data, $triples);
 		$this->handleCategoryAnnotations($data, $triples);
 		$this->handleRedirects($data, $triples);
-		
 
-		// create rules
-		$subject = $data->getSubject()->getTitle();
 
-		global $smwgEnableObjectLogicRules;
-		if (isset($smwgEnableObjectLogicRules)) {
-			$new_rules = self::$fullSemanticData->getRules();
-			$old_rules = SMWRuleStore::getInstance()->getRules($subject->getArticleId());
-			SMWRuleStore::getInstance()->clearRules($subject->getArticleId());
-			SMWRuleStore::getInstance()->addRules($subject->getArticleId(), $new_rules);
-		}
+
 
 
 		// connect to MessageBroker and send commands
@@ -584,7 +585,7 @@ class SMWTripleStore extends SMWStore {
 		$new_iri = $this->tsNamespace->getFullIRI($newtitle);
 
 		$sparulCommands = array();
-		
+
 		// update local rule store
 		global $smwgEnableObjectLogicRules;
 		if (isset($smwgEnableObjectLogicRules)) {
@@ -599,9 +600,9 @@ class SMWTripleStore extends SMWStore {
 		global $smwgMessageBroker, $smwgTripleStoreGraph;
 		try {
 			$con = TSConnection::getConnector();
-			
+				
 			$sparulCommands[] = "MODIFY MAPPING $old_iri : $new_iri";
-						
+
 			$prop_ns = $this->tsNamespace->getNSPrefix(SMW_NS_PROPERTY);
 			$naryPropFrag = "<$smwgTripleStoreGraph/$prop_ns";
 
@@ -1082,23 +1083,23 @@ class SMWTripleStore extends SMWStore {
 		} else {
 			$titleText = $data->getDBkey();
 		}
-			$chain = explode(".",$titleText);
+		$chain = explode(".",$titleText);
 
-			if (count($chain) > 1) {
-				$newtitle = Title::newFromText($chain[count($chain)-1], SMW_NS_PROPERTY);
-				if ($newtitle->exists()) {
-					$newlabel = $pr->getLabel() != $titleText ? $pr->getLabel() : $newtitle->getText();
-					$newData = SMWPropertyValue::makeUserProperty($newtitle->getText());
-				} else {
-					$newlabel = $pr->getLabel() != $titleText ? $pr->getLabel() : $newtitle->getText();
-					$newData = $newtitle;
-				}
-
-				$rewritten_prs = new SMWPrintRequest($newtitle->exists() ? SMWPrintRequest::PRINT_PROP : SMWPrintRequest::PRINT_THIS, $newlabel, $newData, $pr->getOutputFormat());
-				$rewritten_prs->getHash();
-
+		if (count($chain) > 1) {
+			$newtitle = Title::newFromText($chain[count($chain)-1], SMW_NS_PROPERTY);
+			if ($newtitle->exists()) {
+				$newlabel = $pr->getLabel() != $titleText ? $pr->getLabel() : $newtitle->getText();
+				$newData = SMWPropertyValue::makeUserProperty($newtitle->getText());
+			} else {
+				$newlabel = $pr->getLabel() != $titleText ? $pr->getLabel() : $newtitle->getText();
+				$newData = $newtitle;
 			}
-		
+
+			$rewritten_prs = new SMWPrintRequest($newtitle->exists() ? SMWPrintRequest::PRINT_PROP : SMWPrintRequest::PRINT_THIS, $newlabel, $newData, $pr->getOutputFormat());
+			$rewritten_prs->getHash();
+
+		}
+
 		return $rewritten_prs;
 	}
 
