@@ -183,22 +183,14 @@ TreeTransformer.prototype = {
 			if (msg != vars[1]) { 
 				text = text.replace(reg_exp,
 					msg);
-			} else {
-				// probably missing language constant
-				text = text.replace(reg_exp,
-						"!!"+msg+"!!");
-			}
+			} 
 			
 			// use other language providers
 			lp.each(function(provider) { 
 				var msg = provider(vars[1]);
 				if (msg != vars[1]) text = text.replace(reg_exp,
 						msg);
-				else {
-					// probably missing language constant
-					text = text.replace(reg_exp,
-							"!!"+msg+"!!");
-				}
+				
 			});
 		}
 		n.textContent = text;
