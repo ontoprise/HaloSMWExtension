@@ -187,6 +187,8 @@ class TFTabularFormData {
 		
 		$html .= '</table>';
 		
+		$html .= '<textarea class="tabf_rowindex_comparator" style="visibility: hidden; height: 1em"></textarea>';
+		
 		return $html;
 	}
 	
@@ -458,7 +460,7 @@ class TFTabularFormData {
 				
 			//add annotation also if no results have been found	
 			if($noResults){
-				$formRowData->addAnnotation($this->annotationPrintRequests[$key]['title'], null, null);
+				$formRowData->addAnnotation($this->annotationPrintRequests[$key]['title'], null, null, null, null);
 			}
 		}
 			

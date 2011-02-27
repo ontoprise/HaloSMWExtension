@@ -141,7 +141,7 @@ var TF = Class.create({
 	 */
 	navigateCells : function(cell, keyCode){
 		
-		if(keyCode == '39' || keyCode == 'tab'){ //key right
+		if(keyCode == 'tab'){ //key right keyCode == '39' || 
 			
 			if(keyCode != 'tab' && tf.selectionEndPosition < jQuery(cell).attr('value').length){
 				return;
@@ -176,6 +176,10 @@ var TF = Class.create({
 						
 		} else if(keyCode == '40'){ //key down
 			
+			if(!tf.isLastRow(cell)){
+				return;
+			}
+			
 			var column = jQuery(cell).parent();
 			
 			var maxCellNumber = jQuery('textarea', column).get().length;
@@ -193,6 +197,10 @@ var TF = Class.create({
 				jQuery(newCell).select();
 			}
 		} else if(keyCode == '38'){ //key up
+			
+			if(!tf.isFirstRow(cell)){
+				return;
+			}
 			
 			var column = jQuery(cell).parent();
 			
@@ -436,8 +444,6 @@ var TF = Class.create({
 			
 		} else if(jQuery(this).attr('isModified') == 'true' || jQuery(this).attr('isNew') == 'true' ){
 			
-			alert('a');
-			
 			jQuery('td:last-child .tabf_modified_status', this).css('display', 'none');
 			jQuery('td:last-child .tabf_added_status', this).css('display', 'none');
 			jQuery('td:last-child .tabf_pending_status', this).css('display', 'inline');
@@ -450,6 +456,15 @@ var TF = Class.create({
 				var fieldValues = jQuery('textarea', jQuery(fields[fieldNr])).get();
 				for(var i=0; i < fieldValues.length; i++){
 					if(jQuery(fieldValues[i]).attr('isModified') == 'true'){
+						
+						jQuery(fieldValues[i]).get(0).setAttribute('wrap', 'pgysical');
+						
+						alert(jQuery(fieldValues[i]).get(0).getAttribute('value'));
+						//jQuery(fieldValues[i]).attr('wrap', 'physical');
+						alert(jQuery(fieldValues[i]).attr('value'));
+						//jQuery(fieldValues[i]).attr('wrap', 'virtual');
+						alert(jQuery(fieldValues[i]).attr('value'));
+						
 						var modifiedValue = new Object();
 						modifiedValue['newValue'] = jQuery(fieldValues[i]).attr('value');
 						modifiedValue['originalValue'] = jQuery(fieldValues[i]).attr('originalValue');
@@ -868,6 +883,50 @@ var TF = Class.create({
 			
 		}
 
+	},
+	
+	/*
+	 * Is cursor in last row
+	 */
+	isLastRow : function(cell){
+		var comparator = jQuery('.tabf_rowindex_comparator', jQuery(cell).parent().parent().parent().parent().parent());
+		
+		jQuery(comparator).css('width', jQuery(cell).innerWidth() + 'px');
+		jQuery(comparator).attr('value', jQuery(cell).attr('value'));
+		
+		var completeScrollHeight = jQuery(comparator).attr('scrollHeight');
+		
+		jQuery(comparator).attr('value', jQuery(cell).attr('value').substr(0, tf.selectionEndPosition));
+		
+		var newScrollHeight = jQuery(comparator).attr('scrollHeight');
+		
+		if(newScrollHeight < completeScrollHeight){
+			return false;
+		} else {
+			return true;
+		}
+	},
+	
+	/*
+	 * Is cursor in first row
+	 */
+	isFirstRow : function(cell){
+		var comparator = jQuery('.tabf_rowindex_comparator', jQuery(cell).parent().parent().parent().parent().parent());
+		
+		jQuery(comparator).css('width', jQuery(cell).innerWidth() + 'px');
+		jQuery(comparator).attr('value', '');
+		
+		var completeScrollHeight = jQuery(comparator).attr('scrollHeight');
+		
+		jQuery(comparator).attr('value', jQuery(cell).attr('value').substr(0, tf.selectionStartPosition));
+		
+		var newScrollHeight = jQuery(comparator).attr('scrollHeight');
+		
+		if(newScrollHeight == completeScrollHeight){
+			return true;
+		} else {
+			return false;
+		}
 	}
 	
 	
