@@ -292,7 +292,7 @@ class SRRuleEndpoint {
 		foreach ($allNamespaces as $nsIndsex => $ns) {
 			if (stripos($uri, $ns) === 0) {
 				$lastIndexOfSlash = strrpos($uri, "/");
-				$local = substr($uri, $lastIndexOfSlash);
+				$local = substr($uri, $lastIndexOfSlash+1);
 				$title = Title::newFromText($local, $nsIndsex);
 				return $title;
 			}
@@ -302,7 +302,7 @@ class SRRuleEndpoint {
 		$length = strrpos($uri, "/") - $startNS;
 		$ns = intval(substr($uri, $startNS, $length));
 
-		$local = substr($uri, strrpos($sv, "/")+1);
+		$local = substr($uri, strrpos($uri, "/")+1);
 
 		$title = Title::newFromText($local, $ns);
 		return $title;
