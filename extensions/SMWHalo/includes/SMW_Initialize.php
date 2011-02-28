@@ -136,8 +136,11 @@ function smwgHaloSetupExtension() {
 	$wgAutoloadClasses['SMWChemicalFormulaTypeHandler'] = $smwgHaloIP . '/includes/SMW_DV_ChemFormula.php';
 	$wgAutoloadClasses['SMWChemicalEquationTypeHandler'] = $smwgHaloIP . '/includes/SMW_DV_ChemEquation.php';
 	$wgAutoloadClasses['SMWMathematicalEquationTypeHandler'] = $smwgHaloIP . '/includes/SMW_DV_MathEquation.php';
+	$wgAutoloadClasses['SMWURIIntegrationValue'] = $smwgHaloIP . '/includes/storage/SMW_DV_IntegrationLink.php';
 	$wgAutoloadClasses['SMWIsExtensionInstalledPF'] = $smwgHaloIP . '/includes/SMW_IsExtensionInstalledPF.php';
 	$wgAutoloadClasses['SMWQMSpecialBrowse'] = $smwgHaloIP.'/specials/SearchTriple/SMW_QM_SpecialBrowse.php';
+	$wgAutoloadClasses['LODNonExistingPage'] = $smwgHaloIP . '/includes/articlepages/LOD_NonExistingPage.php';
+	$wgAutoloadClasses['LODNonExistingPageHandler'] = $smwgHaloIP . '/includes/articlepages/LOD_NonExistingPageHandler.php';
 
 	//patch Special:Browse in order to hide special Query Management Property
 	$wgSpecialPages['Browse']  = array( 'SMWQMSpecialBrowse' );
@@ -182,6 +185,39 @@ function smwgHaloSetupExtension() {
 	// Remove the existing smwfSaveHook and replace it with the
 	// new and functionally enhanced smwfHaloSaveHook
 	$wgHooks['ParserBeforeStrip'][] = 'smwfRegisterSPARQLInlineQueries';
+	$wgHooks['InternalParseBeforeLinks'][] = 'smwfRegisterIntegrationLink';
+
+	global $lodgNEPEnabled;
+	if ($lodgNEPEnabled) {
+		$wgHooks['ArticleFromTitle'][]      = 'LODNonExistingPageHandler::onArticleFromTitle';
+		$wgHooks['EditFormPreloadText'][]   = 'LODNonExistingPageHandler::onEditFormPreloadText';
+
+		global $lodgNEPGenericTemplate, $lodgNEPPropertyPageTemplate, $lodgNEPCategoryPageTemplate, $lodgNEPUseGenericTemplateIfCategoryMember, $lodgNEPCategoryTemplatePattern;
+		####
+		# string - Article name of the generic template for all non-existing pages but
+		# properties and categories.
+		$lodgNEPGenericTemplate = "MediaWiki:NEP/Generic";
+
+		####
+		# string - Article name of the template for property pages
+		$lodgNEPPropertyPageTemplate = "MediaWiki:NEP/Property";
+
+		####
+		# string - Article name of the template for category pages
+		$lodgNEPCategoryPageTemplate = "MediaWiki:NEP/Category";
+
+		####
+		# boolean - If <true>, the generic NEP template is used, even if the Linked Data
+		# item has a type.
+		$lodgNEPUseGenericTemplateIfCategoryMember = false;
+
+		####
+		# string - The Linked Data item can have several types which are mapped to wiki
+		# categories. A template can be used for each category according to the template
+		# pattern. The variable {cat} is replaced by the category that is associated with
+		# a type.
+		$lodgNEPCategoryTemplatePattern = "MediaWiki:NEP/Category/{cat}";
+	}
 
 	$wgHooks['SkinTemplateToolboxEnd'][] = 'smwfOntoSkinTemplateToolboxEnd';
 
@@ -482,6 +518,33 @@ function smwfRegisterSPARQLInlineQueries( &$parser, &$text, &$stripstate ) {
 	return true; // always return true, in order not to stop MW's hook processing!
 }
 
+function smwfRegisterIntegrationLink(&$parser, &$text, &$strip_state = null) {
+	$ilinkPattern = '/&lt;ilink(.*?&gt;)(.*?.)&lt;\/ilink&gt;/ixus';
+	preg_match_all($ilinkPattern, trim($text), $matches);
+
+	// at least one parameter and content?
+	for($i = 0; $i < count($matches[0]); $i++) {
+		$header = trim($matches[1][$i]);
+		$uri = trim($matches[2][$i]);
+
+
+		// parse header parameters
+		$parameterPattern = "/([^=]+)=\"([^\"]*)\"/ixus";
+		preg_match_all($parameterPattern, $header, $matchesheader);
+
+		$caption = '';
+		for ($j = 0; $j < count($matchesheader[0]); $j++) {
+			if (trim($matchesheader[1][$j]) == 'caption') {
+				$caption = trim($matchesheader[2][$j]);
+			}
+		}
+		$text = str_replace($matches[0][$i], '<a class="new" href="'.$uri.'">'.$caption.'</a>', $text);
+			
+	}
+	return true;
+}
+
+
 /**
  * The {{#sparql }} parser function processing part.
  */
@@ -525,6 +588,8 @@ function smwfHaloInitDatatypes() {
 	$smwgHaloContLang->getHaloDatatype('smw_hdt_chemical_equation'));
 	SMWDataValueFactory::registerDatatype('_meq', 'SMWMathematicalEquationTypeHandler',
 	$smwgHaloContLang->getHaloDatatype('smw_hdt_mathematical_equation'));
+	SMWDataValueFactory::registerDatatype('_ili', 'SMWURIIntegrationValue',
+	$smwgHaloContLang->getHaloDatatype('smw_integration_link'));
 
 	return true;
 }
@@ -1535,6 +1600,7 @@ function smwfCommaAnnotation(&$parser){
 function smwfAddHaloMagicWords(&$magicWords, $langCode){
 	$magicWords['annotateList'] = array( 0, 'annotateList' );
 	$magicWords['sparql']  = array( 0, 'sparql' );
+	$magicWords['ilink']  = array( 0, 'ilink' );
 	return true;
 }
 

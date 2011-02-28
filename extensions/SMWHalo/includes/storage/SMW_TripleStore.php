@@ -116,7 +116,7 @@ class SMWTripleStore extends SMWStore {
 			$con = TSConnection::getConnector();
 			$sparulCommands = array();
 			$sparulCommands[] = "DELETE MAPPING $subject_iri";
-				
+
 			$prop_ns = $this->tsNamespace->getNSPrefix(SMW_NS_PROPERTY);
 			$naryPropFrag = "<$smwgTripleStoreGraph/$prop_ns";
 			$sparulCommands[] = "DELETE FROM <$smwgTripleStoreGraph> { $subject_iri ?p ?b. ?b $naryPropFrag/_1> ?v1. ?b $naryPropFrag/_2> ?v2. ?b $naryPropFrag/_3> ?v3. ?b $naryPropFrag/_4> ?v4. ?b $naryPropFrag/_5> ?v5.}";
@@ -141,7 +141,7 @@ class SMWTripleStore extends SMWStore {
 
 	function updateData(SMWSemanticData $data) {
 		$this->smwstore->updateData($data);
-		
+
 		// update rules in internal store
 		$subject = $data->getSubject()->getTitle();
 
@@ -600,7 +600,7 @@ class SMWTripleStore extends SMWStore {
 		global $smwgMessageBroker, $smwgTripleStoreGraph;
 		try {
 			$con = TSConnection::getConnector();
-				
+
 			$sparulCommands[] = "MODIFY MAPPING $old_iri : $new_iri";
 
 			$prop_ns = $this->tsNamespace->getNSPrefix(SMW_NS_PROPERTY);
@@ -1141,7 +1141,16 @@ class SMWTripleStore extends SMWStore {
 					if ($plainFormat) {
 						$v = $this->createSMWDataValue(NULL, $sv, TSNamespaces::$XSD_NS."string", $metadata);
 					} else {
-						$v = $this->createSMWDataValue(NULL, $sv, TSNamespaces::$XSD_NS."anyURI", $metadata);
+
+						if ($lodgNEPEnabled) {
+							// in case the NEP feature is active, create integration links.
+							// guess local name
+							$localname = TSHelper::guessLocalName($sv);
+							$v = $this->createIntegrationLinkURI($localname, $localname, $sv);
+						} else {
+							// normal URI ouput
+							$v = $this->createSMWDataValue(NULL, $sv, TSNamespaces::$XSD_NS."anyURI", $metadata);
+						}
 
 					}
 					$allValues[] = $v;
@@ -1275,6 +1284,23 @@ class SMWTripleStore extends SMWStore {
 		TSHelper::setMetadata($v, $metadata);
 		return $v;
 
+	}
+    
+	/**
+	 * Creates an integration link URI DataValue object, ie. a redlink which has an URI parameter.
+	 * It can be used by the NEP mechanism.
+	 * 
+	 * @param $dbkey
+	 * @param $caption
+	 * @param $uri
+	 */
+	protected function createIntegrationLinkURI($dbkey, $caption, $uri) {
+		global $wgServer, $wgArticlePath;
+		$value = $wgServer.$wgArticlePath;
+		$value = str_replace('$1', $dbkey, $value);
+		$value .= '?action=edit&uri='.urlencode($uri).'&redlink=1';
+		$value = SMWDataValueFactory::newTypeIDValue('_ili', $value, $caption);
+		return $value;
 	}
 
 	/**

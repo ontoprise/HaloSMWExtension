@@ -474,7 +474,8 @@ en cliquant sur les grosses flà¨ches situées entre les colonnes.",
     var $smwHaloDatatypes = array(
     'smw_hdt_chemical_formula' => 'Formule chimique',
     'smw_hdt_chemical_equation' => 'Equation chimique',
-    'smw_hdt_mathematical_equation' => 'Equation mathématique'
+    'smw_hdt_mathematical_equation' => 'Equation mathématique',
+    'smw_integration_link' => 'Integration link'
     );
 
     protected $smwHaloNamespaces = array(

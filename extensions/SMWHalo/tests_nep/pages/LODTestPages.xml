@@ -1,0 +1,116 @@
+<mediawiki xmlns="http://www.mediawiki.org/xml/export-0.3/"  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"  xsi:schemaLocation="http://www.mediawiki.org/xml/export-0.3/ http://www.mediawiki.org/xml/export-0.3.xsd"  version="0.3" xml:lang="en">
+  <siteinfo>
+    <sitename>Halo3wiki</sitename>
+    <base>http://localhost/develwiki/index.php/Main_Page</base>
+    <generator>MediaWiki 1.13.2</generator>
+    <case>first-letter</case>
+    <namespaces>
+      <namespace key="-2">Media</namespace>
+      <namespace key="-1">Special</namespace>
+      <namespace key="0"/>
+      <namespace key="1">Talk</namespace>
+      <namespace key="2">User</namespace>
+      <namespace key="3">User talk</namespace>
+      <namespace key="4">Halo3wiki</namespace>
+      <namespace key="5">Halo3wiki talk</namespace>
+      <namespace key="6">Image</namespace>
+      <namespace key="7">Image talk</namespace>
+      <namespace key="8">MediaWiki</namespace>
+      <namespace key="9">MediaWiki talk</namespace>
+      <namespace key="10">Template</namespace>
+      <namespace key="11">Template talk</namespace>
+      <namespace key="12">Help</namespace>
+      <namespace key="13">Help talk</namespace>
+      <namespace key="14">Category</namespace>
+      <namespace key="15">Category talk</namespace>
+      <namespace key="100">Relation</namespace>
+      <namespace key="101">Relation talk</namespace>
+      <namespace key="102">Property</namespace>
+      <namespace key="103">Property talk</namespace>
+      <namespace key="104">Type</namespace>
+      <namespace key="105">Type talk</namespace>
+      <namespace key="106">Form</namespace>
+      <namespace key="107">Form talk</namespace>
+      <namespace key="108">Concept</namespace>
+      <namespace key="109">Concept talk</namespace>
+      <namespace key="120">Document</namespace>
+      <namespace key="121">Document talk</namespace>
+      <namespace key="122">Audio</namespace>
+      <namespace key="123">Audio talk</namespace>
+      <namespace key="124">Video</namespace>
+      <namespace key="125">Video talk</namespace>
+      <namespace key="126">Pdf</namespace>
+      <namespace key="127">Pdf talk</namespace>
+      <namespace key="200">WebService</namespace>
+      <namespace key="201">WebService talk</namespace>
+      <namespace key="300">ACL</namespace>
+      <namespace key="301">ACL talk</namespace>
+    </namespaces>
+  </siteinfo>
+  <page>
+    <title>Main Page</title>
+    <id>25</id>
+    <revision>
+      <id>25</id>
+      <timestamp>2009-10-09T07:01:48Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <comment>Created page with 'Main Page'</comment>
+      <text xml:space="preserve">Main Page</text>
+    </revision>
+  </page>
+  <page>
+    <title>Prius</title>
+    <id>2</id>
+    <revision>
+      <id>50</id>
+      <timestamp>2010-06-16T13:49:51Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">This page is about the Toyota Prius 3.                                  It has a power of [[HasPower::136]] HP.                                  [[Category:Automobile]]                 [[Category:Hybrid]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Property:HasPower</title>
+    <id>33</id>
+    <revision>
+      <id>49</id>
+      <timestamp>2010-06-16T13:48:18Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">This property represents the power of car.                                  Type: [[Has type::Type:Number]]                 Domain: [[Has domain and range::Category:Automobile;]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Category:Automobile</title>
+    <id>4</id>
+    <revision>
+      <id>51</id>
+      <timestamp>2010-06-16T13:51:44Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">This is the category for automobiles.</text>
+    </revision>
+  </page>
+  <page>
+    <title>Category:Hybrid</title>
+    <id>34</id>
+    <revision>
+      <id>52</id>
+      <timestamp>2010-06-16T13:52:37Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <comment>Created page with 'This is the category for Hybrid cars.  [[Category:Automobile]]'</comment>
+      <text xml:space="preserve">This is the category for Hybrid cars.                                  [[Category:Automobile]]</text>
+    </revision>
+  </page>
+</mediawiki>

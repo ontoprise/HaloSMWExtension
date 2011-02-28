@@ -94,6 +94,19 @@ class WikiTypeToXSD {
 }
 
 class TSHelper {
+
+	public static function guessLocalName($uri) {
+		if (strpos($uri, "http://") !== false) $uri = substr($uri, 8);
+		
+		$lastSlash = strrpos($uri, "/");
+		if ($lastSlash == false) {
+			$lastHash = strrpos($uri, "#");
+			$localname = substr($uri, $lastHash+1);
+		} else {
+			$localname = substr($uri, $lastSlash+1);
+		}
+		return $localname;
+	}
 	public static function getTitleFromURI($sv, $forceTitle = true) {
 
 		foreach (TSNamespaces::$ALL_NAMESPACES as $nsIndsex => $ns) {
@@ -124,11 +137,11 @@ class TSHelper {
 			// any URI
 
 			if ($forceTitle) {
-				 if (strpos($sv, "#") !== false) {
+				if (strpos($sv, "#") !== false) {
 					$local = substr($sv, strpos($sv, "#")+1);
 				} else if (strrpos($sv, "/") !== false) {
-                    $local = substr($sv, strrpos($sv, "/")+1);
-                } else {
+					$local = substr($sv, strrpos($sv, "/")+1);
+				} else {
 					return NULL;
 				}
 				return Title::newFromText($local, NS_MAIN);
@@ -258,7 +271,7 @@ class TSNamespaces {
 
 	public static $initialized = false;
 	private static $INSTANCE = NULL;
-	
+
 
 	public static function getInstance() {
 		if (is_null(self::$INSTANCE)) {
@@ -282,10 +295,10 @@ class TSNamespaces {
 
 		// add all namespaces (including talk namespaces)
 		global $wgContLang;
-		
+
 		$extraNamespaces = array_diff(array_keys($wgExtraNamespaces), self::$ALL_NAMESPACE_KEYS);
 		self::$ALL_NAMESPACE_KEYS = array_merge(self::$ALL_NAMESPACE_KEYS, $extraNamespaces);
-		
+
 		foreach(self::$ALL_NAMESPACE_KEYS as $nsKey) {
 			$prefix = $wgContLang->getNSText($nsKey);
 			$prefix = $nsKey == NS_MAIN ? "a" : str_replace(" ","_",strtolower($prefix));
@@ -298,7 +311,7 @@ class TSNamespaces {
 		// add special prefixes "cat" and "prop" for compatibility with < SMWHalo 1.5.2
 		self::$ALL_PREFIXES .= "\nPREFIX cat:<".$smwgTripleStoreGraph."/".str_replace(" ","_",strtolower($wgContLang->getNSText(NS_CATEGORY))).'/> '.
 							   "\nPREFIX prop:<".$smwgTripleStoreGraph."/".str_replace(" ","_",strtolower($wgContLang->getNSText(SMW_NS_PROPERTY))).'/> ';
-				
+
 		// SET $W3C_PREFIXES constant
 		self::$W3C_PREFIXES = 'PREFIX xsd:<'.self::$XSD_NS.'> PREFIX owl:<'.self::$OWL_NS.'> PREFIX rdfs:<'.
 		self::$RDFS_NS.'> PREFIX rdf:<'.self::$RDF_NS.'> ';

@@ -451,7 +451,8 @@ clicking the big arrows between the columns.',
 	var $smwHaloDatatypes = array(
 	'smw_hdt_chemical_formula' => 'Chemical formula',
 	'smw_hdt_chemical_equation' => 'Chemical equation',
-	'smw_hdt_mathematical_equation' => 'Mathematical equation'
+	'smw_hdt_mathematical_equation' => 'Mathematical equation',
+	'smw_integration_link' => 'Integration link'
 	);
 
 	protected $smwHaloNamespaces = array(

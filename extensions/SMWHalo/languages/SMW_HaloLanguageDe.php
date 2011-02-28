@@ -442,7 +442,8 @@ var $smwSpecialCategories = array (
 var $smwHaloDatatypes = array(
 	'smw_hdt_chemical_formula' => 'Chemische Formel',
 	'smw_hdt_chemical_equation' => 'Chemische Gleichung',
-	'smw_hdt_mathematical_equation' => 'Mathematische Gleichung'
+	'smw_hdt_mathematical_equation' => 'Mathematische Gleichung',
+    'smw_integration_link' => 'Integrations-Link'
 );
 
 protected $smwHaloNamespaces = array(

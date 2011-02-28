@@ -453,6 +453,7 @@ var $smwHaloDatatypes = array(
 	'smw_hdt_chemical_formula' => 'Chemische formule',
 	'smw_hdt_chemical_equation' => 'Chemische gelijkheid',
 	'smw_hdt_mathematical_equation' => 'Wiskundige gelijkheid',
+    'smw_integration_link' => 'Integrations link'
 );
 
 protected $smwHaloNamespaces = array(
