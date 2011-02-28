@@ -75,6 +75,8 @@ var TF = Class.create({
 		jQuery(this).change(tf.cellChangeHandler);
 		jQuery(this).keyup(tf.cellKeyUpHandler);
 		jQuery(this).keydown(tf.cellKeyDownHandler);
+		jQuery(this).focus(tf.setAsCurrentlySelectedCellValue);
+		jQuery(this).blur(tf.unSetAsCurrentlySelectedCellValue);
 	},
 	
 	/*
@@ -927,6 +929,21 @@ var TF = Class.create({
 		} else {
 			return false;
 		}
+	},
+	
+	/*
+	 * Set class for currently selected cell
+	 */
+	setAsCurrentlySelectedCellValue : function(){
+		jQuery(this).addClass('tabf_selected_value');
+	},
+	
+	
+	/*
+	 * unset class for currently selected cell
+	 */
+	unSetAsCurrentlySelectedCellValue : function(){
+		jQuery(this).removeClass('tabf_selected_value');
 	}
 	
 	
