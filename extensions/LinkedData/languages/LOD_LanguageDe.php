@@ -48,6 +48,7 @@ class LODLanguageDe extends LODLanguage {
 	protected $mParserFunctions = array(
 		LODLanguage::PF_MAPPING			=> 'zuordnung',
 		LODLanguage::PF_LSD				=> 'quelldefinition',
+		LODLanguage::PF_SMAPPING			=> 'silkZuordnung',
 		
 	);
 	
@@ -70,6 +71,9 @@ class LODLanguageDe extends LODLanguage {
 		LODLanguage::PFP_LSD_URIREGEXPATTERN		=> "uriregexmuster",
 		LODLanguage::PFP_LSD_VOCABULARY				=> "vokabular",
 		LODLanguage::PFP_LSD_PREDICATETOCRAWL		=> "zufolgendesprÃ¤dikat",
+		
+		LODLanguage::PFP_SILK_MAPPING_MINTURI				=> 'mintURI',
+		LODLanguage::PFP_SILK_MAPPING_MINTPROPERTY				=> 'mintProperty',
 		
 	);
 		

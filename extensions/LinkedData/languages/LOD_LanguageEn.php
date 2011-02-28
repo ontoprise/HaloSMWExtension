@@ -47,7 +47,8 @@ class LODLanguageEn extends LODLanguage {
 
 	protected $mParserFunctions = array(
 		LODLanguage::PF_MAPPING			=> 'mapping', 
-		LODLanguage::PF_LSD				=> 'sourcedefinition', 
+		LODLanguage::PF_LSD				=> 'sourcedefinition',
+		LODLanguage::PF_SMAPPING			=> 'silkMapping',  
 	);
 	
 	protected $mParserFunctionsParameters = array(
@@ -69,6 +70,9 @@ class LODLanguageEn extends LODLanguage {
 		LODLanguage::PFP_LSD_URIREGEXPATTERN		=> "uriregexpattern",
 		LODLanguage::PFP_LSD_VOCABULARY				=> "vocabulary",
 		LODLanguage::PFP_LSD_PREDICATETOCRAWL		=> "predicatetocrawl",
+		
+		LODLanguage::PFP_SILK_MAPPING_MINTURI				=> 'mintURI',
+		LODLanguage::PFP_SILK_MAPPING_MINTPROPERTY				=> 'mintProperty',
 		
 	);
 		

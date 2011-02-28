@@ -32,6 +32,7 @@ abstract class LODLanguage {
 	//---IDs of parser functions ---
 	const PF_MAPPING = 1;
 	const PF_LSD	 = 2; // LOD source definition
+	const PF_SMAPPING = 3;
 
 	//---IDs of parser function parameters ---
 	const PFP_MAPPING_TARGET	= 100;
@@ -52,6 +53,9 @@ abstract class LODLanguage {
 	const PFP_LSD_VOCABULARY				= 212;
 	const PFP_LSD_SPARQLGRAPHPATTERN		= 213;
 	const PFP_LSD_PREDICATETOCRAWL			= 214;
+	
+	const PFP_SILK_MAPPING_MINTURI	= 300;
+	const PFP_SILK_MAPPING_MINTPROPERTY	= 301;
 	
 	
 	// the special message arrays ...
