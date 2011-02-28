@@ -177,6 +177,8 @@ var TF = Class.create({
 						
 		} else if(keyCode == '40'){ //key down
 			
+			alert(autoCompleter.currentInputBox);
+			
 			if(!tf.isLastRow(cell)){
 				return;
 			}
@@ -785,9 +787,35 @@ var TF = Class.create({
 			}
 		} else if (tf.currentSortColumnNr == tf.currentLastSortColumnNumber){ //status row
 			var images = jQuery('img', cell).get();
+			var sortKey = 'z';
 			for(var i=0; i < images.length; i++){
 				if(jQuery(images[i]).css('display') != 'none'){
-					sortKey = jQuery(images[i]).attr('class');
+					switch (jQuery(images[i]).attr('class')) {
+						case 'tabf_added_status' :
+							sortKey = 'a';
+							break;
+						case 'tabf_deleted_status' :
+							sortKey = 'b';
+							break;
+						case 'tabf_modified_status' :
+							sortKey = 'c';
+							break;
+						case 'tabf_exists_not_status' :
+							sortKey = 'd';
+							break;
+						case 'tabf_saved_status' :
+							sortKey = 'e';
+							break;
+						case 'tabf_error_status' :
+							sortKey = 'f';
+							break;
+						case 'tabf_pending_status' :
+							sortKey = 'g';
+							break;
+						default :
+							sortKey = 'z';
+							break;
+					}
 					break;
 				}
 			}
