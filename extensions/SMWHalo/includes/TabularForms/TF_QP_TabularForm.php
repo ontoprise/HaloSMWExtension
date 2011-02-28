@@ -83,12 +83,12 @@ class TFTabularFormData {
 		$this->initializeTemplateParameterPrintRequests();
 		
 		if(array_key_exists('enable add', $this->queryParams)
-				&& $this->queryParams['enable add'] == 'true'){
+				&& $this->queryParams['enable add'] == true){
 			$this->enableInstanceAdd = true;
 		}
 		
 		if(array_key_exists('enable delete', $this->queryParams)
-				&& $this->queryParams['enable delete'] == 'true'){
+				&& $this->queryParams['enable delete'] == true){
 			$this->enableInstanceDelete = true;
 		}
 	}
@@ -173,7 +173,7 @@ class TFTabularFormData {
 		
 		$html = '';
 		
-		$html .= '<table class="smwtable" width="100%">';
+		$html .= '<table border="0" cellspacing="0" cellpadding="0" width="100%">';
 		
 		$html .= $this->addTableHeaderHTML();
 		
@@ -259,7 +259,7 @@ class TFTabularFormData {
 		$html .= '<a href="#" class="sortheader" onclick="tf.startRowSort(event);return false;">';
 		$html .= '<span class="sortarrow"><img alt="[&lt;&gt;]" src="'.$smwgScriptPath.'/skins/images/sort_none.gif"/>';
 		$html .= '</span></a>&nbsp;';
-		$html .= '<span style="margin-left: 0.3em; margin-right: 1em;">';
+		$html .= '<span>';
 		$html .= $this->subjectColumnLabel;
 		$html .= '</span>';
 		$html .= '</th>';
@@ -270,7 +270,7 @@ class TFTabularFormData {
 			$html .= '<a href="#" class="sortheader" onclick="tf.startRowSort(event);return false;">';
 			$html .= '<span class="sortarrow"><img alt="[&lt;&gt;]" src="'.$smwgScriptPath.'/skins/images/sort_none.gif"/>';
 			$html .= '</span></a>&nbsp;';
-			$html .= '<span style="margin-left: 0.3em; margin-right: 1em;">';
+			$html .= '<span>';
 			$html .= $annotation['label'];
 			$html .= '</span>';
 			$html .= '</th>';
@@ -283,7 +283,7 @@ class TFTabularFormData {
 				$html .= '<a href="#" class="sortheader" onclick="tf.startRowSort(event);return false;">';
 				$html .= '<span class="sortarrow"><img alt="[&lt;&gt;]" src="'.$smwgScriptPath.'/skins/images/sort_none.gif"/>';
 				$html .= '</span></a>&nbsp;';
-				$html .= '<span style="margin-left: 0.3em; margin-right: 1em;">';
+				$html .= '<span>';
 				if(array_key_exists($template, $this->templateParameterPrintRequestLabels) 
 						&& array_key_exists($param, $this->templateParameterPrintRequestLabels[$template])){
 					$html .= $this->templateParameterPrintRequestLabels[$template][$param];	
@@ -299,7 +299,7 @@ class TFTabularFormData {
 		$html .= '<th>';
 		$html .= '<a href="#" class="sortheader" onclick="tf.startRowSort(event);return false;">';
 		$html .= '<span class="sortarrow"><img alt="[&lt;&gt;]" src="'.$smwgScriptPath.'/skins/images/sort_none.gif"/>';
-		$html .= '</span></a>&nbsp;';
+		$html .= '</span></a>';
 		$html .= '</th>';
 		
 		$html.= '</tr>';
@@ -314,7 +314,7 @@ class TFTabularFormData {
 		$html = '<tr style="display: none" class="tabf_table_row">';
 		
 		$html .= '<td revision-id="-1" ><textarea rows="1"></textarea>';
-		$html .= '<input class="tabf-delete-button" type="button" value="Delete" style="z-index: 10; display: none" onclick="tf.deleteInstance(event)"/>';
+		$html .= '<input class="tabf-delete-button" type="button" value="Delete" style="display: none" onclick="tf.deleteInstance(event)"/>';
 		$html .= '</td>';
 
 		//Add cells for annotations
@@ -379,7 +379,7 @@ class TFTabularFormData {
 	private function addTabularFormFooterHTML($tabularFormId){
 		$html = '';
 		
-		$html .= '<tr class="smwfooter">';
+		$html .= '<tr class="tabf_table_footer">';
 		
 		$colSpan = 2;
 		$colSpan += count($this->annotationPrintRequests);
@@ -394,7 +394,6 @@ class TFTabularFormData {
 			$link = $this->queryResult->getQueryLink();
 			
 			$link->setParameter('tabularform', 'format');
-			$link->setParameter('1', 'limit');
 			
 			//add template parameter printrequests
 			foreach($this->queryParams as $param => $label){
@@ -756,7 +755,7 @@ class TFTabularFormRowData {
 				$html .= $linker->makeLinkObj($this->title);
 			}
 			if($enableInstanceDelete && ($this->title instanceof Title && $this->title->exists())){
-				$html .= '<input class="tabf-delete-button" type="button" value="Delete" style="z-index: 10; display: none" onclick="tf.deleteInstance(event)"/>';
+				$html .= '<input class="tabf-delete-button" type="button" value="Delete" style=" display: none" onclick="tf.deleteInstance(event)"/>';
 			}
 		} else {
 			$html .= '<td class="tabf_table_cell" revision-id="-1">';
@@ -765,7 +764,7 @@ class TFTabularFormRowData {
 				$html .= $this->title->getFullText();
 			}
 			$html .= '</textarea>';
-			$html .= '<input class="tabf-delete-button" type="button" value="Delete" style="z-index: 10; display: none" onclick="tf.deleteInstance(event)"/>';
+			$html .= '<input class="tabf-delete-button" type="button" value="Delete" style="display: none" onclick="tf.deleteInstance(event)"/>';
 		}
 		$html .= '</td>';
 
@@ -781,14 +780,16 @@ class TFTabularFormRowData {
 			}
 			
 			$annotations = $this->annotations[$annotation['title']];
+			$moreThanOne = false;
 			foreach($annotations as $annotation){
 				if($annotation->isWritable){
-					$html .= "<textarea ".$autocompletion." rows='1' annotation-hash='".$annotation->hash
+					$moreThanOne == true ? $style = 'style="border-top: 1px inset grey;"' : $style ='';
+					$html .= "<textarea ".$autocompletion." ". $style ." rows='2' annotation-hash='".$annotation->hash
 						."' annotation-type-id='".$annotation->typeId."'>".$annotation->currentValue."</textarea>";
 				} else {
 					$html .= '<div style="height: 3em; width: 100%">'.$annotation->renderedValue.'</div>';
 				}
-				$first = false;
+				$moreThanOne = true;
 			}
 			
 			$html .= '</td>';
@@ -821,7 +822,7 @@ class TFTabularFormRowData {
 		}
 		
 		//add status column
-		$html .= '<td>';
+		$html .= '<td class="tabf_status_cell">';
 		
 		$okDisplay = $readProtectedDisplay = $writeProtectedDisplay = 
 			$addedDisplay = $notExistsDisplay = 'none';

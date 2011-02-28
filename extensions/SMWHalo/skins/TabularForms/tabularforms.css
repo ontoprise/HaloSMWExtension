@@ -1,6 +1,20 @@
+@CHARSET "UTF-8";
 
-.tabf_container{
+/* 
+	Document	: tabularforms.css
+	Created on	: 28.03.2011
+	Author		: steinbauer and langguth
+	Description	:
+		Tabular Forms extension style sheet.
+*/
+/* general settings */
+.tabf_container {
 	width: 100%;
+}
+
+.tabf_container table {
+	background: none repeat scroll 0 0 transparent;
+	border-collapse: collapse;
 }
 
 .tabf_loader {
@@ -8,59 +22,180 @@
 	width: 100%;
 }
 
-.tabf_table_cell textarea{
-	padding: 0px;
-	margin: 0px;
+/* table header */
+.tabf_container th {
+	background: none repeat scroll 0 0 transparent;
+	text-align: left;
+	vertical-align: bottom;
+}
+
+.tabf_container th > span {
+	margin-right: 1em;
+}
+
+.tabf_container span.sortarrow {
+	margin-right: 0.3em
+}
+
+.tabf_column_header {
+	border-bottom: 2px solid #116988;
+}
+
+.tabf_column_header a {
+	color: #116988 !important;
+}
+
+/* table row */
+.tabf_table_row, .tabf_new_row {
+	vertical-align: top;
+	height: 2.5em;
+}
+
+.tabf_table_row td:first-child {
+	border-left: 0;
+}
+.tabf-delete-button {
+	position: absolute;
+	font-size: smaller;
+	text-align: center;
+	z-index: 10;
+}
+
+/* table cell */
+.tabf_table_cell {
+	padding: 0;
+	margin: 0;
+	border-left: 1px inset grey;
+	border-bottom: 1px inset grey;
+	/*outline: 1px inset grey*/;
+	y-overflow: auto;
+}
+
+.tabf_status_cell {
+	border-left: 1px inset grey;
+	background-color: transparent !important;
+	vertical-align: middle;
+}
+/* textareas */
+.tabf_table_cell textarea {
+	/*background:url(../edit.gif)no-repeat 100% 0%;*/
+	padding: 0;
+	margin: 0;
+	border: 0;
 	min-width: 125px;
 	width: 100%;
+	height: 2.5em;
 }
 
-
-.tabf_column_header{
+.tabf_table_cell textarea:hover {
+	background:url(edit.gif)no-repeat 100% 0%;
+}
+.tabf_table_cell textarea:focus {
+	background: 0;
 }
 
-.tabf_table_row {
+/* footer */
+.tabf_table_footer {
+	font-size: 90%;
+	line-height: 1em;
+	padding: 0 5px;
+	text-align: right;
 	vertical-align: top;
 }
 
-.tabf_table_row_saved{
+.tabf_further_results a {
+	text-align: right;
+	margin: 0 1em;
 }
 
-.tabf_table_row_saved_successfull{
+/* action dependent styles */
+/* One or more values in the row have been modified */
+.tabf_modified_row td:first-child {
+	font-weight: bold;
 }
-
-.tabf_table_row_saved_error{
-}
-
-.tabf_table_cell{
-	padding: 0px !important;
-	margin: 0px !important;
-	border: 0üx;
-}
-
 
 .tabf_modified_value {
 	font-weight: bold;
 }
 
-.tabf_deleted_row {
+/* Teaxtarea has focus */
+.tabf_selected_value {
+	background-color: #E8EDFF !important;
+	outline: 1px solid black;
 }
 
-.tabf_modified_row td:nth-child(1){
-	font-weight: bold;
+/* The row has been deleted */
+.tabf_deleted_row .tabf_table_cell {
+	background-color: red;
+}
+.tabf_deleted_row textarea {
+	background-color: red;
 }
 
-.tabf_further_results a{
-	text-align: right| important;
+/* A row has been added, because user has pressed 'Add instance' button or
+because the query has found an instance, which does not exist and the user is
+allowed to create new instances. */
+.tabf_new_row .tabf_table_cell {
+	background-color: #FFCD87;
+}
+.tabf_new_row textarea {
+	background-color: #FFCD87;
+}
+.tabf_new_row .tabf_table_cell:last-child {
+	background-color: transparent !important;
 }
 
-.tabf_new_row {
+/* The query has found an instance that does not exist and the user is not
+allowed to create new instances. */
+.tabf_non_existing_row {
+	background-color: red;
+}
+.tabf_non_existing_row textarea {
+	background-color: red;
+}
+
+/* The row is read protected */
+.tabf_read_protected_row .tabf_table_cell, .tabf_read_protected_row .tabf_table_cell textarea {
+	background: 0;
+	background-color: #F0F0F0;
+	color: #6D6D6D;
+}
+
+/* The row is write protected */
+.tabf_write_protected_row .tabf_table_cell {
+	background-color: #F0F0F0;
+	color: #6D6D6D;
+}
+
+/* The row has been saved... */
+.tabf_table_row_saved {
 	
+}
+
+/* ...successfully */
+.tabf_table_row_saved_successfull .tabf_table_cell {
+	background-color: lightgreen;
+}
+
+.tabf_table_row_saved_successfull textarea {
+	background-color: lightgreen;
+}
+
+/* ...erroneous */
+.tabf_table_row_saved_error .tabf_table_cell {
+	background-color: red;
+}
+
+.tabf_table_row_saved_error textarea {
+	background-color: red;
+}
+
+/* for the instances (first column) */
+.tabf_valid_instance_name {
+	background-color: lightgreen !important;
 }
 
 .tabf_erronious_instance_name {
 	font-weight: bold;
-}
-
-.tabf_valid_instance_name {
+	background-color: red !important;
 }

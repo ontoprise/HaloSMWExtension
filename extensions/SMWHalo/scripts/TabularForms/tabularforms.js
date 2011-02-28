@@ -543,14 +543,16 @@ var TF = Class.create({
 	 * Tabular Form.
 	 */
 	addInstance : function(tabfId){
-		jQuery('#' + tabfId + ' .tabf_table_container .smwfooter').
+		jQuery('#' + tabfId + ' .tabf_table_container .tabf_table_footer').
 			before('<tr>' + jQuery('#' + tabfId + ' .tabf_table_container table tr:last-child').html() + '</tr>');
 		
-		var newRow = jQuery('#' + tabfId + ' .tabf_table_container .smwfooter').prev();
+		var newRow = jQuery('#' + tabfId + ' .tabf_table_container .tabf_table_footer').prev();
 		jQuery(newRow).addClass('tabf_new_row');
 		jQuery(newRow).attr('isNew', true);
 		jQuery('td:first-child textarea', newRow).addClass('tabf_erronious_instance_name');
 		jQuery('td', newRow).addClass('tabf_table_cell');
+		jQuery('td:last-child', newRow).removeClass('tabf_table_cell');
+		jQuery('td:last-child', newRow).addClass('tabf_status_cell');
 		
 		jQuery('td textarea', newRow).each(tf.initializeLoadedCell)
 		jQuery('td:first-child', newRow).each(tf.initializeDeleteButtons)
@@ -622,12 +624,9 @@ var TF = Class.create({
 	 * Displays delete/undelete button if one moves mouse over a subject name
 	 */
 	displayDeleteButton : function(event){
-		jQuery('.tabf-delete-button', this).css('position', 'absolute');
 		//todo: rempve minus 3
 		var bottomPos = jQuery(this).position().top + jQuery(this).innerHeight() - jQuery('input', this).height() - 3;
 		jQuery('.tabf-delete-button', this).css('top', bottomPos);
-		//todo: remove minus 1
-		jQuery('.tabf-delete-button', this).css('width', jQuery(this).innerWidth() - 1);
 		jQuery('.tabf-delete-button', this).css('display', 'block');
 	},
 	
