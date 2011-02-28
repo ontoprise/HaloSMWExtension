@@ -43,8 +43,9 @@ RefreshSemanticToolBar.prototype = {
                      wgCanonicalSpecialPageName == 'AddData' || wgCanonicalSpecialPageName == 'EditData' ||
                      wgCanonicalSpecialPageName == 'FormEdit' )
 		   && typeof stb_control != 'undefined' && stb_control.isToolbarAvailable()){
-			Event.observe('wpTextbox1', 'change' ,this.changed.bind(this));
-			Event.observe('wpTextbox1', 'keyup' ,this.setUserIsTyping.bind(this));
+            var txtarea = $('wpTextbox1') || $('free_text');
+            Event.observe(txtarea, 'change' ,this.changed.bind(this));
+            Event.observe(txtarea, 'keyup' ,this.setUserIsTyping.bind(this));
 			this.registerTimer();
 			this.editboxtext = "";
 
