@@ -26,7 +26,6 @@ var TF = Class.create({
 		var tabularFormId = jQuery(container).attr('id');
 		var isSPARQL = jQuery('.tabf_query_serialization', container).attr('isSPARQL');
 		
-		//todo:add ajax error handling
 		var url = wgServer + wgScriptPath + "/index.php";
 		jQuery.ajax({ url:  url, 
 			data: {
@@ -348,8 +347,8 @@ var TF = Class.create({
 	cellValueChangeHandler : function(node){
 		var parentRow = jQuery(node).parent('td').parent('tr');
 		
-		if(jQuery(node).attr('class') == 'tabf_erronious_instance_name'
-				|| jQuery(node).attr('class') == 'tabf_valid_instance_name'){
+		if(jQuery(node).attr('class').indexOf('tabf_erronious_instance_name') > -1
+				|| jQuery(node).attr('class').indexOf('tabf_valid_instance_name') > -1){
 			return;
 		}
 		
@@ -357,7 +356,7 @@ var TF = Class.create({
 			jQuery(node).addClass('tabf_modified_value');
 			jQuery(node).attr('isModified', true);
 		
-			if(jQuery(parentRow).attr('class') == 'tabf_new_row'){
+			if(jQuery(parentRow).attr('class').indexOf('tabf_new_row') > -1){
 				return;
 			}
 			
@@ -374,7 +373,7 @@ var TF = Class.create({
 			jQuery(node).removeClass('tabf_modified_value');
 			jQuery(node).attr('isModified', false);
 			
-			if(jQuery(parentRow).attr('class') == 'tabf_new_row'){
+			if(jQuery(parentRow).attr('class').indexOf('tabf_new_row') > -1){
 				return;
 			}
 			
@@ -432,7 +431,6 @@ var TF = Class.create({
 			var articleTitle = jQuery('td:first-child ',this).attr('article-name');
 			
 			
-			//todo:add ajax error handling
 			var url = wgServer + wgScriptPath + "/index.php";
 			jQuery.ajax({ url:  url, 
 				data: {
@@ -494,7 +492,6 @@ var TF = Class.create({
 			}
 			
 			
-			//todo:add ajax error handling
 			var url = wgServer + wgScriptPath + "/index.php";
 			jQuery.ajax({ url:  url, 
 				data: {
@@ -525,14 +522,14 @@ var TF = Class.create({
 			jQuery('td:last-child .tabf_saved_status', row).css('display', 'inline');
 			//replace article name input of new instance with textarea
 			
-			if(jQuery('td:first-child textarea', row).attr('class') == 'tabf_valid_instance_name'){
+			if(jQuery('td:first-child textarea', row).attr('class').indexOf('tabf_valid_instance_name') > -1){
 				var text = '<a href="' + wgServer + wgScriptPath + "/index.php" + "?title=";
 				text += encodeURI(jQuery('td:first-child textarea', row).attr('value'));
 				text += '">' + jQuery('td:first-child textarea', row).attr('value') + '</a>';
 				jQuery('td:first-child', row).html(text);
 			}
 		} else {
-			jQuery(row).addClass('.tabf_table_row_saved_error');
+			jQuery(row).addClass('tabf_table_row_saved_error');
 			jQuery('td:last-child .tabf_pending_status', row).css('display', 'none');
 			jQuery('td:last-child .tabf_error_status', row).attr('title', data.msg);
 			jQuery('td:last-child .tabf_error_status', row).css('display', 'inline');
@@ -567,8 +564,8 @@ var TF = Class.create({
 	 * checks if instance name is valid and new via an Ajax Call.
 	 */
 	checkNewInstanceName : function(element, keyCode){
-		if(jQuery(element).attr('class') != 'tabf_erronious_instance_name' 
-				&& jQuery(element).attr('class') != 'tabf_valid_instance_name'){
+		if(jQuery(element).attr('class').indexOf('tabf_erronious_instance_name') == -1 
+				&& jQuery(element).attr('class').indexOf('tabf_valid_instance_name') == -1){
 			return;
 		}
 		
@@ -604,9 +601,11 @@ var TF = Class.create({
 		if(data.validTitle == true){
 			jQuery('td:first-child textarea', jQuery(row)).removeClass('tabf_erronious_instance_name');
 			jQuery('td:first-child textarea', jQuery(row)).addClass('tabf_valid_instance_name');
+			jQuery('td:first-child textarea', jQuery(row)).attr('isValidInstanceName', 'true');
 		} else {
 			jQuery('td:first-child textarea', jQuery(row)).removeClass('tabf_valid_instance_name');
 			jQuery('td:first-child textarea', jQuery(row)).addClass('tabf_erronious_instance_name');
+			jQuery('td:first-child textarea', jQuery(row)).attr('isValidInstanceName', 'false');
 		}
 		
 		if(jQuery('.tabf_new_row .tabf_erronious_instance_name', jQuery(row).parent().parent()).length == 0){
@@ -806,8 +805,6 @@ var TF = Class.create({
 				}
 				
 				if(isTemplateParam == 'true'){
-					
-					//todo: make sure, that this does not happen each time the value of this cell is compared
 					
 					var templateName = jQuery('th:nth-child(' + tf.currentSortColumnNr + ')', 
 							jQuery(cell).parent().parent().parent()).attr('field-address');
