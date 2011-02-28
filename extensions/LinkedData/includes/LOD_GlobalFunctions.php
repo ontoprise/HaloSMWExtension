@@ -184,11 +184,7 @@ function lodfSetupExtension() {
     
     $wgHooks['ArticleDelete'][]			= 'LODParserFunctions::articleDelete';
     $wgHooks['OutputPageBeforeHTML'][]	= 'LODParserFunctions::outputPageBeforeHTML';
-    
-    if ($lodgNEPEnabled) {
-	 	$wgHooks['ArticleFromTitle'][]		= 'LODNonExistingPageHandler::onArticleFromTitle';
-	    $wgHooks['EditFormPreloadText'][]	= 'LODNonExistingPageHandler::onEditFormPreloadText';
-    }    
+      
 
     lodfSetupMetaDataQueryPrinter();
     lodfSetupRating();

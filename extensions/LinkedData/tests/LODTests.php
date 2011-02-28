@@ -11,7 +11,6 @@ require_once 'testcases/TestSparqlDataspaceRewriter.php';
 require_once 'testcases/TestOntologyBrowserSparql.php';
 require_once 'testcases/TestMappingLanguageAPI.php';
 require_once 'testcases/TestImporter.php';
-require_once 'testcases/TestNonExistingPageHandler.php';
 require_once 'testcases/TestMetaDataQueryPrinter.php';
 require_once 'testcases/TestLODRating.php';
 require_once 'testcases/TestSparqlParser.php';
@@ -35,7 +34,6 @@ class LODTests
         $suite->addTestSuite("TestOntologyBrowserSparql");
         $suite->addTestSuite("TestMappingLanguageAPI");
         $suite->addTestSuite("TestImporter");
-        $suite->addTestSuite("TestNonExistinPageSuite");
         $suite->addTestSuite("TestMetaDataQueryPrinterSuite");
         $suite->addTestSuite("TestSparqlParserSuite");
         $suite->addTestSuite("TestLODPolicySuite");
