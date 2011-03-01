@@ -23,6 +23,8 @@ VERSION 1.4.1
       mode and the image dialog inserts the correct html element.
 
   BUGFIXES:
+    * Fix bug http://smwforum.ontoprise.com/smwbugs/show_bug.cgi?id=13852
+      Some features of "Numbered lists" in the WYSIWYG editor malfunctioned
     * Fix bug http://smwforum.ontoprise.com/smwbugs/show_bug.cgi?id=13539
       Language of UI in CKeditor
     * Fix bug http://smwforum.ontoprise.com/smwbugs/show_bug.cgi?id=13797
