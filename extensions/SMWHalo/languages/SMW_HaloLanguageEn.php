@@ -418,8 +418,10 @@ clicking the big arrows between the columns.',
 	'semanticmaps_abb_south'       => 'S',
 	'semanticmaps_abb_west'        => 'W',
 	'semanticmaps_label_latitude'  => 'Latitude:',
-	'semanticmaps_label_longitude' => 'Longitude:'
+	'semanticmaps_label_longitude' => 'Longitude:',
 	
+	//--- Non-existing pages ---
+    'lod_nep_link'          => 'Create the article <b>$1</b> with the content displayed below.',
 	
 
 	);

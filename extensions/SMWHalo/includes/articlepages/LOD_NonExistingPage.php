@@ -43,14 +43,14 @@ global $haclgIP;
  *
  */
 class  LODNonExistingPage extends Article {
-    
+
 	private $mUri;
-	
+
 	public function LODNonExistingPage($title, $uri = '') {
 		parent::__construct($title);
 		$this->mUri = $uri;
 	}
-	
+
 	//--- Constants ---
 
 	//--- Private fields ---
@@ -95,7 +95,7 @@ class  LODNonExistingPage extends Article {
 	 * 		Content of the page.
 	 */
 	public function getContent() {
-		$text = self::getCreateLink($this);
+		$text = self::getCreateLink($this, $this->mUri);
 		$text .= self::getContentOfNEP($this, $this->mUri);
 		return $text;
 	}
@@ -116,7 +116,7 @@ class  LODNonExistingPage extends Article {
 		$uri = $uri != '' ? $uri : TSHelper::getUriFromTitle($t);
 		$ns = $t->getNamespace();
 
-       
+			
 		$content = array();
 		if ($ns == NS_CATEGORY) {
 			// add content for category pages
@@ -139,6 +139,7 @@ class  LODNonExistingPage extends Article {
 				$content[$key] = str_replace('$uri$', $uri, $wikiText);
 			}
 		}
+
 
 		// Assemble the complete content
 		$text = "";
@@ -262,9 +263,9 @@ class  LODNonExistingPage extends Article {
 		}
 
 		// get the categories of the entity
-		
+
 		if (!class_exists("LODTripleStoreAccess")) return;
-		
+
 		$tsa = new LODTripleStoreAccess();
 		$query = <<<SPARQL
 			PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
@@ -324,15 +325,26 @@ SPARQL;
 	 *
 	 * @param Article $article
 	 * 		The article for which the link is generated.
+	 * @param string URI of entity this article describes
 	 */
-	private static function getCreateLink(Article $article) {
+	private static function getCreateLink(Article $article, $uri = '') {
+
+
 		$t = $article->getTitle();
-		$link = $t->getFullUrl(array('action' => 'edit',
+		if ($uri == '') {
+			$link = $t->getFullUrl(array('action' => 'edit',
 									 'preloadNEP' => 'true',
 									 'mode' => 'wysiwyg'));
+		} else {
+			$link = $t->getFullUrl(array('action' => 'edit',
+                                     'preloadNEP' => 'true',
+                                     'mode' => 'wysiwyg',
+			                         'uri' => $uri));
+		}
 		$name = $t->getFullText();
 		$message = wfMsg('lod_nep_link', $name);
 		$link = "[$link $message] <br />";
 		return $link;
+
 	}
 }

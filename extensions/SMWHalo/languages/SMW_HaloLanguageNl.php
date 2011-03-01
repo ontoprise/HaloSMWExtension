@@ -1,23 +1,23 @@
 <?php
 /*  Copyright 2007, ontoprise GmbH
-*  This file is part of the halo-Extension.
-*
-*   The halo-Extension is free software; you can redistribute it and/or modify
-*   it under the terms of the GNU General Public License as published by
-*   the Free Software Foundation; either version 3 of the License, or
-*   (at your option) any later version.
-*
-*   The halo-Extension is distributed in the hope that it will be useful,
-*   but WITHOUT ANY WARRANTY; without even the implied warranty of
-*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-*   GNU General Public License for more details.
-*
-*   along with this program.  If not, see <http://www.gnu.org/licenses/>.
-* 
-*/
+ *  This file is part of the halo-Extension.
+ *
+ *   The halo-Extension is free software; you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation; either version 3 of the License, or
+ *   (at your option) any later version.
+ *
+ *   The halo-Extension is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *
+ *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
 /**
  * @file
-*  @ingroup SMWHaloLanguage
+ *  @ingroup SMWHaloLanguage
  * @author Ontoprise
  */
 
@@ -26,7 +26,7 @@ include_once($smwgHaloIP . '/languages/SMW_HaloLanguage.php');
 
 class SMW_HaloLanguageNl extends SMW_HaloLanguage {
 
-protected $smwContentMessages = array(
+	protected $smwContentMessages = array(
 
 	'smw_viewinOB' => 'Openen in de ontology-browser',
 
@@ -70,12 +70,12 @@ protected $smwContentMessages = array(
 	'smw_help_pageexists' => "Deze vraag is reeds in ons helpsysteem.\nKies 'more' om alle vragen te zien.",
 	'smw_help_error' => "Oeps. Er blijkt een fout gebeurd te zijn.\nJe vraag kon niet toegevoegd worden aan het systeem. Sorry.",
 	'smw_help_question_added' => "Je vraag werd toegevoegd aan ons helpsysteem\nen kan nu beantwoord worden door andere wiki gebruikers.",
-    // Messages for CSH
+	// Messages for CSH
     'smw_csh_icon_tooltip' => 'Click here if you need help or if you want to send feeback to the SMW+ developers.'
-);
+	);
 
 
-protected $smwUserMessages = array(
+	protected $smwUserMessages = array(
     'specialpages-group-smwplus_group' => 'Semantic Mediawiki+',
 	'smw_devel_warning' => 'Dit feature wordt momenteel ontwikkeld, en is mogelijk niet volledig functioneel. Sla je gegevens op vooraleer je het gebruikt.',
 	// Messages for pages of types, relations, and attributes
@@ -88,10 +88,10 @@ protected $smwUserMessages = array(
 	'smw_category_schemainfo' => 'Schema informatie voor categorie "$1"',
 	'smw_category_properties' => 'Eigenschappen',
 	'smw_category_properties_range' => 'Eigenschappen met waardenbereik "$1"',
-	
+
 	'smw_category_askforallinstances' => 'Vraag alle entiteiten van "$1" en alle entiteiten von de sub-categorieën',
 	'smw_category_queries' => 'Queries voor categorieën',
-	
+
 	'smw_category_nrna' => 'Pagina´s met verkeerd toegekend domein "$1".',
 	'smw_category_nrna_expl' => 'Deze pagina´s hebben een domein maar zijn geen eigenschap.',
 	'smw_category_nrna_range' => 'Pagina´s met verkeerd toegekende waardenbereik "$1".',
@@ -140,14 +140,14 @@ Druk de rechter knop om resultaten te verkrijgen. Enkel <i>Return</i> drukken ge
 	'smw_unusedattributes_docu' => 'De volgende attribuut-pagina´s bestaan alhoewel geen enkele andere pagina er gebruik van maakt.',
 
 
-/*Messages for OntologyBrowser*/
+	/*Messages for OntologyBrowser*/
 	'ontologybrowser' => 'Ontologie-browser',
 	'smw_ac_hint' => 'Druk Ctrl+Alt+Space voor auto-completion. (Ctrl+Space in IE)',
 	'smw_ob_categoryTree' => 'Categorieënboom',
 	'smw_ob_attributeTree' => 'Eigenschappenboom',
 
 	'smw_ob_instanceList' => 'Entiteiten',
-	
+
 	'smw_ob_att' => 'Eigenschappen',
 	'smw_ob_relattValues' => 'Waarden',
 	'smw_ob_relattRangeType' => 'Type/waardenbereik',
@@ -188,7 +188,7 @@ Druk de rechter knop om resultaten te verkrijgen. Enkel <i>Return</i> drukken ge
     'smw_ob_cmd_createinstance' => 'Create instance',
 	'smw_ob_cmd_addpropertytodomain' => 'Eigenschappen toevoegen aan domein: ',
 
-//TODO: Translate strings
+	//TODO: Translate strings
 	/* Advanced options in the ontology browser */
 	'smw_ob_source_wiki' => "-Wiki-" ,
 	'smw_ob_advanced_options' => "Advanced options" ,
@@ -214,7 +214,7 @@ Druk de rechter knop om resultaten te verkrijgen. Enkel <i>Return</i> drukken ge
 	'smw_cs_no_triples_found' => 'Geen triples gevonden!',
 	'smw_autogen_mail' => 'Deze email werd automatisch gegenereerd. Gelieve niet te antwoorden op deze email!',
 
-	
+
 
 	/*Messages for ContextSensitiveHelp*/
 	'contextsensitivehelp' => 'Kontext-gevoelige helpfunctie',
@@ -337,24 +337,24 @@ Druk de rechter knop om resultaten te verkrijgen. Enkel <i>Return</i> drukken ge
     'smw_qi_tt_option' => 'Define general settings for how the query is executed',
     'smw_qi_tt_maintab_query' => 'Create a new query',
     'smw_qi_tt_maintab_load' => 'Load an existing query',
-	
+
 	/* Annotation */
  	'smw_annotation_tab' => 'aantekeningen maken',
 	'smw_annotating'     => '$1 aantekenen',
 	'annotatethispage'   => 'Deze pagina annoteren',
 
- 	
- 	/* Refactor preview */
+
+	/* Refactor preview */
  	'refactorstatistics' => 'Refactor statistieken',
  	'smw_ob_link_stats' => 'Refactor statistieken openen',
- 	
- 	
- 	
- 	
- 	/* Gardening Issue Highlighting in Inline Queries */
+
+
+
+
+	/* Gardening Issue Highlighting in Inline Queries */
 	'smw_iqgi_missing' => 'ontbrekend',
 	'smw_iqgi_wrongunit' => 'verkeerde eenheid',
-	
+
 	/* ACL */
 	'acl' => 'Access Control Lists',
 	'acl_welcome' => 'This special page allows to configure the Access Control Lists. They are used to restrict access to the wiki.',
@@ -379,7 +379,7 @@ Druk de rechter knop om resultaten te verkrijgen. Enkel <i>Return</i> drukken ge
 	'smw_acl_move' => 'move',
 	'smw_acl_permit' => 'permit',
 	'smw_acl_deny' => 'deny',
-	
+
 	// Simple Rules formula parser
 	'smw_srf_expected_factor' => 'Expected a function, variable, constant or braces near $1',
 	'smw_srf_expected_comma' => 'Expected a comma near $1',
@@ -388,7 +388,7 @@ Druk de rechter knop om resultaten te verkrijgen. Enkel <i>Return</i> drukken ge
 	'smw_srf_expected_parameter' => 'Expected a parameter near $1',
 	'smw_srf_missing_operator' => 'Expected an operator near $1',
 
-	 // Triple Store Admin
+	// Triple Store Admin
     'tsa' => 'Triple store administration',
     'tsc_advertisment' => "'''This special page helps you to administrate the Wiki to triplestore connection.'''<br><br>''You have no triplestore attached to this Wiki.''<br><br>You make this Wiki smarter by connecting a TripleStore to it!<br><br>Connecting the ontoprise products '''TripleStoreConnector Basic''' (free) or '''TripleStoreConnector Professional''' ultimately leads to getting better search results and to making use of data which lives outside this Wiki. <br><br> '''[http://smwforum.ontoprise.com/smwforum/index.php/List_of_Extensions/Triple_store_connector Click here to read what your benefits are and to download a TripleStore!]'''",
     'smw_tsa_welcome' => 'This special page helps you to administrate the wiki/triplestore connection.',
@@ -415,64 +415,69 @@ Druk de rechter knop om resultaten te verkrijgen. Enkel <i>Return</i> drukken ge
 	// Derived facts
 	'smw_df_derived_facts_about' => 'Afgeleide feiten $1',
     'smw_df_tsc_advertisment'    => "''You have no triplestore attached to this Wiki.''\n\nYou make this Wiki smarter by connecting a TripleStore to it! Connecting the ontoprise products '''TripleStoreConnector Basic''' (free) or '''TripleStoreConnector Professional''' ultimately leads to getting better search results and to making use of data which lives outside this Wiki.\nClick here to read what your benefits are and to download a [http://smwforum.ontoprise.com/smwforum/index.php/List_of_Extensions/Triple_store_connector TripleStore]!",
-        //skin
+	//skin
         'smw_search_this_wiki' => 'Search this wiki',
         'more_functions' => 'more',
         'smw_treeviewleft' => 'Open treeview to the left side',
-        'smw_treeviewright' => 'Open treeview to the right side'
+        'smw_treeviewright' => 'Open treeview to the right side',
+
+	//--- Non-existing pages ---
+    'lod_nep_link'          => 'Create the article <b>$1</b> with the content displayed below.',
 
 
 
-);
 
 
-protected $smwSpecialProperties = array(
+	);
+
+
+	protected $smwSpecialProperties = array(
 	//always start upper-case
 	"___cfsi" => array('_siu', 'Komt overeen met SI'),
 	"___CREA" => array('_wpg', 'Creator'),
 	"___CREADT" => array('_dat', 'Creation date'),
 	"___MOD" => array('_wpg', 'Last modified by')
-);
+	);
 
 
-var $smwSpecialSchemaProperties = array (
+	var $smwSpecialSchemaProperties = array (
 	SMW_SSP_HAS_DOMAIN_AND_RANGE_HINT => 'Heeft domein en waardenbereik',
 	SMW_SSP_HAS_MAX_CARD => 'Heeft max kardinaliteit',
 	SMW_SSP_HAS_MIN_CARD => 'Heeft min kardinaliteit',
 	SMW_SSP_IS_INVERSE_OF => 'Is het omgekeerde van',
 	SMW_SSP_IS_EQUAL_TO => 'Is gelijk aan',
 	SMW_SSP_ONTOLOGY_URI => 'Ontology URI'
-);
+	);
 
-var $smwSpecialCategories = array (
+	var $smwSpecialCategories = array (
 	SMW_SC_TRANSITIVE_RELATIONS => 'Transitieve eigenschappen',
 	SMW_SC_SYMMETRICAL_RELATIONS => 'Symmetrische eigenschappen'
-);
+	);
 
-var $smwHaloDatatypes = array(
+	var $smwHaloDatatypes = array(
 	'smw_hdt_chemical_formula' => 'Chemische formule',
 	'smw_hdt_chemical_equation' => 'Chemische gelijkheid',
 	'smw_hdt_mathematical_equation' => 'Wiskundige gelijkheid',
     'smw_integration_link' => 'Integrations link'
-);
+	);
 
-protected $smwHaloNamespaces = array(
-);
+	protected $smwHaloNamespaces = array(
+	);
 
-protected $smwHaloNamespaceAliases = array(
-);
+	protected $smwHaloNamespaceAliases = array(
+	);
 
 	/**
 	 * Function that returns the namespace identifiers.
 	 */
 	public function getNamespaceArray() {
 		return array(
-			SMW_NS_RELATION       => 'Relatie',
-			SMW_NS_RELATION_TALK  => 'Relatie_talk',
-			SMW_NS_PROPERTY       => 'Eigenschap',
-			SMW_NS_PROPERTY_TALK  => 'Eigenschap_talk',
-			SMW_NS_TYPE           => 'Type',
-			SMW_NS_TYPE_TALK      => 'Type_talk'
+		SMW_NS_RELATION       => 'Relatie',
+		SMW_NS_RELATION_TALK  => 'Relatie_talk',
+		SMW_NS_PROPERTY       => 'Eigenschap',
+		SMW_NS_PROPERTY_TALK  => 'Eigenschap_talk',
+		SMW_NS_TYPE           => 'Type',
+		SMW_NS_TYPE_TALK      => 'Type_talk'
 		);
 	}
 

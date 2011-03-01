@@ -1141,7 +1141,7 @@ class SMWTripleStore extends SMWStore {
 					if ($plainFormat) {
 						$v = $this->createSMWDataValue(NULL, $sv, TSNamespaces::$XSD_NS."string", $metadata);
 					} else {
-
+                        global $lodgNEPEnabled;
 						if ($lodgNEPEnabled) {
 							// in case the NEP feature is active, create integration links.
 							// guess local name

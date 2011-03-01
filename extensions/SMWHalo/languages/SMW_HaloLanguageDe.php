@@ -409,9 +409,11 @@ protected $smwUserMessages = array(
 	'semanticmaps_abb_south'       => 'S',
 	'semanticmaps_abb_west'        => 'W',
 	'semanticmaps_label_latitude'  => 'Latitude:',
-	'semanticmaps_label_longitude' => 'Longitude:'
+	'semanticmaps_label_longitude' => 'Longitude:',
 
 	
+	//--- Non-existing pages ---
+    'lod_nep_link'          => 'Den Artikel <b>$1</b> mit dem unten dargestellten Inhalt erzeugen.',
 	
 );
 
