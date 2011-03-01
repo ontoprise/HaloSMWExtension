@@ -29,37 +29,21 @@ CKEDITOR.editorConfig = function( config )
 	config.toolbar = 'Wiki';
     // var origToolbar = CKEDITOR.config.toolbar_Full
 
-    // custom toolbar for MW
-    var mwToolbar = ['MWSpecialTags', 'MWTemplate'];
     // SMWHalo extension
-    var smwQiButton;
-    var smwStbButton;
-    if (('SMW_HALO_VERSION').InArray(window.parent.wgCKeditorUseBuildin4Extensions)) {
-        smwQiButton = 'SMWqi';
-        CKEDITOR.plugins.addExternal( 'smw_qi', CKEDITOR.basePath + 'plugins/smwqueryinterface/' );
-        smwStbButton = 'SMWtoolbar';
-        CKEDITOR.plugins.addExternal( 'smw_toolbar', CKEDITOR.basePath + 'plugins/smwtoolbar/' );
-        extraPlugins += ",smw_qi,smwtoolbar";
-    }
+    CKEDITOR.plugins.addExternal( 'smw_qi', CKEDITOR.basePath + 'plugins/smwqueryinterface/' );
+    CKEDITOR.plugins.addExternal( 'smw_toolbar', CKEDITOR.basePath + 'plugins/smwtoolbar/' );
+    extraPlugins += ",smw_qi,smwtoolbar";
     // DataImport extension
-    var smwDiButton;
-    if (('SMW_DI_VERSION').InArray(window.parent.wgCKeditorUseBuildin4Extensions)) {
-        smwDiButton = 'SMWwebservice';
-        CKEDITOR.plugins.addExternal( 'smw_webservice', CKEDITOR.basePath + 'plugins/smwwebservice/' );
-        extraPlugins += ",smw_webservice";
-    }
+    CKEDITOR.plugins.addExternal( 'smw_webservice', CKEDITOR.basePath + 'plugins/smwwebservice/' );
+    extraPlugins += ",smw_webservice";
     // SemanticRule extension
     if (('SEMANTIC_RULES_VERSION').InArray(window.parent.wgCKeditorUseBuildin4Extensions)) {
         CKEDITOR.plugins.addExternal( 'smw_rule', CKEDITOR.basePath + 'plugins/smwrule/' );
         extraPlugins += ",smw_rule";
     }
     // Richmedia extension
-    var smwRmButton;
-    if (('SMW_RM_VERSION').InArray(window.parent.wgCKeditorUseBuildin4Extensions)) {
-        smwRmButton = 'SMWrichmedia';
-        CKEDITOR.plugins.addExternal( 'smw_richmedia', CKEDITOR.basePath + 'plugins/smwrichmedia/' );
-        extraPlugins += ",smw_richmedia";
-    }
+    CKEDITOR.plugins.addExternal( 'smw_richmedia', CKEDITOR.basePath + 'plugins/smwrichmedia/' );
+    extraPlugins += ",smw_richmedia";
 
     config.toolbar_Wiki = [
         ['Source', '-', 'Print','SpellChecker','Scayt'],
@@ -69,8 +53,8 @@ CKEDITOR.editorConfig = function( config )
         ['Link','Unlink'],
         ['Undo','Redo'],
         ['Image', 'Table', 'HorizontalRule', 'SpecialChar'],
-        ['MWSpecialTags', 'MWTemplate', smwQiButton, smwDiButton, smwRmButton ],
-        [ smwStbButton ],
+        ['MWSpecialTags', 'MWTemplate', 'SMWqi', 'SMWwebservice', 'SMWrichmedia' ],
+        [ 'SMWtoolbar' ],
         ['About'],
         '/',
         ['Styles','Format','Font','FontSize'],
