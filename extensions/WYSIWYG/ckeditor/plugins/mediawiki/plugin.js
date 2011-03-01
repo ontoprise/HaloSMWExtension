@@ -634,9 +634,23 @@ CKEDITOR.customprocessor.prototype =
 					switch ( sNodeName ){
 						case 'ol' :
 						case 'ul' :
-							var isFirstLevel = !htmlNode.parentNode.nodeName.IEquals( 'ul', 'ol', 'li', 'dl', 'dt', 'dd' );
+							var isFirstLevel = !htmlNode.parentNode.nodeName.IEquals( 'ul', 'ol', 'li', 'dl', 'dt', 'dd' ),
+                                listStyle = htmlNode.getAttribute('style') || '',
+                                startNum = htmlNode.getAttribute('start') || '';
+                            this.preserveLiNode = (listStyle && !listStyle.match(/list-style-type:\s*decimal;/i) || startNum && startNum != '1');
+                            if (this.preserveLiNode) {
+                                stringBuilder.push('<' + sNodeName);
+                                if (startNum)
+                                    stringBuilder.push(' start="' + startNum + '"');
+                                if (listStyle)
+                                    stringBuilder.push(' style="' + listStyle + '"');
+                                stringBuilder.push('>\n');
+                            }
 
 							this._AppendChildNodes( htmlNode, stringBuilder, prefix );
+
+                            if (this.preserveLiNode)
+                                stringBuilder.push('</' + sNodeName + '>');
 
 							if ( isFirstLevel && stringBuilder[ stringBuilder.length - 1 ] != "\n" ) {
 								stringBuilder.push( '\n' );
@@ -645,6 +659,13 @@ CKEDITOR.customprocessor.prototype =
 							break;
 
 						case 'li' :
+
+                            if (this.preserveLiNode) {
+                                stringBuilder.push('<li>');
+                                this._AppendChildNodes( htmlNode, stringBuilder, prefix );
+                                stringBuilder.push('</li>\n');
+                                break;
+                            }
 
 							if( stringBuilder.length > 1 ){
 								var sLastStr = stringBuilder[ stringBuilder.length - 1 ];
