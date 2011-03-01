@@ -1,3 +1,26 @@
+if (!('SMW_HALO_VERSION').InArray(window.parent.wgCKeditorUseBuildin4Extensions)) {
+// Halo Import extension is not installed, show a teaser only.
+CKEDITOR.plugins.add( 'smw_qi',
+{
+	requires : [ 'dialog' ],
+	init : function( editor )
+	{
+		var command = editor.addCommand( 'SMWqi', new CKEDITOR.dialogCommand( 'SMWqi' ) );
+		command.canUndo = false;
+
+		editor.ui.addButton( 'SMWqi',
+			{
+				label : 'Query Interface',
+				command : 'SMWqi',
+                icon: this.path + 'images/tb_icon_ask.gif'
+			});
+
+		CKEDITOR.dialog.add( 'SMWqi', this.path + 'dialogs/teaser.js' );
+	}
+});
+
+} else {
+// Halo extension is installed, use the Webservice
 CKEDITOR.plugins.add('smw_qi', {
 
     requires : [ 'mediawiki', 'dialog' ],
@@ -64,3 +87,4 @@ CKEDITOR.plugins.add('smw_qi', {
 
 	}
 });
+}
