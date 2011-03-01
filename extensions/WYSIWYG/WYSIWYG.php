@@ -62,6 +62,9 @@ $wgFCKEditorExcludedNamespaces = array();
 // URL param mode=wysiwyg is set
 $wgCKEditorUrlparamMode = false;
 
+// hide toolbar buttons when some extensions are not installed (default show buttons)
+$wgCKEditorHideDisabledTbutton = false;
+
 /**
  * Enable use of AJAX features.
  */
