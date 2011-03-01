@@ -18,6 +18,7 @@ CKEDITOR.editorConfig = function( config )
 	// Define changes to default configuration here. For example:
 	// config.language = 'fr';
 	// config.uiColor = '#AADC6E';
+    var showTbButton = (typeof window.parent.wgCKEditorHideDisabledTbutton == 'undefined');
     
     CKEDITOR.plugins.addExternal( 'mediawiki', CKEDITOR.basePath + 'plugins/mediawiki/' );
     CKEDITOR.plugins.addExternal( 'mwtemplate', CKEDITOR.basePath + 'plugins/mwtemplate/' );
@@ -30,20 +31,33 @@ CKEDITOR.editorConfig = function( config )
     // var origToolbar = CKEDITOR.config.toolbar_Full
 
     // SMWHalo extension
-    CKEDITOR.plugins.addExternal( 'smw_qi', CKEDITOR.basePath + 'plugins/smwqueryinterface/' );
-    CKEDITOR.plugins.addExternal( 'smw_toolbar', CKEDITOR.basePath + 'plugins/smwtoolbar/' );
-    extraPlugins += ",smw_qi,smwtoolbar";
+    var qiButton, stbButton;
+    if ( ('SMW_HALO_VERSION').InArray(window.parent.wgCKeditorUseBuildin4Extensions) || showTbButton) {
+        CKEDITOR.plugins.addExternal( 'smw_qi', CKEDITOR.basePath + 'plugins/smwqueryinterface/' );
+        CKEDITOR.plugins.addExternal( 'smw_toolbar', CKEDITOR.basePath + 'plugins/smwtoolbar/' );
+        extraPlugins += ",smw_qi,smwtoolbar";
+        qiButton = 'SMWqi';
+        stbButton = 'SMWtoolbar';
+    }
     // DataImport extension
-    CKEDITOR.plugins.addExternal( 'smw_webservice', CKEDITOR.basePath + 'plugins/smwwebservice/' );
-    extraPlugins += ",smw_webservice";
+    var wsButton;
+    if ( ('SMW_DI_VERSION').InArray(window.parent.wgCKeditorUseBuildin4Extensions) || showTbButton) {
+        CKEDITOR.plugins.addExternal( 'smw_webservice', CKEDITOR.basePath + 'plugins/smwwebservice/' );
+        extraPlugins += ",smw_webservice";
+        wsButton = 'SMWwebservice';
+    }
     // SemanticRule extension
     if (('SEMANTIC_RULES_VERSION').InArray(window.parent.wgCKeditorUseBuildin4Extensions)) {
         CKEDITOR.plugins.addExternal( 'smw_rule', CKEDITOR.basePath + 'plugins/smwrule/' );
         extraPlugins += ",smw_rule";
     }
     // Richmedia extension
-    CKEDITOR.plugins.addExternal( 'smw_richmedia', CKEDITOR.basePath + 'plugins/smwrichmedia/' );
-    extraPlugins += ",smw_richmedia";
+    var rmButton;
+    if ( ('SMW_RM_VERSION').InArray(window.parent.wgCKeditorUseBuildin4Extensions) || showTbButton) {
+        CKEDITOR.plugins.addExternal( 'smw_richmedia', CKEDITOR.basePath + 'plugins/smwrichmedia/' );
+        extraPlugins += ",smw_richmedia";
+        rmButton = 'SMWrichmedia';
+    }
 
     config.toolbar_Wiki = [
         ['Source', '-', 'Print','SpellChecker','Scayt'],
@@ -53,8 +67,8 @@ CKEDITOR.editorConfig = function( config )
         ['Link','Unlink'],
         ['Undo','Redo'],
         ['Image', 'Table', 'HorizontalRule', 'SpecialChar'],
-        ['MWSpecialTags', 'MWTemplate', 'SMWqi', 'SMWwebservice', 'SMWrichmedia' ],
-        [ 'SMWtoolbar' ],
+        ['MWSpecialTags', 'MWTemplate', qiButton, wsButton, rmButton ],
+        [ stbButton ],
         ['About'],
         '/',
         ['Styles','Format','Font','FontSize'],
