@@ -1,3 +1,4 @@
+if (('SMW_HALO_VERSION').InArray(window.parent.wgCKeditorUseBuildin4Extensions)) {
 (function(){
 /**
  * Class which has the same functionality as SMWEditInterface except for the fact
@@ -1126,3 +1127,26 @@ CKEDITOR.plugins.add('smwtoolbar', {
 	}
 });
 })();
+} else {
+// SMWHalo not installed
+CKEDITOR.plugins.add( 'smwtoolbar',
+{
+	requires : [ 'dialog' ],
+	init : function( editor )
+	{
+		var command = editor.addCommand( 'SMWtoolbar', new CKEDITOR.dialogCommand( 'SMWtoolbar' ) );
+		command.canUndo = false;
+
+		editor.ui.addButton( 'SMWtoolbar',
+			{
+				label : 'Semantic Toolbar',
+                title : 'Semantic Toolbar',
+				command : 'SMWtoolbar',
+                icon: this.path + 'images/tb_icon_semtoolbar.png'
+			});
+
+		CKEDITOR.dialog.add( 'SMWtoolbar', this.path + 'dialogs/teaser.js' );
+	}
+});
+
+}

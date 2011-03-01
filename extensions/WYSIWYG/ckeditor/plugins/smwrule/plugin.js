@@ -1,3 +1,5 @@
+if (('SEMANTIC_RULES_VERSION').InArray(window.parent.wgCKeditorUseBuildin4Extensions)) {
+// Rules extension is installed
 CKEDITOR.plugins.add('smw_rule', {
 
     requires : [ 'mediawiki', 'dialog' ],
@@ -81,3 +83,6 @@ CKEDITOR.plugins.add('smw_rule', {
 
 	}
 });
+} else {
+// rules extension is not installed
+}

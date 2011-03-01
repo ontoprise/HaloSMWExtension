@@ -1,3 +1,26 @@
+if (!('SMW_DI_VERSION').InArray(window.parent.wgCKeditorUseBuildin4Extensions)) {
+// Data Import extension is not installed, show a teaser only.
+CKEDITOR.plugins.add( 'smw_webservice',
+{
+	requires : [ 'dialog' ],
+	init : function( editor )
+	{
+		var command = editor.addCommand( 'SMWwebservice', new CKEDITOR.dialogCommand( 'SMWwebservice' ) );
+		command.canUndo = false;
+
+		editor.ui.addButton( 'SMWwebservice',
+			{
+				label : 'Webservice definition',
+				command : 'SMWwebservice',
+                icon: this.path + 'images/tb_icon_webservice.gif'
+			});
+
+		CKEDITOR.dialog.add( 'SMWwebservice', this.path + 'dialogs/teaser.js' );
+	}
+});
+
+} else {
+// Data Import extension is installed, use the Webservice
 CKEDITOR.plugins.add('smw_webservice', {
 
     requires : [ 'mediawiki', 'dialog' ],
@@ -80,3 +103,5 @@ CKEDITOR.plugins.add('smw_webservice', {
 		
 	}
 });
+
+}

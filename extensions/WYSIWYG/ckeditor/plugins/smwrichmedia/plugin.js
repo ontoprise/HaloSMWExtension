@@ -1,24 +1,6 @@
-//CKEDITOR.plugins.add('smw_richmedia', {
-//
-//    requires : [ 'mediawiki', 'dialog' ],
-//
-//	init : function( editor )
-//	{
-//		editor.addCommand( 'SMWrichmedia', commandDefinition );
-//        CKEDITOR.dialog.add( 'SMWrichmedia', this.path + 'dialogs/smwRmUploadDlg.js');
-//
-//        if ( editor.ui.addButton ) {
-//            editor.ui.addButton( 'SMWrichmedia',
-//                {
-//                    label : 'Upload media',
-//                    command : 'SMWrichmedia',
-//                    icon: this.path + 'images/icon_mediaupload.gif'
-//                });
-//        }
-//	}
-//});
+if (('SMW_RM_VERSION').InArray(window.parent.wgCKeditorUseBuildin4Extensions)) {
+// Richmedia extension is installed
 
-var plugin = CKEDITOR.plugins.smwtoolbar;
 var commandDefinition =
 {
 	preserveState : true,
@@ -73,3 +55,26 @@ CKEDITOR.plugins.add('smw_richmedia', {
 		}
 	}
 });
+
+} else {
+// Richmedia extension is not installed
+CKEDITOR.plugins.add( 'smw_richmedia',
+{
+	requires : [ 'dialog' ],
+	init : function( editor )
+	{
+		var command = editor.addCommand( 'SMWrichmedia', new CKEDITOR.dialogCommand( 'SMWrichmedia' ) );
+		command.canUndo = false;
+
+		editor.ui.addButton( 'SMWrichmedia',
+			{
+				label : 'Upload media',
+				command : 'SMWrichmedia',
+                icon: this.path + 'images/icon_mediaupload.gif'
+			});
+
+		CKEDITOR.dialog.add( 'SMWrichmedia', this.path + 'dialogs/teaser.js' );
+	}
+});
+
+}
