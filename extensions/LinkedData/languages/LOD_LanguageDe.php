@@ -72,8 +72,8 @@ class LODLanguageDe extends LODLanguage {
 		LODLanguage::PFP_LSD_VOCABULARY				=> "vokabular",
 		LODLanguage::PFP_LSD_PREDICATETOCRAWL		=> "zufolgendesprÃ¤dikat",
 		
-		LODLanguage::PFP_SILK_MAPPING_MINTURI				=> 'mintURI',
-		LODLanguage::PFP_SILK_MAPPING_MINTPROPERTY				=> 'mintProperty',
+		LODLanguage::PFP_SILK_MAPPING_MINT_NAMESPACE				=> 'mintNamespace',
+		LODLanguage::PFP_SILK_MAPPING_MINT_PREDICATE_LABEL				=> 'mintPredicateLabel',
 		
 	);
 		

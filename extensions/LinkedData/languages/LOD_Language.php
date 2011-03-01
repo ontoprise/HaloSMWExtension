@@ -54,8 +54,8 @@ abstract class LODLanguage {
 	const PFP_LSD_SPARQLGRAPHPATTERN		= 213;
 	const PFP_LSD_PREDICATETOCRAWL			= 214;
 	
-	const PFP_SILK_MAPPING_MINTURI	= 300;
-	const PFP_SILK_MAPPING_MINTPROPERTY	= 301;
+	const PFP_SILK_MAPPING_MINT_NAMESPACE	= 300;
+	const PFP_SILK_MAPPING_MINT_PREDICATE_LABEL	= 301;
 	
 	
 	// the special message arrays ...
