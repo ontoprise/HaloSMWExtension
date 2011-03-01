@@ -14,6 +14,10 @@ VERSION 1.4.1
       text editor.
 
   CHANGES:
+    * Fix bug http://smwforum.ontoprise.com/smwbugs/show_bug.cgi?id=13271
+      Buttons for Halo features are not hidden when these are not available.
+      Instead in the popup dialog an informative text is displayed where the
+      user can get the extension to enable the requested feature.
     * Fix bug http://smwforum.ontoprise.com/smwbugs/show_bug.cgi?id=10987
       Provide halo autocompletion in the image-picker - if there is no input
       for selecting an image, an image list with the maximum number of results
