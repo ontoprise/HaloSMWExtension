@@ -22,7 +22,9 @@ set_include_path( implode( PATH_SEPARATOR, $path ) . PATH_SEPARATOR . get_includ
 require_once( $IP."/includes/DefaultSettings.php" );
 
 # If PHP's memory limit is very low, some operations may fail.
-ini_set( 'memory_limit', '64M' );
+if (preg_match('/(\d+)\w+/', ini_get('memory_limit'), $match) &&
+    $match[1] < 64)
+    ini_set('memory_limit', '64M');
 
 if ( $wgCommandLineMode ) {
     if ( isset( $_SERVER ) && array_key_exists( 'REQUEST_METHOD', $_SERVER ) ) {
