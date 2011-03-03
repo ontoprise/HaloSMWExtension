@@ -68,7 +68,6 @@
 	border-left: 1px inset grey;
 	border-bottom: 1px inset grey;
 	/*outline: 1px inset grey*/;
-	y-overflow: auto;
 }
 
 .tabf_status_cell {
