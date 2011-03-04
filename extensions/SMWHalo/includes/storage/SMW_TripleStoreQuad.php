@@ -78,10 +78,14 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 			$children = $r->children(); // binding nodes
 			$b = $children->binding[0];
 			$sv = $b->children()->uri[0];
-			if ($sv == TSNamespaces::$RDF_NS."type") continue;
+			if ($sv == TSNamespaces::$RDF_NS."type") {
+				$property = SMWPropertyValue::makeProperty('_INST');
 
-			$title = TSHelper::getTitleFromURI((string) $sv);
-			$property = SMWPropertyValue::makeUserProperty($title->getText());
+			} else {
+
+				$title = TSHelper::getTitleFromURI((string) $sv);
+				$property = SMWPropertyValue::makeUserProperty($title->getText());
+			}
 
 			$b = $children->binding[1];
 			if (isset($b->children()->bnode)) {
@@ -172,11 +176,13 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 			$b = $children->binding[0];
 			$sv = $b->children()->uri[0];
 
-			if ($sv == TSNamespaces::$RDF_NS."type") continue;
+			if ($sv == TSNamespaces::$RDF_NS."type") {
+				$properties[] = SMWPropertyValue::makeProperty('_INST');
+			} else {
 
-			$title = TSHelper::getTitleFromURI((string) $sv);
-			$properties[] = SMWPropertyValue::makeUserProperty($title->getText());
-
+				$title = TSHelper::getTitleFromURI((string) $sv);
+				$properties[] = SMWPropertyValue::makeUserProperty($title->getText());
+			}
 		}
 
 		return $properties;
@@ -231,11 +237,13 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 			$children = $r->children(); // binding nodes
 			$b = $children->binding[0];
 			$sv = $b->children()->uri[0];
-			if ($sv == TSNamespaces::$RDF_NS."type") continue;
+			if ($sv == TSNamespaces::$RDF_NS."type") {
+				$properties[] = SMWPropertyValue::makeProperty('_INST');
+			} else {
 
-			$title = TSHelper::getTitleFromURI((string) $sv);
-			$properties[] = SMWPropertyValue::makeUserProperty($title->getText());
-
+				$title = TSHelper::getTitleFromURI((string) $sv);
+				$properties[] = SMWPropertyValue::makeUserProperty($title->getText());
+			}
 		}
 
 		return $properties;
@@ -252,16 +260,18 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 
 		$values = array();
 
-		$propertyName = $property->getWikiPageValue()->getTitle()->getDBkey();
-
 		$limit =  isset($requestoptions->limit) ? " LIMIT ".$requestoptions->limit : "";
 		$offset =  isset($requestoptions->offset) ? " OFFSET ".$requestoptions->offset : "";
 
-		// query
-		$property_iri =  $this->tsNamespace->getFullIRI($property->getWikiPageValue()->getTitle());
+		if ($property->getPropertyID() == '_INST') {
+			$property_iri = "<".TSNamespaces::$RDF_NS."type>";
+		} else {
+			$propertyName = $property->getWikiPageValue()->getTitle()->getDBkey();
 
-        // add boundary constraint here too?
-        
+			$property_iri =  $this->tsNamespace->getFullIRI($property->getWikiPageValue()->getTitle());
+		}
+		// add boundary constraint here too?
+
 		try {
 			$response = $client->query("SELECT ?s ?o WHERE { GRAPH ?G {  ?s $property_iri ?o. } }  $limit $offset",  "merge=false");
 		} catch(Exception $e) {
@@ -358,7 +368,11 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 			$subject_iri =  $this->tsNamespace->getFullIRI($subject->getTitle());
 		}
 
-		$property_iri =  $this->tsNamespace->getFullIRI($property->getWikiPageValue()->getTitle());
+		if ($property->getPropertyID() == '_INST') {
+			$property_iri = "<".TSNamespaces::$RDF_NS."type>";
+		} else {
+			$property_iri =  $this->tsNamespace->getFullIRI($property->getWikiPageValue()->getTitle());
+		}
 
 
 		try {
@@ -448,7 +462,11 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 		$nsMainPrefix = TSNamespaces::getInstance()->getNSURI(NS_MAIN);
 		$boundaryFilter = !is_null($requestoptions->boundary) ? "FILTER (str(?s) $op \"".$nsMainPrefix.TSHelper::escapeForStringLiteral($requestoptions->boundary)."\")" : "";
 
-		$propertyIRI = $this->tsNamespace->getFullIRI($property->getWikiPageValue()->getTitle());
+		if ($property->getPropertyID() == '_INST') {
+			$property_iri = "<".TSNamespaces::$RDF_NS."type>";
+		} else {
+			$propertyIRI = $this->tsNamespace->getFullIRI($property->getWikiPageValue()->getTitle());
+		}
 
 		try {
 			if (is_null($value)) {
