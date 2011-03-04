@@ -173,8 +173,8 @@ class CKeditor_MediaWiki {
         //var_dump($out->styles);
         $action = $wgRequest->getText( 'action' );
         if (! in_array($action, array('edit', 'submit'))) return $out;
+        $inlineStyles = array();
         foreach ( $out->styles as $key => $val ) {
-            $inlineStyles = array();
             if (count($out->styles[$key]) > 0) {
                 if (isset($out->styles[$key]['condition']) ||
                     isset($out->styles[$key]['dir']) ||
@@ -194,11 +194,10 @@ class CKeditor_MediaWiki {
                     }
                 }
             }
-            foreach($inlineStyles as $media => $css ) {
-                $out->addInlineStyle( $css );
-            }
         }
-        //var_dump( $out->styles );
+        foreach($inlineStyles as $media => $css ) {
+            $out->addInlineStyle( $css );
+        }
         return $out;
     }
 
