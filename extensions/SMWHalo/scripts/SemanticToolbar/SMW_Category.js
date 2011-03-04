@@ -121,7 +121,7 @@ fillList: function(forceShowList) {
 	}
 	if (this.wtp) {
 		this.wtp.initialize();
-		var categories = this.wtp.getCategories();		
+		var categories = this.wtp.getCategories();
 		var cats = '';
 		for (var i = 0; i < categories.length; ++i) {
 			cats += gLanguage.getMessage('CATEGORY_NS') + categories[i].getName()+',';
@@ -131,10 +131,11 @@ fillList: function(forceShowList) {
 		if (cats.length > 0 && cats != this.categoriesForExistenceCheck) {
 			// Check if categories are already defined
 			this.categoriesForExistenceCheck = cats;
+			this.recommendedRelsNeedRefresh = true;
 			sajax_do_call('smwf_om_ExistsArticleMultiple',
-			              [cats],
-			              checkCategoryExistCallback.bind(this),
-			              categories);
+						[cats],
+						checkCategoryExistCallback.bind(this),
+						categories);
 		}
 		if (this.categoryExists
 			&& this.categoryExists.length == categories.length) {
@@ -142,7 +143,20 @@ fillList: function(forceShowList) {
 				categories[i].exists = this.categoryExists[i][1];
 			}
 		}
-		
+		if( this.recommendedRelsNeedRefresh == true ) {
+			this.recommendedRelsNeedRefresh = false;
+			// Get all properties with that have one of the annotated categories as domain
+			sajax_do_call('smwf_om_getDomainProperties',
+						[cats],
+						getDomainPropertiesCallback.bind(this),
+						'');
+		}
+		if ( cats.length == 0 ) {
+			// reset rec relations when there's no cat annotaion left
+			this.recommendedRels = new Array();
+			this.recommendedRelsNeedRefresh = true;
+		}
+
 		this.categorycontainer.setContent(this.genTB.createList(categories,"category"));
 		this.categorycontainer.contentChanged();
 	}
@@ -168,6 +182,33 @@ fillList: function(forceShowList) {
 		this.categorycontainer.setContent(this.genTB.createList(categories,"category"));
 		this.categorycontainer.contentChanged();
 		refreshSTB.refreshToolBar();
+	};
+	
+	/**
+	 * Closure:
+	 * Callback function that gets the results of the domain properties request.
+	 */
+	function getDomainPropertiesCallback(request) {
+	
+		if (request.status != 200) {
+			// call for domain properties data failed, do nothing.
+			return;
+		}
+		// {propText, inherited?, [inheritChain]}
+		var recRels = request.responseText.evalJSON(true);
+
+		this.recommendedRels = new Array();
+		for( var i = 0, n = recRels.length-1; i <= n; i++ ) {
+			var val = '';
+			if( recRels[i].inherited == 'true' ) {
+				var val = recRels[i].inheritLink.join(' >> ');
+			}
+			var recRel = new WtpRelation( '', 0, 0, this.wtp, '',
+				recRels[i].propText, val, '', '', null );
+			recRel.inherited = recRels[i].inherited == 'true' ? true : false;
+			this.recommendedRels.push(recRel);
+		}
+		relToolBar.fillList()
 	};
 },
 

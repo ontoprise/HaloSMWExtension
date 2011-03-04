@@ -75,6 +75,7 @@ var wgUserLanguageStrings = {
 	'CHANGE_PROPERTY'         : 'Een property aanpassen.',
 	'PROPERTIES'              : 'Eigenschappen',
 	'RETRIEVE_SCHEMA_DATA'    : 'Opvragen van schemadata mislukt!',
+	'RECPROP'                 : "Aanbevolen Eigenschap",
 
 	// Property characteristics toolbar
 	'PROPERTY_DOES_NOT_EXIST' : '(w)Deze eigenschap bestaat niet.',

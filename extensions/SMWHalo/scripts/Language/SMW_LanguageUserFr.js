@@ -75,6 +75,7 @@ var wgUserLanguageStrings = {
     'CHANGE_PROPERTY'         : 'Modifier une propriété.',
     'PROPERTIES'              : 'Propriétés',
     'RETRIEVE_SCHEMA_DATA'    : 'Echec lors de la récupération du schéma de données !',
+    'RECPROP'                 : "Proprieté recommandé",
 
     // Property characteristics toolbar
     'PROPERTY_DOES_NOT_EXIST' : '(w)Cette propriété n\'existe pas.',

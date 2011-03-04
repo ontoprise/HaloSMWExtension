@@ -613,19 +613,45 @@ a.menulink{
     width:60%;
     overflow: hidden;
 }
-
-.relation-col2{
-    border-bottom: 1px dotted #888888;
-    vertical-align: top;
-    overflow: hidden;
-    width:30%;
+.relation-col2, .rec-relation-col2 {
+	border-bottom: 1px dotted #888888;
+	vertical-align: top;
+	overflow: hidden;
+	width: 30%;
 }
 
-.relation-col3{
-    border-bottom: 1px dotted #888888;
-    text-align: right;
-    vertical-align: top;
-    width:10%;
+.relation-col3,.rec-relation-col3 {
+	border-bottom: 1px dotted #888888;
+	text-align: right;
+	vertical-align: top;
+	width: 10%;
+}
+
+#rec-relation-table {
+	border-top: 1px solid #FF9602;
+	background-color: #ffcd87;
+	/*table-layout: fixed;*/
+	width: 100%;
+	overflow: hidden;
+	word-wrap: break-word;
+}
+.rec-relation-col1 {
+	border-bottom: 1px dotted #888888;
+	vertical-align: top;
+	width: 60%;
+	overflow: hidden;
+}
+
+#rec-relation-table .inherited {
+	font-style: italic;
+	/* this color was taken from autocompletetion feature 
+	but doesn't play nice with orange background of property table
+	background-color: #D9D998;*/
+}
+
+#rec-relation-th {
+	background-color: #FF9602;
+	color: #FFFFFF;
 }
 
 /* Properties Container */

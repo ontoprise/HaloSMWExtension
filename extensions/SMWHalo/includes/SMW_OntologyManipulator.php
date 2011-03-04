@@ -46,6 +46,7 @@ $wgAjaxExportList[] = 'smwf_om_invalidateAllPages';
 $wgAjaxExportList[] = 'smwf_om_userCan';
 $wgAjaxExportList[] = 'smwf_om_userCanMultiple';
 $wgAjaxExportList[] = 'smwf_om_GetDerivedFacts';
+$wgAjaxExportList[] = 'smwf_om_getDomainProperties';
 
 /**
  * Creates a new article or appends some text if it already
@@ -867,3 +868,101 @@ function smwf_om_GetDerivedFacts($titleName) {
 	return $text;
 }
 
+/**
+ * This function retrieves all properties that have one of the given categories as domain
+ * 
+ * @param: string $categoryNames
+ * 		Comma seperated list of category names including the NS
+ * 
+ * @return:
+ * 	 A JSON encoded array of results:
+ * 		array(
+ * 			array(propName, inherited, [inheritChain]),
+ * 			...
+ * 		)
+ */
+
+function smwf_om_getDomainProperties($categoryNames) {
+
+	$categoryNames = explode(',', $categoryNames);
+	$properties = array();
+
+	foreach($categoryNames as $cN){
+		$cT = Title::newFromText($cN, NS_CATEGORY);
+		//direct
+		foreach(smwfGetSemanticStore()->getPropertiesWithDomain($cT) as $p){
+			$notDefined = true;
+			for( $i = 0; $i <= sizeof($properties); ++$i) {
+				if( isset($properties[$i]) &&
+					array_key_exists('propText', $properties[$i]) &&
+					$properties[$i]['propText'] == $p->getText()) {
+					$notDefined = false;
+					if( array_key_exists('inherited', $properties[$i]) &&
+						$properties[$i]['inherited'] == 'true' ) {
+						// replace inherited property with direct one
+						array_splice($properties, $i, 1);
+						$itemRemoved = true;
+					}
+				}
+			}
+			if( $notDefined || ( !$notDefined && $itemRemoved ) ) {
+				$properties[] = array(
+					'propText' => $p->getText(),
+					'inherited' => 'false',
+					'inheritLink' => array()
+				);
+			}
+		}
+		// inherited
+		$superCategoryTitles = smwf_om_getSuperCategories($cT);
+		foreach($superCategoryTitles as $sCT){
+			foreach(smwfGetSemanticStore()->getPropertiesWithDomain($sCT) as $p){
+				// avoid multiple things
+				$notDefined = true;
+				foreach( $properties as $prop ) {
+					if($prop['propText'] == $p->getText()) {
+						$notDefined = false;
+					}
+				}
+				if( $notDefined ) {
+					$properties[] = array(
+						'propText' => $p->getText(),
+						'inherited' => 'true',
+						'inheritLink' => array($cT->getText(), $sCT->getText())
+					);
+				}
+			}
+		}
+	}
+
+	return json_encode($properties);
+}
+
+/**
+ * Get all supercategories of a given category
+ * 
+ * @param: object $categoryTitle
+ * 		A Title object
+ * @param: boolean $asTree
+ * @param: array $superCategoryTitles
+ * 		An array of Title objects
+ * 
+ * @return:
+ * 	 An array of Title objects
+ */
+function smwf_om_getSuperCategories($categoryTitle, $asTree = false, $superCategoryTitles = array()){
+	$directSuperCatgeoryTitles = smwfGetSemanticStore()->getDirectSuperCategories($categoryTitle);
+	if($asTree){
+		$superCategoryTitles[$categoryTitle->getText()] = array();
+	}
+	foreach($directSuperCatgeoryTitles as $dSCT){
+		if($asTree){
+			$superCategoryTitles[$categoryTitle->getText()] =
+			smwf_om_getSuperCategories($dSCT, $asTree, $superCategoryTitles[$categoryTitle->getText()]);
+		} else {
+			$superCategoryTitles[$dSCT->getText()] = $dSCT;
+			$superCategoryTitles = smwf_om_getSuperCategories($dSCT, $asTree, $superCategoryTitles);
+		}
+	}
+	return $superCategoryTitles;
+}

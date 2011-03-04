@@ -75,6 +75,7 @@ var wgUserLanguageStrings = {
 	'CHANGE_PROPERTY'         : 'Ändern Sie ein Attribut.',
 	'PROPERTIES'              : 'Attribute',
 	'RETRIEVE_SCHEMA_DATA'    : 'Die Schema-Daten konnten nicht ermittelt werden!',
+	'RECPROP'                 : "Empfohlene Attribute",
 
 	// Property characteristics toolbar
 	'PROPERTY_DOES_NOT_EXIST' : '(w)Dieses Attribut existiert nicht.',

@@ -75,6 +75,7 @@ var wgUserLanguageStrings = {
 	'CHANGE_PROPERTY'         : 'Change a property.',
 	'PROPERTIES'              : 'Properties',
 	'RETRIEVE_SCHEMA_DATA'    : 'Failed to retrieve schema Data!',
+	'RECPROP'                 : "Recommended properties",
 
 	// Property characteristics toolbar
 	'PROPERTY_DOES_NOT_EXIST' : '(w)This property does not exist.',

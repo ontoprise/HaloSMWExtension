@@ -157,8 +157,20 @@ fillList: function(forceShowList) {
 		this.wtp.initialize();
 		var relations = this.wtp.getRelations();
 		var rels = '';
+		var recRels = window.catToolBar.recommendedRels !== undefined ? 
+			window.catToolBar.recommendedRels.clone() : new Array();
 		for (var i = 0; i < relations.length; ++i) {
 			rels += gLanguage.getMessage('PROPERTY_NS') + relations[i].getName()+',';
+			// check if recommended relation is already set
+			if( recRels !== undefined ) {
+				for (var j = 0; j < recRels.length; ++j) {
+					if( recRels[i] !== 'undefined' &&
+						relations[i].getName().toLowerCase() === recRels[j].getName().toLowerCase()){
+						// Annotaion already made. Ignore this recommendation
+						recRels.splice( j, 1 );
+					}
+				}
+			}
 		}
 		rels = rels.substr(0, rels.length-1);
 		if (rels.length > 0 && rels != this.relationsForAccessCheck) {
@@ -192,8 +204,9 @@ fillList: function(forceShowList) {
 			}
 		}
 
-		
-		this.relationcontainer.setContent(this.genTB.createList(relations,"relation"));
+		this.relationcontainer.setContent(
+			this.genTB.createList(relations,"relation")
+			+ this.genTB.createList(recRels, "rec-relation"));
 		this.relationcontainer.contentChanged();
 	}
 	
@@ -470,6 +483,53 @@ newItem: function() {
 	
 	//Sets Focus on first Element
 	setTimeout("$('rel-name').focus();",50);
+},
+
+/* new function (derived from newItem) to add recommended properties */
+recProp: function(propName) {
+	this.wtp.initialize();
+	this.showList = false;
+	this.currentAction = "annotate";
+
+//	var selection = this.wtp.getSelection(true);
+	/*STARTLOG*/
+	smwhgLogger.log(propName,"STB-Properties","rec_prop_clicked");
+	/*ENDLOG*/
+	
+	var tb = this.createToolbar(SMW_REL_ALL_VALID);	
+	tb.append(tb.createText('rel-help_msg', gLanguage.getMessage('ANNOTATE_PROPERTY'), '' , true));
+	tb.append(tb.createInput('rel-name', gLanguage.getMessage('PROPERTY'), propName, '',
+	                         SMW_REL_CHECK_PROPERTY_UPDATE_SCHEMA +
+	                         SMW_REL_CHECK_PROPERTY_ACCESS +
+	                         SMW_REL_CHECK_EMPTY +
+	                         SMW_REL_VALID_PROPERTY_NAME +
+	                         SMW_REL_HINT_PROPERTY,
+	                         true));
+	tb.setInputValue('rel-name', propName);
+	tb.append(tb.createText('rel-name-msg', gLanguage.getMessage('ENTER_NAME'), '' , true));
+	tb.append(tb.createInput('rel-value-0', gLanguage.getMessage('PAGE'), '', '', 
+							 SMW_REL_CHECK_EMPTY_NEV +
+							 SMW_REL_HINT_INSTANCE +
+							 SMW_REL_VALID_PROPERTY_VALUE,
+	                         true));
+//	tb.setInputValue('rel-value-0', selection);
+	                         
+	tb.append(tb.createText('rel-value-0-msg', gLanguage.getMessage('ANNO_PAGE_VALUE'), '' , true));
+	
+	tb.append(tb.createInput('rel-show', gLanguage.getMessage('SHOW'), '', '', '', true));
+	tb.setInputValue('rel-show','');
+	
+	var links = [['relToolBar.addItem()',gLanguage.getMessage('ADD'), 'rel-confirm', gLanguage.getMessage('INVALID_VALUES'), 'rel-invalid'],
+				 ['relToolBar.cancel()', gLanguage.getMessage('CANCEL')]
+				];
+	
+	tb.append(tb.createLink('rel-links', links, '', true));
+
+	tb.finishCreation();
+	gSTBEventActions.initialCheck($("relation-content-box"));
+	
+	//Sets Focus on first Element
+	setTimeout("$('rel-value-0').focus();",50);
 },
 
 updateSchema: function(elementID) {

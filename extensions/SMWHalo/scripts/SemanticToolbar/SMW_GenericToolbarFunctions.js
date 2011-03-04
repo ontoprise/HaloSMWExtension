@@ -31,6 +31,7 @@ initialize: function() {
 createList: function(list,id) {
 	var len = list == null ? 0 : list.length;
 	var divlist = "";
+	var tableHeader = "";
 	switch (id) {
 		case "category":
 			divlist ='<div id="' + id +'-tools">';
@@ -59,8 +60,13 @@ createList: function(list,id) {
 			divlist += '<a id="rules-menu-annotate" href="javascript:ruleToolBar.createRule()" class="menulink">'+gLanguage.getMessage('CREATE')+'</a>';
 			divlist += '</div>';
 	 		break;
+		case "rec-relation": 
+			if ( len > 0 ) {
+				tableHeader = '<tr><th id="' + id +'-th" colspan="3">' + gLanguage.getMessage('RECPROP') + '</th></tr>';
+			}
+			break;
 	}
-  	divlist += "<div id=\"" + id +"-itemlist\"><table id=\"" + id +"-table\">";
+  	divlist += "<div id=\"" + id +"-itemlist\"><table id=\"" + id +"-table\">" + tableHeader;
 
 	var path = wgArticlePath;
 	var dollarPos = path.indexOf('$1');
@@ -71,7 +77,7 @@ createList: function(list,id) {
 	//Calculate the size of the property columns depending on the length of the content
 	var maxlen1 = 0;
 	var maxlen2 = 0;
-	if(id=="relation"){
+	if(id=="relation" || id=="rec-relation"){
 		for (var i = 0; i < len; i++) {
 				list[i].getName().length > maxlen2 ? maxlen2 = list[i].getName().length : "";
 				// HTML of parameter rows (except first)
@@ -84,7 +90,7 @@ createList: function(list,id) {
 	
 	var len1="";
 	var len2="";
-	if( id == "relation" && maxlen2 != 0){
+	if( ( id == "relation" || id=="rec-relation" ) && maxlen2 != 0){
   		len2 = 20 + 100*(0.55*(maxlen1/(maxlen2+maxlen1)));
   		len2 = 'style="width:'+ len2 + '%;"';
   		len1 = 20 + 100*(0.55 - 0.55*(maxlen1/(maxlen2+maxlen1)));
@@ -141,6 +147,16 @@ createList: function(list,id) {
 						"</tr>";
 	  			}
   			break
+			case "rec-relation":
+				fn = "relToolBar.recProp('" + list[i].getName() + "')";
+				prefix = gLanguage.getMessage('PROPERTY_NS');
+				var rowSpan = 'rowspan="'+(list[i].getArity()-1)+'"';
+	  			var values = list[i].getSplitValues();
+	  			firstValue = values[0].escapeHTML();
+	  			var valueLink;
+	  			valueLink = '<span title="' + firstValue + '">' + firstValue + '<span>';
+				firstValue = valueLink;
+			break
 		}
 		
 		//Checks if getValue exists if no it's an Category what allows longer text
@@ -148,19 +164,29 @@ createList: function(list,id) {
 		var elemName;
 		//shortName.length > maxlen2 ? maxlen2 = shortName.length : "";
 		//Construct the link
+		var img = '<img src="' + wgScriptPath  + '/extensions/SMWHalo/skins/edit.gif"/>';
 		if (id == 'rules') {
 			elemName = list[i].getName().escapeHTML();
 		} else {
 			var accessWarning = '';
 			var editArticleURL = "";
 			var redLink = "";
+			var inheritedClass = "";
 			if (id == 'relation') {
 				var accessAllowed = (typeof (list[i].accessAllowed) != "undefined") 
 									? list[i].accessAllowed : true;
 				if (accessAllowed == "false") {
 					accessWarning = '<img title="'+gLanguage.getMessage('PROPERTY_ACCESS_DENIED_TT')+'" ' +
-							             'src="' + wgScriptPath  + '/extensions/SMWHalo/skins/warning.png"/>';
+						'src="' + wgScriptPath  + '/extensions/SMWHalo/skins/warning.png"/>';
 				}
+			}
+			if (id== 'rec-relation') {
+				var inherited = (typeof (list[i].inherited) != "undefined") 
+				? list[i].inherited : true;
+				if ( inherited ) {
+					inheritedClass = "class='inherited'";
+				}
+				img = '<img src="' + wgScriptPath  + '/extensions/SMWHalo/skins/add.png"/>';
 			}
 			if (id == 'category' || id == 'relation') {
 				if (typeof (list[i].exists) != "undefined" && list[i].exists == "false") {
@@ -169,22 +195,21 @@ createList: function(list,id) {
 				}
 			}
 			elemName = accessWarning + 
-			           '<a href="'+wgServer+path+prefix+list[i].getName().escapeHTML()+editArticleURL;
+				'<a href="'+wgServer+path+prefix+list[i].getName().escapeHTML()+editArticleURL;
 			elemName += '" target="blank"'+redLink+' title="' + shortName +'">' + shortName + '</a>';
 		}
-		divlist += 	"<tr>" +
+		divlist += 	"<tr " + inheritedClass + ">" +
 				"<td "+rowSpan+" class=\"" + id + "-col1\" " + len1 + ">" + 
 					elemName + 
 				" </td>" +
 				"<td class=\"" + id + "-col2\"  " + len2 + ">" + firstValue + " </td>" + // first value row
-		           	"<td "+rowSpan+" class=\"" + id + "-col3\">" +
-		           	'<a href=\"javascript:' + fn + '">' +
-		           	'<img src="' + wgScriptPath  + '/extensions/SMWHalo/skins/edit.gif"/></a>' +
-		           
-		           	'</tr>' + multiValue; // all other value rows
-  	}
-  	divlist += "</table></div>";
-  	return divlist;
+				"<td "+rowSpan+" class=\"" + id + "-col3\">" +
+				'<a href=\"javascript:' + fn + '">' +
+				img + '</a>' +
+				'</tr>' + multiValue; // all other value rows
+	}
+	divlist += "</table></div>";
+	return divlist;
 },
 
 createSubSupAllowed: function() {
