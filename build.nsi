@@ -25,9 +25,8 @@
 ; --- The following definitions are meant to be changed ---
 
 !define PRODUCTPATH "SMWPLUS"
-!define PRODUCT "SMW+"
-!define PRODUCT_CAPTION "SMW+"
-!define PRODUCT_YEAR "2010"
+#!define PRODUCT "SMW+"
+!define PRODUCT_YEAR "2011"
 #!define VERSION "1.4.3" set by hudson
 #!define BUILD_ID "431" set by hudson
 !define REQUIRED_JAVA_VERSION 16
@@ -86,7 +85,7 @@ SetCompress off
 ;--------------------------------
 
 Name "${PRODUCT} v${VERSION}"
-Caption "${PRODUCT_CAPTION} ${VERSION}"
+Caption "${PRODUCT} ${VERSION}"
 Icon "..\..\..\Internal__SMWPlusInstaller_and_XAMPP\workspace\SMWPlusInstaller\images\nsis1-install.ico"
 OutFile "${PRODUCT}-${VERSION}.exe"
 
@@ -677,7 +676,7 @@ Function changeConfigForFullXAMPP
     CreateDirectory "$INSTDIR\apache\logs"
     
     ; setup halowiki (change LocalSettings.php)
-    ; Use LocalSettings.php.template and change the following variables:
+    ; Use LocalSettings.php from input and change the following variables:
     ;   phpInterpreter
     ;   smwgIQEnabled
     ;   smwgAllowNewHelpQuestions
@@ -693,7 +692,7 @@ Function changeConfigForFullXAMPP
     nsExec::ExecToLog '"$INSTDIR\php\php.exe" "$INSTDIR\htdocs\mediawiki\installer\changeLS.php" phpInterpreter="$INSTDIR\php\php.exe" \
         smwgIQEnabled=true smwgAllowNewHelpQuestions=true wgUseAjax=true wgJobRunRate=0 wgEnableUploads=true \
         smwgKeepGardeningConsole=false smwgEnableLogging=false smwgDeployVersion=true \
-        smwgSemanticAC=false smwgGardeningBotDelay=100 wgScriptPath="/mediawiki" ls=LocalSettings.php.template'
+        smwgSemanticAC=false smwgGardeningBotDelay=100 wgScriptPath="/mediawiki" ls=${LOCALSETTINGS}'
     
     ; Activate php_gd2.dll for thumbnails and php_openssl.dll for SSL 
     DetailPrint "Update php.ini"
@@ -814,7 +813,7 @@ Function configCustomizationsForNew
         MessageBox MB_OK|MB_ICONINFORMATION $(FIREWALL_COMPLAIN_INFO)
     
         DetailPrint "Import wiki database"
-        nsExec::ExecToLog ' "$INSTDIR\import_smwplus_db.bat" "$INSTDIR" root m8nix semwiki_en "$INSTDIR\smwplus_database.sql" '
+        nsExec::ExecToLog ' "$INSTDIR\import_smwplus_db.bat" "$INSTDIR" root m8nix semwiki_en "$INSTDIR\${WIKIDB}" '
         
         DetailPrint "Set php.exe in PATH Variable"
         ${EnvVarUpdate} $0 "PATH" "A" "HKLM" "$INSTDIR\php"
