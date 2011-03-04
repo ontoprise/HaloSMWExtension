@@ -1128,33 +1128,37 @@ class SMWTripleStore extends SMWStore {
 			foreach($uris as $uri) {
 				list($sv, $metadata) = $uri;
 
-				$title = TSHelper::getTitleFromURI($sv, false);
-
-				if (is_null($title) || $title instanceof Title) {
-					if ($plainFormat) {
-						$allValues[] = $this->createSMWDataValue(NULL, $title->getPrefixedText(), TSNamespaces::$XSD_NS."string", $metadata);
-					} else {
-						$allValues[] = $this->createSMWPageValue($title, $metadata);
-					}
+				if ($sv == TSNamespaces::$RDF_NS."type") {
+						$allValues[] = SMWPropertyValue::makeProperty('_INST');
 				} else {
-					// external URI
-					if ($plainFormat) {
-						$v = $this->createSMWDataValue(NULL, $sv, TSNamespaces::$XSD_NS."string", $metadata);
-					} else {
-                        global $lodgNEPEnabled;
-						if ($lodgNEPEnabled) {
-							// in case the NEP feature is active, create integration links.
-							// guess local name
-							$localname = TSHelper::guessLocalName($sv);
-							$v = $this->createIntegrationLinkURI($localname, $localname, $sv);
+					$title = TSHelper::getTitleFromURI($sv, false);
+
+					if (is_null($title) || $title instanceof Title) {
+						if ($plainFormat) {
+							$allValues[] = $this->createSMWDataValue(NULL, $title->getPrefixedText(), TSNamespaces::$XSD_NS."string", $metadata);
 						} else {
-							// normal URI ouput
-							$v = $this->createSMWDataValue(NULL, $sv, TSNamespaces::$XSD_NS."anyURI", $metadata);
+							$allValues[] = $this->createSMWPageValue($title, $metadata);
 						}
+					} else {
+						// external URI
+						if ($plainFormat) {
+							$v = $this->createSMWDataValue(NULL, $sv, TSNamespaces::$XSD_NS."string", $metadata);
+						} else {
+							global $lodgNEPEnabled;
+							if ($lodgNEPEnabled) {
+								// in case the NEP feature is active, create integration links.
+								// guess local name
+								$localname = TSHelper::guessLocalName($sv);
+								$v = $this->createIntegrationLinkURI($localname, $localname, $sv);
+							} else {
+								// normal URI ouput
+								$v = $this->createSMWDataValue(NULL, $sv, TSNamespaces::$XSD_NS."anyURI", $metadata);
+							}
+
+						}
+						$allValues[] = $v;
 
 					}
-					$allValues[] = $v;
-
 				}
 			}
 		} else {
@@ -1219,21 +1223,40 @@ class SMWTripleStore extends SMWStore {
 					$value = SMWDataValueFactory::newPropertyObjectValue($property, $literalValue);
 				}
 			} else {
+					
 				$value = SMWDataValueFactory::newTypeIDValue(WikiTypeToXSD::getWikiType($literalType));
 			}
 
 			// set actual value
 			if ($value->getTypeID() == '_dat') {
+					
 				// normalize dateTime
 				if ($literalValue != '') {
 
-					// remove time if it is 00:00:00
+					// remove time zone (if existing)
+					if (preg_match('/[+-]\d\d:\d\d/', $literalValue) > 0) {
+						$literalValue = substr($literalValue, 0, strlen($literalValue)-6);
+					}
+						
+					// remove miliseconds (if existing)
+					if (substr($literalValue, -4) == '.000') {
+						$literalValue = substr($literalValue, 0, strlen($literalValue)-4);
+					}
+						
+					// remove time (if it is 00:00:00, in this case only the date is usually significant)
 					if (substr($literalValue, -9) == 'T00:00:00') {
 						$literalValue = substr($literalValue, 0, strpos($literalValue, "T"));
 					}
+						
 					// hack: can not use setUserValue for SMW_DV_Time for some reason.
 					if ($property instanceof SMWPropertyValue ) {
-						$valueTemp = SMWDataValueFactory::newPropertyObjectValue($property, str_replace("-","/",$literalValue));
+						$propertyTitle = $property->getWikiPageValue()->getTitle();
+							
+						if (!$propertyTitle->exists()) {
+							$valueTemp = SMWDataValueFactory::newTypeIDValue('_dat', str_replace("-","/",$literalValue));
+						} else {
+							$valueTemp = SMWDataValueFactory::newPropertyObjectValue($property, str_replace("-","/",$literalValue));
+						}
 					} else {
 						$valueTemp = SMWDataValueFactory::newTypeIDValue('_dat', str_replace("-","/",$literalValue));
 					}
@@ -1285,11 +1308,11 @@ class SMWTripleStore extends SMWStore {
 		return $v;
 
 	}
-    
+
 	/**
 	 * Creates an integration link URI DataValue object, ie. a redlink which has an URI parameter.
 	 * It can be used by the NEP mechanism.
-	 * 
+	 *
 	 * @param $dbkey
 	 * @param $caption
 	 * @param $uri
@@ -1297,9 +1320,22 @@ class SMWTripleStore extends SMWStore {
 	protected function createIntegrationLinkURI($dbkey, $caption, $uri) {
 		global $wgServer, $wgArticlePath;
 		$value = $wgServer.$wgArticlePath;
-		$value = str_replace('$1', $dbkey, $value);
+		$dbkey = urldecode($dbkey);
+		$dbkey = str_replace("#", "_", $dbkey);
+		$dbkey = str_replace(",", "_", $dbkey);
+		$dbkey = str_replace("\"", "_", $dbkey);
+		$dbkey = str_replace("'", "_", $dbkey);
+		$dbkey = str_replace("^", "_", $dbkey);
+		$dbkey = str_replace("<", "_", $dbkey);
+		$dbkey = str_replace(">", "_", $dbkey);
+		$dbkey = str_replace(":", "_", $dbkey);
+		$dbkey = str_replace("%", "_", $dbkey);
+		$dbkey = str_replace(" ", "_", $dbkey);
+		$dbkey = preg_replace('/__+/', "_", $dbkey);
+
+		$value = str_replace('$1', ucfirst($dbkey), $value);
 		$value .= '?action=edit&uri='.urlencode($uri).'&redlink=1';
-		$value = SMWDataValueFactory::newTypeIDValue('_ili', $value, $caption);
+		$value = SMWDataValueFactory::newTypeIDValue('_ili', $value, $dbkey);
 		return $value;
 	}
 
