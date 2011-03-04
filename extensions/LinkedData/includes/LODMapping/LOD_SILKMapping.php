@@ -148,8 +148,6 @@ class LODSILKMapping  extends LODMapping{
 		if(count($this->getMintLabelPredicates()) 
 			!= count($mapping->getMintLabelPredicates())) return false;
 		
-			
-			
 		foreach($this->getMintLabelPredicates() as $pred){
 			if(!in_array($pred, $mapping->getMintLabelPredicates())) return false;
 		}	

@@ -227,8 +227,12 @@ class LODParserFunctions {
 				$lodgContLang->getParserFunctionParameter(LODLanguage::PFP_SILK_MAPPING_MINT_NAMESPACE));
 			$mintNamespace = null;
 			if (array_key_exists($mintNamespaceName, $params)) {
-				//todo: validate URI
-				$mintNamespace = '<'.$params[$mintNamespaceName].'>';
+				if(!Http::isValidURI($params[$mintNamespaceName])){
+					$msg .= '<br/>'.wfMsg("lod_mapping_invalid_mintNS");
+					$mintNamespace = '<'.$pm->getNamespaceURI('a').'>';	
+				} else { 
+					$mintNamespace = '<'.$params[$mintNamespaceName].'>';
+				}
 			} else {
 				$mintNamespace = '<'.$pm->getNamespaceURI('a').'>';
 			}
@@ -247,7 +251,7 @@ class LODParserFunctions {
 					} catch (Exception $e){}
 					
 					if(!Http::isValidURI($labelPredicate)){
-						//todo:Add warning
+						$msg .= '<br/>'.wfMsg("lod_mapping_invalid_mintLP", $mintLabelPredicates[$key]);
 						unset($mintLabelPredicates[$key]);
 					} else {
 						$mintLabelPredicates[$key] = '<'.$labelPredicate.'>';
@@ -269,7 +273,7 @@ class LODParserFunctions {
 			$store->addMappingToPage($title->getFullText(), $source, $target);
 			
 			if (!$success) {
-				$msg = wfMsg("lod_saving_mapping_failed");
+				$msg .= '<br/>'.wfMsg("lod_saving_mapping_failed");
 			}
 		}
 		

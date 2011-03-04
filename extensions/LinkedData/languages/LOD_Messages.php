@@ -35,6 +35,8 @@ $messages['en'] = array(
 	'lod_mapping_tag_ns'	 => 'The tags <r2rMapping> and <silkMapping> are only evaluated in the namespace "Mapping".',
     'lod_no_mapping_in_ns'   => 'Articles in the namespace "Mapping" are supposed to contain mappings for linked data sources. You can add mapping descriptions in the tags &lt;r2rMapping&gt; or &lt;silkMapping&gt;.',
 	'lod_saving_mapping_failed' => '<b>The following mapping could not be saved:</b>',
+	'lod_mapping_invalid_mintNS' => '<b>The given mintNamespace was not understood and the default Wiki namespace will be taken.</b>',
+	'lod_mapping_invalid_mintLP' => "<b>The mintLabelPredicate '$1' is not a valid URI or uses an unknown Namespace prefix and will be ignored.<b>",
 	
 	//--- Non-existing pages ---
 	'lod_nep_link'			=> 'Create the article <b>$1</b> with the content displayed below.',
@@ -180,6 +182,8 @@ $messages['de'] = array(
 	'lod_mapping_tag_ns'	 => 'Die Tags <r2rZuordnung> und <silkZuordnung> werden nur im Namensraum "Mapping" ausgewertet.',
     'lod_no_mapping_in_ns'   => 'Artikel im Namensraum "Zuordnung" sollten Mappings für Linked Data Quellen beinhalten. Sie können Mapping-Beschreibungen in den Tags &lt;r2rZuordnung&gt; oder &lt;silkZuordnung&gt;einfügen.',
 	'lod_saving_mapping_failed' => '<b>Die folgende Zuordnung konnte nicht gespeichert werden:</b>',
+	'lod_mapping_invalid_mintNS' => '<b>Der angegebene mintNamespace wurde nicht verstanden und wird ignoriert. Stattdessen wird der Standard Wiki Namespace verwendet.</b>',
+	'lod_mapping_invalid_mintLP' => "<b>Das mintLabelPredicate '$1' iist keine valide URI oder benutzt einen unbekannten Namespace Prefix und wird ignoriert.<b>",
 
 	//--- Non-existing pages ---
 	'lod_nep_link'			=> 'Den Artikel <b>$1</b> mit dem unten dargestellten Inhalt erzeugen.',

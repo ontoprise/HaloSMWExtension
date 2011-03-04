@@ -22,6 +22,10 @@ class TestMapping extends PHPUnit_Framework_TestCase {
 	private $mMappingTarget = "wikipedia";
 	private $mMappingText1;
 	private $mMappingText2;
+	private $mMappingText3;
+	
+	private $mintNamespace = 'http://halowiki/ob/a#';
+	private $mintLabelPredicate = 'http://wiki/GeneSymbol';
 	
 	function setUp() {
 		$this->mMappingText1 = 'r2r:personmapping rdf:type r2r:ClassMapping ;'
@@ -125,8 +129,6 @@ class TestMapping extends PHPUnit_Framework_TestCase {
 		$store = LODMappingStore::getStore();
 		$this->assertNotNull($store);
 
-		// TODO SILK
-		
 		// Store three mappings
 		$mapping1 = new LODR2RMapping($this->mMappingText1, "dbpedia", "wiki");
 		$r = $store->addMapping($mapping1, $articleName);
@@ -170,6 +172,22 @@ class TestMapping extends PHPUnit_Framework_TestCase {
 		$mappings = $store->getAllMappings("dbpedia", "wiki");
 		$this->assertTrue(is_array($mappings));
 		$this->assertEquals(0, count($mappings));
+		
+		//Test adding a SILK mapping
+		$mapping = new LODSILKMapping($this->getSILKMappingText(), 
+			"dbpedia", "wiki", '<'.$this->mintNamespace.'>', explode(' ', '<'.$this->mintLabelPredicate.'>'));
+		$r = $store->addMapping($mapping, $articleName);
+		$this->assertTrue($r);
+		$mappings = $store->getAllMappings("dbpedia", "wiki");
+		$this->assertTrue(is_array($mappings));
+		$idxs = array_keys($mappings);
+		$this->assertTrue($mapping->equals($mappings[$idxs[0]]));
+		
+		//Test removing SILK Mapping
+		$store->removeAllMappings("dbpedia", "wiki", $articleName);
+		$mappings = $store->getAllMappings("dbpedia", "wiki");
+		$this->assertTrue(is_array($mappings));
+		$this->assertEquals(0, count($mappings));
 	}
 
 
@@ -183,8 +201,6 @@ class TestMapping extends PHPUnit_Framework_TestCase {
 			
 		$articleName = "Mapping:".ucfirst($this->mMappingSource);
 		$article = new Article(Title::newFromText($articleName));
-		
-		//TODO: SILK
 		
 		// Create article with <mapping> tags and make sure its content is stored
 		// with the LODMappingStore
@@ -371,7 +387,134 @@ class TestMapping extends PHPUnit_Framework_TestCase {
 		// Make sure source-target-pairs for the article are removed from the DB
 		$sourceTargetPairs = $store->getMappingsInArticle($articleName);
 		$this->assertEquals(0, count($sourceTargetPairs));
+		
+		//Add SILK Mapping
+		$text4 = '\r\n <silkMapping source="'.$mySource.'" target="'.$myTarget
+			.'" mintNamespace="'.$this->mintNamespace.'" mintLabelPredicate="'.$this->mintLabelPredicate.'">'
+			.$this->getSILKMappingText().'</silkMapping>';
+		
+		$article->doEdit($text4, "");
+
+		// Make sure the mappings exists
+		$mapping = new LODSILKMapping($this->getSILKMappingText(), $mySource, $myTarget,  
+			'<'.$this->mintNamespace.'>', array('<'.$this->mintLabelPredicate.'>'));
+		$this->assertTrue($store->existsMapping($mapping));
+		
+		// Check that the source-target pair of the mapping of the article is stored in the DB
+		$sourceTargetPairs = $store->getMappingsInArticle($articleName);
+		$this->assertEquals(1, count($sourceTargetPairs), "Expected exactly two mapping.");
+		$this->assertContains(array($mySource, $myTarget), $sourceTargetPairs); 
+		
+		// Load the mappings with the saved source and targets.
+		$mappings = $store->getAllMappings($mySource, $myTarget);
+		$this->assertTrue(is_array($mappings));
+		$this->assertEquals(1, count($mappings));
+		
+		//test adding SILK mapping with errors
+		$text4 = '\r\n <silkMapping '
+			.' mintNamespace="Not a URI" mintLabelPredicate="NOT_A_URI prop:ABC '.$this->mintLabelPredicate.'">'
+			.$this->getSILKMappingText().'</silkMapping>';
+		
+		$article->doEdit($text4, "");
+
+		// Make sure the mappings exists
+		$mapping = new LODSILKMapping($this->getSILKMappingText(), ucfirst($this->mMappingSource)
+			, 'wiki', '<http://halowiki/ob/a/>', 
+			array('<'.$this->mintLabelPredicate.'>', '<http://halowiki/ob/property/ABC>'));
+		$this->assertTrue($store->existsMapping($mapping));
+		
+		
+		//Delete all mappings again
+		try {
+			$article->doDelete($articleName);
+		} catch (MWException $e) {
+			// Due to the calling environment an exception is thrown.
+		}
+		$mappings = $store->getAllMappings($this->mMappingSource, $this->mMappingTarget);
+		$this->assertTrue(is_array($mappings));
+		$this->assertEquals(0, count($mappings));
+	}
 	
+	
+	private function getSILKMappingText(){
+		$text = '';
+		$text .= '<?xml version="1.0" encoding="utf-8" ?>';
+		$text .= '<Silk>';
+		$text .= 'Prefixes>';
+		$text .= '<Prefix id="rdf" namespace="http://www.w3.org/1999/02/22-rdf-syntax-ns#" />';
+		$text .= '<Prefix id="rdfs" namespace="http://www.w3.org/2000/01/rdf-schema#" />';
+		$text .= '<Prefix id="owl" namespace="http://www.w3.org/2002/07/owl#" />';
+		$text .= '<Prefix id="genes" namespace="http://wiking.vulcan.com/neurobase/kegg_genes/resource/vocab/" />';
+		$text .= '<Prefix id="smwprop" namespace="http://halowiki/ob/property#" />';
+		$text .= '<Prefix id="smwcat" namespace="http://halowiki/ob/category#" />';
+		$text .= '<Prefix id="wiki" namespace="http://www.example.com/smw#" />';
+		$text .= '</Prefixes>';
+		$text .= '<Interlinks>';
+		$text .= '<Interlink id="genes">';
+		$text .= '<LinkType>owl:sameAs</LinkType>';
+		$text .= '<SourceDataset dataSource="SOURCE" var="b">';
+		$text .= '<RestrictTo>?b rdf:type smwcat:Gene</RestrictTo>';
+		$text .= '</SourceDataset>';
+		$text .= '<TargetDataset dataSource="TARGET" var="a">';
+		$text .= '<RestrictTo>?a rdf:type smwcat:Gene</RestrictTo>';
+		$text .= '</TargetDataset>';
+		$text .= '<LinkCondition>';
+		$text .= '<Aggregate type="max">';
+		$text .= '<Compare metric="equality">';
+		$text .= '<Input path="?a/smwprop:UniprotId" />';
+		$text .= 'Input path="?b/smwprop:UniprotId" />';
+		$text .= '</Compare>';
+		$text .= '<Compare metric="equality">';
+		$text .= '<Input path="?a/smwprop:EntrezGeneId" />';
+		$text .= '<Input path="?b/smwprop:EntrezGeneId" />';
+		$text .= '</Compare>';
+		$text .= '<Compare metric="equality">';
+		$text .= '<Input path="?a/smwprop:MgiMarkerAccessionId" />';
+		$text .= '<Input path="?b/smwprop:MgiMarkerAccessionId" />';
+		$text .= '</Compare>';
+		$text .= '</Aggregate>';
+		$text .= '</LinkCondition>';
+		$text .= '<Filter threshold="1.0" />';
+		$text .= '</Interlink>';
+		$text .= '<Interlink id="diseases">';
+		$text .= '<LinkType>owl:sameAs</LinkType>';
+		$text .= '<SourceDataset dataSource="SOURCE" var="b">';
+		$text .= '<RestrictTo>?b rdf:type smwcat:Disease</RestrictTo>';
+		$text .= '</SourceDataset>';
+		$text .= '<TargetDataset dataSource="TARGET" var="a">';
+		$text .= '<RestrictTo>?a rdf:type smwcat:Disease</RestrictTo>';
+		$text .= '</TargetDataset>';
+		$text .= '<LinkCondition>';
+		$text .= '<Aggregate type="max">';
+		$text .= '<Compare metric="equality">';
+		$text .= '<Input path="?a/smwprop:KeggDiseaseId" />';
+		$text .= '<Input path="?b/smwprop:KeggDiseaseId" />';
+		$text .= '</Compare>';
+		$text .= '</Aggregate>';
+		$text .= '</LinkCondition>';
+		$text .= '<Filter threshold="1.0" />';
+		$text .= '</Interlink>';
+		$text .= '<Interlink id="pathways">';
+		$text .= '<LinkType>owl:sameAs</LinkType>';
+		$text .= '<SourceDataset dataSource="SOURCE" var="b">';
+		$text .= '<RestrictTo>?b rdf:type smwcat:Pathway</RestrictTo>';
+		$text .= '</SourceDataset>';
+		$text .= '<TargetDataset dataSource="TARGET" var="a">';
+		$text .= '<RestrictTo>?a rdf:type smwcat:Pathway</RestrictTo>';
+		$text .= '</TargetDataset>';
+		$text .= '<LinkCondition>';
+		$text .= '<Aggregate type="max">';
+		$text .= '<Compare metric="equality">';
+		$text .= '<Input path="?a/smwprop:KeggPathwayId" />';
+		$text .= '<Input path="?b/smwprop:KeggPathwayId" />';
+		$text .= '</Compare>';
+		$text .= '</Aggregate>';
+		$text .= '</LinkCondition>';
+		$text .= '<Filter threshold="1.0" />';
+		$text .= '</Interlink>';
+		$text .= '</Interlinks>';
+		$text .= '</Silk>';
+		return $text;
 	}
 
 }
