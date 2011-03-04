@@ -27,6 +27,9 @@ VERSION 1.4.1
       mode and the image dialog inserts the correct html element.
 
   BUGFIXES:
+    * Fix bug http://smwforum.ontoprise.com/smwbugs/show_bug.cgi?id=13894
+      IE8: Cannot enter a link, image, table, query, template: popups are not
+      displayed (improved bugfix that was done for #13511)
     * Fix bug http://smwforum.ontoprise.com/smwbugs/show_bug.cgi?id=13795
       Some formating styles like huge fonts are not supported in the wiki
     * Fix bug http://smwforum.ontoprise.com/smwbugs/show_bug.cgi?id=13852
