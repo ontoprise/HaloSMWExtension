@@ -12,94 +12,108 @@ require_once($smwgHaloIP."/includes/storage/SMW_RESTWebserviceConnector.php");
  * Note: There is no SOAP implementation available, because the TSC does not
  * support SOAP any more.
  *
- * @author Kai
+ * @author Kai, ingo Steinbauer
  * Date: 28.5.2010
  *
  */
 class LODMappingTripleStore implements ILODMappingStore {
 
-	private $_client;
+	/**
+	 * Deletes all mappings that are stored in the article with the name 
+	 * $articleName. Also calls remove all Mappings in order to delte
+	 * mappings from TSC
+	 * 
+	 * @param string $articleName
+	 * 		Fully qualified name of an article
+	 */
+	public function removeAllMappingsFromPage($articleName) {
+		$db = LODStorage::getDatabase();
 
-	function __construct() {
-
-		// create webservice client
-		global $smwgWebserviceEndpoint, $smwgWebserviceUser, $smwgWebservicePassword, $smwgWebserviceProtocol;
-
-		if (isset($smwgWebserviceProtocol) && strtolower($smwgWebserviceProtocol) === 'rest') {
-			if (!isset($smwgWebserviceEndpoint)) $smwgWebserviceEndpoint = "localhost:8080"; // assume a default value
-			list($host, $port) = explode(":", $smwgWebserviceEndpoint);
-			$credentials = isset($smwgWebserviceUser) ? $smwgWebserviceUser.":".$smwgWebservicePassword : "";
-			$this->_client = new RESTWebserviceConnector($host, $port, "mapping", $credentials);
-		} else {
-			trigger_error("Mapping endpoint can not be requested by SOAP.");
-			die();
+		$sourceTargetPairs = $db->getMappingsInArticle($articleName);
+		if (isset($sourceTargetPairs)) {
+			foreach ($sourceTargetPairs as $stp) {
+				$source = $stp[0];
+				$target = $stp[1];
+				$this->removeAllMappings($source, $target, $articleName);
+			}
+			
+			$db->removeAllMappingsFromPage($articleName);
 		}
-
 	}
-
-	// start implement interfaces methods from ILODMappingStore
-	public function existsMapping($source, $target) {
-		$paramMap = array("sourceID" => $source, "targetID" => $target);
-		$payload = $this->serializeParameters($paramMap);
-		list($header, $status, $res) = $this->_client->send($payload, "/existsMapping");
-		if ($status != 200) {
-			return false;
-		}
-		return trim($res) == 'true';
+	
+	
+	/**
+	 * Deletes all mappings having source and range $source and $target.
+	 *
+	 * @param string source
+	 * 		ID of the source. If <null>, all mappings with the to the given target
+	 * 		are deleted.
+	 * @param string target
+	 * 		ID of the target. If <null>, all mappings from the given source are 
+	 * 		deleted.
+	 * @param string $persistencyLayerId
+	 * 		Must be the same Id that was used when storing the triples.	
+	 * 
+	 */
+	public function removeAllMappings($source, $target, $persistencyLayerId) {
+		$tripleStoreAccess = new LODPersistentTripleStoreAccess(true);
+		$pm = LODPrefixManager::getInstance();
+		
+		$property = 'smw-lde:linksFrom';
+		$property = $pm->makeAbsoluteURI($property);
+		$source = 'smwDatasources:'.$source; 
+		$source = $pm->makeAbsoluteURI($source);
+		$where = '?mapping '.$property.' '.$source.'. ';
+		
+		$property = 'smw-lde:linksTo';
+		$property = $pm->makeAbsoluteURI($property);
+		$target = 'smwDatasources:'.$target; 
+		$target = $pm->makeAbsoluteURI($target);
+		$where .= '?mapping '.$property.' '.$target.'. ';
+		
+		$template = '?mapping';
+		
+		$graph = 'smwGraphs:MappingRepository';
+		$graph = $pm->makeAbsoluteURI($graph, false);
+		
+		$tripleStoreAccess->deleteTriples($graph, $where, $template);
+		$tripleStoreAccess->flushCommands();
+		
+		$tripleStoreAccess->deletePersistentTriples('MappingStore', $persistencyLayerId);
 	}
-
-	public function addMapping(LODMapping $mapping) {
-		$paramMap = array("sourceID" => $mapping->getSource(), "targetID" => $mapping->getTarget(), "mappingText" => $mapping->getMappingText());
-		$payload = $this->serializeParameters($paramMap);
-		list($header, $status, $res) =  $this->_client->send($payload, "/addMapping");
-		if ($status != 200) {
-			return false;
-		}
-		return true;
+	
+	
+	/**
+	 * Adds the given mapping to the store. Already existing mappings with the
+	 * same source and target are not replaced but enhanced.
+	 * 
+	 * @param LODMapping $mapping
+	 * 		This object defines a mapping for a linked data source.
+	 * 
+	 * @return bool 
+	 * 		<true> if the mapping was stored successfully or
+	 * 		<false> otherwise
+	 * 	
+	 * @param string persistencyLayerId
+	 * 		An id, that adresses the tripples of this mapping in the 
+	 * 		persistency layer. Normally the article name is used.
+	 */
+	public function addMapping(LODMapping $mapping, $persistencyLayerId) {
+		$triples = $mapping->getTriples();
+		
+		$tripleStoreAccess = new LODPersistentTripleStoreAccess(true);
+		$pm = LODPrefixManager::getInstance();
+		
+		$graph = 'smwGraphs:MappingRepository';
+		$graph = $pm->makeAbsoluteURI($graph, false);
+		
+		$tripleStoreAccess->addPrefixes($pm->getSPARQLPrefixes(array('xsd')));
+		$tripleStoreAccess->insertTriples($graph, $triples);
+		$result = $tripleStoreAccess->flushCommands('MappingStore', $persistencyLayerId);
+		
+		return $result;
 	}
-
-	public function getAllMappings($source = null, $target = null) {
-		$paramMap = array("sourceID" => $source, "targetID" => $target);
-		$payload = $this->serializeParameters($paramMap);
-		list($header, $status, $res) =  $this->_client->send($payload, "/getAllMappings");
-		if ($status != 200) {
-			return array();
-		}
-		return $this->makeMappingsFromXML($res);
-	}
-
-	public function removeAllMappings($source = null, $target = null) {
-		$paramMap = array("sourceID" => $source, "targetID" => $target);
-		$payload = $this->serializeParameters($paramMap);
-		list($header, $status, $res) =  $this->_client->send($payload, "/removeAllMappings");
-
-	}
-
-	public function getAllSources() {
-		$payload = "";
-		list($header, $status, $res) =  $this->_client->send($payload, "/getAllSources");
-		if ($status != 200) {
-			return array();
-		}
-		$sources = $this->makeIDs2Array($res);
-		foreach ($sources as $k => $s) {
-			$sources[$k] = $this->removeSourcePrefix($s);
-		}
-		return $sources;
-	}
-
-	public function getAllTargets() {
-		$payload = "";
-		list($header, $status, $res) =  $this->_client->send($payload, "/getAllTargets");
-		if ($status != 200) {
-			return array();
-		}
-		$targets = $this->makeIDs2Array($res);
-		foreach ($targets as $k => $t) {
-			$targets[$k] = $this->removeTargetPrefix($t);
-		}
-		return $targets;
-	}
+	
 	
 	/**
 	 * As mappings are stored in articles the system must know which mappings
@@ -113,9 +127,11 @@ class LODMappingTripleStore implements ILODMappingStore {
 	 * 		Name of the mapping target
 	 */
 	public function addMappingToPage($articleName, $source, $target) {
-		$db = LODStorage::getDatabase();
+		$db = LODStorage::getDatabase();	
+		
 		$db->addMappingToPage($articleName, $source, $target);
 	}
+	
 	
 	/**
 	 * Returns an array of source-target pairs of mappings that are stored in the
@@ -124,111 +140,108 @@ class LODMappingTripleStore implements ILODMappingStore {
 	 * 		Fully qualified name of an article
 	 * @return array(array(string source, string $target))
 	 */
-	public function getMappingsInArticle($articleName) {
-		$db = LODStorage::getDatabase();
-		return $db->getMappingsInArticle($articleName);
-	}
-	
-	/**
-	 * Deletes all mappings that are stored in the article with the name 
-	 * $articleName.
-	 * @param string $articleName
-	 * 		Fully qualified name of an article
-	 */
-	public function removeAllMappingsFromPage($articleName) {
+	public function getMappingsInArticle($articleName, $askTSC = false) {
 		$db = LODStorage::getDatabase();
 		$sourceTargetPairs = $db->getMappingsInArticle($articleName);
-		if (isset($sourceTargetPairs)) {
-			foreach ($sourceTargetPairs as $stp) {
-				$source = $stp[0];
-				$target = $stp[1];
-				$this->removeAllMappings($source, $target);
+		 
+		if(!$askTSC){
+			return $sourceTargetPairs;
+		}  else {
+			$pairs = array();
+			foreach($sourceTargetPairs as $pair){
+				$pairs[$pair[0]][] = $pair[1];
+			}
+			
+			$mappings = array();
+			foreach($pairs as $source => $targets){
+				foreach($targets as $target){
+					$mappings = array_merge($mappings,
+						$this->getAllMappings($source, $target));		
+				}
+			}
+			
+			return $mappings;
+		}
+	}
+	
+	
+	/**
+	 * Loads all definitions of mappings between $source and $target.
+	 *
+	 * @param string source
+	 * 		ID of the source. If <null>, all mappings with the to the given target
+	 * 		are returned.
+	 * @param string target
+	 * 		ID of the target. If <null>, all mappings from the given source are 
+	 * 		returned.
+	 * If both parameters are <null>, all existing mappings are returned.
+	 * 
+	 * @return array<LODMapping>
+	 * 		The definitions of matching mappings or an empty array, if there are 
+	 * 		no such mappings.
+	 */
+	public function getAllMappings($source = null, $target = null, $typeId = null) {
+		$tripleStoreAccess = new LODPersistentTripleStoreAccess(true);
+		$pm = LODPrefixManager::getInstance();
+		
+		$graph = 'smwGraphs:MappingRepository';
+		$graph = $pm->makeAbsoluteURI($graph, false);
+				
+		$query = LODMapping::getQueryString($source, $target);
+		
+		$queryResult = $tripleStoreAccess->queryTripleStore($query, $graph);
+		
+		$mappings = array();
+		if($queryResult instanceof LODSPARQLQueryResult){
+			foreach($queryResult -> getRows() as $row){
+				$mappings[$row->getResult('mapping')->getValue()][$row->getResult('p')->getValue()][] = 
+					$row->getResult('o')->getValue();
 			}
 		}
-		$db->removeAllMappingsFromPage($articleName);
 		
-	}
-		
-	// end implement interfaces methods from ILODMappingStore
-
-	/**
-	 * Converts the list of IDs from XML to an array of string.
-	 *
-	 * @param string $xml
-	 * @return array of IDs (string)
-	 */
-	private function makeIDs2Array($xml) {
-		$dom = simplexml_load_string($xml);
-		if($dom === FALSE) return array();
-		$ids = $dom->xpath('//id');
-		if($ids === FALSE) return array();
-
-		$results = array();
-		foreach($ids as $id) {
-			$results[] = (string) $id;
-		}
-		return $results;
-
-	}
-
-	/**
-	 * Converts the list of IDs from XML to an array of string.
-	 *
-	 * @param string $xml
-	 * @return array of LODMappings
-	 */
-	private function makeMappingsFromXML($xml) {
-		$dom = simplexml_load_string($xml);
-		if($dom === FALSE) return array();
-		$mappings = $dom->xpath('//mapping');
-		if($mappings === FALSE) return array();
-
-		$results = array();
-		foreach($mappings as $m) {
-			$source = $this->removeSourcePrefix((string) $m->attributes()->sourceID);
-			$target = $this->removeTargetPrefix((string) $m->attributes()->targetID);
-			$results[] = new LODMapping((string) $m, $source, $target);
+		foreach($mappings as $subjectURI => $mappingData){
+			$mappings[$subjectURI] = 
+				LODMapping::createMappingFromSPARQLResult($mappingData);
 		}
 		
-		return $results;
-
+		return $mappings;
 	}
-
+	
+	
 	/**
-	 * @param unknown_type $paramMap
-	 * @return string
+	 * Checks if a mapping exists in the Mapping Store
+	 *
+	 * @param LODMapping mapping
+	 * 		The mapping to check for
+	 * 
+	 * @return bool
+	 * 	<true>, if the mapping exists
+	 * 	<false> otherwise
+	 * 
 	 */
-	private function serializeParameters($paramMap) {
-		$first = true;
-		$result = "";
-		foreach($paramMap as $param => $value) {
-			if (is_null($value)) continue;
-			if ($first) {
-				$first = false;
-				$result .= $param."=".urlencode($value);
-			} else {
-				$result .= "&".$param."=".urlencode($value);
+	public function existsMapping($mapping){
+		if($mapping instanceof LODSILKMapping){
+			$mappingType = 'SILK';
+		} else {
+			$mappingType = 'R2R';
+		}
+		
+		$mappings = $this->getAllMappings($mapping->getSource(), $mapping->getTarget(), $mappingType);
+		
+		foreach($mappings as $existsCandidate){
+			if($mapping->equals($existsCandidate)){
+				return true;
 			}
 		}
-		return $result;
+		return false;
+		
+		
 	}
-	
-	private function removeSourcePrefix($source) {
-		$pm = LODPrefixManager::getInstance();
-		$sourcePrefix = $pm->getNamespaceURI('smwDatasources');
-		if (strpos($source, $sourcePrefix) === 0) {
-			$source = substr($source, strlen($sourcePrefix));
-		}
-		return $source;
-	}
-	
-	private function removeTargetPrefix($target) {
-		$pm = LODPrefixManager::getInstance();
-		$targetPrefix = $pm->getNamespaceURI('smwDatasources');
-		if (strpos($target, $targetPrefix) === 0) {
-			$target = substr($target, strlen($targetPrefix));
-		}
-		return $target;
-	}
-	
+
 }
+
+
+
+
+
+

@@ -43,15 +43,19 @@ $wgHooks['LanguageGetMagic'][] = 'lodfLanguageGetMagic';
 function lodfInitParserfunctions() {
 	global $wgParser, $lodgContLang;
 	
+	//Add to install and readme that mapping tag name has been changed
+	
 	$inst = LODParserFunctions::getInstance();
-	$wgParser->setHook($lodgContLang->getParserFunction(LODLanguage::PF_MAPPING), 
-	                   array('LODParserFunctions', 'mapping'));
+	$wgParser->setHook($lodgContLang->getParserFunction(LODLanguage::PF_RMAPPING), 
+		array('LODParserFunctions', 'r2rMapping'));
+
+	$wgParser->setHook($lodgContLang->getParserFunction(LODLanguage::PF_SMAPPING), 
+		array('LODParserFunctions', 'silkMapping'));
 	                   
 	$wgParser->setFunctionHook('lodsourcedefinition', array($inst, 'lodSourceDefinition'));
 	
 	global $wgHooks;
 	$wgHooks['ArticleSave'][] = 'LODParserFunctions::onArticleSave';
-
 }
 
 function lodfLanguageGetMagic( &$magicWords, $langCode ) {
@@ -99,6 +103,75 @@ class LODParserFunctions {
 	}
 
 	/**
+	 * Parses the r2rMapping tag <r2rMapping>. The tag may have two parameters:
+	 * "source" and "target" of the mapping. If the source is not specified,
+	 * the name of the article is taken as source. Users must be aware that the
+	 * case of the article is modified by MW and the spaces are replaced by "_".
+	 * If the target is undefined, the default target defined in the global variable
+	 * $lodgDefaultMappingTarget is used. 
+	 *
+	 * @param string $text
+	 * 		The content of the <mapping> tag
+	 * @param array $params
+	 * 		Parameters
+	 * @param Parser $parser
+	 * 		The parser
+	 */
+	public static function r2rMapping($text, $params, $parser)  {
+		
+		// The mapping function is only allowed in namespace "Mapping".
+		$title = $parser->getTitle();
+		$ns = $title->getNamespace();
+		$msg = "";
+		if ($ns != LOD_NS_MAPPING) {
+			// Wrong namespace => add a warning
+			$msg = wfMsg('lod_mapping_tag_ns');
+		} else {
+			$store = LODMappingStore::getStore();
+
+			// Get the "target" parameter
+			global $lodgContLang;
+			$targetName = $lodgContLang->getParserFunctionParameter(LODLanguage::PFP_MAPPING_TARGET);
+			$target = null;
+			if (array_key_exists($targetName, $params)) {
+				//todo:deal with prefixed or complete uris
+				$target = $params[$targetName];
+			} else {
+				global $lodgDefaultMappingTarget;
+				$target = $lodgDefaultMappingTarget;
+			}
+			
+			// Get the "source" parameter
+			global $lodgContLang;
+			$sourceName = $lodgContLang->getParserFunctionParameter(LODLanguage::PFP_MAPPING_SOURCE);
+			$source = null;
+			if (array_key_exists($sourceName, $params)) {
+				//todo:deal with prefixed or complete uris
+				$source = $params[$sourceName];
+			} else {
+				// Article name is the default source
+				$source = $title->getText();
+			}
+			
+			// Store this mapping.
+			$mapping = new LODR2RMapping($text, $source, $target);
+			
+			$success = $store->addMapping($mapping, $title->getFullText());
+			
+			$store->addMappingToPage($title->getFullText(), $source, $target);
+			
+			if (!$success) {
+				$msg = wfMsg("lod_saving_mapping_failed");
+			}
+			
+		}
+		
+		$text = htmlentities($text);
+		return "$msg\n\n<pre>$text</pre>";
+	}
+	
+	
+/**
 	 * Parses the mapping tag <mapping>. The tag may have two parameters:
 	 * "source" and "target" of the mapping. If the source is not specified,
 	 * the name of the article is taken as source. Users must be aware that the
@@ -113,9 +186,10 @@ class LODParserFunctions {
 	 * @param Parser $parser
 	 * 		The parser
 	 */
-	public static function mapping($text, $params, $parser)  {
+	public static function silkMapping($text, $params, $parser)  {
+		//todo: todo: update method description
 		
-		// The mapping function is only allowed in namespace "Mapping".
+		// The silk-mapping function is only allowed in namespace "Mapping".
 		$title = $parser->getTitle();
 		$ns = $title->getNamespace();
 		$msg = "";
@@ -123,9 +197,7 @@ class LODParserFunctions {
 			// Wrong namespace => add a warning
 			$msg = wfMsg('lod_mapping_tag_ns');
 		} else {
-			// All mappings for previous version of the page must be deleted.
-			$store = LODMappingStore::getStore();
-
+			
 			// Get the "target" parameter
 			global $lodgContLang;
 			$targetName = $lodgContLang->getParserFunctionParameter(LODLanguage::PFP_MAPPING_TARGET);
@@ -136,6 +208,7 @@ class LODParserFunctions {
 				global $lodgDefaultMappingTarget;
 				$target = $lodgDefaultMappingTarget;
 			}
+			
 			// Get the "source" parameter
 			global $lodgContLang;
 			$sourceName = $lodgContLang->getParserFunctionParameter(LODLanguage::PFP_MAPPING_SOURCE);
@@ -146,20 +219,60 @@ class LODParserFunctions {
 				// Article name is the default source
 				$source = $title->getText();
 			}
-			// Store this mapping.
-			$mapping = new LODMapping($text, $source, $target);
-			$success = true;
-			try {
-				$success = $store->addMapping($mapping);
-			} catch (Exception $e) {
-				$success = false;
+			
+			$pm = LODPrefixManager::getInstance();
+			
+			//get mintNamespace
+			$mintNamespaceName = strtolower(
+				$lodgContLang->getParserFunctionParameter(LODLanguage::PFP_SILK_MAPPING_MINT_NAMESPACE));
+			$mintNamespace = null;
+			if (array_key_exists($mintNamespaceName, $params)) {
+				//todo: validate URI
+				$mintNamespace = '<'.$params[$mintNamespaceName].'>';
+			} else {
+				$mintNamespace = '<'.$pm->getNamespaceURI('a').'>';
 			}
+			
+			//get mintPredicateLabels
+			$mintLabelPredicateName = strtolower(
+				$lodgContLang->getParserFunctionParameter(LODLanguage::PFP_SILK_MAPPING_MINT_LABEL_PREDICATE));
+			$mintLabelPredicates = null;
+			$mintLabelPredicates = array();
+			if (array_key_exists($mintLabelPredicateName, $params)) {
+				$mintLabelPredicates = explode(' ', $params[$mintLabelPredicateName]);
+				
+				foreach($mintLabelPredicates as $key => $labelPredicate){
+					try{
+						$labelPredicate = $pm->makeAbsoluteURI($labelPredicate, false);
+					} catch (Exception $e){}
+					
+					if(!Http::isValidURI($labelPredicate)){
+						//todo:Add warning
+						unset($mintLabelPredicates[$key]);
+					} else {
+						$mintLabelPredicates[$key] = '<'.$labelPredicate.'>';
+					}
+				}
+				
+			} else {
+				//todo: Add warning))
+			} 
+			
+			// Store this mapping.
+			$mapping = new LODSILKMapping($text, $source, $target, $mintNamespace, $mintLabelPredicates);
+			
+			//echo('<pre>'.print_r($mapping, true).'</pre>');
+			
+			$store = LODMappingStore::getStore();
+			$success = $store->addMapping($mapping, $title->getFullText());
+			
 			$store->addMappingToPage($title->getFullText(), $source, $target);
+			
 			if (!$success) {
 				$msg = wfMsg("lod_saving_mapping_failed");
 			}
-			
 		}
+		
 		$text = htmlentities($text);
 		return "$msg\n\n<pre>$text</pre>";
 	}
@@ -301,11 +414,13 @@ class LODParserFunctions {
 		$title = $wgTitle;
 		if (isset($title) && $title->getNamespace() == LOD_NS_MAPPING) {
 			$store = LODMappingStore::getStore();
+			
 			if (count($store->getMappingsInArticle($title->getFullText())) == 0) {
 				$msg = wfMsg("lod_no_mapping_in_ns");
 				$out->addHTML("<div><b>$msg</b></div>");
 			}
 		}
+		
 		return true;
 	}
 	
@@ -557,14 +672,18 @@ class LODParserFunctions {
 	 * 		namespace.
 	 */
 	private static function deleteMappingsForArticle($article) {
+		
 		if ($article->getTitle()->getNamespace() == LOD_NS_MAPPING) {
 			// The article is in the "Mapping" namespace.
-			// => delete the mappings that are defined in the article.
-			$source = $article->getTitle()->getFullText();
+			
+			//remove all mappings defined in this article, because they may
+			//have been deleted and updated. They will be stored again,
+			//ehrn zhr mapping tags are evaluated.
+			$articleName = $article->getTitle()->getFullText();
 			$store = LODMappingStore::getStore();
-			$store->removeAllMappingsFromPage($source);
+			$store->removeAllMappingsFromPage($articleName);
 		}
 	}
-
-
+	
+	
 }

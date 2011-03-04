@@ -47,20 +47,17 @@ if ( !defined( 'MEDIAWIKI' ) ) {
 interface ILODMappingStore  {
 	
 	/**
-	 * Checks if a mapping between $source and $target exists in the store 
-	 * for mappings.
+	 * Checks if a mapping exists in the Mapping Store
 	 *
-	 * @param string source
-	 * 		ID of the source
-	 * @param string target
-	 * 		ID of the target
+	 * @param LODMapping mapping
+	 * 		The mapping to check for
 	 * 
 	 * @return bool
 	 * 	<true>, if the mapping exists
 	 * 	<false> otherwise
 	 * 
 	 */
-	public function existsMapping($source, $target);
+	public function existsMapping($mapping);
 	
 	/**
 	 * Adds the given mapping to the store. Already existing mappings with the
@@ -73,8 +70,11 @@ interface ILODMappingStore  {
 	 * 		<true> if the mapping was stored successfully or
 	 * 		<false> otherwise
 	 * 	
+	 * @param string persistencyLayerId
+	 * 		An id, that adresses the tripples of this mapping in the 
+	 * 		persistency layer. Normally the article name is used.
 	 */
-	public function addMapping(LODMapping $mapping);
+	public function addMapping(LODMapping $mapping, $persistencyLayerId);
 
 	/**
 	 * Loads all definitions of mappings between $source and $target.
@@ -94,7 +94,7 @@ interface ILODMappingStore  {
 	public function getAllMappings($source = null, $target = null);
 	
 	/**
-	 * Deletes all mappings between $source and $target.
+	 * Deletes all mappings having source and range $source and $target.
 	 *
 	 * @param string source
 	 * 		ID of the source. If <null>, all mappings with the to the given target
@@ -102,9 +102,11 @@ interface ILODMappingStore  {
 	 * @param string target
 	 * 		ID of the target. If <null>, all mappings from the given source are 
 	 * 		deleted.
-	 * If both parameters are <null>, all existing mappings are deleted.
+	 * @param string $persistencyLayerId
+	 * 		Must be the same Id that was used when storing the triples.	
+	 * 
 	 */
-	public function removeAllMappings($source = null, $target = null);
+	public function removeAllMappings($source, $target, $persistencyLayerId);
 	
 	/**
 	 * Returns the IDs of all sources in the store.
@@ -112,7 +114,7 @@ interface ILODMappingStore  {
 	 * @return array<string>
 	 * 		An array of source IDs.
 	 */
-	public function getAllSources();
+	//public function getAllSources();
 	
 	/**
 	 * Returns the IDs of all targets in the store.
@@ -120,7 +122,7 @@ interface ILODMappingStore  {
 	 * @return array<string>
 	 * 		An array of target IDs.
 	 */
-	public function getAllTargets();
+	//public function getAllTargets();
 	
 	/**
 	 * As mappings are stored in articles the system must know which mappings
@@ -146,7 +148,9 @@ interface ILODMappingStore  {
 	
 	/**
 	 * Deletes all mappings that are stored in the article with the name 
-	 * $articleName.
+	 * $articleName. Also calls remove all Mappings in order to delte
+	 * mappings from TSC
+	 * 
 	 * @param string $articleName
 	 * 		Fully qualified name of an article
 	 */

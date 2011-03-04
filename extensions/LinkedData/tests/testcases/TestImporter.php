@@ -49,8 +49,8 @@ r2r:targetPattern "?SUBJ a smw:Gene" ;
 .
 END;
 
-		$this->mapping = new LODMapping($this->mappingText, "ds1", "ds2");
-		$this->mappingStore->addMapping($this->mapping);
+		$this->mapping = new LODR2RMapping($this->mappingText, "ds1", "ds2");
+		$this->mappingStore->addMapping($this->mapping, 'dummyPersistencyLayerid');
 	}
 
 	function tearDown() {

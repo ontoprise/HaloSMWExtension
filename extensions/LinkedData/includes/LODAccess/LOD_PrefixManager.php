@@ -92,6 +92,8 @@ class LODPrefixManager  {
 		$this->mPrefixMap['smwTrustPolicies']	= self::LOD_BASE_URI.self::LOD_SMW_TRUSTPOLICIES;
 		$this->mPrefixMap['smwUsers']		= self::LOD_BASE_URI.self::LOD_SMW_USERS;
 		
+		$this->mPrefixMap['smwDatasourceLinks']		= self::LOD_BASE_URI.'smwDatasourceLinks/';
+		
 		// Add wiki prefixes
 		global $smwgTripleStoreGraph;
 		if (isset($smwgTripleStoreGraph)) {

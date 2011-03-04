@@ -32,8 +32,8 @@ $messages = array();
  */
 $messages['en'] = array(
     //--- Mapping ---
-	'lod_mapping_tag_ns'	 => 'The tag <mapping> is only evaluated in the namespace "Mapping".',
-    'lod_no_mapping_in_ns'   => 'Articles in the namespace "Mapping" are supposed to contain mappings for linked data sources. You can add mapping descriptions in the tag &lt;mapping&gt;.',
+	'lod_mapping_tag_ns'	 => 'The tags <r2rMapping> and <silkMapping> are only evaluated in the namespace "Mapping".',
+    'lod_no_mapping_in_ns'   => 'Articles in the namespace "Mapping" are supposed to contain mappings for linked data sources. You can add mapping descriptions in the tags &lt;r2rMapping&gt; or &lt;silkMapping&gt;.',
 	'lod_saving_mapping_failed' => '<b>The following mapping could not be saved:</b>',
 	
 	//--- Non-existing pages ---
@@ -177,8 +177,8 @@ $messages['en'] = array(
  */
 $messages['de'] = array(
     //--- Mapping ---
-	'lod_mapping_tag_ns'	 => 'Das Tag <zuordnung> wird nur im Namensraum "Mapping" ausgewertet.',
-    'lod_no_mapping_in_ns'   => 'Artikel im Namensraum "Mapping" sollten Mappings für Linked Data Quellen beinhalten. Sie können Mapping-Beschreibungen im Tag &lt;zuordnung&gt; einfügen.',
+	'lod_mapping_tag_ns'	 => 'Die Tags <r2rZuordnung> und <silkZuordnung> werden nur im Namensraum "Mapping" ausgewertet.',
+    'lod_no_mapping_in_ns'   => 'Artikel im Namensraum "Zuordnung" sollten Mappings für Linked Data Quellen beinhalten. Sie können Mapping-Beschreibungen in den Tags &lt;r2rZuordnung&gt; oder &lt;silkZuordnung&gt;einfügen.',
 	'lod_saving_mapping_failed' => '<b>Die folgende Zuordnung konnte nicht gespeichert werden:</b>',
 
 	//--- Non-existing pages ---

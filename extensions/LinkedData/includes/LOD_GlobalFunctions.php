@@ -81,9 +81,10 @@ function enableLinkedData() {
 	
 	$wgAutoloadClasses['ILODMappingStore']	= $lodgIP . '/includes/LODMapping/ILOD_MappingStore.php';
 	$wgAutoloadClasses['LODMapping'] 		= $lodgIP . '/includes/LODMapping/LOD_Mapping.php';
+	$wgAutoloadClasses['LODR2RMapping'] 		= $lodgIP . '/includes/LODMapping/LOD_R2RMapping.php';
+	$wgAutoloadClasses['LODSILKMapping'] 		= $lodgIP . '/includes/LODMapping/LOD_SILKMapping.php';
 	$wgAutoloadClasses['LODMappingStore'] 	= $lodgIP . '/includes/LODMapping/LOD_MappingStore.php';
 	$wgAutoloadClasses['LODMappingTripleStore'] = $lodgIP . '/includes/LODMapping/LOD_MappingTripleStore.php';
-	$wgAutoloadClasses['LODPersistentMappingStore'] = $lodgIP . '/includes/LODMapping/LOD_PersistentMappingStore.php';
 	
 	$wgAutoloadClasses['LODMLClassMapping'] = $lodgIP . '/includes/LODMLApi/LOD_MLClassMapping.php';
 	$wgAutoloadClasses['LODMLEquivalentClassMapping'] = $lodgIP . '/includes/LODMLApi/LOD_MLEquivalentClassMapping.php';

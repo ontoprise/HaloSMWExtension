@@ -30,7 +30,7 @@ abstract class LODLanguage {
 	//-- Constants --
 	
 	//---IDs of parser functions ---
-	const PF_MAPPING = 1;
+	const PF_RMAPPING = 1;
 	const PF_LSD	 = 2; // LOD source definition
 	const PF_SMAPPING = 3;
 
@@ -55,7 +55,7 @@ abstract class LODLanguage {
 	const PFP_LSD_PREDICATETOCRAWL			= 214;
 	
 	const PFP_SILK_MAPPING_MINT_NAMESPACE	= 300;
-	const PFP_SILK_MAPPING_MINT_PREDICATE_LABEL	= 301;
+	const PFP_SILK_MAPPING_MINT_LABEL_PREDICATE	= 301;
 	
 	
 	// the special message arrays ...

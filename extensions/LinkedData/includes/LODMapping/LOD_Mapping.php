@@ -24,28 +24,30 @@
 /**
  * This file contains the class LODMapping.
  * 
- * @author Thomas Schweitzer
+ * @author Thomas Schweitzer, Ingo Steinbauer
  * Date: 12.05.2010
  * 
  */
+
 if ( !defined( 'MEDIAWIKI' ) ) {
 	die( "This file is part of the LinkedData extension. It is not a valid entry point.\n" );
 }
 
- //--- Includes ---
- global $haclgIP;
-//require_once("$haclgIP/...");
-
-/**
+ /**
  * This class manages mappings among different LOD sources.
+ * This is the super class for R2R and SILK mappings
  * 
- * @author Thomas Schweitzer
+ * @author Thomas Schweitzer, Ingo Steinbauer
  * 
  */
-class LODMapping  {
+abstract class LODMapping  {
+	
+	/*
+	 * This counter is used to generate mapping URIs
+	 */
+	public static $mappingCounter = 0;
 	
 	//--- Constants ---
-//	const XY= 0;		// the result has been added since the last time
 		
 	//--- Private fields ---
 	
@@ -97,6 +99,192 @@ class LODMapping  {
 	
 	//--- Public methods ---
 	
+	/*
+	 * Get the triples, which represent this mapping 
+	 */
+	public function getTriples(){
+		$triples = array();
+		
+		$pm = LODPrefixManager::getInstance();
 
+		self::$mappingCounter += 1;
+		$subject = $this->getSubject();
+		
+		////Set mapping type
+		$property = self::getTypeProp();
+		$object = $this->getMappingType();
+		$object = $pm->makeAbsoluteURI($object);
+		$triples[] = new LODTriple($subject, $property, $object, '__objectURI');
+		
+		//set mapping source
+		$property = self::getSourceProp();
+		$object = 'smwDatasources:'.$this->getSource();
+		$object = $pm->makeAbsoluteURI($object);
+		$triples[] = new LODTriple($subject, $property, $object, '__objectURI');
+		
+		//set target
+		$property = self::getTargetProp();
+		$object = 'smwDatasources:'.$this->getTarget();
+		$object = $pm->makeAbsoluteURI($object);
+		$triples[] = new LODTriple($subject, $property, $object, '__objectURI');
+		
+		//Set mapping description
+		$property = self::getCodeProp();
+		$triples[] = new LODTriple($subject, $property, $this->getMappingText(), 'xsd:string');
+		
+		return $triples;
+	}
+	
+	
+	/*
+	 * get SPARQL query for searching this mapping in the TSC
+	 */
+	public static function getQueryString($source = null, $target = null, $mappingType = null){
+		$queryString = "SELECT ?mapping ?p ?o ";
+		$queryString .= " WHERE { ?mapping ?p ?o. ";
+		
+		$pm = LODPrefixManager::getInstance();
+		
+		$where = '';
+		if(!is_null($mappingType)){
+			$mappingType = 'LOD'.strtoupper($mappingType).'Mapping';
+			$mappingType = get_class_vars($mappingType);
+			$mappingType = $mappingType['mappingType'];
+			$property = self::getTypeProp();
+			$object = $mappingType;
+			$object = $pm->makeAbsoluteURI($object);
+			$queryString .= ' ?mapping '.$property.' '.$object.'. ';
+		}
+		if(!is_null($source)){
+			$property = self::getSourceProp();
+			$object = 'smwDatasources:'.$source;
+			$object = $pm->makeAbsoluteURI($object);
+			$queryString .= ' ?mapping '.$property.' '.$object.'. ';
+		}
+		if(!is_null($target)){
+			$property = self::getTargetProp();
+			$object = 'smwDatasources:'.$target;
+			$object = $pm->makeAbsoluteURI($object);
+			$queryString .= ' ?mapping '.$property.' '.$object.'. ';
+		}
+		
+		$queryString .= ' } ';
+		
+		return $queryString;
+	}
+	
+	/*
+	 * Create a LODMapping object from a SPARQL query result
+	 */
+	public static function createMappingFromSPARQLResult($mappingData){
+		$pm = LODPrefixManager::getInstance();
+		
+		$type = null;
+		$source = null;
+		$target = null;
+		$code = null;
+		foreach($mappingData as $prop => $values){
+			if($prop == self::getTypeProp(false)){
+				if($values[0] == $pm->makeAbsoluteURI(LODSILKMapping::$mappingType, false)){
+					$type = 'SILK';
+				} else if($values[0] == $pm->makeAbsoluteURI(LODR2RMapping::$mappingType, false)){
+					$type = 'R2R';
+				}
+				unset($mappingData[$prop]);
+			} else if ($prop == self::getSourceProp(false)){
+				$source = $values[0];
+				$source = str_replace($pm->getNamespaceURI('smwDatasources'), '', $source);
+				unset($mappingData[$prop]);
+			} else if($prop == self::getTargetProp(false)){
+				$target = $values[0];
+				$target = str_replace($pm->getNamespaceURI('smwDatasources'), '', $target);
+				unset($mappingData[$prop]);
+			} else if($prop == self::getcodeProp(false)){
+				$code = $values[0];
+				unset($mappingData[$prop]);
+			}
+		}
+
+		if(!is_null($type) && !is_null($source) && !is_null($target) && !is_null($code)){
+			$class = 'LOD'.$type.'Mapping';
+			return new $class($code, $source, $target, null, null, $mappingData);
+		} else {
+			return null;
+		}
+	}
+	
+	
+	/*
+	 * Returns true if this mapping equals the given one.
+	 */
+	public function equals($mapping){
+		if(!($mapping instanceof LODMapping)) return false;
+		
+		if($this->getSource() != $mapping->getSource()) return false;
+		
+		if($this->getTarget() != $mapping->getTarget()) return false;
+		
+		if($this->getMappingText() != $mapping->getMappingText()) return false;
+		
+		return true;
+	}
+	
+	
 	//--- Private methods ---
+	
+	/*
+	 * get URI of this mapping
+	 */
+	protected function getSubject(){
+		$pm = LODPrefixManager::getInstance();
+		$subject = 'smwDatasourceLinks:'.$this->getSource().'_to_'.$this->getTarget().'_Mapping_'.self::$mappingCounter;
+		$subject = $pm->makeAbsoluteURI($subject);
+		return $subject;
+	}
+	
+	
+	private static function getTypeProp($braced = true){
+		$pm = LODPrefixManager::getInstance();
+		
+		$prop = 'rdf:type';
+		$prop = $pm->makeAbsoluteURI($prop, $braced);
+		
+		return $prop;
+	}
+
+	private static function getSourceProp($braced = true){
+		$pm = LODPrefixManager::getInstance();
+		
+		$prop = 'smw-lde:linksFrom';
+		$prop = $pm->makeAbsoluteURI($prop, $braced);
+		
+		return $prop;
+	}
+	
+	private static function getTargetProp($braced = true){
+		$pm = LODPrefixManager::getInstance();
+		
+		$prop = 'smw-lde:linksTo';
+		$prop = $pm->makeAbsoluteURI($prop, $braced);
+		
+		return $prop;
+	}
+	
+	private static function getCodeProp($braced = true){
+		$pm = LODPrefixManager::getInstance();
+		
+		$prop = 'smw-lde:sourceCode';
+		$prop = $pm->makeAbsoluteURI($prop, $braced);
+		
+		return $prop;
+	}
+	
+	
+	/*
+	 * Get type ORO pf this mapping
+	 */
+	abstract public function getMappingType();
 }
+
+
+

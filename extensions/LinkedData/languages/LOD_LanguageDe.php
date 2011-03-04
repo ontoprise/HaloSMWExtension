@@ -46,7 +46,7 @@ class LODLanguageDe extends LODLanguage {
 	);
 
 	protected $mParserFunctions = array(
-		LODLanguage::PF_MAPPING			=> 'zuordnung',
+		LODLanguage::PF_RMAPPING			=> 'r2rZuordnung',
 		LODLanguage::PF_LSD				=> 'quelldefinition',
 		LODLanguage::PF_SMAPPING			=> 'silkZuordnung',
 		
@@ -73,7 +73,7 @@ class LODLanguageDe extends LODLanguage {
 		LODLanguage::PFP_LSD_PREDICATETOCRAWL		=> "zufolgendesprÃ¤dikat",
 		
 		LODLanguage::PFP_SILK_MAPPING_MINT_NAMESPACE				=> 'mintNamespace',
-		LODLanguage::PFP_SILK_MAPPING_MINT_PREDICATE_LABEL				=> 'mintPredicateLabel',
+		LODLanguage::PFP_SILK_MAPPING_MINT_LABEL_PREDICATE				=> 'mintLabelPredicate',
 		
 	);
 		
