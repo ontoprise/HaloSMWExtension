@@ -38,9 +38,7 @@ $messages['en'] = array(
 	'lod_mapping_invalid_mintNS' => '<b>The given mintNamespace was not understood and the default Wiki namespace will be taken.</b>',
 	'lod_mapping_invalid_mintLP' => "<b>The mintLabelPredicate '$1' is not a valid URI or uses an unknown Namespace prefix and will be ignored.<b>",
 	
-	//--- Non-existing pages ---
-	'lod_nep_link'			=> 'Create the article <b>$1</b> with the content displayed below.',
-
+	
 	//--- Meta-data printer ---
 	'lod_mdp_no_printer'	=> 'The requested meta-data printer for format <i>$1</i> was not found.',
 	'lod_mdp_no_metadata'	=> 'There is no meta-data for this value.',
@@ -185,9 +183,7 @@ $messages['de'] = array(
 	'lod_mapping_invalid_mintNS' => '<b>Der angegebene mintNamespace wurde nicht verstanden und wird ignoriert. Stattdessen wird der Standard Wiki Namespace verwendet.</b>',
 	'lod_mapping_invalid_mintLP' => "<b>Das mintLabelPredicate '$1' iist keine valide URI oder benutzt einen unbekannten Namespace Prefix und wird ignoriert.<b>",
 
-	//--- Non-existing pages ---
-	'lod_nep_link'			=> 'Den Artikel <b>$1</b> mit dem unten dargestellten Inhalt erzeugen.',
-
+	
 	//--- Meta-data printer ---
 	'lod_mdp_no_printer'	=> 'Die gewünschte Metadatenausgabe <i>$1</i> wurde nicht gefunden.',
 	'lod_mdp_no_metadata'	=> 'Zu diesem Wert gibt es keine Metadaten.',
