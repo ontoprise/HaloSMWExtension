@@ -1,10 +1,20 @@
 Linked data extension ChangeLog
 ===========================
 
+Version 1.2
+
+FEATURES:
+	- silkMapping tag for SILK mappings
+
+CHANGES
+	- 'mapping' tag for R2R mappings has been renamed tp 'r2rMapping'.
+	- Special persistence layer of mapping component has been removed and genereic persistence layer is now used.
+	Therefore the LDE's maintenance script and SMW's refresh data script must be executed on update.
+
 Version 1.1
 
   FEATURE:
-  	Non-existing pages handler (http://dmwiki.ontoprise.com:8888/dmwiki/index.php/Non-exisiting_pages_handler) 
+  	- Non-existing pages handler (http://dmwiki.ontoprise.com:8888/dmwiki/index.php/Non-exisiting_pages_handler) 
   	
   CHANGES:
   	

@@ -419,7 +419,7 @@ class TestMapping extends PHPUnit_Framework_TestCase {
 
 		// Make sure the mappings exists
 		$mapping = new LODSILKMapping($this->getSILKMappingText(), ucfirst($this->mMappingSource)
-			, 'wiki', '<http://halowiki/ob/a/>', 
+			, 'wiki', '<http://halowiki/ob>', 
 			array('<'.$this->mintLabelPredicate.'>', '<http://halowiki/ob/property/ABC>'));
 		$this->assertTrue($store->existsMapping($mapping));
 		
