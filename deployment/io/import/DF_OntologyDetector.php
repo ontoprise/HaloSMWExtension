@@ -211,7 +211,12 @@ class DeployWikiRevisionDetector extends WikiRevision {
 
                 $partOfOntology = SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString('df_part_of_ontology'));
                 $values = smwfGetStore()->getPropertyValues($this->title, $partOfOntology);
-
+                
+                // FIXME: deal also with pages in MediaWiki namespace as possible conflict
+                if ($this->title->getNamespace() == NS_MEDIAWIKI) {
+                	 $this->result = array($this->title, "merge");
+                	 return false;
+                }
                 if (count($values) > 0) {
                     $v = reset($values);
                     $ontologyID = strtolower($v->getDBkey());

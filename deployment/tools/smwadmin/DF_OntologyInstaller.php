@@ -50,6 +50,102 @@ class OntologyInstaller {
 		$this->logger = Logger::getInstance();
 	}
 
+
+	public function installOntology($ontologyID, $inputfile, $callback) {
+
+		$outputfile = $inputfile.".xml";
+		try {
+			$ret = $this->convertOntology($inputfile, $outputfile);
+
+			if ($ret != 0) {
+				print "\nCould not convert ontology.";
+				die(1);
+			}
+		} catch(Exception $e) {
+			// onto2mwxml might not be installed
+			print "\nCould not convert ontology. Reason: ";
+			print $e->getMessage();
+			die(1);
+		}
+
+		// read possible existing prefix if this is an update
+		$prefixFile = $inputfile.".prefix";
+		if (file_exists($prefixFile)) {
+			$prefix = trim(file_get_contents($prefixFile));
+		} else {
+			$prefix='';
+		}
+
+		$outputfile_rel = $inputfile.".xml";
+		// verifies the ontologies
+		print "\n[Verifying ontology $inputfile...";
+		do {
+			$verificationLog = $this->verifyOntology($outputfile_rel, $ontologyID, $prefix);
+
+			 //var_dump($verificationLog);
+			$conflict = $this->checkForConflict($verificationLog, $callback);
+			if ($conflict !== false) $prefix = $conflict;
+
+		} while ($conflict !== false);
+		print "done.";
+
+		if ($prefix != '') {
+			// write prefix file
+			print "\n[Conflict detected. Using prefix '$prefix']";
+			$handle = fopen($prefixFile, "w");
+			fwrite($handle, $prefix);
+			fclose($handle);
+		} else {
+			print "\n[No Conflict detected]";
+		}
+
+		// do actual install/update
+		print "\n[Installing/updating ontology $inputfile...";
+		$this->installOrUpdateOntology($outputfile_rel, $verificationLog, $ontologyID, $prefix);
+	}
+
+	/**
+	 * Converts an ontology via onto2mwxml.
+	 *
+	 * @param $inputfile
+	 * @param $outputfile
+	 */
+	private function convertOntology($inputfile, $outputfile) {
+		// convert ontology
+		print "\n[Convert ontology...";
+
+		$cwd = getcwd();
+		$onto2mwxml_dir = $this->rootDir."/deployment/tools/onto2mwxml";
+		echo $onto2mwxml_dir;
+		chdir($onto2mwxml_dir);
+		$ret = 0;
+		if (Tools::isWindows()) {
+			if (!file_exists("$onto2mwxml_dir/onto2mwxml.exe")) {
+				if (!file_exists($outputfile)) {
+					throw new Exception("Onto2MWXML tool is not installed.");
+				}
+			} else {
+				if (!file_exists($outputfile)) {
+					exec("$onto2mwxml_dir/onto2mwxml.exe $inputfile -o $outputfile", $output, $ret);
+				}
+			}
+		} else {
+			if (!file_exists("$onto2mwxml_dir/onto2mwxml.sh")) {
+				if (!file_exists($outputfile)) {
+					throw new Exception("Onto2MWXML tool is not installed.");
+				}
+			} else {
+				if (!file_exists($outputfile)) {
+					exec("$onto2mwxml_dir/onto2mwxml.sh $inputfile -o $outputfile", $output, $ret);
+				}
+
+			}
+		}
+		chdir($cwd);
+		print "done.]";
+		return $ret;
+	}
+
 	/**
 	 * Installs or updates ontologies specified in the deploy descriptor
 	 *
@@ -60,66 +156,7 @@ class OntologyInstaller {
 		$ontologies = $desc->getOntologies();
 		foreach($ontologies as $tuple) {
 			list($loc, $ontologyID) = $tuple;
-
-			// convert ontology
-			print "\n[Convert ontology...";
-			$inputfile = $this->rootDir."/".$desc->getInstallationDirectory()."/".$loc;
-			$outputfile = $inputfile.".xml";
-			$cwd = getcwd();
-			$onto2mwxml_dir = $this->rootDir."/deployment/tools/onto2mwxml";
-			chdir($onto2mwxml_dir);
-			if (Tools::isWindows()) {
-				if (!file_exists("$onto2mwxml_dir/onto2mwxml.exe")) {
-					if (!file_exists($outputfile)) {
-						throw new InstallationError(DEPLOY_FRAMEWORK_ONTOLOGYCONVERSION_FAILED, "Onto2MWXML tool is not installed.");
-					}
-				}
-				exec("$onto2mwxml_dir/onto2mwxml.exe $inputfile -o $outputfile");
-			} else {
-				if (!file_exists("$onto2mwxml_dir/onto2mwxml.sh")) {
-					if (!file_exists($outputfile)) {
-						throw new InstallationError(DEPLOY_FRAMEWORK_ONTOLOGYCONVERSION_FAILED, "Onto2MWXML tool is not installed.");
-					}
-				}
-				exec("$onto2mwxml_dir/onto2mwxml.sh $inputfile -o $outputfile");
-			}
-			chdir($cwd);
-			print "done.]";
-
-			// read possible existing prefix if this is an update
-			$prefixFile = $this->rootDir."/".$desc->getInstallationDirectory()."/".$loc.".prefix";
-			if (file_exists($prefixFile)) {
-				$prefix = trim(file_get_contents($prefixFile));
-			} else {
-				$prefix='';
-			}
-
-			$outputfile_rel = $desc->getInstallationDirectory()."/".$loc.".xml";
-			// verifies the ontologies
-			print "\n[Verifying ontology $loc...";
-			do {
-				$verificationLog = $this->verifyOntology($outputfile_rel, $ontologyID, $prefix);
-
-				$conflict = $this->checkForConflict($verificationLog, $callback);
-				if ($conflict !== false) $prefix = $conflict;
-
-			} while ($conflict !== false);
-
-			print "done.";
-
-			if ($prefix != '') {
-				// write prefix file
-				print "\n[Conflict detected. Using prefix '$prefix']";
-				$handle = fopen($prefixFile, "w");
-				fwrite($handle, $prefix);
-				fclose($handle);
-			} else {
-				print "\n[No Conflict detected]";
-			}
-
-			// do actual install/update
-			print "\n[Installing/updating ontology $loc...";
-			$this->installOrUpdateOntology($outputfile_rel, $verificationLog, $ontologyID, $prefix);
+			$this->installOntology($ontologyID, $this->rootDir.$desc->getInstallationDirectory()."/".$loc, $callback);
 		}
 	}
 
@@ -159,7 +196,7 @@ class OntologyInstaller {
 		if( preg_match( '/\.gz$/', $filepath ) ) {
 			$filename = 'compress.zlib://' . $filepath;
 		}
-		$fileHandle = fopen( $this->rootDir."/".$filepath, 'rt' );
+		$fileHandle = fopen( $filepath, 'rt' );
 		return $this->readFromHandle( $fileHandle, $ontologyID , $prefix);
 	}
 
@@ -175,18 +212,27 @@ class OntologyInstaller {
 
 		// remove ontology elements which do not exist anymore.
 		global $dfgLang;
-		$pagesToImport = array_keys($verificationLog);
-		$pageValuesOfOntology = smwfGetStore()->getAllPropertySubjects(SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString('df_ontology_id')));
+		$pagesToImport = array();
+
+		foreach($verificationLog as $log) {
+			list($title, $command)=$log;
+			$pagesToImport[] = $title->getPrefixedText();
+		}
+		$pageValuesOfOntology = smwfGetStore()->getAllPropertySubjects(SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString('df_part_of_ontology')));
 		$existingPages = array();
 		foreach($pageValuesOfOntology as $pv) {
 			$existingPages[] = $pv->getTitle()->getPrefixedText();
 		}
+
+
 		$pagesToDelete = array_diff($existingPages, $pagesToImport);
+
+
 		foreach($pagesToDelete as $p) {
 			$title = Title::newFromText($p);
 			$a = new Article($title);
 			print "\n\tRemove page: ".$title->getPrefixedText();
-			$a->doDeleteArticle("ontology removed: ".$ext_id);
+			$a->doDeleteArticle("ontology removed: ".$ontologyID);
 
 		}
 
@@ -195,7 +241,7 @@ class OntologyInstaller {
 		if( preg_match( '/\.gz$/', $filepath ) ) {
 			$filename = 'compress.zlib://' . $filepath;
 		}
-		$fileHandle = fopen( $this->rootDir."/".$filepath, 'rt' );
+		$fileHandle = fopen( $filepath, 'rt' );
 		return $this->importFromHandle( $fileHandle, $ontologyID , $prefix);
 	}
 

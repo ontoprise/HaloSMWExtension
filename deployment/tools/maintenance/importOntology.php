@@ -10,10 +10,16 @@
 
 $optionsWithArgs = array( 'report' );
 
+global $rootDir;
+$rootDir = dirname(__FILE__);
+$rootDir = str_replace("\\", "/", $rootDir);
+$rootDir = realpath($rootDir."/../../");
+
 require_once( '../../../maintenance/commandLine.inc' );
 require_once('../../io/import/DF_DeployWikiOntologyImporter.php');
 require_once('../../io/import/DF_OntologyMerger.php');
 require_once('../../tools/smwadmin/DF_Tools.php');
+require_once('../../tools/smwadmin/DF_OntologyInstaller.php');
 require_once('../../io/DF_Log.php');
 
 $langClass = "DF_Language_$wgLanguageCode";
@@ -31,7 +37,7 @@ for( $arg = reset( $argv ); $arg !== false; $arg = next( $argv ) ) {
   
     //-o => ontology name
     if ($arg == '-o') {
-        $ontologyName = next($argv);
+        $ontologyID = next($argv);
         continue;
     }
     //-f => file name
@@ -47,8 +53,25 @@ if (!isset($filePath)) {
     die();
 }
 
+class DFCallbackConfirm {
+    function askForOntologyPrefix(& $answer) {
+        print "\n\nOntology conflict. Please enter prefix: ";
+        $line = trim(fgets(STDIN));
+        $result = $line;
+    }
+}
 
-if( preg_match( '/\.gz$/', $filePath ) ) {
+
+
+$oInstaller = OntologyInstaller::getInstance(realpath($rootDir."/../"));
+
+$confirm = new DFCallbackConfirm();
+
+$oInstaller->installOntology($ontologyID, $filePath, $confirm);
+
+
+
+/*if( preg_match( '/\.gz$/', $filePath ) ) {
 	$filename = 'compress.zlib://' . $filePath;
 }
 $file = fopen( $filePath, 'rt' );
@@ -66,4 +89,4 @@ function importFromHandle( $handle, $ontologyName ) {
 	$result = $importer->getResult();
 
 }
-
+*/

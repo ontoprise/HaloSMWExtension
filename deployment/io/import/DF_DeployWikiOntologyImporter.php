@@ -166,9 +166,9 @@ class DeployWikiOntologyRevision extends WikiRevision {
 		$this->ontologyID = $ontologyID;
 		$this->prefix = $prefix;
 		$this->ontologyMerger = new OntologyMerger(
-		      array($dfgLang->getLanguageString('is_inverse_of')),
-		      array($dfgLang->getLanguageString('has_domain_and_range') => array('Type:Page', 'Type:Page')),
-		      array($dfgLang->getLanguageString('has_domain_and_range'), $dfgLang->getLanguageString('imported_from'), $dfgLang->getLanguageString('df_part_of_ontology'))
+		array($dfgLang->getLanguageString('is_inverse_of')),
+		array($dfgLang->getLanguageString('has_domain_and_range') => array('Type:Page', 'Type:Page')),
+		array($dfgLang->getLanguageString('has_domain_and_range'), $dfgLang->getLanguageString('imported_from'), $dfgLang->getLanguageString('df_part_of_ontology'))
 		);
 		$this->logger = Logger::getInstance();
 	}
@@ -200,28 +200,41 @@ class DeployWikiOntologyRevision extends WikiRevision {
 			$nsText = $this->title->getNamespace() !== NS_MAIN ? $this->title->getNsText().":" : "";
 			$this->setTitle(Title::newFromText($nsText.$this->prefix.$this->title->getText()));
 		}
-		
-		// replace http://$$__graph__$$
-		global $smwgTripleStoreGraph;
-		$this->text = str_replace('http://$$_graph_$$', $smwgTripleStoreGraph, $this->text);
+
+
 
 		$article = new Article( $this->title );
 		$pageId = $article->getId();
-
+		global $smwgTripleStoreGraph;
 		if( $pageId == 0 ) {
 			# page does not exist
 
 			$this->logger->info("Imported page: ".$this->title->getPrefixedText());
 			print "\n\t[Imported page] ".$this->title->getPrefixedText();
-			return parent::importOldRevision();
+			$rules = $this->ontologyMerger->extractRules($this->text);
+			if (count($rules) > 0) {
+				// there are rules
+				$this->text = str_replace('http://$$_graph_$$', $smwgTripleStoreGraph, $this->text);
+			}
+				
+			$res = parent::importOldRevision();
+			
+			// run parser and store data
+			global $wgParser, $wgTitle;
+			$wgTitle = $this->title;
+			$wgParser->mOptions = new ParserOptions();
+			$parseOutput = $wgParser->parse($this->text, $this->title, $wgParser->mOptions);
+			SMWParseData::storeData($parseOutput, $this->title);
+			
+			return $res;
 
 		} else {
 
 			$prior = Revision::loadFromTitle( $dbw, $this->title );
-			
-			
+
+
 			if( !is_null( $prior ) ) {
-				
+
 				// merge new annotations with existing wikitext
 				$wikitext = $prior->getRawText();
 				$wikitext = $this->ontologyMerger->stripAnnotations($wikitext);
@@ -232,23 +245,31 @@ class DeployWikiOntologyRevision extends WikiRevision {
 
 				// strip rules from existing revision
 				$wikitext = $this->ontologyMerger->stripRules($wikitext);
-   				
-				// extract rules from new
-                $rules =  $this->ontologyMerger->extractRules($this->text);
-                
-                // update text
+					
+				// extract rules from new and add prefix if necessary
+				$rules = $this->ontologyMerger->extractRules($this->text);
+				$rules = $this->ontologyMerger->transformRulesElements($this->prefix, $rules);
+
+				// update text
+
 				$this->text = $wikitext;
-                foreach($rules as $r) {
-                	list($name, $ruletag) = $r;
-                	$pos = strpos($this->text, "==$name==");
-                	$start = substr($this->text, 0, $pos + strlen("==$name=="));
-                	$end = substr($this->text, $pos + strlen("==$name=="));
-                	$this->text = "$start\n$ruletag$end";
-	                
-                }
-                
-				//print "\n\t[Updated page] ".$this->title->getPrefixedText();
-				return $this->importAsNewRevision();
+				foreach($rules as $r) {
+					list($name, $ruletag) = $r;
+					// replace http://$$__graph__$$
+					$ruletag = str_replace('http://$$_graph_$$', $smwgTripleStoreGraph, $ruletag);
+					$this->text .= "\n$ruletag";
+
+				}
+
+				$res = $this->importAsNewRevision();
+
+				// run parser and store data
+				global $wgParser, $wgTitle;
+				$wgTitle = $this->title;
+				$wgParser->mOptions = new ParserOptions();
+				$parseOutput = $wgParser->parse($this->text, $this->title, $wgParser->mOptions);
+				SMWParseData::storeData($parseOutput, $this->title);
+				return $res;
 
 				/*// revision already exists.
 				 // that means we have to check if the page was changed in the meantime.
@@ -264,7 +285,7 @@ class DeployWikiOntologyRevision extends WikiRevision {
 					return $this->importAsNewRevision();
 					}
 					if ($hash != $exp_hash) {
-						
+
 					return $this->importAsNewRevision();
 
 					}*/
@@ -306,11 +327,11 @@ class DeployWikiOntologyRevision extends WikiRevision {
 		# Sneak a single revision into place
 		$user = User::newFromName( $this->getUser() );
 		if( $user ) {
-		$userId = intval( $user->getId() );
-		$userText = $user->getName();
+			$userId = intval( $user->getId() );
+			$userText = $user->getName();
 		} else {
-		$userId = 0;
-		$userText = $this->getUser();
+			$userId = 0;
+			$userText = $this->getUser();
 		}
 
 		// avoid memory leak...?
@@ -320,27 +341,27 @@ class DeployWikiOntologyRevision extends WikiRevision {
 		$article = new Article( $this->title );
 		$pageId = $article->getId();
 		if( $pageId == 0 ) {
-		# must create the page...
-		$pageId = $article->insertOn( $dbw );
-		$created = true;
+			# must create the page...
+			$pageId = $article->insertOn( $dbw );
+			$created = true;
 		} else {
-		$created = false;
+			$created = false;
 
-		$prior = $dbw->selectField( 'revision', '1',
-		array( 'rev_page' => $pageId,
+			$prior = $dbw->selectField( 'revision', '1',
+			array( 'rev_page' => $pageId,
 		'rev_timestamp' => $dbw->timestamp( $this->timestamp ),
 		'rev_user_text' => $userText,
 		'rev_comment'   => $this->getComment() ),
-		__METHOD__
-		);
-		if( $prior ) {
-		// FIXME: this could fail slightly for multiple matches :P
-		$this->logger->info("Skipping existing revision: ".$this->title->getPrefixedText());
-		print "\n\t[Skipping existing revision] ".$this->title->getPrefixedText();
-		wfDebug( __METHOD__ . ": skipping existing revision for [[" .
-		$this->title->getPrefixedText() . "]], timestamp " . $this->timestamp . "\n" );
-		return false;
-		}
+			__METHOD__
+			);
+			if( $prior ) {
+				// FIXME: this could fail slightly for multiple matches :P
+				$this->logger->info("Skipping existing revision: ".$this->title->getPrefixedText());
+				print "\n\t[Skipping existing revision] ".$this->title->getPrefixedText();
+				wfDebug( __METHOD__ . ": skipping existing revision for [[" .
+				$this->title->getPrefixedText() . "]], timestamp " . $this->timestamp . "\n" );
+				return false;
+			}
 		}
 
 		# FIXME: Use original rev_id optionally (better for backups)
@@ -362,28 +383,28 @@ class DeployWikiOntologyRevision extends WikiRevision {
 		$GLOBALS['wgTitle'] = $this->title;
 
 		if( $created ) {
-		wfDebug( __METHOD__ . ": running onArticleCreate\n" );
-		Article::onArticleCreate( $this->title );
+			wfDebug( __METHOD__ . ": running onArticleCreate\n" );
+			Article::onArticleCreate( $this->title );
 
-		wfDebug( __METHOD__ . ": running create updates\n" );
-		$article->createUpdates( $revision );
+			wfDebug( __METHOD__ . ": running create updates\n" );
+			$article->createUpdates( $revision );
 
 		} elseif( $changed ) {
-		wfDebug( __METHOD__ . ": running onArticleEdit\n" );
-		Article::onArticleEdit( $this->title );
+			wfDebug( __METHOD__ . ": running onArticleEdit\n" );
+			Article::onArticleEdit( $this->title );
 
-		wfDebug( __METHOD__ . ": running edit updates\n" );
-		$article->editUpdates(
-		$this->getText(),
-		$this->getComment(),
-		$this->minor,
-		$this->timestamp,
-		$revId );
+			wfDebug( __METHOD__ . ": running edit updates\n" );
+			$article->editUpdates(
+			$this->getText(),
+			$this->getComment(),
+			$this->minor,
+			$this->timestamp,
+			$revId );
 		}
 		$GLOBALS['wgTitle'] = $tempTitle;
 		$this->logger->info("Imported new revision of page: ".$this->title->getPrefixedText());
 		print "\n\t[Imported new revision of page] ".$this->title->getPrefixedText();
-	
+
 		return true;
 	}
 }

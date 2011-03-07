@@ -98,6 +98,28 @@ class OntologyMerger {
 		$t = $this->modifyPropertyAnnotations($t);
 		return $t;
 	}
+	
+	/**
+	 * Transforms IRIs in rules
+	 * 
+	 * @param string $prefix
+	 * @param array of (name, ruletag) $rules
+	 * 
+	 * @return array of (name, ruletag) 
+	 */
+	public function transformRulesElements($prefix, $rules) {
+		$results = array();
+		$this->prefix = $prefix;
+		$iri_pattern = '/<([^>]+)>/';
+		foreach($rules as $r) {
+			list($name, $ruletag) = $r;
+			$ruletag = preg_replace_callback( $iri_pattern, array( $this, 'simpleParseIRICallback' ), $ruletag );
+			$results[] = array($name, $ruletag);
+		}
+		return $results;
+	}
+	
+	
 
 	/**
 	 * Removes all rules from wikitext $text
@@ -260,6 +282,18 @@ class OntologyMerger {
 			}
 		}
 	}
+	
+	/**
+     * This callback function inserts the prefix into an IRI.
+     * Could be replaced by a lambda-function but then it is restricted to PHP 5.3.x
+     */
+    public function simpleParseIRICallback($iri) {
+        if (strpos($iri[0], 'http://$$_graph_$$/') === false) return $iri[0];
+        $index = strpos($iri[1], "/", strlen('http://$$_graph_$$/')+1);
+        $localname = substr($iri[1], $index+1);
+        $ns = substr($iri[1], 0, $index+1);
+        return "<".$ns.$this->prefix.$localname.">";
+    } 
 
 	private function attachPrefix($titlestring) {
 		$title = Title::newFromText(trim($titlestring));
