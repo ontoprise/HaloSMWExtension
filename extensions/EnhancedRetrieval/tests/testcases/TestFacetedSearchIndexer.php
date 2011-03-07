@@ -299,7 +299,7 @@ class TestSolrFullIndexContent extends PHPUnit_Framework_TestCase {
     		      	'"smwh_Modification_date_xsdvalue_dt",160',
     		      	'"smwh_Building_name_xsdvalue_t",34',
     		      	'"smwh_Image_xsdvalue_t",34',
-    		      	'"smwh_Height_stories_xsdvalue_d",33',
+    		      	'"smwh_Height_stories_xsdvalue_d",34',
     		      	'"smwh_Year_built_xsdvalue_dt",8',
     		        '"smwh_Description_xsdvalue_t",152',
     		      	'"Building",34',
