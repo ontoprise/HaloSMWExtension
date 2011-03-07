@@ -31,6 +31,17 @@
 #!define BUILD_ID "431" set by hudson
 !define REQUIRED_JAVA_VERSION 16
 
+!ifdef EXTENSIONS_EDITION
+  !define PRODUCT "SMW+"
+  !define LOCALSETTINGS "LocalSettings.php.template"
+  !define WIKIDB "smwplus_database.sql"
+!endif
+!ifdef COMMUNITY_EDITION
+  !define PRODUCT "SMW+ Community Edition"
+  !define LOCALSETTINGS "LocalSettings.php.community.tmpl"
+  !define WIKIDB "smwplus_database.sql"
+!endif
+
 ; ----------------------------------------------------------
 
 !define MUI_ABORTWARNING
@@ -313,13 +324,14 @@ Section "${PRODUCT} ${VERSION} core" smwplus
       !ifndef NOFILES
             
             File /r /x .svn /x CVS /x *.zip /x *.exe /x *.cache /x *.settings /x LocalSettings.php /x ACLs.php /x *.nsi /x SKOSExpander.php * 
-            File /oname=extensions\RichMedia\bin\xpdf\pdftotext.exe extensions\RichMedia\bin\xpdf\pdftotext.exe
-            File /oname=extensions\RichMedia\bin\AbiWord\bin\AbiWord.exe extensions\RichMedia\bin\AbiWord\bin\AbiWord.exe
             File /oname=AdminSettings.php AdminSettingsTemplate.php           
             File /oname=deployment\tools\patch.exe deployment\tools\patch.exe
             File /oname=deployment\tools\unzip.exe deployment\tools\unzip.exe
             CopyFiles $INSTDIR\htdocs\mediawiki\patches\patch.php $INSTDIR\htdocs\mediawiki\deployment\tools
-            
+            !ifndef COMMUNITY_EDITION
+                File /oname=extensions\RichMedia\bin\xpdf\pdftotext.exe extensions\RichMedia\bin\xpdf\pdftotext.exe
+                File /oname=extensions\RichMedia\bin\AbiWord\bin\AbiWord.exe extensions\RichMedia\bin\AbiWord\bin\AbiWord.exe
+            !endif
       !endif  
   ;Create uninstaller (only when newly installed)
   ${If} $INSTALLTYPE == 1 
