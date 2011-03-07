@@ -103,7 +103,7 @@ class  LODNonExistingPageHandler  {
 				global $smwgHaloContLang;
 				$ssp = $smwgHaloContLang->getSpecialSchemaPropertyArray();
 				$ontologyURIProperty = $ssp[SMW_SSP_ONTOLOGY_URI];
-				$text = "[[$ontologyURIProperty::$uri]]\n\n".$text;
+				$text = "[[$ontologyURIProperty::$uri |]]\n\n".$text;
 			}
 		}
 		return true;
