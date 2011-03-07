@@ -887,7 +887,13 @@ function smwf_om_getDomainProperties($categoryNames) {
 	$categoryNames = explode(',', $categoryNames);
 	$properties = array();
 
+	if( !is_array($categoryNames) || empty($categoryNames) ) {
+		return json_encode($properties);
+	}
 	foreach($categoryNames as $cN){
+		if( empty($cN) ) {
+			continue;
+		}
 		$cT = Title::newFromText($cN, NS_CATEGORY);
 		//direct
 		foreach(smwfGetSemanticStore()->getPropertiesWithDomain($cT) as $p){

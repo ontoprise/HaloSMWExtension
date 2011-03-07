@@ -143,7 +143,7 @@ fillList: function(forceShowList) {
 				categories[i].exists = this.categoryExists[i][1];
 			}
 		}
-		if( this.recommendedRelsNeedRefresh == true ) {
+		if( cats.length > 0 && this.recommendedRelsNeedRefresh ) {
 			this.recommendedRelsNeedRefresh = false;
 			// Get all properties with that have one of the annotated categories as domain
 			sajax_do_call('smwf_om_getDomainProperties',
@@ -152,7 +152,7 @@ fillList: function(forceShowList) {
 						'');
 		}
 		if ( cats.length == 0 ) {
-			// reset rec relations when there's no cat annotaion left
+			// reset rec relations when there's no cat annotation left
 			this.recommendedRels = new Array();
 			this.recommendedRelsNeedRefresh = true;
 		}
