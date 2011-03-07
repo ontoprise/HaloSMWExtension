@@ -151,10 +151,10 @@ abstract class FSSolrIndexer implements IFSIndexer {
 		foreach ($document as $field => $value) {
 			if (is_array($value)) {
 				foreach ($value as $v) {
-					$xml .= "\t\t<field name=\"$field\">$v</field>\n";
+					$xml .= "\t\t<field name=\"$field\"><![CDATA[$v]]></field>\n";
 				}
 			} else {
-				$xml .= "\t\t<field name=\"$field\">$value</field>\n";
+				$xml .= "\t\t<field name=\"$field\"><![CDATA[$value]]></field>\n";
 			}
 		}
 		$xml .= "\t</doc>\n</add>";

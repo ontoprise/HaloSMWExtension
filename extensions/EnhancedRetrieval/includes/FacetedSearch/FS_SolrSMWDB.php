@@ -283,7 +283,8 @@ SQL;
         			$dateTime = explode("T", $valueXSD);
         			$date = $dateTime[0];
         			$date = str_replace('/', '-', $date);
-        			$time = count($dateTime) > 1 ? $dateTime[1] : '00:00:00';
+        			$time = count($dateTime) > 1 && !empty($dateTime[1])
+        					? $dateTime[1] : '00:00:00';
         			$valueXSD = "{$date}T{$time}Z";
         			$typeSuffix = 'dt';
         		} else if (

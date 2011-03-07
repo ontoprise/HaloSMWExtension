@@ -28,6 +28,14 @@ if ( !defined( 'MEDIAWIKI' ) ) {
 }
 
 ###
+# This is the path to your installation of the Faceted Search as seen from the
+# web. Change it if required ($wgScriptPath is the path to the base directory
+# of your wiki). No final slash.
+##
+$fsgScriptPath = $wgScriptPath . '/extensions/EnhancedRetrieval';
+
+
+###
 # This array configures the indexer that is used for faceted search. It has the
 # following key-value pairs:
 # indexer: Type of the indexer. Currently only 'SOLR' is supported.

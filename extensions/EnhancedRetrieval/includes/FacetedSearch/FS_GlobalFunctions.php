@@ -30,13 +30,20 @@ if ( !defined( 'MEDIAWIKI' ) ) {
 
 require_once 'FS_Settings.php';
 
+$dir = __DIR__.'/';
+$wgExtensionMessagesFiles['FacetedSearch'] = $dir . '/languages/FS_Messages.php'; // register messages (requires MW=>1.11)
+
 /**
  * Sets up the Faceted Search module. Registers autoload classes and registers
  * hooks.
  */
 function fsfSetupFacetedSearch() {
-	global $wgAutoloadClasses, $wgHooks;
+	global $wgAutoloadClasses, $wgHooks, $wgExtensionMessagesFiles,
+	       $wgExtensionAliasesFiles;
 	$dir = __DIR__.'/';
+	
+    // Register special pages aliases file
+    $wgExtensionAliasesFiles['FacetedSearch'] = $dir . '/languages/FS_Aliases.php';
 	
 	// Classes for Faceted Search
 	$wgAutoloadClasses['FSIndexerFactory'] = $dir . 'FS_IndexerFactory.php';
@@ -44,6 +51,7 @@ function fsfSetupFacetedSearch() {
 	$wgAutoloadClasses['FSSolrIndexer'] = $dir . 'FS_SolrIndexer.php';
 	$wgAutoloadClasses['FSIncrementalUpdater'] = $dir . 'FS_IncrementalUpdater.php';
 	$wgAutoloadClasses['IFSIndexer'] = $dir . 'IFS_Indexer.php';
+	$wgAutoloadClasses['FSFacetedSearchSpecial'] = $dir . '../../specials/FS_FacetedSearchSpecial.php';
 	
 	// Exceptions
 	$wgAutoloadClasses['ERException'] = $dir . '../../exceptions/ER_Exception.php';
@@ -53,5 +61,12 @@ function fsfSetupFacetedSearch() {
 	$wgHooks['ArticleSaveComplete'][] = 'FSIncrementalUpdater::onArticleSaveComplete';
 	$wgHooks['TitleMoveComplete'][]   = 'FSIncrementalUpdater::onTitleMoveComplete';
 	$wgHooks['ArticleDelete'][]       = 'FSIncrementalUpdater::onArticleDelete';
+	
+    ///// Register specials pages
+    global $wgSpecialPages, $wgSpecialPageGroups;
+    $wgSpecialPages['FacetedSearch']      = array('FSFacetedSearchSpecial');
+    $wgSpecialPageGroups['FacetedSearch'] = 'facetedsearch_group';
+    $wgSpecialPageGroups['FacetedSearch'] = 'smwplus_group';
+	
 	
 }
