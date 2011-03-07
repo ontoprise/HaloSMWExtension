@@ -134,8 +134,8 @@ class LODParserFunctions {
 			$targetName = $lodgContLang->getParserFunctionParameter(LODLanguage::PFP_MAPPING_TARGET);
 			$target = null;
 			if (array_key_exists($targetName, $params)) {
-				//todo:deal with prefixed or complete uris
 				$target = $params[$targetName];
+				$target = self::removeDataSourcePrefix($target);
 			} else {
 				global $lodgDefaultMappingTarget;
 				$target = $lodgDefaultMappingTarget;
@@ -146,8 +146,8 @@ class LODParserFunctions {
 			$sourceName = $lodgContLang->getParserFunctionParameter(LODLanguage::PFP_MAPPING_SOURCE);
 			$source = null;
 			if (array_key_exists($sourceName, $params)) {
-				//todo:deal with prefixed or complete uris
 				$source = $params[$sourceName];
+				$source = self::removeDataSourcePrefix($source);
 			} else {
 				// Article name is the default source
 				$source = $title->getText();
@@ -172,12 +172,16 @@ class LODParserFunctions {
 	
 	
 /**
-	 * Parses the mapping tag <mapping>. The tag may have two parameters:
-	 * "source" and "target" of the mapping. If the source is not specified,
-	 * the name of the article is taken as source. Users must be aware that the
-	 * case of the article is modified by MW and the spaces are replaced by "_".
+	 * Parses the silkMapping tag <silkMapping>. The tag may have four parameters:
+	 * "source", "target", "mintNamespace"  and "mintPredicateLabel".  
+	 * If the source is not specified, the name of the article is taken as source. 
+	 * Users must be aware that the case of the article is modified by MW and 
+	 * the spaces are replaced by "_".
 	 * If the target is undefined, the default target defined in the global variable
 	 * $lodgDefaultMappingTarget is used. 
+	 * If no mintNamespace is set, then the Wiki's default namespace is used.
+	 * The mintPredicateLabel attribute can take zero or more space separated
+	 * URIs.
 	 *
 	 * @param string $text
 	 * 		The content of the <mapping> tag
@@ -187,8 +191,6 @@ class LODParserFunctions {
 	 * 		The parser
 	 */
 	public static function silkMapping($text, $params, $parser)  {
-		//todo: todo: update method description
-		
 		// The silk-mapping function is only allowed in namespace "Mapping".
 		$title = $parser->getTitle();
 		$ns = $title->getNamespace();
@@ -204,6 +206,7 @@ class LODParserFunctions {
 			$target = null;
 			if (array_key_exists($targetName, $params)) {
 				$target = $params[$targetName];
+				$target = self::removeDataSourcePrefix($target);
 			} else {
 				global $lodgDefaultMappingTarget;
 				$target = $lodgDefaultMappingTarget;
@@ -215,6 +218,7 @@ class LODParserFunctions {
 			$source = null;
 			if (array_key_exists($sourceName, $params)) {
 				$source = $params[$sourceName];
+				$source = self::removeDataSourcePrefix($source);
 			} else {
 				// Article name is the default source
 				$source = $title->getText();
@@ -258,8 +262,6 @@ class LODParserFunctions {
 					}
 				}
 				
-			} else {
-				//todo: Add warning))
 			} 
 			
 			// Store this mapping.
@@ -687,6 +689,19 @@ class LODParserFunctions {
 			$store = LODMappingStore::getStore();
 			$store->removeAllMappingsFromPage($articleName);
 		}
+	}
+	
+	
+	/*
+	 * Removes the dta source prefix if available
+	 */
+	private static function removeDataSourcePrefix($dataSource){
+		$pm = LODPrefixManager::getInstance();
+		$prefix = $pm->getNamespaceURI('smwDatasources');
+		if (strpos($dataSource, $prefix) === 0) {
+			$dataSource = substr($dataSource, strlen($prefix));
+		}
+		return $dataSource;
 	}
 	
 	

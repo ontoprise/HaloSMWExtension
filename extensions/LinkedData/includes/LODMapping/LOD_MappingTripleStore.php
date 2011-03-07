@@ -109,6 +109,7 @@ class LODMappingTripleStore implements ILODMappingStore {
 		
 		$tripleStoreAccess->addPrefixes($pm->getSPARQLPrefixes(array('xsd')));
 		$tripleStoreAccess->insertTriples($graph, $triples);
+		
 		$result = $tripleStoreAccess->flushCommands('MappingStore', $persistencyLayerId);
 		
 		return $result;

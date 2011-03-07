@@ -51,8 +51,10 @@ class LODStorageSQL {
 	/**
 	 * Initializes the database tables of the Linked Data extensions.
 	 * These are:
-	 * - lod_mapping_persistence
 	 * - lod_triple_persistence
+	 * 
+	 * The table lod_mapping_persistence which was used in older
+	 * versions of the Linked Data extension will be deleted.
 	 *
 	 */
 	public function initDatabaseTables() {
@@ -64,17 +66,24 @@ class LODStorageSQL {
 		$verbose = true;
 		LODDBHelper::reportProgress("Setting up LinkedData ...\n",$verbose);
 
-		// lod_mapping_persistence:
-		//		persistence of mappings that are defined in wiki articles
+		// Delete table lod_mapping_persistence because table is not used anymore
 		$table = $db->tableName(self::MAPPING_PERSISTENCE_TABLE);
 
-		LODDBHelper::setupTable($table, array(
-				'mapping_id'	=> 'INT(8) UNSIGNED NOT NULL AUTO_INCREMENT',
-	            'source' 		=> 'Text CHARACTER SET utf8 COLLATE utf8_bin',
-	            'target' 		=> 'Text CHARACTER SET utf8 COLLATE utf8_bin',
-	            'mapping_text' 	=> 'Text CHARACTER SET utf8 COLLATE utf8_bin'),
-				$db, $verbose, 'mapping_id, source(128), target(128)');
+		//		LODDBHelper::setupTable($table, array(
+		//				'mapping_id'	=> 'INT(8) UNSIGNED NOT NULL AUTO_INCREMENT',
+		//	            'source' 		=> 'Text CHARACTER SET utf8 COLLATE utf8_bin',
+		//	            'target' 		=> 'Text CHARACTER SET utf8 COLLATE utf8_bin',
+		//	            'mapping_text' 	=> 'Text CHARACTER SET utf8 COLLATE utf8_bin'),
+		//				$db, $verbose, 'mapping_id, source(128), target(128)');
 
+		global $wgDBtype;
+		LODDBHelper::reportProgress("Drop table $table if exists\n", $verbose);
+		if ($db->tableExists($table) === true){
+			$db->query('DROP TABLE' . ($wgDBtype=='postgres'?'':' IF EXISTS'). $table, 'LODStorageSQL::dropDatabaseTables');
+			LODDBHelper::reportProgress(" ... dropped table $table.\n", $verbose);
+		}
+		
+		
 		// MAPPINGS_PER_ARTICLE_TABLE:
 		//		stores the source-target pairs of mappings in an article
 		$table = $db->tableName(self::MAPPINGS_PER_ARTICLE_TABLE);
