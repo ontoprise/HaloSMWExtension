@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <deploydescriptor>
 	<global>
-		<version>110</version>
+		<version>120</version>
 		<id>linkeddata</id>
 		<vendor>Ontoprise GmbH</vendor>
         <maintainer>Ontoprise GmbH</maintainer>
@@ -12,7 +12,7 @@
 		<helpurl>http://smwforum.ontoprise.com/smwforum/index.php/Help:Linked_Data_extension</helpurl>
 		<dependencies>
 			<dependency from="1150" to="1169">mw</dependency>
-			<dependency from="101" to="101">scriptmanager</dependency>
+			<dependency from="101">scriptmanager</dependency>
 			<dependency from="100" to="100">arclibrary</dependency>
 			<dependency from="140" to="155">smw</dependency>
 			<dependency from="152" to="154">smwhalo</dependency>
