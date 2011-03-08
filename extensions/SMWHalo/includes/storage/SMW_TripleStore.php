@@ -1012,6 +1012,8 @@ class SMWTripleStore extends SMWStore {
 				foreach($mapPRTOColumns as $pr => $column) reset($mapPRTOColumns[$pr]);
 
 				// create result row. iterate over variable set and convert binding nodes to SMWDataValue objects
+				$maxResultsInColumn = 0;
+				$totalResults = 0;
 				foreach ($variableSet as $var) {
 					$var = ucfirst($var);
 					if ($bindingNodeIndex < count($bindingSet)) {
@@ -1052,16 +1054,16 @@ class SMWTripleStore extends SMWStore {
 
 					$bindingNodeIndex++;
 					$row[$resultColumn] = new SMWHaloResultArray($resultInstance, $prs[$resultColumn], $this, $allValues);
-
+					$maxResultsInColumn = max(array($maxResultsInColumn, count($allValues)));
 				}
 				$rowIndex++;
 				ksort($row);
 				$qresults[] = $row;
-
+                $totalResults += $maxResultsInColumn;
 			}
 
 			// create query result object
-			$queryResult = new SMWHaloQueryResult($prs, $query, $qresults, $this, (count($results) == $query->getLimit()));
+			$queryResult = new SMWHaloQueryResult($prs, $query, $qresults, $this, ($totalResults == $query->getLimit()));
 			$qResultSet[$s] = $queryResult;
 		}
 		// consider multiple results
@@ -1129,7 +1131,7 @@ class SMWTripleStore extends SMWStore {
 				list($sv, $metadata) = $uri;
 
 				if ($sv == TSNamespaces::$RDF_NS."type") {
-						$allValues[] = SMWPropertyValue::makeProperty('_INST');
+					$allValues[] = SMWPropertyValue::makeProperty('_INST');
 				} else {
 					$title = TSHelper::getTitleFromURI($sv, false);
 
@@ -1237,17 +1239,17 @@ class SMWTripleStore extends SMWStore {
 					if (preg_match('/[+-]\d\d:\d\d/', $literalValue) > 0) {
 						$literalValue = substr($literalValue, 0, strlen($literalValue)-6);
 					}
-						
+
 					// remove miliseconds (if existing)
 					if (substr($literalValue, -4) == '.000') {
 						$literalValue = substr($literalValue, 0, strlen($literalValue)-4);
 					}
-						
+
 					// remove time (if it is 00:00:00, in this case only the date is usually significant)
 					if (substr($literalValue, -9) == 'T00:00:00') {
 						$literalValue = substr($literalValue, 0, strpos($literalValue, "T"));
 					}
-						
+
 					// hack: can not use setUserValue for SMW_DV_Time for some reason.
 					if ($property instanceof SMWPropertyValue ) {
 						$propertyTitle = $property->getWikiPageValue()->getTitle();
