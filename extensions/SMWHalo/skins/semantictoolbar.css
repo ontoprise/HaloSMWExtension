@@ -798,6 +798,49 @@ a.menulink{
 	overflow: auto;
 	font-size: 11px;
 }
+
+/* Query hint Container */
+#stb_cont15-headline {
+	background-color: #E6E600;
+	font-weight: bold;
+	color: #FFF;
+	/*  padding-top: 1px; */
+	padding-left: 3px;
+	border: 1px solid #E6E600;
+	margin-top: 3px;
+}
+
+#stb_cont15-content {
+	background-color: #FFFFCC;
+	border: 1px solid #E6E600;
+	overflow: auto;
+	font-size: 11px;
+}
+#query-table {
+	background-color: #FFFFCC;
+	width: 100%;
+}
+
+#query-tools {
+	border-bottom: 1px solid #888888;
+	width: Inherit;
+}
+
+.query-col1 {
+	border-bottom: 1px dotted #888888;
+	/*border-right: 1px dashed #888888;*/
+	vertical-align: top;
+	width:90%;
+	overflow: hidden;
+}
+
+.query-col2 {
+	border-bottom: 1px dotted #888888;
+	text-align: right;
+	vertical-align: top;
+	width: 10%;
+}
+
 /* css for Containerframework
  *
  * if an element has different classes defining the same style

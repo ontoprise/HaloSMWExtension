@@ -202,6 +202,7 @@ WikiTextParser.prototype = {
 		this.categories  = null;
 		this.links  = null;
 		this.rules  = null;
+		this.askQueries = null;
 		this.error = WTP_NO_ERROR;
 	},
 	
@@ -384,6 +385,42 @@ WikiTextParser.prototype = {
 		}
 
 		return this.rules;
+	},
+	
+	/**
+	 * @public
+	 *
+	 * Returns an array that contains the queries, that are contained in
+	 * the current wiki text. Queries within templates are not considered.
+	 *
+	 * @return array() An array of query definitions.
+	 */
+	getAskQueries: function(){
+		if(this.askQueries == null) {
+			this.parseAnnotations();
+		}
+		return this.askQueries;
+	},
+	
+	/**
+	 * @public
+	 *
+	 * Returns the query with the given name or null if it is not present.
+	 *
+	 * @return QUERY The requested query or null.
+	 */
+	getAskQuery: function(name) {
+		if (this.askQueries == null) {
+			this.parseAnnotations();
+		}
+
+		for (var i = 0, num = this.askQueries.length; i < num; ++i) {
+			var query = this.askQueries[i];
+			if (this.equalWikiName(query.getName(), name)) {
+				return query;
+			}
+		}
+		return null;
 	},
 
 
@@ -830,6 +867,8 @@ WikiTextParser.prototype = {
 		this.categories = new Array();
 		this.links      = new Array();
 		this.rules      = new Array();
+		this.askQueries = new Array();
+		this.askQueryUnnamedIndex = 0;
 		this.error = WTP_NO_ERROR;
 
 		// Parsing-States
@@ -949,6 +988,24 @@ WikiTextParser.prototype = {
 				case 4:
 					// we are within an {{#ask:-template
 					var pos = this.parseAskTemplate(currentPos);
+					if( pos != -1 ) {
+						var querytext = this.text.substring(currentPos-1, pos);
+						var queryName = this.getQueryName(querytext);
+						var plainQueryText = this.text.substring(currentPos+7, pos-2);
+						plainQueryText = plainQueryText.replace(/\n/g,'');
+						var query = new WtpQuery(
+								querytext,
+								currentPos-1,
+								pos,
+								this,
+								queryName,
+								plainQueryText);
+						if (query) {
+							if (query instanceof WtpQuery) {
+								this.askQueries.push(query);
+							}
+						}
+					}
 					currentPos = (pos == -1) ? currentPos+7 : pos;
 					state = 0;
 					break;
@@ -1074,6 +1131,40 @@ WikiTextParser.prototype = {
 			currentPos = findings[0]+ findings[1].length;
 		}
 		return currentPos;
+	},
+	
+	getQueryName : function(query){
+		var queryname = '',
+			curIndex = this.askQueryUnnamedIndex;
+		
+		if( typeof(query) == 'undefined' || query == '' ) {
+			this.askQueryUnnamedIndex++;
+			return 'query-' + curIndex;
+		}
+		query = query.replace(/^\s*\{\{#(ask):\s*/, '');
+		query = query.replace(/\s*\}\}\s*$/, '');
+
+		// remove line breaks
+		query = query.replace(/\n/g,'');
+		var options = query.split('|');
+		for ( var i = 1; i < options.length; i++) {
+			var kv = options[i].replace(/^\s*(.*?)\s*$/, '$1').split(/=/);
+			if (kv.length == 1) {
+				continue;
+			}
+			var key = kv[0].replace(/^\s*(.*?)\s*$/, '$1');
+			var val = kv[1].replace(/^\s*(.*?)\s*$/, '$1');
+			// we only need the (optional) query name
+			if( key == 'queryname' ) {
+				queryname = val;
+			}
+		}
+		if( queryname == '' ) {
+			// query name still empty - use custom name instead
+			queryname = 'query-' + curIndex;
+			this.askQueryUnnamedIndex++;
+		}
+		return queryname;
 	},
 	
 	/**

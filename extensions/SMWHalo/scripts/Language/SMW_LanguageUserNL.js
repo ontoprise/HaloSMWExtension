@@ -155,6 +155,10 @@ var wgUserLanguageStrings = {
 	'SA_ANNOTATIONS_SAVED'	  : '(i) De aantekeningen werden succesvol opgeslaan.',
 	'SA_SAVING_ANNOTATIONS_FAILED' : '(e) Een fout gebeurde bij het opslaan van aantekeningen.',
 	'SA_SAVING_ANNOTATIONS'   : '(i) Aantekeningen worden opgeslaan...',
+	
+	// Queries in STB
+	'QUERY_HINTS'			  : 'Inline queries',
+	'NO_QUERIES_FOUND'		  : '(i) No queries found in this article',
 
 	// Autocompletion
 	'AUTOCOMPLETION_HINT'     : 'Druk Ctrl+Alt+Space om auto-completion te gebruiken. (Ctrl+Space in IE)',

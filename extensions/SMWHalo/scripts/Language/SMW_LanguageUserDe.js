@@ -152,6 +152,10 @@ var wgUserLanguageStrings = {
 	'SA_ANNOTATIONS_SAVED'	  : '(i) Die Annotationen wurden gespeichert.',
 	'SA_SAVING_ANNOTATIONS_FAILED' : '(e) Ein Fehler trat beim Speichern der Annotationen auf.',
 	'SA_SAVING_ANNOTATIONS'   : '(i) Speichere Annotationen...',
+	
+	// Queries in STB
+	'QUERY_HINTS'			  : 'Inline queries',
+	'NO_QUERIES_FOUND'		  : '(i) Kein Queries in diesem Artikel gefunden.',
 
 	// Autocompletion
 	'AUTOCOMPLETION_HINT'     : 'Drücken Sie Ctrl+Alt+Space um die Auto-completion zu benutzen. (Ctrl+Space im IE)',

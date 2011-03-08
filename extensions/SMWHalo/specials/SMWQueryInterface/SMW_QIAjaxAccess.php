@@ -11,11 +11,13 @@ if ( !defined( 'MEDIAWIKI' ) ) die;
 global $wgAjaxExportList, $wgHooks;
 $wgAjaxExportList[] = 'smwf_qi_QIAccess';
 $wgAjaxExportList[] = 'smwf_qi_getPage';
+$wgAjaxExportList[] = 'smwf_qi_getAskPage';
 
 $wgHooks['ajaxMIMEtype'][] = 'smwf_qi_getPageMimeType';
 
 function smwf_qi_getPageMimeType($func, & $mimeType) {
     if ($func == 'smwf_qi_getPage') $mimeType = 'text/html; charset=utf-8';
+    if ($func == 'smwf_qi_getAskPage') $mimeType = 'text/html; charset=utf-8';
    return true;
 }
 
@@ -449,6 +451,27 @@ function smwf_qi_getPage($args= "") {
 
 	return $newPage;
 		
+}
+
+/**
+ * Wrapper function to build layout around 'normal' ajax QI
+ * 
+ * @param  string key=value pairs urlencoded i.e. noPreview%26noLayout
+ * @return string $html
+ */
+function smwf_qi_getAskPage($args= "") {
+
+	$html = smwf_qi_getPage($args);
+	$html .= '<div id="stb-qi-footer-spacer"></div>';
+	$html .= '<div id="stb-qi-footer-wrap">';
+	$html .= '<div id="stb-qi-footer-container">';
+	$html .= '<div id="stb-qi-footer">';
+	$html .= '<input id="stb-qi-save-button" type="button" value="OK" name="ok" onclick="javascript:qihelper.querySaved=true;parent.jQuery.fancybox.close();" />'.
+		'<input id="stb-qi-cancel-button" type="button" value="Cancel" name="cancel" onclick="javascript:qihelper.querySaved=false;parent.jQuery.fancybox.close();" />';
+	$html .= '</div>';
+	$html .= '</div>';
+	$html .= '</div>';
+	return $html;
 }
 
 /**

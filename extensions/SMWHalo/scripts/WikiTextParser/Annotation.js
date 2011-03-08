@@ -592,3 +592,62 @@ WtpRule.prototype = Object.extend(new WtpAnnotation(), {
 	
 });
 
+/**
+ * Class for queries - derived from WtpAnnotation
+ * 
+ * Stores
+ * - the name of the query
+ * - the pure query content (without parser funtion and brackets)
+ * 
+ */
+var WtpQuery = Class.create();
+WtpQuery.prototype = Object.extend(new WtpAnnotation(), {
+	
+	/**
+	 * @public
+	 * @see constructor of WtpQuery
+	 */
+	initialize: function(annotation, start, end, wtp, 
+			name, queryText) {
+		this.WtpAnnotation(annotation, start, end, wtp, "");
+		this.WtpQuery(name, queryText);
+	},
+
+	/**
+	 * @private - called by <initialize>
+	 * 
+	 * Constructor.
+	 * 
+	 * @param string name
+	 * 		Name of the query
+	 * @param string queryText
+	 * 		Text of the query
+	 */
+	WtpQuery: function(name, queryText) {
+		this.name = name;
+		this.queryText = queryText;
+	},
+	
+	/**
+	 * @public
+	 * 
+	 * @return string
+	 * 		Returns the pure content of the query
+	 */
+	getQueryText: function() {
+		return this.queryText;
+	},
+	
+
+	/**
+	 * @public
+	 * 
+	 * Replaces a query in the wiki text.
+	 * 
+	 * @param string newQuery The complete definition of the new query
+	 */
+	changeQuery: function(newQuery) {
+		this.replaceAnnotation(newQuery);
+	}
+});
+

@@ -40,7 +40,8 @@ var HELPCONTAINER = 11; // contains help
 var ANNOTATIONHINTCONTAINER = 12; // gardening hints in AAM
 var SAVEANNOTATIONSCONTAINER = 13; // save annotations in AAM
 var DBGCONTAINER = 14; // contains debug information
-var LASTCONTAINERIDX = 14;
+var ASKQUERYCONTAINER = 15; // contains query informations with links to QI
+var LASTCONTAINERIDX = 15;
 
 var STBIMGMINUS = '/extensions/SMWHalo/skins/Annotation/images/minus.gif'
 var STBIMGPLUS = '/extensions/SMWHalo/skins/Annotation/images/plus.gif'

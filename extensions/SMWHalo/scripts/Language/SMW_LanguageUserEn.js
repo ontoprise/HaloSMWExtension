@@ -155,6 +155,10 @@ var wgUserLanguageStrings = {
 	'SA_SAVING_ANNOTATIONS_FAILED' : '(e) An error occurred while saving the annotations.',
 	'SA_SAVING_ANNOTATIONS'   : '(i) Saving annotations...',
 
+	// Queries in STB
+	'QUERY_HINTS'			  : 'Inline queries',
+	'NO_QUERIES_FOUND'		  : '(i) No queries found in this article',
+
 	// Autocompletion
 	'AUTOCOMPLETION_HINT'     : 'Press Ctrl+Alt+Space to use auto-completion. (Ctrl+Space in IE)',
 	'WW_AUTOCOMPLETION_HINT'  : '- supported in the Wiki text mode only.',

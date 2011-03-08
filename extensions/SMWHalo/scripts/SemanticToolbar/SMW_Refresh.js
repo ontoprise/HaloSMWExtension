@@ -106,6 +106,10 @@ RefreshSemanticToolBar.prototype = {
 			propToolBar.createContent();
 		}
 
+		if(window.smwhgASKQuery){
+			smwhgASKQuery.fillList();
+		}
+
 		// Check for syntax errors in the wiki text
 		var saveButton = $('wpSave');
 		if (saveButton) {

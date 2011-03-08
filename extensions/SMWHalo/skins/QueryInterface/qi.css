@@ -562,3 +562,33 @@ cursor: pointer;
 #usesub_text {
 	font-style: italic;
 }
+
+
+#stb-qi-footer-spacer {
+	height:60px;
+}
+#stb-qi-footer-wrap {
+	position: fixed;
+	bottom: 0;
+	left: 0;
+	width: 100%;
+	font-size: 70%;
+}
+
+#stb-qi-footer-container {
+	background: white;
+	height: 30px;
+	font-size: 70%;
+}
+
+#stb-qi-footer {
+	width: 100%;
+	margin: 0 auto;
+	position: relative;
+	text-align: center;
+	vertical-align: bottom;
+	font-size: 70%;
+}
+#stb-qi-footer input {
+	margin: 5px;
+}

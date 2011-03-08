@@ -154,6 +154,10 @@ var wgUserLanguageStrings = {
     'SA_ANNOTATIONS_SAVED'    : '(i) Les annotations ont été enregistrées avec succès.',
     'SA_SAVING_ANNOTATIONS_FAILED' : '(e) Une erreur est survenue lors de l\'enregistrement des annotations.',
     'SA_SAVING_ANNOTATIONS'   : '(i) Enregistrement des annotations en cours...',
+    
+    // Queries in STB
+    'QUERY_HINTS'			  : 'Inline queries',
+    'NO_QUERIES_FOUND'		  : '(i) No queries found in this article',
 
     // Autocompletion
     'AUTOCOMPLETION_HINT'     : 'Appuyez sur Ctrl+Alt+Espace pour utiliser l\'autocomplétion. (Ctrl+Espace in IE)',
