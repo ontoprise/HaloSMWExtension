@@ -923,7 +923,7 @@ Index: extensions/SemanticForms/includes/SF_EmbeddedFormClasses.php
 +		$template_namespace = $namespace_labels[NS_TEMPLATE];
 +		$title = Title::makeTitle( SF_NS_FORM, $this->form_name );
 +		$ad = SpecialPage::getPage('FormEdit');
-+		$add_data_url = SFLinkUtils::titleURLString($ad->getTitle()) . "/" . $title->getPartialURL();
++		$add_data_url = SFUtils::titleURLString($ad->getTitle()) . "/" . $title->getPartialURL();
 +		$form_description = wfMsgForContent('sf_form_docu', $this->form_name, $add_data_url);
 +		$form_input = "{{#forminput:" . $this->form_name . "}}\n";
 +    $form_header ="{{Form
