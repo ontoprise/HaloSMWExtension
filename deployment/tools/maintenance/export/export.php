@@ -26,17 +26,24 @@ $originalDir = getcwd();
 
 $optionsWithArgs = array( 'pagelist', 'start', 'end' );
 
-require_once( '../../../maintenance/commandLine.inc' );
-require_once( '../../../maintenance/backup.inc' );
-require_once('../../io/export/DF_DeployWikiExporter.php');
-require_once('../../tools/smwadmin/DF_Tools.php');
+// get root dir of DF
+global $rootDir;
+$rootDir = dirname(__FILE__);
+$rootDir = str_replace("\\", "/", $rootDir);
+$rootDir = realpath($rootDir."/../../../");
+
+require_once( $rootDir.'/../maintenance/commandLine.inc' );
+require_once( $rootDir.'/../maintenance/backup.inc' );
+require_once( $rootDir.'/io/export/DF_DeployWikiExporter.php');
+require_once( $rootDir.'/tools/smwadmin/DF_Tools.php');
+
 
 $langClass = "DF_Language_".ucfirst($wgLanguageCode);
 
-if (!file_exists("../../languages/$langClass.php")) {
+if (!file_exists("../../../languages/$langClass.php")) {
 	$langClass = "DF_Language_En";
 }
-require_once("../../languages/$langClass.php");
+require_once("../../../languages/$langClass.php");
 $dfgLang = new $langClass();
 
 // check if required properties exist

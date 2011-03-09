@@ -23,19 +23,20 @@
  * @author: Kai K�hn
  */
 
+// get root dir of DF
 global $rootDir;
 $rootDir = dirname(__FILE__);
 $rootDir = str_replace("\\", "/", $rootDir);
-$rootDir = realpath($rootDir."/../../");
+$rootDir = realpath($rootDir."/../../../");
 require_once($rootDir. '/../maintenance/commandLine.inc' );
 require_once($rootDir.'/tools/smwadmin/DF_Tools.php');
 require_once($rootDir.'/io/export/DF_DeployUploadExporter.php');
 
 $langClass = "DF_Language_$wgLanguageCode";
-if (!file_exists("../../languages/$langClass.php")) {
+if (!file_exists("../../../languages/$langClass.php")) {
 	$langClass = "DF_Language_En";
 }
-require_once("../../languages/$langClass.php");
+require_once("../../../languages/$langClass.php");
 $dfgLang = new $langClass();
 
 for( $arg = reset( $argv ); $arg !== false; $arg = next( $argv ) ) {

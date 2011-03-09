@@ -28,8 +28,9 @@
  *
  */
 
-require_once( '../../../maintenance/commandLine.inc' );
+require_once( '../../../../maintenance/commandLine.inc' );
 
+// get root dir of DF
 global $rootDir;
 $rootDir = dirname(__FILE__);
 $rootDir = str_replace("\\", "/", $rootDir);
