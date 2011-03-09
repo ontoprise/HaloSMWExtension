@@ -346,8 +346,6 @@ $smwgNamespacesWithSemanticLinks[SF_NS_FORM] = true;
 $smwgNamespacesWithSemanticLinks[NS_HELP] = true;
 $smwgNamespacesWithSemanticLinks[NS_HELP_TALK] = true;
 $smwgNamespacesWithSemanticLinks[NS_TEMPLATE] = true;
-$smwgNamespacesWithSemanticLinks[SF_NS_FORM] = true;
-
 
 /*start-semanticformsinputs*/
 require_once($IP.'/extensions/SemanticFormsInputs/SemanticFormsInputs.php');
