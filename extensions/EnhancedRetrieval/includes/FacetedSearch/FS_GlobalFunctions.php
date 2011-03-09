@@ -40,7 +40,7 @@ $wgExtensionMessagesFiles['FacetedSearch'] = $dir . '/languages/FS_Messages.php'
 function fsfSetupFacetedSearch() {
 	global $wgAutoloadClasses, $wgHooks, $wgExtensionMessagesFiles,
 	       $wgExtensionAliasesFiles;
-	$dir = __DIR__.'/';
+	$dir = dirname(__FILE__).'/';
 	
     // Register special pages aliases file
     $wgExtensionAliasesFiles['FacetedSearch'] = $dir . '/languages/FS_Aliases.php';
