@@ -215,6 +215,7 @@
 			<arg value="--js=../../SMWHalo/scripts/SemanticToolbar/SMW_Category.js" />
 			<arg value="--js=../../SMWHalo/scripts/SemanticToolbar/SMW_Help.js" />
 			<arg value="--js=../../SMWHalo/scripts/SemanticToolbar/SMW_Links.js" />
+			<arg value="--js=../../SMWHalo/scripts/SemanticToolbar/SMW_ASKQuery.js" />
 			<arg value="--js=../../SMWHalo/scripts/AdvancedAnnotation/SMW_AdvancedAnnotation.js" />
 			<arg value="--js=../../SMWHalo/scripts/AdvancedAnnotation/SMW_AnnotationHints.js" />
 			<arg value="--js=../../SMWHalo/scripts/AdvancedAnnotation/SMW_GardeningHints.js" />
