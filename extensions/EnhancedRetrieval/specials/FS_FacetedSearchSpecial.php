@@ -42,7 +42,7 @@ class FSFacetedSearchSpecial extends SpecialPage {
 	
 	//--- Constants ---
 	
-	const SPECIAL_PAGE_HTML = <<<HTML
+	const SPECIAL_PAGE_HTML = '
 <div id="wrapper"> 
 	<div id="header">
 		<h1>{{fs_title}}</h1>
@@ -78,7 +78,7 @@ class FSFacetedSearchSpecial extends SpecialPage {
 		</div>
 	</div>
 </div>
-HTML;
+';
 
     public function __construct() {
         parent::__construct('FacetedSearch');
