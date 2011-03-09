@@ -30,7 +30,7 @@ if ( !defined( 'MEDIAWIKI' ) ) {
 
 require_once 'FS_Settings.php';
 
-$dir = __DIR__.'/';
+$dir = dirname(__FILE__).'/';
 $wgExtensionMessagesFiles['FacetedSearch'] = $dir . '/languages/FS_Messages.php'; // register messages (requires MW=>1.11)
 
 /**
