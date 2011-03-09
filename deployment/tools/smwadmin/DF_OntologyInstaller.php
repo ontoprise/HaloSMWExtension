@@ -218,7 +218,8 @@ class OntologyInstaller {
 			list($title, $command)=$log;
 			$pagesToImport[] = $title->getPrefixedText();
 		}
-		$pageValuesOfOntology = smwfGetStore()->getAllPropertySubjects(SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString('df_part_of_ontology')));
+		$ontologyIDValue = SMWDataValueFactory::newTypeIDValue('_wpg', $ontologyID);
+		$pageValuesOfOntology = smwfGetStore()->getPropertySubjects(SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString('df_partofbundle')), $ontologyIDValue);
 		$existingPages = array();
 		foreach($pageValuesOfOntology as $pv) {
 			$existingPages[] = $pv->getTitle()->getPrefixedText();

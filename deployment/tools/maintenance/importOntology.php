@@ -49,7 +49,8 @@ for( $arg = reset( $argv ); $arg !== false; $arg = next( $argv ) ) {
 }
 
 if (!isset($filePath)) {
-    print "Usage: php importOntology.php -f <filePath> -o <ontology name> ";
+    print "Usage: php importOntology.php -f <filePath> [ -o <ontology ID> ] ";
+    print " If ontology ID is not given the filename is used.";
     die();
 }
 
@@ -66,6 +67,11 @@ class DFCallbackConfirm {
 $oInstaller = OntologyInstaller::getInstance(realpath($rootDir."/../"));
 
 $confirm = new DFCallbackConfirm();
+
+if (!isset($ontologyID)) {
+	$fileName = basename($filePath);
+	$ontologyID = reset(explode(".", $fileName));
+}
 
 $oInstaller->installOntology($ontologyID, $filePath, $confirm);
 

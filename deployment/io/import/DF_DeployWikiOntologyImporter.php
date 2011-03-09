@@ -168,7 +168,7 @@ class DeployWikiOntologyRevision extends WikiRevision {
 		$this->ontologyMerger = new OntologyMerger(
 		array($dfgLang->getLanguageString('is_inverse_of')),
 		array($dfgLang->getLanguageString('has_domain_and_range') => array('Type:Page', 'Type:Page')),
-		array($dfgLang->getLanguageString('has_domain_and_range'), $dfgLang->getLanguageString('imported_from'), $dfgLang->getLanguageString('df_part_of_ontology'))
+		array($dfgLang->getLanguageString('has_domain_and_range'), $dfgLang->getLanguageString('imported_from'), $dfgLang->getLanguageString('df_partofbundle'))
 		);
 		$this->logger = Logger::getInstance();
 	}
@@ -271,24 +271,7 @@ class DeployWikiOntologyRevision extends WikiRevision {
 				SMWParseData::storeData($parseOutput, $this->title);
 				return $res;
 
-				/*// revision already exists.
-				 // that means we have to check if the page was changed in the meantime.
-				 $contenthashProperty = SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString('df_contenthash'));
-				 $values = smwfGetStore()->getPropertyValues($this->title, $contenthashProperty);
-				 if (count($values) > 0) $exp_hash = strtolower(Tools::getXSDValue(reset($values))); else $exp_hash = NULL;
-				 $rawtext = preg_replace('/\{\{\s*'.$dfgLang->getLanguageString('df_contenthash').'\s*\|\s*value\s*=\s*\w*(\s*\|)?[^}]*\}\}/', "", $prior->getRawText());
-				 $hash = md5($rawtext);
-
-				 if (is_null($exp_hash) || $hash === $exp_hash) {
-					// either no hash annotation given and no check possible
-					// or site is as it is expected.
-					return $this->importAsNewRevision();
-					}
-					if ($hash != $exp_hash) {
-
-					return $this->importAsNewRevision();
-
-					}*/
+				
 			}
 		}
 		return false;
@@ -296,29 +279,7 @@ class DeployWikiOntologyRevision extends WikiRevision {
 	}
 
 
-	/**
-	 * Adds a content hash template call at the end of the text or replaces an existing.
-	 *
-	 * {{Content hash|value=<md5 of $text>}}
-	 *
-	 * If the template call already exists, it is only changed where it is located.
-	 *
-	 * Note: The MD5 value is calculated assuming there is no template call for obvious reasons.
-	 *
-	 * @param $text
-	 * @return $text with added or changed template call
-	 */
-	function replaceOrAddContentHash($text) {
-		global $dfgLang;
-		$matchNums = preg_match('/\{\{\s*'.$dfgLang->getLanguageString('df_contenthash').'\s*\|\s*value\s*=\s*\w*(\s*\|)?[^}]*\}\}/', $text);
-		if ($matchNums === 0) {
-			$text .= "\n{{".$dfgLang->getLanguageString('df_contenthash')."|value=".md5($text)."}}";
-		} else {
-			$rawtext = preg_replace('/\{\{\s*'.$dfgLang->getLanguageString('df_contenthash').'\s*\|\s*value\s*=\s*\w*(\s*\|)?[^}]*\}\}/', "", $text);
-			$text = preg_replace('/\{\{\s*'.$dfgLang->getLanguageString('df_contenthash').'\s*\|\s*value\s*=\s*\w*(\s*\|)?[^}]*\}\}/', "{{".$dfgLang->getLanguageString('df_contenthash')."|value=".md5($rawtext)."}}", $text);
-		}
-		return $text;
-	}
+	
 
 	function importAsNewRevision() {
 

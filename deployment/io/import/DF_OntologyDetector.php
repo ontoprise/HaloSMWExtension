@@ -209,7 +209,7 @@ class DeployWikiRevisionDetector extends WikiRevision {
 
                 // revision already exists.
 
-                $partOfOntology = SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString('df_part_of_ontology'));
+                $partOfOntology = SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString('df_partofbundle'));
                 $values = smwfGetStore()->getPropertyValues($this->title, $partOfOntology);
                 
                 // FIXME: deal also with pages in MediaWiki namespace as possible conflict
