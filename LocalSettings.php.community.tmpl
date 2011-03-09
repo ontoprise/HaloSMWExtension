@@ -253,3 +253,9 @@ $oaiAuth = true;
 $oaiAudit = true;
 $oaiAuditDatabase = 'semwiki_en';
 /*end-unifiedsearch*/
+
+// enable Form ns when SF is not installed
+if (! isset($wgExtraNamespaces[SF_NS_FORM]) ) {
+  $wgExtraNamespaces[SF_NS_FORM] = 'Form';
+  $wgExtraNamespaces[SF_NS_FORM_TALK] = 'Form_talk';
+}
