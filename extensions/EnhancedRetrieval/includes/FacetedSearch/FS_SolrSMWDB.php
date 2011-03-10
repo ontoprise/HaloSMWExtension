@@ -162,6 +162,7 @@ SQL;
 	 */
 	private function retrieveSMWID($db, $namespaceID, $title, array &$doc) {
 		// Get the SMW ID for the page
+        $title = str_replace("'", "\'", $title);
 		$smw_ids = $db->tableName('smw_ids');
 		$sql = <<<SQL
 			SELECT s.smw_id as smwID
