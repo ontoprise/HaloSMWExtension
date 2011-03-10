@@ -177,8 +177,6 @@ var TF = Class.create({
 						
 		} else if(keyCode == '40'){ //key down
 			
-			alert(autoCompleter.currentInputBox);
-			
 			if(!tf.isLastRow(cell)){
 				return;
 			}
@@ -460,13 +458,7 @@ var TF = Class.create({
 					if(jQuery(fieldValues[i]).attr('isModified') == 'true'){
 						
 						jQuery(fieldValues[i]).get(0).setAttribute('wrap', 'pgysical');
-						
-						alert(jQuery(fieldValues[i]).get(0).getAttribute('value'));
-						//jQuery(fieldValues[i]).attr('wrap', 'physical');
-						alert(jQuery(fieldValues[i]).attr('value'));
-						//jQuery(fieldValues[i]).attr('wrap', 'virtual');
-						alert(jQuery(fieldValues[i]).attr('value'));
-						
+												
 						var modifiedValue = new Object();
 						modifiedValue['newValue'] = jQuery(fieldValues[i]).attr('value');
 						modifiedValue['originalValue'] = jQuery(fieldValues[i]).attr('originalValue');
