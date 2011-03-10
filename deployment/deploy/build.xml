@@ -28,12 +28,9 @@
 				<include name="patch.php" />
 			</fileset>
 		</copy>
-		<copy file="../tools/smwadmin/smwadmin.php" tofile="bin/zip/deployment/tools/smwadmin/smwadmin.php" filtering="on" overwrite="true" verbose="true" failonerror="false">
-			<filterset>
-				<filter token="VERSION" value="${version}" />
-				<filter token="BUILD_NUMBER" value="${env.BUILD_NUMBER}" />
-			</filterset>
-		</copy>
+		<copy file="../tools/smwadmin/smwadmin.php"
+              tofile="bin/zip/deployment/tools/smwadmin/smwadmin.php"
+              overwrite="true" verbose="true" failonerror="false"/>
 		<copy todir="bin/zip/deployment">
 			<fileset dir="../">
 				<include name="COPYING" />
@@ -58,6 +55,12 @@
 			<arg value="../../buildtools/replaceVersionHintDF.php" />
 			<arg value="deploy.xml" />
 			<arg value="../Deployment.php" />
+			<arg value="${env.BUILD_NUMBER}" />
+		</exec>
+		<exec executable="php">
+			<arg value="../../buildtools/replaceVersionHintDF.php" />
+			<arg value="deploy.xml" />
+			<arg value="../tools/smwadmin/smwadmin.php" />
 			<arg value="${env.BUILD_NUMBER}" />
 		</exec>
 	</target>
