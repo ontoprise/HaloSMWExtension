@@ -90,6 +90,12 @@ $packageToInstall = array();
 $packageToDeinstall = array();
 $packageToUpdate = array();
 
+// ontologies as local files (full or relative path)
+$ontologiesToInstall = array();
+
+// local bundles to install
+$localBundlesToInstall = array();
+
 // defaults:
 $dfgForce = false;
 $dfgGlobalUpdate= false;
@@ -119,7 +125,21 @@ for( $arg = reset( $args ); $arg !== false; $arg = next( $args ) ) {
 	if ($arg == '-i') {
 		$package = next($args);
 		if ($package === false) fatalError("No package found");
-		$packageToInstall[] = $package;
+
+		if (file_exists($package)) {
+			$file_ext = reset(array_reverse(explode(".", $package)));
+			if ($file_ext == 'owl' || $file_ext == 'rdf' || $file_ext == 'obl') {
+				// import ontology
+				$ontologiesToInstall[] = $package;
+			} else if ($file_ext == 'zip') {
+				// import bundle
+				$localBundlesToInstall[] = $package;
+			}
+
+		} else {
+			// assume it is a package
+			$packageToInstall[] = $package;
+		}
 		continue;
 	} else if ($arg == '-d') { // -d => De-install
 		$package = next($args);
@@ -178,10 +198,10 @@ for( $arg = reset( $args ); $arg !== false; $arg = next( $args ) ) {
 		$dfgRestoreList = true;
 		continue;
 	} else if ($arg == '-rcreate') {
-        $dfgCreateRestorePoint = true;
-        $dfgRestorePoint = next($args);
-        continue;
-    } else {
+		$dfgCreateRestorePoint = true;
+		$dfgRestorePoint = next($args);
+		continue;
+	} else {
 		print "\nUnknown command: $arg. Try --help\n\n";
 		die(DF_TERMINATION_ERROR);
 	}
@@ -311,7 +331,42 @@ foreach($packageToInstall as $toInstall) {
 		$logger->fatal($e);
 		fatalError("Installation failed! You can try to rollback: smwadmin -r");
 	}
+}
 
+// install ontologies
+if (count($ontologiesToInstall) > 0) {
+
+	$mediaWikiLocation = dirname(__FILE__) . '/../../..';
+	require_once "$mediaWikiLocation/maintenance/commandLine.inc";
+
+	initializeLanguage();
+
+	// requires a wiki environment, so check and include a few things more
+	checkWikiContext();
+	require_once($rootDir.'/tools/smwadmin/DF_OntologyInstaller.php');
+
+	foreach($ontologiesToInstall as $filePath) {
+
+		$oInstaller = OntologyInstaller::getInstance(realpath($rootDir."/../"));
+
+		$confirm = new DFOntologyConflictConfirm();
+
+		if (!isset($ontologyID)) {
+			$fileName = basename($filePath);
+			$ontologyID = reset(explode(".", $fileName));
+		}
+
+		$oInstaller->installOntology($ontologyID, $filePath, $confirm);
+
+	}
+}
+
+// install local bundles
+if (count($localBundlesToInstall) > 0) {
+	
+	foreach($localBundlesToInstall as $filePath) {
+       $installer->installOrUpdateFromFile($filePath);
+	}
 }
 
 //de-install
@@ -592,4 +647,12 @@ function fatalError($e) {
 	print "\n\n";
 	// stop installation
 	die(DF_TERMINATION_ERROR);
+}
+
+class DFOntologyConflictConfirm {
+	function askForOntologyPrefix(& $answer) {
+		print "\n\nOntology conflict. Please enter prefix: ";
+		$line = trim(fgets(STDIN));
+		$result = $line;
+	}
 }

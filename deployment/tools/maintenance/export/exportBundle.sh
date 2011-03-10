@@ -1,5 +1,16 @@
 #!/bin/bash
 
+#
+# Exports a bundle with images
+#
+# Usage: ./exportBundle.sh <bundle-id> <temporary name>
+#
+# Note: <temporary name> is a unique directory name just used for bundle generation.
+#       It is arbitrary, e.g. 'mybundle'. Then you'll find the created bundle in /tmp/mybundle
+# 
+# Author: Kai Kühn / ontoprise / 2011
+#
+
 # Create output dir
 OUTPUTDIR=/tmp/$2/extensions/$1
 if [ ! -e $OUTPUTDIR ];

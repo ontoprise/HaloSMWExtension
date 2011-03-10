@@ -478,16 +478,40 @@ class Tools {
 	/**
 	 * Returns the home directory.
 	 * (path with slashes only also on Windows)
-	 * 
-	 * @return string 
+	 *
+	 * @return string
 	 */
 	public static function getHomeDir() {
 		if (self::isWindows()) {
-            exec("echo %UserProfile%", $out, $ret);
-            return str_replace("\\", "/", reset($out));
+			exec("echo %UserProfile%", $out, $ret);
+			return str_replace("\\", "/", reset($out));
 		} else {
 			exec('echo $HOME', $out, $ret);
-            return reset($out);
+			return reset($out);
 		}
+	}
+
+	/**
+	 * Reads a deploy descriptor from a bundle (zip file).
+	 *
+	 * @param $filePath bundle as zip file (absolute or relative)
+	 * @return DeployDescriptor or NULL if it could not be found.
+	 */
+	public static function unzipDeployDescriptor($filePath, $tempFolder) {
+		$filePath = Tools::makeUnixPath($filePath);
+		if (!file_exists($filePath)) return NULL;
+		exec('unzip -l '.$filePath, $output, $res);
+		foreach($output as $o) {
+			if (strpos($o, "/deploy.xml") !== false) {
+				$out = $o;
+				break;
+			}
+		}
+		if (!isset($out)) return NULL;
+		$tempFile = $tempFolder."/".uniqid();
+		$dd_path = reset(array_reverse(explode(" ", $out)));
+		exec('unzip -j '.$filePath.' '.$dd_path.' -d '.$tempFile, $output, $res);
+		$dd = new DeployDescriptor(file_get_contents($tempFile."/deploy.xml"));
+		return $dd;
 	}
 }

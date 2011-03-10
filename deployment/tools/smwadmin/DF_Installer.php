@@ -76,10 +76,10 @@ class Installer {
 
 	// Helper obejcts
 	private $rollback;
-    
+
 	// global logger
-    private $logger;
-    
+	private $logger;
+
 	private $errors;
 
 	/**
@@ -137,6 +137,55 @@ class Installer {
 
 
 			
+	}
+
+	/**
+	 * Installs a package from a file.
+	 *
+	 * Dependencies are not resolved. The user just gets a warning about that.
+	 *
+	 * @param $filePath bundle (zip file)
+	 */
+	public function installOrUpdateFromFile($filePath) {
+		$dd = Tools::unzipDeployDescriptor($filePath, $this->tmpFolder);
+		if (is_null($dd)) {
+			throw new InstallationError(-1);
+		}
+		$localPackages = PackageRepository::getLocalPackages($this->rootDir.'/extensions');
+
+		// check dependencies
+		$deps = $dd->getDependencies();
+		foreach($deps as $d) {
+			list($depID, $depFrom, $depTo, $optional, $message) = $d;
+			if (!array_key_exists($depID, $localPackages)) {
+				throw new InstallationError(-1);
+			}
+			$b = $localPackages[$depID];
+			if ($b->getVersion() < $depFrom || $b->getVersion() > $depTo) {
+				throw new InstallationError(-1);
+			}
+		}
+		$fromVersion = NULL;
+		if (array_key_exists($dd->getID(), $localPackages)) {
+		    $fromVersion = $localPackages[$dd->getID()]->getVersion();	
+		}
+
+		// dependencies are fine
+		$id = $dd->getID();
+		$version = $dd->getVersion();
+		$this->logger->info("Unzip $filePath");
+		$this->unzipFromFile($filePath);
+
+		$this->logger->info("Apply configs for $filePath");
+		$dd->applyConfigurations($this->rootDir, false, $fromVersion, $this);
+		$this->errors = array_merge($this->errors, $dd->getLastErrors());
+		
+		// write finalize hint
+		$handle = fopen($this->rootDir."/".$dd->getInstallationDirectory()."/init$.ext", "w");
+		fwrite($handle, "1,".$fromVersion);
+		fclose($handle);
+
+		print "\n-------\n";
 	}
 
 	/**
@@ -307,6 +356,15 @@ class Installer {
 
 			if ($showDescription && array_key_exists($p_id, $localPackages)) print "\n ".$localPackages[$p_id]->getDescription()."\n\n";
 		}
+		
+		$onlyLocalPackages = array_diff(array_keys($localPackages), array_keys($allPackages));
+		if (count($onlyLocalPackages) > 0) {
+			print "\nThe following exists only locally:";
+			foreach($onlyLocalPackages as $id) {
+				$lp = $localPackages[$id];
+				print "\n".$lp->getID()."-".$lp->getVersion();
+			}
+		}
 		print "\n\n";
 	}
 
@@ -423,14 +481,14 @@ class Installer {
 
 			list($url,$repo_url) = PackageRepository::getVersion($id, $desc->getVersion());
 			$credentials = PackageRepository::getCredentials($repo_url);
-				
+
 			$this->logger->info("Download $id-".$desc->getVersion().".zip");
 			$d->downloadAsFileByURL($url, $this->tmpFolder."/$id-".$desc->getVersion().".zip", $credentials);
 
 			// unzip
 			$this->logger->info("Unzip $id-".$desc->getVersion().".zip");
 			$this->unzip($id, $desc->getVersion());
-				
+
 			$this->logger->info("Apply configs for $id-".$desc->getVersion().".zip");
 			$desc->applyConfigurations($this->rootDir, false, $fromVersion, $this);
 			$this->errors = array_merge($this->errors, $desc->getLastErrors());
@@ -561,7 +619,7 @@ class Installer {
 	/**
 	 * Unzips the package denoted by $id and $version
 	 *
-	 *  (requires 7-zip installed on Windows, unzip on Linux)
+	 *  (requires unzip installed on Windows, on Linux)
 	 *
 	 * @param string $id
 	 * @param int $version
@@ -576,6 +634,21 @@ class Installer {
 		}
 		print "done.]";
 	}
+
+	/**
+	 * Unzips the given bundle.
+	 *
+	 * @param $filePath of bundle (absolute or relative)
+	 */
+	private function unzipFromFile($filePath) {
+
+		print "\n[unzip ".$filePath."...";
+		exec('unzip -o '.$filePath.' -d '.$this->rootDir);
+		print "done.]";
+
+	}
+
+
 
 	/**
 	 * Calculates for any extension individually the possible interval of version,
@@ -824,7 +897,7 @@ class Installer {
 		$line = trim(fgets(STDIN));
 		$result = strtolower($line);
 	}
-	
+
 	public function askForOntologyPrefix(& $result) {
 		print "\n\nOntology conflict. Please enter prefix: ";
 		$line = trim(fgets(STDIN));

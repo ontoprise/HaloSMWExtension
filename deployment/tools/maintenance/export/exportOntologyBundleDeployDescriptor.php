@@ -107,9 +107,9 @@ function dumpDescriptor($bundeID, $output = "deploy.xml", $dumpFile = "dump.xml"
 		fwrite( STDERR , "No description annotation on $bundeID" . "\n" );
 	}
 
-	$versionText = count($version) > 0 ? Tools::getXSDValue(reset($version)) : "no version";
+	$versionText = count($version) > 0 ? Tools::getXSDValue(reset($version)) : "100";
 	$vendorText = count($vendor) > 0 ? Tools::getXSDValue(reset($vendor)) : "no vendor";
-	$instdirText = count($instdir) > 0 ? Tools::getXSDValue(reset($instdir)) : "no instdir";
+	$instdirText = count($instdir) > 0 ? Tools::getXSDValue(reset($instdir)) : "extensions/$bundeID";
 	$descriptionText = count($description) > 0 ? Tools::getXSDValue(reset($description)) : "no description";
 
 	$handle = fopen("$output", "w");
