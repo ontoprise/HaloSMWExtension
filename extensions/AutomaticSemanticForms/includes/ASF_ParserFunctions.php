@@ -17,12 +17,26 @@ class ASFParserFunctions {
 			array( 'ASFParserFunctions', 'renderShowNow' ), SFH_OBJECT_ARGS); 
 		$parser->setFunctionHook( 'asfforminput', 
 			array( 'ASFParserFunctions', 'renderASFFormInput' ) );
+		$parser->setFunctionHook( 'collapsableFieldSetStart', 
+			array( 'ASFParserFunctions', 'renderCollapsableFieldSetStart'));
+		$parser->setFunctionHook( 'collapsableFieldSetEnd', 
+			array( 'ASFParserFunctions', 'renderCollapsableFieldSetEnd'));
+		$parser->setFunctionHook( 'collapsableFieldSet', 
+			array( 'ASFParserFunctions', 'renderCollapsableFieldSet'));
+		$parser->setFunctionHook( 'qTip', 
+			array( 'ASFParserFunctions', 'renderQTip'));
+		$parser->setFunctionHook( 'qTipHelp', 
+			array( 'ASFParserFunctions', 'renderQTipHelp'));
+
+			
+		//todo:document new parser functions in dmwiki	
 			
 		global $wgHooks;
 		$wgHooks['ParserAfterTidy'][] = 'ASFParserFunctions::finallyRenderShowNow';
 		
 		return true;
 	}
+	
 	
 	/*
 	 * Initialize magic words
@@ -31,8 +45,148 @@ class ASFParserFunctions {
 		$magicWords['CreateSilentAnnotations']	= array ( 0, 'CreateSilentAnnotations' );
 		$magicWords['shownow']	= array ( 0, 'shownow' );
 		$magicWords['asfforminput'] = array ( 0, 'asfforminput' );
+		$magicWords['collapsableFieldSetStart'] = array(0, 'collapsableFieldSetStart');
+		$magicWords['collapsableFieldSetEnd'] = array(0, 'collapsableFieldSetEnd');
+		$magicWords['collapsableFieldSet'] = array(0, 'collapsableFieldSet');
+		$magicWords['qTip'] = array(0, 'qTip');
+		$magicWords['qTipHelp'] = array(0, 'qTipHelp');
 		
 		return true;
+	}
+	
+	
+	/*
+	 * Displays a small help icon with a qTip Tooltip
+	 */
+	static function renderQTipHelp( &$parser) {
+		$params = func_get_args();
+		array_shift( $params ); // don't need the parser
+		
+		$tip = '';
+		if(array_key_exists(0, $params)){
+			$tip .= trim($params[0]);
+			$tip = $parser->internalParse($tip);
+		}
+		
+		global $wgScriptPath;
+		$imgSRC = $wgScriptPath . '/extensions/AutomaticSemanticForms/skins/help.gif';
+		
+		$result = '<span class="asf_use_qtip">';
+		$result .= '<img src="'.$imgSRC.'">';
+		$result .= '<span class="asf_qtip_content" style="display: none">';
+		$result .= $tip;
+		$result .= '</span>';
+		$result .= '</img></span>';
+		
+		return $parser->insertStripItem( $result, $parser->mStripState );
+	}
+	
+	
+	static function renderQTip( &$parser) {
+		$params = func_get_args();
+		array_shift( $params ); // don't need the parser
+		
+		$content = "";
+		if(array_key_exists(0, $params)){
+			$content .= trim($params[0]);
+			$content = $parser->internalParse($content);
+		}
+		
+		$tip = '';
+		if(array_key_exists(1, $params)){
+			$tip .= trim($params[1]);
+			$tip = $parser->internalParse($tip);
+		}
+		
+		$result = '<span class="asf_use_qtip">';
+		$result .= $content;
+		$result .= '<span class="asf_qtip_content" style="display: none">';
+		$result .= $tip;
+		$result .= '</span>';
+		$result .= '</span>';
+		
+		return $parser->insertStripItem( $result, $parser->mStripState );
+	}
+	
+	
+	/*
+	 * Display of collapsable fieldset
+	 */
+	static function renderCollapsableFieldSet( &$parser) {
+		$params = func_get_args();
+		array_shift( $params ); // don't need the parser
+		
+		$legend = "";
+		if(array_key_exists(0, $params)){
+			$legend = $params[0];
+		}
+		
+		$content = "";
+		if(array_key_exists(1, $params)){
+			$content = $params[1];
+		}
+		
+		$result = "{{#collapsableFieldSetStart:".$legend.'}}';
+		$result .= $content;
+		$result .= "{{#collapsableFieldSetEnd:}}";
+		
+		return array($result, 'noparse' => false);
+	}
+	
+	
+	/*
+	 * Display start of collapsable fieldset
+	 */
+	static function renderCollapsableFieldSetStart( &$parser) {
+		$params = func_get_args();
+		array_shift( $params ); // don't need the parser
+		
+		global $wgScriptPath, $asfCollapsableFieldSetCounter;
+		
+		if(is_null($asfCollapsableFieldSetCounter)){
+			$asfCollapsableFieldSetCounter = 1;
+		} else {
+			$asfCollapsableFieldSetCounter += 1;
+		}
+		
+		$legend = "";
+		if(array_key_exists(0, $params)){
+			$legend .= trim($params[0]);
+			$legend = " ".$parser->internalParse($legend);
+		}
+		
+		$result = "";
+		$result .= '<fieldset id="fieldset_'.$asfCollapsableFieldSetCounter.'_hidden" style="display: none">';
+		
+		$result .= '<legend>';
+		$imgSRC = $wgScriptPath . '/extensions/AutomaticSemanticForms/skins/plus-act.gif';
+		$result .= "<img src=\"$imgSRC\" onclick=\"asf_show_category_section('fieldset_$asfCollapsableFieldSetCounter')\"></img>";
+		$result .= $legend;
+		$result .= '</legend>';
+		
+		$result .= '</fieldset>';
+		
+		$result .= '<fieldset id="fieldset_'.$asfCollapsableFieldSetCounter.'_visible">';
+		
+		$imgSRC = $wgScriptPath . '/extensions/AutomaticSemanticForms/skins/minus-act.gif';
+		$result .= '<legend>';
+		$result .= "<img src=\"$imgSRC\" onclick=\"asf_hide_category_section('fieldset_$asfCollapsableFieldSetCounter')\"></img>";
+		$result .= $legend;
+		$result .= '</legend>';
+		
+		//Add javascript and css
+		global $smgJSLibs; 
+		$smgJSLibs[] = 'jquery'; 
+		$smgJSLibs[] = 'qtip';
+		
+		return $parser->insertStripItem( $result, $parser->mStripState );
+	}
+	
+	/*
+	 * Display end of collapsable fieldset
+	 */
+	static function renderCollapsableFieldSetEnd( &$parser) {
+		return $parser->insertStripItem( '</fieldset>', $parser->mStripState );
 	}
 	
 	/*

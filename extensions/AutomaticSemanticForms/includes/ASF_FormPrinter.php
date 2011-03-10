@@ -45,29 +45,21 @@ class ASFFormPrinter extends SFFormPrinter {
 			
 		if($postProcess){
 			//unescape fieldset and legend HTNL tag
-			$form_text = str_replace("&lt;fieldset", "<fieldset", $form_text);
-			$form_text = str_replace("&lt;/fieldset&gt;", "</fieldset>", $form_text);
-			$form_text = str_replace("&gt;&lt;legend&gt;", "><legend>", $form_text);
-			$form_text = str_replace("&lt;/legend&gt;", "</legend>", $form_text);
-			
-			//deal with the help icon
-			global $wgScriptPath;
-			$imgSRC = $wgScriptPath . '/extensions/AutomaticSemanticForms/skins/help.gif';
-			$form_text = str_replace('&lt;img src="ASF_HELP_ICON', '<img src="'.$imgSRC, $form_text);
-			$form_text = str_replace('ASF_HELP_ICON', $imgSRC, $form_text);
-			$form_text = str_replace('&gt;<span class="asf', '><span class="asf', $form_text);
-			$form_text = str_replace('</span>&lt;/img&gt;', '</span></img>', $form_text);
+			//$form_text = str_replace("&lt;fieldset", "<fieldset", $form_text);
+			//$form_text = str_replace("&lt;/fieldset&gt;", "</fieldset>", $form_text);
+			//$form_text = str_replace("&gt;&lt;legend&gt;", "><legend>", $form_text);
+			//$form_text = str_replace("&lt;/legend&gt;", "</legend>", $form_text);
 			
 			//deal with thecollapse images
-			$imgSRC = $wgScriptPath . '/extensions/AutomaticSemanticForms/skins/minus-act.gif';
-			$form_text = str_replace('&lt;img src="ASF_MINUS_ICON', '<img src="'.$imgSRC, $form_text);
-			$form_text = str_replace('ASF_MINUS_ICON', $imgSRC, $form_text);
+			//$imgSRC = $wgScriptPath . '/extensions/AutomaticSemanticForms/skins/minus-act.gif';
+			//$form_text = str_replace('&lt;img src="ASF_MINUS_ICON', '<img src="'.$imgSRC, $form_text);
+			//$form_text = str_replace('ASF_MINUS_ICON', $imgSRC, $form_text);
 			
-			$imgSRC = $wgScriptPath . '/extensions/AutomaticSemanticForms/skins/plus-act.gif';
-			$form_text = str_replace('&lt;img src="ASF_PLUS_ICON', '<img src="'.$imgSRC, $form_text);
-			$form_text = str_replace('ASF_PLUS_ICON', $imgSRC, $form_text);
+			//$imgSRC = $wgScriptPath . '/extensions/AutomaticSemanticForms/skins/plus-act.gif';
+			//$form_text = str_replace('&lt;img src="ASF_PLUS_ICON', '<img src="'.$imgSRC, $form_text);
+			//$form_text = str_replace('ASF_PLUS_ICON', $imgSRC, $form_text);
 			
-			$form_text = str_replace('&gt;&lt;/img&gt;', '></img>', $form_text);
+			//$form_text = str_replace('&gt;&lt;/img&gt;', '></img>', $form_text);
 			
 			//deal with autocompletion diff - necessary because otherwise no other
 			//HTML elements are possible in the same row as the input field

@@ -128,29 +128,17 @@ class ASFCategoryFormData {
 		//create field input label text
 		global $asfDisplayPropertiesAndCategoriesAsLinks;
 		if($asfDisplayPropertiesAndCategoriesAsLinks){
-			$categoryLabel = '<span class="asf_category_tooltip">';
+			$categoryLabel = '{{#qTip:';
 			$categoryLabel .= '[[:'.$this->titleObject->getFullText().'|'.$this->titleObject->getText().']]';
-			$categoryLabel .= '<span class="asf_category_tooltip_content" style="display: none">';
-			$categoryLabel .= $this->getCategoryTooltip().'</span></span>';
+			$categoryLabel .= '| '.$this->getCategoryTooltip().'}}';
 		} else {
 			$categoryLabel = "<i>".$this->titleObject->getText()."</i>";
 		}
 		
 		//create collapsed version of section
-		$sectionId =  'fieldset_'.str_replace(' ', '_', $this->titleObject->getText());
-		$intro = "<fieldset id=\"".$sectionId."_hidden\" style=\"display: none\">";
-		$intro .= "<legend>";
-		$intro .= '<img src="ASF_PLUS_ICON" onclick="asf_show_category_section(\''.$sectionId.'\')"></img> ';
-		$intro .= wfMsg('asf_category_section_label', $categoryLabel);
-		$intro .= "</legend>";
-		$intro .= "</fieldset>";
-		
-		//create expanded version of section
-		$intro .= "<fieldset id=\"".$sectionId."_visible\">";
-		$intro .= "<legend>";
-		$intro .= '<img src="ASF_MINUS_ICON" onclick="asf_hide_category_section(\''.$sectionId.'\')"></img> ';
-		$intro .= wfMsg('asf_category_section_label', $categoryLabel);
-		$intro .= "</legend>";
+		$intro = "{{#collapsableFieldSetStart:";
+		$intro .= "\n".wfMsg('asf_category_section_label', $categoryLabel);
+		$intro .= "\n}}";
 		
 		$intro .= "\n\n".'{| width="100%" align="center"';
 
@@ -183,9 +171,9 @@ class ASFCategoryFormData {
 			return '';
 		}
 		
-		$outro = "\n|}\n";
+		$outro = "\n|}";
 		
-		$outro .= "</fieldset>\n\n";
+		$outro .= "{{#collapsableFieldSetEnd:}}\n\n";
 		
 		$this->categorySectionOutro = $outro;
 		return $this->categorySectionOutro;

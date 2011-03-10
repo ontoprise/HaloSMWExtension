@@ -1,0 +1,41 @@
+
+.asf_tab_container span{
+	border: solid 2px;
+	margin-right: 5px;
+	margin-top: 40px;
+	padding-left: 5px;
+	padding-right: 5px;
+	display: inline-block;
+	cursor: pointer;
+}
+
+.asf_tab_container .asf_unselected_tab{
+	background-color: light-grey;
+}
+
+.asf_tab_container .asf_selected_tab{
+	font-weight: bold;
+}
+
+.asf_tab_windoe {
+	border: solid 2px;
+	width: 97%;
+	height: 100%; 
+	min-height: 20px;
+	padding: 10px;
+	margin-bottom: 30px;
+}
+
+#asf_category_input {
+	width: 99%;
+	height: 2em;
+}
+
+#asf_formname_input {
+	width: 509px;
+}
+
+.asf_warning {
+	color: red;	
+}
+

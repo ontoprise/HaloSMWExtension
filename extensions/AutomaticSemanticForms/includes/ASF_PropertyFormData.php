@@ -168,10 +168,9 @@ class ASFPropertyFormData {
 		
 		//deal with form input help
 		if($this->helpText){
-			//TODO: Use a help icon instead
-			$syntax .= ' <span class="asf_additional_help"><img src="ASF_HELP_ICON">';
-			$syntax .= '<span class="asf_additional_help_content" style="display: none">'.$this->helpText.'</span>';
-			$syntax .= '</img></span>';	
+			$syntax .= '{{#qTipHelp:';
+			$syntax .= $this->helpText;
+			$syntax .= '}}';	
 		}
 		
 		$this->formFieldSyntax = $syntax;
@@ -187,7 +186,7 @@ class ASFPropertyFormData {
 		
 		$intro = "\n|-";
 		
-		$intro .= "\n".'| valign="top" |<span class="asf_property_link">';
+		$intro .= "\n".'| valign="top" |{{#qTip:';
 		
 		//add form field label
 		global $asfDisplayPropertiesAndCategoriesAsLinks;
@@ -203,9 +202,9 @@ class ASFPropertyFormData {
 		}
 		
 		//Create the tooltip:
-		$intro .= '<span class="asf_tooltip_content" style="display: none">';
+		$intro .= "\n| ";
 		$intro .= $this->getPropertyToolTip();
-		$intro .= '</span></span>';
+		$intro .= '}}';
 		
 		$intro .= "\n".'| valign="top" |';
 		

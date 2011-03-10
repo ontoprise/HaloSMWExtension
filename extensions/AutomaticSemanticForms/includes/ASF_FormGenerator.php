@@ -215,8 +215,7 @@ class ASFFormGenerator {
 		
 		
 		$intro .= "{{{for template| CreateSilentAnnotations:";
-
-		$intro .= '}}}';
+		$intro .= "}}}\n\r";
 		
 		return $intro;
 	}

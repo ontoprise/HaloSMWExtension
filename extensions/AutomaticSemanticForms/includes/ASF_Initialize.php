@@ -44,6 +44,9 @@ $asfScriptPath = $wgScriptPath . '/extensions/AutomaticSemanticForms';
 	$wgAutoloadClasses['ASFCategorySectionStructureProcessor'] = $asfIP . '/includes/ASF_CategorySectionStructureProcessor.php';
 	$wgAutoloadClasses['ASFUnresolvedAnnotationsFormData'] = $asfIP . '/includes/ASF_UnresolvedAnnotationsFormData.php';
 	$wgAutoloadClasses['ASFRedLinkHandler'] = $asfIP . '/includes/ASF_RedLinkHandler.php';
+	$wgAutoloadClasses['ASFAdminSpecial'] = $asfIP . '/specials/ASF_AdminSpecial.php';
+	
+	require_once($asfIP . '/specials/ASF_AdminSpecialAjaxAccess.php');
 	
 	global $wgHooks;
 	//create edit with form tab
@@ -58,8 +61,10 @@ $asfScriptPath = $wgScriptPath . '/extensions/AutomaticSemanticForms';
 	$wgHooks['LanguageGetMagic'][] = 'ASFParserFunctions::languageGetMagic';
 	
 	//Register special pages
-	global $wgSpecialPages;
+	global $wgSpecialPages, $wgSpecialPageGroups;
 	$wgSpecialPages['FormEdit'] = 'ASFFormEdit';
+	$wgSpecialPages['ASFSpecial'] = array('ASFAdminSpecial');
+	$wgSpecialPageGroups['ASFSpecial'] = 'smwplus_group';
 	
 	//load form generator in order to initialize constants
 	ASFFormGenerator::getInstance();
@@ -89,6 +94,20 @@ function asfSetupExtension(){
 	//replace SFFormPrinter with its ASF implementation
 	global $sfgFormPrinter;
 	$sfgFormPrinter = new ASFFormPrinter();
+	
+	//Add hook for ASF scripts and css
+	$wgHooks['BeforePageDisplay'][]='asfAddHeaders';
+	global $asfHeaders;
+	$asfHeaders = array();
+	
+	global $wgRequest, $wgContLang;
+	if(strpos($wgRequest->getVal('title'), $wgContLang->getNsText(NS_SPECIAL).':') !== 0){
+		global $smgJSLibs, $asfHeaders; 
+		$smgJSLibs[] = 'jquery'; 
+		$smgJSLibs[] = 'qtip';
+		
+		$asfHeaders['asf.js'] = true;
+	}
 	
 	return true;
 }
@@ -151,6 +170,27 @@ function asfInitContentLanguage($langcode) {
 }
 
 
+/*
+ * Adds ASF scripts and stylesheets
+ */
+function asfAddHeaders(& $out){
+	global $asfHeaders, $asfScriptPath;
+	
+	foreach($asfHeaders as $script => $dc){
+		switch($script){
+			case 'asf.js' :
+				$scriptFile = $asfScriptPath . "/scripts/asf.js";
+				$out->addScriptFile( $scriptFile );
+				break ;
+			case 'asf.css' :
+				$cssFile = $asfScriptPath . "/skins/asf.css";
+				$out->addExtensionStyle($cssFile);
+				break ;
+		}
+	}
+	
+	return true;
+}
 
 
 
