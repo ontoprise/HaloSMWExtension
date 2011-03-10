@@ -1,5 +1,5 @@
 <?php
-define( 'DF_VERSION', '1.3.0_0 [B${env.BUILD_NUMBER}]' );
+define( 'DF_VERSION', '{{$VERSION}} [B{{$BUILDNUMBER}}]' );
 
 $wgExtensionFunctions[] = 'dfgSetupExtension';
 $smwgDFIP = $IP . '/deployment';
