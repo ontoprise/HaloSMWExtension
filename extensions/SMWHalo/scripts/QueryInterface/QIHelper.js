@@ -2975,7 +2975,7 @@ applyOptionParams : function(query) {
             // check for additionl printouts like |?myProp
             var m = options[i].match(/^\s*\?/)
             if (m) {
-                m = options[i].replace(/\n/g,'').match(/^([^#|=]*)(#[^=]*)?(=.*?)?$/);
+                m = options[i].replace(/\n/g,'').match(/^(.*?)(#.*?)?(=.*?)?$/);
                 var pname = m[1].replace(/^\s*\?\s*/, '').replace(/\s*$/,'');
                 var punit = (m[2]) ? m[2].replace(/#/,'').replace(/\s*$/,'') : null;
                 var col = (m[3]) ? m[3].replace(/=\s*/,'').replace(/\s*$/,'') : null;
