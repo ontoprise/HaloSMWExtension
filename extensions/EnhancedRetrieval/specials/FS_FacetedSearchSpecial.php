@@ -68,13 +68,14 @@ class FSFacetedSearchSpecial extends SpecialPage {
 	</div>
 	<div class="results" id="results">
 		<div id="navigation">
-			<ul id="pager"></ul>
-	
-			<div id="pager-header">
+			<div id="pager-header" />
 			</div>
 		</div>
 		<div id="docs">
 			{{fs_search_results}}
+		</div>
+		<div id="xfsFooter">
+			<ul id="pager"></ul>
 		</div>
 	</div>
 </div>
@@ -104,7 +105,8 @@ class FSFacetedSearchSpecial extends SpecialPage {
 		$wgOut->addScript("<script type=\"text/javascript\" src=\"". $fsgScriptPath .  "/scripts/ajax-solr/lib/core/AbstractWidget.js\"></script>");        
 		$wgOut->addScript("<script type=\"text/javascript\" src=\"". $fsgScriptPath .  "/scripts/ajax-solr/lib/core/AbstractFacetWidget.js\"></script>");        
 		$wgOut->addScript("<script type=\"text/javascript\" src=\"". $fsgScriptPath .  "/scripts/ajax-solr/lib/core/ParameterStore.js\"></script>");        
-//		$wgOut->addScript("<script type=\"text/javascript\" src=\"". $fsgScriptPath .  "/scripts/ajax-solr/lib/helpers/jquery/ajaxsolr.theme.js\"></script>");        
+		$wgOut->addScript("<script type=\"text/javascript\" src=\"". $fsgScriptPath .  "/scripts/ajax-solr/lib/helpers/jquery/ajaxsolr.theme.js\"></script>");        
+		$wgOut->addScript("<script type=\"text/javascript\" src=\"". $fsgScriptPath .  "/scripts/ajax-solr/lib/widgets/jquery/PagerWidget.js\"></script>");        
 		
 		$wgOut->addScript("<script type=\"text/javascript\" src=\"". $fsgScriptPath .  "/scripts/FacetedSearch/FS_Theme.js\"></script>");        
 		$wgOut->addScript("<script type=\"text/javascript\" src=\"". $fsgScriptPath .  "/scripts/FacetedSearch/FS_ResultWidget.js\"></script>");        

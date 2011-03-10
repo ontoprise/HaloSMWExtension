@@ -38,9 +38,9 @@ FacetedSearch.classes.FacetedSearch = function () {
 	
 	//--- Constants ---
 	// The field with this name is used on SOLR queries
-	const QUERY_FIELD = 'smwh_title';
+	var QUERY_FIELD = 'smwh_title';
 	
-	const FACET_FIELDS = ['smwh_categories', 'smwh_attributes', 'smwh_properties'];
+	var FACET_FIELDS = ['smwh_categories', 'smwh_attributes', 'smwh_properties'];
 	
 	//--- Private members ---
 
@@ -89,6 +89,23 @@ FacetedSearch.classes.FacetedSearch = function () {
 				field: fieldName
 			}));
 		}
+
+		// paging
+		mAjaxSolrManager.addWidget(new AjaxSolr.PagerWidget({
+			id : 'pager',
+			target : '#pager',
+			prevLabel : '&lt; Previous',
+			nextLabel : 'Next &gt;',
+//			innerWindow : 1,
+			renderHeader : function(perPage, offset, total) {
+				$('#pager-header').html(
+						$('<span/>').text(
+								'Result ' + Math.min(total, offset + 1)
+										+ ' to '
+										+ Math.min(total, offset + perPage)
+										+ ' of ' + total));
+			}
+		}));
 		
 	};
 	that.construct = construct;

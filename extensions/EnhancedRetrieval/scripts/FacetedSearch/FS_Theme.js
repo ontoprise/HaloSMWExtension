@@ -27,9 +27,28 @@
 
 (function ($) {
 
-	const FS_CATEGORIES = 'smwh_categories';
-	const FS_ATTRIBUTES = 'smwh_attributes';
-	const FS_PROPERTIES = 'smwh_properties';
+	var FS_CATEGORIES = 'smwh_categories';
+	var FS_ATTRIBUTES = 'smwh_attributes';
+	var FS_PROPERTIES = 'smwh_properties';
+	var MOD_ATT = 'smwh_Modification_date_xsdvalue_dt';
+	var MAX_CAT = 5;
+
+	var SEARCH_PATH = '/extensions/EnhancedRetrieval/skin/images/';
+	var NS_ICON = {
+		// TODO add missing mappings
+		0 : wgScriptPath + SEARCH_PATH + 'smw_plus_instances_icon_16x16.png',
+		6 : wgScriptPath + SEARCH_PATH + 'smw_plus_image_icon_16x16.png',
+		102 : wgScriptPath + SEARCH_PATH + 'smw_plus_property_icon_16x16.png',
+		700 : wgScriptPath + SEARCH_PATH + 'smw_plus_comment_icon_16x16.png'
+	};
+	
+	function noUnderscore(string) {
+		return string.replace(/_/g, ' ');
+	}
+	
+	function getIconForNSID(id) {
+		return '<img src="' + NS_ICON[id] + '"/>';
+	}
 	
 	/**
 	 * Theme for article titles and their semantic data.
@@ -40,12 +59,15 @@
 	 * 		HTML representation of the semantic data
 	 */
 	AjaxSolr.theme.prototype.article = function (doc, data) {
-		var output = '<div><b>' + doc.smwh_title + '</b>';
-		output += '<p id="links_' + doc.id + '" class="links"></p>';
-		output += '<p>' + data + '</p></div>';
+		// TODO check link
+		var output = '<div class="xfsResult"><a class="xfsResultTitle" href="' + doc.smwh_title + '">';
+		output += noUnderscore(doc.smwh_title) + '</a>';
+		output += getIconForNSID(doc.smwh_namespace_id);
+		// output += '<p id="links_' + doc.id + '" class="links"></p>';
+		output += '<div>' + data + '</div></div>';
 		return output;
 	};
-
+	
 	/**
 	 * Theme for the semantic data of an article.
 	 * 
@@ -62,19 +84,28 @@
 		var attributeRegEx = /smwh_(.*)_xsdvalue_(.*)/;
 		
 		if (typeof cats !== 'undefined') {
-			// Show all categories
-			output += '<p>Categories<br/><ul>';
-			for ( var i = 0; i < cats.length; i++) {
-				output += '<li>'+cats[i]+'</li>';
+			// Show MAX_CAT categories
+			output += '<div class="xfsResultCategory"><p>is in category: ';
+			var count = Math.min(cats.length, MAX_CAT);
+			var vals = [];
+			for ( var i = 0; i < count; i++) {
+				// TODO check link
+				vals.push('<a href="' + cats[i] + '">' + noUnderscore(cats[i]) + '</a>');
 			}
-			output += '</ul></p>';
+			if (count < cats.length) {
+				vals.push('... (' + (cats.length - count) + ' more)');
+			}
+			output += vals.join(' | ');
+			output += '</p></div>';
 		}
 		
 		if (props.length + attr.length > 0) {
 			// Properties or attributes are present 
 			// => add a table header
-			output += '<p>Properties<br/><table class="property_table">';
+			output += '<div class="xfsResultTable"><table>';
 		}
+		var row = 0;
+		
 		// Show all properties
 		if (props.length > 0) {
 			// The property array may contain duplicates 
@@ -89,10 +120,16 @@
 				// Get the property name without prefix, suffix and type
 				var plainName = property.match(propertyRegEx);
 				if (plainName) {
-					plainName = plainName[1].replace(/_/g,' ');
-					output += '<tr>';
-					output += '<td>'+plainName+'</td>';
-					output += '<td>'+doc[property].join(', ')+'</td>';
+					plainName = noUnderscore(plainName[1]);
+					output += '<tr class="s' + (row % 2) + '">';
+					row += 1;
+					output += '<td>' + plainName + '</td>';
+					var vals = [];
+					$.each(doc[property], function() {
+						// TODO check link
+						vals.push('<a href="' + this + '">' + noUnderscore(this) + '</a>');
+					});
+					output += '<td>' + vals.join(', ') + '</td>';
 					output += '</tr>';
 				}
 			}
@@ -110,8 +147,9 @@
 				// Get the property name without prefix, suffix and type
 				var plainName = attribute.match(attributeRegEx);
 				if (plainName) {
-					plainName = plainName[1].replace(/_/g,' ');
-					output += '<tr>';
+					plainName = noUnderscore(plainName[1]);
+					output += '<tr class="s' + (row % 2) + '">';
+					row += 1;
 					output += '<td>'+plainName+'</td>';
 					output += '<td>'+doc[attribute].join(', ')+'</td>';
 					output += '</tr>';
@@ -122,14 +160,19 @@
 		if (props.length + attr.length > 0) {
 			// Properties or attributes are present 
 			// => close the table
-			output += '</table></p>';
+			output += '</table></div>';
 		}
+		
+		// TODO check if field is set
+		// TODO remove property from previous listing?
+		// TODO handling of timezone, date formatting?
+		output += '<div class="xfsResultModified"><p>Last changed: ' + String(doc[MOD_ATT]).replace('T', ' ') + '</p></div>';
 		
 		return output;
 	};
 
 	AjaxSolr.theme.prototype.facet = function(value, weight, handler) {
-		return $('<a href="#" class="tagcloud_item"/>').text(value).addClass(
+		return $('<a href="#" class="tagcloud_item"/>').text(noUnderscore(value)).addClass(
 				'tagcloud_size_' + weight).click(handler);
 	};
 
