@@ -17,4 +17,33 @@
 		<ant antfile="build.xml" dir="HaloACL/deploy" target="deployscripts" />
 		<ant antfile="build.xml" dir="SemanticRules/deploy" target="deployscripts" />
 	</target>
+
+    <target name="del_extension_suite">
+		<delete dir="AutomaticSemanticForms" />
+		<delete dir="Cite" />
+		<delete dir="Collaboration" />
+		<delete dir="DataImport" />
+		<delete dir="DebugTemplate" />
+		<delete dir="DynamicPageList" />
+		<delete dir="HaloACL" />
+		<delete dir="HashingFunctions" />
+		<delete dir="ImageMap" />
+		<delete dir="LdapAuthentication" />
+		<delete dir="Maps" />
+		<delete dir="NewUserMessage" />
+		<delete dir="RichMedia" />
+		<delete dir="SemanticConnector" />
+		<delete dir="SemanticForms" />
+		<delete dir="SemanticFormsInputs" />
+		<delete dir="SemanticGardening" />
+		<delete dir="SemanticMaps" />
+		<delete dir="SemanticNotifications/" />
+		<delete dir="SemanticResultFormats" />
+		<delete dir="SemanticRules" />
+		<delete dir="SMWUserManual" />
+		<delete dir="Treeview" />
+		<delete dir="Ultrapedia" />
+		<delete dir="Validator" />
+	</target>
+
 </project>
