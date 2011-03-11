@@ -35,8 +35,8 @@ class ResourceInstaller {
 	static $instance; // singleton
 
 	var $rootDir; // MW installation dir
-    var $logger;
-    
+	var $logger;
+
 	public static function getInstance($rootDir) {
 		if (is_null(self::$instance)) {
 			self::$instance = new ResourceInstaller($rootDir);
@@ -60,41 +60,41 @@ class ResourceInstaller {
 
 
 		if (!defined('SMW_VERSION')) throw new InstallationError(DEPLOY_FRAMEWORK_NOT_INSTALLED, "SMW is not installed or at least is not active. The ontology could not be properly installed. Please restart smwadmin using -f (force) to install it.");
-		
+
 		// remove old pages
 		if (!is_null($fromVersion) && $fromVersion != '') {
-            // remove old pages
-            $this->logger->info("Remove unused pages from ".$dd->getID());
-            print "\n[Remove unused pages...";
-            $query = SMWQueryProcessor::createQuery("[[Ontology version::$fromVersion]][[Part of bundle::".$dd->getID()."]]", array());
-            $res = smwfGetStore()->getQueryResult($query);
-            $next = $res->getNext();
-            while($next !== false) {
+			// remove old pages
+			$this->logger->info("Remove unused pages from ".$dd->getID());
+			print "\n[Remove unused pages...";
+			$query = SMWQueryProcessor::createQuery("[[Ontology version::$fromVersion]][[Part of bundle::".$dd->getID()."]]", array());
+			$res = smwfGetStore()->getQueryResult($query);
+			$next = $res->getNext();
+			while($next !== false) {
 
-                $title = $next[0]->getNextObject()->getTitle();
-                if (!is_null($title)) {
-                    $a = new Article($title);
-                    $reason = "ontology removed: ".$dd->getID();
-                    $id = $title->getArticleID( GAID_FOR_UPDATE );
-                    if( wfRunHooks('ArticleDelete', array(&$a, &$wgUser, &$reason, &$error)) ) {
-                        if( $a->doDeleteArticle( $reason ) ) {
-                        	$this->logger->info("Remove old page from $fromVersion: ".$title->getPrefixedText());
-                            print "\n\t[Remove old page from $fromVersion: ".$title->getPrefixedText();
-                            wfRunHooks('ArticleDeleteComplete', array(&$a, &$wgUser, $reason, $id));
-                            print "done.]";
-                        }
-                    }
+				$title = $next[0]->getNextObject()->getTitle();
+				if (!is_null($title)) {
+					$a = new Article($title);
+					$reason = "ontology removed: ".$dd->getID();
+					$id = $title->getArticleID( GAID_FOR_UPDATE );
+					if( wfRunHooks('ArticleDelete', array(&$a, &$wgUser, &$reason, &$error)) ) {
+						if( $a->doDeleteArticle( $reason ) ) {
+							$this->logger->info("Remove old page from $fromVersion: ".$title->getPrefixedText());
+							print "\n\t[Remove old page from $fromVersion: ".$title->getPrefixedText();
+							wfRunHooks('ArticleDeleteComplete', array(&$a, &$wgUser, $reason, $id));
+							print "done.]";
+						}
+					}
 
-                }
-                $next = $res->getNext();
-            }
-        }
-        print "\ndone.]";
-        
-        // import new wiki pages
-        $reader = new BackupReader($mode);
-        $wikidumps = $dd->getWikidumps();
-        
+				}
+				$next = $res->getNext();
+			}
+		}
+		print "\ndone.]";
+
+		// import new wiki pages
+		$reader = new BackupReader($mode);
+		$wikidumps = $dd->getWikidumps();
+
 		foreach($wikidumps as $file) {
 			$this->logger->info("Import ontology: $file");
 			print "\n[Import ontology: $file";
@@ -107,7 +107,7 @@ class ResourceInstaller {
 			$result = $reader->importFromFile($dumpPath );
 			print "\ndone.]";
 		}
-		
+
 
 	}
 
@@ -149,7 +149,7 @@ class ResourceInstaller {
 			}
 			$im_file->delete("remove resource");
 			$a = new Article($title);
-			
+
 			$reason = "remove resource";
 			$id = $title->getArticleID( GAID_FOR_UPDATE );
 			if( wfRunHooks('ArticleDelete', array(&$a, &$wgUser, &$reason, &$error)) ) {
@@ -177,7 +177,7 @@ class ResourceInstaller {
 		}
 	}
 
-	
+
 
 	/**
 	 * Checks if the page contained in the given package are modified and displays those.
@@ -245,7 +245,7 @@ class ResourceInstaller {
 		print "\ndone.]";
 
 		if (count($dd->getOnlyCopyResources()) ==  0) return;
-		
+
 		$this->logger->info("Copying resources for ".$dd->getID());
 		print "\n[Copying resources...";
 		$resources = $dd->getOnlyCopyResources();
@@ -284,7 +284,7 @@ class ResourceInstaller {
 			print "\n\t[WARNING]: LinkedData extension is not installed. Can not install mappings.";
 			return;
 		}
-        
+
 		$importedMappings = array();
 		// import mappings
 		$this->logger->info("Import mappings for ".$dd->getID());
@@ -322,7 +322,7 @@ class ResourceInstaller {
 
 					$mappingContent = file_get_contents($resourcePath);
 					$content .= "<mapping target=\"$target\">\n".$mappingContent."\n</mapping>";
-						
+
 				}
 				print "done.]";
 			}
@@ -398,6 +398,8 @@ class ResourceInstaller {
 	 */
 	private function deletePagesOfBundle($ext_id) {
 		global $dfgLang;
+		global $wgUser;
+
 		$db =& wfGetDB( DB_MASTER );
 		$smw_ids = $db->tableName('smw_ids');
 		$smw_rels2 = $db->tableName('smw_rels2');
@@ -437,11 +439,18 @@ class ResourceInstaller {
 		if($db->numRows( $res ) > 0) {
 			while($row = $db->fetchObject($res)) {
 
-				$template = Title::newFromText($row->title, NS_TEMPLATE);
-
-				$a = new Article($template);
-				print "\n\tRemove page: ".$template->getPrefixedText();
-				$a->doDeleteArticle("ontology removed: ".$ext_id);
+				$title = Title::newFromText($row->title, NS_TEMPLATE);
+				
+				$a = new Article($title);
+				$id = $title->getArticleID( GAID_FOR_UPDATE );
+				if( wfRunHooks('ArticleDelete', array(&$a, &$wgUser, &$reason, &$error)) ) {
+					if( $a->doDeleteArticle( "ontology removed: ".$ext_id ) ) {
+						$this->logger->info("Removed page: ".$title->getPrefixedText());
+						print "\n\t[Removed page]: ".$title->getPrefixedText();
+						wfRunHooks('ArticleDeleteComplete', array(&$a, &$wgUser, "ontology removed: ".$ext_id, $id));
+						print "done.]";
+					}
+				}
 
 			}
 		}
@@ -453,11 +462,25 @@ class ResourceInstaller {
 		if($db->numRows( $res ) > 0) {
 			while($row = $db->fetchObject($res)) {
 
-				$page = Title::newFromID($row->id);
+				$title = Title::newFromID($row->id);
+
+				if (is_null($title)) {
+					$this->logger->error("Invalid page ID: ".$row->id);
+					continue;
+				}
 				// DELETE
-				$a = new Article($page);
-				print "\n\tRemove page: ".$page->getPrefixedText();
-				$a->doDeleteArticle("ontology removed: ".$ext_id);
+				$a = new Article($title);
+				$id = $row->id;
+				if( wfRunHooks('ArticleDelete', array(&$a, &$wgUser, &$reason, &$error)) ) {
+					if( $a->doDeleteArticle( "ontology removed: ".$ext_id ) ) {
+						$this->logger->info("Removed page: ".$title->getPrefixedText());
+						print "\n\t[Removed page]: ".$title->getPrefixedText();
+						
+						wfRunHooks('ArticleDeleteComplete', array(&$a, &$wgUser, "ontology removed: ".$ext_id, $id));
+						print "done.]";
+					}
+				}
+
 			}
 		}
 		$db->freeResult($res);
@@ -466,5 +489,6 @@ class ResourceInstaller {
 		$db->query('DROP TEMPORARY TABLE df_page_of_templates_used');
 		$db->query('DROP TEMPORARY TABLE df_page_of_templates_must_persist');
 	}
+
 
 }
