@@ -601,7 +601,7 @@ class AutoCompletionHandler {
 	public static function executeCommand($command, $userInput) {
 		$parsedCommands = self::parseCommand($command);
 		$acStore = smwfGetAutoCompletionStore();
-
+		
 		$result = array();
 		$first = true;
 		foreach($parsedCommands as $c) {
@@ -754,6 +754,19 @@ class AutoCompletionHandler {
 						$titles[] = TSHelper::getTitleFromURI($r, true);
 					}
 				}
+				$inf = self::setInferred($titles, !$first);
+				self::mergeResults($result, $inf);
+				if (count($result) >= SMW_AC_MAX_RESULTS) break;
+			
+			} else if($commandText == "asf-ac"){
+				//returns all categories for which an ASF can be created
+				
+				if(defined('ASF_VERSION')){
+					@ $titles = ASFCategoryAC::getCategories($userInput);
+				} else {
+					$titles = array();
+				}
+
 				$inf = self::setInferred($titles, !$first);
 				self::mergeResults($result, $inf);
 				if (count($result) >= SMW_AC_MAX_RESULTS) break;
