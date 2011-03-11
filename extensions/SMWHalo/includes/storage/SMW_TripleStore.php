@@ -674,8 +674,10 @@ class SMWTripleStore extends SMWStore {
 				global $smwgTripleStoreGraph;
 				$con = TSConnection::getConnector();
 				$con->connect();
-
-				$response = $con->query($query->getQueryString(), $this->serializeParams($query), $smwgTripleStoreGraph);
+                
+				// if graph parameter is set but empty or set and null, no wikigraph is given
+				$wikigraph = array_key_exists('graph', $query->params) && ($query->params['graph'] == 'null' || empty($query->params['graph'])) ? '' : $smwgTripleStoreGraph;
+				$response = $con->query($query->getQueryString(), $this->serializeParams($query), $wikigraph);
 
 				global $smwgSPARQLResultEncoding;
 				// PHP strings are always interpreted in ISO-8859-1 but may be actually encoded in
