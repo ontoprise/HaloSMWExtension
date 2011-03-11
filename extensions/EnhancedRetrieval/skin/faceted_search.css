@@ -1,21 +1,29 @@
 .facets {
 	float: left;
-	width: 250px;
+	width: 25%;
 	padding: 0 0 10px 10px;
 	word-wrap: break-word;
+}
+#query {
+	width: 100%;
+}
+.xfsFacetHeader {
+	font-weight: bold;
 }
 
 .results {
 	float: right;
-	width: 500px;
+	width: 65%;
 	padding: 10px 20px 10px 40px;
 	border-left: 1px solid #aaa;
 	text-align: left;
 	line-height: 1.3em;
 }
-
 .xfsResult {
 	margin-bottom: 20px;
+}
+.xfsResult a {
+	cursor: pointer;
 }
 .xfsResult p {
 	margin: 0;	
@@ -33,11 +41,13 @@
 .xfsResultModified {
 	color: darkgreen;
 	font-size: 90%;
+	padding-top: 1px;
 }
 .xfsResultTable table {
 	border: 1px solid #BFBDBD;
 	border-collapse: collapse;
 	width: 100%;
+	display: none;
 }
 .xfsResultTable table tr.s0 {
 	background-color: #EEF3FF;

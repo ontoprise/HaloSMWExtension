@@ -54,12 +54,12 @@ class FSFacetedSearchSpecial extends SpecialPage {
 	        <input type="text" id="query" name="query"/>
 		</div>
 		<div>
-			{{fs_categories}}
+			<span class="xfsFacetHeader">{{fs_categories}}</span>
 			<div id="field_smwh_categories">
 			</div>
 		</div> 
 		<div>
-			{{fs_properties}}
+			<span class="xfsFacetHeader">{{fs_properties}}</span>
 			<div id="field_smwh_attributes">
 			</div>
 			<div id="field_smwh_properties">
