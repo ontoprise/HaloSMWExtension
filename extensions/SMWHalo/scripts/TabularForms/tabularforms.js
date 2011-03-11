@@ -159,6 +159,9 @@ var TF = Class.create({
 			var newCell = jQuery('textarea', column).get(cellNumber-1);
 			jQuery(newCell).focus();
 			jQuery(newCell).select();
+			
+			jQuery(cell).removeClass('tabf_selected_value');
+			jQuery(newCell).addClass('tabf_selected_value');
 		
 		} else if(keyCode == 'shift+tab'){ 
 			
@@ -174,6 +177,9 @@ var TF = Class.create({
 			var newCell = jQuery('textarea', column).get(cellNumber-1);
 			jQuery(newCell).focus();
 			jQuery(newCell).select();
+			
+			jQuery(cell).removeClass('tabf_selected_value');
+			jQuery(newCell).addClass('tabf_selected_value');
 						
 		} else if(keyCode == '40'){ //key down
 			
@@ -196,6 +202,9 @@ var TF = Class.create({
 				var newCell = jQuery('textarea', column).get(cellNumber-1);
 				jQuery(newCell).focus();
 				jQuery(newCell).select();
+				
+				jQuery(cell).removeClass('tabf_selected_value');
+				jQuery(newCell).addClass('tabf_selected_value');
 			}
 		} else if(keyCode == '38'){ //key up
 			
@@ -219,6 +228,9 @@ var TF = Class.create({
 				var newCell = jQuery('textarea', column).get(cellNumber-1);
 				jQuery(newCell).focus();
 				jQuery(newCell).select();
+				
+				jQuery(cell).removeClass('tabf_selected_value');
+				jQuery(newCell).addClass('tabf_selected_value');
 			}
 		}
 	},
