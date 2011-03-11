@@ -57,9 +57,10 @@ class SMWXMLResultPrinter extends SMWResultPrinter {
 		while ( $row = $res->getNext() ) {
 			$result .= "\t\t<result>\n";
 
-			$i = 0;
+			$i = -1;
 			foreach ($row as $field) {
-
+				$i++;
+				
 				$content = $field->getContent();
 				if (count($content) === 0) continue; // do not serialize null bindings
 
@@ -95,8 +96,6 @@ class SMWXMLResultPrinter extends SMWResultPrinter {
 				}
 
 				$result .= "</binding>\n";
-					
-				$i++;
 			}
 			$result .= "\t\t</result>\n";
 		}
