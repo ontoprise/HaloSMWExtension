@@ -1,44 +1,42 @@
-Index: extensions/SemanticResultFormats/Outline/SRF_Outline.php
+Index: extensions/SemanticResultFormats/SRF_Messages.php
 ===================================================================
---- extensions/SemanticResultFormats/Outline/SRF_Outline.php	2010-07-06 18:28:01.000000000 +0200
-+++ extensions/SemanticResultFormats/Outline/SRF_Outline.php	2010-07-07 10:37:47.000000000 +0200
-@@ -232,7 +232,7 @@
- 
- 	public function getParameters() {
-                 $params = parent::getParameters();
--                $params[] = array( 'name' => 'outlineproperties', 'type' => 'string', 'description' => wfMsg( 'srf_paramdesc_outlineproperties' ) );
-+                $params[] = array( 'name' => 'outlineproperties', 'type' => 'string', 'description' => wfMsg( 'srf_paramdesc_outlineproperties' ), 'constraints' => "namespace: ".SMW_NS_PROPERTY );
-                 return $params;
- 	}
- 
-Index: extensions/SemanticResultFormats/Timeline/SRF_Timeline.php
-===================================================================
---- extensions/SemanticResultFormats/Timeline/SRF_Timeline.php	(revision 9726)
-+++ extensions/SemanticResultFormats/Timeline/SRF_Timeline.php	(working copy)
-@@ -148,6 +148,7 @@
- 							$objectlabel = $object->getLongText( $outputmode, $l );
- 						} else {
- 							$objectlabel = $object->getShortText( $outputmode, $l );
-+							if ($objectlabel == '') continue;
- 						}
- 						
- 						$urlobject =  ( $l !== null );
-@@ -315,4 +316,11 @@
- 		);
- 	}
- 	
-+	function getScripts() {
-+		global $srfgScriptPath;
-+		$scripts [] = '<script type="text/javascript" src="' . $srfgScriptPath .  '/Timeline/SRF_timeline.js"></script>' . "\n";
-+		$scripts [] = '<script type="text/javascript" src="' . $srfgScriptPath .  '/Timeline/SimileTimeline/timeline-api.js"></script>' . "\n";
-+		return $scripts;
-+	}
+--- extensions/SemanticResultFormats/SRF_Messages.php	(revision 9982)
++++ extensions/SemanticResultFormats/SRF_Messages.php	(working copy)
+@@ -72,6 +72,18 @@
+ 	'srf_paramdesc_barnumbersaxislabel' => 'The label for the numbers axis',
+ 	// format "gallery"
+ 	'srf_printername_gallery' => 'Gallery',
++
++	// format "graph"
++	'srf_paramdesc_graphname' => 'Title',
++	'srf_paramdesc_graphsize' => 'Graph size (in px)',
++	'srf_paramdesc_graphlegend' => 'Show graph legend or not',
++	'srf_paramdesc_graphlabel' => 'Graph label',
++	'srf_paramdesc_rankdir' => 'Rank dir',
++	'srf_paramdesc_graphlink' => 'Graph link',
++	'srf_paramdesc_graphcolor' => 'Graph color',
 +	
- }
++	// general params for "order"
++	'srf_paramdesc_order' => 'Sort order',
+ );
+ 
+ /** Message documentation (Message documentation)
+Index: extensions/SemanticResultFormats/Exhibit/SRF_Exhibit.php
+===================================================================
+--- extensions/SemanticResultFormats/Exhibit/SRF_Exhibit.php	(revision 9982)
++++ extensions/SemanticResultFormats/Exhibit/SRF_Exhibit.php	(working copy)
+@@ -446,6 +446,7 @@
+ 		$params[] = array( 'name' => 'views', 'type' => 'enum-list', 'description' => wfMsg( 'srf_paramdesc_views' ), 'values' => array( 'tiles', 'tabular', 'timeline', 'maps' ) );
+ 		$params[] = array( 'name' => 'facets', 'type' => 'string', 'description' => wfMsg( 'srf_paramdesc_facets' ) );
+ 		$params[] = array( 'name' => 'lens', 'type' => 'string', 'description' => wfMsg( 'srf_paramdesc_lens' ) );
++		$params[] = array('name' => 'order', 'type' => 'enumeration', 'description' => wfMsg('srf_paramdesc_order'), 'values' => array('ascending','descending'));
+ 		return $params;
+ 	}
+ 
 Index: extensions/SemanticResultFormats/GoogleCharts/SRF_GoogleBar.php
 ===================================================================
---- extensions/SemanticResultFormats/GoogleCharts/SRF_GoogleBar.php	2010-07-06 18:28:01.000000000 +0200
-+++ extensions/SemanticResultFormats/GoogleCharts/SRF_GoogleBar.php	2010-07-07 10:51:36.000000000 +0200
+--- extensions/SemanticResultFormats/GoogleCharts/SRF_GoogleBar.php	(revision 9982)
++++ extensions/SemanticResultFormats/GoogleCharts/SRF_GoogleBar.php	(working copy)
 @@ -28,6 +28,11 @@
  		$this->isHTML = true;
  
@@ -53,8 +51,8 @@ Index: extensions/SemanticResultFormats/GoogleCharts/SRF_GoogleBar.php
  		$count = 0; // How many bars will they be? Needed to calculate the height of the image
 Index: extensions/SemanticResultFormats/GoogleCharts/SRF_GooglePie.php
 ===================================================================
---- extensions/SemanticResultFormats/GoogleCharts/SRF_GooglePie.php	2010-07-06 18:28:01.000000000 +0200
-+++ extensions/SemanticResultFormats/GoogleCharts/SRF_GooglePie.php	2010-07-07 10:50:17.000000000 +0200
+--- extensions/SemanticResultFormats/GoogleCharts/SRF_GooglePie.php	(revision 9982)
++++ extensions/SemanticResultFormats/GoogleCharts/SRF_GooglePie.php	(working copy)
 @@ -34,6 +34,11 @@
  		$this->isHTML = true;
  
@@ -67,12 +65,46 @@ Index: extensions/SemanticResultFormats/GoogleCharts/SRF_GooglePie.php
  		// print all result rows
  		$first = true;
  		$max = 0; // the biggest value. needed for scaling
+Index: extensions/SemanticResultFormats/GraphViz/SRF_Graph.php
+===================================================================
+--- extensions/SemanticResultFormats/GraphViz/SRF_Graph.php	(revision 9982)
++++ extensions/SemanticResultFormats/GraphViz/SRF_Graph.php	(working copy)
+@@ -151,4 +151,16 @@
+ 		}
+ 		return $result;
+ 	}
++	
++	function getParameters() {
++		return array(
++			array('name' => 'graphname', 'type' => 'string', 'description' => wfMsg('srf_paramdesc_graphname')),
++	                array('name' => 'graphsize', 'type' => 'int', 'description' => wfMsg('srf_paramdesc_graphsize')),
++	                array('name' => 'graphlegend', 'type' => 'enumeration', 'description' => wfMsg('srf_paramdesc_graphlegend'), 'values'=>array('yes', 'no')),
++	                array('name' => 'graphlabel', 'type' => 'enumeration', 'description' => wfMsg('srf_paramdesc_graphlabel'), 'values'=>array('yes', 'no')),
++	                array('name' => 'rankdir', 'type' => 'string', 'description' => wfMsg('srf_paramdesc_rankdir')),
++	                array('name' => 'graphlink', 'type' => 'enumeration', 'description' => wfMsg('srf_paramdesc_graphlink'), 'values'=>array('yes', 'no')),
++	                array('name' => 'graphcolor', 'type' => 'enumeration', 'description' => wfMsg('srf_paramdesc_graphcolor'), 'values'=>array('yes', 'no'))
++		);      
++	}
+ }
+Index: extensions/SemanticResultFormats/Outline/SRF_Outline.php
+===================================================================
+--- extensions/SemanticResultFormats/Outline/SRF_Outline.php	(revision 9982)
++++ extensions/SemanticResultFormats/Outline/SRF_Outline.php	(working copy)
+@@ -231,7 +231,7 @@
+ 
+ 	public function getParameters() {
+                 $params = parent::getParameters();
+-                $params[] = array( 'name' => 'outlineproperties', 'type' => 'string', 'description' => wfMsg( 'srf_paramdesc_outlineproperties' ) );
++                $params[] = array( 'name' => 'outlineproperties', 'type' => 'string', 'description' => wfMsg( 'srf_paramdesc_outlineproperties' ), 'constraints' => "namespace: ".SMW_NS_PROPERTY );
+                 return $params;
+ 	}
+ 
 Index: extensions/SemanticResultFormats/Ploticus/SRF_Ploticus.php
 ===================================================================
---- extensions/SemanticResultFormats/Ploticus/SRF_Ploticus.php	2010-07-06 18:28:01.000000000 +0200
-+++ extensions/SemanticResultFormats/Ploticus/SRF_Ploticus.php	2010-07-07 10:40:47.000000000 +0200
+--- extensions/SemanticResultFormats/Ploticus/SRF_Ploticus.php	(revision 9982)
++++ extensions/SemanticResultFormats/Ploticus/SRF_Ploticus.php	(working copy)
 @@ -383,4 +383,27 @@
- 		
+ 
  		return ( $rtnstr );
  	}
 +	
@@ -99,59 +131,27 @@ Index: extensions/SemanticResultFormats/Ploticus/SRF_Ploticus.php
 +	}
 +	
  }
-Index: extensions/SemanticResultFormats/Exhibit/SRF_Exhibit.php
+Index: extensions/SemanticResultFormats/Timeline/SRF_Timeline.php
 ===================================================================
---- extensions/SemanticResultFormats/Exhibit/SRF_Exhibit.php	2010-07-06 18:27:55.000000000 +0200
-+++ extensions/SemanticResultFormats/Exhibit/SRF_Exhibit.php	2010-07-07 10:15:43.000000000 +0200
-@@ -449,6 +449,7 @@
- 		$params[] = array( 'name' => 'views', 'type' => 'enum-list', 'description' => wfMsg( 'srf_paramdesc_views' ), 'values' => array( 'tiles', 'tabular', 'timeline', 'maps' ) );
- 		$params[] = array( 'name' => 'facets', 'type' => 'string', 'description' => wfMsg( 'srf_paramdesc_facets' ) );
- 		$params[] = array( 'name' => 'lens', 'type' => 'string', 'description' => wfMsg( 'srf_paramdesc_lens' ) );
-+		$params[] = array('name' => 'order', 'type' => 'enumeration', 'description' => wfMsg('srf_paramdesc_order'), 'values' => array('ascending','descending'));
- 		return $params;
+--- extensions/SemanticResultFormats/Timeline/SRF_Timeline.php	(revision 9982)
++++ extensions/SemanticResultFormats/Timeline/SRF_Timeline.php	(working copy)
+@@ -148,6 +148,7 @@
+ 							$objectlabel = $object->getLongText( $outputmode, $l );
+ 						} else {
+ 							$objectlabel = $object->getShortText( $outputmode, $l );
++							if ($objectlabel == '') continue;
+ 						}
+ 						
+ 						$urlobject =  ( $l !== null );
+@@ -315,4 +316,11 @@
+ 		);
  	}
-
-Index: extensions/SemanticResultFormats/SRF_Messages.php
-===================================================================
---- extensions/SemanticResultFormats/SRF_Messages.php	2010-07-06 18:28:01.000000000 +0200
-+++ extensions/SemanticResultFormats/SRF_Messages.php	2010-07-07 10:32:11.000000000 +0200
-@@ -66,6 +66,18 @@
- 	'srf_paramdesc_chartwidth' => 'The width of the chart, in pixels',
- 	// format "gallery"
- 	'srf_printername_gallery' => 'Gallery',
-+
-+	// format "graph"
-+	'srf_paramdesc_graphname' => 'Title',
-+	'srf_paramdesc_graphsize' => 'Graph size (in px)',
-+	'srf_paramdesc_graphlegend' => 'Show graph legend or not',
-+	'srf_paramdesc_graphlabel' => 'Graph label',
-+	'srf_paramdesc_rankdir' => 'Rank dir',
-+	'srf_paramdesc_graphlink' => 'Graph link',
-+	'srf_paramdesc_graphcolor' => 'Graph color',
-+	
-+	// general params for "order"
-+	'srf_paramdesc_order' => 'Sort order',
- );
- 
- /** Message documentation (Message documentation)
-Index: extensions/SemanticResultFormats/GraphViz/SRF_Graph.php
-===================================================================
---- extensions/SemanticResultFormats/GraphViz/SRF_Graph.php	2010-07-06 18:27:55.000000000 +0200
-+++ extensions/SemanticResultFormats/GraphViz/SRF_Graph.php	2010-07-07 10:35:35.000000000 +0200
-@@ -151,4 +151,16 @@
- 		}
- 		return $result;
- 	}
-+	
-+	function getParameters() {
-+		return array(
-+			array('name' => 'graphname', 'type' => 'string', 'description' => wfMsg('srf_paramdesc_graphname'),
-+	                array('name' => 'graphsize', 'type' => 'int', 'description' => wfMsg('srf_paramdesc_graphsize')),
-+	                array('name' => 'graphlegend', 'type' => 'enumeration', 'description' => wfMsg('srf_paramdesc_graphlegend'), 'values'=>array('yes', 'no')),
-+	                array('name' => 'graphlabel', 'type' => 'enumeration', 'description' => wfMsg('srf_paramdesc_graphlabel'), 'values'=>array('yes', 'no')),
-+	                array('name' => 'rankdir', 'type' => 'string', 'description' => wfMsg('srf_paramdesc_rankdir')),
-+	                array('name' => 'graphlink', 'type' => 'enumeration', 'description' => wfMsg('srf_paramdesc_graphlink'), 'values'=>array('yes', 'no')),
-+	                array('name' => 'graphcolor', 'type' => 'enumeration', 'description' => wfMsg('srf_paramdesc_graphcolor'), 'values'=>array('yes', 'no')),
-+		);      
+ 	
++	function getScripts() {
++		global $srfgScriptPath;
++		$scripts [] = '<script type="text/javascript" src="' . $srfgScriptPath .  '/Timeline/SRF_timeline.js"></script>' . "\n";
++		$scripts [] = '<script type="text/javascript" src="' . $srfgScriptPath .  '/Timeline/SimileTimeline/timeline-api.js"></script>' . "\n";
++		return $scripts;
 +	}
++	
  }
