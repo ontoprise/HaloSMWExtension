@@ -45,6 +45,7 @@ $asfScriptPath = $wgScriptPath . '/extensions/AutomaticSemanticForms';
 	$wgAutoloadClasses['ASFUnresolvedAnnotationsFormData'] = $asfIP . '/includes/ASF_UnresolvedAnnotationsFormData.php';
 	$wgAutoloadClasses['ASFRedLinkHandler'] = $asfIP . '/includes/ASF_RedLinkHandler.php';
 	$wgAutoloadClasses['ASFAdminSpecial'] = $asfIP . '/specials/ASF_AdminSpecial.php';
+	$wgAutoloadClasses['ASFCategoryAC'] = $asfIP . '/includes/ASF_CategoryAC.php';
 	
 	require_once($asfIP . '/specials/ASF_AdminSpecialAjaxAccess.php');
 	

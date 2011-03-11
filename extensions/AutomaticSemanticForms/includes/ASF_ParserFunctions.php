@@ -486,7 +486,7 @@ class ASFParserFunctions {
 				//both input fields are shown and category input intro must be added
 				$str .= $categoryInputIntro;
 			}
-			$str .= '<input type="text" name="categories" size="'.$categorySize.'" value="'.$categoryValue.'" class="wickEnabled" constraints="ask: [[:Category:+]]"/>';
+			$str .= '<input type="text" name="categories" size="'.$categorySize.'" value="'.$categoryValue.'" class="wickEnabled" constraints="asf-ac:category"/>';
 		}
 		
 		//add constant article creation data
