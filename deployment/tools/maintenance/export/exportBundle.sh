@@ -3,16 +3,15 @@
 #
 # Exports a bundle with images
 #
-# Usage: ./exportBundle.sh <bundle-id> <temporary name>
+# Usage: ./exportBundle.sh <bundle-id> 
 #
-# Note: <temporary name> is a unique directory name just used for bundle generation.
-#       It is arbitrary, e.g. 'mybundle'. Then you'll find the created bundle in /tmp/mybundle
+# Note: You'll find the created bundle in /tmp/mybundle
 # 
 # Author: Kai Kühn / ontoprise / 2011
 #
 
 # Create output dir
-OUTPUTDIR=/tmp/$2/extensions/$1
+OUTPUTDIR=/tmp/$1/extensions/$1
 if [ ! -e $OUTPUTDIR ];
 then
  echo "Create directory $OUTPUTDIR..."
@@ -26,12 +25,12 @@ php exportOntologyBundleDeployDescriptor.php -o $OUTPUTDIR/deploy.xml -b $1 -d d
 
 # Zip bundle
 PWD=pwd
-cd /tmp/$2/
-zip -r /tmp/$2/$1.zip *
+cd /tmp/$1/
+zip -r /tmp/$1/$1.zip *
 cd $PWD
 
 # Remove temp files
-rm -rf /tmp/$2/extensions/
+rm -rf /tmp/$1/extensions/
 echo
-echo The bundle is located at /tmp/$2
+echo The bundle is located at /tmp/$1
 echo 

@@ -167,7 +167,7 @@ class Installer {
 		}
 		$fromVersion = NULL;
 		if (array_key_exists($dd->getID(), $localPackages)) {
-		    $fromVersion = $localPackages[$dd->getID()]->getVersion();	
+			$fromVersion = $localPackages[$dd->getID()]->getVersion();
 		}
 
 		// dependencies are fine
@@ -179,7 +179,7 @@ class Installer {
 		$this->logger->info("Apply configs for $filePath");
 		$dd->applyConfigurations($this->rootDir, false, $fromVersion, $this);
 		$this->errors = array_merge($this->errors, $dd->getLastErrors());
-		
+
 		// write finalize hint
 		$handle = fopen($this->rootDir."/".$dd->getInstallationDirectory()."/init$.ext", "w");
 		fwrite($handle, "1,".$fromVersion);
@@ -321,7 +321,7 @@ class Installer {
 			print "\n\nNo packages available!\n";
 			return;
 		}
-		print "\n Installed           | Package             | Av. versions  | Repository";
+		print "\n Installed           | Bundle               | Av. versions  | Repository";
 		print "\n-------------------------------------------------------------------------\n";
 
 		foreach($allPackages as $p_id => $versions) {
@@ -356,13 +356,17 @@ class Installer {
 
 			if ($showDescription && array_key_exists($p_id, $localPackages)) print "\n ".$localPackages[$p_id]->getDescription()."\n\n";
 		}
-		
+
+		// show local bundles
 		$onlyLocalPackages = array_diff(array_keys($localPackages), array_keys($allPackages));
 		if (count($onlyLocalPackages) > 0) {
-			print "\nThe following exists only locally:";
+			print "\n\nThe following bundles exist only locally:\n";
 			foreach($onlyLocalPackages as $id) {
 				$lp = $localPackages[$id];
-				print "\n".$lp->getID()."-".$lp->getVersion();
+				$display = "[installed ".Tools::addVersionSeparators(array($lp->getVersion(), $lp->getPatchlevel()))."]";
+				$display .= str_repeat(" ", 20-strlen($display) >= 0 ? 20-strlen($display) : 0);
+				$display .= $lp->getID();
+				print "\n ".$display;
 			}
 		}
 		print "\n\n";
@@ -577,12 +581,19 @@ class Installer {
 	public function deinitializePackages($dd) {
 
 		$res_installer = ResourceInstaller::getInstance($this->rootDir);
+		$ont_installer = OntologyInstaller::getInstance($this->rootDir);
 
-		// remove ontology
-		$this->logger->info("De-install ontologies: ".$dd->getID());
-		print "\n[De-install ontologies...";
+		// remove wikidumps
+		$this->logger->info("De-install wikidumps: ".$dd->getID());
+		print "\n[De-install wikidumps...";
 		$res_installer->deinstallWikidump($dd);
 		print "done.]";
+		
+		// remove ontologies
+		$this->logger->info("De-install ontologies: ".$dd->getID());
+        print "\n[De-install ontologies...";
+        $ont_installer->deinstallOntology($dd);
+        print "done.]";
 
 		// delete resources
 		$this->logger->info("Delete resourcs: ".$dd->getID());

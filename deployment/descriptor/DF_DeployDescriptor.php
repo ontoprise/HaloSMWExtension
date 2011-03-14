@@ -485,7 +485,7 @@ class DeployDescriptor {
         if (!is_null($this->ontologies)) return $this->ontologies;
         $this->ontologies = array();
         foreach($this->ontologies_xml as $file) {
-            $this->ontologies[] = array( (string) $file->attributes()->loc, (string) $file->attributes()->ontologyid) ;
+            $this->ontologies[] = (string) $file->attributes()->loc;
         }
         return $this->ontologies;
     }

@@ -357,15 +357,27 @@ if (count($ontologiesToInstall) > 0) {
 		}
 
 		$oInstaller->installOntology($ontologyID, $filePath, $confirm);
-
+		
+		// copy ontology and create ontology bundle
+		print "\n[Creating deploy descriptor...";
+		$xml = $oInstaller->createDeployDescriptor($ontologyID, $filePath);
+		$ontologyID = strtolower($ontologyID);
+		Tools::mkpath($mwrootDir."/extensions/$ontologyID");
+		$handle = fopen($mwrootDir."/extensions/$ontologyID/deploy.xml", "w");
+		fwrite($handle, $xml);
+		fclose($handle);
+		print "done.]";
+		print "\n[Copying ontology file...";
+        copy($filePath, $mwrootDir."/extensions/$ontologyID/".basename($filePath));
+        print "done.]";
 	}
 }
 
 // install local bundles
 if (count($localBundlesToInstall) > 0) {
-	
+
 	foreach($localBundlesToInstall as $filePath) {
-       $installer->installOrUpdateFromFile($filePath);
+		$installer->installOrUpdateFromFile($filePath);
 	}
 }
 
@@ -377,7 +389,8 @@ foreach($packageToDeinstall as $toDeInstall) {
 		if (count($dd->getWikidumps()) > 0
 		|| count($dd->getResources()) >  0
 		|| count($dd->getUninstallScripts()) > 0
-		|| count($dd->getCodefiles()) > 0) {
+		|| count($dd->getCodefiles()) > 0
+		|| count($dd->getOntologies()) > 0) {
 			// include commandLine.inc to be in maintenance mode
 			$mediaWikiLocation = dirname(__FILE__) . '/../../..';
 			require_once "$mediaWikiLocation/maintenance/commandLine.inc";
@@ -385,9 +398,13 @@ foreach($packageToDeinstall as $toDeInstall) {
 			initializeLanguage();
 			// include the resource installer
 			require_once('DF_ResourceInstaller.php');
+			require_once('DF_OntologyInstaller.php');
 
 			// include commandLine.inc to be in maintenance mode
 			checkWikiContext();
+			
+			$packageID = $dd->getID();
+			$version = $dd->getVersion();
 			$logger->info("Start un-install package '$packageID'".(is_null($version) ? "" : "-$version"));
 			$installer->deinitializePackages($dd);
 			$logger->info("End un-install package '$packageID'".(is_null($version) ? "" : "-$version"));

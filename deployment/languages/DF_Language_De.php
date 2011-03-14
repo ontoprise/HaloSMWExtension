@@ -31,7 +31,7 @@ class DF_Language_De extends DF_Language {
     'df_ontologyvendor' => 'Anbieter',
     'df_description' => 'Beschreibung',
 	
-    'df_ontology_id' => 'Ontologie-ID',
+   
 	'checkinstallation' => 'Prüfe Installation',
 	'category' => 'Kategorie',
 	'is_inverse_of' => 'Ist invers zu',

@@ -51,11 +51,11 @@ class OntologyInstaller {
 	}
 
 
-	public function installOntology($ontologyID, $inputfile, $callback) {
+	public function installOntology($bundleID, $inputfile, $callback, $noBundlePage = false) {
 
 		$outputfile = $inputfile.".xml";
 		try {
-			$ret = $this->convertOntology($inputfile, $outputfile);
+			$ret = $this->convertOntology($inputfile, $outputfile, $bundleID, $noBundlePage);
 
 			if ($ret != 0) {
 				print "\nCould not convert ontology.";
@@ -80,9 +80,9 @@ class OntologyInstaller {
 		// verifies the ontologies
 		print "\n[Verifying ontology $inputfile...";
 		do {
-			$verificationLog = $this->verifyOntology($outputfile_rel, $ontologyID, $prefix);
+			$verificationLog = $this->verifyOntology($outputfile_rel, $bundleID, $prefix);
 
-			 //var_dump($verificationLog);
+			//var_dump($verificationLog);
 			$conflict = $this->checkForConflict($verificationLog, $callback);
 			if ($conflict !== false) $prefix = $conflict;
 
@@ -101,7 +101,7 @@ class OntologyInstaller {
 
 		// do actual install/update
 		print "\n[Installing/updating ontology $inputfile...";
-		$this->installOrUpdateOntology($outputfile_rel, $verificationLog, $ontologyID, $prefix);
+		$this->installOrUpdateOntology($outputfile_rel, $verificationLog, $bundleID, $prefix);
 	}
 
 	/**
@@ -110,13 +110,13 @@ class OntologyInstaller {
 	 * @param $inputfile
 	 * @param $outputfile
 	 */
-	private function convertOntology($inputfile, $outputfile) {
+	private function convertOntology($inputfile, $outputfile, $bundleID, $noBundlePage = false) {
 		// convert ontology
-		print "\n[Convert ontology...";
 
 		$cwd = getcwd();
 		$onto2mwxml_dir = $this->rootDir."/deployment/tools/onto2mwxml";
-		echo $onto2mwxml_dir;
+		print "\n[Convert ontology $onto2mwxml_dir...";
+
 		chdir($onto2mwxml_dir);
 		$ret = 0;
 		if (Tools::isWindows()) {
@@ -126,7 +126,8 @@ class OntologyInstaller {
 				}
 			} else {
 				if (!file_exists($outputfile)) {
-					exec("$onto2mwxml_dir/onto2mwxml.exe $inputfile -o $outputfile", $output, $ret);
+					if ($noBundlePage) $noBundlePageParam = "--nobundlepage"; else $noBundlePageParam = "";
+					exec("$onto2mwxml_dir/onto2mwxml.exe $inputfile -o $outputfile --bundleid $bundleID $noBundlePageParam", $output, $ret);
 				}
 			}
 		} else {
@@ -136,7 +137,8 @@ class OntologyInstaller {
 				}
 			} else {
 				if (!file_exists($outputfile)) {
-					exec("$onto2mwxml_dir/onto2mwxml.sh $inputfile -o $outputfile", $output, $ret);
+					if ($noBundlePage) $noBundlePageParam = "--nobundlepage"; else $noBundlePageParam = "";
+					exec("$onto2mwxml_dir/onto2mwxml.sh $inputfile -o $outputfile --bundleid $bundleID $noBundlePageParam", $output, $ret);
 				}
 
 			}
@@ -154,9 +156,10 @@ class OntologyInstaller {
 	 */
 	public function installOntologies($desc, $callback) {
 		$ontologies = $desc->getOntologies();
-		foreach($ontologies as $tuple) {
-			list($loc, $ontologyID) = $tuple;
-			$this->installOntology($ontologyID, $this->rootDir.$desc->getInstallationDirectory()."/".$loc, $callback);
+		$noBundlePage = false;
+		foreach($ontologies as $loc) {
+			$this->installOntology($dd->getID(), $this->rootDir.$desc->getInstallationDirectory()."/".$loc, $callback, $noBundlePage);
+			$noBundlePage = true; // make sure that only the first ontology creates a bundle page
 		}
 	}
 
@@ -228,12 +231,22 @@ class OntologyInstaller {
 
 		$pagesToDelete = array_diff($existingPages, $pagesToImport);
 
-
+		global $wgUser;
 		foreach($pagesToDelete as $p) {
 			$title = Title::newFromText($p);
 			$a = new Article($title);
-			print "\n\tRemove page: ".$title->getPrefixedText();
-			$a->doDeleteArticle("ontology removed: ".$ontologyID);
+				
+			$id = $title->getArticleID( GAID_FOR_UPDATE );
+			if( wfRunHooks('ArticleDelete', array(&$a, &$wgUser, &$reason, &$error)) ) {
+				if( $a->doDeleteArticle("ontology removed: ".$ontologyID) ) {
+					$this->logger->info("Removed page: ".$title->getPrefixedText());
+					print "\n\t[Removed page]: ".$title->getPrefixedText()."...";
+
+					wfRunHooks('ArticleDeleteComplete', array(&$a, &$wgUser, "ontology removed: ".$ontologyID, $id));
+					print "done.]";
+				}
+			}
+
 
 		}
 
@@ -244,6 +257,18 @@ class OntologyInstaller {
 		}
 		$fileHandle = fopen( $filepath, 'rt' );
 		return $this->importFromHandle( $fileHandle, $ontologyID , $prefix);
+	}
+
+	public function deinstallOntology($dd) {
+		if (count($dd->getOntologies()) == 0) return;
+		if (!defined('SMW_VERSION')) throw new InstallationError(DEPLOY_FRAMEWORK_NOT_INSTALLED, "SMW is not installed. Can not delete ontology.");
+
+		foreach($dd->getOntologies() as $loc) {
+			$bundleID = $dd->getID();
+			print "\n\t[Deleting pages of $bundleID...";
+			Tools::deletePagesOfBundle($bundleID, $this->logger);
+			print "\ndone]";
+		}
 	}
 
 	private function readFromHandle( $handle, $ontologyID , $prefix) {
@@ -276,5 +301,67 @@ class OntologyInstaller {
 		return $result;
 
 
+	}
+
+	/**
+	 * Creates an deploy descriptor for an ontology bundle.
+	 *
+	 * @param unknown_type $ontologyID
+	 * @param unknown_type $inputfile
+	 */
+	public function createDeployDescriptor($ontologyID, $inputfile) {
+		global $dfgLang;
+		$ontologyBundlePage = Title::newFromText($ontologyID);
+		$ontologyVersion = smwfGetStore()->getPropertyValues($ontologyBundlePage, SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString('df_ontologyversion')));
+		$installationDir = smwfGetStore()->getPropertyValues($ontologyBundlePage, SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString('df_instdir')));
+		$ontologyVersion = reset($ontologyVersion);
+		$installationDir = reset($installationDir);
+		$versionDBkeys = $ontologyVersion->getDBkeys();
+		$version = reset($versionDBkeys);
+		$installDirDBkeys = $installationDir->getDBkeys();
+		$installDir = reset($installDirDBkeys);
+		$filename = basename($inputfile);
+			
+		// set others to defaults
+		$vendor = '';
+		$maintainer= '';
+		$description = '';
+
+		$xml =  <<<ENDS
+<?xml version="1.0" encoding="UTF-8"?>
+<deploydescriptor>
+    <global>
+        <version>$version</version>
+        <patchlevel>0</patchlevel>
+        <id>$ontologyID</id>
+        <vendor>$vendor</vendor>
+        <maintainer>$maintainer</maintainer>
+        <instdir>$installDir</instdir>
+        <description>
+        $description
+        </description>
+        <helpurl></helpurl>
+        <dependencies>
+        </dependencies>
+    </global>
+    <codefiles>
+        <!-- empty -->
+    </codefiles>
+    <wikidumps>
+        <!-- empty -->
+    </wikidumps>
+    <resources>
+        <!-- empty -->
+    </resources>
+    <ontologies>
+        <file loc="$filename" ontologyid="$ontologyID"/>
+    </ontologies>
+    <configs>
+
+    </configs>
+</deploydescriptor>
+ENDS
+        ;
+        return $xml;
 	}
 }
