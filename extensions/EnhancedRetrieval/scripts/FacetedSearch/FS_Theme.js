@@ -24,31 +24,11 @@
 /**
  * This file defines the theme i.e. how certain elements are represented as HTML.
  */
-
-function xfsTProperty(link) {
-	if (jQuery(link).text() == 'show') {
-		jQuery(link).text('hide');
-	} else {
-		jQuery(link).text('show');
-	}
-	jQuery(link).next('table').toggle();
-}
-
-function xfsTCategory(link, more) {
-	if (more) {
-		jQuery(link).parent().hide();
-		jQuery(link).parent().next('.xfsToggle').show();
-	} else {
-		jQuery(link).parent().hide();
-		jQuery(link).parent().prev('.xfsToggle').show();
-	}
-}
-
 (function ($) {
 
 	var FS_CATEGORIES = 'smwh_categories';
 	var FS_ATTRIBUTES = 'smwh_attributes';
-	var FS_PROPERTIES = 'smwh_properties';
+	var FS_PROPERTIES = 'smwh_properties'; // relations
 	var MOD_ATT = 'smwh_Modification_date_xsdvalue_dt';
 	var CAT_MAX = 4;
 	var CAT_SEP = ' | ';
@@ -139,14 +119,14 @@ function xfsTCategory(link, more) {
 			}
 			output += vals.join(CAT_SEP);
 			if (count < cats.length) {
-				output += CAT_SEP;
-				output += '<span class="xfsToggle">... (<a onclick="xfsTCategory(this,true)">more</a>)</span>';
 				vals = [];
 				for (var i=count; i<cats.length; i++) {
 					// TODO check link
 					vals.push('<a href="' + cats[i] + '">' + noUnderscore(cats[i]) + '</a>');
 				}
-				output += '<span class="xfsToggle" style="display: none">' + vals.join(CAT_SEP) + ' (<a onclick="xfsTCategory(this,false)">less</a>)</span>';
+				output += CAT_SEP;
+				output += '<span class="xfsToggle" style="display: none">' + vals.join(CAT_SEP) + '</span>';
+				output += ' (<a class="xfsMore">more</a>)';
 			}
 			output += '</p></div>';
 		}
@@ -154,7 +134,7 @@ function xfsTCategory(link, more) {
 		if (props.length + attr.length > 0) {
 			// Properties or attributes are present 
 			// => add a table header
-			output += '<div class="xfsResultTable">has properties: (<a onclick="xfsTProperty(this)">show</a>)<table>';
+			output += '<div class="xfsResultTable">has properties: (<a class="xfsShow">show</a>)<table>';
 		}
 		var row = 0;
 		

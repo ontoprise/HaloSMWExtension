@@ -58,27 +58,20 @@ FacetedSearch.classes.FacetedSearch = function () {
 	 */
 	function construct() {
 		mAjaxSolrManager = new AjaxSolr.Manager();
-		mAjaxSolrManager.init();
-		// TEST
-		mAjaxSolrManager.store.addByValue('q', '*:*');
 		
 		mAjaxSolrManager.addWidget(new FacetedSearch.classes.ResultWidget({
 		  id: 'article',
 		  target: '#docs'
 		}));
 
-		// add facets
 		var params = {
-			facet: true,
-			'facet.field': FACET_FIELDS,
-			'facet.limit': 20,
-			'facet.mincount': 1,
-			'f.topics.facet.limit': 50,
-			'json.nl': 'map'
-		};
-		for (var name in params) {
-			mAjaxSolrManager.store.addByValue(name, params[name]);
-		}
+				facet: true,
+				'facet.field': FACET_FIELDS,
+				'facet.limit': 20,
+				'facet.mincount': 1,
+				'f.topics.facet.limit': 50,
+				'json.nl': 'map'
+			};
 		
 		// Add the widgets for the standard facets
 		for (var i = 0, l = FACET_FIELDS.length; i < l; i++) {
@@ -96,7 +89,6 @@ FacetedSearch.classes.FacetedSearch = function () {
 			target : '#pager',
 			prevLabel : '&lt; Previous',
 			nextLabel : 'Next &gt;',
-//			innerWindow : 1,
 			renderHeader : function(perPage, offset, total) {
 				$('#pager-header').html(
 						$('<span/>').text(
@@ -106,6 +98,15 @@ FacetedSearch.classes.FacetedSearch = function () {
 										+ ' of ' + total));
 			}
 		}));
+		
+		// init
+		mAjaxSolrManager.init();
+		mAjaxSolrManager.store.addByValue('q', '*:*');
+		
+		// add facets
+		for (var name in params) {
+			mAjaxSolrManager.store.addByValue(name, params[name]);
+		}
 		
 	};
 	that.construct = construct;
