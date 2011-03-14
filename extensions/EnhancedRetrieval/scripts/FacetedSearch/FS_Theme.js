@@ -52,6 +52,8 @@ function xfsTCategory(link, more) {
 	var MOD_ATT = 'smwh_Modification_date_xsdvalue_dt';
 	var CAT_MAX = 4;
 	var CAT_SEP = ' | ';
+	var PROPERTY_REGEX = /^smwh_(.*)_(.*)$/;
+	var ATTRIBUTE_REGEX = /smwh_(.*)_xsdvalue_(.*)/;
 
 	var SEARCH_PATH = '/extensions/EnhancedRetrieval/skin/images/';
 	var NS_ICON = {
@@ -69,6 +71,30 @@ function xfsTCategory(link, more) {
 	function getIconForNSID(id) {
 		var iconData = NS_ICON[id];
 		return '<img src="' + iconData[1] + '" title="' + iconData[0] + '"/>';
+	}
+	
+	/**
+	 * Attributes and relations that are delivered as facets always have a prefix
+	 * and a suffix that indicates the type. This function retrieves the original
+	 * name of an attribute or relation.
+	 * @param string property
+	 * 		The decorated name of an attribute or property.
+	 * @return string
+	 * 		The plain name of the property.
+	 */
+	function extractPlainName(property) {
+		// Try attribute
+		var plainName = property.match(ATTRIBUTE_REGEX);
+		if (plainName) {
+			return noUnderscore(plainName[1]);
+		}
+		// Try relation
+		plainName = property.match(PROPERTY_REGEX);
+		if (plainName) {
+			return noUnderscore(plainName[1]);
+		}
+		// Neither attribute nor relation => return the given name
+		return noUnderscore(property);
 	}
 	
 	/**
@@ -101,8 +127,6 @@ function xfsTCategory(link, more) {
 		var attr  = doc[FS_ATTRIBUTES] || [];
 		var props = doc[FS_PROPERTIES] || [];
 		var cats  = doc[FS_CATEGORIES];
-		var propertyRegEx = /^smwh_(.*)_(.*)$/;
-		var attributeRegEx = /smwh_(.*)_xsdvalue_(.*)/;
 		
 		if (typeof cats !== 'undefined') {
 			// Show CAT_MAX categories
@@ -146,20 +170,17 @@ function xfsTCategory(link, more) {
 			// Show all properties in a table
 			for (var property in propMap) {
 				// Get the property name without prefix, suffix and type
-				var plainName = property.match(propertyRegEx);
-				if (plainName) {
-					plainName = noUnderscore(plainName[1]);
-					output += '<tr class="s' + (row % 2) + '">';
-					row += 1;
-					output += '<td>' + plainName + '</td>';
-					var vals = [];
-					$.each(doc[property], function() {
-						// TODO check link
-						vals.push('<a href="' + this + '">' + noUnderscore(this) + '</a>');
-					});
-					output += '<td>' + vals.join(', ') + '</td>';
-					output += '</tr>';
-				}
+				var plainName = extractPlainName(property);
+				output += '<tr class="s' + (row % 2) + '">';
+				row += 1;
+				output += '<td>' + plainName + '</td>';
+				var vals = [];
+				$.each(doc[property], function() {
+					// TODO check link
+					vals.push('<a href="' + this + '">' + noUnderscore(this) + '</a>');
+				});
+				output += '<td>' + vals.join(', ') + '</td>';
+				output += '</tr>';
 			}
 		}
 		
@@ -173,15 +194,12 @@ function xfsTCategory(link, more) {
 			
 			for (var attribute in attrMap) {
 				// Get the property name without prefix, suffix and type
-				var plainName = attribute.match(attributeRegEx);
-				if (plainName) {
-					plainName = noUnderscore(plainName[1]);
-					output += '<tr class="s' + (row % 2) + '">';
-					row += 1;
-					output += '<td>'+plainName+'</td>';
-					output += '<td>'+doc[attribute].join(', ')+'</td>';
-					output += '</tr>';
-				}
+				var plainName = extractPlainName(attribute);
+				output += '<tr class="s' + (row % 2) + '">';
+				row += 1;
+				output += '<td>'+plainName+'</td>';
+				output += '<td>'+doc[attribute].join(', ')+'</td>';
+				output += '</tr>';
 			}
 		}
 		
@@ -200,8 +218,12 @@ function xfsTCategory(link, more) {
 	};
 
 	AjaxSolr.theme.prototype.facet = function(value, weight, handler) {
-		return $('<a href="#" class="tagcloud_item"/>').text(noUnderscore(value)).addClass(
-				'tagcloud_size_' + weight).click(handler).add($('<span>').text(' (' + weight + ')'));
+		return $('<a href="#" class="tagcloud_item"/>')
+			.text(extractPlainName(value))
+			.addClass('tagcloud_size_' + weight)
+			.click(handler)
+			.add($('<span>')
+			.text(' (' + weight + ')'));
 	};
 
 	AjaxSolr.theme.prototype.facet_link = function(value, handler) {
