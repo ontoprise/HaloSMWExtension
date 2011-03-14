@@ -54,8 +54,9 @@ FacetedSearch.classes.FacetWidget = AjaxSolr.AbstractFacetWidget.extend({
 				count: count
 			});
 		}
+		
 		objectedItems.sort(function(a, b){
-			return a.facet < b.facet ? -1 : 1;
+			return a.count > b.count ? -1 : 1;
 		});
 		
 		var self = this;
@@ -64,7 +65,7 @@ FacetedSearch.classes.FacetWidget = AjaxSolr.AbstractFacetWidget.extend({
 			var facet = objectedItems[i].facet;
 			$(this.target)
 				.append(AjaxSolr.theme('facet', facet, 
-				                       parseInt(objectedItems[i].count / maxCount * 10), 
+				                       objectedItems[i].count, 
 									   self.clickHandler(facet)))
 				.append('<br/>');
 		}
