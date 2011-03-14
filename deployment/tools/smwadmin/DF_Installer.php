@@ -639,9 +639,9 @@ class Installer {
 
 		print "\n[unzip ".$id."-$version.zip...";
 		if (Tools::isWindows()) {
-			exec('unzip -o '.$this->tmpFolder."\\".$id."-$version.zip -d ".$this->rootDir);
+			exec('unzip -o "'.$this->tmpFolder."\\".$id."-$version.zip\" -d \"".$this->rootDir.'"');
 		} else {
-			exec('unzip -o '.$this->tmpFolder."/".$id."-$version.zip -d ".$this->rootDir);
+			exec('unzip -o "'.$this->tmpFolder."/".$id."-$version.zip\" -d \"".$this->rootDir.'"');
 		}
 		print "done.]";
 	}
@@ -654,7 +654,7 @@ class Installer {
 	private function unzipFromFile($filePath) {
 
 		print "\n[unzip ".$filePath."...";
-		exec('unzip -o '.$filePath.' -d '.$this->rootDir);
+		exec('unzip -o "'.$filePath.'" -d "'.$this->rootDir.'"');
 		print "done.]";
 
 	}

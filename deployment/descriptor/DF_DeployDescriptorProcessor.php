@@ -150,7 +150,7 @@ class DeployDescriptionProcessor {
 			}
 			$this->logger->info("Run script: $script");
 			print "\n[Run script: $script";
-			exec("php ".$rootDir."/".$script." ".$setup['params'], $out, $ret);
+			exec("php \"".$rootDir."/".$script."\" ".$setup['params'], $out, $ret);
 			print "done.]";
 			foreach($out as $line) print "\n".$line;
 			if ($ret != 0) {
@@ -181,7 +181,7 @@ class DeployDescriptionProcessor {
 				continue;
 			}
 			print "\n[Run script: $script";
-			exec("php ".$rootDir."/".$script." ".$setup['params'], $out, $ret);
+			exec("php \"".$rootDir."/".$script."\" ".$setup['params'], $out, $ret);
 			print "done.]";
 			foreach($out as $line) print "\n".$line;
 			if ($ret != 0) {
@@ -218,7 +218,7 @@ class DeployDescriptionProcessor {
 			}
 			// do dry-run at first to check for rejected patches
 			print "\n[Test patch ".$patch."...";
-			exec("php ".$rootDir."/deployment/tools/patch.php -p ".$rootDir."/".$patch." -d ".$rootDir." --dry-run --onlypatch", $out, $ret);
+			exec("php \"".$rootDir."/deployment/tools/patch.php\" -p \"".$rootDir."/".$patch."\" -d \"".$rootDir."\" --dry-run --onlypatch", $out, $ret);
 			print "done.]";
 			$patchFailed = false;
 			foreach($out as $line) {
@@ -240,7 +240,7 @@ class DeployDescriptionProcessor {
 				case 'y': // apply the patches
 			 	print "\n[Apply patch...";
 			 	$this->logger->info("Apply patch: $patch");
-			 	exec("php ".$rootDir."/deployment/tools/patch.php -p ".$rootDir."/".$patch." -d ".$rootDir." --onlypatch", $out, $ret);
+			 	exec("php \"".$rootDir."/deployment/tools/patch.php\" -p \"".$rootDir."/".$patch."\" -d \"".$rootDir."\" --onlypatch", $out, $ret);
 			 	if ($ret !== 0) {
 			 		$this->logger->warn("Patch failed: '$patch'. Output: ".Tools::arraytostring($out));
 			 	}
@@ -278,7 +278,7 @@ class DeployDescriptionProcessor {
 				continue;
 			}
 			// do dry-run at first to check for rejected patches
-			exec("php ".$rootDir."/deployment/tools/patch.php -r -p ".$rootDir."/".$patch." -d ".$rootDir." --dry-run --onlypatch", $out, $ret);
+			exec("php \"".$rootDir."/deployment/tools/patch.php\" -r -p \"".$rootDir."/".$patch."\" -d \"".$rootDir."\" --dry-run --onlypatch", $out, $ret);
 			$patchFailed = false;
 			foreach($out as $line) {
 				if (strpos($line, "FAILED") !== false) {
@@ -288,7 +288,7 @@ class DeployDescriptionProcessor {
 			if ($patchFailed) print "\n\tWARNING: Some patches can not be removed! Reject files are created.";
 			$this->logger->info("Unapply patch: $patch");
 			print "\n\t[Remove patch $patch...";
-			exec("php ".$rootDir."/deployment/tools/patch.php -r -p ".$rootDir."/".$patch." -d ".$rootDir, $out, $ret);
+			exec("php \"".$rootDir."/deployment/tools/patch.php\" -r -p \"".$rootDir."/".$patch."\" -d \"".$rootDir."\"", $out, $ret);
 			if ($ret !== 0) {
 				$this->logger->warn("Patch failed: '$patch'. Output: ".Tools::arraytostring($out));
 			}
@@ -322,7 +322,7 @@ class DeployDescriptionProcessor {
 			}
 			// do dry-run at first to check for rejected patches
 			print "\n[Check if patch is already applied ".$patch."...";
-			exec("php ".$rootDir."/deployment/tools/patch.php -r -p ".$rootDir."/".$patch." -d ".$rootDir." --dry-run --onlypatch", $out, $ret);
+			exec("php \"".$rootDir."/deployment/tools/patch.php\" -r -p \"".$rootDir."/".$patch."\" -d \"".$rootDir."\" --dry-run --onlypatch", $out, $ret);
 			print "done.]";
 			$patchFailed = false;
 			foreach($out as $line) {
