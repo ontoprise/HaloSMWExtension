@@ -130,7 +130,12 @@ function smwfNavTree() {
  */
 function smwfEchoNavTree() {
 
-   echo smwfNavTree();
+   global $wgRequest, $wgTitle;
+   //when in edit mode, don't insert tree into ontoskin
+   if( $wgRequest->getVal('action') != 'edit' && $wgRequest->getVal('action') != 'formedit'
+           && !($wgTitle->getNamespace()==NS_SPECIAL && $wgTitle->getText() == 'FormEdit') ){
+        echo smwfNavTree();
+   }
    return true;
 }
 
