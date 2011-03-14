@@ -23,8 +23,6 @@
  */
 class LODLinkSpecsPage extends SpecialPage {
 
-    var $editorUrl = "http://localhost:30300/";
-
     public function __construct() {
         parent::__construct('LODLinkSpecs');
         wfLoadExtensionMessages('LODLinkSpecs');
@@ -34,11 +32,15 @@ class LODLinkSpecsPage extends SpecialPage {
         global $wgOut;
         global $wgScript;
         global $lodgScriptPath;
+	global $lodgSilkServerUrl;
+
+        SMWOutputs::requireHeadItem("lod_linkspec.css",
+                        '<link rel="stylesheet" type="text/css" href="' . $lodgScriptPath . '/skins/linkspec.css" />');
 
         SMWOutputs::commitToOutputPage($wgOut);
         $this->setHeaders();
         
-        $html = "<iframe src=\"".$this->editorUrl."\" height=\"500\" width=\"1100px\">You need a Frames Capable browser to view this content.</iframe>";
+        $html = "<iframe id=\"silkFrame\" src=\"".$lodgSilkServerUrl."\" height=\"930\" width=\"1100px\" >You need a Frames Capable browser to view this content.</iframe>";
 
         $wgOut->addHTML($html);
 
