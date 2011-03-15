@@ -906,7 +906,8 @@ QIHelper.prototype = {
 		cell.innerHTML = gLanguage.getMessage('CATEGORY');
 		cell = newrow.insertCell(1);
         // input field with autocompletion enabled
-		cell.innerHTML = '<input type="text" id="input0" class="wickEnabled general-forms" constraints="namespace: 14" autocomplete="OFF"/>';
+		cell.innerHTML = '<input type="text" id="input0" class="wickEnabled general-forms" constraints="namespace: 14" autocomplete="OFF" '+
+            'onmouseover="Tip(\'' +  gLanguage.getMessage('AUTOCOMPLETION_HINT') + '\');"/>';
         cell = newrow.insertCell(2);
         // link to add another input for or-ed values
         newrow = $('dialoguecontent').insertRow(-1);
@@ -941,7 +942,8 @@ QIHelper.prototype = {
 		var cell = newrow.insertCell(0);
 		cell.innerHTML = gLanguage.getMessage('QI_INSTANCE');
 		cell = newrow.insertCell(1);
-		cell.innerHTML = '<input type="text" id="input0" class="wickEnabled general-forms" constraints="namespace: 0" autocomplete="OFF"/>';
+		cell.innerHTML = '<input type="text" id="input0" class="wickEnabled general-forms" constraints="namespace: 0" autocomplete="OFF" '+
+            'onmouseover="Tip(\'' +  gLanguage.getMessage('AUTOCOMPLETION_HINT') + '\');"/>';
         cell = newrow.insertCell(2);
         // link to add another input for or-ed values
         newrow = $('dialoguecontent').insertRow(-1);
@@ -1035,8 +1037,9 @@ QIHelper.prototype = {
         var tmpHTML = '<input type="text" id="input_p'+ idx +'" '
             + 'class="wickEnabled general-forms" constraints="' + constraintstring + '" '
             + ((idx > 0) ? 'style="font-weight:bold;" ' : '')
-            + 'onblur="qihelper.getPropertyInformation()"'
-            + ((propName) ? ' value="'+propName+'"' : '')
+            + 'onblur="qihelper.getPropertyInformation()" '
+            + ((propName) ? 'value="'+propName+'" ' : '')
+            + 'onmouseover="Tip(\'' +  gLanguage.getMessage('AUTOCOMPLETION_HINT') + '\');"';
             + '/>';
         if (idx > 0)
             tmpHTML += ' <img src="'	+ this.imgpath + 'delete.png" alt="deleteInput" onclick="qihelper.removePropertyChainInput()"/>';
@@ -1261,11 +1264,14 @@ QIHelper.prototype = {
 		cell.innerHTML = gLanguage.getMessage('QI_OR').toUpperCase();
 		cell = newrow.insertCell(1);
 
-		if (this.activeDialogue == "category") // add input fields according to
-												// dialogue
-			cell.innerHTML = '<input class="wickEnabled general-forms" constraints="namespace: 14" autocomplete="OFF" type="text" id="input' + id + '"/>';
-		else if (this.activeDialogue == "instance")
-			cell.innerHTML = '<input class="wickEnabled general-forms" constraints="namespace: 0" autocomplete="OFF" type="text" id="input' + id + '"/>';
+        var ns;
+		if (this.activeDialogue == "category") // add input fields according to dialogue
+            ns = '14';
+        else if (this.activeDialogue == "instance")
+            ns = '0';
+
+		cell.innerHTML = '<input class="wickEnabled general-forms" constraints="namespace: '+ns+'" autocomplete="OFF" '+
+            'type="text" id="input' + id + '" onmouseover="Tip(\'' +  gLanguage.getMessage('AUTOCOMPLETION_HINT') + '\');"/>';
 		cell = newrow.insertCell(-1);
 		cell.innerHTML = '<img src="'
 				+ this.imgpath
