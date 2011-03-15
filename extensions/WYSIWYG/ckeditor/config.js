@@ -67,7 +67,7 @@ CKEDITOR.editorConfig = function( config )
         ['Link','Unlink'],
         ['Undo','Redo'],
         ['Image', 'Table', 'HorizontalRule', 'SpecialChar'],
-        ['MWSpecialTags', 'MWTemplate', qiButton, wsButton, rmButton ],
+        ['MWSpecialTags', 'MWTemplate', 'MWSignature', qiButton, wsButton, rmButton ],
         [ stbButton ],
         ['About'],
         '/',

@@ -648,6 +648,7 @@ class CKeditorParser extends CKeditorParserWrapper {
 		$parserOutput = parent::parse( $text, $title, $options, $linestart, $clearState, $revid );
 
         $parserOutput->setText( strtr( $parserOutput->getText(), array('FCKLR_fcklr_FCKLR' => '<br fcklr="true"/>') ) );
+        $parserOutput->setText( strtr( $parserOutput->getText(), array('--~~~~' => '<span class="fck_mw_signature">_</span>') ) );
         
 		$categories = $parserOutput->getCategories();
 		if( $categories ) {

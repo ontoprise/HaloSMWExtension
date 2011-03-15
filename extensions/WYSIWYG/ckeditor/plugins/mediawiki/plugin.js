@@ -198,6 +198,9 @@ CKEDITOR.plugins.add( 'mediawiki',
                             case 'fck_mw_onlyinclude' :
                                 if ( className == null )
                                     className = 'FCK__MWOnlyinclude';
+                            case 'fck_mw_signature' :
+                                if ( className == null )
+                                    className = 'FCK__MWSignature';
                             case 'fck_smw_query' :
                                 if ( className == null )
                                     className = 'FCK__SMWquery';
@@ -216,9 +219,18 @@ CKEDITOR.plugins.add( 'mediawiki',
 			};
 
         var dataProcessor = editor.dataProcessor = new CKEDITOR.customprocessor( editor );
-
         dataProcessor.dataFilter.addRules( wikiFilterRules );
-        //dataProcessor.htmlFilter.addRules( htmlFilterRules );
+
+        var signatureCommand =
+    	{
+        	canUndo : false,    // The undo snapshot will be handled by 'insertElement'.
+            exec : function( editor ) {
+                var sig = '<span class="fck_mw_signature">_</span>',
+                    element = CKEDITOR.dom.element.createFromHtml(sig, editor.document),
+                    newFakeObj = editor.createFakeElement( element, 'FCK__MWSignature', 'span' );
+                editor.insertElement( newFakeObj );
+            }
+        };
 
         // language logic for additional messages
         var MWpluginLang = []
@@ -239,6 +251,8 @@ CKEDITOR.plugins.add( 'mediawiki',
             caption         : 'Caption',
             imgType         : 'Special type',
             alignCenter     : 'Center',
+            // signature
+            signature       : 'Signature',
             // special tags
             specialTags     : 'Special Tags',
             specialTagTitle : 'Special Tags Dialogue',
@@ -271,6 +285,8 @@ CKEDITOR.plugins.add( 'mediawiki',
             caption         : 'Beschreibung',
             imgType         : 'Bildtyp',
             alignCenter     : 'Mitte',
+            // signature
+            signature       : 'Signatur',
             // special tags
             specialTags     : 'Spezial Tags',
             specialTagTitle : 'Spezial Tags Dialog',
@@ -297,6 +313,7 @@ CKEDITOR.plugins.add( 'mediawiki',
         CKEDITOR.dialog.add( 'MWImage', this.path + 'dialogs/image.js' );
         editor.addCommand( 'MWSpecialTags', new CKEDITOR.dialogCommand( 'MWSpecialTags' ) );
         CKEDITOR.dialog.add( 'MWSpecialTags', this.path + 'dialogs/special.js' );
+        editor.addCommand( 'MWSignature', signatureCommand);
         if (editor.addMenuItem) {
             // A group menu is required
             // order, as second parameter, is not required
@@ -315,6 +332,12 @@ CKEDITOR.plugins.add( 'mediawiki',
 					label : editor.lang.mwplugin.specialTags,
 					command : 'MWSpecialTags',
                     icon: this.path + 'images/tb_icon_special.gif'
+				});
+			editor.ui.addButton( 'MWSignature',
+				{
+					label : editor.lang.mwplugin.signature,
+					command : 'MWSignature',
+                    icon: this.path + 'images/tb_icon_sig.png'
 				});
 
 		}
@@ -988,7 +1011,7 @@ CKEDITOR.customprocessor.prototype =
 									return;
 
 								case 'fck_mw_signature' :
-									stringBuilder.push( CKEDITOR.config.WikiSignature );
+									stringBuilder.push( this.editor.config.WikiSignature );
 									return;
 
 								case 'fck_mw_template' :
