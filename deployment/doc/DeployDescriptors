@@ -56,7 +56,7 @@ For a formal description in XML-Schema, see dd.xsd
         - hash attribute: Accumulated hash of all specified files.
         - file element: may point to a single file or a directory. 
     
-3. Wikidumps
+3. Wikidumps/ontologies
 
     Specifies dump files containg arbitrary wiki pages. It's a special dump format containing
     a hash to determine changes to the wiki pages. This special export can be created by using
@@ -66,6 +66,14 @@ For a formal description in XML-Schema, see dd.xsd
         <file loc="..."/>
         ...
     </wikidumps>
+    
+    Specifies ontologies which should be imported. The common ontology serialization formats are supported:
+        rdf/xml, n3, nt.
+    
+     <ontologies>
+        <file loc="..."/>
+        ...
+    </ontologies>
     
 4. Resources
 
