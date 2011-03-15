@@ -32,16 +32,16 @@
 	var MOD_ATT = 'smwh_Modification_date_xsdvalue_dt';
 	var CAT_MAX = 4;
 	var CAT_SEP = ' | ';
-	var PROPERTY_REGEX = /^smwh_(.*)_(.*)$/;
+	var RELATION_REGEX = /^smwh_(.*)_(.*)$/;
 	var ATTRIBUTE_REGEX = /smwh_(.*)_xsdvalue_(.*)/;
 
-	var SEARCH_PATH = '/extensions/EnhancedRetrieval/skin/images/';
+	var IMAGE_PATH = '/extensions/EnhancedRetrieval/skin/images/';
 	var NS_ICON = {
 		// TODO add missing mappings
-		0 : ['Instance', wgScriptPath + SEARCH_PATH + 'smw_plus_instances_icon_16x16.png'],
-		6 : ['Image', wgScriptPath + SEARCH_PATH + 'smw_plus_image_icon_16x16.png'],
-		102 : ['Property', wgScriptPath + SEARCH_PATH + 'smw_plus_property_icon_16x16.png'],
-		700 : ['Comment', wgScriptPath + SEARCH_PATH + 'smw_plus_comment_icon_16x16.png']
+		0 : ['Instance', wgScriptPath + IMAGE_PATH + 'smw_plus_instances_icon_16x16.png'],
+		6 : ['Image', wgScriptPath + IMAGE_PATH + 'smw_plus_image_icon_16x16.png'],
+		102 : ['Property', wgScriptPath + IMAGE_PATH + 'smw_plus_property_icon_16x16.png'],
+		700 : ['Comment', wgScriptPath + IMAGE_PATH + 'smw_plus_comment_icon_16x16.png']
 	};
 	
 	function noUnderscore(string) {
@@ -69,12 +69,24 @@
 			return noUnderscore(plainName[1]);
 		}
 		// Try relation
-		plainName = property.match(PROPERTY_REGEX);
+		plainName = property.match(RELATION_REGEX);
 		if (plainName) {
 			return noUnderscore(plainName[1]);
 		}
 		// Neither attribute nor relation => return the given name
 		return noUnderscore(property);
+	}
+	
+	/**
+	 * Checks if the given name is a name for an attribute or relation.
+	 * 
+	 * @param {string} name
+	 * 		The name to examine
+	 * @return {bool}
+	 * 		true, if name is a property name
+	 */
+	function isProperty(name) {
+		return name.match(ATTRIBUTE_REGEX)|| name.match(RELATION_REGEX);
 	}
 	
 	/**
@@ -197,21 +209,84 @@
 		return output;
 	};
 
-	AjaxSolr.theme.prototype.facet = function(value, weight, handler) {
-		return $('<a href="#" class="tagcloud_item"/>')
-			.text(extractPlainName(value))
-			.addClass('tagcloud_size_' + weight)
-			.click(handler)
-			.add($('<span>')
-			.text(' (' + weight + ')'));
+
+	/**
+	 * This function generates the HTML for a facet which may be a category or
+	 * a property. Properties have details e.g. clusters of values or lists of
+	 * values.
+	 * 
+	 * @param {string} facet
+	 * 		Name of the facet
+	 * @param {int} count
+	 * 		Number of documents that match the facet
+	 * @param {Function} handler
+	 * 		Click handler for the facet.
+	 * @param {Function} showPropertyDetailsHandler
+	 * 		This function is called when the details of a property are to be
+	 * 		shown.
+	 * 		
+	 */
+	AjaxSolr.theme.prototype.facet = function(facet, count, handler, showPropertyDetailsHandler) {
+		var html = 
+			'<a href="#">' +
+				extractPlainName(facet) +
+				' (' + count + ')' +
+			'</a>';
+		html = $(html).click(handler);
+		if (isProperty(facet)) {
+			var path = wgScriptPath + IMAGE_PATH;
+			var divID = 'property_' + facet + '_values';
+			var img1ID = 'show_details' + divID;
+			var img2ID = 'hide_details' + divID;
+			var toggleFunc = function () {
+				if ($('#' + divID).is(':visible')) {
+					$('#' + divID).hide();
+				} else {
+					$('#' + divID).show();
+					showPropertyDetailsHandler(facet);
+				} 
+				$('#' + img1ID).toggle();
+				$('#' + img2ID).toggle();
+			};
+			var img1 = 
+				$('<img src="'+ path + 'right.png" title="Show details" id="'+img1ID+'"/>')
+				.click(toggleFunc);
+			var img2 = 
+				$('<img src="'+ path + 'down.png" title="Hide details" style="display:none" id="'+img2ID+'"/>')
+				.click(toggleFunc);
+			html = img1.add(img2).add(html);
+			html = html.add($('<div id="' + divID + '" style="display:none"></div>'));
+		}
+		return html;
 	};
 
 	AjaxSolr.theme.prototype.facet_link = function(value, handler) {
-		return $('<a href="#"/>').text(value).click(handler);
+		return $('<a href="#"/>'+ value + '</a>').click(handler);
 	};
 
 	AjaxSolr.theme.prototype.no_items_found = function() {
 		return 'no items found in current selection';
+	};
+	
+	/**
+	 * Creates the HTML for a cluster of values of an attribute. A cluster is 
+	 * a range of values and the number of elements within this range e.g.
+	 * 10 - 30 (5).
+	 * 
+	 * @param {double} from 
+	 * 		Start value of the range
+	 * @param {double} to
+	 * 		End value of the range
+	 * @param {int} count
+	 * 		Number of elements in this range
+	 * @param {function} handler
+	 * 		This function is called when the cluster is clicked.
+	 */
+	AjaxSolr.theme.prototype.cluster = function(from, to, count, handler) {
+		return $('<a href="#" class="xfsClusterEntry"/>'
+				+ from + ' - ' + to + ' (' + count + ')'
+				+ '<br /></a>')
+			.click(handler);
 	};
 
 })(jQuery);

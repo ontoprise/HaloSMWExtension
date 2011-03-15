@@ -64,14 +64,19 @@ FacetedSearch.classes.FacetedSearch = function () {
 		  target: '#docs'
 		}));
 
+		// init
+		mAjaxSolrManager.init();
+
+		// add facets
 		var params = {
-				facet: true,
-				'facet.field': FACET_FIELDS,
-				'facet.limit': 20,
-				'facet.mincount': 1,
-				'f.topics.facet.limit': 50,
-				'json.nl': 'map'
-			};
+			facet: true,
+			'facet.field': FACET_FIELDS,
+			'facet.mincount': 1,
+			'json.nl': 'map'
+		};
+		for (var name in params) {
+			mAjaxSolrManager.store.addByValue(name, params[name]);
+		}
 		
 		// Add the widgets for the standard facets
 		for (var i = 0, l = FACET_FIELDS.length; i < l; i++) {
@@ -99,8 +104,6 @@ FacetedSearch.classes.FacetedSearch = function () {
 			}
 		}));
 		
-		// init
-		mAjaxSolrManager.init();
 		mAjaxSolrManager.store.addByValue('q', '*:*');
 		
 		// add facets
@@ -129,6 +132,7 @@ FacetedSearch.classes.FacetedSearch = function () {
 //			clearTimeout(mFilterTimeout);
 //		}
 //		mFilterTimeout = setTimeout(that.filterGroupTree, 300, mFilter);
+
 		return false;
 	};
 	
@@ -144,6 +148,8 @@ FacetedSearch.classes.FacetedSearch = function () {
 	
 	construct();
 	addEventHandlers();
+	mAjaxSolrManager.doRequest();
+	
 	return that;
 	
 }
