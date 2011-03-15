@@ -20,16 +20,21 @@ class ASFCategorySectionStructureProcessor {
 	
 	private $categorySectionStructure = array();
 	
+	private $categoriesWithNoProperties = array();
+	
+	private $categoriesWithNoFormEdit = array();
+	
 	/*
 	 * Public method for retrieving the category section structure
 	 */
 	public function getCategorySectionStructure($categories){
+		
 		$this->initCategorySectionStructure($categories);
 		
-		$this->removeCategoriesWithNoProperties();
+		$this->removecategoriesWithNoProperties();
 		
 		if(count($this->categorySectionStructure) == 0){
-			return false;
+			return array(false, $this->categoriesWithNoProperties, $this->categoriesWithNoFormEdit);
 		}
 		
 		$this->removeUnnecesserayEdges();
@@ -47,7 +52,7 @@ class ASFCategorySectionStructureProcessor {
 		
 		//echo('<pre>'.print_r($this->categorySectionStructure, true).'</pre>');
 		
-		return $this->categorySectionStructure;
+		return array($this->categorySectionStructure, $this->categoriesWithNoProperties, $this->categoriesWithNoFormEdit);
 	}
 	
 	
@@ -70,18 +75,20 @@ class ASFCategorySectionStructureProcessor {
 			$categoryTitle = $categoryObject->getTitle();
 			
 			if(!$categoryTitle->exists()){
-				continue;
+				//also display sections for categories that do not exist
+				//continue;
 			}
 			
 			$semanticData = $store->getSemanticData($categoryTitle);
 			$noASF = ASFFormGeneratorUtils::getPropertyValue($semanticData, ASF_PROP_NO_AUTOMATIC_FORMEDIT);
 			if($noASF){
+				$this->categoriesWithNoFormEdit[$categoryTitle->getText()] = true;
 				continue;
 			}
 			
 			$categoryTree = ASFFormGeneratorUtils::getSuperCategories($categoryTitle, true);
 
-			$this->fillCategorySectionStructureWithItems($category, $categoryTree[$category]);
+			$this->fillCategorySectionStructureWithItems($category, $categoryTree[ucfirst($category)]);
 			
 			//echo('<pre>'.print_r($tree, true).'</pre>');
 		}
@@ -117,7 +124,7 @@ class ASFCategorySectionStructureProcessor {
 	 * This method removes categories which are not used 
 	 * by any category as the domain
 	 */
-	private function removeCategoriesWithNoProperties(){
+	private function removecategoriesWithNoProperties(){
 		//get emoty categories
 		$emptyCategorySections = array();
 		foreach($this->categorySectionStructure as $categoryName => $item){
@@ -156,6 +163,7 @@ class ASFCategorySectionStructureProcessor {
 			
 			if(count($properties) == 0 && count($item->children) == 0 && count($item->parents) == 0){
 				unset($this->categorySectionStructure[$categoryName]);
+				$this->categoriesWithNoProperties[$categoryName] = false;
 			}
 		}
 	}

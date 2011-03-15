@@ -44,24 +44,7 @@ class ASFFormPrinter extends SFFormPrinter {
 			parent::formHTML( $form_def, $form_submitted, $source_is_page, $form_id, $existing_page_content, $page_name, $page_name_formula, $is_query, $embedded);
 			
 		if($postProcess){
-			//unescape fieldset and legend HTNL tag
-			//$form_text = str_replace("&lt;fieldset", "<fieldset", $form_text);
-			//$form_text = str_replace("&lt;/fieldset&gt;", "</fieldset>", $form_text);
-			//$form_text = str_replace("&gt;&lt;legend&gt;", "><legend>", $form_text);
-			//$form_text = str_replace("&lt;/legend&gt;", "</legend>", $form_text);
-			
-			//deal with thecollapse images
-			//$imgSRC = $wgScriptPath . '/extensions/AutomaticSemanticForms/skins/minus-act.gif';
-			//$form_text = str_replace('&lt;img src="ASF_MINUS_ICON', '<img src="'.$imgSRC, $form_text);
-			//$form_text = str_replace('ASF_MINUS_ICON', $imgSRC, $form_text);
-			
-			//$imgSRC = $wgScriptPath . '/extensions/AutomaticSemanticForms/skins/plus-act.gif';
-			//$form_text = str_replace('&lt;img src="ASF_PLUS_ICON', '<img src="'.$imgSRC, $form_text);
-			//$form_text = str_replace('ASF_PLUS_ICON', $imgSRC, $form_text);
-			
-			//$form_text = str_replace('&gt;&lt;/img&gt;', '></img>', $form_text);
-			
-			//deal with autocompletion diff - necessary because otherwise no other
+			//deal with autocompletion div - necessary because otherwise no other
 			//HTML elements are possible in the same row as the input field
 			$form_text = str_replace('<div class="page_name_auto_complete"', 
 				'<div style="display: inline" class="page_name_auto_complete"', $form_text);
@@ -82,7 +65,6 @@ class ASFFormPrinter extends SFFormPrinter {
     				}
     			}
     			
-				//todo:does this work with wysiwyg
 				$startFreeText = strpos($form_text, 'id="free_text"');
 				$endFreeText = strpos($form_text, '</textarea>', $startFreeText);
 				$form_text = substr($form_text, 0, $endFreeText).$additionalCategoryAnnotations.substr($form_text, $endFreeText);

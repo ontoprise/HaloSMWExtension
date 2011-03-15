@@ -80,7 +80,8 @@ class ASFFormEditTab {
 		}
 			
 		//Create form definition
-		$formDefinition = ASFFormGenerator::getInstance()->generateFromTitle($article->getTitle());
+		list($formDefinition, $dC)
+			= ASFFormGenerator::getInstance()->generateFromTitle($article->getTitle());
 		if($formDefinition){
 			global $asfDummyFormName;
 			$errors = ASFFormGeneratorUtils::createFormDummyIfNecessary();

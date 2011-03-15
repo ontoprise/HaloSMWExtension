@@ -29,8 +29,6 @@ class ASFParserFunctions {
 			array( 'ASFParserFunctions', 'renderQTipHelp'));
 
 			
-		//todo:document new parser functions in dmwiki	
-			
 		global $wgHooks;
 		$wgHooks['ParserAfterTidy'][] = 'ASFParserFunctions::finallyRenderShowNow';
 		
@@ -126,7 +124,14 @@ class ASFParserFunctions {
 			$content = $params[1];
 		}
 		
-		$result = "{{#collapsableFieldSetStart:".$legend.'}}';
+		$collapsed = '';
+		if(array_key_exists(2, $params)){
+			if(strtolower($params[2]) == 'true'){
+				$collapsed = '| true';
+			}
+		}
+		
+		$result = "{{#collapsableFieldSetStart:".$legend.$collapsed.'}}';
 		$result .= $content;
 		$result .= "{{#collapsableFieldSetEnd:}}";
 		
@@ -155,8 +160,17 @@ class ASFParserFunctions {
 			$legend = " ".$parser->internalParse($legend);
 		}
 		
+		$collapsedDisplay = "none";
+		$unCollapsedDisplay = "";
+		if(array_key_exists(1, $params)){
+			if(strtolower($params[1]) == 'true'){
+				$collapsedDisplay = "";
+				$unCollapsedDisplay = "none";
+			}
+		}
+		
 		$result = "";
-		$result .= '<fieldset id="fieldset_'.$asfCollapsableFieldSetCounter.'_hidden" style="display: none">';
+		$result .= '<fieldset id="fieldset_'.$asfCollapsableFieldSetCounter.'_hidden" style="display: '.$collapsedDisplay.'">';
 		
 		$result .= '<legend>';
 		$imgSRC = $wgScriptPath . '/extensions/AutomaticSemanticForms/skins/plus-act.gif';
@@ -166,7 +180,7 @@ class ASFParserFunctions {
 		
 		$result .= '</fieldset>';
 		
-		$result .= '<fieldset id="fieldset_'.$asfCollapsableFieldSetCounter.'_visible">';
+		$result .= '<fieldset id="fieldset_'.$asfCollapsableFieldSetCounter.'_visible" style="display: '.$unCollapsedDisplay.'">';
 		
 		$imgSRC = $wgScriptPath . '/extensions/AutomaticSemanticForms/skins/minus-act.gif';
 		$result .= '<legend>';
@@ -341,6 +355,7 @@ class ASFParserFunctions {
 		$size = $categorySize = $pageSize = 25;
 		$categoryInputIntro = '';
 		$buttonLabel = '';
+		$useDropDown=false;
 		
 		// assign params - support unlabelled params, for backwards compatibility
 		$unresolvedParameters = array();
@@ -384,7 +399,11 @@ class ASFParserFunctions {
 				
 			}  else if ( $paramName == 'category input intro' ) {
 				$autocompletionQuery = $paramValue;
-			} else { 
+			} else if ( $paramName == 'use dropdown' ) {
+				if(strtolower($paramValue) == 'true'){
+					$useDropDown = true;
+				}
+			}else { 
 				$unresolvedParameters[$i] = $param;
 			}
 		}
@@ -418,6 +437,12 @@ class ASFParserFunctions {
 			
 			If(strlen($buttonLabel) == 0 && array_key_exists(4, $unresolvedParameters))
 				$buttonLabel = $unresolvedParameters[4];
+			
+			If(!$useDropDown && array_key_exists(5, $unresolvedParameters)){
+				if(strtolower($unresolvedParameters[5]) == 'true'){
+					$useDropDown = true;		
+				}
+			}
 		
 		} else if ($type == 'page'){
 			If(strlen($categoryName) == 0 && array_key_exists(1, $unresolvedParameters))
@@ -462,6 +487,12 @@ class ASFParserFunctions {
 			
 			If(strlen($buttonLabel) == 0 && array_key_exists(7, $unresolvedParameters))
 				$buttonLabel = $unresolvedParameters[7];
+				
+			If(!$useDropDown && array_key_exists(8, $unresolvedParameters)){
+				if(strtolower($unresolvedParameters[8]) == 'true'){
+					$useDropDown = true;		
+				}
+			}
 		}
 		
 		//open form tag
@@ -486,7 +517,19 @@ class ASFParserFunctions {
 				//both input fields are shown and category input intro must be added
 				$str .= $categoryInputIntro;
 			}
-			$str .= '<input type="text" name="categories" size="'.$categorySize.'" value="'.$categoryValue.'" class="wickEnabled" constraints="asf-ac:category"/>';
+			
+			if(!$useDropDown){
+				$str .= '<input type="text" name="categories" size="'.$categorySize.'" value="'.$categoryValue.'" class="wickEnabled" constraints="asf-ac:category"/>';
+			} else {
+				$str .= '<select size="1" name="categories" size="'.$categorySize.'">';
+				define('SMW_AC_MAX_RESULTS', 500);
+				@ $categories = ASFCategoryAC::getCategories('');
+				foreach($categories as $category){
+					$str .= '<option>'.$category->getText().'</option>';
+				}
+				
+				$str .= '</select>'; 
+			}
 		}
 		
 		//add constant article creation data

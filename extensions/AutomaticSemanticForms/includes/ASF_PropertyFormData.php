@@ -273,7 +273,6 @@ class ASFPropertyFormData {
 		$values = false;
 		
 		if($this->explicitInputType){
-			//todo: what id explicit input type needs several parameters?
 			$inputType = strtolower($this->explicitInputType);
 		} else {
 			$objectType = '-'.strtolower($this->objectType).'-';
@@ -290,7 +289,6 @@ class ASFPropertyFormData {
 				$rows = ASF_TEXTAREA_ROWS;
 				$cols = ASF_TEXTAREA_COLS;
 			} else if(strpos(DATETIMEDATATYPES, $objectType) !== false){
-				//TODO deal with datepicker
 				global $asfUseSemanticFormsInputsFeatures;
 				if(class_exists('SFITSettings') && $asfUseSemanticFormsInputsFeatures){
 					$inputType = 'datepicker';

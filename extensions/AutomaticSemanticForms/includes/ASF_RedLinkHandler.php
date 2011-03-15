@@ -56,7 +56,7 @@ class ASFRedLinkHandler {
 			}
 		}
 		
-		$createLink = ASFFormGenerator::getInstance()
+		list($createLink, $dC) = ASFFormGenerator::getInstance()
 			->generateFormForCategories(array_keys($categories), null, true); 
 		if($createLink){
 			$link = SpecialPage::getPage( 'FormEdit' );

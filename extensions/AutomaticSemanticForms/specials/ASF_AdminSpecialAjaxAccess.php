@@ -17,7 +17,7 @@ function asff_getFormPreview($categories){
 	
 	$categories = explode(';', $categories);
 	
-	$formDefinition = ASFFormGenerator::getInstance()
+	list($formDefinition, $dontCare) = ASFFormGenerator::getInstance()
 		->generateFormForCategories($categories);
 		
 	if($formDefinition){

@@ -14,6 +14,8 @@ class ASFFormEdit extends SFFormEdit {
 	 * It adds some ASF features and then calls its parent method
 	 */
 function execute($query) {
+		$this->addHeaders();	
+	
 		//get get parameters
 		global $wgRequest;
 		$categoryParam = $wgRequest->getVal('categories');
@@ -72,11 +74,10 @@ function execute($query) {
 		if(count($categoryNames) > 0 && $targetName){
 			//The given instance will be edited with forms for the given categories
 			
-			//TODO: What to do with non existing or empty  category names?
-			
 			$targetTitle = Title::newFromText($targetName);
 			
-			$formDefinition = ASFFormGenerator::getInstance()->generateFormForCategories($categoryNames, $targetTitle);
+			list($formDefinition, $categoriesWithNoFormEdit) = 
+				ASFFormGenerator::getInstance()->generateFormForCategories($categoryNames, $targetTitle);
 			if($formDefinition){
 				//Set the dummy form name to trick the Semantic Forms extension
 				global $asfDummyFormName;
@@ -95,7 +96,12 @@ function execute($query) {
 				}
 			} else {
 				global $wgOut;
-				$wgOut->addHTML( '<p><b>Error:</b> No automatic form could be created for given category name(s).</p>');
+				 
+				$html = '<p><b>Error:</b> No automatic form could be created for the given categories,'.
+				 	' because they all have a <i>No automatic formedit</i> annotation </p>';
+
+				$wgOut->addHTML($html);
+				
 				return;
 			}
 		} else if(count($categoryNames) == 0 && $targetName && !$formName){
@@ -104,7 +110,8 @@ function execute($query) {
 			
 			$title = Title::newFromText($targetName);
 			if($title->exists()){
-				$formDefinition = ASFFormGenerator::getInstance()->generateFromTitle($title, true);
+				list($formDefinition, $categoriesWithNoFormEdit)
+					= ASFFormGenerator::getInstance()->generateFromTitle($title, true);
 		
 				if($formDefinition){
 					global $asfFormDefData;
@@ -149,4 +156,20 @@ function execute($query) {
 		} 
 		return $categoryNames;
 	}
+	
+	
+/*
+	 * Add javascript and CSS files
+	 */
+	private function addHeaders(){
+		global $smgJSLibs; 
+		$smgJSLibs[] = 'jquery'; 
+		$smgJSLibs[] = 'qtip';
+		
+		global $asfHeaders;
+		$asfHeaders['asf.js'] = true;
+		$asfHeaders['asf.css'] = true;		
+	}
+	
+	
 }

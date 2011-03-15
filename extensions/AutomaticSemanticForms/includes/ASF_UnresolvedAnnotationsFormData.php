@@ -86,23 +86,11 @@ class ASFUnresolvedAnnotationsFormData extends ASFCategoryFormData {
 		}
 		
 		//create collapsed version of section
-		$sectionId =  'fieldset_instance_annotations';
-		$intro = "<fieldset id=\"".$sectionId."_hidden\" style=\"display: none\">";
-		$intro .= "<legend>";
-		$intro .= '<img src="ASF_PLUS_ICON" onclick="asf_show_category_section(\''.$sectionId.'\')"></img> ';
+		$intro = "\n{{#collapsableFieldSetStart:";
 		$intro .= wfMsg('asf_unresolved_annotations');
-		$intro .= "</legend>";
-		$intro .= "</fieldset>";
-		
-		//create expanded version of section
-		$intro .= "<fieldset id=\"".$sectionId."_visible\">";
-		$intro .= "<legend>";
-		$intro .= '<img src="ASF_MINUS_ICON" onclick="asf_hide_category_section(\''.$sectionId.'\')"></img> ';
-		$intro .= wfMsg('asf_unresolved_annotations');
-		$intro .= "</legend>";
+		$intro .= "}}";
 		
 		$intro .= "\n\n{|";
-
 		$intro .= "\n";
 		
 		$this->categorySectionIntro = $intro;

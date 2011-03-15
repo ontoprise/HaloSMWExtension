@@ -82,7 +82,9 @@ class ASFFormGeneratorUtils {
 	 * for this article
 	 */
 	public static function canFormForArticleBeCreated(Title $title, $createInNSCategory = false){
-		return ASFFormGenerator::getInstance()->generateFromTitle($title, false, true);
+		list($response, $dC)
+			= ASFFormGenerator::getInstance()->generateFromTitle($title, false, true);
+		return $response;
 	}
 	
 	/*
