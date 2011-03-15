@@ -44,10 +44,10 @@
 				</boolean>
 			</variable>
 			<variable name="wgAllowExternalImagesFrom">
-				<string name="wgAllowExternalImagesFrom"
+				<boolean name="wgAllowExternalImagesFrom"
 					description="allows external images">
 					$wgServer
-				</string>
+				</boolean>
 			</variable>
 			<require name="rm_init"
 				file="extensions/RichMedia/includes/RM_Initialize.php" />
