@@ -991,7 +991,7 @@ WikiTextParser.prototype = {
 					if( pos != -1 ) {
 						var querytext = this.text.substring(currentPos-1, pos);
 						var queryName = this.getQueryName(querytext);
-						var plainQueryText = this.text.substring(currentPos+7, pos-2);
+						var plainQueryText = this.text.substring(currentPos+6, pos-2);
 						plainQueryText = plainQueryText.replace(/\n/g,'');
 						var query = new WtpQuery(
 								querytext,

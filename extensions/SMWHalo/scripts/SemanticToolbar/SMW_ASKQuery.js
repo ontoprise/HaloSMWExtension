@@ -180,7 +180,7 @@ getSelectedItem: function(selindex) {
 	smwhgLogger.log(queries[selindex].getName(),"STB-Queries",this.currentAction+"clicked");
 	/*ENDLOG*/
 
-	var queryString = encodeURIComponent('&query='+queries[selindex].getQueryText());
+	var queryString = encodeURIComponent('&query='+queries[selindex].getQueryText().replace(/\n|\r/g, ''));
 	var args = '&rsargs[]=CKE' + queryString;
 	jQuery.fancybox({
 		'href' : wgScript + '?action=ajax&rs=smwf_qi_getAskPage'+args,
@@ -238,10 +238,10 @@ setNewAskQuery:function() {
 		window.top.frames[0].qihelper.querySaved !== true ) {
 		return;
 	}
-	newQuery = newQuery.replace(/\]\]\[\[/g, "]]\n[[");
-	newQuery = newQuery.replace(/>\[\[/g, ">\n[[");
-	newQuery = newQuery.replace(/\]\]</g, "]]\n<");
-	newQuery = newQuery.replace(/([^\|]{1})\|{1}(?!\|)/g, "$1\n|");
+		newQuery = newQuery.replace(/\]\]\[\[/g, "]]\n[[");
+		newQuery = newQuery.replace(/>\[\[/g, ">\n[[");
+		newQuery = newQuery.replace(/\]\]</g, "]]\n<");
+		newQuery = newQuery.replace(/([^\|]{1})\|{1}(?!\|)/g, "$1\n|");
 	
 	smwhgASKQuery.wtp.addAnnotation(newQuery);
 	refreshSTB.refreshToolBar();
