@@ -1,6 +1,18 @@
 #
 # ChangeLog
 #
+Since DF 1.3.1
+
+Bugfixes:
+    # 13922 Wiki installation directory path can contain whitespaces
+
+New:
+
+ - Ontologies can be deployed via a bundle.
+ - Ontologies can be imported from a file via smwadmin.
+ - export script for bundles has been revised. It now exports complete bundles.
+ - Local bundles can be imported from a file.
+
 
 Since DF 1.3.0 patchlevel 1
 
@@ -17,4 +29,5 @@ New:
 - FR #12508 Multiple different restore points supported.
 - FR #13200 DF writes log about all operations
 - FR #12330: Shell scripts for import of dumps. 
+
 
