@@ -202,9 +202,9 @@ getSelectedItem: function(selindex) {
  */
 setUpdatedAskQuery: function() {
 //	alert('Query Interface is going to be closed! Saving Query now...');
-	var newQuery = window.frames[0].qihelper.getAskQueryFromGui();
-	if( typeof( window.frames[0].qihelper.querySaved) == 'undefined' || 
-		window.frames[0].qihelper.querySaved !== true ) {
+	var newQuery = window.top.frames[0].qihelper.getAskQueryFromGui();
+	if( typeof( window.top.frames[0].qihelper.querySaved) == 'undefined' || 
+		window.top.frames[0].qihelper.querySaved !== true ) {
 		return;
 	}
 	newQuery = newQuery.replace(/\]\]\[\[/g, "]]\n[[");
@@ -233,9 +233,9 @@ setUpdatedAskQuery: function() {
  * set new query annotations
  */
 setNewAskQuery:function() {
-	var newQuery = window.frames[0].qihelper.getAskQueryFromGui();
-	if( typeof( window.frames[0].qihelper.querySaved) == 'undefined' || 
-		window.frames[0].qihelper.querySaved !== true ) {
+	var newQuery = window.top.frames[0].qihelper.getAskQueryFromGui();
+	if( typeof( window.top.frames[0].qihelper.querySaved) == 'undefined' || 
+		window.top.frames[0].qihelper.querySaved !== true ) {
 		return;
 	}
 	newQuery = newQuery.replace(/\]\]\[\[/g, "]]\n[[");

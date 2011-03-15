@@ -54,10 +54,11 @@ class SMWQueryInterface extends SpecialPage {
         $html .= $this->addLoadQuery();
         $html .= '</div>';
         
-        if ($smwgDeployVersion)
-		      $html .= '<script type="text/javascript" src="' . $smwgHaloScriptPath .  '/scripts/QueryInterface/deploy_qi_tooltip.js"></script>';
-		else
-              $html .= '<script type="text/javascript" src="' . $smwgHaloScriptPath .  '/scripts/QueryInterface/qi_tooltip.js"></script>';		
+        if ($smwgDeployVersion) {
+		      $html .= '<script type="text/javascript" src="' . $smwgHaloScriptPath .  '/scripts/QueryInterface/deployQueryInterface.js"></script>';
+        } else {
+              $html .= '<script type="text/javascript" src="' . $smwgHaloScriptPath .  '/scripts/QueryInterface/qi_tooltip.js"></script>';
+        }
 		$html .= '</div></div>';
 		$wgOut->addHTML($html);
 	}
