@@ -207,11 +207,13 @@ setUpdatedAskQuery: function() {
 		window.top.frames[0].qihelper.querySaved !== true ) {
 		return;
 	}
-	newQuery = newQuery.replace(/\]\]\[\[/g, "]]\n[[");
-	newQuery = newQuery.replace(/>\[\[/g, ">\n[[");
-	newQuery = newQuery.replace(/\]\]</g, "]]\n<");
-	newQuery = newQuery.replace(/([^\|]{1})\|{1}(?!\|)/g, "$1\n|");
-
+	if( typeof( window.top.frames[0].qihelper.queryFormated ) === 'undefined' ) { 
+		// format query if not already done
+		newQuery = newQuery.replace(/\]\]\[\[/g, "]]\n[[");
+		newQuery = newQuery.replace(/>\[\[/g, ">\n[[");
+		newQuery = newQuery.replace(/\]\]</g, "]]\n<");
+		newQuery = newQuery.replace(/([^\|]{1})\|{1}(?!\|)/g, "$1\n|");
+	}
 	smwhgASKQuery.wtp.initialize();
 	var queries = smwhgASKQuery.wtp.getAskQueries();
 	var i = smwhgASKQuery.currentQueryIndex;

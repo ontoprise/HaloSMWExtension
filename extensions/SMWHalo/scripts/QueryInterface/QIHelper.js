@@ -2466,6 +2466,9 @@ QIHelper.prototype = {
 		}
 	},
 
+	/**
+	 * run when user switches to "Query source"
+	 */
 	showFullAsk : function(type, toggle) {
 		if (toggle) {
 			$('shade').toggle();
@@ -2488,6 +2491,7 @@ QIHelper.prototype = {
 		if (type == "parser")
 			ask = ask.replace(/([^\|]{1})\|{1}(?!\|)/g, "$1\n|");
 		$('fullAskText').value = ask;
+		this.queryFormated = true;
 	},
 
 	showLoadDialogue : function() {
