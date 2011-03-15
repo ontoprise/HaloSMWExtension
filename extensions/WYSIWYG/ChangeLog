@@ -12,6 +12,7 @@ VERSION 1.4.1
       editor. To use wiki markup and html tags in a wiki page, the user can do
       this in the source mode of the Richtext editor or use the default wiki
       text editor.
+    * new button to add the signature into the edited document.
 
   CHANGES:
     * Fix bug http://smwforum.ontoprise.com/smwbugs/show_bug.cgi?id=13271
