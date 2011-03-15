@@ -78,9 +78,16 @@ function enableSMWHalo($store = 'SMWHaloStore2', $tripleStore = NULL, $tripleSto
 	//init is ExtensionInstalled PF
 	$wgHooks['LanguageGetMagic'][] = 'smwfAddIsExtensionInstalledMagic';
 
-	global $smgJSLibs;
+	global $smgJSLibs, $sfgFancyBoxIncluded;
 	$smgJSLibs[] = 'prototype';
 	$smgJSLibs[] = 'qtip';
+
+	if ( !$sfgFancyBoxIncluded ) {
+		// fancybox isn't already provided by SF
+		$smgJSLibs[] = 'jquery';
+		$smgJSLibs[] = 'fancybox';
+		$sfgFancyBoxIncluded = true;
+	}
 
 	//initialize query management
 	global $smwgHaloIP;

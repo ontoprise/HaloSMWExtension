@@ -140,10 +140,14 @@ function enableRichMediaExtension() {
 	// register AC icons
 	$wgHooks['smwhACNamespaceMappings'][] = 'smwfRMRegisterAutocompletionIcons';
 	
-	global $smgJSLibs;
+	global $smgJSLibs, $sfgFancyBoxIncluded;
 	$smgJSLibs[] = 'jquery';
 	$smgJSLibs[] = 'prototype';
-
+	// following can not be in the BeforePageDisplay hook
+	if ( !$sfgFancyBoxIncluded ) {
+		$smgJSLibs[] = 'fancybox';
+		$sfgFancyBoxIncluded = true;
+	}
 	return true;
 }
 
@@ -355,20 +359,15 @@ function RMImagePreviewUsage_Magic(&$magicWords, $langCode){
  * @return boolean
  */
 function smwRMFormAddHTMLHeader(&$out){
-	global $smwgRMScriptPath, $sfgScriptPath, $sfgFancyBoxIncluded;
+	global $smwgRMScriptPath;
 	static $rmScriptLoaded = false;
 
 	if(!$rmScriptLoaded){
-		if ( !$sfgFancyBoxIncluded ) {
-			$sfgFancyBoxIncluded = true;
-			$out->addScript( '<script type="text/javascript" src="' . $sfgScriptPath . '/libs/jquery.fancybox-1.3.1.js"></script>');
-            $out->addStyle($sfgScriptPath . '/skins/jquery.fancybox-1.3.1.css', 'screen, projection');
-		}
 		$out->addScript('<script type="text/javascript" src="'.$smwgRMScriptPath. '/scripts/richmedia.js"></script>');
 		$out->addScript('<script type="text/javascript" src="'.$smwgRMScriptPath. '/scripts/fck_connect.js"></script>');
 		$out->addScript('<script type="text/javascript" src="'.$smwgRMScriptPath. '/scripts/richmedia_links.js"></script>');
 
-        $out->addStyle($smwgRMScriptPath . '/skins/richmedia.css', 'screen, projection');
+		$out->addStyle($smwgRMScriptPath . '/skins/richmedia.css', 'screen, projection');
 
 		$rmScriptLoaded = true;
 	}

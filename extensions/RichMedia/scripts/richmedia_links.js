@@ -14,7 +14,8 @@ jQuery(document).ready(function() {
 			'type'		: 'iframe',
 			'overlayColor'  : '#222',
 			'overlayOpacity' : '0.8',
-			'hideOnContentClick' : true
+			'hideOnContentClick' : true,
+			'scrolling' : 'auto'
 		});
 	});
 
