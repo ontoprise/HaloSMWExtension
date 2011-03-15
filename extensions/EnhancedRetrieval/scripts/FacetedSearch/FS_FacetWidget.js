@@ -34,6 +34,19 @@ if (typeof FacetedSearch == "undefined") {
  * 
  */
 FacetedSearch.classes.FacetWidget = AjaxSolr.AbstractFacetWidget.extend({
+	
+	/**
+	 * This function is called when the details of a property facet are to be shown.
+	 * @param {string} facet
+	 * 		Name of the facet
+	 * 
+	 */
+	showPropertyDetailsHandler: function(facet) {
+		var clusterer = FacetedSearch.classes.FacetClusterer(facet);
+		clusterer.retrieveClusters();
+		
+	},
+	
 	afterRequest: function () {
 		
 		var $ = jQuery;
@@ -66,7 +79,8 @@ FacetedSearch.classes.FacetWidget = AjaxSolr.AbstractFacetWidget.extend({
 			$(this.target)
 				.append(AjaxSolr.theme('facet', facet, 
 				                       objectedItems[i].count, 
-									   self.clickHandler(facet)))
+									   self.clickHandler(facet),
+									   self.showPropertyDetailsHandler))
 				.append('<br/>');
 		}
 	}
