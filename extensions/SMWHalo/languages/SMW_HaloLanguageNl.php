@@ -306,6 +306,8 @@ Druk de rechter knop om resultaten te verkrijgen. Enkel <i>Return</i> drukken ge
     'smw_qi_loader_qname' => 'Query-Name',
     'smw_qi_loader_qprinter' => 'Result Format',
     'smw_qi_loader_qpage' => 'Used in article',
+    'smw_qi_tpee_header' => 'Select trust policy for your query results',
+    'smw_qi_tpee_none' => 'Don\'t use any trust policy',
 
 	/*Tooltips for Query Interface*/
 	'smw_qi_tt_addCategory' => 'Bij het toevoegen van een categorie, worden enkel artikels van deze categorie toegevoegd',

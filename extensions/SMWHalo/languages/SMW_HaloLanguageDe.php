@@ -311,6 +311,8 @@ protected $smwUserMessages = array(
     'smw_qi_loader_qname' => 'Query-Name',
     'smw_qi_loader_qprinter' => 'Ergebis Format',
     'smw_qi_loader_qpage' => 'aus Artikel',
+    'smw_qi_tpee_header' => 'W&auml;hle trust policy f&uuml;r die Query Ergebnisse',
+    'smw_qi_tpee_none' => 'keine trust policy verwenden',
 
 	/*Tooltips for Query Interface*/
 	'smw_qi_tt_addCategory' => 'Indem man eine Kategorie hinzuf&uuml;gt, werden nur Artikel aus dieser Kategorie ber&uuml;cksichtigt',

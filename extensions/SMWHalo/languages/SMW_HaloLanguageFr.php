@@ -314,6 +314,8 @@ en cliquant sur les grosses flà¨ches situées entre les colonnes.",
     'smw_qi_loader_qname' => 'Query-Name',
     'smw_qi_loader_qprinter' => 'Result Format',
     'smw_qi_loader_qpage' => 'Used in article',
+    'smw_qi_tpee_header' => 'Select trust policy for your query results',
+    'smw_qi_tpee_none' => 'Don\'t use any trust policy',
 
     /*Tooltips for Query Interface*/
     'smw_qi_tt_addCategory' => 'En ajoutant une catégorie, seuls les articles de cette catégorie sont inclus',
