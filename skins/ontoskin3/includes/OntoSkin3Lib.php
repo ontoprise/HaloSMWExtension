@@ -186,11 +186,13 @@ class SMWH_Skin {
         //by default it's disabled
         $content = wfMsgForContent( 'halomenuconfig' );
         if(strpos($content,"showmediawikimenu=true")===false){
-            return "";
+            $hidemediawikimenu = 'style="display:none;"';
+        } else {
+            $hidemediawikimenu = '';
         }
 
         $menu = "<!-- Standardmediawiki Menu -->";
-        $menu.= "<li class=\"smwh_menulistitem\">";
+        $menu.= "<li class=\"smwh_menulistitem\" ".$hidemediawikimenu.">";
         $menu.= "<div id=\"smwh_menuhead_mediawiki\" class=\"smwh_menuhead smwh_menudropdown\"><p>MediaWiki";
         $menu.= "</p></div>";
         $menu.= "<div id=\"smwh_menubody_mediwiki\" class=\"smwh_menubody\">";
@@ -203,7 +205,7 @@ class SMWH_Skin {
         if ( !isset( $sidebar['LANGUAGES'] ) ) $sidebar['LANGUAGES'] = true;
         foreach ($sidebar as $boxName => $cont) {
             if ( $boxName == 'SEARCH' ) {
-            //$this->searchBox();
+                //$this->searchBox();
             } elseif ( $boxName == 'TOOLBOX' ) {
                 $this->skintemplate->toolbox();
             } elseif ( $boxName == 'LANGUAGES' ) {
