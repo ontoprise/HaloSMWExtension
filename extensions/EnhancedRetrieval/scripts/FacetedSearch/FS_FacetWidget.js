@@ -72,17 +72,41 @@ FacetedSearch.classes.FacetWidget = AjaxSolr.AbstractFacetWidget.extend({
 			return a.count > b.count ? -1 : 1;
 		});
 		
+		// show facets using grouping
+		var GROUP_SIZE = 4;
 		var self = this;
 		$(this.target).empty();
 		for (var i = 0, l = objectedItems.length; i < l; i++) {
+			if (i % GROUP_SIZE == 0) {
+				var ntarget = $('<div>');
+				if (i != 0) {
+					$(ntarget).hide();
+				}
+				$(this.target).append(ntarget);
+			}
 			var facet = objectedItems[i].facet;
-			$(this.target)
-				.append(AjaxSolr.theme('facet', facet, 
-				                       objectedItems[i].count, 
-									   self.clickHandler(facet),
-									   self.showPropertyDetailsHandler))
-				.append('<br/>');
+			$(ntarget).append(AjaxSolr.theme('facet', facet, objectedItems[i].count, self.clickHandler(facet), self.showPropertyDetailsHandler)).append('<br>');
 		}
+		if (objectedItems.length > GROUP_SIZE) {
+			$(this.target).append('<a class="xfsFMore">more</a>').append("<br />");
+		}
+	},
+	
+	init: function () {
+		var $ = jQuery;
+		$('a.xfsFMore').live('click', function() {
+			var hidden = $(this).parent().children('div:hidden').length;
+			if (hidden > 0) {
+				$(this).parent().children('div:hidden:first').show();
+				if (hidden == 1) {
+					$(this).text('less');
+				}
+			} else {
+				$(this).parent().children('div:gt(0)').hide();
+				$(this).text('more');
+			}
+			return false;
+		});
 	}
 });
 

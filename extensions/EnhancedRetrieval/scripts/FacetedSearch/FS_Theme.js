@@ -43,14 +43,34 @@
 		102 : ['Property', wgScriptPath + IMAGE_PATH + 'smw_plus_property_icon_16x16.png'],
 		700 : ['Comment', wgScriptPath + IMAGE_PATH + 'smw_plus_comment_icon_16x16.png']
 	};
+
+	var NS_CAT_ID = 14;
+	var NS_PROP_ID = 102;
 	
+	/**
+	 * Removes all underscores.
+	 */
 	function noUnderscore(string) {
 		return string.replace(/_/g, ' ');
 	}
-	
+
+	/**
+	 * Gets icon-URL for a specific namespace ID.
+	 */
 	function getIconForNSID(id) {
 		var iconData = NS_ICON[id];
 		return '<img src="' + iconData[1] + '" title="' + iconData[0] + '"/>';
+	}
+	
+	/**
+	 * Constructs a relative URL from namespace and page name.
+	 */
+	function getLink(namespaceId, page) {
+		var ns = wgFormattedNamespaces[String(namespaceId)];
+		if (ns.length > 0) {
+			ns = noUnderscore(ns) + ':';
+		}
+		return wgArticlePath.replace('$1', ns + page);
 	}
 	
 	/**
@@ -98,8 +118,7 @@
 	 * 		HTML representation of the semantic data
 	 */
 	AjaxSolr.theme.prototype.article = function (doc, data) {
-		// TODO check link
-		var output = '<div class="xfsResult"><a class="xfsResultTitle" href="' + doc.smwh_title + '">';
+		var output = '<div class="xfsResult"><a class="xfsResultTitle" href="' + getLink(doc.smwh_namespace_id, doc.smwh_title) + '">';
 		output += noUnderscore(doc.smwh_title) + '</a>';
 		output += getIconForNSID(doc.smwh_namespace_id);
 		// output += '<p id="links_' + doc.id + '" class="links"></p>';
@@ -126,15 +145,13 @@
 			var count = Math.min(cats.length, CAT_MAX);
 			var vals = [];
 			for ( var i = 0; i < count; i++) {
-				// TODO check link
-				vals.push('<a href="' + cats[i] + '">' + noUnderscore(cats[i]) + '</a>');
+				vals.push('<a href="' + getLink(NS_CAT_ID, cats[i]) + '">' + noUnderscore(cats[i]) + '</a>');
 			}
 			output += vals.join(CAT_SEP);
 			if (count < cats.length) {
 				vals = [];
 				for (var i=count; i<cats.length; i++) {
-					// TODO check link
-					vals.push('<a href="' + cats[i] + '">' + noUnderscore(cats[i]) + '</a>');
+					vals.push('<a href="' + getLink(NS_CAT_ID, cats[i]) + '">' + noUnderscore(cats[i]) + '</a>');
 				}
 				output += CAT_SEP;
 				output += '<span class="xfsToggle" style="display: none">' + vals.join(CAT_SEP) + '</span>';
@@ -168,7 +185,7 @@
 				output += '<td>' + plainName + '</td>';
 				var vals = [];
 				$.each(doc[property], function() {
-					// TODO check link
+					// TODO check link namespace, has to be extracetd from value, e.g. Namespace:Page_Title
 					vals.push('<a href="' + this + '">' + noUnderscore(this) + '</a>');
 				});
 				output += '<td>' + vals.join(', ') + '</td>';
@@ -203,7 +220,6 @@
 		
 		// TODO check if field is set
 		// TODO remove property from previous listing?
-		// TODO handling of timezone, date formatting?
 		output += '<div class="xfsResultModified"><p>Last changed: ' + String(doc[MOD_ATT]).replace('T', ' ').substring(0, 16) + '</p></div>';
 		
 		return output;
@@ -267,7 +283,11 @@
 	AjaxSolr.theme.prototype.no_items_found = function() {
 		return 'no items found in current selection';
 	};
-	
+
+	AjaxSolr.theme.prototype.no_facet_filter_set = function() {
+		return $('<div>').text('(no facet filter set)');
+	};
+
 	/**
 	 * Creates the HTML for a cluster of values of an attribute. A cluster is 
 	 * a range of values and the number of elements within this range e.g.
