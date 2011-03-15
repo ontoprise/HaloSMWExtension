@@ -128,21 +128,26 @@ QIHelper.prototype = {
         }
     },
 
-    resetTscOptions : function() {
-        // check for linked data options and reset these
-        var dataSources = $('qidatasourceselector');
-        if (dataSources) {
-            for (var i=0; i < dataSources.options.length; i++) {
-                if (i == 0) dataSources.options[i].selected='selected'
-                else dataSources.options[i].selected=null;
+    resetSelection : function(selector, defaultVal) {
+        if (defaultVal == null) defaultVal = -1;
+        if (selector) {
+            for (var i=0; i < selector.options.length; i++) {
+                if (i == defaultVal) selector.options[i].selected='selected'
+                else selector.options[i].selected=null;
             }
         }
+    },
+
+    resetTscOptions : function() {
+        // check for linked data options and reset these
+        this.resetSelection( $('qidatasourceselector'), 0);
 		if ( $('qio_showrating') != null )
             $('qio_showrating').checked = null;
 		if ( $('qio_showmetadata') != null )
             $('qio_showmetadata').checked = null;
         if ( $('qio_showdatasource_div') )
             $('qio_showdatasource_div').style.display = "none";
+        this.resetSelection( $('qitpeeselector'), 0);
         this.updateSrcAndPreview();
     },
 
@@ -158,6 +163,15 @@ QIHelper.prototype = {
             $('qio_showdatasource_div').style.display = "block";
         else
             $('qio_showdatasource_div').style.display = "none";
+        this.clickUseTsc();
+    },
+    clickTpee : function () {
+        for ( var i = 1; i < $('qitpeeselector').options.length; i++ ) {
+            var div = 'qitpeeparams_' + $('qitpeeselector').options[i].value;
+            $(div).style.display = 'none';
+            if ($('qitpeeselector').options[i].selected)
+                $(div).style.display = '';
+        }
         this.clickUseTsc();
     },
 
@@ -774,6 +788,31 @@ QIHelper.prototype = {
             else
                 args.push('metadata=*');
         }
+        if ( $('qitpeeselector') ) {
+            var tpee = '';
+            // start with the first TPEE (0 = no policy)
+            for (var i=1; i < $('qitpeeselector').options.length; i++) {
+                if ($('qitpeeselector').options[i].selected) {
+                    tpee = $('qitpeeselector').options[i].value;
+                    args.push('policyid=' + tpee);
+                    break;
+                }
+            }
+            if ( $('qitpeeparams_' + tpee )) {
+                var span = $$('#qitpeeparams_' + tpee + ' span' );
+                var jsonParams = [];
+                for (var i = 0; i < span.length; i++) {
+                    var pname = (span[i].name) ? span[i].name.replace('qitpeeparams_ ' + tpee + '_', '') : span[i].innerHTML;
+                    var val = $('qitpeeparamval_' + tpee + '_' + pname) && $('qitpeeparamval_' + tpee + '_' + pname).value;
+                    if (pname && val) {
+                        jsonParams.push( pname + ':' + val );
+                    }
+                }
+                if (jsonParams.length > 0) {
+                    args.push('policyparams={' + jsonParams.join(',') +'}');
+                }
+            }
+        }
         // return now all parameters
         if (args.length > 0)
             return args.join("| ");
@@ -1205,7 +1244,7 @@ QIHelper.prototype = {
 		this.activeInputs = 0;
         this.updateBreadcrumbs(this.activeQueryId);
 	},
-
+    
 	/**
 	 * Add another input to the current dialogue
 	 */
@@ -2971,6 +3010,8 @@ applyOptionParams : function(query) {
     var mustShow = [];
     $('qiQueryName').value = ''; // reset query name
 	var format = "table"; // default format
+    var tpeeParamsObj = new Object(); // empty policy params
+    var tpeePolicyId = ''; // empty name of TPEE
 	for ( var i = 1; i < options.length; i++) {
             // check for additionl printouts like |?myProp
             var m = options[i].match(/^\s*\?/)
@@ -3015,7 +3056,26 @@ applyOptionParams : function(query) {
                     }
                 }
             }
+            // trust policy settings
+            else if (key == "policyid" && $('qitpeeselector') ) {
+                tpeePolicyId = val;
+                for (var s= 0; s < $('qitpeeselector').length; s++ ) {
+                    $('qitpeeselector').options[s].selected =
+                        (val == $('qitpeeselector').options[s].value) ? "selected" : null;
+                }
+                $('qitpeeparams_'+tpeePolicyId).style.display = 'inline';
+            }
+            else if (key == "policyparams" ) {
+                val = val.replace(/^\s*\{/,'').replace(/\}\s*$/, '');
+                tpeeParamsObj = this.unwrapPolicyParams(val);
+            }
 
+    }
+    if ( tpeeParamsObj ) {
+        for ( var parname in tpeeParamsObj ) {
+            if ( $('qitpeeparamval_' + tpeePolicyId + '_' + parname) )
+                $('qitpeeparamval_' + tpeePolicyId + '_' + parname).value = tpeeParamsObj[parname];
+        }
     }
 	
 
@@ -3106,7 +3166,59 @@ splitQueryParts : function(ask) {
 			break;
 	}
 	return sub;
+},
+
+unwrapPolicyParams : function (paramStr) {
+    var paramsObj = new Object(),
+        delimiter = ':',
+        quoted = '',
+        key = '',
+        type = 0;
+
+    while ( paramStr.length > 0) {
+
+        if (paramStr.match(/^\s*"/))
+            quoted = '"';
+        else if (paramStr.match(/^\s*'/))
+            quoted = "'";
+        var pos = paramStr.indexOf(delimiter),
+            piece = '';
+        while (paramStr.length > 0) {
+            if (pos != -1) {
+                piece += paramStr.substr(0, pos);
+                paramStr = paramStr.substr(pos +1);
+            }
+            else {
+                piece = paramStr;
+                paramStr = '';
+                break;
+            }
+            if (quoted) {
+                var tail = piece.substr(piece.lastIndexOf(quoted));
+                if (tail.match(/\s*$/)) break;
+            } else break;
+        }
+        if (quoted) {
+            piece = piece.substr(piece.indexOf(quoted)+1);
+            piece = piece.substr(0, piece.lastIndexOf(quoted));
+        }
+        else piece = piece.replace(/^\s*/,'').replace(/\s*$/,'');
+        if (type == 0) {
+            key = piece;
+            delimiter = ',';
+        }
+        else {
+            paramsObj[key] = piece;
+            delimiter = ':';
+        }
+        quoted = '';
+        type = 1 - type;
+
+    }
+
+    return paramsObj;
 }
+
 
 }
 // end class qiHelper
@@ -3327,4 +3439,3 @@ if (!Array.prototype.inArray) {
 		return false;
 	}
 };
-
