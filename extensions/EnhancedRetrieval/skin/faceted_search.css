@@ -65,6 +65,11 @@
 .xfsResultTable table td {
 	padding: 2px 15px 2px 5px;
 }
+
+.xfsClusterEntry {
+	margin-left: 2em;
+}
+
 #pager {
 	display: inline;
     list-style-type: none;
