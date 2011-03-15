@@ -123,36 +123,11 @@ class SMWQueryInterface extends SpecialPage {
         global $smwgDefaultStore;
         $useTS = "";
         $useLodDatasources = "";
-        
+        $useLodTrustpolicy = "";
+
    		if (defined('LOD_LINKEDDATA_VERSION')) { // LinkedData extension is installed
-            $sourceOptions = '<option selected="selected">-Wiki-</option>'; // default fist option is the wiki itself
-            $useLodDatasources = wfMsg('smw_qi_datasource_select_header') . ':';
-			// Check if the triples store is propertly connected.
-			$tsa = new LODTripleStoreAccess();
-			if (!$tsa->isConnected()) {
-				$useLodDatasources .= " <span class=\"qiConnectionError\">".wfMsg("smw_ob_ts_not_connected")."</span>";
-			}
-            else {
-                $ids = LODAdministrationStore::getInstance()->getAllSourceDefinitionIDs();
-                foreach ($ids as $sourceID) {
-                    $sourceOptions .= "<option>$sourceID</option>";
-        		}
-            }
-            $useLodDatasources .= '<br/><table><tr><td>' .
-                '<select id="qidatasourceselector" size="5" multiple="true" onchange="qihelper.clickUseTsc();">' .
-                    $sourceOptions .
-                '</select>' .
-                '</td><td>' .
-            /*
-                '<input type="checkbox" id="qio_showrating" onchange="qihelper.clickUseTsc();" />' .
-                wfMsg('smw_qi_showdatarating') . '<br/>' .
-             */
-                '<input type="checkbox" id="qio_showmetadata" value="*" onchange="qihelper.clickMetadata();" />' .
-                wfMsg('smw_qi_showmetadata') . '<br/>' .
-                '<div id="qio_showdatasource_div" style="display:none">'.
-                '<input type="checkbox" id="qio_showdatasource" onchange="qihelper.clickMetadata();" />' .
-                wfMsg('smw_qi_showdatasource') . '<br/></div>' .
-                '</td></tr></table><hr/>';
+            $useLodDatasources = $this->getLodDatasources();
+            $useLodTrustpolicy = $this->getLodTrustpolicy();
         }
         // check if triple store is availabe, and offer option do deselect
         if (isset($smwgDefaultStore) && strpos($smwgDefaultStore, "SMWTripleStore") !== false) {
@@ -161,13 +136,15 @@ class SMWQueryInterface extends SpecialPage {
         // check if there are any options that will be displayed, If this is not the case
         // then ommit this section
         if (strlen($useLodDatasources) == 0 &&
+            strlen($useLodTrustpolicy) == 0 &&
             strlen($useTS) == 0) return "";
 
         $html = '<div id="qioptiontitle"><span onclick="qihelper.switchOption()" onmouseover="Tip(\'' . wfMsg('smw_qi_tt_option') . '\')"><a id="qioptiontitle-link" class="plusminus" href="javascript:void(0)"></a>' . wfMsg('smw_qi_section_option') . '</span></div>' .
                 '<div id="qioptionlayout">' .
                 '<div id="qioptioncontent" style="display:none">' .
-                $useLodDatasources .
                 $useTS .
+                $useLodDatasources .
+                $useLodTrustpolicy .
                 '</div>'.
                 '</div>';
         return $html;
@@ -374,5 +351,66 @@ class SMWQueryInterface extends SpecialPage {
 				'<div id="query4DiscardChanges" style="display:none"></div>';
 	}
 
+    private function getLodDatasources() {
+        $sourceOptions = '<option selected="selected">-Wiki-</option>'; // default fist option is the wiki itself
+        $lodDatasources = '<hr />'.wfMsg('smw_qi_datasource_select_header') . ':';
+		// Check if the triples store is propertly connected.
+		$tsa = new LODTripleStoreAccess();
+		if (!$tsa->isConnected()) {
+			$lodDatasources .= " <span class=\"qiConnectionError\">".wfMsg("smw_ob_ts_not_connected")."</span>";
+		}
+        else {
+            $ids = LODAdministrationStore::getInstance()->getAllSourceDefinitionIDs();
+            foreach ($ids as $sourceID) {
+                $sourceOptions .= "<option>$sourceID</option>";
+        	}
+        }
+        $lodDatasources .= '<br/><table><tr><td>' .
+            '<select id="qidatasourceselector" size="5" multiple="true" onchange="qihelper.clickUseTsc();">' .
+                $sourceOptions .
+            '</select>' .
+            '</td><td>' .
+            /*
+                '<input type="checkbox" id="qio_showrating" onchange="qihelper.clickUseTsc();" />' .
+                wfMsg('smw_qi_showdatarating') . '<br/>' .
+             */
+            '<input type="checkbox" id="qio_showmetadata" value="*" onchange="qihelper.clickMetadata();" />' .
+            wfMsg('smw_qi_showmetadata') . '<br/>' .
+            '<div id="qio_showdatasource_div" style="display:none">'.
+            '<input type="checkbox" id="qio_showdatasource" onchange="qihelper.clickMetadata();" />' .
+            wfMsg('smw_qi_showdatasource') . '<br/></div>' .
+            '</td></tr></table>';
+        return $lodDatasources;
+    }
+    private function getLodTrustpolicy() {
+        $tps = LODPolicyStore::getInstance();
+        $policyIds = $tps->getAllPolicyIDs();
+        $is = count($policyIds);
+		if ($is > 0) {
+            $paramText = '';
+            $text = '<select id="qitpeeselector" size="5" onchange="qihelper.clickTpee();">'.
+                    '<option value="__NONE__" selected="selected">'.wfMsg('smw_qi_tpee_none').'</option>';
+            for ($i = 0; $i < $is; $i++) {
+                $policy = $tps->loadPolicy($policyIds[$i]);
+                $params = $policy->getParameters();
+                $paramText .= '<div id="qitpeeparams_'.$policyIds[$i].'" style="display:none"><table>';
+                foreach ($params as $param) {
+                    $paramText .= '<tr><td colspan="2">'.$param->getDescription().'</td></tr>'.
+                            '<tr><td>'.
+                            ( ($param->getLabel())
+                                ? '<span name="qitpeeparams_'.$policyIds[$i].'_'.$param->getName().'">'.$param->getLabel().'</span>'
+                                : '<span>'.$param->getName().'</span>'
+                            ).
+                            '</td><td><input id="qitpeeparamval_'.$policyIds[$i].'_'.$param->getName().'" type="text" size="20"/></td></tr>';
+                }
+                $paramText .= '</table></div>';
+                $text .= '<option value="'.$policyIds[$i].'">'.$policy->getDescription().'</option>';
+            }
+            $text .= '</select>';
+            return '<hr />'.wfMsg('smw_qi_tpee_header') .':<br/><table><tr><td>'.$text.'</td><td>'.$paramText.'</td></tr></table>';
+        }
+        
+        return '';
+    }
 }
 
