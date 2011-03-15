@@ -448,10 +448,9 @@ en cliquant sur les grosses flà¨ches situées entre les colonnes.",
     //--- Non-existing pages ---
     'lod_nep_link'          => 'Create the article <b>$1</b> with the content displayed below.',
     
-    
-    
-    
-
+    	// Tabular Forms
+	'smw_tf_paramdesc_add'		=> 'L\'utilisateur est autorisé à ajouter de nouvelles instances pour le résultat',
+	'smw_tf_paramdesc_delete'	=> 'L\'utilisateur est autorisé à supprimer des instances du résultat',
     );
 
 

@@ -416,6 +416,10 @@ protected $smwUserMessages = array(
 	
 	//--- Non-existing pages ---
     'lod_nep_link'          => 'Den Artikel <b>$1</b> mit dem unten dargestellten Inhalt erzeugen.',
+
+	// Tabular Forms
+	'smw_tf_paramdesc_add'		=> 'Benutzer darf neue Instanzen zum Ergebnis hinzufügen',
+	'smw_tf_paramdesc_delete'	=> 'Benutzen darf Instanzen aus dem Ergebnis löschen',
 	
 );
 

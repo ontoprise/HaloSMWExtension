@@ -35,9 +35,14 @@ class TFTabularFormQueryPrinter extends SMWResultPrinter {
 	}
 
 	public function getParameters() {
-		//todo: deal with parameters
-		//todo: add no edit and no delete parameter
-		return array();
+		$params = parent::getParameters();
+		$params[] = array( 'name' => 'enable add', 'type' => 'enumeration', 
+			'description' => wfMsg( 'smw_tf_paramdesc_add' ),
+			'values' => array( 'true', 'false' ) );
+		$params[] = array( 'name' => 'enable delete', 'type' => 'enumeration', 
+			'description' => wfMsg( 'smw_tf_paramdesc_delete' ),
+			'values' => array( 'true', 'false' ) );
+		return $params;
 	}
 
 }

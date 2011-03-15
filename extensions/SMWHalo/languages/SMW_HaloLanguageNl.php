@@ -423,13 +423,12 @@ Druk de rechter knop om resultaten te verkrijgen. Enkel <i>Return</i> drukken ge
         'smw_treeviewleft' => 'Open treeview to the left side',
         'smw_treeviewright' => 'Open treeview to the right side',
 
-	//--- Non-existing pages ---
-    'lod_nep_link'          => 'Create the article <b>$1</b> with the content displayed below.',
+		//--- Non-existing pages ---
+	    'lod_nep_link'          => 'Create the article <b>$1</b> with the content displayed below.',
 
-
-
-
-
+		// Tabular Forms
+		'smw_tf_paramdesc_add'		=> 'Gebruiker is toegestaan ​​om nieuwe exemplaren toe te voegen aan het resultaat',
+		'smw_tf_paramdesc_delete'	=> 'Gebruiker is toegestaan ​​om gevallen te verwijderen uit het resultaat',
 	);
 
 

@@ -425,6 +425,10 @@ clicking the big arrows between the columns.',
 	//--- Non-existing pages ---
     'lod_nep_link'          => 'Create the article <b>$1</b> with the content displayed below.',
 	
+	// Tabular Forms
+	'smw_tf_paramdesc_add'		=> 'User is allowed to add new instances to the result',
+	'smw_tf_paramdesc_delete'	=> 'User is allowed to delete instances from the result',
+	
 
 	);
 
