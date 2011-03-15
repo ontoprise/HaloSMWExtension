@@ -112,16 +112,21 @@ ul.smwh_menulist div.smwh_menubody td:hover {
 
 /* breadcrumb */
 
-#breadcrumb a{
+#breadcrumb a, #breadcrumb span {
+	background: url("../img/breadcrums.jpg") no-repeat scroll right center transparent; 
+	-moz-background-inline-policy: continuous;
     color: #4187a0;
+    float: left;
+    padding: 0.9em 0.85em;
 }
+
+#breadcrumb span {
+	color: #000;
+}
+
 
 #smwh_breadcrumbs{
-    font-size: smaller;
-}
-
-#smwh_breadcrumb_currentpage{
-    color: #000;
+    font-size: x-small;
 }
 
 /* mainpage */
