@@ -421,6 +421,9 @@ protected $smwUserMessages = array(
 	// Tabular Forms
 	'smw_tf_paramdesc_add'		=> 'Benutzer darf neue Instanzen zum Ergebnis hinzufügen',
 	'smw_tf_paramdesc_delete'	=> 'Benutzen darf Instanzen aus dem Ergebnis löschen',
+
+	//Querylist Special Page
+	'querylist' => "Gespeicherte Queries",
 	
 );
 

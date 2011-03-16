@@ -452,6 +452,9 @@ en cliquant sur les grosses flà¨ches situées entre les colonnes.",
     	// Tabular Forms
 	'smw_tf_paramdesc_add'		=> 'L\'utilisateur est autorisé à ajouter de nouvelles instances pour le résultat',
 	'smw_tf_paramdesc_delete'	=> 'L\'utilisateur est autorisé à supprimer des instances du résultat',
+    
+    	//Querylist Special Page
+		'querylist' => "Saved Queries",
     );
 
 

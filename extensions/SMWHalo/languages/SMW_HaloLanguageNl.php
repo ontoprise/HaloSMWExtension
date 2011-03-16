@@ -430,6 +430,9 @@ Druk de rechter knop om resultaten te verkrijgen. Enkel <i>Return</i> drukken ge
 		// Tabular Forms
 		'smw_tf_paramdesc_add'		=> 'Gebruiker is toegestaan ​​om nieuwe exemplaren toe te voegen aan het resultaat',
 		'smw_tf_paramdesc_delete'	=> 'Gebruiker is toegestaan ​​om gevallen te verwijderen uit het resultaat',
+	
+		//Querylist Special Page
+		'querylist' => "Saved Queries",
 	);
 
 
