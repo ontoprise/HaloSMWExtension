@@ -363,7 +363,7 @@ class ASFParserFunctions {
 			$elements = explode( '=', $param, 2 );
 			$paramName = null;
 			$paramValue = trim( $param );
-			if ( count( $elements ) > 1 ) {
+			if ( count( $elements ) > 1) {
 				$paramName = trim( $elements[0] );
 				$paramValue = trim( $elements[1] );
 			}
@@ -376,7 +376,7 @@ class ASFParserFunctions {
 				$pageName = $paramValue;
 			else if ( $paramName == 'size' )
 				$size = $paramValue;
-			else if ( $paramName == 'page input size' )
+			 else if ( $paramName == 'page input size' )
 				$pageSize = $paramValue;
 			else if ( $paramName == 'category input size' )
 				$categorySize = $paramValue;
@@ -396,14 +396,13 @@ class ASFParserFunctions {
 				$autocompletionType = 'namespace';
 			} else if ( $paramName == 'category input intro' ) {
 				$categoryInputIntro = $paramValue;
-				
 			}  else if ( $paramName == 'category input intro' ) {
 				$autocompletionQuery = $paramValue;
 			} else if ( $paramName == 'use dropdown' ) {
 				if(strtolower($paramValue) == 'true'){
 					$useDropDown = true;
 				}
-			}else { 
+			} else { 
 				$unresolvedParameters[$i] = $param;
 			}
 		}
@@ -423,7 +422,7 @@ class ASFParserFunctions {
 				$pageName = ($target) ? $target : '';
 			}
 			
-			if($categorySize == 25 && array_key_exists(2, $unresolvedParameters))
+			if($categorySize == 25 && array_key_exists(2, $unresolvedParameters) && $size == 25)
 				$categorySize = $unresolvedParameters[2];
 			if($categorySize != 25)
 				$size = $categorySize;
@@ -448,7 +447,7 @@ class ASFParserFunctions {
 			If(strlen($categoryName) == 0 && array_key_exists(1, $unresolvedParameters))
 				$categoryName = $unresolvedParameters[1];
 			
-			if($pageSize == 25 && array_key_exists(2, $unresolvedParameters))
+			if($pageSize == 25 && array_key_exists(2, $unresolvedParameters) && $size == 25)
 				$pageSize = $unresolvedParameters[2];
 			if($pageSize != 25)
 				$size = $pageSize;
