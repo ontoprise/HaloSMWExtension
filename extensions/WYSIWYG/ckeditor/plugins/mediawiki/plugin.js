@@ -337,7 +337,7 @@ CKEDITOR.plugins.add( 'mediawiki',
 				{
 					label : editor.lang.mwplugin.signature,
 					command : 'MWSignature',
-                    icon: this.path + 'images/tb_icon_sig.png'
+                    icon: this.path + 'images/tb_icon_sig.gif'
 				});
 
 		}
