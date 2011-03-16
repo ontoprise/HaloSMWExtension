@@ -3069,9 +3069,16 @@ applyOptionParams : function(query) {
             // trust policy settings
             else if (key == "policyid" && $('qitpeeselector') ) {
                 tpeePolicyId = val;
-                for (var s= 0; s < $('qitpeeselector').length; s++ ) {
-                    $('qitpeeselector').options[s].selected =
-                        (val == $('qitpeeselector').options[s].value) ? "selected" : null;
+                for (var s= 0; s < $('qitpeeselector').options.length; s++ ) {
+                    if ( val == $('qitpeeselector').options[s].value ) {
+                        $('qitpeeselector').options[s].selected = "selected";
+                        $('qitpeeparams_'+val).style.display = '';
+                    }
+                    else {
+                        var divId = 'qitpeeparams_'+$('qitpeeselector').options[s].value;
+                        $('qitpeeselector').options[s].selected = null;
+                        if (s > 0) $(divId).style.display = 'none';
+                    }
                 }
                 $('qitpeeparams_'+tpeePolicyId).style.display = 'inline';
             }
