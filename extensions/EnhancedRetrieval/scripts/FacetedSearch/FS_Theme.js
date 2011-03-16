@@ -218,9 +218,9 @@
 			output += '</table></div>';
 		}
 		
-		// TODO check if field is set
-		// TODO remove property from previous listing?
-		output += '<div class="xfsResultModified"><p>Last changed: ' + String(doc[MOD_ATT]).replace('T', ' ').substring(0, 16) + '</p></div>';
+		if (doc[MOD_ATT]) {
+			output += '<div class="xfsResultModified"><p>Last changed: ' + String(doc[MOD_ATT]).replace('T', ' ').substring(0, 16) + '</p></div>';
+		}
 		
 		return output;
 	};
@@ -246,7 +246,7 @@
 		var html = 
 			'<a href="#">' +
 				extractPlainName(facet) +
-				' (' + count + ')' +
+				(count > 0 ? ' (' + count + ')' : '') +
 			'</a>';
 		html = $(html).click(handler);
 		if (isProperty(facet)) {

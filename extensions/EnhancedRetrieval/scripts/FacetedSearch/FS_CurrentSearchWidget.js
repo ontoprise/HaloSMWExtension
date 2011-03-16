@@ -33,18 +33,23 @@ FacetedSearch.classes.CurrentSearchWidget = AjaxSolr.AbstractWidget.extend({
 	afterRequest : function() {
 		var $ = jQuery;
 
+		var FIELD_PREFIX_REGEX = /([^:]+):(.*)/;
+		
 		var self = this;
 		var links = [];
 
 		var fq = this.manager.store.values('fq');
 		for ( var i = 0, l = fq.length; i < l; i++) {
-			// TODO format facet text
-			links.push($('<a href="#"/>').text(fq[i] + ' [X]').click(
-					self.removeFacet(fq[i])));
+			var match = fq[i].match(FIELD_PREFIX_REGEX);
+			// TODO add property details handler
+			links.push(AjaxSolr.theme('facet', match[2], -1, self.removeFacet(fq[i]), self.showPropertyDetailsHandler));
 		}
 
 		if (links.length) {
-			AjaxSolr.theme('list_items', this.target, links);
+			$(this.target).empty();
+			$.each(links, function() {
+				$(self.target).append(this).append('<br>');
+			});
 		} else {
 			$(this.target).html(AjaxSolr.theme('no_facet_filter_set'));
 		}
@@ -58,31 +63,5 @@ FacetedSearch.classes.CurrentSearchWidget = AjaxSolr.AbstractWidget.extend({
 			}
 			return false;
 		};
-	},
-
-	init : function() {
-		var $ = jQuery;
-		// $('a.xfsMore').live('click', function() {
-		// $(this).toggle(function() {
-		// $(this).prev('span.xfsToggle').show();
-		// $(this).text('less');
-		// return false;
-		// }, function() {
-		// $(this).prev('span.xfsToggle').hide();
-		// $(this).text('more');
-		// return false;
-		// });
-		// });
-		// $('a.xfsShow').live('click', function() {
-		// $(this).toggle(function() {
-		// $(this).next('table').show();
-		// $(this).text('hide');
-		// return false;
-		// }, function() {
-		// $(this).next('table').hide();
-		// $(this).text('show');
-		// return false;
-		// });
-		// });
 	}
 });
