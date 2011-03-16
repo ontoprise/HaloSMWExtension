@@ -67,7 +67,7 @@ FacetedSearch.classes.FacetWidget = AjaxSolr.AbstractFacetWidget.extend({
 				count: count
 			});
 		}
-		
+
 		objectedItems.sort(function(a, b){
 			return a.count > b.count ? -1 : 1;
 		});
@@ -85,10 +85,17 @@ FacetedSearch.classes.FacetWidget = AjaxSolr.AbstractFacetWidget.extend({
 				$(this.target).append(ntarget);
 			}
 			var facet = objectedItems[i].facet;
-			$(ntarget).append(AjaxSolr.theme('facet', facet, objectedItems[i].count, self.clickHandler(facet), self.showPropertyDetailsHandler)).append('<br>');
+			$(ntarget)
+				.append(AjaxSolr.theme('facet', 
+									   facet, objectedItems[i].count, 
+									   self.clickHandler(facet), 
+									   self.showPropertyDetailsHandler))
+				.append('<br>');
 		}
 		if (objectedItems.length > GROUP_SIZE) {
-			$(this.target).append('<a class="xfsFMore">more</a>').append("<br />");
+			$(this.target)
+				.append('<a class="xfsFMore">more</a>')
+				.append("<br />");
 		}
 	},
 	
