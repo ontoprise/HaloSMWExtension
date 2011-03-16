@@ -27,7 +27,7 @@ class ASFAdminSpecial extends SpecialPage {
 		
 		//the category input field
 		$html .= '<span><small>Please enter category names separated by semicolons.</small></span>';
-		$html .= '<textarea id="asf_category_input" class="wickEnabled" constraints="ask: [[:Category:+]]"></textarea>';
+		$html .= '<textarea id="asf_category_input" class="wickEnabled" constraints="asf-ac:category"></textarea>';
 		$html .= '<input type="button" value="Refresh" onclick="ASFAdmin.refreshTabs()"/>';
 		
 		//the tabs
