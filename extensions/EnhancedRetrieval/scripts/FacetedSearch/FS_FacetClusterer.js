@@ -65,6 +65,8 @@ FacetedSearch.classes.FacetClusterer = function (facetName) {
 	function construct(facetName) {
 		mAjaxSolrManager = new AjaxSolr.Manager();
 		mAjaxSolrManager.init();
+		fsm = FacetedSearch.singleton.FacetedSearchInstance.getAjaxSolrManager();
+		mAjaxSolrManager.store = fsm.store;
 		
 		mFacetName = facetName;
 		
@@ -76,7 +78,6 @@ FacetedSearch.classes.FacetClusterer = function (facetName) {
 	 * Retrieves the clusters for the facet of this instance
 	 */
 	that.retrieveClusters = function () {
-		mAjaxSolrManager.store.addByValue('q', '*:*');
 		mAjaxSolrManager.store.addByValue('stats', 'true');
 		mAjaxSolrManager.store.addByValue('stats.field', mFacetName);
 		var handleResponse = mAjaxSolrManager.handleResponse;
