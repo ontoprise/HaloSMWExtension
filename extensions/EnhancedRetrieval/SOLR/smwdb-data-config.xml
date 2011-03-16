@@ -36,59 +36,71 @@
         	}
         	
         	function Attributes(row) {
-        		var prop    = row.get('prop');
-        		var valXSD  = row.get('valueXSD');
-        		var valNum  = row.get('valueNum');
-        		var valUnit = row.get('valueUnit');
-        		var type    = row.get('type');
-        		row.remove('prop');
-        		row.remove('valueXSD');
-        		row.remove('valueNum');
-        		row.remove('valueUnit');
-        		row.remove('type');
-        		var typeSuffix = 't';
-        		var isNumeric = false;
-        		if (type == '_dat' ||
-              prop == 'Modification_date' ||
-              prop == 'Creation_date') {
-              // Given format of a date: 1995/12/31T23:59:59
-              // Required format: 1995-12-31T23:59:59Z
-              var dateTime = valXSD.split("T");
-              var date = dateTime[0];
-              date = date.replace('/', '-');
-              time = dateTime.length > 1 ? dateTime[1] : '00:00:00';
-              valXSD = date + 'T' + time + 'Z';
-              typeSuffix = 'dt';
-            } else if (
-              type == '_txt' ||
-        	    type == '_cod' ||
-        	    type == '_str' ||
-        	    type == '_ema' ||
-        	    type == '_uri' ||
-        	    type == '_anu' ||
-        	    type == '_tel' ||
-        	    type == '_tem' ||
-        	    type == '_rec') {
-              typeSuffix = 't';
-        	  } else if (type == '_num') {
-              typeSuffix = 'd';
-              isNumeric = true;
-        	  } else if (type == '_boo') {
-              typeSuffix = 'b';
-            }
-
-            var propXSD = 'smwh_'+prop+'_xsdvalue_'+typeSuffix;
-        		row.put(propXSD, valXSD);
-        		row.put('smwh_attributes', propXSD);
-        		if (isNumeric) {
-        		  row.put('smwh_'+prop+'_numvalue_d', valNum);
-        		  if (valUnit.length > 0) {
-                row.put('smwh_'+prop+'_unit_s', valUnit);
-              }
-            }
-        		
-        		return row;
-        	}
+				var prop    = row.get('prop');
+				var valXSD  = row.get('valueXSD');
+				var valNum  = row.get('valueNum');
+				var valUnit = row.get('valueUnit');
+				var type    = row.get('type');
+				row.remove('prop');
+				row.remove('valueXSD');
+				row.remove('valueNum');
+				row.remove('valueUnit');
+				row.remove('type');
+				var typeSuffix = 't';
+				var isNumeric = false;
+				if (type == '_dat' ||
+					prop == 'Modification_date' ||
+					prop == 'Creation_date') {
+					// Given format of a date: 1995/12/31T23:59:59
+					// Required format: 1995-12-31T23:59:59Z
+					var dateTime = valXSD.split("T");
+					var date = dateTime[0];
+					date = date.replace('/', '-');
+					time = dateTime.length > 1 ? dateTime[1] : '00:00:00';
+					valXSD = date + 'T' + time + 'Z';
+					typeSuffix = 'dt';
+					// Store a date/time also as long e.g. 19951231235959
+					// This is needed for querying statistics for dates
+					// Normalize month and day e.g. 1995-1-1 => 1995-01-01 
+					var ymd = date.split('-');
+					var m = parseInt(ymd[1]);
+					m = (m < 10) ? '0'+m : m.toString();
+					var d = parseInt(ymd[2]);
+					d = (d < 10) ? '0'+d : d.toString();
+					time = time.replace(":", '').replace(":", '');
+					var dateTime = ymd[0]+m+d+time;
+					var propDate = 'smwh_'+prop+'_datevalue_l';
+					row.put(propDate, dateTime);
+				} else if (
+					type == '_txt' ||
+					type == '_cod' ||
+					type == '_str' ||
+					type == '_ema' ||
+					type == '_uri' ||
+					type == '_anu' ||
+					type == '_tel' ||
+					type == '_tem' ||
+					type == '_rec') {
+					typeSuffix = 't';
+				} else if (type == '_num') {
+					typeSuffix = 'd';
+					isNumeric = true;
+				} else if (type == '_boo') {
+					typeSuffix = 'b';
+				}
+				
+				var propXSD = 'smwh_'+prop+'_xsdvalue_'+typeSuffix;
+				row.put(propXSD, valXSD);
+				row.put('smwh_attributes', propXSD);
+				if (isNumeric) {
+					row.put('smwh_'+prop+'_numvalue_d', valNum);
+					if (valUnit.length > 0) {
+						row.put('smwh_'+prop+'_unit_s', valUnit);
+					}
+				}
+				
+				return row;
+			}
         ]]>
 	</script>
 	<document>
