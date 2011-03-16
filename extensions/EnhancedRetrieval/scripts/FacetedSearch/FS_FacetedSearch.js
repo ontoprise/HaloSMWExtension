@@ -24,8 +24,7 @@
 if (typeof FacetedSearch == "undefined") {
 // Define the FacetedSearch module	
 	var FacetedSearch = { 
-		classes : {},
-		singleton : {}
+		classes : {}
 	};
 }
 
@@ -53,6 +52,11 @@ FacetedSearch.classes.FacetedSearch = function () {
 	
 	// string - The current search string
 	var mSearch = '';
+	
+	//--- Getters/Setters ---
+	that.getAjaxSolrManager = function() {
+		return mAjaxSolrManager;
+	}
 
 	/**
 	 * Constructor for the FacetedSearch class.
@@ -64,13 +68,6 @@ FacetedSearch.classes.FacetedSearch = function () {
 		  id: 'article',
 		  target: '#docs'
 		}));
-
-		var params = {
-				facet: true,
-				'facet.field': FACET_FIELDS,
-				'facet.mincount': 1,
-				'json.nl': 'map'
-			};
 		
 		// Add the widgets for the standard facets
 		for (var i = 0, l = FACET_FIELDS.length; i < l; i++) {
@@ -103,9 +100,21 @@ FacetedSearch.classes.FacetedSearch = function () {
 			id: 'currentsearch',
 		  	target: '#selection'
 		}));
-		
+
 		// init
 		mAjaxSolrManager.init();
+
+		// add facets
+		var params = {
+			facet: true,
+			'facet.field': FACET_FIELDS,
+			'facet.mincount': 1,
+			'json.nl': 'map'
+		};
+		for (var name in params) {
+			mAjaxSolrManager.store.addByValue(name, params[name]);
+		}
+
 		mAjaxSolrManager.store.addByValue('q', '*:*');
 		
 		// add facets
@@ -158,6 +167,6 @@ FacetedSearch.classes.FacetedSearch = function () {
 }
 
 jQuery(document).ready(function() {
-	//FacetedSearch.singleton.FacetedSearchInstance =
-	FacetedSearch.classes.FacetedSearch();
+	FacetedSearch.singleton = {};
+	FacetedSearch.singleton.FacetedSearchInstance = FacetedSearch.classes.FacetedSearch();
 });
