@@ -51,63 +51,49 @@ class CECommentAjax {
  * @return xml
  * 
  */
-function cef_comment_createNewPage( $pageName, $pageContent) {
+function cef_comment_createNewPage( $pageName, $pageContent ) {
 
 	$pageName = CECommentUtils::unescape( $pageName );
 	$pageContent = CECommentUtils::unescape( $pageContent );	
-	return CEComment::createComment($pageName, $pageContent);
+	return CEComment::createComment( $pageName, $pageContent );
 }
 
 function cef_comment_editPage( $pageName, $pageContent) {
 
 	$pageName = CECommentUtils::unescape( $pageName );
 	$pageContent = CECommentUtils::unescape( $pageContent );	
-	return CEComment::createComment($pageName, $pageContent, true);
+	return CEComment::createComment( $pageName, $pageContent, true );
 }
 
 
-function cef_comment_deleteComment($pageName) {
+function cef_comment_deleteComment( $pageName ) {
 	global $wgUser;
-	$pageName = CECommentUtils::unescape($pageName);
-	$result = wfMsg("ce_nothing_deleted");
+	$pageName = CECommentUtils::unescape( $pageName );
+	$result = wfMsg( 'ce_nothing_deleted' );
 	$success = true;
-	if ($pageName != null) {
+	if ( $pageName != null ) {
 		try {
-			$title = Title::newFromText($pageName);
-			if($title->getNamespace() != CE_COMMENT_NS) {
-				$title = Title::makeTitle(CE_COMMENT_NS, $title);
+			$title = Title::newFromText( $pageName );
+			if ( $title->getNamespace() != CE_COMMENT_NS ) {
+				$title = Title::makeTitle( CE_COMMENT_NS, $title );
 			}
-			$article = new Article($title);
+			$article = new Article( $title );
 			$articleContent = $article->getContent();
-			$date = new Datetime(null, new DateTimeZone('UTC'));
-			$articleContent = preg_replace('/\|CommentContent.*}}/',
+			$date = new Datetime( null, new DateTimeZone( 'UTC' ) );
+			$articleContent = preg_replace( '/\|CommentContent.*}}/',
 				'|CommentContent=' . $wgUser->getName() . ' ' .
-				wfMsg('ce_comment_has_deleted') . ' ' .
-				$date->format('r') . '|CommentWasDeleted=true|}}',
-				$articleContent);
-			$article->doEdit($articleContent, wfMsg('ce_comment_delete_reason'));
-//			$article->doDelete(wfMsg('ce_comment_delete_reason'));
-			$result = wfMsg('ce_comment_deletion_successful');
-			return CECommentUtils::createXMLResponse($result, '0', $pageName);
-		} catch(Exception $e ) {
-			$result .= wfMsg('ce_comment_deletion_error');
+				wfMsg( 'ce_comment_has_deleted' ) . ' ' .
+				$date->format( 'r' ) . '|CommentWasDeleted=true|}}',
+				$articleContent
+			);
+			$article->doEdit( $articleContent, wfMsg( 'ce_comment_delete_reason' ) );
+			$result = wfMsg( 'ce_comment_deletion_successful' );
+			return CECommentUtils::createXMLResponse( $result, '0', $pageName );
+		} catch( Exception $e ) {
+			$result .= wfMsg( 'ce_comment_deletion_error' );
 			$success = false;
-			return CECommentUtils::createXMLResponse($result, '1', $pageName);
+			return CECommentUtils::createXMLResponse( $result, '1', $pageName );
 		}
 	}
-	return CECommentUtils::createXMLResponse('sth went wrong here', '1', $pageName);
-}
-
-/**
- * 
- * @param $wikiurl
- * @param $wikiPath
- * @param $pagename
- * @param $revision
- * @param $section
- * @return unknown_type
- */
-function cef_comment_getPageContent($pagename, $revision, $section ) {
-//	return CEComment::createComment($pagexml);
-	return "xml";
+	return CECommentUtils::createXMLResponse( 'sth went wrong here', '1', $pageName );
 }

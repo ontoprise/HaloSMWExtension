@@ -44,79 +44,86 @@ class CEComment {
 	const PERMISSION_ERROR = 2;
 	
 	
-	public static function createComment($pageName, $pageContent, $editMode = false) {
+	public static function createComment( $pageName, $pageContent, $editMode = false ) {
 		global $wgUser, $cegEnableComment, $cegEnableCommentFor;
 		
-		$title = Title::newFromText($pageName);
-		if($title->getNamespace() != CE_COMMENT_NS) {
-			$title = Title::makeTitle(CE_COMMENT_NS, $title);
+		$title = Title::newFromText( $pageName );
+		if( $title->getNamespace() != CE_COMMENT_NS ) {
+			$title = Title::makeTitle( CE_COMMENT_NS, $title );
 		}
-		$article = new Article($title);
+		$article = new Article( $title );
 		
 		# check if comments are enabled #
-		if ( !isset($cegEnableComment) || !$cegEnableComment )
+		if ( !isset( $cegEnableComment ) || !$cegEnableComment ) {
 			return CECommentUtils::createXMLResponse(
-				wfMsg('ce_cf_disabled'),
-				self::PERMISSION_ERROR, $pageName);
-		
+				wfMsg( 'ce_cf_disabled' ),
+				self::PERMISSION_ERROR, $pageName
+			);
+		}
 		# check authorization #
-		if ( !isset($cegEnableCommentFor)
-			|| ($cegEnableCommentFor == CE_COMMENT_NOBODY )
-			|| ( ($cegEnableCommentFor == CE_COMMENT_AUTH_ONLY) && !($wgUser->isAnon()) ) )
+		if ( !isset( $cegEnableCommentFor )
+			|| ( $cegEnableCommentFor == CE_COMMENT_NOBODY )
+			|| ( ( $cegEnableCommentFor == CE_COMMENT_AUTH_ONLY ) && !$wgUser->isAnon() ) )
 		{
 			return CECommentUtils::createXMLResponse(
-				wfMsg('ce_cf_disabled'),
-				self::PERMISSION_ERROR, $pageName);
+				wfMsg( 'ce_cf_disabled' ),
+				self::PERMISSION_ERROR, $pageName
+			);
 		} else {
 			//user is allowed
-			if ($article->exists() && !$editMode) {
+			if ( $article->exists() && !$editMode ) {
 				return CECommentUtils::createXMLResponse(
-					wfMsg('ce_comment_exists', $pageName),
-					self::COMMENT_ALREADY_EXISTS, $pageName);
+					wfMsg( 'ce_comment_exists', $pageName),
+					self::COMMENT_ALREADY_EXISTS, $pageName
+				);
 			}
-			if(!$title->userCan('edit')) {
+			if( !$title->userCan( 'edit' ) ) {
 				return CECommentUtils::createXMLResponse(
-					wfMsg('ce_com_cannot_create'),
+					wfMsg( 'ce_com_cannot_create' ),
 					self::PERMISSION_ERROR, $pageName);
 			} else {
-				
 				// Insert current Date
 				$date = new DateTime();
-				$dateString = $date->format('c');
-				if($editMode) {
+				$dateString = $date->format( 'c' );
+				if( $editMode ) {
 					// use the original DATE!!!
-					SMWQueryProcessor::processFunctionParams(array("[[".$pageName."]]", "?Has comment date=")
-						,$querystring,$params,$printouts);
-					$queryResult = explode("|",
-						SMWQueryProcessor::getResultFromQueryString($querystring,$params,
-						$printouts, SMW_OUTPUT_WIKI));
+					$comNS = MWNamespace::getCanonicalName( CE_COMMENT_NS );
+					SMWQueryProcessor::processFunctionParams(
+						array( $comNS . ":" . $pageName, "?Has comment date" ),
+						$querystring, $params, $printouts, true
+					);
+					$queryResult = explode( "|",
+						SMWQueryProcessor::getResultFromQueryString( 
+							$querystring, $params, $printouts, SMW_OUTPUT_WIKI
+						)
+					);
 					//just get the first property value and use this
-					if(isset($queryResult[0])) {
+					if( isset( $queryResult[0] ) ) {
 						// see '/extensions/SemanticMediaWiki/includes/SMW_DV_Time.php'
 						// [...] For export, times are given without timezone information. [...]
-						$date = new Datetime($queryResult[0], new DateTimeZone('UTC'));
-						$dateString = $date->format('c');
+						$date = new Datetime( $queryResult[0], new DateTimeZone( 'UTC' ) );
+						$dateString = $date->format( 'c' );
 					}
-					$responseText = wfMsg('ce_com_edited');
-					$summary = wfMsg('ce_com_edit_sum'); 
+					$responseText = wfMsg( 'ce_com_edited' );
+					$summary = wfMsg( 'ce_com_edit_sum' ); 
 				} else {
-					$responseText = wfMsg('ce_com_created');
-					$summary = wfMsg('ce_com_create_sum');
+					$responseText = wfMsg( 'ce_com_created' );
+					$summary = wfMsg( 'ce_com_create_sum' );
 				}
-				$pageContent = str_replace('##DATE##', $dateString, $pageContent);
+				$pageContent = str_replace( '##DATE##', $dateString, $pageContent );
 				$article->doEdit( $pageContent, $summary );
 
-				if($article->exists()) {
+				if( $article->exists() ) {
 					return CECommentUtils::createXMLResponse(
-						$responseText,
-						self::SUCCESS, $pageName);
+						$responseText, self::SUCCESS, $pageName
+					);
 				} else {
 					return CECommentUtils::createXMLResponse(
-						wfMsg('ce_com_cannot_create'),
-						self::PERMISSION_ERROR, $pageName);
+						wfMsg( 'ce_com_cannot_create' ),
+						self::PERMISSION_ERROR, $pageName
+					);
 				}
 			}
 		}
 	}
 }
-

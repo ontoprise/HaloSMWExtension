@@ -1,6 +1,13 @@
 Collaboration extension ChangeLog
 =================================
 
+VERSION 1.31
+  FEATURES:
+	FR #13057: Information about last edit of a comment
+  CHANGES:
+	FR #13548: Small GUI improvements
+  BUGFIXES:
+
 VERSION 1.30
 
   FEATURES:

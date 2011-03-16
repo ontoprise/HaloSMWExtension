@@ -154,6 +154,15 @@ img.collabComEditImg,img.collabComDeleteImg,img.collabComReplyImg {
 	padding: 0 0 0 5px;
 	vertical-align: text-bottom;
 }
+div.collabComEditInfo {
+	padding: 5px 10px;
+	color: grey;
+	font-size: smaller;
+	text-align: center;
+}
+span.collabComEditor, span.collabComEditorPre, span.collabComEditDatePre, span.collabComEditDate {
+	padding-right: 3px;
+}
 
 /* Comment form */
 div#collabComFormHeader {

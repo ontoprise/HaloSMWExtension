@@ -2,7 +2,7 @@
   <siteinfo>
     <sitename>Contentwiki</sitename>
     <base>http://localhost/index.php/Main_Page</base>
-    <generator>MediaWiki 1.16.0</generator>
+    <generator>MediaWiki 1.16.1</generator>
     <case>first-letter</case>
     <namespaces>
       <namespace key="-2" case="first-letter">Media</namespace>
@@ -63,12 +63,12 @@
     <title>Category:Comment</title>
     <id>237</id>
     <revision>
-      <id>2263</id>
-      <timestamp>2010-12-22T16:33:01Z</timestamp>
+      <id>2632</id>
+      <timestamp>2010-12-23T15:35:02Z</timestamp>
       <contributor>
-        <username>WikiSysop</username>
-        <id>1</id>
+        <ip>127.0.0.1</ip>
       </contributor>
+      <comment>added content hash</comment>
       <text xml:space="preserve">{{Category
 |PAGENAME=Category:Comment
 |rationale=This category contains all comments created by the Collaboration Extension.
@@ -76,9 +76,9 @@
 |part of=Collaboration
 }}
 {{Part of bundle|value=Collaboration}}
-{{Content hash|value=}}
+{{Content hash|value=f1e103217093fed9e18a79989b7e1c72}}
 [[Category:Entity]]</text>
-    <hash>1f283ee49ebbef1cc1422e1d83c96a1d</hash>
+    <hash>dbd519f02879ea45eb96752931e6a6a1</hash>
     </revision>
   </page>
   <page>
@@ -169,8 +169,8 @@
     <title>Template:CommentResult</title>
     <id>244</id>
     <revision>
-      <id>2255</id>
-      <timestamp>2010-12-22T16:28:15Z</timestamp>
+      <id>3106</id>
+      <timestamp>2011-03-16T13:41:17Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -181,7 +181,7 @@
 |PAGENAME=Template:CommentResult
 }}
 {{Part of bundle|value=Collaboration}}
-{{Content hash|value=}}
+{{Content hash|value=78a7adf5e5b60939873e0ec79f04f8f1}}
 &lt;/noinclude&gt;&lt;includeonly&gt;&lt;!-- start comment (do not change css-classes)
 --&gt;{{#vardefine:resID
 |{{PAGENAMEE:{{#ifeq: {{#pos:{{{6}}}|:}} 
@@ -210,9 +210,11 @@
 --&gt;&lt;div class=&quot;collabComResDate&quot;&gt; {{{3}}}&lt;/div&gt;&lt;!-- end comment date
 --&gt;&lt;!-- start comment content
 --&gt;&lt;div class=&quot;collabComResText&quot;&gt;{{{4}}}&lt;/div&gt;&lt;/div&gt;&lt;!-- end comment content
---&gt;{{#if:{{{7|}}}|&lt;div class=&quot;collabComResDeletion&quot;&gt;{{{7|}}}&lt;/div&gt;&lt;!-- end deletion info --&gt;|}}&lt;/div&gt;&lt;!-- end comment 
+--&gt;{{#if:{{{7|}}}|&lt;div class=&quot;collabComResDeletion&quot;&gt;{{{7|}}}&lt;/div&gt;&lt;!-- end deletion info --&gt;|}}
+{{#if:{{{8|}}}|&lt;div class=&quot;collabComEditInfo&quot;&gt;&lt;span class=&quot;collabComEditorPre&quot;&gt;&lt;/span&gt;&lt;span class=&quot;collabComEditor&quot;&gt;{{{8|}}}&lt;/span&gt;&lt;span class=&quot;collabComEditDatePre&quot;&gt;&lt;/span&gt;&lt;span class=&quot;collabComEditDate&quot;&gt;{{{9|}}}&lt;/span&gt;&lt;/div&gt;&lt;!-- end deletion info --&gt;|}}
+&lt;/div&gt;&lt;!-- end comment 
 --&gt;&lt;/includeonly&gt;</text>
-    <hash>e67336323bc7fe485ed7c424f193ef07</hash>
+    <hash>b76a311096b146d52995adf3f5287777</hash>
     </revision>
   </page>
   <page>
@@ -240,8 +242,8 @@
     <title>Template:ShowCommentsIntern</title>
     <id>247</id>
     <revision>
-      <id>2262</id>
-      <timestamp>2010-12-22T16:32:15Z</timestamp>
+      <id>3104</id>
+      <timestamp>2011-03-16T13:39:47Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -252,7 +254,7 @@
 |rationale=Show all comments incl. form.
 }}
 {{Part of bundle|value=Collaboration}}
-{{Content hash|value=}}
+{{Content hash|value=01e755447c667809898f7a6227c779dc}}
 &lt;/noinclude&gt;&lt;includeonly&gt;
 &lt;!--start surrounding div --&gt;&lt;div class=&quot;collabComInternSurround&quot;&gt;&lt;!-- start header div --&gt;&lt;div class=&quot;collabComInternHeader&quot;&gt;[[File:Comment_icon_crystal.png|text-bottom|nopreview|16px|link=]]&lt;/div&gt;&lt;!-- end header div --&gt;
 {{#showcommentform:}}
@@ -264,6 +266,8 @@
   | ?Has comment rating
   | ?Belongs to comment
   | ?Comment was deleted
+  | ?Has comment editor
+  | ?Modification date
   | format=template
   | template=CommentResult
   | sort=Has comment date
@@ -273,7 +277,7 @@
 }}
 &lt;/div&gt;
 &lt;/div&gt;&lt;!-- end surround div --&gt;&lt;/includeonly&gt;</text>
-    <hash>10c0686a36bb32baef5565ecca092f71</hash>
+    <hash>217bb3b3cdafddc30678fcf07ca53ede</hash>
     </revision>
   </page>
   <page>
@@ -322,12 +326,12 @@
     <title>Template:Comment</title>
     <id>358</id>
     <revision>
-      <id>2252</id>
-      <timestamp>2010-12-22T16:23:25Z</timestamp>
+      <id>2641</id>
+      <timestamp>2010-12-23T15:35:03Z</timestamp>
       <contributor>
-        <username>WikiSysop</username>
-        <id>1</id>
+        <ip>127.0.0.1</ip>
       </contributor>
+      <comment>added content hash</comment>
       <text xml:space="preserve">&lt;noinclude&gt;{{Template
 |part of=Collaboration
 |rationale=Creates a comment.
@@ -341,7 +345,7 @@
 |PAGENAME=Template:Comment
 }}
 {{Part of bundle|value=Collaboration}}
-{{Content hash|value=}}
+{{Content hash|value=4480f4670d8215f224c9c83a3c5d76dd}}
 &lt;/noinclude&gt;&lt;includeonly&gt;''Comment for {{#if: {{{CommentRelatedArticle|}}} 
 | [[Belongs to article::{{{CommentRelatedArticle|}}}]] | nothing
 }}{{#if: {{{CommentRelatedComment|}}} 
@@ -378,60 +382,53 @@
 [[Comment was deleted::{{{CommentWasDeleted|false}}}]]
 &lt;!-- end comment --&gt;[[Category:Comment]]
 &lt;/includeonly&gt;</text>
-    <hash>46677a7bb0900eb16de91f9462ccac29</hash>
+    <hash>2974485e0549583dfc3768204289af7d</hash>
     </revision>
   </page>
   <page>
     <title>Template:ShowComments</title>
     <id>359</id>
     <revision>
-      <id>2261</id>
-      <timestamp>2010-12-22T16:31:37Z</timestamp>
+      <id>2660</id>
+      <timestamp>2010-12-23T15:35:07Z</timestamp>
       <contributor>
-        <username>WikiSysop</username>
-        <id>1</id>
+        <ip>127.0.0.1</ip>
       </contributor>
+      <comment>added content hash</comment>
       <text xml:space="preserve">&lt;noinclude&gt;{{Template
 |PAGENAME=Template:ShowComments
 |part of=Collaboration
 |rationale=Shows all comments incl. a form entry field for the given article.
 }}
 {{Part of bundle|value=Collaboration}}
-{{Content hash|value=}}
+{{Content hash|value=09f6461f4882b5496d68baa15933a29b}}
 &lt;/noinclude&gt;&lt;includeonly&gt;
 {{#ifeq:{{{show|}}}|True|{{ShowCommentsIntern}}|}}&lt;/includeonly&gt;</text>
-    <hash>58bb12f67ca2382598f0417699c638b9</hash>
+    <hash>2b321c9d33e5766f595807f7f7d9edd7</hash>
     </revision>
   </page>
   <page>
     <title>Collaboration</title>
     <id>444</id>
     <revision>
-      <id>1973</id>
-      <timestamp>2010-12-21T20:53:41Z</timestamp>
+      <id>3108</id>
+      <timestamp>2011-03-16T14:00:09Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
       <text xml:space="preserve">{{Content bundle
 |Vendor=Ontoprise
-|Version=130
+|Version=131
 |rationale=This content bundle features a set of basic elements that are necessary to for the Collaboration extension.
 |Installation=extensions/Collaboration
-|Dependency=mw;1160;1160, smw;152;152, smwhalo;152;152, scriptmanager;101;101, applicationprogramming;102;102
-}}
-{{Part of bundle|value=Collaboration}}
-[[Vendor::Ontoprise| ]]
-[[Ontology version::130| ]]
-[[Installation dir::extensions/Collaboration| ]]
-[[Dependency::mw;1160;1160| ]]
-[[Dependency::smw;152;152| ]]
-[[Dependency::smwhalo;152;152| ]]
-[[Dependency::scriptmanager;101;101| ]]
+|Dependency=smwhalo;153;153, applicationprogramming;102;102
+}} {{Part of bundle|value=Collaboration}} [[Vendor::Ontoprise| ]] [[Ontology version::131| ]] [[Installation dir::extensions/Collaboration| ]] 
+[[Dependency::smwhalo;153;153| ]] 
 [[Dependency::applicationprogramming;102;102| ]]
-[[Category:Content bundle]]
 
-;This bundle contains these articles:
+;This bundle contains these articles
+:
 
 {{#ask:[[Part of bundle::{{FULLPAGENAME}}]]
 |?=Link
@@ -439,25 +436,33 @@
 |link=subject
 |default=''none''
 |mainlabel=-
-}}</text>
-    <hash>1963378c5f9798d41ddbc274efb84266</hash>
+}}
+
+&lt;br/&gt;[[Category:Content bundle|Content_bundle]]
+{{Content hash|value=a5b59c7c93de4673e7a007ab705bdafa}}</text>
+    <hash>5ce9afea87f163336099c53ab61351ea</hash>
     </revision>
   </page>
   <page>
-    <title>Template:!</title>
-    <id>105</id>
+    <title>Property:Has comment editor</title>
+    <id>560</id>
     <revision>
-      <id>1115</id>
-      <timestamp>2010-11-24T10:44:01Z</timestamp>
+      <id>3107</id>
+      <timestamp>2011-03-16T13:42:11Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
-      <text xml:space="preserve">|&lt;noinclude&gt;
-&lt;!-- Add cats and interwikis to the /doc subpage, not here! --&gt;
-helper template for pipe symbol, which can e.g. not be used directly in template parameter calls.[[Part of bundle::Baseontologybundle| ]]
-&lt;/noinclude&gt;</text>
-    <hash>5fb9b20c2825d7743e58540992c213ec</hash>
+      <comment>Created page with &quot;{{Property |part of=Collaboration |rationale=Contains the name of the last editor. |PAGENAME=Property:Has comment editor }} {{Part of bundle|value=Collaboration}} {{Content hash|...&quot;</comment>
+      <text xml:space="preserve">{{Property
+|part of=Collaboration
+|rationale=Contains the name of the last editor.
+|PAGENAME=Property:Has comment editor
+}}
+{{Part of bundle|value=Collaboration}}
+{{Content hash|value=}}
+[[has domain and range::Category:Comment; | ]][[has type::Type:String| ]]</text>
+    <hash>45afecb73239336498fd6e1bbc6fc7fc</hash>
     </revision>
   </page>
 </mediawiki>
