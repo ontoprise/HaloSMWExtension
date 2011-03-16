@@ -33,12 +33,15 @@ if (typeof FacetedSearch == "undefined") {
  * This class clusters the values of a facet.
  * 
  */
-FacetedSearch.classes.FacetClusterer = function (facetName) {
+FacetedSearch.classes.FacetClusterer = function (facetName, plainName) {
 	var $ = jQuery;
+	
+	// The instance of this object
+	var that = {};
 	
 	//--- Constants ---
 	// The field with this name is used on SOLR queries
-	var NUM_CLUSTERS = 5;
+	that.NUM_CLUSTERS = 5;
 	
 	
 	//--- Private members ---
@@ -50,25 +53,29 @@ FacetedSearch.classes.FacetClusterer = function (facetName) {
 	// string - Name of the facet whose clusters are retrieved.
 	var mFacetName;
 	
-	// The instance of this object
-	var that = {};
+	// string - Plain name of the facet without prefix and suffix
+	var mPlainName;
+	
 	
 
 	/**
-	 * Constructor for the FacetedSearch class. Clusters can be created for 
-	 * numerical values and dates.
+	 * Constructor for the FacetClusterer class. Clusters can be created for 
+	 * numerical values, dates etc.
 	 * The name of the facet contains the type as suffix.
 	 * 
 	 * @param string facetName
 	 * 		The full name of the facet whose values are clustered. 
+	 * @param string plainName
+	 * 		The plain name without prefix and suffix of the facet. 
 	 */
-	function construct(facetName) {
+	function construct(facetName, plainName) {
 		mAjaxSolrManager = new AjaxSolr.Manager();
 		mAjaxSolrManager.init();
 		fsm = FacetedSearch.singleton.FacetedSearchInstance.getAjaxSolrManager();
 		mAjaxSolrManager.store = fsm.store;
 		
 		mFacetName = facetName;
+		mPlainName = plainName;
 		
 	};
 	that.construct = construct;
@@ -79,7 +86,7 @@ FacetedSearch.classes.FacetClusterer = function (facetName) {
 	 */
 	that.retrieveClusters = function () {
 		mAjaxSolrManager.store.addByValue('stats', 'true');
-		mAjaxSolrManager.store.addByValue('stats.field', mFacetName);
+		mAjaxSolrManager.store.addByValue('stats.field', that.getStatisticsField());
 		var handleResponse = mAjaxSolrManager.handleResponse;
 
 		mAjaxSolrManager.handleResponse = function (data) {
@@ -100,7 +107,16 @@ FacetedSearch.classes.FacetClusterer = function (facetName) {
 	}
 	
 	/**
-	 * This function generates clusters for values between min and max.
+	 * For clustering the statistics of a facet have to be retrieved to find its
+	 * min and max values. Normally this is the field stored in mFacetName. Sub 
+	 * classes can overwrite this method it a different field is to be used.
+	 */
+	that.getStatisticsField = function () {
+		return mFacetName;
+	}
+	
+	/**
+	 * This function generates clusters for numeric values between min and max.
 	 * 
 	 * @param {int} min
 	 * 		The minimal value of the value range.
@@ -108,17 +124,7 @@ FacetedSearch.classes.FacetClusterer = function (facetName) {
 	 * 		The maximal value of the value range.
 	 */
 	that.makeClusters = function makeClusters(min, max) {
-		var diff = max - min;
-		var values = [];
-		var currVal = min;
-		var incr = diff / NUM_CLUSTERS;
-		
-		for (var i = 0; i < NUM_CLUSTERS; ++i) {
-			values[i] = Math.round(currVal);
-			currVal += incr;
-		}
-		values[i] = max;
-		return values;
+		alert("The function FacetClusterer.makeClusters must be implemented by derived classes.")
 	}
 	
 	/**
@@ -131,10 +137,11 @@ FacetedSearch.classes.FacetClusterer = function (facetName) {
 	function retrieveClusterCounts(clusters) {
 		mAjaxSolrManager.store.addByValue('facet', 'true');
 		var min = clusters[0];
+		var facet = that.getStatisticsField();
 		for (var i = 1; i < clusters.length; ++i) {
 			var max = clusters[i];
 			mAjaxSolrManager.store.addByValue('facet.query', 
-				mFacetName+':[' + min + ' TO ' + max + ']');
+				facet+':[' + min + ' TO ' + max + ']');
 			min = max + 1;	
 		}
 		
@@ -148,7 +155,7 @@ FacetedSearch.classes.FacetClusterer = function (facetName) {
 		
 	}
 	
-	construct(facetName);
+	construct(facetName, plainName);
 	return that;
 	
 }
