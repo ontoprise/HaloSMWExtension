@@ -383,6 +383,7 @@ class SMWQueryInterface extends SpecialPage {
         return $lodDatasources;
     }
     private function getLodTrustpolicy() {
+        global $smwgHaloScriptPath;
         $tps = LODPolicyStore::getInstance();
         $policyIds = $tps->getAllPolicyIDs();
         $is = count($policyIds);
@@ -395,13 +396,20 @@ class SMWQueryInterface extends SpecialPage {
                 $params = $policy->getParameters();
                 $paramText .= '<div id="qitpeeparams_'.$policyIds[$i].'" style="display:none"><table>';
                 foreach ($params as $param) {
-                    $paramText .= '<tr><td colspan="2">'.$param->getDescription().'</td></tr>'.
+                    if (! $param->getName() ) continue;
+                    $paramText .= 
                             '<tr><td>'.
                             ( ($param->getLabel())
                                 ? '<span name="qitpeeparams_'.$policyIds[$i].'_'.$param->getName().'">'.$param->getLabel().'</span>'
                                 : '<span>'.$param->getName().'</span>'
                             ).
-                            '</td><td><input id="qitpeeparamval_'.$policyIds[$i].'_'.$param->getName().'" type="text" size="20"/></td></tr>';
+                            '</td><td>'.
+                            '<input id="qitpeeparamval_'.$policyIds[$i].'_'.$param->getName().'" type="text" size="20"/></td>'.
+                            ( ($param->getDescription())
+                                ? '<td><img src="'.$smwgHaloScriptPath . '/skins/QueryInterface/images/help.gif" onmouseover="Tip(\''.
+                                  str_replace("'", "\'", $param->getDescription()).'\');" /></td>'
+                                : '<td> </td>' ).
+                            '</td></tr>';
                 }
                 $paramText .= '</table></div>';
                 $text .= '<option value="'.$policyIds[$i].'">'.$policy->getDescription().'</option>';
