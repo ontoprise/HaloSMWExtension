@@ -303,10 +303,11 @@
 	 * 		This function is called when the cluster is clicked.
 	 */
 	AjaxSolr.theme.prototype.cluster = function(from, to, count, handler) {
-		return $('<a href="#" class="xfsClusterEntry"/>'
+		return $('<a href="#" class="xfsClusterEntry">'
 				+ from + ' - ' + to + ' (' + count + ')'
-				+ '<br /></a>')
-			.click(handler);
+				+ '</a>')
+			.click(handler)
+			.add('<br />');
 	};
 
 })(jQuery);
