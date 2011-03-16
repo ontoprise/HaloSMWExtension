@@ -251,9 +251,8 @@ ul.smwh_menulist div.smwh_menubody_visible {
 
 #smwh_breadcrumbs{
     clear: both;
-    margin-top: 13px;
-    margin-bottom: 13px;
-    margin-left: 12px;
+    margin-top: 0.2em;
+    margin-left: 1.1em;
 }
 
 #smwh_breadcrumb_currentpage{
@@ -277,7 +276,7 @@ ul.smwh_menulist div.smwh_menubody_visible {
 
 #smwh_tabs{
     height: 25px;
-    margin-top: 1em;
+    margin-top: 2.8em;
 }
 
 .tab{
