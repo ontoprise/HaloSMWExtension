@@ -805,7 +805,7 @@ QIHelper.prototype = {
                     var pname = (span[i].name) ? span[i].name.replace('qitpeeparams_ ' + tpee + '_', '') : span[i].innerHTML;
                     var val = $('qitpeeparamval_' + tpee + '_' + pname) && $('qitpeeparamval_' + tpee + '_' + pname).value;
                     if (pname && val) {
-                        jsonParams.push( pname + ':' + val );
+                        jsonParams.push( '"' + pname + '":"' + val + '"' );
                     }
                 }
                 if (jsonParams.length > 0) {
