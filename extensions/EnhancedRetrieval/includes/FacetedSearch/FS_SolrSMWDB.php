@@ -288,6 +288,18 @@ SQL;
         					? $dateTime[1] : '00:00:00';
         			$valueXSD = "{$date}T{$time}Z";
         			$typeSuffix = 'dt';
+					// Store a date/time also as long e.g. 19951231235959
+					// This is needed for querying statistics for dates
+					// Normalize month and day e.g. 1995-1-1 => 1995-01-01 
+					$ymd = explode('-', $date);
+					$m = (strlen($ymd[1]) == 1) ? '0'.$ymd[1] : $ymd[1];
+					$d = (strlen($ymd[2]) == 1) ? '0'.$ymd[2] : $ymd[2];
+					$dateTime = $ymd[0] . $m . $d . str_replace(':', '', $time);
+					$propDate = 'smwh_' . $prop . '_datevalue_l';
+					if (!array_key_exists($propDate, $doc)) {
+						$doc[$propDate] = array();
+					}
+					$doc[$propDate][] = $dateTime;
         		} else if (
 	        		$type == '_txt' ||
 	        		$type == '_cod' ||
