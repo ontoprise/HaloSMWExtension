@@ -114,7 +114,10 @@ class FSFacetedSearchSpecial extends SpecialPage {
 		$wgOut->addScript("<script type=\"text/javascript\" src=\"". $fsgScriptPath .  "/scripts/FacetedSearch/FS_CurrentSearchWidget.js\"></script>");
 		$wgOut->addScript("<script type=\"text/javascript\" src=\"". $fsgScriptPath .  "/scripts/FacetedSearch/FS_FacetedSearch.js\"></script>");
 		$wgOut->addScript("<script type=\"text/javascript\" src=\"". $fsgScriptPath .  "/scripts/FacetedSearch/FS_FacetClusterer.js\"></script>");
+		$wgOut->addScript("<script type=\"text/javascript\" src=\"". $fsgScriptPath .  "/scripts/FacetedSearch/FS_NumericFacetClusterer.js\"></script>");
+		$wgOut->addScript("<script type=\"text/javascript\" src=\"". $fsgScriptPath .  "/scripts/FacetedSearch/FS_DateFacetClusterer.js\"></script>");
 		$wgOut->addScript("<script type=\"text/javascript\" src=\"". $fsgScriptPath .  "/scripts/FacetedSearch/FS_ClusterWidget.js\"></script>");
+		$wgOut->addScript("<script type=\"text/javascript\" src=\"". $fsgScriptPath .  "/scripts/FacetedSearch/FS_FacetClustererFactory.js\"></script>");
 
 		$wgOut->addStyle($fsgScriptPath . '/skin/faceted_search.css', 'screen, projection');
 		
