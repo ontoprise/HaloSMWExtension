@@ -166,6 +166,19 @@ var wgUserLanguageStrings = {
 	'AC_MORE_RESULTS_AVAILABLE' : 'Too many results...',
 	'AC_MORE_RESULTS_TOOLTIP' : 'Too many results. Please expand your search term to get less results.',
 	'AC_NO_RESULTS': 'No results',
+	'AC_ALL' : 'Auto-completion for all pages',
+	'AC_QUERY' : 'ASK-Query',
+	'AC_SCHEMA_PROPERTY_DOMAIN' : 'All properties with domain: ',
+	'AC_SCHEMA_PROPERTY_RANGE_INSTANCE' : 'All properties which have a range-instance of: ',
+	'AC_DOMAINLESS_PROPERTY' : 'All properties without domain',
+	'AC_ANNOTATION_PROPERTY' : 'Properties which are used on pages of category: ',
+	'AC_ANNOTATION_VALUE' : 'All properties with value annotated: ',
+	'AC_INSTANCE_PROPERTY_RANGE' : 'All instances which are member of range: ',
+	'AC_NAMESPACE' : 'All pages in namespace(s): ',
+	'AC_LEXICAL' : 'All pages containing: ',
+	'AC_SCHEMA_PROPERTY_TYPE' : 'All properties of type: ',
+	'AC_ASF' : 'TODO: ask ingo about this',
+	
 
 	// Combined search
 	'ADD_COMB_SEARCH_RES'     : 'Additional Combined Search results.',

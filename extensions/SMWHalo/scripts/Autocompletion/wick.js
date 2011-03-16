@@ -1216,6 +1216,79 @@ AutoCompleter.prototype = {
         }
 
         Event.observe(document, "mouseover", this.handleMouseOver.bindAsEventListener(this), false);
+        
+        // show AC hint
+        $$('input.wickEnabled').each(function(t) { 
+        	if (t.getAttribute('constraints') != '') {
+        		var constraint = t.getAttribute('constraints').trim();
+        		var commands = constraint.split("|");
+        		var showText = "";
+        		
+        		commands.each(function(c) {
+	        		var parts = c.split(":");
+	        		parts[0] = parts[0].trim();
+	        		
+	        		if (constraint == 'all') {
+	        			showText += gLanguage.getMessage('AC_ALL');
+	        		} else if (parts[0] == 'ask') {
+	        			showText += gLanguage.getMessage('AC_QUERY') + parts[1];
+	        		} else if (parts[0] == 'schema-property-domain') {
+	        			showText += gLanguage.getMessage('AC_SCHEMA_PROPERTY_DOMAIN') + parts[1];
+	        		} else if (parts[0] == 'schema-property-range-instance') {
+	        			showText += gLanguage.getMessage('AC_SCHEMA_PROPERTY_RANGE_INSTANCE') + parts[1];
+	        		} else if (parts[0] == 'domainless-property') {
+	        			showText += gLanguage.getMessage('AC_DOMAINLESS_PROPERTY') + parts[1];
+	        		} else if (parts[0] == 'annotation-property') {
+	        			showText += gLanguage.getMessage('AC_ANNOTATION_PROPERTY') + parts[1];
+	        		} else if (parts[0] == 'annotation-value') {
+	        			showText += gLanguage.getMessage('AC_ANNOTATION_VALUE') + parts[1];
+	        		} else if (parts[0] == 'instance-property-range') {
+	        			showText += gLanguage.getMessage('AC_INSTANCE_PROPERTY_RANGE') + parts[1];
+	        		} else if (parts[0] == 'namespace') {
+	        			showText += gLanguage.getMessage('AC_NAMESPACE') + parts[1];
+	        		} else if (parts[0] == 'lexical') {
+	        			showText += gLanguage.getMessage('AC_LEXICAL') + parts[1];
+	        		} else if (parts[0] == 'schema-property-type') {
+	        			showText += gLanguage.getMessage('AC_SCHEMA_PROPERTY_TYPE') + parts[1];
+	        		} else if (parts[0] == 'asf-ac') {
+	        			showText += gLanguage.getMessage('AC_ASF') + parts[1];
+	        		} else {
+	        			showText += parts[1];
+	        		} 
+	        		
+        		 });
+        		
+        		jQuery(t).qtip( {
+					content : showText,
+					show : {
+						effect : {
+							length : 500
+						},
+						when : {
+							event : 'mouseover'
+						}
+					},
+					hide : {
+						when : {
+							event : 'mouseout'
+						},
+						fixed : true
+					},
+					position : {
+						corner : {
+							target : 'topLeft',
+							tooltip : 'bottomLeft'
+						}
+					},
+					style : {
+						tip : 'bottomLeft',
+						width : {
+							max : 500
+						}
+					}
+				});
+        	}
+        });
     },  //registerSmartInputListeners
 
     /**
@@ -1479,7 +1552,7 @@ function SmartInputMatch(cleanValue, value, type, nsText, extraData, inferred, i
      */
     this.getImageTag = function() {
     	if (_imageurl && _imageurl != '') {
-        	return "<img src=\"" + wgServer +_imageurl+"\">";
+        	return "<img src=\"" + wgServer +_imageurl+"\" height=\"16px\" width=\"16px\">";
     	} else {
 	    	var imgPath = acNamespaceRegistry.getImgPath(_type);
 	    	var namespaceText = _nsText != null ? _nsText+":" : "";

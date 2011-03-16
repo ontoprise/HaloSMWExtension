@@ -237,7 +237,7 @@ class AutoCompletionStorageSQL2 extends AutoCompletionStorage {
 				if (smwf_om_userCan($row->page_title, 'read', $row->page_namespace) == 'true') {
 					if ($row->page_namespace == SMW_NS_PROPERTY) {
 						$propertyTitle = Title::newFromText($row->page_title, SMW_NS_PROPERTY);
-						$result[] = array('title'=>$propertyTitle, 'inferred'=>false, 'pasteContent'=> NULL, 'extraData'=>$this->getPropertyData($propertyTitle));
+						$result[] = array('title'=>$propertyTitle, 'inferred'=>false, 'pasteContent'=> NULL, 'schemaData'=>$this->getPropertyData($propertyTitle));
 					} else {
 						$result[] = Title::makeTitle($row->page_namespace, $row->page_title);
 					}
@@ -348,7 +348,7 @@ class AutoCompletionStorageSQL2 extends AutoCompletionStorage {
 			while($row = $db->fetchObject($res)) {
 				if (smwf_om_userCan($row->property, 'read', SMW_NS_PROPERTY) == 'true') {
 					$propertyTitle = Title::newFromText($row->property, SMW_NS_PROPERTY);
-					$result[] = array('title'=>$propertyTitle, 'inferred'=>$row->inferred == "true", 'pasteContent'=>NULL, 'extraData'=>$this->getPropertyData($propertyTitle));
+					$result[] = array('title'=>$propertyTitle, 'inferred'=>$row->inferred == "true", 'pasteContent'=>NULL, 'schemaData'=>$this->getPropertyData($propertyTitle));
 				}
 			}
 		}
@@ -427,7 +427,7 @@ class AutoCompletionStorageSQL2 extends AutoCompletionStorage {
 			while($row = $db->fetchObject($res)) {
 				if (smwf_om_userCan($row->property, 'read', SMW_NS_PROPERTY) == 'true') {
 					$propertyTitle = Title::newFromText($row->property, SMW_NS_PROPERTY);
-					$result[] = array('title'=>$propertyTitle, 'inferred'=>$row->inferred == "true", 'pasteContent'=>NULL, 'extraData'=>$this->getPropertyData($propertyTitle));
+					$result[] = array('title'=>$propertyTitle, 'inferred'=>$row->inferred == "true", 'pasteContent'=>NULL, 'schemaData'=>$this->getPropertyData($propertyTitle));
 				}
 			}
 		}
@@ -513,7 +513,7 @@ class AutoCompletionStorageSQL2 extends AutoCompletionStorage {
 			while($row = $db->fetchObject($res)) {
 				if (smwf_om_userCan($row->property, 'read', SMW_NS_PROPERTY) == 'true') {
 					$propertyTitle = Title::newFromText($row->property, SMW_NS_PROPERTY);
-					$result[] = array('title'=>$propertyTitle, 'inferred'=>$row->inferred == "true", 'pasteContent'=>NULL, 'extraData'=>$this->getPropertyData($propertyTitle));
+					$result[] = array('title'=>$propertyTitle, 'inferred'=>$row->inferred == "true", 'pasteContent'=>NULL, 'schemaData'=>$this->getPropertyData($propertyTitle));
 				}
 			}
 		}
@@ -742,7 +742,7 @@ class AutoCompletionStorageSQL2 extends AutoCompletionStorage {
 				if (smwf_om_userCan($row->smw_title, 'read', SMW_NS_PROPERTY) == 'true') {
 
 					$propertyTitle = Title::newFromText($row->smw_title, SMW_NS_PROPERTY);
-					$result[] = array('title'=>$propertyTitle, 'inferred'=>false, 'pasteContent'=>NULL, 'extraData'=>$this->getPropertyData($propertyTitle));
+					$result[] = array('title'=>$propertyTitle, 'inferred'=>false, 'pasteContent'=>NULL, 'schemaData'=>$this->getPropertyData($propertyTitle));
 
 				}
 			}
@@ -914,7 +914,7 @@ class AutoCompletionStorageTSCQuad extends AutoCompletionStorageSQL2 {
 					continue;
 				}
 				$extraData = ($title->getNamespace() == SMW_NS_PROPERTY) ? $this->getPropertyData($title) : NULL;
-				$result[] = array('title'=>$title, 'inferred'=>false, 'pasteContent'=>NULL, 'extraData'=>$extraData);
+				$result[] = array('title'=>$title, 'inferred'=>false, 'pasteContent'=>NULL, 'schemaData'=>$extraData);
 			} else {
 				$sv = $b->children()->literal[0];
 				$result[] = array((string) $sv, false);

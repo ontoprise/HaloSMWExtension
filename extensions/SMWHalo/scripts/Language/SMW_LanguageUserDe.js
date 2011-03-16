@@ -164,6 +164,18 @@ var wgUserLanguageStrings = {
     'AC_MORE_RESULTS_AVAILABLE' : 'Zuviele Treffer gefunden...',
     'AC_MORE_RESULTS_TOOLTIP' : 'Zuviele Treffer. Bitte erweitern Sie die Suchanfrage.',
     'AC_NO_RESULTS': 'Keine Treffer',
+    'AC_ALL' : 'Auto-completion für alle Seiten',
+	'AC_QUERY' : 'ASK-Query',
+	'AC_SCHEMA_PROPERTY_DOMAIN' : 'Alle Attribute mit der Domäne: ',
+	'AC_SCHEMA_PROPERTY_RANGE_INSTANCE' : 'Alle Attribute mit einem Wertebereich dieser Instanz: ',
+	'AC_DOMAINLESS_PROPERTY' : 'Alle Attribute ohne Domäne',
+	'AC_ANNOTATION_PROPERTY' : 'Alle Attribute, die auf Seiten dieser Kategorie verwendet werden: ',
+	'AC_ANNOTATION_VALUE' : 'Alle Attribute mit folgenden annotierten Werten: ',
+	'AC_INSTANCE_PROPERTY_RANGE' : 'Alle Instanzen der Range-Kategorie von: ',
+	'AC_NAMESPACE' : 'Alle Seiten im Namensraum: ',
+	'AC_LEXICAL' : 'Alle Seiten die folgenden Text im Titel enthalten: ',
+	'AC_SCHEMA_PROPERTY_TYPE' : 'Alle Attribute dieses Typs: ',
+	'AC_ASF' : 'TODO: ask ingo about this',
 
 	// Combined search
 	'ADD_COMB_SEARCH_RES'     : 'Zusätzliche Ergebnisse der Combined-Search.',
