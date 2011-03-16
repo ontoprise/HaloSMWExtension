@@ -48,27 +48,48 @@ FacetedSearch.classes.FacetWidget = AjaxSolr.AbstractFacetWidget.extend({
 	},
 	
 	afterRequest: function () {
+		if (this.noRender) {
+			return;
+		}
 		
 		var $ = jQuery;
-		if (this.manager.response.facet_counts.facet_fields[this.field] === undefined) {
+		
+		if (this.fields === undefined) {
+			this.fields = [this.field];
+		}
+		
+		var fq = this.manager.store.values('fq');
+		
+		var maxCount = 0;
+		var objectedItems = [];
+		for (var i = 0; i < this.fields.length; i++) {
+			var field = this.fields[i];
+			if (this.manager.response.facet_counts.facet_fields[field] === undefined) {
+				continue;
+			}
+			for (var facet in this.manager.response.facet_counts.facet_fields[field]) {
+				var count = parseInt(this.manager.response.facet_counts.facet_fields[field][facet]);
+				if (count > maxCount) {
+					maxCount = count;
+				}
+				var fullName = field + ':' + facet;
+				if ($.inArray(fullName, fq) >= 0) {
+					continue;
+				}
+				objectedItems.push({
+					field: field,
+					facet: facet,
+					count: count
+				});
+			}
+		}
+
+		if (objectedItems.length == 0) {
 			$(this.target).html(AjaxSolr.theme('no_items_found'));
 			return;
 		}
 		
-		var maxCount = 0;
-		var objectedItems = [];
-		for (var facet in this.manager.response.facet_counts.facet_fields[this.field]) {
-			var count = parseInt(this.manager.response.facet_counts.facet_fields[this.field][facet]);
-			if (count > maxCount) {
-				maxCount = count;
-			}
-			objectedItems.push({
-				facet: facet,
-				count: count
-			});
-		}
-
-		objectedItems.sort(function(a, b){
+		objectedItems.sort(function(a, b) {
 			return a.count > b.count ? -1 : 1;
 		});
 		
@@ -85,11 +106,14 @@ FacetedSearch.classes.FacetWidget = AjaxSolr.AbstractFacetWidget.extend({
 				$(this.target).append(ntarget);
 			}
 			var facet = objectedItems[i].facet;
+			var target;
+			if (objectedItems[i].field == this.field) {
+				target = self;
+			} else {
+				target = FacetedSearch.singleton.FacetedSearchInstance.getRelationWidget();
+			}
 			$(ntarget)
-				.append(AjaxSolr.theme('facet', 
-									   facet, objectedItems[i].count, 
-									   self.clickHandler(facet), 
-									   self.showPropertyDetailsHandler))
+				.append(AjaxSolr.theme('facet', facet, objectedItems[i].count, target.clickHandler(facet), target.showPropertyDetailsHandler))
 				.append('<br>');
 		}
 		if (objectedItems.length > GROUP_SIZE) {

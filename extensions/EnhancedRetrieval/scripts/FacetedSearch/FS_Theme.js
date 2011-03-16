@@ -40,6 +40,8 @@
 		// TODO add missing mappings
 		0 : ['Instance', wgScriptPath + IMAGE_PATH + 'smw_plus_instances_icon_16x16.png'],
 		6 : ['Image', wgScriptPath + IMAGE_PATH + 'smw_plus_image_icon_16x16.png'],
+		10 : ['Template', wgScriptPath + IMAGE_PATH + 'smw_plus_template_icon_16x16.png'],
+		14: ['Category', wgScriptPath + IMAGE_PATH + 'smw_plus_category_icon_16x16.png'],
 		102 : ['Property', wgScriptPath + IMAGE_PATH + 'smw_plus_property_icon_16x16.png'],
 		700 : ['Comment', wgScriptPath + IMAGE_PATH + 'smw_plus_comment_icon_16x16.png']
 	};
@@ -59,6 +61,9 @@
 	 */
 	function getIconForNSID(id) {
 		var iconData = NS_ICON[id];
+		if (iconData === undefined) {
+			return '<!-- unknown namespace ID: ' + id + ' -->'; 
+		}
 		return '<img src="' + iconData[1] + '" title="' + iconData[0] + '"/>';
 	}
 	

@@ -57,20 +57,18 @@ class FSFacetedSearchSpecial extends SpecialPage {
 		</div>
 		<div>
 			<span class="xfsFacetHeader">{{fs_categories}}</span>
-			<div id="field_smwh_categories">
+			<div id="field_categories">
 			</div>
 		</div> 
 		<div>
 			<span class="xfsFacetHeader">{{fs_properties}}</span>
-			<div id="field_smwh_attributes">
-			</div>
-			<div id="field_smwh_properties">
+			<div id="field_properties">
 			</div>
 		</div> 
 	</div>
 	<div class="results" id="results">
 		<div id="navigation">
-			<div id="pager-header" />
+			<div id="pager-header">
 			</div>
 		</div>
 		<div id="docs">

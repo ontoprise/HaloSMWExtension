@@ -48,7 +48,9 @@ FacetedSearch.classes.CurrentSearchWidget = AjaxSolr.AbstractWidget.extend({
 		if (links.length) {
 			$(this.target).empty();
 			$.each(links, function() {
-				$(self.target).append(this).append('<br>');
+				$(self.target)
+					.append(this)
+					.append('<br>');
 			});
 		} else {
 			$(this.target).html(AjaxSolr.theme('no_facet_filter_set'));
