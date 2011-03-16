@@ -38,17 +38,23 @@ FacetedSearch.classes.ClusterWidget = AjaxSolr.AbstractWidget.extend({
 
 	/**
 	 * This is the click handler for a cluster of values for an attribute.
-	 * @param {String} value The value.
+	 * @param {Object} cluster
+	 * 		A description of the cluster with the fields 
+	 * 		- from
+	 * 		- to
+	 * 		- count
+	 * 		- facet
 	 * @returns {Function} Sends a request to Solr if it successfully adds a
 	 *   filter query with the given value.
 	 */
-	clickHandler: function (value) {
-//TODO make the correct solr request
+	clickClusterHandler: function (cluster) {
 		var self = this;
 		return function () {
-			if (self.add(value)) {
-				self.manager.doRequest(0);
-			}
+			var fsm = FacetedSearch.singleton.FacetedSearchInstance.getAjaxSolrManager();
+			fsm.store.addByValue('facet', true);
+			fsm.store.addByValue('fq', 
+				cluster.facet+':[' + cluster.from + ' TO ' + cluster.to + ']');
+			fsm.doRequest(0);
 			return false;
 		}
 	},
@@ -82,7 +88,7 @@ FacetedSearch.classes.ClusterWidget = AjaxSolr.AbstractWidget.extend({
 				// Create the HTML for the cluster
 				$(this.target)
 					.append(AjaxSolr.theme('cluster', from, to, count, 
-					                       self.clickHandler({
+					                       self.clickClusterHandler({
 											   	from: from,
 												to: to,
 												count: count,
