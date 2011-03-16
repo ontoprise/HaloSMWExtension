@@ -42,7 +42,7 @@ FacetedSearch.classes.FacetWidget = AjaxSolr.AbstractFacetWidget.extend({
 	 * 
 	 */
 	showPropertyDetailsHandler: function(facet) {
-		var clusterer = FacetedSearch.classes.FacetClusterer(facet);
+		var clusterer = FacetedSearch.factories.FacetClustererFactory(facet);
 		clusterer.retrieveClusters();
 		
 	},
