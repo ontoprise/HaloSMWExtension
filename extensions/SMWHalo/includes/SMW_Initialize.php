@@ -148,7 +148,8 @@ function smwgHaloSetupExtension() {
 	$wgAutoloadClasses['SMWQMSpecialBrowse'] = $smwgHaloIP.'/specials/SearchTriple/SMW_QM_SpecialBrowse.php';
 	$wgAutoloadClasses['LODNonExistingPage'] = $smwgHaloIP . '/includes/articlepages/LOD_NonExistingPage.php';
 	$wgAutoloadClasses['LODNonExistingPageHandler'] = $smwgHaloIP . '/includes/articlepages/LOD_NonExistingPageHandler.php';
-
+	$wgAutoloadClasses['SMWQueryList'] = $smwgHaloIP . '/specials/SMWQueryList/SMW_QueryList.php';
+	
 	//patch Special:Browse in order to hide special Query Management Property
 	$wgSpecialPages['Browse']  = array( 'SMWQMSpecialBrowse' );
 
@@ -416,8 +417,8 @@ function smwgHaloSetupExtension() {
 		$wgSpecialPages['TSA'] = array('SMWTripleStoreAdmin');
 		$wgSpecialPageGroups['TSA'] = 'smwplus_group';
 
-
-
+		$wgSpecialPages['QueryList'] = array('SMWQueryList');
+		$wgSpecialPageGroups['QueryList'] = 'smwplus_group';
 	}
 
 	// include SMW logger (exported as ajax function but also used locally)
