@@ -1,8 +1,8 @@
 <?php
 /**
  * @file
- * @ingroup EnhancedRetrievalStorage 
- * 
+ * @ingroup EnhancedRetrievalStorage
+ *
  * @author Kai K�hn
  */
 require_once('US_Store.php');
@@ -15,7 +15,40 @@ require_once('US_Store.php');
  */
 class USStoreSQL extends USStore {
 
+	/**
+     * Returns the (local) URL of an image attached to a category. 
+     * The language constant smw_ac_category_has_icon defines the icon property.
+     * 
+     * @param Title $categoryTitle
+     */
+	public function getImageURL($categoryTitle) {
+		static $image_urls = array();
 
+		if (is_null($categoryTitle)) return NULL;
+
+		if (array_key_exists($categoryTitle->getPrefixedDBkey(), $image_urls)) {
+			return $image_urls[$categoryTitle->getPrefixedDBkey()];
+		}
+		$catHasIconProperty = SMWPropertyValue::makeUserProperty(wfMsg('smw_ac_category_has_icon'));
+
+		global $smwgDefaultStore;
+		if ($smwgDefaultStore == 'SMWTripleStoreQuad') {
+			$iconValues = smwfGetStore()->getPropertyValues($categoryTitle, $catHasIconProperty, NULL, '', true);
+		} else {
+			$iconValues = smwfGetStore()->getPropertyValues($categoryTitle, $catHasIconProperty, NULL, '');
+		}
+		$iconValue = reset($iconValues); // consider only first
+		if ($iconValue === false) return NULL;
+
+		$im_file = wfLocalFile($iconValue->getTitle());
+		$url = !is_null($im_file) && $im_file instanceof File ? $im_file->getURL(): NULL;
+
+		if (!is_null($url)) {
+			$image_urls[$categoryTitle->getPrefixedDBkey()] = $url;
+		}
+
+		return $url;
+	}
 
 	function getDirectSubCategories(Title $categoryTitle, $requestoptions = NULL) {
 		$result = "";
@@ -244,7 +277,7 @@ class USStoreSQL extends USStore {
 	public function getPageTitles($terms) {
 		$db =& wfGetDB( DB_SLAVE );
 		$page = $db->tableName('page');
-		 
+			
 		$requestoptions = new SMWRequestOptions();
 		$requestoptions->isCaseSensitive = false;
 		$requestoptions->limit = 50;
@@ -288,8 +321,8 @@ class USStoreSQL extends USStore {
 			$db->query('DROP TABLE' . ($wgDBtype=='postgres'?'':' IF EXISTS'). $name, 'USStoreSQL::drop');
 			if ($verbose) print (" ... dropped table $name.\n");
 		}
-		
-		
+
+
 		return true;
 	}
 }

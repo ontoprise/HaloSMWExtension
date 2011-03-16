@@ -17,7 +17,9 @@ class US_LanguageEn {
 									    'us_skos_narrower' => 'Narrower term',
 									    'us_skos_description' => 'Definition',
 									    'us_skos_example' => 'Example',
-									    'us_skos_term' => 'Term');
+									    'us_skos_term' => 'Term',
+    
+                                        'smw_ac_category_has_icon' => 'Category has icon');
     
     public $us_userMessages = array (
         'us_search' => 'Enhanced Retrieval',

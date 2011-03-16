@@ -859,7 +859,7 @@ AutoCompleter.prototype = {
                     this.siw.matchCollection[j]
                         = new SmartInputMatch(entry.getText()+entry.getPasteContent(),
                               mEntry.replace(/\>/gi, '}').replace(/\< ?/gi, '{').replace(re, "<b>$1</b>").replace(/_/g, ' '),
-                              entry.getType(), entry.getNsText(), entry.getExtraData(), entry.isInferred());
+                              entry.getType(), entry.getNsText(), entry.getExtraData(), entry.isInferred(), entry.getImageURL());
                 }
 
                 j++;
@@ -867,7 +867,7 @@ AutoCompleter.prototype = {
                 if (displayMatches) {
                     this.siw.matchCollection[j] = new SmartInputMatch(entry.getText()+entry.getPasteContent(),
                                                       mEntry.replace(/\>/gi, '}').replace(/\</gi, '{').replace(re1,
-                                                          "$1<b>$2</b>").replace(re2, "$1<b>$2</b>").replace(/_/g, ' '), entry.getType(), entry.getNsText(), entry.getExtraData(), entry.isInferred());
+                                                          "$1<b>$2</b>").replace(re2, "$1<b>$2</b>").replace(/_/g, ' '), entry.getType(), entry.getNsText(), entry.getExtraData(), entry.isInferred(),entry.getImageURL());
                 }
 
                 j++;
@@ -875,7 +875,7 @@ AutoCompleter.prototype = {
                 if (displayMatches) {
                     this.siw.matchCollection[j] = new SmartInputMatch(entry.getText()+entry.getPasteContent(),
                                                       mEntry.replace(/\>/gi, '}').replace(/\</gi, '{').replace(re1,
-                                                          "$1<b>$2</b>").replace(re2, "$1<b>$2</b>").replace(/_/g, ' '), entry.getType(), entry.getNsText(), entry.getExtraData(), entry.isInferred());
+                                                          "$1<b>$2</b>").replace(re2, "$1<b>$2</b>").replace(/_/g, ' '), entry.getType(), entry.getNsText(), entry.getExtraData(), entry.isInferred(),entry.getImageURL());
                 }
 
                 j++;
@@ -1410,11 +1410,12 @@ AutoCompleter.prototype = {
         	var type = parseInt(children[i].getAttribute("type"));
         	var inferred = children[i].getAttribute("inferred") == "true";
         	var nsText = children[i].getAttribute("nsText");
+        	var imageurl = children[i].getAttribute("imageurl");
         	var pasteContentTextNode = children[i].getElementsByTagName("pasteContent")[0];
         	var extraDataTextNode = children[i].getElementsByTagName("extraData")[0];
         	var pasteContent = pasteContentTextNode.firstChild != null ? pasteContentTextNode.firstChild.nodeValue : "";
         	var extraData = extraDataTextNode.firstChild != null ? extraDataTextNode.firstChild.nodeValue : "";
-            collection[i] = new MatchItem(display, type, nsText, extraData, inferred, pasteContent);
+            collection[i] = new MatchItem(display, type, nsText, extraData, inferred, pasteContent, imageurl);
         }
 
         return collection;
@@ -1424,18 +1425,20 @@ AutoCompleter.prototype = {
 
  // ----- Classes -----------
 
-function MatchItem(text, type, nsText, extraData, inferred, pasteContent) {
+function MatchItem(text, type, nsText, extraData, inferred, pasteContent, imageurl) {
     var _text = text;
     var _type = type;
     var _nsText = nsText;
     var _extraData = extraData;
     var _inferred = inferred;
     var _pasteContent = pasteContent;
-
+    var _imageurl = imageurl;
+    
     this.getText = function() { return _text; }
     this.getExtraData = function() { return _extraData; }
     this.getType = function() { return _type; }
     this.getNsText = function() { return _nsText; }
+    this.getImageURL = function() { return _imageurl; }
     this.isInferred = function() { return _inferred; }
     this.getPasteContent = function() { return _pasteContent; }
 }
@@ -1461,7 +1464,7 @@ function SmartInputWindow() {
     }
 }  //SmartInputWindow Object
 
-function SmartInputMatch(cleanValue, value, type, nsText, extraData, inferred) {
+function SmartInputMatch(cleanValue, value, type, nsText, extraData, inferred, imageurl) {
     this.cleanValue = cleanValue;
     this.value = value;
     this.isSelected = false;
@@ -1469,16 +1472,20 @@ function SmartInputMatch(cleanValue, value, type, nsText, extraData, inferred) {
     var _type = type;
     var _nsText = nsText;
     var _extraData = extraData;
-    
+    var _imageurl = imageurl;
     /**
      * Shows namespace icon or namespace as text.
      * In case of primitive values neither of that.
      */
     this.getImageTag = function() {
-    	var imgPath = acNamespaceRegistry.getImgPath(_type);
-    	var namespaceText = _nsText != null ? _nsText+":" : "";
-    	return imgPath ? "<img src=\"" + wgServer + wgScriptPath
-                +imgPath+"\">" : namespaceText;
+    	if (_imageurl && _imageurl != '') {
+        	return "<img src=\"" + wgServer +_imageurl+"\">";
+    	} else {
+	    	var imgPath = acNamespaceRegistry.getImgPath(_type);
+	    	var namespaceText = _nsText != null ? _nsText+":" : "";
+	    	return imgPath ? "<img src=\"" + wgServer + wgScriptPath
+	                +imgPath+"\">" : namespaceText;
+    	}
     }
 
     this.getType = function() { return _type; }

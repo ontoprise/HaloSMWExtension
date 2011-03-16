@@ -105,6 +105,7 @@ function smwf_ac_AutoCompletionDispatcher($articleName, $userInputToMatch, $user
 
 			$pages = AutoCompletionHandler::executeCommand($constraints, $userInputToMatch);
 		}
+		AutoCompletionRequester::attachImageURL($pages);
 		$result = AutoCompletionRequester::encapsulateAsXML($pages);
 		return $result;
 	} else if (stripos($userContext, "[[") === 0){
@@ -200,20 +201,20 @@ function smwf_ac_AutoCompletionDispatcher($articleName, $userInputToMatch, $user
 	} else if (preg_match('/\|\s*format\s*=/', $userContext) > 0) {
 		// format query parameter context
 		global $smwgResultFormats;
-        $pages = AutoCompletionHandler::executeCommand("values: ".implode(",",array_keys($smwgResultFormats)), $userInputToMatch);
-        $result = AutoCompletionRequester::encapsulateAsXML($pages);
-        return $result;
-    } else if (stripos($userContext, "?") === 0) {
-    	// query printout context
+		$pages = AutoCompletionHandler::executeCommand("values: ".implode(",",array_keys($smwgResultFormats)), $userInputToMatch);
+		$result = AutoCompletionRequester::encapsulateAsXML($pages);
+		return $result;
+	} else if (stripos($userContext, "?") === 0) {
+		// query printout context
 		$pages = AutoCompletionHandler::executeCommand("namespace: ".SMW_NS_PROPERTY, $userInputToMatch);
 		$result = AutoCompletionRequester::encapsulateAsXML($pages);
 		return $result;
 	} else if (stripos($userContext, "|") === 0) {
 		// general query parameter context
-        $pages = AutoCompletionHandler::executeCommand("values: sort=,order=asc/desc/reverse,limit=,offset=,format=,headers=,mainlabel=,link=,default=,intro=,outro=,searchlabel=,template=", $userInputToMatch);
-        $result = AutoCompletionRequester::encapsulateAsXML($pages);
-        return $result;
-    }
+		$pages = AutoCompletionHandler::executeCommand("values: sort=,order=asc/desc/reverse,limit=,offset=,format=,headers=,mainlabel=,link=,default=,intro=,outro=,searchlabel=,template=", $userInputToMatch);
+		$result = AutoCompletionRequester::encapsulateAsXML($pages);
+		return $result;
+	}
 }
 
 /**
@@ -246,7 +247,7 @@ function &smwfGetAutoCompletionStore() {
 				global $smwhgAutoCompletionTSC;
 				if (isset($smwhgAutoCompletionTSC) && $smwhgAutoCompletionTSC === true) {
 					// activate TSC autocompletion only explicitly
-					$smwhgAutoCompletionStore = new AutoCompletionStorageTSC();
+					$smwhgAutoCompletionStore = new AutoCompletionStorageTSCQuad();
 				} else {
 					$smwhgAutoCompletionStore = new AutoCompletionStorageSQL2();
 				}
@@ -265,8 +266,30 @@ function &smwfGetAutoCompletionStore() {
  * TODO: Document, including member functions
  */
 class AutoCompletionRequester {
-
-
+    
+	/**
+	 * Attaches images URLs to Match Items 
+	 * 
+	 * @param & $matches (out)
+	 * 
+	 * @param hash array $matches
+	 */
+	public static function attachImageURL(& $matches) {
+		for($i = 0; $i < count($matches); $i++) {
+			$title = is_array($matches[$i])? $matches[$i]['title'] : $matches[$i];
+			if ($title->getNamespace() != NS_MAIN) continue;
+			$categories = smwfGetSemanticStore()->getCategoriesForInstance($title);
+			foreach($categories as $c) {
+				$url = smwfGetAutoCompletionStore()->getImageURL($c);
+				if (!is_null($url)) {
+					$matches[$i]['title'] = $title;
+					$matches[$i]['imageurl'] = $url;
+					break;
+				}
+			}
+		}
+		
+	}
 
 	/**
 	 * Get category proposals matching $match.
@@ -305,7 +328,7 @@ class AutoCompletionRequester {
 				}
 
 			}
-
+            AutoCompletionRequester::attachImageURL($pages);
 			return AutoCompletionRequester::encapsulateAsXML($pages, true); // return namespace too!
 		} else if (stripos(strtolower($userContext),strtolower($specialSchemaProperties[SMW_SSP_HAS_DOMAIN_AND_RANGE_HINT])) > 0) {
 			// has domain hint relation
@@ -325,6 +348,7 @@ class AutoCompletionRequester {
 				// fallback
 				$pages = smwfGetAutoCompletionStore()->getPages($match, array(NS_MAIN));
 			}
+			AutoCompletionRequester::attachImageURL($pages);
 			return AutoCompletionRequester::encapsulateAsXML($pages);
 
 		}
@@ -447,9 +471,13 @@ class AutoCompletionRequester {
 	/**
 	 * Encapsulate an array of Titles in a xml string
 	 *
-	 * @param $titles Array of Title
+	 * @param $matches Array of Title/string or hash array 
+	 *             'title' => Title
+	 *             'inferred' => boolean
+	 *             'pasteContent'=> string
+	 *             'extraData'=> mixed
+	 *             'imageurl'=>string
 	 * @param $putNameSpaceInName If true system would return 'namespace:localname' otherwise 'localname'
-	 * @param $extraData Extra data which is pasted behind the Title. (array sizes of $titles and $extraData must matched, if used.)
 	 * @return xml string
 	 */
 	public static function encapsulateAsXML(array & $matches, $putNameSpaceInName = false) {
@@ -462,27 +490,28 @@ class AutoCompletionRequester {
 		$xmlResult = '';
 
 		for($i = 0, $n = count($matches); $i < $n; $i++) {
-			$pasteContent = "";
-			$extraData = "";
-			$inferred = false;
+			$pasteContent = array_key_exists('pasteContent', $matches[$i]) ? $matches[$i]['pasteContent'] :"";
+			$extraData = array_key_exists('extraData', $matches[$i]) ? $matches[$i]['extraData'] :"";
+			$inferred = array_key_exists('inferred', $matches[$i]) ? $matches[$i]['inferred'] : false;
+			$imageURL = array_key_exists('imageurl', $matches[$i]) ? $matches[$i]['imageurl'] : "";
 			$namespaceText = "";
+			
 			$arity = count($matches[$i]);
 			switch($arity) {
 				case 1: $title = $matches[$i]; break;
-				case 2: list($title, $inferred) = $matches[$i];break;
-				case 3: list($title, $inferred, $pasteContent) = $matches[$i]; break;
-				case 4: list($title, $inferred, $pasteContent, $extraData) = $matches[$i];
+				default:
+					$title = $matches[$i]['title'];break;
 			}
 			if ($title == NULL) continue;
-
-			$inferredAtt = $inferred ? 'inferred="true"' : 'inferred="false"';
+            
+			// set content (ie. the content to display)
 			if (is_string($title)) {
 				$typeAtt =  "type=\"-1\""; // no namespace, just a value
 				$content = $title;
 			} else {
 				// $title is actual Title obejct
-
-				if ($arity == 4 && $title->getNamespace() == SMW_NS_PROPERTY) {
+				if (array_key_exists('extraData', $matches[$i]) && $title->getNamespace() == SMW_NS_PROPERTY) {
+					// extraData contains property schema inforamation
 					list($typeStr, $rangeStr) = $extraData;
 					$extraData = $rangeStr == NULL ? wfMsg('smw_ac_typehint', $typeStr) : wfMsg('smw_ac_typerangehint', $typeStr, $rangeStr);
 				}
@@ -490,9 +519,15 @@ class AutoCompletionRequester {
 				$namespaceText = "nsText=\"".$title->getNsText()."\"";
 				$content = ($putNameSpaceInName ? htmlspecialchars($title->getPrefixedDBkey()) : htmlspecialchars($title->getDBkey()));
 			}
+			
+			// set all other
+			$inferredAtt = $inferred ? 'inferred="true"' : 'inferred="false"';
 			$pasteContent = htmlspecialchars($pasteContent);
 			$extraData = htmlspecialchars($extraData);
-			$xmlResult .= "<match $typeAtt $inferredAtt $namespaceText><display>$content</display><pasteContent>$pasteContent</pasteContent><extraData>$extraData</extraData></match>";
+			$imageURLAtt = "imageurl=\"".str_replace('"', '&quot;', $imageURL)."\"";
+			
+			// assemble match item
+			$xmlResult .= "<match $typeAtt $inferredAtt $namespaceText $imageURLAtt><display>$content</display><pasteContent>$pasteContent</pasteContent><extraData>$extraData</extraData></match>";
 		}
 
 		return '<result maxMatches="'.SMW_AC_MAX_RESULTS.'">'.$xmlResult.'</result>';
@@ -514,6 +549,9 @@ class AutoCompletionRequester {
 		}
 		return '<result maxMatches="'.SMW_AC_MAX_RESULTS.'">'.$xmlResult.'</result>';
 	}
+
+
+
 }
 
 class TemplateReader {
@@ -601,7 +639,7 @@ class AutoCompletionHandler {
 	public static function executeCommand($command, $userInput) {
 		$parsedCommands = self::parseCommand($command);
 		$acStore = smwfGetAutoCompletionStore();
-		
+
 		$result = array();
 		$first = true;
 		foreach($parsedCommands as $c) {
@@ -757,10 +795,10 @@ class AutoCompletionHandler {
 				$inf = self::setInferred($titles, !$first);
 				self::mergeResults($result, $inf);
 				if (count($result) >= SMW_AC_MAX_RESULTS) break;
-			
+					
 			} else if($commandText == "asf-ac"){
 				//returns all categories for which an ASF can be created
-				
+
 				if(defined('ASF_VERSION')){
 					@ $titles = ASFCategoryAC::getCategories($userInput);
 				} else {
@@ -810,8 +848,8 @@ class AutoCompletionHandler {
 	 * @return int < 0 if $r1 < $r2, == 0 if $r1 == $r2, > 0 if $r1 > $r2
 	 */
 	private static function isEqualResults(& $r1, & $r2) {
-		$t1 = is_array($r1) ? reset($r1) : $r1;
-		$t2 = is_array($r2) ? reset($r2) : $r2;
+		$t1 = is_array($r1) ? $r1['title'] : $r1;
+		$t2 = is_array($r2) ? $r2['title'] : $r2;
 		$t1_text = $t1 instanceof Title ? $t1->getPrefixedText() : $t1;
 		$t2_text = $t2 instanceof Title ? $t2->getPrefixedText() : $t2;
 		return strcmp($t1_text, $t2_text);
@@ -829,9 +867,9 @@ class AutoCompletionHandler {
 		$newmatches = array();
 		foreach($acMatches as $t) {
 			if ($t instanceof Title) {
-				$newmatches[] = array($t, $inferred);
+				$newmatches[] = array('title'=>$t, 'inferred'=>$inferred);
 			} else {
-				$t[1] = $inferred;
+				$t['inferred'] = $inferred;
 				$newmatches[] = $t;
 
 			}

@@ -46,7 +46,8 @@ class SMW_HaloLanguageNl extends SMW_HaloLanguage {
     'smw_ac_email_proposal'=>'somebody@somewhere.com',
     'smw_ac_temperature_proposal'=>'<number> K, <number> °C, <number> °F, <number> °R',
     'smw_ac_telephone_proposal'=>'tel:+1-201-555-0123',
-
+    'smw_ac_category_has_icon' => 'Category has icon',
+	
 	// Messages for SI unit parsing
 	'smw_no_si_unit' => 'Geen eenheid in de SI voorstelling. ',
 	'smw_too_many_slashes' => 'Teveel slashes in de SI voorstelling. ',

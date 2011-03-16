@@ -52,6 +52,7 @@ protected $smwContentMessages = array(
     'smw_ac_email_proposal'=>'irgendwer@irgendwo.com',
     'smw_ac_temperature_proposal'=>'<Zahl> K, <Zahl> °C, <Zahl> °F, <Zahl> °R',
     'smw_ac_telephone_proposal'=>'tel:+49-721-5453334',
+    'smw_ac_category_has_icon' => 'Kategorie hat Bild',
 
 	// Messages for SI unit parsing
 	'smw_no_si_unit' => 'Einheit nicht in SI-Representation. ',

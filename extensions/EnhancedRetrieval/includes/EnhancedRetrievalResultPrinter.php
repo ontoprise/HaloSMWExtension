@@ -103,7 +103,7 @@ class EnhancedRetrievalResultPrinter {
 			$html .= self::addPreview($e, $args, $args_prev);
 			$html .= '<a class="us_search_result_link" href="'.$e->getTitle()->getFullURL().'">'.$e->getTitle()->getText().'</a>';
 			$nsName = $e->getTitle()->getNamespace() == NS_MAIN ? wfMsg('us_article') : $wgContLang->getNsText($e->getTitle()->getNamespace());
-			$html .= '<img alt="'.$nsName.'" title="'.$nsName.'" src="'.self::getImageURI(self::getImageFromNamespace($e)).'"/>';
+			$html .= '<img alt="'.$nsName.'" title="'.$nsName.'" src="'.self::getImageFromNamespace($e).'"/>';
 
 			if (count($categories) > 0) {
 				$html .= '<div class="category">'.wfMsg('us_isincat').': ';
@@ -130,6 +130,12 @@ class EnhancedRetrievalResultPrinter {
 
 		return $imagePath;
 	}
+	
+    public static function getImageURIFromPath($path) {
+        global $wgServer, $wgScriptPath;
+        $imagePath = "$wgServer$path";
+        return $imagePath;
+    }
 
 	// adds preview to result depending on namespace
 	private static function addPreview($e, $args, $args_prev) {
@@ -141,6 +147,15 @@ class EnhancedRetrievalResultPrinter {
 	}
 
 	private static function getImageFromNamespace($result) {
+		if ($result->getTitle()->getNamespace() == NS_MAIN) {
+			$categories=$result->getTitle()->getParentCategories();
+			foreach($categories as $prefixedText => $text) {
+				$path = USStore::getStore()->getImageURL(Title::newFromText($prefixedText));
+				if (!is_null($path)) {
+					return self::getImageURIFromPath($path);
+				}
+			}
+		}
 		$image = "";
 		switch($result->getTitle()->getNamespace()) {
 			case NS_MAIN: { $image = "smw_plus_instances_icon_16x16.png"; break; }
@@ -178,7 +193,7 @@ class EnhancedRetrievalResultPrinter {
 				case SMW_NS_USER_MANUAL: { $image = "smw_plus_help_icon_16x16.png"; break; }
 			}
 		}
-		return $image;
+		return self::getImageURI($image);
 	}
 
 	private static function formatdate($timestamp) {

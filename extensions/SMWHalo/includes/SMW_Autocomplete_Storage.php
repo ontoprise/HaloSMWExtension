@@ -122,14 +122,22 @@ abstract class AutoCompletionStorage {
 	 * @return array of (Title instance)
 	 */
 	public abstract function getInstanceAsTarget($userInputToMatch, $domainRangeAnnotations);
+
+	/**
+	 * Returns properties which do not have domain/range annotations.
+	 *
+	 * @param string $userInputToMatch
+	 * @return array of (Property title, false, NULL, array(types, range categories))
+	 */
+	public abstract function getDomainLessProperty($userInputToMatch);
 	
 	/**
-     * Returns properties which do not have domain/range annotations.
-     * 
-     * @param string $userInputToMatch
-     * @return array of (Property title, false, NULL, array(types, range categories))
-     */
-    public abstract function getDomainLessProperty($userInputToMatch);
+	 * Returns the (local) URL of an image attached to a category. 
+	 * The language constant smw_ac_category_has_icon defines the icon property.
+	 * 
+	 * @param Title $categoryTitle
+	 */
+	public abstract function getImageURL($categoryTitle);
 }
 
 /**
@@ -229,7 +237,7 @@ class AutoCompletionStorageSQL2 extends AutoCompletionStorage {
 				if (smwf_om_userCan($row->page_title, 'read', $row->page_namespace) == 'true') {
 					if ($row->page_namespace == SMW_NS_PROPERTY) {
 						$propertyTitle = Title::newFromText($row->page_title, SMW_NS_PROPERTY);
-						$result[] = array($propertyTitle, false, NULL, $this->getPropertyData($propertyTitle));
+						$result[] = array('title'=>$propertyTitle, 'inferred'=>false, 'pasteContent'=> NULL, 'extraData'=>$this->getPropertyData($propertyTitle));
 					} else {
 						$result[] = Title::makeTitle($row->page_namespace, $row->page_title);
 					}
@@ -276,7 +284,7 @@ class AutoCompletionStorageSQL2 extends AutoCompletionStorage {
 
 
 	public function getPropertyForInstance($userInputToMatch, $instance, $matchDomainOrRange) {
-		
+
 		$db =& wfGetDB( DB_SLAVE );
 		$page = $db->tableName('page');
 		$categorylinks = $db->tableName('categorylinks');
@@ -286,7 +294,7 @@ class AutoCompletionStorageSQL2 extends AutoCompletionStorage {
 
 		$nary_pos = $matchDomainOrRange ? '"_1"' : '"_2"';
 
-		
+
 		// create virtual tables
 		$db->query( 'CREATE TEMPORARY TABLE smw_ob_properties (id INT(8) NOT NULL, property VARBINARY(255), inferred ENUM(\'true\',\'false\'))
                     ENGINE=MEMORY', 'SMW::createVirtualTableWithPropertiesByCategory' );
@@ -340,7 +348,7 @@ class AutoCompletionStorageSQL2 extends AutoCompletionStorage {
 			while($row = $db->fetchObject($res)) {
 				if (smwf_om_userCan($row->property, 'read', SMW_NS_PROPERTY) == 'true') {
 					$propertyTitle = Title::newFromText($row->property, SMW_NS_PROPERTY);
-					$result[] = array($propertyTitle, $row->inferred == "true", NULL, $this->getPropertyData($propertyTitle));
+					$result[] = array('title'=>$propertyTitle, 'inferred'=>$row->inferred == "true", 'pasteContent'=>NULL, 'extraData'=>$this->getPropertyData($propertyTitle));
 				}
 			}
 		}
@@ -355,7 +363,7 @@ class AutoCompletionStorageSQL2 extends AutoCompletionStorage {
 	}
 
 	public function getPropertyForCategory($userInputToMatch, $category) {
-		
+
 		$db =& wfGetDB( DB_SLAVE );
 		$page = $db->tableName('page');
 		$categorylinks = $db->tableName('categorylinks');
@@ -365,7 +373,7 @@ class AutoCompletionStorageSQL2 extends AutoCompletionStorage {
 
 		$nary_pos = '"_1"';
 
-		
+
 		// create virtual tables
 		$db->query( 'CREATE TEMPORARY TABLE smw_ob_properties (id INT(8) NOT NULL, property VARBINARY(255), inferred ENUM(\'true\',\'false\'))
                     ENGINE=MEMORY', 'SMW::createVirtualTableWithPropertiesByCategory' );
@@ -419,7 +427,7 @@ class AutoCompletionStorageSQL2 extends AutoCompletionStorage {
 			while($row = $db->fetchObject($res)) {
 				if (smwf_om_userCan($row->property, 'read', SMW_NS_PROPERTY) == 'true') {
 					$propertyTitle = Title::newFromText($row->property, SMW_NS_PROPERTY);
-					$result[] = array($propertyTitle, $row->inferred == "true", NULL, $this->getPropertyData($propertyTitle));
+					$result[] = array('title'=>$propertyTitle, 'inferred'=>$row->inferred == "true", 'pasteContent'=>NULL, 'extraData'=>$this->getPropertyData($propertyTitle));
 				}
 			}
 		}
@@ -434,7 +442,7 @@ class AutoCompletionStorageSQL2 extends AutoCompletionStorage {
 	}
 
 	public function getPropertyForAnnotation($userInputToMatch, $category) {
-		
+
 		$db =& wfGetDB( DB_SLAVE );
 		$page = $db->tableName('page');
 		$categorylinks = $db->tableName('categorylinks');
@@ -445,7 +453,7 @@ class AutoCompletionStorageSQL2 extends AutoCompletionStorage {
 
 		$nary_pos = 0;
 
-	
+
 		// create virtual tables
 		$db->query( 'CREATE TEMPORARY TABLE smw_ob_properties (id INT(8) NOT NULL, property VARBINARY(255), inferred ENUM(\'true\',\'false\'))
                     ENGINE=MEMORY', 'SMW::createVirtualTableWithPropertiesByCategory' );
@@ -505,7 +513,7 @@ class AutoCompletionStorageSQL2 extends AutoCompletionStorage {
 			while($row = $db->fetchObject($res)) {
 				if (smwf_om_userCan($row->property, 'read', SMW_NS_PROPERTY) == 'true') {
 					$propertyTitle = Title::newFromText($row->property, SMW_NS_PROPERTY);
-					$result[] = array($propertyTitle, $row->inferred == "true", NULL, $this->getPropertyData($propertyTitle));
+					$result[] = array('title'=>$propertyTitle, 'inferred'=>$row->inferred == "true", 'pasteContent'=>NULL, 'extraData'=>$this->getPropertyData($propertyTitle));
 				}
 			}
 		}
@@ -520,7 +528,7 @@ class AutoCompletionStorageSQL2 extends AutoCompletionStorage {
 	}
 
 	public function getValueForAnnotation($userInputToMatch, $property) {
-		
+
 		$db =& wfGetDB( DB_SLAVE );
 
 		$smw_ids = $db->tableName('smw_ids');
@@ -529,7 +537,7 @@ class AutoCompletionStorageSQL2 extends AutoCompletionStorage {
 		$smw_subs2 = $db->tableName('smw_subp2');
 		$smw_spec2 = $db->tableName('smw_spec2');
 
-		
+
 		// create virtual tables
 		$db->query( 'CREATE TEMPORARY TABLE smw_cc_propertyinst (title VARBINARY(255), namespace INT(11), inferred ENUM(\'true\',\'false\'))
                     ENGINE=MEMORY', 'SMW::getNumberOfPropertyInstantiations' );
@@ -602,7 +610,7 @@ class AutoCompletionStorageSQL2 extends AutoCompletionStorage {
 					$result[] = array($stringValue, $row->inferred == 'true');
 				} else {
 					if (smwf_om_userCan($row->title, 'read', $row->namespace) == 'true') {
-						$result[] = array(Title::makeTitle($row->namespace, $row->title), $row->inferred == 'true');
+						$result[] = array('title'=>Title::makeTitle($row->namespace, $row->title), 'inferred'=>$row->inferred == 'true');
 					}
 				}
 			}
@@ -621,12 +629,12 @@ class AutoCompletionStorageSQL2 extends AutoCompletionStorage {
 
 
 	public function getInstanceAsTarget($userInputToMatch, $domainRangeAnnotations) {
-		
+
 		$db =& wfGetDB( DB_SLAVE );
 		$page = $db->tableName('page');
 		$categorylinks = $db->tableName('categorylinks');
 
-		
+
 		// create virtual tables
 		$db->query( 'CREATE TEMPORARY TABLE smw_ob_instances (instance VARBINARY(255), namespace INTEGER(11))
                     ENGINE=MEMORY', 'SMW::createVirtualTableWithInstances' );
@@ -704,46 +712,46 @@ class AutoCompletionStorageSQL2 extends AutoCompletionStorage {
 		return $results;
 	}
 
-public function getDomainLessProperty($userInputToMatch) {
-        
-        $db =& wfGetDB( DB_SLAVE );
-        
-        $smw_rels2 = $db->tableName('smw_rels2');
-        $smw_ids = $db->tableName('smw_ids');
-        
-        $requestoptions = new SMWRequestOptions();
-        $requestoptions->limit = SMW_AC_MAX_RESULTS;
-        $options = DBHelper::getSQLOptionsAsString($requestoptions);
+	public function getDomainLessProperty($userInputToMatch) {
 
-        $domainAndRange = $db->selectRow($db->tableName('smw_ids'), array('smw_id'), array('smw_title' => smwfGetSemanticStore()->domainRangeHintRelation->getDBkey()) );
-        if ($domainAndRange == NULL) {
-            $domainAndRangeID = -1; // does never exist
-        } else {
-            $domainAndRangeID = $domainAndRange->smw_id;
-        }
+		$db =& wfGetDB( DB_SLAVE );
 
-        $sql = 'SELECT smw_title FROM '.$smw_ids.' q LEFT JOIN '.$smw_rels2.' s ON q.smw_id = s.s_id AND s.p_id = '.$domainAndRangeID.' '.
+		$smw_rels2 = $db->tableName('smw_rels2');
+		$smw_ids = $db->tableName('smw_ids');
+
+		$requestoptions = new SMWRequestOptions();
+		$requestoptions->limit = SMW_AC_MAX_RESULTS;
+		$options = DBHelper::getSQLOptionsAsString($requestoptions);
+
+		$domainAndRange = $db->selectRow($db->tableName('smw_ids'), array('smw_id'), array('smw_title' => smwfGetSemanticStore()->domainRangeHintRelation->getDBkey()) );
+		if ($domainAndRange == NULL) {
+			$domainAndRangeID = -1; // does never exist
+		} else {
+			$domainAndRangeID = $domainAndRange->smw_id;
+		}
+
+		$sql = 'SELECT smw_title FROM '.$smw_ids.' q LEFT JOIN '.$smw_rels2.' s ON q.smw_id = s.s_id AND s.p_id = '.$domainAndRangeID.' '.
         'WHERE smw_namespace = '.SMW_NS_PROPERTY.' AND s.p_id IS NULL AND UPPER('.DBHelper::convertColumn('smw_title').') LIKE UPPER('.$db->addQuotes('%'.$userInputToMatch.'%').') '.$options;
 
 
-        $result = array();
-        $res = $db->query($sql);
+		$result = array();
+		$res = $db->query($sql);
 
-        if($db->numRows( $res ) > 0) {
-            while($row = $db->fetchObject($res)) {
-                if (smwf_om_userCan($row->smw_title, 'read', SMW_NS_PROPERTY) == 'true') {
-                        
-                    $propertyTitle = Title::newFromText($row->smw_title, SMW_NS_PROPERTY);
-                    $result[] = array($propertyTitle, false, NULL, $this->getPropertyData($propertyTitle));
-                        
-                }
-            }
-        }
-        $db->freeResult($res);
-        return $result;
+		if($db->numRows( $res ) > 0) {
+			while($row = $db->fetchObject($res)) {
+				if (smwf_om_userCan($row->smw_title, 'read', SMW_NS_PROPERTY) == 'true') {
 
-    }
-    
+					$propertyTitle = Title::newFromText($row->smw_title, SMW_NS_PROPERTY);
+					$result[] = array('title'=>$propertyTitle, 'inferred'=>false, 'pasteContent'=>NULL, 'extraData'=>$this->getPropertyData($propertyTitle));
+
+				}
+			}
+		}
+		$db->freeResult($res);
+		return $result;
+
+	}
+
 	public  function runASKQuery($rawquery, $userInput, $column = "_var0") {
 
 		global $smwgResultFormats, $smwgHaloIP;
@@ -765,14 +773,37 @@ public function getDomainLessProperty($userInputToMatch) {
 
 	}
 
+	public function getImageURL($categoryTitle) {
+		static $image_urls = array();
+
+		if (is_null($categoryTitle)) return NULL;
+
+		if (array_key_exists($categoryTitle->getPrefixedDBkey(), $image_urls)) {
+			return $image_urls[$categoryTitle->getPrefixedDBkey()];
+		}
+		$catHasIconProperty = SMWPropertyValue::makeUserProperty(wfMsg('smw_ac_category_has_icon'));
+		$iconValues = smwfGetStore()->getPropertyValues($categoryTitle, $catHasIconProperty, NULL, '');
+		$iconValue = reset($iconValues); // consider only first
+		if ($iconValue === false) return NULL;
+		
+		$im_file = wfLocalFile($iconValue->getTitle());
+		$url = !is_null($im_file) && $im_file instanceof File ? $im_file->getURL(): NULL;
+
+		if (!is_null($url)) {
+			$image_urls[$categoryTitle->getPrefixedDBkey()] = $url;
+		}
+        
+		return $url;
+	}
+
 	/**
-     * Returns type labels and range categories of a property as comma-separated
-     * list.
-     * 
-     * @param Title $property
-     * 
-     * @return array(types, range categories)
-     */
+	 * Returns type labels and range categories of a property as comma-separated
+	 * list.
+	 *
+	 * @param Title $property
+	 *
+	 * @return array(types, range categories)
+	 */
 	protected function getPropertyData(Title $property) {
 		$ranges = array();
 		$pv = SMWPropertyValue::makeUserProperty($property->getText());
@@ -789,12 +820,12 @@ public function getDomainLessProperty($userInputToMatch) {
 		if ($hasWikiPageType) {
 			$domainRangeAnnotations = smwfGetStore()->getPropertyValues($property, smwfGetSemanticStore()->domainRangeHintProp);
 			foreach($domainRangeAnnotations as $a) {
-				
+
 				$dvs = $a->getDVs();
 				$domain = reset($dvs);
 				$range = next($dvs);
 				if (!is_null($range) && $range !== false) $ranges[] = $range->getTitle()->getText();
-				
+
 			}
 
 			$rangeString = implode(',', array_unique($ranges));
@@ -803,8 +834,14 @@ public function getDomainLessProperty($userInputToMatch) {
 	}
 }
 
-class AutoCompletionStorageTSC extends AutoCompletionStorageSQL2 {
-	
+/**
+ * This class handles the auto-completion mechanism in case of a TSC in quad mode.
+ *
+ * @author Kai Kühn / ontoprise / 2011
+ *
+ */
+class AutoCompletionStorageTSCQuad extends AutoCompletionStorageSQL2 {
+
 	public  function runASKQuery($rawquery, $userInput, $column = "_var0") {
 
 		global $smwgResultFormats, $smwgHaloIP;
@@ -827,7 +864,8 @@ class AutoCompletionStorageTSC extends AutoCompletionStorageSQL2 {
 	}
 
 
-
+	//TODO: This is not efficient. Must be replaced by another implementation
+	// Ideally, the SOLR server should handle this
 	public function getPages($match, $namespaces = NULL) {
 		$client = TSConnection::getConnector();
 		$client->connect();
@@ -852,14 +890,14 @@ class AutoCompletionStorageTSC extends AutoCompletionStorageSQL2 {
 			$response = $client->query("SELECT DISTINCT ?s WHERE { $filter }",  "limit=".SMW_AC_MAX_RESULTS);
 		}
 		$result = $this->parseSPARQLResults($response);
-       
-		
+		 
+
 		return $result;
 	}
 
 	protected function parseSPARQLResults($response) {
 		$dom = simplexml_load_string($response);
-        $dom->registerXPathNamespace("sparqlxml", "http://www.w3.org/2005/sparql-results#");
+		$dom->registerXPathNamespace("sparqlxml", "http://www.w3.org/2005/sparql-results#");
 		$result = array();
 		$results = $dom->xpath('//sparqlxml:result');
 		foreach ($results as $r) {
@@ -868,23 +906,23 @@ class AutoCompletionStorageTSC extends AutoCompletionStorageSQL2 {
 			$b = $children->binding[0]; // predicate
 
 			$sv = $b->children()->uri[0];
-			
+				
 			if (!is_null($sv) && $sv !== '') {
 				$title = TSHelper::getTitleFromURI((string) $sv);
 				if (is_null($title)) {
-					
+						
 					continue;
-				} 
+				}
 				$extraData = ($title->getNamespace() == SMW_NS_PROPERTY) ? $this->getPropertyData($title) : NULL;
-				$result[] = array($title, false, NULL, $extraData);
+				$result[] = array('title'=>$title, 'inferred'=>false, 'pasteContent'=>NULL, 'extraData'=>$extraData);
 			} else {
 				$sv = $b->children()->literal[0];
 				$result[] = array((string) $sv, false);
 			}
 
 		}
-	
-	return $result;
+
+		return $result;
 	}
 
 
@@ -940,7 +978,7 @@ class AutoCompletionStorageTSC extends AutoCompletionStorageSQL2 {
 		$client = TSConnection::getConnector();
 		$client->connect();
 		$tsn = TSNamespaces::getInstance();
-	
+
 
 
 		$first = true;
@@ -965,7 +1003,27 @@ class AutoCompletionStorageTSC extends AutoCompletionStorageSQL2 {
 	}
 
 
+	public function getImageURL($categoryTitle) {
+		static $image_urls = array();
 
+		if (is_null($categoryTitle)) return NULL;
+
+		if (array_key_exists($categoryTitle->getPrefixedDBkey(), $image_urls)) {
+			return $image_urls[$categoryTitle->getPrefixedDBkey()];
+		}
+		$catHasIconProperty = SMWPropertyValue::makeUserProperty(wfMsg('smw_ac_category_has_icon'));
+		$iconValues = smwfGetStore()->getPropertyValues($categoryTitle, $catHasIconProperty, NULL, '', true);
+		$iconValue = reset($iconValues); // consider only first
+
+		$im_file = wfLocalFile($iconValue->getTitle());
+		$url = !is_null($im_file) && $im_file instanceof File ? $im_file->getURL(): NULL;
+
+		if (!is_null($url)) {
+			$image_urls[$categoryTitle->getPrefixedDBkey()] = $url;
+		}
+
+		return $url;
+	}
 
 }
 
