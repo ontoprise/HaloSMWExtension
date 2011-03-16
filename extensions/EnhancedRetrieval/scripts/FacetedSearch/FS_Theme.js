@@ -292,6 +292,10 @@
 	AjaxSolr.theme.prototype.no_facet_filter_set = function() {
 		return $('<div>').text('(no facet filter set)');
 	};
+	
+	AjaxSolr.theme.prototype.remove_all_filters = function(handler) {
+		return ($('<a href="#"/>').text('remove all').click(handler));
+	};
 
 	/**
 	 * Creates the HTML for a cluster of values of an attribute. A cluster is 

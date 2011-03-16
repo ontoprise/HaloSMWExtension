@@ -35,18 +35,6 @@ if (typeof FacetedSearch == "undefined") {
  */
 FacetedSearch.classes.FacetWidget = AjaxSolr.AbstractFacetWidget.extend({
 	
-	/**
-	 * This function is called when the details of a property facet are to be shown.
-	 * @param {string} facet
-	 * 		Name of the facet
-	 * 
-	 */
-	showPropertyDetailsHandler: function(facet) {
-		var clusterer = FacetedSearch.factories.FacetClustererFactory(facet);
-		clusterer.retrieveClusters();
-		
-	},
-	
 	afterRequest: function () {
 		if (this.noRender) {
 			return;
@@ -94,7 +82,7 @@ FacetedSearch.classes.FacetWidget = AjaxSolr.AbstractFacetWidget.extend({
 		});
 		
 		// show facets using grouping
-		var GROUP_SIZE = 4;
+		var GROUP_SIZE = 10;
 		var self = this;
 		$(this.target).empty();
 		for (var i = 0, l = objectedItems.length; i < l; i++) {
@@ -113,7 +101,7 @@ FacetedSearch.classes.FacetWidget = AjaxSolr.AbstractFacetWidget.extend({
 				target = FacetedSearch.singleton.FacetedSearchInstance.getRelationWidget();
 			}
 			$(ntarget)
-				.append(AjaxSolr.theme('facet', facet, objectedItems[i].count, target.clickHandler(facet), target.showPropertyDetailsHandler))
+				.append(AjaxSolr.theme('facet', facet, objectedItems[i].count, target.clickHandler(facet), FacetedSearch.classes.ClusterWidget.showPropertyDetailsHandler))
 				.append('<br>');
 		}
 		if (objectedItems.length > GROUP_SIZE) {

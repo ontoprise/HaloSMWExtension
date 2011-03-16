@@ -103,3 +103,13 @@ FacetedSearch.classes.ClusterWidget = AjaxSolr.AbstractWidget.extend({
 	}
 });
 
+/**
+ * This function is called when the details of a property facet are to be shown.
+ * @param {string} facet
+ * 		Name of the facet
+ * 
+ */
+FacetedSearch.classes.ClusterWidget.showPropertyDetailsHandler = function(facet) {
+	var clusterer = FacetedSearch.factories.FacetClustererFactory(facet);
+	clusterer.retrieveClusters();
+};
