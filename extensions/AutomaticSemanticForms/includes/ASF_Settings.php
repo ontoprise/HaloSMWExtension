@@ -19,7 +19,7 @@ $asfDummyFormName = "AutomaticSemanticForm";
  * extension features.
  */
 global $asfUseSemanticFormsInputsFeatures;
-$asfUseSemanticFormsInputsFeatures = false;
+$asfUseSemanticFormsInputsFeatures = true;
 
 
 /*

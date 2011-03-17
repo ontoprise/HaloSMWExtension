@@ -134,7 +134,7 @@ class ASFPropertyFormData {
 		
 		//deal with validator
 		global $asfUseSemanticFormsInputsFeatures;
-		if($this->validator && $asfUseSemanticFormsInputsFeatures){
+		if($this->validator && class_exists(SFIInputs) && $asfUseSemanticFormsInputsFeatures){
 			$syntax .= ' |regexp='.$this->validator;
 		}
 
@@ -290,7 +290,7 @@ class ASFPropertyFormData {
 				$cols = ASF_TEXTAREA_COLS;
 			} else if(strpos(DATETIMEDATATYPES, $objectType) !== false){
 				global $asfUseSemanticFormsInputsFeatures;
-				if(class_exists('SFITSettings') && $asfUseSemanticFormsInputsFeatures){
+				if(class_exists('SFIInputs') && $asfUseSemanticFormsInputsFeatures){
 					$inputType = 'datepicker';
 				} else {
 					$inputType = 'datetime';
