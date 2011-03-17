@@ -17,6 +17,7 @@ define('QRC_HQO_LABEL','QRCHasQueryOffset');
 define('QRC_HEPP_LABEL','QRCHasExtraPropertyPrintouts');
 define('QRC_HECP_LABEL','QRCHasExtraCategoryPrintout');
 define('QRC_ISQ_LABEL','QRCIsSPARQLQuery');
+define('QRC_UAS_LABEL','QRCUsesASKSyntax');
 
 define('QRC_DOP_LABEL','QRCDependsOnProperty');
 define('QRC_DOC_LABEL','QRCDependsOnCategory');
@@ -63,6 +64,7 @@ class SMWQMQueryManagementHandler {
 		SMWPropertyValue::registerProperty('___QRC_HEPP', '_str', QRC_HEPP_LABEL , false);
 		SMWPropertyValue::registerProperty('___QRC_HECP', '_boo', QRC_HECP_LABEL , false);
 		SMWPropertyValue::registerProperty('___QRC_ISQ', '_boo', QRC_ISQ_LABEL , false);
+		SMWPropertyValue::registerProperty('___QRC_UAS', '_boo', QRC_UAS_LABEL , false);
 		
 		SMWPropertyValue::registerProperty('___QM_UIA', '_str', QM_UIA_LABEL , false);
 		SMWPropertyValue::registerProperty('___QM_UQP', '_str', QM_UQP_LABEL , false);
@@ -131,9 +133,15 @@ class SMWQMQueryManagementHandler {
 		
 		if ($query instanceof SMWSPARQLQuery){
 			$dataValue->setIsSPQRQLQuery('true');
+			$tmph = $query->fromASK ? 'true' : 'false';
+			$dataValue->setUsesASKSyntax($tmph);
 		} else {
-			$prProperties = 
-			$dataValue->setIsSPQRQLQuery('false');
+			if(array_key_exists('src', $query->params) && $query->params['src'] == 'tsc'){
+				$dataValue->setIsSPQRQLQuery('true');
+			} else {
+				$dataValue->setIsSPQRQLQuery('false');
+			}
+			$dataValue->setUsesASKSyntax('true');
 		}
 			
 		$properties = array();

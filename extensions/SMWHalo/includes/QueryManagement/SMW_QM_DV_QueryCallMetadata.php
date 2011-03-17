@@ -92,6 +92,12 @@ class SMWQueryCallMetadataValue extends SMWContainerValue {
 		$this->m_data->addPropertyObjectValue($propertyValue, $dataValue);
 	}
 	
+	public function setusesASKSyntax($isASK){
+		$propertyValue = SMWPropertyValue::makeUserProperty(QRC_UAS_LABEL);
+		$dataValue = SMWDataValueFactory::newPropertyObjectValue($propertyValue, $isASK);
+		$this->m_data->addPropertyObjectValue($propertyValue, $dataValue);
+	}
+	
 	public function setUsedInArticle($uia){
 		$propertyValue = SMWPropertyValue::makeUserProperty(QM_UIA_LABEL);
 		$dataValue = SMWDataValueFactory::newPropertyObjectValue($propertyValue, $uia);

@@ -23,8 +23,10 @@ class SMWQMQueryMetadata {
 	
 	public $isDisjunctive;
 	
+	public $usesASKSyntax;
+	
 	public function __construct($isDisjunctive = false, $propertyPrintRequests = null, $isSparqlQuery = null, $categoryConditions = null, 
-			$propertyConditions = null, $usedInArticle = null, $queryPrinter = null, $queryName = null){
+			$propertyConditions = null, $usedInArticle = null, $queryPrinter = null, $queryName = null, $usesASKSyntax = null){
 		
 		$this->isDisjunctive = $isDisjunctive;
 		$this->propertyPrintRequests = $propertyPrintRequests;
@@ -34,6 +36,7 @@ class SMWQMQueryMetadata {
 		$this->usedInArticle = $usedInArticle;
 		$this->queryPrinter = $queryPrinter;
 		$this->queryName = $queryName;
+		$this->usesASKSyntax = $usesASKSyntax;
 	}
 	
 	public function getMetadaSearchQueryString(){
@@ -77,6 +80,10 @@ class SMWQMQueryMetadata {
 		
 		if(!is_null($this->isSparqlQuery)){
 			$queryString = '('.$queryString.') [['.QRC_UQC_LABEL.'.'.QRC_ISQ_LABEL.'::'.$this->isSparqlQuery.']]';
+		}
+		
+		if(!is_null($this->usesASKSyntax)){
+			$queryString = '('.$queryString.') [['.QRC_UQC_LABEL.'.'.QRC_UAS_LABEL.'::'.$this->usesASKSyntax.']]';
 		}
 		
 		if(strlen($queryString) == 0){
@@ -149,6 +156,12 @@ class SMWQMQueryMetadata {
 			}
 		}
 
+		if(!is_null($this->usesASKSyntax) && !is_null($queryMetadataPattern->usesASKSyntax)){
+			if($this->usesASKSyntax != $queryMetadataPattern->usesASKSyntax){
+				return false;
+			}
+		}
+		
 		if($this->isDisjunctive){
 			return false;
 		} else {
@@ -164,6 +177,7 @@ class SMWQMQueryMetadata {
 			if($pV[0] == QRC_HEPP_LABEL) $this->propertyPrintRequests[$pV[1][0]] = true;
 			if($pV[0] == QRC_HECP_LABEL) $this->hasCategoryPrintRequest = $pV[1][0];
 			if($pV[0] == QRC_ISQ_LABEL) $this->isSparqlQuery = $pV[1][0];
+			if($pV[0] == QRC_UAS_LABEL) $this->usesASKSyntax = $pV[1][0];
 			if($pV[0] == QRC_DOP_LABEL) $this->propertyConditions[$pV[1][0]] = true;
 			if($pV[0] == QRC_DOC_LABEL) $this->categoryConditions[$pV[1][0]] = true;
 			if($pV[0] == QM_UIA_LABEL) $this->usedInArticle = $pV[1][0];
