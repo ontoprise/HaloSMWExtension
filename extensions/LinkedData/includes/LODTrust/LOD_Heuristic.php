@@ -48,6 +48,10 @@ class LODHeuristic extends LODResource {
     // string:
     // 	A label of the heuristic.
     private $mLabel;
+    
+    // array<LODParameter>:
+    // A list of parameters.
+    private $mParameters;
 
     /**
      * Constructor for LODHeuristic.
@@ -66,6 +70,14 @@ class LODHeuristic extends LODResource {
 
     public function setLabel($val) {
         $this->mLabel = $val;
+    }
+
+    public function getParameters() {
+        return $this->mParameters;
+    }
+
+    public function setParameters($pars) {
+        $this->mParameters = $pars;
     }
 
     //--- Public methods ---

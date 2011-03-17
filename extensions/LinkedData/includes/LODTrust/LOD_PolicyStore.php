@@ -206,7 +206,7 @@ QUERY;
     }
 
     /**
-     * Stores the definition of a Linked Data source in the triple store. The
+     * Stores the definition of a trust policy in the triple store. The
      * new namespace with the prefix "smw-lde" is used.
      *
      * Data source definitions are stored in a dedicated graph defined by LOD_BASE_URI
@@ -453,5 +453,106 @@ QUERY;
         return $parameter;
     }
 
+       /**
+     * Loads all heuristics from the TPEE web service.
+     *
+     * @return hash array (LODHeuristic)
+     */
+    public function loadAllHeuristics() {
+        $graph = $this->getTrustGraph();
+        $prefixes = self::getPolicyPrefixes();
+
+        $query = <<<QUERY
+		$prefixes
+SELECT ?h
+FROM <$graph>
+WHERE {
+	?h a smw-lde:ConflictResolutionHeuristic .
+}
+QUERY;
+
+        $tsa = new LODTripleStoreAccess();
+
+        $result = $tsa->queryTripleStore($query, $graph);
+        $heuristics = array();
+        if (!$result || count($result->getRows()) == 0) {
+            return $heuristics;
+        }
+
+        foreach ($result->getRows() as $row) {
+            $uri = $row->getResult('h')->getValue();
+            $heuristic = $this->loadHeuristic($uri);
+            $heuristics[] = $heuristic;
+        }
+        return $heuristics;
+    }
+
+        /**
+     * Loads a heuristic from the triple store.
+     *
+     * @param string $uri
+     * 		URI of the heuristic
+     *
+     * @return LODHeuristic
+     * 		The heuristic or <NULL>, if there is no such policy
+     * 		with the given URI.
+     */
+    public function loadHeuristic($uri) {
+        $graph = $this->getTrustGraph();
+        $prefixes = self::getPolicyPrefixes();
+
+        $query = <<<QUERY
+		$prefixes
+SELECT ?p ?o ?op ?oo
+FROM <$graph>
+WHERE {
+	<$uri> ?p ?o .
+    OPTIONAL {
+        ?o ?op ?oo .
+    }
+}
+QUERY;
+
+        $tsa = new LODTripleStoreAccess();
+
+        $result = $tsa->queryTripleStore($query, $graph);
+
+        if (!$result || count($result->getRows()) == 0) {
+            return NULL;
+        }
+        $rows = $result->getRows();
+
+        $label = NULL;
+        $parameters = array();
+        $pm = LODPrefixManager::getInstance();
+        $propNS = $pm->getNamespaceURI("smw-lde");
+        $rdfsNS = $pm->getNamespaceURI("rdfs");
+        foreach ($rows as $row) {
+            $prop = "{$rdfsNS}label";
+            $rowProp = $this->getVarVal($row, 'p');
+            $value = $this->getVarVal($row, 'o');
+
+            if ($rowProp == $prop) {
+                $label = $value;
+            }
+            $prop = "{$propNS}parameter";
+            if ($rowProp == $prop) {
+                $uri = $this->getVarVal($row, 'o');
+                if (!array_key_exists($uri, $parameters)) {
+                    $parameter = $this->getParameter($value, $rows);
+                    $parameters[$uri] = $parameter;
+                }
+            }
+        }
+
+        // Create a policy object.
+        $heuristic = new LODHeuristic($uri);
+        if ($label) {
+            $heuristic->setLabel($label);
+        }
+        $heuristic->setParameters($parameters);
+
+        return $heuristic;
+    }
 }
 
