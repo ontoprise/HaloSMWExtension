@@ -79,6 +79,10 @@ class SMWQMQueryMetadata {
 			$queryString = '('.$queryString.') [['.QRC_UQC_LABEL.'.'.QRC_ISQ_LABEL.'::'.$this->isSparqlQuery.']]';
 		}
 		
+		if(strlen($queryString) == 0){
+			$queryString = '[['.QRC_UQC_LABEL.'::+]]';
+		}
+		
 		return $queryString;
 	}
 	
