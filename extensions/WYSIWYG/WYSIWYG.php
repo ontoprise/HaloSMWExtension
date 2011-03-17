@@ -43,6 +43,10 @@ if ((!array_key_exists('SERVER_NAME', $_SERVER) || $_SERVER['SERVER_NAME'] == NU
 
 define('WYSIWYG_EDITOR_VERSION', '{{$VERSION}} [B{{$BUILDNUMBER}}]');
 
+// define to check with {{#isExtensionInstalled:wysiwyg}} if extension is installed
+// the parser function comes in the SMWHalo extension
+define('wysiwyg', 'true}]');
+
 # Configuration variables
 // Path to this extension
 $wgFCKEditorExtDir = 'extensions/WYSIWYG';
