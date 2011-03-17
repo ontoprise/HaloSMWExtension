@@ -85,3 +85,7 @@
 	font-size: 90%;
 	margin-bottom: 10px;
 }
+#selection > span > img {
+	padding-left: 3px;
+    vertical-align: text-bottom;
+}

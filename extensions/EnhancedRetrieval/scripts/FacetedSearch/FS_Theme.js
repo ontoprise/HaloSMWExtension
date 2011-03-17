@@ -251,12 +251,12 @@
 		var html;
 		if (isRemove) {
 			html = $('<span>')
-				.append($('<span>').text(extractPlainName(facet)))
+				.append(extractPlainName(facet))
 				.append($('<img src="' + wgScriptPath + '/extensions/SMWHalo/skins/QueryInterface/images/delete.png" title="Remove filter"/>').click(handler));
 		} else {
 			html = $('<span>')
 				.append($('<a href="#">').click(handler).text(extractPlainName(facet)))
-				.append($('<span>').text(' (' + count + ')'));
+				.append(' (' + count + ')');
 		}
 		if (isProperty(facet)) {
 			var path = wgScriptPath + IMAGE_PATH;

@@ -101,28 +101,31 @@ FacetedSearch.classes.FacetWidget = AjaxSolr.AbstractFacetWidget.extend({
 				target = FacetedSearch.singleton.FacetedSearchInstance.getRelationWidget();
 			}
 			$(ntarget)
-				.append(AjaxSolr.theme('facet', facet, objectedItems[i].count, target.clickHandler(facet), FacetedSearch.classes.ClusterWidget.showPropertyDetailsHandler))
-				.append('<br>');
+				.append(AjaxSolr.theme('facet', facet, objectedItems[i].count, target.clickHandler(facet), FacetedSearch.classes.ClusterWidget.showPropertyDetailsHandler, false))
+				.append('<br/>');
 		}
 		if (objectedItems.length > GROUP_SIZE) {
-			$(this.target)
-				.append('<a class="xfsFMore">more</a>')
-				.append("<br />");
+			$(this.target).append('<a class="xfsFMore">more</a> <a class="xfsFLess" style="display: none">less</a><br/>');
 		}
 	},
 	
 	init: function () {
 		var $ = jQuery;
 		$('a.xfsFMore').live('click', function() {
-			var hidden = $(this).parent().children('div:hidden').length;
-			if (hidden > 0) {
-				$(this).parent().children('div:hidden:first').show();
-				if (hidden == 1) {
-					$(this).text('less');
-				}
-			} else {
-				$(this).parent().children('div:gt(0)').hide();
-				$(this).text('more');
+			if ($(this).parent().children('div:hidden').filter(':first').show().end().length <= 1) {
+				$(this).hide();
+			}
+			if ($(this).parent().children('div:visible').length > 1) {
+				$(this).parent().children('a.xfsFLess').show();
+			}
+			return false;
+		});
+		$('a.xfsFLess').live('click', function() {
+			if ($(this).parent().children('div:visible').filter(':last').hide().end().length <= 2) {
+				$(this).hide();
+			}
+			if ($(this).parent().children('div:hidden').length >= 1) {
+				$(this).parent().children('a.xfsFMore').show();
 			}
 			return false;
 		});
