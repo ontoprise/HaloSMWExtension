@@ -284,12 +284,21 @@ function smwf_qi_QIAccess($method, $params) {
             $queryMetadataPattern1 = new SMWQMQueryMetadata(true, null, '0',
             null, null, ucfirst($term), null, $term);
         }
+        
+        //ask for all queries which use the #ask syntax
+        $queryMetadataPattern->isSparqlQuery = null;
+        $queryMetadataPattern->usesASKSyntax = '1';
+        
         $queryMetadataResults = SMWQMQueryManagementHandler::getInstance()->searchQueries($queryMetadataPattern);
 
 
         $result = qiMergeQueryMetadataResults($queryMetadataResults, $result);
         if (isset($queryMetadataPattern1)) {
-            $queryMetadataResults = SMWQMQueryManagementHandler::getInstance()->searchQueries($queryMetadataPattern1);
+            //ask for all queries which use the #ask syntax
+        	$queryMetadataPattern1->isSparqlQuery = null;
+        	$queryMetadataPattern1->usesASKSyntax = '1';
+        	
+        	$queryMetadataResults = SMWQMQueryManagementHandler::getInstance()->searchQueries($queryMetadataPattern1);
             $result = qiMergeQueryMetadataResults($queryMetadataResults, $result);
         }
         $jsonEnc = new Services_JSON();
