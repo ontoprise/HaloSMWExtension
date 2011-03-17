@@ -247,13 +247,17 @@
 	 * 		shown.
 	 * 		
 	 */
-	AjaxSolr.theme.prototype.facet = function(facet, count, handler, showPropertyDetailsHandler) {
-		var html = 
-			'<a href="#">' +
-				extractPlainName(facet) +
-				(count > 0 ? ' (' + count + ')' : '') +
-			'</a>';
-		html = $(html).click(handler);
+	AjaxSolr.theme.prototype.facet = function(facet, count, handler, showPropertyDetailsHandler, isRemove) {
+		var html;
+		if (isRemove) {
+			html = $('<span>')
+				.append($('<span>').text(extractPlainName(facet)))
+				.append($('<img src="' + wgScriptPath + '/extensions/SMWHalo/skins/QueryInterface/images/delete.png" title="Remove filter"/>').click(handler));
+		} else {
+			html = $('<span>')
+				.append($('<a href="#">').click(handler).text(extractPlainName(facet)))
+				.append($('<span>').text(' (' + count + ')'));
+		}
 		if (isProperty(facet)) {
 			var path = wgScriptPath + IMAGE_PATH;
 			var divID = 'property_' + facet + '_values';
