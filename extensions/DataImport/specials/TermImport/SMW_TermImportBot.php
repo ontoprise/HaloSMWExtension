@@ -96,6 +96,13 @@ class TermImportBot extends GardeningBot {
 		}
 		
 		$this->createTermImportResultContent($termImportName);
+		
+		global $smwgDefaultStore;
+		if($smwgDefaultStore == 'SMWTripleStore' || $smwgDefaultStore == 'SMWTripleStoreQuad'){
+			define('SMWH_FORCE_TS_UPDATE', 'TRUE');
+			smwfGetStore()->initialize(true);
+		}
+		
 		return array($result, "TermImport:".$termImportName."/".$timeInTitle);
 	}
 

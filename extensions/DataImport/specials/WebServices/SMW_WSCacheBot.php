@@ -65,6 +65,13 @@ class WSCacheBot extends GardeningBot {
 
 	public function run($paramArray, $isAsync, $delay) {
 		$this->cleanCompleteCache();
+		
+		global $smwgDefaultStore;
+		if($smwgDefaultStore == 'SMWTripleStore' || $smwgDefaultStore == 'SMWTripleStoreQuad'){
+			define('SMWH_FORCE_TS_UPDATE', 'TRUE');
+			smwfGetStore()->initialize(true);
+		}
+		
 		return '';
 	}
 

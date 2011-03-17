@@ -97,6 +97,13 @@ class WSUpdateBot extends GardeningBot {
 		}
 
 		echo("\nbot finished");
+		
+		global $smwgDefaultStore;
+		if($smwgDefaultStore == 'SMWTripleStore' || $smwgDefaultStore == 'SMWTripleStoreQuad'){
+			define('SMWH_FORCE_TS_UPDATE', 'TRUE');
+			smwfGetStore()->initialize(true);
+		}
+		
 		return '';
 	}
 

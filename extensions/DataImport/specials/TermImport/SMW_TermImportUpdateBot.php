@@ -73,6 +73,13 @@ public function getImageDirectory() {
 		echo "...started!\n";
 		
 		$this->updateTermImports();
+		
+		global $smwgDefaultStore;
+		if($smwgDefaultStore == 'SMWTripleStore' || $smwgDefaultStore == 'SMWTripleStoreQuad'){
+			define('SMWH_FORCE_TS_UPDATE', 'TRUE');
+			smwfGetStore()->initialize(true);
+		}
+		
 		return;
 	}
 
