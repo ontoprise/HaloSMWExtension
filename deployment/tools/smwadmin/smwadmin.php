@@ -353,22 +353,22 @@ if (count($ontologiesToInstall) > 0) {
 
 		if (!isset($ontologyID)) {
 			$fileName = basename($filePath);
-			$ontologyID = reset(explode(".", $fileName));
+			$bundleID = reset(explode(".", $fileName));
 		}
 
-		$oInstaller->installOntology($ontologyID, $filePath, $confirm);
+		$oInstaller->installOntology($bundleID, $filePath, $confirm, false, $dfgForce);
 		
 		// copy ontology and create ontology bundle
 		print "\n[Creating deploy descriptor...";
-		$xml = $oInstaller->createDeployDescriptor($ontologyID, $filePath);
-		$ontologyID = strtolower($ontologyID);
-		Tools::mkpath($mwrootDir."/extensions/$ontologyID");
-		$handle = fopen($mwrootDir."/extensions/$ontologyID/deploy.xml", "w");
+		$xml = $oInstaller->createDeployDescriptor($bundleID, $filePath);
+		$bundleID = strtolower($bundleID);
+		Tools::mkpath($mwrootDir."/extensions/$bundleID");
+		$handle = fopen($mwrootDir."/extensions/$bundleID/deploy.xml", "w");
 		fwrite($handle, $xml);
 		fclose($handle);
 		print "done.]";
 		print "\n[Copying ontology file...";
-        copy($filePath, $mwrootDir."/extensions/$ontologyID/".basename($filePath));
+        copy($filePath, $mwrootDir."/extensions/$bundleID/".basename($filePath));
         print "done.]";
 	}
 }
