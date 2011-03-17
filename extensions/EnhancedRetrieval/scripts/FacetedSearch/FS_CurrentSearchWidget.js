@@ -41,7 +41,9 @@ FacetedSearch.classes.CurrentSearchWidget = AjaxSolr.AbstractWidget.extend({
 		var fq = this.manager.store.values('fq');
 		for ( var i = 0, l = fq.length; i < l; i++) {
 			var match = fq[i].match(FIELD_PREFIX_REGEX);
-			links.push(AjaxSolr.theme('facet', match[2], -1, self.removeFacet(fq[i]), FacetedSearch.classes.ClusterWidget.showPropertyDetailsHandler));
+			if ($.inArray(match[1], FacetedSearch.singleton.FacetedSearchInstance.FACET_FIELDS) >= 0) {
+				links.push(AjaxSolr.theme('facet', match[2], -1, self.removeFacet(fq[i]), FacetedSearch.classes.ClusterWidget.showPropertyDetailsHandler));
+			}
 		}
 
 		if (links.length > 1) {

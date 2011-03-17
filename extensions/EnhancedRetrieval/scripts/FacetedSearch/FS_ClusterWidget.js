@@ -52,6 +52,14 @@ FacetedSearch.classes.ClusterWidget = AjaxSolr.AbstractWidget.extend({
 		return function () {
 			var fsm = FacetedSearch.singleton.FacetedSearchInstance.getAjaxSolrManager();
 			fsm.store.addByValue('facet', true);
+			var field;
+			var ATTRIBUTE_REGEX = /smwh_(.*)_xsdvalue_(.*)/;
+			if (cluster.facet.match(ATTRIBUTE_REGEX)) {
+				field = FacetedSearch.singleton.FacetedSearchInstance.FACET_FIELDS[1];
+			} else {
+				field = FacetedSearch.singleton.FacetedSearchInstance.FACET_FIELDS[2];
+			}
+			fsm.store.addByValue('fq', field + ':' + cluster.facet);
 			fsm.store.addByValue('fq', 
 				cluster.facet+':[' + cluster.from + ' TO ' + cluster.to + ']');
 			fsm.doRequest(0);
