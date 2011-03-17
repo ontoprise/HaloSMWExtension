@@ -1835,3 +1835,45 @@ Index: extensions/SemanticForms/languages/SF_Messages.php
  	'semanticforms-desc'                 => 'Forms for adding and editing semantic data',
  	'specialpages-group-sf_group'        => 'Semantic Forms',
  	'createproperty'                     => 'Create a property',
+Index: extensions/SemanticForms/includes/SF_ParserFunctions.php
+===================================================================
+--- extensions/SemanticForms/includes/SF_ParserFunctions.php	(original)
++++ extensions/SemanticForms/includes/SF_ParserFunctions.php	(patched version)
+@@ -246,6 +246,17 @@
+ 				$inAutocompletionSource = $value;
+ 				$autocompletion_type = 'namespace';
+ 			}
++			/*op-patch|SR|2011-03-17|SF|HaloAC in #forminput|start*/
++			/*op-patch|SR|2011-03-17|SF|HaloAC in #forminput|doc|http://dmwiki.ontoprise.com:8888/dmwiki/index.php/HaloAC_in_forminput_parser_function*/
++			elseif ( defined('SMW_HALO_VERSION') && $param_name == 'useHaloAC' ) {
++				$useHaloAC='';
++				$inAutocompletionSource = '';
++			}
++			elseif ( $param_name == 'constraints' && isset($useHaloAC) ) {
++				$inAutocompletionSource = '';
++				$useHaloAC = $value;
++			}
++			/*op-patch|SR|2011-03-17|SF|HaloAC in #forminput|end*/
+ 			elseif ( $i == 0 )
+ 				$inFormName = $param;
+ 			elseif ( $i == 1 )
+@@ -277,7 +288,18 @@
+ 
+ 		$fs = SpecialPage::getPage( 'FormStart' );
+ 		$fs_url = $fs->getTitle()->getLocalURL();
+-		if ( empty( $inAutocompletionSource ) ) {
++		/*op-patch|SR|2011-03-17|SF|HaloAC in #forminput|start*/
++		if (  defined('SMW_HALO_VERSION') && isset($useHaloAC) && !empty($useHaloAC) ) {
++			$useHaloAC = str_replace(';', '|', $useHaloAC); // turn escaped pipes back to original
++			$useHaloAC = str_replace('"', '\"', $useHaloAC); // escape any quotes to not break the html
++			$str = <<<END
++			<form name="createbox" action="$fs_url" method="get">
++			<p><input type="text" name="page_name" id="input_$input_num" size="$inSize" value="$inValue" autocomplete="OFF" class="wickEnabled formInput" constraints="$useHaloAC" />
++
++END;
++		}
++		elseif ( empty( $inAutocompletionSource ) ) {
++		/*op-patch|SR|2011-03-17|SF|HaloAC in #forminput|end*/
+ 			$str = <<<END
+ 			<form action="$fs_url" method="get">
+ 			<p><input type="text" name="page_name" size="$inSize" value="$inValue" class="formInput" />
