@@ -64,8 +64,8 @@ $asfScriptPath = $wgScriptPath . '/extensions/AutomaticSemanticForms';
 	//Register special pages
 	global $wgSpecialPages, $wgSpecialPageGroups;
 	$wgSpecialPages['FormEdit'] = 'ASFFormEdit';
-	$wgSpecialPages['ASFSpecial'] = array('ASFAdminSpecial');
-	$wgSpecialPageGroups['ASFSpecial'] = 'smwplus_group';
+	$wgSpecialPages['AutomaticSemanticForms'] = array('ASFAdminSpecial');
+	$wgSpecialPageGroups['AutomaticSemanticForms'] = 'smwplus_group';
 	
 	//load form generator in order to initialize constants
 	ASFFormGenerator::getInstance();

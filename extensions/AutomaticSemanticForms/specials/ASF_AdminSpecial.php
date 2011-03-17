@@ -12,7 +12,7 @@ class ASFAdminSpecial extends SpecialPage {
 	 * Constructor
 	 */
 	function __construct() {
-		parent::__construct( 'ASFSpecial' );
+		parent::__construct( 'AutomaticSemanticForms' );
 	}
 
 	/*

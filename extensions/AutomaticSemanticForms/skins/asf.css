@@ -1,7 +1,7 @@
 
 .asf_tab_container span{
-	border: solid 2px;
-	margin-right: 5px;
+	border: thin solid #CACAC4;
+	margin-right: 10px;
 	margin-top: 40px;
 	padding-left: 5px;
 	padding-right: 5px;
@@ -14,11 +14,11 @@
 }
 
 .asf_tab_container .asf_selected_tab{
-	font-weight: bold;
+	border-bottom: medium none white;
 }
 
 .asf_tab_windoe {
-	border: solid 2px;
+	border: thin solid #CACAC4;
 	width: 97%;
 	height: 100%; 
 	min-height: 20px;
