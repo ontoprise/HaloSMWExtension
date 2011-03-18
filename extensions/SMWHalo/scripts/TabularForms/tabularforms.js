@@ -972,6 +972,17 @@ var TF = Class.create({
 	 */
 	unSetAsCurrentlySelectedCellValue : function(){
 		jQuery(this).removeClass('tabf_selected_value');
+	},
+	
+	getPositionForAC : function(element){
+		if(jQuery(element).parent().attr('class') == 'tabf_table_cell'){;
+			var pos = new Object();
+			pos.top = jQuery(element).position().top + jQuery(element).height();
+			pos.left = jQuery(element).position().left;
+			return pos;
+		} else {
+			return false;
+		}
 	}
 	
 	

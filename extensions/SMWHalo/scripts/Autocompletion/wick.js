@@ -520,11 +520,11 @@ AutoCompleter.prototype = {
             if (!this.siw.customFloater) {
                 var x = Position.cumulativeOffset(this.siw.inputBox)[0];
                 var y = Position.cumulativeOffset(this.siw.inputBox)[1] + this.siw.inputBox.offsetHeight;
-
+                
                 //hack: browser-specific adjustments.
                 if (!OB_bd.isGecko && !OB_bd.isIE) x += 8;
                 if (!OB_bd.isGecko && !OB_bd.isIE) y += 10;
-
+                
                 // read position flag and set it: fixed and absolute is possible
                 var posStyle = this.currentInputBox != null ? this.currentInputBox.getAttribute("position") : null;
                 if (posStyle == null || posStyle == 'absolute') {
@@ -535,7 +535,15 @@ AutoCompleter.prototype = {
                     Element.setStyle(this.siw.floater, { position: 'fixed'});
                                         
                 }
-
+                
+                if(window.tf != undefined){
+                	var pos = tf.getPositionForAC(this.siw.inputBox);
+                	if(pos != false){
+	                	x = pos.left;
+	                	y = pos.top;
+                	}
+                }
+                
                 // read alignment flag and set position accordingly
                 var alignment = this.currentInputBox != null ? this.currentInputBox.getAttribute("alignfloater") : null;
                 var content = document.body;//$("content");
@@ -625,7 +633,9 @@ AutoCompleter.prototype = {
      * Shows small graphic indicating an AJAX call.
      */
     showPendingAJAXIndicator: function(inputBox) {
-        var pending = $("pendingAjaxIndicator");
+        
+    	var pending = $("pendingAjaxIndicator");
+    	pending.style.position = '';
 
         if (!this.siw) this.siw = new SmartInputWindow();
       
@@ -647,9 +657,18 @@ AutoCompleter.prototype = {
             if (x != null && y != null) {
                 pending.style.left = parseInt(x) + "px";
                 pending.style.top = parseInt(y) + "px";
+            } else if(window.tf != undefined){
+            	var pos = tf.getPositionForAC(inputBox);
+            	if(pos != false){
+	            	pending.style.position = 'absolute';
+            		pending.style.left = pos.left + "px";
+	                pending.style.top = pos.top + "px";
+	            } else {
+            		pending.style.left = "0px";
+                    pending.style.top = "0px";
+            	}
             } else {
-               
-                pending.style.left = "0px";
+               pending.style.left = "0px";
                 pending.style.top = "0px";
             }
         }
@@ -662,6 +681,7 @@ AutoCompleter.prototype = {
 
         pending.style.display = "block";
         pending.style.visibility = "visible";
+        
     },  //showPendingElement()
 
      /**
