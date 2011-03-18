@@ -53,7 +53,10 @@ class FSFacetedSearchSpecial extends SpecialPage {
 			<h2>{{fs_search}}</h2>
 	        <input type="text" id="query" name="query"/>
 		</div>
-		<div id="selection">
+		<div>
+			<span class="xfsFacetHeader">{{fs_selected}}</span>
+			<div id="selection">
+			</div>
 		</div>
 		<div>
 			<span class="xfsFacetHeader">{{fs_categories}}</span>

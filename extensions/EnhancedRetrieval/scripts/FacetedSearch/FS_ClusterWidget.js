@@ -108,12 +108,36 @@ FacetedSearch.classes.ClusterWidget = AjaxSolr.AbstractWidget.extend({
 						facetStatisticField: this.statisticsFieldName,
 						facet: this.facetName
 					})));
+					var fq = this.manager.store.values('fq');
+					for (var i = 0, l = fq.length; i < l; i++) {
+						if (fq[i].indexOf(this.statisticsFieldName) == 0) {
+							$(this.target).append(AjaxSolr.theme('cluster_remove_range_filter', self.clickRemoveRangeHandler(this.statisticsFieldName)));
+							break;
+						}
+					}
 				}
 			}
 		}
 		// Remove the statistic parameters
 		this.manager.store.remove('facet.query');
 		
+	},
+	
+	/**
+	 * Removes a range restriction for a facet.
+	 * @param {string} facet
+	 * 		Name of the facet
+	 */
+	clickRemoveRangeHandler: function (facet) {
+		var fq = this.manager.store.values('fq');
+		for (var i = 0, l = fq.length; i < l; i++) {
+			if (fq[i].indexOf(facet) == 0) {
+				this.manager.store.removeByValue('fq', fq[i]);
+				break;
+			}
+		}
+		this.manager.doRequest();
+		return false;
 	}
 });
 

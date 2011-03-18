@@ -256,7 +256,8 @@
 		} else {
 			html = $('<span>')
 				.append($('<a href="#">').click(handler).text(extractPlainName(facet)))
-				.append(' (' + count + ')');
+				.append(' ')
+				.append($('<span class="xfsMinor">').text('(' + count + ')'));
 		}
 		if (isProperty(facet)) {
 			var path = wgScriptPath + IMAGE_PATH;
@@ -294,11 +295,23 @@
 	};
 
 	AjaxSolr.theme.prototype.no_facet_filter_set = function() {
-		return $('<div>').text('(no facet filter set)');
+		return $('<div class="xfsMinor">').text('(no facet filter set)');
 	};
 	
 	AjaxSolr.theme.prototype.remove_all_filters = function(handler) {
-		return ($('<a href="#"/>').text('remove all').click(handler));
+		return $('<a href="#"/>').text('remove all').click(handler);
+	};
+	
+	AjaxSolr.theme.prototype.cluster_remove_range_filter = function(handler) {
+		return $('<a href="#" class="xfsClusterEntry"/>').text('remove range').click(handler);
+	};
+	
+	AjaxSolr.theme.prototype.filter_debug = function(filters) {
+		var list = $('<ul id="xfsFilterDebug>');
+		$.each(filters, function(index, value) {
+			$(list).append($('<li>').text(value));
+		});
+		return list;
 	};
 
 	/**
@@ -322,6 +335,6 @@
 			.click(handler)
 			.add('<br />');
 	};
-
+	
 })(jQuery);
 

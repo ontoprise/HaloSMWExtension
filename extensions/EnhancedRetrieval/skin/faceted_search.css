@@ -92,3 +92,14 @@
 a.xfsFMore, a.xfsFLess {
 	cursor: pointer;
 }
+#xfsFilterDebug {
+	background-color: gold;
+    border: 1px solid darkGoldenRod;
+    font-size: 80%;
+    line-height: 1em;
+    margin: 0;
+    padding: 2px 2px 2px 18px;	
+}
+.xfsMinor {
+	color: gray;
+}

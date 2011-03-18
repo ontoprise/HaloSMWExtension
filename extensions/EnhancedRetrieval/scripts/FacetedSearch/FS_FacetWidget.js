@@ -47,7 +47,7 @@ FacetedSearch.classes.FacetWidget = AjaxSolr.AbstractFacetWidget.extend({
 		}
 		
 		var fq = this.manager.store.values('fq');
-		
+
 		var maxCount = 0;
 		var objectedItems = [];
 		for (var i = 0; i < this.fields.length; i++) {

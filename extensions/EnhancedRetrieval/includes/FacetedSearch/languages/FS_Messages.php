@@ -41,7 +41,8 @@ $messages['en'] = array(
 	'fs_search'         => "Search",
 	'fs_categories'     => "Categories",
 	'fs_properties'     => "Properties",
-	'fs_search_results' => "Search results"
+	'fs_search_results' => "Search results",
+	'fs_selected'       => "Selected facets" 
 
 );
 
@@ -59,6 +60,7 @@ $messages['de'] = array(
 	'fs_search'         => "Suchbegriff",
 	'fs_categories'     => "Kategorien",
 	'fs_properties'     => "Eigenschaften",
-	'fs_search_results' => "Suchresultate"
+	'fs_search_results' => "Suchresultate",
+	'fs_selected'       => "Facettenfilter"
 
 );

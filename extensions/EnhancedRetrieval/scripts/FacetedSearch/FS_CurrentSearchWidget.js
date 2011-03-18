@@ -30,9 +30,13 @@ if (typeof FacetedSearch == "undefined") {
 
 FacetedSearch.classes.CurrentSearchWidget = AjaxSolr.AbstractWidget.extend({
 
+	/**
+	 * Updates the current search restrictions/filter view.
+	 */
 	afterRequest : function() {
 		var $ = jQuery;
 
+		var DEBUG = true;
 		var FIELD_PREFIX_REGEX = /([^:]+):(.*)/;
 		
 		var self = this;
@@ -55,7 +59,10 @@ FacetedSearch.classes.CurrentSearchWidget = AjaxSolr.AbstractWidget.extend({
 		}
 		
 		if (links.length) {
-			$(this.target).empty();
+			$(self.target).empty();
+			if (DEBUG) {
+				$(self.target).append(AjaxSolr.theme('filter_debug', self.manager.store.values('fq')));
+			}
 			$.each(links, function() {
 				$(self.target)
 					.append(this)
@@ -66,6 +73,11 @@ FacetedSearch.classes.CurrentSearchWidget = AjaxSolr.AbstractWidget.extend({
 		}
 	},
 
+	/**
+	 * Removes a facet from current filter, including all related ranges.
+	 * @param {string} facet
+	 * 		Name of the facet
+	 */
 	removeFacet : function(facet) {
 		var self = this;
 		var $ = jQuery;
