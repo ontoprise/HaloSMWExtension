@@ -108,14 +108,14 @@ FacetedSearch.classes.ClusterWidget = AjaxSolr.AbstractWidget.extend({
 						facetStatisticField: this.statisticsFieldName,
 						facet: this.facetName
 					})));
-					var fq = this.manager.store.values('fq');
-					for (var i = 0, l = fq.length; i < l; i++) {
-						if (fq[i].indexOf(this.statisticsFieldName) == 0) {
-							$(this.target).append(AjaxSolr.theme('cluster_remove_range_filter', self.clickRemoveRangeHandler(this.statisticsFieldName)));
-							break;
-						}
-					}
 				}
+			}
+		}
+		var fq = this.manager.store.values('fq');
+		for (var i = 0, l = fq.length; i < l; i++) {
+			if (fq[i].indexOf(this.statisticsFieldName) == 0) {
+				$(this.target).append(AjaxSolr.theme('cluster_remove_range_filter', self.clickRemoveRangeHandler(this.statisticsFieldName)));
+				break;
 			}
 		}
 		// Remove the statistic parameters
@@ -129,15 +129,19 @@ FacetedSearch.classes.ClusterWidget = AjaxSolr.AbstractWidget.extend({
 	 * 		Name of the facet
 	 */
 	clickRemoveRangeHandler: function (facet) {
-		var fq = this.manager.store.values('fq');
-		for (var i = 0, l = fq.length; i < l; i++) {
-			if (fq[i].indexOf(facet) == 0) {
-				this.manager.store.removeByValue('fq', fq[i]);
-				break;
+		var self = this;
+		return function() {
+			var fsm = FacetedSearch.singleton.FacetedSearchInstance.getAjaxSolrManager();
+			var fq = fsm.store.values('fq');
+			for (var i = 0, l = fq.length; i < l; i++) {
+				if (fq[i].indexOf(facet) == 0) {
+					fsm.store.removeByValue('fq', fq[i]);
+					break;
+				}
 			}
-		}
-		this.manager.doRequest();
-		return false;
+			fsm.doRequest(0);
+			return false;
+		};
 	}
 });
 
