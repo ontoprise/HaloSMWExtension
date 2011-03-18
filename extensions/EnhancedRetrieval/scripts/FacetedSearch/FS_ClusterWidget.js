@@ -65,7 +65,7 @@ FacetedSearch.classes.ClusterWidget = AjaxSolr.AbstractWidget.extend({
 			fsm.store.addByValue('fq', field + ':' + cluster.facet);
 
 			fsm.store.addByValue('fq', 
-				cluster.facet+':[' + cluster.from + ' TO ' + cluster.to + ']');
+				cluster.facetStatisticField+':[' + cluster.from + ' TO ' + cluster.to + ']');
 			fsm.doRequest(0);
 			return false;
 		}
@@ -105,7 +105,8 @@ FacetedSearch.classes.ClusterWidget = AjaxSolr.AbstractWidget.extend({
 						from: from,
 						to: to,
 						count: count,
-						facet: this.statisticsFieldName
+						facetStatisticField: this.statisticsFieldName,
+						facet: this.facetName
 					})));
 				}
 			}
