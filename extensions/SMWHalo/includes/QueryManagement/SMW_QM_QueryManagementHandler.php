@@ -419,15 +419,32 @@ class SMWQMQueryManagementHandler {
 		 SMWQueryProcessor::processFunctionParams(array($queryString) 
 			,$queryString, $params, $printouts);
 		
-		$query = 
-			SMWQueryProcessor::createQuery($queryString,$params);
+		$store = smwfNewBaseStore();	
 			
-		$query->params['noquerymanagement'] = 'true';
-		$query->params['nocaching'] = 'true';
-		
-		$store = smwfNewBaseStore();
-		
-		$queryResults = $store->getQueryResult($query)->getResults();
+		$continue = true;
+		$offset = 0;
+		$queryResults = array();
+		global $smwgQMaxInlineLimit;
+		while($continue){
+			$params = array();
+			$params['limit'] = $smwgQMaxInlineLimit - 1;
+			$params['offset'] = $offset;;
+			
+			$query = 
+				SMWQueryProcessor::createQuery($queryString,$params);
+				
+			$query->params['noquerymanagement'] = 'true';
+			$query->params['nocaching'] = 'true';
+			
+			$qrT = $store->getQueryResult($query)->getResults();
+			$queryResults = array_merge($queryResults, $qrT);
+			
+			if(count($qrT) == $smwgQMaxInlineLimit - 1){
+				$offset += $smwgQMaxInlineLimit - 1;
+			} else {
+				$continue = false;
+			}
+		}
 		
 		$queryMetadataResults = array();
 		foreach($queryResults as $queryResult){
