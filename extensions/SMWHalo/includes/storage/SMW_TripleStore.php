@@ -532,6 +532,12 @@ class SMWTripleStore extends SMWStore {
 				$supercategory_iri = $this->tsNamespace->getFullIRI($c);
 				$triples[] = array($subject_iri, "rdfs:subClassOf", $supercategory_iri);
 			}
+			
+			if (count($categories) == 0) {
+				// if there are no supercategories create a statement that
+				// indicates that this is a class
+				$triples[] = array($subject_iri, "rdf:type", "owl:Class");
+			}
 		} else {
 
 			foreach($categories as $c) {
