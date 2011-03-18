@@ -20,7 +20,7 @@ var TF = Class.create({
 	 */
 	loadForm : function(container){
 		jQuery('.tabf_table_container', container).css('display', 'none');
-		jQuery('.tabf_loader').css('display', 'table', container);
+		jQuery('.tabf_loader', container).css('display', 'table', container);
 		
 		var querySerialization = jQuery('.tabf_query_serialization', container).html();
 		var tabularFormId = jQuery(container).attr('id');
