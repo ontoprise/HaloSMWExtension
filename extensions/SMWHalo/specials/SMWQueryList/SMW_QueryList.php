@@ -20,12 +20,29 @@ class SMWQueryList extends SpecialPage {
 	function execute( $query ) {
 		global $wgOut;
 		
+		//todo: Use Language
+		
 		$html = '';
+		
+		$html .= '<span>Filter: </span>';
+		$html .= '<input id="ql_filterstring-0" style="display: inline" type="text" size="50" class="wickEnabled" constraints="all" currentValue=""/> ';
+		$html .= '<input id="ql_filterstring-1" style="display: none" type="text" size="50" currentValue=""/> ';
+		$html .= '<input id="ql_filterstring-3" style="display: none" type="text" size="50" class="wickEnabled" constraints="ask: [[:Category:+]]" currentValue=""/> ';
+		$html .= '<input id="ql_filterstring-4" style="display: none" type="text" size="50" class="wickEnabled" constraints="ask: [[:Property:+]]" currentValue=""/> ';
+		$html .= '<select id="ql_filtercol" size="1" currentValue="0" onchange="queryList_updateAC()">';
+		$html .= '<option value="0">All</optionY';
+		$html .= '<option value="1">Name</option>';
+		$html .= '<option value="2">Page</option>';
+		$html .= '<option value="3">Categories</option>';
+		$html .= '<option value="4">Properties</option>';
+		$html .= '</select>';
+		$html .= '  <input type="button" value="Ok" onclick="queryList_filter()"/>';
+		$html .= '<br/><br/>';
 		
 		$queryMetadata = new SMWQMQueryMetadata();
 		$results = SMWQMQueryManagementHandler::getInstance()->searchQueries($queryMetadata);
 		
-		$html .= '<table class="smwtable" width="100%" id="list_of_all_queries">';
+		$html .= '<table id="ql_list" class="smwtable" width="100%" id="list_of_all_queries">';
 		$html .= '<tr><th>Name</th><th>Page</th><th>Categories</th><th>Properties</th></tr>';
 		
 		$linker = new Linker();
@@ -34,7 +51,7 @@ class SMWQueryList extends SpecialPage {
 			$html .= '<tr>';
 			
 			//Add query name
-			$html .= '<td>'.$result->queryName.'</td>';
+			$html .= '<td><span>'.$result->queryName.'</span></td>';
 			
 			//Add article name
 			$html .= '<td>';
@@ -48,12 +65,15 @@ class SMWQueryList extends SpecialPage {
 			if(is_array($result->categoryConditions)){
 				ksort($result->categoryConditions);
 				$result->categoryConditions = array_keys($result->categoryConditions);
-				$sortkey = array_key_exists(0, $result->categoryConditions) ? $result->categoryConditions[0] : '';
+				$sortKey = implode(', ', $result->categoryConditions);
 				foreach($result->categoryConditions as $key => $category){
 					$title = Title::newFromText($category, NS_CATEGORY);
 					$result->categoryConditions[$key] = $linker->makeLink($title->getFullText(), $title->getText());
 				}
+				$html .= '<span style="display: none">'.$sortKey.'</span>';
 				$html .= implode('; ', $result->categoryConditions);
+			} else {
+				$html .= '<span></span>';
 			}
 			$html .= '</td>';
 			
@@ -64,12 +84,12 @@ class SMWQueryList extends SpecialPage {
 			if(is_array($result->propertyPrintRequests)) $properties = array_merge($properties, $result->propertyPrintRequests);
 			ksort($properties);
 			$properties = array_keys($properties);
-			$sortkey = array_key_exists(0, $properties) ? $properties[0] : '';
-			$html .= '<span style="display: none">'.$sortkey.'</span>';
+			$sortkey = implode(', ', $properties);
 			foreach($properties as $key => $property){
 				$title = Title::newFromText($property, SMW_NS_PROPERTY);
 				$properties[$key] = $linker->makeLink($title->getFullText(), $title->getText());
 			}
+			$html .= '<span style="display: none">'.$sortkey.'</span>';
 			$html .= implode('; ', $properties);
 			$html .= '</tr>';
 		}
@@ -78,6 +98,10 @@ class SMWQueryList extends SpecialPage {
 		
 		global $smwgScriptPath;
 		$html .= '<script type="text/javascript" src="' . $smwgScriptPath . '/skins/SMW_sorttable.js"></script>';
+		
+		//todo: Deal with deploy version script
+		global $smwgHaloScriptPath;
+		$html .= '<script type="text/javascript" src="' . $smwgHaloScriptPath . '/scripts/QueryList/querylist.js"></script>';
 		
 		$wgOut->addHTML($html);
 		
