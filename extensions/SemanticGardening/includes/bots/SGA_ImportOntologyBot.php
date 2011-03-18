@@ -111,6 +111,14 @@ class ImportOntologyBot extends GardeningBot {
 
 		$this->globalLog .= "\nModel was successfully translated and imported!\n";
 		print $this->globalLog;
+		
+	    //sync with tsc
+        global $smwgDefaultStore;
+        if($smwgDefaultStore == 'SMWTripleStore' || $smwgDefaultStore == 'SMWTripleStoreQuad'){
+            define('SMWH_FORCE_TS_UPDATE', 'TRUE');
+            smwfGetStore()->initialize(true);
+        }
+        
 		return $this->globalLog;
 	}
 

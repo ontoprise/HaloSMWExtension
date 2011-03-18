@@ -2,12 +2,12 @@
 /**
  * @file
  * @ingroup TemplateMaterializerBot
- * 
+ *
  * @defgroup TemplateMaterializerBot
  * @ingroup SemanticGardeningBots
- * 
- * @author Kai Kühn
- * 
+ *
+ * @author Kai Kï¿½hn
+ *
  * Created on 13.04.2007
  *
  * Author: KK
@@ -41,7 +41,7 @@ class TemplateMaterializerBot extends GardeningBot {
 		return wfMsg($this->id);
 	}
 
-	
+
 
 	/**
 	 * Returns an array mapping parameter IDs to parameter objects
@@ -76,28 +76,28 @@ class TemplateMaterializerBot extends GardeningBot {
 		$requestoptions = new SMWRequestOptions();
 		$requestoptions->limit = $this->limit;
 		$requestoptions->offset = 0;
-        $total = $this->store->getNumberOfPagesUsingTemplates(NULL, $lastTemplateMaterialization);
+		$total = $this->store->getNumberOfPagesUsingTemplates(NULL, $lastTemplateMaterialization);
 		$this->setNumberOfTasks(1);
 		$this->addSubTask($total);
-        
+
 		// process pages in packages of size $this->limit
 		do {
 			// get pages using 'dirty' templates
 			$pageTitles = $this->store->getPagesUsingTemplates(NULL, $lastTemplateMaterialization, $requestoptions);
-			
+				
 			// update them and write log
 			foreach($pageTitles as $pt) {
 				$this->worked(1);
-				
+
 				// save article
 				if ($isAsync) echo "Updating ".$pt->getDBkey()."... ";
 				$article = new Article($pt);
 				$article->doEdit($article->getContent(), $article->getComment(), EDIT_UPDATE);
 				if ($isAsync) echo " done!\n";
-				
+
 				// store gardening issue about update
 				$gi_store->addGardeningIssueAboutArticle($this->id, SMW_GARDISSUE_UPDATEARTICLE, $pt);
-				
+
 				if ($delay > 0) {
 					if ($this->isAborted()) break;
 					usleep($delay);
@@ -106,17 +106,25 @@ class TemplateMaterializerBot extends GardeningBot {
 			if ($this->isAborted()) break;
 			$requestoptions->offset += $this->limit;
 		} while (count($pageTitles) == $this->limit);
+
+		//sync with tsc
+		global $smwgDefaultStore;
+		if($smwgDefaultStore == 'SMWTripleStore' || $smwgDefaultStore == 'SMWTripleStoreQuad'){
+			define('SMWH_FORCE_TS_UPDATE', 'TRUE');
+			smwfGetStore()->initialize(true);
+		}
+
 		return '';
 	}
 
 	private function getTemplateMaterializerStore() {
-		
+
 		if ($this->store == NULL) {
 			global $smwgBaseStore;
 			switch ($smwgBaseStore) {
-				
+
 				case ('SMWHaloStore2'): default:
-						
+
 					$this->store = new TemplateMaterializerStorageSQL();
 					break;
 			}
@@ -181,7 +189,7 @@ abstract class TemplateMaterializerStorage {
 	 * @return array of Title
 	 */
 	public abstract function getPagesUsingTemplates($templateTitle = NULL, $touchedAfter = NULL, $requestoptions = NULL);
-	
+
 	/**
 	 * Returns number of all pages using templates which have been altered after some point in time.
 	 *
@@ -218,31 +226,31 @@ class TemplateMaterializerStorageSQL extends TemplateMaterializerStorage {
 		$db->freeResult($res);
 		return $result;
 	}
-	
+
 	public function getNumberOfPagesUsingTemplates($templateTitle = NULL, $touchedAfter = NULL) {
-        
-        $db =& wfGetDB( DB_SLAVE );
-        if ($templateTitle != NULL) {
-            $sql = 'page_id=tl_from AND tl_title = '. $db->addQuotes($templateTitle->getDBkey());
-        } else {
-            $sql = 'page_id=tl_from';
-        }
 
-        if ($touchedAfter != NULL) {
-            $sql .= ' AND tl_title IN (SELECT page_title FROM page WHERE page_touched > '. $db->addQuotes($touchedAfter).' AND page_namespace='.NS_TEMPLATE.')';
-        }
+		$db =& wfGetDB( DB_SLAVE );
+		if ($templateTitle != NULL) {
+			$sql = 'page_id=tl_from AND tl_title = '. $db->addQuotes($templateTitle->getDBkey());
+		} else {
+			$sql = 'page_id=tl_from';
+		}
 
-        $res = $db->select( array($db->tableName('templatelinks'),$db->tableName('page')) ,
+		if ($touchedAfter != NULL) {
+			$sql .= ' AND tl_title IN (SELECT page_title FROM page WHERE page_touched > '. $db->addQuotes($touchedAfter).' AND page_namespace='.NS_TEMPLATE.')';
+		}
+
+		$res = $db->select( array($db->tableName('templatelinks'),$db->tableName('page')) ,
                             'COUNT(page_title) AS num',
-        $sql, 'SMW::getNumberOfPagesUsingTemplates', NULL );
-        $result = array();
-        if($db->numRows( $res ) > 0) {
-            $row = $db->fetchObject($res);
-            $result = $row->num;
-            
-        }
-        $db->freeResult($res);
-        return $result;
-    }
+		$sql, 'SMW::getNumberOfPagesUsingTemplates', NULL );
+		$result = array();
+		if($db->numRows( $res ) > 0) {
+			$row = $db->fetchObject($res);
+			$result = $row->num;
+
+		}
+		$db->freeResult($res);
+		return $result;
+	}
 }
 

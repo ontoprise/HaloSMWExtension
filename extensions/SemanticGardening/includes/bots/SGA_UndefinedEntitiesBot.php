@@ -6,7 +6,7 @@
  * @defgroup UndefinedEntitiesBot
  * @ingroup SemanticGardeningBots
  * 
- * @author Kai Kühn
+ * @author Kai Kï¿½hn
  * 
  * Created on 13.06.2007
  *
@@ -36,8 +36,6 @@ class UndefinedEntitiesBot extends GardeningBot {
 	public function getLabel() {
 		return wfMsg($this->id);
 	}
-
-	
 
 	/**
 	 * Returns an array mapping parameter IDs to parameter objects
