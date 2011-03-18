@@ -465,6 +465,7 @@ function smwgHaloSetupExtension() {
 
 	// add the 'halo' form input type, if Semantic Forms is installed
 	if ( defined('SF_VERSION') ) {
+        global $sfgFormPrinter;
 		$sfgFormPrinter->setInputTypeHook('haloACtext', 'smwfHaloFormInput', array());
 		$sfgFormPrinter->setInputTypeHook('haloACtextarea', 'smwfHaloFormInputTextarea', array());
 	}
