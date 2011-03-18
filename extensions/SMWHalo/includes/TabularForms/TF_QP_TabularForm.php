@@ -759,7 +759,7 @@ class TFTabularFormRowData {
 			if($this->title instanceof Title){
 				$html .= $linker->makeLinkObj($this->title);
 			}
-			if($enableInstanceDelete && ($this->title instanceof Title && $this->title->exists())){
+			if($enableInstanceDelete && ($this->title instanceof Title && $this->title->exists() && $this->title->userCan('delete'))){
 				$html .= '<input class="tabf-delete-button" type="button" value="Delete" style=" display: none" onclick="tf.deleteInstance(event)"/>';
 			}
 		} else {
