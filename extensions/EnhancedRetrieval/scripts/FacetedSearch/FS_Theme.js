@@ -255,9 +255,9 @@
 				.append($('<img src="' + wgScriptPath + '/extensions/SMWHalo/skins/QueryInterface/images/delete.png" title="Remove filter"/>').click(handler));
 		} else {
 			html = $('<span>')
-				.append($('<a href="#">').click(handler).text(extractPlainName(facet)))
+				.append($('<a href="#">' + extractPlainName(facet) + '</a>').click(handler))
 				.append(' ')
-				.append($('<span class="xfsMinor">').text('(' + count + ')'));
+				.append('<span class="xfsMinor">(' + count + ')</span>');
 		}
 		var path = wgScriptPath + IMAGE_PATH;
 		if (isProperty(facet)) {
