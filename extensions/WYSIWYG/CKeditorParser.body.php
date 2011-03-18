@@ -93,6 +93,14 @@ class CKeditorParser extends CKeditorParserWrapper {
         'int',
         '#tag',
     );
+    // these tags are for Semantic Forms extension (in a forms page)
+    private $FCKeditorSFspecialTags = array(
+        'info',
+        'for template',
+        'field',
+        'end template',
+        'standard input'
+    );
 
     public function __construct() {
         global $wgParser;
@@ -131,6 +139,9 @@ class CKeditorParser extends CKeditorParserWrapper {
     }
     public function getFunctionHooks() {
         return $this->FCKeditorFunctionHooks;
+    }
+    public function getSfSpecialTags() {
+        return $this->FCKeditorSFspecialTags;
     }
 
 	/**
@@ -538,12 +549,29 @@ class CKeditorParser extends CKeditorParserWrapper {
                         else
                             $fck_mw_template = 'fck_mw_template';
                     }
-                    if (strlen($fck_mw_template) > 1) {
+                    // check if the recogized "template" is one of these special form tags of Semantic Forms
+                    global $wgTitle;
+                    if (defined('SF_VERSION') && 
+                        $wgTitle && $wgTitle->getNamespace() == SF_NS_FORM &&
+                        $fck_mw_template = 'fck_mw_template') {
+                        foreach ($this->FCKeditorSFspecialTags as $sfTag) {
+                            if (preg_match('/^\{'.$sfTag.'(\s|\}|\|)/', $funcName)) {
+                                $fck_mw_template = 'sf';
+                                $funcName = $sfTag;
+                                break;
+                            }
+                        }
+                    }
+
+                    if (strlen($fck_mw_template) > 2) {
                         if( $opened <= $closed ) { // {{template}} is NOT in [] or [[]]
                             $this->fck_mw_strtr_span['Fckmw' . $this->fck_mw_strtr_span_counter . 'fckmw'] = '<span class="'.$fck_mw_template.'">' . str_replace( array( "\r\n", "\n", "\r" ), 'fckLR', $inner ) . '</span>';
                         } else {
                             $this->fck_mw_strtr_span['Fckmw' . $this->fck_mw_strtr_span_counter . 'fckmw'] = str_replace( array( "\r\n", "\n", "\r" ), 'fckLR', $inner );
                         }
+                    } else if (strlen($fck_mw_template) > 1) { // SF tag
+                        $this->fck_mw_strtr_span['Fckmw'.$this->fck_mw_strtr_span_counter.'fckmw'] = '<span class="fck_mw_special" _fck_mw_customtag="true" _fck_mw_tagname="'.$funcName.'" _fck_mw_tagtype="'.$fck_mw_template.'">'
+                                . str_replace( array( "\r\n", "\n", "\r" ), 'fckLR', $inner ) . '</span>';
                     } else {
                         $this->fck_mw_strtr_span['Fckmw'.$this->fck_mw_strtr_span_counter.'fckmw'] = '<span class="fck_mw_special" _fck_mw_customtag="true" _fck_mw_tagname="'.$funcName.'" _fck_mw_tagtype="'.$fck_mw_template.'">';
                         if (strlen($inner) > strlen($funcName) + 5) {

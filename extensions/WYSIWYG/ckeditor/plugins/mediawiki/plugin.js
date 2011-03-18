@@ -432,9 +432,9 @@ CKEDITOR.customprocessor.prototype =
 
             // Use Ajax to transform the Wikitext to HTML.
             if( window.parent.popup ){
-                window.parent.popup.parent.FCK_sajax( 'wfSajaxWikiToHTML', [data], loadHTMLFromAjax );
+                window.parent.popup.parent.FCK_sajax( 'wfSajaxWikiToHTML', [data, window.parent.popup.wgPageName], loadHTMLFromAjax );
             } else {
-                window.parent.FCK_sajax( 'wfSajaxWikiToHTML', [data], loadHTMLFromAjax );
+                window.parent.FCK_sajax( 'wfSajaxWikiToHTML', [data, window.parent.wgPageName], loadHTMLFromAjax );
             }
         }
         var fragment = CKEDITOR.htmlParser.fragment.fromHtml( data, fixForBody ),
@@ -1056,6 +1056,9 @@ CKEDITOR.customprocessor.prototype =
 								                stringBuilder.push( ':' + unescape(this._GetNodeText(htmlNode)).replace(/fckLR/g,'\r\n').replace(/_$/, '') );
 								            stringBuilder.push( '}}');
 								            break;
+                                        case 'sf' :
+                                            stringBuilder.push( unescape(this._GetNodeText(htmlNode)).replace(/fckLR/g,'\r\n') );
+                                            break;
 								    }
 								    return;
 

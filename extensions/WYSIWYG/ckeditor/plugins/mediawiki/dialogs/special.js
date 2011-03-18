@@ -78,6 +78,18 @@ CKEDITOR.dialog.add( 'MWSpecialTags', function( editor ) {
                         className = 'FCK__MWTemplate';
                     }
                 }
+                else if ( wgCKeditorMagicWords.sftags && ( el = content.match(/^{{{([\w ]+)((\|[^\|]+)*)}}}$/) ) ) {
+                    if (el[1].InArray(wgCKeditorMagicWords.sftags)) tagType = 'sf';
+                    if (tagType) {
+                        tag = '<span class="fck_mw_special" _fck_mw_customtag="true" _fck_mw_tagname="' + el[1] + '"' +
+                              ' _fck_mw_tagtype="' + tagType + '">' + content + '</span>'
+                        className = 'FCK__MWSpecial';
+                    }
+                    else {
+                        tag = '<span class="fck_mw_template">{{{' + el[1] + '}}}</span>';
+                        className = 'FCK__MWTemplate';
+                    }
+                }
                 else if (el = content.match(/^{{[\w\d_-]+(\|.*?)*}}$/)) {
                     tag = '<span class="fck_mw_template">' + el[0].substr(2, -2) + '</span>';
                     className = 'FCK__MWTemplate';
@@ -127,6 +139,9 @@ CKEDITOR.dialog.add( 'MWSpecialTags', function( editor ) {
                             
                         if ( tagType == 't' ) {
                             content += '<' + tagName + '>' + inner + '</' + tagName + '>';
+                        }
+                        else if ( tagType == 'sf') {
+                            content +=  inner;
                         }
                         else {
                             content += '{{' + tagName;

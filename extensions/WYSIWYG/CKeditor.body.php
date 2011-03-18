@@ -295,8 +295,10 @@ class CKeditor_MediaWiki {
             'magicwords' => $ckParser->getMagicWords(),
             'datevars' => $ckParser->getDateTimeVariables(),
             'wikivars' => $ckParser->getWikiVariables(),
-            'parserhooks' => $ckParser->getFunctionHooks(),
+            'parserhooks' => $ckParser->getFunctionHooks()
         );
+        if (defined('SF_VERSION'))
+           $vars['wgCKeditorMagicWords']['sftags'] = $ckParser->getSfSpecialTags();
         $instExt = array();
         if (defined('SMW_DI_VERSION'))
             $instExt[] = 'SMW_DI_VERSION';

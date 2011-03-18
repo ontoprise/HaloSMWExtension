@@ -248,8 +248,11 @@ function wfSajaxSearchTemplateCKeditor( $empty ) {
 	return $ret;
 }
 
-function wfSajaxWikiToHTML( $wiki ) {
+function wfSajaxWikiToHTML( $wiki, $title = '' ) {
 	global $wgTitle;
+
+    if ($title)
+        $wgTitle = Title::newFromText($title);
 
 	$options = new CKeditorParserOptions();
 	$options->setTidy( true );
