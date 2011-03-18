@@ -259,8 +259,8 @@
 				.append(' ')
 				.append($('<span class="xfsMinor">').text('(' + count + ')'));
 		}
+		var path = wgScriptPath + IMAGE_PATH;
 		if (isProperty(facet)) {
-			var path = wgScriptPath + IMAGE_PATH;
 			var divID = 'property_' + facet + '_values';
 			var img1ID = 'show_details' + divID;
 			var img2ID = 'hide_details' + divID;
@@ -282,6 +282,9 @@
 				.click(toggleFunc);
 			html = img1.add(img2).add(html);
 			html = html.add($('<div id="' + divID + '" style="display:none"></div>'));
+		} else {
+			var img = $('<img src="' + path + 'item.png">');
+			html = img.add(html);
 		}
 		return html;
 	};

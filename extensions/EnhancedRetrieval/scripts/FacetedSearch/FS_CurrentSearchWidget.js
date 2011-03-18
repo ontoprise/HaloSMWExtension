@@ -60,9 +60,6 @@ FacetedSearch.classes.CurrentSearchWidget = AjaxSolr.AbstractWidget.extend({
 		
 		if (links.length) {
 			$(self.target).empty();
-			if (DEBUG) {
-				$(self.target).append(AjaxSolr.theme('filter_debug', self.manager.store.values('fq')));
-			}
 			$.each(links, function() {
 				$(self.target)
 					.append(this)
@@ -70,6 +67,9 @@ FacetedSearch.classes.CurrentSearchWidget = AjaxSolr.AbstractWidget.extend({
 			});
 		} else {
 			$(this.target).html(AjaxSolr.theme('no_facet_filter_set'));
+		}
+		if (DEBUG) {
+			$(self.target).append(AjaxSolr.theme('filter_debug', self.manager.store.values('fq')));
 		}
 	},
 
@@ -84,17 +84,14 @@ FacetedSearch.classes.CurrentSearchWidget = AjaxSolr.AbstractWidget.extend({
 		return function() {
 			var fq = self.manager.store.values('fq');
 			var FIELD_PREFIX_REGEX = /([^:]+):(.*)/;
-			var match = facet.match(FIELD_PREFIX_REGEX);
-			if ($.inArray(match[1], FacetedSearch.singleton.FacetedSearchInstance.FACET_FIELDS) >= 0) {
-				var remove = [];
-				$.each(fq, function(index, value) {
-					if (value.indexOf(match[2]) == 0) {
-						remove.push(value);
-					}
-				});
-				$.each(remove, function(index, value) {
-					self.manager.store.removeByValue('fq', value);
-				});
+			var split = facet.match(FIELD_PREFIX_REGEX);
+			if ($.inArray(split[1], FacetedSearch.singleton.FacetedSearchInstance.FACET_FIELDS) >= 0) {
+				self.manager.store.removeByValue('fq', new RegExp('^' + split[2] + ':.*'));
+			}
+			var ATTRIBUTE = new RegExp(FacetedSearch.singleton.FacetedSearchInstance.FACET_FIELDS[1] + ':(smwh_.*)_xsdvalue_.*');
+			var ps = facet.match(ATTRIBUTE);
+			if (ps) {
+				self.manager.store.removeByValue('fq', new RegExp('^' + ps[1] + '_(datevalue_l|numvalue_d):\\[.*\\]$'));
 			}
 			if (self.manager.store.removeByValue('fq', facet)) {
 				self.manager.doRequest(0);
