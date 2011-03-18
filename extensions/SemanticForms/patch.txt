@@ -1877,7 +1877,7 @@ Index: extensions/SemanticForms/includes/SF_ParserFunctions.php
  			$str = <<<END
  			<form action="$fs_url" method="get">
  			<p><input type="text" name="page_name" size="$inSize" value="$inValue" class="formInput" />
-Index: extensions/SemanticForms/includes/SF_ParserFunctions.php
+Index: extensions/SemanticForms/libs/SemanticForms.js
 ===================================================================
 --- extensions/SemanticForms/libs/SemanticForms.js	(original)
 +++ extensions/SemanticForms/libs/SemanticForms.js	(patched version)
