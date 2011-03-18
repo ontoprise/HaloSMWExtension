@@ -73,7 +73,11 @@ FacetedSearch.classes.NumericFacetClusterer = function (facetName, plainName) {
 			values[i] = Math.round(currVal);
 			currVal += incr;
 		}
-		values[i] = max;
+		values[i] = max+1;
+		for (i = 0; i < values.length-1; ++i) {
+			values[i] = [values[i], values[i+1]-1];
+		}
+		values.splice(values.length-1,1);
 		return values;
 	}
 		

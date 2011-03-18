@@ -52,6 +52,9 @@ FacetedSearch.classes.ClusterWidget = AjaxSolr.AbstractWidget.extend({
 		return function () {
 			var fsm = FacetedSearch.singleton.FacetedSearchInstance.getAjaxSolrManager();
 			fsm.store.addByValue('facet', true);
+			var regex = new RegExp(cluster.facet+':\\[.*\\]');
+			fsm.store.removeByValue('fq', regex);
+
 			var field;
 			var ATTRIBUTE_REGEX = /smwh_(.*)_xsdvalue_(.*)/;
 			if (cluster.facet.match(ATTRIBUTE_REGEX)) {
@@ -60,6 +63,7 @@ FacetedSearch.classes.ClusterWidget = AjaxSolr.AbstractWidget.extend({
 				field = FacetedSearch.singleton.FacetedSearchInstance.FACET_FIELDS[2];
 			}
 			fsm.store.addByValue('fq', field + ':' + cluster.facet);
+
 			fsm.store.addByValue('fq', 
 				cluster.facet+':[' + cluster.from + ' TO ' + cluster.to + ']');
 			fsm.doRequest(0);
@@ -84,28 +88,29 @@ FacetedSearch.classes.ClusterWidget = AjaxSolr.AbstractWidget.extend({
 		
 		// Create strings for the ranges with instance counts
 		// e.g. 42 - 52 (5)
-		var regex = new RegExp(this.facetName+':\\[(\\d*) TO (\\d*)\\]'); 
+		var regex = new RegExp(this.statisticsFieldName+':\\[(\\d*) TO (\\d*)\\]'); 
 		var ranges = data.facet_counts.facet_queries;
 		$(this.target).empty();
 		for (var range in ranges) {
 			var matches = range.match(regex);
 			if (matches) {
 				var from = matches[1];
+				var displayFrom = this.clusterer.formatBoundary(from);
 				var to = matches[2];
+				var displayTo = this.clusterer.formatBoundary(to);
 				var count = ranges[range];
-				// Create the HTML for the cluster
-				$(this.target)
-					.append(AjaxSolr.theme('cluster', from, to, count, 
-					                       self.clickClusterHandler({
-											   	from: from,
-												to: to,
-												count: count,
-												facet: this.facetName
-										   })));
+				if (count > 0) {
+					// Create the HTML for the cluster
+					$(this.target).append(AjaxSolr.theme('cluster', displayFrom, displayTo, count, self.clickClusterHandler({
+						from: from,
+						to: to,
+						count: count,
+						facet: this.statisticsFieldName
+					})));
+				}
 			}
 		}
 		// Remove the statistic parameters
-		this.manager.store.remove('facet');
 		this.manager.store.remove('facet.query');
 		
 	}

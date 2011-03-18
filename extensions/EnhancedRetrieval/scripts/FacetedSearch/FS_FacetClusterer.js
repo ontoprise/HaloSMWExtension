@@ -92,8 +92,10 @@ FacetedSearch.classes.FacetClusterer = function (facetName, plainName) {
 		mAjaxSolrManager.handleResponse = function (data) {
 			// Restore the original response handler
 			mAjaxSolrManager.handleResponse = handleResponse;
-			var min = data.stats.stats_fields[mFacetName].min;
-			var max = data.stats.stats_fields[mFacetName].max;
+			
+			facet = that.getStatisticsField();
+			var min = data.stats.stats_fields[facet].min;
+			var max = data.stats.stats_fields[facet].max;
 			var clusters = that.makeClusters(min, max);
 			
 			// Remove the statistic parameters
@@ -128,6 +130,17 @@ FacetedSearch.classes.FacetClusterer = function (facetName, plainName) {
 	}
 	
 	/**
+	 * Formats a boundary value of a cluster for display in the UI.
+	 * @param {Object} value
+	 * 		The value to format
+	 * @return string
+	 * 		The formated value
+	 */
+	that.formatBoundary = function (value) {
+		return value;
+	}
+	
+	/**
 	 * Retrieves the number of objects in the given clusters of the facet of this
 	 * instance.
 	 * 
@@ -136,19 +149,20 @@ FacetedSearch.classes.FacetClusterer = function (facetName, plainName) {
 	 */
 	function retrieveClusterCounts(clusters) {
 		mAjaxSolrManager.store.addByValue('facet', 'true');
-		var min = clusters[0];
 		var facet = that.getStatisticsField();
-		for (var i = 1; i < clusters.length; ++i) {
-			var max = clusters[i];
+		for (var i = 0; i < clusters.length; ++i) {
+			var min = clusters[i][0];
+			var max = clusters[i][1];
 			mAjaxSolrManager.store.addByValue('facet.query', 
 				facet+':[' + min + ' TO ' + max + ']');
-			min = max + 1;	
 		}
 		
 		mAjaxSolrManager.addWidget(new FacetedSearch.classes.ClusterWidget({
 				id: 'fsc'+mFacetName,
 				target: '#property_' + mFacetName + '_values',
-				facetName: mFacetName
+				facetName: mFacetName,
+				statisticsFieldName: facet,
+				clusterer: that
 			}));
 		
 		mAjaxSolrManager.doRequest();
