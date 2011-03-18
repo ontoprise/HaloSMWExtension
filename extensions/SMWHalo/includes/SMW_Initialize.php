@@ -464,8 +464,7 @@ function smwgHaloSetupExtension() {
 	$wgHooks['CheckNamespaceForImage'][] = 'smwfRichMediaIsImage';
 
 	// add the 'halo' form input type, if Semantic Forms is installed
-	global $sfgFormPrinter;
-	if ($sfgFormPrinter) {
+	if ( defined('SF_VERSION') ) {
 		$sfgFormPrinter->setInputTypeHook('haloACtext', 'smwfHaloFormInput', array());
 		$sfgFormPrinter->setInputTypeHook('haloACtextarea', 'smwfHaloFormInputTextarea', array());
 	}
