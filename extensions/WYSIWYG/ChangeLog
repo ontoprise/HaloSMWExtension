@@ -13,6 +13,12 @@ VERSION 1.4.1
       this in the source mode of the Richtext editor or use the default wiki
       text editor.
     * new button to add the signature into the edited document.
+    * Treat the special tags of the Semantic Forms extension not as templates
+      but as a "Special Tag" like magic words or variables. The SF special tags
+      are 'info', 'for template', 'field', 'end template', 'standard input'. The
+      parsing is done only on pages that are in the form namespace and when
+      Semantic Forms is installed.
+      See also http://smwforum.ontoprise.com/smwbugs/show_bug.cgi?id=13021
 
   CHANGES:
     * Fix bug http://smwforum.ontoprise.com/smwbugs/show_bug.cgi?id=13271
