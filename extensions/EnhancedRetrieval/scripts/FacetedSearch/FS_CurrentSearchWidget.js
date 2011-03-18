@@ -68,7 +68,22 @@ FacetedSearch.classes.CurrentSearchWidget = AjaxSolr.AbstractWidget.extend({
 
 	removeFacet : function(facet) {
 		var self = this;
+		var $ = jQuery;
 		return function() {
+			var fq = self.manager.store.values('fq');
+			var FIELD_PREFIX_REGEX = /([^:]+):(.*)/;
+			var match = facet.match(FIELD_PREFIX_REGEX);
+			if ($.inArray(match[1], FacetedSearch.singleton.FacetedSearchInstance.FACET_FIELDS) >= 0) {
+				var remove = [];
+				$.each(fq, function(index, value) {
+					if (value.indexOf(match[2]) == 0) {
+						remove.push(value);
+					}
+				});
+				$.each(remove, function(index, value) {
+					self.manager.store.removeByValue('fq', value);
+				});
+			}
 			if (self.manager.store.removeByValue('fq', facet)) {
 				self.manager.doRequest(0);
 			}

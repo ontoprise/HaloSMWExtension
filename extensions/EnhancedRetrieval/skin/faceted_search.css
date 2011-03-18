@@ -89,3 +89,6 @@
 	padding-left: 3px;
     vertical-align: text-bottom;
 }
+a.xfsFMore, a.xfsFLess {
+	cursor: pointer;
+}
