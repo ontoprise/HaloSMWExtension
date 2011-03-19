@@ -351,20 +351,20 @@ ENDS
         chdir($onto2mwxml_dir);
         $ret = 0;
         if (Tools::isWindows()) {
-            if (!file_exists("$onto2mwxml_dir/onto2mwxml.exe")) {
+            if (!file_exists("$onto2mwxml_dir/tsc")) {
                 if (!file_exists($outputfile)) {
-                    throw new Exception("Onto2MWXML tool is not installed.");
+                    throw new Exception("Onto2MWXML tool is not correctly installed. Please take a look in deployment/tools/onto2mwxml/README.TXT.");
                 }
             } else {
                 if (!file_exists($outputfile)) {
                     if ($noBundlePage) $noBundlePageParam = "--nobundlepage"; else $noBundlePageParam = "";
-                    exec("$onto2mwxml_dir/onto2mwxml.exe $inputfile -o $outputfile --bundleid $bundleID $noBundlePageParam", $output, $ret);
+                    exec("$onto2mwxml_dir/onto2mwxml.bat $inputfile -o $outputfile --bundleid $bundleID $noBundlePageParam", $output, $ret);
                 }
             }
         } else {
-            if (!file_exists("$onto2mwxml_dir/onto2mwxml.sh")) {
+            if (!file_exists("$onto2mwxml_dir/tsc")) {
                 if (!file_exists($outputfile)) {
-                    throw new Exception("Onto2MWXML tool is not installed.");
+                    throw new Exception("Onto2MWXML tool is not correctly installed. Please take a look in deployment/tools/onto2mwxml/README.TXT.");
                 }
             } else {
                 if (!file_exists($outputfile)) {

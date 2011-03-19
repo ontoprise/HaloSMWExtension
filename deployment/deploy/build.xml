@@ -66,11 +66,12 @@
 	</target>
 
 	<target name="onto2mwxml">
+		<!-- REMOVE ME!
 		<ant antfile="${onto2mwxml_path}/build.xml" dir="${onto2mwxml_path}" target="pack_jena" />
 		<copy todir="../tools/onto2mwxml">
 			<fileset dir="${onto2mwxml_path}/deploy/bin/zip">
 				<exclude name="**/.svn, **/CVS" />
 			</fileset>
-		</copy>
+		</copy>-->
 	</target>
 </project>
