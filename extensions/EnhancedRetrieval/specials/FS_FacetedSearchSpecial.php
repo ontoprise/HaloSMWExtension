@@ -34,6 +34,8 @@ if (!defined('MEDIAWIKI')) die();
 
 global $IP;
 require_once( $IP . "/includes/SpecialPage.php" );
+$dir = dirname(__FILE__).'/';
+require_once( $dir."../includes/FacetedSearch/FS_Settings.php" );
 
 /*
  * Standard class that is responsible for the creation of the Special Page
@@ -86,6 +88,9 @@ class FSFacetedSearchSpecial extends SpecialPage {
 
     public function __construct() {
         parent::__construct('FacetedSearch');
+		global $wgHooks;
+		$wgHooks['MakeGlobalVariablesScript'][] = "FSFacetedSearchSpecial::addJavaScriptVariables";
+        
     }
 
     /**
@@ -114,20 +119,39 @@ class FSFacetedSearchSpecial extends SpecialPage {
 		$wgOut->addScript("<script type=\"text/javascript\" src=\"". $fsgScriptPath .  "/scripts/FacetedSearch/FS_Theme.js\"></script>");        
 		$wgOut->addScript("<script type=\"text/javascript\" src=\"". $fsgScriptPath .  "/scripts/FacetedSearch/FS_ResultWidget.js\"></script>");        
 		$wgOut->addScript("<script type=\"text/javascript\" src=\"". $fsgScriptPath .  "/scripts/FacetedSearch/FS_FacetWidget.js\"></script>");        
+		$wgOut->addScript("<script type=\"text/javascript\" src=\"". $fsgScriptPath .  "/scripts/FacetedSearch/FS_FacetPropertyValueWidget.js\"></script>");        
 		$wgOut->addScript("<script type=\"text/javascript\" src=\"". $fsgScriptPath .  "/scripts/FacetedSearch/FS_CurrentSearchWidget.js\"></script>");
 		$wgOut->addScript("<script type=\"text/javascript\" src=\"". $fsgScriptPath .  "/scripts/FacetedSearch/FS_FacetedSearch.js\"></script>");
 		$wgOut->addScript("<script type=\"text/javascript\" src=\"". $fsgScriptPath .  "/scripts/FacetedSearch/FS_FacetClusterer.js\"></script>");
 		$wgOut->addScript("<script type=\"text/javascript\" src=\"". $fsgScriptPath .  "/scripts/FacetedSearch/FS_NumericFacetClusterer.js\"></script>");
+		$wgOut->addScript("<script type=\"text/javascript\" src=\"". $fsgScriptPath .  "/scripts/FacetedSearch/FS_StringFacetClusterer.js\"></script>");
 		$wgOut->addScript("<script type=\"text/javascript\" src=\"". $fsgScriptPath .  "/scripts/FacetedSearch/FS_DateFacetClusterer.js\"></script>");
 		$wgOut->addScript("<script type=\"text/javascript\" src=\"". $fsgScriptPath .  "/scripts/FacetedSearch/FS_ClusterWidget.js\"></script>");
 		$wgOut->addScript("<script type=\"text/javascript\" src=\"". $fsgScriptPath .  "/scripts/FacetedSearch/FS_FacetClustererFactory.js\"></script>");
 
 		$wgOut->addStyle($fsgScriptPath . '/skin/faceted_search.css', 'screen, projection');
-		
+						
         global $smgJSLibs;
         $smgJSLibs[] = 'jquery';
 
     }
+
+	/**
+	 * Add a global JavaScript variable for the SOLR URL.
+	 * @param $vars
+	 * 		This array of global variables is enhanced with "wgFSSolrURL"
+	 */
+	public static function addJavaScriptVariables(&$vars) {
+		global $fsgFacetedSearchConfig;
+		$solrURL = "http://".$fsgFacetedSearchConfig['host']
+		           .':'
+		           .$fsgFacetedSearchConfig['port']
+		           .'/solr/';
+		
+		$vars['wgFSSolrURL'] = $solrURL;
+		
+		return true;
+	}
     
 	/**
 	 * Language dependent identifiers in $text that have the format {{identifier}}
@@ -158,3 +182,4 @@ class FSFacetedSearchSpecial extends SpecialPage {
     
 
 }
+
