@@ -56,7 +56,11 @@ FacetedSearch.classes.FacetClusterer = function (facetName, plainName) {
 	// string - Plain name of the facet without prefix and suffix
 	var mPlainName;
 	
+	//--- Getters/Setters ---
+	that.getAjaxSolrManager = function () { return mAjaxSolrManager; }
+	that.getFacetName       = function () { return mFacetName; }
 	
+	//--- Public methods ---
 
 	/**
 	 * Constructor for the FacetClusterer class. Clusters can be created for 
@@ -69,7 +73,9 @@ FacetedSearch.classes.FacetClusterer = function (facetName, plainName) {
 	 * 		The plain name without prefix and suffix of the facet. 
 	 */
 	function construct(facetName, plainName) {
-		mAjaxSolrManager = new AjaxSolr.Manager();
+		mAjaxSolrManager = new AjaxSolr.Manager({
+			solrUrl : wgFSSolrURL
+		});
 		mAjaxSolrManager.init();
 		fsm = FacetedSearch.singleton.FacetedSearchInstance.getAjaxSolrManager();
 		mAjaxSolrManager.store = fsm.store;

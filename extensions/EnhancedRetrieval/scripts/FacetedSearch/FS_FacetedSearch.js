@@ -40,6 +40,7 @@ FacetedSearch.classes.FacetedSearch = function () {
 	// The field with this name is used on SOLR queries
 	var QUERY_FIELD = 'smwh_title';
 	
+	// Names of the facet classes
 	var FACET_FIELDS = ['smwh_categories', 'smwh_attributes', 'smwh_properties'];
 
 	
@@ -70,7 +71,9 @@ FacetedSearch.classes.FacetedSearch = function () {
 	 * Constructor for the FacetedSearch class.
 	 */
 	function construct() {
-		mAjaxSolrManager = new AjaxSolr.Manager();
+		mAjaxSolrManager = new AjaxSolr.Manager({
+			solrUrl: wgFSSolrURL
+			});
 		
 		mAjaxSolrManager.addWidget(new FacetedSearch.classes.ResultWidget({
 		  id: 'article',
