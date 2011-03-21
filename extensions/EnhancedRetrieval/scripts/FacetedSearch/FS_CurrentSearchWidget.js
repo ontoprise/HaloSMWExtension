@@ -36,17 +36,39 @@ FacetedSearch.classes.CurrentSearchWidget = AjaxSolr.AbstractWidget.extend({
 	afterRequest : function() {
 		var $ = jQuery;
 
-		var DEBUG = true;
+		var DEBUG = false;
 		var FIELD_PREFIX_REGEX = /([^:]+):(.*)/;
+		var EXTRACT_TYPE_REGEX = /(.*)_(.*)$/; 
 		
 		var self = this;
 		var links = [];
 
 		var fq = this.manager.store.values('fq');
-		for ( var i = 0, l = fq.length; i < l; i++) {
+		var facetQueries = {};
+		for ( var i = 0, l = fq.length; i < l; i++) { 
 			var match = fq[i].match(FIELD_PREFIX_REGEX);
 			if ($.inArray(match[1], FacetedSearch.singleton.FacetedSearchInstance.FACET_FIELDS) >= 0) {
+				var facetName = match[2];
 				links.push(AjaxSolr.theme('facet', match[2], -1, self.removeFacet(fq[i]), FacetedSearch.classes.ClusterWidget.showPropertyDetailsHandler, true));
+				var nameWithoutType = facetName.match(EXTRACT_TYPE_REGEX);
+				nameWithoutType = nameWithoutType[1];
+				facetQueries[nameWithoutType] = true;
+			}
+		}
+		for ( var i = 0, l = fq.length; i < l; i++) {
+			var match = fq[i].match(FIELD_PREFIX_REGEX);
+			if ($.inArray(match[1], FacetedSearch.singleton.FacetedSearchInstance.FACET_FIELDS) < 0) {
+				var facetName = match[1];
+				// Do not include fields that end with "datevalue_l"
+				if (facetName.match(/.*?_datevalue_l$/)) {
+					continue;
+				}
+				var nameWithoutType = facetName.match(EXTRACT_TYPE_REGEX);
+				nameWithoutType = nameWithoutType[1];
+				if (!facetQueries[nameWithoutType]) {
+					links.push(AjaxSolr.theme('facet', facetName, -1, self.removeFacet(fq[i]), FacetedSearch.classes.ClusterWidget.showPropertyDetailsHandler, true));
+					facetQueries[facetName] = true;
+				}
 			}
 		}
 
@@ -82,20 +104,37 @@ FacetedSearch.classes.CurrentSearchWidget = AjaxSolr.AbstractWidget.extend({
 		var self = this;
 		var $ = jQuery;
 		return function() {
-			var fq = self.manager.store.values('fq');
+			var fs = FacetedSearch.singleton.FacetedSearchInstance;
+			var fsfields = fs.FACET_FIELDS; 
 			var FIELD_PREFIX_REGEX = /([^:]+):(.*)/;
+			var store = self.manager.store;
+			
+			var fq = self.manager.store.values('fq');
 			var split = facet.match(FIELD_PREFIX_REGEX);
-			if ($.inArray(split[1], FacetedSearch.singleton.FacetedSearchInstance.FACET_FIELDS) >= 0) {
-				self.manager.store.removeByValue('fq', new RegExp('^' + split[2] + ':.*'));
+			if ($.inArray(split[1], fsfields) >= 0) {
+				// Remove filter queries for category, relation or attribute 
+				// facets that begin with the facet name e.g. someProperty:propertyValue
+				// The type suffix of the property name may be wrong 
+				// i.e. string and are equivalent => ignore the suffix
+				var nameWithoutType = split[2].match(/^(.*_).*$/); 
+				store.removeByValue('fq', new RegExp('^' + nameWithoutType[1] + '.*?:.*'));
 			}
-			var ATTRIBUTE = new RegExp(FacetedSearch.singleton.FacetedSearchInstance.FACET_FIELDS[1] + ':(smwh_.*)_xsdvalue_.*');
-			var ps = facet.match(ATTRIBUTE);
+			var attrFacetClass = fsfields[1];
+			var ATTRIBUTE_REGEX = new RegExp(attrFacetClass + ':(smwh_.*)_xsdvalue_.*');
+			var ps = facet.match(ATTRIBUTE_REGEX);
 			if (ps) {
-				self.manager.store.removeByValue('fq', new RegExp('^' + ps[1] + '_(datevalue_l|numvalue_d):\\[.*\\]$'));
+				var removeRegex = new RegExp('^' + ps[1] + '_.*?value_.*?:.*$');
+				store.removeByValue('fq', removeRegex);
 			}
-			if (self.manager.store.removeByValue('fq', facet)) {
-				self.manager.doRequest(0);
+			var relationFacetClass = fsfields[2];
+			var RELATION_REGEX = new RegExp('^' + relationFacetClass + ':(smwh_.*)_.*$');
+			var ps = facet.match(RELATION_REGEX);
+			if (ps) {
+				var removeRegex = new RegExp('^' + relationFacetClass + ':' + ps[1] + '_.*$');
+				store.removeByValue('fq', removeRegex);
 			}
+			store.removeByValue('fq', facet);
+			self.manager.doRequest(0);
 			return false;
 		};
 	}
