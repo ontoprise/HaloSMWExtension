@@ -127,8 +127,8 @@ class TFDataAPIACCESS {
 						}
 					} 
 				} else if ($element instanceof POMBuiltInParserFunction){
-					if(strpos($element->nodeText, '{{SilentAnnotations:') === 0){
-						$silents = trim(substr($element->nodeText, strlen('{{SilentAnnotations:')));
+					if(strpos($element->nodeText, '{{CreateSilentAnnotations:') === 0){
+						$silents = trim(substr($element->nodeText, strlen('{{CreateSilentAnnotations:')));
 						$silents = substr($silents, 0, strlen($silents)-2);
 						$silents = explode('|', $silents);
 						foreach($silents as $silent){
@@ -264,8 +264,8 @@ class TFDataAPIACCESS {
 						}
 					} 
 				} else if ($element instanceof POMBuiltInParserFunction){
-					if(strpos($element->nodeText, '{{SilentAnnotations:') === 0){
-						$silents = trim(substr($element->nodeText, strlen('{{SilentAnnotations:')));
+					if(strpos($element->nodeText, '{{CreateSilentAnnotations:') === 0){
+						$silents = trim(substr($element->nodeText, strlen('{{CreateSilentAnnotations:')));
 						$silents = substr($silents, 0, strlen($silents)-2);
 						$silents = explode('|', $silents);
 						$modified = false;
@@ -285,7 +285,7 @@ class TFDataAPIACCESS {
 						}
 						
 						if($modified){
-							$element->nodeText = '{{SilentAnnotations:'.implode('|', $silents).'}}';
+							$element->nodeText = '{{CreateSilentAnnotations:'.implode('|', $silents).'}}';
 						}
 					} 
 				} else if($element instanceof POMTemplate){

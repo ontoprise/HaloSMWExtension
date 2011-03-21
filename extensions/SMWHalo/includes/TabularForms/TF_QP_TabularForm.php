@@ -602,6 +602,8 @@ class TFTabularFormRowData {
 	private $revisionId = 0;
 	private $annotations = array();
 	public $templateParameters = array();
+	private $isReadProtected;
+	private $isWriteProtected;
 	
 	
 	/*
@@ -611,6 +613,8 @@ class TFTabularFormRowData {
 	public function __construct($title){
 		$this->title = Title::newFromText($title);
 		$this->dataAPIAccess = TFDataAPIAccess::getInstance($this->title);
+		$this->isReadProtected = $this->dataAPIAccess->isReadProtected;
+		$this->isWriteProtected = $this->dataAPIAccess->isWriteProtected;
 		$this->revisionId = $this->dataAPIAccess->getRevisionId();
 	}
 	
@@ -632,7 +636,7 @@ class TFTabularFormRowData {
 		
 		//All values are read-only if article does not exist and add is not enabled
 		if((!($this->title instanceof Title && $this->title->exists()) && !$enableInstanceAdd)
-				|| $this->dataAPIAccess->isReadProtected || $this->dataAPIAccess->isWriteProtected){
+				|| $this->isReadProtected || $this->isWriteProtected){
 			foreach($this->annotations as $key => $annotations){
 				foreach($annotations as $k => $annotation){
 					$this->annotations[$key][$k]->isWritable = false;
@@ -714,7 +718,7 @@ class TFTabularFormRowData {
 		
 		//Template parameters are read-only if article does not exist and add is not enabled
 		if((!($this->title instanceof Title && $this->title->exists()) && !$enableInstanceAdd)
-				|| $this->dataAPIAccess->isReadProtected || $this->dataAPIAccess->isWriteProtected){
+				|| $this->isReadProtected || $this->isWriteProtected){
 			foreach($this->templateParameters as $key => $parameters){
 				foreach($parameters as $k => $parameter){
 					$this->templateParameters[$key][$k]->isWritable = false;
@@ -735,9 +739,9 @@ class TFTabularFormRowData {
 		$class = 'tabf_table_row';
 		$additionalAttributes = "";
 		if($this->title instanceof Title && $this->title->exists()){
-			if($this->dataAPIAccess->isReadProtected){
+			if($this->isReadProtected){
 				$class .= ' tabf_read_protected_row';
-			} else if($this->dataAPIAccess->isWriteProtected){
+			} else if($this->isWriteProtected){
 				$class .= ' tabf_write_protected_row';
 			}
 		} else {
@@ -833,9 +837,9 @@ class TFTabularFormRowData {
 			$addedDisplay = $notExistsDisplay = 'none';
 		
 		if($this->title instanceof Title && $this->title->exists()){
-			if($this->dataAPIAccess->isReadProtected == true){
+			if($this->isReadProtected == true){
 				$readProtectedDisplay = '';
-			} else if($this->dataAPIAccess->isWriteProtected == true){
+			} else if($this->isWriteProtected == true){
 				$writeProtectedDisplay = '';
 			} else {
 				// I think it is not necessary to have an ICON for this staus
