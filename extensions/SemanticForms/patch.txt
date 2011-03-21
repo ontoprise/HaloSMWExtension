@@ -578,12 +578,12 @@ Index: extensions/SemanticForms/includes/SF_GlobalFunctions.php
  $wgSpecialPageGroups['Templates'] = 'pages';
 Index: extensions/SemanticForms/includes/SF_FormPrinter.php
 ===================================================================
---- extensions/SemanticForms/includes/SF_FormPrinter.php	(revision 9578)
-+++ extensions/SemanticForms/includes/SF_FormPrinter.php	(working copy)
+--- extensions/SemanticForms/includes/SF_FormPrinter.php	(original)
++++ extensions/SemanticForms/includes/SF_FormPrinter.php    (patched version)
 @@ -9,6 +9,12 @@
   * @author Daniel Hansch
   */
- 
+
 +// patches included:
 +// 1. WYSIWYG parameter in info tag
 +//    tag of patch: op-patch|DH|2009-04-22|"WYSIWYG" in info tag
@@ -591,14 +591,14 @@ Index: extensions/SemanticForms/includes/SF_FormPrinter.php
 +//    doc: op-patch|DH|2009-04-22|"WYSIWYG" in info tag|http://dmwiki.ontoprise.com:8888/dmwiki/index.php/WYSIWYG_in_info_tag
 +
  class SFFormPrinter {
- 
+
    var $mSemanticTypeHooks;
 @@ -159,8 +165,13 @@
      global $sfgTabIndex; // used to represent the current tab index in the form
      global $sfgFieldNum; // used for setting various HTML IDs
      global $sfgAdderButtons;
 +    global $wgContLang;
- 
+
      // initialize some variables
 +    /*op-patch|KK|2009-11-04|FCKeditor|use separate variable for FCK Options|start*/
 +    /*op-patch|KK|2009-11-04|FCKeditor|use separate variable for FCK Options|doc|http://dmwiki.ontoprise.com:8888/dmwiki/index.php/Use_rows_parameter_for_FCK_editor_window_height_in_SF*/
@@ -615,7 +615,7 @@ Index: extensions/SemanticForms/includes/SF_FormPrinter.php
 +    /*op-patch|DH|2009-26-08|SF|free text in includeonly tags and rest in noinclude tags|doc|http://dmwiki.ontoprise.com:8888/dmwiki/index.php/Patch_free_text_in_includeonly_tags*/
 +    $includeonly_free_text = false;
 +    /*op-patch|DH|2009-26-08|SF|free text in includeonly tags and rest in noinclude tags|end*/
-     
+
 +    /*op-patch|DH|2009-04-22|"WYSIWYG" in info tag|start*/
 +    $show_FCKEditor = false;
 +    /*op-patch|DH|2009-04-22|"WYSIWYG" in info tag|end*/
@@ -716,7 +716,7 @@ Index: extensions/SemanticForms/includes/SF_FormPrinter.php
            $template_text .= "{{" . $tif->template_name;
            $all_fields = $tif->getAllFields();
            // remove template tag
-@@ -707,9 +785,19 @@
+@@ -707,15 +785,37 @@
                $new_text = SFFormUtils::hiddenFieldHTML( 'free_text', '!free_text!' );
              } else {
                if ( ! array_key_exists( 'rows', $field_args ) )
@@ -739,7 +739,26 @@ Index: extensions/SemanticForms/includes/SF_FormPrinter.php
                $sfgTabIndex++;
                $sfgFieldNum++;
                if ( $cur_value == '' ) {
-@@ -952,10 +1040,13 @@
+                 $default_value = '!free_text!';
+               } else {
+-                $default_value = $cur_value;
++                /*op-patch|SR|2011-03-21|FCKeditor|bugfix for default parameter in freetext|start*/
++                /*op-patch|SR|2011-03-21|FCKeditor|bugfix for default parameter in freetext|doc|http://dmwiki.ontoprise.com:8888/dmwiki/index.php/FCKParse_for_default_value*/
++                // if the FCKeditor extension is installed, default value needs to be parsed for use in editor
++                global $wgFCKEditorDir;
++                if ( $wgFCKEditorDir && strpos( $existing_page_content, '__NORICHEDITOR__' ) === false ) {
++                    $showFCKEditor = SFFormUtils::getShowFCKEditor();
++                    if ( !$form_submitted && ( $showFCKEditor & RTE_VISIBLE ) ) {
++                        $default_value = SFFormUtils::prepareTextForFCK( $cur_value );
++                    }
++                    else $default_value = $cur_value;
++                }
++                else $default_value = $cur_value;
++                /*op-patch|SR|2011-03-21|FCKeditor|bugfix for default parameter in freetext|end*/
+               }
+               $new_text = SFTextAreaInput::getText( $default_value, 'free_text', false, ( $form_is_disabled || $is_restricted ), $field_args );
+               if ( in_array( 'edittools', $free_text_components ) ) {
+@@ -952,10 +1052,13 @@
                  // if the date is hidden, cur_value will already be set
                  // to the default value
                  ( $cur_value == '' || $cur_value == 'current user' ) ) {
@@ -754,8 +773,8 @@ Index: extensions/SemanticForms/includes/SF_FormPrinter.php
 +              /*op-patch|DH|2009-09-18|SF|include namespace for current user|end*/
              }
              $new_text = $this->formFieldHTML( $form_field, $cur_value );
- 
-@@ -1072,9 +1163,21 @@
+
+@@ -1072,9 +1175,21 @@
                $form_is_partial = true;
                // replacement pages may have minimal matches...
                $source_page_matches_this_form = true;
@@ -778,7 +797,27 @@ Index: extensions/SemanticForms/includes/SF_FormPrinter.php
            }
            $section = substr_replace( $section, '', $brackets_loc, $brackets_end_loc + 3 - $brackets_loc );
          // =====================================================
-@@ -1156,6 +1259,10 @@
+@@ -1105,15 +1220,15 @@
+           // doing a replace
+           if ( $existing_page_content && strpos( $existing_page_content, '{{{insertionpoint}}}', 0 ) !== false ) {
+             $existing_page_content = preg_replace( '/\{\{\{insertionpoint\}\}\}(\r?\n?)/',
+-              preg_replace( '/\}\}/m', '}�',
+-                preg_replace( '/\{\{/m', '�{', $template_text ) ) .
++              preg_replace( '/\}\}/m', '}�',
++                preg_replace( '/\{\{/m', '�{', $template_text ) ) .
+               "\n{{{insertionpoint}}}",
+               $existing_page_content );
+           // otherwise, if it's a partial form, we have to add the new
+           // text somewhere
+           } elseif ( $form_is_partial && $wgRequest->getCheck( 'partial' ) ) {
+-            $existing_page_content = preg_replace( '/\}\}/m', '}�',
+-              preg_replace( '/\{\{/m', '�{', $template_text ) ) .
++            $existing_page_content = preg_replace( '/\}\}/m', '}�',
++              preg_replace( '/\{\{/m', '�{', $template_text ) ) .
+                 "\n{{{insertionpoint}}}\n" . $existing_page_content;
+           }
+         }
+@@ -1156,6 +1271,10 @@
        } else {
          $form_text .= $section;
        }
@@ -786,10 +825,19 @@ Index: extensions/SemanticForms/includes/SF_FormPrinter.php
 +      if($collapsible)
 +        $form_text .= "</div>"; //closing div for collapsing
 +      /*op-patch|BL|2009-08-14|end*/
- 
+
      } // end for
- 
-@@ -1197,6 +1304,17 @@
+
+@@ -1176,7 +1295,7 @@
+          $form_text .= SFFormUtils::hiddenFieldHTML( 'partial', 1 );
+        } else {
+          $free_text = null;
+-         $existing_page_content = preg_replace( array( '/�\{/m','/\}�/m' ),
++         $existing_page_content = preg_replace( array( '/�\{/m','/\}�/m' ),
+            array( '{{','}}' ),
+            $existing_page_content );
+          $existing_page_content = preg_replace( '/\{\{\{insertionpoint\}\}\}/', '', $existing_page_content );
+@@ -1197,6 +1316,17 @@
      } else {
        $free_text = null;
      }
@@ -807,7 +855,7 @@ Index: extensions/SemanticForms/includes/SF_FormPrinter.php
      if ( $onlyinclude_free_text ) {
        // modify free text and data text to insert <onlyinclude> tags
        $free_text = str_replace( "<onlyinclude>", '', $free_text );
-@@ -1206,7 +1324,9 @@
+@@ -1206,7 +1336,9 @@
      }
      // if the FCKeditor extension is installed, use that for the free text input
      global $wgFCKEditorDir;
@@ -818,7 +866,7 @@ Index: extensions/SemanticForms/includes/SF_FormPrinter.php
        $showFCKEditor = SFFormUtils::getShowFCKEditor();
        if ( !$form_submitted && ( $showFCKEditor & RTE_VISIBLE ) ) {
          $free_text = SFFormUtils::prepareTextForFCK( $free_text );
-@@ -1216,6 +1336,17 @@
+@@ -1216,6 +1348,17 @@
      }
      // now that we have it, substitute free text into the form and page
      $escaped_free_text = Sanitizer::safeEncodeAttribute( $free_text );
@@ -835,8 +883,8 @@ Index: extensions/SemanticForms/includes/SF_FormPrinter.php
 +    /*op-patch|SR|2009-09-21|magic word __NORICHEDITOR__ was not checked by SF|end*/
      $form_text = str_replace( '!free_text!', $escaped_free_text, $form_text );
      $data_text = str_replace( '!free_text!', $free_text, $data_text );
- 
-@@ -1250,7 +1381,11 @@
+
+@@ -1250,7 +1393,11 @@
      // add Javascript code for form-wide use
      $javascript_text = "";
      if ( $free_text_was_included && $showFCKEditor > 0 ) {
