@@ -44,6 +44,7 @@ FacetedSearch.classes.ClusterWidget = AjaxSolr.AbstractWidget.extend({
 	 * 		- to
 	 * 		- count
 	 * 		- facet
+	 * 		- facetStatisticField
 	 * @returns {Function} Sends a request to Solr if it successfully adds a
 	 *   filter query with the given value.
 	 */
@@ -52,7 +53,7 @@ FacetedSearch.classes.ClusterWidget = AjaxSolr.AbstractWidget.extend({
 		return function () {
 			var fsm = FacetedSearch.singleton.FacetedSearchInstance.getAjaxSolrManager();
 			fsm.store.addByValue('facet', true);
-			var regex = new RegExp(cluster.facet+':\\[.*\\]');
+			var regex = new RegExp(cluster.facetStatisticField+':\\[.*\\]');
 			fsm.store.removeByValue('fq', regex);
 
 			var field;
