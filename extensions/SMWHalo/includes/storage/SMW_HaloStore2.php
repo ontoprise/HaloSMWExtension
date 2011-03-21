@@ -71,7 +71,8 @@ class SMWHaloStore2 extends SMWSQLStore2 {
 			if ($ontologyURIProperty == $property->getDBkey()) {
 
 				$propertyValueArray = $data->getPropertyValues($property);
-
+                
+				if (count($propertyValueArray) == 0) continue;
 				// should be only one, otherwise out of spec)
 				$uriValue = reset($propertyValueArray);
 				$uriDBkeys = $uriValue->getDBkeys();

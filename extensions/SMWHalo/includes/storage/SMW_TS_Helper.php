@@ -137,7 +137,9 @@ class TSHelper {
 			// any URI
 
 			if ($forceTitle) {
-				if (strpos($sv, "#") !== false) {
+				if (strpos($sv, "obl:") === 0) {
+					$local = TSHelper::convertOBLFunctionalTerm($sv);
+				} else if (strpos($sv, "#") !== false) {
 					$local = substr($sv, strpos($sv, "#")+1);
 				} else if (strrpos($sv, "/") !== false) {
 					$local = substr($sv, strrpos($sv, "/")+1);
@@ -146,11 +148,28 @@ class TSHelper {
 				}
 				return Title::newFromText($local, NS_MAIN);
 			} else {
+				
 				return $sv;
 			}
 		}
 
 
+	}
+	
+	private static function convertOBLFunctionalTerm($uri) {
+		  $uri = urldecode($uri);
+        $uri = str_replace("#", "_", $uri);
+        $uri = str_replace(",", "_", $uri);
+        $uri = str_replace("\"", "_", $uri);
+        $uri = str_replace("'", "_", $uri);
+        $uri = str_replace("^", "_", $uri);
+        $uri = str_replace("<", "_", $uri);
+        $uri = str_replace(">", "_", $uri);
+        $uri = str_replace(":", "_", $uri);
+        $uri = str_replace("%", "_", $uri);
+        $uri = str_replace(" ", "_", $uri);
+        $uri = preg_replace('/__+/', "_", $uri);
+        return $uri;
 	}
 
 	public static function isLocalURI($uri) {

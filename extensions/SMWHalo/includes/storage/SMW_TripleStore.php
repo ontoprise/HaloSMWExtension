@@ -186,7 +186,9 @@ class SMWTripleStore extends SMWStore {
 			if (!is_null($this->smwstore->getMapping())) {
 				list($wikiURI, $tscURI) = $this->smwstore->getMapping();
 				$sparulCommands[] = "DELETE MAPPING <".$wikiURI.">";
-				$sparulCommands[] = "INSERT MAPPING <".$wikiURI."> : <".$tscURI.">";
+				if (!is_null($tscURI) && !empty($tscURI)) {
+					$sparulCommands[] = "INSERT MAPPING <".$wikiURI."> : <".$tscURI.">";
+				}
 			}
 			$prefixes = TSNamespaces::$W3C_PREFIXES.TSNamespaces::$TSC_PREFIXES;
 			$prop_ns = $this->tsNamespace->getNSPrefix(SMW_NS_PROPERTY);
@@ -215,7 +217,9 @@ class SMWTripleStore extends SMWStore {
 					$ruleText = preg_replace("/[\n\r]/", " ", $ruleText);
 					$nativeText = $native ? "NATIVE" : "";
 					$activeText = !$active ? "INACTIVE" : "";
-					$sparulCommands[] = "INSERT MAPPING <$ruleID> : <$tsc_uri>";
+					if (!is_null($tsc_uri) && !empty($tsc_uri)) {
+						$sparulCommands[] = "INSERT MAPPING <$ruleID> : <$tsc_uri>";
+					}
 					$sparulCommands[] = "INSERT $nativeText $activeText RULE <$ruleID> INTO <$smwgTripleStoreGraph> : \"".TSHelper::escapeForStringLiteral($ruleText)."\" TYPE \"$type\"";
 				}
 			}
@@ -532,7 +536,7 @@ class SMWTripleStore extends SMWStore {
 				$supercategory_iri = $this->tsNamespace->getFullIRI($c);
 				$triples[] = array($subject_iri, "rdfs:subClassOf", $supercategory_iri);
 			}
-			
+				
 			if (count($categories) == 0) {
 				// if there are no supercategories create a statement that
 				// indicates that this is a class
@@ -680,7 +684,7 @@ class SMWTripleStore extends SMWStore {
 				global $smwgTripleStoreGraph;
 				$con = TSConnection::getConnector();
 				$con->connect();
-                
+
 				// if graph parameter is set but empty or set and null, no wikigraph is given
 				$wikigraph = array_key_exists('graph', $query->params) && ($query->params['graph'] == 'null' || empty($query->params['graph'])) ? '' : $smwgTripleStoreGraph;
 				$response = $con->query($query->getQueryString(), $this->serializeParams($query), $wikigraph);
@@ -995,7 +999,7 @@ class SMWTripleStore extends SMWStore {
 				$resultInstance = NULL;
 				foreach ($bindingSet->binding as $b) {
 					$var_name = ucfirst((string) $bindingSet[$bindingNodeIndex]->attributes()->name);
-					if ($var_name == '_X_') {
+					if (!$query->mainLabelMissing && $var_name == '_X_') {
 						$resultColumn = current($mapPRTOColumns[$var_name]);
 						next($mapPRTOColumns[$var_name]);
 
@@ -1067,7 +1071,7 @@ class SMWTripleStore extends SMWStore {
 				$rowIndex++;
 				ksort($row);
 				$qresults[] = $row;
-                $totalResults += $maxResultsInColumn;
+				$totalResults += $maxResultsInColumn;
 			}
 
 			// create query result object
