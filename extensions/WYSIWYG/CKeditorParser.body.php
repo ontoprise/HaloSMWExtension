@@ -1054,7 +1054,9 @@ class CKeditorParser extends CKeditorParserWrapper {
 		$prop = explode('::', $match);
         if (count($prop) < 2) $prop = explode(':=', $match); // support old syntax [[prop:=val]]
   		if ((count($prop) == 2) && (strlen($prop[0]) > 0) && (strlen($prop[1]) > 0)) {
-  			if (($p = strpos($prop[1], '|')) !== false) {
+  			if (($p = strpos($prop[1], '|')) !== false &&
+                // Hack to prevent that something like this is misplaced: [[prop::{{{param|}}}]]
+                !preg_match('/\{\{.*?\|.*?\}\}/', $prop[1]) ) {
   				$prop[0] .= '::'.substr($prop[1], 0, $p);
   				$prop[1] = substr($prop[1], $p + 1);
   			}
