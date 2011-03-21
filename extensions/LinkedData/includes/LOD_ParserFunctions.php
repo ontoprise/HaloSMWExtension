@@ -154,7 +154,7 @@ class LODParserFunctions {
 			}
 			
 			// Store this mapping.
-			$mapping = new LODR2RMapping($text, $source, $target);
+			$mapping = new LODR2RMapping(null, $text, $source, $target);
 			
 			$success = $store->addMapping($mapping, $title->getFullText());
 			
