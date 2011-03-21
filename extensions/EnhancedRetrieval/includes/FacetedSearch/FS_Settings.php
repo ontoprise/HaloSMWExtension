@@ -48,6 +48,7 @@ $fsgScriptPath = $wgScriptPath . '/extensions/EnhancedRetrieval';
 $fsgFacetedSearchConfig = array(
     'indexer' => 'SOLR',
     'source'  => 'SMWDB',
-    'host'    => 'localhost',
+//    'host'    => '127.0.0.1',
+    'host'    => '10.0.0.133',
     'port'    => 8983
 );
