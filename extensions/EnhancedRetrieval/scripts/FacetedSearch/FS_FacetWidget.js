@@ -35,6 +35,16 @@ if (typeof FacetedSearch == "undefined") {
  */
 FacetedSearch.classes.FacetWidget = AjaxSolr.AbstractFacetWidget.extend({
 	
+	facetTheme: 'facet',
+	removeSelectedFacet: true,
+	
+	setFacetTheme: function (facetTheme) {
+		this.facetTheme = facetTheme;
+	},
+	setRemoveSelectedFacet: function (removeFacet) {
+		this.removeSelectedFacet = removeFacet;
+	},
+	
 	afterRequest: function () {
 		if (this.noRender) {
 			return;
@@ -60,9 +70,11 @@ FacetedSearch.classes.FacetWidget = AjaxSolr.AbstractFacetWidget.extend({
 				if (count > maxCount) {
 					maxCount = count;
 				}
-				var fullName = field + ':' + facet;
-				if ($.inArray(fullName, fq) >= 0) {
-					continue;
+				if (this.removeSelectedFacet) {
+					var fullName = field + ':' + facet;
+					if ($.inArray(fullName, fq) >= 0) {
+						continue;
+					}
 				}
 				objectedItems.push({
 					field: field,
@@ -101,7 +113,7 @@ FacetedSearch.classes.FacetWidget = AjaxSolr.AbstractFacetWidget.extend({
 				target = FacetedSearch.singleton.FacetedSearchInstance.getRelationWidget();
 			}
 			$(ntarget)
-				.append(AjaxSolr.theme('facet', facet, objectedItems[i].count, target.clickHandler(facet), FacetedSearch.classes.ClusterWidget.showPropertyDetailsHandler, false))
+				.append(AjaxSolr.theme(this.facetTheme, facet, objectedItems[i].count, target.clickHandler(facet), FacetedSearch.classes.ClusterWidget.showPropertyDetailsHandler, false))
 				.append('<br/>');
 		}
 		if (objectedItems.length > GROUP_SIZE) {
