@@ -289,6 +289,11 @@
 		return html;
 	};
 
+	AjaxSolr.theme.prototype.propertyValueFacet = function(facet, count, handler, showPropertyDetailsHandler, isRemove){
+		var html = AjaxSolr.theme('facet', facet, count, handler, showPropertyDetailsHandler, isRemove);
+		return jQuery('<span class="xfsClusterEntry">').append(html);		
+	};
+	
 	AjaxSolr.theme.prototype.facet_link = function(value, handler) {
 		return $('<a href="#"/>'+ value + '</a>').click(handler);
 	};
