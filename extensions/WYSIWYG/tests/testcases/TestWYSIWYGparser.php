@@ -203,6 +203,50 @@ and
         $this->assertEquals($expected, $res);
 
     }
+
+    function testPage9() {
+        $text= 'include this into an article and save:
+
+{| class="wikitable"
+|-
+! field
+| [[Vendor::{{{field|}}}]]
+|}
+';
+        $expected = '<p>include this into an article and save:
+</p>
+<table class="wikitable">
+
+<tr>
+<th> field
+</th><td> <span class="fck_mw_property" property="Vendor">{{{field|}}}</span>
+</td></tr></table>
+';
+        $res = $this->parsePage($text);
+        $this->assertEquals($expected, $res);
+    }
+    function testPage10() {
+        $text= 'include this into an article and save:
+
+{| class="wikitable"
+|-
+! field
+| [[Vendor::foo|{{{field|}}}]]
+|}
+';
+        $expected = '<p>include this into an article and save:
+</p>
+<table class="wikitable">
+
+<tr>
+<th> field
+</th><td> <span class="fck_mw_property" property="Vendor::foo">{{{field|}}}</span>
+</td></tr></table>
+';
+        $res = $this->parsePage($text);
+        $this->assertEquals($expected, $res);
+    }
+
     private function parsePage($text) {
         return $this->parser->parse($text, $this->title, $this->options)->getText();
     }
