@@ -360,14 +360,14 @@ class TFDataAPIACCESS {
 		if(is_null($this->title) || $this->title->exists()){
 			return false; 
 		}
-			
+		
 		$text = '';
 		
 		$annotations = $annotations->getNewAnnotations();
 		foreach($annotations as $annotation){
 			if($annotation['name'] == '__Category__'){
 				$text .= '[[Category:'.$annotation['value'].'| ]]';
-			} else {
+			} else if (strlen($annotation['name']) >0){
 				$text .= '[['.$annotation['name'].'::'.$annotation['value'].'| ]]';
 			}
 		}

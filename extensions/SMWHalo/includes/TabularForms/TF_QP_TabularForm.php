@@ -77,7 +77,7 @@ class TFTabularFormData {
 		$this->hasFurtherResults = $hasFurtherResults;
 		
 		if($this->queryResult instanceof SMWHaloQueryResult && 
-				$this->queryResult->getQuery() instanceof SMWSPARQLQuery && $this->queryResult->getQuery()->fromASK){
+				$this->queryResult->getQuery() instanceof SMWSPARQLQuery && !$this->queryResult->getQuery()->fromASK){
 			$this->isSPARQLQuery = true;			
 		}
 		
@@ -88,12 +88,12 @@ class TFTabularFormData {
 		$this->initializeTemplateParameterPrintRequests();
 		
 		if(array_key_exists('enable add', $this->queryParams)
-				&& $this->queryParams['enable add'] == true){
+				&& $this->queryParams['enable add'] == 'true'){
 			$this->enableInstanceAdd = true;
 		}
 		
 		if(array_key_exists('enable delete', $this->queryParams)
-				&& $this->queryParams['enable delete'] == true){
+				&& $this->queryParams['enable delete'] == 'true'){
 			$this->enableInstanceDelete = true;
 		}
 	}
@@ -791,7 +791,7 @@ class TFTabularFormRowData {
 			$annotations = $this->annotations[$annotation['title']];
 			$moreThanOne = false;
 			foreach($annotations as $annotation){
-				if($annotation->isWritable){
+				if($annotation->isWritable || ($this->title instanceof Title && !$this->title->exists() && $enableInstanceAdd)){
 					$moreThanOne == true ? $style = 'style="border-top: 1px inset grey;"' : $style ='';
 					$html .= "<textarea ".$autocompletion." ". $style ." rows='2' annotation-hash='".$annotation->hash
 						."' annotation-type-id='".$annotation->typeId."'>".$annotation->currentValue."</textarea>";
@@ -811,14 +811,16 @@ class TFTabularFormRowData {
 				
 				ksort($this->templateParameters[$template][$param]->currentValues);
 				if(count($this->templateParameters[$template][$param]->currentValues) == 0){
-					if($this->templateParameters[$template][$param]->isWritable){
+					if($this->templateParameters[$template][$param]->isWritable
+							|| ($this->title instanceof Title && !$this->title->exists() && $enableInstanceAdd)){
 						$html .= "<textarea rows='1' template-id=".'"'.TF_NEW_TEMPLATE_CALL.'"'."></textarea>";
 					} else {
 						$html .= '<div style="height: 3em; width: 100%"></div>';
 					}
 				} else {
 					foreach($this->templateParameters[$template][$param]->currentValues as $templateId => $currentValue){
-						if($this->templateParameters[$template][$param]->isWritable){
+						if($this->templateParameters[$template][$param]->isWritable
+								|| ($this->title instanceof Title && !$this->title->exists() && $enableInstanceAdd) ){
 							$html .= "<textarea rows='1' template-id=".'"'.$templateId.'"'."'>".$currentValue."</textarea>";
 						} else {
 							$html .= '<div style="height: 3em; width: 100%">'.$currentValue.'</div>';

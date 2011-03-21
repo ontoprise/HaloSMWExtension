@@ -68,6 +68,8 @@ function tff_updateInstanceData($updates, $articleTitle, $revisionId, $rowNr, $t
 			$params[$update['address']]['originalValues'][$update['templateId']] = $update['originalValue'];
 			$params[$update['address']]['newValues'][$update['templateId']] = $update['newValue'];
 		} else {
+			//if(strlen($update['address']) == 0) continue;
+			if($revisionId == '-1') $update['originalValue'] = null;
 			$annotations->addAnnotation(new TFAnnotationData(
 				$update['address'], $update['originalValue'], null, $update['hash'], $update['typeId'], $update['newValue']));
 		}

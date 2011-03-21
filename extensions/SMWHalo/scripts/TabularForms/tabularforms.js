@@ -467,7 +467,8 @@ var TF = Class.create({
 				
 				var fieldValues = jQuery('textarea', jQuery(fields[fieldNr])).get();
 				for(var i=0; i < fieldValues.length; i++){
-					if(jQuery(fieldValues[i]).attr('isModified') == 'true'){
+					if(jQuery(fieldValues[i]).attr('isModified') == 'true'
+							|| (jQuery(fieldValues[i]).attr('value').length > 0 && jQuery(this).attr('isNew') == 'true')){
 						
 						jQuery(fieldValues[i]).get(0).setAttribute('wrap', 'pgysical');
 												
