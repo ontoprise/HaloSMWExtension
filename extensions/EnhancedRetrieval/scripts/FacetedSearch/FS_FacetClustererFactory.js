@@ -48,10 +48,15 @@ if (typeof FacetedSearch.factory == "undefined") {
  */
 FacetedSearch.factories.FacetClustererFactory = function (facetName) {
 	var ATTRIBUTE_REGEX = /smwh_(.*)_xsdvalue_(.*)/;
+	var RELATION_REGEX  = /smwh_(.*)_(.*)/;
 
 	var nameType = facetName.match(ATTRIBUTE_REGEX);
 	if (!nameType) {
-		return null;
+		// maybe a relation facet
+		nameType = facetName.match(RELATION_REGEX);
+		if (!nameType) {
+			return null;
+		}
 	}
 	var name = nameType[1];
 	var type = nameType[2];
@@ -67,6 +72,8 @@ FacetedSearch.factories.FacetClustererFactory = function (facetName) {
 			return FacetedSearch.classes.StringFacetClusterer(facetName, name);
 		case 'b':
 			return FacetedSearch.classes.BooleanFacetClusterer(facetName, name);
+		default:
+			return FacetedSearch.classes.StringFacetClusterer(facetName, name);
 	}
 	return null;
 }
