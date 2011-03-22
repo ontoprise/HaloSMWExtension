@@ -80,9 +80,9 @@ if ($check !== true) {
 }
 
 // check if LocalSettings.php is writeable
-$success = touch("$rootDir/../LocalSettings.php");
+@$success = touch("$rootDir/../LocalSettings.php");
 if ($success === false) {
-	fatalError("LocalSettings.php is locked. Please close all programs using it.");
+	fatalError("LocalSettings.php is not accessible. Missing rights or file locked?");
 }
 
 
@@ -488,7 +488,10 @@ function showHelp() {
 	echo "\n\tsmwadmin -d smw: Removes the package smw.";
 	echo "\n\tsmwadmin -r [name] : Restores old installation from a restore point. User is prompted for which.";
 	echo "\n\n";
-
+	
+	$logDir = Tools::getHomeDir()."/df_log";
+	echo "\nThe DF's log files are stored in: $logDir";
+	echo "\n\n";
 }
 
 
