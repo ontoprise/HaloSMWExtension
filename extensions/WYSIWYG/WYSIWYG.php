@@ -104,7 +104,7 @@ $wgAutoloadClasses['CKeditorEditPage'] = $dir . 'CKeditorEditPage.body.php';
 $wgAutoloadClasses['CKeditor_MediaWiki'] = $dir . 'CKeditor.body.php';
 
 // Path to internationalization file
-$wgExtensionMessagesFiles['FCKeditor'] = $dir . 'CKeditor.i18n.php';
+$wgExtensionMessagesFiles['CKeditor'] = $dir . 'CKeditor.i18n.php';
 
 // Initialize FCKeditor and the MediaWiki extension
 $ckeditor = new CKEditor('fake');
