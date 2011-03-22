@@ -176,9 +176,12 @@ function smwf_ac_AutoCompletionDispatcher($articleName, $userInputToMatch, $user
 			// 4.property name case
 			// --------------------------------
 		} else {
+			
 			$result = AutoCompletionRequester::getPropertyProposals($articleName, $userInputToMatch);
-
-			return $result;
+            AutoCompletionRequester::attachCategoryHints($result);
+            AutoCompletionRequester::attachImageURL($result);
+            return AutoCompletionRequester::encapsulateAsXML($result);
+			
 
 		}
 
@@ -297,6 +300,7 @@ class AutoCompletionRequester {
      * Attaches category information Match Items
      *
      * @param & $matches (out)
+     *      hash array or array of Title/string
      *
      * @param hash array $matches
      */
@@ -305,6 +309,7 @@ class AutoCompletionRequester {
         $options->limit = SMW_AC_MAX_INSTANCE_SAMPLES;
 		for($i = 0; $i < count($matches); $i++) {
 			$title = is_array($matches[$i])? $matches[$i]['title'] : $matches[$i];
+			if (!is_array($matches[$i])) $matches[$i] = array();
 			$matches[$i]['title'] = $title;
 		    $matches[$i]['instanceSamples'] = array();
 			if ($title->getNamespace() == NS_CATEGORY) {
@@ -456,7 +461,7 @@ class AutoCompletionRequester {
 		// make sure the special relations come first
 		$pages = AutoCompletionHandler::mergeResults($specialMatches, $pages);
 
-		return AutoCompletionRequester::encapsulateAsXML($pages);
+		return $pages;
 	}
 
 	/**
@@ -538,9 +543,9 @@ class AutoCompletionRequester {
 		$xmlResult = '';
 
 		for($i = 0, $n = count($matches); $i < $n; $i++) {
-			$pasteContent = array_key_exists('pasteContent', $matches[$i]) ? $matches[$i]['pasteContent'] :"";
-			$inferred = array_key_exists('inferred', $matches[$i]) ? $matches[$i]['inferred'] : false;
-			$imageURL = array_key_exists('imageurl', $matches[$i]) ? $matches[$i]['imageurl'] : "";
+			$pasteContent = is_array($matches[$i]) && array_key_exists('pasteContent', $matches[$i]) ? $matches[$i]['pasteContent'] :"";
+			$inferred = is_array($matches[$i]) &&  array_key_exists('inferred', $matches[$i]) ? $matches[$i]['inferred'] : false;
+			$imageURL = is_array($matches[$i]) &&  array_key_exists('imageurl', $matches[$i]) ? $matches[$i]['imageurl'] : "";
 			
 			$namespaceText = "";
 			$extraData = "";

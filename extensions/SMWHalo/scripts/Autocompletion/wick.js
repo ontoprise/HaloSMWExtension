@@ -1238,9 +1238,12 @@ AutoCompleter.prototype = {
         Event.observe(document, "mouseover", this.handleMouseOver.bindAsEventListener(this), false);
         
         // show AC hint
-        $$('input.wickEnabled').each(function(t) { 
-        	if (t.getAttribute('constraints') != '') {
-        		var constraint = t.getAttribute('constraints').trim();
+        $$('input.wickEnabled').each(function(t) {
+        		var constraint = t.getAttribute('constraints');
+	        	if (constraint == null || constraint == '') {
+	        		constraint = "all";
+	        	}
+        		constraint = constraint.trim();
         		var commands = constraint.split("|");
         		var showText = "";
         		
@@ -1307,7 +1310,7 @@ AutoCompleter.prototype = {
 						}
 					}
 				});
-        	}
+        	
         });
     },  //registerSmartInputListeners
 
