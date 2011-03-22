@@ -154,6 +154,7 @@ newQuery: function() {
 		'overlayColor' : '#222',
 		'overlayOpacity' : '0.8',
 		'hideOnContentClick' : false,
+		'scrolling' : 'auto',
 		'onCleanup' : smwhgASKQuery.setNewAskQuery
 	});
 

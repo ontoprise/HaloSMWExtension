@@ -33,7 +33,7 @@ jQuery(document).ready(function() {
 			'overlayColor' : '#222',
 			'overlayOpacity' : '0.8',
 			'hideOnContentClick' : true,
-			'scrolling' : 'no'
+			'scrolling' : 'auto'
 		});
 		return false;
 	});
