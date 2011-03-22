@@ -126,7 +126,7 @@ class Rollback {
 		$wgDBname = $this->getVariableValue("LocalSettings.php", "wgDBname");
 		print "\n[Saving database...";
 		//print "\nmysqldump -u $wgDBadminuser --password=$wgDBadminpassword $wgDBname > ".$this->tmpDir."/$name/dump.sql";
-		exec("mysqldump -u $wgDBadminuser --password=$wgDBadminpassword $wgDBname > ".$this->tmpDir."/$name/dump.sql");
+		exec("mysqldump -u $wgDBadminuser --password=$wgDBadminpassword $wgDBname > \"".$this->tmpDir."/$name/dump.sql\"");
 		print "done.]";
 		$savedDataBase = true;
 
@@ -281,7 +281,7 @@ class Rollback {
 		print "\n[Restore database...";
 		$logger = Logger::getInstance();
 		$logger->info("Restore database");
-		exec("mysql -u $wgDBadminuser --password=$wgDBadminpassword --database=$wgDBname < ".$this->tmpDir."/$name/dump.sql", $out, $ret);
+		exec("mysql -u $wgDBadminuser --password=$wgDBadminpassword --database=$wgDBname < \"".$this->tmpDir."/$name/dump.sql\"", $out, $ret);
 		if ($ret != 0){
 			$logger->error("Could not restore database.");
 			print "\nError: Could not restore database.";
