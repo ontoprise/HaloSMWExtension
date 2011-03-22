@@ -338,7 +338,10 @@ class SMWH_Skin {
                                             # because there are installations where the include is done only if
                                             # action == edit and mode == wysiwyg. Therefore on page view the FCK
                                             # might not be included at this moment.
-                                            if (!$link && $key == "edit" && file_exists($IP.'/extensions/FCKeditor/FCKeditor.php'))
+                                            if (!$link && $key == "edit" && (
+                                                  file_exists($IP.'/extensions/FCKeditor/FCKeditor.php') ||
+                                                  file_exists($IP.'/extensions/WYSIWYG/WYSIWYG.php')
+                                                ) )
                                                 $link = htmlspecialchars($tab['href']).'&mode=wysiwyg';
                                             # none of the conditions above came into action, then use the normal
                                             # wiki editor for editing pages.
