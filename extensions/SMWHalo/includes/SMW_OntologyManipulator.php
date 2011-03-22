@@ -103,6 +103,17 @@ function smwf_om_CreateArticle($title, $user, $content, $optionalText, $creation
 			$content = $metadataText.$content;
 		}
 	}
+	
+	// add pre-defined text
+	global $smwhgAutoTemplateText;
+    if (isset($smwhgAutoTemplateText)) {
+        if (array_key_exists($title->getNamespace(), $smwhgAutoTemplateText)) {
+            require_once('SMW_Predefinitions.php');
+            $addedText = $smwhgAutoTemplateText[$title->getNamespace()];
+            $addedText .= "\n";
+            $content = $addedText.$content;
+        }
+    }
 
 	$article = new Article($title);
 
