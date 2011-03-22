@@ -1248,35 +1248,41 @@ AutoCompleter.prototype = {
         		var showText = "";
         		
         		commands.each(function(c) {
-	        		var parts = c.split(":");
-	        		parts[0] = parts[0].trim();
-	        		
+        			var sepIndex = c.indexOf(":");
+        			
+        			var parameter = '';
+        			var command = '';
+        			if (sepIndex != -1) {
+        				command = c.substr(0, sepIndex).trim();
+        				parameter = c.substr(sepIndex+1).trim();
+        			}
+	        			        		
 	        		if (constraint == 'all') {
 	        			showText += gLanguage.getMessage('AC_ALL');
-	        		} else if (parts[0] == 'ask') {
-	        			showText += gLanguage.getMessage('AC_QUERY') + parts[1];
-	        		} else if (parts[0] == 'schema-property-domain') {
-	        			showText += gLanguage.getMessage('AC_SCHEMA_PROPERTY_DOMAIN') + parts[1];
-	        		} else if (parts[0] == 'schema-property-range-instance') {
-	        			showText += gLanguage.getMessage('AC_SCHEMA_PROPERTY_RANGE_INSTANCE') + parts[1];
-	        		} else if (parts[0] == 'domainless-property') {
-	        			showText += gLanguage.getMessage('AC_DOMAINLESS_PROPERTY') + parts[1];
-	        		} else if (parts[0] == 'annotation-property') {
-	        			showText += gLanguage.getMessage('AC_ANNOTATION_PROPERTY') + parts[1];
-	        		} else if (parts[0] == 'annotation-value') {
-	        			showText += gLanguage.getMessage('AC_ANNOTATION_VALUE') + parts[1];
-	        		} else if (parts[0] == 'instance-property-range') {
-	        			showText += gLanguage.getMessage('AC_INSTANCE_PROPERTY_RANGE') + parts[1];
-	        		} else if (parts[0] == 'namespace') {
-	        			showText += gLanguage.getMessage('AC_NAMESPACE') + parts[1];
-	        		} else if (parts[0] == 'lexical') {
-	        			showText += gLanguage.getMessage('AC_LEXICAL') + parts[1];
-	        		} else if (parts[0] == 'schema-property-type') {
-	        			showText += gLanguage.getMessage('AC_SCHEMA_PROPERTY_TYPE') + parts[1];
-	        		} else if (parts[0] == 'asf-ac') {
-	        			showText += gLanguage.getMessage('AC_ASF') + parts[1];
+	        		} else if (command == 'ask') {
+	        			showText += gLanguage.getMessage('AC_QUERY') + parameter;
+	        		} else if (command == 'schema-property-domain') {
+	        			showText += gLanguage.getMessage('AC_SCHEMA_PROPERTY_DOMAIN') + parameter;
+	        		} else if (command == 'schema-property-range-instance') {
+	        			showText += gLanguage.getMessage('AC_SCHEMA_PROPERTY_RANGE_INSTANCE') + parameter;
+	        		} else if (command == 'domainless-property') {
+	        			showText += gLanguage.getMessage('AC_DOMAINLESS_PROPERTY') + parameter;
+	        		} else if (command == 'annotation-property') {
+	        			showText += gLanguage.getMessage('AC_ANNOTATION_PROPERTY') + parameter;
+	        		} else if (command == 'annotation-value') {
+	        			showText += gLanguage.getMessage('AC_ANNOTATION_VALUE') + parameter;
+	        		} else if (command == 'instance-property-range') {
+	        			showText += gLanguage.getMessage('AC_INSTANCE_PROPERTY_RANGE') + parameter;
+	        		} else if (command == 'namespace') {
+	        			showText += gLanguage.getMessage('AC_NAMESPACE') + parameter;
+	        		} else if (command == 'lexical') {
+	        			showText += gLanguage.getMessage('AC_LEXICAL') + parameter;
+	        		} else if (command == 'schema-property-type') {
+	        			showText += gLanguage.getMessage('AC_SCHEMA_PROPERTY_TYPE') + parameter;
+	        		} else if (command == 'asf-ac') {
+	        			showText += gLanguage.getMessage('AC_ASF') + parameter;
 	        		} else {
-	        			showText += parts[1];
+	        			showText += "Unknown constraint: "+c;
 	        		} 
 	        		
         		 });
