@@ -11,9 +11,9 @@
 		</description>
 		<helpurl>http://smwforum.ontoprise.com/smwforum/index.php/Help:Rich_Media_Extension</helpurl>
 		<dependencies>
-			<dependency from="152">smwhalo</dependency>
+			<dependency from="153">smwhalo</dependency>
 			<dependency from="208">semanticforms</dependency>
-			<dependency from="102">applicationprogramming</dependency>
+			<dependency from="103">applicationprogramming</dependency>
 			<dependency from="100" to="100" optional="true">baseontologybundle</dependency> 
 		</dependencies>
 	</global>
