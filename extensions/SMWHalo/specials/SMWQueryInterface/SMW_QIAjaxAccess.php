@@ -648,8 +648,16 @@ function doHttpRequestWithCurl($server, $file, $debug = false) {
 	curl_setopt($c, CURLOPT_URL, $server.$file);
 	curl_setopt($c, CURLOPT_RETURNTRANSFER, true);
     // needs authentication?	
-    if (isset($_SERVER['AUTH_TYPE']) && isset($_SERVER['PHP_AUTH_USER']) && isset($_SERVER['PHP_AUTH_PW'])) {
-		curl_setopt($c, CURLOPT_USERPWD, $_SERVER['PHP_AUTH_USER'].":".$_SERVER['PHP_AUTH_PW']);
+    if (isset($_SERVER['AUTH_TYPE']) ) {
+        if (isset($_SERVER['PHP_AUTH_USER']) && isset($_SERVER['PHP_AUTH_PW'])) {
+            curl_setopt($c, CURLOPT_USERPWD, $_SERVER['PHP_AUTH_USER'].":".$_SERVER['PHP_AUTH_PW']);
+        }
+        else if (isset($_SERVER['PHP_AUTH_DIGEST'])) {
+            $authData = qiParseHttpDigest($_SERVER['PHP_AUTH_DIGEST']);
+            global $smwgHttpAuthPassword;
+            curl_setopt($c, CURLOPT_USERPWD, $authData['username'].':'.$smwgHttpAuthPassword);
+            curl_setopt($c, CURLOPT_HTTPAUTH, CURLAUTH_ANY);
+        }
 	}
     // user agent (important i.e. for Popup in FCK Editor)
 	if (isset($_SERVER['HTTP_USER_AGENT']))
@@ -862,4 +870,21 @@ function qiMergeQueryMetadataResults($queryMetadataResults, $result) {
         );
     }
     return $result;
+}
+
+//Function to parse the http auth header
+function qiParseHttpDigest($digest) {
+    //Protect against missing data
+    $needed_parts = array('nonce'=>1, 'nc'=>1, 'cnonce'=>1, 'qop'=>1, 'username'=>1, 'uri'=>1, 'response'=>1);
+
+    $data = array();
+    $parts = explode(", ", $digest);
+
+    foreach ($parts as $element) {
+		$bits = explode("=", $element);
+		$data[$bits[0]] = str_replace('"','', $bits[1]);
+
+		unset($needed_parts[$bits[0]]);
+    }
+    return $needed_parts ? false : $data;
 }
