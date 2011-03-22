@@ -94,7 +94,20 @@ class SMWQMQueryMetadata {
 	}
 	
 	public function matchesQueryMetadataPattern($queryMetadataPattern){
+		
 		$this->isDisjunctive = $queryMetadataPattern->isDisjunctive; 
+		
+		if(!is_null($this->isSparqlQuery) && !is_null($queryMetadataPattern->isSparqlQuery)){
+			if($this->isSparqlQuery != $queryMetadataPattern->isSparqlQuery){
+				return false;
+			}
+		}
+
+		if(!is_null($this->usesASKSyntax) && !is_null($queryMetadataPattern->usesASKSyntax)){
+			if($this->usesASKSyntax != $queryMetadataPattern->usesASKSyntax){
+				return false;
+			}
+		}
 		
 		if(!is_null($this->propertyPrintRequests) && !is_null($queryMetadataPattern->propertyPrintRequests)){
 			foreach($queryMetadataPattern->propertyPrintRequests as $prop => $dontCare){
@@ -150,18 +163,6 @@ class SMWQMQueryMetadata {
 			}
 		}
 		
-		if(!is_null($this->isSparqlQuery) && !is_null($queryMetadataPattern->isSparqlQuery)){
-			if($this->isSparqlQuery != $queryMetadataPattern->isSparqlQuery){
-				return false;
-			}
-		}
-
-		if(!is_null($this->usesASKSyntax) && !is_null($queryMetadataPattern->usesASKSyntax)){
-			if($this->usesASKSyntax != $queryMetadataPattern->usesASKSyntax){
-				return false;
-			}
-		}
-		
 		if($this->isDisjunctive){
 			return false;
 		} else {
@@ -183,7 +184,7 @@ class SMWQMQueryMetadata {
 			if($pV[0] == QM_UIA_LABEL) $this->usedInArticle = $pV[1][0];
 			if($pV[0] == QM_UQP_LABEL) $this->queryPrinter = $pV[1][0];
 			if($pV[0] == QM_HQN_LABEL) $this->queryName = $pV[1][0];
-		}	
+		}
 	}
 	
 }

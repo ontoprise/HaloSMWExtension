@@ -2,6 +2,7 @@
 
 
 var queryList_filter = function(){
+	
 	var filterCol = jQuery('#ql_filtercol').attr('value');
 	
 	var filterStringId = '#ql_filterstring-';
@@ -13,34 +14,23 @@ var queryList_filter = function(){
 	
 	if(jQuery(filterStringId).attr('value') != jQuery(filterStringId).attr('currentValue')
 				|| filterCol != jQuery('#ql_filtercol').attr('currentValue')){ 
-		
+	
 		var filterString = jQuery(filterStringId).attr('value');
 		jQuery(filterStringId).attr('currentValue', filterString); 	
 		jQuery('#ql_filtercol').attr('currentValue', filterCol);
 		
-		if(filterCol == 0){
-			var filterCols = new Array(1,2,3,4);
-		} else {
-			var filterCols = new Array(filterCol);
+		var colSelector = '#ql_list tr td span:first-child';
+		if(filterCol != 0){
+			colSelector = '#ql_list tr td:nth-child(' + filterCol + ') span:first-child';
 		}
 		
-		jQuery('#ql_list tr').each(function(){
-			if(jQuery('th', this).html() != null){
-				return;
-			}
+		jQuery('#ql_list tr').css('display', 'none');
+		jQuery('#ql_list tr:first-child').css('display', 'table-row');
+		
+		jQuery(colSelector).each(function(){
 			
-			var hide = true;
-			for(var i = 0; i < filterCols.length; i++){
-				if(jQuery('td:nth-child(' + filterCols[i] + ') span:first-child', this).html().indexOf(filterString) != -1){
-					hide = false;
-					break;
-				}
-			}
-			
-			if(hide){
-				jQuery(this).css('display', 'none');
-			} else {
-				jQuery(this).css('display', 'table-row');
+			if(jQuery(this).html().indexOf(filterString) != -1){
+				jQuery(this).parent().parent().css('display', 'table-row');
 			}
 		});
 	}

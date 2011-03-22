@@ -115,8 +115,9 @@ class SMWQMQueryManagementHandler {
 		if (!isset($wgParser->getOutput()->mSMWData)) {
 			$wgParser->getOutput()->mSMWData = new SMWSemanticData(SMWWikiPageValue::makePageFromTitle($title));
 		}
+		
 		$semanticData = $wgParser->getOutput()->mSMWData;
-
+		
 		$propertyValue = SMWPropertyValue::makeProperty('___QRC_UQC');
 		$dataValue = SMWDataValueFactory::newTypeIDValue('_qcm');
 		$dataValue->setQueryId($this->getQueryId($query));
@@ -174,6 +175,7 @@ class SMWQMQueryManagementHandler {
 		}
 		$semanticData->addPropertyObjectValue($propertyValue, $dataValue);
 		$wgParser->getOutput()->mSMWData = $semanticData;
+		
 	}
 	
 	/*
@@ -437,6 +439,7 @@ class SMWQMQueryManagementHandler {
 			$query->params['nocaching'] = 'true';
 			
 			$qrT = $store->getQueryResult($query)->getResults();
+			
 			$queryResults = array_merge($queryResults, $qrT);
 			
 			if(count($qrT) == $smwgQMaxInlineLimit - 1){
