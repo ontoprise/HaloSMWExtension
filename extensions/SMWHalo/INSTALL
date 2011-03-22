@@ -183,6 +183,12 @@ the FAQ section, then contact the user support list (see the Contact section).
 
 	$wgGroupPermissions['sysop']['ontologyediting'] = true;
 
+7.  If you protect your wiki with a htaccess file and use the Auth Digest method
+    then you need to set the http password in the variable $smwgHttpAuthPassword.
+    The username will be taken from the http request, and is not set here.
+
+    $smwgHttpAuthPassword='your password';
+
 === Configuring a triplestore ===
 Change the line with 'enableSMWHalo' to:
 
