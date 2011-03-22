@@ -57,8 +57,8 @@ class LODR2RMapping  extends LODMapping{
 	 * 		target that is defined in the global variable $lodgDefaultMappingTarget
 	 * 		is used.
 	 */		
-	function __construct($mappingText, $source, $target = null, $additionalProps = null) {
-		parent::__construct($mappingText, $source, $target);
+	function __construct($uri, $mappingText, $source, $target = null, $additionalProps = null) {
+		parent::__construct($uri, $mappingText, $source, $target);
 	}
 	
 	/*

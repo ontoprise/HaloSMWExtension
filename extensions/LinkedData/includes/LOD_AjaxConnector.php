@@ -39,7 +39,8 @@ $wgAjaxExportList[] = "lodafGetRatingsForTriple";
 $wgAjaxExportList[] = "lodafGetRatingEditorForTriple";
 $wgAjaxExportList[] = "lodImportOrUpdate";
 $wgAjaxExportList[] = "lodGetDataSourceTable";
-
+$wgAjaxExportList[] = "getAllR2RMappings";
+$wgAjaxExportList[] = "getR2RMapping";
 
 /**
  * Returns the HTML of the editor for rating the triples that are determined by
@@ -190,4 +191,48 @@ function lodGetDataSourceTable() {
     }
     
     return $response;
+}
+
+/**
+ * Outputs a list of all R2R mappings as JSON * 
+ * @return AjaxResponse
+ */
+function getAllR2RMappings() {
+	$lodMappingStore = LODMappingStore::getStore();
+    $response = new AjaxResponse();
+	$allMappings = $lodMappingStore->getAllMappings();
+	$results = array();
+	foreach ($allMappings as $uri => $mapping) {
+		if(!($mapping instanceof LODR2RMapping)) {
+			continue;
+		}
+			$results[$uri] = array(
+			"uri"		=> $mapping->getUri(),
+			"id"		=> $mapping->getID(),
+			"source"	=> $mapping->getSource(),
+			"target"	=> $mapping->getTarget(),
+		);
+	}
+    $response->setContentType("json");
+    $response->addText(json_encode($results));
+	return $response;
+}
+
+/**
+ * Outputs an R2R mapping as TTL
+ * 
+ * @param string $mappingURI
+ * 		The JSON encoded rating.
+ * @return AjaxResponse
+ */
+function getR2RMapping($mappingURI) {
+	$lodMappingStore = LODMappingStore::getStore();
+    $response = new AjaxResponse();
+	if ($mapping = $lodMappingStore->getMapping($mappingURI)) {
+	    $response->setContentType("text/turtle");
+	    $response->addText($mapping->getMappingText());
+	} else {
+		$response->setResponseCode(500);
+		$response->addText("Mapping <" + $mappingUri + "> not found.");	}
+	return $response;
 }

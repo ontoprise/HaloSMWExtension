@@ -81,11 +81,11 @@ class TestMapping extends PHPUnit_Framework_TestCase {
 	 *
 	 */
 	function testLODR2RMapping() {
-		$mapping = new LODR2RMapping($this->mMappingText1, $this->mMappingSource, $this->mMappingTarget);
+		$mapping = new LODR2RMapping(null, $this->mMappingText1, $this->mMappingSource, $this->mMappingTarget);
 		$this->assertNotNull($mapping);
 			
 		// Test mapping with default target.
-		$mapping = new LODR2RMapping($this->mMappingText1, $this->mMappingSource);
+		$mapping = new LODR2RMapping(null, $this->mMappingText1, $this->mMappingSource);
 		$this->assertNotNull($mapping);
 			
 		$this->assertEquals($this->mMappingText1, $mapping->getMappingText());
@@ -130,13 +130,13 @@ class TestMapping extends PHPUnit_Framework_TestCase {
 		$this->assertNotNull($store);
 
 		// Store three mappings
-		$mapping1 = new LODR2RMapping($this->mMappingText1, "dbpedia", "wiki");
+		$mapping1 = new LODR2RMapping(null, $this->mMappingText1, "dbpedia", "wiki");
 		$r = $store->addMapping($mapping1, $articleName);
 		$this->assertTrue($r);
-		$mapping2 = new LODR2RMapping($this->mMappingText1, "dbpedia", "wiki1");
+		$mapping2 = new LODR2RMapping(null, $this->mMappingText1, "dbpedia", "wiki1");
 		$r = $store->addMapping($mapping2, $articleName);
 		$this->assertTrue($r);
-		$mapping3 = new LODR2RMapping($this->mMappingText1, "dbpedia1", "wiki");
+		$mapping3 = new LODR2RMapping(null, $this->mMappingText1, "dbpedia1", "wiki");
 		$r = $store->addMapping($mapping3, $articleName);
 		$this->assertTrue($r);	
 		
@@ -174,7 +174,7 @@ class TestMapping extends PHPUnit_Framework_TestCase {
 		$this->assertEquals(0, count($mappings));
 		
 		//Test adding a SILK mapping
-		$mapping = new LODSILKMapping($this->getSILKMappingText(), 
+		$mapping = new LODSILKMapping(null, $this->getSILKMappingText(), 
 			"dbpedia", "wiki", '<'.$this->mintNamespace.'>', explode(' ', '<'.$this->mintLabelPredicate.'>'));
 		$r = $store->addMapping($mapping, $articleName);
 		$this->assertTrue($r);
@@ -225,11 +225,11 @@ class TestMapping extends PHPUnit_Framework_TestCase {
 		
 		file_put_contents('d://mapi.rtf', $store->getAllMappings($mwSource, $myTarget), true);
 
-		$mapping = new LODR2RMapping($this->mMappingText1, $mwSource, $this->mMappingTarget);
+		$mapping = new LODR2RMapping(null, $this->mMappingText1, $mwSource, $this->mMappingTarget);
 		$this->assertTrue($store->existsMapping($mapping));
-		$mapping = new LODR2RMapping($this->mMappingText2, $mwSource, $lodgDefaultMappingTarget);
+		$mapping = new LODR2RMapping(null, $this->mMappingText2, $mwSource, $lodgDefaultMappingTarget);
 		$this->assertTrue($store->existsMapping($mapping));
-		$mapping = new LODR2RMapping($this->mMappingText3, $mySource, $myTarget);
+		$mapping = new LODR2RMapping(null, $this->mMappingText3, $mySource, $myTarget);
 		$this->assertTrue($store->existsMapping($mapping));
 		
 		
@@ -282,7 +282,7 @@ class TestMapping extends PHPUnit_Framework_TestCase {
 		$article->doEdit($text1, "");
 
 		// Make sure the mapping exists
-		$mapping = new LODR2RMapping($this->mMappingText1, $mySource, $myTarget);
+		$mapping = new LODR2RMapping(null, $this->mMappingText1, $mySource, $myTarget);
 			$this->assertTrue($store->existsMapping($mapping));
 		
 		// Check that the source-target pair of the mapping of the article is stored in the DB
@@ -305,9 +305,9 @@ class TestMapping extends PHPUnit_Framework_TestCase {
 		$article->doEdit($text1.$text2, "");
 
 		// Make sure the mappings exists
-		$mapping = new LODR2RMapping($this->mMappingText1, $mySource, $myTarget);
+		$mapping = new LODR2RMapping(null, $this->mMappingText1, $mySource, $myTarget);
 		$this->assertTrue($store->existsMapping($mapping));
-		$mapping = new LODR2RMapping($this->mMappingText2, $mySource1, $myTarget1);
+		$mapping = new LODR2RMapping(null, $this->mMappingText2, $mySource1, $myTarget1);
 		$this->assertTrue($store->existsMapping($mapping));
 		
 		// Check that the source-target pair of the mapping of the article is stored in the DB
@@ -334,11 +334,11 @@ class TestMapping extends PHPUnit_Framework_TestCase {
 		$article->doEdit($text1.$text3, "");
 
 		// Make sure the mappings exists
-		$mapping = new LODR2RMapping($this->mMappingText1, $mySource, $myTarget);
+		$mapping = new LODR2RMapping(null, $this->mMappingText1, $mySource, $myTarget);
 		$this->assertTrue($store->existsMapping($mapping));
-		$mapping = new LODR2RMapping($this->mMappingText3, $mySource1, $myTarget1);
+		$mapping = new LODR2RMapping(null, $this->mMappingText3, $mySource1, $myTarget1);
 		$this->assertTrue($store->existsMapping($mapping));
-		$mapping = new LODR2RMapping($this->mMappingText2, $mySource1, $myTarget1);
+		$mapping = new LODR2RMapping(null, $this->mMappingText2, $mySource1, $myTarget1);
 		$this->assertFalse($store->existsMapping($mapping));
 		
 		// Check that the source-target pair of the mapping of the article is stored in the DB
@@ -362,9 +362,9 @@ class TestMapping extends PHPUnit_Framework_TestCase {
 		$article->doEdit('No mapping', "");
 
 		// Make sure the mappings do no longer exist
-		$mapping = new LODR2RMapping($this->mMappingText1, $mySource, $myTarget);
+		$mapping = new LODR2RMapping(null, $this->mMappingText1, $mySource, $myTarget);
 		$this->assertFalse($store->existsMapping($mapping));
-		$mapping = new LODR2RMapping($this->mMappingText3, $mySource1, $myTarget1);
+		$mapping = new LODR2RMapping(null, $this->mMappingText3, $mySource1, $myTarget1);
 		$this->assertFalse($store->existsMapping($mapping));
 		
 		// Check that the source-target pair of the mapping of the article is no longer stored in the DB
@@ -396,7 +396,7 @@ class TestMapping extends PHPUnit_Framework_TestCase {
 		$article->doEdit($text4, "");
 
 		// Make sure the mappings exists
-		$mapping = new LODSILKMapping($this->getSILKMappingText(), $mySource, $myTarget,  
+		$mapping = new LODSILKMapping(null, $this->getSILKMappingText(), $mySource, $myTarget,  
 			'<'.$this->mintNamespace.'>', array('<'.$this->mintLabelPredicate.'>'));
 		$this->assertTrue($store->existsMapping($mapping));
 		
@@ -418,7 +418,7 @@ class TestMapping extends PHPUnit_Framework_TestCase {
 		$article->doEdit($text4, "");
 
 		// Make sure the mappings exists
-		$mapping = new LODSILKMapping($this->getSILKMappingText(), ucfirst($this->mMappingSource)
+		$mapping = new LODSILKMapping(null, $this->getSILKMappingText(), ucfirst($this->mMappingSource)
 			, 'wiki', '<http://halowiki/ob>', 
 			array('<'.$this->mintLabelPredicate.'>', '<http://halowiki/ob/property/ABC>'));
 		$this->assertTrue($store->existsMapping($mapping));

@@ -267,7 +267,7 @@ class LODParserFunctions {
 			} 
 			
 			// Store this mapping.
-			$mapping = new LODSILKMapping($text, $source, $target, $mintNamespace, $mintLabelPredicates);
+			$mapping = new LODSILKMapping(null, $text, $source, $target, $mintNamespace, $mintLabelPredicates);
 			
 			//echo('<pre>'.print_r($mapping, true).'</pre>');
 			

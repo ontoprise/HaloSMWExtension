@@ -81,6 +81,20 @@ class LODMappingTripleStore implements ILODMappingStore {
 		
 		$tripleStoreAccess->deletePersistentTriples('MappingStore', $persistencyLayerId);
 	}
+
+    public function removeMapping($id) {
+        $uri = LODMapping::id2uri($id);
+        $tripleStoreAccess = new LODPersistentTripleStoreAccess(true);
+		$pm = LODPrefixManager::getInstance();
+
+        $graph = 'smwGraphs:MappingRepository';
+		$graph = $pm->makeAbsoluteURI($graph, false);
+		$where = "?s ?p ?o";
+		$template = "<$uri> ?p ?o";
+
+		$tripleStoreAccess->deleteTriples($graph, $where, $template);
+		return $tripleStoreAccess->flushCommands();
+    }
 	
 	
 	/**
@@ -202,12 +216,43 @@ class LODMappingTripleStore implements ILODMappingStore {
 		
 		foreach($mappings as $subjectURI => $mappingData){
 			$mappings[$subjectURI] = 
-				LODMapping::createMappingFromSPARQLResult($mappingData);
+				LODMapping::createMappingFromSPARQLResult($mappingData, $subjectURI);
 		}
 		
 		return $mappings;
 	}
 	
+	
+	/**
+	 * Loads a mapping definition based on the mapping URI
+	 *
+	 * @param string mappingUri
+	 * 
+	 * @return LODMapping
+	 * 		The definition of matching mappings or null
+	 */
+	public function getMapping($mappingUri) {
+		$tripleStoreAccess = new LODPersistentTripleStoreAccess(true);
+		$pm = LODPrefixManager::getInstance();
+		
+		$graph = 'smwGraphs:MappingRepository';
+		$graph = $pm->makeAbsoluteURI($graph, false);
+				
+		$query = "SELECT ?p ?o WHERE { <$mappingUri> ?p ?o }";
+		
+		$queryResult = $tripleStoreAccess->queryTripleStore($query, $graph);
+		
+		$mappingData = array();
+		if($queryResult instanceof LODSPARQLQueryResult){
+			foreach($queryResult -> getRows() as $row){
+				$mappingData[$row->getResult('p')->getValue()][] = 
+					$row->getResult('o')->getValue();
+			}
+			return LODMapping::createMappingFromSPARQLResult($mappingData, $mappingUri);
+		} else {
+			return null;
+		}
+	}
 	
 	/**
 	 * Checks if a mapping exists in the Mapping Store

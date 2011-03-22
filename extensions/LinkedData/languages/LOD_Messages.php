@@ -143,9 +143,12 @@ $messages['en'] = array(
     'lod_sp_policy_action_define_par' => 'Define parameter',
     'lod_sp_policy_action_new_par' => 'New parameter',
     'lod_sp_policy_action_cancel_edit' => 'Cancel editing',
-        //--- LOD LinkSpecs editor
-        'lodlinkspecs'	=> 'LOD Link Specification',
+    
+    //--- LOD LinkSpecs editor
+    'lodlinkspecs'	=> 'LOD Link Specification',
 
+    //--- LOD Mapping editor
+    'lodmappings'	=> 'LOD R2R Mappings',
 
 	//--- LOD rating ---
 	'lod_rt_heading'			=> 'Selected value:',

@@ -67,9 +67,9 @@ class LODSILKMapping  extends LODMapping{
 	 * @param array $mintLabelPredicates
 	 * 		The uriMintLabelPredicates
 	 */		
-	function __construct($mappingText, $source, $target = null, $mintNamespace = null, 
+	function __construct($uri, $mappingText, $source, $target = null, $mintNamespace = null,
 		$mintLabelPredicates = array(), $additionalProps = null) {
-		parent::__construct($mappingText, $source, $target);
+		parent::__construct($uri, $mappingText, $source, $target);
 		
 		$this->mMintNamespace = $mintNamespace;
 		$this->mMintLabelPredicates = $mintLabelPredicates;
