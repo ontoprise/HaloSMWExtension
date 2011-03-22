@@ -82,7 +82,7 @@ protected $smwContentMessages = array(
 );
 
 protected $smwUserMessages = array(
-    'specialpages-group-smwplus_group' => 'Semantic Mediawiki+',
+    'specialpages-group-smwplus_group' => 'SMW+',
 	'smw_devel_warning' => 'Diese Funktion befindet sich zur Zeit in Entwicklung und ist eventuell noch nicht voll einsatzfähig. Eventuell ist es ratsam, den Inhalt des Wikis vor der Benutzung dieser Funktion zu sichern.',
 
 	'smw_relation_header' => 'Seiten mit der Relation „$1“',

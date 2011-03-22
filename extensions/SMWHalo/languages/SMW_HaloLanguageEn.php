@@ -79,7 +79,7 @@ class SMW_HaloLanguageEn extends SMW_HaloLanguage {
 
 
 	protected $smwUserMessages = array(
-	'specialpages-group-smwplus_group' => 'Semantic Mediawiki+',
+	'specialpages-group-smwplus_group' => 'SMW+',
 	'smw_devel_warning' => 'This feature is currently under development, and might not be fully functional. Backup your data before using it.',
 	// Messages for pages of types, relations, and attributes
 
