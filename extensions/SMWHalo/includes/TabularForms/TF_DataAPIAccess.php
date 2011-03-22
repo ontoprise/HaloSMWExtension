@@ -207,7 +207,7 @@ class TFDataAPIACCESS {
 			}
 			
 			if($this->getRevisionId() != $revisionId){
-				return 'This instance has been deleted in the meantime.';
+				return 'This instance has been edited in the meantime.';
 			}
 			
 			if($this->isReadProtected){
@@ -520,7 +520,7 @@ class TFAnnotationData {
 		
 		$this->dataValue->setUserValue($value);
 		
-		if($this->hash == $this->dataValue->getHash()){
+		if(ucfirst($this->hash) == ucfirst($this->dataValue->getHash())){
 			return true;
 		} else {
 			return false;

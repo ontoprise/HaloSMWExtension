@@ -630,6 +630,7 @@ class TFTabularFormRowData {
 	 * are writable and which are read-only.
 	 */
 	public function detectWritableAnnotations(){
+		
 		$collection = new TFAnnotationDataCollection();
 		$collection->addAnnotations($this->annotations);
 		$this->annotations = $this->dataAPIAccess->getWritableAnnotations($collection);

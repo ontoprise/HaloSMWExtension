@@ -81,6 +81,9 @@ function tff_updateInstanceData($updates, $articleTitle, $revisionId, $rowNr, $t
 			TFTemplateParameter(	$param, $values['originalValues'], $values['newValues']));
 	}
 	
+	//Make sure that updates are stored in the TSC
+	define('SMWH_FORCE_TS_UPDATE', 'TRUE');
+	
 	$title = Title::newFromText($articleTitle);
 	
 	//todo: add meaningful error messages
@@ -140,6 +143,9 @@ function tff_checkArticleName($articleName, $rowNr, $tabularFormId){
 function tff_deleteInstance($articleTitle, $revisionId, $rowNr, $tabularFormId){
 	
 	//todo: add meaningful error messages
+	
+	//Make sure that updates are stored in the TSC
+	define('SMWH_FORCE_TS_UPDATE', 'TRUE');
 	
 	$title = Title::newFromText($articleTitle);
 	$result = TFDataAPIAccess::getInstance($title)->deleteInstance($revisionId);
