@@ -218,6 +218,7 @@ enableSemantics(/*param-start-enableSemantics*/'localhost:8080'/*param-end-enabl
 $smwhgAutoTemplatesParameters = array (NS_CATEGORY => array("PAGENAME"=>'$FULLPAGENAME'),
                                        SMW_NS_PROPERTY => array("PAGENAME"=>'$FULLPAGENAME'));
 $smwhgAutoTemplates = array(NS_CATEGORY => "Category", SMW_NS_PROPERTY => "Property");
+$smwhgAutoTemplateText = array( SMW_NS_PROPERTY => "[[Category:Property]]");
 
 /*start-semanticforms*/
 include_once($IP.'/extensions/SemanticForms/SemanticForms.php');
