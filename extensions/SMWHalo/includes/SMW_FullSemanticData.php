@@ -182,7 +182,12 @@ class SMWFullSemanticData {
 			foreach ($assertedValues as $v) {
 				if ($dv->getTypeID() == '_wpg' && $v->getTypeID() == '_wpg') {
 					$vt1 = $dv->getTitle();
+					if (!is_string($v->getDBkey())) {
+						// FIXME: this happens for the QRC properties. why? 
+					   continue;	
+					}
 					$vt2 = $v->getTitle();
+				
 					if (isset($vt1)
 					&& isset($vt2)
 					&& $vt1->getText() == $vt2->getText()) {

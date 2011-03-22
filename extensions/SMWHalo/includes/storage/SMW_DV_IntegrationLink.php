@@ -4,10 +4,10 @@
  * @ingroup SMWDataValues
  */
 
-define( 'SMW_URI_MODE_EMAIL', 1 );
-define( 'SMW_URI_MODE_URI', 3 );
-define( 'SMW_URI_MODE_ANNOURI', 4 );
-define( 'SMW_URI_MODE_TEL', 5 );
+if (!defined( 'SMW_URI_MODE_EMAIL')) define( 'SMW_URI_MODE_EMAIL', 1 );
+if (!defined( 'SMW_URI_MODE_URI'))define( 'SMW_URI_MODE_URI', 3 );
+if (!defined( 'SMW_URI_MODE_ANNOURI'))define( 'SMW_URI_MODE_ANNOURI', 4 );
+if (!defined( 'SMW_URI_MODE_TEL'))define( 'SMW_URI_MODE_TEL', 5 );
 
 /**
  * derived from SMWURIValue

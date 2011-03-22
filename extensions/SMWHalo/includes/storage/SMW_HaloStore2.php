@@ -77,7 +77,13 @@ class SMWHaloStore2 extends SMWSQLStore2 {
 				$uriValue = reset($propertyValueArray);
 				$uriDBkeys = $uriValue->getDBkeys();
 				$tscURI = array_shift($uriDBkeys);
-			
+			    
+				// make sure to decode "(", ")", ",". Normally they are encoded in SMW URIs 
+				// This is crucial for OBL functional terms!
+				$tscURI = str_replace("%28", "(", $tscURI);
+				$tscURI = str_replace("%29", ")", $tscURI);
+				$tscURI = str_replace("%2C", ",", $tscURI);
+        
 				$db->insert($smw_urimapping, array('smw_id' => $id->smw_id, 'page_id' => $subjectTitle->getArticleID(), 'smw_uri'=>$tscURI));
 
 				$wikiURI = TSNamespaces::getInstance()->getFullURI($subjectTitle);
