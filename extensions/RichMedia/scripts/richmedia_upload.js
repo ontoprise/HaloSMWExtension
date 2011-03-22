@@ -16,11 +16,11 @@ function rmAddCollapsingLegend(htmlid){
 	var obj = jQuery('table#' + htmlid);
 	var objLegend = obj.parent().find('legend');
 	var objImg = document.createElement('img');
-	jQuery(objImg).attr('src', wgScriptPath + '/extensions/SemanticForms/skins/plus.gif');
+	jQuery(objImg).attr('src', wgScriptPath + '/extensions/SemanticForms/skins/minus.gif');
 	jQuery(objImg).hover(function() {
-		jQuery(objImg).attr('src', wgServer + wgScriptPath + '/extensions/SemanticForms/skins/plus-act.gif');
+		jQuery(objImg).attr('src', wgServer + wgScriptPath + '/extensions/SemanticForms/skins/minus-act.gif');
 	}, function() {
-		jQuery(objImg).attr('src', wgServer + wgScriptPath + '/extensions/SemanticForms/skins/plus.gif');
+		jQuery(objImg).attr('src', wgServer + wgScriptPath + '/extensions/SemanticForms/skins/minus.gif');
 	});
 
 	jQuery(objImg).attr('id', htmlid + '_img');

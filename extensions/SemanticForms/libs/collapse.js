@@ -24,6 +24,8 @@ CollapsingForm.prototype = {
 	},
 
 	switchVisibilityWithImg: function(id) {
+		var openedimg = '',
+		    closedimg = '';
 		if ($(id).visible()) {
 			this.closedContainers[id] = false;
 			closedimg = "<img id=\"" + id + "_img\" onmouseout=\"(src='"+ wgScriptPath + "/extensions/SemanticForms/skins" + "/plus.gif')\" onmouseover=\"(src='"+ wgScriptPath + "/extensions/SemanticForms/skins" + "/plus-act.gif')\" src=\""+ wgScriptPath + "/extensions/SemanticForms/skins" + "/plus.gif\"/>";
