@@ -25,9 +25,10 @@ class ASFCategoryAC {
 		$textTitles = array_unique($textTitles);
 		$titles = array();
 		foreach($textTitles as $r) {
-			if (smwf_om_userCan($r, 'read') == 'true') {
+			//todo: solve this problem
+			//if (smwf_om_userCan($r, 'read') == 'true') {
 				$titles[] = TSHelper::getTitleFromURI($r, true);
-			}
+			//}
 		}
 		
 		return $titles;
