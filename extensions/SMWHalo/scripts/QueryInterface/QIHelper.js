@@ -154,6 +154,7 @@ QIHelper.prototype = {
     clickUseTsc : function () {
         if ($('usetriplestore')) {
             $('usetriplestore').checked="checked";
+            this.tpeeOrderSelection();
             this.updateSrcAndPreview();
         }
     },
@@ -173,6 +174,86 @@ QIHelper.prototype = {
                 $(div).style.display = '';
         }
         this.clickUseTsc();
+    },
+    tpeeOrder : function (move) {
+        var policy_id = '';
+        for (var i = 0; i < $('qitpeeselector').options.length; i++) {
+            if ($('qitpeeselector').options[i].selected) {
+                policy_id = $('qitpeeselector').options[i].value;
+                break;
+            }
+        }
+        if (policy_id.length == 0) return;
+        var table = $('qitpeeparamval_' + policy_id + '_PAR_ORDER');
+        if (! table) return;
+        for (var i = 0; i < table.rows.length; i++) {
+            if (table.rows[i].cells[0].className == 'qiTpeeSelected') {
+                if (move == 'up' && i > 0) {
+                    var html = table.rows[i].cells[0].innerHTML;
+                    table.deleteRow(i);
+                    var row = table.insertRow(i-1);
+                    var cell = row.insertCell(0);
+                    cell.className = 'qiTpeeSelected';
+                    cell.innerHTML = html;
+                    break;
+                }
+                if (move == 'down' && i < table.rows.length -1) {
+                    var html = table.rows[i].cells[0].innerHTML;
+                    table.deleteRow(i);
+                    var row = table.insertRow(i+1);
+                    var cell = row.insertCell(0);
+                    cell.className = 'qiTpeeSelected';
+                    cell.innerHTML = html;
+                    break;
+                }
+            }
+        }
+    },
+    tpeeOrderSelect : function (el) {
+        var table = el.parentNode;
+        while (table.nodeName.toUpperCase() != 'TABLE')
+            table = table.parentNode;
+        for (var i = 0; i < table.rows.length; i++) {
+            table.rows[i].cells[0].className = null;
+        }
+        el.className="qiTpeeSelected";
+    },
+    
+    tpeeOrderSelection : function () {
+        if (!$('qitpeeselector')) return; // no tpee active
+
+        // get selected datasources
+        var ds = [];
+        for (var i=0; i < $('qidatasourceselector').options.length; i++) {
+            if ($('qidatasourceselector').options[i].selected) {
+                ds.push($('qidatasourceselector').options[i].value);
+            }
+        }
+
+        for (var i = 0; i < $('qitpeeselector').options.length; i++) {
+            var c_ds = ds;
+            var par_order_id = 'qitpeeparamval_' + $('qitpeeselector').options[i].value + '_PAR_ORDER';
+            if ($(par_order_id) ) {
+                for (var j = 0; j < $(par_order_id).rows.length; j++) {
+                    if (! c_ds.inArray($(par_order_id).rows[j].cells[0].innerHTML)) {
+                        $(par_order_id).deleteRow(j);
+                        j--;
+                    } else {
+                        c_ds = c_ds.removeVal($(par_order_id).rows[j].cells[0].innerHTML);
+                    }
+                }
+                // add missing values to the tpee selection
+                if (c_ds.length > 0) {
+                    for (var k=0 ; k < c_ds.length; k++) {
+                        var row = $(par_order_id).insertRow(-1);
+                        var cell = row.insertCell(0);
+                        cell.setAttribute('onclick', 'qihelper.tpeeOrderSelect(this);');
+                        cell.innerHTML = c_ds[k];
+                    }
+                }
+            }
+        }
+
     },
 
 	/**
@@ -765,17 +846,13 @@ QIHelper.prototype = {
 		if ( $('usetriplestore') != null && $('usetriplestore').checked )
             args.push('source=tsc');
         var selectedDataSources = [];
+        var useTpeeOrder = false;
         var dataSources = $('qidatasourceselector');
         if (dataSources) {
             for (var i=0; i < dataSources.options.length; i++) {
                 if (dataSources.options[i].selected) {
                     selectedDataSources.push(dataSources.options[i].value);
                 }
-            }
-            // if only the wiki data source is defined, we do not need a parameter
-            if (! (selectedDataSources.length == 1 &&
-                   selectedDataSources[0] == '-Wiki-')) {
-                args.push('dataspace=' + selectedDataSources.join(','));
             }
         }
 		if ( $('qio_showrating') != null && $('qio_showrating').checked )
@@ -803,8 +880,23 @@ QIHelper.prototype = {
                 var jsonParams = [];
                 for (var i = 0; i < span.length; i++) {
                     var pname = (span[i].name) ? span[i].name.replace('qitpeeparams_ ' + tpee + '_', '') : span[i].innerHTML;
-                    var val = $('qitpeeparamval_' + tpee + '_' + pname) && $('qitpeeparamval_' + tpee + '_' + pname).value;
+                    var val = $('qitpeeparamval_' + tpee + '_' + pname) && 
+                        ( $('qitpeeparamval_' + tpee + '_' + pname).value || $('qitpeeparamval_' + tpee + '_' + pname).innerHTML);
                     if (pname && val) {
+                        if (pname == 'PAR_USER') {
+                            val = $('qi_tsc_wikigraph').innerHTML + '/' + $('qi_tsc_userns').innerHTML + '/' + val;
+                        }
+                        if (pname == 'PAR_ORDER') {
+                            var vals = [];
+                            var table = $('qitpeeparamval_' + tpee + '_' + pname);
+                            for (var r = 0; r < table.rows.length; r++) {
+                                vals.push("\\'" + table.rows[r].cells[0].innerHTML + "\\'");
+                            }
+                            if (vals.length > 0) {
+                                useTpeeOrder = true;
+                                val = '[' + vals.join(',') + ']';
+                            }
+                        }
                         jsonParams.push( '"' + pname + '":"' + val + '"' );
                     }
                 }
@@ -812,6 +904,15 @@ QIHelper.prototype = {
                     args.push('policyparams={' + jsonParams.join(',') +'}');
                 }
             }
+        }
+        // if the TPEE is used and the order of the datasources is given in PAR_ORDER
+        // then remove the dataspace parameter
+        // if only the wiki data source is defined, we do not need this parameter,
+        // also do not add this parameter when the TPEE with PAR_ORDER parameter is used
+        if ( (!(selectedDataSources.length == 1 &&
+               selectedDataSources[0] == '-Wiki-')) &&
+               !useTpeeOrder && selectedDataSources.length > 0 ) {
+                args.push('dataspace=' + selectedDataSources.join(','));
         }
         // return now all parameters
         if (args.length > 0)
@@ -3090,6 +3191,12 @@ applyOptionParams : function(query) {
     }
     if ( tpeeParamsObj ) {
         for ( var parname in tpeeParamsObj ) {
+            // PAR_USER -> remove the graph URI from the user name
+            if ( parname == 'PAR_USER' ) {
+                var graph = $('qi_tsc_wikigraph').innerHTML || '';
+                graph += $('qi_tsc_userns').innerHTML || '';
+                tpeeParamsObj[parname] = tpeeParamsObj[parname].replace(graph, '');
+            }
             if ( $('qitpeeparamval_' + tpeePolicyId + '_' + parname) )
                 $('qitpeeparamval_' + tpeePolicyId + '_' + parname).value = tpeeParamsObj[parname];
         }
@@ -3456,3 +3563,14 @@ if (!Array.prototype.inArray) {
 		return false;
 	}
 };
+if (!Array.prototype.removeVal) {
+	Array.prototype.removeVal = function (val) {
+        data = [];
+		for ( var i = 0; i < this.length; i++) {
+			if (val != this[i])
+				data.push(this[i]);
+		}
+		return data;
+	}
+};
+
