@@ -51,8 +51,11 @@ FacetedSearch.classes.CurrentSearchWidget = AjaxSolr.AbstractWidget.extend({
 				var facetName = match[2];
 				links.push(AjaxSolr.theme('facet', match[2], -1, self.removeFacet(fq[i]), FacetedSearch.classes.ClusterWidget.showPropertyDetailsHandler, true));
 				var nameWithoutType = facetName.match(EXTRACT_TYPE_REGEX);
-				nameWithoutType = nameWithoutType[1];
-				facetQueries[nameWithoutType] = true;
+				if (nameWithoutType) {
+					// This applies only to properties
+					nameWithoutType = nameWithoutType[1];
+					facetQueries[nameWithoutType] = true;
+				}
 			}
 		}
 		for ( var i = 0, l = fq.length; i < l; i++) {
@@ -65,7 +68,7 @@ FacetedSearch.classes.CurrentSearchWidget = AjaxSolr.AbstractWidget.extend({
 				}
 				var nameWithoutType = facetName.match(EXTRACT_TYPE_REGEX);
 				nameWithoutType = nameWithoutType[1];
-				if (!facetQueries[nameWithoutType]) {
+				if (nameWithoutType && !facetQueries[nameWithoutType]) {
 					links.push(AjaxSolr.theme('facet', facetName, -1, self.removeFacet(fq[i]), FacetedSearch.classes.ClusterWidget.showPropertyDetailsHandler, true));
 					facetQueries[facetName] = true;
 				}
@@ -107,6 +110,7 @@ FacetedSearch.classes.CurrentSearchWidget = AjaxSolr.AbstractWidget.extend({
 			var fs = FacetedSearch.singleton.FacetedSearchInstance;
 			var fsfields = fs.FACET_FIELDS; 
 			var FIELD_PREFIX_REGEX = /([^:]+):(.*)/;
+			var CATEGORY_FACET_REGEX = new RegExp(fsfields[0] + ':.*');
 			var store = self.manager.store;
 			
 			var fq = self.manager.store.values('fq');
@@ -114,10 +118,17 @@ FacetedSearch.classes.CurrentSearchWidget = AjaxSolr.AbstractWidget.extend({
 			if ($.inArray(split[1], fsfields) >= 0) {
 				// Remove filter queries for category, relation or attribute 
 				// facets that begin with the facet name e.g. someProperty:propertyValue
-				// The type suffix of the property name may be wrong 
-				// i.e. string and are equivalent => ignore the suffix
-				var nameWithoutType = split[2].match(/^(.*_).*$/); 
-				store.removeByValue('fq', new RegExp('^' + nameWithoutType[1] + '.*?:.*'));
+				
+				// Is it a category facet
+				if (facet.match(CATEGORY_FACET_REGEX)) {
+					store.removeByValue('fq', split[0]);
+				} else {
+					// The type suffix of the property name may be wrong 
+					// i.e. string and are equivalent => ignore the suffix
+					var nameWithoutType = split[2].match(/^(.*_).*$/); 
+					store.removeByValue('fq', new RegExp('^' + nameWithoutType[1] + '.*?:.*'));
+				}
+				
 			}
 			var attrFacetClass = fsfields[1];
 			var ATTRIBUTE_REGEX = new RegExp(attrFacetClass + ':(smwh_.*)_xsdvalue_.*');
