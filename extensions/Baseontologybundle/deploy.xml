@@ -10,7 +10,6 @@
 		<dependencies>
 		    <dependency from="102">applicationprogramming</dependency>
 			<dependency from="152">smwhalo</dependency>
-			<dependency from="200">semanticforms</dependency>
 		</dependencies>
 	</global>
 	<wikidumps>
