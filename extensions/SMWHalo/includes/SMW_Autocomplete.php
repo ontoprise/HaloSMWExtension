@@ -105,7 +105,7 @@ function smwf_ac_AutoCompletionDispatcher($articleName, $userInputToMatch, $user
 			// otherwise use constraints
 			$pages = AutoCompletionHandler::executeCommand($constraints, $userInputToMatch);
 		}
-		
+
 		AutoCompletionRequester::attachCategoryHints($pages);
 		AutoCompletionRequester::attachImageURL($pages);
 		$result = AutoCompletionRequester::encapsulateAsXML($pages);
@@ -173,15 +173,25 @@ function smwf_ac_AutoCompletionDispatcher($articleName, $userInputToMatch, $user
 
 
 			// --------------------------------
-			// 4.property name case
+			// 4.property name / article case
 			// --------------------------------
 		} else {
+
 			
+			if (!is_null($namespaceText)) {
+				// assume article title.
+				$result = AutoCompletionHandler::executeCommand("namespace: $namespaceText", $userInputToMatch);
+				AutoCompletionRequester::attachCategoryHints($result);
+				AutoCompletionRequester::attachImageURL($result);
+				return AutoCompletionRequester::encapsulateAsXML($result, true);
+			}
+			
+			// assume property 
 			$result = AutoCompletionRequester::getPropertyProposals($articleName, $userInputToMatch);
-            AutoCompletionRequester::attachCategoryHints($result);
-            AutoCompletionRequester::attachImageURL($result);
-            return AutoCompletionRequester::encapsulateAsXML($result);
-			
+			AutoCompletionRequester::attachCategoryHints($result);
+			AutoCompletionRequester::attachImageURL($result);
+			return AutoCompletionRequester::encapsulateAsXML($result);
+				
 
 		}
 
@@ -296,56 +306,56 @@ class AutoCompletionRequester {
 
 	}
 
-    /**
-     * Attaches category information Match Items
-     *
-     * @param & $matches (out)
-     *      hash array or array of Title/string
-     *
-     * @param hash array $matches
-     */
+	/**
+	 * Attaches category information Match Items
+	 *
+	 * @param & $matches (out)
+	 *      hash array or array of Title/string
+	 *
+	 * @param hash array $matches
+	 */
 	public static function attachCategoryHints(& $matches) {
 		$options = new SMWRequestOptions();
-        $options->limit = SMW_AC_MAX_INSTANCE_SAMPLES;
+		$options->limit = SMW_AC_MAX_INSTANCE_SAMPLES;
 		for($i = 0; $i < count($matches); $i++) {
 			$title = is_array($matches[$i])? $matches[$i]['title'] : $matches[$i];
 			if (!is_array($matches[$i])) $matches[$i] = array();
 			$matches[$i]['title'] = $title;
-		    $matches[$i]['instanceSamples'] = array();
+			$matches[$i]['instanceSamples'] = array();
 			if ($title->getNamespace() == NS_CATEGORY) {
 				$instances = smwfGetSemanticStore()->getDirectInstances($title, $options);
 				foreach($instances as $inst) {
 					$matches[$i]['instanceSamples'][] = $inst->getPrefixedText();
 				}
-				
-			    $parents = $title->getParentCategoryTree();
-                $matches[$i]['parentCategories'] = array();
-                
-                $next = reset(array_keys($parents));
-                while($next !== false) {
-                    $matches[$i]['parentCategories'][] = $next;
-                    $parents = $parents[$next];
-                    $next = reset(array_keys($parents));
-                }
-                $matches[$i]['parentCategories'] = array_reverse($matches[$i]['parentCategories']);
-               
+
+				$parents = $title->getParentCategoryTree();
+				$matches[$i]['parentCategories'] = array();
+
+				$next = reset(array_keys($parents));
+				while($next !== false) {
+					$matches[$i]['parentCategories'][] = $next;
+					$parents = $parents[$next];
+					$next = reset(array_keys($parents));
+				}
+				$matches[$i]['parentCategories'] = array_reverse($matches[$i]['parentCategories']);
+				 
 			} else if ($title->getNamespace() == NS_MAIN) {
-			    $parents = $title->getParentCategoryTree();
-                $matches[$i]['parentCategories'] = array();
-			
-	            $next = reset(array_keys($parents));
-                while($next !== false) {
-                    $matches[$i]['parentCategories'][] = $next;
-                    $parents = $parents[$next];
-                    $next = reset(array_keys($parents));
-                }
-                $matches[$i]['parentCategories'] = array_reverse($matches[$i]['parentCategories']);
+				$parents = $title->getParentCategoryTree();
+				$matches[$i]['parentCategories'] = array();
+					
+				$next = reset(array_keys($parents));
+				while($next !== false) {
+					$matches[$i]['parentCategories'][] = $next;
+					$parents = $parents[$next];
+					$next = reset(array_keys($parents));
+				}
+				$matches[$i]['parentCategories'] = array_reverse($matches[$i]['parentCategories']);
 			}
-			
+				
 		}
 	}
 
-	
+
 
 	/**
 	 * Get Property target proposals. Consider special properties too
@@ -530,7 +540,7 @@ class AutoCompletionRequester {
 	 *             'instanceSamples'=>array of string (optional)
 	 *             'parentCategories'=> array of string (optional)
 	 * @param $putNameSpaceInName If true system would return 'namespace:localname' otherwise 'localname'
-	 * 
+	 *
 	 * @return xml string
 	 */
 	public static function encapsulateAsXML(array & $matches, $putNameSpaceInName = false) {
@@ -546,13 +556,13 @@ class AutoCompletionRequester {
 			$pasteContent = is_array($matches[$i]) && array_key_exists('pasteContent', $matches[$i]) ? $matches[$i]['pasteContent'] :"";
 			$inferred = is_array($matches[$i]) &&  array_key_exists('inferred', $matches[$i]) ? $matches[$i]['inferred'] : false;
 			$imageURL = is_array($matches[$i]) &&  array_key_exists('imageurl', $matches[$i]) ? $matches[$i]['imageurl'] : "";
-			
+				
 			$namespaceText = "";
 			$extraData = "";
-				
+
 			$arity = count($matches[$i]);
 			switch($arity) {
-				case 1: 
+				case 1:
 					$title = $matches[$i]; break;
 				default:
 					$title = $matches[$i]['title'];break;
@@ -572,24 +582,24 @@ class AutoCompletionRequester {
 				}
 				if (array_key_exists('instanceSamples', $matches[$i]) && $title->getNamespace() == NS_CATEGORY) {
 					if (!empty($extraData)) $extraData .= "<br>";
-                    $extraData .= implode(", ", $matches[$i]['instanceSamples']);
-                    if (count($matches[$i]['instanceSamples']) == SMW_AC_MAX_INSTANCE_SAMPLES) $extraData .= ", ...";
-                }  
-                if (array_key_exists('parentCategories', $matches[$i]) && ($title->getNamespace() == NS_CATEGORY || $title->getNamespace() == NS_MAIN)) {
-                	if (!empty($extraData)) $extraData .= "<br>";
-                    $extraData .= implode(" -> ", $matches[$i]['parentCategories']);
-                }
+					$extraData .= implode(", ", $matches[$i]['instanceSamples']);
+					if (count($matches[$i]['instanceSamples']) == SMW_AC_MAX_INSTANCE_SAMPLES) $extraData .= ", ...";
+				}
+				if (array_key_exists('parentCategories', $matches[$i]) && ($title->getNamespace() == NS_CATEGORY || $title->getNamespace() == NS_MAIN)) {
+					if (!empty($extraData)) $extraData .= "<br>";
+					$extraData .= implode(" -> ", $matches[$i]['parentCategories']);
+				}
 				$typeAtt = "type=\"".$title->getNamespace()."\"";
 				$namespaceText = "nsText=\"".$title->getNsText()."\"";
 				$content = ($putNameSpaceInName ? htmlspecialchars($title->getPrefixedDBkey()) : htmlspecialchars($title->getDBkey()));
 			}
-				
+
 			// set all other
 			$inferredAtt = $inferred ? 'inferred="true"' : 'inferred="false"';
 			$pasteContent = htmlspecialchars($pasteContent);
 			$extraData = htmlspecialchars($extraData);
 			$imageURLAtt = "imageurl=\"".str_replace('"', '&quot;', $imageURL)."\"";
-				
+
 			// assemble match item
 			$xmlResult .= "<match $typeAtt $inferredAtt $namespaceText $imageURLAtt><display>$content</display><pasteContent>$pasteContent</pasteContent><extraData>$extraData</extraData></match>";
 		}
