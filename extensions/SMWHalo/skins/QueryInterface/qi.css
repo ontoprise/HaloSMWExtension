@@ -592,3 +592,12 @@ cursor: pointer;
 #stb-qi-footer input {
 	margin: 5px;
 }
+.qiTpeeSelected {
+    color: white;
+    background-color: blue;
+}
+.qitpeeparamval {
+    font-size: smaller;
+    border: #000 1px solid;
+    line-height: normal;
+}
