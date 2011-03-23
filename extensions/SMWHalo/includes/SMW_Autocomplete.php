@@ -128,36 +128,9 @@ function smwf_ac_AutoCompletionDispatcher($articleName, $userInputToMatch, $user
 
 			// get property name
 			$propertyText = trim(substr($userContext, 2, stripos($userContext,"::")-2));
-			$pv = SMWPropertyValue::makeUserProperty($propertyText);
-			$typeID = $pv->getPropertyTypeID();
-
-			// returns syntax examples for several datatypes
-			if ($typeID == '_dat') {
-				return AutoCompletionRequester::encapsulateConstantMatchesAsXML(explode("|",(wfMsg('smw_ac_datetime_proposal'))));
-			} else if ($typeID == '_boo') {
-				return AutoCompletionRequester::encapsulateConstantMatchesAsXML(array_merge(explode(",",wfMsg('smw_true_words')), explode(",",wfMsg('smw_false_words'))));
-			} else if ($typeID == '_geo') {
-				return AutoCompletionRequester::encapsulateConstantMatchesAsXML(explode("|",(wfMsg('smw_ac_geocoord_proposal'))));
-			} else if ($typeID == '_rec') {
-
-				// request expected types of record property
-				$values = smwfGetStore()->getPropertyValues(Title::newFromText($propertyText, SMW_NS_PROPERTY), SMWPropertyValue::makeProperty("_LIST"));
-				$typeValues = $values[0]->getTypeValues();
-
-				$proposal = "";
-				for($i = 0; $i < count($typeValues); $i++) {
-					$tv = $typeValues[$i];
-					$proposal .= $tv->getWikiValue();
-					if ($i < count($typeValues)-1) $proposal .= "; ";
-				}
-
-				return AutoCompletionRequester::encapsulateConstantMatchesAsXML(array($proposal));
-			} else if ($typeID == '_ema') {
-				return AutoCompletionRequester::encapsulateConstantMatchesAsXML(array(wfMsg('smw_ac_email_proposal')));
-			} else if ($typeID == '_tem') {
-				return AutoCompletionRequester::encapsulateConstantMatchesAsXML(explode(",",wfMsg('smw_ac_temperature_proposal')));
-			} else if ($typeID == '_tel') {
-				return AutoCompletionRequester::encapsulateConstantMatchesAsXML(array(wfMsg('smw_ac_telephone_proposal')));
+			$samples = AutoCompletionRequester::getSyntaxSamples($propertyText);
+			if (!is_null($samples)) {
+				return AutoCompletionRequester::encapsulateConstantMatchesAsXML($samples);
 			}
 
 			// try enumeration values and units
@@ -177,7 +150,7 @@ function smwf_ac_AutoCompletionDispatcher($articleName, $userInputToMatch, $user
 			// --------------------------------
 		} else {
 
-			
+				
 			if (!is_null($namespaceText)) {
 				// assume article title.
 				$result = AutoCompletionHandler::executeCommand("namespace: $namespaceText", $userInputToMatch);
@@ -185,13 +158,13 @@ function smwf_ac_AutoCompletionDispatcher($articleName, $userInputToMatch, $user
 				AutoCompletionRequester::attachImageURL($result);
 				return AutoCompletionRequester::encapsulateAsXML($result, true);
 			}
-			
-			// assume property 
+				
+			// assume property
 			$result = AutoCompletionRequester::getPropertyProposals($articleName, $userInputToMatch);
 			AutoCompletionRequester::attachCategoryHints($result);
 			AutoCompletionRequester::attachImageURL($result);
 			return AutoCompletionRequester::encapsulateAsXML($result);
-				
+
 
 		}
 
@@ -292,6 +265,7 @@ class AutoCompletionRequester {
 	public static function attachImageURL(& $matches) {
 		for($i = 0; $i < count($matches); $i++) {
 			$title = is_array($matches[$i])? $matches[$i]['title'] : $matches[$i];
+			if (!($title instanceof Title)) continue;
 			if ($title->getNamespace() != NS_MAIN) continue;
 			$categories = smwfGetSemanticStore()->getCategoriesForInstance($title);
 			foreach($categories as $c) {
@@ -322,6 +296,8 @@ class AutoCompletionRequester {
 			if (!is_array($matches[$i])) $matches[$i] = array();
 			$matches[$i]['title'] = $title;
 			$matches[$i]['instanceSamples'] = array();
+			if (!($title instanceof Title)) continue;
+				
 			if ($title->getNamespace() == NS_CATEGORY) {
 				$instances = smwfGetSemanticStore()->getDirectInstances($title, $options);
 				foreach($instances as $inst) {
@@ -338,7 +314,7 @@ class AutoCompletionRequester {
 					$next = reset(array_keys($parents));
 				}
 				$matches[$i]['parentCategories'] = array_reverse($matches[$i]['parentCategories']);
-				 
+					
 			} else if ($title->getNamespace() == NS_MAIN) {
 				$parents = $title->getParentCategoryTree();
 				$matches[$i]['parentCategories'] = array();
@@ -351,8 +327,49 @@ class AutoCompletionRequester {
 				}
 				$matches[$i]['parentCategories'] = array_reverse($matches[$i]['parentCategories']);
 			}
-				
+
 		}
+	}
+
+	/**
+	 * Returns syntax examples for some datatypes.
+	 * 
+	 * @param string $propertyText The property for which syntax examples should be shown.
+	 * 
+	 * @return array of string
+	 */
+	public static function getSyntaxSamples($propertyText) {
+		$pv = SMWPropertyValue::makeUserProperty($propertyText);
+		$typeID = $pv->getPropertyTypeID();
+		// returns syntax examples for several datatypes
+		if ($typeID == '_dat') {
+			return (explode("|",(wfMsg('smw_ac_datetime_proposal'))));
+		} else if ($typeID == '_boo') {
+			return (array_merge(explode(",",wfMsg('smw_true_words')), explode(",",wfMsg('smw_false_words'))));
+		} else if ($typeID == '_geo') {
+			return (explode("|",(wfMsg('smw_ac_geocoord_proposal'))));
+		} else if ($typeID == '_rec') {
+
+			// request expected types of record property
+			$values = smwfGetStore()->getPropertyValues(Title::newFromText($propertyText, SMW_NS_PROPERTY), SMWPropertyValue::makeProperty("_LIST"));
+			$typeValues = $values[0]->getTypeValues();
+
+			$proposal = "";
+			for($i = 0; $i < count($typeValues); $i++) {
+				$tv = $typeValues[$i];
+				$proposal .= $tv->getWikiValue();
+				if ($i < count($typeValues)-1) $proposal .= "; ";
+			}
+
+			return (array($proposal));
+		} else if ($typeID == '_ema') {
+			return (array(wfMsg('smw_ac_email_proposal')));
+		} else if ($typeID == '_tem') {
+			return (explode(",",wfMsg('smw_ac_temperature_proposal')));
+		} else if ($typeID == '_tel') {
+			return (array(wfMsg('smw_ac_telephone_proposal')));
+		}
+		return NULL;
 	}
 
 
@@ -556,7 +573,7 @@ class AutoCompletionRequester {
 			$pasteContent = is_array($matches[$i]) && array_key_exists('pasteContent', $matches[$i]) ? $matches[$i]['pasteContent'] :"";
 			$inferred = is_array($matches[$i]) &&  array_key_exists('inferred', $matches[$i]) ? $matches[$i]['inferred'] : false;
 			$imageURL = is_array($matches[$i]) &&  array_key_exists('imageurl', $matches[$i]) ? $matches[$i]['imageurl'] : "";
-				
+
 			$namespaceText = "";
 			$extraData = "";
 
@@ -595,6 +612,7 @@ class AutoCompletionRequester {
 			}
 
 			// set all other
+			$content = htmlspecialchars($content);
 			$inferredAtt = $inferred ? 'inferred="true"' : 'inferred="false"';
 			$pasteContent = htmlspecialchars($pasteContent);
 			$extraData = htmlspecialchars($extraData);
@@ -790,6 +808,13 @@ class AutoCompletionHandler {
 				if (smwf_om_userCan($params[0], 'read') == 'true') {
 					$property = Title::newFromText($params[0]);
 					if (!is_null($property)) {
+
+						// in case of empty user input check if syntax samples are appropriate
+						if (empty($userInput)) {
+							$samples = AutoCompletionRequester::getSyntaxSamples($property->getText());
+							if (!is_null($samples)) return $samples;
+						}
+
 						$domainRangeAnnotations = smwfGetStore()->getPropertyValues($property, smwfGetSemanticStore()->domainRangeHintProp);
 						$pages = $acStore->getInstanceAsTarget($userInput, $domainRangeAnnotations);
 						$inf = self::setInferred($pages, !$first);
