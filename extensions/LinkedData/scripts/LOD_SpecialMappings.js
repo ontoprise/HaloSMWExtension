@@ -42,7 +42,7 @@
 				sourceUrl: base.serviceUrl + "?action=ajax&rs=lodGetR2RMapping&rsargs%5B%5D=" + escape(mapping.mappingUri),
 				serialize: true,
 				onCommit: function(data) {
-					base.updateMapping(base.currentMapping, data);
+					base.updateMapping(base.currentMapping, data, false);
 				}
 			});
 		};
@@ -123,6 +123,7 @@
 													label: "Remove Mapping",
 											})
 											.click(function() {
+												var dialogOpened = false;
 												var dialog = $("<div class=\"r2redit-dialog\" title=\"Remove Mapping\">\
 																<p>\
 																<span class=\"ui-icon ui-icon-alert\"></span>\
@@ -157,7 +158,7 @@
 														}
 													}
 												});
-												var dialogOpened = true;
+												dialogOpened = true;
 												$.r2rUI.fixJQueryUIDialogButtons(dialog);
 											})
 											.appendTo(base.editorButtonPane);
@@ -208,15 +209,76 @@
 		};
 		
 		base.newMappingDialog = function() {
+			base.invokeMethod("get", "json", "lodListSources", [], "Unable to retrieve data sources", function(dataSources) {
+				var dialog = $("<div class=\"r2redit-dialog\" title=\"New R2R Mapping\">\
+									<form>\
+										<fieldset>\
+											<label for=\"sourceSelector\">Source</label>\
+											<select id=\"sourceSelector\">\
+											</select>\
+											<label for=\"targetSelector\">Target</label>\
+											<select id=\"targetSelector\">\
+											</select>\
+										</fieldset>\
+									</form>\
+								</div>");
+								
+				/* Popuplate selectors with data source list */
+				var selectors = dialog.find("select");
+				dataSources.unshift("(please select)");
+				dataSources.push("Wiki");
+				$(dataSources).each(function(key, value) {
+					selectors.append($("<option />").val(value).text(value));
+				});
+				dialog.find("#targetSelector").val("Wiki");
+
+				var dialogOpened = false;	
+				dialog.dialog({
+					dialogClass: ".lodmapping-newmappingdialog",
+					autoOpen: true,
+					height: 180,
+					width: 300,
+					modal: true,
+					buttons: {
+						"Create": function() {
+							/**
+							 * Workaround: This gets called once on initialization... seems to be a jQuery UI bug
+							 */
+							if (!dialogOpened) {
+								return;
+							}
+							$(this).dialog("close");
+							base.updateMapping({mappingUri: null, source: dialog.find("#sourceSelector").val(), target: dialog.find("#targetSelector").val()}, "@prefix r2r: <http://www4.wiwiss.fu-berlin.de/bizer/r2r/> .\
+@prefix owl: <http://www.w3.org/2002/07/owl#> .\
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .\
+@prefix mp: <http://www.example.org/smw-lde/smwTransformations/> .\
+", true);
+						},
+						"Cancel": function() {
+							/**
+							 * Workaround: This gets called once on initialization... seems to be a jQuery UI bug
+							 */
+							if (!dialogOpened) {
+								return;
+							}
+							$(this).dialog("close");
+						}
+					}
+				});
+				dialogOpened = true;
+				$.r2rUI.fixJQueryUIDialogButtons(dialog);
+			});
 		};
 		
 		/**
 		 * Updates the specified mapping
 		 * @param mapping
 		 * @param ttl
+		 * @param refresh Whether to reload the overview list
 		 */
-		base.updateMapping = function(mapping, ttl) {
-			base.invokeMethod("lodUpdateR2RMapping", [mapping.mappingUri, mapping.source, mapping.target, ttl], "Unable to update mapping");
+		base.updateMapping = function(mapping, ttl, refresh) {
+			base.invokeMethod("post", "text", "lodUpdateR2RMapping", [mapping.mappingUri, mapping.source, mapping.target, ttl], "Unable to update mapping",
+				null, function() { if (refresh) { base.init(); } });
 		};
 
 		/**
@@ -224,17 +286,18 @@
 		 * @param mapping
 		 */
 		base.removeMapping = function(mapping) {
-			base.invokeMethod("lodRemoveR2RMapping", [mapping.mappingUri], "Unable to remove mapping", function() { base.init(); });
+			base.invokeMethod("post", "text", "lodRemoveR2RMapping", [mapping.mappingUri], "Unable to remove mapping", null, function() { base.init(); });
 		};
 		
 		/**
 		 * Invokes an RPC method
+		 * @param type
 		 * @param method
 		 * @param parameters
 		 * @param errorTitle
 		 * @param onComplete
 		 */
-		base.invokeMethod = function(method, parameters, errorTitle, onComplete) {
+		base.invokeMethod = function(callType, dataType, method, parameters, errorTitle, onSuccess, onComplete) {
 			$.r2rUI.showProgress();
 			$.ajax({
 				url: base.serviceUrl,
@@ -243,16 +306,21 @@
 					'rs': method,
 					'rsargs[]': parameters
 				},
-				dataType: 'text',
-				type: 'post',
+				type: callType,
+				dataType: dataType,
 		        error: function(jqXHR, textStatus, err) {
 					$.r2rUI.showError(errorTitle, err);        	
 		        },
+				success: function(data) {
+					if (onSuccess) {
+						onSuccess(data);
+					}
+		        },
 		        complete: function() {
-   					$.r2rUI.hideProgress();
-   					if (onComplete) {
-   						onComplete();
-   					}
+					$.r2rUI.hideProgress();
+					if (onComplete) {
+						onComplete();
+					}
 		        }
 			});
 		};		

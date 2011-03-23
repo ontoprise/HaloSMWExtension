@@ -204,7 +204,6 @@ function lodListSources() {
 	$lodAdminStore = LODAdministrationStore::getInstance();
     $response = new AjaxResponse();
 	$sources = $lodAdminStore->loadAllSourceDefinitions();
-	print_r($sources); die();
 	$results = array();
 	foreach ($sources as $id => $source) {
 		if(!$id) {
