@@ -484,11 +484,12 @@ class OB_Storage {
 
 		$reqfilter->isCaseSensitive = false;
 		$foundProperties = smwfGetSemanticStore()->getPropertiesWithSchemaByName($reqfilter);
-		$schemaData = array();
+		$propertySchemaElement = array();
 		foreach($foundProperties as $p) {
-			$schemaData[] = new SchemaData($p[0], $p[1], $p[2], $p[3], $p[4], $p[5], $p[6], $p[7] == true);
+			$schemaData = new SchemaData($p[0], $p[1], $p[2], $p[3], $p[4], $p[5], $p[6], $p[7] == true);
+			$propertySchemaElement[] = new PropertySchemaElement(SMWPropertyValue::makeUserProperty($p[0]->getText()), NULL, $schemaData);
 		}
-		return SMWOntologyBrowserXMLGenerator::encapsulateAsPropertyList($schemaData);
+		return SMWOntologyBrowserXMLGenerator::encapsulateAsPropertyList($propertySchemaElement);
 	}
 
 	/**
