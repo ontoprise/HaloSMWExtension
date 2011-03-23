@@ -560,7 +560,7 @@ class HACLEvaluator {
 	 * @param Revision $newRev
 	 * @return boolean true
 	 */
-	public static function onDiffViewHeader(DifferenceEngine &$diffEngine, $oldRev, $newRev) {
+	public static function onDiffViewHeader(DifferenceEngine $diffEngine, $oldRev, $newRev) {
 		global $wgUser;
 		
 		$newText = $diffEngine->mNewtext;
