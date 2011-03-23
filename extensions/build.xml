@@ -27,7 +27,6 @@
 		<delete dir="DynamicPageList" />
 		<delete dir="HaloACL" />
 		<delete dir="HashingFunctions" />
-		<delete dir="ImageMap" />
 		<delete dir="LdapAuthentication" />
 		<delete dir="Maps" />
 		<delete dir="NewUserMessage" />
