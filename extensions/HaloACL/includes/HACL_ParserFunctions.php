@@ -1410,6 +1410,7 @@ class HACLParserFunctions {
 		$warnings = array();
 		$users = array();
 		$groups = array();
+		$dynamicAssignees = array();
 
 		$assignedToPN = $isAssignedTo
 						? $haclgContLang->getParserFunctionParameter(HACLLanguage::PFP_ASSIGNED_TO)
@@ -1418,12 +1419,11 @@ class HACLParserFunctions {
 		if (!array_key_exists($assignedToPN, $params)) {
 			// The parameter "assigned to" is missing.
 			$errMsgs[] = wfMsgForContent('hacl_missing_parameter', $assignedToPN);
-			return array($users, $groups, $errMsgs);
+			return array($users, $groups, $dynamicAssignees, $errMsgs, $warnings);
 		}
 
 		$etc = haclfDisableTitlePatch();
 
-		$dynamicAssignees = array();
 		$assignedTo = $params[$assignedToPN];
 		if (is_array(($assignedTo))) {
 			// The array might contain queries for dynamic assignees
