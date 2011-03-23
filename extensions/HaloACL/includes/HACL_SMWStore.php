@@ -90,7 +90,7 @@ class HACLSMWStore extends SMWStore {
 			return $this->mWrappedStore->getSemanticData($subject, $filter);
 		}
 		
-		$result = new SMWSemanticData(SMWWikiPageValue::makePageFromTitle($subject));
+		$result = new SMWSemanticData(SMWWikiPageValue::makePageFromTitle($subject), false);
 		if (!$this->isSubjectAccessible($subject)) {
 			// The subject can not be accessed 
 			// => return an empty semantic data object
