@@ -797,26 +797,6 @@ Index: extensions/SemanticForms/includes/SF_FormPrinter.php
            }
            $section = substr_replace( $section, '', $brackets_loc, $brackets_end_loc + 3 - $brackets_loc );
          // =====================================================
-@@ -1105,15 +1220,15 @@
-           // doing a replace
-           if ( $existing_page_content && strpos( $existing_page_content, '{{{insertionpoint}}}', 0 ) !== false ) {
-             $existing_page_content = preg_replace( '/\{\{\{insertionpoint\}\}\}(\r?\n?)/',
--              preg_replace( '/\}\}/m', '}�',
--                preg_replace( '/\{\{/m', '�{', $template_text ) ) .
-+              preg_replace( '/\}\}/m', '}�',
-+                preg_replace( '/\{\{/m', '�{', $template_text ) ) .
-               "\n{{{insertionpoint}}}",
-               $existing_page_content );
-           // otherwise, if it's a partial form, we have to add the new
-           // text somewhere
-           } elseif ( $form_is_partial && $wgRequest->getCheck( 'partial' ) ) {
--            $existing_page_content = preg_replace( '/\}\}/m', '}�',
--              preg_replace( '/\{\{/m', '�{', $template_text ) ) .
-+            $existing_page_content = preg_replace( '/\}\}/m', '}�',
-+              preg_replace( '/\{\{/m', '�{', $template_text ) ) .
-                 "\n{{{insertionpoint}}}\n" . $existing_page_content;
-           }
-         }
 @@ -1156,6 +1271,10 @@
        } else {
          $form_text .= $section;
@@ -828,15 +808,6 @@ Index: extensions/SemanticForms/includes/SF_FormPrinter.php
 
      } // end for
 
-@@ -1176,7 +1295,7 @@
-          $form_text .= SFFormUtils::hiddenFieldHTML( 'partial', 1 );
-        } else {
-          $free_text = null;
--         $existing_page_content = preg_replace( array( '/�\{/m','/\}�/m' ),
-+         $existing_page_content = preg_replace( array( '/�\{/m','/\}�/m' ),
-            array( '{{','}}' ),
-            $existing_page_content );
-          $existing_page_content = preg_replace( '/\{\{\{insertionpoint\}\}\}/', '', $existing_page_content );
 @@ -1197,6 +1316,17 @@
      } else {
        $free_text = null;
