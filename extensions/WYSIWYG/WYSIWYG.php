@@ -136,3 +136,6 @@ $wgDefaultUserOptions['riched_use_toggle'] = 1;
 $wgDefaultUserOptions['riched_start_disabled'] = 1;
 $wgDefaultUserOptions['riched_use_popup'] = 1;
 $wgDefaultUserOptions['riched_toggle_remember_state'] = 1;
+
+// when SMWHalo is used then the QueryInterface opens in an Iframe
+if (defined('SMW_HALO_VERSION')) $wgEditPageFrameOptions = 'SAMEORIGIN';
