@@ -2,9 +2,11 @@
 REM assume PHP is in PATH variable
 SET PHP=php
 
+REM ######## DEACTIVATED #########
 REM Repair SMW+ 1.5.1 (only done once)
-IF NOT EXIST  ..\..\smwplus151_repaired.txt (echo "done" > ..\..\smwplus151_repaired.txt) ELSE (GOTO checkMWUpdate)
-%PHP% maintenance\repairSMWPlus151.php
+REM IF NOT EXIST  ..\..\smwplus151_repaired.txt (echo "done" > ..\..\smwplus151_repaired.txt) ELSE (GOTO checkMWUpdate)
+REM %PHP% maintenance\repairSMWPlus151.php
+REM ######## DEACTIVATED #########
 
 :checkMWUpdate
 REM Update MW if it was recently updated
