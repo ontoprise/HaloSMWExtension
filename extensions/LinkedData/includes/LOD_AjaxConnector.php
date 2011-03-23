@@ -39,8 +39,11 @@ $wgAjaxExportList[] = "lodafGetRatingsForTriple";
 $wgAjaxExportList[] = "lodafGetRatingEditorForTriple";
 $wgAjaxExportList[] = "lodImportOrUpdate";
 $wgAjaxExportList[] = "lodGetDataSourceTable";
-$wgAjaxExportList[] = "getAllR2RMappings";
-$wgAjaxExportList[] = "getR2RMapping";
+$wgAjaxExportList[] = "lodListSources";
+$wgAjaxExportList[] = "lodListR2RMappings";
+$wgAjaxExportList[] = "lodGetR2RMapping";
+$wgAjaxExportList[] = "lodUpdateR2RMapping";
+$wgAjaxExportList[] = "lodRemoveR2RMapping";
 
 /**
  * Returns the HTML of the editor for rating the triples that are determined by
@@ -194,10 +197,31 @@ function lodGetDataSourceTable() {
 }
 
 /**
- * Outputs a list of all R2R mappings as JSON * 
+ * Outputs a list of all Linked Data source as JSON
  * @return AjaxResponse
  */
-function getAllR2RMappings() {
+function lodListSources() {
+	$lodAdminStore = LODAdministrationStore::getInstance();
+    $response = new AjaxResponse();
+	$sources = $lodAdminStore->loadAllSourceDefinitions();
+	print_r($sources); die();
+	$results = array();
+	foreach ($sources as $id => $source) {
+		if(!$id) {
+			continue;
+		}
+		$results[] = $id;
+	}
+    $response->setContentType("json");
+    $response->addText(json_encode($results));
+	return $response;
+}
+
+/**
+ * Outputs a list of all R2R mappings as JSON
+ * @return AjaxResponse
+ */
+function lodListR2RMappings() {
 	$lodMappingStore = LODMappingStore::getStore();
     $response = new AjaxResponse();
 	$allMappings = $lodMappingStore->getAllMappings();
@@ -206,7 +230,7 @@ function getAllR2RMappings() {
 		if(!($mapping instanceof LODR2RMapping)) {
 			continue;
 		}
-			$results[$uri] = array(
+		$results[$uri] = array(
 			"uri"		=> $mapping->getUri(),
 			"id"		=> $mapping->getID(),
 			"source"	=> $mapping->getSource(),
@@ -222,17 +246,64 @@ function getAllR2RMappings() {
  * Outputs an R2R mapping as TTL
  * 
  * @param string $mappingURI
- * 		The JSON encoded rating.
- * @return AjaxResponse
+ * @return AjaxResponse	The JSON encoded mapping
  */
-function getR2RMapping($mappingURI) {
-	$lodMappingStore = LODMappingStore::getStore();
+function lodGetR2RMapping($mappingURI) {
     $response = new AjaxResponse();
+	$lodMappingStore = LODMappingStore::getStore();
 	if ($mapping = $lodMappingStore->getMapping($mappingURI)) {
 	    $response->setContentType("text/turtle");
 	    $response->addText($mapping->getMappingText());
 	} else {
 		$response->setResponseCode(500);
-		$response->addText("Mapping <" + $mappingUri + "> not found.");	}
+		$response->addText("Mapping <" + $mappingUri + "> not found.");
+	}
+	return $response;
+}
+
+/**
+ * Updates an R2R mapping
+ * 
+ * @param string $mappingURI	null to create a new mapping
+ * @param $source
+ * @param $target
+ * @param $sourceCode
+ * @return AjaxResponse	The JSON encoded mapping
+ */
+function lodUpdateR2RMapping($mappingURI, $source, $target, $sourceCode) {
+    $response = new AjaxResponse();
+	$lodMappingStore = LODMappingStore::getStore();
+
+	if ($mappingUri) {
+		$lodMappingStore->removeMapping($mappingURI);
+	}
+
+	$mapping = new LODR2RMapping($uri, $sourceCode, $source, $target);
+
+	if ($lodMappingStore->addMapping($mapping, "R2Redit")) {
+		$response->addText("Mapping <" + $mappingUri + "> updated.");
+	} else {
+		$response->setResponseCode(500);
+		$response->addText("Unable to update mapping <" + $mappingUri + ">.");
+	}
+	return $response;
+}
+
+/**
+ * Removes an R2R mapping
+ * 
+ * @param string $mappingURI
+ * @return AjaxResponse
+ */
+function lodRemoveR2RMapping($mappingURI) {
+    $response = new AjaxResponse();
+	$lodMappingStore = LODMappingStore::getStore();
+	try {
+		$lodMappingStore->removeMapping($mappingURI);
+		$response->addText("Mapping removed.");
+	} catch(Exception $e) {
+		$response->setResponseCode(500);
+		$response->addText("Unable to remove mapping <" + $mappingUri + ">.");
+	}
 	return $response;
 }

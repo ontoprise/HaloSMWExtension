@@ -29,6 +29,10 @@
 	background-position: 0px 0px;
 }
 
-#lodmapping-buttonpane {
+.lodmapping-buttonpane {
 	padding-top: 10px;
+}
+
+.lodmapping-buttonpane .ui-button {
+	margin-right: 5px;
 }

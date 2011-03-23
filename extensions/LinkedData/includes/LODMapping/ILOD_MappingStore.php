@@ -157,10 +157,10 @@ interface ILODMappingStore  {
 	public function removeAllMappingsFromPage($articleName);
 	
 	/**
-	 * Delete a mapping.
+	 * Deletes a mapping.
 	 *
-	 * @param string $id
-	 * 		The id of the mapping to remove
+	 * @param string $uri
+	 * 		The uri of the mapping to be removed
 	 */
 	public function removeMapping($uri);
 	

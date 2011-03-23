@@ -19,22 +19,30 @@
 	$.lodMapping = function(container) {
 		var base = this;
 		base.container = container;
+		base.currentMapping = {
+			mappingUri: null,
+			source: null,
+			target: null
+		};
+		base.mainContainer = null;
+		base.serviceUrl = wgServer + ((wgScript == null) ? (wgScriptPath + "/index.php") : wgScript);		
 
 		/**
 		 * Loads the editor with a specific mapping
-		 * @param mappingURI
+		 * @param mappingUri
 		 * @param title
 		 */
-		base.openEditor = function(mappingURI, title) {
+		base.openEditor = function(mapping, title) {
+			base.currentMapping = mapping;
 			base.overviewTable.hide();
-			base.newMappingButton.hide();
-			base.backButton.show();
+			base.overviewButtonPane.hide();
+			base.editorButtonPane.show();
 			base.editor = new $.r2rEditor(base.mainContainer, {
 				title: title,
-				sourceUrl: base.getAjaxUrl("getR2RMapping", [mappingURI]),
+				sourceUrl: base.serviceUrl + "?action=ajax&rs=lodGetR2RMapping&rsargs%5B%5D=" + escape(mapping.mappingUri),
 				serialize: true,
 				onCommit: function(data) {
-		//			$("#result").text(data);
+					base.updateMapping(base.currentMapping, data);
 				}
 			});
 		};
@@ -42,27 +50,23 @@
 		base.closeEditor = function() {
 			base.editor.remove();
 			base.overviewTable.show();
-			base.newMappingButton.show();
-			base.backButton.hide();
+			base.editorButtonPane.hide();
+			base.overviewButtonPane.show();
 		}
-		
-		/**
-		 * Removes the specified mapping
-		 * @param mappingURI
-		 * @param title
-		 */
-		base.removeMapping = function(mappingURI, title) {
-			// TODO
-		};
 
 		/**
 		 * Show the overview table
 		 */
 		base.init = function() {
+			base.container.empty();
 			$.r2rUI.showProgress();
 			$.ajax({
-				url: base.getAjaxUrl("getAllR2RMappings"),
-				dataType:'json',
+				url: base.serviceUrl,
+				data: {
+					action: 'ajax',
+					'rs': 'lodListR2RMappings',
+				},
+				dataType: 'json',
 				success: function(data) {
 					try {
 						base.mainContainer = $("<div></div>").appendTo(base.container);
@@ -76,7 +80,6 @@
 														<th>From</th>\
 														<th>To</th>\
 														<th>Edit</th>\
-														<th>Remove</th>\
 													</tr>\
 													<tbody class=\"ui-widget-content\">\
 													</tbody>\
@@ -84,10 +87,9 @@
 												</table>\
 												</div>\
 											</div>").appendTo(base.mainContainer);
-						base.buttonPane = $("<div></div>")
-											.attr("id", "lodmapping-buttonpane")
+						base.overviewButtonPane = $("<div></div>")
+											.addClass("lodmapping-buttonpane")
 											.appendTo(base.container);
-
 						base.newMappingButton = 
 							$("<div></div>").button({
 													icons: {
@@ -96,8 +98,14 @@
 													label: "New R2R Mapping",
 											})
 											.click(function() {
+												base.newMappingDialog();
 											})
-											.appendTo(base.buttonPane);
+											.appendTo(base.overviewButtonPane);
+											
+						base.editorButtonPane = $("<div></div>")
+											.addClass("lodmapping-buttonpane")
+											.appendTo(base.container)
+											.hide();
 											
 						base.backButton = 
 							$("<div></div>").button({
@@ -109,8 +117,50 @@
 											.click(function() {
 												base.closeEditor();
 											})
-											.appendTo(base.buttonPane)
-											.hide();
+											.appendTo(base.editorButtonPane);
+						base.removeButton = 
+							$("<div></div>").button({
+													label: "Remove Mapping",
+											})
+											.click(function() {
+												var dialog = $("<div class=\"r2redit-dialog\" title=\"Remove Mapping\">\
+																<p>\
+																<span class=\"ui-icon ui-icon-alert\"></span>\
+																Are you sure?\
+																</p>\
+																</div>");
+												dialog.dialog({
+													autoOpen: true,
+													height: 150,
+													width: 300,
+													modal: true,
+													buttons: {
+														"Remove": function() {
+															/**
+															 * Workaround: This gets called once on initialization... seems to be a jQuery UI bug
+															 */
+															if (!dialogOpened) {
+																return;
+															}
+															$(this).dialog("close");
+															base.closeEditor();
+															base.removeMapping(base.currentMapping);
+														},
+														"Cancel": function() {
+															/**
+															 * Workaround: This gets called once on initialization... seems to be a jQuery UI bug
+															 */
+															if (!dialogOpened) {
+																return;
+															}
+															$(this).dialog("close");
+														}
+													}
+												});
+												var dialogOpened = true;
+												$.r2rUI.fixJQueryUIDialogButtons(dialog);
+											})
+											.appendTo(base.editorButtonPane);
 											
 						var overviewTableBody = base.overviewTable.find("tbody");
 						$.each(data, function(key, mapping) {
@@ -138,19 +188,10 @@
 										.addClass("r2redit-mappingTableClickable")
 										.addClass("r2redit-mappingTableEdit")
 										.click(function() {
-											base.openEditor(mapping.uri, mapping.id); 
+											base.openEditor({mappingUri: mapping.uri, source: mapping.source, target: mapping.target}, mapping.id); 
 										})
 								)
 								/* Remove */
-								.append(
-									$("<td></td>")
-										.addClass("r2redit-mappingTableAction")
-										.addClass("r2redit-mappingTableClickable")
-										.addClass("lodmappings-mappingTableRemove")
-										.click(function() {
-											base.removeMapping(mapping.uri, mapping.id); 
-										})
-								)
 								.appendTo(overviewTableBody);
 						});
 					} catch (err) {
@@ -166,18 +207,56 @@
 			});
 		};
 		
-		base.getAjaxUrl = function(method, parameters) {
-			var requestUrl = wgServer +
-							((wgScript == null) ? (wgScriptPath + "/index.php") : wgScript) +
-							"?action=ajax&rs=" + method;
-			if (parameters) {
-				$(parameters).each(function(key, value) {
-					requestUrl += "&rsargs=" + escape(value);
-				});
-			}
-			return requestUrl;
+		base.newMappingDialog = function() {
 		};
-	
+		
+		/**
+		 * Updates the specified mapping
+		 * @param mapping
+		 * @param ttl
+		 */
+		base.updateMapping = function(mapping, ttl) {
+			base.invokeMethod("lodUpdateR2RMapping", [mapping.mappingUri, mapping.source, mapping.target, ttl], "Unable to update mapping");
+		};
+
+		/**
+		 * Removes the specified mapping
+		 * @param mapping
+		 */
+		base.removeMapping = function(mapping) {
+			base.invokeMethod("lodRemoveR2RMapping", [mapping.mappingUri], "Unable to remove mapping", function() { base.init(); });
+		};
+		
+		/**
+		 * Invokes an RPC method
+		 * @param method
+		 * @param parameters
+		 * @param errorTitle
+		 * @param onComplete
+		 */
+		base.invokeMethod = function(method, parameters, errorTitle, onComplete) {
+			$.r2rUI.showProgress();
+			$.ajax({
+				url: base.serviceUrl,
+				data: {
+					action: 'ajax',
+					'rs': method,
+					'rsargs[]': parameters
+				},
+				dataType: 'text',
+				type: 'post',
+		        error: function(jqXHR, textStatus, err) {
+					$.r2rUI.showError(errorTitle, err);        	
+		        },
+		        complete: function() {
+   					$.r2rUI.hideProgress();
+   					if (onComplete) {
+   						onComplete();
+   					}
+		        }
+			});
+		};		
+		
 		base.init();
 		return base;
 	};		

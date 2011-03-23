@@ -82,8 +82,13 @@ class LODMappingTripleStore implements ILODMappingStore {
 		$tripleStoreAccess->deletePersistentTriples('MappingStore', $persistencyLayerId);
 	}
 
-    public function removeMapping($id) {
-        $uri = LODMapping::id2uri($id);
+	/**
+	 * Deletes a mapping.
+	 *
+	 * @param string $uri
+	 * 		The uri of the mapping to be removed
+	 */
+    public function removeMapping($uri) {
         $tripleStoreAccess = new LODPersistentTripleStoreAccess(true);
 		$pm = LODPrefixManager::getInstance();
 
