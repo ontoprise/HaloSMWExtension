@@ -597,7 +597,7 @@ class  HACLGroup {
                 }
                 $gid = self::idForGroup($mg);
                 if (!$gid) {
-                    throw new HACLGroupException(HACLGroupException::UNKOWN_GROUP, $mg);
+                    throw new HACLGroupException(HACLGroupException::UNKNOWN_GROUP, $mg);
                 }
                 $this->mManageGroups[$i] = (int) $gid;
             }
