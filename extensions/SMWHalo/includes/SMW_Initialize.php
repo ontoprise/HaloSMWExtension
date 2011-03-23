@@ -149,7 +149,7 @@ function smwgHaloSetupExtension() {
 	$wgAutoloadClasses['LODNonExistingPage'] = $smwgHaloIP . '/includes/articlepages/LOD_NonExistingPage.php';
 	$wgAutoloadClasses['LODNonExistingPageHandler'] = $smwgHaloIP . '/includes/articlepages/LOD_NonExistingPageHandler.php';
 	$wgAutoloadClasses['SMWQueryList'] = $smwgHaloIP . '/specials/SMWQueryList/SMW_QueryList.php';
-	
+
 	//patch Special:Browse in order to hide special Query Management Property
 	$wgSpecialPages['Browse']  = array( 'SMWQMSpecialBrowse' );
 
@@ -465,9 +465,11 @@ function smwgHaloSetupExtension() {
 
 	// add the 'halo' form input type, if Semantic Forms is installed
 	if ( defined('SF_VERSION') ) {
-        global $sfgFormPrinter;
-		$sfgFormPrinter->setInputTypeHook('haloACtext', 'smwfHaloFormInput', array());
-		$sfgFormPrinter->setInputTypeHook('haloACtextarea', 'smwfHaloFormInputTextarea', array());
+		global $sfgFormPrinter;
+		if (isset($sfgFormPrinter)) {
+			$sfgFormPrinter->setInputTypeHook('haloACtext', 'smwfHaloFormInput', array());
+			$sfgFormPrinter->setInputTypeHook('haloACtextarea', 'smwfHaloFormInputTextarea', array());
+		}
 	}
 
 	//Initialize Tabular Forms
