@@ -39,8 +39,8 @@ class LODLinkSpecsPage extends SpecialPage {
 
         SMWOutputs::commitToOutputPage($wgOut);
         $this->setHeaders();
-        
-        $html = "<iframe id=\"silkFrame\" src=\"".$lodgSilkServerUrl."\" height=\"930\" width=\"1100px\" >You need a Frames Capable browser to view this content.</iframe>";
+
+        $html = "<iframe id=\"silkFrame\" src=\"".$lodgSilkServerUrl."\" width=\"1100px\"  height=\"1150px\"  >You need a Frames Capable browser to view this content.</iframe>";
 
         $wgOut->addHTML($html);
 
