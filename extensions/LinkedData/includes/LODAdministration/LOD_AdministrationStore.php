@@ -183,6 +183,7 @@ class  LODAdministrationStore  {
 	 * smw-lde:changefreq 				^^xsd:string 	(0..1)
 	 * smw-lde:vocabulary 				^^owl:Thing 	(0..*)
 	 * smw-lde:predicateToCrawl			^^owl:Thing 	(0..*)
+         * smw-lde:levelsToCrawl			^^xsd:integer 	(0..*)
 	 *
 	 * @param LODSourceDefinition $sd
 	 * 		This object defines a linked data source.
@@ -247,6 +248,12 @@ class  LODAdministrationStore  {
 		if (is_array($sd->getPredicatesToCrawl())) {
 			foreach ($sd->getPredicatesToCrawl() as $uri) {
 				$triples[] = new LODTriple($subject, $propNS."predicateToCrawl", $uri, "__objectURI");
+			}
+		}
+                
+                if (is_array($sd->getLevelsToCrawl())) {
+			foreach ($sd->getLevelsToCrawl() as $level) {
+				$triples[] = new LODTriple($subject, $propNS."levelsToCrawl", $level, "xsd:int");
 			}
 		}
 
@@ -356,6 +363,9 @@ QUERY;
 		}
 		if (array_key_exists("{$propNS}predicateToCrawl", $properties)) {
 			$sd->setPredicatesToCrawl($properties["{$propNS}predicateToCrawl"]);
+		}
+                if (array_key_exists("{$propNS}levelsToCrawl", $properties)) {
+			$sd->setLevelsToCrawl($properties["{$propNS}levelsToCrawl"]);
 		}
 
 		return $sd;

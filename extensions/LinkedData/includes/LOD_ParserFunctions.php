@@ -357,6 +357,10 @@ class LODParserFunctions {
 	 * PredicateToCrawl (URI) 0..*
 	 * When importing from URIs, this property allows to specify a predicate
 	 * that should be followed by the crawler.
+         *
+         * LevelsToCrawl (integer) 0..1
+	 * Indicates the maximum number of levels to be crawled.
+         *
 	 *
 	 * @param Parser $parser
 	 * 		The parser object
@@ -535,6 +539,7 @@ class LODParserFunctions {
 			array(LODLanguage::PFP_LSD_CHANGEFREQ, 				0,  1, "setChangeFreq",				"lod_lsd_changefreq"),
 			array(LODLanguage::PFP_LSD_VOCABULARY, 				0, -1, "setVocabularies", 			"lod_lsd_vocabulary"),
 			array(LODLanguage::PFP_LSD_PREDICATETOCRAWL, 		0, -1, "setPredicatesToCrawl",		"lod_lsd_predicatetocrawl"),
+                        array(LODLanguage::PFP_LSD_LEVELSTOCRAWL, 		0, -1, "setLevelsToCrawl",		"lod_lsd_levelstocrawl"),
 			);
 		
 		// Retrieve and set all parameters of $lsd

@@ -116,6 +116,7 @@ $messages['en'] = array(
 	'lod_lsd_uriregexpattern'			=> "URI regex pattern",
 	'lod_lsd_vocabulary'				=> "Vocabulary",
 	'lod_lsd_predicatetocrawl'			=> "Predicate to crawl",
+        'lod_lsd_levelstocrawl'			=> "Levels to crawl",
 
 	//--- LOD special pages ---
 	'lodsources'	=> 'LOD sources',

@@ -70,6 +70,7 @@ class LODLanguageEn extends LODLanguage {
 		LODLanguage::PFP_LSD_URIREGEXPATTERN		=> "uriregexpattern",
 		LODLanguage::PFP_LSD_VOCABULARY				=> "vocabulary",
 		LODLanguage::PFP_LSD_PREDICATETOCRAWL		=> "predicatetocrawl",
+               	LODLanguage::PFP_LSD_LEVELSTOCRAWL		=> "levelstocrawl",
 		
 		LODLanguage::PFP_SILK_MAPPING_MINT_NAMESPACE				=> 'mintNamespace',
 		LODLanguage::PFP_SILK_MAPPING_MINT_LABEL_PREDICATE				=> 'mintLabelPredicate',

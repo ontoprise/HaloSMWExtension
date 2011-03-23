@@ -143,6 +143,10 @@ class LODSourceDefinition  {
 	// When importing from URIs, this property allows to specify a predicate
 	// that should be followed by the crawler.
 	private $mPredicatesToCrawl;
+        
+        // integer
+	// Indicates the maximum number of levels to be crawled.
+	private $mLevelsToCrawl;
 	
 	/**
 	 * Constructor for LODSourceDefinition.
@@ -172,6 +176,7 @@ class LODSourceDefinition  {
     public function getErrorMessagesFromLastImport(){ return $this->mErrorMessagesLastImport; }
     public function getLastImportDate(){ return $this->mLastImportDate; }
 	public function getPredicatesToCrawl()		{ return $this->mPredicatesToCrawl; }
+        public function getLevelsToCrawl()		{ return $this->mLevelsToCrawl; }
 
 	public function setID($val)						{ $this->mID = $val; }
 	public function setDescription($val)			{ $this->mDescription = $val; }
@@ -189,6 +194,7 @@ class LODSourceDefinition  {
 	public function setErrorMessagesFromLastImport($val){ $this->mErrorMessagesLastImport = $val; }
     public function setLastImportDate($val){ $this->mLastImportDate = $val; }
 	public function setPredicatesToCrawl(array $val){ $this->mPredicatesToCrawl = $val; }
+        public function setLevelsToCrawl($val){ $this->mLevelsToCrawl = $val; }
 	//--- Public methods ---
 	
 	
