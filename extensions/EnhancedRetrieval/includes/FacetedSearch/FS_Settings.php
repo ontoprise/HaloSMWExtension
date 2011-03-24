@@ -34,6 +34,10 @@ if ( !defined( 'MEDIAWIKI' ) ) {
 ##
 $fsgScriptPath = $wgScriptPath . '/extensions/EnhancedRetrieval';
 
+###
+# This is the installation path of the extension
+$fsgIP = $IP.'/extensions/EnhancedRetrieval';
+
 
 ###
 # This array configures the indexer that is used for faceted search. It has the
@@ -48,7 +52,6 @@ $fsgScriptPath = $wgScriptPath . '/extensions/EnhancedRetrieval';
 $fsgFacetedSearchConfig = array(
     'indexer' => 'SOLR',
     'source'  => 'SMWDB',
-//    'host'    => '127.0.0.1',
-    'host'    => '10.0.0.133',
+    'host'    => '127.0.0.1',
     'port'    => 8983
 );
