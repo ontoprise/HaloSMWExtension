@@ -52,6 +52,8 @@ QIHelper.prototype = {
 		this.propertyTypesList = new PropertyList();
 		this.specialQPParameters = new Array();
 		this.sortColumn = null;
+        this.DS_SELECTED = 0;
+        this.TPEE_SELECTED = 1;
         
         $('qistatus').innerHTML = gLanguage.getMessage('QI_START_CREATING_QUERY');
         if (! this.noTabSwitch) this.switchTab(1, true);
@@ -147,18 +149,21 @@ QIHelper.prototype = {
             $('qio_showmetadata').checked = null;
         if ( $('qio_showdatasource_div') )
             $('qio_showdatasource_div').style.display = "none";
-        this.resetSelection( $('qitpeeselector'), 0);
+        //this.resetSelection( $('qitpeeselector'), 0);
         this.updateSrcAndPreview();
+        // check if the TSC has been disabled or enabled and hide DS and TPEE box
+        if ($('usetriplestore').checked)
+            this.selectDsTpee(this.DS_SELECTED);
+        else
+            this.selectDsTpee(-1);
     },
 
     clickUseTsc : function () {
         if ($('usetriplestore')) {
             $('usetriplestore').checked="checked";
-            this.tpeeOrderSelection();
             this.updateSrcAndPreview();
         }
     },
-
     clickMetadata : function () {
 		if ( $('qio_showmetadata') && $('qio_showmetadata').checked )
             $('qio_showdatasource_div').style.display = "block";
@@ -174,6 +179,35 @@ QIHelper.prototype = {
                 $(div).style.display = '';
         }
         this.clickUseTsc();
+    },
+    selectDsTpee : function (val) {
+        // no datasources or trust policy in use
+        if (! ( $('qiTpeeSelected') && $('qiDsSelected') ) ) return;
+        if (! $('qiTpeeSelected') ) { // only datasources are in use
+            $('qiDsSelected').style.display = ( val == -1 ) ? 'none' : '';
+            return;
+        }
+        var radio = $('qioptioncontent').getElementsBySelector('[name="qiDsTpeeSelector"]');
+        if (val == this.TPEE_SELECTED) {
+            $('qiDsSelected').style.display = 'none';
+            $('qiTpeeSelected').style.display = '';
+            radio[1].checked = 'checked';
+            this.clickUseTsc();
+        }
+        else if (val == this.DS_SELECTED) {
+            $('qiDsSelected').style.display = '';
+            $('qiTpeeSelected').style.display = 'none';
+            radio[0].checked = 'checked';
+            this.clickUseTsc();
+        }
+        else {
+            $('qiDsSelected').style.display = 'none';
+            $('qiTpeeSelected').style.display = 'none';
+            radio[0].checked = null;
+            radio[1].checked = null;
+            $('usetriplestore').checked=null;
+            this.updateSrcAndPreview();
+        }
     },
     tpeeOrder : function (move) {
         var policy_id = '';
@@ -208,6 +242,7 @@ QIHelper.prototype = {
                 }
             }
         }
+        this.clickUseTsc(); // updates source and preview
     },
     tpeeOrderSelect : function (el) {
         var table = el.parentNode;
@@ -219,43 +254,6 @@ QIHelper.prototype = {
         el.className="qiTpeeSelected";
     },
     
-    tpeeOrderSelection : function () {
-        if (!$('qitpeeselector')) return; // no tpee active
-
-        // get selected datasources
-        var ds = [];
-        for (var i=0; i < $('qidatasourceselector').options.length; i++) {
-            if ($('qidatasourceselector').options[i].selected) {
-                ds.push($('qidatasourceselector').options[i].value);
-            }
-        }
-
-        for (var i = 0; i < $('qitpeeselector').options.length; i++) {
-            var c_ds = ds;
-            var par_order_id = 'qitpeeparamval_' + $('qitpeeselector').options[i].value + '_PAR_ORDER';
-            if ($(par_order_id) ) {
-                for (var j = 0; j < $(par_order_id).rows.length; j++) {
-                    if (! c_ds.inArray($(par_order_id).rows[j].cells[0].innerHTML)) {
-                        $(par_order_id).deleteRow(j);
-                        j--;
-                    } else {
-                        c_ds = c_ds.removeVal($(par_order_id).rows[j].cells[0].innerHTML);
-                    }
-                }
-                // add missing values to the tpee selection
-                if (c_ds.length > 0) {
-                    for (var k=0 ; k < c_ds.length; k++) {
-                        var row = $(par_order_id).insertRow(-1);
-                        var cell = row.insertCell(0);
-                        cell.setAttribute('onclick', 'qihelper.tpeeOrderSelect(this);');
-                        cell.innerHTML = c_ds[k];
-                    }
-                }
-            }
-        }
-
-    },
-
 	/**
 	 * Called whenever preview result printer needs to be updated.
      * This is only done, if the results are visible.
@@ -846,14 +844,17 @@ QIHelper.prototype = {
 		if ( $('usetriplestore') != null && $('usetriplestore').checked )
             args.push('source=tsc');
         var selectedDataSources = [];
-        var useTpeeOrder = false;
+        var selectorDsTpee = $('qioptioncontent').getElementsBySelector('[name="qiDsTpeeSelector"]');
         var dataSources = $('qidatasourceselector');
-        if (dataSources) {
+        if (selectorDsTpee && selectorDsTpee[0].checked || !selectorDsTpee && dataSources) {
             for (var i=0; i < dataSources.options.length; i++) {
                 if (dataSources.options[i].selected) {
                     selectedDataSources.push(dataSources.options[i].value);
                 }
             }
+            if (!(selectedDataSources.length == 1 &&
+                selectedDataSources[0] == '-Wiki-'))
+                args.push('dataspace=' + selectedDataSources.join(','));
         }
 		if ( $('qio_showrating') != null && $('qio_showrating').checked )
             args.push('enableRating=true');
@@ -865,10 +866,9 @@ QIHelper.prototype = {
             else
                 args.push('metadata=*');
         }
-        if ( $('qitpeeselector') ) {
+        if ( selectorDsTpee && selectorDsTpee[1].checked ) {
             var tpee = '';
-            // start with the first TPEE (0 = no policy)
-            for (var i=1; i < $('qitpeeselector').options.length; i++) {
+            for (var i=0; i < $('qitpeeselector').options.length; i++) {
                 if ($('qitpeeselector').options[i].selected) {
                     tpee = $('qitpeeselector').options[i].value;
                     args.push('policyid=' + tpee);
@@ -893,7 +893,6 @@ QIHelper.prototype = {
                                 vals.push("\\'" + table.rows[r].cells[0].innerHTML + "\\'");
                             }
                             if (vals.length > 0) {
-                                useTpeeOrder = true;
                                 val = '[' + vals.join(',') + ']';
                             }
                         }
@@ -904,15 +903,6 @@ QIHelper.prototype = {
                     args.push('policyparams={' + jsonParams.join(',') +'}');
                 }
             }
-        }
-        // if the TPEE is used and the order of the datasources is given in PAR_ORDER
-        // then remove the dataspace parameter
-        // if only the wiki data source is defined, we do not need this parameter,
-        // also do not add this parameter when the TPEE with PAR_ORDER parameter is used
-        if ( (!(selectedDataSources.length == 1 &&
-               selectedDataSources[0] == '-Wiki-')) &&
-               !useTpeeOrder && selectedDataSources.length > 0 ) {
-                args.push('dataspace=' + selectedDataSources.join(','));
         }
         // return now all parameters
         if (args.length > 0)
@@ -3178,7 +3168,7 @@ applyOptionParams : function(query) {
                     else {
                         var divId = 'qitpeeparams_'+$('qitpeeselector').options[s].value;
                         $('qitpeeselector').options[s].selected = null;
-                        if (s > 0) $(divId).style.display = 'none';
+                        $(divId).style.display = 'none';
                     }
                 }
                 $('qitpeeparams_'+tpeePolicyId).style.display = 'inline';
