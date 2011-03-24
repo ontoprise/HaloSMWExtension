@@ -124,6 +124,8 @@ class SMWQueryInterface extends SpecialPage {
         $useTS = "";
         $useLodDatasources = "";
         $useLodTrustpolicy = "";
+        $DS_SELECTED = 0;
+        $TPEE_SELECTED = 1;
 
    		if (defined('LOD_LINKEDDATA_VERSION')) { // LinkedData extension is installed
             $useLodDatasources = $this->getLodDatasources();
@@ -139,14 +141,27 @@ class SMWQueryInterface extends SpecialPage {
             strlen($useLodTrustpolicy) == 0 &&
             strlen($useTS) == 0) return "";
 
-        $tsn = TSNamespaces::getInstance();
-        $user_ns = $tsn->getNSPrefix(NS_USER);
+        if (strlen($useLodTrustpolicy) > 0 && strlen($useLodDatasources) > 0) {
+            // wiki graph and user namespace are needed for TPEE PAR_USER field for AC
+            $tsn = TSNamespaces::getInstance();
+            $user_ns = $tsn->getNSPrefix(NS_USER);
+
+            $DataSourceTpeeSelector = '&nbsp;&nbsp;&nbsp;'.
+                '<input type="radio" name="qiDsTpeeSelector" value="'.$DS_SELECTED.'" onchange="qihelper.selectDsTpee('.$DS_SELECTED.')" checked="checked"/>'.
+                wfMsg('smw_qi_dstpee_selector_'.$DS_SELECTED).
+                '<input type="radio" name="qiDsTpeeSelector" value="'.$TPEE_SELECTED.'" onchange="qihelper.selectDsTpee('.$TPEE_SELECTED.')"/>'.
+                wfMsg('smw_qi_dstpee_selector_'.$TPEE_SELECTED).
+                '<span id="qi_tsc_wikigraph" style="display:none">'.$smwgTripleStoreGraph.'</span>'.
+                '<span id="qi_tsc_userns" style="display:none">'.$user_ns.'</span>';
+
+        }
+        else $DataSourceTpeeSelector = '';
+
         $html = '<div id="qioptiontitle"><span onclick="qihelper.switchOption()" onmouseover="Tip(\'' . wfMsg('smw_qi_tt_option') . '\')"><a id="qioptiontitle-link" class="plusminus" href="javascript:void(0)"></a>' . wfMsg('smw_qi_section_option') . '</span></div>' .
                 '<div id="qioptionlayout">' .
                 '<div id="qioptioncontent" style="display:none">' .
-                '<span id="qi_tsc_wikigraph" style="display:none">'.$smwgTripleStoreGraph.'</span>'.
-                '<span id="qi_tsc_userns" style="display:none">'.$user_ns.'</span>'.
                 $useTS .
+                $DataSourceTpeeSelector .
                 $useLodDatasources .
                 $useLodTrustpolicy .
                 '</div>'.
@@ -384,7 +399,7 @@ class SMWQueryInterface extends SpecialPage {
             '<input type="checkbox" id="qio_showdatasource" onchange="qihelper.clickMetadata();" />' .
             wfMsg('smw_qi_showdatasource') . '<br/></div>' .
             '</td></tr></table>';
-        return $lodDatasources;
+        return '<div id="qiDsSelected">'.$lodDatasources.'</div>';
     }
     private function getLodTrustpolicy() {
         global $smwgHaloScriptPath;
@@ -393,8 +408,7 @@ class SMWQueryInterface extends SpecialPage {
         $is = count($policyIds);
 		if ($is > 0) {
             $paramText = '';
-            $text = '<select id="qitpeeselector" size="5" style="width:400px" onchange="qihelper.clickTpee();">'.
-                    '<option value="__NONE__" selected="selected">'.wfMsg('smw_qi_tpee_none').'</option>';
+            $text = '<select id="qitpeeselector" size="5" style="width:400px" onchange="qihelper.clickTpee();">';
             for ($i = 0; $i < $is; $i++) {
                 $policy = $tps->loadPolicy($policyIds[$i]);
                 $params = $policy->getParameters();
@@ -420,7 +434,8 @@ class SMWQueryInterface extends SpecialPage {
                 $text .= '<option value="'.$policyIds[$i].'">'.$policy->getDescription().'</option>';
             }
             $text .= '</select>';
-            return '<hr />'.wfMsg('smw_qi_tpee_header') .':<br/><table><tr><td>'.$text.'</td><td>'.$paramText.'</td></tr></table>';
+            return '<div id="qiTpeeSelected" style="display:none"><hr />'.wfMsg('smw_qi_tpee_header') .':<br/>'.
+                   '<table><tr><td>'.$text.'</td><td>'.$paramText.'</td></tr></table></div>';
         }
         
         return '';
@@ -433,7 +448,9 @@ class SMWQueryInterface extends SpecialPage {
         }
         if ($paramName == 'PAR_ORDER') {
             return '<div class="qitpeeparamval">'.
-                   '<table id="qitpeeparamval_'.$policyId.'_'.$paramName.'"></table>'.
+                   '<table id="qitpeeparamval_'.$policyId.'_'.$paramName.'">'.
+                   '<tr><td onclick="qihelper.tpeeOrderSelect(this);">PharmGKB</td></tr><tr><td onclick="qihelper.tpeeOrderSelect(this);">Uniprot</td></tr><tr><td onclick="qihelper.tpeeOrderSelect(this);">ABA</td></tr>'.
+                   '</table>'.
                    '</div>'.
                    '<span style="vertical-align: center">'.
                    '<img src="'.$smwgHaloScriptPath.'/skins/QueryInterface/images/up.png" alt="up" onclick="qihelper.tpeeOrder(\'up\');" />'.
