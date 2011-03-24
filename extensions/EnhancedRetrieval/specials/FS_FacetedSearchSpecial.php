@@ -101,9 +101,10 @@ class FSFacetedSearchSpecial extends SpecialPage {
         global $wgOut, $wgRequest, $wgLang,$wgUser;
 
 		$wgOut->addHTML($this->replaceLanguageStrings(self::SPECIAL_PAGE_HTML));
+		$this->addJSLanguageScripts();
 		
 		global $fsgScriptPath;
-            
+           
 		$wgOut->addScript("<script type=\"text/javascript\" src=\"". $fsgScriptPath .  "/scripts/ajax-solr/lib/core/Core.js\"></script>");        
 		$wgOut->addScript("<script type=\"text/javascript\" src=\"". $fsgScriptPath .  "/scripts/ajax-solr/lib/core/AbstractManager.js\"></script>");        
 		$wgOut->addScript("<script type=\"text/javascript\" src=\"". $fsgScriptPath .  "/scripts/ajax-solr/lib/core/AbstractManager.js\"></script>");        
@@ -180,6 +181,27 @@ class FSFacetedSearchSpecial extends SpecialPage {
 		return $text;
 	}
     
+	/**
+	 * Add appropriate JS language script
+	 */
+	function addJSLanguageScripts() {
+		global $fsgScriptPath, $fsgIP, $wgUser, $wgOut;
+		$path = '/scripts/FacetedSearch/Language/';
+		$wgOut->addScript("<script type=\"text/javascript\" src=\"". $fsgScriptPath . $path . "FS_Language.js\"></script>");        
+
+		$lng = $path . 'FS_Language';
+		if (isset($wgUser)) {
+			$lng .= ucfirst($wgUser->getOption('language')).'.js';
+			if (file_exists($fsgIP . $lng)) {
+				$wgOut->addScript("<script type=\"text/javascript\" src=\"". $fsgScriptPath . $lng."\"></script>");        
+			} else {
+				$wgOut->addScript("<script type=\"text/javascript\" src=\"". $fsgScriptPath . $path . "FS_LanguageEn.js\"></script>");        
+			}
+		} else {
+			$wgOut->addScript("<script type=\"text/javascript\" src=\"". $fsgScriptPath . $path . "FS_LanguageEn.js\"></script>");        
+		}
+
+	}
 
 }
 
