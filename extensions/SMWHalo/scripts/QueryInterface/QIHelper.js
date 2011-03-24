@@ -172,7 +172,7 @@ QIHelper.prototype = {
         this.clickUseTsc();
     },
     clickTpee : function () {
-        for ( var i = 1; i < $('qitpeeselector').options.length; i++ ) {
+        for ( var i = 0; i < $('qitpeeselector').options.length; i++ ) {
             var div = 'qitpeeparams_' + $('qitpeeselector').options[i].value;
             $(div).style.display = 'none';
             if ($('qitpeeselector').options[i].selected)
