@@ -138,6 +138,7 @@
 	 * 		The article given as SOLR document
 	 */
 	AjaxSolr.theme.prototype.data = function (doc) {
+		var lang = FacetedSearch.singleton.Language;
 
 		var output = '';
 		var attr  = doc[FS_ATTRIBUTES] || [];
@@ -146,21 +147,27 @@
 		
 		if (typeof cats !== 'undefined') {
 			// Show CAT_MAX categories
-			output += '<div class="xfsResultCategory"><p>is in category: ';
+			output += 
+				'<div class="xfsResultCategory">' +
+				'<p>'+ lang.getMessage('inCategory') +': ';
 			var count = Math.min(cats.length, CAT_MAX);
 			var vals = [];
 			for ( var i = 0; i < count; i++) {
-				vals.push('<a href="' + getLink(NS_CAT_ID, cats[i]) + '">' + noUnderscore(cats[i]) + '</a>');
+				vals.push('<a href="' + getLink(NS_CAT_ID, cats[i]) + '">' 
+				          + noUnderscore(cats[i]) 
+						  + '</a>');
 			}
 			output += vals.join(CAT_SEP);
 			if (count < cats.length) {
 				vals = [];
 				for (var i=count; i<cats.length; i++) {
-					vals.push('<a href="' + getLink(NS_CAT_ID, cats[i]) + '">' + noUnderscore(cats[i]) + '</a>');
+					vals.push('<a href="' + getLink(NS_CAT_ID, cats[i]) + '">' 
+					          + noUnderscore(cats[i]) 
+							  + '</a>');
 				}
 				output += CAT_SEP;
 				output += '<span class="xfsToggle" style="display: none">' + vals.join(CAT_SEP) + '</span>';
-				output += ' (<a class="xfsMore">more</a>)';
+				output += ' (<a class="xfsMore">'+lang.getMessage('more')+'</a>)';
 			}
 			output += '</p></div>';
 		}
@@ -169,7 +176,8 @@
 			// Properties or attributes are present 
 			// => add a table header
 			output += '<div class="xfsResultTable">' +
-				'has properties: (<a class="xfsShow">show</a>)' + 
+				lang.getMessage('hasProperties') + 
+				': (<a class="xfsShow">'+ lang.getMessage('show') +'</a>)' + 
 				'<table>';
 		}
 		var row = 0;
@@ -228,7 +236,7 @@
 		if (doc[MOD_ATT]) {
 			output += 
 				'<div class="xfsResultModified">' + 
-					'<p>Last changed: ' + 
+					'<p>'+ lang.getMessage('lastChange') +': ' + 
 						String(doc[MOD_ATT])
 							.replace('T', ' ')
 							.substring(0, 16) + 
@@ -258,10 +266,16 @@
 	 */
 	AjaxSolr.theme.prototype.facet = function(facet, count, handler, showPropertyDetailsHandler, isRemove) {
 		var html;
+		var lang = FacetedSearch.singleton.Language;
+		
 		if (isRemove) {
 			html = $('<span>')
 				.append(extractPlainName(facet))
-				.append($('<img src="' + wgScriptPath + '/extensions/SMWHalo/skins/QueryInterface/images/delete.png" title="Remove filter"/>').click(handler));
+				.append($('<img src="' 
+				          + wgScriptPath 
+						  + '/extensions/SMWHalo/skins/QueryInterface/images/delete.png" '
+						  + 'title="'+ lang.getMessage('removeFilter') +'"/>')
+				.click(handler));
 		} else {
 			html = $('<span>')
 				.append($('<a href="#">' + extractPlainName(facet) + '</a>').click(handler))
@@ -284,10 +298,14 @@
 				$('#' + img2ID).toggle();
 			};
 			var img1 = 
-				$('<img src="'+ path + 'right.png" title="Show details" id="'+img1ID+'"/>')
+				$('<img src="'+ path + 'right.png" ' +
+				  'title="'+ lang.getMessage('showDetails') +
+				  '" id="'+img1ID+'"/>')
 				.click(toggleFunc);
 			var img2 = 
-				$('<img src="'+ path + 'down.png" title="Hide details" style="display:none" id="'+img2ID+'"/>')
+				$('<img src="'+ path + 'down.png" ' +
+				  'title="'+ lang.getMessage('hideDetails') +
+				  '" style="display:none" id="'+img2ID+'"/>')
 				.click(toggleFunc);
 			html = img1.add(img2).add(html);
 			html = html.add($('<div id="' + divID + '" style="display:none"></div>'));
@@ -306,21 +324,46 @@
 	AjaxSolr.theme.prototype.facet_link = function(value, handler) {
 		return $('<a href="#"/>'+ value + '</a>').click(handler);
 	};
+	
+	AjaxSolr.theme.prototype.moreLessLink = function() {
+		var lang = FacetedSearch.singleton.Language;
+		
+		var html =  
+			'<a class="xfsFMore">' +
+				lang.getMessage('more') +
+			'</a>' +
+			'<span style="display: none">' +
+			' &#124; ' + 
+			'</span>' +
+			'<a class="xfsFLess" style="display: none">' +
+				lang.getMessage('less') +
+			'</a>' +
+			'<br/>';
+			
+		return html;
+	};
 
 	AjaxSolr.theme.prototype.no_items_found = function() {
 		return 'no items found in current selection';
 	};
 
 	AjaxSolr.theme.prototype.no_facet_filter_set = function() {
-		return $('<div class="xfsMinor">').text('(no facet filter set)');
+		var lang = FacetedSearch.singleton.Language;
+		return $('<div class="xfsMinor">').text(lang.getMessage('noFacetFilter'));
 	};
 	
 	AjaxSolr.theme.prototype.remove_all_filters = function(handler) {
-		return $('<a href="#"/>').text('remove all').click(handler);
+		var lang = FacetedSearch.singleton.Language;
+		return $('<a href="#"/>')
+				.text(lang.getMessage('removeAllFilters'))
+				.click(handler);
 	};
 	
 	AjaxSolr.theme.prototype.cluster_remove_range_filter = function(handler) {
-		return $('<a href="#" class="xfsClusterEntry"/>').text('remove range').click(handler);
+		var lang = FacetedSearch.singleton.Language;
+		return $('<a href="#" class="xfsClusterEntry"/>')
+				.text(lang.getMessage('removeRestriction'))
+				.click(handler);
 	};
 	
 	AjaxSolr.theme.prototype.filter_debug = function(filters) {

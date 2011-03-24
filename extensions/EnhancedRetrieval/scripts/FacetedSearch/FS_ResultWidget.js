@@ -29,11 +29,10 @@ if (typeof FacetedSearch == "undefined") {
 }
 
 FacetedSearch.classes.ResultWidget = AjaxSolr.AbstractWidget.extend({
-	
-	
+		
 	beforeRequest: function () {
 		var $ = jQuery;
-		$(this.target).html($('<img/>').attr('src', 'images/ajax-loader.gif'));
+//		$(this.target).html($('<img/>').attr('src', 'images/ajax-loader.gif'));
 	},
 
 	facetLinks: function (facet_field, facet_values) {
@@ -66,24 +65,25 @@ FacetedSearch.classes.ResultWidget = AjaxSolr.AbstractWidget.extend({
 	},
 
 	init: function () {
+		var lang = FacetedSearch.singleton.Language;
 		var $ = jQuery;
 		$('a.xfsMore').live('click', function() {
 			if ($(this).prev('span.xfsToggle').is(':visible')) {
 				$(this).prev('span.xfsToggle').hide();
-				$(this).text('more');
+				$(this).text(lang.getMessage('more'));
 			} else {
 				$(this).prev('span.xfsToggle').show();
-				$(this).text('less');
+				$(this).text(lang.getMessage('less'));
 			}
 			return false;
 		});
 		$('a.xfsShow').live('click', function() {
 			if ($(this).next('table').is(':visible')) {
 				$(this).next('table').hide();
-				$(this).text('show');
+				$(this).text(lang.getMessage('show'));
 			} else {
 				$(this).next('table').show();
-				$(this).text('hide');
+				$(this).text(lang.getMessage('hide'));
 			}
 			return false;
 		});

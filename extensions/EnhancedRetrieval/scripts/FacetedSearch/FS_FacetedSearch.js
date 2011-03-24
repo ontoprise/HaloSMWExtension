@@ -104,18 +104,21 @@ FacetedSearch.classes.FacetedSearch = function () {
 		}));
 
 		// paging
+		var lang = FacetedSearch.singleton.Language;
+
 		mAjaxSolrManager.addWidget(new AjaxSolr.PagerWidget({
 			id : 'pager',
 			target : '#pager',
-			prevLabel : '&lt; Previous',
-			nextLabel : 'Next &gt;',
+			prevLabel : lang.getMessage('pagerPrevious'),
+			nextLabel : lang.getMessage('pagerNext'),
 			renderHeader : function(perPage, offset, total) {
 				$('#pager-header').html(
 						$('<span/>').text(
-								'Result ' + Math.min(total, offset + 1)
-										+ ' to '
-										+ Math.min(total, offset + perPage)
-										+ ' of ' + total));
+								lang.getMessage('results') + ' ' 
+								+ Math.min(total, offset + 1)
+								+ ' ' + lang.getMessage('to') + ' '
+								+ Math.min(total, offset + perPage)
+								+ ' '+ lang.getMessage('of') + ' ' + total));
 			}
 		}));
 		
@@ -191,6 +194,8 @@ FacetedSearch.classes.FacetedSearch = function () {
 }
 
 jQuery(document).ready(function() {
-	FacetedSearch.singleton = {};
+	if (!FacetedSearch.singleton) {
+		FacetedSearch.singleton = {};
+	}
 	FacetedSearch.singleton.FacetedSearchInstance = FacetedSearch.classes.FacetedSearch();
 });
