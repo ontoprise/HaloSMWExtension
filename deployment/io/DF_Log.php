@@ -52,8 +52,7 @@ class Logger {
 		$homeDir = Tools::getHomeDir();
 		$this->logDir = "$homeDir/df_log";
 		Tools::mkpath($this->logDir);
-		$currentDate = $this->createDateForFileName();
-		$this->logFileHandle = fopen($this->logDir."/log_$currentDate", "w");
+		$this->logFileHandle = fopen($this->logDir."/df.log", "a");
 	}
 
 	/**
@@ -106,12 +105,12 @@ class Logger {
 		fclose($this->logFileHandle);
 	}
 
-	private function createDateForFileName() {
+	/*private function createDateForFileName() {
 		$currentDate = date(DATE_RSS);
 		$currentDate = str_replace(",","_",$currentDate);
 		$currentDate = str_replace(" ","_",$currentDate);
 		$currentDate = str_replace(":","_",$currentDate);
 		$currentDate = str_replace("+","_",$currentDate);
 		return $currentDate;
-	}
+	}*/
 }
