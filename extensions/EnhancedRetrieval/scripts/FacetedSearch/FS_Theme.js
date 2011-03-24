@@ -168,7 +168,9 @@
 		if (props.length + attr.length > 0) {
 			// Properties or attributes are present 
 			// => add a table header
-			output += '<div class="xfsResultTable">has properties: (<a class="xfsShow">show</a>)<table>';
+			output += '<div class="xfsResultTable">' +
+				'has properties: (<a class="xfsShow">show</a>)' + 
+				'<table>';
 		}
 		var row = 0;
 		
@@ -224,7 +226,14 @@
 		}
 		
 		if (doc[MOD_ATT]) {
-			output += '<div class="xfsResultModified"><p>Last changed: ' + String(doc[MOD_ATT]).replace('T', ' ').substring(0, 16) + '</p></div>';
+			output += 
+				'<div class="xfsResultModified">' + 
+					'<p>Last changed: ' + 
+						String(doc[MOD_ATT])
+							.replace('T', ' ')
+							.substring(0, 16) + 
+					'</p>' + 
+				'</div>';
 		}
 		
 		return output;
