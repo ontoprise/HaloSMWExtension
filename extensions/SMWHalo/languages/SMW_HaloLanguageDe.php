@@ -314,6 +314,8 @@ protected $smwUserMessages = array(
     'smw_qi_loader_qpage' => 'aus Artikel',
     'smw_qi_tpee_header' => 'W&auml;hle trust policy f&uuml;r die Query Ergebnisse',
     'smw_qi_tpee_none' => 'keine trust policy verwenden',
+    'smw_qi_dstpee_selector_0' => 'W&auml;hle Datenquellen',
+    'smw_qi_dstpee_selector_1' => 'W&auml;hle Trust Policy',
 
 	/*Tooltips for Query Interface*/
 	'smw_qi_tt_addCategory' => 'Indem man eine Kategorie hinzuf&uuml;gt, werden nur Artikel aus dieser Kategorie ber&uuml;cksichtigt',

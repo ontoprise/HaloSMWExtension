@@ -316,6 +316,8 @@ clicking the big arrows between the columns.',
     'smw_qi_loader_qpage' => 'Used in article',
     'smw_qi_tpee_header' => 'Select trust policy for your query results',
     'smw_qi_tpee_none' => 'Don\'t use any trust policy',
+    'smw_qi_dstpee_selector_0' => 'Select from Datasource',
+    'smw_qi_dstpee_selector_1' => 'Select by Trust Policy',
 
 	/*Tooltips for Query Interface*/
 	'smw_qi_tt_addCategory' => 'By adding a category, only articles of this category are included',
