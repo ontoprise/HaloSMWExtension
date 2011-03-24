@@ -29,7 +29,7 @@ class LODMappingsPage extends SpecialPage {
 		/* jQuery UI */
 		"lib/jquery-ui-1.8.11.custom.min.js",
 
-		/* rdfQuery UI */
+		/* rdfQuery */
 		"lib/jquery.curie.js",
 		"lib/jquery.uri.js",
 		"lib/jquery.datatype.js",
@@ -39,11 +39,14 @@ class LODMappingsPage extends SpecialPage {
 		"lib/jquery.rdf.turtle.js",
 		"lib/jquery.rdf.xml.js",
 
-		/* R2Redit */
+		/* other libs */
 		"lib/jquery.inherit-1.3.2.js",
 		"lib/jquery.qtip-1.0.0-rc3.min.js",
 		"lib/jquery.treeview.js",
 		"lib/jquery.treeview.edit.js",
+		"lib/jquery.placeholder.js",
+
+		/* R2Redit */
 		"js/r2redit.util.js",
 		"js/r2redit.env.js",
 		"js/r2redit.ui.js",

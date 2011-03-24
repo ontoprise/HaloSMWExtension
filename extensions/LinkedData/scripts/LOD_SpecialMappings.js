@@ -41,6 +41,7 @@
 				title: title,
 				sourceUrl: base.serviceUrl + "?action=ajax&rs=lodGetR2RMapping&rsargs%5B%5D=" + escape(mapping.mappingUri),
 				serialize: true,
+				basePath: wgScriptPath + "/extensions/LinkedData/libs/R2Redit/",
 				onCommit: function(data) {
 					base.updateMapping(base.currentMapping, data, false);
 				}
@@ -164,7 +165,10 @@
 											.appendTo(base.editorButtonPane);
 											
 						var overviewTableBody = base.overviewTable.find("tbody");
-						$.each(data, function(key, mapping) {
+						var mappingUris = [];
+						$.each(data, function(k){ mappingUris.push(k) });
+						$(mappingUris).sort().each(function(index,uri) {
+							var mapping = data[uri];
 							$("<tr></tr>")
 								/* ID */
 								.append(
