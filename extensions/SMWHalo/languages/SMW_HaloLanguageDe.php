@@ -426,6 +426,32 @@ protected $smwUserMessages = array(
 
 	//Querylist Special Page
 	'querylist' => "Gespeicherte Queries",
+
+	//tabular forms
+	'tabf_load_msg' => "Tabular forms wird geladen.",
+
+	'tabf_add_label' => "instanz hinzufügen",
+	'tabf_refresh_label' => "Aktualisieren",
+	'tabf_save_label' => "Änderungen übernehmen",
+	
+	'tabf_status_unchanged' => "Diese Instanz wurde noch nicht editiert.",
+	'tabf_status_notexist_create' => "Diese Instanz existiert noch nicht und wird erzeugt.",
+	'tabf_status_notexist' => "Diese Instanz existiert nicht.",
+	'tabf_status_readprotected' => "Diese Instanz ist lesegeschützt.",
+	'tabf_status_writeprotected' => "Diese Instanz ist schreibgeschützt.",
+	'tabf_status_delete' => "Diese Instanz wird gelöscht.",
+	'tabf_status_modified' => "Diese Instanz wirde geändert.",
+	'tabf_status_saved' => "Diese Instanz wurde erfolgreich gespeichert.",
+	'tabf_status_pending' => "Änderungen werden übernommen.",
+	
+	'tabf_response_deleted' => "Diese Instanz wurde in der Zwischenzeit gelöscht.",
+	'tabf_response_modified' => "Diese Instanz wurde in der Zwischenzeit geändert.",
+	'tabf_response_readprotected' => "Diese Instanz wurde in der Zwischenzeit lesegeschützt.",
+	'tabf_response_writeprotected' => "Diese Instanz wurde in der Zwischenzeit schreibgeschützt.",
+	'tabf_response_invalidname' => "Diese Instanz hat einen ungültigen Namen.",
+	'tabf_response_created' => "Diese Instanz wurde in der Zwischenzeit erstellt.",
+	'tabf_response_nocreatepermission' => "Sie besitzen nicht das Recht, diese Instanz zu erzeugen.",
+	'tabf_response_nodeletepermission' => "Sie besitzen nicht das Recht, diese Instanz zu löschen.",
 	
 );
 
