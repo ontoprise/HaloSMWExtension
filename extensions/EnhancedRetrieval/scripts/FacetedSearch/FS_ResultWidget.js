@@ -68,26 +68,24 @@ FacetedSearch.classes.ResultWidget = AjaxSolr.AbstractWidget.extend({
 	init: function () {
 		var $ = jQuery;
 		$('a.xfsMore').live('click', function() {
-			$(this).toggle(function() {
-				$(this).prev('span.xfsToggle').show();
-				$(this).text('less');
-				return false;
-			}, function() {
+			if ($(this).prev('span.xfsToggle').is(':visible')) {
 				$(this).prev('span.xfsToggle').hide();
 				$(this).text('more');
-				return false;
-			});
+			} else {
+				$(this).prev('span.xfsToggle').show();
+				$(this).text('less');
+			}
+			return false;
 		});
 		$('a.xfsShow').live('click', function() {
-			$(this).toggle(function() {
-				$(this).next('table').show();
-				$(this).text('hide');
-				return false;
-			}, function() {
+			if ($(this).next('table').is(':visible')) {
 				$(this).next('table').hide();
 				$(this).text('show');
-				return false;
-			});
+			} else {
+				$(this).next('table').show();
+				$(this).text('hide');
+			}
+			return false;
 		});
 	}
 });
