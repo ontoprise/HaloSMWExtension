@@ -434,6 +434,32 @@ clicking the big arrows between the columns.',
 	
 	//Querylist Special Page
 	'querylist' => "Saved Queries",
+	
+	//Tabular forms
+	'tabf_load_msg' => "Tabular forms is loading.",
+
+	'tabf_add_label' => "Add instance",
+	'tabf_refresh_label' => "Refresh",
+	'tabf_save_label' => "Apply changes",
+	
+	'tabf_status_unchanged' => "This instance has not yet been modified.",
+	'tabf_status_notexist_create' => "This instance does not exist. It will be created.",
+	'tabf_status_notexist' => "This instance does not exist.",
+	'tabf_status_readprotected' => "This instance is read protected.",
+	'tabf_status_writeprotected' => "This instance is write protected.",
+	'tabf_status_delete' => "This instance will be deleted.",
+	'tabf_status_modified' => "This instance has been modified.",
+	'tabf_status_saved' => "This instance has been saved successfully.",
+	'tabf_status_pending' => "Applying changes.",
+	
+	'tabf_response_deleted' => "This instance has been deleted in the meantime.",
+	'tabf_response_modified' => "This instance has been modified in the meantime.",
+	'tabf_response_readprotected' => "This instance has been made read-protected in the meantime.",
+	'tabf_response_writeprotected' => "This instance has been made write-protected in the meantime.",
+	'tabf_response_invalidname' => "This instance has an invalid name.",
+	'tabf_response_created' => "This instance has been created in the meantime.",
+	'tabf_response_nocreatepermission' => "You do not have the permission to create this instance.",
+	'tabf_response_nodeletepermission' => "You do not have the permission to delete this instance.",
 	);
 
 

@@ -11,7 +11,7 @@ class TFTabularFormQueryPrinter extends SMWResultPrinter {
 	public function getName() {
 		return 'Tabular Form';
 	}
-
+	
 	/*
 	 * Returns the HTML output of this query printer
 	 */
@@ -109,10 +109,9 @@ class TFTabularFormData {
 		
 		$html .= '<div id="tabf_container_'.$tfgTabularFormCount.'" class="tabf_container">';
 		
-		//todo:LANGUAGE
 		global $smwgHaloScriptPath;
 		$html .= '<div class="tabf_loader">';
-		$html .= 'Tabular form is loading'.' ';
+		$html .= wfMsg('zabf_load_msg');
 		$html .= '<img title="Loading Tabular Form" src="'.$smwgHaloScriptPath.'/skins/TabularForms/Pending.gif"></img>';
 		$html .= '</div>';
 		
@@ -392,12 +391,10 @@ class TFTabularFormData {
 			$colSpan += count($parameters);
 		}
 		
-		//todo:LANGUAGE
 		$html .= '<td colspan="'.$colSpan.'">';
 		
 		if ( $this->hasFurtherResults){
 			$link = $this->queryResult->getQueryLink();
-			
 			$link->setParameter('tabularform', 'format');
 			
 			//add template parameter printrequests
@@ -410,14 +407,12 @@ class TFTabularFormData {
 			$html .= '<span class="tabf_further_results" width="100%">'.$link->getText( $this->outputMode, $this->linker).'</span>';
 		}
 		
-		//todo:LANGUAGE
-		
 		if($this->enableInstanceAdd){
-			$html .= '<input class="tabf_add_button" type="button" value="Add instance" onclick="tf.addInstance('."'".$tabularFormId."'".')"/>';
+			$html .= '<input class="tabf_add_button" type="button" value="'.wfmsg('tabf_add_label').'" onclick="tf.addInstance('."'".$tabularFormId."'".')"/>';
 		}
 		
-		$html .= '<input type="button" value="Refresh" onclick="tf.refreshForm('."'".$tabularFormId."'".')"/>';
-		$html .= '<input class="tabf_save_button" style="display:none" type="button" value="Save" onclick="tf.saveFormData(event,'."'".$tabularFormId."'".')"/>';
+		$html .= '<input type="button" value="'.wfMsg('tabf_refresh_label').'" onclick="tf.refreshForm('."'".$tabularFormId."'".')"/>';
+		$html .= '<input class="tabf_save_button" style="display:none" type="button" value="'.wfMsg('tabf_save_label').'" onclick="tf.saveFormData(event,'."'".$tabularFormId."'".')"/>';
 		$html .= '</td>';
 		
 		$html .= '</tr>';
@@ -876,36 +871,35 @@ class TFTabularFormRowData {
 				
 		$html = '';
 		
-		//todo: LANGUAGE
-		$title = 'Not yet modified.';
+		$title = wfMsg('tabf_status_unchanged');
 		$html .= '<img class="tabf_ok_status" title="'.$title.'" style="display: '.$okDisplay.'" src="'.
 			$smwgHaloScriptPath.'/skins/TabularForms/Unmodified.png"></img>';
 		
-		$title = 'Instance does not exist and will be created.';
+		$title = wfMsg('tabf_status_notexist_create');
 		$html .= '<img class="tabf_added_status" title="'.$title.'" style="display: '.$addedDisplay.'" src="'
 			.$smwgHaloScriptPath.'/skins/TabularForms/Added.png"></img>';
 		
-		$title = 'Instance does not exist.';
+		$title = wfMsg('tabf_status_notexist');
 		$html .= '<img class="tabf_exists_not_status" title="'.$title.'" style="display: '.$notExistsDisplay.'" src="'
 			.$smwgHaloScriptPath.'/skins/TabularForms/Warning.png"></img>';
 		
-		$title = 'Instance is read protected.';
+		$title = wfMsg('tabf_status_readprotected');
 		$html .= '<img class="tabf_exists_not_status" title="'.$title.'" style="display: '.$readProtectedDisplay.'" src="'
 			.$smwgHaloScriptPath.'/skins/TabularForms/Warning.png"></img>';
 
-		$title = 'Instance is write protected.';
+		$title = wfMsg('tabf_status_writeprotected');
 		$html .= '<img class="tabf_exists_not_status" title="'.$title.'" style="display: '.$writeProtectedDisplay.'" src="'
 			.$smwgHaloScriptPath.'/skins/TabularForms/Warning.png"></img>';
 			
-		$title = "Instance will be deleted.";	
+		$title = wfMsg('tabf_status_delete');	
 		$html .= '<img class="tabf_deleted_status" title="'.$title.'" style="display: none" src="'
 			.$smwgHaloScriptPath.'/skins/TabularForms/Deleted.png"></img>';
 		
-		$title = 'Instance has been modified.';
+		$title = wfMsg('tabf_status_modified');
 		$html .= '<img class="tabf_modified_status" title="'.$title.'" style="display: none" src="'
 			.$smwgHaloScriptPath.'/skins/TabularForms/Modified.png"></img>';
 		
-		$title = 'Instance has been saved successfully.';
+		$title = wfMsg('tabf_status_saved');
 		$html .= '<img class="tabf_saved_status" title="'.$title.'" style="display: none" src="'
 			.$smwgHaloScriptPath.'/skins/TabularForms/Saved.png"></img>';
 		
@@ -913,7 +907,7 @@ class TFTabularFormRowData {
 		$html .= '<img class="tabf_error_status" title="'.$title.'" style="display: none" src="'
 			.$smwgHaloScriptPath.'/skins/TabularForms/Error.png"></img>';
 		
-		$title = 'Updating instance.';
+		$title = wfMsg('tabf_status_pending');
 		$html .= '<img class="tabf_pending_status" title="'.$title.'" style="display: none" src="'
 			.$smwgHaloScriptPath.'/skins/TabularForms/Pending.gif"></img>';
 	

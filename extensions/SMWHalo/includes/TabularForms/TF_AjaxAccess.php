@@ -23,7 +23,7 @@ function tff_getTabularForm($querySerialization, $isSPARQL, $tabularFormId){
 		SMWSPARQLQueryProcessor::processFunctionParams( 
 			$querySerialization, $queryString, $queryParams, $printRequests);
 		
-		//todo: avoid this
+		//Replace strange encoding
 		$queryString = str_replace('&nbsp;', ' ', $queryString);	
 			
 		$queryParams[TF_SHOW_AJAX_LOADER_HTML_PARAM] = 'false';
@@ -86,7 +86,6 @@ function tff_updateInstanceData($updates, $articleTitle, $revisionId, $rowNr, $t
 	
 	$title = Title::newFromText($articleTitle);
 	
-	//todo: add meaningful error messages
 	if($revisionId == '-1'){
 		//add instance
 		$result = TFDataAPIAccess::getInstance($title)->createInstance($annotations, $parameters);
@@ -142,15 +141,20 @@ function tff_checkArticleName($articleName, $rowNr, $tabularFormId){
  */
 function tff_deleteInstance($articleTitle, $revisionId, $rowNr, $tabularFormId){
 	
-	//todo: add meaningful error messages
-	
 	//Make sure that updates are stored in the TSC
 	define('SMWH_FORCE_TS_UPDATE', 'TRUE');
 	
 	$title = Title::newFromText($articleTitle);
 	$result = TFDataAPIAccess::getInstance($title)->deleteInstance($revisionId);
+
+	if(is_string($result)){
+		$msg = $result;
+		$result = false;
+	} else {
+		$msg = '';
+	}
 	
-	$result = array('success' => $result, 'rowNr' => $rowNr, 'tabularFormId' => $tabularFormId, $revisionId);
+	$result = array('success' => $result, 'rowNr' => $rowNr, 'msg' => $msg, 'tabularFormId' => $tabularFormId, $revisionId);
 	$result = json_encode($result);
 	
 	return '--##starttf##--' . $result . '--##endtf##--';

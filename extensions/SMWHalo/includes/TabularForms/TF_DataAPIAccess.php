@@ -46,8 +46,6 @@ class TFDataAPIACCESS {
 		 */
 		private function initialize(){
 			
-			//todo:think about when and where to initialize POM. LocalSettings is not good.
-			
 			$this->article = null;
 			
 			//update access rights information
@@ -127,6 +125,7 @@ class TFDataAPIACCESS {
 						}
 					} 
 				} else if ($element instanceof POMBuiltInParserFunction){
+					//todo: deal with delimiters
 					if(strpos($element->nodeText, '{{CreateSilentAnnotations:') === 0){
 						$silents = trim(substr($element->nodeText, strlen('{{CreateSilentAnnotations:')));
 						$silents = substr($silents, 0, strlen($silents)-2);
@@ -199,23 +198,22 @@ class TFDataAPIACCESS {
 		 */
 		public function updateValues($annotations, $parameters, $revisionId){
 		
-			//todo: annotation labels
+			//todo: deal with delimiters
 			
-			//todo: LANGUAGE
 			if(is_null($this->title) || !$this->title->exists()){
-				return 'This instance has been deleted in the meantime.'; 
+				return wfMsg('tabf_response_deleted'); 
 			}
 			
 			if($this->getRevisionId() != $revisionId){
-				return 'This instance has been edited in the meantime.';
+				return wfMsg('tabf_response_modified');
 			}
 			
 			if($this->isReadProtected){
-				return 'This instance has been made read-protected in the meantime.';
+				return wfMsg('tabf_response_readprotected');
 			}
 			
 			if($this->isWriteProtected){
-				return 'This instance has been made write-protected in the meantime.';
+				return wfMsg('tabf_response_writeprotected');
 			}
 			
 			$elements = $this->pomPage->getElements()->listIterator(); 
@@ -225,10 +223,17 @@ class TFDataAPIACCESS {
 				
 				if($element instanceof POMProperty){
 					if(!is_null($newValue = $annotations->getNewValue($element->name, $element->value))){
+						file_put_contents('d://xyz.rtf', print_r($element, true));
 						if(strlen($newValue) == 0){
 							$this->pomPage->delete($element);
 						} else {
 							$element->value = $newValue;
+							
+							//replace label if a visible lable was originally defined
+							if(is_string($element->representation) && strlen($element->representation) > 0 
+								&& $element->representation != ' '){
+								$element->representation = $newValue;
+							}
 						}
 					}
 				} else if($element instanceof POMCategory){
@@ -355,10 +360,18 @@ class TFDataAPIACCESS {
 	 */
 	public function createInstance($annotations, $parameters){
 		
-		//todo: deal with acls
+		//todo: Language
 		
-		if(is_null($this->title) || $this->title->exists()){
-			return false; 
+		if(is_null($this->title)){
+			return wfMsg('tabf_response_invalidname'); 
+		}
+		
+		if($this->title->exists()){
+			return wfMsg('tabf_response_created');
+		}
+		
+		if(!$this->title->userCan('createpage')){
+			return wfMsg('tabf_response_nocreatepermission');
 		}
 		
 		$text = '';
@@ -394,15 +407,17 @@ class TFDataAPIACCESS {
 	 */
 	public function deleteInstance($revisionId){
 		
-		//todo: Deal with ACLS
-		
 		if(is_null($this->title) || !$this->title->exists()){
 			return true; 
 		}
 		
 		if($this->getRevisionId() != $revisionId){
-			return false;
-		}	
+			return wfMsg('tabf_response_modified');
+		}
+
+		if(!$this->title->userCan('delete')){
+			return wfMsg('tabf_response_nodeletepermission');
+		}
 		
 		$this->article->doDelete('tabular forms');
 		
