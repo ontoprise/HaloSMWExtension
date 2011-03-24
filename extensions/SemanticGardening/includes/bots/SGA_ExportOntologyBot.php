@@ -118,7 +118,7 @@ class ExportOntologyBot extends GardeningBot {
 		$domainRangeProperty = smwfGetStore()->getPropertyValues($domainRangeTitle, SMWPropertyValue::makeProperty("_TYPE"));
 		$domainRangeProperty = reset($domainRangeProperty);
 		$typeValue = $domainRangeProperty !== false ? reset($domainRangeProperty->getTypeValues()) : NULL;
-		$type = $typeValue !== false ? reset($typeValue->getDBkeys()) : NULL;
+		$type = $typeValue !== false && !is_null($typeValue) ? reset($typeValue->getDBkeys()) : NULL;
 		if ($type != '_rec') {
 			global $smwgHaloContLang;
 			$ssp = $smwgHaloContLang->getSpecialSchemaPropertyArray();
