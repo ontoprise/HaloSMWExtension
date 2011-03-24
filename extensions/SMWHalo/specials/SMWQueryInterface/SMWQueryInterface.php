@@ -20,6 +20,7 @@ require_once( "SMW_QIAjaxAccess.php" );
  */
 class SMWQueryInterface extends SpecialPage {
     private $imagepath;     // image path for all QI icons
+    private $datasources;
     
 	public function __construct() {
 		parent::__construct('QueryInterface');
@@ -371,6 +372,7 @@ class SMWQueryInterface extends SpecialPage {
 	}
 
     private function getLodDatasources() {
+        $this->datasources = array();
         $sourceOptions = '<option selected="selected">-Wiki-</option>'; // default fist option is the wiki itself
         $lodDatasources = '<hr />'.wfMsg('smw_qi_datasource_select_header') . ':';
 		// Check if the triples store is propertly connected.
@@ -381,6 +383,7 @@ class SMWQueryInterface extends SpecialPage {
         else {
             $ids = LODAdministrationStore::getInstance()->getAllSourceDefinitionIDs();
             foreach ($ids as $sourceID) {
+                $this->datasources[] = $sourceID;
                 $sourceOptions .= "<option>$sourceID</option>";
         	}
         }
@@ -447,15 +450,18 @@ class SMWQueryInterface extends SpecialPage {
                    'class="wickEnabled" constraints="namespace: 2" autocomplete="OFF"/>';
         }
         if ($paramName == 'PAR_ORDER') {
-            return '<div class="qitpeeparamval">'.
-                   '<table id="qitpeeparamval_'.$policyId.'_'.$paramName.'">'.
-                   '<tr><td onclick="qihelper.tpeeOrderSelect(this);">PharmGKB</td></tr><tr><td onclick="qihelper.tpeeOrderSelect(this);">Uniprot</td></tr><tr><td onclick="qihelper.tpeeOrderSelect(this);">ABA</td></tr>'.
-                   '</table>'.
+            $html= '<div class="qitpeeparamval">'.
+                   '<table id="qitpeeparamval_'.$policyId.'_'.$paramName.'">';
+            foreach ($this->datasources as $ds) {
+                $html .= '<tr><td onclick="qihelper.tpeeOrderSelect(this);">'.$ds.'</td></tr>';
+            }
+            $html.='</table>'.
                    '</div>'.
                    '<span style="vertical-align: center">'.
                    '<img src="'.$smwgHaloScriptPath.'/skins/QueryInterface/images/up.png" alt="up" onclick="qihelper.tpeeOrder(\'up\');" />'.
                    '<img src="'.$smwgHaloScriptPath.'/skins/QueryInterface/images/down.png" alt="down" onclick="qihelper.tpeeOrder(\'down\');" />'.
                    '</span>';
+            return $html;
         }
         return '<input id="qitpeeparamval_'.$policyId.'_'.$paramName.'" type="text" size="20"/>';    
     }
