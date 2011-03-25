@@ -1335,21 +1335,12 @@ class SMWTripleStore extends SMWStore {
 		global $wgServer, $wgArticlePath;
 		$value = $wgServer.$wgArticlePath;
 		$dbkey = urldecode($dbkey);
-		$dbkey = str_replace("#", "_", $dbkey);
-		$dbkey = str_replace(",", "_", $dbkey);
-		$dbkey = str_replace("\"", "_", $dbkey);
-		$dbkey = str_replace("'", "_", $dbkey);
-		$dbkey = str_replace("^", "_", $dbkey);
-		$dbkey = str_replace("<", "_", $dbkey);
-		$dbkey = str_replace(">", "_", $dbkey);
-		$dbkey = str_replace(":", "_", $dbkey);
-		$dbkey = str_replace("%", "_", $dbkey);
-		$dbkey = str_replace(" ", "_", $dbkey);
-		$dbkey = preg_replace('/__+/', "_", $dbkey);
+		
+		$titleName = TSHelper::convertOBLFunctionalTerm($dbkey);
 
-		$value = str_replace('$1', ucfirst($dbkey), $value);
+		$value = str_replace('$1', ucfirst($titleName), $value);
 		$value .= '?action=edit&uri='.urlencode($uri).'&redlink=1';
-		$value = SMWDataValueFactory::newTypeIDValue('_ili', $value, $dbkey);
+		$value = SMWDataValueFactory::newTypeIDValue('_ili', $value, $titleName);
 		return $value;
 	}
 

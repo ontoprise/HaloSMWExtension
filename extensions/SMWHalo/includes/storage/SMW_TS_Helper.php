@@ -97,7 +97,7 @@ class TSHelper {
 
 	public static function guessLocalName($uri) {
 		if (strpos($uri, "http://") !== false) $uri = substr($uri, 8);
-		
+
 		$lastSlash = strrpos($uri, "/");
 		if ($lastSlash == false) {
 			$lastHash = strrpos($uri, "#");
@@ -148,28 +148,62 @@ class TSHelper {
 				}
 				return Title::newFromText($local, NS_MAIN);
 			} else {
-				
+
 				return $sv;
 			}
 		}
 
 
 	}
-	
-	private static function convertOBLFunctionalTerm($uri) {
-		  $uri = urldecode($uri);
-        $uri = str_replace("#", "_", $uri);
-        $uri = str_replace(",", "_", $uri);
-        $uri = str_replace("\"", "_", $uri);
-        $uri = str_replace("'", "_", $uri);
-        $uri = str_replace("^", "_", $uri);
-        $uri = str_replace("<", "_", $uri);
-        $uri = str_replace(">", "_", $uri);
-        $uri = str_replace(":", "_", $uri);
-        $uri = str_replace("%", "_", $uri);
-        $uri = str_replace(" ", "_", $uri);
-        $uri = preg_replace('/__+/', "_", $uri);
-        return $uri;
+
+	public static function convertOBLFunctionalTerm($uri) {
+		$uri = urldecode($uri);
+		// echo $uri;die();
+		preg_match('/\(([^)]*)\)/',$uri, $matches);
+		if (count($matches) > 1) {
+			$uri = $matches[1];
+			$arguments = explode(",", $uri);
+			for($i = 0; $i < count($arguments); $i++) {
+				$a = $arguments[$i];
+				if (strpos($a,":") !== false) {
+					// could be URI
+					if (strpos($a, "#") !== false) {
+						$local = substr($a, strpos($a, "#")+1);
+					} else if (strrpos($a, "/") !== false) {
+						$local = substr($a, strrpos($a, "/")+1);
+					}
+					$a = $local;
+				}
+				$a = self::eliminateTitleCharacters($a);
+				$arguments[$i]= $a;
+
+			}
+			$uri = implode("_", $arguments);
+		} else {
+			$uri = self::eliminateTitleCharacters($uri);
+		}
+			
+		return $uri;
+	}
+
+	private static function eliminateTitleCharacters($uri) {
+		$uri = str_replace("#", "_", $uri);
+		$uri = str_replace("(", "_", $uri);
+		$uri = str_replace(")", "_", $uri);
+		$uri = str_replace(",", "_", $uri);
+		$uri = str_replace("\"", "_", $uri);
+		$uri = str_replace("'", "_", $uri);
+		$uri = str_replace("^", "_", $uri);
+		$uri = str_replace("<", "_", $uri);
+		$uri = str_replace(">", "_", $uri);
+		$uri = str_replace(":", "_", $uri);
+		$uri = str_replace("%", "_", $uri);
+		$uri = str_replace(" ", "_", $uri);
+		$uri = preg_replace('/__+/', "_", $uri);
+		$uri = str_replace("_", " ", $uri);
+		$uri = trim($uri);
+		$uri = str_replace(" ", "_", $uri);
+		return $uri;
 	}
 
 	public static function isLocalURI($uri) {
@@ -319,10 +353,20 @@ class TSNamespaces {
 		self::$ALL_NAMESPACE_KEYS = array_merge(self::$ALL_NAMESPACE_KEYS, $extraNamespaces);
 
 		foreach(self::$ALL_NAMESPACE_KEYS as $nsKey) {
-			$prefix = $wgContLang->getNSText($nsKey);
-			$prefix = $nsKey == NS_MAIN ? "a" : str_replace(" ","_",strtolower($prefix));
+			$nsText = $wgContLang->getNSText($nsKey);
+			if ($nsKey == NS_MAIN) {
+			    $prefix = "a";
+			    $nsText = "a";
+			} else if ($nsKey == NS_PROJECT) {
+				$prefix = "wiki";
+			} else if ($nsKey == NS_PROJECT_TALK) {
+                $prefix = "wiki_talk";
+            } else {
+				$prefix = str_replace(" ","_",strtolower($nsText));
+			}
 			if (empty($prefix)) continue;
-			$uri = $smwgTripleStoreGraph."/$prefix/";
+			$nsText = str_replace(" ","_",strtolower($nsText));
+			$uri = $smwgTripleStoreGraph."/$nsText/";
 			self::$ALL_PREFIXES .= "\nPREFIX $prefix:<$uri> ";
 			self::$ALL_NAMESPACES[$nsKey] = $uri;
 		}
