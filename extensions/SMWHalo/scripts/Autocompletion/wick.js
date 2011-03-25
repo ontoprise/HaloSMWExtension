@@ -1274,7 +1274,22 @@ AutoCompleter.prototype = {
 	        		} else if (command == 'instance-property-range') {
 	        			showText += gLanguage.getMessage('AC_INSTANCE_PROPERTY_RANGE') + parameter;
 	        		} else if (command == 'namespace') {
-	        			showText += gLanguage.getMessage('AC_NAMESPACE') + parameter;
+	        			
+	        			// convert namespace indices into names, if necessary
+	        			var namespaces = parameter.split(",");
+	        			var namespaceText = "";
+	        			var i = 0;
+	        			namespaces.each(function(n) { 
+	        				if (!isNaN(n)) {
+	        					var index = Number(n);
+	        					namespaceText += wgFormattedNamespaces[index];
+	        				} else{
+	        					namespaceText += n;
+	        				}
+	        				i++;
+	        				if (i < namespaces.length) namespaceText += ", ";
+	        			});
+	        			showText += gLanguage.getMessage('AC_NAMESPACE') + namespaceText;
 	        		} else if (command == 'lexical') {
 	        			showText += gLanguage.getMessage('AC_LEXICAL') + parameter;
 	        		} else if (command == 'schema-property-type') {
