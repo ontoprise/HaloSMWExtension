@@ -1143,7 +1143,7 @@ QIHelper.prototype = {
             + ((idx > 0) ? 'style="font-weight:bold;" ' : '')
             + 'onblur="qihelper.getPropertyInformation()" '
             + ((propName) ? 'value="'+propName+'" ' : '')
-            + 'onmouseover="Tip(\'' +  gLanguage.getMessage('AUTOCOMPLETION_HINT') + '\');"';
+            + 'onmouseover="Tip(\'' +  gLanguage.getMessage('AUTOCOMPLETION_HINT') + '\');"'
             + '/>';
         if (idx > 0)
             tmpHTML += ' <img src="'	+ this.imgpath + 'delete.png" alt="deleteInput" onclick="qihelper.removePropertyChainInput()"/>';
