@@ -29,11 +29,11 @@ if (typeof FacetedSearch == "undefined") {
 }
 
 /**
- * @class FSLanguageEn
+ * @class FSLanguageDe
  * This class contains the german language string for the faceted search UI
  * 
  */
-FacetedSearch.classes.FSLanguageEn = function () {
+FacetedSearch.classes.FSLanguageDe = function () {
 	
 	// The instance of this object
 	var that = FacetedSearch.classes.FSLanguage();
@@ -67,5 +67,5 @@ jQuery(document).ready(function() {
 	if (!FacetedSearch.singleton) {
 		FacetedSearch.singleton = {};
 	}
-	FacetedSearch.singleton.Language = FacetedSearch.classes.FSLanguageEn();
+	FacetedSearch.singleton.Language = FacetedSearch.classes.FSLanguageDe();
 });
