@@ -70,6 +70,7 @@ function tff_updateInstanceData($updates, $articleTitle, $revisionId, $rowNr, $t
 		} else {
 			//if(strlen($update['address']) == 0) continue;
 			if($revisionId == '-1') $update['originalValue'] = null;
+			if(!array_key_exists('hash', $update)) $update['hash'] = null;
 			$annotations->addAnnotation(new TFAnnotationData(
 				$update['address'], $update['originalValue'], null, $update['hash'], $update['typeId'], $update['newValue']));
 		}
@@ -120,14 +121,16 @@ function tff_checkArticleName($articleName, $rowNr, $tabularFormId){
 	$articleName = implode(':', $articleName);
 	
 	$validTitle = false;
-	$title = Title::newFromText($articleName);
-	if($title){
-		if($title->getFullText() == $articleName){
-			if(!$title->exists()){
-				$validTitle = true;
+	if(strpos($articleName, '#') === false){
+		$title = Title::newFromText($articleName);
+		if($title){
+			if($title->getFullText() == $articleName){
+				if(!$title->exists()){
+					$validTitle = true;
+				}
 			}
-		}
-	}  
+		}  
+	}
 	
 	$result = array('validTitle' => $validTitle, 'rowNr' => $rowNr, 'tabularFormId' => $tabularFormId);
 	$result = json_encode($result);
