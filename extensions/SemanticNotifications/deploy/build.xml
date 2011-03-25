@@ -12,6 +12,11 @@
 				<exclude name="**/.svn, **/CVS" />
 			</fileset>
 		</copy>
+		<copy todir="bin/zip/extensions/SemanticNotifications/maintenance">
+			<fileset dir="../maintenance/">
+				<exclude name="**/.svn, **/CVS" />
+			</fileset>
+		</copy>
 		<copy todir="bin/zip/extensions/SemanticNotifications/scripts">
 			<fileset dir="../scripts/">
 				<exclude name="**/.svn, **/CVS" />
@@ -39,43 +44,43 @@
 			</fileset>
 		</copy>
 		<zip destfile="bin/semanticnotifications.zip" basedir="bin/zip" />
-		
+
 		<exec executable="php">
 			<arg value="../../../buildtools/renameDeployable.php" />
 			<arg value="../deploy.xml" />
 			<arg value="bin/semanticnotifications.zip" />
 		</exec>
 	</target>
-	
-	<target name="semanticnotifications_bundled" depends="semnot">
-	      
-	        <ant antfile="../../SemanticGardening/deploy/build.xml" inheritall="true" dir="../../SemanticGardening/deploy" target="semanticgardening">
-	        </ant>
 
-	        <copy todir="bin/zip/extensions/SemanticGardening">
-	            <fileset dir="../../SemanticGardening/">
-	                <exclude name="**/.svn, **/CVS" />
-	                <exclude name="**/deploy/**" />
-	            </fileset>
-	        </copy>
-	      
-	        <zip destfile="bin/semanticnotifications_bundled.zip" basedir="bin/zip" />
-	        <delete dir="bin/zip" />
-	        <exec executable="php">
-	            <arg value="../../../buildtools/renameDeployable.php" />
-	            <arg value="../deploy.xml" />
-	            <arg value="bin/semanticnotifications_bundled.zip" />
-                <arg value="bin/semanticnotifications-%s_including_dependencies.zip" />
-	        </exec>
-	    </target>
-	
+	<target name="semanticnotifications_bundled" depends="semnot">
+
+		<ant antfile="../../SemanticGardening/deploy/build.xml" inheritall="true" dir="../../SemanticGardening/deploy" target="semanticgardening">
+		</ant>
+
+		<copy todir="bin/zip/extensions/SemanticGardening">
+			<fileset dir="../../SemanticGardening/">
+				<exclude name="**/.svn, **/CVS" />
+				<exclude name="**/deploy/**" />
+			</fileset>
+		</copy>
+
+		<zip destfile="bin/semanticnotifications_bundled.zip" basedir="bin/zip" />
+		<delete dir="bin/zip" />
+		<exec executable="php">
+			<arg value="../../../buildtools/renameDeployable.php" />
+			<arg value="../deploy.xml" />
+			<arg value="bin/semanticnotifications_bundled.zip" />
+			<arg value="bin/semanticnotifications-%s_including_dependencies.zip" />
+		</exec>
+	</target>
+
 	<target name="versionhint">
-        <property environment="env" />
+		<property environment="env" />
 		<exec executable="php">
 			<arg value="../../../buildtools/replaceVersionHint.php" />
 			<arg value="../deploy.xml" />
 			<arg value="../includes/SN_Initialize.php" />
-            <arg value="${env.BUILD_NUMBER}" />
+			<arg value="${env.BUILD_NUMBER}" />
 		</exec>
 	</target>
 </project>
