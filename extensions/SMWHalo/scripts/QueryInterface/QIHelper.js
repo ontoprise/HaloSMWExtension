@@ -180,7 +180,7 @@ QIHelper.prototype = {
         }
         this.clickUseTsc();
     },
-    selectDsTpee : function (val) {
+    selectDsTpee : function (val, noupdate) {
         // no datasources or trust policy in use
         if (! ( $('qiTpeeSelected') && $('qiDsSelected') ) ) return;
         if (! $('qiTpeeSelected') ) { // only datasources are in use
@@ -192,13 +192,15 @@ QIHelper.prototype = {
             $('qiDsSelected').style.display = 'none';
             $('qiTpeeSelected').style.display = '';
             radio[1].checked = 'checked';
-            this.clickUseTsc();
+            if (! noupdate)
+                this.clickUseTsc();
         }
         else if (val == this.DS_SELECTED) {
             $('qiDsSelected').style.display = '';
             $('qiTpeeSelected').style.display = 'none';
             radio[0].checked = 'checked';
-            this.clickUseTsc();
+            if (! noupdate)
+                this.clickUseTsc();
         }
         else {
             $('qiDsSelected').style.display = 'none';
@@ -206,7 +208,8 @@ QIHelper.prototype = {
             radio[0].checked = null;
             radio[1].checked = null;
             $('usetriplestore').checked=null;
-            this.updateSrcAndPreview();
+            if (! noupdate )
+                this.updateSrcAndPreview();
         }
     },
     tpeeOrder : function (move) {
@@ -846,7 +849,7 @@ QIHelper.prototype = {
         var selectedDataSources = [];
         var selectorDsTpee = $('qioptioncontent').getElementsBySelector('[name="qiDsTpeeSelector"]');
         var dataSources = $('qidatasourceselector');
-        if (selectorDsTpee && selectorDsTpee[0].checked || !selectorDsTpee && dataSources) {
+        if (selectorDsTpee.length > 0 && selectorDsTpee[0].checked || selectorDsTpee.length == 0 && dataSources) {
             for (var i=0; i < dataSources.options.length; i++) {
                 if (dataSources.options[i].selected) {
                     selectedDataSources.push(dataSources.options[i].value);
@@ -866,7 +869,7 @@ QIHelper.prototype = {
             else
                 args.push('metadata=*');
         }
-        if ( selectorDsTpee && selectorDsTpee[1].checked ) {
+        if ( selectorDsTpee.length > 0 && selectorDsTpee[1].checked ) {
             var tpee = '';
             for (var i=0; i < $('qitpeeselector').options.length; i++) {
                 if ($('qitpeeselector').options[i].selected) {
@@ -890,7 +893,8 @@ QIHelper.prototype = {
                             var vals = [];
                             var table = $('qitpeeparamval_' + tpee + '_' + pname);
                             for (var r = 0; r < table.rows.length; r++) {
-                                vals.push("\\'" + table.rows[r].cells[0].innerHTML + "\\'");
+                                // vars need to be in double quotes
+                                vals.push('\\"' + table.rows[r].cells[0].innerHTML + '\\"');
                             }
                             if (vals.length > 0) {
                                 val = '[' + vals.join(',') + ']';
@@ -902,6 +906,15 @@ QIHelper.prototype = {
                 if (jsonParams.length > 0) {
                     args.push('policyparams={' + jsonParams.join(',') +'}');
                 }
+                // if we had the order param we must add the policy var with the printout statement
+                // it must be one only so take the first one
+                if ($('qitpeeparamval_' + tpee + '_PAR_ORDER') ){
+                    var printouts = this.queries[0].getDisplayStatements();
+                    args.push('policyvar='+ ((printouts[0]) ? printouts[0] : ''));
+                }
+                // trust based queries use their specified graphs, hence send empty
+                // graph statement so that it's not overwritten with the wiki graph in the sparql
+                args.push('graph=');
             }
         }
         // return now all parameters
@@ -2736,6 +2749,7 @@ QIHelper.prototype = {
 				var pname = escapeQueryHTML(props[j].substring(2, props[j]
 						.indexOf('::')));
                 var pchain = pname.split('.');
+                pchain = pchain.firstUpperCase();
                 for (var c = 0; c < pchain.length; c++) {
                     if (!propertiesInQuery.inArray(pchain[c]))
                         propertiesInQuery.push(pchain[c]);
@@ -2752,6 +2766,7 @@ QIHelper.prototype = {
                 pname = pname.replace(/^([^#|=]*).*/, "$1");
 				pname = escapeQueryHTML(pname.replace(/\s*$/,''));
                 var pchain = pname.split('.');
+                pchain = pchain.firstUpperCase();
                 for (var c = 0; c < pchain.length; c++) {
     				if (!propertiesInQuery.inArray(pchain[c]))
         				propertiesInQuery.push(pchain[c]);
@@ -2782,24 +2797,24 @@ QIHelper.prototype = {
     	var pMustShow = this.applyOptionParams(sub[0]);
 
     	// run over all query strings and start parsing
-	   for (f = 0; f < sub.length; f++) {
-        // set current query to active, do this manually (treeview is not
-		// updated)
-		this.activeQuery = this.queries[f];
-		this.activeQueryId = f;
-		// extact the arguments, i.e. all between [[...]]
-		var args = sub[f].split(/\]\]\s*\[\[/);
-		// remove the ]] from the last element
-		args[args.length - 1] = args[args.length - 1].substring(0,
+		for (var f = 0; f < sub.length; f++) {
+			// set current query to active, do this manually (treeview is not
+			// updated)
+			this.activeQuery = this.queries[f];
+			this.activeQueryId = f;
+			// extact the arguments, i.e. all between [[...]]
+			var args = sub[f].split(/\]\]\s*\[\[/);
+			// remove the ]] from the last element
+			args[args.length - 1] = args[args.length - 1].substring(0,
 				args[args.length - 1].indexOf(']]'));
-		// and [[ from the first element
-		args[0] = args[0].replace(/^\s*\[\[/, '');
-		this.handleQueryString(args, f, pMustShow);
-	   }
-        this.setActiveQuery(0); // set main query to active
-        this.updateTree();      // show new tree
-        this.updateColumnPreview(); // update sort selection
-	   this.updatePreview(); // update result preview
+			// and [[ from the first element
+			args[0] = args[0].replace(/^\s*\[\[/, '');
+			this.handleQueryString(args, f, pMustShow);
+		}
+		this.setActiveQuery(0); // set main query to active
+		this.updateTree();      // show new tree
+		this.updateColumnPreview(); // update sort selection
+		this.updatePreview(); // update result preview
     },
     
     savePropertyInformation : function(xml) {
@@ -2883,8 +2898,9 @@ handleQueryString : function(args, queryId, pMustShow) {
 			var pname = args[i].substring(0, args[i].indexOf('::'));
 			var pval = args[i].substring(args[i].indexOf('::') + 2,
 					args[i].length);
-            var pchains = pname.split('.');
-            pname = pchains[pchains.length - 1];
+            var pchain = pname.split('.');
+            pchain = pchain.firstUpperCase();
+            pname = pchain[pchain.length - 1];
 
 			// if the property was already once in the arguments, we already
 			// have details about the property
@@ -2898,7 +2914,7 @@ handleQueryString : function(args, queryId, pMustShow) {
             // in main query, check if property is on the list of props to show
             if (queryId == 0) {
                 for (var j = 0; j < pMustShow.length; j++) {
-                    if (pMustShow[j][0] == pchains.join('.')) {
+                    if (pMustShow[j][0] == pchain.join('.')) {
                         pshow = true;
                         unit = pMustShow[j][1];
                         column = pMustShow[j][2];
@@ -2907,12 +2923,12 @@ handleQueryString : function(args, queryId, pMustShow) {
                 }
             }
 			// must be set?
-			var pmust = args.inArray(pchains.join('.') + '::+');
+			var pmust = args.inArray(pchain.join('.') + '::+');
 			var arity = propdef ? propdef.getArity() : 2;
 			var isEnum = propdef ? propdef.isEnumeration() : false;
 			var enumValues = propdef ? propdef.getEnumValues() : [];
             // create propertyGroup
-			var pgroup = new PropertyGroup(escapeQueryHTML(pchains.join('.')), arity,
+			var pgroup = new PropertyGroup(escapeQueryHTML(pchain.join('.')), arity,
                 	pshow, pmust, isEnum, enumValues, null, unit, column);
             if (arity > 2) {
                 var naryVals = propdef.getValues();
@@ -2921,7 +2937,7 @@ handleQueryString : function(args, queryId, pMustShow) {
             }
             pgroup.setUnits(propdef.getUnits());
 
-			var subqueryIds = propList.getSubqueryIds(propList.getIndex(pchains.join('.')));
+			var subqueryIds = propList.getSubqueryIds(propList.getIndex(pchain.join('.')));
             if (!subqueryIds) subqueryIds = new Array();
 			var paramname = this.propertyTypesList && this.propertyTypesList.getType(pname)
                             ? this.propertyTypesList.getType(pname)
@@ -2933,7 +2949,7 @@ handleQueryString : function(args, queryId, pMustShow) {
 			if (pval.match(/___q\d+q___/)) {
 				paramname = "subquery";
 				paramvalue = parseInt(pval.replace(/___q(\d+)q___/, '$1'));
-				this.insertQuery(paramvalue, queryId, pchains.join('.'));
+				this.insertQuery(paramvalue, queryId, pchain.join('.'));
 				subqueryIds.push(paramvalue);
                 // add a value group to the property group
 				pgroup.addValue(paramname, restriction, paramvalue);
@@ -2949,7 +2965,7 @@ handleQueryString : function(args, queryId, pMustShow) {
                 if (pval == "+") {
                     for (var k = 0; k < args.length; k++) {
                         // check if poperty exists again in query but with other value
-                        if (args[k].indexOf(pchains.join('.')) != -1 && args[k] != pchains.join('.') + '::+')
+                        if (args[k].indexOf(pchain.join('.')) != -1 && args[k] != pchain.join('.') + '::+')
                             skipMustShow = true;
                     }
                 }
@@ -3036,7 +3052,7 @@ handleQueryString : function(args, queryId, pMustShow) {
                     }
                 }
 			}
-			propList.addNew(pchains.join('.'), pgroup, subqueryIds); // add current property to property list
+			propList.addNew(pchain.join('.'), pgroup, subqueryIds); // add current property to property list
 		}
 	}
 
@@ -3051,6 +3067,7 @@ handleQueryString : function(args, queryId, pMustShow) {
             // get information about the property itself
             // split of propname
             var pchain = pMustShow[i][0].split('.');
+            pchain = pchain.firstUpperCase();
             var plocname = pchain[pchain.length - 1];
             var defPgroup = this.propertyTypesList.getPgroup(plocname);
             var ptype = gLanguage.getMessage('QI_PAGE');
@@ -3113,17 +3130,21 @@ applyOptionParams : function(query) {
 	var format = "table"; // default format
     var tpeeParamsObj = new Object(); // empty policy params
     var tpeePolicyId = ''; // empty name of TPEE
+    // selector of TPEE or DS
+    var selectorDsTpee = $('qioptioncontent').getElementsBySelector('[name="qiDsTpeeSelector"]');
 	for ( var i = 1; i < options.length; i++) {
             // check for additionl printouts like |?myProp
             var m = options[i].match(/^\s*\?/)
             if (m) {
                 m = options[i].replace(/\n/g,'').match(/^(.*?)(#.*?)?(=.*?)?$/);
                 var pname = m[1].replace(/^\s*\?\s*/, '').replace(/\s*$/,'');
+                pname = pname.substr(0, 1).toUpperCase() + pname.substr(1); // fist upper case
                 var punit = (m[2]) ? m[2].replace(/#/,'').replace(/\s*$/,'') : null;
                 var col = (m[3]) ? m[3].replace(/=\s*/,'').replace(/\s*$/,'') : null;
                 if (col == null) { // set default column value if not set.
-                    pchain = pname.split('.');
+                    var pchain = pname.split('.');
                     col = pchain[pchain.length -1];
+                    col = col.substr(0, 1).toUpperCase() + col.substr(1); // fist upper case
                 }
                 mustShow.push([pname, punit, col]);
                 continue;
@@ -3158,12 +3179,13 @@ applyOptionParams : function(query) {
                 }
             }
             // trust policy settings
-            else if (key == "policyid" && $('qitpeeselector') ) {
+            else if (key == "policyid" && selectorDsTpee.length > 0 ) {
                 tpeePolicyId = val;
+                this.selectDsTpee(this.TPEE_SELECTED, true);
                 for (var s= 0; s < $('qitpeeselector').options.length; s++ ) {
                     if ( val == $('qitpeeselector').options[s].value ) {
                         $('qitpeeselector').options[s].selected = "selected";
-                        $('qitpeeparams_'+val).style.display = '';
+                        $('qitpeeparams_'+val).style.display = 'inline';
                     }
                     else {
                         var divId = 'qitpeeparams_'+$('qitpeeselector').options[s].value;
@@ -3174,8 +3196,10 @@ applyOptionParams : function(query) {
                 $('qitpeeparams_'+tpeePolicyId).style.display = 'inline';
             }
             else if (key == "policyparams" ) {
-                val = val.replace(/^\s*\{/,'').replace(/\}\s*$/, '');
-                tpeeParamsObj = this.unwrapPolicyParams(val);
+                val = val.replace(/^\s*/,'').replace(/\s*$/, '');
+                tpeeParamsObj = JSON.parse(val);
+                //once jQuery 1.4.1 is available use this line instead
+                //tpeeParamsObj = jQuery.parseJSON(val);
             }
 
     }
@@ -3183,9 +3207,37 @@ applyOptionParams : function(query) {
         for ( var parname in tpeeParamsObj ) {
             // PAR_USER -> remove the graph URI from the user name
             if ( parname == 'PAR_USER' ) {
-                var graph = $('qi_tsc_wikigraph').innerHTML || '';
-                graph += $('qi_tsc_userns').innerHTML || '';
-                tpeeParamsObj[parname] = tpeeParamsObj[parname].replace(graph, '');
+                var wikigraph = $('qi_tsc_wikigraph').innerHTML || '';
+                var userns = $('qi_tsc_userns').innerHTML || '';
+                tpeeParamsObj[parname] = tpeeParamsObj[parname].replace(wikigraph + '/' + userns + '/', '');
+            }
+            else if ( parname == 'PAR_ORDER') {
+                var table = $('qitpeeparamval_' + tpeePolicyId + '_PAR_ORDER');
+                if (table) {
+                    var orderValues = [];
+                    var parOrderArr = JSON.parse(tpeeParamsObj.PAR_ORDER);
+                    for (var t = 0; t < table.rows.length; t++) {
+                        orderValues.push(table.rows[t].cells[0].innerHTML);
+                        table.deleteRow(t);
+                        t--;
+                    }
+                    for (var t = 0; t < parOrderArr.length; t++ ) {
+                        if (orderValues.inArray(parOrderArr[t])) {
+                            var row = table.insertRow(-1);
+                            var cell = row.insertCell(-1);
+                            cell.setAttribute('onclick', "qihelper.tpeeOrderSelect(this)");
+                            cell.innerHTML = parOrderArr[t];
+                        }
+                    }
+                    for (var t = 0; t < orderValues.length; t++) {
+                        if (! parOrderArr.inArray(orderValues[t])) {
+                            var row = table.insertRow(-1);
+                            var cell = row.insertCell(-1);
+                            cell.setAttribute('onclick', "qihelper.tpeeOrderSelect(this)");
+                            cell.innerHTML = orderValues[t];
+                        }
+                    }
+                }
             }
             if ( $('qitpeeparamval_' + tpeePolicyId + '_' + parname) )
                 $('qitpeeparamval_' + tpeePolicyId + '_' + parname).value = tpeeParamsObj[parname];
@@ -3280,59 +3332,7 @@ splitQueryParts : function(ask) {
 			break;
 	}
 	return sub;
-},
-
-unwrapPolicyParams : function (paramStr) {
-    var paramsObj = new Object(),
-        delimiter = ':',
-        quoted = '',
-        key = '',
-        type = 0;
-
-    while ( paramStr.length > 0) {
-
-        if (paramStr.match(/^\s*"/))
-            quoted = '"';
-        else if (paramStr.match(/^\s*'/))
-            quoted = "'";
-        var pos = paramStr.indexOf(delimiter),
-            piece = '';
-        while (paramStr.length > 0) {
-            if (pos != -1) {
-                piece += paramStr.substr(0, pos);
-                paramStr = paramStr.substr(pos +1);
-            }
-            else {
-                piece = paramStr;
-                paramStr = '';
-                break;
-            }
-            if (quoted) {
-                var tail = piece.substr(piece.lastIndexOf(quoted));
-                if (tail.match(/\s*$/)) break;
-            } else break;
-        }
-        if (quoted) {
-            piece = piece.substr(piece.indexOf(quoted)+1);
-            piece = piece.substr(0, piece.lastIndexOf(quoted));
-        }
-        else piece = piece.replace(/^\s*/,'').replace(/\s*$/,'');
-        if (type == 0) {
-            key = piece;
-            delimiter = ',';
-        }
-        else {
-            paramsObj[key] = piece;
-            delimiter = ':';
-        }
-        quoted = '';
-        type = 1 - type;
-
-    }
-
-    return paramsObj;
 }
-
 
 }
 // end class qiHelper
@@ -3553,14 +3553,14 @@ if (!Array.prototype.inArray) {
 		return false;
 	}
 };
-if (!Array.prototype.removeVal) {
-	Array.prototype.removeVal = function (val) {
-        data = [];
-		for ( var i = 0; i < this.length; i++) {
-			if (val != this[i])
-				data.push(this[i]);
-		}
-		return data;
-	}
-};
+if (!Array.prototype.firstUpperCase) {
+    Array.prototype.firstUpperCase = function() {
+        var data = [];
+        for ( var i = 0; i < this.length; i++ ) {
+            data.push( this[i].substr(0, 1).toUpperCase() +
+                this[i].substr(1) );
+        }
+        return data;
+    }
+}
 
