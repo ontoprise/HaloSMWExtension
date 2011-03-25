@@ -29,6 +29,8 @@
  *
  */
 
+define("DF_MAX_LOG_SIZE", 1024*1024);
+
 class Logger {
 
 	var $logDir;
@@ -52,7 +54,13 @@ class Logger {
 		$homeDir = Tools::getHomeDir();
 		$this->logDir = "$homeDir/df_log";
 		Tools::mkpath($this->logDir);
-		$this->logFileHandle = fopen($this->logDir."/df.log", "a");
+	    $i = 1;
+		if (filesize($this->logDir."/df_$i.log") > DF_MAX_LOG_SIZE) {
+			while(file_exists($this->logDir."/df_$i.log")) {
+				$i++;
+			} 
+		}
+		$this->logFileHandle = fopen($this->logDir."/df_$i.log", "a");
 	}
 
 	/**
