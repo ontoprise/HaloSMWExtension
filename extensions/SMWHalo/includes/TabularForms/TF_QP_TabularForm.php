@@ -254,7 +254,7 @@ class TFTabularFormData {
 	 * Get column headings html
 	 */
 	private function addTableHeaderHTML(){
-		global $smwgScriptPath;
+		global $smwgScriptPath, $smwgHaloScriptPath;
 		
 		$html ='<tr>';
 		
@@ -288,12 +288,18 @@ class TFTabularFormData {
 				$html .= '<span class="sortarrow"><img alt="[&lt;&gt;]" src="'.$smwgScriptPath.'/skins/images/sort_none.gif"/>';
 				$html .= '</span></a>&nbsp;';
 				$html .= '<span>';
+				
+				$html .= '<nobr>';
 				if(array_key_exists($template, $this->templateParameterPrintRequestLabels) 
 						&& array_key_exists($param, $this->templateParameterPrintRequestLabels[$template])){
-					$html .= $this->templateParameterPrintRequestLabels[$template][$param];	
+					$linkLabel = $this->templateParameterPrintRequestLabels[$template][$param];	
 				} else {
-					$html .= $template.'#'.$param;
+					$linkLabel = $template.'#'.$param;
 				}
+				$html .= $this->linker->makeLink(Title::newFromText($template, NS_TEMPLATE)->getFullText(), $linkLabel .' ');
+				$html .= '<img src="'.$smwgHaloScriptPath.'/skins/template.gif" alt="[T]"></img>';
+				$html .= '</nobr>';
+				
 				$html .= '</span>';
 				$html .= '</th>';
 			}
