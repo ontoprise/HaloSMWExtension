@@ -11,9 +11,12 @@ if (!defined('MEDIAWIKI')) die();
 
 
 
-global $IP;
+global $IP, $smgJSLibs;
 require_once( $IP . "/includes/SpecialPage.php" );
 require_once( "SMW_QIAjaxAccess.php" );
+
+// need json lib to parse Query string -> can be removed once we use jQuery 1.4.1
+$smgJSLibs[]= 'json';
 
 /*
  * Standard class that is resopnsible for the creation of the Special Page
@@ -447,7 +450,7 @@ class SMWQueryInterface extends SpecialPage {
         global $smwgHaloScriptPath;
         if ($paramName == 'PAR_USER') {
             return '<input id="qitpeeparamval_'.$policyId.'_'.$paramName.'" type="text" size="20" '.
-                   'class="wickEnabled" constraints="namespace: 2" autocomplete="OFF"/>';
+                   'class="wickEnabled" constraints="namespace: 2" autocomplete="OFF" onblur="qihelper.updateSrcAndPreview();"/>';
         }
         if ($paramName == 'PAR_ORDER') {
             $html= '<div class="qitpeeparamval">'.
