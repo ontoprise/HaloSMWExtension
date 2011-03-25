@@ -1142,6 +1142,7 @@ QIHelper.prototype = {
             + 'class="wickEnabled general-forms" constraints="' + constraintstring + '" '
             + ((idx > 0) ? 'style="font-weight:bold;" ' : '')
             + 'onblur="qihelper.getPropertyInformation()" '
+            + 'onchange="qihelper.clearPropertyType('+idx+');" '
             + ((propName) ? 'value="'+propName+'" ' : '')
             + 'onmouseover="Tip(\'' +  gLanguage.getMessage('AUTOCOMPLETION_HINT') + '\');"'
             + '/>';
@@ -1396,6 +1397,17 @@ QIHelper.prototype = {
         tr.parentNode.removeChild(tr);
 	},
 
+    /**
+     * When the inputfield with the property name is changed, then clear the
+     * property type so that it is retrieved again. This must be done so that the
+     * user cannot just hit "update" still with the old property information
+     * @param idx
+     *            Integer with the field number that has been changed
+     */
+    clearPropertyType : function( idx ){
+        $('dialoguecontent').rows[idx * 2 +1].cells[1].innerHTML=
+            gLanguage.getMessage('QI_PROPERTY_TYPE') + ':';
+    },
 	/**
 	 * Is called everytime a user entered a property name and leaves the input
 	 * field. Executes an ajax call which will get information about the
@@ -2288,7 +2300,9 @@ QIHelper.prototype = {
 	 */
 	addPropertyGroup : function() {
         // check if user clicked on add, while prop information is not yet loaded.
-        if (!$('input_c1')) return;
+        var typeRow = ($('dialoguecontent').rows.length -2);
+ 		if ($('dialoguecontent').rows[typeRow].cells[1].innerHTML == gLanguage.getMessage('QI_PROPERTY_TYPE') + ':') return;
+
 		var pname='';
         var propInputFields = $('dialoguecontent').getElementsByTagName('input');
         for (var i = 0, n = propInputFields.length; i < n; i++) {
