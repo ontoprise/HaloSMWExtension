@@ -125,7 +125,6 @@ class TFDataAPIACCESS {
 						}
 					} 
 				} else if ($element instanceof POMBuiltInParserFunction){
-					//todo: deal with delimiters
 					if(strpos($element->nodeText, '{{CreateSilentAnnotations:') === 0){
 						$silents = trim(substr($element->nodeText, strlen('{{CreateSilentAnnotations:')));
 						$silents = substr($silents, 0, strlen($silents)-2);
@@ -134,7 +133,17 @@ class TFDataAPIACCESS {
 							if(strlen($silent) == 0) continue;
 							$silent = explode('=', $silent, 2);
 							if(count($silent) == 2){
-								$annotations->setWritable(trim($silent[0]), trim($silent[1]));
+								
+								//check if value must be split with a delimiter
+								if($delimiter = $this->getSilentAnnotationsDelimiter($silent[0])){
+									$values = explode($delimiter, $silent[1]);
+								} else {
+									$values = array($silent[1]);
+								}
+								
+								foreach($values as $val){
+									$annotations->setWritable(trim($silent[0]), trim($val));
+								}
 							}
 						}
 					} 
@@ -198,8 +207,6 @@ class TFDataAPIACCESS {
 		 */
 		public function updateValues($annotations, $parameters, $revisionId){
 		
-			//todo: deal with delimiters
-			
 			if(is_null($this->title) || !$this->title->exists()){
 				return wfMsg('tabf_response_deleted'); 
 			}
@@ -223,7 +230,6 @@ class TFDataAPIACCESS {
 				
 				if($element instanceof POMProperty){
 					if(!is_null($newValue = $annotations->getNewValue($element->name, $element->value))){
-						file_put_contents('d://xyz.rtf', print_r($element, true));
 						if(strlen($newValue) == 0){
 							$this->pomPage->delete($element);
 						} else {
@@ -278,14 +284,48 @@ class TFDataAPIACCESS {
 							if($key == 0) continue;
 							$silent = explode('=', $silent, 2);
 							if(count($silent == 2)){
-								if(!is_null($newValue = $annotations->getNewValue(trim($silent[0]), trim($silent[1])))){
-									$modified = true;
-									if(strlen($newValue) == 0){
-										unset($silents[$key]);
+								
+								//check if value must be split with a delimiter
+								if($delimiter = $this->getSilentAnnotationsDelimiter($silent[0])){
+									$values = explode($delimiter, $silent[1]);
+								} else {
+									$values = array($silent[1]);
+									$delimiter = "";
+								}
+								
+								$silent[1] = '';
+								$first = true;
+								$valueModified = false;
+								foreach($values as $value){
+									if(!is_null($newValue = $annotations->getNewValue(trim($silent[0]), trim($value)))){
+										$valueModified = true;
+										if(strlen($newValue) > 0){
+											if($first){
+												$first = false;
+											} else {
+												$silent[1] .= $delimiter;
+											}
+											$silent[1] .= $newValue;
+										}
 									} else {
-										$silents[$key] = $silent[0].'='.$newValue;
+										if($first){
+											$first = false;
+										} else {
+											$silent[1] .= $delimiter;
+										}
+										$silent[1] .= $value; 
 									}
 								}
+								
+								if($valueModified){
+									$modified = true;
+									if(strlen($silent[1]) == 0){
+										unset($silents[$key]);
+									} else {
+										$silents[$key] = $silent[0].'='.$silent[1];
+									}
+								}
+										
 							}
 						}
 						
@@ -422,6 +462,43 @@ class TFDataAPIACCESS {
 		$this->article->doDelete('tabular forms');
 		
 		return true;
+	}
+	
+	/*
+	 * Get delimiter for CreateSilentAnnotations parser function annotation
+	 */
+	private function getSilentAnnotationsDelimiter($propertyName){
+		$title = Title::newFromText($propertyName, SMW_NS_PROPERTY);
+		
+		if(!$title->exists()){
+			return false;
+		}
+		
+		$store = smwfNewBaseStore();
+		$semanticData = $store->getSemanticData($title);
+		$properties = $semanticData->getProperties();
+		
+		$maxCardinality = false;
+		if(array_key_exists('Has_max_cardinality', $properties)){
+			$pVals = $semanticData->getPropertyValues($properties['Has_max_cardinality']);
+			$idx = array_keys($pVals);
+			$maxCardinality = $pVals[$idx[0]]->getShortWikiText();
+		}
+		
+		$delimiter = false;
+		if(array_key_exists('Delimiter', $properties)){
+			$pVals = $semanticData->getPropertyValues($properties['Delimiter']);
+			$idx = array_keys($pVals);
+			$delimiter = $pVals[$idx[0]]->getShortWikiText();
+		}
+			
+		if($maxCardinality != 1 || $delimiter){
+				if(!$delimiter) 
+					return ',';
+				else
+					return $delimiter;
+		}
+		
 	}
 		
 }
