@@ -139,6 +139,13 @@ function smwf_ac_AutoCompletionDispatcher($articleName, $userInputToMatch, $user
 			if ($attributeValues != SMW_AC_NORESULT) {
 				return $attributeValues;
 			} else {
+				if (!is_null($namespaceText)) {
+					// assume article title.
+					$result = AutoCompletionHandler::executeCommand("namespace: $namespaceText", $userInputToMatch);
+					AutoCompletionRequester::attachCategoryHints($result);
+					AutoCompletionRequester::attachImageURL($result);
+					return AutoCompletionRequester::encapsulateAsXML($result, true);
+				}
 				// try instance values that match
 				$propertyTargets = AutoCompletionRequester::getPropertyTargetProposals($userContext, $userInputToMatch);
 				return $propertyTargets;
@@ -150,7 +157,7 @@ function smwf_ac_AutoCompletionDispatcher($articleName, $userInputToMatch, $user
 			// --------------------------------
 		} else {
 
-				
+
 			if (!is_null($namespaceText)) {
 				// assume article title.
 				$result = AutoCompletionHandler::executeCommand("namespace: $namespaceText", $userInputToMatch);
@@ -158,7 +165,7 @@ function smwf_ac_AutoCompletionDispatcher($articleName, $userInputToMatch, $user
 				AutoCompletionRequester::attachImageURL($result);
 				return AutoCompletionRequester::encapsulateAsXML($result, true);
 			}
-				
+
 			// assume property
 			$result = AutoCompletionRequester::getPropertyProposals($articleName, $userInputToMatch);
 			AutoCompletionRequester::attachCategoryHints($result);
@@ -297,7 +304,7 @@ class AutoCompletionRequester {
 			$matches[$i]['title'] = $title;
 			$matches[$i]['instanceSamples'] = array();
 			if (!($title instanceof Title)) continue;
-				
+
 			if ($title->getNamespace() == NS_CATEGORY) {
 				$instances = smwfGetSemanticStore()->getDirectInstances($title, $options);
 				foreach($instances as $inst) {
@@ -333,9 +340,9 @@ class AutoCompletionRequester {
 
 	/**
 	 * Returns syntax examples for some datatypes.
-	 * 
+	 *
 	 * @param string $propertyText The property for which syntax examples should be shown.
-	 * 
+	 *
 	 * @return array of string
 	 */
 	public static function getSyntaxSamples($propertyText) {
