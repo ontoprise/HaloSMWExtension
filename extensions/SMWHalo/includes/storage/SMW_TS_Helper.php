@@ -107,8 +107,32 @@ class TSHelper {
 		}
 		return $localname;
 	}
+	
+	/**
+	 * Converts a URI into a Title object.
+	 * 
+	 * If $forceTitle is true, a title object is always returned, even
+	 * in cases where the URI could not be converted because it matches no wiki URI
+	 * or a localname could not be found.
+	 * 
+	 * If $forceTitle is false, the URI is returned unchanged in these cases.
+	 * 
+	 * @param string $sv URI
+	 * @param boolean $forceTitle
+	 * 
+	 * @return Title
+	 */
 	public static function getTitleFromURI($sv, $forceTitle = true) {
-
+        
+		if (is_null($sv)) {
+			// URI is null
+			if ($forceTitle) {
+				return Title::newFromText("empty URI", NS_MAIN);
+			}
+			return NULL;
+		}
+		
+		// check if it is a wiki URI
 		foreach (TSNamespaces::$ALL_NAMESPACES as $nsIndsex => $ns) {
 			if (stripos($sv, $ns) === 0) {
 				$local = substr($sv, strlen($ns));
@@ -117,9 +141,7 @@ class TSHelper {
 			}
 		}
 
-
-
-		// result with unknown namespace
+		// check if it is an unknown namespace (superfluous now?)
 		if (stripos($sv, TSNamespaces::$UNKNOWN_NS) === 0) {
 
 
@@ -131,24 +153,24 @@ class TSHelper {
 
 			return Title::makeTitle($ns, $local);
 
-
-
 		} else {
-			// any URI
-
+			
+			// any other URI
 			if ($forceTitle) {
 				if (strpos($sv, "obl:") === 0) {
+					// function term on OBL
 					$local = TSHelper::convertOBLFunctionalTerm($sv);
 				} else if (strpos($sv, "#") !== false) {
+					// consider part after # as localname
 					$local = substr($sv, strpos($sv, "#")+1);
 				} else if (strrpos($sv, "/") !== false) {
+					// consider part after / as localname
 					$local = substr($sv, strrpos($sv, "/")+1);
-				} else {
-					return NULL;
-				}
-				return Title::newFromText($local, NS_MAIN);
+				} 
+				// make sure to return a Title
+				return Title::newFromText("not interpretable URI", NS_MAIN);
 			} else {
-
+				// return URI unchanged.
 				return $sv;
 			}
 		}
