@@ -328,17 +328,32 @@
                     <xsl:choose>
                         <xsl:when test="@localurl">
                             <xsl:attribute name="href"><xsl:value-of
-                                select="@localurl" />?action=edit</xsl:attribute>
+                                select="@localurl" />
+                                 <xsl:choose>
+                                    <xsl:when test="@uri and @notexists">&amp;action=edit&amp;preloadNEP=true</xsl:when>
+                                    <xsl:otherwise>?action=edit</xsl:otherwise>
+                                </xsl:choose>
+                            </xsl:attribute>
                         </xsl:when>
                         <xsl:when test="@namespace=''">
                             <xsl:attribute name="href"><xsl:value-of
                                 select="substring-before($param-wiki-path,'$1')" /><xsl:value-of
-                                select="@title_url" />?action=edit</xsl:attribute>
+                                select="@title_url" />
+                                 <xsl:choose>
+                                    <xsl:when test="@uri and @notexists">&amp;action=edit&amp;preloadNEP=true</xsl:when>
+                                    <xsl:otherwise>?action=edit</xsl:otherwise>
+                                </xsl:choose>
+                            </xsl:attribute>
                         </xsl:when>
                         <xsl:otherwise>
                             <xsl:attribute name="href"><xsl:value-of
                                 select="substring-before($param-wiki-path,'$1')" /><xsl:value-of
-                                select="@namespace" />:<xsl:value-of select="@title_url" />?action=edit</xsl:attribute>
+                                select="@namespace" />:<xsl:value-of select="@title_url" />
+                                 <xsl:choose>
+                                    <xsl:when test="@uri and @notexists">&amp;action=edit&amp;preloadNEP=true</xsl:when>
+                                    <xsl:otherwise>?action=edit</xsl:otherwise>
+                                </xsl:choose>
+                            </xsl:attribute>
                         </xsl:otherwise>
                     </xsl:choose>
                     {{SMW_OB_EDIT}}

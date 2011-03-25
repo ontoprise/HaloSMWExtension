@@ -148,19 +148,28 @@ class SMWOntologyBrowserXMLGenerator {
 
 			$localurl_att = "";
 			if (!is_null($url)) {
-				$localurl_att = 'localurl="'.htmlspecialchars($url).'"';
+				if (!is_null($instanceURI)) {
+					$localurl_att = 'localurl="'.htmlspecialchars($url).'?uri='.urlencode($instanceURI).'"';
+				}else{
+				    $localurl_att = 'localurl="'.htmlspecialchars($url).'"';
+				}
 			}
 
 			$instanceURI_att = "";
 			if (!is_null($instanceURI)) {
 				$instanceURI_att = 'uri="'.htmlspecialchars($instanceURI).'"';
 			}
+			
+			$notexist_att = "";
+			if (!$instanceTitle->exists()) {
+				$notexist_att = 'notexists="true"';
+			}
 
 			if (!is_null($categoryTitle)) {
 				$categoryTitle = htmlspecialchars($categoryTitle->getDBkey());
-				$result = $result."<instance $instanceURI_att $localurl_att title_url=\"$titleURLEscaped\" title=\"".$titleEscaped."\" namespace=\"$namespace\" superCat=\"$categoryTitle\" img=\"instance.gif\" id=\"ID_$id$count\" inherited=\"true\">$gi_issues$metadataTags</instance>";
+				$result = $result."<instance $instanceURI_att $localurl_att title_url=\"$titleURLEscaped\" title=\"".$titleEscaped."\" namespace=\"$namespace\" $notexist_att superCat=\"$categoryTitle\" img=\"instance.gif\" id=\"ID_$id$count\" inherited=\"true\">$gi_issues$metadataTags</instance>";
 			} else {
-				$result = $result."<instance $instanceURI_att $localurl_att title_url=\"$titleURLEscaped\" title=\"".$titleEscaped."\" namespace=\"$namespace\" img=\"instance.gif\" id=\"ID_$id$count\">$gi_issues$metadataTags</instance>";
+				$result = $result."<instance $instanceURI_att $localurl_att title_url=\"$titleURLEscaped\" title=\"".$titleEscaped."\" namespace=\"$namespace\" $notexist_att img=\"instance.gif\" id=\"ID_$id$count\">$gi_issues$metadataTags</instance>";
 			}
 			$count++;
 		}
