@@ -37,7 +37,8 @@
 			<variable name="phpInterpreter">
 				<string name="phpInterpreterPath"
 					userValueRequired="true"
-					description="Path of PHP interpreter (executebale)" />
+					description="Path of PHP interpreter (executebale)"
+					proposal="search: php" />
 			</variable>
 			<script file="maintenance/SGA_setup.php" params="" />
 		</new>
