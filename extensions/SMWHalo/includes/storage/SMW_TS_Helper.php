@@ -365,6 +365,11 @@ class TSNamespaces {
 				$prefix = str_replace(" ","_",strtolower($nsText));
 			}
 			if (empty($prefix)) continue;
+			
+			// check for validity of prefix
+			preg_match('/\w([\w_0-9-]|\.[\w_0-9-])*/', $prefix, $matches);
+			if (isset($matches[0]) && $matches[0] != $prefix) continue;
+			
 			$nsText = str_replace(" ","_",strtolower($nsText));
 			$uri = $smwgTripleStoreGraph."/$nsText/";
 			self::$ALL_PREFIXES .= "\nPREFIX $prefix:<$uri> ";
