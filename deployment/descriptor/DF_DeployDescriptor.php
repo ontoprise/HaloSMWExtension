@@ -560,22 +560,25 @@ class DeployDescriptor {
 				case "string": {
 					$name = (string) $ch->attributes()->name;
 					$userValueRequired = (string) $ch->attributes()->userValueRequired;
+					$proposal = (string) $ch->attributes()->proposal;
 					if ($userValueRequired == true) {
-						$userReqs[$name] = array("string", (string) $ch->attributes()->description);
+						$userReqs[$name] = array("string", (string) $ch->attributes()->description, $proposal);
 					}
 				}break;
 				case "number": {
 					$name = (string) $ch->attributes()->name;
 					$userValueRequired = (string) $ch->attributes()->userValueRequired;
+					$proposal = (string) $ch->attributes()->proposal;
 					if ($userValueRequired == true) {
-						$userReqs[$name] = array("number", (string) $ch->attributes()->description);
+						$userReqs[$name] = array("number", (string) $ch->attributes()->description, $proposal);
 					}
 				}break;
 				case "boolean": {
 					$name = (string) $ch->attributes()->name;
 					$userValueRequired = (string) $ch->attributes()->userValueRequired;
+					$proposal = (string) $ch->attributes()->proposal;
 					if ($userValueRequired == true) {
-						$userReqs[$name] = array("boolean", (string) $ch->attributes()->description);
+						$userReqs[$name] = array("boolean", (string) $ch->attributes()->description, $proposal);
 					}
 				}break;
 				case "array": {

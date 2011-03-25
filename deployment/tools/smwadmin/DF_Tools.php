@@ -627,4 +627,20 @@ class Tools {
     	if ($index === false) return $filename;
     	return substr($filename, 0, $index);
     }
+        
+    /**
+     * Returns the location of a file (first occurence if more than on exist).
+     *  
+     * @param string $name
+     * 
+     */
+    public static function whereis($name) {
+        if (self::isWindows()) {
+            exec("whereis.bat $name", $out, $ret);
+            return str_replace("\\", "/", reset($out));
+        } else {
+            exec("whereis $name", $out, $ret);
+            return reset($out);
+        }
+    }
 }

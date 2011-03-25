@@ -588,12 +588,12 @@ class Installer {
 		print "\n[De-install wikidumps...";
 		$res_installer->deinstallWikidump($dd);
 		print "done.]";
-		
+
 		// remove ontologies
 		$this->logger->info("De-install ontologies: ".$dd->getID());
-        print "\n[De-install ontologies...";
-        $ont_installer->deinstallOntology($dd);
-        print "done.]";
+		print "\n[De-install ontologies...";
+		$ont_installer->deinstallOntology($dd);
+		print "done.]";
 
 		// delete resources
 		$this->logger->info("Delete resourcs: ".$dd->getID());
@@ -884,12 +884,33 @@ class Installer {
 		if ($this->noAsk || count($userParams) == 0) return;
 		print "\n\nRequired parameters:";
 		foreach($userParams as $name => $up) {
-			list($type, $desc) = $up;
-			print "\n$desc\n";
-			print "$name ($type): ";
-			$line = trim(fgets(STDIN));
-			$line = str_replace("\\", "/", $line); // do not allow backslashes
-			$mapping[$name] = $line;
+			list($type, $desc, $proposal) = $up;
+			if (!is_null($proposal) && $proposal != '') {
+				$parts = explode(":", $proposal);
+				if (count($parts) > 1) {
+					switch($parts[0]) {
+						case "search": {
+							$proposal = Tools::whereis(trim($parts[1]));
+							$proposal = trim($proposal);
+							break;
+						}
+						default:
+							$proposal = '';
+							break;
+					}
+				}
+			}
+			
+			// use proposal if given
+			if (!is_null($proposal) && $proposal != '') {
+				$mapping[$name] = $proposal;
+			} else {
+				print "\n$desc\n";
+				print "$name ($type): ";
+				$line = trim(fgets(STDIN));
+				$line = str_replace("\\", "/", $line); // do not allow backslashes
+				$mapping[$name] = $line;
+			}
 		}
 
 	}
