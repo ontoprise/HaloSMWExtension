@@ -610,7 +610,7 @@ abstract class SMWDataValue {
 		}
 
 		if ( count( $extralinks ) > 0 ) {
-			$result .= smwfEncodeMessages( $extralinks, 'info', ', <!--br-->' );
+			$result .= smwfEncodeMessages( $extralinks, 'info', ', <!--br-->', false );
 		}
 
 		return $result;
@@ -806,6 +806,20 @@ abstract class SMWDataValue {
 	 */
 	public function getUnit() {
 		return ''; // empty unit
+	}
+	
+	/**
+	 * Returns if the data value holds info about a main object (page)
+	 * or not (property). This allows query printers to distinguise
+	 * the main object from properties of type page (count does not
+	 * suffice as the main object can be omitted using mainlabel=-)
+	 * 
+	 * @since 1.5.6
+	 * 
+	 * @return boolean
+	 */
+	public function isMainObject() {
+		return $this->m_property == null;
 	}
 
 }

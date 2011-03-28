@@ -457,3 +457,9 @@ $smwgAdminRefreshStore = true;
 ##
 $smwgAutocompleteInSpecialAsk = true;
 ##
+
+###
+# Sets whether or not to refresh the pages of which semantic data is stored.
+##
+$smwgAutoRefreshSubject = true;
+##
