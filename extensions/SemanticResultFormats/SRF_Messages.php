@@ -70,8 +70,23 @@ $messages['en'] = array(
 	'srf_paramdesc_barcolor'   =>   'The color of the bars',
 	'srf_paramdesc_bardirection'=>  'The direction of the bar chart',
 	'srf_paramdesc_barnumbersaxislabel' => 'The label for the numbers axis',
-	// format "gallery"
+
+	// "gallery" format
 	'srf_printername_gallery' => 'Gallery',
+	'srf_paramdesc_perrow' => 'The amount of images per row',
+	'srf_paramdesc_widths' => 'The width of the images',
+	'srf_paramdesc_heights' => 'The height of the images',
+	'srf_paramdesc_autocaptions' => 'Use file name as caption when none is provided',
+
+	// "tagcloud" format
+	'srf_printername_tagcloud' => 'Tag cloud',
+	'srf_paramdesc_includesubject' => 'If the names of the subjects themselves should be included',
+	'srf_paramdesc_increase' => 'How to increase the size of tags',
+	'srf_paramdesc_tagorder' => 'The order of the tags',
+	'srf_paramdesc_mincount' => 'The minimum amount of times a value needs to occur to be listed',
+	'srf_paramdesc_minsize' => 'The size of the smallest tags in percent (default: 77)',
+	'srf_paramdesc_maxsize' => 'The size of the biggest tags in percent (default: 177)',
+	'srf_paramdesc_maxtags' => 'The maximum amount of tags in the cloud',
 );
 
 /** Message documentation (Message documentation)
@@ -205,7 +220,7 @@ $messages['arz'] = array(
 	'srf_paramdesc_chartwidth' => 'عرض الرسم بالبكسل',
 );
 
-/** Belarusian (Taraškievica orthography) (Беларуская (тарашкевіца))
+/** Belarusian (Taraškievica orthography) (‪Беларуская (тарашкевіца)‬)
  * @author EugeneZelenko
  * @author Jim-by
  */
@@ -252,6 +267,7 @@ $messages['be-tarask'] = array(
 	'srf_paramdesc_bardirection' => 'Накіраваньне слупкоў дыяграмы',
 	'srf_paramdesc_barnumbersaxislabel' => 'Надпісы для лічбавых восяў',
 	'srf_printername_gallery' => 'Галерэя',
+	'srf_printername_tagcloud' => 'Воблака тэгаў',
 );
 
 /** Bulgarian (Български)
@@ -359,6 +375,7 @@ $messages['bs'] = array(
 );
 
 /** Catalan (Català)
+ * @author Dvdgmz
  * @author Paucabot
  * @author Toniher
  */
@@ -377,6 +394,7 @@ $messages['ca'] = array(
 	'srf_printername_max' => 'Nombre màxim',
 	'srf_printername_min' => 'Nombre mínim',
 	'srf_paramdesc_limit' => 'El nombre màxim de pàgines on fer la consulta',
+	'srf_paramdesc_timelinesize' => 'La llargada de la línia de temps (per defecte són 300px)',
 	'srf_printername_gallery' => 'Galeria',
 );
 
@@ -432,6 +450,7 @@ $messages['de'] = array(
 	'srf_paramdesc_bardirection' => 'Ein Säulen- (vertikale Ausrichtung) oder Balkendiagramm (horizontale Ausrichtung)',
 	'srf_paramdesc_barnumbersaxislabel' => 'Die Beschriftung der y-Achse',
 	'srf_printername_gallery' => 'Galerie',
+	'srf_printername_tagcloud' => 'Schlagwortwolke',
 );
 
 /** Lower Sorbian (Dolnoserbski)
@@ -480,6 +499,7 @@ $messages['dsb'] = array(
 	'srf_paramdesc_bardirection' => 'Směr słupowego diagrama',
 	'srf_paramdesc_barnumbersaxislabel' => 'Pópisanje za y-wósku',
 	'srf_printername_gallery' => 'Galerija',
+	'srf_printername_tagcloud' => 'Tafličkowa mróčel',
 );
 
 /** Greek (Ελληνικά)
@@ -814,6 +834,7 @@ $messages['gsw'] = array(
 	'srf_paramdesc_bardirection' => 'E Syyle- (sänkrächti Uusrichtig) oder Balkediagramm (woogrächti Uusrichtig)',
 	'srf_paramdesc_barnumbersaxislabel' => 'D Bschryftig vu dr Zahle-Achs',
 	'srf_printername_gallery' => 'Galeri',
+	'srf_printername_tagcloud' => 'Schlagwortwulche',
 );
 
 /** Manx (Gaelg)
@@ -917,6 +938,7 @@ $messages['hsb'] = array(
 	'srf_paramdesc_bardirection' => 'Stołpowy diagram abo hrjadowy diagram',
 	'srf_paramdesc_barnumbersaxislabel' => 'Popisanje y-wóski',
 	'srf_printername_gallery' => 'Galerija',
+	'srf_printername_tagcloud' => 'Tafličkowa mróčel',
 );
 
 /** Haitian (Kreyòl ayisyen)
@@ -1013,6 +1035,7 @@ $messages['ia'] = array(
 	'srf_paramdesc_bardirection' => 'Le orientation del diagramma de barras',
 	'srf_paramdesc_barnumbersaxislabel' => 'Le etiquetta pro le axe de numeros',
 	'srf_printername_gallery' => 'Galeria',
+	'srf_printername_tagcloud' => 'Etiquettario',
 );
 
 /** Indonesian (Bahasa Indonesia)
@@ -1126,6 +1149,7 @@ $messages['it'] = array(
  * @author Hosiryuhosi
  * @author JtFuruhata
  * @author Naohiro19
+ * @author Whym
  * @author 青子守歌
  */
 $messages['ja'] = array(
@@ -1171,6 +1195,7 @@ $messages['ja'] = array(
 	'srf_paramdesc_bardirection' => '棒グラフの方向',
 	'srf_paramdesc_barnumbersaxislabel' => '数値軸のラベル',
 	'srf_printername_gallery' => 'ギャラリー',
+	'srf_printername_tagcloud' => 'タグクラウド',
 );
 
 /** Javanese (Basa Jawa)
@@ -1237,6 +1262,13 @@ $messages['ksh'] = array(
 	'srf_paramdesc_chartwidth' => 'Dämm Dijajramm sing Breedt en Pixelle',
 );
 
+/** Kurdish (Latin) (Kurdî (Latin))
+ * @author George Animal
+ */
+$messages['ku-latn'] = array(
+	'srfc_today' => 'Îro',
+);
+
 /** Luxembourgish (Lëtzebuergesch)
  * @author Robby
  */
@@ -1301,7 +1333,7 @@ $messages['mk'] = array(
 	'srf_printername_calendar' => 'Месечен календар',
 	'srf_paramdesc_calendarlang' => 'Кодот на јазикот на кој ќе се прикажува календарот',
 	'srf_printername_vcard' => 'Извоз на vCard',
-	'srf_icalendar_link' => 'iKalendar',
+	'srf_icalendar_link' => 'iКалендар',
 	'srf_printername_icalendar' => 'Извоз на iCalendar',
 	'srf_paramdesc_icalendartitle' => 'Насловот на податотеката на календарот',
 	'srf_paramdesc_icalendardescription' => 'Описот на податотеката на календарот',
@@ -1335,6 +1367,7 @@ $messages['mk'] = array(
 	'srf_paramdesc_bardirection' => 'Насока на столбниот графикон',
 	'srf_paramdesc_barnumbersaxislabel' => 'Натпис за бројната оска',
 	'srf_printername_gallery' => 'Галерија',
+	'srf_printername_tagcloud' => 'Облак со ознаки',
 );
 
 /** Malayalam (മലയാളം)
@@ -1453,12 +1486,13 @@ $messages['nn'] = array(
 );
 
 /** Norwegian (bokmål)‬ (‪Norsk (bokmål)‬)
+ * @author Event
  * @author Jon Harald Søby
  * @author Nghtwlkr
  */
 $messages['no'] = array(
 	'srf-desc' => 'Ytterligere format for Semantic MediaWiki «inline»-spørringer',
-	'srf-name' => 'Semantic resultatformat',
+	'srf-name' => 'Semantisk resultatformat',
 	'srfc_previousmonth' => 'Forrige måned',
 	'srfc_nextmonth' => 'Neste måned',
 	'srfc_today' => 'I dag',
@@ -1500,6 +1534,7 @@ $messages['no'] = array(
 	'srf_paramdesc_bardirection' => 'Retningen på stolpediagrammet',
 	'srf_paramdesc_barnumbersaxislabel' => 'Etiketten for tallaksen',
 	'srf_printername_gallery' => 'Galleri',
+	'srf_printername_tagcloud' => 'Tagg-sky',
 );
 
 /** Occitan (Occitan)
@@ -1696,6 +1731,7 @@ $messages['pt'] = array(
 	'srf_paramdesc_bardirection' => 'A orientação do gráfico de barras',
 	'srf_paramdesc_barnumbersaxislabel' => 'A legenda para o eixo dos números',
 	'srf_printername_gallery' => 'Galeria',
+	'srf_printername_tagcloud' => 'Nuvem de tags',
 );
 
 /** Brazilian Portuguese (Português do Brasil)
@@ -1823,6 +1859,7 @@ $messages['ru'] = array(
 	'srf_paramdesc_bardirection' => 'Направление столбцов',
 	'srf_paramdesc_barnumbersaxislabel' => 'Надпись для числовых осей',
 	'srf_printername_gallery' => 'Галерея',
+	'srf_printername_tagcloud' => 'Облако меток',
 );
 
 /** Rusyn (Русиньскый)
@@ -1859,7 +1896,7 @@ $messages['sk'] = array(
 	'srf_printername_eventline' => 'Os udalostí',
 );
 
-/** Serbian Cyrillic ekavian (Српски (ћирилица))
+/** Serbian Cyrillic ekavian (‪Српски (ћирилица)‬)
  * @author Михајло Анђелковић
  */
 $messages['sr-ec'] = array(
@@ -1876,7 +1913,7 @@ $messages['sr-ec'] = array(
 	'srf_printername_gallery' => 'Галерија',
 );
 
-/** Serbian Latin ekavian (Srpski (latinica))
+/** Serbian Latin ekavian (‪Srpski (latinica)‬)
  * @author Michaello
  */
 $messages['sr-el'] = array(

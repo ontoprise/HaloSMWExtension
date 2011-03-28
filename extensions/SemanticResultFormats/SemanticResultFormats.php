@@ -65,7 +65,7 @@ $wgExtensionCredits[defined( 'SEMANTIC_EXTENSION_TYPE' ) ? 'semantic' : 'other']
 		'Rowan Rodrik van der Molen',
 		'[http://www.mediawiki.org/wiki/User:Jeroen_De_Dauw Jeroen De Dauw]'
 	),
-	'url' => 'http://semantic-mediawiki.org/wiki/Help:Semantic_Result_Formats',
+	'url' => 'http://www.mediawiki.org/wiki/Extension:Semantic_Result_Formats',
 	'descriptionmsg' => 'srf-desc'
 );
 
@@ -75,7 +75,7 @@ $wgExtensionCredits[defined( 'SEMANTIC_EXTENSION_TYPE' ) ? 'semantic' : 'other']
  * @since 1.5.2
  */
 function srffInitFormats() {
-	global $srfgFormats, $smwgResultFormats, $wgAutoloadClasses;
+	global $srfgFormats, $smwgResultFormats, $smwgResultAliases, $wgAutoloadClasses;
 	
 	$formatDir = dirname( __FILE__ ) . '/';
 	
@@ -95,6 +95,7 @@ function srffInitFormats() {
 	$wgAutoloadClasses['SRFProcess'] = $formatDir . 'GraphViz/SRF_Process.php';
 	$wgAutoloadClasses['SRFPloticusVBar'] = $formatDir . 'Ploticus/SRF_PloticusVBar.php';
 	$wgAutoloadClasses['SRFGallery'] = $formatDir . 'Gallery/SRF_Gallery.php';
+	$wgAutoloadClasses['SRFTagCloud'] = $formatDir . 'TagCloud/SRF_TagCloud.php';
 	
 	$formatClasses = array(
 		'timeline' => 'SRFTimeline',
@@ -117,14 +118,23 @@ function srffInitFormats() {
 		'process' => 'SRFProcess',
 		'ploticusvbar' => 'SRFPloticusVBar',
 		'gallery' => 'SRFGallery',
+		'tagcloud' => 'SRFTagCloud',
 	);
 
+	$formatAliases = array(
+		'tagcloud' => array( 'tag cloud' )
+	);
+	
 	foreach ( $srfgFormats as $format ) {
 		if ( array_key_exists( $format, $formatClasses ) ) {
 			$smwgResultFormats[$format] = $formatClasses[$format];
 			
 			if ( method_exists( $formatClasses[$format], 'registerResourceModules' ) ) {
 				call_user_func( array( $formatClasses[$format], 'registerResourceModules' ) );
+			}
+			
+			if ( isset( $smwgResultAliases ) && array_key_exists( $format, $formatAliases ) ) {
+				$smwgResultAliases[$format] = $formatAliases[$format];
 			}
 		}
 		else {
@@ -144,8 +154,7 @@ function efSRFSetup() {
 	global $wgVersion;
 	
 	// This function has been deprecated in 1.16, but needed for earlier versions.
-	// It's present in 1.16 as a stub, but lets check if it exists in case it gets removed at some point.
-	if ( version_compare( $wgVersion, '1.15', '<=' ) ) {
+	if ( version_compare( $wgVersion, '1.16', '<' ) ) {
 		wfLoadExtensionMessages( 'SemanticResultFormats' );
 	}	
 	
