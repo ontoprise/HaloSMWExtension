@@ -99,7 +99,13 @@
 	line-height: 1em;
 	padding: 0 5px;
 	text-align: right;
-	vertical-align: top;
+	vertical-align: top !important;
+}
+
+.tabf_table_footer input {
+	margin-top: 4px;
+	margin-left: 4px;
+	width: 100%;
 }
 
 .tabf_further_results a {

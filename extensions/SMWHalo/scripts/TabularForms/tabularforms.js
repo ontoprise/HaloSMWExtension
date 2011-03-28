@@ -428,6 +428,10 @@ var TF = Class.create({
 	 * Called if Save button has been pressed.
 	 */
 	saveFormData : function(event, containerId){
+		
+		tf.updateJobs = 0;
+		tf.updateErrors = 0;
+		
 		var container = jQuery('#' + containerId);
 	
 		jQuery(Event.element(event)).css('display', 'none');
@@ -452,6 +456,8 @@ var TF = Class.create({
 			var revisionId = jQuery('td:first-child ',this).attr('revision-id');
 			var articleTitle = jQuery('td:first-child ',this).attr('article-name');
 			
+			
+			tf.updateJobs += 1;
 			
 			var url = wgServer + wgScriptPath + "/index.php";
 			jQuery.ajax({ url:  url, 
@@ -508,6 +514,7 @@ var TF = Class.create({
 				var articleTitle = jQuery('td:first-child ',this).attr('article-name');
 			}
 			
+			tf.updateJobs += 1;
 			
 			var url = wgServer + wgScriptPath + "/index.php";
 			jQuery.ajax({ url:  url, 
@@ -539,7 +546,8 @@ var TF = Class.create({
 			jQuery('td:last-child .tabf_saved_status', row).css('display', 'inline');
 			//replace article name input of new instance with textarea
 			
-			if(jQuery('td:first-child textarea', row).attr('class').indexOf('tabf_valid_instance_name') > -1){
+			if(jQuery('td:first-child textarea', row).attr('class') != null &&
+					jQuery('td:first-child textarea', row).attr('class').indexOf('tabf_valid_instance_name') > -1){
 				var text = '<a href="' + wgServer + wgScriptPath + "/index.php" + "?title=";
 				text += encodeURI(jQuery('td:first-child textarea', row).attr('value'));
 				text += '">' + jQuery('td:first-child textarea', row).attr('value') + '</a>';
@@ -550,6 +558,13 @@ var TF = Class.create({
 			jQuery('td:last-child .tabf_pending_status', row).css('display', 'none');
 			jQuery('td:last-child .tabf_error_status', row).attr('title', data.msg);
 			jQuery('td:last-child .tabf_error_status', row).css('display', 'inline');
+			
+			tf.updateErrors += 1;
+		}
+		
+		tf.updateJobs -= 1;
+		if(tf.updateJobs == 0 && tf.updateErrors > 0){
+			alert(jQuery('.tabf_update_warning').html());
 		}
 	},
 	
@@ -559,9 +574,10 @@ var TF = Class.create({
 	 */
 	addInstance : function(tabfId){
 		jQuery('#' + tabfId + ' .tabf_table_container .tabf_table_footer').
-			before('<tr>' + jQuery('#' + tabfId + ' .tabf_table_container table tr:last-child').html() + '</tr>');
+			before('<tr>' + jQuery('#' + tabfId + ' .tabf_add_instance_template').html() + '</tr>');
 		
 		var newRow = jQuery('#' + tabfId + ' .tabf_table_container .tabf_table_footer').prev();
+		jQuery(newRow).removeClass('tabf_add_instance_template');
 		jQuery(newRow).addClass('tabf_new_row');
 		jQuery(newRow).attr('isNew', true);
 		jQuery('td:first-child textarea', newRow).addClass('tabf_erronious_instance_name');

@@ -193,6 +193,10 @@ class TFTabularFormData {
 		
 		$html .= '<textarea class="tabf_rowindex_comparator" style="visibility: hidden; height: 1em"></textarea>';
 		
+		$html .= '<span class="tabf_update_warning" style="display: none">';
+		$html .= wfMsg( 'tabf_update_warning' );
+		$html .= '</span>';
+		
 		return $html;
 	}
 	
@@ -321,7 +325,7 @@ class TFTabularFormData {
 	 * template for adding new instances.
 	 */
 	private function addTabularFormAddRowTemplateHTML(){
-		$html = '<tr style="display: none" class="tabf_table_row">';
+		$html = '<tr style="display: none" class="tabf_table_row tabf_add_instance_template">';
 		
 		$html .= '<td revision-id="-1" ><textarea rows="1"></textarea>';
 		$html .= '<input class="tabf-delete-button" type="button" value="Delete" style="display: none" onclick="tf.deleteInstance(event)"/>';
@@ -397,7 +401,11 @@ class TFTabularFormData {
 			$colSpan += count($parameters);
 		}
 		
-		$html .= '<td colspan="'.$colSpan.'">';
+		$html .= '<td colspan="'.$colSpan.'" style="vertical-align: top">';
+		
+		$saveColSpan = 0;
+		$html .= '<table style="float: right">';
+		$html .= '<tr>';
 		
 		if ( $this->hasFurtherResults){
 			$link = $this->queryResult->getQueryLink();
@@ -410,15 +418,35 @@ class TFTabularFormData {
 				}
 			}
 			
+			$html .= '<td>';
 			$html .= '<span class="tabf_further_results" width="100%">'.$link->getText( $this->outputMode, $this->linker).'</span>';
+			$html .= '</td>';
+			
+			$saveColSpan += 1;
 		}
 		
 		if($this->enableInstanceAdd){
+			$html .= '<td>';
 			$html .= '<input class="tabf_add_button" type="button" value="'.wfmsg('tabf_add_label').'" onclick="tf.addInstance('."'".$tabularFormId."'".')"/>';
+			$html .= '</td>';
+			
+			$saveColSpan += 1;
 		}
 		
+		$html .= '<td>';
 		$html .= '<input type="button" value="'.wfMsg('tabf_refresh_label').'" onclick="tf.refreshForm('."'".$tabularFormId."'".')"/>';
+		$html .= '</td>';
+		$html .= '</tr>';
+		
+		$html .= '<tr>';
+		$html .= ($saveColSpan > 0) ? '<td colspan="'.$saveColSpan.'"></td>' : '';
+		$html .= '<td>';
 		$html .= '<input class="tabf_save_button" style="display:none" type="button" value="'.wfMsg('tabf_save_label').'" onclick="tf.saveFormData(event,'."'".$tabularFormId."'".')"/>';
+		$html .= '</td>';
+		$html .= '</tr>';
+		
+		$html .= '</table>';
+		
 		$html .= '</td>';
 		
 		$html .= '</tr>';
