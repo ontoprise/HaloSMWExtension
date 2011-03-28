@@ -26,9 +26,11 @@ class TestUserCanHookSuite extends PHPUnit_Framework_TestSuite
     	User::createNew("U1");
     	User::createNew("U2");
         User::createNew("U3");
+        User::createNew("Daniel'sDog");
         User::idFromName("U1");  
         User::idFromName("U2");  
         User::idFromName("U3");  
+        User::idFromName("Daniel'sDog");  
     	Skin::getSkinNames();
         
    		global $wgUser;
@@ -205,7 +207,7 @@ ACL
 {{#manage rights: assigned to=User:U1}}
 
 {{#access:
- assigned to=User:U1
+ assigned to=User:U1, User:Daniel'sDog
 |actions=*
 |description= Page/A: Allow * access for U1
 }}
