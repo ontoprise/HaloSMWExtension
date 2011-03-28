@@ -847,7 +847,7 @@ QIHelper.prototype = {
 		if ( $('usetriplestore') != null && $('usetriplestore').checked )
             args.push('source=tsc');
         var selectedDataSources = [];
-        var selectorDsTpee = $('qioptioncontent').getElementsBySelector('[name="qiDsTpeeSelector"]');
+        var selectorDsTpee = ($('qioptioncontent')) ? $('qioptioncontent').getElementsBySelector('[name="qiDsTpeeSelector"]') : [];
         var dataSources = $('qidatasourceselector');
         if (selectorDsTpee.length > 0 && selectorDsTpee[0].checked || selectorDsTpee.length == 0 && dataSources) {
             for (var i=0; i < dataSources.options.length; i++) {
