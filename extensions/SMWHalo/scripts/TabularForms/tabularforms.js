@@ -183,6 +183,11 @@ var TF = Class.create({
 						
 		} else if(keyCode == '40'){ //key down
 			
+			if (autoCompleter.siw != null && autoCompleter.siw.floater.style.display && (autoCompleter.siw.floater.style.display != "none")) {
+				//do not navigate, if user is currently in autocompletion-mode
+				return;
+			}
+			
 			if(!tf.isLastRow(cell)){
 				return;
 			}
@@ -207,6 +212,11 @@ var TF = Class.create({
 				jQuery(newCell).addClass('tabf_selected_value');
 			}
 		} else if(keyCode == '38'){ //key up
+			
+			if (autoCompleter.siw != null && autoCompleter.siw.floater.style.display && (autoCompleter.siw.floater.style.display != "none")) {
+				//do not navigate, if user is currently in autocompletion-mode
+				return;
+			}
 			
 			if(!tf.isFirstRow(cell)){
 				return;
