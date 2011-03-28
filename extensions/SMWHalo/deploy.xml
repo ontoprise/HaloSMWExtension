@@ -38,6 +38,7 @@
 			<patch file="patch_for_SMW1.5.2.txt" ext="smw" from="152" to="152"/>
             <patch file="patch_for_SMW1.5.4.txt" ext="smw" from="154" to="154"/>
             <patch file="patch_for_SMW1.5.5.txt" ext="smw" from="155" to="155"/>
+            <patch file="patch_for_SMW1.5.6.txt" ext="smw" from="156" to="156"/>
             <patch file="patch_for_MW1.15.3.txt"
                 ext="mw" from="1153" to="1153" />
             <patch file="patch_for_MW1.16.0.txt"
@@ -73,6 +74,7 @@
 			<patch file="patch_for_SMW1.5.2.txt" ext="smw" from="152" to="152"/>
             <patch file="patch_for_SMW1.5.4.txt" ext="smw" from="154" to="154"/>
             <patch file="patch_for_SMW1.5.5.txt" ext="smw" from="155" to="155"/>
+            <patch file="patch_for_SMW1.5.6.txt" ext="smw" from="156" to="156"/>
             <patch file="patch_for_MW1.15.3.txt"
                 ext="mw" from="1153" to="1153" />
             <patch file="patch_for_MW1.16.0.txt"
