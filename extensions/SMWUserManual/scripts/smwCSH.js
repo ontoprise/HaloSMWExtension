@@ -467,6 +467,7 @@ SMW_UserManual_CSH.prototype = {
             case 'DataImportRepository':ds.push('ImportVocabulary');break
             case 'DefineWebService':
             case 'UseWebService':ds.push('WebService');break
+            case 'LODTrust':ds.push('LODTrust');break
             case 'Gardening':
             case 'GardeningLog':ds.push('Gardening');break
             case 'SemanticNotifications':ds.push('SemanticNotifications');break
