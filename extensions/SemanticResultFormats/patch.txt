@@ -2,10 +2,10 @@ Index: extensions/SemanticResultFormats/SRF_Messages.php
 ===================================================================
 --- extensions/SemanticResultFormats/SRF_Messages.php	(revision 9982)
 +++ extensions/SemanticResultFormats/SRF_Messages.php	(working copy)
-@@ -72,6 +72,18 @@
- 	'srf_paramdesc_barnumbersaxislabel' => 'The label for the numbers axis',
- 	// format "gallery"
- 	'srf_printername_gallery' => 'Gallery',
+@@ -87,6 +87,16 @@
+ 	'srf_paramdesc_minsize' => 'The size of the smallest tags in percent (default: 77)',
+ 	'srf_paramdesc_maxsize' => 'The size of the biggest tags in percent (default: 177)',
+ 	'srf_paramdesc_maxtags' => 'The maximum amount of tags in the cloud',
 +
 +	// format "graph"
 +	'srf_paramdesc_graphname' => 'Title',
@@ -14,25 +14,11 @@ Index: extensions/SemanticResultFormats/SRF_Messages.php
 +	'srf_paramdesc_graphlabel' => 'Graph label',
 +	'srf_paramdesc_rankdir' => 'Rank dir',
 +	'srf_paramdesc_graphlink' => 'Graph link',
-+	'srf_paramdesc_graphcolor' => 'Graph color',
-+	
-+	// general params for "order"
-+	'srf_paramdesc_order' => 'Sort order',
++	'srf_paramdesc_graphcolor' => 'Graph color'
++
  );
- 
+
  /** Message documentation (Message documentation)
-Index: extensions/SemanticResultFormats/Exhibit/SRF_Exhibit.php
-===================================================================
---- extensions/SemanticResultFormats/Exhibit/SRF_Exhibit.php	(revision 9982)
-+++ extensions/SemanticResultFormats/Exhibit/SRF_Exhibit.php	(working copy)
-@@ -446,6 +446,7 @@
- 		$params[] = array( 'name' => 'views', 'type' => 'enum-list', 'description' => wfMsg( 'srf_paramdesc_views' ), 'values' => array( 'tiles', 'tabular', 'timeline', 'maps' ) );
- 		$params[] = array( 'name' => 'facets', 'type' => 'string', 'description' => wfMsg( 'srf_paramdesc_facets' ) );
- 		$params[] = array( 'name' => 'lens', 'type' => 'string', 'description' => wfMsg( 'srf_paramdesc_lens' ) );
-+		$params[] = array('name' => 'order', 'type' => 'enumeration', 'description' => wfMsg('srf_paramdesc_order'), 'values' => array('ascending','descending'));
- 		return $params;
- 	}
- 
 Index: extensions/SemanticResultFormats/GoogleCharts/SRF_GoogleBar.php
 ===================================================================
 --- extensions/SemanticResultFormats/GoogleCharts/SRF_GoogleBar.php	(revision 9982)
