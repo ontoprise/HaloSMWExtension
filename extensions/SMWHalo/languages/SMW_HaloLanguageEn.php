@@ -461,6 +461,8 @@ clicking the big arrows between the columns.',
 	'tabf_response_created' => "This instance has been created in the meantime.",
 	'tabf_response_nocreatepermission' => "You do not have the permission to create this instance.",
 	'tabf_response_nodeletepermission' => "You do not have the permission to delete this instance.",
+	
+	'tabf_update_warning' => "Some errors occured while applying changes. Please have a look at the status column.",
 	);
 
 
