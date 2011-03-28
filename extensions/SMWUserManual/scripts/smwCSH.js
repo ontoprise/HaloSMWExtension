@@ -477,8 +477,10 @@ SMW_UserManual_CSH.prototype = {
                            break
 
         }
-        // FCKeditor object exists?
-        if (typeof FCKeditor != "undefined") ds.push('EditWYSIWYG')
+        // FCKeditor/CKeditor object exists?
+        if ( (typeof FCKeditor != "undefined") ||
+             (typeof CKEDITOR != "undefined") )
+            ds.push('EditWYSIWYG')
         // Semantic Toolbar div exists, and toolbar is visible?
         if (document.getElementById('semtoolbar') &&
             typeof stb_control != "undefined" && 
@@ -494,7 +496,7 @@ SMW_UserManual_CSH.prototype = {
         }
         // check the action parameter
         switch (wgAction) {
-            case 'edit':if (typeof FCKeditor == "undefined") ds.push('EditWikisyntax');break
+            case 'edit':if ((typeof FCKeditor == "undefined") ||(typeof CKEDITOR == "undefined")) ds.push('EditWikisyntax');break
             case 'annotate':ds.push('Annotate');break
             case 'submit' :ds.push('Preview');break
             case 'formedit':ds.push('SemanticForms');break
