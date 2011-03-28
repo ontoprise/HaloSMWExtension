@@ -143,7 +143,8 @@ function smwf_qi_QIAccess($method, $params) {
            	    case 'ofc-scatterline':
                 case 'jqplotbar':
                 case 'jqplotpie':
-                case 'tabularform': 
+                case 'tabularform':
+                case 'tagcloud':
                     return (is_array($result)) ? $result[0] : $result;
                     break;   
                 case 'map':
