@@ -189,6 +189,8 @@ function smwf_qi_QIAccess($method, $params) {
 
         // fix for missing parameter order
         $order_missing = true;
+        $limit_missibg = true;
+        $offset_missing = true;
         $intro_missing = true;
         $outro_missing = true;
         $qp = new $formatclass($format, false);
@@ -198,6 +200,12 @@ function smwf_qi_QIAccess($method, $params) {
             switch ($params[$i]['name']) {
                 case "order" :
                     $order_missing = false;
+                    break;
+                case "limit" :
+                    $limit_missing = false;
+                    break;
+                case "offset" :
+                    $offset_missing = false;
                     break;
                 case "template" :
                     if ( $format != "template" )
@@ -223,6 +231,20 @@ function smwf_qi_QIAccess($method, $params) {
                 'type' => 'enumeration',
                 'description' => wfMsg('smw_qi_tt_order'),
                 'values' => array('ascending', 'descending'),
+            );
+        }
+        if ($limit_missing) {
+            $params[]= array(
+                'name' => 'limit',
+                'type' => 'int',
+                'description' => wfMsg('smw_qi_tt_limit')
+            );
+        }
+        if ($offset_missing) {
+            $params[]= array(
+                'name' => 'offset',
+                'type' => 'int',
+                'description' => wfMsg('smw_qi_tt_offset')
             );
         }
         if ($intro_missing) {
