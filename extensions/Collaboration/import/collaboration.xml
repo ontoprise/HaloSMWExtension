@@ -63,120 +63,118 @@
     <title>Category:Comment</title>
     <id>237</id>
     <revision>
-      <id>2632</id>
-      <timestamp>2010-12-23T15:35:02Z</timestamp>
+      <id>3299</id>
+      <timestamp>2011-03-28T11:19:33Z</timestamp>
       <contributor>
-        <ip>127.0.0.1</ip>
+        <username>WikiSysop</username>
+        <id>1</id>
       </contributor>
-      <comment>added content hash</comment>
       <text xml:space="preserve">{{Category
 |PAGENAME=Category:Comment
 |rationale=This category contains all comments created by the Collaboration Extension.
 |No automatic formedit=Yes
-|part of=Collaboration
 }}
 {{Part of bundle|value=Collaboration}}
 {{Content hash|value=f1e103217093fed9e18a79989b7e1c72}}
 [[Category:Entity]]</text>
-    <hash>dbd519f02879ea45eb96752931e6a6a1</hash>
+    <hash>7eacc9464715cced9134b4cf7a718c49</hash>
     </revision>
   </page>
   <page>
     <title>Property:Has comment rating</title>
     <id>238</id>
     <revision>
-      <id>2258</id>
-      <timestamp>2010-12-22T16:30:39Z</timestamp>
+      <id>3306</id>
+      <timestamp>2011-03-28T11:25:21Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
       <text xml:space="preserve">{{Property
-|part of=Collaboration
 |rationale=The rating value of a comment.
 |PAGENAME=Property:Has rating
 }}
+[[Category:Property]]
 {{Part of bundle|value=Collaboration}}
 {{Content hash|value=}}
 [[has domain and range::Category:Comment; | ]][[has type::Type:Number| ]] [[Allows value::1| ]] [[Allows value::0| ]] [[Allows value::-1| ]]</text>
-    <hash>adc51d785938fb68ac93e3af91bed26c</hash>
+    <hash>578b61328f8c5ade10ebf747f3130c25</hash>
     </revision>
   </page>
   <page>
     <title>Property:Has comment date</title>
     <id>239</id>
     <revision>
-      <id>2256</id>
-      <timestamp>2010-12-22T16:28:43Z</timestamp>
+      <id>3303</id>
+      <timestamp>2011-03-28T11:23:24Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
       <text xml:space="preserve">{{Property
-|part of=Collaboration
 |rationale=The date of a comment.
 |PAGENAME=Property:Has comment date
 }}
+[[Category:Property]]
 {{Part of bundle|value=Collaboration}}
 {{Content hash|value=}}
 [[has domain and range::Category:Comment; | ]][[has type::Type:Date| ]]</text>
-    <hash>1e08daf77bd63ea166d43a204419b961</hash>
+    <hash>65fa64837e4de336398e722df6e22f12</hash>
     </revision>
   </page>
   <page>
     <title>Property:Has comment text</title>
     <id>240</id>
     <revision>
-      <id>2259</id>
-      <timestamp>2010-12-22T16:31:04Z</timestamp>
+      <id>3307</id>
+      <timestamp>2011-03-28T11:25:52Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
       <text xml:space="preserve">{{Property
-|part of=Collaboration
 |rationale=Contains a comment text.
 |PAGENAME=Property:Has comment text
 }}
+[[Category:Property]]
 {{Part of bundle|value=Collaboration}}
 {{Content hash|value=}}
 [[has domain and range::Category:Comment; | ]][[has type::Type:Text| ]]</text>
-    <hash>42415065dce696d9f88de042c2a77af5</hash>
+    <hash>70066faf414cb6697cd79d018ecd8bb2</hash>
     </revision>
   </page>
   <page>
     <title>Property:Has comment person</title>
     <id>241</id>
     <revision>
-      <id>2257</id>
-      <timestamp>2010-12-22T16:29:19Z</timestamp>
+      <id>3305</id>
+      <timestamp>2011-03-28T11:24:52Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
       <text xml:space="preserve">{{Property
-|part of=Collaboration
 |rationale=Contains the commenting person.
 |PAGENAME=Property:Has comment person
 }}
+[[Category:Property]]
 {{Part of bundle|value=Collaboration}}
 {{Content hash|value=}}
 [[has domain and range::Category:Comment; | ]][[has type::Type:String| ]]</text>
-    <hash>7dcf5f3557020199d3b41539199c5b0c</hash>
+    <hash>553457b362e1e14abf1d3b800e11e709</hash>
     </revision>
   </page>
   <page>
     <title>Template:CommentResult</title>
     <id>244</id>
     <revision>
-      <id>3106</id>
-      <timestamp>2011-03-16T13:41:17Z</timestamp>
+      <id>3302</id>
+      <timestamp>2011-03-28T11:22:50Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
       <text xml:space="preserve">&lt;noinclude&gt;{{Template
-|part of=Collaboration
 |rationale=Used as result printer template.
 |PAGENAME=Template:CommentResult
 }}
@@ -214,43 +212,42 @@
 {{#if:{{{8|}}}|&lt;div class=&quot;collabComEditInfo&quot;&gt;&lt;span class=&quot;collabComEditorPre&quot;&gt;&lt;/span&gt;&lt;span class=&quot;collabComEditor&quot;&gt;{{{8|}}}&lt;/span&gt;&lt;span class=&quot;collabComEditDatePre&quot;&gt;&lt;/span&gt;&lt;span class=&quot;collabComEditDate&quot;&gt;{{{9|}}}&lt;/span&gt;&lt;/div&gt;&lt;!-- end deletion info --&gt;|}}
 &lt;/div&gt;&lt;!-- end comment 
 --&gt;&lt;/includeonly&gt;</text>
-    <hash>b76a311096b146d52995adf3f5287777</hash>
+    <hash>aaf917143d6397915a83a2bedc516c94</hash>
     </revision>
   </page>
   <page>
     <title>Property:Belongs to article</title>
     <id>245</id>
     <revision>
-      <id>2247</id>
-      <timestamp>2010-12-22T16:18:43Z</timestamp>
+      <id>3297</id>
+      <timestamp>2011-03-28T11:18:03Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
       <text xml:space="preserve">{{Property
-|part of=Collaboration
 |rationale=Used to create a relation between comments and articles.
 |PAGENAME=Property:Belongs to article
 }}
+[[Category:Property]]
 {{Part of bundle|value=Collaboration}}
 {{Content hash|value=}}
 [[has type::Type:Page| ]][[Has max cardinality::1| ]][[Has min cardinality::1| ]][[has domain and range::Category:Comment; | ]]</text>
-    <hash>e404bff7c9b2d0bfce778da940d0c6e8</hash>
+    <hash>d4e79df3b8547dde9d98865ea12a549c</hash>
     </revision>
   </page>
   <page>
     <title>Template:ShowCommentsIntern</title>
     <id>247</id>
     <revision>
-      <id>3104</id>
-      <timestamp>2011-03-16T13:39:47Z</timestamp>
+      <id>3309</id>
+      <timestamp>2011-03-28T11:27:24Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
       <text xml:space="preserve">&lt;noinclude&gt;{{Template
 |PAGENAME=Template:ShowCommentsIntern
-|part of=Collaboration
 |rationale=Show all comments incl. form.
 }}
 {{Part of bundle|value=Collaboration}}
@@ -277,63 +274,62 @@
 }}
 &lt;/div&gt;
 &lt;/div&gt;&lt;!-- end surround div --&gt;&lt;/includeonly&gt;</text>
-    <hash>217bb3b3cdafddc30678fcf07ca53ede</hash>
+    <hash>c7248fb970e97217e012545b25076e4e</hash>
     </revision>
   </page>
   <page>
     <title>Property:Comment was deleted</title>
     <id>284</id>
     <revision>
-      <id>2253</id>
-      <timestamp>2010-12-22T16:23:56Z</timestamp>
+      <id>3301</id>
+      <timestamp>2011-03-28T11:22:23Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
       <text xml:space="preserve">{{Property
-|part of=Collaboration
 |rationale=Flag for comment deletion.
 |PAGENAME=Property:Comment was deleted
 }}
+[[Category:Property]]
 {{Part of bundle|value=Collaboration}}
 {{Content hash|value=}}
 [[has domain and range::Category:Comment; | ]][[has type::Type:Boolean| ]]</text>
-    <hash>03ad88cd0cd5d081ef1c85d467f0c613</hash>
+    <hash>3c5401ead2bec9906fb1b916b35b4ece</hash>
     </revision>
   </page>
   <page>
     <title>Property:Belongs to comment</title>
     <id>285</id>
     <revision>
-      <id>2248</id>
-      <timestamp>2010-12-22T16:20:18Z</timestamp>
+      <id>3298</id>
+      <timestamp>2011-03-28T11:19:03Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
       <text xml:space="preserve">{{Property
-|part of=Collaboration
 |rationale=Used to create a relation between comments and other comments.
 |PAGENAME=Property:Belongs to comment
 }}
+[[Category:Property]]
 {{Part of bundle|value=Collaboration}}
 {{Content hash|value=}}
 [[has type::Type:Page| ]][[Has max cardinality::1| ]][[Has min cardinality::1| ]][[has domain and range::Category:Comment;Category:Comment | ]]</text>
-    <hash>f208e8ea95c0d6ec2a58ee67cbcec4e3</hash>
+    <hash>59b5e200eeb4b6ca4543e1a6b0a63498</hash>
     </revision>
   </page>
   <page>
     <title>Template:Comment</title>
     <id>358</id>
     <revision>
-      <id>2641</id>
-      <timestamp>2010-12-23T15:35:03Z</timestamp>
+      <id>3300</id>
+      <timestamp>2011-03-28T11:21:44Z</timestamp>
       <contributor>
-        <ip>127.0.0.1</ip>
+        <username>WikiSysop</username>
+        <id>1</id>
       </contributor>
-      <comment>added content hash</comment>
       <text xml:space="preserve">&lt;noinclude&gt;{{Template
-|part of=Collaboration
 |rationale=Creates a comment.
 |parameters=&lt;pre&gt;{{Comment
 |CommentPerson
@@ -382,37 +378,36 @@
 [[Comment was deleted::{{{CommentWasDeleted|false}}}]]
 &lt;!-- end comment --&gt;[[Category:Comment]]
 &lt;/includeonly&gt;</text>
-    <hash>2974485e0549583dfc3768204289af7d</hash>
+    <hash>b7c349147d14460278ce7a28970695b3</hash>
     </revision>
   </page>
   <page>
     <title>Template:ShowComments</title>
     <id>359</id>
     <revision>
-      <id>2660</id>
-      <timestamp>2010-12-23T15:35:07Z</timestamp>
+      <id>3308</id>
+      <timestamp>2011-03-28T11:26:29Z</timestamp>
       <contributor>
-        <ip>127.0.0.1</ip>
+        <username>WikiSysop</username>
+        <id>1</id>
       </contributor>
-      <comment>added content hash</comment>
       <text xml:space="preserve">&lt;noinclude&gt;{{Template
 |PAGENAME=Template:ShowComments
-|part of=Collaboration
 |rationale=Shows all comments incl. a form entry field for the given article.
 }}
 {{Part of bundle|value=Collaboration}}
 {{Content hash|value=09f6461f4882b5496d68baa15933a29b}}
 &lt;/noinclude&gt;&lt;includeonly&gt;
 {{#ifeq:{{{show|}}}|True|{{ShowCommentsIntern}}|}}&lt;/includeonly&gt;</text>
-    <hash>2b321c9d33e5766f595807f7f7d9edd7</hash>
+    <hash>0d88f76070ff1a4d2d491e59d11803fb</hash>
     </revision>
   </page>
   <page>
     <title>Collaboration</title>
     <id>444</id>
     <revision>
-      <id>3108</id>
-      <timestamp>2011-03-16T14:00:09Z</timestamp>
+      <id>3296</id>
+      <timestamp>2011-03-28T11:16:37Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -422,10 +417,10 @@
 |Version=131
 |rationale=This content bundle features a set of basic elements that are necessary to for the Collaboration extension.
 |Installation=extensions/Collaboration
-|Dependency=smwhalo;153;153, applicationprogramming;102;102
+|Dependency=smwhalo;153;153, applicationprogramming;103;103
 }} {{Part of bundle|value=Collaboration}} [[Vendor::Ontoprise| ]] [[Ontology version::131| ]] [[Installation dir::extensions/Collaboration| ]] 
 [[Dependency::smwhalo;153;153| ]] 
-[[Dependency::applicationprogramming;102;102| ]]
+[[Dependency::applicationprogramming;103;103| ]]
 
 ;This bundle contains these articles
 :
@@ -440,29 +435,143 @@
 
 &lt;br/&gt;[[Category:Content bundle|Content_bundle]]
 {{Content hash|value=a5b59c7c93de4673e7a007ab705bdafa}}</text>
-    <hash>5ce9afea87f163336099c53ab61351ea</hash>
+    <hash>f1424fc0622409ba315682bde9deb1c4</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Collaboration Sandbox</title>
+    <id>535</id>
+    <revision>
+      <id>3315</id>
+      <timestamp>2011-03-28T11:36:48Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">= Collaboration Sandbox =
+Just click on '''&quot;Show comments&quot;''' below to read and add comments.
+
+More information can be found also in the [http://smwforum.ontoprise.com/smwforum/index.php?title=Help:Using_the_Collaboration_extension_1.3&amp;context=Help%3ACollaboration+extension+1.3 Collaboration extension help article]. Get this extension on our [http://smwforum.ontoprise.com/smwforum/index.php/Download download page]!
+
+{{ShowComments
+|show=True
+}}
+&lt;noinclude&gt;
+{{Part of bundle|value=Collaboration}}
+{{Content hash|value=}}
+&lt;/noinclude&gt;</text>
+    <hash>94584fd7ad28a4cd7be3e85646e339db</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Comment:Collaboration Sandbox 1295602691794</title>
+    <id>536</id>
+    <revision>
+      <id>3310</id>
+      <timestamp>2011-03-28T11:34:11Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">{{Comment|CommentPerson=User:WikiSysop|CommentRelatedArticle=Collaboration_Sandbox|CommentDatetime=2011-01-21T10:38:11+01:00|CommentContent=Do you want to let your visitors have a say and encourage discussions in your wiki? Then introduce meta talking with the Collaboration extension.|}}
+&lt;noinclude&gt;
+{{Part of bundle|value=Collaboration}}
+{{Content hash|value=}}
+&lt;/noinclude&gt;</text>
+    <hash>1e3e9c7d5ff4b6cd748b574112bd2bfe</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Comment:Collaboration Sandbox 1295602913516</title>
+    <id>537</id>
+    <revision>
+      <id>3311</id>
+      <timestamp>2011-03-28T11:34:39Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">{{Comment|CommentPerson=User:WikiSysop|CommentRelatedArticle=Collaboration_Sandbox|CommentDatetime=2011-01-21T10:41:52+01:00|CommentContent=Communicating about topics and media is a basic community feature. You can upgrade your wiki essentially if you allow your visitors to present and discuss their opinions about certain articles. Or you would like to set up a conversation focused wiki where commenting is the superordinate and actual objective and therefore always available. You can have it your way and expand the attraction of your wiki in any case. |}}
+&lt;noinclude&gt;
+{{Part of bundle|value=Collaboration}}
+{{Content hash|value=}}
+&lt;/noinclude&gt;</text>
+    <hash>2749d63bd78d6bfd253672bec338b4a2</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Comment:Collaboration Sandbox 1295602948268</title>
+    <id>538</id>
+    <revision>
+      <id>3312</id>
+      <timestamp>2011-03-28T11:35:01Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">{{Comment|CommentPerson=User:WikiSysop|CommentRelatedArticle=Collaboration_Sandbox|CommentRelatedComment=Comment:Collaboration_Sandbox_1295602913516|CommentDatetime=2011-01-21T10:42:27+01:00|CommentContent=So let people take part and rate contents with the Collaboration extension.|}}
+&lt;noinclude&gt;
+{{Part of bundle|value=Collaboration}}
+{{Content hash|value=}}
+&lt;/noinclude&gt;</text>
+    <hash>bd18e1ceb3a8116679100c20738bc37a</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Comment:Collaboration Sandbox 1295603031029</title>
+    <id>539</id>
+    <revision>
+      <id>3313</id>
+      <timestamp>2011-03-28T11:35:27Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">{{Comment|CommentPerson=User:WikiSysop|CommentRelatedArticle=Collaboration_Sandbox|CommentDatetime=2011-01-21T10:43:50+01:00|CommentContent=The features of the Collaboration extension&amp;#58; &lt;br /&gt;Let your visitors comment and rate articles and contents &lt;br /&gt;Allow discussions about and replies to expressed opinions &lt;br /&gt;Aggregate comments in different ways (e.g. lists of all exisiting comments, the 10 latest comments or all contributions of a certain user)|}}
+&lt;noinclude&gt;
+{{Part of bundle|value=Collaboration}}
+{{Content hash|value=}}
+&lt;/noinclude&gt;</text>
+    <hash>a2d0c374740dc255c44cc6f41308ddbb</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Comment:Collaboration Sandbox 1295603163565</title>
+    <id>540</id>
+    <revision>
+      <id>3314</id>
+      <timestamp>2011-03-28T11:35:50Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">{{Comment|CommentPerson=User:WikiSysop|CommentRelatedArticle=Collaboration_Sandbox|CommentRelatedComment=Comment:Collaboration_Sandbox_1295603031029|CommentDatetime=2011-01-21T10:46:02+01:00|CommentContent=You can download this extension here&amp;#58; http&amp;#58;&amp;#47;&amp;#47;smwforum.ontoprise.com&amp;#47;smwforum&amp;#47;index.php&amp;#47;Download#SUITE_OF_HALO_EXTENSIONS|}}
+&lt;noinclude&gt;
+{{Part of bundle|value=Collaboration}}
+{{Content hash|value=}}
+&lt;/noinclude&gt;</text>
+    <hash>67a0d157ea87631291fc16848747c555</hash>
     </revision>
   </page>
   <page>
     <title>Property:Has comment editor</title>
     <id>560</id>
     <revision>
-      <id>3107</id>
-      <timestamp>2011-03-16T13:42:11Z</timestamp>
+      <id>3304</id>
+      <timestamp>2011-03-28T11:24:17Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
-      <comment>Created page with &quot;{{Property |part of=Collaboration |rationale=Contains the name of the last editor. |PAGENAME=Property:Has comment editor }} {{Part of bundle|value=Collaboration}} {{Content hash|...&quot;</comment>
       <text xml:space="preserve">{{Property
-|part of=Collaboration
 |rationale=Contains the name of the last editor.
 |PAGENAME=Property:Has comment editor
 }}
+[[Category:Property]]
 {{Part of bundle|value=Collaboration}}
 {{Content hash|value=}}
 [[has domain and range::Category:Comment; | ]][[has type::Type:String| ]]</text>
-    <hash>45afecb73239336498fd6e1bbc6fc7fc</hash>
+    <hash>07394658b93e3e24382ffd4079e060d6</hash>
     </revision>
   </page>
 </mediawiki>
