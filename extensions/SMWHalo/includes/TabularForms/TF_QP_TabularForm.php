@@ -111,7 +111,7 @@ class TFTabularFormData {
 		
 		global $smwgHaloScriptPath;
 		$html .= '<div class="tabf_loader">';
-		$html .= wfMsg('zabf_load_msg');
+		$html .= wfMsg('tabf_load_msg');
 		$html .= '<img title="Loading Tabular Form" src="'.$smwgHaloScriptPath.'/skins/TabularForms/Pending.gif"></img>';
 		$html .= '</div>';
 		
@@ -826,7 +826,7 @@ class TFTabularFormRowData {
 					$html .= "<textarea ".$autocompletion." ". $style ." rows='2' annotation-hash='".$annotation->hash
 						."' annotation-type-id='".$annotation->typeId."'>".$annotation->currentValue."</textarea>";
 				} else {
-					$html .= '<div style="height: 3em; width: 100%">'.$annotation->renderedValue.'</div>';
+					$html .= '<div>'.$annotation->renderedValue.'</div>';
 				}
 				$moreThanOne = true;
 			}
@@ -845,7 +845,7 @@ class TFTabularFormRowData {
 							|| ($this->title instanceof Title && !$this->title->exists() && $enableInstanceAdd)){
 						$html .= "<textarea rows='1' template-id=".'"'.TF_NEW_TEMPLATE_CALL.'"'."></textarea>";
 					} else {
-						$html .= '<div style="height: 3em; width: 100%"></div>';
+						$html .= '<div></div>';
 					}
 				} else {
 					foreach($this->templateParameters[$template][$param]->currentValues as $templateId => $currentValue){
@@ -853,7 +853,7 @@ class TFTabularFormRowData {
 								|| ($this->title instanceof Title && !$this->title->exists() && $enableInstanceAdd) ){
 							$html .= "<textarea rows='1' template-id=".'"'.$templateId.'"'."'>".$currentValue."</textarea>";
 						} else {
-							$html .= '<div style="height: 3em; width: 100%">'.$currentValue.'</div>';
+							$html .= '<div>'.$currentValue.'</div>';
 						}
 					}
 				}

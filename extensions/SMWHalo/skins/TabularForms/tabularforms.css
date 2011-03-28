@@ -75,6 +75,11 @@
 	background-color: transparent !important;
 	vertical-align: middle;
 }
+.tabf_table_cell div {
+	height: 2.5em;
+	width: 100%;
+	background-color: #F0F0F0; /*all divs are write protected*/
+}
 /* textareas */
 .tabf_table_cell textarea {
 	/*background:url(../edit.gif)no-repeat 100% 0%;*/
@@ -121,6 +126,7 @@
 
 .tabf_modified_value {
 	font-weight: bold;
+	background-color: #FFCD87;
 }
 
 /* Teaxtarea has focus */
