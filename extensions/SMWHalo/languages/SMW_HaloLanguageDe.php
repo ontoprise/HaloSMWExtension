@@ -338,6 +338,7 @@ protected $smwUserMessages = array(
 	'smw_qi_tt_outro' => 'Text, der hinter den Queryergebnissen ausgegeben wird',
 	'smw_qi_tt_sort' => 'Spalte, nach welcher die Sortierung erfolgt',
 	'smw_qi_tt_limit' => 'Maximale Anzahl der angezeigten Ergebnisse',
+    'smw_qi_tt_offset' => 'Offset Wert für Ergebnisse, die gezeigt werden sollen',
 	'smw_qi_tt_mainlabel' => '&uuml;berschrift der ersten Spalte',
 	'smw_qi_tt_order' => 'Auf- oder absteigende Sortierung',
 	'smw_qi_tt_headers' => 'Tabellen&uuml;berschriften anzeigen oder nicht',

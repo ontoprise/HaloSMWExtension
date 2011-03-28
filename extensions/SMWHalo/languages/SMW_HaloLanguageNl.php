@@ -333,6 +333,7 @@ Druk de rechter knop om resultaten te verkrijgen. Enkel <i>Return</i> drukken ge
     'smw_qi_tt_outro' => 'Tekst die achteraan aan de queryresultaten toegevoegd wordt',
 	'smw_qi_tt_sort' => 'Kolom die zal gebruikt worden om te sorteren',
 	'smw_qi_tt_limit' => 'Maximum aantal getoonde resultaten',
+    'smw_qi_tt_offset' => 'Offset number from where to start display results',
 	'smw_qi_tt_mainlabel' => 'Naam van de eerste kolom',
 	'smw_qi_tt_order' => 'Stijgende of dalende volgorde',
 	'smw_qi_tt_headers' => 'De kop van de tabel tonen of niet',
