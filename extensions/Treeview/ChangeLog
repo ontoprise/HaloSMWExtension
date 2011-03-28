@@ -1,7 +1,13 @@
 Treeview extension ChangeLog
 ============================
 
-VERSION 1.5.2
+VERSION 1.4.3
+
+  BUGFIXES:
+    * Fix bug 12489: Treeview must be visible (and calculated) if the article is
+      opened in edit mode
+
+VERSION 1.4.2
 
   BUGFIXES:
     * Fix: When using the initOnload parameter some other parameters like level
