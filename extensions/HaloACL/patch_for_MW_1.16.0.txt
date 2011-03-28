@@ -303,7 +303,7 @@ Index: includes/Title.php
  		} else {
  			return NULL;
  		}
-@@ -3675,4 +3692,105 @@
+@@ -3675,4 +3692,97 @@
  		}
  		return $this->mBacklinkCache;
  	}
@@ -372,20 +372,13 @@ Index: includes/Title.php
 +		if ($this->getFullText() != $currentTitle) {
 +			$action = 'read';
 +		}
-+//		echo $this->getText()."($action): ";
 +		$index = $this->getFullText().'-'.$action; // A bug was fixed here thanks to Dave MacDonald
 +		$allowed = @$permissionCache[$index];
 +		if (!isset($allowed)) {
 +			switch ($action) {
 +				case 'create':
-+					$allowed = $this->userCanCreate();
-+					break;
 +				case 'edit':
-+					$allowed = $this->userCanEdit();
-+					break;
 +				case 'move':
-+					$allowed = $this->userCanMove();
-+					break;
 +				case 'annotate':
 +					$allowed = $this->userCan($action);
 +					break;
@@ -395,7 +388,6 @@ Index: includes/Title.php
 +			$permissionCache[$index] = $allowed;
 +		}
 +		if ($allowed === false) {
-+//			echo "no\n";
 +			global $haclgContLang;
 +			$etc = $haclgEnableTitleCheck;
 +			$haclgEnableTitleCheck = false;
@@ -403,7 +395,6 @@ Index: includes/Title.php
 +			$haclgEnableTitleCheck = $etc;
 +			return $t;
 +		}
-+//		echo "yes\n";
 +		return $this;
 +	}
 +/*op-patch|TS|2009-06-19|end*/  
