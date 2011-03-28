@@ -956,10 +956,10 @@ OBOntologyModifier.prototype = {
 		var uri = GeneralTools.makeTSCURI(instanceTitle);
 		var uri_att = uri != false ? 'uri="'+uri+'"' : '';
 		return '<instance '+uri_att+' title_url="' + instanceTitle_esc
-				+ '" localurl="'+localURL+'" title="' + instanceTitle
-				+ '" superCat="' + categoryTitle + '" id="ID_'
+				+ '" namespace= "" localurl="'+localURL+'" title="' + instanceTitle
+				+ '"  id="ID_'
 				+ (this.date.getTime() + this.count)
-				+ '" inherited="false" />';
+				+ '"  />';
 	},
 
 	/**

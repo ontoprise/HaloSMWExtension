@@ -179,7 +179,7 @@ function smwf_om_CreateArticle($title, $user, $content, $optionalText, $creation
 
 	return ($success ? "true," : "false,").
 	       ($created ? "true," : "false,").
-	       $title->getNsText().":".$title->getText();
+	       $title->getPrefixedText();
 }
 
 /**
