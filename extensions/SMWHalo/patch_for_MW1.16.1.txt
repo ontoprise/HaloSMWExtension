@@ -2,15 +2,18 @@ Index: includes/AjaxDispatcher.php
 ===================================================================
 --- includes/AjaxDispatcher.php	(revision 9464)
 +++ includes/AjaxDispatcher.php	(working copy)
-@@ -113,6 +113,9 @@
+@@ -113,6 +113,12 @@
  				else {
  					if ( is_string( $result ) ) {
  						$result = new AjaxResponse( $result );
++						/*op-patch|SR|2009-09-17|MW|add ajaxMIMEtype hook|start*/
++						/*op-patch|SR|2009-09-17|MW|add ajaxMIMEtype hook|doc|http://dmwiki.ontoprise.com:8888/dmwiki/index.php?title=Ajax_mimetype_hook*/
 +						$mimeType = NULL;
 +						wfRunHooks('ajaxMIMEtype', array($func, & $mimeType));
 +						if (!is_null($mimeType)) $result->setContentType($mimeType);
++						/*op-patch|SR|2009-09-17|MW|add ajaxMIMEtype hook|end*/
  					}
- 
+
  					$result->sendHeaders();
 Index: includes/Article.php
 ===================================================================
@@ -35,14 +38,16 @@ Index: includes/Linker.php
 ===================================================================
 --- includes/Linker.php	(revision 9464)
 +++ includes/Linker.php	(working copy)
-@@ -239,6 +239,10 @@
+@@ -239,6 +239,12 @@
  		and $target->getNamespace() != NS_SPECIAL ) {
  			$query['action'] = 'edit';
  			$query['redlink'] = '1';
-+            global $IP;
-+            if ((defined('SMWHALO_WYSIWYG_EDITOR_WRAPPER') || defined('WYSIWYG_EDITOR_VERSION')) &&
-+                empty( $query['mode']))
-+                $query['mode']= 'wysiwyg';
++			/*op-patch|SR|2009-09-17|MW|red link with mode wysiwyg|start*/
++			/*op-patch|SR|2009-09-17|MW|red link with mode wysiwyg|doc|http://dmwiki.ontoprise.com:8888/dmwiki/index.php?title=Redlink_with_wysiwyg*/
++			global $IP;
++			if ((defined('SMWHALO_WYSIWYG_EDITOR_WRAPPER') || defined('WYSIWYG_EDITOR_VERSION')) &&	empty( $query['mode']))
++				$query['mode']= 'wysiwyg';
++			/*op-patch|SR|2009-09-17|MW|red link with mode wysiwyg|doc|end*/
  		}
  		$ret = $target->getLinkUrl( $query );
  		wfProfileOut( __METHOD__ );
