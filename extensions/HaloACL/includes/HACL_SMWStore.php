@@ -519,4 +519,15 @@ class HACLSMWStore extends SMWStore {
 		}
 		return $properties;		
 	}
+
+///// Abstact methods of SMWStore /////
+
+   	/**
+	 * @see SMWStore::doDataUpdate
+	 *
+	 * @param SMWSemanticData $data
+	 */
+    public function doDataUpdate(SMWSemanticData $data) {
+        parent::doDataUpdate($data);
+    }
 }
