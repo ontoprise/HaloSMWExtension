@@ -52,29 +52,6 @@ Index: includes/Linker.php
  		}
  		$ret = $target->getLinkUrl( $query );
  		wfProfileOut( __METHOD__ );
-Index: includes/Namespace.php
-===================================================================
---- includes/Namespace.php	(revision 9464)
-+++ includes/Namespace.php	(working copy)
-@@ -60,7 +60,17 @@
- 	 */
- 	public static function isMovable( $index ) {
- 		global $wgAllowImageMoving;
--		return !( $index < NS_MAIN || ($index == NS_FILE && !$wgAllowImageMoving)  || $index == NS_CATEGORY );
-+		/*op-patch|BL|2009-10-07|RichMedia|AdditionalNamespaceCheck|start*/
-+		// NS_FILE is not the only Namespace now, so check them all
-+		// original content is located in else statement.
-+		global $smwgEnableRichMedia;
-+		if( $smwgEnableRichMedia ) {
-+			RMNamespace::isImage( $index, $rMresult );
-+			return !( $index < NS_MAIN || ($rMresult && !$wgAllowImageMoving) );
-+		} else {
-+			return !( $index < NS_MAIN || ($index == NS_FILE && !$wgAllowImageMoving) );
-+		}
-+		/*op-patch|BL|2009-10-07|end*/
- 	}
- 
- 	/**
 Index: includes/parser/ParserOptions.php
 ===================================================================
 --- includes/parser/ParserOptions.php	(revision 9464)
