@@ -50,16 +50,16 @@ class OntologyInstaller {
 		$this->logger = Logger::getInstance();
 	}
 
-    /**
-     * Installs an ontology from a file.
-     *  
-     * @param string $bundleID ID of stub bundle which will be created for the ontology. 
-     * @param string $inputfile Full path of input file
-     * @param object $callback method askForOntologyPrefix(& $answer)
-     * @param boolean $noBundlePage Should a bundle page be created or not. 
-     * @param boolean $force Ignore conflicts or not.
-     * 
-     */
+	/**
+	 * Installs an ontology from a file.
+	 *
+	 * @param string $bundleID ID of stub bundle which will be created for the ontology.
+	 * @param string $inputfile Full path of input file
+	 * @param object $callback method askForOntologyPrefix(& $answer)
+	 * @param boolean $noBundlePage Should a bundle page be created or not.
+	 * @param boolean $force Ignore conflicts or not.
+	 *
+	 */
 	public function installOntology($bundleID, $inputfile, $callback, $noBundlePage = false, $force = false) {
 
 		$outputfile = $inputfile.".xml";
@@ -108,36 +108,44 @@ class OntologyInstaller {
 			print "\n[No Conflict detected]";
 		}
 
-		// do actual install/update
+		// do actual ontology install/update
 		print "\n[Installing/updating ontology $inputfile...";
 		$this->installOrUpdateOntology($outputfile_rel, $verificationLog, $bundleID, $prefix);
-	}
-	
-    /**
-     * Installs or updates ontologies specified in the deploy descriptor
-     *
-     * @param DeployDescriptor $dd
-     * @param object $callback method askForOntologyPrefix(& $answer)
-     */
-    public function installOntologies($dd, $callback, $force = false) {
-        $ontologies = $dd->getOntologies();
-        $noBundlePage = false;
-        foreach($ontologies as $loc) {
-            $this->installOntology($dd->getID(), $this->rootDir.$dd->getInstallationDirectory()."/".$loc, $callback, $noBundlePage, $force);
-            $noBundlePage = true; // make sure that only the first ontology creates a bundle page
+
+		// import external artifacts (e.g. mapping metadata/rules)
+	    $externalArtifactFile = $inputfile.".external";
+        if (file_exists($externalArtifactFile)) {
+            print "\n\t[Importing external artifacts from $externalArtifactFile...";
+            $this->uploadExternalArtifacts($externalArtifactFile, $bundleID);
+            print "done.]"; 
         }
-    }
+	}
 
-	
+	/**
+	 * Installs or updates ontologies specified in the deploy descriptor
+	 *
+	 * @param DeployDescriptor $dd
+	 * @param object $callback method askForOntologyPrefix(& $answer)
+	 */
+	public function installOntologies($dd, $callback, $force = false) {
+		$ontologies = $dd->getOntologies();
+		$noBundlePage = false;
+		foreach($ontologies as $loc) {
+			$this->installOntology($dd->getID(), $this->rootDir.$dd->getInstallationDirectory()."/".$loc, $callback, $noBundlePage, $force);
+			$noBundlePage = true; // make sure that only the first ontology creates a bundle page
+		}
+	}
 
-	
 
-	
-    /**
-     * De-installs ontologies contained in a bundle.
-     * 
-     * @param DeployDescriptor $dd
-     */
+
+
+
+
+	/**
+	 * De-installs ontologies contained in a bundle.
+	 *
+	 * @param DeployDescriptor $dd
+	 */
 	public function deinstallOntology($dd) {
 		if (count($dd->getOntologies()) == 0) return;
 		if (!defined('SMW_VERSION')) throw new InstallationError(DEPLOY_FRAMEWORK_NOT_INSTALLED, "SMW is not installed. Can not delete ontology.");
@@ -149,32 +157,32 @@ class OntologyInstaller {
 			print "\ndone]";
 		}
 	}
-	
-    /**
-     * Creates an deploy descriptor for an ontology bundle.
-     *
-     * @param string $ontologyID
-     * @param string $inputfile
-     */
-    public function createDeployDescriptor($ontologyID, $inputfile) {
-        global $dfgLang;
-        $ontologyBundlePage = Title::newFromText($ontologyID);
-        $ontologyVersion = smwfGetStore()->getPropertyValues($ontologyBundlePage, SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString('df_ontologyversion')));
-        $installationDir = smwfGetStore()->getPropertyValues($ontologyBundlePage, SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString('df_instdir')));
-        $ontologyVersion = reset($ontologyVersion);
-        $installationDir = reset($installationDir);
-        $versionDBkeys = $ontologyVersion->getDBkeys();
-        $version = reset($versionDBkeys);
-        $installDirDBkeys = $installationDir->getDBkeys();
-        $installDir = reset($installDirDBkeys);
-        $filename = basename($inputfile);
-            
-        // set others to defaults
-        $vendor = '';
-        $maintainer= '';
-        $description = '';
 
-        $xml =  <<<ENDS
+	/**
+	 * Creates an deploy descriptor for an ontology bundle.
+	 *
+	 * @param string $ontologyID
+	 * @param string $inputfile
+	 */
+	public function createDeployDescriptor($ontologyID, $inputfile) {
+		global $dfgLang;
+		$ontologyBundlePage = Title::newFromText($ontologyID);
+		$ontologyVersion = smwfGetStore()->getPropertyValues($ontologyBundlePage, SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString('df_ontologyversion')));
+		$installationDir = smwfGetStore()->getPropertyValues($ontologyBundlePage, SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString('df_instdir')));
+		$ontologyVersion = reset($ontologyVersion);
+		$installationDir = reset($installationDir);
+		$versionDBkeys = $ontologyVersion->getDBkeys();
+		$version = reset($versionDBkeys);
+		$installDirDBkeys = $installationDir->getDBkeys();
+		$installDir = reset($installDirDBkeys);
+		$filename = basename($inputfile);
+
+		// set others to defaults
+		$vendor = '';
+		$maintainer= '';
+		$description = '';
+
+		$xml =  <<<ENDS
 <?xml version="1.0" encoding="UTF-8"?>
 <deploydescriptor>
     <global>
@@ -210,93 +218,107 @@ class OntologyInstaller {
 ENDS
         ;
         return $xml;
-    }
-
-    /**
-     * Checks what would happen if the given ontology would be imported.
-     *
-     * @param $inputfile filepath relative to extension
-     * @param string $bundleID
-     * @param string $prefix Prefix used to distinguish 2 ontologies
-     * 
-     * @return array of (Title t, string status) 
-     *     status can be 'merge', 'conflict' or 'notexist'
-     */
-    private function verifyOntology($inputfile, $bundleID, $prefix = '') {
-
-        if( preg_match( '/\.gz$/', $inputfile ) ) {
-            $filename = 'compress.zlib://' . $inputfile;
-        }
-        $fileHandle = fopen( $inputfile, 'rt' );
-        return $this->verifyFromHandle( $fileHandle, $bundleID , $prefix);
-    }
+	}
     
-    /**
-     * Install/update ontology
-     *
-     * @param $file filepath relative to extension
-     * @param array $verificationLog
-     * @param string bundleID
-     * @param string $prefix
-     */
-    private function installOrUpdateOntology($inputfile, $verificationLog, $bundleID, $prefix = '') {
+	/**
+	 * Uploads an external entity containing arbitrary artifacts. Marks this upload
+	 * as part of the bundle.
+	 *  
+	 * @param string $filepath Absolute path
+	 * @param string $bundleID 
+	 */
+	private function uploadExternalArtifacts($filepath, $bundleID) {
+		global $dfgLang;
+		$im_file = wfLocalFile(Title::newFromText(basename($filepath), NS_FILE));
+		$text = "[[".$dfgLang->getLanguageString('df_partofbundle')."::".ucfirst($bundleID)."]]";
+		$im_file->upload($filepath, "auto-inserted external artifacts from $bundleID", $text);
+	}
 
-        // remove ontology elements which do not exist anymore.
-        global $dfgLang;
-        $pagesToImport = array();
+	/**
+	 * Checks what would happen if the given ontology would be imported.
+	 *
+	 * @param $inputfile filepath relative to extension
+	 * @param string $bundleID
+	 * @param string $prefix Prefix used to distinguish 2 ontologies
+	 *
+	 * @return array of (Title t, string status)
+	 *     status can be 'merge', 'conflict' or 'notexist'
+	 */
+	private function verifyOntology($inputfile, $bundleID, $prefix = '') {
 
-        foreach($verificationLog as $log) {
-            list($title, $command)=$log;
-            $pagesToImport[] = $title->getPrefixedText();
-        }
-        $bundleIDValue = SMWDataValueFactory::newTypeIDValue('_wpg', $bundleID);
-        $pageValuesOfOntology = smwfGetStore()->getPropertySubjects(SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString('df_partofbundle')), $bundleIDValue);
-        $existingPages = array();
-        foreach($pageValuesOfOntology as $pv) {
-            $existingPages[] = $pv->getTitle()->getPrefixedText();
-        }
+		if( preg_match( '/\.gz$/', $inputfile ) ) {
+			$filename = 'compress.zlib://' . $inputfile;
+		}
+		$fileHandle = fopen( $inputfile, 'rt' );
+		return $this->verifyFromHandle( $fileHandle, $bundleID , $prefix);
+	}
+
+	/**
+	 * Install/update ontology
+	 *
+	 * @param $file filepath relative to extension
+	 * @param array $verificationLog
+	 * @param string bundleID
+	 * @param string $prefix
+	 */
+	private function installOrUpdateOntology($inputfile, $verificationLog, $bundleID, $prefix = '') {
+
+		// remove ontology elements which do not exist anymore.
+		global $dfgLang;
+		$pagesToImport = array();
+
+		foreach($verificationLog as $log) {
+			list($title, $command)=$log;
+			$pagesToImport[] = $title->getPrefixedText();
+		}
+		$bundleIDValue = SMWDataValueFactory::newTypeIDValue('_wpg', $bundleID);
+		$pageValuesOfOntology = smwfGetStore()->getPropertySubjects(SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString('df_partofbundle')), $bundleIDValue);
+		$existingPages = array();
+		foreach($pageValuesOfOntology as $pv) {
+			$existingPages[] = $pv->getTitle()->getPrefixedText();
+		}
 
 
-        $pagesToDelete = array_diff($existingPages, $pagesToImport);
+		$pagesToDelete = array_diff($existingPages, $pagesToImport);
 
-        global $wgUser;
-        foreach($pagesToDelete as $p) {
-            $title = Title::newFromText($p);
-            $a = new Article($title);
-                
-            $id = $title->getArticleID( GAID_FOR_UPDATE );
-            if( wfRunHooks('ArticleDelete', array(&$a, &$wgUser, &$reason, &$error)) ) {
-                if( $a->doDeleteArticle("ontology removed: ".$bundleID) ) {
-                    $this->logger->info("Removed page: ".$title->getPrefixedText());
-                    print "\n\t[Removed page]: ".$title->getPrefixedText()."...";
+		global $wgUser;
+		foreach($pagesToDelete as $p) {
+			$title = Title::newFromText($p);
+			$a = new Article($title);
 
-                    wfRunHooks('ArticleDeleteComplete', array(&$a, &$wgUser, "ontology removed: ".$bundleID, $id));
-                    print "done.]";
-                }
-            }
+			$id = $title->getArticleID( GAID_FOR_UPDATE );
+			if( wfRunHooks('ArticleDelete', array(&$a, &$wgUser, &$reason, &$error)) ) {
+				if( $a->doDeleteArticle("ontology removed: ".$bundleID) ) {
+					$this->logger->info("Removed page: ".$title->getPrefixedText());
+					print "\n\t[Removed page]: ".$title->getPrefixedText()."...";
+
+					wfRunHooks('ArticleDeleteComplete', array(&$a, &$wgUser, "ontology removed: ".$bundleID, $id));
+					print "done.]";
+				}
+			}
 
 
-        }
+		}
 
-            
-        // install new or updated ontology
-        if( preg_match( '/\.gz$/', $inputfile ) ) {
-            $filename = 'compress.zlib://' . $inputfile;
-        }
-        $fileHandle = fopen( $inputfile, 'rt' );
-        return $this->importFromHandle( $fileHandle, $bundleID , $prefix);
-    }
-    
-    /**
-     * Verifies ontology file and checks if there are conflicts
-     * 
-     * @param int $handle
-     * @param string $bundleID
-     * @param string $prefix
-     * 
-     * @return array of (Title t, string status) 
-     *     status can be 'merge', 'conflict' or 'notexist'
-     */
+
+		// install new or updated ontology
+		if( preg_match( '/\.gz$/', $inputfile ) ) {
+			$filename = 'compress.zlib://' . $inputfile;
+		}
+		$fileHandle = fopen( $inputfile, 'rt' );
+		return $this->importFromHandle( $fileHandle, $bundleID , $prefix);
+	}
+
+	/**
+	 * Verifies ontology file and checks if there are conflicts
+	 *
+	 * @param int $handle
+	 * @param string $bundleID
+	 * @param string $prefix
+	 *
+	 * @return array of (Title t, string status)
+	 *     status can be 'merge', 'conflict' or 'notexist'
+	 */
 	private function verifyFromHandle( $handle, $bundleID , $prefix) {
 		$source = new ImportStreamSource( $handle );
 		$importer = new DeployWikiImporterDetector( $source, $bundleID, $prefix, 1, $this );
@@ -308,10 +330,10 @@ ENDS
 		$result = $importer->getResult();
 		return $result;
 	}
-    
+
 	/**
-	 * Imports ontology. 
-	 *  
+	 * Imports ontology.
+	 *
 	 * @param int $handle
 	 * @param string $bundleID
 	 * @param string $prefix
@@ -332,79 +354,79 @@ ENDS
 
 
 	}
-	
-    /**
-     * Converts an ontology via onto2mwxml.
-     *
-     * @param string $inputfile
-     * @param string $outputfile
-     * @param string $bundleID
-     * @param boolean $noBundlePage
-     */
-    private function convertOntology($inputfile, $outputfile, $bundleID, $noBundlePage = false) {
-        // convert ontology
 
-        $cwd = getcwd();
-        $onto2mwxml_dir = $this->rootDir."/deployment/tools/onto2mwxml";
-        print "\n[Convert ontology $inputfile...";
+	/**
+	 * Converts an ontology via onto2mwxml.
+	 *
+	 * @param string $inputfile
+	 * @param string $outputfile
+	 * @param string $bundleID
+	 * @param boolean $noBundlePage
+	 */
+	private function convertOntology($inputfile, $outputfile, $bundleID, $noBundlePage = false) {
+		// convert ontology
 
-        chdir($onto2mwxml_dir);
-        $ret = 0;
-        if (Tools::isWindows()) {
-            if (!file_exists("$onto2mwxml_dir/tsc")) {
-                if (!file_exists($outputfile)) {
-                    throw new Exception("Onto2MWXML tool is not correctly installed. Please take a look in deployment/tools/onto2mwxml/README.TXT.");
-                }
-            } else {
-                if (!file_exists($outputfile)) {
-                    if ($noBundlePage) $noBundlePageParam = "--nobundlepage"; else $noBundlePageParam = "";
-                    exec("$onto2mwxml_dir/onto2mwxml.bat $inputfile -o $outputfile --bundleid $bundleID $noBundlePageParam", $output, $ret);
-                }
-            }
-        } else {
-            if (!file_exists("$onto2mwxml_dir/tsc")) {
-                if (!file_exists($outputfile)) {
-                    throw new Exception("Onto2MWXML tool is not correctly installed. Please take a look in deployment/tools/onto2mwxml/README.TXT.");
-                }
-            } else {
-                if (!file_exists($outputfile)) {
-                    if ($noBundlePage) $noBundlePageParam = "--nobundlepage"; else $noBundlePageParam = "";
-                    exec("$onto2mwxml_dir/onto2mwxml.sh $inputfile -o $outputfile --bundleid $bundleID $noBundlePageParam", $output, $ret);
-                }
+		$cwd = getcwd();
+		$onto2mwxml_dir = $this->rootDir."/deployment/tools/onto2mwxml";
+		print "\n[Convert ontology $inputfile...";
 
-            }
-        }
-        chdir($cwd);
-        print "done.]";
-        return $ret;
-    }
+		chdir($onto2mwxml_dir);
+		$ret = 0;
+		if (Tools::isWindows()) {
+			if (!file_exists("$onto2mwxml_dir/tsc")) {
+				if (!file_exists($outputfile)) {
+					throw new Exception("Onto2MWXML tool is not correctly installed. Please take a look in deployment/tools/onto2mwxml/README.TXT.");
+				}
+			} else {
+				if (!file_exists($outputfile)) {
+					if ($noBundlePage) $noBundlePageParam = "--nobundlepage"; else $noBundlePageParam = "";
+					exec("$onto2mwxml_dir/onto2mwxml.bat $inputfile -o $outputfile --bundleid $bundleID $noBundlePageParam", $output, $ret);
+				}
+			}
+		} else {
+			if (!file_exists("$onto2mwxml_dir/tsc")) {
+				if (!file_exists($outputfile)) {
+					throw new Exception("Onto2MWXML tool is not correctly installed. Please take a look in deployment/tools/onto2mwxml/README.TXT.");
+				}
+			} else {
+				if (!file_exists($outputfile)) {
+					if ($noBundlePage) $noBundlePageParam = "--nobundlepage"; else $noBundlePageParam = "";
+					exec("$onto2mwxml_dir/onto2mwxml.sh $inputfile -o $outputfile --bundleid $bundleID $noBundlePageParam", $output, $ret);
+				}
 
-    
+			}
+		}
+		chdir($cwd);
+		print "done.]";
+		return $ret;
+	}
 
-    /**
-     * Checks for a conflict.
-     *
-     * @param array ($title, $msg) $verificationLog
-     * @param object $callback method askForOntologyPrefix(& $answer)
-     *
-     * @return mixed false if no conflict otherwise prefix to make solve conflict.
-     */
-    private function checkForConflict($verificationLog, $callback) {
-        $conflict = false;
-        foreach($verificationLog as $l) {
-            list($title, $msg) = $l;
-            if ($msg == 'conflict') {
-                print "\nConflict with: '$title'";
-                $conflict = true;
-                break;
-            }
-        }
-        $answer=false;
-        if ($conflict) {
-            $callback->askForOntologyPrefix(& $answer);
-        }
-        return $answer;
-    }
 
-	
+
+	/**
+	 * Checks for a conflict.
+	 *
+	 * @param array ($title, $msg) $verificationLog
+	 * @param object $callback method askForOntologyPrefix(& $answer)
+	 *
+	 * @return mixed false if no conflict otherwise prefix to make solve conflict.
+	 */
+	private function checkForConflict($verificationLog, $callback) {
+		$conflict = false;
+		foreach($verificationLog as $l) {
+			list($title, $msg) = $l;
+			if ($msg == 'conflict') {
+				print "\nConflict with: '$title'";
+				$conflict = true;
+				break;
+			}
+		}
+		$answer=false;
+		if ($conflict) {
+			$callback->askForOntologyPrefix(& $answer);
+		}
+		return $answer;
+	}
+
+
 }
