@@ -27,22 +27,25 @@ class SMWHaloStore2 extends SMWSQLStore2 {
 		return parent::getQueryResult($query);
 	}
 
-	function updateData(SMWSemanticData $data) {
+	function doDataUpdate(SMWSemanticData $data) {
 		global $smwgQRCEnabled;
 		if($smwgQRCEnabled){
 			$qrc = new SMWQRCQueryResultsCache();
-			return $qrc->updateData($data, $this);
+			$updateData = $qrc->updateData($data, $this);
+			$this->mapping = NULL;
+			$this->handleURIMappings($data);
+			return $updateData;
+				
 		} else {
-			return $this->doUpdateData($data);
+			$updateData = parent::doDataUpdate($data);
+			$this->mapping = NULL;
+			$this->handleURIMappings($data);
+			return $updateData;
+				
 		}
 	}
 
-	function doUpdateData(SMWSemanticData $data) {
-		$updateData = parent::updateData($data);
-		$this->mapping = NULL;
-		$this->handleURIMappings($data);
-		return $updateData;
-	}
+	
 
 	/**
 	 * Creates URI mapping table. Maps the SMW ids to URIs.
@@ -63,27 +66,27 @@ class SMWHaloStore2 extends SMWSQLStore2 {
 		}
 
 		if (is_null($id)) return; // something is wrong. stop here
-		
+
 		// delete old mappings
-        $db->delete($smw_urimapping, array('smw_id' => $id->smw_id));
-        
+		$db->delete($smw_urimapping, array('smw_id' => $id->smw_id));
+
 		foreach($data->getProperties() as $key => $property) {
 			if ($ontologyURIProperty == $property->getDBkey()) {
 
 				$propertyValueArray = $data->getPropertyValues($property);
-                
+
 				if (count($propertyValueArray) == 0) continue;
 				// should be only one, otherwise out of spec)
 				$uriValue = reset($propertyValueArray);
 				$uriDBkeys = $uriValue->getDBkeys();
 				$tscURI = array_shift($uriDBkeys);
-			    
-				// make sure to decode "(", ")", ",". Normally they are encoded in SMW URIs 
+				 
+				// make sure to decode "(", ")", ",". Normally they are encoded in SMW URIs
 				// This is crucial for OBL functional terms!
 				$tscURI = str_replace("%28", "(", $tscURI);
 				$tscURI = str_replace("%29", ")", $tscURI);
 				$tscURI = str_replace("%2C", ",", $tscURI);
-        
+
 				$db->insert($smw_urimapping, array('smw_id' => $id->smw_id, 'page_id' => $subjectTitle->getArticleID(), 'smw_uri'=>$tscURI));
 
 				$wikiURI = TSNamespaces::getInstance()->getFullURI($subjectTitle);

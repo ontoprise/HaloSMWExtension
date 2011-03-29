@@ -139,7 +139,7 @@ class SMWTripleStore extends SMWStore {
 		}
 	}
 
-	function updateData(SMWSemanticData $data) {
+	function doDataUpdate(SMWSemanticData $data) {
 		$this->smwstore->updateData($data);
 
 		// update rules in internal store

@@ -2,7 +2,7 @@
 /**
  * @file
  * @ingroup SMWHaloSemanticStorage
- * 
+ *
  * Created on 17.04.2007
  * Author: kai
  *
@@ -147,7 +147,7 @@ class SMWSemanticStoreSQL extends SMWSemanticStore {
 		return $result;
 	}
 
-	
+
 
 	function getRootCategories($requestoptions = NULL) {
 		$result = array();
@@ -158,10 +158,10 @@ class SMWSemanticStoreSQL extends SMWSemanticStore {
                ' AND page_is_redirect = 0 AND NOT EXISTS (SELECT cl_from FROM '.$categorylinks.' WHERE cl_from = page_id) AND NOT EXISTS (SELECT c.cl_from FROM '.$categorylinks.' c JOIN '.$page.' p ON p.page_id = c.cl_from WHERE c.cl_to = t.page_title AND p.page_namespace=14)';
 		$sql2 = 'page_namespace=' . NS_CATEGORY .
                ' AND page_is_redirect = 0 AND NOT EXISTS (SELECT cl_from FROM '.$categorylinks.' WHERE cl_from = page_id) AND EXISTS (SELECT c.cl_from FROM '.$categorylinks.' c JOIN '.$page.' p ON p.page_id = c.cl_from WHERE c.cl_to = t.page_title AND p.page_namespace=14)';
-		
+
 		$res = $db->query('(SELECT page_title, "true" AS has_subcategories FROM '.$page.' t WHERE '.$sql.') UNION (SELECT page_title, "false" AS has_subcategories FROM '.$page.' t WHERE '.$sql2.') '.DBHelper::getSQLOptionsAsString($requestoptions,'page_title'));
-                        
-		
+
+
 
 		if($db->numRows( $res ) > 0) {
 			while($row = $db->fetchObject($res)) {
@@ -170,7 +170,7 @@ class SMWSemanticStoreSQL extends SMWSemanticStore {
 				}
 			}
 		}
-		
+
 		$db->freeResult($res);
 		return $result;
 	}
@@ -203,26 +203,26 @@ class SMWSemanticStoreSQL extends SMWSemanticStore {
 		return $result;
 	}
 
-	
 
-	
+
+
 
 	function getDirectSubCategories(Title $categoryTitle, $requestoptions = NULL) {
 			
 		$db =& wfGetDB( DB_SLAVE );
 		$categorylinks = $db->tableName('categorylinks');
-        $page = $db->tableName('page');
+		$page = $db->tableName('page');
 		$sql = 'page_namespace=' . NS_CATEGORY .
                ' AND page_is_redirect = 0 AND cl_to =' . $db->addQuotes($categoryTitle->getDBkey()) . ' AND cl_from = page_id AND NOT EXISTS (SELECT c.cl_from FROM '.$categorylinks.' c JOIN '.$page.' p ON p.page_id = c.cl_from WHERE c.cl_to = t.page_title AND p.page_namespace=14)';
-		
-        $sql2 = 'page_namespace=' . NS_CATEGORY .
+
+		$sql2 = 'page_namespace=' . NS_CATEGORY .
                ' AND page_is_redirect = 0 AND cl_to =' . $db->addQuotes($categoryTitle->getDBkey()) . ' AND cl_from = page_id AND EXISTS (SELECT c.cl_from FROM '.$categorylinks.' c JOIN '.$page.' p ON p.page_id = c.cl_from WHERE c.cl_to = t.page_title AND p.page_namespace=14)';
-        
-        
+
+
 		$res = $db->query('(SELECT page_title, "true" AS has_subcategories FROM '.$page.' t, '.$categorylinks.' WHERE '.$sql.') UNION '.
 		                   '(SELECT page_title, "false" AS has_subcategories FROM '.$page.' t, '.$categorylinks.' WHERE '.$sql2.')'.
-		                    DBHelper::getSQLOptionsAsString($requestoptions,'page_title'));
-		
+		DBHelper::getSQLOptionsAsString($requestoptions,'page_title'));
+
 		$result = array();
 		if($db->numRows( $res ) > 0) {
 			while($row = $db->fetchObject($res)) {
@@ -231,7 +231,7 @@ class SMWSemanticStoreSQL extends SMWSemanticStore {
 				}
 			}
 		}
-		
+
 		$db->freeResult($res);
 		return $result;
 	}
@@ -245,7 +245,7 @@ class SMWSemanticStoreSQL extends SMWSemanticStore {
 		$subCategories = $this->getDirectSubCategories($category);
 		$result = array();
 		foreach($subCategories as $tuple) {
-			list($subCat,$isLeaf) = $tuple; 
+			list($subCat,$isLeaf) = $tuple;
 			if (in_array($subCat, $visitedNodes)) {
 				continue;
 			}
@@ -368,12 +368,12 @@ class SMWSemanticStoreSQL extends SMWSemanticStore {
 	 * @param boolean $onlyMain True, if only articles from NS_MAIN should be returned. False, if all namespaces (except category) should be returned.
 	 */
 	protected function createVirtualTableWithInstances($categoryTitle, & $db, $onlyMain = true) {
-		
+
 
 		$page = $db->tableName('page');
 		$categorylinks = $db->tableName('categorylinks');
 
-		
+
 		// create virtual tables
 		$db->query( 'CREATE TEMPORARY TABLE smw_ob_instances (instance VARBINARY(255), namespace INT(11), category VARBINARY(255))
 		            ENGINE=MEMORY', 'SMW::createVirtualTableWithInstances' );
@@ -585,7 +585,7 @@ class SMWSemanticStoreSQL extends SMWSemanticStore {
 	 *
 	 */
 	protected function createVirtualTableWithPropertiesByName($requestoptions, & $db) {
-		
+
 
 		$page = $db->tableName('page');
 		$redirect = $db->tableName('redirect');
@@ -607,14 +607,14 @@ class SMWSemanticStoreSQL extends SMWSemanticStore {
 	 * @param & $db
 	 */
 	protected function createVirtualTableWithPropertiesByCategory(Title $categoryTitle, & $db) {
-		
+
 
 		$page = $db->tableName('page');
 		$categorylinks = $db->tableName('categorylinks');
 		$smw_nary = $db->tableName('smw_nary');
 		$smw_nary_relations = $db->tableName('smw_nary_relations');
 
-		
+
 		// create virtual tables
 		$db->query( 'CREATE TEMPORARY TABLE smw_ob_properties (id INT(8) NOT NULL, property VARBINARY(255))
 		            ENGINE=MEMORY', 'SMW::createVirtualTableWithPropertiesByCategory' );
@@ -997,7 +997,7 @@ class SMWSemanticStoreSQL extends SMWSemanticStore {
 				if (strtolower($ssp[SMW_SSP_HAS_DOMAIN_AND_RANGE_HINT]) == strtolower($t->getText())) {
 					$text = "\n\n[[".$propertyLabels['_TYPE']."::Type:Record]]";
 					$text .= wfMsg('smw_predefined_props', $t->getText())."\n\n[[".$propertyLabels['_LIST']."::".
-                    $namespaces[SMW_NS_TYPE].":".$datatypeLabels["_wpg"]."; ".$namespaces[SMW_NS_TYPE].":".$datatypeLabels["_wpg"]."]]";
+					$namespaces[SMW_NS_TYPE].":".$datatypeLabels["_wpg"]."; ".$namespaces[SMW_NS_TYPE].":".$datatypeLabels["_wpg"]."]]";
 					$article->insertNewArticle($text, "", false, false);
 				} else if (strtolower($ssp[SMW_SSP_HAS_MAX_CARD]) == strtolower($t->getText())) { // special handling for SMW_SSP_HAS_MAX_CARD.
 					$article->insertNewArticle(wfMsg('smw_predefined_props', $t->getText())."\n\n[[".$propertyLabels['_TYPE']."::".
@@ -1006,9 +1006,9 @@ class SMWSemanticStoreSQL extends SMWSemanticStore {
 					$article->insertNewArticle(wfMsg('smw_predefined_props', $t->getText())."\n\n[[".$propertyLabels['_TYPE']."::".
 					$namespaces[SMW_NS_TYPE].":".$datatypeLabels["_num"]."]]", "", false, false);
 				} else if (strtolower($ssp[SMW_SSP_ONTOLOGY_URI]) == strtolower($t->getText())) { // special handling for SMW_SSP_HAS_MIN_CARD.
-                    $article->insertNewArticle(wfMsg('smw_predefined_props', $t->getText())."\n\n[[".$propertyLabels['_TYPE']."::".
-                    $namespaces[SMW_NS_TYPE].":".$datatypeLabels["_uri"]."]]", "", false, false);
-                } else {
+					$article->insertNewArticle(wfMsg('smw_predefined_props', $t->getText())."\n\n[[".$propertyLabels['_TYPE']."::".
+					$namespaces[SMW_NS_TYPE].":".$datatypeLabels["_uri"]."]]", "", false, false);
+				} else {
 					$article->insertNewArticle(wfMsg('smw_predefined_props', $t->getText()), "", false, false);
 				}
 				DBHelper::reportProgress("   ... Create page ".$t->getNsText().":".$t->getText()."...\n",$verbose);
@@ -1122,24 +1122,24 @@ class SMWSemanticStoreSQL extends SMWSemanticStore {
 				  DBHelper::reportProgress("   ... done!\n",$verbose);
 	}
 
-    protected function setupURIMapping($verbose = false) {
-    	   
-        DBHelper::reportProgress("   ... Creating URI mapping database \n",$verbose);
-        global $wgDBname;
-        $db =& wfGetDB( DB_MASTER );
+	protected function setupURIMapping($verbose = false) {
 
-        // create gardening table
-        $smw_logging = $db->tableName('smw_urimapping');
-        $fname = 'SMW::setupLogging';
+		DBHelper::reportProgress("   ... Creating URI mapping database \n",$verbose);
+		global $wgDBname;
+		$db =& wfGetDB( DB_MASTER );
 
-        // create relation table
-        DBHelper::setupTable($smw_logging, array(
+		// create gardening table
+		$smw_logging = $db->tableName('smw_urimapping');
+		$fname = 'SMW::setupLogging';
+
+		// create relation table
+		DBHelper::setupTable($smw_logging, array(
                   'smw_id'              =>  'INT(8) UNSIGNED NOT NULL PRIMARY KEY' ,
                   'page_id'              =>  'INTEGER UNSIGNED NOT NULL ' ,
                   'smw_uri'       =>  'VARBINARY(255)'), $db, $verbose);
 
-        DBHelper::reportProgress("   ... done!\n",$verbose);
-    }
+		DBHelper::reportProgress("   ... done!\n",$verbose);
+	}
 
 
 
@@ -1265,6 +1265,13 @@ class SMWSemanticStoreSQL extends SMWSemanticStore {
 			SMWFactbox::storeData(true);
 			if ($verbose) echo "done!";
 		}
+	}
+
+	public function getTSCURI($title) {
+		$smw_urimapping = $db->tableName('smw_urimapping');
+
+		$id = $db->selectRow($smw_urimapping, array('smw_uri'), array('smw_title'=>$subjectTitle->getDBkey(), 'smw_namespace'=>$subjectTitle->getNamespace()));
+
 	}
 }
 
