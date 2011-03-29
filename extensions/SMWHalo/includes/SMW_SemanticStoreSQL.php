@@ -719,6 +719,26 @@ class SMWSemanticStoreSQL extends SMWSemanticStore {
 		return $result;
 	}
 
+	/**
+	 * Returns all range categories for a given property.
+	 */
+	function getRangeCategories($propertyTitle, $reqfilter) {
+		$db =& wfGetDB( DB_SLAVE );
+		$page = $db->tableName('page');
+		$domainRangeRelation = smwfGetSemanticStore()->domainRangeHintRelation;
+
+		$categories = smwfGetStore()->getPropertyValues($propertyTitle, smwfGetSemanticStore()->domainRangeHintProp, $reqfilter);
+		$result = array();
+		foreach($categories as $value) {
+			$dvs = $value->getDVs();
+			if ($dvs[1] instanceof SMWWikiPageValue) {
+				$t = $dvs[1]->getTitle();
+				if (!SMWSemanticStoreSQL::isRedirect($t, $page, $db)) $result[] = $t;
+			}
+		}
+		return $result;
+	}
+
 	function getDirectSubProperties(Title $attribute, $requestoptions = NULL) {
 			
 		$result = "";
@@ -1268,10 +1288,10 @@ class SMWSemanticStoreSQL extends SMWSemanticStore {
 	}
 
 	public function getTSCURI($title) {
+		$db =& wfGetDB( DB_SLAVE );
 		$smw_urimapping = $db->tableName('smw_urimapping');
-
-		$id = $db->selectRow($smw_urimapping, array('smw_uri'), array('smw_title'=>$subjectTitle->getDBkey(), 'smw_namespace'=>$subjectTitle->getNamespace()));
-
+		$tscURI = $db->selectRow($smw_urimapping, array('smw_uri'), array('page_id'=>$title->getArticleID()));
+		return $tscURI !== false ? $tscURI->smw_uri : NULL;
 	}
 }
 

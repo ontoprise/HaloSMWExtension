@@ -48,11 +48,283 @@ class ExportObjectLogicBot extends GardeningBot {
 		return array();
 	}
 
+	private function exportCategories($bundleID) {
+		global $dfgLang;
+		$bundleIDValue = SMWDataValueFactory::newTypeIDValue('_wpg', $bundleID);
+		$pageValuesOfOntology = smwfGetStore()->getPropertySubjects(SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString('df_partofbundle')), $bundleIDValue);
+		$store = smwfGetSemanticStore();
+		$ts = TSNamespaces::getInstance();
+		$obl = "";
+		foreach($pageValuesOfOntology as $pv) {
+			$title = $pv->getTitle();
+			if ($title->getNamespace() == NS_CATEGORY) {
+				$superCategories = $store->getDirectSuperCategories($title);
+				if (count($superCategories) == 0) {
+					// root concept
+					$iri = $this->getTSCIRI($title);
+					$obl .= "\n".$iri.'[].';
+				} else {
+					// subconcept
+					foreach($superCategories as $scat) {
+						$iri = $this->getTSCIRI($title);
+						$obl .= "\n$iri::";
+
+						$iri = $this->getTSCIRI($scat);
+						$obl .= "$iri.";
+					}
+				}
+			}
+		}
+		return $obl;
+	}
+	private function exportProperties($bundleID) {
+		global $dfgLang;
+		$bundleIDValue = SMWDataValueFactory::newTypeIDValue('_wpg', $bundleID);
+		$pageValuesOfOntology = smwfGetStore()->getPropertySubjects(SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString('df_partofbundle')), $bundleIDValue);
+
+		$store = smwfGetSemanticStore();
+		$ts = TSNamespaces::getInstance();
+		$obl = "";
+		foreach($pageValuesOfOntology as $pv) {
+			$title = $pv->getTitle();
+			if ($title->getNamespace() == SMW_NS_PROPERTY) {
+				$range = NULL;
+				$type = NULL;
+				// get domain and range/type
+				$domains = $store->getDomainCategories($title);
+
+				$typeValues = smwfGetStore()->getPropertyValues($title, SMWPropertyValue::makeProperty('_TYPE'));
+				if (count($typeValues) == 0) {
+					// relation
+					// NOTE: There MUST be only one range category for OBL-Export. So use first
+					// and ignore any others
+					$ranges = $store->getRangeCategories($title);
+					$range = reset($ranges);
+				} else{
+					$typeValue = reset($typeValues);
+					$id = $typeValue->getDBkey();
+					if (WikiTypeToXSD::isPageType($id)) {
+						// relation
+						// NOTE: There MUST be only one range category for OBL-Export. So use first
+						// and ignore any others
+						$ranges = $store->getRangeCategories($title);
+						$range = reset($ranges);
+					} else {
+						// attribute
+						$type = WikiTypeToXSD::getXSDType($id);
+
+					}
+				}
+
+				// get cardinalities
+				$minCardValues = smwfGetStore()->getPropertyValues($title, SMWPropertyValue::makeUserProperty($store->minCard->getDBkey()));
+				$minCardValue = reset($minCardValues); // must be only 1
+
+				$maxCardValues = smwfGetStore()->getPropertyValues($title, SMWPropertyValue::makeUserProperty($store->maxCard->getDBkey()));
+				$maxCardValue = reset($maxCardValues); // must be only 1
+
+				if ($minCardValue !== false) {
+					$minCardValue->getDBkeys();
+					$minCardValue = reset($minCardValue);
+				} else {
+					$minCardValue = "0";
+				}
+				if ($maxCardValue !== false) {
+					$maxCardValue->getDBkeys();
+					$maxCardValue = reset($minCardValue);
+				} else {
+					$maxCardValue = "*";
+				}
+
+				// get sym/trans state
+				$transitive = false;
+				$symetrical = false;
+				$categories = $store->getCategoriesForInstance($title);
+				foreach($category as $c) {
+					if ($c->equals($store->transitiveCat)) {
+						$transitive = true;
+					}
+					if ($c->equals($store->symetricalCat)) {
+						$symetrical = true;
+					}
+				}
+
+				$modifiers = '{'.$minCardValue.':'.$maxCardValue;
+				if ($transitive) {
+					$modifiers .= ":transitive";
+				}
+				if ($symetrical) {
+					$modifiers .= ":symetrical";
+				}
+				$modifiers .= "}";
+
+				// build OBL string
+				$propertyIRI = $this->getTSCIRI($title);
+				if (is_null($range)) {
+					$typeIRI = "<".str_replace("xsd:", TSNamespaces::$XSD_NS, $type).">";
+				} else{
+					$rangeIRI = $this->getTSCIRI($range);
+				}
+				foreach($domains as $d) {
+					$domainIRI = $this->getTSCIRI($d);
+					if (is_null($range)) {
+						$obl .= "\n$propertyIRI [ $domainIRI $modifiers *=> $typeIRI ].";
+					} else{
+						$obl .= "\n$propertyIRI [ $domainIRI $modifiers *=> $rangeIRI ].";
+					}
+				}
+			}
+		}
+		return $obl;
+	}
+
+	private function exportInstances($bundleID) {
+		global $dfgLang;
+		$bundleIDValue = SMWDataValueFactory::newTypeIDValue('_wpg', $bundleID);
+		$pageValuesOfOntology = smwfGetStore()->getPropertySubjects(SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString('df_partofbundle')), $bundleIDValue);
+		$store = smwfGetSemanticStore();
+		$internalProperties = array($dfgLang->getLanguageString('df_partofbundle'),
+		$dfgLang->getLanguageString('df_ontologyversion'), $dfgLang->getLanguageString('df_contenthash'),
+		$dfgLang->getLanguageString('df_instdir'),$dfgLang->getLanguageString('df_dependencies'),
+		$dfgLang->getLanguageString('df_ontologyvendor'),$dfgLang->getLanguageString('df_description'), $store->ontologyURI->getText());
+		$ts = TSNamespaces::getInstance();
+		$obl = "";
+		foreach($pageValuesOfOntology as $pv) {
+			$title = $pv->getTitle();
+			if ($title->getNamespace() == NS_MAIN) {
+				$instanceIRI = $this->getTSCIRI($title);
+				$sd = smwfGetStore()->getSemanticData($title);
+				$properties = $sd->getProperties();
+				foreach($properties as $p) {
+					$values = $sd->getPropertyValues($p);
+
+					if (in_array($p->getText(), $internalProperties)) {
+						continue;
+					}
+
+					$propertyIRI = $this->getTSCIRI(Title::newFromText($p->getText(), SMW_NS_PROPERTY));
+					foreach($values as $v) {
+						$typeID = $v->getTypeID();
+						if (WikiTypeToXSD::isPageType($typeID)) {
+							$objectIRI = $this->getTSCIRI($v->getTitle());
+							$obl .= "\n$instanceIRI [ $propertyIRI -> $objectIRI ]. ";
+						} else {
+							$dbkeys = $v->getDBkeys();
+							$dbkey = reset($dbkeys);
+							print_r($dbkey);
+							if ($dbkey !== false) {
+								$value = '"'.str_replace('"','\"', $dbkey).'"';
+								$value = $this->fixType($value, $typeID);
+
+								$type = WikiTypeToXSD::getXSDType($typeID);
+								$typeIRI = "<".str_replace("xsd:", TSNamespaces::$XSD_NS, $type).">";
+								$obl .= "\n$instanceIRI [ $propertyIRI -> $value^^$typeIRI ]. ";
+							}
+						}
+					}
+				}
+			}
+		}
+		return $obl;
+	}
+
+
+	private function exportRules($bundleID) {
+		global $dfgLang;
+		$bundleIDValue = SMWDataValueFactory::newTypeIDValue('_wpg', $bundleID);
+		$pageValuesOfOntology = smwfGetStore()->getPropertySubjects(SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString('df_partofbundle')), $bundleIDValue);
+		$obl = "";
+		$ruleTagPattern = '/<rule(.*?>)(.*?.)<\/rule>/ixus';
+		foreach($pageValuesOfOntology as $pv) {
+			$title = $pv->getTitle();
+			$rev = Revision::newFromTitle($title);
+			$text = $rev->getText();
+			preg_match_all($ruleTagPattern, trim($text), $matches);
+
+			// at least one parameter and content?
+			for($i = 0; $i < count($matches[0]); $i++) {
+				$header = trim($matches[1][$i]);
+				$ruletext = trim($matches[2][$i]);
+
+				// parse header parameters
+				$ruleparamterPattern = "/([^=]+)=\"([^\"]*)\"/ixus";
+				preg_match_all($ruleparamterPattern, $header, $matchesheader);
+
+				$native = false;
+				$active = true;
+				$type="USER_DEFINED";
+				$tsc_uri = "";
+				for ($j = 0; $j < count($matchesheader[0]); $j++) {
+					if (trim($matchesheader[1][$j]) == 'name') {
+						$name = trim($matchesheader[2][$j]);
+					}
+
+					if (trim($matchesheader[1][$j]) == 'type') {
+						$type = $matchesheader[2][$j];
+					}
+					if (trim($matchesheader[1][$j]) == 'uri') {
+						$tsc_uri = $matchesheader[2][$j];
+					}
+				}
+
+				if (empty($tsc_uri)) {
+					$ruleURI = $this->getTSCURI($title);
+					$ruleIRI = "<$ruleURI$name>";
+				} else {
+					$ruleIRI = "<$tsc_uri>";
+				}
+				$obl .= "\n".'@{'.$ruleIRI."}";
+				$obl .= "\n$ruletext";
+				$obl .= "\nHalo";
+			}
+		}
+		return $obl;
+	}
+
+	private function fixType($value, $typeID) {
+		if ($typeID == '_dat') {
+			return str_replace("/","-",$value);
+		}
+		return $value;
+	}
+
+	private function getTSCIRI($title) {
+		$store = smwfGetSemanticStore();
+		$ts = TSNamespaces::getInstance();
+		$uri = $store->getTSCURI($title);
+		if (is_null($uri)) {
+			return $ts->getFullIRI($title);
+		}
+		return "<$uri>";
+	}
+
+	private function getTSCURI($title) {
+		$store = smwfGetSemanticStore();
+		$ts = TSNamespaces::getInstance();
+		$uri = $store->getTSCURI($title);
+		if (is_null($uri)) {
+			return $ts->getFullURI($title);
+		}
+		return $uri;
+	}
+
 	/**
 	 * Export ontology
 	 * DO NOT use echo when it is not running asynchronously.
 	 */
 	public function run($paramArray, $isAsync, $delay) {
+		/*$obl = "";
+		$obl .= "// schema properties";
+		$obl .= $this->exportProperties("Ontology-v9");
+		$obl .= "\n\n// schema categories";
+		$obl .= $this->exportCategories("Ontology-v9");
+		$obl .= "\n\n// instances";
+		$obl .= $this->exportInstances("Ontology-v9");
+		$obl .= "\n\n// rules";
+		$obl .= $this->exportRules("Ontology-v9");
+		echo $obl;
+
+		return "\n\n<pre>$obl</pre>\n\n";*/
 
 		// do not allow to start synchronously.
 		if (!$isAsync) {
