@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <deploydescriptor>
 	<global>
-		<version>101</version>
+		<version>110</version>
 		<id>baseontologybundle</id>
 		<patchlevel>0</patchlevel>
 		<instdir>extensions/Baseontologybundle</instdir>
