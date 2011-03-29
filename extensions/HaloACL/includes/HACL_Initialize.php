@@ -61,8 +61,8 @@ $haclgHaloScriptPath = $wgScriptPath . '/extensions/HaloACL';
 # for accessibility. Unfortunately, the Title-object does not check if an article
 # can be accessed. A patch adds this functionality and checks every title that is 
 # created. If a title can not be accessed, a replacement title called "Permission
-# denied" is returned. This is the best and securest way of protecting an article,
-# however, it slows down things a bit.
+# denied" is returned. This is the best and most secure way of protecting an article,
+# however, it slows down things a bit. 
 ##
 $haclgEnableTitleCheck = false;
 
