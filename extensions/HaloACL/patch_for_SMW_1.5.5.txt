@@ -122,16 +122,3 @@ Index: extensions/SemanticMediaWiki/includes/SMW_ParserExtensions.php
  		if ( ( $smwgInlineErrors && $smwgStoreAnnotations && SMWParserExtensions::$mTempStoreAnnotations ) && ( !$dv->isValid() ) ) {
  			$result .= $dv->getErrorText();
  		}
-Index: extensions/SemanticMediaWiki/SMW_Settings.php
-===================================================================
---- extensions/SemanticMediaWiki/SMW_Settings.php	(revision 9534)
-+++ extensions/SemanticMediaWiki/SMW_Settings.php	(working copy)
-@@ -66,7 +66,7 @@
- // $smwgShowFactbox = SMW_FACTBOX_NONEMPTY; # show only those factboxes that have some content
- // $smwgShowFactbox = SMW_FACTBOX_SPECIAL # show only if special properties were set
- $smwgShowFactbox = SMW_FACTBOX_HIDDEN; # hide always
--// $smwgShowFactbox = SMW_FACTBOX_SHOWN;  # show always, buggy and not recommended
-+//$smwgShowFactbox = SMW_FACTBOX_SHOWN;  # show always, buggy and not recommended
- ##
- 
- ###
