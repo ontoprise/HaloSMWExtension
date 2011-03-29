@@ -246,13 +246,25 @@ class HACLParserFunctions {
 		$description = array_key_exists($descPN, $params)
 						? $params[$descPN]
 						: "";
+		if (is_array($description)) {
+			// If the description contains a template parameter '{{{...}}}', the
+			// description is returned as array
+			array_shift($description);
+			$description = implode(' ', $description);
+		}
 		// handle the (optional) parameter 'name'
 		$namePN = $haclgContLang->getParserFunctionParameter(HACLLanguage::PFP_NAME);
 		$namePN = strtolower($namePN);
 		$name = array_key_exists($namePN, $params)
 					? $params[$namePN]
 					: "";
-
+		if (is_array($name)) {
+			// If the $name contains a template parameter '{{{...}}}', the
+			// $name is returned as array
+			array_shift($name);
+			$name = implode(' ', $name);
+		}
+					
 		$errMsgs = $em1 + $em2;
 
 		if (count($errMsgs) == 0) {
@@ -332,12 +344,26 @@ class HACLParserFunctions {
 		$description = array_key_exists($descPN, $params)
 			? $params[$descPN]
 			: "";
+		if (is_array($description)) {
+			// If the $name contains a template parameter '{{{...}}}', the
+			// $name is returned as array
+			array_shift($description);
+			$description = implode(' ', $description);
+		}
+			
 		// handle the (optional) parameter 'name'
 		$namePN = $haclgContLang->getParserFunctionParameter(HACLLanguage::PFP_NAME);
 		$namePN = strtolower($namePN);
 		$name = array_key_exists($namePN, $params)
 			? $params[$namePN]
 			: "";
+		if (is_array($name)) {
+			// If the $name contains a template parameter '{{{...}}}', the
+			// $name is returned as array
+			array_shift($name);
+			$name = implode(' ', $name);
+		}
+			
 
 		$errMsgs = $em1 + $em2;
 
