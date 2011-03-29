@@ -4,7 +4,7 @@
  *
  * @author Stephan Gambke
  * @author Sanyam Goyal
- * @version 0.4
+ * @version 0.4.1
  */
 
 if ( !defined( 'MEDIAWIKI' ) ) {

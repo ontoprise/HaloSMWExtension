@@ -19,6 +19,7 @@ $messages['en'] = array(
 
 /** Message documentation (Message documentation)
  * @author EugeneZelenko
+ * @author F.trott
  * @author Siebrand
  * @author The Evil IP address
  */
@@ -27,8 +28,12 @@ $messages['qqq'] = array(
 	'semanticformsinputs-close' => '{{Identical|Close}}',
 	'semanticformsinputs-prev' => '{{Identical|Previous}}',
 	'semanticformsinputs-next' => '{{Identical|Next}}',
-	'semanticformsinputs-dateformatlong' => 'This is a machine-readable date format string! It is used by a function to format a date. It will not be read by a human user. Do not translate each letter literally! Instead insert the date format for your language using the english-based letters. See http://docs.jquery.com/UI/Datepicker/formatDate',
-	'semanticformsinputs-dateformatshort' => 'This is a machine-readable date format string! It is used by a function to format a date. It will not be read by a human user. Do not translate each letter literally! Instead insert the date format for your language using the english-based letters. See http://docs.jquery.com/UI/Datepicker/formatDate',
+	'semanticformsinputs-dateformatlong' => "{{doc-important|This is a machine-readable date format string!| <br>It is used by a function to format a date. It will not be read by a human user. Do not translate each letter literally! Instead insert the date format for your language using the english-based letters. See http://docs.jquery.com/UI/Datepicker/formatDate }}
+
+{{doc-important|This is an ''optional'' message. Do not translate it, if it would remain unchanged in your language. }}",
+	'semanticformsinputs-dateformatshort' => "{{doc-important|This is a machine-readable date format string!| <br>It is used by a function to format a date. It will not be read by a human user. Do not translate each letter literally! Instead insert the date format for your language using the english-based letters. See http://docs.jquery.com/UI/Datepicker/formatDate }}
+
+{{doc-important|This is an ''optional'' message. Do not translate it, if it would remain unchanged in your language. }}",
 );
 
 /** Afrikaans (Afrikaans)
@@ -53,7 +58,7 @@ $messages['arc'] = array(
 	'semanticformsinputs-today' => 'ܝܘܡܢܐ',
 );
 
-/** Belarusian (Taraškievica orthography) (Беларуская (тарашкевіца))
+/** Belarusian (Taraškievica orthography) (‪Беларуская (тарашкевіца)‬)
  * @author EugeneZelenko
  * @author Jim-by
  */
@@ -269,6 +274,23 @@ $messages['ja'] = array(
 	'semanticformsinputs-today' => '今日',
 );
 
+/** Khmer (ភាសាខ្មែរ)
+ * @author គីមស៊្រុន
+ */
+$messages['km'] = array(
+	'semanticformsinputs-close' => 'បិទ',
+	'semanticformsinputs-prev' => 'មុន',
+	'semanticformsinputs-next' => 'ក្រោយ',
+	'semanticformsinputs-today' => 'ថ្ងៃនេះ',
+);
+
+/** Kurdish (Latin) (Kurdî (Latin))
+ * @author George Animal
+ */
+$messages['ku-latn'] = array(
+	'semanticformsinputs-today' => 'Îro',
+);
+
 /** Luxembourgish (Lëtzebuergesch)
  * @author Robby
  */
@@ -283,6 +305,7 @@ $messages['lb'] = array(
 
 /** Macedonian (Македонски)
  * @author Bjankuloski06
+ * @author F.trott
  */
 $messages['mk'] = array(
 	'semanticformsinputs-desc' => 'Дополнителни типови на внос за [http://www.mediawiki.org/wiki/Extension:Semantic_Forms Семантички обрасци]',
@@ -291,6 +314,8 @@ $messages['mk'] = array(
 	'semanticformsinputs-prev' => 'Претходно',
 	'semanticformsinputs-next' => 'Следно',
 	'semanticformsinputs-today' => 'Денес',
+	'semanticformsinputs-dateformatlong' => 'd MM yy',
+	'semanticformsinputs-dateformatshort' => 'dd/mm/yy',
 );
 
 /** Malayalam (മലയാളം)
@@ -334,7 +359,7 @@ $messages['pdc'] = array(
 	'semanticformsinputs-next' => 'Neegschte',
 );
 
-/** Pfälzisch (Pfälzisch)
+/** Pälzisch (Pälzisch)
  * @author Xqt
  */
 $messages['pfl'] = array(
@@ -449,6 +474,17 @@ $messages['zh-hans'] = array(
 	'semanticformsinputs-close' => '关闭',
 	'semanticformsinputs-prev' => '向前',
 	'semanticformsinputs-next' => '下一个',
+	'semanticformsinputs-today' => '今天',
+);
+
+/** Traditional Chinese (‪中文(繁體)‬)
+ * @author Mark85296341
+ */
+$messages['zh-hant'] = array(
+	'semanticformsinputs-wrongformat' => '格式不正確。',
+	'semanticformsinputs-close' => '關閉',
+	'semanticformsinputs-prev' => '上一個',
+	'semanticformsinputs-next' => '下一個',
 	'semanticformsinputs-today' => '今天',
 );
 

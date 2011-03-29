@@ -3,7 +3,6 @@
  * Settings for the Semantic Forms Inputs extension.
  *
  * @author Stephan Gambke
- * @version 0.4
  *
  * To change the default settings you can uncomment (or copy) the
  * examples here and adjust them to your needs. You may as well
@@ -55,22 +54,10 @@ $sfigSettings->datePickerLastDate = null;
 # '' - single quote
 # anything else - literal text
 #
-# There are also a number of predefined standard date formats available:
+# There are also two predefined standard date formats available:
 #
 # SHORT - short date format localized to the wiki user language
 # LONG - long date format localized to the wiki user language
-# ATOM - 'yy-mm-dd' (Same as RFC 3339/ISO 8601)
-# COOKIE - 'D, dd M yy'
-# ISO_8601 - 'yy-mm-dd'
-# RFC_822 - 'D, d M y' (See RFC 822)
-# RFC_850 - 'DD, dd-M-y' (See RFC 850)
-# RFC_1036 - 'D, d M y' (See RFC 1036)
-# RFC_1123 - 'D, d M yy' (See RFC 1123)
-# RFC_2822 - 'D, d M yy' (See RFC 2822)
-# RSS - 'D, d M y' (Same as RFC 822)
-# TICKS - '!'
-# TIMESTAMP - '@'
-# W3C - 'yy-mm-dd' (Same as ISO 8601)
 #
 $sfigSettings->datePickerDateFormat = 'SHORT';
 

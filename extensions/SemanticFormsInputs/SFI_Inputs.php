@@ -5,7 +5,6 @@
  * @author Stephan Gambke
  * @author Sanyam Goyal
  * @author Yaron Koren
- * @version 0.4
  *
  */
 
@@ -898,16 +897,6 @@ JAVASCRIPT;
 
 		}
 
-		// build JS code from attributes array
-		$jsattribsString = Xml::encodeJsVar( $jsattribs );
-
-		$jstext = <<<JAVASCRIPT
-jQuery(function(){ jQuery('#input_$sfgFieldNum').SemanticForms_registerInputInit(SFI_DTP_init, $jsattribsString ); });
-JAVASCRIPT;
-
-		// insert the code of the JS init function into the pages code
-		$wgOut->addScript('<script type="text/javascript">' . $jstext . '</script>');
-
 		// find allowed values and keep only the date portion
 		if ( array_key_exists( 'possible_values', $other_args ) &&
 				count( $other_args[ 'possible_values' ] ) ) {
@@ -919,11 +908,29 @@ JAVASCRIPT;
 			);
 		}
 
-		$separator = strpos($cur_value, " ");
+		$dateTimeString = trim( $cur_value );
+		$dateString = '';
+		$timeString = '';
+
+		$separatorPos = strpos($dateTimeString, " ");
+
+		// does it have a separating whitespace? assume it's a date & time
+		if ( $separatorPos ) {
+			$dateString = substr( $dateTimeString, 0, $separatorPos );
+			$timeString = substr( $dateTimeString, $separatorPos + 1 );
+
+		// does it start with a time of some kind?
+		} elseif ( preg_match( '/^\d?\d:\d\d/', $dateTimeString ) ) {
+			$timeString = $dateTimeString;
+
+		// if all else fails assume it's a date
+		} else {
+			$dateString = $dateTimeString;
+		}
 
 		$html = '<span class="inputSpan' . ($is_mandatory ? ' mandatoryFieldSpan' : '') . '">' .
-				self::jqDatePickerHTML(substr($cur_value + " ", 0, $separator), $input_name, $is_mandatory, $is_disabled, $other_args) . " " .
-				self::timepickerHTML(substr($cur_value + " ", $separator + 1), $input_name, $is_mandatory, $is_disabled, $other_args) .
+				self::jqDatePickerHTML( $dateString, $input_name, $is_mandatory, $is_disabled, $other_args) . " " .
+				self::timepickerHTML( $timeString, $input_name, $is_mandatory, $is_disabled, $other_args) .
 				Xml::element("input",
 						array(
 							"id" => "input_{$sfgFieldNum}",
@@ -932,6 +939,16 @@ JAVASCRIPT;
 							"value" => $cur_value
 						))
 				. '</span>';
+
+		// build JS code from attributes array
+		$jsattribsString = Xml::encodeJsVar( $jsattribs );
+
+		$jstext = <<<JAVASCRIPT
+jQuery(function(){ jQuery('#input_$sfgFieldNum').SemanticForms_registerInputInit(SFI_DTP_init, $jsattribsString ); });
+JAVASCRIPT;
+
+		// insert the code of the JS init function into the pages code
+		$wgOut->addScript('<script type="text/javascript">' . $jstext . '</script>');
 
 		return $html;
 	}
@@ -1143,6 +1160,8 @@ JAVASCRIPT;
 			if ( array_key_exists( 'mintime', $other_args )
 					&& ( preg_match( '/^\d+:\d\d$/', trim( $other_args['mintime'] ) ) == 1 ) ) {
 					$minTime = trim( $other_args[ 'mintime' ] );
+			} elseif ( $sfigSettings->timePickerMinTime != null ) {
+				$minTime = $sfigSettings->timePickerMinTime	;
 			} else {
 				$minTime = '00:00';
 			}
@@ -1151,6 +1170,8 @@ JAVASCRIPT;
 			if ( array_key_exists( 'maxtime', $other_args )
 					&& ( preg_match( '/^\d+:\d\d$/', trim( $other_args['maxtime'] ) ) == 1 ) ) {
 					$maxTime = trim( $other_args[ 'maxtime' ] );
+			} elseif ( $sfigSettings->timePickerMaxTime != null ) {
+				$maxTime = $sfigSettings->timePickerMaxTime	;
 			} else {
 				$maxTime = '23:59';
 			}

@@ -18,7 +18,7 @@ See the COPYING file for more information.
 
 Having at least MediaWiki 1.16, Semantic MediaWiki 1.5.4 and Semantic
 Forms 2.0.8 installed is a precondition for the Semantic Forms Inputs
-extension version 0.4; the code will not work without it.
+extension version 0.4 and above; the code will not work without it.
 
 To install Semantic Forms Inputs, create a directory named
 SemanticFormsInputs in the extensions directory of your MediaWiki

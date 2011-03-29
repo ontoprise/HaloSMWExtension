@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <deploydescriptor>
     <global>
-        <version>040</version>
+        <version>041</version>
         <id>semanticformsinputs</id>
         <vendor>Stephan Gambke</vendor>
         <instdir>extensions/SemanticFormsInputs</instdir>
@@ -9,7 +9,7 @@
             Additional inputs for SemanticForms
         </description>
         <dependencies>
-            <dependency from="208" to="208">semanticforms</dependency>
+            <dependency from="208">semanticforms</dependency>
         </dependencies>
     </global>
     <codefiles>

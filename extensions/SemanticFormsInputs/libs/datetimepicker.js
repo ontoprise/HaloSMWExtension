@@ -2,7 +2,6 @@
  * Javascript code to be used with input type datepicker.
  *
  * @author Stephan Gambke
- * @version 0.4
  *
  */
 
@@ -34,4 +33,5 @@ function SFI_DTP_init ( input_id, params ) {
 			})
 		}
 	}
+
 }

@@ -2,7 +2,6 @@
  * Javascript code to be used with input type datepicker.
  *
  * @author Stephan Gambke
- * @version 0.4
  *
  */
 
@@ -79,21 +78,33 @@ function SFI_DP_init ( input_id, params ) {
 		}
 
 		if ( params.disabledDates ) {
+			
+			var disabledDates = new Array();
 
-			var disabledDates = params.disabledDates.map(function(range) {
-				return [new Date(range[0], range[1], range[2]), new Date(range[3], range[4], range[5])]
-			});
+			for (i in params.disabledDates)
+				disabledDates.push([
+					new Date(params.disabledDates[i][0], params.disabledDates[i][1], params.disabledDates[i][2]),
+					new Date(params.disabledDates[i][3], params.disabledDates[i][4], params.disabledDates[i][5])
+				]);
 
 			input.datepicker("option", "disabledDates", disabledDates);
+
+			delete disabledDates;
 		}
 
 		if ( params.highlightedDates ) {
 
-			var highlightedDates = params.highlightedDates.map(function(range) {
-				return [new Date(range[0], range[1], range[2]), new Date(range[3], range[4], range[5])]
-			});
+			var highlightedDates = new Array();
+
+			for (i in params.highlightedDates)
+				highlightedDates.push([
+					new Date(params.highlightedDates[i][0], params.highlightedDates[i][1], params.highlightedDates[i][2]),
+					new Date(params.highlightedDates[i][3], params.highlightedDates[i][4], params.highlightedDates[i][5])
+				]);
 
 			input.datepicker("option", "highlightedDates", highlightedDates);
+
+			delete highlightedDates;
 		}
 
 		if (params.disabledDays) {
@@ -114,6 +125,15 @@ function SFI_DP_init ( input_id, params ) {
 			input.attr( "value", params.currValue );
 			jQuery( "#" + input_id.replace( "_dp_show", "" )).attr( "value", params.currValue );
 		}
+
+		// delete date when user deletes input field
+		input.change(function() {
+
+			if ( this.value == "" ) {
+				input.datepicker( "setDate", null );
+			}
+
+		});
 	}
 }
 
