@@ -2,11 +2,12 @@ Index: extensions/SemanticMediaWiki/includes/SMW_DataValue.php
 ===================================================================
 --- extensions/SemanticMediaWiki/includes/SMW_DataValue.php	(revision 10223)
 +++ extensions/SemanticMediaWiki/includes/SMW_DataValue.php	(working copy)
-@@ -104,6 +104,28 @@
+@@ -104,6 +104,29 @@
  	 */
  	private $mHasServiceLinks;
  
 +	/*op-patch|KK|SMWHalo|Metadata in DataValue (LOD)|start*/
++	/*op-patch|KK|SMWHalo|Metadata in DataValue (LOD)|doc|http://dmwiki.ontoprise.com:8888/dmwiki/index.php/LOD_metadata*/
 +	private $m_metadata = array();
 +	private $m_metadataTypes = array();
 +
@@ -35,11 +36,12 @@ Index: extensions/SemanticMediaWiki/includes/datavalues/SMW_DV_WikiPage.php
 ===================================================================
 --- extensions/SemanticMediaWiki/includes/datavalues/SMW_DV_WikiPage.php	(revision 10223)
 +++ extensions/SemanticMediaWiki/includes/datavalues/SMW_DV_WikiPage.php	(working copy)
-@@ -120,6 +120,9 @@
+@@ -120,6 +120,10 @@
  		$this->m_namespace = array_key_exists( 1, $args ) ? $args[1]:$this->m_fixNamespace;
  		$this->m_interwiki = array_key_exists( 2, $args ) ? $args[2]:'';
  		$this->m_sortkey   = array_key_exists( 3, $args ) ? $args[3]:'';
 +		/*op-patch|KK|SMWHalo|Keep fragment (LOD)|start*/
++		/*op-patch|KK|SMWHalo|Keep fragment (LOD)|doc|http://dmwiki.ontoprise.com:8888/dmwiki/index.php/LOD_metadata*/
 +		$this->m_fragment  = array_key_exists( 4, $args ) ? $args[4]:'';
 +		/*op-patch|KK|SMWHalo|Keep fragment (LOD)|end*/
  		$this->m_textform = str_replace( '_', ' ', $this->m_dbkeyform );
@@ -84,7 +86,7 @@ Index: extensions/SemanticMediaWiki/skins/SMW_sorttable.js
 ===================================================================
 --- extensions/SemanticMediaWiki/skins/SMW_sorttable.js	(revision 10223)
 +++ extensions/SemanticMediaWiki/skins/SMW_sorttable.js	(working copy)
-@@ -104,9 +104,10 @@
+@@ -104,9 +104,11 @@
  				return spans[i].innerHTML;
  			}
  		}
@@ -93,6 +95,7 @@ Index: extensions/SemanticMediaWiki/skins/SMW_sorttable.js
 -	}
 +	} 
 +	/*op-patch|KK|SMWHalo|Keep tables sortable for GardeningIssues|start*/
++	/*op-patch|KK|SMWHalo|Keep tables sortable for GardeningIssues|doc|http://dmwiki.ontoprise.com:8888/dmwiki/index.php/Sorting_in_tables_with_GardeningIssues*/
 +	return el.innerHTML;
 +	/*op-patch|KK|SMWHalo|Keep tables sortable for GardeningIssues|end*/
  }
