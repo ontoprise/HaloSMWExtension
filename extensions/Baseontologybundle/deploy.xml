@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <deploydescriptor>
 	<global>
-		<version>100</version>
+		<version>101</version>
 		<id>baseontologybundle</id>
-		<patchlevel>1</patchlevel>
+		<patchlevel>0</patchlevel>
 		<instdir>extensions/Baseontologybundle</instdir>
 		<vendor>Ontoprise</vendor>
 		<description>Basic ontology bundle</description>
