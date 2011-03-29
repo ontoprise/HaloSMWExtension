@@ -41,7 +41,7 @@ FacetedSearch.classes.FSLanguageEn = function () {
 	that.mMessages = {
 'more' 				: 'more',
 'less' 				: 'less',
-'noFacetFilter'		: '(no facet filter set)',
+'noFacetFilter'		: '(no facets selected)',
 'removeFilter'		: 'Remove filter',
 'removeRestriction'	: 'Remove restriction',
 'removeAllFilters'	: 'Remove all filters',
