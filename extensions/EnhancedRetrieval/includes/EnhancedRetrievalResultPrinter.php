@@ -80,7 +80,7 @@ class EnhancedRetrievalResultPrinter {
 	public static function serialize(array & $entries, & $terms) {
 		
 		global $wgContLang;
-		$termsarray = split(' ', $terms);
+		$termsarray = explode(' ', $terms);
 		// GreyBox
 		$args = "";
 		$args_prev = "";
