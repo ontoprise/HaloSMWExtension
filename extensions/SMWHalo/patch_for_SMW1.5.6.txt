@@ -47,7 +47,7 @@ Index: extensions/SemanticMediaWiki/includes/datavalues/SMW_DV_WikiPage.php
  		$this->m_textform = str_replace( '_', ' ', $this->m_dbkeyform );
  		$this->m_id = false;
  		$this->m_title = null;
-@@ -168,6 +171,23 @@
+@@ -168,6 +172,23 @@
  		} elseif ( $this->m_namespace == NS_IMAGE ) { // embed images instead of linking to their page
  			 return '[[' . str_replace( "'", '&#x0027;', $this->getPrefixedText() ) . '|' . $this->m_textform . '|frameless|border|text-top]]';
  		} else { // this takes care of all other cases, esp. it is right for Media:
@@ -71,7 +71,7 @@ Index: extensions/SemanticMediaWiki/includes/datavalues/SMW_DV_WikiPage.php
  			return '[[:' . str_replace( "'", '&#x0027;', $this->getPrefixedText() ) . '|' . $this->m_textform . ']]';
  		}
  	}
-@@ -375,8 +395,8 @@
+@@ -375,8 +396,8 @@
  	/**
  	 * @deprecated Use setDBkeys()
  	 */
@@ -86,18 +86,18 @@ Index: extensions/SemanticMediaWiki/skins/SMW_sorttable.js
 ===================================================================
 --- extensions/SemanticMediaWiki/skins/SMW_sorttable.js	(revision 10223)
 +++ extensions/SemanticMediaWiki/skins/SMW_sorttable.js	(working copy)
-@@ -104,9 +104,11 @@
+@@ -104,10 +104,12 @@
  				return spans[i].innerHTML;
  			}
  		}
 -	} else {
--		return el.innerHTML;
--	}
-+	} 
++	}
 +	/*op-patch|KK|SMWHalo|Keep tables sortable for GardeningIssues|start*/
 +	/*op-patch|KK|SMWHalo|Keep tables sortable for GardeningIssues|doc|http://dmwiki.ontoprise.com:8888/dmwiki/index.php/Sorting_in_tables_with_GardeningIssues*/
-+	return el.innerHTML;
+ 		return el.innerHTML;
 +	/*op-patch|KK|SMWHalo|Keep tables sortable for GardeningIssues|end*/
- }
- 
+ 	}
+-}
+
  function smw_resortTable( lnk, clid ) {
+ 	// get the span
