@@ -2,12 +2,13 @@ Index: includes/HistoryPage.php
 ===================================================================
 --- includes/HistoryPage.php	(revision 5531)
 +++ includes/HistoryPage.php	(working copy)
-@@ -523,7 +523,13 @@
+@@ -523,7 +523,14 @@
  			$s .= ' ' . $this->getSkin()->formatRevisionSize( $size );
  		}
 
 -		$s .= $this->getSkin()->revComment( $rev, false, true );
 +		/*op-patch|TS|2009-11-05|HaloACL|Protected properties|start*/
++		// See http://dmwiki.ontoprise.com:8888/dmwiki/index.php/Protected_properties
 +		global $haclgProtectProperties;
 +		if (!$haclgProtectProperties) {
 +			// The comment for an article might reveal values of protected properties
@@ -21,11 +22,12 @@ Index: includes/specials/SpecialAllpages.php
 ===================================================================
 --- includes/specials/SpecialAllpages.php	(revision 5535)
 +++ includes/specials/SpecialAllpages.php	(working copy)
-@@ -303,6 +303,11 @@
+@@ -303,6 +303,12 @@
  
  				while( ( $n < $this->maxPerPage ) && ( $s = $res->fetchObject() ) ) {
  					$t = Title::makeTitle( $s->page_namespace, $s->page_title );
 +/*op-patch|TS|2009-06-19|HaloACL|SafeTitle|start*/
++// See http://dmwiki.ontoprise.com:8888/dmwiki/index.php/SafeTitle
 +				if ($t && !$t->userCanReadEx()) {
 +					continue; 
 +				}
@@ -37,12 +39,13 @@ Index: includes/specials/SpecialExport.php
 ===================================================================
 --- includes/specials/SpecialExport.php	(revision 5535)
 +++ includes/specials/SpecialExport.php	(working copy)
-@@ -276,8 +276,14 @@
+@@ -276,8 +276,15 @@
  				$ns = $wgContLang->getNsText( $row->page_namespace );
  				$n = $ns . ':' . $n;
  			}
 -			
 +/*op-patch|TS|2009-07-09|HaloACL|SafeTitle|start*/
++// See http://dmwiki.ontoprise.com:8888/dmwiki/index.php/SafeTitle
 +			$t = Title::newFromText($n);
 +			global $wgUser;
 +			$allowed = wfRunHooks( 'userCan', array( &$t, &$wgUser, "read", &$result));
@@ -57,11 +60,12 @@ Index: includes/specials/SpecialListredirects.php
 ===================================================================
 --- includes/specials/SpecialListredirects.php	(revision 5535)
 +++ includes/specials/SpecialListredirects.php	(working copy)
-@@ -39,6 +39,12 @@
+@@ -39,6 +39,13 @@
  		if( $revision ) {
  			# Make a link to the destination page
  			$target = Title::newFromRedirect( $revision->getText() );
 +/*op-patch|TS|2009-06-19|HaloACL|SafeTitle|start*/
++// See http://dmwiki.ontoprise.com:8888/dmwiki/index.php/SafeTitle
 +			if (!$target->userCanReadEx()) {
 +				return;
 +			}
@@ -74,12 +78,13 @@ Index: includes/specials/SpecialNewpages.php
 ===================================================================
 --- includes/specials/SpecialNewpages.php	(revision 5535)
 +++ includes/specials/SpecialNewpages.php	(working copy)
-@@ -251,6 +251,13 @@
+@@ -251,6 +251,14 @@
  		$dm = $wgContLang->getDirMark();
 
  		$title = Title::makeTitleSafe( $result->rc_namespace, $result->rc_title );
 +
 +		/*op-patch|TS|2009-06-19|HaloACL|SafeTitle|start*/
++		// See http://dmwiki.ontoprise.com:8888/dmwiki/index.php/SafeTitle
 +		if (!$title->userCanReadEx()) {
 +			return;
 +		}
@@ -92,11 +97,12 @@ Index: includes/specials/SpecialPrefixindex.php
 ===================================================================
 --- includes/specials/SpecialPrefixindex.php	(revision 5535)
 +++ includes/specials/SpecialPrefixindex.php	(working copy)
-@@ -134,6 +134,11 @@
+@@ -134,6 +134,12 @@
  	
  				while( ( $n < $this->maxPerPage ) && ( $s = $res->fetchObject() ) ) {
  					$t = Title::makeTitle( $s->page_namespace, $s->page_title );
 +/*op-patch|TS|2009-06-19|HaloACL|SafeTitle|start*/
++// See http://dmwiki.ontoprise.com:8888/dmwiki/index.php/SafeTitle
 +					if ($t && !$t->userCanReadEx()) {
 +						continue; 
 +					}
@@ -108,11 +114,12 @@ Index: includes/specials/SpecialRecentchanges.php
 ===================================================================
 --- includes/specials/SpecialRecentchanges.php	(revision 5535)
 +++ includes/specials/SpecialRecentchanges.php	(working copy)
-@@ -369,6 +369,13 @@
+@@ -369,6 +369,14 @@
  
  		$s = $list->beginRecentChangesList();
  		foreach( $rows as $obj ) {
 +/*op-patch|TS|2009-06-19|HaloACL|SafeTitle|start*/
++// See http://dmwiki.ontoprise.com:8888/dmwiki/index.php/SafeTitle
 +			$rc = RecentChange::newFromRow( $obj );
 +			if (!$rc->getTitle()->userCanReadEx()) {
 +				continue;
@@ -126,16 +133,18 @@ Index: includes/specials/SpecialSearch.php
 ===================================================================
 --- includes/specials/SpecialSearch.php	(revision 5535)
 +++ includes/specials/SpecialSearch.php	(working copy)
-@@ -1147,7 +1147,14 @@
+@@ -1147,7 +1147,16 @@
  		$out .= "<ul class='mw-search-results'>\n";
  
  		while( $result = $matches->next() ) {
 +/*op-patch|TS|2009-06-19|HaloACL|SafeTitle|start*/
++// See http://dmwiki.ontoprise.com:8888/dmwiki/index.php/SafeTitle
 +			if (($result->getTitle() != NULL) 
 +			    && ($result->getTitle()->userCanReadEx())) {
 +/*op-patch|TS|2009-06-19|end*/  
  			$out .= $this->showHit( $result, $terms );
 +/*op-patch|TS|2009-06-19|HaloACL|SafeTitle|start*/
++// See http://dmwiki.ontoprise.com:8888/dmwiki/index.php/SafeTitle
 +			}
 +/*op-patch|TS|2009-06-19|end*/  
  		}
@@ -145,11 +154,12 @@ Index: includes/specials/SpecialWatchlist.php
 ===================================================================
 --- includes/specials/SpecialWatchlist.php	(revision 5535)
 +++ includes/specials/SpecialWatchlist.php	(working copy)
-@@ -340,6 +340,12 @@
+@@ -340,6 +340,13 @@
  	while ( $obj = $dbr->fetchObject( $res ) ) {
  		# Make RC entry
  		$rc = RecentChange::newFromRow( $obj );
 +/*op-patch|TS|2009-06-19|HaloACL|SafeTitle|start*/
++// See http://dmwiki.ontoprise.com:8888/dmwiki/index.php/SafeTitle
 +		if (!$rc->getTitle()->userCanReadEx()) {
 +			continue;
 +		}
@@ -162,11 +172,12 @@ Index: includes/specials/SpecialWhatlinkshere.php
 ===================================================================
 --- includes/specials/SpecialWhatlinkshere.php	(revision 5535)
 +++ includes/specials/SpecialWhatlinkshere.php	(working copy)
-@@ -238,6 +238,11 @@
+@@ -238,6 +238,12 @@
  		$wgOut->addHTML( $this->listStart() );
  		foreach ( $rows as $row ) {
  			$nt = Title::makeTitle( $row->page_namespace, $row->page_title );
 +/*op-patch|TS|2009-06-19|HaloACL|SafeTitle|start*/
++// See http://dmwiki.ontoprise.com:8888/dmwiki/index.php/SafeTitle
 +			if (!$nt->userCanReadEx()) {
 +				continue;
 +			}
@@ -178,11 +189,12 @@ Index: includes/CategoryPage.php
 ===================================================================
 --- includes/CategoryPage.php	(revision 5531)
 +++ includes/CategoryPage.php	(working copy)
-@@ -152,6 +152,11 @@
+@@ -152,6 +152,12 @@
  	 * @deprecated kept for compatibility, please use addSubcategoryObject instead
  	 */
  	function addSubcategory( $title, $sortkey, $pageLength ) {
 +		/*op-patch|TS|2009-06-19|HaloACL|SafeTitle|start*/
++		// See http://dmwiki.ontoprise.com:8888/dmwiki/index.php/SafeTitle
 +		if (!$title->userCanReadEx()) {
 +			return;
 +		}
@@ -190,11 +202,12 @@ Index: includes/CategoryPage.php
  		// Subcategory; strip the 'Category' namespace from the link text.
  		$this->children[] = $this->getSkin()->link(
  			$title,
-@@ -202,6 +207,12 @@
+@@ -202,6 +207,13 @@
  	 * Add a miscellaneous page
  	 */
  	function addPage( $title, $sortkey, $pageLength, $isRedirect = false ) {
 +/*op-patch|TS|2009-06-19|HaloACL|SafeTitle|start*/
++// See http://dmwiki.ontoprise.com:8888/dmwiki/index.php/SafeTitle
 +		if (!$title->userCanReadEx()) {
 +			return;
 +		}
@@ -207,11 +220,12 @@ Index: includes/LogEventsList.php
 ===================================================================
 --- includes/LogEventsList.php	(revision 5531)
 +++ includes/LogEventsList.php	(working copy)
-@@ -206,6 +206,12 @@
+@@ -206,6 +206,13 @@
  		global $wgLang, $wgUser, $wgContLang;
  
  		$title = Title::makeTitle( $row->log_namespace, $row->log_title );
 +/*op-patch|TS|2009-06-19|HaloACL|SafeTitle|start*/
++// See http://dmwiki.ontoprise.com:8888/dmwiki/index.php/SafeTitle
 +		if (!$title->userCanReadEx()) {
 +			return '';
 +		}
@@ -224,11 +238,12 @@ Index: includes/QueryPage.php
 ===================================================================
 --- includes/QueryPage.php	(revision 5531)
 +++ includes/QueryPage.php	(working copy)
-@@ -399,6 +399,13 @@
+@@ -399,6 +399,14 @@
  			# $res might contain the whole 1,000 rows, so we read up to
  			# $num [should update this to use a Pager]
  			for( $i = 0; $i < $num && $row = $dbr->fetchObject( $res ); $i++ ) {
 +/*op-patch|TS|2009-06-19|HaloACL|SafeTitle|start*/
++// See http://dmwiki.ontoprise.com:8888/dmwiki/index.php/SafeTitle
 +				$title = Title::makeTitleSafe( $row->namespace, $row->title );
 +				if (!$title->userCanReadEx()) {
 +					continue;
@@ -242,12 +257,13 @@ Index: includes/Title.php
 ===================================================================
 --- includes/Title.php	(revision 5531)
 +++ includes/Title.php	(working copy)
-@@ -90,7 +90,11 @@
+@@ -90,7 +90,12 @@
  		$t = new Title();
  		$t->mDbkeyform = $key;
  		if( $t->secureAndSplit() )
 -			return $t;
 +/*op-patch|TS|2009-06-19|HaloACL|SafeTitle|start*/
++// See http://dmwiki.ontoprise.com:8888/dmwiki/index.php/SafeTitle
 +			return $t->checkAccessControl();
 +/*op-patch|TS|2009-06-19|end*/  
 +//Replaced by patch		return $t;
@@ -255,35 +271,38 @@ Index: includes/Title.php
  		else
  			return NULL;
  	}
-@@ -144,7 +148,10 @@
+@@ -144,7 +148,11 @@
  				$cachedcount++;
  				Title::$titleCache[$text] =& $t;
  			}
 -			return $t;
 +/*op-patch|TS|2009-06-19|HaloACL|SafeTitle|start*/
++// See http://dmwiki.ontoprise.com:8888/dmwiki/index.php/SafeTitle
 +			return $t->checkAccessControl();
 +/*op-patch|TS|2009-06-19|end*/  
 +// Preplaced by patch			return $t;
  		} else {
  			$ret = NULL;
  			return $ret;
-@@ -170,7 +177,10 @@
+@@ -170,7 +177,11 @@
  
  		$t->mDbkeyform = str_replace( ' ', '_', $url );
  		if( $t->secureAndSplit() ) {
 -			return $t;
 +/*op-patch|TS|2009-06-19|HaloACL|SafeTitle|start*/
++// See http://dmwiki.ontoprise.com:8888/dmwiki/index.php/SafeTitle
 +			return $t->checkAccessControl();
 +/*op-patch|TS|2009-06-19|end*/  
 +// Preplaced by patch			return $t;
  		} else {
  			return NULL;
  		}
-@@ -256,7 +266,11 @@
+@@ -256,7 +266,12 @@
  		$t->mArticleID = ( $ns >= 0 ) ? -1 : 0;
  		$t->mUrlform = wfUrlencode( $t->mDbkeyform );
  		$t->mTextform = str_replace( '_', ' ', $title );
 +/*op-patch|TS|2009-06-19|HaloACL|SafeTitle|start*/
++// See http://dmwiki.ontoprise.com:8888/dmwiki/index.php/SafeTitle
 +		$t = $t->checkAccessControl();
  		return $t;
 +/*op-patch|TS|2009-06-19|end*/  
@@ -291,24 +310,26 @@ Index: includes/Title.php
  	}
  
  	/**
-@@ -273,7 +287,10 @@
+@@ -273,7 +287,11 @@
  		$t = new Title();
  		$t->mDbkeyform = Title::makeName( $ns, $title, $fragment );
  		if( $t->secureAndSplit() ) {
 -			return $t;
 +/*op-patch|TS|2009-06-19|HaloACL|SafeTitle|start*/
++// See http://dmwiki.ontoprise.com:8888/dmwiki/index.php/SafeTitle
 +			return $t->checkAccessControl();
 +/*op-patch|TS|2009-06-19|end*/  
 +// Preplaced by patch			return $t;
  		} else {
  			return NULL;
  		}
-@@ -3675,4 +3692,97 @@
+@@ -3675,4 +3692,98 @@
  		}
  		return $this->mBacklinkCache;
  	}
 +
 +/*op-patch|TS|2009-06-19|HaloACL|SafeTitle|start*/
++// See http://dmwiki.ontoprise.com:8888/dmwiki/index.php/SafeTitle
 +	
 +	/**
 +	 * This function is called from the patches for HaloACL for secure listings 
