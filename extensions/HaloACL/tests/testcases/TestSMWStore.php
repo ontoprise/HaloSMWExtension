@@ -1368,8 +1368,13 @@ QUERY;
 			$vals = $semData->getPropertyValues(SMWPropertyValue::makeUserProperty($expProp));
 			$this->assertEquals(count($vals), count($expValues), "*** Assertion failed for $testDescr ***");
 			
+			// The values are of type SMWWikiPageValue => get their names
+			$stringVals = array();
+			foreach ($vals as $value) {
+				$stringVals[] = $value->getText();
+			}
 			foreach ($expValues as $expVal) {
-				$this->assertArrayHasKey($expVal, $vals, "*** Assertion failed for $testDescr ***");
+				$this->assertContains($expVal, $stringVals, "*** Assertion failed for $testDescr ***");
 			}
 			
 		}
