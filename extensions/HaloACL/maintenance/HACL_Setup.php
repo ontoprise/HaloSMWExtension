@@ -95,11 +95,13 @@ if ($help) {
 		$maintenanceDir = "$mediaWikiLocation/maintenance/";
 		$ontologyBundle = "$haclgIP/ontologyBundle/dump.xml";
 		$output = array();
-		exec("php $maintenanceDir/importDump.php $ontologyBundle", $output);
+		exec("php \"$maintenanceDir/importDump.php\" \"$ontologyBundle\"", $output);
 		echo implode("\n",$output);
 		echo "Importing done.\n\n";
 		
 		echo "Refreshing all pages in namespace ACL...\n";
+		global $wgUser;
+		$wgUser = User::newFromName('WikiSysop');
 		refreshACLPages();
 		echo "done.\n";
 		
@@ -109,8 +111,8 @@ if ($help) {
 			"Knowledge consumer" => array('read', 'edit'),
 			"user" => array('read', 'edit'),  // all registered users
 			"Knowledge provider" => array('read', 'edit', 'upload'),
-			"sysop" => array('read', 'edit', 'manage', 'upload', 'administrate', 'technical'),
-			"bureaucrat" => array('read', 'edit', 'manage', 'upload', 'administrate', 'technical')
+			"sysop" => array('read', 'edit', 'manage', 'upload', 'administrate', 'technical', 'createaccount'),
+			"bureaucrat" => array('read', 'edit', 'manage', 'upload', 'administrate', 'technical', 'createaccount')
 		);
 		
 		// Store all permission for features
