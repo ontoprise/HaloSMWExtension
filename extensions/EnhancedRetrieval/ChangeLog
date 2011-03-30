@@ -1,6 +1,19 @@
 Enhanced Retrieval extension ChangeLog
 ==================================
+VERSION 1.4.1
 
+
+  FEATURES:
+  * Faceted Search: Browse the semantic data by categories and properties
+
+
+  CHANGES:
+
+
+
+  BUGFIXES:
+  13633 - Function split() is deprecated
+  
 
 VERSION XXXX
 
