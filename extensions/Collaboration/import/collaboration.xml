@@ -406,8 +406,8 @@
     <title>Collaboration</title>
     <id>444</id>
     <revision>
-      <id>3296</id>
-      <timestamp>2011-03-28T11:16:37Z</timestamp>
+      <id>3323</id>
+      <timestamp>2011-03-30T09:59:01Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -421,6 +421,13 @@
 }} {{Part of bundle|value=Collaboration}} [[Vendor::Ontoprise| ]] [[Ontology version::131| ]] [[Installation dir::extensions/Collaboration| ]] 
 [[Dependency::smwhalo;153;153| ]] 
 [[Dependency::applicationprogramming;103;103| ]]
+;This content bundle features a set of basic elements that are necessary to for the Collaboration extension.
+
+Simply add the template call &lt;code&gt;&lt;nowiki&gt;{{ShowComments|show=True}}&lt;/nowiki&gt;&lt;/code&gt; to the area where you would like to display the list of actual comments for this article and the collapsible comment form. Usually this is at the bottom of the page.
+
+We have created a small [[Collaboration_Sandbox|Collaboration Sandbox]] for this extension where you discover its features.
+
+More information about the Collaboration extension and how to use it can be found in our [http://smwforum.ontoprise.com/smwforum/index.php/Help:Collaboration_Extension Collaboration extension help article at SMWForum].
 
 ;This bundle contains these articles
 :
@@ -433,9 +440,9 @@
 |mainlabel=-
 }}
 
-&lt;br/&gt;[[Category:Content bundle|Content_bundle]]
+[[Category:Content bundle|Content_bundle]]
 {{Content hash|value=a5b59c7c93de4673e7a007ab705bdafa}}</text>
-    <hash>f1424fc0622409ba315682bde9deb1c4</hash>
+    <hash>32e0d3a21f47b7557a588dccf0a5e5a5</hash>
     </revision>
   </page>
   <page>
