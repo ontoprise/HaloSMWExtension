@@ -323,7 +323,7 @@ Index: includes/Title.php
  		} else {
  			return NULL;
  		}
-@@ -3675,4 +3692,98 @@
+@@ -3675,4 +3692,97 @@
  		}
  		return $this->mBacklinkCache;
  	}
@@ -421,3 +421,4 @@ Index: includes/Title.php
 +/*op-patch|TS|2009-06-19|end*/  
 +
  }
+ 
