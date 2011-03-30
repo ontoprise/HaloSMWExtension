@@ -3145,7 +3145,8 @@ applyOptionParams : function(query) {
     var tpeeParamsObj = new Object(); // empty policy params
     var tpeePolicyId = ''; // empty name of TPEE
     // selector of TPEE or DS
-    var selectorDsTpee = $('qioptioncontent').getElementsBySelector('[name="qiDsTpeeSelector"]');
+    var selectorDsTpee = ( $('qioptioncontent') )
+        ? $('qioptioncontent').getElementsBySelector('[name="qiDsTpeeSelector"]') : [];
 	for ( var i = 1; i < options.length; i++) {
             // check for additionl printouts like |?myProp
             var m = options[i].match(/^\s*\?/)
