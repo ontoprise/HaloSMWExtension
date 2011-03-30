@@ -180,7 +180,7 @@ class TSHelper {
 
 	public static function convertOBLFunctionalTerm($uri) {
 		$uri = urldecode($uri);
-		// echo $uri;die();
+		
 		preg_match('/\(([^)]*)\)/',$uri, $matches);
 		if (count($matches) > 1) {
 			$uri = $matches[1];
@@ -214,6 +214,7 @@ class TSHelper {
 		$uri = str_replace(")", "_", $uri);
 		$uri = str_replace(",", "_", $uri);
 		$uri = str_replace("\"", "_", $uri);
+		$uri = str_replace("/", "_", $uri);
 		$uri = str_replace("'", "_", $uri);
 		$uri = str_replace("^", "_", $uri);
 		$uri = str_replace("<", "_", $uri);
