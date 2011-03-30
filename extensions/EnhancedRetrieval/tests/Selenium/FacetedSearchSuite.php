@@ -6,9 +6,9 @@ class Example extends PHPUnit_Extensions_SeleniumTestCase
 {
 	protected function setUp()
 	{
-		//$this->setBrowser("*chrome");
+		$this->setBrowser("*chrome"); // Firefox
 		//$this->setBrowser("*iexploreproxy");
-		$this->setBrowser("*googlechrome");
+		//$this->setBrowser("*googlechrome");
 		$this->setBrowserUrl("http://localhost/");
 	}
 
