@@ -1913,3 +1913,69 @@ Index: extensions/SemanticForms/libs/SemanticForms.js
  
      /* extending jQuery functions for custom highlighting */
      jQuery.ui.autocomplete.prototype._renderItem = function( ul, item) {
+
+Index: extensions/SemanticForms/skins/SemanticForms.css
+===================================================================
+--- extensions/SemanticForms/skins/SemanticForms.css	(revision 9639)
++++ extensions/SemanticForms/skins/SemanticForms.css	(working copy)
+@@ -1,9 +1,17 @@
+ /**
+  * The main CSS file for the Semantic Forms extension.
+  */
++/*op-patch|SR|2011-03-30|SF|Style for Halo|start*/
++/*op-patch|SR|2011-03-30|SF|Style for Halo|doc|http://dmwiki.ontoprise.com:8888/dmwiki/index.php/SF_style_for_Halo*/
+ 
+ /* Override "width: 100%" setting in standard MediaWiki skins */
+ textarea.createboxInput {
++	-moz-box-shadow: 0 2px 2px rgba(0, 0, 0, 0.2) inset;
++	background: none no-repeat scroll 0 0 #FFFFFF;
++	border-color: #959595 #CCCCCC #CCCCCC #959595;
++	border-style: solid;
++	border-width: 1px;
++	padding:3px;
+ 	width: auto;
+ }
+ textarea.mandatoryField {
+@@ -12,16 +20,16 @@
+ 
+ /* Used in 'create template' page */
+ .fieldBox {
+-        border: 1px black solid;
+-        background: #dddddd;
++		border: 1px #a9c5d9 solid;
++		background: #edf2f6;
+         padding: 10px 20px 10px 20px;
+         margin: 0px 20px 20px 20px;
+ }
+ 
+ /* Used in 'create form' page */
+ .templateForm {
+-        border: 1px black solid;
+-        background: #dddddd;
++        border: 1px #a9c5d9 solid;
++        background: #edf2f6;
+         padding: 0px 20px 10px 20px;
+         margin-bottom: 20px;
+ }
+@@ -68,6 +76,16 @@
+ 	padding: 4px; */
+ }
+ 
++fieldset {
++	border: 1px #a9c5d9 solid;
++	background: #ffffff;
++	display: block;
++	margin-left: 2px;
++	margin-right: 2px;
++	padding: 0.35em 0.625em 0.75em;
++}
++
++
+ div.infoMessage {
+ 	border: 1px solid #777777;
+ 	padding: 12px;
+@@ -107,3 +125,4 @@
+ 	vertical-align: bottom;
+ 	margin-top: 0.2em;
+ } /* button elements seem to need a little more width */
++/*op-patch|SR|2011-03-30|SF|Style for Halo|start*/
