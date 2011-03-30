@@ -110,7 +110,7 @@ FacetedSearch.classes.FacetClusterer = function (facetName, plainName) {
 			var clusterCounts = retrieveClusterCounts(clusters);
 		};
 		
-		mAjaxSolrManager.doRequest();
+		mAjaxSolrManager.doRequest(0);
 		
 	}
 	
@@ -171,7 +171,7 @@ FacetedSearch.classes.FacetClusterer = function (facetName, plainName) {
 				clusterer: that
 			}));
 		
-		mAjaxSolrManager.doRequest();
+		mAjaxSolrManager.doRequest(0);
 		
 	}
 	

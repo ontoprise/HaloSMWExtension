@@ -56,7 +56,8 @@ FacetedSearch.classes.FSLanguageEn = function () {
 'hide'				: 'hide',
 'showDetails'		: 'Show details',
 'hideDetails'		: 'Hide details',
-'lastChange'		: 'Last change'
+'lastChange'		: 'Last change',
+'addFacetOrQuery'	: 'Please enter a search term or select a facet!'
 
 		
 	};

@@ -58,6 +58,20 @@ FacetedSearch.classes.ResultWidget = AjaxSolr.AbstractWidget.extend({
 	afterRequest: function () {
 		var $ = jQuery;
 		$(this.target).empty();
+		var query = this.manager.store.values('q');
+		var emptyQuery = true;
+		if (query.length == 1) {
+			query = query[0];	
+			emptyQuery = query.match(/^.*:\*$/) !== null;
+		}
+		var facetQuery = this.manager.store.values('fq');
+		if (emptyQuery && facetQuery.length == 0) {
+			// No query present => hide results and show a message
+			$(this.target).append(AjaxSolr.theme('emptyQuery'));
+			return;
+		} 
+
+		// Add all results
 		for (var i = 0, l = this.manager.response.response.docs.length; i < l; i++) {
 			var doc = this.manager.response.response.docs[i];
 			$(this.target).append(AjaxSolr.theme('article', doc, AjaxSolr.theme('data', doc)));

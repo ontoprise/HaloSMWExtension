@@ -106,7 +106,7 @@ FacetedSearch.classes.FacetedSearch = function () {
 		// paging
 		var lang = FacetedSearch.singleton.Language;
 
-		mAjaxSolrManager.addWidget(new AjaxSolr.PagerWidget({
+		mAjaxSolrManager.addWidget(new FacetedSearch.classes.PagerWidget({
 			id : 'pager',
 			target : '#pager',
 			prevLabel : lang.getMessage('pagerPrevious'),
@@ -162,7 +162,7 @@ FacetedSearch.classes.FacetedSearch = function () {
 			qs = '*';
 		}
 		mAjaxSolrManager.store.addByValue('q', QUERY_FIELD+':'+qs);
-		mAjaxSolrManager.doRequest();
+		mAjaxSolrManager.doRequest(0);
 		
 //		if (mDebug) { console.log("Filter: "+mFilter+"\n"); }
 //		if (typeof mFilterTimeout !== 'undefined') {
@@ -186,7 +186,9 @@ FacetedSearch.classes.FacetedSearch = function () {
 	
 	construct();
 	addEventHandlers();
-	mAjaxSolrManager.doRequest();
+	
+	// Show all results at start up
+	mAjaxSolrManager.doRequest(0);
 	
 	that.FACET_FIELDS = FACET_FIELDS;
 	return that;

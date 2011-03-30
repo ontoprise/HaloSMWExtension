@@ -78,7 +78,7 @@ FacetedSearch.classes.StringFacetClusterer = function (facetName, plainName) {
 		asm.addWidget(fpvw);
 		asm.store.addByValue('facet.field', queryFacet);
 
-		asm.doRequest();
+		asm.doRequest(0);
 		
 	}
 			

@@ -359,6 +359,11 @@
 				.click(handler);
 	};
 	
+	AjaxSolr.theme.prototype.emptyQuery = function(handler) {
+		var lang = FacetedSearch.singleton.Language;
+		return lang.getMessage('addFacetOrQuery');
+	};
+	
 	AjaxSolr.theme.prototype.cluster_remove_range_filter = function(handler) {
 		var lang = FacetedSearch.singleton.Language;
 		return $('<a href="#" class="xfsClusterEntry"/>')
