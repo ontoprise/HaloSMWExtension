@@ -45,9 +45,11 @@ function smwfTripleStorePropertyUpdate(& $data, & $property, & $propertyValueArr
 			$datavalues = reset($propertyValueArray);
 			$dvs = $datavalues->getDVs();
 			$domain = reset($dvs);
-			$domain_iri = $tsNamespace->getFullIRI($domain->getTitle());
-			$triplesFromHook[] = array($subj_iri, "haloprop:domainAndRange", "_:1");
-			$triplesFromHook[] = array("_:1", "haloprop:domain", $domain_iri);
+			if ($domain) {
+				$domain_iri = $tsNamespace->getFullIRI($domain->getTitle());
+				$triplesFromHook[] = array($subj_iri, "haloprop:domainAndRange", "_:1");
+				$triplesFromHook[] = array("_:1", "haloprop:domain", $domain_iri);
+			}
 			$range = next($dvs);
 				
 			if ($range !== false) {
