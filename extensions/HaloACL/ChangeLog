@@ -1,7 +1,7 @@
 HaloACL extension ChangeLog
 ===========================
 
-Version 1.5.3
+Version 1.4
 
   FEATURE:
     - Create security descriptors automatically based on the category of an article
@@ -14,10 +14,12 @@ Version 1.5.3
   CHANGES:
   	
   BUGFIXES: (Bug numbers according to http://smwforum.ontoprise.com/smwbugs/)
+  13642 - Error in HACL_Setup.php when wiki is installed at c:\Program files\Ontorpise...
   13740 - Translation to other languages causes problems
   			Added spanish translation provided by Facundo Ezequiel Grande
+  13804 - MediaWiki 1.16.0 patch is incorrect in Version 1.3.0_0 [B216]
 
-Version 1.5.2
+Version 1.3
 
   FEATURE:
   	
