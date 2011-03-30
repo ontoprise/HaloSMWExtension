@@ -779,16 +779,12 @@ class SMWTripleStore extends SMWStore {
 	}
 
 	function initialize($verbose = true) {
-		global $smwgMessageBroker, $smwgTripleStoreGraph, $wgDBtype, $wgDBport, $wgDBserver, $wgDBname, $wgDBuser, $wgDBpassword, $wgDBprefix, $wgLanguageCode, $smwgBaseStore, $smwgIgnoreSchema, $smwgNamespaceIndex;
-		$ignoreSchema = isset($smwgIgnoreSchema) && $smwgIgnoreSchema === true ? "true" : "false";
+		
 		try {
 			$con = TSConnection::getConnector();
-			$sparulCommands = array();
-			$sparulCommands[] = "DROP SILENT GRAPH <$smwgTripleStoreGraph>"; // drop may fail. don't worry
-			$sparulCommands[] = "CREATE SILENT GRAPH <$smwgTripleStoreGraph>";
-			$sparulCommands[] = "LOAD <smw://".urlencode($wgDBuser).":".urlencode($wgDBpassword)."@$wgDBserver:$wgDBport/$wgDBname?lang=$wgLanguageCode&smwstore=$smwgBaseStore&ignoreSchema=$ignoreSchema&smwnsindex=$smwgNamespaceIndex#".urlencode($wgDBprefix)."> INTO <$smwgTripleStoreGraph>";
+			$commandText = smwf_ts_getSyncCommands();
 			$con->connect();
-			$con->update("/topic/WIKI.TS.UPDATE", $sparulCommands);
+			$con->update("/topic/WIKI.TS.UPDATE", explode("\n", $commandText));
 			$con->disconnect();
 		} catch(Exception $e) {
 

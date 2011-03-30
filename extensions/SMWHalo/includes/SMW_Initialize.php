@@ -453,6 +453,7 @@ function smwgHaloSetupExtension() {
 	if (smwfIsTripleStoreConfigured()) {
 		$wgHooks['InternalParseBeforeLinks'][] = 'smwfTripleStoreParserHook';
 	}
+	$wgAjaxExportList[] = 'smwf_ts_getSyncCommands';
 	$wgAjaxExportList[] = 'smwf_ts_getWikiNamespaces';
 	$wgAjaxExportList[] = 'smwf_ts_getWikiSpecialProperties';
 	$wgAjaxExportList[] = 'smwf_ts_triggerAsynchronousLoading';
@@ -603,6 +604,52 @@ function smwfHaloInitDatatypes() {
 
 	return true;
 }
+
+/**
+ * Returns a list of SPARUL commands which are required to sync
+ * with the TSC.
+ *
+ * @return string
+ */
+function smwf_ts_getSyncCommands() {
+	global $smwgMessageBroker, $smwgTripleStoreGraph, $wgDBtype, $wgDBport,
+	$wgDBserver, $wgDBname, $wgDBuser, $wgDBpassword, $wgDBprefix, $wgLanguageCode,
+	$smwgBaseStore, $smwgIgnoreSchema, $smwgNamespaceIndex;
+
+	$sparulCommands = array();
+
+	// sync wiki module
+	$sparulCommands[] = "DROP SILENT GRAPH <$smwgTripleStoreGraph>"; // drop may fail. don't worry
+	$sparulCommands[] = "CREATE SILENT GRAPH <$smwgTripleStoreGraph>";
+	$sparulCommands[] = "LOAD <smw://".urlencode($wgDBuser).":".urlencode($wgDBpassword).
+	"@$wgDBserver:$wgDBport/$wgDBname?lang=$wgLanguageCode&smwstore=$smwgBaseStore".
+	"&smwnsindex=$smwgNamespaceIndex#".urlencode($wgDBprefix).
+	"> INTO <$smwgTripleStoreGraph>";
+
+	// sync external modules (only if DF is installed)
+	if (defined('DF_VERSION')) {
+
+		$externalArtifacts = DFBundleTools::getExternalArtifacts();
+
+		foreach($externalArtifacts as $extArt) {
+			list($fileTitle, $uri) = $extArt;
+			$sparulCommands[] = "DROP SILENT GRAPH <$uri>"; // drop may fail. don't worry
+			$sparulCommands[] = "CREATE SILENT GRAPH <$uri>";
+
+			$localFile = wfLocalFile($fileTitle);
+			$format = DFBundleTools::guessOntologyFileType($fileTitle->getText());
+			$fileURL = $localFile->getFullUrl();
+			$sparulCommands[] = "LOAD <$fileURL?format=$format> INTO <$uri>";
+			$sparulCommands[] = "IMPORT ONTOLOGY <$uri> INTO <$smwgTripleStoreGraph>";
+		}
+
+
+	}
+
+	return implode("\n", $sparulCommands);
+}
+
+
 
 /**
  * Returns a list of namespace mappings.
