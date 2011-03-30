@@ -8,7 +8,7 @@
  * 
  * Created on 26.11.2007
  *
- * @author Kai Kühn
+ * @author Kai Kï¿½hn
  */
  
 if (!defined('MEDIAWIKI')) die();
@@ -211,7 +211,7 @@ function smwfDoSpecialFindWorkPage() {
 		switch($field) {
 			case 0: return array(NULL, NULL, NULL);
 			case 1: return array('smw_consistencybot', NULL, NULL);
-			case 2: return array('smw_consistencybot', NULL, SMW_GARDISSUE_TOO_LOW_CARD);
+			case 2: return array('smw_missingannotationsbot', NULL, SMW_GARDISSUE_TOO_LOW_CARD);
 			case 3: return array('smw_consistencybot', SMW_CONSISTENCY_BOT_BASE + 1, NULL);  // SMW_CONSISTENCY_BOT_BASE + 1 is group of undefined domains/ranges/types		
 			case 4: return array('smw_undefinedentitiesbot', NULL, SMW_GARDISSUE_INSTANCE_WITHOUT_CAT);
 			case 5: return array('smw_anomaliesbot', NULL, SMW_GARDISSUE_CATEGORY_LEAF);
