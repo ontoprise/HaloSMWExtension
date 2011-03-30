@@ -41,6 +41,7 @@ var wgCEUserLanguageStrings = {
 	'ce_com_rating_text2'	:	'Bewertung(en):',
 	'ce_com_toggle_tooltip'	:	'Sie können die Kommentare durch Klicken öffnen/schließen',
 	'ce_form_toggle_tooltip':	'Sie können das Kommentarformular durch Klicken öffnen/schließen.',
+	'ce_form_toggle_no_edit_tooltip' : 'Sie dürfen leider keine neuen Kommentare erstellen.',
 	'ce_edit_intro'			:	'Dieser Kommentare wurde zuletzt bearbeitet von',
 	'ce_edit_date_intro'	:	'am'
 }

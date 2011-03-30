@@ -240,20 +240,20 @@ class CECommentParserFunctions {
 		$script = '<script type="'.$wgJsMimeType.'">/*<![CDATA[*/'.
 			($userIsSysopJSText? $userIsSysopJSText : "") .
 			'/*]]>*/</script>';
-		SMWOutputs::requireHeadItem('CEJS_Variables3', $script);  
+		SMWOutputs::requireHeadItem('CEJS_Variables3', $script);
 
 		$html = XML::openElement( 'div', array( 'id' => 'collabComFormHeader' )) .
 			XML::openElement( 'form', array( 'id' => 'collabComForm',
 			'style' => 'display:none',		
-			'onSubmit' => 'return ceCommentForm.processForm()' ) ) . 
+			'onSubmit' => 'return ceCommentForm.processForm()' ) ) .
 			XML::openElement('div', array('id' => 'collabComFormUserIcon')) .
 				XML::Element( 'img', array( 'id' => 'collabComFormUserImg',
 					'src' => $userImgSrc? $userImgSrc : '' )) .
 			XML::closeElement('div') .
 			XML::openElement('div', array('id' => 'collabComFormRight')) .
 				XML::openElement( 'div', array( 'id' => 'collabComFormUser') ) .
-					'<span class="userkey">' .wfMsg('ce_cf_author') . '</span>' . 
-					'<span class="uservalue">' . 
+					'<span class="userkey">' .wfMsg('ce_cf_author') . '</span>' .
+					'<span class="uservalue">' .
 						$parser->recursiveTagParse('[['.$wgUser->getUserPage()->getPrefixedText().'|'.$currentUser.']]') . '</span>' .
 				XML::closeElement('div') .
 				$ratingHTML .
@@ -284,6 +284,13 @@ class CECommentParserFunctions {
 			XML::closeElement('div') .
 			XML::closeElement('div');
 
+			$testTitle = Title::newFromText( 'Comment' . time(), CE_COMMENT_NS );
+			if( !$testTitle->userCan( 'edit' ) ) {
+				$script = '<script type="'.$wgJsMimeType.'">/*<![CDATA[*/'.
+					'var wgCEUserCanEdit = false;' .
+					'/*]]>*/</script>';
+				SMWOutputs::requireHeadItem('CEJS_Variables4', $script); 
+			}
 		self::$mInstance->mCommentFormDisplayed = true;
 		return $parser->insertStripItem( $html, $parser->mStripState );
 	}

@@ -935,15 +935,26 @@ function CECommentForm() {
 	 * @param withPipe: Indicates if the Text should be extended with a leading pipe symbol
 	 */
 	this.addFormToggler = function( withPipe ) {
-		var toggleSpan = this.createDOMElement( 'span',
-			'collabComFormToggle',
-			null,
-			[['id', 'collabComFormToggle']],
-			( withPipe? ' | ' : ' ' ) + ceLanguage.getMessage( 'ce_com_default_header' )
-		);
-		$jq( toggleSpan ).bind( 'click', function() {
-			$jq( '#collabComForm' ).toggle( 'slow' );
-		});
+		var toggleSpan ='';
+		if( typeof( wgCEUserCanEdit ) !== 'undefined' && wgCEUserCanEdit === false ) {
+			toggleSpan = this.createDOMElement( 'span',
+					'collabComFormToggle',
+					null,
+					[['style', 'color: grey; cursor: default;'],
+					['title', ceLanguage.getMessage( 'ce_form_toggle_no_edit_tooltip' )]],
+					( withPipe? ' | ' : ' ' ) + ceLanguage.getMessage( 'ce_com_default_header' )
+			);
+		} else {
+			toggleSpan = this.createDOMElement( 'span',
+				'collabComFormToggle',
+				null,
+				[['title', ceLanguage.getMessage( 'ce_form_toggle_tooltip' )]],
+				( withPipe? ' | ' : ' ' ) + ceLanguage.getMessage( 'ce_com_default_header' )
+			);
+			$jq( toggleSpan ).bind( 'click', function() {
+				$jq( '#collabComForm' ).toggle( 'slow' );
+			});
+		}
 		$jq( '.collabComInternHeader' ).append( $jq( toggleSpan ) );
 		return true;
 	};
@@ -1224,8 +1235,9 @@ $jq(document).ready(
 					$jq( '.collabComResDate', resCom ).after( divEl );
 				}
 			}
-			if ( typeof(wgCECommentsDisabled) === 'undefined' 
+			if ( ( typeof( wgCECommentsDisabled ) === 'undefined' 
 				|| wgCECommentsDisabled === false )
+				&& ( typeof( wgCEUserCanEdit ) === 'undefined' ) )
 			{
 				// reply
 				var divEl = ceCommentForm.createDOMElement( 'span',

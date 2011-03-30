@@ -41,6 +41,7 @@ var wgCEUserLanguageStrings = {
 	'ce_com_rating_text2'	:	'rating(s):',
 	'ce_com_toggle_tooltip'	:	'Click to show/hide all comments',
 	'ce_form_toggle_tooltip':	'Click to show/hide the comment form.',
+	'ce_form_toggle_no_edit_tooltip' : 'You are not allowed to add new comments',
 	'ce_edit_intro'			:	'This comment has been last edited by',
 	'ce_edit_date_intro'	:	'on'
 }
