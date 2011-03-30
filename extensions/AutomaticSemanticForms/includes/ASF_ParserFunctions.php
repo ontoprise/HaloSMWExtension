@@ -234,7 +234,7 @@ class ASFParserFunctions {
 			$maxCardinality = 
 				ASFFormGeneratorUtils::getPropertyValue($semanticData, ASF_PROP_HAS_MAX_CARDINALITY);
 			$delimiter = 
-				ASFFormGeneratorUtils::getPropertyValue($semanticData, ASF_PROP_DELIMITER);
+				ASFFormGeneratorUtils::getPropertyValue($semanticData, 'Delimiter');
 			
 			if($maxCardinality != 1 || $delimiter){
 				if(!$delimiter) $delimiter = ',';
@@ -356,6 +356,7 @@ class ASFParserFunctions {
 		$categoryInputIntro = '';
 		$buttonLabel = '';
 		$useDropDown=false;
+		$queryString = '';
 		
 		// assign params - support unlabelled params, for backwards compatibility
 		$unresolvedParameters = array();
@@ -402,6 +403,8 @@ class ASFParserFunctions {
 				if(strtolower($paramValue) == 'true'){
 					$useDropDown = true;
 				}
+			} else if($paramName == 'query string'){
+				$queryString = $paramValue;
 			} else { 
 				$unresolvedParameters[$i] = $param;
 			}
@@ -442,6 +445,10 @@ class ASFParserFunctions {
 					$useDropDown = true;		
 				}
 			}
+			
+			if(strlen($queryString) == 0 && array_key_exists(6, $unresolvedParameters)){
+				$queryString = $unresolvedParameters[6];
+			}
 		
 		} else if ($type == 'page'){
 			If(strlen($categoryName) == 0 && array_key_exists(1, $unresolvedParameters))
@@ -464,6 +471,10 @@ class ASFParserFunctions {
 			
 			If(strlen($buttonLabel) == 0 && array_key_exists(5, $unresolvedParameters))
 				$buttonLabel = $unresolvedParameters[5];
+			
+			if(strlen($queryString) == 0 && array_key_exists(6, $unresolvedParameters)){
+				$queryString = $unresolvedParameters[6];
+			}
 		
 		} else {
 			if($pageSize == 25 && array_key_exists(1, $unresolvedParameters))
@@ -492,7 +503,12 @@ class ASFParserFunctions {
 					$useDropDown = true;		
 				}
 			}
+			
+			if(strlen($queryString) == 0 && array_key_exists(9, $unresolvedParameters)){
+				$queryString = $unresolvedParameters[9];
+			}
 		}
+		
 		
 		//open form tag
 		$formEdit = SpecialPage::getPage( 'FormEdit' );
@@ -536,6 +552,21 @@ class ASFParserFunctions {
 			$str .= '<input type="hidden" name="categories" value="' .$categoryName. '">';
 		} else if ($type == 'category'){
 			$str .= '<input type="hidden" name="target" value="' .$pageName. '">';
+		}
+		
+		if ( $queryString != '' ) {
+			$queryString = str_replace( '&amp;', '%26', $queryString);
+			$queryComponents = explode( '&', $queryString);
+			foreach ( $queryComponents as $queryComponent ) {
+				$queryComponent = urldecode( $queryComponent );
+				if(strpos($queryComponent, 'Property[') === 0){
+					$queryComponent = 'CreateSilentAnnotations:[' . substr($queryComponent, strlen('Property['));
+				}
+				$varAndVal = explode( '=', $queryComponent );
+				if ( count($varAndVal) == 2){
+					$str .= '<input type="hidden" name="' . $varAndVal[0] . '" value="' . $varAndVal[1] . '" /> ';
+				}
+			}
 		}
 		
 		//add submit button
