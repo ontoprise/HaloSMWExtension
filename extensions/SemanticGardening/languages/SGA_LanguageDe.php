@@ -167,7 +167,8 @@ class SGA_LanguageDe {
     /*Message for ExportObjectLogicBot*/
     'smw_exportobjectlogicbot'=>'Exportiere ObjectLogic',
     'smw_gard_exportobl_docu' => 'Dieser Bot exportiert die Ontologien des TSCs als ObjectLogic.',
-
+    'smw_gard_exportobl_bundlename' => 'Bundle-Name (auto-completion)',
+    
     /*Message for TemplateMaterializerBot*/
     'smw_gard_templatemat_docu' => 'Dieser Bot aktualisiert alle Seiten, die Templates verwenden welche seit der letzten Materialisierung geändert wurden. Dies ist notwendig damit ASK-Queries in allen Fällen korrekte Ergebnisse liefern.',
     'smw_gard_templatemat_applytotouched' => 'Nur geänderte Tempates berücksichtigen',

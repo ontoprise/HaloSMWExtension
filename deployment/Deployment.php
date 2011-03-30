@@ -10,6 +10,7 @@ function dfgSetupExtension() {
 	dfgInitializeLanguage();
 	global $wgAutoloadClasses, $wgSpecialPages, $wgSpecialPageGroups,$smwgDFIP, $wgExtensionCredits;
 	$wgAutoloadClasses['SMWCheckInstallation'] = $smwgDFIP . '/specials/SMWCheckInstallation/SMW_CheckInstallation.php';
+	$wgAutoloadClasses['DFBundleTools'] = $smwgDFIP . '/io/DF_BundleTools.php';
 	$wgSpecialPages['CheckInstallation'] = array('SMWCheckInstallation');
 	$wgSpecialPageGroups['CheckInstallation'] = 'smwplus_group';
 	

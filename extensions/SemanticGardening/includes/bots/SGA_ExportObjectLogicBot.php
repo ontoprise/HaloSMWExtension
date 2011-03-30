@@ -45,7 +45,11 @@ class ExportObjectLogicBot extends GardeningBot {
 	 * Returns an array of GardeningParamObjects
 	 */
 	public function createParameters() {
-		return array();
+		global $dfgLang, $wgLang;
+		$param1 = new GardeningParamTitle('GARD_OBLEXPORT_BUNDLE', wfMsg('smw_gard_exportobl_bundlename'), SMW_GARD_PARAM_REQUIRED);
+		$param1->setAutoCompletion(true);
+		$param1->setConstraints("ask: [[".$wgLang->getNsText(NS_CATEGORY).":".$dfgLang->getLanguageString('df_contentbundle')."]]");
+		return array($param1);
 	}
 
 	private function exportCategories($bundleID) {
@@ -191,6 +195,9 @@ class ExportObjectLogicBot extends GardeningBot {
 		$obl = "";
 		foreach($pageValuesOfOntology as $pv) {
 			$title = $pv->getTitle();
+			
+			 if (!($title instanceof Title)) continue;
+		
 			if ($title->getNamespace() == NS_MAIN) {
 				$instanceIRI = $this->getTSCIRI($title);
 				$sd = smwfGetStore()->getSemanticData($title);
@@ -198,14 +205,16 @@ class ExportObjectLogicBot extends GardeningBot {
 				foreach($properties as $p) {
 					$values = $sd->getPropertyValues($p);
 
-					if (in_array($p->getText(), $internalProperties)) {
+					if (in_array($p->getText(), $internalProperties) ) {
 						continue;
 					}
-
-					$propertyIRI = $this->getTSCIRI(Title::newFromText($p->getText(), SMW_NS_PROPERTY));
+                   $propertyTitle= Title::newFromText($p->getText(), SMW_NS_PROPERTY);
+                    if (!($propertyTitle instanceof Title)) continue;
+					$propertyIRI = $this->getTSCIRI($propertyTitle);
 					foreach($values as $v) {
 						$typeID = $v->getTypeID();
 						if (WikiTypeToXSD::isPageType($typeID)) {
+							if (!($v->getTitle() instanceof Title)) continue;
 							$objectIRI = $this->getTSCIRI($v->getTitle());
 							$obl .= "\n$instanceIRI [ $propertyIRI -> $objectIRI ]. ";
 						} else {
@@ -230,6 +239,12 @@ class ExportObjectLogicBot extends GardeningBot {
 
 
 	private function exportRules($bundleID) {
+
+		// do not export rules if SemanticRules extensions is not available.
+		if (!defined('SEMANTIC_RULES_VERSION')) {
+			return "";
+		}
+
 		global $dfgLang;
 		$bundleIDValue = SMWDataValueFactory::newTypeIDValue('_wpg', $bundleID);
 		$pageValuesOfOntology = smwfGetStore()->getPropertySubjects(SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString('df_partofbundle')), $bundleIDValue);
@@ -273,9 +288,12 @@ class ExportObjectLogicBot extends GardeningBot {
 				} else {
 					$ruleIRI = "<$tsc_uri>";
 				}
+
+				$ruletext = SRRuleEndpoint::getInstance()->translateRuleURIs($ruletext, false);
+
 				$obl .= "\n".'@{'.$ruleIRI."}";
 				$obl .= "\n$ruletext";
-				$obl .= "\nHalo";
+				$obl .= "\n";
 			}
 		}
 		return $obl;
@@ -309,27 +327,128 @@ class ExportObjectLogicBot extends GardeningBot {
 	}
 
 	/**
+	 * Creates a default header for OBL files
+	 *
+	 * version 2.1
+	 * encoding ISO-8859-1 (default PHP)
+	 * 
+	 * @param string $uri Module
+	 */
+	private function createOBLHeader($uri) {
+		$date = date(DATE_RFC822);
+		$header = <<<ENDS
+//         
+// auto-generated Wiki ontology export
+// date: $date
+//         
+:- version("2.1").
+:- encoding("ISO-8859-1").
+
+:- default prefix = "$uri".
+:- prefix orn = "http://schema.ontoprise.com/reserved#".
+:- prefix xsd = "http://www.w3.org/2001/XMLSchema#".
+:- module = <$uri>.
+        
+ENDS;
+		return $header;
+	}
+
+	/**
 	 * Export ontology
 	 * DO NOT use echo when it is not running asynchronously.
 	 */
 	public function run($paramArray, $isAsync, $delay) {
-		/*$obl = "";
-		$obl .= "// schema properties";
-		$obl .= $this->exportProperties("Ontology-v9");
-		$obl .= "\n\n// schema categories";
-		$obl .= $this->exportCategories("Ontology-v9");
-		$obl .= "\n\n// instances";
-		$obl .= $this->exportInstances("Ontology-v9");
-		$obl .= "\n\n// rules";
-		$obl .= $this->exportRules("Ontology-v9");
-		echo $obl;
-
-		return "\n\n<pre>$obl</pre>\n\n";*/
 
 		// do not allow to start synchronously.
 		if (!$isAsync) {
 			return "Export ontology bot should not be executed synchronously!";
 		}
+
+		if (array_key_exists('GARD_OBLEXPORT_BUNDLE', $paramArray))  {
+
+			if (!defined('DF_VERSION')) {
+				return "Bundle export requires the DF to be installed. ".
+			 	"[http://smwforum.ontoprise.com/smwforum/index.php/Deployment_Framework Deployment Framework]";
+			}
+			$downloadLink="";
+			
+			// export particular bundle
+			$this->setNumberOfTasks(3);
+			$bundleName = $paramArray['GARD_OBLEXPORT_BUNDLE'];
+
+			$this->addSubTask(4);
+			echo "\nCreate OBL export from bundle: $bundleName";
+			$obl = "";
+			$obl .= "\n\n// schema categories";
+			$obl .= $this->exportCategories($bundleName);
+			$this->worked(1);
+			$obl .= "// schema properties";
+			$obl .= $this->exportProperties($bundleName);
+			$this->worked(1);
+			$obl .= "\n\n// instances";
+			$obl .= $this->exportInstances($bundleName);
+			
+			$this->worked(1);
+			$obl .= "\n\n// rules";
+			$obl .= $this->exportRules($bundleName);
+			$this->worked(1);
+    
+			echo "\nCreate temp directory";
+			$tempdir = self::getTempDir()."/oblExports";
+			self::mkpath($tempdir);
+
+			// read external artifacts
+			echo "\nRead external artifacts";
+			$externalArtifacts = DFBundleTools::getExternalArtifacts($bundleName);
+			$this->addSubTask(count($externalArtifacts));
+			foreach($externalArtifacts as $extArt) {
+				list($fileTitle, $uri) = $extArt;
+				$localFile = wfLocalFile($fileTitle);
+				if (!file_exists($localFile->getPath())) continue;
+				$contents = file_get_contents($localFile->getPath());
+			    
+				// TODO: add refactoring here
+				
+				// and upload
+                // $downloadLink .= "\n*[[".$exportFileTitle->getPrefixedText()."]]";
+                $this->worked(1);
+			}
+            
+			// export ontology from wiki content 
+			$this->addSubTask(1);
+			
+			// store file temporarily
+			$f = "export".uniqid().".obl";
+			echo "\nCreate temporary file: $tempdir/$f"; 
+			$ontologyURI = DFBundleTools::getOntologyURI($bundleName);
+			$header = $this->createOBLHeader($ontologyURI);
+			$obl = $header . $obl;
+
+			// refactor ontology
+			// TODO: add refactoring here
+			
+			// save temporarily
+			$handle = fopen($tempdir."/".$f, "w");
+			fwrite($handle, $obl);
+			fclose($handle);
+			
+			// and upload
+			echo "\nUploading file: $tempdir/$f to ".basename($tempdir."/".$f); 
+			$exportFileTitle = Title::newFromText(basename($tempdir."/".$f), NS_IMAGE);
+			$im_file = wfLocalFile($exportFileTitle);
+			$im_file->upload($tempdir."/".$f, "auto-inserted file", "noText");
+			$downloadLink .= "\n*[[".$exportFileTitle->getPrefixedText()."]]";
+			unlink($tempdir."/".$f);
+            echo "\nRemoved temporary file: $tempdir."/".$f";	
+            
+			$this->worked(1);
+
+			return "\n\n$downloadLink\n\n";
+
+
+		}
+
+		// if no bundle given, export all ontologies from TSC.
 		$this->setNumberOfTasks(5);
 
 		// request ontology export
@@ -502,8 +621,10 @@ class ExportObjectLogicBotFilter extends GardeningIssueFilter {
 	}
 }
 
-// create instance
-new ExportObjectLogicBot();
+// create instance (only if DF is installed and registered in LocalSettings.php)
+if (defined('DF_VERSION')) {
+	new ExportObjectLogicBot();
+}
 
 /**
  * @file

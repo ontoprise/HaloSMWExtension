@@ -30,7 +30,7 @@ class DF_Language_De extends DF_Language {
     'df_instdir' => 'Installationsverzeichnis',
     'df_ontologyvendor' => 'Anbieter',
     'df_description' => 'Beschreibung',
-	
+	'df_contentbundle' => 'Content bundle',
    
 	'checkinstallation' => 'Prüfe Installation',
 	'category' => 'Kategorie',

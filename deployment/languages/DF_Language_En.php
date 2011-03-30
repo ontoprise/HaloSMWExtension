@@ -32,6 +32,7 @@ class DF_Language_En extends DF_Language {
 	'df_instdir' => 'Installation dir',
 	'df_ontologyvendor' => 'Vendor',
 	'df_description' => 'Description',
+	'df_contentbundle' => 'Content bundle',
 	
 	'category' => 'Category',
 	'is_inverse_of' => 'Is inverse of',

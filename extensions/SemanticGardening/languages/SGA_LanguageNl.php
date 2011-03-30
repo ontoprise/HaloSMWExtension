@@ -173,6 +173,7 @@ class SGA_LanguageNl {
     /*Message for ExportObjectLogicBot*/
     'smw_exportobjectlogicbot'=>'Export ObjectLogic',
     'smw_gard_exportobl_docu' => 'This bot exports the TSC\'s ontologies as ObjectLogic',
+    'smw_gard_exportobl_bundlename' => 'Bundle name (auto-completion)',
 
     /*Message for TemplateMateriazerBot*/
     'smw_gard_templatemat_docu' => 'Deze bot actualiseert de wikipagina´s die templates gebruiken die sinds de laatste materialisering veranderd zijn. Dit is noodzakelijk om altijd juiste resultaten te krijgen van ASK queries.',

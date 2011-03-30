@@ -178,7 +178,8 @@ of the tools click on this link: $1.',
     
     /*Message for ExportObjectLogicBot*/
     'smw_exportobjectlogicbot'=>'Export ObjectLogic',
-    'smw_gard_exportobl_docu' => 'This bot exports the TSC\'s ontologies as ObjectLogic',
+    'smw_gard_exportobl_docu' => 'This bot exports the TSC\'s ontologies as ObjectLogic. If bundle name is empty, the whole TSC content is exported.',
+    'smw_gard_exportobl_bundlename' => 'Bundle name (auto-completion)',
     
     /*Message for TemplateMateriazerBot*/
     'smw_gard_templatemat_docu' => 'This bot updates the wikipages which use templates that got new annotations to includes these annotations in the results of an ASK query.',
