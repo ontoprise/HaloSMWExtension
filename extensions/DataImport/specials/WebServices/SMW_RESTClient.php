@@ -87,8 +87,8 @@ class SMWRestClient implements IWebServiceClient {
 		}
 		
 		$uri = $this->mURI;
-
-		//todo define constants
+		
+				//todo define constants
 		//create http request header if appropriaste parameters exist
 		$header = "";
 		if(array_key_exists("__rest__user_agent", $parameters)){
@@ -99,7 +99,7 @@ class SMWRestClient implements IWebServiceClient {
 		}
 
 		if(array_key_exists(DI_ACCEPT, $parameters)){
-			$header .= "accept: ".$parameters[DI_ACCEPT][0]."\r\n";
+			$header .= " accept: ".$parameters[DI_ACCEPT][0]."\r\n";
 			unset($parameters[DI_ACCEPT]);
 		}
 		
@@ -120,19 +120,20 @@ class SMWRestClient implements IWebServiceClient {
 		if(array_key_exists(DI_LANGUAGE, $parameters)){
 			unset($parameters[DI_LANGUAGE]);
 		}
-			
+		
 		if(strtolower($operationName) == "get"){
-			$params = array('http' => array('method' => 'GET', 'header' => $header));
+			$params = array('http' => array('method' => 'GET', 'header' => $header, 'max_redirects' => 10,));
 			
 			$first = true;
 			foreach($parameters as $key => $values){
 				foreach($values as $value){
 					if($first){
-						$uri .= "?".$key."=".urlencode($value);
+						$uri .= '?';
 						$first=false;
 					} else {
-						$uri .= "&".$key."=".urlencode($value);
+						$uri .= '&';
 					}
+					$uri .= http_build_query(array($key => $value));
 				}
 			}
 		} else if (strtolower($operationName) == "post"){
@@ -164,6 +165,8 @@ class SMWRestClient implements IWebServiceClient {
 		} else {
 			return "unknown method name";
 		}
+		
+		$uri = trim($uri);
 		
 		$ctx = stream_context_create($params);
 
