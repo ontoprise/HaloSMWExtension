@@ -22,6 +22,7 @@ class DFBundleTools {
 
 		$fileNsText = $wgLang->getNsText(NS_FILE);
 		$partOfBundleName = $dfgLang->getLanguageString('df_partofbundle');
+		$ontologyURI = $dfgLang->getLanguageString('df_ontologyuri');
 		$rawparams = array();
 		$rawparams[] = "[[$fileNsText:+]][[$partOfBundleName::".ucfirst($bundleName)."]]";
 		$rawparams[] = "?$partOfBundleName";
@@ -43,7 +44,7 @@ class DFBundleTools {
 			$bundleTitle = $object->getTitle();
 
 			$externalGraphs = array();
-			$values = smwfGetStore()->getPropertyValues($bundleTitle, SMWPropertyValue::makeUserProperty("Ontology URI"));
+			$values = smwfGetStore()->getPropertyValues($bundleTitle, SMWPropertyValue::makeUserProperty($ontologyURI));
 			if (count($values) > 0) {
 				$value = reset($values);
 				$dbkeys = $value->getDBkeys();
@@ -56,16 +57,56 @@ class DFBundleTools {
 	}
 
 	public static function getOntologyURI($bundleID) {
+		global $dfgLang;
+		$ontologyURI = $dfgLang->getLanguageString('df_ontologyuri');
 		$bundleTitle = Title::newFromText($bundleID);
-		$values = smwfGetStore()->getPropertyValues($bundleTitle, SMWPropertyValue::makeUserProperty("Ontology URI"));
+		$values = smwfGetStore()->getPropertyValues($bundleTitle, SMWPropertyValue::makeUserProperty($ontologyURI));
 		if (count($values) > 0) {
 			$value = reset($values);
 			$dbkeys = $value->getDBkeys();
 			$ontologyURI = reset($dbkeys);
 			return $ontologyURI;
 		}
-		
+
 		return NULL;
+	}
+
+	/**
+	 * Returns the ontology prefix (if any). Otherwise an empty string.
+	 *
+	 * @param $bundleID
+	 */
+	public static function getOntologyPrefix($bundleID) {
+		global $dfgLang;
+		$instDirProperty = $dfgLang->getLanguageString('df_instdir');
+		$bundleTitle = Title::newFromText($bundleID);
+		$values = smwfGetStore()->getPropertyValues($bundleTitle, SMWPropertyValue::makeUserProperty($instDirProperty));
+		if (count($values) > 0) {
+			$value = reset($values);
+			$dbkeys = $value->getDBkeys();
+			$installationDir = reset($dbkeys);
+			global $IP;
+
+			$handle = @opendir("$IP/$installationDir");
+			if (!$handle) {
+				return ''; // TODO: should not happen
+			}
+
+			while ($entry = readdir($handle) ){
+				if ($entry[0] == '.'){
+					continue;
+				}
+				
+				$parts = explode(".", $entry);
+				if ($parts[count($parts)-1] == 'prefix') {
+					$prefix = file_get_contents("$IP/$installationDir/$entry");
+					return trim($prefix);
+				}
+			}
+
+		}
+
+		return '';
 	}
 
 	/**

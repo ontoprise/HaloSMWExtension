@@ -33,6 +33,7 @@ class DF_Language_En extends DF_Language {
 	'df_ontologyvendor' => 'Vendor',
 	'df_description' => 'Description',
 	'df_contentbundle' => 'Content bundle',
+	'df_ontologyuri' => 'Ontology URI',
 	
 	'category' => 'Category',
 	'is_inverse_of' => 'Is inverse of',
