@@ -940,6 +940,8 @@ CKEDITOR.customprocessor.prototype =
                             var imgStyleHeight = match && match[1] || 0;
 							var imgRealWidth	= ( htmlNode.getAttribute( 'width' ) || '' ) + '';
 							var imgRealHeight	= ( htmlNode.getAttribute( 'height' ) || '' ) + '';
+                            var imgNolink = ( htmlNode.getAttribute( 'no-link' ) || '' ) + '';
+                            var imgLink = ( htmlNode.getAttribute( 'link' ) || '' ) + '';
 
 							stringBuilder.push( '[[Image:' );
 							stringBuilder.push( imgName );
@@ -971,6 +973,10 @@ CKEDITOR.customprocessor.prototype =
 
 							if ( imgCaption.length > 0 )
 								stringBuilder.push( '|' + imgCaption );
+                            if ( imgNolink )
+                                stringBuilder.push( '|link=' );
+                            else if ( imgLink )
+                                stringBuilder.push( '|link=' + imgLink );
 
 							stringBuilder.push( ']]' );
 
