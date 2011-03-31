@@ -201,6 +201,10 @@ class CKeditorSkin {
 		if( $class ) {
 			$ret .= "class=\"$class\" ";
 		}
+        if (isset($fp['no-link']))
+            $ret .= 'no-link="1" ';
+        if (isset($fp['link-title']) && is_object($fp['link-title']))
+            $ret .= 'link="'.htmlentities ($fp['link-title']->getFullText()).'" ';
 
 		$ret .= '/>';
 
