@@ -672,7 +672,24 @@ class HACLEvaluator {
 //		return true;
 	}
 
-
+	/**
+	 * This function is called by semantic forms when it wants to decide if a
+	 * page can be edited. The page's title is stored in the global variable
+	 * $wgTitle, the user in $wgUser.
+	 * 
+	 * @param bool $userCanEdit
+	 * 		This parameter is set 'false' if the article is not editable
+	 */
+	public static function onSfUserCanEditPage($title, &$userCanEdit) {
+		global $wgUser;
+		$allowed = true;
+		self::userCan($title, $wgUser, "formedit", $allowed);
+		if (!$allowed) {
+			$userCanEdit = false;
+		}
+		return true;
+	}
+	
 	/**
 	 * This method is important if the mode of the access control is 
 	 * "closed wiki access" or if an SD for an instance of a protected category 

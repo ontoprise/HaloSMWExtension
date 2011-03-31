@@ -186,6 +186,7 @@ function haclfSetupExtension() {
 	$wgHooks['EditPage::showEditForm:fields'][] = 'haclfAddToolbarForEditPage';
 	$wgHooks['sfHTMLBeforeForm'][]     		= 'haclfAddToolbarForSemanticForms';
 	$wgHooks['sfSetTargetName'][]           = 'haclfOnSfSetTargetName';
+	$wgHooks['sfUserCanEditPage'][]         = 'HACLEvaluator::onSfUserCanEditPage';
 	
     
     //-- includes for Ajax calls --
