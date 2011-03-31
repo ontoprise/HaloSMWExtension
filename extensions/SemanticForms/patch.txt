@@ -1979,3 +1979,41 @@ Index: extensions/SemanticForms/skins/SemanticForms.css
  	margin-top: 0.2em;
  } /* button elements seem to need a little more width */
 +/*op-patch|SR|2011-03-30|SF|Style for Halo|start*/
+Index: extensions/SemanticForms/includes/SF_FormInputs.php
+===================================================================
+--- extensions/SemanticForms/includes/SF_FormInputs.php (original)
++++ extensions/SemanticForms/includes/SF_FormInputs.php	(patched version)
+@@ -125,6 +125,16 @@
+     if ( array_key_exists( 'maxlength', $other_args ) ) {
+       $inputAttrs['maxlength'] = $other_args['maxlength'];
+     }
++    /*op-patch|SR|2011-03-31|SF|Fix other_args bug|start*/
++    /*op-patch|SR|2011-03-31|SF|Fix other_args bug|doc|http://dmwiki.ontoprise.com:8888/dmwiki/index.php/Fix_other_args_bug*/
++    // fix bug http://smwforum.ontoprise.com/smwbugs/show_bug.cgi?id=13984
++    $known_other_args = array('class', 'field_type', 'size', 'maxlength', 'is_uploadable', 'possible_values',
++        'is_list', 'delimiter', 'autocomplete field type', 'value_labels', 'semantic_property' );
++    foreach (array_keys($other_args) as $key ) {
++        if ($key && !in_array($key, $known_other_args))
++            $inputAttrs[$key] = $other_args[$key];
++    }
++    /*op-patch|SR|2011-03-31|SF|Fix other_args bug|end*/
+     $text = Xml::element( 'input', $inputAttrs );
+ 
+     if ( array_key_exists( 'is_uploadable', $other_args ) && $other_args['is_uploadable'] == true ) {
+@@ -628,6 +638,16 @@
+       $textarea_attrs['onKeyDown'] = $maxLengthJSCheck;
+       $textarea_attrs['onKeyUp'] = $maxLengthJSCheck;
+     }
++    /*op-patch|SR|2011-03-31|SF|Fix other_args bug|start*/
++    /*op-patch|SR|2011-03-31|SF|Fix other_args bug|doc|http://dmwiki.ontoprise.com:8888/dmwiki/index.php/Fix_other_args_bug*/
++    // fix bug http://smwforum.ontoprise.com/smwbugs/show_bug.cgi?id=13984
++    $known_other_args = array('class', 'field_type', 'size', 'maxlength', 'is_uploadable', 'possible_values',
++        'is_list', 'delimiter', 'autocomplete field type', 'value_labels', 'semantic_property', 'rows', 'cols', 'autogrow' );
++    foreach (array_keys($other_args) as $key ) {
++        if ( $key && ! in_array($key, $known_other_args))
++            $textarea_attrs[$key] = $other_args[$key];
++    }
++    /*op-patch|SR|2011-03-31|SF|Fix other_args bug|end*/
+     $text = Xml::element( 'textarea', $textarea_attrs, $cur_value, false );
+     $spanClass = "inputSpan";
+     if ( $is_mandatory ) { $spanClass .= " mandatoryFieldSpan"; }
