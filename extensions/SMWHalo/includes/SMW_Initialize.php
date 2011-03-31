@@ -444,10 +444,13 @@ function smwgHaloSetupExtension() {
 
 
 	// Register Credits
-	$wgExtensionCredits['parserhook'][]= array('name'=>'SMWHalo&nbsp;Extension', 'version'=>SMW_HALO_VERSION,
-			'author'=>"Thomas&nbsp;Schweitzer, Kai&nbsp;K&uuml;hn, Markus&nbsp;Nitsche, J&ouml;rg Heizmann, Frederik&nbsp;Pfisterer, Robert Ulrich, Daniel Hansch, Moritz Weiten and Michael Erdmann. Maintained by [http://www.ontoprise.de Ontoprise].", 
-			'url'=>'http://smwforum.ontoprise.com/smwforum/index.php/Help:Halo_Extension_User_Manual',
-			'description' => 'Facilitate the use of Semantic Mediawiki for a large community of non-tech-savvy users. [http://smwforum.ontoprise.com/smwforum/index.php/Help:SMW%2B_User_Manual View feature description.]');
+	$wgExtensionCredits['semantic'][] = array(
+		'name'=>'SMWHalo&nbsp;Extension', 
+		'version'=>SMW_HALO_VERSION,
+		'author'=>"Thomas&nbsp;Schweitzer, Kai&nbsp;K&uuml;hn, Markus&nbsp;Nitsche, J&ouml;rg Heizmann, Frederik&nbsp;Pfisterer, Robert Ulrich, Daniel Hansch, Moritz Weiten and Michael Erdmann. Maintained by [http://www.ontoprise.de Ontoprise].", 
+		'url'=>'http://smwforum.ontoprise.com/smwforum/index.php/Help:Halo_Extension_User_Manual',
+		'description' => 'Facilitate the use of Semantic Mediawiki for a large community of non-tech-savvy users. [http://smwforum.ontoprise.com/smwforum/index.php/Help:SMW%2B_User_Manual View feature description.]'
+	);
 
 	global $smwgDefaultStore;
 	if (smwfIsTripleStoreConfigured()) {
