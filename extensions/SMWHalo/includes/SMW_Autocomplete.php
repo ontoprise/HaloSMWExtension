@@ -350,7 +350,7 @@ class AutoCompletionRequester {
 		$typeID = $pv->getPropertyTypeID();
 		// returns syntax examples for several datatypes
 		if ($typeID == '_dat') {
-			return (explode("|",(wfMsg('smw_ac_datetime_proposal'))));
+			return array_merge(array(date('F d, Y')), explode("|",(wfMsg('smw_ac_datetime_proposal'))));
 		} else if ($typeID == '_boo') {
 			return (array_merge(explode(",",wfMsg('smw_true_words')), explode(",",wfMsg('smw_false_words'))));
 		} else if ($typeID == '_geo') {
