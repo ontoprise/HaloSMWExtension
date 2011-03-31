@@ -514,10 +514,11 @@ class ExportOntologyBot extends GardeningBot {
 			} else {
 				$owl .= '       <rdfs:domain rdf:resource="&owl;Thing" />'.LINE_FEED;
 				$owl .= '       <rdfs:range rdf:resource="&xsd;'.$xsdType.'" />'.LINE_FEED;
-
+				$owl .= '</owl:DatatypeProperty>'.LINE_FEED;
 			}
 		} else {
 
+			$owlTemp = '';
 			foreach($domainRange as $dr) {
 				if (!($dr instanceof SMWRecordValue)) continue;
 				$dvs = $dr->getDVs();
@@ -542,19 +543,22 @@ class ExportOntologyBot extends GardeningBot {
 				} else {
 					$owl .= '      <rdfs:domain rdf:resource="&cat;'.ExportOntologyBot::makeXMLAttributeContent($domain).'" />'.LINE_FEED;
 					$owl .= '      <rdfs:range rdf:resource="&xsd;'.$xsdType.'" />'.LINE_FEED;
-					if ($this->rdfsSemantics) $owl .= '</owl:DatatypeProperty>'.LINE_FEED;
 					if ($maxCard != NULL || $minCard != NULL) {
-						$owl .= '<owl:Class rdf:about="&cat;'.ExportOntologyBot::makeXMLAttributeContent($domain).'">'.LINE_FEED;
+						$owlTemp .= '<owl:Class rdf:about="&cat;'.ExportOntologyBot::makeXMLAttributeContent($domain).'">'.LINE_FEED;
 						if ($maxCard != NULL) {
-							$owl .= $this->exportMaxCard($rp, $maxCard);
+							$owlTemp .= $this->exportMaxCard($rp, $maxCard);
 						}
 						if ($minCard != NULL) {
-							$owl .= $this->exportMinCard($rp, $minCard);
+							$owlTemp .= $this->exportMinCard($rp, $minCard);
 						}
-						$owl .= '</owl:Class>'.LINE_FEED;
+						$owlTemp .= '</owl:Class>'.LINE_FEED;
 					}
 				}
 			}
+			
+			if ($this->rdfsSemantics) $owl .= '</owl:DatatypeProperty>'.LINE_FEED;
+			
+			if(strlen($owlTemp) > 0) $owl .= $owlTemp;
 
 		}
 
@@ -621,6 +625,7 @@ class ExportOntologyBot extends GardeningBot {
 			} else {
 				$owl .= '       <rdfs:domain rdf:resource="&owl;Thing" />'.LINE_FEED;
 				$owl .= '       <rdfs:range rdf:resource="&owl;Thing" />'.LINE_FEED;
+				$owl .= '</owl:ObjectProperty>'.LINE_FEED;
 			}
 		} else {
 
