@@ -103,7 +103,7 @@ This page is protected by [[ACL:Page/A]] if subpages are enabled.
 ACL
 ,
 //------------------------------------------------------------------------------		
-			'A/sub2' =>
+			'A/sub1/sub2' =>
 <<<ACL
 This page is protected by [[ACL:Page/A]] if subpages are enabled.
 ACL
@@ -585,15 +585,15 @@ class TestUserCanHook extends PHPUnit_Framework_TestCase {
     function providerForSubpageProtection() {
     	// $article, $user, $action, $subpageEnabled, $expected (, $nospExpected)
     	return array(
-//    			// Test reading page A and subpages
-//				array('A', '*', 'read', false),
-//				array('A', 'U1', 'read', true),
-//				array('A', 'U2', 'read', false),
-//				
-//    			// Test editing page A subpages
-//				array('A', '*', 'edit', false),
-//				array('A', 'U1', 'edit', true),
-//				array('A', 'U2', 'edit', false),
+    			// Test reading page A and subpages
+				array('A', '*', 'read', false),
+				array('A', 'U1', 'read', true),
+				array('A', 'U2', 'read', false),
+				
+    			// Test editing page A subpages
+				array('A', '*', 'edit', false),
+				array('A', 'U1', 'edit', true),
+				array('A', 'U2', 'edit', false),
 
     			// Test creating subpages of A
 				array('A/create', '*', 'create', false, true),
@@ -606,14 +606,14 @@ class TestUserCanHook extends PHPUnit_Framework_TestCase {
 				array('A/create', 'U2', 'edit', false, true),
 				
 				// Test accessing page B subpages
-//				array('B', '*', 'read', true),
-//				array('B', 'U1', 'read', false),
-//				array('B', 'U2', 'edit', false),
-//
-//				// Test accessing page C subpagess
-//				array('C', '*', 'read', true),
-//				array('C', 'U1', 'read', false),
-//				array('C', 'U2', 'edit', true),
+				array('B', '*', 'read', true),
+				array('B', 'U1', 'read', false),
+				array('B', 'U2', 'edit', false),
+
+				// Test accessing page C subpagess
+				array('C', '*', 'read', true),
+				array('C', 'U1', 'read', false),
+				array('C', 'U2', 'edit', true),
 				);
     }
     
