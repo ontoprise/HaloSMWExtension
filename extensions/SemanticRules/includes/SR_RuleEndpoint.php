@@ -179,10 +179,11 @@ class SRRuleEndpoint {
 	 * Translates the URI mappings in a rule.
 	 *
 	 * @param string $ruletext
+	 * @param string ontology URI
 	 */
-	public function translateRuleURIs($ruletext, $ajaxCall = true) {
+	public function translateRuleURIs($ruletext, $uri, $ajaxCall = true) {
 		global $smwgTripleStoreGraph;
-		$payload = "ruletext=".urlencode($ruletext)."&graph=".urlencode($smwgTripleStoreGraph);
+		$payload = "ruletext=".urlencode($ruletext)."&graph=".urlencode($uri);
 		list($header, $status, $res) = self::$_client->send($payload, "/translateRuleURIs");
 
 		if ($ajaxCall) {

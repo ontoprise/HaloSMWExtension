@@ -313,6 +313,21 @@ class TSConnectorRESTWebservice extends TSConnection {
 		}
 		return $result;
 	}
+	
+    public function refactorOblOntology($prefix, $ontologyID, $ontology, $wikiGraph, $lang) {
+        
+        $queryRequest = "prefix=".urlencode($prefix);
+        $queryRequest .= "&ontology=".urlencode($ontology);
+        $queryRequest .= "&ontologyID=".urlencode($ontologyID);
+        $queryRequest .= "&wikiGraph=".urlencode($wikiGraph);
+        $queryRequest .= "&lang=".urlencode($lang);
+
+        list($header, $status, $result) = $this->manageClient->send($queryRequest, "/refactorOblOntology");
+        if ($status != 200) {
+            throw new Exception(strip_tags($result), $status);
+        }
+        return $result;
+    }
 
 	public function runImport($datasourceID, $update = false) {
 		$payload = "dataSourceId=".urlencode($datasourceID)."&update=".urlencode($update);

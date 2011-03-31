@@ -65,7 +65,8 @@ class RESTWebserviceConnector {
         $status = curl_getinfo($ch,CURLINFO_HTTP_CODE);
         curl_close($ch);
        
-        list($header, $res) = strpos($res, "\r\n\r\n") !== false ? explode("\r\n\r\n", $res) : array($res, "");
+        $bodyBegin = strpos($res, "\r\n\r\n");
+        list($header, $res) = $bodyBegin !== false ? array(substr($res, 0, $bodyBegin), substr($res, $bodyBegin+4)) : array($res, "");
         return array($header, $status, str_replace("%0A%0D%0A%0D", "\r\n\r\n", $res));
 	}
 	

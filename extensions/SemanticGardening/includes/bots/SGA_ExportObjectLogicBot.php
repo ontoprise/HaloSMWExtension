@@ -46,7 +46,7 @@ class ExportObjectLogicBot extends GardeningBot {
 	 */
 	public function createParameters() {
 		global $dfgLang, $wgLang;
-		$param1 = new GardeningParamTitle('GARD_OBLEXPORT_BUNDLE', wfMsg('smw_gard_exportobl_bundlename'), SMW_GARD_PARAM_REQUIRED);
+		$param1 = new GardeningParamTitle('GARD_OBLEXPORT_BUNDLE', wfMsg('smw_gard_exportobl_bundlename'), SMW_GARD_PARAM_OPTIONAL);
 		$param1->setAutoCompletion(true);
 		$param1->setConstraints("ask: [[".$wgLang->getNsText(NS_CATEGORY).":".$dfgLang->getLanguageString('df_contentbundle')."]]");
 		return array($param1);
@@ -120,6 +120,20 @@ class ExportObjectLogicBot extends GardeningBot {
 					}
 				}
 
+				// get inverse
+				$inverseOfIRI = NULL;
+				$inverseOfValues = smwfGetStore()->getPropertyValues($title, SMWPropertyValue::makeUserProperty($store->inverseOf->getDBkey()));
+				$inverseOfValue = reset($inverseOfValues); // must be only 1
+				if ($inverseOfValue !== false) {
+					$inverseOfTitle = $inverseOfValue->getTitle();
+					$inverseOfIRI = $this->getTSCIRI($inverseOfTitle);
+				}
+
+
+				// get sub-properties
+				$subProperties = $store->getDirectSubProperties($title);
+
+
 				// get cardinalities
 				$minCardValues = smwfGetStore()->getPropertyValues($title, SMWPropertyValue::makeUserProperty($store->minCard->getDBkey()));
 				$minCardValue = reset($minCardValues); // must be only 1
@@ -155,11 +169,15 @@ class ExportObjectLogicBot extends GardeningBot {
 
 				$modifiers = '{'.$minCardValue.':'.$maxCardValue;
 				if ($transitive) {
-					$modifiers .= ":transitive";
+					$modifiers .= ",transitive";
 				}
 				if ($symetrical) {
-					$modifiers .= ":symetrical";
+					$modifiers .= ",symetrical";
 				}
+				if (!is_null($inverseOfIRI)) {
+					$modifiers .= ",inverseOf($inverseOfIRI)";
+				}
+
 				$modifiers .= "}";
 
 				// build OBL string
@@ -172,10 +190,15 @@ class ExportObjectLogicBot extends GardeningBot {
 				foreach($domains as $d) {
 					$domainIRI = $this->getTSCIRI($d);
 					if (is_null($range)) {
-						$obl .= "\n$propertyIRI [ $domainIRI $modifiers *=> $typeIRI ].";
+						$obl .= "\n$domainIRI [ $propertyIRI $modifiers *=> $typeIRI ].";
 					} else{
-						$obl .= "\n$propertyIRI [ $domainIRI $modifiers *=> $rangeIRI ].";
+						$obl .= "\n$domainIRI [ $propertyIRI $modifiers *=> $rangeIRI ].";
 					}
+				}
+
+				foreach($subProperties as $subProperty) {
+					$subPropertyIRI = $this->getTSCIRI($subProperty);
+					$obl .= "\n$subPropertyIRI << $propertyIRI.";
 				}
 			}
 		}
@@ -191,13 +214,16 @@ class ExportObjectLogicBot extends GardeningBot {
 		$dfgLang->getLanguageString('df_ontologyversion'), $dfgLang->getLanguageString('df_contenthash'),
 		$dfgLang->getLanguageString('df_instdir'),$dfgLang->getLanguageString('df_dependencies'),
 		$dfgLang->getLanguageString('df_ontologyvendor'),$dfgLang->getLanguageString('df_description'), $store->ontologyURI->getText());
+
+		$internalCategories = array($dfgLang->getLanguageString('df_contentbundle'));
+
 		$ts = TSNamespaces::getInstance();
 		$obl = "";
 		foreach($pageValuesOfOntology as $pv) {
 			$title = $pv->getTitle();
-			
-			 if (!($title instanceof Title)) continue;
-		
+
+			if (!($title instanceof Title)) continue;
+
 			if ($title->getNamespace() == NS_MAIN) {
 				$instanceIRI = $this->getTSCIRI($title);
 				$sd = smwfGetStore()->getSemanticData($title);
@@ -208,8 +234,17 @@ class ExportObjectLogicBot extends GardeningBot {
 					if (in_array($p->getText(), $internalProperties) ) {
 						continue;
 					}
-                   $propertyTitle= Title::newFromText($p->getText(), SMW_NS_PROPERTY);
-                    if (!($propertyTitle instanceof Title)) continue;
+					if ($p->getPropertyID() == '_INST') {
+						$value = reset($values);
+						if (in_array($value->getTitle()->getText(), $internalCategories)) {
+							continue;
+						}
+						$objectIRI = $this->getTSCIRI($value->getTitle());
+						$obl .= "\n$instanceIRI : $objectIRI. ";
+						continue;
+					}
+					$propertyTitle= Title::newFromText($p->getText(), SMW_NS_PROPERTY);
+					if (!($propertyTitle instanceof Title)) continue;
 					$propertyIRI = $this->getTSCIRI($propertyTitle);
 					foreach($values as $v) {
 						$typeID = $v->getTypeID();
@@ -220,7 +255,7 @@ class ExportObjectLogicBot extends GardeningBot {
 						} else {
 							$dbkeys = $v->getDBkeys();
 							$dbkey = reset($dbkeys);
-							print_r($dbkey);
+
 							if ($dbkey !== false) {
 								$value = '"'.str_replace('"','\"', $dbkey).'"';
 								$value = $this->fixType($value, $typeID);
@@ -244,6 +279,8 @@ class ExportObjectLogicBot extends GardeningBot {
 		if (!defined('SEMANTIC_RULES_VERSION')) {
 			return "";
 		}
+
+		$ontologyURI = DFBundleTools::getOntologyURI($bundleID);
 
 		global $dfgLang;
 		$bundleIDValue = SMWDataValueFactory::newTypeIDValue('_wpg', $bundleID);
@@ -289,7 +326,7 @@ class ExportObjectLogicBot extends GardeningBot {
 					$ruleIRI = "<$tsc_uri>";
 				}
 
-				$ruletext = SRRuleEndpoint::getInstance()->translateRuleURIs($ruletext, false);
+				$ruletext = SRRuleEndpoint::getInstance()->translateRuleURIs($ruletext, $ontologyURI, false);
 
 				$obl .= "\n".'@{'.$ruleIRI."}";
 				$obl .= "\n$ruletext";
@@ -301,7 +338,20 @@ class ExportObjectLogicBot extends GardeningBot {
 
 	private function fixType($value, $typeID) {
 		if ($typeID == '_dat') {
-			return str_replace("/","-",$value);
+			$date = str_replace("/","-",$value);
+			$datearray = date_parse($date);
+			$year = $datearray['year'];
+			$month = $datearray['month'];
+			if ($month < 10) $month = "0$month";
+			$day = $datearray['day'];
+			if ($day < 10) $day = "0$day";
+			$hour = $datearray['hour'];
+			if ($hour < 10) $hour = "0$hour";
+			$minute = $datearray['minute'];
+			if ($minute < 10) $minute = "0$minute";
+			$second = $datearray['second'];
+			if ($second < 10) $second = "0$second";
+			return "\"$year-$month-$day"."T"."$hour:$minute:$second\"";
 		}
 		return $value;
 	}
@@ -331,14 +381,14 @@ class ExportObjectLogicBot extends GardeningBot {
 	 *
 	 * version 2.1
 	 * encoding ISO-8859-1 (default PHP)
-	 * 
+	 *
 	 * @param string $uri Module
 	 */
-	private function createOBLHeader($uri) {
+	private function createOBLHeader($uri, $bundleName = '') {
 		$date = date(DATE_RFC822);
 		$header = <<<ENDS
 //         
-// auto-generated Wiki ontology export
+// auto-generated Wiki ontology export of '$bundleName'
 // date: $date
 //         
 :- version("2.1").
@@ -366,81 +416,94 @@ ENDS;
 
 		if (array_key_exists('GARD_OBLEXPORT_BUNDLE', $paramArray))  {
 
+			global $wgLanguageCode, $smwgTripleStoreGraph;
+				
 			if (!defined('DF_VERSION')) {
 				return "Bundle export requires the DF to be installed. ".
 			 	"[http://smwforum.ontoprise.com/smwforum/index.php/Deployment_Framework Deployment Framework]";
 			}
 			$downloadLink="";
-			
+
 			// export particular bundle
 			$this->setNumberOfTasks(3);
 			$bundleName = $paramArray['GARD_OBLEXPORT_BUNDLE'];
 
+			$ontologyPrefix = DFBundleTools::getOntologyPrefix($bundleName);
+
+
 			$this->addSubTask(4);
-			echo "\nCreate OBL export from bundle: $bundleName";
+			echo "\nCreate OBL export from bundle $bundleName...";
 			$obl = "";
 			$obl .= "\n\n// schema categories";
 			$obl .= $this->exportCategories($bundleName);
 			$this->worked(1);
-			$obl .= "// schema properties";
+			$obl .= "\n\n// schema properties";
 			$obl .= $this->exportProperties($bundleName);
 			$this->worked(1);
 			$obl .= "\n\n// instances";
 			$obl .= $this->exportInstances($bundleName);
-			
+
 			$this->worked(1);
 			$obl .= "\n\n// rules";
 			$obl .= $this->exportRules($bundleName);
 			$this->worked(1);
-    
-			echo "\nCreate temp directory";
+			echo "done.";
+
+			echo "\nCreate temp directory...";
 			$tempdir = self::getTempDir()."/oblExports";
 			self::mkpath($tempdir);
-
+            echo "done.";
+            
 			// read external artifacts
-			echo "\nRead external artifacts";
+			echo "\nRead external artifacts...";
 			$externalArtifacts = DFBundleTools::getExternalArtifacts($bundleName);
+			echo "done.";
 			$this->addSubTask(count($externalArtifacts));
+			$oblExt = "";
 			foreach($externalArtifacts as $extArt) {
-				list($fileTitle, $uri) = $extArt;
+				list($fileTitle, $ontologyURI) = $extArt;
 				$localFile = wfLocalFile($fileTitle);
 				if (!file_exists($localFile->getPath())) continue;
-				$contents = file_get_contents($localFile->getPath());
-			    
-				// TODO: add refactoring here
-				
-				// and upload
-                // $downloadLink .= "\n*[[".$exportFileTitle->getPrefixedText()."]]";
-                $this->worked(1);
-			}
-            
-			// export ontology from wiki content 
-			$this->addSubTask(1);
+				$oblExt .= file_get_contents($localFile->getPath());
+                
+				//FIXME: does not work for more than one attached ontology because of OBL header.
 			
+			}
+
+			// export ontology from wiki content
+			$this->addSubTask(1);
+
 			// store file temporarily
 			$f = "export".uniqid().".obl";
-			echo "\nCreate temporary file: $tempdir/$f"; 
+			echo "\nCreate temporary file: $tempdir/$f...";
 			$ontologyURI = DFBundleTools::getOntologyURI($bundleName);
-			$header = $this->createOBLHeader($ontologyURI);
-			$obl = $header . $obl;
-
+			$header = $this->createOBLHeader($ontologyURI, $bundleName);
+			$obl = $oblExt ."\n\n" . $obl;
+            echo "done.";
+            
 			// refactor ontology
-			// TODO: add refactoring here
-			
+			echo "\nRefactor ontology...";
+			$con = TSConnection::getConnector();
+			$con->connect();
+			$obl = $con->refactorOblOntology($ontologyPrefix, $ontologyURI, $obl, $smwgTripleStoreGraph, $wgLanguageCode);
+			$con->disconnect();
+			echo "done.";
+
 			// save temporarily
 			$handle = fopen($tempdir."/".$f, "w");
 			fwrite($handle, $obl);
 			fclose($handle);
-			
+
 			// and upload
-			echo "\nUploading file: $tempdir/$f to ".basename($tempdir."/".$f); 
+			echo "\nUploading file: $tempdir/$f to ".basename($tempdir."/".$f)."...";
 			$exportFileTitle = Title::newFromText(basename($tempdir."/".$f), NS_IMAGE);
 			$im_file = wfLocalFile($exportFileTitle);
 			$im_file->upload($tempdir."/".$f, "auto-inserted file", "noText");
+			echo "done.";
 			$downloadLink .= "\n*[[".$exportFileTitle->getPrefixedText()."]]";
 			unlink($tempdir."/".$f);
-            echo "\nRemoved temporary file: $tempdir."/".$f";	
-            
+			echo "\nRemoved temporary file: $tempdir."/".$f";
+
 			$this->worked(1);
 
 			return "\n\n$downloadLink\n\n";
