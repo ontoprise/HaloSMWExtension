@@ -350,7 +350,12 @@ class AutoCompletionRequester {
 		$typeID = $pv->getPropertyTypeID();
 		// returns syntax examples for several datatypes
 		if ($typeID == '_dat') {
-			return array_merge(array(date('F d, Y')), explode("|",(wfMsg('smw_ac_datetime_proposal'))));
+			global $smwgContLang;
+			$currentDate = getdate(time());
+			$monthLabel = $smwgContLang->getMonthLabel($currentDate['mon']);
+			$dayLabel = $currentDate['mday'];
+			$yearLabel = $currentDate['year'];
+			return array_merge(array("$monthLabel $dayLabel, $yearLabel"), explode("|",(wfMsg('smw_ac_datetime_proposal'))));
 		} else if ($typeID == '_boo') {
 			return (array_merge(explode(",",wfMsg('smw_true_words')), explode(",",wfMsg('smw_false_words'))));
 		} else if ($typeID == '_geo') {
