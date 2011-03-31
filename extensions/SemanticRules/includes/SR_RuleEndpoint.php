@@ -176,6 +176,28 @@ class SRRuleEndpoint {
 	}
 
 	/**
+	 * Translates the URI mappings in a rule.
+	 *
+	 * @param string $ruletext
+	 */
+	public function translateRuleURIs($ruletext, $ajaxCall = true) {
+		global $smwgTripleStoreGraph;
+		$payload = "ruletext=".urlencode($ruletext)."&graph=".urlencode($smwgTripleStoreGraph);
+		list($header, $status, $res) = self::$_client->send($payload, "/translateRuleURIs");
+
+		if ($ajaxCall) {
+			$response = new AjaxResponse($res);
+			$response->setContentType( "application/text" );
+			$response->setResponseCode($status);
+		} else {
+			return $res;
+		}
+
+		return $response;
+
+	}
+
+	/**
 	 * Parses an ObjectLogic rule and returns the corresponding RuleObject.
 	 *
 	 * @param string $ruleid
@@ -207,7 +229,7 @@ class SRRuleEndpoint {
 			$response->setContentType( "application/xml" );
 			$response->setResponseCode($status);
 			return $response;
-				
+
 		} else {
 			return $parsedRuleXML;
 		}
@@ -231,10 +253,10 @@ class SRRuleEndpoint {
 
 			list($containingPageURI, $rulename) = explode("$$", $ruleURI);
 			$containingPageTitle = $this->getWikiTitleFromURI($containingPageURI);
-				
+
 			$rw = new SRRuleWidget($ruleURI, $ruleText, $active == "true", $native == "true");
 			$html .= $rw->asHTML();
-			 
+
 		}
 
 		$html .= '';
