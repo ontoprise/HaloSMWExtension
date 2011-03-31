@@ -1022,7 +1022,10 @@ CKEDITOR.customprocessor.prototype =
 
 								case 'fck_mw_template' :
                                 case 'fck_smw_query' :
-									stringBuilder.push( unescape(this._GetNodeText(htmlNode)).replace(/fckLR/g,'\r\n') );
+                                    var inner= unescape(this._GetNodeText(htmlNode)).replace(/fckLR/g,'\r\n');
+                                    if (inner == '{{!}}')
+                                        stringBuilder.push( '\n' );
+                                    stringBuilder.push( inner );
 									return;
                                 case 'fck_smw_webservice' :
                                 case 'fck_smw_rule' :
