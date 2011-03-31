@@ -87,6 +87,7 @@ function cef_comment_deleteComment( $pageName ) {
 				$articleContent
 			);
 			$article->doEdit( $articleContent, wfMsg( 'ce_comment_delete_reason' ) );
+			CEComment::updateRelatedArticle( $articleContent );
 			$result = wfMsg( 'ce_comment_deletion_successful' );
 			return CECommentUtils::createXMLResponse( $result, '0', $pageName );
 		} catch( Exception $e ) {

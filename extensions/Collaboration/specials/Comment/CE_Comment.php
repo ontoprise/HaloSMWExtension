@@ -43,10 +43,15 @@ class CEComment {
 	const COMMENT_ALREADY_EXISTS = 1;
 	const PERMISSION_ERROR = 2;
 	
-	
+	/**
+	 * This function creates a new comment article
+	 * @param string $pageName
+	 * @param string $pageContent
+	 * @param bool $editMode
+	 */
 	public static function createComment( $pageName, $pageContent, $editMode = false ) {
 		global $wgUser, $cegEnableComment, $cegEnableCommentFor;
-		
+
 		$title = Title::newFromText( $pageName );
 		if( $title->getNamespace() != CE_COMMENT_NS ) {
 			$title = Title::makeTitle( CE_COMMENT_NS, $title );
@@ -114,6 +119,7 @@ class CEComment {
 				$article->doEdit( $pageContent, $summary );
 
 				if( $article->exists() ) {
+					self::updateRelatedArticle( $pageContent );
 					return CECommentUtils::createXMLResponse(
 						$responseText, self::SUCCESS, $pageName
 					);
@@ -123,6 +129,34 @@ class CEComment {
 						self::PERMISSION_ERROR, $pageName
 					);
 				}
+			}
+		}
+	}
+
+	/**
+	 * This function updates the related article if the new/edited/deleted comment has a rating.
+	 * 
+	 * @param string $commentContent
+	 */
+	public static function updateRelatedArticle( $commentContent ) {
+		global $wgParser;
+		$commentHasRating = preg_match('/CommentRating=/', $commentContent);
+		$find = preg_match('/CommentRelatedArticle=(.*?)\|/', $commentContent, $extract);
+		$relatedArticle = $extract[1];
+		if( $commentHasRating !== ( false || 0 )
+			&& $relatedArticle && $relatedArticle != '' ) 
+		{
+			// update semantic data for the realted article
+			$title = Title::newFromText( $relatedArticle );
+			$article = new Article( $title );
+			$text = $article->getContent();
+			$options = new ParserOptions;
+			$output = $wgParser->parse( $article->preSaveTransform( $text ), 
+				$article->mTitle, $options
+			);
+			if ( isset( $output->mSMWData ) ) {
+				$store = smwfGetStore();
+				$store->updateData( $output->mSMWData );
 			}
 		}
 	}

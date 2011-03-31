@@ -233,8 +233,8 @@
     <title>Template:ShowCommentsIntern</title>
     <id>247</id>
     <revision>
-      <id>3347</id>
-      <timestamp>2011-03-31T08:36:05Z</timestamp>
+      <id>3360</id>
+      <timestamp>2011-03-31T12:35:02Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -246,6 +246,9 @@
 {{Content hash|value=01e755447c667809898f7a6227c779dc}}
 &lt;/noinclude&gt;&lt;includeonly&gt;
 &lt;!--start surrounding div --&gt;&lt;div class=&quot;collabComInternSurround&quot;&gt;&lt;!-- start header div --&gt;&lt;div class=&quot;collabComInternHeader&quot;&gt;[[File:Comment_icon_crystal.png|text-bottom|nopreview|16px|link=]]&lt;/div&gt;&lt;!-- end header div --&gt;
+{{#set:
+|Article has average rating={{#averagerating:}}
+}}
 {{#showcommentform:}}
 &lt;div id=&quot;collabComResults&quot;&gt;
 {{#ask: [[Belongs to article::{{FULLPAGENAME}}]] [[Comment:+]]
@@ -266,7 +269,7 @@
 }}
 &lt;/div&gt;
 &lt;/div&gt;&lt;!-- end surround div --&gt;&lt;/includeonly&gt;</text>
-    <hash>dc1ebac1042175eda008b913960439b7</hash>
+    <hash>6d1130eff0e1137108262c5af27958cd</hash>
     </revision>
   </page>
   <page>
@@ -560,6 +563,27 @@ More information can be found also in the [http://smwforum.ontoprise.com/smwforu
 {{Content hash|value=}}
 [[has domain and range::Category:Comment; | ]][[has type::Type:String| ]]</text>
     <hash>d3d5aeab5e5764cebab6e81473327e60</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Article has average rating</title>
+    <id>594</id>
+    <revision>
+      <id>3367</id>
+      <timestamp>2011-03-31T12:48:33Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">{{Property
+|rationale=Contains the average rating for the article.
+}}
+[[Category:Property]]
+{{Part of bundle|value=Collaboration}}
+{{Content hash|value=}}
+
+[[has type::Type:Number| ]]</text>
+    <hash>913344dc4491cf882354be3485d17849</hash>
     </revision>
   </page>
 </mediawiki>

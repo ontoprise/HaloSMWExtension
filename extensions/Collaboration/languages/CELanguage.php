@@ -33,6 +33,7 @@ abstract class CELanguage {
 	### IDs of parser functions ###
 	const CE_PF_SHOWCOMMENTS = 1;
 	const CE_PF_SHOWFORM = 2;
+	const CE_PF_AVGRATING = 3;
 	
 	### IDs of parser function parameters ###
 	const CE_PFP_RATINGSTYLE = 11;

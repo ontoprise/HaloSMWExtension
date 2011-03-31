@@ -49,6 +49,7 @@ class CELanguageEn extends CELanguage {
 	protected $mParserFunctions = array(
 		CELanguage::CE_PF_SHOWCOMMENTS		=> 'showcomments', 
 		CELanguage::CE_PF_SHOWFORM			=> 'showcommentform',
+		CELanguage::CE_PF_AVGRATING			=> 'averagerating',
 	);
 	
 	protected $mParserFunctionsParameters = array(

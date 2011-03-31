@@ -44,14 +44,18 @@ function cefInitCommentParserfunctions() {
 
 	CECommentParserFunctions::getInstance();
 
-	$wgParser->setFunctionHook('showcommentform', 'CECommentParserFunctions::showcommentform');
+	$wgParser->setFunctionHook('showcommentform', array('CECommentParserFunctions', 'showcommentform'));
+	$wgParser->setFunctionHook('averagerating', array('CECommentParserFunctions', 'getAverageRating'));
 	return true;
 }
 
 function cefCommentLanguageGetMagic( &$magicWords, $langCode ) {
 	global $cegContLang;
-	$magicWords['showcommentform'] = array(
-		0, $cegContLang->getParserFunction(CELanguage::CE_PF_SHOWFORM)
+	$magicWords['showcommentform']
+		= array(0, $cegContLang->getParserFunction( CELanguage::CE_PF_SHOWFORM )
+	);
+	$magicWords['averagerating']
+		= array( 0, $cegContLang->getParserFunction( CELanguage::CE_PF_AVGRATING )
 	);
 
 	return true;
@@ -295,6 +299,40 @@ class CECommentParserFunctions {
 		return $parser->insertStripItem( $html, $parser->mStripState );
 	}
 
+	/**
+	 * Function to get the average rating for an article.
+	 * 
+	 * @param Parser $parser
+	 */
+	public static function getAverageRating(&$parser) {
+		$title = $parser->getTitle();
+		if (self::$mInstance->mTitle == null) {
+			self::$mInstance->mTitle = $title;
+		}
+		SMWQueryProcessor::processFunctionParams(
+			array("[[Category:Comment]] [[Belongs to article::" . $title->getFullText() . "]]",
+				"[[Has comment rating::+]]", "[[Comment was deleted::!true]]",
+				"?Has comment rating=", "format=list", "mainlabel=-", "searchlabel="
+			),
+			$querystring, $params, $printouts
+		);
+		$queryResult = explode( "," ,
+			SMWQueryProcessor::getResultFromQueryString(
+				$querystring, $params, $printouts, SMW_OUTPUT_WIKI
+			)
+		);
+		$count = count( $queryResult );
+		if( $count == 0 ) {
+			return '';
+		}
+		$sum = 0;
+		$avg = 0;
+		foreach ( $queryResult as $res ) {
+			$sum += $res;
+		}
+
+		return $sum / $count;
+	}
 	/**
 	 * This method is called, when an article is deleted. If the article "has" comment article(s)
 	 * they should be also deleted to prevent article corps.
