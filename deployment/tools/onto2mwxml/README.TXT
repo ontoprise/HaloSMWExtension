@@ -2,7 +2,8 @@
 The tool "onto2mwxml" is not shipped with the Deployment Framework but with the TripleStore Connector (TSC).
 Please download the TSC and put a link to it named 'tsc' in this directory here.
 
-However, the DF is fully functional without this tool except that ontology import won't work.
+However, the DF is fully functional without this tool except that ontology import won't work. Note that
+you need Java 1.6 to be installed when using the "onto2mwxml" tool.
 
 #
 # Installation on Windows 7 / Vista / Server 2008
