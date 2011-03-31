@@ -1231,6 +1231,7 @@ OBPropertyTreeActionListener.prototype = Object
 								.each(
 										function() {
 											var node = $(this.getAttribute('id'));
+											if (!node) return;
 											var propertyURI = node.getAttribute("uri");
 											var propertyTitle = node.getAttribute("title");
 											var valueNode = node.parentNode.nextSibling;

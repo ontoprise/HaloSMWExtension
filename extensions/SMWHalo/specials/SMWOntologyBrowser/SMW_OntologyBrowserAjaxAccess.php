@@ -275,6 +275,7 @@ class OB_Storage {
 		if (smwf_om_userCan($p_array[0], 'propertyread', SMW_NS_PROPERTY) === "true") {
 			$property = SMWPropertyValue::makeUserProperty($prop->getDBkey());
 			$attvalues = smwfGetStore()->getPropertyValues(NULL, $property ,  $reqfilter, '', true);
+
 		} else {
 			$attvalues = array();
 		}
@@ -282,8 +283,10 @@ class OB_Storage {
 
 		$propertyAnnotations = array();
 		foreach($attvalues as $v) {
+			$attvalues_tuple = array();
+			$attvalues_tuple[] = array($v, NULL);
 			$propertyElement = new PropertySchemaElement($property, NULL, NULL);
-			$propertyAnnotations[] = new Annotation($propertyElement, array($v, NULL));
+			$propertyAnnotations[] = new Annotation($propertyElement, $attvalues_tuple);
 		}
 			
 		return SMWOntologyBrowserXMLGenerator::encapsulateAsAnnotationList($propertyAnnotations, NULL);
@@ -861,7 +864,7 @@ class OB_StorageTS extends OB_Storage {
 			$offset = $partition * $limit;
 			$metadata = isset($p_array[3]) ? $p_array[3] : false;
 			$metadataRequest = $metadata != false ? "|metadata=$metadata" : "";
-            $onlyDirect = $p_array[4] == "true";
+			$onlyDirect = $p_array[4] == "true";
 			global $smwgTripleStoreGraph;
 			$response = $client->query("SELECT ?p ?o WHERE { <$instanceURI> ?p ?o. }",  "limit=$limit|offset=$offset$metadataRequest", $smwgTripleStoreGraph);
 			$annotations = array();
@@ -891,11 +894,11 @@ class OB_StorageTS extends OB_Storage {
 		$dom->registerXPathNamespace("sparqlxml", "http://www.w3.org/2005/sparql-results#");
 
 		$results = $dom->xpath('//sparqlxml:result');
-		
+
 		$instanceTitle = TSHelper::getTitleFromURI($instanceURI);
 		if ($instanceTitle instanceof Title) {
-		  $semData = smwfGetStore()->getSemanticData($instanceTitle);
-		  
+			$semData = smwfGetStore()->getSemanticData($instanceTitle);
+
 		} else {
 			$assertedValues = array();
 		}
@@ -948,11 +951,11 @@ class OB_StorageTS extends OB_Storage {
 			$assertedValues = $semData->getPropertyValues($predicate);
 			$derivedValuesResult=array();
 			$assertedValuesResult=array();
-            SMWFullSemanticData::getDataValueDiff($values, $assertedValues, $predicate, $derivedValuesResult, $assertedValuesResult);
-            
-            if ($onlyDirect) {
-            	$derivedValuesResult=array();
-            }
+			SMWFullSemanticData::getDataValueDiff($values, $assertedValues, $predicate, $derivedValuesResult, $assertedValuesResult);
+
+			if ($onlyDirect) {
+				$derivedValuesResult=array();
+			}
 			$annotations[] = new Annotation(new PropertySchemaElement($predicate, $predicateURI), $assertedValuesResult, $derivedValuesResult);
 		}
 
