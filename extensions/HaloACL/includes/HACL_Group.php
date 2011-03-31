@@ -772,7 +772,7 @@ class  HACLGroup {
 		$dynamicUsers = $this->queryDynamicMembers(self::ID);
 		$dynamicUsers = $dynamicUsers['users'];
 		$users = array_merge($users, $dynamicUsers);
-		$users = array_merge(array_unique($users, SORT_NUMERIC));
+		$users = array_merge(array_unique($users));
 		
         if ($mode === self::ID) {
             return $users;
@@ -847,7 +847,7 @@ class  HACLGroup {
 		$dynamicGroups = $this->queryDynamicMembers(self::ID);
 		$dynamicGroups = $dynamicGroups['groups'];
 		$groups = array_merge($groups, $dynamicGroups);
-        $groups = array_merge(array_unique($groups, SORT_NUMERIC));
+        $groups = array_merge(array_unique($groups));
         
         if ($mode === self::ID) {
             return $groups;
