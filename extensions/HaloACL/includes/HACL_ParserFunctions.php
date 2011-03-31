@@ -1701,20 +1701,24 @@ class HACLParserFunctions {
 						? 'hacl_dyn_assigned_users' : 'hacl_dyn_member_users';
 		$msgDynGroups = $isAssignedTo 
 						? 'hacl_dyn_assigned_groups' : 'hacl_dyn_member_groups';
-		if (!is_null($dynamicAssignees) && count($dynamicAssignees['queries']) > 0) {
+		if (!is_null($dynamicAssignees) 
+		    && array_key_exists('queries', $dynamicAssignees)
+		    && count($dynamicAssignees['queries']) > 0) {
 			$text .= ':;'.wfMsgForContent($msgDynTitle).":\n";
 			$text .= '::;'.wfMsgForContent($msgDynQueries)."\n";
 			foreach ($dynamicAssignees['queries'] as $q) {
 				global $wgParser;
 				$text .= $wgParser->insertStripItem("::*<code>$q</code>\n", $wgParser->mStripState);
 			}
-			if (count($dynamicAssignees['users']) > 0) {
+			if (array_key_exists('users', $dynamicAssignees)
+				&& count($dynamicAssignees['users']) > 0) {
 				$text .= '::;'.wfMsgForContent($msgDynUsers)."\n";
 				foreach ($dynamicAssignees['users'] as $u) {
 					$text .= "::* [[$userNS:$u|$u]]\n";
 				}
 			}
-			if (count($dynamicAssignees['groups']) > 0) {
+			if (array_key_exists('groups', $dynamicAssignees)
+				&& count($dynamicAssignees['groups']) > 0) {
 				$text .= '::;'.wfMsgForContent($msgDynGroups)."\n";
 				foreach ($dynamicAssignees['groups'] as $g) {
 					$text .= "::* [[$aclNS:$g|$g]]\n";
