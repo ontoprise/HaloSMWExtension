@@ -1179,7 +1179,7 @@ class HACLEvaluator {
 	 * 		<false>: Access to the property is denied.
 	 *      -1: $action is not concerned with properties.
 	 */
-	private static function checkPropertyAccess(Title $title, User $user, $action) {
+	private static function checkPropertyAccess(Title $title, $user, $action) {
 		if (self::$mMode == HACLEvaluator::DENY_DIFF) {
 			return false;
 		}
