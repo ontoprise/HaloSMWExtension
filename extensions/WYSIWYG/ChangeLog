@@ -34,6 +34,8 @@ VERSION 1.4.1
       mode and the image dialog inserts the correct html element.
 
   BUGFIXES:
+    * Fix bug http://smwforum.ontoprise.com/smwbugs/show_bug.cgi?id=13693
+      The link attribute in images got lost
     * Fix bug http://smwforum.ontoprise.com/smwbugs/show_bug.cgi?id=13400
       Links are broken after edition
     * Fix bug http://smwforum.ontoprise.com/smwbugs/show_bug.cgi?id=13908
