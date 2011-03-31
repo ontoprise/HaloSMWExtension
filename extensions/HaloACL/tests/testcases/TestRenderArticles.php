@@ -10,8 +10,10 @@ class TestRenderArticlesSuite extends PHPUnit_Framework_TestSuite
 {
 	
 	public static function suite() {
-		define('UNIT_TEST_RUNNING', true);
-		
+		if (!defined('UNIT_TEST_RUNNING')) {
+			define('UNIT_TEST_RUNNING', true);
+		}
+				
 		$suite = new TestRenderArticlesSuite();
 		$suite->addTestSuite('TestTransclusion');
 		return $suite;

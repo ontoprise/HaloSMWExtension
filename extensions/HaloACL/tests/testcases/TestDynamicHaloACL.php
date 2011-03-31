@@ -11,7 +11,9 @@ class TestDynamicHaloACLSuite extends PHPUnit_Framework_TestSuite
 	private $mArticleManager;
 	
 	public static function suite() {
-		define('UNIT_TEST_RUNNING', true);
+		if (!defined('UNIT_TEST_RUNNING')) {
+			define('UNIT_TEST_RUNNING', true);
+		}
 		
 		$suite = new TestDynamicHaloACLSuite();
 		$suite->addTestSuite('TestDynamicSD');

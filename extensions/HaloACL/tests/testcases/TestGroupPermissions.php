@@ -19,8 +19,10 @@ class TestGroupPermissionsSuite extends PHPUnit_Framework_TestSuite
 	public static $mGroupPermissions;
 	
 	public static function suite() {
-		define('UNIT_TEST_RUNNING', true);
-		
+		if (!defined('UNIT_TEST_RUNNING')) {
+			define('UNIT_TEST_RUNNING', true);
+		}
+				
 		$suite = new TestGroupPermissionsSuite();
 		$suite->addTestSuite('TestMWGroupsStorage');
 		$suite->addTestSuite('TestMWGroupPermissionsUI');
