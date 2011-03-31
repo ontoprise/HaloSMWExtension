@@ -675,8 +675,6 @@ QUERY;
 						)
 		));
 		
-		// This test currently fails because of bug
-		// 13615 - Graph and URI-prefix must not be the same
 		$this->doTestSPARQLGetQueryResult(array(
 		    'query'		=> "[[NormalProperty::+]][[ProtectedProperty::+]]",
 			'format'	=> "table",
