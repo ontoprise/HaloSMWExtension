@@ -143,7 +143,7 @@ class SN_XMLResultPrinter extends SMWResultPrinter {
                         if ($object->isNumeric()) { // does this have any effect?
                             $text = $object->getNumericValue();
                         } else {
-                            $text = $object->getXSDValue();
+                            $text = $object->getWikiValue();
                         }
                     }
                     hash_update($hash, $text);
