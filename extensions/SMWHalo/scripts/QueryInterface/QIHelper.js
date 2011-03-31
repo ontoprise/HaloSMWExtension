@@ -2728,6 +2728,8 @@ QIHelper.prototype = {
             $('fullAskText').value.length > 0 &&
             this.sourceChanged)
                 this.initFromQueryString($('fullAskText').value);
+        if ($('fullAskText').value.length == 0)
+            $('previewcontent').innerHTML = "";
     },
 
 	initFromQueryString : function(ask) {
