@@ -13,6 +13,7 @@ VERSION 1.4.1
 
   BUGFIXES:
   13633 - Function split() is deprecated
+  13577 - Unified search statistics shows always 20 Hits (results on one page) not the real number
   
 
 VERSION XXXX
