@@ -435,6 +435,8 @@ class SMWH_Skin {
      * @return string
      */
     private function buildHelpTab(){
+        global $wgExtensionFunctions;
+        if ( !in_array('setupSMWUserManual', $wgExtensionFunctions) ) return;
         global $wgStylePath;
         $tab ='<div id="helptab" class="tab">';
         $tab.= '<div id="smw_csh"><img id="helpimage" src="'.$wgStylePath.$this->imagepath.'/help_icon.png" alt="help" title="'.wfMsg('smw_csh_icon_tooltip').'"/></div>';
