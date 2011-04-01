@@ -103,7 +103,7 @@ class EnhancedRetrievalResultPrinter {
 			$html .= self::addPreview($e, $args, $args_prev);
 			$html .= '<a class="us_search_result_link" href="'.$e->getTitle()->getFullURL().'">'.$e->getTitle()->getText().'</a>';
 			$nsName = $e->getTitle()->getNamespace() == NS_MAIN ? wfMsg('us_article') : $wgContLang->getNsText($e->getTitle()->getNamespace());
-			$html .= '<img alt="'.$nsName.'" title="'.$nsName.'" src="'.self::getImageFromNamespace($e).'"/>';
+			$html .= '<img alt="'.$nsName.'" height="16" title="'.$nsName.'" src="'.self::getImageFromNamespace($e).'"/>';
 
 			if (count($categories) > 0) {
 				$html .= '<div class="category">'.wfMsg('us_isincat').': ';
