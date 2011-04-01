@@ -867,8 +867,8 @@ function qiMergeQueryMetadataResults($queryMetadataResults, $result) {
     for ($i = 0; $i < count($queryMetadataResults); $i++) {
         $queryString = $queryMetadataResults[$i]->queryString;
         if (is_array($queryMetadataResults[$i]->propertyPrintRequests)) {
-            $key = implode('', array_keys($queryMetadataResults[$i]->propertyPrintRequests));
-            $queryString .= '|?'.str_replace(';', '|?', $key);
+            $keys = implode('|?', array_keys($queryMetadataResults[$i]->propertyPrintRequests));
+            $queryString .= '|?'.$keys;
         }
         $queryString.= '|format='.$queryMetadataResults[$i]->queryPrinter;
         if ($queryMetadataResults[$i]->limit &&
