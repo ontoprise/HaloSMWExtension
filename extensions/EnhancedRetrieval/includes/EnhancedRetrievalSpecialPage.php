@@ -68,7 +68,7 @@ class USSpecialPage extends SpecialPage {
 		if (trim($search) != '') {
 			list($searchResults,$searchSet) = $this->doSearch($limit, $offset);
 			// save results for statistics
-			if ($searchSet !== NULL) USStore::getStore()->addSearchTry($search, $searchSet->numRows() );
+			if ($searchSet !== NULL) USStore::getStore()->addSearchTry($search, $searchSet->getTotalHits() );
 		} else {
 			// initialize when searchstring is empty
 			$searchResults = array();
