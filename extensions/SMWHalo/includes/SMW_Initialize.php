@@ -132,6 +132,7 @@ function smwgHaloSetupExtension() {
 	$wgAutoloadClasses['TSConnection']            = $smwgHaloIP . '/includes/storage/SMW_TSConnection.php';
 	$wgAutoloadClasses['TSNamespaces']            = $smwgHaloIP . '/includes/storage/SMW_TS_Helper.php';
 	$wgAutoloadClasses['TSHelper']            = $smwgHaloIP . '/includes/storage/SMW_TS_Helper.php';
+	$wgAutoloadClasses['WikiTypeToXSD']            = $smwgHaloIP . '/includes/storage/SMW_TS_Helper.php';
 	$wgAutoloadClasses['SMWTripleStore']            = $smwgHaloIP . '/includes/storage/SMW_TripleStore.php';
 	$wgAutoloadClasses['SMWTripleStoreQuad']            = $smwgHaloIP . '/includes/storage/SMW_TripleStoreQuad.php';
 	$wgAutoloadClasses['SMWSPARQLQueryProcessor']            = $smwgHaloIP . '/includes/SMW_SPARQLQueryProcessor.php';
