@@ -19,9 +19,9 @@
 /**
  * @file
  * @ingroup RichMedia
- * 
+ *
  * This class handles all Parser functions created and used by the Rich Media extension.
- * 
+ *
  * @author Benjamin Langguth
  */
 class RMForm {
@@ -47,7 +47,7 @@ class RMForm {
 		$fancyboxClass = 'rmlink';
 		$uploadLabel = wfMsgNoTrans('smw_rm_uploadheadline');
 		$buttonText = '>> ' . wfMsgNoTrans('smw_rm_formbuttontext');
-		$html = "<input class=\"$fancyboxClass rmUploadButton\" type=\"button\" id=\"rmFormButton\"". 
+		$html = "<input class=\"$fancyboxClass rmUploadButton\" type=\"button\" id=\"rmFormButton\"".
 			"value=\"$buttonText\" title=\"$uploadLabel\" />";
 
 		$fancybox_js =<<<END
@@ -64,12 +64,12 @@ END;
 
 	/**
 	 * Parser funtion that creates a link to the upload overlay
-	 * 
+	 *
 	 *
 	 * @param array $parameters
 	 * 		1. The link text
 	 * 		2. The link title
-	 * 		3. the set of values that you want passed in through the query string to the upload form. 
+	 * 		3. the set of values that you want passed in through the query string to the upload form.
 	 * 			It should look like a typical URL query string
 	 * @return HTML the text embraced by "richmedialink"-tags that will be removed again later in createRichMediaLinkAfterTidy
 	 */
@@ -94,7 +94,7 @@ END;
 			#cylce throuh other paramters and check if no preview value is blank!
 			for ($i = 0; $i < count($queryParameters); $i++) {
 				$queryParameter = $queryParameters[$i];
-					
+
 				if ( $queryString != "" ) {
 					$combine = "&";
 				}
@@ -124,11 +124,11 @@ END;
 		$smwgRMMarkerList[$markercount] = $output;
 		return $marker;
 	}
-	
+
 	/**
 	 * Parser functions that finds the markers created by function createRichMediaLink
 	 * in $text and replaces them with the actual output.
-	 * 
+	 *
 	 * @param Parser $parser
 	 * @param $text
 	 * @return bool
@@ -148,7 +148,7 @@ END;
 
 	/**
 	 * Parser function that creates a link to the EmbedWindow
-	 * 
+	 *
 	 * The file extension needs to be contained in (global) $smwgRMPreviewWhitelist
 	 * or $smwgRMIgnoreWhitelistForPF must be set to true.
 	 * Otherwise a link to the original file details page is generated.
@@ -184,11 +184,16 @@ END;
 		$title = Title::newFromText($link_name);
 		$temp_var = $title->getNamespace();
 		$file = wfFindFile($title);
+		if ( !$file ) {
+			return wfMsgNoTrans( 'smw_rm_filenotfound', $link_name);
+		}
 		$ext = $file->getExtension();
 
 		RMNamespace::isImage( $temp_var, $rMresult );
-		if ( $rMresult && ( $smwgRMIgnoreWhitelistForPF ||
-			(is_array($smwgRMPreviewWhitelist) && in_array( $ext, $smwgRMPreviewWhitelist ) ) ) ) {
+		if ( $rMresult && ( $smwgRMIgnoreWhitelistForPF
+			|| ( is_array( $smwgRMPreviewWhitelist ) 
+			&& in_array( $ext, $smwgRMPreviewWhitelist ) ) ) )
+		{
 			$queryString = "target=".urlencode($link_name);
 			$embedWindowPage = SpecialPage::getPage('EmbedWindow');
 			$embedWindowUrl = $embedWindowPage->getTitle()->getFullURL($queryString);
