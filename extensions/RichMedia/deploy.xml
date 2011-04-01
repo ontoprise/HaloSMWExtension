@@ -2,7 +2,7 @@
 <deploydescriptor>
 	<global>
 		<version>151</version>
-		<id>RichMedia</id>
+		<id>richmedia</id>
 		<vendor>Ontoprise GmbH</vendor>
 		<maintainer>Ontoprise GmbH</maintainer>
 		<instdir>extensions/RichMedia</instdir>
@@ -14,7 +14,7 @@
 			<dependency from="153">smwhalo</dependency>
 			<dependency from="208">semanticforms</dependency>
 			<dependency from="103">applicationprogramming</dependency>
-			<dependency from="100" to="100" optional="true">baseontologybundle</dependency> 
+			<dependency from="110" to="110" optional="true">baseontologybundle</dependency> 
 		</dependencies>
 	</global>
 	<codefiles>
@@ -22,11 +22,14 @@
 		<!-- TODO: add others in skins/commons/images/icons-->
 	</codefiles>
 	<wikidumps>
-		<file loc="import/RichMediaOntology_v1.5.xml" />
+		<file loc="import/richmedia.xml" />
 	</wikidumps>
 	<resources>
 		<file loc="skins/vcard.gif" />
 		<file loc="skins/Calendar.gif" />
+		<file loc="import/Richmedia_Sandbox.doc" />
+		<file loc="import/Richmedia_Sandbox.pdf" />
+		<file loc="import/Richmedia_Sandbox.png" />
 	</resources>
 
 	<configs>

@@ -315,6 +315,7 @@ $wgJobRunRate=0;
 /*start-richmedia*/
 require_once($IP.'/extensions/RichMedia/includes/RM_Initialize.php');
 enableRichMediaExtension();
+$wgAllowExternalImagesFrom = $wgServer;
 require_once($IP.'/extensions/RichMedia/includes/WebDAV/WD_Initialize.php');
 #Set default searching for document and pdf namespace
 $wgNamespacesToBeSearchedDefault = array(
