@@ -59,10 +59,7 @@ class SMWSPARQLQueryProcessor extends SMWQueryProcessor {
 					if ($title === NULL) {
 						continue;
 					}
-					if (!$title->exists()) { // too bad, this is no legal property/category name, ignore
-						$title = Title::newFromText(trim($propparts[0]));
-						
-					}
+					
 					if ($title->getNamespace() == SMW_NS_PROPERTY) {
 						$printmode = SMWPrintRequest::PRINT_PROP;
 						$property = SMWPropertyValue::makeProperty($title->getDBKey());
