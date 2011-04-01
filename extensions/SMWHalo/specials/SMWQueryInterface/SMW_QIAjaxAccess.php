@@ -415,10 +415,7 @@ function smwf_qi_getPage($args= "") {
 		list($httpErr, $page) = doHttpRequestWithCurl($wgServer, $qiScript);
 	}
 	else {
-	  if (strtolower(substr($wgServer, 0, 5)) == "https")
-	       return "Error: for HTTPS connections please activate the Curl module in your PHP configuration";
-	  list ($httpErr, $page) =
-	  	doHttpRequest($wgServer, $_SERVER['SERVER_PORT'], $qiScript);
+      return "Error: please activate the Curl module in your PHP configuration";
 	}
 	// this happens at any error (also if the URL can be called but a 404 is returned)
 	if ($page === false || $httpErr != 200)
@@ -592,71 +589,6 @@ function mvDataFromPage(&$page, &$newPage, $pattern, $copy= true) {
 		$newPage.= substr($page, 0, $pos);
 	}
 	$page = substr($page, $pos -1); 
-}
-
-// this is a replacement for doHttpRequestWithFsockuopen() whih was previously at this place.
-// Some weird Windows installations suddenly produce special characters in the output which
-// destroys the whole page.
-function doHttpRequest($server, $port, $file) {
-    if ($file{0} != "/") $file = "/".$file;
-    $cont = "";
-    if (isset($_SERVER['AUTH_TYPE']) && isset($_SERVER['PHP_AUTH_USER']) && isset($_SERVER['PHP_AUTH_PW'])) {
-        $host = preg_replace('/^http(s)?:\/\//i', '', $server);
-        $protocol = substr($server, 0, strlen($server)-strlen($host));
-        $target=$protocol.$_SERVER['PHP_AUTH_USER'].':'.$_SERVER['PHP_AUTH_PW'].'@'.$host.$file;
-    }
-    else
-        $target= $server.$file;
-    $fp = fopen($target, "rb");
-    if (! $fp) return array(-1, false);
-    while (!feof($fp)) {
-        $cont .= fread($fp, 1024);
-        $stream_meta_data = stream_get_meta_data($fp);
-        if($stream_meta_data['unread_bytes'] <= 0) break; 
-    }
-    fclose($fp);
-    if (strlen($cont) > 0)
-      return array(200, $cont);    
-    return array(-1, false);
-}
-
-
-/**
- * If no curl is available, the page must retrieved manually
- * 
- * @param string server i.e. www.domain.com 
- * @param string port i.e. 80 (https will probably not work)
- * @param string file	i.e. /path/to/script.cgi or /some/file.html
- * @return array(int, string) with httpCode, page
- */ 
-function doHttpRequestWithFsockuopen($server, $port, $file) {
-	if ($file{0} != "/") $file = "/".$file;
-	$server = preg_replace('/^http(s)?:\/\//i', '', $server);
-    $p = strpos($server, ':', 7);
-    if ($p !== false) {
-       $port = substr($server,$p+1);
-       $server = substr($server, 0, $p);
-    }
-    $cont = "";
-    $ip = gethostbyname($server);
-    $fp = fsockopen($ip, $port);
-    if (!$fp) return array(-1, false);
-    $com = "GET $file HTTP/1.1\r\nAccept: */*\r\n".
-           "User-Agent: ".$_SERVER['HTTP_USER_AGENT']."\r\n".
-           "Host: $server:$port\r\n".
-           "Connection: Keep-Alive\r\n";
-    if (isset($_SERVER['AUTH_TYPE']) && isset($_SERVER['PHP_AUTH_USER']) && isset($_SERVER['PHP_AUTH_PW']))
-        $com .= "Authorization: Basic ".base64_encode($_SERVER['PHP_AUTH_USER'].":".$_SERVER['PHP_AUTH_PW'])."\r\n";
-    $com .= "\r\n";
-    fputs($fp, $com);
-    while (!feof($fp))
-        $cont .= fread($fp, 1024);
-    fclose($fp);
-    $httpHeaders= explode("\r\n", substr($cont, 0, strpos($cont, "\r\n\r\n")));
-    list($protocol, $httpErr, $message) = explode(' ', $httpHeaders[0]);
-    $offset = 8;
-    $cont = substr($cont, strpos($cont, "\r\n\r\n") + $offset );
-    return array($httpErr, $cont);
 }
 
 /**
