@@ -674,19 +674,21 @@ class HACLEvaluator {
 
 	/**
 	 * This function is called by semantic forms when it wants to decide if a
-	 * page can be edited. The page's title is stored in the global variable
-	 * $wgTitle, the user in $wgUser.
+	 * page can be edited. It checks if the current user in $wgUser has the 
+	 * right 'formedit' for the given $title.
+	 * 
+	 * @param bool $title
+	 * 		The title of the article whose rights are checked.
 	 * 
 	 * @param bool $userCanEdit
-	 * 		This parameter is set 'false' if the article is not editable
+	 * 		This parameter is set 'false' if the article is not editable and 'true'
+	 * 		if it is.
 	 */
 	public static function onSfUserCanEditPage($title, &$userCanEdit) {
 		global $wgUser;
 		$allowed = true;
 		self::userCan($title, $wgUser, "formedit", $allowed);
-		if (!$allowed) {
-			$userCanEdit = false;
-		}
+		$userCanEdit = $allowed;
 		return true;
 	}
 	
