@@ -230,7 +230,9 @@ function wfUSInitializeSKOSOntology() {
 			$name = $t->getText();
 			$text = "";
 		} else if ($page instanceof SMWPropertyValue) {
-			$t = Title::newFromText($page->getXSDValue(), SMW_NS_PROPERTY);
+			$wpv = $page->getWikiPageValue();
+			$name = $wpv->getWikiPageValue();
+			$t = Title::newFromText($name, SMW_NS_PROPERTY);
 			$name = $t->getText();
 			$propertyLabels = $smwgContLang->getPropertyLabels();
 			$namespaces = $smwgContLang->getNamespaces();

@@ -6,7 +6,7 @@
  * 
  * Query Expander augments search terms.
  *
- * @author: Kai Kühn
+ * @author: Kai Kï¿½hn
  *
  * Created on: 27.01.2009
  */
@@ -44,8 +44,28 @@ class QueryExpander {
         $connectedParts = 0; // number of _actually_ connected $terms
         $result = "";
         foreach($terms as $t) {
-            if ($t == NULL) continue;
-            if ($t instanceof Title) {
+        	if ($t == NULL) {
+        		continue;	
+        	}
+        	$term = null;
+        	if ($t instanceof Title) {
+        		$term = $t->getText();
+        	} else if ($t instanceof SMWPropertyValue ) {
+        		$term = $t->getWikiPageValue()->getWikiPageValue();
+        	} else if ($t instanceof SMWStringValue ) {
+        		$term = $t->getWikiPageValue();
+        	} else if ($t instanceof SMWWikiPageValue ) {
+        		$term = $t->getWikiPageValue();
+        	} else if (is_string($t) && strlen($t) > 0) {
+        		$term = $t;
+        	}
+        	if (!is_null($term)) {
+        		$term = self::quoteIfNecessary($term);
+        		$result .= ($i === 0) ? $term : " $operator " . $term;
+                $connectedParts++;
+        	}
+/*
+        	if ($t instanceof Title) {
                 if ($i === 0) $result .= self::quoteIfNecessary($t->getText()); else $result .= " $operator ".self::quoteIfNecessary($t->getText());
                 $connectedParts++;
             } else if ($t instanceof SMWPropertyValue ) {
@@ -61,6 +81,7 @@ class QueryExpander {
                 if ($i === 0) $result .= self::quoteIfNecessary($t); else $result .= " $operator ".self::quoteIfNecessary($t);
                 $connectedParts++;
             }
+*/            
             $i++;
         }
         return $connectedParts <= 1 ? $result : "(".$result.")";
