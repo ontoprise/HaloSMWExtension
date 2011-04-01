@@ -1239,71 +1239,9 @@ AutoCompleter.prototype = {
         
         // show AC hint
         $$('input.wickEnabled').each(function(t) {
-        		var constraint = t.getAttribute('constraints');
-	        	if (constraint == null || constraint == '') {
-	        		constraint = "all";
-	        	}
-        		constraint = constraint.trim();
-        		var commands = constraint.split("|");
-        		var showText = "";
-        		
-        		commands.each(function(c) {
-        			var sepIndex = c.indexOf(":");
-        			
-        			var parameter = '';
-        			var command = '';
-        			if (sepIndex != -1) {
-        				command = c.substr(0, sepIndex).trim();
-        				parameter = c.substr(sepIndex+1).trim();
-        			}
-	        			        		
-	        		if (constraint == 'all') {
-	        			showText += gLanguage.getMessage('AC_ALL');
-	        		} else if (command == 'ask') {
-	        			showText += gLanguage.getMessage('AC_QUERY') + parameter;
-	        		} else if (command == 'schema-property-domain') {
-	        			showText += gLanguage.getMessage('AC_SCHEMA_PROPERTY_DOMAIN') + parameter;
-	        		} else if (command == 'schema-property-range-instance') {
-	        			showText += gLanguage.getMessage('AC_SCHEMA_PROPERTY_RANGE_INSTANCE') + parameter;
-	        		} else if (command == 'domainless-property') {
-	        			showText += gLanguage.getMessage('AC_DOMAINLESS_PROPERTY') + parameter;
-	        		} else if (command == 'annotation-property') {
-	        			showText += gLanguage.getMessage('AC_ANNOTATION_PROPERTY') + parameter;
-	        		} else if (command == 'annotation-value') {
-	        			showText += gLanguage.getMessage('AC_ANNOTATION_VALUE') + parameter;
-	        		} else if (command == 'instance-property-range') {
-	        			showText += gLanguage.getMessage('AC_INSTANCE_PROPERTY_RANGE') + parameter;
-	        		} else if (command == 'namespace') {
-	        			
-	        			// convert namespace indices into names, if necessary
-	        			var namespaces = parameter.split(",");
-	        			var namespaceText = "";
-	        			var i = 0;
-	        			namespaces.each(function(n) { 
-	        				if (!isNaN(n)) {
-	        					var index = Number(n);
-	        					namespaceText += wgFormattedNamespaces[index];
-	        				} else{
-	        					namespaceText += n;
-	        				}
-	        				i++;
-	        				if (i < namespaces.length) namespaceText += ", ";
-	        			});
-	        			showText += gLanguage.getMessage('AC_NAMESPACE') + namespaceText;
-	        		} else if (command == 'lexical') {
-	        			showText += gLanguage.getMessage('AC_LEXICAL') + parameter;
-	        		} else if (command == 'schema-property-type') {
-	        			showText += gLanguage.getMessage('AC_SCHEMA_PROPERTY_TYPE') + parameter;
-	        		} else if (command == 'asf-ac') {
-	        			showText += gLanguage.getMessage('AC_ASF') + parameter;
-	        		} else {
-	        			showText += "Unknown constraint: "+c;
-	        		} 
-	        		
-        		 });
         		
         		jQuery(t).qtip( {
-					content : showText,
+					content : "",
 					show : {
 						effect : {
 							length : 500
@@ -1311,6 +1249,14 @@ AutoCompleter.prototype = {
 						when : {
 							event : 'mouseover'
 						}
+					},
+					api: {
+						// read current state
+						beforeShow: function(s) {
+		        			var constraints = s.target.getAttribute('constraints');
+		        			constraints = autoCompleter.translateACHint(constraints);
+		        			this.updateContent(constraints);
+		        		}
 					},
 					hide : {
 						when : {
@@ -1334,6 +1280,81 @@ AutoCompleter.prototype = {
         	
         });
     },  //registerSmartInputListeners
+    
+    
+    /**
+     * Translates the constraint parameter into human-readible text
+     * 
+     * @param string Constraints parameter as it appears in the INPUT element.
+     * 
+     * @return string
+     */
+    translateACHint:function(constraint) {
+
+    	if (constraint == null || constraint == '') {
+    		constraint = "all";
+    	}
+		constraint = constraint.trim();
+		var commands = constraint.split("|");
+		var showText = "";
+		
+		commands.each(function(c) {
+			var sepIndex = c.indexOf(":");
+			
+			var parameter = '';
+			var command = '';
+			if (sepIndex != -1) {
+				command = c.substr(0, sepIndex).trim();
+				parameter = c.substr(sepIndex+1).trim();
+			}
+    			        		
+    		if (constraint == 'all') {
+    			showText += gLanguage.getMessage('AC_ALL');
+    		} else if (command == 'ask') {
+    			showText += gLanguage.getMessage('AC_QUERY') + parameter;
+    		} else if (command == 'schema-property-domain') {
+    			showText += gLanguage.getMessage('AC_SCHEMA_PROPERTY_DOMAIN') + parameter;
+    		} else if (command == 'schema-property-range-instance') {
+    			showText += gLanguage.getMessage('AC_SCHEMA_PROPERTY_RANGE_INSTANCE') + parameter;
+    		} else if (command == 'domainless-property') {
+    			showText += gLanguage.getMessage('AC_DOMAINLESS_PROPERTY') + parameter;
+    		} else if (command == 'annotation-property') {
+    			showText += gLanguage.getMessage('AC_ANNOTATION_PROPERTY') + parameter;
+    		} else if (command == 'annotation-value') {
+    			showText += gLanguage.getMessage('AC_ANNOTATION_VALUE') + parameter;
+    		} else if (command == 'instance-property-range') {
+    			showText += gLanguage.getMessage('AC_INSTANCE_PROPERTY_RANGE') + parameter;
+    		} else if (command == 'namespace') {
+    			
+    			// convert namespace indices into names, if necessary
+    			var namespaces = parameter.split(",");
+    			var namespaceText = "";
+    			var i = 0;
+    			namespaces.each(function(n) { 
+    				if (!isNaN(n)) {
+    					var index = Number(n);
+    					namespaceText += wgFormattedNamespaces[index];
+    				} else{
+    					namespaceText += n;
+    				}
+    				i++;
+    				if (i < namespaces.length) namespaceText += ", ";
+    			});
+    			showText += gLanguage.getMessage('AC_NAMESPACE') + namespaceText;
+    		} else if (command == 'lexical') {
+    			showText += gLanguage.getMessage('AC_LEXICAL') + parameter;
+    		} else if (command == 'schema-property-type') {
+    			showText += gLanguage.getMessage('AC_SCHEMA_PROPERTY_TYPE') + parameter;
+    		} else if (command == 'asf-ac') {
+    			showText += gLanguage.getMessage('AC_ASF') + parameter;
+    		} else {
+    			showText += "Unknown constraint: "+c;
+    		} 
+    		
+		 });
+		return showText;
+	
+    },
 
     /**
      * Register all INPUT tags on page.
