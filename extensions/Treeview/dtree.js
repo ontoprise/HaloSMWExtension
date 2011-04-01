@@ -1021,6 +1021,7 @@ dTree.prototype.getHtml4Node = function(cn, url, params) {
     if (URLDecode(cn.link) == wgPageName)
     	str = '<strong class="selflink">' + cn.name + '</strong>';
     else {
+        if (cn.redlink) return cn.redlink;
         // if there is a / in the pagename, add name as URL param and not as path
         if (link.indexOf('%2F') != -1) {
             url = url.substr(0, url.length-1);
