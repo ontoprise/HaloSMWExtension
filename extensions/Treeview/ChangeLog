@@ -4,6 +4,7 @@ Treeview extension ChangeLog
 VERSION 1.4.3
 
   BUGFIXES:
+    * Fix bug 12355: in dynamic trees, redlinks have not been created
     * Fix bug 13416: Refresh did not work on static trees, refresh on dynamic
       trees created double nodes
     * Fix bug 12489: Treeview must be visible (and calculated) if the article is
