@@ -533,7 +533,9 @@ function smwf_qi_CheckValidResult ($printRequest, $format, $mainlabel) {
     $haveDate = false;
     $haveNumber = false;
     foreach( $printRequest as $object ) {
-        $propName = $object->getData()->getDBkey();
+        $prData = $object->getData();
+        if (is_null($prData)) continue; // for Category print requests
+        $propName = $prData->getDBkey();
         $propXML = qiGetPropertyInformation($propName);
         $xmlDoc = DOMDocument::loadXML($propXML);
         for ($i = 0; $i < count($xmlDoc->documentElement->childNodes); $i++) {
