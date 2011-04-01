@@ -88,6 +88,8 @@ class TreeGenerator {
 		$openTo = array_key_exists('opento', $genTreeParameters) ? $this->getValidTitle($genTreeParameters['opento']) : NULL;
 		// parameter urlparams
 		$urlparams = array_key_exists('urlparams', $genTreeParameters) ? $genTreeParameters['urlparams'] : NULL;
+        // parameter refresh
+        $refresh = array_key_exists('refresh', $genTreeParameters) ? true : NULL;
 		// parameter check
 		$tv_store = TreeviewStorage::getTreeviewStorage($this->useTsc);
 		if (is_null($tv_store)) return "";
@@ -124,7 +126,7 @@ class TreeGenerator {
 		// is set and the page is rendered for the first tree
 		// prefixed parameter are send like GET params in an URL encapsulated with "\x7f". In the tree parser
 		// function, these parameters are evaluated and some Javascript for the dTree is added.
-		if (!$this->json && (strlen(trim($tree)) > 0) && ($ajaxExpansion > 0 || $tv_store->openToFound() || $urlparams)) {
+		if (!$this->json && (strlen(trim($tree)) > 0) && ($ajaxExpansion > 0 || $tv_store->openToFound() || $urlparams || $refresh)) {
 		    $returnPrefix= "\x7f";
 			if ($ajaxExpansion > 0) {			
 				$returnPrefix.= "dynamic=1&property=".$genTreeParameters['property']."&";
@@ -146,6 +148,8 @@ class TreeGenerator {
 				$returnPrefix .= "urlparams=".urlencode($urlparams)."&";
             if ($this->useTsc)
                 $returnPrefix .= "useTsc=1&";
+            if ($refresh)
+                $returnPrefix .= "refresh=1&";
 		    return $returnPrefix."\x7f".$tree;
 		}
 		return $tree;

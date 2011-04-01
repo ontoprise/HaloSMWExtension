@@ -142,7 +142,6 @@ class SemanticTreeview {
 
 	            // check if initOnload is set, then skip the rest here but just replace the initOnload function
 	            if (substr($matches[1], 0, 10) == "initOnload") {
-	            	$this->args[$this->id."SmwUrl"] = "setupSmwUrl('".$wgServer.$wgScriptPath."');";
 	            	$text .= $matches[2]."*".$matches[1]."\n";
 	            	$matches[1] = substr($matches[1], 12); // remove initOnload('
 	            	$matches[1] = substr($matches[1], 0, -2); // and ')'
@@ -152,7 +151,6 @@ class SemanticTreeview {
 	    	    	$this->args[$this->id."opento"] = urlencode($params['opento']);
 	    	    if (isset($params['urlparams'])) $this->args[$this->id."urlparams"] = urldecode($params['urlparams']);
                 if (isset($params['dynamic']) && $params['dynamic'] == 1) {
-            	    $this->args[$this->id."SmwUrl"] = "setupSmwUrl('".$wgServer.$wgScriptPath."');";
             	    $addSmwData = "addSmwData(, '".((isset($params['property'])) ? $params['property'] : '')."',";
             	    $addSmwData .= (isset($params['category'])) ? "'".$params['category']."', " : "null, ";
             	    $addSmwData .= (isset($params['display'])) ? "'".$params['display']."', " : "null, ";
@@ -166,9 +164,10 @@ class SemanticTreeview {
 					$addSmwData .= (isset($params['useTsc'])) ? "1);" : "null);";
             	    $text.= $matches[2]."*".
                 	    	$addSmwData."\n";
-                    if (isset($params['refresh']) && $params['refresh'] == 1)
-                        $this->args[$this->id."refresh"] = true;
                 }
+                if (isset($params['refresh']) && $params['refresh'] == 1)
+                    $this->args[$this->id."refresh"] = true;
+
                 $text.= $matches[2].$matches[3]."\n";
     	    }
 	        else $text.= $line."\n";
@@ -269,7 +268,6 @@ class SemanticTreeview {
                 $args = $this->args[$id];
                 $class = $this->args[$id."class"];
                 if (!isset($args['root'])) $args['root'] = ''; # tmp - need to handle rootless trees
-                $smwUrl  = isset($this->args[$id."SmwUrl"]) ? $this->uniqname.$id.".".$this->args[$id."SmwUrl"] : NULL;
                 $end     = (count($rows) == 0) || $rows[0][4]; // start flag of next node
                 $refresh = isset($this->args[$id."refresh"]) ? "tree.config.refresh = true;" : '';
                 $add     = isset($args['root']) ? "tree.add(0,-1,'".$args['root']."');" : '';
@@ -327,7 +325,6 @@ class SemanticTreeview {
                                 $refresh
                                 $add
                                 {$this->uniqname}$id = tree;
-                                $smwUrl
                                 $nodes
                                 document.getElementById('$id').innerHTML = {$this->uniqname}$id.toString();
                                 ".((strlen($openTo) > 0) ? $openTo : "")."

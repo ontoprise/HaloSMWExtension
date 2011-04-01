@@ -293,15 +293,8 @@ function dTree(objName, className) {
 	this.selectedFound = false;
 	this.completed = false;
 	this.className = className;
-	this.smwAjaxUrl = null;
+	this.smwAjaxUrl = wgServer + wgScript + '?action=ajax&rs=smw_treeview_getTree&rsargs[]=';
 	this.callInitOnload = null;
-};
-
-// setup for smw+
-dTree.prototype.setupSmwUrl = function(url) {
-	this.smwAjaxUrl = url;
-	if (url.substr(-1) != "/") this.smwAjaxUrl += "/";
-	this.smwAjaxUrl += 'index.php?action=ajax&rs=smw_treeview_getTree&rsargs[]=';
 };
 
 // Adds a new node to the node array
@@ -391,12 +384,16 @@ dTree.prototype.isMaxDepth = function(id) {
 dTree.prototype.refresh = function() {
 
 	// flush cache vars although this shouldn't be neccessary
-	refreshOpenNodes = new Array();
-    refreshRootNodes = new Array();
+	var refreshOpenNodes = new Array();
+    var refreshRootNodes = new Array();
 
 	// get all dynamic root nodes
 	for (var i = 0; i < this.aSmw.length; i++)
 		refreshRootNodes.push(this.aSmw[i].id);
+
+    // if there is no dynamic node, then refresh the entire tree
+    if (refreshRootNodes.length == 0)
+        refreshRootNodes.push(0);
 
 	// these nodes will be fetched automatically and must
 	// marked as to be refreshed
@@ -459,7 +456,7 @@ dTree.prototype.refresh = function() {
 	// in dtreeHandleResponseRefresh() triggered by the http requests.
 	// set refreshDtree to true, later the dtree object is stored there
 	// this variable is used for locking.
-	drn = refreshRootNodes.shift();
+	var drn = refreshRootNodes.shift();
 	if (drn != null) {
 		refreshDtree = true;
 		this.loadFirstLevel(drn, 'r');
@@ -1158,7 +1155,7 @@ dtreeHandleResponseRefresh = function() {
    		
    		// search if this node already exists, only needed on refresh
    		found = null;
-        if (!dTree.initOnload) {
+        if (!dTree.callInitOnload) {
             for (var k = 0; k < dTree.aNodes.length; k++) {
                 var cName = dTree.aNodes[k].getPageName();
                 if (dTree.aNodes[k].pid == cParent && cName == cn.link.replace('%3A', ':') &&
@@ -1184,7 +1181,7 @@ dtreeHandleResponseRefresh = function() {
     }
 	
 	// search for old nodes that are not there anymore, only needed on refresh
-    if (!dTree.initOnload) {
+    if (!dTree.callInitOnload) {
         for (var j = 0; j < foundParents.length; j++) {
             for (var k = 0; k < dTree.aNodes.length; k++) {
     			if (dTree.aNodes[k].pid == foundParents[j] && dTree.aNodes[k]._refresh == 1) {
