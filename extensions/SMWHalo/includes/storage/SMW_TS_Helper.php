@@ -60,6 +60,8 @@ class WikiTypeToXSD {
 	public static function isPageType($wikiType) {
 		switch($wikiType) {
 			//only relevant for schema import
+
+			case '__spf':
 			case '_wpc' :
 			case '_wpf' :
 			case '_wpp' :
@@ -107,23 +109,23 @@ class TSHelper {
 		}
 		return $localname;
 	}
-	
+
 	/**
 	 * Converts a URI into a Title object.
-	 * 
+	 *
 	 * If $forceTitle is true, a title object is always returned, even
 	 * in cases where the URI could not be converted because it matches no wiki URI
 	 * or a localname could not be found.
-	 * 
+	 *
 	 * If $forceTitle is false, the URI is returned unchanged in these cases.
-	 * 
+	 *
 	 * @param string $sv URI
 	 * @param boolean $forceTitle
-	 * 
+	 *
 	 * @return Title
 	 */
 	public static function getTitleFromURI($sv, $forceTitle = true) {
-        
+
 		if (is_null($sv)) {
 			// URI is null
 			if ($forceTitle) {
@@ -131,7 +133,7 @@ class TSHelper {
 			}
 			return NULL;
 		}
-		
+
 		// check if it is a wiki URI
 		foreach (TSNamespaces::$ALL_NAMESPACES as $nsIndsex => $ns) {
 			if (stripos($sv, $ns) === 0) {
@@ -154,10 +156,10 @@ class TSHelper {
 			return Title::makeTitle($ns, $local);
 
 		} else {
-			
+				
 			// any other URI
 			if ($forceTitle) {
-				if (strpos($sv, "obl:") === 0) {
+				if (self::isFunctionalOBLTerm($sv)) {
 					// function term on OBL
 					$local = TSHelper::convertOBLFunctionalTerm($sv);
 				} else if (strpos($sv, "#") !== false) {
@@ -166,9 +168,11 @@ class TSHelper {
 				} else if (strrpos($sv, "/") !== false) {
 					// consider part after / as localname
 					$local = substr($sv, strrpos($sv, "/")+1);
-				} 
-				// make sure to return a Title
-				return Title::newFromText("not interpretable URI", NS_MAIN);
+				} else {
+					// make sure to return a Title
+					return $local = "not interpretable URI";
+				}
+				return Title::newFromText($local, NS_MAIN);
 			} else {
 				// return URI unchanged.
 				return $sv;
@@ -180,7 +184,7 @@ class TSHelper {
 
 	public static function convertOBLFunctionalTerm($uri) {
 		$uri = urldecode($uri);
-		
+
 		preg_match('/\(([^)]*)\)/',$uri, $matches);
 		if (count($matches) > 1) {
 			$uri = $matches[1];
@@ -240,6 +244,10 @@ class TSHelper {
 		if (stripos($uri, TSNamespaces::$UNKNOWN_NS) === 0) return true;
 
 		return false;
+	}
+	
+	public static function isFunctionalOBLTerm($uri) {
+		return strpos($uri, "obl:") === 0;
 	}
 
 	/**
@@ -378,21 +386,21 @@ class TSNamespaces {
 		foreach(self::$ALL_NAMESPACE_KEYS as $nsKey) {
 			$nsText = $wgContLang->getNSText($nsKey);
 			if ($nsKey == NS_MAIN) {
-			    $prefix = "a";
-			    $nsText = "a";
+				$prefix = "a";
+				$nsText = "a";
 			} else if ($nsKey == NS_PROJECT) {
 				$prefix = "wiki";
 			} else if ($nsKey == NS_PROJECT_TALK) {
-                $prefix = "wiki_talk";
-            } else {
+				$prefix = "wiki_talk";
+			} else {
 				$prefix = str_replace(" ","_",strtolower($nsText));
 			}
 			if (empty($prefix)) continue;
-			
+				
 			// check for validity of prefix
 			preg_match('/\w([\w_0-9-]|\.[\w_0-9-])*/', $prefix, $matches);
 			if (isset($matches[0]) && $matches[0] != $prefix) continue;
-			
+				
 			$nsText = str_replace(" ","_",strtolower($nsText));
 			$uri = $smwgTripleStoreGraph."/$nsText/";
 			self::$ALL_PREFIXES .= "\nPREFIX $prefix:<$uri> ";

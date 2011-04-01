@@ -919,7 +919,7 @@ class OB_StorageTS extends OB_Storage {
 			$values = array();
 			foreach($b->children()->uri as $sv) {
 				$object = TSHelper::getTitleFromURI((string) $sv);
-				if (TSHelper::isLocalURI((string) $sv)) {
+				if (TSHelper::isLocalURI((string) $sv) || TSHelper::isFunctionalOBLTerm((string) $sv)) {
 					$value = SMWDataValueFactory::newPropertyObjectValue($predicate, $object);
 					$uri = (string) $sv;
 				} else {
