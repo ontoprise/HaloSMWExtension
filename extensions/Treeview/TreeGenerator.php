@@ -587,6 +587,8 @@ abstract class TreeviewStorage {
      * is returned but an array of elements as associative arrays. This is
      * later used to be converted into a json compatible string that can be
      * easily parsed by javascript.
+     * Also in addition here we must check wether the node (page) exists or if
+     * it must be displayed as a red link
      *
      * @return array	  $tree of elements as an asoc array (name, link)
      */
@@ -605,6 +607,10 @@ abstract class TreeviewStorage {
 		      'depth' => $item[1],
 		    );
 		    if (in_array($item[0], $this->leafNodes)) $node['leaf'] = 1;
+            // leafs are never red links
+            else if ($this->elementProperties[$item[0]]->isRedLink()) {
+                $node['redlink'] = $this->getRedlinkStr($node['name']);
+            }
 		    $tree[] = $node;
 		    unset($item);
 	    }
@@ -682,6 +688,41 @@ abstract class TreeviewStorage {
 		}
         return $nodesToCheck;
     }
+
+    /**
+     * When a redlink must be created, some hooks may come into effect. Therefore
+     * let the parser create a redlink. We will then use the returned string and
+     * replace it with the correct pagename
+     *
+     * @global <type> $wgParser
+     * @global <type> $wgTitle
+     * @staticvar <type> $redlink
+     * @param string $text
+     * @return string
+     */
+    private function getRedlinkStr($text) {
+        static $redlink;
+
+        if ($redlink) {
+            return str_replace('__%__', $text, $redlink);
+        }
+
+    	global $wgParser;
+        $page = '[[FFFFFFFWWWWFFFFFFFF]]';
+       	if ( ($wgParser->getTitle() instanceof Title) && ($wgParser->getOptions() instanceof ParserOptions) ) {
+        	$result = $wgParser->recursiveTagParse($page);
+    	} else {
+        	global $wgTitle;
+            $popt = new ParserOptions();
+            $pout = $wgParser->parse($page, $wgTitle, $popt);
+    		$result = $pout->getText();
+        }
+        $redlink = str_replace('FFFFFFFWWWWFFFFFFFF', '__%__', $result);
+        $redlink = preg_replace('/^(.*?)<a/', '<a', $redlink);
+        $redlink = preg_replace('/<\/a>(.*?)$/', '</a>', $redlink);
+        return str_replace('__%__', $text, $redlink);
+    }
+
 
 }
 
@@ -1651,6 +1692,12 @@ class ElementProperty {
 	public function setDisplayProperty($v) { $this->displayProperty = $v; }
 	public function setSortProperty($v) { $this->sortProperty = $v; }
     public function setLinkValue($v) { $this->linkValue = $v; }
+
+    public function isRedLink() {
+        $title = Title::makeTitle($this->ns, $this->title);
+        if (! $title) return true; // invalid title, will be no page anyway
+        return !$title->exists();
+    }
 
 	public function getLink() {
 		global $wgContLang;
