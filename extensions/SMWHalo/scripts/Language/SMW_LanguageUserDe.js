@@ -160,7 +160,7 @@ var wgUserLanguageStrings = {
 	// Autocompletion
 	'AUTOCOMPLETION_HINT'     : 'Drücken Sie Ctrl+Alt+Space um die Auto-completion zu benutzen. (Ctrl+Space im IE)',
 	'WW_AUTOCOMPLETION_HINT'  : '- wird nur im Wikitext Modus unterstützt.',
-	'AC_CLICK_TO_DRAG'        : 'Auto-Completion - Hier zum Verschieben klicken',
+	'AC_CLICK_TO_DRAG'        : 'Auto-Completion',
     'AC_MORE_RESULTS_AVAILABLE' : 'Zuviele Treffer gefunden...',
     'AC_MORE_RESULTS_TOOLTIP' : 'Zuviele Treffer. Bitte erweitern Sie die Suchanfrage.',
     'AC_NO_RESULTS': 'Keine Treffer',

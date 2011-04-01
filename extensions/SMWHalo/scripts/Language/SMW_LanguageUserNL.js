@@ -163,7 +163,7 @@ var wgUserLanguageStrings = {
 	// Autocompletion
 	'AUTOCOMPLETION_HINT'     : 'Druk Ctrl+Alt+Space om auto-completion te gebruiken. (Ctrl+Space in IE)',
         'WW_AUTOCOMPLETION_HINT'  : '- in wiki text mode only.',
-	'AC_CLICK_TO_DRAG'        : 'Auto-Completion - Klik hier om te slepen',
+	'AC_CLICK_TO_DRAG'        : 'Auto-Completion',
     'AC_MORE_RESULTS_AVAILABLE' : 'Too much results found...',
     'AC_MORE_RESULTS_TOOLTIP' : 'Too many results. Please expand your search term to get less results.',
     'AC_NO_RESULTS': 'No results',
