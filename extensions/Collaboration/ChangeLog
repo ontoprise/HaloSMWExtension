@@ -6,7 +6,9 @@ VERSION 1.31
 	FR #13057: Information about last edit of a comment
   CHANGES:
 	FR #13548: Small GUI improvements
+	Issue 12823: Added average rating per article
   BUGFIXES:
+	Issue 14050: Changed GUI regarding the user edit right.
 
 VERSION 1.30
 
