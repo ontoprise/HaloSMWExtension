@@ -12,11 +12,23 @@ class TFTabularFormQueryPrinter extends SMWResultPrinter {
 		return 'Tabular Form';
 	}
 	
+	public function getMimeType( $res ) {
+		//This is a trick to force SMW to also show TF if no results exist
+		
+		if($res->getCount() == 0 ){
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
 	/*
 	 * Returns the HTML output of this query printer
 	 */
 	protected function getResultText( $queryResult, $outputMode ) {
 		$this->isHTML = true;
+		
+		//echo('<pre>'.print_r($queryResult, true).'</pre>');
 		
 		$tabularFormData = new TFTabularFormData($queryResult, $this->m_params, $this->mLinker,
 			$this->linkFurtherResults( $queryResult));
@@ -30,6 +42,8 @@ class TFTabularFormQueryPrinter extends SMWResultPrinter {
 			//the Ajax loader HTML must be displayed
 			$html = $tabularFormData->getAjaxLoaderHTML(); 
 		}
+		
+		//return array( $html . $this->mErrorList, 'noparse' => true, 'isHTML' => true );
 		
 		return $html;
 	}
