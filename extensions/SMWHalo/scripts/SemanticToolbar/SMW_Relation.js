@@ -819,6 +819,7 @@ updateTypeHint: function(elementID) {
 		}
 		hint = cats + hint;
 	}
+	
 	relation.setAttribute('constraints', hint);
 //	console.log("updateTypeHint: "+hint);
 	
@@ -838,6 +839,8 @@ updateInstanceTypeHint: function(elementID) {
 		}
 	}
 	instance.setAttribute('constraints', hint);
+	instance.setAttribute('pastens', "true");
+	
 //	console.log("updateInstanceTypeHint: "+hint);
 	
 },

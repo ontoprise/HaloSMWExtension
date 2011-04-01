@@ -10,7 +10,8 @@ VERSION 1.5.3
 	CHANGES:
 
 	BUGFIXES
-		Bugfix 14068 - Special:Version must list SMWhalo as Semantic Extension
+		14068 - Special:Version must list SMWhalo as Semantic Extension
+		14108 - Auto-completion not as expected
     
 
 VERSION 1.5.2
