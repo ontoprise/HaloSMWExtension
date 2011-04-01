@@ -428,7 +428,7 @@ TermImportPage.prototype = {
 							}
 							else {
 								property_response += "<tr><td class=\"mytd\" style=\"width:10px\"><input type=\"checkbox\" name=\"checked_properties\" value=\""+
-									property_name + "\"></td><td class=\"mytd\">" + property_name + "</td></tr>";
+									property_name + "\" checked=\"true\"/></td><td class=\"mytd\">" + property_name + "</td></tr>";
 							}
 						}
 					}	
