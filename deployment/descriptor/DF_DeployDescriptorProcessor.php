@@ -204,8 +204,8 @@ class DeployDescriptionProcessor {
 		$rootDir = self::makeUnixPath(dirname($this->ls_loc));
 		$localPackages = PackageRepository::getLocalPackages($rootDir.'/extensions');
 
-		foreach($this->dd_parser->getPatches($localPackages) as $patch) {
-
+		foreach($this->dd_parser->getPatches($localPackages) as $tuple) {
+			list($patch, $mayfail) = $tuple;
 			$instDir = trim(self::makeUnixPath($this->dd_parser->getInstallationDirectory()));
 			if (substr($instDir, -1) != '/') $instDir .= "/";
 			$patch = $instDir.self::makeUnixPath($patch);
@@ -221,6 +221,8 @@ class DeployDescriptionProcessor {
 			exec("php \"".$rootDir."/deployment/tools/patch.php\" -p \"".$rootDir."/".$patch."\" -d \"".$rootDir."\" --dry-run --onlypatch", $out, $ret);
 			print "done.]";
 			$patchFailed = false;
+			
+			$out = $this->eliminateWhichMayFail($out, $mayfail);
 			foreach($out as $line) {
 				if (strpos($line, "FAILED") !== false) {
 					$patchFailed = true;
@@ -230,9 +232,12 @@ class DeployDescriptionProcessor {
 			// ask user to continue/rollback in case of failed patches
 			$result = 'y';
 			if (!is_null($userCallback) && $patchFailed) {
-				foreach($out as $line) print "\n".$line; // show failures
-				print "\n";
-				$userCallback->getUserConfirmation("Some patches failed. Apply anyway?", $result);
+
+				if (count($out) > 0) {
+					foreach($out as $line) print "\n".$line; // show failures
+					print "\n";
+					$userCallback->getUserConfirmation("Some patches failed. Apply anyway?", $result);
+				}
 			}
 
 			switch($result) {
@@ -255,6 +260,33 @@ class DeployDescriptionProcessor {
 
 
 		}
+	}
+
+	/**
+	 * Checks the output of GNU patch and eliminates those hunks which
+	 * may fail due to the patch spec in the deploy descriptor.
+	 *
+	 * @param array of string $out Patch output in lines
+	 * @param string $mayfail Filenames of files to be patched but which may fail (comma separated).
+	 * 
+	 * @return array of string Cleaned-up patch output.
+	 */
+	private function eliminateWhichMayFail($out, $mayfail) {
+		if (empty($mayfail)) return $out; // do nothing if no patches may fail.
+		$mayFailInFiles = explode(",", $mayfail);
+		$failedPatches = array();
+		foreach($out as $line) {
+			if (strpos($line, "FAILED") !== false) {
+				$failed = true;
+				foreach($mayFailInFiles as $file) {
+					if (strpos($line, $file.".rej") !== false) {
+						$failed = false;
+					}
+				}
+				if ($failed) $failedPatches[] = $line;
+			}
+		}
+		return $failedPatches;
 	}
 
 	/**
@@ -293,9 +325,9 @@ class DeployDescriptionProcessor {
 				$this->logger->warn("Patch failed: '$patch'. Output: ".Tools::arraytostring($out));
 			}
 			print "done.]";
-			
+
 			// clear patch.php output
-            $out = array();
+			$out = array();
 		}
 	}
 
@@ -309,8 +341,8 @@ class DeployDescriptionProcessor {
 		$rootDir = self::makeUnixPath(dirname($this->ls_loc));
 		$localPackages = PackageRepository::getLocalPackages($rootDir.'/extensions');
 
-		foreach($this->dd_parser->getPatches($localPackages) as $patch) {
-
+		foreach($this->dd_parser->getPatches($localPackages) as $tuple) {
+			list($patch, $mayfail) = $tuple;
 			$instDir = trim(self::makeUnixPath($this->dd_parser->getInstallationDirectory()));
 			if (substr($instDir, -1) != '/') $instDir .= "/";
 			$patch = $instDir.self::makeUnixPath($patch);
@@ -325,6 +357,8 @@ class DeployDescriptionProcessor {
 			exec("php \"".$rootDir."/deployment/tools/patch.php\" -r -p \"".$rootDir."/".$patch."\" -d \"".$rootDir."\" --dry-run --onlypatch", $out, $ret);
 			print "done.]";
 			$patchFailed = false;
+			
+			$out = $this->eliminateWhichMayFail($out, $mayfail);
 			foreach($out as $line) {
 				if (strpos($line, "FAILED") !== false) {
 					$patchFailed = true;

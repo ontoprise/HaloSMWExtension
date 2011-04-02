@@ -249,8 +249,10 @@ class DeployDescriptor {
 				$ext = trim((string) $p->attributes()->ext);
 				$from = trim((string) $p->attributes()->from);
 				$to = trim((string) $p->attributes()->to);
+				$mayfail = trim((string) $p->attributes()->mayfail);
+				
 				if (is_null($patchFile) || $patchFile == '') throw new IllegalArgument("Patch 'file'-atrribute missing");
-				$this->patches[] = array(array($ext, $from, $to), $patchFile);
+				$this->patches[] = array(array($ext, $from, $to), array($patchFile, $mayfail));
 			}
 		}
 
