@@ -221,7 +221,7 @@ class DeployDescriptor {
 					case 'require': $this->configs[] = new RequireConfigElement($p);break;
 					case 'php': $this->configs[] = new PHPConfigElement($p);break;
 					case 'replace': $this->configs[] = new ReplaceConfigElement($p);break;
-					case 'exclude': $this->excludeFiles[] = $p->attributes()->file;break;
+					case 'exclude': $this->excludeFiles[] = (string) $p->attributes()->file;break;
 				}
 			}
 		}
