@@ -1,41 +1,45 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <deploydescriptor>
-    <global>
-        <version>131</version>
-        <patchlevel>0</patchlevel>
-        <id>deployment</id>
-        <vendor>Ontoprise GmbH</vendor>
-        <maintainer>Ontoprise GmbH</maintainer>
-        <instdir>deployment</instdir>
-        <description>
-          Eases the installation and updating of extensions
+	<global>
+		<version>131</version>
+		<patchlevel>0</patchlevel>
+		<id>deployment</id>
+		<vendor>Ontoprise GmbH</vendor>
+		<maintainer>Ontoprise GmbH</maintainer>
+		<instdir>deployment</instdir>
+		<description>
+			Eases the installation and updating of extensions
         </description>
-        <helpurl>http://smwforum.ontoprise.com/smwforum/index.php/Deployment_Framework</helpurl>
-        <dependencies>
-            <dependency from="1120" to="1169">mw</dependency>
-        </dependencies>
-    </global>
-    <codefiles>
-    
-    </codefiles>
-    <wikidumps>
-        <!-- empty -->
-    </wikidumps>
-    <resources>
-        <!-- empty -->
-    </resources>
-    <configs>
+		<helpurl>http://smwforum.ontoprise.com/smwforum/index.php/Deployment_Framework
+		</helpurl>
+		<dependencies>
+			<dependency from="1120" to="1169">mw</dependency>
+		</dependencies>
+	</global>
+	<codefiles>
 
-        <new>
-            <require name="deploymentframework"
-                file="deployment/Deployment.php" />
-                
-            <!--  Normally exluding files in only for updates
-            but in this case it is ok, because you must have DF
-            when you install it new.  -->    
+	</codefiles>
+	<wikidumps>
+		<!-- empty -->
+	</wikidumps>
+	<resources>
+		<!-- empty -->
+	</resources>
+	<configs>
+
+		<new>
+			<require name="deploymentframework" file="deployment/Deployment.php" />
+
+			<!-- Normally exluding files in only for updates but in this case it is 
+				ok, because you must have DF when you install it new. -->
 			<exclude file="deployment/tools/repositories" />
-			<exclude file="deployment/settings.php" />    
-        </new>
-      
-    </configs>
+			<exclude file="deployment/settings.php" />
+		</new>
+
+		<update from="130">
+			<exclude file="deployment/tools/repositories" />
+			<exclude file="deployment/settings.php" />
+		</update>
+
+	</configs>
 </deploydescriptor>
