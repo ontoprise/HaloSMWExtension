@@ -386,6 +386,11 @@ protected $smwUserMessages = array(
 
 	'smw_tsa_tscinfo' => 'Triplestore Connector information',
     'smw_tsa_tscversion' => 'TSC Version',
+
+	// SMWHaloAdmin
+	'smwhaloadmin' => 'SMWHalo Administration',
+	'smw_haloadmin_description' => 'Diese Seite initialisiert die SMWHalo-Extension. Drücke Sie Initialize.',
+	
     'smw_ts_notconnected' => 'TSC nicht erreichbar. Prüfe Server unter: $1',
     'asktsc' => 'Ask triplestore',
 	'smw_tsc_query_not_allowed' => 'Leere Query nicht erlaubt.',

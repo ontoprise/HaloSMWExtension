@@ -56,6 +56,12 @@ class SMWSemanticStoreSQL extends SMWSemanticStore {
 		$this->setupURIMapping($verbose);
 		$this->createPreDefinedPages($verbose);
 		DBHelper::reportProgress(" ... done!\n",$verbose);
+		return true;
+	}
+
+	function isInitialized() {
+		$db =& wfGetDB( DB_SLAVE );
+		return $db->tableExists('smw_logging') && $db->tableExists('smw_urimapping');
 	}
 
 	function drop($verbose) {

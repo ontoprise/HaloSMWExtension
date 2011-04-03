@@ -419,6 +419,11 @@ en cliquant sur les grosses flà¨ches situées entre les colonnes.",
     'asktsc' => 'Ask triplestore',
     'smw_tsc_query_not_allowed' => 'Empty query not allowed when querying TSC.',
     
+    // SMWHaloAdmin
+	'smwhaloadmin' => 'SMWHalo Administration',
+	'smw_haloadmin_description' => 'This page initializes the database for the SMWHalo extension. Press Initialize.',
+	
+    
     // Simple Rules formula parser
     'smw_srf_expected_factor' => 'Une fonction, variable, constante ou accolade est attendue prà¨s de $1',
     'smw_srf_expected_comma' => 'Une virgule est attendue prà¨s de $1',

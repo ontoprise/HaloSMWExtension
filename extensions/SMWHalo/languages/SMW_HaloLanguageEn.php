@@ -398,6 +398,9 @@ clicking the big arrows between the columns.',
 	'asktsc' => 'Ask triplestore',
 	'smw_tsc_query_not_allowed' => 'Empty query not allowed when querying TSC.',
 	
+	// SMWHaloAdmin
+	'smwhaloadmin' => 'SMWHalo Administration',
+	'smw_haloadmin_description' => 'This page initializes the database for the SMWHalo extension. Press Initialize.',
 	
 	// Derived facts
 	'smw_df_derived_facts_about' => 'Derived facts about $1',
