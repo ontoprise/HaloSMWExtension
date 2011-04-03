@@ -2,9 +2,9 @@
 /**
  * @file
  * @ingroup DFMaintenance
- * 
+ *
  * Extracts deploy descriptors and writes them to a given location.
- * 
+ *
  * @author: Kai K�hn / ontoprise / 2009
  */
 
@@ -44,7 +44,7 @@ function getLocalPackages($ext_dir) {
 		}
 
 	}
-	 
+
 	return $localPackages;
 }
 
@@ -55,15 +55,15 @@ for( $arg = reset( $argv ); $arg !== false; $arg = next( $argv ) ) {
 	if ($arg == '-o') {
 		$outputDir = next($argv);
 		if (substr($outputDir,-1)!='/'){
-	        $outputDir .= '/';
-	    }
+			$outputDir .= '/';
+		}
 		continue;
 	}
-	
-    if ($arg == '--latest') {
-        $latest = true;
-        continue;
-    }
+
+	if ($arg == '--latest') {
+		$latest = true;
+		continue;
+	}
 }
 
 if (!isset($outputDir)) {
@@ -80,17 +80,36 @@ if (Tools::isWindows() && $latest) {
 $outputDir = str_replace("\\", "/", $outputDir);
 if (substr($outputDir, -1) != "/") $outputDir .= "/";
 
-$rootDir = realpath(dirname(__FILE__)."/../../../extensions");
+$rootDir = realpath(dirname(__FILE__)."/../../../");
 $rootDir = str_replace("\\", "/", $rootDir);
 if (substr($rootDir, -1) != "/") $rootDir .= "/";
 
-
-$localPackages = getLocalPackages($rootDir);
+// create DD for extensions
+$localPackages = getLocalPackages($rootDir."/extensions");
 foreach($localPackages as $dd_file => $dd) {
+	createEntry($dd, $rootDir."/extensions/".$dd_file, $outputDir, $latest, $noSymlink);
+}
+
+// create DD for DF
+$dd = new DeployDescriptor(file_get_contents(realpath($rootDir."/deployment/deploy.xml")));
+createEntry($dd, $rootDir."/deployment/deploy.xml", $outputDir, $latest, $noSymlink);
+
+print "\nDONE.\n\n";
+
+/**
+ * Creates a DD entry for a deployed entity. 
+ * 
+ * @param DeployDescriptor $dd
+ * @param string $dd_file Full path of deploy.xml
+ * @param string $outputDir Output directory
+ * @param boolean $latest
+ * @param boolean $noSymlink
+ */
+function createEntry($dd, $dd_file, $outputDir, $latest, $noSymlink) {
 	$version = $dd->getVersion();
 	$targetFile = str_replace("deploy.xml", "deploy-".$version.".xml", $dd_file);
 	Tools::mkpath($outputDir.$dd->getID());
-	copy($rootDir.$dd_file, $outputDir.$dd->getID()."/deploy-".$version.".xml");
+	copy($dd_file, $outputDir.$dd->getID()."/deploy-".$version.".xml");
 	print "\nCreated: $outputDir$targetFile";
 
 	if (!$noSymlink && $latest) {

@@ -38,13 +38,15 @@
 				<include name="INSTALL" />
 				<include name="settings.php" />
 				<include name="Deployment.php" />
+				<include name="deploy.xml" />
 			</fileset>
+		
 		</copy>
 		<zip destfile="bin/smwhalo-deploy.zip" basedir="bin/zip" />
 		<delete dir="bin/zip" />
 		<exec executable="php">
 			<arg value="../../buildtools/renameDeployableDF.php" />
-			<arg value="deploy.xml" />
+			<arg value="../deploy.xml" />
 			<arg value="bin/smwhalo-deploy.zip" />
 		</exec>
 	</target>
@@ -53,13 +55,13 @@
 		<property environment="env" />
 		<exec executable="php">
 			<arg value="../../buildtools/replaceVersionHintDF.php" />
-			<arg value="deploy.xml" />
+			<arg value="../deploy.xml" />
 			<arg value="../Deployment.php" />
 			<arg value="${env.BUILD_NUMBER}" />
 		</exec>
 		<exec executable="php">
 			<arg value="../../buildtools/replaceVersionHintDF.php" />
-			<arg value="deploy.xml" />
+			<arg value="../deploy.xml" />
 			<arg value="../tools/smwadmin/smwadmin.php" />
 			<arg value="${env.BUILD_NUMBER}" />
 		</exec>

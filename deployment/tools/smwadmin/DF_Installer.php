@@ -287,8 +287,9 @@ class Installer {
 		foreach($localPackages as $tl_ext) {
 
 			$dd = PackageRepository::getLatestDeployDescriptor($tl_ext->getID());
+			
 			if ($dd->getVersion() > $localPackages[$dd->getID()]->getVersion()
-			|| $dd->getPatchlevel() > $localPackages[$dd->getID()]->getPatchlevel()) {
+			|| ($dd->getVersion() == $localPackages[$dd->getID()]->getVersion() && $dd->getPatchlevel() > $localPackages[$dd->getID()]->getPatchlevel())) {
 				$this->collectDependingExtensions($dd, $updatesNeeded, $localPackages, true);
 				$updatesNeeded[] = array($dd, $dd->getVersion(), $dd->getVersion());
 			}
@@ -491,7 +492,7 @@ class Installer {
 
 			// unzip
 			$this->logger->info("Unzip $id-".$desc->getVersion().".zip");
-			$this->unzip($id, $desc->getVersion());
+			$this->unzip($desc);
 
 			$this->logger->info("Apply configs for $id-".$desc->getVersion().".zip");
 			$desc->applyConfigurations($this->rootDir, false, $fromVersion, $this);
@@ -635,13 +636,19 @@ class Installer {
 	 * @param string $id
 	 * @param int $version
 	 */
-	private function unzip($id, $version) {
-
+	private function unzip($dd) {
+		$id = $dd->getID();
+	 	$version =	$dd->getVersion();
+	 	$excludedFiles = $dd->getExcludedFiles();
+	 	$excludedFilesString = "";
+	 	if (count($excludedFiles) > 0) {
+	 		$excludedFilesString = "-x ".implode(" ", $excludedFiles); // FIXME: quote, could contain whitespaces
+	 	} 
 		print "\n[unzip ".$id."-$version.zip...";
 		if (Tools::isWindows()) {
-			exec('unzip -o "'.$this->tmpFolder."\\".$id."-$version.zip\" -d \"".$this->rootDir.'"');
+			exec('unzip -o "'.$this->tmpFolder."\\".$id."-$version.zip\" -d \"".$this->rootDir.'" '.$excludedFilesString);
 		} else {
-			exec('unzip -o "'.$this->tmpFolder."/".$id."-$version.zip\" -d \"".$this->rootDir.'"');
+			exec('unzip -o "'.$this->tmpFolder."/".$id."-$version.zip\" -d \"".$this->rootDir.'" '.$excludedFilesString);
 		}
 		print "done.]";
 	}

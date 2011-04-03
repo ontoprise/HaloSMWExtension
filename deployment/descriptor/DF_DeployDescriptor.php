@@ -43,6 +43,7 @@ class DeployDescriptor {
 	var $oc_resources; // resources which get only copied
 	var $configs;   // config elements concerning localsettings changes
 	var $removeAllConfigs;
+	var $excludeFiles; // all files excluded during unzip
 
 	var $successors; // extensions which are successors of this one in localsettings
 	var $userReqs;  // variables which need to be defined by the user
@@ -137,6 +138,14 @@ class DeployDescriptor {
 	public function getUninstallScripts() {
 		return $this->uninstall_scripts;
 	}
+	
+	/**
+	 * Returns excluded files.
+	 * @return Array of string (full path of files within zip)
+	 */
+	public function getExcludedFiles() {
+		return $this->excludeFiles;
+	}
 
 	/**
 	 * Creates/Updates the config element data depending on the given version.
@@ -149,7 +158,7 @@ class DeployDescriptor {
 
 		// initialize (or reset) config data
 		$this->configs = array();
-
+		$this->excludeFiles = array();
 		$this->successors = array();
 		$this->install_scripts = array();
 		$this->uninstall_scripts = array();
@@ -212,6 +221,7 @@ class DeployDescriptor {
 					case 'require': $this->configs[] = new RequireConfigElement($p);break;
 					case 'php': $this->configs[] = new PHPConfigElement($p);break;
 					case 'replace': $this->configs[] = new ReplaceConfigElement($p);break;
+					case 'exclude': $this->excludeFiles[] = $p->attributes()->file;break;
 				}
 			}
 		}

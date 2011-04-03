@@ -390,6 +390,11 @@ class PackageRepository {
 		}
 		// create special deploy descriptor for Mediawiki itself
 		self::$localPackages['mw'] = self::createMWDeployDescriptor(realpath($ext_dir."/.."));
+		
+		// read deploy descriptor of DF
+		$dd = new DeployDescriptor(file_get_contents(realpath($ext_dir."/../deployment/deploy.xml")));
+		self::$localPackages[$dd->getID()] = $dd;
+		
 		return self::$localPackages;
 	}
 

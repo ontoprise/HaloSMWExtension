@@ -3,7 +3,7 @@
     <global>
         <version>131</version>
         <patchlevel>0</patchlevel>
-        <id>deploymentframework</id>
+        <id>deployment</id>
         <vendor>Ontoprise GmbH</vendor>
         <maintainer>Ontoprise GmbH</maintainer>
         <instdir>deployment</instdir>
@@ -29,6 +29,12 @@
         <new>
             <require name="deploymentframework"
                 file="deployment/Deployment.php" />
+                
+            <!--  Normally exluding files in only for updates
+            but in this case it is ok, because you must have DF
+            when you install it new.  -->    
+			<exclude file="deployment/tools/repositories" />
+			<exclude file="deployment/settings.php" />    
         </new>
       
     </configs>

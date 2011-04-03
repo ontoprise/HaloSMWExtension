@@ -216,7 +216,7 @@ class ConsistencyChecker {
 			global $wgVersion;
 			$version = intval(str_replace(".","",$wgVersion));
 		}
-		
+
 		// only check for AdminSettings.php if MW version is < 1.16
 		if ($version < 1160) {
 			$this->statusLog[] = $this->out(array("\n","Does AdminSettings.php exist?...", "\n"), $format);
@@ -619,8 +619,11 @@ class ConsistencyChecker {
 		// change LocalSetings.php
 		$startIndex = strpos($ls, "/SemanticMediaWiki/includes/SMW_Settings.php");
 		if ($startIndex === false) {
-			$this->statusLog[] = $this->out(array("\n","\t[FAILED]","Adding DF tags to LocalSettings.php not possible.", "\n"), $format);
-			return false;
+			$startIndex = strpos($ls, "/SemanticMediaWiki/SemanticMediaWiki.php");
+			if ($startIndex === false) {
+				$this->statusLog[] = $this->out(array("\n","\t[FAILED]","Adding DF tags to LocalSettings.php not possible.", "\n"), $format);
+				return false;
+			}
 		}
 		$startIndex = strrpos(substr($ls,0, $startIndex), "\n");
 		$endIndex = strpos($ls, "enableSemantics");
@@ -666,14 +669,20 @@ class ConsistencyChecker {
 		// change LocalSetings.php
 		$startIndex = strpos($ls, "/SemanticForms/includes/SF_Settings.php");
 		if ($startIndex === false) {
-			$this->statusLog[] = $this->out(array("\n","\t[FAILED]","Adding DF tags to LocalSettings.php not possible.", "\n"), $format);
-			return false;
+			$startIndex = strpos($ls, "/SemanticForms/SemanticForms.php");
+			if ($startIndex === false) {
+				$this->statusLog[] = $this->out(array("\n","\t[FAILED]","Adding DF tags to LocalSettings.php not possible.", "\n"), $format);
+				return false;
+			}
 		}
 		$startIndex = strrpos(substr($ls,0, $startIndex), "\n");
 		$endIndex = strpos($ls, "/SemanticForms/includes/SF_Settings.php");
 		if ($endIndex === false) {
-			$this->statusLog[] = $this->out(array("\n","\t[FAILED]","Adding DF tags to LocalSettings.php not possible.", "\n"), $format);
-			return false;
+			$endIndex = strpos($ls, "/SemanticForms/SemanticForms.php");
+			if ($endIndex === false) {
+				$this->statusLog[] = $this->out(array("\n","\t[FAILED]","Adding DF tags to LocalSettings.php not possible.", "\n"), $format);
+				return false;
+			}
 		}
 		$endIndex = strpos(substr($ls,$endIndex), "\n")+$endIndex;
 
