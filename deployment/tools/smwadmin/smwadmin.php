@@ -344,7 +344,8 @@ if (count($ontologiesToInstall) > 0) {
 	// requires a wiki environment, so check and include a few things more
 	checkWikiContext();
 	require_once($rootDir.'/tools/smwadmin/DF_OntologyInstaller.php');
-
+    
+	global $rootDir;
 	foreach($ontologiesToInstall as $filePath) {
 
 		$oInstaller = OntologyInstaller::getInstance(realpath($rootDir."/../"));
@@ -354,6 +355,11 @@ if (count($ontologiesToInstall) > 0) {
 		if (!isset($ontologyID)) {
 			$fileName = basename($filePath);
 			$bundleID = reset(explode(".", $fileName));
+		}
+		
+		// make path absolute is given as relative
+		if (file_exists($rootDir."/tools/".$filePath)) {
+			$filePath = $rootDir."/tools/".$filePath;
 		}
 
 		$oInstaller->installOntology($bundleID, $filePath, $confirm, false, $dfgForce);
