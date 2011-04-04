@@ -709,6 +709,8 @@ function ToggleCKEditor( mode, objId ){
         SRCtextarea.style.visibility = 'visible';
         if (CKEDITOR.plugins.smwtoolbar) {
             CKEDITOR.plugins.smwtoolbar.stbIsActive = false;
+            smwhgAnnotationHints = new AnnotationHints();
+            propToolBar = new PropertiesToolBar();
             AdvancedAnnotation.unload();
             AdvancedAnnotation.create();
             stb_control.stbconstructor();
