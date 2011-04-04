@@ -21,6 +21,11 @@ class ASFAdminSpecial extends SpecialPage {
 	function execute( $query ) {
 		global $wgOut;
 		
+		SFUtils::addJavascriptAndCSS();
+		
+		global $sfgScriptPath;
+		$wgOut->addExtensionStyle( $sfgScriptPath . '/skins/jquery-ui/base/jquery.ui.datepicker.css' );
+		
 		//todo: LANGUAGE
 		
 		$html = '<p><strong>Here, you can materialize automatically created Semantic Forms.</strong></p>';

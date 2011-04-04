@@ -48,7 +48,9 @@ var ASFAdmin = {
 		data.source = '<pre>' + data.source + '</pre>';
 		
 		jQuery('#asf_preview_tab').html(data.preview);
+		
 		jQuery('#asf_source_tab').html(data.source);
+		
 		
 		jQuery('#asf_create_tab span:nth-child(1)').css('display', 'none');
 		jQuery('#asf_create_tab span:nth-child(4)').css('display', 'none');
