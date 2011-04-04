@@ -122,28 +122,28 @@ function smfSortScripts($smgJSLibs) {
  * @param string $headLinks
  * @return headlinks merged
  */
-function smfMergeHeadLinks($headLinks) {
+function smfMergeHeadLinks( $headLinks ) {
 	// apply common link pattern, <link ... href="LINK_FILE" ... />
-	preg_match_all('/\<\s*link\b[^\>]+\bhref\s*=\s*[\'"]([^\'"]*)[\'"][^\>]*\/\>/i', $headLinks, $links, PREG_SET_ORDER|PREG_OFFSET_CAPTURE);
+	preg_match_all( '/\<\s*link\b[^\>]+\bhref\s*=\s*[\'"]([^\'"]*)[\'"][^\>]*\/\>/i', $headLinks, $links, PREG_SET_ORDER | PREG_OFFSET_CAPTURE );
 	$newlink = ''; // new head link string
 	$offset = 0; // offset in $headLinks
-	$ls = array(); // a keyword list to store css file strings
-	foreach($links as $l) {
+	$ls = array( ); // a keyword list to store css file strings
+	foreach ( $links as $l ) {
 		// append head string outside link patterns
-		$newlink .= substr($headLinks, $offset, $l[0][1] - $offset);
+		$newlink .= substr( $headLinks, $offset, $l[0][1] - $offset );
 		// calculate new offset
-		$offset = $l[0][1] + strlen($l[0][0]);
+		$offset = $l[0][1] + strlen( $l[0][0] );
 		// get file keyword (file name only), e.g. 'extensions/EA/css/jquery.css', the keyword is 'jquery.css'
-		$start = strrpos($l[1][0], '/');
-		$key = substr($l[1][0], ($start===false?-1:$start) + 1);
+		$start = strrpos( $l[1][0], '/' );
+		$key = substr( $l[1][0], ($start === false ? -1 : $start) + 1 );
 		// if the css keyword is first used, append to head link, otherwise, omit it
-		if(!isset($ls[$key])) {
+		if ( !isset( $ls[$key] ) ) {
 			$newlink .= $l[0][0];
 			$ls[$key] = true;
 		}
 	}
 	// append the rest head string
-	$newlink .= substr($headLinks, $offset);
+	$newlink .= substr( $headLinks, $offset );
 
 	return $newlink;
 }
@@ -161,38 +161,56 @@ function smfMergeHeadLinks($headLinks) {
  * @param string $scripts
  * @return scripts merged
  */
-function smfMergeHeadScripts($scripts) {
+function smfMergeHeadScripts( $scripts ) {
 	// split head scripts with pattern '</script>', which will always be a script end mark
-	$sc = preg_split('/\<\s*\/script\s*\>/i', $scripts);
+	$sc = preg_split( '/\<\s*\/script\s*\>/i', $scripts );
 	$newscript = ''; // new head script string
-	$ls = array(); // a keyword list to store js file strings
+	$ls = array( ); // a keyword list to store js file strings
 	// registered js frameworks, jquery, jqueryui, prototype, extjs, yui, ...
-	$js_frameworks = array('jquery'=>false, 'jqueryui'=>false, 'prototype'=>false, 'yui'=>false, 'extjs'=>false);
-	foreach($sc as $s) {
+	$js_frameworks = array(
+		'jquery' => false,
+		'jqueryui' => false,
+		'jqueryfancybox' => false,
+		'prototype' => false,
+		'yui' => false,
+		'extjs' => false
+	);
+	foreach ( $sc as $s ) {
 		// test if current script piece is in common script src pattern, <script ... src="JS_FILE" ... >
-		if(preg_match('/\<\s*script\b[^\>]+\bsrc\s*=\s*[\'"]([^\'"]*)[\'"][^\>]*\>/i', $s, $script, PREG_OFFSET_CAPTURE)){
+		if ( preg_match( '/\<\s*script\b[^\>]+\bsrc\s*=\s*[\'"]([^\'"]*)[\'"][^\>]*\>/i', $s, $script, PREG_OFFSET_CAPTURE ) )
+		{
 			// append head string outside script patterns
-			$newscript .= substr($s, 0, $script[0][1]);
-			// get file keyword (file name only), e.g. 'extensions/EA/scripts/jquery.js', the keyword is 'jquery.js'
-			$start = strrpos($script[1][0], '/');
-			$key = substr($script[1][0], ($start===false?-1:$start) + 1);
+			$newscript .= substr( $s, 0, $script[0][1] );
+			// get file keyword (file name only)
+			// e.g. 'extensions/EA/scripts/jquery.js', the keyword is 'jquery.js'
+			$start = strrpos( $script[1][0], '/' );
+			$key = substr( $script[1][0], ($start === false ? -1 : $start) + 1 );
 			// judge common js frameworks with filename patterns
-			if(preg_match('/\bjquery(-[\d]+(\.[\d]+)*(\.[^\.]+)*)?\.js\b/i', $key)) {
-				// jquery, jquery.js / jquery-1.3.2.js / jquery-1.3.2.min.js
+			if ( preg_match( '/\bjquery(-[\d]+(\.[\d]+)*)?(\.min)?\.js\b/i', $key ) ) {
+				// jquery, jquery.js / jquery-1.3.2.js / jquery-1.3.2.min.js / jquery.min.js
 				$js_frameworks['jquery'] = true;
-			} else if(preg_match('/\bjquery-ui(-[\d]+(\.[\d]+)*(\.[^\.]+)*)?\.js\b/i', $key)) {
-				// jqueryui, jquery-ui.js / jquery-ui-1.7.2.js / jquery-ui-1.7.2.min.js
+			} else if ( preg_match( '/\bjquery-ui(-[\d]+(\.[\d]+)*)?(\.min)?\.js\b/i', $key ) ) {
+				// jquery-ui.js / jquery-ui-1.7.2.js / jquery-ui-1.7.2.min.js
 				$js_frameworks['jqueryui'] = true;
-			} else if(preg_match('/\bprototype(-[\d]+(\.[\d]+)*(\.[^\.]+)*)?\.js\b/i', $key)) {
+			} else if ( preg_match( '/\bjquery.fancybox(-[\d]+(\.[\d]+)*)?(\.min)?\.js\b/i', $key ) ) {
+				// jquery's fancybox plugin
+				if( $js_frameworks['jquery'] ) {
+					// jquery has to be included before
+					$js_frameworks['jqueryfancybox'] = true;
+				} else {
+					// otherwise, just append js piece
+					$newscript .= $s . '</script>';
+				}
+			} else if ( preg_match( '/\bprototype(-[\d]+(\.[\d]+)*)?(\.min)?\.js\b/i', $key ) ) {
 				// prototype, prototype.js / prototype-1.6.0.js / prototype-1.6.0.min.js
 				$js_frameworks['prototype'] = true;
-			} else if(preg_match('/\bext-[^\.]+\.js\b/i', $key)) {
+			} else if ( preg_match( '/\bext-[^\.]+\.js\b/i', $key ) ) {
 				// extjs, ext-all.js / ext-base.js / ext-jquery-adapter.js / ...
 				$js_frameworks['extjs'] = true;
 			} else {
 				// if the js keyword is first used, append to head script, otherwise, omit it
-				if(!isset($ls[$key])) {
-					$newscript .= substr($s, $script[0][1]) . '</script>';
+				if ( !isset( $ls[$key] ) ) {
+					$newscript .= substr( $s, $script[0][1] ) . '</script>';
 					$ls[$key] = true;
 				}
 			}
@@ -201,31 +219,35 @@ function smfMergeHeadScripts($scripts) {
 			$newscript .= $s . '</script>';
 		}
 	}
-	$newscript = substr($newscript, 0, strlen($newscript) - strlen('</script>'));
+	$newscript = substr( $newscript, 0, strlen( $newscript ) - strlen( '</script>' ) );
 
 	// generate framework scripts
 	global $wgJsMimeType, $smgSMPath;
 	$frameworks = '';
-	if($js_frameworks['jquery']) {
+	if ( $js_frameworks['jquery'] ) {
 		// jquery with noConflict flag
 		$frameworks .= "<script type=\"{$wgJsMimeType}\" src=\"{$smgSMPath}/scripts/jquery-1.3.2.min.js\"></script>\n";
 		$frameworks .= "<script type=\"{$wgJsMimeType}\">jQuery.noConflict();jQuery.noConflict=function( deep ) {return jQuery;};</script>\n";
 	}
-	if($js_frameworks['jqueryui']) {
+	if ( $js_frameworks['jqueryui'] ) {
 		// jquery ui
 		$frameworks .= "<script type=\"{$wgJsMimeType}\" src=\"{$smgSMPath}/scripts/jquery-ui-1.7.2.custom.min.js\"></script>\n";
 	}
-	if($js_frameworks['prototype']) {
+	if ( $js_frameworks['jqueryfancybox'] ) {
+		// jQuery's fancybox plugin
+		$frameworks .= "<script type=\"{$wgJsMimeType}\" src=\"{$smgSMPath}/scripts/fancybox/jquery.fancybox-1.3.1.js\"></script>\n";
+	}
+	if ( $js_frameworks['prototype'] ) {
 		// prototype
 		$frameworks .= "<script type=\"{$wgJsMimeType}\" src=\"{$smgSMPath}/scripts/prototype.js\"></script>\n";
 	}
-	if($js_frameworks['extjs']) {
+	if ( $js_frameworks['extjs'] ) {
 		// extjs with multiple adapter
-		if($js_frameworks['prototype']) {
+		if ( $js_frameworks['prototype'] ) {
 			$frameworks .= "<script type=\"{$wgJsMimeType}\" src=\"{$smgSMPath}/scripts/extjs/adapter/prototype/ext-prototype-adapter.js\"></script>\n";
-		} else if($js_frameworks['yui']) {
+		} else if ( $js_frameworks['yui'] ) {
 			$frameworks .= "<script type=\"{$wgJsMimeType}\" src=\"{$smgSMPath}/scripts/extjs/adapter/yui/ext-yui-adapter.js\"></script>\n";
-		} else if($js_frameworks['jquery']) {
+		} else if ( $js_frameworks['jquery'] ) {
 			$frameworks .= "<script type=\"{$wgJsMimeType}\" src=\"{$smgSMPath}/scripts/extjs/adapter/jquery/ext-jquery-adapter.js\"></script>\n";
 		} else {
 			$frameworks .= "<script type=\"{$wgJsMimeType}\" src=\"{$smgSMPath}/scripts/extjs/adapter/ext/ext-base.js\"></script>\n";
