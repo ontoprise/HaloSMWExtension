@@ -470,8 +470,9 @@ class AutoCompletionRequester {
 	public static function getPropertyProposals($articleName, $match) {
 		global $wgLang;
 
-		$pages = smwfGetAutoCompletionStore()->getPages($match, array(SMW_NS_PROPERTY, NS_MAIN));
-
+		// get domain less properties first, fill with other properties and instances
+		$pages = AutoCompletionHandler::executeCommand("domainless-property: |namespace: ".SMW_NS_PROPERTY.", ".NS_MAIN, $match);
+		
 		// special handling for special relations
 		$specialMatches = array(); // keeps matches of special relations
 		global $smwgContLang;

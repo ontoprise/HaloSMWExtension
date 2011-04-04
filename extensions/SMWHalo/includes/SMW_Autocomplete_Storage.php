@@ -814,7 +814,7 @@ class AutoCompletionStorageSQL2 extends AutoCompletionStorage {
 		foreach($typeValues as $tv) {
 			$dbkeys = $tv->getDBkeys();
 			$typeID = array_shift($dbkeys);
-			$hasWikiPageType |= WikiTypeToXSD::isPageType($typeID);
+			$hasWikiPageType |= WikiTypeToXSD::isPageType($typeID) || $typeID ==  '__tls'; // __tls = list of types
 		}
 
 		$rangeString = NULL;
@@ -831,8 +831,11 @@ class AutoCompletionStorageSQL2 extends AutoCompletionStorage {
 			
 			global $smwgContLang;
             $datatypeLabels = $smwgContLang->getDatatypeLabels();
-			// There is no proper label for 'spf', so replace it by default Page type label.
+			// FIXME: There is no proper label for 'spf','wpp' and 'tls', so replace it by default Page type label.
             $typeString = str_replace('spf', $datatypeLabels['_wpg'], $typeString);
+            $typeString = str_replace('wpp', $datatypeLabels['_wpg'], $typeString);
+            $typeString = str_replace('tls', wfMsg('smw_ac_tls'), $typeString);
+            
 			$rangeString = implode(',', array_unique($ranges));
 		}
 		return array($typeString, $rangeString);
