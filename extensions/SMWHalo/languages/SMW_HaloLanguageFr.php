@@ -49,6 +49,7 @@ class SMW_HaloLanguageFr extends SMW_HaloLanguage {
     'smw_ac_temperature_proposal'=>'<number> K, <number> °C, <number> °F, <number> °R',
     'smw_ac_telephone_proposal'=>'tel:+1-201-555-0123',
     'smw_ac_category_has_icon' => 'Category has icon',
+    'smw_ac_tls' => 'List of types',
     
     // Messages for SI unit parsing
     'smw_no_si_unit' => 'Aucune unité n\'a été spécifiée dans la représentation du SI. ',
@@ -172,8 +173,8 @@ Initialement, la navigation s'effectue de gauche à  droite. Il vous est possib
 en cliquant sur les grosses flà¨ches situées entre les colonnes.",
     'smw_ob_undefined_type' => '*range indéfini*',
     'smw_ob_hideinstances' => 'Cacher les instances',
-    'smw_ob_onlyDirect' => 'Uniquement les propriétés directes',
-    'smw_ob_showRange' => 'properties of range',
+    'smw_ob_onlyDirect' => 'show inherited properties',
+    'smw_ob_showRange' => 'show properties with selected category as range',
     'smw_ob_hasnumofsubcategories' => 'Nombre de sous-catégories',
     'smw_ob_hasnumofinstances' => 'Nombre d\'instances',
     'smw_ob_hasnumofproperties' => 'Nombre de propriétés',

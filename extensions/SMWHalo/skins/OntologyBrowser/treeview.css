@@ -75,7 +75,11 @@ a.navigationLink {
 }
 
 #directPropertySwitch {
-	margin-left: 160px;
+	margin-left: 20px;
+}
+
+#showForRange {
+	   margin-left: 20px;
 }
 
 #categoryTree, #relattributes, #propertyTree {

@@ -744,7 +744,7 @@ OBCategoryTreeActionListener.prototype = Object
 							}
 							if (OB_RIGHT_ARROW == 0) {
 								OB_relatt_pendingIndicator.show();
-								var onlyDirect = $('directPropertySwitch').checked;
+								var onlyDirect = !$('directPropertySwitch').checked;
 								var dIndex = $('showForRange').checked ? '_2'
 										: '_1';
 								dataAccess.getProperties(categoryName,
@@ -925,7 +925,7 @@ OBInstanceActionListener.prototype = {
 				var instanceParam = node.getAttribute("uri") == null ? instanceNamespace
 						+ ":" + instanceName
 						: node.getAttribute("uri");
-				var onlyDirect = $('directPropertySwitch').checked;
+				var onlyDirect = !$('directPropertySwitch').checked;
 				dataAccess.getAnnotations(instanceParam, onlyDirect,
 						callbackOnInstanceSelectToRight);
 

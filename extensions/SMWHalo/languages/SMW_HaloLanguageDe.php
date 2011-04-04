@@ -53,6 +53,7 @@ protected $smwContentMessages = array(
     'smw_ac_temperature_proposal'=>'<Zahl> K, <Zahl> °C, <Zahl> °F, <Zahl> °R',
     'smw_ac_telephone_proposal'=>'tel:+49-721-5453334',
     'smw_ac_category_has_icon' => 'Kategorie hat Bild',
+    'smw_ac_tls' => 'Liste von Typen',
 
 	// Messages for SI unit parsing
 	'smw_no_si_unit' => 'Einheit nicht in SI-Representation. ',
@@ -171,8 +172,8 @@ protected $smwUserMessages = array(
 
 	'smw_ob_undefined_type' => '*keine Range definiert*',
 	'smw_ob_hideinstances' => 'Verstecke Instanzen',
-    'smw_ob_onlyDirect' => 'keine inferierten',	
-    'smw_ob_showRange' => 'Properties mit Range',
+    'smw_ob_onlyDirect' => 'keine geerbten Eigenschaften anzeigen',	
+    'smw_ob_showRange' => 'zeige Eigenschaften der ausgewählten Kategorie',
 	'smw_ob_hasnumofsubcategories' => 'Anzahl Unterkategorien',
 	'smw_ob_hasnumofinstances' => 'Anzahl Instanzen',
 	'smw_ob_hasnumofproperties' => 'Anzahl Attribute',

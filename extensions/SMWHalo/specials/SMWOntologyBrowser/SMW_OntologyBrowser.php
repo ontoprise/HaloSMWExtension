@@ -75,7 +75,7 @@ class SMW_OntologyBrowser extends SpecialPage {
 		$html .= "<button type=\"button\" id=\"filterBrowseButton\" name=\"filterBrowsing\" onclick=\"globalActionListener.filterBrowsing(event, true)\">".wfMsg('smw_ob_filterbrowsing')."</button>";
 		$html .= "<button type=\"button\" name=\"refresh\" onclick=\"globalActionListener.reset(event)\">".wfMsg('smw_ob_reset')."</button>";
 		$html .= "<button type=\"button\" id=\"hideInstancesButton\" name=\"hideInstances\" onclick=\"instanceActionListener.toggleInstanceBox(event)\">".wfMsg('smw_ob_hideinstances')."</button>";//  <a href=\"".$refactorstatstitle->getFullURL()."\">".wfMsg('smw_ob_link_stats')."</a>";
-		$html .= "<span id=\"propertyRangeSpan\"><input type=\"checkbox\" id=\"directPropertySwitch\"/>".wfMsg('smw_ob_onlyDirect')."</input><input type=\"checkbox\" id=\"showForRange\"/>".wfMsg('smw_ob_showRange')."</input></span>";
+		
 		$html .= "<div id=\"ontologybrowser\">";
 
 //TODO: Add the following code to a hook. However, the problem is, that 
@@ -167,12 +167,11 @@ TEXT;
 			<span id=\"relattValues\">".wfMsg('smw_ob_relattValues')."</span><span id=\"relattRangeType\" style=\"display:none;\">".wfMsg('smw_ob_relattRangeType')."</span></span>
 			".($showMenuBar ? "<span class=\"menuBar menuBarProperties\" id=\"menuBarProperties\"><a onclick=\"schemaActionPropertyListener.showSubMenu(".SMW_OB_COMMAND_ADD_SCHEMAPROPERTY.")\">".wfMsg('smw_ob_cmd_addpropertytodomain')."<span id=\"currentSelectedCategory\">...</span></a><div id=\"schemaPropertiesMenu\"></div></span>" : "" )."	
 			<div id=\"relattributes\" class=\"propertyTreeListColors\"></div>
-			<span class=\"OB-filters\"><span>".wfMsg('smw_ob_filter')."</span><input type=\"text\" size=\"22\" id=\"propertyFilter\"><button type=\"button\" name=\"filterProperties\" onclick=\"globalActionListener.filterProperties(event)\">".wfMsg('smw_ob_filter')."</button></span>		
+			<span class=\"OB-filters\"><span>".wfMsg('smw_ob_filter')."</span><input type=\"text\" size=\"22\" id=\"propertyFilter\"><button type=\"button\" name=\"filterProperties\" onclick=\"globalActionListener.filterProperties(event)\">".wfMsg('smw_ob_filter')."</button>
+			<div id=\"propertyRangeSpan\"><div><input type=\"checkbox\" id=\"directPropertySwitch\" checked=\"true\"/>".wfMsg('smw_ob_onlyDirect')."</input></div><div><input type=\"checkbox\" id=\"showForRange\" />".wfMsg('smw_ob_showRange')."</input></div></div></span>		
 		</div>		
 		<div id=\"OB-filters\">
-			" .
-			"" .
-			"
+		
 		</div>" .
 		"<div id=\"OB-footer\">".wfMsg('smw_ob_footer')."
 			

@@ -47,6 +47,7 @@ class SMW_HaloLanguageNl extends SMW_HaloLanguage {
     'smw_ac_temperature_proposal'=>'<number> K, <number> °C, <number> °F, <number> °R',
     'smw_ac_telephone_proposal'=>'tel:+1-201-555-0123',
     'smw_ac_category_has_icon' => 'Category has icon',
+	'smw_ac_tls' => 'List of types',
 	
 	// Messages for SI unit parsing
 	'smw_no_si_unit' => 'Geen eenheid in de SI voorstelling. ',
@@ -167,8 +168,8 @@ Druk de rechter knop om resultaten te verkrijgen. Enkel <i>Return</i> drukken ge
 	'smw_ob_help' => 'De ontologie-browser maakt het mogelijk om doorheen de ontologie te navigeren en zo gemakkelijk items in de wiki te vinden en te identificeren. Gebruik het filter mechanisme	links bovenaan om naar specifieke elementen in de ontologie te zoeken. De filters beneden elke kolom laten toe om de zoekresultaten te beperken. Bij het begin gebeurt het browsen van links naar rechts. 	Deze richting kan veranderd worden door op de grote pijlen tussen de kolommen te klikken.',
 	'smw_ob_undefined_type' => '*ongedefinieerd range*',
 	'smw_ob_hideinstances' => 'Entiteiten verbergen',
-    'smw_ob_onlyDirect' => 'no inferred',
-	'smw_ob_showRange' => 'properties of range',
+    'smw_ob_onlyDirect' => 'show inherited properties',
+    'smw_ob_showRange' => 'show properties with selected category as range',
 	'smw_ob_hasnumofsubcategories' => 'Aantal subcategorieën',
 	'smw_ob_hasnumofinstances' => 'Aantal entiteiten',
 	'smw_ob_hasnumofproperties' => 'Aantal eigenschappen',
