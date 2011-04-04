@@ -140,7 +140,7 @@ function saveRichMediaData(mediaTitle, mediaLink) {
 				oNew = oEditor.document.createElement( 'a' );
 				oNew.addClass('internal');
 				oNew.setAttribute('title', mediaTitle);
-				oNew.setAttribute('_cke_mw_type', ns.toLowerCase());
+				oNew.setAttribute('_cke_mw_type', ns);
 				oNew.setAttribute('_cke_mw_filename', basename);
 				oNew.setAttribute('href', mediaTitle);
 				oNew.setAttribute('_cke_saved_href', mediaTitle);
