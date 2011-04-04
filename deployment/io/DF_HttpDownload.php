@@ -73,8 +73,10 @@ class HttpDownload {
 		$address = gethostbyname($host);
 		$handle = fopen($filename, "wb");
 		$socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
+		if ($socket === false) throw new Exception("\t***Could not connect to '$host'***");
 		$this->useProxy($path, $port, $address);
-		socket_connect($socket, $address, $port);
+		$connect_status = socket_connect($socket, $address, $port);
+		if ($connect_status === false) throw new Exception("\t***Could not connect to '$host'***");
 		$in = "GET $path HTTP/1.0\r\n";
 		$in .= "Host: $host\r\n";
 		if ($credentials != '') $in .= "Authorization: Basic ".base64_encode(trim($credentials))."\r\n";
@@ -139,8 +141,10 @@ class HttpDownload {
 		$address = gethostbyname($host);
 		$res = "";
 		$socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
+		if ($socket === false) throw new Exception("\t***Could not connect to '$host'***");
 		$this->useProxy($path, $port, $address);
-		socket_connect($socket, $address, $port);
+		$connect_status = socket_connect($socket, $address, $port);
+		if ($connect_status === false) throw new Exception("\t***Could not connect to '$host'***");
 		$in = "GET $path HTTP/1.0\r\n";
 		$in .= "Host: $host\r\n";
 		if ($credentials != '') $in .= "Authorization: Basic ".base64_encode(trim($credentials))."\r\n";

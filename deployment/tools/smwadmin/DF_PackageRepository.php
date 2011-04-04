@@ -106,7 +106,10 @@ class PackageRepository {
 			} catch(HttpError $e) {
 				print "\n".$e->getMsg();
 				print "\n";
-			}
+			} catch(Exception $e) {
+                print "\n".$e->getMessage();
+                print "\n";
+            }
 
 		}
 		return self::$repo_dom;
