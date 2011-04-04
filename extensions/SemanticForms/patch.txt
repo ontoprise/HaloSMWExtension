@@ -878,7 +878,7 @@ Index: extensions/SemanticForms/includes/SF_TemplateField.php
  	}
 +	/*op-patch|DH|2009-09-08|Special:CreateTemplate adapted to SMWplus|start*/
 +    /*op-patch|DH|2009-09-08|Special:CreateTemplate adapted to SMWplus|doc|http://dmwiki.ontoprise.com:8888/dmwiki/index.php/Special_CreateTemplate_adapted_to_SMWplus*/
-+	function createTemplateText( $template_name, $template_fields, $category, $aggregating_property, $aggregating_label, $template_format, $partof_wikisection, $rationale, $headerlabel) {
++	function createTemplateText( $template_name, $template_fields, $category, $aggregating_property, $aggregating_label, $template_format, $partof_wikisection='', $rationale='', $headerlabel='') {
 +		global $wgUser;
 +		global $wgContLang;
 +		$namespace_labels = $wgContLang->getNamespaces();
