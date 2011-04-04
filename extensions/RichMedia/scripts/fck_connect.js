@@ -130,7 +130,7 @@ function saveRichMediaData(mediaTitle, mediaLink) {
 			if (ns == "File") { // create an image for all images
 				oNew = oEditor.document.createElement( 'img' );
 				oNew.setAttribute('alt', mediaTitle);
-				oNew.setAttribute('_fck_mw_filename', mediaTitle.replace(/^[^:].*:(.*)/, '\$1').replace('_', ' '));
+				oNew.setAttribute('_cke_mw_filename', mediaTitle.replace(/^[^:].*:(.*)/, '\$1').replace('_', ' '));
 				oNew.setAttribute('src', mediaLink);
 			} else {
 				// other media (ns != Image:) will be created as a link
@@ -140,9 +140,10 @@ function saveRichMediaData(mediaTitle, mediaLink) {
 				oNew = oEditor.document.createElement( 'a' );
 				oNew.addClass('internal');
 				oNew.setAttribute('title', mediaTitle);
-				oNew.setAttribute('_fck_mw_type', ns);
-				oNew.setAttribute('_fck_mw_filename', basename);
+				oNew.setAttribute('_cke_mw_type', ns.toLowerCase());
+				oNew.setAttribute('_cke_mw_filename', basename);
 				oNew.setAttribute('href', mediaTitle);
+				oNew.setAttribute('_cke_saved_href', mediaTitle);
 				oNew.$.innerHTML = mediaTitle;
 			}
 
