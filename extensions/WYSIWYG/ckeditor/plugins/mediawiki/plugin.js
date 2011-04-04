@@ -727,8 +727,13 @@ CKEDITOR.customprocessor.prototype =
 							var href = htmlNode.getAttribute( '_cke_saved_href' );
 							var hrefType = htmlNode.getAttribute( '_cke_mw_type' ) || '';
 
+                            // this is still the old style, thats used in the parser (should be fixed soon)
+                            if ( href == null ) {
+                                href = htmlNode.getAttribute( '_fcksavedurl' );
+                                hrefType = htmlNode.getAttribute( '_fck_mw_type' ) || '';
+                            }
+
 							if ( href == null ) {
-//								href = htmlNode.getAttribute( 'href', 2 ) || '';
 								href = htmlNode.getAttribute( 'href' ) || '';
 							}
 
@@ -738,10 +743,8 @@ CKEDITOR.customprocessor.prototype =
 
 							var isWikiUrl = true;
 
-							if ( hrefType == "media" )
-								stringBuilder.push( '[[Media:' );
-                            else if ( hrefType == "pdf" )
-                                stringBuilder.push( '[[Pdf:' );
+							if ( hrefType != "" )
+								stringBuilder.push( '[[' );
 							else if ( htmlNode.className == "extiw" ){
 								stringBuilder.push( '[[' );
 								var isWikiUrl = true;
