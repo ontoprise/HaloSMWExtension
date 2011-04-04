@@ -25,7 +25,7 @@ class USSpecialPage extends SpecialPage {
 		parent::__construct('Search');
 	}
 
-	public function execute() {
+	public function execute($par) {
 		global $wgRequest, $wgOut, $wgPermissionACL, $wgContLang, $wgLang, $wgWhitelistRead, $wgPermissionACL_Superuser, $wgExtensionCredits, $wgUSPathSearch;
 		$search = str_replace( "\n", " ", $wgRequest->getText( 'search', '' ) );
 		$restrict = $wgRequest->getText( 'restrict', '' );
