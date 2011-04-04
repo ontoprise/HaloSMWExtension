@@ -920,7 +920,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow.php
  }
 Index: extensions/SemanticForms/specials/SF_UploadWindow2.php
 ===================================================================
---- extensions/SemanticForms/specials/SF_UploadWindow2.php	(revision 9540)
+--- extensions/SemanticForms/specials/SF_UploadWindow2.php	(revision 10300)
 +++ extensions/SemanticForms/specials/SF_UploadWindow2.php	(working copy)
 @@ -70,9 +70,11 @@
  
@@ -1141,7 +1141,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow2.php
 +		$uploadFormContent['Format'] = $this->mLocalFile->getMimeType();
 +//		$wgRequest->setVal($rMUploadFormName, array('Format' => $this->mLocalFile->getMimeType()));
 +		// save relatedArticles
-+		$relatedArticles = $wgRequest->getVal($rMUploadFormName.'[RelatedArticles]');
++		$relatedArticles = $uploadFormContent['RelatedArticles'];
 +		//set the desired destination form
 +		$rMDestFormName = $smwgRMFormByNamespace[$this->mLocalFile->title->getNamespace()];
 +
