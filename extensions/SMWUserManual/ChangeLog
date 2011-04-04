@@ -7,6 +7,7 @@ VERSION 1.0.3
 
   FEATURES:
     * add new discourse state LODTrust for help on the page Special:LODTrust
+    * add new discourse state CheckInstallation for help on the page Special:CheckInstallation
     * check for CKeditor to see if the page is edited with a wysiwyg editor
 
 
