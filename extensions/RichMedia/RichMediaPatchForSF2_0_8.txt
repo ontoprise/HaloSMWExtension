@@ -1017,7 +1017,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow2.php
 +		}
 +		if ( isset($title) && $title->exists() ) {
 +			$article = new Article($title);
-+
+ 
 +			$content = $article->getContent();
 +			//we've got an RM Template in here. Use EditData then
 +			if (strrchr($content, '{{RM')){
@@ -1026,7 +1026,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow2.php
 +				$smwgRMHideStandardInputs = true;
 +				global $smwgRMFormByNamespace;
 +				$rMDestFormName = $smwgRMFormByNamespace[$title->getNamespace()];
- 
++
 +				$form_edit = new SFFormEdit();
 +				$form_edit_test = $form_edit->execute($rMDestFormName."/".$title->getFullText());
 +			} else {
@@ -1042,72 +1042,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow2.php
  		$this->showUploadForm( $form );
  	}
  
-@@ -336,9 +405,61 @@
- 	 * @param string $message
- 	 */
- 	protected function uploadError( $message ) {
--		$message = '<h2>' . wfMsgHtml( 'uploadwarning' ) . "</h2>\n" .
--			'<div class="error">' . $message . "</div>\n";
--		$this->showUploadForm( $this->getUploadForm( $message ) );
-+		/*op-patch|BL|2010-10-05|RichMedia|SpecialUploadWindow2|start*/
-+		global $wgOut, $wgContLang, $smwgRMScriptPath;
-+
-+		$wgOut->addScript('<script type="text/javascript" src="' . $smwgRMScriptPath . '/scripts/richmedia.js"></script>' . "\n");
-+		$wgOut->addHTML( '<div id="rmUploadHeadline" >' );
-+		$wgOut->addHTML( wfMsgExt( 'smw_rm_uploadheadline', array( 'parseinline' ) ) );
-+		$wgOut->addHTML( '</div>' );
-+
-+		$wgOut->addHTML( "<h2>" . wfMsgHtml( 'uploadwarning' ) . "</h2>\n" );
-+		$wgOut->addHTML( "<span class='error'>{$error}</span><br/><br/>\n" );
-+
-+		//changed:
-+		$reupload = wfMsgHtml( 'reupload' );
-+		$reup = wfMsgWikiHtml( 'reuploaddesc' );
-+		$align1 = $wgContLang->isRTL() ? 'left' : 'right';
-+		$align2 = $wgContLang->isRTL() ? 'right' : 'left';
-+
-+		$titleObj = SpecialPage::getTitleFor( 'UploadWindow' );
-+
-+		$wgOut->addHTML( "
-+	<form id='uploadwarning' method='post' enctype='multipart/form-data' action=''>
-+		<input type='hidden' name='wpIgnoreWarning' value='1' />
-+		<input type='hidden' name='wpSessionKey' value=\"" . htmlspecialchars( $this->mSessionKey ) . "\" />
-+		<input type='hidden' name='wpUploadDescription' value=\"" . htmlspecialchars( $this->mComment ) . "\" />
-+		<input type='hidden' name='wpLicense' value=\"" . htmlspecialchars( $this->mLicense ) . "\" />
-+		<input type='hidden' name='wpWatchthis' value=\"" . htmlspecialchars( intval( $this->mWatchthis ) ) . "\" />
-+		<input type='hidden' name='sfInputID' value=\"" . htmlspecialchars( $this->mInputID ) . "\" />
-+		<input type='hidden' name='sfDelimiter' value=\"" . htmlspecialchars( $this->mDelimiter ) . "\" />".
-+		Xml::hidden( 'wpForReUpload', $this->mForReUpload, array( 'id' => 'wpForReUpload' ) )
-+		);
-+
-+		$wgOut->addHTML("
-+	<table border='0'>
-+		<tr>
-+			<td align='$align1'>
-+				<input tabindex='2' type='submit' name='' value=\"{$reupload}\" onClick='richMediaPage.copyToUploadWarning();'/>
-+			</td>
-+			<td align='$align2'>$reup</td>
-+			</tr>
-+		</tr>
-+	</table>\n" );
-+
-+		$wgOut->addHTML("</form>");
-+
-+		//Beginn RichMedia
-+		global $smwgRMFormByNamespace, $wgRequest;
-+		$rMUploadFormName = $smwgRMFormByNamespace['RMUpload'];
-+		$form_add = new SFFormEdit();
-+		$wgOut->addHTML('<div style="display:none">');
-+		$form_add_test = $form_add->execute( $rMUploadFormName );
-+		$wgOut->addHTML('</div>');
-+		/*op-patch|BL|2010-10-05|end*/
-+//		$message = '<h2>' . wfMsgHtml( 'uploadwarning' ) . "</h2>\n" .
-+//			'<div class="error">' . $message . "</div>\n";
-+//		$this->showUploadForm( $this->getUploadForm( $message ) );
- 	}
- 
- 	/**
-@@ -368,8 +489,11 @@
+@@ -368,8 +437,11 @@
  		// Check warnings if necessary
  		if ( !$this->mIgnoreWarning ) {
  			$warnings = $this->mUpload->checkWarnings();
@@ -1121,7 +1056,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow2.php
  		}
  
  		// Get the page text if this is not a reupload
-@@ -395,39 +519,91 @@
+@@ -395,39 +467,91 @@
  		}
  
  		$basename = str_replace( '_', ' ', $basename );
@@ -1151,12 +1086,12 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow2.php
 +		//This needs to be set, otherwise the page content (created by UploadConverter e.g.) is ignored
 +		$wgRequest->setVal('query', 'false');
 +		$wgRequest->setVal('SFviaRichMedia', 'true');
- 
++
 +		$target_title = Title::newFromText($target);
 +		// Title->exists gets the article ID for this Title from the link cache
 +		// and this ID is not correct now (always 0). So do an ID update once.
 +		$testID = $target_title->getArticleID(GAID_FOR_UPDATE);
-+
+ 
 +		if (!$this->mForReUpload){
 +			$wgRequest->setVal($rMDestFormName, $uploadFormContent);
 +		}
@@ -1239,7 +1174,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow2.php
  		print $output;
  		$img = null; // @todo: added to avoid passing a ref to null - should this be defined somewhere?
  
-@@ -691,7 +867,46 @@
+@@ -691,7 +815,46 @@
  			return '';
  		}
  	}
@@ -1250,7 +1185,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow2.php
 +	 */
 +	public static function showSuccessfulMsg() {
 +		global $wgRequest, $wgScriptPath, $smwgRMScriptPath;
- 
++
 +		$filename = $wgRequest->getText( 'uploadedFile' );
 +
 +		// create the message for the successsful upload
@@ -1279,14 +1214,14 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow2.php
 +
 +		$uploadSuccessHTML .= '<div id="rmUploadSuccessCloseText">';
 +		$uploadSuccessHTML .= wfMsgNoTrans( 'smw_rm_uploadsuccess_closewindow' ) . '</div><br/>';
-+
+ 
 +		print($uploadSuccessHTML);
 +	}
 +	/*op-patch|BL|2010-10-05|end*/
  }
  
  /**
-@@ -703,6 +918,10 @@
+@@ -703,6 +866,10 @@
  	protected $mSessionKey;
  	protected $mHideIgnoreWarning;
  	protected $mDestWarningAck;
@@ -1297,7 +1232,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow2.php
  	
  	protected $mSourceIds;
  
-@@ -715,6 +934,9 @@
+@@ -715,6 +882,9 @@
  				? $options['sessionkey'] : '';
  		$this->mHideIgnoreWarning = !empty( $options['hideignorewarning'] );
  		$this->mDestFile = isset( $options['destfile'] ) ? $options['destfile'] : '';
@@ -1307,7 +1242,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow2.php
  
  		$sourceDescriptor = $this->getSourceSection();
  		$descriptor = $sourceDescriptor
-@@ -777,12 +999,12 @@
+@@ -777,12 +947,12 @@
  				'label-message' => 'sourcefilename',
  				'upload-type' => 'File',
  				'radio' => &$radio,
@@ -1322,7 +1257,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow2.php
  				'checked' => $selectedSourceType == 'file',
  		);
  		if ( $canUploadByUrl ) {
-@@ -803,12 +1025,12 @@
+@@ -803,12 +973,12 @@
  		}
  		wfRunHooks( 'UploadFormSourceDescriptors', array( &$descriptor, &$radio, $selectedSourceType ) );
  
@@ -1337,7 +1272,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow2.php
  		return $descriptor;
  	}
  
-@@ -913,6 +1135,13 @@
+@@ -913,6 +1083,13 @@
  				'label-message' => 'filesource',
  			);
  		}
@@ -1351,7 +1286,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow2.php
  
  		return $descriptor;
  	}
-@@ -958,7 +1187,169 @@
+@@ -958,7 +1135,169 @@
  	 */
  	public function show() {
  		$this->addUploadJS();
@@ -1521,7 +1456,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow2.php
  		// disable $wgOut - we'll print out the page manually,
  		// taking the body created by the form, plus the necessary
  		// Javascript files, and turning them into an HTML page
-@@ -970,6 +1361,33 @@
+@@ -970,6 +1309,33 @@
  		$sk->initPage( $wgOut ); // need to call this to set skin name correctly
  		$wgTitle = SpecialPage::getTitleFor( 'Upload' );
  
@@ -1555,7 +1490,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow2.php
  		if ( method_exists( $wgOut, 'addModules' ) ) {
  			$head_scripts = '';
  			$wgOut->addModules( array( 'mediawiki.legacy.edit', 'mediawiki.legacy.upload', 'mediawiki.legacy.wikibits', 'mediawiki.legacy.ajax', 'mediawiki.legacy.ajaxwatch' ) );
-@@ -1002,7 +1420,11 @@
+@@ -1002,7 +1368,11 @@
  
  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
  <head>
