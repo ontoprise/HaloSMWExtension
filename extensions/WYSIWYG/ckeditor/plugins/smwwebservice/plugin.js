@@ -41,15 +41,15 @@ CKEDITOR.plugins.add('smw_webservice', {
         // language logic for additional messages
         var pluginLang = []
         pluginLang['en'] = {
-            titleWsDef      : 'Webservice definition',
-            titleWsEdit     : 'Edit webservice definition',
-            defineWs        : 'Define here the webservice definition:'
+            titleWsDef      : 'Webservice call',
+            titleWsEdit     : 'Edit webservice call',
+            defineWs        : 'Define here the webservice call:'
         }
 
         pluginLang['de'] = {
             titleWsDef      : 'Webservice Definition',
-            titleWsEdit     : 'Ändere Webservice Definition',
-            defineWs        : 'Spezifiziere die Webservice Definition:'
+            titleWsEdit     : 'Ändere Webservice Aufruf',
+            defineWs        : 'Spezifiziere den Webservice Aufruf:'
         }
         if (typeof pluginLang[editor.langCode] != 'undefined' )
             editor.lang.smwwebservice = pluginLang[editor.langCode];
