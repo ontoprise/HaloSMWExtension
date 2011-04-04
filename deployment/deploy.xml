@@ -8,7 +8,7 @@
 		<maintainer>Ontoprise GmbH</maintainer>
 		<instdir>deployment</instdir>
 		<description>
-			Eases the installation and updating of extensions
+			Simplifies installation and update of extensions
 		</description>
 		<helpurl>http://smwforum.ontoprise.com/smwforum/index.php/Deployment_Framework
 		</helpurl>
