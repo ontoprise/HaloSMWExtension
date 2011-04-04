@@ -487,6 +487,23 @@ Section "Lucene search" lucene
         Exec "$INSTDIR\lucene\lucene-wiki.exe"       
 SectionEnd
 
+Section "Solr" solr
+    SectionIn 1 RO
+    SectionGetFlags ${xampp} $0
+    IntOp $0 $0 & ${SF_SELECTED}
+
+    SetOutPath "$INSTDIR\solr"
+    StrCpy $PHP "$INSTDIR\php\php.exe"
+
+    DetailPrint "Run Solr"
+    ; run the solr server
+    Exec 'java -jar "$INSTDIR\solr\wiki\start.jar"'
+
+    ; create index
+    nsExec::ExecToLog '"$PHP" "$INSTDIR\solr\wiki\createIndex.php"
+
+SectionEnd
+
 SectionGroupEnd
 
 
@@ -1130,6 +1147,7 @@ Section "Uninstall"
     RMDir /r "$INSTDIR\contrib"
     RMDir /r "$INSTDIR\tomcat"
     RMDir /r "$INSTDIR\memcached"
+    RMDir /r "$INSTDIR\solr"
     
     ; only remove if empty
     RMDir "$INSTDIR"
