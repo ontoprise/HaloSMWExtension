@@ -168,7 +168,7 @@ END;
 		if ( array_key_exists( 1, $parameter ) && isset( $parameter[1] ) ) {
 			$link_title = $parameter[1];
 		} else {
-			$link_title = wfMsgNoTrans('smw_rm_uploadheadline');
+			$link_title = $link_name;
 		}
 		if ( array_key_exists( 2, $parameter ) && isset( $parameter[2] ) ) {
 			$rev_width = 'width:' . $parameter[2];
