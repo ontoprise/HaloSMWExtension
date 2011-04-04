@@ -113,12 +113,12 @@ class OntologyInstaller {
 		$this->installOrUpdateOntology($outputfile_rel, $verificationLog, $bundleID, $prefix);
 
 		// import external artifacts (e.g. mapping metadata/rules)
-	    $externalArtifactFile = $inputfile.".external";
-        if (file_exists($externalArtifactFile)) {
-            print "\n\t[Importing external artifacts from $externalArtifactFile...";
-            $this->uploadExternalArtifacts($externalArtifactFile, $bundleID);
-            print "done.]"; 
-        }
+		$externalArtifactFile = $inputfile.".external";
+		if (file_exists($externalArtifactFile)) {
+			print "\n\t[Importing external artifacts from $externalArtifactFile...";
+			$this->uploadExternalArtifacts($externalArtifactFile, $bundleID);
+			print "done.]";
+		}
 	}
 
 	/**
@@ -219,13 +219,13 @@ ENDS
         ;
         return $xml;
 	}
-    
+
 	/**
 	 * Uploads an external entity containing arbitrary artifacts. Marks this upload
 	 * as part of the bundle.
-	 *  
+	 *
 	 * @param string $filepath Absolute path
-	 * @param string $bundleID 
+	 * @param string $bundleID
 	 */
 	private function uploadExternalArtifacts($filepath, $bundleID) {
 		global $dfgLang;
@@ -374,26 +374,17 @@ ENDS
 		$ret = 0;
 		if (Tools::isWindows()) {
 			if (!file_exists("$onto2mwxml_dir/tsc")) {
-				if (!file_exists($outputfile)) {
-					throw new Exception("Onto2MWXML tool is not correctly installed. Please take a look in deployment/tools/onto2mwxml/README.TXT.");
-				}
+				throw new Exception("Onto2MWXML tool is not correctly installed. Please take a look in deployment/tools/onto2mwxml/README.TXT.");
 			} else {
-				if (!file_exists($outputfile)) {
-					if ($noBundlePage) $noBundlePageParam = "--nobundlepage"; else $noBundlePageParam = "";
-					exec("$onto2mwxml_dir/onto2mwxml.bat $inputfile -o $outputfile --bundleid $bundleID $noBundlePageParam", $output, $ret);
-				}
-			}
+				if ($noBundlePage) $noBundlePageParam = "--nobundlepage"; else $noBundlePageParam = "";
+				exec("$onto2mwxml_dir/onto2mwxml.bat $inputfile -o $outputfile --bundleid $bundleID $noBundlePageParam", $output, $ret);
+    		}
 		} else {
 			if (!file_exists("$onto2mwxml_dir/tsc")) {
-				if (!file_exists($outputfile)) {
-					throw new Exception("Onto2MWXML tool is not correctly installed. Please take a look in deployment/tools/onto2mwxml/README.TXT.");
-				}
+				throw new Exception("Onto2MWXML tool is not correctly installed. Please take a look in deployment/tools/onto2mwxml/README.TXT.");
 			} else {
-				if (!file_exists($outputfile)) {
-					if ($noBundlePage) $noBundlePageParam = "--nobundlepage"; else $noBundlePageParam = "";
-					exec("$onto2mwxml_dir/onto2mwxml.sh $inputfile -o $outputfile --bundleid $bundleID $noBundlePageParam", $output, $ret);
-				}
-
+				if ($noBundlePage) $noBundlePageParam = "--nobundlepage"; else $noBundlePageParam = "";
+				exec("$onto2mwxml_dir/onto2mwxml.sh $inputfile -o $outputfile --bundleid $bundleID $noBundlePageParam", $output, $ret);
 			}
 		}
 		chdir($cwd);
