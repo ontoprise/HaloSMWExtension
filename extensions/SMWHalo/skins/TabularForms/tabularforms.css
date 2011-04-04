@@ -74,6 +74,7 @@
 	border-left: 1px inset grey;
 	background-color: transparent !important;
 	vertical-align: middle;
+	text-align: center;
 }
 .tabf_table_cell div {
 	height: 2.5em;
@@ -109,7 +110,7 @@
 
 .tabf_table_footer input {
 	margin-top: 4px;
-	margin-left: 4px;
+/*	margin-left: 4px;*/
 	width: 100%;
 }
 
