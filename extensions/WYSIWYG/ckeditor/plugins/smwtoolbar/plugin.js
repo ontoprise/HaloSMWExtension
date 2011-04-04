@@ -1122,6 +1122,14 @@ CKEDITOR.plugins.add('smwtoolbar', {
                 window.parent.gEditInterface = gEditInterface;
                 plugin.SetEventHandler4AnnotationBox(editor);
             }
+        });
+        editor.on("resize", function(event) {
+            if (plugin.stbIsActive) {
+                var ontomenu = window.parent.document.getElementById('ontomenuanchor');
+                // I have no clue how to know in which mode we are, so just set the z-index to some
+                // value that works in both modes
+                ontomenu.style.zIndex = editor.config.baseFloatZIndex + 10;
+            }
         })
 
 	}
