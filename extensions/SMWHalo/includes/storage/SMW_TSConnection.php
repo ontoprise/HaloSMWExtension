@@ -196,7 +196,9 @@ class TSConnectorRESTWebservice extends TSConnection {
 
 	public function connect() {
 		global $smwgWebserviceUser, $smwgWebservicePassword, $smwgWebserviceEndpoint;
-		list($host, $port) = explode(":", $smwgWebserviceEndpoint);
+        if (empty($smwgWebserviceEndpoint)) {
+            throw new Exception('Variable $smwgWebserviceEndpoint is not defined for TSC');
+        }
 		$credentials = isset($smwgWebserviceUser) ? $smwgWebserviceUser.":".$smwgWebservicePassword : "";
 		$this->updateClient = new RESTWebserviceConnector($host, $port, "sparul", $credentials);
 		$this->queryClient = new RESTWebserviceConnector($host, $port, "sparql", $credentials);
