@@ -58,10 +58,59 @@ class SMWSemanticStoreSQL extends SMWSemanticStore {
 		DBHelper::reportProgress(" ... done!\n",$verbose);
 		return true;
 	}
-
-	function isInitialized() {
+    
+	/**
+	 * Checks if the extension is correctly installed.
+	 * 
+	 *  (1) Checks existance of database tables
+	 *  (2) Checks if certain pages with special Halo semantics exist
+	 *  
+	 *  FIXME: i18n the messages.
+	 *  
+	 * @param (out) array $messages 
+	 */
+	function isInitialized(& $messages) {
 		$db =& wfGetDB( DB_SLAVE );
-		return $db->tableExists('smw_logging') && $db->tableExists('smw_urimapping');
+		$smw_loggingExists = $db->tableExists('smw_logging');
+		if (!$smw_loggingExists) { 
+		  $messages[] = "smw_logging does not exist!\n";
+		}
+		$smw_urimappingExists = $db->tableExists('smw_urimapping');
+		if (!$smw_urimappingExists) {
+			$messages[] = "smw_urimapping does not exist!\n";
+		}
+		$pagesExist = true;
+		if (!$this->domainRangeHintRelation->exists()) {
+			$pagesExist = false;
+			$messages[] = $this->domainRangeHintRelation->getPrefixedText()." does not exist!\n";
+		}
+		if (!$this->maxCard->exists()) {
+			$pagesExist = false;
+			$messages[] = $this->maxCard->getPrefixedText()." does not exist!\n";
+		}
+		if (!$this->minCard->exists()) {
+			$pagesExist = false;
+			$messages[] = $this->minCard->getPrefixedText()." does not exist!\n";
+		}
+		if (!$this->transitiveCat->exists()) {
+			$pagesExist = false;
+			$messages[] = $this->transitiveCat->getPrefixedText()." does not exist!\n";
+		}
+		if (!$this->symetricalCat->exists()) {
+			$pagesExist = false;
+			$messages[] = $this->symetricalCat->getPrefixedText()." does not exist!\n";
+		}
+		if (!$this->inverseOf->exists()) {
+			$pagesExist = false;
+			$messages[] = $this->inverseOf->getPrefixedText()." does not exist!\n";
+		}
+		if (!$this->ontologyURI->exists()) {
+			$pagesExist = false;
+			$messages[] = $this->ontologyURI->getPrefixedText()." does not exist!\n";
+		}
+
+		// FIXME: ignore help attributes
+		return $smw_loggingExists && $smw_urimappingExists && $pagesExist;
 	}
 
 	function drop($verbose) {

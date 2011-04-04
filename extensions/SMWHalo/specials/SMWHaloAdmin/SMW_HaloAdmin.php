@@ -31,7 +31,7 @@ class SMWHaloAdmin extends SpecialPage {
 		$wgOut->setPageTitle(wfMsg('tsa'));
 		$adminPage = Title::newFromText("SMwHaloAdmin", NS_SPECIAL);
 		$html = wfMsg('smw_haloadmin_description');
-		
+
 		if ($wgRequest->getVal('init') != NULL) {
 			$wgOut->disable(); // raw output
 			ob_start();
@@ -49,13 +49,21 @@ class SMWHaloAdmin extends SpecialPage {
 			ob_flush();
 			flush();
 			return;
-				
+
 		}
-		if (smwfGetSemanticStore()->isInitialized()) {
+		$messages= array();
+		if (smwfGetSemanticStore()->isInitialized($messages)) {
 			wfMsg('smw_haloadmin_alreadyinitialized');
-			$html .= "<br><form><input name=\"init\" type=\"submit\" value=\"".wfMsg('smw_tsa_reinitialize')."\"/><input name=\"title\" type=\"hidden\" value=\"".$adminPage->getPrefixedDBkey()."\"/></form>";
+			$html .= "<br><br><form><input name=\"init\" type=\"submit\" value=\"".wfMsg('smw_tsa_reinitialize')."\"/><input name=\"title\" type=\"hidden\" value=\"".$adminPage->getPrefixedDBkey()."\"/></form>";
+			$html .= "<h2>".wfMsg('smw_tsa_status')."</h2>";
+			$html .= wfMsg('smw_haloadmin_ok');
 		}else {
-			$html .= "<br><form><input name=\"init\" type=\"submit\" value=\"".wfMsg('smw_tsa_initialize')."\"/><input name=\"title\" type=\"hidden\" value=\"".$adminPage->getPrefixedDBkey()."\"/></form>";
+				
+			$html .= "<br><br><form><input name=\"init\" type=\"submit\" value=\"".wfMsg('smw_tsa_initialize')."\"/><input name=\"title\" type=\"hidden\" value=\"".$adminPage->getPrefixedDBkey()."\"/></form>";
+			$html .= "<h2>".wfMsg('smw_tsa_status')."</h2>";
+			foreach($messages as $m) {
+				$html .= "<br>".$m;
+			}
 		}
 
 		$wgOut->addHTML($html);

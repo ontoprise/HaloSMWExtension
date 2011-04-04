@@ -401,6 +401,7 @@ clicking the big arrows between the columns.',
 	// SMWHaloAdmin
 	'smwhaloadmin' => 'SMWHalo Administration',
 	'smw_haloadmin_description' => 'This page initializes the database for the SMWHalo extension. Press Initialize.',
+	'smw_haloadmin_ok' => 'SMWHalo extension is correctly installed.',
 	
 	// Derived facts
 	'smw_df_derived_facts_about' => 'Derived facts about $1',

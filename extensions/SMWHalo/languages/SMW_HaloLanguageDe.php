@@ -390,6 +390,7 @@ protected $smwUserMessages = array(
 	// SMWHaloAdmin
 	'smwhaloadmin' => 'SMWHalo Administration',
 	'smw_haloadmin_description' => 'Diese Seite initialisiert die SMWHalo-Extension. Drücke Sie Initialize.',
+    'smw_haloadmin_ok' => 'Die SMWHalo-Extension ist korrekt eingerichtet.',
 	
     'smw_ts_notconnected' => 'TSC nicht erreichbar. Prüfe Server unter: $1',
     'asktsc' => 'Ask triplestore',

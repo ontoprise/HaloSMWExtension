@@ -422,6 +422,7 @@ en cliquant sur les grosses flà¨ches situées entre les colonnes.",
     // SMWHaloAdmin
 	'smwhaloadmin' => 'SMWHalo Administration',
 	'smw_haloadmin_description' => 'This page initializes the database for the SMWHalo extension. Press Initialize.',
+    'smw_haloadmin_ok' => 'SMWHalo extension is correctly installed.',
 	
     
     // Simple Rules formula parser
