@@ -48,7 +48,7 @@ class SemanticNotificationSpecial extends SpecialPage {
 	/**
 	 * Overloaded function that is resopnsible for the creation of the Special Page
 	 */
-	public function execute() {
+	public function execute($par) {
 
 		global $wgRequest, $wgOut, $wgUser, $wgScript,$sngScriptPath;
 		
