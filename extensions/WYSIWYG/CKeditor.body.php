@@ -543,6 +543,8 @@ $script .= '</script>';
 	}
 
     public static function InitializeScripts($textfield, $newWinMsg) {
+        global $wgFCKEditorHeight;
+        $ckeHeight = (empty($wgFCKEditorHeight)) ? 0 : $wgFCKEditorHeight;
 		$script = <<<HEREDOC
 
 //IE hack to call func from popup
@@ -561,7 +563,7 @@ function onLoadCKeditor(){
 	firstLoad = false;
 	realTextarea = document.getElementById( '$textfield' );
 	if ( realTextarea ){
-		var height = wgFCKEditorHeight;
+		var height = $ckeHeight;
 		realTextarea.style.display = 'none';
 		if ( height == 0 ){
 			// Get the window (inner) size.
