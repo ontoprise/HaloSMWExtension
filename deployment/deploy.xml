@@ -9,7 +9,7 @@
 		<instdir>deployment</instdir>
 		<description>
 			Eases the installation and updating of extensions
-        </description>
+		</description>
 		<helpurl>http://smwforum.ontoprise.com/smwforum/index.php/Deployment_Framework
 		</helpurl>
 		<dependencies>
@@ -30,15 +30,18 @@
 		<new>
 			<require name="deploymentframework" file="deployment/Deployment.php" />
 
-			<!-- Normally exluding files in only for updates but in this case it is 
-				ok, because you must have DF when you install it new. -->
+			<!-- Normally exluding files is only for updates but in this case it is 
+				ok, because you must have DF when you install it (forced) new. -->
+				
 			<exclude file="deployment/tools/repositories" />
 			<exclude file="deployment/settings.php" />
+			<exclude file="deployment/tools/unzip.exe" />
 		</new>
 
 		<update from="130">
 			<exclude file="deployment/tools/repositories" />
 			<exclude file="deployment/settings.php" />
+			<exclude file="deployment/tools/unzip.exe" />
 		</update>
 
 	</configs>
