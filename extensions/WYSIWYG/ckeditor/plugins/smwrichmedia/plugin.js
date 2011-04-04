@@ -12,8 +12,9 @@ var commandDefinition =
 		//get URL first
 		var src = window.parent.wgServer + window.parent.wgScript + '?title=Special:UploadWindow';
 		var article = window.parent.wgTitle;
-		if (window.parent.wgPageName == 'Special:AddData') {
-			//obviously we are in Special:AddData and wgTitle is not containing what we're loooking for...
+		if (window.parent.wgNamespaceNumber == -1 &&
+            window.parent.wgCanonicalSpecialPageName == 'FormEdit')  {
+			//obviously we are in Special:FormEdit and wgTitle is not containing what we're loooking for...
 			// try target= ...first
 			var regexS = "[\\?&]target=([^&#]*)";
 			var regex = new RegExp( regexS );
