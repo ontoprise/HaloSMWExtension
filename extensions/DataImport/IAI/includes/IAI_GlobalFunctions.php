@@ -148,6 +148,11 @@ iaifStartLog("iaifInitNamespaces");
 
     define('IAI_NS_IAI',       $iaigNamespaceIndex);
     define('IAI_NS_IAI_TALK',  $iaigNamespaceIndex+1);
+    
+    if (defined('SMW_VERSION')) {
+    	global $smwgNamespacesWithSemanticLinks;
+    	$smwgNamespacesWithSemanticLinks[IAI_NS_IAI] = true;
+    }
 
     iaifInitContentLanguage($wgLanguageCode);
 
