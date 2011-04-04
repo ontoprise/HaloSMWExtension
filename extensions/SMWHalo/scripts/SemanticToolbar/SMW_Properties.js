@@ -507,7 +507,7 @@ hasAnnotationChanged: function(relations, categories) {
 		this.catValues = new Array(categories.length);
 		this.relValues = new Array();
 	}
-	relValues = new Array();
+	var relValues = new Array();
 	
 	// check properties that are defined as relation
 	var k = 0;
