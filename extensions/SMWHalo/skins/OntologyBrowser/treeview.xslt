@@ -232,7 +232,7 @@
 		<xsl:choose>
 			<xsl:when test="not (@isEmpty)">
 				<table class="instanceListColors" border="0" cellspacing="0"
-					cellpadding="0" style="width:100%;">
+					cellpadding="0" style="width:500px;">
 					<xsl:apply-templates select="instance" />
 					<xsl:apply-templates select="instancePartition" />
 				</table>
@@ -252,7 +252,7 @@
 
 	<xsl:template match="instance">
 		<tr>
-			<td><!-- <img src="{$param-img-directory}instance.gif"/> -->
+			<td style="width: 15%"><!-- <img src="{$param-img-directory}instance.gif"/> -->
 				<a class="instance">
 					<xsl:choose>
 						<xsl:when test="gissues and @inherited">
@@ -283,9 +283,7 @@
 							<xsl:value-of select="translate($title, '_', ' ')" />
 						</xsl:when>
 						<xsl:otherwise>
-							<xsl:value-of select="@namespace" />
-							:
-							<xsl:value-of select="translate($title, '_', ' ')" />
+							<xsl:value-of select="@namespace" />:<xsl:value-of select="translate($title, '_', ' ')" />
 						</xsl:otherwise>
 					</xsl:choose>
 
@@ -302,7 +300,7 @@
 					</xsl:with-param>
 				</xsl:call-template>
 			</td>
-			<td>
+			<td style="width: 20%">
 
 				<a class="navigationLink" style="margin-left:5px;">
 					<xsl:choose>
@@ -323,7 +321,6 @@
 					</xsl:choose>
 					{{SMW_OB_OPEN}}
 				</a>
-				
 				<a class="navigationLink" style="margin-left:5px;">
                     <xsl:choose>
                         <xsl:when test="@localurl">
@@ -641,9 +638,7 @@
 			<td>
 				<xsl:attribute name="rowspan"><xsl:value-of
 					select="count(child::rangeType)+1" /></xsl:attribute>
-				(
-				<xsl:value-of select="@num" />
-				)
+				(<xsl:value-of select="@num" />)
 			</td>
 			<td align="right">
 				<xsl:choose>
