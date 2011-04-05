@@ -58,6 +58,8 @@ class OntologyInstaller {
 	 * @param object $callback method askForOntologyPrefix(& $answer)
 	 * @param boolean $noBundlePage Should a bundle page be created or not.
 	 * @param boolean $force Ignore conflicts or not.
+	 * 
+	 * @return string Prefixed used to make ontology pages unique (can be null)
 	 *
 	 */
 	public function installOntology($bundleID, $inputfile, $callback, $noBundlePage = false, $force = false) {
@@ -78,12 +80,7 @@ class OntologyInstaller {
 		}
 
 		// read possible existing prefix if this is an update
-		$prefixFile = $inputfile.".prefix";
-		if (file_exists($prefixFile)) {
-			$prefix = trim(file_get_contents($prefixFile));
-		} else {
-			$prefix='';
-		}
+		$prefix = DFBundleTools::getOntologyPrefix($bundleID);
 
 		$outputfile_rel = $inputfile.".xml";
 		// verifies the ontologies
@@ -101,9 +98,7 @@ class OntologyInstaller {
 		if ($prefix != '') {
 			// write prefix file
 			print "\n[Conflict detected. Using prefix '$prefix']";
-			$handle = fopen($prefixFile, "w");
-			fwrite($handle, $prefix);
-			fclose($handle);
+
 		} else {
 			print "\n[No Conflict detected]";
 		}
@@ -119,6 +114,8 @@ class OntologyInstaller {
 			$this->uploadExternalArtifacts($externalArtifactFile, $bundleID);
 			print "done.]";
 		}
+
+		return $prefix;
 	}
 
 	/**
@@ -131,8 +128,16 @@ class OntologyInstaller {
 		$ontologies = $dd->getOntologies();
 		$noBundlePage = false;
 		foreach($ontologies as $loc) {
-			$this->installOntology($dd->getID(), $this->rootDir.$dd->getInstallationDirectory()."/".$loc, $callback, $noBundlePage, $force);
+			$prefix = $this->installOntology($dd->getID(), $this->rootDir.$dd->getInstallationDirectory()."/".$loc, $callback, $noBundlePage, $force);
 			$noBundlePage = true; // make sure that only the first ontology creates a bundle page
+
+			// store prefix
+			if ($prefix != '') {
+				$basename = basename($this->rootDir.$dd->getInstallationDirectory()."/".$loc);
+				$handle = fopen("$mwrootDir/extensions/$bundleID/".$basename.".prefix", "w");
+				fwrite($handle, $prefix);
+				fclose($handle);
+			}
 		}
 	}
 
@@ -164,8 +169,9 @@ class OntologyInstaller {
 	 * @param string $ontologyID
 	 * @param string $inputfile
 	 */
-	public function createDeployDescriptor($ontologyID, $inputfile) {
+	public function createDeployDescriptor($ontologyID, $inputfile, $prefix) {
 		global $dfgLang;
+		
 		$ontologyBundlePage = Title::newFromText($ontologyID);
 		$ontologyVersion = smwfGetStore()->getPropertyValues($ontologyBundlePage, SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString('df_ontologyversion')));
 		$installationDir = smwfGetStore()->getPropertyValues($ontologyBundlePage, SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString('df_instdir')));
@@ -378,7 +384,7 @@ ENDS
 			} else {
 				if ($noBundlePage) $noBundlePageParam = "--nobundlepage"; else $noBundlePageParam = "";
 				exec("$onto2mwxml_dir/onto2mwxml.bat \"$inputfile\" -o \"$outputfile\" --bundleid \"$bundleID\" $noBundlePageParam", $output, $ret);
-    		}
+			}
 		} else {
 			if (!file_exists("$onto2mwxml_dir/tsc")) {
 				throw new Exception("Onto2MWXML tool is not correctly installed. Please take a look in deployment/tools/onto2mwxml/README.TXT.");
@@ -414,8 +420,9 @@ ENDS
 		}
 		$answer=false;
 		if ($conflict) {
-			$callback->askForOntologyPrefix(& $answer);
+			$callback->askForOntologyPrefix($answer);
 		}
+
 		return $answer;
 	}
 

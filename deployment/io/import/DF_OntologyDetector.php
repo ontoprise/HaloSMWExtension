@@ -188,8 +188,8 @@ class DeployWikiRevisionDetector extends WikiRevision {
         if ($this->title->getNamespace() == NS_TEMPLATE && $this->title->getText() === $dfgLang->getLanguageString('df_contenthash')) return false;
         if ($this->title->getNamespace() == NS_TEMPLATE && $this->title->getText() === $dfgLang->getLanguageString('df_partofbundle')) return false;
 
-        
-		if ($this->prefix != '') {
+        // only rename if prefix is set and it is NOT the ontology page itself.
+		if ($this->prefix != '' && $this->title->getPrefixedText() != ucfirst($this->ontologyID)) {
 			$nsText = $this->title->getNamespace() !== NS_MAIN ? $this->title->getNsText().":" : "";
 			$this->setTitle(Title::newFromText($nsText.$this->prefix.$this->title->getText()));
 		}
@@ -219,17 +219,18 @@ class DeployWikiRevisionDetector extends WikiRevision {
                 }
                 if (count($values) > 0) {
                     $v = reset($values);
-                    $ontologyID = strtolower($v->getDBkey());
-                    if ($ontologyID == $this->ontologyID) {
+                    $ontologyID = $v->getDBkey();
+                    if ($ontologyID == ucfirst($this->ontologyID)) {
                         // same ontology, no conflict but merging necessary
                     
                         $this->result = array($this->title, "merge");
                     } else {
                         // conflict
-                        
+                       
                         $this->result = array($this->title, "conflict");
                     }
                 } else {
+                
                 	$this->result = array($this->title, "conflict");
                 }
 

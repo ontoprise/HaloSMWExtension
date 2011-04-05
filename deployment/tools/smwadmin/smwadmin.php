@@ -344,7 +344,7 @@ if (count($ontologiesToInstall) > 0) {
 	// requires a wiki environment, so check and include a few things more
 	checkWikiContext();
 	require_once($rootDir.'/tools/smwadmin/DF_OntologyInstaller.php');
-    
+
 	global $rootDir;
 	foreach($ontologiesToInstall as $filePath) {
 
@@ -356,17 +356,17 @@ if (count($ontologiesToInstall) > 0) {
 			$fileName = basename($filePath);
 			$bundleID = reset(explode(".", $fileName));
 		}
-		
+
 		// make path absolute is given as relative
 		if (file_exists($rootDir."/tools/".$filePath)) {
 			$filePath = $rootDir."/tools/".$filePath;
 		}
 
-		$oInstaller->installOntology($bundleID, $filePath, $confirm, false, $dfgForce);
-		
+		$prefix = $oInstaller->installOntology($bundleID, $filePath, $confirm, false, $dfgForce);
+
 		// copy ontology and create ontology bundle
 		print "\n[Creating deploy descriptor...";
-		$xml = $oInstaller->createDeployDescriptor($bundleID, $filePath);
+		$xml = $oInstaller->createDeployDescriptor($bundleID, $filePath, $prefix);
 		$bundleID = strtolower($bundleID);
 		Tools::mkpath($mwrootDir."/extensions/$bundleID");
 		$handle = fopen($mwrootDir."/extensions/$bundleID/deploy.xml", "w");
@@ -374,8 +374,15 @@ if (count($ontologiesToInstall) > 0) {
 		fclose($handle);
 		print "done.]";
 		print "\n[Copying ontology file...";
-        copy($filePath, $mwrootDir."/extensions/$bundleID/".basename($filePath));
-        print "done.]";
+		copy($filePath, $mwrootDir."/extensions/$bundleID/".basename($filePath));
+
+		// store prefix
+		if ($prefix != '') {
+			$handle = fopen("$mwrootDir/extensions/$bundleID/".basename($filePath).".prefix", "w");
+			fwrite($handle, $prefix);
+			fclose($handle);
+		}
+		print "done.]";
 	}
 }
 
@@ -408,7 +415,7 @@ foreach($packageToDeinstall as $toDeInstall) {
 
 			// include commandLine.inc to be in maintenance mode
 			checkWikiContext();
-			
+				
 			$packageID = $dd->getID();
 			$version = $dd->getVersion();
 			$logger->info("Start un-install package '$packageID'".(is_null($version) ? "" : "-$version"));
@@ -494,7 +501,7 @@ function showHelp() {
 	echo "\n\tsmwadmin -d smw: Removes the package smw.";
 	echo "\n\tsmwadmin -r [name] : Restores old installation from a restore point. User is prompted for which.";
 	echo "\n\n";
-	
+
 	$logDir = Tools::getHomeDir()."/df_log";
 	echo "\nThe DF's log files are stored in: $logDir";
 	echo "\n\n";
@@ -676,7 +683,7 @@ function fatalError($e) {
 }
 
 class DFOntologyConflictConfirm {
-	function askForOntologyPrefix(& $answer) {
+	function askForOntologyPrefix(& $result) {
 		print "\n\nOntology conflict. Please enter prefix: ";
 		$line = trim(fgets(STDIN));
 		$result = $line;

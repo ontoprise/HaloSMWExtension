@@ -14,6 +14,7 @@ Run the following command in this directory:
    mklink /D tsc <tsc-dir>
 
  Note: Windows XP users can use the tool linkd.exe from Microsoft to create directory links.
+ Download: [http://www.microsoft.com/downloads/en/details.aspx?FamilyID=9d467a69-57ff-4ae7-96ee-b18c4790cffd&displaylang=en]
 
 #
 # Installation on Linux

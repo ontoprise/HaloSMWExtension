@@ -195,13 +195,11 @@ class DeployWikiOntologyRevision extends WikiRevision {
 		if ($this->title->getNamespace() == NS_TEMPLATE && $this->title->getText() === $dfgLang->getLanguageString('df_contenthash')) return false;
 		if ($this->title->getNamespace() == NS_TEMPLATE && $this->title->getText() === $dfgLang->getLanguageString('df_partofbundle')) return false;
 
-
-		if ($this->prefix != '') {
+        //  only rename if prefix is set and it is NOT the ontology page itself.
+		if ($this->prefix != '' && $this->title->getPrefixedText() != ucfirst($this->ontologyID)) {
 			$nsText = $this->title->getNamespace() !== NS_MAIN ? $this->title->getNsText().":" : "";
 			$this->setTitle(Title::newFromText($nsText.$this->prefix.$this->title->getText()));
 		}
-
-
 
 		$article = new Article( $this->title );
 		$pageId = $article->getId();
