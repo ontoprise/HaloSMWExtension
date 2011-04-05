@@ -587,10 +587,13 @@ Function checkForApacheAndMySQLAndMemcached
    IntOp $2 0 + $R0
    FindProcDLL::FindProc "lucene-wiki.exe"
    IntOp $3 0 + $R0
+   FindProcDLL::FindProc "startSolr.bat"
+   IntOp $4 0 + $R0
    ${If} $0 == 1
    ${OrIf} $1 == 1
    ${OrIf} $2 == 1
    ${OrIf} $3 == 1
+   ${OrIf} $4 == 1
     MessageBox MB_ICONEXCLAMATION|MB_OKCANCEL $(STARTED_SERVERS) IDOK 0 IDCANCEL skipCheck
     goto checkagain
    ${EndIf}
@@ -1036,6 +1039,10 @@ Function installAsWindowsService
     # Do not install Lucene as service (does not work) but register it in Autostart folder
     DetailPrint "Start Lucene automatically via AutoStart folder."
     CreateShortCut "$SMSTARTUP\LuceneForSMWPlus.lnk" "$INSTDIR\lucene\lucene-wiki.exe"
+    # Do not install Solr as service (does not work) but register it in Autostart folder
+    DetailPrint "Start Solr automatically via AutoStart folder."
+    CreateShortCut "$SMSTARTUP\SolrForSMWPlus.lnk" "$INSTDIR\solr\wiki\startSolr.bat"
+
 FunctionEnd
 
 
@@ -1047,6 +1054,9 @@ Function un.uninstallAsWindowsService
     
     DetailPrint "Delete autostart entry for Lucene"
     Delete "$SMSTARTUP\LuceneForSMWPlus.lnk"
+
+    DetailPrint "Delete autostart entry for solr"
+    Delete "$SMSTARTUP\SolrForSMWPlus.lnk"
     
     SetOutPath "c:\temp\halo" #dummy to make installation dir removable
 FunctionEnd
@@ -1063,10 +1073,13 @@ Function un.checkForApacheAndMySQLAndMemcached
    IntOp $2 0 + $R0
    FindProcDLL::FindProc "lucene-wiki.exe"
    IntOp $3 0 + $R0
+   FindProcDLL::FindProc "startSolr.bat"
+   IntOp $4 0 + $R0
    ${If} $0 == 1
    ${OrIf} $1 == 1
    ${OrIf} $2 == 1
    ${OrIf} $3 == 1
+   ${OrIf} $4 == 1
     MessageBox MB_ICONEXCLAMATION|MB_OKCANCEL $(STARTED_SERVERS) IDOK 0 IDCANCEL skipCheck
     goto checkagain
    ${EndIf}
