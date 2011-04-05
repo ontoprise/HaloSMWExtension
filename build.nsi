@@ -492,15 +492,22 @@ Section "Solr" solr
     SectionGetFlags ${xampp} $0
     IntOp $0 $0 & ${SF_SELECTED}
 
-    SetOutPath "$INSTDIR\solr"
+    SetOutPath "$INSTDIR\solr\wiki"
     StrCpy $PHP "$INSTDIR\php\php.exe"
 
     DetailPrint "Run Solr"
     ; run the solr server
-    Exec 'java -jar "$INSTDIR\solr\wiki\start.jar"'
+    Exec '"$INSTDIR\solr\wiki\startSolr.bat"'
+
+    ${If} $0 == 1
+        SetOutPath "$INSTDIR\solr\wiki"
+        CreateDirectory "$SMPROGRAMS\$STARTMENU_FOLDER"
+        CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\${PRODUCT} ${VERSION} Start Solr.lnk" "$INSTDIR\solr\wiki\startSolr.bat"
+        CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\${PRODUCT} ${VERSION} Start Solr CreateIndex.lnk" '"$PHP" "$INSTDIR\solr\wiki\createIndex.php"'
+    ${EndIf}
 
     ; create index
-    nsExec::ExecToLog '"$PHP" "$INSTDIR\solr\wiki\createIndex.php"
+    nsExec::ExecToLog '"$PHP" "$INSTDIR\solr\wiki\createIndex.php"'
 
 SectionEnd
 
