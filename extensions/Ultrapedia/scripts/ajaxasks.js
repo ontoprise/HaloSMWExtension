@@ -6,6 +6,7 @@ var AjaxAsk = {
                 var node = document.getElementById(id);
                 if (x.status == 200) node.innerHTML = x.responseText;
                 else node.innerHTML= "<div class='error'>Error: " + x.status + " " + x.statusText + " (" + x.responseText + ")</div>";
+                smw_makeSortable(node.firstChild);
                 smw_tooltipInit();
              }
             sajax_do_call('smwf_up_Access', ["ajaxAsk", "" + qno + "," + query], target);
@@ -22,6 +23,7 @@ var AjaxSparql = {
                 if (x.status == 200) node.innerHTML = x.responseText;
                 else node.innerHTML= "<div class='error'>Error: " + x.status + " " + x.statusText + " (" + x.responseText + ")</div>";
                 smw_tooltipInit();
+                smw_makeSortable(node);
              }
             sajax_do_call('smwf_up_Access', ["ajaxSparql", "" + qno + "," + query], target);
         }

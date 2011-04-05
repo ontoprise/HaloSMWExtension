@@ -51,6 +51,8 @@ class UPParserFunctions {
 		SMWOutputs::requireHeadItem(SMW_HEADER_STYLE);
 		// add ajax ask header
 		global $smwgUltraPediaScriptPath;
+		SMWOutputs::requireHeadItem( SMW_HEADER_SORTTABLE );
+		SMWOutputs::requireHeadItem( SMW_HEADER_TOOLTIP );
 		SMWOutputs::requireHeadItem("ajaxask-header", '<script type="text/javascript" src="' . $smwgUltraPediaScriptPath . '/scripts/ajaxasks.js"></script>');
 	}
 	static public function doAjaxAsk(&$parser) {
