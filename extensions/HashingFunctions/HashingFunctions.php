@@ -19,7 +19,7 @@ $wgExtensionCredits['parserhook'][] = array(
 	'name' => 'Hashing Functions',
 	'version' => '1.0',
 	'url' => '',
-	'author' => 'Ontoprise',   
+	'author' => 'Owned by [http://www.ontoprise.de ontoprise GmbH].',   
 	'description' => 'Defines a new parser function that creates a hash from a given string. '.
                      'Currently md5 hashes and rot13 are supported.'
 );

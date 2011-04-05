@@ -205,7 +205,7 @@ function haclfSetupExtension() {
     $wgExtensionCredits['other'][]= array(
         'name'=>'HaloACL',
         'version'=>HACL_HALOACL_VERSION,
-        'author'=>"Thomas Schweitzer",
+        'author'=>"Thomas Schweitzer. Owned by [http://www.ontoprise.de ontoprise GmbH].",
         'url'=>'http://smwforum.ontoprise.com/smwforum/index.php/Help:Access_Control_List_extension',
         'description' => 'Protect the content of your wiki.');
 

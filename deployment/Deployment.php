@@ -18,7 +18,7 @@ function dfgSetupExtension() {
         'path' => __FILE__,
         'name' => 'Deployment framework',
         'version' => DF_VERSION,
-        'author' => "Kai K&uuml;hn. Maintained by [http://www.ontoprise.de Ontoprise].",
+        'author' => "Kai K&uuml;hn. Owned by [http://www.ontoprise.de ontoprise GmbH].",
         'url' => 'http://smwforum.ontoprise.com/smwforum/index.php/Deployment_Framework',
 	    'description' => 'Eases the installation and updating of extensions.'
     );

@@ -22,7 +22,7 @@ require_once 'FacetedSearch/FS_GlobalFunctions.php';
 $wgExtensionCredits['other'][] = array(
         'name' => 'Enhanced Retrieval extension',
 		'version' => US_SEARCH_EXTENSION_VERSION,
-        'author' => 'Kai K&uuml;hn',
+        'author' => 'Kai K&uuml;hn. Owned by [http://www.ontoprise.de ontoprise GmbH].',
         'url' => 'http://smwforum.ontoprise.com/smwforum/index.php/Help:Enhanced_Retrieval_Extension',
         'description' => 'Provides access to a Lucene backend.',
 );

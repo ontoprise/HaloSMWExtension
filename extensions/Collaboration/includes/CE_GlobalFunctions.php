@@ -110,7 +110,7 @@ function cefSetupExtension() {
 	$wgExtensionCredits['other'][]= array(
 		'name' => 'Collaboration',
 		'version' => CE_VERSION,
-		'author' => "Benjamin Langguth and others. Maintained by [http://www.ontoprise.de Ontoprise].",
+		'author' => "Benjamin Langguth and others. Owned by [http://www.ontoprise.de ontoprise GmbH].",
 		'url' => 'http://smwforum.ontoprise.com/smwforum/index.php/Help:Collaboration_Extension',
 		'description' => 'Some fancy collaboration tools.'
 		);

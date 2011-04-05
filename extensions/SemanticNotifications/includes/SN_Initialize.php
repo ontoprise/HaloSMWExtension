@@ -86,7 +86,7 @@ function enableSemanticNotifications() {
 	$wgExtensionCredits['other'][]= array(
 		'name'=>'Semantic Notifications', 
 		'version'=>SN_SEMANTIC_NOTIFICATIONS_VERSION, 
-		'author'=>"Thomas Schweitzer", 
+		'author'=>"Thomas Schweitzer. Owned by [http://www.ontoprise.de ontoprise GmbH].", 
 		'url'=>'http://smwforum.ontoprise.com/smwforum/index.php/Help:Semantic_Notifications_Extension',
 		'description' => 'Receive notification emails when the result of a query changes.');
 	

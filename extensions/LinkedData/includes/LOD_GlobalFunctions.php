@@ -217,7 +217,7 @@ function lodfSetupExtension() {
     $wgExtensionCredits['other'][]= array(
         'name'=>'LinkedData',
         'version'=>LOD_LINKEDDATA_VERSION,
-        'author'=>"Thomas Schweitzer",
+        'author'=>"Thomas Schweitzer. Owned by [http://www.ontoprise.de ontoprise GmbH].",
         'url'=>'http://smwforum.ontoprise.de',
         'description' => 'Embed linked data in your wiki.');
 

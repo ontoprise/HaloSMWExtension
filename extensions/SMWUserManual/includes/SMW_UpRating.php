@@ -16,7 +16,7 @@ define('SMW_UP_RATING_VERSION', '1.1');
 $wgExtensionCredits['other'][] = array(
     'name' => 'SMW Ultrapedia Rating',
 	'version'=>SMW_UP_RATING_VERSION,
-    'author' => 'Ontoprise',
+    'author' => 'Owned by [http://www.ontoprise.de ontoprise GmbH].',
     'url' => 'http://sourceforge.net/projects/halo-extension/',
     'description' => 'Rate data and send feedback to UP'.
         'and Wikipedia for improvements'

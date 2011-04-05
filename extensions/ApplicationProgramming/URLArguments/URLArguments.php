@@ -17,7 +17,7 @@ $wgExtensionCredits['parserhook'][] = array(
 	'name' => 'URL Arguments',
 	'version' => '1.0',
 	'url' => 'http://smwforum.ontoprise.com/smwforum/index.php/Help:Application_Programming_extension',
-	'author' => 'Thomas Schweitzer',   
+	'author' => 'Thomas Schweitzer. Owned by [http://www.ontoprise.de ontoprise GmbH].',   
 	'description' => 'Defines the new parser function "arg" that retrieves arguments from the URL of the current article. These values can be used in the wikitext of the article.'
 );
  

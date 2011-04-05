@@ -104,7 +104,7 @@ iaifStartLog("enableIAI");
     $wgExtensionCredits['other'][]= array(
         'name'=>'IAI',
         'version'=>IAI_VERSION,
-        'author'=>"Thomas Schweitzer",
+        'author'=>"Thomas Schweitzer. Owned by [http://www.ontoprise.de ontoprise GmbH].",
         'url'=>'http://smwforum.ontoprise.com/smwforum/index.php/Help:Data_Import_Extension',
         'description' => 'Import articles from other Mediawikis.');
 

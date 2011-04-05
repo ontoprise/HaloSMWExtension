@@ -34,7 +34,7 @@ global $smgJSLibs; $smgJSLibs[] = 'prototype';
 //Register Specialpage
 //$wgExtensionCredits['specialpage'][] = array(
 //	'name' => 'Comment',
-//	'author' => 'Robert Ulrich',
+//	'author' => 'Robert Ulrich. Owned by [http://www.ontoprise.de ontoprise GmbH].',
 //	'url' => 'www.ontoprise.de',
 //	'description' => 'Extension to dynamically resize the treeview in the menu',
 //	'version' => '0.0.1'

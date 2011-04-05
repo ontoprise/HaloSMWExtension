@@ -32,7 +32,7 @@ $wgHooks['LanguageGetMagic'][] = 'wfTreeViewLanguageGetMagic';
 
 $wgExtensionCredits['parserhook'][] = array(
     'name'        => 'Semantic Treeview',
-    'author'      => 'based on the work of [http://www.organicdesign.co.nz/nad Nad], improved by [http://www.ontoprise.de Ontoprise]',
+    'author'      => 'based on the work of [http://www.organicdesign.co.nz/nad Nad], improved by [http://www.ontoprise.de ontoprise GmbH]',
     'url'         => 'http://smwforum.ontoprise.com/smwforum/index.php/Help:TreeView_Extension',
     'description' => 'Improved version of the Mediawiki extension [http://www.mediawiki.org/wiki/Extension:Treeview Treeview].'.
     				 ' Extends the wiki parser to allow bullet and numbered lists to work with recursion and optionally'.
