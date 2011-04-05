@@ -95,7 +95,7 @@ function smwf_ac_AutoCompletionDispatcher($articleName, $userInputToMatch, $user
 
 			// if no namespace, just search all namespaces
 			if ($namespaceIndex === false) {
-				$namespaces = array_unique(array_merge(array(SMW_NS_PROPERTY, NS_CATEGORY, NS_MAIN, NS_TEMPLATE, SMW_NS_TYPE, NS_USER), array_keys($wgExtraNamespaces)));
+				$namespaces = array_unique(array_merge(array(SMW_NS_PROPERTY, NS_CATEGORY, NS_MAIN, NS_TEMPLATE, SMW_NS_TYPE, NS_USER, NS_HELP), array_keys($wgExtraNamespaces)));
 				$pages = AutoCompletionHandler::executeCommand("namespace: ".implode(",", $namespaces), $userInputToMatch);
 			} else {
 				$pages = AutoCompletionHandler::executeCommand("namespace: ".$namespaceIndex, $userInputToMatch);
@@ -116,10 +116,10 @@ function smwf_ac_AutoCompletionDispatcher($articleName, $userInputToMatch, $user
 		// ------------------------
 		// 1. category case
 		// ------------------------
-		if (stripos(strtolower($userContext), strtolower($wgLang->getNsText(NS_CATEGORY)).":") > 0) {
-			$categories = smwfGetAutoCompletionStore()->getPages($match, array(NS_CATEGORY));
+		if (preg_match('/'.strtolower($wgLang->getNsText(NS_CATEGORY)).'\s*:/i', $userContext) > 0) {
+			$categories = smwfGetAutoCompletionStore()->getPages($userInputToMatch, array(NS_CATEGORY));
 			AutoCompletionRequester::attachCategoryHints($categories);
-			return $categories;
+			return AutoCompletionRequester::encapsulateAsXML($categories, true);
 		}
 		// ------------------------------------------------
 		// 2./3. property target case / property value case
