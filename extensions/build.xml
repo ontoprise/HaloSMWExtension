@@ -28,6 +28,7 @@
 		<delete dir="HaloACL" />
 		<delete dir="HashingFunctions" />
 		<delete dir="LdapAuthentication" />
+        <delete dir="ImageMap" />
 		<delete dir="Maps" />
 		<delete dir="NewUserMessage" />
 		<delete dir="RichMedia" />
