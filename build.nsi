@@ -503,8 +503,10 @@ Section "Solr" solr
         SetOutPath "$INSTDIR\solr\wiki"
         CreateDirectory "$SMPROGRAMS\$STARTMENU_FOLDER"
         CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\${PRODUCT} ${VERSION} Start Solr.lnk" "$INSTDIR\solr\wiki\startSolr.bat"
-        CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\${PRODUCT} ${VERSION} Start Solr CreateIndex.lnk" '"$PHP" "$INSTDIR\solr\wiki\createIndex.php"'
+        CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\${PRODUCT} ${VERSION} Start Solr CreateIndex.lnk" '"$INSTDIR\solr\wiki\createIndex.bat"'
     ${EndIf}
+
+    nsExec::ExecToLog '"$PHP" "$MEDIAWIKIDIR\installer\changeVariable.php" in=createIndex.bat out=createIndex.bat php-exe="$PHP"'
 
     ; create index
     nsExec::ExecToLog '"$PHP" "$INSTDIR\solr\wiki\createIndex.php"'
