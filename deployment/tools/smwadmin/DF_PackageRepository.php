@@ -62,7 +62,7 @@ class PackageRepository {
 		if (!empty(self::$repo_dom)) return self::$repo_dom;
 		$rep_urls = array();
 		if (file_exists("repositories")) {
-			print "\nReadling from repository file...";
+			print "\nReading from repository file...";
 			$content = file_get_contents("repositories");
 			$rep_file_lines = array_unique(explode("\n", $content));
 			$repo_urls = array();
