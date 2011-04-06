@@ -2818,7 +2818,18 @@ QIHelper.prototype = {
 			// updated)
 			this.activeQuery = this.queries[f];
 			this.activeQueryId = f;
-			// extact the arguments, i.e. all between [[...]]
+
+            // merge something like this [[Category:X]] | [[PropX::+]]
+            var tmp = sub[f].split('|');
+            var tmp2 = [ '' ];
+            for (var t = 0; t < tmp.length; t++) {
+                if (tmp[t].match(/^\s*\[\[.*\]\]\s*$/))
+                    tmp2[0] += tmp[t];
+                else tmp2.push(tmp[t]);
+            }
+            sub[f] = tmp2.join('|');
+
+            // extact the arguments, i.e. all between [[...]]
 			var args = sub[f].split(/\]\]\s*\[\[/);
 			// remove the ]] from the last element
 			args[args.length - 1] = args[args.length - 1].substring(0,
@@ -2917,6 +2928,7 @@ handleQueryString : function(args, queryId, pMustShow) {
             var pchain = pname.split('.');
             pchain = pchain.firstUpperCase();
             pname = pchain[pchain.length - 1];
+            args[i] = pchain.join('.') + '::' + pval;
 
 			// if the property was already once in the arguments, we already
 			// have details about the property
@@ -3153,7 +3165,7 @@ applyOptionParams : function(query) {
             // check for additionl printouts like |?myProp
             var m = options[i].match(/^\s*\?/)
             if (m) {
-                m = options[i].replace(/\n/g,'').match(/^(.*?)(#.*?)?(=.*?)?$/);
+                m = options[i].replace(/\r?\n/g,'').match(/^(.*?)(#.*?)?(=.*?)?$/);
                 var pname = m[1].replace(/^\s*\?\s*/, '').replace(/\s*$/,'');
                 pname = pname.substr(0, 1).toUpperCase() + pname.substr(1); // fist upper case
                 var punit = (m[2]) ? m[2].replace(/#/,'').replace(/\s*$/,'') : null;
