@@ -165,9 +165,11 @@ class TSHelper {
 				} else if (strpos($sv, "#") !== false) {
 					// consider part after # as localname
 					$local = substr($sv, strpos($sv, "#")+1);
+					$local = urldecode($local);
 				} else if (strrpos($sv, "/") !== false) {
 					// consider part after / as localname
 					$local = substr($sv, strrpos($sv, "/")+1);
+					$local = urldecode($local);
 				} else {
 					// make sure to return a Title
 					return $local = "not interpretable URI";
