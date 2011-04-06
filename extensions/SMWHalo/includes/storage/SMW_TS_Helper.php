@@ -96,18 +96,58 @@ class WikiTypeToXSD {
 }
 
 class TSHelper {
-
+    
+	/**
+	 * Parses a URI and uses several heuristics 
+	 * 
+	 * @param string $uri
+	 * @return string localname which can be used to create a Title object
+	 *  
+	 */
 	public static function guessLocalName($uri) {
-		if (strpos($uri, "http://") !== false) $uri = substr($uri, 8);
+		global $wgContLang;
+		$parsedURI = parse_url($uri);
+		$knowNamespaces = array();
+		foreach(TSNamespaces::$ALL_NAMESPACE_KEYS as $nsKey) $knowNamespaces = $wgContLang->getNSText($nsKey);
+		if (array_key_exists('fragment', $parsedURI)) {
+			$local =  $parsedURI['fragment'];
+			$local = urldecode($local);
+			$local = ucfirst(trim($local));
+			$local = str_replace(" ", "_", $local);
+			$local = str_replace("%", "_", $local);
+			$local = str_replace("/", "_", $local);
+			$local = str_replace("[", "_", $local);
+			$local = str_replace("]", "_", $local);
+			$local = str_replace("?", "_", $local);
+			$local = str_replace("#", "_", $local);
+			$local = preg_replace('/__+/', "_", $local);
 
-		$lastSlash = strrpos($uri, "/");
-		if ($lastSlash == false) {
-			$lastHash = strrpos($uri, "#");
-			$localname = substr($uri, $lastHash+1);
-		} else {
-			$localname = substr($uri, $lastSlash+1);
+			$parts = explode(":", $local);
+			if (count($parts) == 1) return $local;
+			if (in_array($parts[0], $knowNamespaces)) return implode("_", $parts);
+			return $parts[1];
 		}
-		return $localname;
+		if (array_key_exists('path', $parsedURI)) {
+			$local =  $parsedURI['path'];
+			$lastSlash = strrpos($local, "/");
+			$local = $lastSlash !== false ? substr($local, $lastSlash+1) : $local;
+			$local = urldecode($local);
+			$local = ucfirst(trim($local));
+			$local = str_replace(" ", "_", $local);
+			$local = str_replace("%", "_", $local);
+			$local = str_replace("/", "_", $local);
+			$local = str_replace("[", "_", $local);
+			$local = str_replace("]", "_", $local);
+			$local = str_replace("?", "_", $local);
+			$local = str_replace("#", "_", $local);
+			$local = preg_replace('/__+/', "_", $local);
+			$parts = explode(":", $local);
+			if (count($parts) == 1) return $local;
+			if (in_array($parts[0], $knowNamespaces)) return implode("_", $parts);
+			return $parts[1];
+		}
+
+		return NULL;
 	}
 
 	/**
@@ -156,23 +196,18 @@ class TSHelper {
 			return Title::makeTitle($ns, $local);
 
 		} else {
-				
+
 			// any other URI
 			if ($forceTitle) {
 				if (self::isFunctionalOBLTerm($sv)) {
 					// function term on OBL
-					$local = TSHelper::convertOBLFunctionalTerm($sv);
-				} else if (strpos($sv, "#") !== false) {
-					// consider part after # as localname
-					$local = substr($sv, strpos($sv, "#")+1);
-					$local = urldecode($local);
-				} else if (strrpos($sv, "/") !== false) {
-					// consider part after / as localname
-					$local = substr($sv, strrpos($sv, "/")+1);
-					$local = urldecode($local);
+					$local = self::convertOBLFunctionalTerm($sv);
 				} else {
-					// make sure to return a Title
-					return $local = "not interpretable URI";
+					$local = self::guessLocalName($sv);
+					if (is_null($local)) {
+					   // make sure to return a valid Title
+					   $local = "not interpretable URI";	
+					} 
 				}
 				return Title::newFromText($local, NS_MAIN);
 			} else {
@@ -183,6 +218,8 @@ class TSHelper {
 
 
 	}
+
+
 
 	public static function convertOBLFunctionalTerm($uri) {
 		$uri = urldecode($uri);
@@ -247,7 +284,7 @@ class TSHelper {
 
 		return false;
 	}
-	
+
 	public static function isFunctionalOBLTerm($uri) {
 		return strpos($uri, "obl:") === 0;
 	}
@@ -398,11 +435,11 @@ class TSNamespaces {
 				$prefix = str_replace(" ","_",strtolower($nsText));
 			}
 			if (empty($prefix)) continue;
-				
+
 			// check for validity of prefix
 			preg_match('/\w([\w_0-9-]|\.[\w_0-9-])*/', $prefix, $matches);
 			if (isset($matches[0]) && $matches[0] != $prefix) continue;
-				
+
 			$nsText = str_replace(" ","_",strtolower($nsText));
 			$uri = $smwgTripleStoreGraph."/$nsText/";
 			self::$ALL_PREFIXES .= "\nPREFIX $prefix:<$uri> ";

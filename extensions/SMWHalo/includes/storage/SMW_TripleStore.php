@@ -1336,7 +1336,7 @@ class SMWTripleStore extends SMWStore {
 
 		$value = str_replace('$1', ucfirst($titleName), $value);
 		$value .= '?action=edit&uri='.urlencode($uri).'&redlink=1';
-		$value = SMWDataValueFactory::newTypeIDValue('_ili', $value, $titleName);
+		$value = SMWDataValueFactory::newTypeIDValue('_ili', $value, str_replace("_", " ",$titleName));
 		return $value;
 	}
 
