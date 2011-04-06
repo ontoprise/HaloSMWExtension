@@ -1,6 +1,8 @@
 
 .asf_tab_container span{
-	border: thin solid #CACAC4;
+	border-top: thin solid #CACAC4;
+	border-left: thin solid #CACAC4;
+	border-right: thin solid #CACAC4;
 	margin-right: 10px;
 	margin-top: 40px;
 	padding-left: 5px;
@@ -10,11 +12,12 @@
 }
 
 .asf_tab_container .asf_unselected_tab{
-	background-color: light-grey;
+	background-color: #CACAC4;
 }
 
 .asf_tab_container .asf_selected_tab{
-	border-bottom: medium none white;
+	font-weight: bold;
+	border-bottom-style: none;
 }
 
 .asf_tab_windoe {
