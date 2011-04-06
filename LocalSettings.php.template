@@ -182,9 +182,9 @@ $wgGroupPermissions['sysop']['ontologyediting'] = true;
 
 // extensions
 
-/*start-deploymentframework*/
+/*start-deployment*/
 require_once($IP.'/deployment/Deployment.php');
-/*end-deploymentframework*/
+/*end-deployment*/
 
 /*start-scriptmanager*/
 require_once($IP.'/extensions/ScriptManager/SM_Initialize.php');
