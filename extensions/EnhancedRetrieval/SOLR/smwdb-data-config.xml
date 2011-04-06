@@ -2,9 +2,9 @@
 	<dataSource 
 		type="JdbcDataSource" 
 		driver="com.mysql.jdbc.Driver"
-		url="jdbc:mysql://localhost:3306/testdb" 
-		user="root" 
-		password="m8nix"
+		url="jdbc:mysql://{{wgDBserver}}:{{wgDBport}}/{{wgDBname}}"
+		user="{{wgDBuser}}"
+		password="{{wgDBpassword}}"
 		batchSize="-1" 
 		/>
 	<script>
