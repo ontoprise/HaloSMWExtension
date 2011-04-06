@@ -45,7 +45,9 @@ class DALInterwikiArticleImport implements IDAL {
 //--- Fields ---
 
 	private $mWikiAPIs = array(
-		'Wikipedia' => 'http://en.wikipedia.org/w/'
+		'Wikipedia' => 'http://en.wikipedia.org/w/',
+		'Wikipedia German' => 'http://de.wikipedia.org/w/',
+	
 	);
 	
 //--- Public methods ---
@@ -72,10 +74,12 @@ class DALInterwikiArticleImport implements IDAL {
 	 * 
 	 */
 	public function getSourceSpecification() {
+		$sources = array_keys($this->mWikiAPIs);
+		$defaultsSource = $sources[0];
 		return 
 			'<?xml version="1.0"?>'."\n".
 			'<DataSource xmlns="http://www.ontoprise.de/smwplus#">'."\n".
-			' 	<wiki display="Wiki" type="text">Wikipedia</wiki>'."\n".
+			' 	<wiki display="Wiki" type="text">'.$defaultsSource.'</wiki>'."\n".
 			'</DataSource>'."\n";
 	}
      
