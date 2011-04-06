@@ -1,15 +1,34 @@
 Installation instructions
 -------------------------
 
+Install instructions for the latest version of Rich Media are also online:
+
+ http://smwforum.ontoprise.com/smwforum/index.php/Help:Installing_Rich_Media_extension_1.5
+ 
+For the full manual of the Rich Media have a look at:
+
+ http://smwforum.ontoprise.com/smwforum/index.php/Help:Rich_Media_extension
+
+
+How to install with deployment framework:
+
+(1) Download and install the Deployment Framework 
+	(Installation instructions: http://smwforum.ontoprise.com/smwforum/index.php/Help:Installing_Deployment_Framework)
+(2) Open in your commandline tool the directory: "<deployment-framework-install-dir>/deployment/tools/"
+(3) Type 'smwadmin -i richmedia'
+    This installs the extension and patches MediaWiki and SemanticForms.
+
+If you don't use the deployment framework, you can install it manually. See below.
+
 #
 #Requirements:
 #
 
 	PHP 5.2.x or 5.3.x
-	MediaWiki 1.16
-	Semantic MediaWiki 1.5.2
-	SMWHalo 1.5.2
-	Semantic Forms 2.0
+	MediaWiki 1.16.1
+	Semantic MediaWiki 1.5.2 or higher
+	SMWHalo 1.5.3
+	Semantic Forms 2.0.8
 	Parser Functions
 	String Functions 2.0 or higher
 	Deployment Framework (optional)
@@ -23,9 +42,8 @@ Installation instructions
 	1.1 The Rich Media extension comes with several patch files, where two must
 	be applied. One file patches Mediawiki and the other the Semantic Forms
 	extension. Depending on the version number choose the correct patch file.
-		* '/extensions/RichMedia/RichMediaPatchForSF2_0.txt': This file provides the necessary patches for Semantic Forms 2.0
-		* '/extensions/RichMedia/RichMediaPatchForMW1_15_3.txt': This is needed to patch MediaWiki in version 1.15.3
-		* '/extensions/RichMedia/RichMediaPatchForMW1_16_0.txt': This is needed to patch MediaWiki in version 1.16.0
+		* '/extensions/RichMedia/RichMediaPatchForSF2_0_8.txt': This file provides the necessary patches for Semantic Forms 2.0
+		* '/extensions/RichMedia/RichMediaPatchForMW1_16_1.txt': This is needed to patch MediaWiki in version 1.16.0
 
 	Note: We can not ensure that this patch works properly for other versions of MediaWiki.
 	These are Eclipse patch files which can be installed using the tool patch.php which itself uses GNU patch. The
@@ -61,7 +79,7 @@ Installation instructions
 	$wgEnableUploads = true;
 	--- 
 
-5. Go to Special:Import, select and upload '/extensions/RichMedia/import/RichMediaOntology_v1.5.xml'
+5. Go to Special:Import, select and upload '/extensions/RichMedia/import/richmedia.xml'
 
 6. Go to Special:Upload, select and upload the following two files:
 	* '/extensions/RichMedia/skins/Calendar.gif'
