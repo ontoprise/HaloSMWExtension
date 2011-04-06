@@ -168,7 +168,9 @@ class DeployWikiOntologyRevision extends WikiRevision {
 		$this->ontologyMerger = new OntologyMerger(
 		array($dfgLang->getLanguageString('is_inverse_of')),
 		array($dfgLang->getLanguageString('has_domain_and_range') => array('Type:Page', 'Type:Page')),
-		array($dfgLang->getLanguageString('has_domain_and_range'), $dfgLang->getLanguageString('imported_from'), $dfgLang->getLanguageString('df_partofbundle'))
+		array($dfgLang->getLanguageString('has_domain_and_range'), $dfgLang->getLanguageString('imported_from'), $dfgLang->getLanguageString('df_partofbundle'),
+		      $dfgLang->getLanguageString('df_ontologyversion'), $dfgLang->getLanguageString('df_instdir'), $dfgLang->getLanguageString('df_description'),
+	          $dfgLang->getLanguageString('df_ontologyuri'))
 		);
 		$this->logger = Logger::getInstance();
 	}
@@ -195,7 +197,7 @@ class DeployWikiOntologyRevision extends WikiRevision {
 		if ($this->title->getNamespace() == NS_TEMPLATE && $this->title->getText() === $dfgLang->getLanguageString('df_contenthash')) return false;
 		if ($this->title->getNamespace() == NS_TEMPLATE && $this->title->getText() === $dfgLang->getLanguageString('df_partofbundle')) return false;
 
-        //  only rename if prefix is set and it is NOT the ontology page itself.
+		//  only rename if prefix is set and it is NOT the ontology page itself.
 		if ($this->prefix != '' && $this->title->getPrefixedText() != ucfirst($this->ontologyID)) {
 			$nsText = $this->title->getNamespace() !== NS_MAIN ? $this->title->getNsText().":" : "";
 			$this->setTitle(Title::newFromText($nsText.$this->prefix.$this->title->getText()));
@@ -204,80 +206,88 @@ class DeployWikiOntologyRevision extends WikiRevision {
 		$article = new Article( $this->title );
 		$pageId = $article->getId();
 		global $smwgTripleStoreGraph;
-		if( $pageId == 0 ) {
-			# page does not exist
+		//if( $pageId == 0 ) {
 
-			$this->logger->info("Imported page: ".$this->title->getPrefixedText());
-			print "\n\t[Imported page] ".$this->title->getPrefixedText();
-			$rules = $this->ontologyMerger->extractRules($this->text);
-			if (count($rules) > 0) {
-				// there are rules
-				$this->text = str_replace('http://$$_graph_$$', $smwgTripleStoreGraph, $this->text);
-			}
-				
-			$res = parent::importOldRevision();
-			
-			// run parser and store data
-			global $wgParser, $wgTitle;
-			$wgTitle = $this->title;
-			$wgParser->mOptions = new ParserOptions();
-			$parseOutput = $wgParser->parse($this->text, $this->title, $wgParser->mOptions);
-			SMWParseData::storeData($parseOutput, $this->title);
-			
-			return $res;
-
-		} else {
-
-			$prior = Revision::loadFromTitle( $dbw, $this->title );
-
-
-			if( !is_null( $prior ) ) {
-
-				// merge new annotations with existing wikitext
-				$wikitext = $prior->getRawText();
-				$wikitext = $this->ontologyMerger->stripAnnotations($wikitext);
-
-				$extractAnnotations = $this->ontologyMerger->extractAnnotations($this->getText());
-				$wikitext .= implode("\n", $extractAnnotations);
-				$wikitext = $this->ontologyMerger->transformOntologyElements($this->prefix, $wikitext);
-
-				// strip rules from existing revision
-				$wikitext = $this->ontologyMerger->stripRules($wikitext);
-					
-				// extract rules from new and add prefix if necessary
-				$rules = $this->ontologyMerger->extractRules($this->text);
-				$rules = $this->ontologyMerger->transformRulesElements($this->prefix, $rules);
-
-				// update text
-
-				$this->text = $wikitext;
-				foreach($rules as $r) {
-					list($name, $ruletag) = $r;
-					// replace http://$$__graph__$$
-					$ruletag = str_replace('http://$$_graph_$$', $smwgTripleStoreGraph, $ruletag);
-					$this->text .= "\n$ruletag";
-
-				}
-
-				$res = $this->importAsNewRevision();
-
-				// run parser and store data
-				global $wgParser, $wgTitle;
-				$wgTitle = $this->title;
-				$wgParser->mOptions = new ParserOptions();
-				$parseOutput = $wgParser->parse($this->text, $this->title, $wgParser->mOptions);
-				SMWParseData::storeData($parseOutput, $this->title);
-				return $res;
-
-				
-			}
+		// set base URI for rules entities
+		$rules = $this->ontologyMerger->extractRules($this->text);
+		if (count($rules) > 0) {
+			// there are rules
+			$this->text = str_replace('http://$$_graph_$$', $smwgTripleStoreGraph, $this->text);
 		}
+        
+		// refactor (necessary if prefix is non-empty)
+		if ($this->prefix != '') {
+			$this->text = $this->ontologyMerger->transformOntologyElements($this->prefix, $this->text);
+			$rules = $this->ontologyMerger->transformRulesElements($this->prefix, $rules);
+		}
+			
+
+		$res = parent::importOldRevision();
+
+		// run parser and store data
+		global $wgParser, $wgTitle;
+		$wgTitle = $this->title;
+		$wgParser->mOptions = new ParserOptions();
+		$parseOutput = $wgParser->parse($this->text, $this->title, $wgParser->mOptions);
+		SMWParseData::storeData($parseOutput, $this->title);
+
+		$this->logger->info("Imported page: ".$this->title->getPrefixedText());
+		print "\n\t[Imported page] ".$this->title->getPrefixedText();
+			
+		return $res;
+
+		//} else {
+
+		/*$prior = Revision::loadFromTitle( $dbw, $this->title );
+
+
+		if( !is_null( $prior ) ) {
+
+		// merge new annotations with existing wikitext
+		$wikitext = $prior->getRawText();
+		$wikitext = $this->ontologyMerger->stripAnnotations($wikitext);
+
+		$extractAnnotations = $this->ontologyMerger->extractAnnotations($this->getText());
+		$wikitext .= implode("\n", $extractAnnotations);
+		$wikitext = $this->ontologyMerger->transformOntologyElements($this->prefix, $wikitext);
+
+		// strip rules from existing revision
+		$wikitext = $this->ontologyMerger->stripRules($wikitext);
+			
+		// extract rules from new and add prefix if necessary
+		$rules = $this->ontologyMerger->extractRules($this->text);
+		$rules = $this->ontologyMerger->transformRulesElements($this->prefix, $rules);
+
+		// update text
+
+		$this->text = $wikitext;
+		foreach($rules as $r) {
+		list($name, $ruletag) = $r;
+		// replace http://$$__graph__$$
+		$ruletag = str_replace('http://$$_graph_$$', $smwgTripleStoreGraph, $ruletag);
+		$this->text .= "\n$ruletag";
+
+		}
+
+		$res = $this->importAsNewRevision();
+
+		// run parser and store data
+		global $wgParser, $wgTitle;
+		$wgTitle = $this->title;
+		$wgParser->mOptions = new ParserOptions();
+		$parseOutput = $wgParser->parse($this->text, $this->title, $wgParser->mOptions);
+		SMWParseData::storeData($parseOutput, $this->title);
+		return $res;
+
+
+		}
+		}*/
 		return false;
 
 	}
 
 
-	
+
 
 	function importAsNewRevision() {
 
