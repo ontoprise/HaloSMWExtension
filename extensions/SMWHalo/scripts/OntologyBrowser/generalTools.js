@@ -123,6 +123,7 @@ GeneralBrowserTools.isTextSelected = function (inputBox) {
  * and *without* memory leak. Harmless to Mozilla/FF/Opera
  */
 GeneralBrowserTools.purge = function (d) {
+	if (!OB_bd.isIE) return;
     var a = d.attributes, i, l, n;
     if (a) {
         l = a.length;
