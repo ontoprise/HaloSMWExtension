@@ -16,11 +16,11 @@ $mediaWikiLocation = dirname(__FILE__) . '/../../..';
 require_once "$mediaWikiLocation/maintenance/commandLine.inc";
 $diIP = "$mediaWikiLocation/extensions/DataImport";
 
-$help = array_key_exists("help", $options);
-$delete = array_key_exists("delete", $options);
+$help = array_key_exists("h", $options);
+$delete = array_key_exists("delete", $options) || array_key_exists("d", $options);
 
 if ($help) {
-	echo "\nUsage: php DI_setup.php --help | --delete \n";
+	echo "\nUsage: php DI_setup.php --h | --d \n";
 	echo "Started with no parameters installs the database tables.";
 	die();
 }

@@ -55,6 +55,8 @@ class SMWMaterializationStorageSQL implements IMaterializationStorage{
 	}
 
 	public function deleteDatabaseTables() {
+		global $wgDBtype;
+		
 		$db =& wfGetDB( DB_MASTER );
 		$verbose = true;
 		DBHelper::reportProgress("Dropping materialization tables ...\n",$verbose);

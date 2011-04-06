@@ -171,6 +171,8 @@ class WSStorageSQL {
 	}
 
 	public function deleteDatabaseTables() {
+		global $wgDBtype;
+		
 		$db =& wfGetDB( DB_MASTER );
 		$verbose = true;
 		DBHelper::reportProgress("Dropping web service tables ...\n",$verbose);
