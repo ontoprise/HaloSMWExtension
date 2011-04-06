@@ -461,7 +461,7 @@ protected $smwUserMessages = array(
 	'tabf_response_nocreatepermission' => "Sie besitzen nicht das Recht, diese Instanz zu erzeugen.",
 	'tabf_response_nodeletepermission' => "Sie besitzen nicht das Recht, diese Instanz zu löschen.",
 
-	'tabf_update_warning' => "Beim Anwenden der Änderungen sind Fehler aufgetreten. Bitte werfen sie einen Blick in die Status-Spalte.",
+	'tabf_update_warning' => "Beim Anwenden der Änderungen sind Fehler aufgetreten. Bitte werfen sie einen Blick in die Status-Icons.",
 	
 );
 
