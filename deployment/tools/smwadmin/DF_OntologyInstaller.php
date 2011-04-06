@@ -58,7 +58,7 @@ class OntologyInstaller {
 	 * @param object $callback method askForOntologyPrefix(& $answer)
 	 * @param boolean $noBundlePage Should a bundle page be created or not.
 	 * @param boolean $force Ignore conflicts or not.
-	 * 
+	 *
 	 * @return string Prefixed used to make ontology pages unique (can be null)
 	 *
 	 */
@@ -75,7 +75,7 @@ class OntologyInstaller {
 		} catch(Exception $e) {
 			// onto2mwxml might not be installed
 			print "\nCould not convert ontology. Reason: ";
-			print $e->getMessage();
+			print "\n\n".$e->getMessage()."\n";
 			die(1);
 		}
 
@@ -171,7 +171,7 @@ class OntologyInstaller {
 	 */
 	public function createDeployDescriptor($ontologyID, $inputfile, $prefix) {
 		global $dfgLang;
-		
+
 		$ontologyBundlePage = Title::newFromText($ontologyID);
 		$ontologyVersion = smwfGetStore()->getPropertyValues($ontologyBundlePage, SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString('df_ontologyversion')));
 		$installationDir = smwfGetStore()->getPropertyValues($ontologyBundlePage, SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString('df_instdir')));
@@ -384,6 +384,10 @@ ENDS
 			} else {
 				if ($noBundlePage) $noBundlePageParam = "--nobundlepage"; else $noBundlePageParam = "";
 				exec("$onto2mwxml_dir/onto2mwxml.bat \"$inputfile\" -o \"$outputfile\" --bundleid \"$bundleID\" $noBundlePageParam", $output, $ret);
+				if ($ret != 0) {
+					foreach($output as $l) print "\n$l";
+					throw new Exception("Onto2MWXML exited abnormally.");
+				}
 			}
 		} else {
 			if (!file_exists("$onto2mwxml_dir/tsc")) {
@@ -391,6 +395,10 @@ ENDS
 			} else {
 				if ($noBundlePage) $noBundlePageParam = "--nobundlepage"; else $noBundlePageParam = "";
 				exec("$onto2mwxml_dir/onto2mwxml.sh \"$inputfile\" -o \"$outputfile\" --bundleid \"$bundleID\" $noBundlePageParam", $output, $ret);
+				if ($ret != 0) {
+					foreach($output as $l) print "\n$l";
+					throw new Exception("Onto2MWXML exited abnormally.");
+				}
 			}
 		}
 		chdir($cwd);
