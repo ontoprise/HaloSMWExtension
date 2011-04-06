@@ -1094,7 +1094,7 @@ class HACLEvaluator {
 
 		global $haclgProtectProperties;
 		global $wgRequest;
-		if (!$haclgProtectProperties) {
+		if (!$haclgProtectProperties || !defined('SMW_VERSION')) {
 			// Properties are not protected.
 			return true;
 		}
