@@ -320,6 +320,8 @@ class TestMWGroupsStorage extends PHPUnit_Framework_TestCase {
 	public function testInitPermissionsFromDBException() {
 		$gid = TestGroupPermissionsSuite::$mGroup->getGroupID();
 		
+		global $haclgThrowExceptionForMissingFeatures;
+		$haclgThrowExceptionForMissingFeatures = true;
 		// Store an unknown features
 		HACLGroupPermissions::storePermission($gid, 'unknown feature', true);
 		

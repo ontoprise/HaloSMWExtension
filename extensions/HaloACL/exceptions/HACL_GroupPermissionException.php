@@ -92,7 +92,8 @@ class HACLGroupPermissionsException extends HACLException {
     			break;
     		case self::UNKNOWN_FEATURE:
     			$msg = "The database contains a feature ('$args[1]') that is not defined in \$haclgFeature.\n".
-    					"This feature has probably been removed from \$haclgFeature.";
+    					"This feature has probably been removed from \$haclgFeature.\n".
+    					"You can ignore undefined features by setting \$haclgThrowExceptionForMissingFeatures = false; in HACL_Initialize.php.\n";
     			break;
     	}
     	return $msg;

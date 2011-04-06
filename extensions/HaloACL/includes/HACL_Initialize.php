@@ -210,6 +210,17 @@ $haclCrossTemplateAccess = array('sysop','bureaucrat');
 #
 $haclgUseFeaturesForGroupPermissions = true;
 
+###
+#
+# The names of the features that are defined here are stored as reference in the 
+# database if they are actually used. If the definition of a feature is removed
+# the corresponding rights can no longer be set. Normally this will lead to an
+# exception that informs about the missing feature.
+# If $haclgThrowExceptionForMissingFeatures is false, this exception will not
+# be thrown and the rights for the missing feature will be silently ignored.
+# 
+$haclgThrowExceptionForMissingFeatures = true;
+
 // Definition of features in the "Global Permissions" tab of Special:HaloACL
 // Do not remove the surrounding if-condition!
 
@@ -232,13 +243,13 @@ if ($haclgUseFeaturesForGroupPermissions === true) {
 	$haclgFeature['edit']['description'] = "This is the feature for editing articles.";
 	$haclgFeature['edit']['permissibleBy'] = "admin"; // The other alternative would be "all"
 	$haclgFeature['edit']['default'] = "deny"; // The other alternative would be "deny"
-	
+/*	
 	$haclgFeature['createaccount']['systemfeatures'] = "createaccount";
 	$haclgFeature['createaccount']['name'] = "Create account";
 	$haclgFeature['createaccount']['description'] = "This is the feature for creating user accounts.";
 	$haclgFeature['createaccount']['permissibleBy'] = "admin"; // The other alternative would be "all"
 	$haclgFeature['createaccount']['default'] = "permit"; // The other alternative would be "deny"
-	
+*/	
 	$haclgFeature['manage']['systemfeatures'] = "import|importupload|ontologyediting|bigdelete|deletedhistory|undelete|browsearchive|mergehistory|protect|block|blockemail|hideuser|userrights|userrights-interwiki|markbotedits|patrol|editinterface|editusercssjs|suppressrevision|deleterevision|gardening";
 	$haclgFeature['manage']['name'] = "Management";
 	$haclgFeature['manage']['description'] = "This is the feature for managing wiki articles.";

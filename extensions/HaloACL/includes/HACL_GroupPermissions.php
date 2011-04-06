@@ -163,10 +163,16 @@ class HACLGroupPermissions  {
 				break;
 			}
 			if (!array_key_exists($p['feature'], $haclgFeature)) {
-				// Unknown feature found
-				throw new HACLGroupPermissionsException(
-					HACLGroupPermissionsException::UNKNOWN_FEATURE,
-					$p['feature']);
+				global $haclgThrowExceptionForMissingFeatures;
+				if ($haclgThrowExceptionForMissingFeatures) {
+					// Unknown feature found
+					throw new HACLGroupPermissionsException(
+						HACLGroupPermissionsException::UNKNOWN_FEATURE,
+						$p['feature']);
+				} else {
+					// Suppress exception and continue with next feature
+					continue;
+				}
 			}
 			$feature = $haclgFeature[$p['feature']]['systemfeatures'];
 			$sysFeatures = explode('|', $feature);
