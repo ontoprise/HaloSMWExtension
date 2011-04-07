@@ -34,6 +34,10 @@
  * @ingroup RichMedia
  */
 
+if ( !defined( 'MEDIAWIKI' ) ) {
+	die( "This file is part of the RichMedia extension. It is not a valid entry point.\n" );
+}
+
 $wgFileExtensions = array_merge($wgFileExtensions, array(
 	'pdf', 'doc', 'ac3', 'avi', 'mp3', 'ogg', 'mpg', 'mpeg', 'mpp',
  	'mov', 'wmv', 'ppt', 'pps', 'odt', 'ods', 'odp', 'odg', 'odf', 'sxw', 'zip',
@@ -87,7 +91,15 @@ $wgRichMediaNamespaceAliases = array('Document' => NS_DOCUMENT,
 	
 global $wgNamespaceAliases;
 $wgNamespaceAliases = array_merge($wgNamespaceAliases, $wgRichMediaNamespaceAliases); 
-	
+
+global $wgNamespacesWithSubpages;
+$wgNamespacesWithSubpages[NS_FILE] = true;
+$wgNamespacesWithSubpages[NS_DOCUMENT] = true;
+$wgNamespacesWithSubpages[NS_AUDIO] = true;
+$wgNamespacesWithSubpages[NS_VIDEO] = true;
+$wgNamespacesWithSubpages[NS_PDF] = true;
+$wgNamespacesWithSubpages[NS_ICAL] = true;
+$wgNamespacesWithSubpages[NS_VCARD] = true;
 
 #used to determine which form to choose
 global $wgNamespaceByExtension;

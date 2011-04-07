@@ -24,6 +24,10 @@
  *
  * @author Benjamin Langguth
  */
+if ( !defined( 'MEDIAWIKI' ) ) {
+	die( "This file is part of the RichMedia extension. It is not a valid entry point.\n" );
+}
+
 class RMForm {
 
 	/**
