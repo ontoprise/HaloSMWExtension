@@ -243,11 +243,6 @@ $smwgNamespacesWithSemanticLinks[NS_TEMPLATE] = true;
 /*start-variable-wgUSPathSearch*/$wgUSPathSearch=true;/*end-variable-wgUSPathSearch*/
 $wgLuceneSearchTimeout=5;
 require_once($IP.'/extensions/EnhancedRetrieval/includes/EnhancedRetrieval.php');
-@require_once( $IP.'/extensions/EnhancedRetrieval/OAI/OAIRepo.php' );
-$oaiAgentRegex = '/experimental/';
-$oaiAuth = true;
-$oaiAudit = true;
-$oaiAuditDatabase = 'semwiki_en';
 /*end-unifiedsearch*/
 
 // enable Form ns when SF is not installed
