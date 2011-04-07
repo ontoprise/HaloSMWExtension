@@ -22,12 +22,12 @@
  */
 
 var wgContLanguageStrings = {
-	'PROPERTY_NS_WOC'         : 'Propriété', // Property namespace without colon
+	'PROPERTY_NS_WOC'         : 'Attribut', // Property namespace without colon
 	'RELATION_NS_WOC'         : 'Relation', // Relation namespace without colon
 	'CATEGORY_NS_WOC'         : 'Catégorie', // Category namespace without colon
 	
 	'CATEGORY_NS'             : "Catégorie:",	//namespace identifier with colon
-	'PROPERTY_NS'             : "Propriété:",	//namespace identifier with colon
+	'PROPERTY_NS'             : "Attribut:",	//namespace identifier with colon
 	'TEMPLATE_NS'             : "Template:",	//namespace identifier with colon	
 	'TYPE_NS'                 : 'Type:', 		//namespace identifier with colon
 	'TYPE_PAGE'               : "Type:Page",	// type identifier
@@ -43,8 +43,8 @@ var wgContLanguageStrings = {
 	'MAX_CARDINALITY'		  : "A pour cardinalité max",
 	'MIN_CARDINALITY'		  : "A pour cardinalité min",
 	'IS_INVERSE_OF'			  : "Est l'inverse de",
-	'TRANSITIVE_RELATION'	  : "Propriétés transitives",
-	'SYMMETRICAL_RELATION'	  : "Propriétés symétriques",
+	'TRANSITIVE_RELATION'	  : "Attributs transitives",
+	'SYMMETRICAL_RELATION'	  : "Attributs symétriques",
 	'SUBPROPERTY_OF'		  : "Subproperty of"
 	
 }
