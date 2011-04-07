@@ -76,7 +76,7 @@ class ASFFormPrinter extends SFFormPrinter {
 			$styleStartPos = strpos($form_text, 'style=', $startPos);
 			if($styleStartPos > 0){
 				$styleStartPos = strpos($form_text, '"', $styleStartPos);
-				$form_text = substr($form_text, 0, $endPos).'width: 100%;'.substr($form_text, $endPos);
+				$form_text = substr($form_text, 0, $styleStartPos).'width: 100%;'.substr($form_text, $styleStartPos);
 			} else {
 				$endPos = strpos($form_text, '>', $startPos);
 				$form_text = substr($form_text, 0, $endPos).'style="width: 100%"'.substr($form_text, $endPos);
