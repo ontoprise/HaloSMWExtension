@@ -310,6 +310,12 @@ class TSHelper {
         $str = str_replace("]", "_", $str);
         $str = str_replace("?", "_", $str);
         $str = str_replace("#", "_", $str);
+        $str = str_replace("\\", "_", $str);
+        $str = str_replace("'", "_", $str);
+        $str = str_replace("^", "_", $str);
+        $str = str_replace("<", "_", $str);
+        $str = str_replace(">", "_", $str);
+        $str = str_replace(";", "_", $str);
         $str = preg_replace('/__+/', "_", $str);
         return $str;
 
