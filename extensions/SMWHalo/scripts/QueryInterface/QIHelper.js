@@ -2820,14 +2820,18 @@ QIHelper.prototype = {
 			this.activeQueryId = f;
 
             // merge something like this [[Category:X]] | [[PropX::+]]
-            var tmp = sub[f].split('|');
-            var tmp2 = [ '' ];
+            // but also escape double || like in [[Category:X||Y]]
+            var tmp = sub[f].replace(/\|\|/g, '%%!!%%').split('|'),
+                tmp2 = [ '' ];
+
             for (var t = 0; t < tmp.length; t++) {
-                if (tmp[t].match(/^\s*\[\[.*\]\]\s*$/))
+                if (tmp[t].match(/^\s*\[\[/) && tmp[t].match(/\]\]\s*$/))
                     tmp2[0] += tmp[t];
-                else tmp2.push(tmp[t]);
+                else
+                  tmp2.push(tmp[t]);
             }
-            sub[f] = tmp2.join('|');
+            // join elements again and revert escaping of ||
+            sub[f] = tmp2.join('|').replace(/%%!!%%/g, '||');
 
             // extact the arguments, i.e. all between [[...]]
 			var args = sub[f].split(/\]\]\s*\[\[/);
