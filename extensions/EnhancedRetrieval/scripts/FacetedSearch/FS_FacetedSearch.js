@@ -149,6 +149,7 @@ FacetedSearch.classes.FacetedSearch = function () {
 			mAjaxSolrManager.store.addByValue(name, params[name]);
 		}
 		
+		checkSolrPresent();	
 	};
 	that.construct = construct;
 	
@@ -182,6 +183,29 @@ FacetedSearch.classes.FacetedSearch = function () {
 		
 		// Keyup handler for the search input field
 		$('#query').keyup(that.onSearchKeyup);
+	}
+	
+	/**
+	 * Checks if the SOLR server is responding
+	 */
+	function checkSolrPresent() {
+		var solrPresent = false;
+		var sm = new AjaxSolr.Manager({
+			solrUrl : wgFSSolrURL,
+			handleResponse : function (data) {
+				solrPresent = true;
+			}
+		});
+		sm.init();
+		sm.store.addByValue('q', '*:*');		
+		sm.doRequest(0);
+		setTimeout(function () {
+			if (!solrPresent) {
+				var lang = FacetedSearch.singleton.Language;
+				$("#results").text(lang.getMessage('solrNotFound'));
+			}
+		}, 2000);
+
 	}
 	
 	construct();
