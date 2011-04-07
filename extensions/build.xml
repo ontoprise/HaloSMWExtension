@@ -11,7 +11,12 @@
 		<ant antfile="build.xml" dir="SemanticResultFormats/deploy" target="patches" />
 
 	</target>
-	
+
+    <target name="apply_patches_for_community_edition">
+		<ant antfile="build.xml" dir="SMWHalo/deploy" target="patches" />
+		<ant antfile="build.xml" dir="EnhancedRetrieval/deploy" target="patches" />
+	</target>
+
 	<target name="apply_deployscripts">
 		<ant antfile="build.xml" dir="SMWHalo/deploy" target="deployscripts" />
 		<ant antfile="build.xml" dir="HaloACL/deploy" target="deployscripts" />
