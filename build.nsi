@@ -39,7 +39,7 @@
 !ifdef COMMUNITY_EDITION
   !define PRODUCT "SMW+ Community Edition"
   !define LOCALSETTINGS "LocalSettings.php.community.tmpl"
-  !define WIKIDB "htdocs\mediawiki\tests\tests_halo\mw16_db.sql"
+  !define WIKIDB "htdocs\mediawiki\tests\tests_halo\mw16_1_db.sql"
 !endif
 
 ; ----------------------------------------------------------
@@ -367,7 +367,8 @@ Section "SMW+ Setup" smwplussetup
   nsExec::ExecToLog '"$PHP" "$MEDIAWIKIDIR\extensions\EnhancedRetrieval\maintenance\setup.php"'
 
   SetOutPath "$INSTDIR\htdocs\mediawiki\deployment\tools"
-  nsExec::ExecToLog 'smwadmin.bat -i "$INSTDIR\baseontologybundle.zip"'
+  File "$INSTDIR\Smwplussandbox.zip"
+  nsExec::ExecToLog 'smwadmin.bat -i Smwplussandbox.zip'
 
 SectionEnd
 
