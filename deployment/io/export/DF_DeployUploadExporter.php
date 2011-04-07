@@ -1,6 +1,6 @@
 <?php
 
-# @author: Kai Kühn Ontoprise 2009
+# @author: Kai Kï¿½hn Ontoprise 2009
 #
 # derived from
 # Copyright (C) 2003, 2005, 2006 Brion Vibber <brion@pobox.com>
@@ -164,7 +164,7 @@ class DeployUploadExporter {
 						
 					$path = dirname($rel);
 					Tools::mkpath($this->dest."/$path");
-					copy($this->src."/$rel", $this->dest."/$rel");
+					copy($this->src."../$rel", $this->dest."/$rel");
 				}
 			} else {
 				echo "$rel\n";
