@@ -1,14 +1,14 @@
 <?php
 
 /*  Copyright 2009, ontoprise GmbH
- *  This file is part of the Collaboration-Extension.
+ *  This file is part of the Script Manager extension.
  *
- *   The Collaboration-Extension is free software; you can redistribute it and/or modify
+ *   The Script Manager extension is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
  *   the Free Software Foundation; either version 3 of the License, or
  *   (at your option) any later version.
  *
- *   The Collaboration-Extension is distributed in the hope that it will be useful,
+ *   The Script Manager extension is distributed in the hope that it will be useful,
  *   but WITHOUT ANY WARRANTY; without even the implied warranty of
  *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *   GNU General Public License for more details.
@@ -18,7 +18,7 @@
  */
 
 /**
- * Script extension which manages the including of common JS script libraries.
+ * Script extension which manages the inclution of common JS script libraries.
  *
  * @author Kai K�hn
  *
@@ -37,6 +37,7 @@ $wgExtensionFunctions[] = 'smgSetupExtension';
 function smgSetupExtension() {
 	global $wgHooks, $wgExtensionCredits;
 	$wgHooks['BeforePageDisplay'][]='smfAddHTMLHeader';
+	$wgHooks['SkinTemplateOutputPageBeforeExec'][] = 'smfMergeHead';
 	
 	// Register Credits
     $wgExtensionCredits['parserhook'][]= array('name'=>'ScriptManager&nbsp;Extension', 'version'=>SCM_VERSION,
@@ -109,6 +110,36 @@ function smfSortScripts($smgJSLibs) {
 	return $newList;
 }
 
+/**
+ * MW enables multiple extensions. Different extensions may use same (css in) js frameworks.
+ * This function is for the hook 'SkinTemplateOutputPageBeforeExec'
+ * and it calls 'smfMergeHeadLinks' and 'smwfMergeHeadScript' to merge
+ * known js/css links for multiple included frameworks
+ * 
+ * @param type $skin
+ * @param type $skinTemplate
+ * @return boolean true
+ */
+function smfMergeHead( $skin, $skinTemplate ) {
+	if ( $skinTemplate && $skinTemplate->data )	{
+		if ( array_key_exists( 'headscripts', $skinTemplate->data ) ) {
+			// actual head scripts of SkinTemplate
+			$headScripts = $skinTemplate->data['headscripts'];
+			// merged head scripts of SkinTemplate
+			$mergedHeadScripts = smfMergeHeadScripts( $headScripts );
+			$skinTemplate->set( 'headscripts', $mergedHeadScripts );
+		}
+		if ( array_key_exists( 'headlinks', $skinTemplate->data ) ) {
+			//actual head links of SkinTemplate
+			//TODO: these aren't all. Where are all the links?
+			$headLinks = $skinTemplate->data['headlinks'];
+			// merged head links of SkinTemplate
+			$mergedHeadLinks = smfMergeHeadLinks( $headLinks );
+			$skinTemplate->set( 'headlinks', $mergedHeadLinks );
+		}
+	}
+	return true;
+}
 
 /**
  * MW enables multiple extensions. Different extensions may use same css in js frameworks.
@@ -117,7 +148,7 @@ function smfSortScripts($smgJSLibs) {
  * Non-framework css files in different extensions may have the same filename,
  * this may cause HTML rendering bugs
  *
- * This function will be called in SkinTemplate outputPage, set 'headlinks'
+ * This function will be called from smfMergeHead
  *
  * @param string $headLinks
  * @return headlinks merged
@@ -156,7 +187,7 @@ function smfMergeHeadLinks( $headLinks ) {
  * Non-framework js files in different extensions may have the same filename,
  * this may cause HTML js bugs
  *
- * This function will be called in SkinTemplate outputPage, set 'headscripts'
+ * This function will be called from smfMergeHead
  *
  * @param string $scripts
  * @return scripts merged
