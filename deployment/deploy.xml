@@ -12,6 +12,7 @@
 		</description>
 		<helpurl>http://smwforum.ontoprise.com/smwforum/index.php/Deployment_Framework
 		</helpurl>
+		<license>GPL-v2</license> 
 		<dependencies>
 			<dependency from="1120" to="1169">mw</dependency>
 		</dependencies>
