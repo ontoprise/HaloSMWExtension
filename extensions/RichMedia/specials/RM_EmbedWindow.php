@@ -64,8 +64,7 @@ headID.appendChild(cssNode);
 </script>
 HTML;
 	$text = <<<END
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="{$wgXhtmlDefaultNamespace}"
+<html xmlns="{$wgXhtmlDefaultNamespace}">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 $head_scripts
@@ -186,7 +185,7 @@ HTML;
 			$embedObject = <<<END
 			<div id="rmEWEmbedded">
 				<object data="{$imagePath}" type="{$embedMIMEType}" id="rmEWEmbeddedObject"
-					width="95%" height="85%" declare standby="{$embedLoading}">
+					width="95%" height="85%" standby="{$embedLoading}">
 					<p>{$noEmbedMsg}</p>
 				</object>
 			</div>
