@@ -39,7 +39,7 @@
 !ifdef COMMUNITY_EDITION
   !define PRODUCT "SMW+ Community Edition"
   !define LOCALSETTINGS "LocalSettings.php.community.tmpl"
-  !define WIKIDB "smwplus_database.sql"
+  !define WIKIDB "htdocs\mediawiki\tests\tests_halo\mw16_db.sql"
 !endif
 
 ; ----------------------------------------------------------
@@ -351,6 +351,25 @@ Section "${PRODUCT} ${VERSION} core" smwplus
   
 SectionEnd
 
+Section "SMW+ Setup" smwplussetup
+  SectionIn 1 RO
+  DetailPrint "Configure SMW+"
+  SectionGetFlags ${xampp} $0
+  IntOp $0 $0 & ${SF_SELECTED}
+
+  SetOutPath "$INSTDIR\htdocs\mediawiki"
+  StrCpy $PHP "$INSTDIR\php\php.exe"
+  StrCpy $MEDIAWIKIDIR "$INSTDIR\htdocs\mediawiki"
+
+  nsExec::ExecToLog '"$PHP" "$MEDIAWIKIDIR\maintenance\update.php"'
+  nsExec::ExecToLog '"$PHP" "$MEDIAWIKIDIR\extensions\SemanticMediaWiki\maintenance\SMW_setup.php"'
+  nsExec::ExecToLog '"$PHP" "$MEDIAWIKIDIR\extensions\SMWHalo\maintenance\SMW_setup.php"'
+  nsExec::ExecToLog '"$PHP" "$MEDIAWIKIDIR\extensions\EnhancedRetrieval\maintenance\setup.php"'
+
+  SetOutPath "$INSTDIR\htdocs\mediawiki\deployment\tools"
+  nsExec::ExecToLog 'smwadmin.bat -i "$INSTDIR\baseontologybundle.zip"'
+
+SectionEnd
 
 
 Section "Semantic Forms" semforms
