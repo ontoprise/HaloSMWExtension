@@ -1158,7 +1158,7 @@ class SMWTripleStore extends SMWStore {
 							if ($lodgNEPEnabled) {
 								// in case the NEP feature is active, create integration links.
 								// guess local name
-								$localname = TSHelper::guessLocalName($sv);
+								$localname = TSHelper::convertURIToLocalName($sv);
 								$v = $this->createIntegrationLinkURI($localname, $localname, $sv);
 							} else {
 								// normal URI ouput
@@ -1331,12 +1331,10 @@ class SMWTripleStore extends SMWStore {
 		global $wgServer, $wgArticlePath;
 		$value = $wgServer.$wgArticlePath;
 		$dbkey = urldecode($dbkey);
-		
-		$titleName = TSHelper::convertOBLFunctionalTerm($dbkey);
 
-		$value = str_replace('$1', ucfirst($titleName), $value);
+		$value = str_replace('$1', ucfirst($dbkey), $value);
 		$value .= '?action=edit&uri='.urlencode($uri).'&redlink=1';
-		$value = SMWDataValueFactory::newTypeIDValue('_ili', $value, str_replace("_", " ",$titleName));
+		$value = SMWDataValueFactory::newTypeIDValue('_ili', $value, str_replace("_", " ",$dbkey));
 		return $value;
 	}
 

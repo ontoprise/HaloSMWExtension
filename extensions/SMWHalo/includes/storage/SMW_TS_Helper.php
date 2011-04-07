@@ -96,59 +96,8 @@ class WikiTypeToXSD {
 }
 
 class TSHelper {
-    
-	/**
-	 * Parses a URI and uses several heuristics 
-	 * 
-	 * @param string $uri
-	 * @return string localname which can be used to create a Title object
-	 *  
-	 */
-	public static function guessLocalName($uri) {
-		global $wgContLang;
-		$parsedURI = parse_url($uri);
-		$knowNamespaces = array();
-		foreach(TSNamespaces::$ALL_NAMESPACE_KEYS as $nsKey) $knowNamespaces = $wgContLang->getNSText($nsKey);
-		if (array_key_exists('fragment', $parsedURI)) {
-			$local =  $parsedURI['fragment'];
-			$local = urldecode($local);
-			$local = ucfirst(trim($local));
-			$local = str_replace(" ", "_", $local);
-			$local = str_replace("%", "_", $local);
-			$local = str_replace("/", "_", $local);
-			$local = str_replace("[", "_", $local);
-			$local = str_replace("]", "_", $local);
-			$local = str_replace("?", "_", $local);
-			$local = str_replace("#", "_", $local);
-			$local = preg_replace('/__+/', "_", $local);
 
-			$parts = explode(":", $local);
-			if (count($parts) == 1) return $local;
-			if (in_array($parts[0], $knowNamespaces)) return implode("_", $parts);
-			return $parts[1];
-		}
-		if (array_key_exists('path', $parsedURI)) {
-			$local =  $parsedURI['path'];
-			$lastSlash = strrpos($local, "/");
-			$local = $lastSlash !== false ? substr($local, $lastSlash+1) : $local;
-			$local = urldecode($local);
-			$local = ucfirst(trim($local));
-			$local = str_replace(" ", "_", $local);
-			$local = str_replace("%", "_", $local);
-			$local = str_replace("/", "_", $local);
-			$local = str_replace("[", "_", $local);
-			$local = str_replace("]", "_", $local);
-			$local = str_replace("?", "_", $local);
-			$local = str_replace("#", "_", $local);
-			$local = preg_replace('/__+/', "_", $local);
-			$parts = explode(":", $local);
-			if (count($parts) == 1) return $local;
-			if (in_array($parts[0], $knowNamespaces)) return implode("_", $parts);
-			return $parts[1];
-		}
-
-		return NULL;
-	}
+	
 
 	/**
 	 * Converts a URI into a Title object.
@@ -162,7 +111,7 @@ class TSHelper {
 	 * @param string $sv URI
 	 * @param boolean $forceTitle
 	 *
-	 * @return Title
+	 * @return mixed Title or string
 	 */
 	public static function getTitleFromURI($sv, $forceTitle = true) {
 
@@ -199,16 +148,7 @@ class TSHelper {
 
 			// any other URI
 			if ($forceTitle) {
-				if (self::isFunctionalOBLTerm($sv)) {
-					// function term on OBL
-					$local = self::convertOBLFunctionalTerm($sv);
-				} else {
-					$local = self::guessLocalName($sv);
-					if (is_null($local)) {
-					   // make sure to return a valid Title
-					   $local = "not interpretable URI";	
-					} 
-				}
+				$local = self::convertURIToLocalName($sv);
 				return Title::newFromText($local, NS_MAIN);
 			} else {
 				// return URI unchanged.
@@ -218,59 +158,32 @@ class TSHelper {
 
 
 	}
-
-
-
-	public static function convertOBLFunctionalTerm($uri) {
-		$uri = urldecode($uri);
-
-		preg_match('/\(([^)]*)\)/',$uri, $matches);
-		if (count($matches) > 1) {
-			$uri = $matches[1];
-			$arguments = explode(",", $uri);
-			for($i = 0; $i < count($arguments); $i++) {
-				$a = $arguments[$i];
-				if (strpos($a,":") !== false) {
-					// could be URI
-					if (strpos($a, "#") !== false) {
-						$local = substr($a, strpos($a, "#")+1);
-					} else if (strrpos($a, "/") !== false) {
-						$local = substr($a, strrpos($a, "/")+1);
-					}
-					$a = $local;
-				}
-				$a = self::eliminateTitleCharacters($a);
-				$arguments[$i]= $a;
-
-			}
-			$uri = implode("_", $arguments);
-		} else {
-			$uri = self::eliminateTitleCharacters($uri);
-		}
+    
+	/**
+	 * Converts a URI into a localname by guessing the localname.
+	 * 
+	 * @param string $uri
+	 * @return string
+	 */
+	public static function convertURIToLocalName($uri) {
 			
-		return $uri;
+		if (self::isFunctionalOBLTerm($uri)) {
+			// function term on OBL
+			$local = self::convertOBLFunctionalTerm($uri);
+			$local = self::eliminateTitleCharacters($local);
+			$local .= '_'.md5($uri); // make sure the title is unique
+		} else {
+			$local = self::guessLocalName($uri);
+			if (is_null($local)) {
+				// make sure to return a valid Title
+				$local = "not interpretable URI";
+			}
+		}
+		return $local;
 	}
 
-	private static function eliminateTitleCharacters($uri) {
-		$uri = str_replace("#", "_", $uri);
-		$uri = str_replace("(", "_", $uri);
-		$uri = str_replace(")", "_", $uri);
-		$uri = str_replace(",", "_", $uri);
-		$uri = str_replace("\"", "_", $uri);
-		$uri = str_replace("/", "_", $uri);
-		$uri = str_replace("'", "_", $uri);
-		$uri = str_replace("^", "_", $uri);
-		$uri = str_replace("<", "_", $uri);
-		$uri = str_replace(">", "_", $uri);
-		$uri = str_replace(":", "_", $uri);
-		$uri = str_replace("%", "_", $uri);
-		$uri = str_replace(" ", "_", $uri);
-		$uri = preg_replace('/__+/', "_", $uri);
-		$uri = str_replace("_", " ", $uri);
-		$uri = trim($uri);
-		$uri = str_replace(" ", "_", $uri);
-		return $uri;
-	}
+
+   
 
 	public static function isLocalURI($uri) {
 		foreach (TSNamespaces::$ALL_NAMESPACES as $nsIndsex => $ns) {
@@ -306,6 +219,8 @@ class TSHelper {
 
 		return array($uri, $title);
 	}
+	
+   
 
 	/**
 	 * Returns a local URI for the wiki graph of a given Title object.
@@ -354,6 +269,87 @@ class TSHelper {
 			}
 		}
 	}
+	
+ /**
+     * Converts an OBL function term by translating all contained URIs
+     * into their localnames by guessing them. 
+     * 
+     * @param string $uri
+     * @return string
+     */
+    private static function convertOBLFunctionalTerm($uri) {
+            
+        $uri = urldecode($uri);
+        $uri = substr($uri, 9);
+
+        preg_match_all("/<([^>]+)>/", $uri, $matches);
+
+        foreach($matches[1] as $match) {
+            $t = self::convertURIToLocalName($match);
+            if (!is_null($t)) {
+                $uri = str_replace("<$match>", $t, $uri);
+            }
+        }
+            
+        return $uri;
+    }
+    
+    /**
+     * Eliminates some forbidden characters which must not appear in a Title.
+     * 
+     *  @param string $str
+     *  @return string 
+     */
+    private static function eliminateTitleCharacters($str) {
+
+        $str = ucfirst(trim($str));
+        $str = str_replace(" ", "_", $str);
+        $str = str_replace("%", "_", $str);
+        $str = str_replace("/", "_", $str);
+        $str = str_replace("[", "_", $str);
+        $str = str_replace("]", "_", $str);
+        $str = str_replace("?", "_", $str);
+        $str = str_replace("#", "_", $str);
+        $str = preg_replace('/__+/', "_", $str);
+        return $str;
+
+    }
+    
+    /**
+     * Parses a URI and uses several heuristics
+     *
+     * @param string $uri
+     * @return string localname which can be used to create a Title object
+     *
+     */
+    private static function guessLocalName($uri) {
+        global $wgContLang;
+        $parsedURI = parse_url($uri);
+        $knowNamespaces = array();
+        foreach(TSNamespaces::$ALL_NAMESPACE_KEYS as $nsKey) $knowNamespaces[] = $wgContLang->getNSText($nsKey);
+        if (array_key_exists('fragment', $parsedURI)) {
+            $local =  $parsedURI['fragment'];
+            $local = urldecode($local);
+            $local = self::eliminateTitleCharacters($local);
+            $parts = explode(":", $local);
+            if (count($parts) == 1) return $local;
+            if (in_array($parts[0], $knowNamespaces)) return implode("_", $parts);
+            return $parts[1];
+        }
+        if (array_key_exists('path', $parsedURI)) {
+            $local =  $parsedURI['path'];
+            $lastSlash = strrpos($local, "/");
+            $local = $lastSlash !== false ? substr($local, $lastSlash+1) : $local;
+            $local = urldecode($local);
+            $local = self::eliminateTitleCharacters($local);
+            $parts = explode(":", $local);
+            if (count($parts) == 1) return $local;
+            if (in_array($parts[0], $knowNamespaces)) return implode("_", $parts);
+            return $parts[1];
+        }
+
+        return NULL;
+    }
 
 }
 
