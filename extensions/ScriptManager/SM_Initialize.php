@@ -121,6 +121,8 @@ function smfSortScripts($smgJSLibs) {
  * @return boolean true
  */
 function smfMergeHead( $skin, $skinTemplate ) {
+	// FIXME: For vector skin all scripts and (css) links are contained in
+	// $skinTemplate->data['headelements']
 	if ( $skinTemplate && $skinTemplate->data ) {
 		if ( array_key_exists( 'headscripts', $skinTemplate->data ) ) {
 			// actual head scripts of SkinTemplate
