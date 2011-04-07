@@ -121,7 +121,7 @@ function smfSortScripts($smgJSLibs) {
  * @return boolean true
  */
 function smfMergeHead( $skin, $skinTemplate ) {
-	if ( $skinTemplate && $skinTemplate->data )	{
+	if ( $skinTemplate && $skinTemplate->data ) {
 		if ( array_key_exists( 'headscripts', $skinTemplate->data ) ) {
 			// actual head scripts of SkinTemplate
 			$headScripts = $skinTemplate->data['headscripts'];
@@ -136,6 +136,11 @@ function smfMergeHead( $skin, $skinTemplate ) {
 			// merged head links of SkinTemplate
 			$mergedHeadLinks = smfMergeHeadLinks( $headLinks );
 			$skinTemplate->set( 'headlinks', $mergedHeadLinks );
+		}
+		if ( array_key_exists( 'csslinks', $skinTemplate->data ) ) {
+			$cssLinks = $skinTemplate->data['csslinks'];
+			$mergedCssLinks = smfMergeHeadLinks( $cssLinks );
+			$skinTemplate->set( 'csslinks', $mergedCssLinks );
 		}
 	}
 	return true;
