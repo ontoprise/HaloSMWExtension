@@ -604,7 +604,7 @@ class ConsistencyChecker {
 	private function liftSMW($version, $format) {
 		global $smwgIP;
 		$ls = file_get_contents($this->rootDir."/LocalSettings.php");
-		if (strpos($ls, '/*start-smw*/') !== false) continue;
+		if (strpos($ls, '/*start-smw*/') !== false) return false;
 		// create deploy descriptor
 		$dd = file_get_contents("resources/dd_templates/deploy_smw.xml");
 		$dd = str_replace("{{version}}", $version, $dd);
@@ -655,7 +655,7 @@ class ConsistencyChecker {
 	private function liftSF($version, $format) {
 		global $sfgIP;
 		$ls = file_get_contents($this->rootDir."/LocalSettings.php");
-		if (strpos($ls, '/*start-semanticforms*/') !== false) continue;
+		if (strpos($ls, '/*start-semanticforms*/') !== false) return false;
 		// create deploy descriptor
 		$dd = file_get_contents("resources/dd_templates/deploy_sf.xml");
 		$dd = str_replace("{{version}}", $version, $dd);
