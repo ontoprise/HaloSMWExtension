@@ -269,6 +269,8 @@ class DeployWikiRevision extends WikiRevision {
 					}
 					if ($result == true) {
 						// if confirmed overwrite
+						$this->setID($prior->getId()+1);
+						$this->setTimestamp(0);
 						return $this->importAsNewRevision();
 					}
 				}
