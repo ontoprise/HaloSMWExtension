@@ -20,6 +20,7 @@ function tff_getTabularForm($querySerialization, $isSPARQL, $tabularFormId){
 	$printRequests = array();
 
 	if($isSPARQL){
+		
 		SMWSPARQLQueryProcessor::processFunctionParams( 
 			$querySerialization, $queryString, $queryParams, $printRequests);
 		
@@ -66,13 +67,13 @@ function tff_updateInstanceData($updates, $articleTitle, $revisionId, $rowNr, $t
 		if($update['isTemplateParam'] == 'true'){
 			if(strlen($update['originalValue']) == 0) $update['originalValue'] = null;
 			$params[$update['address']]['originalValues'][$update['templateId']] = $update['originalValue'];
-			$params[$update['address']]['newValues'][$update['templateId']] = $update['newValue'];
+			$params[$update['address']]['newValues'][$update['templateId']] = trim($update['newValue']);
 		} else {
 			//if(strlen($update['address']) == 0) continue;
 			if($revisionId == '-1') $update['originalValue'] = null;
 			if(!array_key_exists('hash', $update)) $update['hash'] = null;
 			$annotations->addAnnotation(new TFAnnotationData(
-				$update['address'], $update['originalValue'], null, $update['hash'], $update['typeId'], $update['newValue']));
+				$update['address'], $update['originalValue'], null, $update['hash'], $update['typeId'], trim($update['newValue'])));
 		}
 	}
 	
