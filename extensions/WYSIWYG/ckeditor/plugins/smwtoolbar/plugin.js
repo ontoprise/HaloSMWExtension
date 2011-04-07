@@ -257,7 +257,7 @@ CKeditInterface.prototype = {
         // selection with html markup of the imediate parent element, if required
         var html = this.getSelectionHtml();
         // (partly) selected text within these elements can be annotated.
-        var goodNodes = ['P', 'B', 'I', 'U', 'S'];
+        var goodNodes = ['P', 'B', 'I', 'U', 'S', 'LI', 'DT', 'DIV', 'SPAN'];
 
         // selection is the same as the innerHTML -> no html was selected
 		// trim strings to compare
