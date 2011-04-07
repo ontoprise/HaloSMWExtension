@@ -11,6 +11,7 @@
 			Mediawiki.
 		</description>
 		<helpurl>http://smwforum.ontoprise.com/smwforum/index.php/Help:Halo_Extension_User_Manual</helpurl>
+		<license>GPL v2</license>
 		<dependencies>
 		    <dependency from="1150" to="1169">mw</dependency>
 			<dependency from="156">smw</dependency>
