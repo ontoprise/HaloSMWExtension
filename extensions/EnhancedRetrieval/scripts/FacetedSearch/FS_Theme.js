@@ -72,6 +72,9 @@
 	 */
 	function getLink(namespaceId, page) {
 		var ns = wgFormattedNamespaces[String(namespaceId)];
+		if (!ns) {
+			ns = "";
+		}
 		if (ns.length > 0) {
 			ns = noUnderscore(ns) + ':';
 		}
