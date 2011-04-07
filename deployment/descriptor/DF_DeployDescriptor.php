@@ -339,13 +339,22 @@ class DeployDescriptor {
 	}
 
 	/**
-	 * Get notice (which is optional). It is displayed at the end of an installation operation.
+	 * Returns notice (which is optional). It is displayed at the end of an installation operation.
 	 * @return string
 	 */
 	function getNotice() {
-		// helpurl is optional
+		// notice is optional
 		return isset($this->globalElement[0]->notice) ? trim((string) $this->globalElement[0]->notice) : '';
 	}
+	
+    /**
+     * Returns license (which is optional). 
+     * @return string
+     */
+    function getLicense() {
+        // license is optional
+        return isset($this->globalElement[0]->license) ? trim((string) $this->globalElement[0]->license) : '';
+    }
 
 	/**
 	 * Returns installation directory.
