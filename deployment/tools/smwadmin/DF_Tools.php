@@ -500,7 +500,7 @@ class Tools {
 	public static function unzipDeployDescriptor($filePath, $tempFolder) {
 		$filePath = Tools::makeUnixPath($filePath);
 		if (!file_exists($filePath)) return NULL;
-		exec('unzip -l '.$filePath, $output, $res);
+		exec('unzip -l "'.$filePath.'"', $output, $res);
 		foreach($output as $o) {
 			if (strpos($o, "/deploy.xml") !== false) {
 				$out = $o;
@@ -510,7 +510,7 @@ class Tools {
 		if (!isset($out)) return NULL;
 		$tempFile = $tempFolder."/".uniqid();
 		$dd_path = reset(array_reverse(explode(" ", $out)));
-		exec('unzip -j '.$filePath.' '.$dd_path.' -d '.$tempFile, $output, $res);
+		exec('unzip -j "'.$filePath.'" "'.$dd_path.'" -d "'.$tempFile.'"', $output, $res);
 		$dd = new DeployDescriptor(file_get_contents($tempFile."/deploy.xml"));
 		return $dd;
 	}
