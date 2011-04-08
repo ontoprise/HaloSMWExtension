@@ -3,6 +3,7 @@
 	<global>
 		<version>143</version>
 		<id>treeview</id>
+        <license>GPL-v2</license>
 		<vendor>Ontoprise GmbH</vendor>
 		<maintainer>Ontoprise GmbH</maintainer>
 		<instdir>extensions/Treeview</instdir>
