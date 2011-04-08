@@ -3,6 +3,7 @@
 	<global>
 		<version>131</version>
 		<id>collaboration</id>
+        <license>GPL-v2</license>
 		<vendor>Ontoprise GmbH</vendor>
 		<maintainer>Ontoprise GmbH</maintainer>
 		<instdir>extensions/Collaboration</instdir>
