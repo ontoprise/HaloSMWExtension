@@ -14,6 +14,7 @@
 			<dependency from="1160" to="1169">mw</dependency>
 		</dependencies>
 		<patchlevel>0</patchlevel>
+		<license>GPL v2</license>
 	</global>
 	<codefiles>
 

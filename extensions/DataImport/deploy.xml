@@ -20,6 +20,7 @@
 			<dependency from="100" to="110" optional="true">linkeddata</dependency>
 		</dependencies>
 		<patchlevel>0</patchlevel>
+		<license>GPL v2</license>
 	</global>
 	<codefiles>
 
