@@ -6,7 +6,7 @@ Index: extensions/SemanticMediaWiki/includes/SMW_ParseData.php
  		// The below method is not safe, since "M" as used in MW may not be the month label as used in SMW if SMW falls back to some other language:
  		//   $dv = SMWDataValueFactory::newPropertyObjectValue( $pmdat, $wgContLang->sprintfDate( 'd M Y G:i:s', $article->getTimestamp() ) );
  		$semdata->addPropertyObjectValue( $pmdat, $dv );
-+		/*op-patch|TS|2009-12-11|SMWHalo|Additional builtin properties|start*/
++		/*op-patch|TS|2009-12-11|SMWHalo|Additional builtin properties|start|doc|http://dmwiki.ontoprise.com:8888/dmwiki/index.php/Additional_builtin_properties*/
 +		global $wgUser, $wgRequest;
 +		if (isset($wgUser) && $wgRequest->getVal('action') == 'submit') {
 +			// I guess action is not 'submit' when this is called from a job
