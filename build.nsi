@@ -323,8 +323,10 @@ Section "${PRODUCT} ${VERSION} core" smwplus
   copyfiles:
       !ifndef NOFILES
             
-            File /r /x .svn /x CVS /x *.zip /x *.exe /x *.cache /x *.settings /x LocalSettings.php /x ACLs.php /x *.nsi /x SKOSExpander.php * 
-            File /oname=AdminSettings.php AdminSettingsTemplate.php           
+            File /r /x .svn /x CVS /x *.zip /x *.exe /x *.cache /x .buildpath /x .project /x *.settings /x LocalSettings.php /x ACLs.php /x *.nsi /x SKOSExpander.php *
+            File /oname=AdminSettings.php AdminSettingsTemplate.php
+            File /oname=Smwplus.zip deployment\tools\Smwplus.zip
+            File /oname=Smwplussandbox.zip deployment\tools\Smwplussandbox.zip
             File /oname=deployment\tools\patch.exe deployment\tools\patch.exe
             File /oname=deployment\tools\unzip.exe deployment\tools\unzip.exe
             CopyFiles $INSTDIR\htdocs\mediawiki\patches\patch.php $INSTDIR\htdocs\mediawiki\deployment\tools
@@ -367,8 +369,6 @@ Section "SMW+ Setup" smwplussetup
   nsExec::ExecToLog '"$PHP" "$MEDIAWIKIDIR\extensions\EnhancedRetrieval\maintenance\setup.php"'
 
   SetOutPath "$MEDIAWIKIDIR\deployment\tools"
-  CopyFiles "$MEDIAWIKIDIR\Smwplus.zip" "$MEDIAWIKIDIR\deployment\tools"
-  CopyFiles "$MEDIAWIKIDIR\Smwplussandbox.zip" "$MEDIAWIKIDIR\deployment\tools"
   nsExec::ExecToLog '"$MEDIAWIKIDIR\deployment\tools\smwadmin.bat" -i Smwplus.zip'
   nsExec::ExecToLog '"$MEDIAWIKIDIR\deployment\tools\smwadmin.bat" -i Smwplussandbox.zip'
 
