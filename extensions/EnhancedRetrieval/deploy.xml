@@ -5,6 +5,7 @@
 		<id>unifiedsearch</id>
 		<vendor>Ontoprise GmbH</vendor>
 		<maintainer>Ontoprise GmbH</maintainer>
+		<license>GPL-v2</license>
 		<instdir>extensions/EnhancedRetrieval</instdir>
 		<description>A client for the lucene wiki server.</description>
 		<helpurl>http://smwforum.ontoprise.com/smwforum/index.php/Help:Enhanced_Retrieval_Extension
