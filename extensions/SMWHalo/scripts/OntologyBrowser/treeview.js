@@ -297,11 +297,22 @@ Event.observe(window, 'load', function() { // call initialize hook
 			dataAccess = new OBDataAccess();
 			dataAccess.initializeTree(null);
 
-			// initialize event listener for FilterBrowser
+		// initialize event listener for FilterBrowser
 		var filterBrowserInput = $("FilterBrowserInput");
 		Event.observe(filterBrowserInput, "keyup",
 				globalActionListener.filterBrowsing.bindAsEventListener(
 						globalActionListener, false));
+		
+		// initialize handlers for property switches 
+		var showInheritedPropertySwitch = $("directPropertySwitch");
+		Event.observe(showInheritedPropertySwitch, "change",
+				schemaActionPropertyListener.reloadProperties.bindAsEventListener(
+						schemaActionPropertyListener, false));
+		
+		var showRangesForPropertySwitch = $("showForRange");
+		Event.observe(showRangesForPropertySwitch, "change",
+				schemaActionPropertyListener.reloadProperties.bindAsEventListener(
+						schemaActionPropertyListener, false));
 	});
 
 // ---------------------------------------------------------------------------

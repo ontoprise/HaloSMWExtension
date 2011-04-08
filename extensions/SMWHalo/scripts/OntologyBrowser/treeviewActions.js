@@ -1586,7 +1586,43 @@ OBSchemaPropertyActionListener.prototype = {
 						callbackOnPropertySelectForInstance);
 			}
 		}
+	},
+	
+	/**
+	 * Reloads the propery column (for schema data).
+	 * 
+	 */
+	reloadProperties: function(e) {
+		// callback for properties of a category
+		function callbackOnCategorySelect2(request) {
+			OB_relatt_pendingIndicator.hide();
+			if (relattDIV.firstChild) {
+				GeneralBrowserTools
+						.purge(relattDIV.firstChild);
+				relattDIV.removeChild(relattDIV.firstChild);
+			}
+			var xmlFragmentPropertyList = GeneralXMLTools
+					.createDocumentFromString(request.responseText);
+			dataAccess.OB_cachedProperties = xmlFragmentPropertyList;
+			selectionProvider.fireBeforeRefresh();
+			transformer.transformResultToHTML(request,
+					relattDIV);
+			selectionProvider.fireRefresh();
+			selectionProvider.fireSelectionChanged(null,
+					null, SMW_PROPERTY_NS, null);
+		}
+		var relattDIV = document
+		.getElementById("relattributes");
+		
+		OB_relatt_pendingIndicator.show();
+		var onlyDirect = !$('directPropertySwitch').checked;
+		var dIndex = $('showForRange').checked ? '_2'
+				: '_1';
+		dataAccess.getProperties(this.selectedCategory,
+				onlyDirect, dIndex,
+				callbackOnCategorySelect2);
 	}
+	
 }
 
 /**
