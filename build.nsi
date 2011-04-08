@@ -367,8 +367,8 @@ Section "SMW+ Setup" smwplussetup
   nsExec::ExecToLog '"$PHP" "$MEDIAWIKIDIR\extensions\EnhancedRetrieval\maintenance\setup.php"'
 
   SetOutPath "$MEDIAWIKIDIR\deployment\tools"
-  File "$MEDIAWIKIDIR\Smwplus.zip"
-  File "$MEDIAWIKIDIR\Smwplussandbox.zip"
+  CopyFiles "$MEDIAWIKIDIR\Smwplus.zip" "$MEDIAWIKIDIR\deployment\tools"
+  CopyFiles "$MEDIAWIKIDIR\Smwplussandbox.zip" "$MEDIAWIKIDIR\deployment\tools"
   nsExec::ExecToLog 'smwadmin.bat -i Smwplus.zip'
   nsExec::ExecToLog 'smwadmin.bat -i Smwplussandbox.zip'
 
