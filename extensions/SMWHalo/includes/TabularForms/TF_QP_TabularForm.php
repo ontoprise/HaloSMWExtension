@@ -22,6 +22,34 @@ class TFTabularFormQueryPrinter extends SMWResultPrinter {
 		}
 	}
 	
+	
+	/*
+	 * Also called by Halo Initialize
+	 */
+	public function getScripts() {
+	    global $smwgHaloScriptPath;
+	    $scripts=array();
+		$scripts[] = '<script type="text/javascript" src="' . $smwgHaloScriptPath . 
+				'/scripts/TabularForms/tabularforms.js"></script>' . "\n";
+		return $scripts;
+	}
+	
+	/*
+	 * Also called by Halo Initialize
+	 */
+	function getStylesheets() {
+		global $smwgHaloScriptPath;
+		$css = array();
+		$css[] = array(
+            'rel' => 'stylesheet',
+            'type' => 'text/css',
+            'media' => "screen, projection",
+            'href' => $smwgHaloScriptPath . '/skins/TabularForms/tabularforms.css'
+		);
+        return $css;
+	}
+	
+	
 	/*
 	 * Returns the HTML output of this query printer
 	 */
@@ -40,10 +68,17 @@ class TFTabularFormQueryPrinter extends SMWResultPrinter {
 			$html = $tabularFormData->getTabularFormHTML($this->m_params[TF_TABULAR_FORM_ID_PARAM]);
 		} else {
 			//the Ajax loader HTML must be displayed
-			$html = $tabularFormData->getAjaxLoaderHTML(); 
+			$html = $tabularFormData->getAjaxLoaderHTML();
+
+			//Add script
+			foreach($this->getScripts() as $key => $script) {
+				SMWOutputs::requireHeadItem("tf-script".$key, $script);    
+			}
+			
+			 foreach($this->getStylesheets() as $key => $css) {
+				SMWOutputs::requireHeadItem("tabularform-css".$key, '<link rel="stylesheet" type="text/css" href="' . $css['href'] . '" />');
+			 }
 		}
-		
-		//return array( $html . $this->mErrorList, 'noparse' => true, 'isHTML' => true );
 		
 		return $html;
 	}
@@ -111,6 +146,7 @@ class TFTabularFormData {
 			$this->enableInstanceDelete = true;
 		}
 	}
+	
 	
 	/*
 	 * Returns the HTML of the Ajax loader
