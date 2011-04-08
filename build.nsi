@@ -369,8 +369,8 @@ Section "SMW+ Setup" smwplussetup
   SetOutPath "$MEDIAWIKIDIR\deployment\tools"
   CopyFiles "$MEDIAWIKIDIR\Smwplus.zip" "$MEDIAWIKIDIR\deployment\tools"
   CopyFiles "$MEDIAWIKIDIR\Smwplussandbox.zip" "$MEDIAWIKIDIR\deployment\tools"
-  nsExec::ExecToLog 'smwadmin.bat -i Smwplus.zip'
-  nsExec::ExecToLog 'smwadmin.bat -i Smwplussandbox.zip'
+  nsExec::ExecToLog '"$MEDIAWIKIDIR\deployment\tools\smwadmin.bat" -i Smwplus.zip'
+  nsExec::ExecToLog '"$MEDIAWIKIDIR\deployment\tools\smwadmin.bat" -i Smwplussandbox.zip'
 
 SectionEnd
 
