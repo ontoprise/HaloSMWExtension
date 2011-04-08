@@ -1000,9 +1000,7 @@ function smwfHaloAddHTMLHeader(&$out) {
 	$jsm->addCSSIf($smwgHaloScriptPath . '/skins/derivedFactsTab.css');
 
 	//    $jsm->addCSSIf($smwgHaloScriptPath . '/skins/Glossary/glossary.css');
-
-	$jsm->addCSSIf($smwgHaloScriptPath . '/skins/TabularForms/tabularforms.css');
-
+	
 	// serialize the css
 	$jsm->serializeCSS($out);
 
@@ -1020,9 +1018,6 @@ function smwfHaloAddHTMLHeader(&$out) {
 	$spec_ns = $wgContLang->getNsText(NS_SPECIAL);
 	$isQIF = ($pagetitle == "$spec_ns:QueryInterface");
 	// end of hack
-
-	//todo: deal with deploy version
-	$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/TabularForms/tabularforms.js');
 
 	if (!isset($smwgDeployVersion) || $smwgDeployVersion === false || $isQIF) {
 
