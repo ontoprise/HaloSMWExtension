@@ -4,6 +4,7 @@
         <version>041</version>
         <id>semanticformsinputs</id>
         <vendor>Stephan Gambke</vendor>
+        <license>GPL-v2</license>
         <instdir>extensions/SemanticFormsInputs</instdir>
         <description>
             Additional inputs for SemanticForms
