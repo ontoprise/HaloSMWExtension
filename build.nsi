@@ -325,8 +325,8 @@ Section "${PRODUCT} ${VERSION} core" smwplus
             
             File /r /x .svn /x CVS /x *.zip /x *.exe /x *.cache /x .buildpath /x .project /x *.settings /x LocalSettings.php /x ACLs.php /x *.nsi /x SKOSExpander.php *
             File /oname=AdminSettings.php AdminSettingsTemplate.php
-            File /oname=Smwplus.zip deployment\tools\Smwplus.zip
-            File /oname=Smwplussandbox.zip deployment\tools\Smwplussandbox.zip
+            File /oname=deployment\tools\Smwplus.zip Smwplus.zip
+            File /oname=deployment\tools\Smwplussandbox.zip Smwplussandbox.zip
             File /oname=deployment\tools\patch.exe deployment\tools\patch.exe
             File /oname=deployment\tools\unzip.exe deployment\tools\unzip.exe
             CopyFiles $INSTDIR\htdocs\mediawiki\patches\patch.php $INSTDIR\htdocs\mediawiki\deployment\tools
