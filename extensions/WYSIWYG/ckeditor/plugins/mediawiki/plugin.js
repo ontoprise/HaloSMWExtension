@@ -743,13 +743,13 @@ CKEDITOR.customprocessor.prototype =
 
 							var isWikiUrl = true;
 
-							if ( hrefType != "" )
+							if ( hrefType != "" && hrefType != "http" && hrefType != "mailto" )
 								stringBuilder.push( '[[' );
 							else if ( htmlNode.className == "extiw" ){
 								stringBuilder.push( '[[' );
-								var isWikiUrl = true;
+								isWikiUrl = true;
 							} else {
-								var isWikiUrl = !( href.StartsWith( 'mailto:' ) || /^\w+:\/\//.test( href ) );
+								isWikiUrl = !( href.StartsWith( 'mailto:' ) || /^\w+:\/\//.test( href ) || /\{\{[^\}]*\}\}/.test( href ) );
 								stringBuilder.push( isWikiUrl ? '[[' : '[' );
 							}
 							// #2223
@@ -1191,7 +1191,7 @@ CKEDITOR.customprocessor.prototype =
 					if ( !htmlNode.nextSibling && !this._inLSpace && !this._inPre && ( !htmlNode.parentNode || !htmlNode.parentNode.nextSibling ) )
 						textValue = textValue.replace(/\s*$/, ''); // rtrim
 
-					if( !this._inLSpace && !this._inPre ) {
+					if( !this._inLSpace && !this._inPre && htmlNode.parentNode.tagName.toLowerCase() != 'a' ) {
 						textValue = textValue.replace( / {2,}/g, ' ' );
                         textValue = this._EscapeWikiMarkup(textValue);
                     }

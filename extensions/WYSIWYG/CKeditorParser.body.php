@@ -625,6 +625,8 @@ class CKeditorParser extends CKeditorParserWrapper {
         //$text = strtr($text, array("\n" => "\nFCKLR_fcklr_FCKLR", "\r" => ''));
         // this doesn't work when inside tables. So leave this for later.
 
+        $text = $this->parseExternalLinksWithTmpl($text);
+
         $finalString = parent::internalParse( $text, $isMain );
 		return $finalString;
 	}
@@ -649,7 +651,47 @@ class CKeditorParser extends CKeditorParserWrapper {
 		return $text;
 	}
 
-	function replaceFreeExternalLinks( $text ) { return $text; }
+	function parseExternalLinksWithTmpl( $text ) {
+   		$callback = array(
+			'[' => array(
+				'end'=>']',
+				'cb' => array(
+					1 => array( $this, 'fck_replaceCkmarkupInLink' )
+				),
+				'min' => 1,
+				'max' => 1,
+			)
+		);
+
+		$text = $this->replace_callback( $text, $callback );
+        //var_dump($text);
+        return $text;
+    }
+
+    /**
+     * Check external links if they use some templates or parser functions e.g.
+     * [http://google.de/?search=quertz {{PAGENAME}}]
+     * [{{fullurl:{{FULLPAGENAME}}|printable=yes}} Printable version]
+     * Then these will not get replaced by the normal parsing process. At this
+     * point these links look like:
+     * [http://google.de/?search=quertz FckmwXXfckmw]
+     * [FckmwXYfckmw Printable version]
+     * and are not recognized by the mediawiki parser. Therefore we revert the
+     * replaced elements, built the anchor element but replace is with FckmwXZfckmw
+     * so that the parser wont touch it.
+     */
+    function fck_replaceCkmarkupInLink( $matches ) {
+        $p = strpos($matches['title'], ' ');
+        if ($p === false) return $matches['text'];
+        $target = substr($matches['title'], 0, $p);
+        $title = substr($matches['title'], $p + 1);
+        if (!preg_match('/Fckmw\d+fckmw/', $title) &&
+            !preg_match('/Fckmw\d+fckmw/', $target)) return $matches['text'];
+
+        $title = $this->revertEncapsulatedString($title);
+        $target = $this->revertEncapsulatedString($target);
+        return $this->fck_addToStrtr('<a href="'.$target.'" _cke_saved_href="'.$target.'" _cke_mw_type="http">'.$title.'</a>');
+    }
 
 	function stripNoGallery( &$text ) {}
 
@@ -677,7 +719,7 @@ class CKeditorParser extends CKeditorParserWrapper {
 
         $parserOutput->setText( strtr( $parserOutput->getText(), array('FCKLR_fcklr_FCKLR' => '<br fcklr="true"/>') ) );
         $parserOutput->setText( strtr( $parserOutput->getText(), array('--~~~~' => '<span class="fck_mw_signature">_</span>') ) );
-        
+
 		$categories = $parserOutput->getCategories();
 		if( $categories ) {
 			$appendString = '';

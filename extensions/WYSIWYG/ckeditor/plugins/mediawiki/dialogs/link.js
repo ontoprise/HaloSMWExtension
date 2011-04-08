@@ -138,7 +138,7 @@ CKEDITOR.dialog.add( 'MWLink', function( editor ) {
             onOk : function() {
                 var e = this.getContentElement( 'mwLinkTab1', 'linkTarget'),
                     link = e.getValue().Trim().replace(/ /g, '_'),
-                    attributes = {href : link};
+                    attributes = {href : link, _cke_saved_href : link};
 
                 if ( !this._.selectedElement ) {
                     // Create element if current selection is collapsed.
