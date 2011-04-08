@@ -383,7 +383,7 @@ ENDS
 				throw new Exception("Onto2MWXML tool is not correctly installed. Please take a look in deployment/tools/onto2mwxml/README.TXT.");
 			} else {
 				if ($noBundlePage) $noBundlePageParam = "--nobundlepage"; else $noBundlePageParam = "";
-				exec("$onto2mwxml_dir/onto2mwxml.bat \"$inputfile\" -o \"$outputfile\" --bundleid \"$bundleID\" $noBundlePageParam", $output, $ret);
+				exec("\"$onto2mwxml_dir/onto2mwxml.bat\" \"$inputfile\" -o \"$outputfile\" --bundleid \"$bundleID\" $noBundlePageParam", $output, $ret);
 				if ($ret != 0) {
 					foreach($output as $l) print "\n$l";
 					throw new Exception("Onto2MWXML exited abnormally.");
@@ -394,7 +394,7 @@ ENDS
 				throw new Exception("Onto2MWXML tool is not correctly installed. Please take a look in deployment/tools/onto2mwxml/README.TXT.");
 			} else {
 				if ($noBundlePage) $noBundlePageParam = "--nobundlepage"; else $noBundlePageParam = "";
-				exec("$onto2mwxml_dir/onto2mwxml.sh \"$inputfile\" -o \"$outputfile\" --bundleid \"$bundleID\" $noBundlePageParam", $output, $ret);
+				exec("\"$onto2mwxml_dir/onto2mwxml.sh\" \"$inputfile\" -o \"$outputfile\" --bundleid \"$bundleID\" $noBundlePageParam", $output, $ret);
 				if ($ret != 0) {
 					foreach($output as $l) print "\n$l";
 					throw new Exception("Onto2MWXML exited abnormally.");
