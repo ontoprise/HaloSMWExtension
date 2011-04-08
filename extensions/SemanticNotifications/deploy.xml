@@ -5,6 +5,7 @@
 		<id>semanticnotifications</id>
 		<vendor>Ontoprise GmbH</vendor>
 		<maintainer>Ontoprise GmbH</maintainer>
+		<license>GPL-v2</license>
 		<instdir>extensions/SemanticNotifications</instdir>
 		<description>
 			Sends notifications when values of semantic properties change.
