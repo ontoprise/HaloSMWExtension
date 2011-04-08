@@ -107,6 +107,7 @@ class TFTabularFormData {
 	private $annotationPrintRequests = array();
 	private $templateParameterPrintRequests = array();
 	private $templateParameterPrintRequestLabels = array();
+	private $templateParameterPrintRequestPreload = array();
 	private $queryResult;
 	private $outputMode;
 	private $queryParams;
@@ -392,17 +393,24 @@ class TFTabularFormData {
 				$autocompletion .= '"';
 			}
 			
-			$html .= "<textarea ".$autocompletion." rows='1' originalValue='' ></textarea>";
+			$html .= "<textarea ".$autocompletion." rows='1' originalValue='' >".$annotation['preload']."</textarea>";
 			
 			$html .= '</td>';
 		}
 		
 		//Add template cells
 		foreach($this->templateParameterPrintRequests as $template => $params){
-			foreach($params as $param){
+			foreach($params as $param => $dC){
 				$html .= '<td>';
+				
+				$value = '';
+				if(array_key_exists($template, $this->templateParameterPrintRequestPreload)){
+					if(array_key_exists($param, $this->templateParameterPrintRequestPreload[$template])){
+						$value = $this->templateParameterPrintRequestPreload[$template][$param];
+					}
+				}
 			
-				$html .= "<textarea rows='1' template-id=".'"'.TF_NEW_TEMPLATE_CALL.'"'." originalValue=''></textarea>";
+				$html .= "<textarea rows='1' template-id=".'"'.TF_NEW_TEMPLATE_CALL.'"'." originalValue='' >".$value."</textarea>";
 			
 				$html .= '</td>';
 			}
@@ -583,19 +591,36 @@ class TFTabularFormData {
 			if(is_null($printRequest->getData())){
 				
 				//deal with category print requests
-				if($printRequest->getHash() == '0:Category::'){
+				if(strpos($printRequest->getHash(), '0:') === 0){
+					
+					$label = $printRequest->getText($this->outputMode, $this->linker);
+					$label = explode('=', $label);
+					$preload = count($label) > 1 ? $label[1] : '';
+					$label = $label[0];
+					
 					$this->annotationPrintRequests[$count] = 
 						array('title' => '__Category__', 
-						'label' => $printRequest->getText($this->outputMode, $this->linker),
+						'label' => $label,
+						'preload' => $preload,
 						'rawlabel' => $printRequest->getText($this->outputMode, null));
 				} 
 				
 				continue;
 			}
 			
+			$label = $printRequest->getText($this->outputMode, $this->linker);
+			$labelIntro = substr($label, 0, strpos($label, '>') + 1);
+			$label = substr($label, strpos($label, '>') + 1);
+			$labelOutro = substr($label, strpos($label, '<'));
+			$label = substr($label, 0, strpos($label, '<'));
+			$label = explode('=', $label);
+			$preload = count($label) > 1 ? $label[1] : '';
+			$label = $labelIntro.$label[0].$labelOutro;
+			
 			$this->annotationPrintRequests[$count] = 
 				array('title' => $printRequest->getData()->getText(), 
-				'label' => $printRequest->getText($this->outputMode, $this->linker),
+				'label' => $label,
+				'preload' => $preload,
 				'rawlabel' => $printRequest->getText($this->outputMode, null));
 		}
 	}
@@ -628,7 +653,14 @@ class TFTabularFormData {
 							$this->templateParameterPrintRequestLabels[$param[0]] = array();
 						}
 						
-						$this->templateParameterPrintRequestLabels[$param[0]][$param[1]] = $label;
+						$label = explode('=', $label, 2);
+						
+						$this->templateParameterPrintRequestLabels[$param[0]][$param[1]] = $label[0];
+						
+						if(count($label) == 2){
+							$this->templateParameterPrintRequestPreload[$param[0]][$param[1]] = $label[1];			
+						}
+						
 					}
 				}
 			}
