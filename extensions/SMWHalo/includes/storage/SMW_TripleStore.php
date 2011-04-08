@@ -536,7 +536,7 @@ class SMWTripleStore extends SMWStore {
 				$supercategory_iri = $this->tsNamespace->getFullIRI($c);
 				$triples[] = array($subject_iri, "rdfs:subClassOf", $supercategory_iri);
 			}
-				
+
 			if (count($categories) == 0) {
 				// if there are no supercategories create a statement that
 				// indicates that this is a class
@@ -779,7 +779,7 @@ class SMWTripleStore extends SMWStore {
 	}
 
 	function initialize($verbose = true) {
-		
+
 		try {
 			$con = TSConnection::getConnector();
 			$commandText = smwf_ts_getSyncCommands();
@@ -1348,12 +1348,18 @@ class SMWTripleStore extends SMWStore {
 	protected function serializeParams($query) {
 		$result = "";
 		$first = true;
-
+		
 		// serializes printouts
 		foreach ($query->getExtraPrintouts() as $printout) {
 			if (!$first) $result .= "|";
 			if ($printout->getData() == NULL) {
-				$result .= "?=".$printout->getLabel();
+				$label = $printout->getLabel();
+				global $wgContLang;
+				if ($label == $wgContLang->getNsText(NS_CATEGORY)) {
+					$result .= "?$label"; // category printout	
+				} else {
+					$result .= "?=$label";
+				}
 			} else if ($printout->getData() instanceof Title) {
 				$outputFormat = $printout->getOutputFormat() !== NULL ? "#".$printout->getOutputFormat() : "";
 				$result .= "?".$printout->getData()->getDBkey().$outputFormat."=".$printout->getLabel();
