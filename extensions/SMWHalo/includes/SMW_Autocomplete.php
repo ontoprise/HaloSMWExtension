@@ -216,11 +216,12 @@ function smwf_ac_AutoCompletionDispatcher($articleName, $userInputToMatch, $user
  * Return options and namespace icon mappings.
  */
 function smwf_ac_AutoCompletionOptions() {
+	
 	global $wgUser;
 	if (isset($wgUser) && !is_null($wgUser)) {
-		$autoTriggering = $wgUser->getOption( "autotriggering" ) == 1 ? "autotriggering=auto" : "autotriggering=manual";
+		$autoTriggering = $wgUser->getOption( "smwhactriggering" ) == 1 ? "smwhactriggering=manual" : "smwhactriggering=auto";
 	} else {
-		$autoTriggering = "autotriggering=manual";
+		$autoTriggering = "smwhactriggering=manual";
 	}
 	$namespaceMappings = array();
 	wfRunHooks('smwhACNamespaceMappings', array (&$namespaceMappings));
