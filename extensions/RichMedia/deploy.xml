@@ -3,6 +3,7 @@
 	<global>
 		<version>151</version>
 		<id>richmedia</id>
+        <license>GPL-v2</license>
 		<vendor>Ontoprise GmbH</vendor>
 		<maintainer>Ontoprise GmbH</maintainer>
 		<instdir>extensions/RichMedia</instdir>
