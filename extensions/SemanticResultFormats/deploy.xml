@@ -4,6 +4,7 @@
         <version>153</version>
         <patchlevel>1</patchlevel>
         <id>semanticresultformats</id>
+        <license>GPL-v2</license>
         <vendor>Ontoprise GmbH</vendor>
         <maintainer>Ontoprise GmbH</maintainer>
         <instdir>extensions/SemanticResultFormats</instdir>
