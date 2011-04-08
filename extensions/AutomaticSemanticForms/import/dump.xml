@@ -2,7 +2,7 @@
   <siteinfo>
     <sitename>Halo3wiki</sitename>
     <base>http://localhost/mediawiki/index.php/Main_Page</base>
-    <generator>MediaWiki 1.16.0</generator>
+    <generator>MediaWiki 1.16.1</generator>
     <case>first-letter</case>
     <namespaces>
       <namespace key="-2" case="first-letter">Media</namespace>
@@ -55,8 +55,8 @@
     <title>Property:Use input type</title>
     <id>133</id>
     <revision>
-      <id>455</id>
-      <timestamp>2010-12-21T15:56:37Z</timestamp>
+      <id>2149</id>
+      <timestamp>2011-04-08T08:15:34Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -64,23 +64,23 @@
       <minor/>
       <comment>1 revision</comment>
       <text xml:space="preserve">{{Property
-|PAGENAME=Property:Use input type
 |rationale=Use this property to annotate a property article if you want to choose a different input type for that property in automatically created Semantic Forms.
-|part of=Automaticsemanticforms
-|Has_author=User:217.110.222.148
 }}
 {{Part of bundle|value=automaticsemanticforms}}
 
-[[Has type::Type:Text| ]] [[Has max cardinality::1| ]] [[Has domain and range::Category:Property; | ]]</text>
-    <hash>1d622c3b3ccff40e83ba92079f8c4d34</hash>
+[[Has type::Type:Text| ]] [[Has max cardinality::1| ]] 
+[[Has min cardinality::0| ]][[has domain and range::Category:Property; | ]]{{Content hash
+|value=asf-xx
+}}[[Category:Property]]</text>
+    <hash>861f5aee71094b2e918e5808c734aaf0</hash>
     </revision>
   </page>
   <page>
     <title>Property:Is uploadable</title>
     <id>134</id>
     <revision>
-      <id>457</id>
-      <timestamp>2010-12-21T15:56:37Z</timestamp>
+      <id>2141</id>
+      <timestamp>2011-04-08T08:15:29Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -88,23 +88,21 @@
       <minor/>
       <comment>1 revision</comment>
       <text xml:space="preserve">{{Property
-|PAGENAME=Property:Is uploadable
 |rationale=Use this property to annotate a property if you want that a file upload button appears next to the form input field of the property in an automatically created Semantic Form.
-|part of=Automaticsemanticforms
-|Has_author=User:217.110.222.148
 }}
-{{Part of bundle|value=automaticsemanticforms}}
-
-[[Has type::Type:Boolean| ]] [[Has max cardinality::1| ]] [[Has domain and range::Category:Property; | ]]</text>
-    <hash>cbd9686e624080b56e08698dfd20605a</hash>
+[[Has type::Type:Boolean| ]] [[Has max cardinality::1| ]] 
+{{Part of bundle|value=automaticsemanticforms}}[[Has min cardinality::0| ]][[has domain and range::Category:Property; | ]]{{Content hash
+|value=asf-xx
+}}[[Category:Property]]</text>
+    <hash>0bd8346204c31d2e9816da9f2ef78373</hash>
     </revision>
   </page>
   <page>
     <title>Property:Form input help</title>
     <id>135</id>
     <revision>
-      <id>459</id>
-      <timestamp>2010-12-21T15:56:37Z</timestamp>
+      <id>2137</id>
+      <timestamp>2011-04-08T08:15:26Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -112,23 +110,21 @@
       <minor/>
       <comment>1 revision</comment>
       <text xml:space="preserve">{{Property
-|PAGENAME=Property:Form input help
 |rationale=Use this property to annotate a property if you want that a help icon with a help message appears next to the form input field of the property in an automatically created Semantic Form.
-|part of=Automaticsemanticforms
-|Has_author=User:217.110.222.148
 }}
-{{Part of bundle|value=automaticsemanticforms}}
-
-[[Has type::Type:Text| ]] [[Has max cardinality::1| ]] [[Has domain and range::Category:Property; | ]]</text>
-    <hash>e1e54fa57bac512efc7253b917a0dda6</hash>
+[[Has type::Type:Text| ]] [[Has max cardinality::1| ]] [[Has domain and range::Category:Property; | ]]
+{{Part of bundle|value=automaticsemanticforms}}{{Content hash
+|value=asf-xx
+}}[[Category:Property]]</text>
+    <hash>952ce5e23a3a8e48b635096f127ca46c</hash>
     </revision>
   </page>
   <page>
     <title>Property:Delimiter</title>
     <id>136</id>
     <revision>
-      <id>461</id>
-      <timestamp>2010-12-21T15:56:38Z</timestamp>
+      <id>2133</id>
+      <timestamp>2011-04-08T08:15:24Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -136,24 +132,26 @@
       <minor/>
       <comment>1 revision</comment>
       <text xml:space="preserve">{{Property
-|PAGENAME=Property:Delimiter
 |rationale=Users may enter several values in a fprm input field for a property in an automatically created Semantic Form. Use the ''delimiter'' annotation to choose the delimiter.
-|part of=Automaticsemanticforms
-|Has_author=User:217.110.222.148
+}}
+[[Has type::Type:Text| ]] [[Has max cardinality::1| ]] [[Has domain and range::Category:Property; | ]]
+
+{{Part of bundle
+|value=automaticsemanticforms
 }}
 
-{{Part of bundle|value=automaticsemanticforms}}
-
-[[Has type::Type:Text| ]] [[Has max cardinality::1| ]] [[Has domain and range::Category:Property; | ]]</text>
-    <hash>b09ef4afc0574370801f6c2274d2b90b</hash>
+{{Content hash
+|value=asf-xx
+}}[[Category:Property]]</text>
+    <hash>11a5d4c996a7e17346a5b55754c0862f</hash>
     </revision>
   </page>
   <page>
     <title>Property:Field sequence number</title>
     <id>137</id>
     <revision>
-      <id>463</id>
-      <timestamp>2010-12-21T15:56:38Z</timestamp>
+      <id>2135</id>
+      <timestamp>2011-04-08T08:15:25Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -161,24 +159,21 @@
       <minor/>
       <comment>1 revision</comment>
       <text xml:space="preserve">{{Property
-|PAGENAME=Property:Field sequence number
 |rationale=The Automatic Semantic Forms Extension orders form input fields for properties alphabetically. Use the ''Field sequence number'' annotation on property articles to reorder their form input fields.
-|part of=Automaticsemanticforms
-|Has_author=User:217.110.222.148
 }}
-
-{{Part of bundle|value=automaticsemanticforms}}
-
-[[Has type::Type:Number| ]] [[Has max cardinality::1| ]] [[Has domain and range::Category:Property; | ]]</text>
-    <hash>17b94a58597be8a96c6649203b707822</hash>
+[[Has type::Type:Number| ]] [[Has max cardinality::1| ]] [[Has domain and range::Category:Property; | ]]
+{{Part of bundle|value=automaticsemanticforms}}{{Content hash
+|value=asf-xx
+}}[[Category:Property]]</text>
+    <hash>de2630d9140d8564f280a1e1e75a724d</hash>
     </revision>
   </page>
   <page>
     <title>Property:Default value</title>
     <id>138</id>
     <revision>
-      <id>465</id>
-      <timestamp>2010-12-21T15:56:38Z</timestamp>
+      <id>2131</id>
+      <timestamp>2011-04-08T08:15:22Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -186,24 +181,25 @@
       <minor/>
       <comment>1 revision</comment>
       <text xml:space="preserve">{{Property
-|PAGENAME=Property:Default value
 |rationale=You can use this property to annotate a property article, if you want that the form input field for that property contains a default value in an automatically created Semantic Form.
-|part of=Automaticsemanticforms
-|Has_author=User:217.110.222.148
 }}
+[[Has type::Type:Text| ]] [[Has max cardinality::1| ]] [[Has domain and range::Category:Property; | ]] [[Category:Property]]
 
-{{Part of bundle|value=automaticsemanticforms}}
-
-[[Has type::Type:Text| ]] [[Has max cardinality::1| ]] [[Has domain and range::Category:Property; | ]]</text>
-    <hash>26c95d6aba69b431b79dabb2d0097e40</hash>
+{{Part of bundle
+|value=automaticsemanticforms
+}}
+{{Content hash
+|value=asf-xx
+}}[[Category:Property]]</text>
+    <hash>b20bb4dd3632e82d83df98554b3e19ee</hash>
     </revision>
   </page>
   <page>
     <title>Property:Validator</title>
     <id>139</id>
     <revision>
-      <id>467</id>
-      <timestamp>2010-12-21T15:56:38Z</timestamp>
+      <id>2151</id>
+      <timestamp>2011-04-08T08:15:35Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -211,24 +207,25 @@
       <minor/>
       <comment>1 revision</comment>
       <text xml:space="preserve">{{Property
-|PAGENAME=Property:Validator
 |rationale=Use the ''Validator'' property to annotate a property, if you want to validate a user's input into the property's form input field in an automatically created Semantic form with a regular expression.
-|part of=Automaticsemanticforms
-|Has_author=User:217.110.222.148
 }}
+[[Has type::Type:Text| ]] [[Has max cardinality::1| ]] [[Has min cardinality::0| ]][[has domain and range::Category:Property; | ]]
 
-{{Part of bundle|value=automaticsemanticforms}}
-
-[[Has type::Type:Text| ]] [[Has max cardinality::1| ]] [[Has domain and range::Category:Property; | ]]</text>
-    <hash>a7a3ec283b774a90922299ce186dc13c</hash>
+{{Part of bundle
+|value=automaticsemanticforms
+}}
+{{Content hash
+|value=asf-xx
+}}[[Category:Property]]</text>
+    <hash>e412e04ef1bcbfe19464a061ec4a08e7</hash>
     </revision>
   </page>
   <page>
     <title>Property:No automatic formedit</title>
     <id>140</id>
     <revision>
-      <id>469</id>
-      <timestamp>2010-12-21T15:56:38Z</timestamp>
+      <id>2143</id>
+      <timestamp>2011-04-08T08:15:30Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -236,23 +233,28 @@
       <minor/>
       <comment>1 revision</comment>
       <text xml:space="preserve">{{Property
-|PAGENAME=Property:No automatic formedit
 |rationale=Use this property to annotate a category if you don't want that Semantic Forms are created automatically for instances in this category. Please note, that this annotation is not inherited to subcategories.
 |part of=Automaticsemanticforms
+|PAGENAME=Property:No automatic formedit
 }}
+[[Has type::Type:Boolean| ]] [[Has max cardinality::1| ]] [[Has domain and range::Category:Category; | ]]
 
-{{Part of bundle|value=automaticsemanticforms}}
-
-[[Has type::Type:Boolean| ]] [[Has max cardinality::1| ]] [[Has domain and range::Category:Category; | ]]</text>
-    <hash>ca0da38cb6fe15b35ed823e027a7fdc7</hash>
+{{Part of bundle
+|value=automaticsemanticforms
+|PAGENAME=Property:No automatic formedit
+}}
+{{Content hash
+|value=asf-xx
+}}[[Category:Property]]</text>
+    <hash>c629975ab479ef8db0923afb680b4bc1</hash>
     </revision>
   </page>
   <page>
     <title>Property:Use display template</title>
     <id>141</id>
     <revision>
-      <id>471</id>
-      <timestamp>2010-12-21T15:56:38Z</timestamp>
+      <id>2147</id>
+      <timestamp>2011-04-08T08:15:32Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -260,24 +262,30 @@
       <minor/>
       <comment>1 revision</comment>
       <text xml:space="preserve">{{Property
-|PAGENAME=Property:Use display template
 |rationale=The Automatic Semantic Forms Extension creates silent annotations, i.e. ammotations that are only displayed in the factbox and not in the rendered article. Use the ''Use display template'' to assign a template to a category so that the data which is entered for that category is displayed via a template.
 |part of=Automaticsemanticforms
+|PAGENAME=Property:Use display template
 |Has_author=User:217.110.222.148
 }}
+[[Has type::Type:Text| ]] [[Has max cardinality::1| ]] [[Has domain and range::Category:Category; | ]]
 
-{{Part of bundle|value=automaticsemanticforms}}
-
-[[Has type::Type:Text| ]] [[Has max cardinality::1| ]] [[Has domain and range::Category:Category; | ]]</text>
-    <hash>2c2df622e490047b054fc6709fe7f2eb</hash>
+{{Part of bundle
+|value=automaticsemanticforms
+|PAGENAME=Property:Use display template
+|Has_author=User:217.110.222.148
+}}
+{{Content hash
+|value=asf-xx
+}}[[Category:Property]]</text>
+    <hash>867c96e8270798414edd5ae55ff929a7</hash>
     </revision>
   </page>
   <page>
     <title>Property:Use class</title>
     <id>142</id>
     <revision>
-      <id>473</id>
-      <timestamp>2010-12-21T15:56:38Z</timestamp>
+      <id>2145</id>
+      <timestamp>2011-04-08T08:15:31Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -285,58 +293,65 @@
       <minor/>
       <comment>1 revision</comment>
       <text xml:space="preserve">{{Property
-|PAGENAME=Property:Use class
 |rationale=One can use this property to annotate a category or a property in order to tell the Automatic Semantic Forms Extension to use a specific CSS-class when creating a property's input field, respectively a category's table of input fields.
-|part of=Automaticsemanticforms
 }}
-
+[[Has type::Type:Text| ]] [[Has max cardinality::1| ]] [[Has min cardinality::0| ]][[has domain and range::Category:Property; | ]]
 {{Part of bundle|value=automaticsemanticforms}}
-
-[[Has type::Type:Text| ]] [[Has max cardinality::1| ]] [[Has domain and range::Category:Property; | ]] [[Has domain and range::Category:Category; | ]]</text>
-    <hash>b5d0e24ba0104f07eadea62b9d49f552</hash>
+{{Content hash
+|value=asf-xx
+}}[[Category:Property]]</text>
+    <hash>b35c2b359f6e8c8cfba62d76682937f0</hash>
     </revision>
   </page>
   <page>
     <title>Automaticsemanticforms</title>
     <id>143</id>
     <revision>
-      <id>476</id>
-      <timestamp>2010-12-21T15:57:45Z</timestamp>
+      <id>2157</id>
+      <timestamp>2011-04-08T08:15:41Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
+      <minor/>
+      <comment>1 revision</comment>
       <text xml:space="preserve">{{Content bundle
-|Vendor=Ontoprise
-|Version=100
-|Description=This bundle contains build-in properties used by the Automatic Semantic Forms Extension.
-|Installation=extensions/AutomaticSemanticForms
-|Dependency=smwhalo;152;152, semanticforms;200;200, baseontologybundle;100;100
-}}
+|rationale=This content bundle contains Property articles, which are used by the Automatic Semantic Forms extension. This content bundle is optional. The Automatic Semantic Forms extension also works without it.}} {{Part of bundle|value=Automaticsemanticforms}} [[Vendor::Ontoprise| ]][[Ontology version::110| ]][[Installation dir::extensions/AutomaticSemanticForms| ]][[Dependency::smwhalo;152;153| ]] [[Dependency::semanticforms;208;208| ]] [[Dependency::Smwplus; 153; 153| ]] [[License::GPL v2| ]] [[Dependency::Smwplussandbox; 100; 100| ]] [[License::GPL v2| ]]
 
-{{Part of bundle|value=automaticsemanticforms}}
+;This content bundle contains Property articles, which are used by the Automatic Semantic Forms extension. This content bundle is optional. The Automatic Semantic Forms extension also works without it.
 
-[[Ontology version::100| ]][[Installation dir::extensions/AutomaticSemanticForms| ]][[Vendor::Ontoprise| ]][[Dependency::smwhalo;152;152| ]] [[Dependency::baseontologybundle;100;100| ]][[Dependency::semanticforms;200;200| ]]
-[[Category:Content bundle]]
+;How to use
 
-;This bundle contains these articles:
- 
+The Properties, which are included in this content bundle can be used to annotate Properties and Categories in order to control automatic Semantic Forms creation.
+
+;Sandbox
+
+We have created the [[ASF sandbox|sandbox article]] in this Wiki, which demonstartes some Features of the Automatic Semantic Forms extension.
+
+;User manual
+
+More information about the Automatic Semantic Forms extension and how to use it can be found in our [[[http://smwforum.ontoprise.com/smwforum/index.php/Help:Automatic_Semantic_Forms_extension|SMWForum|SMWForum]]].
+
+;This bundle contains these articles
+
 {{#ask:[[Part of bundle::{{FULLPAGENAME}}]]
 |?=Link
 |?Rationale
 |link=subject
 |default=''none''
 |mainlabel=-
-}}</text>
-    <hash>8d6394675bbfc63ed77ebdb921dc67eb</hash>
+}} {{Content hash|value=asf-xx}}
+
+&lt;br/&gt;[[Category:Content bundle|Content_bundle]]</text>
+    <hash>387309093a854892155caa07c2f52adf</hash>
     </revision>
   </page>
   <page>
     <title>Property:Form input label</title>
     <id>144</id>
     <revision>
-      <id>453</id>
-      <timestamp>2010-12-21T15:56:37Z</timestamp>
+      <id>2139</id>
+      <timestamp>2011-04-08T08:15:27Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -344,21 +359,108 @@
       <minor/>
       <comment>1 revision</comment>
       <text xml:space="preserve">{{Property
-|PAGENAME=Property:Form input label
 |rationale=Use this property to annotate a property article if you want to choose an alternative label for its form input field in an automatically created Semantic Form.
-|part of=Automaticsemanticforms
-|Has_author=User:WikiSysop
 }}
+[[Has type::Type:Text| ]] [[Has max cardinality::1| ]] [[Has min cardinality::0| ]][[has domain and range::Category:Property; | ]]
+{{Part of bundle|value=automaticsemanticforms}}{{Content hash
+|value=asf-xx
+}}[[Category:Property]]</text>
+    <hash>2cb2e43fd8fedeb95d5da80b1a396b8a</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Call</title>
+    <id>783</id>
+    <revision>
+      <id>2129</id>
+      <timestamp>2011-04-08T08:15:21Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <minor/>
+      <comment>1 revision</comment>
+      <text xml:space="preserve">{{Property
+|rationale=Which number should be called in a phone call. (This property is used by the Automatic Semantic Forms sandbox.)
+}}
+[[Has type::Type:String| ]] [[Has domain and range::Category:Phone call; | ]]
+[[Form input help::Enter the &lt;b&gt;phone number&lt;/b&gt;&lt;br/&gt;you have to call.| ]]
+{{Content hash|value=|}}{{Part of bundle|value=Automaticsemanticforms}}
 
-{{Part of bundle|value=automaticsemanticforms}}
+[[Category:Property]]
 
-[[Has type::Type:Text| ]] [[Has max cardinality::1| ]] [[ [[Has domain and range::Category:Property; | ]]</text>
-    <hash>44679fc147c14075b13c6f9892561ef8</hash>
+{{Part of bundle}}
+{{Content hash}}</text>
+    <hash>cb886ccc3489b782935cb09a88f7985f</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Category:Phone call</title>
+    <id>784</id>
+    <revision>
+      <id>2153</id>
+      <timestamp>2011-04-08T08:15:36Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <minor/>
+      <comment>1 revision</comment>
+      <text xml:space="preserve">{{Category
+|rationale=Use this category for phone calls which you have to do. (This category is used by the Automatic Semantic Forms sandbox.)
+|No automatic formedit=No
+}}
+[[Category:Task]] {{Content hash|value=|}}{{Part of bundle|value=Automaticsemanticforms}}
+
+{{Part of bundle}}
+{{Content hash}}</text>
+    <hash>151240a459476bdf3d853633d93c2d47</hash>
+    </revision>
+  </page>
+  <page>
+    <title>ASF sandbox</title>
+    <id>785</id>
+    <revision>
+      <id>2155</id>
+      <timestamp>2011-04-08T08:15:38Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <minor/>
+      <comment>1 revision</comment>
+      <text xml:space="preserve">&lt;div style=&quot;font-size: 20pt;  line-height: 30px&quot;&gt;Welcome to the&lt;br/&gt;Aitpmatic Semantic Forms &lt;span style=&quot;font-size: 20pt;  font-weight: bold&quot;&gt;sandbox&lt;/span&gt;!&lt;/div&gt;
+&lt;span style=&quot;font-size: 20pt;  font-weight: bold&quot;&gt;B&lt;/span&gt;elow you can play around with the Automatic Semantic Forms extension. This is easy and works like follows:
+
+#Enter an article name in the input field. Use the name of an article that does not yet exist.
+#Choose one of the categories in the dropdown box.
+#Hit the 'Try out' button.
+
+&lt;br/&gt;&lt;br/&gt;|{{#ifeq:{{#isExtensionInstalled:automaticsemanticforms}} |true |Article name: {{#asfforminput:both|40|20|ASF Example||all|&amp;nbsp;&amp;nbsp;Category:|Try&amp;nbsp;out!|true}}|'''First, you have to install the Automatic Semantic Forms extension.'''}}{{#ifeq:{{#ask:[[:Category:Task]]|link=none}}|Category:Task|&lt;br/&gt;&lt;small&gt;&lt;i&gt;&lt;b&gt;Hint:&lt;/b&gt; Choose the category 'Phone call' as a first example!&lt;(i&gt;&lt;(small&gt;|}}
+
+[[Rationale::This is the sandbox article for the Automatic Semantic Forms extension.| ]]{{Content hash|value=|}}{{Part of bundle|value=Automaticsemanticforms}}</text>
+    <hash>40811aee134c6499ab5f4a00af2f4fda</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Template:Content hash</title>
+    <id>213</id>
+    <revision>
+      <id>427</id>
+      <timestamp>2010-12-21T15:19:27Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <minor/>
+      <comment>1 revision</comment>
+      <text xml:space="preserve">[[Content hash::{{{value|}}}| ]]</text>
+    <hash>f8c8036d815ebfdd0e3685d245faac6f</hash>
     </revision>
   </page>
   <page>
     <title>Template:Part of bundle</title>
-    <id>212</id>
+    <id>257</id>
     <revision>
       <id>425</id>
       <timestamp>2010-12-21T15:19:27Z</timestamp>
