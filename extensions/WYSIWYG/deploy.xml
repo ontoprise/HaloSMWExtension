@@ -3,6 +3,7 @@
 	<global>
 		<version>141</version>
 		<id>wysiwyg</id>
+        <license>GPL-v2</license>
 		<vendor>Ontoprise GmbH</vendor>
 		<maintainer>Ontoprise GmbH</maintainer>
 		<instdir>extensions/WYSIWYG</instdir>
