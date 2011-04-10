@@ -30,7 +30,8 @@
             <patch file="patch.txt" />
             <require name="srf"
                 file="extensions/SemanticResultFormats/SemanticResultFormats.php" />
-     
+            <require name="srfofc"
+                file="extensions/SemanticResultFormats/ofc/SRF_OFC_Init.php" />
         </new>
         <uninstall>
            
