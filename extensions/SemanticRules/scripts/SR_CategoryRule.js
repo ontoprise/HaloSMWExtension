@@ -109,7 +109,7 @@ createHeadHTML: function(varIdx, catOrProp, title, propValue, propIsVariable) {
 			'&nbsp;' +
 			this.createVariableSelector("sr-head-value-selector", gsrLanguage.getMessage('SR_SIMPLE_VALUE'),"X2") +
 			'&nbsp;' +
-			'<input type="text" value="" id="sr-prop-head-value" style="display:none" />' +
+			'<input type="text" value="" id="sr-prop-head-value" style="display:none" class="wickEnabled" constraints="all"/>' +
 			'&nbsp;';		
 		headText = headText.replace(/\$3/g, propHTML);
 		this.variables = 2;
@@ -641,7 +641,7 @@ editPropertyCondition: function(partID) {
 		                                       gsrLanguage.getMessage('SR_SIMPLE_VALUE'),select);
 		
 		html += this.createOperatorSelector("sr-op-selector", operand, true);
-		html += '<input type="text" value="" id="sr-prop-value" style="display:none"/>';
+		html += '<input type="text" value="" id="sr-prop-value" style="display:none" class="wickEnabled" constraints="all"/>';
 		elem.replace(html);
 		if (type == 'value') {
 			$("sr-prop-value").value = val;

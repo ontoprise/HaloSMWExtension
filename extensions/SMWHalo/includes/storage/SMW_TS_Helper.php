@@ -528,26 +528,44 @@ class TSNamespaces {
 	}
 
 	/**
-	 * Converts prefix from into full URI form
+	 * Converts $input from into full URI 
+	 * 
+	 *  (1) may be already a full URI
+	 *  (2) may be a prefix form a#MyInstance, cat#MyInstance
+	 *  (3) may be something else, consider as instance
 	 *
-	 * @param string $prefixForm
+	 * @param string $input
+	 * @return string Full URI
 	 */
-	public function prefix2FullURI($prefixForm) {
-		$lastSlashIndex = strrpos($prefixForm, "/");
-		if ( $lastSlashIndex === false) return $prefixForm;
-		$prefix = substr($prefixForm, 0, $lastSlashIndex+1);
-		$local = substr($prefixForm, $lastSlashIndex);
-
-		$local = ucfirst($local);
-
-		foreach(self::$ALL_NAMESPACE_KEYS as $nsKey) {
-			$suffix = $this->getNSPrefix($nsKey);
-			if ($suffix == $prefix) {
-				return $this>getNSURI($nsKey).$local;
+	public function toFullURI($input) {
+		$input = str_replace(" ", "_", $input);
+		$parsedURL = parse_url($input);
+		if (array_key_exists('scheme', $parsedURL)) {
+			// full URI
+	       return $input;
+		} else if (array_key_exists('path', $parsedURL) && array_key_exists('fragment', $parsedURL)) {
+            // prefix form URI
+			$lastSlashIndex = strrpos($input, "#");
+			if ( $lastSlashIndex === false) return $this->getNSURI(NS_MAIN).$parsedURL['fragment'];
+			$prefix = substr($input, 0, $lastSlashIndex+1);
+			$local = substr($input, $lastSlashIndex);
+	
+			$local = ucfirst($local);
+	
+			foreach(self::$ALL_NAMESPACE_KEYS as $nsKey) {
+				$suffix = $this->getNSPrefix($nsKey);
+				if ($suffix == $prefix) {
+					return $this->getNSURI($nsKey).$local;
+				}
 			}
-		}
+           
+        } else {
+        	// any other value, consider as instance
+        	$input = ucfirst($input);
+        	return $this->getNSURI(NS_MAIN).$input;
+        }
 
-		return $prefixForm;
+		
 	}
 
 

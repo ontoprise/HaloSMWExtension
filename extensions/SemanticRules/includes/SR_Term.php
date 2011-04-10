@@ -99,9 +99,12 @@ if (!defined('MEDIAWIKI')) die();
 		if ($this->_arity == 0) {
 			// actually a constant here. Try to interprete it as term.
 			$tsn = TSNamespaces::getInstance();
-			$fullURI = $tsn->prefix2FullURI($this->_arguments);
+			$fullURI = $tsn->toFullURI($this->_arguments);
+			
 			return $fullURI;
+			
 		} else {
+			
 			if (sizeof($this->_arguments)>1) {
 				if (strpos($this->_arguments[0], $smwgTripleStoreGraph) === 0) {
 					// full qualified
@@ -115,6 +118,7 @@ if (!defined('MEDIAWIKI')) die();
 				}
 				
 			} else {
+				
 				return $this->_arguments[0];
 			}
 		}
