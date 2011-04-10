@@ -65,8 +65,8 @@ class SMWTripleStoreAdmin extends SpecialPage {
 		$html .= "<h2>".wfMsg('smw_tsa_tscinfo')."</h2>";
 		$html .= wfMsg('smw_tsa_tscversion').": ".$status['tscversion'];
 		// show warning when rule support is missing or defined although it is not available.
-		if (in_array('RULES', $status['features']) && (!isset($smwgEnableObjectLogicRules) || $smwgEnableObjectLogicRules === false)) $html .= "<div style=\"color:red;font-weight:bold;\">".
-		wfMsg('smw_tsa_rulesupport')."</div>";
+		//if (in_array('RULES', $status['features']) && (!isset($smwgEnableObjectLogicRules) || $smwgEnableObjectLogicRules === false)) $html .= "<div style=\"color:red;font-weight:bold;\">".
+		//wfMsg('smw_tsa_rulesupport')."</div>";
 		if (!in_array('RULES', $status['features']) && $smwgEnableObjectLogicRules === true) $html .= "<div style=\"color:red;font-weight:bold;\">".
 		wfMsg('smw_tsa_norulesupport')."</div>";
 
