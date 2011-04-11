@@ -180,7 +180,10 @@ CKEDITOR.dialog.add( 'MWLink', function( editor ) {
                         attributes._fcknotitle = 'true';
                     else
                         element.removeAttributes( ['_fcknotitle'] );
-                    element.setAttributes( attributes );
+                    if ( element.is('img') )
+                        element.setAttribute('link', link);
+                    else
+                        element.setAttributes( attributes );
 
                     if ( this.fakeObj )
                         editor.createFakeElement( element, 'cke_anchor', 'anchor' ).replace( this.fakeObj );
@@ -194,8 +197,8 @@ CKEDITOR.dialog.add( 'MWLink', function( editor ) {
                 // clear old selection list from a previous call
                 var editor = this.getParentEditor(),
                     e = this.getContentElement( 'mwLinkTab1', 'linkList' );
-                    e.items = [],
-                    div = document.getElementById(e.domId),
+                    e.items = [];
+                var div = document.getElementById(e.domId),
                     select = div.getElementsByTagName('select')[0];
                 while ( select.options.length > 0 )
                     select.remove( 0 );
@@ -212,16 +215,21 @@ CKEDITOR.dialog.add( 'MWLink', function( editor ) {
         		// Fill in all the relevant fields if there's already one link selected.
             	if ( ( element = plugin.getSelectedLink( editor ) ) && element.hasAttribute( 'href' ) )
                 	selection.selectElement( element );
-    			else if ( ( element = selection.getSelectedElement() ) && element.is( 'img' )
-        				&& element.getAttribute( '_cke_real_element_type' )
-            			&& element.getAttribute( '_cke_real_element_type' ) == 'anchor' )
+    			else if ( ( element = selection.getSelectedElement() ) && element.is( 'img' ) )
                 {
-                    this.fakeObj = element;
-    				element = editor.restoreRealElement( this.fakeObj );
-        			selection.selectElement( this.fakeObj );
-            	}
+                    if ( element.getAttribute( '_cke_real_element_type' ) &&
+            			 element.getAttribute( '_cke_real_element_type' ) == 'anchor' )
+                    {
+                        this.fakeObj = element;
+                        element = editor.restoreRealElement( this.fakeObj );
+                        selection.selectElement( this.fakeObj );
+                    }
+                    else {
+                        selection.selectElement( element );
+                    }
+                }
 
-                href = ( element  && ( element.getAttribute( '_cke_saved_href' ) || element.getAttribute( 'href' ) ) ) || '';
+                var href = ( element  && ( element.getAttribute( '_cke_saved_href' ) || element.getAttribute( 'href' ) || element.getAttribute('link') ) ) || '';
                 if (href) {
                     var e = this.getContentElement( 'mwLinkTab1', 'linkTarget');
                     e.setValue(href);
