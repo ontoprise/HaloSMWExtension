@@ -1574,13 +1574,13 @@ Index: extensions/SemanticForms/specials/SF_FormEdit.php
  			if ( $form_submitted ) {
 Index: extensions/SemanticForms/includes/SF_FormPrinter.php
 ===================================================================
---- extensions/SemanticForms/includes/SF_FormPrinter.php	(revision 10300)
+--- extensions/SemanticForms/includes/SF_FormPrinter.php	(revision 10486)
 +++ extensions/SemanticForms/includes/SF_FormPrinter.php	(working copy)
 @@ -712,6 +712,19 @@
                  $field_args['cols'] = 80;
                $sfgTabIndex++;
                $sfgFieldNum++;
-+              /*op-patch|BL|2009-10-12|RichMedia|HideStandardInputsInUploadWindow|start*/
++              /*op-patch|BL|2009-10-12|RichMedia|HideStandardInputsInUploadOverlay|start*/
 +              /*op-patch|BL|2009-10-12|RichMedia|HideStandardInputsInUploadOverlay|doc|
 +               *  http://dmwiki.ontoprise.com:8888/dmwiki/index.php/HideStandardInputsInUploadOverlay */
 +              // We don't want to have the standard inputs in the UploadWindow
@@ -1601,7 +1601,7 @@ Index: extensions/SemanticForms/includes/SF_FormPrinter.php
            
            // if it's a query, ignore all standard inputs except run query
 -          if ( ( $is_query && $input_name != 'run query' ) || ( !$is_query && $input_name == 'run query' ) ) {
-+          /*op-patch|BL|2009-10-12|RichMedia|HideStandardInputsInUploadWindow|start*/
++          /*op-patch|BL|2009-10-12|RichMedia|HideStandardInputsInUploadOverlay|start*/
 +          /*op-patch|BL|2009-10-12|RichMedia|HideStandardInputsInUploadOverlay|doc|
 +           *  http://dmwiki.ontoprise.com:8888/dmwiki/index.php/HideStandardInputsInUploadOverlay */
 +          // We don't want to have the standard inputs in the UploadWindow
@@ -1614,6 +1614,35 @@ Index: extensions/SemanticForms/includes/SF_FormPrinter.php
              $new_text = "";
              $section = substr_replace( $section, $new_text, $brackets_loc, $brackets_end_loc + 3 - $brackets_loc );
              continue;
+@@ -1105,15 +1127,15 @@
+           // doing a replace
+           if ( $existing_page_content && strpos( $existing_page_content, '{{{insertionpoint}}}', 0 ) !== false ) {
+             $existing_page_content = preg_replace( '/\{\{\{insertionpoint\}\}\}(\r?\n?)/',
+-              preg_replace( '/\}\}/m', '}²',
+-                preg_replace( '/\{\{/m', '²{', $template_text ) ) .
++              preg_replace( '/\}\}/m', '}ï¿½',
++                preg_replace( '/\{\{/m', 'ï¿½{', $template_text ) ) .
+               "\n{{{insertionpoint}}}",
+               $existing_page_content );
+           // otherwise, if it's a partial form, we have to add the new
+           // text somewhere
+           } elseif ( $form_is_partial && $wgRequest->getCheck( 'partial' ) ) {
+-            $existing_page_content = preg_replace( '/\}\}/m', '}²',
+-              preg_replace( '/\{\{/m', '²{', $template_text ) ) .
++            $existing_page_content = preg_replace( '/\}\}/m', '}ï¿½',
++              preg_replace( '/\{\{/m', 'ï¿½{', $template_text ) ) .
+                 "\n{{{insertionpoint}}}\n" . $existing_page_content;
+           }
+         }
+@@ -1176,7 +1198,7 @@
+          $form_text .= SFFormUtils::hiddenFieldHTML( 'partial', 1 );
+        } else {
+          $free_text = null;
+-         $existing_page_content = preg_replace( array( '/²\{/m','/\}²/m' ),
++         $existing_page_content = preg_replace( array( '/ï¿½\{/m','/\}ï¿½/m' ),
+            array( '{{','}}' ),
+            $existing_page_content );
+          $existing_page_content = preg_replace( '/\{\{\{insertionpoint\}\}\}/', '', $existing_page_content );
 @@ -1227,10 +1249,24 @@
  
      // add form bottom, if no custom "standard inputs" have been defined
@@ -1625,7 +1654,7 @@ Index: extensions/SemanticForms/includes/SF_FormPrinter.php
 +      if ( $is_query ) {
 +         $form_text .= SFFormUtils::queryFormBottom($form_is_disabled);
 +      } else {
-+        /*op-patch|BL|2009-10-12|RichMedia|HideStandardInputsInUploadWindow|start*/
++        /*op-patch|BL|2009-10-12|RichMedia|HideStandardInputsInUploadOverlay|start*/
 +        /*op-patch|BL|2009-10-12|RichMedia|HideStandardInputsInUploadOverlay|doc|
 +         *  http://dmwiki.ontoprise.com:8888/dmwiki/index.php/HideStandardInputsInUploadOverlay */
 +        // We don't want to have the standard inputs in the UploadWindow
