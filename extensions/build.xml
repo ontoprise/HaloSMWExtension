@@ -9,7 +9,7 @@
 		<ant antfile="build.xml" dir="HaloACL/deploy" target="patches" />
 		<ant antfile="build.xml" dir="EnhancedRetrieval/deploy" target="patches" />
 		<ant antfile="build.xml" dir="SemanticResultFormats/deploy" target="patches" />
-
+		<ant antfile="build.xml" dir="SemanticGardening/deploy" target="patches" />
 	</target>
 
     <target name="apply_patches_for_community_edition">
