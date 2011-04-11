@@ -224,7 +224,7 @@ function smfMergeHeadScripts( $scripts ) {
 			$start = strrpos( $script[1][0], '/' );
 			$key = substr( $script[1][0], ($start === false ? -1 : $start) + 1 );
 			// judge common js frameworks with filename patterns
-			if ( preg_match( '/$jquery(-[\d]+(\.[\d]+)*)?(\.min)?\.js\b/i', $key ) ) {
+			if ( preg_match( '/^jquery(-[\d]+(\.[\d]+)*)?(\.min)?\.js\b/i', $key ) ) {
 				// jquery, jquery.js / jquery-1.3.2.js / jquery-1.3.2.min.js / jquery.min.js
 				$js_frameworks['jquery'] = true;
 			} else if ( preg_match( '/\bjquery-ui(-[\d]+(\.[\d]+)*)?(\.min)?\.js\b/i', $key ) ) {
