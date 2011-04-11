@@ -1,38 +1,37 @@
 == Installation ==
 
-This integration is done by a dedicated MediaWiki extension. See http://www.mediawiki.org/wiki/Extension:FCKeditor_(Official) for details.
+Information about the extension can be found at:
+http://smwforum.ontoprise.com/smwforum/index.php/Help:WYSIWYG_extension
+
+To install the extension please:
+* unzip the ZIP archive into your Mediawiki installation directory.
+* edit your LocalSettings.php and add:
+  require_once('extensions/WYSIWYG/WYSIWYG.php');
+
+== Apply Patches ==
+
+There are two patches included in the WYSIWYG extension. These patches are optional.
+
+If you use the Semantic Forms extension please apply the patch file:
+patch_for_SF_2.0.8.txt
+Currently only Semantic Forms version 2.0.8 is supported.
+
+If you use Mediawiki 1.16.x and want the WYSIWYG editor show up only when the URL
+parameter mode=wysiwyg is set, then apply the patch file:
+patch_for_MW_1.16.x.txt
+
+Applying the patch can be done with the patch.php:
+php patch.php -d <install_dir of mediawiki> -p <path_to_patchfile>
+
+You need to have the GNU Patch tool installed on your system.
 
 == About the project ==
 
-After several attempts to provide a WYSIWYG interface for MediaWiki, we at FCKeditor have decided starting a dedicated project for it, aiming to propose a definitive solution for it. 
+This extension is developed from the official FCK extension for Mediawiki:
+http://www.mediawiki.org/wiki/Extension:FCKeditor_%28Official%29
 
-The main criticism again such kind of integration is that rich text editors produce HTML code, and MediaWiki runs with Wikitext. We prioritized this problem when developing this prototype and our FCKeditor integration now produces Wikitext, satisfying this need. 
- 
-== Integration screenshot ==
+The FCK editor has been replaced with the new CKEditor.
 
-So, to see it in action, just go to our Sandbox: http://mediawiki.fckeditor.net/index.php/Sandbox and start editing that page. 
-
-== Integration status ==
-
-We have created the first working prototype for this integration. It is still in the first stages, but shows the potential of it, and it’s actually fully usable. In any case, use it on production web sites at your own risk. 
-
-The following features are currently available: 
-* Rich editing: instead of writing inside a plain text area, using Wikitext markup for the text    * structure and formatting, you can use visual tools, which reflect the final output. 
-* Easy table creation. 
-* Easy link creation, including automated search for internal articles. 
-* Easy image insertion, including automated search for uploaded image files. 
-* Templates handling: a template icon is displayed in the editor so they can be easily edited or inserted, without impacting in the editing interface. 
-* References are displayed as small icons, not disturbing the editing, making them easy to create and edit. 
-* Formulas are rendered inside the editor, making it easy to edit them with a mouse click. 
-* My preferences: the editor can be disable at "Editing > Disable rich editor". Also, if the editor is enabled, a new tab called "Rich editor" is available so you can disable it under specific namespaces. 
-
-== Final notes ==
-
-Take it easy! This is a prototype and it is expected to present undesired behaviors if bugs are forced to happen. Feel free to use the discussion space in this page to talk about it. 
-
-=== Project future ===
-
-As stated at the top of this page, at FCKeditor we have "started" coding this integration. We need help now to continue with it, as we are (and have to be) focused on FCKeditor. 
-
-We are looking for help on coding it, so PHP and JavaScript developers are welcome.
-
+In addition to the official FCK extension, the WYSIWYG extensions supports
+wikitext used in Semantic Mediawiki and also contains various other improvements
+for parsing wikitext.
