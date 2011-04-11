@@ -8,7 +8,15 @@ Install instructions for the latest version of the Deployment Framework are also
 For the full manual of the Deployment Framework have a look at:
 
  http://smwforum.ontoprise.com/smwforum/index.php/Help:Deployment_Framework_1.3
- 
+
+Third party tools
+==================
+The deployment framework uses:
+
+    - GNU unzip (GPL)
+    - GNU patch (GPL)
+    - 7zip (LGPL)
+    
 Requirements: 
 =============
     MediaWiki 1.16 installed

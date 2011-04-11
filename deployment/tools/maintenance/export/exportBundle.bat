@@ -13,7 +13,7 @@ REM
 IF "%~1"=="" GOTO help
 
 REM IMPORTANT: Make sure 7z.exe is in PATH!
-SET ZIP=7z
+SET ZIP=7za
 
 @%ZIP% > null
 IF %ERRORLEVEL% NEQ 0 GOTO install7z
