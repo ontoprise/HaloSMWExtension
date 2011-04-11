@@ -15,7 +15,8 @@ For install instructions and further information on Semantic MediaWiki, please v
 
 Requirements: 
     MediaWiki 1.13 or higher
-    Semantic MediaWiki 1.5 (Please make reference to the installation instructions: http://smwforum.ontoprise.com/smwforum/index.php/Help:Installation_of_Semantic_MediaWiki_1.5.0) 
+    Semantic MediaWiki 1.5 (Please make reference to the installation instructions: http://smwforum.ontoprise.com/smwforum/index.php/Help:Installation_of_Semantic_MediaWiki_1.5.0)
+    SMWHalo 1.5.3 or higher (Please make reference to the installation instructions: http://smwforum.ontoprise.com/smwforum/index.php/Help:Halo_extension)
     Lucene server 2.0 or 2.1 (the version deployed on SMWHalo's page on sourceforge runs on Windows too!)
 
 1. Add to your LocalSettings.php:
@@ -39,13 +40,6 @@ Documentation on how to configure the Lucene server is available here:
 http://www.mediawiki.org/wiki/Extension:Lucene-search
 
 That's it.
-
----
-4. Apply patches
-
-If you do not use the SMWHalo extension then please apply the patch to Mediawiki.
-Select the patch file depending on your installed Mediawiki version:
-php patch.php -d {wiki-path} -p patch_for_MW1.16.0.txt
 
 ------------------------------------------------------------------------------------------------------------
 The following is optional:
