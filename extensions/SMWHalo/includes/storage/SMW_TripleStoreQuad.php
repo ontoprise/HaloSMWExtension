@@ -40,8 +40,8 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 
 		$values = array();
 
-		$limit =  isset($requestoptions->limit) ? " LIMIT ".$requestoptions->limit : "";
-		$offset =  isset($requestoptions->offset) ? " OFFSET ".$requestoptions->offset : "";
+		$limit =  ($requestoptions->limit > -1) ? " LIMIT ".$requestoptions->limit : "";
+        $offset = ($requestoptions->offset > 0) ? " OFFSET ".$requestoptions->offset : "";
 
 		// query
 		if ($subject instanceof Title) {
@@ -145,8 +145,8 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 
 
 
-		$limit =  isset($requestoptions->limit) ? " LIMIT ".$requestoptions->limit : "";
-		$offset =  isset($requestoptions->offset) ? " OFFSET ".$requestoptions->offset : "";
+		$limit =  ($requestoptions->limit > -1) ? " LIMIT ".$requestoptions->limit : "";
+        $offset = ($requestoptions->offset > 0) ? " OFFSET ".$requestoptions->offset : "";
 
 		// query
 		if ($subject instanceof Title) {
@@ -208,8 +208,8 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 
 		$values = array();
 
-		$limit =  isset($requestoptions->limit) ? " LIMIT ".$requestoptions->limit : "";
-		$offset =  isset($requestoptions->offset) ? " OFFSET ".$requestoptions->offset : "";
+		$limit =  ($requestoptions->limit > -1) ? " LIMIT ".$requestoptions->limit : "";
+		$offset = ($requestoptions->offset > 0) ? " OFFSET ".$requestoptions->offset : "";
 
 		// query
 		if ($object instanceof SMWWikiPageValue) {
@@ -272,8 +272,8 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 
 		$values = array();
 
-		$limit =  isset($requestoptions->limit) ? " LIMIT ".$requestoptions->limit : "";
-		$offset =  isset($requestoptions->offset) ? " OFFSET ".$requestoptions->offset : "";
+		$limit =  ($requestoptions->limit > -1) ? " LIMIT ".$requestoptions->limit : "";
+        $offset = ($requestoptions->offset > 0) ? " OFFSET ".$requestoptions->offset : "";
 
 		if ($property->getPropertyID() == '_INST') {
 			$property_iri = "<".TSNamespaces::$RDF_NS."type>";
@@ -374,8 +374,8 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 		$subjctName = $subject->getDBkey();
 		$propertyName = $property->getWikiPageValue()->getTitle()->getDBkey();
 
-		$limit =  isset($requestoptions->limit) ? " LIMIT ".$requestoptions->limit : "";
-		$offset =  isset($requestoptions->offset) ? " OFFSET ".$requestoptions->offset : "";
+		$limit =  ($requestoptions->limit > -1) ? " LIMIT ".$requestoptions->limit : "";
+        $offset = ($requestoptions->offset > 0) ? " OFFSET ".$requestoptions->offset : "";
 
 		// query
 		if ($subject instanceof Title) {
@@ -469,8 +469,8 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 
 
 		$propertyName = $property->getWikiPageValue()->getTitle()->getDBkey();
-		$limit =  isset($requestoptions->limit) ? " LIMIT ".$requestoptions->limit : "";
-		$offset =  isset($requestoptions->offset) ? " OFFSET ".$requestoptions->offset : "";
+		$limit =  ($requestoptions->limit > -1) ? " LIMIT ".$requestoptions->limit : "";
+        $offset = ($requestoptions->offset > 0) ? " OFFSET ".$requestoptions->offset : "";
 		if ( $requestoptions->ascending ) {
 			$op = $requestoptions->include_boundary ? ' >= ' : ' > ';
 		} else {
@@ -566,8 +566,8 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 
 		$values = array();
 
-		$limit =  isset($requestoptions->limit) ? " LIMIT ".$requestoptions->limit : "";
-		$offset =  isset($requestoptions->offset) ? " OFFSET ".$requestoptions->offset : "";
+		$limit =  ($requestoptions->limit > -1) ? " LIMIT ".$requestoptions->limit : "";
+        $offset = ($requestoptions->offset > 0) ? " OFFSET ".$requestoptions->offset : "";
 
 		// query
 		if ($subject instanceof Title) {
