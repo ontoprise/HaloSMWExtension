@@ -1,6 +1,12 @@
 Data Import extension ChangeLog
 ===============================
 
+VERSION 1.4.2
+
+CHANGES
+* Log files created by the Interwiki Article Importer are now more conform to the logs,
+which are created by the other Data Access Modules, e.g. CSV import.
+
 VERSION 1.4.1
 
 CHANGES
