@@ -164,7 +164,28 @@ class ASFFormGeneratorUtils {
 			} 
 		}
 		
+		//filter properties with no automatic form edit
+		foreach($properties as $k => $p){
+			$semanticData = smwfNewBaseStore()->getSemanticData($p);
+			$noAutomaticFormEdit =
+				ASFFormGeneratorUtils::getPropertyValue($semanticData, ASF_PROP_NO_AUTOMATIC_FORMEDIT); 
+			
+			if(strtolower($noAutomaticFormEdit) == 'true'){
+				unset($properties[$k]);
+			}
+		}
+		
 		return $properties;
 	}
 	
 } 
+
+
+
+
+
+
+
+
+
+
