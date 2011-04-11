@@ -50,7 +50,7 @@ initialize: function(ruleName, ruleType) {
  */
 createRule: function() {
 	// hide the wiki text editor
-	var bodyContent = $('content');
+	var bodyContent = skin == 'ontoskin3' ? $('content') : $('bodyContent');
 	bodyContent.hide();
 	var html;
 	
@@ -209,8 +209,8 @@ editRule: function(ruleAnnotation) {
  *  
  */
 cancel: function() {
-	
-	$('content').show();
+	var bodyContent = skin == 'ontoskin3' ? $('content') : $('bodyContent');
+	bodyContent.show();
 	if ($('createRuleContent')) {
 		$('createRuleContent').remove();
 	}

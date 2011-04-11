@@ -102,8 +102,8 @@ editRule: function(ruleAnnotation) {
  *  
  */
 cancel: function() {
-	
-	$('content').show();
+	var bodyContent = skin == 'ontoskin3' ? $('content') : $('bodyContent');
+	bodyContent.show();
 	if ($('createRuleContent')) {
 		$('createRuleContent').remove();
 	}
@@ -124,7 +124,7 @@ cancel: function() {
  */
 createUI: function(parsedRule) {
 	// hide the wiki text editor
-	var bodyContent = $('content');
+	var bodyContent = skin == 'ontoskin3' ? $('content') : $('bodyContent');
 	bodyContent.hide();
 	var html;
 					

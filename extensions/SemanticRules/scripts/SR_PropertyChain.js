@@ -26,7 +26,7 @@ PropertyChain.prototype = {
 	},
 	
 	getCreateChainHtml : function() {
-		var bodyContent = $('content');
+		var bodyContent = skin == 'ontoskin3' ? $('content') : $('bodyContent');
 		bodyContent.hide();
 
 		var headHtml = this.getHeadHtml(2);
@@ -243,8 +243,8 @@ PropertyChain.prototype = {
 	 *  
 	 */
 	cancel: function() {
-		
-		$('content').show();
+		var bodyContent = skin == 'ontoskin3' ? $('content') : $('bodyContent');
+		bodyContent.show();
 		if ($('pc-content')) {
 			$('pc-content').remove();
 		}
