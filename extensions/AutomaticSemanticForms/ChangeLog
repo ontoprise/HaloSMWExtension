@@ -3,5 +3,17 @@ Automatic Semantic Forms extension ChangeLog
 
 VERSION 1.0
 
+FEATURES
+* New special page Special:AutomaticSemanticForms added. Page enables users 
+to materialize automatically created Semantic Forms.
+* Property:No_automatic_formedit can now also be used for properties. Properties with such an
+annotation will not be shown in automatically created SFs.
+* asfforminput parser function now has an optional parameter to display available properties in a dropdown.
+* Semantic Forms are now also created automatically, if all category annotations of an instance are not
+the domain of any Property. In this case, the automatically crreated Semantic Form will only display a freetex
+input field and some information about the categories, which are not the domain of any property.
+
+VERSION 1.0
+
 CHANGES
 * This is the first version of the Automatic Semantic Forms Extension
