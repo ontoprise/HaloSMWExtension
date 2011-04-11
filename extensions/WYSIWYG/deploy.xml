@@ -30,7 +30,8 @@
 
 	<configs>
 		<new>
-		<require name="wysiwygtab" file="extensions/WYSIWYG/WYSIWYG.php"/>
+            <patch file="patch_for_MW_1.16.x.txt" ext="mw" from="1160" to="1161"/>
+            <require name="wysiwygtab" file="extensions/WYSIWYG/WYSIWYG.php"/>
 		</new>
 		<update from="132" removeAll="true">
           <require name="wysiwygtab" file="extensions/WYSIWYG/WYSIWYG.php"/>
