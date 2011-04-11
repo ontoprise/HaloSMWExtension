@@ -96,8 +96,28 @@ class WikiTypeToXSD {
 }
 
 class TSHelper {
-
-	
+    
+	/**
+	 * Checks via heuristic if the given parameters contain a SPARQL query.
+	 * 
+	 * @param mixed array of string or string $parserFunctionParameters
+	 * 
+	 * @return boolean
+	 */
+	public static function isSPARQL($parserFunctionParameters) {
+		if (is_array($parserFunctionParameters)) {
+			$isSparql = false;
+			foreach($parserFunctionParameters as $p) {
+				$p = trim($p);
+				$isSparql |= (stripos($p, "SELECT ") === 0 || stripos($p, "PREFIX ") === 0);
+				if ($isSparql) break;
+			}
+			return $isSparql;
+		} else {
+			$p = trim($parserFunctionParameters);
+			return (stripos($p, "SELECT ")  === 0 || stripos($p, "PREFIX ") === 0);
+		}
+	}
 
 	/**
 	 * Converts a URI into a Title object.
@@ -158,10 +178,10 @@ class TSHelper {
 
 
 	}
-    
+
 	/**
 	 * Converts a URI into a localname by guessing the localname.
-	 * 
+	 *
 	 * @param string $uri
 	 * @return string
 	 */
@@ -183,7 +203,7 @@ class TSHelper {
 	}
 
 
-   
+
 
 	public static function isLocalURI($uri) {
 		foreach (TSNamespaces::$ALL_NAMESPACES as $nsIndsex => $ns) {
@@ -219,8 +239,8 @@ class TSHelper {
 
 		return array($uri, $title);
 	}
-	
-   
+
+
 
 	/**
 	 * Returns a local URI for the wiki graph of a given Title object.
@@ -269,93 +289,93 @@ class TSHelper {
 			}
 		}
 	}
-	
- /**
-     * Converts an OBL function term by translating all contained URIs
-     * into their localnames by guessing them. 
-     * 
-     * @param string $uri
-     * @return string
-     */
-    private static function convertOBLFunctionalTerm($uri) {
-            
-        $uri = urldecode($uri);
-        $uri = substr($uri, 9);
 
-        preg_match_all("/<([^>]+)>/", $uri, $matches);
+	/**
+	 * Converts an OBL function term by translating all contained URIs
+	 * into their localnames by guessing them.
+	 *
+	 * @param string $uri
+	 * @return string
+	 */
+	private static function convertOBLFunctionalTerm($uri) {
 
-        foreach($matches[1] as $match) {
-            $t = self::convertURIToLocalName($match);
-            if (!is_null($t)) {
-                $uri = str_replace("<$match>", $t, $uri);
-            }
-        }
-            
-        return $uri;
-    }
-    
-    /**
-     * Eliminates some forbidden characters which must not appear in a Title.
-     * 
-     *  @param string $str
-     *  @return string 
-     */
-    private static function eliminateTitleCharacters($str) {
+		$uri = urldecode($uri);
+		$uri = substr($uri, 9);
 
-        $str = ucfirst(trim($str));
-        $str = str_replace(" ", "_", $str);
-        $str = str_replace("%", "_", $str);
-        $str = str_replace("/", "_", $str);
-        $str = str_replace("[", "_", $str);
-        $str = str_replace("]", "_", $str);
-        $str = str_replace("?", "_", $str);
-        $str = str_replace("#", "_", $str);
-        $str = str_replace("\\", "_", $str);
-        $str = str_replace("'", "_", $str);
-        $str = str_replace("^", "_", $str);
-        $str = str_replace("<", "_", $str);
-        $str = str_replace(">", "_", $str);
-        $str = str_replace(";", "_", $str);
-        $str = preg_replace('/__+/', "_", $str);
-        return $str;
+		preg_match_all("/<([^>]+)>/", $uri, $matches);
 
-    }
-    
-    /**
-     * Parses a URI and uses several heuristics
-     *
-     * @param string $uri
-     * @return string localname which can be used to create a Title object
-     *
-     */
-    private static function guessLocalName($uri) {
-        global $wgContLang;
-        $parsedURI = parse_url($uri);
-        $knowNamespaces = array();
-        foreach(TSNamespaces::$ALL_NAMESPACE_KEYS as $nsKey) $knowNamespaces[] = $wgContLang->getNSText($nsKey);
-        if (array_key_exists('fragment', $parsedURI)) {
-            $local =  $parsedURI['fragment'];
-            $local = urldecode($local);
-            $local = self::eliminateTitleCharacters($local);
-            $parts = explode(":", $local);
-            if (count($parts) == 1) return $local;
-            if (in_array($parts[0], $knowNamespaces)) return implode("_", $parts);
-            return $parts[1];
-        }
-        if (array_key_exists('path', $parsedURI)) {
-            $local =  $parsedURI['path'];
-            $lastSlash = strrpos($local, "/");
-            $local = $lastSlash !== false ? substr($local, $lastSlash+1) : $local;
-            $local = urldecode($local);
-            $local = self::eliminateTitleCharacters($local);
-            $parts = explode(":", $local);
-            if (count($parts) == 1) return $local;
-            if (in_array($parts[0], $knowNamespaces)) return implode("_", $parts);
-            return $parts[1];
-        }
+		foreach($matches[1] as $match) {
+			$t = self::convertURIToLocalName($match);
+			if (!is_null($t)) {
+				$uri = str_replace("<$match>", $t, $uri);
+			}
+		}
 
-        return NULL;
-    }
+		return $uri;
+	}
+
+	/**
+	 * Eliminates some forbidden characters which must not appear in a Title.
+	 *
+	 *  @param string $str
+	 *  @return string
+	 */
+	private static function eliminateTitleCharacters($str) {
+
+		$str = ucfirst(trim($str));
+		$str = str_replace(" ", "_", $str);
+		$str = str_replace("%", "_", $str);
+		$str = str_replace("/", "_", $str);
+		$str = str_replace("[", "_", $str);
+		$str = str_replace("]", "_", $str);
+		$str = str_replace("?", "_", $str);
+		$str = str_replace("#", "_", $str);
+		$str = str_replace("\\", "_", $str);
+		$str = str_replace("'", "_", $str);
+		$str = str_replace("^", "_", $str);
+		$str = str_replace("<", "_", $str);
+		$str = str_replace(">", "_", $str);
+		$str = str_replace(";", "_", $str);
+		$str = preg_replace('/__+/', "_", $str);
+		return $str;
+
+	}
+
+	/**
+	 * Parses a URI and uses several heuristics
+	 *
+	 * @param string $uri
+	 * @return string localname which can be used to create a Title object
+	 *
+	 */
+	private static function guessLocalName($uri) {
+		global $wgContLang;
+		$parsedURI = parse_url($uri);
+		$knowNamespaces = array();
+		foreach(TSNamespaces::$ALL_NAMESPACE_KEYS as $nsKey) $knowNamespaces[] = $wgContLang->getNSText($nsKey);
+		if (array_key_exists('fragment', $parsedURI)) {
+			$local =  $parsedURI['fragment'];
+			$local = urldecode($local);
+			$local = self::eliminateTitleCharacters($local);
+			$parts = explode(":", $local);
+			if (count($parts) == 1) return $local;
+			if (in_array($parts[0], $knowNamespaces)) return implode("_", $parts);
+			return $parts[1];
+		}
+		if (array_key_exists('path', $parsedURI)) {
+			$local =  $parsedURI['path'];
+			$lastSlash = strrpos($local, "/");
+			$local = $lastSlash !== false ? substr($local, $lastSlash+1) : $local;
+			$local = urldecode($local);
+			$local = self::eliminateTitleCharacters($local);
+			$parts = explode(":", $local);
+			if (count($parts) == 1) return $local;
+			if (in_array($parts[0], $knowNamespaces)) return implode("_", $parts);
+			return $parts[1];
+		}
+
+		return NULL;
+	}
 
 }
 
@@ -528,8 +548,8 @@ class TSNamespaces {
 	}
 
 	/**
-	 * Converts $input from into full URI 
-	 * 
+	 * Converts $input from into full URI
+	 *
 	 *  (1) may be already a full URI
 	 *  (2) may be a prefix form a#MyInstance, cat#MyInstance
 	 *  (3) may be something else, consider as instance
@@ -542,30 +562,30 @@ class TSNamespaces {
 		$parsedURL = parse_url($input);
 		if (array_key_exists('scheme', $parsedURL)) {
 			// full URI
-	       return $input;
+			return $input;
 		} else if (array_key_exists('path', $parsedURL) && array_key_exists('fragment', $parsedURL)) {
-            // prefix form URI
+			// prefix form URI
 			$lastSlashIndex = strrpos($input, "#");
 			if ( $lastSlashIndex === false) return $this->getNSURI(NS_MAIN).$parsedURL['fragment'];
 			$prefix = substr($input, 0, $lastSlashIndex+1);
 			$local = substr($input, $lastSlashIndex);
-	
+
 			$local = ucfirst($local);
-	
+
 			foreach(self::$ALL_NAMESPACE_KEYS as $nsKey) {
 				$suffix = $this->getNSPrefix($nsKey);
 				if ($suffix == $prefix) {
 					return $this->getNSURI($nsKey).$local;
 				}
 			}
-           
-        } else {
-        	// any other value, consider as instance
-        	$input = ucfirst($input);
-        	return $this->getNSURI(NS_MAIN).$input;
-        }
 
-		
+		} else {
+			// any other value, consider as instance
+			$input = ucfirst($input);
+			return $this->getNSURI(NS_MAIN).$input;
+		}
+
+
 	}
 
 

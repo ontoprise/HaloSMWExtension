@@ -35,7 +35,7 @@ class SMWQueryProcessor {
 	static public function createQuery( $querystring, array $params, $context = SMWQueryProcessor::INLINE_QUERY, $format = '', $extraprintouts = array() ) {
 		// check if SPARQL then change query creator class
 		// necessary for Special:Ask
-		if (strpos($querystring, "SELECT ") !== false) {
+		if (TSHelper::isSPARQL($querystring)) {
 			return SMWSPARQLQueryProcessor::createQuery($querystring, $params, $context, $extraprintouts);
 		}
 		global $smwgQDefaultNamespaces, $smwgQFeatures, $smwgQConceptFeatures;
@@ -159,7 +159,10 @@ class SMWQueryProcessor {
 	 */
 	static public function processFunctionParams( array $rawparams, &$querystring, &$params, &$printouts, $showmode = false ) {
 		global $wgContLang;
-		
+	   
+        if (TSHelper::isSPARQL($rawparams)) {
+            return SMWSPARQLQueryProcessor::processFunctionParams( $rawparams, $querystring, $params, $printouts, $showmode );
+        } 
 		$querystring = '';
 		$printouts = array();
 		$lastprintout = null;

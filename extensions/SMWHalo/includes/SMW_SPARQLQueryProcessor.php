@@ -93,7 +93,7 @@ class SMWSPARQLQueryProcessor extends SMWQueryProcessor {
 				$params[trim($param[0])] = trim($param[1]);
 			} else { // parameter or query
 				// FIX:KK special handling for SPARQL queries here
-				if (strpos($param, "SELECT ") !== false) {
+				if (TSHelper::isSPARQL($param)) {
 					$querystring .= $param;
 				} else {
 					$parts = explode('=',$param,2);
