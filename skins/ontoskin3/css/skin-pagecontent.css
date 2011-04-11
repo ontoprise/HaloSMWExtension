@@ -65,9 +65,12 @@
 	border-bottom: 2px solid #116988;
 }
 
+/**
+FIX: 13866. 
 #content .smwtable th a{
 	color: #116988;
 }
+*/
 
 #content .smwtable td{
 	border-bottom: 1px solid #cccccc;
