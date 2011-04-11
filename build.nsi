@@ -530,6 +530,8 @@ Section "Solr" solr
 
     nsExec::ExecToLog '"$PHP" "$MEDIAWIKIDIR\installer\changeVariable.php" in=createIndex.bat out=createIndex.bat php-exe="$PHP"'
     nsExec::ExecToLog '"$PHP" "$MEDIAWIKIDIR\installer\changeVariable.php" in="\"$INSTDIR\htdocs\mediawiki\extensions\EnhancedRetrieval\SOLR\smwdb-data-config.xml\"" out="\"$INSTDIR\solr\wiki\solr\conf\smwdb-data-config.xml\"" wgDBname=semwiki_en wgDBserver=localhost wgDBport=3306 wgDBuser=root wgDBpassword=m8nix'
+    ;this is done when LocalSettings.php is updated with the global wiki variables
+    ;nsExec::ExecToLog '"$PHP" "$MEDIAWIKIDIR\installer\changeVariable.php" in="\"$INSTDIR\htdocs\mediawiki\LocalSettings.php\"" out="\"$INSTDIR\htdocs\mediawiki\LocalSettings.php\"" ip=$IP'
     CopyFiles "$INSTDIR\htdocs\mediawiki\extensions\EnhancedRetrieval\SOLR\schema.xml" "$INSTDIR\solr\wiki\solr\conf\schema.xml"
     CopyFiles "$INSTDIR\htdocs\mediawiki\extensions\EnhancedRetrieval\SOLR\solrconfig.xml" "$INSTDIR\solr\wiki\solr\conf\solrconfig.xml"
 
@@ -871,7 +873,7 @@ Function configCustomizationsForNew
         SetOutPath "$INSTDIR\htdocs\mediawiki"
         nsExec::ExecToLog ' "$INSTDIR\php\php.exe" "$INSTDIR\htdocs\mediawiki\installer\changeLS.php" \
         wgSitename="$WIKINAME" wgDBname="semwiki_$WIKILANG" wgLogo=$$wgScriptPath/url:("$WIKILOGO") wgLanguageCode=$WIKILANG wgDefaultSkin="$WIKISKIN" \
-        smwgAllowNewHelpQuestions="true" ls=LocalSettings.php'
+        ip="$IP" ls=LocalSettings.php'
     
         DetailPrint "Starting XAMPP"
         CALL installMemcached
