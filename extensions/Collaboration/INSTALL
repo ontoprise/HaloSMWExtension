@@ -1,5 +1,5 @@
-Installation instructions for Collaboration extension v1.3
-----------------------------------------------------------
+Installation instructions for Collaboration extension v1.3.1
+------------------------------------------------------------
 
 Requirements: 
 =============
@@ -10,7 +10,7 @@ Requirements:
 	ParserFunctions
 	StringFunctions
 	Variables
-	Base ontology bundle 1.0 (optional) 
+	SMW Plus ontology bundle 1.5.3 (optional) 
 
 
 Installation:

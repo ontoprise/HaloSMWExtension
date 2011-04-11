@@ -32,7 +32,7 @@ If you don't use the deployment framework, you can install it manually. See belo
 	Parser Functions
 	String Functions 2.0 or higher
 	Deployment Framework (optional)
-	Base ontology bundle (optional)
+	SMW Plus ontology bundle 1.5.3 (optional)
 
 #
 # Installation
