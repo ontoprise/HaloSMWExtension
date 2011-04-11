@@ -13,7 +13,11 @@
                 <exclude name="**/deploy/**" />
                 <exclude name="**/tests/**" />
             </fileset>
+			<fileset dir="../../../patches/">
+				<include name="patch.php" />
+			</fileset>
         </copy>
+
         <zip destfile="bin/wysiwyg.zip" basedir="bin/zip" />
         <delete dir="bin/zip" />
         <exec executable="php">
