@@ -7,7 +7,6 @@
 		<ant antfile="build.xml" dir="SemanticForms/deploy" target="patches" />
 		<ant antfile="build.xml" dir="RichMedia/deploy" target="patches" />
 		<ant antfile="build.xml" dir="HaloACL/deploy" target="patches" />
-		<ant antfile="build.xml" dir="EnhancedRetrieval/deploy" target="patches" />
 		<ant antfile="build.xml" dir="SemanticResultFormats/deploy" target="patches" />
 		<ant antfile="build.xml" dir="SemanticGardening/deploy" target="patches" />
 		<ant antfile="build.xml" dir="LinkedData/deploy" target="patches" />
@@ -15,7 +14,6 @@
 
     <target name="apply_patches_for_community_edition">
 		<ant antfile="build.xml" dir="SMWHalo/deploy" target="patches" />
-		<ant antfile="build.xml" dir="EnhancedRetrieval/deploy" target="patches" />
 	</target>
 
 	<target name="apply_deployscripts">
