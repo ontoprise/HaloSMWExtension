@@ -1,6 +1,6 @@
 Index: extensions/SemanticForms/specials/SF_UploadWindow.php
 ===================================================================
---- extensions/SemanticForms/specials/SF_UploadWindow.php	(revision 9674)
+--- extensions/SemanticForms/specials/SF_UploadWindow.php	(revision 10300)
 +++ extensions/SemanticForms/specials/SF_UploadWindow.php	(working copy)
 @@ -40,7 +40,8 @@
  	global $wgRequest, $wgOut, $wgUser, $wgServer;
@@ -922,14 +922,17 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow2.php
 ===================================================================
 --- extensions/SemanticForms/specials/SF_UploadWindow2.php	(revision 10300)
 +++ extensions/SemanticForms/specials/SF_UploadWindow2.php	(working copy)
-@@ -70,9 +70,11 @@
+@@ -70,9 +70,14 @@
  
  		// Guess the desired name from the filename if not provided
  		$this->mDesiredDestName   = $request->getText( 'wpDestFile' );
 -		if ( !$this->mDesiredDestName )
 -			$this->mDesiredDestName = $request->getText( 'wpUploadFile' );
 -		$this->mComment	   = $request->getText( 'wpUploadDescription' );
-+		/*op-patch|BL|2010-10-05|RichMedia|SpecialUploadWindow2|start*/
++		/*op-patch|BL|2010-10-05|RichMedia|RichMedia patch for SF|start*/
++		/*op-patch|BL|2010-10-05|RichMedia|RichMedia patch for SF|doc|
++		 *  http://dmwiki.ontoprise.com:8888/dmwiki/index.php/RichMedia_patch_for_SF */
++		// Embed the Richmedia functionality into the Semantic Forms extension.
 +		if( !$this->mDesiredDestName && $request->getFileName( 'wpUploadFile' ) !== null )
 +			$this->mDesiredDestName = $request->getFileName( 'wpUploadFile' );
 +		/*op-patch|BL|2010-10-05|end*/
@@ -937,23 +940,29 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow2.php
  		$this->mLicense	   = $request->getText( 'wpLicense' );
  
  
-@@ -100,6 +102,10 @@
+@@ -100,6 +105,13 @@
  		}
  		$this->mInputID	   = $request->getText( 'sfInputID' );
  		$this->mDelimiter	 = $request->getText( 'sfDelimiter' );
-+		/*op-patch|BL|2010-10-05|RichMedia|SpecialUploadWindow2|start*/
++		/*op-patch|BL|2010-10-05|RichMedia|RichMedia patch for SF|start*/
++		/*op-patch|BL|2010-10-05|RichMedia|RichMedia patch for SF|doc|
++		 *  http://dmwiki.ontoprise.com:8888/dmwiki/index.php/RichMedia_patch_for_SF */
++		// Embed the Richmedia functionality into the Semantic Forms extension.
 +		$this->mRMFileStatus	  = $request->getVal( 'filestatus' );
 +		/*op-patch|BL|2010-10-05|end*/
 +		
  	}
  
  	/**
-@@ -173,7 +179,13 @@
+@@ -173,7 +185,16 @@
  		if ( $this->mTokenOk && !$this->mCancelUpload
  				&& ( $this->mUpload && $this->mUploadClicked ) ) {
  			$this->processUpload();
 -		} else {
-+		/*op-patch|BL|2010-10-05|RichMedia|SpecialUploadWindow2|start*/
++		/*op-patch|BL|2010-10-05|RichMedia|RichMedia patch for SF|start*/
++		/*op-patch|BL|2010-10-05|RichMedia|RichMedia patch for SF|doc|
++		 *  http://dmwiki.ontoprise.com:8888/dmwiki/index.php/RichMedia_patch_for_SF */
++		// Embed the Richmedia functionality into the Semantic Forms extension.
 +		} else if( 'uploaded' == $this->mRMFileStatus) {
 +			$this->showSuccessfulMsg();
 + 		} else {
@@ -963,7 +972,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow2.php
  			$this->showUploadForm( $this->getUploadForm() );
  		}
  
-@@ -216,6 +228,7 @@
+@@ -216,6 +237,7 @@
  			'destfile' => $this->mDesiredDestName,
  			'sfInputID' => $this->mInputID,
  			'sfDelimiter' => $this->mDelimiter,
@@ -971,7 +980,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow2.php
  		) );
  		$form->setTitle( $this->getTitle() );
  
-@@ -294,6 +307,17 @@
+@@ -294,6 +316,17 @@
  	protected function uploadWarning( $warnings ) {
  		global $wgUser;
  
@@ -989,11 +998,14 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow2.php
  		$sessionKey = $this->mUpload->stashSession();
  
  		$sk = $wgUser->getSkin();
-@@ -326,7 +350,52 @@
+@@ -326,7 +359,55 @@
  		$form->setSubmitText( wfMsg( 'upload-tryagain' ) );
  		$form->addButton( 'wpUploadIgnoreWarning', wfMsg( 'ignorewarning' ) );
  		$form->addButton( 'wpCancelUpload', wfMsg( 'reuploaddesc' ) );
-+		/*op-patch|BL|2010-10-05|RichMedia|SpecialUploadWindow2|start*/
++		/*op-patch|BL|2010-10-05|RichMedia|RichMedia patch for SF|start*/
++		/*op-patch|BL|2010-10-05|RichMedia|RichMedia patch for SF|doc|
++		 *  http://dmwiki.ontoprise.com:8888/dmwiki/index.php/RichMedia_patch_for_SF */
++		// Embed the Richmedia functionality into the Semantic Forms extension.
 +		global $wgOut, $smwgRMFormByNamespace;
 +		$wgOut->addHTML('<div style="display:none;">');
 +		$rMUploadName = $smwgRMFormByNamespace['RMUpload'];
@@ -1042,13 +1054,16 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow2.php
  		$this->showUploadForm( $form );
  	}
  
-@@ -368,8 +437,11 @@
+@@ -368,8 +449,14 @@
  		// Check warnings if necessary
  		if ( !$this->mIgnoreWarning ) {
  			$warnings = $this->mUpload->checkWarnings();
 -			if ( count( $warnings ) )
 -				return $this->uploadWarning( $warnings );
-+			/*op-patch|BL|2010-10-05|RichMedia|SpecialUploadWindow2|start*/
++			/*op-patch|BL|2010-10-05|RichMedia|RichMedia patch for SF|start*/
++			/*op-patch|BL|2010-10-05|RichMedia|RichMedia patch for SF|doc|
++			 *  http://dmwiki.ontoprise.com:8888/dmwiki/index.php/RichMedia_patch_for_SF */
++			// Embed the Richmedia functionality into the Semantic Forms extension.
 +			if( $this->uploadWarning( $warnings ) ) {
 +				return;
 +			}
@@ -1056,7 +1071,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow2.php
  		}
  
  		// Get the page text if this is not a reupload
-@@ -395,39 +467,91 @@
+@@ -395,39 +482,100 @@
  		}
  
  		$basename = str_replace( '_', ' ', $basename );
@@ -1064,7 +1079,10 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow2.php
 -		if ( $this->mDelimiter == null ) {
 -			$output .= <<<END
 -		parent.document.getElementById("{$this->mInputID}").value = '$basename';
-+		/*op-patch|BL|2010-10-05|RichMedia|SpecialUploadWindow2|start*/
++		/*op-patch|BL|2010-10-05|RichMedia|RichMedia patch for SF|start*/
++		/*op-patch|BL|2010-10-05|RichMedia|RichMedia patch for SF|doc|
++		 *  http://dmwiki.ontoprise.com:8888/dmwiki/index.php/RichMedia_patch_for_SF */
++		// Embed the Richmedia functionality into the Semantic Forms extension.
 +		$target = $this->mLocalFile->title->getPrefixedText();
 +		global $smwgRMFormByNamespace;
 +		$rMUploadFormName = $smwgRMFormByNamespace['RMUpload'];
@@ -1099,7 +1117,10 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow2.php
 +		$form_add_test = $form_add->execute($myQuery);
 +		/*op-patch|BL|2010-10-05|end*/
 +		$output = '<script type="text/javascript">' . "\n";
-+		/*op-patch|BL|2010-10-05|RichMedia|SpecialUploadWindow2|start*/
++		/*op-patch|BL|2010-10-05|RichMedia|RichMedia patch for SF|start*/
++		/*op-patch|BL|2010-10-05|RichMedia|RichMedia patch for SF|doc|
++		 *  http://dmwiki.ontoprise.com:8888/dmwiki/index.php/RichMedia_patch_for_SF */
++		// Embed the Richmedia functionality into the Semantic Forms extension.
 +		if ( $this->mInputID ) {
 +		/*op-patch|BL|2010-10-05|end*/
 +			if ( $this->mDelimiter == null ) {
@@ -1146,7 +1167,10 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow2.php
 -		$output .= <<<END
 -		parent.jQuery.fancybox.close();
 +			}
-+		/*op-patch|BL|2010-10-05|RichMedia|SpecialUploadWindow2|start*/
++		/*op-patch|BL|2010-10-05|RichMedia|RichMedia patch for SF|start*/
++		/*op-patch|BL|2010-10-05|RichMedia|RichMedia patch for SF|doc|
++		 *  http://dmwiki.ontoprise.com:8888/dmwiki/index.php/RichMedia_patch_for_SF */
++		// Embed the Richmedia functionality into the Semantic Forms extension.
 + 		}
 +		// content was:
 +		// $output .= <<<END
@@ -1174,12 +1198,15 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow2.php
  		print $output;
  		$img = null; // @todo: added to avoid passing a ref to null - should this be defined somewhere?
  
-@@ -691,7 +815,46 @@
+@@ -691,7 +839,49 @@
  			return '';
  		}
  	}
 +	
-+	/*op-patch|BL|2010-10-05|RichMedia|SpecialUploadWindow2|start*/
++	/*op-patch|BL|2010-10-05|RichMedia|RichMedia patch for SF|start*/
++	/*op-patch|BL|2010-10-05|RichMedia|RichMedia patch for SF|doc|
++	 *  http://dmwiki.ontoprise.com:8888/dmwiki/index.php/RichMedia_patch_for_SF */
++	// Embed the Richmedia functionality into the Semantic Forms extension.
 +	/**
 +	 * The upload was successful and now show the Message for the according file
 +	 */
@@ -1221,28 +1248,34 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow2.php
  }
  
  /**
-@@ -703,6 +866,10 @@
+@@ -703,6 +893,13 @@
  	protected $mSessionKey;
  	protected $mHideIgnoreWarning;
  	protected $mDestWarningAck;
-+	/*op-patch|BL|2010-10-05|RichMedia|SpecialUploadWindow2|start*/
++	/*op-patch|BL|2010-10-05|RichMedia|RichMedia patch for SF|start*/
++	/*op-patch|BL|2010-10-05|RichMedia|RichMedia patch for SF|doc|
++	 *  http://dmwiki.ontoprise.com:8888/dmwiki/index.php/RichMedia_patch_for_SF */
++	// Embed the Richmedia functionality into the Semantic Forms extension.
 +	protected $mDestFile;
 +	/*op-patch|BL|2010-10-05|end*/
 +	
  	
  	protected $mSourceIds;
  
-@@ -715,6 +882,9 @@
+@@ -715,6 +912,12 @@
  				? $options['sessionkey'] : '';
  		$this->mHideIgnoreWarning = !empty( $options['hideignorewarning'] );
  		$this->mDestFile = isset( $options['destfile'] ) ? $options['destfile'] : '';
-+		/*op-patch|BL|2010-10-05|RichMedia|SpecialUploadWindow2|start*/
++		/*op-patch|BL|2010-10-05|RichMedia|RichMedia patch for SF|start*/
++		/*op-patch|BL|2010-10-05|RichMedia|RichMedia patch for SF|doc|
++		 *  http://dmwiki.ontoprise.com:8888/dmwiki/index.php/RichMedia_patch_for_SF */
++		// Embed the Richmedia functionality into the Semantic Forms extension.
 +		$this->mDestWarningAck = !empty( $options['destwarningack'] );
 +		/*op-patch|BL|2010-10-05|end*/
  
  		$sourceDescriptor = $this->getSourceSection();
  		$descriptor = $sourceDescriptor
-@@ -777,12 +947,12 @@
+@@ -777,12 +980,12 @@
  				'label-message' => 'sourcefilename',
  				'upload-type' => 'File',
  				'radio' => &$radio,
@@ -1257,7 +1290,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow2.php
  				'checked' => $selectedSourceType == 'file',
  		);
  		if ( $canUploadByUrl ) {
-@@ -803,12 +973,12 @@
+@@ -803,12 +1006,12 @@
  		}
  		wfRunHooks( 'UploadFormSourceDescriptors', array( &$descriptor, &$radio, $selectedSourceType ) );
  
@@ -1272,7 +1305,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow2.php
  		return $descriptor;
  	}
  
-@@ -913,6 +1083,13 @@
+@@ -913,6 +1116,13 @@
  				'label-message' => 'filesource',
  			);
  		}
@@ -1286,11 +1319,14 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow2.php
  
  		return $descriptor;
  	}
-@@ -958,7 +1135,169 @@
+@@ -958,7 +1168,175 @@
  	 */
  	public function show() {
  		$this->addUploadJS();
-+		/*op-patch|BL|2010-10-05|RichMedia|SpecialUploadWindow2|start*/
++		/*op-patch|BL|2010-10-05|RichMedia|RichMedia patch for SF|start*/
++		/*op-patch|BL|2010-10-05|RichMedia|RichMedia patch for SF|doc|
++		 *  http://dmwiki.ontoprise.com:8888/dmwiki/index.php/RichMedia_patch_for_SF */
++		// Embed the Richmedia functionality into the Semantic Forms extension.
 +		global $smwgRMScriptPath, $smwgRMFormByNamespace, $wgOut, $wgUser, $wgRequest, $smwgRMShowMainForm;
 +		$rMUploadName = $smwgRMFormByNamespace['RMUpload'];
 +		$uploadFormContent = $wgRequest->getArray($rMUploadName);
@@ -1387,7 +1423,10 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow2.php
 +		}
 +		/*op-patch|BL|2010-10-05|end*/
  		parent::show();
-+		/*op-patch|BL|2010-10-05|RichMedia|SpecialUploadWindow2|start*/
++		/*op-patch|BL|2010-10-05|RichMedia|RichMedia patch for SF|start*/
++		/*op-patch|BL|2010-10-05|RichMedia|RichMedia patch for SF|doc|
++		 *  http://dmwiki.ontoprise.com:8888/dmwiki/index.php/RichMedia_patch_for_SF */
++		// Embed the Richmedia functionality into the Semantic Forms extension.
 +		if ( $this->mDestFile && $wgUser->isAllowed( 'deletedhistory' ) ) {
 +			$title = Title::makeTitleSafe( NS_IMAGE, $this->mDestFile );
 +		} else {
@@ -1456,11 +1495,14 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow2.php
  		// disable $wgOut - we'll print out the page manually,
  		// taking the body created by the form, plus the necessary
  		// Javascript files, and turning them into an HTML page
-@@ -970,6 +1309,33 @@
+@@ -970,6 +1348,36 @@
  		$sk->initPage( $wgOut ); // need to call this to set skin name correctly
  		$wgTitle = SpecialPage::getTitleFor( 'Upload' );
  
-+		/*op-patch|BL|2010-10-05|RichMedia|SpecialUploadWindow2|start*/
++		/*op-patch|BL|2010-10-05|RichMedia|RichMedia patch for SF|start*/
++		/*op-patch|BL|2010-10-05|RichMedia|RichMedia patch for SF|doc|
++		 *  http://dmwiki.ontoprise.com:8888/dmwiki/index.php/RichMedia_patch_for_SF */
++		// Embed the Richmedia functionality into the Semantic Forms extension.
 +		global $smwgRMScriptPath, $sfgScriptPath, $wgStyleVersion, $wgJsMimeType;
 +		$richmedia_upload_include = '<script type="text/javascript" 
 +			src="' . $smwgRMScriptPath . '/scripts/richmedia_upload.js"></script>' . "\n";
@@ -1490,7 +1532,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow2.php
  		if ( method_exists( $wgOut, 'addModules' ) ) {
  			$head_scripts = '';
  			$wgOut->addModules( array( 'mediawiki.legacy.edit', 'mediawiki.legacy.upload', 'mediawiki.legacy.wikibits', 'mediawiki.legacy.ajax', 'mediawiki.legacy.ajaxwatch' ) );
-@@ -1002,7 +1368,11 @@
+@@ -1002,7 +1410,11 @@
  
  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
  <head>
@@ -1504,13 +1546,15 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow2.php
  {$wgOut->getHTML()}
 Index: extensions/SemanticForms/specials/SF_FormEdit.php
 ===================================================================
---- extensions/SemanticForms/specials/SF_FormEdit.php	(revision 9539)
+--- extensions/SemanticForms/specials/SF_FormEdit.php	(revision 10300)
 +++ extensions/SemanticForms/specials/SF_FormEdit.php	(working copy)
-@@ -145,9 +145,21 @@
+@@ -145,9 +145,23 @@
  					$page_is_source = ( $page_contents != null );
  				}
  			} else {
-+			/*op-patch|BL|2010-04-16|RMCombiningFormentriesWithFreeText|start*/
++			/*op-patch|BL|2010-04-16|RichMedia patch for SF|start*/
++			/*op-patch|BL|2010-04-16|RichMedia patch for SF|doc
++			 *  http://dmwiki.ontoprise.com:8888/dmwiki/index.php/RichMedia_patch_for_SF */
 +			// Any page content created by the upload converter is already stored
 +			// in the article but also the form is submitted.
 +			// content was:
@@ -1523,20 +1567,23 @@ Index: extensions/SemanticForms/specials/SF_FormEdit.php
  				$page_is_source = false;
  				$page_contents = null;
  			}
-+			/*op-patch|BL|2010-04-16||end*/
++			/*op-patch|BL|2010-04-16|end*/
 +			}
  			list ( $form_text, $javascript_text, $data_text, $form_page_title, $generated_page_name ) =
  				$sfgFormPrinter->formHTML( $form_definition, $form_submitted, $page_is_source, $form_article->getID(), $page_contents, $target_name, $page_name_formula );
  			if ( $form_submitted ) {
 Index: extensions/SemanticForms/includes/SF_FormPrinter.php
 ===================================================================
---- extensions/SemanticForms/includes/SF_FormPrinter.php	(revision 9541)
+--- extensions/SemanticForms/includes/SF_FormPrinter.php	(revision 10300)
 +++ extensions/SemanticForms/includes/SF_FormPrinter.php	(working copy)
-@@ -712,6 +712,16 @@
+@@ -712,6 +712,19 @@
                  $field_args['cols'] = 80;
                $sfgTabIndex++;
                $sfgFieldNum++;
 +              /*op-patch|BL|2009-10-12|RichMedia|HideStandardInputsInUploadWindow|start*/
++              /*op-patch|BL|2009-10-12|RichMedia|HideStandardInputsInUploadOverlay|doc|
++               *  http://dmwiki.ontoprise.com:8888/dmwiki/index.php/HideStandardInputsInUploadOverlay */
++              // We don't want to have the standard inputs in the UploadWindow
 +              global $smwgEnableRichMedia, $smwgRMHideStandardInputs;
 +              if ( $smwgEnableRichMedia && $smwgRMHideStandardInputs) {
 +                $sfgFieldNum++;
@@ -1549,20 +1596,25 @@ Index: extensions/SemanticForms/includes/SF_FormPrinter.php
                if ( $cur_value == '' ) {
                  $default_value = '!free_text!';
                } else {
-@@ -994,7 +1004,11 @@
+@@ -994,7 +1007,16 @@
            $attr = array();
            
            // if it's a query, ignore all standard inputs except run query
 -          if ( ( $is_query && $input_name != 'run query' ) || ( !$is_query && $input_name == 'run query' ) ) {
 +          /*op-patch|BL|2009-10-12|RichMedia|HideStandardInputsInUploadWindow|start*/
++          /*op-patch|BL|2009-10-12|RichMedia|HideStandardInputsInUploadOverlay|doc|
++           *  http://dmwiki.ontoprise.com:8888/dmwiki/index.php/HideStandardInputsInUploadOverlay */
++          // We don't want to have the standard inputs in the UploadWindow
++          // content was:
++          // if ( ( $is_query && $input_name != 'run query' ) || ( !$is_query && $input_name == 'run query' ) ) {
 +          global $smwgEnableRichMedia, $smwgRMHideStandardInputs;
-+          if ( ( $is_query && $input_name != 'run query' ) || ( !$is_query && $input_name == 'run query' ) ||
-+               ( $smwgEnableRichMedia && $smwgRMHideStandardInputs ) ) {
++          if ( ( $is_query && $input_name != 'run query' ) || ( !$is_query && $input_name == 'run query' ) 
++            || ( $smwgEnableRichMedia && $smwgRMHideStandardInputs ) ) {
 +            /*op-patch|BL|2009-10-12|end*/
              $new_text = "";
              $section = substr_replace( $section, $new_text, $brackets_loc, $brackets_end_loc + 3 - $brackets_loc );
              continue;
-@@ -1227,10 +1241,19 @@
+@@ -1227,10 +1249,24 @@
  
      // add form bottom, if no custom "standard inputs" have been defined
      if ( !$this->standardInputsIncluded ) {
@@ -1573,29 +1625,41 @@ Index: extensions/SemanticForms/includes/SF_FormPrinter.php
 +      if ( $is_query ) {
 +         $form_text .= SFFormUtils::queryFormBottom($form_is_disabled);
 +      } else {
-+        /*op-patch|BL|2009-06-05|RichMedia|HideStandardInputs|start*/
-+        // get the upload form name and do not display standard inputs for that
-+        // code was:
++        /*op-patch|BL|2009-10-12|RichMedia|HideStandardInputsInUploadWindow|start*/
++        /*op-patch|BL|2009-10-12|RichMedia|HideStandardInputsInUploadOverlay|doc|
++         *  http://dmwiki.ontoprise.com:8888/dmwiki/index.php/HideStandardInputsInUploadOverlay */
++        // We don't want to have the standard inputs in the UploadWindow
++        // Get the upload form name and do not display standard inputs for that
++        // content was:
 +        // $form_text .= SFFormUtils::formBottom($form_is_disabled);
-+        global $smwgRMFormByNamespace, $smwgRMHideStandardInputs;
-+        if ( $query_template_name != $smwgRMFormByNamespace['RMUpload'] && !$smwgRMHideStandardInputs) {
++        global $smwgEnableRichMedia, $smwgRMFormByNamespace, $smwgRMHideStandardInputs;
++        if ( $query_template_name != $smwgRMFormByNamespace['RMUpload']
++          && !$smwgRMHideStandardInputs )
++        {
 +          $form_text .= SFFormUtils::formBottom($form_is_disabled);
 +        }
-+        /*op-patch|BL|2009-06-05|RichMedia|HideStandardInputs|end*/
++        /*op-patch|BL|2009-10-12|end*/
 +      }
      }
      $starttime = wfTimestampNow();
      $page_article = new Article( $this->mPageTitle );
 Index: extensions/SemanticForms/libs/SemanticForms.js
 ===================================================================
---- extensions/SemanticForms/libs/SemanticForms.js	(revision 9539)
+--- extensions/SemanticForms/libs/SemanticForms.js	(revision 10300)
 +++ extensions/SemanticForms/libs/SemanticForms.js	(working copy)
-@@ -785,7 +785,7 @@
-
+@@ -785,7 +785,14 @@
+ 
  	// Could this be done via classes and attributes, instead of a
  	// global variable?
 -	for (var i in sfgAdderButtons) {
++	/*op-patch|BL|2009-10-12|RichMedia|RichMedia patch for SF|start*/
++	/*op-patch|BL|2009-10-07|RichMedia|RichMedia patch for SF|doc|
++	 *  http://dmwiki.ontoprise.com:8888/dmwiki/index.php/RichMedia_patch_for_SF */
++	// Avoid JS error.
++	// contet was:
++	// for (var i in sfgAdderButtons) {
 +	for (var i=0; i <= sfgAdderButtons.length-1; i++) {
++	/*op-patch|BL|2009-10-12|end*/
  		var components = sfgAdderButtons[i].split(',');
  		adderID = components[0];
  		templateName = components[1];
