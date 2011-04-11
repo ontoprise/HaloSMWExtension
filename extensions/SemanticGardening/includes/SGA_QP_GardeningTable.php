@@ -17,12 +17,24 @@
 class SGAGardeningTableResultPrinter extends SMWResultPrinter {
 	
 
-    
+	/*
+	 * Also called by Halo Initialize
+	 */
+	public function getScripts() {
+	    global $wgScriptPath;
+	    $scripts=array();
+		$scripts[] = '<script type="text/javascript" src="' . $wgScriptPath . 
+			'/extensions/SemanticGardening/scripts/sorttable_patch.js"></script>' . "\n";
+		return $scripts;
+	}
 	
 	protected function getResultText($res, $outputmode) {
 		global $smwgIQRunningNumber;
 		SMWOutputs::requireHeadItem(SMW_HEADER_SORTTABLE);
 
+		foreach($this->getScripts() as $key => $script) {
+			SMWOutputs::requireHeadItem("sgaqp-script".$key, $script);    
+		}
 		
 		global $sgagIP;
 		

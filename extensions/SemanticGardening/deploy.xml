@@ -31,8 +31,7 @@
 		<new>
 			<require name="sga"
 				file="extensions/SemanticGardening/includes/SGA_GardeningInitialize.php" />
-		    <patch file="patch_for_SMW1.5.6.txt" ext="smw" from="156" to="156"/>
-            <php name="GardeningRights">
+		    <php name="GardeningRights">
     			// Gardening privileges for the WikiSysop
                 $wgGroupPermissions['sysop']['gardening'] = true;
 			</php>
