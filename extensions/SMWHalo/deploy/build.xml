@@ -281,15 +281,7 @@
 			<arg value="--patchtool" />
 			<arg value="${patchtool}"/>
 		</exec>
-		<exec executable="php">
-			<arg value="../../../patches/patch.php"/>
-			<arg value="-d"/>
-			<arg value="${basedir}/../../../"/>
-			<arg value="-p" />
-			<arg value="../patch_for_SMW1.5.6.txt"/>
-			<arg value="--patchtool" />
-			<arg value="${patchtool}"/>
-		</exec>
+		
 		<exec executable="php">
 			<arg value="../../../patches/patch.php"/>
 			<arg value="-d"/>
