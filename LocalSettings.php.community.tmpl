@@ -243,6 +243,12 @@ $smwgNamespacesWithSemanticLinks[NS_TEMPLATE] = true;
 /*start-variable-wgUSPathSearch*/$wgUSPathSearch=true;/*end-variable-wgUSPathSearch*/
 $wgLuceneSearchTimeout=5;
 require_once($IP.'/extensions/EnhancedRetrieval/includes/EnhancedRetrieval.php');
+$fsgFacetedSearchConfig = array(
+    'indexer' => 'SOLR',
+    'source'  => 'SMWDB',
+    'host'    => '{{ip}}',
+    'port'    => 8983
+);
 /*end-unifiedsearch*/
 
 // enable Form ns when SF is not installed
