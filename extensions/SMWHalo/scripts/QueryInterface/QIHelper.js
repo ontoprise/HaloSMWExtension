@@ -54,6 +54,7 @@ QIHelper.prototype = {
 		this.sortColumn = null;
         this.DS_SELECTED = 0;
         this.TPEE_SELECTED = 1;
+        this.propertyAddClicked = false;
         
         $('qistatus').innerHTML = gLanguage.getMessage('QI_START_CREATING_QUERY');
         if (! this.noTabSwitch) this.switchTab(1, true);
@@ -1653,6 +1654,7 @@ QIHelper.prototype = {
 		}
 		autoCompleter.registerAllInputs();
 		//this.pendingElement.hide();
+        if (this.propertyAddClicked) this.addPropertyGroup(1);
 	},
 
     /**
@@ -2300,10 +2302,12 @@ QIHelper.prototype = {
 	/**
 	 * Reads the input fields of a property dialogue and adds them to the query
 	 */
-	addPropertyGroup : function() {
+	addPropertyGroup : function(updateGui) {
         // check if user clicked on add, while prop information is not yet loaded.
+        this.propertyAddClicked = true;
         var typeRow = ($('dialoguecontent').rows.length -2);
- 		if ($('dialoguecontent').rows[typeRow].cells[1].innerHTML == gLanguage.getMessage('QI_PROPERTY_TYPE') + ':') return;
+ 		if ($('dialoguecontent').rows[typeRow].cells[1].innerHTML == gLanguage.getMessage('QI_PROPERTY_TYPE') + ':') return
+        this.propertyAddClicked = false;
 
 		var pname='';
         var propInputFields = $('dialoguecontent').getElementsByTagName('input');
@@ -2410,6 +2414,14 @@ QIHelper.prototype = {
             // if the property contains a subquery, set the active query now to this subquery
             if (selector > 0) this.setActiveQuery(selector);
 		}
+
+        // update tree and query preview if this has not yet happened
+        if ( updateGui ) {
+            this.updateTree();
+            this.updateSrcAndPreview()
+            this.updateBreadcrumbs(this.activeQueryId);
+            this.loadedFromID = null;
+        }
 	},
 
     switchTab : function(id, flush) {
