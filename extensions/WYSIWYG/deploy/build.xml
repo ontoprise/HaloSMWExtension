@@ -16,6 +16,9 @@
 			<fileset dir="../../../patches/">
 				<include name="patch.php" />
 			</fileset>
+			<fileset dir="../../../deployment/tools">
+				<include name="patch.exe" />
+			</fileset>
         </copy>
 
         <zip destfile="bin/wysiwyg.zip" basedir="bin/zip" />
