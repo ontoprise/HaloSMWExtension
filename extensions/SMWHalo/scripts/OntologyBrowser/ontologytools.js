@@ -1044,11 +1044,14 @@ OBOntologyModifier.prototype = {
 		var newInstanceXML = GeneralXMLTools.createDocumentFromString(this
 				.createInstanceNode(instanceTitle, categoryTitle));
 		
+		// just in case the instance list is currently empty
+		dataAccess.OB_cachedInstances.documentElement.removeAttribute("textToDisplay");
+		dataAccess.OB_cachedInstances.documentElement.removeAttribute("isEmpty");
+		
 		// insert in cache and displayed tree
 		GeneralXMLTools.importNode(dataAccess.OB_cachedInstances.documentElement,
 				newInstanceXML.documentElement, true);
-	
-		//alert("TODO: implement");
+		
 	},
 
 	/**
