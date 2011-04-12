@@ -124,8 +124,8 @@
     <title>Form:RMUpload</title>
     <id>60</id>
     <revision>
-      <id>69</id>
-      <timestamp>2011-03-31T13:53:01Z</timestamp>
+      <id>839</id>
+      <timestamp>2011-04-12T08:43:50Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -144,7 +144,7 @@
 | width=&quot;70%&quot; | 
 |-
 | align=&quot;right&quot; style=&quot;font-size: 100%; font-weight: bold; &quot; | Uploaded by&lt;span style=&quot;color: red; &quot;&gt;*&lt;/span&gt;: 
-| {{{field|Uploader|mandatory|input type=haloACtext|constraints=ask: [[Category:Person]]|default=current user|size=40|maxlength=40}}}
+| {{{field|Uploader|mandatory|input type=haloACtext|constraints=ask: [[Category:User]]|default=current user|size=40|maxlength=40}}}
 |-
 | &amp;nbsp; 
 | style=&quot;padding-bottom: 5px; font-size: 80%; font-style: italic; &quot; | (The name of the uploader.)
@@ -153,7 +153,7 @@
 | {{{field|CopyrightBy|size=40|maxlength=40}}}
 |-
 | &amp;nbsp; 
-| style=&quot;padding-bottom: 5px; font-size: 80%; font-style: italic; &quot; | (The name of the person/company who holds the rights of this file)
+| style=&quot;padding-bottom: 5px; font-size: 80%; font-style: italic; &quot; | (The name of the User/company who holds the rights of this file)
 |-
 | align=&quot;right&quot; style=&quot;font-size: 100%; font-weight: bold; &quot; | Creation date: 
 | {{{field|CreationDate|input type=date|default=now}}}
@@ -188,15 +188,15 @@
 
 {{{end template}}}&lt;/includeonly&gt;&lt;noinclude&gt;
 &lt;/noinclude&gt;</text>
-    <hash>76010e0e5eb922ea0387c664f7abd06e</hash>
+    <hash>303b18fa4b4b33350e0b0971cbacd78a</hash>
     </revision>
   </page>
   <page>
     <title>Form:RMImage</title>
     <id>61</id>
     <revision>
-      <id>70</id>
-      <timestamp>2011-03-31T14:01:14Z</timestamp>
+      <id>836</id>
+      <timestamp>2011-04-12T08:43:08Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -224,7 +224,7 @@
 | {{{field|CopyrightBy}}}
 |-
 | &amp;nbsp; 
-| style=&quot;padding-bottom: 5px; font-size: 80%; font-style: italic; &quot; | (The name of the person/company who holds the rights of this file)
+| style=&quot;padding-bottom: 5px; font-size: 80%; font-style: italic; &quot; | (The name of the user/company who holds the rights of this file)
 |-
 | align=&quot;right&quot; style=&quot;font-size: 100%; font-weight: bold; &quot; | Creation date: 
 | {{{field|CreationDate|input type=date|default=now}}}
@@ -233,7 +233,7 @@
 | style=&quot;padding-bottom: 5px; font-size: 80%; font-style: italic; &quot; | (The date when this file has been created or recently changed)
 |-
 | align=&quot;right&quot; style=&quot;font-size: 100%; font-weight: bold; &quot; | Uploaded by&lt;span style=&quot;color: red; &quot;&gt;*&lt;/span&gt;: 
-| {{{field|Uploader|mandatory|size=40|input type=haloACtext|constraints=ask: [[Category:Person]]|default=current user}}}
+| {{{field|Uploader|mandatory|size=40|input type=haloACtext|constraints=ask: [[Category:User]]|default=current user}}}
 |-
 | &amp;nbsp; 
 | style=&quot;padding-bottom: 5px; font-size: 80%; font-style: italic; &quot; | (The name of the uploader.)
@@ -272,15 +272,15 @@
 
 {{{standard input|save}}} {{{standard input|preview}}} {{{standard input|changes}}} {{{standard input|cancel}}}&lt;/includeonly&gt;&lt;noinclude&gt;
 &lt;/noinclude&gt;</text>
-    <hash>ddfc850a94dcf25c9c2adbd2220924e3</hash>
+    <hash>bd40a26d6d5ab48bdad253b2c6f668cc</hash>
     </revision>
   </page>
   <page>
     <title>Form:RMPdf</title>
     <id>62</id>
     <revision>
-      <id>71</id>
-      <timestamp>2011-03-31T13:51:49Z</timestamp>
+      <id>837</id>
+      <timestamp>2011-04-12T08:43:13Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -308,7 +308,7 @@
 | {{{field|CopyrightBy}}}
 |-
 | &amp;nbsp; 
-| style=&quot;padding-bottom: 5px; font-size: 80%; font-style: italic; &quot; | (The name of the person/company who holds the rights of this file)
+| style=&quot;padding-bottom: 5px; font-size: 80%; font-style: italic; &quot; | (The name of the user/company who holds the rights of this file)
 |-
 | align=&quot;right&quot; style=&quot;font-size: 100%; font-weight: bold; &quot; | Creation date: 
 | {{{field|CreationDate|input type=date|default=now}}}
@@ -317,7 +317,7 @@
 | style=&quot;padding-bottom: 5px; font-size: 80%; font-style: italic; &quot; | (The date when this file has been created or recently changed)
 |-
 | align=&quot;right&quot; style=&quot;font-size: 100%; font-weight: bold; &quot; | Uploaded by&lt;span style=&quot;color: red; &quot;&gt;*&lt;/span&gt;: 
-| {{{field|Uploader|mandatory|size=40|input type=haloACtext|constraints=aks: [[Category:Person]]|default=current user}}}
+| {{{field|Uploader|mandatory|size=40|input type=haloACtext|constraints=aks: [[Category:User]]|default=current user}}}
 |-
 | &amp;nbsp; 
 | style=&quot;padding-bottom: 5px; font-size: 80%; font-style: italic; &quot; | (The name of the uploader.)
@@ -359,15 +359,15 @@
 {{{standard input|minor edit}}} {{{standard input|watch}}} 
 
 {{{standard input|save}}} {{{standard input|preview}}} {{{standard input|changes}}} {{{standard input|cancel}}}&lt;/includeonly&gt;</text>
-    <hash>7c057394573c3a20b8d20e7d22a54241</hash>
+    <hash>c73e149cbea9a6f3af12da75ebe0534a</hash>
     </revision>
   </page>
   <page>
     <title>Form:RMDocument</title>
     <id>63</id>
     <revision>
-      <id>72</id>
-      <timestamp>2011-03-31T13:45:40Z</timestamp>
+      <id>835</id>
+      <timestamp>2011-04-12T08:42:29Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -395,7 +395,7 @@
 | {{{field|CopyrightBy}}}
 |-
 | &amp;nbsp; 
-| style=&quot;padding-bottom: 5px; font-style: italic; font-size: 80%; &quot; | (The name of the person/company who holds the rights of this file)
+| style=&quot;padding-bottom: 5px; font-style: italic; font-size: 80%; &quot; | (The name of the user/company who holds the rights of this file)
 |-
 | align=&quot;right&quot; style=&quot;font-size: 100%; font-weight: bold; &quot; | Creation date: 
 | {{{field|CreationDate|input type=date|default=now}}}
@@ -404,7 +404,7 @@
 | style=&quot;padding-bottom: 5px; font-style: italic; font-size: 80%; &quot; | (The date when this file has been created or recently changed)
 |-
 | align=&quot;right&quot; style=&quot;font-size: 100%; font-weight: bold; &quot; | Uploaded by&lt;span style=&quot;color: red; &quot;&gt;*&lt;/span&gt;: 
-| {{{field|Uploader|mandatory|size=40|input type=haloACtext|constraints=ask: [[Category:Person]]|default=current user}}}
+| {{{field|Uploader|mandatory|size=40|input type=haloACtext|constraints=ask: [[Category:User]]|default=current user}}}
 |-
 | &amp;nbsp; 
 | style=&quot;padding-bottom: 5px; font-style: italic; font-size: 80%; &quot; | (The name of the uploader.)
@@ -451,15 +451,15 @@
 
 {{{standard input|save}}} {{{standard input|preview}}} {{{standard input|changes}}} {{{standard input|cancel}}}&lt;/includeonly&gt;&lt;noinclude&gt;
 &lt;/noinclude&gt;</text>
-    <hash>703550d10abcdd83da5efe6734d613f4</hash>
+    <hash>43941997cd933436bc58a9cea378e6fa</hash>
     </revision>
   </page>
   <page>
     <title>Form:RMAudio</title>
     <id>64</id>
     <revision>
-      <id>73</id>
-      <timestamp>2011-03-31T13:45:18Z</timestamp>
+      <id>834</id>
+      <timestamp>2011-04-12T08:40:13Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -485,7 +485,7 @@
 | {{{field|CopyrightBy}}}
 |-
 | &amp;nbsp; 
-| style=&quot;padding-bottom: 5px; font-size: 80%; font-style: italic; &quot; | (The name of the person/company who holds the rights of this file)
+| style=&quot;padding-bottom: 5px; font-size: 80%; font-style: italic; &quot; | (The name of the user/company who holds the rights of this file)
 |-
 | align=&quot;right&quot; style=&quot;font-size: 100%; font-weight: bold; &quot; | Creation date: 
 | {{{field|CreationDate|input type=date|default=now}}}
@@ -494,7 +494,7 @@
 | style=&quot;padding-bottom: 5px; font-size: 80%; font-style: italic; &quot; | (The date when this file has been created or recently changed)
 |-
 | align=&quot;right&quot; style=&quot;font-size: 100%; font-weight: bold; &quot; | Uploaded by&lt;span style=&quot;color: red; &quot;&gt;*&lt;/span&gt;: 
-| {{{field|Uploader|mandatory|size=40|input type=haloACtext|constraints=ask: [[Category:Person]]|default=current user}}}
+| {{{field|Uploader|mandatory|size=40|input type=haloACtext|constraints=ask: [[Category:User]]|default=current user}}}
 |-
 | &amp;nbsp; 
 | style=&quot;padding-bottom: 5px; font-size: 80%; font-style: italic; &quot; | (The name of the uploader.)
@@ -535,15 +535,15 @@
 }}
 {{Content hash|value=52d0024d9ca5eb7808a722b9abc04ace}}
 &lt;/noinclude&gt;</text>
-    <hash>ad0fe4f83fbf466210db4ba58336fd9c</hash>
+    <hash>3f8f2f4ec09fe6287caaee7755e6326f</hash>
     </revision>
   </page>
   <page>
     <title>Form:RMVideo</title>
     <id>65</id>
     <revision>
-      <id>74</id>
-      <timestamp>2011-03-31T13:54:28Z</timestamp>
+      <id>841</id>
+      <timestamp>2011-04-12T08:44:22Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -571,7 +571,7 @@
 | {{{field|CopyrightBy}}}
 |-
 | &amp;nbsp; 
-| style=&quot;padding-bottom: 5px; font-size: 80%; font-style: italic; &quot; | (The name of the person/company who holds the rights of this file)
+| style=&quot;padding-bottom: 5px; font-size: 80%; font-style: italic; &quot; | (The name of the user/company who holds the rights of this file)
 |-
 | align=&quot;right&quot; style=&quot;font-size: 100%; font-weight: bold; &quot; | Creation date: 
 | {{{field|CreationDate|input type=date|default=now}}}
@@ -580,7 +580,7 @@
 | style=&quot;padding-bottom: 5px; font-size: 80%; font-style: italic; &quot; | (The date when this file has been created or recently changed)
 |-
 | align=&quot;right&quot; style=&quot;font-size: 100%; font-weight: bold; &quot; | Uploaded by&lt;span style=&quot;color: red; &quot;&gt;*&lt;/span&gt;: 
-| {{{field|Uploader|mandatory|size=40|input type=haloACtext|constraints=ask: [[Category:Person]]|default=current user}}}
+| {{{field|Uploader|mandatory|size=40|input type=haloACtext|constraints=ask: [[Category:User]]|default=current user}}}
 |-
 | &amp;nbsp; 
 | style=&quot;padding-bottom: 5px; font-size: 80%; font-style: italic; &quot; | (The name of the uploader.)
@@ -617,7 +617,7 @@
 
 {{{end template}}}&lt;/includeonly&gt;&lt;noinclude&gt;
 &lt;/noinclude&gt;</text>
-    <hash>9c35b9d0f07b8c8ee22a6997cd65e1e2</hash>
+    <hash>e14418f360ed3c5a351e1c604eac54bc</hash>
     </revision>
   </page>
   <page>
@@ -691,7 +691,7 @@
         <id>1</id>
       </contributor>
       <text xml:space="preserve">{{Property
-|rationale=Relates a media file with the person who uploaded the file (e.g. User:WikiSysop).
+|rationale=Relates a media file with the user who uploaded the file (e.g. User:WikiSysop).
 }}
 [[Category:Property]]
 {{Part of bundle|value=Richmedia}}
@@ -943,8 +943,8 @@
     <title>Form:RMICalendar</title>
     <id>88</id>
     <revision>
-      <id>97</id>
-      <timestamp>2011-03-31T13:48:03Z</timestamp>
+      <id>838</id>
+      <timestamp>2011-04-12T08:43:14Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -972,7 +972,7 @@
 | {{{field|CopyrightBy}}}
 |-
 | &amp;nbsp; 
-| style=&quot;padding-bottom: 5px; font-size: 80%; font-style: italic; &quot; | (The name of the person/company who holds the rights of this file)
+| style=&quot;padding-bottom: 5px; font-size: 80%; font-style: italic; &quot; | (The name of the user/company who holds the rights of this file)
 |-
 | align=&quot;right&quot; style=&quot;font-size: 100%; font-weight: bold; &quot; | Creation date: 
 | {{{field|CreationDate|input type=date|default=now}}}
@@ -981,7 +981,7 @@
 | style=&quot;padding-bottom: 5px; font-size: 80%; font-style: italic; &quot; | (The date when this file has been created or recently changed)
 |-
 | align=&quot;right&quot; style=&quot;font-size: 100%; font-weight: bold; &quot; | Uploaded by&lt;span style=&quot;color: red; &quot;&gt;*&lt;/span&gt;: 
-| {{{field|Uploader|mandatory|size=40|input type=haloACtext|constraints=aks: [[Category:Person]]|default=current user}}}
+| {{{field|Uploader|mandatory|size=40|input type=haloACtext|constraints=aks: [[Category:User]]|default=current user}}}
 |-
 | &amp;nbsp; 
 | style=&quot;padding-bottom: 5px; font-size: 80%; font-style: italic; &quot; | (The name of the uploader.)
@@ -1024,7 +1024,7 @@
 
 {{{standard input|save}}} {{{standard input|preview}}} {{{standard input|changes}}} {{{standard input|cancel}}}&lt;/includeonly&gt;&lt;noinclude&gt;
 &lt;/noinclude&gt;</text>
-    <hash>6c36216216ddae0031bc72a493cab5a0</hash>
+    <hash>288472e353e88131d61c2f7969ae0ffd</hash>
     </revision>
   </page>
   <page>
@@ -1456,8 +1456,8 @@
     <title>Form:RMVCard</title>
     <id>164</id>
     <revision>
-      <id>173</id>
-      <timestamp>2011-03-31T13:54:05Z</timestamp>
+      <id>840</id>
+      <timestamp>2011-04-12T08:44:09Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -1485,7 +1485,7 @@
 | {{{field|CopyrightBy}}}
 |-
 | &amp;nbsp; 
-| style=&quot;padding-bottom: 5px; font-size: 80%; font-style: italic; &quot; | (The name of the person/company who holds the rights of this file)
+| style=&quot;padding-bottom: 5px; font-size: 80%; font-style: italic; &quot; | (The name of the user/company who holds the rights of this file)
 |-
 | align=&quot;right&quot; style=&quot;font-size: 100%; font-weight: bold; &quot; | Creation date: 
 | {{{field|CreationDate|input type=date|mandatory|default=now}}}
@@ -1494,7 +1494,7 @@
 | style=&quot;padding-bottom: 5px; font-size: 80%; font-style: italic; &quot; | (The date when this file has been created or recently changed)
 |-
 | align=&quot;right&quot; style=&quot;font-size: 100%; font-weight: bold; &quot; | Uploaded by&lt;span style=&quot;color: red; &quot;&gt;*&lt;/span&gt;: 
-| {{{field|Uploader|mandatory|size=40|input type=haloACtext|constraints=aks: [[Category:Person]]|default=current user}}}
+| {{{field|Uploader|mandatory|size=40|input type=haloACtext|constraints=aks: [[Category:User]]|default=current user}}}
 |-
 | &amp;nbsp; 
 | style=&quot;padding-bottom: 5px; font-size: 80%; font-style: italic; &quot; | (The name of the uploader.)
@@ -1539,7 +1539,7 @@
 
 &lt;/includeonly&gt;&lt;noinclude&gt;
 &lt;/noinclude&gt;</text>
-    <hash>3c85531befd7ff8fb426da11aba4c784</hash>
+    <hash>daa1bda1cd3fd5473cb2216166ca29fe</hash>
     </revision>
   </page>
   <page>
@@ -1641,13 +1641,13 @@
     <title>Richmedia</title>
     <id>215</id>
     <revision>
-      <id>224</id>
-      <timestamp>2011-03-31T09:59:10Z</timestamp>
+      <id>829</id>
+      <timestamp>2011-04-12T08:34:39Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
-      <text xml:space="preserve">{{Content bundle}}[[Vendor::Ontoprise| ]][[Ontology version::151| ]][[Installation dir::extensions/RichMedia| ]][[Dependency::smwhalo;153;153| ]][[Dependency::semanticforms;208;208| ]][[Dependency::applicationprogramming;103;103| ]][[Rationale::This content bundle features a set of basic elements that are necessary for the Rich Media extension.| ]]
+      <text xml:space="preserve">{{Content bundle}}[[Vendor::Ontoprise| ]][[Ontology version::151| ]][[Installation dir::extensions/RichMedia| ]][[Dependency::smwhalo;153;153| ]][[Dependency::semanticforms;208;208| ]][[Dependency::applicationprogramming;103;103| ]][[Dependency::Smwplus; 153; 153| ]] [[License::GPL v2| ]] [[Rationale::This content bundle features a set of basic elements that are necessary for the Rich Media extension.| ]]
 ;This content bundle features a set of basic elements that are necessary for the Rich Media extension.
 
 With the RichMedia Extension you can let the system generate a list of related media (images, documents, pdf, audio and video) to every article.
@@ -1674,7 +1674,7 @@ More information about the RichMedia extension and how to use it can be found in
 [[Category:Content bundle|Content_bundle]]
 {{Content hash|value=60d3b7281dde4625d9aeff2b822e500e}}
 {{Part of bundle|value=Richmedia}}</text>
-    <hash>0beb3f3e517669d480d12a6b5c0398ab</hash>
+    <hash>1bc1ffce4010e3e6ae08fdd3a6ce095f</hash>
     </revision>
   </page>
   <page>
