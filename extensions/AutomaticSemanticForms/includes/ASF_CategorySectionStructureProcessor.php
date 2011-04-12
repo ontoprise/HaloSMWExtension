@@ -62,7 +62,7 @@ class ASFCategorySectionStructureProcessor {
 	 */
 	private function initCategorySectionStructure($categories){
 		global $asfPreloadingArticles;
-		$asfPreöoadingArticles = array();
+		$asfPreloadingArticles = array();
 		
 		$this->categorySectionStructure = array();
 		
