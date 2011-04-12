@@ -25,6 +25,7 @@
 
     <target name="del_extension_suite">
 		<delete dir="AutomaticSemanticForms" />
+        <delete dir="Baseontologybundle" />
 		<delete dir="Cite" />
 		<delete dir="Collaboration" />
 		<delete dir="DataImport" />
