@@ -53,6 +53,9 @@
 			<fileset dir="../../../patches/">
 				<include name="patch.php" />
 			</fileset>
+            <fileset dir="../../../deployment/tools">
+				<include name="patch.exe" />
+			</fileset>
 		</copy>
 		<copy todir="bin/zip/skins">
 			<fileset dir="../patches/skins/">
