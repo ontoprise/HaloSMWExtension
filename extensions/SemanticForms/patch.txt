@@ -329,24 +329,6 @@ Index: extensions/SemanticForms/languages/SF_Messages.php
  	'semanticforms-desc'                 => 'Forms for adding and editing semantic data',
  	'specialpages-group-sf_group'        => 'Semantic Forms',
  	'createproperty'                     => 'Create a property',
-Index: extensions/SemanticForms/libs/SemanticForms.js
-===================================================================
---- extensions/SemanticForms/libs/SemanticForms.js	(original)
-+++ extensions/SemanticForms/libs/SemanticForms.js	(patched version)
-@@ -29,7 +29,11 @@
- 		}
- 	}
- 
--    jQuery.noConflict();
-+    /*op-patch|SR|2011-03-18|SF|Fix JS errors in STB|start*/
-+    /*op-patch|SR|2011-03-18|SF|Fix JS errors in STB|doc|http://dmwiki.ontoprise.com:8888/dmwiki/index.php/Fix_js_bug_with_STB*/
-+    if ( typeof stb_control == 'undefined')
-+        jQuery.noConflict();
-+    /*op-patch|SR|2011-03-18|SF|Fix JS errors in STB|end*/
- 
-     /* extending jQuery functions for custom highlighting */
-     jQuery.ui.autocomplete.prototype._renderItem = function( ul, item) {
-
 Index: extensions/SemanticForms/includes/SF_FormInputs.php
 ===================================================================
 --- extensions/SemanticForms/includes/SF_FormInputs.php (original)
