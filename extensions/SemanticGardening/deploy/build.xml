@@ -50,6 +50,12 @@
 				<include name="INSTALL" />
 				<include name="deploy.xml" />
 			</fileset>
+			<fileset dir="../../../patches/">
+				<include name="patch.php" />
+			</fileset>
+            <fileset dir="../../../deployment/tools">
+				<include name="patch.exe" />
+			</fileset>
 		</copy>
 		<zip destfile="bin/semanticgardening.zip" basedir="bin/zip" />
 		<delete dir="bin/zip" />
