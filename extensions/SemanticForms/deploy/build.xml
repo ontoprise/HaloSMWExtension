@@ -35,6 +35,30 @@
 			</fileset>
 		</copy>
 
+		<copy todir="bin/zip/extensions/SemanticForms/patches/RichMedia">
+			<fileset dir="../../RichMedia/">
+				<include name="RichMediaPatchForSF2_0_8.txt" />
+			</fileset>
+		</copy>
+		
+		<copy todir="bin/zip/extensions/SemanticForms/patches/HaloACL">
+			<fileset dir="../../HaloACL/">
+				<include name="patch_for_SF_2.0.8.txt" />
+			</fileset>
+		</copy>
+
+		<copy todir="bin/zip/extensions/SemanticForms/patches/SMWHalo">
+			<fileset dir="../../SMWHalo/">
+				<include name="patch_for_SF2.0.8.txt" />
+			</fileset>
+		</copy>
+
+		<copy todir="bin/zip/extensions/SemanticForms/patches/WYSIWYG">
+			<fileset dir="../../WYSIWYG/">
+				<include name="patch_for_SF_2.0.8.txt" />
+			</fileset>
+		</copy>
+
 		<copy todir="bin/zip/extensions/SemanticForms">
 			<fileset dir="../">
 				<include name="COPYING" />
@@ -78,6 +102,42 @@
 			<arg value="${basedir}/../../../" />
 			<arg value="-p" />
 			<arg value="../patch.txt" />
+			<arg value="--patchtool" />
+			<arg value="${patchtool}" />
+		</exec>
+		<exec executable="php">
+			<arg value="../../../patches/patch.php" />
+			<arg value="-d" />
+			<arg value="${basedir}/../../../" />
+			<arg value="-p" />
+			<arg value="../patches/HaloACL/patch_for_SF_2.0.8.txt" />
+			<arg value="--patchtool" />
+			<arg value="${patchtool}" />
+		</exec>
+		<exec executable="php">
+			<arg value="../../../patches/patch.php" />
+			<arg value="-d" />
+			<arg value="${basedir}/../../../" />
+			<arg value="-p" />
+			<arg value="../patches/RichMedia/RichMediaPatchForSF2_0_8.txt" />
+			<arg value="--patchtool" />
+			<arg value="${patchtool}" />
+		</exec>
+		<exec executable="php">
+			<arg value="../../../patches/patch.php" />
+			<arg value="-d" />
+			<arg value="${basedir}/../../../" />
+			<arg value="-p" />
+			<arg value="../patches/SMWHalo/patch_for_SF2.0.8.txt" />
+			<arg value="--patchtool" />
+			<arg value="${patchtool}" />
+		</exec>
+		<exec executable="php">
+			<arg value="../../../patches/patch.php" />
+			<arg value="-d" />
+			<arg value="${basedir}/../../../" />
+			<arg value="-p" />
+			<arg value="../patches/WYSIWYG/patch_for_SF_2.0.8.txt" />
 			<arg value="--patchtool" />
 			<arg value="${patchtool}" />
 		</exec>
