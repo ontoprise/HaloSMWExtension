@@ -369,6 +369,12 @@ Section "SMW+ Setup" smwplussetup
   nsExec::ExecToLog '"$PHP" "$MEDIAWIKIDIR\extensions\EnhancedRetrieval\maintenance\setup.php"'
 
   SetOutPath "$MEDIAWIKIDIR\deployment\tools"
+
+  ; Set PHP path for deployment framework
+  DetailPrint "Set PHP path for deployment framework"
+  ${ConfigWrite} "$MEDIAWIKIDIR\deployment\tools\smwadmin.bat" "SET PHP=" '"$INSTDIR\php\php.exe"' $R0
+
+  DetailPrint "Install bundles into wiki"
   nsExec::ExecToLog '"$MEDIAWIKIDIR\deployment\tools\smwadmin.bat" -i Smwplus.zip'
   nsExec::ExecToLog '"$MEDIAWIKIDIR\deployment\tools\smwadmin.bat" -i Smwplussandbox.zip'
 
@@ -771,11 +777,7 @@ Function changeConfigForFullXAMPP
     ; Make halowiki directory accessible by Apache  
     DetailPrint "Update httpd.conf"  
     nsExec::ExecToLog '"$INSTDIR\php\php.exe" "$INSTDIR\htdocs\mediawiki\installer\changeHttpd.php" httpd="$INSTDIR\apache\conf\httpd.conf" wiki-path=mediawiki fs-path="$INSTDIR\htdocs\mediawiki" memcache=true'
-    
-    ; Set PHP path for deployment framework
-    DetailPrint "Set PHP path for deployment framework"  
-    ${ConfigWrite} "$INSTDIR\htdocs\mediawiki\deployment\tools\smwadmin.bat" "SET PHP=" '"$INSTDIR\php\php.exe"' $R0
-    
+        
     DetailPrint "Config customizations"
     CALL configCustomizationsForNew
 FunctionEnd
