@@ -913,7 +913,7 @@ class AutoCompletionHandler {
 				//returns all categories for which an ASF can be created
 
 				if(defined('ASF_VERSION')){
-					@ $titles = ASFCategoryAC::getCategories($userInput);
+					@ $titles = ASFCategoryAC::getCategories($userInput, $params[0]);
 				} else {
 					$titles = array();
 				}
