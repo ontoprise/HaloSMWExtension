@@ -22,7 +22,7 @@ class DFBundleTools {
 
 		$fileNsText = $wgLang->getNsText(NS_FILE);
 		$partOfBundleName = $dfgLang->getLanguageString('df_partofbundle');
-		$ontologyURI = $dfgLang->getLanguageString('df_ontologyuri');
+		$ontologyURIProperty = $dfgLang->getLanguageString('df_ontologyuri');
 		$rawparams = array();
 		$rawparams[] = "[[$fileNsText:+]][[$partOfBundleName::".ucfirst($bundleName)."]]";
 		$rawparams[] = "?$partOfBundleName";
@@ -44,7 +44,7 @@ class DFBundleTools {
 			$bundleTitle = $object->getTitle();
 
 			$externalGraphs = array();
-			$values = smwfGetStore()->getPropertyValues($bundleTitle, SMWPropertyValue::makeUserProperty($ontologyURI));
+			$values = smwfGetStore()->getPropertyValues($bundleTitle, SMWPropertyValue::makeUserProperty($ontologyURIProperty));
 			if (count($values) > 0) {
 				$value = reset($values);
 				$dbkeys = $value->getDBkeys();
