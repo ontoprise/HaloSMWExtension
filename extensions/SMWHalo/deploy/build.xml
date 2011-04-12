@@ -51,6 +51,11 @@
 				<exclude name="**/.svn, **/CVS" />
 			</fileset>
 		</copy>
+		<copy todir="bin/zip/extensions/SMWHalo/resources">
+			<fileset dir="../resources/">
+				<exclude name="**/.svn, **/CVS" />
+			</fileset>
+		</copy>
 		<copy todir="bin/zip/extensions/SMWHalo/tests">
 			<fileset dir="../tests/">
 				<exclude name="**/.svn, **/CVS" />
@@ -111,7 +116,7 @@
 				<exclude name="**/deploy/**" />
 			</fileset>
 		</copy>
-        <copy file="../../../patches/patch.php" tofile="bin/zip/deployment/tools/patch.php" overwrite="true" verbose="true" failonerror="true"/>
+		<copy file="../../../patches/patch.php" tofile="bin/zip/deployment/tools/patch.php" overwrite="true" verbose="true" failonerror="true" />
 
 		<copy todir="bin/zip/extensions/ApplicationProgramming">
 			<fileset dir="../../ApplicationProgramming/">
@@ -180,7 +185,7 @@
 		</exec>
 	</target>
 
-	<target name="deployscripts" >
+	<target name="deployscripts">
 		<echo>General Tools</echo>
 		<java fork="true" jar="../../../buildtools/closure/compiler.jar" failonerror="true">
 			<arg value="--js=../../SMWHalo/scripts/ajaxhalo.js" />
@@ -271,37 +276,37 @@
 	</target>
 
 	<target name="patches" depends="checkos">
-		<echo message="${patchtool}"/>
+		<echo message="${patchtool}" />
 		<exec executable="php">
-			<arg value="../../../patches/patch.php"/>
-			<arg value="-d"/>
-			<arg value="${basedir}/../../../"/>
+			<arg value="../../../patches/patch.php" />
+			<arg value="-d" />
+			<arg value="${basedir}/../../../" />
 			<arg value="-p" />
-			<arg value="../patch_for_builtin_properties_SMW_1.5.6.txt"/>
+			<arg value="../patch_for_builtin_properties_SMW_1.5.6.txt" />
 			<arg value="--patchtool" />
-			<arg value="${patchtool}"/>
-		</exec>
-		
-		<exec executable="php">
-			<arg value="../../../patches/patch.php"/>
-			<arg value="-d"/>
-			<arg value="${basedir}/../../../"/>
-			<arg value="-p" />
-			<arg value="../patch_for_MW1.16.1.txt"/>
-			<arg value="--patchtool" />
-			<arg value="${patchtool}"/>
+			<arg value="${patchtool}" />
 		</exec>
 
 		<exec executable="php">
-			<arg value="../../../patches/patch.php"/>
-			<arg value="-d"/>
-			<arg value="${basedir}/../../../"/>
+			<arg value="../../../patches/patch.php" />
+			<arg value="-d" />
+			<arg value="${basedir}/../../../" />
 			<arg value="-p" />
-			<arg value="../patch_for_SF2.0.8.txt"/>
+			<arg value="../patch_for_MW1.16.1.txt" />
 			<arg value="--patchtool" />
-			<arg value="${patchtool}"/>
+			<arg value="${patchtool}" />
 		</exec>
-		
+
+		<exec executable="php">
+			<arg value="../../../patches/patch.php" />
+			<arg value="-d" />
+			<arg value="${basedir}/../../../" />
+			<arg value="-p" />
+			<arg value="../patch_for_SF2.0.8.txt" />
+			<arg value="--patchtool" />
+			<arg value="${patchtool}" />
+		</exec>
+
 	</target>
 
 

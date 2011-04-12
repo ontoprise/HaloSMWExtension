@@ -1104,6 +1104,16 @@ class SMWSemanticStoreSQL extends SMWSemanticStore {
 				DBHelper::reportProgress("   ... Create page ".$t->getNsText().":".$t->getText()."...\n",$verbose);
 			}
 		}
+		
+		// create NEP templates
+		global $smwgHaloIP;
+		$contents = file_get_contents("$smwgHaloIP/resources/nep/NEP_Generic.template");
+	    $t = Title::newFromText("NEP/Generic", NS_MEDIAWIKI);
+            if (!$t->exists()) {
+                $article = new Article($t);
+                $article->insertNewArticle($contents, "", false, false);
+                DBHelper::reportProgress("   ... Create page ".$t->getNsText().":".$t->getText()."...\n",$verbose);
+            }
 
 		$this->createHelpAttributes($verbose);
 
