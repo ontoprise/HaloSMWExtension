@@ -1042,11 +1042,14 @@ QIHelper.prototype = {
         this.updateBreadcrumbs(this.activeQueryId, gLanguage.getMessage((reset) ? 'QI_BC_ADD_INSTANCE' : 'QI_BC_EDIT_INSTANCE') );
 		this.activeDialogue = "instance";
         this.resetDialogueContent(reset);
+        var catConstraint = this.getCategoryConstraints();
+        if (catConstraint.length > 0)
+            catConstraint = 'schema-instance-domain:' + catConstraint + '|';
 		var newrow = $('dialoguecontent').insertRow(-1);
 		var cell = newrow.insertCell(0);
 		cell.innerHTML = gLanguage.getMessage('QI_INSTANCE');
 		cell = newrow.insertCell(1);
-		cell.innerHTML = '<input type="text" id="input0" class="wickEnabled general-forms" constraints="namespace: 0" autocomplete="OFF" '+
+		cell.innerHTML = '<input type="text" id="input0" class="wickEnabled general-forms" constraints="' + catConstraint + 'namespace: 0" autocomplete="OFF" '+
             'onmouseover="Tip(\'' +  gLanguage.getMessage('AUTOCOMPLETION_HINT') + '\');"/>';
         cell = newrow.insertCell(2);
         // link to add another input for or-ed values
@@ -1095,11 +1098,25 @@ QIHelper.prototype = {
         this.updateHeightBoxcontent();
 	},
 
+    getCategoryConstraints : function() {
+		// fetch category constraints:
+		var cats = this.activeQuery.categories; // get the category group
+        var constraintsCategories = "";
+        for ( var i = 0, n = cats.length; i < n; i++) {
+            var catconstraint = cats[i].join(',');
+            if (i < n -1)
+                catconstraint += ',';
+		}
+        constraintsCategories += gLanguage.getMessage('CATEGORY_NS',
+							'cont')
+							+ catconstraint;
+        return constraintsCategories;
+    },
+
     addPropertyChainInput : function(propName) {
         autoCompleter.deregisterAllInputs();
 		// fetch category constraints:
-		var cats = this.activeQuery.categories; // get the category group 
-        var constraintsCategories = "";
+		var constraintsCategories = "";
         // calculate index of current field
         var idx = $('dialoguecontent').rows.length;
         if (idx > 0) idx = (idx - 1) / 2;
@@ -1109,25 +1126,10 @@ QIHelper.prototype = {
             var pName = $('input_p'+(idx-1)).value;
             if (this.propRange[pName.toLowerCase()]) {
                 constraintsCategories = this.propRange[pName.toLowerCase()];
-                cats = null; // deactivate category
             } 
         }
-		if (cats != null) {
-			for ( var i = 0, n = cats.length; i < n; i++) {
-				catconstraint = cats[i];
-				if (i > 0) {
-					constraintstring += ",";
-				}
-				for ( var j = 0, m = catconstraint.length; j < m; j++) {
-					orconstraint = catconstraint[j];
-					if (j > 0) {
-						constraintstring += ",";
-					}
-					constraintsCategories += gLanguage.getMessage('CATEGORY_NS',
-							'cont')
-							+ orconstraint;
-				}
-			}
+		if (constraintsCategories.length == 0) {
+            constraintsCategories = this.getCategoryConstraints();
 		}
         var constraintstring = "schema-property-domain: "+constraintsCategories+ "|annotation-property: "+constraintsCategories + "|namespace: 102";
 		var newrow = $('dialoguecontent').insertRow(idx*2);
@@ -1664,7 +1666,7 @@ QIHelper.prototype = {
         // check if the dialogue is already complete
         if (this.activeDialogue == "property" && $('input_c1')) return;
         // hr line
-        node = document.createElement('hr');
+        var node = document.createElement('hr');
         $('dialoguecontent').parentNode.parentNode.appendChild(node);
         // second table with checkbox for display option and value must be set
         node = document.createElement('table');
