@@ -70,6 +70,14 @@ class  LODStringValue extends SMWStringValue {
 		return $this->augmentMetaData(parent::getLongWikiText($linked));
 	}
 	
+	/**
+	 * HTML is returned without meta-data.
+	 */
+	public function getShortHTMLText( $linker = null ) {
+		return smwfXMLContentEncode( parent::getShortWikiText( $linker ) );
+	}
+	
+	
 	//--- Private methods ---
 	/**
 	 * Augments the given wiki text with meta data, if appropriate.
