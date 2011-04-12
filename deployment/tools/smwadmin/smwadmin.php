@@ -390,7 +390,21 @@ if (count($ontologiesToInstall) > 0) {
 if (count($localBundlesToInstall) > 0) {
 
 	foreach($localBundlesToInstall as $filePath) {
-		$installer->installOrUpdateFromFile($filePath);
+		try {
+			$installer->installOrUpdateFromFile($filePath);
+		} catch(InstallationError $e) {
+			$logger->fatal($e);
+			fatalError($e);
+		} catch(HttpError $e) {
+			$logger->fatal($e);
+			fatalError($e);
+		} catch(RollbackInstallation $e) {
+			$logger->fatal($e);
+			fatalError("Installation failed! You can try to rollback: smwadmin -r");
+		}catch(RepositoryError $e) {
+			$logger->fatal($e);
+			fatalError($e);
+		}
 	}
 }
 
@@ -415,7 +429,7 @@ foreach($packageToDeinstall as $toDeInstall) {
 
 			// include commandLine.inc to be in maintenance mode
 			checkWikiContext();
-				
+
 			$packageID = $dd->getID();
 			$version = $dd->getVersion();
 			$logger->info("Start un-install package '$packageID'".(is_null($version) ? "" : "-$version"));

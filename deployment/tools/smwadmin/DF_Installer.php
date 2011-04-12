@@ -30,6 +30,8 @@ define('DEPLOY_FRAMEWORK_PRECEDING_CYCLE', 10);
 define('DEPLOY_FRAMEWORK_WRONG_MW_VERSION', 11);
 define('DEPLOY_FRAMEWORK_CREATING_RESTOREPOINT_FAILED', 12);
 define('DEPLOY_FRAMEWORK_ONTOLOGYCONVERSION_FAILED', 13);
+define('DEPLOY_FRAMEWORK_WRONG_VERSION', 14);
+define('DEPLOY_FRAMEWORK_UNCOMPRESS_ERROR', 15);
 
 require_once 'DF_PackageRepository.php';
 require_once 'DF_Tools.php';
@@ -149,7 +151,7 @@ class Installer {
 	public function installOrUpdateFromFile($filePath) {
 		$dd = Tools::unzipDeployDescriptor($filePath, $this->tmpFolder);
 		if (is_null($dd)) {
-			throw new InstallationError(-1);
+			throw new InstallationError(DEPLOY_FRAMEWORK_UNCOMPRESS_ERROR, "Uncompressing $filePath failed.");
 		}
 		$localPackages = PackageRepository::getLocalPackages($this->rootDir.'/extensions');
 
@@ -158,11 +160,11 @@ class Installer {
 		foreach($deps as $d) {
 			list($depID, $depFrom, $depTo, $optional, $message) = $d;
 			if (!array_key_exists($depID, $localPackages)) {
-				throw new InstallationError(-1);
+				throw new InstallationError(DEPLOY_FRAMEWORK_PACKAGE_NOT_EXISTS, "'$depID' is missing.");
 			}
 			$b = $localPackages[$depID];
 			if ($b->getVersion() < $depFrom || $b->getVersion() > $depTo) {
-				throw new InstallationError(-1);
+				throw new InstallationError(DEPLOY_FRAMEWORK_WRONG_VERSION, "'$depID' is installed in wrong version: ".$b->getVersion().". $depFrom - $depTo is required.");
 			}
 		}
 		$fromVersion = NULL;
