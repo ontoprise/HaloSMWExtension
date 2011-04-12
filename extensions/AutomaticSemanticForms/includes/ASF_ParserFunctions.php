@@ -357,6 +357,7 @@ class ASFParserFunctions {
 		$buttonLabel = '';
 		$useDropDown=false;
 		$queryString = '';
+		$rootCategory = '';
 		
 		// assign params - support unlabelled params, for backwards compatibility
 		$unresolvedParameters = array();
@@ -405,6 +406,8 @@ class ASFParserFunctions {
 				}
 			} else if($paramName == 'query string'){
 				$queryString = $paramValue;
+			} else if($paramName == 'category ac root'){
+				$rootCategory = $paramValue;
 			} else { 
 				$unresolvedParameters[$i] = $param;
 			}
@@ -448,6 +451,10 @@ class ASFParserFunctions {
 			
 			if(strlen($queryString) == 0 && array_key_exists(6, $unresolvedParameters)){
 				$queryString = $unresolvedParameters[6];
+			}
+			
+			if(strlen($rootCategory) == 0 && array_key_exists(7, $unresolvedParameters)){
+				$rootCategory = $unresolvedParameters[7];
 			}
 		
 		} else if ($type == 'page'){
@@ -507,6 +514,10 @@ class ASFParserFunctions {
 			if(strlen($queryString) == 0 && array_key_exists(9, $unresolvedParameters)){
 				$queryString = $unresolvedParameters[9];
 			}
+			
+			if(strlen($rootCategory) == 0 && array_key_exists(7, $unresolvedParameters)){
+				$rootCategory = $unresolvedParameters[10];
+			}
 		}
 		
 		
@@ -534,11 +545,21 @@ class ASFParserFunctions {
 			}
 			
 			if(!$useDropDown){
-				$str .= '<input type="text" name="categories" size="'.$categorySize.'" value="'.$categoryValue.'" class="wickEnabled" constraints="asf-ac:category"/>';
+				if(strlen($rootCategory) == 0){
+					$cACConstraint = "asf-ac:_";
+				} else {
+					$cACConstraint = "asf-ac:".$rootCategory;	
+				}
+				$str .= '<input type="text" name="categories" size="'.$categorySize.'" value="'.$categoryValue
+					.'" class="wickEnabled" constraints="'.$cACConstraint.'"/>';
 			} else {
 				$str .= '<select size="1" name="categories" size="'.$categorySize.'">';
 				define('SMW_AC_MAX_RESULTS', 500);
-				@ $categories = ASFCategoryAC::getCategories('');
+				if(strlen($rootCategory) == 0){
+					$categories = ASFCategoryAC::getCategories('');
+				} else {
+					$categories = ASFCategoryAC::getCategories('', $rootCategory);
+				}
 				foreach($categories as $category){
 					$str .= '<option>'.$category->getText().'</option>';
 				}

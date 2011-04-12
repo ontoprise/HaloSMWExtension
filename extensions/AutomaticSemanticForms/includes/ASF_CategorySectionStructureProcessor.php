@@ -81,7 +81,7 @@ class ASFCategorySectionStructureProcessor {
 			
 			$semanticData = $store->getSemanticData($categoryTitle);
 			$noASF = ASFFormGeneratorUtils::getPropertyValue($semanticData, ASF_PROP_NO_AUTOMATIC_FORMEDIT);
-			if($noASF == 'true'){
+			if(strtolower($noASF) == 'true'){
 				$this->categoriesWithNoFormEdit[$categoryTitle->getText()] = true;
 				continue;
 			}
