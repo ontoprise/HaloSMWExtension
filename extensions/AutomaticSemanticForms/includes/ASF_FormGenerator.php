@@ -15,6 +15,7 @@ define('ASF_PROP_USE_CLASS', 'Use_class');
 define('ASF_PROP_DELIMITER', 'Delimiter');
 define('ASF_PROP_FIELD_SEQUENCE_NUMBER', 'Field_sequence_number');
 define('ASF_PROP_DEFAULT_VALUE', 'Default_value');
+define('ASF_PROP_PRELOAD', 'Use_preload_article');
 
 //define form metadata properties for categories
 define('ASF_PROP_NO_AUTOMATIC_FORMEDIT', 'No_automatic_formedit');

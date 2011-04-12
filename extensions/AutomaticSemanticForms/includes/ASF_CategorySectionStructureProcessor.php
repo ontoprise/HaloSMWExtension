@@ -61,6 +61,9 @@ class ASFCategorySectionStructureProcessor {
 	 * data about parents and children to each category section tree item
 	 */
 	private function initCategorySectionStructure($categories){
+		global $asfPreloadingArticles;
+		$asfPreöoadingArticles = array();
+		
 		$this->categorySectionStructure = array();
 		
 		$store = smwfNewBaseStore();
@@ -84,6 +87,12 @@ class ASFCategorySectionStructureProcessor {
 			if(strtolower($noASF) == 'true'){
 				$this->categoriesWithNoFormEdit[$categoryTitle->getText()] = true;
 				continue;
+			}
+			
+			//deal with preloading
+			$preloadArticle = ASFFormGeneratorUtils::getPropertyValue($semanticData, ASF_PROP_PRELOAD);
+			if(strlen($preloadArticle) > 0){
+				$asfPreloadingArticles[$preloadArticle] = true;
 			}
 			
 			$categoryTree = ASFFormGeneratorUtils::getSuperCategories($categoryTitle, true);

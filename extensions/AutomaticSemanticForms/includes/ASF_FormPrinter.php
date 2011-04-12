@@ -56,18 +56,34 @@ class ASFFormPrinter extends SFFormPrinter {
 					$additionalCategoryAnnotations .= "[[".$category."]] ";
 				}
 				
+				$additionalContent = "";
+				
+				//deal with preloading
+				global $asfPreloadingArticles;
+				$title = Title::newFromText($page_name);
+				if(is_array($asfPreloadingArticles) && !$title->exists()){
+					foreach($asfPreloadingArticles as $articleName => $dC){
+						$title = Title::newFromText($articleName);
+						$article = new Article($title);
+						$asfPreloadingArticles[$articleName] = $article->getRawText();
+					}
+					$additionalContent = implode("\n\n", $asfPreloadingArticles);
+				}
+				
+				$additionalContent .= $additionalCategoryAnnotations;
+				
 				//render for fck if necessary
 				global $wgFCKEditorDir;
     			if ( $wgFCKEditorDir ) {
 					$showFCKEditor = SFFormUtils::getShowFCKEditor();
       				if ( $showFCKEditor & RTE_VISIBLE ) {
-   						$additionalCategoryAnnotations = SFFormUtils::prepareTextForFCK($additionalCategoryAnnotations);
+   						$additionalContent = SFFormUtils::prepareTextForFCK($additionalContent);
     				}
     			}
     			
-				$startFreeText = strpos($form_text, 'id="free_text"');
+    			$startFreeText = strpos($form_text, 'id="free_text"');
 				$endFreeText = strpos($form_text, '</textarea>', $startFreeText);
-				$form_text = substr($form_text, 0, $endFreeText).$additionalCategoryAnnotations.substr($form_text, $endFreeText);
+				$form_text = substr($form_text, 0, $endFreeText).$additionalContent.substr($form_text, $endFreeText);
 			}
 			
 			//deal with standard text input with
