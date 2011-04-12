@@ -1028,5 +1028,8 @@ class ImportOntologyBotFilter extends GardeningIssueFilter {
 }
 
 // create one instance for registration at Gardening framework
-new ImportOntologyBot();
+// new ImportOntologyBot();
 
+// For importing an ontology please do not use the ImportBot any longer.
+// Instead use the deployment framework: smwadmin -i <ontology-file>
+// This will read the ontology and create appropriate wiki pages.  
