@@ -125,7 +125,7 @@ function dumpDescriptor($bundeID, $output = "deploy.xml", $dumpFile = "dump.xml"
 	$xml .= "\t".'<global>'."\n";
 	$xml .= "\t\t".'<version>'.$versionText.'</version>'."\n";
 	$xml .= "\t\t".'<id>'.strtolower($bundeID).'</id>'."\n";
-	$xml .= "\t\t".'<instdir>'.strtolower($instdirText).'</instdir>'."\n";
+	$xml .= "\t\t".'<instdir>'.$instdirText.'</instdir>'."\n";
 	$xml .= "\t\t".'<vendor>'.$vendorText.'</vendor>'."\n";
 	$xml .= "\t\t".'<description>'.$descriptionText.'</description>'."\n";
 	$xml .= "\t\t".'<dependencies>'."\n";
