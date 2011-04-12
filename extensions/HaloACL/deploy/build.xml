@@ -70,6 +70,9 @@
 			<fileset dir="../../../patches/">
 				<include name="patch.php" />
 			</fileset>
+            <fileset dir="../../../deployment/tools">
+				<include name="patch.exe" />
+			</fileset>
 
 		</copy>
 		<zip destfile="bin/haloacl.zip" basedir="bin/zip" />
