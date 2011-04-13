@@ -416,12 +416,6 @@ class ASFParserFunctions {
 		If(strlen($type) == 0 && array_key_exists(0, $unresolvedParameters))
 				$type = $unresolvedParameters[0];
 				
-		echo('<pre>'.print_r($unresolvedParameters, true).'</pre>');	
-		
-		echo('<pre>'.print_r($params, true).'</pre>');
-			
-		//error();
-				
 		$errors = false;
 		if($type == 'category'){
 			If(strlen($pageName) == 0 && array_key_exists(1, $unresolvedParameters))
