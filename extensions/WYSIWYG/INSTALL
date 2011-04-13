@@ -11,6 +11,8 @@ To install the extension please:
 == Apply Patches ==
 
 There are two patches included in the WYSIWYG extension. These patches are optional.
+Please find more detailed information about the patches at:
+TODO Domi: Link zu WYSIWYG-Patches im SMW-Forum
 
 If you use the Semantic Forms extension please apply the patch file:
 patch_for_SF_2.0.8.txt
@@ -20,10 +22,12 @@ If you use Mediawiki 1.16.x and want the WYSIWYG editor show up only when the UR
 parameter mode=wysiwyg is set, then apply the patch file:
 patch_for_MW_1.16.x.txt
 
-Applying the patch can be done with the patch.php:
-php patch.php -d <install_dir of mediawiki> -p <path_to_patchfile>
+Applying the patch can be done with the script patch.php. Open a command line 
+in the root folder of the WYSIWYG extension and enter:
 
-You need to have the GNU Patch tool installed on your system.
+php patch.php -d <install_dir of mediawiki> -p <patchfile>
+
+Replace <install_dir of mediawiki> and <patchfile> by appropriate values.
 
 == About the project ==
 
