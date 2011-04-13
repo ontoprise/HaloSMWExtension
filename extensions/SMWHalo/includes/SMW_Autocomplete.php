@@ -416,8 +416,8 @@ class AutoCompletionRequester {
 				}
 
 			}
-			AutoCompletionRequester::attachImageURL($pages);
 			AutoCompletionRequester::attachCategoryHints($pages);
+			AutoCompletionRequester::attachImageURL($pages);
 			return AutoCompletionRequester::encapsulateAsXML($pages, true); // return namespace too!
 		} else if (stripos(strtolower($userContext),strtolower($specialSchemaProperties[SMW_SSP_HAS_DOMAIN_AND_RANGE_HINT])) > 0) {
 			// has domain hint relation
@@ -438,6 +438,8 @@ class AutoCompletionRequester {
 				// fallback
 				$pages = smwfGetAutoCompletionStore()->getPages($match, array(NS_MAIN));
 			}
+			
+			AutoCompletionRequester::attachCategoryHints($pages);
 			AutoCompletionRequester::attachImageURL($pages);
 			return AutoCompletionRequester::encapsulateAsXML($pages);
 
