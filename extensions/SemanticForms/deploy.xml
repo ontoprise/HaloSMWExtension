@@ -30,7 +30,7 @@
     </resources>
 
     <configs>
-   
+        <successor ext="smwhalo"/>
         <new>
             <require name="sf_init"
                 file="extensions/SemanticForms/SemanticForms.php" />
