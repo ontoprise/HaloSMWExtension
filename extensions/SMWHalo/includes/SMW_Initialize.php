@@ -28,6 +28,8 @@ define('SMW_SC_SYMMETRICAL_RELATIONS', 1);
 define('CARDINALITY_MIN',0);
 define('CARDINALITY_UNLIMITED', 2147483647); // MAXINT
 
+// max depth of category graph
+define('SMW_MAX_CATEGORY_GRAPH_DEPTH', 10);
 
 $smwgHaloIP = $IP . '/extensions/SMWHalo';
 $smwgHaloScriptPath = $wgScriptPath . '/extensions/SMWHalo';

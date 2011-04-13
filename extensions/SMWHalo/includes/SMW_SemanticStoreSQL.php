@@ -18,8 +18,7 @@ require_once  "$smwgHaloIP/includes/SMW_DBHelper.php";
 require_once( "SMW_SemanticStore.php");
 require_once( "SMW_OntologyManipulator.php");
 
-// max depth of category graph
-define('SMW_MAX_CATEGORY_GRAPH_DEPTH', 10);
+
 
 class SMWSemanticStoreSQL extends SMWSemanticStore {
 

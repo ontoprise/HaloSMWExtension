@@ -811,6 +811,10 @@ class AutoCompletionHandler {
 					$property = Title::newFromText($params[0]);
 					if (!is_null($property)) {
 						$pages = $acStore->getValueForAnnotation($userInput, $property);
+						if (empty($pages)) {
+							// if empty, show syntax samples
+							$pages = AutoCompletionRequester::getSyntaxSamples($property->getText());
+						}
 						$inf = self::setInferred($pages, !$first);
 						$result = self::mergeResults($result, $inf);
 
@@ -990,7 +994,9 @@ class AutoCompletionHandler {
 		foreach($acMatches as $t) {
 			if ($t instanceof Title) {
 				$newmatches[] = array('title'=>$t, 'inferred'=>$inferred);
-			} else {
+			} else if (is_string($t)) {
+                $newmatches[] = $t;
+            } else { // hash array
 				$t['inferred'] = $inferred;
 				$newmatches[] = $t;
 
