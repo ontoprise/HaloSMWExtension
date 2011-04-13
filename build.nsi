@@ -375,8 +375,8 @@ Section "SMW+ Setup" smwplussetup
   ${ConfigWrite} "$MEDIAWIKIDIR\deployment\tools\smwadmin.bat" "SET PHP=" '"$INSTDIR\php\php.exe"' $R0
 
   DetailPrint "Install bundles into wiki"
-  nsExec::ExecToLog '"$MEDIAWIKIDIR\deployment\tools\smwadmin.bat" -i Smwplus.zip'
-  nsExec::ExecToLog '"$MEDIAWIKIDIR\deployment\tools\smwadmin.bat" -i Smwplussandbox.zip'
+  nsExec::ExecToLog '"$MEDIAWIKIDIR\deployment\tools\smwadmin.bat" -f -i Smwplus.zip'
+  nsExec::ExecToLog '"$MEDIAWIKIDIR\deployment\tools\smwadmin.bat" -f -i Smwplussandbox.zip'
 
 SectionEnd
 
