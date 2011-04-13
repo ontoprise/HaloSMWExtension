@@ -398,7 +398,7 @@ class ASFParserFunctions {
 				$autocompletionType = 'namespace';
 			} else if ( $paramName == 'category input intro' ) {
 				$categoryInputIntro = $paramValue;
-			}  else if ( $paramName == 'category input intro' ) {
+			}  else if ( $paramName == 'autocomplete' ) {
 				$autocompletionQuery = $paramValue;
 			} else if ( $paramName == 'use dropdown' ) {
 				if(strtolower($paramValue) == 'true'){
@@ -415,6 +415,12 @@ class ASFParserFunctions {
 		
 		If(strlen($type) == 0 && array_key_exists(0, $unresolvedParameters))
 				$type = $unresolvedParameters[0];
+				
+		echo('<pre>'.print_r($unresolvedParameters, true).'</pre>');	
+		
+		echo('<pre>'.print_r($params, true).'</pre>');
+			
+		//error();
 				
 		$errors = false;
 		if($type == 'category'){
