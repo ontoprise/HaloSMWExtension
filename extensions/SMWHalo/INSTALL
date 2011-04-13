@@ -65,15 +65,15 @@ SMW+, also read the remarks in the section "Notes on Upgrading" below.
 
  
 (1) Download and install the ScriptManager extension into your Mediawiki
-    installation.  In case you have the bundled version you can omit this step.
+    installation.  In case you have the bundled version you can skip this step.
     
 (2) Download and install the ARCLibrary extension into your Mediawiki
-    installation. In case you have the bundled version you can omit this step.
+    installation. In case you have the bundled version you can skip this step.
 
 (3) Extract the ZIP archive to the directory
     <mw-dir>\htdocs\mediawiki\extensions\
 
-	Note: 	Replace <mw-dir> with the path to root directory of MediaWiki.
+	Note: 	Replace <mw-dir> with the path to the root directory of MediaWiki.
 
 (4) Edit the configuration file <mw-dir>\htdocs\mediawiki\LocalSettings.php
 
@@ -100,25 +100,39 @@ SMW+, also read the remarks in the section "Notes on Upgrading" below.
 
 (10) Run the script SMW_setup.php to initialize the database tables
 
-(11) Download the Deployment Framework to install the patches:
-	 https://sourceforge.net/projects/halo-extension/files/smwhalo-deploy-1.2.zip/download
+(11) Open a command-line interface to install the patches.
+     The files patch*.txt are Eclipse patch files which can be installed using the
+     tool patch.php (in the root folder of the extension) which itself uses GNU patch. The
+     The patch files are located in the directory 'extensions\SMWHalo'.
+     They are named with respect to the extension that is patched and
+     the version of that extension. For instance, patch_for_MW_1.16.1.txt patches
+     version 1.16.1 of MediaWiki. Please choose the correct version when applying
+     the patches in the following steps.
 
-(12) Extract the zip-file into the MediaWiki roots folder
+(12) Patch MediaWiki:
+     php patch.php -p patch_for_MW<version>.txt -d <mw-dir> --onlypatch
+     Replace <mw-dir> with the absolute path of your Mediawiki installation and 
+     choose the correct version of the patch file for <version>.
+TODO Domi: Link zu MW-Patches im SMW-Forum
+     
+(13) Patch SemanticMediaWiki:
+     php patch.php -p patch_for_SMW<version>.txt -d <mw-dir> --onlypatch
+     Replace <mw-dir> with the absolute path of your Mediawiki installation and 
+     choose the correct version of the patch file for <version>.
+TODO Domi: Link zu SMW-Patches im SMW-Forum
 
-(13) Open a command-line interface to install the patches
-     The file patch.txt is an Eclipse patch file which can be installed using the
-     tool patch.php from the deploy framework which itself uses GNU patch. The
-     file is located in the directory 'extensions\SMWHalo'.
+(14) Patch SemanticForms (if installed and not yet patched):
+     php patch.php -p patch_for_SF2.0.8.txt -d <mw-dir> --onlypatch
+     Replace <mw-dir> with the absolute path of your Mediawiki installation.
+TODO Domi: Link zu SF-Patches im SMW-Forum
 
-(14) Enter the following command:
-     php patch.php -p patch.txt -d <mw-dir> --onlypatch
-     replace <mw-dir> with the absolute path of your Mediawiki installation.
+(15) Optional patch for additional builtin properties:
+     php patch.php -p patch_for_builtin_properties_SMW_<version>.txt -d <mw-dir> --onlypatch
+     Replace <mw-dir> with the absolute path of your Mediawiki installation and 
+     choose the correct version of the patch file for <version>.
+TODO Domi: Link zu Builtin-Properties-Patches im SMW-Forum
 
-(15) To apply the patch for Mediawiki please also run:
-     php patch.php -p patch_for_MW1.16.0.txt -d <mw-dir> --onlypatch
-     replace <mw-dir> with the absolute path of your Mediawiki installation.
-     replace patch_for_MW1.16.0.txt with the correct version for your Mediawiki
-     installation.
+     
 -----------------------------------------------------------------------------------------------
 
 Note: 	Replace < mw-dir > with the path to root directory of MediaWiki.

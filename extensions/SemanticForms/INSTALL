@@ -34,6 +34,44 @@ installation requirements.
 own custom namespaces, you have to set the parameter $sfgNamespaceIndex before
 including SF_Settings.php. See SF_Settings.php for more details.
 
+== Install patches ==
+
+If you want to use Semantic Forms together with the extensions HaloACL, RichMedia,
+SMWHalo or WYSIWYG you have to install patches for these extensions. If you install
+the extensions after Semantic Forms you can skip the installation of patches here.
+Otherwise you should install the appropriate patches. The patches are located in
+the folder "patches" of the Semantic forms extension. The tools for patching are
+patch.php and patch.exe. They are located in the root folder of the extension.
+Please open a command line there for the following steps. Replace <mediawiki-dir>
+by the absolute path to your MediaWiki installation in the given commands.
+
+===Install patches for HaloACL===
+
+Enter:
+php patch.php -d <mediawiki-dir> -p patch_for_SF_2.0.8.txt
+
+===Install patches for RichMedia===
+
+Enter:
+php patch.php -d <mediawiki-dir> -p RichMediaPatchForSF2_0_8.txt
+
+===Install patches for SMWHalo===
+
+Enter:
+php patch.php -d <mediawiki-dir> -p patch_for_SF2.0.8.txt
+
+===Install patches for WYSIWYG===
+
+Enter:
+php patch.php -d <mediawiki-dir> -p patch_for_SF_2.0.8.txt
+
+===Further information===
+
+Please find more detailed information about the patches at:
+TODO Domi: Links zu den 4 Patches im SMW-Forum
+
+
+
 == Contact ==
 
 If you have any issues or questions, please send them to

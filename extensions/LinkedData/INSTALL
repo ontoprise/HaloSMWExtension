@@ -42,20 +42,19 @@ How to install manually:
 	enableLinkedData(); 
 	
 (5) Install the patch for SMW. 
+
+		Please find more detailed information about the patches at:
+TODO Domi: Link zu LinkedData-Patches im SMW-Forum
             
-        (a) Download the latest version of Deployment Framework to install the patches:
-              https://sourceforge.net/projects/halo-extension/files/deployment-1.3.1.zip/download
+        (a) Open a command-line interface in the root directory of the LDE to 
+        	install the patches.
+            The file patch_for_SMW1.5.6.txt is an Eclipse patch file which can 
+            be installed using the tool patch.php which itself uses GNU patch. 
+            Both tools are located in the root folder of the LDE.
         
-        (b) Extract the zip-file into the MediaWiki roots folder
-        
-        (c) Open a command-line interface to install the patches
-             The file patch.txt is an Eclipse patch file which can be installed using the
-             tool patch.php from the deploy framework which itself uses GNU patch. The
-             file is located in the directory 'extensions\SemanticGardening'.
-        
-        (d) Enter the following command:
+        (b) Enter the following command:
              php patch.php -p patch_for_SMW1.5.6.txt -d <mw-dir> --onlypatch
-             replace <mw-dir> with the absolute path of your Mediawiki installation.
+             Replace <mw-dir> with the absolute path of your Mediawiki installation.
 
 Updating the database
 ---------------------

@@ -25,14 +25,14 @@ Requirements HaloACL (unbundled):
     MediaWiki 1.13.2, 1.15.1 - 1.15.3 or 1.16.0
     ScriptManager 1.x (Installation instructions: http://smwforum.ontoprise.com/smwforum/index.php/Help:Installing_the_Script_Manager_Extension_1.0)
     ARCLibrary 1.x (Installation instructions: http://smwforum.ontoprise.com/smwforum/index.php/Help:Installing_the_ARCLibrary_1.0)
-    OPTIONAL: SMW 1.5.0 - SMW 1.5.2
-    OPTIONAL: Semantic Forms 1.9 - 2.0 
+    OPTIONAL: SMW 1.5.0 - SMW 1.5.6
+    OPTIONAL: Semantic Forms 1.9 - 2.0.8
 
 Requirements HaloACL (bundled): 
 =============================
     MediaWiki 1.13.2, 1.15.1 - 1.15.3 or 1.16.0
-    OPTIONAL: SMW 1.5.0 - SMW 1.5.2 
-    OPTIONAL: Semantic Forms 1.9 - 2.0 
+    OPTIONAL: SMW 1.5.0 - SMW 1.5.6
+    OPTIONAL: Semantic Forms 1.9 - 2.0.8 
     
 Installation:
 =============
@@ -58,39 +58,36 @@ Note: If you use the bundled version of HaloACL, include the following in LocalS
 		   php patch.php -d <mediawiki-dir> -p patch_for_MW_1.15.1.txt
 		- MediaWiki 1.15.3 
 		   php patch.php -d <mediawiki-dir> -p patch_for_MW_1.15.3.txt
+		- MediaWiki 1.16.x 
+		   php patch.php -d <mediawiki-dir> -p patch_for_MW_1.16.0.txt
 	
 (8) Choose the command depending on your Semantic MediaWiki installation to patch SMW
-	(skip this step if you don't have SMW installed):
-		- SMW 1.4.2 
-		   php patch.php -d <mediawiki-dir> -p patch_for_SMW_1.4.2.txt
-		- SMW 1.4.3
-		   php patch.php -d <mediawiki-dir> -p patch_for_SMW_1.4.3.txt
-		- SMW 1.5.0 
-		   php patch.php -d <mediawiki-dir> -p patch_for_SMW_1.5.0.txt
-		- SMW 1.5.1 
-		   php patch.php -d <mediawiki-dir> -p patch_for_SMW_1.5.1.txt
+	(skip this step if you don't have SMW installed). Replace <version> by the 
+	version number of your SMW:
+		- SMW <version> 
+		   php patch.php -d <mediawiki-dir> -p patch_for_SMW_<version>.txt
+		   
 	
 (9) Execute the following command to patch Semantic Forms (skip this step if you don't
-	have the Semantic Forms extension installed):
-		php patch.php -d <SemanticForms-dir> -p patch_for_SF_1.9.txt
+	have the Semantic Forms extension installed). Replace <version> by the 
+	version number of your Semantic Forms:
+		php patch.php -d <mediawiki-dir> -p patch_for_SF_<version>.txt
 
 
-* patch_for_MW_1.13.2.txt or patch_for_MW_1.15.1.txt or patch_for_MW_1.15.3.txt: 
+* patch_for_MW_<version>.txt: 
 	This patch for MediaWiki removes all links to protected pages from 
 	the rendered articles and listings. If a link can not be removed, it is 
 	replaced by a link to the page 'Permission denied'. This patch is optional.
-* patch_for_SMW_1.5.x.txt: 
-	This patch for SMW 1.5.x is mandatory, if you want to protect the values of 
+* patch_for_SMW_<version>.txt: 
+	This patch for SMW is mandatory, if you want to protect the values of 
 	semantic properties.
-* patch_for_SF_1.9.txt:
-	This patch for Semantic Forms 1.9 is mandatory, if you want to protect the 
+* patch_for_SF_<version>.txt:
+	This patch for Semantic Forms is mandatory, if you want to protect the 
 	values of semantic properties in semantic forms and if you want to use the
 	HaloACL toolbar in forms.
-These patch files were created in Eclipse. They can be installed using the tool
-patch.php from the deploy framework (smwhalo-deploy-1.0) which itself uses GNU
-patch. The patch.php is also included in this extension. Go into the root
-directory of the extension and run the following command:
- php patch.php -p <patch-file> -d <mediawiki-dir> --onlypatch
+	
+Please find more detailed information about the patches at:
+TODO Domi: Link zu HaloACL-Patches im SMW-Forum
 
 Updating the database
 ---------------------
