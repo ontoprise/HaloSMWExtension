@@ -220,7 +220,7 @@ class Installer {
 		print "done.]";
 
 		// check if there are depending extensions
-		print "\n[Checking for dependant packages of $packageID...";
+		print "\n[Checking for dependent packages of $packageID...";
 		$existDependency = false;
 		$dependantPackages = array();
 		foreach($localPackages as $p) {
@@ -244,23 +244,23 @@ class Installer {
 
 		// unapply setups
 		$this->logger->info("Unapply setups for ".$ext->getID());
-		print "\n[Unapply setups ".$ext->getID()."...";
+		print "\n[Removing setup for ".$ext->getID()."...";
 		$ext->unapplySetups($this->rootDir, false);
-		print "\ndone.]";
+		print "done.]";
 
 		// undo all config changes
 		// - from LocalSettings.php
 		// - from database (setup scripts)
 		// - patches
 		$this->logger->info("Unapply configs for ".$ext->getID());
-		print "\n[Unapply configurations of ".$ext->getID()."...";
+		print "\n[Removing configurations for ".$ext->getID()."...";
 		$ext->unapplyConfigurations($this->rootDir, false);
 		$this->errors = array_merge($this->errors, $ext->getLastErrors());
 		print "done.]";
 
 		// remove extension code
 		$this->logger->info("Remove code of ".$ext->getID());
-		print "\n[Remove code of ".$ext->getID()."...";
+		print "\n[Removing code for ".$ext->getID()."...";
 		Tools::remove_dir($this->rootDir."/".$ext->getInstallationDirectory());
 		print "done.]";
 
@@ -587,22 +587,22 @@ class Installer {
 		$ont_installer = OntologyInstaller::getInstance($this->rootDir);
 
 		// remove wikidumps
-		$this->logger->info("De-install wikidumps: ".$dd->getID());
-		print "\n[De-install wikidumps...";
+		$this->logger->info("De-installing wikidumps: ".$dd->getID());
+		print "\n[De-installing wikidumps...";
 		$res_installer->deinstallWikidump($dd);
-		print "done.]";
+		print "\ndone.]";
 
 		// remove ontologies
-		$this->logger->info("De-install ontologies: ".$dd->getID());
-		print "\n[De-install ontologies...";
+		$this->logger->info("De-installing ontologies: ".$dd->getID());
+		print "\n[De-installing ontologies...";
 		$ont_installer->deinstallOntology($dd);
-		print "done.]";
+		print "\ndone.]";
 
 		// delete resources
 		$this->logger->info("Delete resourcs: ".$dd->getID());
-		print "\n[Delete resources...";
+		print "\n[Deleting resources...";
 		$res_installer->deleteResources($dd);
-		print "done.]";
+		print "\ndone.]";
 
 	}
 

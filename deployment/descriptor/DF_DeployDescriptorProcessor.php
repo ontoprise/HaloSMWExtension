@@ -118,10 +118,11 @@ class DeployDescriptionProcessor {
 		$fragment = ConfigElement::getExtensionFragment($this->dd_parser->getID(), $this->localSettingsContent);
 
 		if (is_null($fragment)) {
+			//FIXME: introduce exceptions here
 			$this->logger->error("Could not find configuration for ".$this->dd_parser->getID());
 			$this->errorMessages[] = "Could not find configuration for ".$this->dd_parser->getID();
 			echo "\n\tCould not find configuration for ".$this->dd_parser->getID();
-			echo "\n\tAbort changing LocalSettings.php";
+			echo "\n\tAbort changing LocalSettings.php...";
 			return $this->localSettingsContent;
 		}
 		$this->logger->info("Remove from LocalSettings.php: $fragment");

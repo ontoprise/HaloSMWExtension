@@ -362,12 +362,12 @@ if (count($ontologiesToInstall) > 0) {
 			$filePath = $rootDir."/tools/".$filePath;
 		}
 
+		$bundleID = strtolower($bundleID);
 		$prefix = $oInstaller->installOntology($bundleID, $filePath, $confirm, false, $dfgForce);
 
 		// copy ontology and create ontology bundle
 		print "\n[Creating deploy descriptor...";
 		$xml = $oInstaller->createDeployDescriptor($bundleID, $filePath, $prefix);
-		$bundleID = strtolower($bundleID);
 		Tools::mkpath($mwrootDir."/extensions/$bundleID");
 		$handle = fopen($mwrootDir."/extensions/$bundleID/deploy.xml", "w");
 		fwrite($handle, $xml);
@@ -382,6 +382,15 @@ if (count($ontologiesToInstall) > 0) {
 			fwrite($handle, $prefix);
 			fclose($handle);
 		}
+
+		// register in Localsettings.php
+		$ls = file_get_contents("$mwrootDir/LocalSettings.php");
+		if (strpos($ls, "/*start-$bundleID*/" ) === false) {
+			$handle = fopen("$mwrootDir/LocalSettings.php", "a");
+			fwrite($handle, "/*start-$bundleID*/\n/*end-$bundleID*/");
+			fclose($handle);
+		}
+
 		print "done.]";
 	}
 }

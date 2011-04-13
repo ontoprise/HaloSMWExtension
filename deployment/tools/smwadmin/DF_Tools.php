@@ -572,8 +572,8 @@ class Tools {
                 $id = $title->getArticleID( GAID_FOR_UPDATE );
                 if( wfRunHooks('ArticleDelete', array(&$a, &$wgUser, &$reason, &$error)) ) {
                     if( $a->doDeleteArticle( "ontology removed: ".$ext_id ) ) {
-                        if (!is_null($logger)) $logger->info("Removed page: ".$title->getPrefixedText());
-                        print "\n\t[Removed page]: ".$title->getPrefixedText();
+                        if (!is_null($logger)) $logger->info("Removing page: ".$title->getPrefixedText());
+                        print "\n\t[Removing page]: ".$title->getPrefixedText()."...";
                         wfRunHooks('ArticleDeleteComplete', array(&$a, &$wgUser, "ontology removed: ".$ext_id, $id));
                         print "done.]";
                     }
@@ -600,8 +600,8 @@ class Tools {
                 $id = $row->id;
                 if( wfRunHooks('ArticleDelete', array(&$a, &$wgUser, &$reason, &$error)) ) {
                     if( $a->doDeleteArticle( "ontology removed: ".$ext_id ) ) {
-                        if (!is_null($logger)) $logger->info("Removed page: ".$title->getPrefixedText());
-                        print "\n\t[Removed page]: ".$title->getPrefixedText();
+                        if (!is_null($logger)) $logger->info("Removing page: ".$title->getPrefixedText());
+                        print "\n\t[Removing page]: ".$title->getPrefixedText()."...";
                         
                         wfRunHooks('ArticleDeleteComplete', array(&$a, &$wgUser, "ontology removed: ".$ext_id, $id));
                         print "done.]";

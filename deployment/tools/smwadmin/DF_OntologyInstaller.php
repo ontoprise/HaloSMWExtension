@@ -21,6 +21,7 @@ require_once($rootDir.'/../maintenance/commandLine.inc' );
 require_once($rootDir.'/io/import/DF_DeployWikiOntologyImporter.php');
 require_once($rootDir.'/io/import/DF_OntologyDetector.php');
 require_once($rootDir.'/io/import/DF_OntologyMerger.php');
+require_once($rootDir.'/io//DF_BundleTools.php');
 
 /**
  * @file
@@ -157,9 +158,7 @@ class OntologyInstaller {
 
 		foreach($dd->getOntologies() as $loc) {
 			$bundleID = $dd->getID();
-			print "\n\t[Deleting pages of $bundleID...";
 			Tools::deletePagesOfBundle($bundleID, $this->logger);
-			print "\ndone]";
 		}
 	}
 
@@ -295,8 +294,8 @@ ENDS
 			$id = $title->getArticleID( GAID_FOR_UPDATE );
 			if( wfRunHooks('ArticleDelete', array(&$a, &$wgUser, &$reason, &$error)) ) {
 				if( $a->doDeleteArticle("ontology removed: ".$bundleID) ) {
-					$this->logger->info("Removed page: ".$title->getPrefixedText());
-					print "\n\t[Removed page]: ".$title->getPrefixedText()."...";
+					$this->logger->info("Removing page: ".$title->getPrefixedText());
+					print "\n\t[Removing page]: ".$title->getPrefixedText()."...";
 
 					wfRunHooks('ArticleDeleteComplete', array(&$a, &$wgUser, "ontology removed: ".$bundleID, $id));
 					print "done.]";
