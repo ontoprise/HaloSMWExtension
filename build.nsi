@@ -536,7 +536,7 @@ Section "Solr" solr
 
     nsExec::ExecToLog '"$PHP" "$MEDIAWIKIDIR\installer\changeVariable.php" in=createIndex.bat out=createIndex.bat php-exe="$PHP"'
     nsExec::ExecToLog '"$PHP" "$MEDIAWIKIDIR\installer\changeVariable.php" in="\"$INSTDIR\htdocs\mediawiki\extensions\EnhancedRetrieval\SOLR\smwdb-data-config.xml\"" out="\"$INSTDIR\solr\wiki\solr\conf\smwdb-data-config.xml\"" wgDBname=semwiki_en wgDBserver=localhost wgDBport=3306 wgDBuser=root wgDBpassword=m8nix'
-    nsExec::ExecToLog '"$PHP" "$MEDIAWIKIDIR\installer\changeVariable.php" in="\"$INSTDIR\htdocs\mediawiki\LocalSettings.php\"" out="\"$INSTDIR\htdocs\mediawiki\LocalSettings.php\"" IP=$IP'
+    nsExec::ExecToLog '"$PHP" "$MEDIAWIKIDIR\installer\changeVariable.php" in="\"$INSTDIR\htdocs\mediawiki\LocalSettings.php\"" out="\"$INSTDIR\htdocs\mediawiki\LocalSettings.php\"" solr_ip="$IP"'
     CopyFiles "$INSTDIR\htdocs\mediawiki\extensions\EnhancedRetrieval\SOLR\schema.xml" "$INSTDIR\solr\wiki\solr\conf\schema.xml"
     CopyFiles "$INSTDIR\htdocs\mediawiki\extensions\EnhancedRetrieval\SOLR\solrconfig.xml" "$INSTDIR\solr\wiki\solr\conf\solrconfig.xml"
 
