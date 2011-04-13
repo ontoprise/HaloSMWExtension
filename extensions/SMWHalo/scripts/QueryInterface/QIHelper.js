@@ -1043,8 +1043,9 @@ QIHelper.prototype = {
         this.updateBreadcrumbs(this.activeQueryId, gLanguage.getMessage((reset) ? 'QI_BC_ADD_INSTANCE' : 'QI_BC_EDIT_INSTANCE') );
 		this.activeDialogue = "instance";
         this.resetDialogueContent(reset);
-        var catConstraint = "ask:";
+        var catConstraint = "";
         if (catConstraint.length > 0) {
+        	catConstraint = "ask:";
         	var categories = this.activeQuery.categories;
         	categories.each(function(c) { 
         		catConstraint += '[[' + gLanguage.getMessage('CATEGORY_NS',
