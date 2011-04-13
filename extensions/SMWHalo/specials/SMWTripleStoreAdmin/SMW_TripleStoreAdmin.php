@@ -70,6 +70,29 @@ class SMWTripleStoreAdmin extends SpecialPage {
 		if (!in_array('RULES', $status['features']) && $smwgEnableObjectLogicRules === true) $html .= "<div style=\"color:red;font-weight:bold;\">".
 		wfMsg('smw_tsa_norulesupport')."</div>";
 
+		$html .= "<h2>".wfMsg('smw_tsa_loadgraphs')."</h2>";
+		$html .= "<table>";
+		foreach($status['loadedGraphs'] as $g) {
+		    $html .= '<tr><td>'.$g.'</td></tr>';
+		}
+		$html .= "</table>";
+		
+		$html .= "<h2>".wfMsg('smw_tsa_autoloadfolder')."</h2>";
+        $html .= $status['autoloadFolder'];
+    
+        $html .= "<h2>".wfMsg('smw_tsa_tscparameters')."</h2>";
+        $html .= "<table>";
+        foreach($status['startParameters'] as $p) {
+        	list($name, $value) = $p;
+            $html .= '<tr><td>'.$name.'</td><td>'.$value.'</td></tr>';
+        }
+        $html .= "</table>";
+        
+        $html .= "<h2>".wfMsg('smw_tsa_synccommands')."</h2>";
+        $html .= '<pre>'.htmlspecialchars(implode("\n",$status['syncCommands'])).'</pre>';
+        
+      
+        
 		$html .= "<h2>".wfMsg('smw_tsa_status')."</h2>";
 		if ($status['isInitialized'] == true) {
 			$html .= "<div style=\"color:green;font-weight:bold;\">".wfMsg('smw_tsa_wikiconfigured', (is_array($smwgWebserviceEndpoint) ? implode(", ", $smwgWebserviceEndpoint) : $smwgWebserviceEndpoint))."</div>";
@@ -80,6 +103,7 @@ class SMWTripleStoreAdmin extends SpecialPage {
 			$tsaPage = Title::newFromText("TSA", NS_SPECIAL);
 			$html .= "<br><form><input name=\"init\" type=\"submit\" value=\"".wfMsg('smw_tsa_initialize')."\"/><input name=\"title\" type=\"hidden\" value=\"".$tsaPage->getPrefixedDBkey()."\"/></form>";
 		}
+		
 		$wgOut->addHTML($html);
 	}
 

@@ -398,6 +398,11 @@ clicking the big arrows between the columns.',
 	'smw_ts_notconnected' => 'TSC not accessible. Check server: $1',
 	'asktsc' => 'Ask triplestore',
 	'smw_tsc_query_not_allowed' => 'Empty query not allowed when querying TSC.',
+	'smw_tsa_loadgraphs'=> 'Loaded graphs',
+	'smw_tsa_autoloadfolder'=> 'Auto-load folder',
+	'smw_tsa_tscparameters'=> 'TSC parameters',
+	'smw_tsa_synccommands'=> 'Synchronization commands',
+	
 	
 	// SMWHaloAdmin
 	'smwhaloadmin' => 'SMWHalo Administration',

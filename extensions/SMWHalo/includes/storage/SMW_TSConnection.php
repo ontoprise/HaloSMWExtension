@@ -295,7 +295,25 @@ class TSConnectorRESTWebservice extends TSConnection {
 		$resultMap['driverInfo'] = (string) $xmlDoc->driverInfo;
 		$resultMap['isInitialized'] = ((string) $xmlDoc->isInitialized) == 'true';
 		$resultMap['features'] = explode(",", (string) $xmlDoc->features);
-
+		
+		$resultMap['loadedGraphs'] = array();
+		$graphsLoaded = $xmlDoc->loadedGraphs[0];
+		foreach($graphsLoaded->graph as $gl) {
+		      $resultMap['loadedGraphs'][] = $gl->attributes()->uri;
+		}
+        $resultMap['autoloadFolder'] = (string) $xmlDoc->autoloadFolder[0];
+        
+	    $resultMap['startParameters'] = array();
+        $startParameters = $xmlDoc->startParameters[0];
+        foreach($startParameters->param as $p) {
+              $resultMap['startParameters'][] = array($p->attributes()->name, (string) $p);
+        }
+        
+	    $resultMap['syncCommands'] = array();
+        $syncCommands = $xmlDoc->syncCommands[0];
+        foreach($syncCommands->command as $c) {
+              $resultMap['syncCommands'][] = (string) $c;
+        }
 		return $resultMap;
 
 	}

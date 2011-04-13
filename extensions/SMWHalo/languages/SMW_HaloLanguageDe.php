@@ -388,6 +388,11 @@ protected $smwUserMessages = array(
 	'smw_tsa_tscinfo' => 'Triplestore Connector information',
     'smw_tsa_tscversion' => 'TSC Version',
 
+    'smw_tsa_loadgraphs'=> 'Geladene Graphen',
+    'smw_tsa_autoloadfolder'=> 'Automatisch geladenes Verzeichnis',
+    'smw_tsa_tscparameters'=> 'TSC-Parameter',
+    'smw_tsa_synccommands'=> 'Synchronisationskommandos',
+
 	// SMWHaloAdmin
 	'smwhaloadmin' => 'SMWHalo Administration',
 	'smw_haloadmin_description' => 'Diese Seite initialisiert die SMWHalo-Extension. Drücke Sie Initialize.',
