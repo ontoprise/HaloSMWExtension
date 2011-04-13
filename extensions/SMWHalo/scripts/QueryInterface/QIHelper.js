@@ -1044,7 +1044,7 @@ QIHelper.prototype = {
 		this.activeDialogue = "instance";
         this.resetDialogueContent(reset);
         var catConstraint = "";
-        if (catConstraint.length > 0) {
+        if (this.activeQuery.categories.length > 0) {
         	catConstraint = "ask:";
         	var categories = this.activeQuery.categories;
         	categories.each(function(c) { 
