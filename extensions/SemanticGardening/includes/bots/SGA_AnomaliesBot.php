@@ -66,7 +66,8 @@ if ( !defined( 'MEDIAWIKI' ) ) die;
  		// for GARDENERS and SYSOPS, deletion of leaf categories is possible.
  		$userGroups = $wgUser->getGroups();
  		if (in_array('gardener', $userGroups) || in_array('sysop', $userGroups)) { // why do the constants SMW_GARD_SYSOP, SMW_GARD_GARDENERS not work here?
- 			$params[] = new GardeningParamBoolean('CATEGORY_LEAF_DELETE', wfMsg('smw_gard_anomaly_deletecatleaves'), SMW_GARD_PARAM_OPTIONAL, false);
+            // Deactivated for security reasons 			
+ 			//$params[] = new GardeningParamBoolean('CATEGORY_LEAF_DELETE', wfMsg('smw_gard_anomaly_deletecatleaves'), SMW_GARD_PARAM_OPTIONAL, false);
  		}
  		return $params;
  	}
