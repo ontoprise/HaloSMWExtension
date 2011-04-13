@@ -15,6 +15,7 @@
 		<copy todir="bin/zip/extensions/ScriptManager">
 			<fileset dir="../">
 				<include name="SM_Initialize.php" />
+				<include name="INSTALL" />
 				<include name="deploy.xml" />
 			</fileset>
 		</copy>
