@@ -73,7 +73,9 @@
             <fileset dir="../../../deployment/tools">
 				<include name="patch.exe" />
 			</fileset>
-
+            <fileset dir="../../../deployment/tools">
+				<include name="patch.exe.manifest" />
+			</fileset>
 		</copy>
 		<zip destfile="bin/haloacl.zip" basedir="bin/zip" />
 
