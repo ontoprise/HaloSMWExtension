@@ -1043,9 +1043,15 @@ QIHelper.prototype = {
         this.updateBreadcrumbs(this.activeQueryId, gLanguage.getMessage((reset) ? 'QI_BC_ADD_INSTANCE' : 'QI_BC_EDIT_INSTANCE') );
 		this.activeDialogue = "instance";
         this.resetDialogueContent(reset);
-        var catConstraint = this.getCategoryConstraints();
-        if (catConstraint.length > 0)
-            catConstraint = 'schema-instance-domain:' + catConstraint + '|';
+        var catConstraint = "ask:";
+        if (catConstraint.length > 0) {
+        	var categories = this.activeQuery.categories;
+        	categories.each(function(c) { 
+        		catConstraint += '[[' + gLanguage.getMessage('CATEGORY_NS',
+				'cont') + c + ']]';
+        	});
+        	catConstraint += '|';
+        }
 		var newrow = $('dialoguecontent').insertRow(-1);
 		var cell = newrow.insertCell(0);
 		cell.innerHTML = gLanguage.getMessage('QI_INSTANCE');
