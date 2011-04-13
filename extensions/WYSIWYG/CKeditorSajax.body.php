@@ -89,8 +89,8 @@ function wfSajaxSearchImageCKeditor( $term ) {
     		array(
         		'page_namespace IN (' . NS_IMAGE . ',' . NS_FILE . ')',
             	"page_title LIKE '%". $dbr->strencode( $term1 ) ."%'".
-                "OR (LOWER(page_title) LIKE '%". $dbr->strencode( $term2 ) ."%') ".
-    			"OR (UPPER(page_title) LIKE '%". $dbr->strencode( $term3 ) ."%') ".
+                "OR (LOWER(CONVERT(page_title, CHAR)) LIKE '%". $dbr->strencode( $term2 ) ."%') ".
+    			"OR (UPPER(CONVERT(page_title, CHAR)) LIKE '%". $dbr->strencode( $term3 ) ."%') ".
         		"OR (page_title LIKE '%". $dbr->strencode( $term4 ) ."%') "
             ),
             __METHOD__,
@@ -117,31 +117,32 @@ function wfSajaxSearchImageCKeditor( $term ) {
 function wfSajaxSearchArticleCKeditor( $term ) {
 	global $wgContLang, $wgExtraNamespaces;
 	$limit = 30;
-	$ns = NS_MAIN;
+	$ns = array(NS_MAIN, NS_CATEGORY, NS_IMAGE, NS_TEMPLATE);
+    if (defined(SF_NS_FORM)) $ns[]= SF_NS_FORM;
 
 	$term = $wgContLang->checkTitleEncoding( $wgContLang->recodeInput( js_unescape( $term ) ) );
 
 	if( strpos( strtolower( $term ), 'category:' ) === 0 ) {
-		$ns = NS_CATEGORY;
+		$ns = array(NS_CATEGORY);
 		$term = substr( $term, 9 );
 		$prefix = 'Category:';
 	} else if( strpos( strtolower( $term ), ':category:' ) === 0 ) {
-		$ns = NS_CATEGORY;
+		$ns = array(NS_CATEGORY);
 		$term = substr( $term, 10 );
 		$prefix = ':Category:';
 	} else if( strpos( strtolower( $term ), 'media:' ) === 0 ) {
-		$ns = NS_IMAGE;
+		$ns = array(NS_IMAGE);
 		$term = substr( $term, 6 );
 		$prefix = 'Media:';
 	} else if( strpos( strtolower( $term ), ':image:' ) === 0 ) {
-		$ns = NS_IMAGE;
+		$ns = array(NS_IMAGE);
 		$term = substr( strtolower( $term ), 7 );
 		$prefix = ':Image:';
 	} else if( strpos( $term, ':' ) && is_array( $wgExtraNamespaces ) ) {
 		$pos = strpos( $term, ':' );
 		$find_ns = array_search( substr( $term, 0, $pos ), $wgExtraNamespaces );
 		if( $find_ns ) {
-			$ns = $find_ns;
+			$ns = array($find_ns);
 			$prefix = substr( $term, 0, $pos + 1 );
 			$term = substr( $term, $pos + 1 );
 		}
@@ -157,29 +158,43 @@ function wfSajaxSearchArticleCKeditor( $term ) {
 		return '';
 	}
 
-	$dbr = wfGetDB( DB_SLAVE );
-	$res = $dbr->select( 'page',
-		'page_title',
-		array(
-			'page_namespace' => $ns,
-			"page_title LIKE '%". $dbr->strencode( $term1 ) ."%' ".
-			"OR (LOWER(page_title) LIKE '%". $dbr->strencode( $term2 ) ."%') ".
-			"OR (UPPER(page_title) LIKE '%". $dbr->strencode( $term3 ) ."%') ".
-			"OR (page_title LIKE '%". $dbr->strencode( $term4 ) ."%') "
+    $dbr = wfGetDB( DB_SLAVE );
+	$res = $dbr->select(
+        'page',
+        'page_title, page_namespace',
+        array(
+			'page_namespace in ('.implode(',', $ns).') and '.
+			"( page_title LIKE '%". $dbr->strencode( $term1 ) ."%' ".
+			"OR (LOWER(CONVERT(page_title, CHAR)) LIKE '%". $dbr->strencode( $term2 ) ."%') ".
+			"OR (UPPER(CONVERT(page_title, CHAR)) LIKE '%". $dbr->strencode( $term3 ) ."%') ".
+			"OR (page_title LIKE '%". $dbr->strencode( $term4 ) ."%') )"
 		),
 		__METHOD__,
 		array( 'LIMIT' => $limit + 1 )
 	);
-
 	$ret = array();
 	$i = 0;
 	while ( ( $row = $dbr->fetchObject( $res ) ) && ( ++$i <= $limit ) ) {
+        $title = '';
 		if( isset( $prefix ) && !is_null( $prefix ) ) {
-			$ret .= $prefix;
+			$title .= $prefix;
 		}
-		$ret[]= $row->page_title;
+        else if ($row->page_namespace != NS_MAIN) {
+            $title .= MWNamespace::getCanonicalName($row->page_namespace).':';
+        }
+        $title .= $row->page_title;
+		$ret[]= $title;
 	}
-
+    // if we have not yet enough results, check the special pages
+    if (count($ret) < $limit) {
+        global $wgSpecialPages;
+        $specialPages = array_keys($wgSpecialPages);
+        foreach ($specialPages as $page) {
+            if (strpos(strtolower($page), $term2) !== FALSE ||
+                strpos(strtoupper($page), $term3) !== FALSE )
+                $ret[] = MWNamespace::getCanonicalName(NS_SPECIAL).':'.$page;
+        }
+    }
 	return join("\n", $ret);
 }
 
