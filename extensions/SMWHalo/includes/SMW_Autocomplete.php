@@ -95,8 +95,7 @@ function smwf_ac_AutoCompletionDispatcher($articleName, $userInputToMatch, $user
 
 			// if no namespace, just search all namespaces
 			if ($namespaceIndex === false) {
-				$namespaces = array_unique(array_merge(array(SMW_NS_PROPERTY, NS_CATEGORY, NS_MAIN, NS_TEMPLATE, SMW_NS_TYPE, NS_USER, NS_HELP), array_keys($wgExtraNamespaces)));
-				$pages = AutoCompletionHandler::executeCommand("namespace: ".implode(",", $namespaces), $userInputToMatch);
+				$pages = AutoCompletionHandler::executeCommand("all: ", $userInputToMatch);
 			} else {
 				$pages = AutoCompletionHandler::executeCommand("namespace: ".$namespaceIndex, $userInputToMatch);
 			}
@@ -855,7 +854,15 @@ class AutoCompletionHandler {
 				$inf = self::setInferred($pages, !$first);
 				$result = self::mergeResults($result, $inf);
 				if (count($result) >= SMW_AC_MAX_RESULTS) break;
-			} else if ($commandText == 'lexical') {
+			}  else if ($commandText == 'all') {
+                $namespaceIndexes = array();
+                global $wgContLang;
+               
+                $pages = smwfGetAutoCompletionStore()->getPages($userInput, NULL);
+                $inf = self::setInferred($pages, !$first);
+                $result = self::mergeResults($result, $inf);
+                if (count($result) >= SMW_AC_MAX_RESULTS) break;
+            } else if ($commandText == 'lexical') {
 				$pages = smwfGetAutoCompletionStore()->getPages($userInput);
 				$inf = self::setInferred($pages, !$first);
 				$result = self::mergeResults($result, $inf);
