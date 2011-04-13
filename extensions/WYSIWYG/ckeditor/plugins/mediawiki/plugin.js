@@ -744,7 +744,7 @@ CKEDITOR.customprocessor.prototype =
 							var isWikiUrl = true;
 
 							if ( hrefType != "" && hrefType != "http" && hrefType != "mailto" )
-								stringBuilder.push( '[[' );
+								stringBuilder.push( '[[' + hrefType.FirstToUpper() + ':' );
 							else if ( htmlNode.className == "extiw" ){
 								stringBuilder.push( '[[' );
 								isWikiUrl = true;
