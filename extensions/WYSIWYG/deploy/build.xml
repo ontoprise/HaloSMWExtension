@@ -18,6 +18,7 @@
 			</fileset>
 			<fileset dir="../../../deployment/tools">
 				<include name="patch.exe" />
+                <include name="patch.exe.manifest" />
 			</fileset>
         </copy>
 
