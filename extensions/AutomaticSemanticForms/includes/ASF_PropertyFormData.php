@@ -113,6 +113,14 @@ class ASFPropertyFormData {
 			} else {
 				$autocompletion = ' |autocomplete';
 			}
+		} else if($autocompletion == 'category'){
+			if($asfUseHaloAutocompletion){
+				if($inputType == 'text') $inputType = 'haloACtext';
+				if($inputType == 'textarea') $inputType = 'haloACtextarea';
+				$autocompletion = ' |constraints=all';
+			} else {
+				$autocompletion = ' |autocomplete';
+			}
 		} else {
 			$autocompletion = '';
 		}
