@@ -795,7 +795,7 @@ function smwf_om_GetDerivedFacts($titleName) {
 	$semdata = smwfGetStore()->getSemanticData($t);
 	wfLoadExtensionMessages('SemanticMediaWiki');
 	global $wgContLang;
-	$derivedFacts = SMWFullSemanticData::getDerivedProperties($semdata);
+	list($derivedFacts, $derivedCategories) = SMWFullSemanticData::getDerivedProperties($semdata);
 	$derivedFactsFound = false;
 
 	$text = '<div class="smwfact">' .
@@ -871,7 +871,15 @@ function smwf_om_GetDerivedFacts($titleName) {
 		}
 		$text .= '</td></tr>';
 	}
-	$text .= '</table></div>';
+	$text .= '</table>';
+	
+	$categoryLinks=array();
+	foreach($derivedCategories as $c) {
+	   $derivedFactsFound=True;
+	   $categoryLinks[] = $linker->link($c);
+	}
+	$text .= '<br>'.implode(", ", $categoryLinks);
+	$text .= '</div>';
 
 	if (!$derivedFactsFound) {
 		$text = wfMsg('smw_df_no_df_found');

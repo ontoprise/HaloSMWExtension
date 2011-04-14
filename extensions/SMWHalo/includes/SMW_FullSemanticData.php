@@ -134,13 +134,28 @@ class SMWFullSemanticData {
 				}
 			}
 		}
-  
+        
+		$derivedCategories=array();
 		// Check is a property is derived or directly annotated
 		foreach ($propVal as $propName => $derivedValues) {
-
+            
 			// does the property already exist?
 			$prop = SMWPropertyValue::makeUserProperty(str_replace("_"," ",$propName));
 			$values = $semData->getPropertyValues($prop);
+			
+			// special handling for _INST
+			if ($propName == '_INST') {
+				$allCategories = $derivedValues;
+				$assertCategories = $subject->getTitle()->getParentCategories();
+				foreach($allCategories as $c) {
+					$title = $c->getTitle();
+					if (!in_array($title->getText(), $assertCategories)) {
+						$derivedCategories[] = $title;
+					}
+				}
+			
+				continue;
+			}
 			
 			$derivedValuesResult=array();
 			self::getDataValueDiff($derivedValues, $values, $prop, $derivedValuesResult, $assertedValuesResult);
@@ -149,7 +164,7 @@ class SMWFullSemanticData {
                 $derivedProperties->addPropertyObjectValue($prop, $dv);
 			}
 		}
-		return $derivedProperties;
+		return array($derivedProperties, $derivedCategories);
 	}
 
 	/**
