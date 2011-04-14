@@ -2770,6 +2770,11 @@ QIHelper.prototype = {
         
         // check triplestore switch if it comes from sparql parser function
 		if (ask.indexOf('#sparql:') != -1) {
+            // check if this is really a sparq query and add send a warning to the user
+            if (ask.match(/\sselect\s/i)) {
+                alert (gLanguage.getMessage('QI_SPARQL_NOT_SUPPORTED'));
+                return;
+            }
 			var triplestoreSwitch = $('usetriplestore');
 			if (triplestoreSwitch) triplestoreSwitch.checked = true;
 		}	
