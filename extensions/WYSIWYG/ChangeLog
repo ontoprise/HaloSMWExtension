@@ -74,6 +74,8 @@ VERSION 1.4.1
       Interwiki links break in WYSIWYG
     * Fix bug http://smwforum.ontoprise.com/smwbugs/show_bug.cgi?id=14268
       Open QI from Wysiwyg with query using comparators yields illegal syntax
+    * Fix bug http://smwforum.ontoprise.com/smwbugs/show_bug.cgi?id=14317
+      Edit text box disappears when switching between the two text editors
 
 
 VERSION 1.4.0

@@ -654,6 +654,18 @@ HEREDOC;
         $script = <<<HEREDOC
 
 function ToggleCKEditor( mode, objId ){
+  if (typeof window.toggleRTESemaphore !== 'undefined') {
+    if (window.toggleRTESemaphore === true) {
+      return false;
+    }
+  } 
+  window.toggleRTESemaphore = true;
+  jQuery('#ckTools').hide();
+  
+  setTimeout(function() {
+      window.toggleRTESemaphore = false;
+      jQuery('#ckTools').show();
+    }, 2000);
 	var SRCtextarea = document.getElementById( objId );
 	if( mode == 'popup' ){
 		if ( ( showFCKEditor & RTE_VISIBLE ) && ( CKEDITOR.status == 'basic_ready' ) ) { // if CKeditor is up-to-date
@@ -684,8 +696,12 @@ function ToggleCKEditor( mode, objId ){
 		return true;
 	}
 
-	if( ! CKEDITOR.ready ) return false; // sajax_do_call in action
-	if( ! (CKEDITOR.status == 'basic_ready') ) return false; // not loaded yet
+	if( ! CKEDITOR.ready ) {
+    return false; // sajax_do_call in action
+  }
+	if( ! (CKEDITOR.status == 'basic_ready') ) {
+    return false; // not loaded yet
+  }
 	var oEditorIns = CKEDITOR.instances[objId];
 	var oEditorIframe  = document.getElementById( 'cke_' + objId );
 	var toolbar = document.getElementById( 'toolbar' );
@@ -749,6 +765,7 @@ function ToggleCKEditor( mode, objId ){
         if (CKEDITOR.plugins.smwtoolbar)
             AdvancedAnnotation.unload();
 	}
+
 	return true;
 }
 
