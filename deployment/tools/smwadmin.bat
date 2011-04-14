@@ -25,5 +25,5 @@ IF EXIST ..\..\init$.ext (%PHP% ..\..\maintenance\update.php --quick) ELSE (GOTO
 DEL ..\..\init$.ext
 
 :runfinalize
-%PHP% smwadmin/smwadmin.php --finalize
+%PHP% smwadmin/smwadmin.php --finalize %*
 :end

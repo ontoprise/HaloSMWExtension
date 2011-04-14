@@ -175,16 +175,7 @@ for( $arg = reset( $args ); $arg !== false; $arg = next( $args ) ) {
 		$packageToInstall[] = $package;
 		continue;
 	} else if ($arg == '--finalize') { // => finalize installation, ie. run scripts, import pages
-		// include commandLine.inc to be in maintenance mode
-		$mediaWikiLocation = dirname(__FILE__) . '/../../..';
-		require_once "$mediaWikiLocation/maintenance/commandLine.inc";
 
-		initializeLanguage();
-		// include the resource installer
-		require_once('DF_ResourceInstaller.php');
-
-		// finalize mode requires a wiki environment, so check and include a few things more
-		checkWikiContext();
 		$dfgInstallPackages = true;
 		continue;
 	} else if ($arg == '-f') { // => force
@@ -212,7 +203,30 @@ $logger = Logger::getInstance();
 $installer = Installer::getInstance($mwrootDir, $dfgForce);
 $rollback = Rollback::getInstance($mwrootDir);
 
+if ($dfgInstallPackages) {
+	// include commandLine.inc to be in maintenance mode
+	$mediaWikiLocation = dirname(__FILE__) . '/../../..';
+	require_once "$mediaWikiLocation/maintenance/commandLine.inc";
 
+	initializeLanguage();
+	// include the resource installer
+	require_once('DF_ResourceInstaller.php');
+
+	// finalize mode requires a wiki environment, so check and include a few things more
+	checkWikiContext();
+	
+	$logger->info("Start initializing packages");
+	$installer->initializePackages();
+	$logger->info("End initializing packages");
+	die(DF_TERMINATION_WITHOUT_FINALIZE);  // 2 is normal termination but no further action
+} else {
+	// check for non-initialized extensions
+	$localPackages = PackageRepository::getLocalPackagesToInitialize($mwrootDir.'/extensions');
+	if (count($localPackages) > 0) {
+		print "\nThere are non-initialized extensions. Run: smwadmin --finalize\n";
+		die(DF_TERMINATION_ERROR);
+	}
+}
 
 if ($dfgRestore) {
 	print "\nThis operation will restore the wiki from the last restore point.";
@@ -294,19 +308,7 @@ if ($dfgListPackages) {
 	die(DF_TERMINATION_WITHOUT_FINALIZE);  // 2 is normal termination but no further action
 }
 
-if ($dfgInstallPackages) {
-	$logger->info("Start initializing packages");
-	$installer->initializePackages();
-	$logger->info("End initializing packages");
-	die(DF_TERMINATION_WITHOUT_FINALIZE);  // 2 is normal termination but no further action
-} else {
-	// check for non-initialized extensions
-	$localPackages = PackageRepository::getLocalPackagesToInitialize($mwrootDir.'/extensions');
-	if (count($localPackages) > 0) {
-		print "\nThere are non-initialized extensions. Run: smwadmin --finalize\n";
-		die(DF_TERMINATION_ERROR);
-	}
-}
+
 
 // install
 foreach($packageToInstall as $toInstall) {
