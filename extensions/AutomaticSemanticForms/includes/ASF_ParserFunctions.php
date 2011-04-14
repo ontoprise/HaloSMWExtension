@@ -515,7 +515,7 @@ class ASFParserFunctions {
 				$queryString = $unresolvedParameters[9];
 			}
 			
-			if(strlen($rootCategory) == 0 && array_key_exists(7, $unresolvedParameters)){
+			if(strlen($rootCategory) == 0 && array_key_exists(10, $unresolvedParameters)){
 				$rootCategory = $unresolvedParameters[10];
 			}
 		}
