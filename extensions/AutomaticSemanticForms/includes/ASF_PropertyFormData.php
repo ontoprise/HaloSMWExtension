@@ -300,6 +300,7 @@ class ASFPropertyFormData {
 				global $asfUseSemanticFormsInputsFeatures;
 				if(class_exists('SFIInputs') && $asfUseSemanticFormsInputsFeatures){
 					$inputType = 'datepicker';
+					$size = '';
 				} else {
 					$inputType = 'datetime';
 				}
