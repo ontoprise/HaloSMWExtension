@@ -48,6 +48,7 @@ var TF = Class.create({
 		
 		jQuery('#' + data.tabularFormId + ' .tabf_loader').css('display', 'none');
 		jQuery('#' + data.tabularFormId + ' .tabf_table_container').html(data.result);
+		jQuery('#' + data.tabularFormId + ' .tabf_table_container').attr('usesat', data.useSAT);
 		
 		jQuery('#' + data.tabularFormId + ' .tabf_table_container').css('display', 'block');
 		
@@ -505,9 +506,11 @@ var TF = Class.create({
 				}
 			}
 			
+			//xyz
 			//this is uglay
 			var tabularFormId = jQuery(this).parent().parent().parent().parent().attr('id');
 			var revisionId = jQuery('td:first-child ',this).attr('revision-id');
+			var useSAT = jQuery(this).parent().parent().parent().attr('usesat'); 
 			if(revisionId == '-1'){
 				var articleTitle = jQuery('td:first-child textarea',this).attr('value');
 			} else {
@@ -521,7 +524,7 @@ var TF = Class.create({
 				data: {
 					'action' : 'ajax',
 					'rs' : 'tff_updateInstanceData',
-					'rsargs[]' : [JSON.stringify(modifiedValues), articleTitle, revisionId, rowNr, tabularFormId],
+					'rsargs[]' : [JSON.stringify(modifiedValues), articleTitle, revisionId, rowNr, tabularFormId, useSAT],
 				},
 				success: tf.saveFormRowDataCallback,
 				
