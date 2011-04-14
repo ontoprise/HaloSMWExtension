@@ -121,8 +121,12 @@ class HACLSMWStore extends SMWStore {
 					// Property and its value are not protected 
 					// => copy to the new result
 					$propKey = $prop->getDBkeys();
-					$valKey = $v->getDBkeys();
-					$result->addPropertyStubValue($propKey[0], $valKey);
+					if ($v instanceof SMWRecordValue) {
+						$result->addPropertyValue($propKey[0], $v);
+					} else {
+						$valKey = $v->getDBkeys();
+						$result->addPropertyStubValue($propKey[0], $valKey);
+					}
 				}
 			}
 					
