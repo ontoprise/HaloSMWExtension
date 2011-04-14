@@ -529,7 +529,11 @@ QIHelper.prototype = {
 			params += 'format=' + $('layout_format').value + '|';
 			params += this.serializeSpecialQPParameters("|");
 			params += '|merge=false';
-			sajax_do_call('smwf_qi_QIAccess', [ "getQueryResult", params ],
+            var currentPage = null;
+            if (window.parent.wgPageName) {
+                currentPage = window.parent.wgPageName.wgCanonicalNamespace + ':' + window.parent.wgPageName;
+            }
+			sajax_do_call('smwf_qi_QIAccess', [ "getQueryResult", params, currentPage ],
 					this.openPreview.bind(this));
 		} else { // query is empty
 			var request = Array();
@@ -557,7 +561,11 @@ QIHelper.prototype = {
         var ask = this.getQueryFromTree();
 
         if (ask.length > 0) {
-			sajax_do_call('smwf_qi_QIAccess', [ "getQueryResult", ask ],
+            var currentPage = null;
+            if (window.parent.wgPageName) {
+                currentPage = window.parent.wgPageName.wgCanonicalNamespace + ':' + window.parent.wgPageName;
+            }
+			sajax_do_call('smwf_qi_QIAccess', [ "getQueryResult", ask, currentPage],
 					this.openResultPreview.bind(this));
 		} else { // query is empty
 			var request = Array();
@@ -2739,7 +2747,7 @@ QIHelper.prototype = {
 		this.getSpecialQPParameters($('layout_format').value);
 		this.updateSrcAndPreview();
 	},
-
+    
     /**
      * called when the Query Tree tab is clicked and the Query source tab is still active
      */
