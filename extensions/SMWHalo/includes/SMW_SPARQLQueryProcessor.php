@@ -97,7 +97,7 @@ class SMWSPARQLQueryProcessor extends SMWQueryProcessor {
 					$querystring .= $param;
 				} else {
 					$parts = explode('=',$param,2);
-					$knownOption = in_array($parts[0], array('merge','template', 'mainlabel', 'sort', 'order', 'default', 'format', 'offset', 'limit', 'headers', 'link', 'intro', 'searchlabel', 'enable add', 'enable delete'));
+					$knownOption = in_array($parts[0], array('merge','template', 'mainlabel', 'sort', 'order', 'default', 'format', 'offset', 'limit', 'headers', 'link', 'intro', 'searchlabel', 'enable add', 'enable delete', 'use silent annotations template'));
 					$probablyOption = preg_match('/^\s*[\w-]+\s*$/', $parts[0]) > 0 && strlen($parts[0]) < 20; // probably an option if alphanumeric and less than 20 chars.
 					if (count($parts) == 2 && ($knownOption || $probablyOption)) {
 						$params[strtolower(trim($parts[0]))] = $parts[1]; // don't trim here, some params care for " "
