@@ -375,8 +375,10 @@ Section "SMW+ Setup" smwplussetup
   ${ConfigWrite} "$MEDIAWIKIDIR\deployment\tools\smwadmin.bat" "SET PHP=" '"$INSTDIR\php\php.exe"' $R0
 
   DetailPrint "Install bundles into wiki"
-  nsExec::ExecToLog '"$MEDIAWIKIDIR\deployment\tools\smwadmin.bat" -f -i Smwplus.zip'
-  nsExec::ExecToLog '"$MEDIAWIKIDIR\deployment\tools\smwadmin.bat" -f -i Smwplussandbox.zip'
+  nsExec::ExecToLog '"$PHP" "$MEDIAWIKIDIR\deployment\tools\smwadmin\smwadmin.php" -f -i Smwplus.zip'
+  nsExec::ExecToLog '"$PHP" "$MEDIAWIKIDIR\deployment\tools\smwadmin\smwadmin.php" -f --finalize'
+  nsExec::ExecToLog '"$PHP" "$MEDIAWIKIDIR\deployment\tools\smwadmin\smwadmin.php" -f -i Smwplussandbox.zip'
+  nsExec::ExecToLog '"$PHP" "$MEDIAWIKIDIR\deployment\tools\smwadmin\smwadmin.php" -f --finalize'
 
 SectionEnd
 
@@ -535,10 +537,8 @@ Section "Solr" solr
     ${EndIf}
 
     DetailPrint "set solr_ip to $IP"
-    nsExec::ExecToLog '"$PHP" "$MEDIAWIKIDIR\installer\changeVariable.php" in="\"$INSTDIR\htdocs\mediawiki\LocalSettings.php\"" out="\"$INSTDIR\htdocs\mediawiki\LocalSettings.php.solr\"" solr_ip=\""$IP\""'
-    CopyFiles "$INSTDIR\htdocs\mediawiki\LocalSettings.php.solr" "$INSTDIR\htdocs\mediawiki\LocalSettings.php"
-    Delete "$INSTDIR\htdocs\mediawiki\LocalSettings.php.solr"
-
+    ${ConfigWrite} "$MEDIAWIKIDIR\extensions\EnhancedRetrieval\SOLR\solr_ip.php" "<?php$\n\$$solrIP=" '"$IP";' $R0
+    
     nsExec::ExecToLog '"$PHP" "$MEDIAWIKIDIR\installer\changeVariable.php" in=createIndex.bat out=createIndex.bat php-exe="$PHP"'
     nsExec::ExecToLog '"$PHP" "$MEDIAWIKIDIR\installer\changeVariable.php" in="\"$INSTDIR\htdocs\mediawiki\extensions\EnhancedRetrieval\SOLR\smwdb-data-config.xml\"" out="\"$INSTDIR\solr\wiki\solr\conf\smwdb-data-config.xml\"" wgDBname=semwiki_en wgDBserver=localhost wgDBport=3306 wgDBuser=root wgDBpassword=m8nix'
     CopyFiles "$INSTDIR\htdocs\mediawiki\extensions\EnhancedRetrieval\SOLR\schema.xml" "$INSTDIR\solr\wiki\solr\conf\schema.xml"
