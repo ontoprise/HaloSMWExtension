@@ -71,6 +71,8 @@ CKEDITOR.dialog.add( 'SMWqi', function( editor ) {
 				element = editor.restoreRealElement( this.fakeObj );
     			selection.selectElement( this.fakeObj );
                 querySource = element.getHtml().replace(/_$/, '');
+				// decode HTML entities in the encoded query source
+				querySource = jQuery("<div/>").html(querySource).text();
                 querySource = querySource.replace(/fckLR/g, '\r\n');
 
                 if ( typeof qiDocument.qihelper == 'undefined' )
