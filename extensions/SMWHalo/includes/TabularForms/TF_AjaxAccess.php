@@ -43,7 +43,15 @@ function tff_getTabularForm($querySerialization, $isSPARQL, $tabularFormId){
 			( $queryString, $queryParams, $printRequests, 0);
 	}
 	
-	$result = array('result' => $result, 'tabularFormId' => $tabularFormId);
+	$useSilentAnnotationsTemplate = false;
+	if(array_key_exists('use silent annotations template', $queryParams)){
+		if($queryParams['use silent annotations template'] == 'true'){
+			$useSilentAnnotationsTemplate = true;
+		}	
+	}
+	
+	$result = array('result' => $result, 'tabularFormId' => $tabularFormId,
+		'useSAT' => $useSilentAnnotationsTemplate);
 	$result = json_encode($result);
 	
 	return '--##starttf##--' . $result . '--##endtf##--';
@@ -53,7 +61,7 @@ function tff_getTabularForm($querySerialization, $isSPARQL, $tabularFormId){
 /*
  * Called by UI in order to add or modify a particular insatnce
  */
-function tff_updateInstanceData($updates, $articleTitle, $revisionId, $rowNr, $tabularFormId){
+function tff_updateInstanceData($updates, $articleTitle, $revisionId, $rowNr, $tabularFormId, $useSAT){
 	
 	//dom't know why, but this has to be done twice
 	$updates = json_decode(print_r($updates, true), true);
@@ -90,10 +98,10 @@ function tff_updateInstanceData($updates, $articleTitle, $revisionId, $rowNr, $t
 	
 	if($revisionId == '-1'){
 		//add instance
-		$result = TFDataAPIAccess::getInstance($title)->createInstance($annotations, $parameters);
+		$result = TFDataAPIAccess::getInstance($title)->createInstance($annotations, $parameters, $useSAT);
 	} else {
 		//edit instance
-		$result = TFDataAPIAccess::getInstance($title)->updateValues($annotations, $parameters, $revisionId);
+		$result = TFDataAPIAccess::getInstance($title)->updateValues($annotations, $parameters, $revisionId, $useSAT);
 	}
 	
 	//a error msg is returnd if not successfull

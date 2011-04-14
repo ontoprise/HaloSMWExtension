@@ -205,7 +205,7 @@ class TFDataAPIACCESS {
 		 * Updates the annotations and template parameters of an instance
 		 * and adds new ones
 		 */
-		public function updateValues($annotations, $parameters, $revisionId){
+		public function updateValues($annotations, $parameters, $revisionId, $useSAT){
 		
 			if(is_null($this->title) || !$this->title->exists()){
 				return wfMsg('tabf_response_deleted'); 
@@ -223,7 +223,9 @@ class TFDataAPIACCESS {
 				return wfMsg('tabf_response_writeprotected');
 			}
 			
-			$elements = $this->pomPage->getElements()->listIterator(); 
+			$elements = $this->pomPage->getElements()->listIterator();
+
+			$createSilentAnnotationsTemplateFound = false;
 			
 			while($elements->hasNext()){
 				$element = $elements->getNextNodeValueByReference();
@@ -276,6 +278,7 @@ class TFDataAPIACCESS {
 					} 
 				} else if ($element instanceof POMBuiltInParserFunction){
 					if(strpos($element->nodeText, '{{CreateSilentAnnotations:') === 0){
+						$createSilentAnnotationsTemplateFound = true;
 						$silents = trim(substr($element->nodeText, strlen('{{CreateSilentAnnotations:')));
 						$silents = substr($silents, 0, strlen($silents)-2);
 						$silents = explode('|', $silents);
@@ -326,6 +329,14 @@ class TFDataAPIACCESS {
 									}
 								}
 										
+							}
+						}
+						
+						$newAnnotations = $annotations->getNewAnnotations();
+						if(count($newAnnotations) > 0){
+							$modified = true;
+							foreach($newAnnotations as $newAnnotation){
+								$silents[] = $newAnnotation['name'].'='.$newAnnotation['value'];
 							}
 						}
 						
@@ -382,11 +393,25 @@ class TFDataAPIACCESS {
 			}
 			
 			$newAnnotations = $annotations->getNewAnnotations();
-			foreach($newAnnotations as $newAnnotation){
-				if($newAnnotation['name'] == '__Category__'){
-					$text .= '[[Category:'.$newAnnotation['value'].'| ]]';
-				} else {
-					$text .= '[['.$newAnnotation['name'].'::'.$newAnnotation['value'].'| ]]';
+			if($useSAT != 'true'){
+				foreach($newAnnotations as $newAnnotation){
+					if($newAnnotation['name'] == '__Category__'){
+						$text .= '[[Category:'.$newAnnotation['value'].'| ]]';
+					} else {
+						$text .= '[['.$newAnnotation['name'].'::'.$newAnnotation['value'].'| ]]';
+					}
+				}
+			} else {
+				$silentAnnotations = '{{CreateSilentAnnozazions:';
+				foreach($newAnnotations as $newAnnotation){
+					if($newAnnotation['name'] == '__Category__'){
+						$text .= '[[Category:'.$newAnnotation['value'].'| ]]';
+					} else {
+						$silentAnnotations .= '| '.$newAnnotation['name'].'='.$newAnnotation['value'];
+					}
+				}
+				if(!$createSilentAnnotationsTemplateFound){
+					$text .= $silentAnnotations.'}}';
 				}
 			}
 			
@@ -398,7 +423,7 @@ class TFDataAPIACCESS {
 	/*
 	 * This method creates a new instance 
 	 */
-	public function createInstance($annotations, $parameters){
+	public function createInstance($annotations, $parameters, $useSAT){
 		
 		//todo: Language
 		
@@ -417,14 +442,27 @@ class TFDataAPIACCESS {
 		$text = '';
 		
 		$annotations = $annotations->getNewAnnotations();
-		foreach($annotations as $annotation){
-			if($annotation['name'] == '__Category__'){
-				$text .= '[[Category:'.$annotation['value'].'| ]]';
-			} else if (strlen($annotation['name']) >0){
-				$text .= '[['.$annotation['name'].'::'.$annotation['value'].'| ]]';
+		if($useSAT != 'true'){
+			foreach($annotations as $annotation){
+				if($annotation['name'] == '__Category__'){
+					$text .= '[[Category:'.$annotation['value'].'| ]]';
+				} else if (strlen($annotation['name']) >0){
+					$text .= '[['.$annotation['name'].'::'.$annotation['value'].'| ]]';
+				}
 			}
+		} else {
+			$silentAnnotations = "{{CreateSilentAnnotations:";
+			foreach($annotations as $annotation){
+				if($annotation['name'] == '__Category__'){
+					$text .= '[[Category:'.$annotation['value'].'| ]]';
+				} else if (strlen($annotation['name']) >0){
+					$silentAnnotations .= '| '.$annotation['name'].'='.$annotation['value'];
+				}
+			}
+			
+			$text = $silentAnnotations.'}}'.$text;
 		}
-		
+			
 		$newTemplateCalls = $parameters->getNewTemplateCalls();
 		foreach($newTemplateCalls as $template => $parameters){
 			if(count($parameters) > 0){

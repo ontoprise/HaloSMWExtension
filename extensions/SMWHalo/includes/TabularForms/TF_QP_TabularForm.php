@@ -91,6 +91,9 @@ class TFTabularFormQueryPrinter extends SMWResultPrinter {
 		$params[] = array( 'name' => 'enable delete', 'type' => 'enumeration', 
 			'description' => wfMsg( 'smw_tf_paramdesc_delete' ),
 			'values' => array( 'true', 'false' ) );
+		$params[] = array( 'name' => 'use silent annotations template', 'type' => 'enumeration', 
+			'description' => wfMsg( 'smw_tf_paramdesc_delete' ),
+			'values' => array( 'true', 'false' ) );
 		return $params;
 	}
 
@@ -393,7 +396,8 @@ class TFTabularFormData {
 				$autocompletion .= '"';
 			}
 			
-			$html .= "<textarea ".$autocompletion." rows='1' originalValue='' >".$annotation['preload']."</textarea>";
+			$html .= "<textarea ".$autocompletion." rows='1' originalValue='' >"
+				.$this->parsePreloadValue($annotation['preload'])."</textarea>";
 			
 			$html .= '</td>';
 		}
@@ -406,7 +410,7 @@ class TFTabularFormData {
 				$value = '';
 				if(array_key_exists($template, $this->templateParameterPrintRequestPreload)){
 					if(array_key_exists($param, $this->templateParameterPrintRequestPreload[$template])){
-						$value = $this->templateParameterPrintRequestPreload[$template][$param];
+						$value = $this->parsePreloadValue($this->templateParameterPrintRequestPreload[$template][$param]);
 					}
 				}
 			
@@ -430,6 +434,21 @@ class TFTabularFormData {
 		$html .= '</td>';
 		
 		return $html;
+	}
+	
+	/*
+	 * 
+	 */
+	private function parsePreloadValue($preload){
+		if(strlen(trim($preload)) > 0){
+			global $wgParser;
+			$popts = new ParserOptions();
+			$wgParser->startExternalParse(Title::newFromText('TabularFormsDummy'), $popts, Parser::OT_HTML);
+
+			$preload = $wgParser->internalParse($preload);
+		}
+		
+		return $preload;
 	}
 	
 	/*
@@ -616,6 +635,7 @@ class TFTabularFormData {
 			$label = explode('=', $label);
 			$preload = count($label) > 1 ? $label[1] : '';
 			$label = $labelIntro.$label[0].$labelOutro;
+			
 			
 			$this->annotationPrintRequests[$count] = 
 				array('title' => $printRequest->getData()->getText(), 
