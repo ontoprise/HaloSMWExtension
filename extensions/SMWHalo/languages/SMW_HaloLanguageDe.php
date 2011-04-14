@@ -435,7 +435,9 @@ protected $smwUserMessages = array(
 
 	// Tabular Forms
 	'smw_tf_paramdesc_add'		=> 'Benutzer darf neue Instanzen zum Ergebnis hinzufügen',
-	'smw_tf_paramdesc_delete'	=> 'Benutzen darf Instanzen aus dem Ergebnis löschen',
+	'smw_tf_paramdesc_delete'	=> 'Benutzer darf Instanzen aus dem Ergebnis löschen',
+	'smw_tf_paramdesc_use_silent_annotation' => "Tabular Forms benutzt das Silent Annotation Template zum Erstellen neuer Annotationen",
+
 
 	//Querylist Special Page
 	'querylist' => "Gespeicherte Queries",

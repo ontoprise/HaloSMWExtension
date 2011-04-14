@@ -442,6 +442,7 @@ clicking the big arrows between the columns.',
 	// Tabular Forms
 	'smw_tf_paramdesc_add'		=> 'User is allowed to add new instances to the result',
 	'smw_tf_paramdesc_delete'	=> 'User is allowed to delete instances from the result',
+	'smw_tf_paramdesc_use_silent_annotation' => "Tabular Forms will use the silent annotations template to create new annotations.",
 	
 	//Querylist Special Page
 	'querylist' => "Saved Queries",
