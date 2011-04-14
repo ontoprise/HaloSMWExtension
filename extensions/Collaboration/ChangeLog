@@ -3,10 +3,11 @@ Collaboration extension ChangeLog
 
 VERSION 1.31
   FEATURES:
-	FR #13057: Information about last edit of a comment
+	FR #13057: Information about last edit of a comment 
   CHANGES:
+	Issue 14351: Added a complete sandbox. "Template:Show comments infobox for user" can be used to display an infobox at user pages.
 	FR #13548: Small GUI improvements
-	Issue 12823: Added average rating per article
+	Issue 12823: Added average rating per article 
   BUGFIXES:
 	Issue 14050: Changed GUI regarding the user edit right.
 

@@ -3,7 +3,7 @@
 	<global>
 		<version>131</version>
 		<id>collaboration</id>
-        <license>GPL-v2</license>
+		<license>GPL-v2</license>
 		<vendor>Ontoprise GmbH</vendor>
 		<maintainer>Ontoprise GmbH</maintainer>
 		<instdir>extensions/Collaboration</instdir>
@@ -30,6 +30,7 @@
 		<file loc="skins/Comment/icons/neutral_active.png" />
 		<file loc="skins/Comment/icons/bad_active.png" />
 		<file loc="skins/Comment/icons/Comment_icon_crystal.png" />
+		<file loc="skins/Comment/icons/Smw_plus_comment_icon_2_16x16.gif" />
 	</resources>
 	<configs>
 		<new>

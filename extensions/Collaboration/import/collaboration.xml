@@ -63,8 +63,8 @@
     <title>Category:Comment</title>
     <id>104</id>
     <revision>
-      <id>113</id>
-      <timestamp>2011-03-31T08:28:12Z</timestamp>
+      <id>904</id>
+      <timestamp>2011-04-14T12:30:35Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -75,8 +75,9 @@
 }}
 {{Part of bundle|value=Collaboration}}
 {{Content hash|value=f1e103217093fed9e18a79989b7e1c72}}
-[[Category:Entity]]</text>
-    <hash>d99e5eba6bbd7510b697bdb1e908b534</hash>
+[[Category:Entity]]
+[[Category has icon::File:Smw plus comment icon 2 16x16.gif]]</text>
+    <hash>ed1d00d099c1c82cd9e869d5b0895658</hash>
     </revision>
   </page>
   <page>
@@ -432,14 +433,27 @@ More information about the Collaboration extension and how to use it can be foun
     <title>Collaboration Sandbox</title>
     <id>262</id>
     <revision>
-      <id>271</id>
-      <timestamp>2011-03-31T08:23:28Z</timestamp>
+      <id>936</id>
+      <timestamp>2011-04-14T13:45:37Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
+      <comment>Undo revision 935 by [[Special:Contributions/WikiSysop|WikiSysop]] ([[User talk:WikiSysop|talk]])</comment>
       <text xml:space="preserve">= Collaboration Sandbox =
 Just click on '''&quot;Show comments&quot;''' below to read and add comments.
+
+Have a look at [[User:Collaboration|the article of our sandbox user]] to discover his latest comments powered by [[Template:Show comments infobox for user]]. Feel free to use this template on all your user pages by entering &lt;pre&gt;
+{{Show comments infobox for user
+|show=True
+}}
+&lt;/pre&gt; to these articles.
+
+We also created [[Collaboration_best_articles|a sample article to display the best rated articles]] in this wiki that calls [[Template:Show best rated articles]]. You can use this template call in any other pages, too. &lt;pre&gt;
+{{Show best rated articles
+|show=True
+}}
+&lt;/pre&gt;
 
 More information can be found also in the [http://smwforum.ontoprise.com/smwforum/index.php?title=Help:Using_the_Collaboration_extension_1.3&amp;context=Help%3ACollaboration+extension+1.3 Collaboration extension help article]. Get this extension on our [http://smwforum.ontoprise.com/smwforum/index.php/Download download page]!
 
@@ -448,101 +462,104 @@ More information can be found also in the [http://smwforum.ontoprise.com/smwforu
 {{ShowComments
 |show=True
 }}
-&lt;noinclude&gt;
-{{Part of bundle|value=Collaboration}}
-{{Content hash|value=}}
-&lt;/noinclude&gt;</text>
-    <hash>90984cbece7c8a632ecbd715e321c1a1</hash>
+&lt;noinclude&gt;{{Part of bundle|value=Collaboration}}
+{{Content hash|value=}}&lt;/noinclude&gt;</text>
+    <hash>f6e68b8075bd7ce12abb79f7cd7bd7bc</hash>
     </revision>
   </page>
   <page>
     <title>Comment:Collaboration Sandbox 1295602691794</title>
     <id>263</id>
     <revision>
-      <id>272</id>
-      <timestamp>2011-03-28T11:34:11Z</timestamp>
+      <id>905</id>
+      <timestamp>2011-04-14T12:45:02Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
-      <text xml:space="preserve">{{Comment|CommentPerson=User:WikiSysop|CommentRelatedArticle=Collaboration_Sandbox|CommentDatetime=2011-01-21T10:38:11+01:00|CommentContent=Do you want to let your visitors have a say and encourage discussions in your wiki? Then introduce meta talking with the Collaboration extension.|}}
+      <text xml:space="preserve">{{Comment|CommentPerson=User:Collaboration|CommentRelatedArticle=Collaboration_Sandbox|CommentRating=1|CommentDatetime=2011-01-21T10:38:11+01:00|CommentContent=Do you want to let your visitors have a say and encourage discussions in your wiki? Then introduce meta talking with the Collaboration extension.|}}
 &lt;noinclude&gt;
 {{Part of bundle|value=Collaboration}}
 {{Content hash|value=}}
+[[Rationale::A small sample comment for the Sandbox of the Collaboration extension in this Wiki.| ]]
 &lt;/noinclude&gt;</text>
-    <hash>1e3e9c7d5ff4b6cd748b574112bd2bfe</hash>
+    <hash>cb546e04b624a3cb2e1b07ed1067086e</hash>
     </revision>
   </page>
   <page>
     <title>Comment:Collaboration Sandbox 1295602913516</title>
     <id>264</id>
     <revision>
-      <id>273</id>
-      <timestamp>2011-03-28T11:34:39Z</timestamp>
+      <id>906</id>
+      <timestamp>2011-04-14T12:45:33Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
-      <text xml:space="preserve">{{Comment|CommentPerson=User:WikiSysop|CommentRelatedArticle=Collaboration_Sandbox|CommentDatetime=2011-01-21T10:41:52+01:00|CommentContent=Communicating about topics and media is a basic community feature. You can upgrade your wiki essentially if you allow your visitors to present and discuss their opinions about certain articles. Or you would like to set up a conversation focused wiki where commenting is the superordinate and actual objective and therefore always available. You can have it your way and expand the attraction of your wiki in any case. |}}
+      <text xml:space="preserve">{{Comment|CommentPerson=User:Collaboration|CommentRelatedArticle=Collaboration_Sandbox|CommentRating=1|CommentDatetime=2011-01-21T10:41:52+01:00|CommentContent=Communicating about topics and media is a basic community feature. You can upgrade your wiki essentially if you allow your visitors to present and discuss their opinions about certain articles. Or you would like to set up a conversation focused wiki where commenting is the superordinate and actual objective and therefore always available. You can have it your way and expand the attraction of your wiki in any case. |}}
 &lt;noinclude&gt;
 {{Part of bundle|value=Collaboration}}
 {{Content hash|value=}}
+[[Rationale::A small sample comment for the Sandbox of the Collaboration extension in this Wiki.| ]]
 &lt;/noinclude&gt;</text>
-    <hash>2749d63bd78d6bfd253672bec338b4a2</hash>
+    <hash>76c354a3478aa2d2bda1c500b02a69e6</hash>
     </revision>
   </page>
   <page>
     <title>Comment:Collaboration Sandbox 1295602948268</title>
     <id>265</id>
     <revision>
-      <id>274</id>
-      <timestamp>2011-03-28T11:35:01Z</timestamp>
+      <id>896</id>
+      <timestamp>2011-04-14T12:06:43Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
-      <text xml:space="preserve">{{Comment|CommentPerson=User:WikiSysop|CommentRelatedArticle=Collaboration_Sandbox|CommentRelatedComment=Comment:Collaboration_Sandbox_1295602913516|CommentDatetime=2011-01-21T10:42:27+01:00|CommentContent=So let people take part and rate contents with the Collaboration extension.|}}
+      <text xml:space="preserve">{{Comment|CommentPerson=User:Collaboration|CommentRelatedArticle=Collaboration_Sandbox|CommentRelatedComment=Comment:Collaboration_Sandbox_1295602913516|CommentDatetime=2011-01-21T10:42:27+01:00|CommentContent=So let people take part and rate contents with the Collaboration extension.|}}
 &lt;noinclude&gt;
 {{Part of bundle|value=Collaboration}}
 {{Content hash|value=}}
+[[Rationale::A small sample comment for the Sandbox of the Collaboration extension in this Wiki.| ]]
 &lt;/noinclude&gt;</text>
-    <hash>bd18e1ceb3a8116679100c20738bc37a</hash>
+    <hash>805daee6005bee77b252ca0ec0b3646f</hash>
     </revision>
   </page>
   <page>
     <title>Comment:Collaboration Sandbox 1295603031029</title>
     <id>266</id>
     <revision>
-      <id>275</id>
-      <timestamp>2011-03-28T11:35:27Z</timestamp>
+      <id>895</id>
+      <timestamp>2011-04-14T12:05:22Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
-      <text xml:space="preserve">{{Comment|CommentPerson=User:WikiSysop|CommentRelatedArticle=Collaboration_Sandbox|CommentDatetime=2011-01-21T10:43:50+01:00|CommentContent=The features of the Collaboration extension&amp;#58; &lt;br /&gt;Let your visitors comment and rate articles and contents &lt;br /&gt;Allow discussions about and replies to expressed opinions &lt;br /&gt;Aggregate comments in different ways (e.g. lists of all exisiting comments, the 10 latest comments or all contributions of a certain user)|}}
+      <text xml:space="preserve">{{Comment|CommentPerson=User:Collaboration|CommentRelatedArticle=Collaboration_Sandbox|CommentDatetime=2011-01-21T10:43:50+01:00|CommentContent=The features of the Collaboration extension&amp;#58; &lt;br /&gt;Let your visitors comment and rate articles and contents &lt;br /&gt;Allow discussions about and replies to expressed opinions &lt;br /&gt;Aggregate comments in different ways (e.g. lists of all exisiting comments, the 10 latest comments or all contributions of a certain user)|}}
 &lt;noinclude&gt;
 {{Part of bundle|value=Collaboration}}
 {{Content hash|value=}}
+[[Rationale::A small sample comment for the Sandbox of the Collaboration extension in this Wiki.| ]]
 &lt;/noinclude&gt;</text>
-    <hash>a2d0c374740dc255c44cc6f41308ddbb</hash>
+    <hash>363d82900dc5c2f336bb5b2ce8594251</hash>
     </revision>
   </page>
   <page>
     <title>Comment:Collaboration Sandbox 1295603163565</title>
     <id>267</id>
     <revision>
-      <id>276</id>
-      <timestamp>2011-03-28T11:35:50Z</timestamp>
+      <id>894</id>
+      <timestamp>2011-04-14T12:05:14Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
-      <text xml:space="preserve">{{Comment|CommentPerson=User:WikiSysop|CommentRelatedArticle=Collaboration_Sandbox|CommentRelatedComment=Comment:Collaboration_Sandbox_1295603031029|CommentDatetime=2011-01-21T10:46:02+01:00|CommentContent=You can download this extension here&amp;#58; http&amp;#58;&amp;#47;&amp;#47;smwforum.ontoprise.com&amp;#47;smwforum&amp;#47;index.php&amp;#47;Download#SUITE_OF_HALO_EXTENSIONS|}}
+      <text xml:space="preserve">{{Comment|CommentPerson=User:Collaboration|CommentRelatedArticle=Collaboration_Sandbox|CommentRelatedComment=Comment:Collaboration_Sandbox_1295603031029|CommentDatetime=2011-01-21T10:46:02+01:00|CommentContent=You can download this extension here&amp;#58; http&amp;#58;&amp;#47;&amp;#47;smwforum.ontoprise.com&amp;#47;smwforum&amp;#47;index.php&amp;#47;Download#SUITE_OF_HALO_EXTENSIONS|}}
 &lt;noinclude&gt;
 {{Part of bundle|value=Collaboration}}
 {{Content hash|value=}}
+[[Rationale::A small sample comment for the Sandbox of the Collaboration extension in this Wiki.| ]]
 &lt;/noinclude&gt;</text>
-    <hash>67a0d157ea87631291fc16848747c555</hash>
+    <hash>cc8a19a41ca12f284ae6865def786843</hash>
     </revision>
   </page>
   <page>
@@ -584,6 +601,269 @@ More information can be found also in the [http://smwforum.ontoprise.com/smwforu
 
 [[has type::Type:Number| ]]</text>
     <hash>913344dc4491cf882354be3485d17849</hash>
+    </revision>
+  </page>
+  <page>
+    <title>File:Smw plus comment icon 2 16x16.gif</title>
+    <id>411</id>
+    <revision>
+      <id>901</id>
+      <timestamp>2011-04-14T12:20:57Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">(recovered file, missing upload log entry)
+&lt;noinclude&gt;
+{{Part of bundle|value=Collaboration}}
+{{Content hash|value=}}
+[[Rationale::Comment icon of the Collaboration extension used in the Comments infobox for user.| ]]
+&lt;/noinclude&gt;</text>
+    <hash>0b58351f6a4d0ab206ebee3e95f3a1cc</hash>
+    </revision>
+  </page>
+  <page>
+    <title>User:Collaboration</title>
+    <id>483</id>
+    <revision>
+      <id>891</id>
+      <timestamp>2011-04-14T12:02:32Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">[[Rationale::A small sample user page in this Wiki to give you an expression of the comment user info box delivered by the Collaboration sandbox.]]
+{{Show comments infobox for user
+|show=True
+}}
+&lt;noinclude&gt;
+{{Part of bundle|value=Collaboration}}
+{{Content hash|value=}}
+&lt;/noinclude&gt;</text>
+    <hash>0d19ac3bd08a4308132f61d899b634d3</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Template:Show comments infobox for user</title>
+    <id>484</id>
+    <revision>
+      <id>882</id>
+      <timestamp>2011-04-14T11:35:22Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <comment>Created page with &quot;&lt;noinclude&gt;{{Template |rationale=Wrapper template for switching the comments info box on a user page on or off. }} {{Part of bundle|value=Collaboration}} {{Content hash|value=}} ...&quot;</comment>
+      <text xml:space="preserve">&lt;noinclude&gt;{{Template
+|rationale=Wrapper template for switching the comments info box on a user page on or off.
+}}
+{{Part of bundle|value=Collaboration}}
+{{Content hash|value=}}
+&lt;/noinclude&gt;&lt;includeonly&gt;{{#ifeq:{{{show|}}}|True|{{Comments infobox for user}}|}}&lt;/includeonly&gt;&lt;noinclude&gt;
+&lt;/noinclude&gt;</text>
+    <hash>827e9f2ec4a1b35398c11460336016a6</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Template:Comments infobox for user</title>
+    <id>485</id>
+    <revision>
+      <id>883</id>
+      <timestamp>2011-04-14T11:39:44Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <comment>Created page with &quot;&lt;noinclude&gt;{{Template |rationale=Shows an infobox of the most recent comments made by a user. This template should be called on a user's page. }} {{Part of bundle|value=Collabora...&quot;</comment>
+      <text xml:space="preserve">&lt;noinclude&gt;{{Template
+|rationale=Shows an infobox of the most recent comments made by a user. This template should be called on a user's page.
+}}
+{{Part of bundle|value=Collaboration}}
+{{Content hash|value=}}
+&lt;/noinclude&gt;&lt;includeonly&gt;{{#vardefine:query|[[Category:Comment]] [[Has comment person::{{FULLPAGENAME}}]] [[Modification date::+]]}} {{#vardefine:resultLimit|5}} {{#vardefine:resultNumber|{{#ask: {{#var:query}} | format=count}}}} 
+
+{| cellspacing=&quot;0&quot; cellpadding=&quot;5&quot; style=&quot;border: 1px solid rgb(170, 170, 170); margin: 0pt 0pt 0.5em 1em; background: rgb(255, 255, 255) none repeat scroll 0% 0%; position: relative; border-collapse: collapse; -moz-background-clip: border; -moz-background-origin: padding; -moz-background-inline-policy: continuous; float: right; clear: right; width: 35%;&quot;
+|-
+! style=&quot;background: rgb(237, 244, 252) none repeat scroll 0% 0%; -moz-background-clip: border; -moz-background-origin: padding; -moz-background-inline-policy: continuous; color: black;&quot; colspan=&quot;2&quot; | Recent Comments ({{#var:resultNumber}})
+|-
+| {{#ask: {{#var:query}} 
+|?Has comment text
+|?Has comment rating
+|?Has comment date
+|?Belongs to article
+| sort=Has comment date
+| order=desc
+| format=template
+| template=Comment row for user
+| limit={{#var:resultLimit}} 
+| searchlabel= 
+| link=none 
+| default=*''no comments made yet''}}
+|-
+| colspan=&quot;2&quot; | {{#ifexpr: {{#var:resultNumber}} &gt; {{#var:resultLimit}} | &lt;small&gt;For all comments of {{FULLPAGENAME}} click [{{fullurl:Template:Comments overview|ofUser={{urlencode:{{FULLPAGENAME}}}}}} here...]&lt;/small&gt;}}
+|}&lt;/includeonly&gt;&lt;noinclude&gt;
+&lt;/noinclude&gt;</text>
+    <hash>b73cde52ac8b6152ce929bce0ecd077b</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Template:Comments overview</title>
+    <id>486</id>
+    <revision>
+      <id>885</id>
+      <timestamp>2011-04-14T11:43:23Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">&lt;noinclude&gt;{{Template
+|rationale=Template for displaying the latest comments of a given user specified by the argument ''ofUser''.
+}}
+{{Part of bundle|value=Collaboration}}
+{{Content hash|value=}}
+&lt;/noinclude&gt;&lt;includeonly&gt;
+== Comments {{#if:{{#arg:ofUser|}}|made by [[{{#arg:ofUser|}}]]|}} ==
+
+{{#ask: [[Comment:+]] [[Has comment person::{{#arg:ofUser|+}}]]
+  | ?Has comment person
+  | ?Has comment date
+  | ?Has comment text
+  | ?Has comment rating
+  | ?Belongs to article
+  | sort=Has comment date
+  | order=desc
+  | format=template
+  | template=CommentResult
+  | link=none
+  | limit=100
+}}&lt;/includeonly&gt;</text>
+    <hash>b0dffbe9d9a208ac0871ce5e6ef94eb0</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Template:Comment row for user</title>
+    <id>487</id>
+    <revision>
+      <id>886</id>
+      <timestamp>2011-04-14T11:45:21Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <comment>Created page with &quot;&lt;noinclude&gt;{{Template |rationale=Result template to display a comment in a table row for the comment info box. }} {{Part of bundle|value=Collaboration}} {{Content hash|value=}} &lt;...&quot;</comment>
+      <text xml:space="preserve">&lt;noinclude&gt;{{Template
+|rationale=Result template to display a comment in a table row for the comment info box.
+}}
+{{Part of bundle|value=Collaboration}}
+{{Content hash|value=}}
+&lt;/noinclude&gt;&lt;includeonly&gt;{|
+|[[File:Smw_plus_comment_icon_2_16x16.gif|link={{{1|}}}]]
+| {{#ifexpr: {{#len:{{{2|}}}}} &gt; 125 | ''{{#sub:{{{2|}}}|0|125}} ...'' | ''{{{2|}}}'' }} &lt;br/&gt; &lt;!--comment rating: {{{3|}}}--&gt; &lt;small&gt;date: {{{4|}}} &lt;br/&gt; to: [[{{{5|}}}]]&lt;/small&gt;
+|}&lt;/includeonly&gt;</text>
+    <hash>34f8259179257f4c127900b24eb3bd44</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Template:Best rated articles</title>
+    <id>491</id>
+    <revision>
+      <id>931</id>
+      <timestamp>2011-04-14T13:38:10Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">&lt;noinclude&gt;{{Template
+|rationale=Shows an info box of the best rated comments in this wiki.
+}}
+{{Part of bundle|value=Collaboration}}
+{{Content hash|value=}}
+&lt;/noinclude&gt;&lt;includeonly&gt;{{#vardefine:query|[[Article has average rating::+]]}} {{#vardefine:resultLimit|5}} {{#vardefine:resultNumber|{{#ask: {{#var:query}} | format=count}}}} 
+
+{| cellspacing=&quot;0&quot; cellpadding=&quot;5&quot; style=&quot;border: 1px solid rgb(170, 170, 170); margin: 0pt 0pt 0.5em 1em; background: rgb(255, 255, 255) none repeat scroll 0% 0%; position: relative; border-collapse: collapse; -moz-background-clip: border; -moz-background-origin: padding; -moz-background-inline-policy: continuous; float: right; clear: right; width: 35%;&quot;
+|-
+! style=&quot;background: rgb(237, 244, 252) none repeat scroll 0% 0%; -moz-background-clip: border; -moz-background-origin: padding; -moz-background-inline-policy: continuous; color: black;&quot; colspan=&quot;2&quot; | ({{#var:resultNumber}}) best rated articles 
+|-
+| {{#ask: {{#var:query}} 
+|?Article has average rating
+| sort=Article has average rating
+| order=desc
+| format=template
+| template=Article row for comment ratings
+| limit={{#var:resultLimit}} 
+| searchlabel= 
+| link=none 
+| default=*''no article commented yet''
+}}
+|}&lt;/includeonly&gt;&lt;noinclude&gt;
+&lt;/noinclude&gt;</text>
+    <hash>192d4dd413d4d10b39c0636e54697706</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Template:Article row for comment ratings</title>
+    <id>492</id>
+    <revision>
+      <id>930</id>
+      <timestamp>2011-04-14T13:38:02Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">&lt;noinclude&gt;{{Template
+|rationale=Result template to display a row with a rated article in an info box.
+}}
+{{Part of bundle|value=Collaboration}}
+{{Content hash|value=}}
+&lt;/noinclude&gt;&lt;includeonly&gt;{|
+| [[{{{1|}}}]]
+| with average rating: {{{2|}}}
+|}&lt;/includeonly&gt;</text>
+    <hash>f208a310fa13f2fe6e9d78b3cb5cc4c2</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Template:Show best rated articles</title>
+    <id>493</id>
+    <revision>
+      <id>914</id>
+      <timestamp>2011-04-14T13:11:07Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <minor/>
+      <comment>moved [[Template:Show best rated comments]] to [[Template:Show best rated articles]]</comment>
+      <text xml:space="preserve">&lt;noinclude&gt;{{Template
+|rationale=Wrapper template for switching the best rated articles info box on or off.
+}}
+{{Part of bundle|value=Collaboration}}
+{{Content hash|value=}}
+&lt;/noinclude&gt;&lt;includeonly&gt;{{#ifeq:{{{show|}}}|True|{{Best rated articles}}|}}&lt;/includeonly&gt;&lt;noinclude&gt;
+&lt;/noinclude&gt;</text>
+    <hash>cff630c51e0b2ce23b8ae6d378d226cf</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Collaboration best articles</title>
+    <id>498</id>
+    <revision>
+      <id>933</id>
+      <timestamp>2011-04-14T13:40:05Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">This info box displays the best rated articles in this wiki.
+{{Show best rated articles
+|show=True
+}}
+[[Rationale::A sample article with an info box that displays the best rated articles in this wiki.| ]]
+&lt;noinclude&gt;
+{{Part of bundle|value=Collaboration}}
+{{Content hash|value=}}
+&lt;/noinclude&gt;</text>
+    <hash>6905da8523208160be7e6dcd1d2e21dc</hash>
     </revision>
   </page>
 </mediawiki>

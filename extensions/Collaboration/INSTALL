@@ -7,10 +7,8 @@ Requirements:
 	MediaWiki 1.15.1 or higher
 	Semantic Mediawiki 1.5.2
 	Script Manager 1.0.1 or higher
-	ParserFunctions
-	StringFunctions
-	Variables
-	SMW Plus ontology bundle 1.5.3 (optional) 
+	Application Programming 1.0.3
+	SMW Plus ontology bundle 1.5.3 (optional)
 
 
 Installation:
