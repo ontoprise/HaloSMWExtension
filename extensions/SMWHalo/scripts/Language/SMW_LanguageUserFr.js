@@ -334,6 +334,7 @@ var wgUserLanguageStrings = {
     'QI_QP_PARAM_outro'       : 'footer',
     'QI_NOT_SPECIFIED'        : 'Not specified',
     'QI_NO_QUERIES_FOUND'     : 'Your search did not match any queries in the wiki',
+    'QI_SPARQL_NOT_SUPPORTED' : 'SPARQL queries cannot be edited in Query Interface.',
 
     
     // Find work
