@@ -742,9 +742,15 @@ class TreeviewTriplestore extends TreeviewStorage {
             // not needed here but must be set so that rootNodes will be examined correctly
             $this->smw_category_ids = array(1);
         }
-
+    
+        // make sure that the normal smw table printer is used.
+        if (defined('SGA_GARDENING_EXTENSION_VERSION')) {
+        	$qpName = "smwtable";
+        } else {
+        	$qpName = "table";
+        }
 		$fixparams = array(
-			"format" => "table",
+			"format" => $qpName,
 			"limit" => $smwgQMaxInlineLimit,
             "link" => "none",
             "merge" => "false"

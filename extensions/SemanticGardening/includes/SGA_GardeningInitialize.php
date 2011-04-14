@@ -48,6 +48,7 @@ function sgagGardeningSetupExtension() {
    
     
 	global $smwgResultFormats;
+	$smwgResultFormats['smwtable'] = 'SMWTableResultPrinter'; // keep old printer
 	$smwgResultFormats['table'] = 'SGAGardeningTableResultPrinter'; // overwrite SMW printer
 	$smwgResultFormats['broadtable'] = 'SGAGardeningTableResultPrinter'; // overwrite SMW printer
 
