@@ -95,7 +95,8 @@ class TestSMWStoreSuite extends PHPUnit_Framework_TestSuite
 			'ProtectedPage',
 			'ACL:Page/ProtectedPage',
 			'PageWithProtectedProperties',
-			'NormalPage'
+			'NormalPage',
+			'Property:PropWithDomainAndRange'
 		);
 		
 		$this->mArticles = array(
@@ -190,6 +191,13 @@ ACL
 {{#ask: [[HA::+]]
 | ?HB
 }}
+ACL
+,
+//------------------------------------------------------------------------------		
+			'Property:PropWithDomainAndRange' =>
+<<<ACL
+	This is a property with domain and range definition.
+	[[Has domain and range::Category:Person;Category:Dog]]
 ACL
 		);
 	}
@@ -915,6 +923,42 @@ QUERY;
 		$diff = array_diff($expected, $pages);
 		$this->assertEquals(0, count($diff), "Expected to find the pages 'PageWithProtectedProperties' and 'NormalPage' with queries.");
 		
+	}
+	
+	
+    /**
+     * Data provider for testGetRecordValues
+     */
+    function providerForGetRecordValues() {
+    	return array(
+    		// Article name, property, index of property value, expected
+    		array("Property:PropWithDomainAndRange", "Has domain and range", 0, "Category:Person"),
+    		array("Property:PropWithDomainAndRange", "Has domain and range", 1, "Category:Dog"),
+    	);
+    }
+	
+	/**
+	 * Test if all values of a record are retrieved correctly.
+	 * @dataProvider providerForGetRecordValues
+	 */
+	public function testGetRecordValues($name, $property, $index, $expected) {
+		$store = smwfGetStore();
+		$subject = Title::newFromText($name);
+		$values = $store->getPropertyValues($subject,
+											SMWPropertyValue::makeUserProperty($property));
+		if (is_array($values)) {
+			$idx = array_keys($values);
+			$idx = $idx[0];
+			if($values[$idx] instanceof SMWRecordValue){
+				$dVs = $values[$idx]->getDVs();
+				if(count($dVs) >= $index+1){
+					$idx = array_keys($dVs);
+					$idx = $idx[$index];
+					$result = $dVs[$idx]->getShortWikiText();
+					$this->assertEquals($expected, $result);
+				}
+			}
+		}
 	}
 	
 	/**
