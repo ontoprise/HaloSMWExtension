@@ -21,7 +21,7 @@ function smwf_qi_getPageMimeType($func, & $mimeType) {
    return true;
 }
 
-function smwf_qi_QIAccess($method, $params) {
+function smwf_qi_QIAccess($method, $params, $currentPage= null) {
 	$p_array = explode(",", $params);
 	global $smwgQEnabled;
 
@@ -68,6 +68,11 @@ function smwf_qi_QIAccess($method, $params) {
             
             // fix bug 10812: if query string contains a ,
             $p_array[0] = str_replace('%2C', ',', $p_array[0]);
+
+            // fix bug 14308
+            if (!empty($currentPage)) {
+                $p_array[0] = parseQuery($p_array[0], $currentPage);
+            }
 
             // read query with printouts and (possibly) other parameters like sort, order, limit, etc...
             $pos = strpos($p_array[0], "|?");
@@ -371,25 +376,56 @@ function smwf_qi_QIAccess($method, $params) {
 /**
  * function content copied from SMWResultPrinter::getResult(). Using the constant
  * SMW_OUTPUT_HTML doesn't always work. Details see bug #10494
+ * For bugfix 14308 parse also the query sting so that during query execution
+ * expressions like {{FULLPAGENAME}} work.
  * 
  * @param string  wikitext
+ * @param string  page name (optional)
  * @return string html
  */
-function parseWikiText($text) {
+function parseWikiText($text, $title = null) {
 	global $wgParser;
             
-   	if ( ($wgParser->getTitle() instanceof Title) && ($wgParser->getOptions() instanceof ParserOptions) ) {
+   	if ( !$title && ($wgParser->getTitle() instanceof Title) && ($wgParser->getOptions() instanceof ParserOptions) ) {
 		$result = $wgParser->recursiveTagParse($text);
 	} else {
-		global $wgTitle;
+        if (!$title) {
+            global $wgTitle;
+            $title = $wgTitle;
+        }
+        else {
+            $title = Title::newFromText($title);
+        }
 		$popt = new ParserOptions();
 		$popt->setEditSection(false);
-		$pout = $wgParser->parse($text . '__NOTOC__', $wgTitle, $popt);
+		$pout = $wgParser->parse($text . '__NOTOC__', $title, $popt);
 		/// NOTE: as of MW 1.14SVN, there is apparently no better way to hide the TOC
 		SMWOutputs::requireFromParserOutput($pout);
 		$result = $pout->getText();
 	}
     return $result;           
+}
+
+/**
+ * Gets a querystring like [[Category:User]][[Is project member of::{{FULLPAGENAME}}]]
+ * and replaces the magic word with the applicable for the current page.
+ *
+ * @param string query text
+ * @param string page name
+ * @return string query text
+ */
+function parseQuery($query, $page) {
+    $query = str_replace('[', '%%%BrOpen%%%', $query);
+    $query = str_replace(']', '%%%BrClose%%%', $query);
+    $query = str_replace('|', '%%%Pipe%%%', $query);
+    $query = parseWikiText( $query, $page );
+    $query = str_replace('%%%BrOpen%%%', '[', $query);
+    $query = str_replace('%%%BrClose%%%', ']', $query);
+    $query = str_replace('%%%Pipe%%%','|', $query);
+    $query = strip_tags($query);
+    $query = str_replace('&amp;', '&', $query);
+    $query = str_replace('&nbsp;', ' ', $query);
+    return $query;
 }
 
 /**
