@@ -22,7 +22,7 @@
 		<!-- TODO: add all others -->
 	</codefiles>
 	<wikidumps>
-		<!-- empty -->
+		<file loc="treeview_sandbox.xml" />
 	</wikidumps>
 	<resources>
 		<!-- empty -->

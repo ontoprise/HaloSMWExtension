@@ -1,0 +1,590 @@
+<mediawiki xmlns="http://www.mediawiki.org/halowikiexport/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.ontoprise.de/halowikiexport-1.0.xsd" version="1.0" xml:lang="en">
+  <siteinfo>
+    <sitename>Contentwiki</sitename>
+    <base>http://localhost/index.php/Main_Page</base>
+    <generator>MediaWiki 1.16.1</generator>
+    <case>first-letter</case>
+    <namespaces>
+      <namespace key="-2" case="first-letter">Media</namespace>
+      <namespace key="-1" case="first-letter">Special</namespace>
+      <namespace key="0" case="first-letter" />
+      <namespace key="1" case="first-letter">Talk</namespace>
+      <namespace key="2" case="first-letter">User</namespace>
+      <namespace key="3" case="first-letter">User talk</namespace>
+      <namespace key="4" case="first-letter">Contentwiki</namespace>
+      <namespace key="5" case="first-letter">Contentwiki talk</namespace>
+      <namespace key="6" case="first-letter">File</namespace>
+      <namespace key="7" case="first-letter">File talk</namespace>
+      <namespace key="8" case="first-letter">MediaWiki</namespace>
+      <namespace key="9" case="first-letter">MediaWiki talk</namespace>
+      <namespace key="10" case="first-letter">Template</namespace>
+      <namespace key="11" case="first-letter">Template talk</namespace>
+      <namespace key="12" case="first-letter">Help</namespace>
+      <namespace key="13" case="first-letter">Help talk</namespace>
+      <namespace key="14" case="first-letter">Category</namespace>
+      <namespace key="15" case="first-letter">Category talk</namespace>
+      <namespace key="102" case="first-letter">Property</namespace>
+      <namespace key="103" case="first-letter">Property talk</namespace>
+      <namespace key="104" case="first-letter">Type</namespace>
+      <namespace key="105" case="first-letter">Type talk</namespace>
+      <namespace key="106" case="first-letter">Form</namespace>
+      <namespace key="107" case="first-letter">Form talk</namespace>
+      <namespace key="108" case="first-letter">Concept</namespace>
+      <namespace key="109" case="first-letter">Concept talk</namespace>
+      <namespace key="120" case="first-letter">Document</namespace>
+      <namespace key="121" case="first-letter">Document talk</namespace>
+      <namespace key="122" case="first-letter">Audio</namespace>
+      <namespace key="123" case="first-letter">Audio talk</namespace>
+      <namespace key="124" case="first-letter">Video</namespace>
+      <namespace key="125" case="first-letter">Video talk</namespace>
+      <namespace key="126" case="first-letter">Pdf</namespace>
+      <namespace key="127" case="first-letter">Pdf talk</namespace>
+      <namespace key="128" case="first-letter">ICalendar</namespace>
+      <namespace key="129" case="first-letter">ICalendar talk</namespace>
+      <namespace key="130" case="first-letter">VCard</namespace>
+      <namespace key="131" case="first-letter">VCard talk</namespace>
+      <namespace key="200" case="first-letter">WebService</namespace>
+      <namespace key="201" case="first-letter">WebService talk</namespace>
+      <namespace key="202" case="first-letter">TermImport</namespace>
+      <namespace key="203" case="first-letter">TermImport talk</namespace>
+      <namespace key="220" case="first-letter">E-mail</namespace>
+      <namespace key="221" case="first-letter">E-mail talk</namespace>
+      <namespace key="300" case="first-letter">ACL</namespace>
+      <namespace key="301" case="first-letter">ACL talk</namespace>
+      <namespace key="400" case="first-letter">IAI</namespace>
+      <namespace key="401" case="first-letter">IAI talk</namespace>
+      <namespace key="700" case="first-letter">Comment</namespace>
+      <namespace key="701" case="first-letter">Comment talk</namespace>
+      <namespace key="702" case="first-letter">UserManual</namespace>
+      <namespace key="703" case="first-letter">UserManual talk</namespace>
+    </namespaces>
+  </siteinfo>
+  <page>
+    <title>MediaWiki:NavTree</title>
+    <id>258</id>
+    <revision>
+      <id>908</id>
+      <timestamp>2011-04-14T12:51:34Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">{{#tree:id=test|root=Tree|
+*This is examplaric content of the tree view
+**Read here how to adjust it to your needs: [http://smwforum.ontoprise.com/smwforum/index.php/Help:TreeView_Extension]
+*You can adjust the contents of this tree in this article:
+** [[MediaWiki:NavTree]]
+}}&lt;div style=&quot;display:none;&quot;&gt;
+{{Part of bundle|value=Treeview}}
+{{Content hash|value=4ac5ed548030cb74b9c0a8ddac2e3250}}
+[[Rationale::You must populate this article in order display a tree view in the ontoskin3.| ]]&lt;/div&gt;</text>
+    <hash>b0ab38fbf4d926f27cb46d2243eabafe</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Treeview</title>
+    <id>488</id>
+    <revision>
+      <id>939</id>
+      <timestamp>2011-04-14T13:55:58Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">{{Content bundle
+|rationale=This content bundle includes basic elements which are required for the TreeView extension.
+}}
+;Copyright: [[Vendor::Ontoprise]]
+;License: [[License::GPL v2]] 
+;Version: [[Ontology version::143]]
+;Requires: 
+* [[Dependency::Smwplus; 153; 153]]
+;Installation directory: [[Installation dir::extensions/Treeview]]
+
+;This content bundle is useful if you want to use the TreeView extension.
+
+;How to use it
+Simply add a call like the following into your article to get a tree view:
+
+&lt;pre&gt;&lt;nowiki&gt;{{#tree:
+* node 1
+** node 2}}&lt;/nowiki&gt;&lt;/pre&gt;
+
+;Sandbox
+We have created a small [[Treeview_Sandbox|Sandbox of the TreeView extension]] in this Wiki to give you a smooth start.
+
+;User manual
+More information about the TreeView extension and how to use it can be found in our [http://smwforum.ontoprise.com/smwforum/index.php/Help:TreeView_extension TreeView extension help article at SMWForum].
+
+;This bundle contains these articles
+:
+{{#ask:[[Part of bundle::{{FULLPAGENAME}}]]
+|?=Link
+|?Rationale
+|link=subject
+|default=''none''
+|mainlabel=-
+}}
+
+[[Category:Content bundle|Content_bundle]]
+{{Part of bundle|value=Treeview}} 
+{{Content hash|value=a5b59c7c93de4673e7a007ab705bdafa}}</text>
+    <hash>038767925f8883af238762fcfda4b9a0</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Category:Tree element</title>
+    <id>489</id>
+    <revision>
+      <id>899</id>
+      <timestamp>2011-04-14T12:17:39Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">{{Category
+|Category has icon=
+|Has default form=
+|No automatic formedit=
+|rationale=Use this category to tag elements of the tree.
+}}
+
+{{Part of bundle|value=Treeview}}
+{{Content hash|value=}}</text>
+    <hash>b197c7164b19dc456a21e088a98c65a0</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Points to tree element</title>
+    <id>490</id>
+    <revision>
+      <id>907</id>
+      <timestamp>2011-04-14T12:47:31Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">{{Property
+|rationale=If you want to display instances from your domain ontology in the tree view based on one or more properties, then simply make your properties a sub-property of this one.
+}}
+;Note:
+After you have assigned the sub-properties to this property, then you will need to refresh the instances in order to make them visible in the tree view.
+
+[[Has max cardinality::1]]
+[[Has min cardinality::1]]
+[[Has type::Type:Page]]
+[[Has domain and range::Category:Tree_element; Category:Tree element]]
+{{Part of bundle|value=Treeview}}
+{{Content hash|value=}}</text>
+    <hash>6a653e057515a4ad58eb6e7ea487e193</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Treeview Sandbox</title>
+    <id>494</id>
+    <revision>
+      <id>937</id>
+      <timestamp>2011-04-14T13:45:43Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">= Sandbox for the TreeView extension =
+
+;Building a static tree
+To obtain a tree which is composed of static elements which never change you
+use the wikitext syntax for bullet lists (i.e. &lt;nowiki&gt;*&lt;/nowiki&gt;).
+
+{{#tree:id=test|root=Tree|
+*This is examplaric content of the tree view
+**Read here how to adjust it to your needs: [http://smwforum.ontoprise.com/smwforum/index.php/Help:TreeView_Extension]
+*You can adjust the contents of this tree in this article:
+** [[MediaWiki:NavTree]]
+}}
+
+The above tree is generated by this wikitext:
+
+&lt;pre&gt;&lt;nowiki&gt;{{#tree:id=statictree|root=Static tree|
+*This is examplaric content of the tree view
+**Read here how to adjust it to your needs: [http://smwforum.ontoprise.com/smwforum/index.php/Help:TreeView_Extension]
+*You can adjust the contents of this tree in this article:
+** [[MediaWiki:NavTree]]
+}}&lt;/nowiki&gt;&lt;/pre&gt;
+
+;Generating a tree from the dynamic data in the Wiki
+You can instruct the tree view to automatically compose a tree from elements which are interconnected by a relation:
+
+{{#tree:id=dynamictree
+|root=Dynamic tree
+|
+{{#generateTree:property=Points to tree element
+|category=Tree element
+}}
+}}
+
+The above tree is generated by this wikitext:
+&lt;pre&gt;&lt;nowiki&gt;{{#tree:id=dynamictree|root=Dynamic tree|
+{{#generateTree:property=Points to tree element
+|category=Tree element}}
+}}&lt;/nowiki&gt;&lt;/pre&gt;
+
+;Placing the tree in the Wiki
+You can display trees in wiki articles. Or, if you use Ontoskin3 (the default skin of SMW+), then just copy and paste your tree view-wikitext into this article:
+ &lt;pre&gt;&lt;nowiki&gt;[[MediaWiki:NavTree]]&lt;/nowiki&gt;&lt;/pre&gt;
+Your tree will then open if you click on the arrow at the right hand side of the skin.
+
+;More information can be found here:
+* [http://smwforum.ontoprise.com/smwforum/index.php/Example/Semantic_tree_library Library of examples for the TreeView extension]
+* [http://smwforum.ontoprise.com/smwforum/index.php/Help:TreeView_Extension User manual of the TreeView extension]
+[[Rationale::A small Sandbox of the TreeView extension in this Wiki to give you a smooth start.| ]]
+
+&lt;noinclude&gt;
+{{Part of bundle|value=Treeview}}
+{{Content hash|value=}}
+&lt;/noinclude&gt;</text>
+    <hash>c118239f5032fe779a95709c9118dd1b</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Tree node 1</title>
+    <id>495</id>
+    <revision>
+      <id>925</id>
+      <timestamp>2011-04-14T13:29:28Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">This is an element of the tree view. It points to nowhere - it is the root of the tree!
+[[Category:Tree element]]
+{{Part of bundle|value=Treeview}}
+{{Content hash|value=}}</text>
+    <hash>fe3a8b77e33dfbfcabd3fd289a39a21d</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Tree node 2</title>
+    <id>496</id>
+    <revision>
+      <id>923</id>
+      <timestamp>2011-04-14T13:28:58Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">This is an element of the tree view. It points to [[Points to tree element::Tree node 1]].
+[[Category:Tree element]]
+{{Part of bundle|value=Treeview}}
+{{Content hash|value=}}</text>
+    <hash>7eb0281aa4f9827f78e7f0eb55b583c3</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Tree node 3</title>
+    <id>497</id>
+    <revision>
+      <id>922</id>
+      <timestamp>2011-04-14T13:28:38Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <comment>Created page with &quot;This is an element of the tree view. It points to [[Points to tree element::Tree node 2]].  [[Category:Tree element]] {{Part of bundle|value=Treeview}} {{Content hash|value=}}&quot;</comment>
+      <text xml:space="preserve">This is an element of the tree view. It points to [[Points to tree element::Tree node 2]].
+
+[[Category:Tree element]]
+{{Part of bundle|value=Treeview}}
+{{Content hash|value=}}</text>
+    <hash>92557e8e5a69d97d86d2d452ad45f16c</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Template:Category</title>
+    <id>53</id>
+    <revision>
+      <id>62</id>
+      <timestamp>2011-04-07T14:50:35Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">&lt;noinclude&gt;{{Template
+|rationale=You should use this template to provide your wiki-community with a proper documentation of the categories used in the wiki.
+}}
+&lt;/noinclude&gt;&lt;includeonly&gt;{{Headline wiki parts}}
+__NOTOC__ 
+__NORICHEDITOR__
+__NOEDITSECTION__
+=== Information about this category ===
+;Icon
+Instances of this category are visualised with the following icon:
+* [[Property:Category has icon]]: '''[[Category has icon::{{{Category has icon|}}}]]'''
+;Default form
+{{#ifeq:{{FULLPAGENAME}}|Category:Category&lt;!--
+ --&gt;|Categories can be edited with the following form:
+* [[Property:Page has default form]]: '''[[Page has default form::{{{Has default form|}}}]]'''&lt;!--
+ --&gt;|Instances of this category can be edited with the following form:
+* [[Property:Has default form]]: '''[[Has default form::{{{Has default form|}}}]]''' 
+This page can be editied with the following form:
+* [[Property:Page has default form]]: '''[[Page has default form::{{#show:Category:Category|?Page has default form=|link=none}}]]'''
+}}
+Note: [[Property:Page has default form]] and [[Property:Has default form]] take only effect if the extension &quot;Semantic Forms&quot; is installed ({{#ifexist: Special:FormEdit|Semantic Forms is installed in this Wiki.|Semantic Forms is not installed in this Wiki.}}).
+;Automatic form
+Instances of this category can be edited with an automatic form:
+{{#ifeq:{{{No automatic formedit|}}}|Yes&lt;!--
+      --&gt;|* [[Property:No automatic formedit]]: '''[[No automatic formedit::true]]'''&lt;!--
+      --&gt;|* [[Property:No automatic formedit]]: '''[[No automatic formedit::false]]'''
+}}
+Note: [[Property:No automatic formedit]] takes only effect if the extension &quot;Automatic Semantic Forms&quot; is installed ({{#ifeq:{{#isExtensionInstalled:automaticsemanticforms}}|true|Automatic Semantic Forms is installed in this Wiki.|Automatic Semantic Forms is not installed in this Wiki.}}).
+;Templates
+This category is used in the following templates (based on [[Property:Defines category]]):
+{{#ask:[[Category:Template]][[Defines category::{{FULLPAGENAME}}]]|format=ul|default=* none}}&lt;!--
+
+--&gt;
+{{#ifeq:{{FULLPAGENAME}}|Category:Category|[[Category:Wiki part| ]]|}}[[Rationale::{{{rationale|}}}| ]]
+&lt;/includeonly&gt;&lt;noinclude&gt;
+{{Part of bundle|value=Smwplus}}
+{{Content hash|value=3c8de63b63a331512f7afc6636238b2a}}
+&lt;/noinclude&gt;</text>
+    <hash>b2cbcddd0dd9cf3302a2b2b8caba7cf0</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Template:!</title>
+    <id>55</id>
+    <revision>
+      <id>64</id>
+      <timestamp>2011-04-07T14:46:16Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">&lt;noinclude&gt;{{Template
+|rationale=Help template to print out the pipesymbol.
+}}
+&lt;/noinclude&gt;&lt;includeonly&gt;|&lt;/includeonly&gt;&lt;noinclude&gt;
+{{Part of bundle|value=Smwplus}}
+{{Content hash|value=7b2a47de07aeb175f7a898bf5c40164a}}
+&lt;/noinclude&gt;</text>
+    <hash>d4bfd973995140bab008c4b3864d6107</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Template:Property</title>
+    <id>56</id>
+    <revision>
+      <id>65</id>
+      <timestamp>2011-04-07T15:04:20Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">&lt;noinclude&gt;{{Template
+|rationale=Displays a property and some essential metadata. 
+
+Note: this template does not include the annotation Category:Property!
+|defines category=
+}}
+&lt;/noinclude&gt;&lt;includeonly&gt;{{Headline wiki parts}}
+__NOTOC__ 
+[[Rationale::{{{rationale|}}}| ]]
+&lt;/includeonly&gt;&lt;noinclude&gt;
+{{Part of bundle|value=Smwplus}}
+{{Content hash
+|value=b86adb63c24c2bd1295bb2d2af24a593
+}}
+&lt;/noinclude&gt;</text>
+    <hash>3e57a6c3d40a27aea442838ac8b5b6ae</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Template:Content bundle</title>
+    <id>170</id>
+    <revision>
+      <id>179</id>
+      <timestamp>2011-04-07T14:44:48Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">&lt;noinclude&gt;{{Template
+|rationale=Content bundle template
+|defines category=Category:Content bundle
+}}
+&lt;/noinclude&gt;&lt;includeonly&gt;{{Headline wiki parts}}
+
+&lt;!-- &lt;nowiki&gt;
+{{Header for wiki parts
+|Category=Content bundle
+|Pagetitle={{PAGENAME}}
+|Icon=File:Smw_plus_contentsection_icon_100x100.gif
+|Short description={{#ifeq:{{{rationale|}}}|||[[Rationale::{{{rationale|}}}]]}}
+|author={{#ifeq:{{{Vendor|}}}|||[[Vendor::{{{Vendor|}}}]]}}
+|Wiki section={{#ifeq:{{{part of|}}}|||[[part of bundle::{{{part of|}}}]]}}
+|Version={{#ifeq:{{{Version|}}}|||[[Ontology version::{{{Version|}}}]]}}
+|Installation dir={{#ifeq:{{{Installation|}}}|||[[Installation dir::{{{Installation|}}}]]}}
+|Dependency={{#ifeq:{{{Dependency|}}}|||{{#arraymap:{{{Dependency|}}}|,|x|[[Dependency::x]]|,}}}}
+}} &lt;/nowiki&gt; --&gt;
+__NOTOC__ [[Rationale::{{{rationale|}}}| ]][[Category:Content bundle]]&lt;/includeonly&gt;&lt;noinclude&gt;
+{{Part of bundle|value=Smwplus}}
+{{Content hash|value=6f431fa593d3c7eb517575d016fbf221}}
+&lt;/noinclude&gt;</text>
+    <hash>a499020a882051e309d2d2dea16101f4</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Template:Part of bundle</title>
+    <id>247</id>
+    <revision>
+      <id>256</id>
+      <timestamp>2010-12-21T14:25:58Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">[[Part of bundle::{{{value|}}}| ]]</text>
+    <hash>5cf85fbe02e47a89b26e95572ab39d8c</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Template:Content hash</title>
+    <id>248</id>
+    <revision>
+      <id>257</id>
+      <timestamp>2010-12-21T14:25:49Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">[[Content hash::{{{value|}}}| ]]</text>
+    <hash>f8c8036d815ebfdd0e3685d245faac6f</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Template:Headline wiki parts</title>
+    <id>275</id>
+    <revision>
+      <id>287</id>
+      <timestamp>2011-04-07T14:58:28Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">&lt;noinclude&gt;{{Template
+|rationale=This template is used to display a nice header for all wiki parts, i.e. forms, templates etc
+}}
+&lt;/noinclude&gt;&lt;includeonly&gt;&lt;!--
+--&gt;&lt;div class=&quot;round&quot; style=&quot;padding-bottom: 2px; padding-left: 2px; padding-right: 2px; padding-top: 5px; font-family: tahoma, sans-serif; font-size: 120%; color: rgb(255,255,255); background-color: #999999; margin-bottom: 5px;&quot;&gt;&lt;!-- --&gt;
+{{{!}} width=&quot;100%&quot; cellspacing=&quot;1&quot; cellpadding=&quot;1&quot; border=&quot;0&quot; align=&quot;center&quot;
+{{!}}- 
+{{!}} &lt;div style=&quot;padding: 2px; font-family: tahoma,sans-serif; color: rgb(250, 250, 250); margin-bottom: 2px;font-size: 120%;&quot; class=&quot;round&quot;&gt;
+{{{!}} width=&quot;100%&quot; cellspacing=&quot;1&quot; cellpadding=&quot;1&quot; border=&quot;0&quot; align=&quot;center&quot;
+{{!}}-
+{{!}} width=&quot;10%&quot; valign=&quot;left&quot; align=&quot;center&quot; rowspan=&quot;2&quot; {{!}}&lt;!--
+--&gt;{{#ifeq:{{{Icon|}}}|&lt;!--
+  --&gt;|&lt;!--
+  --&gt;{{#ifeq:{{NAMESPACE}}|Category&lt;!--
+    --&gt;|{{#show:Category:Category|?Category has icon|default=}}&lt;!--
+    --&gt;|&lt;!--
+
+        --&gt;{{#ifeq:{{#ask:[[{{FULLPAGENAME}}]]|?Category=|default=|link=none|limit=1}}|&lt;!--
+           --&gt;|&lt;!--
+           --&gt;|{{#show:Category:{{#ask:[[{{FULLPAGENAME}}]]|?Category=|default=|link=none|limit=1}}|?Category has icon|default=}}&lt;!--
+        --&gt;}}&lt;!--
+  --&gt;}}&lt;!--
+  --&gt;|&lt;!--
+  --&gt;[[{{{Icon|}}}|40px]]&lt;!--
+--&gt;}}
+{{!}} &lt;big&gt;''' {{NAMESPACE}} ''{{PAGENAME}}'' '''&lt;/big&gt;
+{{!}}-
+{{!}} align=&quot;right&quot; {{!}}&lt;small&gt;last modified by {{#show:{{FULLPAGENAME}}|?Last modified by}} ({{#show:{{FULLPAGENAME}}|?Modification date}})&lt;/small&gt;
+{{!}}}&lt;/div&gt;
+{{!}}}&lt;/div&gt;&lt;/includeonly&gt;&lt;noinclude&gt;&lt;!--
+--&gt;{{Part of bundle|value=Smwplus}}&lt;!--
+--&gt;{{Content hash|value=3a0f9a47bbd2dbb0ca0c84fb62b75b5f}}&lt;!--
+--&gt;&lt;/noinclude&gt;</text>
+    <hash>0210687d422754adc0f4bb00da08067c</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Tree node 1</title>
+    <id>495</id>
+    <revision>
+      <id>925</id>
+      <timestamp>2011-04-14T13:29:28Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">This is an element of the tree view. It points to nowhere - it is the root of the tree!
+[[Category:Tree element]]
+{{Part of bundle|value=Treeview}}
+{{Content hash|value=}}</text>
+    <hash>fe3a8b77e33dfbfcabd3fd289a39a21d</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Tree node 2</title>
+    <id>496</id>
+    <revision>
+      <id>923</id>
+      <timestamp>2011-04-14T13:28:58Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">This is an element of the tree view. It points to [[Points to tree element::Tree node 1]].
+[[Category:Tree element]]
+{{Part of bundle|value=Treeview}}
+{{Content hash|value=}}</text>
+    <hash>7eb0281aa4f9827f78e7f0eb55b583c3</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Tree node 3</title>
+    <id>497</id>
+    <revision>
+      <id>922</id>
+      <timestamp>2011-04-14T13:28:38Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <comment>Created page with &quot;This is an element of the tree view. It points to [[Points to tree element::Tree node 2]].  [[Category:Tree element]] {{Part of bundle|value=Treeview}} {{Content hash|value=}}&quot;</comment>
+      <text xml:space="preserve">This is an element of the tree view. It points to [[Points to tree element::Tree node 2]].
+
+[[Category:Tree element]]
+{{Part of bundle|value=Treeview}}
+{{Content hash|value=}}</text>
+    <hash>92557e8e5a69d97d86d2d452ad45f16c</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Template:Part of bundle</title>
+    <id>247</id>
+    <revision>
+      <id>256</id>
+      <timestamp>2010-12-21T14:25:58Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">[[Part of bundle::{{{value|}}}| ]]</text>
+    <hash>5cf85fbe02e47a89b26e95572ab39d8c</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Template:Content hash</title>
+    <id>248</id>
+    <revision>
+      <id>257</id>
+      <timestamp>2010-12-21T14:25:49Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">[[Content hash::{{{value|}}}| ]]</text>
+    <hash>f8c8036d815ebfdd0e3685d245faac6f</hash>
+    </revision>
+  </page>
+</mediawiki>
