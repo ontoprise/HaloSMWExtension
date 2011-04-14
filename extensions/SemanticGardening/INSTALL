@@ -37,14 +37,25 @@ Installation:
 
 (2) Add to your LocalSettings.php after you initialized SMWHalo:
 
-	$phpInterpreter="<path to php executable>";
-	require_once("extensions/SemanticGardening/includes/SGA_GardeningInitialize.php");
+    //-----------
+    	$phpInterpreter="<path to php executable>";
+    	require_once("extensions/SemanticGardening/includes/SGA_GardeningInitialize.php");
+	//-----------
+	
+	Note: Please replace <path to php executable> by a path to the PHP executable.
+	
+	Example: 
+	   $phpInterpreter="/usr/bin/php";
+	   
+	  or
+	  
+	   $phpInterpreter="c:/Programme/php/php.exe";
 
 (3) Specify a temporary directory by setting $sgaTempDir to a directory
     where PHP has read/write access. If none is specified, 
     then c:\temp\wiki or /tmp/wiki is used on Windows respectively on Linux.
     
-(4) To specify the gardening privilege, add:
+(4) To specify the gardening privilege for sysops, add:
 
 	$wgGroupPermissions['sysop']['gardening'] = true;
 	
