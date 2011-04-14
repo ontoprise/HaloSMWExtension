@@ -95,7 +95,7 @@
 		</exec>
 	</target>
 
-	<target name="patches" depends="checkos">
+	<target name="patch_sf_only" depends="checkos">
 		<echo message="${patchtool}" />
 		<exec executable="php">
 			<arg value="../../../patches/patch.php" />
@@ -106,6 +106,9 @@
 			<arg value="--patchtool" />
 			<arg value="${patchtool}" />
 		</exec>
+    </target>
+	<target name="patches" depends="patch_sf_only">
+		<echo message="${patchtool}" />
 		<exec executable="php">
 			<arg value="../../../patches/patch.php" />
 			<arg value="-d" />
