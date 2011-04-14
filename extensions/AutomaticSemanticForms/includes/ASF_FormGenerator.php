@@ -256,7 +256,7 @@ class ASFFormGenerator {
 		
 		$outro .=  $this->handleCategoriesWithNoProperties($categoriesWithNoProperties);
 		
-		$outro .= "\n\n'''".wfMsg('asf_free_text')."'''\n\n";
+		$outro .= "'''".wfMsg('asf_free_text')."'''\n";
 		
 		global $wgUser;
 		$cols = $wgUser->getIntOption('cols');
@@ -288,7 +288,7 @@ class ASFFormGenerator {
 			}
 			$syntax .= '</ul>';
 			
-			$syntax .= "\n{{#collapsableFieldSetEnd:}}\n\n";
+			$syntax .= "\n{{#collapsableFieldSetEnd:}}";
 		}
 		
 		return $syntax;

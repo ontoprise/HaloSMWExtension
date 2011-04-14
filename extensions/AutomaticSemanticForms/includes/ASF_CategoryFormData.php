@@ -173,7 +173,7 @@ class ASFCategoryFormData {
 		
 		$outro = "\n|}";
 		
-		$outro .= "{{#collapsableFieldSetEnd:}}\n\n";
+		$outro .= "{{#collapsableFieldSetEnd:}}";
 		
 		$this->categorySectionOutro = $outro;
 		return $this->categorySectionOutro;
