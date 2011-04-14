@@ -14,6 +14,7 @@
 		<dependencies>
 			<dependency from="146">smwhalo</dependency>
             <dependency from="101">scriptmanager</dependency>
+            <dependency from="153" to="153" optional="true">smwplus</dependency>
 		</dependencies>
 	</global>
 	<codefiles>
