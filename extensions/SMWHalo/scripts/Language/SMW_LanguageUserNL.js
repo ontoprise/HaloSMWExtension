@@ -207,6 +207,7 @@ var wgUserLanguageStrings = {
 	'OB_DELETE'	  			  : 'Verwijderen',
 	'OB_PREVIEW' 			  : 'Preview',
 	'OB_TITLE_EXISTS'		  : 'Titel bestaat!',
+	'OB_TITLE_NOTEXISTS'		  : 'Title does not exist!',
 	'OB_ENTER_TITLE'		  : 'Titel ingeven',
 	'OB_SELECT_CATEGORY'	  : 'Selecteer eerst de categorie',
 	'OB_SELECT_PROPERTY'	  : 'Selecteer eerst de eigenschap',

@@ -202,6 +202,7 @@ var wgUserLanguageStrings = {
 	'OB_DELETE'	  			  : 'Löschen',
 	'OB_PREVIEW' 			  : 'Preview',
 	'OB_TITLE_EXISTS'		  : 'Seite existiert bereits',
+	'OB_TITLE_NOTEXISTS'		  : 'Seite existiert noch nicht!',
 	'OB_ENTER_TITLE'		  : 'Seitennamen eingeben',
 	'OB_SELECT_CATEGORY'	  : 'Erst Kategorie auswählen',
 	'OB_SELECT_PROPERTY'	  : 'Erst Property auswählen',

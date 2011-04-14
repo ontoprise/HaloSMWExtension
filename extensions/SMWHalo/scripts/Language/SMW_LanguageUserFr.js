@@ -204,6 +204,7 @@ var wgUserLanguageStrings = {
     'OB_DELETE'               : 'Supprimer',
     'OB_PREVIEW'              : 'Aperçu',
     'OB_TITLE_EXISTS'         : 'Le titre existe!',
+    'OB_TITLE_NOTEXISTS'		  : 'Title n\'existe pas!',
     'OB_ENTER_TITLE'          : 'Saisir le titre',
     'OB_SELECT_CATEGORY'      : 'Sélectionner la catégorie en premier',
     'OB_SELECT_PROPERTY'      : 'Sélectionner la propriété en premier',

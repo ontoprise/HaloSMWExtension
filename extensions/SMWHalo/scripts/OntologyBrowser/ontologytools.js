@@ -1339,6 +1339,8 @@ OBInputTitleValidator.prototype = Object.extend(new OBInputFieldValidator(), {
 		this.ns = ns;
 		this.mustExist = mustExist;
 		this.pendingElement = new OBPendingIndicator();
+		this.hintDIV = document.createElement("div");
+		$(id).parentNode.appendChild(this.hintDIV);
 	},
 
 	/**
@@ -1352,8 +1354,9 @@ OBInputTitleValidator.prototype = Object.extend(new OBInputFieldValidator(), {
 			var answer = request.responseText;
 			var regex = /(true|false)/;
 			var parts = answer.match(regex);
-
-			// check if title got empty in the meantime
+	
+			this.hintDIV.innerHTML = "";
+	// check if title got empty in the meantime
 	if ($F(id) == '') {
 		this.control.enable(false, id);
 		return;
@@ -1367,11 +1370,16 @@ OBInputTitleValidator.prototype = Object.extend(new OBInputFieldValidator(), {
 		// article exists -> MUST NOT exist
 		this.isValid = this.mustExist;
 		this.control.enable(this.mustExist, id);
+		if (!this.isValid) {
+			this.hintDIV.innerHTML = gLanguage.getMessage('OB_TITLE_EXISTS');
+		}
 		return;
 	} else {
 		this.isValid = !this.mustExist;
 		this.control.enable(!this.mustExist, id);
-
+		if (!this.isValid) {
+			this.hintDIV.innerHTML = gLanguage.getMessage('OB_TITLE_NOTEXISTS');
+		}
 	}
 }
 ;
@@ -2420,10 +2428,15 @@ OBSchemaPropertySubMenu.prototype = Object
 						var valid = this.titleInputValidator.isValid
 								&& this.maxCardValidator.isValid
 								&& this.minCardValidator.isValid;
-						this.rangeValidators.each(function(e) {
+						
+						// FIX 14347. 
+						// Ignore validators for range categories
+						// instead show a hint
+						
+						/*this.rangeValidators.each(function(e) {
 							if (e != null)
 								valid &= e.isValid
-						});
+						});*/
 						return valid;
 					},
 
