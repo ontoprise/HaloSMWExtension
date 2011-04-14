@@ -43,7 +43,7 @@ the authors.
  * PHP 5.2 or PHP 5.3
  * MediaWiki 1.16.x (see installation guide)
  * ScriptManager 1.0 (see installation guide)
- * Semantic MediaWiki 1.5.2 (Please make reference to the installation instructions)
+ * Semantic MediaWiki 1.5.2 (see installation section in SemanticMediaWiki/INSTALL)
  * ARC Library 1.0 (see installation guide)
  * Web browser (for clients, recommended Firefox 3.x or Internet Explorer 8. There might be glitches with other browsers)
 
@@ -51,7 +51,7 @@ the authors.
 
  * PHP 5.2.x or PHP 5.3.x
  * MediaWiki 1.16.x (see installation guide)
- * Semantic MediaWiki 1.5.2 (Please make reference to the installation instructions)
+ * Semantic MediaWiki 1.5.2 (see installation section in SemanticMediaWiki/INSTALL)
  * Web browser (for clients, recommended Firefox 3.x or Internet Explorer 8. There might be glitches with other browsers)
 
 == Installation ==
@@ -70,12 +70,9 @@ SMW+, also read the remarks in the section "Notes on Upgrading" below.
 (2) Download and install the ARCLibrary extension into your Mediawiki
     installation. In case you have the bundled version you can skip this step.
 
-(3) Extract the ZIP archive to the directory
-    <mw-dir>\htdocs\mediawiki\extensions\
+(3) Extract the ZIP archive to the root directory of MediaWiki.
 
-	Note: 	Replace <mw-dir> with the path to the root directory of MediaWiki.
-
-(4) Edit the configuration file <mw-dir>\htdocs\mediawiki\LocalSettings.php
+(4) Edit the configuration file <mw-dir>\LocalSettings.php
 
 (5)	Add the following code in a place before any other extension is loaded. This
     initializes the ScriptManager and the ARCLibrary extension first, so that
@@ -96,7 +93,7 @@ SMW+, also read the remarks in the section "Notes on Upgrading" below.
 (8) Open a command-line interface
 
 (9) Navigate to the directory
-     <mw-dir>\extensions\SemanticMediaWiki\maintenance\
+     <mw-dir>\extensions\SMWHalo\maintenance\
 
 (10) Run the script SMW_setup.php to initialize the database tables
 
