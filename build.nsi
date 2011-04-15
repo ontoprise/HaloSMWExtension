@@ -19,6 +19,7 @@
 !include "FileFunc.nsh"
 !include "TextFunc.nsh"
 !include "EnvVarUpdate.nsh"
+!include "WinMessages.nsh"
 !insertmacro ConfigWrite
 !insertmacro GetFileName
 
@@ -375,10 +376,10 @@ Section "SMW+ Setup" smwplussetup
   ${ConfigWrite} "$MEDIAWIKIDIR\deployment\tools\smwadmin.bat" "SET PHP=" '"$INSTDIR\php\php.exe"' $R0
 
   DetailPrint "Install bundles into wiki"
-  nsExec::ExecToLog '"$PHP" "$MEDIAWIKIDIR\deployment\tools\smwadmin\smwadmin.php" -f -i Smwplus.zip'
-  nsExec::ExecToLog '"$PHP" "$MEDIAWIKIDIR\deployment\tools\smwadmin\smwadmin.php" -f --finalize'
-  nsExec::ExecToLog '"$PHP" "$MEDIAWIKIDIR\deployment\tools\smwadmin\smwadmin.php" -f -i Smwplussandbox.zip'
-  nsExec::ExecToLog '"$PHP" "$MEDIAWIKIDIR\deployment\tools\smwadmin\smwadmin.php" -f --finalize'
+  nsExec::ExecToLog '"$PHP" "$MEDIAWIKIDIR\deployment\tools\smwadmin\smwadmin.php" --nocheck -f -i Smwplus.zip'
+  nsExec::ExecToLog '"$PHP" "$MEDIAWIKIDIR\deployment\tools\smwadmin\smwadmin.php" --nocheck -f --finalize'
+  nsExec::ExecToLog '"$PHP" "$MEDIAWIKIDIR\deployment\tools\smwadmin\smwadmin.php" --nocheck -f -i Smwplussandbox.zip'
+  nsExec::ExecToLog '"$PHP" "$MEDIAWIKIDIR\deployment\tools\smwadmin\smwadmin.php" --nocheck -f --finalize'
 
 SectionEnd
 
@@ -1180,6 +1181,10 @@ Section "Uninstall"
     DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT} ${VERSION}"
 
     nsExec::ExecToLog '"$INSTDIR\xampp_stop.bat"'
+    Push "${PRODUCT} ${VERSION} Start Lucene"
+    Call un.CloseProgram
+    Push "${PRODUCT} ${VERSION} Start Solr"
+    Call un.CloseProgram
 
     Delete "$INSTDIR\*"
    
@@ -1646,3 +1651,17 @@ Function GetWindowsVersion
  
 FunctionEnd
  
+Function un.CloseProgram
+  Exch $1
+  Push $0
+  loop:
+    FindWindow $0 $1
+    IntCmp $0 0 done
+      #SendMessage $0 ${WM_DESTROY} 0 0
+      SendMessage $0 ${WM_CLOSE} 0 0
+    Sleep 100
+    Goto loop
+  done:
+  Pop $0
+  Pop $1
+FunctionEnd
