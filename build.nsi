@@ -336,6 +336,7 @@ Section "${PRODUCT} ${VERSION} core" smwplus
             File /oname=deployment\tools\Smwplussandbox.zip Smwplussandbox.zip
             File /oname=deployment\tools\patch.exe deployment\tools\patch.exe
             File /oname=deployment\tools\unzip.exe deployment\tools\unzip.exe
+            File /oname=deployment\tools\maintenance\export\7za.exe deployment\tools\maintenance\export\7za.exe
             CopyFiles $INSTDIR\htdocs\mediawiki\patches\patch.php $INSTDIR\htdocs\mediawiki\deployment\tools
             !ifndef COMMUNITY_EDITION
                 File /oname=extensions\RichMedia\bin\xpdf\pdftotext.exe extensions\RichMedia\bin\xpdf\pdftotext.exe
