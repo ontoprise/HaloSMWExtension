@@ -64,7 +64,7 @@ Installation of the SOLR server for Faceted Search
 The Apache Solr indexer is needed for the special page Special:FacetedSearch.
 
 You can download a preconfigured ZIP with Apache Solr from sourceforge:
-TODO: Add sourceforge link
+http://sourceforge.net/projects/halo-extension/files/SMWHalo 1.5.3/SOLR/Solr-server.zip
 
 1. Extract the ZIP to any directory of your choice (which we will call {solr-path}).
 2. Enter your database credentials
