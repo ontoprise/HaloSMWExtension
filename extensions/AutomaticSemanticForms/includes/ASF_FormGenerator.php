@@ -24,8 +24,8 @@ define('ASF_PROP_USE_DISPLAY_TEMPLATE', 'Use_display_template');
 define('ASF_PROP_NOT_DISJOINT_WITH', 'Not_disjoint_with');
 
 //define dtata type form input type relations
-define('TEXTDATATYPES', '-page- -string-');
-define('LONGTEXTDATATYPES', '-url- -email- -annotation uri- -telephone number-');
+define('TEXTDATATYPES', '-page- ');
+define('LONGTEXTDATATYPES', '-url- -email- -annotation uri- -telephone number- -string-');
 define('SHORTTEXTDATATYPES', '-number- -temperature-');
 define('TEXTAREADATATYPES', '-text- -ccode-');
 define('DATETIMEDATATYPES', '-date-');

@@ -101,7 +101,7 @@ class ASFPropertyFormData {
 			if($asfUseHaloAutocompletion){
 				if($inputType == 'text') $inputType = 'haloACtext';
 				if($inputType == 'textarea') $inputType = 'haloACtextarea';
-				$autocompletion = ' |constraints=ask: [[Category:'.$this->autocompletionRange.']]';
+				$autocompletion = ' |constraints=instance-property-range: '.$this->titleObject->getFullText();
 			} else {
 				$autocompletion = ' |autocomplete on category='.$this->autocompletionRange;
 			}
@@ -109,7 +109,7 @@ class ASFPropertyFormData {
 			if($asfUseHaloAutocompletion){
 				if($inputType == 'text') $inputType = 'haloACtext';
 				if($inputType == 'textarea') $inputType = 'haloACtextarea';
-				$autocompletion = ' |constraints=ask: [['.$this->titleObject->getText().'::+]] ,'.$this->titleObject->getText();
+				$autocompletion = ' |constraints=annotation-value: '.$this->titleObject->getFullText();
 			} else {
 				$autocompletion = ' |autocomplete';
 			}
@@ -124,7 +124,9 @@ class ASFPropertyFormData {
 		} else {
 			$autocompletion = '';
 		}
-			
+		
+		$autocompletion .= '|pasteNS=true';
+		
 			
 		$syntax .= ' |input type='.$inputType;
 		if($size) $syntax .= ' |size='.$size;

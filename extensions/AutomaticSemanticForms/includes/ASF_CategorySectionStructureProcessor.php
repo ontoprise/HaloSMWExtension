@@ -96,7 +96,7 @@ class ASFCategorySectionStructureProcessor {
 			}
 			
 			$categoryTree = ASFFormGeneratorUtils::getSuperCategories($categoryTitle, true);
-
+			
 			$this->fillCategorySectionStructureWithItems($category, $categoryTree[ucfirst($category)]);
 			
 			//echo('<pre>'.print_r($tree, true).'</pre>');
