@@ -811,7 +811,7 @@ class AutoCompletionHandler {
 					$property = Title::newFromText($params[0]);
 					if (!is_null($property)) {
 						$pages = $acStore->getValueForAnnotation($userInput, $property);
-						if (empty($pages)) {
+						if ($userInput == '') {
 							// if empty, show syntax samples
 							$pages = AutoCompletionRequester::getSyntaxSamples($property->getText());
 						}
