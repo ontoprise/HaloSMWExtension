@@ -540,7 +540,7 @@ Section "Solr" solr
         SetOutPath "$INSTDIR\solr\wiki"
         CreateDirectory "$SMPROGRAMS\$STARTMENU_FOLDER"
         CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\${PRODUCT} ${VERSION} Start Solr.lnk" "$INSTDIR\solr\wiki\startSolr.bat"
-        CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\${PRODUCT} ${VERSION} Start Solr Create Index.lnk" '"$INSTDIR\solr\wiki\createIndex.bat"'
+        CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\${PRODUCT} ${VERSION} Solr Create Index.lnk" '"$INSTDIR\solr\wiki\createIndex.bat"'
     ${EndIf}
 
     DetailPrint "set solr_ip to $IP"
