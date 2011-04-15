@@ -63,19 +63,21 @@ class ASFFormGeneratorUtils {
 	 * Get all supercategories of a given category
 	 */
 	public static function getSuperCategories($categoryTitle, $asTree = false, $superCategoryTitles = array()){
-		$directSuperCatgeoryTitles = smwfGetSemanticStore()->getDirectSuperCategories($categoryTitle);
+		$directSuperCatgeories = $categoryTitle->getParentCategories();
 		
 		if($asTree){
 			$superCategoryTitles[$categoryTitle->getText()] = array();
 		}
 		
-		foreach($directSuperCatgeoryTitles as $dSCT){
+		foreach($directSuperCatgeories as $category => $dC){
 			if($asTree){
 				$superCategoryTitles[$categoryTitle->getText()] = 
-					self::getSuperCategories($dSCT, $asTree, $superCategoryTitles[$categoryTitle->getText()]);
+					self::getSuperCategories(Title::newFromText($category), $asTree, $superCategoryTitles[$categoryTitle->getText()]);
 			} else {
-				$superCategoryTitles[$dSCT->getText()] = $dSCT;
-				$superCategoryTitles = self::getSuperCategories($dSCT, $asTree, $superCategoryTitles);
+				$superCategoryTitles[substr($category, strpos($category, ':') + 1)] =
+					Title::newFromText($category);
+				$superCategoryTitles = self::getSuperCategories(
+					Title::newFromText($category), $asTree, $superCategoryTitles);
 			}
 		}
 		
