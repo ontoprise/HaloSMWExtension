@@ -247,7 +247,7 @@ Section "XAMPP" xampp
     CreateDirectory "$SMPROGRAMS\$STARTMENU_FOLDER"
    
     CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Start ${PRODUCT}.lnk" "$INSTDIR\xampp_start.bat"
-    CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Stop ${PRODUCT}.lnk" "$INSTDIR\xampp_stop.bat"
+    CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Stop ${PRODUCT}.lnk" "$INSTDIR\xampp_stop.exe"
     
 SectionEnd
 
@@ -1188,7 +1188,7 @@ Section "Uninstall"
     DeleteRegKey HKCU "Software\Ontoprise\${PRODUCT} ${VERSION}"
     DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT} ${VERSION}"
 
-    nsExec::ExecToLog '"$INSTDIR\xampp_stop.bat"'
+    nsExec::ExecToLog '"$INSTDIR\xampp_stop.exe"'
     Push "${PRODUCT} ${VERSION} Start Lucene"
     Call un.CloseProgram
     Push "${PRODUCT} ${VERSION} Start Solr"
