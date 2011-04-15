@@ -1168,7 +1168,7 @@ Section "Uninstall"
     Delete "$SMPROGRAMS\$MUI_TEMP\${PRODUCT} ${VERSION} Start Lucene.lnk" 
     #Delete "$SMPROGRAMS\$MUI_TEMP\${PRODUCT} ${VERSION} Start Lucene Updater.lnk"
     Delete "$SMPROGRAMS\$MUI_TEMP\${PRODUCT} ${VERSION} Start Solr.lnk"
-    Delete "$SMPROGRAMS\$MUI_TEMP\${PRODUCT} ${VERSION} Start Solr Create Index.lnk"
+    Delete "$SMPROGRAMS\$MUI_TEMP\${PRODUCT} ${VERSION} Solr Create Index.lnk"
     Delete "$SMPROGRAMS\$MUI_TEMP\${PRODUCT} ${VERSION} Main Page.lnk"
     #Delete "$SMPROGRAMS\$MUI_TEMP\${PRODUCT} ${VERSION} Help.lnk"
     
