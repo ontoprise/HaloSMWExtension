@@ -544,7 +544,7 @@ Section "Solr" solr
     ${EndIf}
 
     DetailPrint "set solr_ip to $IP"
-    ${WriteToFile} "<?php$\r$\n\$$solrIP=\"$IP\";" "$MEDIAWIKIDIR\extensions\EnhancedRetrieval\SOLR\solr_ip.php"
+    ${WriteToFile} "<?php$\r$\n\$$solrIP='$IP';" "$MEDIAWIKIDIR\extensions\EnhancedRetrieval\SOLR\solr_ip.php"
     ;${ConfigWrite} "$MEDIAWIKIDIR\extensions\EnhancedRetrieval\SOLR\solr_ip.php" "<?php$\n\$$solrIP=" '"$IP";' $R0
     
     nsExec::ExecToLog '"$PHP" "$MEDIAWIKIDIR\installer\changeVariable.php" in=createIndex.bat out=createIndex.bat php-exe="$PHP"'
