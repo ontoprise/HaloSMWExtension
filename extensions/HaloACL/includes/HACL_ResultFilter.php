@@ -165,6 +165,7 @@ class  HACLResultFilter  {
 					if ($item instanceof SMWWikiPageValue) {
 						$t = $item->getTitle();
 						if ($isProperty) {
+							$allowed = true;
 							wfRunHooks('userCan', array(&$t, &$wgUser, "propertyread", &$allowed));
 							if (!$allowed) {
 								// The property is protected
