@@ -538,7 +538,8 @@ Section "Solr" solr
     ${EndIf}
 
     DetailPrint "set solr_ip to $IP"
-    ${ConfigWrite} "$MEDIAWIKIDIR\extensions\EnhancedRetrieval\SOLR\solr_ip.php" "<?php$\n\$$solrIP=" '"$IP";' $R0
+    ${WriteToFile} "<?php$\r$\n\$$solrIP=\"$IP\";" "$MEDIAWIKIDIR\extensions\EnhancedRetrieval\SOLR\solr_ip.php"
+    ;${ConfigWrite} "$MEDIAWIKIDIR\extensions\EnhancedRetrieval\SOLR\solr_ip.php" "<?php$\n\$$solrIP=" '"$IP";' $R0
     
     nsExec::ExecToLog '"$PHP" "$MEDIAWIKIDIR\installer\changeVariable.php" in=createIndex.bat out=createIndex.bat php-exe="$PHP"'
     nsExec::ExecToLog '"$PHP" "$MEDIAWIKIDIR\installer\changeVariable.php" in="\"$INSTDIR\htdocs\mediawiki\extensions\EnhancedRetrieval\SOLR\smwdb-data-config.xml\"" out="\"$INSTDIR\solr\wiki\solr\conf\smwdb-data-config.xml\"" wgDBname=semwiki_en wgDBserver=localhost wgDBport=3306 wgDBuser=root wgDBpassword=m8nix'
@@ -1665,3 +1666,24 @@ Function un.CloseProgram
   Pop $0
   Pop $1
 FunctionEnd
+
+Function WriteToFile
+ Exch $0 ;file to write to
+ Exch
+ Exch $1 ;text to write
+
+  FileOpen $0 $0 a #open file
+   FileSeek $0 0 END #go to end
+   FileWrite $0 $1 #write to file
+  FileClose $0
+
+ Pop $1
+ Pop $0
+FunctionEnd
+
+!macro WriteToFile String File
+ Push "${String}"
+ Push "${File}"
+  Call WriteToFile
+!macroend
+!define WriteToFile "!insertmacro WriteToFile"
