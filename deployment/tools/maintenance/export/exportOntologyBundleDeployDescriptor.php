@@ -131,14 +131,20 @@ function dumpDescriptor($bundeID, $output = "deploy.xml", $dumpFile = "dump.xml"
 	$xml .= "\t\t".'<dependencies>'."\n";
 	foreach($dependencies as $dep) {
 		$dvs = $dep->getDVs();
-		if (count($dvs) != 3) {
+		if (count($dvs) == 0) {
 		  print "\nWarning: Wrong dependency annotation. Ignore it.";
 		  continue;	
 		}
+		// id must be there
 		$id = Tools::getXSDValue(reset($dvs));
-		$minVersion = Tools::getXSDValue(next($dvs));
-		$maxVersion = Tools::getXSDValue(next($dvs));
-		$xml .= "\t\t\t".'<dependency from="'.$minVersion.'" to="'.$maxVersion.'">'.$id.'</dependency>'."\n";
+		
+		$minVersionValue = next($dvs);
+		$minVersion = $minVersionValue !== false ? 'from="'.Tools::getXSDValue($minVersionValue).'"' : "";
+		
+		$maxVersionValue = next($dvs);
+        $maxVersion = $maxVersionValue !== false ? 'to="'.Tools::getXSDValue($maxVersionValue).'"' : "";
+		
+		$xml .= "\t\t\t<dependency $minVersion $maxVersion>$id</dependency>\n";
 	}
 	$xml .= "\t".'</dependencies>'."\n";
 
