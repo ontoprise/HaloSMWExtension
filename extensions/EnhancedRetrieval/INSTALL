@@ -55,6 +55,41 @@ $wgUSPathSearch = true;
 
 This line must be inserted before the line with the require_once command. 
 
+------------------------------------------------------------------------------------------------------------
+
+
+Installation of the SOLR server for Faceted Search
+==================================================
+
+The Apache Solr indexer is needed for the special page Special:FacetedSearch.
+
+You can download a preconfigured ZIP with Apache Solr from sourceforge:
+TODO: Add sourceforge link
+
+1. Extract the ZIP to any directory of your choice (which we will call {solr-path}).
+2. Enter your database credentials
+2.1 Open {solr-path}/solr/wiki/solr/conf/smwdb-data-config.xml in an editor
+2.2 You will find this in line 5: url="jdbc:mysql://{{wgDBserver}}:{{wgDBport}}/{{wgDBname}}"
+2.3 Replace {{wgDBserver}} by the name of server that hosts you wiki database e.g. localhost
+2.4 Replace {{wgDBport}} by the port of the database e.g. 3306
+2.5 Replace {{wgDBname}} by the name of database e.g. semwiki_en
+3. Go to folder {solr-path}/solr/wiki and open a command line there.
+4. Run "startSolr.bat"
+5. Create the initial full index by running "php createIndex.php"
+6. Configure the SOLR access point in your wiki
+6.1 Open {wiki-path}/extensions/EnhancedRetrieval/includes/FacetedSearch/FS_Settings.php
+6.2 You will find a definition like this:
+	$fsgFacetedSearchConfig = array(
+	    'indexer' => 'SOLR',
+	    'source'  => 'SMWDB',
+	    'host'    => '127.0.0.1',
+	    'port'    => 8983
+	);
+	Replace the value of 'host' with the IP-address of your wiki server or its name
+	e.g.'myserver.mycompany.org'
+7. Test Faceted Search in your wiki. Open the page "Special:FacetedSearch"
+
+
 
 
 
