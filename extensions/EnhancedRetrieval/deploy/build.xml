@@ -43,6 +43,11 @@
 				<exclude name="**/.svn, **/CVS" />
 			</fileset>
 		</copy>
+		<copy todir="bin/zip/extensions/EnhancedRetrieval/specials">
+			<fileset dir="../specials/">
+				<exclude name="**/.svn, **/CVS" />
+			</fileset>
+		</copy>
 		<copy todir="bin/zip/extensions/EnhancedRetrieval/storage">
 			<fileset dir="../storage/">
 				<exclude name="**/.svn, **/CVS" />
