@@ -369,7 +369,8 @@ class USSpecialPage extends SpecialPage {
         	  
                 $createNewPage = Title::newFromText('Create_new_page');
                 if ($createNewPage->exists()) {
-                    $newLink = str_replace('index.php?title='.urlencode($newpage->getPrefixedDBkey())."&amp;action=edit",
+                    $mylink = str_replace('%3A', ':', urlencode($newpage->getPrefixedDBkey()));
+                    $newLink = str_replace('index.php?title='.$mylink."&amp;action=edit",
                                            'index.php/Create_new_page?target='.urlencode($newpage->getPrefixedDBkey()),
                                            $newLink);
                 }
