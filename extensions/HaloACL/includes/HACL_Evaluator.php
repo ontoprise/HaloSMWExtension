@@ -579,10 +579,10 @@ class HACLEvaluator {
 				$prop = $prop->getWikiPageValue();
 				if ($prop) {
 					$prop = $prop->getTitle();
-				}
-				if (!self::checkPropertyAccess($prop, $wgUser, "propertyread")) {
-					HACLEvaluator::$mMode = HACLEvaluator::DENY_DIFF;
-					return true;
+					if (!self::checkPropertyAccess($prop, $wgUser, "propertyread")) {
+						HACLEvaluator::$mMode = HACLEvaluator::DENY_DIFF;
+						return true;
+					}
 				}
 			}
 		}
@@ -594,10 +594,10 @@ class HACLEvaluator {
 				$prop = $prop->getWikiPageValue();
 				if ($prop) {
 					$prop = $prop->getTitle();
-				}
-				if (!self::checkPropertyAccess($prop, $wgUser, "propertyread")) {
-					HACLEvaluator::$mMode = HACLEvaluator::DENY_DIFF;
-					return true;
+					if (!self::checkPropertyAccess($prop, $wgUser, "propertyread")) {
+						HACLEvaluator::$mMode = HACLEvaluator::DENY_DIFF;
+						return true;
+					}
 				}
 			}
 		}

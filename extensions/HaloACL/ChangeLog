@@ -14,6 +14,7 @@ Version 1.4
   CHANGES:
   	
   BUGFIXES: (Bug numbers according to http://smwforum.ontoprise.com/smwbugs/)
+  14356 - Version Diff broken
   14369 - Derived factbox is not showing infered values
   13642 - Error in HACL_Setup.php when wiki is installed at c:\Program files\Ontorpise...
   13740 - Translation to other languages causes problems
