@@ -118,7 +118,7 @@ function smwf_ac_AutoCompletionDispatcher($articleName, $userInputToMatch, $user
 		if (preg_match('/'.strtolower($wgLang->getNsText(NS_CATEGORY)).'\s*:/i', $userContext) > 0) {
 			$categories = smwfGetAutoCompletionStore()->getPages($userInputToMatch, array(NS_CATEGORY));
 			AutoCompletionRequester::attachCategoryHints($categories);
-			return AutoCompletionRequester::encapsulateAsXML($categories, true);
+			return AutoCompletionRequester::encapsulateAsXML($categories, false);
 		}
 		// ------------------------------------------------
 		// 2./3. property target case / property value case
