@@ -70,7 +70,10 @@ class  LODNonExistingPageHandler  {
 		$isView = $action === 'view';
 		$isRedlink = $wgRequest->getVal('redlink', '') === '1';
 		$uri = $wgRequest->getVal('uri', '');
-
+        
+		// ignore NEP on NS_FILE pages
+		if ($title->getNamespace() === NS_FILE) return true;
+		
 		if (!$title->exists()
 		&& ($isView || $isRedlink)
 		&& $wgRequest->getVal('title') === $title->getPrefixedDBkey()) {
