@@ -68,23 +68,27 @@ if (array_key_exists('SERVER_NAME', $_SERVER) && $_SERVER['SERVER_NAME'] != NULL
 }
 
 // check if the user is allowed to create files, directory.
-$check = Tools::checkPriviledges();
-if ($check !== true) {
-	fatalError($check);
-}
+if (!in_array("--nocheck", $_SERVER['argv'])) {
+	$check = Tools::checkPriviledges();
+	if ($check !== true) {
+		fatalError($check);
+	}
 
-// check required tools
-$check = Tools::checkEnvironment();
-if ($check !== true) {
-	fatalError($check);
-}
 
-// check if LocalSettings.php is writeable
-@$success = touch("$rootDir/../LocalSettings.php");
-if ($success === false) {
-	fatalError("LocalSettings.php is not accessible. Missing rights or file locked?");
-}
+	// check required tools
+	$check = Tools::checkEnvironment();
+	if ($check !== true) {
+		fatalError($check);
+	}
 
+
+	// check if LocalSettings.php is writeable
+
+	@$success = touch("$rootDir/../LocalSettings.php");
+	if ($success === false) {
+		fatalError("LocalSettings.php is not accessible. Missing rights or file locked?");
+	}
+}
 
 $packageToInstall = array();
 $packageToDeinstall = array();
@@ -192,6 +196,9 @@ for( $arg = reset( $args ); $arg !== false; $arg = next( $args ) ) {
 		$dfgCreateRestorePoint = true;
 		$dfgRestorePoint = next($args);
 		continue;
+	} else if ($arg == '--nocheck') {
+		// ignore
+		continue;
 	} else {
 		print "\nUnknown command: $arg. Try --help\n\n";
 		die(DF_TERMINATION_ERROR);
@@ -214,7 +221,7 @@ if ($dfgInstallPackages) {
 
 	// finalize mode requires a wiki environment, so check and include a few things more
 	checkWikiContext();
-	
+
 	$logger->info("Start initializing packages");
 	$installer->initializePackages();
 	$logger->info("End initializing packages");
