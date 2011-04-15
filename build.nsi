@@ -174,7 +174,7 @@ Page custom showWikiCustomize checkWikiCustomize
 !endif
 
 AutoCloseWindow false
-ShowInstDetails hide
+ShowInstDetails show
 
 ;--------------------------------
 
