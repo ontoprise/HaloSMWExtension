@@ -2,15 +2,15 @@
 
 Install instructions for the latest version of SMWHalo are also online:
 
- http://smwforum.ontoprise.com/smwforum/index.php/Help:Installing_Halo_Extension_1.5.0
+ http://smwforum.ontoprise.com/smwforum/index.php/Help:Installing_Halo_Extension_1.5.3
 
 For the full manual of the Halo Extension have a look at:
 
- http://smwforum.ontoprise.com/smwforum/index.php/Help:Halo_Extension_1.5.0
+ http://smwforum.ontoprise.com/smwforum/index.php/Help:Halo_extension
 
 For further customizing your installation, take a look at:
 
- http://smwforum.ontoprise.com/smwforum/index.php/Help:Customizing_SMW%2B
+ http://smwforum.ontoprise.com/smwforum/index.php/Help:Customizing_SMW%2B 1.5.3
 
 For install instructions and further information on Semantic MediaWiki, please visit
 
@@ -110,24 +110,22 @@ SMW+, also read the remarks in the section "Notes on Upgrading" below.
      php patch.php -p patch_for_MW<version>.txt -d <mw-dir> --onlypatch
      Replace <mw-dir> with the absolute path of your Mediawiki installation and 
      choose the correct version of the patch file for <version>.
-TODO Domi: Link zu MW-Patches im SMW-Forum
      
 (13) Patch SemanticMediaWiki:
      php patch.php -p patch_for_SMW<version>.txt -d <mw-dir> --onlypatch
      Replace <mw-dir> with the absolute path of your Mediawiki installation and 
      choose the correct version of the patch file for <version>.
-TODO Domi: Link zu SMW-Patches im SMW-Forum
 
 (14) Patch SemanticForms (if installed and not yet patched):
      php patch.php -p patch_for_SF2.0.8.txt -d <mw-dir> --onlypatch
      Replace <mw-dir> with the absolute path of your Mediawiki installation.
-TODO Domi: Link zu SF-Patches im SMW-Forum
 
 (15) Optional patch for additional builtin properties:
      php patch.php -p patch_for_builtin_properties_SMW_<version>.txt -d <mw-dir> --onlypatch
      Replace <mw-dir> with the absolute path of your Mediawiki installation and 
      choose the correct version of the patch file for <version>.
-TODO Domi: Link zu Builtin-Properties-Patches im SMW-Forum
+
+Notes on patches: http://smwforum.ontoprise.com/smwforum/index.php/Help:Installing_Halo_extension_1.5.3#Notes_on_patches
 
      
 -----------------------------------------------------------------------------------------------
