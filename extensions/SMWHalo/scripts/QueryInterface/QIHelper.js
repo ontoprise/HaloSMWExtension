@@ -531,7 +531,8 @@ QIHelper.prototype = {
 			params += '|merge=false';
             var currentPage = null;
             if (window.parent.wgPageName) {
-                currentPage = window.parent.wgPageName.wgCanonicalNamespace + ':' + window.parent.wgPageName;
+                currentPage = window.parent.wgPageName.wgCanonicalNamespace || '';
+                currentPage += ':' + window.parent.wgPageName;
             }
 			sajax_do_call('smwf_qi_QIAccess', [ "getQueryResult", params, currentPage ],
 					this.openPreview.bind(this));
@@ -563,7 +564,8 @@ QIHelper.prototype = {
         if (ask.length > 0) {
             var currentPage = null;
             if (window.parent.wgPageName) {
-                currentPage = window.parent.wgPageName.wgCanonicalNamespace + ':' + window.parent.wgPageName;
+                currentPage = window.parent.wgPageName.wgCanonicalNamespace || '';
+                currentPage += ':' + window.parent.wgPageName;
             }
 			sajax_do_call('smwf_qi_QIAccess', [ "getQueryResult", ask, currentPage],
 					this.openResultPreview.bind(this));
