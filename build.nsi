@@ -82,6 +82,12 @@ located in the zip-file containing this installer. The readme file contains impo
 !define MUI_STARTMENUPAGE_REGISTRY_KEY "Software\Ontoprise\${PRODUCT} ${VERSION}" 
 !define MUI_STARTMENUPAGE_REGISTRY_VALUENAME "Start Menu Folder"
 
+!macro WriteToFile String File
+ Push "${String}"
+ Push "${File}"
+  Call WriteToFile
+!macroend
+!define WriteToFile "!insertmacro WriteToFile"
 
 !ifdef NOCOMPRESS
 SetCompress off
@@ -1680,10 +1686,3 @@ Function WriteToFile
  Pop $1
  Pop $0
 FunctionEnd
-
-!macro WriteToFile String File
- Push "${String}"
- Push "${File}"
-  Call WriteToFile
-!macroend
-!define WriteToFile "!insertmacro WriteToFile"
