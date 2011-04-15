@@ -396,7 +396,7 @@ class TFTabularFormData {
 				$autocompletion .= '"';
 			}
 			
-			$html .= "<textarea ".$autocompletion." rows='1' originalValue='' >"
+			$html .= "<textarea ".$autocompletion." rows='1' originalValue='' pasteNS='true'>"
 				.$this->parsePreloadValue($annotation['preload'])."</textarea>";
 			
 			$html .= '</td>';
@@ -926,7 +926,7 @@ class TFTabularFormRowData {
 				if($annotation->isWritable || ($this->title instanceof Title && !$this->title->exists() && $enableInstanceAdd)){
 					$moreThanOne == true ? $style = 'style="border-top: 1px inset grey;"' : $style ='';
 					$html .= "<textarea ".$autocompletion." ". $style ." rows='2' annotation-hash='".$annotation->hash
-						."' annotation-type-id='".$annotation->typeId."'>".$annotation->currentValue."</textarea>";
+						."' annotation-type-id='".$annotation->typeId."' pasteNS='true'>".$annotation->currentValue."</textarea>";
 				} else {
 					$html .= '<div>'.$annotation->renderedValue.'</div>';
 				}
