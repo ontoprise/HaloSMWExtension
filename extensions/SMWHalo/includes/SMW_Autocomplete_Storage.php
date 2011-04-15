@@ -607,7 +607,7 @@ class AutoCompletionStorageSQL2 extends AutoCompletionStorage {
 				if ($row->namespace == -1) {
 					$stringValue = $row->title;
 					$stringValue = isset($dateformat) ? ACStorageHelper::convertDate($stringValue, $dateformat) : $stringValue;
-					$result[] = array($stringValue, $row->inferred == 'true');
+					$result[] = $stringValue;
 				} else {
 					if (smwf_om_userCan($row->title, 'read', $row->namespace) == 'true') {
 						$result[] = array('title'=>Title::makeTitle($row->namespace, $row->title), 'inferred'=>$row->inferred == 'true');
