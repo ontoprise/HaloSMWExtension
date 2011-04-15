@@ -107,7 +107,6 @@ class FSFacetedSearchSpecial extends SpecialPage {
            
 		$wgOut->addScript("<script type=\"text/javascript\" src=\"". $fsgScriptPath .  "/scripts/ajax-solr/lib/core/Core.js\"></script>");        
 		$wgOut->addScript("<script type=\"text/javascript\" src=\"". $fsgScriptPath .  "/scripts/ajax-solr/lib/core/AbstractManager.js\"></script>");        
-		$wgOut->addScript("<script type=\"text/javascript\" src=\"". $fsgScriptPath .  "/scripts/ajax-solr/lib/core/AbstractManager.js\"></script>");        
 		$wgOut->addScript("<script type=\"text/javascript\" src=\"". $fsgScriptPath .  "/scripts/ajax-solr/lib/managers/Manager.jquery.js\"></script>");        
 		$wgOut->addScript("<script type=\"text/javascript\" src=\"". $fsgScriptPath .  "/scripts/ajax-solr/lib/core/Parameter.js\"></script>");        
 		$wgOut->addScript("<script type=\"text/javascript\" src=\"". $fsgScriptPath .  "/scripts/ajax-solr/lib/core/ParameterStore.js\"></script>");        
