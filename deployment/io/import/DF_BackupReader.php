@@ -11,6 +11,8 @@ class BackupReader {
 	var $debug     = false;
 	var $uploads   = false;
 	var $mode = 0;
+	
+	var $importedPages = array();
 
 	function BackupReader($mode) {
 		$this->stderr = fopen( "php://stderr", "wt" );
@@ -18,7 +20,12 @@ class BackupReader {
 	}
 
 	function reportPage( $page ) {
+		$this->importedPages[] = $page;
 		$this->pageCount++;
+	}
+	
+	function getImportedPages() {
+		return $this->importedPages;
 	}
 
 	function handleRevision( $rev ) {

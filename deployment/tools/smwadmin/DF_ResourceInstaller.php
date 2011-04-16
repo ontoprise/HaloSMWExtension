@@ -108,6 +108,22 @@ class ResourceInstaller {
 			print "\ndone.]";
 		}
 
+		// refresh imported pages
+		$pageTitles = $reader->getImportedPages();
+		global $wgParser;
+		$wgParser->mOptions = new ParserOptions();
+		$this->logger->info("Refreshing ontology: $file");
+		print "\n[Refreshing ontology: $file";
+		
+		foreach($pageTitles as $pageName) {
+			$t = Title::newFromText($pageName);
+			if ($t->getNamespace() == NS_FILE) continue;
+			$rev = Revision::newFromTitle($t);
+			$parseOutput = $wgParser->parse($rev->getText(), $t, $wgParser->mOptions);
+			SMWParseData::storeData($parseOutput, $t);
+			$this->logger->info($t->getText()." refreshed.");
+			print "\n\t[".$t->getText()." refreshed]";
+		}
 
 	}
 
@@ -389,6 +405,6 @@ class ResourceInstaller {
 		}
 	}
 
-	
+
 
 }
