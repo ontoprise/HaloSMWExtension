@@ -156,17 +156,33 @@ class Installer {
 		$localPackages = PackageRepository::getLocalPackages($this->rootDir.'/extensions');
 
 		// check dependencies
-		$deps = $dd->getDependencies();
-		foreach($deps as $d) {
-			list($depID, $depFrom, $depTo, $optional, $message) = $d;
-			if (!array_key_exists($depID, $localPackages)) {
-				throw new InstallationError(DEPLOY_FRAMEWORK_PACKAGE_NOT_EXISTS, "'$depID' is missing.");
-			}
-			$b = $localPackages[$depID];
-			if ($b->getVersion() < $depFrom || $b->getVersion() > $depTo) {
-				throw new InstallationError(DEPLOY_FRAMEWORK_WRONG_VERSION, "'$depID' is installed in wrong version: ".$b->getVersion().". $depFrom - $depTo is required.");
+		$updatesNeeded=array();
+			print "\n[Check for necessary updates...";
+		$this->collectDependingExtensions($dd, $updatesNeeded, $localPackages);
+		$this->collectSuperExtensions($dd, $updatesNeeded, $localPackages);
+		print "done.]";
+
+		//  calculate version which matches all depdencies of an extension.
+		print "\n[Filter incompatible packages...";
+		$this->filterIncompatiblePackages($updatesNeeded, $extensions_to_update, $contradictions);
+		print "done.]";
+		
+		// Install/update all dependant and super extensions
+		print "\nThe following packages need to be installed";
+		foreach($extensions_to_update as $etu) {
+			list($deployd, $min, $max) = $etu;
+			print "\n- ".$deployd->getID()."-".$deployd->getVersion();
+		}
+
+		if (count($contradictions) > 0) {
+			print "\nThe following extension can not be installed/updated due to conflicts:";
+			foreach($contradictions as $etu) {
+				list($deployd, $min, $max) = $etu;
+				print "\n- ".$deployd->getID();
 			}
 		}
+		$this->installOrUpdatePackages($extensions_to_update);
+		
 		$fromVersion = NULL;
 		if (array_key_exists($dd->getID(), $localPackages)) {
 			$fromVersion = $localPackages[$dd->getID()]->getVersion();
