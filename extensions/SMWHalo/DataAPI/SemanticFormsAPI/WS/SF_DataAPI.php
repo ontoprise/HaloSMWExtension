@@ -175,7 +175,7 @@ class SFDataAPI extends ApiBase {
 		$__result['page']['ns'] = $__page->namespace;
 		$__result['page']['rid'] = $__page->usedrevid;
 		if(!$direct){
-			$__formNames = SFLinkUtils::getFormsForArticle(new Article(Title::newFromText($__title, $__page->namespace)));
+			$__formNames = SFFormLinker::getDefaultFormsForPage(Title::newFromText($__title, $__page->namespace));
 		} else {
 			$__formNames = array($title);
 		}
@@ -727,7 +727,7 @@ class SFDataAPI extends ApiBase {
 				}
 			}
 			// check if there is a SF defined for the category
-			$__sfName = SFLinkUtils::getFormsThatPagePointsTo($catName, NS_CATEGORY, '_SF_DF', '_SF_DF_BACKUP', SF_SP_HAS_DEFAULT_FORM);
+			$__sfName = SFFormLinker::getFormsThatPagePointsTo($catName, NS_CATEGORY, '_SF_DF', '_SF_DF_BACKUP', SF_SP_HAS_DEFAULT_FORM);
 			if ( $__sfName != NULL){
 				$__catHashmap[str_ireplace(' ','_',$catName)]['catOptions'] = "Form:$__sfName[0]";
 			}
@@ -767,7 +767,7 @@ class SFDataAPI extends ApiBase {
 				foreach ($__catHashmap[str_ireplace(' ','_',$catName)] as $__subCategory=>$__emptySpace){
 					if($__subCategory != 'catOptions'){
 						// check if there is a SF defined for the subcategories only if no further levels requested
-						$__sfName = SFLinkUtils::getFormsThatPagePointsTo(
+						$__sfName = SFFprmLinker::getFormsThatPagePointsTo(
 							$__subCategory, NS_CATEGORY, '_SF_DF', '_SF_DF_BACKUP', SF_SP_HAS_DEFAULT_FORM);
 						if(count($__sfName) > 0){
 							$__sfName = $__sfName[0];
@@ -837,8 +837,8 @@ class SFDataAPI extends ApiBase {
 					$wgContLang->getLocalNsIndex($__pageNamespace);
 			}
 			
-			$sfList = SFLinkUtils::getFormsForArticle(
-				new Article(Title::newFromText($__pageTitle, $__pageNamespace)));
+			$sfList = SFFormLinker::getDefaultFormsForPage(
+				Title::newFromText($__pageTitle, $__pageNamespace));
 			
 		
 			foreach($sfList as $key => $sf){
@@ -863,7 +863,7 @@ class SFDataAPI extends ApiBase {
 
 			// for each category only a default form should exist
 			foreach ($__pageCats as $__pageCat){
-				$__tmpDefaultSFs = SFLinkUtils::
+				$__tmpDefaultSFs = SFFormLinker::
 					getFormsThatPagePointsTo(
 					$__pageCat->getText(), NS_CATEGORY, '_SF_DF', '_SF_DF_BACKUP', SF_SP_HAS_DEFAULT_FORM);
 				if(count($__tmpDefaultSFs) > 0){
@@ -892,12 +892,10 @@ class SFDataAPI extends ApiBase {
 			// for each property a default and alternate forms may exist
 			foreach ($__pageProps as $__pageProp){
 				if($__pageProp->isVisible()){ // exclude internal set properties
-					$__tmpListAlternateSF = SFLinkUtils::getAlternateForms(
-					$__pageProp->getWikiPageValue()->getTitle()->getText(),
-					$__pageProp->getWikiPageValue()->getNamespace());
-					$__tmpDefaultSFs = SFLinkUtils::getDefaultForms(
-					$__pageProp->getWikiPageValue()->getTitle()->getText(),
-					$__pageProp->getWikiPageValue()->getNamespace());
+					$__tmpListAlternateSF = SFFormLinker::getAlternateFormsForPage(
+						$__pageProp->getWikiPageValue()->getTitle()->getFullText());
+					$__tmpDefaultSFs = SFFormLinker::getDefaultFormsForPage(
+						$__pageProp->getWikiPageValue()->getTitle()->getFullText());
 
 					if(count($__tmpDefaultSFs) > 0){
 							
