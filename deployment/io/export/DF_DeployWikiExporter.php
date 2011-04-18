@@ -35,12 +35,11 @@ require_once 'DF_DeployUploadExporter.php';
 class DeployBackupDumper extends BackupDumper {
 
 	private $bundleToExport;
-	private $noCat = false;
-	private $notemplates = false;
+	
 	function __construct($argv) {
 		parent::__construct($argv);
-		$this->noCat = false;
-		$this->notemplates = false;
+		$this->includeInstances = false;
+		$this->includeTemplates = true;
 		for( $arg = reset( $argv ); $arg !== false; $arg = next( $argv ) ) {
 
 			//-b => Bundle to export
@@ -51,14 +50,17 @@ class DeployBackupDumper extends BackupDumper {
 				$this->bundleToExport = $bundleToExport;
 				continue;
 			}
-			// --nocat means: do not consider member of categories beloning to a bundle
-			else if ($arg == '--nocat') {
-				$this->noCat = true;
+			
+			// --includeInstances means: consider member of categories beloning to a bundle
+			else if (strpos($arg, '--includeInstances') === 0) {
+				list($option, $value) = explode("=", "--includeInstances");
+				$this->includeInstances = ($value == 'true' || $value == '1' || $value == 'yes');
 			}
 
-			// --notemplates means: do not consider member of categories beloning to a bundle
-			else if ($arg == '--notemplates') {
-				$this->notemplates = true;
+			// --includeTemplates means: consider all templates used on pages of bundle
+			else if (strpos($arg, '--includeTemplates') === 0) {
+				list($option, $value) = explode("=", "--includeTemplates");
+				$this->includeTemplates = ($value == 'true' || $value == '1' || $value == 'yes');
 			}
 		}
 	}
@@ -82,7 +84,7 @@ class DeployBackupDumper extends BackupDumper {
 		$exporter->openStream();
 
 		if (isset($this->bundleToExport)) {
-			$exporter->exportBundle($this->bundleToExport, $this->noCat, $this->notemplates);
+			$exporter->exportBundle($this->bundleToExport, $this->includeInstances, $this->includeTemplates);
 		} else {
 			if( is_null( $this->pages ) ) {
 				if( $this->startId || $this->endId ) {
@@ -138,7 +140,7 @@ class DeployWikiExporter extends WikiExporter {
 	 *
 	 * @param string $bundleID
 	 */
-	function exportBundle($bundeID, $noCat, $noTemplates) {
+	function exportBundle($bundeID, $includeInstances, $includeTemplates) {
 		global $dfgLang;
 
 		$partOfBundlePropertyID = smwfGetStore()->getSMWPropertyID(SMWPropertyValue::makeProperty($dfgLang->getLanguageString("df_partofbundle")));
@@ -156,7 +158,7 @@ class DeployWikiExporter extends WikiExporter {
 		$this->dumpFrom($joint, $cond);
 
 		// all templates used by pages of bundle
-		if (!$noTemplates) {
+		if ($includeTemplates) {
 			$joint = "$templatelinks";
 			$cond = "page_title = tl_title AND page_namespace = tl_namespace ".
                 "AND tl_from IN (SELECT tl_from FROM $page,$templatelinks,$smwids,$smwrels WHERE smw_title = page_title AND smw_namespace = page_namespace AND smw_id = s_id ".
@@ -164,7 +166,7 @@ class DeployWikiExporter extends WikiExporter {
 			$this->dumpFrom($joint, $cond);
 		}
 
-		if (!$noCat) {
+		if ($includeInstances) {
 			// export all instances of categories belonging to this bundle
 			// (except if they are from cat or prop namespace)
 			$joint = "$categorylinks";
@@ -174,7 +176,7 @@ class DeployWikiExporter extends WikiExporter {
 
 			$this->dumpFrom($joint, $cond);
 
-			if (!$noTemplates) {
+			if ($includeTemplates) {
 				// export templates used by instances of category belonging to this bundle
 				$joint = "$categorylinks,$templatelinks";
 				$cond = "page_title = tl_title AND page_namespace = tl_namespace AND cl_from = tl_from ".

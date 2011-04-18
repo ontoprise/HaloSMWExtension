@@ -96,11 +96,19 @@ format for export or backup.
 
 XML output is sent to stdout; progress reports are sent to stderr.
 
-Usage: php dumpBackup.php <action> [<options>]
+Usage: php export.php <action> [<options>]
 Actions:
   --full      Dump complete history of every page.
   --current   Includes only the latest revision of each page.
 
+  --includeInstances=true|false|yes|no|1|0
+	  includes all instances of all categories belonging to exported 
+	  bundle.  default=false
+  --includeTemplates=true|false|yes|no|1|0
+	  includes all templates used by at least one page belonging to exported 
+	  bundle.  default=true
+  
+  
 Options:
   --quiet     Don't dump status reports to stderr.
   --report=n  Report position and speed after every n pages processed.
