@@ -70,7 +70,7 @@ function smwf_qi_QIAccess($method, $params, $currentPage= null) {
             $p_array[0] = str_replace('%2C', ',', $p_array[0]);
 
             // fix bug 14308
-            if (!empty($currentPage) && $currentPage != 'Special:QueryInterface') {
+            if (!empty($currentPage) && $currentPage != ':Special:QueryInterface') {
                 $p_array[0] = parseQuery($p_array[0], $currentPage);
             }
 
@@ -376,24 +376,25 @@ function smwf_qi_QIAccess($method, $params, $currentPage= null) {
 /**
  * function content copied from SMWResultPrinter::getResult(). Using the constant
  * SMW_OUTPUT_HTML doesn't always work. Details see bug #10494
+ * Do not use wgParser because this somehow screws up when another parsing step
+ * in parseQuery() is done.
  *
  * @param string  wikitext
  * @return string html
  */
-function parseWikiText($text) {
+function parseWikiText($text, $page = '___Dummy_Page___') {
 	global $wgParser;
 
-   	if ( ($wgParser->getTitle() instanceof Title) && ($wgParser->getOptions() instanceof ParserOptions) ) {
-		$result = $wgParser->recursiveTagParse($text);
-	} else {
-		global $wgTitle;
-		$popt = new ParserOptions();
-		$popt->setEditSection(false);
-		$pout = $wgParser->parse($text . '__NOTOC__', $wgTitle, $popt);
-		/// NOTE: as of MW 1.14SVN, there is apparently no better way to hide the TOC
-		SMWOutputs::requireFromParserOutput($pout);
-		$result = $pout->getText();
-	}
+    $parser = new Parser();
+    $title = Title::newFromText($page);
+
+	$popt = new ParserOptions();
+	$popt->setEditSection(false);
+	$pout = $parser->parse($text . '__NOTOC__', $title, $popt);
+	/// NOTE: as of MW 1.14SVN, there is apparently no better way to hide the TOC
+	SMWOutputs::requireFromParserOutput($pout);
+	$result = $pout->getText();
+
     return $result;
 }
 
@@ -411,13 +412,7 @@ function parseQuery($query, $page) {
     $query = str_replace('|', '%%%Pipe%%%', $query);
     
     // do not use the global parser that screws up things
-    $parser = new Parser();
-    $title = Title::newFromText($page);
-    $popt = new ParserOptions();
-    $popt->setEditSection(false);
-    $pout = $parser->parse($query . '__NOTOC__', $title, $popt);
-    SMWOutputs::requireFromParserOutput($pout);
-    $query = $pout->getText();
+    $query = parseWikiText($query, $page);
 
     $query = parseWikiText( $query, $page );
     $query = str_replace('%%%BrOpen%%%', '[', $query);
