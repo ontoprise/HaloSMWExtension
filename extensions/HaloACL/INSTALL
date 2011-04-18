@@ -1,9 +1,9 @@
-Installation instructions for HaloACL extension v1.3
+Installation instructions for Access_Control_List extension v1.4
 ----------------------------------------------------
 
 Install instructions for the latest version of HaloACL are also online:
 
- http://smwforum.ontoprise.com/smwforum/index.php/Help:Installing_HaloACL_1.3
+ http://smwforum.ontoprise.com/smwforum/index.php/Help:Installing_Access_Control_List_extension_1.3
  
 For the full manual of the HaloACL have a look at:
 
@@ -87,7 +87,7 @@ Note: If you use the bundled version of HaloACL, include the following in LocalS
 	HaloACL toolbar in forms.
 	
 Please find more detailed information about the patches at:
-TODO Domi: Link zu HaloACL-Patches im SMW-Forum
+http://smwforum.ontoprise.com/smwforum/index.php/Help:Installing_HaloACL_1.3#Notes_on_patches
 
 Updating the database
 ---------------------
