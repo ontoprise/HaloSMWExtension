@@ -820,7 +820,10 @@ class Installer {
 				list($id, $from, $to, $optional, $message) = $dep;
 				if ($optional && !$globalUpdate) {
 					// ask for installation of optional packages
-					// do not ask if it is a global update
+					// do not ask if it is a global update or if it already exists.
+					if (array_key_exists($id, $localPackages)) {
+						continue;
+					}
 					$this->getUserConfirmation("$message\nInstall optional extension '$id'? ", $result);
 					if ($result != 'y') {
 						continue;
