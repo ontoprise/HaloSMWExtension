@@ -202,6 +202,7 @@ class PackageRepository {
 	 * @return DeployDescriptor
 	 */
 	public static function getDeployDescriptor($ext_id, $version) {
+		if (strlen((string)$version) == 2) $version = "0$version";
 		if (is_null($ext_id) || is_null($version)) throw new IllegalArgument("version or ext must not null");
 		if (array_key_exists($ext_id.$version, self::$deploy_descs)) return self::$deploy_descs[$ext_id.$version];
 
