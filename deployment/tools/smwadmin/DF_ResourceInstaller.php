@@ -109,7 +109,7 @@ class ResourceInstaller {
 		}
 
 		// refresh imported pages
-		$pageTitles = $reader->getImportedPages();
+		/*$pageTitles = $reader->getImportedPages();
 		global $wgParser;
 		$wgParser->mOptions = new ParserOptions();
 		$this->logger->info("Refreshing ontology: $file");
@@ -123,7 +123,7 @@ class ResourceInstaller {
 			SMWParseData::storeData($parseOutput, $t);
 			$this->logger->info($t->getText()." refreshed.");
 			print "\n\t[".$t->getText()." refreshed]";
-		}
+		}*/
 
 	}
 
