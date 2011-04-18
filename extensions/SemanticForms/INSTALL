@@ -76,7 +76,7 @@ php patch.php -d <mediawiki-dir> -p patches/WYSIWYG/patch_for_SF_2.0.8.txt
 ===Further information===
 
 Please find more detailed information about the patches at:
-TODO Domi: Links zu den 4 Patches im SMW-Forum
+http://smwforum.ontoprise.com/smwforum/index.php/Help:Installing_Semantic_Forms_2.0.8#Notes_on_patches
 
 
 
