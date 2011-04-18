@@ -86,6 +86,13 @@ For a formal description in XML-Schema, see dd.xsd
         ...
     </resources>
     
+    Note: If you add content of any kind to your extension you should add a notice to inform the
+          user to refresh the semantic content. This notice is shown at the end of an 
+          installation procedure. Creating a notice is quite simple. Just add the following tag
+          to the global section:
+          
+          <notice> ... your notice ... </notice>
+    
 5. Configs
 
     Specifies the necessary configuration changes. It is divided in three sections:

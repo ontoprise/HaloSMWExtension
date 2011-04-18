@@ -121,8 +121,12 @@ which keeps meta information about this bundle. The bundle page name MUST be equ
     The script export.php supports the same options as the default MW export script does and these two:
         
         -b <bundlename> (bundlename always lowercase!)
-        --nocat (do not consider instances of categories belonging to the bundle, ie. export only _explicitly_ annotated pages)
-        --notemplates (do not consider used templates belonging to the bundle, ie. export only _explicitly_ annotated pages)
+        
+        --includeInstances=true|false : (default is false)
+            Export instances of categories belonging to the bundle, or export only _explicitly_ annotated pages.
+            
+        --includeTemplates=true|false : (default is true)
+            Export used templates belonging to the bundle or export only _explicitly_ annotated pages.
         
     For convenience the shell script (deployment/tools/maintenance/exportBundle.bat/sh) is recommended. Use it like follows:    
     
@@ -137,7 +141,12 @@ which keeps meta information about this bundle. The bundle page name MUST be equ
       This exports all pages belonging to the bundle 'mybundle' (including instances of categories of the bundle and templates it uses) and
       returns a deployable bundle named mybundle.zip.
       
-      Note: On Windows you need to install 7-zip to use the exportBundle script. Linux requires the default GNU zip tool.
+      Note: 
+        (1) Linux requires the default GNU zip tool. Please install it before.
+    
+        (2) Content bundles contain an automatically generated notice to tell the user to refresh 
+            the semantic content. This notice is shown at the end of the installation procedure. 
+      
       
 ########################################  
 # 3. Importing a bundle from a file
