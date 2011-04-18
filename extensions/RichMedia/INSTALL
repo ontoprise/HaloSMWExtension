@@ -3,7 +3,7 @@ Installation instructions
 
 Install instructions for the latest version of Rich Media are also online:
 
- http://smwforum.ontoprise.com/smwforum/index.php/Help:Installing_Rich_Media_extension_1.5
+ http://smwforum.ontoprise.com/smwforum/index.php/Help:Installing_Rich_Media_extension_1.5.1
  
 For the full manual of the Rich Media have a look at:
 
@@ -41,7 +41,7 @@ If you don't use the deployment framework, you can install it manually. See belo
 		* '/extensions/RichMedia/RichMediaPatchForMW1_16_1.txt': 
 			This is needed to patch MediaWiki in version 1.16.0 and 1.16.1
 	Please find more detailed information about the patches at:
-TODO Domi: Link zu RichMedia-Patches im SMW-Forum
+http://smwforum.ontoprise.com/smwforum/index.php/Help:Installing_Rich_Media_extension_1.5.1#Notes_on_patches
 
 
 	Note: We can not ensure that this patch works properly for other versions of
