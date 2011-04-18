@@ -1,4 +1,4 @@
-Installation instructions for LinkedData Extension v1.0
+Installation instructions for LinkedData Extension v1.2
 -------------------------------------------------------
 
 In the following instructions we will use the abbreviation LDE for LinkedData 
@@ -44,7 +44,7 @@ How to install manually:
 (5) Install the patch for SMW. 
 
 		Please find more detailed information about the patches at:
-TODO Domi: Link zu LinkedData-Patches im SMW-Forum
+        http://smwforum.ontoprise.com/smwforum/index.php/Help:Installing_Linked_Data_extension#Notes_on_patches
             
         (a) Open a command-line interface in the root directory of the LDE to 
         	install the patches.
