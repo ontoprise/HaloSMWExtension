@@ -24,14 +24,7 @@ If you don't use the deployment framework, you can install it manually. See belo
 #Requirements:
 #
 
-	PHP 5.2.x or 5.3.x
-	MediaWiki 1.16.1
-	Semantic MediaWiki 1.5.2 or higher
-	SMWHalo 1.5.3
 	Semantic Forms 2.0.8
-	Application Programming
-		Parser Functions
-		String Functions 2.0 or higher
 	Deployment Framework (optional)
 	SMW Plus ontology bundle 1.5.3
 
