@@ -95,12 +95,13 @@ function smwf_om_CreateArticle($title, $user, $content, $optionalText, $creation
 	
 	// add predefined content if configured
 	global $smwhgAutoTemplates, $smwhgAutoTemplatesParameters;
+	$autoContent = "";
 	if (isset($smwhgAutoTemplates)) {
 		if (array_key_exists($title->getNamespace(), $smwhgAutoTemplates)) {
 			require_once('SMW_Predefinitions.php');
 			$mappings = array_key_exists($title->getNamespace(), $smwhgAutoTemplatesParameters) ? $smwhgAutoTemplatesParameters[$title->getNamespace()] : array();
 			$metadataText = SMWPredefinitions::getPredefinitions($title, $smwhgAutoTemplates[$title->getNamespace()], $mappings);
-			$content = $metadataText.$content;
+			$autoContent .= $metadataText;
 		}
 	}
 	
@@ -111,9 +112,11 @@ function smwf_om_CreateArticle($title, $user, $content, $optionalText, $creation
             require_once('SMW_Predefinitions.php');
             $addedText = $smwhgAutoTemplateText[$title->getNamespace()];
             $addedText .= "\n";
-            $content = $addedText.$content;
+            $autoContent .= $addedText;
         }
     }
+    
+    $content = $autoContent.$content;
 
 	$article = new Article($title);
 
