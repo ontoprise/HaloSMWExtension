@@ -143,7 +143,7 @@ function saveRichMediaData(mediaTitle, mediaLink) {
 				oNew.setAttribute('_cke_mw_type', ns);
 				oNew.setAttribute('_cke_mw_filename', basename);
 				oNew.setAttribute('href', mediaTitle);
-				oNew.setAttribute('_cke_saved_href', mediaTitle);
+				oNew.setAttribute('_cke_saved_href', basename);
 				oNew.$.innerHTML = mediaTitle;
 			}
 
