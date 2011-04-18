@@ -684,8 +684,8 @@
     <title>Property:HasUploader</title>
     <id>69</id>
     <revision>
-      <id>78</id>
-      <timestamp>2011-04-07T15:28:22Z</timestamp>
+      <id>845</id>
+      <timestamp>2011-04-12T08:51:30Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -697,7 +697,7 @@
 {{Part of bundle|value=Richmedia}}
 {{Content hash|value=}}
 [[Has type::Type:Page| ]] [[has domain and range::Category:Media;Category:User| ]]</text>
-    <hash>9b70759372592a093064eb06d61f1532</hash>
+    <hash>6cc8338f3c441c62c58d3c46fd20768b</hash>
     </revision>
   </page>
   <page>
@@ -870,8 +870,8 @@
     <title>Template:RMMedia</title>
     <id>79</id>
     <revision>
-      <id>88</id>
-      <timestamp>2011-03-31T13:51:02Z</timestamp>
+      <id>1115</id>
+      <timestamp>2011-04-15T08:00:03Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -880,7 +880,7 @@
 |rationale=This template displays information of media (i.e. document, image, etc) in a box.
 }}
 {{Part of bundle|value=Richmedia}}
-{{Content hash|value=de447dfd683634e7e9ef0d219b6761b9}}
+{{Content hash|value=ee76af1c1d38bb3b276e218646355470}}
 &lt;/noinclude&gt;&lt;includeonly&gt;{| cellspacing=&quot;0&quot; cellpadding=&quot;5&quot; class=&quot;rmMetadataTable&quot;
 ! colspan=&quot;2&quot; class=&quot;rmMetadataTH&quot; | ''{{{Media subcategory|}}}&amp;nbsp;Metadata''
 |-
@@ -916,7 +916,7 @@
 {{!}} valign=&quot;top&quot; {{!}} {{#if:{{{SubSectionOf|}}}|{{#arraymap:{{{SubSectionOf|}}}|,|x|[[subsection of::x]]}}|undefined}} }}
 |}&lt;/includeonly&gt;&lt;noinclude&gt;
 &lt;/noinclude&gt;</text>
-    <hash>77eef88ed7b15f36f05e3a4b543e01ad</hash>
+    <hash>9aa7a13d72e7ae20485aba88f6ca8166</hash>
     </revision>
   </page>
   <page>
@@ -1215,8 +1215,8 @@
     <title>Template:RMImage</title>
     <id>155</id>
     <revision>
-      <id>164</id>
-      <timestamp>2011-03-31T13:48:54Z</timestamp>
+      <id>1116</id>
+      <timestamp>2011-04-15T08:00:05Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -1225,7 +1225,7 @@
 |rationale=Displays and annotates the metadata of an uploaded image.
 }}
 {{Part of bundle|value=Richmedia}}
-{{Content hash|value=8822982008e2312c2be41d3e76537e62}}
+{{Content hash|value=f64dcd4b47227ac74e28abfec10a489d}}
 &lt;/noinclude&gt;&lt;includeonly&gt;{{RMMedia
 |Media subcategory=Image
 |Filename={{{Filename|}}}
@@ -1242,7 +1242,7 @@
 
 [[Category:Image]]&lt;/includeonly&gt;&lt;noinclude&gt;
 &lt;/noinclude&gt;</text>
-    <hash>7b2b73822dcfb808a1a2dc0e1e5c840c</hash>
+    <hash>5b407f20fb46023221dc63cd5412aa45</hash>
     </revision>
   </page>
   <page>
@@ -1641,13 +1641,19 @@
     <title>Richmedia</title>
     <id>215</id>
     <revision>
-      <id>829</id>
-      <timestamp>2011-04-12T08:34:39Z</timestamp>
+      <id>1303</id>
+      <timestamp>2011-04-15T17:36:17Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
-      <text xml:space="preserve">{{Content bundle}}[[Vendor::Ontoprise| ]][[Ontology version::151| ]][[Installation dir::extensions/RichMedia| ]][[Dependency::smwhalo;153;153| ]][[Dependency::semanticforms;208;208| ]][[Dependency::applicationprogramming;103;103| ]][[Dependency::Smwplus; 153; 153| ]] [[License::GPL v2| ]] [[Rationale::This content bundle features a set of basic elements that are necessary for the Rich Media extension.| ]]
+      <text xml:space="preserve">{{Content bundle}}[[Vendor::Ontoprise| ]][[Ontology version::151| ]][[Installation dir::extensions/RichMedia| ]]
+;dependencies
+:[[Dependency::semanticforms;208;208]]
+:[[Dependency::Smwplus;153;153]]
+;License
+:[[License::GPL v2| ]]
+[[Rationale::This content bundle features a set of basic elements that are necessary for the Rich Media extension.| ]]
 ;This content bundle features a set of basic elements that are necessary for the Rich Media extension.
 
 With the RichMedia Extension you can let the system generate a list of related media (images, documents, pdf, audio and video) to every article.
@@ -1674,7 +1680,7 @@ More information about the RichMedia extension and how to use it can be found in
 [[Category:Content bundle|Content_bundle]]
 {{Content hash|value=60d3b7281dde4625d9aeff2b822e500e}}
 {{Part of bundle|value=Richmedia}}</text>
-    <hash>1bc1ffce4010e3e6ae08fdd3a6ce095f</hash>
+    <hash>c39a8cdc8c766d126cfe0a9a551661a7</hash>
     </revision>
   </page>
   <page>

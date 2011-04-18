@@ -29,10 +29,11 @@ If you don't use the deployment framework, you can install it manually. See belo
 	Semantic MediaWiki 1.5.2 or higher
 	SMWHalo 1.5.3
 	Semantic Forms 2.0.8
-	Parser Functions
-	String Functions 2.0 or higher
+	Application Programming
+		Parser Functions
+		String Functions 2.0 or higher
 	Deployment Framework (optional)
-	SMW Plus ontology bundle 1.5.3 (optional)
+	SMW Plus ontology bundle 1.5.3
 
 #
 # Installation
