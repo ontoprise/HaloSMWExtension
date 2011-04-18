@@ -11,16 +11,19 @@ To install the extension please:
 == Apply Patches ==
 
 There are two patches included in the WYSIWYG extension. These patches are optional.
-Please find more detailed information about the patches at:
-TODO Domi: Link zu WYSIWYG-Patches im SMW-Forum
 
 If you use the Semantic Forms extension please apply the patch file:
 patch_for_SF_2.0.8.txt
 Currently only Semantic Forms version 2.0.8 is supported.
+Please find more detailed information about the Semantic Forms patches at: 
+http://smwforum.ontoprise.com/smwforum/index.php/Help:Installing_the_WYSIWYG_extension_manually_on_top_of_SMW_%28v.1.5.6%29
 
 If you use Mediawiki 1.16.x and want the WYSIWYG editor show up only when the URL
 parameter mode=wysiwyg is set, then apply the patch file:
 patch_for_MW_1.16.x.txt
+Please find more detailed information about the MediaWiki patches at: 
+http://smwforum.ontoprise.com/smwforum/index.php/Help:Installing_the_WYSIWYG_extension_manually_on_top_of_MediaWiki_(v_1.16)
+
 
 Applying the patch can be done with the script patch.php. Open a command line 
 in the root folder of the WYSIWYG extension and enter:
