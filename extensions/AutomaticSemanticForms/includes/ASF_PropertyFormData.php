@@ -76,6 +76,7 @@ class ASFPropertyFormData {
 			ASFFormGeneratorUtils::getPropertyValue($this->semanticData, ASF_PROP_FIELD_SEQUENCE_NUMBER);
 		$this->defaultValue = 
 			ASFFormGeneratorUtils::getPropertyValue($this->semanticData, ASF_PROP_DEFAULT_VALUE);
+			
 	}
 	
 	
@@ -93,7 +94,8 @@ class ASFPropertyFormData {
 		//deal with input type
 		list($inputType, $size, $rows, $cols, $autocompletion, $values) = 
 			$this->getFormFieldInputTypeMetadata();
-		
+			
+			
 		//deal with autocompletion
 		global $asfUseHaloAutocompletion;
 		if($this->autocompletionRange && $autocompletion == 'category'){
@@ -316,6 +318,9 @@ class ASFPropertyFormData {
 		}
 		
 		if($this->allowsValues){
+			if(!$this->explicitInputType){
+				$inputType = 'dropdown';
+			}
 			$values = implode(',', $this->allowsValues);
 		}
 		
