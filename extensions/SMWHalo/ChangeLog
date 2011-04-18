@@ -6,6 +6,10 @@ VERSION 1.5.3
     		 *infer=true/false
      
     	FR #13018 Syntax of Halo Autocompletion: constraints-parameter shall support "namespace:Form"
+    	
+    	TABULAR FORMS New query result printer, which enables users to edit the query result and thus the corresponding instances.
+    	
+    	QUERY LIST New special page that displays all queries that are used in the Wiki. SPARQL queries are also include.
     	  
 	CHANGES:
 
