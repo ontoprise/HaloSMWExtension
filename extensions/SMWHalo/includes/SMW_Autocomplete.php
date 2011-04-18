@@ -203,6 +203,11 @@ function smwf_ac_AutoCompletionDispatcher($articleName, $userInputToMatch, $user
 		$pages = AutoCompletionHandler::executeCommand("namespace: ".SMW_NS_PROPERTY, $userInputToMatch);
 		$result = AutoCompletionRequester::encapsulateAsXML($pages);
 		return $result;
+	} else if (preg_match('/\|\s*[^=]+\s*=/', $userContext) > 0) {
+		// general query parameter context
+		$pages = AutoCompletionHandler::executeCommand("all: ", $userInputToMatch);
+		$result = AutoCompletionRequester::encapsulateAsXML($pages);
+		return $result;
 	} else if (stripos($userContext, "|") === 0) {
 		// general query parameter context
 		$pages = AutoCompletionHandler::executeCommand("values: sort=,order=asc/desc/reverse,limit=,offset=,format=,headers=,mainlabel=,link=,default=,intro=,outro=,searchlabel=,template=", $userInputToMatch);
