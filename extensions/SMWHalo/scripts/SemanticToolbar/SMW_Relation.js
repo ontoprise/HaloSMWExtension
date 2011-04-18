@@ -204,9 +204,17 @@ fillList: function(forceShowList) {
 			}
 		}
 
-		this.relationcontainer.setContent(
-			this.genTB.createList(relations,"relation")
-			+ this.genTB.createList(recRels, "rec-relation"));
+		if( wgAction !== "annotate" ) {
+			// no recommended properties for "Annotation Mode"
+			this.relationcontainer.setContent(
+				this.genTB.createList(relations,"relation") +
+				this.genTB.createList(recRels, "rec-relation")
+			);
+		} else {
+			this.relationcontainer.setContent(
+				this.genTB.createList(relations,"relation")
+			);
+		}
 		this.relationcontainer.contentChanged();
 	}
 	
