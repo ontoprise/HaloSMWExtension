@@ -391,8 +391,8 @@
     <title>Collaboration</title>
     <id>217</id>
     <revision>
-      <id>831</id>
-      <timestamp>2011-04-12T08:36:14Z</timestamp>
+      <id>1313</id>
+      <timestamp>2011-04-18T11:30:42Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -400,8 +400,7 @@
       <text xml:space="preserve">{{Content bundle
 |rationale=This content bundle features a set of basic elements that are necessary for the Collaboration extension.
 }} {{Part of bundle|value=Collaboration}} [[Vendor::Ontoprise| ]] [[Ontology version::131| ]] [[Installation dir::extensions/Collaboration| ]] 
-[[Dependency::smwhalo;153;153| ]] 
-[[Dependency::applicationprogramming;103;103| ]][[Dependency::Smwplus; 153; 153| ]] [[License::GPL v2| ]] 
+[[Dependency::Smwplus; 153; 153| ]] [[License::GPL v2| ]] 
 ;This content bundle comprises a set of articles that are necessary to make use of the Collaboration extension.
 
 ;How to use
@@ -426,7 +425,7 @@ More information about the Collaboration extension and how to use it can be foun
 
 [[Category:Content bundle|Content_bundle]]
 {{Content hash|value=a5b59c7c93de4673e7a007ab705bdafa}}</text>
-    <hash>9b57564e157f6f4c520d06a20c8bcd6a</hash>
+    <hash>4053bb15515227003f64eed21b2cfebc</hash>
     </revision>
   </page>
   <page>

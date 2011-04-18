@@ -12,9 +12,7 @@
 		</description>
 		<helpurl>http://smwforum.ontoprise.com/smwforum/index.php/Help:Collaboration_Extension</helpurl>
 		<dependencies>
-			<dependency from="153">smwhalo</dependency>
-			<dependency from="103">applicationprogramming</dependency>
-			<dependency from="153" to="153" optional="true">smwplus</dependency>
+			<dependency from="153" to="153">smwplus</dependency>
 		</dependencies>
 	</global>
 	<codefiles>

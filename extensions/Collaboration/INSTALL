@@ -4,11 +4,8 @@ Installation instructions for Collaboration extension v1.3.1
 Requirements: 
 =============
 
-	MediaWiki 1.15.1 or higher
-	Semantic Mediawiki 1.5.2
-	Script Manager 1.0.1 or higher
-	Application Programming 1.0.3
-	SMW Plus ontology bundle 1.5.3 (optional)
+	Deployment Framework (optional)
+	SMW Plus ontology bundle 1.5.3
 
 
 Installation:
