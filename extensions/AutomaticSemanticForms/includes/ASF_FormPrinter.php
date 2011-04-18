@@ -63,9 +63,7 @@ class ASFFormPrinter extends SFFormPrinter {
 				$title = Title::newFromText($page_name);
 				if(is_array($asfPreloadingArticles) && !$title->exists()){
 					foreach($asfPreloadingArticles as $articleName => $dC){
-						$title = Title::newFromText($articleName);
-						$article = new Article($title);
-						$asfPreloadingArticles[$articleName] = $article->getRawText();
+						$asfPreloadingArticles[$articleName] = SFFormUtils::getPreloadedText($articleName);
 					}
 					$additionalContent = implode("\n\n", $asfPreloadingArticles);
 				}
