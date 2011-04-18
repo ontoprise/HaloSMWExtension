@@ -414,7 +414,6 @@ function parseQuery($query, $page) {
     // do not use the global parser that screws up things
     $query = parseWikiText($query, $page);
 
-    $query = parseWikiText( $query, $page );
     $query = str_replace('%%%BrOpen%%%', '[', $query);
     $query = str_replace('%%%BrClose%%%', ']', $query);
     $query = str_replace('%%%Pipe%%%','|', $query);
