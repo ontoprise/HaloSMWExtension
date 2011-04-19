@@ -194,12 +194,14 @@ SemanticNotifications.prototype = {
 		this.showPendingIndicator(e);
 		var query = $('sn-querytext').value;
 		query = this.stripQuery(query);
-		query += ",table,all,,,50,,ascending,,";
+		query += ",format=table|limit=50|order=ascending|merge=false";
 		sajax_do_call('smwf_qi_QIAccess', ["getQueryResult", query], 
                       ajaxResponseShowPreview.bind(this));
+//TEST					  
 //		sajax_do_call('snf_sn_ShowPreview', 
 //                      [query], 
 //                      ajaxResponseShowPreview.bind(this));
+//TEST					  
 		
 	},
 	
