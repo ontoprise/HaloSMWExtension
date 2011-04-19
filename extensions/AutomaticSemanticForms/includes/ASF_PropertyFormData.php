@@ -286,6 +286,13 @@ class ASFPropertyFormData {
 		
 		if($this->explicitInputType){
 			$inputType = strtolower($this->explicitInputType);
+			$objectType = '-'.strtolower($this->objectType).'-';
+			if(strpos(LONGTEXTDATATYPES, $objectType) !== false
+					|| strpos(SHORTTEXTDATATYPES, $objectType) !== false){
+				$autocompletion = 'values';
+			} else{
+				$autocompletion = 'category';
+			}
 		} else {
 			$objectType = '-'.strtolower($this->objectType).'-';
 			if(strpos(LONGTEXTDATATYPES, $objectType) !== false){
