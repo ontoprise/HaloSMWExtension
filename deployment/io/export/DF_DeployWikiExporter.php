@@ -53,13 +53,13 @@ class DeployBackupDumper extends BackupDumper {
 			
 			// --includeInstances means: consider member of categories beloning to a bundle
 			else if (strpos($arg, '--includeInstances') === 0) {
-				list($option, $value) = explode("=", "--includeInstances");
+				list($option, $value) = explode("=", $arg);
 				$this->includeInstances = ($value == 'true' || $value == '1' || $value == 'yes');
 			}
 
 			// --includeTemplates means: consider all templates used on pages of bundle
 			else if (strpos($arg, '--includeTemplates') === 0) {
-				list($option, $value) = explode("=", "--includeTemplates");
+				list($option, $value) = explode("=", $arg);
 				$this->includeTemplates = ($value == 'true' || $value == '1' || $value == 'yes');
 			}
 		}
