@@ -18,10 +18,7 @@
 		</dependencies>
 		<patchlevel>0</patchlevel>
 		<notice>
-Please include at the end of an installation process *which installed
-new articles/images* the following wording:
-
-"Your Wiki contains now new pages. Since existing pages can make
+Your Wiki contains now new pages. Since existing pages can make
 use of newly imported pages (e.g. templates), it is necessary to
 REFRESH all pages in this Wiki now.
 
@@ -37,7 +34,7 @@ php SMW_refreshData.php -v
 NOTE: in some cases it is required to call this script aborts with an error. In
 such cases you have to run the script multiple times. Please read more about
 repairing data here:
-http://smwforum.ontoprise.com/smwforum/index.php/Help:Repairing_data"
+http://smwforum.ontoprise.com/smwforum/index.php/Help:Repairing_data
 		</notice> 
 	</global>
 	<codefiles>
