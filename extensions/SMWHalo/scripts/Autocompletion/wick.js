@@ -1272,9 +1272,7 @@ AutoCompleter.prototype = {
 					},
 					style : {
 						tip : 'bottomLeft',
-						width : {
-							max : 500
-						}
+						width : 300
 					}
 				});
         	
@@ -1304,8 +1302,8 @@ AutoCompleter.prototype = {
 			var parameter = '';
 			var command = '';
 			if (sepIndex != -1) {
-				command = c.substr(0, sepIndex).trim();
-				parameter = c.substr(sepIndex+1).trim();
+				command = jQuery.trim(c.substr(0, sepIndex));
+				parameter = jQuery.trim(c.substr(sepIndex+1));
 			}
     			        		
     		if (constraint == 'all') {
