@@ -1371,7 +1371,7 @@ CKEDITOR.customprocessor.prototype =
                 var labelCategory = 'Category';
                 if (sort == text) sort = null;
 				if (sort) {
-					if (emptyVal.exec(sort)) return '';
+					if (emptyVal.exec(sort)) sort = ' ';
 					return '[[' + labelCategory + ':' + text + '|' + sort + ']]';
 				}
 				if (emptyVal.exec(text)) return '';
