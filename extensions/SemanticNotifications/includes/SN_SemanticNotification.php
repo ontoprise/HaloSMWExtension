@@ -266,7 +266,6 @@ HTML;
 	public function query() {
 		global $smwgIP, $sngIP;
 		require_once("$sngIP/includes/SN_QP_SNXML.php");
-		require_once($smwgIP . '/includes/SMW_QueryProcessor.php');
 
 		global $smwgQMaxLimit;
 	    if (property_exists('SMWQueryProcessor','formats')) { // registration up to SMW 1.2.*
