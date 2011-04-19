@@ -139,11 +139,8 @@ class USSpecialPage extends SpecialPage {
 		$caseInsensitiveTitle = USStore::getStore()->getSingleTitle($localname);
 		
 		if ($newpage !== NULL && !$newpage->exists() && is_null($caseInsensitiveTitle)) {
-			global $wgParser;
-			$wikilink = '[[:'.$newpage->getPrefixedText().'|'.wfMsg('us_clicktocreate').']]';
-			$newLink = $wgParser->parse($wikilink, Title::newFromText("__dummy__"), new ParserOptions(), true, true)->getText();
-			$newLink = strip_tags($newLink, '<a>');
-                        $this->createNewPageLink($newpage, $newLink);
+            
+            $newLink = $this->createNewPageLink( $newpage );
 			$html .= '<div id="us_newpage">'.wfMsg('us_page_does_not_exist', $newLink).'</div>';
 		}
 		if (!is_null($caseInsensitiveTitle)) {
@@ -151,12 +148,9 @@ class USSpecialPage extends SpecialPage {
                         $wikilink = '[[:'.$caseInsensitiveTitle->getPrefixedText().']]';
                         $newTitleObj = &$caseInsensitiveTitle;
 			if (!is_null($newpage) && !$newpage->exists()) {
-                            $wikilink .= ' | [['.$newpage->getPrefixedText().'|'.wfMsg('us_clicktocreate').']]';
                             $newTitleObj = &$newpage;
                         }
-                        $newLink = $wgParser->parse($wikilink, Title::newFromText("__dummy__"), new ParserOptions(), true, true)->getText();
-                        $newLink = strip_tags($newLink, '<a>');
-                        $this->createNewPageLink($newTitleObj, $newLink);
+                        $newLink = $this->createNewPageLink($newTitleObj);
                         $html .= '<div id="us_newpage">'.wfMsg('us_similar_page_does_exist', $newLink).'</div>';
 		}
 
@@ -365,15 +359,20 @@ class USSpecialPage extends SpecialPage {
          * @param Title $newpage
          * @param &string $newLink
          */
-        private function createNewPageLink( $newpage, &$newLink) {
-        	  
+        private function createNewPageLink( $newpage ) {
+            	$linker = new Linker();
                 $createNewPage = Title::newFromText('Create_new_page');
                 if ($createNewPage->exists()) {
-                    $mylink = str_replace('%3A', ':', urlencode($newpage->getPrefixedDBkey()));
-                    $newLink = str_replace('index.php?title='.$mylink."&amp;action=edit",
-                                           'index.php/Create_new_page?target='.urlencode($newpage->getPrefixedDBkey()),
-                                           $newLink);
+                    $wikilink = $linker->link($createNewPage,
+                            wfMsg('us_clicktocreate'),
+                            array('class' => 'new'),
+                            array('target' => $newpage->getPrefixedDBkey(), 'redlink' => 1 ) );
+                } else {
+                    $myTitle = Title::newFromText(':'.$newpage->getPrefixedText());
+                    $wikilink = $linker->link($myTitle, wfMsg('us_clicktocreate'), array(), array('redlink' => 1)  );
                 }
+
+                return $wikilink;
         }
 
 	private function doSearch($limit, $offset) {
