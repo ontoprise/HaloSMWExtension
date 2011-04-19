@@ -106,19 +106,21 @@ function saveRichMediaData(mediaTitle, mediaLink) {
 
 			return true;
 		}
-		if (richEditorType == 'cke' && typeof(oEditor) !== 'undefined') { // CK
+		if ( richEditorType == 'cke' && typeof(oEditor) !== 'undefined' ) { // CK
 			// CKeditor
 			// check if an image is selected
 			var sel = oEditor.getSelection();
-			if (sel) {
+			if ( sel ) {
 				oElement = sel.getSelectedElement();
 			}
 			if ( oElement && oElement.is('img') &&  !oElement.getAttribute( '_cke_realelement' )) {
 				// ok
 			}
 			else { // check if we are inside a link, replace the link, even if it is not a media link
-				oElement = sel.getStartElement();
-				if (oElement && oElement.is('a')) {
+				if ( sel ) {
+					oElement = sel.getStartElement();
+				}
+				if ( oElement && oElement.is( 'a' ) ) {
 					sel.selectElement( oElement );
 				} else {
 					oElement = null;
@@ -127,13 +129,13 @@ function saveRichMediaData(mediaTitle, mediaLink) {
 
 			// create new Element from uploaded file
 			var ns = mediaTitle.substring(0, mediaTitle.indexOf(':'));
-			if (ns == "File") { // create an image for all images
+			if (ns == "File" || ns == "Image") { // create an image for all images
 				oNew = oEditor.document.createElement( 'img' );
 				oNew.setAttribute('alt', mediaTitle);
 				oNew.setAttribute('_cke_mw_filename', mediaTitle.replace(/^[^:].*:(.*)/, '\$1').replace('_', ' '));
 				oNew.setAttribute('src', mediaLink);
 			} else {
-				// other media (ns != Image:) will be created as a link
+				// other media (ns != File:) will be created as a link
 				//var basename = mediaTitle.replace(/^[^:].*:(.*)/, '\$1');
 				var basename = mediaTitle.substring(mediaTitle.indexOf(':') + 1);
 				var ns = mediaTitle.substring(0, mediaTitle.indexOf(':'))
@@ -152,9 +154,8 @@ function saveRichMediaData(mediaTitle, mediaLink) {
 			if ( oElement ) {
 				oNew.replace( oElement );
 				oEditor.getSelection().selectElement( oNew );
-			}
-			// otherwise insert new element into editor content
-			else {
+			} else {
+				// otherwise insert new element into editor content
 				oEditor.insertElement( oNew ) ;
 			}
 
