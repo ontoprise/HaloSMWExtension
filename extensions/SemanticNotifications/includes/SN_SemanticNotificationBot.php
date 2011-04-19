@@ -69,9 +69,14 @@ class SemanticNotificationBot extends GardeningBot {
 	 * This method is called by the bot framework. 
 	 */
 	public function run($paramArray, $isAsync, $delay) {
+		global $wgUser;
 		echo "...started!\n";
 		$result = "";
 
+		// Make sure the the triple store is asked for SPARQL queries although
+		// the bot is running in maintenance mode.
+		define('SMWH_FORCE_TS_UPDATE', true);
+		
 		$log = SGAGardeningIssuesAccess::getGardeningIssuesAccess();
 		
 		$notifications = SemanticNotificationManager::getAllNotifications();
@@ -81,6 +86,7 @@ class SemanticNotificationBot extends GardeningBot {
 		foreach ($notifications as $n) {
 			$sn = SemanticNotification::newFromName($n[1], $n[0]);
 			echo $n[1]." ".$sn->getUserName();
+			$wgUser = User::newFromName($sn->getUserName());
 			$ts = $sn->getTimestamp();
 			preg_match("/(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/",$ts, $t);
 			$lastUpdate = mktime($t[4],$t[5],$t[6],$t[2],$t[3],$t[1]);
