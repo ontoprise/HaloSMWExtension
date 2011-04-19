@@ -164,7 +164,8 @@ class HACLSMWStore extends SMWStore {
 				}
 			}
 		}
-
+		
+		$values = array_merge($values);
 		return $values;
 	}
 
@@ -187,6 +188,7 @@ class HACLSMWStore extends SMWStore {
 				unset($subjects[$k]);
 			}
 		}
+		$subjects = array_merge($subjects);
 		return $subjects;
 	}
 
@@ -316,7 +318,8 @@ class HACLSMWStore extends SMWStore {
 			}
     	}
 		
-		return $propUsage;
+		$propUsage = array_merge($propUsage);
+    	return $propUsage;
 	}
 
 	/**
@@ -521,6 +524,7 @@ class HACLSMWStore extends SMWStore {
 				unset($properties[$k]);
 			}
 		}
+		$properties = array_merge($properties);
 		return $properties;		
 	}
 
