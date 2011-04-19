@@ -1294,7 +1294,7 @@ AutoCompleter.prototype = {
     	if (constraint == null || constraint == '') {
     		constraint = "all";
     	}
-		constraint = constraint.trim();
+		constraint = jQuery.trim(constraint);
 		var commands = constraint.split("|");
 		var showText = "";
 		
