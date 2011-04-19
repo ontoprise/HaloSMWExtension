@@ -480,8 +480,9 @@ CKEDITOR.customprocessor.prototype =
         data = data.replace(/<br\/>(\s*<\/(p|li)>)/gi, '$1');
         // also remove <br/> before nested lists
         data = data.replace(/<br\/>(\s*<(ol|ul)>)/gi, '$1');
-		// in IE the values of the class attribute is not quoted 
+		// in IE the values of the class and alt attribute are not quoted
         data = data.replace(/class=([^\"].*?)\s/gi, 'class="$1" ');
+        data = data.replace(/alt=([^\"].*?)\s/gi, 'alt="$1" ');
         // when inserting data with Excel an unmatched <col> element exists, thus remove it
         data = data.replace(/<col[^>]*>/gi, '' );
 		
