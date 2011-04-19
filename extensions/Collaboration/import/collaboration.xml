@@ -314,6 +314,81 @@
     </revision>
   </page>
   <page>
+    <title>File:Comment icon crystal.png</title>
+    <id>123</id>
+    <revision>
+      <id>1358</id>
+      <timestamp>2011-04-19T13:00:04Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">{{Part of bundle|value=Collaboration}}
+{{Content hash|value=}}</text>
+    <hash>579d346e2ce3c336ea7ccf7cbcec9627</hash>
+    </revision>
+  </page>
+  <page>
+    <title>File:Bad active.png</title>
+    <id>124</id>
+    <revision>
+      <id>1356</id>
+      <timestamp>2011-04-19T12:59:37Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">{{Part of bundle|value=Collaboration}}
+{{Content hash|value=}}</text>
+    <hash>579d346e2ce3c336ea7ccf7cbcec9627</hash>
+    </revision>
+  </page>
+  <page>
+    <title>File:Good active.png</title>
+    <id>125</id>
+    <revision>
+      <id>1357</id>
+      <timestamp>2011-04-19T12:59:39Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">{{Part of bundle|value=Collaboration}}
+{{Content hash|value=}}</text>
+    <hash>579d346e2ce3c336ea7ccf7cbcec9627</hash>
+    </revision>
+  </page>
+  <page>
+    <title>File:Neutral active.png</title>
+    <id>126</id>
+    <revision>
+      <id>1355</id>
+      <timestamp>2011-04-19T12:58:24Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">{{Part of bundle|value=Collaboration}}
+{{Content hash|value=}}</text>
+    <hash>579d346e2ce3c336ea7ccf7cbcec9627</hash>
+    </revision>
+  </page>
+  <page>
+    <title>File:Defaultuser.gif</title>
+    <id>127</id>
+    <revision>
+      <id>1359</id>
+      <timestamp>2011-04-19T13:14:01Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">{{Part of bundle|value=Collaboration}}
+{{Content hash|value=}}</text>
+    <hash>579d346e2ce3c336ea7ccf7cbcec9627</hash>
+    </revision>
+  </page>
+  <page>
     <title>Template:Comment</title>
     <id>166</id>
     <revision>
