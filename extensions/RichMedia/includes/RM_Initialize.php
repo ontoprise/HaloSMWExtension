@@ -75,6 +75,11 @@ $smwgRMFormByNamespace = array(
 	'RMUpload' => 'RMUpload'
 );
 
+// minimum size of overlay
+global $smwgRMEWMinWidth , $smwgRMEWMinHeight;
+$smwgRMEWMinWidth = 250;
+$smwgRMEWMinHeight = 200;
+
 // Conversion of documents (PDF, MS Office)
 global $smwgEnableUploadConverter;
 if ($smwgEnableUploadConverter) {

@@ -106,7 +106,9 @@ class EmbedWindowForm {
 	 */
 	function execute(){
 		global $wgOut, $wgUser, $smwgRMScriptPath, 
-			$smwgRMEWEnableResizing, $smwgRMEWAllowScroll, $wgServer, $wgJsMimeType;
+			$smwgRMEWEnableResizing, $smwgRMEWAllowScroll,
+			$smwgRMEWMinWidth, $smwgRMEWMinHeight,
+			$wgServer, $wgJsMimeType;
 		if (isset( $this->mTarget ) && $this->mTarget != "" ) {
 			$nt = Title::newFromText($this->mTarget);
 		}
@@ -132,7 +134,16 @@ class EmbedWindowForm {
 				</td></tr>
 			</table>
 END;
-			if($smwgRMEWEnableResizing) {
+			
+			if( $smwgRMEWEnableResizing ) {
+				$newWidth = $embedWidth;
+				$newHeight = $embedHeight;
+				if( $embedWidth < $smwgRMEWMinWidth ) {
+					$newWidth = $smwgRMEWMinWidth;
+				}
+				if ( $embedHeight < $smwgRMEWMinHeight ) {
+					$newHeight = $smwgRMEWMinHeight;
+				}
 				switch($smwgRMEWAllowScroll) {
 					case true:
 						$scroll = 1;
@@ -143,13 +154,13 @@ END;
 				}
 				
 				$embedObject .= <<<HTML
-	<script type="{$wgJsMimeType}">
+<script type="{$wgJsMimeType}">
 	var screenHeight = top.screen.availHeight, screenWidth = top.screen.availWidth,
 		paddingTotal = 20, extraHeight = 60; // some extra space to avoid Scrollbars
-		extraWidth = 20, outer = top.jQuery('#fancybox-wrap'), 
-		inner = top.jQuery('#fancybox-inner');
+	extraWidth = 20, outer = top.jQuery('#fancybox-wrap'), 
+	inner = top.jQuery('#fancybox-inner');
 
-		if ({$scroll} !== 1 && ( {$embedWidth} > screenWidth || {$embedHeight} > screenHeight) ) {
+	if ({$scroll} !== 1 && ( {$newWidth} > screenWidth || {$newHeight} > screenHeight) ) {
 		outer.css({ 
 			height: screenHeight - 250, 
 			width: screenWidth - 100 
@@ -163,13 +174,13 @@ END;
 		picture.setAttribute( 'width', screenWidth - 100 - extraWidth - paddingTotal );
 	} else {
 		outer.css({ 
-			height: {$embedHeight} + paddingTotal + extraHeight, 
-			width: {$embedWidth} + paddingTotal + extraWidth 
+			height: {$newHeight} + paddingTotal + extraHeight, 
+			width: {$newWidth} + paddingTotal + extraWidth 
 		}); 
 		inner.css({ 
-			height: {$embedHeight} + extraHeight, 
-			width: {$embedWidth} + extraWidth 
-		});
+				height: {$newHeight} + extraHeight, 
+				width: {$newWidth} + extraWidth 
+			});
 	}
 	top.jQuery.fancybox.center(); 
 </script>
