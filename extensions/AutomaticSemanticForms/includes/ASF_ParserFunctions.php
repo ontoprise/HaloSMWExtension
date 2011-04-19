@@ -554,7 +554,9 @@ class ASFParserFunctions {
 					.'" class="wickEnabled" constraints="'.$cACConstraint.'"/>';
 			} else {
 				$str .= '<select size="1" name="categories" size="'.$categorySize.'">';
-				define('SMW_AC_MAX_RESULTS', 500);
+				if(!defined('SMW_AC_MAX_RESULTS')){
+					define('SMW_AC_MAX_RESULTS', 500);
+				}
 				if(strlen($rootCategory) == 0){
 					$categories = ASFCategoryAC::getCategories('');
 				} else {
