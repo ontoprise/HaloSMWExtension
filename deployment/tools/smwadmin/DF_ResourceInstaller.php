@@ -79,7 +79,7 @@ class ResourceInstaller {
 					if( wfRunHooks('ArticleDelete', array(&$a, &$wgUser, &$reason, &$error)) ) {
 						if( $a->doDeleteArticle( $reason ) ) {
 							$this->logger->info("Remove old page from $fromVersion: ".$title->getPrefixedText());
-							print "\n\t[Remove old page from $fromVersion: ".$title->getPrefixedText();
+							print "\n\t[Removing old page from $fromVersion: ".$title->getPrefixedText()."...";
 							wfRunHooks('ArticleDeleteComplete', array(&$a, &$wgUser, $reason, $id));
 							print "done.]";
 						}
