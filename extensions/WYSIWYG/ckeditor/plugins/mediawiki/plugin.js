@@ -930,7 +930,7 @@ CKEDITOR.customprocessor.prototype =
                                 return;
                             }
                             
-							var imgName		= htmlNode.getAttribute( '_fck_mw_filename' );
+							var imgName		= htmlNode.getAttribute( '_fck_mw_filename' ) || htmlNode.getAttribute( '_cke_mw_filename' ) || '';
 							var imgCaption	= htmlNode.getAttribute( 'alt' ) || '';
 							var imgType		= htmlNode.getAttribute( '_fck_mw_type' ) || '';
 							var imgLocation	= htmlNode.getAttribute( '_fck_mw_location' ) || '';
@@ -946,7 +946,7 @@ CKEDITOR.customprocessor.prototype =
                             var imgNolink = ( htmlNode.getAttribute( 'no-link' ) || '' ) + '';
                             var imgLink = ( htmlNode.getAttribute( 'link' ) || '' ) + '';
 
-							stringBuilder.push( '[[Image:' );
+							stringBuilder.push( '[[File:' );
 							stringBuilder.push( imgName );
 
 							if ( imgStyleWidth.length > 0 )
