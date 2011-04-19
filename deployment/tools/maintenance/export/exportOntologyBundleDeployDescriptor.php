@@ -149,9 +149,6 @@ function dumpDescriptor($bundeID, $output = "deploy.xml", $dumpFile = "dump.xml"
 	$xml .= "\t".'</dependencies>'."\n";
     $xml .= "<notice>";
     $xml .= <<<ENDS
-Please include at the end of an installation process *which installed
-new articles/images* the following wording:
-
 "Your Wiki contains now new pages. Since existing pages can make
 use of newly imported pages (e.g. templates), it is necessary to
 REFRESH all pages in this Wiki now.
