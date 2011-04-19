@@ -34,6 +34,8 @@ VERSION 1.4.1
       mode and the image dialog inserts the correct html element.
 
   BUGFIXES:
+    * Fix bug http://smwforum.ontoprise.com/smwbugs/show_bug.cgi?id=14465
+      WYSIWYG changes % to ükLR
     * Fix bug http://smwforum.ontoprise.com/smwbugs/show_bug.cgi?id=14447
       Wysiwyg editor looses category annotations with empty labels
     * Fix bug http://smwforum.ontoprise.com/smwbugs/show_bug.cgi?id=13693
