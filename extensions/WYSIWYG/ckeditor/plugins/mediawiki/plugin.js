@@ -994,7 +994,7 @@ CKEDITOR.customprocessor.prototype =
 									stringBuilder.push( '<source' );
 									stringBuilder.push( ' lang="' + refLang + '"' );
 									stringBuilder.push( '>' );
-									stringBuilder.push( unescape(this._GetNodeText(htmlNode)).replace(/fckLR/g,'\r\n') );
+									stringBuilder.push( this._GetNodeText(htmlNode).htmlDecode().replace(/fckLR/g,'\r\n') );
 									stringBuilder.push( '</source>' );
 									return;
 
@@ -1025,7 +1025,7 @@ CKEDITOR.customprocessor.prototype =
 
 								case 'fck_mw_template' :
                                 case 'fck_smw_query' :
-                                    var inner= unescape(this._GetNodeText(htmlNode)).replace(/fckLR/g,'\r\n');
+                                    var inner= this._GetNodeText(htmlNode).htmlDecode().replace(/fckLR/g,'\r\n');
                                     if (inner == '{{!}}')
                                         stringBuilder.push( '\n' );
                                     stringBuilder.push( inner );
@@ -1051,7 +1051,7 @@ CKEDITOR.customprocessor.prototype =
                                                 stringBuilder.push( attribs ) ;
 
                 							stringBuilder.push( '>' ) ;
-                                			stringBuilder.push( unescape(this._GetNodeText(htmlNode)).replace(/fckLR/g,'\r\n').replace(/_$/, '') );
+                                			stringBuilder.push( this._GetNodeText(htmlNode).htmlDecode().replace(/fckLR/g,'\r\n').replace(/_$/, '') );
                                             stringBuilder.push( '<\/' + tagName + '>' ) ;
 
 								            break;
@@ -1065,11 +1065,11 @@ CKEDITOR.customprocessor.prototype =
 								        case 'p' :
 								            stringBuilder.push( '{{' + tagName );
 								            if (this._GetNodeText(htmlNode).length > 0)
-								                stringBuilder.push( ':' + unescape(this._GetNodeText(htmlNode)).replace(/fckLR/g,'\r\n').replace(/_$/, '') );
+								                stringBuilder.push( ':' + this._GetNodeText(htmlNode).htmlDecode().replace(/fckLR/g,'\r\n').replace(/_$/, '') );
 								            stringBuilder.push( '}}');
 								            break;
                                         case 'sf' :
-                                            stringBuilder.push( unescape(this._GetNodeText(htmlNode)).replace(/fckLR/g,'\r\n') );
+                                            stringBuilder.push( this._GetNodeText(htmlNode).htmlDecode().replace(/fckLR/g,'\r\n') );
                                             break;
 								    }
 								    return;
@@ -1217,7 +1217,7 @@ CKEDITOR.customprocessor.prototype =
 						textValue = textValue.replace( /<!--LINK_PIPE-->/g, '|' );
 					}
 				} else {
-					textValue = unescape(textValue).replace(/fckLR/g,'\r\n');
+					textValue = textValue.htmlDecode().replace(/fckLR/g,'\r\n');
 				}
 
 				stringBuilder.push( textValue );
