@@ -2,12 +2,14 @@
 <project basedir="." default="SOLR" name="SOLR">
 
 	<target name="SOLR">
-		<property name="solr_dir" value="../../../../../XAMPP/solr" />
+		<property environment="env" />
+		<property name="solr_dir" value="${env.WORKSPACE}/../.." />
+		<property name="xampp" />
 		<delete dir="deploy/bin/solr_zip" />
 		<mkdir dir="deploy/bin/solr_zip" />
 
 		<copy todir="deploy/bin/solr_zip/solr">
-			<fileset dir="${solr_dir}/solr">
+			<fileset dir="${solr_dir}/${xampp}/solr">
 				<exclude name="**/.svn, **/CVS" />
 			</fileset>
 		</copy>
