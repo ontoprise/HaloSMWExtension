@@ -468,8 +468,10 @@ function smwgHaloSetupExtension() {
 	$wgAjaxExportList[] = 'smwf_ts_getWikiSpecialProperties';
 	$wgAjaxExportList[] = 'smwf_ts_triggerAsynchronousLoading';
 
-	// make hook for red links
-	$wgHooks['LinkEnd'][] = 'smwfBrokenLinkForPage';
+	// make hook for red links if $lodgNEPEnabled is disabled (see above)
+    global $smwgRedLinkWithCreateNewPage;
+    if ($smwgRedLinkWithCreateNewPage && !$lodgNEPEnabled)
+        $wgHooks['LinkEnd'][] = 'smwfBrokenLinkForPage';
 
 	// make hook for RichMedia
 	$wgHooks['CheckNamespaceForImage'][] = 'smwfRichMediaIsImage';
