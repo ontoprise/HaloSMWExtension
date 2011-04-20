@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project basedir="." default="SOLR" name="SOLR">
+
+	<target name="SOLR">
+		<property name="solr_dir" value="../../../../../XAMPP/solr" />
+		<delete dir="deploy/bin/solr_zip" />
+		<mkdir dir="deploy/bin/solr_zip" />
+
+		<copy todir="deploy/bin/solr_zip/solr">
+			<fileset dir="${solr_dir}/solr">
+				<exclude name="**/.svn, **/CVS" />
+			</fileset>
+		</copy>
+		<zip destfile="deploy/bin/solr-${VERSION}.zip" basedir="deploy/bin/solr_zip" />
+		<delete dir="deploy/bin/solr_zip" />
+	</target>
+</project>
