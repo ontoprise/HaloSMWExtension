@@ -59,7 +59,7 @@ $messages['en'] = array(
 					 ' notification. If there were no changes, no notification'.
 					 ' will be sent.',
 	'sn_special5' => 'I would like to receive this notification every',
-	'sn_special6' => 'day(s).',
+	'sn_special6' => 'minute(s).',
 	'sn_special7' => 'Enter a name for your notification:',
 	'sn_special8' => 'Please check the preview first.',
 	'sn_special9' => 'Add notification',
@@ -90,6 +90,8 @@ $messages['en'] = array(
 	'sn_msg_link' => '<br />To manage your notifications, please go to $1.<br /><br />    --Your SMW notification service.',
 
 	'sn_processed_notification' => 'Processed notification "$1" of user "$2".',
+	'sn_processed_notification_sent' => 'Processed notification "$1" of user "$2". The semantic data changed and a notification was sent.',
+	'sn_skipped_notification'   => 'Skipped notification "$1" of user "$2" due to update interval.',
 	'sn_mail_title' => 'Semantic notification from $1',
 
 
@@ -134,7 +136,7 @@ $messages['de'] = array(
 					 'erhalten möchten. Wenn es keine Änderungen gibt, werden '.
 					 'keine Benachrichtigungen versendet.',
 	'sn_special5' => 'Ich möchte diese Benachrichtigung alle',
-	'sn_special6' => 'Tage erhalten.',
+	'sn_special6' => 'Minuten erhalten.',
 	'sn_special7' => 'Geben Sie Ihrer Benachrichtigung einen Namen:',
 	'sn_special8' => 'Sehen Sie sich zuerst die Vorschau an.',
 	'sn_special9' => 'Benachrichtigung hinzufügen',
@@ -166,6 +168,8 @@ $messages['de'] = array(
 	'sn_msg_link' => '<br />Bitte gehen Sie zum Verwalten Ihrer Benachrichtigungen zu $1.<br /><br />    --Ihr SMW Benachrichtigungsdienst.',
 
 	'sn_processed_notification' => 'Die Benachrichtigung $1 des Benutzers "$2" wurde bearbeitet.',
+	'sn_processed_notification_sent' => 'Die Benachrichtigung $1 des Benutzers "$2" wurde bearbeitet. Die semantischen Daten änderten sich und eine Benachrichtigung wurde gesendet.',
+	'sn_skipped_notification'   => 'Die Benachrichtigung $1 des Benutzers "$2" wurde übersprungen da der Benachrichtigungszeitraum noch nicht abgelaufen ist.',
 	'sn_mail_title' => 'Semantische Benachrichtigung von $1',
 
 );

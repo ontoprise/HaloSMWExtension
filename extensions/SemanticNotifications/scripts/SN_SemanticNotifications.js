@@ -39,6 +39,7 @@ SemanticNotifications.prototype = {
 		this.queryLen = 0;
 		this.queryEdited = false;
 		this.minInterval = 1000;
+		// The initial name is a hint that the preview has to be shown first
 		this.initialName = $('sn-notification-name').value;
 		this.previewOK = false;
 	},
@@ -63,9 +64,8 @@ SemanticNotifications.prototype = {
 	},
 	
 	/**
-	 * Key-up and blur callback for the query text area. If the query text has 
-	 * been changed the input field for the name of the notification and the 'Add' 
-	 * button are disabled.
+	 * Key-up and blur callback for the name text field. If the name is empty or
+	 * if the query result preview is not valid the 'Add' button is disabled.
 	 */	
 	nameChanged: function(event) {
 		var key = event.which || event.keyCode;
@@ -161,23 +161,23 @@ SemanticNotifications.prototype = {
 		function ajaxResponseShowPreview(request) {
 			this.hidePendingIndicator();			
 			if (request.status == 200) {
-//				var pos = request.responseText.indexOf(',');
-//				success = request.responseText.substring(0, pos);
-//				var res = request.responseText.substr(pos+1);
 				var res = request.responseText;
 				$('sn-previewbox').innerHTML = res;
-//				if (success.indexOf('true')>= 0) {
-					this.previewOK = true;
-					$('sn-notification-name').enable();
-					$('sn-notification-name').focus();
-					if ($('sn-notification-name').value == this.initialName) {
-						$('sn-notification-name').value = '';
-						this.enable('sn-add-notification', false);
-					} else {
-						this.enable('sn-add-notification', true);
-					}
-	//			}
+				this.previewOK = true;
+				$('sn-notification-name').enable();
+				$('sn-notification-name').focus();
+				var snName = $('sn-notification-name').value;
+				if (snName == this.initialName && this.initialName.length > 0) {
+					// Remove the hint to show the preview first
+					// => a real name must be entered
+					$('sn-notification-name').value = '';
+					this.enable('sn-add-notification', false);
+				} else {
+					// Enable the "Add" button if a name is given
+					this.enable('sn-add-notification', snName.length > 0);
+				}
 			} else {
+				// Preview failed => the notification can not be added
 				$('sn-notification-name').disable();
 				this.enable('sn-add-notification', false);
 				this.previewOK = false;

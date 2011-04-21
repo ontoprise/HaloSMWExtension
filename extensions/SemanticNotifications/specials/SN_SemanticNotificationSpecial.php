@@ -109,10 +109,9 @@ HTML;
        		$minInterval = $limits['min interval'];
        	}
 		    
-		$html = '';
-
-		$html = wfMsg('sn_explanation');
-		$html .= <<<HTML
+		$explanation = wfMsg('sn_explanation');
+		$html = <<<HTML
+	<div>$explanation</div>
     <div class="sn-outerdiv" style="position:relative; overflow:hidden; height:600px; top:20px;">
 	  <div id="querypreview" style="float:left; width:79%">
 	      <div id="sn-querybox" style="float:left; width:100%;">
@@ -138,7 +137,9 @@ HTML;
 		    </div>
 	        <div class="sn-previewbox" id="sn-previewbox" style="width:79%; height:320px; position:relative;"></div>
 	        <div id="sn-footer" style="width:79%; float:right; overflow:hidden;">
-			  $txtSn4
+			  <div>
+	      	     $txtSn4
+	      	  </div>
 	          <div class="sn_labels" id="sn-enter-updateinterval-txt" style="overflow:hidden; float:left;">
 			      	$txtSn5&nbsp; 
 			    </div>

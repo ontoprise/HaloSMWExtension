@@ -90,21 +90,31 @@ class SemanticNotificationBot extends GardeningBot {
 			$ts = $sn->getTimestamp();
 			preg_match("/(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/",$ts, $t);
 			$lastUpdate = mktime($t[4],$t[5],$t[6],$t[2],$t[3],$t[1]);
-			$diff = time() - $lastUpdate;
-			$ui = $sn->getUpdateInterval();
-			if ($diff < $ui * (24*60*60)) {
-				echo "...skipped\n";
-				// update interval not elapsed
-				continue;
-			}
+			$now = wfTimestampNow();
+			preg_match("/(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/",$now, $n);
+			$now = mktime($n[4],$n[5],$n[6],$n[2],$n[3],$n[1]);
 			
-			$sn->sendNotificationMessage();
-			$sn->store();
+			$diff = $now - $lastUpdate;
+			$ui = $sn->getUpdateInterval();
+			// Update interval is given in minutes = 60 seconds
+			$skipped = false;
+			$notificationSent = false;
+			if ($diff >= $ui * 60) {
+				$notificationSent = $sn->sendNotificationMessage();
+				$sn->store();
+			} else {
+				$skipped = true;
+			}	
 			
 			$this->worked(1);
 
 			$log->addGardeningIssueAboutValue(
-				$this->id, SMW_GARDISSUE_PROCESSED_NOTIFICATION, 
+				$this->id, 
+				$skipped 
+					? SMW_GARDISSUE_SKIPPED_NOTIFICATION
+					: $notificationSent
+						? SMW_GARDISSUE_PROCESSED_NOTIFICATION_SENT
+						: SMW_GARDISSUE_PROCESSED_NOTIFICATION, 
 				Title::newFromText($sn->getName()), $sn->getUserName());
 			echo "...done.\n";
 			
@@ -121,6 +131,8 @@ new SemanticNotificationBot();
 
 define('SMW_SEMANTIC_NOTIFICATION_BOT_BASE', 2500);
 define('SMW_GARDISSUE_PROCESSED_NOTIFICATION', SMW_SEMANTIC_NOTIFICATION_BOT_BASE * 100 + 1);
+define('SMW_GARDISSUE_SKIPPED_NOTIFICATION',   SMW_SEMANTIC_NOTIFICATION_BOT_BASE * 100 + 2);
+define('SMW_GARDISSUE_PROCESSED_NOTIFICATION_SENT', SMW_SEMANTIC_NOTIFICATION_BOT_BASE * 100 + 3);
 
 class SemanticNotificationBotIssue extends GardeningIssue {
 
@@ -132,6 +144,10 @@ class SemanticNotificationBotIssue extends GardeningIssue {
 		switch($this->gi_type) {
 			case SMW_GARDISSUE_PROCESSED_NOTIFICATION:
 				return wfMsg('sn_processed_notification', $text1, $this->value);
+			case SMW_GARDISSUE_PROCESSED_NOTIFICATION_SENT:
+				return wfMsg('sn_processed_notification_sent', $text1, $this->value);
+			case SMW_GARDISSUE_SKIPPED_NOTIFICATION:
+				return wfMsg('sn_skipped_notification', $text1, $this->value);
 			default: return NULL;
 				
 		}

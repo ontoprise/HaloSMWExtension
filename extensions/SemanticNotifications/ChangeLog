@@ -1,13 +1,13 @@
 Semantic Notification extension ChangeLog
 =========================================
 
-
 VERSION 1.1.2
 
 
   FEATURES:
-
-
+	Feature request 14299 - allow a more fine-grained period for sending notifications
+		http://smwforum.ontoprise.com/smwbugs/show_bug.cgi?id=14299
+		Since patch level 2
 
   CHANGES:
 
