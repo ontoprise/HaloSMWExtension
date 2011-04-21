@@ -66,7 +66,7 @@ if ($help) {
 	SNStorage::getDatabase()->dropDatabaseTables();
 	echo "done.\n";
 } else {
-	echo "Setup program for HaloACL\n";
+	echo "Setup program for SemanticNotifications\n";
 	echo "=========================\n";
 	echo "For help, please start with option --h or --help. \n\n";
 	echo "Setting up database tables for SemanticNotifications...";
