@@ -220,7 +220,7 @@ function smwf_ac_AutoCompletionDispatcher($articleName, $userInputToMatch, $user
  * Return options and namespace icon mappings.
  */
 function smwf_ac_AutoCompletionOptions() {
-	
+
 	global $wgUser;
 	if (isset($wgUser) && !is_null($wgUser)) {
 		$autoTriggering = $wgUser->getOption( "smwhactriggering" ) == 1 ? "smwhactriggering=manual" : "smwhactriggering=auto";
@@ -442,7 +442,7 @@ class AutoCompletionRequester {
 				// fallback
 				$pages = smwfGetAutoCompletionStore()->getPages($match, array(NS_MAIN));
 			}
-			
+				
 			AutoCompletionRequester::attachCategoryHints($pages);
 			AutoCompletionRequester::attachImageURL($pages);
 			return AutoCompletionRequester::encapsulateAsXML($pages);
@@ -479,7 +479,7 @@ class AutoCompletionRequester {
 
 		// get domain less properties first, fill with other properties and instances
 		$pages = AutoCompletionHandler::executeCommand("domainless-property: |namespace: ".SMW_NS_PROPERTY.", ".NS_MAIN, $match);
-		
+
 		// special handling for special relations
 		$specialMatches = array(); // keeps matches of special relations
 		global $smwgContLang;
@@ -815,10 +815,15 @@ class AutoCompletionHandler {
 				if (smwf_om_userCan($params[0], 'read') == 'true') {
 					$property = Title::newFromText($params[0]);
 					if (!is_null($property)) {
-						$pages = $acStore->getValueForAnnotation($userInput, $property);
-						if ($userInput == '') {
-							// if empty, show syntax samples
-							$pages = AutoCompletionRequester::getSyntaxSamples($property->getText());
+						$pages = $acStore->getPossibleValues($property);
+						if (empty($pages)) {
+							if ($userInput == '') {
+								// if empty, show syntax samples
+								$pages = AutoCompletionRequester::getSyntaxSamples($property->getText());
+							}
+							if (is_null($pages)) {
+								$pages = $acStore->getValueForAnnotation($userInput, $property);
+							}
 						}
 						$inf = self::setInferred($pages, !$first);
 						$result = self::mergeResults($result, $inf);
@@ -864,14 +869,14 @@ class AutoCompletionHandler {
 				$result = self::mergeResults($result, $inf);
 				if (count($result) >= SMW_AC_MAX_RESULTS) break;
 			}  else if ($commandText == 'all') {
-                $namespaceIndexes = array();
-                global $wgContLang;
-               
-                $pages = smwfGetAutoCompletionStore()->getPages($userInput, NULL);
-                $inf = self::setInferred($pages, !$first);
-                $result = self::mergeResults($result, $inf);
-                if (count($result) >= SMW_AC_MAX_RESULTS) break;
-            } else if ($commandText == 'lexical') {
+				$namespaceIndexes = array();
+				global $wgContLang;
+				 
+				$pages = smwfGetAutoCompletionStore()->getPages($userInput, NULL);
+				$inf = self::setInferred($pages, !$first);
+				$result = self::mergeResults($result, $inf);
+				if (count($result) >= SMW_AC_MAX_RESULTS) break;
+			} else if ($commandText == 'lexical') {
 				$pages = smwfGetAutoCompletionStore()->getPages($userInput);
 				$inf = self::setInferred($pages, !$first);
 				$result = self::mergeResults($result, $inf);
@@ -1000,8 +1005,8 @@ class AutoCompletionHandler {
 			if ($t instanceof Title) {
 				$newmatches[] = array('title'=>$t, 'inferred'=>$inferred);
 			} else if (is_string($t)) {
-                $newmatches[] = $t;
-            } else { // hash array
+				$newmatches[] = $t;
+			} else { // hash array
 				$t['inferred'] = $inferred;
 				$newmatches[] = $t;
 

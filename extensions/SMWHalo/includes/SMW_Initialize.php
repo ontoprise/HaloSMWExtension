@@ -1652,7 +1652,7 @@ function smwfCommaAnnotation(&$parser){
 	$params = func_get_args();
 	array_shift( $params ); // we already know the $parser ...
 	$annoName = $params[0];
-	$annoValues = split(',', $params[1]);
+	$annoValues = explode(',', $params[1]);
 	$ret = '';
 	for ($i=0; $i<sizeof($annoValues); $i++){
 		$val = $annoValues[$i];
