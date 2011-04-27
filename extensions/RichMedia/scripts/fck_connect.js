@@ -8,46 +8,33 @@
   will closes itself and the original page will be reloaded. 
  */
 
-function saveRichMediaData(mediaTitle, mediaLink) {
+function saveRichMediaData(mediaTitle, mediaLink, formInputID) {
 	// get FCK editor instance
 	var inFormEdit = false;
 	var richEditorType;
+	// just return if a formInputID is set
+	// this means that the upload was started out of an uploadable form field
+	if ( formInputID !== '' ) {
+		return;
+	}
 	try {
 		// Semantic Forms: either we are in formedit or we add/edit a page via Special:AddData/EditData/CreateForm/FormEdit
 		if (window.top.wgAction == "formedit" || window.top.wgPageName == 'Special:AddData' 
 			|| window.top.wgPageName == 'Special:EditData' || window.top.wgPageName == 'Special:FormEdit'
 				|| window.top.wgPageName == 'Special:CreateForm') {
-			inFormEdit = true;
 			oEditor = window.top.FCKeditorAPI.GetInstance('free_text');
 		} else {
 			// normal WYSIWYG edit
 			oEditor = window.top.FCKeditorAPI.GetInstance('wpTextbox1');
-			richEditorType = 'fck';
 		}
-	}
-	// no instance found, we didn't came from the FCK Editor, reload the main page and quit.
-	catch(err) {
+		richEditorType = 'fck';
+	} catch(err) {
 		// try CKEditor
 		try {
-			// Semantic Forms: either we are in formedit or we add/edit a page via Special:AddData/EditData/CreateForm/FormEdit
-			if (window.top.wgAction == "formedit" || window.top.wgPageName == 'Special:AddData' 
-				|| window.top.wgPageName == 'Special:EditData' || window.top.wgPageName == 'Special:FormEdit'
-					|| window.top.wgPageName == 'Special:CreateForm') {
-				inFormEdit = true;
-				oEditor = window.top.wgCKeditorInstance;
-			} else {
-				// normal WYSIWYG edit
-				oEditor = window.top.wgCKeditorInstance;
-				richEditorType = 'cke';
-			}
-		}
-		catch(err) {
-			// just reload if we're not using a form or doing an edit
-			if (inFormEdit) {
-				//not available...
-//				parent.jQuery.fancybox.onClosed ='window.location.reload()';
-				return;
-			}
+			oEditor = window.top.wgCKeditorInstance;
+			richEditorType = 'cke';
+		} catch(err) {
+			return;
 		}
 	} finally {
 		if (richEditorType == 'fck' && typeof(oEditor) !== 'undefined') { // FCK

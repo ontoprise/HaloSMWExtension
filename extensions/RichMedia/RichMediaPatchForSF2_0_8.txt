@@ -920,7 +920,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow.php
  }
 Index: extensions/SemanticForms/specials/SF_UploadWindow2.php
 ===================================================================
---- extensions/SemanticForms/specials/SF_UploadWindow2.php	(revision 10300)
+--- extensions/SemanticForms/specials/SF_UploadWindow2.php	(revision 10528)
 +++ extensions/SemanticForms/specials/SF_UploadWindow2.php	(working copy)
 @@ -70,9 +70,14 @@
  
@@ -1185,7 +1185,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow2.php
 +		$successString = "filestatus=uploaded&uploadedFile=".urlencode($target)."&RelatedArticles=$relatedArticles&sfInputID=$this->mInputID";
 +		$uploadWindowUrlSuccess = $uploadWindowPage->getTitle()->getFullURL($successString);
 + 		$output .= <<<END
-+		top.saveRichMediaData('{$target}', '{$imageURL}');
++		top.saveRichMediaData('{$target}', '{$imageURL}', '{$this->mInputID}');
 +		//load the upload success message
 +		top.jQuery('#fancybox-inner').load('{$uploadWindowUrlSuccess}');
  	</script>
