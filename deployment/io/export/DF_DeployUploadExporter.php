@@ -78,11 +78,12 @@ class DeployUploadExporter {
 			}
 		}
         
-		// noCat means: do not consider member of categories beloning to a bundle
-		if( isset( $args['noCat'] ) ) {
-			$this->mNoCat = true;
+		// includeInstances means: consider member of categories beloning to a bundle
+		if( isset( $args['includeInstances'] ) ) {
+			$this->includeInstances = $args['includeInstances'];
 		} else {
-			$this->mNoCat = false;
+			// default setting is: false
+			$this->includeInstances = false;
 		}
 	}
 
@@ -119,7 +120,7 @@ class DeployUploadExporter {
 		// get all image pages beloning to pages of bundle
 		$sql = "SELECT DISTINCT il_to AS image FROM $page JOIN $smwids ON smw_title = page_title AND smw_namespace = page_namespace JOIN $smwrels ON smw_id = s_id JOIN $imagelinks ON page_id = il_from WHERE  p_id = $partOfBundlePropertyID AND o_id = $partOfBundleID";
 
-		if (!$this->mNoCat) {
+		if ($this->includeInstances) {
 			// get all images pages belonging to instances of categories of bundle
 			$sql2 = "SELECT DISTINCT il_to AS image FROM $page JOIN $categorylinks ON page_id = cl_from JOIN $smwids ON smw_title = cl_to AND smw_namespace = ".NS_CATEGORY." JOIN $smwrels ON smw_id = s_id JOIN $imagelinks ON page_id = il_from WHERE p_id = $partOfBundlePropertyID AND o_id = $partOfBundleID";
 

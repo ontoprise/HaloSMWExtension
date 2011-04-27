@@ -389,10 +389,10 @@ class ConsistencyChecker {
 	 * Checks if there are Halo extensions installed which are not handled by the DF.
 	 *
 	 * @param int $format
-	 * @param boolean $nowiki
+	 * @param boolean $addChecks
 	 */
-	private function checkExistingExtensions($format, $nowiki = false) {
-		if ($nowiki) return false;
+	private function checkExistingExtensions($format, $addChecks = true) {
+        if (!$addChecks) return false;
 
 		global $wgExtensionCredits;
 		$ls = file_get_contents($this->rootDir."/LocalSettings.php");

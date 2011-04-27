@@ -104,7 +104,7 @@ if (isset($dfOnlydep)) {
 		require_once "$mediaWikiLocation/maintenance/commandLine.inc";
 
 	}
-	$errorFound = $cChecker->checkInstallation(DF_OUTPUT_FORMAT_TEXT, isset($dfNoWiki));
+	$errorFound = $cChecker->checkInstallation(DF_OUTPUT_FORMAT_TEXT, !isset($dfNoWiki));
 }
 
 // show log

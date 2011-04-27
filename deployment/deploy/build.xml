@@ -20,6 +20,21 @@
 				<exclude name="**/.svn, **/CVS" />
 			</fileset>
 		</copy>
+		<copy todir="bin/zip/deployment/skins">
+			<fileset dir="../skins/">
+				<exclude name="**/.svn, **/CVS" />
+			</fileset>
+		</copy>
+		<copy todir="bin/zip/deployment/doc">
+			<fileset dir="../doc/">
+				<exclude name="**/.svn, **/CVS" />
+			</fileset>
+		</copy>
+		<copy todir="bin/zip/deployment/specials">
+			<fileset dir="../specials/">
+				<exclude name="**/.svn, **/CVS" />
+			</fileset>
+		</copy>
 		<copy todir="bin/zip/deployment/tools">
 			<fileset dir="../tools/">
 				<exclude name="**/.svn, **/CVS" />
@@ -28,9 +43,7 @@
 				<include name="patch.php" />
 			</fileset>
 		</copy>
-		<copy file="../tools/smwadmin/smwadmin.php"
-              tofile="bin/zip/deployment/tools/smwadmin/smwadmin.php"
-              overwrite="true" verbose="true" failonerror="false"/>
+		<copy file="../tools/smwadmin/smwadmin.php" tofile="bin/zip/deployment/tools/smwadmin/smwadmin.php" overwrite="true" verbose="true" failonerror="false" />
 		<copy todir="bin/zip/deployment">
 			<fileset dir="../">
 				<include name="COPYING" />
@@ -40,7 +53,7 @@
 				<include name="Deployment.php" />
 				<include name="deploy.xml" />
 			</fileset>
-		
+
 		</copy>
 		<zip destfile="bin/deployment.zip" basedir="bin/zip" />
 		<delete dir="bin/zip" />
