@@ -425,7 +425,7 @@ Du koast {{SITENAME}} jitz anonym wetter nutzen, oder diech erneut under damm se
 Beachte, doas einige Seyta noo oazeiga kinna, doas du oagemeldet best, sulange du ne denn Browsercache gelaart host.",
 'welcomecreation'            => '== Willkumma, $1! ==
 
-Dei Benutzerkonto wurde eigerichtet. 
+Dei Benutzerkonto wurde eigerichtet.
 Vergiss nä, denne [[Special:Preferences|{{SITENAME}}-Eistellunga]] oazupoassa.',
 'yourname'                   => 'Benutzernoame:',
 'yourpassword'               => 'Passwort:',
@@ -641,7 +641,7 @@ Anne Speicherung koan dann Seytainhalt zerstiera. Dies geschieht bisweilen durch
 Doas obere Textfeld enthält dann aktuellen Stand.
 Doas undere Textfeld enthält denne Änderungen.
 Bitte fiege denne Änderungen ei doas obere Textfeld a.
-'''Ock''' dar Inhalt des oberen Textfeldes werd gespeichert, wenn du uff „Seyte speichern“ klickst!",
+'''Ock''' dar Inhalt des oberen Textfeldes werd gespeichert, wenn du uff „{{int:savearticle}}“ klickst!",
 'yourtext'                         => 'Deen Text',
 'storedversion'                    => 'Gespeicherte Version',
 'nonunicodebrowser'                => "'''Ochtiche:''' Dei Browser koan Unicode-Zeicha ne richtig veroarbeeta. Bitte verwende a'n andern Browser im Seyta zu beoarbeeta.",
@@ -655,9 +655,9 @@ Reiche hier kenne Texte a, falls du ne wielst, doß diese ohne Einschränkung ge
 
 Du bestätigst hiermit au, doß du diese Texte selbst geschrieba host oder diese vu a'r gemeinfreien Quelle kopiert host
 (siehe $1 fier wettere Details). '''IEBERTRAGE OHNE GENEHMIGUNG KENNE URHEBERRECHTLICH GESCHIETZTEN INHALTE!'''",
-'longpagewarning'                  => "'''WARNUNG: Diese Seyte ies $1 KB gruß; einige Browser kinnta Probleme hoan, Seyta zu beoarbeeta, de grießer ols 32 KB sein.
-Ieberlege bitte, ob anne Uffteilung dar Seyte ei klennere Obschnitte meeglich ies.'''",
-'longpageerror'                    => "'''FAHLER: Dar Text, dann du zu speichern versuchst, ies $1 KB gruß. Doas ies grießer ols doas erlaubte Maximum vu $2 KB – Speicherung ne meeglich.'''",
+'longpagewarning'                  => "'''Warnung:''' Diese Seyte ies $1 KB gruß; einige Browser kinnta Probleme hoan, Seyta zu beoarbeeta, de grießer ols 32 KB sein.
+Ieberlege bitte, ob anne Uffteilung dar Seyte ei klennere Obschnitte meeglich ies.",
+'longpageerror'                    => "'''Fahler: Dar Text, dann du zu speichern versuchst, ies $1 KB gruß. Doas ies grießer ols doas erlaubte Maximum vu $2 KB – Speicherung ne meeglich.'''",
 'readonlywarning'                  => "'''OCHTICHE: De Datenbank wurde fier Wartungsoarbeeta gesperrt, su doaß denne Änderunga derzeit ne gespeichert waan kinna.
 Sechere dann Text bitte lokal uff demm Computer und versiche zu a'm späteren Zeitpunkt, de Änderunga zu iebertraga.'''
 
@@ -1241,7 +1241,7 @@ Bitte priefe '''<tt>[[:$1]]</tt>''', wenn du dir ne secher biest, ob du se ände
 'file-thumbnail-no'          => "Dar Dateinoame beginnt miet '''<tt>$1</tt>'''. Dies deutet uff a Bild verringerter Griße ''(thumbnail)'' hin.
 Bitte priefe, ob du doas Bild ei voller Ufflesung vorliegen host und loade dieses under damm Originalnoama huch.",
 'file-exists-duplicate'      => 'Diese Datei ies a Duplikat dar fulgenda {{PLURAL:$1|Datei|$1 Dateien}}:',
-'file-deleted-duplicate'     => 'Anne identische Datei dieser Datei ([[$1]]) wurde frieher geläscht. Ieberpriefe doas Läsch-Logbuch, bevor du se huchlädst.',
+'file-deleted-duplicate'     => 'Anne identische Datei dieser Datei ([[:$1]]) wurde frieher geläscht. Ieberpriefe doas Läsch-Logbuch, bevor du se huchlädst.',
 'successfulupload'           => 'Erfolgreich huchgeloada',
 'uploadwarning'              => 'Warnung',
 'savefile'                   => 'Datei speichern',

@@ -11,6 +11,7 @@
  * @author Artomo
  * @author Lakaoso
  * @author Malafaya
+ * @author Reedy
  * @author Remember the dot
  * @author Wyvernoid
  * @author לערי ריינהארט
@@ -137,7 +138,7 @@ $messages = array(
 'tog-enotifrevealaddr'        => 'Montrez mea e-posto adreso en notifiko e-posti',
 'tog-shownumberswatching'     => 'Montrez nombro di surveyanta uzanti',
 'tog-fancysig'                => 'Traktez signaturo kom wikikodo (sen automata ligilo)',
-'tog-externaleditor'          => 'Uzez extera redaktanto nespecigite (nur por experti, bezonas specala moderi ye vua komputoro)',
+'tog-externaleditor'          => 'Uzez extera redaktanto nespecigite (nur por experti, bezonas specala moderi ye vua komputoro .[http://www.mediawiki.org/wiki/Manual:External_editors Plusa informo.])',
 'tog-forceeditsummary'        => 'Notifikez me kande skribanta vakua redakto-rezumo',
 'tog-watchlisthideown'        => 'Celez mea redaktaji de la surveyaji',
 'tog-watchlisthidebots'       => 'Celez redaktaji da roboti de la surveyaji',
@@ -207,6 +208,7 @@ $messages = array(
 'pagecategories'                 => '{{PLURAL:$1|Kategorio|Kategorii}}',
 'category_header'                => 'Artikli en kategorio "$1"',
 'subcategories'                  => 'Subkategorii',
+'category-media-header'          => '"Media" en kategorio "$1"',
 'category-empty'                 => "''Nuntempe existas nula pagini en ita kategorio.''",
 'hidden-categories'              => '{{PLURAL:$1|Celita kategorio|Celita kategorii}}',
 'hidden-category-category'       => 'Celita kategorii',
@@ -397,7 +399,7 @@ On povas trovar listo di valida specala pagini en [[Special:SpecialPages|{{int:s
 'error'               => 'Eroro',
 'databaseerror'       => 'Datumarala eroro',
 'readonly'            => 'Datumaro esas blokusita',
-'enterlockreason'     => 'Explikez la motivo por la blokuso, inkluzante 
+'enterlockreason'     => 'Explikez la motivo por la blokuso, inkluzante
 evaluo pri kande eventos la desblokuso',
 'missingarticle-rev'  => '(versiono#: $1)',
 'missingarticle-diff' => '(Difero: $1, $2)',
@@ -549,6 +551,9 @@ Se vu esas hike erore, kliktez sur la butono por retrovenar en vua navigilo.',
 Vu povas [[Special:Search/{{PAGENAME}}|serchar ica titulo]] en altra pagini,
 <span class="plainlinks">[{{fullurl:{{#Special:Log}}|page={{FULLPAGENAMEE}}}} serchar en la relata registri],
 o [{{fullurl:{{FULLPAGENAME}}|action=edit}} redaktar ica pagino]</span>.',
+'userpage-userdoesnotexist'        => 'Uzanto-nomo "$1" no registragesis.
+Voluntez konfirmez se vu volas krear/redaktar ica pagino.',
+'userpage-userdoesnotexist-view'   => 'Uzanto-nomo "$1" no registragesis.',
 'clearyourcache'                   => "'''Atencez: Pos registragar, vu probable mustas renovigar la tempala-magazino di vua navigilo por vidar la chanji.'''
 '''Mozilla / Firefox / Safari:''' tenez ''Shift'' kliktante ''Reload'', o presez sive  ''Ctrl-F5'' sive ''Ctrl-R'' (''Command-R'' ye Macintosh);
 '''Konqueror''': kliktez ''Reload'' o presez ''F5'';
@@ -567,7 +572,11 @@ Se ol ankore nefuncionas, probez [[Special:UserLogout|ekirar]] e pose enirar.",
 'editingsection'                   => 'Vu redaktas $1 (seciono)',
 'editingcomment'                   => 'Vu redaktas $1 (nova seciono)',
 'editconflict'                     => 'Redakto-konflikto: $1',
-'explainconflict'                  => 'Ulu chanjis ica pagino depos vu editeskis ol. La supra texto-areo kontenas la texto dil pagino quale ol existas aktuale. Vua chanji montresas en la infra texto-areo. Vu devas atachar vua chanji en la existanta texto. <b>Nur</b> la texto en la supra texto-areo registragesos kande vu presez sur "Registragar".',
+'explainconflict'                  => "Ulu chanjis ica pagino depos vu editeskis ol.
+La supra texto-areo kontenas la texto dil pagino quale ol existas aktuale.
+Vua chanji montresas en la infra texto-areo.
+Vu devas atachar vua chanji en la existanta texto.
+'''Nur''' la texto en la supra texto-areo registragesos kande vu presez sur \"{{int:savearticle}}\".",
 'yourtext'                         => 'Vua texto',
 'storedversion'                    => 'Gardita versiono',
 'nonunicodebrowser'                => "'''EGARDEZ: Vua navigilo esas ne obediema ad ''unicode''.'''
@@ -610,9 +619,9 @@ La efaco-registraro e movo-registraro dil pagino provizesar sequante por refero.
 'last'                => 'lasta',
 'page_first'          => 'unesma',
 'page_last'           => 'finala',
-'histlegend'          => "Selektado por diferi: markizez la versioni por komparar e lore presez 'Enter' o la butono infre.<br /> 
-Surskriburo: '''({{int:cur}})''' = diferi kun l'aktuala versiono, 
-'''({{int:last}})''' = diferi kun l'antea versiono, 
+'histlegend'          => "Selektado por diferi: markizez la versioni por komparar e lore presez 'Enter' o la butono infre.<br />
+Surskriburo: '''({{int:cur}})''' = diferi kun l'aktuala versiono,
+'''({{int:last}})''' = diferi kun l'antea versiono,
 '''{{int:minoreditletter}}''' = mikra redakto.",
 'histfirst'           => 'Maxim anciena',
 'histlast'            => 'Maxim nova',
@@ -633,6 +642,7 @@ Surskriburo: '''({{int:cur}})''' = diferi kun l'aktuala versiono,
 'revdelete-hide-user'        => 'Celar uzantonomo od IP di redaktanto',
 'revdelete-radio-set'        => 'Yes',
 'revdelete-radio-unset'      => 'No',
+'revdelete-log'              => 'Motivo:',
 'revdel-restore'             => 'chanjar videbleso',
 'pagehist'                   => 'Pagino-versionaro',
 'deletedhist'                => 'Efacita versionaro',
@@ -711,7 +721,7 @@ Probez prefixizar vua demando kun ''all:'' por serchar omna kontenajo (inkluzant
 'mypreferences'                 => 'Mea preferaji',
 'prefs-edits'                   => 'Nombro di redaktaji:',
 'prefsnologin'                  => 'Vu ne eniris',
-'prefsnologintext'              => 'Vu mustas <span class="plainlinks">[{{fullurl:{{#Special:UserLogin}}|returnto=$1}} enirir] por establisar la preferaji.',
+'prefsnologintext'              => 'Vu mustas <span class="plainlinks">[{{fullurl:{{#Special:UserLogin}}|returnto=$1}} enirir]</span> por establisar la preferaji.',
 'changepassword'                => 'Chanjar pasovorto',
 'prefs-skin'                    => 'Pelo',
 'skin-preview'                  => 'Pre-videz',
@@ -722,8 +732,8 @@ Probez prefixizar vua demando kun ''all:'' por serchar omna kontenajo (inkluzant
 'prefs-rc'                      => 'Recenta chanji',
 'prefs-watchlist'               => 'Surveyo-listo',
 'prefs-watchlist-days'          => 'Dii montrata en surveyaji:',
-'prefs-watchlist-days-max'      => '(maximo 7 dii)',
-'prefs-watchlist-edits-max'     => '(maxima nombro: 1000)',
+'prefs-watchlist-days-max'      => 'Maximo 7 dii',
+'prefs-watchlist-edits-max'     => 'Maxima nombro: 1000',
 'prefs-misc'                    => 'Mixaji',
 'prefs-resetpass'               => 'Chanjar pasovorto',
 'prefs-rendering'               => 'Aspekto',
