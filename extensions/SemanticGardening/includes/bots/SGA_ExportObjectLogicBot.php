@@ -185,13 +185,19 @@ class ExportObjectLogicBot extends GardeningBot {
 				if (is_null($range)) {
 					$typeIRI = "<".str_replace("xsd:", TSNamespaces::$XSD_NS, $type).">";
 				} else{
-					$rangeIRI = $this->getTSCIRI($range);
+					if ($range !== false) {
+						$rangeIRI = $this->getTSCIRI($range);
+					}
 				}
 				foreach($domains as $d) {
 					$domainIRI = $this->getTSCIRI($d);
 					if (is_null($range)) {
 						$obl .= "\n$domainIRI [ $propertyIRI $modifiers *=> $typeIRI ].";
 					} else{
+						if ($range === false) {
+							$rangeIRI = $domainIRI;
+							print "\nWARNING: $propertyIRI does not define a range category although it is an object property. Domain category used instead.";
+						}
 						$obl .= "\n$domainIRI [ $propertyIRI $modifiers *=> $rangeIRI ].";
 					}
 				}
@@ -417,7 +423,7 @@ ENDS;
 		if (array_key_exists('GARD_OBLEXPORT_BUNDLE', $paramArray))  {
 
 			global $wgLanguageCode, $smwgTripleStoreGraph;
-				
+
 			if (!defined('DF_VERSION')) {
 				return "Bundle export requires the DF to be installed. ".
 			 	"[http://smwforum.ontoprise.com/smwforum/index.php/Deployment_Framework Deployment Framework]";
@@ -452,8 +458,8 @@ ENDS;
 			echo "\nCreate temp directory...";
 			$tempdir = self::getTempDir()."/oblExports";
 			self::mkpath($tempdir);
-            echo "done.";
-            
+			echo "done.";
+
 			// read external artifacts
 			echo "\nRead external artifacts...";
 			$externalArtifacts = DFBundleTools::getExternalArtifacts($bundleName);
@@ -465,9 +471,9 @@ ENDS;
 				$localFile = wfLocalFile($fileTitle);
 				if (!file_exists($localFile->getPath())) continue;
 				$oblExt .= file_get_contents($localFile->getPath());
-                
+
 				//FIXME: does not work for more than one attached ontology because of OBL header.
-			
+					
 			}
 
 			// export ontology from wiki content
@@ -479,8 +485,8 @@ ENDS;
 			$ontologyURI = DFBundleTools::getOntologyURI($bundleName);
 			$header = $this->createOBLHeader($ontologyURI, $bundleName);
 			$obl = $oblExt ."\n\n" . $obl;
-            echo "done.";
-            
+			echo "done.";
+
 			// refactor ontology
 			echo "\nRefactor ontology...";
 			$con = TSConnection::getConnector();
