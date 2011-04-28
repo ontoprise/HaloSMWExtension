@@ -932,8 +932,8 @@ QUERY;
     function providerForGetRecordValues() {
     	return array(
     		// Article name, property, index of property value, expected
-    		array("Property:PropWithDomainAndRange", "Has domain and range", 0, "Category:Person"),
-    		array("Property:PropWithDomainAndRange", "Has domain and range", 1, "Category:Dog"),
+    		array("Property:PropWithDomainAndRange", "Has_domain_and_range", 0, "Category:Person"),
+    		array("Property:PropWithDomainAndRange", "Has_domain_and_range", 1, "Category:Dog"),
     	);
     }
 	
@@ -944,18 +944,23 @@ QUERY;
 	public function testGetRecordValues($name, $property, $index, $expected) {
 		$store = smwfGetStore();
 		$subject = Title::newFromText($name);
-		$values = $store->getPropertyValues($subject,
-											SMWPropertyValue::makeUserProperty($property));
-		if (is_array($values)) {
-			$idx = array_keys($values);
-			$idx = $idx[0];
-			if($values[$idx] instanceof SMWRecordValue){
-				$dVs = $values[$idx]->getDVs();
-				if(count($dVs) >= $index+1){
-					$idx = array_keys($dVs);
-					$idx = $idx[$index];
-					$result = $dVs[$idx]->getShortWikiText();
-					$this->assertEquals($expected, $result);
+		$semanticData = $store->getSemanticData($subject);
+		$properties = $semanticData->getProperties();
+		
+		if(array_key_exists($property, $properties)) {
+			$values = $semanticData->getPropertyValues($properties[$property]);
+											
+			if (is_array($values)) {
+				$idx = array_keys($values);
+				$idx = $idx[0];
+				if($values[$idx] instanceof SMWRecordValue){
+					$dVs = $values[$idx]->getDVs();
+					if(count($dVs) >= $index+1){
+						$idx = array_keys($dVs);
+						$idx = $idx[$index];
+						$result = $dVs[$idx]->getShortWikiText();
+						$this->assertEquals($expected, $result);
+					}
 				}
 			}
 		}
