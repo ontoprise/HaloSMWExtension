@@ -129,12 +129,7 @@ div.collabComResDeletion{
 	display: none;
 }
 
-div.collabComEdit {
-	display: inline;
-	cursor: pointer;
-}
-div.collabComDel {
-	display: inline;
+span.collabComEdit, span.collabComDel, span.collabComEditCancel {
 	cursor: pointer;
 }
 
@@ -150,7 +145,7 @@ div.collabComDelSelected {
 	background-color: #FAFAD2;
 }
 
-img.collabComEditImg,img.collabComDeleteImg,img.collabComReplyImg {
+img.collabComEditImg, img.collabComEditCancelImg, img.collabComDeleteImg, img.collabComReplyImg {
 	padding: 0 0 0 5px;
 	vertical-align: text-bottom;
 }

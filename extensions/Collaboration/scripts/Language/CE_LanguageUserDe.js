@@ -27,6 +27,7 @@ var wgCEUserLanguageStrings = {
 	'ce_close_button'		:	'Fenster schließen und Seite neu laden',
 	'ce_delete_title'		:	'Klicken Sie hier um diesen Kommentar zu löschen',
 	'ce_edit_title'			:	'Klicken Sie hier um diesen Kommentar zu editieren',
+	'ce_edit_cancel_title'	:	'Klicken Sie hier um den Editiermodus zu verlassen.',
 	'ce_reply_title'		:	'Klicken Sie hier um auf diesen Kommentar zu antworten',
 	'ce_com_reply'			:	'Antworten',
 	'ce_edit_rating_text'	:	'Bewerten Sie die Qualität dieses Artikels ',

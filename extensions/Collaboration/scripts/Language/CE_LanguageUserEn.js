@@ -27,6 +27,7 @@ var wgCEUserLanguageStrings = {
 	'ce_close_button'		:	'Close window and refresh page',
 	'ce_delete_title'		:	'Click here to delete this comment',
 	'ce_edit_title'			:	'Click here to edit this comment',
+	'ce_edit_cancel_title'	:	'Click here to leave the edit mode.',
 	'ce_reply_title'		:	'Click here to reply to this comment',
 	'ce_com_reply'			:	'Reply',
 	'ce_edit_rating_text'	:	'Rate the quality of this article ',
