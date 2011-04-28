@@ -694,16 +694,16 @@ class HACLEvaluator {
 	
 	/**
 	 * This method is important if the mode of the access control is 
-	 * "closed wiki access" or if an SD for an instance of a protected category 
-	 * of namespace is about to be created. 
+	 * "closed wiki access" or if an SD for an instance of a protected category, 
+	 * namespace or subpage is about to be created. 
 	 * If the wiki access is open, articles without security
 	 * descriptor have full access. If it is closed, nobody can access the article
 	 * until a security descriptor is defined. Only the latest author of the article
 	 * can do this. This method checks, if a security descriptor can be created.
 	 * 
-	 * If an article is an instance of a protected category or namespace, creating
-	 * an SD for it is restricted. The modification rights of the category's or
-	 * namespace's SD are applied.
+	 * If an article is an instance of a protected category, namespace or a subpage, 
+	 * creating an SD for it is restricted. The modification rights of the category's,
+	 * namespace's or parent page's SD are applied.
 	 *
 	 * @param Title $title
 	 * 		Title of the article that will be created
@@ -740,6 +740,35 @@ class HACLEvaluator {
 			list ($r, $hasSD) = self::checkNamespaceSDCreationRight($t, $user->getId());		
 			if ($r === false && $hasSD === true) {
 				return false;
+			}
+		}
+		
+		// Check if page is a subpage
+		if ($title->isSubpage()) {
+			$parentTitleText = $title->getBaseText();
+			if (strpos($parentTitleText, '/') !== false) {
+				// Top level of sub-pages not yet reached 
+				// => inherit parent rights
+				$parentTitle = Title::newFromText($parentTitleText, $title->getNamespace());
+				// Check if the parent article has an SD that can be modified
+				$hasSD = false;
+				$r = false;
+				if ($parentTitle->exists()) {
+					list($r, $hasSD) = self::checkACLManager($parentTitle, $user, HACLRight::EDIT);
+					if ($r === true && $hasSD === true) {
+						return $r;
+					}
+				}
+				// Check inherited rights
+				$allowed = self::checkSDCreation($parentTitle, $user);
+				if ($allowed === 'n/a') {
+					// no explicit rights found for parents
+					if ($hasSD) {
+						// The current right does not allow modification of the SD
+						return false;
+					}
+				}
+				return $allowed;
 			}
 		}
 		

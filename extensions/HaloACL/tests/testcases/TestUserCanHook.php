@@ -516,7 +516,25 @@ class TestUserCanHook extends PHPUnit_Framework_TestCase {
 				array('ACL:Page/A', 'U1', 'edit', true),
 				array('ACL:Page/A', 'WikiSysop', 'edit', true),
 				array('ACL:Page/A', 'U2', 'edit', false),
-			);
+				array('ACL:Page/A/sub1', 'U1', 'edit', true),
+				array('ACL:Page/A/sub1', 'WikiSysop', 'edit', true),
+				array('ACL:Page/A/sub1', 'U2', 'edit', false),
+				array('ACL:Page/A/sub1/sub2', 'U1', 'edit', true),
+				array('ACL:Page/A/sub1/sub2', 'WikiSysop', 'edit', true),
+				array('ACL:Page/A/sub1/sub2', 'U2', 'edit', false),
+				array('ACL:Page/B/sub1', 'U1', 'edit', true),
+				array('ACL:Page/B/sub1', 'WikiSysop', 'edit', true),
+				array('ACL:Page/B/sub1', 'U2', 'edit', false),
+				array('ACL:Page/B/sub1/sub2', 'U1', 'edit', true),
+				array('ACL:Page/B/sub1/sub2', 'WikiSysop', 'edit', true),
+				array('ACL:Page/B/sub1/sub2', 'U2', 'edit', false),
+				array('ACL:Page/C/sub1', 'U1', 'edit', true),
+				array('ACL:Page/C/sub1', 'WikiSysop', 'edit', true),
+				array('ACL:Page/C/sub1', 'U2', 'edit', false),
+				array('ACL:Page/C/sub1/sub2', 'U1', 'edit', true),
+				array('ACL:Page/C/sub1/sub2', 'WikiSysop', 'edit', true),
+				array('ACL:Page/C/sub1/sub2', 'U2', 'edit', false),
+				);
 			$this->doCheckRights("testModifySD", $checkRights);
 		} catch (Exception $e) {
 			$this->assertTrue(false, "Unexpected exception while testing ".basename($file)."::testModifySD():".$e->getMessage());
