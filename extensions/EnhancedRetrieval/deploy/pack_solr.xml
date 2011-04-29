@@ -13,6 +13,11 @@
 				<exclude name="**/.svn, **/CVS" />
 			</fileset>
 		</copy>
+        <copy todir="bin/solr_zip/solr/wiki/solr/conf">
+            <fileset dir="../SOLR">
+                <exclude name="**/.svn, **/CVS" />
+            </fileset>
+        </copy>
 		<zip destfile="bin/solr-${VERSION}.zip" basedir="bin/solr_zip" />
 		<delete dir="bin/solr_zip" />
 	</target>
