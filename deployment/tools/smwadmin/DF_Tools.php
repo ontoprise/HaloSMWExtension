@@ -795,7 +795,7 @@ class Tools {
 	 * @return string
 	 */
 	public static function getFileExtension($filePath) {
-		$parts = explode($filePath);
+		$parts = explode(".", $filePath);
 		$extension = reset(array_reverse($parts));
 		return $extension;
 	}
