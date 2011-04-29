@@ -70,7 +70,7 @@ function smfAddHTMLHeader(& $out) {
 				}
 				break;
 			case 'qtip':
-                if (isset($smwgDeployVersion) && $smwgDeployVersion !== false)
+					if (isset($smwgDeployVersion) && $smwgDeployVersion !== false)
 					$out->addScript("<script type=\"text/javascript\" src=\"". "$smgSMPath/scripts/qTip/jquery.qtip-1.0.0-rc3.min.js\"></script>");
                 else
 					$out->addScript("<script type=\"text/javascript\" src=\"". "$smgSMPath/scripts/qTip/jquery.qtip-1.0.0-rc3.js\"></script>");
@@ -144,6 +144,29 @@ function smfMergeHead( $skin, $skinTemplate ) {
 			$mergedCssLinks = smfMergeHeadLinks( $cssLinks );
 			$skinTemplate->set( 'csslinks', $mergedCssLinks );
 		}
+		if ( array_key_exists( 'headelement', $skinTemplate->data ) ) {
+			// vector based skin use the headelement which also contains the doctype, meta tags etc.
+			$headElement = $skinTemplate->data['headelement'];
+			// find first occurences of link and script tags
+			// everything before the first link
+			$headIntro = substr( $headElement,
+				0,
+				strpos( $headElement, '<link', 1 ) -1
+			);
+			$cssLinks = substr( $headElement,
+				strpos( $headElement, '<link', 1 ),
+				strpos( $headElement, '<script', 1 ) - strpos( $headElement, '<link', 1 ) - 1 
+			);
+			$headScripts =  substr( $headElement,
+				strpos( $headElement, '<script', 1 )
+			);
+			// merge and set them again
+			$mergedCssLinks = smfMergeHeadLinks( $cssLinks );
+			$mergedHeadScripts = smfMergeHeadScripts( $headScripts );
+			$skinTemplate->set( 'headelement', 
+				$headIntro . $mergedCssLinks . $mergedHeadScripts
+			);
+		}
 	}
 	return true;
 }
@@ -162,7 +185,7 @@ function smfMergeHead( $skin, $skinTemplate ) {
  */
 function smfMergeHeadLinks( $headLinks ) {
 	// apply common link pattern, <link ... href="LINK_FILE" ... />
-	preg_match_all( '/\<\s*link\b[^\>]+\bhref\s*=\s*[\'"]([^\'"]*)[\'"][^\>]*\/\>/i', $headLinks, $links, PREG_SET_ORDER | PREG_OFFSET_CAPTURE );
+	preg_match_all( '/\<\s*link\b[^\>]+\brel\s+\bhref\s*=\s*[\'"]([^\'"]*)[\'"][^\>]*\/\>/i', $headLinks, $links, PREG_SET_ORDER | PREG_OFFSET_CAPTURE );
 	$newlink = ''; // new head link string
 	$offset = 0; // offset in $headLinks
 	$ls = array( ); // a keyword list to store css file strings
