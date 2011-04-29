@@ -346,7 +346,7 @@ z-index:51;
 top:10%;
 left:10%;
 background:#FFF;
-border: 1px solid #AAAAAA;
+border: 2px solid #AAAAAA;
 padding:10px;
 }
 
@@ -506,6 +506,9 @@ cursor: pointer;
     border-right-style: solid;
     border-top-width: 1px;
     border-top-style: solid;
+    color: #269FB2;
+    font-size: larger;
+    font-weight: bold;
 }
 .qiDefTabInactive {
     font-size:84%;
@@ -515,6 +518,7 @@ cursor: pointer;
     padding-top: 3px;
 	background-color:#fafafa;
 	border: 1px solid #AAAAAA;
+	color: #269FB2;
 }
 
 .qiDefTabSpacer {
@@ -536,6 +540,8 @@ cursor: pointer;
 }
 .qiMainTabLabel {
     font-size: larger;
+    color: #269FB2;
+    font-weight:bold;
 }
 #qistatus {
     padding-left: 5px;
