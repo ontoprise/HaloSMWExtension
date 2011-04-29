@@ -383,7 +383,7 @@
 
 				overlay.css({
 					'background-color'	: currentOpts.overlayColor,
-					'opacity'			: currentOpts.overlayOpacity
+					'opacity'			: 0.3
 				}).unbind().show();
 			}
 
