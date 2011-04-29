@@ -113,34 +113,37 @@ foreach($descriptors as $tuple) {
     
 	// 2. Add to repository.xml
 	$newExt = $repoDoc->createElement("extension");
-
-	$urlAttr = $repoDoc->createAttribute("url");
-	$urlAttr->value = $repositoryURL."/bin/".$dd->getID()."-".Tools::addSeparators($dd->getVersion(), $dd->getPatchlevel()).".zip";
-	$newExt->appendChild($urlAttr);
-
-	$versionAttr = $repoDoc->createAttribute("ver");
-	$versionAttr->value = $dd->getVersion();
-	$newExt->appendChild($versionAttr);
-
 	$idAttr = $repoDoc->createAttribute("id");
 	$idAttr->value = $dd->getID();
 	$newExt->appendChild($idAttr);
+	
+	$newVer = $repoDoc->createElement("version");
+    $newExt->appendChild($newVer);
+    
+	$urlAttr = $repoDoc->createAttribute("url");
+	$urlAttr->value = $repositoryURL."/bin/".$dd->getID()."-".Tools::addSeparators($dd->getVersion(), $dd->getPatchlevel()).".zip";
+	$newVer->appendChild($urlAttr);
+
+	$versionAttr = $repoDoc->createAttribute("ver");
+	$versionAttr->value = $dd->getVersion();
+	$newVer->appendChild($versionAttr);
+
 
 	$patchlevelAttr = $repoDoc->createAttribute("patchlevel");
 	$patchlevelAttr->value = $dd->getPatchlevel();
-	$newExt->appendChild($patchlevelAttr);
+	$newVer->appendChild($patchlevelAttr);
 
 	$maintainerAttr = $repoDoc->createAttribute("maintainer");
 	$maintainerAttr->value = $dd->getMaintainer();
-	$newExt->appendChild($maintainerAttr);
+	$newVer->appendChild($maintainerAttr);
 
 	$descriptionAttr = $repoDoc->createAttribute("description");
 	$descriptionAttr->value = $dd->getDescription();
-	$newExt->appendChild($descriptionAttr);
+	$newVer->appendChild($descriptionAttr);
 
 	$helpurlAttr = $repoDoc->createAttribute("helpurl");
 	$helpurlAttr->value = $dd->getHelpURL();
-	$newExt->appendChild($helpurlAttr);
+	$newVer->appendChild($helpurlAttr);
 
 	echo "\nAdd to repository: ".$dd->getID();
 	$extensionsNode->appendChild($newExt);
