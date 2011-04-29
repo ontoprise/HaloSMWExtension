@@ -141,15 +141,23 @@ a.plusminus:hover{
 }
 
 #tab_0{
-    background-color: #C0C0C0;
-    border: 1px solid #C0C0C0;
-    font-weight: bold;
+    background-color: #ffffff;
+    border: 2px solid #aaaaaa;
+    border-bottom: 0px solid #ffffff;
+    color: rgb(38, 159, 178);
+    font-weight: bold;   
+    border-radius: 5px 5px 5px 5px;
+    box-shadow: 2px 2px 0 #D8D8D8, 2px 2px 15px rgba(0, 0, 0, 0.3);
 }
 
 #tab_1{
-    background-color: #C0C0C0;
-    border: 1px solid #C0C0C0;
+    background-color: #ffffff;
+    border: 2px solid #aaaaaa;
+    border-bottom: 0px solid #ffffff;
+    color: rgb(38, 159, 178);
     font-weight: bold;
+    border-radius: 5px 5px 5px 5px;
+    box-shadow: 2px 2px 0 #D8D8D8, 2px 2px 15px rgba(0, 0, 0, 0.3);
 }
 
 #tab_2{
@@ -192,8 +200,10 @@ a.plusminus:hover{
 #semtoolbar{
     padding-top: 1px;
     padding-bottom: 3px;
-    border: 1px solid #C0C0C0;
-    background-color: #DDDDDD;
+    border: 2px solid #aaaaaa;
+    background-color: #ffffff;
+    border-radius: 5px 5px 5px 5px;
+    box-shadow: 2px 2px 0 #D8D8D8, 2px 2px 15px rgba(0, 0, 0, 0.3);
 }
 
 .input{
