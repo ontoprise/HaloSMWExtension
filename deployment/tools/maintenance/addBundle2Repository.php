@@ -90,9 +90,9 @@ foreach($descriptors as $tuple) {
 	$id = $dd->getID();
 	$version = $dd->getVersion();
 	$id = strtolower($id);
-	echo "\nCreate extension entry for $ids";
+	echo "\nCreate extension entry for $id";
 	Tools::mkpath($repositoryDir."/extensions/$id");
-	Tools::unzipFile($bundlePath, "/deploy.xml", $repositoryDir."/extensions/$id");
+	Tools::unzipFile($zipFilepath, "/deploy.xml", $repositoryDir."/extensions/$id");
 	rename($repositoryDir."/extensions/$id/deploy.xml", $repositoryDir."/extensions/$id/deploy-$version.xml");
 	if ($createSymlinks && $latest) {
 		// remove symbolic link if existing
