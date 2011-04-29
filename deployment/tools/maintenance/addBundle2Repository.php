@@ -101,13 +101,13 @@ foreach($descriptors as $tuple) {
 		}
 		// create symbolic link
 		if (Tools::isWindows()) {
-			$source = str_replace("/", "\\", "$repositoryDir/extensions/$id/deploy-$version.xml");
-			$target = str_replace("/", "\\", "$repositoryDir/extensions/$id/deploy.xml");
-			exec("mklink \"$target\" \"$source\"", $out, $res);
+			$target = str_replace("/", "\\", "$repositoryDir/extensions/$id/deploy-$version.xml");
+			$link = str_replace("/", "\\", "$repositoryDir/extensions/$id/deploy.xml");
+			exec("mklink \"$link\" \"$target\"", $out, $res);
 		} else{
-			exec('ln -s '.$repositoryDir."/$id/deploy-$version.xml $repositoryDir/$id/deploy.xml");
+			exec("ln -s $repositoryDir/extensions/$id/deploy-$version.xml $repositoryDir/extensions/$id/deploy.xml", $out, $res);
 		}
-		print "\n\tCreated link: ".$repositoryDir."/".$id.'/deploy.xml';
+		if ($res == 0) print "\n\tCreated link: ".$repositoryDir."/extensions/".$id.'/deploy.xml';
 	}
     echo "\n..done.";
     
