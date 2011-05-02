@@ -5,6 +5,7 @@ Version 1.5
   FEATURE:
   	
   CHANGES:
+    - Added support (i.e. patch) for MW 1.16.4
   	
   BUGFIXES: (Bug numbers according to http://smwforum.ontoprise.com/smwbugs/)
   	14546 - User can modify SD of a subpage
