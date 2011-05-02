@@ -2,13 +2,13 @@
 /**
  * @file
  * @ingroup DFMaintenance
- * 
- * Creates a repository XML file. Must be done once a new release available
- * 
- * Usage:   php createRepsoitory -o <repository path>  -r release-num 
- *          php createRepsoitory -o <repository path>  --head 
- *          
- * @author: Kai K�hn / ontoprise / 2009
+ *
+ * Creates a DF repository from the SVN version. Must be done once a new release available
+ *
+ * Usage:   php createRepsoitory -o <repository path>  -r release-num
+ *          php createRepsoitory -o <repository path>  --head
+ *
+ * @author: Kai Kühn / ontoprise / 2009
  */
 
 global $rootDir;
@@ -24,33 +24,40 @@ require_once($rootDir."/tools/smwadmin/DF_Tools.php");
 $latest = false;
 for( $arg = reset( $argv ); $arg !== false; $arg = next( $argv ) ) {
 
-    //-o => output
-    if ($arg == '-o') {
-        $outputDir = next($argv);
+	//-o => output
+	if ($arg == '-o') {
+		$outputDir = next($argv);
+		if (substr($outputDir,-1)!='/'){
+			$outputDir .= '/';
+		}
+		continue;
+	}
+
+	//-r => release num
+	if ($arg == '-r') {
+		$release = str_replace('.','',next($argv));
+		continue;
+	}
+
+	//-head => release num
+	if ($arg == '--head') {
+		$head = true;
+		continue;
+	}
+    
+    if ($arg == '--latest') {
+        $latest = true;
         continue;
     }
-    
-     //-r => release num
-    if ($arg == '-r') {
-        $release = str_replace('.','',next($argv));
-        continue;
-    }
-    
-    //-head => release num
-    if ($arg == '--head') {
-        $head = true;
-        continue;
-    }
-    
 }
 
 if (!isset($outputDir)) {
-    echo "\nSet output dir by using -o <directory>\n";
-    die();
+	echo "\nSet output dir by using -o <directory>\n";
+	die();
 }
 if (!isset($release) && !isset($head)) {
-    echo "\nSet release by using -r <releasenum> or use --head\n";
-    die();
+	echo "\nSet release by using -r <releasenum> or use --head\n";
+	die();
 }
 
 $outputDir = str_replace("\\", "/", $outputDir);
@@ -71,22 +78,22 @@ echo "\nCreate new repository ".$outputDir."repository.xml";
 
 $new_ser = '<?xml version="1.0" encoding="UTF-8"?><?xml-stylesheet type="text/xsl" href="repository.xsl"?>'."<root>\n<extensions>\n";
 foreach($localPackages as $lp) {
-    $id = $lp->getID();
-    if ($id == 'mw') continue;
-    $installdir = $lp->getInstallationDirectory();
-    $new_ser .= "<extension id=\"$id\">";
-        $branch = isset($head) ? "smwhalo" : "smwhalo_".addSeparators($release,"_")."_release";
-        $url = "http://dailywikibuilds.ontoprise.com:8080/job/$branch/lastSuccessfulBuild/artifact/SMWHaloTrunk/$installdir/deploy/bin/$id-".addSeparators($lp->getVersion(),".")."_".$lp->getPatchlevel().".zip";
-        $ver = $lp->getVersion();
-        $newPatchlevel = $lp->getPatchlevel();
-        if ($newPatchlevel == '') $newPatchlevel = 0;
-        $maintainer = escapeForXMLAttribute($lp->getMaintainer());
-        $helpurl = escapeForXMLAttribute($lp->getHelpURL());
-        $description = escapeForXMLAttribute($lp->getDescription());
-        
-        $new_ser .= "<version ver=\"$ver\" url=\"$url\" patchlevel=\"$newPatchlevel\" maintainer=\"$maintainer\" description=\"$description\" helpurl=\"$helpurl\"/>";
-    
-    $new_ser .= "</extension>\n";
+	$id = $lp->getID();
+	if ($id == 'mw' || $id == 'deployment') continue; // special handling for these
+	$installdir = $lp->getInstallationDirectory();
+	$new_ser .= "<extension id=\"$id\">";
+	$branch = isset($head) ? "smwhalo" : "smwhalo_".addSeparators($release,"_")."_release";
+	$url = "http://dailywikibuilds.ontoprise.com:8080/job/$branch/lastSuccessfulBuild/artifact/SMWHaloTrunk/$installdir/deploy/bin/$id-".Tools::addSeparators($lp->getVersion(),$lp->getPatchlevel()).".zip";
+	$ver = $lp->getVersion();
+	$newPatchlevel = $lp->getPatchlevel();
+	if ($newPatchlevel == '') $newPatchlevel = 0;
+	$maintainer = Tools::escapeForXMLAttribute($lp->getMaintainer());
+	$helpurl = Tools::escapeForXMLAttribute($lp->getHelpURL());
+	$description = Tools::escapeForXMLAttribute($lp->getDescription());
+
+	$new_ser .= "<version ver=\"$ver\" url=\"$url\" patchlevel=\"$newPatchlevel\" maintainer=\"$maintainer\" description=\"$description\" helpurl=\"$helpurl\"/>";
+
+	$new_ser .= "</extension>\n";
 }
 $new_ser .= "\n</extensions>\n</root>";
 
@@ -95,15 +102,73 @@ $handle = fopen($outputDir."repository.xml", "w");
 fwrite($handle, $new_ser);
 fclose($handle);
 
-function addSeparators($version, $sep = ".") {
-    $sep_version = "";
-    for($i = 0; $i < strlen($version); $i++) {
-        if ($i>0) $sep_version .= $sep;
-        $sep_version .= $version[$i];
+echo "\nWriting deploy descriptors...";
+
+// create symlinks for Linux and Windows 7
+$createSymlinks=true;
+if (Tools::isWindows($os) && $latest) {
+    $createSymlinks = ($os == 'Windows 7');
+    if (!$createSymlinks) {
+        echo "Be careful: Cannot create symbolic links on Windows <= 7!";
     }
-    return $sep_version;
 }
 
-function escapeForXMLAttribute($text) {
-	return str_replace('"', "&quot;", $text);
+$outputDir = str_replace("\\", "/", $outputDir);
+if (substr($outputDir, -1) != "/") $outputDir .= "/";
+$outputDir .= "extensions/";
+
+$rootDir = realpath(dirname(__FILE__)."/../../../");
+$rootDir = str_replace("\\", "/", $rootDir);
+if (substr($rootDir, -1) != "/") $rootDir .= "/";
+
+// create substructure with deploy descriptors
+$localPackages = PackageRepository::getLocalPackages($rootDir."/extensions");
+foreach($localPackages as $dd_file => $dd) {
+	$id = $dd->getID();
+	if ($id == 'mw' || $id == 'deployment') continue;
+	$instdir = $dd->getInstallationDirectory();
+	createEntry($dd, $rootDir."/$instdir/deploy.xml", $outputDir, $latest, $createSymlinks);
+}
+
+// create substructure for DF
+$dd = new DeployDescriptor(file_get_contents(realpath($rootDir."/deployment/deploy.xml")));
+createEntry($dd, $rootDir."/deployment/deploy.xml", $outputDir, $latest, $createSymlinks);
+
+print "\nDONE.\n\n";
+
+/**
+ * Creates a DD entry for a deployed entity.
+ *
+ * @param DeployDescriptor $dd
+ * @param string $dd_file Full path of deploy.xml
+ * @param string $outputDir Output directory
+ * @param boolean $latest
+ * @param boolean $createSymlinks
+ */
+function createEntry($dd, $dd_file, $outputDir, $latest, $createSymlinks) {
+	$version = $dd->getVersion();
+	$targetFile = str_replace("deploy.xml", "deploy-".$version.".xml", $dd_file);
+	Tools::mkpath($outputDir.$dd->getID());
+	copy($dd_file, $outputDir.$dd->getID()."/deploy-".$version.".xml");
+	print "\nCreated: $outputDir$targetFile";
+    
+    // creates links
+    $id = $dd->getID();
+    $version = $dd->getVersion();
+    if ($createSymlinks && $latest) {
+        // remove symbolic link if existing
+        if (file_exists($outputDir."/$id/deploy.xml")) {
+            unlink($outputDir."/$id/deploy.xml");
+        }
+        // create symbolic link
+        if (Tools::isWindows()) {
+            $target = str_replace("/", "\\", "$outputDir/$id/deploy-$version.xml");
+            $link = str_replace("/", "\\", "$outputDir/$id/deploy.xml");
+            exec("mklink \"$link\" \"$target\"", $out, $res);
+        } else{
+            exec("ln -s $outputDir/$id/deploy-$version.xml $outputDir/$id/deploy.xml", $out, $res);
+        }
+        if ($res == 0) print "\nCreated link: $outputDir/".$id.'/deploy.xml';
+    }
+	
 }

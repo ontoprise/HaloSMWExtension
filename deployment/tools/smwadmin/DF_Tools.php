@@ -46,13 +46,13 @@ class Tools {
 		//Check if it consists 'windows' as string
 		preg_match('/[Ww]indows.*/',$ma[1],$os);
 		$thisBoxRunsWindows= count($os) > 0;
-		
+
 		if ($thisBoxRunsWindows && (strpos($os[0], "6.1") !== false)) $version = "Windows 7";
-	
+
 		return $thisBoxRunsWindows;
 	}
-	
-	
+
+
 
 	/**
 	 * Creates the given directory.
@@ -175,7 +175,7 @@ class Tools {
 				if($file!="." && $file!="..")
 				{
 					$__dest=$dest."/".$file;
-						
+
 					if (in_array($source."/".$file, $exclude)) continue;
 					$result = $result && self::copy_dir($source."/".$file, $__dest, $options);
 				}
@@ -520,30 +520,30 @@ class Tools {
 		$dd = new DeployDescriptor(file_get_contents($tempFile."/deploy.xml"));
 		return $dd;
 	}
-	
+
 	/**
-	 * Unzips a file from a zip archive. 
-	 * 
+	 * Unzips a file from a zip archive.
+	 *
 	 * @param $zipFile Full path to zip file
 	 * @param $filePath File to extract from zip (may be partial if unique)
 	 * @param $destDir Destination file dir
-	 * 
+	 *
 	 * @return boolean True, if succesfull
 	 */
 	public static function unzipFile($zipFile, $filePath, $destDir) {
 		$zipFile = Tools::makeUnixPath($zipFile);
-        if (!file_exists($zipFile)) return NULL;
-        exec('unzip -l "'.$zipFile.'"', $output, $res);
-        foreach($output as $o) {
-            if (strpos($o, $filePath) !== false) {
-                $out = $o;
-                break;
-            }
-        }
-        if (!isset($out)) return false;
-        $dd_path = reset(array_reverse(explode(" ", $out)));
-        exec('unzip -o -j "'.$zipFile.'" "'.$dd_path.'" -d "'.$destDir.'"', $output, $res);
-        return $res == 0;
+		if (!file_exists($zipFile)) return NULL;
+		exec('unzip -l "'.$zipFile.'"', $output, $res);
+		foreach($output as $o) {
+			if (strpos($o, $filePath) !== false) {
+				$out = $o;
+				break;
+			}
+		}
+		if (!isset($out)) return false;
+		$dd_path = reset(array_reverse(explode(" ", $out)));
+		exec('unzip -o -j "'.$zipFile.'" "'.$dd_path.'" -d "'.$destDir.'"', $output, $res);
+		return $res == 0;
 	}
 
 	/**
@@ -775,7 +775,7 @@ class Tools {
 	 * @param $version
 	 * @param $patchlevel
 	 * @param $sep default is dot
-	 * 
+	 *
 	 * @return string
 	 */
 	public static function addSeparators($version, $patchlevel = 0, $sep = ".") {
@@ -787,10 +787,10 @@ class Tools {
 		$sep_version .= "_$patchlevel";
 		return $sep_version;
 	}
-	
+
 	/**
 	 * Returns file extension
-	 * 
+	 *
 	 * @param $filePath
 	 * @return string
 	 */
@@ -798,5 +798,13 @@ class Tools {
 		$parts = explode(".", $filePath);
 		$extension = reset(array_reverse($parts));
 		return $extension;
+	}
+
+	/**
+	 * Escapes XML attribute values
+	 * @param $text
+	 */
+	public static function escapeForXMLAttribute($text) {
+		return str_replace('"', "&quot;", $text);
 	}
 }

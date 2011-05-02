@@ -170,8 +170,8 @@ ENDS;
 	// creates links
 	if ($createSymlinks && $latest) {
 		// remove symbolic link if existing
-		if (file_exists($repositoryDir."/$id/deploy.xml")) {
-			unlink($repositoryDir."/$id/deploy.xml");
+		if (file_exists($repositoryDir."/extensions/$id/deploy.xml")) {
+			unlink($repositoryDir."/extensions/$id/deploy.xml");
 		}
 		// create symbolic link
 		if (Tools::isWindows()) {
@@ -245,6 +245,10 @@ function extractDeployDescriptors($bundlePath) {
 				if (strtolower($fileExtension) != 'zip') continue;
 				$__file=$bundlePath."/".$file;
 				$dd = Tools::unzipDeployDescriptor($__file, $tmpFolder);
+				if (is_null($dd)) {
+					print "\nWARNING: $__file does not contain a deploy descriptor. It is skipped."; 
+				    continue;	
+				}
 				$result[] = array($dd, $__file);
 			}
 		}
