@@ -61,44 +61,26 @@ class ResourceInstaller {
 
 		if (!defined('SMW_VERSION')) throw new InstallationError(DEPLOY_FRAMEWORK_NOT_INSTALLED, "SMW is not installed or at least is not active. The ontology could not be properly installed. Please restart smwadmin using -f (force) to install it.");
 
-		// remove old pages
-		if (!is_null($fromVersion) && $fromVersion != '') {
-			// remove old pages
-			$this->logger->info("Remove unused pages from ".$dd->getID());
-			print "\n[Remove unused pages...";
-			$query = SMWQueryProcessor::createQuery("[[Ontology version::$fromVersion]][[Part of bundle::".$dd->getID()."]]", array());
-			$res = smwfGetStore()->getQueryResult($query);
-			$next = $res->getNext();
-			while($next !== false) {
 
-				$title = $next[0]->getNextObject()->getTitle();
-				if (!is_null($title)) {
-					$a = new Article($title);
-					$reason = "ontology removed: ".$dd->getID();
-					$id = $title->getArticleID( GAID_FOR_UPDATE );
-					if( wfRunHooks('ArticleDelete', array(&$a, &$wgUser, &$reason, &$error)) ) {
-						if( $a->doDeleteArticle( $reason ) ) {
-							$this->logger->info("Remove old page from $fromVersion: ".$title->getPrefixedText());
-							print "\n\t[Removing old page from $fromVersion: ".$title->getPrefixedText()."...";
-							wfRunHooks('ArticleDeleteComplete', array(&$a, &$wgUser, $reason, $id));
-							print "done.]";
-						}
-					}
-
-				}
-				$next = $res->getNext();
-			}
-		}
-		print "\ndone.]";
 
 		// import new wiki pages
 		$reader = new BackupReader($mode);
 		$wikidumps = $dd->getWikidumps();
 
 		foreach($wikidumps as $file) {
+			$dumpPath = $this->rootDir."/". $dd->getInstallationDirectory()."/".$file;
+			// remove old pages
+			if (!is_null($fromVersion) && $fromVersion != '') {
+				// remove old pages
+				$this->logger->info("\n[Removing unused pages from ".$dd->getID());
+				print "\n[Removing unused pages from ".$dd->getID();
+				$verificationLog = $this->getPagesFromImport($dumpPath, $dd->getID());
+				$this->removeOldPages($dd->getID(), $verificationLog);
+				print "\ndone.]";
+			}
+
 			$this->logger->info("Import ontology: $file");
 			print "\n[Import ontology: $file";
-			$dumpPath = $this->rootDir."/". $dd->getInstallationDirectory()."/".$file;
 			if (!file_exists($dumpPath)) {
 				$this->logger->warn("dump file '".$dumpPath."' does not exist.");
 				print "\n\t[WARNING]: dump file '".$dumpPath."' does not exist.";
@@ -110,12 +92,12 @@ class ResourceInstaller {
 
 		// refresh imported pages
 		/*$pageTitles = $reader->getImportedPages();
-		global $wgParser;
-		$wgParser->mOptions = new ParserOptions();
-		$this->logger->info("Refreshing ontology: $file");
-		print "\n[Refreshing ontology: $file";
-		
-		foreach($pageTitles as $pageName) {
+		 global $wgParser;
+		 $wgParser->mOptions = new ParserOptions();
+		 $this->logger->info("Refreshing ontology: $file");
+		 print "\n[Refreshing ontology: $file";
+
+		 foreach($pageTitles as $pageName) {
 			$t = Title::newFromText($pageName);
 			if ($t->getNamespace() == NS_FILE) continue;
 			$rev = Revision::newFromTitle($t);
@@ -123,7 +105,7 @@ class ResourceInstaller {
 			SMWParseData::storeData($parseOutput, $t);
 			$this->logger->info($t->getText()." refreshed.");
 			print "\n\t[".$t->getText()." refreshed]";
-		}*/
+			}*/
 
 	}
 
@@ -406,5 +388,72 @@ class ResourceInstaller {
 	}
 
 
+	/**
+	 * Reads a dump file and returns the verification log (which itself contains 
+	 * a list of pages).
+	 *
+	 * @param string $dumpPath
+	 * @param string $bundleID
+	 *
+	 * @return array of (Title t, string status) 
+	 *     status can be 'merge', 'conflict' or 'notexist' 
+	 */
+	private function getPagesFromImport( $dumpPath, $bundleID ) {
+		$handle = fopen( $dumpPath, 'rt' );
+		$source = new ImportStreamSource( $handle );
+		$importer = new DeployWikiImporterDetector( $source, $bundleID, '', 1, $this );
 
+		$importer->setDebug( false );
+
+		$importer->doImport();
+
+		$result = $importer->getResult();
+		return $result;
+	}
+    
+	/**
+	 * Removes pages which are no more contained in the bundle to be installed. 
+	 * 
+	 * @param string $bundleID
+	 * @param array of (Title t, string status) $verificationLog 
+     *    
+	 */
+	private function removeOldPages($bundleID, $verificationLog) {
+		global $dfgLang;
+		$pagesToImport = array();
+
+		foreach($verificationLog as $log) {
+			list($title, $command)=$log;
+			$pagesToImport[] = $title->getPrefixedText();
+		}
+		$bundleIDValue = SMWDataValueFactory::newTypeIDValue('_wpg', $bundleID);
+		$pageValuesOfOntology = smwfGetStore()->getPropertySubjects(SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString('df_partofbundle')), $bundleIDValue);
+		$existingPages = array();
+		foreach($pageValuesOfOntology as $pv) {
+			$existingPages[] = $pv->getTitle()->getPrefixedText();
+		}
+
+
+		$pagesToDelete = array_diff($existingPages, $pagesToImport);
+
+		global $wgUser;
+		foreach($pagesToDelete as $p) {
+			$title = Title::newFromText($p);
+			$a = new Article($title);
+
+			$id = $title->getArticleID( GAID_FOR_UPDATE );
+			if( wfRunHooks('ArticleDelete', array(&$a, &$wgUser, &$reason, &$error)) ) {
+				if( $a->doDeleteArticle("ontology removed: ".$bundleID) ) {
+					$this->logger->info("Removing page: ".$title->getPrefixedText());
+					print "\n\t[Removing page]: ".$title->getPrefixedText()."...";
+
+					wfRunHooks('ArticleDeleteComplete', array(&$a, &$wgUser, "ontology removed: ".$bundleID, $id));
+					print "done.]";
+				}
+			}
+
+
+		}
+
+	}
 }
