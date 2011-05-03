@@ -29,9 +29,6 @@
 /* styling for elements inside overlay */
 .ceOverlayDetails {
 	padding: 10px 0px;
-	/*position: absolute;*/
-	/*top: 15px;*/
-	/*right: 15px;*/
 	font-size: 12px;
 	font-weight: bold;
 	color: #fff;
@@ -39,15 +36,22 @@
 	text-align: center;
 }
 .ceOverlayDeleteButtonDiv {
-	padding: 7px 40px 0 0;
+	padding: 0 40px 10px 0;
 	float: right;
 }
 
 .ceOverlayCancelButtonDiv {
-	padding: 7px 0 0 40px;
+	padding: 0 0 10px 40px;
 	float:left;
 }
 .ceOverlayCloseButtonDiv {
+	text-align: center;
+}
+.ceOverlayFullDeleteDiv {
+	clear: both;
+	color: #fff;
+	width: 100%;
+	padding: 10px 0px;
 	text-align: center;
 }
 .ceCommentSelected {

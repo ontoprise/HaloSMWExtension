@@ -74,6 +74,11 @@ $cegEnableCommentFor = CE_COMMENT_ALL;
 $cegEnableRatingForArticles = true;
 
 ###
+# Enable full/physical deletion of comments (sysop only)
+###
+$cegEnableFullDeletion = true;
+
+###
 # Use ScriptManager
 ###
 global $smgJSLibs;

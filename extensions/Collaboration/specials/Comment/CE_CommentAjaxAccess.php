@@ -36,6 +36,7 @@ global $wgAjaxExportList;
 $wgAjaxExportList[] = 'cef_comment_createNewPage';
 $wgAjaxExportList[] = 'cef_comment_editPage';
 $wgAjaxExportList[] = 'cef_comment_deleteComment';
+$wgAjaxExportList[] = 'cef_comment_fullDeleteComments';
 
 
 class CECommentAjax {
@@ -97,4 +98,35 @@ function cef_comment_deleteComment( $pageName ) {
 		}
 	}
 	return CECommentUtils::createXMLResponse( 'sth went wrong here', '1', $pageName );
+}
+
+function cef_comment_fullDeleteComments( $pageNames ) {
+	global $wgUser;
+	$pageNames = CECommentUtils::unescape( $pageNames );
+	$pageNames = explode( ',', $pageNames );
+	$result = wfMsg( 'ce_nothing_deleted' );
+	$success = false;
+	foreach ( $pageNames as $pageName) {
+		try {
+			$title = Title::newFromText( $pageName );
+			if ( $title->getNamespace() != CE_COMMENT_NS ) {
+				$title = Title::makeTitle( CE_COMMENT_NS, $title );
+			}
+			$article = new Article( $title );
+			$articleContent = $article->getContent();
+			$articleDel = $article->doDelete( wfMsg( 'ce_comment_delete_reason' ) );
+			$success = true;
+		} catch( Exception $e ) {
+			$result .= wfMsg( 'ce_comment_deletion_error' );
+			$success = false;
+			return CECommentUtils::createXMLResponse( $result, '1', $pageName);
+		}
+	}
+	if( $success ) {
+		$result = wfMsg( 'ce_comment_massdeletion_successful' );
+		return CECommentUtils::createXMLResponse( $result, '0', $pageNames[0] );
+	} else {
+		$pageNames = json_encode($pageNames);
+		return CECommentUtils::createXMLResponse( 'sth went wrong here', '1', $pageNames );
+	}
 }

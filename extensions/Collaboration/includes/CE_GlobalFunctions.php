@@ -349,10 +349,11 @@ function cefRegisterACIcon( &$namespaceMappings) {
 }
 
 function cefAddGlobalJSVariables( &$vars ) {
-	global $cegScriptPath;
+	global $cegScriptPath, $cegEnableRatingForArticles;
 	$ns = MWNamespace::getCanonicalName(NS_USER);
 
 	$vars['wgCEScriptPath'] = $cegScriptPath;
 	$vars['wgCEUserNS'] = $ns;
+	$vars['wgCEEnableFullDeletion'] = $cegEnableRatingForArticles;
 	return true;
 }

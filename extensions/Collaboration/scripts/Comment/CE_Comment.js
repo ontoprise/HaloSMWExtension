@@ -184,10 +184,32 @@ function CECommentForm() {
 	 */
 	this.deleteComment = function( pageName, container ) {
 		this.overlayName = container;
-		// add pending indicator
+		var deletingMsg = '';
+		var commentsToDelete = '';
+		var fullDelete = false;
 		var comEl = $jq( '#' + container );
-		$jq( '.ceOverlayDetails', comEl ).html( ceLanguage.getMessage( 'ce_deleting' ) );
-		var pendingSpan = this.createDOMElement( 'span', 'collabComDelPending',null, null, '&nbsp;' );
+		$jq( '*:input', comEl ).attr( 'disabled', 'disabled' );
+		if ( $jq( '.ceOverlayFullDeleteCheckbox:checked', comEl ).length === 1 ) {
+			fullDelete = true;
+			deletingMsg = ceLanguage.getMessage( 'ce_full_deleting' );
+			commentsToDelete += pageName;
+			var hasReplies = true;
+			var replyComment = replyComment = $jq( '#' + pageName ).next( '.comRearranged' );
+			while( hasReplies ) {
+				if( replyComment.length === 0) {
+					hasReplies = false;
+				} else {
+					commentsToDelete += ', ' + replyComment.attr( 'id' );
+				}
+				replyComment = replyComment.next( '.comRearranged' )
+			}
+			//console.log(commentsToDelete);
+		} else {
+			deletingMsg = ceLanguage.getMessage( 'ce_deleting' )
+		}
+		$jq( '.ceOverlayDetails', comEl ).html( deletingMsg );
+		// add pending indicator
+		var pendingSpan = this.createDOMElement( 'span', 'collabComDelPending', null, null, '&nbsp;' );
 		$jq( '.ceOverlayDetails', comEl ).append( pendingSpan );
 		if ( typeof( this.pendingIndicatorDel ) === 'undefined'
 			|| this.pendingIndicatorDel === null)
@@ -195,9 +217,16 @@ function CECommentForm() {
 			this.pendingIndicatorDel = new CPendingIndicator( $jq( '#collabComDelPending' ) );
 		}
 		this.pendingIndicatorDel.show();
-		sajax_do_call( 'cef_comment_deleteComment', 
-			[pageName], this.deleteCommentCallback.bindToFunction(this)
-		);
+		if ( fullDelete ) {
+			sajax_do_call( 'cef_comment_fullDeleteComments', 
+				[commentsToDelete], this.deleteCommentCallback.bindToFunction(this)
+			);
+		} else {
+			sajax_do_call( 'cef_comment_deleteComment', 
+				[pageName], this.deleteCommentCallback.bindToFunction(this)
+			);
+		}
+		
 	};
 
 	/**
@@ -207,7 +236,6 @@ function CECommentForm() {
 		var resultDOM = this.XMLResult = CollaborationXMLTools.createDocumentFromString( request.responseText );	
 		var valueEl = resultDOM.getElementsByTagName( 'value' )[0];
 		var htmlmsg = resultDOM.getElementsByTagName( 'message' )[0].firstChild.nodeValue;
-
 		var page = resultDOM.getElementsByTagName( 'article' )[0].firstChild.nodeValue;
 		var divId = '#' + page;
 		var comEditMessage = this.createDOMElement( 'div', 'collabComEditFormMessage' );
@@ -764,15 +792,9 @@ function CECommentForm() {
 				ceCommentForm.replyCommentForm( resComName );
 			});
 		});
-		// overlays
-		$jq( '.collabComDel' ).overlay({
-			api: true,
-			// when overlay is closed, remove color highlighting
-			onClose: function() {
-				$jq( '.collabComRes' ).removeClass( 'collabComDelSelected' );
-			}
-		});
 		this.currentView = 1;
+		// overlays
+		this.bindOverlays();
 		return true;
 	};
 
@@ -1043,6 +1065,19 @@ function CECommentForm() {
 		var overlayDivContent = document.createTextNode( ceLanguage.getMessage( 'ce_delete' ) );
 		$jq( overlayDivDetailsEl ).append( $jq( overlayDivContent ) );
 
+		var overlayFullDeleteDiv = this.createDOMElement( 'div', null, ['ceOverlayFullDeleteDiv'] );
+		var overlayFullDeleteCheckBox = this.createDOMElement( 'input',
+			null,
+			['ceOverlayFullDeleteCheckbox'],
+			[['type', 'checkbox'],['name', 'ceFullDelete']]
+		);
+		$jq( overlayFullDeleteDiv ).append( $jq( overlayFullDeleteCheckBox ) );
+		var overlayFullDeleteDivContent = document.createTextNode(
+			ceLanguage.getMessage( 'ce_full_delete' ) 
+		);
+		$jq( overlayFullDeleteDiv ).append( $jq( overlayFullDeleteDivContent ) );
+		$jq( overlayDivEl ).append( $jq( overlayFullDeleteDiv ) );
+
 		// cancel button
 		var cancelButtonDiv = this.createDOMElement( 'div', null, ['ceOverlayCancelButtonDiv'] );
 		$jq( cancelButtonDiv ).bind( 'click', function() {
@@ -1076,6 +1111,43 @@ function CECommentForm() {
 		$jq( overlayDivEl ).append( $jq( deleteButtonDiv ) );
 		return overlayDivEl;
 	};
+	
+	/**
+	 *
+	 */
+	this.bindOverlays = function() {
+		var overlays = $jq('.collabComDel');
+		$jq.each( overlays, function( i, overlay ) {
+			var overlayID = $jq(overlay).attr('id');
+			$jq(overlay).overlay({
+				api: true,
+				// when overlay is closed, remove color highlighting
+				onClose: function() {
+					$jq( '.collabComRes' ).removeClass( 'collabComDelSelected' );
+				},
+				onBeforeLoad: function() {
+					ceCommentForm.controlFullDeleteOptions( 
+						overlay, i, overlayID.replace ('ceDel', '' )
+					);
+				}
+			});
+		});
+	}
+
+	/**
+	 *
+	 */
+	this.controlFullDeleteOptions = function( overlay, overlayNum, commentID ) {
+		if ( typeof( wgCEEnableFullDeletion ) !== 'undefined' && this.currentView === 0
+			&& ( typeof( wgCEUserIsSysop ) !== 'undefined'
+			&& wgCEUserIsSysop !== null && wgCEUserIsSysop !== false ) )
+		{
+			$jq( '.ceOverlayFullDeleteDiv', $jq( '#overlay_' + overlayNum ) ).show();
+		} else {
+			$jq( '.ceOverlayFullDeleteDiv', $jq( '#overlay_' + overlayNum ) ).hide();
+		}
+		return true;
+	}
 	
 	/**
 	 * This function preloads images to prevent 'loading gap'.
@@ -1159,6 +1231,7 @@ $jq(document).ready(
 		ceCommentForm.preloadImages();
 		// format comments
 		var resultComments = $jq( '.collabComRes' );
+		var overlayID = 0;
 		$jq.each( resultComments, function( i, resCom ) {
 			var resComInfo = $jq( '.collabComResInfo', resCom );
 			// name of actual comment
@@ -1194,12 +1267,12 @@ $jq(document).ready(
 				|| (wgUserName !== null && commentPerson == wgUserName ) )
 			{
 				//Overlay for deleting comments
-				var overlayDiv = ceCommentForm.createOverlay( i, resComName );
+				var overlayDiv = ceCommentForm.createOverlay( overlayID, resComName );
 				domElement = ceCommentForm.createDOMElement( 'span',
 					'ceDel' + escape(resComName),
 					['collabComDel'],
 					[['title', ceLanguage.getMessage( 'ce_delete_title' )],
-					['rel', '#overlay_' + i]]
+					['rel', '#overlay_' + overlayID++]]
 				);
 				$jq( domElement ).bind( 'click', function() {
 					$jq( '#' + resComName.replace( /(:|\.)/g, '\\$1' ) ).addClass( 'collabComDelSelected' );
@@ -1274,6 +1347,7 @@ $jq(document).ready(
 				$jq( domElement ).append( $jq( replyImgEl ) );
 				$jq( '.collabComResText', resCom ).after( domElement );
 			}
+			return true;
 		});
 		// build header
 		ceCommentForm.buildHeader();
@@ -1302,13 +1376,7 @@ $jq(document).ready(
 $jq(document).ready(
 	function() {
 		// did not work in the same ready function
-		$jq( '.collabComDel' ).overlay({
-			api: true,
-			// when overlay is closed, remove color highlighting
-			onClose: function() {
-				$jq( '.collabComRes' ).removeClass( 'collabComDelSelected' );
-			}
-		});
+		ceCommentForm.bindOverlays();
 	}
 );
 

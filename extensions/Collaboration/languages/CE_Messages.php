@@ -73,6 +73,7 @@ $messages['en'] = array(
 	'ce_nothing_deleted'			=> 'No comment deleted.',
 	'ce_comment_delete_reason'		=> 'Comment has been deleted via Collaboration GUI.',
 	'ce_comment_deletion_successful'=> 'Comment has been successfully deleted.',
+	'ce_comment_massdeletion_successful' => 'Comments have been successfully deleted.',
 	'ce_comment_deletion_error'		=> 'Comment could not be deleted.',
 	'ce_comment_has_deleted'		=> 'deleted this comment on'
 );
@@ -126,6 +127,7 @@ $messages['de'] = array(
 	'ce_nothing_deleted'			=> 'Kein Kommentar gelöscht.',
 	'ce_comment_delete_reason'		=> 'Kommentar wurde per Collaboration GUI gelöscht.',
 	'ce_comment_deletion_successful'=> 'Kommentar wurde erfolgreich gelöscht.',
+	'ce_comment_massdeletion_successful' => 'Kommentare wurden erfolgreich gelöscht.',
 	'ce_comment_deletion_error'		=> 'Kommentar konnte nicht gelöscht werden.',
 	'ce_comment_has_deleted'		=> 'löschte diesen Kommentar am'
 );
