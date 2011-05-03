@@ -508,7 +508,7 @@ class Tools {
 		if (!file_exists($filePath)) return NULL;
 		exec('unzip -l "'.$filePath.'"', $output, $res);
 		foreach($output as $o) {
-			if (strpos($o, "/deploy.xml") !== false) {
+			if (strpos($o, "deploy.xml") !== false) {
 				$out = $o;
 				break;
 			}
