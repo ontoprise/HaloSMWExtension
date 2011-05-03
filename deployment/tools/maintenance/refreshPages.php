@@ -84,8 +84,8 @@ $pageTitles = $importer->getResult();
 $logger = Logger::getInstance();
 global $wgParser;
 $wgParser->mOptions = new ParserOptions();
-$logger->info("Refreshing ontology: $file");
-print "\n[Refreshing ontology: $file";
+$logger->info("Refreshing ontology: $dumpFilePath");
+print "\n[Refreshing ontology: $dumpFilePath";
 
 foreach($pageTitles as $tuple) {
 	list($t, $status) = $tuple;

@@ -90,22 +90,13 @@ class ResourceInstaller {
 			print "\ndone.]";
 		}
 
-		// refresh imported pages
-		/*$pageTitles = $reader->getImportedPages();
-		 global $wgParser;
-		 $wgParser->mOptions = new ParserOptions();
-		 $this->logger->info("Refreshing ontology: $file");
-		 print "\n[Refreshing ontology: $file";
+		// refresh imported pages (started as a separate process)
+		global $rootDir;
+		$this->logger->info("Refreshing ontology: $file");
+    	$id = $dd->getID();
+		system("php \"$rootDir/tools/maintenance/refreshPages.php\" -d \"$dumpPath\" -b $id");
+		print "\ndone.]";
 
-		 foreach($pageTitles as $pageName) {
-			$t = Title::newFromText($pageName);
-			if ($t->getNamespace() == NS_FILE) continue;
-			$rev = Revision::newFromTitle($t);
-			$parseOutput = $wgParser->parse($rev->getText(), $t, $wgParser->mOptions);
-			SMWParseData::storeData($parseOutput, $t);
-			$this->logger->info($t->getText()." refreshed.");
-			print "\n\t[".$t->getText()." refreshed]";
-			}*/
 
 	}
 
@@ -389,14 +380,14 @@ class ResourceInstaller {
 
 
 	/**
-	 * Reads a dump file and returns the verification log (which itself contains 
+	 * Reads a dump file and returns the verification log (which itself contains
 	 * a list of pages).
 	 *
 	 * @param string $dumpPath
 	 * @param string $bundleID
 	 *
-	 * @return array of (Title t, string status) 
-	 *     status can be 'merge', 'conflict' or 'notexist' 
+	 * @return array of (Title t, string status)
+	 *     status can be 'merge', 'conflict' or 'notexist'
 	 */
 	private function getPagesFromImport( $dumpPath, $bundleID ) {
 		$handle = fopen( $dumpPath, 'rt' );
@@ -410,13 +401,13 @@ class ResourceInstaller {
 		$result = $importer->getResult();
 		return $result;
 	}
-    
+
 	/**
-	 * Removes pages which are no more contained in the bundle to be installed. 
-	 * 
+	 * Removes pages which are no more contained in the bundle to be installed.
+	 *
 	 * @param string $bundleID
-	 * @param array of (Title t, string status) $verificationLog 
-     *    
+	 * @param array of (Title t, string status) $verificationLog
+	 *
 	 */
 	private function removeOldPages($bundleID, $verificationLog) {
 		global $dfgLang;
