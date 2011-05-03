@@ -26,6 +26,7 @@
  *                  --url <repository-url>      The download base URL
  *                  [--latest]                  Latest version?
  *                  [--mediawiki]               Include Mediawiki?
+ *                  [--contains <substring> ]   File name contains a substring
  *
  * @author: Kai Kühn / ontoprise / 2011
  *
@@ -43,7 +44,7 @@ require_once($rootDir."/tools/smwadmin/DF_Tools.php");
 
 $latest = false;
 $createSymlinks = true;
-
+$fileNamecontains = false;
 for( $arg = reset( $argv ); $arg !== false; $arg = next( $argv ) ) {
 
 	//-r => repository directory
@@ -72,6 +73,11 @@ for( $arg = reset( $argv ); $arg !== false; $arg = next( $argv ) ) {
 		$mediawiki = true;
 		continue;
 	}
+	
+    if ($arg == '--contains') {
+        $fileNamecontains = next($argv);
+        continue;
+    }
 }
 
 if (!isset($repositoryDir) || !isset($bundlePath) || !isset($repositoryURL)) {
@@ -92,7 +98,7 @@ Tools::mkpath($repositoryDir."/bin");
 
 // read bundles and extract the deploy descriptors
 echo "\nExtract deploy descriptors";
-$descriptors = extractDeployDescriptors($bundlePath);
+$descriptors = extractDeployDescriptors($bundlePath, $fileNamecontains);
 echo "..done.";
 
 // load existing repository
@@ -245,11 +251,11 @@ function loadRepository($filePath) {
 /**
  * Extracts the deploy descriptor(s) from a bundle or a set of bundles.
  *
- * @param $bundlePath (file or directory)
- *
+ * @param string $bundlePath (file or directory)
+ * @param string $fileNamecontains Filter for files
  * @return array of (DeployDescriptor, Bundle file path)
  */
-function extractDeployDescriptors($bundlePath) {
+function extractDeployDescriptors($bundlePath, $fileNamecontains = false) {
 	$tmpFolder = Tools::isWindows() ? 'c:\temp\mw_deploy_tool' : '/tmp/mw_deploy_tool';
 	if (is_dir($bundlePath)) {
 		$result = array();
@@ -258,6 +264,9 @@ function extractDeployDescriptors($bundlePath) {
 			if($file!="." && $file!="..") {
 				$fileExtension = Tools::getFileExtension($file);
 				if (strtolower($fileExtension) != 'zip') continue;
+				if ($fileNamecontains !== false) {
+					if (strpos($file, $fileNamecontains) === false) continue;
+				}
 				$__file=$bundlePath."/".$file;
 				$dd = Tools::unzipDeployDescriptor($__file, $tmpFolder);
 				if (is_null($dd)) {
