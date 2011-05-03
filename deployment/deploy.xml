@@ -27,7 +27,7 @@
 		<!-- empty -->
 	</resources>
 	<configs>
-
+		<successor ext="smwhalo"/>
 		<new>
 			<require name="deploymentframework" file="deployment/Deployment.php" />
 
