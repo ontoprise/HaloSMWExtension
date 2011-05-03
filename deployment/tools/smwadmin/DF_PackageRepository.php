@@ -107,9 +107,9 @@ class PackageRepository {
 				print "\n".$e->getMsg();
 				print "\n";
 			} catch(Exception $e) {
-                print "\n".$e->getMessage();
-                print "\n";
-            }
+				print "\n".$e->getMessage();
+				print "\n";
+			}
 
 		}
 		return self::$repo_dom;
@@ -372,6 +372,21 @@ class PackageRepository {
 			$ext_dir .= '/';
 		}
 
+		// read root dir and extensions dir for deploy descriptors
+		self::readDirectoryForDD($ext_dir);
+		self::readDirectoryForDD($ext_dir."extensions");
+		self::readDirectoryForDD(Tools::getProgramDir()."/Ontoprise");
+
+		// create special deploy descriptor for Mediawiki itself
+		self::$localPackages['mw'] = self::createMWDeployDescriptor(realpath($ext_dir));
+
+		return self::$localPackages;
+	}
+
+	private static function readDirectoryForDD($ext_dir) {
+		if (substr($ext_dir,-1)!='/'){
+			$ext_dir .= '/';
+		}
 		$handle = @opendir($ext_dir);
 		if (!$handle) {
 			throw new IllegalArgument('Extension directory does not exist: '.$ext_dir);
@@ -381,7 +396,7 @@ class PackageRepository {
 			if ($entry[0] == '.'){
 				continue;
 			}
-
+			 
 			if (is_dir($ext_dir.$entry)) {
 				// check if there is a deploy.xml
 				if (file_exists($ext_dir.$entry.'/deploy.xml')) {
@@ -392,14 +407,7 @@ class PackageRepository {
 			}
 
 		}
-		// create special deploy descriptor for Mediawiki itself
-		self::$localPackages['mw'] = self::createMWDeployDescriptor(realpath($ext_dir."/.."));
-		
-		// read deploy descriptor of DF
-		$dd = new DeployDescriptor(file_get_contents(realpath($ext_dir."/../deployment/deploy.xml")));
-		self::$localPackages[$dd->getID()] = $dd;
-		
-		return self::$localPackages;
+		@closedir($handle);
 	}
 
 	/**
@@ -416,6 +424,25 @@ class PackageRepository {
 			$ext_dir .= '/';
 		}
 
+		self::readDirectoryForDDToInitialize($ext_dir);
+		self::readDirectoryForDDToInitialize($ext_dir."extensions");
+        self::readDirectoryForDDToInitialize(Tools::getProgramDir()."/Ontoprise");
+        
+		// special handling for MW itself
+		if (file_exists($ext_dir.'/init$.ext')) {
+			$init_ext_file = trim(file_get_contents($ext_dir.'/init$.ext'));
+			list($id, $fromVersion) = explode(",", $init_ext_file);
+			$dd = new DeployDescriptor(file_get_contents($ext_dir.'/deploy.xml'));
+			self::$localPackagesToInitialize[$id] = array($dd, $fromVersion);
+		}
+
+		return self::$localPackagesToInitialize;
+	}
+
+	private static function readDirectoryForDDToInitialize($ext_dir) {
+		if (substr($ext_dir,-1)!='/'){
+			$ext_dir .= '/';
+		}
 		$handle = @opendir($ext_dir);
 		if (!$handle) {
 			throw new IllegalArgument('Extension directory does not exist: '.$ext_dir);
@@ -438,16 +465,7 @@ class PackageRepository {
 			}
 
 		}
-
-		// special handling for MW itself
-		if (file_exists($ext_dir.'../init$.ext')) {
-			$init_ext_file = trim(file_get_contents($ext_dir.'../init$.ext'));
-			list($id, $fromVersion) = explode(",", $init_ext_file);
-			$dd = new DeployDescriptor(file_get_contents($ext_dir.'../deploy.xml'));
-			self::$localPackagesToInitialize[$id] = array($dd, $fromVersion);
-		}
-
-		return self::$localPackagesToInitialize;
+		@closedir($handle);
 	}
 
 	private static function createMWDeployDescriptor($rootDir) {

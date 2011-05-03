@@ -66,7 +66,7 @@ if (!file_exists($outputDir)) Tools::mkpath($outputDir);
 
 $mwRootDir = dirname(__FILE__);
 $mwRootDir = str_replace("\\", "/", $mwRootDir);
-$mwRootDir = realpath($mwRootDir."/../../../extensions/");
+$mwRootDir = realpath($mwRootDir."/../../../");
 print($mwRootDir);
 if (substr($mwRootDir, -1) != "/") $mwRootDir .= "/";
 
@@ -79,7 +79,7 @@ echo "\nCreate new repository ".$outputDir."repository.xml";
 $new_ser = '<?xml version="1.0" encoding="UTF-8"?><?xml-stylesheet type="text/xsl" href="repository.xsl"?>'."<root>\n<extensions>\n";
 foreach($localPackages as $lp) {
 	$id = $lp->getID();
-	if ($id == 'mw' || $id == 'deployment') continue; // special handling for these
+	if ($id == 'mw') continue; // special handling for mw
 	$installdir = $lp->getInstallationDirectory();
 	$new_ser .= "<extension id=\"$id\">";
 	$branch = isset($head) ? "smwhalo" : "smwhalo_".addSeparators($release,"_")."_release";
@@ -107,6 +107,7 @@ echo "\nWriting deploy descriptors...";
 // create symlinks for Linux and Windows 7
 $createSymlinks=true;
 if (Tools::isWindows($os) && $latest) {
+	
     $createSymlinks = ($os == 'Windows 7');
     if (!$createSymlinks) {
         echo "Be careful: Cannot create symbolic links on Windows <= 7!";
@@ -122,17 +123,13 @@ $rootDir = str_replace("\\", "/", $rootDir);
 if (substr($rootDir, -1) != "/") $rootDir .= "/";
 
 // create substructure with deploy descriptors
-$localPackages = PackageRepository::getLocalPackages($rootDir."/extensions");
+$localPackages = PackageRepository::getLocalPackages($rootDir);
 foreach($localPackages as $dd_file => $dd) {
 	$id = $dd->getID();
-	if ($id == 'mw' || $id == 'deployment') continue;
+	if ($id == 'mw') continue;
 	$instdir = $dd->getInstallationDirectory();
 	createEntry($dd, $rootDir."/$instdir/deploy.xml", $outputDir, $latest, $createSymlinks);
 }
-
-// create substructure for DF
-$dd = new DeployDescriptor(file_get_contents(realpath($rootDir."/deployment/deploy.xml")));
-createEntry($dd, $rootDir."/deployment/deploy.xml", $outputDir, $latest, $createSymlinks);
 
 print "\nDONE.\n\n";
 

@@ -34,8 +34,12 @@ class Tools {
 	 */
 	public static function isWindows(& $version = '') {
 		static $thisBoxRunsWindows;
+		static $os;
 
-		if (! is_null($thisBoxRunsWindows)) return $thisBoxRunsWindows;
+		if (! is_null($thisBoxRunsWindows)) {
+			$version = $os;
+			return $thisBoxRunsWindows;
+		}
 
 		ob_start();
 		phpinfo();
@@ -47,7 +51,11 @@ class Tools {
 		preg_match('/[Ww]indows.*/',$ma[1],$os);
 		$thisBoxRunsWindows= count($os) > 0;
 
-		if ($thisBoxRunsWindows && (strpos($os[0], "6.1") !== false)) $version = "Windows 7";
+
+		if ($thisBoxRunsWindows && (strpos($os[0], "6.1") !== false)) {
+			$version = "Windows 7";
+			$os = $version;
+		}
 
 		return $thisBoxRunsWindows;
 	}
@@ -494,6 +502,21 @@ class Tools {
 		} else {
 			exec('echo $HOME', $out, $ret);
 			return reset($out);
+		}
+	}
+
+	/**
+	 * Returns the program directory. On Linux it is simply /usr/local/share
+	 * (path with slashes only also on Windows)
+	 *
+	 * @return string
+	 */
+	public static function getProgramDir() {
+		if (self::isWindows()) {
+			exec("echo %ProgramFiles%", $out, $ret);
+			return str_replace("\\", "/", reset($out));
+		} else {
+			return "/usr/local/share";
 		}
 	}
 

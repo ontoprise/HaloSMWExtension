@@ -113,7 +113,7 @@ class ConsistencyChecker {
 
 	public function __construct($rootDir) {
 		$this->rootDir = $rootDir;
-		$this->localPackages = PackageRepository::getLocalPackages($this->rootDir."/extensions");
+		$this->localPackages = PackageRepository::getLocalPackages($this->rootDir);
 		$this->statusLog = array();
 	}
 

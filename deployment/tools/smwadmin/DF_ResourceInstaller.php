@@ -178,7 +178,7 @@ class ResourceInstaller {
 	public function checkWikidump($packageID, $version) {
 		if (!defined('SMW_VERSION')) throw new InstallationError(DEPLOY_FRAMEWORK_NOT_INSTALLED, "SMW is not installed although it is needed to check ontology status.");
 
-		$localPackages = PackageRepository::getLocalPackages($this->rootDir.'/extensions');
+		$localPackages = PackageRepository::getLocalPackages($this->rootDir);
 		$package = array_key_exists($packageID, $localPackages) ? $localPackages[$packageID] : NULL;
 		$packageFound = !is_null($package) && ($package->getVersion() == $version || $version == NULL);
 		if (!$packageFound) {

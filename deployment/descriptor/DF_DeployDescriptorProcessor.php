@@ -203,7 +203,7 @@ class DeployDescriptionProcessor {
 	 */
 	function applyPatches($userCallback, $patchesToSkip = array()) {
 		$rootDir = self::makeUnixPath(dirname($this->ls_loc));
-		$localPackages = PackageRepository::getLocalPackages($rootDir.'/extensions', true);
+		$localPackages = PackageRepository::getLocalPackages($rootDir, true);
 
 		foreach($this->dd_parser->getPatches($localPackages) as $tuple) {
 			list($patch, $mayfail) = $tuple;
@@ -299,7 +299,7 @@ class DeployDescriptionProcessor {
 	 */
 	function unapplyPatches() {
 		$rootDir = self::makeUnixPath(dirname($this->ls_loc));
-		$localPackages = PackageRepository::getLocalPackages($rootDir.'/extensions');
+		$localPackages = PackageRepository::getLocalPackages($rootDir);
 		foreach($this->dd_parser->getUninstallPatches($localPackages) as $patch) {
 
 			$instDir = trim(self::makeUnixPath($this->dd_parser->getInstallationDirectory()));
@@ -340,7 +340,7 @@ class DeployDescriptionProcessor {
 	 */
 	function checkIfPatchesAlreadyApplied(& $alreadyApplied) {
 		$rootDir = self::makeUnixPath(dirname($this->ls_loc));
-		$localPackages = PackageRepository::getLocalPackages($rootDir.'/extensions', true);
+		$localPackages = PackageRepository::getLocalPackages($rootDir, true);
 
 		foreach($this->dd_parser->getPatches($localPackages) as $tuple) {
 			list($patch, $mayfail) = $tuple;

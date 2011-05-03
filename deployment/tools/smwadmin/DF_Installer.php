@@ -153,7 +153,7 @@ class Installer {
 		if (is_null($dd)) {
 			throw new InstallationError(DEPLOY_FRAMEWORK_UNCOMPRESS_ERROR, "Uncompressing $filePath failed.");
 		}
-		$localPackages = PackageRepository::getLocalPackages($this->rootDir.'/extensions');
+		$localPackages = PackageRepository::getLocalPackages($this->rootDir);
 
 		// check dependencies
 		$updatesNeeded=array();
@@ -221,7 +221,7 @@ class Installer {
 	public function deInstall($packageID) {
 
 		print "\n[Checking for package $packageID...";
-		$localPackages = PackageRepository::getLocalPackages($this->rootDir.'/extensions');
+		$localPackages = PackageRepository::getLocalPackages($this->rootDir);
 		$ext = NULL;
 		foreach($localPackages as $p) {
 			if ($p->getID() == $packageID) {
@@ -297,7 +297,7 @@ class Installer {
 	 */
 	public function updateAll($onlyDependencyCheck = false) {
 
-		$localPackages = PackageRepository::getLocalPackages($this->rootDir.'/extensions');
+		$localPackages = PackageRepository::getLocalPackages($this->rootDir);
 
 		// iterate through all installed packages, check if new or patched versions
 		// are available and collect all depending extension to be updated.
@@ -335,7 +335,7 @@ class Installer {
 	public function listAvailablePackages($showDescription, $pattern = NULL) {
 
 		$allPackages = PackageRepository::getAllPackages();
-		$localPackages = PackageRepository::getLocalPackages($this->rootDir.'/extensions');
+		$localPackages = PackageRepository::getLocalPackages($this->rootDir);
 		if (count($allPackages) == 0) {
 			print "\n\nNo packages available!\n";
 			return;
@@ -401,7 +401,7 @@ class Installer {
 	public function collectPackagesToInstall($packageID, $version = NULL) {
 		// 1. Check if package is installed
 		print "\n[Check if package installed...";
-		$localPackages = PackageRepository::getLocalPackages($this->rootDir.'/extensions');
+		$localPackages = PackageRepository::getLocalPackages($this->rootDir);
 		$old_package = NULL;
 		foreach($localPackages as $p) {
 			if ($p->getID() == $packageID) {
@@ -475,7 +475,7 @@ class Installer {
 	 */
 	private function installOrUpdatePackages($extensions_to_update) {
 		$d = new HttpDownload();
-		$localPackages = PackageRepository::getLocalPackages($this->rootDir.'/extensions');
+		$localPackages = PackageRepository::getLocalPackages($this->rootDir);
 		$num = 0;
 		foreach($extensions_to_update as $arr) {
 			list($desc, $min, $max) = $arr;
@@ -537,7 +537,7 @@ class Installer {
 		require_once 'DF_OntologyInstaller.php';
 		$res_installer = ResourceInstaller::getInstance($this->rootDir);
 		$ont_installer = OntologyInstaller::getInstance($this->rootDir);
-		$localPackages = PackageRepository::getLocalPackagesToInitialize($this->rootDir.'/extensions');
+		$localPackages = PackageRepository::getLocalPackagesToInitialize($this->rootDir);
 		ksort($localPackages, SORT_NUMERIC);
 
 		if (count($localPackages) === 0) {
@@ -590,424 +590,437 @@ class Installer {
 		}
 		print "done.]\n\n";
 
-		}
+	}
 
-		/**
-		 * Deinitializes the package, ie.
-		 *
-		 * 	Note: requires wiki context when called.
-		 *
-		 * 	(1) deinstall ontologies
-		 *  (2) deinstall resources
-		 *
-		 * @param DeployDescriptor $dd
-		 */
-		public function deinitializePackages($dd) {
+	/**
+	 * Deinitializes the package, ie.
+	 *
+	 * 	Note: requires wiki context when called.
+	 *
+	 * 	(1) deinstall ontologies
+	 *  (2) deinstall resources
+	 *
+	 * @param DeployDescriptor $dd
+	 */
+	public function deinitializePackages($dd) {
 
-			$res_installer = ResourceInstaller::getInstance($this->rootDir);
-			$ont_installer = OntologyInstaller::getInstance($this->rootDir);
+		$res_installer = ResourceInstaller::getInstance($this->rootDir);
+		$ont_installer = OntologyInstaller::getInstance($this->rootDir);
 
-			// remove wikidumps
-			$this->logger->info("De-installing wikidumps: ".$dd->getID());
-			print "\n[De-installing wikidumps...";
-			$res_installer->deinstallWikidump($dd);
-			print "\ndone.]";
+		// remove wikidumps
+		$this->logger->info("De-installing wikidumps: ".$dd->getID());
+		print "\n[De-installing wikidumps...";
+		$res_installer->deinstallWikidump($dd);
+		print "\ndone.]";
 
-			// remove ontologies
-			$this->logger->info("De-installing ontologies: ".$dd->getID());
-			print "\n[De-installing ontologies...";
-			$ont_installer->deinstallOntology($dd);
-			print "\ndone.]";
+		// remove ontologies
+		$this->logger->info("De-installing ontologies: ".$dd->getID());
+		print "\n[De-installing ontologies...";
+		$ont_installer->deinstallOntology($dd);
+		print "\ndone.]";
 
-			// delete resources
-			$this->logger->info("Delete resourcs: ".$dd->getID());
-			print "\n[Deleting resources...";
-			$res_installer->deleteResources($dd);
-			print "\ndone.]";
+		// delete resources
+		$this->logger->info("Delete resourcs: ".$dd->getID());
+		print "\n[Deleting resources...";
+		$res_installer->deleteResources($dd);
+		print "\ndone.]";
 
-		}
+	}
 
-		/**
-		 * Deletes codefiles which are *not* located in the installation directory.
-		 *
-		 * @param DeployDescriptor $dd
-		 */
-		public function deleteExternalCodefiles($dd) {
+	/**
+	 * Deletes codefiles which are *not* located in the installation directory.
+	 *
+	 * @param DeployDescriptor $dd
+	 */
+	public function deleteExternalCodefiles($dd) {
 
-			if (count($dd->getCodefiles()) ==  0) return;
-			$codefiles = $dd->getCodefiles();
-			print "\n[Deleting external codefiles...";
-			foreach($codefiles as $f) {
-				if (strpos($f, $dd->getInstallationDirectory()) === 0) continue; // ignore these
-				print "\n\t[Remove $f...";
-				$path = $this->rootDir."/".$dd->getInstallationDirectory()."/".$f;
-				if (is_dir($path)) {
-					Tools::remove_dir($path);
-				} else if (file_exists($path)) {
-					unlink($path);
-				}
-				print "done.]";
+		if (count($dd->getCodefiles()) ==  0) return;
+		$codefiles = $dd->getCodefiles();
+		print "\n[Deleting external codefiles...";
+		foreach($codefiles as $f) {
+			if (strpos($f, $dd->getInstallationDirectory()) === 0) continue; // ignore these
+			print "\n\t[Remove $f...";
+			$path = $this->rootDir."/".$dd->getInstallationDirectory()."/".$f;
+			if (is_dir($path)) {
+				Tools::remove_dir($path);
+			} else if (file_exists($path)) {
+				unlink($path);
 			}
-			print "\ndone.]";
-		}
-
-		/**
-		 * Unzips the package denoted by $id and $version
-		 *
-		 *  (requires unzip installed on Windows, on Linux)
-		 *
-		 * @param string $id
-		 * @param int $version
-		 */
-		private function unzip($dd) {
-			$id = $dd->getID();
-	 	$version =	$dd->getVersion();
-	 	$excludedFiles = $dd->getExcludedFiles();
-	 	$excludedFilesString = "";
-	 	if (count($excludedFiles) > 0) {
-	 		$excludedFilesString = "-x ".implode(" ", $excludedFiles); // FIXME: quote, could contain whitespaces
-	 	}
-	 	print "\n[unzip ".$id."-$version.zip...";
-	 	if (Tools::isWindows()) {
-	 		exec('unzip -o "'.$this->tmpFolder."\\".$id."-$version.zip\" -d \"".$this->rootDir.'" '.$excludedFilesString);
-	 	} else {
-	 		exec('unzip -o "'.$this->tmpFolder."/".$id."-$version.zip\" -d \"".$this->rootDir.'" '.$excludedFilesString);
-	 	}
-	 	print "done.]";
-		}
-
-		/**
-		 * Unzips the given bundle.
-		 *
-		 * @param $filePath of bundle (absolute or relative)
-		 */
-		private function unzipFromFile($filePath) {
-
-			print "\n[unzip ".$filePath."...";
-			exec('unzip -o "'.$filePath.'" -d "'.$this->rootDir.'"');
 			print "done.]";
+		}
+		print "\ndone.]";
+	}
 
+	/**
+	 * Unzips the package denoted by $id and $version
+	 *
+	 *  (requires unzip installed on Windows, on Linux)
+	 *
+	 * @param string $id
+	 * @param int $version
+	 */
+	private function unzip($dd) {
+		$id = $dd->getID();
+		$version =	$dd->getVersion();
+		$excludedFiles = $dd->getExcludedFiles();
+		$excludedFilesString = "";
+		if (count($excludedFiles) > 0) {
+			$excludedFilesString = "-x ".implode(" ", $excludedFiles); // FIXME: quote, could contain whitespaces
 		}
 
+		$unzipDirectory = $this->rootDir;
+		if ($dd->isNonPublic()) {
+			$unzipDirectory = Tools::getProgramDir()."/Ontoprise";
+			Tools::mkpath($unzipDirectory);
+		}
+
+		print "\n[unzip ".$id."-$version.zip...";
+		if (Tools::isWindows()) {
+			exec('unzip -o "'.$this->tmpFolder."\\".$id."-$version.zip\" -d \"".$unzipDirectory.'" '.$excludedFilesString);
+		} else {
+			exec('unzip -o "'.$this->tmpFolder."/".$id."-$version.zip\" -d \"".$unzipDirectory.'" '.$excludedFilesString);
+		}
+		print "done.]";
+	}
+
+	/**
+	 * Unzips the given bundle.
+	 *
+	 * @param $filePath of bundle (absolute or relative)
+	 */
+	private function unzipFromFile($filePath) {
+
+		$unzipDirectory = $this->rootDir;
+		if ($dd->isNonPublic()) {
+			$unzipDirectory = Tools::getProgramDir()."/Ontoprise";
+			Tools::mkpath($unzipDirectory);
+		}
+
+		print "\n[unzip ".$filePath."...";
+		exec('unzip -o "'.$filePath.'" -d "'.$unzipDirectory.'"');
+		print "done.]";
+
+	}
 
 
-		/**
-		 * Calculates for any extension individually the possible interval of version,
-		 * which can be installed. Removes all packages which can not be
-		 * installed because there are contradicting requirements in terms of version numbers,
-		 * ie. min version > max version.
-		 *
-		 * @param array($dd, $min, $max) $updatesNeeded
-		 * @param array(id=>array($dd, $min, $max)) $extensions_to_update
-		 */
-		private function filterIncompatiblePackages($updatesNeeded, & $extensions_to_update, & $contradictions) {
-			$extensions = array();
 
-			$removed_extensions = array();
-			$extensions_to_update = array();
-			$contradictions = array();
-			// calculate the intersection of min/max version number of each package
-			foreach($updatesNeeded as $un) {
-				list($dd, $from, $to) = $un;
-				if (!array_key_exists($dd->getID(), $extensions)) {
+	/**
+	 * Calculates for any extension individually the possible interval of version,
+	 * which can be installed. Removes all packages which can not be
+	 * installed because there are contradicting requirements in terms of version numbers,
+	 * ie. min version > max version.
+	 *
+	 * @param array($dd, $min, $max) $updatesNeeded
+	 * @param array(id=>array($dd, $min, $max)) $extensions_to_update
+	 */
+	private function filterIncompatiblePackages($updatesNeeded, & $extensions_to_update, & $contradictions) {
+		$extensions = array();
 
-					$extensions[$dd->getID()] = array($dd, $from, $to);
+		$removed_extensions = array();
+		$extensions_to_update = array();
+		$contradictions = array();
+		// calculate the intersection of min/max version number of each package
+		foreach($updatesNeeded as $un) {
+			list($dd, $from, $to) = $un;
+			if (!array_key_exists($dd->getID(), $extensions)) {
+
+				$extensions[$dd->getID()] = array($dd, $from, $to);
+			} else {
+				list($dd2, $min, $max) = $extensions[$dd->getID()];
+				if ($from > $min) $min = $from;
+				if ($to < $max) $max = $to;
+				$extensions[$dd->getID()] = array($dd2, $min, $max);
+			}
+		}
+
+		// remove all packages with min > max, ie. they can not be installed
+		// because no suitable version exists.
+		// remove also all super-packages of such.
+		do {
+			$lastSize = count($removed_extensions);
+			foreach($extensions as $id => $e) {
+				list($un, $min, $max) = $e;
+				if ($min <= $max) {
+					$deps = $un->getDependencies();
+					foreach($deps as $dep) {
+						list($depID, $from, $to, $optional, $message) = $dep;
+						if ($optional) continue;
+						if (array_key_exists($depID, $removed_extensions)) {
+							$removed_extensions[$id] = $un;
+						}
+
+					}
 				} else {
-					list($dd2, $min, $max) = $extensions[$dd->getID()];
-					if ($from > $min) $min = $from;
-					if ($to < $max) $max = $to;
-					$extensions[$dd->getID()] = array($dd2, $min, $max);
+					$removed_extensions[$id] = $un;
+					$contradictions[] = array($id, $min, $max);
 				}
 			}
+		} while(count($removed_extensions) > $lastSize);
 
-			// remove all packages with min > max, ie. they can not be installed
-			// because no suitable version exists.
-			// remove also all super-packages of such.
-			do {
-				$lastSize = count($removed_extensions);
-				foreach($extensions as $id => $e) {
-					list($un, $min, $max) = $e;
-					if ($min <= $max) {
-						$deps = $un->getDependencies();
-						foreach($deps as $dep) {
-							list($depID, $from, $to, $optional, $message) = $dep;
-							if ($optional) continue;
-							if (array_key_exists($depID, $removed_extensions)) {
-								$removed_extensions[$id] = $un;
-							}
-
-						}
-					} else {
-						$removed_extensions[$id] = $un;
-						$contradictions[] = array($id, $min, $max);
-					}
-				}
-			} while(count($removed_extensions) > $lastSize);
-
-			foreach($removed_extensions as $id => $re) {
-				unset($extensions[$id]);
-			}
-
-			// sort the packages list topologically according to their dependency graph.
-			$precedenceOrder = $this->sortForDependencies($extensions);
-			foreach($precedenceOrder as $po) {
-				$extensions_to_update[$po] = $extensions[$po];
-			}
-
+		foreach($removed_extensions as $id => $re) {
+			unset($extensions[$id]);
 		}
 
-		/**
-		 * Provides a topologic sorting based on the dependency graph.
-		 *
-		 * @param array(ID=>array($dd,$min,$max)) $extensions_to_update
-		 * @return array(ID)
-		 */
-		private function sortForDependencies(& $extensions_to_update) {
-			$sortedPackages = array();
-			$vertexes = array_keys($extensions_to_update);
-			$descriptors = array_values($extensions_to_update);
-			while (!empty($vertexes)) {
-				$cycle = true;
-				foreach($vertexes as $v) {
-					$hasPreceding = false;
-					foreach($descriptors as $e) {
-						list($dd, $from, $to) = $e;
-						if (in_array($dd->getID(), $vertexes)) {
-							if ($dd->hasDependency($v)) {
-								$hasPreceding = true;
-								break;
-							}
-						}
-					}
-					if (!$hasPreceding) {
-						$cycle = false;
-						break;
-					}
-				}
-				if (!$hasPreceding) {
-					// remove $v from $vertexes
-					$vertexes = array_diff($vertexes, array($v));
-
-				}
-				$sortedPackages[] = $v;
-
-				if ($cycle) throw new InstallationError(DEPLOY_FRAMEWORK_PRECEDING_CYCLE, "Cycle in the dependency graph.");
-			}
-			return array_reverse($sortedPackages);
+		// sort the packages list topologically according to their dependency graph.
+		$precedenceOrder = $this->sortForDependencies($extensions);
+		foreach($precedenceOrder as $po) {
+			$extensions_to_update[$po] = $extensions[$po];
 		}
 
+	}
 
-
-
-
-		/**
-		 * Checks for updates on depending extensions if the package described by $dd would be installed.
-		 * Goes recursively down the dependency tree.
-		 *
-		 * @param DeployDescriptor $dd
-		 * @param array $packagesToUpdate
-		 * @param array of DeployDescriptor $localPackages
-		 * @param boolean $globalUpdate Global update or not (-u)
-		 */
-		private function collectDependingExtensions($dd, & $packagesToUpdate, $localPackages, $globalUpdate = false) {
-			$dependencies = $dd->getDependencies();
-			$updatesNeeded = array();
-
-			// find packages which need to get updated
-			// or installed.
-
-			foreach($dependencies as $dep) {
-				list($id, $from, $to, $optional, $message) = $dep;
-				if ($optional && !$globalUpdate) {
-					// ask for installation of optional packages
-					// do not ask if it is a global update or if it already exists.
-					if (array_key_exists($id, $localPackages)) {
-						continue;
-					}
-					$this->getUserConfirmation("$message\nInstall optional extension '$id'? ", $result);
-					if ($result != 'y') {
-						continue;
-					}
-				}
-				$packageFound = false;
-				foreach($localPackages as $p) {
-					if ($id === $p->getID()) {
-						$packageFound = true;
-						if ($p->getVersion() < $from) {
-
-							$updatesNeeded[] = array($id, $from, $to);
-						}
-						if ($p->getVersion() > $to) {
-
-							throw new InstallationError(DEPLOY_FRAMEWORK_INSTALL_LOWER_VERSION, "Requires '$id' to be installed at most in version ".Tools::addVersionSeparators(array($to,0)).". Downgrades are not supported.");
-						}
-					}
-				}
-				if (!$packageFound) {
-					// package was not installed at all.
-
-					$updatesNeeded[] = array($id, $from, $to);
-				}
-			}
-
-			// get minimally required versions of packages to upgrade or install
-			// and check if other extensions depending on them
-			// need to get updated too.
-			foreach($updatesNeeded as $up) {
-				list($id, $minVersion, $maxVersion) = $up;
-
-				$desc_min = PackageRepository::getDeployDescriptorFromRange($id, $minVersion, $maxVersion);
-
-				$packagesToUpdate[] = array($desc_min, $minVersion, $maxVersion);
-				$this->collectDependingExtensions($desc_min, $packagesToUpdate, $localPackages, $globalUpdate);
-			}
-
-		}
-
-		/**
-		 * Checks for updates on super extensions if the package described by $dd would be installed.
-		 * Goes recursively up the dependency tree.
-		 *
-		 * @param DeployDescriptor $dd
-		 * @param array $packagesToUpdate
-		 * @param array of DeployDescriptor $localPackages
-		 */
-		private function collectSuperExtensions($dd, & $packagesToUpdate, $localPackages) {
-
-			foreach($localPackages as $p) {
-
-				// check if a local extension has $dd as a dependency
-				$dep = $p->getDependency($dd->getID());
-				if ($dep == NULL) continue;
-				list($id, $from, $to) = $dep;
-
-				// if $dd's version exceeds the limit of the installed,
-				// try to find an update
-				if ($dd->getVersion() > $to) {
-					$versions = PackageRepository::getAllVersions($p->getID());
-					// iterate through the available versions
-					$updateFound = false;
-					foreach($versions as $v) {
-						$ptoUpdate = PackageRepository::getDeployDescriptor($p->getID(), $v);
-						list($id_ptu, $from_ptu, $to_ptu) = $ptoUpdate->getDependency($p->getID());
-						if ($from_ptu <= $dd->getVersion() && $to_ptu >= $dd->getVersion()) {
-
-							$packagesToUpdate[] = array($p, $from_ptu, $to_ptu);
-							$updateFound = true;
+	/**
+	 * Provides a topologic sorting based on the dependency graph.
+	 *
+	 * @param array(ID=>array($dd,$min,$max)) $extensions_to_update
+	 * @return array(ID)
+	 */
+	private function sortForDependencies(& $extensions_to_update) {
+		$sortedPackages = array();
+		$vertexes = array_keys($extensions_to_update);
+		$descriptors = array_values($extensions_to_update);
+		while (!empty($vertexes)) {
+			$cycle = true;
+			foreach($vertexes as $v) {
+				$hasPreceding = false;
+				foreach($descriptors as $e) {
+					list($dd, $from, $to) = $e;
+					if (in_array($dd->getID(), $vertexes)) {
+						if ($dd->hasDependency($v)) {
+							$hasPreceding = true;
 							break;
 						}
 					}
-					if (!$updateFound) throw new InstallationError(DEPLOY_FRAMEWORK_COULD_NOT_FIND_UPDATE, "Could not find update for: ".$p->getID());
-
-					$this->collectSuperExtensions($p, $packagesToUpdate, $localPackages);
+				}
+				if (!$hasPreceding) {
+					$cycle = false;
+					break;
 				}
 			}
+			if (!$hasPreceding) {
+				// remove $v from $vertexes
+				$vertexes = array_diff($vertexes, array($v));
 
+			}
+			$sortedPackages[] = $v;
+
+			if ($cycle) throw new InstallationError(DEPLOY_FRAMEWORK_PRECEDING_CYCLE, "Cycle in the dependency graph.");
 		}
+		return array_reverse($sortedPackages);
+	}
 
-		/**
-		 * Callback method. Reads user for required parameters.
-		 *
-		 *
-		 * @param array($name=>(array($type, $description)) $userParams
-		 * @param out array($name=>$value) $mapping
-		 *
-		 */
-		public function getUserReqParams($userParams, & $mapping) {
-			if ($this->noAsk || count($userParams) == 0) return;
-			print "\n\nRequired parameters:";
-			foreach($userParams as $name => $up) {
-				list($type, $desc, $proposal) = $up;
-				if (!is_null($proposal) && $proposal != '') {
-					$parts = explode(":", $proposal);
-					if (count($parts) > 1) {
-						switch($parts[0]) {
-							case "search": {
-								$proposal = Tools::whereis(trim($parts[1]));
-								$proposal = trim($proposal);
-								break;
-							}
-							default:
-								$proposal = '';
-								break;
-						}
+
+
+
+
+	/**
+	 * Checks for updates on depending extensions if the package described by $dd would be installed.
+	 * Goes recursively down the dependency tree.
+	 *
+	 * @param DeployDescriptor $dd
+	 * @param array $packagesToUpdate
+	 * @param array of DeployDescriptor $localPackages
+	 * @param boolean $globalUpdate Global update or not (-u)
+	 */
+	private function collectDependingExtensions($dd, & $packagesToUpdate, $localPackages, $globalUpdate = false) {
+		$dependencies = $dd->getDependencies();
+		$updatesNeeded = array();
+
+		// find packages which need to get updated
+		// or installed.
+
+		foreach($dependencies as $dep) {
+			list($id, $from, $to, $optional, $message) = $dep;
+			if ($optional && !$globalUpdate) {
+				// ask for installation of optional packages
+				// do not ask if it is a global update or if it already exists.
+				if (array_key_exists($id, $localPackages)) {
+					continue;
+				}
+				$this->getUserConfirmation("$message\nInstall optional extension '$id'? ", $result);
+				if ($result != 'y') {
+					continue;
+				}
+			}
+			$packageFound = false;
+			foreach($localPackages as $p) {
+				if ($id === $p->getID()) {
+					$packageFound = true;
+					if ($p->getVersion() < $from) {
+
+						$updatesNeeded[] = array($id, $from, $to);
+					}
+					if ($p->getVersion() > $to) {
+
+						throw new InstallationError(DEPLOY_FRAMEWORK_INSTALL_LOWER_VERSION, "Requires '$id' to be installed at most in version ".Tools::addVersionSeparators(array($to,0)).". Downgrades are not supported.");
 					}
 				}
-					
-				// use proposal if given
-				if (!is_null($proposal) && $proposal != '') {
-					$mapping[$name] = $proposal;
-				} else {
-					print "\n$desc\n";
-					print "$name ($type): ";
-					$line = trim(fgets(STDIN));
-					$line = str_replace("\\", "/", $line); // do not allow backslashes
-					$mapping[$name] = $line;
+			}
+			if (!$packageFound) {
+				// package was not installed at all.
+
+				$updatesNeeded[] = array($id, $from, $to);
+			}
+		}
+
+		// get minimally required versions of packages to upgrade or install
+		// and check if other extensions depending on them
+		// need to get updated too.
+		foreach($updatesNeeded as $up) {
+			list($id, $minVersion, $maxVersion) = $up;
+
+			$desc_min = PackageRepository::getDeployDescriptorFromRange($id, $minVersion, $maxVersion);
+
+			$packagesToUpdate[] = array($desc_min, $minVersion, $maxVersion);
+			$this->collectDependingExtensions($desc_min, $packagesToUpdate, $localPackages, $globalUpdate);
+		}
+
+	}
+
+	/**
+	 * Checks for updates on super extensions if the package described by $dd would be installed.
+	 * Goes recursively up the dependency tree.
+	 *
+	 * @param DeployDescriptor $dd
+	 * @param array $packagesToUpdate
+	 * @param array of DeployDescriptor $localPackages
+	 */
+	private function collectSuperExtensions($dd, & $packagesToUpdate, $localPackages) {
+
+		foreach($localPackages as $p) {
+
+			// check if a local extension has $dd as a dependency
+			$dep = $p->getDependency($dd->getID());
+			if ($dep == NULL) continue;
+			list($id, $from, $to) = $dep;
+
+			// if $dd's version exceeds the limit of the installed,
+			// try to find an update
+			if ($dd->getVersion() > $to) {
+				$versions = PackageRepository::getAllVersions($p->getID());
+				// iterate through the available versions
+				$updateFound = false;
+				foreach($versions as $v) {
+					$ptoUpdate = PackageRepository::getDeployDescriptor($p->getID(), $v);
+					list($id_ptu, $from_ptu, $to_ptu) = $ptoUpdate->getDependency($p->getID());
+					if ($from_ptu <= $dd->getVersion() && $to_ptu >= $dd->getVersion()) {
+
+						$packagesToUpdate[] = array($p, $from_ptu, $to_ptu);
+						$updateFound = true;
+						break;
+					}
+				}
+				if (!$updateFound) throw new InstallationError(DEPLOY_FRAMEWORK_COULD_NOT_FIND_UPDATE, "Could not find update for: ".$p->getID());
+
+				$this->collectSuperExtensions($p, $packagesToUpdate, $localPackages);
+			}
+		}
+
+	}
+
+	/**
+	 * Callback method. Reads user for required parameters.
+	 *
+	 *
+	 * @param array($name=>(array($type, $description)) $userParams
+	 * @param out array($name=>$value) $mapping
+	 *
+	 */
+	public function getUserReqParams($userParams, & $mapping) {
+		if ($this->noAsk || count($userParams) == 0) return;
+		print "\n\nRequired parameters:";
+		foreach($userParams as $name => $up) {
+			list($type, $desc, $proposal) = $up;
+			if (!is_null($proposal) && $proposal != '') {
+				$parts = explode(":", $proposal);
+				if (count($parts) > 1) {
+					switch($parts[0]) {
+						case "search": {
+							$proposal = Tools::whereis(trim($parts[1]));
+							$proposal = trim($proposal);
+							break;
+						}
+						default:
+							$proposal = '';
+							break;
+					}
 				}
 			}
 
-		}
-
-		/**
-		 * Callback method. Requests a confirmation by the user.
-		 *
-		 *
-		 * @param string $message
-		 * @param out boolean $result
-		 * @return unknown
-		 */
-		public function getUserConfirmation($message, & $result) {
-			if ($this->noAsk) return 'y';
-			print "\n\n$message [ (y)es/(n)o ]";
-			$line = trim(fgets(STDIN));
-			$result = strtolower($line);
-		}
-
-		public function askForOntologyPrefix(& $result) {
-			print "\n\nOntology conflict. Please enter prefix: ";
-			$line = trim(fgets(STDIN));
-			$result = $line;
-		}
-
-		public function getErrors() {
-			return $this->errors;
-		}
-
-		public function downloadProgres($percentage) {
-			// do nothing
-		}
-		public function downloadFinished($filename) {
-			// do nothing
+			// use proposal if given
+			if (!is_null($proposal) && $proposal != '') {
+				$mapping[$name] = $proposal;
+			} else {
+				print "\n$desc\n";
+				print "$name ($type): ";
+				$line = trim(fgets(STDIN));
+				$line = str_replace("\\", "/", $line); // do not allow backslashes
+				$mapping[$name] = $line;
+			}
 		}
 
 	}
 
-	class InstallationError extends Exception {
-
-		var $msg;
-		var $arg1;
-		var $arg2;
-
-		public function __construct($errCode, $msg = '', $arg1 = NULL, $arg2 = NULL) {
-			$this->errCode = $errCode;
-			$this->msg = $msg;
-			$this->arg1 = $arg1;
-			$this->arg2 = $arg2;
-		}
-
-		public function getMsg() {
-			return $this->msg;
-		}
-
-		public function getErrorCode() {
-			return $this->errCode;
-		}
-
-		public function getArg1() {
-			return $this->arg1;
-		}
-
-		public function getArg2() {
-			return $this->arg2;
-		}
+	/**
+	 * Callback method. Requests a confirmation by the user.
+	 *
+	 *
+	 * @param string $message
+	 * @param out boolean $result
+	 * @return unknown
+	 */
+	public function getUserConfirmation($message, & $result) {
+		if ($this->noAsk) return 'y';
+		print "\n\n$message [ (y)es/(n)o ]";
+		$line = trim(fgets(STDIN));
+		$result = strtolower($line);
 	}
+
+	public function askForOntologyPrefix(& $result) {
+		print "\n\nOntology conflict. Please enter prefix: ";
+		$line = trim(fgets(STDIN));
+		$result = $line;
+	}
+
+	public function getErrors() {
+		return $this->errors;
+	}
+
+	public function downloadProgres($percentage) {
+		// do nothing
+	}
+	public function downloadFinished($filename) {
+		// do nothing
+	}
+
+}
+
+class InstallationError extends Exception {
+
+	var $msg;
+	var $arg1;
+	var $arg2;
+
+	public function __construct($errCode, $msg = '', $arg1 = NULL, $arg2 = NULL) {
+		$this->errCode = $errCode;
+		$this->msg = $msg;
+		$this->arg1 = $arg1;
+		$this->arg2 = $arg2;
+	}
+
+	public function getMsg() {
+		return $this->msg;
+	}
+
+	public function getErrorCode() {
+		return $this->errCode;
+	}
+
+	public function getArg1() {
+		return $this->arg1;
+	}
+
+	public function getArg2() {
+		return $this->arg2;
+	}
+}

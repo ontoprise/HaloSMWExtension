@@ -363,6 +363,16 @@ class DeployDescriptor {
 	function getInstallationDirectory() {
 		return trim((string) $this->globalElement[0]->instdir);
 	}
+	
+	/**
+	 * Returns true if the deployable should be installed to a non-public location. 
+	 * 
+     * @return boolean
+	 */
+	function isNonPublic() {
+		$instdir = $this->globalElement[0]->instdir;
+		return ((string) $instdir->attributes()->nonpublic == 'true');
+	}
 
 	/**
 	 * Returns the extension's description.

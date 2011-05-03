@@ -54,7 +54,7 @@ if (substr($outputDir, -1) != "/") $outputDir .= "/";
 
 $rootDir = dirname(__FILE__);
 $rootDir = str_replace("\\", "/", $rootDir);
-$rootDir = realpath($rootDir."/../../../extensions/");
+$rootDir = realpath($rootDir."/../../../");
 print($rootDir);
 if (substr($rootDir, -1) != "/") $rootDir .= "/";
 

@@ -228,7 +228,7 @@ if ($dfgInstallPackages) {
 	die(DF_TERMINATION_WITHOUT_FINALIZE);  // 2 is normal termination but no further action
 } else {
 	// check for non-initialized extensions
-	$localPackages = PackageRepository::getLocalPackagesToInitialize($mwrootDir.'/extensions');
+	$localPackages = PackageRepository::getLocalPackagesToInitialize($mwrootDir);
 	if (count($localPackages) > 0) {
 		print "\nThere are non-initialized extensions. Run: smwadmin --finalize\n";
 		die(DF_TERMINATION_ERROR);
