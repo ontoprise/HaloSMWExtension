@@ -2,7 +2,7 @@
   <siteinfo>
     <sitename>Contentwiki</sitename>
     <base>http://localhost/index.php/Main_Page</base>
-    <generator>MediaWiki 1.16.1</generator>
+    <generator>MediaWiki 1.16.4</generator>
     <case>first-letter</case>
     <namespaces>
       <namespace key="-2" case="first-letter">Media</namespace>
@@ -234,8 +234,8 @@
     <title>Template:ShowCommentsIntern</title>
     <id>111</id>
     <revision>
-      <id>120</id>
-      <timestamp>2011-03-31T12:35:02Z</timestamp>
+      <id>1362</id>
+      <timestamp>2011-05-03T11:49:24Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -252,13 +252,13 @@
 }}
 {{#showcommentform:}}
 &lt;div id=&quot;collabComResults&quot;&gt;
-{{#ask: [[Belongs to article::{{FULLPAGENAME}}]] [[Comment:+]]
+{{#ask: [[Belongs to article::{{FULLPAGENAME}}]] [[Category:Comment]]
   | ?Has comment person
   | ?Has comment date
   | ?Has comment text
   | ?Has comment rating
   | ?Belongs to comment
-  | ?Comment was deleted
+  | ?Comment was deleted#true,false
   | ?Has comment editor
   | ?Modification date
   | format=template
@@ -270,7 +270,7 @@
 }}
 &lt;/div&gt;
 &lt;/div&gt;&lt;!-- end surround div --&gt;&lt;/includeonly&gt;</text>
-    <hash>6d1130eff0e1137108262c5af27958cd</hash>
+    <hash>0a6c37619bd09abfeee7b55b7b8b43fe</hash>
     </revision>
   </page>
   <page>

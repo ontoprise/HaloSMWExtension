@@ -52,10 +52,10 @@ function cefInitCommentParserfunctions() {
 function cefCommentLanguageGetMagic( &$magicWords, $langCode ) {
 	global $cegContLang;
 	$magicWords['showcommentform']
-		= array(0, $cegContLang->getParserFunction( CELanguage::CE_PF_SHOWFORM )
+		= array(0, 'showcommentform'
 	);
 	$magicWords['averagerating']
-		= array( 0, $cegContLang->getParserFunction( CELanguage::CE_PF_AVGRATING )
+		= array( 0, 'averagerating'
 	);
 
 	return true;

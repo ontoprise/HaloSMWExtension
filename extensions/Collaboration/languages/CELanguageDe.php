@@ -49,12 +49,8 @@ class CELanguageDe extends CELanguage {
 	);
 	
 	protected $mParserFunctions = array(
-		CELanguage::CE_PF_SHOWCOMMENTS		=> 'zeige kommentare', 
-		CELanguage::CE_PF_SHOWFORM			=> 'zeige kommentarfeld',
-		CELanguage::CE_PF_AVGRATING			=> 'durchschnittsbewertung',
 	);
 	
 	protected $meParserFunctionsParameters = array(
-		CELanguage::CE_PFP_RATINGSTYLE	=> 'bewertungsstil',
 	);
 }

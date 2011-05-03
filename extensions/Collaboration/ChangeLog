@@ -3,9 +3,9 @@ Collaboration extension ChangeLog
 
 VERSION 1.31 patchlevel 1
   FEATURES:
-  	
+  	FR #13053: Included an option to completely delete a comment
   CHANGES:
-  	
+  	Issue  #14358: Removed localization of parser functions
   BUGFIXES:
   	14481 - Editing of comments was not possible in IE 8
 
