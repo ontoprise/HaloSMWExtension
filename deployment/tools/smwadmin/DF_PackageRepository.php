@@ -389,7 +389,7 @@ class PackageRepository {
 		}
 		$handle = @opendir($ext_dir);
 		if (!$handle) {
-			print "WARNING: $ext_dir does not exist. Skipped.";
+			//print "\nWARNING: $ext_dir does not exist. Skipped.";
 			return;
 		}
 
@@ -446,7 +446,7 @@ class PackageRepository {
 		}
 		$handle = @opendir($ext_dir);
 		if (!$handle) {
-			print "WARNING: $ext_dir does not exist. Skipped.";
+			//print "\nWARNING: $ext_dir does not exist. Skipped.";
             return;
 		}
 

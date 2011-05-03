@@ -515,7 +515,14 @@ class Installer {
 			$this->logger->info("Apply configs for $id-".$desc->getVersion().".zip");
 			$desc->applyConfigurations($this->rootDir, false, $fromVersion, $this);
 			$this->errors = array_merge($this->errors, $desc->getLastErrors());
-			$handle = fopen($this->rootDir."/".$desc->getInstallationDirectory()."/init$.ext", "w");
+				
+			$installDirectory = $this->rootDir."/".$desc->getInstallationDirectory();
+			if ($dd->isNonPublic()) {
+				$installDirectory = Tools::getProgramDir()."/Ontoprise/".$desc->getInstallationDirectory();
+				Tools::mkpath($installDirectory);
+			}
+
+			$handle = fopen($installDirectory."/init$.ext", "w");
 			fwrite($handle, $num.",".$fromVersion);
 			fclose($handle);
 			$num++;
