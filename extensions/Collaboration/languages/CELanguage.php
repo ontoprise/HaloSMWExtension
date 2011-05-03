@@ -100,7 +100,7 @@ abstract class CELanguage {
 	 * 		The language dependent name of the parser function.
 	 */
 	public function getParserFunction($parserFunctionID) {
-		return $this->mParserFunctions[$parserFunctionID];
+		return $this->mParserFunctions;
 	}
 	
 	/**
