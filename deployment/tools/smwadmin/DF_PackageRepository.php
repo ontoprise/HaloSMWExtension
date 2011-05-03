@@ -389,7 +389,8 @@ class PackageRepository {
 		}
 		$handle = @opendir($ext_dir);
 		if (!$handle) {
-			throw new IllegalArgument('Extension directory does not exist: '.$ext_dir);
+			print "WARNING: $ext_dir does not exist. Skipped.";
+			return;
 		}
 
 		while ($entry = readdir($handle) ){
@@ -445,7 +446,8 @@ class PackageRepository {
 		}
 		$handle = @opendir($ext_dir);
 		if (!$handle) {
-			throw new IllegalArgument('Extension directory does not exist: '.$ext_dir);
+			print "WARNING: $ext_dir does not exist. Skipped.";
+            return;
 		}
 
 		while ($entry = readdir($handle) ){
