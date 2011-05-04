@@ -84,7 +84,7 @@ SMW+, also read the remarks in the section "Notes on Upgrading" below.
 
 (6) Change $wgDefaultSkin='ontoskin3';
 
-(7) Add following lines to initialize the Halo Extension:
+(7) Add following lines to initialize the Halo Extension after the lines where all the required extensions are loaded:
 
 	include_once('extensions/SMWHalo/includes/SMW_Initialize.php');
 	enableSMWHalo(/*param-start-enableSMWHalo*/'SMWHaloStore2', NULL, NULL/*param-end-enableSMWHalo*/);
