@@ -515,9 +515,9 @@ class Installer {
 			$this->logger->info("Apply configs for $id-".$desc->getVersion().".zip");
 			$desc->applyConfigurations($this->rootDir, false, $fromVersion, $this);
 			$this->errors = array_merge($this->errors, $desc->getLastErrors());
-				
+
 			$installDirectory = $this->rootDir."/".$desc->getInstallationDirectory();
-			if ($dd->isNonPublic()) {
+			if ($desc->isNonPublic()) {
 				$installDirectory = Tools::getProgramDir()."/Ontoprise/".$desc->getInstallationDirectory();
 				Tools::mkpath($installDirectory);
 			}
@@ -592,8 +592,13 @@ class Installer {
 		print "\n[Clean up...";
 		foreach($localPackages as $tupl) {
 			list($desc, $fromVersion) = $tupl;
+			$installDirectory = $this->rootDir."/".$desc->getInstallationDirectory();
+			if ($desc->isNonPublic()) {
+				$installDirectory = Tools::getProgramDir()."/Ontoprise/".$desc->getInstallationDirectory();
+				Tools::mkpath($installDirectory);
+			}
 			$this->logger->info("Mark extension as initialized: ".$desc->getID());
-			unlink($this->rootDir."/".$desc->getInstallationDirectory()."/init$.ext");
+			unlink($installDirectory."/init$.ext");
 		}
 		print "done.]\n\n";
 
