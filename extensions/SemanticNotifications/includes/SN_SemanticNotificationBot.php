@@ -81,44 +81,49 @@ class SemanticNotificationBot extends GardeningBot {
 		
 		$notifications = SemanticNotificationManager::getAllNotifications();
 		
-		$this->setNumberOfTasks(1);
-		$this->addSubTask(count($notifications));
-		foreach ($notifications as $n) {
-			$sn = SemanticNotification::newFromName($n[1], $n[0]);
-			echo $n[1]." ".$sn->getUserName();
-			$wgUser = User::newFromName($sn->getUserName());
-			$ts = $sn->getTimestamp();
-			preg_match("/(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/",$ts, $t);
-			$lastUpdate = mktime($t[4],$t[5],$t[6],$t[2],$t[3],$t[1]);
-			$now = wfTimestampNow();
-			preg_match("/(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/",$now, $n);
-			$now = mktime($n[4],$n[5],$n[6],$n[2],$n[3],$n[1]);
-			
-			$diff = $now - $lastUpdate;
-			$ui = $sn->getUpdateInterval();
-			// Update interval is given in minutes = 60 seconds
-			$skipped = false;
-			$notificationSent = false;
-			if ($diff >= $ui * 60) {
-				$notificationSent = $sn->sendNotificationMessage();
-				$sn->store();
-			} else {
-				$skipped = true;
-			}	
-			
-			$this->worked(1);
-
-			$log->addGardeningIssueAboutValue(
-				$this->id, 
-				$skipped 
-					? SMW_GARDISSUE_SKIPPED_NOTIFICATION
-					: $notificationSent
-						? SMW_GARDISSUE_PROCESSED_NOTIFICATION_SENT
-						: SMW_GARDISSUE_PROCESSED_NOTIFICATION, 
-				Title::newFromText($sn->getName()), $sn->getUserName());
-			echo "...done.\n";
-			
+		if(is_array($notifications)){
+			$this->setNumberOfTasks(1);
+			$this->addSubTask(count($notifications));
+			foreach ($notifications as $n) {
+				$sn = SemanticNotification::newFromName($n[1], $n[0]);
+				echo $n[1]." ".$sn->getUserName();
+				$wgUser = User::newFromName($sn->getUserName());
+				$ts = $sn->getTimestamp();
+				preg_match("/(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/",$ts, $t);
+				$lastUpdate = mktime($t[4],$t[5],$t[6],$t[2],$t[3],$t[1]);
+				$now = wfTimestampNow();
+				preg_match("/(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/",$now, $n);
+				$now = mktime($n[4],$n[5],$n[6],$n[2],$n[3],$n[1]);
+				
+				$diff = $now - $lastUpdate;
+				$ui = $sn->getUpdateInterval();
+				// Update interval is given in minutes = 60 seconds
+				$skipped = false;
+				$notificationSent = false;
+				if ($diff >= $ui * 60) {
+					$notificationSent = $sn->sendNotificationMessage();
+					$sn->store();
+				} else {
+					$skipped = true;
+				}	
+				
+				$this->worked(1);
+	
+				$log->addGardeningIssueAboutValue(
+					$this->id, 
+					$skipped 
+						? SMW_GARDISSUE_SKIPPED_NOTIFICATION
+						: $notificationSent
+							? SMW_GARDISSUE_PROCESSED_NOTIFICATION_SENT
+							: SMW_GARDISSUE_PROCESSED_NOTIFICATION, 
+					Title::newFromText($sn->getName()), $sn->getUserName());
+				echo "...done.\n";
+				
+			}
 		}
+		
+		echo "...finished.\n";
+				
 		return $result;
 
 	}
