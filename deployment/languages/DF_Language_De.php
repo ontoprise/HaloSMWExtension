@@ -42,6 +42,7 @@ class DF_Language_De extends DF_Language {
 	// user
     'checkinstallation' => 'Prüfe Installation',
     'df_checkforupdates' => 'Prüfe auf Updates',
+	'df_updatesavailable' => 'Updates verfügbar!',
     'df_updateforextensions' => 'Es gibt Updates für folgende Extensions:',
     'df_noupdatesfound' => 'Keine Updates gefunden!'
     
