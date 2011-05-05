@@ -5,8 +5,8 @@
  *
  * Creates a DF repository from the SVN version. Must be done once a new release available
  *
- * Usage:   php createRepsoitory -o <repository path>  -r release-num
- *          php createRepsoitory -o <repository path>  --head
+ * Usage:   php createRepsoitory.php -o <repository path>  -r release-num 
+ *          php createRepsoitory.php -o <repository path>  --head [ --empty ]
  *
  * @author: Kai Kühn / ontoprise / 2009
  */
@@ -22,6 +22,7 @@ require_once($rootDir."/tools/smwadmin/DF_Tools.php");
 
 
 $latest = false;
+$emptyRepo = false;
 for( $arg = reset( $argv ); $arg !== false; $arg = next( $argv ) ) {
 
 	//-o => output
@@ -49,6 +50,11 @@ for( $arg = reset( $argv ); $arg !== false; $arg = next( $argv ) ) {
         $latest = true;
         continue;
     }
+    
+    if ($arg == '--empty') {
+        $emptyRepo = true;
+        continue;
+    }
 }
 
 if (!isset($outputDir)) {
@@ -71,7 +77,7 @@ print($mwRootDir);
 if (substr($mwRootDir, -1) != "/") $mwRootDir .= "/";
 
 echo "\nRead local packages";
-$localPackages = PackageRepository::getLocalPackages($mwRootDir);
+$localPackages = isset($emptyRepo) && $emptyRepo == true ? array() : PackageRepository::getLocalPackages($mwRootDir);
 
 echo "\nCreate new repository ".$outputDir."repository.xml";
 
@@ -123,7 +129,7 @@ $rootDir = str_replace("\\", "/", $rootDir);
 if (substr($rootDir, -1) != "/") $rootDir .= "/";
 
 // create substructure with deploy descriptors
-$localPackages = PackageRepository::getLocalPackages($rootDir);
+$localPackages = isset($emptyRepo) && $emptyRepo == true ? array() : PackageRepository::getLocalPackages($rootDir);
 foreach($localPackages as $dd_file => $dd) {
 	$id = $dd->getID();
 	if ($id == 'mw') continue;
