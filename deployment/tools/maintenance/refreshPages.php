@@ -19,6 +19,8 @@
 /**
  * @file
  * @ingroup DFMaintenance
+ * 
+ * Refreshes pages contained in a dump file.
  *
  * Usage: php refreshPages -d <dump file> -b <bundle ID>
  *
