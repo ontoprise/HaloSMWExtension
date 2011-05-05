@@ -576,6 +576,7 @@ class ConsistencyChecker {
 					$name = $ext['name'];
 					list($version) = explode(" ", $ext['version']);
 					$version = str_replace(".","", $version);
+					$version = reset(explode("_", $version));
 
 					if (stripos($name, "semantic") !== false && stripos($name, "mediawiki") !== false) {
 						$lifted |= $this->liftSMW($version, $format);
