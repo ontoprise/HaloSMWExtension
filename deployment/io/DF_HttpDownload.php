@@ -278,6 +278,9 @@ class HttpDownload {
 	 * @param float $per
 	 */
 	public function downloadProgress($length, $contentLength = 0) {
+		
+		if (!defined('DO_MAINTENANCE')) return;
+		
 		static $first = true;
 		static $lastLength = 0;
 		if (!$first) for($i = 0; $i < $lastLength; $i++) echo chr(8);
@@ -302,10 +305,12 @@ class HttpDownload {
 	}
 
 	public function downloadStart($filename) {
+		if (!defined('DO_MAINTENANCE')) return;
 		if (!is_null($filename)) echo "\nDownloading $filename...\n";
 	}
 
 	public function downloadFinished($filename) {
+		if (!defined('DO_MAINTENANCE')) return;
 		//echo "\n";
 		//if (!is_null($filename)) echo "\n$filename was downloaded.";
 	}
