@@ -51,9 +51,9 @@ class SMWCheckInstallation extends SpecialPage {
 			} else{
 				$html .= wfMsg('df_updateforextensions');
 				$html .= "<table>";
-				foreach($updates as $dd) {
-
-					$html .= "<tr><td>".$dd->getID()."</td><td>".Tools::addSeparators($dd->getVersion(), $dd->getPatchlevel())."</td></tr>";
+				foreach($updates as $tuple) {
+                    list($id, $version, $patchlevel) = $tuple;
+					$html .= "<tr><td>$id</td><td>".Tools::addSeparators($version, $patchlevel)."</td></tr>";
 				}
 				$html .= "</table>";
 			}

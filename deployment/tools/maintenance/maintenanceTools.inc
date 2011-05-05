@@ -191,14 +191,18 @@ class ConsistencyChecker {
 		// iterate through all installed packages, check if new or patched versions
 		// are available 
 		$updatesNeeded = array();
+		$latestPackages = PackageRepository::getAllPackages();
 		foreach($localPackages as $tl_ext) {
+            
+			$tuple = reset($latestPackages[$tl_ext->getID()]);
+			if ($tuple === false) continue;
+			list($latestVersion, $latestPatchlevel) = $tuple;
 
-			$dd = PackageRepository::getLatestDeployDescriptor($tl_ext->getID());
-
-			if ($dd->getVersion() > $localPackages[$dd->getID()]->getVersion()
-			|| ($dd->getVersion() == $localPackages[$dd->getID()]->getVersion() && $dd->getPatchlevel() > $localPackages[$dd->getID()]->getPatchlevel())) {
+			if ($latestVersion > $localPackages[$tl_ext->getID()]->getVersion()
+			|| ($latestVersion == $localPackages[$tl_ext->getID()]->getVersion() 
+			&& $latestPatchlevel > $localPackages[$tl_ext->getID()]->getPatchlevel())) {
 				
-				$updatesNeeded[] = $dd;
+				$updatesNeeded[] = array($tl_ext->getID(), $latestVersion, $latestPatchlevel) ;
 			}
 
 		}
