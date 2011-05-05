@@ -54,33 +54,54 @@ attribute is interpreted as 0.
 
 
 #
-# 2. Repository setup .
+# 2. Repository setup 
 #
 
-Before you make a new repository, you should setup a new branch and do an inital checkout. The change into
+(a) create repository the included extensions
 
-    $project-dir/deployment/tools/maintenance
-
-Make sure you have superuser access.
+    Before you make a new repository, you should setup a new branch and do an inital checkout. The change into
     
-Run the script: 
-
-    php createRepository.php -o <repository location> -r <release num>
+        $project-dir/deployment/tools/maintenance
     
-It creates the file <repository location>/repository.xml. If you create the repository from head,
-replace the option -r <release num> by --head. The <release num> is a 3-digit number, like 151.
-
-Then run the script:
-
-    php extractDD.php -o <repository location>/extensions --latest
+    Make sure you have superuser access.
+        
+    Run the script: 
     
-It creates copies of the deployment descriptors for each extension in a separate folder. It also creates a link to
-the latest version in each subdirectory.
+        php createRepository.php -o <repository location> -r <release num> --latest
+        
+    It creates the file <repository location>/repository.xml. If you create the repository from head,
+    replace the option -r <release num> by --head. The <release num> is a 3-digit number, like 151.
+        
+    If option '--latest' is given it creates a link to the latest version in each subdirectory. This is mandatory
+    for the latest version of an extension.
+    
+    Your repository is now accessible (if the repository dir is accessible by HTTP of course).
 
-Your repository is now accessible (if the repository dir is accessible by HTTP of course).
+(b) create an arbitrary repository
+
+    To create an empty repository where bundles can be added, enter:
+    
+     php createRepository.php -o <repository location> --head --empty
 
 #
-# 3. Build automatically during build
+# 3. Add a bundle to a repository
+#
+
+The tool for adding a bundle to a repository is called 'addBundle2Repository'. It expects an already existing
+repository.
+
+    Usage:
+    
+        php addBundle2Repository.php -o <repository location> -b <bundle or bundle dir> --url=<repository url>
+        
+    The -b parameter can point to a single bundle or to a directory of bundles.
+    
+    There are 2 options:
+        --contains <string> : Considers only bundle files with the string contained.
+        --mediawiki: Adds the current Mediawiki version to the repository.     
+
+#
+# 4. Build automatically during build
 #
 
 You should create the repository during each build to reflect all changes in the deploy descriptors.
@@ -90,8 +111,22 @@ Use this snippet. Just replace the <release num> by, for example, 151 for versio
 
 #Write deploy descriptors
 cd $WORKSPACE/SMWHaloTrunk/deployment/tools/maintenance
-php extractDD.php -o /root/nightly_repository/extensions --latest
 
-#(Re-)create repository.xml
-php createRepository.php -o /root/nightly_repository -r <release num>
-   
+#Create new repository
+php createRepository.php -o /home/hudson/nightly_repository --head --latest
+
+#Add content bundles
+php addBundle2Repository.php -r /home/hudson/nightly_repository -b /home/hudson/dumps/wiki/contentwiki --url http://dailywikibuilds.ontoprise.com/nightly_repository --latest --mediawiki
+
+#Add Basic TSC
+php addBundle2Repository.php -r /home/hudson/nightly_repository -b /home/hudson/nightly_builds --url http://dailywikibuilds.ontoprise.com/nightly_repo
+
+#
+# 5. Rendering as HTML
+#
+
+The repository.xml file can be rendered to HTML using the following stylesheet shipped with DF:
+
+deployment/tools/maintenance/resources/repository.xsl
+
+Just copy the stylesheet in the repository's root folder.

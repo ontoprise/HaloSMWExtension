@@ -1,7 +1,7 @@
 * 
 * Deploy Descriptors
 *
-* @author: Kai Kühn / ontoprise / 2009
+* @author: Kai Kühn / ontoprise / 2009-2011
 *
 
 Contents:
@@ -23,25 +23,35 @@ For a formal description in XML-Schema, see dd.xsd
  
         <global>
                 <version>120</version>   // means 1.2
+                <patchlevel>1</patchlevel> // default if missing is 0
                 <id>smwhalo</id>      
                 <instdir>extensions/SMWHalo</instdir>
                 <vendor>Ontoprise</vendor>
+                <maintainer>Ontoprise</maintainer>
                 <description>... any text ...</description>
                 <dependencies>
                     <dependency from="100" to="120">ID of an extension</dependency>
-            </dependencies>
+                </dependencies>
+                <helpurl>http://...</helpurl>
+                <license>GPL-v2</license>
+                <notice>... any text ...</notice>
         </global>
         
         - version: 3 digits
+        - patchlevel: integer beginning with 0 which is default.
         - id: unique name for package (all lowercase)
         - installation directory (only slashes, no backslashes to be platform-independant)
         - vendor: Arbitrary name
+        - maintainer: Arbitrary name
         - description: A short text which describes the package
         - dependencies: Describes all packages which this package needs for proper working.
                     the dependant package is identified by its ID. from and to attributes 
                     specify the range of versions of the dependant package which this package can handle.
+        - a help URL which is shown in the rendered repository view. 
+        - license hint: Gives a hint for the license of this deployable. Arbitrary string. 
+        - notice: A notice for the user which is shown when the installation process has finished. Arbitrary string. 
                     
-2. Codefiles
+2. Codefiles (this is OPTIONAL, can be empty)
     
     Used for checking integrity of code. All denoted files are hashed, concatenated to a string and this
     is finally hashed resulting in the fingerprint of this code.
@@ -171,4 +181,11 @@ For a formal description in XML-Schema, see dd.xsd
        
        - patch: attribute file: A file in the unified patch format (GNU)
        
-       - setup: attribute file: A PHP script.
+        Example:
+            <patch file="patch_for_SF2.0.8.txt" ext="semanticforms" from="208" to="208" />
+            
+       - script: attribute file: A PHP script.
+       
+        Examples:
+            <script file="maintenance/SMW_setup.php" />
+            <script file="maintenance/SMW_setup.php" params="--delete" />
