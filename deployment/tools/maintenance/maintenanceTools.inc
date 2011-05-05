@@ -181,6 +181,33 @@ class ConsistencyChecker {
 	}
 
 	/**
+	 * Checks for available updates in the current installation.
+	 * 
+	 * @return array of DeployDescriptor
+	 */
+	public function checksForUpdates() {
+		$localPackages = PackageRepository::getLocalPackages($this->rootDir);
+
+		// iterate through all installed packages, check if new or patched versions
+		// are available 
+		$updatesNeeded = array();
+		foreach($localPackages as $tl_ext) {
+
+			$dd = PackageRepository::getLatestDeployDescriptor($tl_ext->getID());
+
+			if ($dd->getVersion() > $localPackages[$dd->getID()]->getVersion()
+			|| ($dd->getVersion() == $localPackages[$dd->getID()]->getVersion() && $dd->getPatchlevel() > $localPackages[$dd->getID()]->getPatchlevel())) {
+				
+				$updatesNeeded[] = $dd;
+			}
+
+		}
+		
+		return $updatesNeeded;
+
+	}
+
+	/**
 	 * Checks LocalSettings.php for common problems.
 	 *
 	 */
@@ -392,7 +419,7 @@ class ConsistencyChecker {
 	 * @param boolean $addChecks
 	 */
 	private function checkExistingExtensions($format, $addChecks = true) {
-        if (!$addChecks) return false;
+		if (!$addChecks) return false;
 
 		global $wgExtensionCredits;
 		$ls = file_get_contents($this->rootDir."/LocalSettings.php");

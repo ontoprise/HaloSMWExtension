@@ -11,3 +11,10 @@
 .df_checkinst_links {
 	margin-top: 10px;
 }
+
+#df_updatesection {
+    border-width: 3px;
+    border-style: solid;
+     border-color: green;
+     padding: 5px;
+}

@@ -1,11 +1,11 @@
-<?php 
+<?php
 /**
  * @file
  * @ingroup SMWCheckInstallation
- * 
- * @defgroup SMWCheckInstallation 
+ *
+ * @defgroup SMWCheckInstallation
  * @ingroup SMWHaloSpecials
- * 
+ *
  * @author Kai Kühn
  */
 if (!defined('MEDIAWIKI')) die();
@@ -24,20 +24,48 @@ class SMWCheckInstallation extends SpecialPage {
 	 * Overloaded function that is responsible for the creation of the Special Page
 	 */
 	public function execute($par) {
-		global $wgOut,$wgScriptPath;
-	   $wgOut->addLink(array('rel'   => 'stylesheet','type'  => 'text/css',
+		global $wgOut,$wgScriptPath, $wgRequest;
+		$wgOut->addLink(array('rel'   => 'stylesheet','type'  => 'text/css',
                         'media' => 'screen, projection','href'  => $wgScriptPath . '/deployment/skins/df.css'));
-       
+			
 		$wgOut->setPageTitle(wfMsg('checkinstallation'));
 		$wgOut->addHTML("<h2>".wfMsg('checkinstallation')."</h2>");
+
+
 		global $IP;
 		global $rootDir;
 		$rootDir = "$IP/deployment";
 		if (!file_exists("$IP/deployment/tools/maintenance/maintenanceTools.inc")) {
-		      $wgOut->addHTML("No deployment framework installed! Please install to use this feature.");
+			$wgOut->addHTML("No deployment framework installed! Please install to use this feature.");
 		}
 		require_once "$IP/deployment/tools/maintenance/maintenanceTools.inc";
 		$cc = new ConsistencyChecker($IP);
+		
+		// (1) "check for updates" button
+		$html = "";
+		if (!is_null($wgRequest->getVal('checkforupdates'))) {
+			$html .= "<div id=\"df_updatesection\">";
+			$updates = $cc->checksForUpdates();
+			if (count($updates) == 0) {
+				$html .= wfMsg('df_noupdatesfound');
+			} else{
+				$html .= wfMsg('df_updateforextensions');
+				$html .= "<table>";
+				foreach($updates as $dd) {
+
+					$html .= "<tr><td>".$dd->getID()."</td><td>".Tools::addSeparators($dd->getVersion(), $dd->getPatchlevel())."</td></tr>";
+				}
+				$html .= "</table>";
+			}
+			$html .= "</div><br/>";
+		} else {
+			$html .= "<form><input name=\"checkforupdates\" type=\"submit\" value=\"".wfMsg('df_checkforupdates')."\"/></form>";
+			$html .= "<br/>";
+		}
+		$wgOut->addHTML($html);
+
+        // (2) consistency checks
+        
 		$errorsFound = false;
 		//$errorsFound |= $cc->checkDependencies(false, DF_OUTPUT_FORMAT_HTML);
 		$errorsFound |=$cc->checkInstallation(DF_OUTPUT_FORMAT_HTML);

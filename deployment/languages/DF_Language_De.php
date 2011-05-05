@@ -37,6 +37,13 @@ class DF_Language_De extends DF_Language {
 	'category' => 'Kategorie',
 	'is_inverse_of' => 'Ist invers zu',
     'has_domain_and_range' => 'Hat Domain und Range',
-	'imported_from'=>'Importiert aus'
+	'imported_from'=>'Importiert aus',
+	
+	// user
+    'checkinstallation' => 'Prüfe Installation',
+    'df_checkforupdates' => 'Prüfe auf Updates',
+    'df_updateforextensions' => 'Es gibt Updates für folgende Extensions:',
+    'df_noupdatesfound' => 'Keine Updates gefunden!'
+    
 	);
 }

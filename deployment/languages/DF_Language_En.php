@@ -41,8 +41,11 @@ class DF_Language_En extends DF_Language {
 	'imported_from'=>'Imported from',
 
 	// user
-	'checkinstallation' => 'Check Installation'
-	
+	'checkinstallation' => 'Check Installation',
+	'df_checkforupdates' => 'Check for updates',
+	'df_updateforextensions' => 'There are updates for the following extensions:',
+	'df_noupdatesfound' => 'No updates found!'
+		
 	);
 
 }
