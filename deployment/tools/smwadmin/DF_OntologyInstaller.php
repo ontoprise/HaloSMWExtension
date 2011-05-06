@@ -58,12 +58,12 @@ class OntologyInstaller {
 	 * @param string $inputfile Full path of input file
 	 * @param object $callback method askForOntologyPrefix(& $answer)
 	 * @param boolean $noBundlePage Should a bundle page be created or not.
-	 * @param boolean $force Ignore conflicts or not.
+	 * @param int $mode How to deal with conflicts  (see DF_ONOLOGYIMPORT_.. constants)
 	 *
 	 * @return string Prefixed used to make ontology pages unique (can be null)
 	 *
 	 */
-	public function installOntology($bundleID, $inputfile, $callback, $noBundlePage = false, $force = false) {
+	public function installOntology($bundleID, $inputfile, $callback, $noBundlePage = false, $mode = 0) {
 
 		$outputfile = $inputfile.".xml";
 		try {
@@ -84,18 +84,20 @@ class OntologyInstaller {
 		$prefix = DFBundleTools::getOntologyPrefix($bundleID);
 
 		$outputfile_rel = $inputfile.".xml";
-		// verifies the ontologies
-		print "\n[Verifying ontology $inputfile...";
-		do {
-			$verificationLog = $this->verifyOntology($outputfile_rel, $bundleID, $prefix);
 
-			//var_dump($verificationLog);
-			$conflict = $this->checkForConflict($verificationLog, $callback);
-			if ($conflict !== false) $prefix = $conflict;
+		if ($mode != DF_ONTOLOGYIMPORT_FORCEOVERWRITE) {
+			// verifies the ontologies
+			print "\n[Verifying ontology $inputfile...";
+			do {
+				$verificationLog = $this->verifyOntology($outputfile_rel, $bundleID, $prefix);
 
-		} while ($conflict !== false);
-		print "done.";
+				//var_dump($verificationLog);
+				$conflict = $this->checkForConflict($verificationLog, $callback, $mode);
+				if ($conflict !== false) $prefix = $conflict;
 
+			} while ($conflict !== false);
+			print "done.";
+		}
 		if ($prefix != '') {
 			// write prefix file
 			print "\n[Conflict detected. Using prefix '$prefix']";
@@ -124,12 +126,14 @@ class OntologyInstaller {
 	 *
 	 * @param DeployDescriptor $dd
 	 * @param object $callback method askForOntologyPrefix(& $answer)
+	 * @param int $mode How to deal with conflicts  (see DF_ONOLOGYIMPORT_.. constants)
+	 * 
 	 */
-	public function installOntologies($dd, $callback, $force = false) {
+	public function installOntologies($dd, $callback, $mode = 0) {
 		$ontologies = $dd->getOntologies();
 		$noBundlePage = false;
 		foreach($ontologies as $loc) {
-			$prefix = $this->installOntology($dd->getID(), $this->rootDir.$dd->getInstallationDirectory()."/".$loc, $callback, $noBundlePage, $force);
+			$prefix = $this->installOntology($dd->getID(), $this->rootDir.$dd->getInstallationDirectory()."/".$loc, $callback, $noBundlePage, $mode);
 			$noBundlePage = true; // make sure that only the first ontology creates a bundle page
 
 			// store prefix
@@ -412,10 +416,11 @@ ENDS
 	 *
 	 * @param array ($title, $msg) $verificationLog
 	 * @param object $callback method askForOntologyPrefix(& $answer)
+	 * @param int $mode How to deal with conflicts (see DF_ONOLOGYIMPORT_.. constants)
 	 *
 	 * @return mixed false if no conflict otherwise prefix to make solve conflict.
 	 */
-	private function checkForConflict($verificationLog, $callback) {
+	private function checkForConflict($verificationLog, $callback, $mode) {
 		$conflict = false;
 		foreach($verificationLog as $l) {
 			list($title, $msg) = $l;
@@ -427,6 +432,9 @@ ENDS
 		}
 		$answer=false;
 		if ($conflict) {
+			if ($mode == DF_ONTOLOGYIMPORT_STOPONCONFLICT) {
+				throw new InstallationError(DEPLOY_FRAMEWORK_ONTOLOGYCONFLICT_ERROR, "Ontology conflict occured. Conflict with (at least): '$title' ");
+			}
 			$callback->askForOntologyPrefix($answer);
 		}
 

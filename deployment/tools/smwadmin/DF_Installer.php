@@ -32,6 +32,7 @@ define('DEPLOY_FRAMEWORK_CREATING_RESTOREPOINT_FAILED', 12);
 define('DEPLOY_FRAMEWORK_ONTOLOGYCONVERSION_FAILED', 13);
 define('DEPLOY_FRAMEWORK_WRONG_VERSION', 14);
 define('DEPLOY_FRAMEWORK_UNCOMPRESS_ERROR', 15);
+define('DEPLOY_FRAMEWORK_ONTOLOGYCONFLICT_ERROR', 16);
 
 require_once 'DF_PackageRepository.php';
 require_once 'DF_Tools.php';
@@ -564,9 +565,17 @@ class Installer {
 		}
 
 		// do the actual work
+		global $dfgForce, $dfgNoConflict;
 		foreach($localPackages as $tupl) {
 			list($desc, $fromVersion) = $tupl;
-			$ont_installer->installOntologies($desc, $this);
+			if ($dfgForce) {
+				$mode = DF_ONTOLOGYIMPORT_FORCEOVERWRITE;
+			} else if ($dfgNoConflict) {
+				$mode = DF_ONTOLOGYIMPORT_STOPONCONFLICT;
+			} else {
+				$mode = DF_ONTOLOGYIMPORT_ASKINTERACTIVELY;
+			}
+			$ont_installer->installOntologies($desc, $this, $mode);
 			$res_installer->installOrUpdateResources($desc);
 			$res_installer->installOrUpdateWikidumps($desc, $fromVersion, $this->force ? DEPLOYWIKIREVISION_FORCE : DEPLOYWIKIREVISION_WARN);
 			$res_installer->installOrUpdateMappings($desc);

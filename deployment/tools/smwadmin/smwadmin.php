@@ -36,6 +36,11 @@ define('DF_TERMINATION_WITH_FINALIZE', 0);
 define('DF_TERMINATION_ERROR', 1);
 define('DF_TERMINATION_WITHOUT_FINALIZE', 2);
 
+// 3 modes for handling ontology import conflicts.
+define('DF_ONTOLOGYIMPORT_ASKINTERACTIVELY', 0);
+define('DF_ONTOLOGYIMPORT_STOPONCONFLICT', 1);
+define('DF_ONTOLOGYIMPORT_FORCEOVERWRITE', 2);
+
 global $rootDir;
 $rootDir = dirname(__FILE__);
 $rootDir = str_replace("\\", "/", $rootDir);
@@ -111,6 +116,7 @@ $dfgCheckInst=false;
 $dfgInstallPackages=false;
 $dfgRestoreList=false;
 $dfgCreateRestorePoint=false;
+$dfgNoConflict=false;
 
 $args = $_SERVER['argv'];
 array_shift($args); // remove script name
@@ -196,6 +202,9 @@ for( $arg = reset( $args ); $arg !== false; $arg = next( $args ) ) {
 		$dfgCreateRestorePoint = true;
 		$dfgRestorePoint = next($args);
 		continue;
+	} else if ($arg == '--noconflict') {
+		$dfgNoConflict = true;
+		continue;
 	} else if ($arg == '--nocheck') {
 		// ignore
 		continue;
@@ -204,6 +213,10 @@ for( $arg = reset( $args ); $arg !== false; $arg = next( $args ) ) {
 		die(DF_TERMINATION_ERROR);
 	}
 	$params[] = $arg;
+}
+
+if ($dfgForce && $dfgNoConflict) {
+	print "\nWARNING: -f and --noconflict are incompatible options. --noconflict is IGNORED.";
 }
 
 $logger = Logger::getInstance();
@@ -372,35 +385,54 @@ if (count($ontologiesToInstall) > 0) {
 		}
 
 		$bundleID = strtolower($bundleID);
-		$prefix = $oInstaller->installOntology($bundleID, $filePath, $confirm, false, $dfgForce);
 
-		// copy ontology and create ontology bundle
-		print "\n[Creating deploy descriptor...";
-		$xml = $oInstaller->createDeployDescriptor($bundleID, $filePath, $prefix);
-		Tools::mkpath($mwrootDir."/extensions/$bundleID");
-		$handle = fopen($mwrootDir."/extensions/$bundleID/deploy.xml", "w");
-		fwrite($handle, $xml);
-		fclose($handle);
-		print "done.]";
-		print "\n[Copying ontology file...";
-		copy($filePath, $mwrootDir."/extensions/$bundleID/".basename($filePath));
-
-		// store prefix
-		if ($prefix != '') {
-			$handle = fopen("$mwrootDir/extensions/$bundleID/".basename($filePath).".prefix", "w");
-			fwrite($handle, $prefix);
-			fclose($handle);
+		global $dfgForce, $dfgNoConflict;
+		if ($dfgForce) {
+			$mode = DF_ONTOLOGYIMPORT_FORCEOVERWRITE;
+		} else if ($dfgNoConflict) {
+			$mode = DF_ONTOLOGYIMPORT_STOPONCONFLICT;
+		} else {
+			$mode = DF_ONTOLOGYIMPORT_ASKINTERACTIVELY;
 		}
 
-		// register in Localsettings.php
-		$ls = file_get_contents("$mwrootDir/LocalSettings.php");
-		if (strpos($ls, "/*start-$bundleID*/" ) === false) {
-			$handle = fopen("$mwrootDir/LocalSettings.php", "a");
-			fwrite($handle, "/*start-$bundleID*/\n/*end-$bundleID*/");
-			fclose($handle);
-		}
+		try {
+			$prefix = $oInstaller->installOntology($bundleID, $filePath, $confirm, false, $mode);
 
-		print "done.]";
+			// copy ontology and create ontology bundle
+			print "\n[Creating deploy descriptor...";
+			$xml = $oInstaller->createDeployDescriptor($bundleID, $filePath, $prefix);
+			Tools::mkpath($mwrootDir."/extensions/$bundleID");
+			$handle = fopen($mwrootDir."/extensions/$bundleID/deploy.xml", "w");
+			fwrite($handle, $xml);
+			fclose($handle);
+			print "done.]";
+			print "\n[Copying ontology file...";
+			copy($filePath, $mwrootDir."/extensions/$bundleID/".basename($filePath));
+
+			// store prefix
+			if ($prefix != '') {
+				$handle = fopen("$mwrootDir/extensions/$bundleID/".basename($filePath).".prefix", "w");
+				fwrite($handle, $prefix);
+				fclose($handle);
+			}
+
+			// register in Localsettings.php
+			$ls = file_get_contents("$mwrootDir/LocalSettings.php");
+			if (strpos($ls, "/*start-$bundleID*/" ) === false) {
+				$handle = fopen("$mwrootDir/LocalSettings.php", "a");
+				fwrite($handle, "/*start-$bundleID*/\n/*end-$bundleID*/");
+				fclose($handle);
+			}
+
+			print "done.]";
+		} catch(InstallationError $e) {
+
+			switch($e->getErrorCode()) {
+				case DEPLOY_FRAMEWORK_ONTOLOGYCONFLICT_ERROR: print "\nERROR: ontology conflict\n";
+			}
+
+			die(DF_TERMINATION_WITHOUT_FINALIZE);
+		}
 	}
 }
 
@@ -524,8 +556,10 @@ function showHelp() {
 	echo "\n\t-rlist : Shows all existing wiki-restore-points";
 	echo "\n\n\tAdvanced options: ";
 	echo "\n\t--finalize: Finalizes installation";
-	echo "\n\t--checkdump <package>: Check only dumps for changes but do not install.";
+	//echo "\n\t--checkdump <package>: Check only dumps for changes but do not install.";
 	echo "\n\t--dep : Check only dependencies but do not install.";
+	echo "\n\t--noconflict: Assures that there are no conflicts on ontology import. Will stop the process, if not."
+	echo "\n\t--nocheck: Skips the environment checks";
 	echo "\n";
 	echo "\nExamples:\n\n\tsmwadmin -i smwhalo Installs the given packages";
 	echo "\n\tsmwadmin -u: Updates complete installation";
