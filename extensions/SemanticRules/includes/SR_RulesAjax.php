@@ -393,6 +393,13 @@ function smwhCreateRuleXML($literals) {
 			// The property's name is a term
 			$propName = $args[1]->getName();
 			$xml .= '<name>'. $propName . '</name>';
+			
+			/*$rangeCategories = smwfGetSemanticStore()->getRangeCategories(Title::newFromText($propName, SMW_NS_PROPERTY));
+			$rangeCategoriesStr = "";
+			foreach($rangeCategories as $cat) {
+				$rangeCategoriesStr .= $cat->getText()."; ";
+			}
+			$xml = str_replace('$$type$$', 'type="'.$rangeCategoriesStr.'"', $xml);*/
 
 			// The object can be a constant or a variable
 			if (is_a($args[2], 'SMWConstant')) {
