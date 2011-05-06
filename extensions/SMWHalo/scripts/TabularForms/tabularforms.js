@@ -762,10 +762,11 @@ var TF = Class.create({
 		//make sure that also cell values will be sorted again
 		jQuery('td[values-already-sorted=true]', table).attr('values-already-sorted', 'false');
 		
-		var rows = jQuery('tr', table).get();
+		var rows = jQuery('> tr', table).get();
+		jQuery(rows).attr('isSpecialRow', '');
 		jQuery(rows[0]).attr('isSpecialRow', 'header');
-		jQuery(rows[rows.length-1]).attr('isSpecialRow', 'footer');
-		jQuery(rows[rows.length-2]).attr('isSpecialRow', 'add-template');
+		jQuery(rows[rows.length-1]).attr('isSpecialRow', 'add-template');
+		jQuery(rows[rows.length-2]).attr('isSpecialRow', 'footer');
 		rows.sort(tf.sortRows);
 		
 		var newTableHTML = '';
@@ -779,6 +780,7 @@ var TF = Class.create({
 	 * to place before the other
 	 */
 	sortRows : function(a, b){
+		
 		//first deal with special rows
 		if(jQuery(a).attr('isSpecialRow') == 'header'){
 			return -1;
