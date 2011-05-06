@@ -830,4 +830,33 @@ class Tools {
 	public static function escapeForXMLAttribute($text) {
 		return str_replace('"', "&quot;", $text);
 	}
+
+	/**
+	 * Returns the installation directory of Ontoprise software on Windows.
+	 * Note: Returns always NULL on linux.
+	 *
+	 * @param string $programname (Fragment of) program name. By default search for all.
+	 * 
+	 * @return array( Programname => directory path )
+	 */
+	public static function getInstallationDirectory($programname = '') {
+		if (!Tools::isWindows($os)) return NULL;
+
+		exec("reg QUERY \"HKEY_CURRENT_USER\Software\Ontoprise\" /s /ve", $out, $res);
+
+		if ($res != 0) return NULL;
+
+		$result=array();
+		$n = count($out);
+		for($i = 0; $i < $n; $i++) {
+			if (stripos($out[$i], "HKEY_CURRENT_USER\\Software\\Ontoprise\\") !== false
+			 && (stripos($out[$i], $programname) !== false || $programname == '')) {
+				$defValue = $out[$i+1];
+				$parts = explode("   ", $defValue);
+				$prgName = substr($out[$i], strlen("HKEY_CURRENT_USER\\Software\\Ontoprise\\"));
+				$result[$prgName] = reset(array_reverse($parts));
+			}
+		}
+		return $result;
+	}
 }
