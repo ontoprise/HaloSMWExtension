@@ -126,7 +126,7 @@ class Rollback {
 		$wgDBname = $this->getVariableValue("LocalSettings.php", "wgDBname");
 		print "\n[Saving database...";
 		//print "\nmysqldump -u $wgDBadminuser --password=$wgDBadminpassword $wgDBname > ".$this->tmpDir."/$name/dump.sql";
-		exec("mysqldump -u $wgDBadminuser --password=$wgDBadminpassword $wgDBname > \"".$this->tmpDir."/$name/dump.sql\"");
+		exec("mysqldump -u $wgDBadminuser --password=$wgDBadminpassword $wgDBname > \"".$this->tmpDir."/$name/dump.sql\"", $out, $ret);
 		print "done.]";
 		$savedDataBase = true;
 
