@@ -9,7 +9,7 @@
  * $smwgDefaultRuleStore must be set to the implementator class name
  * This class should be loaded by autoload mechanism.
  *
- * @author: Kai Kühn / ontoprise / 2009
+ * @author: Kai Kï¿½hn / ontoprise / 2009
  *
  */
 class SMWRuleStore {
@@ -54,14 +54,15 @@ class SMWRuleStore {
 	}
 
 	/**
-	 * Updates article IDs. In case of a renaming operation.
-	 *
-	 * @param int $old_article_id
-	 * @param int $new_article_id
-	 */
-	public function updateRules($old_article_id, $new_article_id) {
-		// no impl
-	}
+     * Updates article IDs. In case of a renaming operation.
+     *
+     * @param int $new_article_id
+     * @param int $old_article_id
+     * @param Title $newTitle
+     */
+    public function updateRules($new_article_id, $old_article_id, $newTitle) {
+        // no impl
+    }
 
 	/**
 	 * Setups database tables for semantic rules extension.
