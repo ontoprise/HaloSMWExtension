@@ -691,10 +691,21 @@ class Installer {
 
 		$unzipDirectory = $this->rootDir;
 		if ($dd->isNonPublic()) {
-			$unzipDirectory = Tools::getProgramDir()."/Ontoprise";
+
+			// default location
+			$unzipDirectory = Tools::getProgramDir()."/Ontoprise/".$dd->getInstallationDirectory();
+
+			if (file_exists($unzipDirectory)) {
+				// if already somewhere installed, use this (only Windows)
+				$OPSoftware = Tools::getOntopriseSoftware($dd->getID());
+				if (!is_null($OPSoftware) && count($OPSoftware) > 0) {
+					$unzipDirectory = trim(reset($OPSoftware));
+				}
+
+			}
 			Tools::mkpath($unzipDirectory);
 		}
-
+		print "\nunzip into $unzipDirectory";
 		print "\n[unzip ".$id."-$version.zip...";
 		if (Tools::isWindows()) {
 			exec('unzip -o "'.$this->tmpFolder."\\".$id."-$version.zip\" -d \"".$unzipDirectory.'" '.$excludedFilesString);
@@ -713,7 +724,18 @@ class Installer {
 
 		$unzipDirectory = $this->rootDir;
 		if ($dd->isNonPublic()) {
-			$unzipDirectory = Tools::getProgramDir()."/Ontoprise";
+
+			// default location
+			$unzipDirectory = Tools::getProgramDir()."/Ontoprise/".$dd->getInstallationDirectory();
+
+			if (file_exists($unzipDirectory)) {
+				// if already somewhere installed, use this (only Windows)
+				$OPSoftware = Tools::getOntopriseSoftware($dd->getID());
+				if (!is_null($OPSoftware) && count($OPSoftware) > 0) {
+					$unzipDirectory = trim(reset($OPSoftware));
+				}
+
+			}
 			Tools::mkpath($unzipDirectory);
 		}
 

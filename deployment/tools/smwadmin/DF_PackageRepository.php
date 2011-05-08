@@ -379,6 +379,18 @@ class PackageRepository {
 		self::readDirectoryForDD($ext_dir."extensions");
 		self::readDirectoryForDD(Tools::getProgramDir()."/Ontoprise");
 
+		$OPSoftware = Tools::getOntopriseSoftware();
+		if (!is_null($OPSoftware) && count($OPSoftware) > 0) {
+			$path = trim(reset($OPSoftware));
+			if (file_exists($path.'/deploy.xml')) {
+				$dd = new DeployDescriptor(file_get_contents($path.'/deploy.xml'));
+				if (!array_key_exists($dd->getID(), self::$localPackages)) {
+					self::$localPackages[$dd->getID()] = $dd;
+				}
+
+			}
+		}
+
 		// create special deploy descriptor for Mediawiki itself
 		self::$localPackages['mw'] = self::createMWDeployDescriptor(realpath($ext_dir));
 
@@ -399,7 +411,7 @@ class PackageRepository {
 			if ($entry[0] == '.'){
 				continue;
 			}
-			 
+
 			if (is_dir($ext_dir.$entry)) {
 				// check if there is a deploy.xml
 				if (file_exists($ext_dir.$entry.'/deploy.xml')) {
@@ -429,8 +441,8 @@ class PackageRepository {
 
 		self::readDirectoryForDDToInitialize($ext_dir);
 		self::readDirectoryForDDToInitialize($ext_dir."extensions");
-        self::readDirectoryForDDToInitialize(Tools::getProgramDir()."/Ontoprise");
-        
+		self::readDirectoryForDDToInitialize(Tools::getProgramDir()."/Ontoprise");
+
 		// special handling for MW itself
 		if (file_exists($ext_dir.'/init$.ext')) {
 			$init_ext_file = trim(file_get_contents($ext_dir.'/init$.ext'));
@@ -449,7 +461,7 @@ class PackageRepository {
 		$handle = @opendir($ext_dir);
 		if (!$handle) {
 			//print "\nWARNING: $ext_dir does not exist. Skipped.";
-            return;
+			return;
 		}
 
 		while ($entry = readdir($handle) ){

@@ -279,7 +279,7 @@ class HttpDownload {
 	 */
 	public function downloadProgress($length, $contentLength = 0) {
 		
-		if (!defined('DO_MAINTENANCE')) return;
+		if (defined('DF_WIKICONTEXT')) return;
 		
 		static $first = true;
 		static $lastLength = 0;
@@ -305,12 +305,12 @@ class HttpDownload {
 	}
 
 	public function downloadStart($filename) {
-		if (!defined('DO_MAINTENANCE')) return;
+		if (defined('DF_WIKICONTEXT')) return;
 		if (!is_null($filename)) echo "\nDownloading $filename...\n";
 	}
 
 	public function downloadFinished($filename) {
-		if (!defined('DO_MAINTENANCE')) return;
+		if (defined('DF_WIKICONTEXT')) return;
 		//echo "\n";
 		//if (!is_null($filename)) echo "\n$filename was downloaded.";
 	}

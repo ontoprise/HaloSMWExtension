@@ -835,17 +835,26 @@ class Tools {
 	 * Returns the installation directory of Ontoprise software on Windows.
 	 * Note: Returns always NULL on linux.
 	 *
-	 * @param string $programname (Fragment of) program name. By default search for all.
+	 * @param string $programname (Fragment of) program name or deploy ID. By default search for all.
 	 * 
 	 * @return array( Programname => directory path )
 	 */
-	public static function getInstallationDirectory($programname = '') {
+	public static function getOntopriseSoftware($id = '') {
 		if (!Tools::isWindows($os)) return NULL;
 
 		exec("reg QUERY \"HKEY_CURRENT_USER\Software\Ontoprise\" /s /ve", $out, $res);
 
 		if ($res != 0) return NULL;
-
+        
+		// convert IDs into program names (as far as known)
+		// TSC is the only registered program for now.
+		// otherwise consider it as program name 
+		if ($id == 'tsc') {
+			$programname = "Triplestore Connector";
+		} else {
+			$programname = $id;
+		}
+		
 		$result=array();
 		$n = count($out);
 		for($i = 0; $i < $n; $i++) {

@@ -1,5 +1,6 @@
 <?php
 define( 'DF_VERSION', '{{$VERSION}} [B{{$BUILD_NUMBER}}]' );
+define ('DF_WIKICONTEXT', 1);
 
 $wgExtensionFunctions[] = 'dfgSetupExtension';
 $smwgDFIP = $IP . '/deployment';

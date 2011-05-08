@@ -558,7 +558,7 @@ function showHelp() {
 	echo "\n\t--finalize: Finalizes installation";
 	//echo "\n\t--checkdump <package>: Check only dumps for changes but do not install.";
 	echo "\n\t--dep : Check only dependencies but do not install.";
-	echo "\n\t--noconflict: Assures that there are no conflicts on ontology import. Will stop the process, if not."
+	echo "\n\t--noconflict: Assures that there are no conflicts on ontology import. Will stop the process, if not.";
 	echo "\n\t--nocheck: Skips the environment checks";
 	echo "\n";
 	echo "\nExamples:\n\n\tsmwadmin -i smwhalo Installs the given packages";
