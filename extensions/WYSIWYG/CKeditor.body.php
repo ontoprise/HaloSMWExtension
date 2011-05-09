@@ -737,6 +737,7 @@ function ToggleCKEditor( mode, objId ){
             relToolBar.callme();
             catToolBar.callme();
             propToolBar.callme();
+            smwhgASKQuery.createContainer();
             // webservice toolbar, only available if DataImport extension is included
             if (typeof wsToolBar != 'undefined')
                 wsToolBar.callme();
