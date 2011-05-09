@@ -381,13 +381,14 @@ class PackageRepository {
 
 		$OPSoftware = Tools::getOntopriseSoftware();
 		if (!is_null($OPSoftware) && count($OPSoftware) > 0) {
-			$path = trim(reset($OPSoftware));
-			if (file_exists($path.'/deploy.xml')) {
-				$dd = new DeployDescriptor(file_get_contents($path.'/deploy.xml'));
-				if (!array_key_exists($dd->getID(), self::$localPackages)) {
-					self::$localPackages[$dd->getID()] = $dd;
+			foreach($OPSoftware as $prgname => $path) {
+				$path = trim($path);
+				if (file_exists($path.'/deploy.xml')) {
+					$dd = new DeployDescriptor(file_get_contents($path.'/deploy.xml'));
+					if (!array_key_exists($dd->getID(), self::$localPackages)) {
+						self::$localPackages[$dd->getID()] = $dd;
+					}
 				}
-
 			}
 		}
 
