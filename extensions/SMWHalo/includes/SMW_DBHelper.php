@@ -71,7 +71,9 @@ class DBHelper {
 					$db->query("ALTER TABLE $table ADD `$name` $type $position", 'DBHelper::setupTable');
 					$result[$name] = 'new';
 					DBHelper::reportProgress("done \n",$verbose);
-				} elseif ($curfields[$name] != $type && stripos("auto_increment", $type) == -1) {
+				} elseif ($curfields[$name] != $type 
+				          && stripos($type, "primary key") === false) {
+				    // Changing primary keys throws an error
 					DBHelper::reportProgress("   ... changing type of column $name from '$curfields[$name]' to '$type' ... ",$verbose);
 					$db->query("ALTER TABLE $table CHANGE `$name` `$name` $type $position", 'DBHelper::setupTable');
 					$result[$name] = 'up';
