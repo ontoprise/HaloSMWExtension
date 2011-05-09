@@ -348,6 +348,7 @@ class DeployDescriptionProcessor {
 			if (substr($instDir, -1) != '/') $instDir .= "/";
 			$patch = $instDir.self::makeUnixPath($patch);
 			$patchFailed = false;
+			$out = array();
 			if (!file_exists($rootDir."/".$patch)) {
 				$this->errorMessages[] = "WARNING: patch at '$rootDir/$patch' does not exist";
 				print "\nWARNING: patch at '$rootDir/$patch' does not exist";
