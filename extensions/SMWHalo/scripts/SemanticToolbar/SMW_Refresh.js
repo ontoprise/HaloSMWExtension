@@ -67,8 +67,15 @@ RefreshSemanticToolBar.prototype = {
 						? t - this.lastKeypress
 						: 0;
 			if (dt > REFRESH_DELAY*1000) {
+				// Get the element that is currently focussed as focus may change
+				// during refresh of toolbar
+				var currentFocus = document.activeElement;
 				this.contentChanged = false;
 				this.refreshToolBar();
+				if (currentFocus) {
+					// Restore the focus
+					currentFocus.focus();
+				}
 			}
 		}
 	},
