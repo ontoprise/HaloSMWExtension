@@ -319,23 +319,27 @@ class AutoCompletionRequester {
 				$parents = $title->getParentCategoryTree();
 				$matches[$i]['parentCategories'] = array();
 
-				$next = reset(array_keys($parents));
+				$parentkeys = array_keys($parents);
+				$next = reset($parentkeys);
 				while($next !== false) {
 					$matches[$i]['parentCategories'][] = $next;
 					$parents = $parents[$next];
-					$next = reset(array_keys($parents));
+					$parentkeys = array_keys($parents);
+					$next = reset($parentkeys);
 				}
 				$matches[$i]['parentCategories'] = array_reverse($matches[$i]['parentCategories']);
 					
 			} else if ($title->getNamespace() == NS_MAIN) {
 				$parents = $title->getParentCategoryTree();
 				$matches[$i]['parentCategories'] = array();
-					
-				$next = reset(array_keys($parents));
+				
+				$parentkeys = array_keys($parents);
+				$next = reset($parentkeys);
 				while($next !== false) {
 					$matches[$i]['parentCategories'][] = $next;
 					$parents = $parents[$next];
-					$next = reset(array_keys($parents));
+					$parentkeys = array_keys($parents);
+					$next = reset($parentkeys);
 				}
 				$matches[$i]['parentCategories'] = array_reverse($matches[$i]['parentCategories']);
 			}
