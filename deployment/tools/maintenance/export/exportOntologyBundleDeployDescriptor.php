@@ -58,98 +58,108 @@ for( $arg = reset( $argv ); $arg !== false; $arg = next( $argv ) ) {
 			
 		continue;
 	} else if (strpos($arg, '--includeInstances') === 0) {
-			list($option, $value) = explode("=", $arg);
-			$includeInstances = ($value == 'true' || $value == '1' || $value == 'yes');
+		list($option, $value) = explode("=", $arg);
+		if (!isset($value))  $value = next($argv);
+		$includeInstances = ($value == 'true' || $value == '1' || $value == 'yes');
+		continue;
+	} else if (strpos($arg, '--includeImages') === 0) {
+		
+        list($option, $value) = explode("=", $arg);
+        if (!isset($value)) $value = next($argv);
+        $includeImages = ($value == 'true' || $value == '1' || $value == 'yes');
+       
+        continue;
+    }
+}
+
+// check bundle page
+$bundlePage = Title::newFromText($bundleToExport, NS_MAIN);
+if (!$bundlePage->exists()) {
+	print "\n\n".$bundlePage->getText()." does not exist. Please create first.";
+	die();
+}
+
+// check if relevant package properties exist
+if (Tools::checkPackageProperties() === false) {
+	print "\n\nCorrect the errors and try again!\n";
+	die();
+}
+
+dumpDescriptor($bundleToExport, $output, $dumpFile);
+
+function dumpDescriptor($bundeID, $output = "deploy.xml", $dumpFile = "dump.xml") {
+	global $dfgLang, $includeInstances, $includeImages;
+	$dependencies_p = SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString('df_dependencies'));
+
+	$instdir_p = SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString('df_instdir'));
+	$ontologyversion_p = SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString('df_ontologyversion'));
+	$ontologyvendor_p = SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString('df_ontologyvendor'));
+	$description_p = SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString('df_description'));
+
+	$bundlePage = Title::newFromText($bundeID);
+	$dependencies = smwfGetStore()->getPropertyValues($bundlePage, $dependencies_p);
+	$version = smwfGetStore()->getPropertyValues($bundlePage, $ontologyversion_p);
+	$instdir = smwfGetStore()->getPropertyValues($bundlePage, $instdir_p);
+	$vendor = smwfGetStore()->getPropertyValues($bundlePage, $ontologyvendor_p);
+	$description = smwfGetStore()->getPropertyValues($bundlePage, $description_p);
+
+	if ( count($version) == 0) {
+		fwrite( STDERR , "No version annotation on $bundeID" . "\n" );
+	}
+	if ( count($vendor) == 0) {
+		fwrite( STDERR , "No vendor annotation on $bundeID" . "\n" );
+	}
+	if ( count($instdir) == 0) {
+		fwrite( STDERR , "No instdir annotation on $bundeID" . "\n" );
+	}
+	if ( count($description) == 0) {
+		fwrite( STDERR , "No description annotation on $bundeID" . "\n" );
+	}
+
+	$versionText = count($version) > 0 ? Tools::getXSDValue(reset($version)) : "100";
+	$vendorText = count($vendor) > 0 ? Tools::getXSDValue(reset($vendor)) : "no vendor";
+	$instdirText = count($instdir) > 0 ? Tools::getXSDValue(reset($instdir)) : "extensions/$bundeID";
+	$descriptionText = count($description) > 0 ? Tools::getXSDValue(reset($description)) : "no description";
+
+	$handle = fopen("$output", "w");
+	$src = dirname(__FILE__)."/../../../";
+	$dest = dirname($output);
+	$options['used'] = true;
+	$options['shared'] = true;
+	$options['includeInstances'] = $includeInstances;
+	$options['includeImages'] = $includeImages;
+
+	$uploadExporter = new DeployUploadExporter( $options, $bundeID, $handle, $src, $dest );
+
+	$xml = '<?xml version="1.0" encoding="ISO-8859-1"?>'."\n";
+	$xml .= '<deploydescriptor>'."\n";
+	$xml .= "\t".'<global>'."\n";
+	$xml .= "\t\t".'<version>'.$versionText.'</version>'."\n";
+	$xml .= "\t\t".'<id>'.strtolower($bundeID).'</id>'."\n";
+	$xml .= "\t\t".'<instdir>'.$instdirText.'</instdir>'."\n";
+	$xml .= "\t\t".'<vendor>'.$vendorText.'</vendor>'."\n";
+	$xml .= "\t\t".'<description>'.$descriptionText.'</description>'."\n";
+	$xml .= "\t\t".'<dependencies>'."\n";
+	foreach($dependencies as $dep) {
+		$dvs = $dep->getDVs();
+		if (count($dvs) == 0) {
+			print "\nWarning: Wrong dependency annotation. Ignore it.";
 			continue;
 		}
+		// id must be there
+		$id = Tools::getXSDValue(reset($dvs));
+
+		$minVersionValue = next($dvs);
+		$minVersion = $minVersionValue !== false ? 'from="'.Tools::getXSDValue($minVersionValue).'"' : "";
+
+		$maxVersionValue = next($dvs);
+		$maxVersion = $maxVersionValue !== false ? 'to="'.Tools::getXSDValue($maxVersionValue).'"' : "";
+
+		$xml .= "\t\t\t<dependency $minVersion $maxVersion>$id</dependency>\n";
 	}
-
-	// check bundle page
-	$bundlePage = Title::newFromText($bundleToExport, NS_MAIN);
-	if (!$bundlePage->exists()) {
-		print "\n\n".$bundlePage->getText()." does not exist. Please create first.";
-		die();
-	}
-
-	// check if relevant package properties exist
-	if (Tools::checkPackageProperties() === false) {
-		print "\n\nCorrect the errors and try again!\n";
-		die();
-	}
-
-	dumpDescriptor($bundleToExport, $output, $dumpFile);
-
-	function dumpDescriptor($bundeID, $output = "deploy.xml", $dumpFile = "dump.xml") {
-		global $dfgLang, $includeInstances;
-		$dependencies_p = SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString('df_dependencies'));
-
-		$instdir_p = SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString('df_instdir'));
-		$ontologyversion_p = SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString('df_ontologyversion'));
-		$ontologyvendor_p = SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString('df_ontologyvendor'));
-		$description_p = SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString('df_description'));
-
-		$bundlePage = Title::newFromText($bundeID);
-		$dependencies = smwfGetStore()->getPropertyValues($bundlePage, $dependencies_p);
-		$version = smwfGetStore()->getPropertyValues($bundlePage, $ontologyversion_p);
-		$instdir = smwfGetStore()->getPropertyValues($bundlePage, $instdir_p);
-		$vendor = smwfGetStore()->getPropertyValues($bundlePage, $ontologyvendor_p);
-		$description = smwfGetStore()->getPropertyValues($bundlePage, $description_p);
-
-		if ( count($version) == 0) {
-			fwrite( STDERR , "No version annotation on $bundeID" . "\n" );
-		}
-		if ( count($vendor) == 0) {
-			fwrite( STDERR , "No vendor annotation on $bundeID" . "\n" );
-		}
-		if ( count($instdir) == 0) {
-			fwrite( STDERR , "No instdir annotation on $bundeID" . "\n" );
-		}
-		if ( count($description) == 0) {
-			fwrite( STDERR , "No description annotation on $bundeID" . "\n" );
-		}
-
-		$versionText = count($version) > 0 ? Tools::getXSDValue(reset($version)) : "100";
-		$vendorText = count($vendor) > 0 ? Tools::getXSDValue(reset($vendor)) : "no vendor";
-		$instdirText = count($instdir) > 0 ? Tools::getXSDValue(reset($instdir)) : "extensions/$bundeID";
-		$descriptionText = count($description) > 0 ? Tools::getXSDValue(reset($description)) : "no description";
-
-		$handle = fopen("$output", "w");
-		$src = dirname(__FILE__)."/../../../";
-		$dest = dirname($output);
-		$options['used'] = true;
-		$options['shared'] = true;
-		$options['includeInstances'] = $includeInstances;
-		$uploadExporter = new DeployUploadExporter( $options, $bundeID, $handle, $src, $dest );
-
-		$xml = '<?xml version="1.0" encoding="ISO-8859-1"?>'."\n";
-		$xml .= '<deploydescriptor>'."\n";
-		$xml .= "\t".'<global>'."\n";
-		$xml .= "\t\t".'<version>'.$versionText.'</version>'."\n";
-		$xml .= "\t\t".'<id>'.strtolower($bundeID).'</id>'."\n";
-		$xml .= "\t\t".'<instdir>'.$instdirText.'</instdir>'."\n";
-		$xml .= "\t\t".'<vendor>'.$vendorText.'</vendor>'."\n";
-		$xml .= "\t\t".'<description>'.$descriptionText.'</description>'."\n";
-		$xml .= "\t\t".'<dependencies>'."\n";
-		foreach($dependencies as $dep) {
-			$dvs = $dep->getDVs();
-			if (count($dvs) == 0) {
-		  print "\nWarning: Wrong dependency annotation. Ignore it.";
-		  continue;
-			}
-			// id must be there
-			$id = Tools::getXSDValue(reset($dvs));
-
-			$minVersionValue = next($dvs);
-			$minVersion = $minVersionValue !== false ? 'from="'.Tools::getXSDValue($minVersionValue).'"' : "";
-
-			$maxVersionValue = next($dvs);
-			$maxVersion = $maxVersionValue !== false ? 'to="'.Tools::getXSDValue($maxVersionValue).'"' : "";
-
-			$xml .= "\t\t\t<dependency $minVersion $maxVersion>$id</dependency>\n";
-		}
-		$xml .= "\t".'</dependencies>'."\n";
-		$xml .= "<notice>";
-		$xml .= <<<ENDS
+	$xml .= "\t".'</dependencies>'."\n";
+	$xml .= "<notice>";
+	$xml .= <<<ENDS
 "Your Wiki contains now new pages. Since existing pages can make
 use of newly imported pages (e.g. templates), it is necessary to
 REFRESH all pages in this Wiki now.
@@ -169,24 +179,24 @@ repairing data here:
 http://smwforum.ontoprise.com/smwforum/index.php/Help:Repairing_data"
 
 ENDS
-		;
-		$xml .= "</notice>";
+	;
+	$xml .= "</notice>";
 
-		$xml .= "\t".'</global>'."\n";
-		$xml .= "\t".'<wikidumps>'."\n";
-		$xml .= "\t\t".'<file loc="'.$dumpFile.'"/>'."\n";
-		$xml .= "\t".'</wikidumps>'."\n";
-		$xml .= "\t".'<resources>'."\n";
-		fwrite($handle, $xml);
-		$uploadExporter->run();
-		$xml = "\t".'</resources>'."\n";
-		$xml .= '</deploydescriptor>'."\n";
-		fwrite($handle, $xml);
-		fclose($handle);
-	}
+	$xml .= "\t".'</global>'."\n";
+	$xml .= "\t".'<wikidumps>'."\n";
+	$xml .= "\t\t".'<file loc="'.$dumpFile.'"/>'."\n";
+	$xml .= "\t".'</wikidumps>'."\n";
+	$xml .= "\t".'<resources>'."\n";
+	fwrite($handle, $xml);
+	$uploadExporter->run();
+	$xml = "\t".'</resources>'."\n";
+	$xml .= '</deploydescriptor>'."\n";
+	fwrite($handle, $xml);
+	fclose($handle);
+}
 
-	function fatalError($text) {
-		print "\n\n".$text;
-		die();
-	}
+function fatalError($text) {
+	print "\n\n".$text;
+	die();
+}
 

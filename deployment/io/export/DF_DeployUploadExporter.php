@@ -24,10 +24,10 @@
 /**
  * @file
  * @ingroup DFIO
- * 
+ *
  * @defgroup DFIO Input/Output
  * @ingroup DeployFramework
- * 
+ *
  * Exports uploaded files contained in one bundle.
  *
  */
@@ -77,13 +77,21 @@ class DeployUploadExporter {
 				$this->mSharedSupplement = true;
 			}
 		}
-        
+
 		// includeInstances means: consider member of categories beloning to a bundle
 		if( isset( $args['includeInstances'] ) ) {
 			$this->includeInstances = $args['includeInstances'];
 		} else {
 			// default setting is: false
 			$this->includeInstances = false;
+		}
+
+		// includeImages means: consider images linked with pages of bundles
+		if( isset( $args['includeImages'] ) ) {
+			$this->includeImages = $args['includeImages'];
+		} else {
+			// default setting is: true
+			$this->includeImages = true;
 		}
 	}
 
@@ -105,7 +113,7 @@ class DeployUploadExporter {
 	function fetchUsed( $shared ) {
 		global $dfgLang;
 		$dbr = wfGetDB( DB_SLAVE );
-		
+
 		$smwids     = $dbr->tableName( 'smw_ids' );
 		$smwrels     = $dbr->tableName( 'smw_rels2' );
 		$page = $dbr->tableName( 'page' );
@@ -115,19 +123,26 @@ class DeployUploadExporter {
 
 		$partOfBundlePropertyID = smwfGetStore()->getSMWPropertyID(SMWPropertyValue::makeProperty($dfgLang->getLanguageString("df_partofbundle")));
 		$partOfBundleID = smwfGetStore()->getSMWPageID($this->bundleID, NS_MAIN, "");
-        
-		
+
 		// get all image pages beloning to pages of bundle
-		$sql = "SELECT DISTINCT il_to AS image FROM $page JOIN $smwids ON smw_title = page_title AND smw_namespace = page_namespace JOIN $smwrels ON smw_id = s_id JOIN $imagelinks ON page_id = il_from WHERE  p_id = $partOfBundlePropertyID AND o_id = $partOfBundleID";
+		if ($this->includeImages) {
+       
+			$sql = "SELECT DISTINCT il_to AS image FROM $page JOIN $smwids ON smw_title = page_title AND smw_namespace = page_namespace JOIN $smwrels ON smw_id = s_id JOIN $imagelinks ON page_id = il_from WHERE  p_id = $partOfBundlePropertyID AND o_id = $partOfBundleID";
 
-		if ($this->includeInstances) {
-			// get all images pages belonging to instances of categories of bundle
-			$sql2 = "SELECT DISTINCT il_to AS image FROM $page JOIN $categorylinks ON page_id = cl_from JOIN $smwids ON smw_title = cl_to AND smw_namespace = ".NS_CATEGORY." JOIN $smwrels ON smw_id = s_id JOIN $imagelinks ON page_id = il_from WHERE p_id = $partOfBundlePropertyID AND o_id = $partOfBundleID";
+			if ($this->includeInstances) {
+				// get all images pages belonging to instances of categories of bundle
+				$sql2 = "SELECT DISTINCT il_to AS image FROM $page JOIN $categorylinks ON page_id = cl_from JOIN $smwids ON smw_title = cl_to AND smw_namespace = ".NS_CATEGORY." JOIN $smwrels ON smw_id = s_id JOIN $imagelinks ON page_id = il_from WHERE p_id = $partOfBundlePropertyID AND o_id = $partOfBundleID";
 
-			$res = $dbr->query( "($sql) UNION DISTINCT ($sql2)" );
+				$res = $dbr->query( "($sql) UNION DISTINCT ($sql2)" );
+			} else {
+				$res = $dbr->query( $sql );
+			}
 		} else {
-			$res = $dbr->query( $sql );
+		
+			$sql = "SELECT DISTINCT smw_title AS image FROM $smwids JOIN $smwrels ON smw_id = s_id WHERE p_id = $partOfBundlePropertyID AND o_id = $partOfBundleID AND smw_namespace = ".NS_FILE;
+			$res = $dbr->query( $sql );	
 		}
+
 		if($dbr->numRows( $res ) > 0) {
 			while($row = $dbr->fetchObject($res)) {
 
@@ -162,7 +177,7 @@ class DeployUploadExporter {
 			if (!is_null($this->filehandle)) {
 				fwrite($this->filehandle, "\t\t<file loc=\"$rel\"/>\n");
 				if (!is_null($this->src) && !is_null($this->dest) ) {
-						
+
 					$path = dirname($rel);
 					Tools::mkpath($this->dest."/$path");
 					copy($this->src."../$rel", $this->dest."/$rel");
@@ -171,7 +186,7 @@ class DeployUploadExporter {
 				echo "$rel\n";
 			}
 		} else {
-			
+				
 			wfDebug( __METHOD__ . ": base file? $name\n" );
 		}
 	}

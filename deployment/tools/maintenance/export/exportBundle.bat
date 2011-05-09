@@ -27,7 +27,7 @@ mkdir %OUTPUTDIR%
 REM Export bundle
 ECHO Export bundle %1
 php export.php --current --output=file:%OUTPUTDIR%/dump.xml -b %1 %2 %3 %4 %5
-php exportOntologyBundleDeployDescriptor.php -o %OUTPUTDIR%/deploy.xml -b %1 -d dump.xml %3 %4 %5
+php exportOntologyBundleDeployDescriptor.php -o %OUTPUTDIR%/deploy.xml -b %1 -d dump.xml %2 %3 %4 %5
 
 REM Zip bundle
 ECHO Zip bundle

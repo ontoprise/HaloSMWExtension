@@ -863,7 +863,8 @@ class Tools {
 				$defValue = $out[$i+1];
 				$parts = explode("   ", $defValue);
 				$prgName = substr($out[$i], strlen("HKEY_CURRENT_USER\\Software\\Ontoprise\\"));
-				$result[$prgName] = reset(array_reverse($parts));
+				$pathAtFirst = array_reverse($parts);
+				$result[$prgName] = reset($pathAtFirst);
 			}
 		}
 		return $result;

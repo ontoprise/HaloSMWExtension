@@ -194,6 +194,9 @@ class ConsistencyChecker {
 		$latestPackages = PackageRepository::getAllPackages();
 		foreach($localPackages as $tl_ext) {
             
+			// ignore only-local packages
+			if (!array_key_exists($tl_ext->getID(), $latestPackages)) continue;
+			
 			$tuple = reset($latestPackages[$tl_ext->getID()]);
 			if ($tuple === false) continue;
 			list($latestVersion, $latestPatchlevel) = $tuple;
