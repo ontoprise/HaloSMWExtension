@@ -218,7 +218,7 @@ function lodfSetupExtension() {
         'name'=>'LinkedData',
         'version'=>LOD_LINKEDDATA_VERSION,
         'author'=>"Thomas Schweitzer. Owned by [http://www.ontoprise.de ontoprise GmbH].",
-        'url'=>'http://smwforum.ontoprise.de',
+        'url'=>'http://smwforum.ontoprise.com/smwforum/index.php/Help:Linked_Data_extension',
         'description' => 'Embed linked data in your wiki.');
 
     // Register autocompletion icon
