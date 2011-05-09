@@ -13,7 +13,8 @@
 		<helpurl>http://smwforum.ontoprise.com/smwforum/index.php/Help:Rule_Knowledge_Extension</helpurl>
 		<license>GPL-v2</license> 
 		<dependencies>
-			<dependency from="152">smwhalo</dependency>
+			<dependency from="154">smwhalo</dependency>
+			<dependency from="154">tsc</dependency>
 		</dependencies>
 		<notice>The Semantic rules extension requires the installation of the Triplestore connector (TSC). Please check smwforum.ontoprise.com for help.</notice>
 	</global>
