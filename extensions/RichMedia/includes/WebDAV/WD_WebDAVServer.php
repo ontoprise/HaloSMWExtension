@@ -61,7 +61,10 @@ class WebDAVServer extends HTTP_WebDAV_Server {
 			echo "<D:options-response xmlns:D=\"DAV:\">\n";
 			echo '  <D:activity-collection-set><D:href>' . $this->getUrl( array( 'path' => 'deltav.php/act' ) ) . "</D:href></D:activity-collection-set>\n";
 			echo "</D:options-response>\n";
+			
 		}
+		
+		
 
 		return true;
 	}
@@ -429,8 +432,10 @@ class WebDAVServer extends HTTP_WebDAV_Server {
 
 		$text = "";
 		$fileData = new FileData($pathComponents);
-		if($fileData->isWikiArticle() || ($fileData->isArticleFolder() && !$echo)){
+		
+		if($fileData->isWikiArticle()){
 			$rawPage = $this->getRawPage();
+			
 			if ( !isset( $rawPage ) ) {
 				$this->setResponseStatus("404 Not found", false );
 				return false;
@@ -441,6 +446,14 @@ class WebDAVServer extends HTTP_WebDAV_Server {
 				echo($text = $rawPage->getRawText());
 			} else {
 				$text = $rawPage->getRawText();
+			}
+		} else if(($fileData->isArticleFolder() && !$echo)){
+			$file = RepoGroup::singleton()
+				->findFile($fileData->getFileName());
+			if($file){
+				return true;
+			} else {
+				return false;
 			}
 		} else if($fileData->isTempFile()) {
 			global $wgUploadDirectory;
@@ -500,6 +513,7 @@ class WebDAVServer extends HTTP_WebDAV_Server {
 		
 		$getResult = $this->doGet($this->pathComponents, false);
 		if($getResult === false){
+			$this->setResponseStatus("404 Not Found");
 			return false;
 		} else {
 			$this->setResponseStatus("200 OK", false);
@@ -513,6 +527,7 @@ class WebDAVServer extends HTTP_WebDAV_Server {
 	}
 
 	function doDelete($serverOptions, $pathComponents) {
+		
 		$temp = implode("/",$pathComponents);
 		$this->writeLog("delete ".$temp);
 
@@ -600,13 +615,14 @@ class WebDAVServer extends HTTP_WebDAV_Server {
 		global $wgUser;
 		
 		$error = '';
+		$reason = "Deleted via WebDAV";
 		if(wfRunHooks('ArticleDelete', array(&$article, &$wgUser, 
-				"Deleted via WebDAV", &$error))) {
-			$article->doDeleteArticle("Deleted via WebDAV", true, $articleId);
+				&$reason, &$error))) {
+			$article->doDeleteArticle($reason, true, $articleId);
 			wfRunHooks('ArticleDeleteComplete', array(&$article, &$wgUser, 
-				"Deleted via WebDAV", $articleId));
+				&$reason, $articleId));
 		}
-
+		
 		return true;
 	}
 
@@ -809,6 +825,7 @@ class WebDAVServer extends HTTP_WebDAV_Server {
 	}
 
 	function doPut($serverOptions, $pathComponents, $text = null) {
+		
 		$temp = implode("/",$pathComponents);
 		$this->writeLog("put ".$temp);
 

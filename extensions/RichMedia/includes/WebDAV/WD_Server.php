@@ -181,7 +181,7 @@ class HTTP_WebDAV_Server
 	{
 		// initialize
 		$this->init();
-
+		
 		// identify ourselves
 		if (!empty($this->poweredBy)) {
 			$this->setResponseHeader('X-Dav-Powered-By: ' . $this->poweredBy);
@@ -201,13 +201,13 @@ class HTTP_WebDAV_Server
 			$this->setResponseStatus('401 Unauthorized');
 			return;
 		}
-
+		
 		// check if request header components
 		if (!$this->check_if_helper($this->ifHeaderComponents)) {
 			$this->setResponseStatus('412 Precondition Failed');
 			return;
 		}
-
+		
 		// detect requested method names
 		$method = strtolower($_SERVER['REQUEST_METHOD']);
 		$wrapper = $method . '_wrapper';
@@ -518,6 +518,8 @@ class HTTP_WebDAV_Server
 		// to use WebDAV
 		$this->setResponseHeader('MS-Author-Via: DAV');
 
+		//echo('<pre>'.print_r($this->responseHeaders ,true).'</pre>');
+		
 		return true;
 	}
 
@@ -2508,7 +2510,7 @@ class HTTP_WebDAV_Server
 				$allowedMethods[] = 'HEAD';
 			}
 		}
-
+		
 		return $allowedMethods;
 	}
 
@@ -2925,7 +2927,7 @@ class HTTP_WebDAV_Server
 		$errorReporting = ini_get('error_reporting');
 		ini_set('error_reporting', $errorReporting & ~E_NOTICE);
 
-		if (!$doc->load('php://input')) {
+		if (@ !$doc->load('php://input')) {
 			ini_set('error_reporting', $errorReporting);
 			return;
 		}
