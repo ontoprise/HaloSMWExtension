@@ -56,6 +56,7 @@
 				<include name="COPYING" />
 				<include name="INSTALL" />
 				<include name="deploy.xml" />
+				<include name="patch_for*.txt" />
 			</fileset>
             <fileset dir="../../../deployment/tools">
 				<include name="patch.exe" />
