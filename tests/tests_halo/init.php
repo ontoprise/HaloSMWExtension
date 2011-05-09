@@ -42,7 +42,7 @@ tstInsertLocalSettings($testDir);
 echo "\ndone!\n";
 
 require_once( $mw_dir.'maintenance/commandLine.inc' );
-echo "\nInitializing database for use with MW 1.16 ...";
+echo "\nInitializing database for use with MW 1.16.1 ...";
 tstInitializeDatabase();
 echo "\ndone!\n";
 
@@ -70,7 +70,12 @@ function tstInitializeDatabase() {
 	echo "\nImporting database...";
 	echo "$mysqlExe -u $wgDBuser --password=$wgDBpassword < \"$mw_dir"."tests/tests_halo/mw16_db.sql\"";
 	//exec("\"$xamppDir/mysql/bin/mysql.exe\" -u $wgDBuser --password=$wgDBpassword < \"$mw_dir"."tests/tests_halo/mw15_db.sql\"");
-	runProcess("$mysqlExe -u $wgDBuser --password=$wgDBpassword < \"$mw_dir"."tests/tests_halo/mw16_db.sql\"");
+	runProcess("$mysqlExe -u $wgDBuser --password=$wgDBpassword < \"$mw_dir"."tests/tests_halo/mw16_1_db.sql\"");
+	echo "\ndone.\n";
+
+   	echo "\nRun mediawiki update...";
+	echo $phpExe.' "'.$mw_dir.'maintenance/update.php" ';
+	runProcess($phpExe.' "'.$mw_dir.'maintenance/update.php" ');
 	echo "\ndone.\n";
 
 	// run setups

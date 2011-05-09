@@ -16,6 +16,15 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
+-- Create schema mw16_1_db
+--
+
+DROP DATABASE IF EXISTS testdb;
+
+CREATE DATABASE testdb;
+USE testdb;
+
+--
 -- Table structure for table `archive`
 --
 
