@@ -1,5 +1,16 @@
 SMWHalo extension ChangeLog
 ===========================
+VERSION 1.5.4
+	FEATURES:
+	
+	CHANGES:
+	
+	BUGFIXES:
+		14493 - SMWhalo special properties Creator, Creation date, Last modified
+		        by are not available in articles which have been created with 
+		        tabular forms.
+		        
+		        
 VERSION 1.5.3
  	FEATURES:
 	    FR #12720 added parameter to SPARQL parser function to turn inferencing off/on 

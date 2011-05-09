@@ -152,6 +152,7 @@ function smwgHaloSetupExtension() {
 	$wgAutoloadClasses['LODNonExistingPage'] = $smwgHaloIP . '/includes/articlepages/LOD_NonExistingPage.php';
 	$wgAutoloadClasses['LODNonExistingPageHandler'] = $smwgHaloIP . '/includes/articlepages/LOD_NonExistingPageHandler.php';
 	$wgAutoloadClasses['SMWQueryList'] = $smwgHaloIP . '/specials/SMWQueryList/SMW_QueryList.php';
+	$wgAutoloadClasses['SMWArticleBuiltinProperties'] = $smwgHaloIP . '/includes/SMW_ArticleBuiltinProperties.php';
 
 	//patch Special:Browse in order to hide special Query Management Property
 	$wgSpecialPages['Browse']  = array( 'SMWQMSpecialBrowse' );
@@ -317,6 +318,10 @@ function smwgHaloSetupExtension() {
 
 	// register AC icons
 	$wgHooks['smwhACNamespaceMappings'][] = 'smwfRegisterAutocompletionIcons';
+	
+	// register hook for additional builtin properties
+	$wgHooks['NewRevisionFromEditComplete'][] = 'SMWArticleBuiltinProperties::onNewRevisionFromEditComplete'; // fetch some MediaWiki data for replication in SMW's store
+	
 
 	// add triple store hooks if necessary
 	global $smwgDefaultStore,$smwgIgnoreSchema;

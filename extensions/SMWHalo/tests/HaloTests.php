@@ -19,6 +19,7 @@ require_once 'testcases/TestDataAPI.php';
 
 require_once 'testcases/TestQueryPrinters.php';
 require_once 'testcases/TestQIAjaxAccess.php';
+require_once 'testcases/TestBuiltinProperties.php';
 
 class HaloTests
 {
@@ -35,6 +36,7 @@ class HaloTests
 		$suite->addTestSuite("TestWikiJobs");
 		$suite->addTestSuite("TestDataAPI");
 		$suite->addTestSuite("TestQIAjaxAccess");
+		$suite->addTestSuite("TestBuiltinPropertiesSuite");
 		return $suite;
 	}
 }
