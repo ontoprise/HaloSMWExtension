@@ -445,10 +445,10 @@ QUERY;
 	
     /**
      * Every LOD source definition has an ID. This method returns all IDs of
-     * definitions that are stored in the triple store.
+     * definitions and their labels that are stored in the triple store.
      *
-     * @return array<string>
-     *      An array of all IDs. If no ID is available, the array is empty.
+     * @return array<id, label>
+     *      An array of all IDs and according labels. If no ID is available, the array is empty.
      */
     public function getAllSourceDefinitionIDsAndLabels() {
         $graph = $this->getDataSourcesGraph();
