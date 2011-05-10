@@ -262,6 +262,9 @@ class DeployDescriptor {
 				$mayfail = trim((string) $p->attributes()->mayfail);
 				
 				if (is_null($patchFile) || $patchFile == '') throw new IllegalArgument("Patch 'file'-atrribute missing");
+				
+				if (empty($from)) $from = 0;
+				if (empty($to)) $to = 9999;
 				$this->patches[] = array(array($ext, $from, $to), array($patchFile, $mayfail));
 			}
 		}
@@ -276,6 +279,8 @@ class DeployDescriptor {
 				$from = trim((string) $p->attributes()->from);
 				$to = trim((string) $p->attributes()->to);
 				if (is_null($patchFile) || $patchFile == '') throw new IllegalArgument("Patch 'file'-atrribute missing");
+				if (empty($from)) $from = 0;
+                if (empty($to)) $to = 9999;
 				$this->uninstallpatches[] = array(array($ext, $from, $to), $patchFile);
 			}
 		}
