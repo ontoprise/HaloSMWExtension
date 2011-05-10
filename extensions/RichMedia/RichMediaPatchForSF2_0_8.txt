@@ -1643,23 +1643,3 @@ Index: extensions/SemanticForms/includes/SF_FormPrinter.php
      }
      $starttime = wfTimestampNow();
      $page_article = new Article( $this->mPageTitle );
-Index: extensions/SemanticForms/libs/SemanticForms.js
-===================================================================
---- extensions/SemanticForms/libs/SemanticForms.js	(revision 10300)
-+++ extensions/SemanticForms/libs/SemanticForms.js	(working copy)
-@@ -785,7 +785,14 @@
- 
- 	// Could this be done via classes and attributes, instead of a
- 	// global variable?
--	for (var i in sfgAdderButtons) {
-+	/*op-patch|BL|2009-10-12|RichMedia|RichMedia patch for SF|start*/
-+	/*op-patch|BL|2009-10-07|RichMedia|RichMedia patch for SF|doc|
-+	 *  http://dmwiki.ontoprise.com:8888/dmwiki/index.php/RichMedia_patch_for_SF */
-+	// Avoid JS error.
-+	// contet was:
-+	// for (var i in sfgAdderButtons) {
-+	for (var i=0; i <= sfgAdderButtons.length-1; i++) {
-+	/*op-patch|BL|2009-10-12|end*/
- 		var components = sfgAdderButtons[i].split(',');
- 		adderID = components[0];
- 		templateName = components[1];

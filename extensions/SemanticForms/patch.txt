@@ -367,3 +367,153 @@ Index: extensions/SemanticForms/includes/SF_FormInputs.php
      $text = Xml::element( 'textarea', $textarea_attrs, $cur_value, false );
      $spanClass = "inputSpan";
      if ( $is_mandatory ) { $spanClass .= " mandatoryFieldSpan"; }
+Index: extensions/SemanticForms/libs/SemanticForms.js
+===================================================================
+--- extensions/SemanticForms/libs/SemanticForms.js	(revision 10836)
++++ extensions/SemanticForms/libs/SemanticForms.js	(working copy)
+@@ -336,7 +336,14 @@
+ // Show this div if the current value is any of the relevant options -
+ // otherwise, hide it.
+ function showDivIfSelected(options, div_id, inputVal) {
+-	for (var j in options) {
++	/*op-patch|BL|2011-05-10|SemanticForms|ForInLoops|start*/
++	/*op-patch|BL|2011-05-10|SemanticForms|ForInLoops|doc|
++	 *  http://dmwiki.ontoprise.com:8888/dmwiki/index.php/For_in_loops_in_SF */
++	// Reverted "for ... in" back to vanilla loops.
++	// content was:
++	//	for (var j in options) {
++	for ( var j = 0; j < options.length; j++ ) {
++	/*op-patch|BL|2011-05-10|end*/
+ 		// If it's a listbox and the user has selected more than one
+ 		// value, it'll be an array - handle either case.
+ 		if ((jQuery.isArray(inputVal) && jQuery.inArray(options[j], inputVal) >= 0) ||
+@@ -352,7 +359,14 @@
+ jQuery.fn.showIfSelected = function() {
+ 	var inputVal = this.val();
+ 	var showOnSelectVals = sfgShowOnSelect[this.attr("id")];
+-	for (i in showOnSelectVals) {
++	/*op-patch|BL|2011-05-10|SemanticForms|ForInLoops|start*/
++	/*op-patch|BL|2011-05-10|SemanticForms|ForInLoops|doc|
++	 *  http://dmwiki.ontoprise.com:8888/dmwiki/index.php/For_in_loops_in_SF */
++	// Reverted "for ... in" back to vanilla loops.
++	// content was:
++	//	for (i in showOnSelectVals) {
++	for ( var i = 0; i < showOnSelectVals.length; i++ ) {
++	/*op-patch|BL|2011-05-10|end*/
+ 		var options = showOnSelectVals[i][0];
+ 		var div_id = showOnSelectVals[i][1];
+ 		showDivIfSelected(options, div_id, inputVal);
+@@ -362,7 +376,14 @@
+ // Show this div if any of the relevant selections are checked -
+ // otherwise, hide it.
+ jQuery.fn.showDivIfChecked = function(options, div_id) {
+-	for (var i in options) {
++	/*op-patch|BL|2011-05-10|SemanticForms|ForInLoops|start*/
++	/*op-patch|BL|2011-05-10|SemanticForms|ForInLoops|doc|
++	 *  http://dmwiki.ontoprise.com:8888/dmwiki/index.php/For_in_loops_in_SF */
++	// Reverted "for ... in" back to vanilla loops.
++	// content was:
++	//	for (var i in options) {
++	for ( var i = 0; i < options.length; i++ ) {
++	/*op-patch|BL|2011-05-10|end*/
+ 		if (jQuery(this).find('[value="' + options[i] + '"]').is(":checked")) {
+ 			showDiv(div_id);
+ 			return;
+@@ -375,7 +396,14 @@
+ // inputs.
+ jQuery.fn.showIfChecked = function() {
+ 	var showOnSelectVals = sfgShowOnSelect[this.attr("id")];
+-	for (i in showOnSelectVals) {
++	/*op-patch|BL|2011-05-10|SemanticForms|ForInLoops|start*/
++	/*op-patch|BL|2011-05-10|SemanticForms|ForInLoops|doc|
++	 *  http://dmwiki.ontoprise.com:8888/dmwiki/index.php/For_in_loops_in_SF */
++	// Reverted "for ... in" back to vanilla loops.
++	// content was:
++	//	for (i in showOnSelectVals) {
++	for ( var i = 0; i < showOnSelectVals.length; i++ ) {
++	/*op-patch|BL|2011-05-10|end*/
+ 		var options = showOnSelectVals[i][0];
+ 		var div_id = showOnSelectVals[i][1];
+ 		this.showDivIfChecked(options, div_id);
+@@ -565,7 +593,14 @@
+ 			if ( jQuery("#" + id).closest(".multipleTemplateStarter").length == 0 ) {
+ 
+ 				// Call every validation method for this input.
+-				for ( var i in sfdata.validationFunctions[id]) {
++				/*op-patch|BL|2011-05-10|SemanticForms|ForInLoops|start*/
++				/*op-patch|BL|2011-05-10|SemanticForms|ForInLoops|doc|
++				 *  http://dmwiki.ontoprise.com:8888/dmwiki/index.php/For_in_loops_in_SF */
++				// Reverted "for ... in" back to vanilla loops.
++				// content was:
++				// for ( var i in sfdata.validationFunctions[id]) {
++				for ( var i = 0; i < sfdata.validationFunctions[id].length; i++ ) {
++				/*op-patch|BL|2011-05-10|end*/
+ 					if (! sfdata.validationFunctions[id][i].valfunction(id, sfdata.validationFunctions[id][i].parameters) )
+ 						num_errors += 1;
+ 				}
+@@ -630,8 +665,14 @@
+ 					// For every initialization method for
+ 					// input with id old_id, register the
+ 					// method for the new input.
+-					for ( var i in sfdata.initFunctions[old_id] ) {
+-
++					/*op-patch|BL|2011-05-10|SemanticForms|ForInLoops|start*/
++					/*op-patch|BL|2011-05-10|SemanticForms|ForInLoops|doc|
++					 *  http://dmwiki.ontoprise.com:8888/dmwiki/index.php/For_in_loops_in_SF */
++					// Reverted "for ... in" back to vanilla loops.
++					// content was:
++					// for ( var i in sfdata.initFunctions[old_id] ) {
++					for ( var i = 0; i < sfdata.initFunctions[old_id].length; i++ ) {
++					/*op-patch|BL|2011-05-10|end*/
+ 						jQuery(this).SemanticForms_registerInputInit(
+ 							sfdata.initFunctions[old_id][i].initFunction,
+ 							sfdata.initFunctions[old_id][i].parameters,
+@@ -642,8 +683,14 @@
+ 					// For every validation method for the
+ 					// input with ID old_id, register it
+ 					// for the new input.
+-					for ( i in sfdata.validationFunctions[old_id] ) {
+-
++					/*op-patch|BL|2011-05-10|SemanticForms|ForInLoops|start*/
++					/*op-patch|BL|2011-05-10|SemanticForms|ForInLoops|doc|
++					 *  http://dmwiki.ontoprise.com:8888/dmwiki/index.php/For_in_loops_in_SF */
++					// Reverted "for ... in" back to vanilla loops.
++					// content was:
++					// for ( i in sfdata.validationFunctions[old_id] ) {
++					for ( i = 0; i < sfdata.validationFunctions[old_id].length; i++ ) {
++					/*op-patch|BL|2011-05-10|end*/
+ 						jQuery(this).SemanticForms_registerInputValidation(
+ 							sfdata.validationFunctions[old_id][i].valfunction,
+ 							sfdata.validationFunctions[old_id][i].parameters
+@@ -727,7 +774,14 @@
+ 				if (sfdata) { // if anything registered at all
+ 					// Call every initialization method
+ 					// for this input
+-					for ( var i in sfdata.initFunctions[this.id] ) {
++					/*op-patch|BL|2011-05-10|SemanticForms|ForInLoops|start*/
++					/*op-patch|BL|2011-05-10|SemanticForms|ForInLoops|doc|
++					 *  http://dmwiki.ontoprise.com:8888/dmwiki/index.php/For_in_loops_in_SF */
++					// Reverted "for ... in" back to vanilla loops.
++					// content was:
++					// for ( var i in sfdata.initFunctions[this.id] ) {
++					for ( var i = 0; i < sfdata.initFunctions[this.id].length; i++ ) {
++					/*op-patch|BL|2011-05-10|end*/
+ 						sfdata.initFunctions[this.id][i].initFunction(
+ 							this.id,
+ 							sfdata.initFunctions[this.id][i].parameters
+@@ -785,7 +839,14 @@
+ 
+ 	// Could this be done via classes and attributes, instead of a
+ 	// global variable?
+-	for (var i in sfgAdderButtons) {
++	/*op-patch|BL|2011-05-10|SemanticForms|ForInLoops|start*/
++	/*op-patch|BL|2011-05-10|SemanticForms|ForInLoops|doc|
++	 *  http://dmwiki.ontoprise.com:8888/dmwiki/index.php/For_in_loops_in_SF */
++	// Reverted "for ... in" back to vanilla loops.
++	// content was:
++	// for (var i in sfgAdderButtons) {
++	for ( var i = 0; i < sfgAdderButtons.length; i++ ) {
++	/*op-patch|BL|2011-05-10|end*/
+ 		var components = sfgAdderButtons[i].split(',');
+ 		adderID = components[0];
+ 		templateName = components[1];
