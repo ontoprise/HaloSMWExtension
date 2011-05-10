@@ -442,6 +442,33 @@ QUERY;
 		}
 		return $result;
 	}
+	
+    /**
+     * Every LOD source definition has an ID. This method returns all IDs of
+     * definitions that are stored in the triple store.
+     *
+     * @return array<string>
+     *      An array of all IDs. If no ID is available, the array is empty.
+     */
+    public function getAllSourceDefinitionIDsAndLabels() {
+        $graph = $this->getDataSourcesGraph();
+        $id    = "smw-lde:ID";
+        $label    = "smw-lde:label";
+        $prefixes = self::getSourceDefinitionPrefixes();
+
+        $query = $prefixes."SELECT ?s ?id ?label FROM <$graph> WHERE { ?s $id  ?id . ?s $label ?label . }";
+
+        $tsa = new LODTripleStoreAccess();
+        $qr = $tsa->queryTripleStore($query, $graph);
+
+        $result = array();
+        if (is_null($qr)) return $result;
+
+        foreach ($qr->getRows() as $row) {
+            $result[] = array($row->getResult("id")->getValue(), $row->getResult("label")->getValue());
+        }
+        return $result;
+    }
 
 	/**
 	 * Returns the prefixes for all namespaces that are used in triples for
