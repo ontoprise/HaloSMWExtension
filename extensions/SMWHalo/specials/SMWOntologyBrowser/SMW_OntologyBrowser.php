@@ -89,10 +89,11 @@ class SMW_OntologyBrowser extends SpecialPage {
 				$connectionError = "<div class=\"aoConnectionError\">".wfMsg("smw_ob_ts_not_connected")."</div>";
 			}
 			
-			$ids = LODAdministrationStore::getInstance()->getAllSourceDefinitionIDs();
+			$ids = LODAdministrationStore::getInstance()->getAllSourceDefinitionIDsAndLabels();
 			$sourceOptions = "";
-			foreach ($ids as $sourceID) {
-				$sourceOptions .= "<option>$sourceID</option>";
+			foreach ($ids as $tuple) {
+				list($sourceID, $sourceLabel) = $tuple;
+				$sourceOptions .= "<option sourceid=\"$sourceID\">$sourceLabel</option>";
 			}
 			$advancedOptions  = wfMsg("smw_ob_advanced_options");
 			$fromWiki         = wfMsg("smw_ob_source_wiki");

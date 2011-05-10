@@ -67,7 +67,7 @@ OBAdvancedOptions.prototype = {
 		var value = "";
 		dss.descendants().each(function(opt){
 			if (opt.selected == true) {
-				value += "," + opt.text;
+				value += "," + opt.getAttribute("sourceid");
 			}
 		});
 		if (value.length > 0) {
