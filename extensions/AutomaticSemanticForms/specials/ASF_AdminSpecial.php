@@ -35,20 +35,31 @@ class ASFAdminSpecial extends SpecialPage {
 		$html .= '<textarea id="asf_category_input" class="wickEnabled" constraints="asf-ac:_"></textarea>';
 		$html .= '<input type="button" value="Refresh" onclick="ASFAdmin.refreshTabs()"/>';
 		
+		
+		//the tab container
+		$html .= '<table class="asf_tab_container">';
+		
 		//the tabs
-		$html .= '<div class="asf_tab_container">';
-		$html .= '<span class="asf_selected_tab" onclick="ASFAdmin.displayPreview()">Preview</span>';
-		$html .= '<span class="asf_unselected_tab" onclick="ASFAdmin.displaySource()">Source</span>';
-		$html .= '<span class="asf_unselected_tab" onclick="ASFAdmin.displayCreate()">Create</span>';
-		$html .= '</div>';
+		$html .= '<tr class="asf_tabs">';
+		$html .= '<td class="asf_selected_tab" onclick="ASFAdmin.displayPreview()">Preview</td>';
+		$html .= '<td class="asf_spacer_tab"></td>';
+		$html .= '<td class="asf_unselected_tab" onclick="ASFAdmin.displaySource()">Source</td>';
+		$html .= '<td class="asf_spacer_tab"></td>';
+		$html .= '<td class="asf_unselected_tab" onclick="ASFAdmin.displayCreate()">Create</td>';
+		$html .= '<td class="asf_spacer_tab" width="100%"></td>';
+		//$html .= '</div>';
+		$html .= '</tr>';
+
 		
 		//the tab containers
 		$initMSG = 'First, please choose some categories and click the refresh button.';
-		$html .= '<div class="asf_tab_windoe">';
+		$html .= '<tr>';
+		$html .= '<td class="asf_tab_content" colspan="6">';
+		//$html .= '<div class="asf_tab_window">';
 		$html .= '<div id="asf_preview_tab">'.$initMSG.'</div>';
 		$html .= '<div id="asf_source_tab" style="display: none">'.$initMSG.'</div>';
-		$html .= '<div id="asf_create_tab" style="display: none">';
 		
+		$html .= '<div id="asf_create_tab" style="display: none">';
 		$html .= '<span>'.$initMSG.'</span>';
 		$html .= '<span style="display: none"></span>';
 		$html .= '<div style="display: none; width: 100%">';
@@ -64,7 +75,11 @@ class ASFAdminSpecial extends SpecialPage {
 		$html .= '<br/><input type="button" value="Ok" onclick="ASFAdmin.finishSaveRequest()"/>';
 		$html .= '</span>';
 		$html .= '</div>';
-		$html .= '</div>';
+		//$html .= '</div>';
+		
+		$html .= '</td>';
+		$html .= '</tr>';
+		$html .= '</table>';
 		
 		$wgOut->addHTML($html);
 		

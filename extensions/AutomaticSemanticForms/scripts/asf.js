@@ -70,44 +70,44 @@ var ASFAdmin = {
 	
 	displayPreview : function(){
 		jQuery('#asf_source_tab').css('display', 'none');
-		jQuery('.asf_tab_container span:nth-child(2)').removeClass('asf_selected_tab');
-		jQuery('.asf_tab_container span:nth-child(2)').addClass('asf_unselected_tab');
+		jQuery('.asf_tabs td:nth-child(3)').removeClass('asf_selected_tab');
+		jQuery('.asf_tabs td:nth-child(3)').addClass('asf_unselected_tab');
 		
 		jQuery('#asf_create_tab').css('display', 'none');
-		jQuery('.asf_tab_container span:nth-child(3)').removeClass('asf_selected_tab');
-		jQuery('.asf_tab_container span:nth-child(3)').addClass('asf_unselected_tab');
+		jQuery('.asf_tabs td:nth-child(5)').removeClass('asf_selected_tab');
+		jQuery('.asf_tabs td:nth-child(5)').addClass('asf_unselected_tab');
 		
 		jQuery('#asf_preview_tab').css('display', 'inline-block');
-		jQuery('.asf_tab_container span:nth-child(1)').removeClass('asf_unselected_tab');
-		jQuery('.asf_tab_container span:nth-child(1)').addClass('asf_selected_tab');
+		jQuery('.asf_tabs td:nth-child(1)').removeClass('asf_unselected_tab');
+		jQuery('.asf_tabs td:nth-child(1)').addClass('asf_selected_tab');
 	},
 	
 	displaySource : function(){
 		jQuery('#asf_source_tab').css('display', 'inline-block');
-		jQuery('.asf_tab_container span:nth-child(2)').removeClass('asf_unselected_tab');
-		jQuery('.asf_tab_container span:nth-child(2)').addClass('asf_selected_tab');
+		jQuery('.asf_tabs td:nth-child(3)').removeClass('asf_unselected_tab');
+		jQuery('.asf_tabs td:nth-child(3)').addClass('asf_selected_tab');
 		
 		jQuery('#asf_create_tab').css('display', 'none');
-		jQuery('.asf_tab_container span:nth-child(3)').removeClass('asf_selected_tab');
-		jQuery('.asf_tab_container span:nth-child(3)').addClass('asf_unselected_tab');
+		jQuery('.asf_tabs td:nth-child(5)').removeClass('asf_selected_tab');
+		jQuery('.asf_tabs td:nth-child(5)').addClass('asf_unselected_tab');
 		
 		jQuery('#asf_preview_tab').css('display', 'none');
-		jQuery('.asf_tab_container span:nth-child(1)').removeClass('asf_selected_tab');
-		jQuery('.asf_tab_container span:nth-child(1)').addClass('asf_unselected_tab');
+		jQuery('.asf_tabs td:nth-child(1)').removeClass('asf_selected_tab');
+		jQuery('.asf_tabs td:nth-child(1)').addClass('asf_unselected_tab');
 	},
 	
 	displayCreate : function(){
 		jQuery('#asf_source_tab').css('display', 'none');
-		jQuery('.asf_tab_container span:nth-child(2)').removeClass('asf_selected_tab');
-		jQuery('.asf_tab_container span:nth-child(2)').addClass('asf_unselected_tab');
+		jQuery('.asf_tabs td:nth-child(3)').removeClass('asf_selected_tab');
+		jQuery('.asf_tabs td:nth-child(3)').addClass('asf_unselected_tab');
 		
 		jQuery('#asf_create_tab').css('display', 'inline-block');
-		jQuery('.asf_tab_container span:nth-child(3)').removeClass('asf_unselected_tab');
-		jQuery('.asf_tab_container span:nth-child(3)').addClass('asf_selected_tab');
+		jQuery('.asf_tabs td:nth-child(5)').removeClass('asf_unselected_tab');
+		jQuery('.asf_tabs td:nth-child(5)').addClass('asf_selected_tab');
 		
 		jQuery('#asf_preview_tab').css('display', 'none');
-		jQuery('.asf_tab_container span:nth-child(1)').removeClass('asf_selected_tab');
-		jQuery('.asf_tab_container span:nth-child(1)').addClass('asf_unselected_tab');
+		jQuery('.asf_tabs td:nth-child(1)').removeClass('asf_selected_tab');
+		jQuery('.asf_tabs td:nth-child(1)').addClass('asf_unselected_tab');
 	},
 	
 	saveForm : function(){
