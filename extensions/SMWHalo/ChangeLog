@@ -9,6 +9,8 @@ VERSION 1.5.4
 		14493 - SMWhalo special properties Creator, Creation date, Last modified
 		        by are not available in articles which have been created with 
 		        tabular forms.
+		13781 - Viewing red-links from properties (type:Page, no range) in STB: 
+		        property values must be displayed in red
 		        
 		        
 VERSION 1.5.3

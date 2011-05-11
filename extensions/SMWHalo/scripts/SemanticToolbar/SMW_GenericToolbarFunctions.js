@@ -32,6 +32,8 @@ createList: function(list,id) {
 	var len = list == null ? 0 : list.length;
 	var divlist = "";
 	var tableHeader = "";
+	var redLinkStyle = ' style="color:#CC2200"';
+	
 	switch (id) {
 		case "category":
 			divlist ='<div id="' + id +'-tools">';
@@ -123,22 +125,50 @@ createList: function(list,id) {
 	  		
 	  			var rowSpan = 'rowspan="'+(list[i].getArity()-1)+'"';
 	  			var values = list[i].getSplitValues();
+				var valuePageInfo = ['no page'];
+				if (list[i].valuePageInfo) {
+					valuePageInfo = list[i].valuePageInfo;
+				}
 	  			firstValue = values[0].escapeHTML();
 	  			var valueLink;
+				var linkDeco = '';
+				
+				if (valuePageInfo[0] == 'redlink') {
+					linkDeco = redLinkStyle;
+				} 
+				if (valuePageInfo[0] == 'exists' || valuePageInfo[0] == 'redlink') {
+					// link to an existing page
+					valueLink = '<a href="'+wgServer+path+firstValue+editArticleURL +
+					            '" target="blank"'+linkDeco+' title="' + firstValue +'">' + firstValue + '</a>';					
+				} else {
+					valueLink = '<span title="' + firstValue + '">' 
+					            + firstValue + '<span>';
+				}
 
 				//firstValue.length > maxlen1 ? maxlen1 = firstValue.length : "";
 
-				valueLink = '<span title="' + firstValue + '">' + firstValue + '<span>';
 				firstValue = valueLink;
 				
 	  			// HTML of parameter rows (except first)
 	  			for (var j = 1, n = list[i].getArity()-1; j < n; j++) {
 	  				//values[j].length > maxlen1 ? maxlen1 = values[j].length : "";
 	  				var v = values[j].escapeHTML();
-					valueLink = 
-						'<span title="' + v + '">' + v +
-					    '</span>';
-	//						values[j];
+					var linkDeco = '';
+					
+					if (valuePageInfo[j] == 'redlink') {
+						linkDeco = redLinkStyle;
+					} 
+					if (valuePageInfo[j] == 'exists' || valuePageInfo[j] == 'redlink') {
+						// link to an existing page
+						valueLink = '<a href="'+wgServer+path+v+editArticleURL +
+						            '" target="blank"'+linkDeco+' title="' + v +'">' + v + '</a>';					
+					} else {
+						valueLink = '<span title="' + v + '">' 
+						            + v + '<span>';
+					}
+//					valueLink = 
+//						'<span title="' + v + '">' + v +
+//					    '</span>';
 					multiValue += 
 						"<tr>" +
 							"<td class=\"" + id + "-col2\">" + 

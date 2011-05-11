@@ -172,35 +172,41 @@ fillList: function(forceShowList) {
 				}
 			}
 		}
-		rels = rels.substr(0, rels.length-1);
-		if (rels.length > 0 && rels != this.relationsForAccessCheck) {
-			// Check if properties are protected by access control
-			this.relationsForAccessCheck = rels;
-			sajax_do_call('smwf_om_userCanMultiple',
-			              [rels, "propertyedit"],
-			              checkPropertyEditCallback.bind(this),
-			              relations);
+		
+		var relationInfo = [];
+		for (var i = 0; i < relations.length; ++i) {
+			relationInfo[i] = {
+				name  : gLanguage.getMessage('PROPERTY_NS') + relations[i].name,
+				values: relations[i].getSplitValues(),
+				accessRequest: "propertyedit"
+			};
 		}
 
+		var riJSON = JSON.stringify(relationInfo);
+		if (riJSON.length > 0 && riJSON != this.relationInfoRequest) {
+			this.relationInfoRequest = riJSON;
+			sajax_do_call('smwf_om_MultipleRelationInfo',
+			              [riJSON],
+			              relationInfoCallback.bind(this),
+			              relations);
+		}
+		
 		if (this.propertyRights
 			&& this.propertyRights.length == relations.length) {
 			for (var i = 0; i < relations.length; ++i) {
-				relations[i].accessAllowed = this.propertyRights[i][1];
+				relations[i].accessAllowed = this.propertyRights[i];
 			}
-		}
-
-		if (rels.length > 0 && rels != this.relationsForExistenceCheck) {
-			// Check if properties are already defined
-			this.relationsForExistenceCheck = rels;
-			sajax_do_call('smwf_om_ExistsArticleMultiple',
-			              [rels],
-			              checkPropertyExistCallback.bind(this),
-			              relations);
 		}
 		if (this.propertyExists
 			&& this.propertyExists.length == relations.length) {
 			for (var i = 0; i < relations.length; ++i) {
-				relations[i].exists = this.propertyExists[i][1];
+				relations[i].exists = this.propertyExists[i];
+			}
+		}
+		if (this.valuePageInfo
+			&& this.valuePageInfo.length == relations.length) {
+			for (var i = 0; i < relations.length; ++i) {
+				relations[i].valuePageInfo = this.valuePageInfo[i];
 			}
 		}
 
@@ -218,58 +224,43 @@ fillList: function(forceShowList) {
 		this.relationcontainer.contentChanged();
 	}
 	
+	
 	/**
-	 * Closure:
-	 * Callback function that gets the results of the access check for properties.
+	 * 
+	 * @param {Object} request
 	 */
-	function checkPropertyEditCallback(request) {
-		
+	function relationInfoCallback(request) {
 	
 		if (request.status != 200) {
 			// call for schema data failed, do nothing.
 			return;
 		}
 	
-		var rights = request.responseText.evalJSON(true);
-		this.propertyRights = rights;
+		var relationInfo = request.responseText.evalJSON(true);
+		this.propertyExists = [];
+		this.valuePageInfo = [];
 
 		var containsForbiddenProperties = false;
-		for (var i = 0; i < relations.length; ++i) {
-			relations[i].accessAllowed = rights[i][1];
-			if (rights[i][1] == "false") {
+		for (var i = 0; i < relationInfo.length; ++i) {
+			relations[i].exists = relationInfo[i].relationExists;
+			this.propertyExists.push(relationInfo[i].relationExists);
+			
+			relations[i].accessAllowed = relationInfo[i].accessGranted;
+			if (relationInfo[i].accessGranted == "false") {
 				containsForbiddenProperties = true;
 			}
+			
+			relations[i].valuePageInfo = relationInfo[i].valuePageInfo;
+			this.valuePageInfo.push(relationInfo[i].valuePageInfo);
 		}
 		
 		refreshSTB.containsForbiddenProperties = containsForbiddenProperties;
+
 		this.relationcontainer.setContent(this.genTB.createList(relations,"relation"));
 		this.relationcontainer.contentChanged();
 		refreshSTB.refreshToolBar();
 		
-	};
-
-	/**
-	 * Closure:
-	 * Callback function that gets the results of the check for existence of properties.
-	 */
-	function checkPropertyExistCallback(request) {
-	
-		if (request.status != 200) {
-			// call for schema data failed, do nothing.
-			return;
-		}
-	
-		var existence = request.responseText.evalJSON(true);
-		this.propertyExists = existence;
-
-		for (var i = 0; i < relations.length; ++i) {
-			relations[i].exists = existence[i][1];
-		}
-		this.relationcontainer.setContent(this.genTB.createList(relations,"relation"));
-		this.relationcontainer.contentChanged();
-		refreshSTB.refreshToolBar();
-	};
-	
+	}	
 },
 
 /**

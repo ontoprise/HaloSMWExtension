@@ -36,6 +36,7 @@ $wgAjaxExportList[] = 'smwf_om_TouchArticle';
 $wgAjaxExportList[] = 'smwf_om_ExistsArticle';
 $wgAjaxExportList[] = 'smwf_om_ExistsArticleMultiple';
 $wgAjaxExportList[] = 'smwf_om_ExistsArticleIgnoreRedirect';
+$wgAjaxExportList[] = 'smwf_om_MultipleRelationInfo';
 $wgAjaxExportList[] = 'smwf_om_RelationSchemaData';
 $wgAjaxExportList[] = 'smwf_om_GetWikiText';
 $wgAjaxExportList[] = 'smwf_om_DeleteArticle';
@@ -418,6 +419,78 @@ function smwf_om_IsRedirect(Title $title) {
 	return $db->selectRow($pagetable, 'page_is_redirect', array('page_title' => $title->getDBkey(), 'page_namespace' => $title->getNamespace(), 'page_is_redirect' => 1)) !== false;
 }
 
+/**
+ * This function retrieves information about several relations. It checks if
+ * - there is an article that defines the relation
+ * - access control grants the requested access
+ * - values of type page are valid existing pages
+ * 
+ * @param string $relations
+ * 		JSON representation of all relations to check:
+ * 		array(Object(name => string, values => array(string))
+ * @return string 
+ * 		JSON representation of the objects that were given as parameter with
+ * 		additional values:
+ * 		- relationExists: "true", "false" or "false,denied,<relation name>"
+ * 		- accessGranted: "true" or "false"
+ * 		- valuePageInfo (array): For each value of the property, if it is the 
+ *                               name of an article and if it exists:
+ *								 "exists"  => Value is an existing page
+ *								 "redlink" => Value is a non-existing page
+ *								 "no page" => Value is not a page
+ *								 "missing type info" => The type info for the value is  missing
+ * 
+ */
+function smwf_om_MultipleRelationInfo($relations) {
+	if (empty($relations)) {
+		return '[]';
+	}
+	
+	$results = array();
+	// The relations have to be decoded twice as sajax_do_call does not correctly
+	// encode JavaScript-objects, but it does encode the string with a JSON 
+	// representation of an object
+	$relations = json_decode($relations);
+	$relations = json_decode($relations);
+	foreach ($relations as $relDescr) {
+		// Check if an article for the relation exists 
+		$relDescr->relationExists = smwf_om_ExistsArticle($relDescr->name);
+		
+		// Check access request for the relation
+		$relDescr->accessGranted = smwf_om_userCan($relDescr->name, $relDescr->accessRequest);
+		
+		// Check if values of the relation are valid pages
+		$relSchema = $relDescr->relationExists === 'true'
+						? smwf_om_getRelationSchema($relDescr->name)
+						: array('_wpg');
+		// Store for each value of the property if it is the name of an article
+		// and if it exists. This is encoded as follows:
+		// "exists"  => Value is an existing page
+		// "redlink" => Value is a non-existing page
+		// "no page"   => Value is not a page
+		// "missing type info" => The type info for the value is  missing
+		$valuePageInfo = array();
+		for ($i = 0, $n = count($relDescr->values); $i < $n; ++$i) {
+			if ($i < count($relSchema)) {
+				// Type info for value exists
+				if ($relSchema[$i] == '_wpg') {
+					// Value should be a page
+					$exists = smwf_om_ExistsArticle($relDescr->values[$i]);
+					$valuePageInfo[] = $exists == 'true' ? "exists" : "redlink";
+				} else {
+					// value is of another type
+					$valuePageInfo[] = "no page";
+				}
+			} else {
+				$valuePageInfo[] = "missing type info";
+			}
+		}
+		$relDescr->valuePageInfo = $valuePageInfo;
+		$results[] = $relDescr;
+	}
+	
+	return json_encode($results);
+}
 
 /**
  * Returns relation schema data as XML.
@@ -993,4 +1066,45 @@ function smwf_om_getSuperCategories($categoryTitle, $asTree = false, $superCateg
 		}
 	}
 	return $superCategoryTitles;
+}
+
+/**
+ * Retrieves the schema of the relation with the given name.
+ * This is a "private" function.
+ * 
+ * @param string $relationName
+ * 		Name of the relation
+ * 
+ */
+function smwf_om_getRelationSchema($relationName) {
+	// get type definition (if it exists)
+	$relationTitle = Title::newFromText($relationName, SMW_NS_PROPERTY);
+	$hasTypeDV = SMWPropertyValue::makeProperty("_TYPE");
+	$type = smwfGetStore()->getPropertyValues($relationTitle, $hasTypeDV);
+
+	// if no 'has type' annotation => normal binary relation
+	if (count($type) == 0) {
+		// return binary schema with the default type 'page'
+		$relSchema = array('page');
+	} else {
+		$typeLabels = $type[0]->getTypeLabels();
+		$typeValues = $type[0]->getTypeValues();
+		$relSchema = array();
+		if ($type[0] instanceof SMWTypesValue) {
+			if ($type[0]->getDBkey() == '_rec') {
+				// This is an n-ary property
+				// => the property "has fields" contains the actual types
+				$fieldsProp = SMWPropertyValue::makeProperty("_LIST");
+				$fields = smwfGetStore()->getPropertyValues($relationTitle, $fieldsProp);
+				$typeValues = $fields[0]->getTypeValues();
+				foreach ($typeValues as $tv) {
+					$relSchema[] = $tv->getDBkey();
+				}
+			} else {
+	   			$relSchema[] = $type[0]->getDBkey();
+			}
+		}
+	}
+	return $relSchema;
+	
 }
