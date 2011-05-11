@@ -117,7 +117,10 @@ class DeployWikiImporterDetector extends WikiImporter {
         $this->pageOutCallback( $this->pageTitle, $this->origTitle,
         $this->workRevisionCount, $this->workSuccessCount );
         
-        $this->result[] = !is_null($this->workRevision) ? $this->workRevision->getResult() : NULL;
+        if (!is_null($this->workRevision) && !is_null($this->workRevision->getResult())) {
+        	 $this->result[] = $this->workRevision->getResult();
+        }
+       
         $this->workTitle = null;
         $this->workRevision = null;
         $this->workRevisionCount = 0;
@@ -163,6 +166,7 @@ class DeployWikiRevisionDetector extends WikiRevision {
         $this->callback = $callback;
         $this->ontologyID = $ontologyID;
         $this->prefix = $prefix;
+        $this->result = NULL;
         $this->logger = Logger::getInstance();
     }
 
