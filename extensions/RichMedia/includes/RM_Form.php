@@ -186,6 +186,9 @@ END;
 		}
 
 		$title = Title::newFromText($link_name);
+		if( !$title->exists() ) {
+			return wfMsgNoTrans( 'smw_rm_filenotfound', $link_name);
+		}
 		$temp_var = $title->getNamespace();
 		$file = wfFindFile($title);
 		if ( !$file ) {
