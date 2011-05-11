@@ -40,9 +40,8 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 
 		$values = array();
 
-		$limit =  ($requestoptions->limit > -1) ? " LIMIT ".$requestoptions->limit : "";
-        $offset = ($requestoptions->offset > 0) ? " OFFSET ".$requestoptions->offset : "";
-
+	
+		
 		// query
 		if ($subject instanceof Title) {
 			$v = SMWDataValueFactory::newTypeIDValue('_wpg');
@@ -55,7 +54,7 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 		}
 
 		try {
-			$response = $client->query("SELECT DISTINCT ?p ?o WHERE {  GRAPH ?G { $subj_iri ?p ?o. } } $limit $offset",  "merge=false");
+			$response = $client->query("SELECT DISTINCT ?p ?o WHERE {  GRAPH ?G { $subj_iri ?p ?o. } } ",  "merge=false");
 		} catch(Exception $e) {
 			wfDebug("Triplestore does probably not run.\n");
 			$response = TSNamespaces::$EMPTY_SPARQL_XML;
@@ -145,9 +144,9 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 
 
 
-		$limit =  ($requestoptions->limit > -1) ? " LIMIT ".$requestoptions->limit : "";
-        $offset = ($requestoptions->offset > 0) ? " OFFSET ".$requestoptions->offset : "";
-
+		$limit =  (!is_null($requestoptions) && $requestoptions->limit > -1) ? " LIMIT ".$requestoptions->limit : "";
+        $offset = (!is_null($requestoptions) && $requestoptions->offset > 0) ? " OFFSET ".$requestoptions->offset : "";
+		
 		// query
 		if ($subject instanceof Title) {
 			$subj_iri =  $this->tsNamespace->getFullIRI($subject);
@@ -208,9 +207,9 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 
 		$values = array();
 
-		$limit =  ($requestoptions->limit > -1) ? " LIMIT ".$requestoptions->limit : "";
-		$offset = ($requestoptions->offset > 0) ? " OFFSET ".$requestoptions->offset : "";
-
+		$limit =  (!is_null($requestoptions) && $requestoptions->limit > -1) ? " LIMIT ".$requestoptions->limit : "";
+        $offset = (!is_null($requestoptions) && $requestoptions->offset > 0) ? " OFFSET ".$requestoptions->offset : "";
+		
 		// query
 		if ($object instanceof SMWWikiPageValue) {
 			$objectNode =  $this->tsNamespace->getFullIRI($object->getTitle());
@@ -272,9 +271,9 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 
 		$values = array();
 
-		$limit =  ($requestoptions->limit > -1) ? " LIMIT ".$requestoptions->limit : "";
-        $offset = ($requestoptions->offset > 0) ? " OFFSET ".$requestoptions->offset : "";
-
+		$limit =  (!is_null($requestoptions) && $requestoptions->limit > -1) ? " LIMIT ".$requestoptions->limit : "";
+        $offset = (!is_null($requestoptions) && $requestoptions->offset > 0) ? " OFFSET ".$requestoptions->offset : "";
+		
 		if ($property->getPropertyID() == '_INST') {
 			$property_iri = "<".TSNamespaces::$RDF_NS."type>";
 		} else if ($property->getPropertyID() == '_INST') {
@@ -374,8 +373,8 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 		$subjctName = $subject->getDBkey();
 		$propertyName = $property->getWikiPageValue()->getTitle()->getDBkey();
 
-		$limit =  ($requestoptions->limit > -1) ? " LIMIT ".$requestoptions->limit : "";
-        $offset = ($requestoptions->offset > 0) ? " OFFSET ".$requestoptions->offset : "";
+		$limit =  (!is_null($requestoptions) && $requestoptions->limit > -1) ? " LIMIT ".$requestoptions->limit : "";
+        $offset = (!is_null($requestoptions) && $requestoptions->offset > 0) ? " OFFSET ".$requestoptions->offset : "";
 
 		// query
 		if ($subject instanceof Title) {
@@ -469,8 +468,9 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 
 
 		$propertyName = $property->getWikiPageValue()->getTitle()->getDBkey();
-		$limit =  ($requestoptions->limit > -1) ? " LIMIT ".$requestoptions->limit : "";
-        $offset = ($requestoptions->offset > 0) ? " OFFSET ".$requestoptions->offset : "";
+		$limit =  (!is_null($requestoptions) && $requestoptions->limit > -1) ? " LIMIT ".$requestoptions->limit : "";
+        $offset = (!is_null($requestoptions) && $requestoptions->offset > 0) ? " OFFSET ".$requestoptions->offset : "";
+		
 		if ( $requestoptions->ascending ) {
 			$op = $requestoptions->include_boundary ? ' >= ' : ' > ';
 		} else {
@@ -566,8 +566,7 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 
 		$values = array();
 
-		$limit =  ($requestoptions->limit > -1) ? " LIMIT ".$requestoptions->limit : "";
-        $offset = ($requestoptions->offset > 0) ? " OFFSET ".$requestoptions->offset : "";
+		
 
 		// query
 		if ($subject instanceof Title) {
@@ -584,7 +583,7 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 			$slot2 = $this->tsNamespace->getFullIRIByName(SMW_NS_PROPERTY, "_3");
 			$slot3 = $this->tsNamespace->getFullIRIByName(SMW_NS_PROPERTY, "_4");
 			$slot4 = $this->tsNamespace->getFullIRIByName(SMW_NS_PROPERTY, "_5");
-			$response = $client->query("SELECT DISTINCT ?p ?b ?s0 ?s1 ?s2 ?s3 ?s4 WHERE { GRAPH ?G {  $subj_iri ?p ?b. ?b $slot0 ?s0 . ?b $slot1 ?s1 . ?b $slot2 ?s2 . ?b $slot3 ?s3 . ?b $slot4 ?s4 } } $limit $offset",  "merge=false");
+			$response = $client->query("SELECT DISTINCT ?p ?b ?s0 ?s1 ?s2 ?s3 ?s4 WHERE { GRAPH ?G {  $subj_iri ?p ?b. ?b $slot0 ?s0 . ?b $slot1 ?s1 . ?b $slot2 ?s2 . ?b $slot3 ?s3 . ?b $slot4 ?s4 } } ",  "merge=false");
 		} catch(Exception $e) {
 			wfDebug("Triplestore does probably not run.\n");
 			$response = TSNamespaces::$EMPTY_SPARQL_XML;
