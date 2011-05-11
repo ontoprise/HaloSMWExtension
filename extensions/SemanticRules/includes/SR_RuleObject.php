@@ -260,7 +260,8 @@ class SMWRuleObject extends SMWAbstractRuleObject {
 						$tmp2 = " AND ?__VALUE".self::$varIndex." ".$operand." ".$value;
 						self::$varIndex++;
 					} else if (WikiTypeToXSD::isPageType($wikiType)) {
-						$value = "<".$args[$i]->getFullQualifiedName().">";
+						$uri_value = $args[$i]->getFullQualifiedName($resultType);
+						$value = $resultType == "fullURI" ? "<$uri_value>" : $uri_value;
 						$tmp .= $value;
 					}
 
@@ -277,14 +278,17 @@ class SMWRuleObject extends SMWAbstractRuleObject {
 					} else if ($wikiType == '_num') {
 						$value = $args[$i]->getValue();
 					} else if (WikiTypeToXSD::isPageType($wikiType)) {
-						$value = "<".$args[$i]->getFullQualifiedName().">";
+						$uri_value = $args[$i]->getFullQualifiedName($resultType);
+                        $value = $resultType == "fullURI" ? "<$uri_value>" : $uri_value;
 					}
 					$tmp .= $value;
 
 				} else if ($args[$i] instanceof SMWVariable) {
 					$tmp .= $args[$i]->getName();
 				} else if ($args[$i] instanceof SMWTerm) {
-					$tmp .= $args[$i]->getFullQualifiedName();
+					$uri_value = $args[$i]->getFullQualifiedName($resultType);
+                    $tmp .= $resultType == "fullURI" ? "<$uri_value>" : $uri_value;
+				
 				}
 			}
 		}

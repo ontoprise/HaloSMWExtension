@@ -94,17 +94,18 @@ if (!defined('MEDIAWIKI')) die();
 		}
 	}
 
-	public function getFullQualifiedName() {
+	public function getFullQualifiedName(& $resultType) {
 		global $smwgTripleStoreGraph;
 		if ($this->_arity == 0) {
 			// actually a constant here. Try to interprete it as term.
 			$tsn = TSNamespaces::getInstance();
-			$fullURI = $tsn->toFullURI($this->_arguments);
+			$resultType = "";
+			$fullURI = $tsn->toURI($this->_arguments, $resultType);
 			
 			return $fullURI;
 			
 		} else {
-			
+			$resultType = "fullURI";
 			if (sizeof($this->_arguments)>1) {
 				if (strpos($this->_arguments[0], $smwgTripleStoreGraph) === 0) {
 					// full qualified
