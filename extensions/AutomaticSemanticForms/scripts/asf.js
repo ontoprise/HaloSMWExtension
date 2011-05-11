@@ -236,17 +236,44 @@ function initializeNiceASFTooltips(){
  * hide a form section 
  */
 function asf_hide_category_section(id){
-	jQuery('#' + id + '_visible').hide();
-	jQuery('#' + id + '_hidden').show();
+	jQuery('#' + id + ' .asf_visible_legend').hide();
+	jQuery('#' + id + ' .asf_collapsed_legend').show();
+	jQuery('#' + id + ' .asf_fieldset_content').hide();
+	//jQuery('#' + id + '_hidden legend').focus();
 }
 
 /*
  * Display form section
  */
 function asf_show_category_section(id){
-	jQuery('#' + id + '_visible').show();
-	jQuery('#' + id + '_hidden').hide();
+	jQuery('#' + id + ' .asf_visible_legend').show();
+	jQuery('#' + id + ' .asf_collapsed_legend').hide();
+	jQuery('#' + id + ' .asf_fieldset_content').show();
+	//jQuery('#' + id + '_visible legend').focus();
+}
+
+function asf_hit_category_section(id){
+	if(jQuery('#' + id + ' .asf_visible_legend').css("display") == "none"){
+		asf_show_category_section(id);
+	} else {
+		asf_hide_category_section(id);
+	}
 }
 
 //initialize tooltips
 window.onload = initializeNiceASFTooltips;
+
+
+
+function asf_initializeCollapsableSectionsTabIndexes(){
+	jQuery(".asf_legend").each( function(){
+		var tabindex = jQuery("input[tabindex]", jQuery(this).parent()).attr('tabindex');
+		if(tabindex != undefined){
+			jQuery(this).attr("tabindex", tabindex*1-1+".5");
+		}
+	});
+}
+
+window.onload = asf_initializeCollapsableSectionsTabIndexes;
+
+
