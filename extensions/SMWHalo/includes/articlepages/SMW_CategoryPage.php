@@ -261,7 +261,8 @@ class SMWCategoryViewer extends CategoryViewer {
 				$type = $store->getPropertyValues($prop, $hastypeDV);
 				if (count($type) > 0) {
 					$type = $type[0];
-					$xsd = array_shift($type->getDBkeys());
+					$dbkeys = $type->getDBkeys();
+					$xsd = array_shift($dbkeys);
 					if ($xsd != '_wpg') {
 						$range = $type;
 					}
