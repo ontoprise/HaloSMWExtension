@@ -96,12 +96,12 @@ class WikiTypeToXSD {
 }
 
 class TSHelper {
-    
+
 	/**
 	 * Checks via heuristic if the given parameters contain a SPARQL query.
-	 * 
+	 *
 	 * @param mixed array of string or string $parserFunctionParameters
-	 * 
+	 *
 	 * @return boolean
 	 */
 	public static function isSPARQL($parserFunctionParameters) {
@@ -548,41 +548,73 @@ class TSNamespaces {
 	}
 
 	/**
-	 * Converts $input from into full URI
+	 * Converts $input from into a prefixed or full URI, if necessary.
 	 *
-	 *  (1) may be already a full URI
-	 *  (2) may be a prefix form a#MyInstance, cat#MyInstance
-	 *  (3) may be something else, consider as instance
+	 *  (1) may be already a full URI, then returned unchanged.
+	 *  (2) may be a prefix form a#MyInstance, cat#MyInstance. Then returned as prefix form
+	 *      unlesss it is not possible because of forbidden characters.
+	 *  (3) may be a title form, e.g. Category:Person 
+	 *  (4) may be something else, consider as instance and return as 
+	 *      prefix form (if possible) or as full URI.
 	 *
 	 * @param string $input
-	 * @return string Full URI
+	 * @param string (out) $resultType (prefixURI or fullURI)
+	 * @return string URI
 	 */
-	public function toFullURI($input) {
+	public function toURI($input, & $resultType) {
 		$input = str_replace(" ", "_", $input);
 		$parsedURL = parse_url($input);
 		if (array_key_exists('scheme', $parsedURL)) {
-			// full URI
+			// full URI or title form 
+			foreach(self::$ALL_NAMESPACE_KEYS as $nsKey) {
+				$suffix = strtolower($this->getNSPrefix($nsKey));
+				$prefix = strtolower($parsedURL['scheme']);
+				$local = ucfirst(substr($input, strlen($prefix)+1));
+				if ($suffix == $prefix) {
+					if (preg_match('/^[\w\d_]+$/', $local, $matches)> 0) {
+						$resultType = "prefixURI";
+						return $prefix."#".$local;
+					} else{
+						$resultType = "fullURI";
+						return $this->getNSURI($nsKey).$local;
+					}
+				}
+			}
+
 			return $input;
 		} else if (array_key_exists('path', $parsedURL) && array_key_exists('fragment', $parsedURL)) {
 			// prefix form URI
 			$lastSlashIndex = strrpos($input, "#");
 			if ( $lastSlashIndex === false) return $this->getNSURI(NS_MAIN).$parsedURL['fragment'];
-			$prefix = substr($input, 0, $lastSlashIndex+1);
-			$local = substr($input, $lastSlashIndex);
+			$prefix = substr($input, 0, $lastSlashIndex);
+			$local = substr($input, $lastSlashIndex+1);
 
 			$local = ucfirst($local);
 
 			foreach(self::$ALL_NAMESPACE_KEYS as $nsKey) {
 				$suffix = $this->getNSPrefix($nsKey);
 				if ($suffix == $prefix) {
-					return $this->getNSURI($nsKey).$local;
+					if (preg_match('/^[\w\d_]+$/', $local, $matches)> 0) {
+						$resultType = "prefixURI";
+						return $prefix."#".$local;
+					} else{
+						$resultType = "fullURI";
+						return $this->getNSURI($nsKey).$local;
+					}
 				}
 			}
 
 		} else {
 			// any other value, consider as instance
 			$input = ucfirst($input);
-			return $this->getNSURI(NS_MAIN).$input;
+			if (preg_match('/^[\w\d_]+$/', $input) > 0) {
+				$resultType = "prefixURI";
+				return "a#".$input;
+			} else{
+				$resultType = "fullURI";
+				return $this->getNSURI(NS_MAIN).$input;
+			}
+
 		}
 
 
