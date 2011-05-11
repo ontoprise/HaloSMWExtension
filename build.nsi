@@ -387,7 +387,6 @@ Section "SMW+ Setup" smwplussetup
   nsExec::ExecToLog '"$PHP" "$MEDIAWIKIDIR\deployment\tools\smwadmin\smwadmin.php" --nocheck -f --finalize'
   nsExec::ExecToLog '"$PHP" "$MEDIAWIKIDIR\deployment\tools\smwadmin\smwadmin.php" --nocheck -f -i Smwplussandbox.zip'
   nsExec::ExecToLog '"$PHP" "$MEDIAWIKIDIR\deployment\tools\smwadmin\smwadmin.php" --nocheck -f --finalize'
-  nsExec::ExecToLog '"$PHP" "$MEDIAWIKIDIR\extensions\SemanticMediaWiki\maintenance\SMW_refreshData.php" -v'
 
 SectionEnd
 
