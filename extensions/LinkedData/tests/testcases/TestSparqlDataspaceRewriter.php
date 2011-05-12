@@ -70,10 +70,10 @@ class TestSparqlDataspaceRewriter extends PHPUnit_Framework_TestCase {
 		";    	
 		
 		// Ask the query for all graphs
-    	$qr = $tsa->queryTripleStore($query, $this->mDSIGraph);
+    	$qr = $tsa->queryTripleStore($query);
     	
     	$rows = $qr->getRows();
-//    	$this->assertEquals(count($rows), 4);
+    	$this->assertEquals(count($rows), 4);
     	// Verify results of graph 1
     	$r = $qr->getRowsWhere("g", self::$mBaseURI."smwGraphs/Graph1");
     	$this->assertEquals(count($r), 1);
@@ -111,7 +111,7 @@ class TestSparqlDataspaceRewriter extends PHPUnit_Framework_TestCase {
     	
     	
     	// Ask the query in dataspace "Wikicompany" i.e. Graph2
-    	$qr = $tsa->queryTripleStore($query, $this->mDSIGraph, "dataspace = Wikicompany");
+    	$qr = $tsa->queryTripleStore($query, $this->mDSIGraph, "dataspace = wiki");
     	$rows = $qr->getRows();
     	$this->assertEquals(count($rows), 2);
 
@@ -159,7 +159,7 @@ class TestSparqlDataspaceRewriter extends PHPUnit_Framework_TestCase {
         ";      
         
         // Ask the query for all graphs and request metadata
-        $qr = $tsa->queryTripleStore($query, $this->mDSIGraph, "metadata=(SWP2_AUTHORITY)");
+        $qr = $tsa->queryTripleStore($query, "", "metadata=(SWP2_AUTHORITY)");
     
         $rows = $qr->getRows();
         
