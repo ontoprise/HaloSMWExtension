@@ -1355,7 +1355,7 @@ class OB_StorageTSQuad extends OB_StorageTS {
 			return $this->createErrorMessage($e->getCode(), "Error accessing the TSC at $smwgWebserviceEndpoint");
 		}
 
-		return SMWOntologyBrowserXMLGenerator::encapsulateAsAnnotationList($annotations, Title::newFromText("dummy"));
+		return SMWOntologyBrowserXMLGenerator::encapsulateAsAnnotationList($annotations, NULL);
 
 	}
 
