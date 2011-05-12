@@ -109,7 +109,7 @@ class TestOntologyBrowserSparql extends PHPUnit_Framework_TestCase {
 		$r = smwf_ob_OntologyBrowserAccess("getAnnotations", "Prius##80##0", $wiki);
 	
 		$this->assertTrue(strpos($r,'title_url="HasPower" title="HasPower"') !== false);
-		$this->assertTrue(strpos($r,'<![CDATA[136 ]]>') !== false);
+		$this->assertTrue(strpos($r,'<![CDATA[136]]>') !== false);
 
 		$r = smwf_ob_OntologyBrowserAccess("getAnnotations", "Prius-II##80##0", $wiki);
 		$this->assertTrue(strpos($r,'<annotationsList isEmpty="true"') !== false);
@@ -129,11 +129,11 @@ class TestOntologyBrowserSparql extends PHPUnit_Framework_TestCase {
 
 		$r = smwf_ob_OntologyBrowserAccess("getAnnotations", "{$prefix}Prius-II##80##0", "Toyota");
 		$this->assertTrue(strpos($r,'title_url="HasPower" title="HasPower"') !== false);
-		$this->assertTrue(strpos($r,'<![CDATA[113 ]]>') !== false);
+		$this->assertTrue(strpos($r,'<![CDATA[113]]>') !== false);
 
 		$r = smwf_ob_OntologyBrowserAccess("getAnnotations", "{$prefix}Prius-III##80##0", "Toyota");
 		$this->assertTrue(strpos($r,'title_url="HasPower" title="HasPower"') !== false);
-		$this->assertTrue(strpos($r,'<![CDATA[136 ]]>') !== false);
+		$this->assertTrue(strpos($r,'<![CDATA[136]]>') !== false);
 
 		$r = smwf_ob_OntologyBrowserAccess("getAnnotations", "{$prefix}Golf-I##80##0", "Toyota");
 		$this->assertTrue(strpos($r,'<annotationsList isEmpty="true"') !== false);
@@ -153,11 +153,11 @@ class TestOntologyBrowserSparql extends PHPUnit_Framework_TestCase {
 			
 		$r = smwf_ob_OntologyBrowserAccess("getAnnotations", "{$prefix}Golf-I##80##0", "Volkswagen");
 		$this->assertTrue(strpos($r,'title_url="HasPower" title="HasPower"') !== false);
-		$this->assertTrue(strpos($r,'<![CDATA[50 ]]>') !== false);
+		$this->assertTrue(strpos($r,'<![CDATA[50]]>') !== false);
 
 		$r = smwf_ob_OntologyBrowserAccess("getAnnotations", "{$prefix}Golf-VI##80##0", "Volkswagen");
 		$this->assertTrue(strpos($r,'title_url="HasPower" title="HasPower"') !== false);
-		$this->assertTrue(strpos($r,'<![CDATA[105 ]]>') !== false);
+		$this->assertTrue(strpos($r,'<![CDATA[105]]>') !== false);
 
 	}
 
