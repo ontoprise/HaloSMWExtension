@@ -377,13 +377,13 @@ var TF = Class.create({
 		
 		if(jQuery(node).attr('originalValue') != jQuery.trim(jQuery(node).attr('value'))){
 			jQuery(node).addClass('tabf_modified_value');
-			jQuery(node).attr('isModified', true);
+			jQuery(node).attr('isModified', 'true');
 		
 			if(jQuery(parentRow).attr('class').indexOf('tabf_new_row') > -1){
 				return;
 			}
 			
-			parentRow.attr('isModified', true);
+			parentRow.attr('isModified', 'true');
 			parentRow.addClass('tabf_modified_row');
 			
 			//jQuery('td:last-child .tabf_ok_status', parentRow).css('display', 'none');
