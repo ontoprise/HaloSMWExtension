@@ -29,9 +29,7 @@ class SMWCheckInstallation extends SpecialPage {
                         'media' => 'screen, projection','href'  => $wgScriptPath . '/deployment/skins/df.css'));
 			
 		$wgOut->setPageTitle(wfMsg('checkinstallation'));
-		$wgOut->addHTML("<h2>".wfMsg('checkinstallation')."</h2>");
-
-
+		
 		global $IP;
 		global $rootDir;
 		$rootDir = "$IP/deployment";
@@ -63,9 +61,13 @@ class SMWCheckInstallation extends SpecialPage {
 			$html .= "<br/>";
 		}
 		$wgOut->addHTML($html);
+		
+		// (2) show installation path
+		$wgOut->addHTML("<h2>".wfMsg('df_installationpath_heading')."</h2>");
+		$wgOut->addHTML("$IP/deployment");
 
-        // (2) consistency checks
-        
+        // (3) consistency checks
+        $wgOut->addHTML("<h2>".wfMsg('checkinstallation')."</h2>");
 		$errorsFound = false;
 		//$errorsFound |= $cc->checkDependencies(false, DF_OUTPUT_FORMAT_HTML);
 		$errorsFound |=$cc->checkInstallation(DF_OUTPUT_FORMAT_HTML);
