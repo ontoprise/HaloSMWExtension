@@ -39,6 +39,12 @@
             <patch file="patches/SMWHalo/patch_for_SF2.0.8.txt" />
             <patch file="patches/WYSIWYG/patch_for_SF_2.0.8.txt" />
         </new>
+        <update from="208">
+            <patch file="patch.txt" />
+            <patch file="patches/HaloACL/patch_for_SF_2.0.8.txt" />
+            <patch file="patches/SMWHalo/patch_for_SF2.0.8.txt" />
+            <patch file="patches/WYSIWYG/patch_for_SF_2.0.8.txt" />
+        </update>
          <update from="191">
             <patch file="patch.txt" />
          </update>
