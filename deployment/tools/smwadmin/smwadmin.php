@@ -172,7 +172,7 @@ for( $arg = reset( $args ); $arg !== false; $arg = next( $args ) ) {
 		$dfgListPackages = true;
 		$pattern = next($args);
 		continue;
-	} else if ($arg == '-desc') { // => show description for each package
+	} else if ($arg == '--desc') { // => show description for each package
 		$dfgShowDescription = true;
 		continue;
 	} else if ($arg == '--dep') { // => show dependencies
@@ -195,10 +195,10 @@ for( $arg = reset( $args ); $arg !== false; $arg = next( $args ) ) {
 		$dfgRestorePoint = next($args);
 		$dfgRestore = true;
 		continue;
-	} else if ($arg == '-rlist') {
+	} else if ($arg == '--rlist') {
 		$dfgRestoreList = true;
 		continue;
-	} else if ($arg == '-rcreate') {
+	} else if ($arg == '--rcreate') {
 		$dfgCreateRestorePoint = true;
 		$dfgRestorePoint = next($args);
 		continue;
@@ -551,13 +551,15 @@ function showHelp() {
 	echo "\n\t-d <package> ]: De-Install";
 	echo "\n\t-u <package>: Update";
 	echo "\n\t-l [ pattern ] : List installed packages.";
+	echo "\n\t-l --desc: Shows additional description about the packages.";
 	echo "\n\t-r [ name ]: Restore from a wiki-restore-point.";
-	echo "\n\t-rcreate [ name ]: Explicitly creates a wiki-restore-point.";
-	echo "\n\t-rlist : Shows all existing wiki-restore-points";
+	echo "\n\t--rcreate [ name ]: Explicitly creates a wiki-restore-point.";
+	echo "\n\t--rlist : Shows all existing wiki-restore-points";
+	echo "\n\t--dep : Check only dependencies but do not install.";
 	echo "\n\n\tAdvanced options: ";
 	echo "\n\t--finalize: Finalizes installation";
+	echo "\n\t-f: Force operation (ignore any problems if possible)";
 	//echo "\n\t--checkdump <package>: Check only dumps for changes but do not install.";
-	echo "\n\t--dep : Check only dependencies but do not install.";
 	echo "\n\t--noconflict: Assures that there are no conflicts on ontology import. Will stop the process, if not.";
 	echo "\n\t--nocheck: Skips the environment checks";
 	echo "\n";
