@@ -180,10 +180,10 @@ Druk de rechter knop om resultaten te verkrijgen. Enkel <i>Return</i> drukken ge
 
 	/* Commands for ontology browser */
 	'smw_ob_cmd_createsubcategory' => 'Subcategorie toevoegen',
-	'smw_ob_cmd_createsubcategorysamelevel' => 'Categorie op hetzelfde niveau toevoegen',
+	'smw_ob_cmd_createsubcategorysamelevel' => 'Categorie op hetzelfde',
 	'smw_ob_cmd_renamecategory' => 'Hernoemen',
 	'smw_ob_cmd_createsubproperty' => 'Subeigenschap toevoegen',
-	'smw_ob_cmd_createsubpropertysamelevel' => 'Eigenschap op hetzelfde niveau toevoegen',
+	'smw_ob_cmd_createsubpropertysamelevel' => 'Eigenschap op hetzelfde',
 	'smw_ob_cmd_renameproperty' => 'Hernoemen',
 	'smw_ob_cmd_renameinstance' => 'Entiteit hernoemen',
 	'smw_ob_cmd_deleteinstance' => 'Entiteit verwijderen',

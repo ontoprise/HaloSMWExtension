@@ -185,10 +185,10 @@ clicking the big arrows between the columns.',
 
 	/* Commands for ontology browser */
 	'smw_ob_cmd_createsubcategory' => 'Add subcategory',
-	'smw_ob_cmd_createsubcategorysamelevel' => 'Add cat. on same level',
+	'smw_ob_cmd_createsubcategorysamelevel' => 'Add category',
 	'smw_ob_cmd_renamecategory' => 'Rename',
 	'smw_ob_cmd_createsubproperty' => 'Add subproperty',
-	'smw_ob_cmd_createsubpropertysamelevel' => 'Add prop. on same level',
+	'smw_ob_cmd_createsubpropertysamelevel' => 'Add property',
 	'smw_ob_cmd_renameproperty' => 'Rename',
 	'smw_ob_cmd_renameinstance' => 'Rename instance',
 	'smw_ob_cmd_deleteinstance' => 'Delete instance',

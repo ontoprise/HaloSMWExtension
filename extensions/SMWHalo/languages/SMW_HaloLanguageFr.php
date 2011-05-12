@@ -185,10 +185,10 @@ en cliquant sur les grosses flà¨ches situées entre les colonnes.",
     
     /* Commands for ontology browser */
     'smw_ob_cmd_createsubcategory' => 'Ajouter une sous-catégorie',
-    'smw_ob_cmd_createsubcategorysamelevel' => 'Ajouter une catégorie au même niveau',
+    'smw_ob_cmd_createsubcategorysamelevel' => 'Ajouter une catégorie',
     'smw_ob_cmd_renamecategory' => 'Renommer',
     'smw_ob_cmd_createsubproperty' => 'Ajouter une sous-propriété',
-    'smw_ob_cmd_createsubpropertysamelevel' => 'Ajouter une propriété au même niveau',
+    'smw_ob_cmd_createsubpropertysamelevel' => 'Ajouter une propriété',
     'smw_ob_cmd_renameproperty' => 'Renommer',
     'smw_ob_cmd_renameinstance' => 'Renommer l\'instance',
     'smw_ob_cmd_deleteinstance' => 'Supprimer l\'instance',
