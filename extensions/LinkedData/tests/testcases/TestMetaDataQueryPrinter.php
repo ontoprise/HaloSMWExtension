@@ -807,6 +807,10 @@ HTML;
 				while ($value = $cell->getNextObject()) {
 					$ro = new ReflectionObject($value);
 					$class = get_class($value);
+					if ($class == 'SMWPropertyValue') {
+						// we are not interested in SMWPropertyValues
+						continue;
+					}
 					$this->assertTrue($ro->hasMethod("setMetaDataPrinter"), 
 									  "Meta-data printer missing in data value of type <$class>.");
 					$mdp = $value->getMetaDataPrinter();
