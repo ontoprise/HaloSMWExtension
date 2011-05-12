@@ -833,6 +833,7 @@ SPARQL;
 					SMW_OUTPUT_WIKI);
     	// Get all values in the row of the vtbr. 
 		// The price of the Hermann Hesse book is 17.0. Get all values in that row.
+		$result = str_replace('&', '&amp;', $result);
 		$dom = simplexml_load_string($result);
 		$this->assertTrue($dom !== false, "Query processor returned invalid result.");
 		
