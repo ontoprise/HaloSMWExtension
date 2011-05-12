@@ -394,6 +394,13 @@ class TFTabularFormData {
 				$autocompletion = 'class="wickEnabled" constraints="';
 				$autocompletion .= $annotation['autocomplete'];
 				$autocompletion .= '"';
+				
+				//do not display ns for category column when autocompleting
+				if($annotation['title'] == '__Category__'){
+					$autocompletion .= ' pasteNS="" ';
+				} else {
+					$autocompletion .= ' pasteNS="true" ';
+				}
 			}
 			
 			$html .= "<textarea ".$autocompletion." rows='1' originalValue='' pasteNS='true'>"
@@ -918,6 +925,13 @@ class TFTabularFormRowData {
 				$autocompletion = 'class="wickEnabled" constraints="';
 				$autocompletion .= $annotation['autocomplete'];
 				$autocompletion .= '"';
+				
+				//do not display ns for category column when autocompleting
+				if($annotation['title'] == '__Category__'){
+					$autocompletion .= ' pasteNS="" ';
+				} else {
+					$autocompletion .= ' pasteNS="true" ';
+				}
 			}
 			
 			$annotations = $this->annotations[$annotation['title']];

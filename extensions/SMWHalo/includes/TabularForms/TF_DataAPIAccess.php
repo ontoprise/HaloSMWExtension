@@ -625,7 +625,9 @@ class TFAnnotationData {
 	public $typeId = null;
 	
 	
-	public function __construct($name, $currentValue = null, $renderedValue = null, $hash = null, $typeId=null, $newValue = null){
+	public function __construct($name, $currentValue = null, $renderedValue = null, 
+			$hash = null, $typeId=null, $newValue = null){
+				
 		$this->name = $name;
 		$this->currentValue = ucfirst($currentValue);
 		$this->renderedValue = $renderedValue;
@@ -640,6 +642,15 @@ class TFAnnotationData {
 		if(is_null($this->currentValue) || $this->currentValue == ''){
 			$this->isWritable = true;
 		}
+		
+		//remove category prefix from category annotations
+		if($this->name == "__Category__"){
+			global $wgLang;
+			if(strpos($this->newValue, $wgLang->getNSText(NS_CATEGORY).":") === 0){
+				$this->newValue = substr($this->newValue, strpos($this->newValue, ":") +1);
+			}
+		}
+		
 		
 	}
 	
