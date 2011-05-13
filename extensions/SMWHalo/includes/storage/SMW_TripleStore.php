@@ -1159,7 +1159,7 @@ class SMWTripleStore extends SMWStore {
 								// in case the NEP feature is active, create integration links.
 								// guess local name
 								$localname = TSHelper::convertURIToLocalName($sv);
-								$v = $this->createIntegrationLinkURI($localname, $localname, $sv);
+								$v = $this->createIntegrationLinkURI($localname, $localname, $sv, $metadata);
 							} else {
 								// normal URI ouput
 								$v = $this->createSMWDataValue(NULL, $sv, TSNamespaces::$XSD_NS."anyURI", $metadata);
@@ -1327,7 +1327,7 @@ class SMWTripleStore extends SMWStore {
 	 * @param $caption
 	 * @param $uri
 	 */
-	protected function createIntegrationLinkURI($dbkey, $caption, $uri) {
+	protected function createIntegrationLinkURI($dbkey, $caption, $uri, $metadata) {
 		global $wgServer, $wgArticlePath;
 		$value = $wgServer.$wgArticlePath;
 		$dbkey = urldecode($dbkey);
@@ -1335,6 +1335,7 @@ class SMWTripleStore extends SMWStore {
 		$value = str_replace('$1', ucfirst($dbkey), $value);
 		$value .= '?action=edit&uri='.urlencode($uri).'&redlink=1';
 		$value = SMWDataValueFactory::newTypeIDValue('_ili', $value, str_replace("_", " ",$dbkey));
+		TSHelper::setMetadata($value, $metadata);
 		return $value;
 	}
 
