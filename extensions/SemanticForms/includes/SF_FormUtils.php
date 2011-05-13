@@ -10,16 +10,18 @@
 
 class SFFormUtils {
 	static function setGlobalJSVariables( &$vars ) {
-		global $sfgAdderButtons, $sfgShowOnSelect;
 		global $sfgAutocompleteValues, $sfgAutocompleteOnAllChars;
+		global $sfgInitJSFunctions, $sfgValidationJSFunctions;
+		global $sfgShowOnSelect;
 
 		$vars['sfgRemoveText'] = wfMsg( 'sf_formedit_remove' );
-		$vars['sfgAdderButtons'] = $sfgAdderButtons;
 		$vars['sfgAutocompleteOnAllChars'] = $sfgAutocompleteOnAllChars;
 		// variables that are associative arrays need to be cast as
 		// objects, to work with MW 1.15 and earlier
 		$vars['sfgAutocompleteValues'] = (object)$sfgAutocompleteValues;
 		$vars['sfgShowOnSelect'] = (object)$sfgShowOnSelect;
+		$vars['sfgInitJSFunctions'] = (object)$sfgInitJSFunctions;
+		$vars['sfgValidationJSFunctions'] = (object)$sfgValidationJSFunctions;
 		$vars['sfgFormErrorsHeader'] = wfMsg( 'sf_formerrors_header' );
 		$vars['sfgBlankErrorStr'] = wfMsg( 'sf_blank_error' );
 		$vars['sfgBadURLErrorStr'] = wfMsg( 'sf_bad_url_error' );
@@ -85,17 +87,26 @@ END;
 		global $sfgTabIndex;
 
 		$sfgTabIndex++;
-		$disabled_text = ( $is_disabled ) ? " disabled" : "";
 		if ( $label == null )
 			$label = wfMsgExt( 'minoredit', array( 'parseinline' ) );
-		$accesskey = wfMsg( 'accesskey-minoredit' );
 		$tooltip = wfMsg( 'tooltip-minoredit' );
-		$attr = Xml::expandAttributes( $attr );
-		$text = <<<END
-	<input tabindex="$sfgTabIndex" type="checkbox" value="" name="wpMinoredit" accesskey="$accesskey" id="wpMinoredit"$disabled_text$attr/>
-	<label for="wpMinoredit" title="$tooltip">$label</label>
+		$attrs = $attr + array(
+			'type' => 'checkbox',
+			'value' => '',
+			'name' => 'wpMinoredit',
+			'id' => 'wpMinoredit',
+			'accesskey' => wfMsg( 'accesskey-minoredit' ),
+			'tabindex' => $sfgTabIndex,
+		);
+		if ( $is_disabled ) {
+			$attrs['disabled'] = 'disabled';
+		}
+		$text = "\t" . Xml::element( 'input', $attrs ) . "\n";
+		$text .= "\t" . Xml::element( 'label', array(
+			'for' => 'wpMinoredit',
+			'title' => $tooltip
+		), $label ) . "\n";
 
-END;
 		return $text;
 	}
 
@@ -224,8 +235,9 @@ END;
 		global $sfgTabIndex;
 
 		$sfgTabIndex++;
-		if ( $label == null )
+		if ( $label == null ) {
 			$label = wfMsg( 'runquery' );
+		}
 		return self::buttonHTML( $attr + array(
 			'id'        => 'wpRunQuery',
 			'name'      => 'wpRunQuery',
@@ -305,7 +317,8 @@ END;
 			wfMsgForContent( 'february' ),
 			wfMsgForContent( 'march' ),
 			wfMsgForContent( 'april' ),
-			wfMsgForContent( 'may' ),
+			// Needed to avoid using 3-letter abbreviation
+			wfMsgForContent( 'may_long' ),
 			wfMsgForContent( 'june' ),
 			wfMsgForContent( 'july' ),
 			wfMsgForContent( 'august' ),

@@ -56,10 +56,11 @@ class SFRunQuery extends IncludableSpecialPage {
 			$raw = $wgRequest->getBool( 'raw', false );
 		}
 		$form_submitted = ( $run_query );
-		if ( $raw )
+		if ( $raw ) {
 			$wgOut->setArticleBodyOnly( true );
-		// if user already made some action, ignore the edited
-		// page and just get data from the query string
+		}
+		// If user already made some action, ignore the edited
+		// page and just get data from the query string.
 		if ( !$embedded && $wgRequest->getVal( 'query' ) == 'true' ) {
 			$edit_content = null;
 			$is_text_source = false;
@@ -74,15 +75,6 @@ class SFRunQuery extends IncludableSpecialPage {
 			$sfgFormPrinter->formHTML( $form_definition, $form_submitted, $is_text_source, $form_article->getID(), $edit_content, null, null, true, $embedded );
 		$text = "";
 
-		// Set the page title.
-		if ( !$embedded ) {
-			if ( $form_page_title != null ) {
-				$wgOut->setPageTitle( $form_page_title );
-			} else {
-				$s = wfMsg( 'sf_runquery_title', $form_title->getText() );
-				$wgOut->setPageTitle( $s );
-			}
-		}
 		if ( $form_submitted ) {
 			global $wgUser, $wgTitle, $wgOut;
 			$wgParser->mOptions = new ParserOptions();
@@ -114,23 +106,37 @@ class SFRunQuery extends IncludableSpecialPage {
 			$action = htmlspecialchars( SpecialPage::getTitleFor( "RunQuery", $form_name )->getLocalURL() );
 			$text .= <<<END
 	<form id="sfForm" name="createbox" action="$action" method="post" class="createbox">
-	<input type="hidden" name="query" value="true" />
 
 END;
+			$text .= "\t" . Xml::hidden( 'query', 'true' ) . "\n";
 			$text .= $form_text;
 		}
 		if ( $embedded ) {
 			$text = "<div class='runQueryEmbedded'>$text</div>";
 		}
 
+		// Armor against doBlockLevels()
+		$text = preg_replace( '/^ +/m', '', $text );
 		// Now write everything to the screen.
 		$wgOut->addHTML( $text );
 		SFUtils::addJavascriptAndCSS( $embedded ? $wgParser : null );
-		$script = '		<script type="text/javascript">' . "\n" . $javascript_text . '</script>' . "\n";
+		$script = "\t\t" . '<script type="text/javascript">' . "\n" . $javascript_text . '</script>' . "\n";
 		if ( $embedded ) {
 			$wgParser->getOutput()->addHeadItem( $script );
 		} else {
 			$wgOut->addScript( $script );
+			$wgOut->addParserOutputNoText( $wgParser->getOutput() );
+		}
+
+		// Finally, set the page title - for MW <= 1.16, this has to be
+		// called after addParserOutputNoText() for it to take effect.
+		if ( !$embedded ) {
+			if ( $form_page_title != null ) {
+				$wgOut->setPageTitle( $form_page_title );
+			} else {
+				$s = wfMsg( 'sf_runquery_title', $form_title->getText() );
+				$wgOut->setPageTitle( $s );
+			}
 		}
 	}
 }

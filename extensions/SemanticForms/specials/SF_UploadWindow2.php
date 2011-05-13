@@ -12,7 +12,7 @@
  */
 
 
-class SFUploadWindow2 extends SpecialPage {
+class SFUploadWindow2 extends UnlistedSpecialPage {
 	/**
 	 * Constructor : initialise object
 	 * Get data POSTed through the form and assign them to the object
@@ -119,10 +119,12 @@ class SFUploadWindow2 extends SpecialPage {
 	 */
 	public function execute( $par ) {
 		global $wgUser, $wgOut, $wgRequest;
-		// disable $wgOut - we'll print out the page manually, taking
+		// Disable $wgOut - we'll print out the page manually, taking
 		// the body created by the form, plus the necessary Javascript
-		// files, and turning them into an HTML page
+		// files, and turning them into an HTML page.
 		$wgOut->disable();
+		// This line is needed to get around Squid caching.
+		$wgOut->sendCacheControl();
 
 		$this->setHeaders();
 		$this->outputHeader();
@@ -972,7 +974,7 @@ class SFUploadForm extends HTMLForm {
 
 		if ( method_exists( $wgOut, 'addModules' ) ) {
 			$head_scripts = '';
-			$wgOut->addModules( array( 'mediawiki.legacy.edit', 'mediawiki.legacy.upload', 'mediawiki.legacy.wikibits', 'mediawiki.legacy.ajax', 'mediawiki.legacy.ajaxwatch' ) );
+			$wgOut->addModules( array( 'mediawiki.legacy.edit', 'mediawiki.legacy.upload', 'mediawiki.legacy.wikibits', 'mediawiki.legacy.ajax' ) );
 			$body_scripts = $wgOut->getHeadScripts( $sk );
 		} else {
 			global $wgJsMimeType, $wgStylePath, $wgStyleVersion;

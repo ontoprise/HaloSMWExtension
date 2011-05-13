@@ -107,6 +107,9 @@ class SFParserFunctions {
 	static $num_autocompletion_inputs = 0;
 
 	static function registerFunctions( &$parser ) {
+
+		global $wgOut;
+
 		$parser->setFunctionHook( 'forminput', array( 'SFParserFunctions', 'renderFormInput' ) );
 		$parser->setFunctionHook( 'formlink', array( 'SFParserFunctions', 'renderFormLink' ) );
 		if ( defined( get_class( $parser ) . '::SFH_OBJECT_ARGS' ) ) {
@@ -116,6 +119,12 @@ class SFParserFunctions {
 			$parser->setFunctionHook( 'arraymap', array( 'SFParserFunctions', 'renderArrayMap' ) );
 			$parser->setFunctionHook( 'arraymaptemplate', array( 'SFParserFunctions', 'renderArrayMapTemplate' ) );
 		}
+
+		// load jQuery on MW 1.16
+		if ( is_callable( array( $wgOut, 'includeJQuery' ) ) ) {
+			$wgOut -> includeJQuery();
+		}
+		
 		return true;
 	}
 
@@ -132,10 +141,14 @@ class SFParserFunctions {
 	}
 
 	static function renderFormLink ( &$parser ) {
+
+		global $wgVersion;
+
 		$params = func_get_args();
 		array_shift( $params ); // don't need the parser
 		// set defaults
 		$inFormName = $inLinkStr = $inLinkType = $inQueryStr = $inTargetName = '';
+		$popupClassString = "";
 		// assign params - support unlabelled params, for backwards compatibility
 		foreach ( $params as $i => $param ) {
 			$elements = explode( '=', $param, 2 );
@@ -143,26 +156,32 @@ class SFParserFunctions {
 			$value = trim( $param );
 			if ( count( $elements ) > 1 ) {
 				$param_name = trim( $elements[0] );
-				$value = trim( $elements[1] );
+				$value = trim( $parser->recursiveTagParse( $elements[1] ) );
 			}
-			if ( $param_name == 'form' )
+			if ( $param_name == 'form' ) {
 				$inFormName = $value;
-			elseif ( $param_name == 'link text' )
+			} elseif ( $param_name == 'link text' ) {
 				$inLinkStr = $value;
-			elseif ( $param_name == 'link type' )
+			} elseif ( $param_name == 'link type' ) {
 				$inLinkType = $value;
-			elseif ( $param_name == 'query string' )
+			} elseif ( $param_name == 'query string' ) {
 				$inQueryStr = $value;
-			elseif ( $param_name == 'target' )
+			} elseif ( $param_name == 'target' ) {
 				$inTargetName = $value;
-			elseif ( $i == 0 )
+			} elseif ( $param_name == null && $value == 'popup'
+				&& version_compare( $wgVersion, '1.16', '>=' )) {
+				self::loadScriptsForPopupForm( $parser );
+				$popupClassString = 'class="popupformlink"';
+			}
+			elseif ( $i == 0 ) {
 				$inFormName = $param;
-			elseif ( $i == 1 )
+			} elseif ( $i == 1 ) {
 				$inLinkStr = $param;
-			elseif ( $i == 2 )
+			} elseif ( $i == 2 ) {
 				$inLinkType = $param;
-			elseif ( $i == 3 )
+			} elseif ( $i == 3 ) {
 				$inQueryStr = $param;
+			}
 		}
 
 		$ad = SpecialPage::getPage( 'FormEdit' );
@@ -171,11 +190,11 @@ class SFParserFunctions {
 			$link_url .= "/$inTargetName";
 		}
 		$link_url = str_replace( ' ', '_', $link_url );
+		$hidden_inputs = "";
 		if ( $inQueryStr != '' ) {
 			// special handling for 'post button' - query string
 			// has to be turned into hidden inputs
 			if ( $inLinkType == 'post button' ) {
-				$hidden_inputs = "";
 				// Change HTML-encoded ampersands to
 				// URL-encoded ampersands, so that the string
 				// doesn't get split up on the '&'.
@@ -185,7 +204,7 @@ class SFParserFunctions {
 					$query_component = urldecode( $query_component );
 					$var_and_val = explode( '=', $query_component );
 					if ( count( $var_and_val ) == 2 ) {
-						$hidden_inputs .= '<input type="hidden" name="' . $var_and_val[0] . '" value="' . $var_and_val[1] . '" /> ';
+						$hidden_inputs .= Xml::hidden( $var_and_val[0], $var_and_val[1] ) . "\n";
 					}
 				}
 			} else {
@@ -202,11 +221,18 @@ class SFParserFunctions {
 		if ( $inLinkType == 'button' ) {
 			$link_url = html_entity_decode( $link_url, ENT_QUOTES );
 			$link_url = str_replace( "'", "\'", $link_url );
-			$str = "<form><input type=\"button\" value=\"$inLinkStr\" onclick=\"window.location.href='$link_url'\"></form>";
+			$str = "<form $popupClassString>";
+			$str .= Xml::element( 'input', array(
+				'type' => 'button',
+				'value' => $inLinkStr,
+				'onclick' => "window.location.href='$link_url'",
+			) ) . "</form>";
 		} elseif ( $inLinkType == 'post button' ) {
-			$str = "<form action=\"$link_url\" method=\"post\"><input type=\"submit\" value=\"$inLinkStr\" />$hidden_inputs</form>";
+			$str = "<form action=\"$link_url\" method=\"post\" $popupClassString>";
+			$str .= Xml::element( 'input', array( 'type' => 'submit', 'value' => $inLinkStr ) );
+			$str .= "$hidden_inputs</form>";
 		} else {
-			$str = "<a href=\"$link_url\">$inLinkStr</a>";
+			$str = "<a href=\"$link_url\" $popupClassString>$inLinkStr</a>";
 		}
 		// hack to remove newline from beginning of output, thanks to
 		// http://jimbojw.com/wiki/index.php?title=Raw_HTML_Output_from_a_MediaWiki_Parser_Function
@@ -214,12 +240,15 @@ class SFParserFunctions {
 	}
 
 	static function renderFormInput ( &$parser ) {
+		global  $wgVersion;
+		
 		$params = func_get_args();
 		array_shift( $params ); // don't need the parser
 		// set defaults
 		$inFormName = $inValue = $inButtonStr = $inQueryStr = '';
 		$inAutocompletionSource = '';
 		$inSize = 25;
+		$popupClassString = "";
 		// assign params - support unlabelled params, for backwards compatibility
 		foreach ( $params as $i => $param ) {
 			$elements = explode( '=', $param, 2 );
@@ -227,7 +256,7 @@ class SFParserFunctions {
 			$value = trim( $param );
 			if ( count( $elements ) > 1 ) {
 				$param_name = trim( $elements[0] );
-				$value = trim( $elements[1] );
+				$value = trim( $parser->recursiveTagParse( $elements[1] ) );
 			}
 			if ( $param_name == 'form' )
 				$inFormName = $value;
@@ -245,6 +274,10 @@ class SFParserFunctions {
 			} elseif ( $param_name == 'autocomplete on namespace' ) {
 				$inAutocompletionSource = $value;
 				$autocompletion_type = 'namespace';
+			} elseif ( $param_name == null && $value == 'popup'
+				&& version_compare( $wgVersion, '1.16', '>=' )) {
+				self::loadScriptsForPopupForm( $parser );
+				$popupClassString = 'class="popupforminput"';
 			}
 			elseif ( $i == 0 )
 				$inFormName = $param;
@@ -279,27 +312,38 @@ class SFParserFunctions {
 		$fs_url = $fs->getTitle()->getLocalURL();
 		if ( empty( $inAutocompletionSource ) ) {
 			$str = <<<END
-			<form action="$fs_url" method="get">
-			<p><input type="text" name="page_name" size="$inSize" value="$inValue" class="formInput" />
+			<form action="$fs_url" method="get" $popupClassString>
+			<p>
 
 END;
+			$str .= Xml::element( 'input',
+				array( 'type' => 'text', 'name' => 'page_name', 'size' => $inSize, 'value' => $inValue, 'class' => 'formInput' ) );
 		} else {
 			$str = <<<END
-			<form name="createbox" action="$fs_url" method="get">
-			<p><input type="text" name="page_name" id="input_$input_num" size="$inSize" value="$inValue"  class="autocompleteInput createboxInput formInput" autocompletesettings="input_$input_num" />
+			<form name="createbox" action="$fs_url" method="get" $popupClassString>
+			<p>
 
 END;
+			$str .= Xml::element( 'input', array(
+				'type' => 'text',
+				'name' => 'page_name',
+				'id' => 'input_' . $input_num,
+				'size' => $inSize,
+				'value' => $inValue,
+				'class' => 'autocompleteInput createboxInput formInput',
+				'autocompletesettings' => 'input_' . $input_num
+		       	) );
 		}
 		// if the form start URL looks like "index.php?title=Special:FormStart"
 		// (i.e., it's in the default URL style), add in the title as a
 		// hidden value
 		if ( ( $pos = strpos( $fs_url, "title=" ) ) > - 1 ) {
-			$str .= '			<input type="hidden" name="title" value="' . urldecode( substr( $fs_url, $pos + 6 ) ) . '">' . "\n";
+			$str .= "\t\t\t" . Xml::hidden( "title", urldecode( substr( $fs_url, $pos + 6 ) ) ) . "\n";
 		}
 		if ( $inFormName == '' ) {
 			$str .= SFUtils::formDropdownHTML();
 		} else {
-			$str .= '			<input type="hidden" name="form" value="' . $inFormName . '">' . "\n";
+			$str .= "\t\t\t" . Xml::hidden( "form", $inFormName ) . "\n";
 		}
 		// Recreate the passed-in query string as a set of hidden
 		// variables.
@@ -486,4 +530,43 @@ END;
 		return implode( $new_delimiter, $results_array );
 	}
 
+	static function loadScriptsForPopupForm ( &$parser ) {
+
+		global $sfgScriptPath;
+
+		if ( defined( 'MW_SUPPORTS_RESOURCE_MODULES' ) ) {
+
+			// on MW 1.17+ just request the ResourceLoader to include modules
+
+			$parser->getOutput()->addModules( 'ext.semanticforms.popupformedit' );
+
+		} else {
+
+			// on MW pre1.17 insert the necessary headers into the page head
+
+			static $loaded = false;
+
+			// load JavaScript and CSS files only once
+			if ( $loaded ) return true;
+
+			// load extensions JavaScript
+			$parser->getOutput()->addHeadItem(
+				'<script type="text/javascript" src="' . $sfgScriptPath
+				. '/libs/SF_popupform.js"></script> ' . "\n",
+				'sf_popup_script'
+			);
+
+			// load extensions style sheet
+			$parser->getOutput()->addHeadItem(
+				'<link rel="stylesheet" href="' . $sfgScriptPath
+				. '/skins/SF_popupform.css"/> ' . "\n",
+				'sf_popup_style'
+			);
+
+			$loaded = true;
+
+		}
+
+		return true;
+	}
 }
