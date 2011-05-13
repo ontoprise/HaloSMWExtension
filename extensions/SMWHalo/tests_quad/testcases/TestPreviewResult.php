@@ -12,6 +12,9 @@ class Example extends PHPUnit_Extensions_SeleniumTestCase
 
   public function testMyTestCase()
   {
+  	//test is incomplete
+  	$this->markTestIncomplete("Selenium QueryInterface test is incomplete.");
+  	
     $this->open("/mediawiki/index.php/Main_Page");
     $this->type("searchInput", "Special:QueryInterface");
     $this->click("searchGoButton");

@@ -21,6 +21,9 @@ class TestImportPages extends PHPUnit_Extensions_SeleniumTestCase
   
 public function testImport()
   {
+  	//test is incomplete
+  	$this->markTestIncomplete("Selenium QueryInterface test is incomplete.");
+  	
   	$this->login();
   	
     $this->open("/mediawiki/index.php/Special:Import");
