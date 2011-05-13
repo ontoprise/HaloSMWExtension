@@ -90,6 +90,7 @@ class  LODMetaDataQueryPrinter  {
 		SMWDataValueFactory::registerDatatype('_uri', 'LODURIValue'); // URL/URI type
 		SMWDataValueFactory::registerDatatype('_anu', 'LODURIValue'); // Annotation URI type
 		SMWDataValueFactory::registerDatatype('_tel', 'LODURIValue'); // Phone number (URI) type
+		SMWDataValueFactory::registerDatatype('_ili', 'LODURIIntegrationValue'); // Integration link
 
 		SMWDataValueFactory::registerDatatype('_wpg', 'LODWikiPageValue'); // Page type
 		SMWDataValueFactory::registerDatatype('_wpp', 'LODWikiPageValue'); // Property page type

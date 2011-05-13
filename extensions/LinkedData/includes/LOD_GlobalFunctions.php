@@ -113,6 +113,7 @@ function enableLinkedData() {
 	//--- Derived data value classes for meta-data query printers ---
 	$wgAutoloadClasses['LODStringValue'] = $lodgIP . '/includes/LODWikiFrontend/MetaDataQueryPrinter/LOD_DV_String.php';
 	$wgAutoloadClasses['LODURIValue'] = $lodgIP . '/includes/LODWikiFrontend/MetaDataQueryPrinter/LOD_DV_URI.php';
+	$wgAutoloadClasses['LODURIIntegrationValue'] = $lodgIP . '/includes/LODWikiFrontend/MetaDataQueryPrinter/LOD_DV_URIIntegrationValue.php';
 	$wgAutoloadClasses['LODWikiPageValue'] = $lodgIP . '/includes/LODWikiFrontend/MetaDataQueryPrinter/LOD_DV_WikiPage.php';
 	$wgAutoloadClasses['LODNumberValue'] = $lodgIP . '/includes/LODWikiFrontend/MetaDataQueryPrinter/LOD_DV_Number.php';
 	$wgAutoloadClasses['LODTemperatureValue'] = $lodgIP . '/includes/LODWikiFrontend/MetaDataQueryPrinter/LOD_DV_Temperature.php';
