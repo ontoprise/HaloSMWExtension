@@ -9,7 +9,7 @@ class TestSubquery extends PHPUnit_Extensions_SeleniumTestCase
     $this->setBrowser("*chrome");
     $this->setBrowserUrl("http://localhost/");
   }
-
+  
   public function testMyTestCase()
   {
   	//test is incomplete
