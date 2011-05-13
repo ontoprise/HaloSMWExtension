@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head profile="http://selenium-ide.openqa.org/profiles/test-case">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<link rel="selenium.base" href="http://localhost/" />
+<title>subquery</title>
+</head>
+<body>
+<table cellpadding="1" cellspacing="1" border="1">
+<thead>
+<tr><td rowspan="1" colspan="3">subquery</td></tr>
+</thead><tbody>
+<tr>
+	<td>open</td>
+	<td>/mediawiki/index.php/Special:QueryInterface</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//button[@onclick='qihelper.newPropertyDialogue(true)']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>input_p0</td>
+	<td>ComingFrom</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//input[@name='input_r0' and @value='1']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>fireEvent</td>
+	<td>//button[@onclick='qihelper.add()']</td>
+	<td>click</td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//div[@id='treeanchor']//a[text()='Subquery 1']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//div[@id='treeanchor']//a[text()='Subquery 1']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//button[@onclick='qihelper.newCategoryDialogue(true)']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>input0</td>
+	<td>City</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//button[@onclick='qihelper.add()']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyTextPresent</td>
+	<td>Liverpudlian 	Liverpool</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>link=City</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//button[@onclick='qihelper.newPropertyDialogue(true)']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>input_p0</td>
+	<td>Inhabitants</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//input[@name='input_r0' and @value='-2']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>input_r1</td>
+	<td>100000</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//button[@onclick='qihelper.add()']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyTextPresent</td>
+	<td>Your query did not return any results.</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//div[@id='treeanchor']//a[text()='Inhabitants']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//div[@id='treeanchor']//a[text()='Inhabitants']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>input_r1</td>
+	<td>200000</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//button[@onclick='qihelper.add()']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyTextPresent</td>
+	<td>Liverpudlian 	Liverpool</td>
+	<td></td>
+</tr>
+</tbody></table>
+</body>
+</html>
