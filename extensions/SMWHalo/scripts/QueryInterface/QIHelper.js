@@ -226,24 +226,21 @@ QIHelper.prototype = {
         if (! table) return;
         for (var i = 0; i < table.rows.length; i++) {
             if (table.rows[i].cells[0].className == 'qiTpeeSelected') {
-                if (move == 'up' && i > 0) {
-                    var html = table.rows[i].cells[0].innerHTML;
-                    table.deleteRow(i);
-                    var row = table.insertRow(i-1);
-                    var cell = row.insertCell(0);
-                    cell.className = 'qiTpeeSelected';
-                    cell.innerHTML = html;
-                    break;
-                }
-                if (move == 'down' && i < table.rows.length -1) {
-                    var html = table.rows[i].cells[0].innerHTML;
-                    table.deleteRow(i);
-                    var row = table.insertRow(i+1);
-                    var cell = row.insertCell(0);
-                    cell.className = 'qiTpeeSelected';
-                    cell.innerHTML = html;
-                    break;
-                }
+                var newRow = -1;
+                if (move == 'up' && i > 0)
+                    newRow = i - 1;
+                if (move == 'down' && i < table.rows.length -1)
+                    newRow = i + 1;
+                if (newRow == -1) break;
+                var html = table.rows[i].cells[0].innerHTML;
+                var sourceId = table.rows[i].cells[0].getAttribute('_sourceid');
+                table.deleteRow(i);
+                var row = table.insertRow(newRow);
+                var cell = row.insertCell(0);
+                cell.className = 'qiTpeeSelected';
+                cell.setAttribute('_sourceid', sourceId);
+                cell.innerHTML = html;
+                break;
             }
         }
         this.clickUseTsc(); // updates source and preview
@@ -905,7 +902,7 @@ QIHelper.prototype = {
                             var table = $('qitpeeparamval_' + tpee + '_' + pname);
                             for (var r = 0; r < table.rows.length; r++) {
                                 // vars need to be in double quotes
-                                vals.push('\\"' + table.rows[r].cells[0].innerHTML + '\\"');
+                                vals.push('\\"' + table.rows[r].cells[0].getAttribute('_sourceid') + '\\"');
                             }
                             if (vals.length > 0) {
                                 val = '[' + vals.join(',') + ']';
@@ -3286,7 +3283,7 @@ applyOptionParams : function(query) {
                     var orderValues = [];
                     var parOrderArr = JSON.parse(tpeeParamsObj.PAR_ORDER);
                     for (var t = 0; t < table.rows.length; t++) {
-                        orderValues.push(table.rows[t].cells[0].innerHTML);
+                        orderValues.push(table.rows[t].cells[0].getAttribute('_sourceid'));
                         table.deleteRow(t);
                         t--;
                     }
@@ -3295,6 +3292,7 @@ applyOptionParams : function(query) {
                             var row = table.insertRow(-1);
                             var cell = row.insertCell(-1);
                             cell.setAttribute('onclick', "qihelper.tpeeOrderSelect(this)");
+                            cell.setAttribute('_sourceid', parOrderArr[t]);
                             cell.innerHTML = parOrderArr[t];
                         }
                     }
@@ -3303,6 +3301,7 @@ applyOptionParams : function(query) {
                             var row = table.insertRow(-1);
                             var cell = row.insertCell(-1);
                             cell.setAttribute('onclick', "qihelper.tpeeOrderSelect(this)");
+                            cell.setAttribute('_sourceid', orderValues[t]);
                             cell.innerHTML = orderValues[t];
                         }
                     }
