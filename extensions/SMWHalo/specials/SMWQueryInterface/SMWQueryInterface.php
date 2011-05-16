@@ -384,11 +384,13 @@ class SMWQueryInterface extends SpecialPage {
 			$lodDatasources .= " <span class=\"qiConnectionError\">".wfMsg("smw_ob_ts_not_connected")."</span>";
 		}
         else {
-            $ids = LODAdministrationStore::getInstance()->getAllSourceDefinitionIDs();
-            foreach ($ids as $sourceID) {
-                $this->datasources[] = $sourceID;
-                $sourceOptions .= "<option>$sourceID</option>";
-        	}
+            $ids = LODAdministrationStore::getInstance()->getAllSourceDefinitionIDsAndLabels();
+            foreach ($ids as $tuple) {
+				list($sourceID, $sourceLabel) = $tuple;
+                $label = trim($sourceLabel);
+                $this->datasources[$sourceID] = strlen($label) > 0 ? $label : $sourceID;
+				$sourceOptions .= "<option value=\"$sourceID\">$label</option>";
+			}
         }
         $lodDatasources .= '<br/><table><tr><td>' .
             '<select id="qidatasourceselector" size="5" multiple="true" onchange="qihelper.clickUseTsc();">' .
@@ -455,8 +457,8 @@ class SMWQueryInterface extends SpecialPage {
         if ($paramName == 'PAR_ORDER') {
             $html= '<div class="qitpeeparamval">'.
                    '<table id="qitpeeparamval_'.$policyId.'_'.$paramName.'">';
-            foreach ($this->datasources as $ds) {
-                $html .= '<tr><td onclick="qihelper.tpeeOrderSelect(this);">'.$ds.'</td></tr>';
+            foreach (array_keys($this->datasources) as $ds) {
+                $html .= '<tr><td _sourceid="'.$ds.'" onclick="qihelper.tpeeOrderSelect(this);">'.$this->datasources[$ds].'</td></tr>';
             }
             $html.='</table>'.
                    '</div>'.
