@@ -448,7 +448,7 @@ class PackageRepository {
 		if (file_exists($ext_dir.'/init$.ext')) {
 			$init_ext_file = trim(file_get_contents($ext_dir.'/init$.ext'));
 			list($id, $fromVersion) = explode(",", $init_ext_file);
-			$dd = new DeployDescriptor(file_get_contents($ext_dir.'/deploy.xml'));
+			$dd = self::createMWDeployDescriptor(realpath($ext_dir));
 			self::$localPackagesToInitialize[$id] = array($dd, $fromVersion);
 		}
 
