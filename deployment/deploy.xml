@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <deploydescriptor>
 	<global>
-		<version>131</version>
+		<version>156</version>
 		<patchlevel>0</patchlevel>
 		<id>deployment</id>
 		<vendor>Ontoprise GmbH</vendor>
