@@ -933,7 +933,7 @@ CKEDITOR.customprocessor.prototype =
                             
 							var imgName		= htmlNode.getAttribute( '_fck_mw_filename' ) || htmlNode.getAttribute( '_cke_mw_filename' ) || '';
 							var imgCaption	= htmlNode.getAttribute( 'alt' ) || '';
-							var imgType		= htmlNode.getAttribute( '_fck_mw_type' ) || '';
+							var imgType		= htmlNode.getAttribute( '_fck_mw_type' ) || htmlNode.getAttribute( '_cke_mw_type' ) || '';
 							var imgLocation	= htmlNode.getAttribute( '_fck_mw_location' ) || '';
 							var imgWidth	= htmlNode.getAttribute( '_fck_mw_width' ) || '';
 							var imgHeight	= htmlNode.getAttribute( '_fck_mw_height' ) || '';
