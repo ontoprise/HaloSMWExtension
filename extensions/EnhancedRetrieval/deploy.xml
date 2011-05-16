@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <deploydescriptor>
 	<global>
-		<version>141</version>
+		<version>156</version>
 		<id>unifiedsearch</id>
 		<vendor>Ontoprise GmbH</vendor>
 		<maintainer>Ontoprise GmbH</maintainer>
@@ -13,7 +13,7 @@
 		<dependencies>
 			<dependency from="1150" to="1169">mw</dependency>
 			<dependency from="101">scriptmanager</dependency>
-            <depencency from="153">smwhalo</depencency>
+            <depencency from="156">smwhalo</depencency>
 		</dependencies>
 	</global>
 	<codefiles>
