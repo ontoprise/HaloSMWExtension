@@ -13,7 +13,7 @@
 		<helpurl>http://smwforum.ontoprise.com/smwforum/index.php/Help:Rich_Media_Extension</helpurl>
 		<dependencies>
 			<dependency from="208">semanticforms</dependency>
-			<dependency from="153" to="153">smwplus</dependency>
+			<dependency from="153" to="156">smwplus</dependency>
 		</dependencies>
 		<notice>
 "Your Wiki contains now new pages. Since existing pages can make
