@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <deploydescriptor>
 	<global>
-		<version>141</version>
+		<version>156</version>
 		<id>wysiwyg</id>
         <license>GPL-v2</license>
 		<vendor>Ontoprise GmbH</vendor>
