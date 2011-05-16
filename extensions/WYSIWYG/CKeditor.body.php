@@ -660,11 +660,11 @@ function ToggleCKEditor( mode, objId ){
     }
   } 
   window.toggleRTESemaphore = true;
-  jQuery('#ckTools').hide();
+  document.getElementById('ckTools').style.display='none';
   
   setTimeout(function() {
       window.toggleRTESemaphore = false;
-      jQuery('#ckTools').show();
+      document.getElementById('ckTools').style.display='block';
     }, 2000);
 	var SRCtextarea = document.getElementById( objId );
 	if( mode == 'popup' ){
