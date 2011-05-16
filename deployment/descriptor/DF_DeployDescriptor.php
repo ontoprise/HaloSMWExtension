@@ -183,9 +183,11 @@ class DeployDescriptor {
 
 			$update = $this->dom->xpath($path);
 			if (count($update) === 0) {
-				// if update config missing, do not use anything
-				// should work, otherwise the dd is false.
-				return;
+				// if update config is missing, use the patches from the new section, nothing else.
+				// this makes sense because users often forget to specify them in an update section.
+				// moreover it is safe, because the patches are checked before they are applied.
+				$patches = $this->dom->xpath('/deploydescriptor/configs/new/patch');
+				
 			}
 
 			if (isset($update[0]->attributes()->removeAll)) {
@@ -200,7 +202,7 @@ class DeployDescriptor {
 		$install_scripts = $this->dom->xpath($path.'/script');
 		$uninstall_scripts = $this->dom->xpath("/deploydescriptor/configs/uninstall/script");
 		$uninstall_patches = $this->dom->xpath("/deploydescriptor/configs/uninstall/patch");
-		$patches = $this->dom->xpath($path.'/patch');
+		if (!isset($patches)) $patches = $this->dom->xpath($path.'/patch');
 
 
 		// successors, ie. all the extensions which must succeed this one.
