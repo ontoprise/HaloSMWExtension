@@ -14,7 +14,7 @@
 		<dependencies>
 			<dependency from="1132" to="1169">mw</dependency>
 			<dependency from="140" to="156">smw</dependency>
-			<dependency from="142" to="154">smwhalo</dependency>
+			<dependency from="142" to="156">smwhalo</dependency>
 			<dependency from="100" to="140">semanticgardening</dependency>
 			<dependency from="101">scriptmanager</dependency>
 		</dependencies>
