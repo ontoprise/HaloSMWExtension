@@ -804,9 +804,9 @@ function smwfHaloFormInput($cur_value, $input_name, $is_mandatory, $is_disabled,
 	// call now the general function of SF that creates the <input> field
 	//	$html = SFFormInput::$method($cur_value, $input_name, $is_mandatory, $is_disabled, $other_args);
 	if($method == 'textEntryHTML') {
-		$html = SFTextInput::getText($cur_value, $input_name, $is_mandatory, $is_disabled, $other_args);
+		$html = SFTextInput::getHTML($cur_value, $input_name, $is_mandatory, $is_disabled, $other_args);
 	} else {
-		$html = SFTextAreaInput::getText($cur_value, $input_name, $is_mandatory, $is_disabled, $other_args);
+		$html = SFTextAreaInput::getHTML($cur_value, $input_name, $is_mandatory, $is_disabled, $other_args);
 	}
 
 	// add the constraints in the result output html. Either in input field or a textarea
