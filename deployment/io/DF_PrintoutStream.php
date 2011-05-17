@@ -19,19 +19,21 @@
  * @file
  * @ingroup DFIO
  *
- * Configurable output stream. Prints message in differnt formats 
+ * Configurable output stream. Prints message in differnt formats
  * to the PHP output stream.
  *
  * @author: Kai Kühn / ontoprise / 2011
  *
  */
+define ("DF_OUTPUT_FORMAT_TEXT", 0);
+define ("DF_OUTPUT_FORMAT_HTML", 1);
 
 define('DF_PRINTSTREAM_TYPE_INFO', 0);
 define('DF_PRINTSTREAM_TYPE_WARN', 1);
 define('DF_PRINTSTREAM_TYPE_ERROR', 2);
 define('DF_PRINTSTREAM_TYPE_FATAL', 4);
 
-class DFPrintStream {
+class DFPrintoutStream {
 
 	/*
 	 * printout mode
@@ -42,7 +44,7 @@ class DFPrintStream {
 
 	public static function getInstance($mode = DF_OUTPUT_FORMAT_TEXT) {
 		if (!is_null(self::$instance)) return self::$instance;
-		self::$instance = new DFPrintStream($mode);
+		self::$instance = new DFPrintoutStream($mode);
 		return self::$instance;
 	}
 
@@ -59,7 +61,7 @@ class DFPrintStream {
 	 * Print some output to indicate progress. The output message is given by
 	 * $msg, while $verbose indicates whether or not output is desired at all.
 	 */
-	public function reportProgress($msg, $type, $verbose = true) {
+	public function output($msg, $type = DF_PRINTSTREAM_TYPE_INFO, $verbose = true) {
 		if (!$verbose) {
 			return;
 		}
@@ -71,24 +73,74 @@ class DFPrintStream {
 		flush();
 	}
 	
-	private function formatText($text, $type) {
+    /**
+     * Print some output to indicate progress. The output message is given by
+     * $msg, while $verbose indicates whether or not output is desired at all.
+     */
+    public function outputln($msg = '', $type = DF_PRINTSTREAM_TYPE_INFO, $verbose = true) {
+        if (!$verbose) {
+            return;
+        }
+        if (ob_get_level() == 0) { // be sure to have some buffer, otherwise some PHPs complain
+            ob_start();
+        }
+        print $this->formatText($msg, $type, "\n");
+        ob_flush();
+        flush();
+    }
+
+	private function formatText($text, $type, $preLined = '') {
+		global $dfgLang;
 		switch($this->mode) {
-		case DF_OUTPUT_FORMAT_TEXT:
-				return is_array($text) ? implode("", $text) : $text;
+			case DF_OUTPUT_FORMAT_TEXT:
+				$prefix = "";
+				switch($type) {
+					case DF_PRINTSTREAM_TYPE_WARN:
+						$prefix .= $dfgLang->getLanguageString('df_warn'). " ";
+						break;
+					case DF_PRINTSTREAM_TYPE_ERROR:
+						$prefix .= $dfgLang->getLanguageString('df_error'). " ";
+						break;
+					case DF_PRINTSTREAM_TYPE_FATAL:
+						$prefix .= $dfgLang->getLanguageString('df_fatal'). " ";
+				}
+				if (is_array($text)) {
+					$result = "";
+					foreach($text as $t) {
+						$result .= $prefix . $t;
+					}
+					return $preLined.$result;
+				}
+				return $preLined.$prefix .$text;
 				break;
 			case DF_OUTPUT_FORMAT_HTML:
+				if ($preLined == "\n") {
+					$preLined = "<br/>";
+				}
 				if (is_array($text)) {
 					for($i = 0; $i < count($text); $i++){
 						$text[$i] = str_replace("\n", "<br>", $text[$i]);
 						$text[$i] = str_replace("\t", '<div style="display: inline; margin-left: 10px;"></div>', $text[$i]);
-						$text[$i] = str_replace("[FAILED]", '<span class="df_checkinst_error">[FAILED]</span>', $text[$i]);
-						$text[$i] = str_replace("[OK]", '<span class="df_checkinst_ok">[OK]</span>', $text[$i]);
+						$text[$i] = str_replace("[FAILED]", '<span class="df_checkinst_error">['.$dfgLang->getLanguageString('df_failed').']</span>', $text[$i]);
+						$text[$i] = str_replace("[OK]", '<span class="df_checkinst_ok">['.$dfgLang->getLanguageString('df_ok').']</span>', $text[$i]);
+							
+
+						switch($type) {
+							case DF_PRINTSTREAM_TYPE_WARN:
+								$text[$i] = '<span class="df_checkinst_error">['.$dfgLang->getLanguageString('df_warn').']</span>' . " " . $text[$i];
+								break;
+							case DF_PRINTSTREAM_TYPE_ERROR:
+								$prefix .= '<span class="df_checkinst_error">['.$dfgLang->getLanguageString('df_error').']</span>'. " " . $text[$i];
+								break;
+							case DF_PRINTSTREAM_TYPE_FATAL:
+								$prefix .= '<span class="df_checkinst_error">['.$dfgLang->getLanguageString('df_fatal').']</span>'. " " . $text[$i];
+						}
 					}
-					return implode("", $text);
-				} else return $text;
+					return $preLined.implode("", $text);
+				} else return $preLined.$text;
 				break;
-		
+
 		}
-	} 
+	}
 
 }

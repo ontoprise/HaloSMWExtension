@@ -19,9 +19,9 @@ global $rootDir;
 require_once $rootDir.'/tools/maintenance/maintenanceTools.inc';
 require_once($rootDir."/tools/smwadmin/DF_PackageRepository.php");
 require_once($rootDir."/tools/smwadmin/DF_Tools.php");
+require_once($rootDir."/io/DF_PrintoutStream.php");
 
-define ("DF_OUTPUT_FORMAT_TEXT", 0);
-define ("DF_OUTPUT_FORMAT_HTML", 1);
+
 
 
 define ("DF_SMWFORUM_LINK_MISSING_DEPENDENCY", "http://smwforum.ontoprise.com/smwforum/index.php/Help:Troubleshooting_for_common_problems_with_the_Deployment_Framework#Missing_dependency_in_an_extension");

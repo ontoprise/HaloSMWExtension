@@ -45,8 +45,12 @@ class DF_Language_De extends DF_Language {
 	'df_updatesavailable' => 'Updates verfügbar!',
     'df_updateforextensions' => 'Es gibt Updates für folgende Extensions:',
     'df_noupdatesfound' => 'Keine Updates gefunden!',
-		'df_installationpath_heading' => "Installationsverzeichnis des Deployment-Frameworks"
+    'df_installationpath_heading' => "Installationsverzeichnis des Deployment-Frameworks",
        
-    
+    'df_warn' => 'WARNUNG',
+    'df_error' => 'FEHLER',
+    'df_fatal' => 'FATALER FEHLER',
+    'df_failed' => 'FEHLGESCHLAGEN',
+    'df_ok' => 'OK'
 	);
 }
