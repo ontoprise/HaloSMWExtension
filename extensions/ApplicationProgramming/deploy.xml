@@ -35,6 +35,8 @@
 				file="extensions/ApplicationProgramming/URLArguments/URLArguments.php" />
 			<require name="variables"
 				file="extensions/ApplicationProgramming/Variables/Variables.php" />
+			<require name="preloadtext"
+				file="extensions/ApplicationProgramming/PreloadText/PreloadText.php" />
 		</new>
 	</configs>
 </deploydescriptor>
