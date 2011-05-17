@@ -129,16 +129,30 @@ createList: function(list,id) {
 				if (list[i].valuePageInfo) {
 					valuePageInfo = list[i].valuePageInfo;
 				}
+				var category = null;
+				if (list[i].categoryInfo) {
+					categoryInfo = list[i].categoryInfo;
+				}
+				
 	  			firstValue = values[0].escapeHTML();
 	  			var valueLink;
 				var linkDeco = '';
+				var editArticleURL = '';
+				var categoryNS = wgFormattedNamespaces['14'];
+				var categoryParam = categoryInfo[0] !== null && valuePageInfo[0] === 'redlink'
+									? '&category='+escape(categoryInfo[0]) 
+									  + '&preloadtext=[['
+									  + categoryNS
+									  + escape(':'+categoryInfo[0])+']]'
+									: '';
 				
 				if (valuePageInfo[0] == 'redlink') {
 					linkDeco = redLinkStyle;
+					editArticleURL = '?action=edit';
 				} 
 				if (valuePageInfo[0] == 'exists' || valuePageInfo[0] == 'redlink') {
 					// link to an existing page
-					valueLink = '<a href="'+wgServer+path+firstValue+editArticleURL +
+					valueLink = '<a href="'+wgServer+path+firstValue+editArticleURL + categoryParam +
 					            '" target="blank"'+linkDeco+' title="' + firstValue +'">' + firstValue + '</a>';					
 				} else {
 					valueLink = '<span title="' + firstValue + '">' 
@@ -154,13 +168,20 @@ createList: function(list,id) {
 	  				//values[j].length > maxlen1 ? maxlen1 = values[j].length : "";
 	  				var v = values[j].escapeHTML();
 					var linkDeco = '';
-					
+					var categoryParam = categoryInfo[j] !== null && valuePageInfo[j] === 'redlink'
+									? '&category='+escape(categoryInfo[j]) 
+									  + '&preloadtext=[['
+									  + categoryNS 
+									  + escape(':'+categoryInfo[j])+']]'
+									: '';
+					editArticleURL = '';
 					if (valuePageInfo[j] == 'redlink') {
 						linkDeco = redLinkStyle;
+						editArticleURL = '?action=edit';
 					} 
 					if (valuePageInfo[j] == 'exists' || valuePageInfo[j] == 'redlink') {
 						// link to an existing page
-						valueLink = '<a href="'+wgServer+path+v+editArticleURL +
+						valueLink = '<a href="'+wgServer+path+v+editArticleURL + categoryParam +
 						            '" target="blank"'+linkDeco+' title="' + v +'">' + v + '</a>';					
 					} else {
 						valueLink = '<span title="' + v + '">' 

@@ -209,6 +209,12 @@ fillList: function(forceShowList) {
 				relations[i].valuePageInfo = this.valuePageInfo[i];
 			}
 		}
+		if (this.categoryInfo
+			&& this.categoryInfo.length == relations.length) {
+			for (var i = 0; i < relations.length; ++i) {
+				relations[i].categoryInfo = this.categoryInfo[i];
+			}
+		}
 
 		if( wgAction !== "annotate" ) {
 			// no recommended properties for "Annotation Mode"
@@ -239,6 +245,7 @@ fillList: function(forceShowList) {
 		var relationInfo = request.responseText.evalJSON(true);
 		this.propertyExists = [];
 		this.valuePageInfo = [];
+		this.categoryInfo = [];
 
 		var containsForbiddenProperties = false;
 		for (var i = 0; i < relationInfo.length; ++i) {
@@ -252,6 +259,9 @@ fillList: function(forceShowList) {
 			
 			relations[i].valuePageInfo = relationInfo[i].valuePageInfo;
 			this.valuePageInfo.push(relationInfo[i].valuePageInfo);
+			
+			relations[i].categoryInfo = relationInfo[i].rangeCategories;
+			this.categoryInfo.push(relationInfo[i].rangeCategories);
 		}
 		
 		refreshSTB.containsForbiddenProperties = containsForbiddenProperties;

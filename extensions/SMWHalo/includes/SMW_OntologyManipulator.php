@@ -438,7 +438,10 @@ function smwf_om_IsRedirect(Title $title) {
  *								 "exists"  => Value is an existing page
  *								 "redlink" => Value is a non-existing page
  *								 "no page" => Value is not a page
- *								 "missing type info" => The type info for the value is  missing
+ *								 "missing type info" => The type info for the 
+ *                                                      value is  missing
+ *		- rangeCategories (array): The categories of each page value of the property
+ *      - relationSchema (array): The type IDs for each type of the property values
  * 
  */
 function smwf_om_MultipleRelationInfo($relations) {
@@ -460,9 +463,9 @@ function smwf_om_MultipleRelationInfo($relations) {
 		$relDescr->accessGranted = smwf_om_userCan($relDescr->name, $relDescr->accessRequest);
 		
 		// Check if values of the relation are valid pages
-		$relSchema = $relDescr->relationExists === 'true'
+		list($relSchema, $categories) = $relDescr->relationExists === 'true'
 						? smwf_om_getRelationSchema($relDescr->name)
-						: array('_wpg');
+						: array(array('_wpg'), array(null));
 		// Store for each value of the property if it is the name of an article
 		// and if it exists. This is encoded as follows:
 		// "exists"  => Value is an existing page
@@ -486,6 +489,8 @@ function smwf_om_MultipleRelationInfo($relations) {
 			}
 		}
 		$relDescr->valuePageInfo = $valuePageInfo;
+		$relDescr->rangeCategories = $categories;
+		$relDescr->relationSchema = $relSchema;
 		$results[] = $relDescr;
 	}
 	
@@ -1085,26 +1090,65 @@ function smwf_om_getRelationSchema($relationName) {
 	// if no 'has type' annotation => normal binary relation
 	if (count($type) == 0) {
 		// return binary schema with the default type 'page'
-		$relSchema = array('page');
-	} else {
-		$typeLabels = $type[0]->getTypeLabels();
-		$typeValues = $type[0]->getTypeValues();
-		$relSchema = array();
-		if ($type[0] instanceof SMWTypesValue) {
-			if ($type[0]->getDBkey() == '_rec') {
-				// This is an n-ary property
-				// => the property "has fields" contains the actual types
-				$fieldsProp = SMWPropertyValue::makeProperty("_LIST");
-				$fields = smwfGetStore()->getPropertyValues($relationTitle, $fieldsProp);
-				$typeValues = $fields[0]->getTypeValues();
-				foreach ($typeValues as $tv) {
-					$relSchema[] = $tv->getDBkey();
-				}
-			} else {
-	   			$relSchema[] = $type[0]->getDBkey();
-			}
-		}
+		$relSchema = array('_wpg');
+		$categories = array(null);
+		return array($relSchema, $categories);
 	}
-	return $relSchema;
+	$type = array_values($type);
+	$typeLabels = $type[0]->getTypeLabels();
+	$typeValues = $type[0]->getTypeValues();
+	$relSchema = array();
+	$categories = array();
+	
+	if (!($type[0] instanceof SMWTypesValue)) {
+		return array($relSchema, $categories);
+	}
+
+	// Get category names for page values
+   	$rangeHints = smwfGetStore()
+   					->getPropertyValues($relationTitle, 
+   					                    smwfGetSemanticStore()->domainRangeHintProp);
+	$rangeHints = array_values($rangeHints);
+
+	if ($type[0]->getDBkey() == '_rec') {
+		// This is an n-ary property
+		// => the property "has fields" contains the actual types
+		$fieldsProp = SMWPropertyValue::makeProperty("_LIST");
+		$fields = smwfGetStore()->getPropertyValues($relationTitle, $fieldsProp);
+		$fields = array_values($fields);
+		$typeValues = $fields[0]->getTypeValues();
+		foreach ($typeValues as $tv) {
+			$relSchema[] = $tv->getDBkey();
+		}
+
+		// Assign the range hints to array $categories
+		$i = 0;
+		foreach ($relSchema as $valueType) {
+			$cat = null;
+			if ($valueType == '_wpg' && count($rangeHints) > $i) {
+				$dvs = $rangeHints[$i]->getDVs();
+				if ($dvs[1] !== NULL) {
+					$cat = htmlspecialchars($dvs[1]->getTitle()->getText());
+				}
+				++$i;
+			}
+			$categories[] = $cat;
+		}  								                    
+   						
+	} else {
+		// A simple property
+   		$relSchema[] = $type[0]->getDBkey();
+   		$cat = null;
+   		if ($relSchema[0] == '_wpg') {
+   			if (count($rangeHints) > 0) {
+				$dvs = $rangeHints[0]->getDVs();
+				if ($dvs[1] !== NULL) {
+					$cat = htmlspecialchars($dvs[1]->getTitle()->getText());
+				}
+   			}
+   		}
+   		$categories[] = $cat;
+	}
+	return array($relSchema, $categories);
 	
 }
