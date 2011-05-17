@@ -24,7 +24,7 @@ If you don't use the deployment framework, you can install it manually. See belo
 #Requirements:
 #
 
-	Semantic Forms 2.0.8
+	Semantic Forms 2.1.2
 	Deployment Framework (optional)
 	SMW Plus ontology bundle 1.5.3
 
@@ -36,10 +36,10 @@ If you don't use the deployment framework, you can install it manually. See belo
 	1.1 The Rich Media extension comes with several patch files, where two must
 	be applied. One file patches Mediawiki and the other the Semantic Forms
 	extension. Depending on the version number choose the correct patch file.
-		* '/extensions/RichMedia/RichMediaPatchForSF2_0_8.txt': 
-			This file provides the necessary patches for Semantic Forms 2.0.8
-		* '/extensions/RichMedia/RichMediaPatchForMW1_16_1.txt': 
-			This is needed to patch MediaWiki in version 1.16.0 and 1.16.1
+		* '/extensions/RichMedia/RichMediaPatchForSF2_1_2.txt': 
+			This file provides the necessary patches for Semantic Forms 2.1.2
+		* '/extensions/RichMedia/RichMediaPatchForMW1_16_4.txt': 
+			This is needed to patch MediaWiki in version 1.16.4
 	Please find more detailed information about the patches at:
 http://smwforum.ontoprise.com/smwforum/index.php/Help:Installing_Rich_Media_extension_1.5.1#Notes_on_patches
 

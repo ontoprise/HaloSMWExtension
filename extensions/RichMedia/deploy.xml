@@ -12,7 +12,7 @@
 		</description>
 		<helpurl>http://smwforum.ontoprise.com/smwforum/index.php/Help:Rich_Media_Extension</helpurl>
 		<dependencies>
-			<dependency from="208">semanticforms</dependency>
+			<dependency from="212">semanticforms</dependency>
 			<dependency from="153" to="156">smwplus</dependency>
 		</dependencies>
 		<notice>
@@ -85,6 +85,8 @@ http://smwforum.ontoprise.com/smwforum/index.php/Help:Repairing_data"
 				from="200" to="200" />
 			<patch file="RichMediaPatchForSF2_0_8.txt" ext="semanticforms"
 				from="208" to="208" />
+			<patch file="RichMediaPatchForSF2_1_2.txt" ext="semanticforms"
+				from="212" to="212" />
 			<patch file="RichMediaPatchForMW1_15_3.txt" ext="mw" 
 				from="1153" to="1153" />
 			<patch file="RichMediaPatchForMW1_16_0.txt" ext="mw"
@@ -96,7 +98,7 @@ http://smwforum.ontoprise.com/smwforum/index.php/Help:Repairing_data"
 
 		</new>
 		<update from="141">
-			<patch file="RichMediaPatchForSF2_0_8.txt" />
+			<patch file="RichMediaPatchForSF2_1_2.txt" />
 			<patch file="RichMediaPatchForMW1_16_4.txt" />
 		</update>
 		<uninstall>
@@ -108,6 +110,8 @@ http://smwforum.ontoprise.com/smwforum/index.php/Help:Repairing_data"
 				from="200" to="200" />
 			<patch file="RichMediaPatchForSF2_0_8.txt" ext="semanticforms"
 				from="208" to="208" />
+			<patch file="RichMediaPatchForSF2_1_2.txt" ext="semanticforms"
+				from="212" to="212" />
 			<patch file="RichMediaPatchForMW1_15_3.txt" ext="mw" 
 				from="1153" to="1153" />
 			<patch file="RichMediaPatchForMW1_16_0.txt" ext="mw"
