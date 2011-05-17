@@ -132,8 +132,6 @@ ENDS
 
 }
 
-function fatalError($text) {
-	print "\n$text\n";die();
-}
+
 
 

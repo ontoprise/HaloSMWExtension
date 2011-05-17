@@ -836,7 +836,7 @@ class Tools {
 	 * Note: Returns always NULL on linux.
 	 *
 	 * @param string $programname (Fragment of) program name or deploy ID. By default search for all.
-	 * 
+	 *
 	 * @return array( Programname => directory path )
 	 */
 	public static function getOntopriseSoftware($id = '') {
@@ -845,21 +845,21 @@ class Tools {
 		exec("reg QUERY \"HKEY_CURRENT_USER\Software\Ontoprise\" /s /ve", $out, $res);
 
 		if ($res != 0) return NULL;
-        
+
 		// convert IDs into program names (as far as known)
 		// TSC is the only registered program for now.
-		// otherwise consider it as program name 
+		// otherwise consider it as program name
 		if ($id == 'tsc') {
 			$programname = "Triplestore Connector";
 		} else {
 			$programname = $id;
 		}
-		
+
 		$result=array();
 		$n = count($out);
 		for($i = 0; $i < $n; $i++) {
 			if (stripos($out[$i], "HKEY_CURRENT_USER\\Software\\Ontoprise\\") !== false
-			 && (stripos($out[$i], $programname) !== false || $programname == '')) {
+			&& (stripos($out[$i], $programname) !== false || $programname == '')) {
 				$defValue = $out[$i+1];
 				$parts = explode("   ", $defValue);
 				$prgName = substr($out[$i], strlen("HKEY_CURRENT_USER\\Software\\Ontoprise\\"));
@@ -869,4 +869,47 @@ class Tools {
 		}
 		return $result;
 	}
+
+	/**
+	 * Shows a fatal error which aborts installation.
+	 *
+	 * @param Exception $e (InstallationError, HttpError, RollbackInstallation)
+	 */
+	public static function exitOnFatalError($e) {
+		$dfgOut->outputln();
+
+		if ($e instanceof InstallationError) {
+			switch($e->getErrorCode()) {
+				case DEPLOY_FRAMEWORK_DEPENDENCY_EXIST: {
+					$packages = $e->getArg1();
+					$dfgOut->outputln($e->getMsg());
+					$dfgOut->outputln();
+					foreach($packages as $p) {
+						$dfgOut->outputln("\t*$p", DF_PRINTSTREAM_TYPE_FATAL);
+					}
+					break;
+				}
+				case DEPLOY_FRAMEWORK_ALREADY_INSTALLED:
+					$package = $e->getArg1();
+					$dfgOut->outputln($e->getMsg(), DF_PRINTSTREAM_TYPE_FATAL);
+					$dfgOut->outputln("\t*".$package->getID()."-".$package->getVersion(), DF_PRINTSTREAM_TYPE_FATAL);
+					break;
+						
+				default: $dfgOut->outputln($e->getMsg(), DF_PRINTSTREAM_TYPE_FATAL); break;
+			}
+		} else if ($e instanceof HttpError) {
+			$dfgOut->outputln($e->getMsg(), DF_PRINTSTREAM_TYPE_FATAL);
+
+		} else if ($e instanceof RepositoryError) {
+			$dfgOut->outputln($e->getMsg(), DF_PRINTSTREAM_TYPE_FATAL);
+		} else if (is_string($e)) {
+			if (!empty($e)) $dfgOut->outputln($e, DF_PRINTSTREAM_TYPE_FATAL);
+		}
+		$dfgOut->outputln();
+		$dfgOut->outputln();
+
+		// stop installation
+		die(DF_TERMINATION_ERROR);
+	}
+
 }

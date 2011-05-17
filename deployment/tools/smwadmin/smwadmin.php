@@ -56,8 +56,8 @@ require_once($mwrootDir.'/deployment/io/DF_Log.php');
 require_once($mwrootDir.'/deployment/io/DF_PrintoutStream.php');
 
 // output format of smwadmin as a console app is text
-initializeLanguage();
-$dfgPrintStream = DFPrintoutStream::getInstance(DF_OUTPUT_FORMAT_TEXT);
+dffInitLanguage();
+$dfgOut = DFPrintoutStream::getInstance(DF_OUTPUT_FORMAT_TEXT);
 
 //Load Settings
 if(file_exists($rootDir.'/settings.php'))
@@ -68,27 +68,25 @@ if(file_exists($rootDir.'/settings.php'))
 // check PHP version
 $phpver = str_replace(".","",phpversion());
 if ($phpver < 520) {
-	$dfgPrintStream->output("\nPHP version must be >= 5.2\n", DF_PRINTSTREAM_TYPE_ERROR) ;
-	die(DF_TERMINATION_ERROR);
+	Tools::exitOnFatalError("PHP version must be >= 5.2\n");
 }
 
 if (array_key_exists('SERVER_NAME', $_SERVER) && $_SERVER['SERVER_NAME'] != NULL) {
-	$dfgPrintStream->output("Invalid access! A maintenance script MUST NOT be accessed from remote.", DF_PRINTSTREAM_TYPE_ERROR);
-	die(DF_TERMINATION_ERROR);
+	Tools::exitOnFatalError("Invalid access! A maintenance script MUST NOT be accessed from remote.");
 }
 
 // check if the user is allowed to create files, directory.
 if (!in_array("--nocheck", $_SERVER['argv'])) {
 	$check = Tools::checkPriviledges();
 	if ($check !== true) {
-		fatalError($check);
+		Tools::exitOnFatalError($check);
 	}
 
 
 	// check required tools
 	$check = Tools::checkEnvironment();
 	if ($check !== true) {
-		fatalError($check);
+		Tools::exitOnFatalError($check);
 	}
 
 
@@ -96,7 +94,7 @@ if (!in_array("--nocheck", $_SERVER['argv'])) {
 
 	@$success = touch("$rootDir/../LocalSettings.php");
 	if ($success === false) {
-		fatalError("LocalSettings.php is not accessible. Missing rights or file locked?");
+		Tools::exitOnFatalError("LocalSettings.php is not accessible. Missing rights or file locked?");
 	}
 }
 
@@ -126,20 +124,20 @@ $dfgNoConflict=false;
 $args = $_SERVER['argv'];
 array_shift($args); // remove script name
 if (count($args) === 0) {
-	showHelp();
+	dffShowHelp();
 	die(DF_TERMINATION_WITHOUT_FINALIZE);
 }
 
 // get command line parameters
 for( $arg = reset( $args ); $arg !== false; $arg = next( $args ) ) {
 	if ($arg == '--help') {
-		showHelp();
+		dffShowHelp();
 		die(DF_TERMINATION_WITHOUT_FINALIZE);
 	} else
 	//-i => Install
 	if ($arg == '-i') {
 		$package = next($args);
-		if ($package === false) fatalError("No package found");
+		if ($package === false) Tools::exitOnFatalError("No package found");
 
 		if (file_exists($package)) {
 			$file_ext = reset(array_reverse(explode(".", $package)));
@@ -158,7 +156,7 @@ for( $arg = reset( $args ); $arg !== false; $arg = next( $args ) ) {
 		continue;
 	} else if ($arg == '-d') { // -d => De-install
 		$package = next($args);
-		if ($package === false) fatalError("No package found");
+		if ($package === false) Tools::exitOnFatalError("No package found");
 		$packageToDeinstall[] = $package;
 			
 		continue;
@@ -186,7 +184,7 @@ for( $arg = reset( $args ); $arg !== false; $arg = next( $args ) ) {
 	} else if ($arg == '--checkdump') { // => analyze installed dump
 		$checkDump = true;
 		$package = next($args);
-		if ($package === false) fatalError("No package found");
+		if ($package === false) Tools::exitOnFatalError("No package found");
 		$packageToInstall[] = $package;
 		continue;
 	} else if ($arg == '--finalize') { // => finalize installation, ie. run scripts, import pages
@@ -214,14 +212,13 @@ for( $arg = reset( $args ); $arg !== false; $arg = next( $args ) ) {
 		// ignore
 		continue;
 	} else {
-		$dfgPrintStream->outputln("\nUnknown command: $arg. Try --help\n\n", DF_PRINTSTREAM_TYPE_ERROR);
-		die(DF_TERMINATION_ERROR);
+		Tools::exitOnFatalError("\nUnknown command: $arg. Try --help\n\n");
 	}
 	$params[] = $arg;
 }
 
 if ($dfgForce && $dfgNoConflict) {
-	$dfgPrintStream->outputln("\nWARNING: -f and --noconflict are incompatible options. --noconflict is IGNORED.", DF_PRINTSTREAM_TYPE_WARN);
+	$dfgOut->outputln("\nWARNING: -f and --noconflict are incompatible options. --noconflict is IGNORED.", DF_PRINTSTREAM_TYPE_WARN);
 }
 
 $logger = Logger::getInstance();
@@ -233,12 +230,12 @@ if ($dfgInstallPackages) {
 	$mediaWikiLocation = dirname(__FILE__) . '/../../..';
 	require_once "$mediaWikiLocation/maintenance/commandLine.inc";
 
-	initializeLanguage();
+	dffInitLanguage();
 	// include the resource installer
 	require_once('DF_ResourceInstaller.php');
 
 	// finalize mode requires a wiki environment, so check and include a few things more
-	checkWikiContext();
+	dffCheckWikiContext();
 
 	$logger->info("Start initializing packages");
 	$installer->initializePackages();
@@ -248,35 +245,34 @@ if ($dfgInstallPackages) {
 	// check for non-initialized extensions
 	$localPackages = PackageRepository::getLocalPackagesToInitialize($mwrootDir);
 	if (count($localPackages) > 0) {
-		$dfgPrintStream->outputln("\nThere are non-initialized extensions. Run: smwadmin --finalize\n");
-		die(DF_TERMINATION_ERROR);
+		Tools::exitOnFatalError("\nThere are non-initialized extensions. Run: smwadmin --finalize\n");
 	}
 }
 
 if ($dfgRestore) {
-	$dfgPrintStream->outputln("\nThis operation will restore the wiki from the last restore point.");
-	$dfgPrintStream->outputln("\nThat means the Mediawiki installation is overwritten as well as the");
-	$dfgPrintStream->outputln("\ndatabase content!\n\n Do you really want to continue (y/n)? ");
+	$dfgOut->outputln("\nThis operation will restore the wiki from the last restore point.");
+	$dfgOut->outputln("\nThat means the Mediawiki installation is overwritten as well as the");
+	$dfgOut->outputln("\ndatabase content!\n\n Do you really want to continue (y/n)? ");
 	$line = trim(fgets(STDIN));
 	$result = strtolower($line);
 	if ($result === 'y') {
 		$restorePoints = $rollback->getAllRestorePoints();
 		if (count($restorePoints) === 0) {
-			$dfgPrintStream->outputln("Nothing to restore.");
-			$dfgPrintStream->outputln();
+			$dfgOut->outputln("Nothing to restore.");
+			$dfgOut->outputln();
 			die(DF_TERMINATION_WITHOUT_FINALIZE);
 		}
 		if ($dfgRestorePoint === false) {
-			$dfgPrintStream->outputln("The following restore points are available:");
-			$dfgPrintStream->outputln();
+			$dfgOut->outputln("The following restore points are available:");
+			$dfgOut->outputln();
 			do {
 				$i = 1;
 				foreach($restorePoints as $rp) {
 					$timestamp = filemtime($rp);
-					$dfgPrintStream->outputln("($i) ".basename($rp)." [".date(DATE_RSS, $timestamp)."]");
+					$dfgOut->outputln("($i) ".basename($rp)." [".date(DATE_RSS, $timestamp)."]");
 					$i++;
 				}
-				$dfgPrintStream->outputln("\n\nChoose one: ");
+				$dfgOut->outputln("\n\nChoose one: ");
 				$num = intval(trim(fgets(STDIN)));
 			} while(!(is_int($num) && $num < $i && $num > 0));
 			$dfgRestorePoint = basename($restorePoints[$num-1]);
@@ -285,7 +281,7 @@ if ($dfgRestore) {
 		$success = $rollback->restore($dfgRestorePoint);
 		if (!$success) {
 			$logger->error("Could not restore '$dfgRestorePoint'");
-			$dfgPrintStream->outputln("\nCould not restore '$dfgRestorePoint'. Does it exist?", DF_PRINTSTREAM_TYPE_ERROR);
+			$dfgOut->outputln("\nCould not restore '$dfgRestorePoint'. Does it exist?", DF_PRINTSTREAM_TYPE_ERROR);
 		}
 		$logger->info("End restore operation");
 		die(DF_TERMINATION_WITH_FINALIZE);
@@ -308,23 +304,23 @@ if ($dfgCreateRestorePoint) {
 if ($dfgRestoreList) {
 	$restorePoints = $rollback->getAllRestorePoints();
 	if (count($restorePoints) === 0) {
-		$dfgPrintStream->outputln("No restore point exist.\n");
+		$dfgOut->outputln("No restore point exist.\n");
 		die(DF_TERMINATION_WITHOUT_FINALIZE);
 	}
 	$i = 1;
 	foreach($restorePoints as $rp) {
 		$timestamp = filemtime($rp);
-		$dfgPrintStream->outputln("($i) ".basename($rp)." [".date(DATE_RSS, $timestamp)."]");
+		$dfgOut->outputln("($i) ".basename($rp)." [".date(DATE_RSS, $timestamp)."]");
 		$i++;
 	}
-	$dfgPrintStream->outputln();
+	$dfgOut->outputln();
 	die(DF_TERMINATION_WITHOUT_FINALIZE);
 }
 
 // Global update (ie. updates all packages to the latest possible version)
 if ($dfgGlobalUpdate) {
 	$logger->info("Start global update");
-	handleGlobalUpdate($dfgCheckDep);
+	dffHandleGlobalUpdate($dfgCheckDep);
 	$logger->info("End global update");
 	die($dfgCheckDep === true  ? DF_TERMINATION_WITHOUT_FINALIZE : DF_TERMINATION_WITH_FINALIZE);
 }
@@ -345,20 +341,20 @@ foreach($packageToInstall as $toInstall) {
 	$version = count($parts) > 1 ? $parts[1] : NULL;
 	try {
 		$logger->info("Start install package '$packageID'".(is_null($version) ? "" : "-$version"));
-		handleInstallOrUpdate($packageID, $version);
+		dffHandleInstallOrUpdate($packageID, $version);
 		$logger->info("End install package '$packageID'".(is_null($version) ? "" : "-$version"));
 	} catch(InstallationError $e) {
 		$logger->fatal($e);
-		fatalError($e);
+		Tools::exitOnFatalError($e);
 	} catch(HttpError $e) {
 		$logger->fatal($e);
-		fatalError($e);
+		Tools::exitOnFatalError($e);
 	} catch(RepositoryError $e) {
 		$logger->fatal($e);
-		fatalError($e);
+		Tools::exitOnFatalError($e);
 	} catch(RollbackInstallation $e) {
 		$logger->fatal($e);
-		fatalError("Installation failed! You can try to rollback: smwadmin -r");
+		Tools::exitOnFatalError("Installation failed! You can try to rollback: smwadmin -r");
 	}
 }
 
@@ -368,13 +364,13 @@ if (count($ontologiesToInstall) > 0) {
 	$mediaWikiLocation = dirname(__FILE__) . '/../../..';
 	require_once "$mediaWikiLocation/maintenance/commandLine.inc";
 
-	initializeLanguage();
+	dffInitLanguage();
 
 	// requires a wiki environment, so check and include a few things more
-	checkWikiContext();
+	dffCheckWikiContext();
 	require_once($rootDir.'/tools/smwadmin/DF_OntologyInstaller.php');
 
-	global $rootDir, $dfgPrintStream;
+	global $rootDir, $dfgOut;
 	foreach($ontologiesToInstall as $filePath) {
 
 		$oInstaller = OntologyInstaller::getInstance(realpath($rootDir."/../"));
@@ -406,14 +402,14 @@ if (count($ontologiesToInstall) > 0) {
 			$prefix = $oInstaller->installOntology($bundleID, $filePath, $confirm, false, $mode);
 
 			// copy ontology and create ontology bundle
-			$dfgPrintStream->outputln( "[Creating deploy descriptor...");
+			$dfgOut->outputln( "[Creating deploy descriptor...");
 			$xml = $oInstaller->createDeployDescriptor($bundleID, $filePath, $prefix);
 			Tools::mkpath($mwrootDir."/extensions/$bundleID");
 			$handle = fopen($mwrootDir."/extensions/$bundleID/deploy.xml", "w");
 			fwrite($handle, $xml);
 			fclose($handle);
-			$dfgPrintStream->output("done.]");
-			$dfgPrintStream->outputln("[Copying ontology file...");
+			$dfgOut->output("done.]");
+			$dfgOut->outputln("[Copying ontology file...");
 			copy($filePath, $mwrootDir."/extensions/$bundleID/".basename($filePath));
 
 			// store prefix
@@ -431,12 +427,12 @@ if (count($ontologiesToInstall) > 0) {
 				fclose($handle);
 			}
 
-			$dfgPrintStream->output( "done.]");
+			$dfgOut->output( "done.]");
 		} catch(InstallationError $e) {
 
 			switch($e->getErrorCode()) {
 				case DEPLOY_FRAMEWORK_ONTOLOGYCONFLICT_ERROR: 
-					$dfgPrintStream->outputln("ontology conflict\n", DF_PRINTSTREAM_TYPE_ERROR);
+					$dfgOut->outputln("ontology conflict\n", DF_PRINTSTREAM_TYPE_ERROR);
 			}
 
 			die(DF_TERMINATION_WITHOUT_FINALIZE);
@@ -452,16 +448,16 @@ if (count($localBundlesToInstall) > 0) {
 			$installer->installOrUpdateFromFile($filePath);
 		} catch(InstallationError $e) {
 			$logger->fatal($e);
-			fatalError($e);
+			Tools::exitOnFatalError($e);
 		} catch(HttpError $e) {
 			$logger->fatal($e);
-			fatalError($e);
+			Tools::exitOnFatalError($e);
 		} catch(RollbackInstallation $e) {
 			$logger->fatal($e);
-			fatalError("Installation failed! You can try to rollback: smwadmin -r");
+			Tools::exitOnFatalError("Installation failed! You can try to rollback: smwadmin -r");
 		}catch(RepositoryError $e) {
 			$logger->fatal($e);
-			fatalError($e);
+			Tools::exitOnFatalError($e);
 		}
 	}
 }
@@ -480,13 +476,13 @@ foreach($packageToDeinstall as $toDeInstall) {
 			$mediaWikiLocation = dirname(__FILE__) . '/../../..';
 			require_once "$mediaWikiLocation/maintenance/commandLine.inc";
 
-			initializeLanguage();
+			dffInitLanguage();
 			// include the resource installer
 			require_once('DF_ResourceInstaller.php');
 			require_once('DF_OntologyInstaller.php');
 
 			// include commandLine.inc to be in maintenance mode
-			checkWikiContext();
+			dffCheckWikiContext();
 
 			$packageID = $dd->getID();
 			$version = $dd->getVersion();
@@ -496,16 +492,16 @@ foreach($packageToDeinstall as $toDeInstall) {
 		}
 	} catch(InstallationError $e) {
 		$logger->fatal($e);
-		fatalError($e);
+		Tools::exitOnFatalError($e);
 	} catch(HttpError $e) {
 		$logger->fatal($e);
-		fatalError($e);
+		Tools::exitOnFatalError($e);
 	} catch(RollbackInstallation $e) {
 		$logger->fatal($e);
-		fatalError("Installation failed! You can try to rollback: smwadmin -r");
+		Tools::exitOnFatalError("Installation failed! You can try to rollback: smwadmin -r");
 	}catch(RepositoryError $e) {
 		$logger->fatal($e);
-		fatalError($e);
+		Tools::exitOnFatalError($e);
 	}
 
 }
@@ -518,151 +514,151 @@ foreach($packageToUpdate as $toUpdate) {
 	$version = count($parts) > 1 ? $parts[1] : NULL;
 	try {
 		$logger->info("Start update package '$packageID'".(is_null($version) ? "" : "-$version"));
-		handleInstallOrUpdate($packageID, $version);
+		dffHandleInstallOrUpdate($packageID, $version);
 		$logger->info("End update package '$packageID'".(is_null($version) ? "" : "-$version"));
 	} catch(InstallationError $e) {
 		$logger->fatal($e);
-		fatalError($e);
+		Tools::exitOnFatalError($e);
 	} catch(HttpError $e) {
 		$logger->fatal($e);
-		fatalError($e);
+		Tools::exitOnFatalError($e);
 	} catch(RollbackInstallation $e) {
 		$logger->fatal($e);
-		fatalError("Installation failed! You can try to rollback: smwadmin -r");
+		Tools::exitOnFatalError("Installation failed! You can try to rollback: smwadmin -r");
 	} catch(RepositoryError $e) {
 		$logger->fatal($e);
-		fatalError($e);
+		Tools::exitOnFatalError($e);
 	}
 
 }
 
 if (count($installer->getErrors()) === 0) {
-	$dfgPrintStream->outputln( "\nOK.\n");
+	$dfgOut->outputln( "\nOK.\n");
 	die($dfgCheckDep === true ? DF_TERMINATION_WITHOUT_FINALIZE : DF_TERMINATION_WITH_FINALIZE);
 } else {
-	$dfgPrintStream->outputln("\nErrors occured:\n");
+	$dfgOut->outputln("\nErrors occured:\n");
 	foreach($installer->getErrors() as $e) {
-		$dfgPrintStream->outputln( $e, DF_PRINTSTREAM_TYPE_ERROR);
+		$dfgOut->outputln( $e, DF_PRINTSTREAM_TYPE_ERROR);
 	}
-	$dfgPrintStream->outputln();
-	die(DF_TERMINATION_ERROR);
+	Tools::exitOnFatalError();
+	
 }
 
-function showHelp() {
-	global $dfgPrintStream;
-	$dfgPrintStream->outputln( "smwhalo admin utility v".DEPLOY_FRAMEWORK_VERSION.", Ontoprise 2009-2011");
-	$dfgPrintStream->outputln( "Usage: smwadmin [ -i | -d ] <package>[-<version>]");
-	$dfgPrintStream->outputln( "       smwadmin -u [ <package>[-<version>] ]");
-	$dfgPrintStream->outputln( "       smwadmin -r");
-	$dfgPrintStream->outputln( "       smwadmin -l");
-	$dfgPrintStream->outputln();
-	$dfgPrintStream->outputln( "\t-i <package>: Install");
-	$dfgPrintStream->outputln( "\t-d <package> ]: De-Install");
-	$dfgPrintStream->outputln( "\t-u <package>: Update");
-	$dfgPrintStream->outputln( "\t-l [ pattern ] : List installed packages.");
-	$dfgPrintStream->outputln( "\t-l --desc: Shows additional description about the packages.");
-	$dfgPrintStream->outputln( "\t-r [ name ]: Restore from a wiki-restore-point.");
-	$dfgPrintStream->outputln( "\t--rcreate [ name ]: Explicitly creates a wiki-restore-point.");
-	$dfgPrintStream->outputln( "\t--rlist : Shows all existing wiki-restore-points");
-	$dfgPrintStream->outputln( "\t--dep : Check only dependencies but do not install.");
-	$dfgPrintStream->outputln( "\tAdvanced options: ");
-	$dfgPrintStream->outputln( "\t--finalize: Finalizes installation");
-	$dfgPrintStream->outputln( "\t-f: Force operation (ignore any problems if possible)");
-	//$dfgPrintStream->outputln( "\t--checkdump <package>: Check only dumps for changes but do not install.");
-	$dfgPrintStream->outputln( "\t--noconflict: Assures that there are no conflicts on ontology import. Will stop the process, if not.");
-	$dfgPrintStream->outputln( "\t--nocheck: Skips the environment checks");
-	$dfgPrintStream->outputln();
-	$dfgPrintStream->outputln( "Examples:\tsmwadmin -i smwhalo Installs the given packages");
-	$dfgPrintStream->outputln( "\tsmwadmin -u: Updates complete installation");
-	$dfgPrintStream->outputln( "\tsmwadmin -u --dep: Shows what would be updated.");
-	$dfgPrintStream->outputln( "\tsmwadmin -d smw: Removes the package smw.");
-	$dfgPrintStream->outputln( "\tsmwadmin -r [name] : Restores old installation from a restore point. User is prompted for which.");
-	$dfgPrintStream->outputln( "\n");
+function dffShowHelp() {
+	global $dfgOut;
+	$dfgOut->outputln( "smwhalo admin utility v".DEPLOY_FRAMEWORK_VERSION.", Ontoprise 2009-2011");
+	$dfgOut->outputln( "Usage: smwadmin [ -i | -d ] <package>[-<version>]");
+	$dfgOut->outputln( "       smwadmin -u [ <package>[-<version>] ]");
+	$dfgOut->outputln( "       smwadmin -r");
+	$dfgOut->outputln( "       smwadmin -l");
+	$dfgOut->outputln();
+	$dfgOut->outputln( "\t-i <package>: Install");
+	$dfgOut->outputln( "\t-d <package> ]: De-Install");
+	$dfgOut->outputln( "\t-u <package>: Update");
+	$dfgOut->outputln( "\t-l [ pattern ] : List installed packages.");
+	$dfgOut->outputln( "\t-l --desc: Shows additional description about the packages.");
+	$dfgOut->outputln( "\t-r [ name ]: Restore from a wiki-restore-point.");
+	$dfgOut->outputln( "\t--rcreate [ name ]: Explicitly creates a wiki-restore-point.");
+	$dfgOut->outputln( "\t--rlist : Shows all existing wiki-restore-points");
+	$dfgOut->outputln( "\t--dep : Check only dependencies but do not install.");
+	$dfgOut->outputln( "\tAdvanced options: ");
+	$dfgOut->outputln( "\t--finalize: Finalizes installation");
+	$dfgOut->outputln( "\t-f: Force operation (ignore any problems if possible)");
+	//$dfgOut->outputln( "\t--checkdump <package>: Check only dumps for changes but do not install.");
+	$dfgOut->outputln( "\t--noconflict: Assures that there are no conflicts on ontology import. Will stop the process, if not.");
+	$dfgOut->outputln( "\t--nocheck: Skips the environment checks");
+	$dfgOut->outputln();
+	$dfgOut->outputln( "Examples:\tsmwadmin -i smwhalo Installs the given packages");
+	$dfgOut->outputln( "\tsmwadmin -u: Updates complete installation");
+	$dfgOut->outputln( "\tsmwadmin -u --dep: Shows what would be updated.");
+	$dfgOut->outputln( "\tsmwadmin -d smw: Removes the package smw.");
+	$dfgOut->outputln( "\tsmwadmin -r [name] : Restores old installation from a restore point. User is prompted for which.");
+	$dfgOut->outputln( "\n");
 
 	$logDir = Tools::getHomeDir()."/df_log";
-	$dfgPrintStream->outputln( "The DF's log files are stored in: $logDir");
-	$dfgPrintStream->outputln( "\n");
+	$dfgOut->outputln( "The DF's log files are stored in: $logDir");
+	$dfgOut->outputln( "\n");
 }
 
 
 
 
 
-function handleGlobalUpdate($dfgCheckDep) {
-	global $installer, $dfgPrintStream;
+function dffHandleGlobalUpdate($dfgCheckDep) {
+	global $installer, $dfgOut;
 	try {
 		list($extensions_to_update, $contradictions, $updated) = $installer->updateAll($dfgCheckDep);
 		if ($dfgCheckDep) {
 			if (count($extensions_to_update) > 0) {
 
-				$dfgPrintStream->outputln("\nThe following extensions would get updated:\n");
+				$dfgOut->outputln("\nThe following extensions would get updated:\n");
 				foreach($extensions_to_update as $id => $etu) {
 					list($desc, $min, $max) = $etu;
-					$dfgPrintStream->outputln( "\t*$id-".Tools::addVersionSeparators(array($min, $desc->getPatchlevel())));
+					$dfgOut->outputln( "\t*$id-".Tools::addVersionSeparators(array($min, $desc->getPatchlevel())));
 				}
 
 
 			}
 			if (count($contradictions) > 0) {
-				$dfgPrintStream->outputln("\nThe following extensions can not be installed/updated due to conflicts:");
+				$dfgOut->outputln("\nThe following extensions can not be installed/updated due to conflicts:");
 				foreach($contradictions as $etu) {
 					list($dd, $min, $max) = $etu;
-					$dfgPrintStream->outputln("* ".$dd->getID());
+					$dfgOut->outputln("* ".$dd->getID());
 				}
 			}
-			$dfgPrintStream->outputln("\n");
+			$dfgOut->outputln("\n");
 
 		}
 
 		if ($updated && count($extensions_to_update) > 0) {
-			$dfgPrintStream->outputln("\nYour installation is now up-to-date!\n");
+			$dfgOut->outputln("\nYour installation is now up-to-date!\n");
 		} else if (count($extensions_to_update) == 0) {
-			$dfgPrintStream->outputln("\nYour installation is already up-to-date!\n");
+			$dfgOut->outputln("\nYour installation is already up-to-date!\n");
 		}
 	} catch(InstallationError $e) {
-		fatalError($e);
+		Tools::exitOnFatalError($e);
 	} catch(HttpError $e) {
-		fatalError($e);
+		Tools::exitOnFatalError($e);
 	} catch(RollbackInstallation $e) {
-		fatalError("Installation failed! You can try to rollback: smwadmin -r");
+		Tools::exitOnFatalError("Installation failed! You can try to rollback: smwadmin -r");
 	} catch(RepositoryError $e) {
-		fatalError($e);
+		Tools::exitOnFatalError($e);
 	}
 
 }
 
-function handleInstallOrUpdate($packageID, $version) {
-	global $checkDump, $dfgCheckDep, $installer, $res_installer, $dfgPrintStream;
+function dffHandleInstallOrUpdate($packageID, $version) {
+	global $checkDump, $dfgCheckDep, $installer, $res_installer, $dfgOut;
 	if (isset($checkDump) && $checkDump == true) {
 		// include commandLine.inc to be in maintenance mode
 		$mediaWikiLocation = dirname(__FILE__) . '/../../..';
 		require_once "$mediaWikiLocation/maintenance/commandLine.inc";
 
-		initializeLanguage();
+		dffInitLanguage();
 
 		// check status of a currently installed wikidump
-		checkWikiContext();
+		dffCheckWikiContext();
 
 		// include the resource installer
 		require_once('DF_ResourceInstaller.php');
 
 		$res_installer = ResourceInstaller::getInstance($mwrootDir);
 		$res_installer->checkWikidump($packageID, $version);
-		$dfgPrintStream->outputln("\n");
+		$dfgOut->outputln("\n");
 
 	} else if ($dfgCheckDep === true) {
 
 		// check dependencies of a package to install or update
 		list($new_package, $old_package, $extensions_to_update) = $installer->collectPackagesToInstall($packageID, $version);
-		$dfgPrintStream->outputln("\nThe following extensions would be installed:\n");
+		$dfgOut->outputln("\nThe following extensions would be installed:\n");
 		foreach($extensions_to_update as $etu) {
 			list($desc, $min, $max) = $etu;
 			$id = $desc->getID();
-			$dfgPrintStream->outputln("\t*$id-".Tools::addVersionSeparators(array($min, $desc->getPatchlevel())));
+			$dfgOut->outputln("\t*$id-".Tools::addVersionSeparators(array($min, $desc->getPatchlevel())));
 		}
 
 
-		$dfgPrintStream->outputln("\n");
+		$dfgOut->outputln("\n");
 	} else {
 
 		// install or update
@@ -674,10 +670,10 @@ function handleInstallOrUpdate($packageID, $version) {
  * Checks if the wiki context is valid.
  *
  */
-function checkWikiContext() {
+function dffCheckWikiContext() {
     
 	global $wgDBadminuser,$wgDBadminpassword, $wgDBtype, $wgDBserver, 
-	       $wgDBadminuser, $wgDBadminpassword, $wgDBname, $dfgPrintStream;
+	       $wgDBadminuser, $wgDBadminpassword, $wgDBname, $dfgOut;
 	# Attempt to connect to the database as a privileged user
 	# This will vomit up an error if there are permissions problems
 	$dbclass = 'Database' . ucfirst( $wgDBtype ) ;
@@ -685,17 +681,16 @@ function checkWikiContext() {
 
 	if( !$wgDatabase->isOpen() ) {
 		# Appears to have failed
-		$dfgPrintStream->outputln( "A connection to the database could not be established. Check the\n" );
-		$dfgPrintStream->outputln( "values of \$wgDBadminuser and \$wgDBadminpassword.\n" );
-		die(DF_TERMINATION_ERROR);
+		Tools::exitOnFatalError( "A connection to the database could not be established. Check the\n".
+					"values of \$wgDBadminuser and \$wgDBadminpassword.\n" );
+		
 	}
 
 
 	// check if AdminSettings.php is available
 	if (!isset($wgDBadminuser) && !isset($wgDBadminpassword)) {
-		$dfgPrintStream->outputln("Please set create AdminSettings.php file (on MW < 1.16). ".
-		          "On MW >= 1.16 set both variables in LocalSettings.php.", DF_PRINTSTREAM_TYPE_FATAL);
-		die(DF_TERMINATION_ERROR);
+		Tools::exitOnFatalError("Please set create AdminSettings.php file (on MW < 1.16). ".
+		          "On MW >= 1.16 set both variables in LocalSettings.php.");
 	}
 
 }
@@ -706,7 +701,7 @@ function checkWikiContext() {
  *
  * Note: Requires wiki context
  */
-function initializeLanguage() {
+function dffInitLanguage() {
 	global $wgLanguageCode, $dfgLang, $mwrootDir;
 	$langClass = "DF_Language_$wgLanguageCode";
 	if (!file_exists($mwrootDir."/deployment/languages/$langClass.php")) {
@@ -717,52 +712,11 @@ function initializeLanguage() {
 }
 
 
-/**
- * Shows a fatal error which aborts installation.
- *
- * @param Exception $e (InstallationError, HttpError, RollbackInstallation)
- */
-function fatalError($e) {
-	$dfgPrintStream->outputln();
-
-	if ($e instanceof InstallationError) {
-		switch($e->getErrorCode()) {
-			case DEPLOY_FRAMEWORK_DEPENDENCY_EXIST: {
-				$packages = $e->getArg1();
-				$dfgPrintStream->outputln($e->getMsg());
-				$dfgPrintStream->outputln();
-				foreach($packages as $p) {
-					$dfgPrintStream->outputln("\t*$p", DF_PRINTSTREAM_TYPE_FATAL);
-				}
-				break;
-			}
-			case DEPLOY_FRAMEWORK_ALREADY_INSTALLED:
-				$package = $e->getArg1();
-				$dfgPrintStream->outputln($e->getMsg(), DF_PRINTSTREAM_TYPE_FATAL);
-				$dfgPrintStream->outputln("\t*".$package->getID()."-".$package->getVersion(), DF_PRINTSTREAM_TYPE_FATAL);
-				break;
-			
-			default: $dfgPrintStream->outputln($e->getMsg(), DF_PRINTSTREAM_TYPE_FATAL); break;
-		}
-	} else if ($e instanceof HttpError) {
-		$dfgPrintStream->outputln($e->getMsg(), DF_PRINTSTREAM_TYPE_FATAL);
-	
-	} else if ($e instanceof RepositoryError) {
-		$dfgPrintStream->outputln($e->getMsg(), DF_PRINTSTREAM_TYPE_FATAL);
-	} else if (is_string($e)) {
-		$dfgPrintStream->outputln($e, DF_PRINTSTREAM_TYPE_FATAL);
-	}
-	$dfgPrintStream->outputln();
-	$dfgPrintStream->outputln();
-	
-	// stop installation
-	die(DF_TERMINATION_ERROR);
-}
 
 class DFOntologyConflictConfirm {
 	function askForOntologyPrefix(& $result) {
-		global $dfgPrintStream;
-		$dfgPrintStream->outputln("\nOntology conflict. Please enter prefix: ");
+		global $dfgOut;
+		$dfgOut->outputln("\nOntology conflict. Please enter prefix: ");
 		$line = trim(fgets(STDIN));
 		$result = $line;
 	}

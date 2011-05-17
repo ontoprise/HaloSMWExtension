@@ -117,23 +117,23 @@ class Installer {
 	 * @param int $version If omitted (or NULL), the latest version is installed.
 	 */
 	public function installOrUpdate($packageID, $version = NULL) {
-
+		global $dfgOut;
 		list($new_package, $old_package, $extensions_to_update, $contradictions) = $this->collectPackagesToInstall($packageID, $version);
 
 		if (count($extensions_to_update) == 0)
 		throw new InstallationError(DEPLOY_FRAMEWORK_COULD_NOT_FIND_UPDATE, "Set of packages to install is empty.", $packageID);
 		// Install/update all dependant and super extensions
-		print "\nThe following packages need to be installed";
+		$dfgOut->outputln("The following packages need to be installed");
 		foreach($extensions_to_update as $etu) {
 			list($dd, $min, $max) = $etu;
-			print "\n- ".$dd->getID()."-".$dd->getVersion();
+			$dfgOut->outputln("- ".$dd->getID()."-".$dd->getVersion());
 		}
 
 		if (count($contradictions) > 0) {
-			print "\nThe following extension can not be installed/updated due to conflicts:";
+			$dfgOut->outputln("The following extension can not be installed/updated due to conflicts:");
 			foreach($contradictions as $etu) {
 				list($dd, $min, $max) = $etu;
-				print "\n- ".$dd->getID();
+				$dfgOut->outputln("- ".$dd->getID());
 			}
 		}
 		$this->installOrUpdatePackages($extensions_to_update);
@@ -150,6 +150,7 @@ class Installer {
 	 * @param $filePath bundle (zip file)
 	 */
 	public function installOrUpdateFromFile($filePath) {
+		global $dfgOut;
 		$dd = Tools::unzipDeployDescriptor($filePath, $this->tmpFolder);
 		if (is_null($dd)) {
 			throw new InstallationError(DEPLOY_FRAMEWORK_UNCOMPRESS_ERROR, "Uncompressing $filePath failed.");
@@ -158,28 +159,28 @@ class Installer {
 
 		// check dependencies
 		$updatesNeeded=array();
-		print "\n[Check for necessary updates...";
+		$dfgOut->outputln("[Check for necessary updates...");
 		$this->collectDependingExtensions($dd, $updatesNeeded, $localPackages);
 		$this->collectSuperExtensions($dd, $updatesNeeded, $localPackages);
-		print "done.]";
+		$dfgOut->output("done.]");
 
 		//  calculate version which matches all depdencies of an extension.
-		print "\n[Filter incompatible packages...";
+		$dfgOut->outputln( "[Filter incompatible packages..." );
 		$this->filterIncompatiblePackages($updatesNeeded, $extensions_to_update, $contradictions);
-		print "done.]";
+		$dfgOut->output( "done.]");
 
 		// Install/update all dependant and super extensions
-		print "\nThe following packages need to be installed";
+		$dfgOut->outputln( "The following packages need to be installed");
 		foreach($extensions_to_update as $etu) {
 			list($deployd, $min, $max) = $etu;
-			print "\n- ".$deployd->getID()."-".$deployd->getVersion();
+			$dfgOut->outputln( "- ".$deployd->getID()."-".$deployd->getVersion());
 		}
 
 		if (count($contradictions) > 0) {
-			print "\nThe following extension can not be installed/updated due to conflicts:";
+			$dfgOut->outputln( "The following extension can not be installed/updated due to conflicts:");
 			foreach($contradictions as $etu) {
 				list($deployd, $min, $max) = $etu;
-				print "\n- ".$deployd->getID();
+				$dfgOut->outputln( "- ".$deployd->getID());
 			}
 		}
 		$this->installOrUpdatePackages($extensions_to_update);
@@ -204,7 +205,7 @@ class Installer {
 		fwrite($handle, "1,".$fromVersion);
 		fclose($handle);
 
-		print "\n-------\n";
+		$dfgOut->outputln( "-------\n");
 	}
 
 	/**
@@ -220,8 +221,8 @@ class Installer {
 	 * @return DeployDescriptor of extension which is deleted
 	 */
 	public function deInstall($packageID) {
-
-		print "\n[Checking for package $packageID...";
+		global $dfgOut;
+		$dfgOut->outputln( "[Checking for package $packageID...");
 		$localPackages = PackageRepository::getLocalPackages($this->rootDir);
 		$ext = NULL;
 		foreach($localPackages as $p) {
@@ -234,10 +235,10 @@ class Installer {
 			$this->logger->error("Package does not exist $packageID");
 			throw new InstallationError(DEPLOY_FRAMEWORK_PACKAGE_NOT_EXISTS, "Package does not exist", $packageID);
 		}
-		print "done.]";
+		$dfgOut->output( "done.]");
 
 		// check if there are depending extensions
-		print "\n[Checking for dependent packages of $packageID...";
+		$dfgOut->outputln( "[Checking for dependent packages of $packageID...");
 		$existDependency = false;
 		$dependantPackages = array();
 		foreach($localPackages as $p) {
@@ -252,7 +253,7 @@ class Installer {
 				}
 			}
 		}
-		print "done.]";
+		$dfgOut->output( "done.]");
 		if ($existDependency) {
 			$this->logger->error("Can not remove package. Dependency from the following packages exists: ".implode(",", $dependantPackages));
 			throw new InstallationError(DEPLOY_FRAMEWORK_DEPENDENCY_EXIST, "Can not remove package. Dependency from the following packages exists:", $dependantPackages);
@@ -261,25 +262,25 @@ class Installer {
 
 		// unapply setups
 		$this->logger->info("Unapply setups for ".$ext->getID());
-		print "\n[Removing setup for ".$ext->getID()."...";
+		$dfgOut->outputln( "[Removing setup for ".$ext->getID()."...");
 		$ext->unapplySetups($this->rootDir, false);
-		print "done.]";
+		$dfgOut->output( "done.]");
 
 		// undo all config changes
 		// - from LocalSettings.php
 		// - from database (setup scripts)
 		// - patches
 		$this->logger->info("Unapply configs for ".$ext->getID());
-		print "\n[Removing configurations for ".$ext->getID()."...";
+		$dfgOut->outputln( "[Removing configurations for ".$ext->getID()."...");
 		$ext->unapplyConfigurations($this->rootDir, false);
 		$this->errors = array_merge($this->errors, $ext->getLastErrors());
-		print "done.]";
+		$dfgOut->output( "done.]" );
 
 		// remove extension code
 		$this->logger->info("Remove code of ".$ext->getID());
-		print "\n[Removing code for ".$ext->getID()."...";
+		$dfgOut->outputln( "[Removing code for ".$ext->getID()."...");
 		Tools::remove_dir($this->rootDir."/".$ext->getInstallationDirectory());
-		print "done.]";
+		$dfgOut->output( "done.]");
 
 		// may contain files which are not located in the installation directory
 		$this->logger->info("Delete external codefiles of ".$ext->getID());
@@ -334,15 +335,15 @@ class Installer {
 	 *
 	 */
 	public function listAvailablePackages($showDescription, $pattern = NULL) {
-
+		global $dfgOut;
 		$allPackages = PackageRepository::getAllPackages();
 		$localPackages = PackageRepository::getLocalPackages($this->rootDir);
 		if (count($allPackages) == 0) {
-			print "\n\nNo packages available!\n";
+			$dfgOut->outputln( "\nNo packages available!\n");
 			return;
 		}
-		print "\n Installed           | Bundle               | Av. versions  | Repository";
-		print "\n-------------------------------------------------------------------------\n";
+		$dfgOut->outputln (" Installed           | Bundle               | Av. versions  | Repository");
+		$dfgOut->outputln ("-------------------------------------------------------------------------\n");
 
 		foreach($allPackages as $p_id => $versions) {
 
@@ -372,24 +373,26 @@ class Installer {
 			foreach($versions as $v) $sep_v[] = Tools::addVersionSeparators($v);
 			$versionsShown = "(".implode(", ", $sep_v).")";
 			$versionsShown .= str_repeat(" ", 12-strlen($versionsShown) >= 0 ? 12-strlen($versionsShown) : 0);
-			print "\n $instTag $id_shown  $versionsShown ".Tools::shortenURL($v[2], 70);
+			$dfgOut->outputln( " $instTag $id_shown  $versionsShown ".Tools::shortenURL($v[2], 70));
 
-			if ($showDescription && array_key_exists($p_id, $localPackages)) print "\n ".$localPackages[$p_id]->getDescription()."\n\n";
+			if ($showDescription && array_key_exists($p_id, $localPackages)) { 
+				$dfgOut->outputln( " ".$localPackages[$p_id]->getDescription()."\n\n");	
+			}
 		}
 
 		// show local bundles
 		$onlyLocalPackages = array_diff(array_keys($localPackages), array_keys($allPackages));
 		if (count($onlyLocalPackages) > 0) {
-			print "\n\nThe following bundles exist only locally:\n";
+			$dfgOut->outputln( "\nThe following bundles exist only locally:\n");
 			foreach($onlyLocalPackages as $id) {
 				$lp = $localPackages[$id];
 				$display = "[installed ".Tools::addVersionSeparators(array($lp->getVersion(), $lp->getPatchlevel()))."]";
 				$display .= str_repeat(" ", 20-strlen($display) >= 0 ? 20-strlen($display) : 0);
 				$display .= $lp->getID();
-				print "\n ".$display;
+				$dfgOut->outputln( " ".$display);
 			}
 		}
-		print "\n\n";
+		$dfgOut->outputln( "\n");
 	}
 
 	/**
@@ -400,45 +403,46 @@ class Installer {
 	 * @return array($new_package, $old_package, $extensions_to_update)
 	 */
 	public function collectPackagesToInstall($packageID, $version = NULL) {
+		global $dfgOut;
 		// 1. Check if package is installed
-		print "\n[Check if package installed...";
+		$dfgOut->outputln("[Check if package installed...");
 		$localPackages = PackageRepository::getLocalPackages($this->rootDir);
 		$old_package = NULL;
 		foreach($localPackages as $p) {
 			if ($p->getID() == $packageID) {
 				$old_package = $p;
-				print "found!]";
+				$dfgOut->output( "found!]");
 				break;
 			}
 		}
 
 		if (is_null($old_package)) {
-			print "not found.]";
+			$dfgOut->output( "not found.]");
 		}
 
 
 		// 2. Check code integrity of existing package
 		if (!is_null($old_package)) {
-			print "\n[Check code integrity...";
+			$dfgOut->outputln( "[Check code integrity...");
 			$status = $old_package->validatecode($this->rootDir);
 			if ($status !== true) {
 				if (!$this->force) {
 					throw new InstallationError(DEPLOY_FRAMEWORK_CODE_CHANGED, "Code files were modified. Use -f (force)", $status);
 				} else {
-					print "\nWarning: Code files contain differences. Patches may get lost.";
+					$dfgOut->outputln( "Code files contain differences. Patches may get lost.", DF_PRINTSTREAM_TYPE_WARN);
 				}
 			}
 
-			print "done.]";
+			$dfgOut->output( "done.]");
 		}
 
 		// 3. Get required package descriptor
 		if ($version == NULL) {
-			print "\n[Read latest deploy descriptor of $packageID...";
+			$dfgOut->outputln("[Read latest deploy descriptor of $packageID...");
 			$new_package = PackageRepository::getLatestDeployDescriptor($packageID);
 
 		} else {
-			print "\n[Read deploy descriptor of $packageID-$version...";
+			$dfgOut->outputln("[Read deploy descriptor of $packageID-$version...");
 			$new_package = PackageRepository::getDeployDescriptor($packageID, $version);
 
 		}
@@ -455,15 +459,15 @@ class Installer {
 		// 6. Check dependencies for install/update
 		// get package to install
 		$updatesNeeded = array(array($new_package, $new_package->getVersion(), $new_package->getVersion()));
-		print "\n[Check for necessary updates...";
+		$dfgOut->outputln( "[Check for necessary updates...");
 		$this->collectDependingExtensions($new_package, $updatesNeeded, $localPackages);
 		$this->collectSuperExtensions($new_package, $updatesNeeded, $localPackages);
-		print "done.]";
+		$dfgOut->output( "done.]");
 
 		// 7. calculate version which matches all depdencies of an extension.
-		print "\n[Filter incompatible packages...";
+		$dfgOut->outputln("[Filter incompatible packages...");
 		$this->filterIncompatiblePackages($updatesNeeded, $extensions_to_update, $contradictions);
-		print "done.]";
+		$dfgOut->output("done.]");
 
 		return array($new_package, $old_package, $extensions_to_update, $contradictions);
 	}

@@ -8,7 +8,7 @@ $smwgDFIP = $IP . '/deployment';
 $wgHooks['UserLoginComplete'][] = 'dfgCheckUpdate';
 
 function dfgSetupExtension() {
-	dfgInitializeLanguage();
+	dffInitializeLanguage();
 	global $wgAutoloadClasses, $wgSpecialPages, $wgSpecialPageGroups,$smwgDFIP, $wgExtensionCredits;
 	$wgAutoloadClasses['SMWCheckInstallation'] = $smwgDFIP . '/specials/SMWCheckInstallation/SMW_CheckInstallation.php';
 	$wgAutoloadClasses['DFBundleTools'] = $smwgDFIP . '/io/DF_BundleTools.php';
@@ -25,7 +25,7 @@ function dfgSetupExtension() {
 	    );
 }
 
-function dfgInitializeLanguage() {
+function dffInitializeLanguage() {
 	global $wgLanguageCode, $dfgLang, $wgMessageCache, $wgLang, $wgLanguageCode, $smwgDFIP;
 	$langClass = "DF_Language_$wgLanguageCode";
 	if (!file_exists("$smwgDFIP/languages/$langClass.php")) {

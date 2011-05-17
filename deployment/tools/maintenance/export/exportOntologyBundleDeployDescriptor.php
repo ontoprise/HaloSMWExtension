@@ -44,17 +44,17 @@ for( $arg = reset( $argv ); $arg !== false; $arg = next( $argv ) ) {
 	//-b => Bundle to export
 	if ($arg == '-b') {
 		$bundleToExport = next($argv);
-		if ($bundleToExport === false) fatalError("No bundle given.");
+		if ($bundleToExport === false) Tools::exitOnFatalError("No bundle given.");
 		$bundleToExport = strtoupper(substr($bundleToExport, 0,1)).substr($bundleToExport,1);
 		continue;
 	} else if ($arg == '-o') {
 		$output = next($argv);
-		if ($output === false) fatalError("No output file given");
+		if ($output === false) Tools::exitOnFatalError("No output file given");
 			
 		continue;
 	} else if ($arg == '-d') {
 		$dumpFile = next($argv);
-		if ($dumpFile === false) fatalError("No dump file given");
+		if ($dumpFile === false) Tools::exitOnFatalError("No dump file given");
 			
 		continue;
 	} else if (strpos($arg, '--includeInstances') === 0) {
@@ -195,8 +195,4 @@ ENDS
 	fclose($handle);
 }
 
-function fatalError($text) {
-	print "\n\n".$text;
-	die();
-}
 
