@@ -13,7 +13,8 @@ class Example extends PHPUnit_Extensions_SeleniumTestCase
 
   public function login()
   {
-		$this->open("/mediawiki/index.php?title=Special:UserLogin");
+		global $wgScript;
+		$this->open("$wgScript?title=Special:UserLogin");
 		$this->type("wpName1", "WikiSysop");
 		$this->type("wpPassword1", "root");
 		$this->click("wpLoginAttempt");
@@ -22,9 +23,10 @@ class Example extends PHPUnit_Extensions_SeleniumTestCase
 
   public function testGlobalPermissionsUpload()
   {
-    $this->login();
+		global $wgScript;
+		$this->login();
     
-		$this->open("/mediawiki/index.php/Special:HaloACL");
+		$this->open("$wgScript/Special:HaloACL");
 		$this->click("//li[@id='globalPermissionsPanel_button']/a/em");
 		for ($second = 0; ; $second++) {
 				if ($second >= 60) $this->fail("timeout");
@@ -63,7 +65,8 @@ class Example extends PHPUnit_Extensions_SeleniumTestCase
   
   public function logout()
   {
-		$this->open("/mediawiki/index.php/Special:UserLogout");
+		global $wgScript;
+		$this->open("$wgScript/Special:UserLogout");
   }
 
 }
