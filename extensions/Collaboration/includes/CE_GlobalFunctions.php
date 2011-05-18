@@ -142,12 +142,27 @@ function cefAddNonSpecialPageHeader(&$out) {
 //		return true;
 //	}
 	cefAddJSLanguageScripts($out);
-	$out->addScript("<script type=\"text/javascript\" src=\"". $cegScriptPath .  "/scripts/overlay.js\"></script>");
-	$out->addScript("<script type=\"text/javascript\" src=\"". $cegScriptPath .  "/scripts/Comment/CE_Comment.js\"></script>");
+	global $smwgDeployVersion;
+	if ( isset( $smwgDeployVersion ) && $smwgDeployVersion === true ) {
+		$out->addScript( "<script type=\"text/javascript\" src=\"" . $cegScriptPath .
+			"/scripts/deployCollaboration.js\"></script>" );
 
-	$out->addStyle($cegScriptPath. '/skins/Comment/collaboration-comment.css', 'screen, projection');
-    $out->addStyle($cegScriptPath. '/skins/Comment/collaboration-overlay.css', 'screen, projection');
+		$out->addStyle( $cegScriptPath . '/skins/Comment/collaboration-comment.css',
+			'screen, projection' );
+		$out->addStyle( $cegScriptPath . '/skins/Comment/collaboration-overlay.css',
+			'screen, projection' );
+	} else {
+		$out->addScript( "<script type=\"text/javascript\" src=\"" . $cegScriptPath .
+			"/scripts/overlay.js\"></script>" );
+		$out->addScript( "<script type=\"text/javascript\" src=\"" . $cegScriptPath .
+			"/scripts/Comment/CE_Comment.js\"></script>" );
 
+		$out->addStyle( $cegScriptPath . '/skins/Comment/collaboration-comment.css',
+			'screen, projection' );
+		$out->addStyle( $cegScriptPath . '/skins/Comment/collaboration-overlay.css',
+			'screen, projection' );
+	}
+	return true;
 	return true;
 }
 

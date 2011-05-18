@@ -1227,8 +1227,11 @@ $jq(document).ready(
  */
 $jq(document).ready(
 	function() {
-		var domElement;
-		ceCommentForm.preloadImages();
+		var	domElement,
+			collabFormExists = $jq( '#collabComForm' ).length > 0 ? true : false;
+		if( collabFormExists ) {
+			ceCommentForm.preloadImages();
+		}
 		// format comments
 		var resultComments = $jq( '.collabComRes' );
 		var overlayID = 0;
@@ -1349,26 +1352,28 @@ $jq(document).ready(
 			}
 			return true;
 		});
-		// build header
-		ceCommentForm.buildHeader();
-		//clone actual structure without events (bind them again later)
-		ceCommentForm.savedStructure = $jq( '#collabComResults' ).clone();
-		ceCommentForm.showThreaded();
-		// toggle one time if there are comments available
-		if ( resultComments.length !== 0 ) {
-			var comToggle = $jq( '#collabComToggle' );
-			var commentResults = $jq( '#collabComResults' );
-			var newComToggleText = '';
-			if ( commentResults.css( 'display' ) === 'block' ) {
-				newComToggleText = ceLanguage.getMessage( 'ce_com_hide' );
-			} else {
-				newComToggleText = ceLanguage.getMessage( 'ce_com_show' );
+		if( collabFormExists ) {
+			// build header
+			ceCommentForm.buildHeader();
+			//clone actual structure without events (bind them again later)
+			ceCommentForm.savedStructure = $jq( '#collabComResults' ).clone();
+			ceCommentForm.showThreaded();
+			// toggle one time if there are comments available
+			if ( resultComments.length !== 0 ) {
+				var comToggle = $jq( '#collabComToggle' );
+				var commentResults = $jq( '#collabComResults' );
+				var newComToggleText = '';
+				if ( commentResults.css( 'display' ) === 'block' ) {
+					newComToggleText = ceLanguage.getMessage( 'ce_com_hide' );
+				} else {
+					newComToggleText = ceLanguage.getMessage( 'ce_com_show' );
+				}
+				comToggle.html( ' | ' + newComToggleText );
+				commentResults.hide();
+				//hide "Add" and "View"
+				$jq( '#collabComFormToggle' ).toggle();
+				$jq( '#collabComViewToggle' ).toggle();
 			}
-			comToggle.html( ' | ' + newComToggleText );
-			commentResults.hide();
-			//hide "Add" and "View"
-			$jq( '#collabComFormToggle' ).toggle();
-			$jq( '#collabComViewToggle' ).toggle();
 		}
 	}
 );
