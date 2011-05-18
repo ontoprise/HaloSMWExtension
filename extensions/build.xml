@@ -35,6 +35,7 @@
 		<delete dir="HaloACL" />
 		<delete dir="HashingFunctions" />
 		<delete dir="LdapAuthentication" />
+        <delete dir="LinkedData" />
         <delete dir="ImageMap" />
 		<delete dir="Maps" />
 		<delete dir="NewUserMessage" />
@@ -47,6 +48,7 @@
 		<delete dir="SemanticNotifications/" />
 		<delete dir="SemanticResultFormats" />
 		<delete dir="SemanticRules" />
+        <delete dir="SemanticWikiTag" />
 		<delete dir="SMWUserManual" />
 		<delete dir="Treeview" />
 		<delete dir="Ultrapedia" />
