@@ -55,7 +55,7 @@ class ResourceInstaller {
 	 * @param DeployDescriptor $dd
 	 */
 	public function installOrUpdateWikidumps($dd, $fromVersion, $mode) {
-		global $wgUser;
+		global $wgUser, $dfgOut;
 		if (count($dd->getWikidumps()) ==  0) return;
 
 
@@ -73,21 +73,21 @@ class ResourceInstaller {
 			if (!is_null($fromVersion) && $fromVersion != '') {
 				// remove old pages
 				$this->logger->info("\n[Removing unused pages from ".$dd->getID());
-				print "\n[Removing unused pages from ".$dd->getID();
+				$dfgOut->outputln("[Removing unused pages from ".$dd->getID());
 				$verificationLog = $this->getPagesFromImport($dumpPath, $dd->getID());
 				$this->removeOldPages($dd->getID(), $verificationLog);
-				print "\ndone.]";
+				$dfgOut->outputln( "done.]");
 			}
 
 			$this->logger->info("Import ontology: $file");
-			print "\n[Import ontology: $file";
+			$dfgOut->outputln("[Import ontology: $file");
 			if (!file_exists($dumpPath)) {
 				$this->logger->warn("dump file '".$dumpPath."' does not exist.");
-				print "\n\t[WARNING]: dump file '".$dumpPath."' does not exist.";
+				$dfgOut->outputln("\tdump file '".$dumpPath."' does not exist.", DF_PRINTSTREAM_TYPE_WARN);
 				continue;
 			}
 			$result = $reader->importFromFile($dumpPath );
-			print "\ndone.]";
+			$dfgOut->outputln("done.]");
 		}
 
 		// refresh imported pages (started as a separate process)
@@ -95,7 +95,7 @@ class ResourceInstaller {
 		$this->logger->info("Refreshing ontology: $file");
     	$id = $dd->getID();
 		system("php \"$rootDir/tools/maintenance/refreshPages.php\" -d \"$dumpPath\" -b $id");
-		print "\ndone.]";
+		$dfgOut->outputln("done.]");
 
 
 	}
@@ -122,7 +122,7 @@ class ResourceInstaller {
 
 	 */
 	public function deleteResources($dd) {
-		global $wgUser;
+		global $wgUser, $dfgOut;
 		if (count($dd->getResources()) ==  0) return;
 
 
@@ -144,9 +144,9 @@ class ResourceInstaller {
 			if( wfRunHooks('ArticleDelete', array(&$a, &$wgUser, &$reason, &$error)) ) {
 				if( $a->doDeleteArticle( $reason ) ) {
 					$this->logger->info("Remove old page: ".$title->getPrefixedText());
-					print "\n\t[Remove old page: ".$title->getPrefixedText();
+					$dfgOut->outputln("\t[Remove old page: ".$title->getPrefixedText());
 					wfRunHooks('ArticleDeleteComplete', array(&$a, &$wgUser, $reason, $id));
-					print "done.]";
+					$dfgOut->output("done.]");
 				}
 			}
 
@@ -156,13 +156,13 @@ class ResourceInstaller {
 		$resources = $dd->getOnlyCopyResources();
 		foreach($resources as $src => $dest) {
 			$this->logger->info("Remove resource: ".$dest);
-			print "\n\t[Remove resource: ".$dest;
+			$dfgOut->outputln("\t[Remove resource: ".$dest);
 			if (is_dir($this->rootDir."/".$dest)) {
 				Tools::remove_dir($this->rootDir."/".$dest);
 			} else {
 				unlink($this->rootDir."/".$dest);
 			}
-			print "done.]";
+			$dfgOut->output("done.]");
 		}
 	}
 
@@ -176,6 +176,7 @@ class ResourceInstaller {
 
 	 */
 	public function checkWikidump($packageID, $version) {
+		global $dfgOut;
 		if (!defined('SMW_VERSION')) throw new InstallationError(DEPLOY_FRAMEWORK_NOT_INSTALLED, "SMW is not installed although it is needed to check ontology status.");
 
 		$localPackages = PackageRepository::getLocalPackages($this->rootDir);
@@ -185,17 +186,17 @@ class ResourceInstaller {
 			throw new InstallationError(DEPLOY_FRAMEWORK_NOT_INSTALLED, "The specified package is not installed. Nothing to check.");
 		}
 
-		print "\n\n[Checking ontology...";
+		$dfgOut->outputln("\n[Checking ontology...");
 		$reader = new BackupReader(DEPLOYWIKIREVISION_INFO);
 		$wikidumps = $package->getWikidumps();
 		foreach($wikidumps as $file) {
 			if (!file_exists($this->rootDir."/".$file)) {
-				print "\n\t[WARNING]: dump file '".$this->rootDir."/".$file."' does not exist.";
+				$dfgOut->outputln("\t[WARNING]: dump file '".$this->rootDir."/".$file."' does not exist.", DF_PRINTSTREAM_TYPE_WARN);
 				continue;
 			}
 			$result = $reader->importFromFile( $this->rootDir."/".$file );
 		}
-		print "done.]";
+		$dfgOut->output("done.]");
 	}
 
 	/**
@@ -206,47 +207,47 @@ class ResourceInstaller {
 
 	 */
 	public function installOrUpdateResources($dd) {
-
+        global $dfgOut;
 		if (count($dd->getResources()) ==  0) return;
 
 		// resources files
 		$this->logger->info("Uploading resources for ".$dd->getID());
-		print "\n[Uploading resources...";
+		$dfgOut->outputln("[Uploading resources...");
 		$resources = $dd->getResources();
 		foreach($resources as $file) {
 			$resourcePath = $this->rootDir."/".$dd->getInstallationDirectory()."/".$file;
 			if (!file_exists($resourcePath)) {
 				$this->logger->warn("'$resourcePath' does not exist.");
-				print "\n\t[WARNING]: '$resourcePath' does not exist.";
+				$dfgOut->outputln("\t'$resourcePath' does not exist.", DF_PRINTSTREAM_TYPE_WARN);
 				continue;
 			}
 			$this->logger->info("Import ".$resourcePath);
-			print "\n\t[Import ".Tools::shortenPath($resourcePath)."...";
+			$dfgOut->outputln("\t[Import ".Tools::shortenPath($resourcePath)."...");
 			if (is_dir($resourcePath)) {
 				$this->importResources($resourcePath);
 			} else {
 				$im_file = wfLocalFile(Title::newFromText(basename($resourcePath), NS_IMAGE));
 				$im_file->upload($resourcePath, "auto-inserted image", "noText");
 			}
-			print "done.]";
+			$dfgOut->output("done.]");
 
 		}
-		print "\ndone.]";
+		$dfgOut->outputln("done.]");
 
 		if (count($dd->getOnlyCopyResources()) ==  0) return;
 
 		$this->logger->info("Copying resources for ".$dd->getID());
-		print "\n[Copying resources...";
+		$dfgOut->outputln("[Copying resources...");
 		$resources = $dd->getOnlyCopyResources();
 		foreach($resources as $file => $dest) {
 			$resourcePathSrc = $this->rootDir."/".$file;
 			if (!file_exists($resourcePathSrc)) {
 				$this->logger->warn("'$resourcePathSrc' does not exist.");
-				print "\n\t[WARNING]: '$resourcePathSrc' does not exist.";
+				$dfgOut->outputln("\t'$resourcePathSrc' does not exist.", DF_PRINTSTREAM_TYPE_WARN);
 				continue;
 			}
 			$this->logger->info("Copy '".$resourcePathSrc."' to '".$this->rootDir."/".$dest);
-			print "\n\t[Copy '".Tools::shortenPath($resourcePathSrc)."' to '".Tools::shortenPath($this->rootDir."/".$dest)."'...";
+			$dfgOut->outputln("\t[Copy '".Tools::shortenPath($resourcePathSrc)."' to '".Tools::shortenPath($this->rootDir."/".$dest)."'...");
 			if (is_dir($resourcePathSrc)) {
 				Tools::copy_dir($resourcePathSrc, $this->rootDir."/".$dest);
 			} else {
@@ -254,10 +255,10 @@ class ResourceInstaller {
 				copy($resourcePathSrc, $this->rootDir."/".$dest);
 
 			}
-			print "done.]";
+			$dfgOut->output( "done.]");
 
 		}
-		print "\ndone.]";
+		$dfgOut->outputln("done.]");
 	}
 
 	/**
@@ -266,18 +267,19 @@ class ResourceInstaller {
 	 * @param $dd
 	 */
 	public function installOrUpdateMappings($dd, $dryRun = false) {
+		global $dfgOut;
 		if (count($dd->getMappings()) ==  0) return;
 
 		if (!defined('LOD_NS_MAPPING')) {
 			$this->logger->warn("LinkedData extension is not installed. Can not install mappings.");
-			print "\n\t[WARNING]: LinkedData extension is not installed. Can not install mappings.";
+			$dfgOut->outputln("\tLinkedData extension is not installed. Can not install mappings.", DF_PRINTSTREAM_TYPE_WARN);
 			return;
 		}
 
 		$importedMappings = array();
 		// import mappings
 		$this->logger->info("Import mappings for ".$dd->getID());
-		print "\n[Importing mappings...";
+		$dfgOut->outputln("[Importing mappings...");
 		$resources = $dd->getMappings();
 
 		// delete old mapping articles
@@ -291,7 +293,7 @@ class ResourceInstaller {
 				if (!$dryRun) $a->doDeleteArticle("update");
 			}
 		}
-		print "\ndone.]";
+		$dfgOut->outputln("done.]");
 
 		// import new
 		foreach($resources as $source => $list) {
@@ -301,24 +303,24 @@ class ResourceInstaller {
 				$resourcePath = $this->rootDir."/".$dd->getInstallationDirectory()."/".$file;
 				if (!file_exists($resourcePath)) {
 					$this->logger->warn("'$resourcePath' does not exist.");
-					print "\n\t[WARNING]: '$resourcePath' does not exist.";
+					$dfgOut->outputln("\t'$resourcePath' does not exist.", DF_PRINTSTREAM_TYPE_WARN);
 					continue;
 				}
-				print "\n\t[Import '$resourcePath'";
+				$dfgOut->outputln("\t[Import '$resourcePath'");
 				if (is_dir($resourcePath)) {
-					print "\n\tMapping location '$resourcePath' must be a file not a directory.";
+					$dfgOut->outputln("\tMapping location '$resourcePath' must be a file not a directory.", DF_PRINTSTREAM_TYPE_WARN);
 				} else {
 
 					$mappingContent = file_get_contents($resourcePath);
 					$content .= "<mapping target=\"$target\">\n".$mappingContent."\n</mapping>";
 
 				}
-				print "done.]";
+				$dfgOut->output("done.]");
 			}
 			$mappingTitle = Title::newFromText($source, LOD_NS_MAPPING);
 			$a = new Article($mappingTitle);
 			$this->logger->info("Insert mapping: $source");
-			print "\n[Insert mapping [$source]...";
+			$dfgOut->outputln("[Insert mapping [$source]...");
 			if (!$a->exists()) {
 				if (!$dryRun) $a->insertNewArticle($content, "auto-generated mapping page", false, false);
 			} else {
@@ -326,7 +328,7 @@ class ResourceInstaller {
 				if (!$dryRun) $a->doEdit($content, "auto-generated mapping page");
 			}
 			$importedMappings[] = array($source, $target, $content);
-			print "done.]";
+			$dfgOut->output("done.]");
 		}
 		return $importedMappings;
 	}
@@ -353,7 +355,7 @@ class ResourceInstaller {
 
 		$handle = @opendir($SourceDirectory);
 		if (!$handle) {
-			print ("\nDirectory '$SourceDirectory' could not be opened.\n");
+			$dfgOut->outputln("Directory '$SourceDirectory' could not be opened.\n", DF_PRINTSTREAM_TYPE_WARN);
 		}
 		while ( ($entry = readdir($handle)) !== false ){
 
@@ -392,7 +394,7 @@ class ResourceInstaller {
 	private function getPagesFromImport( $dumpPath, $bundleID ) {
 		$handle = fopen( $dumpPath, 'rt' );
 		$source = new ImportStreamSource( $handle );
-		$importer = new DeployWikiImporterDetector( $source, $bundleID, '', 1, $this );
+		$importer = new DeployWikiImporterDetector( $source, $bundleID, '', 1, DFUserInput::getInstance() );
 
 		$importer->setDebug( false );
 
@@ -410,7 +412,7 @@ class ResourceInstaller {
 	 *
 	 */
 	private function removeOldPages($bundleID, $verificationLog) {
-		global $dfgLang;
+		global $dfgLang, $dfgOut;
 		$pagesToImport = array();
 
 		foreach($verificationLog as $log) {
@@ -436,10 +438,10 @@ class ResourceInstaller {
 			if( wfRunHooks('ArticleDelete', array(&$a, &$wgUser, &$reason, &$error)) ) {
 				if( $a->doDeleteArticle("ontology removed: ".$bundleID) ) {
 					$this->logger->info("Removing page: ".$title->getPrefixedText());
-					print "\n\t[Removing page]: ".$title->getPrefixedText()."...";
+					$dfgOut->outputln("\t[Removing page]: ".$title->getPrefixedText()."...");
 
 					wfRunHooks('ArticleDeleteComplete', array(&$a, &$wgUser, "ontology removed: ".$bundleID, $id));
-					print "done.]";
+					$dfgOut->output("done.]");
 				}
 			}
 

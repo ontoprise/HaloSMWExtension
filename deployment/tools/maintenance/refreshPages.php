@@ -38,6 +38,7 @@ require_once( $rootDir.'/../maintenance/backup.inc' );
 require_once($rootDir."/descriptor/DF_DeployDescriptor.php");
 require_once($rootDir."/tools/smwadmin/DF_PackageRepository.php");
 require_once($rootDir."/tools/smwadmin/DF_Tools.php");
+require_once($rootDir."/tools/smwadmin/DF_UserInput.php");
 require_once($rootDir.'/io/import/DF_DeployWikiBundleImporter.php');
 require_once($rootDir.'/io/import/DF_OntologyDetector.php');
 require_once($rootDir.'/io/DF_Log.php');
@@ -73,7 +74,7 @@ if (!isset($dumpFilePath) || !isset($bundleID)) {
 
 $handle = fopen( $dumpFilePath, 'rt' );
 $source = new ImportStreamSource( $handle );
-$importer = new DeployWikiImporterDetector( $source, $bundleID, '', 1, $this );
+$importer = new DeployWikiImporterDetector( $source, $bundleID, '', 1, DFUserInput::getInstance() );
 
 $importer->setDebug( false );
 

@@ -51,6 +51,7 @@ $mwrootDir = str_replace("\\", "/", $mwrootDir);
 $mwrootDir = realpath($mwrootDir."/../../../");
 
 require_once('DF_Tools.php');
+require_once('DF_UserInput.php');
 require_once('DF_Installer.php');
 require_once($mwrootDir.'/deployment/io/DF_Log.php');
 require_once($mwrootDir.'/deployment/io/DF_PrintoutStream.php');
@@ -68,25 +69,25 @@ if(file_exists($rootDir.'/settings.php'))
 // check PHP version
 $phpver = str_replace(".","",phpversion());
 if ($phpver < 520) {
-	Tools::exitOnFatalError("PHP version must be >= 5.2\n");
+	dffExitOnFatalError("PHP version must be >= 5.2\n");
 }
 
 if (array_key_exists('SERVER_NAME', $_SERVER) && $_SERVER['SERVER_NAME'] != NULL) {
-	Tools::exitOnFatalError("Invalid access! A maintenance script MUST NOT be accessed from remote.");
+	dffExitOnFatalError("Invalid access! A maintenance script MUST NOT be accessed from remote.");
 }
 
 // check if the user is allowed to create files, directory.
 if (!in_array("--nocheck", $_SERVER['argv'])) {
 	$check = Tools::checkPriviledges();
 	if ($check !== true) {
-		Tools::exitOnFatalError($check);
+		dffExitOnFatalError($check);
 	}
 
 
 	// check required tools
 	$check = Tools::checkEnvironment();
 	if ($check !== true) {
-		Tools::exitOnFatalError($check);
+		dffExitOnFatalError($check);
 	}
 
 
@@ -94,7 +95,7 @@ if (!in_array("--nocheck", $_SERVER['argv'])) {
 
 	@$success = touch("$rootDir/../LocalSettings.php");
 	if ($success === false) {
-		Tools::exitOnFatalError("LocalSettings.php is not accessible. Missing rights or file locked?");
+		dffExitOnFatalError("LocalSettings.php is not accessible. Missing rights or file locked?");
 	}
 }
 
@@ -137,7 +138,7 @@ for( $arg = reset( $args ); $arg !== false; $arg = next( $args ) ) {
 	//-i => Install
 	if ($arg == '-i') {
 		$package = next($args);
-		if ($package === false) Tools::exitOnFatalError("No package found");
+		if ($package === false) dffExitOnFatalError("No package found");
 
 		if (file_exists($package)) {
 			$file_ext = reset(array_reverse(explode(".", $package)));
@@ -156,7 +157,7 @@ for( $arg = reset( $args ); $arg !== false; $arg = next( $args ) ) {
 		continue;
 	} else if ($arg == '-d') { // -d => De-install
 		$package = next($args);
-		if ($package === false) Tools::exitOnFatalError("No package found");
+		if ($package === false) dffExitOnFatalError("No package found");
 		$packageToDeinstall[] = $package;
 			
 		continue;
@@ -184,7 +185,7 @@ for( $arg = reset( $args ); $arg !== false; $arg = next( $args ) ) {
 	} else if ($arg == '--checkdump') { // => analyze installed dump
 		$checkDump = true;
 		$package = next($args);
-		if ($package === false) Tools::exitOnFatalError("No package found");
+		if ($package === false) dffExitOnFatalError("No package found");
 		$packageToInstall[] = $package;
 		continue;
 	} else if ($arg == '--finalize') { // => finalize installation, ie. run scripts, import pages
@@ -208,11 +209,14 @@ for( $arg = reset( $args ); $arg !== false; $arg = next( $args ) ) {
 	} else if ($arg == '--noconflict') {
 		$dfgNoConflict = true;
 		continue;
-	} else if ($arg == '--nocheck') {
+	} else if ($arg == '--noask') {
+        $dfgNoAsk = true;
+        continue;
+    } else if ($arg == '--nocheck') {
 		// ignore
 		continue;
 	} else {
-		Tools::exitOnFatalError("\nUnknown command: $arg. Try --help\n\n");
+		dffExitOnFatalError("\nUnknown command: $arg. Try --help\n\n");
 	}
 	$params[] = $arg;
 }
@@ -245,17 +249,17 @@ if ($dfgInstallPackages) {
 	// check for non-initialized extensions
 	$localPackages = PackageRepository::getLocalPackagesToInitialize($mwrootDir);
 	if (count($localPackages) > 0) {
-		Tools::exitOnFatalError("\nThere are non-initialized extensions. Run: smwadmin --finalize\n");
+		dffExitOnFatalError("\nThere are non-initialized extensions. Run: smwadmin --finalize\n");
 	}
 }
 
 if ($dfgRestore) {
 	$dfgOut->outputln("\nThis operation will restore the wiki from the last restore point.");
 	$dfgOut->outputln("\nThat means the Mediawiki installation is overwritten as well as the");
-	$dfgOut->outputln("\ndatabase content!\n\n Do you really want to continue (y/n)? ");
-	$line = trim(fgets(STDIN));
-	$result = strtolower($line);
-	if ($result === 'y') {
+	$dfgOut->outputln("\ndatabase content!\n\n ");
+	$result = DFUserInput::consoleConfirm("Do you really want to continue (y/n)?");
+	
+	if ($result) {
 		$restorePoints = $rollback->getAllRestorePoints();
 		if (count($restorePoints) === 0) {
 			$dfgOut->outputln("Nothing to restore.");
@@ -345,16 +349,16 @@ foreach($packageToInstall as $toInstall) {
 		$logger->info("End install package '$packageID'".(is_null($version) ? "" : "-$version"));
 	} catch(InstallationError $e) {
 		$logger->fatal($e);
-		Tools::exitOnFatalError($e);
+		dffExitOnFatalError($e);
 	} catch(HttpError $e) {
 		$logger->fatal($e);
-		Tools::exitOnFatalError($e);
+		dffExitOnFatalError($e);
 	} catch(RepositoryError $e) {
 		$logger->fatal($e);
-		Tools::exitOnFatalError($e);
+		dffExitOnFatalError($e);
 	} catch(RollbackInstallation $e) {
 		$logger->fatal($e);
-		Tools::exitOnFatalError("Installation failed! You can try to rollback: smwadmin -r");
+		dffExitOnFatalError("Installation failed! You can try to rollback: smwadmin -r");
 	}
 }
 
@@ -375,7 +379,7 @@ if (count($ontologiesToInstall) > 0) {
 
 		$oInstaller = OntologyInstaller::getInstance(realpath($rootDir."/../"));
 
-		$confirm = new DFOntologyConflictConfirm();
+		
 
 		if (!isset($ontologyID)) {
 			$fileName = basename($filePath);
@@ -399,7 +403,7 @@ if (count($ontologiesToInstall) > 0) {
 		}
 
 		try {
-			$prefix = $oInstaller->installOntology($bundleID, $filePath, $confirm, false, $mode);
+			$prefix = $oInstaller->installOntology($bundleID, $filePath, DFUserInput::getInstance(), false, $mode);
 
 			// copy ontology and create ontology bundle
 			$dfgOut->outputln( "[Creating deploy descriptor...");
@@ -431,7 +435,7 @@ if (count($ontologiesToInstall) > 0) {
 		} catch(InstallationError $e) {
 
 			switch($e->getErrorCode()) {
-				case DEPLOY_FRAMEWORK_ONTOLOGYCONFLICT_ERROR: 
+				case DEPLOY_FRAMEWORK_ONTOLOGYCONFLICT_ERROR:
 					$dfgOut->outputln("ontology conflict\n", DF_PRINTSTREAM_TYPE_ERROR);
 			}
 
@@ -448,16 +452,16 @@ if (count($localBundlesToInstall) > 0) {
 			$installer->installOrUpdateFromFile($filePath);
 		} catch(InstallationError $e) {
 			$logger->fatal($e);
-			Tools::exitOnFatalError($e);
+			dffExitOnFatalError($e);
 		} catch(HttpError $e) {
 			$logger->fatal($e);
-			Tools::exitOnFatalError($e);
+			dffExitOnFatalError($e);
 		} catch(RollbackInstallation $e) {
 			$logger->fatal($e);
-			Tools::exitOnFatalError("Installation failed! You can try to rollback: smwadmin -r");
+			dffExitOnFatalError("Installation failed! You can try to rollback: smwadmin -r");
 		}catch(RepositoryError $e) {
 			$logger->fatal($e);
-			Tools::exitOnFatalError($e);
+			dffExitOnFatalError($e);
 		}
 	}
 }
@@ -492,16 +496,16 @@ foreach($packageToDeinstall as $toDeInstall) {
 		}
 	} catch(InstallationError $e) {
 		$logger->fatal($e);
-		Tools::exitOnFatalError($e);
+		dffExitOnFatalError($e);
 	} catch(HttpError $e) {
 		$logger->fatal($e);
-		Tools::exitOnFatalError($e);
+		dffExitOnFatalError($e);
 	} catch(RollbackInstallation $e) {
 		$logger->fatal($e);
-		Tools::exitOnFatalError("Installation failed! You can try to rollback: smwadmin -r");
+		dffExitOnFatalError("Installation failed! You can try to rollback: smwadmin -r");
 	}catch(RepositoryError $e) {
 		$logger->fatal($e);
-		Tools::exitOnFatalError($e);
+		dffExitOnFatalError($e);
 	}
 
 }
@@ -518,16 +522,16 @@ foreach($packageToUpdate as $toUpdate) {
 		$logger->info("End update package '$packageID'".(is_null($version) ? "" : "-$version"));
 	} catch(InstallationError $e) {
 		$logger->fatal($e);
-		Tools::exitOnFatalError($e);
+		dffExitOnFatalError($e);
 	} catch(HttpError $e) {
 		$logger->fatal($e);
-		Tools::exitOnFatalError($e);
+		dffExitOnFatalError($e);
 	} catch(RollbackInstallation $e) {
 		$logger->fatal($e);
-		Tools::exitOnFatalError("Installation failed! You can try to rollback: smwadmin -r");
+		dffExitOnFatalError("Installation failed! You can try to rollback: smwadmin -r");
 	} catch(RepositoryError $e) {
 		$logger->fatal($e);
-		Tools::exitOnFatalError($e);
+		dffExitOnFatalError($e);
 	}
 
 }
@@ -540,8 +544,8 @@ if (count($installer->getErrors()) === 0) {
 	foreach($installer->getErrors() as $e) {
 		$dfgOut->outputln( $e, DF_PRINTSTREAM_TYPE_ERROR);
 	}
-	Tools::exitOnFatalError();
-	
+	dffExitOnFatalError();
+
 }
 
 function dffShowHelp() {
@@ -616,13 +620,13 @@ function dffHandleGlobalUpdate($dfgCheckDep) {
 			$dfgOut->outputln("\nYour installation is already up-to-date!\n");
 		}
 	} catch(InstallationError $e) {
-		Tools::exitOnFatalError($e);
+		dffExitOnFatalError($e);
 	} catch(HttpError $e) {
-		Tools::exitOnFatalError($e);
+		dffExitOnFatalError($e);
 	} catch(RollbackInstallation $e) {
-		Tools::exitOnFatalError("Installation failed! You can try to rollback: smwadmin -r");
+		dffExitOnFatalError("Installation failed! You can try to rollback: smwadmin -r");
 	} catch(RepositoryError $e) {
-		Tools::exitOnFatalError($e);
+		dffExitOnFatalError($e);
 	}
 
 }
@@ -671,9 +675,9 @@ function dffHandleInstallOrUpdate($packageID, $version) {
  *
  */
 function dffCheckWikiContext() {
-    
-	global $wgDBadminuser,$wgDBadminpassword, $wgDBtype, $wgDBserver, 
-	       $wgDBadminuser, $wgDBadminpassword, $wgDBname, $dfgOut;
+
+	global $wgDBadminuser,$wgDBadminpassword, $wgDBtype, $wgDBserver,
+	$wgDBadminuser, $wgDBadminpassword, $wgDBname, $dfgOut;
 	# Attempt to connect to the database as a privileged user
 	# This will vomit up an error if there are permissions problems
 	$dbclass = 'Database' . ucfirst( $wgDBtype ) ;
@@ -681,15 +685,15 @@ function dffCheckWikiContext() {
 
 	if( !$wgDatabase->isOpen() ) {
 		# Appears to have failed
-		Tools::exitOnFatalError( "A connection to the database could not be established. Check the\n".
+		dffExitOnFatalError( "A connection to the database could not be established. Check the\n".
 					"values of \$wgDBadminuser and \$wgDBadminpassword.\n" );
-		
+
 	}
 
 
 	// check if AdminSettings.php is available
 	if (!isset($wgDBadminuser) && !isset($wgDBadminpassword)) {
-		Tools::exitOnFatalError("Please set create AdminSettings.php file (on MW < 1.16). ".
+		dffExitOnFatalError("Please set create AdminSettings.php file (on MW < 1.16). ".
 		          "On MW >= 1.16 set both variables in LocalSettings.php.");
 	}
 
@@ -711,13 +715,50 @@ function dffInitLanguage() {
 	$dfgLang = new $langClass();
 }
 
+/**
+ * Shows a fatal error which aborts installation.
+ *
+ * @param Exception $e (InstallationError, HttpError, RollbackInstallation)
+ */
+function dffExitOnFatalError($e) {
+	global $dfgOut;
+	$dfgOut->outputln();
 
+	if ($e instanceof InstallationError) {
+		switch($e->getErrorCode()) {
+			case DEPLOY_FRAMEWORK_DEPENDENCY_EXIST: {
+				$packages = $e->getArg1();
+				$dfgOut->outputln($e->getMsg());
+				$dfgOut->outputln();
+				foreach($packages as $p) {
+					$dfgOut->outputln("\t*$p", DF_PRINTSTREAM_TYPE_FATAL);
+				}
+				break;
+			}
+			case DEPLOY_FRAMEWORK_ALREADY_INSTALLED:
+				$package = $e->getArg1();
+				$dfgOut->outputln($e->getMsg(), DF_PRINTSTREAM_TYPE_FATAL);
+				$dfgOut->outputln("\t*".$package->getID()."-".$package->getVersion(), DF_PRINTSTREAM_TYPE_FATAL);
+				break;
 
-class DFOntologyConflictConfirm {
-	function askForOntologyPrefix(& $result) {
-		global $dfgOut;
-		$dfgOut->outputln("\nOntology conflict. Please enter prefix: ");
-		$line = trim(fgets(STDIN));
-		$result = $line;
+			default: $dfgOut->outputln($e->getMsg(), DF_PRINTSTREAM_TYPE_FATAL); break;
+		}
+	} else if ($e instanceof HttpError) {
+		$dfgOut->outputln($e->getMsg(), DF_PRINTSTREAM_TYPE_FATAL);
+
+	} else if ($e instanceof RepositoryError) {
+		$dfgOut->outputln($e->getMsg(), DF_PRINTSTREAM_TYPE_FATAL);
+	} else if (is_string($e)) {
+		if (!empty($e)) $dfgOut->outputln($e, DF_PRINTSTREAM_TYPE_FATAL);
 	}
+	$dfgOut->outputln();
+	$dfgOut->outputln();
+
+	// stop installation
+	die(DF_TERMINATION_ERROR);
 }
+
+
+
+
+

@@ -64,20 +64,20 @@ class OntologyInstaller {
 	 *
 	 */
 	public function installOntology($bundleID, $inputfile, $callback, $noBundlePage = false, $mode = 0) {
-
+		global $dfgOut;
 		$outputfile = $inputfile.".xml";
 		try {
 			$ret = $this->convertOntology($inputfile, $outputfile, $bundleID, $noBundlePage);
 
 			if ($ret != 0) {
-				print "\nCould not convert ontology.";
+				$dfgOut->outputln("Could not convert ontology.");
 				die(1);
 			}
 		} catch(Exception $e) {
 			// onto2mwxml might not be installed
-			print "\nCould not convert ontology. Reason: ";
-			print "\n\n".$e->getMessage()."\n";
-			die(1);
+			$dfgOut->outputln("Could not convert ontology. Reason: ");
+			$dfgOut->outputln("\n".$e->getMessage()."\n");
+			die(DF_TERMINATION_ERROR);
 		}
 
 		// read possible existing prefix if this is an update
@@ -87,7 +87,7 @@ class OntologyInstaller {
 
 		if ($mode != DF_ONTOLOGYIMPORT_FORCEOVERWRITE) {
 			// verifies the ontologies
-			print "\n[Verifying ontology $inputfile...";
+			$dfgOut->outputln("[Verifying ontology $inputfile...");
 			do {
 				$verificationLog = $this->verifyOntology($outputfile_rel, $bundleID, $prefix);
 
@@ -96,26 +96,26 @@ class OntologyInstaller {
 				if ($conflict !== false) $prefix = $conflict;
 
 			} while ($conflict !== false);
-			print "done.";
+			$dfgOut->output("done.");
 		}
 		if ($prefix != '') {
 			// write prefix file
-			print "\n[Conflict detected. Using prefix '$prefix']";
+			$dfgOut->outputln("[Conflict detected. Using prefix '$prefix']");
 
 		} else {
-			print "\n[No Conflict detected]";
+			$dfgOut->outputln("[No Conflict detected]");
 		}
 
 		// do actual ontology install/update
-		print "\n[Installing/updating ontology $inputfile...";
+		$dfgOut->outputln("[Installing/updating ontology $inputfile...");
 		$this->installOrUpdateOntology($outputfile_rel, $verificationLog, $bundleID, $prefix);
 
 		// import external artifacts (e.g. mapping metadata/rules)
 		$externalArtifactFile = $inputfile.".external";
 		if (file_exists($externalArtifactFile)) {
-			print "\n\t[Importing external artifacts from $externalArtifactFile...";
+			$dfgOut->outputln("\t[Importing external artifacts from $externalArtifactFile...");
 			$this->uploadExternalArtifacts($externalArtifactFile, $bundleID);
-			print "done.]";
+			$dfgOut->output("done.]");
 		}
 
 		return $prefix;
@@ -127,7 +127,7 @@ class OntologyInstaller {
 	 * @param DeployDescriptor $dd
 	 * @param object $callback method askForOntologyPrefix(& $answer)
 	 * @param int $mode How to deal with conflicts  (see DF_ONOLOGYIMPORT_.. constants)
-	 * 
+	 *
 	 */
 	public function installOntologies($dd, $callback, $mode = 0) {
 		$ontologies = $dd->getOntologies();
@@ -273,7 +273,7 @@ ENDS
 	private function installOrUpdateOntology($inputfile, $verificationLog, $bundleID, $prefix = '') {
 
 		// remove ontology elements which do not exist anymore.
-		global $dfgLang;
+		global $dfgLang, $dfgOut;
 		$pagesToImport = array();
 
 		foreach($verificationLog as $log) {
@@ -299,10 +299,10 @@ ENDS
 			if( wfRunHooks('ArticleDelete', array(&$a, &$wgUser, &$reason, &$error)) ) {
 				if( $a->doDeleteArticle("ontology removed: ".$bundleID) ) {
 					$this->logger->info("Removing page: ".$title->getPrefixedText());
-					print "\n\t[Removing page]: ".$title->getPrefixedText()."...";
+					$dfgOut->outputln("\t[Removing page]: ".$title->getPrefixedText()."...");
 
 					wfRunHooks('ArticleDeleteComplete', array(&$a, &$wgUser, "ontology removed: ".$bundleID, $id));
-					print "done.]";
+					$dfgOut->output("done.]");
 				}
 			}
 
@@ -330,7 +330,7 @@ ENDS
 	 */
 	private function verifyFromHandle( $handle, $bundleID , $prefix) {
 		$source = new ImportStreamSource( $handle );
-		$importer = new DeployWikiImporterDetector( $source, $bundleID, $prefix, 1, $this );
+		$importer = new DeployWikiImporterDetector( $source, $bundleID, $prefix, 1, DFUserInput::getInstance() );
 
 		$importer->setDebug( false );
 
@@ -374,10 +374,10 @@ ENDS
 	 */
 	private function convertOntology($inputfile, $outputfile, $bundleID, $noBundlePage = false) {
 		// convert ontology
-
+		global $dfgOut;
 		$cwd = getcwd();
 		$onto2mwxml_dir = $this->rootDir."/deployment/tools/onto2mwxml";
-		print "\n[Convert ontology $inputfile...";
+		$dfgOut->outputln("[Convert ontology $inputfile...");
 
 		chdir($onto2mwxml_dir);
 		$ret = 0;
@@ -388,7 +388,7 @@ ENDS
 				if ($noBundlePage) $noBundlePageParam = "--nobundlepage"; else $noBundlePageParam = "";
 				exec("\"$onto2mwxml_dir/onto2mwxml.bat\" \"$inputfile\" -o \"$outputfile\" --bundleid \"$bundleID\" $noBundlePageParam", $output, $ret);
 				if ($ret != 0) {
-					foreach($output as $l) print "\n$l";
+					foreach($output as $l) $dfgOut->outputln("$l");
 					throw new Exception("Onto2MWXML exited abnormally.");
 				}
 			}
@@ -399,13 +399,13 @@ ENDS
 				if ($noBundlePage) $noBundlePageParam = "--nobundlepage"; else $noBundlePageParam = "";
 				exec("\"$onto2mwxml_dir/onto2mwxml.sh\" \"$inputfile\" -o \"$outputfile\" --bundleid \"$bundleID\" $noBundlePageParam", $output, $ret);
 				if ($ret != 0) {
-					foreach($output as $l) print "\n$l";
+					foreach($output as $l) $dfgOut->outputln("$l");
 					throw new Exception("Onto2MWXML exited abnormally.");
 				}
 			}
 		}
 		chdir($cwd);
-		print "done.]";
+		$dfgOut->output("done.]");
 		return $ret;
 	}
 
@@ -422,10 +422,11 @@ ENDS
 	 */
 	private function checkForConflict($verificationLog, $callback, $mode) {
 		$conflict = false;
+		global $dfgOut;
 		foreach($verificationLog as $l) {
 			list($title, $msg) = $l;
 			if ($msg == 'conflict') {
-				print "\nConflict with: '$title'";
+				$dfgOut->outputln("Conflict with: '$title'");
 				$conflict = true;
 				break;
 			}

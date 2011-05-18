@@ -105,7 +105,7 @@ class BackupReader {
 		$this->importContentHashTemplate();
 
 		$source = new ImportStreamSource( $handle );
-		$importer = new DeployWikiImporter( $source, $this->mode, $this );
+		$importer = new DeployWikiImporter( $source, $this->mode, DFUserInput::getInstance() );
 
 		$importer->setDebug( $this->debug );
 		$importer->setPageCallback( array( &$this, 'reportPage' ) );
@@ -117,36 +117,7 @@ class BackupReader {
 		return $importer->doImport();
 	}
 
-	/**
-	 * Callback method which decides what to do on a modified page.
-	 * Contains out parameters which is declared by the call_user_func()
-	 *
-	 * @param DeployWikiRevision $deployRevision
-	 * @param int $mode
-	 * @param out boolean $result
-	 */
-	function modifiedPage($deployRevision, $mode, & $result) {
-		static $overwrite = false;
-		switch ($mode) {
-			case DEPLOYWIKIREVISION_FORCE:
-				$result = true;
-				break;
-			case DEPLOYWIKIREVISION_WARN:
-				$result = true;
-				if ($overwrite) break;
-				print "\nPage '".$deployRevision->title->getText()."' has been changed.";
-				print "Overwrite? [(y)es/(n)o/(a)ll]?";
-				$line = trim(fgets(STDIN));
-				$overwrite = (strtolower($line) == 'a');
-				$result = (strtolower($line) != 'n');
-				break;
-			case DEPLOYWIKIREVISION_INFO:
-				$result = false;
-				print "\nPage '".$deployRevision->title->getText()."' has been changed";
-				break;
-			default: $result = false;
-		}
-	}
+	
 
 	/**
 	 * Creates the content hash template if it does not exist.
@@ -154,20 +125,21 @@ class BackupReader {
 	 */
 	private function importContentHashTemplate() {
 		global $dfgLang;
+		global $dfgOut;
 		$t = Title::newFromText($dfgLang->getLanguageString('df_contenthash'), NS_TEMPLATE);
 		if (!$t->exists()) {
 			$a = new Article($t);
-			print "\n\tCreating template '".$dfgLang->getLanguageString('df_contenthash')."'...";
+			$dfgOut->outputln("\tCreating template '".$dfgLang->getLanguageString('df_contenthash')."'...");
 			$a->insertNewArticle("[[".$dfgLang->getLanguageString('df_contenthash')."::{{{value|}}}| ]]", "auto-generated", false, false);
-			print "done.";
+			$dfgOut->output( "done.");
 		}
 			
 		$t = Title::newFromText($dfgLang->getLanguageString('df_partofbundle'), NS_TEMPLATE);
 		if (!$t->exists()) {
 			$a = new Article($t);
-			print "\n\tCreating template '".$dfgLang->getLanguageString('df_partofbundle')."'...";
+			$dfgOut->outputln("\tCreating template '".$dfgLang->getLanguageString('df_partofbundle')."'...");
 			$a->insertNewArticle("[[".$dfgLang->getLanguageString('df_partofbundle')."::{{{value|}}}| ]]", "auto-generated", false, false);
-			print "done.";
+			$dfgOut->output("done.");
 		}
 	}
 }

@@ -28,13 +28,14 @@ class TestInstaller extends PHPUnit_Framework_TestCase {
 
 	function setUp() {
 		
+        global $dfgNoAsk;
+        $dfgNoAsk = true;
 		// repo path points to a directory containing a test repository
 		$repo_path = defined('DEBUG_MODE') && DEBUG_MODE == true ? "deployment/tests/testcases/resources/repository/repository.xml" : "testcases/resources/repository/repository.xml";
 		// local path points to a directory containing a simulated local installation.
 		$this->local_path = defined('DEBUG_MODE') && DEBUG_MODE == true ? "deployment/tests/testcases/resources/installer" : "testcases/resources/installer";
 		PackageRepository::initializePackageRepositoryFromString(file_get_contents($repo_path));
-
-		$this->installer = Installer::getInstance($this->local_path, true, true, true);
+		$this->installer = Installer::getInstance($this->local_path, true, true);
 		
 		// create temporary directory for downloads and installation
 		$this->instPath = Tools::isWindows() ? 'c:\temp\install_test' : '/tmp/install_test';

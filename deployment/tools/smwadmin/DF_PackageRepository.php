@@ -59,12 +59,13 @@ class PackageRepository {
 	 * @return PackageRepository
 	 */
 	private static function getPackageRepository() {
+		global $dfgOut;
 		if (!empty(self::$repo_dom)) return self::$repo_dom;
 		$rep_urls = array();
 		global $smwgDFIP;
 		$repositoriesFile = isset($smwgDFIP) ? "$smwgDFIP/tools/repositories" : "repositories";
 		if (file_exists($repositoriesFile)) {
-			print "\nReading from repository file...";
+			$dfgOut->outputln("Reading from repository file...");
 			$content = file_get_contents($repositoriesFile);
 			$rep_file_lines = array_unique(explode("\n", $content));
 			$repo_urls = array();
@@ -81,9 +82,9 @@ class PackageRepository {
 					self::$repo_credentials[$url] = "$user:$pass";
 				}
 			}
-			print "done.";
+			$dfgOut->output( "done.");
 		} else {
-			print "\nNo repository file. Using default repository.";
+			$dfgOut->outputln("No repository file. Using default repository.", DF_PRINTSTREAM_TYPE_WARN);
 			self::$repo_credentials[SMWPLUS_REPOSITORY] = "" ; // default repo
 			$repo_urls[] = SMWPLUS_REPOSITORY;
 		}
@@ -95,22 +96,23 @@ class PackageRepository {
 
 			$path = $partsOfURL['path'];
 			if (!array_key_exists('path', $partsOfURL)) {
-				print "\nWarning: Could not parse $url";
+				$dfgOut->outputln("Could not parse $url", DF_PRINTSTREAM_TYPE_WARN) ;
 			}
 			$host = $partsOfURL['host'];
 			if (!array_key_exists('host', $partsOfURL)) {
-				print "\nWarning: Could not parse $url";
+				$dfgOut->outputln("Could not parse $url", DF_PRINTSTREAM_TYPE_WARN) ;
 			}
 			$port = array_key_exists("port", $partsOfURL) ? $partsOfURL['port'] : 80;
 			try {
 				$res = $d->downloadAsString($path, $port, $host, array_key_exists($url, self::$repo_credentials) ? self::$repo_credentials[$url] : "", NULL);
 				self::$repo_dom[$url] = simplexml_load_string($res);
 			} catch(HttpError $e) {
-				print "\n".$e->getMsg();
-				print "\n";
+				$dfgOut->outputln($e->getMsg(), DF_PRINTSTREAM_TYPE_ERROR);
+				$dfgOut->outputln();
+			
 			} catch(Exception $e) {
-				print "\n".$e->getMessage();
-				print "\n";
+				$dfgOut->outputln($e->getMessage(), DF_PRINTSTREAM_TYPE_ERROR);
+                $dfgOut->outputln();
 			}
 
 		}
@@ -404,7 +406,7 @@ class PackageRepository {
 		}
 		$handle = @opendir($ext_dir);
 		if (!$handle) {
-			//print "\nWARNING: $ext_dir does not exist. Skipped.";
+			
 			return;
 		}
 
@@ -461,7 +463,7 @@ class PackageRepository {
 		}
 		$handle = @opendir($ext_dir);
 		if (!$handle) {
-			//print "\nWARNING: $ext_dir does not exist. Skipped.";
+			
 			return;
 		}
 

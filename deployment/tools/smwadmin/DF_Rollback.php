@@ -73,7 +73,7 @@ class Rollback {
 	 * @boolean True if no error occured
 	 */
 	public function saveInstallation($name = NULL) {
-
+        global $dfgOut;
 		// make sure to save only once
 		static $savedInstallation = false;
 		if ($savedInstallation) return true;
@@ -84,10 +84,10 @@ class Rollback {
 
 		$logger = Logger::getInstance();
 		$logger->info("Save installation to ".$this->tmpDir."/$name");
-		print "\n[Save installation...";
+		$dfgOut->outputln("[Save installation...");
 		$success = Tools::mkpath($this->tmpDir."/$name");
 		$success = $success && Tools::copy_dir($this->rootDir, $this->tmpDir."/$name", array($this->rootDir."/deployment"));
-		print "done.]";
+		$dfgOut->output("done.]");
 		$savedInstallation = true;
 		if (!$success) {
 			$logger->error("Could not copy the MW installation.");
@@ -104,7 +104,7 @@ class Rollback {
 	 */
 	public function saveDatabase($name = NULL) {
 
-		global $mwrootDir;
+		global $mwrootDir, $dfgOut;
 		if (file_exists("$mwrootDir/AdminSettings.php")) {
 			require_once "$mwrootDir/AdminSettings.php";
 		} else {
@@ -124,10 +124,10 @@ class Rollback {
 		$logger->info("Save database to ".$this->tmpDir."/$name/dump.sql");
 
 		$wgDBname = $this->getVariableValue("LocalSettings.php", "wgDBname");
-		print "\n[Saving database...";
+		$dfgOut->outputln("[Saving database...");
 		//print "\nmysqldump -u $wgDBadminuser --password=$wgDBadminpassword $wgDBname > ".$this->tmpDir."/$name/dump.sql";
 		exec("mysqldump -u $wgDBadminuser --password=$wgDBadminpassword $wgDBname > \"".$this->tmpDir."/$name/dump.sql\"", $out, $ret);
-		print "done.]";
+		$dfgOut->output("done.]");
 		$savedDataBase = true;
 
 		if ($ret != 0) {
@@ -164,6 +164,7 @@ class Rollback {
 	 * @return boolean True if a restore point should be created/overwritten.
 	 */
 	protected function acquireNewRestorePoint(& $name) {
+		global $dfgOut;
 		static $calledOnce = false;
 		static $answer;
 		static $namedStored;
@@ -172,10 +173,10 @@ class Rollback {
 		if ($calledOnce) return $answer;
 		$calledOnce = true;
 
-		print "\nCreate new restore point (y/n)? ";
+		$dfgOut->outputln("Create new restore point (y/n)? ");
 		$line = trim(fgets(STDIN));
 		if (strtolower($line) == 'n') {
-			print "\n\nDo not create a restore point.\n\n";
+			$dfgOut->outputln("\nDo not create a restore point.\n\n");
 			$answer = false;
 			return $answer;
 		}
@@ -204,19 +205,19 @@ class Rollback {
 	protected function getRestorePointName() {
 		$done = false;
 		do {
-			print "\nPlease enter a name for the restore point: ";
+			$dfgOut->outputln("Please enter a name for the restore point: ");
 			$name = trim(fgets(STDIN));
 			$name = str_replace(" ","_", $name);
 
 			if (preg_match('/\w+/', $name, $matches) === false) continue;
 			if ($name !== $matches[0]) {
-				print "\nForbidden characters. Please use only alphanumeric chars and spaces";
+				$dfgOut->outputln("Forbidden characters. Please use only alphanumeric chars and spaces");
 				continue;
 			}
 
 			// clear if it already exists
 			if (file_exists($this->tmpDir.$name)) {
-				print "\nA restore point with this name already exists. Overwrite? (y/n) ";
+				$dfgOut->outputln("A restore point with this name already exists. Overwrite? (y/n) ");
 				$line = trim(fgets(STDIN));
 				if (strtolower($line) == 'n') {
 					continue;
@@ -235,7 +236,7 @@ class Rollback {
 	 * @param $msg
 	 */
 	protected function askForConfirmation($msg) {
-		return Tools::consoleConfirm($msg);
+		return DFUserInput::consoleConfirm($msg);
 	}
 
 	/**
@@ -244,20 +245,21 @@ class Rollback {
 	 * @param string Name of restore point.
 	 */
 	private function restoreInstallation($name) {
+		global $dfgOut;
 		$logger = Logger::getInstance();
 
 		$logger->info("Remove current installation");
-		print "\n[Remove current installation...";
+		$dfgOut->outputln("[Remove current installation...");
 		Tools::remove_dir($this->rootDir, array(Tools::normalizePath($this->rootDir."/deployment")));
-		print "done.]";
+		$dfgOut->output("done.]");
 
 		$logger->info("Restore old installation");
-		print "\n[Restore old installation...";
+		$dfgOut->outputln("[Restore old installation...");
 		$success = Tools::copy_dir($this->tmpDir."/$name", $this->rootDir);
 		if (!$success) {
 			$logger->error("Restore old installation faild. Could not copy from ".$this->tmpDir."/$name");
 		}
-		print "done.]";
+		$dfgOut->output("done.]");
 	}
 
 	/**
@@ -267,7 +269,7 @@ class Rollback {
 	 * @return boolean
 	 */
 	private function restoreDatabase($name) {
-		global $mwrootDir;
+		global $mwrootDir, $dfgOut;
 		if (file_exists("$mwrootDir/AdminSettings.php")) {
 			require_once "$mwrootDir/AdminSettings.php";
 		} else {
@@ -278,14 +280,14 @@ class Rollback {
 		$wgDBname = $this->getVariableValue("LocalSettings.php", "wgDBname");
 		if (!file_exists($this->tmpDir."/$name/dump.sql")) return false; // nothing to restore
 		if (!$this->askForConfirmation("Restore database? (y/n) ")) return false;
-		print "\n[Restore database...";
+		$dfgOut->outputln("[Restore database...");
 		$logger = Logger::getInstance();
 		$logger->info("Restore database");
 		exec("mysql -u $wgDBadminuser --password=$wgDBadminpassword --database=$wgDBname < \"".$this->tmpDir."/$name/dump.sql\"", $out, $ret);
 		if ($ret != 0){
 			$logger->error("Could not restore database.");
-			print "\nError: Could not restore database.";
-		}  else print "done.]";
+			$dfgOut->outputln("Could not restore database.", DF_PRINTSTREAM_TYPE_ERROR);
+		}  else $dfgOut->output("done.]");
 		return ($ret == 0);
 	}
 

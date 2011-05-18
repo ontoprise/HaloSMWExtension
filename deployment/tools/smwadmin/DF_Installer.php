@@ -56,9 +56,9 @@ class Installer {
 
 	static $instance = NULL; // singleton
 
-	public static function getInstance($rootDir = NULL, $force = false, $noAsk = false, $noRollback = false) {
+	public static function getInstance($rootDir = NULL, $force = false, $noRollback = false) {
 		if (!is_null(self::$instance)) return self::$instance;
-		self::$instance = new Installer($rootDir, $force, $noAsk, $noRollback);
+		self::$instance = new Installer($rootDir, $force, $noRollback);
 		return self::$instance;
 	}
 	/*
@@ -90,7 +90,7 @@ class Installer {
 	 *
 	 * @param string $rootDir Explicit root dir. Only necessary for testing
 	 */
-	private function __construct($rootDir = NULL, $force = false, $noAsk = false, $noRollback = false) {
+	private function __construct($rootDir = NULL, $force = false, $noRollback = false) {
 		// create temp folder
 		$this->errors = array();
 		$this->tmpFolder = Tools::isWindows() ? 'c:\temp\mw_deploy_tool' : '/tmp/mw_deploy_tool';
@@ -105,7 +105,7 @@ class Installer {
 		$this->rollback = Rollback::getInstance($this->rootDir);
 
 		$this->force = $force;
-		$this->noAsk = $noAsk;
+
 		$this->noRollback = $noRollback;
 		$this->logger = Logger::getInstance();
 	}
@@ -137,7 +137,7 @@ class Installer {
 			}
 		}
 		$this->installOrUpdatePackages($extensions_to_update);
-
+		$dfgOut->outputln("-------\n");
 
 			
 	}
@@ -184,7 +184,7 @@ class Installer {
 			}
 		}
 		$this->installOrUpdatePackages($extensions_to_update);
-
+		$dfgOut->outputln("-------\n");
 		$fromVersion = NULL;
 		if (array_key_exists($dd->getID(), $localPackages)) {
 			$fromVersion = $localPackages[$dd->getID()]->getVersion();
@@ -197,7 +197,7 @@ class Installer {
 		$this->unzipFromFile($filePath);
 
 		$this->logger->info("Apply configs for $filePath");
-		$dd->applyConfigurations($this->rootDir, false, $fromVersion, $this);
+		$dd->applyConfigurations($this->rootDir, false, $fromVersion, DFUserInput::getInstance());
 		$this->errors = array_merge($this->errors, $dd->getLastErrors());
 
 		// write finalize hint
@@ -323,6 +323,7 @@ class Installer {
 			return array($extensions_to_update, $contradictions, false);
 		} else {
 			$this->installOrUpdatePackages($extensions_to_update);
+			$dfgOut->outputln("-------\n");
 			return array($extensions_to_update, $contradictions, true);
 
 		}
@@ -375,8 +376,8 @@ class Installer {
 			$versionsShown .= str_repeat(" ", 12-strlen($versionsShown) >= 0 ? 12-strlen($versionsShown) : 0);
 			$dfgOut->outputln( " $instTag $id_shown  $versionsShown ".Tools::shortenURL($v[2], 70));
 
-			if ($showDescription && array_key_exists($p_id, $localPackages)) { 
-				$dfgOut->outputln( " ".$localPackages[$p_id]->getDescription()."\n\n");	
+			if ($showDescription && array_key_exists($p_id, $localPackages)) {
+				$dfgOut->outputln( " ".$localPackages[$p_id]->getDescription()."\n\n");
 			}
 		}
 
@@ -518,7 +519,7 @@ class Installer {
 			$this->unzip($desc);
 
 			$this->logger->info("Apply configs for $id-".$desc->getVersion().".zip");
-			$desc->applyConfigurations($this->rootDir, false, $fromVersion, $this);
+			$desc->applyConfigurations($this->rootDir, false, $fromVersion, DFUserInput::getInstance());
 			$this->errors = array_merge($this->errors, $desc->getLastErrors());
 
 			$installDirectory = $this->rootDir."/".$desc->getInstallationDirectory();
@@ -532,7 +533,7 @@ class Installer {
 			fclose($handle);
 			$num++;
 
-			print "\n-------\n";
+				
 		}
 
 
@@ -545,6 +546,7 @@ class Installer {
 	 *
 	 */
 	public function initializePackages() {
+		global $dfgOut;
 		require_once 'DF_ResourceInstaller.php';
 		require_once 'DF_OntologyInstaller.php';
 		$res_installer = ResourceInstaller::getInstance($this->rootDir);
@@ -553,7 +555,7 @@ class Installer {
 		ksort($localPackages, SORT_NUMERIC);
 
 		if (count($localPackages) === 0) {
-			print "\nNo finalization required.\n";
+			$dfgOut->outputln("No finalization required.\n");
 			return;
 		}
 		// apply the setup operations which must not happen
@@ -593,16 +595,16 @@ class Installer {
 			if ($notice !== '') {
 				$notice = trim($notice);
 				if (!in_array($notice, $shownNotices)) {
-					print "\n\n=========================================================";
-					print "\nNOTICE (".$desc->getID()."): $notice";
-					print "\n\n=========================================================";
+					$dfgOut->outputln("\n=========================================================");
+					$dfgOut->outputln("NOTICE (".$desc->getID()."): $notice");
+					$dfgOut->outputln("\n=========================================================");
 					$shownNotices[] = $notice;
 				}
 			}
 		}
 
 		// remove installation hint files
-		print "\n[Clean up...";
+		$dfgOut->outputln("[Clean up...");
 		foreach($localPackages as $tupl) {
 			list($desc, $fromVersion) = $tupl;
 			$installDirectory = $this->rootDir."/".$desc->getInstallationDirectory();
@@ -613,7 +615,7 @@ class Installer {
 			$this->logger->info("Mark extension as initialized: ".$desc->getID());
 			unlink($installDirectory."/init$.ext");
 		}
-		print "done.]\n\n";
+		$dfgOut->output("done.]\n\n");
 
 	}
 
@@ -628,27 +630,27 @@ class Installer {
 	 * @param DeployDescriptor $dd
 	 */
 	public function deinitializePackages($dd) {
-
+        global $dfgOut;
 		$res_installer = ResourceInstaller::getInstance($this->rootDir);
 		$ont_installer = OntologyInstaller::getInstance($this->rootDir);
 
 		// remove wikidumps
 		$this->logger->info("De-installing wikidumps: ".$dd->getID());
-		print "\n[De-installing wikidumps...";
+		$dfgOut->outputln("[De-installing wikidumps...");
 		$res_installer->deinstallWikidump($dd);
-		print "\ndone.]";
+		$dfgOut->outputln("done.]");
 
 		// remove ontologies
 		$this->logger->info("De-installing ontologies: ".$dd->getID());
-		print "\n[De-installing ontologies...";
+		$dfgOut->outputln("[De-installing ontologies...");
 		$ont_installer->deinstallOntology($dd);
-		print "\ndone.]";
+		$dfgOut->outputln("done.]");
 
 		// delete resources
 		$this->logger->info("Delete resourcs: ".$dd->getID());
-		print "\n[Deleting resources...";
+		$dfgOut->outputln("[Deleting resources...");
 		$res_installer->deleteResources($dd);
-		print "\ndone.]";
+		$dfgOut->outputln("done.]");
 
 	}
 
@@ -658,22 +660,22 @@ class Installer {
 	 * @param DeployDescriptor $dd
 	 */
 	public function deleteExternalCodefiles($dd) {
-
+        global $dfgOut;
 		if (count($dd->getCodefiles()) ==  0) return;
 		$codefiles = $dd->getCodefiles();
-		print "\n[Deleting external codefiles...";
+		$dfgOut->outputln("[Deleting external codefiles...");
 		foreach($codefiles as $f) {
 			if (strpos($f, $dd->getInstallationDirectory()) === 0) continue; // ignore these
-			print "\n\t[Remove $f...";
+			$dfgOut->outputln("\t[Remove $f...");
 			$path = $this->rootDir."/".$dd->getInstallationDirectory()."/".$f;
 			if (is_dir($path)) {
 				Tools::remove_dir($path);
 			} else if (file_exists($path)) {
 				unlink($path);
 			}
-			print "done.]";
+			$dfgOut->output("done.]");
 		}
-		print "\ndone.]";
+		$dfgOut->outputln("done.]");
 	}
 
 	/**
@@ -685,6 +687,7 @@ class Installer {
 	 * @param int $version
 	 */
 	private function unzip($dd) {
+		global $dfgOut;
 		$id = $dd->getID();
 		$version =	$dd->getVersion();
 		$excludedFiles = $dd->getExcludedFiles();
@@ -709,14 +712,14 @@ class Installer {
 			}
 			Tools::mkpath($unzipDirectory);
 		}
-		print "\nunzip into $unzipDirectory";
-		print "\n[unzip ".$id."-$version.zip...";
+		$dfgOut->outputln("unzip into $unzipDirectory");
+		$dfgOut->outputln("[unzip ".$id."-$version.zip...");
 		if (Tools::isWindows()) {
 			exec('unzip -o "'.$this->tmpFolder."\\".$id."-$version.zip\" -d \"".$unzipDirectory.'" '.$excludedFilesString);
 		} else {
 			exec('unzip -o "'.$this->tmpFolder."/".$id."-$version.zip\" -d \"".$unzipDirectory.'" '.$excludedFilesString);
 		}
-		print "done.]";
+		$dfgOut->output("done.]");
 	}
 
 	/**
@@ -725,7 +728,7 @@ class Installer {
 	 * @param $filePath of bundle (absolute or relative)
 	 */
 	private function unzipFromFile($filePath) {
-
+        global $dfgOut;
 		$unzipDirectory = $this->rootDir;
 		if ($dd->isNonPublic()) {
 
@@ -743,9 +746,9 @@ class Installer {
 			Tools::mkpath($unzipDirectory);
 		}
 
-		print "\n[unzip ".$filePath."...";
+		$dfgOut->outputln("[unzip ".$filePath."...");
 		exec('unzip -o "'.$filePath.'" -d "'.$unzipDirectory.'"');
-		print "done.]";
+		$dfgOut->output("done.]");
 
 	}
 
@@ -884,7 +887,7 @@ class Installer {
 				if (array_key_exists($id, $localPackages)) {
 					continue;
 				}
-				$this->getUserConfirmation("$message\nInstall optional extension '$id'? ", $result);
+				DFUserInput::getInstance()->getUserConfirmation("$message\nInstall optional extension '$id'? ", $result);
 				if ($result != 'y') {
 					continue;
 				}
@@ -965,80 +968,13 @@ class Installer {
 
 	}
 
-	/**
-	 * Callback method. Reads user for required parameters.
-	 *
-	 *
-	 * @param array($name=>(array($type, $description)) $userParams
-	 * @param out array($name=>$value) $mapping
-	 *
-	 */
-	public function getUserReqParams($userParams, & $mapping) {
-		if ($this->noAsk || count($userParams) == 0) return;
-		print "\n\nRequired parameters:";
-		foreach($userParams as $name => $up) {
-			list($type, $desc, $proposal) = $up;
-			if (!is_null($proposal) && $proposal != '') {
-				$parts = explode(":", $proposal);
-				if (count($parts) > 1) {
-					switch($parts[0]) {
-						case "search": {
-							$proposal = Tools::whereis(trim($parts[1]));
-							$proposal = trim($proposal);
-							break;
-						}
-						default:
-							$proposal = '';
-							break;
-					}
-				}
-			}
-
-			// use proposal if given
-			if (!is_null($proposal) && $proposal != '') {
-				$mapping[$name] = $proposal;
-			} else {
-				print "\n$desc\n";
-				print "$name ($type): ";
-				$line = trim(fgets(STDIN));
-				$line = str_replace("\\", "/", $line); // do not allow backslashes
-				$mapping[$name] = $line;
-			}
-		}
-
-	}
-
-	/**
-	 * Callback method. Requests a confirmation by the user.
-	 *
-	 *
-	 * @param string $message
-	 * @param out boolean $result
-	 * @return unknown
-	 */
-	public function getUserConfirmation($message, & $result) {
-		if ($this->noAsk) return 'y';
-		print "\n\n$message [ (y)es/(n)o ]";
-		$line = trim(fgets(STDIN));
-		$result = strtolower($line);
-	}
-
-	public function askForOntologyPrefix(& $result) {
-		print "\n\nOntology conflict. Please enter prefix: ";
-		$line = trim(fgets(STDIN));
-		$result = $line;
-	}
+	
 
 	public function getErrors() {
 		return $this->errors;
 	}
 
-	public function downloadProgres($percentage) {
-		// do nothing
-	}
-	public function downloadFinished($filename) {
-		// do nothing
-	}
+	
 
 }
 

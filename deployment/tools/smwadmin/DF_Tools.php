@@ -400,6 +400,7 @@ class Tools {
 	public static function checkPackageProperties() {
 		global $dfgLang;
 		global $wgContLang;
+		global $dfgOut;
 		$propNSText = $wgContLang->getNsText(SMW_NS_PROPERTY);
 		// check if the required properties exist
 		$check = true;
@@ -409,7 +410,7 @@ class Tools {
 		$pDependencyTypeValue = $pDependency->getTypesValue();
 
 		if (reset($pDependencyTypeValue->getDBkeys()) != '_rec') {
-			print "\n'".$pDependencyTitle->getPrefixedText()."' is not a record type.";
+			$dfgOut->outputln("'".$pDependencyTitle->getPrefixedText()."' is not a record type.");
 			$check = false;
 		}
 
@@ -417,16 +418,16 @@ class Tools {
 		if ($pDependencyTypes !== false) {
 			$typeIDs = explode(";",reset($pDependencyTypes->getDBkeys()));
 			if (count($typeIDs) != 3) {
-				print "\n'".$pDependencyTitle->getPrefixedText()."' wrong number of fields.";
+				$dfgOut->outputln("'".$pDependencyTitle->getPrefixedText()."' wrong number of fields.");
 				$check = false;
 			}
 		} else {
-			print "\nCould not read fields of '".$pDependencyTitle->getPrefixedText();
+			$dfgOut->outputln("\nCould not read fields of '".$pDependencyTitle->getPrefixedText());
 			$check = false;
 		}
 		list($ext_id, $from, $to) = $typeIDs;
 		if ($ext_id != '_str' || $from != '_num' || $to != '_num') {
-			print "\n'".$pDependencyTitle->getPrefixedText()."' property has wrong field types.";
+			$dfgOut->outputln("'".$pDependencyTitle->getPrefixedText()."' property has wrong field types.");
 			$check = false;
 		}
 
@@ -435,7 +436,7 @@ class Tools {
 		$pOntologyVersion = SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString('df_ontologyversion'));
 		$pOntologyVersionValue = $pOntologyVersion->getTypesValue();
 		if (reset($pOntologyVersionValue->getDBkeys()) != '_num') {
-			print "\n'".$pOntologyVersionTitle->getPrefixedText()."' is not a number type.";
+			$dfgOut->outputln("'".$pOntologyVersionTitle->getPrefixedText()."' is not a number type.");
 			$check = false;
 		}
 		// Installation dir
@@ -443,7 +444,7 @@ class Tools {
 		$pInstallationDir = SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString('df_instdir'));
 		$pInstallationDirValue = $pInstallationDir->getTypesValue();
 		if (reset($pInstallationDirValue->getDBkeys()) != '_str') {
-			print "\n'".$pInstallationDirTitle->getPrefixedText()."' is not a string type.";
+			$dfgOut->outputln("'".$pInstallationDirTitle->getPrefixedText()."' is not a string type.");
 			$check = false;
 		}
 		// Vendor
@@ -451,7 +452,7 @@ class Tools {
 		$pVendor = SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString('df_ontologyvendor'));
 		$pVendorValue = $pVendor->getTypesValue();
 		if (reset($pVendorValue->getDBkeys()) != '_str') {
-			print "\n'".$pVendorTitle->getPrefixedText()."' is not a string type.";
+			$dfgOut->outputln("'".$pVendorTitle->getPrefixedText()."' is not a string type.");
 			$check = false;
 		}
 		// Description
@@ -460,20 +461,13 @@ class Tools {
 		$pDescriptionValue = $pDescription->getTypesValue();
 		$typeID = reset($pDescriptionValue->getDBkeys());
 		if ($typeID != '_str' && $typeID != '_txt') {
-			print "\n'".$pDescriptionTitle->getPrefixedText()."' is not a string type.";
+			$dfgOut->outputln("'".$pDescriptionTitle->getPrefixedText()."' is not a string type.");
 			$check = false;
 		}
 		return $check;
 	}
 
-	/**
-	 * Asks for a confirmation.
-	 */
-	public static function consoleConfirm($msg = "") {
-		if ($msg !== '') print "\n$msg";
-		$a = trim(fgets(STDIN));
-		return strtolower($a) === 'y';
-	}
+	
 
 	/**
 	 * Converts an array of string to a string.
@@ -580,7 +574,7 @@ class Tools {
 	public static function deletePagesOfBundle($ext_id, $logger = NULL) {
 		global $dfgLang;
 		global $wgUser;
-
+        global $dfgOut;
 		$db =& wfGetDB( DB_MASTER );
 		$smw_ids = $db->tableName('smw_ids');
 		$smw_rels2 = $db->tableName('smw_rels2');
@@ -627,9 +621,9 @@ class Tools {
 				if( wfRunHooks('ArticleDelete', array(&$a, &$wgUser, &$reason, &$error)) ) {
 					if( $a->doDeleteArticle( "ontology removed: ".$ext_id ) ) {
 						if (!is_null($logger)) $logger->info("Removing page: ".$title->getPrefixedText());
-						print "\n\t[Removing page]: ".$title->getPrefixedText()."...";
+						$dfgOut->outputln("\t[Removing page]: ".$title->getPrefixedText()."...");
 						wfRunHooks('ArticleDeleteComplete', array(&$a, &$wgUser, "ontology removed: ".$ext_id, $id));
-						print "done.]";
+						$dfgOut->output("done.]");
 					}
 				}
 
@@ -655,10 +649,10 @@ class Tools {
 				if( wfRunHooks('ArticleDelete', array(&$a, &$wgUser, &$reason, &$error)) ) {
 					if( $a->doDeleteArticle( "ontology removed: ".$ext_id ) ) {
 						if (!is_null($logger)) $logger->info("Removing page: ".$title->getPrefixedText());
-						print "\n\t[Removing page]: ".$title->getPrefixedText()."...";
+						$dfgOut->outputln("\t[Removing page]: ".$title->getPrefixedText()."...");
 
 						wfRunHooks('ArticleDeleteComplete', array(&$a, &$wgUser, "ontology removed: ".$ext_id, $id));
-						print "done.]";
+						$dfgOut->output( "done.]");
 					}
 				}
 
@@ -721,9 +715,9 @@ class Tools {
 				if( wfRunHooks('ArticleDelete', array(&$a, &$wgUser, &$reason, &$error)) ) {
 					if( $a->doDeleteArticle( "ontology removed: ".$ext_id ) ) {
 						if (!is_null($logger)) $logger->info("Removing page: ".$title->getPrefixedText());
-						print "\n\t[Removing page]: ".$title->getPrefixedText()."...";
+						$dfgOut->outputln("\t[Removing page]: ".$title->getPrefixedText()."...");
 						wfRunHooks('ArticleDeleteComplete', array(&$a, &$wgUser, "ontology removed: ".$ext_id, $id));
-						print "done.]";
+						$dfgOut->output( "done.]");
 					}
 				}
 
@@ -749,10 +743,10 @@ class Tools {
 				if( wfRunHooks('ArticleDelete', array(&$a, &$wgUser, &$reason, &$error)) ) {
 					if( $a->doDeleteArticle( "ontology removed: ".$ext_id ) ) {
 						if (!is_null($logger)) $logger->info("Removing page: ".$title->getPrefixedText());
-						print "\n\t[Removing page]: ".$title->getPrefixedText()."...";
+						$dfgOut->outputln("\n\t[Removing page]: ".$title->getPrefixedText()."...");
 
 						wfRunHooks('ArticleDeleteComplete', array(&$a, &$wgUser, "ontology removed: ".$ext_id, $id));
-						print "done.]";
+						$dfgOut->output("done.]");
 					}
 				}
 
@@ -872,37 +866,19 @@ class Tools {
 
 	/**
 	 * Shows a fatal error which aborts installation.
-	 *
-	 * @param Exception $e (InstallationError, HttpError, RollbackInstallation)
+	 * Note: Requires the global output object $dfgOut to be set.
+	 * 
+	 * @param string $e message
 	 */
 	public static function exitOnFatalError($e) {
+		global $dfgOut;
+
+		if (!isset($dfgOut)) {
+			die(DF_TERMINATION_ERROR);
+		}
 		$dfgOut->outputln();
 
-		if ($e instanceof InstallationError) {
-			switch($e->getErrorCode()) {
-				case DEPLOY_FRAMEWORK_DEPENDENCY_EXIST: {
-					$packages = $e->getArg1();
-					$dfgOut->outputln($e->getMsg());
-					$dfgOut->outputln();
-					foreach($packages as $p) {
-						$dfgOut->outputln("\t*$p", DF_PRINTSTREAM_TYPE_FATAL);
-					}
-					break;
-				}
-				case DEPLOY_FRAMEWORK_ALREADY_INSTALLED:
-					$package = $e->getArg1();
-					$dfgOut->outputln($e->getMsg(), DF_PRINTSTREAM_TYPE_FATAL);
-					$dfgOut->outputln("\t*".$package->getID()."-".$package->getVersion(), DF_PRINTSTREAM_TYPE_FATAL);
-					break;
-						
-				default: $dfgOut->outputln($e->getMsg(), DF_PRINTSTREAM_TYPE_FATAL); break;
-			}
-		} else if ($e instanceof HttpError) {
-			$dfgOut->outputln($e->getMsg(), DF_PRINTSTREAM_TYPE_FATAL);
-
-		} else if ($e instanceof RepositoryError) {
-			$dfgOut->outputln($e->getMsg(), DF_PRINTSTREAM_TYPE_FATAL);
-		} else if (is_string($e)) {
+		if (is_string($e)) {
 			if (!empty($e)) $dfgOut->outputln($e, DF_PRINTSTREAM_TYPE_FATAL);
 		}
 		$dfgOut->outputln();

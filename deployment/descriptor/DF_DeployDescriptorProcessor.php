@@ -139,6 +139,7 @@ class DeployDescriptionProcessor {
 	 *
 	 */
 	function applySetups() {
+		global $dfgOut;
 		$rootDir = self::makeUnixPath(dirname($this->ls_loc));
 		foreach($this->dd_parser->getInstallScripts() as $setup) {
 			$instDir = trim(self::makeUnixPath($this->dd_parser->getInstallationDirectory()));
@@ -146,18 +147,18 @@ class DeployDescriptionProcessor {
 			$script = $instDir.self::makeUnixPath($setup['script']);
 			if (!file_exists($rootDir."/".$script)) {
 				$this->errorMessages[] = "WARNING: setup script at '$rootDir/$script' does not exist";
-				print "\n\tWARNING: setup script at '$rootDir/$script' does not exist";
+				$dfgOut->outputln("\tsetup script at '$rootDir/$script' does not exist", DF_PRINTSTREAM_TYPE_WARN);
 				continue;
 			}
 			$this->logger->info("Run script: $script");
-			print "\n[Run script: $script";
+			$dfgOut->outputln("[Run script: $script");
 			exec("php \"".$rootDir."/".$script."\" ".$setup['params'], $out, $ret);
-			print "done.]";
-			foreach($out as $line) print "\n".$line;
+			$dfgOut->output( "done.]");
+			foreach($out as $line) $dfgOut->outputln($line);
 			if ($ret != 0) {
 				$this->logger->error("Script: '$script' failed.");
 				$this->errorMessages[] = "Script ".$rootDir."/".$script." failed!";
-				print "\n\tScript ".$rootDir."/".$script." failed!";
+				$dfgOut->outputln("\tScript ".$rootDir."/".$script." failed!");
 				throw new RollbackInstallation();
 			}
 			$out = array(); // delete output
@@ -171,6 +172,7 @@ class DeployDescriptionProcessor {
 	 *
 	 */
 	function unapplySetups() {
+		global $dfgOut;
 		$rootDir = self::makeUnixPath(dirname($this->ls_loc));
 		foreach($this->dd_parser->getUninstallScripts() as $setup) {
 			$instDir = trim(self::makeUnixPath($this->dd_parser->getInstallationDirectory()));
@@ -178,16 +180,16 @@ class DeployDescriptionProcessor {
 			$script = $instDir.self::makeUnixPath($setup['script']);
 			if (!file_exists($rootDir."/".$script)) {
 				$this->errorMessages[] = "Warning: setup script at '$rootDir/$script' does not exist";
-				print "\nWarning: setup script at '$rootDir/$script' does not exist";
+				$dfgOut->outputln( "setup script at '$rootDir/$script' does not exist", DF_PRINTSTREAM_TYPE_WARN);
 				continue;
 			}
-			print "\n[Run script: $script";
+			$dfgOut->outputln("[Run script: $script");
 			exec("php \"".$rootDir."/".$script."\" ".$setup['params'], $out, $ret);
-			print "done.]";
-			foreach($out as $line) print "\n".$line;
+			$dfgOut->output( "done.]");
+			foreach($out as $line) $dfgOut->outputln($line);
 			if ($ret != 0) {
 				$this->errorMessages[] = "Script ".$rootDir."/".$script." failed!";
-				print "\n\tScript ".$rootDir."/".$script." failed!";
+				$dfgOut->outputln( "\tScript ".$rootDir."/".$script." failed!",DF_PRINTSTREAM_TYPE_ERROR );
 				throw new RollbackInstallation();
 			}
 
@@ -202,6 +204,7 @@ class DeployDescriptionProcessor {
 	 * @param callback $userCallback Callback function for user confirmation. Returns 'y' or 'n'.
 	 */
 	function applyPatches($userCallback, $patchesToSkip = array()) {
+		global $dfgOut;
 		$rootDir = self::makeUnixPath(dirname($this->ls_loc));
 		$localPackages = PackageRepository::getLocalPackages($rootDir, true);
 
@@ -214,13 +217,13 @@ class DeployDescriptionProcessor {
 			$patchFailed = false;
 			if (!file_exists($rootDir."/".$patch)) {
 				$this->errorMessages[] = "WARNING: patch at '$rootDir/$patch' does not exist";
-				print "\nWARNING: patch at '$rootDir/$patch' does not exist";
+				$dfgOut->outputln( "patch at '$rootDir/$patch' does not exist", DF_PRINTSTREAM_TYPE_WARN);
 				continue;
 			}
 			// do dry-run at first to check for rejected patches
-			print "\n[Test patch ".$patch."...";
+			$dfgOut->outputln("[Test patch ".$patch."...");
 			exec("php \"".$rootDir."/deployment/tools/patch.php\" -p \"".$rootDir."/".$patch."\" -d \"".$rootDir."\" --dry-run --onlypatch", $out, $ret);
-			print "done.]";
+			$dfgOut->output( "done.]");
 			$patchFailed = false;
 			
 			$out = $this->eliminateWhichMayFail($out, $mayfail);
@@ -235,8 +238,8 @@ class DeployDescriptionProcessor {
 			if (!is_null($userCallback) && $patchFailed) {
 
 				if (count($out) > 0) {
-					foreach($out as $line) print "\n".$line; // show failures
-					print "\n";
+					foreach($out as $line) $dfgOut->outputln($line); // show failures
+					$dfgOut->outputln();
 					$userCallback->getUserConfirmation("Some patches failed. Apply anyway?", $result);
 				}
 			}
@@ -244,13 +247,13 @@ class DeployDescriptionProcessor {
 			switch($result) {
 
 				case 'y': // apply the patches
-			 	print "\n[Apply patch...";
+			 	$dfgOut->outputln("[Apply patch...");
 			 	$this->logger->info("Apply patch: $patch");
 			 	exec("php \"".$rootDir."/deployment/tools/patch.php\" -p \"".$rootDir."/".$patch."\" -d \"".$rootDir."\" --onlypatch", $out, $ret);
 			 	if ($ret !== 0) {
 			 		$this->logger->warn("Patch failed: '$patch'. Output: ".Tools::arraytostring($out));
 			 	}
-			 	print "done.]";
+			 	$dfgOut->output( "done.]");
 			 	break;
 				case 'r': throw new RollbackInstallation();
 				case 'n': break; // just ignore the patches completely
@@ -298,6 +301,7 @@ class DeployDescriptionProcessor {
 	 *
 	 */
 	function unapplyPatches() {
+		global $dfgOut;
 		$rootDir = self::makeUnixPath(dirname($this->ls_loc));
 		$localPackages = PackageRepository::getLocalPackages($rootDir);
 		foreach($this->dd_parser->getUninstallPatches($localPackages) as $patch) {
@@ -307,7 +311,7 @@ class DeployDescriptionProcessor {
 			$patch = $instDir.self::makeUnixPath($patch);
 			if (!file_exists($rootDir."/".$patch)) {
 				$this->errorMessages[] = "WARNING: patch at '$rootDir/$patch' does not exist";
-				print "\n\tWARNING: patch at '$rootDir/$patch' does not exist";
+				$dfgOut->outputln("\tpatch at '$rootDir/$patch' does not exist", DF_PRINTSTREAM_TYPE_WARN);
 				continue;
 			}
 			// do dry-run at first to check for rejected patches
@@ -318,14 +322,14 @@ class DeployDescriptionProcessor {
 					$patchFailed = true;
 				}
 			}
-			if ($patchFailed) print "\n\tWARNING: Some patches can not be removed! Reject files are created.";
+			if ($patchFailed) $dfgOut->outputln("\tSome patches can not be removed! Reject files are created.", DF_PRINTSTREAM_TYPE_WARN) ;
 			$this->logger->info("Unapply patch: $patch");
-			print "\n\t[Remove patch $patch...";
+			$dfgOut->outputln("\t[Remove patch $patch...");
 			exec("php \"".$rootDir."/deployment/tools/patch.php\" -r -p \"".$rootDir."/".$patch."\" -d \"".$rootDir."\"", $out, $ret);
 			if ($ret !== 0) {
 				$this->logger->warn("Patch failed: '$patch'. Output: ".Tools::arraytostring($out));
 			}
-			print "done.]";
+			$dfgOut->output( "done.]");
 
 			// clear patch.php output
 			$out = array();
@@ -339,6 +343,7 @@ class DeployDescriptionProcessor {
 	 * @param (out) array & $alreadyApplied List of patch files (paths relative to MW folder).
 	 */
 	function checkIfPatchesAlreadyApplied(& $alreadyApplied) {
+		global $dfgOut;
 		$rootDir = self::makeUnixPath(dirname($this->ls_loc));
 		$localPackages = PackageRepository::getLocalPackages($rootDir, true);
 
@@ -351,13 +356,13 @@ class DeployDescriptionProcessor {
 			$out = array();
 			if (!file_exists($rootDir."/".$patch)) {
 				$this->errorMessages[] = "WARNING: patch at '$rootDir/$patch' does not exist";
-				print "\nWARNING: patch at '$rootDir/$patch' does not exist";
+				$dfgOut->outputln( "patch at '$rootDir/$patch' does not exist", DF_PRINTSTREAM_TYPE_WARN);
 				continue;
 			}
 			// do dry-run at first to check for rejected patches
-			print "\n[Check if patch is already applied ".$patch."...";
+			$dfgOut->outputln("[Check if patch is already applied ".$patch."...");
 			exec("php \"".$rootDir."/deployment/tools/patch.php\" -r -p \"".$rootDir."/".$patch."\" -d \"".$rootDir."\" --dry-run --onlypatch", $out, $ret);
-			print "done.]";
+			$dfgOut->output( "done.]");
 			$patchFailed = false;
 			
 			$out = $this->eliminateWhichMayFail($out, $mayfail);
@@ -368,7 +373,7 @@ class DeployDescriptionProcessor {
 			}
 
 			if (!$patchFailed) {
-				print "\n[$patch seems to be applied already. Skipped]";
+				$dfgOut->outputln("[$patch seems to be applied already. Skipped]");
 				$alreadyApplied[] = $patch;
 			}
 		}

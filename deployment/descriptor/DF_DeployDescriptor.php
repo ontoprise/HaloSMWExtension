@@ -688,12 +688,12 @@ class DeployDescriptor {
 		if ($this->configs === false) {
 			return;
 		}
-
+        global $dfgOut;
 		$dp = new DeployDescriptionProcessor($rootDir.'/LocalSettings.php', $this);
 
-		print "\n[Configure LocalSettings.php...";
+		$dfgOut->outputln("[Configure LocalSettings.php...");
 		$content = $dp->applyLocalSettingsChanges($userCallback, $this->getUserRequirements(), $dryRun);
-		print "done.]";
+		$dfgOut->output("done.]");
 
 		if (!$dryRun) {
 			$alreadyApplied = array();

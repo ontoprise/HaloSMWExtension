@@ -187,7 +187,7 @@ class DeployWikiOntologyRevision extends WikiRevision {
 	 */
 	function importOldRevision() {
 
-
+        global $dfgOut;
 		$dbw = wfGetDB( DB_MASTER );
 		// check revision here
 		$linkCache = LinkCache::singleton();
@@ -232,7 +232,7 @@ class DeployWikiOntologyRevision extends WikiRevision {
 		SMWParseData::storeData($parseOutput, $this->title);
 
 		$this->logger->info("Imported page: ".$this->title->getPrefixedText());
-		print "\n\t[Imported page] ".$this->title->getPrefixedText();
+		$dfgOut->outputln("\t[Imported page] ".$this->title->getPrefixedText());
 			
 		return $res;
 
@@ -290,7 +290,7 @@ class DeployWikiOntologyRevision extends WikiRevision {
 
 
 	function importAsNewRevision() {
-
+        global $dfgOut;
 		$dbw = wfGetDB( DB_MASTER );
 
 		# Sneak a single revision into place
@@ -326,7 +326,7 @@ class DeployWikiOntologyRevision extends WikiRevision {
 			if( $prior ) {
 				// FIXME: this could fail slightly for multiple matches :P
 				$this->logger->info("Skipping existing revision: ".$this->title->getPrefixedText());
-				print "\n\t[Skipping existing revision] ".$this->title->getPrefixedText();
+				$dfgOut->outputln("\t[Skipping existing revision] ".$this->title->getPrefixedText());
 				wfDebug( __METHOD__ . ": skipping existing revision for [[" .
 				$this->title->getPrefixedText() . "]], timestamp " . $this->timestamp . "\n" );
 				return false;
@@ -372,7 +372,7 @@ class DeployWikiOntologyRevision extends WikiRevision {
 		}
 		$GLOBALS['wgTitle'] = $tempTitle;
 		$this->logger->info("Imported new revision of page: ".$this->title->getPrefixedText());
-		print "\n\t[Imported new revision of page] ".$this->title->getPrefixedText();
+		$dfgOut->outputln("\t[Imported new revision of page] ".$this->title->getPrefixedText());
 
 		return true;
 	}

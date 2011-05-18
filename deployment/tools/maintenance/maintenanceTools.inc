@@ -131,14 +131,14 @@ class ConsistencyChecker {
 	}
 
 	public function checkInstallation($format, $addChecks = true) {
-
-		$this->statusLog[] = $this->out(array("\n","The checkInstallation tool helps you with identifying some common problems which may occur with the Deployment Framework, e.g. missing dependencies. It verifies that your installation is stable and configured correctly. You should use this tool after the installation of SMW+, when installing a Halo extension and also if there are any problems with your installation.","\n"), $format);
+        global $dfgOut;
+		$this->statusLog[] = $dfgOut->getln(array("\n","The checkInstallation tool helps you with identifying some common problems which may occur with the Deployment Framework, e.g. missing dependencies. It verifies that your installation is stable and configured correctly. You should use this tool after the installation of SMW+, when installing a Halo extension and also if there are any problems with your installation.","\n"));
 		$errorFound = false;
 		$errorFound |= $this->checkDependencies($format);
 		$errorFound |= $this->checkLocalSettings($format);
 		$errorFound |= $this->checkSpecialConfigs();
 		$errorFound |= $this->checkExistingExtensions($format, $addChecks);
-		$this->statusLog[] = $this->out("\n\n", $format);
+		$this->statusLog[] = $dfgOut->getln("\n\n", $format);
 		return $errorFound;
 	}
 
@@ -148,12 +148,12 @@ class ConsistencyChecker {
 	 *
 	 */
 	public  function checkDependencies($format) {
-
+   global $dfgOut;
 		if (count($this->localPackages) == 0) {
-			$this->statusLog[] = $this->out(array("\n","NO extensions found!", "\n"), $format);
+			$this->statusLog[] = $dfgOut->getln(array("\n","NO extensions found!", "\n"));
 		}
 
-		$this->statusLog[] = $this->out(array("\n","Are the dependencies of all installed extensions consistent?..."), $format);
+		$this->statusLog[] = $dfgOut->getln(array("\n","Are the dependencies of all installed extensions consistent?..."));
 		$errorFound = MaintenanceTools::checkDependencies($this->localPackages, $out);
 
 
@@ -161,15 +161,15 @@ class ConsistencyChecker {
 			foreach($out as $ext => $line) {
 				//if (!is_null(reset($line))) $this->statusLog[] = "\n\n$ext: ";
 				foreach($line as $l) {
-					if (is_null($l)) break; else $this->statusLog[] = $this->out(array("\n","\t","[FAILED]", $ext.":".$l), $format);
+					if (is_null($l)) break; else $this->statusLog[] = $dfgOut->getln(array("\n","\t","[FAILED]", $ext.":".$l));
 				}
 			}
-			$this->statusLog[] = $this->out(array("\n"), $format);
+			$this->statusLog[] = $dfgOut->getln(array("\n"));
 		} else {
-			$this->statusLog[] = $this->out(array("\n", "\t", "none."), $format);
+			$this->statusLog[] = $dfgOut->getln(array("\n", "\t", "none."));
 		}
 		if (!$errorFound) {
-			$this->statusLog[] = $this->out(array("\n", "\t[OK]"), $format);
+			$this->statusLog[] = $dfgOut->getln(array("\n", "\t[OK]"));
 
 		} else {
 			if ($format == DF_OUTPUT_FORMAT_HTML)    {
@@ -186,6 +186,7 @@ class ConsistencyChecker {
 	 * @return array of DeployDescriptor
 	 */
 	public function checksForUpdates() {
+		
 		$localPackages = PackageRepository::getLocalPackages($this->rootDir);
 
 		// iterate through all installed packages, check if new or patched versions
@@ -219,19 +220,19 @@ class ConsistencyChecker {
 	 *
 	 */
 	private function checkLocalSettings($format) {
-
+   global $dfgOut;
 		//
 		// check if LocalSettings.php exists
 		//
-		$this->statusLog[] = $this->out(array("\n","Does LocalSettings.php exist?...", "\n"), $format);
+		$this->statusLog[] = $dfgOut->getln(array("\n","Does LocalSettings.php exist?...", "\n"));
 		$errorFound = !file_exists($this->rootDir."/LocalSettings.php");
 		if ($errorFound) {
-			$this->statusLog[] = $this->out(array("\n","\t","[FAILED]", "LocalSettings.php does not exist", "\n"), $format);
+			$this->statusLog[] = $dfgOut->getln(array("\n","\t","[FAILED]", "LocalSettings.php does not exist", "\n"));
 			return true;
 		}
-		$this->statusLog[] = $this->out(array("\t", "done."), $format);
+		$this->statusLog[] = $dfgOut->getln(array("\t", "done."));
 		if (!$errorFound) {
-			$this->statusLog[] = $this->out(array("\n", "\t[OK]"), $format);
+			$this->statusLog[] = $dfgOut->getln(array("\n", "\t[OK]"));
 		} else {
 			if ($format == DF_OUTPUT_FORMAT_HTML)    {
 				// in case of HTML write a link to the SMW-Forum
@@ -253,16 +254,16 @@ class ConsistencyChecker {
 
 		// only check for AdminSettings.php if MW version is < 1.16
 		if ($version < 1160) {
-			$this->statusLog[] = $this->out(array("\n","Does AdminSettings.php exist?...", "\n"), $format);
+			$this->statusLog[] = $dfgOut->getln(array("\n","Does AdminSettings.php exist?...", "\n"));
 			$errorFound =!file_exists($this->rootDir."/AdminSettings.php");
 			if ($errorFound) {
-				$this->statusLog[] = $this->out(array("\n","\t","[FAILED]", "AdminSettings.php does not exist", "\n"), $format);
+				$this->statusLog[] = $dfgOut->getln(array("\n","\t","[FAILED]", "AdminSettings.php does not exist", "\n"));
 
 				return true;
 			}
-			$this->statusLog[] = $this->out(array("\t", "done."), $format);
+			$this->statusLog[] = $dfgOut->getln(array("\t", "done."));
 			if (!$errorFound) {
-				$this->statusLog[] = $this->out(array("\n", "\t[OK]"), $format);
+				$this->statusLog[] = $dfgOut->getln(array("\n", "\t[OK]"));
 			}else {
 				if ($format == DF_OUTPUT_FORMAT_HTML)    {
 					// in case of HTML write a link to the SMW-Forum
@@ -273,21 +274,21 @@ class ConsistencyChecker {
 		//
 		// check if LocalSettings.php is not empty
 		//
-		$this->statusLog[] = $this->out(array("\n","Does LocalSettings.php have content?...", "\n"), $format);
+		$this->statusLog[] = $dfgOut->getln(array("\n","Does LocalSettings.php have content?...", "\n"));
 		$ls = file_get_contents($this->rootDir."/LocalSettings.php");
 		$errorFound = trim($ls) == '';
 		if (trim($ls) == '') {
-			$this->statusLog[] = $this->out(array("\n","\t","[FAILED]", "LocalSettings.php exists but is empty", "\n"), $format);
+			$this->statusLog[] = $dfgOut->getln(array("\n","\t","[FAILED]", "LocalSettings.php exists but is empty", "\n"));
 
 			return true;
 		}
-		$this->statusLog[] = $this->out(array("\t", "done."), $format);
-		if (!$errorFound) $this->statusLog[] = $this->out(array("\n", "\t[OK]"), $format);
+		$this->statusLog[] = $dfgOut->getln(array("\t", "done."));
+		if (!$errorFound) $this->statusLog[] = $dfgOut->getln(array("\n", "\t[OK]"));
 
 		//
 		// check if existing extensions are registered in LocalSettings.php
 		//
-		$this->statusLog[] = $this->out(array("\n","Are all existing extensions also registered in LocalSettings.php?...","\n"), $format);
+		$this->statusLog[] = $dfgOut->getln(array("\n","Are all existing extensions also registered in LocalSettings.php?...","\n"));
 		$errorFound1 = false;
 		foreach($this->localPackages as $p) {
 			if ($p->getID() == 'mw') continue;
@@ -296,17 +297,17 @@ class ConsistencyChecker {
 			$end = strpos($ls, "/*end-".$p->getID()."*/");
 
 			if ($start === false && $end === false) {
-				$this->statusLog[] = $this->out(array("\n","\t","[FAILED] ", $p->getID()." is not configured."), $format);
+				$this->statusLog[] = $dfgOut->getln(array("\n","\t","[FAILED] ", $p->getID()." is not configured."));
 				$errorFound1 = true;
 
 
 			} else {
 				if ($start === false) {
-					$this->statusLog[] =  $this->out(array("\n","\t","[FAILED]", "Start tag missing: ".$p->getID()), $format);
+					$this->statusLog[] =  $dfgOut->getln(array("\n","\t","[FAILED]", "Start tag missing: ".$p->getID()));
 					$errorFound1 = true;
 				}
 				if ($end === false) {
-					$this->statusLog[] =  $this->out(array("\n","\t","[FAILED]", "End tag missing: ".$p->getID()), $format);
+					$this->statusLog[] =  $dfgOut->getln(array("\n","\t","[FAILED]", "End tag missing: ".$p->getID()));
 					$errorFound1 = true;
 				}
 			}
@@ -314,7 +315,7 @@ class ConsistencyChecker {
 
 		if (!$errorFound1) {
 			$this->statusLog[] = "\n\tnone.";
-			$this->statusLog[] = $this->out(array("\n", "\t[OK]"), $format);
+			$this->statusLog[] = $dfgOut->getln(array("\n", "\t[OK]"));
 		} else {
 			if ($format == DF_OUTPUT_FORMAT_HTML)    {
 				// in case of HTML write a link to the SMW-Forum
@@ -325,22 +326,22 @@ class ConsistencyChecker {
 		//
 		// check if there are registerings for non-existings extensions
 		//
-		$this->statusLog[] = $this->out(array("\n","\n","Are there registerings for non-existings extensions?..."), $format);
+		$this->statusLog[] = $dfgOut->getln(array("\n","\n","Are there registerings for non-existings extensions?..."));
 		preg_match_all('/\/\*start-(\w+)\*\//', $ls, $matches);
 		$errorFound2 = false;
 		foreach ($matches[1] as $m) {
 			if (!array_key_exists($m, $this->localPackages)) {
 				if ($m === 'deploymentframework') continue; // ignore the DF itself
 				$errorFound2 = true;
-				$this->statusLog[] = $this->out(array("\n","\t","[FAILED]","configuration for non-existing extension detected: $m"), $format);
+				$this->statusLog[] = $dfgOut->getln(array("\n","\t","[FAILED]","configuration for non-existing extension detected: $m"));
 
 
 			}
 		}
 
 		if (!$errorFound2) {
-			$this->statusLog[] = $this->out(array("\n","\t","none."), $format);
-			$this->statusLog[] = $this->out(array("\n", "\t[OK]"), $format);
+			$this->statusLog[] = $dfgOut->getln(array("\n","\t","none."));
+			$this->statusLog[] = $dfgOut->getln(array("\n", "\t[OK]"));
 		} else {
 			if ($format == DF_OUTPUT_FORMAT_HTML)    {
 				// in case of HTML write a link to the SMW-Forum
@@ -351,20 +352,20 @@ class ConsistencyChecker {
 		//
 		// check if there are double registered extensions
 		//
-		$this->statusLog[] = $this->out(array("\n","\n","Are there double configuration blocks in the LocalSettings.php?..."), $format);
+		$this->statusLog[] = $dfgOut->getln(array("\n","\n","Are there double configuration blocks in the LocalSettings.php?..."));
 		$errorFound3 = false;
 		preg_match_all('/\/\*start-(\w+)\*\//', $ls, $matches);
 		$ext_counts = array_count_values($matches[1]);
 		foreach ($ext_counts as $ext => $freq) {
 			if ($freq > 1) {
 				$errorFound3 = true;
-				$this->statusLog[] = $this->out(array("\n","\t","[FAILED]","double registered extension detected: $ext"), $format);
+				$this->statusLog[] = $dfgOut->getln(array("\n","\t","[FAILED]","double registered extension detected: $ext"));
 
 			}
 		}
 		if (!$errorFound3) {
-			$this->statusLog[] = $this->out(array("\n","\t","none."), $format);
-			$this->statusLog[] = $this->out(array("\n", "\t[OK]"), $format);
+			$this->statusLog[] = $dfgOut->getln(array("\n","\t","none."));
+			$this->statusLog[] = $dfgOut->getln(array("\n", "\t[OK]"));
 		} else {
 			if ($format == DF_OUTPUT_FORMAT_HTML) {
 				// in case of HTML write a link to the SMW-Forum
@@ -375,7 +376,7 @@ class ConsistencyChecker {
 		//
 		// check if there are double require/include statements
 		//
-		$this->statusLog[] = $this->out(array("\n","\n","Are there double references to an extension in the LocalSettings.php? ..."), $format);
+		$this->statusLog[] = $dfgOut->getln(array("\n","\n","Are there double references to an extension in the LocalSettings.php? ..."));
 		$errorFound4 = false;
 		preg_match_all('/(require|include)(_once)?\s*\(\s*["\']([^"\']*)["\']\s*\)/', $ls, $matches);
 		for($i = 0; $i < count($matches[3]); $i++) $matches[3][$i] = trim($matches[3][$i]);
@@ -383,13 +384,13 @@ class ConsistencyChecker {
 		foreach ($ext_counts as $ext => $freq) {
 			if ($freq > 1) {
 				$errorFound4 = true;
-				$this->statusLog[] = $this->out(array("\n","\t","[FAILED]"," double registered extension detected: $ext"), $format);
+				$this->statusLog[] = $dfgOut->getln(array("\n","\t","[FAILED]"," double registered extension detected: $ext"));
 
 			}
 		}
 		if (!$errorFound4) {
-			$this->statusLog[] = $this->out(array("\n","\t","none."), $format);
-			$this->statusLog[] = $this->out(array("\n", "\t[OK]"), $format);
+			$this->statusLog[] = $dfgOut->getln(array("\n","\t","none."));
+			$this->statusLog[] = $dfgOut->getln(array("\n", "\t[OK]"));
 		} else {
 			if ($format == DF_OUTPUT_FORMAT_HTML) {
 				// in case of HTML write a link to the SMW-Forum
@@ -405,6 +406,7 @@ class ConsistencyChecker {
 	 *
 	 */
 	private function checkSpecialConfigs() {
+		   global $dfgOut;
 		$ls = file_get_contents($this->rootDir."/LocalSettings.php");
 		preg_match_all('/(require|include)(_once)?\s*\(\s*["\']([^"\']*)["\']\s*\)/', $ls, $matches);
 		for($i = 0; $i < count($matches[3]); $i++) $matches[3][$i] = trim($matches[3][$i]);
@@ -413,7 +415,7 @@ class ConsistencyChecker {
 		if (in_array("extensions/SemanticRules/includes/SR_Initialize.php", $matches[3])) {
 			if (strpos($ls, "SMWTripleStore") === false) {
 				$errorFound=true;
-				$this->statusLog[] = $this->out(array("\n","\t","[FAILED]","Rule extension installed but no triplestore is active."), $format);
+				$this->statusLog[] = $dfgOut->getln(array("\n","\t","[FAILED]","Rule extension installed but no triplestore is active."));
 
 			}
 		}
@@ -426,11 +428,12 @@ class ConsistencyChecker {
 	 * @param boolean $addChecks
 	 */
 	private function checkExistingExtensions($format, $addChecks = true) {
+		   global $dfgOut;
 		if (!$addChecks) return false;
 
 		global $wgExtensionCredits;
 		$ls = file_get_contents($this->rootDir."/LocalSettings.php");
-		$this->statusLog[] = $this->out(array("\n","\n","check if there are already existing extensions..."), $format);
+		$this->statusLog[] = $dfgOut->getln(array("\n","\n","check if there are already existing extensions..."));
 		$errorFound=false;
 		foreach($wgExtensionCredits as $extType) {
 			foreach($extType as $ext) {
@@ -441,122 +444,122 @@ class ConsistencyChecker {
 						case 'Semantic MediaWiki':
 
 							if (strpos($ls, '/*start-smw*/') === false) {
-								$this->statusLog[] = $this->out(array("\n","\t","[FAILED]","Semantic Mediawiki is already installed but not visible to DF."), $format);
+								$this->statusLog[] = $dfgOut->getln(array("\n","\t","[FAILED]","Semantic Mediawiki is already installed but not visible to DF."));
 								$errorFound=true;
 							}
 							break;
 						case 'SMWHalo&nbsp;Extension':
 
 							if (strpos($ls, '/*start-smwhalo*/') === false) {
-								$this->statusLog[] = $this->out(array("\n","\t","[FAILED]","SMWHalo Extension is already installed but not visible to DF."), $format);
+								$this->statusLog[] = $dfgOut->getln(array("\n","\t","[FAILED]","SMWHalo Extension is already installed but not visible to DF."));
 								$errorFound=true;
 							}
 							break;
 						case 'ScriptManager&nbsp;Extension':
 							if (strpos($ls, '/*start-scriptmanager*/') === false) {
-								$this->statusLog[] = $this->out(array("\n","\t","[FAILED]","ScriptManager Extension is already installed but not visible to DF."), $format);
+								$this->statusLog[] = $dfgOut->getln(array("\n","\t","[FAILED]","ScriptManager Extension is already installed but not visible to DF."));
 								$errorFound=true;
 							}
 							break;
 						case 'Rich&nbsp;Media&nbsp;Extension':
 							if (strpos($ls, '/*start-richmedia*/') === false) {
-								$this->statusLog[] = $this->out(array("\n","\t","[FAILED]","Richmedia Extension is already installed but not visible to DF."), $format);
+								$this->statusLog[] = $dfgOut->getln(array("\n","\t","[FAILED]","Richmedia Extension is already installed but not visible to DF."));
 								$errorFound=true;
 							}
 							break;
 						case 'Semantic Forms':
 							if (strpos($ls, '/*start-semanticforms*/') === false) {
-								$this->statusLog[] = $this->out(array("\n","\t","[FAILED]","SemanticForms Extension is already installed but not visible to DF."), $format);
+								$this->statusLog[] = $dfgOut->getln(array("\n","\t","[FAILED]","SemanticForms Extension is already installed but not visible to DF."));
 								$errorFound=true;
 							}
 							break;
 						case 'Semantic Forms Input Types':
 							if (strpos($ls, '/*start-semanticformsinputs*/') === false) {
-								$this->statusLog[] = $this->out(array("\n","\t","[FAILED]","SemanticFormsInputs Extension is already installed but not visible to DF."), $format);
+								$this->statusLog[] = $dfgOut->getln(array("\n","\t","[FAILED]","SemanticFormsInputs Extension is already installed but not visible to DF."));
 								$errorFound=true;
 							}
 							break;
 						case 'Semantic Notifications':
 							if (strpos($ls, '/*start-semanticnotifications*/') === false) {
-								$this->statusLog[] = $this->out(array("\n","\t","[FAILED]","Semantic Notifications Extension is already installed but not visible to DF."), $format);
+								$this->statusLog[] = $dfgOut->getln(array("\n","\t","[FAILED]","Semantic Notifications Extension is already installed but not visible to DF."));
 								$errorFound=true;
 							}
 							break;
 						case 'Semantic Gardening extension':
 							if (strpos($ls, '/*start-semanticgardening*/') === false) {
-								$this->statusLog[] = $this->out(array("\n","\t","[FAILED]","Semantic Gardening Extension is already installed but not visible to DF."), $format);
+								$this->statusLog[] = $dfgOut->getln(array("\n","\t","[FAILED]","Semantic Gardening Extension is already installed but not visible to DF."));
 								$errorFound=true;
 							}
 							break;
 						case 'Semantic Result Formats':
 							if (strpos($ls, '/*start-semanticresultsformats*/') === false) {
-								$this->statusLog[] = $this->out(array("\n","\t","[FAILED]","Semantic Result Formats Extension is already installed but not visible to DF."), $format);
+								$this->statusLog[] = $dfgOut->getln(array("\n","\t","[FAILED]","Semantic Result Formats Extension is already installed but not visible to DF."));
 								$errorFound=true;
 							}
 							break;
 						case 'SemanticRules&nbsp;Extension':
 							if (strpos($ls, '/*start-semanticrules*/') === false) {
-								$this->statusLog[] = $this->out(array("\n","\t","[FAILED]","Semantic Rules Formats Extension is already installed but not visible to DF."), $format);
+								$this->statusLog[] = $dfgOut->getln(array("\n","\t","[FAILED]","Semantic Rules Formats Extension is already installed but not visible to DF."));
 								$errorFound=true;
 							}
 							break;
 						case 'Semantic Treeview':
 							if (strpos($ls, '/*start-treeview*/') === false) {
-								$this->statusLog[] = $this->out(array("\n","\t","[FAILED]","Treeview Formats Extension is already installed but not visible to DF."), $format);
+								$this->statusLog[] = $dfgOut->getln(array("\n","\t","[FAILED]","Treeview Formats Extension is already installed but not visible to DF."));
 								$errorFound=true;
 							}
 							break;
 						case 'WYSIWYG extension':
 							if (strpos($ls, '/*start-wysiwyg*/') === false) {
-								$this->statusLog[] = $this->out(array("\n","\t","[FAILED]","WYSIWYG Extension is already installed but not visible to DF."), $format);
+								$this->statusLog[] = $dfgOut->getln(array("\n","\t","[FAILED]","WYSIWYG Extension is already installed but not visible to DF."));
 								$errorFound=true;
 							}
 							break;
 						case 'Semantic&nbsp;UltraPedia&nbsp;Extension':
 							if (strpos($ls, '/*start-ultrapedia*/') === false) {
-								$this->statusLog[] = $this->out(array("\n","\t","[FAILED]","Ultrapedia Extension is already installed but not visible to DF."), $format);
+								$this->statusLog[] = $dfgOut->getln(array("\n","\t","[FAILED]","Ultrapedia Extension is already installed but not visible to DF."));
 								$errorFound=true;
 							}
 							break;
 						case 'LinkedData':
 							if (strpos($ls, '/*start-linkeddata*/') === false) {
-								$this->statusLog[] = $this->out(array("\n","\t","[FAILED]","LinkedData Extension is already installed but not visible to DF."), $format);
+								$this->statusLog[] = $dfgOut->getln(array("\n","\t","[FAILED]","LinkedData Extension is already installed but not visible to DF."));
 								$errorFound=true;
 							}
 							break;
 						case 'HaloACL':
 							if (strpos($ls, '/*start-haloacl*/') === false) {
-								$this->statusLog[] = $this->out(array("\n","\t","[FAILED]","HaloACL Extension is already installed but not visible to DF."), $format);
+								$this->statusLog[] = $dfgOut->getln(array("\n","\t","[FAILED]","HaloACL Extension is already installed but not visible to DF."));
 								$errorFound=true;
 							}
 							break;
 						case 'Enhanced Retrieval extension':
 							if (strpos($ls, '/*start-unifiedsearch*/') === false) {
-								$this->statusLog[] = $this->out(array("\n","\t","[FAILED]","UnifiedSearch Extension is already installed but not visible to DF."), $format);
+								$this->statusLog[] = $dfgOut->getln(array("\n","\t","[FAILED]","UnifiedSearch Extension is already installed but not visible to DF."));
 								$errorFound=true;
 							}
 							break;
 						case 'Data&nbsp;Import&nbsp;Extension':
 							if (strpos($ls, '/*start-datatimport*/') === false) {
-								$this->statusLog[] = $this->out(array("\n","\t","[FAILED]","DataImport Extension is already installed but not visible to DF."), $format);
+								$this->statusLog[] = $dfgOut->getln(array("\n","\t","[FAILED]","DataImport Extension is already installed but not visible to DF."));
 								$errorFound=true;
 							}
 							break;
 						case 'Collaboration':
 							if (strpos($ls, '/*start-collaboration*/') === false) {
-								$this->statusLog[] = $this->out(array("\n","\t","[FAILED]","Collaboration Extension is already installed but not visible to DF."), $format);
+								$this->statusLog[] = $dfgOut->getln(array("\n","\t","[FAILED]","Collaboration Extension is already installed but not visible to DF."));
 								$errorFound=true;
 							}
 							break;
 						case 'Automatic&nbsp;Semantic&nbsp;Forms':
 							if (strpos($ls, '/*start-automaticsemanticforms*/') === false) {
-								$this->statusLog[] = $this->out(array("\n","\t","[FAILED]","Automatic Semanticforms Extension is already installed but not visible to DF."), $format);
+								$this->statusLog[] = $dfgOut->getln(array("\n","\t","[FAILED]","Automatic Semanticforms Extension is already installed but not visible to DF."));
 								$errorFound=true;
 							}
 							break;
 						case 'ARCLibrary':
 							if (strpos($ls, '/*start-arclibrary*/') === false) {
-								$this->statusLog[] = $this->out(array("\n","\t","[FAILED]","ARCLibrary Extension is already installed but not visible to DF."), $format);
+								$this->statusLog[] = $dfgOut->getln(array("\n","\t","[FAILED]","ARCLibrary Extension is already installed but not visible to DF."));
 								$errorFound=true;
 							}
 							break;
@@ -565,7 +568,7 @@ class ConsistencyChecker {
 						case 'URL Arguments':
 						case 'Variables':
 							if (strpos($ls, '/*start-applicationprogramming*/') === false) {
-								$this->statusLog[] = $this->out(array("\n","\t","[FAILED]","Application programming Extension is already installed (or extensions which are contained in this) but not visible to DF."), $format);
+								$this->statusLog[] = $dfgOut->getln(array("\n","\t","[FAILED]","Application programming Extension is already installed (or extensions which are contained in this) but not visible to DF."));
 								$errorFound=true;
 							}
 							break;
@@ -575,14 +578,14 @@ class ConsistencyChecker {
 			}
 		}
 		if (!$errorFound) {
-			$this->statusLog[] = $this->out(array("\n","\t","none."), $format);
-			$this->statusLog[] = $this->out(array("\n", "\t[OK]"), $format);
+			$this->statusLog[] = $dfgOut->getln(array("\n","\t","none."));
+			$this->statusLog[] = $dfgOut->getln(array("\n", "\t[OK]"));
 		} else {
 			if ($format == DF_OUTPUT_FORMAT_HTML) {
 				// in case of HTML write a link to the SMW-Forum
 				$this->statusLog[] = $this->linkout(array(DF_SMWFORUM_LINK_EXISTING_EXTENSION, "Get help: Existing extensions"));
 			}
-			$this->statusLog[] = $this->out(array("\n\n", "\tTry to run: deployment/tools/maintenance/checkInstallation.php --lift"), $format);
+			$this->statusLog[] = $dfgOut->getln(array("\n\n", "\tTry to run: deployment/tools/maintenance/checkInstallation.php --lift"));
 		}
 
 	}
@@ -600,7 +603,7 @@ class ConsistencyChecker {
 	public function liftInstallation($format = DF_OUTPUT_FORMAT_TEXT) {
 
 		global $wgExtensionCredits;
-
+   global $dfgOut;
 
 		$lifted = false;
 		foreach($wgExtensionCredits as $extType) {
@@ -621,9 +624,9 @@ class ConsistencyChecker {
 			}
 		}
 		if (!$lifted) {
-			$this->statusLog[] = $this->out(array("\nNothing to do.\n"), $format);
+			$this->statusLog[] = $dfgOut->getln(array("\nNothing to do.\n"));
 		} else {
-			$this->statusLog[] = $this->out(array("\nPlease visit:\nhttp://smwforum.ontoprise.com/smwforum/index.php/Help:Lifting_installation_for_use_with_DF\n"), $format);
+			$this->statusLog[] = $dfgOut->getln(array("\nPlease visit:\nhttp://smwforum.ontoprise.com/smwforum/index.php/Help:Lifting_installation_for_use_with_DF\n"));
 		}
 	}
 
@@ -638,12 +641,13 @@ class ConsistencyChecker {
 	 */
 	private function liftSMW($version, $format) {
 		global $smwgIP;
+		   global $dfgOut;
 		$ls = file_get_contents($this->rootDir."/LocalSettings.php");
 		if (strpos($ls, '/*start-smw*/') !== false) return false;
 		// create deploy descriptor
 		$dd = file_get_contents("resources/dd_templates/deploy_smw.xml");
 		$dd = str_replace("{{version}}", $version, $dd);
-		$this->statusLog[] = $this->out(array("\n","\t[done]","Creating SMW deploy descriptor."), $format);
+		$this->statusLog[] = $dfgOut->getln(array("\n","\t[done]","Creating SMW deploy descriptor."));
 
 		$handle = fopen($smwgIP."deploy.xml", "w");
 		if ($handle !== false) {
@@ -656,14 +660,14 @@ class ConsistencyChecker {
 		if ($startIndex === false) {
 			$startIndex = strpos($ls, "/SemanticMediaWiki/SemanticMediaWiki.php");
 			if ($startIndex === false) {
-				$this->statusLog[] = $this->out(array("\n","\t[FAILED]","Adding DF tags to LocalSettings.php not possible.", "\n"), $format);
+				$this->statusLog[] = $dfgOut->getln(array("\n","\t[FAILED]","Adding DF tags to LocalSettings.php not possible.", "\n"));
 				return false;
 			}
 		}
 		$startIndex = strrpos(substr($ls,0, $startIndex), "\n");
 		$endIndex = strpos($ls, "enableSemantics");
 		if ($endIndex === false) {
-			$this->statusLog[] = $this->out(array("\n","\t[FAILED]","Adding DF tags to LocalSettings.php not possible.", "\n"), $format);
+			$this->statusLog[] = $dfgOut->getln(array("\n","\t[FAILED]","Adding DF tags to LocalSettings.php not possible.", "\n"));
 			return false;
 		}
 		$endIndex = strpos(substr($ls,$endIndex), "\n")+$endIndex;
@@ -674,7 +678,7 @@ class ConsistencyChecker {
 			fwrite($handle, $ls);
 			fclose($handle);
 		}
-		$this->statusLog[] = $this->out(array("\n","\t[done]","Adding DF tags to LocalSettings.php for SMW.", "\n"), $format);
+		$this->statusLog[] = $dfgOut->getln(array("\n","\t[done]","Adding DF tags to LocalSettings.php for SMW.", "\n"));
 		return true;
 	}
 
@@ -689,12 +693,13 @@ class ConsistencyChecker {
 	 */
 	private function liftSF($version, $format) {
 		global $sfgIP;
+		   global $dfgOut;
 		$ls = file_get_contents($this->rootDir."/LocalSettings.php");
 		if (strpos($ls, '/*start-semanticforms*/') !== false) return false;
 		// create deploy descriptor
 		$dd = file_get_contents("resources/dd_templates/deploy_sf.xml");
 		$dd = str_replace("{{version}}", $version, $dd);
-		$this->statusLog[] = $this->out(array("\n","\t[done]","Creating SemanticForms deploy descriptor."), $format);
+		$this->statusLog[] = $dfgOut->getln(array("\n","\t[done]","Creating SemanticForms deploy descriptor."));
 
 		$handle = fopen($sfgIP."/deploy.xml", "w");
 		if ($handle !== false) {
@@ -706,7 +711,7 @@ class ConsistencyChecker {
 		if ($startIndex === false) {
 			$startIndex = strpos($ls, "/SemanticForms/SemanticForms.php");
 			if ($startIndex === false) {
-				$this->statusLog[] = $this->out(array("\n","\t[FAILED]","Adding DF tags to LocalSettings.php not possible.", "\n"), $format);
+				$this->statusLog[] = $dfgOut->getln(array("\n","\t[FAILED]","Adding DF tags to LocalSettings.php not possible.", "\n"));
 				return false;
 			}
 		}
@@ -715,7 +720,7 @@ class ConsistencyChecker {
 		if ($endIndex === false) {
 			$endIndex = strpos($ls, "/SemanticForms/SemanticForms.php");
 			if ($endIndex === false) {
-				$this->statusLog[] = $this->out(array("\n","\t[FAILED]","Adding DF tags to LocalSettings.php not possible.", "\n"), $format);
+				$this->statusLog[] = $dfgOut->getln(array("\n","\t[FAILED]","Adding DF tags to LocalSettings.php not possible.", "\n"));
 				return false;
 			}
 		}
@@ -727,35 +732,12 @@ class ConsistencyChecker {
 			fwrite($handle, $ls);
 			fclose($handle);
 		}
-		$this->statusLog[] = $this->out(array("\n","\t[done]","Adding DF tags to LocalSettings.php for SemanticForms.", "\n"), $format);
+		$this->statusLog[] = $dfgOut->getln(array("\n","\t[done]","Adding DF tags to LocalSettings.php for SemanticForms.", "\n"));
 		return true;
 
 	}
 
-	/**
-	 * Prints out a status log message.
-	 *
-	 * @param array of string $text
-	 * @param string $format DF_OUTPUT_FORMAT_TEXT or DF_OUTPUT_FORMAT_HTML
-	 */
-	private function out($text, $format) {
-		switch($format) {
-			case DF_OUTPUT_FORMAT_TEXT:
-				return is_array($text) ? implode("", $text) : $text;
-				break;
-			case DF_OUTPUT_FORMAT_HTML:
-				if (is_array($text)) {
-					for($i = 0; $i < count($text); $i++){
-						$text[$i] = str_replace("\n", "<br>", $text[$i]);
-						$text[$i] = str_replace("\t", '<div style="display: inline; margin-left: 10px;"></div>', $text[$i]);
-						$text[$i] = str_replace("[FAILED]", '<span class="df_checkinst_error">[FAILED]</span>', $text[$i]);
-						$text[$i] = str_replace("[OK]", '<span class="df_checkinst_ok">[OK]</span>', $text[$i]);
-					}
-					return implode("", $text);
-				} else return $text;
-				break;
-		}
-	}
+	
 
 	/**
 	 * Creates an HTML link.

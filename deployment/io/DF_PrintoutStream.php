@@ -56,6 +56,15 @@ class DFPrintoutStream {
 	private function __construct($mode = DF_OUTPUT_FORMAT_TEXT) {
 		$this->mode = $mode;
 	}
+	
+	/**
+	 * Returns output mode.
+	 * 
+	 * @return int 
+	 */
+	public function getMode() {
+		return $this->mode;
+	}
 
 	/**
 	 * Print some output to indicate progress. The output message is given by
@@ -88,6 +97,19 @@ class DFPrintoutStream {
         ob_flush();
         flush();
     }
+    
+    /**
+     * Print some output to indicate progress. The output message is given by
+     * $msg, while $verbose indicates whether or not output is desired at all.
+     */
+    public function getln($msg = '', $type = DF_PRINTSTREAM_TYPE_INFO, $verbose = true) {
+        if (!$verbose) {
+            return;
+        }
+       
+        return $this->formatText($msg, $type, "\n");
+        
+    }
 
 	private function formatText($text, $type, $preLined = '') {
 		global $dfgLang;
@@ -118,25 +140,26 @@ class DFPrintoutStream {
 					$preLined = "<br/>";
 				}
 				if (is_array($text)) {
-					for($i = 0; $i < count($text); $i++){
-						$text[$i] = str_replace("\n", "<br>", $text[$i]);
-						$text[$i] = str_replace("\t", '<div style="display: inline; margin-left: 10px;"></div>', $text[$i]);
-						$text[$i] = str_replace("[FAILED]", '<span class="df_checkinst_error">['.$dfgLang->getLanguageString('df_failed').']</span>', $text[$i]);
-						$text[$i] = str_replace("[OK]", '<span class="df_checkinst_ok">['.$dfgLang->getLanguageString('df_ok').']</span>', $text[$i]);
+					$implodedText = "";
+					foreach($text as $t) {
+						$t = str_replace("\n", "<br>", $t);
+						$t = str_replace("\t", '<div style="display: inline; margin-left: 10px;"></div>', $t);
+						$t = str_replace("[FAILED]", '<span class="df_checkinst_error">['.$dfgLang->getLanguageString('df_failed').']</span>', $t);
+						$t = str_replace("[OK]", '<span class="df_checkinst_ok">['.$dfgLang->getLanguageString('df_ok').']</span>', $t);
 							
-
-						switch($type) {
-							case DF_PRINTSTREAM_TYPE_WARN:
-								$text[$i] = '<span class="df_checkinst_error">['.$dfgLang->getLanguageString('df_warn').']</span>' . " " . $text[$i];
-								break;
-							case DF_PRINTSTREAM_TYPE_ERROR:
-								$prefix .= '<span class="df_checkinst_error">['.$dfgLang->getLanguageString('df_error').']</span>'. " " . $text[$i];
-								break;
-							case DF_PRINTSTREAM_TYPE_FATAL:
-								$prefix .= '<span class="df_checkinst_error">['.$dfgLang->getLanguageString('df_fatal').']</span>'. " " . $text[$i];
-						}
+                        $implodedText .= $t;
 					}
-					return $preLined.implode("", $text);
+					switch($type) {
+						case DF_PRINTSTREAM_TYPE_WARN:
+							$implodedText = '<span class="df_checkinst_error">['.$dfgLang->getLanguageString('df_warn').']</span>' . " " . $implodedText;
+							break;
+						case DF_PRINTSTREAM_TYPE_ERROR:
+							$implodedText = '<span class="df_checkinst_error">['.$dfgLang->getLanguageString('df_error').']</span>'. " " .$implodedText;
+							break;
+						case DF_PRINTSTREAM_TYPE_FATAL:
+							$implodedText = '<span class="df_checkinst_error">['.$dfgLang->getLanguageString('df_fatal').']</span>'. " " . $implodedText;
+					}
+					return $preLined.$implodedText;
 				} else return $preLined.$text;
 				break;
 

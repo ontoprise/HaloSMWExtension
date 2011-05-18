@@ -9,11 +9,14 @@ $wgHooks['UserLoginComplete'][] = 'dfgCheckUpdate';
 
 function dfgSetupExtension() {
 	dffInitializeLanguage();
-	global $wgAutoloadClasses, $wgSpecialPages, $wgSpecialPageGroups,$smwgDFIP, $wgExtensionCredits;
+	global $wgAutoloadClasses, $wgSpecialPages, $wgSpecialPageGroups,$smwgDFIP, $wgExtensionCredits, $dfgOut;
+	
 	$wgAutoloadClasses['SMWCheckInstallation'] = $smwgDFIP . '/specials/SMWCheckInstallation/SMW_CheckInstallation.php';
 	$wgAutoloadClasses['DFBundleTools'] = $smwgDFIP . '/io/DF_BundleTools.php';
+	$wgAutoloadClasses['DFPrintoutStream'] = $smwgDFIP . '/io/DF_PrintoutStream.php';
 	$wgSpecialPages['CheckInstallation'] = array('SMWCheckInstallation');
 	$wgSpecialPageGroups['CheckInstallation'] = 'smwplus_group';
+	$dfgOut = DFPrintoutStream::getInstance(DF_OUTPUT_FORMAT_HTML);
 
 	$wgExtensionCredits['other'][] = array(
         'path' => __FILE__,
