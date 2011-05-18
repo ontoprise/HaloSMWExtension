@@ -1,0 +1,1494 @@
+<mediawiki xmlns="http://www.mediawiki.org/xml/export-0.4/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mediawiki.org/xml/export-0.4/ http://www.mediawiki.org/xml/export-0.4.xsd" version="0.4" xml:lang="en">
+  <siteinfo>
+    <sitename>HaloWiki</sitename>
+    <base>http://localhost/mediawiki/index.php/Main_Page</base>
+    <generator>MediaWiki 1.16.0</generator>
+    <case>first-letter</case>
+    <namespaces>
+      <namespace key="-2" case="first-letter">Media</namespace>
+      <namespace key="-1" case="first-letter">Special</namespace>
+      <namespace key="0" case="first-letter" />
+      <namespace key="1" case="first-letter">Talk</namespace>
+      <namespace key="2" case="first-letter">User</namespace>
+      <namespace key="3" case="first-letter">User talk</namespace>
+      <namespace key="4" case="first-letter">HaloWiki</namespace>
+      <namespace key="5" case="first-letter">HaloWiki talk</namespace>
+      <namespace key="6" case="first-letter">File</namespace>
+      <namespace key="7" case="first-letter">File talk</namespace>
+      <namespace key="8" case="first-letter">MediaWiki</namespace>
+      <namespace key="9" case="first-letter">MediaWiki talk</namespace>
+      <namespace key="10" case="first-letter">Template</namespace>
+      <namespace key="11" case="first-letter">Template talk</namespace>
+      <namespace key="12" case="first-letter">Help</namespace>
+      <namespace key="13" case="first-letter">Help talk</namespace>
+      <namespace key="14" case="first-letter">Category</namespace>
+      <namespace key="15" case="first-letter">Category talk</namespace>
+      <namespace key="102" case="first-letter">Property</namespace>
+      <namespace key="103" case="first-letter">Property talk</namespace>
+      <namespace key="104" case="first-letter">Type</namespace>
+      <namespace key="105" case="first-letter">Type talk</namespace>
+      <namespace key="106" case="first-letter">Form</namespace>
+      <namespace key="107" case="first-letter">Form talk</namespace>
+      <namespace key="108" case="first-letter">Concept</namespace>
+      <namespace key="109" case="first-letter">Concept talk</namespace>
+    </namespaces>
+  </siteinfo>
+  <page>
+    <title>Al Gore</title>
+    <id>12</id>
+    <revision>
+      <id>203</id>
+      <timestamp>2010-12-15T10:19:52Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">[[Firstname::Al|Firstname: Al]]
+[[Lastname::Gore|Lastname: Gore]]
+
+[[Knows::Joe Mystery|Knows Joe Mystery]]
+
+[[Category:Person]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Fred</title>
+    <id>13</id>
+    <revision>
+      <id>206</id>
+      <timestamp>2010-12-15T10:29:08Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">[[Firstname::Fred]]
+[[Lastname::Flintstone]]
+[[Email::fred.stone@bedrock.org]]
+[[Homepage::http://en.wikipedia.org/wiki/Fred_Flintstone]]
+[[Homepage label::It's all about Fred]]
+[[Phone::5555-55555656]]
+[[Birthday::1975-11-08]]
+[[Knows::John Doe]]
+
+[[Category:Person]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>John Doe</title>
+    <id>14</id>
+    <revision>
+      <id>207</id>
+      <timestamp>2010-12-15T10:29:31Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">[[Firstname::John]]
+[[Lastname::Doe]]
+[[Email::john@doe.org]]
+[[Homepage::http://john.doe.com]]
+[[Phone::555-1212]]
+[[Birthday::1980-04-25]]
+[[Knows:: Joe Mystery]]
+[[Affiliation::Another complex project]]
+[[Name::John Doe]]
+
+[[Category:Person]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Joe Public</title>
+    <id>15</id>
+    <revision>
+      <id>19</id>
+      <timestamp>2010-12-13T10:54:42Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <minor/>
+      <comment>1 revision: asd</comment>
+      <text xml:space="preserve">My name is [[Has name::Joe Public]]. I was born in [[Born in::Springfield]] but now I live in [[Lives in::Karlsruhe]]. My hobbies are [[Has hobbies::Surfin and Joking]].
+[[Category:Person1]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Category:Person</title>
+    <id>16</id>
+    <revision>
+      <id>195</id>
+      <timestamp>2010-12-15T09:50:46Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">Category Person</text>
+    </revision>
+  </page>
+  <page>
+    <title>Liverpool</title>
+    <id>17</id>
+    <revision>
+      <id>23</id>
+      <timestamp>2010-12-13T10:54:42Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <minor/>
+      <comment>1 revision: asd</comment>
+      <text xml:space="preserve">Liverpool is a City [[Category:City]] with [[Inhabitants::200000]] Inhabitants.</text>
+    </revision>
+  </page>
+  <page>
+    <title>Liverpudlian</title>
+    <id>18</id>
+    <revision>
+      <id>25</id>
+      <timestamp>2010-12-13T10:54:42Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <minor/>
+      <comment>1 revision: asd</comment>
+      <text xml:space="preserve">A person living in [[ComingFrom::Liverpool]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Category:City</title>
+    <id>19</id>
+    <revision>
+      <id>27</id>
+      <timestamp>2010-12-13T10:54:42Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <minor/>
+      <comment>1 revision: asd</comment>
+      <text xml:space="preserve">This is the category city</text>
+    </revision>
+  </page>
+  <page>
+    <title>Property:ComingFrom</title>
+    <id>20</id>
+    <revision>
+      <id>29</id>
+      <timestamp>2010-12-13T10:54:42Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <minor/>
+      <comment>1 revision: asd</comment>
+      <text xml:space="preserve">[[has type::Type:Page| ]]
+[[has domain and range::; | ]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Inhabitants</title>
+    <id>21</id>
+    <revision>
+      <id>31</id>
+      <timestamp>2010-12-13T10:54:42Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <minor/>
+      <comment>1 revision: asd</comment>
+      <text xml:space="preserve">[[has domain and range::; | ]][[has type::Type:Page| ]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Firstitem</title>
+    <id>22</id>
+    <revision>
+      <id>33</id>
+      <timestamp>2010-12-13T10:54:42Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <minor/>
+      <comment>1 revision: asd</comment>
+      <text xml:space="preserve">[[itemnumber::2]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Seconditem</title>
+    <id>23</id>
+    <revision>
+      <id>35</id>
+      <timestamp>2010-12-13T10:54:42Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <minor/>
+      <comment>1 revision: asd</comment>
+      <text xml:space="preserve">[[itemnumber::3]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Itemnumber</title>
+    <id>24</id>
+    <revision>
+      <id>37</id>
+      <timestamp>2010-12-13T10:54:43Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <minor/>
+      <comment>1 revision: asd</comment>
+      <text xml:space="preserve">[[has type::Type:Number| ]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Category:Project</title>
+    <id>25</id>
+    <revision>
+      <id>202</id>
+      <timestamp>2010-12-15T10:11:21Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">Category Project</text>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Start date</title>
+    <id>26</id>
+    <revision>
+      <id>41</id>
+      <timestamp>2010-12-13T10:54:43Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <minor/>
+      <comment>1 revision: asd</comment>
+      <text xml:space="preserve">[[has type::Type:Date| ]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Property:End date</title>
+    <id>27</id>
+    <revision>
+      <id>43</id>
+      <timestamp>2010-12-13T10:54:43Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <minor/>
+      <comment>1 revision: asd</comment>
+      <text xml:space="preserve">[[has type::Type:Date| ]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Project member</title>
+    <id>28</id>
+    <revision>
+      <id>45</id>
+      <timestamp>2010-12-13T10:54:43Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <minor/>
+      <comment>1 revision: asd</comment>
+      <text xml:space="preserve">[[has domain and range::; | ]][[has type::Type:Page| ]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Another complex project</title>
+    <id>29</id>
+    <revision>
+      <id>154</id>
+      <timestamp>2010-12-13T15:07:57Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">[[Start date::2010-01-01]]
+[[End date::2010-12-31]]
+[[Project member::Al Gore]]
+[[Category:Project]]
+[[Homepage::http://www.dict.cc/?s=affiliation|http://www.dict.cc/?s=affiliation]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Category:Person1</title>
+    <id>30</id>
+    <revision>
+      <id>49</id>
+      <timestamp>2010-12-13T10:54:43Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <minor/>
+      <comment>1 revision: asd</comment>
+      <text xml:space="preserve">Person 1</text>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Has name</title>
+    <id>31</id>
+    <revision>
+      <id>51</id>
+      <timestamp>2010-12-13T10:54:43Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <minor/>
+      <comment>1 revision: asd</comment>
+      <text xml:space="preserve">[[has domain and range::Category:Person1]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Born in</title>
+    <id>32</id>
+    <revision>
+      <id>53</id>
+      <timestamp>2010-12-13T10:54:43Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <minor/>
+      <comment>1 revision: asd</comment>
+      <text xml:space="preserve">[[has domain and range::Category:Person1]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Lives in</title>
+    <id>33</id>
+    <revision>
+      <id>55</id>
+      <timestamp>2010-12-13T10:54:43Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <minor/>
+      <comment>1 revision: asd</comment>
+      <text xml:space="preserve">[[has domain and range::Category:Person1]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Has hobbies</title>
+    <id>34</id>
+    <revision>
+      <id>57</id>
+      <timestamp>2010-12-13T10:54:43Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <minor/>
+      <comment>1 revision: asd</comment>
+      <text xml:space="preserve">[[has type::Type:String| ]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Type:Body Size</title>
+    <id>35</id>
+    <revision>
+      <id>59</id>
+      <timestamp>2010-12-13T10:54:43Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <minor/>
+      <comment>1 revision: asd</comment>
+      <text xml:space="preserve">[[Corresponds to::1 cm]]
+[[Corresponds to::0.01 m]]
+[[Corresponds to::0.3937 inch]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Height</title>
+    <id>36</id>
+    <revision>
+      <id>66</id>
+      <timestamp>2010-12-13T10:59:47Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">{{Property
+|PAGENAME=Property:Height
+|Has author=User:WikiSysop
+|part of=Content
+|rationale=Denotes the height of a person
+}}
+[[Has type::Body Size]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Henry Morgan</title>
+    <id>37</id>
+    <revision>
+      <id>208</id>
+      <timestamp>2010-12-15T10:31:01Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">
+[[Firstname::Henry]]
+[[Lastname::Morgan]]
+[[Email::morgan@dev.null]]
+[[Affiliation::Another complex project]]
+[[Homepage::http://google.com]]
+[[Homepage label::Google]]
+[[Phone::12344567]]
+[[Birthday::1968/03/23]]
+[[Knows::Fred]]
+[[Category:Person]]
+
+
+[[Height::175 cm]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Gerald Fox</title>
+    <id>38</id>
+    <revision>
+      <id>205</id>
+      <timestamp>2010-12-15T10:28:36Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">[[Firstname::Gerald|Firstname: Gerald]]
+[[Lastname::Fox|Lastname: Fox]]
+
+
+
+[[Category:Person]]
+
+[[Height::182 cm]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Has author</title>
+    <id>52</id>
+    <revision>
+      <id>102</id>
+      <timestamp>2010-12-13T11:16:51Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <minor/>
+      <comment>1 revision: dfg</comment>
+      <text xml:space="preserve">{{Property
+|PAGENAME=Property:Has author
+|Has author=User:WikiSysop
+|part of=SMWplus Basic Ontology Section
+|rationale=Specifies the author of a particular wiki section or a wiki article in general (i.e. content).
+|long description=
+}}
+{{Copyright of article
+|own work=True
+|copyright holder=Ontoprise GmbH
+|year=2009
+}}
+[[Has type::Type:Page| ]]
+[[Has domain and range::; Category:Person| ]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Is category</title>
+    <id>53</id>
+    <revision>
+      <id>104</id>
+      <timestamp>2010-12-13T11:16:52Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <minor/>
+      <comment>1 revision: dfg</comment>
+      <text xml:space="preserve">{{Property
+|PAGENAME=Property:Is category
+|Has author=WikiSysop
+|rationale=Boolean attribute which defines a thing as being a category (i.e. a page in the namespace Category:).
+|long description=
+This property is useful for querying on schema layer, e.g. for categories having certain characteristics.
+}}
+{{Copyright of article
+|own work=True
+}}
+[[Has max cardinality::1| ]] 
+[[Has min cardinality::1| ]] 
+[[Has type::Type:Boolean| ]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Part of</title>
+    <id>54</id>
+    <revision>
+      <id>106</id>
+      <timestamp>2010-12-13T11:16:54Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <minor/>
+      <comment>1 revision: dfg</comment>
+      <text xml:space="preserve">{{Property
+|PAGENAME=Property:Part of
+|Has author=WikiSysop
+|rationale=Relates a wiki part to its superordinate wiki part (e.g. a content section). E.g. part of(Property:Narrower term, Terminology management section).
+|long description=
+}}
+{{Copyright of article
+|own work=True
+}}
+[[Has type::Type:Page| ]] 
+
+[[Is inverse of::Property:Has part| ]] [[has domain and range::Category:Wiki_part; Category:Wiki_part| ]] 
+
+[[Category:Transitive properties]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Firstname</title>
+    <id>55</id>
+    <revision>
+      <id>108</id>
+      <timestamp>2010-12-13T11:16:55Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <minor/>
+      <comment>1 revision: dfg</comment>
+      <text xml:space="preserve">{{Property
+|PAGENAME=Property:Firstname
+|Has author=WikiSysop
+|rationale=Denotes the first name of a person.
+}}
+{{Copyright of article
+|own work=True
+}}
+[[Has type::Type:String| ]]
+[[Has domain and range::Category:Person| ]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Knows</title>
+    <id>56</id>
+    <revision>
+      <id>110</id>
+      <timestamp>2010-12-13T11:16:55Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <minor/>
+      <comment>1 revision: dfg</comment>
+      <text xml:space="preserve">{{Property
+|PAGENAME=Property:Knows
+|Has author=WikiSysop
+|Has default form=Form:Person
+|rationale=Describes the knows relation between two persons.
+|long description=
+Connects two persons to each other via the &quot;Knows&quot; relation. This property belongs to the [[:Category:Symmetrical properties|symmmetric properties]], which means the following: If a person A knows a person B, then also B knows A. This type of inferencing is only possible with a connected triple store (including a reasoner).
+}}
+{{Copyright of article
+|own work=True
+|copyright holder=ontoprise GmbH
+|year=2009
+}}
+[[Has type::Type:Page| ]] [[Has domain and range::Category:Person; Category:Person| ]] 
+
+[[Category:Symmetrical properties]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Lastname</title>
+    <id>57</id>
+    <revision>
+      <id>112</id>
+      <timestamp>2010-12-13T11:16:56Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <minor/>
+      <comment>1 revision: dfg</comment>
+      <text xml:space="preserve">{{Property
+|PAGENAME=Property:Lastname
+|Has author=WikiSysop
+|rationale=Attribute for specifying the last name of a person.
+|long description=
+}}
+{{Copyright of article
+|own work=True
+}}
+[[Has type::Type:String| ]]
+[[Has domain and range::Category:Person| ]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Name</title>
+    <id>58</id>
+    <revision>
+      <id>114</id>
+      <timestamp>2010-12-13T11:16:57Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <minor/>
+      <comment>1 revision: dfg</comment>
+      <text xml:space="preserve">{{Property
+|PAGENAME=Property:Name
+|Has author=WikiSysop
+|rationale=Provides a name for an entity (e.g. a person or organization)
+|long description=
+}}
+{{Copyright of article
+|own work=True
+}}
+[[Has type::Type:String| ]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Related to</title>
+    <id>59</id>
+    <revision>
+      <id>116</id>
+      <timestamp>2010-12-13T11:16:58Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <minor/>
+      <comment>1 revision: dfg</comment>
+      <text xml:space="preserve">{{Property
+|PAGENAME=Property:Related to
+|Has author=WikiSysop
+|part of=Teamwork section
+|rationale=Relates an entity to another entity (e.g. a task to a project).
+|long description=
+This relation is useful if there is no more specific property
+}}
+{{Copyright of article
+|own work=True
+}}
+[[Has type::Type:Page| ]] [[Has domain and range::Category:Project| ]] [[Has domain and range::Category:Task| ]] [[Has domain and range::Category:Event| ]] [[Has domain and range::Category:Calendar| ]] [[Has domain and range::Category:Task list| ]] [[Has domain and range::Category:Person| ]] [[Has domain and range::Category:Content| ]] 
+
+[[Category:Transitive properties]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Mbox</title>
+    <id>60</id>
+    <revision>
+      <id>118</id>
+      <timestamp>2010-12-13T11:16:59Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <minor/>
+      <comment>1 revision: dfg</comment>
+      <text xml:space="preserve">{{Property
+|PAGENAME=Property:Mbox
+|Has author=WikiSysop
+|rationale=Attribute for specifying an email address (e.g. of a person or a company).
+|long description=
+}}
+{{Copyright of article
+|own work=True
+}}
+[[Has type::Type:Email| ]]
+[[Has domain and range::Category:Person| ]]
+[[Has domain and range::Category:Organization| ]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Homepage</title>
+    <id>62</id>
+    <revision>
+      <id>122</id>
+      <timestamp>2010-12-13T11:17:01Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <minor/>
+      <comment>1 revision: dfg</comment>
+      <text xml:space="preserve">{{Property
+|PAGENAME=Property:Homepage
+|Has author=WikiSysop
+|rationale=Attribute for providing an URL to the homepage of entity (e.g. a person, project or organization).
+|long description=
+}}
+{{Copyright of article
+|own work=True
+}}
+[[Has domain and range::Category:Person| ]]
+[[Has domain and range::Category:Organization| ]]
+[[Has domain and range::Category:Event| ]]
+[[Has domain and range::Category:Project| ]]
+[[Has type::Type:URL| ]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Phone</title>
+    <id>63</id>
+    <revision>
+      <id>124</id>
+      <timestamp>2010-12-13T11:17:02Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <minor/>
+      <comment>1 revision: dfg</comment>
+      <text xml:space="preserve">{{Property
+|PAGENAME=Property:Phone
+|Has author=WikiSysop
+|rationale=Attribute for specifying a phone number (e.g. of a person or an organization).
+|long description=
+}}
+{{Copyright of article
+|own work=True
+}}
+[[Has type::Type:String| ]]
+[[Has domain and range::Category:Person| ]]
+[[Has domain and range::Category:Organization| ]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Birth date</title>
+    <id>64</id>
+    <revision>
+      <id>126</id>
+      <timestamp>2010-12-13T11:17:03Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <minor/>
+      <comment>1 revision: dfg</comment>
+      <text xml:space="preserve">{{Property
+|PAGENAME=Property:Birth date
+|Has author=WikiSysop
+|rationale=Denotes the birth date of a person.
+|long description=
+Denotes the birth date of a person, e.g. &quot;1981-06-25&quot;.
+}}
+{{Copyright of article
+|own work=True
+}}
+[[Has type::Type:Date| ]]
+[[Has domain and range::Category:Person| ]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Has default form</title>
+    <id>65</id>
+    <revision>
+      <id>128</id>
+      <timestamp>2010-12-13T11:17:04Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <minor/>
+      <comment>1 revision: dfg</comment>
+      <text xml:space="preserve">{{Property
+|PAGENAME=Property:Has default form
+|Has author=WikiSysop
+|rationale=Pre-defined property which associates a category, a namespace or a single wiki page with a default form.
+|long description=
+This property comes with the Semantic Forms extension. For further information visit http://www.mediawiki.org/wiki/Extension:Semantic_Forms
+}}
+{{Copyright of article
+|own work=True
+}}
+[[has type::Type:page| ]]
+
+[[has domain and range::;Category:Form| ]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Rationale</title>
+    <id>66</id>
+    <revision>
+      <id>130</id>
+      <timestamp>2010-12-13T11:17:05Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <minor/>
+      <comment>1 revision: dfg</comment>
+      <text xml:space="preserve">{{Property
+|PAGENAME=Property:Rationale
+|Has author=WikiSysop
+|rationale=Used to provide a (short) explanation or description of a wiki part.
+|long description=
+}}
+{{Copyright of article
+|own work=True
+}}
+[[Has max cardinality::1| ]] 
+[[Has min cardinality::1| ]] 
+[[Has type::Type:Text| ]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Category:Template</title>
+    <id>51</id>
+    <revision>
+      <id>100</id>
+      <timestamp>2010-12-13T11:12:12Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <minor/>
+      <comment>1 revision: dfg</comment>
+      <text xml:space="preserve">{{Category
+|PAGENAME=Form:Add and edit Form
+|Has author=User:WikiSysop
+|part of=SMWplus Basic Ontology Section
+|Has default form=Form:Add and edit Template
+|rationale=This category is used to allow easy bookkeeping of templates.
+|long description=
+You should always assign your templates to this category. Doing so, you can use a special form for your templates allowing you to provide all necessary metadata and tags for your wiki community to understand the templates.
+|Example_article=Form:Add and edit Template
+}}
+{{Copyright of article
+|own work=True
+|Example_article=Form:Add and edit Template
+}}
+[[Category:Wiki part]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Template:!</title>
+    <id>42</id>
+    <revision>
+      <id>82</id>
+      <timestamp>2010-12-13T11:10:48Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <minor/>
+      <comment>1 revision: yxc</comment>
+      <text xml:space="preserve">|&lt;noinclude&gt;
+{{documentation}}
+&lt;!-- Add cats and interwikis to the /doc subpage, not here! --&gt;
+helper template for pipe symbol, which can e.g. not be used directly in template parameter calls.
+&lt;/noinclude&gt;</text>
+    </revision>
+  </page>
+  <page>
+    <title>Template:Header for wiki parts</title>
+    <id>46</id>
+    <revision>
+      <id>90</id>
+      <timestamp>2010-12-13T11:10:49Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <minor/>
+      <comment>1 revision: yxc</comment>
+      <text xml:space="preserve">&lt;noinclude&gt;{{Template
+|PAGENAME=Template:Header for wiki parts
+|Has author=Daniel
+|part of=SMWplus Basic Ontology Section
+|rationale=This template is used to display a nice header for all wiki parts, i.e. forms, templates etc
+|long description=
+|parameters=&lt;pre&gt;
+{{Header for wiki parts
+|Category=Form
+|Icon=Image:Cog-green.png
+|Pagetitle={{PAGENAME}}
+|Thumbnail image={{{Form thumbnail|}}}
+|Short description={{#ifeq:{{{rationale|}}}|||[[rationale::{{{rationale|}}}]]}}
+|author={{#ifeq:{{{Has author|}}}|||[[has author::{{{Has author|}}}]]}}
+|Wiki section={{#ifeq:{{{part of|}}}|||[[part of::{{{part of|}}}]]}}
+|Example article={{#ifeq:{{{Example article|}}}|||[[Example article::{{{Example article|}}}]]}}
+|Has special namespace={{#ifeq:{{{Has special namespace|}}}|||[[Has special namespace::{{{Has special namespace|}}}]]}}
+}}
+&lt;/pre&gt;
+|hints for templates and forms=The following values for category are allowed: Form, Template
+|Calls template=Template:Tablelongrow, Template:Tablerow,
+}}
+{{Copyright of article
+|own work=True
+|copyright holder=Ontoprise GmbH
+|year=2009
+}}
+&lt;/noinclude&gt;&lt;includeonly&gt;{{#switch: {{{Category}}}
+|Template=&lt;!--
+
+case: Template
+
+--&gt;&lt;div class=&quot;round&quot; style=&quot;padding-bottom: 2px; padding-left: 2px; padding-right: 2px; padding-top: 5px; font-family: tahoma, sans-serif; font-weight: bold; font-size: 120%; color: rgb(255,255,255); background-color: #999999; margin-bottom: 5px;&quot;&gt;&lt;!-- --&gt;
+{{{!}} width=&quot;100%&quot; cellspacing=&quot;1&quot; cellpadding=&quot;1&quot; border=&quot;0&quot; align=&quot;center&quot;     
+{{!}}- 
+{{!}} &lt;div style=&quot;padding: 2px; font-family: tahoma,sans-serif; font-weight: bold; font-size: 120%; color: rgb(250, 250, 250); margin-bottom: 2px;&quot; class=&quot;round&quot;&gt;
+{{{!}} width=&quot;100%&quot; cellspacing=&quot;1&quot; cellpadding=&quot;1&quot; border=&quot;0&quot; align=&quot;center&quot;
+{{!}}-
+{{!}} width=&quot;10%&quot; valign=&quot;left&quot; align=&quot;center&quot; rowspan=&quot;2&quot; {{!}} [[{{{Icon}}}|40px]]
+{{!}} '''Template ''{{{Pagetitle}}}'' '''
+{{!}}}&lt;/div&gt;
+{{!}}}&lt;/div&gt;
+{{{!}} cellspacing=&quot;0&quot; cellpadding=&quot;5&quot; style=&quot;position:relative; margin: 0 0 0.5em 1em; border-collapse: collapse; border: 1px solid #999999; background: rgb(255,255,255); float: right; clear: none; width: 20em&quot;
+{{#ifeq:{{{Thumbnail image|}}}|||
+{{!}}-
+{{Tablelongrow|Label=Overview:|Value=[[{{{Thumbnail image|}}}|150px]]}} }}
+{{!}}-
+{{#ifeq:{{{Short description|}}}||
+{{Tablelongrow|Label=Overview:|Value=}}
+|
+{{Tablelongrow|Label=Overview:|Value=''{{{Short description}}}''}} }}
+{{!}}-
+{{#ifeq:{{{Wiki section|}}}||
+{{Tablerow|Label=Wiki section:|Value=''not specified...''}}
+|{{Tablerow|Label=Wiki section:|Value={{{Wiki section|}}} }} }}
+{{!}}-
+{{Tablerow|Label=Author:|Value={{{author|}}} }}
+{{!}}}&lt;!--
+
+end case: Template
+
+--&gt;
+|Form=&lt;!--
+
+case: Form
+
+--&gt;&lt;div class=&quot;round&quot; style=&quot;padding-bottom: 2px; padding-left: 2px; padding-right: 2px; padding-top: 5px; font-family: tahoma, sans-serif; font-weight: bold; font-size: 120%; color: rgb(255,255,255); background-color: #999999; margin-bottom: 5px;&quot;&gt;&lt;!-- --&gt;
+{{{!}} width=&quot;100%&quot; cellspacing=&quot;1&quot; cellpadding=&quot;1&quot; border=&quot;0&quot; align=&quot;center&quot;     
+{{!}}- 
+{{!}} &lt;div style=&quot;padding: 2px; font-family: tahoma,sans-serif; font-weight: bold; font-size: 120%; color: rgb(250, 250, 250); margin-bottom: 2px;&quot; class=&quot;round&quot;&gt;
+{{{!}} width=&quot;100%&quot; cellspacing=&quot;1&quot; cellpadding=&quot;1&quot; border=&quot;0&quot; align=&quot;center&quot;
+{{!}}-
+{{!}} width=&quot;10%&quot; valign=&quot;left&quot; align=&quot;center&quot; rowspan=&quot;2&quot; {{!}} [[{{{Icon}}}|40px]]
+{{!}} '''Semantic form ''{{{Pagetitle}}}'' '''
+{{!}}}&lt;/div&gt;
+{{!}}}&lt;/div&gt;
+{{{!}} cellspacing=&quot;0&quot; cellpadding=&quot;5&quot; style=&quot;position:relative; margin: 0 0 0.5em 1em; border-collapse: collapse; border: 1px solid #999999; background: rgb(255,255,255); float: right; clear: none; width: 20em&quot;
+{{#ifeq:{{{Thumbnail image|}}}|||
+{{!}}-
+{{Tablelongrow|Label=Overview:|Value=[[{{{Thumbnail image|}}}|150px]]}} }}
+{{!}}-
+{{Tablelongrow|Label=Overview:|Value=''{{{Short description}}}''}}
+{{!}}-
+{{#ifeq:{{{Wiki section|}}}||
+{{Tablerow|Label=Wiki section:|Value=''not specified...''}}
+|{{Tablerow|Label=Wiki section:|Value={{{Wiki section|}}} }} }}
+{{!}}-
+{{#ifeq:{{{Has special namespace|}}}||
+{{Tablerow|Label=Namespace:|Value=''main namespace''}}
+|{{Tablerow|Label=Namespace:|Value={{{Has special namespace|}}} }} }}
+{{!}}-
+{{#ifeq:{{{Example article|}}}||
+{{Tablerow|Label=Example:|Value=''not specified...''}}
+|{{Tablerow|Label=Example:|Value={{{Example article|}}} }} }}
+{{!}}-
+{{Tablerow|Label=Author:|Value={{{author|}}} }}
+{{!}}}&lt;!--
+
+end case: Form
+
+--&gt;
+|Category=&lt;!--
+
+case: Category
+
+--&gt;&lt;div class=&quot;round&quot; style=&quot;padding-bottom: 2px; padding-left: 2px; padding-right: 2px; padding-top: 5px; font-family: tahoma, sans-serif; font-weight: bold; font-size: 120%; color: rgb(255,255,255); background-color: #999999; margin-bottom: 5px;&quot;&gt;&lt;!-- --&gt;
+{{{!}} width=&quot;100%&quot; cellspacing=&quot;1&quot; cellpadding=&quot;1&quot; border=&quot;0&quot; align=&quot;center&quot;     
+{{!}}- 
+{{!}} &lt;div style=&quot;padding: 2px; font-family: tahoma,sans-serif; font-weight: bold; font-size: 120%; color: rgb(250, 250, 250); margin-bottom: 2px;&quot; class=&quot;round&quot;&gt;
+{{{!}} width=&quot;100%&quot; cellspacing=&quot;1&quot; cellpadding=&quot;1&quot; border=&quot;0&quot; align=&quot;center&quot;
+{{!}}-
+{{!}} width=&quot;10%&quot; valign=&quot;left&quot; align=&quot;center&quot; rowspan=&quot;2&quot; {{!}} [[{{{Icon}}}|40px]]
+{{!}} '''Category ''{{{Pagetitle}}}'' '''
+{{!}}}&lt;/div&gt;
+{{!}}}&lt;/div&gt;
+{{{!}} cellspacing=&quot;0&quot; cellpadding=&quot;5&quot; style=&quot;position:relative; margin: 0 0 0.5em 1em; border-collapse: collapse; border: 1px solid #999999; background: rgb(255,255,255); float: right; clear: none; width: 20em&quot;
+{{#ifeq:{{{Thumbnail image|}}}|||
+{{!}}-
+{{Tablelongrow|Label=Overview:|Value=[[{{{Thumbnail image|}}}|150px]]}} }}
+{{!}}-
+{{Tablelongrow|Label=Overview:|Value=''{{{Short description}}}''}}
+{{!}}-
+{{#ifeq:{{{Wiki section|}}}||
+{{Tablerow|Label=Wiki section:|Value=''not specified...''}}
+|{{Tablerow|Label=Wiki section:|Value={{{Wiki section|}}} }} }}
+{{!}}-
+{{Tablerow|Label=Author:|Value={{{author|}}} }}
+{{!}}}&lt;!--
+
+end case: Category
+
+--&gt;
+|Content section=&lt;!--
+
+case: Content section
+
+--&gt;&lt;div class=&quot;round&quot; style=&quot;padding-bottom: 2px; padding-left: 2px; padding-right: 2px; padding-top: 5px; font-family: tahoma, sans-serif; font-weight: bold; font-size: 120%; color: rgb(255,255,255); background-color: #999999; margin-bottom: 5px;&quot;&gt;&lt;!-- --&gt;
+{{{!}} width=&quot;100%&quot; cellspacing=&quot;1&quot; cellpadding=&quot;1&quot; border=&quot;0&quot; align=&quot;center&quot;     
+{{!}}- 
+{{!}} &lt;div style=&quot;padding: 2px; font-family: tahoma,sans-serif; font-weight: bold; font-size: 120%; color: rgb(250, 250, 250); margin-bottom: 2px;&quot; class=&quot;round&quot;&gt;
+{{{!}} width=&quot;100%&quot; cellspacing=&quot;1&quot; cellpadding=&quot;1&quot; border=&quot;0&quot; align=&quot;center&quot;
+{{!}}-
+{{!}} width=&quot;10%&quot; valign=&quot;left&quot; align=&quot;center&quot; rowspan=&quot;2&quot; {{!}} [[{{{Icon}}}|40px]]
+{{!}} '''Content section ''{{{Pagetitle}}}'' '''
+{{!}}}&lt;/div&gt;
+{{!}}}&lt;/div&gt;
+{{{!}} cellspacing=&quot;0&quot; cellpadding=&quot;5&quot; style=&quot;position:relative; margin: 0 0 0.5em 1em; border-collapse: collapse; border: 1px solid #999999; background: rgb(255,255,255); float: right; clear: none; width: 20em&quot;
+{{#ifeq:{{{Thumbnail image|}}}|||
+{{!}}-
+{{Tablelongrow|Label=Overview:|Value=[[{{{Thumbnail image|}}}|150px]]}} }}
+{{!}}-
+{{Tablelongrow|Label=Overview:|Value=''{{{Short description}}}''}}
+{{!}}-
+{{Tablerow|Label=Author:|Value={{{author|}}} }}
+{{!}}}&lt;!--
+
+case: Content section END
+
+--&gt;
+|Property=&lt;!--
+
+case: Property
+
+--&gt;&lt;div class=&quot;round&quot; style=&quot;padding-bottom: 2px; padding-left: 2px; padding-right: 2px; padding-top: 5px; font-family: tahoma, sans-serif; font-weight: bold; font-size: 120%; color: rgb(255,255,255); background-color: #999999; margin-bottom: 5px;&quot;&gt;&lt;!-- --&gt;
+{{{!}} width=&quot;100%&quot; cellspacing=&quot;1&quot; cellpadding=&quot;1&quot; border=&quot;0&quot; align=&quot;center&quot;     
+{{!}}- 
+{{!}} &lt;div style=&quot;padding: 2px; font-family: tahoma,sans-serif; font-weight: bold; font-size: 120%; color: rgb(250, 250, 250); margin-bottom: 2px;&quot; class=&quot;round&quot;&gt;
+{{{!}} width=&quot;100%&quot; cellspacing=&quot;1&quot; cellpadding=&quot;1&quot; border=&quot;0&quot; align=&quot;center&quot;
+{{!}}-
+{{!}} width=&quot;10%&quot; valign=&quot;left&quot; align=&quot;center&quot; rowspan=&quot;2&quot; {{!}} [[{{{Icon}}}|40px]]
+{{!}} '''Property ''{{{Pagetitle}}}'' '''
+{{!}}}&lt;/div&gt;
+{{!}}}&lt;/div&gt;
+{{{!}} cellspacing=&quot;0&quot; cellpadding=&quot;5&quot; style=&quot;position:relative; margin: 0 0 0.5em 1em; border-collapse: collapse; border: 1px solid #999999; background: rgb(255,255,255); float: right; clear: none; width: 20em&quot;
+{{#ifeq:{{{Thumbnail image|}}}|||
+{{!}}-
+{{Tablelongrow|Label=Overview:|Value=[[{{{Thumbnail image|}}}|150px]]}} }}
+{{!}}-
+{{Tablelongrow|Label=Overview:|Value=''{{{Short description}}}''}}
+{{!}}-
+{{#ifeq:{{{Wiki section|}}}||
+{{Tablerow|Label=Wiki section:|Value=''not specified...''}}
+|{{Tablerow|Label=Wiki section:|Value={{{Wiki section|}}} }} }}
+{{!}}-
+{{Tablerow|Label=Author:|Value={{{author|}}} }}
+{{!}}}&lt;!--
+
+case: Property END
+
+--&gt;
+|User defined rule=&lt;!--
+
+case: User defined rule
+
+--&gt;&lt;div class=&quot;round&quot; style=&quot;padding-bottom: 2px; padding-left: 2px; padding-right: 2px; padding-top: 5px; font-family: tahoma, sans-serif; font-weight: bold; font-size: 120%; color: rgb(255,255,255); background-color: #999999; margin-bottom: 5px;&quot;&gt;&lt;!-- --&gt;
+{{{!}} width=&quot;100%&quot; cellspacing=&quot;1&quot; cellpadding=&quot;1&quot; border=&quot;0&quot; align=&quot;center&quot;     
+{{!}}- 
+{{!}} &lt;div style=&quot;padding: 2px; font-family: tahoma,sans-serif; font-weight: bold; font-size: 120%; color: rgb(250, 250, 250); margin-bottom: 2px;&quot; class=&quot;round&quot;&gt;
+{{{!}} width=&quot;100%&quot; cellspacing=&quot;1&quot; cellpadding=&quot;1&quot; border=&quot;0&quot; align=&quot;center&quot;
+{{!}}-
+{{!}} width=&quot;10%&quot; valign=&quot;left&quot; align=&quot;center&quot; rowspan=&quot;2&quot; {{!}} [[{{{Icon}}}|40px]]
+{{!}} '''User defined rule ''{{{Pagetitle}}}'' '''
+{{!}}}&lt;/div&gt;
+{{!}}}&lt;/div&gt;
+{{{!}} cellspacing=&quot;0&quot; cellpadding=&quot;5&quot; style=&quot;position:relative; margin: 0 0 0.5em 1em; border-collapse: collapse; border: 1px solid #999999; background: rgb(255,255,255); float: right; clear: none; width: 20em&quot;
+{{#ifeq:{{{Thumbnail image|}}}|||
+{{!}}-
+{{Tablelongrow|Label=Overview:|Value=[[{{{Thumbnail image|}}}|150px]]}} }}
+{{!}}-
+{{Tablelongrow|Label=Overview:|Value=''{{{Short description}}}''}}
+{{!}}-
+{{#ifeq:{{{Wiki section|}}}||
+{{Tablerow|Label=Wiki section:|Value=''not specified...''}}
+|{{Tablerow|Label=Wiki section:|Value={{{Wiki section|}}} }} }}
+{{!}}-
+{{Tablerow|Label=Author:|Value={{{author|}}} }}
+{{!}}}&lt;!--
+
+case: User defined rule END
+
+--&gt;
+|All content sections=&lt;!--
+
+case: All content sections
+
+--&gt;&lt;div class=&quot;round&quot; style=&quot;padding-bottom: 2px; padding-left: 2px; padding-right: 2px; padding-top: 5px; font-family: tahoma, sans-serif; font-weight: bold; font-size: 120%; color: rgb(255,255,255); background-color: #999999; margin-bottom: 5px;&quot;&gt;&lt;!-- --&gt;
+{{{!}} width=&quot;100%&quot; cellspacing=&quot;1&quot; cellpadding=&quot;1&quot; border=&quot;0&quot; align=&quot;center&quot;     
+{{!}}- 
+{{!}} &lt;div style=&quot;padding: 2px; font-family: tahoma,sans-serif; font-weight: bold; font-size: 120%; color: rgb(250, 250, 250); margin-bottom: 2px;&quot; class=&quot;round&quot;&gt;
+{{{!}} width=&quot;100%&quot; cellspacing=&quot;1&quot; cellpadding=&quot;1&quot; border=&quot;0&quot; align=&quot;center&quot;
+{{!}}-
+{{!}} width=&quot;10%&quot; valign=&quot;left&quot; align=&quot;center&quot; rowspan=&quot;2&quot; {{!}} [[{{{Icon}}}|40px]]
+{{!}} '''All Content Sections of ''{{SITENAME}}'' '''
+{{!}}}&lt;/div&gt;
+{{!}}}&lt;/div&gt;
+{{{!}} cellspacing=&quot;0&quot; cellpadding=&quot;5&quot; style=&quot;position:relative; margin: 0 0 0.5em 1em; border-collapse: collapse; border: 1px solid #999999; background: rgb(255,255,255); float: right; clear: none; width: 20em&quot;
+{{!}}-
+{{Tablelongrow|Label=Overview:|Value=''{{{Short description}}}''}}
+{{!}}-
+{{Tablerow|Label=Author:|Value={{{author|}}} }}
+{{!}}}&lt;!--
+
+case: All content sections END
+
+--&gt;
+|#default=&lt;!-- unknown category
+--&gt;&lt;div class=&quot;round&quot; style=&quot;padding-bottom: 5px; padding-left: 5px; padding-right: 5px; padding-top: 10px; font-family: tahoma, sans-serif; font-weight: bold; font-size: 120%; color: rgb(255,255,255); background-color: rgb(159,80,0); margin-bottom: 5px;float: right; clear: none; &quot;&gt;&lt;!-- --&gt;
+{{{!}} width=&quot;100%&quot; cellspacing=&quot;1&quot; cellpadding=&quot;1&quot; border=&quot;0&quot; align=&quot;center&quot;     
+{{!}}- 
+{{!}} &lt;div style=&quot;padding: 2px; font-family: tahoma,sans-serif; font-weight: bold; font-size: 120%; color: rgb(250, 250, 250); margin-bottom: 2px;&quot; class=&quot;round&quot;&gt;
+{{{!}} width=&quot;100%&quot; cellspacing=&quot;1&quot; cellpadding=&quot;1&quot; border=&quot;0&quot; align=&quot;center&quot;
+{{!}}-
+{{!}} width=&quot;10%&quot; valign=&quot;left&quot; align=&quot;center&quot; {{!}} [[Image:Stockage.png|40px]]
+{{!}} '''{{#show:{{{PAGENAME}}}|?Content title=}}'''
+{{!}}}&lt;/div&gt;
+{{!}}}&lt;/div&gt;
+{{{!}} cellspacing=&quot;0&quot; cellpadding=&quot;5&quot; style=&quot;position:relative; margin: 0 0 0.5em 1em; border-collapse: collapse; border: 1px solid rgb(159,80,0); background: rgb(255,255,255); float: right; clear: none; width: 20em&quot;
+&lt;!-- end case: Software Product Release --&gt;
+}}&lt;/includeonly&gt;&lt;noinclude&gt;
+&lt;/noinclude&gt;</text>
+    </revision>
+  </page>
+  <page>
+    <title>Template:Property</title>
+    <id>41</id>
+    <revision>
+      <id>80</id>
+      <timestamp>2010-12-13T11:10:48Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <minor/>
+      <comment>1 revision: yxc</comment>
+      <text xml:space="preserve">&lt;noinclude&gt;{{Template
+|PAGENAME=Template:Property
+|Has author=User:WikiSysop
+|part of=SMWplus Basic Ontology Section
+|rationale=Displays a property and some essential metadata.
+|long description=
+}}
+{{Copyright of article
+|own work=True
+|copyright holder=Ontoprise GmbH
+|year=2009
+}}
+&lt;/noinclude&gt;&lt;includeonly&gt;__NOTOC__
+{{Header for wiki parts
+|Category=Property
+|Icon=Image:smw_plus_property_icon_100x100.gif
+|Pagetitle={{PAGENAME}}
+|Short description={{#ifeq:{{{rationale|}}}|||[[rationale::{{{rationale|}}}]]}}
+|author={{#ifeq:{{{Has author|}}}|||{{#arraymap:{{{Has author|}}}|,|x|[[has author::x]]|,}}}}
+|Wiki section={{#ifeq:{{{part of|}}}|||{{#arraymap:{{{part of|}}}|,|x|[[part of::x]]|,}}}}
+}}
+{{{long description|}}}
+
+=== Default form ===
+
+New pages (i.e. &quot;redlinks&quot;) which are related via this property shall use the form: 
+*{{#ifeq:{{{Has default form|}}}||''not specified''|[[Has default form::{{{Has default form|}}}]]}}
+
+[[Page has default form::Form:Add and edit Property| ]] &lt;!-- default form for the property page itself --&gt;
+
+&lt;!-- not needed currently, too fine-grained
+=== Rules ===
+==== Read by rules ====
+This property is read by the following rules:&lt;br&gt;
+{{#sparql:[[Category:User defined rule]][[Is read by rule::{{FULLPAGENAME}}]]|?=|format=ul|default=&lt;ul&gt;&lt;li&gt;''no rule reading this''&lt;/ul&gt;}}
+
+==== Modified by rules ====
+This property is modified by the following rules:&lt;br&gt;
+{{#sparql:[[Category:User defined rule]][[Is written by rule::{{FULLPAGENAME}}]]|?=|format=ul|default=&lt;ul&gt;&lt;li&gt;''no rule modifying this''&lt;/ul&gt;}}
+--&gt;
+
+&lt;!-- type and category annotations --&gt;
+[[Category:Property]]
+&lt;br&gt;
+&lt;/includeonly&gt;&lt;noinclude&gt;
+&lt;/noinclude&gt;</text>
+    </revision>
+  </page>
+  <page>
+    <title>Template:Tablelongrow</title>
+    <id>48</id>
+    <revision>
+      <id>94</id>
+      <timestamp>2010-12-13T11:10:49Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <minor/>
+      <comment>1 revision: yxc</comment>
+      <text xml:space="preserve">&lt;noinclude&gt;{{Template
+|PAGENAME=Template:Tablelongrow
+|part of=SMWplus Basic Ontology Section
+|rationale=This is a helper template to display a table row spanning 2 columns.
+|parameters=&lt;pre&gt;
+{{Tablelongrow
+|Align=center|left|right
+|Color=white|..
+|Font size=100%
+|Value=text to display
+}}
+&lt;/pre&gt;
+}}
+&lt;/noinclude&gt;&lt;includeonly&gt;
+| colspan=&quot;2&quot; style=&quot;text-align: {{{Align|center}}}; background: {{{Color|white}}}&quot;|&lt;div style=&quot;font-size: {{{Font size|100%}}}&quot;&gt;{{{Value}}}&lt;/div&gt;
+&lt;/includeonly&gt;</text>
+    </revision>
+  </page>
+  <page>
+    <title>Template:Tablerow</title>
+    <id>49</id>
+    <revision>
+      <id>96</id>
+      <timestamp>2010-12-13T11:10:49Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <minor/>
+      <comment>1 revision: yxc</comment>
+      <text xml:space="preserve">&lt;noinclude&gt;{{Template
+|PAGENAME=Template:Tablerow
+|part of=SMWplus Basic Ontology Section
+|rationale=This is helper template to display a table row containing two columns.
+|parameters=&lt;pre&gt;
+{{Tablerow
+|Label=name of the label
+|Value=text right to the label
+}}&lt;/pre&gt;
+}}
+&lt;/noinclude&gt;&lt;includeonly&gt;
+{{!}}style=&quot;vertical-align: top;&quot; {{!}}{{{Label}}}
+{{!}} {{{Value|undefined}}}&lt;/includeonly&gt;&lt;noinclude&gt;
+&lt;/noinclude&gt;</text>
+    </revision>
+  </page>
+  <page>
+    <title>Template:Cite web in help</title>
+    <id>67</id>
+    <revision>
+      <id>132</id>
+      <timestamp>2010-12-13T11:17:06Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <minor/>
+      <comment>1 revision: dfg</comment>
+      <text xml:space="preserve">{{Template
+|PAGENAME=Template:Cite web in help
+|Has author=User:WikiSysop
+|part of=SMWplus Basic Ontology Section, 
+|rationale=Displays a box in articles which fall under GFDL.
+|long description=
+|parameters=&lt;pre&gt;
+{{Cite web in help
+|wiki=
+|url=
+|title=
+|retrieved=
+|publisher=
+}}
+&lt;/pre&gt;
+}}
+{{Copyright of article
+|own work=True
+|copyright holder=Ontoprise GmbH
+|year=2009
+}}
+&lt;onlyinclude&gt;&lt;noinclude&gt;&lt;/noinclude&gt;
+
+&lt;includeonly&gt;&lt;/includeonly&gt;
+&lt;div style=&quot;border: 1px solid rgb(240, 240, 240); margin-bottom: 15px; padding-left: 10px; font-family: tahoma,sans-serif; font-size: x-small;&quot;&gt;
+
+
+;References &lt;br&gt;
+
+The content of this page uses material from the article [{{{url}}} {{{title}}}] published by {{{publisher}}} (retrieved on {{{retrieved}}}).&lt;br&gt; This article is licensed under the [[GNU Free Documentation License|GNU Free Documentation License]].
+&lt;/div&gt;
+&lt;noinclude&gt;&lt;/noinclude&gt;&lt;/onlyinclude&gt;</text>
+    </revision>
+  </page>
+  <page>
+    <title>Template:Copyright of article</title>
+    <id>43</id>
+    <revision>
+      <id>84</id>
+      <timestamp>2010-12-13T11:10:49Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <minor/>
+      <comment>1 revision: yxc</comment>
+      <text xml:space="preserve">{{Template
+|PAGENAME=Template:Copyright of article
+|Has author=User:WikiSysop
+|part of=SMWplus Basic Ontology Section, 
+|rationale=Displays a box for an article containing copy right info.
+|long description=
+|parameters=&lt;pre&gt;
+{{Copyright of article
+|own work=
+|year=
+|copyright holder=
+|url=
+|title=
+|date retrieved=
+}}
+&lt;/pre&gt;
+|hints for templates and forms=Set &quot;own work&quot; to &quot;True&quot; if you have the copyright of the article, false otherwise.
+|Calls template=Template:GNU Free Documentation License,Template:Cite web in help
+}}
+{{Copyright of article
+|own work=True
+|copyright holder=ontoprise GmbH
+|year=2009
+|date retrieved=2009/03/29
+}}
+&lt;onlyinclude&gt;&lt;noinclude&gt;&lt;/noinclude&gt;
+
+&lt;includeonly&gt;{{#ifeq:{{{own work|}}}|True|{{GNU Free Documentation License
+|year={{{year|}}}
+|copyright holder={{{copyright holder|}}} }}
+|{{Cite web in help
+|url={{{url|}}}
+|title={{{title|}}}
+|retrieved={{{date retrieved|}}}
+|publisher={{{copyright holder|}}} }}
+}}&lt;/includeonly&gt;&lt;noinclude&gt;&lt;/noinclude&gt;&lt;/onlyinclude&gt;</text>
+    </revision>
+  </page>
+  <page>
+    <title>Template:GNU Free Documentation License</title>
+    <id>44</id>
+    <revision>
+      <id>86</id>
+      <timestamp>2010-12-13T11:10:49Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <minor/>
+      <comment>1 revision: yxc</comment>
+      <text xml:space="preserve">&lt;div style=&quot;border: 1px solid rgb(240, 240, 240); 
+margin-bottom: 15px; 
+padding-left: 10px;
+font-family: tahoma, sans-serif; 
+font-size:x-small;&quot;&gt;
+;Copyright &amp;copy; {{{year}}} {{{copyright holder}}}.&lt;br/&gt;
+
+Permission is granted to copy, distribute and/or modify this document 
+under the terms of the GNU Free Documentation License, Version 1.2 
+or any later version published by the Free Software Foundation; 
+with no Invariant Sections, no Front-Cover Texts, and no Back-Cover Texts. 
+A copy of the license is included in the article &quot;[[GNU_Free_Documentation_License|GNU 
+Free Documentation License]]&quot;. 
+&lt;/div&gt;
+
+&lt;noinclude&gt;
+&lt;pre&gt;
+{{
+GNU Free Documentation License
+|year=
+|copyright holder=
+}}
+&lt;/pre&gt;
+&lt;/noinclude&gt;</text>
+    </revision>
+  </page>
+  <page>
+    <title>Template:Category</title>
+    <id>39</id>
+    <revision>
+      <id>76</id>
+      <timestamp>2010-12-13T11:10:48Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <minor/>
+      <comment>1 revision: yxc</comment>
+      <text xml:space="preserve">&lt;noinclude&gt;{{Template
+|PAGENAME=Template:Category
+|Has author=User:WikiSysop
+|part of=SMWplus Basic Ontology Section
+|rationale=This template is used to display a category.
+|long description=
+You should use this template to provide your wiki-community with a proper documentation of the categories used in the wiki.
+|Calls template=Template:Header for wiki parts
+}}
+{{Copyright of article
+|own work=True
+|copyright holder=Ontoprise GmbH
+|year=2009
+}}
+&lt;/noinclude&gt;&lt;includeonly&gt;__NOTOC__ {{Header for wiki parts
+|Category=Category
+|Icon=Image:Smw_plus_category_icon_100x100.gif
+|Pagetitle={{PAGENAME}}
+|Short description={{#ifeq:{{{rationale|}}}|||[[rationale::{{{rationale|}}}]]}}
+|author={{#ifeq:{{{Has author|}}}|||{{#arraymap:{{{Has author|}}}|,|x|[[has author::x]]|,}}}}
+|Wiki section={{#ifeq:{{{part of|}}}|||{{#arraymap:{{{part of|}}}|,|x|[[part of::x]]|,}}}}
+}} {{{long description|}}} 
+
+=== Default form  ===
+
+This category is populated by the form: 
+{{#ifeq:{{FULLPAGENAME}}|Category:Category&lt;!--
+--&gt;|*{{#ifeq:{{{Has default form|}}}||''not specified''|[[Page has default form::{{{Has default form|}}}]]}}&lt;!--
+--&gt;|*{{#ifeq:{{{Has default form|}}}||''not specified''|[[Has default form::{{{Has default form|}}}]]}}
+}}[[Page has default form::Form:Add and edit Category| ]]
+
+=== Defined in templates  ===
+
+This category is used for category annotations in the templates: 
+
+{{#ifeq:{{#ask:[[Category:Template]][[Defines category::{{FULLPAGENAME}}]]|default=}}||* none ''(you can create a new template using this category by clicking here: &lt;span class=&quot;plainlinks&quot;&gt;[{{SERVER}}{{SCRIPTPATH}}/index.php/Special:CreateTemplate?category={{urlencode:{{PAGENAME}}}} create template]&lt;/span&gt;)''|&lt;ul&gt;{{#ask:[[Category:Template]][[Defines category::{{FULLPAGENAME}}]]|format=template|template=Show defining template|link=none}}&lt;/ul&gt;
+}} &lt;!-- not needed currently, too fine-grained
+&lt;nowiki&gt;
+=== Rules  ===
+
+==== Read by rules  ====
+
+This category is read by the following rules: {{#sparql:[[Category:Rule]][[Is read by rule::{{FULLPAGENAME}}]]|?=|format=ul|default=&lt;ul&gt;&lt;li&gt;''no rule reading this''&lt;/ul&gt;}} 
+
+==== Modified by rules  ====
+
+This category is modified by the following rules: {{#sparql:[[Category:Rule]][[Is written by rule::{{FULLPAGENAME}}]]|?=|format=ul|default=&lt;ul&gt;&lt;li&gt;''no rule modifying this''&lt;/ul&gt;}}
+&lt;/nowiki&gt;
+--&gt;&lt;!-- category annotations --&gt;&lt;!--
+--&gt;{{#ifeq:{{FULLPAGENAME}}|Category:Category|[[Category:Wiki part| ]]|}}[[Is category::true| ]]&lt;!--
+--&gt;&lt;/includeonly&gt;&lt;noinclude&gt;
+&lt;/noinclude&gt;</text>
+    </revision>
+  </page>
+</mediawiki>
