@@ -2,33 +2,30 @@
 
 require_once 'PHPUnit/Extensions/SeleniumTestCase.php';
 
-class Example extends PHPUnit_Extensions_SeleniumTestCase
+class TestPreviewResult extends PHPUnit_Extensions_SeleniumTestCase
 {
+	private $alGore = "Al Gore";
+	private $fred = "Fred";
+	private $geralsFox = "Gerald Fox";
+	private $henryMorgan = "Henry Morgan";
+	private $johnDoe = "John Doe";
+	private $homePageLabel1 = "It's all about Fred";
+	private $homePageLabel2 = "Google";
+	
   protected function setUp()
   {
     $this->setBrowser("*chrome");
-    $this->setBrowserUrl("http://localhost/mediawiki");
+    $this->setBrowserUrl("http://localhost/");
   }
 
   public function testMyTestCase()
   {
-  	//test is incomplete
-  	$this->markTestIncomplete("Selenium QueryInterface test is incomplete.");
-  	
-    $this->open("/mediawiki/index.php/Main_Page");
-    $this->type("searchInput", "Special:QueryInterface");
-    $this->click("searchGoButton");
-    $this->waitForPageToLoad("30000");
+    $this->open("/mediawiki/index.php/Special:QueryInterface");
     $this->click("//button[@onclick='qihelper.newCategoryDialogue(true)']");
-    $this->type("input0", "P");
+    $this->type("input0", "Person");
     $this->click("//button[@onclick='qihelper.add()']");
     try {
-        $this->assertTrue($this->isTextPresent("Person"));
-    } catch (PHPUnit_Framework_AssertionFailedError $e) {
-        array_push($this->verificationErrors, $e->toString());
-    }
-    try {
-        $this->assertTrue($this->isTextPresent("Al Gore"));
+        $this->assertTrue($this->isTextPresent($this->alGore, $this->alGore. " is not present"));
     } catch (PHPUnit_Framework_AssertionFailedError $e) {
         array_push($this->verificationErrors, $e->toString());
     }
@@ -54,31 +51,74 @@ class Example extends PHPUnit_Extensions_SeleniumTestCase
     }
     $this->click("link=Person");
     $this->click("//button[@onclick='qihelper.newPropertyDialogue(true)']");
-    $this->type("input_p0", "H");
+    $this->type("input_p0", "Homepage label");
     $this->click("//button[@onclick='qihelper.add()']");
+    for ($second = 0; ; $second++) {
+        if ($second >= 60) $this->fail("timeout");
+        try {
+            if ($this->isElementPresent("Link=Homepage label")) break;
+        } catch (Exception $e) {}
+        sleep(1);
+    }
+
     try {
-        $this->assertTrue($this->isTextPresent("Person\r\n	Homepage\r\n	= all values"));
+        $this->assertTrue($this->isTextPresent("Al Gore"));
     } catch (PHPUnit_Framework_AssertionFailedError $e) {
         array_push($this->verificationErrors, $e->toString());
     }
     try {
-        $this->assertTrue($this->isTextPresent("Fred 	Http://en.wikipedia.org/wiki/Fred_Flintstone"));
+        $this->assertTrue($this->isTextPresent("Fred"));
     } catch (PHPUnit_Framework_AssertionFailedError $e) {
         array_push($this->verificationErrors, $e->toString());
     }
     try {
-        $this->assertTrue($this->isTextPresent("Henry Morgan 	Http://google.com"));
+        $this->assertTrue($this->isTextPresent("Gerald Fox"));
     } catch (PHPUnit_Framework_AssertionFailedError $e) {
         array_push($this->verificationErrors, $e->toString());
     }
     try {
-        $this->assertTrue($this->isTextPresent("John Doe 	Http://john.doe.com"));
+        $this->assertTrue($this->isTextPresent("Henry Morgan"));
     } catch (PHPUnit_Framework_AssertionFailedError $e) {
         array_push($this->verificationErrors, $e->toString());
     }
-    $this->click("link=Homepage");
+    try {
+        $this->assertTrue($this->isTextPresent("John Doe"));
+    } catch (PHPUnit_Framework_AssertionFailedError $e) {
+        array_push($this->verificationErrors, $e->toString());
+    }
+    try {
+        $this->assertTrue($this->isTextPresent("It's all about Fred"));
+    } catch (PHPUnit_Framework_AssertionFailedError $e) {
+        array_push($this->verificationErrors, $e->toString());
+    }
+    try {
+        $this->assertTrue($this->isTextPresent("Google"));
+    } catch (PHPUnit_Framework_AssertionFailedError $e) {
+        array_push($this->verificationErrors, $e->toString());
+    }
+    $this->click("link=Homepage label");
     $this->click("input_c2");
     $this->click("//button[@onclick='qihelper.add()']");
+    try {
+        $this->assertTrue($this->isTextPresent("Fred"));
+    } catch (PHPUnit_Framework_AssertionFailedError $e) {
+        array_push($this->verificationErrors, $e->toString());
+    }
+    try {
+        $this->assertTrue($this->isTextPresent("It's all about Fred"));
+    } catch (PHPUnit_Framework_AssertionFailedError $e) {
+        array_push($this->verificationErrors, $e->toString());
+    }
+    try {
+        $this->assertTrue($this->isTextPresent("Henry Morgan"));
+    } catch (PHPUnit_Framework_AssertionFailedError $e) {
+        array_push($this->verificationErrors, $e->toString());
+    }
+    try {
+        $this->assertTrue($this->isTextPresent("Google"));
+    } catch (PHPUnit_Framework_AssertionFailedError $e) {
+        array_push($this->verificationErrors, $e->toString());
+    }
   }
 }
 ?>

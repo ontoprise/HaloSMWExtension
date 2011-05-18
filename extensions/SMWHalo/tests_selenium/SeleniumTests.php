@@ -10,14 +10,16 @@
  */
 
 require_once 'testcases/TestSubquery.php';
+require_once 'testcases/TestPreviewResult.php';
 
 class SeleniumTests
 {
     public static function suite()
     {
 		define('UNIT_TEST_RUNNING', true);
-        $suite = new PHPUnit_Framework_TestSuite('MySelenium');
+        $suite = new PHPUnit_Framework_TestSuite('SMWHaloSeleniumTestSuite');
         $suite->addTestSuite("TestSubquery");
+        $suite->addTestSuite("TestPreviewResult");
         return $suite;
     }
 }
