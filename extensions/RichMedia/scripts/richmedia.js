@@ -1,4 +1,4 @@
-/*  Copyright 2008-2009, ontoprise GmbH
+/*  Copyright 2011, ontoprise GmbH
 *   Author: Benjamin Langguth
 *   This file is part of the Rich Media-Extension.
 *
@@ -16,126 +16,116 @@
 *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-var RichMediaPage = Class.create({
-	initialize: function() {
-		// do nothing special.
-	},
-		
+/**
+ * The RichMediaPage "class"
+ * 
+ */
+function RichMediaPage() {
+	
+	// indicates if the current form is already submitted
+	this.formSubmitted = false;
+
 	/**
-	 * do the upload.
+	 * Handles the upload process.#
+	 * 
+	 * @param: destFormName 
+	 *		jquery selector string
 	 */
-	doUpload: function(destFormName) {
-		
-		if( destFormName === undefined ){
-			destFormName = 'upload';
+	this.doUpload = function( destFormName ) {
+		var	error,
+			sForm,
+			destForm,
+			el;
+
+		if( this.formSubmitted ) {
+			return true;
+		}
+		if( typeof destFormName === 'undefined' ){
+			destFormName = '#mw-upload-form';
 		}
 		//validate the form fields!
-		var error = validateAll();
-
-		if (!error) {
+		error = validateAll();
+		if ( !error ) {
 			return false;
 		}
-		
-		var sForm = $$('form.createbox')[0]; //array
-		var destForm = $(destFormName);
-
+		sForm = jQuery('.createbox');
+		destForm = jQuery(destFormName);
 		//merge SemanticForm into UploadForm
-		var result = richMediaPage.mergeFormsToForm([sForm], destForm);
+		this.mergeFormsToForm([sForm], destForm);
 
-		var el = new Element('input', {
-					'type' : 'hidden', 
-					'name' : 'query', 
-					'value' : 'true'} )
-		destForm.appendChild(el);
+		el = document.createElement( 'input' );
+		jQuery( el ).attr( 'type', 'hidden' );
+		jQuery( el ).attr( 'name', 'query');
+		jQuery( el ).val( 'true');
+		destForm.append( jQuery( el ) );
 
-		var el = new Element('input', {
-					'type' : 'hidden', 
-					'name' : 'action', 
-					'value' : 'submit'} )
-		destForm.appendChild(el);
-		
-		var el = new Element('input', {
-			'type' : 'hidden', 
-			'name' : 'wpUpload', 
-			'value' : 'true'} )
-		destForm.appendChild(el);
-		
-		destForm.setAttribute("method", "POST");
+		el = document.createElement( 'input' );
+		jQuery( el ).attr( 'type', 'hidden' );
+		jQuery( el ).attr( 'name', 'action');
+		jQuery( el ).val( 'submit');
+		destForm.append( jQuery( el ) );
+
+		el = document.createElement( 'input' );
+		jQuery( el ).attr( 'type', 'hidden' );
+		jQuery( el ).attr( 'name', 'wpUpload');
+		jQuery( el ).val( 'true');
+		destForm.append( jQuery( el ) );
+
+		destForm.attr( "method", "POST" );
+		this.formSubmitted = true;
 		destForm.submit();
 		return true;
-	},
+	};
 	
+	/**
+	* Merges an array of jQuery objects unvisible into one destination form.
+	* 
+	* @param: sourceForms
+	*		array of jQuery objects
+	* @param: destForm
+	*		jQuery object as destination form
+	*/ 
+	this.mergeFormsToForm = function( sourceForms, destForm ) {
+		var	clonedFormContent,
+			el;
+		for( var i = 0; i < sourceForms.length; i++ ) {
+			clonedFormContent = jQuery( '*', sourceForms[i] ).filter(":input");
+			jQuery.each( clonedFormContent, function( j, el ) {
+				var jQEl = jQuery( el )
+				var clonedElement = jQEl.clone();
+				if ( el.type === 'textarea' ) { 
+					/* Fix for Firefox (values of textareas are just ignored) */ 
+					clonedElement.val( jQEl.val() );
+				}
+				// Just clone and hide everything
+				// Fix: #10678; just clone nodes which have a value 
+				if (clonedElement.val().length > 0) {
+					clonedElement.removeAttr( 'id' );
+					clonedElement.hide();
+					destForm.append(clonedElement);
+				}
+			});
+		}
+		return true;
+	};
+
 	/**
 	 * A warning appeared and the user pressed 'Re-upload' or 'Save file'.
 	 * Copy the SF
 	 */
-	copyToUploadWarning: function() {
-		var sForm = $$('form.createbox')[0]; //array
-		var destForm = $('uploadwarning');
-		
-		var result = richMediaPage.mergeFormsToForm([sForm], destForm);
-	},
-		
-	/**
-	* merges an array of source forms entries hidden into one destination form 
-	*/ 
-	mergeFormsToForm: function(sourceForms, destForm) {  
-  		var clone; 
-  		sourceForms.each(function(sourceForm) { 
-			sourceForm.getElements().each(function(formControl) {
-				clone = formControl.cloneNode(true);
+	this.copyToUploadWarning = function() {
+		var	sForm = jQuery('.form.createbox'), //array
+			destForm = jQuery('#uploadwarning');
+		richMediaPage.mergeFormsToForm([sForm], destForm);
+	};
+}
 
-				if (formControl.type == 'textarea') { 
-					/* Fix for firefox (values of textareas are just ignored) */ 
-					clone.value = formControl.value;
-				} 
+// Set global variable for accessing Rich Media functions
+var richMediaPage;
 
-				/* if we find an id that contains the string 'day'
-				 * we search for the according year and month, build up a new date string 
-				 * and append this to the destForm
-				 */
-				if (clone.id.indexOf('day') > -1) {
-					var date_id = clone.id.replace('_day', ''); 
-					var dateStringValue = $(date_id + '_year').value + 
-						'/' + $(date_id + '_month').value + '/' + clone.value;
-					var dateStringName = clone.name.replace('[day]', '');
-					var el = new Element('input', {
-						'type' : 'hidden',
-						'name' : dateStringName,
-						'value' : dateStringValue } )
-						destForm.appendChild(el);
-				}
-				//We do nothing with 'year' and 'month' because it's already done in 'day'
-				else if ( (clone.id.indexOf('year') > -1 ) || ( clone.id.indexOf('month') > -1) )  {
-					//do nothing
-				}
-				// just clone and hide everything else here 
-				else {
-					// fix: #10678; just clone node which have a value 
-					if (clone.value != '') {
-						clone.id = '';
-						clone.hide();  
-						destForm.appendChild(clone);
-					}
-				}
-	 		}); 
-  		});
-		return true;
-	},
-	
-	/*
-	 * Adds the destination file to the link
-	 */
-	addWpDestFile: function() {
-			//var myWpDestFile = $('myWpDestFile').value;
-			var myLink = $('link_id');
-			//var myHref = myLink.href;
-			//myLink.href = myHref+"&wpDestFile="+myWpDestFile;
-			fb.loadAnchor(myLink);
-			return true;
+// Initialize Rich Media functions if page is loaded
+jQuery( document ).ready(
+	function() {
+		richMediaPage = new RichMediaPage();
 	}
-});
-
-//------ Classes -----------
-
-var richMediaPage = new RichMediaPage();
+);

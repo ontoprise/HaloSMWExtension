@@ -1,7 +1,7 @@
 jQuery(document).ready(function() {
 	//add functionality to (type=submit)
 	jQuery("#mw-upload-form").submit(function() {
-		richMediaPage.doUpload()
+		richMediaPage.doUpload("#mw-upload-form");
 	});
 	// add collapsing functionality for legends
 	// upload form 
