@@ -33,6 +33,11 @@
 				<exclude name="**/.svn, **/CVS" />
 			</fileset>
 		</copy>
+		<copy todir="bin/zip/extensions/ApplicationProgramming/PreloadText">
+			<fileset dir="../PreloadText">
+				<exclude name="**/.svn, **/CVS" />
+			</fileset>
+		</copy>
 
 		<zip destfile="bin/applicationprogramming.zip" basedir="bin/zip" />
 		<delete dir="bin/zip" />
