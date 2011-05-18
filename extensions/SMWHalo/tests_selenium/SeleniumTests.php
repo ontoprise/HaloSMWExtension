@@ -10,7 +10,7 @@
  */
 
 require_once 'testcases/TestSubquery.php';
-require_once 'testcases/TestPreviewResult.php';
+require_once 'testcases/TestPreviewResult_short.php';
 
 class SeleniumTests
 {
@@ -18,8 +18,8 @@ class SeleniumTests
     {
 		define('UNIT_TEST_RUNNING', true);
         $suite = new PHPUnit_Framework_TestSuite('SMWHaloSeleniumTestSuite');
-        $suite->addTestSuite("TestSubquery");
-        $suite->addTestSuite("TestPreviewResult");
+//        $suite->addTestSuite("TestSubquery");
+        $suite->addTestSuite("TestPreviewResult_short");
         return $suite;
     }
 }
