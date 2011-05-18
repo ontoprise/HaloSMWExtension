@@ -149,7 +149,7 @@ class ExportObjectLogicBot extends GardeningBot {
 				}
 				if ($maxCardValue !== false) {
 					$maxCardValue->getDBkeys();
-					$maxCardValue = reset($minCardValue);
+					$maxCardValue = reset($maxCardValue);
 				} else {
 					$maxCardValue = "*";
 				}
@@ -263,8 +263,8 @@ class ExportObjectLogicBot extends GardeningBot {
 							$dbkey = reset($dbkeys);
 
 							if ($dbkey !== false) {
-								$value = '"'.str_replace('"','\"', $dbkey).'"';
-								$value = $this->fixType($value, $typeID);
+								$value = str_replace('"','\"', $dbkey);
+								$value = '"'.$this->fixType($value, $typeID).'"';
 
 								$type = WikiTypeToXSD::getXSDType($typeID);
 								$typeIRI = "<".str_replace("xsd:", TSNamespaces::$XSD_NS, $type).">";
@@ -280,13 +280,16 @@ class ExportObjectLogicBot extends GardeningBot {
 
 
 	private function exportRules($bundleID) {
-
+		global $smwgTripleStoreGraph;
 		// do not export rules if SemanticRules extensions is not available.
 		if (!defined('SEMANTIC_RULES_VERSION')) {
 			return "";
 		}
 
 		$ontologyURI = DFBundleTools::getOntologyURI($bundleID);
+		if (is_null($ontologyURI) || empty($ontologyURI)) {
+			$ontologyURI = $smwgTripleStoreGraph . "/ontology/$bundleID";
+		}
 
 		global $dfgLang;
 		$bundleIDValue = SMWDataValueFactory::newTypeIDValue('_wpg', $bundleID);
@@ -352,12 +355,18 @@ class ExportObjectLogicBot extends GardeningBot {
 			$day = $datearray['day'];
 			if ($day < 10) $day = "0$day";
 			$hour = $datearray['hour'];
+			if (empty($hour)) $hour = 0;
 			if ($hour < 10) $hour = "0$hour";
 			$minute = $datearray['minute'];
+			if (empty($minute)) $minute = 0;
 			if ($minute < 10) $minute = "0$minute";
 			$second = $datearray['second'];
+			if (empty($second)) $second = 0;
 			if ($second < 10) $second = "0$second";
-			return "\"$year-$month-$day"."T"."$hour:$minute:$second\"";
+			return "$year-$month-$day"."T"."$hour:$minute:$second";
+		} else if ($typeID == '_boo') {
+			if ($value == "0") return "false";
+			if ($value == "1") return "true";
 		}
 		return $value;
 	}
@@ -483,6 +492,10 @@ ENDS;
 			$f = "export".uniqid().".obl";
 			echo "\nCreate temporary file: $tempdir/$f...";
 			$ontologyURI = DFBundleTools::getOntologyURI($bundleName);
+			if (is_null($ontologyURI) || empty($ontologyURI)) {
+				$ontologyURI = $smwgTripleStoreGraph . "/ontology/$bundleName";
+			}
+
 			$header = $this->createOBLHeader($ontologyURI, $bundleName);
 			$obl = $oblExt ."\n\n" . $obl;
 			echo "done.";
