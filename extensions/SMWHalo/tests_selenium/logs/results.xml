@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites>
+  <testsuite name="SMWHaloSeleniumTestSuite" tests="2" assertions="21" failures="2" errors="0" time="71.294344">
+    <testsuite name="TestSubquery" file="C:\DEV\workspace\HaloSMWExtension\extensions\SMWHalo\tests_selenium\testcases\TestSubquery.php" tests="1" assertions="5" failures="1" errors="0" time="50.918979">
+      <testcase name="testMyTestCase" class="TestSubquery" file="C:\DEV\workspace\HaloSMWExtension\extensions\SMWHalo\tests_selenium\testcases\TestSubquery.php" line="13" assertions="5" time="50.918979">
+        <failure type="PHPUnit_Framework_AssertionFailedError">TestSubquery::testMyTestCase
+Failed asserting that &lt;boolean:false&gt; is true.
+Failed asserting that &lt;boolean:false&gt; is true.
+Failed asserting that &lt;boolean:false&gt; is true.
+Failed asserting that &lt;boolean:false&gt; is true.
+Failed asserting that &lt;boolean:false&gt; is true.
+
+C:\DEV\workspace\HaloSMWExtension\tests\tests_halo\run-test.php:5
+</failure>
+      </testcase>
+    </testsuite>
+    <testsuite name="TestPreviewResult" file="C:\DEV\workspace\HaloSMWExtension\extensions\SMWHalo\tests_selenium\testcases\TestPreviewResult.php" tests="1" assertions="16" failures="1" errors="0" time="20.375365">
+      <testcase name="testMyTestCase" class="TestPreviewResult" file="C:\DEV\workspace\HaloSMWExtension\extensions\SMWHalo\tests_selenium\testcases\TestPreviewResult.php" line="21" assertions="16" time="20.375365">
+        <failure type="PHPUnit_Framework_AssertionFailedError">TestPreviewResult::testMyTestCase
+Failed asserting that &lt;boolean:false&gt; is true.
+Failed asserting that &lt;boolean:false&gt; is true.
+Failed asserting that &lt;boolean:false&gt; is true.
+Failed asserting that &lt;boolean:false&gt; is true.
+Failed asserting that &lt;boolean:false&gt; is true.
+Failed asserting that &lt;boolean:false&gt; is true.
+Failed asserting that &lt;boolean:false&gt; is true.
+Failed asserting that &lt;boolean:false&gt; is true.
+Failed asserting that &lt;boolean:false&gt; is true.
+Failed asserting that &lt;boolean:false&gt; is true.
+Failed asserting that &lt;boolean:false&gt; is true.
+Failed asserting that &lt;boolean:false&gt; is true.
+Failed asserting that &lt;boolean:false&gt; is true.
+Failed asserting that &lt;boolean:false&gt; is true.
+Failed asserting that &lt;boolean:false&gt; is true.
+Failed asserting that &lt;boolean:false&gt; is true.
+
+C:\DEV\workspace\HaloSMWExtension\tests\tests_halo\run-test.php:5
+</failure>
+      </testcase>
+    </testsuite>
+  </testsuite>
+</testsuites>
