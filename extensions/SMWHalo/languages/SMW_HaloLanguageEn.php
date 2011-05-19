@@ -406,7 +406,9 @@ clicking the big arrows between the columns.',
 	
 	// SMWHaloAdmin
 	'smwhaloadmin' => 'SMWHalo Administration',
-	'smw_haloadmin_description' => 'This page initializes the database for the SMWHalo extension. Press Initialize.',
+	'smw_haloadmin_databaseinit' => 'Database initialization',
+	'smw_haloadmin_description' => 'This special helps you during installation and upgrade of SMWHalo.', 
+	'smw_haloadmin_databaseinit_description' => 'The below function ensures that your database is set up properly. Pressing "Initialize" will upgrade the database schema and install some required wiki pages for the use of semantic data. Alternatively you can use the maintenance script SMW_setup.php which is located in the SMWHalo maintenance folder.',
 	'smw_haloadmin_ok' => 'SMWHalo extension is correctly installed.',
 	
 	// Derived facts

@@ -395,7 +395,9 @@ protected $smwUserMessages = array(
 
 	// SMWHaloAdmin
 	'smwhaloadmin' => 'SMWHalo Administration',
-	'smw_haloadmin_description' => 'Diese Seite initialisiert die SMWHalo-Extension. Drücke Sie Initialize.',
+    'smw_haloadmin_databaseinit' => 'Databank-Initialisierung',
+	'smw_haloadmin_description' => 'Diese Spezialseite unterstützt Sie während der Installation und Aktualisierung von SMWHalo.',
+    'smw_haloadmin_databaseinit_description' => 'Die folgende Funktion gewährleistet dass die Datenbank korrekt eingerichtet ist. Klicken Sie "Initialisieren" um das Datenbankschema zu aktualisieren und um benötigte Wiki-Seiten für die Metadaten-Nutzung zu erstellen.   Alternativ können Sie auch das Wartungsskript SMW_setup.php ausführen, dieses finden Sie im Ordner SMWHalo maintenance. ',
     'smw_haloadmin_ok' => 'Die SMWHalo-Extension ist korrekt eingerichtet.',
 	
     'smw_ts_notconnected' => 'TSC nicht erreichbar. Prüfe Server unter: $1',

@@ -30,8 +30,12 @@ class SMWHaloAdmin extends SpecialPage {
 		global $wgRequest, $wgOut, $smwgMessageBroker, $smwgWebserviceEndpoint, $wgUser, $smwgEnableObjectLogicRules;
 		$wgOut->setPageTitle(wfMsg('smwhaloadmin'));
 		$adminPage = Title::newFromText("SMWHaloAdmin", NS_SPECIAL);
-		$html = wfMsg('smw_haloadmin_description');
-
+		
+		$html = "<h1>".wfMsg('smwhaloadmin')."</h1>";
+		$html .= wfMsg('smw_haloadmin_description');
+        $html .= "<h2>".wfMsg('smw_haloadmin_databaseinit')."</h2>";
+        $html .= wfMsg('smw_haloadmin_databaseinit_description');
+        
 		if ($wgRequest->getVal('init') != NULL) {
 			$wgOut->disable(); // raw output
 			ob_start();
@@ -54,7 +58,7 @@ class SMWHaloAdmin extends SpecialPage {
 		$messages= array();
 		if (smwfGetSemanticStore()->isInitialized($messages)) {
 			wfMsg('smw_haloadmin_alreadyinitialized');
-			$html .= "<br><br><form><input name=\"init\" type=\"submit\" value=\"".wfMsg('smw_tsa_reinitialize')."\"/><input name=\"title\" type=\"hidden\" value=\"".$adminPage->getPrefixedDBkey()."\"/></form>";
+			$html .= "<form><input name=\"init\" type=\"submit\" value=\"".wfMsg('smw_tsa_reinitialize')."\"/><input name=\"title\" type=\"hidden\" value=\"".$adminPage->getPrefixedDBkey()."\"/></form>";
 			$html .= "<h2>".wfMsg('smw_tsa_status')."</h2>";
 			$html .= wfMsg('smw_haloadmin_ok');
 		}else {
