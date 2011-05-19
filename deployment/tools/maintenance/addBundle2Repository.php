@@ -73,11 +73,11 @@ for( $arg = reset( $argv ); $arg !== false; $arg = next( $argv ) ) {
 		$mediawiki = true;
 		continue;
 	}
-	
-    if ($arg == '--contains') {
-        $fileNamecontains = next($argv);
-        continue;
-    }
+
+	if ($arg == '--contains') {
+		$fileNamecontains = next($argv);
+		continue;
+	}
 }
 
 if (!isset($repositoryDir) || !isset($bundlePath) || !isset($repositoryURL)) {
@@ -138,11 +138,11 @@ foreach($descriptors as $tuple) {
 	echo "\n..done.";
 
 	// 2. Add to repository.xml
-    echo "\nAdd to repository: ".$dd->getID();
-	$newExt = createRepositoryEntry($repoDoc, $dd, $repositoryURL);
-	$extensionsNode->appendChild($newExt);
+	echo "\nAdd to repository: ".$dd->getID();
+	list($newExt, $extAlreadyExists) = createRepositoryEntry($repoDoc, $dd, $repositoryURL);
+	if (!$extAlreadyExists) $extensionsNode->appendChild($newExt);
 	echo "..done.";
-	 
+
 	// 3. copy binary package
 	$targetPackageFile = $repositoryDir."/bin/$id-".Tools::addSeparators($dd->getVersion(), $dd->getPatchlevel()).".zip";
 	echo "\nCopy package $id to $targetPackageFile";
@@ -182,7 +182,7 @@ if ($mediawiki) {
 	
 
 ENDS;
-    $id = 'mw';
+	$id = 'mw';
 	Tools::mkpath($repositoryDir."/extensions/$id");
 	$handle = fopen($repositoryDir."/extensions/$id/deploy-$version.xml", "w");
 	fwrite($handle, $xml);
@@ -204,16 +204,16 @@ ENDS;
 		}
 		if ($res == 0) print "\n\tCreated link: ".$repositoryDir."/extensions/".$id.'/deploy.xml';
 	}
-	
+
 	$dd = new DeployDescriptor($xml);
-	
+
 	echo "\nAdd to repository: ".$id;
-    $newExt = createRepositoryEntry($repoDoc, $dd, $repositoryURL);
-    $extensionsNode->appendChild($newExt);
-    echo "..done.";
-    
-    // assume binary package exists
-    
+	list($newExt, $extAlreadyExists) = createRepositoryEntry($repoDoc, $dd, $repositoryURL);
+	if (!$extAlreadyExists) $extensionsNode->appendChild($newExt);
+	echo "..done.";
+
+	// assume binary package exists
+
 }
 
 // save repository.xml
@@ -270,8 +270,8 @@ function extractDeployDescriptors($bundlePath, $fileNamecontains = false) {
 				$__file=$bundlePath."/".$file;
 				$dd = Tools::unzipDeployDescriptor($__file, $tmpFolder);
 				if (is_null($dd)) {
-					print "\nWARNING: $__file does not contain a deploy descriptor. It is skipped."; 
-				    continue;	
+					print "\nWARNING: $__file does not contain a deploy descriptor. It is skipped.";
+					continue;
 				}
 				$result[] = array($dd, $__file);
 			}
@@ -284,40 +284,60 @@ function extractDeployDescriptors($bundlePath, $fileNamecontains = false) {
 }
 
 function createRepositoryEntry($repoDoc, $dd, $repositoryURL) {
-	$newExt = $repoDoc->createElement("extension");
-    $idAttr = $repoDoc->createAttribute("id");
-    $idAttr->value = $dd->getID();
-    $newExt->appendChild($idAttr);
+	
+	// find existing extension
+	$nodeList = $repoDoc->getElementsByTagName("extension");
+	$i=0;
+	$newExt = NULL;
+	
+	while($i < $nodeList->length) {
+		$ext = $nodeList->item($i);
+		$id = $ext->getAttribute("id");
+		if ($id == $dd->getID()) {
+			$newExt = $ext;
+		}
+		$i++;
+	}
+	
+    $extAlreadyExists = true;
+	if (is_null($newExt)) {
+		// create new extension node
+		$extAlreadyExists = false;
+		$newExt = $repoDoc->createElement("extension");
+		$idAttr = $repoDoc->createAttribute("id");
+		$idAttr->value = $dd->getID();
+		$newExt->appendChild($idAttr);
+	}
 
-    $newVer = $repoDoc->createElement("version");
-    $newExt->appendChild($newVer);
+	$newVer = $repoDoc->createElement("version");
+	$newExt->appendChild($newVer);
 
-    $urlAttr = $repoDoc->createAttribute("url");
-    $urlAttr->value = $repositoryURL."/bin/".$dd->getID()."-".Tools::addSeparators($dd->getVersion(), $dd->getPatchlevel()).".zip";
-    $newVer->appendChild($urlAttr);
+	$urlAttr = $repoDoc->createAttribute("url");
+	$urlAttr->value = $repositoryURL."/bin/".$dd->getID()."-".Tools::addSeparators($dd->getVersion(), $dd->getPatchlevel()).".zip";
+	$newVer->appendChild($urlAttr);
 
-    $versionAttr = $repoDoc->createAttribute("ver");
-    $versionAttr->value = $dd->getVersion();
-    $newVer->appendChild($versionAttr);
+	$versionAttr = $repoDoc->createAttribute("ver");
+	$versionAttr->value = $dd->getVersion();
+	$newVer->appendChild($versionAttr);
 
 
-    $patchlevelAttr = $repoDoc->createAttribute("patchlevel");
-    $patchlevelAttr->value = $dd->getPatchlevel();
-    $newVer->appendChild($patchlevelAttr);
+	$patchlevelAttr = $repoDoc->createAttribute("patchlevel");
+	$patchlevelAttr->value = $dd->getPatchlevel();
+	$newVer->appendChild($patchlevelAttr);
 
-    $maintainerAttr = $repoDoc->createAttribute("maintainer");
-    $maintainerAttr->value = $dd->getMaintainer();
-    $newVer->appendChild($maintainerAttr);
+	$maintainerAttr = $repoDoc->createAttribute("maintainer");
+	$maintainerAttr->value = $dd->getMaintainer();
+	$newVer->appendChild($maintainerAttr);
 
-    $descriptionAttr = $repoDoc->createAttribute("description");
-    $descriptionAttr->value = $dd->getDescription();
-    $newVer->appendChild($descriptionAttr);
+	$descriptionAttr = $repoDoc->createAttribute("description");
+	$descriptionAttr->value = $dd->getDescription();
+	$newVer->appendChild($descriptionAttr);
 
-    $helpurlAttr = $repoDoc->createAttribute("helpurl");
-    $helpurlAttr->value = $dd->getHelpURL();
-    $newVer->appendChild($helpurlAttr);
-    
-    return $newExt;
+	$helpurlAttr = $repoDoc->createAttribute("helpurl");
+	$helpurlAttr->value = $dd->getHelpURL();
+	$newVer->appendChild($helpurlAttr);
+
+	return array($newExt, $extAlreadyExists);
 }
 
 
