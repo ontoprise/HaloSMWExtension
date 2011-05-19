@@ -175,3 +175,12 @@ function createEntry($dd, $dd_file, $outputDir, $latest, $createSymlinks) {
     }
 	
 }
+
+function addSeparators($version, $sep = ".") {
+    $sep_version = "";
+    for($i = 0; $i < strlen($version); $i++) {
+        if ($i>0) $sep_version .= $sep;
+        $sep_version .= $version[$i];
+    }
+    return $sep_version;
+}
