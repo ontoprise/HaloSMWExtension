@@ -11,6 +11,7 @@
 
 require_once 'testcases/TestSubquery.php';
 require_once 'testcases/TestPreviewResult_short.php';
+require_once 'testcases/TestFormatQueryPreview.php';
 
 class SeleniumTests
 {
@@ -20,6 +21,7 @@ class SeleniumTests
         $suite = new PHPUnit_Framework_TestSuite('SMWHaloSeleniumTestSuite');
 //        $suite->addTestSuite("TestSubquery");
         $suite->addTestSuite("TestPreviewResult_short");
+        $suite->addTestSuite("TestFormatQueryPreview");
         return $suite;
     }
 }

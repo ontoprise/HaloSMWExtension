@@ -22,14 +22,12 @@ class TestImportPages extends PHPUnit_Extensions_SeleniumTestCase
 public function testImport()
   {
   	$this->login();
-  	
     $this->open("/mediawiki/index.php/Special:Import");
     $pathToImportFile = dirname(dirname(__FILE__)) . DIRECTORY_SEPARATOR . "pages" . DIRECTORY_SEPARATOR . "pages.xml";
     echo "Importing file: " . $pathToImportFile;
     $this->assertTrue(file_exists($pathToImportFile), "Import file doesn't exist");
   	$this->type("xmlimport", $pathToImportFile);
-    $this->click("//input[@value='Upload file']");
-    $this->waitForPageToLoad("30000");
+    $this->clickAndWait("//input[@value='Upload file']");
     $this->assertTrue($this->isTextPresent("Importing pages..."), "Expected text is not present. Import failed");
     $this->assertTrue($this->isTextPresent("Al Gore 1 revision"), "Expected text is not present. Import failed");
     $this->assertTrue($this->isTextPresent("Fred 1 revision"), "Expected text is not present. Import failed"); 
