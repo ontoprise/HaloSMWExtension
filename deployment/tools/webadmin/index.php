@@ -28,7 +28,24 @@
  *
  *
  */
- 
+
+$rootDir = dirname(__FILE__);
+$rootDir = str_replace("\\", "/", $rootDir);
+$rootDir = realpath($rootDir."/../../");
+
+$mwrootDir = dirname(__FILE__);
+$mwrootDir = str_replace("\\", "/", $mwrootDir);
+$mwrootDir = realpath($mwrootDir."/../../../");
+
+require_once('includes/DF_StatusTab.php');
+require_once($mwrootDir.'/deployment/io/DF_Log.php');
+require_once($mwrootDir.'/deployment/io/DF_PrintoutStream.php');
+
+$dfgOut = DFPrintoutStream::getInstance(DF_OUTPUT_FORMAT_HTML);
+
+$dfgStatusTab = new DFStatusTab();
+$statusTabHtml = $dfgStatusTab->getHTML();
+
 $html = <<<ENDS
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" dir="ltr" lang="en-gb" xml:lang="en-gb">
@@ -46,19 +63,21 @@ $html = <<<ENDS
 </head>
 ENDS
 ;
-$html .= "<body>This is the web administration tool of the deployment framework.";
+$html .= "<body><img src=\"skins/logo.png\" /><h1>This is the web administration tool of the deployment framework.</h1>";
 $html .= <<<ENDS
 <div id="tabs">
 
 			<ul>
-				<li><a href="#tabs-1">First</a></li>
-				<li><a href="#tabs-2">Second</a></li>
-				<li><a href="#tabs-3">Third</a></li>
+				<li><a href="#tabs-1">Status</a></li>
+				<li><a href="#tabs-2">Search</a></li>
+				<li><a href="#tabs-3">Content bundles</a></li>
+				<li><a href="#tabs-4">Maintenance</a></li>
 			</ul>
-			<div id="tabs-1">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</div>
+			<div id="tabs-1">$statusTabHtml</div>
 			<div id="tabs-2">Phasellus mattis tincidunt nibh. Cras orci urna, blandit id, pretium vel, aliquet ornare, felis. Maecenas scelerisque sem non nisl. Fusce sed lorem in enim dictum bibendum.</div>
 
 			<div id="tabs-3">Nam dui erat, auctor a, dignissim quis, sollicitudin eu, felis. Pellentesque nisi urna, interdum eget, sagittis et, consequat vestibulum, lacus. Mauris porttitor ullamcorper augue.</div>
+			<div id="tabs-4">Nam dui erat, auctor a, dignissim quis, sollicitudin eu, felis. Pellentesque nisi urna, interdum eget, sagittis et, consequat vestibulum, lacus. Mauris porttitor ullamcorper augue.</div>
 		</div>
 ENDS
 ;
