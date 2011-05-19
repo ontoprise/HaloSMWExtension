@@ -756,7 +756,7 @@ class SMWSemanticStoreSQL extends SMWSemanticStore {
 	/**
 	 * Returns all domain categories for a given property.
 	 */
-	function getDomainCategories($propertyTitle, $reqfilter) {
+	function getDomainCategories($propertyTitle, $reqfilter = NULL) {
 		$db =& wfGetDB( DB_SLAVE );
 		$page = $db->tableName('page');
 		$domainRangeRelation = smwfGetSemanticStore()->domainRangeHintRelation;

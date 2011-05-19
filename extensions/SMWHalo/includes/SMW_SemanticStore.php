@@ -246,7 +246,7 @@
 	/**
  	  * Returns all domain categories for a given property.
  	  */
-	public abstract function getDomainCategories($propertyTitle, $reqfilter);
+	public abstract function getDomainCategories($propertyTitle, $reqfilter = NULL);
 	/**
 	 * Returns all direct subproperties of $property.
 	 * 
