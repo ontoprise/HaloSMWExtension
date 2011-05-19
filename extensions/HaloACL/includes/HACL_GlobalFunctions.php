@@ -61,7 +61,9 @@ function enableHaloACL() {
     $wgAutoloadClasses['HACLEvaluator'] = $haclgIP . '/includes/HACL_Evaluator.php';
     $wgAutoloadClasses['HaloACLSpecial'] = $haclgIP . '/specials/HACL_ACLSpecial.php';
     $wgAutoloadClasses['HACLStorage'] = $haclgIP . '/includes/HACL_Storage.php';
-    $wgAutoloadClasses['HACLSMWStore'] = $haclgIP . '/includes/HACL_SMWStore.php';
+    if (defined('SMW_VERSION')) {
+        $wgAutoloadClasses['HACLSMWStore'] = $haclgIP . '/includes/HACL_SMWStore.php';
+    }
     $wgAutoloadClasses['HACLGroup'] = $haclgIP . '/includes/HACL_Group.php';
     $wgAutoloadClasses['HACLDynamicMemberCache'] = $haclgIP . '/includes/HACL_DynamicMemberCache.php';
     $wgAutoloadClasses['HACLSecurityDescriptor'] = $haclgIP . '/includes/HACL_SecurityDescriptor.php';
