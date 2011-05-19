@@ -90,7 +90,7 @@
 		<exec executable="php">
 			<arg value="../../../buildtools/replaceVersionHint.php" />
 			<arg value="../deploy.xml" />
-			<arg value="../includes/SF_GlobalFunctions.php" />
+			<arg value="../SemanticForms.php" />
 			<arg value="${env.BUILD_NUMBER}" />
 		</exec>
 	</target>
