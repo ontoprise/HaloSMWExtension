@@ -78,16 +78,8 @@
             <arg value="bin/collaboration-%s_including_dependencies.zip" />
 		</exec>
 	</target>
-	<target name="deployscripts">
-		<echo>Pack javascripts for Collaboration</echo>
-		<java fork="true" jar="../../../buildtools/closure/compiler.jar" failonerror="true">
-			<arg value="--js=../../Collaboration/scripts/overlay.js" />
-			<arg value="--js=../../Collaboration/scripts/Comment/CE_Comment.js" />
-			<arg value="--js_output_file=../../SMWHalo/scripts/deployCollaboration.js" />
-		</java>
-	</target>
 
-	<target name="versionhint">
+	<target name="versionhint" depends="deployscripts">
 		<property environment="env" />
 		<exec executable="php">
 			<arg value="../../../buildtools/replaceVersionHint.php" />
@@ -95,6 +87,15 @@
 			<arg value="../includes/CE_Initialize.php" />
 			<arg value="${env.BUILD_NUMBER}" />
 		</exec>
+	</target>
+
+	<target name="deployscripts">
+		<echo>Pack javascripts for Collaboration</echo>
+		<java fork="true" jar="../../../buildtools/closure/compiler.jar" failonerror="true">
+			<arg value="--js=../../Collaboration/scripts/overlay.js" />
+			<arg value="--js=../../Collaboration/scripts/Comment/CE_Comment.js" />
+			<arg value="--js_output_file=../../SMWHalo/scripts/deployCollaboration.js" />
+		</java>
 	</target>
 
 </project>
