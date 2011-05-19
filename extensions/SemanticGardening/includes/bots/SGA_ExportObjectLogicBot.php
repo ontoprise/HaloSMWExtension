@@ -288,7 +288,7 @@ class ExportObjectLogicBot extends GardeningBot {
 
 		$ontologyURI = DFBundleTools::getOntologyURI($bundleID);
 		if (is_null($ontologyURI) || empty($ontologyURI)) {
-			$ontologyURI = $smwgTripleStoreGraph . "/ontology/$bundleID";
+			$ontologyURI = trim($smwgTripleStoreGraph . "/ontology/$bundleID");
 		}
 
 		global $dfgLang;
@@ -493,7 +493,7 @@ ENDS;
 			echo "\nCreate temporary file: $tempdir/$f...";
 			$ontologyURI = DFBundleTools::getOntologyURI($bundleName);
 			if (is_null($ontologyURI) || empty($ontologyURI)) {
-				$ontologyURI = $smwgTripleStoreGraph . "/ontology/$bundleName";
+				$ontologyURI = trim($smwgTripleStoreGraph . "/ontology/$bundleName");
 			}
 
 			$header = $this->createOBLHeader($ontologyURI, $bundleName);
