@@ -747,12 +747,12 @@ var TF = Class.create({
 		
 		if(jQuery('img', column).attr('src') == sortImgPath +'sort_none.gif'
 					|| jQuery('img', column).attr('src') == sortImgPath +'sort_up.gif'){
-			jQuery('th img', table).attr('src', sortImgPath +'sort_none.gif');
-			jQuery('img', column).attr('src', sortImgPath +'sort_down.gif');
+			jQuery('th .sortarrow img', table).attr('src', sortImgPath +'sort_none.gif');
+			jQuery('.sortarrow img', column).attr('src', sortImgPath +'sort_down.gif');
 			tf.currentSortOrder = 1;
 		} else {
-			jQuery('th img', table).attr('src', sortImgPath +'sort_none.gif');
-			jQuery('img', column).attr('src', sortImgPath +'sort_up.gif');
+			jQuery('th .sortarrow img', table).attr('src', sortImgPath +'sort_none.gif');
+			jQuery('.sortarrow img', column).attr('src', sortImgPath +'sort_up.gif');
 			tf.currentSortOrder = -1;
 		}
 		
