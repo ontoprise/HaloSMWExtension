@@ -6,7 +6,7 @@
  */
 if ( !defined( 'MEDIAWIKI' ) ) die;
 
-define('SMW_CONNECTOR_VERSION', '0.5');
+define('SMW_CONNECTOR_VERSION', '0.5.0_0 [B${env.BUILD_NUMBER}]');
 
 $smwgConnectorIP = $IP . '/extensions/SemanticConnector';
 $smwgConnectorScriptPath = $wgScriptPath . '/extensions/SemanticConnector';
