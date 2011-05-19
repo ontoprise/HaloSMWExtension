@@ -158,7 +158,7 @@ class ExportObjectLogicBot extends GardeningBot {
 				$transitive = false;
 				$symetrical = false;
 				$categories = $store->getCategoriesForInstance($title);
-				foreach($category as $c) {
+				foreach($categories as $c) {
 					if ($c->equals($store->transitiveCat)) {
 						$transitive = true;
 					}
