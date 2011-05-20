@@ -109,10 +109,10 @@ class PackageRepository {
 			} catch(HttpError $e) {
 				$dfgOut->outputln($e->getMsg(), DF_PRINTSTREAM_TYPE_ERROR);
 				$dfgOut->outputln();
-			
+					
 			} catch(Exception $e) {
 				$dfgOut->outputln($e->getMessage(), DF_PRINTSTREAM_TYPE_ERROR);
-                $dfgOut->outputln();
+				$dfgOut->outputln();
 			}
 
 		}
@@ -292,6 +292,35 @@ class PackageRepository {
 
 		return $sortedResults;
 	}
+
+	public static function searchAllPackages($searchValue) {
+		$results = array();
+		$searchValues = explode(" ", trim($searchValue));
+		foreach(self::getPackageRepository() as $repo_url => $repo) {
+			$packages = $repo->xpath("/root/extensions/extension");
+			foreach($packages as $p) {
+				$id = (string) $p->attributes()->id;
+
+				$versions = $p->xpath("version");
+				foreach($versions as $v) {
+					$description = (string) $v->attributes()->description;
+					$found = true;
+					foreach($searchValues as $sv) {
+						if (stripos($id, $sv) === false && stripos($description, $sv) === false ) {
+							$found = false;
+							break;
+						}
+					}
+					if ($found) {
+						$results[$id] = $description;
+					}
+				}
+
+			}
+		}
+
+		return $results;
+	}
 	/**
 	 * Returns latest available version of a package
 	 *
@@ -406,7 +435,7 @@ class PackageRepository {
 		}
 		$handle = @opendir($ext_dir);
 		if (!$handle) {
-			
+
 			return;
 		}
 
@@ -463,7 +492,7 @@ class PackageRepository {
 		}
 		$handle = @opendir($ext_dir);
 		if (!$handle) {
-			
+
 			return;
 		}
 
