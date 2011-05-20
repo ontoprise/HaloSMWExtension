@@ -222,7 +222,7 @@ for( $arg = reset( $args ); $arg !== false; $arg = next( $args ) ) {
 }
 
 if ($dfgForce && $dfgNoConflict) {
-	$dfgOut->outputln("\nWARNING: -f and --noconflict are incompatible options. --noconflict is IGNORED.", DF_PRINTSTREAM_TYPE_WARN);
+	$dfgOut->outputln("\n-f and --noconflict are incompatible options. --noconflict is IGNORED.", DF_PRINTSTREAM_TYPE_WARN);
 }
 
 $logger = Logger::getInstance();
