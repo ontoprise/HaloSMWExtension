@@ -1,0 +1,14 @@
+@CHARSET "ISO-8859-1";
+
+.df_extension_id {
+	width: 30%;
+}
+
+.df_description {
+    width: 50%;
+}
+
+.df_actions {
+    width: 20%;
+    text-align: center;
+}

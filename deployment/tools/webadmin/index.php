@@ -38,28 +38,114 @@ $mwrootDir = str_replace("\\", "/", $mwrootDir);
 $mwrootDir = realpath($mwrootDir."/../../../");
 
 require_once('includes/DF_StatusTab.php');
+require_once('includes/DF_SearchTab.php');
+require_once('includes/DF_CommandInterface.php');
+require_once($mwrootDir.'/deployment/settings.php');
 require_once($mwrootDir.'/deployment/io/DF_Log.php');
 require_once($mwrootDir.'/deployment/io/DF_PrintoutStream.php');
 
 $dfgOut = DFPrintoutStream::getInstance(DF_OUTPUT_FORMAT_HTML);
+$wgLanguageCode="en";
+dffInitLanguage();
+$dfgNoAsk=true;
+
+// set server
+$wgServer = '';
+
+if( isset( $_SERVER['SERVER_NAME'] ) ) {
+    $wgServerName = $_SERVER['SERVER_NAME'];
+} elseif( isset( $_SERVER['HOSTNAME'] ) ) {
+    $wgServerName = $_SERVER['HOSTNAME'];
+} elseif( isset( $_SERVER['HTTP_HOST'] ) ) {
+    $wgServerName = $_SERVER['HTTP_HOST'];
+} elseif( isset( $_SERVER['SERVER_ADDR'] ) ) {
+    $wgServerName = $_SERVER['SERVER_ADDR'];
+} else {
+    $wgServerName = 'localhost';
+}
+
+# check if server use https:
+$wgProto = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') ? 'https' : 'http';
+
+$wgServer = $wgProto.'://' . $wgServerName;
+# If the port is a non-standard one, add it to the URL
+if(    isset( $_SERVER['SERVER_PORT'] )
+    && !strpos( $wgServerName, ':' )
+    && (    ( $wgProto == 'http' && $_SERVER['SERVER_PORT'] != 80 )
+     || ( $wgProto == 'https' && $_SERVER['SERVER_PORT'] != 443 ) ) ) {
+
+    $wgServer .= ":" . $_SERVER['SERVER_PORT'];
+}
+
+$wgScriptPath=isset(DF_Config::$scriptPath) ? DF_Config::$scriptPath : "/mediawiki";
+
+// check for ajax call
+$mode = "";
+if ( ! empty( $_GET["rs"] ) ) {
+	$mode = "get";
+}
+
+if ( !empty( $_POST["rs"] ) ) {
+	$mode = "post";
+}
+
+switch( $mode ) {
+
+	case 'get':
+		$func_name = isset( $_GET["rs"] ) ? $_GET["rs"] : '';
+		if ( ! empty( $_GET["rsargs"] ) ) {
+			$args = $_GET["rsargs"];
+		} else {
+			$args = array();
+		}
+		break;
+
+	case 'post':
+		$func_name = isset( $_POST["rs"] ) ? $_POST["rs"] : '';
+		if ( ! empty( $_POST["rsargs"] ) ) {
+			$args = $_POST["rsargs"];
+		} else {
+			$args = array();
+		}
+		break;
+}
 
 $dfgStatusTab = new DFStatusTab();
 $statusTabHtml = $dfgStatusTab->getHTML();
+
+$dfgSearchTab = new DFSearchTab();
+$searchTabHtml = $dfgSearchTab->getHTML();
+
+// for ajax calls
+if (isset($func_name)) {
+	$dfgCommandInterface = new DFCommandInterface();
+	
+	$dfgCommandInterface->dispatch($func_name, $args);
+	
+	die();
+}
+
 
 $html = <<<ENDS
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" dir="ltr" lang="en-gb" xml:lang="en-gb">
 <head>
-<link type="text/css" href="skins/ui-lightness/jquery-ui-1.8.13.custom.css" rel="stylesheet" />	
+<link type="text/css" href="skins/ui-lightness/jquery-ui-1.8.13.custom.css" rel="stylesheet" />
+<link type="text/css" href="skins/webadmin.css" rel="stylesheet" />	
 <script type="text/javascript" src="scripts/jquery-1.6.1.min.js"></script>
 <script type="text/javascript" src="scripts/jquery-ui-1.8.13.custom.min.js"></script>
 <script type="text/javascript">
+
+            wgServer="$wgServer";
+            wgScriptPath="$wgScriptPath";
+            
 			$(function(){
 		
 				// Tabs
 				$('#tabs').tabs();
 			});
 </script>
+<script type="text/javascript" src="scripts/webadmin.js"></script>
 </head>
 ENDS
 ;
@@ -74,7 +160,7 @@ $html .= <<<ENDS
 				<li><a href="#tabs-4">Maintenance</a></li>
 			</ul>
 			<div id="tabs-1">$statusTabHtml</div>
-			<div id="tabs-2">Phasellus mattis tincidunt nibh. Cras orci urna, blandit id, pretium vel, aliquet ornare, felis. Maecenas scelerisque sem non nisl. Fusce sed lorem in enim dictum bibendum.</div>
+			<div id="tabs-2">$searchTabHtml</div>
 
 			<div id="tabs-3">Nam dui erat, auctor a, dignissim quis, sollicitudin eu, felis. Pellentesque nisi urna, interdum eget, sagittis et, consequat vestibulum, lacus. Mauris porttitor ullamcorper augue.</div>
 			<div id="tabs-4">Nam dui erat, auctor a, dignissim quis, sollicitudin eu, felis. Pellentesque nisi urna, interdum eget, sagittis et, consequat vestibulum, lacus. Mauris porttitor ullamcorper augue.</div>
@@ -86,3 +172,19 @@ $html .= "</body>";
 echo $html;
 
 die();
+
+
+/**
+ * Initializes the language object
+ *
+ * Note: Requires wiki context
+ */
+function dffInitLanguage() {
+    global $wgLanguageCode, $dfgLang, $mwrootDir;
+    $langClass = "DF_Language_$wgLanguageCode";
+    if (!file_exists($mwrootDir."/deployment/languages/$langClass.php")) {
+        $langClass = "DF_Language_En";
+    }
+    require_once($mwrootDir."/deployment/languages/$langClass.php");
+    $dfgLang = new $langClass();
+}

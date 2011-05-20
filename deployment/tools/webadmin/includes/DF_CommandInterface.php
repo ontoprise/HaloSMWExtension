@@ -19,54 +19,52 @@
  * @file
  * @ingroup WebAdmin
  *
- * Status tab
+ * Command interface
  *
  * @author: Kai Kühn / ontoprise / 2011
  *
  */
-
 require_once ( $mwrootDir.'/deployment/tools/smwadmin/DF_PackageRepository.php' );
+require_once($mwrootDir.'/deployment/tools/smwadmin/DF_Tools.php');
+require_once($mwrootDir.'/deployment/tools/smwadmin/DF_Installer.php');
+require_once($mwrootDir.'/deployment/tools/smwadmin/DF_UserInput.php');
 
-class DFStatusTab {
-
+class DFCommandInterface {
 	/**
-	 * Status tab
+	 *
 	 *
 	 */
 	public function __construct() {
 
 	}
 
-	public function getHTML() {
-		global $mwrootDir;
-		$html = "";
-		$localPackages = PackageRepository::getLocalPackages($mwrootDir);
-		$html .= "<table>";
-		$html .= "<th>";
-		$html .= "Extension";
-		$html .= "</th>";
-		$html .= "<th>";
-		$html .= "Description";
-		$html .= "</th>";
-		$html .= "<th>";
-		$html .= "Action";
-		$html .= "</th>";
-		foreach($localPackages as $id => $p) {
-			$html .= "<tr>";
-			$html .= "<td class=\"df_extension_id\">";
-			$html .= $id;
-			$html .= "</td>";
-			$html .= "<td class=\"df_description\">";
-			$html .= $p->getDescription();
-			$html .= "</td>";
-			$html .= "<td class=\"df_actions\">";
-		
-			$html .= "</td>";
-			$html .= "</tr>";
+	public function dispatch($command, $args) {
+		switch($command) {
+			case "search":
+				return $this->search($args);
+			case "install":
+				return $this->install($args);
+			default: return "unsupported command";
 		}
-		$html .= "</table>";
-		return $html;
 	}
 
+	public function install($args) {
+		global $mwrootDir;
+		$extid = reset($args);
+		$installer = Installer::getInstance($mwrootDir);
+		$installer->installOrUpdate($extid);
+		
+	}
 
+	public function search($args) {
+		global $mwrootDir, $dfgOut, $dfgSearchTab;
+		$searchValue = reset($args);
+
+		$results = array();
+		$packages = PackageRepository::searchAllPackages($searchValue);
+		$localPackages = PackageRepository::getLocalPackages($mwrootDir);
+		$dfgOut->outputln($dfgSearchTab->searializeSearchResults($packages, $localPackages));
+	}
+
+	
 }

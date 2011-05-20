@@ -16,6 +16,11 @@
 */
 
 class DF_Config  {
+	
+	// This is required for the webadmin tool.
+	public static $scriptPath = "/mediawiki";
+	
+	
 	public static $settings = array(
 	'df_proxy' => '', //Proxy server e.g. "proxy.example.com:8080"
 	);
