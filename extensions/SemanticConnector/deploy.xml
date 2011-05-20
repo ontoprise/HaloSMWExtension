@@ -34,12 +34,16 @@
 				from="191" to="191" />
 			<patch file="patch-SF2.txt" ext="semanticforms"
 				from="208" to="208" />
+			<patch file="patch-SF2.1.2.txt" ext="semanticforms"
+				from="212" to="212" />
         </new>
         <uninstall>
 			<patch file="patch-SF1.9.1.txt" ext="semanticforms"
 				from="191" to="191" />
 			<patch file="patch-SF2.txt" ext="semanticforms"
 				from="208" to="208" />
+			<patch file="patch-SF2.1.2.txt" ext="semanticforms"
+				from="212" to="212" />
         </uninstall>
     </configs>
 </deploydescriptor>
