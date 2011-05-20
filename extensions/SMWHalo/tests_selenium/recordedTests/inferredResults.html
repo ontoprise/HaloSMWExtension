@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head profile="http://selenium-ide.openqa.org/profiles/test-case">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<link rel="selenium.base" href="http://localhost/" />
+<title>inferredResults</title>
+</head>
+<body>
+<table cellpadding="1" cellspacing="1" border="1">
+<thead>
+<tr><td rowspan="1" colspan="3">inferredResults</td></tr>
+</thead><tbody>
+<tr>
+	<td>open</td>
+	<td>/mediawiki/index.php/Special:QueryInterface</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>qiDefTab3</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>fullAskText</td>
+	<td>{{#sparql: [[Itemnumber::+]]<br />| ?Itemnumber<br />| format=csv<br />| headers=show<br />| link=all<br />| order=ascending<br />| merge=false<br />|}}</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//button[@onclick='qihelper.loadFromSource(true)']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>link=CSV</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>link=CSV</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>qiDefTab1</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>link=Itemnumber</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>qidelete</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>qiDefTab3</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>fullAskText</td>
+	<td>{{#sparql: [[Itemnumber::+]]<br />| ?Itemnumber<br />| format=broadtable<br />| headers=show<br />| link=all<br />| order=ascending<br />| merge=false<br />|}}</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//button[@onclick='qihelper.loadFromSource(true)']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//table[@id=&quot;querytable0&quot;][@width=&quot;100%&quot;]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>//table[@id=&quot;querytable0&quot;][@width=&quot;100%&quot;]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyTextPresent</td>
+	<td>Firstitem</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyTextPresent</td>
+	<td>2</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyTextPresent</td>
+	<td>Seconditem</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyTextPresent</td>
+	<td>3</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>qiDefTab1</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>link=Itemnumber</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//input[@name='input_r0' and @value='-2']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>select</td>
+	<td>//tr[@id='row_r1']/td[2]/select</td>
+	<td>label=greater (&gt;=)</td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>input_r1</td>
+	<td>3</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//button[@onclick='qihelper.add()']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>qiDefTab3</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyValue</td>
+	<td>fullAskText</td>
+	<td>{{#ask: [[Itemnumber::&gt;3]]<br />| ?Itemnumber <br />| format=broadtable<br />| headers=show<br />| link=all<br />| order=ascending<br />| merge=false<br />|}}</td>
+</tr>
+<tr>
+	<td>verifyTextPresent</td>
+	<td>Seconditem</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyTextPresent</td>
+	<td>3</td>
+	<td></td>
+</tr>
+
+</tbody></table>
+</body>
+</html>

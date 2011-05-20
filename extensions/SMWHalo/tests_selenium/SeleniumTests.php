@@ -9,9 +9,12 @@
  * @author Kai K�hn
  */
 
-require_once 'testcases/TestSubquery.php';
+//require_once 'testcases/TestSubquery.php';
 require_once 'testcases/TestPreviewResult_short.php';
 require_once 'testcases/TestFormatQueryPreview.php';
+require_once 'testcases/TestInferredResults.php';
+require_once 'testcases/TestUnitsInQuery.php';
+require_once 'testcases/TestQuerySourceText.php';
 
 class SeleniumTests
 {
@@ -22,6 +25,9 @@ class SeleniumTests
 //        $suite->addTestSuite("TestSubquery");
         $suite->addTestSuite("TestPreviewResult_short");
         $suite->addTestSuite("TestFormatQueryPreview");
+        $suite->addTestSuite("TestInferredResults");
+        $suite->addTestSuite("TestUnitsInQuery");
+        $suite->addTestSuite("TestQuerySourceText");
         return $suite;
     }
 }

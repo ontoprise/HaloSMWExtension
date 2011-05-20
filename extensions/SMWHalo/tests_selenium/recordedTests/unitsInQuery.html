@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head profile="http://selenium-ide.openqa.org/profiles/test-case">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<link rel="selenium.base" href="http://localhost/" />
+<title>unitsInQuery</title>
+</head>
+<body>
+<table cellpadding="1" cellspacing="1" border="1">
+<thead>
+<tr><td rowspan="1" colspan="3">unitsInQuery</td></tr>
+</thead><tbody>
+<tr>
+	<td>open</td>
+	<td>/mediawiki/index.php/Special:QueryInterface</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>qiDefTab3</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>fullAskText</td>
+	<td>{{#ask: [[Category:Person]]<br />| ?Height #cm <br />| format=table<br />| merge=false<br />|}}</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//button[@onclick='qihelper.loadFromSource(true)']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForTextPresent</td>
+	<td>Al Gore</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyTextPresent</td>
+	<td>Al Gore</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyTextPresent</td>
+	<td>Fred</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyTextPresent</td>
+	<td>Gerald Fox</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyTextPresent</td>
+	<td>182 cm</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyTextPresent</td>
+	<td>Henry Morgan</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyTextPresent</td>
+	<td>175 cm</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyTextPresent</td>
+	<td>John Doe</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>qiDefTab3</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>fullAskText</td>
+	<td>{{#ask: [[Category:Person]]<br />| ?Height #inch <br />| format=table<br />| headers=show<br />| link=all<br />| order=ascending<br />| merge=false<br />|}}</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//button[@onclick='qihelper.loadFromSource(true)']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForTextPresent</td>
+	<td>Al Gore</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyTextPresent</td>
+	<td>Al Gore</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyTextPresent</td>
+	<td>Fred</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyTextPresent</td>
+	<td>Gerald Fox</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyTextPresent</td>
+	<td>71.653 inch</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyTextPresent</td>
+	<td>Henry Morgan</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyTextPresent</td>
+	<td>68.898 inch</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyTextPresent</td>
+	<td>John Doe</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>qiDefTab3</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>fullAskText</td>
+	<td>{{#ask: [[Category:Person]]<br />[[Height::&lt;1.8 m]]<br />| ?Height #cm <br />| format=table<br />| headers=show<br />| link=all<br />| order=ascending<br />| merge=false<br />|}}</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//button[@onclick='qihelper.loadFromSource(true)']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForTextPresent</td>
+	<td>Henry Morgan</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyTextPresent</td>
+	<td>Henry Morgan</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyTextPresent</td>
+	<td>175 cm</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyTextNotPresent</td>
+	<td>Al Gore</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyTextNotPresent</td>
+	<td>Fred</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyTextNotPresent</td>
+	<td>Gerald Fox</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyTextNotPresent</td>
+	<td>John Doe</td>
+	<td></td>
+</tr>
+
+</tbody></table>
+</body>
+</html>
