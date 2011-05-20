@@ -73,14 +73,14 @@ class Rollback {
 	 * @boolean True if no error occured
 	 */
 	public function saveInstallation($name = NULL) {
-        global $dfgOut;
+		global $dfgOut;
 		// make sure to save only once
 		static $savedInstallation = false;
 		if ($savedInstallation) return true;
 
 		if (is_null($name)) {
 			if (!$this->acquireNewRestorePoint($name)) return true;
-		} 
+		}
 
 		$logger = Logger::getInstance();
 		$logger->info("Save installation to ".$this->tmpDir."/$name");
@@ -115,7 +115,7 @@ class Rollback {
 
 		if (is_null($name)) {
 			if (!$this->acquireNewRestorePoint($name)) return true;
-		} 
+		}
 		// make sure to save only once
 		static $savedDataBase = false;
 		if ($savedDataBase) return true;
@@ -164,6 +164,11 @@ class Rollback {
 	 * @return boolean True if a restore point should be created/overwritten.
 	 */
 	protected function acquireNewRestorePoint(& $name) {
+		global $dfgNoAsk;
+		if (isset($dfgNoAsk) && $dfgNoAsk == true) {
+			return false;
+		}
+
 		global $dfgOut;
 		static $calledOnce = false;
 		static $answer;
@@ -228,16 +233,7 @@ class Rollback {
 		return $name;
 	}
 
-	/**
-	 * Asks for confirmation.
-	 *
-	 * Note: REQUIRES user interaction
-	 *
-	 * @param $msg
-	 */
-	protected function askForConfirmation($msg) {
-		return DFUserInput::consoleConfirm($msg);
-	}
+	
 
 	/**
 	 * Restores complete code base of installation including LocalSettings.php
@@ -279,7 +275,13 @@ class Rollback {
 		}
 		$wgDBname = $this->getVariableValue("LocalSettings.php", "wgDBname");
 		if (!file_exists($this->tmpDir."/$name/dump.sql")) return false; // nothing to restore
-		if (!$this->askForConfirmation("Restore database? (y/n) ")) return false;
+		
+		global $dfgNoAsk;
+        if (isset($dfgNoAsk) && $dfgNoAsk == true) {
+           // default answer is yes, restore.
+        } else {
+           if (!DFUserInput::consoleConfirm("Restore database? (y/n) ")) return false;
+        }
 		$dfgOut->outputln("[Restore database...");
 		$logger = Logger::getInstance();
 		$logger->info("Restore database");
