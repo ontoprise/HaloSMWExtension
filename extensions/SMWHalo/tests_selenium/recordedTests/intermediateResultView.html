@@ -13,60 +13,104 @@
 </thead><tbody>
 <tr>
 	<td>open</td>
-	<td>/mediawiki/index.php/Special:QueryInterface</td>
+	<td>/mediawiki/index.php/Main_Page</td>
 	<td></td>
 </tr>
 <tr>
 	<td>click</td>
-	<td>//button[@onclick='qihelper.newCategoryDialogue(true)']</td>
+	<td>searchInput</td>
 	<td></td>
 </tr>
 <tr>
 	<td>type</td>
-	<td>input0</td>
-	<td>Person1</td>
+	<td>searchInput</td>
+	<td>mypage7</td>
 </tr>
 <tr>
-	<td>click</td>
-	<td>//button[@onclick='qihelper.add()']</td>
+	<td>clickAndWait</td>
+	<td>searchGoButton</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>link=Mypage7</td>
 	<td></td>
 </tr>
 <tr>
 	<td>click</td>
-	<td>//button[@onclick='qihelper.newPropertyDialogue(true)']</td>
+	<td>toggle_wpTextbox1</td>
 	<td></td>
 </tr>
 <tr>
-	<td>keyDown</td>
-	<td>//input[@id=&quot;input_p0&quot;]</td>
-	<td>17</td>
+	<td>type</td>
+	<td>wpTextbox1</td>
+	<td>This is Berlin located in [[located in::Germany]]. The city is also is [[is capital::Germany]] of Germany and has [[Inhabitants::3524000|3.5 Mio]].<br /><br />== Heading 2 ==<br /><br />Here follows a nowiki part &lt;nowiki&gt;'''Note the bold'''&lt;/nowiki&gt;. It ends here.<br /><br />=== Heading 2.2 ===<br /><br />*List item1<br />**List item11<br />*List item2<br /><br />=== Heading 2.3 ===<br /><br />This wiki contains {{#ask:[[Category:Person]]|format=list}} as a person. {{Copyright}}<br /><br />[[Category:City]]</td>
 </tr>
 <tr>
-	<td>keyDown</td>
-	<td>//input[@id=&quot;input_p0&quot;]</td>
-	<td>18</td>
+	<td>clickAndWait</td>
+	<td>wpSave</td>
+	<td></td>
 </tr>
 <tr>
-	<td>keyDown</td>
-	<td>//input[@id=&quot;input_p0&quot;]</td>
-	<td>32</td>
+	<td>verifyTextPresent</td>
+	<td>Facts about Mypage7</td>
+	<td></td>
 </tr>
 <tr>
-	<td>keyDown</td>
-	<td>//input[@id=&quot;input_p0&quot;]</td>
-	<td>32</td>
+	<td>verifyElementPresent</td>
+	<td>link=Inhabitants</td>
+	<td></td>
 </tr>
 <tr>
-	<td>keyDown</td>
-	<td>//input[@id=&quot;input_p0&quot;]</td>
-	<td>18</td>
+	<td>verifyElementPresent</td>
+	<td>link=3524000</td>
+	<td></td>
 </tr>
 <tr>
-	<td>keyDown</td>
-	<td>//input[@id=&quot;input_p0&quot;]</td>
-	<td>17</td>
+	<td>verifyElementPresent</td>
+	<td>link=Is capital</td>
+	<td></td>
 </tr>
-
+<tr>
+	<td>verifyElementPresent</td>
+	<td>link=Germany</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>link=Located in</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>link=Germany</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>link=Edit</td>
+	<td></td>
+</tr>
+<tr>
+	<td>selectFrame</td>
+	<td>relative=top</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>//span[@property='located in'][text()='Germany']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>//span[@property='is capital'][text()='Germany']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>//span[@property='Inhabitants::3524000'][text()='3.5 Mio']</td>
+	<td></td>
+</tr>
 </tbody></table>
 </body>
 </html>

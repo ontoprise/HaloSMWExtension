@@ -15,6 +15,7 @@ require_once 'testcases/TestFormatQueryPreview.php';
 require_once 'testcases/TestInferredResults.php';
 require_once 'testcases/TestUnitsInQuery.php';
 require_once 'testcases/TestQuerySourceText.php';
+require_once 'testcases/TestIntermediateResultView.php';
 
 class SeleniumTests
 {
@@ -28,6 +29,7 @@ class SeleniumTests
         $suite->addTestSuite("TestInferredResults");
         $suite->addTestSuite("TestUnitsInQuery");
         $suite->addTestSuite("TestQuerySourceText");
+        $suite->addTestSuite("TestIntermediateResultView");
         return $suite;
     }
 }
