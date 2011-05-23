@@ -22,7 +22,7 @@ If you don't use the deployment framework, you can install it manually. See belo
 Requirements HaloACL (unbundled): 
 =================================
 
-    MediaWiki 1.13.2, 1.15.1 - 1.15.3 or 1.16.0
+    MediaWiki 1.13.2, 1.15.1 - 1.15.3 or 1.16.0 or 1.16.4
     ScriptManager 1.x (Installation instructions: http://smwforum.ontoprise.com/smwforum/index.php/Help:Installing_the_Script_Manager_Extension_1.0)
     ARCLibrary 1.x (Installation instructions: http://smwforum.ontoprise.com/smwforum/index.php/Help:Installing_the_ARCLibrary_1.0)
     OPTIONAL: SMW 1.5.0 - SMW 1.5.6
@@ -30,7 +30,7 @@ Requirements HaloACL (unbundled):
 
 Requirements HaloACL (bundled): 
 =============================
-    MediaWiki 1.13.2, 1.15.1 - 1.15.3 or 1.16.0
+    MediaWiki 1.13.2, 1.15.1 - 1.15.3 or 1.16.0 or 1.16.4
     OPTIONAL: SMW 1.5.0 - SMW 1.5.6
     OPTIONAL: Semantic Forms 1.9 - 2.0.8 
     
@@ -59,7 +59,7 @@ Note: If you use the bundled version of HaloACL, include the following in LocalS
 		- MediaWiki 1.15.3 
 		   php patch.php -d <mediawiki-dir> -p patch_for_MW_1.15.3.txt
 		- MediaWiki 1.16.x 
-		   php patch.php -d <mediawiki-dir> -p patch_for_MW_1.16.0.txt
+		   php patch.php -d <mediawiki-dir> -p patch_for_MW_1.16.x.txt
 	
 (8) Choose the command depending on your Semantic MediaWiki installation to patch SMW
 	(skip this step if you don't have SMW installed). Replace <version> by the 
