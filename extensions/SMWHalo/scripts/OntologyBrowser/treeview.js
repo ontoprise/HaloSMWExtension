@@ -69,12 +69,8 @@ TreeTransformer.prototype = {
 
 			// Finally import the .xsl
 			this.OB_xsltProcessor_gecko.importStylesheet(xslRef);
-			this.OB_xsltProcessor_gecko
-					.setParameter(
-							null,
-							"param-img-directory",
-							wgServer
-									+ wgScriptPath);
+			this.OB_xsltProcessor_gecko.setParameter(null,
+					"param-img-directory", wgServer + wgScriptPath);
 			this.OB_xsltProcessor_gecko.setParameter(null, "param-wiki-path",
 					wgServer + wgArticlePath);
 			this.OB_xsltProcessor_gecko.setParameter(null, "param-ns-concept",
@@ -94,11 +90,8 @@ TreeTransformer.prototype = {
 			var template = new ActiveXObject("MSXML2.XSLTemplate");
 			template.stylesheet = xsl;
 			this.OB_xsltProcessor_ie = template.createProcessor();
-			this.OB_xsltProcessor_ie
-					.addParameter(
-							"param-img-directory",
-							wgServer
-									+ wgScriptPath);
+			this.OB_xsltProcessor_ie.addParameter("param-img-directory",
+					wgServer + wgScriptPath);
 			this.OB_xsltProcessor_ie.addParameter("param-wiki-path", wgServer
 					+ wgArticlePath);
 			this.OB_xsltProcessor_ie.addParameter("param-ns-concept", gLanguage
@@ -108,15 +101,16 @@ TreeTransformer.prototype = {
 		}
 
 	},
-	
+
 	/**
-	 * Adds a language providers. It must provide a function with parameter 'id'.
+	 * Adds a language providers. It must provide a function with parameter
+	 * 'id'.
 	 * 
 	 */
-	addLanguageProvider: function(provider) {
-        if (typeof(provider) == 'function') { 
-        	this.languageProvider.push(provider);
-        }
+	addLanguageProvider : function(provider) {
+		if (typeof (provider) == 'function') {
+			this.languageProvider.push(provider);
+		}
 	},
 
 	/*
@@ -125,8 +119,12 @@ TreeTransformer.prototype = {
 	 */
 	transformResultToHTML : function(request, node, level) {
 		if (request.status != 200) {
-			alert("Error: " + request.status + " " + request.statusText + ": "
-					+ request.responseText);
+			if (request.status == 0) {
+				alert("Error: Could not connect to wiki. Webserver running?");
+			} else {
+				alert("Error: " + request.status + " " + request.statusText
+						+ ": " + request.responseText);
+			}
 			return;
 		}
 
@@ -158,131 +156,126 @@ TreeTransformer.prototype = {
 	transformXMLToHTML : function(xmlDoc, node, level) {
 		if (OB_bd.isGecko) {
 			// set startDepth parameter. start on root level or below?
-	this.OB_xsltProcessor_gecko.setParameter(null, "startDepth", level ? 1 : 2);
+			this.OB_xsltProcessor_gecko.setParameter(null, "startDepth",
+					level ? 1 : 2);
 
-	// transform, remove all existing and add new generated nodes
-	var fragment = this.OB_xsltProcessor_gecko.transformToFragment(xmlDoc,
-			document);
-	GeneralXMLTools.removeAllChildNodes(node);
-	node.appendChild(fragment);
+			// transform, remove all existing and add new generated nodes
+			var fragment = this.OB_xsltProcessor_gecko.transformToFragment(
+					xmlDoc, document);
+			GeneralXMLTools.removeAllChildNodes(node);
+			node.appendChild(fragment);
 
-	// translate XSLT output
-	
-	// replace language constant in text nodes
-	var languageNodes = GeneralXMLTools.getNodeByText(document, '{{');
-	var regex = new RegExp("\{\{(\\w+)\}\}");
-	var lp = this.languageProvider;
-	languageNodes.each(function(n) {
-		var vars;
-		var text = n.textContent;
-		while (vars = regex.exec(text)) {
-			var reg_exp = new RegExp('\{\{' + vars[1] + '\}\}', "g");
-			
-			// use local language data
-			var msg = gLanguage.getMessage(vars[1])
-			if (msg != vars[1]) { 
-				text = text.replace(reg_exp,
-					msg);
-			} 
-			
-			// use other language providers
-			lp.each(function(provider) { 
-				var msg = provider(vars[1]);
-				if (msg != vars[1]) text = text.replace(reg_exp,
-						msg);
-				
-			});
-		}
-		n.textContent = text;
-		
-	
-	});
-	
-	// replace language constants in HTML attribute nodes
-	var languageAtts = GeneralXMLTools.getAttributeNodeByText(document, '{{');
-	var regex = new RegExp("\{\{(\\w+)\}\}");
-	var lp = this.languageProvider;
-	languageAtts.each(function(n) {
-		var vars;
-		var text = n.textContent;
-		while (vars = regex.exec(text)) {
-			var reg_exp = new RegExp('\{\{' + vars[1] + '\}\}', "g");
-			
-			// use local language data
-			var msg = gLanguage.getMessage(vars[1])
-			if (msg != vars[1]) { 
-				text = text.replace(reg_exp,
-					msg);
-			} else {
-				// probably missing language constant
-				text = text.replace(reg_exp,
-						"!!"+msg+"!!");
-			}
-			
-			// use other language providers
-			lp.each(function(provider) { 
-				var msg = provider(vars[1]);
-				if (msg != vars[1]) text = text.replace(reg_exp,
-						msg);
-				else {
-					// probably missing language constant
-					text = text.replace(reg_exp,
-							"!!"+msg+"!!");
+			// translate XSLT output
+
+			// replace language constant in text nodes
+			var languageNodes = GeneralXMLTools.getNodeByText(document, '{{');
+			var regex = new RegExp("\{\{(\\w+)\}\}");
+			var lp = this.languageProvider;
+			languageNodes.each(function(n) {
+				var vars;
+				var text = n.textContent;
+				while (vars = regex.exec(text)) {
+					var reg_exp = new RegExp('\{\{' + vars[1] + '\}\}', "g");
+
+					// use local language data
+					var msg = gLanguage.getMessage(vars[1])
+					if (msg != vars[1]) {
+						text = text.replace(reg_exp, msg);
+					}
+
+					// use other language providers
+					lp.each(function(provider) {
+						var msg = provider(vars[1]);
+						if (msg != vars[1])
+							text = text.replace(reg_exp, msg);
+
+					});
 				}
+				n.textContent = text;
+
 			});
-		}
-		n.textContent = text;
-		
-	
-	});
 
-} else if (OB_bd.isIE) {
-	// set startDepth parameter. start on root level or below?
-	this.OB_xsltProcessor_ie.addParameter("startDepth", level ? 1 : 2);
+			// replace language constants in HTML attribute nodes
+			var languageAtts = GeneralXMLTools.getAttributeNodeByText(document,
+					'{{');
+			var regex = new RegExp("\{\{(\\w+)\}\}");
+			var lp = this.languageProvider;
+			languageAtts.each(function(n) {
+				var vars;
+				var text = n.textContent;
+				while (vars = regex.exec(text)) {
+					var reg_exp = new RegExp('\{\{' + vars[1] + '\}\}', "g");
 
-	// transform and overwrite with new generated nodes
-	this.OB_xsltProcessor_ie.input = xmlDoc;
-	this.OB_xsltProcessor_ie.transform();
+					// use local language data
+					var msg = gLanguage.getMessage(vars[1])
+					if (msg != vars[1]) {
+						text = text.replace(reg_exp, msg);
+					} else {
+						// probably missing language constant
+						text = text.replace(reg_exp, "!!" + msg + "!!");
+					}
 
-	// important to prevent memory leaks in IE
-	for ( var i = 0, n = node.childNodes.length; i < n; i++) {
-		GeneralBrowserTools.purge(node.childNodes[i]);
-	}
+					// use other language providers
+					lp.each(function(provider) {
+						var msg = provider(vars[1]);
+						if (msg != vars[1])
+							text = text.replace(reg_exp, msg);
+						else {
+							// probably missing language constant
+							text = text.replace(reg_exp, "!!" + msg + "!!");
+						}
+					});
+				}
+				n.textContent = text;
 
-	// translate XSLT output
-	var translatedOutput = this.OB_xsltProcessor_ie.output;
-	var regex = new RegExp("\{\{(\\w+)\}\}");
-	var vars;
-	while (vars = regex.exec(translatedOutput)) {
-		var msg = gLanguage.getMessage(vars[1]);
-		if (msg != vars[1]) {
-		translatedOutput = translatedOutput.replace(new RegExp(
-				'\{\{' + vars[1] + '\}\}', "g"), msg);
-		}
-		
-		var lp = this.languageProvider;
-		for(var i = 0; i < lp.length; i++) { 
-			var msg = lp[i](vars[1]);
-			if (msg != vars[1]) {
-			translatedOutput = translatedOutput.replace(new RegExp(
-					'\{\{' + vars[1] + '\}\}', "g"), msg);
+			});
+
+		} else if (OB_bd.isIE) {
+			// set startDepth parameter. start on root level or below?
+			this.OB_xsltProcessor_ie.addParameter("startDepth", level ? 1 : 2);
+
+			// transform and overwrite with new generated nodes
+			this.OB_xsltProcessor_ie.input = xmlDoc;
+			this.OB_xsltProcessor_ie.transform();
+
+			// important to prevent memory leaks in IE
+			for ( var i = 0, n = node.childNodes.length; i < n; i++) {
+				GeneralBrowserTools.purge(node.childNodes[i]);
 			}
+
+			// translate XSLT output
+			var translatedOutput = this.OB_xsltProcessor_ie.output;
+			var regex = new RegExp("\{\{(\\w+)\}\}");
+			var vars;
+			while (vars = regex.exec(translatedOutput)) {
+				var msg = gLanguage.getMessage(vars[1]);
+				if (msg != vars[1]) {
+					translatedOutput = translatedOutput.replace(new RegExp(
+							'\{\{' + vars[1] + '\}\}', "g"), msg);
+				}
+
+				var lp = this.languageProvider;
+				for ( var i = 0; i < lp.length; i++) {
+					var msg = lp[i](vars[1]);
+					if (msg != vars[1]) {
+						translatedOutput = translatedOutput.replace(new RegExp(
+								'\{\{' + vars[1] + '\}\}', "g"), msg);
+					}
+				}
+			}
+
+			// insert HTML
+			node.innerHTML = translatedOutput;
+
 		}
 	}
-
-	
-	// insert HTML
-	node.innerHTML = translatedOutput;
-
-}
-}
 };
 
 // one global tree transformer
 var transformer = new TreeTransformer(
 		"/extensions/SMWHalo/skins/OntologyBrowser/treeview.xslt");
 
-function resetOntologyBrowser(){
+function resetOntologyBrowser() {
 	dataAccess = new OBDataAccess();
 	dataAccess.initializeTree(null);
 	if ($('instanceList') != null && $('instanceList').down() != null) {
@@ -294,26 +287,26 @@ function resetOntologyBrowser(){
 }
 
 Event.observe(window, 'load', function() { // call initialize hook
-			dataAccess = new OBDataAccess();
-			dataAccess.initializeTree(null);
+	dataAccess = new OBDataAccess();
+	dataAccess.initializeTree(null);
 
-		// initialize event listener for FilterBrowser
-		var filterBrowserInput = $("FilterBrowserInput");
-		Event.observe(filterBrowserInput, "keyup",
-				globalActionListener.filterBrowsing.bindAsEventListener(
-						globalActionListener, false));
-		
-		// initialize handlers for property switches 
-		var showInheritedPropertySwitch = $("directPropertySwitch");
-		Event.observe(showInheritedPropertySwitch, "change",
-				schemaActionPropertyListener.reloadProperties.bindAsEventListener(
-						schemaActionPropertyListener, false));
-		
-		var showRangesForPropertySwitch = $("showForRange");
-		Event.observe(showRangesForPropertySwitch, "change",
-				schemaActionPropertyListener.reloadProperties.bindAsEventListener(
-						schemaActionPropertyListener, false));
-	});
+	// initialize event listener for FilterBrowser
+	var filterBrowserInput = $("FilterBrowserInput");
+	Event.observe(filterBrowserInput, "keyup",
+			globalActionListener.filterBrowsing.bindAsEventListener(
+					globalActionListener, false));
+
+	// initialize handlers for property switches
+	var showInheritedPropertySwitch = $("directPropertySwitch");
+	Event.observe(showInheritedPropertySwitch, "change",
+			schemaActionPropertyListener.reloadProperties.bindAsEventListener(
+					schemaActionPropertyListener, false));
+
+	var showRangesForPropertySwitch = $("showForRange");
+	Event.observe(showRangesForPropertySwitch, "change",
+			schemaActionPropertyListener.reloadProperties.bindAsEventListener(
+					schemaActionPropertyListener, false));
+});
 
 // ---------------------------------------------------------------------------
 
