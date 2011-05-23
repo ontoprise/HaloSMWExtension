@@ -32,6 +32,7 @@ class SCProcessor {
 		$wgOut->addScript('<script type="text/javascript" src="' . $smwgConnectorScriptPath . '/scripts/edit_form.js"></script>');
 
 		$ed = SpecialPage::getPage('EditData');
+		if($ed == null) $ed = SpecialPage::getPage('FormEdit'); // SF2 removed special page EditData
 		$wgOut->addScript('<script type="text/javascript">
 		SemanticConnector.form = { 
 			page_name: "' . $page_name . '", 
@@ -666,7 +667,11 @@ class SCProcessor {
 		$sStore = SCStorage::getDatabase();
 //		$form = $sStore->getCurrentForm($pid);
 
-		$activeForms = SFLinkUtils::getFormsForArticle(new Article($page_title));
+		if( class_exists( "SFFormLinker" ) ) {
+			$activeForms = SFFormLinker::getDefaultFormsForPage( $page_title );
+		} else {
+			$activeForms = SFLinkUtils::getFormsForArticle(new Article($page_title));
+		}
 		if($activeForms == NULL || count($activeForms)==0) {
 			wfProfileOut($fname);
 			return $text;
