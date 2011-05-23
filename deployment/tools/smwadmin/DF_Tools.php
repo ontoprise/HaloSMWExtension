@@ -299,7 +299,7 @@ class Tools {
 		$patchlevel = $patchlevel === 0 ? "" : "_".$patchlevel;
 		$v = trim($v);
 		if (strlen($v) == 3) {
-			return substr($v, 0, 1).".".substr($v, 1).$patchlevel;
+			return substr($v, 0, 1).".".substr($v, 1, 1).".".substr($v, 2).$patchlevel;
 		} else {
 			return substr($v, 0, 1).".".substr($v, 1,2).".".substr($v,3).$patchlevel;
 		}
