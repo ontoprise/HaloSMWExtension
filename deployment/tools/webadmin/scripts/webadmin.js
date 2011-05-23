@@ -28,24 +28,43 @@ $(function() {
 		
 	var searchHandler = function(e) {
 		
+		
+		
+		
 		var callbackHandler = function(html, status, xhr) {
 			$('.df_install_button').click(function(e) {
 				var id = $(e.currentTarget).attr('id');
 				id = id.split("__")[1];
-				var url = wgServer+wgScriptPath+"/deployment/tools/webadmin?rs=install&rsargs[]="+encodeURIComponent(id);
+				var url = wgServer+wgScriptPath+"/deployment/tools/webadmin?rs=getdependencies&rsargs[]="+encodeURIComponent(id);
+				var callbackForExtensions = function(xhr, status) {
+					var extensionsToInstall = $.parseJSON(xhr.responseText);
+					var url = wgServer+wgScriptPath+"/deployment/tools/webadmin?rs=install&rsargs[]="+encodeURIComponent(id);
+					
+					//var $dialog = $('<div></div>').html('<iframe src="'+url+'" width=\"750\" height/>')
+					var $dialog = $('<div id="df_install_dialog"></div>')
+					.dialog( {
+						autoOpen : false,
+						title : 'Please wait...',
+						modal: true,
+						width: 800,
+						height: 500
+					});
+					
+					var callbackForFinalize = function(html, status, xhr) {
+						var finalizeurl = wgServer+wgScriptPath+"/deployment/tools/webadmin?rs=finalize&rsargs[]="+encodeURIComponent(id);
+						$('#df_install_dialog').load(finalizeurl);
+					};
+					
+					$dialog.dialog('open');
+					$('#df_install_dialog').load(url, null, callbackForFinalize);
+					
+				};
+				$.ajax( { url : url, dataType:"json", complete : callbackForExtensions });
 				
-				//var $dialog = $('<div></div>').html('<iframe src="'+url+'" width=\"750\" height/>')
-				var $dialog = $('<div id="df_install_dialog"></div>')
-				.dialog( {
-					autoOpen : false,
-					title : 'Please wait...',
-					modal: true,
-					width: 800,
-					height: 500
-				});
-				$dialog.dialog('open');
-				$('#df_install_dialog').load(url);
+				
 			
+								
+				
 			});
 		}
 		var searchvalue = $('#df_searchinput').val();

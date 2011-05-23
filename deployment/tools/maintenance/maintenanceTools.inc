@@ -206,7 +206,7 @@ class ConsistencyChecker {
 			|| ($latestVersion == $localPackages[$tl_ext->getID()]->getVersion() 
 			&& $latestPatchlevel > $localPackages[$tl_ext->getID()]->getPatchlevel())) {
 				
-				$updatesNeeded[] = array($tl_ext->getID(), $latestVersion, $latestPatchlevel) ;
+				$updatesNeeded[$tl_ext->getID()] = array($tl_ext->getID(), $latestVersion, $latestPatchlevel) ;
 			}
 
 		}

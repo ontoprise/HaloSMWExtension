@@ -94,7 +94,7 @@ class DFUserInput {
 	 * @return unknown
 	 */
 	public function getUserConfirmation($message, & $result) {
-		global $dfgNoAsk;
+		global $dfgNoAsk, $dfgOut;
 		if ((isset($dfgNoAsk) && $dfgNoAsk == true)) return 'y';
 		$dfgOut->outputln("\n$message [ (y)es/(n)o ]");
 		$line = trim(fgets(STDIN));

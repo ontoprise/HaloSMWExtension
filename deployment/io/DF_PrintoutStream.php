@@ -28,6 +28,10 @@
 define ("DF_OUTPUT_FORMAT_TEXT", 0);
 define ("DF_OUTPUT_FORMAT_HTML", 1);
 
+define ("DF_OUTPUT_TARGET_STDOUT", 0);
+define ("DF_OUTPUT_TARGET_FILE", 1);
+
+
 define('DF_PRINTSTREAM_TYPE_INFO', 0);
 define('DF_PRINTSTREAM_TYPE_WARN', 1);
 define('DF_PRINTSTREAM_TYPE_ERROR', 2);
@@ -39,6 +43,8 @@ class DFPrintoutStream {
 	 * printout mode
 	 */
 	private $mode;
+	private $target;
+	private $tmpfile;
 
 	static $instance = NULL; // singleton
 
@@ -55,23 +61,52 @@ class DFPrintoutStream {
 	 */
 	private function __construct($mode = DF_OUTPUT_FORMAT_TEXT) {
 		$this->mode = $mode;
+		$this->verbose = true;
+		$this->target = DF_OUTPUT_TARGET_STDOUT;
 	}
-	
+
+	public function start($target = DF_OUTPUT_TARGET_STDOUT) {
+		$this->target = $target;
+		if ($target == DF_OUTPUT_TARGET_STDOUT) return;
+		if ($target == DF_OUTPUT_TARGET_FILE) {
+			$file = Tools::getTempDir()."/".uniqid().".log";
+			Tools::mkpath(dirname($file));
+			$this->tmpfile = fopen($file, "w");
+            return $file;
+		}
+	}
+
+	public function end() {
+		if ($target == DF_OUTPUT_TARGET_STDOUT) return;
+
+		if ($target == DF_OUTPUT_TARGET_FILE) {
+			fclose($this->tmpfile);
+		}
+	}
+
 	/**
 	 * Returns output mode.
-	 * 
-	 * @return int 
+	 *
+	 * @return int
 	 */
 	public function getMode() {
 		return $this->mode;
+	}
+
+	public function setVerbose($verbose) {
+		$this->verbose = $verbose;
 	}
 
 	/**
 	 * Print some output to indicate progress. The output message is given by
 	 * $msg, while $verbose indicates whether or not output is desired at all.
 	 */
-	public function output($msg, $type = DF_PRINTSTREAM_TYPE_INFO, $verbose = true) {
-		if (!$verbose) {
+	public function output($msg, $type = DF_PRINTSTREAM_TYPE_INFO) {
+		if (!$this->verbose) {
+			return;
+		}
+		if ($this->target == DF_OUTPUT_TARGET_FILE) {
+			fwrite($this->tmpfile, $this->formatText($msg, $type));
 			return;
 		}
 		if (ob_get_level() == 0) { // be sure to have some buffer, otherwise some PHPs complain
@@ -81,35 +116,40 @@ class DFPrintoutStream {
 		ob_flush();
 		flush();
 	}
-	
-    /**
-     * Print some output to indicate progress. The output message is given by
-     * $msg, while $verbose indicates whether or not output is desired at all.
-     */
-    public function outputln($msg = '', $type = DF_PRINTSTREAM_TYPE_INFO, $verbose = true) {
-        if (!$verbose) {
-            return;
-        }
-        if (ob_get_level() == 0) { // be sure to have some buffer, otherwise some PHPs complain
-            ob_start();
-        }
-        print $this->formatText($msg, $type, "\n");
-        ob_flush();
-        flush();
-    }
-    
-    /**
-     * Print some output to indicate progress. The output message is given by
-     * $msg, while $verbose indicates whether or not output is desired at all.
-     */
-    public function getln($msg = '', $type = DF_PRINTSTREAM_TYPE_INFO, $verbose = true) {
-        if (!$verbose) {
-            return;
-        }
-       
-        return $this->formatText($msg, $type, "\n");
-        
-    }
+
+	/**
+	 * Print some output to indicate progress. The output message is given by
+	 * $msg, while $verbose indicates whether or not output is desired at all.
+	 */
+	public function outputln($msg = '', $type = DF_PRINTSTREAM_TYPE_INFO) {
+		if (!$this->verbose) {
+			return;
+		}
+
+		if ($this->target == DF_OUTPUT_TARGET_FILE) {
+			fwrite($this->tmpfile, $this->formatText($msg, $type, "\n"));
+			return;
+		}
+		if (ob_get_level() == 0) { // be sure to have some buffer, otherwise some PHPs complain
+			ob_start();
+		}
+		print $this->formatText($msg, $type, "\n");
+		ob_flush();
+		flush();
+	}
+
+	/**
+	 * Print some output to indicate progress. The output message is given by
+	 * $msg, while $verbose indicates whether or not output is desired at all.
+	 */
+	public function getln($msg = '', $type = DF_PRINTSTREAM_TYPE_INFO, $verbose = true) {
+		if (!$verbose) {
+			return;
+		}
+			
+		return $this->formatText($msg, $type, "\n");
+
+	}
 
 	private function formatText($text, $type, $preLined = '') {
 		global $dfgLang;
@@ -147,7 +187,7 @@ class DFPrintoutStream {
 						$t = str_replace("[FAILED]", '<span class="df_checkinst_error">['.$dfgLang->getLanguageString('df_failed').']</span>', $t);
 						$t = str_replace("[OK]", '<span class="df_checkinst_ok">['.$dfgLang->getLanguageString('df_ok').']</span>', $t);
 							
-                        $implodedText .= $t;
+						$implodedText .= $t;
 					}
 					switch($type) {
 						case DF_PRINTSTREAM_TYPE_WARN:

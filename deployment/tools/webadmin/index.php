@@ -37,6 +37,8 @@ $mwrootDir = dirname(__FILE__);
 $mwrootDir = str_replace("\\", "/", $mwrootDir);
 $mwrootDir = realpath($mwrootDir."/../../../");
 
+$smwgDFIP=$rootDir;
+
 require_once('includes/DF_StatusTab.php');
 require_once('includes/DF_SearchTab.php');
 require_once('includes/DF_CommandInterface.php');
@@ -120,8 +122,8 @@ $searchTabHtml = $dfgSearchTab->getHTML();
 if (isset($func_name)) {
 	$dfgCommandInterface = new DFCommandInterface();
 	
-	$dfgCommandInterface->dispatch($func_name, $args);
-	
+	$ret = $dfgCommandInterface->dispatch($func_name, $args);
+	if (is_string($ret)) echo $ret;
 	die();
 }
 

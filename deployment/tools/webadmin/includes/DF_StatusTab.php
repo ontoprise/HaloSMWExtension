@@ -26,6 +26,7 @@
  */
 
 require_once ( $mwrootDir.'/deployment/tools/smwadmin/DF_PackageRepository.php' );
+require_once ( $mwrootDir.'/deployment/tools/maintenance/maintenanceTools.inc' );
 
 class DFStatusTab {
 
@@ -39,8 +40,13 @@ class DFStatusTab {
 
 	public function getHTML() {
 		global $mwrootDir;
+		global $dfgOut;
+		$cc = new ConsistencyChecker($mwrootDir);
 		$html = "";
 		$localPackages = PackageRepository::getLocalPackages($mwrootDir);
+		$dfgOut->setVerbose(false);
+		$updates = $cc->checksForUpdates();
+		$dfgOut->setVerbose(true);
 		$html .= "<table>";
 		$html .= "<th>";
 		$html .= "Extension";
@@ -60,7 +66,11 @@ class DFStatusTab {
 			$html .= $p->getDescription();
 			$html .= "</td>";
 			$html .= "<td class=\"df_actions\">";
-		
+			if (array_key_exists($id, $updates)) {
+				$html .= "<input type=\"button\" class=\"df_install_button\" value=\"De-Install\" id=\"df_deinstall__$id\"></input>";
+			} else {
+				$html .= "<input type=\"button\" class=\"df_install_button\" value=\"Update\" id=\"df_update__$id\"></input>";
+			}
 			$html .= "</td>";
 			$html .= "</tr>";
 		}

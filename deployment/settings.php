@@ -18,7 +18,7 @@
 class DF_Config  {
 	
 	// This is required for the webadmin tool.
-	public static $scriptPath = "/mediawiki";
+	   public static $scriptPath = "/deploywiki";
 	
 	
 	public static $settings = array(

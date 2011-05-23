@@ -59,6 +59,7 @@ require_once($mwrootDir.'/deployment/io/DF_PrintoutStream.php');
 // output format of smwadmin as a console app is text
 dffInitLanguage();
 $dfgOut = DFPrintoutStream::getInstance(DF_OUTPUT_FORMAT_TEXT);
+$dfgOut->start(DF_OUTPUT_TARGET_STDOUT);
 
 //Load Settings
 if(file_exists($rootDir.'/settings.php'))

@@ -498,6 +498,22 @@ class Tools {
 			return reset($out);
 		}
 	}
+	
+    /**
+     * Returns the temp directory.
+     * (path with slashes only also on Windows)
+     *
+     * @return string
+     */
+    public static function getTempDir() {
+        if (self::isWindows()) {
+            exec("echo %TEMP%", $out, $ret);
+            return str_replace("\\", "/", reset($out));
+        } else {
+            exec('echo $TEMP', $out, $ret);
+            return reset($out);
+        }
+    }
 
 	/**
 	 * Returns the program directory. On Linux it is simply /usr/local/share

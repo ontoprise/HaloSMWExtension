@@ -142,6 +142,8 @@ class Installer {
 			
 	}
 
+
+
 	/**
 	 * Installs a package from a file.
 	 *
@@ -533,7 +535,7 @@ class Installer {
 			fclose($handle);
 			$num++;
 
-				
+
 		}
 
 
@@ -630,7 +632,7 @@ class Installer {
 	 * @param DeployDescriptor $dd
 	 */
 	public function deinitializePackages($dd) {
-        global $dfgOut;
+		global $dfgOut;
 		$res_installer = ResourceInstaller::getInstance($this->rootDir);
 		$ont_installer = OntologyInstaller::getInstance($this->rootDir);
 
@@ -660,7 +662,7 @@ class Installer {
 	 * @param DeployDescriptor $dd
 	 */
 	public function deleteExternalCodefiles($dd) {
-        global $dfgOut;
+		global $dfgOut;
 		if (count($dd->getCodefiles()) ==  0) return;
 		$codefiles = $dd->getCodefiles();
 		$dfgOut->outputln("[Deleting external codefiles...");
@@ -728,7 +730,7 @@ class Installer {
 	 * @param $filePath of bundle (absolute or relative)
 	 */
 	private function unzipFromFile($filePath) {
-        global $dfgOut;
+		global $dfgOut;
 		$unzipDirectory = $this->rootDir;
 		if ($dd->isNonPublic()) {
 
@@ -968,13 +970,52 @@ class Installer {
 
 	}
 
-	
+
 
 	public function getErrors() {
 		return $this->errors;
 	}
 
+	// relevant for webadmin
+
+	/**
+	 * Returns all extensions which get installed when installing a particular package.
+	 *
+	 * @param string $packageID
+	 * @param int $version (default is latest)
+	 */
+	public function getExtensionsToInstall($packageID, $version = NULL) {
+		global $dfgOut;
+		list($new_package, $old_package, $extensions_to_update, $contradictions) = $this->collectPackagesToInstall($packageID, $version);
+
+		if (count($extensions_to_update) == 0)
+		throw new InstallationError(DEPLOY_FRAMEWORK_COULD_NOT_FIND_UPDATE, "Set of packages to install is empty.", $packageID);
+		// Install/update all dependant and super extensions
+		$dfgOut->outputln("The following packages need to be installed");
+		foreach($extensions_to_update as $etu) {
+			list($dd, $min, $max) = $etu;
+			$dfgOut->outputln("- ".$dd->getID()."-".$dd->getVersion());
+		}
+
+		if (count($contradictions) > 0) {
+			$dfgOut->outputln("The following extension can not be installed/updated due to conflicts:");
+			foreach($contradictions as $etu) {
+				list($dd, $min, $max) = $etu;
+				$dfgOut->outputln("- ".$dd->getID());
+			}
+		}
+		$result=array();
+		foreach($extensions_to_update as $arr) {
+			list($desc, $min, $max) = $arr;
+			$result[$desc->getID()] = $desc->getVersion();
+		}
+		return $result;
+	}
+
 	
+
+
+
 
 }
 
