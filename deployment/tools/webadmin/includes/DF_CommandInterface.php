@@ -40,6 +40,8 @@ class DFCommandInterface {
 
 	public function dispatch($command, $args) {
 		switch($command) {
+			case "readlog":
+				return $this->readLog($args);
 			case "getdependencies":
 				return $this->getDependencies($args);
 			case "search":
@@ -50,6 +52,17 @@ class DFCommandInterface {
 				return $this->install($args);
 			default: return "unsupported command";
 		}
+	}
+
+	public function readLog($args) {
+		global $mwrootDir, $dfgOut;
+		$filename = reset($args);
+		$absoluteFilePath = Tools::getTempDir()."/$filename";
+		if (!file_exists($absoluteFilePath)) {
+			return '$$NOTEXISTS$$';
+		}
+		$log = file_get_contents($absoluteFilePath);
+		return $log;
 	}
 
 	public function getDependencies($args) {
@@ -71,7 +84,7 @@ class DFCommandInterface {
 			$wshShell = new COM("WScript.Shell");
 			$runCommand = "cmd /K START php $mwrootDir/deployment/tools/smwadmin/smwadmin.php --nocheck --noask -i $extid";
 			$oExec = $wshShell->Run("$runCommand", 7, false);
-		
+
 		} else {
 			//TODO: impl.linux command
 		}

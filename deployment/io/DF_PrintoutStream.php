@@ -69,10 +69,11 @@ class DFPrintoutStream {
 		$this->target = $target;
 		if ($target == DF_OUTPUT_TARGET_STDOUT) return;
 		if ($target == DF_OUTPUT_TARGET_FILE) {
-			$file = Tools::getTempDir()."/".uniqid().".log";
+			$local = uniqid().".log";
+			$file = Tools::getTempDir()."/".$local;
 			Tools::mkpath(dirname($file));
 			$this->tmpfile = fopen($file, "w");
-            return $file;
+            return $local;
 		}
 	}
 

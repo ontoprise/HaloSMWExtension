@@ -25,13 +25,43 @@
  */
 
 $(function() {
+	
+	var finalizeHandler = function() {
+		var finalizeurl = wgServer+wgScriptPath+"/deployment/tools/webadmin?rs=readlog&rsargs[]="+encodeURIComponent(id);
+		var callbackForFinalize = function(html, status, xhr) {
+		};
+	}
+	
+	
+	var installStarted = function (xhr, status) {
+		var logfile = xhr.responseText;
+		// poll until finished
+		var timer;
+		
+		var periodicLogLoad = function(xhr2, status2) {
+			if (timer) clearTimer(timer);
+			timer = setTimer( periodicLogLoad, 5000);
+			
+			var readLogurl = wgServer+wgScriptPath+"/deployment/tools/webadmin?rs=readlog&rsargs[]="+encodeURIComponent(logfile);
+			$.ajax( { url : readLogurl, dataType:"json", complete : function(xhr3, status3) { 
+				var resultLog = xhr3.responseText;
+				if (resultLog.indexOf("$$STOPPED$$") != -1 || resultLog.indexOf("$$NOTEXISTS$$") != -1) {
+					clearTimer(timer);
+					// finalize
+				}
+				
+				$('#df_install_dialog').html(resultLog);
+			} });
+			
+			
+		};
+	};
 		
 	var searchHandler = function(e) {
-		
-		
-		
-		
+			
 		var callbackHandler = function(html, status, xhr) {
+			
+			// register install buttons
 			$('.df_install_button').click(function(e) {
 				var id = $(e.currentTarget).attr('id');
 				id = id.split("__")[1];
@@ -49,21 +79,14 @@ $(function() {
 						width: 800,
 						height: 500
 					});
-					
-					var callbackForFinalize = function(html, status, xhr) {
-						var finalizeurl = wgServer+wgScriptPath+"/deployment/tools/webadmin?rs=finalize&rsargs[]="+encodeURIComponent(id);
-						$('#df_install_dialog').load(finalizeurl);
-					};
-					
+										
 					$dialog.dialog('open');
-					$('#df_install_dialog').load(url, null, callbackForFinalize);
+					
+					$.ajax( { url : url, dataType:"json", complete : installStarted });
+					
 					
 				};
 				$.ajax( { url : url, dataType:"json", complete : callbackForExtensions });
-				
-				
-			
-								
 				
 			});
 		}
@@ -72,6 +95,8 @@ $(function() {
 		$('#df_search_results').load(url, null, callbackHandler);
 	
 	};
+	
+	
 	
 	$('#df_search').click(searchHandler);
 	$('#df_searchinput').keypress(function(e) { 
