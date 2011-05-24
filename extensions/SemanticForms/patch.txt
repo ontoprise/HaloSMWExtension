@@ -29,36 +29,6 @@ Index: extensions/SemanticForms/includes/SF_FormInputs.php
 ===================================================================
 --- extensions/SemanticForms/includes/SF_FormInputs.php	(revision 10879)
 +++ extensions/SemanticForms/includes/SF_FormInputs.php	(working copy)
-@@ -162,16 +162,16 @@
- 		$upload_window_page = SpecialPage::getPage( 'UploadWindow' );
- 		$query_string = "sfInputID=$input_id";
- 		if ( $delimiter != null )
--			$query_string .= "&sfDelimiter=$delimiter";
-+		$query_string .= "&sfDelimiter=$delimiter";
- 		if ( $default_filename != null )
--			$query_string .= "&wpDestFile=$default_filename";
-+		$query_string .= "&wpDestFile=$default_filename";
- 		$upload_window_url = $upload_window_page->getTitle()->getFullURL( $query_string );
- 		$upload_label = wfMsg( 'upload' );
- 		// window needs to be bigger for MediaWiki version 1.16+
- 		if ( class_exists( 'HTMLForm' ) )
--			$style = "width:650 height:500";
-+		$style = "width:650 height:500";
- 		else
--			$style = '';
-+		$style = '';
- 
- 		$linkAttrs = array(
- 			'href' => $upload_window_url,
-@@ -188,7 +188,7 @@
- 
- 		// For backward compatibility with pre-SF-2.1 forms
- 		if ( array_key_exists( 'autocomplete field type', $other_args ) &&
--			! array_key_exists( 'no autocomplete', $other_args ) ) {
-+		! array_key_exists( 'no autocomplete', $other_args ) ) {
- 			return SFTextWithAutocompleteInput::getHTML( $cur_value, $input_name, $is_mandatory, $is_disabled, $other_args );
- 		}
- 
 @@ -235,6 +235,16 @@
  		if ( array_key_exists( 'maxlength', $other_args ) ) {
  			$inputAttrs['maxlength'] = $other_args['maxlength'];
@@ -93,302 +63,6 @@ Index: extensions/SemanticForms/includes/SF_FormInputs.php
  		$text = Xml::element( 'textarea', $textarea_attrs, $cur_value, false );
  		$spanClass = "inputSpan";
  		if ( $is_mandatory ) { $spanClass .= " mandatoryFieldSpan"; }
-@@ -371,7 +391,7 @@
- 
- 		$className = ( $is_mandatory ) ? "mandatoryField" : "createboxInput";
- 		if ( array_key_exists( 'class', $other_args ) )
--			$className .= " " . $other_args['class'];
-+		$className .= " " . $other_args['class'];
- 		$input_id = "input_$sfgFieldNum";
- 		$disabled_text = ( $is_disabled ) ? "disabled" : "";
- 		if ( array_key_exists( 'show on select', $other_args ) ) {
-@@ -503,7 +523,7 @@
- 		global $sfgTabIndex, $sfgFieldNum, $sfgShowOnSelect;
- 
- 		if ( ( $possible_values = $other_args['possible_values'] ) == null )
--			$possible_values = array();
-+		$possible_values = array();
- 
- 		// Add a "None" value at the beginning, unless this is a
- 		// mandatory field and there's a current value in place (either
-@@ -518,9 +538,9 @@
- 		// the radiobuttons be checked at the beginning.
- 		if ( ! in_array( $cur_value, $possible_values ) ) {
- 			if ( in_array( '', $possible_values ) )
--				$cur_value = '';
-+			$cur_value = '';
- 			else
--				$cur_value = $possible_values[0];
-+			$cur_value = $possible_values[0];
- 		}
- 
- 		$text = '';
-@@ -543,11 +563,11 @@
- 				$radiobutton_attrs['disabled'] = 'disabled';
- 			}
- 			if ( $possible_value == '' ) // blank/"None" value
--				$label = wfMsg( 'sf_formedit_none' );
-+			$label = wfMsg( 'sf_formedit_none' );
- 			elseif ( array_key_exists( 'value_labels', $other_args ) && is_array( $other_args['value_labels'] ) && array_key_exists( $possible_value, $other_args['value_labels'] ) )
--				$label = htmlspecialchars( $other_args['value_labels'][$possible_value] );
-+			$label = htmlspecialchars( $other_args['value_labels'][$possible_value] );
- 			else
--				$label = $possible_value;
-+			$label = $possible_value;
- 
- 			$text .= "\t" . Xml::element ( 'input', $radiobutton_attrs ) . " $label\n";
- 		}
-@@ -600,7 +620,7 @@
- 		if ( array_key_exists( 'delimiter', $other_args ) ) {
- 			$delimiter = $other_args['delimiter'];
- 		} else {
--			 $delimiter = ",";
-+			$delimiter = ",";
- 		}
- 		$cur_values = SFUtils::getValuesArray( $cur_value, $delimiter );
- 		$className .= " sfShowIfSelected";
-@@ -627,30 +647,30 @@
- 			'name' => $input_name . '[]',
- 			'class' => $className,
- 			'multiple' => 'multiple'
--		);
--		if ( array_key_exists( 'size', $other_args ) ) {
--			$selectAttrs['size'] = $other_args['size'];
--		}
--		if ( $is_disabled ) {
--			$selectAttrs['disabled'] = 'disabled';
--		}
--		$text = Xml::tags( 'select', $selectAttrs, $optionsText );
--		$text .= "\t" . Xml::hidden( $input_name . '[is_list]', 1 ) . "\n";
--		if ( $is_mandatory ) {
--			$text = Xml::tags( 'span', array( 'class' => 'inputSpan mandatoryFieldSpan' ), $text );
--		}
-+			);
-+			if ( array_key_exists( 'size', $other_args ) ) {
-+				$selectAttrs['size'] = $other_args['size'];
-+			}
-+			if ( $is_disabled ) {
-+				$selectAttrs['disabled'] = 'disabled';
-+			}
-+			$text = Xml::tags( 'select', $selectAttrs, $optionsText );
-+			$text .= "\t" . Xml::hidden( $input_name . '[is_list]', 1 ) . "\n";
-+			if ( $is_mandatory ) {
-+				$text = Xml::tags( 'span', array( 'class' => 'inputSpan mandatoryFieldSpan' ), $text );
-+			}
- 
--		if ( array_key_exists( 'show on select', $other_args ) ) {
--			foreach ( $other_args['show on select'] as $div_id => $options ) {
--				if ( array_key_exists( $input_id, $sfgShowOnSelect ) ) {
--					$sfgShowOnSelect[$input_id][] = array( $options, $div_id );
--				} else {
--					$sfgShowOnSelect[$input_id] = array( array( $options, $div_id ) );
-+			if ( array_key_exists( 'show on select', $other_args ) ) {
-+				foreach ( $other_args['show on select'] as $div_id => $options ) {
-+					if ( array_key_exists( $input_id, $sfgShowOnSelect ) ) {
-+						$sfgShowOnSelect[$input_id][] = array( $options, $div_id );
-+					} else {
-+						$sfgShowOnSelect[$input_id] = array( array( $options, $div_id ) );
-+					}
- 				}
- 			}
--		}
- 
--		return $text;
-+			return $text;
- 	}
- 
- 	public static function getParameters() {
-@@ -681,7 +701,7 @@
- 		$checkbox_class = ( $is_mandatory ) ? "mandatoryField" : "createboxInput";
- 		$span_class = "checkboxSpan";
- 		if ( array_key_exists( 'class', $other_args ) )
--			$span_class .= " " . $other_args['class'];
-+		$span_class .= " " . $other_args['class'];
- 		$input_id = "input_$sfgFieldNum";
- 		// get list delimiter - default is comma
- 		if ( array_key_exists( 'delimiter', $other_args ) ) {
-@@ -692,15 +712,15 @@
- 		$cur_values = SFUtils::getValuesArray( $cur_value, $delimiter );
- 
- 		if ( ( $possible_values = $other_args['possible_values'] ) == null )
--			$possible_values = array();
-+		$possible_values = array();
- 		$text = "";
- 		foreach ( $possible_values as $key => $possible_value ) {
- 			$cur_input_name = $input_name . "[" . $key . "]";
- 
- 			if ( array_key_exists( 'value_labels', $other_args ) && is_array( $other_args['value_labels'] ) && array_key_exists( $possible_value, $other_args['value_labels'] ) )
--				$label = $other_args['value_labels'][$possible_value];
-+			$label = $other_args['value_labels'][$possible_value];
- 			else
--				$label = $possible_value;
-+			$label = $possible_value;
- 
- 			$checkbox_attrs = array(
- 				'type' => 'checkbox',
-@@ -720,8 +740,8 @@
- 
- 			// Make a span around each checkbox, for CSS purposes.
- 			$text .= '	' . Xml::tags( 'span',
--				array( 'class' => $span_class ),
--				$checkbox_input . ' ' . $label
-+			array( 'class' => $span_class ),
-+			$checkbox_input . ' ' . $label
- 			) . "\n";
- 			$sfgTabIndex++;
- 			$sfgFieldNum++;
-@@ -834,7 +854,7 @@
- 		// Get all autocomplete-related values, plus delimiter value
- 		// (it's needed also for the 'uploadable' link, if there is one).
- 		list( $autocompleteFieldType, $autocompletionSource ) =
--			self::getAutocompletionTypeAndSource( $field_args );
-+		self::getAutocompletionTypeAndSource( $field_args );
- 		$autocompleteSettings = $autocompletionSource;
- 		$is_list = ( array_key_exists( 'is_list', $field_args ) && $field_args['is_list'] == true );
- 		if ( $is_list ) {
-@@ -851,7 +871,7 @@
- 
- 		$remoteDataType = null;
- 		if ( array_key_exists( 'remote autocompletion', $field_args ) &&
--				$field_args['remote autocompletion'] == true ) {
-+		$field_args['remote autocompletion'] == true ) {
- 			$remoteDataType = $autocompleteFieldType;
- 		} elseif ( $autocompletionSource != '' ) {
- 			// @TODO - that count() check shouldn't be necessary
-@@ -872,7 +892,7 @@
- 		// Backwards compatibility, for pre-SF-2.1 forms:
- 		// if 'no autocomplete' was specified, switch to SFTextInput.
- 		if ( array_key_exists( 'no autocomplete', $other_args ) &&
--				$other_args['no autocomplete'] == true ) {
-+		$other_args['no autocomplete'] == true ) {
- 			unset( $other_args['autocompletion source'] );
- 			return SFTextInput::getHTML( $cur_value, $input_name, $is_mandatory, $is_disabled, $other_args );
- 		}
-@@ -883,7 +903,7 @@
- 
- 		$className = ( $is_mandatory ) ? "autocompleteInput mandatoryField" : "autocompleteInput createboxInput";
- 		if ( array_key_exists( 'class', $other_args ) )
--			$className .= " " . $other_args['class'];
-+		$className .= " " . $other_args['class'];
- 		$input_id = "input_" . $sfgFieldNum;
- 
- 		if ( array_key_exists( 'size', $other_args ) ) {
-@@ -917,7 +937,7 @@
- 
- 		if ( array_key_exists( 'is_uploadable', $other_args ) && $other_args['is_uploadable'] == true ) {
- 			if ( array_key_exists( 'default filename', $other_args ) ) {
--					$default_filename = $other_args['default filename'];
-+				$default_filename = $other_args['default filename'];
- 			} else {
- 				$default_filename = "";
- 			}
-@@ -927,7 +947,7 @@
- 		$spanClass = "inputSpan";
- 		if ( $is_mandatory ) { $spanClass .= " mandatoryFieldSpan"; }
- 		$text = "\n" . Xml::tags( 'span', array( 'class' => $spanClass ), $text );
--		
-+
- 		return $text;
- 	}
- 
-@@ -968,7 +988,7 @@
- 		// If 'no autocomplete' was specified, print a regular
- 		// textarea instead.
- 		if ( array_key_exists( 'no autocomplete', $other_args ) &&
--				$other_args['no autocomplete'] == true ) {
-+		$other_args['no autocomplete'] == true ) {
- 			unset( $other_args['autocompletion source'] );
- 			return SFTextAreaInput::getHTML( $cur_value, $input_name, $is_mandatory, $is_disabled, $other_args );
- 		}
-@@ -979,7 +999,7 @@
- 
- 		$className = ( $is_mandatory ) ? "autocompleteInput mandatoryField" : "autocompleteInput createboxInput";
- 		if ( array_key_exists( 'class', $other_args ) )
--			$className .= " " . $other_args['class'];
-+		$className .= " " . $other_args['class'];
- 		$input_id = "input_" . $sfgFieldNum;
- 
- 		if ( array_key_exists( 'rows', $other_args ) ) {
-@@ -1040,7 +1060,7 @@
- 		$spanClass = "inputSpan";
- 		if ( $is_mandatory ) { $spanClass .= " mandatoryFieldSpan"; }
- 		$text = "\n" . Xml::tags( 'span', array( 'class' => $spanClass ), $text );
--		
-+
- 		return $text;
- 	}
- 
-@@ -1063,7 +1083,7 @@
- 	public static function getHTML( $cur_value, $input_name, $is_mandatory, $is_disabled, $other_args ) {
- 		// For backward compatibility with pre-SF-2.1 forms
- 		if ( array_key_exists( 'no autocomplete', $other_args ) &&
--				$other_args['no autocomplete'] == true ) {
-+		$other_args['no autocomplete'] == true ) {
- 			unset( $other_args['autocompletion source'] );
- 			return SFTextInput::getHTML( $cur_value, $input_name, $is_mandatory, $is_disabled, $other_args );
- 		}
-@@ -1089,9 +1109,9 @@
- 		// multiplying by 6 seems to be about right for the major
- 		// browsers.
- 		$pixel_width = $size * 6 . "px";
-- 
-+
- 		list( $autocompleteFieldType, $autocompletionSource ) =
--			SFTextWithAutocompleteInput::getAutocompletionTypeAndSource( $other_args );
-+		SFTextWithAutocompleteInput::getAutocompletionTypeAndSource( $other_args );
- 		$values = SFUtils::getAutocompleteValues($autocompletionSource, $autocompleteFieldType );
- 		$autocompletionSource = str_replace( "'", "\'", $autocompletionSource );
- 
-@@ -1216,7 +1236,7 @@
- 		$text .= '	<input tabindex="' . $sfgTabIndex . '" class="yearInput" name="' . $input_name . '[year]" type="text" value="' . $year . '" size="4" ' . $disabled_text . '/>' . "\n";
- 		return $text;
- 	}
--	
-+
- 	public static function getHTML( $date, $input_name, $is_mandatory, $is_disabled, $other_args ) {
- 		$text = self::getMainHTML( $date, $input_name, $is_mandatory, $is_disabled, $other_args );
- 		$spanClass = "dateInput";
-@@ -1243,7 +1263,7 @@
- 		global $sfgTabIndex, $sfg24HourTime;
- 
- 		$include_timezone = array_key_exists( 'include timezone', $other_args );
-- 
-+
- 		if ( $datetime ) {
- 			// Can show up here either as an array or a string,
- 			// depending on whether it came from user input or a
-@@ -1383,13 +1403,13 @@
- 	public static function getHTML( $cur_value, $input_name, $is_mandatory, $is_disabled, $other_args ) {
- 		// escape if CategoryTree extension isn't included
- 		if ( ! function_exists( 'efCategoryTreeParserHook' ) )
--			return null;
-+		return null;
- 
- 		global $sfgTabIndex, $sfgFieldNum;
- 
- 		$className = ( $is_mandatory ) ? "mandatoryField" : "createboxInput";
- 		if ( array_key_exists( 'class', $other_args ) )
--			$className .= " " . $other_args['class'];
-+		$className .= " " . $other_args['class'];
- 		if ( array_key_exists( 'top category', $other_args ) ) {
- 			$top_category = $other_args['top category'];
- 		} else {
-@@ -1471,13 +1491,13 @@
- 	public static function getHTML( $cur_value, $input_name, $is_mandatory, $is_disabled, $other_args ) {
- 		// escape if CategoryTree extension isn't included
- 		if ( ! function_exists( 'efCategoryTreeParserHook' ) )
--			return null;
-+		return null;
- 
- 		global $sfgTabIndex, $sfgFieldNum, $wgCapitalLinks;
- 
- 		$className = ( $is_mandatory ) ? "mandatoryField" : "createboxInput";
- 		if ( array_key_exists( 'class', $other_args ) )
--			$className .= " " . $other_args['class'];
-+		$className .= " " . $other_args['class'];
- 		$input_id = "input_$sfgFieldNum";
- 		$info_id = "info_$sfgFieldNum";
- 		// get list delimiter - default is comma
 Index: extensions/SemanticForms/includes/SF_FormLinker.php
 ===================================================================
 --- extensions/SemanticForms/includes/SF_FormLinker.php	(revision 10879)
@@ -433,69 +107,10 @@ Index: extensions/SemanticForms/includes/SF_FormPrinter.php
 ===================================================================
 --- extensions/SemanticForms/includes/SF_FormPrinter.php	(revision 10879)
 +++ extensions/SemanticForms/includes/SF_FormPrinter.php	(working copy)
-@@ -61,7 +61,7 @@
- 	public function registerInputType( $inputTypeClass ) {
- 		global $smwgContLang;
- 		global $sfgInitJSFunctions, $sfgValidationJSFunctions;
-- 
-+
- 		$inputTypeName = call_user_func( array( $inputTypeClass, 'getName' ) );
- 		$this->mInputTypeClasses[$inputTypeName] = $inputTypeClass;
- 		$this->setInputTypeHook( $inputTypeName, array( $inputTypeClass, 'getHTML' ), array() );
-@@ -159,7 +159,7 @@
- 	function showDeletionLog( $out ) {
- 		// if MW doesn't have LogEventsList defined, exit immediately
- 		if ( ! class_exists( 'LogEventsList' ) )
--			return false;
-+		return false;
- 
- 		global $wgUser;
- 		$loglist = new LogEventsList( $wgUser->getSkin(), $out );
-@@ -170,20 +170,20 @@
- 			$out->addHTML( '<div class="mw-warning-with-logexcerpt">' );
- 			// the message name changed in MW 1.16
- 			if ( ! wfEmptyMsg( 'moveddeleted-notice', wfMsg( 'moveddeleted-notice' ) ) )
--				$out->addWikiMsg( 'moveddeleted-notice' );
-+			$out->addWikiMsg( 'moveddeleted-notice' );
- 			else
--				$out->addWikiMsg( 'recreate-deleted-warn' );
-+			$out->addWikiMsg( 'recreate-deleted-warn' );
- 			$out->addHTML(
--				$loglist->beginLogEventsList() .
--				$pager->getBody() .
--				$loglist->endLogEventsList()
-+			$loglist->beginLogEventsList() .
-+			$pager->getBody() .
-+			$loglist->endLogEventsList()
- 			);
- 			if ( $count > 10 ) {
- 				$out->addHTML( $wgUser->getSkin()->link(
--					SpecialPage::getTitleFor( 'Log' ),
--					wfMsgHtml( 'deletelog-fulllog' ),
--					array(),
--					array(
-+				SpecialPage::getTitleFor( 'Log' ),
-+				wfMsgHtml( 'deletelog-fulllog' ),
-+				array(),
-+				array(
- 						'type' => 'delete',
- 						'page' => $this->mPageTitle->getPrefixedText() ) ) );
- 			}
-@@ -239,7 +239,7 @@
- 
- END;
- 
--		return $text;
-+			return $text;
- 	}
- 
- 	/**
-@@ -272,7 +272,17 @@
- 		$new_text = "";
+@@ -273,6 +273,16 @@
  		// flag for placing "<onlyinclude>" tags in form output
  		$onlyinclude_free_text = false;
--		
-+
+
 +		/*op-patch|DH|2009-26-08|SF|free text in includeonly tags and rest in noinclude tags|start*/
 +		/*op-patch|DH|2009-26-08|SF|free text in includeonly tags and rest in noinclude tags|doc|http://dmwiki.ontoprise.com:8888/dmwiki/index.php/Patch_free_text_in_includeonly_tags*/
 +		$includeonly_free_text = false;
@@ -509,74 +124,6 @@ Index: extensions/SemanticForms/includes/SF_FormPrinter.php
  		// If we have existing content and we're not in an active replacement
  		// situation, preserve the original content. We do this because we want
  		// to pass the original content on IF this is a partial form.
-@@ -285,10 +295,10 @@
- 			$original_page_content = $existing_page_content;
- 		} else {
- 			$original_page_content = null;
--			 if ( $wgRequest->getCheck( 'free_text' ) ) {
--					$existing_page_content = $wgRequest->getVal( 'free_text' );
--					$form_is_partial = true;
--			 }
-+			if ( $wgRequest->getCheck( 'free_text' ) ) {
-+				$existing_page_content = $wgRequest->getVal( 'free_text' );
-+				$form_is_partial = true;
-+			}
- 		}
- 
- 		// Disable all form elements if user doesn't have edit permission -
-@@ -303,7 +313,7 @@
- 			$this->mPageTitle = $wgTitle;
- 		} elseif ( $page_name == '' ) {
- 			$this->mPageTitle = Title::newFromText(
--				$wgRequest->getVal( 'namespace' ) . ":Semantic Forms permissions test" );
-+			$wgRequest->getVal( 'namespace' ) . ":Semantic Forms permissions test" );
- 		} else {
- 			$this->mPageTitle = Title::newFromText( $page_name );
- 		}
-@@ -353,27 +363,27 @@
- 
- 		// Get the form definition from the cache, if we're using caching and it's
- 		// there.
--//		$got_form_def_from_cache = false;
--//		global $sfgCacheFormDefinitions;
--//		if ( $sfgCacheFormDefinitions && ! is_null( $form_id ) ) {
--//			$db = wfGetDB( DB_MASTER );
--//			$res = $db->select( 'page_props', 'pp_value', "pp_propname = 'formdefinition' AND pp_page = '$form_id'" );
--//			if ( $res->numRows() >	0 ) {
--//				$form_def = $res->fetchObject()->pp_value;
--//				$got_form_def_from_cache = true;
--//			}
--//		}
-+		//		$got_form_def_from_cache = false;
-+		//		global $sfgCacheFormDefinitions;
-+		//		if ( $sfgCacheFormDefinitions && ! is_null( $form_id ) ) {
-+		//			$db = wfGetDB( DB_MASTER );
-+		//			$res = $db->select( 'page_props', 'pp_value', "pp_propname = 'formdefinition' AND pp_page = '$form_id'" );
-+		//			if ( $res->numRows() >	0 ) {
-+		//				$form_def = $res->fetchObject()->pp_value;
-+		//				$got_form_def_from_cache = true;
-+		//			}
-+		//		}
- 		// Otherwise, parse it.
--//		if ( ! $got_form_def_from_cache ) {
-+		//		if ( ! $got_form_def_from_cache ) {
- 		$form_def = $wgParser->recursiveTagParse( $form_def );
- 		$form_def = $wgParser->mStripState->unstripBoth( $form_def );
- 		$form_def = $wgParser->doBlockLevels( $form_def, true );
- 		wfRunHooks( 'ParserAfterTidy', array( &$wgParser, &$form_def ) );
--//			} else {
--//				$form_def = $wgParser->parse( $form_def, $this->mPageTitle, $wgParser->mOptions )->getText();
--//			}
--//		}
--		
-+		//			} else {
-+		//				$form_def = $wgParser->parse( $form_def, $this->mPageTitle, $wgParser->mOptions )->getText();
-+		//			}
-+		//		}
-+
- 		// Turn form definition file into an array of sections, one for each
- 		// template definition (plus the first section)
- 		$form_def_sections = array();
 @@ -420,6 +430,10 @@
  			$tif = new SFTemplateInForm();
  			$start_position = 0;
@@ -606,7 +153,7 @@ Index: extensions/SemanticForms/includes/SF_FormPrinter.php
  						$sub_components = explode( '=', $component, 2 );
  						if ( count( $sub_components ) == 2 ) {
  							if ( $sub_components[0] == 'label' ) {
-@@ -453,6 +473,12 @@
+@@ -453,15 +473,59 @@
  							} elseif ( $sub_components[0] == 'add button text' ) {
  								$add_button_text = $sub_components[1];
  							}
@@ -614,16 +161,16 @@ Index: extensions/SemanticForms/includes/SF_FormPrinter.php
 +							elseif ( $sub_components[0] == 'forceopen' ) {
 +								if ($sub_components[1] && strtolower($sub_components[1] == 'true'))
 +								$force_open = true;
-+							}
-+							/*op-patch|BL|2009-09-16|CollapsingForms|AddForceopenTag|end*/
  						}
++							/*op-patch|BL|2009-09-16|CollapsingForms|AddForceopenTag|end*/
  					}
++					}
  					// If this is the first instance, add the label into the form, if
-@@ -461,7 +487,45 @@
+ 					// there is one, and add the appropriate wrapper div, if this is
+ 					// a multiple-instance template.
  					if ( $old_template_name != $template_name ) {
  						if ( isset( $template_label ) ) {
  							$form_text .= "<fieldset>\n";
--							$form_text .= "<legend>$template_label</legend>\n";
 +							/*op-patch|BL|2009-08-28|CollapsingForms|AddCollapseFunctionality|start*/
 +							// Add Javascript, curser style and sfgTabIndex for each legend
 +							// content was:
@@ -660,234 +207,18 @@ Index: extensions/SemanticForms/includes/SF_FormPrinter.php
 +								$form_text .= "<div id=\"{$smwgRMActFormName}_sec_".$section_num."\" style=\"display:".$section_visibility."\">";
 +							}
 +							else {
-+								$form_text .= "<legend>$template_label</legend>\n";
+ 							$form_text .= "<legend>$template_label</legend>\n";
 +							} // end collabsible
 +							/*op-patch|BL|2009-08-28|CollapsingForms|AddCollapseFunctionality|end*/
  						}
  						if ($allow_multiple) {
  							$form_text .= "\t" . '<div class="multipleTemplateWrapper">' . "\n";
-@@ -482,9 +546,9 @@
- 						// searching on either.
- 						$search_template_str = str_replace( '_', ' ', $tif->template_name );
- 						$preg_match_template_str = str_replace(
--							array( '/', '(', ')' ),
--							array( '\/', '\(', '\)' ),
--							$search_template_str );
-+						array( '/', '(', ')' ),
-+						array( '\/', '\(', '\)' ),
-+						$search_template_str );
- 						$found_instance = preg_match( '/{{' . $preg_match_template_str . '\s*[\|}]/i', str_replace( '_', ' ', $existing_page_content ) );
- 						if ( $allow_multiple ) {
- 							// find instances of this template in the page -
-@@ -614,14 +678,14 @@
- 							}
- 						}
- 					}
--				// =====================================================
--				// end template processing
--				// =====================================================
-+					// =====================================================
-+					// end template processing
-+					// =====================================================
- 				} elseif ( $tag_title == 'end template' ) {
- 					if ( $source_is_page ) {
- 						// add any unhandled template fields in the page as hidden variables
- 						if ( isset( $template_contents ) )
--							$form_text .= SFFormUtils::unhandledFieldsHTML( $template_contents );
-+						$form_text .= SFFormUtils::unhandledFieldsHTML( $template_contents );
- 					}
- 					// remove this tag, reset some variables, and close off form HTML tag
- 					$section = substr_replace( $section, '', $brackets_loc, $brackets_end_loc + 3 - $brackets_loc );
-@@ -633,9 +697,9 @@
- 					$allow_multiple = false;
- 					$all_instances_printed = false;
- 					$instance_num = 0;
--				// =====================================================
--				// field processing
--				// =====================================================	
-+					// =====================================================
-+					// field processing
-+					// =====================================================
- 				} elseif ( $tag_title == 'field' ) {
- 					$field_name = trim( $tag_components[1] );
- 					// cycle through the other components
-@@ -699,9 +763,9 @@
- 											$option = $option_div_pair[0];
- 											$div_id = $option_div_pair[1];
- 											if ( array_key_exists( $div_id, $show_on_select ) )
--												$show_on_select[$div_id][] = $option;
-+											$show_on_select[$div_id][] = $option;
- 											else
--												$show_on_select[$div_id] = array( $option );
-+											$show_on_select[$div_id] = array( $option );
- 										} else {
- 											$show_on_select[$val] = array();
- 										}
-@@ -726,7 +790,7 @@
- 									$autocompletion_source = $sub_components[1];
- 									// special handling for "main" (blank) namespace
- 									if ( $autocompletion_source == "" )
--										$autocompletion_source = "main";
-+									$autocompletion_source = "main";
- 									$field_args['autocompletion source'] = $autocompletion_source;
- 								} elseif ( $sub_components[0] == 'autocomplete from url' ) {
- 									$field_args['autocomplete field type'] = 'external_url';
-@@ -773,16 +837,16 @@
- 						$field_args['no autocomplete'] = true;
- 					}
- 					if ( $allow_multiple )
--						$field_args['part_of_multiple'] = $allow_multiple;
-+					$field_args['part_of_multiple'] = $allow_multiple;
- 					if ( count( $show_on_select ) > 0 )
--						$field_args['show on select'] = $show_on_select;
-+					$field_args['show on select'] = $show_on_select;
- 					// get the value from the request, if it's there, and if it's not
- 					// an array
- 					$escaped_field_name = str_replace( "'", "\'", $field_name );
- 					if ( isset( $template_instance_query_values ) &&
--							$template_instance_query_values != null &&
--							is_array( $template_instance_query_values ) &&
--							array_key_exists( $escaped_field_name, $template_instance_query_values ) ) {
-+					$template_instance_query_values != null &&
-+					is_array( $template_instance_query_values ) &&
-+					array_key_exists( $escaped_field_name, $template_instance_query_values ) ) {
- 						$field_query_val = $template_instance_query_values[$escaped_field_name];
- 						if ( $form_submitted || ( ! is_null( $field_query_val ) && ! is_array( $field_query_val ) ) ) {
- 							$cur_value = $field_query_val;
-@@ -819,7 +883,7 @@
- 					// "field|free text" (a deprecated usage), it has to be outside
- 					// of a template.
- 					if ( ( $template_name == '' && $field_name == 'free text' ) ||
--							$field_name == '<freetext>' ) {
-+					$field_name == '<freetext>' ) {
- 						// Add placeholders for the free text in both the form and
- 						// the page, using <free_text> tags - once all the free text
- 						// is known (at the end), it will get substituted in.
-@@ -827,9 +891,9 @@
- 							$new_text = SFFormUtils::hiddenFieldHTML( 'free_text', '!free_text!' );
- 						} else {
- 							if ( ! array_key_exists( 'rows', $field_args ) )
--								$field_args['rows'] = 5;
-+							$field_args['rows'] = 5;
- 							if ( ! array_key_exists( 'cols', $field_args ) )
--								$field_args['cols'] = 80;
-+							$field_args['cols'] = 80;
- 							$sfgTabIndex++;
- 							$sfgFieldNum++;
- 							if ( $cur_value == '' ) {
-@@ -872,7 +936,7 @@
- 						if ( is_array( $cur_value ) ) {
- 							// first, check if it's a list
- 							if ( array_key_exists( 'is_list', $cur_value ) &&
--									$cur_value['is_list'] == true ) {
-+							$cur_value['is_list'] == true ) {
- 								$cur_value_in_template = "";
- 								if ( array_key_exists( 'delimiter', $field_args ) ) {
- 									$delimiter = $field_args['delimiter'];
-@@ -930,7 +994,7 @@
- 										$yes = ucwords( $words_for_true[0] );
- 									}
- 									$cur_value_in_template = $yes;
--								// if it's 3 or greater, assume it's a date or datetime
-+									// if it's 3 or greater, assume it's a date or datetime
- 								} elseif ( count( $cur_value ) >= 3 ) {
- 									$month = $cur_value['month'];
- 									$day = $cur_value['day'];
-@@ -959,13 +1023,13 @@
- 										}
- 										// include whatever time information we have
- 										if ( ! is_null( $hour ) )
--											$cur_value_in_template .= " " . str_pad( intval( substr( $hour, 0, 2 ) ), 2, '0', STR_PAD_LEFT ) . ":" . str_pad( intval( substr( $minute, 0, 2 ) ), 2, '0', STR_PAD_LEFT );
-+										$cur_value_in_template .= " " . str_pad( intval( substr( $hour, 0, 2 ) ), 2, '0', STR_PAD_LEFT ) . ":" . str_pad( intval( substr( $minute, 0, 2 ) ), 2, '0', STR_PAD_LEFT );
- 										if ( ! is_null( $second ) )
--											$cur_value_in_template .= ":" . str_pad( intval( substr( $second, 0, 2 ) ), 2, '0', STR_PAD_LEFT );
-+										$cur_value_in_template .= ":" . str_pad( intval( substr( $second, 0, 2 ) ), 2, '0', STR_PAD_LEFT );
- 										if ( ! is_null( $ampm24h ) )
--											$cur_value_in_template .= " $ampm24h";
-+										$cur_value_in_template .= " $ampm24h";
- 										if ( ! is_null( $timezone ) )
--											$cur_value_in_template .= " $timezone";
-+										$cur_value_in_template .= " $timezone";
- 									} else {
- 										$cur_value_in_template = "";
- 									}
-@@ -975,13 +1039,13 @@
- 							$cur_value_in_template = $cur_value;
- 						}
- 						if ( $template_name == null || $template_name == '' )
--							$input_name = $field_name;
-+						$input_name = $field_name;
- 						elseif ( $allow_multiple )
--							// 'num' will get replaced by an actual index, either in PHP
--							// or in Javascript, later on
--							$input_name = $template_name . '[num][' . $field_name . ']';
-+						// 'num' will get replaced by an actual index, either in PHP
-+						// or in Javascript, later on
-+						$input_name = $template_name . '[num][' . $field_name . ']';
- 						else
--							$input_name = $template_name . '[' . $field_name . ']';
-+						$input_name = $template_name . '[' . $field_name . ']';
- 
- 						// if we're creating the page name from a formula based on
- 						// form values, see if the current input is part of that formula,
-@@ -999,14 +1063,14 @@
- 						// disable this field if either the whole form is disabled, or
- 						// it's a restricted field and user doesn't have sysop privileges
- 						$is_disabled = ( $form_is_disabled ||
--							( $is_restricted && ( ! $wgUser || ! $wgUser->isAllowed( 'editrestrictedfields' ) ) ) );
-+						( $is_restricted && ( ! $wgUser || ! $wgUser->isAllowed( 'editrestrictedfields' ) ) ) );
- 						// Create an SFFormField instance based on all the parameters
- 						// in the form definition, and any information from the template
- 						// definition (contained in the $all_fields parameter).
- 						$form_field = SFFormField::createFromDefinition( $field_name,
--							$input_name, $is_mandatory, $is_hidden, $is_uploadable,
--							$possible_values, $is_disabled, $is_list, $input_type,
--							$field_args, $all_fields, $strict_parsing );
-+						$input_name, $is_mandatory, $is_hidden, $is_uploadable,
-+						$possible_values, $is_disabled, $is_list, $input_type,
-+						$field_args, $all_fields, $strict_parsing );
- 						// If a property was set in the form definition, overwrite whatever
- 						// is set in the template field - this is somewhat of a hack, since
- 						// parameters set in the form definition are meant to go into the
-@@ -1014,7 +1078,7 @@
- 						// it seemed like too much work, though, to create an
- 						// SFFormField::setSemanticProperty() function just for this call
- 						if ( $semantic_property != null )
--							 $form_field->template_field->setSemanticProperty( $semantic_property );
-+						$form_field->template_field->setSemanticProperty( $semantic_property );
- 
- 						// call hooks - unfortunately this has to be split into two
- 						// separate calls, because of the different variable names in
-@@ -1035,12 +1099,12 @@
- 						// to 'now', and it has no current value, set $cur_value to be
- 						// the current date
- 						if ( $default_value == 'now' &&
--								// if the date is hidden, cur_value will already be set
--								// to the default value
--								( $cur_value == '' || $cur_value == 'now' ) ) {
-+						// if the date is hidden, cur_value will already be set
-+						// to the default value
-+						( $cur_value == '' || $cur_value == 'now' ) ) {
- 							if ( $input_type == 'date' || $input_type == 'datetime' ||
--									$input_type == 'year' ||
--									( $input_type == '' && $form_field->template_field->field_type_id == '_dat' ) ) {
-+							$input_type == 'year' ||
-+							( $input_type == '' && $form_field->template_field->field_type_id == '_dat' ) ) {
- 								// Get current time, for the time zone specified in the wiki.
- 								global $wgLocaltimezone;
- 								if ( isset( $wgLocaltimezone ) ) {
-@@ -1087,13 +1151,16 @@
- 						// to 'current user', and it has no current value, set $cur_value
- 						// to be the current user
- 						if ( $default_value == 'current user' &&
--								// if the date is hidden, cur_value will already be set
--								// to the default value
--								( $cur_value == '' || $cur_value == 'current user' ) ) {
+@@ -1090,10 +1154,13 @@
+ 								// if the date is hidden, cur_value will already be set
+ 								// to the default value
+ 								( $cur_value == '' || $cur_value == 'current user' ) ) {
 -							if ( $input_type == 'text' || $input_type == '' ) {
 -								$cur_value_in_template = $wgUser->getName();
-+						// if the date is hidden, cur_value will already be set
-+						// to the default value
-+						( $cur_value == '' || $cur_value == 'current user' ) ) {
 +							/*op-patch|DH|2009-09-18|SF|include namespace for current user|start*/
 +							if ($input_type == 'text' || $input_type == '' ||
 +							$input_type == 'haloACtext' || $input_type == 'haloACtextarea') {
@@ -897,70 +228,8 @@ Index: extensions/SemanticForms/includes/SF_FormPrinter.php
 +							/*op-patch|DH|2009-09-18|SF|include namespace for current user|end*/
  						}
  						$new_text = $this->formFieldHTML( $form_field, $cur_value );
- 
-@@ -1115,22 +1182,22 @@
- 							} else {
- 								// if the value is null, don't include it at all
- 								if ( $cur_value_in_template != '' )
--									$template_text .= "\n|$field_name=$cur_value_in_template";
-+								$template_text .= "\n|$field_name=$cur_value_in_template";
- 							}
- 							$section = substr_replace( $section, $new_text, $brackets_loc, $brackets_end_loc + 3 - $brackets_loc );
- 						} else {
- 							$start_position = $brackets_end_loc;
- 						}
- 					}
--				// =====================================================
--				// standard input processing
--				// =====================================================
-+					// =====================================================
-+					// standard input processing
-+					// =====================================================
- 				} elseif ( $tag_title == 'standard input' ) {
- 					// handle all the possible values
- 					$input_name = $tag_components[1];
- 					$input_label = null;
- 					$attr = array();
--					
-+
- 					// if it's a query, ignore all standard inputs except run query
- 					if ( ( $is_query && $input_name != 'run query' ) || ( !$is_query && $input_name == 'run query' ) ) {
- 						$new_text = "";
-@@ -1149,13 +1216,13 @@
- 							}
- 						} elseif ( count( $sub_components ) == 2 ) {
- 							switch( $sub_components[0] ) {
--							case 'label':
--								$input_label = $sub_components[1];
--								break;
--							case 'class':
--							case 'style':
--								$attr[$sub_components[0]] = $sub_components[1];
--								break;
-+								case 'label':
-+									$input_label = $sub_components[1];
-+									break;
-+								case 'class':
-+								case 'style':
-+									$attr[$sub_components[0]] = $sub_components[1];
-+									break;
- 							}
- 							// free text input needs more handling than the rest
- 							if ( $input_name == 'free text' || $input_name == '<freetext>' ) {
-@@ -1183,9 +1250,9 @@
- 						$new_text = SFFormUtils::runQueryButtonHTML( $form_is_disabled, $input_label, $attr );
- 					}
- 					$section = substr_replace( $section, $new_text, $brackets_loc, $brackets_end_loc + 3 - $brackets_loc );
--				// =====================================================
--				// page info processing
--				// =====================================================
-+					// =====================================================
-+					// page info processing
-+					// =====================================================
- 				} elseif ( $tag_title == 'info' ) {
- 					// TODO: Generate an error message if this is included more than once
- 					foreach ( array_slice( $tag_components, 1 ) as $component ) {
-@@ -1213,14 +1280,21 @@
+
+@@ -1213,9 +1280,16 @@
  							$form_is_partial = true;
  							// replacement pages may have minimal matches...
  							$source_page_matches_this_form = true;
@@ -977,63 +246,7 @@ Index: extensions/SemanticForms/includes/SF_FormPrinter.php
 +						/*op-patch|DH|2009-26-08|SF|free text in includeonly tags and rest in noinclude tags|end*/
  					}
  					$section = substr_replace( $section, '', $brackets_loc, $brackets_end_loc + 3 - $brackets_loc );
--				// =====================================================
--				// default outer level processing
--				// =====================================================
-+					// =====================================================
-+					// default outer level processing
-+					// =====================================================
- 				} else { // tag is not one of the three allowed values
- 					// ignore tag
- 					$start_position = $brackets_end_loc;
-@@ -1236,7 +1310,7 @@
- 					// add another newline before the final bracket, if this template
- 					// call is already more than one line
- 					if ( strpos( $template_text, "\n" ) )
--						$template_text .= "\n";
-+					$template_text .= "\n";
- 					// if we're editing an existing page, and there were fields in
- 					// the template call not handled by this form, preserve those
- 					$template_text .= SFFormUtils::addUnhandledFields();
-@@ -1267,26 +1341,26 @@
- 					// with from any inputs added by the Javascript
- 					$section = str_replace( '[num]', "[{$instance_num}a]", $section );
- 					$form_text .= "\t\t" . Xml::tags( 'div',
--						array(
--							// The "multipleTemplate" class is there for
--							// backwards-compatibility with any custom CSS on people's
--							// wikis before SF 2.0.9.
-+					array(
-+					// The "multipleTemplate" class is there for
-+					// backwards-compatibility with any custom CSS on people's
-+					// wikis before SF 2.0.9.
- 							'class' => "multipleTemplateInstance multipleTemplate"
--						),
--						self::multipleTemplateInstanceTableHTML( $section )
--					) . "\n";
-+							),
-+							self::multipleTemplateInstanceTableHTML( $section )
-+							) . "\n";
- 
--					// this will cause the section to be re-parsed on the next go
--					$section_num--;
-+							// this will cause the section to be re-parsed on the next go
-+							$section_num--;
- 				} else {
- 					// This is the last instance of this template - print all the
- 					// sections necessary for adding additional instances.
- 					$form_text .= "\t\t" . Xml::tags( 'div',
--						array(
-+					array(
- 							'class' => "multipleTemplateStarter",
- 							'style' => "display: none",
--						),
--						self::multipleTemplateInstanceTableHTML( $section )
-+					),
-+					self::multipleTemplateInstanceTableHTML( $section )
- 					) . "\n";
- 					$form_text .= <<<END
- 	</div><!-- multipleTemplateList -->
+ 				// =====================================================
 @@ -1299,7 +1373,10 @@
  			} else {
  				$form_text .= $section;
@@ -1044,7 +257,7 @@ Index: extensions/SemanticForms/includes/SF_FormPrinter.php
 +			$form_text .= "</div>"; //closing div for collapsing
 +			/*op-patch|BL|2009-08-14|end*/
  		} // end for
- 
+
  		// if it wasn't included in the form definition, add the
 @@ -1340,6 +1417,17 @@
  		} else {
@@ -1064,58 +277,6 @@ Index: extensions/SemanticForms/includes/SF_FormPrinter.php
  		if ( $onlyinclude_free_text ) {
  			// modify free text and data text to insert <onlyinclude> tags
  			$free_text = str_replace( "<onlyinclude>", '', $free_text );
-@@ -1371,9 +1459,9 @@
- 		// add form bottom, if no custom "standard inputs" have been defined
- 		if ( !$this->standardInputsIncluded ) {
- 			if ( $is_query )
--				$form_text .= SFFormUtils::queryFormBottom( $form_is_disabled );
-+			$form_text .= SFFormUtils::queryFormBottom( $form_is_disabled );
- 			else
--				$form_text .= SFFormUtils::formBottom( $form_is_disabled );
-+			$form_text .= SFFormUtils::formBottom( $form_is_disabled );
- 		}
- 		$starttime = wfTimestampNow();
- 		$page_article = new Article( $this->mPageTitle );
-@@ -1400,7 +1488,7 @@
- 		// of which values should apply to which fields.
- 		// If doing a replace, the data text is actually the modified original page
- 		if ( $wgRequest->getCheck( 'partial' ) )
--			$data_text = $existing_page_content;
-+		$data_text = $existing_page_content;
- 
- 		if ( !$embedded ) {
- 			global $wgParser;
-@@ -1414,7 +1502,7 @@
- 		if ( $form_submitted ) {
- 			$javascript_text = '';
- 		}
--		
-+
- 		return array( $form_text, $javascript_text, $data_text, $form_page_title, $generated_page_name );
- 	}
- 
-@@ -1431,8 +1519,8 @@
- 		if ( $form_field->is_hidden ) {
- 			$text = SFFormUtils::hiddenFieldHTML( $form_field->input_name, $cur_value );
- 		} elseif ( $form_field->input_type != '' &&
--							array_key_exists( $form_field->input_type, $this->mInputTypeHooks ) &&
--							$this->mInputTypeHooks[$form_field->input_type] != null ) {
-+		array_key_exists( $form_field->input_type, $this->mInputTypeHooks ) &&
-+		$this->mInputTypeHooks[$form_field->input_type] != null ) {
- 			$funcArgs = array();
- 			$funcArgs[] = $cur_value;
- 			$funcArgs[] = $form_field->input_name;
-@@ -1449,8 +1537,8 @@
- 			$field_type = $template_field->field_type;
- 			$is_list = ( $form_field->is_list || $template_field->is_list );
- 			if ( $field_type != '' &&
--					array_key_exists( $field_type, $this->mSemanticTypeHooks ) &&
--					isset( $this->mSemanticTypeHooks[$field_type][$is_list] ) ) {
-+			array_key_exists( $field_type, $this->mSemanticTypeHooks ) &&
-+			isset( $this->mSemanticTypeHooks[$field_type][$is_list] ) ) {
- 				$funcArgs = array();
- 				$funcArgs[] = $cur_value;
- 				$funcArgs[] = $form_field->input_name;
 Index: extensions/SemanticForms/includes/SF_FormUtils.php
 ===================================================================
 --- extensions/SemanticForms/includes/SF_FormUtils.php	(revision 10879)
@@ -1367,46 +528,6 @@ Index: extensions/SemanticForms/libs/collapse.js
 +
 +var smwCollapsingForm = new CollapsingForm();
 \ No newline at end of file
-Index: extensions/SemanticForms/skins/minus-act.gif
-===================================================================
-Cannot display: file marked as a binary type.
-svn:mime-type = application/octet-stream
-
-Property changes on: extensions\SemanticForms\skins\minus-act.gif
-___________________________________________________________________
-Added: svn:mime-type
-   + application/octet-stream
-
-Index: extensions/SemanticForms/skins/minus.gif
-===================================================================
-Cannot display: file marked as a binary type.
-svn:mime-type = application/octet-stream
-
-Property changes on: extensions\SemanticForms\skins\minus.gif
-___________________________________________________________________
-Added: svn:mime-type
-   + application/octet-stream
-
-Index: extensions/SemanticForms/skins/plus-act.gif
-===================================================================
-Cannot display: file marked as a binary type.
-svn:mime-type = application/octet-stream
-
-Property changes on: extensions\SemanticForms\skins\plus-act.gif
-___________________________________________________________________
-Added: svn:mime-type
-   + application/octet-stream
-
-Index: extensions/SemanticForms/skins/plus.gif
-===================================================================
-Cannot display: file marked as a binary type.
-svn:mime-type = application/octet-stream
-
-Property changes on: extensions\SemanticForms\skins\plus.gif
-___________________________________________________________________
-Added: svn:mime-type
-   + application/octet-stream
-
 Index: extensions/SemanticForms/specials/SF_FormEdit.php
 ===================================================================
 --- extensions/SemanticForms/specials/SF_FormEdit.php	(revision 10879)
