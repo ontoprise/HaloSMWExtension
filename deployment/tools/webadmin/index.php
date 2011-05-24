@@ -127,6 +127,14 @@ if (isset($func_name)) {
 	die();
 }
 
+if (!isset($dfgLangCode)) {
+	$dfgLangCode = "En";
+} else {
+	$dfgLangCode = ucfirst($dfgLangCode);
+}
+
+$javascriptLang = '<script type="text/javascript" src="scripts/languages/DF_WebAdmin_User'.$dfgLangCode.'.js"></script>';
+$javascriptLang .= '<script type="text/javascript" src="scripts/languages/DF_WebAdmin_Language.js"></script>';
 
 $html = <<<ENDS
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
@@ -147,6 +155,7 @@ $html = <<<ENDS
 				$('#tabs').tabs();
 			});
 </script>
+$javascriptLang
 <script type="text/javascript" src="scripts/webadmin.js"></script>
 </head>
 ENDS
@@ -166,7 +175,10 @@ $html .= <<<ENDS
 
 			<div id="tabs-3">Nam dui erat, auctor a, dignissim quis, sollicitudin eu, felis. Pellentesque nisi urna, interdum eget, sagittis et, consequat vestibulum, lacus. Mauris porttitor ullamcorper augue.</div>
 			<div id="tabs-4">Nam dui erat, auctor a, dignissim quis, sollicitudin eu, felis. Pellentesque nisi urna, interdum eget, sagittis et, consequat vestibulum, lacus. Mauris porttitor ullamcorper augue.</div>
-		</div>
+</div>
+<div id="global-updatedialog-confirm" title="Empty the recycle bin?" style="display:none">
+    <p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span><span id=\"global-updatedialog-confirm-text\">Perform global update?</span></p>
+</div>
 ENDS
 ;
 $html .= "</body>";

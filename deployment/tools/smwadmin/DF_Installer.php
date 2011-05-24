@@ -990,29 +990,60 @@ class Installer {
 
 		if (count($extensions_to_update) == 0)
 		throw new InstallationError(DEPLOY_FRAMEWORK_COULD_NOT_FIND_UPDATE, "Set of packages to install is empty.", $packageID);
-		// Install/update all dependant and super extensions
-		$dfgOut->outputln("The following packages need to be installed");
-		foreach($extensions_to_update as $etu) {
-			list($dd, $min, $max) = $etu;
-			$dfgOut->outputln("- ".$dd->getID()."-".$dd->getVersion());
-		}
-
-		if (count($contradictions) > 0) {
-			$dfgOut->outputln("The following extension can not be installed/updated due to conflicts:");
-			foreach($contradictions as $etu) {
-				list($dd, $min, $max) = $etu;
-				$dfgOut->outputln("- ".$dd->getID());
-			}
-		}
-		$result=array();
+		$result = array();
+		$result['newpackage'] = array($new_package->getID(), $new_package->getVersion(), $new_package->getPatchlevel());;
+		$result['oldpackage'] = is_null($old_package) ? NULL : array($old_package->getID(), $old_package->getVersion(), $old_package->getPatchlevel());;
+		$result['extensions'] = array();
 		foreach($extensions_to_update as $arr) {
 			list($desc, $min, $max) = $arr;
-			$result[$desc->getID()] = $desc->getVersion();
+			$result['extensions'][] = array($desc->getID(), $desc->getVersion(), $desc->getPatchlevel());;
+		}
+		$result['contradictions'] = array();
+		foreach($contradictions as $etu) {
+			list($desc, $min, $max) = $etu;
+			$result['contradictions'][] = array($desc->getID(), $desc->getVersion(), $desc->getPatchlevel());;
 		}
 		return $result;
+
 	}
 
-	
+
+	public function checkforGlobalUpdate() {
+		$localPackages = PackageRepository::getLocalPackages($this->rootDir);
+
+		// iterate through all installed packages, check if new or patched versions
+		// are available and collect all depending extension to be updated.
+		$updatesNeeded = array();
+		foreach($localPackages as $tl_ext) {
+
+			$dd = PackageRepository::getLatestDeployDescriptor($tl_ext->getID());
+
+			if ($dd->getVersion() > $localPackages[$dd->getID()]->getVersion()
+			|| ($dd->getVersion() == $localPackages[$dd->getID()]->getVersion() && $dd->getPatchlevel() > $localPackages[$dd->getID()]->getPatchlevel())) {
+				$this->collectDependingExtensions($dd, $updatesNeeded, $localPackages, true);
+				$updatesNeeded[] = array($dd, $dd->getVersion(), $dd->getVersion());
+			}
+
+		}
+
+		// remove all packages which can not be updated due to conflicts
+		$this->filterIncompatiblePackages($updatesNeeded, $extensions_to_update, $contradictions);
+
+		$result = array();
+        $result['extensions'] = array();
+        foreach($extensions_to_update as $arr) {
+            list($desc, $min, $max) = $arr;
+            $result['extensions'][] = array($desc->getID(), $desc->getVersion(), $desc->getPatchlevel());;
+        }
+        $result['contradictions'] = array();
+        foreach($contradictions as $etu) {
+            list($desc, $min, $max) = $etu;
+            $result['contradictions'][] = array($desc->getID(), $desc->getVersion(), $desc->getPatchlevel());;
+        }
+        return $result;
+	}
+
+
 
 
 

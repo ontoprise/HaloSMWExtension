@@ -52,7 +52,10 @@ class DF_Language_En extends DF_Language {
 	'df_error' => 'ERROR',
 	'df_fatal' => 'FATAL',
 	'df_failed' => 'FAILED',
-	'df_ok' => 'OK'
+	'df_ok' => 'OK',
+	
+	// webadmin
+	'df_webadmin_extension' => 'Extension'
 	
 	);
 

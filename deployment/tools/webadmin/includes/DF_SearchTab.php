@@ -66,6 +66,7 @@ class DFSearchTab {
 			$html .= "<td class=\"df_actions\">";
 			if (!array_key_exists($id, $localPackages)) {
 				$html .= "<input type=\"button\" class=\"df_install_button\" value=\"Install\" id=\"df_install__$id\"></input>";
+				$html .= "<input type=\"button\" class=\"df_check_button\" value=\"Check\" id=\"df_showdependencies__$id\"></input>";
 			} else {
 				$html .= "Installed";
 			}

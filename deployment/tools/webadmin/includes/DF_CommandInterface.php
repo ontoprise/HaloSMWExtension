@@ -50,6 +50,12 @@ class DFCommandInterface {
 				return $this->finalize($args);
 			case "install":
 				return $this->install($args);
+			case "deinstall":
+				return $this->deinstall($args);
+			case "checkforGlobalUpdate":
+				return $this->checkforGlobalUpdate();
+			case "doGlobalUpdate":
+				return $this->doGlobalUpdate();
 			default: return "unsupported command";
 		}
 	}
@@ -69,20 +75,26 @@ class DFCommandInterface {
 		global $mwrootDir, $dfgOut;
 		$extid = reset($args);
 		$dfgOut->setVerbose(false);
-		$installer = Installer::getInstance($mwrootDir);
-		$dependencies = $installer->getExtensionsToInstall($extid);
-		$dfgOut->setVerbose(true);
-		return json_encode($dependencies);
+		try {
+			$installer = Installer::getInstance($mwrootDir);
+			$dependencies = $installer->getExtensionsToInstall($extid);
+			$dfgOut->setVerbose(true);
+			return json_encode($dependencies);
+		} catch(InstallationError $e) {
+			$error = array();
+			$error['exception'] = array($e->getMsg(), $e->getErrorCode(), $e->getArg1(), $e->getArg2());
+			return json_encode($error);
+		}
 	}
 
 	public function install($args) {
 		global $mwrootDir, $dfgOut;
 		$extid = reset($args);
-		$filename = $dfgOut->start(DF_OUTPUT_TARGET_FILE);
+		$filename = uniqid().".log";
 		chdir($mwrootDir.'/deployment/tools');
 		if (Tools::isWindows()) {
 			$wshShell = new COM("WScript.Shell");
-			$runCommand = "cmd /K START php $mwrootDir/deployment/tools/smwadmin/smwadmin.php --nocheck --noask -i $extid";
+			$runCommand = "cmd /K START php $mwrootDir/deployment/tools/smwadmin/smwadmin.php --logtofile $filename --outputformat html --nocheck --noask -i $extid";
 			$oExec = $wshShell->Run("$runCommand", 7, false);
 
 		} else {
@@ -92,22 +104,67 @@ class DFCommandInterface {
 	}
 
 	public function deinstall($args) {
-		global $mwrootDir;
+		global $mwrootDir, $dfgOut;
 		$extid = reset($args);
-		$installer = Installer::getInstance($mwrootDir);
-		$installer->deInstall($extid);
-		return true;
+		$filename = uniqid().".log";
+		chdir($mwrootDir.'/deployment/tools');
+		if (Tools::isWindows()) {
+			$wshShell = new COM("WScript.Shell");
+			$runCommand = "cmd /K START php $mwrootDir/deployment/tools/smwadmin/smwadmin.php --logtofile $filename --outputformat html --nocheck --noask -d $extid";
+			$oExec = $wshShell->Run("$runCommand", 7, false);
+
+		} else {
+			//TODO: impl.linux command
+		}
+		return $filename;
 	}
 
 	public function finalize($args) {
-		global $mwrootDir;
+		global $mwrootDir, $dfgOut;
+		$extid = reset($args);
+		$filename = uniqid().".log";
 		chdir($mwrootDir.'/deployment/tools');
 		if (Tools::isWindows()) {
-			passthru($mwrootDir.'/deployment/tools/smwadmin.bat --finalize --nocheck');
+			$wshShell = new COM("WScript.Shell");
+			$runCommand = "cmd /K START php $mwrootDir/deployment/tools/smwadmin/smwadmin.php --logtofile $filename --outputformat html --nocheck --noask --finalize";
+			$oExec = $wshShell->Run("$runCommand", 7, false);
+
 		} else {
-			passthru('sh '.$mwrootDir.'/deployment/tools/smwadmin.sh --finalize --nocheck');
+			//TODO: impl.linux command
 		}
-		return true;
+		return $filename;
+	}
+
+	public function checkforGlobalUpdate() {
+		global $mwrootDir, $dfgOut;
+
+		$dfgOut->setVerbose(false);
+		try {
+			$installer = Installer::getInstance($mwrootDir);
+			$dependencies = $installer->checkforGlobalUpdate();
+			$dfgOut->setVerbose(true);
+			return json_encode($dependencies);
+		} catch(InstallationError $e) {
+			$error = array();
+			$error['exception'] = array($e->getMsg(), $e->getErrorCode(), $e->getArg1(), $e->getArg2());
+			return json_encode($error);
+		}
+	}
+	
+	public function doGlobalUpdate() {
+		global $mwrootDir, $dfgOut;
+        $extid = reset($args);
+        $filename = uniqid().".log";
+        chdir($mwrootDir.'/deployment/tools');
+        if (Tools::isWindows()) {
+            $wshShell = new COM("WScript.Shell");
+            $runCommand = "cmd /K START php $mwrootDir/deployment/tools/smwadmin/smwadmin.php --logtofile $filename --outputformat html --nocheck --noask -u";
+            $oExec = $wshShell->Run("$runCommand", 7, false);
+
+        } else {
+            //TODO: impl.linux command
+        }
+        return $filename;
 	}
 
 	public function search($args) {

@@ -65,23 +65,24 @@ class DFPrintoutStream {
 		$this->target = DF_OUTPUT_TARGET_STDOUT;
 	}
 
-	public function start($target = DF_OUTPUT_TARGET_STDOUT) {
+	public function start($target = DF_OUTPUT_TARGET_STDOUT, $data = NULL) {
 		$this->target = $target;
 		if ($target == DF_OUTPUT_TARGET_STDOUT) return;
 		if ($target == DF_OUTPUT_TARGET_FILE) {
-			$local = uniqid().".log";
+			$local = $data;
 			$file = Tools::getTempDir()."/".$local;
 			Tools::mkpath(dirname($file));
-			$this->tmpfile = fopen($file, "w");
+			$this->tmpfile = $file;
             return $local;
 		}
 	}
 
 	public function end() {
-		if ($target == DF_OUTPUT_TARGET_STDOUT) return;
+		if ($this->target == DF_OUTPUT_TARGET_STDOUT) return;
 
-		if ($target == DF_OUTPUT_TARGET_FILE) {
-			fclose($this->tmpfile);
+		if ($this->target == DF_OUTPUT_TARGET_FILE) {
+
+			$this->tmpfile = NULL;
 		}
 	}
 
@@ -93,6 +94,22 @@ class DFPrintoutStream {
 	public function getMode() {
 		return $this->mode;
 	}
+	
+    /**
+     * Sets output mode.
+     *
+     * @param string $mode (text, html)
+     */
+    public function setMode($mode) {
+    	if ($mode == "text") {
+    	    $this->mode = DF_OUTPUT_FORMAT_TEXT;	
+    	} else if ($mode == "html") {
+    		$this->mode = DF_OUTPUT_FORMAT_HTML;
+    	} else {
+    		$this->mode = DF_OUTPUT_FORMAT_TEXT;
+    	}
+        
+    }
 
 	public function setVerbose($verbose) {
 		$this->verbose = $verbose;
@@ -107,7 +124,9 @@ class DFPrintoutStream {
 			return;
 		}
 		if ($this->target == DF_OUTPUT_TARGET_FILE) {
-			fwrite($this->tmpfile, $this->formatText($msg, $type));
+			$handle = fopen($this->tmpfile, "a");
+			fwrite($handle, $this->formatText($msg, $type));
+			fclose($handle);
 			return;
 		}
 		if (ob_get_level() == 0) { // be sure to have some buffer, otherwise some PHPs complain
@@ -128,8 +147,9 @@ class DFPrintoutStream {
 		}
 
 		if ($this->target == DF_OUTPUT_TARGET_FILE) {
-			fwrite($this->tmpfile, $this->formatText($msg, $type, "\n"));
-			return;
+			$handle = fopen($this->tmpfile, "a");
+            fwrite($handle, $this->formatText($msg, $type, "\n"));
+            fclose($handle);
 		}
 		if (ob_get_level() == 0) { // be sure to have some buffer, otherwise some PHPs complain
 			ob_start();

@@ -122,6 +122,8 @@ $dfgInstallPackages=false;
 $dfgRestoreList=false;
 $dfgCreateRestorePoint=false;
 $dfgNoConflict=false;
+$dfgLogToFile=false;
+$dfgOutputFormat="text";
 
 $args = $_SERVER['argv'];
 array_shift($args); // remove script name
@@ -213,6 +215,12 @@ for( $arg = reset( $args ); $arg !== false; $arg = next( $args ) ) {
 	} else if ($arg == '--noask') {
         $dfgNoAsk = true;
         continue;
+    } else if ($arg == '--logtofile') {
+        $dfgLogToFile = next($args);
+        continue;
+    } else if ($arg == '--outputformat') {
+        $dfgOutputFormat = next($args);
+        continue;
     } else if ($arg == '--nocheck') {
 		// ignore
 		continue;
@@ -224,6 +232,14 @@ for( $arg = reset( $args ); $arg !== false; $arg = next( $args ) ) {
 
 if ($dfgForce && $dfgNoConflict) {
 	$dfgOut->outputln("\n-f and --noconflict are incompatible options. --noconflict is IGNORED.", DF_PRINTSTREAM_TYPE_WARN);
+}
+
+if ($dfgLogToFile !== false) {
+	$dfgOut->start(DF_OUTPUT_TARGET_FILE, $dfgLogToFile);
+}
+
+if ($dfgOutputFormat != "text") {
+	$dfgOut->setMode($dfgOutputFormat);
 }
 
 $logger = Logger::getInstance();
@@ -245,6 +261,7 @@ if ($dfgInstallPackages) {
 	$logger->info("Start initializing packages");
 	$installer->initializePackages();
 	$logger->info("End initializing packages");
+	$dfgOut->outputln('__OK__');
 	die(DF_TERMINATION_WITHOUT_FINALIZE);  // 2 is normal termination but no further action
 } else {
 	// check for non-initialized extensions
@@ -327,6 +344,7 @@ if ($dfgGlobalUpdate) {
 	$logger->info("Start global update");
 	dffHandleGlobalUpdate($dfgCheckDep);
 	$logger->info("End global update");
+	$dfgOut->outputln('__OK__');
 	die($dfgCheckDep === true  ? DF_TERMINATION_WITHOUT_FINALIZE : DF_TERMINATION_WITH_FINALIZE);
 }
 
@@ -439,7 +457,7 @@ if (count($ontologiesToInstall) > 0) {
 				case DEPLOY_FRAMEWORK_ONTOLOGYCONFLICT_ERROR:
 					$dfgOut->outputln("ontology conflict\n", DF_PRINTSTREAM_TYPE_ERROR);
 			}
-
+            $dfgOut->outputln('$$ERROR$$');
 			die(DF_TERMINATION_WITHOUT_FINALIZE);
 		}
 	}
@@ -538,7 +556,7 @@ foreach($packageToUpdate as $toUpdate) {
 }
 
 if (count($installer->getErrors()) === 0) {
-	$dfgOut->outputln( "\nOK.\n");
+	$dfgOut->outputln( "\n__OK__\n");
 	die($dfgCheckDep === true ? DF_TERMINATION_WITHOUT_FINALIZE : DF_TERMINATION_WITH_FINALIZE);
 } else {
 	$dfgOut->outputln("\nErrors occured:\n");
@@ -755,6 +773,7 @@ function dffExitOnFatalError($e) {
 	$dfgOut->outputln();
 	$dfgOut->outputln();
 
+	$dfgOut->outputln('$$ERROR$$');
 	// stop installation
 	die(DF_TERMINATION_ERROR);
 }
