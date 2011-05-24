@@ -9,15 +9,14 @@
  * @author OP
  */
 
-require_once 'testcases/TestWYSIWYGparser.php';
+require_once 'testcases/TestAnnotationsAndIcons.php';
 
-class WYSIWYGTests
+class WYSIWYGSeleniumTests
 {
 	public static function suite()
 	{
-		$suite = new PHPUnit_Framework_TestSuite('WYSIWYG');
-
-		$suite->addTestSuite("TestWYSIWYGparser");
+		$suite = new PHPUnit_Framework_TestSuite('WYSIWYGSeleniumTestSuite');
+		$suite->addTestSuite("TestAnnotationsAndIcons");
 		return $suite;
 	}
 }
