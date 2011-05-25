@@ -1,14 +1,14 @@
 <?php
 
-require_once 'PHPUnit/Extensions/SeleniumTestCase.php';
+require_once './../../../../tests/tests_halo/SeleniumTestCase_Base.php';
 
-class TestAnnotationsAndIcons extends PHPUnit_Extensions_SeleniumTestCase
+class TestAnnotationsAndIcons extends SeleniumTestCase_Base
 {
-  protected function setUp()
-  {
-    $this->setBrowser("*chrome");
-    $this->setBrowserUrl("http://localhost/");
-  }
+//  protected function setUp()
+//  {
+//    $this->setBrowser("*chrome");
+//    $this->setBrowserUrl("http://localhost/");
+//  }
 
   public function test_AnnotationsAndIcons()
   {

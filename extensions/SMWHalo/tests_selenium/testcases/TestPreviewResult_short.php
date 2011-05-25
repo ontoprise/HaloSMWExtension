@@ -1,14 +1,10 @@
 <?php
 
+require_once './../../../../tests/tests_halo/SeleniumTestCase_Base.php';
 require_once 'PHPUnit/Extensions/SeleniumTestCase.php';
 
-class TestPreviewResult_short extends PHPUnit_Extensions_SeleniumTestCase
+class TestPreviewResult_short extends SeleniumTestCase_Base
 {
-  protected function setUp()
-  {
-    $this->setBrowser("*chrome");
-    $this->setBrowserUrl("http://localhost/");
-  }
 
   public function testMyTestCase()
   {

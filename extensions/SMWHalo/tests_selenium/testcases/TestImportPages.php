@@ -1,23 +1,12 @@
 <?php
 
+require_once './../../../../tests/tests_halo/SeleniumTestCase_Base.php';
 require_once 'PHPUnit/Extensions/SeleniumTestCase.php';
 
-class TestImportPages extends PHPUnit_Extensions_SeleniumTestCase
+class TestImportPages extends SeleniumTestCase_Base
 {
-  protected function setUp()
-  {
-    $this->setBrowser("*chrome");
-    $this->setBrowserUrl("http://localhost");
-  }
 
-  public function login()
-  {
-		$this->open("/mediawiki/index.php?title=Special:UserLogin");
-		$this->type("wpName1", "WikiSysop");
-		$this->type("wpPassword1", "root");
-		$this->click("wpLoginAttempt");
-		$this->waitForPageToLoad("30000");
-  }
+  
   
 public function testImport()
   {
@@ -83,12 +72,6 @@ public function testImport()
     $this->assertTrue($this->isTextPresent("Import finished!"), "Expected text is not present. Import failed");
        
     $this->logout();
-  }
-
-  
-  public function logout()
-  {
-		$this->open("/mediawiki/index.php/Special:UserLogout");
   }
 
 }
