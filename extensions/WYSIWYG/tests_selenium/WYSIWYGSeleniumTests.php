@@ -12,6 +12,7 @@
 require_once 'testcases/TestAnnotationsAndIcons.php';
 require_once 'testcases/TestPropertiesAndCategoriesChanges.php';
 require_once 'testcases/TestQueryInterfaceInWysiwyg.php';
+require_once 'testcases/TestTransformationOfSemanticData.php';
 
 class WYSIWYGSeleniumTests
 {
@@ -21,6 +22,7 @@ class WYSIWYGSeleniumTests
 		$suite->addTestSuite("TestAnnotationsAndIcons");
 		$suite->addTestSuite("TestPropertiesAndCategoriesChanges");
 		$suite->addTestSuite("TestQueryInterfaceInWysiwyg");
+		$suite->addTestSuite("TestTransformationOfSemanticData");
 		return $suite;
 	}
 }
