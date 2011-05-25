@@ -217,7 +217,7 @@
 				<arg value="-d" />
 				<arg value="${basedir}/../../../" />
 				<arg value="-p" />
-				<arg value="../patch_for_SF_2.0.8.txt" />
+				<arg value="../patch_for_SF_2.1.2.txt" />
 				<arg value="--patchtool" />
 				<arg value="${patchtool}" />
 			</exec>
