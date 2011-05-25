@@ -36,6 +36,7 @@
 				from="208" to="208" />
 			<patch file="patch-SF2.1.2.txt" ext="semanticforms"
 				from="212" to="212" />
+			<script file="maintenance/SC_setup.php" />
         </new>
         <uninstall>
 			<patch file="patch-SF1.9.1.txt" ext="semanticforms"
@@ -44,6 +45,8 @@
 				from="208" to="208" />
 			<patch file="patch-SF2.1.2.txt" ext="semanticforms"
 				from="212" to="212" />
+			<script file="maintenance/SC_setup.php"
+				params="--delete" />
         </uninstall>
     </configs>
 </deploydescriptor>
