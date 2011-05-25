@@ -1,4 +1,4 @@
-# author: Kai Kühn / Ontoprise / 2009
+# author: Kai Kï¿½hn / Ontoprise / 2009
 
 #
 # HOWTO for automatic testing with MediaWiki
@@ -61,7 +61,18 @@ Create a subfolder 'tests' for your extension containing the following files and
                 work as a basis for the tests.
     f. testcases/: PHP-Files containing classes derived from: PHPUnit_Framework_TestCase
 
-The subfolder 'tests' serves as a place for unit- and webtests as well. 
+The subfolder 'tests' serves as a place for unit- and webtests as well.
+
+If your tests need several extensions being enabled and these extensions may depend on each other,
+you can have several LocalSettings.php and runSetup.cfg scripts in your test directory. Each pair
+of LocalSettings and runSetup is executed at a time. The default pair is always LocalSettings.php
+and runSetup.cfg. A subsequent pair can be named LocalSettings1.php and runSetup1.cfg. The general
+pattern for these files is:
+    i) base name of file (e.g. LocalSettings)
+   ii) optional followed by a - or _
+  iii) followed by a number starting at 1
+   iv) followed by a . and the file suffix (e.g. php)
+For an example please check in the HaloACL extension that required this feature.
 
 ------------        
 2. Webtests
