@@ -10,6 +10,8 @@
  */
 
 require_once 'testcases/TestAnnotationsAndIcons.php';
+require_once 'testcases/TestPropertiesAndCategoriesChanges.php';
+require_once 'testcases/TestQueryInterfaceInWysiwyg.php';
 
 class WYSIWYGSeleniumTests
 {
@@ -17,6 +19,8 @@ class WYSIWYGSeleniumTests
 	{
 		$suite = new PHPUnit_Framework_TestSuite('WYSIWYGSeleniumTestSuite');
 		$suite->addTestSuite("TestAnnotationsAndIcons");
+		$suite->addTestSuite("TestPropertiesAndCategoriesChanges");
+		$suite->addTestSuite("TestQueryInterfaceInWysiwyg");
 		return $suite;
 	}
 }

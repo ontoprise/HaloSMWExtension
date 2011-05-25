@@ -1,6 +1,6 @@
 <?php
 
-require_once './../../../../tests/tests_halo/SeleniumTestCase_Base.php';
+require_once dirname(__FILE__) . '/../../../../tests/tests_halo/SeleniumTestCase_Base.php';
 require_once 'PHPUnit/Extensions/SeleniumTestCase.php';
 
 class TestIntermediateResultView extends SeleniumTestCase_Base
