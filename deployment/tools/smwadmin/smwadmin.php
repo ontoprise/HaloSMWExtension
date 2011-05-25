@@ -154,7 +154,12 @@ for( $arg = reset( $args ); $arg !== false; $arg = next( $args ) ) {
 			}
 
 		} else {
-			// assume it is a package
+			// assume it is a package but print a warning if the name has a 
+			// ontology extension.
+			$file_ext = reset(array_reverse(explode(".", $package)));
+            if ($file_ext == 'owl' || $file_ext == 'rdf' || $file_ext == 'obl') {
+            	$dfgOut->outputln("Are you sure '$package' is intended to be a package? It does not exist as a file.\n", DF_PRINTSTREAM_TYPE_WARN);
+            }
 			$packageToInstall[] = $package;
 		}
 		continue;
