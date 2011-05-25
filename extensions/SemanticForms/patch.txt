@@ -124,7 +124,7 @@ Index: extensions/SemanticForms/includes/SF_FormPrinter.php
  		// If we have existing content and we're not in an active replacement
  		// situation, preserve the original content. We do this because we want
  		// to pass the original content on IF this is a partial form.
-@@ -420,6 +430,10 @@
+@@ -420,6 +420,10 @@
  			$tif = new SFTemplateInForm();
  			$start_position = 0;
  			$template_text = "";
@@ -135,7 +135,7 @@ Index: extensions/SemanticForms/includes/SF_FormPrinter.php
  			// the append is there to ensure that the original array doesn't get
  			// modified; is it necessary?
  			$section = " " . $form_def_sections[$section_num];
-@@ -441,11 +455,17 @@
+@@ -441,11 +445,19 @@
  					// Also replace periods with underlines, since that's what
  					// POST does to strings anyway.
  					$query_template_name = str_replace( '.', '_', $query_template_name );
@@ -148,29 +148,32 @@ Index: extensions/SemanticForms/includes/SF_FormPrinter.php
  						if ( $component == 'multiple' ) $allow_multiple = true;
  						if ( $component == 'strict' ) $strict_parsing = true;
 +						/*op-patch|BL|2009-08-28|CollapsingForms|AddCollapsibleTag|start*/
-+						if ( $component == 'collapsible' ) $collapsible = true;
++						if ( $component == 'collapsible' ) {
++							$collapsible = true;
++						}
 +						/*op-patch|BL|2009-08-28|CollapsingForms|AddCollapsibleTag|end*/
  						$sub_components = explode( '=', $component, 2 );
  						if ( count( $sub_components ) == 2 ) {
  							if ( $sub_components[0] == 'label' ) {
-@@ -453,15 +473,59 @@
+@@ -453,6 +465,13 @@
  							} elseif ( $sub_components[0] == 'add button text' ) {
  								$add_button_text = $sub_components[1];
  							}
 +							/*op-patch|BL|2009-09-16|CollapsingForms|AddForceopenTag|start*/
-+							elseif ( $sub_components[0] == 'forceopen' ) {
-+								if ($sub_components[1] && strtolower($sub_components[1] == 'true'))
-+								$force_open = true;
- 						}
++							elseif( $sub_components[0] == 'forceopen' ) {
++								if( $sub_components[1] && strtolower( $sub_components[1] == 'true' ) ) {
++									$force_open = true;
++								}
++							}
 +							/*op-patch|BL|2009-09-16|CollapsingForms|AddForceopenTag|end*/
+ 						}
  					}
-+					}
  					// If this is the first instance, add the label into the form, if
- 					// there is one, and add the appropriate wrapper div, if this is
- 					// a multiple-instance template.
+@@ -461,7 +480,43 @@
  					if ( $old_template_name != $template_name ) {
  						if ( isset( $template_label ) ) {
  							$form_text .= "<fieldset>\n";
+-							$form_text .= "<legend>$template_label</legend>\n";
 +							/*op-patch|BL|2009-08-28|CollapsingForms|AddCollapseFunctionality|start*/
 +							// Add Javascript, curser style and sfgTabIndex for each legend
 +							// content was:
@@ -178,18 +181,17 @@ Index: extensions/SemanticForms/includes/SF_FormPrinter.php
 +							// }
 +							global $smwgRMActFormName, $sfgScriptPath;
 +							//only if collapsible
-+							if ($collapsible ) {
++							if ( $collapsible ) {
 +								#cookie processing
 +								$cookie_json = in_array('CollapsingForm', array_keys($_COOKIE)) ? $_COOKIE['CollapsingForm'] : null;
 +								if ($cookie_json)
 +								$cookie_obj = json_decode($cookie_json,true);
 +								if (isset($cookie_obj) && array_key_exists($smwgRMActFormName.'_sec_'.$section_num, $cookie_obj)) {
 +									$cookie_open = $cookie_obj[$smwgRMActFormName.'_sec_'.$section_num];
-+								}
-+								else {
++								} else {
 +									$cookie_open = false;
 +								}
-+								if ($force_open || $cookie_open) {
++								if ( $force_open || $cookie_open ) {
 +									$section_visibility ='';
 +									$img = 'minus';
 +								}
@@ -197,18 +199,17 @@ Index: extensions/SemanticForms/includes/SF_FormPrinter.php
 +									$section_visibility = 'none';
 +									$img = 'plus';
 +								}
-+								$form_text .= "<legend tabindex=\"$sfgTabIndex\" style=\"cursor: pointer;font-weight:bold;\"
-+					                onKeyDown=\"javascript:if (event.keyCode == 32){ smwCollapsingForm.switchVisibilityWithImg('{$smwgRMActFormName}_sec_{$section_num}');}\"
-+					                onClick=\"smwCollapsingForm.switchVisibilityWithImg('{$smwgRMActFormName}_sec_{$section_num}');\">
-+					                <img id=\"{$smwgRMActFormName}_sec_{$section_num}_img\" onmouseout=\"(src='$sfgScriptPath/skins/$img.gif')\"
-+					                onmouseover=\"(src='$sfgScriptPath/skins/$img-act.gif')\" src=\"$sfgScriptPath/skins/$img.gif\"/>&nbsp;$template_label</legend>\n";
++								$form_text .= "<legend tabindex=\"$sfgTabIndex\" style=\"cursor: pointer;font-weight:bold;\"" .
++									"onKeyDown=\"javascript:if (event.keyCode == 32){ smwCollapsingForm.switchVisibilityWithImg('{$smwgRMActFormName}_sec_{$section_num}');}\"" .
++									"onClick=\"smwCollapsingForm.switchVisibilityWithImg('{$smwgRMActFormName}_sec_{$section_num}');\">" .
++									"<img id=\"{$smwgRMActFormName}_sec_{$section_num}_img\" onmouseout=\"(src='$sfgScriptPath/skins/$img.gif')\"" .
++									"onmouseover=\"(src='$sfgScriptPath/skins/$img-act.gif')\" src=\"$sfgScriptPath/skins/$img.gif\"/>&nbsp;$template_label</legend>\n";
 +								$sfgTabIndex++;
 +								#This DIV provides the functionality for collapsing forms
 +								$form_text .= "<div id=\"{$smwgRMActFormName}_sec_".$section_num."\" style=\"display:".$section_visibility."\">";
++							} else {
++								$form_text .= "<legend>$template_label</legend>\n";
 +							}
-+							else {
- 							$form_text .= "<legend>$template_label</legend>\n";
-+							} // end collabsible
 +							/*op-patch|BL|2009-08-28|CollapsingForms|AddCollapseFunctionality|end*/
  						}
  						if ($allow_multiple) {
@@ -247,17 +248,18 @@ Index: extensions/SemanticForms/includes/SF_FormPrinter.php
  					}
  					$section = substr_replace( $section, '', $brackets_loc, $brackets_end_loc + 3 - $brackets_loc );
  				// =====================================================
-@@ -1299,7 +1373,10 @@
+@@ -1299,7 +1354,11 @@
  			} else {
  				$form_text .= $section;
  			}
 -
 +			/*op-patch|BL|2009-08-14|CollapsingForms|AddDivForCollapsingForms|start*/
-+			if($collapsible)
-+			$form_text .= "</div>"; //closing div for collapsing
++			if( $collapsible ) {
++				$form_text .= "</div>"; //closing div for collapsing
++			}
 +			/*op-patch|BL|2009-08-14|end*/
  		} // end for
-
+ 
  		// if it wasn't included in the form definition, add the
 @@ -1340,6 +1417,17 @@
  		} else {
@@ -434,7 +436,7 @@ Index: extensions/SemanticForms/libs/collapse.js
 ===================================================================
 --- extensions/SemanticForms/libs/collapse.js	(revision 0)
 +++ extensions/SemanticForms/libs/collapse.js	(revision 0)
-@@ -0,0 +1,92 @@
+@@ -0,0 +1,108 @@
 +/*  Copyright 2008, ontoprise GmbH
 +*  This file is part of CollapsingForms patch for SemanticForms.
 +*
@@ -453,81 +455,98 @@ Index: extensions/SemanticForms/libs/collapse.js
 +* 
 +*   Contains collapsing functions for semantic forms
 +*/
-+var CollapsingForm = Class.create();
-+CollapsingForm.prototype = {
-+	initialize: function() {
-+		this.closedContainers = GeneralCookieTools.getCookieObject("CollapsingForm");
-+		if (this.closedContainers == null) this.closedContainers = new Object();
-+	},
-+
-+	switchVisibilityWithImg: function(id) {
-+		var openedimg = '',
-+		    closedimg = '';
-+		if ($(id).visible()) {
-+			this.closedContainers[id] = false;
-+			closedimg = "<img id=\"" + id + "_img\" onmouseout=\"(src='"+ wgScriptPath + "/extensions/SemanticForms/skins" + "/plus.gif')\" onmouseover=\"(src='"+ wgScriptPath + "/extensions/SemanticForms/skins" + "/plus-act.gif')\" src=\""+ wgScriptPath + "/extensions/SemanticForms/skins" + "/plus.gif\"/>";
-+			$(id+"_img").replace(closedimg);
-+		} else {
-+			this.closedContainers[id] = true;
-+			openedimg = "<img id=\"" + id + "_img\" onmouseout=\"(src='" + wgScriptPath + "/extensions/SemanticForms/skins" + "/minus.gif')\" onmouseover=\"(src='"+ wgScriptPath + "/extensions/SemanticForms/skins" + "/minus-act.gif')\" src=\""+ wgScriptPath + "/extensions/SemanticForms/skins" + "/minus.gif\"/>";
-+			$(id+"_img").replace(openedimg)
-+		}
-+		GeneralCookieTools.setCookieObject("CollapsingForm", this.closedContainers);
-+		this.switchVisibility(id);
-+	},
-+
-+	switchVisibility: function(container) {
-+		var visible = $(container).visible();
-+		if ( visible ) {    
-+			$(container).hide();
-+		} else {
-+			$(container).show();
-+		}
-+	}
-+}
-+
-+//-- cookie functions for collapsing forms -- //
-+// taken out of the generalTools.js from SMWHalo 
-+
-+GeneralCookieTools = new Object();
 +
 +/**
-+ * Returns the cookie value for the given key
++ * The CollapsingForm "class"
++ * 
 + */
-+GeneralCookieTools.getCookie = function (name) {
-+	var value=null;
-+	if(document.cookie != "") {
-+		var kk=document.cookie.indexOf(name+"=");
-+		if(kk >= 0) {
-+			kk=kk+name.length+1;
-+			var ll=document.cookie.indexOf(";", kk);
-+			if(ll < 0)ll=document.cookie.length;
-+			value=document.cookie.substring(kk, ll);
-+			value=unescape(value); 
++function CollapsingForm() {
++
++	this.closedContainers = new Object();
++
++	/**
++	 * Switch the visbility of the element with the given id.
++	 * 
++	 * @param: id 
++	 *		jquery selector string
++	 */
++	this.switchVisibilityWithImg = function( id ) {
++		var	openedimg = '',
++			closedimg = '',
++			visible,
++			jQId = '#' + id;
++
++		if( jQuery( jQId ).is( ':visible' ) ) {
++			visible = false;
++			closedimg = "<img id=\"" + id + "_img\" onmouseout=\"(src='"+
++				wgScriptPath + "/extensions/SemanticForms/skins/plus.gif')\" onmouseover=\"(src='"+
++				wgScriptPath + "/extensions/SemanticForms/skins/plus-act.gif')\" src=\""+
++				wgScriptPath + "/extensions/SemanticForms/skins/plus.gif\"/>";
++			jQuery( jQId + '_img' ).replaceWith( closedimg );
++		} else {
++			visible = true;
++			openedimg = "<img id=\"" + id + "_img\" onmouseout=\"(src='" +
++				wgScriptPath + "/extensions/SemanticForms/skins/minus.gif')\" onmouseover=\"(src='"+
++				wgScriptPath + "/extensions/SemanticForms/skins/minus-act.gif')\" src=\""+
++				wgScriptPath + "/extensions/SemanticForms/skins/minus.gif\"/>";
++			jQuery( jQId + '_img').replaceWith( openedimg )
++		}
++		jQuery( jQId ).toggle();
++		document.cookie = 'CollapsingForm' + "=" + 
++			'{"' + id + '" : ' + visible + '}';
++		this.closedContainers[id] = visible;
++	}
++
++	//-- cookie functions for collapsing forms -- //
++	// taken out of the generalTools.js from SMWHalo
++
++	/**
++	 * Returns the cookie value for the given key
++	 */
++	this.getCookie = function( name ) {
++		var value = null;
++		if( document.cookie !== '' ) {
++			var kk = document.cookie.indexOf( name + '=' );
++			if( kk >= 0 ) {
++				kk = kk + name.length+1;
++				var ll = document.cookie.indexOf( ';', kk );
++				if( ll < 0 ) {
++					ll = document.cookie.length;
++				}
++				value = document.cookie.substring( kk, ll );
++				value = unescape( value ); 
++			}
++		}
++		return value;
++	}
++
++	// set the cookie object
++	if( this.getCookie( 'CollapsingForm' ) ) {
++		this.closedContainers = this.getCookie( 'CollapsingForm' );
++	}
++}
++
++// Set global variable for accessing CollapsingForm functions
++var smwCollapsingForm;
++
++// Initialize Collapsing Form functions if page is loaded and preload
++jQuery( document ).ready(
++	function() {
++		smwCollapsingForm = new CollapsingForm();
++		// image preload
++		var preloadImages = new Array();
++		preloadImages.push( wgScriptPath + '/extensions/SemanticForms/skins/plus.gif' );
++		preloadImages.push( wgScriptPath + '/extensions/SemanticForms/skins/plus-act.gif' );
++		preloadImages.push( wgScriptPath + '/extensions/SemanticForms/skins/minus.gif' );
++		preloadImages.push( wgScriptPath + '/extensions/SemanticForms/skins/minus-act.gif' );
++		for ( i = 0; i < preloadImages.length; i++ ) {
++			var preloadImage = new Image();
++			preloadImage.src = preloadImages[i];
 +		}
 +	}
-+	return value;
-+}
-+
-+GeneralCookieTools.setCookieObject = function(key, object) {
-+	var json = Object.toJSON(object);
-+	document.cookie = key+"="+json; 
-+}
-+
-+GeneralCookieTools.getCookieObject = function(key) {
-+	var json = GeneralCookieTools.getCookie(key);
-+	var res;
-+	try {
-+		res = json.evalJSON(false);
-+	}
-+	catch (e) {
-+		return null;
-+	}
-+	return res;
-+}
-+
-+var smwCollapsingForm = new CollapsingForm();
++);
 \ No newline at end of file
+
 Index: extensions/SemanticForms/specials/SF_FormEdit.php
 ===================================================================
 --- extensions/SemanticForms/specials/SF_FormEdit.php	(revision 10879)
@@ -544,12 +563,15 @@ Index: extensions/SemanticForms/specials/SF_FormEdit.php
  			$form_article = new Article( $form_title );
  			$form_definition = $form_article->getContent();
  
-@@ -261,6 +266,8 @@
+@@ -261,6 +266,11 @@
  				$text .= $pre_form_html;
  				$text .= $form_text;
  			}
-+		global $sfgScriptPath, $wgJsMimeType;
-+		$wgOut->addHTML("<script type=\"{$wgJsMimeType}\" src=\"{$sfgScriptPath}/libs/collapse.js\"></script>");
++			/*op-patch|BL|2009-09-16|CollapsingForms|AddJS|start*/
++			/*op-patch|BL|2009-09-16|CollapsingForms|doc|http://dmwiki.ontoprise.com:8888/dmwiki/index.php/CollapsingForms*/
++			global $sfgScriptPath, $wgJsMimeType;
++			$wgOut->addHTML("<script type=\"{$wgJsMimeType}\" src=\"{$sfgScriptPath}/libs/collapse.js\"></script>");
++			/*op-patch|BL|2009-09-16|end*/
  		}
  		// instead of adding the Javascript using addScript(), which is
  		// the standard approach, we add it using addHTML(), below the
