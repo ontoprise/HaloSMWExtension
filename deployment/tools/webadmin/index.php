@@ -29,6 +29,18 @@
  *
  */
 
+session_start();
+
+$hostname = $_SERVER['HTTP_HOST'];
+$path = dirname($_SERVER['PHP_SELF']);
+
+if (!isset($_SESSION['angemeldet']) || !$_SESSION['angemeldet']) {
+	header('Location: http://'.$hostname.($path == '/' ? '' : $path).'/login.php');
+	exit;
+}
+
+define("DF_WEBADMIN_TOOL", 1);
+
 $rootDir = dirname(__FILE__);
 $rootDir = str_replace("\\", "/", $rootDir);
 $rootDir = realpath($rootDir."/../../");
@@ -37,12 +49,20 @@ $mwrootDir = dirname(__FILE__);
 $mwrootDir = str_replace("\\", "/", $mwrootDir);
 $mwrootDir = realpath($mwrootDir."/../../../");
 
+require_once($mwrootDir.'/deployment/settings.php');
+$wgScriptPath=isset(DF_Config::$scriptPath) ? DF_Config::$scriptPath : "/mediawiki";
+
+
 $smwgDFIP=$rootDir;
+
+// touch the login marker
+touch("$rootDir/userloggedin");
 
 require_once('includes/DF_StatusTab.php');
 require_once('includes/DF_SearchTab.php');
+require_once('includes/DF_MaintenanceTab.php');
+require_once('includes/DF_BundleDetailTab.php');
 require_once('includes/DF_CommandInterface.php');
-require_once($mwrootDir.'/deployment/settings.php');
 require_once($mwrootDir.'/deployment/io/DF_Log.php');
 require_once($mwrootDir.'/deployment/io/DF_PrintoutStream.php');
 
@@ -55,15 +75,15 @@ $dfgNoAsk=true;
 $wgServer = '';
 
 if( isset( $_SERVER['SERVER_NAME'] ) ) {
-    $wgServerName = $_SERVER['SERVER_NAME'];
+	$wgServerName = $_SERVER['SERVER_NAME'];
 } elseif( isset( $_SERVER['HOSTNAME'] ) ) {
-    $wgServerName = $_SERVER['HOSTNAME'];
+	$wgServerName = $_SERVER['HOSTNAME'];
 } elseif( isset( $_SERVER['HTTP_HOST'] ) ) {
-    $wgServerName = $_SERVER['HTTP_HOST'];
+	$wgServerName = $_SERVER['HTTP_HOST'];
 } elseif( isset( $_SERVER['SERVER_ADDR'] ) ) {
-    $wgServerName = $_SERVER['SERVER_ADDR'];
+	$wgServerName = $_SERVER['SERVER_ADDR'];
 } else {
-    $wgServerName = 'localhost';
+	$wgServerName = 'localhost';
 }
 
 # check if server use https:
@@ -72,14 +92,14 @@ $wgProto = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') ? 'https' : '
 $wgServer = $wgProto.'://' . $wgServerName;
 # If the port is a non-standard one, add it to the URL
 if(    isset( $_SERVER['SERVER_PORT'] )
-    && !strpos( $wgServerName, ':' )
-    && (    ( $wgProto == 'http' && $_SERVER['SERVER_PORT'] != 80 )
-     || ( $wgProto == 'https' && $_SERVER['SERVER_PORT'] != 443 ) ) ) {
+&& !strpos( $wgServerName, ':' )
+&& (    ( $wgProto == 'http' && $_SERVER['SERVER_PORT'] != 80 )
+|| ( $wgProto == 'https' && $_SERVER['SERVER_PORT'] != 443 ) ) ) {
 
-    $wgServer .= ":" . $_SERVER['SERVER_PORT'];
+	$wgServer .= ":" . $_SERVER['SERVER_PORT'];
 }
 
-$wgScriptPath=isset(DF_Config::$scriptPath) ? DF_Config::$scriptPath : "/mediawiki";
+
 
 // check for ajax call
 $mode = "";
@@ -112,16 +132,28 @@ switch( $mode ) {
 		break;
 }
 
+// initialize tabs
+
 $dfgStatusTab = new DFStatusTab();
+$statusTabName = $dfgStatusTab->getTabName();
 $statusTabHtml = $dfgStatusTab->getHTML();
 
 $dfgSearchTab = new DFSearchTab();
+$searchTabName = $dfgSearchTab->getTabName();
 $searchTabHtml = $dfgSearchTab->getHTML();
+
+$dfgMaintenanceTab = new DFMaintenanceTab();
+$maintenanceTabName = $dfgMaintenanceTab->getTabName();
+$maintenanceTabHtml = $dfgMaintenanceTab->getHTML();
+
+$dfgBundleDetailTab = new DFBundleDetailTab();
+$bundleDetailTabName = $dfgBundleDetailTab->getTabName();
+$bundleDetailTabHtml = $dfgBundleDetailTab->getHTML();
 
 // for ajax calls
 if (isset($func_name)) {
 	$dfgCommandInterface = new DFCommandInterface();
-	
+
 	$ret = $dfgCommandInterface->dispatch($func_name, $args);
 	if (is_string($ret)) echo $ret;
 	die();
@@ -160,21 +192,22 @@ $javascriptLang
 </head>
 ENDS
 ;
-$html .= "<body><img src=\"skins/logo.png\" /><h1>This is the web administration tool of the deployment framework.</h1>";
+$html .= "<body><img src=\"skins/logo.png\" />".
+         "<a href=\"$wgServer$wgScriptPath/deployment/tools/webadmin/logout.php\">Logout</a>".
+         "<h1>This is the web administration tool of the deployment framework.</h1>";
 $html .= <<<ENDS
 <div id="tabs">
 
 			<ul>
-				<li><a href="#tabs-1">Status</a></li>
-				<li><a href="#tabs-2">Search</a></li>
-				<li><a href="#tabs-3">Content bundles</a></li>
-				<li><a href="#tabs-4">Maintenance</a></li>
+				<li><a href="#tabs-1">$statusTabName</a></li>
+				<li><a href="#tabs-2">$searchTabName</a></li>
+				<li><a href="#tabs-3">$bundleDetailTabName</a></li>
+				<li><a href="#tabs-4">$maintenanceTabName</a></li>
 			</ul>
 			<div id="tabs-1">$statusTabHtml</div>
 			<div id="tabs-2">$searchTabHtml</div>
-
-			<div id="tabs-3">Nam dui erat, auctor a, dignissim quis, sollicitudin eu, felis. Pellentesque nisi urna, interdum eget, sagittis et, consequat vestibulum, lacus. Mauris porttitor ullamcorper augue.</div>
-			<div id="tabs-4">Nam dui erat, auctor a, dignissim quis, sollicitudin eu, felis. Pellentesque nisi urna, interdum eget, sagittis et, consequat vestibulum, lacus. Mauris porttitor ullamcorper augue.</div>
+    		<div id="tabs-3">$bundleDetailTabHtml</div>
+			<div id="tabs-4">$maintenanceTabHtml</div>
 </div>
 <div id="global-updatedialog-confirm" title="Empty the recycle bin?" style="display:none">
     <p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span><span id=\"global-updatedialog-confirm-text\">Perform global update?</span></p>
@@ -194,11 +227,11 @@ die();
  * Note: Requires wiki context
  */
 function dffInitLanguage() {
-    global $wgLanguageCode, $dfgLang, $mwrootDir;
-    $langClass = "DF_Language_$wgLanguageCode";
-    if (!file_exists($mwrootDir."/deployment/languages/$langClass.php")) {
-        $langClass = "DF_Language_En";
-    }
-    require_once($mwrootDir."/deployment/languages/$langClass.php");
-    $dfgLang = new $langClass();
+	global $wgLanguageCode, $dfgLang, $mwrootDir;
+	$langClass = "DF_Language_$wgLanguageCode";
+	if (!file_exists($mwrootDir."/deployment/languages/$langClass.php")) {
+		$langClass = "DF_Language_En";
+	}
+	require_once($mwrootDir."/deployment/languages/$langClass.php");
+	$dfgLang = new $langClass();
 }

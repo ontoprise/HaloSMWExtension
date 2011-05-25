@@ -51,6 +51,19 @@ class DF_Language_De extends DF_Language {
     'df_error' => 'FEHLER',
     'df_fatal' => 'FATALER FEHLER',
     'df_failed' => 'FEHLGESCHLAGEN',
-    'df_ok' => 'OK'
+    'df_ok' => 'OK',
+	
+	// webadmin
+	'df_webadmin_extension' => 'Extension',
+    'df_webadmin_description' => 'Beschreibung',
+    'df_webadmin_action' => 'Aktion',
+	
+	'df_webadmin_statustab' => 'Status',
+    'df_webadmin_searchtab' => 'Suche',
+    'df_webadmin_bundledetailtab' => 'Bundle-Details',
+    'df_webadmin_maintenacetab' => 'Wartung',
+	
+	'df_webadmin_restorepoint' => 'Rücksetzpunkt'
+    
 	);
 }

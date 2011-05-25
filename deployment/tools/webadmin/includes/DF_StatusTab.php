@@ -24,6 +24,9 @@
  * @author: Kai Kühn / ontoprise / 2011
  *
  */
+if (!defined("DF_WEBADMIN_TOOL")) {
+    die();
+}
 
 require_once ( $mwrootDir.'/deployment/tools/smwadmin/DF_PackageRepository.php' );
 require_once ( $mwrootDir.'/deployment/tools/maintenance/maintenanceTools.inc' );
@@ -36,6 +39,11 @@ class DFStatusTab {
 	 */
 	public function __construct() {
 
+	}
+	
+	public function getTabName() {
+		global $dfgLang;
+		return $dfgLang->getLanguageString('df_webadmin_statustab');
 	}
 
 	public function getHTML() {
@@ -56,10 +64,10 @@ class DFStatusTab {
 		$html .= $dfgLang->getLanguageString('df_webadmin_extension');
 		$html .= "</th>";
 		$html .= "<th>";
-		$html .= "Description";
+		$html .= $dfgLang->getLanguageString('df_webadmin_description');
 		$html .= "</th>";
 		$html .= "<th>";
-		$html .= "Action";
+		$html .= $dfgLang->getLanguageString('df_webadmin_action');
 		$html .= "</th>";
 		foreach($localPackages as $id => $p) {
 			$html .= "<tr>";

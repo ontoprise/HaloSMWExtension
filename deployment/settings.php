@@ -18,8 +18,17 @@
 class DF_Config  {
 	
 	// This is required for the webadmin tool.
-	   public static $scriptPath = "/deploywiki";
+	   public static $scriptPath = "/mediawiki";
 	
+
+	/*
+	 * Uncomment the lines if you do not want to authorize
+	 * webadmin tool by the wiki user base.
+	 * 
+	*/
+	public static $df_authorizeByWiki = true;
+	//public static $df_webadmin_user = "root";
+	//public static $df_webadmin_pass = "pass";
 	
 	public static $settings = array(
 	'df_proxy' => '', //Proxy server e.g. "proxy.example.com:8080"

@@ -24,3 +24,65 @@
  * @author: Kai Kühn / ontoprise / 2011
  *
  */
+if (!defined("DF_WEBADMIN_TOOL")) {
+    die();
+}
+
+require_once($mwrootDir.'/deployment/tools/smwadmin/DF_Rollback.php');
+
+class DFMaintenanceTab {
+
+	/**
+	 * Maintenance tab
+	 *
+	 */
+	public function __construct() {
+
+	}
+
+	public function getTabName() {
+		global $dfgLang;
+		return $dfgLang->getLanguageString('df_webadmin_maintenacetab');
+	}
+
+	public function getHTML() {
+
+		$html = "<input type=\"text\" style=\"width: 450px;\" value=\"\" id=\"df_restorepoint\"></input>";
+		$html .= "<input type=\"button\" value=\"Create\" id=\"df_create_restorepoint\"></input>";
+		$html .= $this->serializeRestorePoints($this->getAllRestorePoints());
+		return $html;
+	}
+
+	public function serializeRestorePoints($restorepoints) {
+        global $dfgLang;
+		$html = "<table>";
+		$html .= "<th>";
+		$html .= $dfgLang->getLanguageString('df_webadmin_restorepoint');
+		$html .= "</th>";
+
+		foreach($restorepoints as $rp) {
+			$html .= "<tr>";
+			$html .= "<td>";
+			$name = basename($rp);
+			$html .= $name;
+			$html .= "</td>";
+			$html .= "<td>";
+            $lastMod = filemtime($rp);
+            $html .= date ("m/d/Y", $lastMod);
+            $html .= "</td>";
+			$html .= "<td>";
+            $html .= "<input type=\"button\" class=\"df_restore_button\" value=\"Restore\" id=\"df_restore__$name\"></input>";
+            $html .= "</td>";
+			$html .= "</tr>";
+		}
+		$html .= "</table>";
+		return $html;
+	}
+
+	public function getAllRestorePoints() {
+		global $mwrootDir, $dfgOut;
+		$rollback = Rollback::getInstance($mwrootDir);
+		return $rollback->getAllRestorePoints();
+
+	}
+}

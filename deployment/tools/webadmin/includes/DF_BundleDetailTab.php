@@ -19,8 +19,33 @@
  * @file
  * @ingroup WebAdmin
  *
- * Content bundle tab
+ * BundleDetail tab
  *
  * @author: Kai Kühn / ontoprise / 2011
  *
  */
+
+if (!defined("DF_WEBADMIN_TOOL")) {
+	die();
+}
+
+class DFBundleDetailTab {
+
+	/**
+	 * BundleDetail tab
+	 *
+	 */
+	public function __construct() {
+
+	}
+
+	public function getTabName() {
+		global $dfgLang;
+		return $dfgLang->getLanguageString('df_webadmin_bundledetailtab');
+	}
+
+	public function getHTML() {
+		$html = "bundle detail";
+		return $html;
+	}
+}

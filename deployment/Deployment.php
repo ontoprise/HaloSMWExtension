@@ -6,6 +6,7 @@ $wgExtensionFunctions[] = 'dfgSetupExtension';
 $smwgDFIP = $IP . '/deployment';
 
 $wgHooks['UserLoginComplete'][] = 'dfgCheckUpdate';
+$wgAjaxExportList[] = 'dff_authUser';
 
 function dfgSetupExtension() {
 	dffInitializeLanguage();
@@ -53,4 +54,20 @@ function dfgCheckUpdate(&$wgUser, &$injected_html) {
 		$injected_html = $html;
 	}
 	return true;
+}
+
+/**
+ * Checks the credentials for the user and makes sure that it is
+ * member of group 'sysop'.
+ * 
+ * @param string $username
+ * @param string $password
+ * 
+ * @return string true/false
+ */
+function dff_authUser($username, $password) {
+	$user = User::newFromName($username);
+	$correct = $user->checkPassword($password);
+	$groups = $user->getGroups();
+	return $correct && in_array("sysop", $groups) ? "true" : "false";
 }

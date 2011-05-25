@@ -24,7 +24,9 @@
  * @author: Kai Kühn / ontoprise / 2011
  *
  */
-
+if (!defined("DF_WEBADMIN_TOOL")) {
+    die();
+}
 
 class DFSearchTab {
 
@@ -35,9 +37,14 @@ class DFSearchTab {
 	public function __construct() {
 
 	}
+	
+public function getTabName() {
+        global $dfgLang;
+        return $dfgLang->getLanguageString('df_webadmin_searchtab');
+    }
 
 	public function getHTML() {
-		$html = "<input type=\"text\" style=\"width: 450px;\" value=\"Press\" id=\"df_searchinput\"></input>";
+		$html = "<input type=\"text\" style=\"width: 450px;\" value=\"\" id=\"df_searchinput\"></input>";
 		$html .= "<input type=\"button\"  value=\"Search\" id=\"df_search\"></input>";
 		$html.= "<div id=\"df_search_results\"></div>";
 		return $html;
@@ -46,13 +53,13 @@ class DFSearchTab {
 	public function searializeSearchResults($results, $localPackages) {
 		$html = "<table>";
 		$html .= "<th>";
-		$html .= "Extension";
+		$html .= $dfgLang->getLanguageString('df_webadmin_extension');
 		$html .= "</th>";
 		$html .= "<th>";
-		$html .= "Description";
+		$html .= $dfgLang->getLanguageString('df_webadmin_description');
 		$html .= "</th>";
 		$html .= "<th>";
-		$html .= "Action";
+		$html .= $dfgLang->getLanguageString('df_webadmin_action');
 		$html .= "</th>";
 		foreach($results as $id => $description) {
 

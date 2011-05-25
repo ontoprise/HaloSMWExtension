@@ -306,6 +306,7 @@ if ($dfgRestore) {
 			$dfgOut->outputln("\nCould not restore '$dfgRestorePoint'. Does it exist?", DF_PRINTSTREAM_TYPE_ERROR);
 		}
 		$logger->info("End restore operation");
+		$dfgOut->outputln('__OK__');
 		die(DF_TERMINATION_WITH_FINALIZE);
 	} else {
 		die(DF_TERMINATION_WITHOUT_FINALIZE);
@@ -320,6 +321,7 @@ if ($dfgCreateRestorePoint) {
 	$rollback->saveInstallation($dfgRestorePoint);
 	$rollback->saveDatabase($dfgRestorePoint);
 	$logger->info("Restore point created");
+	$dfgOut->outputln('__OK__');
 	die(DF_TERMINATION_WITHOUT_FINALIZE);
 }
 

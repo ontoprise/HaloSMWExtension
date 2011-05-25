@@ -55,7 +55,16 @@ class DF_Language_En extends DF_Language {
 	'df_ok' => 'OK',
 	
 	// webadmin
-	'df_webadmin_extension' => 'Extension'
+	'df_webadmin_extension' => 'Extension',
+	'df_webadmin_description' => 'Description',
+	'df_webadmin_action' => 'Action',
+	
+	'df_webadmin_statustab' => 'Status',
+	'df_webadmin_searchtab' => 'Search',
+	'df_webadmin_bundledetailtab' => 'Bundle details',
+	'df_webadmin_maintenacetab' => 'Maintenance',
+	
+	'df_webadmin_restorepoint' => 'Restore point'
 	
 	);
 

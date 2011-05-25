@@ -298,4 +298,91 @@ $(function() {
 		});
 	});
 	
+	
+	/**
+	 * Called when restore process has been started.
+	 * 
+	 * @param xhr HTTP responseObject 
+	 * @param int status HTTP response code 
+	 */
+	var restoreStarted = function (xhr, status) {
+		var logfile = xhr.responseText;
+		
+		// poll log until finished
+		var timer;
+		var periodicLogLoad = function(xhr2, status2) {
+			if (timer) clearTimeout(timer);
+			timer = setTimeout( periodicLogLoad, 5000);
+			
+			var readLogurl = wgServer+wgScriptPath+"/deployment/tools/webadmin?rs=readlog&rsargs[]="+encodeURIComponent(logfile);
+			$.ajax( { url : readLogurl, dataType:"json", complete : function(xhr3, status3) { 
+				var resultLog = xhr3.responseText;
+				if (resultLog != '') { 
+					$('#df_install_dialog').html(resultLog); 
+				}
+				if (resultLog.indexOf("__OK__") != -1 || resultLog.indexOf("$$NOTEXISTS$$") != -1) {
+					clearTimeout(timer);
+					// done
+				}
+				
+			} });
+			
+			
+		};
+		setTimeout( periodicLogLoad, 3000);
+		
+	};
+	
+	/**
+	 * Called when "Create" button on the maintenance tab is clicked or 
+	 * enter is pressed in the restore point name input field.
+	 * 
+	 * @param e event
+	 */
+	var restoreHandler = function(e) {
+		var restorepoint = $('#df_restorepoint').val();
+		var url = wgServer+wgScriptPath+"/deployment/tools/webadmin?rs=createRestorePoint&rsargs[]="+encodeURIComponent(restorepoint);
+		var $dialog = $('<div id="df_install_dialog"></div>')
+		.dialog( {
+			autoOpen : false,
+			title : 'Please wait...',
+			modal: true,
+			width: 800,
+			height: 500
+		});
+							
+		$dialog.dialog('open');
+		
+		$.ajax( { url : url, dataType:"json", complete :restoreStarted });
+	}
+	
+	// register restore handler
+	$('#df_create_restorepoint').click(restoreHandler);
+	$('#df_restorepoint').keypress(function(e) { 
+		if (e.keyCode == 13) {
+			restoreHandler(e);
+		}
+	});
+	
+	
+	
+	// register restore buttons
+	$('.df_restore_button').click(function(e) {
+		var restorepoint = $(e.currentTarget).attr('id');
+		restorepoint = restorepoint.split("__")[1];
+		var url = wgServer+wgScriptPath+"/deployment/tools/webadmin?rs=restore&rsargs[]="+encodeURIComponent(restorepoint);
+		var $dialog = $('<div id="df_install_dialog"></div>')
+		.dialog( {
+			autoOpen : false,
+			title : 'Please wait...',
+			modal: true,
+			width: 800,
+			height: 500
+		});
+							
+		$dialog.dialog('open');
+		
+		$.ajax( { url : url, dataType:"json", complete :restoreStarted });
+		
+	});
 });
