@@ -643,7 +643,7 @@ class CKeditorParser extends CKeditorParserWrapper {
 		return $this->fck_wikiTag( 'onlyinclude', $matches[1] );
 	}
 
-	static function fck_leaveTemplatesAlone( $matches ) {
+	function fck_leaveTemplatesAlone( $matches ) {
 		return '<!--FCK_SKIP_START-->' . $matches['text'] . '<!--FCK_SKIP_END-->';
 	}
 
@@ -975,7 +975,7 @@ class CKeditorParser extends CKeditorParserWrapper {
 		array(
 		'end'=>']',
 		'cb' => array(
-		2=>array('CKeditorParser', 'fck_leaveTemplatesAlone'),
+		2=>array($this, 'fck_leaveTemplatesAlone'),
 		3=>array('', ''),
 		),
 		'min' =>2,
