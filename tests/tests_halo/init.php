@@ -38,12 +38,16 @@ if (isWindows()) {
 }
 
 echo "\nInsertings LocalSettings.php ...";
-tstInsertLocalSettings($testDir);
+copyLocalSettingsTest();
 echo "\ndone!\n";
 
 require_once( $mw_dir.'maintenance/commandLine.inc' );
 echo "\nInitializing database for use with MW 1.16.1 ...";
 tstInitializeDatabase();
+echo "\ndone!\n";
+
+echo "\nSetup required extensions ...\n";
+checkSetupSteps();
 echo "\ndone!\n";
 
 echo "\nImporting wiki pages ...";
@@ -73,31 +77,65 @@ function tstInitializeDatabase() {
 	echo "\ndone.\n";
 
    	echo "\nRun mediawiki update...";
-	echo $phpExe.' "'.$mw_dir.'maintenance/update.php" ';
-	runProcess($phpExe.' "'.$mw_dir.'maintenance/update.php" ');
+	echo $phpExe.' "'.$mw_dir.'maintenance/update.php" --quick ';
+	runProcess($phpExe.' "'.$mw_dir.'maintenance/update.php" --quick ');
 	echo "\ndone.\n";
 
-	// run setups
-	echo "\nRun setups...\n";
-	if (file_exists($testDir."/runSetup.cfg") && $handle = fopen($testDir."/runSetup.cfg", "r")) {
-		while(!feof($handle)) {
-			$line = fgets($handle);
-			$prgArg = explode("|", $line);
-			$prg = $prgArg[0];
-			$arg = count($prgArg) > 1 ? $prgArg[1] : "";
-			$cmd = $phpExe." \"".$mw_dir."extensions/".$prg."\" $arg";
-			$cmd = str_replace("\n", "", $cmd);
-			$cmd = str_replace("\r", "", $cmd);
-			echo "$cmd";
-			runProcess($cmd);
-
-		}
-		fclose($handle);
-	} else {
-		echo "No configuration file runSetup.cfg found in: $testDir\nSkip it.";
-	}
 }
 
+/**
+ * Modify LocalSettings and run setup scripts to initialize the extension(s)
+ */
+function checkSetupSteps() {
+    global $testDir;
+
+    $localSettings = array();
+    $runCfg= array();
+    $steps= array();
+    // check if there are several LocalSettings.php and runSetup.cfg
+    if ($handle = opendir($testDir)) {
+        while (false !== ($file = readdir($handle))) {
+            if (strpos($file, "LocalSettings") === 0) {
+                if ($file == "LocalSettings.php") {
+                    $localSettings[0]= $file;
+                    $steps[]= 0;
+                }
+                else if (preg_match('/^LocalSettings[_-]?(\d+)\.php$/', $file, $matches)) {
+                    $localSettings[$matches[1]]= $file;
+                    $steps[]= $matches[1];
+                }
+            }
+            else if (strpos($file, "runSetup") === 0) {
+                if ($file == "runSetup.cfg") {
+                    $runCfg[0]= $file;
+                    $steps[]= 0;
+                }
+                else if (preg_match('/^runSetup[_-]?(\d+)\.cfg$/', $file, $matches)) {
+                    $runCfg[$matches[1]]= $file;
+                    $steps[]= $matches[1];
+                }
+            }
+        }
+        closedir($handle);
+    }
+
+    // sort the steps if several LocalSettings and or runSetup.cfg are found
+    $steps = array_unique($steps);
+    sort($steps, SORT_NUMERIC);
+    
+    // for each possible step, check if there is a LocalSettings.php and or
+    // a runSetup.cfg and then do the appropriate tasks.
+    foreach ($steps as $step) {
+        if (isset($localSettings[$step]))
+            tstInsertLocalSettings($localSettings[$step]);
+        else
+            echo "No LocalSettings found for step $step\nSkip it.\n";
+        if (isset($runCfg[$step]))
+            tstRunSetupCfg($runCfg[$step]);
+        else
+            echo "No configuration file runSetup.cfg found for step $step in: $testDir\nSkip it.\n";
+    }
+}
 /**
  * Imports wiki pages from the $testDir/pages directory. (wiki xml dumps)
  *
@@ -145,7 +183,7 @@ function tstImportWikiPages() {
 			$cmd = $phpExe." \"".$mw_dir."extensions/".$prg."\" $arg";
 			$cmd = str_replace("\n", "", $cmd);
 			$cmd = str_replace("\r", "", $cmd);
-			echo "$cmd";
+			echo "$cmd\n";
 			runProcess($cmd);
 
 		}
@@ -158,23 +196,65 @@ function tstImportWikiPages() {
 /**
  * Inserts the LocalSettings.php from the $testdDir
  *
- * @param string $testDir
+ * @param string $name of LocalSettings chunk that is added
+ *               to global LocalSettings.php
  */
-function tstInsertLocalSettings() {
+function tstInsertLocalSettings($name) {
 	global $mw_dir, $testDir;
 
 	// read old LocalSettings.php
-	$lstest = trim(file_get_contents("LocalSettingsForTest.php"));
-	$ls = trim(file_get_contents($testDir."/LocalSettings.php"));
+	$lstest = trim(file_get_contents($mw_dir."LocalSettings.php"));
+	$ls = trim(file_get_contents($testDir."/".$name));
 	if (! preg_match('/^<\?/', $ls)) $ls = "<?\n".$ls;
 	if (! preg_match('/\?>$/', $ls)) $ls .= "\n?>";
 
 	// write new LocalSettings.php
 	$handle = fopen($mw_dir."LocalSettings.php","wb");
-	echo "\nWrite in output file: ".$mw_dir."LocalSettings.php"."\n";
+	echo "\nAttach $name to global config at: ".$mw_dir."LocalSettings.php"."\n";
 	fwrite($handle, $lstest.$ls);
 	fclose($handle);
 
+}
+
+/**
+ * Run the commands of a runSetup.cfg file from the test directory.
+ *
+ * @param string $name of the runSetup.cfg (without path)
+ */
+function tstRunSetupCfg($name) {
+    global $testDir, $mw_dir, $phpExe;
+    // run setups
+	if (file_exists($testDir."/".$name) && $handle = fopen($testDir."/".$name, "r")) {
+        echo "\nRun setup... $name\n";
+		while(!feof($handle)) {
+			$line = fgets($handle);
+			$prgArg = explode("|", $line);
+			$prg = $prgArg[0];
+			$arg = count($prgArg) > 1 ? $prgArg[1] : "";
+			$cmd = $phpExe." \"".$mw_dir."extensions/".$prg."\" $arg";
+			$cmd = str_replace("\n", "", $cmd);
+			$cmd = str_replace("\r", "", $cmd);
+			echo "$cmd\n";
+			runProcess($cmd);
+
+		}
+		fclose($handle);
+	} else {
+        echo "Error: specified file $testDir/$name not found\n";
+    }
+}
+
+/**
+ * Copy LocalSettingsForTest.php to the main directory of the
+ * wiki installation.
+ */
+function copyLocalSettingsTest() {
+	global $mw_dir, $testDir;
+
+    echo "\nWrite in output file: ".$mw_dir."LocalSettings.php"."\n";
+    $ok= copy("LocalSettingsForTest.php", $mw_dir."LocalSettings.php");
+    if (! $ok)
+        echo "Error copying LocalSettings.php\n";
 }
 
 ?>
