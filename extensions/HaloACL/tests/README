@@ -1,4 +1,4 @@
 
 REM Replace ${mw-root} by the correct folder
-php ${mw-root}/tests/tests_halo/init.php -t ${mw-root}/extensions/SemanticGardening/tests -x ${xampp-dir}
-php ${mw-root}/tests/tests_halo/run-test.php --log-xml logs/result.xml ${mw-root}/extensions/SemanticGardening/tests/GardeningTests.php
+php ${mw-root}/tests/tests_halo/init.php -t ${mw-root}/extensions/HaloACL/tests -x ${xampp-dir}
+php ${mw-root}/tests/tests_halo/run-test.php --log-xml logs/result.xml ${mw-root}/extensions/HaloACL/tests/HaloACLTests.php
