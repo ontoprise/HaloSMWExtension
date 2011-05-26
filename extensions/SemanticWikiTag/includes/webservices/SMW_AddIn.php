@@ -247,9 +247,15 @@ class AddIn {
 				AddIn::$queryProps = array();
 				AddIn::$queryId = 1;
 				$wgParser->parse( $revision->getText(), $t_title, $popts );
+				
+				$output = SMWParseData::getSMWdata($wgParser);
+			}
+			if (!isset($output)) {
+				$semdata = smwfGetStore()->getSemanticData($t_title);
+			} else {
+				$semdata = $output;
 			}
 
-			$semdata = smwfGetStore()->getSemanticData($t_title);
 			foreach($semdata->getProperties() as $property) {
 				if (!$property->isShown()) { // showing this is not desired, hide
 					continue;
@@ -602,9 +608,15 @@ class AddIn {
 			AddIn::$queryProps = array();
 			AddIn::$queryId = 1;
 			$wgParser->parse( $revision->getText(), $t_title, $popts );
-		}
 
-		$semdata = smwfGetStore()->getSemanticData($t_title);
+			$output = SMWParseData::getSMWdata($wgParser);
+		}
+		if (!isset($output)) {
+			$semdata = smwfGetStore()->getSemanticData($t_title);
+		} else {
+			$semdata = $output;
+		}
+			
 		foreach($semdata->getProperties() as $property) {
 			if (!$property->isShown()) { // showing this is not desired, hide
 				continue;

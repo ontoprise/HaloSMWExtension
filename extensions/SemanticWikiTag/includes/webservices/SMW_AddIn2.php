@@ -121,39 +121,46 @@ function smwgWTValidate($auth) {
 	$exception->ret_code = SWT_ADDIN_E_SUCCESS;
 	$exception->message = "Succeed";
 
-	if($auth->user !== NULL && $auth->user != "") {
-		if($auth->type == SWT_ADDIN_TYPE_DOMAIN) {
-			global $wgAuthDomains;
-			$domainMatches = false;
-			if($wgAuthDomains !== NULL) {
-				foreach($wgAuthDomains as $domain) {
-					if($auth->password == $domain) {
-						$domainMatches = true;
-						break;
-					}
-				}
-			}
-			if(!$domainMatches) {
-				$exception->ret_code = SWT_ADDIN_E_WRONG_DOMAIN;
-				$exception->message = "Wrong authenticated domain name, please check";
-				return $exception;
-			} else {
-				// auto create account
-				$u = User::newFromName($auth->user);
-				if ( !$u->getId() ) {
-					$authPlugin = new DomainAuthenticationPlugin();
-					$u->addToDatabase();
-					$u->setToken();
-					$authPlugin->initUser( $u, true );
+	if($auth->type == SWT_ADDIN_TYPE_DOMAIN) {
+		global $wgUser;
+		if($wgUser->getId()) {
+			global $wgDomainAuthDomain, $wgDomainAuthUser;;
+			$auth->user = $wgUser->getName();
+			$auth->password = $wgDomainAuthDomain;
+		}
+		global $wgAuthDomains;
+		$domainMatches = false;
+		if($wgAuthDomains !== NULL) {
+			foreach($wgAuthDomains as $domain) {
+				if($auth->password == $domain) {
+					$domainMatches = true;
+					break;
 				}
 			}
 		}
+		if(!$domainMatches) {
+			$exception->ret_code = SWT_ADDIN_E_WRONG_DOMAIN;
+			$exception->message = "Authentication Failed. Your domain is not supported by this wiki.";
+			return $exception;
+		} else {
+			// auto create account
+			$u = User::newFromName($auth->user);
+			if ( !$u->getId() ) {
+				$authPlugin = new DomainAuthenticationPlugin();
+				$u->addToDatabase();
+				$u->setToken();
+				$authPlugin->initUser( $u, true );
+			}
+		}
+	}
+
+	if($auth->user !== NULL && $auth->user != "") {
 		// set $wgUser field
 		global $wgUser;
 		$wgUser = User::newFromName($auth->user);
 		if ( ($wgUser === null) || !$wgUser->getId() ) {
 			$exception->ret_code = SWT_ADDIN_E_WRONG_NAME;
-			$exception->message = "Wrong authenticated login name, please check";
+			$exception->message = "Authentication Failed. Please check your username/password again.";
 			return $exception;
 		}
 		// compare password
@@ -162,7 +169,7 @@ function smwgWTValidate($auth) {
 			} else if(!$auth->encrypted && $wgUser->checkPassword($auth->password)) {
 			} else {
 				$exception->ret_code = SWT_ADDIN_E_WRONG_PASSWORD;
-				$exception->message = "Wrong account password, please check";
+				$exception->message = "Authentication Failed. Please check your username/password again.";
 				return $exception;
 			}
 		}
@@ -177,10 +184,10 @@ function smwgWTExceptionCheck($auth, $isEdit = false) {
 		$restriction = smwgWTGetRestriction($auth);
 		if($isEdit && ($restriction->restriction & SWT_ADDIN_CANNOT_EDIT)) {
 			$exception->ret_code = SWT_ADDIN_E_NO_PRIVILEGE;
-			$exception->message = "Cannot edit, no privilege, please check your account settings";
+			$exception->message = "This account has no privilege to edit. Please contact your administrator.";
 		} else if(!$isEdit && ($restriction->restriction & SWT_ADDIN_CANNOT_READ)) {
 			$exception->ret_code = SWT_ADDIN_E_NO_PRIVILEGE;
-			$exception->message = "Cannot read, no privilege, please check your account settings";
+			$exception->message = "This account has no privilege to read. Please contact your administrator.";
 		}
 	}
 	return $exception;
@@ -330,13 +337,13 @@ class AddIn2 extends AddIn{
 		if($ret->exception->ret_code != SWT_ADDIN_E_SUCCESS) return $ret;
 
 		$ret->values = parent::getTitleProperties($title);
-		
+
 		// Mapped form lookup
 		// E.g.
 		// Applicable forms: Outlook Mail, Wiki Mail, Appointment
-		// Lookup one level depth: 
-		// (Outlook Mail, Wiki Mail), 
-		// (Outlook Mail, Wiki Mail, Appointment, Bug, Status, Milestone), 
+		// Lookup one level depth:
+		// (Outlook Mail, Wiki Mail),
+		// (Outlook Mail, Wiki Mail, Appointment, Bug, Status, Milestone),
 		// (Wiki Mail, Appointment, Outlook Appointment)
 		//
 		// returns
@@ -364,12 +371,21 @@ class AddIn2 extends AddIn{
 		return $ret;
 	}
 	
+	/**
+	 * Get Form/Field/Values for specified page
+	 * '{free text}' for free text with no templates
+	 *
+	 * @param AuthenticationType $auth
+	 * @param string $title
+	 * @param string $form_name
+	 * @return PropertyPairsType
+	 */
 	public function getFormFieldValues($auth, $title, $form_name) {
 		$ret = new PropertyPairsType();
 		$ret->exception = smwgWTExceptionCheck($auth);
 		if($ret->exception->ret_code != SWT_ADDIN_E_SUCCESS) return $ret;
 		$ret->values = array();
-		
+
 		if(class_exists("SCProcessor")) {
 			foreach(SCProcessor::getPageMappedFormData($title, $form_name) as $template_field => $val) {
 				$prop = new PropertyPair;
@@ -378,7 +394,7 @@ class AddIn2 extends AddIn{
 				$ret->values[] = $prop;
 			}
 		}
-		
+
 		return $ret;
 	}
 
@@ -454,7 +470,8 @@ class AddIn2 extends AddIn{
 	 * 	"This is just a test",
 	 * 	new string[] { "hello", "cool" },
 	 * 	"Project bug",
-	 * 	new string[] { "Project report" }
+	 * 	new string[] { "Project report" },
+	 *  false
 	 * );
 	 *
 	 * @param AuthenticationType $auth
@@ -465,10 +482,11 @@ class AddIn2 extends AddIn{
 	 * @param string[] $categories
 	 * @param string $active_form
 	 * @param string[] $applicable_forms
+	 * @param bool $no_wrapper
 	 *
-	 * @return string
+	 * @return ExceptionType
 	 */
-	public function savePageToForm($auth, $form_name, $page_name, $properties, $freetext, $categories, $active_form, $applicable_forms) {
+	public function savePageToForm($auth, $form_name, $page_name, $properties, $freetext, $categories, $active_form, $applicable_forms, $no_wrapper) {
 		$ret = smwgWTExceptionCheck($auth, true);
 		if($ret->ret_code != SWT_ADDIN_E_SUCCESS) return $ret;
 
@@ -484,7 +502,7 @@ class AddIn2 extends AddIn{
 			SCProcessor::resetPageForms($page_name);
 
 			$templates = SCProcessor::getTemplateField($form_name);
-	
+
 			$tfs = array();
 			foreach($properties as $pv) {
 				$tf = explode('.', $pv->name, 2);
@@ -504,12 +522,16 @@ class AddIn2 extends AddIn{
 				$content .= "}}\n";
 			}
 		}
-		$freetext = str_replace("</nowiki>", "</ nowiki>", $freetext); // trick here
-		$freetext = str_replace("\n", "</nowiki>\n\n<nowiki>", $freetext);
-
-		$content .= "<nowiki>";
+		if(!$no_wrapper) {
+			$freetext = str_replace("</nowiki>", "</ nowiki>", $freetext); // trick here
+			$freetext = str_replace("\n", "</nowiki>\n\n<nowiki>", $freetext);
+	
+			$content .= "<nowiki>";
+		}
 		$content .= $freetext;
-		$content .= "</nowiki>\n\n";
+		if(!$no_wrapper) {
+			$content .= "</nowiki>\n\n";
+		}
 
 		$fname = "SMW::savePageToForm";
 		$db =& wfGetDB( DB_SLAVE );
@@ -542,24 +564,26 @@ class AddIn2 extends AddIn{
 			$content .= "[[Category:" . $c . "]]";
 		}
 
-		$content .= "\n\n''This article is generated via Page Upload extension by third party webservice clients like Microsoft Outlook Addin; ".
-			"any edits on this page could be overwritten by future uploads under the same subject.''";
-
+		if(!$no_wrapper) {	
+			$content .= "\n\n''This article is generated via Page Upload extension by third party webservice clients like Microsoft Outlook Addin; ".
+				"any edits on this page could be overwritten by future uploads under the same subject.''";
+		}
+		
 		$revision = Revision::newFromTitle( $title );
-//		if (( $revision === NULL ) || ($revision->getText() != $content)) {
-			$article = new Article($title);
+		//		if (( $revision === NULL ) || ($revision->getText() != $content)) {
+		$article = new Article($title);
 		if ( $revision === NULL ) {
 			$article->doEdit($content,'');
 		}
 			
-			if(class_exists("SCProcessor")) {
-				SCProcessor::saveEnabledForms($title->getText(), $form_title->getText());
-				$content = SCProcessor::toMappedFormContent($content, $title, Title::newFromText( $active_form, SF_NS_FORM ));
-				$article->doEdit($content,'');
-				if(!is_array($applicable_forms)) $applicable_forms = array();
-				SCProcessor::saveEnabledForms($page_name, $active_form, array_merge($applicable_forms, array($form_title->getText())));
-			}
-//		}
+		if(class_exists("SCProcessor")) {
+			SCProcessor::saveEnabledForms($title->getText(), $form_title->getText());
+			$content = SCProcessor::toMappedFormContent($content, $title, Title::newFromText( $active_form, SF_NS_FORM ));
+			$article->doEdit($content,'');
+			if(!is_array($applicable_forms)) $applicable_forms = array();
+			SCProcessor::saveEnabledForms($page_name, $active_form, array_merge($applicable_forms, array($form_title->getText())));
+		}
+		//		}
 		$ret->message = $title->getText();
 		return $ret;
 	}
@@ -579,10 +603,10 @@ class AddIn2 extends AddIn{
 	 * @param PropertyPairArray $properties
 	 * @param string $freetext
 	 *
-	 * @return string
+	 * @return ExceptionType
 	 */
 	public function savePageBasic($auth, $form_name, $page_name, $properties, $freetext) {
-		return $this->savePageToForm($auth, $form_name, $page_name, $properties, $freetext, $categories, $form_name, NULL);
+		return $this->savePageToForm($auth, $form_name, $page_name, $properties, $freetext, $categories, $form_name, NULL, false);
 	}
 
 	/**
@@ -612,7 +636,7 @@ class AddIn2 extends AddIn{
 			$ret->message = "Form does not exist";
 			return $ret;
 		}
-		
+
 		$title = Title::newFromText( $page_name );
 		if(!$title->exists()) {
 			$ret->ret_code = SWT_ADDIN_E_PAGE_NOT_EXIST;
@@ -622,18 +646,18 @@ class AddIn2 extends AddIn{
 		if(class_exists("SCProcessor")) {
 			$revision = Revision::newFromTitle( $title );
 			$content = $revision->getText();
-	
+
 			$article = new Article($title);
 			$content = SCProcessor::toMappedFormContent($content, $title, $form_title);
 			$article->doEdit($content,'');
 			if(!is_array($applicable_forms)) $applicable_forms = array();
 			SCProcessor::saveEnabledForms($page_name, $active_form, array_merge($applicable_forms, array($form_title->getText())));
 		}
-		
+
 		$ret->message = $title->getText();
 		return $ret;
 	}
-	
+
 	/**
 	 * Create form and template for Add-In items
 	 *
@@ -655,7 +679,7 @@ class AddIn2 extends AddIn{
 		if($ret->ret_code != SWT_ADDIN_E_SUCCESS) return $ret;
 
 		global $wgTitle;
-		
+
 		// create properties
 		foreach($properties as $p) {
 			if($p->value == SMW_TYPE_STRING) {
@@ -725,5 +749,541 @@ This is a page created by some upload clients. Please edit this page with other 
 
 	$ret->message = $title->getText();
 	return $ret;
+	}
+
+	/**
+	 * Get stopword list on wiki
+	 *
+	 * @param AuthenticationType $auth
+	 *
+	 * @return StringsType
+	 */
+	public function getStopwords($auth) {
+		$ret = new StringsType();
+		$ret->exception = smwgWTExceptionCheck($auth);
+		if($ret->exception->ret_code != SWT_ADDIN_E_SUCCESS) return $ret;
+
+		$arr = array();
+
+		global $wgEnableWikiTagsStopword;
+		if($wgEnableWikiTagsStopword) {
+
+			global $wgUploadDirectory;
+			$file = $wgUploadDirectory.'/stopword.txt';
+			if(file_exists($file)) {
+				$stopword = file_get_contents($file);
+				if($stopword !== FALSE) {
+					$arr = explode("\n", $stopword);
+				}
+			}
+		}
+
+		$ret->values = $arr;
+		return $ret;
+	}
+
+	/**
+	 * Get default settings on wiki
+	 *
+	 * stopword => if stopword is enabled
+	 * trigram_threshold => threshold of trigram
+	 *
+	 * @param AuthenticationType $auth
+	 *
+	 * @return PropertyValue[]
+	 */
+	public function getWikiSettings($auth) {
+		$ret = new PropertyPairsType();
+		$ret->exception = smwgWTExceptionCheck($auth);
+		if($ret->exception->ret_code != SWT_ADDIN_E_SUCCESS) return $ret;
+
+		$vals = array();
+
+		global $wgEnableWikiTagsStopword, $wgWikiTagsTrigramThreshold;
+		if($wgEnableWikiTagsStopword) {
+			$prop = new PropertyPair;
+			$prop->name = 'stopword';
+			$prop->value = strval($wgEnableWikiTagsStopword);
+			$vals[] = $prop;
+		}
+		if($wgWikiTagsTrigramThreshold && $wgWikiTagsTrigramThreshold > 0 && $wgWikiTagsTrigramThreshold <= 1) {
+			$prop = new PropertyPair;
+			$prop->name = 'trigram_threshold';
+			$prop->value = strval($wgWikiTagsTrigramThreshold);
+			$vals[] = $prop;
+		}
+
+		$ret->values = $vals;
+
+		return $ret;
+	}
+
+	/**
+	 * Get template field type of a form.
+	 *
+	 * template.field => field render type, date / text / textarea / dropdown list:value 1|value 2|...
+	 * param=value, delimiter is set to "|"
+	 *
+	 * disabled
+	 * is_mandatory
+	 * is_list = delimiter
+	 * input_type = input type
+	 *     (
+	 *       text, textarea, combobox, date, datetime, datetime with timezone,
+	 *       radiobutton, checkbox, checkboxes, dropdown and listbox
+	 *     )
+	 * default_value =
+	 * possible_values =
+	 *
+	 * E.g.,
+	 * input_type=dropdown list|is_mandatory|is_list = ,|default_value = test|possible_values = possible,test,good
+	 * for uid
+	 * input type=textbox|disabled|default_value=BUG-001
+	 *
+	 * @param AuthenticationType $auth
+	 * @param string $form_name
+	 * @return PropertyPairsType
+	 */
+	public function getSiteFormSettings($auth, $form_name) {
+		$ret = new PropertyPairsType();
+		$ret->exception = smwgWTExceptionCheck($auth);
+		if($ret->exception->ret_code != SWT_ADDIN_E_SUCCESS) return $ret;
+
+		if(!defined( 'SF_VERSION' ) || !preg_match('/^1\.[79]/', SF_VERSION)) {
+			$ret->values = array();
+			return $ret;
+		}
+		
+		$vals = array();
+
+		$form_printer = new SFFormPrinter();
+		// based on SF 1.7 source, SF_FormPrinter.inc, function formHTML
+		$form_title = Title::makeTitleSafe(SF_NS_FORM, $form_name);
+		$form_article = new Article($form_title);
+		$form_def = $form_article->getContent();
+
+		$form_def = StringUtils::delimiterReplace('<noinclude>', '</noinclude>', '', $form_def);
+		$form_def = strtr($form_def, array('<includeonly>' => '', '</includeonly>' => ''));
+
+		// parse wiki-text
+		// add '<nowiki>' tags around every triple-bracketed form definition
+		// element, so that the wiki parser won't touch it - the parser will
+		// remove the '<nowiki>' tags, leaving us with what we need
+		global $sfgDisableWikiTextParsing;
+		if (! $sfgDisableWikiTextParsing) {
+			global $wgParser, $wgUser;
+			$form_def = "__NOEDITSECTION__" . strtr($form_def, array('{{{' => '<nowiki>{{{', '}}}' => '}}}</nowiki>'));
+			$wgParser->mOptions = new ParserOptions();
+			$wgParser->mOptions->initialiseFromUser($wgUser);
+			$form_def = $wgParser->parse($form_def, $form_title, $wgParser->mOptions)->getText();
+		}
+
+		// turn form definition file into an array of sections, one for each
+		// template definition (plus the first section)
+		$form_def_sections = array();
+		$start_position = 0;
+		$section_start = 0;
+		$all_values_for_template = array();
+		// unencode and HTML-encoded representations of curly brackets and
+		// pipes - this is a hack to allow for forms to include templates
+		// that themselves contain form elements - the escaping is needed
+		// to make sure that those elements don't get parsed too early
+		$form_def = str_replace(array('&#123;', '&#124;', '&#125;'), array('{', '|', '}'), $form_def);
+		// and another hack - replace the 'free text' standard input with
+		// a field declaration to get it to be handled as a field
+		$form_def = str_replace('standard input|free text', 'field|<freetext>', $form_def);
+		while ($brackets_loc = strpos($form_def, "{{{", $start_position)) {
+			$brackets_end_loc = strpos($form_def, "}}}", $brackets_loc);
+			$bracketed_string = substr($form_def, $brackets_loc + 3, $brackets_end_loc - ($brackets_loc + 3));
+			$tag_components = explode('|', $bracketed_string);
+			$tag_title = trim($tag_components[0]);
+			if ($tag_title == 'for template' || $tag_title == 'end template') {
+				// create a section for everything up to here
+				$section = substr($form_def, $section_start, $brackets_loc - $section_start);
+				$form_def_sections[] = $section;
+				$section_start = $brackets_loc;
+			}
+			$start_position = $brackets_loc + 1;
+		} // end while
+		$form_def_sections[] = trim(substr($form_def, $section_start));
+
+		// cycle through form definition file (and possibly an existing article
+		// as well), finding template and field declarations and replacing them
+		// with form elements, either blank or pre-populated, as appropriate
+		$all_fields = array();
+		$template_name = "";
+		for ($section_num = 0; $section_num < count($form_def_sections); $section_num++) {
+			$tif = new SFTemplateInForm();
+			$start_position = 0;
+			$template_text = "";
+			// the append is there to ensure that the original array doesn't get
+			// modified; is it necessary?
+			$section = " " . $form_def_sections[$section_num];
+
+			while ($brackets_loc = strpos($section, '{{{', $start_position)) {
+				$brackets_end_loc = strpos($section, "}}}", $brackets_loc);
+				$bracketed_string = substr($section, $brackets_loc + 3, $brackets_end_loc - ($brackets_loc + 3));
+				$tag_components = explode('|', $bracketed_string);
+				$tag_title = trim($tag_components[0]);
+				// =====================================================
+				// for template processing
+				// =====================================================
+				if ($tag_title == 'for template') {
+					$template_name = trim($tag_components[1]);
+					$tif->template_name = $template_name;
+
+					$template_label = $template_name;
+					// cycle through the other components
+					for ($i = 2; $i < count($tag_components); $i++) {
+						$component = $tag_components[$i];
+						$sub_components = explode('=', $component);
+						if (count($sub_components) == 2) {
+							if ($sub_components[0] == 'label') {
+								$template_label = $sub_components[1];
+							}
+						}
+					}
+
+					$all_fields = $tif->getAllFields();
+
+					$start_position = $brackets_end_loc;
+					// =====================================================
+					// end template processing
+					// =====================================================
+				} elseif ($tag_title == 'end template') {
+
+					// remove this tag, reset some variables, and close off form HTML tag
+					$start_position = $brackets_end_loc;
+
+					$template_name = null;
+					if (isset($template_label)) {
+						unset ($template_label);
+					}
+					// =====================================================
+					// field processing
+					// =====================================================
+				} elseif ($tag_title == 'field') {
+					$field_name = trim($tag_components[1]);
+					// cycle through the other components
+					$is_mandatory = false;
+					//          $is_hidden = false;
+					//          $is_restricted = false;
+					//          $is_uploadable = false;
+					$is_list = false;
+					$input_type = null;
+					$field_args = array();
+					$default_value = "";
+					$possible_values = null;
+					$semantic_property = null;
+					$default_value = "";
+					for ($i = 2; $i < count($tag_components); $i++) {
+						$component = trim($tag_components[$i]);
+						if ($component == 'mandatory') {
+							$is_mandatory = true;
+							//            } elseif ($component == 'hidden') {
+							//              $is_hidden = true;
+							//            } elseif ($component == 'restricted') {
+							//              $is_restricted = true;
+						} elseif ($component == 'uid') {
+							// uid patch
+							$field_args['uid'] = true;
+							//            } elseif ($component == 'uploadable') {
+							//              $field_args['is_uploadable'] = true;
+						} elseif ($component == 'list') {
+							$is_list = true;
+						} else {
+							$sub_components = explode('=', $component);
+							if (count($sub_components) == 2) {
+								if ($sub_components[0] == 'input type') {
+									$input_type = $sub_components[1];
+								} elseif ($sub_components[0] == 'default') {
+									$default_value = $sub_components[1];
+								} elseif ($sub_components[0] == 'values') {
+									// remove whitespaces from list
+									$possible_values = array_map('trim', explode(',', $sub_components[1]));
+								} elseif ($sub_components[0] == 'values from category') {
+									$possible_values = SFUtils::getAllPagesForCategory($sub_components[1], 10);
+								} elseif ($sub_components[0] == 'values from concept') {
+									$possible_values = SFUtils::getAllPagesForConcept($sub_components[1]);
+								} elseif ($sub_components[0] == 'property') {
+									$semantic_property = $sub_components[1];
+									//                } elseif ($sub_components[0] == 'default filename') {
+									//                  $default_filename = str_replace('&lt;page name&gt;', $page_title, $sub_components[1]);
+									//                  $field_args['default filename'] = $default_filename;
+								} else {
+									$field_args[$sub_components[0]] = $sub_components[1];
+								}
+							}
+						}
+					}
+
+					$settings = '';
+					if(array_key_exists('uid', $field_args)) {
+						// special case, the uid
+						$settings = "diabled";
+						if (array_key_exists('id_prefix', $field_args)) {
+							$default_value = SFFormInputs::getId($field_args['id_prefix']);
+						} else {
+							global $sfgIdPrefix;
+							$default_value = SFFormInputs::getId($sfgIdPrefix);
+						}
+						$settings .= "|default_value=$default_value";
+					} else {
+						// create an SFFormField instance based on all the
+						// parameters in the form definition, and any information from
+						// the template definition (contained in the $all_fields parameter)
+						$form_field = SFFormField::createFromDefinition($field_name, $input_name,
+						$is_mandatory, $is_hidden, $is_uploadable, $possible_values, $is_disabled,
+						$is_list, $input_type, $field_args, $all_fields, $strict_parsing);
+						// if a property was set in the form definition, overwrite whatever
+						// is set in the template field - this is somewhat of a hack, since
+						// parameters set in the form definition are meant to go into the
+						// SFFormField object, not the SFTemplateField object it contains;
+						// it seemed like too much work, though, to create an
+						// SFFormField::setSemanticProperty() function just for this call
+						if ($semantic_property != null) {
+							$form_field->template_field->setSemanticProperty($semantic_property);
+						}
+						if ($is_list) {
+							if(array_key_exists('delimiter', $field_args)) {
+								$is_list = $field_args['delimiter'];
+							} else {
+								$is_list = ",";
+							}
+						}
+
+						if ($form_field->input_type != '' &&
+						array_key_exists($form_field->input_type, $form_printer->mInputTypeHooks) &&
+						$form_printer->mInputTypeHooks[$form_field->input_type] != null) {
+
+							// last argument to function should be a hash, merging the default
+							// values for this input type with all other properties set in
+							// the form definition, plus some semantic-related arguments
+							$hook_values = $form_printer->mInputTypeHooks[$form_field->input_type];
+							$other_args = $form_field->getArgumentsForInputCall($hook_values[1]);
+						} else { // input type not defined in form
+							$template_field = $form_field->template_field;
+								
+							$field_type = $template_field->field_type;
+							$is_list = ($form_field->is_list || $template_field->is_list);
+							if ($field_type != '' &&
+							array_key_exists($field_type, $form_printer->mSemanticTypeHooks) &&
+							isset($form_printer->mSemanticTypeHooks[$field_type][$is_list])) {
+
+								$hook_values = $form_printer->mSemanticTypeHooks[$field_type][$is_list];
+								$other_args = $form_field->getArgumentsForInputCall($hook_values[1]);
+
+								if($hook_values[0][1] == 'textAreaHTML') $input_type = 'textarea';
+								else if($hook_values[0][1] == 'checkboxHTML') $input_type = 'checkbox';
+								else if($hook_values[0][1] == 'dateEntryHTML') $input_type = 'date';
+								else if($hook_values[0][1] == 'dropdownHTML') $input_type = 'dropdown';
+								else if($hook_values[0][1] == 'checkboxesHTML') $input_type = 'checkboxes';
+							}
+						}
+						if($is_mandatory) $settings .= "|is_mandatory";
+						if($other_args['is_list']) {
+							if(array_key_exists('delimiter', $field_args)) {
+								$delimiter = $field_args['delimiter'];
+							} else {
+								$delimiter = ",";
+							}
+							$settings .= "|is_list=$delimiter";
+						}
+						if(isset($input_type)) $settings .= "|input_type=$input_type";
+						if(isset($default_value) && $default_value!='') $settings .= "|default_value=$default_value";
+						if(isset($possible_values)) $settings .= "|possible_values=" . implode(',', $possible_values);
+						if(count($other_args['possible_values']) > 0) $settings .= "|possible_values=" . implode(',', $other_args['possible_values']);
+					}
+					if($template_name != null && $template_name !== '') {
+						$prop = new PropertyPair;
+						$prop->name = "$template_name.$field_name";
+						$prop->value = $settings;
+						$vals[] = $prop;
+					}
+
+					$start_position = $brackets_end_loc;
+
+					// =====================================================
+					// default outer level processing
+					// =====================================================
+				} else { // tag is not one of the three allowed values
+					// ignore tag
+					$start_position = $brackets_end_loc;
+				} // end if
+			} // end while
+		} // end for
+		
+		$ret->values = $vals;
+
+		return $ret;
+	}
+	
+	/**
+	 * Get current form of specified page
+	 * If no form matched, returned message will be blank
+	 *
+	 * @param AuthenticationType $auth
+	 * @param string $page_name
+	 * @return ExceptionType
+	 */
+	public function getPageCurrentForm($auth, $page_name) {
+		$ret = smwgWTExceptionCheck($auth, true);
+		if($ret->ret_code != SWT_ADDIN_E_SUCCESS) return $ret;
+		
+		if(!defined( 'SF_VERSION' ) || !preg_match('/^1\.[79]/', SF_VERSION)) {
+			return $ret;
+		}
+
+		$form_name = "";
+		
+		$page_title = Title::newFromText( $page_name );
+		$article = new Article($page_title);
+		$forms = SFLinkUtils::getFormsForArticle($article);
+		if(count($forms)>0) $form_name = $forms[0];
+		
+//		$revision = Revision::newFromTitle( $page_title );
+//		
+//		if ( $revision !== NULL ) {
+//			if(class_exists("SCProcessor")) {
+//				$sStore = SCStorage::getDatabase();
+//				$pid = $page_title->getArticleID();
+//				$current_form = $sStore->getCurrentForm($pid);
+//				if($current_form !== NULL) {
+//					$form_name = Title::makeTitleSafe(SF_NS_FORM, $current_form)->getText();
+//				}
+//			}
+//		}
+		$ret->message = $form_name;
+		
+		return $ret;
+	}
+
+	/**
+	 * Get form mapping settings, result in src_template.field => target_template.field pair
+	 *
+	 * @param AuthenticationType $auth
+	 * @param string $src_form_name
+	 * @param string $target_form_name
+	 * @return PropertyPairsType
+	 */
+	public function getFormMappingSettings($auth, $src_form_name, $target_form_name) {
+		$ret = new PropertyPairsType();
+		$ret->exception = smwgWTExceptionCheck($auth);
+		if($ret->exception->ret_code != SWT_ADDIN_E_SUCCESS) return $ret;
+
+		$vals = array();
+
+		if(class_exists("SCProcessor")) {
+			$sStore = SCStorage::getDatabase();
+			$form_name = Title::newFromText($src_form_name)->getText();
+			$res = $sStore->lookupFormMapping($form_name);
+
+			foreach($res as $r) {
+				$m = explode('.', $r['map']);
+				if($m[0] == $target_form_name) {
+					$prop = new PropertyPair;
+					$prop->name = $r['src'];
+					$prop->value = $r['map'];
+					$vals[] = $prop;
+				}
+			}
+		}
+
+		$ret->values = $vals;
+
+		return $ret;
+	}
+
+	/**
+	 * Same as method 'getTitles2', the first value in return->values is server timestamp.
+	 * First character is reserved, '+xxx' for add or modifed titles, '-xxx' for removed titles
+	 *
+	 * If timestamp is '0' or null, all titles will thus be returned
+	 *
+	 * @param AuthenticationType $auth
+	 * @param string[] $categoryTitles
+	 * @param string $timestamp
+	 * @return StringsType
+	 */
+	public function getUpdatedTitles($auth, $categoryTitles, $timestamp) {
+		$ret = new StringsType();
+		$ret->exception = smwgWTExceptionCheck($auth);
+		if($ret->exception->ret_code != SWT_ADDIN_E_SUCCESS) return $ret;
+
+		$result = array();
+
+		if($timestamp === 0) {
+			$db =& wfGetDB( DB_SLAVE );
+
+			$page = $db->tableName('page');
+
+			if (($categoryTitles == NULL) || (count($categoryTitles) == 0)) {
+				$sql = '(page_namespace='. NS_MAIN .' or page_namespace='.NS_CATEGORY.')';
+				//$sql = '(page_namespace='. NS_MAIN .')';
+				$res = $db->select( $page, 'page_title', $sql, 'SMW::getTitles');
+			} else {
+				$categorylinks = $db->tableName('categorylinks');
+				$cates = '\'\'';
+				foreach($categoryTitles as $cate){
+					$cates .= ',\''.mysql_real_escape_string(Title::makeTitle(NS_CATEGORY, $cate)->getDBkey()).'\'';
+				}
+				$res = $db->query('SELECT p.page_title from '.$page.' p LEFT JOIN '.$categorylinks.' c ON c.cl_from=p.page_id WHERE c.cl_to IN ('.$cates.') AND p.page_namespace=' . NS_MAIN);
+			}
+			if($db->numRows( $res ) > 0) {
+				while($row = $db->fetchObject($res)) {
+					$result[] = '+' . Title::makeTitle( NS_MAIN, $row->page_title)->getText();
+				}
+			}
+			$db->freeResult($res);
+		}
+
+		$ret->values = $result;
+		array_unshift($ret->values, strval(time()));
+		return $ret;
+	}
+	
+	/**
+	 * 
+	 * disabled
+	 * is_mandatory
+	 * is_list = delimiter
+	 * input_type = input type
+	 *     (
+	 *       text, textarea, combobox, date, datetime, datetime with timezone,
+	 *       radiobutton, checkbox, checkboxes, dropdown and listbox
+	 *     )
+	 * default_value =
+	 * possible_values =
+	 *
+	 * E.g.,
+	 * input_type=dropdown list|is_mandatory|is_list = ,|default_value = test|possible_values = possible,test,good
+	 * for uid
+	 * input type=textbox|disabled|default_value=BUG-001
+	 **/
+	public function getTitlePropertyDefinitions($auth, $title) {
+		$ret = new PropertyPairsType();
+		$ret->exception = smwgWTExceptionCheck($auth);
+		if($ret->exception->ret_code != SWT_ADDIN_E_SUCCESS) return $ret;
+
+		$vals = array();
+		
+		// property => flag
+		// id | editable | 
+		$prop = new PropertyPair;
+		$prop->name = '{form}';
+		$prop->value = $possible_form;
+		$ret->values[] = $prop;
+					
+		$ret->values = $vals;
+
+		return $ret;
+	}
+	
+	public function updateTitlePropertyValue($auth, $title, $prop, $original_val, $new_value) {
+		$ret = smwgWTExceptionCheck($auth, true);
+		if($ret->ret_code != SWT_ADDIN_E_SUCCESS) return $ret;
+
+		$ret->message = '';
+		return $ret;
 	}
 }

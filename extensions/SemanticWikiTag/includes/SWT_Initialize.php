@@ -35,6 +35,18 @@ function smwgWTSetupExtension() {
 		exit;
 	}
 
+	global $wgMessageCache, $wgLang;
+	$wgMessageCache->addMessages( array(
+	/*Messages for WikiTags*/
+		'stopword' => 'Stopword list',
+	)
+		, $wgLang->getCode() );
+	
+	global $wgAutoloadClasses, $wgSpecialPages, $wgSpecialPageGroups;
+	$wgAutoloadClasses['SWTStopword'] = $smwgWTIP . '/specials/SWTStopword.php';
+	$wgSpecialPages['Stopword'] = array( 'SWTStopword' );
+	$wgSpecialPageGroups['Stopword'] = 'smw_group';
+	
 	// Register Credits
 	$wgExtensionCredits['parserhook'][]= array(
 	'name'=>'Semantic&nbsp;WikiTag&nbsp;Extension', 'version'=>SMW_WT_VERSION,

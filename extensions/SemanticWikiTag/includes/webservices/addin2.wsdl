@@ -290,6 +290,7 @@
 		<wsdl:part name="categories" type="typens:stringArray"></wsdl:part>
 		<wsdl:part name="active_form" type="xsd:string"></wsdl:part>
 		<wsdl:part name="applicable_forms" type="typens:stringArray"></wsdl:part>
+		<wsdl:part name="no_wrapper" type="xsd:boolean"></wsdl:part>
 	</wsdl:message>
 	<wsdl:message name="savePageToFormResponse">
 		<wsdl:part name="savePageToFormResponse" type="typens:ExceptionType"></wsdl:part>
@@ -310,7 +311,9 @@
         <wsdl:part name="freetext" type="xsd:string"></wsdl:part>
 	</wsdl:message>
 	<wsdl:message name="savePageBasicResponse">
-		<wsdl:part name="savePageBasicResponse" type="xsd:string"></wsdl:part>
+		<wsdl:part name="savePageBasicResponse"
+			type="typens:ExceptionType">
+		</wsdl:part>
 	</wsdl:message>
 	<wsdl:message name="setPageFormsRequest">
 		<wsdl:part name="auth" type="typens:AuthenticationType"></wsdl:part>
@@ -319,7 +322,9 @@
 		<wsdl:part name="applicable_forms" type="typens:stringArray"></wsdl:part>
 	</wsdl:message>
 	<wsdl:message name="setPageFormsResponse">
-		<wsdl:part name="setPageFormsResponse" type="xsd:string"></wsdl:part>
+		<wsdl:part name="setPageFormsResponse"
+			type="typens:ExceptionType">
+		</wsdl:part>
 	</wsdl:message>
 	<wsdl:message name="NewOperationRequest">
 		<wsdl:part name="NewOperationRequest" type="xsd:string"></wsdl:part>
@@ -335,7 +340,86 @@
 	<wsdl:message name="getFormFieldValuesResponse1">
 		<wsdl:part name="getFormFieldValuesResponse" type="typens:PropertyPairsType"></wsdl:part>
 	</wsdl:message>
-	<portType name="AddInPortType">
+	<wsdl:message name="NewOperationRequest1">
+		<wsdl:part name="NewOperationRequest1" type="xsd:string"></wsdl:part>
+	</wsdl:message>
+	<wsdl:message name="NewOperationResponse1">
+		<wsdl:part name="NewOperationResponse1" type="xsd:string"></wsdl:part>
+	</wsdl:message>
+    <wsdl:message name="NewMessage">
+    	<wsdl:part name="auth" type="typens:AuthenticationType"></wsdl:part></wsdl:message>
+    <wsdl:message name="NewMessage1">
+    	<wsdl:part name="getStopwordsResponse"
+    		type="typens:StringsType">
+    	</wsdl:part></wsdl:message>
+    <wsdl:message name="getWikiSettingsRequest2">
+    	<wsdl:part name="auth" type="typens:AuthenticationType"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="getWikiSettingsResponse2">
+    	<wsdl:part name="getWikiSettingsResponse"
+    		type="typens:PropertyPairsType">
+    	</wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="getSiteFormSettingsRequest2">
+    	<wsdl:part name="auth" type="typens:AuthenticationType"></wsdl:part>
+    	<wsdl:part name="form_name" type="xsd:string"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="getSiteFormSettingsResponse2">
+    	<wsdl:part name="getSiteFormSettingsResponse"
+    		type="typens:PropertyPairsType">
+    	</wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="getUpdatedTitlesRequest2">
+    	<wsdl:part name="auth" type="typens:AuthenticationType"></wsdl:part>
+    	<wsdl:part name="categoryTitles" type="typens:stringArray"></wsdl:part>
+    	<wsdl:part name="timestamp" type="xsd:string"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="getUpdatedTitlesResponse2">
+    	<wsdl:part name="getUpdatedTitlesResponse"
+    		type="typens:StringsType">
+    	</wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="getFormMappingSettingsRequest2">
+    	<wsdl:part name="auth" type="typens:AuthenticationType"></wsdl:part>
+    	<wsdl:part name="src_form_name" type="xsd:string"></wsdl:part>
+    	<wsdl:part name="target_form_name" type="xsd:string"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="getFormMappingSettingsResponse2">
+    	<wsdl:part name="getFormMappingSettingsResponse"
+    		type="typens:PropertyPairsType">
+    	</wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="getPageCurrentFormRequest2">
+    	<wsdl:part name="auth" type="typens:AuthenticationType"></wsdl:part>
+    	<wsdl:part name="page_name" type="xsd:string"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="getPageCurrentFormResponse2">
+    	<wsdl:part name="getPageCurrentFormResponse"
+    		type="typens:ExceptionType">
+    	</wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="getTitlePropertyDefinitionsRequest2">
+    	<wsdl:part name="auth" type="typens:AuthenticationType"></wsdl:part>
+    	<wsdl:part name="title" type="xsd:string"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="getTitlePropertyDefinitionsResponse2">
+    	<wsdl:part name="getTitlePropertyDefinitionsResponse"
+    		type="typens:PropertyPairsType">
+    	</wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="updateTitlePropertyValueRequest2">
+    	<wsdl:part name="auth" type="typens:AuthenticationType"></wsdl:part>
+    	<wsdl:part name="title" type="xsd:string"></wsdl:part>
+    	<wsdl:part name="prop" type="xsd:string"></wsdl:part>
+    	<wsdl:part name="original_val" type="xsd:string"></wsdl:part>
+    	<wsdl:part name="new_value" type="xsd:string"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="updateTitlePropertyValueResponse2">
+    	<wsdl:part name="updateTitlePropertyValueResponse"
+    		type="typens:ExceptionType">
+    	</wsdl:part>
+    </wsdl:message>
+    <portType name="AddInPortType">
 		<operation name="getCategories">
 			<documentation>Get category names</documentation>
 			<input message="typens:getCategoriesRequest" />
@@ -454,332 +538,476 @@
 			<wsdl:input message="typens:getFormFieldValuesRequest1"></wsdl:input>
 			<wsdl:output message="typens:getFormFieldValuesResponse1"></wsdl:output>
 		</wsdl:operation>
-	</portType>
-	<binding name="AddInBinding" type="typens:AddInPortType">
-
-		<soap:binding style="rpc"
-			transport="http://schemas.xmlsoap.org/soap/http" />
-		<operation name="getCategories2">
-
-			<soap:operation soapAction="urn:addin/getCategories2" />
-			<input>
-
-				<soap:body use="encoded" namespace="urn:addin"
-					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
-			</input>
-			<output>
-
-				<soap:body use="encoded" namespace="urn:addin"
-					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
-			</output>
-		</operation>
-		<operation name="getProperties2">
-
-			<soap:operation soapAction="urn:addin/getProperties2" />
-			<input>
-
-				<soap:body use="encoded" namespace="urn:addin"
-					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
-			</input>
-			<output>
-
-				<soap:body use="encoded" namespace="urn:addin"
-					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
-			</output>
-		</operation>
-		<operation name="getTitleProperties2">
-
-			<soap:operation soapAction="urn:addin/getTitleProperties2" />
-			<input>
-
-				<soap:body use="encoded" namespace="urn:addin"
-					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
-			</input>
-			<output>
-
-				<soap:body use="encoded" namespace="urn:addin"
-					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
-			</output>
-		</operation>
-		<operation name="getTitles2">
-
-			<soap:operation soapAction="urn:addin/getTitles2" />
-			<input>
-
-				<soap:body use="encoded" namespace="urn:addin"
-					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
-			</input>
-			<output>
-
-				<soap:body use="encoded" namespace="urn:addin"
-					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
-			</output>
-		</operation>
-		<operation name="authenticate">
-
-			<soap:operation soapAction="urn:addin/authenticate" />
-			<input>
-
-				<soap:body use="encoded" namespace="urn:addin"
-					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
-			</input>
-			<output>
-
-				<soap:body use="encoded" namespace="urn:addin"
-					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
-			</output>
-		</operation>
-		<wsdl:operation name="saveNewMail2">
-
-			<soap:operation soapAction="urn:addin/saveNewMail2" />
-			<wsdl:input>
-
-				<soap:body use="encoded" namespace="urn:addin"
-					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
-			</wsdl:input>
-			<wsdl:output>
-
-				<soap:body use="encoded" namespace="urn:addin"
-					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
-			</wsdl:output>
+		<wsdl:operation name="getStopwords">
+			<wsdl:input message="typens:NewMessage"></wsdl:input>
+			<wsdl:output message="typens:NewMessage1"></wsdl:output>
 		</wsdl:operation>
-		<wsdl:operation name="addCategory2">
-
-			<soap:operation soapAction="urn:addin/addCategory2" />
-			<wsdl:input>
-
-				<soap:body use="encoded" namespace="urn:addin"
-					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
-			</wsdl:input>
-			<wsdl:output>
-
-				<soap:body use="encoded" namespace="urn:addin"
-					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
-			</wsdl:output>
+		<wsdl:operation name="getWikiSettings">
+			<wsdl:input message="typens:getWikiSettingsRequest2"></wsdl:input>
+			<wsdl:output message="typens:getWikiSettingsResponse2"></wsdl:output>
 		</wsdl:operation>
-		<wsdl:operation name="getPageInfo2">
-
-			<soap:operation soapAction="urn:addin/getPageInfo2" />
-			<wsdl:input>
-
-				<soap:body use="encoded" namespace="urn:addin"
-					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
-			</wsdl:input>
-			<wsdl:output>
-
-				<soap:body use="encoded" namespace="urn:addin"
-					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
-			</wsdl:output>
+		<wsdl:operation name="getSiteFormSettings">
+			<wsdl:input message="typens:getSiteFormSettingsRequest2"></wsdl:input>
+			<wsdl:output message="typens:getSiteFormSettingsResponse2"></wsdl:output>
 		</wsdl:operation>
-		<wsdl:operation name="getCategories">
-
-			<soap:operation soapAction="urn:addin/getCategories" />
-			<wsdl:input>
-
-				<soap:body use="encoded" namespace="urn:addin"
-					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
-			</wsdl:input>
-			<wsdl:output>
-
-				<soap:body use="encoded" namespace="urn:addin"
-					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
-			</wsdl:output>
+		<wsdl:operation name="getUpdatedTitles">
+			<wsdl:input message="typens:getUpdatedTitlesRequest2"></wsdl:input>
+			<wsdl:output message="typens:getUpdatedTitlesResponse2"></wsdl:output>
 		</wsdl:operation>
-		<wsdl:operation name="getProperties">
-
-			<soap:operation soapAction="urn:addin/getProperties" />
-			<wsdl:input>
-
-				<soap:body use="encoded" namespace="urn:addin"
-					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
-			</wsdl:input>
-			<wsdl:output>
-
-				<soap:body use="encoded" namespace="urn:addin"
-					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
-			</wsdl:output>
+		<wsdl:operation name="getFormMappingSettings">
+			<wsdl:input message="typens:getFormMappingSettingsRequest2"></wsdl:input>
+			<wsdl:output message="typens:getFormMappingSettingsResponse2"></wsdl:output>
 		</wsdl:operation>
-		<wsdl:operation name="getTitleProperties">
-
-			<soap:operation soapAction="urn:addin/getTitleProperties" />
-			<wsdl:input>
-
-				<soap:body use="encoded" namespace="urn:addin"
-					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
-			</wsdl:input>
-			<wsdl:output>
-
-				<soap:body use="encoded" namespace="urn:addin"
-					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
-			</wsdl:output>
+		<wsdl:operation name="getPageCurrentForm">
+			<wsdl:input message="typens:getPageCurrentFormRequest2"></wsdl:input>
+			<wsdl:output message="typens:getPageCurrentFormResponse2"></wsdl:output>
 		</wsdl:operation>
-		<wsdl:operation name="getTitles">
-
-			<soap:operation soapAction="urn:addin/getTitles" />
-			<wsdl:input>
-
-				<soap:body use="encoded" namespace="urn:addin"
-					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
-			</wsdl:input>
-			<wsdl:output>
-
-				<soap:body use="encoded" namespace="urn:addin"
-					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
-			</wsdl:output>
+		<wsdl:operation name="getTitlePropertyDefinitions">
+			<wsdl:input message="typens:getTitlePropertyDefinitionsRequest2"></wsdl:input>
+			<wsdl:output message="typens:getTitlePropertyDefinitionsResponse2"></wsdl:output>
 		</wsdl:operation>
-		<wsdl:operation name="validate">
-
-			<soap:operation soapAction="urn:addin/validate" />
-			<wsdl:input>
-
-				<soap:body use="encoded" namespace="urn:addin"
-					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
-			</wsdl:input>
-			<wsdl:output>
-
-				<soap:body use="encoded" namespace="urn:addin"
-					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
-			</wsdl:output>
+		<wsdl:operation name="updateTitlePropertyValue">
+			<wsdl:input message="typens:updateTitlePropertyValueRequest2"></wsdl:input>
+			<wsdl:output message="typens:updateTitlePropertyValueResponse2"></wsdl:output>
 		</wsdl:operation>
-		<wsdl:operation name="saveNewMail">
+    </portType>
+    <binding name="AddInBinding" type="typens:AddInPortType">
 
-			<soap:operation soapAction="urn:addin/saveNewMail" />
-			<wsdl:input>
+    	<soap:binding style="rpc"
+    		transport="http://schemas.xmlsoap.org/soap/http" />
+    	<operation name="getCategories2">
 
-				<soap:body use="encoded" namespace="urn:addin"
-					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
-			</wsdl:input>
-			<wsdl:output>
+    		<soap:operation soapAction="urn:addin/getCategories2" />
+    		<input>
 
-				<soap:body use="encoded" namespace="urn:addin"
-					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
-			</wsdl:output>
-		</wsdl:operation>
-		<wsdl:operation name="addCategory">
+    			<soap:body use="encoded" namespace="urn:addin"
+    				encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+    		</input>
+    		<output>
 
-			<soap:operation soapAction="urn:addin/addCategory" />
-			<wsdl:input>
+    			<soap:body use="encoded" namespace="urn:addin"
+    				encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+    		</output>
+    	</operation>
+    	<operation name="getProperties2">
 
-				<soap:body use="encoded" namespace="urn:addin"
-					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
-			</wsdl:input>
-			<wsdl:output>
+    		<soap:operation soapAction="urn:addin/getProperties2" />
+    		<input>
 
-				<soap:body use="encoded" namespace="urn:addin"
-					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
-			</wsdl:output>
-		</wsdl:operation>
-		<wsdl:operation name="getPageInfo">
+    			<soap:body use="encoded" namespace="urn:addin"
+    				encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+    		</input>
+    		<output>
 
-			<soap:operation soapAction="urn:addin/getPageInfo" />
-			<wsdl:input>
+    			<soap:body use="encoded" namespace="urn:addin"
+    				encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+    		</output>
+    	</operation>
+    	<operation name="getTitleProperties2">
 
-				<soap:body use="encoded" namespace="urn:addin"
-					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
-			</wsdl:input>
-			<wsdl:output>
+    		<soap:operation soapAction="urn:addin/getTitleProperties2" />
+    		<input>
 
-				<soap:body use="encoded" namespace="urn:addin"
-					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
-			</wsdl:output>
-		</wsdl:operation>
-		<wsdl:operation name="getCategories2Detail">
+    			<soap:body use="encoded" namespace="urn:addin"
+    				encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+    		</input>
+    		<output>
 
-			<soap:operation soapAction="urn:addin/getCategories2Detail" />
-			<wsdl:input>
+    			<soap:body use="encoded" namespace="urn:addin"
+    				encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+    		</output>
+    	</operation>
+    	<operation name="getTitles2">
 
-				<soap:body use="encoded" namespace="urn:addin"
-					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
-			</wsdl:input>
-			<wsdl:output>
+    		<soap:operation soapAction="urn:addin/getTitles2" />
+    		<input>
 
-				<soap:body use="encoded" namespace="urn:addin"
-					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
-			</wsdl:output>
-		</wsdl:operation>
-		<wsdl:operation name="getPossibleForms">
+    			<soap:body use="encoded" namespace="urn:addin"
+    				encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+    		</input>
+    		<output>
 
-			<soap:operation soapAction="urn:addin/getPossibleForms" />
-			<wsdl:input>
+    			<soap:body use="encoded" namespace="urn:addin"
+    				encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+    		</output>
+    	</operation>
+    	<operation name="authenticate">
 
-				<soap:body use="encoded" namespace="urn:addin"
-					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
-			</wsdl:input>
-			<wsdl:output>
+    		<soap:operation soapAction="urn:addin/authenticate" />
+    		<input>
 
-				<soap:body use="encoded" namespace="urn:addin"
-					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
-			</wsdl:output>
-		</wsdl:operation>
-		<wsdl:operation name="savePageToForm">
+    			<soap:body use="encoded" namespace="urn:addin"
+    				encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+    		</input>
+    		<output>
 
-			<soap:operation soapAction="urn:addin/savePageToForm" />
-			<wsdl:input>
+    			<soap:body use="encoded" namespace="urn:addin"
+    				encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+    		</output>
+    	</operation>
+    	<wsdl:operation name="saveNewMail2">
 
-				<soap:body use="encoded" namespace="urn:addin"
-					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
-			</wsdl:input>
-			<wsdl:output>
+    		<soap:operation soapAction="urn:addin/saveNewMail2" />
+    		<wsdl:input>
 
-				<soap:body use="encoded" namespace="urn:addin"
-					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
-			</wsdl:output>
-		</wsdl:operation>
-		<wsdl:operation name="createFormTemplate">
+    			<soap:body use="encoded" namespace="urn:addin"
+    				encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+    		</wsdl:input>
+    		<wsdl:output>
 
-			<soap:operation soapAction="urn:addin/createFormTemplate" />
-			<wsdl:input>
+    			<soap:body use="encoded" namespace="urn:addin"
+    				encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+    		</wsdl:output>
+    	</wsdl:operation>
+    	<wsdl:operation name="addCategory2">
 
-				<soap:body use="encoded" namespace="urn:addin"
-					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
-			</wsdl:input>
-			<wsdl:output>
+    		<soap:operation soapAction="urn:addin/addCategory2" />
+    		<wsdl:input>
 
-				<soap:body use="encoded" namespace="urn:addin"
-					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
-			</wsdl:output>
-		</wsdl:operation>
-		<wsdl:operation name="savePageBasic">
+    			<soap:body use="encoded" namespace="urn:addin"
+    				encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+    		</wsdl:input>
+    		<wsdl:output>
 
-			<soap:operation soapAction="urn:addin/savePageBasic" />
-			<wsdl:input>
+    			<soap:body use="encoded" namespace="urn:addin"
+    				encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+    		</wsdl:output>
+    	</wsdl:operation>
+    	<wsdl:operation name="getPageInfo2">
 
-				<soap:body use="encoded" namespace="urn:addin"
-					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
-			</wsdl:input>
-			<wsdl:output>
+    		<soap:operation soapAction="urn:addin/getPageInfo2" />
+    		<wsdl:input>
 
-				<soap:body use="encoded" namespace="urn:addin"
-					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
-			</wsdl:output>
-		</wsdl:operation>
-		<wsdl:operation name="setPageForms">
+    			<soap:body use="encoded" namespace="urn:addin"
+    				encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+    		</wsdl:input>
+    		<wsdl:output>
 
-			<soap:operation soapAction="urn:addin/setPageForms" />
-			<wsdl:input>
+    			<soap:body use="encoded" namespace="urn:addin"
+    				encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+    		</wsdl:output>
+    	</wsdl:operation>
+    	<wsdl:operation name="getCategories">
 
-				<soap:body use="encoded" namespace="urn:addin"
-					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
-			</wsdl:input>
-			<wsdl:output>
+    		<soap:operation soapAction="urn:addin/getCategories" />
+    		<wsdl:input>
 
-				<soap:body use="encoded" namespace="urn:addin"
-					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
-			</wsdl:output>
-		</wsdl:operation>
-		<wsdl:operation name="getFormFieldValues">
-			<soap:operation soapAction="urn:addin/getFormFieldValues" />
-			<wsdl:input>
-				<soap:body use="encoded" namespace="urn:addin"
-					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
-			</wsdl:input>
-			<wsdl:output>
-				<soap:body use="encoded" namespace="urn:addin"
-					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
-			</wsdl:output>
-		</wsdl:operation>
-	</binding>
-	<service name="addinService">
+    			<soap:body use="encoded" namespace="urn:addin"
+    				encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+    		</wsdl:input>
+    		<wsdl:output>
+
+    			<soap:body use="encoded" namespace="urn:addin"
+    				encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+    		</wsdl:output>
+    	</wsdl:operation>
+    	<wsdl:operation name="getProperties">
+
+    		<soap:operation soapAction="urn:addin/getProperties" />
+    		<wsdl:input>
+
+    			<soap:body use="encoded" namespace="urn:addin"
+    				encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+    		</wsdl:input>
+    		<wsdl:output>
+
+    			<soap:body use="encoded" namespace="urn:addin"
+    				encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+    		</wsdl:output>
+    	</wsdl:operation>
+    	<wsdl:operation name="getTitleProperties">
+
+    		<soap:operation soapAction="urn:addin/getTitleProperties" />
+    		<wsdl:input>
+
+    			<soap:body use="encoded" namespace="urn:addin"
+    				encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+    		</wsdl:input>
+    		<wsdl:output>
+
+    			<soap:body use="encoded" namespace="urn:addin"
+    				encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+    		</wsdl:output>
+    	</wsdl:operation>
+    	<wsdl:operation name="getTitles">
+
+    		<soap:operation soapAction="urn:addin/getTitles" />
+    		<wsdl:input>
+
+    			<soap:body use="encoded" namespace="urn:addin"
+    				encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+    		</wsdl:input>
+    		<wsdl:output>
+
+    			<soap:body use="encoded" namespace="urn:addin"
+    				encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+    		</wsdl:output>
+    	</wsdl:operation>
+    	<wsdl:operation name="validate">
+
+    		<soap:operation soapAction="urn:addin/validate" />
+    		<wsdl:input>
+
+    			<soap:body use="encoded" namespace="urn:addin"
+    				encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+    		</wsdl:input>
+    		<wsdl:output>
+
+    			<soap:body use="encoded" namespace="urn:addin"
+    				encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+    		</wsdl:output>
+    	</wsdl:operation>
+    	<wsdl:operation name="saveNewMail">
+
+    		<soap:operation soapAction="urn:addin/saveNewMail" />
+    		<wsdl:input>
+
+    			<soap:body use="encoded" namespace="urn:addin"
+    				encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+    		</wsdl:input>
+    		<wsdl:output>
+
+    			<soap:body use="encoded" namespace="urn:addin"
+    				encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+    		</wsdl:output>
+    	</wsdl:operation>
+    	<wsdl:operation name="addCategory">
+
+    		<soap:operation soapAction="urn:addin/addCategory" />
+    		<wsdl:input>
+
+    			<soap:body use="encoded" namespace="urn:addin"
+    				encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+    		</wsdl:input>
+    		<wsdl:output>
+
+    			<soap:body use="encoded" namespace="urn:addin"
+    				encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+    		</wsdl:output>
+    	</wsdl:operation>
+    	<wsdl:operation name="getPageInfo">
+
+    		<soap:operation soapAction="urn:addin/getPageInfo" />
+    		<wsdl:input>
+
+    			<soap:body use="encoded" namespace="urn:addin"
+    				encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+    		</wsdl:input>
+    		<wsdl:output>
+
+    			<soap:body use="encoded" namespace="urn:addin"
+    				encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+    		</wsdl:output>
+    	</wsdl:operation>
+    	<wsdl:operation name="getCategories2Detail">
+
+    		<soap:operation soapAction="urn:addin/getCategories2Detail" />
+    		<wsdl:input>
+
+    			<soap:body use="encoded" namespace="urn:addin"
+    				encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+    		</wsdl:input>
+    		<wsdl:output>
+
+    			<soap:body use="encoded" namespace="urn:addin"
+    				encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+    		</wsdl:output>
+    	</wsdl:operation>
+    	<wsdl:operation name="getPossibleForms">
+
+    		<soap:operation soapAction="urn:addin/getPossibleForms" />
+    		<wsdl:input>
+
+    			<soap:body use="encoded" namespace="urn:addin"
+    				encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+    		</wsdl:input>
+    		<wsdl:output>
+
+    			<soap:body use="encoded" namespace="urn:addin"
+    				encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+    		</wsdl:output>
+    	</wsdl:operation>
+    	<wsdl:operation name="savePageToForm">
+
+    		<soap:operation soapAction="urn:addin/savePageToForm" />
+    		<wsdl:input>
+
+    			<soap:body use="encoded" namespace="urn:addin"
+    				encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+    		</wsdl:input>
+    		<wsdl:output>
+
+    			<soap:body use="encoded" namespace="urn:addin"
+    				encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+    		</wsdl:output>
+    	</wsdl:operation>
+    	<wsdl:operation name="createFormTemplate">
+
+    		<soap:operation soapAction="urn:addin/createFormTemplate" />
+    		<wsdl:input>
+
+    			<soap:body use="encoded" namespace="urn:addin"
+    				encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+    		</wsdl:input>
+    		<wsdl:output>
+
+    			<soap:body use="encoded" namespace="urn:addin"
+    				encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+    		</wsdl:output>
+    	</wsdl:operation>
+    	<wsdl:operation name="savePageBasic">
+
+    		<soap:operation soapAction="urn:addin/savePageBasic" />
+    		<wsdl:input>
+
+    			<soap:body use="encoded" namespace="urn:addin"
+    				encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+    		</wsdl:input>
+    		<wsdl:output>
+
+    			<soap:body use="encoded" namespace="urn:addin"
+    				encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+    		</wsdl:output>
+    	</wsdl:operation>
+    	<wsdl:operation name="setPageForms">
+
+    		<soap:operation soapAction="urn:addin/setPageForms" />
+    		<wsdl:input>
+
+    			<soap:body use="encoded" namespace="urn:addin"
+    				encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+    		</wsdl:input>
+    		<wsdl:output>
+
+    			<soap:body use="encoded" namespace="urn:addin"
+    				encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+    		</wsdl:output>
+    	</wsdl:operation>
+    	<wsdl:operation name="getFormFieldValues">
+
+    		<soap:operation soapAction="urn:addin/getFormFieldValues" />
+    		<wsdl:input>
+
+    			<soap:body use="encoded" namespace="urn:addin"
+    				encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+    		</wsdl:input>
+    		<wsdl:output>
+
+    			<soap:body use="encoded" namespace="urn:addin"
+    				encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+    		</wsdl:output>
+    	</wsdl:operation>
+    	<wsdl:operation name="getStopwords">
+
+    		<soap:operation soapAction="urn:addin/getStopwords" />
+    		<wsdl:input>
+
+    			<soap:body use="encoded" namespace="urn:addin"
+    				encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+    		</wsdl:input>
+    		<wsdl:output>
+
+    			<soap:body use="encoded" namespace="urn:addin"
+    				encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+    		</wsdl:output>
+    	</wsdl:operation>
+    	<wsdl:operation name="getWikiSettings">
+
+    		<soap:operation soapAction="urn:addin/getWikiSettings" />
+    		<wsdl:input>
+
+    			<soap:body use="encoded" namespace="urn:addin"
+    				encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+    		</wsdl:input>
+    		<wsdl:output>
+
+    			<soap:body use="encoded" namespace="urn:addin"
+    				encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+    		</wsdl:output>
+    	</wsdl:operation>
+    	<wsdl:operation name="getSiteFormSettings">
+
+    		<soap:operation soapAction="urn:addin/getSiteFormSettings" />
+    		<wsdl:input>
+
+    			<soap:body use="encoded" namespace="urn:addin"
+    				encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+    		</wsdl:input>
+    		<wsdl:output>
+
+    			<soap:body use="encoded" namespace="urn:addin"
+    				encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+    		</wsdl:output>
+    	</wsdl:operation>
+    	<wsdl:operation name="getUpdatedTitles">
+
+    		<soap:operation soapAction="urn:addin/getUpdatedTitles" />
+    		<wsdl:input>
+
+    			<soap:body use="encoded" namespace="urn:addin"
+    				encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+    		</wsdl:input>
+    		<wsdl:output>
+
+    			<soap:body use="encoded" namespace="urn:addin"
+    				encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+    		</wsdl:output>
+    	</wsdl:operation>
+    	<wsdl:operation name="getFormMappingSettings">
+
+    		<soap:operation
+    			soapAction="urn:addin/getFormMappingSettings" />
+    		<wsdl:input>
+
+    			<soap:body use="encoded" namespace="urn:addin"
+    				encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+    		</wsdl:input>
+    		<wsdl:output>
+
+    			<soap:body use="encoded" namespace="urn:addin"
+    				encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+    		</wsdl:output>
+    	</wsdl:operation>
+    	<wsdl:operation name="getPageCurrentForm">
+
+    		<soap:operation soapAction="urn:addin/getPageCurrentForm" />
+    		<wsdl:input>
+
+    			<soap:body use="encoded" namespace="urn:addin"
+    				encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+    		</wsdl:input>
+    		<wsdl:output>
+
+    			<soap:body use="encoded" namespace="urn:addin"
+    				encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+    		</wsdl:output>
+    	</wsdl:operation>
+    	<wsdl:operation name="getTitlePropertyDefinitions">
+    		<soap:operation
+    			soapAction="urn:addin/getTitlePropertyDefinitions" />
+    		<wsdl:input>
+    			<soap:body use="encoded" namespace="urn:addin"
+    				encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+    		</wsdl:input>
+    		<wsdl:output>
+    			<soap:body use="encoded" namespace="urn:addin"
+    				encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+    		</wsdl:output>
+    	</wsdl:operation>
+    	<wsdl:operation name="updateTitlePropertyValue">
+    		<soap:operation
+    			soapAction="urn:addin/updateTitlePropertyValue" />
+    		<wsdl:input>
+    			<soap:body use="encoded" namespace="urn:addin"
+    				encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+    		</wsdl:input>
+    		<wsdl:output>
+    			<soap:body use="encoded" namespace="urn:addin"
+    				encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+    		</wsdl:output>
+    	</wsdl:operation>
+    </binding>
+    <service name="addinService">
 		<port name="AddInPort" binding="typens:AddInBinding">
 			<soap:address
 				location="http://{{webservice-endpoint}}/index.php?action=wsmethodaddin" />
