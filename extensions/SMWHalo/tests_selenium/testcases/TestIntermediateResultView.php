@@ -17,9 +17,10 @@ class TestIntermediateResultView extends SeleniumTestCase_Base
     $this->controlKeyDown();
     $this->altKeyDown();
 	$this->typeKeys("//input[@id=\"input_p0\"]", "\" \"");
-    
+    $this->controlKeyUp();
+    $this->altKeyUp();
     for ($second = 0; ; $second++) {
-        if ($second >= 60) $this->fail("timeout");
+        if ($second >= 60) $this->fail("Autocomplete list failed to open");
         try {
             if ($this->isElementPresent("//p[@id=\"selected0\"]")) break;
         } catch (Exception $e) {
