@@ -342,8 +342,8 @@ class Installer {
 		$allPackages = PackageRepository::getAllPackages();
 		$localPackages = PackageRepository::getLocalPackages($this->rootDir);
 		if (count($allPackages) == 0) {
-			$dfgOut->outputln( "\nNo packages available!\n");
-			return;
+			$dfgOut->outputln( "\nNo packages found in repositories!\n");
+			
 		}
 		$dfgOut->outputln (" Installed           | Bundle               | Av. versions  | Repository");
 		$dfgOut->outputln ("-------------------------------------------------------------------------\n");
