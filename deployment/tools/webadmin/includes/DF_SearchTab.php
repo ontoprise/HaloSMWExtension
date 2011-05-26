@@ -51,6 +51,7 @@ public function getTabName() {
 	}
 
 	public function searializeSearchResults($results, $localPackages) {
+		global $dfgLang;
 		$html = "<table>";
 		$html .= "<th>";
 		$html .= $dfgLang->getLanguageString('df_webadmin_extension');
