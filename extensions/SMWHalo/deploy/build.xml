@@ -140,7 +140,7 @@
 			</fileset>
 		</copy>
 		<zip destfile="bin/smwhalo-bundled.zip" basedir="bin/zip" />
-		<delete dir="bin/zip" />
+ 
 		<exec executable="php">
 			<arg value="../../../buildtools/renameDeployable.php" />
 			<arg value="../deploy.xml" />
@@ -187,6 +187,52 @@
 			<arg value="bin/smwhalo-convenience.zip" />
 		</exec>
 	</target>
+
+	<target name="smwplus_source_build" depends="smwhalo_bundled_build">
+		<delete>
+			<fileset dir="bin" includes="smwplus-source*.zip" />
+		</delete>
+
+        <ant antfile="../../WYSIWYG/deploy/build.xml" inheritall="true" dir="../../WYSIWYG/deploy" target="build">
+		</ant>
+		<ant antfile="../../EnhancedRetrieval/deploy/build.xml" inheritall="true" dir="../../EnhancedRetrieval/deploy" target="enhancedretrieval">
+		</ant>
+		<ant antfile="../../SemanticMediaWiki/deploy/build.xml" inheritall="true" dir="../../SemanticMediaWiki/deploy" target="smw_build">
+		</ant>
+
+        <copy todir="bin/zip/extensions/WYSIWYG">
+			<fileset dir="../../WYSIWYG/">
+				<exclude name="**/.svn, **/CVS" />
+				<exclude name="**/deploy/**" />
+				<exclude name="**/tests/**" />
+			</fileset>
+		</copy>
+
+        <copy todir="bin/zip/extensions/EnhancedRetrieval">
+			<fileset dir="../../EnhancedRetrieval/">
+				<exclude name="**/.svn, **/CVS" />
+				<exclude name="**/deploy/**" />
+				<exclude name="**/tests/**" />
+			</fileset>
+		</copy>
+
+        <copy todir="bin/zip/extensions/SemanticMediaWiki">
+			<fileset dir="../../SemanticMediaWiki/">
+				<exclude name="**/.svn, **/CVS" />
+				<exclude name="**/deploy/**" />
+				<exclude name="**/tests/**" />
+			</fileset>
+		</copy>
+
+		<zip destfile="bin/smwplus-source.zip" basedir="bin/zip" />
+		<delete dir="bin/zip" />
+		<exec executable="php">
+			<arg value="../../../buildtools/renameDeployable.php" />
+			<arg value="../deploy.xml" />
+			<arg value="bin/smwplus-source.zip" />
+		</exec>
+	</target>
+
 
 	<target name="deployscripts">
 		<echo>General Tools</echo>
