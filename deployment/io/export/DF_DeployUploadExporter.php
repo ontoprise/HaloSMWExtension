@@ -90,8 +90,8 @@ class DeployUploadExporter {
 		if( isset( $args['includeImages'] ) ) {
 			$this->includeImages = $args['includeImages'];
 		} else {
-			// default setting is: true
-			$this->includeImages = true;
+			// default setting is: false
+			$this->includeImages = false;
 		}
 	}
 

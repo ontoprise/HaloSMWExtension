@@ -39,7 +39,7 @@ class DeployBackupDumper extends BackupDumper {
 	function __construct($argv) {
 		parent::__construct($argv);
 		$this->includeInstances = false;
-		$this->includeTemplates = true;
+		$this->includeTemplates = false;
 		for( $arg = reset( $argv ); $arg !== false; $arg = next( $argv ) ) {
 
 			//-b => Bundle to export
