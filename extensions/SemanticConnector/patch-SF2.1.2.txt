@@ -26,7 +26,7 @@ Index: extensions/SemanticForms/includes/SF_FormLinker.php
 +		// attention, this will break common parse of actived forms
 +		// change default form settings (special property 'Has default form') 
 +		// will not work if schema mapping defined
-+		if( $form_connection_type == self::DEFAULT_FORM ) {
++		if( $form_connection_type == self::PAGE_DEFAULT_FORM ) {
 +			$title = Title::makeTitleSafe( $page_namespace, $page_name );
 +			$forms = SCProcessor::getActivedForm($title->getText());
 +			if($forms !== NULL) 
