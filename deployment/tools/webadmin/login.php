@@ -5,6 +5,13 @@ $mwrootDir = realpath($mwrootDir."/../../../");
 require_once($mwrootDir.'/deployment/settings.php');
 $wgScriptPath=isset(DF_Config::$scriptPath) ? DF_Config::$scriptPath : "/mediawiki";
 
+// make an environment check before showing login
+$envCheck = dffCheckEnvironment();
+if ($envCheck !== true) {
+	echo $envCheck;
+	exit();
+}
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	session_start();
 
@@ -51,9 +58,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	}
 }
 
-function authenticateUser($username, $password) {
+function authenticateUser($username, $password, $acceptMIME=NULL) {
 	$res = "";
 	$header = "";
+	$payload="";
 	global $wgScriptPath;
 	$proto = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != '' ? "https" : "http";
 	$hostname = $_SERVER['HTTP_HOST'];
@@ -87,6 +95,56 @@ function authenticateUser($username, $password) {
         list($header, $res) = $bodyBegin !== false ? array(substr($res, 0, $bodyBegin), substr($res, $bodyBegin+4)) : array($res, "");
         $res = trim($res);
         return $res == "true";
+}
+
+/**
+ * Checks if webadmin tool has appropriate rights to work correctly.
+ *
+ * @return mixed True if so, otherwise a string containing the problems.
+ */
+function dffCheckEnvironment() {
+	global $mwrootDir;
+	require_once($mwrootDir.'/deployment/tools/smwadmin/DF_Tools.php');
+    $result = NULL;
+    
+    // check if LocalSettings can be written.
+    @$res = fopen("$mwrootDir/LocalSettings.php", "a");
+    if ($res === false) {
+        $result = "<br>Could not open LocalSettings.php for writing.";
+    } else {
+        fclose($res);
+    }
+
+    // check if extensions folder is writeable
+    @touch("$mwrootDir/extensions/test_file_for_webadmin");
+    if (!file_exists("$mwrootDir/extensions/test_file_for_webadmin")) {
+        $result = "<br>Could not write into the 'extensions' subfolder";
+    } else {
+        unlink("$mwrootDir/extensions/test_file_for_webadmin");
+    }
+
+    // check if external processes can be run
+    @exec('php --version', $out, $ret);
+    if ($ret != 0 || stripos($out[0], "PHP 5") === false) {
+        $result = "<br>Could not run external processes.";
+    }
+    
+    // check if temp folder can be written
+    $tempFolder = Tools::getTempDir();
+    @touch("$tempFolder/test_file_for_webadmin");
+    if (!file_exists("$tempFolder/test_file_for_webadmin")) {
+        $result = "<br>Could not write into the temp folder.";
+    } else {
+        unlink("$tempFolder/test_file_for_webadmin");
+    }
+    
+    // check for curl (needed for wiki auth)
+    if (DF_Config::$df_authorizeByWiki) {
+    	if (!extension_loaded("curl")) {
+    		$result = "<br>Could not find 'curl'-PHP extension. Install it or deactivate authentication by wiki. (DF_Config::\$df_authorizeByWiki=false;)";
+    	}
+    }
+    return is_null($result) ? true : $result;
 }
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">

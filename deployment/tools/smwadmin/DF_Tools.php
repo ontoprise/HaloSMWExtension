@@ -510,8 +510,9 @@ class Tools {
             exec("echo %TEMP%", $out, $ret);
             return str_replace("\\", "/", reset($out));
         } else {
-            exec('echo $TEMP', $out, $ret);
-            return reset($out);
+            exec('echo $TMPDIR', $out, $ret);
+            $val = reset($out);
+            return ($val == '' || $val === false) ? '/tmp' : $val;
         }
     }
 

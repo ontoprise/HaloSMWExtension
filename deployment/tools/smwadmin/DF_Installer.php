@@ -93,7 +93,7 @@ class Installer {
 	private function __construct($rootDir = NULL, $force = false, $noRollback = false) {
 		// create temp folder
 		$this->errors = array();
-		$this->tmpFolder = Tools::isWindows() ? 'c:\temp\mw_deploy_tool' : '/tmp/mw_deploy_tool';
+		$this->tmpFolder = Tools::getTempDir().'/mw_deploy_tool';
 		if (!file_exists($this->tmpFolder)) Tools::mkpath($this->tmpFolder);
 		if (!file_exists($this->tmpFolder)) {
 			throw new InstallationError(DEPLOY_FRAMEWORK_NO_TMP_DIR, "Could not create temporary directory. Not Logged in as root?");

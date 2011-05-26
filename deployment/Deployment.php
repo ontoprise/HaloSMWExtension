@@ -44,11 +44,14 @@ function dfgCheckUpdate(&$wgUser, &$injected_html) {
 	if (!$wgUser->isAllowed('delete')) return true; // FIXME: check for other right than delete
 	global $IP;
 	global $rootDir;
+	global $dfgOut;
 	$rootDir = "$IP/deployment";
 	 
 	require_once "$IP/deployment/tools/maintenance/maintenanceTools.inc";
 	$cc = new ConsistencyChecker($IP);
+	$dfgOut->setVerbose(false);
 	$updates = $cc->checksForUpdates();
+	$dfgOut->setVerbose(true);
 	if (count($updates) > 0) {
 		$html = $wgUser->getSkin()->makeKnownLinkObj(Title::newFromText("CheckInstallation", NS_SPECIAL), wfMsg('df_updatesavailable'));
 		$injected_html = $html;
