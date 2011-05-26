@@ -800,7 +800,8 @@ class AutoCompletionHandler {
 				if (count($result) >= SMW_AC_MAX_RESULTS) break;
 			} else if ($commandText == 'domainless-property') {
 				$pages = $acStore->getDomainLessProperty($userInput);
-				$result = self::mergeResults($result, self::setInferred($pages, !$first));
+				$inf = self::setInferred($pages, !$first);
+				$result = self::mergeResults($result, $inf);
 
 				if (count($result) >= SMW_AC_MAX_RESULTS) break;
 			} else if ($commandText == 'annotation-property') {
