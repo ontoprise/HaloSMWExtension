@@ -46,6 +46,7 @@ $(function() {
 			$.ajax( { url : readLogurl, dataType:"json", complete : function(xhr3, status3) { 
 				var resultLog = xhr3.responseText;
 				if (resultLog != '') { 
+					resultLog += '<img src="skins/ajax-loader.gif"/>';
 					$('#df_install_dialog').html(resultLog); 
 				}
 				if (resultLog.indexOf("__OK__") != -1 || resultLog.indexOf("$$NOTEXISTS$$") != -1) {
@@ -78,8 +79,10 @@ $(function() {
 			var readLogurl = wgServer+wgScriptPath+"/deployment/tools/webadmin?rs=readlog&rsargs[]="+encodeURIComponent(logfile);
 			$.ajax( { url : readLogurl, dataType:"json", complete : function(xhr3, status3) { 
 				var resultLog = xhr3.responseText;
-				if (resultLog != '') { 
+				if (resultLog != '') {
+					resultLog += '<img src="skins/ajax-loader.gif"/>';
 					$('#df_install_dialog').html(resultLog); 
+					
 				}
 				if (resultLog.indexOf("__OK__") != -1 || resultLog.indexOf("$$NOTEXISTS$$") != -1) {
 					clearTimeout(timer);
@@ -115,6 +118,7 @@ $(function() {
 			$.ajax( { url : readLogurl, dataType:"json", complete : function(xhr3, status3) { 
 				var resultLog = xhr3.responseText;
 				if (resultLog != '') { 
+					resultLog += '<img src="skins/ajax-loader.gif"/>';
 					$('#df_install_dialog').html(resultLog); 
 				}
 				if (resultLog.indexOf("__OK__") != -1 || resultLog.indexOf("$$NOTEXISTS$$") != -1) {
@@ -145,6 +149,7 @@ $(function() {
 			$.ajax( { url : readLogurl, dataType:"json", complete : function(xhr3, status3) { 
 				var resultLog = xhr3.responseText;
 				if (resultLog != '') { 
+					resultLog += '<img src="skins/ajax-loader.gif"/>';
 					$('#df_install_dialog').html(resultLog); 
 				}
 				if (resultLog.indexOf("__OK__") != -1 || resultLog.indexOf("$$NOTEXISTS$$") != -1) {
@@ -192,6 +197,7 @@ $(function() {
 					});
 										
 					$dialog.dialog('open');
+					$dialog.html('<img src="skins/ajax-loader.gif"/>');
 					
 					$.ajax( { url : url, dataType:"json", complete : installStarted });
 					
@@ -245,6 +251,7 @@ $(function() {
 			});
 								
 			$dialog.dialog('open');
+			$dialog.html('<img src="skins/ajax-loader.gif"/>');
 			$.ajax( { url : url, dataType:"json", complete : deinstallStarted });
 		});
 		
@@ -280,6 +287,7 @@ $(function() {
 			          							});
 			          										
 			          							$dialog.dialog('open');
+			          							$dialog.html('<img src="skins/ajax-loader.gif"/>');
 			          							$.ajax( { url : url, dataType:"json", complete : globalUpdateStarted }); 
 			                   }
 			              },
@@ -318,6 +326,7 @@ $(function() {
 			$.ajax( { url : readLogurl, dataType:"json", complete : function(xhr3, status3) { 
 				var resultLog = xhr3.responseText;
 				if (resultLog != '') { 
+					resultLog += '<img src="skins/ajax-loader.gif"/>';
 					$('#df_install_dialog').html(resultLog); 
 				}
 				if (resultLog.indexOf("__OK__") != -1 || resultLog.indexOf("$$NOTEXISTS$$") != -1) {
@@ -352,7 +361,7 @@ $(function() {
 		});
 							
 		$dialog.dialog('open');
-		
+		$dialog.html('<img src="skins/ajax-loader.gif"/>');
 		$.ajax( { url : url, dataType:"json", complete :restoreStarted });
 	}
 	
@@ -381,7 +390,7 @@ $(function() {
 		});
 							
 		$dialog.dialog('open');
-		
+		$dialog.html('<img src="skins/ajax-loader.gif"/>');
 		$.ajax( { url : url, dataType:"json", complete :restoreStarted });
 		
 	});
