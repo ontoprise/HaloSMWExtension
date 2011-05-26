@@ -1081,15 +1081,21 @@ AutoCompleter.prototype = {
             } else if (userContext.match(/\?/) || userContext.match(/\|/)) {
             	 // query parameter/printout context. do not add anything in this case
             }else if (type == SMW_PROPERTY_NS && gLanguage.getMessage('PROPERTY_NS_WOC') != addedValue) {
-                addedValue += "::"; // context is a property but not the namespace itself
+            	// context is a property but not the namespace itself
+                addedValue += "::"; 
             } else if (type == SMW_INSTANCE_NS) {
-                if (!userContext.match(/|(\s|\r|\n)*$/)) { 
-                    addedValue += "]]"; // add only if instance is no template parameter
+                if (!userContext.match(/|(\s|\r|\n)*$/)) {
+                	// add only if instance is no template parameter
+                    addedValue += "]]"; 
                 }
              }else if (addedValue.match("/"+gLanguage.getMessage('CATEGORY_NS_WOC')+"/i")) {
-                addedValue += ":"; // category case
+            	// category case
+                addedValue += ":"; 
             } else  {
-                addedValue += ":"; // all others (probably namespace)
+            	// FIXME: in case of a namespace print the colon
+            	if (!this.getTextAfterCursor().match(/^(\s|\r|\n)*\]\]|^(\s|\r|\n)*\||^(\s|\r|\n)*;/)) {
+            		addedValue += ":"; // all others (probably namespace)
+            	}
             } 
         }
         
