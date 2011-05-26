@@ -13,7 +13,7 @@
         <dependencies>
             <dependency from="1160">mw</dependency>
             <dependency from="151">smw</dependency>
-            <dependency from="208">semanticforms</dependency>
+            <dependency from="208" to="212">semanticforms</dependency>
             <dependency from="101">scriptmanager</dependency>
             <dependency from="151" optional="true">smwhalo</dependency>
         </dependencies>
@@ -33,7 +33,7 @@
 			<patch file="patch-SF1.9.1.txt" ext="semanticforms"
 				from="191" to="191" />
 			<patch file="patch-SF2.txt" ext="semanticforms"
-				from="208" to="208" />
+				from="200" to="200" />
 			<patch file="patch-SF2.1.2.txt" ext="semanticforms"
 				from="212" to="212" />
 			<script file="maintenance/SC_setup.php" />
@@ -42,7 +42,7 @@
 			<patch file="patch-SF1.9.1.txt" ext="semanticforms"
 				from="191" to="191" />
 			<patch file="patch-SF2.txt" ext="semanticforms"
-				from="208" to="208" />
+				from="200" to="200" />
 			<patch file="patch-SF2.1.2.txt" ext="semanticforms"
 				from="212" to="212" />
 			<script file="maintenance/SC_setup.php"
