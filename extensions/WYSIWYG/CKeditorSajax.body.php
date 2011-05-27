@@ -149,7 +149,7 @@ function wfSajaxSearchArticleCKeditor( $term ) {
 		$find_ns = array_search( substr( $term, 0, $pos ), $wgExtraNamespaces );
 		if( $find_ns ) {
 			$ns = array($find_ns);
-			$prefix = substr( $term, 0, $pos + 1 );
+			$prefix .= substr( $term, 0, $pos + 1 );
 			$term = substr( $term, $pos + 1 );
 		}
 	}
