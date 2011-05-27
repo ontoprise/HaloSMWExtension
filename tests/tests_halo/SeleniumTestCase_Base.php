@@ -6,14 +6,14 @@ class SeleniumTestCase_Base extends PHPUnit_Extensions_SeleniumTestCase
 
 	public static $browsers = array(
 	array(
-        'name'    => 'Firefox 3.6',
-	//        'browser' => '*firefox C:/Programme/Mozilla Firefox/firefox.exe',
+        'name'    => 'Firefox 3.6 on Windows',
 		'browser' => '*firefox',
+		'host' => 'localhost'
 	),
 	array(
         'name'    => 'Internet Explorer 8',
-	//        'browser' => '*iexplore C:/Programme/Internet Explorer/iexplore.exe',
 		'browser' => '*iexplore',
+		'host' => 'localhost'
 	)
 	);
 
