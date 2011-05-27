@@ -117,27 +117,33 @@ function wfSajaxSearchImageCKeditor( $term ) {
 function wfSajaxSearchArticleCKeditor( $term ) {
 	global $wgContLang, $wgExtraNamespaces;
 	$limit = 30;
-	$ns = array(NS_MAIN, NS_CATEGORY, NS_IMAGE, NS_TEMPLATE);
+	$ns = array(NS_MAIN, NS_CATEGORY, NS_IMAGE, NS_TEMPLATE, NS_USER);
     if (defined(SF_NS_FORM)) $ns[]= SF_NS_FORM;
+    if (defined(SMW_NS_PROPERTY)) $ns[]= SMW_NS_PROPERTY;
 
 	$term = $wgContLang->checkTitleEncoding( $wgContLang->recodeInput( js_unescape( $term ) ) );
+    $prefix = "";
 
-	if( strpos( strtolower( $term ), 'category:' ) === 0 ) {
-		$ns = array(NS_CATEGORY);
-		$term = substr( $term, 9 );
-		$prefix = 'Category:';
-	} else if( strpos( strtolower( $term ), ':category:' ) === 0 ) {
-		$ns = array(NS_CATEGORY);
-		$term = substr( $term, 10 );
-		$prefix = ':Category:';
-	} else if( strpos( strtolower( $term ), 'media:' ) === 0 ) {
+    if ( $term[0] == ':' ) {
+        $prefix= ':';
+        $term= substr($term, 1);
+    }
+    $pos= strpos($term, ':');
+    if ( $pos !== false ) {
+        $nsName = strtolower(substr($term, 0, $pos));
+        foreach ($ns as $idx) {
+            if (strtolower(MWNamespace::getCanonicalName($idx)) == $nsName) {
+                $prefix.= MWNamespace::getCanonicalName($idx) . ':';
+                $term= substr($term, $pos + 1);
+                $ns = array($idx);
+                break;
+            }
+        }
+    }
+	if( strpos( strtolower( $term ), 'image:' ) === 0 ) {
 		$ns = array(NS_IMAGE);
-		$term = substr( $term, 6 );
-		$prefix = 'Media:';
-	} else if( strpos( strtolower( $term ), ':image:' ) === 0 ) {
-		$ns = array(NS_IMAGE);
-		$term = substr( strtolower( $term ), 7 );
-		$prefix = ':Image:';
+		$term = substr( strtolower( $term ), 6 );
+		$prefix .= 'Image:';
 	} else if( strpos( $term, ':' ) && is_array( $wgExtraNamespaces ) ) {
 		$pos = strpos( $term, ':' );
 		$find_ns = array_search( substr( $term, 0, $pos ), $wgExtraNamespaces );
@@ -154,7 +160,7 @@ function wfSajaxSearchArticleCKeditor( $term ) {
 	$term4 = str_replace( ' ', '_', $wgContLang->ucfirst( $term2 ) );
 	$term = $term1;
 
-	if ( strlen( str_replace( '_', '', $term ) ) < 1 ) {
+	if ( ( strlen( str_replace( '_', '', $term ) ) < 1 ) && ( count($ns) > 1 ) ) {
 		return '';
 	}
 
@@ -186,7 +192,7 @@ function wfSajaxSearchArticleCKeditor( $term ) {
 		$ret[]= $title;
 	}
     // if we have not yet enough results, check the special pages
-    if (count($ret) < $limit) {
+    if (count($ret) < $limit && $term2 != "") {
         global $wgSpecialPages;
         $specialPages = array_keys($wgSpecialPages);
         foreach ($specialPages as $page) {
