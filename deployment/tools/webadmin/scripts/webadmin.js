@@ -46,12 +46,16 @@ $(function() {
 			$.ajax( { url : readLogurl, dataType:"json", complete : function(xhr3, status3) { 
 				var resultLog = xhr3.responseText;
 				if (resultLog != '') { 
-					resultLog += '<img src="skins/ajax-loader.gif"/>';
-					$('#df_install_dialog').html(resultLog); 
+					resultLog += '<img id="df_progress_indicator" src="skins/ajax-loader.gif"/>';
+					var dialog = $('#df_install_dialog');
+					dialog[0].innerHTML = resultLog; 
 				}
 				if (resultLog.indexOf("__OK__") != -1 || resultLog.indexOf("$$NOTEXISTS$$") != -1) {
 					clearTimeout(timer);
+					$('#df_progress_indicator').hide();
 					// finished installation
+					var $dialog = $('#df_install_dialog');
+					$dialog.dialog('option', 'title', dfgWebAdminLanguage.getMessage('df_webadmin_finished'));
 				}
 				
 			} });
@@ -80,12 +84,14 @@ $(function() {
 			$.ajax( { url : readLogurl, dataType:"json", complete : function(xhr3, status3) { 
 				var resultLog = xhr3.responseText;
 				if (resultLog != '') {
-					resultLog += '<img src="skins/ajax-loader.gif"/>';
-					$('#df_install_dialog').html(resultLog); 
+					resultLog += '<img id="df_progress_indicator" src="skins/ajax-loader.gif"/>';
+					var dialog = $('#df_install_dialog');
+					dialog[0].innerHTML = resultLog; 
 					
 				}
 				if (resultLog.indexOf("__OK__") != -1 || resultLog.indexOf("$$NOTEXISTS$$") != -1) {
 					clearTimeout(timer);
+					$('#df_progress_indicator').hide();
 					// start finalize
 					var finalizeurl = wgServer+wgScriptPath+"/deployment/tools/webadmin?rs=finalize&rsargs[]=";
 					$.ajax( { url : finalizeurl, dataType:"json", complete : finalizeStarted });
@@ -118,11 +124,13 @@ $(function() {
 			$.ajax( { url : readLogurl, dataType:"json", complete : function(xhr3, status3) { 
 				var resultLog = xhr3.responseText;
 				if (resultLog != '') { 
-					resultLog += '<img src="skins/ajax-loader.gif"/>';
-					$('#df_install_dialog').html(resultLog); 
+					resultLog += '<img id="df_progress_indicator" src="skins/ajax-loader.gif"/>';
+					var dialog = $('#df_install_dialog');
+					dialog[0].innerHTML = resultLog; 
 				}
 				if (resultLog.indexOf("__OK__") != -1 || resultLog.indexOf("$$NOTEXISTS$$") != -1) {
 					clearTimeout(timer);
+					$('#df_progress_indicator').hide();
 					// start finalize
 					var finalizeurl = wgServer+wgScriptPath+"/deployment/tools/webadmin?rs=finalize&rsargs[]=";
 					$.ajax( { url : finalizeurl, dataType:"json", complete : finalizeStarted });
@@ -149,11 +157,13 @@ $(function() {
 			$.ajax( { url : readLogurl, dataType:"json", complete : function(xhr3, status3) { 
 				var resultLog = xhr3.responseText;
 				if (resultLog != '') { 
-					resultLog += '<img src="skins/ajax-loader.gif"/>';
-					$('#df_install_dialog').html(resultLog); 
+					resultLog += '<img id="df_progress_indicator" src="skins/ajax-loader.gif"/>';
+					var dialog = $('#df_install_dialog');
+					dialog[0].innerHTML = resultLog; 
 				}
 				if (resultLog.indexOf("__OK__") != -1 || resultLog.indexOf("$$NOTEXISTS$$") != -1) {
 					clearTimeout(timer);
+					$('#df_progress_indicator').hide();
 					// start finalize
 					var finalizeurl = wgServer+wgScriptPath+"/deployment/tools/webadmin?rs=finalize&rsargs[]=";
 					$.ajax( { url : finalizeurl, dataType:"json", complete : finalizeStarted });
@@ -190,7 +200,7 @@ $(function() {
 					var $dialog = $('<div id="df_install_dialog"></div>')
 					.dialog( {
 						autoOpen : false,
-						title : 'Please wait...',
+						title : dfgWebAdminLanguage.getMessage('df_webadmin_pleasewait'),
 						modal: true,
 						width: 800,
 						height: 500
@@ -214,8 +224,41 @@ $(function() {
 				var callbackForExtensions = function(xhr, status) {
 					
 					var extensionsToInstall = $.parseJSON(xhr.responseText);
+					var text = "";
+								
+					if (extensionsToInstall['exception']) {
+						text += extensionsToInstall['exception'][0];
+					} else {
+						text = dfgWebAdminLanguage.getMessage('df_webadmin_wouldbeinstalled');
+						$.each(extensionsToInstall['extensions'], function(index, value) { 
+							var id =value[0];
+							var version =value[1];
+							text += "<li>"+id+"-"+version;
+						});
+					}
 					
-					alert(xhr.responseText);
+					$('#check-extension-dialog-text').html(text);
+					$( "#check-extension-dialog" ).dialog({
+						resizable: false,
+						height:250,
+						modal: true,
+						 buttons: [
+				              {
+				                  text: "OK",
+				                  click: function() {
+				                  	$( this ).dialog( "close" );
+				          						 
+				                   }
+				              },
+				               {
+				                  text: "Cancel",
+				                  click: function() {
+				          			$( this ).dialog( "close" );
+				          		  }
+				              }
+				         ]
+						
+					});
 				}
 				$.ajax( { url : url, dataType:"json", complete : callbackForExtensions });
 			});
@@ -237,6 +280,19 @@ $(function() {
 	
 	
 	$(document).ready(function(e) { 
+		
+		$('.df_extension_id').click(function(e2) {
+			var $dialog = $('<div id="df_extension_details">TOOD: implement</div>')
+			.dialog( {
+				autoOpen : false,
+				title : dfgWebAdminLanguage.getMessage('df_webadmin_extension_details'),
+				modal: true,
+				width: 800,
+				height: 500
+			});
+			$dialog.dialog('open');
+		});
+		
 		$('.df_deinstall_button').click(function(e2) {
 			var id = $(e2.currentTarget).attr('id');
 			id = id.split("__")[1];
@@ -244,7 +300,7 @@ $(function() {
 			var $dialog = $('<div id="df_install_dialog"></div>')
 			.dialog( {
 				autoOpen : false,
-				title : 'Please wait...',
+				title : dfgWebAdminLanguage.getMessage('df_webadmin_pleasewait'),
 				modal: true,
 				width: 800,
 				height: 500
@@ -262,9 +318,16 @@ $(function() {
 				var extensionsToInstall = $.parseJSON(xhr.responseText);
 				
 				var text = "";
-				$.each(extensionsToInstall['extensions'], function(index, value) { 
-					text += value[0];
+				if (extensionsToInstall['extensions']) {
+					text = dfgWebAdminLanguage.getMessage('df_webadmin_wouldbeupdated');
+					$.each(extensionsToInstall['extensions'], function(index, value) { 
+					text += "<li>"+value[0]+"-"+value[1];
 				});
+				}
+				if (extensionsToInstall['exception']) {
+					text += extensionsToInstall['exception'][0];
+				}
+				
 				$('#global-updatedialog-confirm-text').html(text);
 				
 				$( "#global-updatedialog-confirm" ).dialog({
@@ -280,7 +343,7 @@ $(function() {
 			          							var $dialog = $('<div id="df_install_dialog"></div>')
 			          							.dialog( {
 			          								autoOpen : false,
-			          								title : 'Please wait...',
+			          								title : dfgWebAdminLanguage.getMessage('df_webadmin_pleasewait'),
 			          								modal: true,
 			          								width: 800,
 			          								height: 500
@@ -326,11 +389,13 @@ $(function() {
 			$.ajax( { url : readLogurl, dataType:"json", complete : function(xhr3, status3) { 
 				var resultLog = xhr3.responseText;
 				if (resultLog != '') { 
-					resultLog += '<img src="skins/ajax-loader.gif"/>';
-					$('#df_install_dialog').html(resultLog); 
+					resultLog += '<img id="df_progress_indicator" src="skins/ajax-loader.gif"/>';
+					var dialog = $('#df_install_dialog');
+					dialog[0].innerHTML = resultLog; 
 				}
 				if (resultLog.indexOf("__OK__") != -1 || resultLog.indexOf("$$NOTEXISTS$$") != -1) {
 					clearTimeout(timer);
+					$('#df_progress_indicator').hide();
 					// done
 				}
 				
@@ -354,7 +419,7 @@ $(function() {
 		var $dialog = $('<div id="df_install_dialog"></div>')
 		.dialog( {
 			autoOpen : false,
-			title : 'Please wait...',
+			title : dfgWebAdminLanguage.getMessage('df_webadmin_pleasewait'),
 			modal: true,
 			width: 800,
 			height: 500
@@ -383,7 +448,7 @@ $(function() {
 		var $dialog = $('<div id="df_install_dialog"></div>')
 		.dialog( {
 			autoOpen : false,
-			title : 'Please wait...',
+			title : dfgWebAdminLanguage.getMessage('df_webadmin_pleasewait'),
 			modal: true,
 			width: 800,
 			height: 500

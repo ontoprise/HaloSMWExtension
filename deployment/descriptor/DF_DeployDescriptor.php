@@ -434,6 +434,19 @@ class DeployDescriptor {
 	function hasDependency($ext_id) {
 		return !is_null($this->getDependency($ext_id));
 	}
+	
+	/**
+	 * Checks if $ext_id exists as an optional dependecy
+	 * @param $ext_id Extension ID
+	 * @return boolean or NULL if the dependency does not exist at all.
+	 */
+	function isOptionalDependency($ext_id) {
+		$dep = $this->getDependency($ext_id);
+		if (is_null($dep)) return NULL;
+		list($id, $from, $to, $optional) =  $dep;
+		return $optional;
+	}
+	
 
 	/**
 	 * Returns patches which are suitable for the given local packages.

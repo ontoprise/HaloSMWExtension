@@ -5,12 +5,14 @@ $mwrootDir = realpath($mwrootDir."/../../../");
 require_once($mwrootDir.'/deployment/settings.php');
 $wgScriptPath=isset(DF_Config::$scriptPath) ? DF_Config::$scriptPath : "/mediawiki";
 
+
 // make an environment check before showing login
 $envCheck = dffCheckEnvironment();
 if ($envCheck !== true) {
 	echo $envCheck;
 	exit();
 }
+
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	session_start();
@@ -35,6 +37,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	// user name and password is checked
 	if (DF_Config::$df_authorizeByWiki) {
 		$result = authenticateUser($username, $passwort);
+		if ($result === 400) {
+			echo "Authentication by Wiki sysop-users requires Deployment framework to be included in LocalSettings.php";
+			echo "<br>please add: <pre>require_once('deployment/Deployment.php');</pre>";
+			exit;
+		}
 	} else{
 		$result = $username == DF_Config::$df_webadmin_user
 		&& $passwort == DF_Config::$df_webadmin_pass;
@@ -43,7 +50,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	if ($result == true) {
 		$_SESSION['angemeldet'] = true;
 		touch("$currentDir/userloggedin");
-		// Weiterleitung zur geschützten Startseite
+		
 		if ($_SERVER['SERVER_PROTOCOL'] == 'HTTP/1.1') {
 			if (php_sapi_name() == 'cgi') {
 				header('Status: 303 See Other');
@@ -90,12 +97,19 @@ function authenticateUser($username, $password, $acceptMIME=NULL) {
          
         $status = curl_getinfo($ch,CURLINFO_HTTP_CODE);
         curl_close($ch);
+        
+        if ($status != 200) {
+        	return $status;
+        }
          
         $bodyBegin = strpos($res, "\r\n\r\n");
         list($header, $res) = $bodyBegin !== false ? array(substr($res, 0, $bodyBegin), substr($res, $bodyBegin+4)) : array($res, "");
         $res = trim($res);
         return $res == "true";
 }
+
+
+
 
 /**
  * Checks if webadmin tool has appropriate rights to work correctly.
@@ -146,21 +160,26 @@ function dffCheckEnvironment() {
     }
     return is_null($result) ? true : $result;
 }
-?>
+$html = <<<ENDS
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="de" lang="de">
 <head>
-<title>Geschützter Bereich</title>
+<title>Login webadmin console</title>
 </head>
 <body>
+<h1>Deployment framework webadmin console</h1>
 <form action="login.php" method="post">
 Username:
 <input type="text" name="username" />
 <br />
-Passwort:
+Password:
 <input type="password" name="passwort" />
 <br />
-<input type="submit" value="Anmelden" />
+<input type="submit" value="Login" />
 </form>
 </body>
 </html>
+ENDS
+;
+
+echo $html;

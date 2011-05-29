@@ -1,4 +1,4 @@
-/*  Copyright 2007, ontoprise GmbH
+/*  Copyright 2011, ontoprise GmbH
 *  This file is part of the halo-Extension.
 *
 *   The halo-Extension is free software; you can redistribute it and/or modify
@@ -18,12 +18,17 @@
  * @file
  * @ingroup SRLanguage
  * 
- * @author Kai K�hn
+ * @author Kai Kühn
  */
 var dfgUserDFWebAdmin_LanguageStrings = {
   
 	'df_webadmin_globalupdate' : 'Perform global update?',
-	'df_webadmin_doupdate' : 'Do update'
+	'df_webadmin_doupdate' : 'Do update',
+	'df_webadmin_wouldbeinstalled' : 'The following extensions would be installed:',
+	'df_webadmin_wouldbeupdated' : 'The following extensions would be updated:',
+	'df_webadmin_finished' : 'Finished',
+	'df_webadmin_pleasewait' : 'Please wait...',
+	'df_webadmin_extension_details' : 'Extension details'
 };
 
 var dfgContDFWebAdmin_LanguageStrings= {};  

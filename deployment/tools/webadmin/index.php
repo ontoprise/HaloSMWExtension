@@ -61,7 +61,6 @@ touch("$rootDir/userloggedin");
 require_once('includes/DF_StatusTab.php');
 require_once('includes/DF_SearchTab.php');
 require_once('includes/DF_MaintenanceTab.php');
-require_once('includes/DF_BundleDetailTab.php');
 require_once('includes/DF_CommandInterface.php');
 require_once($mwrootDir.'/deployment/io/DF_Log.php');
 require_once($mwrootDir.'/deployment/io/DF_PrintoutStream.php');
@@ -146,10 +145,6 @@ $dfgMaintenanceTab = new DFMaintenanceTab();
 $maintenanceTabName = $dfgMaintenanceTab->getTabName();
 $maintenanceTabHtml = $dfgMaintenanceTab->getHTML();
 
-$dfgBundleDetailTab = new DFBundleDetailTab();
-$bundleDetailTabName = $dfgBundleDetailTab->getTabName();
-$bundleDetailTabHtml = $dfgBundleDetailTab->getHTML();
-
 // for ajax calls
 if (isset($func_name)) {
 	$dfgCommandInterface = new DFCommandInterface();
@@ -193,7 +188,7 @@ $javascriptLang
 ENDS
 ;
 $html .= "<body><img src=\"skins/logo.png\" />".
-         "<a href=\"$wgServer$wgScriptPath/deployment/tools/webadmin/logout.php\">Logout</a>".
+         "<a href=\"$wgServer$wgScriptPath/deployment/tools/webadmin/logout.php\" style=\"float:right\">Logout</a>".
          "<h1>This is the web administration tool of the deployment framework.</h1>";
 $html .= <<<ENDS
 <div id="tabs">
@@ -201,16 +196,17 @@ $html .= <<<ENDS
 			<ul>
 				<li><a href="#tabs-1">$statusTabName</a></li>
 				<li><a href="#tabs-2">$searchTabName</a></li>
-				<li><a href="#tabs-3">$bundleDetailTabName</a></li>
 				<li><a href="#tabs-4">$maintenanceTabName</a></li>
 			</ul>
 			<div id="tabs-1">$statusTabHtml</div>
 			<div id="tabs-2">$searchTabHtml</div>
-    		<div id="tabs-3">$bundleDetailTabHtml</div>
 			<div id="tabs-4">$maintenanceTabHtml</div>
 </div>
-<div id="global-updatedialog-confirm" title="Empty the recycle bin?" style="display:none">
-    <p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span><span id=\"global-updatedialog-confirm-text\">Perform global update?</span></p>
+<div id="global-updatedialog-confirm" title="Global update" style="display:none">
+    <p><span style="float:left; margin:0 7px 20px 0;"></span><span id="global-updatedialog-confirm-text">Perform global update?</span></p>
+</div>
+<div id="check-extension-dialog" title="Information" style="display:none">
+    <p><span style="float:left; margin:0 7px 20px 0;"></span><span id="check-extension-dialog-text">Check extension</span></p>
 </div>
 ENDS
 ;

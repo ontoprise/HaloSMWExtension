@@ -12,3 +12,8 @@
     width: 20%;
     text-align: center;
 }
+
+.df_extension_id:hover {
+background-color:yellow;
+cursor: pointer;
+}

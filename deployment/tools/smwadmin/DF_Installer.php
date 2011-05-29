@@ -343,7 +343,7 @@ class Installer {
 		$localPackages = PackageRepository::getLocalPackages($this->rootDir);
 		if (count($allPackages) == 0) {
 			$dfgOut->outputln( "\nNo packages found in repositories!\n");
-			
+				
 		}
 		$dfgOut->outputln (" Installed           | Bundle               | Av. versions  | Repository");
 		$dfgOut->outputln ("-------------------------------------------------------------------------\n");
@@ -837,7 +837,7 @@ class Installer {
 				$hasPreceding = false;
 				foreach($descriptors as $e) {
 					list($dd, $from, $to) = $e;
-					if (in_array($dd->getID(), $vertexes)) {
+					if (in_array($dd->getID(), $vertexes) && !$dd->isOptionalDependency($v)) {
 						if ($dd->hasDependency($v)) {
 							$hasPreceding = true;
 							break;
@@ -923,10 +923,23 @@ class Installer {
 
 			$desc_min = PackageRepository::getDeployDescriptorFromRange($id, $minVersion, $maxVersion);
 
-			$packagesToUpdate[] = array($desc_min, $minVersion, $maxVersion);
-			$this->collectDependingExtensions($desc_min, $packagesToUpdate, $localPackages, $globalUpdate);
+			if (!$this->checkIfAlreadyContained($packagesToUpdate, $desc_min)) {
+				$packagesToUpdate[] = array($desc_min, $minVersion, $maxVersion);
+				$this->collectDependingExtensions($desc_min, $packagesToUpdate, $localPackages, $globalUpdate);
+			}
 		}
 
+	}
+
+	private function checkIfAlreadyContained($packagesToUpdate, $dd) {
+
+		foreach($packagesToUpdate as $ptu) {
+			list($desc, $minVersion, $maxVersion) = $ptu;
+			if ($desc->getID() == $dd->getID() && $desc->getVersion() == $dd->getVersion() && $desc->getPatchlevel() == $dd->getPatchlevel()) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	/**
@@ -1030,17 +1043,17 @@ class Installer {
 		$this->filterIncompatiblePackages($updatesNeeded, $extensions_to_update, $contradictions);
 
 		$result = array();
-        $result['extensions'] = array();
-        foreach($extensions_to_update as $arr) {
-            list($desc, $min, $max) = $arr;
-            $result['extensions'][] = array($desc->getID(), $desc->getVersion(), $desc->getPatchlevel());;
-        }
-        $result['contradictions'] = array();
-        foreach($contradictions as $etu) {
-            list($desc, $min, $max) = $etu;
-            $result['contradictions'][] = array($desc->getID(), $desc->getVersion(), $desc->getPatchlevel());;
-        }
-        return $result;
+		$result['extensions'] = array();
+		foreach($extensions_to_update as $arr) {
+			list($desc, $min, $max) = $arr;
+			$result['extensions'][] = array($desc->getID(), $desc->getVersion(), $desc->getPatchlevel());;
+		}
+		$result['contradictions'] = array();
+		foreach($contradictions as $etu) {
+			list($desc, $min, $max) = $etu;
+			$result['contradictions'][] = array($desc->getID(), $desc->getVersion(), $desc->getPatchlevel());;
+		}
+		return $result;
 	}
 
 

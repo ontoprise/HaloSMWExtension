@@ -1,4 +1,4 @@
-/*  Copyright 2007, ontoprise GmbH
+/*  Copyright 2011, ontoprise GmbH
 *  This file is part of the halo-Extension.
 *
 *   The halo-Extension is free software; you can redistribute it and/or modify
@@ -65,12 +65,7 @@ var dfgWebAdminLanguage = {
                 }
         } 
             
-        // Replace variables
-        msg = msg.replace(/\$n/g,wgCanonicalNamespace); 
-        msg = msg.replace(/\$p/g,wgPageName);
-        msg = msg.replace(/\$t/g,wgTitle);
-        msg = msg.replace(/\$u/g,wgUserName);
-        msg = msg.replace(/\$s/g,wgServer);
+        
         return msg;
     }
     

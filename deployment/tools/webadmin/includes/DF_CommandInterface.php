@@ -25,7 +25,7 @@
  *
  */
 if (!defined("DF_WEBADMIN_TOOL")) {
-    die();
+	die();
 }
 
 require_once ( $mwrootDir.'/deployment/tools/smwadmin/DF_PackageRepository.php' );
@@ -63,7 +63,7 @@ class DFCommandInterface {
 				return $this->doGlobalUpdate();
 			case "restore":
 				return $this->restore($args);
-			case "createRestorePoint": 
+			case "createRestorePoint":
 				return $this->createRestorePoint($args);
 			default: return "unsupported command";
 		}
@@ -83,15 +83,22 @@ class DFCommandInterface {
 	public function getDependencies($args) {
 		global $mwrootDir, $dfgOut;
 		$extid = reset($args);
-		$dfgOut->setVerbose(false);
 		try {
+			$dfgOut->setVerbose(false);
 			$installer = Installer::getInstance($mwrootDir);
 			$dependencies = $installer->getExtensionsToInstall($extid);
+				
 			$dfgOut->setVerbose(true);
 			return json_encode($dependencies);
 		} catch(InstallationError $e) {
 			$error = array();
 			$error['exception'] = array($e->getMsg(), $e->getErrorCode(), $e->getArg1(), $e->getArg2());
+			$dfgOut->setVerbose(true);
+			return json_encode($error);
+		} catch(RepositoryError $e) {
+			$error = array();
+			$error['exception'] = array($e->getMsg(), $e->getErrorCode(), $e->getArg1(), $e->getArg2());
+			$dfgOut->setVerbose(true);
 			return json_encode($error);
 		}
 	}
@@ -107,7 +114,8 @@ class DFCommandInterface {
 			$oExec = $wshShell->Run("$runCommand", 7, false);
 
 		} else {
-			//TODO: impl.linux command
+			$runCommand = "php $mwrootDir/deployment/tools/smwadmin/smwadmin.php --logtofile $filename --outputformat html --nocheck --noask -i $extid";
+			$nullResult = `$runCommand &`;
 		}
 		return $filename;
 	}
@@ -123,7 +131,8 @@ class DFCommandInterface {
 			$oExec = $wshShell->Run("$runCommand", 7, false);
 
 		} else {
-			//TODO: impl.linux command
+			$runCommand = "php $mwrootDir/deployment/tools/smwadmin/smwadmin.php --logtofile $filename --outputformat html --nocheck --noask -d $extid";
+			$nullResult = `$runCommand &`;
 		}
 		return $filename;
 	}
@@ -139,7 +148,8 @@ class DFCommandInterface {
 			$oExec = $wshShell->Run("$runCommand", 7, false);
 
 		} else {
-			//TODO: impl.linux command
+			$runCommand = "php $mwrootDir/deployment/tools/smwadmin/smwadmin.php --logtofile $filename --outputformat html --nocheck --noask --finalize";
+			$nullResult = `$runCommand &`;
 		}
 		return $filename;
 	}
@@ -157,6 +167,11 @@ class DFCommandInterface {
 			$error = array();
 			$error['exception'] = array($e->getMsg(), $e->getErrorCode(), $e->getArg1(), $e->getArg2());
 			return json_encode($error);
+		}  catch(RepositoryError $e) {
+			$error = array();
+			$error['exception'] = array($e->getMsg(), $e->getErrorCode(), $e->getArg1(), $e->getArg2());
+			$dfgOut->setVerbose(true);
+			return json_encode($error);
 		}
 	}
 
@@ -171,42 +186,45 @@ class DFCommandInterface {
 			$oExec = $wshShell->Run("$runCommand", 7, false);
 
 		} else {
-			//TODO: impl.linux command
+			$runCommand = "php $mwrootDir/deployment/tools/smwadmin/smwadmin.php --logtofile $filename --outputformat html --nocheck --noask -u";
+			$nullResult = `$runCommand &`;
 		}
 		return $filename;
 	}
-	
+
 	public function restore($args) {
 		global $mwrootDir, $dfgOut;
-        $restorepoint = reset($args);
-        $filename = uniqid().".log";
-        chdir($mwrootDir.'/deployment/tools');
-        if (Tools::isWindows()) {
-            $wshShell = new COM("WScript.Shell");
-            $runCommand = "cmd /K START php $mwrootDir/deployment/tools/smwadmin/smwadmin.php --logtofile $filename --outputformat html --nocheck --noask -r $restorepoint";
-            $oExec = $wshShell->Run("$runCommand", 7, false);
+		$restorepoint = reset($args);
+		$filename = uniqid().".log";
+		chdir($mwrootDir.'/deployment/tools');
+		if (Tools::isWindows()) {
+			$wshShell = new COM("WScript.Shell");
+			$runCommand = "cmd /K START php $mwrootDir/deployment/tools/smwadmin/smwadmin.php --logtofile $filename --outputformat html --nocheck --noask -r $restorepoint";
+			$oExec = $wshShell->Run("$runCommand", 7, false);
 
-        } else {
-            //TODO: impl.linux command
-        }
-        return $filename;
-	} 
-	
+		} else {
+			$runCommand = "php $mwrootDir/deployment/tools/smwadmin/smwadmin.php --logtofile $filename --outputformat html --nocheck --noask -r $restorepoint";
+			$nullResult = `$runCommand &`;
+		}
+		return $filename;
+	}
+
 	public function createRestorePoint($args) {
 		global $mwrootDir, $dfgOut;
-        $restorepoint = reset($args);
-        $filename = uniqid().".log";
-        chdir($mwrootDir.'/deployment/tools');
-        if (Tools::isWindows()) {
-            $wshShell = new COM("WScript.Shell");
-            $runCommand = "cmd /K START php $mwrootDir/deployment/tools/smwadmin/smwadmin.php --logtofile $filename --outputformat html --nocheck --noask --rcreate $restorepoint";
-            $oExec = $wshShell->Run("$runCommand", 7, false);
+		$restorepoint = reset($args);
+		$filename = uniqid().".log";
+		chdir($mwrootDir.'/deployment/tools');
+		if (Tools::isWindows()) {
+			$wshShell = new COM("WScript.Shell");
+			$runCommand = "cmd /K START php $mwrootDir/deployment/tools/smwadmin/smwadmin.php --logtofile $filename --outputformat html --nocheck --noask --rcreate $restorepoint";
+			$oExec = $wshShell->Run("$runCommand", 7, false);
 
-        } else {
-            //TODO: impl.linux command
-        }
-        return $filename;
-	} 
+		} else {
+			$runCommand = "php $mwrootDir/deployment/tools/smwadmin/smwadmin.php --logtofile $filename --outputformat html --nocheck --noask --rcreate $restorepoint";
+			$nullResult = `$runCommand &`;
+		}
+		return $filename;
+	}
 
 	public function search($args) {
 		global $mwrootDir, $dfgOut, $dfgSearchTab;
