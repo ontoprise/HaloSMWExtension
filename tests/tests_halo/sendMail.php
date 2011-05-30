@@ -8,10 +8,12 @@
  *                   [ -s <subject> ]
  *                   [ -m <mail text> | -f <file with mail text> ]
  *                   [ -F <from adress> ]
- *                   [ -S <smtp server with port> ]
+ *                   [ -S <smtp server with port> (default port is 587)]
  *                   [ -U <smtp user> ]
  *                   [ -P <smtp password> ]
  *
+ * Note: Windows user should not use single quotes to encapsulate strings
+ * because these single quotes remain in the string. Solution: use double quotes.
  */
 
 // get command line parameters
@@ -38,7 +40,7 @@ while ($arg = array_shift($args)) {
         }
         else {
             $host = $smtp;
-            $port = "465";
+            $port = "587";
         }
     }
     else if ($arg == '-U') {
