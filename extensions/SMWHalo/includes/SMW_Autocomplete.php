@@ -875,9 +875,9 @@ class AutoCompletionHandler {
 				if (count($result) >= SMW_AC_MAX_RESULTS) break;
 			}  else if ($commandText == 'all') {
 				$namespaceIndexes = array();
-				global $wgContLang;
-				 
-				$pages = smwfGetAutoCompletionStore()->getPages($userInput, NULL);
+				global $wgContLang, $smwhgDefaultACNamespaces;
+								
+				$pages = smwfGetAutoCompletionStore()->getPages($userInput, $smwhgDefaultACNamespaces);
 				$inf = self::setInferred($pages, !$first);
 				$result = self::mergeResults($result, $inf);
 				if (count($result) >= SMW_AC_MAX_RESULTS) break;

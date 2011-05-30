@@ -130,11 +130,11 @@ abstract class AutoCompletionStorage {
 	 * @return array of (Property title, false, NULL, array(types, range categories))
 	 */
 	public abstract function getDomainLessProperty($userInputToMatch);
-	
+
 	/**
-	 * Returns the (local) URL of an image attached to a category. 
+	 * Returns the (local) URL of an image attached to a category.
 	 * The language constant smw_ac_category_has_icon defines the icon property.
-	 * 
+	 *
 	 * @param Title $categoryTitle
 	 */
 	public abstract function getImageURL($categoryTitle);
@@ -220,11 +220,44 @@ class AutoCompletionStorageSQL2 extends AutoCompletionStorage {
 
 		} else {
 
-			for ($i = 0, $n = count($namespaces); $i < $n; $i++) {
-				if ($i > 0) $sql .= ' UNION ';
-				$sql .= '(SELECT page_title, page_namespace FROM '.$page.' WHERE UPPER('.DBHelper::convertColumn('page_title').') LIKE UPPER('.$db->addQuotes($match.'%').') AND page_namespace='.$db->addQuotes($namespaces[$i]).' ORDER BY page_title) UNION ';
-				$sql .= '(SELECT page_title, page_namespace FROM '.$page.' WHERE UPPER('.DBHelper::convertColumn('page_title').') LIKE UPPER('.$db->addQuotes('%'.$match.'%').') AND page_namespace='.$db->addQuotes($namespaces[$i]).' ORDER BY page_title) ';
+			//wanted and unwanted namespace
+			$wantedNamespaces = array();
+			$unwantedNamespaces = array();
+			foreach($namespaces as $ns) {
+				if ($ns > 0) {
+					$wantedNamespaces[] = $ns;
+				}
+				if ($ns <= 0) {
+					$unwantedNamespaces[] = -$ns;
+				}
 			}
+
+				
+			$wantedNamespacesCond = "";
+			$first = true;
+			foreach ($wantedNamespaces as $ns) {
+				if (!$first) $wantedNamespacesCond .= ' OR ';
+				$first = false;
+				
+				$wantedNamespacesCond .= " page_namespace = '$ns' ";
+			}
+			if (!empty($wantedNamespacesCond)) $wantedNamespacesCond = " AND (".$wantedNamespacesCond.")";
+				
+			$unwantedNamespacesCond = "";
+			$first = true;
+			foreach ($unwantedNamespaces as $ns) {
+				if (!$first) $unwantedNamespacesCond .= ' AND ';
+				$first = false;
+			
+				$unwantedNamespacesCond .= " page_namespace != '$ns' ";
+			}
+			if (!empty($unwantedNamespacesCond)) $unwantedNamespacesCond = " AND (".$unwantedNamespacesCond.")";
+
+				//echo print_r($wantedNamespacesCond, true);die();
+				
+			$sql .= '(SELECT page_title, page_namespace FROM '.$page.' WHERE UPPER('.DBHelper::convertColumn('page_title').') LIKE UPPER('.$db->addQuotes($match.'%').') '.$wantedNamespacesCond.' '.$unwantedNamespacesCond.' ORDER BY page_title) UNION ';
+			$sql .= '(SELECT page_title, page_namespace FROM '.$page.' WHERE UPPER('.DBHelper::convertColumn('page_title').') LIKE UPPER('.$db->addQuotes('%'.$match.'%').') '.$wantedNamespacesCond.' '.$unwantedNamespacesCond.' ORDER BY page_title) ';
+				
 
 		}
 
@@ -785,14 +818,14 @@ class AutoCompletionStorageSQL2 extends AutoCompletionStorage {
 		$iconValues = smwfGetStore()->getPropertyValues($categoryTitle, $catHasIconProperty, NULL, '');
 		$iconValue = reset($iconValues); // consider only first
 		if ($iconValue === false) return NULL;
-		
+
 		$im_file = wfLocalFile($iconValue->getTitle());
 		$url = !is_null($im_file) && $im_file instanceof File ? $im_file->getURL(): NULL;
 
 		if (!is_null($url)) {
 			$image_urls[$categoryTitle->getPrefixedDBkey()] = $url;
 		}
-        
+
 		return $url;
 	}
 
@@ -828,14 +861,14 @@ class AutoCompletionStorageSQL2 extends AutoCompletionStorage {
 				if (!is_null($range) && $range !== false) $ranges[] = $range->getTitle()->getText();
 
 			}
-			
+
 			global $smwgContLang;
-            $datatypeLabels = $smwgContLang->getDatatypeLabels();
+			$datatypeLabels = $smwgContLang->getDatatypeLabels();
 			// FIXME: There is no proper label for 'spf','wpp' and 'tls', so replace it by default Page type label.
-            $typeString = str_replace('spf', $datatypeLabels['_wpg'], $typeString);
-            $typeString = str_replace('wpp', $datatypeLabels['_wpg'], $typeString);
-            $typeString = str_replace('tls', wfMsg('smw_ac_tls'), $typeString);
-            
+			$typeString = str_replace('spf', $datatypeLabels['_wpg'], $typeString);
+			$typeString = str_replace('wpp', $datatypeLabels['_wpg'], $typeString);
+			$typeString = str_replace('tls', wfMsg('smw_ac_tls'), $typeString);
+
 			$rangeString = implode(',', array_unique($ranges));
 		}
 		return array($typeString, $rangeString);
@@ -898,7 +931,7 @@ class AutoCompletionStorageTSCQuad extends AutoCompletionStorageSQL2 {
 			$response = $client->query("SELECT DISTINCT ?s WHERE { $filter }",  "limit=".SMW_AC_MAX_RESULTS);
 		}
 		$result = $this->parseSPARQLResults($response);
-		 
+			
 
 		return $result;
 	}
@@ -914,11 +947,11 @@ class AutoCompletionStorageTSCQuad extends AutoCompletionStorageSQL2 {
 			$b = $children->binding[0]; // predicate
 
 			$sv = $b->children()->uri[0];
-				
+
 			if (!is_null($sv) && $sv !== '') {
 				$title = TSHelper::getTitleFromURI((string) $sv);
 				if (is_null($title)) {
-						
+
 					continue;
 				}
 				$extraData = ($title->getNamespace() == SMW_NS_PROPERTY) ? $this->getPropertyData($title) : NULL;
