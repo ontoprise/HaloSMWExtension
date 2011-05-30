@@ -577,10 +577,13 @@ if (count($installer->getErrors()) === 0) {
 function dffShowHelp() {
 	global $dfgOut;
 	$dfgOut->outputln( "smwhalo admin utility v".DEPLOY_FRAMEWORK_VERSION.", Ontoprise 2009-2011");
-	$dfgOut->outputln( "Usage: smwadmin [ -i | -d ] <package>[-<version>]");
-	$dfgOut->outputln( "       smwadmin -u [ <package>[-<version>] ]");
-	$dfgOut->outputln( "       smwadmin -r");
-	$dfgOut->outputln( "       smwadmin -l");
+	$dfgOut->outputln( "Usage: smwadmin [ -i | -d ] <package>[-<version>] [ additional-options ]");
+	$dfgOut->outputln( "       smwadmin -u [ <package>[-<version>] ] [ additional-options ]");
+	$dfgOut->outputln( "       smwadmin -r [ <restore point name> ]");
+	$dfgOut->outputln( "       smwadmin -l [--desc ]");
+	$dfgOut->outputln( "       smwadmin --rcreate [ <restore point name> ]");
+	$dfgOut->outputln( "       smwadmin --rlist");
+	$dfgOut->outputln( "       smwadmin --finalize");
 	$dfgOut->outputln();
 	$dfgOut->outputln( "\t-i <package>: Install");
 	$dfgOut->outputln( "\t-d <package> ]: De-Install");
@@ -590,19 +593,22 @@ function dffShowHelp() {
 	$dfgOut->outputln( "\t-r [ name ]: Restore from a wiki-restore-point.");
 	$dfgOut->outputln( "\t--rcreate [ name ]: Explicitly creates a wiki-restore-point.");
 	$dfgOut->outputln( "\t--rlist : Shows all existing wiki-restore-points");
-	$dfgOut->outputln( "\t--dep : Check only dependencies but do not install.");
-	$dfgOut->outputln( "\tAdvanced options: ");
 	$dfgOut->outputln( "\t--finalize: Finalizes installation");
+	$dfgOut->outputln( "\tAdditional options (can only be used with the optional above): ");
+	$dfgOut->outputln( "\t--dep : Check only dependencies but do not install.");
 	$dfgOut->outputln( "\t-f: Force operation (ignore any problems if possible)");
 	//$dfgOut->outputln( "\t--checkdump <package>: Check only dumps for changes but do not install.");
 	$dfgOut->outputln( "\t--noconflict: Assures that there are no conflicts on ontology import. Will stop the process, if not.");
 	$dfgOut->outputln( "\t--nocheck: Skips the environment checks");
+	$dfgOut->outputln( "\t--noask: Skips all questions (assuming mostly 'yes' except for optional packages");
 	$dfgOut->outputln();
 	$dfgOut->outputln( "Examples:\tsmwadmin -i smwhalo Installs the given packages");
 	$dfgOut->outputln( "\tsmwadmin -u: Updates complete installation");
 	$dfgOut->outputln( "\tsmwadmin -u --dep: Shows what would be updated.");
 	$dfgOut->outputln( "\tsmwadmin -d smw: Removes the package smw.");
 	$dfgOut->outputln( "\tsmwadmin -r [name] : Restores old installation from a restore point. User is prompted for which.");
+    $dfgOut->outputln( "\tsmwadmin -i smwhalo -f: Installs smwhalo ignoring any problems");
+    $dfgOut->outputln( "\tsmwadmin -u --noask: Updates the complete installation with no check for environment.");
 	$dfgOut->outputln( "\n");
 
 	$logDir = Tools::getHomeDir()."/df_log";
