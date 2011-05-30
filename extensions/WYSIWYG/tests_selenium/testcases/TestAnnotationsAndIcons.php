@@ -5,7 +5,7 @@ require_once dirname(__FILE__) . '/../../../../tests/tests_halo/SeleniumTestCase
 class TestAnnotationsAndIcons extends SeleniumTestCase_Base
 {
 
-	public function test_AnnotationsAndIcons()
+	public function testMyTestCase()
 	{
 		$this->open("/mediawiki/index.php?title=MyNewTestPage&action=edit&mode=wysiwyg");
 		$this->type("//*[@id='wpTextbox1']", "This is Berlin located in [[located in::Germany]]. The city is also is [[is capital::Germany]] of Germany and has [[Inhabitants::3524000|3.5 Mio]].\n\n== Heading 2 ==\n\nHere follows a nowiki part <nowiki>'''Note the bold'''</nowiki>. It ends here.\n\n=== Heading 2.2 ===\n\n*List item1\n**List item11\n*List item2\n\n=== Heading 2.3 ===\n\nThis wiki contains {{#ask:[[Category:Person]]|format=list}} as a person. {{Copyright}}\n\n[[Category:City]]");
@@ -67,11 +67,11 @@ class TestAnnotationsAndIcons extends SeleniumTestCase_Base
 		}
 		$this->click("link=Edit");
 		$this->waitForPageToLoad("30000");
-		$this->open("/mediawiki/index.php?title=MyNewTestPage&action=edit&mode=wikitext");
+		$this->open("/mediawiki/index.php?title=MyNewTestPage&action=edit");
 		for ($second = 0; ; $second++) {
-			if ($second >= 60) $this->fail("timeout");
+			if ($second >= 60) $this->fail("Text not present: *List item1");
 			try {
-				if ($this->isTextPresent("*List item1 **List item11 *List item2")) break;
+				if ($this->isTextPresent("*List item1")) break;
 			} catch (Exception $e) {}
 			sleep(1);
 		}
@@ -97,7 +97,17 @@ class TestAnnotationsAndIcons extends SeleniumTestCase_Base
 			array_push($this->verificationErrors, $e->toString());
 		}
 		try {
-			$this->assertTrue($this->isTextPresent("*List item1 **List item11 *List item2"), "Text not present: *List item1 **List item11 *List item2");
+			$this->assertTrue($this->isTextPresent("*List item1"), "Text not present: *List item1");
+		} catch (PHPUnit_Framework_AssertionFailedError $e) {
+			array_push($this->verificationErrors, $e->toString());
+		}
+		try {
+			$this->assertTrue($this->isTextPresent("**List item11"), "Text not present: **List item11");
+		} catch (PHPUnit_Framework_AssertionFailedError $e) {
+			array_push($this->verificationErrors, $e->toString());
+		}
+		try {
+			$this->assertTrue($this->isTextPresent("*List item2"), "Text not present: *List item2");
 		} catch (PHPUnit_Framework_AssertionFailedError $e) {
 			array_push($this->verificationErrors, $e->toString());
 		}

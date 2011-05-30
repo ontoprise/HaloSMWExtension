@@ -8,7 +8,7 @@ class TestPropertiesAndCategoriesChanges extends SeleniumTestCase_Base
 
 	public function testMyTestCase()
 	{
-		$this->open("/mediawiki/index.php?title=Mynewtestpage&action=edit&redlink=1&mode=wysiwyg");
+		$this->open("/mediawiki/index.php?title=Mynewtestpage&action=edit&mode=wysiwyg");
 		$this->click("link=Edit");
 		$this->waitForPageToLoad("30000");
 		$this->setSpeed("2000");

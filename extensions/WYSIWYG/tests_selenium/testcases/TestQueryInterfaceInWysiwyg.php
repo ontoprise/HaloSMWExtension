@@ -8,7 +8,7 @@ class TestQueryInterfaceInWysiwyg extends SeleniumTestCase_Base
 
   public function testMyTestCase()
   {
-    $this->open("/mediawiki/index.php?title=France&action=edit&mode=wikitext");
+    $this->open("/mediawiki/index.php?title=France&action=edit");
     $this->type("wpTextbox1", "[[HasCitizen::33333333]]\n[[HasCapital::Paris]]\n[[Category:State]]");
     $this->click("wpSave");
     $this->waitForPageToLoad("30000");
@@ -83,7 +83,7 @@ class TestQueryInterfaceInWysiwyg extends SeleniumTestCase_Base
     $this->selectWindow("null");
     $this->click("//span[@class='cke_dialog_ui_button'][text()='OK']");
     try {
-        $this->assertTrue($this->isElementPresent("//img[@class='FCK__SMWquery'][@align=''][@src='http://localhost/mediawiki/extensions/WYSIWYG/ckeditor/images/spacer.gif?t=AA4E4NT'][@_cke_realelement='%3Cspan%20class%3D%22fck_smw_query%22%3E%7B%7B%23ask%3A%20%5B%5BCategory%3AState%5D%5DfckLRfckLR%7C%20%3FHasCitizen%20fckLRfckLR%7C%20format%3DtablefckLRfckLR%7C%20merge%3DfalsefckLRfckLR%7C%7D%7D%3C%2Fspan%3E'][@_cke_real_node_type='1'][@alt='Unknown Object'][@_cke_real_element_type='span']"), "Element not present: //img[@class='FCK__SMWquery'][@align=''][@src='http://localhost/mediawiki/extensions/WYSIWYG/ckeditor/images/spacer.gif?t=AA4E4NT'][@_cke_realelement='%3Cspan%20class%3D%22fck_smw_query%22%3E%7B%7B%23ask%3A%20%5B%5BCategory%3AState%5D%5DfckLRfckLR%7C%20%3FHasCitizen%20fckLRfckLR%7C%20format%3DtablefckLRfckLR%7C%20merge%3DfalsefckLRfckLR%7C%7D%7D%3C%2Fspan%3E'][@_cke_real_node_type='1'][@alt='Unknown Object'][@_cke_real_element_type='span']");
+        $this->assertTrue($this->isElementPresent("//img[@class='FCK__SMWquery'][@src='http://localhost/mediawiki/extensions/WYSIWYG/ckeditor/images/spacer.gif?t=AA4E4NT']"), "Element not present: //img[@class='FCK__SMWquery']");
     } catch (PHPUnit_Framework_AssertionFailedError $e) {
         array_push($this->verificationErrors, $e->toString());
     }
