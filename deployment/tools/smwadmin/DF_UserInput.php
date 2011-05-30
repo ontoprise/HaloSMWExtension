@@ -122,7 +122,11 @@ class DFUserInput {
 	 * @param out boolean $result
 	 */
 	public function modifiedPage($deployRevision, $mode, & $result) {
-		global $dfgOut;
+		global $dfgOut, $dfgNoAsk;
+		if ((isset($dfgNoAsk) && $dfgNoAsk == true)) {
+			$result = true;
+			return;
+		}
 		static $overwrite = false;
 		switch ($mode) {
 			case DEPLOYWIKIREVISION_FORCE:
@@ -149,6 +153,8 @@ class DFUserInput {
      * Asks for a confirmation.
      */
     public static function consoleConfirm($msg = "") {
+    	global $dfgNoAsk;
+    	if ((isset($dfgNoAsk) && $dfgNoAsk == true)) return true;
         if ($msg !== '') print "\n$msg";
         $a = trim(fgets(STDIN));
         return strtolower($a) === 'y';

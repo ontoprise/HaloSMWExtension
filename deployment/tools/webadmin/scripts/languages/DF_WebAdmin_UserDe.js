@@ -28,7 +28,19 @@ var dfgUserDFWebAdmin_LanguageStrings = {
   'df_webadmin_wouldbeupdated' : 'Die folg. Extensions würden aktualisiert:',
   'df_webadmin_finished' : 'Beendet',
   'df_webadmin_pleasewait': 'Bitte warten...',
-  'df_webadmin_extension_details' : 'Extension-Details'
+  'df_webadmin_extension_details' : 'Extension-Details',
+  
+  'df_webadmin_id' : 'ID',
+	'df_webadmin_patchlevel' : 'Patchlevel',
+	'df_webadmin_dependencies' : 'Abhängigkeiten',
+	'df_webadmin_maintainer' : 'Maintainer',
+	'df_webadmin_vendor' : 'Anbieter',
+	'df_webadmin_license' : 'Lizenz',
+	'df_webadmin_helpurl' : 'Hilfe-URL',
+	'df_webadmin_wikidumps' : 'Wiki-dumps',
+	'df_webadmin_ontologies' : 'Ontologien',
+	'df_webadmin_resources' : 'Resourcen',
+	'df_webadmin_resourcecopyonly' : 'Kopierte Resourcen'
 };
 
 var dfgContDFWebAdmin_LanguageStrings= {};  

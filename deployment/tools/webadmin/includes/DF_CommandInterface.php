@@ -65,6 +65,8 @@ class DFCommandInterface {
 				return $this->restore($args);
 			case "createRestorePoint":
 				return $this->createRestorePoint($args);
+			case "getLocalDeployDescriptor":
+				return $this->getLocalDeployDescriptor($args);
 			default: return "unsupported command";
 		}
 	}
@@ -80,6 +82,35 @@ class DFCommandInterface {
 		return $log;
 	}
 
+	public function getLocalDeployDescriptor($args) {
+		global $mwrootDir, $dfgOut;
+		$extid = reset($args);
+		$localPackages = PackageRepository::getLocalPackages($mwrootDir);
+		if (!array_key_exists($extid, $localPackages)) {
+			return NULL;
+		}
+		$dd = $localPackages[$extid];
+		$result=array();
+		$result['id'] = $dd->getID();
+		$result['version'] = $dd->getVersion();
+		$result['patchlevel'] = $dd->getPatchlevel();
+		$result['dependencies'] = $dd->getDependencies();
+		$result['maintainer'] = $dd->getMaintainer();
+		$result['vendor'] = $dd->getVendor();
+		$result['helpurl'] = $dd->getHelpURL();
+		 
+		$result['resources'] = $dd->getResources();
+		$result['onlycopyresources'] = $dd->getOnlyCopyResources();
+
+
+		$runCommand = "php $mwrootDir/deployment/tools/smwadmin/smwadmin.php --listpages $extid --outputformat json --nocheck --noask";
+		exec($runCommand, $out, $ret);
+		$wikidumps = json_decode(trim(implode("",$out)));
+		$result['wikidumps'] = $wikidumps->wikidumps;
+		$result['ontologies'] = $wikidumps->ontologies;
+		return json_encode($result);
+	}
+
 	public function getDependencies($args) {
 		global $mwrootDir, $dfgOut;
 		$extid = reset($args);
@@ -87,7 +118,7 @@ class DFCommandInterface {
 			$dfgOut->setVerbose(false);
 			$installer = Installer::getInstance($mwrootDir);
 			$dependencies = $installer->getExtensionsToInstall($extid);
-				
+
 			$dfgOut->setVerbose(true);
 			return json_encode($dependencies);
 		} catch(InstallationError $e) {
@@ -107,6 +138,7 @@ class DFCommandInterface {
 		global $mwrootDir, $dfgOut;
 		$extid = reset($args);
 		$filename = uniqid().".log";
+		touch(Tools::getTempDir()."/$filename");
 		chdir($mwrootDir.'/deployment/tools');
 		if (Tools::isWindows()) {
 			$wshShell = new COM("WScript.Shell");
@@ -124,6 +156,7 @@ class DFCommandInterface {
 		global $mwrootDir, $dfgOut;
 		$extid = reset($args);
 		$filename = uniqid().".log";
+		touch(Tools::getTempDir()."/$filename");
 		chdir($mwrootDir.'/deployment/tools');
 		if (Tools::isWindows()) {
 			$wshShell = new COM("WScript.Shell");
@@ -141,6 +174,7 @@ class DFCommandInterface {
 		global $mwrootDir, $dfgOut;
 		$extid = reset($args);
 		$filename = uniqid().".log";
+		touch(Tools::getTempDir()."/$filename");
 		chdir($mwrootDir.'/deployment/tools');
 		if (Tools::isWindows()) {
 			$wshShell = new COM("WScript.Shell");
@@ -179,6 +213,7 @@ class DFCommandInterface {
 		global $mwrootDir, $dfgOut;
 		$extid = reset($args);
 		$filename = uniqid().".log";
+		touch(Tools::getTempDir()."/$filename");
 		chdir($mwrootDir.'/deployment/tools');
 		if (Tools::isWindows()) {
 			$wshShell = new COM("WScript.Shell");
@@ -196,6 +231,7 @@ class DFCommandInterface {
 		global $mwrootDir, $dfgOut;
 		$restorepoint = reset($args);
 		$filename = uniqid().".log";
+		touch(Tools::getTempDir()."/$filename");
 		chdir($mwrootDir.'/deployment/tools');
 		if (Tools::isWindows()) {
 			$wshShell = new COM("WScript.Shell");
@@ -213,6 +249,7 @@ class DFCommandInterface {
 		global $mwrootDir, $dfgOut;
 		$restorepoint = reset($args);
 		$filename = uniqid().".log";
+		touch(Tools::getTempDir()."/$filename");
 		chdir($mwrootDir.'/deployment/tools');
 		if (Tools::isWindows()) {
 			$wshShell = new COM("WScript.Shell");

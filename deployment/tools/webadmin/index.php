@@ -208,6 +208,9 @@ $html .= <<<ENDS
 <div id="check-extension-dialog" title="Information" style="display:none">
     <p><span style="float:left; margin:0 7px 20px 0;"></span><span id="check-extension-dialog-text">Check extension</span></p>
 </div>
+<div id="df_extension_details" style="display:none"></div>
+<div id="df_install_dialog" style="display:none"></div>
+
 ENDS
 ;
 $html .= "</body>";

@@ -175,6 +175,7 @@ class DFPrintoutStream {
 	private function formatText($text, $type, $preLined = '') {
 		global $dfgLang;
 		switch($this->mode) {
+			default:
 			case DF_OUTPUT_FORMAT_TEXT:
 				$prefix = "";
 				switch($type) {

@@ -124,6 +124,7 @@ $dfgCreateRestorePoint=false;
 $dfgNoConflict=false;
 $dfgLogToFile=false;
 $dfgOutputFormat="text";
+$dfgListpages="no";
 
 $args = $_SERVER['argv'];
 array_shift($args); // remove script name
@@ -154,12 +155,12 @@ for( $arg = reset( $args ); $arg !== false; $arg = next( $args ) ) {
 			}
 
 		} else {
-			// assume it is a package but print a warning if the name has a 
+			// assume it is a package but print a warning if the name has a
 			// ontology extension.
 			$file_ext = reset(array_reverse(explode(".", $package)));
-            if ($file_ext == 'owl' || $file_ext == 'rdf' || $file_ext == 'obl') {
-            	$dfgOut->outputln("Are you sure '$package' is intended to be a package? It does not exist as a file.\n", DF_PRINTSTREAM_TYPE_WARN);
-            }
+			if ($file_ext == 'owl' || $file_ext == 'rdf' || $file_ext == 'obl') {
+				$dfgOut->outputln("Are you sure '$package' is intended to be a package? It does not exist as a file.\n", DF_PRINTSTREAM_TYPE_WARN);
+			}
 			$packageToInstall[] = $package;
 		}
 		continue;
@@ -218,15 +219,18 @@ for( $arg = reset( $args ); $arg !== false; $arg = next( $args ) ) {
 		$dfgNoConflict = true;
 		continue;
 	} else if ($arg == '--noask') {
-        $dfgNoAsk = true;
-        continue;
-    } else if ($arg == '--logtofile') {
-        $dfgLogToFile = next($args);
-        continue;
-    } else if ($arg == '--outputformat') {
-        $dfgOutputFormat = next($args);
-        continue;
-    } else if ($arg == '--nocheck') {
+		$dfgNoAsk = true;
+		continue;
+	} else if ($arg == '--logtofile') {
+		$dfgLogToFile = next($args);
+		continue;
+	} else if ($arg == '--outputformat') {
+		$dfgOutputFormat = next($args);
+		continue;
+	} else if ($arg == '--listpages') {
+		$dfgListpages = next($args);
+		continue;
+	} else if ($arg == '--nocheck') {
 		// ignore
 		continue;
 	} else {
@@ -281,7 +285,7 @@ if ($dfgRestore) {
 	$dfgOut->outputln("\nThat means the Mediawiki installation is overwritten as well as the");
 	$dfgOut->outputln("\ndatabase content!\n\n ");
 	$result = DFUserInput::consoleConfirm("Do you really want to continue (y/n)?");
-	
+
 	if ($result) {
 		$restorePoints = $rollback->getAllRestorePoints();
 		if (count($restorePoints) === 0) {
@@ -405,7 +409,7 @@ if (count($ontologiesToInstall) > 0) {
 
 		$oInstaller = OntologyInstaller::getInstance(realpath($rootDir."/../"));
 
-		
+
 
 		if (!isset($ontologyID)) {
 			$fileName = basename($filePath);
@@ -464,7 +468,7 @@ if (count($ontologiesToInstall) > 0) {
 				case DEPLOY_FRAMEWORK_ONTOLOGYCONFLICT_ERROR:
 					$dfgOut->outputln("ontology conflict\n", DF_PRINTSTREAM_TYPE_ERROR);
 			}
-            $dfgOut->outputln('$$ERROR$$');
+			$dfgOut->outputln('$$ERROR$$');
 			die(DF_TERMINATION_WITHOUT_FINALIZE);
 		}
 	}
@@ -562,6 +566,70 @@ foreach($packageToUpdate as $toUpdate) {
 
 }
 
+if ($dfgListpages != "no") {
+	// read pages
+
+	require_once( $rootDir.'/../maintenance/commandLine.inc' );
+	require_once( $rootDir.'/../maintenance/backup.inc' );
+	require_once($rootDir."/descriptor/DF_DeployDescriptor.php");
+	require_once($rootDir."/tools/smwadmin/DF_PackageRepository.php");
+	require_once($rootDir."/tools/smwadmin/DF_Tools.php");
+	require_once($rootDir."/tools/smwadmin/DF_UserInput.php");
+	require_once($rootDir.'/io/import/DF_DeployWikiBundleImporter.php');
+	require_once($rootDir.'/io/import/DF_OntologyDetector.php');
+	$localPackages = PackageRepository::getLocalPackages($mwrootDir);
+	if (!array_key_exists($dfgListpages, $localPackages)) {
+		return NULL;
+	}
+	$dd = $localPackages[$dfgListpages];
+
+	$result=array();
+	$result['wikidumps'] = array();
+	foreach($dd->getWikidumps() as $loc) {
+		$handle = fopen( $mwrootDir."/".$dd->getInstallationDirectory()."/$loc", 'rt' );
+		$source = new ImportStreamSource( $handle );
+		$importer = new DeployWikiImporterDetector( $source, $dd->getID(), '', 1, NULL );
+
+		$importer->setDebug( false );
+
+		$importer->doImport();
+
+		$pageTitles = $importer->getResult();
+
+		foreach($pageTitles as $tuple) {
+			list($title, $command) = $tuple;
+			$result['wikidumps'][$loc][] = $title->getPrefixedText();
+
+		}
+	}
+	$result['ontologies'] = array();
+	foreach($dd->getOntologies() as $loc) {
+		$handle = fopen( $mwrootDir."/".$dd->getInstallationDirectory()."/$loc", 'rt' );
+		$source = new ImportStreamSource( $handle );
+		$importer = new DeployWikiImporterDetector( $source, $dd->getID(), '', 1, NULL );
+
+		$importer->setDebug( false );
+
+		$importer->doImport();
+
+		$pageTitles = $importer->getResult();
+
+		foreach($pageTitles as $tuple) {
+			list($title, $command) = $tuple;
+			$result['ontologies'][$loc][] = $title->getPrefixedText();
+
+		}
+	}
+
+
+	if ($dfgOutputFormat != 'json') {
+		dffExitOnFatalError("Only json format supported: --outputformat json");
+	}
+
+	$dfgOut->output(json_encode($result));
+	$dfgOut->setVerbose(false);
+}
+
 if (count($installer->getErrors()) === 0) {
 	$dfgOut->outputln( "\n__OK__\n");
 	die($dfgCheckDep === true ? DF_TERMINATION_WITHOUT_FINALIZE : DF_TERMINATION_WITH_FINALIZE);
@@ -607,8 +675,8 @@ function dffShowHelp() {
 	$dfgOut->outputln( "\tsmwadmin -u --dep: Shows what would be updated.");
 	$dfgOut->outputln( "\tsmwadmin -d smw: Removes the package smw.");
 	$dfgOut->outputln( "\tsmwadmin -r [name] : Restores old installation from a restore point. User is prompted for which.");
-    $dfgOut->outputln( "\tsmwadmin -i smwhalo -f: Installs smwhalo ignoring any problems");
-    $dfgOut->outputln( "\tsmwadmin -u --noask: Updates the complete installation with no check for environment.");
+	$dfgOut->outputln( "\tsmwadmin -i smwhalo -f: Installs smwhalo ignoring any problems");
+	$dfgOut->outputln( "\tsmwadmin -u --noask: Updates the complete installation with no check for environment.");
 	$dfgOut->outputln( "\n");
 
 	$logDir = Tools::getHomeDir()."/df_log";
