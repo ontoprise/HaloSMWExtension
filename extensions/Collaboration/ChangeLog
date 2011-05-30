@@ -1,8 +1,11 @@
 Collaboration extension ChangeLog
 =================================
 
-VERSION 1.32
+VERSION 1.40
   FEATURES:
+	FR #14XXX:
+	FR #14XXX:
+	FR #14XXX:
 	FR #13053: Included an option to completely delete a comment
   CHANGES:
 	Issue  #14358: Removed localization of parser functions

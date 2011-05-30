@@ -1,19 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <deploydescriptor>
 	<global>
-		<version>140</version>
-		<id>collaboration</id>
-		<license>GPL-v2</license>
-		<vendor>Ontoprise GmbH</vendor>
-		<maintainer>Ontoprise GmbH</maintainer>
-		<instdir>extensions/Collaboration</instdir>
+		<version>092</version>
+		<id>widgets</id>
+		<license>GPL</license>
+		<vendor>[http://www.sergeychernyshev.com Sergey Chernyshev]</vendor>
+		<maintainer>[http://www.sergeychernyshev.com Sergey Chernyshev]</maintainer>
+		<instdir>extensions/Widgets</instdir>
 		<description>
-			Add fancy collaboration stuff to your wiki.
+			Extension:Widgets
 		</description>
-		<helpurl>http://smwforum.ontoprise.com/smwforum/index.php/Help:Collaboration_Extension</helpurl>
+		<helpurl>http://www.mediawiki.org/wiki/Extension:Widgets</helpurl>
 		<dependencies>
-			<dependency from="153" to="153">smwplus</dependency>
-			<dependency from="092" optional="true">widgets</dependency>
 		</dependencies>
 		<notice>
 "Your Wiki contains now new pages. Since existing pages can make
@@ -39,23 +37,21 @@ http://smwforum.ontoprise.com/smwforum/index.php/Help:Repairing_data"
 		<file loc="deploy.xml" />
 		<!-- TODO: add others -->
 	</codefiles>
-	<wikidumps>
-		<file loc="import/collaboration.xml"/>
-	</wikidumps>
+	<!--<wikidumps>
+		<file loc="widgets.xml"/>
+	</wikidumps>-->
 	<resources>
-		<file loc="skins/Comment/icons/defaultuser.gif" />
-		<file loc="skins/Comment/icons/good_active.png" />
-		<file loc="skins/Comment/icons/neutral_active.png" />
-		<file loc="skins/Comment/icons/bad_active.png" />
-		<file loc="skins/Comment/icons/Comment_icon_crystal.png" />
-		<file loc="skins/Comment/icons/Smw_plus_comment_icon_2_16x16.gif" />
 	</resources>
 	<configs>
 		<new>
-			<require name="ce_init"
-				file="extensions/Collaboration/includes/CE_Initialize.php" />
-			<function name="enableCollaboration">
-			</function>
+			<require name="widget_init"
+				file="extensions/Widgets/Widgets.php" />
+			<variable name="$wgGroupPermissions['sysop']['editwidgets']">
+				<boolean name="sysop"
+					description="allow editing widgets for sysops">
+					true
+				</boolean>
+			</variable>
 		</new>
 	</configs>
 </deploydescriptor>
