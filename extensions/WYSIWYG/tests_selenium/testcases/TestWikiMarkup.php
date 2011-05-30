@@ -2,7 +2,7 @@
 
 require_once dirname(__FILE__) . '/../../../../tests/tests_halo/SeleniumTestCase_Base.php';
 
-class Example extends SeleniumTestCase_Base
+class TestWikiMarkup extends SeleniumTestCase_Base
 {
 
   public function testMyTestCase()
