@@ -1,6 +1,16 @@
 <?php
 
-/* Send mail to someone
+/* Send mail to someone. The only required parameter is -t to specify the
+ * recipient.
+ * The message will not be send if both body and subject are not set.
+ * By default the mail command of PHP is used. This assumes that a local SMTP
+ * server is running on the machine and that php is properly configured in PHP.
+ * To configure php set the appropriate settings in the php.ini or by using the
+ * following commands in your script:
+ *   ini_set("SMTP","smtp.example.com" );
+ *   ini_set('sendmail_from', 'user@example.com')
+ * You may also use a different SMTP server. In this case set the options
+ * -S -U and -P. Then the Pear Mail class is used in favor of the mail command.
  *
  * Usage:
  *
@@ -8,7 +18,7 @@
  *                   [ -s <subject> ]
  *                   [ -m <mail text> | -f <file with mail text> ]
  *                   [ -F <from adress> ]
- *                   [ -S <smtp server with port> (default port is 587)]
+ *                   [ -S <smtp server[:port]> (default port is 587)]
  *                   [ -U <smtp user> ]
  *                   [ -P <smtp password> ]
  *
