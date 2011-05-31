@@ -180,13 +180,13 @@ class DFPrintoutStream {
 				$prefix = "";
 				switch($type) {
 					case DF_PRINTSTREAM_TYPE_WARN:
-						$prefix .= $dfgLang->getLanguageString('df_warn'). " ";
+						$prefix .= "[".$dfgLang->getLanguageString('df_warn'). "]\n";
 						break;
 					case DF_PRINTSTREAM_TYPE_ERROR:
-						$prefix .= $dfgLang->getLanguageString('df_error'). " ";
+						$prefix .= "[".$dfgLang->getLanguageString('df_error'). "]\n";
 						break;
 					case DF_PRINTSTREAM_TYPE_FATAL:
-						$prefix .= $dfgLang->getLanguageString('df_fatal'). " ";
+						$prefix .= "[".$dfgLang->getLanguageString('df_fatal'). "]\n";
 				}
 				if (is_array($text)) {
 					$result = "";

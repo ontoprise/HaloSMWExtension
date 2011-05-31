@@ -62,9 +62,13 @@ class DF_Language_De extends DF_Language {
     'df_webadmin_searchtab' => 'Suche',
     'df_webadmin_bundledetailtab' => 'Bundle-Details',
     'df_webadmin_maintenacetab' => 'Wartung',
+	'df_webadmin_uploadtab' => 'Hochladen',
+	'df_webadmin_settingstab' => 'Einstellungen',
 	
 	'df_webadmin_restorepoint' => 'Rücksetzpunkt',
-	'df_webadmin_creationdate' => 'Datum der Erzeugung'
+	'df_webadmin_creationdate' => 'Datum der Erzeugung',
+	'df_webadmin_version' => 'Version',
+	'df_webadmin_upload' => 'Hochladen'
     
 	);
 }

@@ -1,7 +1,12 @@
 @CHARSET "ISO-8859-1";
 
 .df_extension_id {
-	width: 30%;
+    width: 15%;
+}
+
+.df_extension_version {
+    width: 15%;
+   text-align: center;
 }
 
 .df_description {
@@ -12,6 +17,7 @@
     width: 20%;
     text-align: center;
 }
+
 
 .df_extension_id:hover {
 background-color:yellow;

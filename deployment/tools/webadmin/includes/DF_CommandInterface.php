@@ -69,6 +69,8 @@ class DFCommandInterface {
 				return $this->createRestorePoint($args);
 			case "getLocalDeployDescriptor":
 				return $this->getLocalDeployDescriptor($args);
+			case "getDeployDescriptor":
+				return $this->getDeployDescriptor($args);
 			default: return "unsupported command";
 		}
 	}
@@ -115,6 +117,38 @@ class DFCommandInterface {
 			$wikidumps = json_decode(trim($outText));
 			$result['wikidumps'] = $wikidumps->wikidumps;
 			$result['ontologies'] = $wikidumps->ontologies;
+		}
+		return json_encode($result);
+	}
+
+	public function getDeployDescriptor($args) {
+		global $mwrootDir, $dfgOut;
+		$extid = reset($args);
+		$dd = PackageRepository::getLatestDeployDescriptor($extid);
+		if (is_null($dd)) {
+			return NULL;
+		}
+
+		$result=array();
+		$result['id'] = $dd->getID();
+		$result['version'] = $dd->getVersion();
+		$result['patchlevel'] = $dd->getPatchlevel();
+		$result['dependencies'] = $dd->getDependencies();
+		$result['maintainer'] = $dd->getMaintainer();
+		$result['vendor'] = $dd->getVendor();
+		$result['helpurl'] = $dd->getHelpURL();
+
+		$result['resources'] = $dd->getResources();
+		$result['onlycopyresources'] = $dd->getOnlyCopyResources();
+
+		$result['wikidumps'] = array();
+		foreach($dd->getWikidumps() as $loc) {
+			$result['wikidumps'][$loc] = array();
+		}
+
+		$result['ontologies'] = array();
+		foreach($dd->getOntologies() as $loc) {
+			$result['ontologies'][$loc] = array();
 		}
 		return json_encode($result);
 	}

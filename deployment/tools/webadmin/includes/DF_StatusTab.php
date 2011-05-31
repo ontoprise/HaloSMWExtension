@@ -64,6 +64,9 @@ class DFStatusTab {
 		$html .= $dfgLang->getLanguageString('df_webadmin_extension');
 		$html .= "</th>";
 		$html .= "<th>";
+        $html .= $dfgLang->getLanguageString('df_webadmin_version');
+        $html .= "</th>";
+		$html .= "<th>";
 		$html .= $dfgLang->getLanguageString('df_webadmin_description');
 		$html .= "</th>";
 		$html .= "<th>";
@@ -74,6 +77,9 @@ class DFStatusTab {
 			$html .= "<td class=\"df_extension_id\">";
 			$html .= $id;
 			$html .= "</td>";
+			$html .= "<td class=\"df_extension_version\">";
+            $html .= Tools::addVersionSeparators(array($p->getVersion(), $p->getPatchlevel()));
+            $html .= "</td>";
 			$html .= "<td class=\"df_description\">";
 			$html .= $p->getDescription();
 			$html .= "</td>";
@@ -82,6 +88,7 @@ class DFStatusTab {
 				$html .= "<input type=\"button\" class=\"df_update_button\" value=\"Update\" id=\"df_update__$id\"></input>";
 				$html .= "<input type=\"button\" class=\"df_deinstall_button\" value=\"De-Install\" id=\"df_deinstall__$id\"></input>";
 			} else {
+				$html .= "<input type=\"button\" class=\"df_update_button\" value=\"Update\" id=\"df_update__$id\" disabled=\"true\"></input>";
 				$html .= "<input type=\"button\" class=\"df_deinstall_button\" value=\"De-Install\" id=\"df_update__$id\"></input>";
 			}
 			$html .= "</td>";

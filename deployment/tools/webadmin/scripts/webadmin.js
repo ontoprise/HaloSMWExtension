@@ -38,6 +38,7 @@ $(function() {
 		// poll until finished
 		var timer;
 		
+		var oldLength = 0;
 		var periodicLogLoad = function(xhr2, status2) {
 			if (timer) clearTimeout(timer);
 			timer = setTimeout( periodicLogLoad, 5000);
@@ -45,12 +46,16 @@ $(function() {
 			var readLogurl = wgServer+wgScriptPath+"/deployment/tools/webadmin?rs=readlog&rsargs[]="+encodeURIComponent(logfile);
 			$.ajax( { url : readLogurl, dataType:"json", complete : function(xhr3, status3) { 
 				var resultLog = xhr3.responseText;
+				var length = resultLog.length;
+				resultLog = resultLog.substr(oldLength);
+				oldLength = length;
 				if (resultLog != '') { 
 					resultLog += '<img id="df_progress_indicator" src="skins/ajax-loader.gif"/>';
 					var dialog = $('#df_install_dialog');
-					dialog[0].innerHTML = resultLog; 
+					$('#df_progress_indicator').remove();
+					dialog[0].innerHTML += resultLog; 
 				}
-				if (resultLog.indexOf("__OK__") != -1 || resultLog.indexOf("$$NOTEXISTS$$") != -1) {
+				if (xhr3.responseText.indexOf("__OK__") != -1 || xhr3.responseText.indexOf("$$NOTEXISTS$$") != -1) {
 					clearTimeout(timer);
 					$('#df_progress_indicator').hide();
 					// finished installation
@@ -102,6 +107,11 @@ $(function() {
 					$('#df_progress_indicator').hide();
 					var $dialog = $('#df_install_dialog');
 					$dialog.dialog('option', 'title', dfgWebAdminLanguage.getMessage('df_webadmin_finished'));
+					
+					alert("An error occured, finalization is done.");
+					// start finalize
+					var finalizeurl = wgServer+wgScriptPath+"/deployment/tools/webadmin?rs=finalize&rsargs[]=";
+					$.ajax( { url : finalizeurl, dataType:"json", complete : finalizeStarted });
 				}
 				
 			} });
@@ -434,7 +444,7 @@ $(function() {
 			
 			$('#df_search_results .df_extension_id').click(function(e2) {
 				var id = $(e2.currentTarget).html();
-				var url = wgServer+wgScriptPath+"/deployment/tools/webadmin?rs=getLocalDeployDescriptor&rsargs[]="+encodeURIComponent(id);
+				var url = wgServer+wgScriptPath+"/deployment/tools/webadmin?rs=getDeployDescriptor&rsargs[]="+encodeURIComponent(id);
 				var $dialog = $('#df_extension_details')
 				.dialog( {
 					autoOpen : false,
