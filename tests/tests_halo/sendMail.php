@@ -67,7 +67,7 @@ if (strlen($message) == 0 && strlen($subject) == 0)
     die ("Error: empty subject and mail body\n");
 
 // set from address to some default
-if (! isset($from)) $from = "Hudson Buildserver <robotta@ontoprise.de>";
+if (! isset($from)) $from = "Hudson Buildserver <hudson@ontoprise.de>";
 
 // send mail using the php mail command when we do not have smtp settings defined
 if (! isset($smtp)) {
