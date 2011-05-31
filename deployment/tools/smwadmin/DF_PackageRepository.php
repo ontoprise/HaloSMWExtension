@@ -62,8 +62,15 @@ class PackageRepository {
 		global $dfgOut;
 		if (!empty(self::$repo_dom)) return self::$repo_dom;
 		$rep_urls = array();
-		global $smwgDFIP;
-		$repositoriesFile = isset($smwgDFIP) ? "$smwgDFIP/tools/repositories" : "repositories";
+		global $smwgDFIP, $rootDir;
+		if (isset($smwgDFIP)) {
+			$repositoriesFile = "$smwgDFIP/tools/repositories";
+		} else if (isset($rootDir)) {
+			$repositoriesFile = "$rootDir/tools/repositories";
+		} else {
+			$repositoriesFile =  "repositories";
+		}
+		
 		if (file_exists($repositoriesFile)) {
 			$dfgOut->outputln("Reading from repository file...");
 			$content = file_get_contents($repositoriesFile);
@@ -292,7 +299,15 @@ class PackageRepository {
 
 		return $sortedResults;
 	}
-
+    
+	/**
+	 * Search for packages in all repositories containing the
+	 * $searchvalue in its ID or description. $searchvalue can contain 
+	 * several words (separated by withspace). All must be contained. 
+	 * 
+	 * @param string $searchValue
+	 * @return array (id => DeployDescriptor)
+	 */
 	public static function searchAllPackages($searchValue) {
 		$results = array();
 		$searchValues = explode(" ", trim($searchValue));
@@ -311,14 +326,14 @@ class PackageRepository {
 							break;
 						}
 					}
-					if ($found) {
+					if ($found || empty($searchValue)) {
 						$results[$id] = $description;
 					}
 				}
 
 			}
 		}
-
+        ksort($results);
 		return $results;
 	}
 	/**

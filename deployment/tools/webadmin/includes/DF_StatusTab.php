@@ -79,8 +79,8 @@ class DFStatusTab {
 			$html .= "</td>";
 			$html .= "<td class=\"df_actions\">";
 			if (array_key_exists($id, $updates)) {
-				$html .= "<input type=\"button\" class=\"df_update_button\" value=\"Update\" id=\"df_deinstall__$id\"></input>";
-				$html .= "<input type=\"button\" class=\"df_deinstall_button\" value=\"De-Install\" id=\"df_update__$id\"></input>";
+				$html .= "<input type=\"button\" class=\"df_update_button\" value=\"Update\" id=\"df_update__$id\"></input>";
+				$html .= "<input type=\"button\" class=\"df_deinstall_button\" value=\"De-Install\" id=\"df_deinstall__$id\"></input>";
 			} else {
 				$html .= "<input type=\"button\" class=\"df_deinstall_button\" value=\"De-Install\" id=\"df_update__$id\"></input>";
 			}

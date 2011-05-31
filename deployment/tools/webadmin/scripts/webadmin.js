@@ -1,4 +1,4 @@
-/*  Copyright 2009, ontoprise GmbH
+/*  Copyright 2011, ontoprise GmbH
  *
  *   The deployment tool is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -97,6 +97,13 @@ $(function() {
 					$.ajax( { url : finalizeurl, dataType:"json", complete : finalizeStarted });
 				}
 				
+				if (resultLog.indexOf("$$ERROR$$") != -1) {
+					clearTimeout(timer);
+					$('#df_progress_indicator').hide();
+					var $dialog = $('#df_install_dialog');
+					$dialog.dialog('option', 'title', dfgWebAdminLanguage.getMessage('df_webadmin_finished'));
+				}
+				
 			} });
 			
 			
@@ -136,6 +143,13 @@ $(function() {
 					$.ajax( { url : finalizeurl, dataType:"json", complete : finalizeStarted });
 				}
 				
+				if (resultLog.indexOf("$$ERROR$$") != -1) {
+					clearTimeout(timer);
+					$('#df_progress_indicator').hide();
+					var $dialog = $('#df_install_dialog');
+					$dialog.dialog('option', 'title', dfgWebAdminLanguage.getMessage('df_webadmin_finished'));
+				}
+				
 			} });
 			
 			
@@ -144,6 +158,58 @@ $(function() {
 		
 	};
 	
+	/**
+	 * Called when update process has been started (no global update).
+	 * 
+	 * @param xhr HTTP responseObject 
+	 * @param int status HTTP response code 
+	 */
+	var updateStarted = function (xhr, status) {
+		var logfile = xhr.responseText;
+		
+		// poll log until finished
+		var timer;
+		var periodicLogLoad = function(xhr2, status2) {
+			if (timer) clearTimeout(timer);
+			timer = setTimeout( periodicLogLoad, 5000);
+			
+			var readLogurl = wgServer+wgScriptPath+"/deployment/tools/webadmin?rs=readlog&rsargs[]="+encodeURIComponent(logfile);
+			$.ajax( { url : readLogurl, dataType:"json", complete : function(xhr3, status3) { 
+				var resultLog = xhr3.responseText;
+				if (resultLog != '') { 
+					resultLog += '<img id="df_progress_indicator" src="skins/ajax-loader.gif"/>';
+					var dialog = $('#df_install_dialog');
+					dialog[0].innerHTML = resultLog; 
+				}
+				if (resultLog.indexOf("__OK__") != -1 || resultLog.indexOf("$$NOTEXISTS$$") != -1) {
+					clearTimeout(timer);
+					$('#df_progress_indicator').hide();
+					// start finalize
+					var finalizeurl = wgServer+wgScriptPath+"/deployment/tools/webadmin?rs=finalize&rsargs[]=";
+					$.ajax( { url : finalizeurl, dataType:"json", complete : finalizeStarted });
+				}
+				
+				if (resultLog.indexOf("$$ERROR$$") != -1) {
+					clearTimeout(timer);
+					$('#df_progress_indicator').hide();
+					var $dialog = $('#df_install_dialog');
+					$dialog.dialog('option', 'title', dfgWebAdminLanguage.getMessage('df_webadmin_finished'));
+				}
+				
+			} });
+			
+			
+		};
+		setTimeout( periodicLogLoad, 3000);
+		
+	};
+	
+	/**
+	 * Called when the global update process has been started.
+	 * 
+	 * @param xhr HTTP responseObject 
+	 * @param int status HTTP response code 
+	 */
 	var globalUpdateStarted = function (xhr, status) {
 		var logfile = xhr.responseText;
 		
@@ -169,6 +235,13 @@ $(function() {
 					$.ajax( { url : finalizeurl, dataType:"json", complete : finalizeStarted });
 				}
 				
+				if (resultLog.indexOf("$$ERROR$$") != -1) {
+					clearTimeout(timer);
+					$('#df_progress_indicator').hide();
+					var $dialog = $('#df_install_dialog');
+					$dialog.dialog('option', 'title', dfgWebAdminLanguage.getMessage('df_webadmin_finished'));
+				}
+				
 			} });
 			
 			
@@ -177,8 +250,19 @@ $(function() {
 		
 	};
 	
+	/**
+	 * Called when the extension detail are requested. 
+	 * 
+	 * @param xhr HTTP responseObject 
+	 * @param int status HTTP response code 
+	 */
 	var extensionsDetailsStarted = function (xhr, status) {
 		var dd = $.parseJSON(xhr.responseText);
+		
+		if (dd.error) {
+			$('#df_extension_details')[0].innerHTML = dd.error;
+			return;
+		}
 		var id = dd.id;
 		var version = dd.version
 		var patchlevel = dd.patchlevel;
@@ -241,18 +325,18 @@ $(function() {
 		resourcesCopyOnlyHTML += "</ul>";
 	
 		
-		var html = $('#df_extension_details').html('<div><table>'
-					+'<tr><td>'+dfgWebAdminLanguage.getMessage('df_webadmin_id')+'</td><td>'+id+'-'+version+'</td></tr>'
-					+'<tr><td>'+dfgWebAdminLanguage.getMessage('df_webadmin_patchlevel')+'</td><td>'+patchlevel+'</td></tr>'
-					+'<tr><td>'+dfgWebAdminLanguage.getMessage('df_webadmin_dependencies')+'</td><td>'+dependenciesHTML+'</td></tr>'
-					+'<tr><td>'+dfgWebAdminLanguage.getMessage('df_webadmin_maintainer')+'</td><td>'+maintainer+'</td></tr>'
-					+'<tr><td>'+dfgWebAdminLanguage.getMessage('df_webadmin_vendor')+'</td><td>'+vendor+'</td></tr>'
-					+'<tr><td>'+dfgWebAdminLanguage.getMessage('df_webadmin_license')+'</td><td>'+license+'</td></tr>'
-					+'<tr><td>'+dfgWebAdminLanguage.getMessage('df_webadmin_helpurl')+'</td><td><a href="'+helpurl+'">Help</td></tr>'
-					+'<tr><td>'+dfgWebAdminLanguage.getMessage('df_webadmin_wikidumps')+'</td><td>'+wikidumpsHTML+'</td></tr>'
-					+'<tr><td>'+dfgWebAdminLanguage.getMessage('df_webadmin_ontologies')+'</td><td>'+ontologiesHTML+'</td></tr>'
-					+'<tr><td>'+dfgWebAdminLanguage.getMessage('df_webadmin_resources')+'</td><td>'+resourcesHTML+'</td></tr>'
-					+'<tr><td>'+dfgWebAdminLanguage.getMessage('df_webadmin_resourcecopyonly')+'</td><td>'+resourcesCopyOnlyHTML+'</td></tr>'
+		var html = $('#df_extension_details').html('<div><table class="df_extension_details">'
+					+'<tr><td description="true">'+dfgWebAdminLanguage.getMessage('df_webadmin_id')+'</td><td value="true">'+id+'-'+version+'</td></tr>'
+					+'<tr><td description="true">'+dfgWebAdminLanguage.getMessage('df_webadmin_patchlevel')+'</td><td value="true">'+patchlevel+'</td></tr>'
+					+'<tr><td description="true">'+dfgWebAdminLanguage.getMessage('df_webadmin_dependencies')+'</td><td value="true">'+dependenciesHTML+'</td></tr>'
+					+'<tr><td description="true">'+dfgWebAdminLanguage.getMessage('df_webadmin_maintainer')+'</td><td value="true">'+maintainer+'</td></tr>'
+					+'<tr><td description="true">'+dfgWebAdminLanguage.getMessage('df_webadmin_vendor')+'</td><td value="true">'+vendor+'</td></tr>'
+					+'<tr><td description="true">'+dfgWebAdminLanguage.getMessage('df_webadmin_license')+'</td><td value="true">'+license+'</td></tr>'
+					+'<tr><td description="true">'+dfgWebAdminLanguage.getMessage('df_webadmin_helpurl')+'</td><td value="true"><a href="'+helpurl+'">Help</td></tr>'
+					+'<tr><td description="true">'+dfgWebAdminLanguage.getMessage('df_webadmin_wikidumps')+'</td><td value="true">'+wikidumpsHTML+'</td></tr>'
+					+'<tr><td description="true">'+dfgWebAdminLanguage.getMessage('df_webadmin_ontologies')+'</td><td value="true">'+ontologiesHTML+'</td></tr>'
+					+'<tr><td description="true">'+dfgWebAdminLanguage.getMessage('df_webadmin_resources')+'</td><td value="true">'+resourcesHTML+'</td></tr>'
+					+'<tr><td description="true">'+dfgWebAdminLanguage.getMessage('df_webadmin_resourcecopyonly')+'</td><td value="true">'+resourcesCopyOnlyHTML+'</td></tr>'
 					+'</table></div>');
 		
 		
@@ -299,6 +383,7 @@ $(function() {
 				
 			});
 			
+			// register check buttons
 			$('.df_check_button').click(function(e) {
 				var id = $(e.currentTarget).attr('id');
 				id = id.split("__")[1];
@@ -312,11 +397,13 @@ $(function() {
 						text += extensionsToInstall['exception'][0];
 					} else {
 						text = dfgWebAdminLanguage.getMessage('df_webadmin_wouldbeinstalled');
+						text += "<ul>";
 						$.each(extensionsToInstall['extensions'], function(index, value) { 
 							var id =value[0];
 							var version =value[1];
-							text += "<li>"+id+"-"+version;
+							text += "<li>"+id+"-"+version+"</li>";
 						});
+						text += "</ul>";
 					}
 					
 					$('#check-extension-dialog-text').html(text);
@@ -344,6 +431,23 @@ $(function() {
 				}
 				$.ajax( { url : url, dataType:"json", complete : callbackForExtensions });
 			});
+			
+			$('#df_search_results .df_extension_id').click(function(e2) {
+				var id = $(e2.currentTarget).html();
+				var url = wgServer+wgScriptPath+"/deployment/tools/webadmin?rs=getLocalDeployDescriptor&rsargs[]="+encodeURIComponent(id);
+				var $dialog = $('#df_extension_details')
+				.dialog( {
+					autoOpen : false,
+					title : dfgWebAdminLanguage.getMessage('df_webadmin_extension_details'),
+					modal: true,
+					width: 800,
+					height: 500
+				});
+				$dialog.html("<div></div>");
+				$dialog.dialog('open');
+				$dialog.html('<img src="skins/ajax-loader.gif"/>');
+				$.ajax( { url : url, dataType:"json", complete : extensionsDetailsStarted });
+			});
 		}
 		var searchvalue = $('#df_searchinput').val();
 		var url = wgServer+wgScriptPath+"/deployment/tools/webadmin?rs=search&rsargs[]="+encodeURIComponent(searchvalue);
@@ -363,6 +467,7 @@ $(function() {
 	
 	$(document).ready(function(e) { 
 		
+		// register every extension in status view for showing extension details on a click event.
 		$('.df_extension_id').click(function(e2) {
 			var id = $(e2.currentTarget).html();
 			var url = wgServer+wgScriptPath+"/deployment/tools/webadmin?rs=getLocalDeployDescriptor&rsargs[]="+encodeURIComponent(id);
@@ -376,9 +481,11 @@ $(function() {
 			});
 			$dialog.html("<div></div>");
 			$dialog.dialog('open');
+			$dialog.html('<img src="skins/ajax-loader.gif"/>');
 			$.ajax( { url : url, dataType:"json", complete : extensionsDetailsStarted });
 		});
 		
+		// register de-install buttons
 		$('.df_deinstall_button').click(function(e2) {
 			var id = $(e2.currentTarget).attr('id');
 			id = id.split("__")[1];
@@ -397,6 +504,26 @@ $(function() {
 			$.ajax( { url : url, dataType:"json", complete : deinstallStarted });
 		});
 		
+		// register update buttons
+		$('.df_update_button').click(function(e2) {
+			var id = $(e2.currentTarget).attr('id');
+			id = id.split("__")[1];
+			var url = wgServer+wgScriptPath+"/deployment/tools/webadmin?rs=update&rsargs[]="+encodeURIComponent(id);
+			var $dialog = $('#df_install_dialog')
+			.dialog( {
+				autoOpen : false,
+				title : dfgWebAdminLanguage.getMessage('df_webadmin_pleasewait'),
+				modal: true,
+				width: 800,
+				height: 500
+			});
+			$dialog.html("<div></div>");				
+			$dialog.dialog('open');
+			$dialog.html('<img src="skins/ajax-loader.gif"/>');
+			$.ajax( { url : url, dataType:"json", complete : updateStarted });
+		});
+		
+		// register global update button
 		$('#df_global_update').click(function(e2) {
 			
 			
@@ -406,9 +533,11 @@ $(function() {
 				var text = "";
 				if (extensionsToInstall['extensions']) {
 					text = dfgWebAdminLanguage.getMessage('df_webadmin_wouldbeupdated');
+					text += "<ul>";
 					$.each(extensionsToInstall['extensions'], function(index, value) { 
-					text += "<li>"+value[0]+"-"+value[1];
-				});
+						text += "<li>"+value[0]+"-"+value[1]+"</li>";
+					});
+					text += "</ul>";
 				}
 				if (extensionsToInstall['exception']) {
 					text += extensionsToInstall['exception'][0];
@@ -418,7 +547,7 @@ $(function() {
 				
 				$( "#global-updatedialog-confirm" ).dialog({
 					resizable: false,
-					height:250,
+					height:350,
 					modal: true,
 					 buttons: [
 			              {
@@ -479,11 +608,13 @@ $(function() {
 					var dialog = $('#df_install_dialog');
 					dialog[0].innerHTML = resultLog; 
 				}
-				if (resultLog.indexOf("__OK__") != -1 || resultLog.indexOf("$$NOTEXISTS$$") != -1) {
+				if (resultLog.indexOf("__OK__") != -1 || resultLog.indexOf("$$NOTEXISTS$$") != -1 || resultLog.indexOf("$$ERROR$$") != -1) {
 					clearTimeout(timer);
 					$('#df_progress_indicator').hide();
-					// done
+					var $dialog = $('#df_install_dialog');
+					$dialog.dialog('option', 'title', dfgWebAdminLanguage.getMessage('df_webadmin_finished'));
 				}
+		
 				
 			} });
 			

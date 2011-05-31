@@ -17,3 +17,20 @@
 background-color:yellow;
 cursor: pointer;
 }
+
+.df_restorepoint_table {
+	margin-top: 20px;
+}
+
+.df_restorepoint_table td {
+    width: 200px;
+    text-align: center;
+}
+
+.df_extension_details td[description] {
+	width: 150px;
+}
+
+.df_extension_details td[value] {
+    color: blue;
+}

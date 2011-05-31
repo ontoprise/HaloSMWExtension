@@ -57,6 +57,8 @@ class DFCommandInterface {
 				return $this->install($args);
 			case "deinstall":
 				return $this->deinstall($args);
+			case "update":
+				return $this->update($args);
 			case "checkforGlobalUpdate":
 				return $this->checkforGlobalUpdate();
 			case "doGlobalUpdate":
@@ -98,16 +100,22 @@ class DFCommandInterface {
 		$result['maintainer'] = $dd->getMaintainer();
 		$result['vendor'] = $dd->getVendor();
 		$result['helpurl'] = $dd->getHelpURL();
-		 
+			
 		$result['resources'] = $dd->getResources();
 		$result['onlycopyresources'] = $dd->getOnlyCopyResources();
 
 
 		$runCommand = "php $mwrootDir/deployment/tools/smwadmin/smwadmin.php --listpages $extid --outputformat json --nocheck --noask";
 		exec($runCommand, $out, $ret);
-		$wikidumps = json_decode(trim(implode("",$out)));
-		$result['wikidumps'] = $wikidumps->wikidumps;
-		$result['ontologies'] = $wikidumps->ontologies;
+
+		$outText = implode("",$out);
+		if (strpos($outText, '$$ERROR$$') !== false) {
+			$result['error'] = $outText;
+		} else {
+			$wikidumps = json_decode(trim($outText));
+			$result['wikidumps'] = $wikidumps->wikidumps;
+			$result['ontologies'] = $wikidumps->ontologies;
+		}
 		return json_encode($result);
 	}
 
@@ -165,6 +173,24 @@ class DFCommandInterface {
 
 		} else {
 			$runCommand = "php $mwrootDir/deployment/tools/smwadmin/smwadmin.php --logtofile $filename --outputformat html --nocheck --noask -d $extid";
+			$nullResult = `$runCommand &`;
+		}
+		return $filename;
+	}
+
+	public function update($args) {
+		global $mwrootDir, $dfgOut;
+		$extid = reset($args);
+		$filename = uniqid().".log";
+		touch(Tools::getTempDir()."/$filename");
+		chdir($mwrootDir.'/deployment/tools');
+		if (Tools::isWindows()) {
+			$wshShell = new COM("WScript.Shell");
+			$runCommand = "cmd /K START php $mwrootDir/deployment/tools/smwadmin/smwadmin.php --logtofile $filename --outputformat html --nocheck --noask -u $extid";
+			$oExec = $wshShell->Run("$runCommand", 7, false);
+
+		} else {
+			$runCommand = "php $mwrootDir/deployment/tools/smwadmin/smwadmin.php --logtofile $filename --outputformat html --nocheck --noask -u $extid";
 			$nullResult = `$runCommand &`;
 		}
 		return $filename;

@@ -25,7 +25,7 @@
  *
  */
 if (!defined("DF_WEBADMIN_TOOL")) {
-    die();
+	die();
 }
 
 require_once($mwrootDir.'/deployment/tools/smwadmin/DF_Rollback.php');
@@ -49,15 +49,22 @@ class DFMaintenanceTab {
 
 		$html = "<input type=\"text\" style=\"width: 450px;\" value=\"\" id=\"df_restorepoint\"></input>";
 		$html .= "<input type=\"button\" value=\"Create\" id=\"df_create_restorepoint\"></input>";
+		$html .= "<br/>";
 		$html .= $this->serializeRestorePoints($this->getAllRestorePoints());
 		return $html;
 	}
 
 	public function serializeRestorePoints($restorepoints) {
-        global $dfgLang;
-		$html = "<table>";
+		global $dfgLang;
+		$html = "<div class=\"df_restorepoint_table\"><table>";
 		$html .= "<th>";
 		$html .= $dfgLang->getLanguageString('df_webadmin_restorepoint');
+		$html .= "</th>";
+		$html .= "<th>";
+		$html .= $dfgLang->getLanguageString('df_webadmin_creationdate');
+		$html .= "</th>";
+		$html .= "<th>";
+		$html .= $dfgLang->getLanguageString('df_webadmin_action');
 		$html .= "</th>";
 
 		foreach($restorepoints as $rp) {
@@ -67,15 +74,15 @@ class DFMaintenanceTab {
 			$html .= $name;
 			$html .= "</td>";
 			$html .= "<td>";
-            $lastMod = filemtime($rp);
-            $html .= date ("m/d/Y", $lastMod);
-            $html .= "</td>";
+			$lastMod = filemtime($rp);
+			$html .= date ("m/d/Y", $lastMod);
+			$html .= "</td>";
 			$html .= "<td>";
-            $html .= "<input type=\"button\" class=\"df_restore_button\" value=\"Restore\" id=\"df_restore__$name\"></input>";
-            $html .= "</td>";
+			$html .= "<input type=\"button\" class=\"df_restore_button\" value=\"Restore\" id=\"df_restore__$name\"></input>";
+			$html .= "</td>";
 			$html .= "</tr>";
 		}
-		$html .= "</table>";
+		$html .= "</table></div>";
 		return $html;
 	}
 

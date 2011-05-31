@@ -190,7 +190,7 @@ class DeployDescriptor {
 				
 			}
 
-			if (isset($update[0]->attributes()->removeAll)) {
+			if (isset($update[0]) && isset($update[0]->attributes()->removeAll)) {
 				$this->removeAllConfigs = true;
 			}
 		}

@@ -28,9 +28,9 @@ var dfgUserDFWebAdmin_LanguageStrings = {
 	'df_webadmin_wouldbeupdated' : 'The following extensions would be updated:',
 	'df_webadmin_finished' : 'Finished',
 	'df_webadmin_pleasewait' : 'Please wait...',
+	
+	// extension details
 	'df_webadmin_extension_details' : 'Extension details',
-	
-	
 	'df_webadmin_id' : 'ID',
 	'df_webadmin_patchlevel' : 'Patchlevel',
 	'df_webadmin_dependencies' : 'Dependencies',
