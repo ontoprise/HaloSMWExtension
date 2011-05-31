@@ -33,8 +33,8 @@ $rootDir = dirname(__FILE__);
 $rootDir = str_replace("\\", "/", $rootDir);
 $rootDir = realpath($rootDir."/../../");
 
+require_once($rootDir."/io/DF_PrintoutStream.php");
 require_once($rootDir."/tools/maintenance/maintenanceTools.inc");
-
 
 $mwRootDir = dirname(__FILE__);
 $mwRootDir = str_replace("\\", "/", $mwRootDir);
@@ -42,6 +42,8 @@ $mwRootDir = realpath($mwRootDir."/../../..");
 
 if (substr($mwRootDir, -1) != "/") $mwRootDir .= "/";
 
+$dfgOut = DFPrintoutStream::getInstance(DF_OUTPUT_FORMAT_TEXT);
+$dfgOut->start(DF_OUTPUT_TARGET_STDOUT);
 
 $cChecker = new ConsistencyChecker($mwRootDir);
 $errorFound = $cChecker->checkDependencies(DF_OUTPUT_FORMAT_TEXT);
