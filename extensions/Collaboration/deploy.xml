@@ -12,7 +12,7 @@
 		</description>
 		<helpurl>http://smwforum.ontoprise.com/smwforum/index.php/Help:Collaboration_Extension</helpurl>
 		<dependencies>
-			<dependency from="153" to="153">smwplus</dependency>
+			<dependency from="153" to="156">smwplus</dependency>
 			<dependency from="092" optional="true">widgets</dependency>
 		</dependencies>
 		<notice>

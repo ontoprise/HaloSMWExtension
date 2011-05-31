@@ -13,7 +13,7 @@
 		<dependencies>
 			<dependency from="152" to="156">smwhalo</dependency>
 			<dependency from="200" to="212">semanticforms</dependency>
-			<dependency from="153" to="153" optional="true">smwplus</dependency>
+			<dependency from="153" to="156" optional="true">smwplus</dependency>
 			<dependency from="100" to="100" optional="true">smwplussandbox</dependency>
 		</dependencies>
 		<patchlevel>0</patchlevel>
