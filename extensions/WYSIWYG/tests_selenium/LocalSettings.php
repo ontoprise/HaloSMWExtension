@@ -14,4 +14,3 @@ enableSMWHalo('SMWHaloStore2');
 # the FCK Editor itself
 require_once('extensions/WYSIWYG/WYSIWYG.php');
 
-$wgAllowExternalImages = true;
