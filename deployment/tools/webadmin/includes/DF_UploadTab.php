@@ -25,33 +25,99 @@
  *
  */
 if (!defined("DF_WEBADMIN_TOOL")) {
-    die();
+	die();
 }
+
+require_once($mwrootDir.'/deployment/tools/smwadmin/DF_Tools.php');
 
 class DFUploadTab {
 	/**
-     * Status tab
-     *
-     */
-    public function __construct() {
+	 * Status tab
+	 *
+	 */
+	public function __construct() {
 
-    }
-    
-    public function getTabName() {
-        global $dfgLang;
-        return $dfgLang->getLanguageString('df_webadmin_uploadtab');
-    }
+	}
 
-    public function getHTML() {
-    	 global $dfgLang;
-	    $uploadButtonText = $dfgLang->getLanguageString('df_webadmin_upload');
-    	$html = <<<ENDS
+	public function getTabName() {
+		global $dfgLang;
+		return $dfgLang->getLanguageString('df_webadmin_uploadtab');
+	}
+
+	public function getHTML() {
+		global $dfgLang;
+		$uploadButtonText = $dfgLang->getLanguageString('df_webadmin_upload');
+		$html = <<<ENDS
 <form action="upload.php" method="post" enctype="multipart/form-data">
 <input type="file" name="datei"><br>
 <input type="submit" value="$uploadButtonText">
 </form>
 ENDS
-;
-return $html;
-    }
+		;
+		$html .= '<div class="df_bundlefilelist">';
+		$html .= $this->serializePackageTable();
+		$html .= '</div>';
+		return $html;
+	}
+
+	private function serializePackageTable() {
+		global $dfgLang;
+		$html = "<table>";
+		$html .= "<th>";
+		$html .= $dfgLang->getLanguageString('df_webadmin_file');
+		$html .= "</th>";
+		$html .= "<th>";
+		$html .= $dfgLang->getLanguageString('df_webadmin_creationdate');
+		$html .= "</th>";
+		$html .= "<th>";
+		$html .= $dfgLang->getLanguageString('df_webadmin_action');
+		$html .= "</th>";
+		$uploadDirectory = Tools::getHomeDir()."/df_upload";
+		if ($uploadDirectory == '/df_upload') {
+			$uploadDirectory = Tools::getTempDir()."/df_upload";
+		}
+		$handle = @opendir($uploadDirectory);
+		if ($handle !== false) {
+
+			while ($entry = readdir($handle) ){
+				if ($entry[0] == '.'){
+					continue;
+				}
+
+				$filepath = $uploadDirectory."/".$entry;
+				$file_ext = Tools::getFileExtension($filepath);
+				$filename = basename($filepath);
+
+				if ($file_ext == 'zip'
+				|| $file_ext == 'owl'
+				|| $file_ext == 'rdf'
+				|| $file_ext == 'obl'
+				|| $file_ext == 'nt'
+				|| $file_ext == 'ntriple'
+				|| $file_ext == 'n3') {
+					$html .= "<tr>";
+					$html .= "<td>";
+					$html .= $filename;
+					$html .= "</td>";
+
+					$html .= "<td>";
+					$lastMod = filemtime($filepath);
+					$html .= date ("m/d/Y", $lastMod);
+
+					$html .= "</td>";
+
+					$html .= "<td>";
+					$html .= "<input type=\"button\" class=\"df_install_button\" value=\"Install\" id=\"df_install__$filename\" loc=\"".htmlspecialchars($filepath)."\"></input>";
+					$html .= "<input type=\"button\" class=\"df_removefile_button\" value=\"Remove\" id=\"df_removefile__$filename\" loc=\"".htmlspecialchars($filepath)."\"></input>";
+					$html .= "</td>";
+					$html .= "</tr>";
+				}
+
+
+			}
+		}
+		@closedir($handle);
+		$html .= "</table>";
+		return $html;
+	}
 }

@@ -6,6 +6,9 @@ $rootDir = str_replace("\\", "/", $rootDir);
 $rootDir = realpath($rootDir."/../../");
 require_once($rootDir.'/tools/smwadmin/DF_Tools.php');
 $uploadDirectory = Tools::getHomeDir()."/df_upload";
+if ($uploadDirectory == 'df_upload') {
+	$uploadDirectory = Tools::getTempDir()."/df_upload";
+}
 Tools::mkpath($uploadDirectory);
 
 // move file
