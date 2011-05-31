@@ -34,6 +34,8 @@
 				from="191" to="191" />
 			<patch file="patch-SF2.txt" ext="semanticforms"
 				from="200" to="200" />
+			<patch file="patch-SF2.0.8.txt" ext="semanticforms"
+				from="208" to="208" />
 			<patch file="patch-SF2.1.2.txt" ext="semanticforms"
 				from="212" to="212" />
 			<script file="maintenance/SC_setup.php" />
@@ -43,6 +45,8 @@
 				from="191" to="191" />
 			<patch file="patch-SF2.txt" ext="semanticforms"
 				from="200" to="200" />
+			<patch file="patch-SF2.0.8.txt" ext="semanticforms"
+				from="208" to="208" />
 			<patch file="patch-SF2.1.2.txt" ext="semanticforms"
 				from="212" to="212" />
 			<script file="maintenance/SC_setup.php"

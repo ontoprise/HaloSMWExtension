@@ -1,0 +1,56 @@
+Index: extensions/SemanticForms/libs/SemanticForms.js
+===================================================================
+--- extensions/SemanticForms/libs/SemanticForms.js	(revision 0)
++++ extensions/SemanticForms/libs/SemanticForms.js	(revision 0)
+@@ -586,6 +586,9 @@
+ 		// submitted by the form.
+ 		jQuery('.hiddenBySF').find("input, select, textarea").attr('disabled', 'disabled');
+ 	}
++	// start SC patch
++	if(num_errors == 0) return SemanticConnector.saveEnabledForm();
++	// end of SC patch
+ 	return (num_errors == 0);
+ }
+ 
+
+Index: extensions/SemanticForms/includes/SF_FormLinker.php
+===================================================================
+--- extensions/SemanticForms/includes/SF_FormLinker.php	(revision 0)
++++ extensions/SemanticForms/includes/SF_FormLinker.php	(revision 0)
+@@ -79,7 +79,19 @@
+ 		if ( $page_name == NULL ) {
+ 			return array();
+ 		}
+-
++
++		// start SC patch
++		// attention, this will break common parse of actived forms
++		// change default form settings (special property 'Has default form') 
++		// will not work if schema mapping defined
++		if( $form_connection_type == self::PAGE_DEFAULT_FORM ) {
++			$title = Title::makeTitleSafe( $page_namespace, $page_name );
++			$forms = SCProcessor::getActivedForm($title->getText());
++			if($forms !== NULL) 
++				return $forms;
++		}
++		// end of SC patch
++		
+ 		// Check if we've already gotten the set of forms for this
+ 		// combination of page and "form connection type" (default,
+ 		// alternate or "creates pages with"). If so, use that -
+
+Index: extensions/SemanticForms/specials/SF_FormEdit.php
+===================================================================
+--- extensions/SemanticForms/specials/SF_FormEdit.php	(revision 0)
++++ extensions/SemanticForms/specials/SF_FormEdit.php	(revision 0)
+@@ -105,6 +105,10 @@
+ 			} else {
+ 				$target_article = new Article( $target_title );
+ 				$page_contents = $target_article->getContent();
++				// start SC patch
++				SCProcessor::renderAddEditPage($form_name, $target_name);
++				$page_contents = SCProcessor::toMappedFormContent($page_contents, $target_title, $form_title);
++				// end of SC patch
+ 				$page_is_source = true;
+ 			}
+ 		} elseif ( $target_name != '' ) {
