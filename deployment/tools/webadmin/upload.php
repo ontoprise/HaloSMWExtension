@@ -19,4 +19,4 @@ move_uploaded_file($_FILES['datei']['tmp_name'], "$uploadDirectory/$filename");
 $hostname = $_SERVER['HTTP_HOST'];
 $path = dirname($_SERVER['PHP_SELF']);
 $proto = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != '' ? "https" : "http";
-header('Location: '.$proto.'://'.$hostname.($path == '/' ? '' : $path).'/index.php');
+header('Location: '.$proto.'://'.$hostname.($path == '/' ? '' : $path).'/index.php?tab=2');

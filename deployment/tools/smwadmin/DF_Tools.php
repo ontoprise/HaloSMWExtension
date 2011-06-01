@@ -830,7 +830,8 @@ class Tools {
 	 */
 	public static function getFileExtension($filePath) {
 		$parts = explode(".", $filePath);
-		$extension = reset(array_reverse($parts));
+		$rev_parts = array_reverse($parts);
+		$extension = reset($rev_parts);
 		return $extension;
 	}
 

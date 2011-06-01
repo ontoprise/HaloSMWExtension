@@ -24,8 +24,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	$path = dirname($_SERVER['PHP_SELF']);
 	$currentDir = dirname(__FILE__);
 
-	if (file_exists("$currentDir/userloggedin")) {
-		$lastMod = filemtime("$currentDir/userloggedin");
+	if (file_exists("$currentDir/tools/webadmin/sessiondata/userloggedin")) {
+		$lastMod = filemtime("$currentDir/tools/webadmin/sessiondata/userloggedin");
 		$currenttime = time();
 
 		if ($currenttime - $lastMod < 3600) {
@@ -49,7 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 	if ($result == true) {
 		$_SESSION['angemeldet'] = true;
-		touch("$currentDir/userloggedin");
+		touch("$currentDir/tools/webadmin/sessiondata/userloggedin");
 		
 		if ($_SERVER['SERVER_PROTOCOL'] == 'HTTP/1.1') {
 			if (php_sapi_name() == 'cgi') {
@@ -125,6 +125,14 @@ function dffCheckEnvironment() {
     @$res = fopen("$mwrootDir/LocalSettings.php", "a");
     if ($res === false) {
         $result = "<br>Could not open LocalSettings.php for writing.";
+    } else {
+        fclose($res);
+    }
+    
+    // check if the sessiondata folder can be written
+    @$res = fopen("$mwrootDir/deployment/tools/webadmin/sessiondata", "a");
+    if ($res === false) {
+        $result = "<br>Could not write into the 'deployment/tools/webadmin/sessiondata' subfolder";
     } else {
         fclose($res);
     }

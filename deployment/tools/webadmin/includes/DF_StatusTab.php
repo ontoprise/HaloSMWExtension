@@ -55,7 +55,9 @@ class DFStatusTab {
 		$dfgOut->setVerbose(false);
 		$updates = $cc->checksForUpdates();
 		if (count($updates) > 0) {
+			$html .= $dfgLang->getLanguageString('df_webadmin_updatesavailable');
 			$html .= "<input type=\"button\" value=\"Global update\" id=\"df_global_update\"></input>";
+			$html .= "<br/>";
 		}
 		
 		$dfgOut->setVerbose(true);

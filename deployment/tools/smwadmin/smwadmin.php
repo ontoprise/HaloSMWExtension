@@ -403,7 +403,11 @@ if (count($ontologiesToInstall) > 0) {
 	// requires a wiki environment, so check and include a few things more
 	dffCheckWikiContext();
 	require_once($rootDir.'/tools/smwadmin/DF_OntologyInstaller.php');
-
+    
+	$localpackages = PackageRepository::getLocalPackages($mwrootDir);
+	if (!array_key_exists('smw', $localpackages)) {
+		dffExitOnFatalError("Ontology import needs at least SMW installed.");
+	}
 	global $rootDir, $dfgOut;
 	foreach($ontologiesToInstall as $filePath) {
 
@@ -445,6 +449,7 @@ if (count($ontologiesToInstall) > 0) {
 			$dfgOut->output("done.]");
 			$dfgOut->outputln("[Copying ontology file...");
 			copy($filePath, $mwrootDir."/extensions/$bundleID/".basename($filePath));
+			copy($filePath.".xml", $mwrootDir."/extensions/$bundleID/".basename($filePath).".xml");
 
 			// store prefix
 			if ($prefix != '') {
@@ -604,7 +609,7 @@ if ($dfgListpages != "no") {
 	}
 	$result['ontologies'] = array();
 	foreach($dd->getOntologies() as $loc) {
-		$handle = fopen( $mwrootDir."/".$dd->getInstallationDirectory()."/$loc", 'rt' );
+		$handle = fopen( $mwrootDir."/".$dd->getInstallationDirectory()."/$loc.xml", 'rt' );
 		$source = new ImportStreamSource( $handle );
 		$importer = new DeployWikiImporterDetector( $source, $dd->getID(), '', 1, NULL );
 

@@ -107,8 +107,8 @@ ENDS
 					$html .= "</td>";
 
 					$html .= "<td>";
-					$html .= "<input type=\"button\" class=\"df_install_button\" value=\"Install\" id=\"df_install__$filename\" loc=\"".htmlspecialchars($filepath)."\"></input>";
-					$html .= "<input type=\"button\" class=\"df_removefile_button\" value=\"Remove\" id=\"df_removefile__$filename\" loc=\"".htmlspecialchars($filepath)."\"></input>";
+					$html .= "<input type=\"button\" class=\"df_installfile_button\" value=\"".$dfgLang->getLanguageString('df_webadmin_install')."\" id=\"df_install__$filename\" loc=\"".htmlspecialchars($filepath)."\"></input>";
+					$html .= "<input type=\"button\" class=\"df_removefile_button\" value=\"".$dfgLang->getLanguageString('df_webadmin_remove')."\" id=\"df_removefile__$filename\" loc=\"".htmlspecialchars($filepath)."\"></input>";
 					$html .= "</td>";
 					$html .= "</tr>";
 				}

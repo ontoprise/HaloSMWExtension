@@ -196,7 +196,7 @@ class Installer {
 		$id = $dd->getID();
 		$version = $dd->getVersion();
 		$this->logger->info("Unzip $filePath");
-		$this->unzipFromFile($filePath);
+		$this->unzipFromFile($filePath, $dd);
 
 		$this->logger->info("Apply configs for $filePath");
 		$dd->applyConfigurations($this->rootDir, false, $fromVersion, DFUserInput::getInstance());
@@ -308,7 +308,14 @@ class Installer {
 		$updatesNeeded = array();
 		foreach($localPackages as $tl_ext) {
 
-			$dd = PackageRepository::getLatestDeployDescriptor($tl_ext->getID());
+			try {
+				$dd = PackageRepository::getLatestDeployDescriptor($tl_ext->getID());
+			}  catch(RepositoryError $e) {
+				if ($e->getErrorCode() == DEPLOY_FRAMEWORK_REPO_PACKAGE_DOES_NOT_EXIST) {
+					// local bundle (e.g. ontology). ignore it.
+				}
+			}
+				
 
 			if ($dd->getVersion() > $localPackages[$dd->getID()]->getVersion()
 			|| ($dd->getVersion() == $localPackages[$dd->getID()]->getVersion() && $dd->getPatchlevel() > $localPackages[$dd->getID()]->getPatchlevel())) {
@@ -343,7 +350,7 @@ class Installer {
 		$localPackages = PackageRepository::getLocalPackages($this->rootDir);
 		if (count($allPackages) == 0) {
 			$dfgOut->outputln( "\nNo packages found in repositories!\n");
-				
+
 		}
 		$dfgOut->outputln (" Installed           | Bundle               | Av. versions  | Repository");
 		$dfgOut->outputln ("-------------------------------------------------------------------------\n");
@@ -728,8 +735,9 @@ class Installer {
 	 * Unzips the given bundle.
 	 *
 	 * @param $filePath of bundle (absolute or relative)
+	 * @param DeployDescriptor $dd
 	 */
-	private function unzipFromFile($filePath) {
+	private function unzipFromFile($filePath, $dd) {
 		global $dfgOut;
 		$unzipDirectory = $this->rootDir;
 		if ($dd->isNonPublic()) {
@@ -1029,7 +1037,13 @@ class Installer {
 		$updatesNeeded = array();
 		foreach($localPackages as $tl_ext) {
 
-			$dd = PackageRepository::getLatestDeployDescriptor($tl_ext->getID());
+			try {
+				$dd = PackageRepository::getLatestDeployDescriptor($tl_ext->getID());
+			} catch(RepositoryError $e) {
+				if ($e->getErrorCode() == DEPLOY_FRAMEWORK_REPO_PACKAGE_DOES_NOT_EXIST) {
+					// local bundle (e.g. ontology). ignore it.
+				}
+			}
 
 			if ($dd->getVersion() > $localPackages[$dd->getID()]->getVersion()
 			|| ($dd->getVersion() == $localPackages[$dd->getID()]->getVersion() && $dd->getPatchlevel() > $localPackages[$dd->getID()]->getPatchlevel())) {

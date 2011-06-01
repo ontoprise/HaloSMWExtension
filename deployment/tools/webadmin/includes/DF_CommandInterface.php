@@ -71,6 +71,8 @@ class DFCommandInterface {
 				return $this->getLocalDeployDescriptor($args);
 			case "getDeployDescriptor":
 				return $this->getDeployDescriptor($args);
+			case "removeFile":
+				return $this->removeFile($args);
 			default: return "unsupported command";
 		}
 	}
@@ -334,5 +336,9 @@ class DFCommandInterface {
 		return true;
 	}
 
-
+    public function removeFile($args) {
+    	global $mwrootDir, $dfgOut;
+        $filepath = reset($args);
+        unlink($filepath);
+    }
 }

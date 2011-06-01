@@ -55,9 +55,13 @@ class DF_Language_En extends DF_Language {
 	'df_ok' => 'OK',
 	
 	// webadmin
+	'df_webadmin_updatesavailable' => 'Updates available! Do a ',
 	'df_webadmin_extension' => 'Extension',
 	'df_webadmin_description' => 'Description',
 	'df_webadmin_action' => 'Action',
+	'df_webadmin_install' => 'Install',
+	'df_webadmin_deinstall' => 'De-Install',
+	'df_webadmin_remove' => 'Remove file',
 	
 	'df_webadmin_statustab' => 'Status',
 	'df_webadmin_searchtab' => 'Search',
@@ -69,7 +73,8 @@ class DF_Language_En extends DF_Language {
 	'df_webadmin_restorepoint' => 'Restore point',
 	'df_webadmin_creationdate' => 'Creation date',
 	'df_webadmin_version' => 'Version',
-	'df_webadmin_upload' => 'Upload'
+	'df_webadmin_upload' => 'Upload',
+	'df_webadmin_file' => 'File'
 	
 	);
 

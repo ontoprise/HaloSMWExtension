@@ -24,6 +24,11 @@ background-color:yellow;
 cursor: pointer;
 }
 
+.df_bundlefilelist td {
+   width: 30%;
+   text-align: center;
+}
+
 .df_restorepoint_table {
 	margin-top: 20px;
 }

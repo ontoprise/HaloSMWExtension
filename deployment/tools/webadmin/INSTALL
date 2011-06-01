@@ -1,0 +1,17 @@
+Installation of the webadmin console:
+
+(1) Make sure deployment/tools/webadmin is accessible via HTTP
+(2) Allow the webserver to write in 
+        - deployment/tools/webadmin/sessiondata
+        - LocalSettings.php
+        - extensions folder
+        
+(3) Allow the webserver to run external PHP processes
+(4) For wiki auth. make sure that the 'curl' extension is installed.
+    Otherwise auth. by wiki is not possible and you have to configure a separate
+    user. Take a look in deployment/settings.php for that.
+(5) If you want to upload bundles you have to enable uploads in your webserver conf. They
+    are stored in $HOME/df_upload or $TEMP/df_upload if $HOME is not defined.
+
+You should get a warning if something is missing when you first access the webadmin console.
+

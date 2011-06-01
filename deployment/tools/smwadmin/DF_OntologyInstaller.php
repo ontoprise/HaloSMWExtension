@@ -184,6 +184,7 @@ class OntologyInstaller {
 		$version = reset($versionDBkeys);
 		$installDirDBkeys = $installationDir->getDBkeys();
 		$installDir = reset($installDirDBkeys);
+		$installDir = strtolower($installDir);
 		$filename = basename($inputfile);
 
 		// set others to defaults

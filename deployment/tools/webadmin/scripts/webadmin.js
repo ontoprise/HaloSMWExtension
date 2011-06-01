@@ -295,28 +295,32 @@ $(function() {
 		dependenciesHTML += "</ul>";
 		
 		var wikidumpsHTML="";
-		$.each(wikidumps, function(index, value) { 
-			var dumpfile = index;
-			var titles = value;
-			wikidumpsHTML += dumpfile+":<ul>";
-			$.each(titles, function(index, value) { 
-				var title = value;
-				wikidumpsHTML += "<li>"+title+"</li>";
+		if (wikidumps) {
+			$.each(wikidumps, function(index, value) { 
+				var dumpfile = index;
+				var titles = value;
+				wikidumpsHTML += dumpfile+":<ul>";
+				$.each(titles, function(index, value) { 
+					var title = value;
+					wikidumpsHTML += "<li>"+title+"</li>";
+				});
+				wikidumpsHTML += "</ul>";
 			});
-			wikidumpsHTML += "</ul>";
-		});
+		}
 		
 		var ontologiesHTML="";
-		$.each(ontologies, function(index, value) { 
-			var dumpfile = index;
-			var titles = value;
-			ontologiesHTML += dumpfile+":<ul>";
-			$.each(titles, function(index, value) { 
-				var title = value;
-				ontologiesHTML += "<li>"+title+"</li>";
+		if (ontologies) {
+			$.each(ontologies, function(index, value) { 
+				var dumpfile = index;
+				var titles = value;
+				ontologiesHTML += dumpfile+":<ul>";
+				$.each(titles, function(index, value) { 
+					var title = value;
+					ontologiesHTML += "<li>"+title+"</li>";
+				});
+				ontologiesHTML += "</ul>";
 			});
-			ontologiesHTML += "</ul>";
-		});
+		}
 		
 		var resourcesHTML="<ul>";
 		$.each(resources, function(index, value) { 
@@ -591,6 +595,34 @@ $(function() {
 			}
 			var url = wgServer+wgScriptPath+"/deployment/tools/webadmin?rs=checkforGlobalUpdate&rsargs[]=";
 			$.ajax( { url : url, dataType:"json", complete : checkforGlobalUpdate });
+		});
+		
+		// register install file button
+		$('.df_installfile_button').click(function(e2) {
+			var filepath = $(e2.currentTarget).attr('loc');
+		
+			var url = wgServer+wgScriptPath+"/deployment/tools/webadmin?rs=install&rsargs[]="+encodeURIComponent(filepath);
+			var $dialog = $('#df_install_dialog')
+			.dialog( {
+				autoOpen : false,
+				title : dfgWebAdminLanguage.getMessage('df_webadmin_pleasewait'),
+				modal: true,
+				width: 800,
+				height: 500
+			});
+			$dialog.html("<div></div>");				
+			$dialog.dialog('open');
+			$dialog.html('<img src="skins/ajax-loader.gif"/>');
+			$.ajax( { url : url, dataType:"json", complete : installStarted });
+		});
+		
+		// register remove file button
+		$('.df_removefile_button').click(function(e2) {
+			var filepath = $(e2.currentTarget).attr('loc');
+			$(e2.currentTarget).parent().parent().remove();
+			var url = wgServer+wgScriptPath+"/deployment/tools/webadmin?rs=removeFile&rsargs[]="+encodeURIComponent(filepath);
+			
+			$.ajax( { url : url, dataType:"json" });
 		});
 	});
 	

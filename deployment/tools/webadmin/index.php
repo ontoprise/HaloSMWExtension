@@ -56,7 +56,7 @@ $wgScriptPath=isset(DF_Config::$scriptPath) ? DF_Config::$scriptPath : "/mediawi
 $smwgDFIP=$rootDir;
 
 // touch the login marker
-touch("$rootDir/userloggedin");
+touch("$rootDir/tools/webadmin/sessiondata/userloggedin");
 
 require_once('includes/DF_StatusTab.php');
 require_once('includes/DF_SearchTab.php');
@@ -173,6 +173,12 @@ if (!isset($dfgLangCode)) {
 $javascriptLang = '<script type="text/javascript" src="scripts/languages/DF_WebAdmin_User'.$dfgLangCode.'.js"></script>';
 $javascriptLang .= '<script type="text/javascript" src="scripts/languages/DF_WebAdmin_Language.js"></script>';
 
+if (isset($_GET['tab'])) {
+	$selectedTab = $_GET['tab'];
+} else {
+	$selectedTab = 0;
+}
+
 $html = <<<ENDS
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" dir="ltr" lang="en-gb" xml:lang="en-gb">
@@ -189,7 +195,7 @@ $html = <<<ENDS
 			$(function(){
 		
 				// Tabs
-				$('#tabs').tabs();
+				$('#tabs').tabs( { selected: $selectedTab });
 			});
 </script>
 $javascriptLang

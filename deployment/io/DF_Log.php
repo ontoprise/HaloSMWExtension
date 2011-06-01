@@ -38,8 +38,8 @@ class Logger {
 	static $instance;
 
 	/**
-	 * Acquires the logger. 
-	 * 
+	 * Acquires the logger.
+	 *
 	 * */
 	public static function getInstance() {
 		if (is_null(self::$instance)) {
@@ -50,17 +50,21 @@ class Logger {
 	}
 
 	private function __construct() {
-	
+
 		$homeDir = Tools::getHomeDir();
 		$this->logDir = "$homeDir/df_log";
 		Tools::mkpath($this->logDir);
-	    $i = 1;
-		if (filesize($this->logDir."/df_$i.log") > DF_MAX_LOG_SIZE) {
-			while(file_exists($this->logDir."/df_$i.log")) {
-				$i++;
-			} 
+		if (is_writable($this->logDir)) {
+			$i = 1;
+			if (filesize($this->logDir."/df_$i.log") > DF_MAX_LOG_SIZE) {
+				while(file_exists($this->logDir."/df_$i.log")) {
+					$i++;
+				}
+			}
+			$this->logFileHandle = fopen($this->logDir."/df_$i.log", "a");
+		} else {
+			$this->logFileHandle = NULL;
 		}
-		$this->logFileHandle = fopen($this->logDir."/df_$i.log", "a");
 	}
 
 	/**
@@ -69,6 +73,7 @@ class Logger {
 	 * @param string $msg
 	 */
 	public function info($msg) {
+		if (is_null($this->logFileHandle)) return;
 		$currentDate = date(DATE_RSS);
 		fwrite($this->logFileHandle, "\n[INFO] $currentDate: $msg");
 		fflush($this->logFileHandle);
@@ -80,6 +85,7 @@ class Logger {
 	 * @param string $msg
 	 */
 	public function warn($msg) {
+		if (is_null($this->logFileHandle)) return;
 		$currentDate = date(DATE_RSS);
 		fwrite($this->logFileHandle, "\n[WARN] $currentDate: $msg");
 		fflush($this->logFileHandle);
@@ -91,6 +97,7 @@ class Logger {
 	 * @param string $msg
 	 */
 	public function error($msg) {
+		if (is_null($this->logFileHandle)) return;
 		$currentDate = date(DATE_RSS);
 		fwrite($this->logFileHandle, "\n[ERROR] $currentDate: $msg");
 		fflush($this->logFileHandle);
@@ -104,21 +111,16 @@ class Logger {
 	 * @param string $msg
 	 */
 	public function fatal($msg) {
+		if (is_null($this->logFileHandle)) return;
 		$currentDate = date(DATE_RSS);
 		fwrite($this->logFileHandle, "\n[FATAL] $currentDate: $msg");
 		fflush($this->logFileHandle);
 	}
 
 	public function closeLogFile() {
+		if (is_null($this->logFileHandle)) return;
 		fclose($this->logFileHandle);
 	}
 
-	/*private function createDateForFileName() {
-		$currentDate = date(DATE_RSS);
-		$currentDate = str_replace(",","_",$currentDate);
-		$currentDate = str_replace(" ","_",$currentDate);
-		$currentDate = str_replace(":","_",$currentDate);
-		$currentDate = str_replace("+","_",$currentDate);
-		return $currentDate;
-	}*/
+	
 }
