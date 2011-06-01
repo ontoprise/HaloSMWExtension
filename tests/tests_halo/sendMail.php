@@ -72,8 +72,10 @@ if (! isset($from)) $from = "Hudson Buildserver <hudson@ontoprise.de>";
 // send mail using the php mail command when we do not have smtp settings defined
 if (! isset($smtp)) {
     $headers = 'From: '.trim($from). "\r\n";
-    mail($to, $subject, $message, $headers);
-    exit(0);
+    $res= mail($to, $subject, $message, $headers);
+    if ($res)
+        exit(0);
+    exit(1);
 }
 
 // smtp server config set, then use the Pear Mail package
@@ -91,7 +93,9 @@ $smtp = Mail::factory('smtp',
 
 $mail = $smtp->send($to, $headers, $message);
 
-if (PEAR::isError($mail))
+if (PEAR::isError($mail)) {
    echo("\n" . $mail->getMessage() );
+   exit(1);
+}
 else
    echo("\nMessage successfully sent!\n");
