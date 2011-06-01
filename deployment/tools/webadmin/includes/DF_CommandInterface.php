@@ -44,42 +44,12 @@ class DFCommandInterface {
 	}
 
 	public function dispatch($command, $args) {
-		switch($command) {
-			case "readlog":
-				return $this->readLog($args);
-			case "getdependencies":
-				return $this->getDependencies($args);
-			case "search":
-				return $this->search($args);
-			case "finalize":
-				return $this->finalize($args);
-			case "install":
-				return $this->install($args);
-			case "deinstall":
-				return $this->deinstall($args);
-			case "update":
-				return $this->update($args);
-			case "checkforGlobalUpdate":
-				return $this->checkforGlobalUpdate();
-			case "doGlobalUpdate":
-				return $this->doGlobalUpdate();
-			case "restore":
-				return $this->restore($args);
-			case "createRestorePoint":
-				return $this->createRestorePoint($args);
-			case "getLocalDeployDescriptor":
-				return $this->getLocalDeployDescriptor($args);
-			case "getDeployDescriptor":
-				return $this->getDeployDescriptor($args);
-			case "removeFile":
-				return $this->removeFile($args);
-			default: return "unsupported command";
-		}
+		return call_user_func_array(array($this, $command), $args);
 	}
 
-	public function readLog($args) {
+	public function readLog($filename) {
 		global $mwrootDir, $dfgOut;
-		$filename = reset($args);
+	
 		$absoluteFilePath = Tools::getTempDir()."/$filename";
 		if (!file_exists($absoluteFilePath)) {
 			return '$$NOTEXISTS$$';
@@ -88,9 +58,9 @@ class DFCommandInterface {
 		return $log;
 	}
 
-	public function getLocalDeployDescriptor($args) {
+	public function getLocalDeployDescriptor($extid) {
 		global $mwrootDir, $dfgOut;
-		$extid = reset($args);
+	
 		$localPackages = PackageRepository::getLocalPackages($mwrootDir);
 		if (!array_key_exists($extid, $localPackages)) {
 			return NULL;
@@ -123,9 +93,9 @@ class DFCommandInterface {
 		return json_encode($result);
 	}
 
-	public function getDeployDescriptor($args) {
+	public function getDeployDescriptor($extid) {
 		global $mwrootDir, $dfgOut;
-		$extid = reset($args);
+		
 		$dd = PackageRepository::getLatestDeployDescriptor($extid);
 		if (is_null($dd)) {
 			return NULL;
@@ -155,9 +125,9 @@ class DFCommandInterface {
 		return json_encode($result);
 	}
 
-	public function getDependencies($args) {
+	public function getDependencies($extid) {
 		global $mwrootDir, $dfgOut;
-		$extid = reset($args);
+		
 		try {
 			$dfgOut->setVerbose(false);
 			$installer = Installer::getInstance($mwrootDir);
@@ -178,9 +148,9 @@ class DFCommandInterface {
 		}
 	}
 
-	public function install($args) {
+	public function install($extid) {
 		global $mwrootDir, $dfgOut;
-		$extid = reset($args);
+	
 		$filename = uniqid().".log";
 		touch(Tools::getTempDir()."/$filename");
 		chdir($mwrootDir.'/deployment/tools');
@@ -196,9 +166,9 @@ class DFCommandInterface {
 		return $filename;
 	}
 
-	public function deinstall($args) {
+	public function deinstall($extid) {
 		global $mwrootDir, $dfgOut;
-		$extid = reset($args);
+		
 		$filename = uniqid().".log";
 		touch(Tools::getTempDir()."/$filename");
 		chdir($mwrootDir.'/deployment/tools');
@@ -214,9 +184,9 @@ class DFCommandInterface {
 		return $filename;
 	}
 
-	public function update($args) {
+	public function update($extid) {
 		global $mwrootDir, $dfgOut;
-		$extid = reset($args);
+	
 		$filename = uniqid().".log";
 		touch(Tools::getTempDir()."/$filename");
 		chdir($mwrootDir.'/deployment/tools');
@@ -232,9 +202,9 @@ class DFCommandInterface {
 		return $filename;
 	}
 
-	public function finalize($args) {
+	public function finalize($extid) {
 		global $mwrootDir, $dfgOut;
-		$extid = reset($args);
+		
 		$filename = uniqid().".log";
 		touch(Tools::getTempDir()."/$filename");
 		chdir($mwrootDir.'/deployment/tools');
@@ -289,9 +259,9 @@ class DFCommandInterface {
 		return $filename;
 	}
 
-	public function restore($args) {
+	public function restore($restorepoint) {
 		global $mwrootDir, $dfgOut;
-		$restorepoint = reset($args);
+		
 		$filename = uniqid().".log";
 		touch(Tools::getTempDir()."/$filename");
 		chdir($mwrootDir.'/deployment/tools');
@@ -307,9 +277,9 @@ class DFCommandInterface {
 		return $filename;
 	}
 
-	public function createRestorePoint($args) {
+	public function createRestorePoint($restorepoint) {
 		global $mwrootDir, $dfgOut;
-		$restorepoint = reset($args);
+		
 		$filename = uniqid().".log";
 		touch(Tools::getTempDir()."/$filename");
 		chdir($mwrootDir.'/deployment/tools');
@@ -325,10 +295,8 @@ class DFCommandInterface {
 		return $filename;
 	}
 
-	public function search($args) {
+	public function search($searchValue) {
 		global $mwrootDir, $dfgOut, $dfgSearchTab;
-		$searchValue = reset($args);
-
 		$results = array();
 		$packages = PackageRepository::searchAllPackages($searchValue);
 		$localPackages = PackageRepository::getLocalPackages($mwrootDir);
@@ -336,9 +304,8 @@ class DFCommandInterface {
 		return true;
 	}
 
-    public function removeFile($args) {
+    public function removeFile($filepath) {
     	global $mwrootDir, $dfgOut;
-        $filepath = reset($args);
         unlink($filepath);
     }
 }

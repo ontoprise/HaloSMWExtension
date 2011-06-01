@@ -43,7 +43,7 @@ $(function() {
 			if (timer) clearTimeout(timer);
 			timer = setTimeout( periodicLogLoad, 5000);
 			
-			var readLogurl = wgServer+wgScriptPath+"/deployment/tools/webadmin?rs=readlog&rsargs[]="+encodeURIComponent(logfile);
+			var readLogurl = wgServer+wgScriptPath+"/deployment/tools/webadmin?rs=readLog&rsargs[]="+encodeURIComponent(logfile);
 			$.ajax( { url : readLogurl, dataType:"json", complete : function(xhr3, status3) { 
 				var resultLog = xhr3.responseText;
 				var length = resultLog.length;
@@ -85,7 +85,7 @@ $(function() {
 			if (timer) clearTimeout(timer);
 			timer = setTimeout( periodicLogLoad, 5000);
 			
-			var readLogurl = wgServer+wgScriptPath+"/deployment/tools/webadmin?rs=readlog&rsargs[]="+encodeURIComponent(logfile);
+			var readLogurl = wgServer+wgScriptPath+"/deployment/tools/webadmin?rs=readLog&rsargs[]="+encodeURIComponent(logfile);
 			$.ajax( { url : readLogurl, dataType:"json", complete : function(xhr3, status3) { 
 				var resultLog = xhr3.responseText;
 				if (resultLog != '') {
@@ -137,7 +137,7 @@ $(function() {
 			if (timer) clearTimeout(timer);
 			timer = setTimeout( periodicLogLoad, 5000);
 			
-			var readLogurl = wgServer+wgScriptPath+"/deployment/tools/webadmin?rs=readlog&rsargs[]="+encodeURIComponent(logfile);
+			var readLogurl = wgServer+wgScriptPath+"/deployment/tools/webadmin?rs=readLog&rsargs[]="+encodeURIComponent(logfile);
 			$.ajax( { url : readLogurl, dataType:"json", complete : function(xhr3, status3) { 
 				var resultLog = xhr3.responseText;
 				if (resultLog != '') { 
@@ -183,7 +183,7 @@ $(function() {
 			if (timer) clearTimeout(timer);
 			timer = setTimeout( periodicLogLoad, 5000);
 			
-			var readLogurl = wgServer+wgScriptPath+"/deployment/tools/webadmin?rs=readlog&rsargs[]="+encodeURIComponent(logfile);
+			var readLogurl = wgServer+wgScriptPath+"/deployment/tools/webadmin?rs=readLog&rsargs[]="+encodeURIComponent(logfile);
 			$.ajax( { url : readLogurl, dataType:"json", complete : function(xhr3, status3) { 
 				var resultLog = xhr3.responseText;
 				if (resultLog != '') { 
@@ -229,7 +229,7 @@ $(function() {
 			if (timer) clearTimeout(timer);
 			timer = setTimeout( periodicLogLoad, 5000);
 			
-			var readLogurl = wgServer+wgScriptPath+"/deployment/tools/webadmin?rs=readlog&rsargs[]="+encodeURIComponent(logfile);
+			var readLogurl = wgServer+wgScriptPath+"/deployment/tools/webadmin?rs=readLog&rsargs[]="+encodeURIComponent(logfile);
 			$.ajax( { url : readLogurl, dataType:"json", complete : function(xhr3, status3) { 
 				var resultLog = xhr3.responseText;
 				if (resultLog != '') { 
@@ -371,7 +371,7 @@ $(function() {
 			$('.df_install_button').click(function(e) {
 				var id = $(e.currentTarget).attr('id');
 				id = id.split("__")[1];
-				var url = wgServer+wgScriptPath+"/deployment/tools/webadmin?rs=getdependencies&rsargs[]="+encodeURIComponent(id);
+				var url = wgServer+wgScriptPath+"/deployment/tools/webadmin?rs=getDependencies&rsargs[]="+encodeURIComponent(id);
 				var callbackForExtensions = function(xhr, status) {
 					var extensionsToInstall = $.parseJSON(xhr.responseText);
 					var url = wgServer+wgScriptPath+"/deployment/tools/webadmin?rs=install&rsargs[]="+encodeURIComponent(id);
@@ -401,7 +401,7 @@ $(function() {
 			$('.df_check_button').click(function(e) {
 				var id = $(e.currentTarget).attr('id');
 				id = id.split("__")[1];
-				var url = wgServer+wgScriptPath+"/deployment/tools/webadmin?rs=getdependencies&rsargs[]="+encodeURIComponent(id);
+				var url = wgServer+wgScriptPath+"/deployment/tools/webadmin?rs=getDependencies&rsargs[]="+encodeURIComponent(id);
 				var callbackForExtensions = function(xhr, status) {
 					
 					var extensionsToInstall = $.parseJSON(xhr.responseText);
@@ -642,7 +642,7 @@ $(function() {
 			if (timer) clearTimeout(timer);
 			timer = setTimeout( periodicLogLoad, 5000);
 			
-			var readLogurl = wgServer+wgScriptPath+"/deployment/tools/webadmin?rs=readlog&rsargs[]="+encodeURIComponent(logfile);
+			var readLogurl = wgServer+wgScriptPath+"/deployment/tools/webadmin?rs=readLog&rsargs[]="+encodeURIComponent(logfile);
 			$.ajax( { url : readLogurl, dataType:"json", complete : function(xhr3, status3) { 
 				var resultLog = xhr3.responseText;
 				if (resultLog != '') { 

@@ -12,6 +12,8 @@ Installation of the webadmin console:
     user. Take a look in deployment/settings.php for that.
 (5) If you want to upload bundles you have to enable uploads in your webserver conf. They
     are stored in $HOME/df_upload or $TEMP/df_upload if $HOME is not defined.
+(6) Set the $scriptPath variable in deployment/settings.php (same as $wgScriptPath in LocalSettings.php)
+        
 
 You should get a warning if something is missing when you first access the webadmin console.
 
