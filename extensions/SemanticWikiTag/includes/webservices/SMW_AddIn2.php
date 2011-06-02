@@ -545,6 +545,8 @@ class AddIn2 extends AddIn{
 
 		// just overwrite the subject
 		$title = Title::newFromText( $page_name );
+		global $wgTitle;
+		$wgTitle = $title;
 		if($title->exists()) {
 			// merge categories
 			extract( $db->tableNames('categorylinks', 'page') );
