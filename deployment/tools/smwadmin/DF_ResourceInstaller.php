@@ -93,7 +93,7 @@ class ResourceInstaller {
 		// refresh imported pages (started as a separate process)
 		global $rootDir;
 		$this->logger->info("Refreshing ontology: $file");
-    	$id = $dd->getID();
+		$id = $dd->getID();
 		system("php \"$rootDir/tools/maintenance/refreshPages.php\" -d \"$dumpPath\" -b $id");
 		$dfgOut->outputln("done.]");
 
@@ -110,8 +110,8 @@ class ResourceInstaller {
 
 		if (count($dd->getWikidumps()) == 0) return;
 		if (!defined('SMW_VERSION')) throw new InstallationError(DEPLOY_FRAMEWORK_NOT_INSTALLED, "SMW is not installed. Can not delete ontology.");
-
-		Tools::deletePagesOfBundle($dd->getID(), $this->logger);
+		global $dfgRemoveReferenced, $dfgRemoveStillUsed;
+		Tools::deletePagesOfBundle($dd->getID(), $this->logger, $dfgRemoveReferenced, !$dfgRemoveStillUsed);
 	}
 
 
@@ -124,11 +124,18 @@ class ResourceInstaller {
 	public function deleteResources($dd) {
 		global $wgUser, $dfgOut;
 		if (count($dd->getResources()) ==  0) return;
-
-
+		
+		global $dfgRemoveReferenced, $dfgRemoveStillUsed;
+		if ($dfgRemoveReferenced) {
+			
+			Tools::deleteReferencedImagesOfBundle($dd->getID(), $this->logger, !$dfgRemoveStillUsed);
+		
+		}
+		
 		$resources = $dd->getResources();
 		foreach($resources as $file) {
 			$title = Title::newFromText(basename($file), NS_IMAGE);
+			if (!$title->exists()) continue;
 			$im_file = wfLocalFile($title);
 
 			// delete thumbs for this image too
@@ -207,7 +214,7 @@ class ResourceInstaller {
 
 	 */
 	public function installOrUpdateResources($dd) {
-        global $dfgOut;
+		global $dfgOut;
 		if (count($dd->getResources()) ==  0) return;
 
 		// resources files

@@ -125,6 +125,8 @@ $dfgNoConflict=false;
 $dfgLogToFile=false;
 $dfgOutputFormat="text";
 $dfgListpages="no";
+$dfgRemoveReferenced=false;
+$dfgRemoveStillUsed=false;
 
 $args = $_SERVER['argv'];
 array_shift($args); // remove script name
@@ -230,7 +232,13 @@ for( $arg = reset( $args ); $arg !== false; $arg = next( $args ) ) {
 	} else if ($arg == '--listpages') {
 		$dfgListpages = next($args);
 		continue;
-	} else if ($arg == '--nocheck') {
+	} else if ($arg == '--removereferenced') {
+        $dfgRemoveReferenced = true;
+        continue;
+    } else if ($arg == '--removestillused') {
+        $dfgRemoveStillUsed = true;
+        continue;
+    } else if ($arg == '--nocheck') {
 		// ignore
 		continue;
 	} else {

@@ -643,6 +643,11 @@ class Installer {
 		$res_installer = ResourceInstaller::getInstance($this->rootDir);
 		$ont_installer = OntologyInstaller::getInstance($this->rootDir);
 
+		// delete resources
+		$this->logger->info("Delete resourcs: ".$dd->getID());
+		$dfgOut->outputln("[Deleting resources...");
+		$res_installer->deleteResources($dd);
+		$dfgOut->outputln("done.]");
 		// remove wikidumps
 		$this->logger->info("De-installing wikidumps: ".$dd->getID());
 		$dfgOut->outputln("[De-installing wikidumps...");
@@ -655,11 +660,6 @@ class Installer {
 		$ont_installer->deinstallOntology($dd);
 		$dfgOut->outputln("done.]");
 
-		// delete resources
-		$this->logger->info("Delete resourcs: ".$dd->getID());
-		$dfgOut->outputln("[Deleting resources...");
-		$res_installer->deleteResources($dd);
-		$dfgOut->outputln("done.]");
 
 	}
 

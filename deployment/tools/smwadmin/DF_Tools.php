@@ -467,7 +467,7 @@ class Tools {
 		return $check;
 	}
 
-	
+
 
 	/**
 	 * Converts an array of string to a string.
@@ -498,23 +498,23 @@ class Tools {
 			return reset($out);
 		}
 	}
-	
-    /**
-     * Returns the temp directory.
-     * (path with slashes only also on Windows)
-     *
-     * @return string
-     */
-    public static function getTempDir() {
-        if (self::isWindows()) {
-            exec("echo %TEMP%", $out, $ret);
-            return str_replace("\\", "/", reset($out));
-        } else {
-            exec('echo $TMPDIR', $out, $ret);
-            $val = reset($out);
-            return ($val == '' || $val === false) ? '/tmp' : $val;
-        }
-    }
+
+	/**
+	 * Returns the temp directory.
+	 * (path with slashes only also on Windows)
+	 *
+	 * @return string
+	 */
+	public static function getTempDir() {
+		if (self::isWindows()) {
+			exec("echo %TEMP%", $out, $ret);
+			return str_replace("\\", "/", reset($out));
+		} else {
+			exec('echo $TMPDIR', $out, $ret);
+			$val = reset($out);
+			return ($val == '' || $val === false) ? '/tmp' : $val;
+		}
+	}
 
 	/**
 	 * Returns the program directory. On Linux it is simply /usr/local/share
@@ -581,17 +581,19 @@ class Tools {
 	}
 
 	/**
-	 * Removes articles belonging to a bundle. It is assumed that everything other than instances of categories of a bundle
-	 * and templates used by such is marked with the 'Part of bundle' annotation. Templates which are used by pages other than
-	 * that are kept.
+	 * Removes articles belonging to a bundle. If $removeReferenced == true, it is assumed that everything other than instances of categories of a bundle
+	 * and templates used by such is marked with the 'Part of bundle' annotation. Otherwise _everything_ must be marked with 'Part of bundle'.
+	 * If $keepStillRequiredTemplates == true, templates which are used by pages other than those of the bundle are kept.
 	 *
 	 * @param string $ext_id
 	 * @param Logger $logger
+	 * @param boolean $removeReferenced
+	 * @param boolean $keepStillRequiredTemplates
 	 */
-	public static function deletePagesOfBundle($ext_id, $logger = NULL) {
+	public static function deletePagesOfBundle($ext_id, $logger = NULL, $removeReferenced = false, $keepStillRequiredTemplates = true) {
 		global $dfgLang;
 		global $wgUser;
-        global $dfgOut;
+		global $dfgOut;
 		$db =& wfGetDB( DB_MASTER );
 		$smw_ids = $db->tableName('smw_ids');
 		$smw_rels2 = $db->tableName('smw_rels2');
@@ -613,7 +615,9 @@ class Tools {
 		// put all pages belonging to a bundle (all except templates, ie. categories, properties, instances of categories and all other pages denoted by
 		// the 'part of bundle' annotation like Forms, Help pages, etc..) in df_page_of_bundle
 		$db->query('INSERT INTO df_page_of_bundle (SELECT page_id FROM '.$page.' JOIN '.$smw_ids.' ON smw_namespace = page_namespace AND smw_title = page_title JOIN '.$smw_rels2.' ON smw_id = s_id WHERE p_id = '.$partOfBundlePropertyID.' AND o_id = '.$partOfBundleID.')');
-		$db->query('INSERT INTO df_page_of_bundle (SELECT cl_from FROM '.$categorylinks.' JOIN '.$page.' ON cl_to = page_title AND page_namespace = '.NS_CATEGORY.' JOIN '.$smw_ids.' ON smw_namespace = page_namespace AND smw_title = page_title JOIN '.$smw_rels2.' ON smw_id = s_id WHERE p_id = '.$partOfBundlePropertyID.' AND o_id = '.$partOfBundleID.')');
+		if ($removeReferenced) {
+			$db->query('INSERT INTO df_page_of_bundle (SELECT cl_from FROM '.$categorylinks.' JOIN '.$page.' ON cl_to = page_title AND page_namespace = '.NS_CATEGORY.' JOIN '.$smw_ids.' ON smw_namespace = page_namespace AND smw_title = page_title JOIN '.$smw_rels2.' ON smw_id = s_id WHERE p_id = '.$partOfBundlePropertyID.' AND o_id = '.$partOfBundleID.')');
+		}
 
 		// get all templates used on these pages
 		$db->query('INSERT INTO df_page_of_templates_used (SELECT tl_title FROM '.$templatelinks.' WHERE tl_from IN (SELECT * FROM df_page_of_bundle))');
@@ -622,13 +626,17 @@ class Tools {
 		$db->query('INSERT INTO df_page_of_templates_must_persist (SELECT title FROM df_page_of_templates_used JOIN '.$templatelinks.' ON title = tl_title AND tl_from NOT IN (SELECT * FROM df_page_of_bundle))');
 
 		// delete those from the table of used templates
-		$db->query('DELETE FROM df_page_of_templates_used WHERE title IN (SELECT * FROM df_page_of_templates_must_persist)');
+		if ($keepStillRequiredTemplates) {
+			$db->query('DELETE FROM df_page_of_templates_used WHERE title IN (SELECT * FROM df_page_of_templates_must_persist)');
+		}
 
 		// select all templates which can be deleted
 		$res = $db->query('SELECT DISTINCT title FROM df_page_of_templates_used');
 
 		// DELETE templates
-		if($db->numRows( $res ) > 0) {
+		if(($db->numRows( $res ) > 0) && $removeReferenced) {
+			$logger->info("Removing referenced templates");
+			$dfgOut->outputln("\t[Removing referenced templates...");
 			while($row = $db->fetchObject($res)) {
 
 				$title = Title::newFromText($row->title, NS_TEMPLATE);
@@ -638,13 +646,14 @@ class Tools {
 				if( wfRunHooks('ArticleDelete', array(&$a, &$wgUser, &$reason, &$error)) ) {
 					if( $a->doDeleteArticle( "ontology removed: ".$ext_id ) ) {
 						if (!is_null($logger)) $logger->info("Removing page: ".$title->getPrefixedText());
-						$dfgOut->outputln("\t[Removing page]: ".$title->getPrefixedText()."...");
+						$dfgOut->outputln("\t\t[Removing page]: ".$title->getPrefixedText()."...");
 						wfRunHooks('ArticleDeleteComplete', array(&$a, &$wgUser, "ontology removed: ".$ext_id, $id));
 						$dfgOut->output("done.]");
 					}
 				}
 
 			}
+			$dfgOut->outputln("\tdone.]");
 		}
 		$db->freeResult($res);
 
@@ -682,9 +691,18 @@ class Tools {
 		$db->query('DROP TEMPORARY TABLE df_page_of_templates_must_persist');
 	}
 
-	public static function deleteImagesOfBundle($ext_id, $logger = NULL) {
+	/**
+	 * Removes referenced images of a bundle (ie. images which are used on bundle pages). If $keepStillRequiredImages
+	 * is true, image used by pages other than those of the bundle are kept.
+	 *
+	 * @param string $ext_id
+	 * @param Logger $logger
+	 * @param boolean $keepStillRequiredImages
+	 */
+	public static function deleteReferencedImagesOfBundle($ext_id, $logger = NULL, $keepStillRequiredImages) {
 		global $dfgLang;
 		global $wgUser;
+		global $dfgOut;
 
 		$db =& wfGetDB( DB_MASTER );
 		$smw_ids = $db->tableName('smw_ids');
@@ -709,67 +727,45 @@ class Tools {
 		$db->query('INSERT INTO df_page_of_bundle (SELECT page_id FROM '.$page.' JOIN '.$smw_ids.' ON smw_namespace = page_namespace AND smw_title = page_title JOIN '.$smw_rels2.' ON smw_id = s_id WHERE p_id = '.$partOfBundlePropertyID.' AND o_id = '.$partOfBundleID.')');
 		$db->query('INSERT INTO df_page_of_bundle (SELECT cl_from FROM '.$categorylinks.' JOIN '.$page.' ON cl_to = page_title AND page_namespace = '.NS_CATEGORY.' JOIN '.$smw_ids.' ON smw_namespace = page_namespace AND smw_title = page_title JOIN '.$smw_rels2.' ON smw_id = s_id WHERE p_id = '.$partOfBundlePropertyID.' AND o_id = '.$partOfBundleID.')');
 
-		// get all templates used on these pages
-		$db->query('INSERT INTO df_page_of_images_used (SELECT il_title FROM '.$imagelinks.' WHERE il_from IN (SELECT * FROM df_page_of_bundle))');
+		// get all images used on these pages
+		$db->query('INSERT INTO df_page_of_images_used (SELECT il_to FROM '.$imagelinks.' WHERE il_from IN (SELECT * FROM df_page_of_bundle))');
 
-		// get all templates which are also used on other pages and must therefore persist
-		$db->query('INSERT INTO df_page_of_images_must_persist (SELECT title FROM df_page_of_images_used JOIN '.$imagelinks.' ON title = il_title AND il_from NOT IN (SELECT * FROM df_page_of_bundle))');
+		// get all images which are also used on other pages and must therefore persist
+		$db->query('INSERT INTO df_page_of_images_must_persist (SELECT title FROM df_page_of_images_used JOIN '.$imagelinks.' ON title = il_to AND il_from NOT IN (SELECT * FROM df_page_of_bundle))');
 
-		// delete those from the table of used templates
-		$db->query('DELETE FROM df_page_of_images_used WHERE title IN (SELECT * FROM df_page_of_images_must_persist)');
+		// delete those from the table of used images
+		if ($keepStillRequiredImages) {
+			$db->query('DELETE FROM df_page_of_images_used WHERE title IN (SELECT * FROM df_page_of_images_must_persist)');
+		}
 
-		// select all templates which can be deleted
+		// select all images which can be deleted
 		$res = $db->query('SELECT DISTINCT title FROM df_page_of_images_used');
 
-		// DELETE templates
+		// DELETE referenced images
 		if($db->numRows( $res ) > 0) {
+			$logger->info("Removing referenced images");
+			$dfgOut->outputln("\t[Removing referenced images...");
 			while($row = $db->fetchObject($res)) {
 
-				$title = Title::newFromText($row->title, NS_TEMPLATE);
+				$title = Title::newFromText($row->title, NS_FILE);
 
 				$a = new Article($title);
 				$id = $title->getArticleID( GAID_FOR_UPDATE );
 				if( wfRunHooks('ArticleDelete', array(&$a, &$wgUser, &$reason, &$error)) ) {
 					if( $a->doDeleteArticle( "ontology removed: ".$ext_id ) ) {
 						if (!is_null($logger)) $logger->info("Removing page: ".$title->getPrefixedText());
-						$dfgOut->outputln("\t[Removing page]: ".$title->getPrefixedText()."...");
+						$dfgOut->outputln("\t\t[Removing page]: ".$title->getPrefixedText()."...");
 						wfRunHooks('ArticleDeleteComplete', array(&$a, &$wgUser, "ontology removed: ".$ext_id, $id));
 						$dfgOut->output( "done.]");
 					}
 				}
 
 			}
+			$dfgOut->outputln("\tdone.]");
 		}
 		$db->freeResult($res);
 
-		// DELETE pages of bundle
-		$res = $db->query('SELECT DISTINCT id FROM df_page_of_bundle');
 
-		if($db->numRows( $res ) > 0) {
-			while($row = $db->fetchObject($res)) {
-
-				$title = Title::newFromID($row->id);
-
-				if (is_null($title)) {
-					if (!is_null($logger)) $logger->error("Invalid page ID: ".$row->id);
-					continue;
-				}
-				// DELETE
-				$a = new Article($title);
-				$id = $row->id;
-				if( wfRunHooks('ArticleDelete', array(&$a, &$wgUser, &$reason, &$error)) ) {
-					if( $a->doDeleteArticle( "ontology removed: ".$ext_id ) ) {
-						if (!is_null($logger)) $logger->info("Removing page: ".$title->getPrefixedText());
-						$dfgOut->outputln("\n\t[Removing page]: ".$title->getPrefixedText()."...");
-
-						wfRunHooks('ArticleDeleteComplete', array(&$a, &$wgUser, "ontology removed: ".$ext_id, $id));
-						$dfgOut->output("done.]");
-					}
-				}
-
-			}
-		}
-		$db->freeResult($res);
 
 		$db->query('DROP TEMPORARY TABLE df_page_of_bundle');
 		$db->query('DROP TEMPORARY TABLE df_page_of_images_used');
@@ -885,7 +881,7 @@ class Tools {
 	/**
 	 * Shows a fatal error which aborts installation.
 	 * Note: Requires the global output object $dfgOut to be set.
-	 * 
+	 *
 	 * @param string $e message
 	 */
 	public static function exitOnFatalError($e) {

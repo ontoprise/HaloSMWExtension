@@ -159,10 +159,10 @@ class OntologyInstaller {
 	public function deinstallOntology($dd) {
 		if (count($dd->getOntologies()) == 0) return;
 		if (!defined('SMW_VERSION')) throw new InstallationError(DEPLOY_FRAMEWORK_NOT_INSTALLED, "SMW is not installed. Can not delete ontology.");
-
+        global $dfgRemoveReferenced, $dfgRemoveStillUsed;
 		foreach($dd->getOntologies() as $loc) {
 			$bundleID = $dd->getID();
-			Tools::deletePagesOfBundle($bundleID, $this->logger);
+			Tools::deletePagesOfBundle($bundleID, $this->logger, $dfgRemoveReferenced, !$dfgRemoveStillUsed);
 		}
 	}
 
