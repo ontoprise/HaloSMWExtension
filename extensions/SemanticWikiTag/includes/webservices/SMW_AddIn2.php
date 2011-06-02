@@ -851,7 +851,7 @@ This is a page created by some upload clients. Please edit this page with other 
 		$ret->exception = smwgWTExceptionCheck($auth);
 		if($ret->exception->ret_code != SWT_ADDIN_E_SUCCESS) return $ret;
 
-		if(!defined( 'SF_VERSION' ) || !preg_match('/^1\.[79]/', SF_VERSION)) {
+		if(!defined( 'SF_VERSION' )) {
 			$ret->values = array();
 			return $ret;
 		}
@@ -1132,7 +1132,7 @@ This is a page created by some upload clients. Please edit this page with other 
 		$ret = smwgWTExceptionCheck($auth, true);
 		if($ret->ret_code != SWT_ADDIN_E_SUCCESS) return $ret;
 		
-		if(!defined( 'SF_VERSION' ) || !preg_match('/^1\.[79]/', SF_VERSION)) {
+		if(!defined( 'SF_VERSION' )) {
 			return $ret;
 		}
 
@@ -1140,7 +1140,11 @@ This is a page created by some upload clients. Please edit this page with other 
 		
 		$page_title = Title::newFromText( $page_name );
 		$article = new Article($page_title);
-		$forms = SFLinkUtils::getFormsForArticle($article);
+		if( class_exists( "SFFormLinker" ) ) {
+			$forms = SFFormLinker::getDefaultFormsForPage( $page_title );
+		} else {
+			$forms = SFLinkUtils::getFormsForArticle($article);
+		}
 		if(count($forms)>0) $form_name = $forms[0];
 		
 //		$revision = Revision::newFromTitle( $page_title );
