@@ -830,6 +830,18 @@ class Tools {
 		$extension = reset($rev_parts);
 		return $extension;
 	}
+	
+	/**
+	 * Checks if the given filename has a common ontology ending.
+	 * 
+	 * @param string $filename
+	 * @return boolean
+	 */
+	public static function checkIfOntologyFile($filename) {
+		$ext = self::getFileExtension($filename);
+		return ($ext == 'owl' || $ext == 'rdf' || $ext == 'obl' 
+		          || $ext == 'n3' || $ext == 'nt');
+	}
 
 	/**
 	 * Escapes XML attribute values

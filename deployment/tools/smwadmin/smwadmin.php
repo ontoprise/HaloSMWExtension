@@ -169,6 +169,14 @@ for( $arg = reset( $args ); $arg !== false; $arg = next( $args ) ) {
 	} else if ($arg == '-d') { // -d => De-install
 		$package = next($args);
 		if ($package === false) dffExitOnFatalError("No package found");
+		
+		// check if given package is a file path to an ontology file
+		// if so, derive the package ID from this
+		if (Tools::checkIfOntologyFile(basename($package))) {
+			$filename = substr(basename($package), 0, strrpos(basename($package), "."));
+			$package = strtolower($filename);
+		}
+		
 		$packageToDeinstall[] = $package;
 			
 		continue;
@@ -682,6 +690,9 @@ function dffShowHelp() {
 	$dfgOut->outputln( "\t--noconflict: Assures that there are no conflicts on ontology import. Will stop the process, if not.");
 	$dfgOut->outputln( "\t--nocheck: Skips the environment checks");
 	$dfgOut->outputln( "\t--noask: Skips all questions (assuming mostly 'yes' except for optional packages");
+	$dfgOut->outputln( "\t--removereferenced: Removes all templates, images and instances referenced used by a bundle. Used with -d");
+	$dfgOut->outputln( "\t--removestillused: Removes also pages which are used by other bundles. Used with -d --removereferenced");
+	
 	$dfgOut->outputln();
 	$dfgOut->outputln( "Examples:\tsmwadmin -i smwhalo Installs the given packages");
 	$dfgOut->outputln( "\tsmwadmin -u: Updates complete installation");
