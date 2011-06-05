@@ -4,16 +4,21 @@ Installation of the webadmin console:
 (2) Allow the webserver to write in 
         - deployment/tools/webadmin/sessiondata
         - LocalSettings.php
-        - extensions folder
+        - extensions folder (and all extensions contained)
+        - deployment/tools/webadmin
         
-(3) Allow the webserver to run external PHP processes
+    It is recommended to make the user which runs the webserver the owner of
+    these files and directories. It can be a different webserver than used for the wiki.    
+        
+(3) Allow the webserver to run external PHP processes.
 (4) For wiki auth. make sure that the 'curl' extension is installed.
     Otherwise auth. by wiki is not possible and you have to configure a separate
     user. Take a look in deployment/settings.php for that.
 (5) If you want to upload bundles you have to enable uploads in your webserver conf. They
     are stored in $HOME/df_upload or $TEMP/df_upload if $HOME is not defined.
-(6) Set the $scriptPath variable in deployment/settings.php (same as $wgScriptPath in LocalSettings.php)
+(6) Set the $scriptPath variable in deployment/settings.php 
+    (same as $wgScriptPath in LocalSettings.php)
         
 
-You should get a warning if something is missing when you first access the webadmin console.
+You get a warning if something is missing when you first access the webadmin console.
 
