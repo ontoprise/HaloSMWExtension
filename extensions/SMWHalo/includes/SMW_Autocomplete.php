@@ -174,45 +174,97 @@ function smwf_ac_AutoCompletionDispatcher($articleName, $userInputToMatch, $user
 
 		}
 
-	} else if (stripos($userContext, "{{") === 0) {
-		// template context
-		global $wgLang;
-		$namespace = NS_TEMPLATE;
-		if (defined('SF_NS_FORM')) {
-			$form_ns_text = $wgLang->getNsText(SF_NS_FORM);
-			if ($namespaceText == $form_ns_text) {
-				$namespace = SF_NS_FORM;
+	} else if (stripos($userContext, "{{#") === 0) {
+		// parser function
+		$indexOfPipe = strrpos($userContext, "|");
+		if ($indexOfPipe === false) {
+			$indexOfPipe = -1;
+		}
+		$indexOfQM = strrpos($userContext, "?");
+		if ($indexOfQM === false) {
+			$indexOfQM = -1;
+		}
+		$separatorIndex = max(array($indexOfPipe, $indexOfQM));
+
+		if ($separatorIndex == -1) {
+			// parser function name
+			// TODO: add others
+			$pages = AutoCompletionHandler::executeCommand("values: ask,sparql", $userInputToMatch);
+			$result = AutoCompletionRequester::encapsulateAsXML($pages);
+			return $result;
+		} else {
+			// parser function parameters (for #ask,#sparql)
+			$userContext = substr($userContext, $separatorIndex);
+			if (preg_match('/\|\s*template\s*=/', $userContext) > 0) {
+				// template query parameter context
+				$pages = AutoCompletionHandler::executeCommand("namespace: ".NS_TEMPLATE, $userInputToMatch);
+				$result = AutoCompletionRequester::encapsulateAsXML($pages);
+				return $result;
+			} else if (preg_match('/\|\s*format\s*=/', $userContext) > 0) {
+				// format query parameter context
+				global $smwgResultFormats;
+				$pages = AutoCompletionHandler::executeCommand("values: ".implode(",",array_keys($smwgResultFormats)), $userInputToMatch);
+				$result = AutoCompletionRequester::encapsulateAsXML($pages);
+				return $result;
+			} else if (stripos($userContext, "?") === 0) {
+				// query printout context
+				$pages = AutoCompletionHandler::executeCommand("namespace: ".SMW_NS_PROPERTY, $userInputToMatch);
+				$result = AutoCompletionRequester::encapsulateAsXML($pages);
+				return $result;
+			} else if (preg_match('/\|\s*[^=]+\s*=/', $userContext) > 0) {
+				// general query parameter context
+				$pages = AutoCompletionHandler::executeCommand("all: ", $userInputToMatch);
+				$result = AutoCompletionRequester::encapsulateAsXML($pages);
+				return $result;
+			} else if (stripos($userContext, "|") === 0) {
+				// general query parameter context
+				$pages = AutoCompletionHandler::executeCommand("values: sort=,order=asc/desc/reverse,limit=,offset=,format=,headers=,mainlabel=,link=,default=,intro=,outro=,searchlabel=,template=", $userInputToMatch);
+				$result = AutoCompletionRequester::encapsulateAsXML($pages);
+				return $result;
 			}
 		}
-		$result = AutoCompletionRequester::getTemplateOrFormProposals($userContext, $userInputToMatch , $namespace );
-		return $result;
+	} else if (stripos($userContext, "{{") === 0) {
 
-	} else if (preg_match('/\|\s*template\s*=/', $userContext) > 0) {
-		// template query parameter context
-		$pages = AutoCompletionHandler::executeCommand("namespace: ".NS_TEMPLATE, $userInputToMatch);
-		$result = AutoCompletionRequester::encapsulateAsXML($pages);
-		return $result;
-	} else if (preg_match('/\|\s*format\s*=/', $userContext) > 0) {
-		// format query parameter context
-		global $smwgResultFormats;
-		$pages = AutoCompletionHandler::executeCommand("values: ".implode(",",array_keys($smwgResultFormats)), $userInputToMatch);
-		$result = AutoCompletionRequester::encapsulateAsXML($pages);
-		return $result;
-	} else if (stripos($userContext, "?") === 0) {
-		// query printout context
-		$pages = AutoCompletionHandler::executeCommand("namespace: ".SMW_NS_PROPERTY, $userInputToMatch);
-		$result = AutoCompletionRequester::encapsulateAsXML($pages);
-		return $result;
-	} else if (preg_match('/\|\s*[^=]+\s*=/', $userContext) > 0) {
-		// general query parameter context
-		$pages = AutoCompletionHandler::executeCommand("all: ", $userInputToMatch);
-		$result = AutoCompletionRequester::encapsulateAsXML($pages);
-		return $result;
-	} else if (stripos($userContext, "|") === 0) {
-		// general query parameter context
-		$pages = AutoCompletionHandler::executeCommand("values: sort=,order=asc/desc/reverse,limit=,offset=,format=,headers=,mainlabel=,link=,default=,intro=,outro=,searchlabel=,template=", $userInputToMatch);
-		$result = AutoCompletionRequester::encapsulateAsXML($pages);
-		return $result;
+		// template context
+		$indexOfPipe = strrpos($userContext, "|");
+		if ($indexOfPipe === false) {
+			$indexOfPipe = -1;
+		}
+		$indexOfQM = strrpos($userContext, "?");
+		if ($indexOfQM === false) {
+			$indexOfQM = -1;
+		}
+		$separatorIndex = max(array($indexOfPipe, $indexOfQM));
+		if ($separatorIndex == -1) {
+			
+			// template name
+			global $wgLang;
+			$namespace = NS_TEMPLATE;
+			if (defined('SF_NS_FORM')) {
+				$form_ns_text = $wgLang->getNsText(SF_NS_FORM);
+				if ($namespaceText == $form_ns_text) {
+					$namespace = SF_NS_FORM;
+				}
+			}
+			$result = AutoCompletionRequester::getTemplateOrFormProposals($userContext, $userInputToMatch , $namespace );
+			return $result;
+		} else {
+			
+			// template paramters
+			$templateParameters = explode("|", $userContext);
+			$templateName = trim(substr(reset($templateParameters), 2));
+			$templateParameters = array_reverse($templateParameters);
+			$lastParam = reset($templateParameters);
+			$parameters = TemplateReader::getParameters(Title::newFromText($templateName, NS_TEMPLATE));
+			$values = array();
+			foreach($parameters as $p) {
+				list($v, $default) = $p;
+				$values[] = $v."=";
+			}
+			$pages = AutoCompletionHandler::executeCommand("values: ".implode(",",$values), $userInputToMatch);
+			$result = AutoCompletionRequester::encapsulateAsXML($pages);
+			return $result;
+		}
 	}
 }
 
@@ -332,7 +384,7 @@ class AutoCompletionRequester {
 			} else if ($title->getNamespace() == NS_MAIN) {
 				$parents = $title->getParentCategoryTree();
 				$matches[$i]['parentCategories'] = array();
-				
+
 				$parentkeys = array_keys($parents);
 				$next = reset($parentkeys);
 				while($next !== false) {
@@ -446,7 +498,7 @@ class AutoCompletionRequester {
 				// fallback
 				$pages = smwfGetAutoCompletionStore()->getPages($match, array(NS_MAIN));
 			}
-				
+
 			AutoCompletionRequester::attachCategoryHints($pages);
 			AutoCompletionRequester::attachImageURL($pages);
 			return AutoCompletionRequester::encapsulateAsXML($pages);
@@ -532,13 +584,13 @@ class AutoCompletionRequester {
 			if (defined('SF_NS_FORM')) {
 				foreach($templates as $t) {
 					switch($namespace) {
-						case NS_TEMPLATE: $matches[] = array($t, false, TemplateReader::formatTemplateParameters($t));break;
+						case NS_TEMPLATE: $matches[] = array('title'=>$t, 'inferred'=>false, 'pasteContent'=>TemplateReader::formatTemplateParameters($t));break;
 						case SF_NS_FORM: $matches[] = array($t, false);break;
 					}
 				}
 			} else {
 				foreach($templates as $t) {
-					$matches[] = array($t, false, TemplateReader::formatTemplateParameters($t));
+					$matches[] = array('title'=>$t, 'inferred'=>false, 'pasteContent'=>TemplateReader::formatTemplateParameters($t));
 				}
 			}
 
@@ -689,7 +741,7 @@ class TemplateReader {
 	/**
 	 * Get Template parameters as array of strings. Returns no doubles.
 	 */
-	private static function getParameters($template) {
+	public static function getParameters($template) {
 		$rev = Revision::newFromTitle($template);
 		$content = $rev->getText();
 		$matches = array();
@@ -698,7 +750,12 @@ class TemplateReader {
 		for($i = 0, $n = count($matches[1]); $i < $n; $i++) {
 			$param = $matches[1][$i];
 			if (!array_key_exists($param,$parameters)) {
-				$parameters[$param] = explode("|",$param);
+				$value = explode("|",$param);
+				if (count($value) == 1) {
+					$parameters[$param] = array(reset($value), "");
+				} else {
+					$parameters[$param] = $value;
+				}
 			}
 		}
 		return $parameters;
@@ -876,7 +933,7 @@ class AutoCompletionHandler {
 			}  else if ($commandText == 'all') {
 				$namespaceIndexes = array();
 				global $wgContLang, $smwhgDefaultACNamespaces;
-								
+
 				$pages = smwfGetAutoCompletionStore()->getPages($userInput, $smwhgDefaultACNamespaces);
 				$inf = self::setInferred($pages, !$first);
 				$result = self::mergeResults($result, $inf);

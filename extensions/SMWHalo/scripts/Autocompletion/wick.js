@@ -776,8 +776,8 @@ AutoCompleter.prototype = {
             var textBeforeCursor = this.getTextBeforeCursor();
 
             var userContextStart = Math.max(textBeforeCursor.lastIndexOf("[["), textBeforeCursor.lastIndexOf("{{"));
-            userContextStart = Math.max(textBeforeCursor.lastIndexOf("|"), userContextStart);
-            userContextStart = Math.max(textBeforeCursor.lastIndexOf("?"), userContextStart);
+            userContextStart = Math.max(textBeforeCursor.lastIndexOf("{{"), userContextStart);
+            
             var closingSemTag = Math.max(textBeforeCursor.lastIndexOf("]]"), textBeforeCursor.lastIndexOf("}}"));
 
             if (userContextStart != -1 && userContextStart > closingSemTag) {
@@ -1074,6 +1074,7 @@ AutoCompleter.prototype = {
         var userContext = this.getUserContext();
 
         if (this.siw.customFloater) {
+        	
         	//FIXME: localize category
             if ((userContext.match(/:=/) || userContext.match(/::/) || userContext.match(/category:/i)) 
                 && !this.getTextAfterCursor().match(/^(\s|\r|\n)*\]\]|^(\s|\r|\n)*\||^(\s|\r|\n)*;/)) {
@@ -1091,6 +1092,8 @@ AutoCompleter.prototype = {
              }else if (addedValue.match("/"+gLanguage.getMessage('CATEGORY_NS_WOC')+"/i")) {
             	// category case
                 addedValue += ":"; 
+            } else if (userContext.match(/^\{\{/i)) {
+            	// template or parser function case
             } else  {
             	// FIXME: in case of a namespace print the colon
             	if (!this.getTextAfterCursor().match(/^(\s|\r|\n)*\]\]|^(\s|\r|\n)*\||^(\s|\r|\n)*;/)) {
