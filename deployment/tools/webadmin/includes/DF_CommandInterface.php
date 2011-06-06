@@ -45,7 +45,7 @@ class DFCommandInterface {
 
 	public function dispatch($command, $args) {
 		try {
-		  return call_user_func_array(array($this, $command), $args);
+			return call_user_func_array(array($this, $command), $args);
 		} catch(Exception $e) {
 			header( "Status: " . $e->getCode(), true, (int)$e->getCode() );
 			print $e->getMessage();
@@ -316,30 +316,35 @@ class DFCommandInterface {
 
 	public function removeFromRepository($url) {
 		global $rootDir;
-		if (file_exists("$rootDir/tools/repositories")) {
-			$contents = file_get_contents("$rootDir/tools/repositories");
-			
-			//FIXME: consider credentials
-			$contents = str_replace($url, "", $contents);
-			$handle = fopen("$rootDir/tools/repositories", "w");
-			fwrite($handle, $contents);
-			fclose($handle);
-			return;
+		if (!file_exists("$rootDir/tools/repositories")) {
+			throw new Exception("Could not find repositories file", 500);
 		}
-		throw new Exception("Could not find repositories file", 500);
+		if (!is_writable("$rootDir/tools/repositories")) {
+			throw new Exception("$rootDir/tools/repositories is not writeable!", 500);
+		}
+		$contents = file_get_contents("$rootDir/tools/repositories");
+
+		//FIXME: consider credentials
+		$contents = str_replace($url, "", $contents);
+		$handle = fopen("$rootDir/tools/repositories", "w");
+		fwrite($handle, $contents);
+		fclose($handle);
+		return;
+
+
 	}
 
 	public function addToRepository($url) {
 		global $rootDir;
-		if (file_exists("$rootDir/tools/repositories")) {
-			$contents = file_get_contents("$rootDir/tools/repositories");
-			$contents .= "\n$url";
-			$handle = fopen("$rootDir/tools/repositories", "w");
-			fwrite($handle, $contents);
-			fclose($handle);
-			return;
+		if (!is_writable("$rootDir/tools/repositories")) {
+			throw new Exception("$rootDir/tools/repositories is not writeable!", 500);
 		}
-		throw new Exception("Could not find repositories file", 500);
-		 
+		$contents = file_get_contents("$rootDir/tools/repositories");
+		$contents .= "\n$url";
+		$handle = fopen("$rootDir/tools/repositories", "w");
+		fwrite($handle, $contents);
+		fclose($handle);
+		return;
+
 	}
 }
