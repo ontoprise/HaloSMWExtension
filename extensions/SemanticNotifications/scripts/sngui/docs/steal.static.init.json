@@ -1,0 +1,1 @@
+C({"name": "steal.static.init", "params": {}, "ret": {"type": "undefined", "description": ""}, "type": "function", "parent": "steal.static", "comment": "<p>Starts including files, sets options.</p>", "hide": true, "children": []})

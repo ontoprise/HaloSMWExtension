@@ -144,7 +144,7 @@ class SemanticNotificationManager {
 		$jsm = SMWResourceManager::SINGLETON();
 		$specialpagename = ':'.wfMsg('sn_special_url_name');
 	
-		$jsm->addScriptIf($sngScriptPath . '/scripts/SN_SemanticNotifications.js', "view", -1, NS_SPECIAL.$specialpagename);
+//		$jsm->addScriptIf($sngScriptPath . '/scripts/SN_SemanticNotifications.js', "view", -1, NS_SPECIAL.$specialpagename);
 
 		$jsm->addCSSIf($smwgScriptPath . '/skins/SMW_custom.css', "all", -1, NS_SPECIAL.$specialpagename);
 		$jsm->addCSSIf($sngScriptPath . '/skins/semanticnotification.css', "all", NS_SPECIAL, NS_SPECIAL.$specialpagename);
@@ -162,34 +162,7 @@ class SemanticNotificationManager {
 	 * Add appropriate JS language script
 	 */
 	public static function addJSLanguageScripts(& $jsm, $mode = "all", $namespace = -1, $pages = array()) {
-		global $sngIP, $wgLanguageCode, $sngScriptPath, $wgUser;
-
-		// content language file
-		$jsm->addScriptIf($sngScriptPath . '/scripts/Language/SN_Language.js', $mode, $namespace, $pages);
-		$lng = '/scripts/Language/SN_Language';
-		if (!empty($wgLanguageCode)) {
-			$lng .= ucfirst($wgLanguageCode).'.js';
-			if (file_exists($sngIP . $lng)) {
-				$jsm->addScriptIf($sngScriptPath . $lng, $mode, $namespace, $pages);
-			} else {
-				$jsm->addScriptIf($sngScriptPath . '/scripts/Language/SN_LanguageEn.js', $mode, $namespace, $pages);
-			}
-		} else {
-			$jsm->addScriptIf($sngScriptPath . '/scripts/Language/SN_LanguageEn.js', $mode, $namespace, $pages);
-		}
-	
-		// user language file
-		$lng = '/scripts/Language/SN_Language';
-		if (isset($wgUser)) {
-			$lng .= "User".ucfirst($wgUser->getOption('language')).'.js';
-			if (file_exists($sngScriptPath . $lng)) {
-				$jsm->addScriptIf($sngScriptPath . $lng, $mode, $namespace, $pages);
-			} else {
-				$jsm->addScriptIf($sngScriptPath . '/scripts/Language/SN_LanguageUserEn.js', $mode, $namespace, $pages);
-			}
-		} else {
-			$jsm->addScriptIf($sngScriptPath . '/scripts/Language/SN_LanguageUserEn.js', $mode, $namespace, $pages);
-		}
+		return;
 	}
 		
 	

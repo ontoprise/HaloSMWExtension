@@ -1,0 +1,1 @@
+C({"name": "steal.run", "params": {}, "ret": {"type": "undefined", "description": ""}, "type": "function", "parent": "steal", "comment": "<p>Adds a script tag to the dom, loading and running the steal's JavaScript file.</p>", "hide": true, "children": []})

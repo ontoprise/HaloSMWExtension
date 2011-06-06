@@ -1,6 +1,16 @@
 Semantic Notification extension ChangeLog
 =========================================
 
+VERSION 1.2.0
+
+  FEATURES:
+
+  CHANGES:
+	Changed Javascript library from Prototype to jQuery/JavascriptMVC
+	
+  BUGFIXES:
+
+
 VERSION 1.1.2
 
 

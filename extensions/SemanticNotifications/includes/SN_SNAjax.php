@@ -38,6 +38,8 @@ $wgAjaxExportList[] = 'snf_sn_ShowPreview';
 $wgAjaxExportList[] = 'snf_sn_GetAllNotifications';
 $wgAjaxExportList[] = 'snf_sn_GetNotification';
 $wgAjaxExportList[] = 'snf_sn_DeleteNotification';
+$wgAjaxExportList[] = 'snf_sn_GetLanguageStrings';
+$wgAjaxExportList[] = 'snf_sn_GetUserData';
 
 
 
@@ -130,8 +132,20 @@ function snf_sn_GetAllNotifications($userName) {
 	require_once("$sngIP/includes/SN_SemanticNotificationManager.php");
 	
 	$notifications = SemanticNotificationManager::getNotificationsOfUser($userName);
+	$notificationObjects = array();
 	
-	return $notifications == null ? "" : implode(',', $notifications);
+	$i = 0;
+	foreach ($notifications as $n) {
+		$obj = new stdClass();
+		$obj->label = $n;
+		$obj->id = $i++;
+		$obj->user = $userName;
+		$notificationObjects[] = $obj;
+	}
+	
+	return $notifications == null 
+		? "[]" 
+		: json_encode($notificationObjects);
 }
 
 /**
@@ -153,16 +167,21 @@ function snf_sn_GetNotification($name, $userName) {
 	require_once("$sngIP/includes/SN_SemanticNotification.php");
 	
 	$sn = SemanticNotification::newFromName($name, $userName);
-	$xml = "<?xml version=\"1.0\"?>\n".
-			"<notification>\n".
-			"\t<name>$name</name>\n".
-			"\t<user>$userName</user>\n".
-			"\t<query>".
-				htmlentities($sn->getQueryText()).
-			"</query>\n".
-			"\t<updateInterval>".$sn->getUpdateInterval()."</updateInterval>".
-			"</notification>";
-	return $xml;
+	
+	if ($sn) {
+		$obj = new stdClass();
+		$obj->label = $name;
+		$obj->id = 0;
+		$obj->user = $userName;
+		$obj->queryText = $sn->getQueryText();
+		$obj->updateInterval = $sn->getUpdateInterval();
+		$limits = SemanticNotificationManager::getUserLimitations($userName);
+		$obj->minInterval = is_array($limits) ? $limits['min interval'] : 60;
+	}
+		
+	return $sn == null 
+		? "[]" 
+		: json_encode($obj);
 			
 }
 
@@ -179,6 +198,54 @@ function snf_sn_DeleteNotification($name, $userName) {
 	require_once("$sngIP/includes/SN_SemanticNotification.php");
 	
 	return SemanticNotification::deleteFromDB($name, $userName);
+	
+}
+
+/**
+ * Returns all strings of the current language as JSON object.
+ * 
+ * @return string
+ * 		All language strings as JSON
+ */
+function snf_sn_GetLanguageStrings() {
+	global $wgLanguageCode, $sngScriptPath;
+	include_once 'SN_SemanticNotificationMessages.php';	
+	
+	// add some further strings
+	$info = array(
+		'queryInterfaceLink' => ' specialpage="'.urlencode(SpecialPage::getTitleFor('QueryInterface')->getFullURL()).'"',
+		'imagepath'          => $sngScriptPath . '/skins/images',
+		'sn_not_logged_in'   => wfMsg('sn_not_logged_in',
+									  SpecialPage::getTitleFor('Userlogin')->getFullURL()),
+		'sn_no_email'        => wfMsg('sn_no_email',
+							          SpecialPage::getTitleFor('Preferences')->getFullURL(),
+				                      wfMsg('mypreferences'))
+	);
+	return json_encode(array($info + $messages[$wgLanguageCode]));
+	
+}
+
+/**
+ * Returns information about the current user as JSON object.
+ * 
+ * @return string
+ * 		User data as JSON
+ */
+function snf_sn_GetUserData() {
+	global $wgUser;
+	
+	$userData = new stdClass();
+	$userData->isLoggedIn = $wgUser->isLoggedIn();
+	$userData->isEmailConfirmed = $wgUser->isEmailConfirmed();
+	$userData->minInterval = 60;
+	$userData->maxNotifications = 99999;
+	$limits = SemanticNotificationManager::getUserLimitations($wgUser->getName());
+	if (is_array($limits)) {
+		$userData->minInterval = $limits['min interval'];
+		$userData->maxNotifications = $limits['notifications'];
+	}
+	
+	return json_encode(array($userData));
 	
 }
 

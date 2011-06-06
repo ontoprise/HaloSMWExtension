@@ -1,0 +1,1 @@
+C({"name": "steal.File.prototype.normalize", "params": {}, "ret": {"type": "undefined", "description": ""}, "type": "function", "parent": "steal.File.prototype", "comment": "<p>For a given path, a given working directory, and file location, update the path so \nit points to a location relative to steal's root.</p>", "children": []})

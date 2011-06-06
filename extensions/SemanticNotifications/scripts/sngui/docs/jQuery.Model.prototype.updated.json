@@ -1,0 +1,1 @@
+C({"name": "jQuery.Model.prototype.updated", "type": "function", "parent": "jQuery.Model.prototype", "comment": "<p>Called by save after an instance is updated.  Publishes 'updated'.</p>", "hide": true, "params": {"attrs": {"order": 0, "description": "", "name": "attrs", "type": "Object", "optional": false}}, "children": []})

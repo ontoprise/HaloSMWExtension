@@ -1,0 +1,1 @@
+C({"name": "steal.runNow", "params": {}, "ret": {"type": "undefined", "description": ""}, "type": "function", "parent": "steal", "comment": "<p>Loads the steal code immediately.  This is typically used after DOM has loaded.</p>", "hide": true, "children": []})

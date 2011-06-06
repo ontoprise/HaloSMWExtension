@@ -1,0 +1,1 @@
+C({"name": "steal.static.pageDir", "type": "attribute", "parent": "steal.static", "comment": "<p>The current page's folder's path.</p>", "hide": true, "children": []})

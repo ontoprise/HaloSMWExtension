@@ -1,0 +1,1 @@
+C({"name": "steal.static.setScriptOptions", "params": {}, "ret": {"type": "undefined", "description": ""}, "type": "function", "parent": "steal.static", "comment": "<p>Sets options from script</p>", "hide": true, "children": []})

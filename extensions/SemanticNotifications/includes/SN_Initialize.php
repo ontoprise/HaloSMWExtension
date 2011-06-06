@@ -63,8 +63,8 @@ $sngScriptPath = $wgScriptPath . '/extensions/SemanticNotifications';
 
 
 // Tell the script manager, that we need prototype
-global $smgJSLibs; 
-$smgJSLibs[] = 'prototype'; 
+//global $smgJSLibs; 
+//$smgJSLibs[] = 'prototype'; 
 
 /**
  * Switch on SemanticNotifications. This function must be called in 

@@ -1,0 +1,1 @@
+C({"name": "evil", "type": "attribute", "parent": "../steal/steal.js?sngui,development", "comment": "<p>JavaScriptMVC - steal.js\n(c) 2010 Jupiter JavaScript Consulting</p>\n\n<p>steal provides dependency management\nsteal('path/to/file').then(function(){\n  //do stuff with file\n})</p>", "children": []})

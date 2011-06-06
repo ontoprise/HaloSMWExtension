@@ -1,0 +1,1 @@
+C({"name": "prototype.{window} load", "params": {}, "ret": {"type": "undefined", "description": ""}, "type": "function", "parent": "prototype", "comment": "<p>When the page loads, gets all recipes to be displayed.</p>", "children": []})

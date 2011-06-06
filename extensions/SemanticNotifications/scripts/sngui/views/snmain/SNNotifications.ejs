@@ -1,0 +1,20 @@
+<table class="sn-my-notifications-table">
+	<colgroup>
+		<col width="80%" span="1">
+		<col width="10%" span="2">
+	</colgroup>
+	<% for (var i = 0; i < notifications.length; ++i) { %>
+		<% var n = notifications[i].label %>
+		<tr <%= notifications[i] %>>
+			<td><%=n%></td>
+			<td>
+				<img class="sn-edit-notification"
+				     src="<%=wgScriptPath%>/extensions/SemanticNotifications/skins/images/edit.gif" />
+			</td> 
+			<td>
+				<img class="sn-delete-notification" 
+				     src="<%=wgScriptPath%>/extensions/SemanticNotifications/skins/images/delete.png" />
+			</td> 
+		</tr>
+	<% } %>
+</table>

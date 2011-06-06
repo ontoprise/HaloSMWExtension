@@ -1,0 +1,1 @@
+C({"name": "steal.File.prototype.joinCurrent", "params": {}, "ret": {"type": "undefined", "description": ""}, "type": "function", "parent": "steal.File.prototype", "comment": "<p>Joins the file to the current working directory.</p>", "children": []})

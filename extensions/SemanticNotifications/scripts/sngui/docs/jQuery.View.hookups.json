@@ -1,0 +1,1 @@
+C({"name": "jQuery.View.hookups", "type": "attribute", "parent": "jQuery.View", "comment": "<p>A list of pending 'hookups'</p>", "hide": true, "children": []})

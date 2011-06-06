@@ -93,7 +93,9 @@ $messages['en'] = array(
 	'sn_processed_notification_sent' => 'Processed notification "$1" of user "$2". The semantic data changed and a notification was sent.',
 	'sn_skipped_notification'   => 'Skipped notification "$1" of user "$2" due to update interval.',
 	'sn_mail_title' => 'Semantic notification from $1',
-
+	'sn_overwrite_existing' => 'The notification "$1" already exists. Do you really want to overwrite it?',
+	'sn_delete' => 'Do you really want to delete the notification "$1"?',
+	'sn_invalid_update_interval' => 'The update interval is invalid. The smallest possible value is $1.'
 
 );
 
@@ -171,6 +173,11 @@ $messages['de'] = array(
 	'sn_processed_notification_sent' => 'Die Benachrichtigung $1 des Benutzers "$2" wurde bearbeitet. Die semantischen Daten änderten sich und eine Benachrichtigung wurde gesendet.',
 	'sn_skipped_notification'   => 'Die Benachrichtigung $1 des Benutzers "$2" wurde übersprungen da der Benachrichtigungszeitraum noch nicht abgelaufen ist.',
 	'sn_mail_title' => 'Semantische Benachrichtigung von $1',
+	'sn_overwrite_existing' => 'Die Benachrichtigung "$1" existiert bereits. Möchten Sie sie wirklich überschreiben?',
+	'sn_delete' => 'Möchten Sie die Benachrichtigung "$1" wirklich löschen?',
+	'sn_invalid_update_interval' => 'Das Aktualisierungsinterval ist ungültig. Der kleinste zulässige Wert ist $1.',
+
+
 
 );
 ?>
