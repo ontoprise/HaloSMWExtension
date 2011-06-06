@@ -44,12 +44,17 @@ class DFCommandInterface {
 	}
 
 	public function dispatch($command, $args) {
-		return call_user_func_array(array($this, $command), $args);
+		try {
+		  return call_user_func_array(array($this, $command), $args);
+		} catch(Exception $e) {
+			header( "Status: " . $e->getCode(), true, (int)$e->getCode() );
+			print $e->getMessage();
+		}
 	}
 
 	public function readLog($filename) {
 		global $mwrootDir, $dfgOut;
-	
+
 		$absoluteFilePath = Tools::getTempDir()."/$filename";
 		if (!file_exists($absoluteFilePath)) {
 			return '$$NOTEXISTS$$';
@@ -60,7 +65,7 @@ class DFCommandInterface {
 
 	public function getLocalDeployDescriptor($extid) {
 		global $mwrootDir, $dfgOut;
-	
+
 		$localPackages = PackageRepository::getLocalPackages($mwrootDir);
 		if (!array_key_exists($extid, $localPackages)) {
 			return NULL;
@@ -95,7 +100,7 @@ class DFCommandInterface {
 
 	public function getDeployDescriptor($extid) {
 		global $mwrootDir, $dfgOut;
-		
+
 		$dd = PackageRepository::getLatestDeployDescriptor($extid);
 		if (is_null($dd)) {
 			return NULL;
@@ -127,7 +132,7 @@ class DFCommandInterface {
 
 	public function getDependencies($extid) {
 		global $mwrootDir, $dfgOut;
-		
+
 		try {
 			$dfgOut->setVerbose(false);
 			$installer = Installer::getInstance($mwrootDir);
@@ -150,7 +155,7 @@ class DFCommandInterface {
 
 	public function install($extid) {
 		global $mwrootDir, $dfgOut;
-	
+
 		$filename = uniqid().".log";
 		touch(Tools::getTempDir()."/$filename");
 		chdir($mwrootDir.'/deployment/tools');
@@ -168,7 +173,7 @@ class DFCommandInterface {
 
 	public function deinstall($extid) {
 		global $mwrootDir, $dfgOut;
-		
+
 		$filename = uniqid().".log";
 		touch(Tools::getTempDir()."/$filename");
 		chdir($mwrootDir.'/deployment/tools');
@@ -186,7 +191,7 @@ class DFCommandInterface {
 
 	public function update($extid) {
 		global $mwrootDir, $dfgOut;
-	
+
 		$filename = uniqid().".log";
 		touch(Tools::getTempDir()."/$filename");
 		chdir($mwrootDir.'/deployment/tools');
@@ -204,7 +209,7 @@ class DFCommandInterface {
 
 	public function finalize($extid) {
 		global $mwrootDir, $dfgOut;
-		
+
 		$filename = uniqid().".log";
 		touch(Tools::getTempDir()."/$filename");
 		chdir($mwrootDir.'/deployment/tools');
@@ -261,7 +266,7 @@ class DFCommandInterface {
 
 	public function restore($restorepoint) {
 		global $mwrootDir, $dfgOut;
-		
+
 		$filename = uniqid().".log";
 		touch(Tools::getTempDir()."/$filename");
 		chdir($mwrootDir.'/deployment/tools');
@@ -279,7 +284,7 @@ class DFCommandInterface {
 
 	public function createRestorePoint($restorepoint) {
 		global $mwrootDir, $dfgOut;
-		
+
 		$filename = uniqid().".log";
 		touch(Tools::getTempDir()."/$filename");
 		chdir($mwrootDir.'/deployment/tools');
@@ -304,8 +309,37 @@ class DFCommandInterface {
 		return true;
 	}
 
-    public function removeFile($filepath) {
-    	global $mwrootDir, $dfgOut;
-        unlink($filepath);
-    }
+	public function removeFile($filepath) {
+		global $mwrootDir, $dfgOut;
+		unlink($filepath);
+	}
+
+	public function removeFromRepository($url) {
+		global $rootDir;
+		if (file_exists("$rootDir/tools/repositories")) {
+			$contents = file_get_contents("$rootDir/tools/repositories");
+			
+			//FIXME: consider credentials
+			$contents = str_replace($url, "", $contents);
+			$handle = fopen("$rootDir/tools/repositories", "w");
+			fwrite($handle, $contents);
+			fclose($handle);
+			return;
+		}
+		throw new Exception("Could not find repositories file", 500);
+	}
+
+	public function addToRepository($url) {
+		global $rootDir;
+		if (file_exists("$rootDir/tools/repositories")) {
+			$contents = file_get_contents("$rootDir/tools/repositories");
+			$contents .= "\n$url";
+			$handle = fopen("$rootDir/tools/repositories", "w");
+			fwrite($handle, $contents);
+			fclose($handle);
+			return;
+		}
+		throw new Exception("Could not find repositories file", 500);
+		 
+	}
 }

@@ -54,6 +54,38 @@ class PackageRepository {
 	static $localPackagesToInitialize = NULL;
 
 	/**
+	 * Returns registered list of repositories.
+	 *
+	 * @return array of URLs (string)
+	 */
+	public static function getRepositoryURLs() {
+		global $smwgDFIP, $rootDir;
+		if (isset($smwgDFIP)) {
+			$repositoriesFile = "$smwgDFIP/tools/repositories";
+		} else if (isset($rootDir)) {
+			$repositoriesFile = "$rootDir/tools/repositories";
+		} else {
+			$repositoriesFile =  "repositories";
+		}
+
+		if (!file_exists($repositoriesFile)) {
+			throw new Exception("No repository file found");
+		}
+
+		$content = file_get_contents($repositoriesFile);
+		$rep_file_lines = array_unique(explode("\n", $content));
+		$repo_urls = array();
+		foreach($rep_file_lines as $u) {
+			$u = trim($u);
+			if (trim($u) == "" || substr(trim($u),0,1) == "#") continue;
+			@list($rawurl, $user, $pass) = explode(" ", $u); // do not complain about missing credentials
+			$url = (substr(trim($rawurl), -1) == "/") ? $rawurl : (trim($rawurl)."/"); //add trailing / if necessary
+
+			$repo_urls[] = $url;
+		}
+		return $repo_urls;
+	}
+	/**
 	 * Downloads all package repositories from remote.
 	 *
 	 * @return PackageRepository
@@ -70,7 +102,7 @@ class PackageRepository {
 		} else {
 			$repositoriesFile =  "repositories";
 		}
-		
+
 		if (file_exists($repositoriesFile)) {
 			$dfgOut->outputln("Reading from repository file...");
 			$content = file_get_contents($repositoriesFile);
@@ -101,14 +133,18 @@ class PackageRepository {
 			if (substr($url, -1) != '/') $url .= '/';
 			$partsOfURL = parse_url($url. 'repository.xml');
 
-			$path = $partsOfURL['path'];
 			if (!array_key_exists('path', $partsOfURL)) {
 				$dfgOut->outputln("Could not parse $url", DF_PRINTSTREAM_TYPE_WARN) ;
+				continue;
 			}
-			$host = $partsOfURL['host'];
+			$path = $partsOfURL['path'];
+			
 			if (!array_key_exists('host', $partsOfURL)) {
 				$dfgOut->outputln("Could not parse $url", DF_PRINTSTREAM_TYPE_WARN) ;
+				continue;
 			}
+			$host = $partsOfURL['host'];
+			
 			$port = array_key_exists("port", $partsOfURL) ? $partsOfURL['port'] : 80;
 			try {
 				$res = $d->downloadAsString($path, $port, $host, array_key_exists($url, self::$repo_credentials) ? self::$repo_credentials[$url] : "", NULL);
@@ -299,12 +335,12 @@ class PackageRepository {
 
 		return $sortedResults;
 	}
-    
+
 	/**
 	 * Search for packages in all repositories containing the
-	 * $searchvalue in its ID or description. $searchvalue can contain 
-	 * several words (separated by withspace). All must be contained. 
-	 * 
+	 * $searchvalue in its ID or description. $searchvalue can contain
+	 * several words (separated by withspace). All must be contained.
+	 *
 	 * @param string $searchValue
 	 * @return array (id => DeployDescriptor)
 	 */
@@ -333,7 +369,7 @@ class PackageRepository {
 
 			}
 		}
-        ksort($results);
+		ksort($results);
 		return $results;
 	}
 	/**

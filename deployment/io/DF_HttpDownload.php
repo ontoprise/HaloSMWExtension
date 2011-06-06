@@ -72,10 +72,10 @@ class HttpDownload {
 		if ($credentials == ':') $credentials = ''; // make sure the credentials are not empty by accident
 		$address = gethostbyname($host);
 		$handle = fopen($filename, "wb");
-		$socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
+		@$socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
 		if ($socket === false) throw new Exception("\t***Could not connect to '$host'***");
 		$this->useProxy($path, $port, $address);
-		$connect_status = socket_connect($socket, $address, $port);
+		@$connect_status = socket_connect($socket, $address, $port);
 		if ($connect_status === false) throw new Exception("\t***Could not connect to '$host'***");
 		$in = "GET $path HTTP/1.0\r\n";
 		$in .= "Host: $host\r\n";
@@ -140,10 +140,10 @@ class HttpDownload {
 		if ($credentials == ':') $credentials = ''; // make sure the credentials are not empty by accident
 		$address = gethostbyname($host);
 		$res = "";
-		$socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
+		@$socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
 		if ($socket === false) throw new Exception("\t***Could not connect to '$host'***");
 		$this->useProxy($path, $port, $address);
-		$connect_status = socket_connect($socket, $address, $port);
+		@$connect_status = socket_connect($socket, $address, $port);
 		if ($connect_status === false) throw new Exception("\t***Could not connect to '$host'***");
 		$in = "GET $path HTTP/1.0\r\n";
 		$in .= "Host: $host\r\n";

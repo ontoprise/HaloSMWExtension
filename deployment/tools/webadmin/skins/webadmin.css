@@ -45,3 +45,7 @@ cursor: pointer;
 .df_extension_details td[value] {
     color: blue;
 }
+
+#df_existingrepository_section {
+	margin-top: 20px;
+}

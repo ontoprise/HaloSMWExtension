@@ -478,8 +478,51 @@ $(function() {
 		}
 	});
 	
+	// register repository managment handler
+	var addRepositoryHandler = function() {
+		var newrepositoryURL = $('#df_newrepository_input').val();
+		newrepositoryURL = newrepositoryURL.replace('<','&lt;');
+		newrepositoryURL = newrepositoryURL.replace('&','&amp;');
+		
+		var addToRepositoryCallack = function(xhr, status) {
+			$('#df_settings_progress_indicator').hide();
+			if (xhr.status != 200) {
+				alert(xhr.responseText);
+				return;
+			}
+			$('#df_repository_list').append($('<option>'+newrepositoryURL+'</option>'));
+		};
+		$('#df_settings_progress_indicator').show();
+		var url = wgServer+wgScriptPath+"/deployment/tools/webadmin?rs=addToRepository&rsargs[]="+encodeURIComponent($('#df_newrepository_input').val());
+		$.ajax( { url : url, dataType:"json", complete : addToRepositoryCallack });
+	}
 	
+	$('#df_addrepository').click(addRepositoryHandler);
+	$('#df_newrepository_input').keypress(function(e) { 
+		if (e.keyCode == 13) {
+			addRepositoryHandler();
+		}
+	});
+	$('#df_removerepository').click(function(e) { 
+		 $('#df_repository_list option:selected').each(function(){
+			 var entry = $(this);
+			 var removeFromRepositoryCallack = function(xhr, status) {
+				 $('#df_settings_progress_indicator').hide();
+					if (xhr.status != 200) {
+						alert(xhr.responseText);
+						return;
+					}
+					entry.remove();
+			};
+			$('#df_settings_progress_indicator').show();
+			var url = wgServer+wgScriptPath+"/deployment/tools/webadmin?rs=removeFromRepository&rsargs[]="+encodeURIComponent(entry.val());
+			$.ajax( { url : url, dataType:"json", complete : removeFromRepositoryCallack });
+		        
+		 });
+	});
 	$(document).ready(function(e) { 
+		
+		
 		
 		// register every extension in status view for showing extension details on a click event.
 		$('.df_extension_id').click(function(e2) {
