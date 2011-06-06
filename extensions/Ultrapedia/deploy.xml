@@ -27,7 +27,7 @@
     <configs>
         <new>
             <require name="ultrapedia"
-                file="extensions/UltraPedia/includes/UP_Initialize.php" />
+                file="extensions/Ultrapedia/includes/UP_Initialize.php" />
         </new>
     </configs>
 </deploydescriptor>
