@@ -169,14 +169,14 @@ for( $arg = reset( $args ); $arg !== false; $arg = next( $args ) ) {
 	} else if ($arg == '-d') { // -d => De-install
 		$package = next($args);
 		if ($package === false) dffExitOnFatalError("No package found");
-		
+
 		// check if given package is a file path to an ontology file
 		// if so, derive the package ID from this
 		if (Tools::checkIfOntologyFile(basename($package))) {
 			$filename = substr(basename($package), 0, strrpos(basename($package), "."));
 			$package = strtolower($filename);
 		}
-		
+
 		$packageToDeinstall[] = $package;
 			
 		continue;
@@ -241,12 +241,12 @@ for( $arg = reset( $args ); $arg !== false; $arg = next( $args ) ) {
 		$dfgListpages = next($args);
 		continue;
 	} else if ($arg == '--removereferenced') {
-        $dfgRemoveReferenced = true;
-        continue;
-    } else if ($arg == '--removestillused') {
-        $dfgRemoveStillUsed = true;
-        continue;
-    } else if ($arg == '--nocheck') {
+		$dfgRemoveReferenced = true;
+		continue;
+	} else if ($arg == '--removestillused') {
+		$dfgRemoveStillUsed = true;
+		continue;
+	} else if ($arg == '--nocheck') {
 		// ignore
 		continue;
 	} else {
@@ -419,7 +419,7 @@ if (count($ontologiesToInstall) > 0) {
 	// requires a wiki environment, so check and include a few things more
 	dffCheckWikiContext();
 	require_once($rootDir.'/tools/smwadmin/DF_OntologyInstaller.php');
-    
+
 	$localpackages = PackageRepository::getLocalPackages($mwrootDir);
 	if (!array_key_exists('smw', $localpackages)) {
 		dffExitOnFatalError("Ontology import needs at least SMW installed.");
@@ -692,7 +692,7 @@ function dffShowHelp() {
 	$dfgOut->outputln( "\t--noask: Skips all questions (assuming mostly 'yes' except for optional packages");
 	$dfgOut->outputln( "\t--removereferenced: Removes all templates, images and instances referenced used by a bundle. Used with -d");
 	$dfgOut->outputln( "\t--removestillused: Removes also pages which are used by other bundles. Used with -d --removereferenced");
-	
+
 	$dfgOut->outputln();
 	$dfgOut->outputln( "Examples:\tsmwadmin -i smwhalo Installs the given packages");
 	$dfgOut->outputln( "\tsmwadmin -u: Updates complete installation");
@@ -703,7 +703,11 @@ function dffShowHelp() {
 	$dfgOut->outputln( "\tsmwadmin -u --noask: Updates the complete installation with no check for environment.");
 	$dfgOut->outputln( "\n");
 
-	$logDir = Tools::getHomeDir()."/df_log";
+	if (array_key_exists('df_homedir', DF_Config::$settings)) {
+		$logDir = DF_Config::$settings['df_homedir'];
+	} else {
+		$logDir = Tools::getHomeDir()."/df_log";
+	}
 	$dfgOut->outputln( "The DF's log files are stored in: $logDir");
 	$dfgOut->outputln( "\n");
 }

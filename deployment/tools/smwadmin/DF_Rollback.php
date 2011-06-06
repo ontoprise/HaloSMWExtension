@@ -48,7 +48,11 @@ class Rollback {
 	private function __construct($rootDir) {
 
 		$this->rootDir = $rootDir;
-		$homeDir = Tools::getHomeDir();
+		if (array_key_exists('df_homedir', DF_Config::$settings)) {
+			$homeDir = DF_Config::$settings['df_homedir'];
+		} else {
+			$homeDir = Tools::getHomeDir();
+		}
 		$this->tmpDir = "$homeDir/rollback_smwadmin";
 
 	}
@@ -233,7 +237,7 @@ class Rollback {
 		return $name;
 	}
 
-	
+
 
 	/**
 	 * Restores complete code base of installation including LocalSettings.php
@@ -275,13 +279,13 @@ class Rollback {
 		}
 		$wgDBname = $this->getVariableValue("LocalSettings.php", "wgDBname");
 		if (!file_exists($this->tmpDir."/$name/dump.sql")) return false; // nothing to restore
-		
+
 		global $dfgNoAsk;
-        if (isset($dfgNoAsk) && $dfgNoAsk == true) {
-           // default answer is yes, restore.
-        } else {
-           if (!DFUserInput::consoleConfirm("Restore database? (y/n) ")) return false;
-        }
+		if (isset($dfgNoAsk) && $dfgNoAsk == true) {
+			// default answer is yes, restore.
+		} else {
+			if (!DFUserInput::consoleConfirm("Restore database? (y/n) ")) return false;
+		}
 		$dfgOut->outputln("[Restore database...");
 		$logger = Logger::getInstance();
 		$logger->info("Restore database");

@@ -50,8 +50,11 @@ class Logger {
 	}
 
 	private function __construct() {
-
-		$homeDir = Tools::getHomeDir();
+		if (array_key_exists('df_homedir', DF_Config::$settings)) {
+			$homeDir = DF_Config::$settings['df_homedir'];
+		} else {
+			$homeDir = Tools::getHomeDir();
+		}
 		$this->logDir = "$homeDir/df_log";
 		Tools::mkpath($this->logDir);
 		if (is_writable($this->logDir)) {
@@ -122,5 +125,5 @@ class Logger {
 		fclose($this->logFileHandle);
 	}
 
-	
+
 }

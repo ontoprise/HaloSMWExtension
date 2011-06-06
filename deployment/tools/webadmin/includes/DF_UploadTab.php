@@ -72,7 +72,11 @@ ENDS
 		$html .= "<th>";
 		$html .= $dfgLang->getLanguageString('df_webadmin_action');
 		$html .= "</th>";
-		$uploadDirectory = Tools::getHomeDir()."/df_upload";
+		if (array_key_exists('df_homedir', DF_Config::$settings)) {
+			$uploadDirectory = DF_Config::$settings['df_homedir'];
+		} else {
+			$uploadDirectory = Tools::getHomeDir()."/df_upload";
+		}
 		if ($uploadDirectory == '/df_upload') {
 			$uploadDirectory = Tools::getTempDir()."/df_upload";
 		}

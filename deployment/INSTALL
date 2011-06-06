@@ -24,6 +24,7 @@ Requirements:
 Table of contents
 =================
 1. Installation
+1a. Settings
 2. I already have SMW installed. Can I use the DF though?
 3. HowTo use the deployment framework
 4. Restore wiki from restore point
@@ -66,6 +67,14 @@ Table of contents
     This is OPTIONAL! 
     
     see deployment/tools/webadmin/INSTALL
+    
+#
+# 1a.
+#
+
+There is a settings file located at deployment/settings.php. Take a look in it,
+it is documented.
+    
 #    
 # 2. I already have SMW installed. Can I use the DF though?
 # ==========================================================

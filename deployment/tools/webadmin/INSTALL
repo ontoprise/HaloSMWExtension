@@ -22,3 +22,6 @@ Installation of the webadmin console:
 
 You get a warning if something is missing when you first access the webadmin console.
 
+There is a settings file located at deployment/settings.php. Take a look in it,
+it is documented. It contains some configuration concerning the webadmin console.
+
