@@ -6,7 +6,7 @@ CKEDITOR.dialog.add( 'SMWqi', function( editor ) {
     
 	return {
 		title: 'Query Interface',
-
+		lang: editor.lang,
 		minWidth: 900,
 		minHeight: (window.outerHeight == undefined) ? 400 : parseInt(window.outerHeight * 0.6),
 
@@ -28,6 +28,47 @@ CKEDITOR.dialog.add( 'SMWqi', function( editor ) {
 				 ]
 			}
 		 ],
+		 
+		 buttons: [
+		       	CKEDITOR.dialog.okButton( {
+		       			label: 'Go'
+		       		}),
+
+		       	CKEDITOR.dialog.cancelButton
+		       ],
+
+		 
+//		 buttons:[{
+//			    type:'button',
+//			    id:'someButtonID', /* note: this is not the CSS ID attribute! */
+//			    label: 'Button',
+//			    onClick: function() {
+//					var qiDocument = window.frames['CKeditorQueryInterface'];
+//					var ask = qiDocument.qihelper.getAskQueryFromGui();
+//					ask = ask.replace(/\]\]\[\[/g, "]]\n[[");
+//					ask = ask.replace(/>\[\[/g, ">\n[[");
+//					ask = ask.replace(/\]\]</g, "]]\n<");
+//					ask = ask.replace(/([^\|]{1})\|{1}(?!\|)/g, "$1\n|");
+//
+//		            if ( editor.mode == 'wysiwyg') {
+//		                ask = ask.replace(/\r?\n/g, 'fckLR');
+//		                ask = '<span class="fck_smw_query">' + ask + '</span>';
+//		                var element = CKEDITOR.dom.element.createFromHtml(ask, editor.document),
+//		                    newFakeObj = editor.createFakeElement( element, 'FCK__SMWquery', 'span', false, 'Edit Query (with Query Interface)' );
+//		                if ( this.fakeObj ) {
+//		                    newFakeObj.replace( this.fakeObj );
+//		    				editor.getSelection().selectElement( newFakeObj );
+//		                } else
+//		            		editor.insertElement( newFakeObj );
+//		            }
+//		            else {
+//		                this.InsertDataInTextarea(ask);
+//		            }
+////		            CKEDITOR.dialog.prototype.hide();
+//				}
+//		 
+//		 }, CKEDITOR.dialog.okButton({label: 'xxxxx'}),
+//			CKEDITOR.dialog.cancelButton],
 
          InsertDataInTextarea : function(ask) {
             var myArea = window.parent.getElementById('wpTextbox1');
@@ -101,7 +142,7 @@ CKEDITOR.dialog.add( 'SMWqi', function( editor ) {
                 ask = ask.replace(/\r?\n/g, 'fckLR');
                 ask = '<span class="fck_smw_query">' + ask + '</span>';
                 var element = CKEDITOR.dom.element.createFromHtml(ask, editor.document),
-                    newFakeObj = editor.createFakeElement( element, 'FCK__SMWquery', 'span' );
+                    newFakeObj = editor.createFakeElement( element, 'FCK__SMWquery', 'span', false, 'Edit Query (with Query Interface)' );
                 if ( this.fakeObj ) {
                     newFakeObj.replace( this.fakeObj );
     				editor.getSelection().selectElement( newFakeObj );

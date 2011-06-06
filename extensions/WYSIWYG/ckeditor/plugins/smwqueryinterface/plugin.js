@@ -10,7 +10,7 @@ CKEDITOR.plugins.add( 'smw_qi',
 
 		editor.ui.addButton( 'SMWqi',
 			{
-				label : 'Query Interface',
+				label : 'Insert a new Query (with Query Interface)',
 				command : 'SMWqi',
                 icon: this.path + 'images/tb_icon_ask.gif'
 			});
@@ -36,6 +36,7 @@ CKEDITOR.plugins.add('smw_qi', {
 				'border: 1px solid #a9a9a9;' +
 				'width: 18px !important;' +
 				'height: 18px !important;' +
+				
 			'}\n'
         );
 
@@ -50,7 +51,7 @@ CKEDITOR.plugins.add('smw_qi', {
             editor.addMenuGroup('mediawiki');
             // Create a menu item
             editor.addMenuItem('SMWqi', {
-                label: 'Query Interface',
+            	label : 'Insert a new Query (with Query Interface)',
                 command: 'SMWqi',
                 group: 'mediawiki'
             });
@@ -59,9 +60,9 @@ CKEDITOR.plugins.add('smw_qi', {
         if ( editor.ui.addButton ) {
             editor.ui.addButton( 'SMWqi',
                 {
-                    label : 'Query Interface',
+					label : 'Insert a new Query (with Query Interface)',
                     command : 'SMWqi',
-                    icon: this.path + 'images/tb_icon_ask.gif'
+                    icon: this.path + 'images/tb_icon_ask.gif'            
                 });
         }
         // context menu
