@@ -48,7 +48,7 @@ class SMWQueryProcessor {
 		$qp = new SMWQueryParser( $queryfeatures );
 		$qp->setDefaultNamespaces( $smwgQDefaultNamespaces );
 		$desc = $qp->getQueryDescription( $querystring );
-		
+
 		if ( $format == 'count' ) {
 			$querymode = SMWQuery::MODE_COUNT;
 		} elseif ( $format == 'debug' ) {
@@ -60,8 +60,8 @@ class SMWQueryProcessor {
 
 		$mainlabel = array_key_exists( 'mainlabel', $params ) ? $params['mainlabel'] : '';
 		if ( ( $querymode == SMWQuery::MODE_NONE ) ||
-		     ( ( !$desc->isSingleton() || ( count( $desc->getPrintRequests() ) + count( $extraprintouts ) == 0 ) )
-		       && ( trim($mainlabel) != '-' ) ) ) {
+		( ( !$desc->isSingleton() || ( count( $desc->getPrintRequests() ) + count( $extraprintouts ) == 0 ) )
+		&& ( trim($mainlabel) != '-' ) ) ) {
 			$desc->prependPrintRequest( new SMWPrintRequest( SMWPrintRequest::PRINT_THIS, $mainlabel ) );
 		}
 
@@ -75,7 +75,7 @@ class SMWQueryProcessor {
 		if ( ( array_key_exists( 'offset', $params ) ) && ( is_int( $params['offset'] + 0 ) ) ) {
 			$query->setOffset( max( 0, trim( $params['offset'] ) + 0 ) );
 		}
-		
+
 		if ( $query->querymode == SMWQuery::MODE_COUNT ) { // largest possible limit for "count", even inline
 			global $smwgQMaxLimit;
 			$query->setOffset( 0 );
@@ -91,11 +91,11 @@ class SMWQueryProcessor {
 				$query->setLimit( $smwgQDefaultLimit );
 			}
 		}
-		
+
 		// determine sortkeys and ascendings:
 		if ( array_key_exists( 'order', $params ) ) {
 			$orders = explode( ',', $params['order'] );
-			
+				
 			foreach ( $orders as $key => $order ) { // normalise
 				$order = strtolower( trim( $order ) );
 				if ( ( $order == 'descending' ) || ( $order == 'reverse' ) || ( $order == 'desc' ) ) {
@@ -109,29 +109,29 @@ class SMWQueryProcessor {
 		} else {
 			$orders = array();
 		}
-		
+
 		reset( $orders );
 
 		if ( array_key_exists( 'sort', $params ) ) {
 			$query->sort = true;
 			$query->sortkeys = array();
-			
+				
 			foreach ( explode( ',', trim( $params['sort'] ) ) as $sort ) {
 				$sort = smwfNormalTitleDBKey( trim( $sort ) ); // slight normalisation
 				$order = current( $orders );
 				if ( $order === false ) { // default
 					$order = 'ASC';
 				}
-				
+
 				if ( array_key_exists( $sort, $query->sortkeys ) ) {
 					// maybe throw an error here?
 				} else {
 					$query->sortkeys[$sort] = $order;
 				}
-				
+
 				next( $orders );
 			}
-			
+				
 			if ( current( $orders ) !== false ) { // sort key remaining, apply to page name
 				$query->sortkeys[''] = current( $orders );
 			}
@@ -142,11 +142,11 @@ class SMWQueryProcessor {
 		} else { // sort by page title (main column) by default
 			$query->sortkeys[''] = ( current( $orders ) != false ) ? current( $orders ) : 'ASC';
 		} // TODO: check and report if there are further order statements?
-		
+
 		// make sure to copy source and other LOD relevant parameters. necessary for Special:Ask
-        if (array_key_exists('source', $params)) $query->params['source'] = $params['source'];
-        if (array_key_exists('dataspace', $params)) $query->params['dataspace'] = $params['dataspace'];
-        if (array_key_exists('resultintegration', $params)) $query->params['resultintegration'] = $params['resultintegration'];
+		if (array_key_exists('source', $params)) $query->params['source'] = $params['source'];
+		if (array_key_exists('dataspace', $params)) $query->params['dataspace'] = $params['dataspace'];
+		if (array_key_exists('resultintegration', $params)) $query->params['resultintegration'] = $params['resultintegration'];
 		return $query;
 	}
 
@@ -159,34 +159,34 @@ class SMWQueryProcessor {
 	 */
 	static public function processFunctionParams( array $rawparams, &$querystring, &$params, &$printouts, $showmode = false ) {
 		global $wgContLang;
-	   
-        if (TSHelper::isSPARQL($rawparams)) {
-            return SMWSPARQLQueryProcessor::processFunctionParams( $rawparams, $querystring, $params, $printouts, $showmode );
-        } 
+
+		if (TSHelper::isSPARQL($rawparams)) {
+			return SMWSPARQLQueryProcessor::processFunctionParams( $rawparams, $querystring, $params, $printouts, $showmode );
+		}
 		$querystring = '';
 		$printouts = array();
 		$lastprintout = null;
 		$params = array();
-		
+
 		foreach ( $rawparams as $name => $param ) {
 			// special handling for arrays - this can happen if the
 			// param came from a checkboxes input in Special:Ask
 			if ( is_array( $param ) ) {
 				$param = implode( ',', array_keys( $param ) );
 			}
-			
+				
 			if ( is_string( $name ) && ( $name != '' ) ) { // accept 'name' => 'value' just as '' => 'name=value'
 				$param = $name . '=' . $param;
 			}
-			
+				
 			if ( $param == '' ) {
 			} elseif ( $param { 0 } == '?' ) { // print statement
 				$param = substr( $param, 1 );
 				$parts = explode( '=', $param, 2 );
 				$propparts = explode( '#', $parts[0], 2 );
-				
+
 				$data = null;
-				
+
 				if ( trim( $propparts[0] ) == '' ) { // print "this"
 					$printmode = SMWPrintRequest::PRINT_THIS;
 					$label = ''; // default
@@ -200,7 +200,7 @@ class SMWQueryProcessor {
 					if ( $title === null ) { // too bad, this is no legal property/category name, ignore
 						continue;
 					}
-					
+						
 					if ( $title->getNamespace() == NS_CATEGORY ) {
 						$printmode = SMWPrintRequest::PRINT_CCAT;
 						$data = $title;
@@ -212,17 +212,17 @@ class SMWQueryProcessor {
 						$label = $showmode ? '' : $property->getWikiValue();  // default
 					}
 				}
-				
+
 				if ( count( $propparts ) == 1 ) { // no outputformat found, leave empty
 					$propparts[] = false;
 				} elseif ( trim( $propparts[1] ) == '' ) { // "plain printout", avoid empty string to avoid confusions with "false"
 					$propparts[1] = '-';
 				}
-				
+
 				if ( count( $parts ) > 1 ) { // label found, use this instead of default
 					$label = trim( $parts[1] );
 				}
-				
+
 				$lastprintout = new SMWPrintRequest( $printmode, $label, $data, trim( $propparts[1] ) );
 				$printouts[] = $lastprintout;
 			} elseif ( $param[0] == '+' ) { // print request parameter
@@ -237,10 +237,10 @@ class SMWQueryProcessor {
 				if(count($param) == 2){
 					$value = trim($param[1]);
 				}
-				$params[trim($param[0])] = $value; 
+				$params[trim($param[0])] = $value;
 			} else { // parameter or query
 				$parts = explode( '=', $param, 2 );
-				
+
 				if ( count( $parts ) >= 2 ) {
 					$params[strtolower( trim( $parts[0] ) )] = $parts[1]; // don't trim here, some params care for " "
 				} else {
@@ -248,15 +248,15 @@ class SMWQueryProcessor {
 				}
 			}
 		}
-		
+
 		// make sure the TSC source is selected on the Special:Ask page
 		global $wgTitle;
 		if ( !is_null($wgTitle) && SpecialPage::getTitleFor('Ask')->equals($wgTitle)) {
-		  if (smwfIsTripleStoreConfigured() && !array_key_exists('source', $params)) {
-		  	$params['source'] = "tsc";
-		  } 
+			if (smwfIsTripleStoreConfigured() && !array_key_exists('source', $params)) {
+				$params['source'] = "tsc";
+			}
 		}
-		
+
 		$querystring = str_replace( array( '&lt;', '&gt;' ), array( '<', '>' ), $querystring );
 		if ( $showmode ) $querystring = "[[:$querystring]]";
 	}
@@ -273,6 +273,16 @@ class SMWQueryProcessor {
 	 */
 	static public function getResultFromFunctionParams( array $rawparams, $outputmode, $context = SMWQueryProcessor::INLINE_QUERY, $showmode = false ) {
 		SMWQueryProcessor::processFunctionParams( $rawparams, $querystring, $params, $printouts, $showmode );
+
+		// make sure that the TSC is the default source if a triplestore is attached.
+		if (!array_key_exists("source", $params) && smwfIsTripleStoreConfigured()) {
+			global $smwhgDefaultSource;
+			if (isset($smwhgDefaultSource)) {
+                $params['source'] = $smwhgDefaultSource;
+			} else {
+				$params['source'] = 'tsc';
+			}
+		}
 		return SMWQueryProcessor::getResultFromQueryString( $querystring, $params, $printouts, SMW_OUTPUT_WIKI, $context );
 	}
 
@@ -286,12 +296,12 @@ class SMWQueryProcessor {
 	 */
 	static public function getResultFromQueryString( $querystring, array $params, $extraprintouts, $outputmode, $context = SMWQueryProcessor::INLINE_QUERY ) {
 		wfProfileIn( 'SMWQueryProcessor::getResultFromQueryString (SMW)' );
-		
+
 		$format = SMWQueryProcessor::getResultFormat( $params );
 		$query  = SMWQueryProcessor::createQuery( $querystring, $params, $context, $format, $extraprintouts );
 		$result = SMWQueryProcessor::getResultFromQuery( $query, $params, $extraprintouts, $outputmode, $context, $format );
 		wfProfileOut( 'SMWQueryProcessor::getResultFromQueryString (SMW)' );
-		
+
 		return $result;
 	}
 
@@ -304,7 +314,7 @@ class SMWQueryProcessor {
 		global $smwgQuerySources;
 
 		$query->params = $params; // this is a hack
-		
+
 		if ( array_key_exists( "source", $params ) && array_key_exists( $params["source"], $smwgQuerySources ) ) {
 			$store = new $smwgQuerySources[$params["source"]]();
 		} else {
@@ -319,13 +329,13 @@ class SMWQueryProcessor {
 		} else {
 			$qResults = $res;
 		}
-	
+
 		foreach($qResults as $source => $res) {
 
 			if ($source != 'tsc') {
 				$resultHTML .= "\n==$source==\n";
 			}
-			
+				
 			if ( ( $query->querymode == SMWQuery::MODE_INSTANCES ) || ( $query->querymode == SMWQuery::MODE_NONE ) ) {
 				wfProfileIn( 'SMWQueryProcessor::getResultFromQuery-printout (SMW)' );
 
@@ -362,40 +372,40 @@ class SMWQueryProcessor {
 
 	/**
 	 * Determines the format from an array of parameters, and returns it.
-	 * 
+	 *
 	 * @param array $params
-	 * 
+	 *
 	 * @return string
 	 */
 	static protected function getResultFormat( array $params ) {
 		$format = 'auto';
-		
+
 		if ( array_key_exists( 'format', $params ) ) {
 			global $smwgResultFormats;
-			
+				
 			$format = strtolower( trim( $params['format'] ) );
-			
+				
 			if ( !array_key_exists( $format, $smwgResultFormats ) ) {
 				$isAlias = self::resolveFormatAliases( $format );
 				if ( !$isAlias ) $format = 'auto';  // If it is an unknown format, defaults to list/table again
 			}
 		}
-		
+
 		return $format;
 	}
-	
+
 	/**
 	 * Turns format aliases into main formats.
-	 * 
+	 *
 	 * @param string $format
-	 * 
+	 *
 	 * @return boolean Indicates if the passed format was an alias, and thus was changed.
 	 */
 	static protected function resolveFormatAliases( &$format ) {
 		global $smwgResultAliases;
 
 		$isAlias = false;
-		
+
 		foreach ( $smwgResultAliases as $mainFormat => $aliases ) {
 			if ( in_array( $format, $aliases ) ) {
 				$format = $mainFormat;
@@ -411,20 +421,20 @@ class SMWQueryProcessor {
 	 * Find suitable SMWResultPrinter for the given format. The context in which the query is to be
 	 * used determines some basic settings of the returned printer object. Possible contexts are
 	 * SMWQueryProcessor::SPECIAL_PAGE, SMWQueryProcessor::INLINE_QUERY, SMWQueryProcessor::CONCEPT_DESC.
-	 * 
+	 *
 	 * @param string $format
 	 * @param $context
-	 * 
+	 *
 	 * @return SMWResultPrinter
 	 */
 	static public function getResultPrinter( $format, $context = SMWQueryProcessor::SPECIAL_PAGE ) {
 		global $smwgResultFormats;
-		
+
 		self::resolveFormatAliases( $format );
-		
+
 		// TODO: this seems to contain the same logic as found in getResultFormat - a single function for this might be better.
 		$formatClass = array_key_exists( $format, $smwgResultFormats ) ? $smwgResultFormats[$format] : 'SMWAutoResultPrinter';
-		
+
 		return new $formatClass( $format, ( $context != SMWQueryProcessor::SPECIAL_PAGE ) );
 	}
 
