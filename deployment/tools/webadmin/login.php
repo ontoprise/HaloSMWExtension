@@ -10,7 +10,7 @@ $wgScriptPath=isset(DF_Config::$scriptPath) ? DF_Config::$scriptPath : "/mediawi
 $envCheck = dffCheckEnvironment();
 if ($envCheck !== true) {
 	echo "<h1>Installation problem</h1>";
-	echo "Some problems found with the webadmin console:"
+	echo "Some problems found with the webadmin console:";
 	echo $envCheck;
 	exit();
 }
