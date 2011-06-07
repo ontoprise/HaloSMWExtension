@@ -56,7 +56,7 @@ class DFMaintenanceTab {
 
 	public function serializeRestorePoints($restorepoints) {
 		global $dfgLang;
-		$html = "<div class=\"df_restorepoints\"><table id=\"df_restorepoint_table\">";
+		$html = "<div class=\"df_restorepoints\"><table id=\"df_restorepoint_table\" cellspacing=\"0\" cellpadding=\"0\">";
 		$html .= "<th>";
 		$html .= $dfgLang->getLanguageString('df_webadmin_restorepoint');
 		$html .= "</th>";
@@ -66,7 +66,12 @@ class DFMaintenanceTab {
 		$html .= "<th>";
 		$html .= $dfgLang->getLanguageString('df_webadmin_action');
 		$html .= "</th>";
-
+        
+		if (count($restorepoints) == 0) {
+			$html .= "</table></div><br/>";
+			$html .= $dfgLang->getLanguageString('df_webadmin_norestorepoints');
+			return $html;
+		}
 		foreach($restorepoints as $rp) {
 			$html .= "<tr>";
 			$html .= "<td>";

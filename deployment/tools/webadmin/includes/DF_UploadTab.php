@@ -54,7 +54,7 @@ class DFUploadTab {
 </form>
 ENDS
 		;
-		$html .= '<div class="df_bundlefilelist">';
+		$html .= '<div id="df_bundlefilelist">';
 		$html .= $this->serializePackageTable();
 		$html .= '</div>';
 		return $html;
@@ -62,7 +62,7 @@ ENDS
 
 	private function serializePackageTable() {
 		global $dfgLang;
-		$html = "<table id=\"df_bundlefilelist_table\">";
+		$html = "<table id=\"df_bundlefilelist_table\" cellspacing=\"0\" cellpadding=\"0\">";
 		$html .= "<th>";
 		$html .= $dfgLang->getLanguageString('df_webadmin_file');
 		$html .= "</th>";
@@ -72,6 +72,7 @@ ENDS
 		$html .= "<th>";
 		$html .= $dfgLang->getLanguageString('df_webadmin_action');
 		$html .= "</th>";
+	
 		if (array_key_exists('df_homedir', DF_Config::$settings)) {
 			$uploadDirectory = DF_Config::$settings['df_homedir'];
 		} else {
@@ -80,6 +81,8 @@ ENDS
 		if ($uploadDirectory == '/df_upload') {
 			$uploadDirectory = Tools::getTempDir()."/df_upload";
 		}
+		
+		$uploadFilesCounter = 0;
 		$handle = @opendir($uploadDirectory);
 		if ($handle !== false) {
 
@@ -99,6 +102,7 @@ ENDS
 				|| $file_ext == 'nt'
 				|| $file_ext == 'ntriple'
 				|| $file_ext == 'n3') {
+					$uploadFilesCounter++;
 					$html .= "<tr>";
 					$html .= "<td>";
 					$html .= $filename;
@@ -122,6 +126,11 @@ ENDS
 		}
 		@closedir($handle);
 		$html .= "</table>";
+		if ($uploadFilesCounter == 0) {
+            $html .= "</table><br/>";
+            $html .= $dfgLang->getLanguageString('df_webadmin_nouploadedfiles');
+        }
+		
 		return $html;
 	}
 }

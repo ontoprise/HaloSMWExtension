@@ -45,7 +45,7 @@ public function getTabName() {
 
 	public function getHTML() {
 		$html = "<input type=\"text\" style=\"width: 450px;\" value=\"\" id=\"df_searchinput\"></input>";
-		$html .= "<input type=\"button\"  value=\"Search\" id=\"df_search\"></input>";
+		$html .= "<input type=\"button\"  value=\"Search\" id=\"df_search\"></input><img id=\"df_search_progress_indicator\" src=\"skins/ajax-loader.gif\" style=\"display:none\"/>";
 		$html.= "<div id=\"df_search_results\"></div>";
 		return $html;
 	}

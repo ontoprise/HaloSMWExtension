@@ -387,6 +387,7 @@ $(function() {
 			
 		var callbackHandler = function(html, status, xhr) {
 			
+			$('#df_search_progress_indicator').hide();
 			smw_makeSortable($('#df_search_results_table')[0]);
 			
 			// register install buttons
@@ -484,6 +485,7 @@ $(function() {
 			});
 		}
 		var searchvalue = $('#df_searchinput').val();
+		$('#df_search_progress_indicator').show();
 		var url = wgServer+wgScriptPath+"/deployment/tools/webadmin?rs=search&rsargs[]="+encodeURIComponent(searchvalue);
 		$('#df_search_results').load(url, null, callbackHandler);
 	
