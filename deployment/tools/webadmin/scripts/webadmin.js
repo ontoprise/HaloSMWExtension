@@ -286,7 +286,7 @@ $(function() {
 		var resources = dd.resources;
 		var onlycopyresources = dd.onlycopyresources;
 		
-		var dependenciesHTML = "<ul>";
+		var dependenciesHTML = "<ul class=\"df_enumeration\">";
 		$.each(dependencies, function(index, value) { 
 			var id =value[0];
 			var version =value[1];
@@ -295,6 +295,7 @@ $(function() {
 		dependenciesHTML += "</ul>";
 		
 		var wikidumpsHTML="";
+		var i = 0;
 		if (wikidumps) {
 			$.each(wikidumps, function(index, value) { 
 				var dumpfile = index;
@@ -303,40 +304,59 @@ $(function() {
 				$.each(titles, function(index, value) { 
 					var title = value;
 					wikidumpsHTML += "<li>"+title+"</li>";
+					i++;
 				});
 				wikidumpsHTML += "</ul>";
 			});
 		}
+		if (i == 0) {
+			wikidumpsHTML = "-";
+		}
 		
+		i = 0;
 		var ontologiesHTML="";
 		if (ontologies) {
 			$.each(ontologies, function(index, value) { 
 				var dumpfile = index;
 				var titles = value;
-				ontologiesHTML += dumpfile+":<ul>";
+				ontologiesHTML += dumpfile+":<ul class=\"df_enumeration\">";
 				$.each(titles, function(index, value) { 
 					var title = value;
 					ontologiesHTML += "<li>"+title+"</li>";
+					i++
 				});
 				ontologiesHTML += "</ul>";
 			});
 		}
+		if (i == 0) {
+			ontologiesHTML = "-";
+		}
 		
-		var resourcesHTML="<ul>";
+		i = 0;
+		var resourcesHTML="<ul class=\"df_enumeration\">";
 		$.each(resources, function(index, value) { 
 			var file = value;
-			resourcesHTML = "<li>"+file+"</li>";
+			resourcesHTML += "<li>"+file+"</li>";
+			i++;
 			
 		});
 		resourcesHTML += "</ul>";
+		if (i == 0) {
+			resourcesHTML = "-";
+		}
 		
-		var resourcesCopyOnlyHTML="<ul>";
+		i = 0;
+		var resourcesCopyOnlyHTML="<ul class=\"df_enumeration\">";
 		$.each(onlycopyresources, function(index, value) { 
 			var file = value;
-			resourcesCopyOnlyHTML = "<li>"+file+"</li>";
+			resourcesCopyOnlyHTML += "<li>"+file+"</li>";
+			i++;
 			
 		});
 		resourcesCopyOnlyHTML += "</ul>";
+		if (i == 0) {
+			resourcesCopyOnlyHTML = "-";
+		}
 	
 		
 		var html = $('#df_extension_details').html('<div><table class="df_extension_details">'

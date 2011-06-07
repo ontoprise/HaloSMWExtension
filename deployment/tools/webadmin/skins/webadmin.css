@@ -25,6 +25,10 @@
     text-align: center;
 }
 
+.df_enumeration {
+	margin-left: -20px;
+}
+
 
 .df_extension_id:hover {
 background-color:yellow;
@@ -47,10 +51,12 @@ cursor: pointer;
 
 .df_extension_details td[description] {
 	width: 150px;
+	padding-top: 10px;
 }
 
 .df_extension_details td[value] {
     color: blue;
+    padding-top: 10px;
 }
 
 #df_existingrepository_section {

@@ -78,6 +78,7 @@ class DFCommandInterface {
 		$result['dependencies'] = $dd->getDependencies();
 		$result['maintainer'] = $dd->getMaintainer();
 		$result['vendor'] = $dd->getVendor();
+		$result['license'] = $dd->getLicense();
 		$result['helpurl'] = $dd->getHelpURL();
 			
 		$result['resources'] = $dd->getResources();
@@ -113,6 +114,7 @@ class DFCommandInterface {
 		$result['dependencies'] = $dd->getDependencies();
 		$result['maintainer'] = $dd->getMaintainer();
 		$result['vendor'] = $dd->getVendor();
+		$result['license'] = $dd->getLicense();
 		$result['helpurl'] = $dd->getHelpURL();
 
 		$result['resources'] = $dd->getResources();
