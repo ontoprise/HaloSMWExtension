@@ -16,10 +16,15 @@
  */
 
 class DF_Config  {
-
+	
+	// MANDATORY setting!
 	// This is required for the webadmin tool. It is the same as specified in
 	// LocalSettings.php for $wgScriptPath
 	public static $scriptPath = "/deploywiki";
+	
+	
+	// Wiki name the DF is working on (OPTIONAL setting)
+	public static $wikiName = "";
 
 	/*
 	 * Uncomment the lines and set $df_authorizeByWiki to false
