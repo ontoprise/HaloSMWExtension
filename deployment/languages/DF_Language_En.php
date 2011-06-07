@@ -75,7 +75,9 @@ class DF_Language_En extends DF_Language {
 	'df_webadmin_creationdate' => 'Creation date',
 	'df_webadmin_version' => 'Version',
 	'df_webadmin_upload' => 'Upload',
-	'df_webadmin_file' => 'File'
+	'df_webadmin_file' => 'File',
+	'df_webadmin_nothingfound' => 'No matching bundles for <b>"{{search-value}}"</b> found!',
+	'df_webadmin_searchinfoifnothingfound' => 'To browse the Ontoprise repository click here: '
 	
 	);
 

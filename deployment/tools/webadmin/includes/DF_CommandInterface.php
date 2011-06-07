@@ -305,7 +305,7 @@ class DFCommandInterface {
 		$results = array();
 		$packages = PackageRepository::searchAllPackages($searchValue);
 		$localPackages = PackageRepository::getLocalPackages($mwrootDir);
-		$dfgOut->outputln($dfgSearchTab->searializeSearchResults($packages, $localPackages));
+		$dfgOut->outputln($dfgSearchTab->searializeSearchResults($packages, $localPackages, $searchValue));
 		return true;
 	}
 

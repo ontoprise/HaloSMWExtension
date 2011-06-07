@@ -23,8 +23,12 @@
 abstract class DF_Language {
 	protected $language_constants;
 
-	public function getLanguageString($key) {
-		return $this->language_constants[$key];
+	public function getLanguageString($key, $params = array()) {
+		$template = $this->language_constants[$key];
+		foreach($params as $p => $value) {
+			$template = str_replace($p, $value, $template);
+		}
+		return $template;
 	}
 	
 	public function getLanguageArray() {
