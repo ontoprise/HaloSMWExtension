@@ -228,6 +228,9 @@ $html .= <<<ENDS
 <div id="global-updatedialog-confirm" title="Global update" style="display:none">
     <p><span style="float:left; margin:0 7px 20px 0;"></span><span id="global-updatedialog-confirm-text">Perform global update?</span></p>
 </div>
+<div id="deinstall-dialog-confirm" title="Uninstall extension" style="display:none">
+    <p><span style="float:left; margin:0 7px 20px 0;"></span><span id="deinstall-dialog-confirm-text">The following extensions will be uninstalled. Are you sure?</span></p>
+</div>
 <div id="check-extension-dialog" title="Information" style="display:none">
     <p><span style="float:left; margin:0 7px 20px 0;"></span><span id="check-extension-dialog-text">Check extension</span></p>
 </div>

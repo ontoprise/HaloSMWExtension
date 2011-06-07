@@ -550,23 +550,51 @@ $(function() {
 		$('.df_deinstall_button').click(function(e2) {
 			var id = $(e2.currentTarget).attr('id');
 			id = id.split("__")[1];
-			var url = wgServer+wgScriptPath+"/deployment/tools/webadmin?rs=deinstall&rsargs[]="+encodeURIComponent(id);
-			var $dialog = $('#df_install_dialog')
-			.dialog( {
-				autoOpen : false,
-				title : dfgWebAdminLanguage.getMessage('df_webadmin_pleasewait'),
+			
+			var text = dfgWebAdminLanguage.getMessage('df_webadmin_want_touninstall');
+			text += "<ul><li>"+id+"</li></ul>";
+			$('#deinstall-dialog-confirm-text').html(text);
+			
+			$( "#deinstall-dialog-confirm" ).dialog({
+				resizable: false,
+				height:350,
 				modal: true,
-				width: 800,
-				height: 500,
-				close: function(event, ui) { 
-					window.location.href = wgServer+wgScriptPath+"/deployment/tools/webadmin/index.php?tab=0";
+				 buttons: [
+		              {
+		                  text: dfgWebAdminLanguage.getMessage('df_yes'),
+		                  click: function() {
+		                  	$( this ).dialog( "close" );
+		                  
+		        			var url = wgServer+wgScriptPath+"/deployment/tools/webadmin?rs=deinstall&rsargs[]="+encodeURIComponent(id);
+		        			var $dialog = $('#df_install_dialog')
+		        			.dialog( {
+		        				autoOpen : false,
+		        				title : dfgWebAdminLanguage.getMessage('df_webadmin_pleasewait'),
+		        				modal: true,
+		        				width: 800,
+		        				height: 500,
+		        				close: function(event, ui) { 
+		        					window.location.href = wgServer+wgScriptPath+"/deployment/tools/webadmin/index.php?tab=0";
 
-				}
+		        				}
+		        			});
+		        			$dialog.html("<div></div>");				
+		        			$dialog.dialog('open');
+		        			$dialog.html('<img src="skins/ajax-loader.gif"/>');
+		        			$.ajax( { url : url, dataType:"json", complete : deinstallStarted });		 
+		                   }
+		              },
+		               {
+		                  text: dfgWebAdminLanguage.getMessage('df_no'),
+		                  click: function() {
+		          							$( this ).dialog( "close" );
+		          						}
+		              }
+		         ]
+				
 			});
-			$dialog.html("<div></div>");				
-			$dialog.dialog('open');
-			$dialog.html('<img src="skins/ajax-loader.gif"/>');
-			$.ajax( { url : url, dataType:"json", complete : deinstallStarted });
+			
+			
 		});
 		
 		// register update buttons
