@@ -382,7 +382,11 @@ $(function() {
 						title : dfgWebAdminLanguage.getMessage('df_webadmin_pleasewait'),
 						modal: true,
 						width: 800,
-						height: 500
+						height: 500,
+						close: function(event, ui) { 
+							window.location.href = wgServer+wgScriptPath+"/deployment/tools/webadmin/index.php?tab=0";
+
+						}
 					});
 					$dialog.html("<div></div>");				
 							
@@ -553,7 +557,11 @@ $(function() {
 				title : dfgWebAdminLanguage.getMessage('df_webadmin_pleasewait'),
 				modal: true,
 				width: 800,
-				height: 500
+				height: 500,
+				close: function(event, ui) { 
+					window.location.href = wgServer+wgScriptPath+"/deployment/tools/webadmin/index.php?tab=0";
+
+				}
 			});
 			$dialog.html("<div></div>");				
 			$dialog.dialog('open');
@@ -572,7 +580,11 @@ $(function() {
 				title : dfgWebAdminLanguage.getMessage('df_webadmin_pleasewait'),
 				modal: true,
 				width: 800,
-				height: 500
+				height: 500,
+				close: function(event, ui) { 
+					window.location.href = wgServer+wgScriptPath+"/deployment/tools/webadmin/index.php?tab=0";
+
+				}
 			});
 			$dialog.html("<div></div>");				
 			$dialog.dialog('open');
@@ -618,7 +630,11 @@ $(function() {
 			          								title : dfgWebAdminLanguage.getMessage('df_webadmin_pleasewait'),
 			          								modal: true,
 			          								width: 800,
-			          								height: 500
+			          								height: 500,
+			          								close: function(event, ui) { 
+			          									window.location.href = wgServer+wgScriptPath+"/deployment/tools/webadmin/index.php?tab=0";
+
+			          								}
 			          							});
 			          							$dialog.html("<div></div>");			
 			          							$dialog.dialog('open');
@@ -724,7 +740,11 @@ $(function() {
 			title : dfgWebAdminLanguage.getMessage('df_webadmin_pleasewait'),
 			modal: true,
 			width: 800,
-			height: 500
+			height: 500,
+			close: function(event, ui) { 
+				window.location.href = wgServer+wgScriptPath+"/deployment/tools/webadmin/index.php?tab=3";
+
+			}
 		});
 		$dialog.html("<div></div>");	
 		$dialog.dialog('open');
