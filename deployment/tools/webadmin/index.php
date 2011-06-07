@@ -203,9 +203,10 @@ $javascriptLang
 </head>
 ENDS
 ;
+$wikiName = !empty(DF_Config::$wikiName) ? "(".DF_Config::$wikiName.")" : "";
 $html .= "<body><img src=\"skins/logo.png\" />".
          "<a href=\"$wgServer$wgScriptPath/deployment/tools/webadmin/logout.php\" style=\"float:right\">Logout</a>".
-         "<h1>This is the web administration tool of the deployment framework.</h1>";
+         "<h1>Deployment Framework WebAdmin $wikiName</h1>";
 $html .= <<<ENDS
 <div id="tabs">
 
