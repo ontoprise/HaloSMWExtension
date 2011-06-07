@@ -427,21 +427,15 @@ $(function() {
 					$('#check-extension-dialog-text').html(text);
 					$( "#check-extension-dialog" ).dialog({
 						resizable: false,
-						height:250,
+						height:400,
 						modal: true,
 						 buttons: [
 				              {
-				                  text: "OK",
+				                  text: dfgWebAdminLanguage.getMessage('df_webadmin_close'),
 				                  click: function() {
 				                  	$( this ).dialog( "close" );
 				          						 
 				                   }
-				              },
-				               {
-				                  text: "Cancel",
-				                  click: function() {
-				          			$( this ).dialog( "close" );
-				          		  }
 				              }
 				         ]
 						
@@ -643,7 +637,7 @@ $(function() {
 			                   }
 			              },
 			               {
-			                  text: "Cancel",
+			                  text: dfgWebAdminLanguage.getMessage('df_webadmin_cancel'),
 			                  click: function() {
 			          							$( this ).dialog( "close" );
 			          						}

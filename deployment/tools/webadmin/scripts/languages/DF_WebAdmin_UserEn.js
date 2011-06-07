@@ -28,6 +28,8 @@ var dfgUserDFWebAdmin_LanguageStrings = {
 	'df_webadmin_wouldbeupdated' : 'The following extensions would be updated:',
 	'df_webadmin_finished' : 'Finished',
 	'df_webadmin_pleasewait' : 'Please wait...',
+	'df_webadmin_close': 'Close',
+	'df_webadmin_cancel': 'Cancel',
 	
 	// extension details
 	'df_webadmin_extension_details' : 'Extension details',

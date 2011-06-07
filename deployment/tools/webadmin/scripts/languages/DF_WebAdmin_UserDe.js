@@ -29,6 +29,8 @@ var dfgUserDFWebAdmin_LanguageStrings = {
   'df_webadmin_finished' : 'Beendet',
   'df_webadmin_pleasewait': 'Bitte warten...',
   'df_webadmin_extension_details' : 'Extension-Details',
+  'df_webadmin_close': 'Schließen',
+  'df_webadmin_cancel': 'Abbrechen',
   
   'df_webadmin_id' : 'ID',
 	'df_webadmin_patchlevel' : 'Patchlevel',
