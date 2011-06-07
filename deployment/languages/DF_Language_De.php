@@ -64,10 +64,9 @@ class DF_Language_De extends DF_Language {
     'df_webadmin_remove' => 'Datei entfernen',
 	
 	'df_webadmin_statustab' => 'Status',
-    'df_webadmin_searchtab' => 'Suche',
-    'df_webadmin_bundledetailtab' => 'Bundle-Details',
-    'df_webadmin_maintenacetab' => 'Wartung',
-	'df_webadmin_uploadtab' => 'Hochladen',
+    'df_webadmin_searchtab' => 'Suche Extensions',
+    'df_webadmin_maintenacetab' => 'Systemwiederherstellung',
+	'df_webadmin_uploadtab' => 'Hochladen von Bundles/Ontologien',
 	'df_webadmin_settingstab' => 'Einstellungen',
 	
 	'df_webadmin_restorepoint' => 'Rücksetzpunkt',
