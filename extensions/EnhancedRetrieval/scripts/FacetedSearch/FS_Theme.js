@@ -85,9 +85,9 @@
 	 * Attributes and relations that are delivered as facets always have a prefix
 	 * and a suffix that indicates the type. This function retrieves the original
 	 * name of an attribute or relation.
-	 * @param string property
+	 * @param {String} property
 	 * 		The decorated name of an attribute or property.
-	 * @return string
+	 * @return {String}
 	 * 		The plain name of the property.
 	 */
 	function extractPlainName(property) {
@@ -103,6 +103,54 @@
 		}
 		// Neither attribute nor relation => return the given name
 		return noUnderscore(property);
+	}
+	
+	/**
+	 * Some strings are too long for displaying them in the UI. This function
+	 * shortens them and appends an ellipsis (...) .
+	 * @param {String} longName
+	 * 		The name that is shortened
+	 * @return {String/bool} short name
+	 * 		The short name. If the longName is already short enough the boolean
+	 * 		"false" is returned.
+	 */
+	function makeShortName(longName, width, className) {
+// Fast version that does not consider the actual rendered width of the text
+//		var maxLength = 25;
+//		if (longName.length > maxLength) {
+//			return longName.substr(0, maxLength-3) + '&hellip;';
+//		}
+//		return false;
+		var className = className ? ' class="' + classname + '" ' : "";
+		var tempItem = '<span id="textWitdhTempItem" ' + className + 'style="display:none;">'+ longName +'</span>';
+	    $(tempItem).appendTo('body');
+		tempItem = $('#textWitdhTempItem');
+	    var itemWidth = tempItem.width();
+	    var shortName = longName;
+	
+	    if (itemWidth < width){
+		    tempItem.remove();
+			return false;
+		}
+		
+		var minLen = 0;
+		var maxLen = shortName.length;
+		while (maxLen - minLen > 1 && Math.abs(itemWidth - width) > 5) {
+			var currLen = (maxLen - minLen) / 2 + minLen;
+            shortName = longName.substr(0, currLen);
+            tempItem[0].innerHTML = shortName + '&hellip;';
+            itemWidth = tempItem.width();
+//            itemWidth = tempItem.html(shortName + '&hellip;').width();
+			if (itemWidth > width) {
+				// Reduce the upper bound
+				maxLen = currLen;
+			} else {
+				// Increase the lower bound
+				minLen = currLen;
+			}
+		}
+	    tempItem.remove();
+	    return shortName + '&hellip;';
 	}
 	
 	/**
@@ -270,10 +318,14 @@
 	AjaxSolr.theme.prototype.facet = function(facet, count, handler, showPropertyDetailsHandler, isRemove) {
 		var html;
 		var lang = FacetedSearch.singleton.Language;
-		
+		var plainName = extractPlainName(facet);
+		var maxWidth = $('.facets').width() * 0.8;
+		var shortName = makeShortName(plainName, maxWidth);
+		var tooltip = shortName === false ? "" : ' title="' + plainName + '" ';
+		var name = shortName === false ? plainName : shortName;
 		if (isRemove) {
-			html = $('<span>')
-				.append(extractPlainName(facet))
+			html = $('<span' + tooltip + '>')
+				.append(name)
 				.append($('<img src="' 
 				          + wgScriptPath 
 						  + '/extensions/SMWHalo/skins/QueryInterface/images/delete.png" '
@@ -281,7 +333,7 @@
 				.click(handler));
 		} else {
 			html = $('<span>')
-				.append($('<a href="#">' + extractPlainName(facet) + '</a>').click(handler))
+				.append($('<a href="#"' + tooltip + '>' + name + '</a>').click(handler))
 				.append(' ')
 				.append('<span class="xfsMinor">(' + count + ')</span>');
 		}
@@ -321,7 +373,8 @@
 
 	AjaxSolr.theme.prototype.propertyValueFacet = function(facet, count, handler, showPropertyDetailsHandler, isRemove){
 		var html = AjaxSolr.theme('facet', facet, count, handler, showPropertyDetailsHandler, isRemove);
-		return jQuery('<span class="xfsClusterEntry">').append(html);		
+		html = $('<span class="xfsClusterEntry" />').append(html);
+		return html;	
 	};
 	
 	AjaxSolr.theme.prototype.facet_link = function(value, handler) {

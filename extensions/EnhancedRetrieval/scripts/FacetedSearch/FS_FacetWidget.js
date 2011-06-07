@@ -112,8 +112,13 @@ FacetedSearch.classes.FacetWidget = AjaxSolr.AbstractFacetWidget.extend({
 			} else {
 				target = FacetedSearch.singleton.FacetedSearchInstance.getRelationWidget();
 			}
+			var entry = AjaxSolr.theme(this.facetTheme, facet, 
+			                           objectedItems[i].count, 
+									   target.clickHandler(facet), 
+									   FacetedSearch.classes.ClusterWidget.showPropertyDetailsHandler, 
+									   false);
 			$(ntarget)
-				.append(AjaxSolr.theme(this.facetTheme, facet, objectedItems[i].count, target.clickHandler(facet), FacetedSearch.classes.ClusterWidget.showPropertyDetailsHandler, false))
+				.append(entry)
 				.append('<br/>');
 		}
 		if (objectedItems.length > GROUP_SIZE) {
