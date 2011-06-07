@@ -525,7 +525,7 @@ class  HACLDefaultSD  {
 	 * 		<true>, if a group was created or modified
 	 * 		<false>, if not
 	 */
-	private static function createDynamicGroup(Article $article, User $user) {
+	private static function createDynamicGroup(Article $article, $user) {
 		
 		$dgroup = self::getMatchingDynamicGroup($article, $user);
 		if (is_null($dgroup)) {
