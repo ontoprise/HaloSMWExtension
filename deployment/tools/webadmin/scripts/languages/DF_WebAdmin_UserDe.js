@@ -45,7 +45,10 @@ var dfgUserDFWebAdmin_LanguageStrings = {
 	'df_webadmin_wikidumps' : 'Wiki-dumps',
 	'df_webadmin_ontologies' : 'Ontologien',
 	'df_webadmin_resources' : 'Resourcen',
-	'df_webadmin_resourcecopyonly' : 'Kopierte Resourcen'
+	'df_webadmin_resourcecopyonly' : 'Kopierte Resourcen',
+	
+	'df_webadmin_installation_successful' : 'Installation erfolgreich!',
+	'df_webadmin_installation_failure' : 'Während der Installation sind Fehler aufgetreten.'
 };
 
 var dfgContDFWebAdmin_LanguageStrings = {};

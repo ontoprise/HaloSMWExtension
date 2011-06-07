@@ -1,5 +1,12 @@
 @CHARSET "ISO-8859-1";
 
+#df_updateavailable {
+	margin-top: 20px;
+	border: 5px solid green;
+	text-align: center;
+	padding: 5px;
+}
+
 #df_statustable {
 	margin-top: 20px;
 }
