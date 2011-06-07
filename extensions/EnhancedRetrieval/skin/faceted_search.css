@@ -4,6 +4,9 @@
 	padding: 0 0 10px 10px;
 	word-wrap: break-word;
 }
+.detailsImage {
+	cursor: pointer;
+}
 #query {
 	width: 100%;
 }
@@ -102,4 +105,5 @@ a.xfsFMore, a.xfsFLess {
 }
 .xfsMinor {
 	color: gray;
+	cursor: default;
 }

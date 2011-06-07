@@ -355,12 +355,12 @@
 			var img1 = 
 				$('<img src="'+ path + 'right.png" ' +
 				  'title="'+ lang.getMessage('showDetails') +
-				  '" id="'+img1ID+'"/>')
+				  '" id="'+img1ID+'" class="detailsImage"/>')
 				.click(toggleFunc);
 			var img2 = 
 				$('<img src="'+ path + 'down.png" ' +
 				  'title="'+ lang.getMessage('hideDetails') +
-				  '" style="display:none" id="'+img2ID+'"/>')
+				  '" style="display:none" id="'+img2ID+'" class="detailsImage"/>')
 				.click(toggleFunc);
 			html = img1.add(img2).add(html);
 			html = html.add($('<div id="' + divID + '" style="display:none"></div>'));
