@@ -74,7 +74,9 @@ class DF_Language_De extends DF_Language {
 	'df_webadmin_version' => 'Version',
 	'df_webadmin_upload' => 'Hochladen',
 	'df_webadmin_nothingfound' => 'Keine passenden Pakete für <b>"{{search-value}}"</b> gefunden!',
-	'df_webadmin_searchinfoifnothingfound' => 'Um das Ontoprise-Repository zu browsen klicken Sie hier: '
+	'df_webadmin_searchinfoifnothingfound' => 'Um das Ontoprise-Repository zu browsen klicken Sie hier: ',
+	'df_webadmin_norestorepoints' => 'Keine Wiederherstellungspunkte gefundend.',
+	'df_webadmin_nouploadedfiles' => 'Keine Dateien gefunden.'
     
 	);
 }

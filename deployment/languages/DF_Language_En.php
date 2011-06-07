@@ -76,7 +76,10 @@ class DF_Language_En extends DF_Language {
 	'df_webadmin_upload' => 'Upload',
 	'df_webadmin_file' => 'File',
 	'df_webadmin_nothingfound' => 'No matching bundles for <b>"{{search-value}}"</b> found!',
-	'df_webadmin_searchinfoifnothingfound' => 'To browse the Ontoprise repository click here: '
+	'df_webadmin_searchinfoifnothingfound' => 'To browse the Ontoprise repository click here: ',
+	'df_webadmin_norestorepoints' => 'No restore points found.',
+	'df_webadmin_nouploadedfiles' => 'No uploaded files found.'
+	
 	
 	);
 
