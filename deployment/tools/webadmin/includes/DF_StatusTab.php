@@ -86,12 +86,14 @@ class DFStatusTab {
 			$html .= $p->getDescription();
 			$html .= "</td>";
 			$html .= "<td class=\"df_actions\">";
+			$updateText = $dfgLang->getLanguageString('df_webadmin_update');
+			$deinstallText = $dfgLang->getLanguageString('df_webadmin_deinstall');
 			if (array_key_exists($id, $updates)) {
-				$html .= "<input type=\"button\" class=\"df_update_button\" value=\"Update\" id=\"df_update__$id\"></input>";
-				$html .= "<input type=\"button\" class=\"df_deinstall_button\" value=\"De-Install\" id=\"df_deinstall__$id\"></input>";
+				$html .= "<input type=\"button\" class=\"df_update_button\" value=\"$updateText\" id=\"df_update__$id\"></input>";
+				$html .= "<input type=\"button\" class=\"df_deinstall_button\" value=\"$deinstallText\" id=\"df_deinstall__$id\"></input>";
 			} else {
-				$html .= "<input type=\"button\" class=\"df_update_button\" value=\"Update\" id=\"df_update__$id\" disabled=\"true\"></input>";
-				$html .= "<input type=\"button\" class=\"df_deinstall_button\" value=\"De-Install\" id=\"df_update__$id\"></input>";
+				$html .= "<input type=\"button\" class=\"df_update_button\" value=\"$updateText\" id=\"df_update__$id\" disabled=\"true\"></input>";
+				$html .= "<input type=\"button\" class=\"df_deinstall_button\" value=\"$deinstallText\" id=\"df_update__$id\"></input>";
 			}
 			$html .= "</td>";
 			$html .= "</tr>";

@@ -60,7 +60,8 @@ class DF_Language_En extends DF_Language {
 	'df_webadmin_description' => 'Description',
 	'df_webadmin_action' => 'Action',
 	'df_webadmin_install' => 'Install',
-	'df_webadmin_deinstall' => 'De-Install',
+	'df_webadmin_deinstall' => 'Uninstall',
+	'df_webadmin_update' => 'Update',
 	'df_webadmin_remove' => 'Remove file',
 	
 	'df_webadmin_statustab' => 'Status',
