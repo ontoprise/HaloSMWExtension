@@ -497,7 +497,8 @@ CKEDITOR.customprocessor.prototype =
 
 		var stringBuilder = new Array();
 		this._AppendNode( rootNode, stringBuilder, '' );
-		return stringBuilder.join( '' ).Trim() + '\n';
+//		return stringBuilder.join( '' ).Trim() + '\n';
+		return stringBuilder.join( '' ).Trim();
 	},
 
     _getNodeFromHtml : function( data ) {

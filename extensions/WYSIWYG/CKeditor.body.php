@@ -469,6 +469,7 @@ class CKeditor_MediaWiki {
 
 		$script = <<<HEREDOC
 <script type="text/javascript" src="$wgScriptPath/${wgFCKEditorDir}ckeditor.js"></script>
+<!--<script type="text/javascript" src="$wgScriptPath/${wgFCKEditorDir}ckeditor_source.js"></script>-->
 <script type="text/javascript">
 var sEditorAreaCSS = '$printsheet,/mediawiki/skins/monobook/main.css?{$wgStyleVersion}';
 </script>
@@ -710,7 +711,7 @@ function ToggleCKEditor( mode, objId ){
 	//CKeditor visible -> hidden
 	if ( showFCKEditor & RTE_VISIBLE ){
 		var text = oEditorIns.getData();
-		SRCtextarea.value = text;
+		SRCtextarea.value = text.replace(/<br\/>/gi, "");
 		if( saveSetting ){
 			sajax_request_type = 'GET';
 			sajax_do_call( 'wfSajaxToggleCKeditor', ['hide'], function(){} ); //remember closing in session
