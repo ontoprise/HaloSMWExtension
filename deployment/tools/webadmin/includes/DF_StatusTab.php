@@ -61,7 +61,7 @@ class DFStatusTab {
 		}
 		
 		$dfgOut->setVerbose(true);
-		$html .= "<table>";
+		$html .= "<table id=\"df_statustable\">";
 		$html .= "<th>";
 		$html .= $dfgLang->getLanguageString('df_webadmin_extension');
 		$html .= "</th>";
@@ -74,6 +74,7 @@ class DFStatusTab {
 		$html .= "<th>";
 		$html .= $dfgLang->getLanguageString('df_webadmin_action');
 		$html .= "</th>";
+		ksort($localPackages);
 		foreach($localPackages as $id => $p) {
 			$html .= "<tr>";
 			$html .= "<td class=\"df_extension_id\">";

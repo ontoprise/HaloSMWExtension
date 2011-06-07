@@ -56,7 +56,7 @@ class DFMaintenanceTab {
 
 	public function serializeRestorePoints($restorepoints) {
 		global $dfgLang;
-		$html = "<div class=\"df_restorepoint_table\"><table>";
+		$html = "<div class=\"df_restorepoints\"><table id=\"df_restorepoint_table\">";
 		$html .= "<th>";
 		$html .= $dfgLang->getLanguageString('df_webadmin_restorepoint');
 		$html .= "</th>";

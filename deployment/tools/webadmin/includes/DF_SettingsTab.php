@@ -48,7 +48,7 @@ class DFSettingsTab {
 	public function getHTML() {
 		global $dfgLang;
 		$html = "<div id=\"df_addrepository_section\">Add new repository: <input type=\"text\" style=\"width: 450px;\" value=\"\" id=\"df_newrepository_input\"></input>";
-		$html .= "<input type=\"button\"  value=\"Add repository\" id=\"df_addrepository\"></input>'<img id=\"df_settings_progress_indicator\" src=\"skins/ajax-loader.gif\" style=\"display:hidden\"/></div>";
+		$html .= "<input type=\"button\"  value=\"Add repository\" id=\"df_addrepository\"></input>'<img id=\"df_settings_progress_indicator\" src=\"skins/ajax-loader.gif\" style=\"display:none\"/></div>";
 		$html .= "<div id=\"df_existingrepository_section\">Existing repositories<br/><select size=\"5\" id=\"df_repository_list\">".$this->getRepositoriesAsHTMLOptions()."</select></div>";
 		$html .= "<input type=\"button\"  value=\"Remove from repository\" id=\"df_removerepository\"></input>";
 		return $html;

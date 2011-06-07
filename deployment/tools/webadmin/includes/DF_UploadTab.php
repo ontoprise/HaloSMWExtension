@@ -62,7 +62,7 @@ ENDS
 
 	private function serializePackageTable() {
 		global $dfgLang;
-		$html = "<table>";
+		$html = "<table id=\"df_bundlefilelist_table\">";
 		$html .= "<th>";
 		$html .= $dfgLang->getLanguageString('df_webadmin_file');
 		$html .= "</th>";

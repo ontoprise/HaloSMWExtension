@@ -367,6 +367,8 @@ $(function() {
 			
 		var callbackHandler = function(html, status, xhr) {
 			
+			smw_makeSortable($('#df_search_results_table')[0]);
+			
 			// register install buttons
 			$('.df_install_button').click(function(e) {
 				var id = $(e.currentTarget).attr('id');
@@ -520,7 +522,11 @@ $(function() {
 	});
 	$(document).ready(function(e) { 
 		
-		
+		// make tables sortable
+		smw_preload_images();
+		smw_makeSortable($('#df_statustable')[0]);
+		smw_makeSortable($('#df_bundlefilelist_table')[0]);
+		smw_makeSortable($('#df_restorepoint_table')[0]);
 		
 		// register every extension in status view for showing extension details on a click event.
 		$('.df_extension_id').click(function(e2) {

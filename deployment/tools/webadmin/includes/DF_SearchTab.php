@@ -59,7 +59,7 @@ public function getTabName() {
 			$html .= '<a href="http://dailywikibuilds.ontoprise.com/repository/repository.xml">Ontoprise repository</a>';
 			return $html;
 		}
-		$html = "<table>";
+		$html = "<table id=\"df_search_results_table\">";
 		$html .= "<th>";
 		$html .= $dfgLang->getLanguageString('df_webadmin_extension');
 		$html .= "</th>";

@@ -1,5 +1,12 @@
 @CHARSET "ISO-8859-1";
 
+#df_statustable {
+	margin-top: 20px;
+}
+
+#df_bundlefilelist {
+	 margin-top: 20px;
+}
 .df_extension_id {
     width: 15%;
 }

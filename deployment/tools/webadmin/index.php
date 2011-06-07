@@ -199,6 +199,7 @@ $html = <<<ENDS
 			});
 </script>
 $javascriptLang
+<script type="text/javascript" src="scripts/sorttable.js"></script>
 <script type="text/javascript" src="scripts/webadmin.js"></script>
 </head>
 ENDS
