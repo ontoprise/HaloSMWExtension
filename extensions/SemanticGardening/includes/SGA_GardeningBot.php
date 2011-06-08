@@ -444,6 +444,17 @@ abstract class GardeningBot {
 		
 		return $botLogFile;
 	}
+	
+    public function canBeRun() {
+		return true;
+	}
+      public function importOntology_TSC() {
+		return true;
+	}
+
+      public function importOntology_df() {
+		return true;
+	}
 
 	/**
 	 * Returns a writeable dir (assuming $sgaTempDir is configured accrodingly).
