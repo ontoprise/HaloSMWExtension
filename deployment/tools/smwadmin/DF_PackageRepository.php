@@ -635,14 +635,20 @@ class PackageRepository {
 	public static function getDeletionOrder($extIDs, $rootDir = NULL) {
 		$localpackages = PackageRepository::getLocalPackages($rootDir, false);
 		$superExtensions = array();
+		
 		foreach($extIDs as $id) {
+			// add the extension itself
 			$superExtensions[$id] = $localpackages[$id];
+			// and its super extensions
 			self::getLocalSuperExtensions($id, $superExtensions, $rootDir);
 		}
+		
+		// topological sorting according to the dependencies
 		$resultExtensionIDs = self::sortForDependencies($superExtensions);
+		
+		// reverse so that top most come first
 		$resultExtensionIDs = array_reverse($resultExtensionIDs);
-		$diff = array_diff($resultExtensionIDs, $extIDs);
-		$resultExtensionIDs = array_diff($resultExtensionIDs, $diff);
+		
 		return $resultExtensionIDs;
 	}
     
