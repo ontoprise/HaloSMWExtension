@@ -153,6 +153,9 @@ class SGA_LanguageDe {
     'smw_gard_import_docu' => 'Importiert eine OWL-Datei.',
     'smw_gard_import_uselabels' => 'Benutze Labels',
     'smw_gard_ontology_id' => 'Ontology ID',
+    'smw_df_missing' => 'Um die Gardening Bots nutzen zu können müssen Sie das Deployment Framework installieren! <br/> Folgen Sie dem Link für weitere Informationen: ',
+    'smw_TSC_missing' => 'Um die Gardening Bots nutzen zu können müssen Sie das Triplestore Connector installieren! <br/> Folgen Sie dem Link für weitere Informationen:',
+    
     
     /*Message for ExportOntologyBot*/
     'smw_exportontologybot' => 'Exportiere Ontologie',  
