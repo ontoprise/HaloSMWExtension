@@ -9,6 +9,7 @@
         <description>
             Additional inputs for SemanticForms
         </description>
+        <helpurl>http://www.mediawiki.org/wiki/Extension:Semantic_Forms_Inputs</helpurl>
         <dependencies>
             <dependency from="208">semanticforms</dependency>
         </dependencies>

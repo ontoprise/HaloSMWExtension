@@ -9,7 +9,7 @@
 		<description>
 			Provides the ARC library to other MW extensions.
 		</description>
-		<helpurl>http://smwforum.ontoprise.com</helpurl>
+		<helpurl>http://smwforum.ontoprise.com/smwforum/index.php/Help:ARCLibrary_extension</helpurl>
 		<dependencies>
 			<dependency from="1160" to="1169">mw</dependency>
 		</dependencies>
