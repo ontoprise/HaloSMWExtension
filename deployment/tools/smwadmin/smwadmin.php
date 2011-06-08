@@ -29,7 +29,7 @@
  *
  *
  */
-define('DEPLOY_FRAMEWORK_VERSION', '1.5.6_0 [B${env.BUILD_NUMBER}]');
+define('DEPLOY_FRAMEWORK_VERSION', '{{$VERSION}} [B{{$BUILD_NUMBER}}]');
 
 // termination constants
 define('DF_TERMINATION_WITH_FINALIZE', 0);
@@ -384,6 +384,13 @@ if ($dfgListPackages) {
 
 
 // install
+
+// if more than one bundle is installed at once,
+// consolidate the bundle list first, ie. remove all redundant bundles. 
+if (count($packageToInstall) > 1) {
+	$packageToInstall = PackageRepository::getTopMostExtensions($packageToInstall);
+}
+
 foreach($packageToInstall as $toInstall) {
 	$toInstall = str_replace(".", "", $toInstall);
 	$parts = explode("-", $toInstall);
@@ -518,6 +525,14 @@ if (count($localBundlesToInstall) > 0) {
 }
 
 //de-install
+// if more than one bundle is de-installed at once,
+// consolidate the bundle list first, ie. correct the order and add additional extensions if necessary.
+if (count($packageToDeinstall) > 1) {
+    $packageToDeinstall = PackageRepository::getDeletionOrder($packageToDeinstall, $mwrootDir);
+    
+    //TODO: ask for confirmation?
+}
+
 foreach($packageToDeinstall as $toDeInstall) {
 	$toDeInstall = str_replace(".", "", $toDeInstall);
 	try {

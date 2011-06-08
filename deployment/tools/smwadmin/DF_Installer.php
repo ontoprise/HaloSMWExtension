@@ -94,7 +94,10 @@ class Installer {
 		// create temp folder
 		$this->errors = array();
 		$this->tmpFolder = Tools::getTempDir().'/mw_deploy_tool';
-		if (!file_exists($this->tmpFolder)) Tools::mkpath($this->tmpFolder);
+		if (!file_exists($this->tmpFolder)) { 
+		    Tools::mkpath($this->tmpFolder);	
+		    @chmod($this->tmpFolder, 0777);
+		}
 		if (!file_exists($this->tmpFolder)) {
 			throw new InstallationError(DEPLOY_FRAMEWORK_NO_TMP_DIR, "Could not create temporary directory. Not Logged in as root?");
 		}
@@ -315,7 +318,7 @@ class Installer {
 					// local bundle (e.g. ontology). ignore it.
 				}
 			}
-				
+
 
 			if ($dd->getVersion() > $localPackages[$dd->getID()]->getVersion()
 			|| ($dd->getVersion() == $localPackages[$dd->getID()]->getVersion() && $dd->getPatchlevel() > $localPackages[$dd->getID()]->getPatchlevel())) {
@@ -687,6 +690,8 @@ class Installer {
 		$dfgOut->outputln("done.]");
 	}
 
+	
+
 	/**
 	 * Unzips the package denoted by $id and $version
 	 *
@@ -822,53 +827,14 @@ class Installer {
 		}
 
 		// sort the packages list topologically according to their dependency graph.
-		$precedenceOrder = $this->sortForDependencies($extensions);
+		$precedenceOrder = PackageRepository::sortForDependencies($extensions);
 		foreach($precedenceOrder as $po) {
 			$extensions_to_update[$po] = $extensions[$po];
 		}
 
 	}
 
-	/**
-	 * Provides a topologic sorting based on the dependency graph.
-	 *
-	 * @param array(ID=>array($dd,$min,$max)) $extensions_to_update
-	 * @return array(ID)
-	 */
-	private function sortForDependencies(& $extensions_to_update) {
-		$sortedPackages = array();
-		$vertexes = array_keys($extensions_to_update);
-		$descriptors = array_values($extensions_to_update);
-		while (!empty($vertexes)) {
-			$cycle = true;
-			foreach($vertexes as $v) {
-				$hasPreceding = false;
-				foreach($descriptors as $e) {
-					list($dd, $from, $to) = $e;
-					if (in_array($dd->getID(), $vertexes) && !$dd->isOptionalDependency($v)) {
-						if ($dd->hasDependency($v)) {
-							$hasPreceding = true;
-							break;
-						}
-					}
-				}
-				if (!$hasPreceding) {
-					$cycle = false;
-					break;
-				}
-			}
-			if (!$hasPreceding) {
-				// remove $v from $vertexes
-				$vertexes = array_diff($vertexes, array($v));
-
-			}
-			$sortedPackages[] = $v;
-
-			if ($cycle) throw new InstallationError(DEPLOY_FRAMEWORK_PRECEDING_CYCLE, "Cycle in the dependency graph.");
-		}
-		return array_reverse($sortedPackages);
-	}
-
+	
 
 
 
