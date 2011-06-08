@@ -130,25 +130,46 @@ class SGAGardening extends SpecialPage {
 		 }
 		 return $htmlResult;
 	}
+
 	
-	static function getParameterFormularForBot($botID) {
+static function getParameterFormularForBot($botID) {
 		global $registeredBots;
  		$bot = $registeredBots[$botID];
  		if ($bot == null) {
  			return "unknown bot"; //TODO: externalize by wfMsg(...)
  		}
+	
  		$htmlResult = "<div>".$bot->getHelpText()."</div>";
- 		$htmlResult .= "<form id=\"gardeningParamForm\"";
+ 		
+		if ($bot->canBeRun()) {
+		$htmlResult .= "<form id=\"gardeningParamForm\"";
  		$parameters = $bot->getParameters();
  		foreach($parameters as $param) {
  			$htmlResult .= $param->serializeAsHTML()."<br>";
  		}
  		$htmlResult .= "</form><br>";
- 		$htmlResult .= "<button id=\"runBotButton\" type=\"button\" name=\"run\" onclick=\"gardeningPage.run(event)\">Run Bot</button>";
+ 		$htmlResult .= "<button id=\"runBotButton\" type=\"button\" name=\"run\" onclick=\"gardeningPage.run(event)\">Run 
+
+Bot</button>";
+		}
+		
+		if(!$bot->importOntology_df()){
+		$htmlResult .= "<div>".wfMsg('smw_df_missing')."<a title=\"Deployment Framework\" 
+
+href=\"http://smwforum.ontoprise.com/smwforum/index.php/Help:Installing_Deployment_Framework\">Deployment Framework</a></div>";
+		$htmlResult .= "<br>";
+		}
+		if(!$bot->importOntology_TSC()){
+		$htmlResult .= "<div>".wfMsg('smw_TSC_missing')."<a title=\"Triplestore Connector\" 
+
+href=\"http://smwforum.ontoprise.com/smwforum/index.php/Help:Installing_the_TripleStoreConnector_Basic_1.5.3_manually\">Triplesto
+
+re Connector</a></div>";
+			
+		}
  		return $htmlResult;
+		
 	}
-	
-	
 	
 	
 }
