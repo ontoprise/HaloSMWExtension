@@ -55,6 +55,8 @@ class DF_Language_En extends DF_Language {
 	'df_ok' => 'OK',
 	
 	// webadmin
+	'df_linktowiki' => 'Go to wiki',
+	'df_logout' => 'Logout',
 	'df_webadmin_updatesavailable' => 'Updates available! Do a ',
 	'df_webadmin_extension' => 'Extension',
 	'df_webadmin_description' => 'Description',

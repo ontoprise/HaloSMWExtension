@@ -54,6 +54,8 @@ class DF_Language_De extends DF_Language {
     'df_ok' => 'OK',
 	
 	// webadmin
+	'df_linktowiki' => 'Gehe zum Wiki',
+    'df_logout' => 'Ausloggen',
 	'df_webadmin_updatesavailable' => 'Updates verfügbar! Machen Sie ein ',
 	'df_webadmin_extension' => 'Extension',
     'df_webadmin_description' => 'Beschreibung',
