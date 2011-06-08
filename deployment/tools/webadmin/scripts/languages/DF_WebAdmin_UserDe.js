@@ -46,9 +46,13 @@ var dfgUserDFWebAdmin_LanguageStrings = {
 	'df_webadmin_ontologies' : 'Ontologien',
 	'df_webadmin_resources' : 'Resourcen',
 	'df_webadmin_resourcecopyonly' : 'Kopierte Resourcen',
-	
-	'df_webadmin_installation_successful' : 'Installation erfolgreich!',
-	'df_webadmin_installation_failure' : 'Während der Installation sind Fehler aufgetreten.'
+
+	'df_webadmin_install_successful' : 'Installation erfolgreich!',
+	'df_webadmin_install_failure' : 'Während der Installation sind Fehler aufgetreten.',
+	'df_webadmin_deinstall_successful' : 'De-Installation erfolgreich!',
+	'df_webadmin_deinstall_failure' : 'Während der De-Installation sind Fehler aufgetreten.',
+	'df_webadmin_update_successful' : 'Update erfolgreich!',
+	'df_webadmin_update_failure' : 'Während des Updates sind Fehler aufgetreten.'
 };
 
 var dfgContDFWebAdmin_LanguageStrings = {};

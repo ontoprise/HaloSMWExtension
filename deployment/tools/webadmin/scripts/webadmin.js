@@ -63,11 +63,13 @@ $(function() {
 					var $dialog = $('#df_install_dialog');
 					$dialog.dialog('option', 'title', dfgWebAdminLanguage.getMessage('df_webadmin_finished'));
 					$dialog.dialog( "option", "buttons", { "Ok": function() { $(this).dialog("close"); } } );
+					var operation = $dialog.dialog('option', 'operation');
+					
 					
 					if (resultLog.indexOf("$$ERROR$$") != -1) {
-						dialog[0].innerHTML += "<br/><br/>"+dfgWebAdminLanguage.getMessage('df_webadmin_installation_failure');
+						dialog[0].innerHTML += "<br/><br/>"+dfgWebAdminLanguage.getMessage('df_webadmin_'+operation+'_failure');
 					} else {
-						dialog[0].innerHTML += "<br/><br/>"+dfgWebAdminLanguage.getMessage('df_webadmin_installation_successful');
+						dialog[0].innerHTML += "<br/><br/>"+dfgWebAdminLanguage.getMessage('df_webadmin_'+operation+'_successful');
 					}
 					// make sure it is visible
 					dialog[0].scrollTop = dialog[0].clientHeight;
@@ -419,6 +421,7 @@ $(function() {
 						modal: true,
 						width: 800,
 						height: 500,
+						operation : "install",
 						close: function(event, ui) { 
 							window.location.href = wgServer+wgScriptPath+"/deployment/tools/webadmin/index.php?tab=0";
 
@@ -608,6 +611,7 @@ $(function() {
 		        				modal: true,
 		        				width: 800,
 		        				height: 500,
+		        				operation : "deinstall",
 		        				close: function(event, ui) { 
 		        					window.location.href = wgServer+wgScriptPath+"/deployment/tools/webadmin/index.php?tab=0";
 
@@ -644,6 +648,7 @@ $(function() {
 				modal: true,
 				width: 800,
 				height: 500,
+				operation : "update",
 				close: function(event, ui) { 
 					window.location.href = wgServer+wgScriptPath+"/deployment/tools/webadmin/index.php?tab=0";
 
@@ -694,6 +699,7 @@ $(function() {
 			          								modal: true,
 			          								width: 800,
 			          								height: 500,
+			          								operation : "update",
 			          								close: function(event, ui) { 
 			          									window.location.href = wgServer+wgScriptPath+"/deployment/tools/webadmin/index.php?tab=0";
 
