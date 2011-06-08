@@ -8,10 +8,16 @@
 	cursor: pointer;
 }
 #query {
-	width: 100%;
+	width: 50%;
 }
+
 .xfsFacetHeader {
 	font-weight: bold;
+}
+
+.xfsComponentHeader {
+	font-weight: bold;
+	font-size: medium;
 }
 
 .results {
@@ -106,4 +112,10 @@ a.xfsFMore, a.xfsFLess {
 .xfsMinor {
 	color: gray;
 	cursor: default;
+}
+
+.xfsSeparatorLine {
+  background: none repeat scroll 0 0 #AAAAAA;
+  border: medium none;
+  height: 1px;
 }

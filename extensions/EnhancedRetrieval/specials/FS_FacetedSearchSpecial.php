@@ -51,15 +51,13 @@ class FSFacetedSearchSpecial extends SpecialPage {
 	</div>
 
 	<div class="facets">
-		<div class="search">
-			<h2>{{fs_search}}</h2>
-	        <input type="text" id="query" name="query"/>
-		</div>
 		<div>
-			<span class="xfsFacetHeader">{{fs_selected}}</span>
+			<span class="xfsComponentHeader">{{fs_selected}}</span>
 			<div id="selection">
 			</div>
 		</div>
+		<hr class="xfsSeparatorLine">
+		<span class="xfsComponentHeader">{{fs_available_facets}}</span>
 		<div>
 			<span class="xfsFacetHeader">{{fs_categories}}</span>
 			<div id="field_categories">
@@ -72,6 +70,11 @@ class FSFacetedSearchSpecial extends SpecialPage {
 		</div> 
 	</div>
 	<div class="results" id="results">
+		<div class="search">
+			<span class="xfsFacetHeader">{{fs_search}}</span>
+	        <input type="text" id="query" name="query"/>
+		</div>
+		<hr class="xfsSeparatorLine">
 		<div id="navigation">
 			<div id="pager-header">
 			</div>

@@ -37,12 +37,13 @@ $messages['en'] = array(
     'specialpages-group-facetedsearch_group'	=> 'Faceted Search',
 
 	//--- Messages for the special page ---
-	'fs_title'	        => "Faceted Search",
-	'fs_search'         => "Search",
-	'fs_categories'     => "Categories",
-	'fs_properties'     => "Properties",
-	'fs_search_results' => "Search results",
-	'fs_selected'       => "Selected facets" 
+	'fs_title'	          => "Faceted Search",
+	'fs_search'           => "Find articles",
+	'fs_categories'       => "Categories",
+	'fs_properties'       => "Properties",
+	'fs_search_results'   => "Search results",
+	'fs_selected'         => "Selected facets",
+	'fs_available_facets' => "Available facets"
 
 );
 
@@ -56,11 +57,12 @@ $messages['de'] = array(
     'specialpages-group-facetedsearch_group'	=> 'Facettierte Suche',
 
 	//--- Messages for the special page ---
-	'fs_title'	        => "Facettensuche",
-	'fs_search'         => "Suchbegriff",
-	'fs_categories'     => "Kategorien",
-	'fs_properties'     => "Eigenschaften",
-	'fs_search_results' => "Suchresultate",
-	'fs_selected'       => "Facettenfilter"
+	'fs_title'	          => "Facettensuche",
+	'fs_search'           => "Finde Artikel",
+	'fs_categories'       => "Kategorien",
+	'fs_properties'       => "Eigenschaften",
+	'fs_search_results'   => "Suchresultate",
+	'fs_selected'         => "Facettenfilter",
+	'fs_available_facets' => "Verfügbare Facetten"
 
 );
