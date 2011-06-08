@@ -47,7 +47,7 @@ FacetedSearch.classes.FSLanguageDe = function () {
 'noFacetFilter'		: '(Keine Facetten ausgewählt.)',
 'removeFilter'		: 'Filter enfernen',
 'removeRestriction'	: 'Einschränkung entfernen',
-'removeAllFilters'	: 'Alle Filter entfernen',
+'removeAllFilters'	: 'Alle Facetten entfernen',
 'pagerPrevious'		: '&lt; Vorherige',
 'pagerNext'			: 'Nächste &gt;',
 'results'			: 'Resultate',

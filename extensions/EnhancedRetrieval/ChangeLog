@@ -8,7 +8,9 @@ VERSION 1.5.6
   CHANGES:
 
   BUGFIXES:
+  14667 - Rename "Remove all filters"
   14603 - Faceted Search: Text properties clutter interface
+  14594 - Faceted Search: Use hand icon for interactive elements
 
 VERSION 1.4.1
 
