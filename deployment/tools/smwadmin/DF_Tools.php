@@ -245,7 +245,11 @@ class Tools {
 		exec("mysql --version > $nullDevice", $out, $ret);
 		$mysql_binaries = ($ret == 0);
 		if (!$mysql_binaries) return("Cannot find mysql.exe. Please include path to mysql.exe into PATH-variable.");
-
+        
+		// check if socket functions are available
+		if (!function_exists("socket_create")) {
+			return("Cannot find socket function in your PHP installation. Check if 'php_sockets'-extension is loaded in php.ini.");
+		}
 		if (Tools::isWindows()) unlink($nullDevice);
 		return true;
 	}
