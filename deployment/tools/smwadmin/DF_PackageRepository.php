@@ -576,9 +576,10 @@ class PackageRepository {
 				        <version>'.$version.'</version>
 				        <id>mw</id>
 				        <vendor>Ontoprise GmbH</vendor>
+				        <maintainer>Wikimedia foundation</maintainer>
 				        <instdir/>
-				        <description>Mediawiki software</description>
-				       
+				        <description>MediaWiki is a free software open source wiki package written in PHP, originally for use on Wikipedia.</description>
+				        <helpurl>http://www.mediawiki.org/wiki/MediaWiki</helpurl>
     			    </global>
 				    <codefiles/>
 				    <wikidumps/>
