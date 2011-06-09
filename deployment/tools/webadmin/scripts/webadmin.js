@@ -292,25 +292,30 @@ $(function() {
 		var version = dd.version
 		var patchlevel = dd.patchlevel;
 		var dependencies = dd.dependencies;
-		var maintainer = dd.maintainer;
-		var vendor = dd.vendor;
-		var license = dd.license;
-		var helpurl = dd.helpurl;
+		var maintainer = dd.maintainer != '' ? dd.maintainer : "-";
+		var vendor = dd.vendor != '' ? dd.vendor : "-";
+		var license = dd.license != '' ? dd.license : "-";
+		var helpurl = dd.helpurl != '' ? dd.helpurl : "-";
 		var wikidumps = dd.wikidumps;
 		var ontologies = dd.ontologies;
 		var resources = dd.resources;
 		var onlycopyresources = dd.onlycopyresources;
 		
+		var i = 0;
 		var dependenciesHTML = "<ul class=\"df_enumeration\">";
 		$.each(dependencies, function(index, value) { 
 			var id =value[0];
 			var version =value[1];
 			dependenciesHTML += "<li>"+id+"-"+version;
+			i++;
 		});
 		dependenciesHTML += "</ul>";
+		if (i == 0) { 
+			dependenciesHTML = "-";
+		}
 		
 		var wikidumpsHTML="";
-		var i = 0;
+		i = 0;
 		if (wikidumps) {
 			$.each(wikidumps, function(index, value) { 
 				var dumpfile = index;
