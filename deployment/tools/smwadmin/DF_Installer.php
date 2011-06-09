@@ -303,7 +303,7 @@ class Installer {
 	 * @return true, if anything was updated.
 	 */
 	public function updateAll($onlyDependencyCheck = false) {
-
+        global $dfgOut;
 		$localPackages = PackageRepository::getLocalPackages($this->rootDir);
 
 		// iterate through all installed packages, check if new or patched versions
