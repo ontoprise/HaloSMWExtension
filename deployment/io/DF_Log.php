@@ -59,7 +59,7 @@ class Logger {
 		Tools::mkpath($this->logDir);
 		if (is_writable($this->logDir)) {
 			$i = 1;
-			if (filesize($this->logDir."/df_$i.log") > DF_MAX_LOG_SIZE) {
+			if (@filesize($this->logDir."/df_$i.log") > DF_MAX_LOG_SIZE) {
 				while(file_exists($this->logDir."/df_$i.log")) {
 					$i++;
 				}
