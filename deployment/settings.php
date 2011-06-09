@@ -22,9 +22,11 @@ class DF_Config  {
 	// LocalSettings.php for $wgScriptPath
 	public static $scriptPath = "/deploywiki";
 	
+	// DF GUI language (default is english)
+	public static $df_lang = "en";
 	
 	// Wiki name the DF is working on (OPTIONAL setting)
-	public static $wikiName = "";
+	public static $df_wikiName = "";
 
 	/*
 	 * Uncomment the lines and set $df_authorizeByWiki to false

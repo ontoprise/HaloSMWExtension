@@ -68,7 +68,7 @@ require_once($mwrootDir.'/deployment/io/DF_Log.php');
 require_once($mwrootDir.'/deployment/io/DF_PrintoutStream.php');
 
 $dfgOut = DFPrintoutStream::getInstance(DF_OUTPUT_FORMAT_HTML);
-$wgLanguageCode="en";
+
 dffInitLanguage();
 $dfgNoAsk=true;
 
@@ -164,10 +164,10 @@ if (isset($func_name)) {
 	die();
 }
 
-if (!isset($dfgLangCode)) {
+if (!isset(DF_Config::$df_lang)) {
 	$dfgLangCode = "En";
 } else {
-	$dfgLangCode = ucfirst($dfgLangCode);
+	$dfgLangCode = ucfirst(DF_Config::$df_lang);
 }
 
 $javascriptLang = '<script type="text/javascript" src="scripts/languages/DF_WebAdmin_User'.$dfgLangCode.'.js"></script>';
@@ -204,7 +204,7 @@ $javascriptLang
 </head>
 ENDS
 ;
-$wikiName = !empty(DF_Config::$wikiName) ? "(".DF_Config::$wikiName.")" : "";
+$wikiName = !empty(DF_Config::$df_wikiName) ? "(".DF_Config::$df_wikiName.")" : "";
 $html .= "<body><img src=\"skins/logo.png\" />".
          "<div style=\"float:right\">".
          "<a href=\"$wgServer$wgScriptPath/index.php\">".$dfgLang->getLanguageString('df_linktowiki')."</a> ".
@@ -255,8 +255,9 @@ die();
  * Note: Requires wiki context
  */
 function dffInitLanguage() {
-	global $wgLanguageCode, $dfgLang, $mwrootDir;
-	$langClass = "DF_Language_$wgLanguageCode";
+	global $dfgLang, $mwrootDir;
+	$langCode = isset(DF_Config::$lang) ? ucfirst(DF_Config::$lang) : "En";
+	$langClass = "DF_Language_$langCode";
 	if (!file_exists($mwrootDir."/deployment/languages/$langClass.php")) {
 		$langClass = "DF_Language_En";
 	}
