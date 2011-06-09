@@ -43,13 +43,13 @@
 		
 		<copy todir="bin/zip/extensions/SemanticForms/patches/HaloACL">
 			<fileset dir="../../HaloACL/">
-				<include name="patch_for_SF_2.0.8.txt" />
+                <include name="patch_for_SF_2.1.2.txt" />
 			</fileset>
 		</copy>
 
 		<copy todir="bin/zip/extensions/SemanticForms/patches/SMWHalo">
 			<fileset dir="../../SMWHalo/">
-				<include name="patch_for_SF2.0.8.txt" />
+                <include name="patch_for_SF2.1.2.txt" />
 			</fileset>
 		</copy>
 
@@ -114,7 +114,7 @@
 			<arg value="-d" />
 			<arg value="${basedir}/../../../" />
 			<arg value="-p" />
-			<arg value="../patches/HaloACL/patch_for_SF_2.0.8.txt" />
+			<arg value="../patches/HaloACL/patch_for_SF_2.1.2.txt" />
 			<arg value="--patchtool" />
 			<arg value="${patchtool}" />
 		</exec>
@@ -123,7 +123,7 @@
 			<arg value="-d" />
 			<arg value="${basedir}/../../../" />
 			<arg value="-p" />
-			<arg value="../patches/SMWHalo/patch_for_SF2.0.8.txt" />
+			<arg value="../patches/SMWHalo/patch_for_SF2.1.2.txt" />
 			<arg value="--patchtool" />
 			<arg value="${patchtool}" />
 		</exec>
