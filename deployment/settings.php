@@ -31,6 +31,8 @@ class DF_Config  {
 	/*
 	 * Uncomment the lines and set $df_authorizeByWiki to false
 	 * if you do not want to authorize webadmin tool by the wiki user base.
+	 * 
+	 * This is required if 'curl' is NOT installed!
 	 *
 	 */
 	public static $df_authorizeByWiki = true;
@@ -50,6 +52,10 @@ class DF_Config  {
 	// restore points, logs, uploaded files.
 	// normally $HOME is used.
 	// 'df_homedir' => '',
+	
+	// set PHP path if it does not exist in path or it has the wrong version
+	// PHP 5 is required at least
+	//'df_php_path' => 'php',
 
 	);
 	public static function getValue($identifier){

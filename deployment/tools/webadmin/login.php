@@ -148,16 +148,22 @@ function dffCheckEnvironment() {
     }
 
     // check if external processes can be run
-    @exec('php --version', $out, $ret);
-    if ($ret != 0 || stripos($out[0], "PHP 5") === false) {
+    $phpExe = 'php';
+    if (array_key_exists('df_php_path', DF_Config::$settings)) {
+    	$phpExe = DF_Config::$settings['df_php_path'];
+    }
+    @exec("$phpExe --version", $out, $ret);
+    if ($ret != 0 || stripos($out[0], "PHP") === false) {
         $result .= "<br>Could not run external processes: <pre>".implode("\n",$out)."</pre>";
+    } else if ($ret == 0 && preg_match("/5\\.\\d+\\.\\d+/", $out[0]) === 0) {
+    	$result .= "<br>Wrong PHP version: ".$out[0]." (PHP 5.x.x required, except 5.3.1)";
     }
     
     // check if temp folder can be written
     $tempFolder = Tools::getTempDir();
     @touch("$tempFolder/test_file_for_webadmin");
     if (!file_exists("$tempFolder/test_file_for_webadmin")) {
-        $result .= "<br>Could not write into the temp folder.";
+        $result .= "<br>Could not write into the temp folder at $tempFolder.";
     } else {
         unlink("$tempFolder/test_file_for_webadmin");
     }
