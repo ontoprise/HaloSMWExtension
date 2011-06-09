@@ -250,7 +250,7 @@ class DFCommandInterface {
 
 	public function doGlobalUpdate() {
 		global $mwrootDir, $dfgOut;
-		$extid = reset($args);
+
 		$filename = uniqid().".log";
 		touch(Tools::getTempDir()."/$filename");
 		chdir($mwrootDir.'/deployment/tools');
