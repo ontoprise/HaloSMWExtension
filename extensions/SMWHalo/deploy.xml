@@ -49,6 +49,7 @@
                 ext="mw" from="1161" to="1161" />    
 
             <patch file="patch_for_SF2.0.8.txt" ext="semanticforms" from="208" to="208" />
+            <patch file="patch_for_SF2.1.2.txt" ext="semanticforms" from="212" to="212" />
 
 			<require name="smwhalo"
 				file="extensions/SMWHalo/includes/SMW_Initialize.php" />
@@ -87,6 +88,7 @@
             <patch file="patch_for_MW1.16.1.txt"
                 ext="mw" from="1161" to="1161" />
             <patch file="patch_for_SF2.0.8.txt" ext="semanticforms" from="208" to="208" />
+            <patch file="patch_for_SF2.1.2.txt" ext="semanticforms" from="212" to="212" />
 
 			<script file="maintenance/SMW_setup.php"
 				params="--delete" />
