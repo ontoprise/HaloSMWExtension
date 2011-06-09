@@ -256,7 +256,7 @@ die();
  */
 function dffInitLanguage() {
 	global $dfgLang, $mwrootDir;
-	$langCode = isset(DF_Config::$lang) ? ucfirst(DF_Config::$lang) : "En";
+	$langCode = isset(DF_Config::$df_lang) ? ucfirst(DF_Config::$df_lang) : "En";
 	$langClass = "DF_Language_$langCode";
 	if (!file_exists($mwrootDir."/deployment/languages/$langClass.php")) {
 		$langClass = "DF_Language_En";

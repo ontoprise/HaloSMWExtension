@@ -850,7 +850,8 @@ function dffCheckWikiContext() {
  */
 function dffInitLanguage() {
 	global $wgLanguageCode, $dfgLang, $mwrootDir;
-	$langClass = "DF_Language_$wgLanguageCode";
+	$langCode = ucfirst($wgLanguageCode);
+	$langClass = "DF_Language_$langCode";
 	if (!file_exists($mwrootDir."/deployment/languages/$langClass.php")) {
 		$langClass = "DF_Language_En";
 	}
