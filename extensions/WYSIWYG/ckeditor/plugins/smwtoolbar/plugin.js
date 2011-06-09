@@ -981,12 +981,14 @@ CKEDITOR.plugins.smwtoolbar = {
             window.parent.smwhgGardeningHints.createContainer();
         window.parent.smw_links_callme();
         this.SetEventHandler4AnnotationBox( editor );
+        editor.getCommand('SMWtoolbar').setState(CKEDITOR.TRISTATE_ON)
     },
     DisableAnnotationToolbar: function( editor ) {
         this.stbIsActive = false;
         HideContextPopup();
         window.parent.AdvancedAnnotation.unload();
         this.ClearEventHandler4AnnotationBox(editor);
+        editor.getCommand('SMWtoolbar').setState(CKEDITOR.TRISTATE_OFF)
     },
     EditorareaChanges : function() {
         if (! this.stbIsActive) return;
@@ -1073,7 +1075,6 @@ var commandDefinition =
 		exec: function( editor )
 		{
 			plugin.loadToolbar( editor );
-			editor.getCommand('SMWtoolbar').toggleState();
 		}
 	};
 
@@ -1105,6 +1106,7 @@ CKEDITOR.plugins.add('smwtoolbar', {
 		editor.on( 'beforeCommandExec', function( ev ) {
 			if ( !plugin.stbIsActive )
 				return;
+			
 			if ( ( ev.data.name == 'source' || ev.data.name == 'newpage' ) && editor.mode == 'wysiwyg' ) {
 				plugin.DisableAnnotationToolbar( editor );
             }
