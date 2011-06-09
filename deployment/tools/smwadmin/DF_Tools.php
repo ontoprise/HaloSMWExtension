@@ -245,7 +245,7 @@ class Tools {
 		exec("mysql --version > $nullDevice", $out, $ret);
 		$mysql_binaries = ($ret == 0);
 		if (!$mysql_binaries) return("Cannot find mysql.exe. Please include path to mysql.exe into PATH-variable.");
-        
+
 		// check if socket functions are available
 		if (!function_exists("socket_create")) {
 			return("Cannot find socket function in your PHP installation. Check if 'php_sockets'-extension is loaded in php.ini.");
@@ -514,9 +514,13 @@ class Tools {
 			exec("echo %TEMP%", $out, $ret);
 			return str_replace("\\", "/", reset($out));
 		} else {
-			exec('echo $TMPDIR', $out, $ret);
-			$val = reset($out);
-			return ($val == '' || $val === false) ? '/tmp' : $val;
+			@exec('echo $TMPDIR', $out, $ret);
+			if ($ret == 0) {
+				$val = reset($out);
+				return ($val == '' || $val === false) ? '/tmp' : $val;
+			} else {
+				return '/tmp';
+			}
 		}
 	}
 
@@ -834,17 +838,17 @@ class Tools {
 		$extension = reset($rev_parts);
 		return $extension;
 	}
-	
+
 	/**
 	 * Checks if the given filename has a common ontology ending.
-	 * 
+	 *
 	 * @param string $filename
 	 * @return boolean
 	 */
 	public static function checkIfOntologyFile($filename) {
 		$ext = self::getFileExtension($filename);
-		return ($ext == 'owl' || $ext == 'rdf' || $ext == 'obl' 
-		          || $ext == 'n3' || $ext == 'nt');
+		return ($ext == 'owl' || $ext == 'rdf' || $ext == 'obl'
+		|| $ext == 'n3' || $ext == 'nt');
 	}
 
 	/**
