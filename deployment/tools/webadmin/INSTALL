@@ -18,7 +18,8 @@ Installation of the webadmin console:
     are stored in $HOME/df_upload or $TEMP/df_upload if $HOME is not defined.
 (6) Set the $scriptPath variable in deployment/settings.php 
     (same as $wgScriptPath in LocalSettings.php)
-        
+(7) If you want to restore from a restore point the whole wiki directory
+    must be writable by the webserver.        
 
 You get a warning if something is missing when you first access the webadmin console.
 
