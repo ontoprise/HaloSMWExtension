@@ -150,7 +150,7 @@ function dffCheckEnvironment() {
     // check if external processes can be run
     @exec('php --version', $out, $ret);
     if ($ret != 0 || stripos($out[0], "PHP 5") === false) {
-        $result .= "<br>Could not run external processes.";
+        $result .= "<br>Could not run external processes: <pre>".implode("\n",$out)."</pre>";
     }
     
     // check if temp folder can be written
