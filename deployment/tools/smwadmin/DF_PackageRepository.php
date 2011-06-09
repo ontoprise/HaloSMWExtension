@@ -580,6 +580,7 @@ class PackageRepository {
 				        <instdir/>
 				        <description>MediaWiki is a free software open source wiki package written in PHP, originally for use on Wikipedia.</description>
 				        <helpurl>http://www.mediawiki.org/wiki/MediaWiki</helpurl>
+				        <license>GPL-v2</license>
     			    </global>
 				    <codefiles/>
 				    <wikidumps/>
