@@ -169,8 +169,9 @@ class DeployWikiOntologyRevision extends WikiRevision {
 		array($dfgLang->getLanguageString('is_inverse_of')),
 		array($dfgLang->getLanguageString('has_domain_and_range') => array('Type:Page', 'Type:Page')),
 		array($dfgLang->getLanguageString('has_domain_and_range'), $dfgLang->getLanguageString('imported_from'), $dfgLang->getLanguageString('df_partofbundle'),
-		      $dfgLang->getLanguageString('df_ontologyversion'), $dfgLang->getLanguageString('df_instdir'), $dfgLang->getLanguageString('df_description'),
-	          $dfgLang->getLanguageString('df_ontologyuri'))
+		      $dfgLang->getLanguageString('df_ontologyversion'), $dfgLang->getLanguageString('df_instdir'), $dfgLang->getLanguageString('df_rationale'),
+	          $dfgLang->getLanguageString('df_ontologyuri'), $dfgLang->getLanguageString('df_license'), $dfgLang->getLanguageString('df_maintainer'),
+	          $dfgLang->getLanguageString('df_helpurl'), $dfgLang->getLanguageString('df_vendor'))
 		);
 		$this->logger = Logger::getInstance();
 	}

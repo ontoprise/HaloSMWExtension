@@ -30,8 +30,12 @@ class DF_Language_En extends DF_Language {
     'df_contenthash' => 'Content hash',
 	'df_dependencies'=> 'Dependency',
 	'df_instdir' => 'Installation dir',
-	'df_ontologyvendor' => 'Vendor',
-	'df_description' => 'Description',
+	
+	'df_rationale' => 'Rationale',
+	'df_maintainer' => 'Maintainer',
+    'df_vendor' => 'Vendor',
+    'df_helpurl' => 'Help Url',
+    'df_license' => 'License',
 	'df_contentbundle' => 'Content bundle',
 	'df_ontologyuri' => 'Ontology URI',
 	

@@ -63,13 +63,13 @@ for( $arg = reset( $argv ); $arg !== false; $arg = next( $argv ) ) {
 		$includeInstances = ($value == 'true' || $value == '1' || $value == 'yes');
 		continue;
 	} else if (strpos($arg, '--includeImages') === 0) {
-		
-        list($option, $value) = explode("=", $arg);
-        if (!isset($value)) $value = next($argv);
-        $includeImages = ($value == 'true' || $value == '1' || $value == 'yes');
-       
-        continue;
-    }
+
+		list($option, $value) = explode("=", $arg);
+		if (!isset($value)) $value = next($argv);
+		$includeImages = ($value == 'true' || $value == '1' || $value == 'yes');
+		 
+		continue;
+	}
 }
 
 // check bundle page
@@ -93,33 +93,52 @@ function dumpDescriptor($bundeID, $output = "deploy.xml", $dumpFile = "dump.xml"
 
 	$instdir_p = SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString('df_instdir'));
 	$ontologyversion_p = SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString('df_ontologyversion'));
-	$ontologyvendor_p = SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString('df_ontologyvendor'));
-	$description_p = SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString('df_description'));
+	$rationale_p = SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString('df_rationale'));
+	$maintainer_p = SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString('df_maintainer'));
+	$vendor_p = SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString('df_vendor'));
+	$helpURL_p = SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString('df_helpurl'));
+	$license_p = SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString('df_license'));
 
 	$bundlePage = Title::newFromText($bundeID);
 	$dependencies = smwfGetStore()->getPropertyValues($bundlePage, $dependencies_p);
 	$version = smwfGetStore()->getPropertyValues($bundlePage, $ontologyversion_p);
 	$instdir = smwfGetStore()->getPropertyValues($bundlePage, $instdir_p);
-	$vendor = smwfGetStore()->getPropertyValues($bundlePage, $ontologyvendor_p);
-	$description = smwfGetStore()->getPropertyValues($bundlePage, $description_p);
+	$rationale = smwfGetStore()->getPropertyValues($bundlePage, $rationale_p);
+	$maintainer = smwfGetStore()->getPropertyValues($bundlePage, $maintainer_p);
+	$vendor = smwfGetStore()->getPropertyValues($bundlePage, $vendor_p);
+	$helpurl = smwfGetStore()->getPropertyValues($bundlePage, $helpURL_p);
+	$license = smwfGetStore()->getPropertyValues($bundlePage, $license_p);
 
 	if ( count($version) == 0) {
-		fwrite( STDERR , "No version annotation on $bundeID" . "\n" );
+		fwrite( STDERR , "No [[".$dfgLang->getLanguageString('df_ontologyversion')."]] annotation on $bundeID" . "\n" );
 	}
 	if ( count($vendor) == 0) {
-		fwrite( STDERR , "No vendor annotation on $bundeID" . "\n" );
+		fwrite( STDERR , "No [[".$dfgLang->getLanguageString('df_vendor')."]] annotation on $bundeID" . "\n" );
 	}
 	if ( count($instdir) == 0) {
-		fwrite( STDERR , "No instdir annotation on $bundeID" . "\n" );
+		fwrite( STDERR , "No [[".$dfgLang->getLanguageString('df_instdir')."]] annotation on $bundeID" . "\n" );
 	}
-	if ( count($description) == 0) {
-		fwrite( STDERR , "No description annotation on $bundeID" . "\n" );
+	if ( count($rationale) == 0) {
+		fwrite( STDERR , "No [[".$dfgLang->getLanguageString('df_rationale')."]] annotation on $bundeID" . "\n" );
 	}
+	if ( count($maintainer) == 0) {
+		fwrite( STDERR , "No [[".$dfgLang->getLanguageString('df_maintainer')."]] annotation on $bundeID" . "\n" );
+	}
+	if ( count($helpurl) == 0) {
+		fwrite( STDERR , "No [[".$dfgLang->getLanguageString('df_helpurl')."]] annotation on $bundeID" . "\n" );
+	}
+	if ( count($license) == 0) {
+		fwrite( STDERR , "No [[".$dfgLang->getLanguageString('df_license')."]] annotation on $bundeID" . "\n" );
+	}
+
 
 	$versionText = count($version) > 0 ? Tools::getXSDValue(reset($version)) : "100";
 	$vendorText = count($vendor) > 0 ? Tools::getXSDValue(reset($vendor)) : "no vendor";
 	$instdirText = count($instdir) > 0 ? Tools::getXSDValue(reset($instdir)) : "extensions/$bundeID";
-	$descriptionText = count($description) > 0 ? Tools::getXSDValue(reset($description)) : "no description";
+	$rationaleText = count($rationale) > 0 ? Tools::getXSDValue(reset($rationale)) : "no description";
+	$maintainerText = count($maintainer) > 0 ? Tools::getXSDValue(reset($maintainer)) : "no maintainer";
+	$helpurlText = count($helpurl) > 0 ? Tools::getXSDValue(reset($helpurl)) : "no help url";
+	$licenseText = count($license) > 0 ? Tools::getXSDValue(reset($license)) : "no license specified";
 
 	$handle = fopen("$output", "w");
 	$src = dirname(__FILE__)."/../../../";
@@ -138,7 +157,10 @@ function dumpDescriptor($bundeID, $output = "deploy.xml", $dumpFile = "dump.xml"
 	$xml .= "\t\t".'<id>'.strtolower($bundeID).'</id>'."\n";
 	$xml .= "\t\t".'<instdir>'.$instdirText.'</instdir>'."\n";
 	$xml .= "\t\t".'<vendor>'.$vendorText.'</vendor>'."\n";
-	$xml .= "\t\t".'<description>'.$descriptionText.'</description>'."\n";
+	$xml .= "\t\t".'<description>'.$rationaleText.'</description>'."\n";
+	$xml .= "\t\t".'<maintainer>'.$maintainerText.'</maintainer>'."\n";
+	$xml .= "\t\t".'<helpurl>'.$helpurlText.'</helpurl>'."\n";
+	$xml .= "\t\t".'<license>'.$licenseText.'</license>'."\n";
 	$xml .= "\t\t".'<dependencies>'."\n";
 	foreach($dependencies as $dep) {
 		$dvs = $dep->getDVs();
