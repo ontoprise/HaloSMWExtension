@@ -711,7 +711,7 @@ function ToggleCKEditor( mode, objId ){
 	//CKeditor visible -> hidden
 	if ( showFCKEditor & RTE_VISIBLE ){
 		var text = oEditorIns.getData();
-		SRCtextarea.value = text.replace(/<br\/>/gi, "");
+		SRCtextarea.value = text;
 		if( saveSetting ){
 			sajax_request_type = 'GET';
 			sajax_do_call( 'wfSajaxToggleCKeditor', ['hide'], function(){} ); //remember closing in session

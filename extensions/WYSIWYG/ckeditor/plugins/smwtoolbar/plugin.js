@@ -1065,7 +1065,7 @@ CKEDITOR.plugins.smwtoolbar = {
 var plugin = CKEDITOR.plugins.smwtoolbar;
 var commandDefinition =
 	{
-		preserveState : true,
+		preserveState : false,
 		editorFocus : false,
 		canUndo : false,
         modes : { wysiwyg : 1, source : 1 },
@@ -1073,6 +1073,7 @@ var commandDefinition =
 		exec: function( editor )
 		{
 			plugin.loadToolbar( editor );
+			editor.getCommand('SMWtoolbar').toggleState();
 		}
 	};
 
@@ -1094,9 +1095,11 @@ CKEDITOR.plugins.add('smwtoolbar', {
                     label : 'Semantic Toolbar',
                     command : 'SMWtoolbar',
                     icon: this.path + 'images/tb_icon_semtoolbar.png',
-                    title: 'Semantic Toolbar'
+                    title: 'Semantic Toolbar',
                 });
+            editor.getCommand('SMWtoolbar').setState(CKEDITOR.TRISTATE_OFF)
         }
+        
 
         // disable toolbar when switching mode
 		editor.on( 'beforeCommandExec', function( ev ) {
