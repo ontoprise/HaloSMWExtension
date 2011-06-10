@@ -212,3 +212,7 @@ allowed to create new instances. */
 	font-weight: bold;
 	background-color: red !important;
 }
+
+.tabf_finally_lost_instance {
+	display : none;
+}

@@ -111,7 +111,7 @@ class TFDataAPIACCESS {
 				if($element instanceof POMProperty){
 					$annotations->setWritable($element->name, $element->value);
 				} else if($element instanceof POMCategory){
-					$annotations->setWritable('__Category__', $element->value);
+					$annotations->setWritable(TF_CATEGORY_KEYWORD, $element->value);
 				} else if ($element instanceof POMExtensionParserFunction){
 					if(strpos($element->nodeText, '{{#set:') === 0){
 						$sets = trim(substr($element->nodeText, strlen('{{#set:')));
@@ -245,7 +245,7 @@ class TFDataAPIACCESS {
 						}
 					}
 				} else if($element instanceof POMCategory){
-					if(!is_null($newValue = $annotations->getNewValue('__Category__', $element->value))){
+					if(!is_null($newValue = $annotations->getNewValue(TF_CATEGORY_KEYWORD, $element->value))){
 						if(strlen($newValue) == 0){
 							$this->pomPage->delete($element);
 						} else {
@@ -395,7 +395,7 @@ class TFDataAPIACCESS {
 			$newAnnotations = $annotations->getNewAnnotations();
 			if($useSAT != 'true'){
 				foreach($newAnnotations as $newAnnotation){
-					if($newAnnotation['name'] == '__Category__'){
+					if($newAnnotation['name'] == TF_CATEGORY_KEYWORD){
 						$text .= '[[Category:'.$newAnnotation['value'].'| ]]';
 					} else {
 						$text .= '[['.$newAnnotation['name'].'::'.$newAnnotation['value'].'| ]]';
@@ -404,7 +404,7 @@ class TFDataAPIACCESS {
 			} else {
 				$silentAnnotations = '{{CreateSilentAnnozazions:';
 				foreach($newAnnotations as $newAnnotation){
-					if($newAnnotation['name'] == '__Category__'){
+					if($newAnnotation['name'] == TF_CATEGORY_KEYWORD){
 						$text .= '[[Category:'.$newAnnotation['value'].'| ]]';
 					} else {
 						$silentAnnotations .= '| '.$newAnnotation['name'].'='.$newAnnotation['value'];
@@ -441,10 +441,12 @@ class TFDataAPIACCESS {
 		
 		$text = '';
 		
+		file_put_contents('d://annotations.rtf', print_r($annotations, trie));
+		
 		$annotations = $annotations->getNewAnnotations();
 		if($useSAT != 'true'){
 			foreach($annotations as $annotation){
-				if($annotation['name'] == '__Category__'){
+				if($annotation['name'] == TF_CATEGORY_KEYWORD){
 					$text .= '[[Category:'.$annotation['value'].'| ]]';
 				} else if (strlen($annotation['name']) >0){
 					$text .= '[['.$annotation['name'].'::'.$annotation['value'].'| ]]';
@@ -453,7 +455,7 @@ class TFDataAPIACCESS {
 		} else {
 			$silentAnnotations = "{{CreateSilentAnnotations:";
 			foreach($annotations as $annotation){
-				if($annotation['name'] == '__Category__'){
+				if($annotation['name'] == TF_CATEGORY_KEYWORD){
 					$text .= '[[Category:'.$annotation['value'].'| ]]';
 				} else if (strlen($annotation['name']) >0){
 					$silentAnnotations .= '| '.$annotation['name'].'='.$annotation['value'];
@@ -550,8 +552,10 @@ class TFAnnotationDataCollection {
 			$add = true;
 			if(array_key_exists($annotation->name, $this->annotations)){
 				foreach($this->annotations[$annotation->name] as $cAnnotation){
-					if($annotation->currentValue == $cAnnotation->currentValue){
-						$add = false;
+					if($annotation->currentValue != ''){
+						if($annotation->currentValue == $cAnnotation->currentValue){
+							$add = false;
+						}
 					}
 				}
 			}
@@ -644,7 +648,7 @@ class TFAnnotationData {
 		}
 		
 		//remove category prefix from category annotations
-		if($this->name == "__Category__"){
+		if($this->name == TF_CATEGORY_KEYWORD){
 			global $wgLang;
 			if(strpos($this->newValue, $wgLang->getNSText(NS_CATEGORY).":") === 0){
 				$this->newValue = substr($this->newValue, strpos($this->newValue, ":") +1);

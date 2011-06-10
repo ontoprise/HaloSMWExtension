@@ -506,9 +506,14 @@ function smwgHaloSetupExtension() {
 	$smwgHaloIP.'/includes/TabularForms/TF_DataAPIAccess.php';
 	$wgAutoloadClasses['TFTemplateParameterCollection'] =
 	$smwgHaloIP.'/includes/TabularForms/TF_DataAPIAccess.php';
+	$wgAutoloadClasses['TFQueryAnalyser'] =
+	$smwgHaloIP.'/includes/TabularForms/TF_QueryAnalyser.php';
 	$smwgResultFormats['tabularform'] = 'TFTabularFormQueryPrinter';
-
-
+	
+	define('TF_IS_QC_CMP', 'qc_');
+	define('TF_IS_EXISTS_CMP', 'plus_');
+	define('TF_CATEGORY_KEYWORD', '__Category__');
+	
 	return true;
 }
 

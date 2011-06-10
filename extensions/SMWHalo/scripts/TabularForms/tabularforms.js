@@ -71,12 +71,18 @@ var TF = Class.create({
 	 */
 	initializeLoadedCell : function(){
 		jQuery(this).attr('originalValue', jQuery(this).attr('value'));
+		jQuery(this).attr('currentValue', jQuery(this).attr('value'));
 			
 		jQuery(this).change(tf.cellChangeHandler);
 		jQuery(this).keyup(tf.cellKeyUpHandler);
 		jQuery(this).keydown(tf.cellKeyDownHandler);
 		jQuery(this).focus(tf.setAsCurrentlySelectedCellValue);
 		jQuery(this).blur(tf.unSetAsCurrentlySelectedCellValue);
+		
+		if(jQuery(this).parent().parent().attr('isNew') == 'true'){
+			tf.checkAnnotationValue(this);
+		}
+				
 	},
 	
 	/*
@@ -114,7 +120,15 @@ var TF = Class.create({
 		
 		tf.cellValueChangeHandler(this);
 		
-		tf.checkNewInstanceName(this, event.which);
+		//do checks only if values really have changed
+		if(jQuery(this).attr('currentValue') != jQuery(this).attr('value')){
+			jQuery(this).attr('currentValue', jQuery(this).attr('value'));
+				
+			tf.checkNewInstanceName(this, event.which);
+				
+			tf.checkAnnotationValue(this, event.which);
+		}
+		
 	},
 	
 	/*
@@ -506,7 +520,17 @@ var TF = Class.create({
 				}
 			}
 			
-			//xyz
+			//deal with hidden preload values
+			if(jQuery(this).attr('isNew') == 'true'){
+				jQuery('#tf-hidden-preload-values > div').each( function(){
+					var modifiedValue = new Object();
+					modifiedValue['newValue'] = jQuery(this).html();
+					modifiedValue['originalValue'] = '';
+					modifiedValue['address'] = jQuery(this).attr('annotationName');
+					modifiedValues.push(modifiedValue);
+				});
+			}
+			
 			//this is uglay
 			var tabularFormId = jQuery(this).parent().parent().parent().parent().attr('id');
 			var revisionId = jQuery('td:first-child ',this).attr('revision-id');
@@ -555,6 +579,7 @@ var TF = Class.create({
 				text += encodeURI(jQuery('td:first-child textarea', row).attr('value'));
 				text += '">' + jQuery('td:first-child textarea', row).attr('value') + '</a>';
 				jQuery('td:first-child', row).html(text);
+				jQuery(row).addClass('tabf_table_row');
 			}
 		} else {
 			jQuery(row).addClass('tabf_table_row_saved_error');
@@ -567,7 +592,61 @@ var TF = Class.create({
 		
 		tf.updateJobs -= 1;
 		if(tf.updateJobs == 0 && tf.updateErrors > 0){
-			alert(jQuery('.tabf_update_warning').html());
+			//alert(jQuery('.tabf_update_warning').html());
+		}
+		
+		if(tf.updateJobs == 0){
+			tf.searchForLostInstances(data.tabularFormId);
+		}
+	},
+	
+	/*
+	 * Check which instances finally have been removed from the query result
+	 */
+	searchForLostInstances : function(containerId){
+		
+		var container = jQuery('#' + containerId);
+		
+		var instanceNames = '';
+		
+		var instances = jQuery('.tabf_table_row .tabf_table_cell:first-child a', container).get();		
+		for(var i=0; i < instances.length; i++){
+			var name = jQuery(instances[i]).html();;
+			
+			if(instanceNames.length > 0 && name.length > 0){
+				instanceNames += ' || ';
+			}
+			instanceNames += name;
+		}
+		
+		var querySerialization = jQuery('.tabf_query_serialization', container).html();
+		var isSPARQL = jQuery('.tabf_query_serialization', container).attr('isSPARQL');
+		
+		var url = wgServer + wgScriptPath + "/index.php";
+		jQuery.ajax({ url:  url, 
+			data: {
+				'action' : 'ajax',
+				'rs' : 'tff_getLostInstances',
+				'rsargs[]' : [querySerialization, isSPARQL, containerId, instanceNames],
+			},
+			success: tf.searchForLostInstancesCallBack
+			
+		});
+	},
+	
+	
+	searchForLostInstancesCallBack : function(data){
+		data = data.substr(data.indexOf('--##starttf##--') + 15, data.indexOf('--##endtf##--') - data.indexOf('--##starttf##--') - 15); 
+		data = JSON.parse(data);
+		
+		var instances = jQuery(
+				'#'+data.tabularFormId +' .tabf_table_row .tabf_table_cell:first-child a').get();		
+		for(var i=0; i < instances.length; i++){
+			for(var k=0; k < data.result.length; k++){
+				if('#' + jQuery(instances[i]).html() == '#' + data.result[k]){
+					jQuery(instances[i]).parent().parent().addClass('tabf_finally_lost_instance');
+				}
+			}
 		}
 	},
 	
@@ -604,10 +683,6 @@ var TF = Class.create({
 	checkNewInstanceName : function(element, keyCode){
 		if(jQuery(element).attr('class').indexOf('tabf_erronious_instance_name') == -1 
 				&& jQuery(element).attr('class').indexOf('tabf_valid_instance_name') == -1){
-			return;
-		}
-		
-		if(keyCode == 'tab' || keyCode == 'shift-tab' || (keyCode >= '38' && keyCode <= '40')){
 			return;
 		}
 		
@@ -1015,9 +1090,96 @@ var TF = Class.create({
 		} else {
 			return false;
 		}
+	},
+	
+	
+	/*
+	 * Check if annotation value 
+	 * - is valid according to property type
+	 * - matches the query conditions for htis property
+	 */
+	checkAnnotationValue : function(element){
+		
+		if(jQuery(element).attr('class').indexOf('tabf_erronious_instance_name') != -1 
+				|| jQuery(element).attr('class').indexOf('tabf_valid_instance_name') != -1){
+			//seems to be textarea for instance name
+			return;
+		}
+		
+		var tabularFormId = jQuery(element).parent().parent().parent().parent().parent().parent().attr('id');
+		var rowNr = tf.getChildNumber(jQuery(element).parent().parent(), 1)
+		var columnNr = tf.getChildNumber(jQuery(element).parent(), 1);
+		var fieldNr = tf.getChildNumber(jQuery(element), 1);
+		
+		if( jQuery('#' + tabularFormId + ' table tr:first-child th:nth-child(' + columnNr 
+				+ ')').attr('is-template') != 'true'){
+		
+			var cssSelector = '#' + tabularFormId + ' table tr:nth-child(' + rowNr + ') td:nth-child(' + columnNr 
+				+ ') textarea:nth-child(' + fieldNr	+ ')';
+			
+			var annotationName = jQuery('#' + tabularFormId + ' table tr:first-child th:nth-child(' + columnNr 
+					+ ')').attr('field-address');
+			
+			var queryConditions = jQuery('#' + tabularFormId + ' table tr:first-child th:nth-child(' + columnNr 
+					+ ') .tabf-query-conditions').html();
+			
+			var annotationValue = jQuery(element).attr('value');
+			
+			var annotationValues = "";
+			jQuery('textarea', jQuery(element).parent()).each( function (){
+				annotationValues += ";" + jQuery(this).attr('value').replace(/;/g, "/;");
+			});
+			
+			//add read-only values
+			jQuery('div', jQuery(element).parent()).each( function (){
+				var title = '';
+				if(jQuery('a', this).html() != null){
+					title = jQuery('a',this).html();
+					if(jQuery('a',this).attr('title').indexOf(':' + title) > 1){
+						title = jQuery('a', this).attr('title').substr(0, title.length + 1 + jQuery('a', this).attr('title').indexOf(':' + title));
+					}
+				} else {
+					title = jQuery(this).html(); 
+				}
+				annotationValues += ";" + title.replace(/;/g, "/;");
+			});
+			
+			if(queryConditions == null){
+				queryConditions = false;
+			}
+			
+			var url = wgServer + wgScriptPath + "/index.php";
+			jQuery.ajax({ url:  url, 
+				data: {
+					'action' : 'ajax',
+					'rs' : 'tff_checkAnnotationValues',
+					'rsargs[]' : [annotationName, annotationValue, annotationValues, queryConditions, cssSelector],
+				},
+				success: tf.checkAnnotationValueCallBack,
+				
+			});
+		}
+	},
+	
+	/*
+	 * Call back for the check annotation value ajax call
+	 */
+	checkAnnotationValueCallBack : function(data){
+		data = data.substr(data.indexOf('--##starttf##--') + 15, data.indexOf('--##endtf##--') - data.indexOf('--##starttf##--') - 15); 
+		data = JSON.parse(data);
+		
+		var currentValue = jQuery(data.cssSelector).attr('value');
+		
+		if(data.isValid == false){
+			alert(currentValue + ' is invalid.');
+		}
+		
+		if(data.lost == true){
+			for(var i = 0; i < data.warnings.length; i++){
+				alert(data.warnings[i]);
+			}
+		}
 	}
-	
-	
 	
 });
 

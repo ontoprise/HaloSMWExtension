@@ -80,6 +80,8 @@ class TFTabularFormQueryPrinter extends SMWResultPrinter {
 			 }
 		}
 		
+		$this->mShowErrors = false;
+		
 		return $html;
 	}
 
@@ -94,6 +96,10 @@ class TFTabularFormQueryPrinter extends SMWResultPrinter {
 		$params[] = array( 'name' => 'use silent annotations template', 'type' => 'enumeration', 
 			'description' => wfMsg( 'smw_tf_paramdesc_delete' ),
 			'values' => array( 'true', 'false' ) );
+		//todo: use language file
+		//todo make sure tha this paramer also works with sparqö queries
+		$params[] = array( 'name' => 'write protected annotations', 'type' => 'string', 
+			'description' => 'Write protected annotations');
 		return $params;
 	}
 
@@ -121,6 +127,9 @@ class TFTabularFormData {
 	private $isSPARQLQuery = false;
 	private $enableInstanceDelete = false;
 	private $enableInstanceAdd = false;
+	private $annotationPreloadValues = array();
+	private $writeProtectedAnnotations = array();
+	private $annotationQueryConditions = array();
 		
 	public function __construct($queryResult, $queryParams, $linker, $hasFurtherResults){
 		$this->queryResult = $queryResult;
@@ -149,6 +158,18 @@ class TFTabularFormData {
 				&& $this->queryParams['enable delete'] == 'true'){
 			$this->enableInstanceDelete = true;
 		}
+		
+		//todo: make parameter available in QI?
+		if(array_key_exists('write protected annotations', $this->queryParams)){
+			$wPAs = str_replace('/;', '##,-,##', $this->queryParams['write protected annotations']);
+			$wPAs = explode(';', $wPAs);
+			foreach($wPAs as $key => $wPA){
+				//todo use language string
+				if(trim($wPA) == 'Category') $wPA = TF_CATEGORY_KEYWORD;
+				$wPAs[$key] = trim($wPA);
+			}
+			$this->writeProtectedAnnotations = array_flip($wPAs);
+		}
 	}
 	
 	
@@ -172,30 +193,7 @@ class TFTabularFormData {
 		//display serialized query
 		$html .= '<span class="tabf_query_serialization" style="display: none" isSPARQL="'.$this->isSPARQLQuery.'">';
 		
-		$query = array();
-		foreach($this->queryParams as $param => $value){
-			if(!($param == 'mainlabel' && $value == '-')){
-				if(strlen($value) > 0){
-					$param .= '='.$value;
-				}
-				$query[] = $param;
-			}
-		}
-		
-		$query[] = $this->queryResult->getQueryString();
-		
-		foreach($this->annotationPrintRequests as $annotation){
-			if($annotation['title'] == '__Category__'){
-				//replace internal category id
-				$annotation['title'] = 'Category';	
-			} 
-			
-			if(strlen($annotation['rawlabel']) > 0){
-				$query[] = '?'.$annotation['title'].'='.$annotation['rawlabel'];
-			} else {
-				$query[] = '?'.$annotation['title'];
-			}
-		}
+		$query = $this->getQuerySerialization();
 		
 		$html .= json_encode($query);
 		$html .= '</span>';
@@ -209,6 +207,40 @@ class TFTabularFormData {
 		return $html;
 	}
 	
+	
+	/*
+	 * Returns the query as an array
+	 */
+	private function getQuerySerialization(){
+		$query = array();
+		foreach($this->queryParams as $param => $value){
+			if(!($param == 'mainlabel' && $value == '-')){
+				if(strlen($value) > 0){
+					$param .= '='.$value;
+				}
+				$query[] = $param;
+			}
+		}
+		
+		$query[] = $this->queryResult->getQueryString();
+		
+		foreach($this->annotationPrintRequests as $annotation){
+			if($annotation['title'] == TF_CATEGORY_KEYWORD){
+				//replace internal category id
+				$annotation['title'] = 'Category';	
+			} 
+			
+			if(strlen($annotation['rawlabel']) > 0){
+				$query[] = '?'.$annotation['title'].'='.$annotation['rawlabel'];
+			} else {
+				$query[] = '?'.$annotation['title'];
+			}
+		}
+		
+		return $query;
+	}
+	
+	
 	/*
 	 * Returns the HTML for this tabular form
 	 */
@@ -221,6 +253,14 @@ class TFTabularFormData {
 		}
 		
 		$this->initializeAnnotationAutocompletion();
+		
+		$this->annotationPreloadValues = 
+			TFQueryAnalyser::getPreloadValues($this->getQuerySerialization());
+		
+		$this->annotationQueryConditions = 
+			TFQueryAnalyser::getQueryConditions($this->getQuerySerialization());
+		
+		$this->checkEnableAddInstance();
 		
 		// process each query result row
 		while ( $row = $this->queryResult->getNext() ) {
@@ -245,11 +285,22 @@ class TFTabularFormData {
 		
 		$html .= '</table>';
 		
-		$html .= '<textarea class="tabf_rowindex_comparator" style="visibility: hidden; height: 1em"></textarea>';
+		$html .= '<textarea class="tabf_rowindex_comparator" style="visibility: hidden; height: 1em"></textarea><br/>';
 		
 		$html .= '<span class="tabf_update_warning" style="display: none">';
 		$html .= wfMsg( 'tabf_update_warning' );
 		$html .= '</span>';
+		
+		//todo: display woth mesaging system
+		$html .= '<div class="tabf_query_errors" style="display: "><ul>';
+		if(count($this->queryResult->getErrors()) > 0){
+			$html .= '<li>';
+			$html .= implode('</li><li>', $this->queryResult->getErrors());
+			$html .= '</li>';
+		}
+		$html .= '</div>';
+		
+		
 		
 		return $html;
 	}
@@ -261,7 +312,7 @@ class TFTabularFormData {
 	private function initializeAnnotationAutocompletion(){
 		
 		foreach($this->annotationPrintRequests as $key => $annotation){
-			if($annotation['title'] == '__Category__'){
+			if($annotation['title'] == TF_CATEGORY_KEYWORD){
 				$this->annotationPrintRequests[$key]['autocomplete'] = 'ask: [[:Category:+]]';
 			} else {
 				//default autocompletion for properties is all
@@ -308,6 +359,66 @@ class TFTabularFormData {
 	}
 	
 	
+	
+	/*
+	 * Checks if adding instances is allowed or if it must be disabled 
+	 * because of insufficient preload values
+	 */
+	private function checkEnableAddInstance(){
+		
+		//check must not be done if enable add is deactivated anyway
+		if(!$this->enableInstanceAdd){
+			return;
+		}
+		
+		$errors = array();
+		
+		foreach(TFQueryAnalyser::getQueryConditions($this->getQuerySerialization()) as $name => $conditions){
+			
+			global $wgLang;
+			if($name == $wgLang->getNSText(NS_CATEGORY)){
+				$name = TF_CATEGORY_KEYWORD;
+			}
+			
+			//user must not enter a value for that annotation, e.g. because its value will be inferenced
+			if(array_key_exists($name, $this->writeProtectedAnnotations)){
+				continue;
+			}
+			
+			// This works because: If there is only one condition and if we hace a preload value,
+			// then:
+			// a manual value was passed by the user
+			// pr a preload value value for the only condition could be computed and there is not other
+			// one for which no preload value could be computed 
+			if(count($conditions) == 1){
+				if(array_key_exists($name, $this->annotationPreloadValues)){
+					continue;
+				}
+			}
+				
+			//if the annotation is shown in the TF ten w.th. is ok, because the user can enter the appropriate values
+			$found = false;
+			foreach($this->annotationPrintRequests as $annotation){
+				if($name == $annotation['title']){
+					$found = true;
+				}
+			}
+			if($found){
+				continue;
+			}
+			
+			$errors[] = $name;
+		}
+		
+		if(count($errors) > 0){
+			$this->enableInstanceAdd = false;
+			//todo: use language file
+			$this->queryResult->addErrors(
+				array("The 'Add instance' button had to be disabled. Please provide a preload value for the following annotations, mark them as write-protected or show them in the Tabular Form: ".implode(',', $errors)));
+		}
+	}
+	
+	
 	/*
 	 * Get column headings html
 	 */
@@ -335,6 +446,15 @@ class TFTabularFormData {
 			$html .= '<span>';
 			$html .= $annotation['label'];
 			$html .= '</span>';
+			
+			
+			//add query condition data
+			if(array_key_exists($annotation['title'], $this->annotationQueryConditions)){
+				$html .= '<span class="tabf-query-conditions" style="display: none">';
+				$html .= json_encode($this->annotationQueryConditions[$annotation['title']]);
+				$html .= '</span>';
+			}
+			
 			$html .= '</th>';
 		}
 		
@@ -379,6 +499,7 @@ class TFTabularFormData {
 	 * template for adding new instances.
 	 */
 	private function addTabularFormAddRowTemplateHTML(){
+		
 		$html = '<tr style="display: none" class="tabf_table_row tabf_add_instance_template">';
 		
 		$html .= '<td revision-id="-1" ><textarea rows="1"></textarea>';
@@ -389,23 +510,34 @@ class TFTabularFormData {
 		foreach($this->annotationPrintRequests as $annotation){
 			$html .= '<td>';
 			
-			$autocomplete = '';
-			if(!is_null($annotation['autocomplete'])){
-				$autocompletion = 'class="wickEnabled" constraints="';
-				$autocompletion .= $annotation['autocomplete'];
-				$autocompletion .= '"';
+			if(array_key_exists($annotation['title'], $this->writeProtectedAnnotations)){
+				$html .= '<div></div>';
+			} else {
+				$autocomplete = '';
+				if(!is_null($annotation['autocomplete'])){
+					$autocompletion = 'class="wickEnabled" constraints="';
+					$autocompletion .= $annotation['autocomplete'];
+					$autocompletion .= '"';
+					
+					//do not display ns for category column when autocompleting
+					if($annotation['title'] == TF_CATEGORY_KEYWORD){
+						$autocompletion .= ' pasteNS="" ';
+					} else {
+						$autocompletion .= ' pasteNS="true" ';
+					}
+				}
 				
-				//do not display ns for category column when autocompleting
-				if($annotation['title'] == '__Category__'){
-					$autocompletion .= ' pasteNS="" ';
-				} else {
-					$autocompletion .= ' pasteNS="true" ';
+				$preloadValues = array('');
+				if(array_key_exists($annotation['title'], $this->annotationPreloadValues)){
+					$preloadValues = $this->annotationPreloadValues[$annotation['title']];
+					unset($this->annotationPreloadValues[$annotation['title']]);	
+				}
+				
+				foreach($preloadValues as $preloadValue){
+					$html .= "<textarea ".$autocompletion." rows='1' originalValue='' pasteNS='true'>"
+						.$this->parsePreloadValue($preloadValue)."</textarea>";
 				}
 			}
-			
-			$html .= "<textarea ".$autocompletion." rows='1' originalValue='' pasteNS='true'>"
-				.$this->parsePreloadValue($annotation['preload'])."</textarea>";
-			
 			$html .= '</td>';
 		}
 		
@@ -440,11 +572,21 @@ class TFTabularFormData {
 			
 		$html .= '</td>';
 		
+		$html .= '<div id="tf-hidden-preload-values" style="display: none">';
+		foreach($this->annotationPreloadValues as $name => $values){
+			if(!array_key_exists($name, $this->writeProtectedAnnotations)){
+				foreach($values as $value){
+					$html .= '<div annotationName="'.$name.'">'.$value.'</div>';
+				}
+			}
+		}
+		$html .= '</div>';
+		
 		return $html;
 	}
 	
 	/*
-	 * 
+	*	Parse preloading values in case they contain Wiki text 
 	 */
 	private function parsePreloadValue($preload){
 		if(strlen(trim($preload)) > 0){
@@ -582,6 +724,8 @@ class TFTabularFormData {
 		}
 			
 		$formRowData->detectWritableAnnotations();
+		
+		$formRowData->setManuallyWriteProtectedAnnotations($this->writeProtectedAnnotations);
 			
 		$formRowData->readTemplateParameters($this->templateParameterPrintRequests);
 
@@ -625,7 +769,7 @@ class TFTabularFormData {
 					$label = $label[0];
 					
 					$this->annotationPrintRequests[$count] = 
-						array('title' => '__Category__', 
+						array('title' => TF_CATEGORY_KEYWORD, 
 						'label' => $label,
 						'preload' => $preload,
 						'rawlabel' => $printRequest->getText($this->outputMode, null));
@@ -642,7 +786,6 @@ class TFTabularFormData {
 			$label = explode('=', $label);
 			$preload = count($label) > 1 ? $label[1] : '';
 			$label = $labelIntro.$label[0].$labelOutro;
-			
 			
 			$this->annotationPrintRequests[$count] = 
 				array('title' => $printRequest->getData()->getText(), 
@@ -780,6 +923,21 @@ class TFTabularFormRowData {
 				foreach($annotations as $k => $annotation){
 					$this->annotations[$key][$k]->isWritable = false;
 				}
+			}
+		}
+	}
+	
+	/*
+	 * Maek manually write protected annotations
+	 */
+	public function setManuallyWriteProtectedAnnotations($writeProtectedAnnotations){
+		
+		foreach($writeProtectedAnnotations as $name => $dC){
+			if(array_key_exists($name, $this->annotations)){
+				foreach($this->annotations[$name] as $key => $annotation){
+					$annotation->isWritable = false;
+					$this->annotations[$name][$key] = 	$annotation;
+				};
 			}
 		}
 	}
@@ -927,7 +1085,7 @@ class TFTabularFormRowData {
 				$autocompletion .= '"';
 				
 				//do not display ns for category column when autocompleting
-				if($annotation['title'] == '__Category__'){
+				if($annotation['title'] == TF_CATEGORY_KEYWORD){
 					$autocompletion .= ' pasteNS="" ';
 				} else {
 					$autocompletion .= ' pasteNS="true" ';
