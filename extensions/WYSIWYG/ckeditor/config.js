@@ -68,14 +68,14 @@ CKEDITOR.editorConfig = function( config )
         ['Undo','Redo'],
         ['Image', 'Table', 'HorizontalRule', 'SpecialChar'],
         ['MWSpecialTags', 'MWTemplate', 'MWSignature', qiButton, wsButton, rmButton ],
+        [ stbButton ],
         ['About'],
         ['Styles','Format','Font','FontSize'],
         ['Bold','Italic','Underline','Strike'],
         ['JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock'],
         ['NumberedList','BulletedList', '-', 'Outdent','Indent', 'Blockquote'],
         ['TextColor','BGColor'],
-        ['Maximize', 'ShowBlocks'],
-        [ stbButton ]
+        ['Maximize', 'ShowBlocks']
     ];
     config.extraPlugins = extraPlugins;
     config.height = '26em';
