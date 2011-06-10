@@ -61,6 +61,7 @@ class DF_Language_De extends DF_Language {
 	'df_linktowiki' => 'Gehe zum Wiki',
     'df_logout' => 'Ausloggen',
 	'df_webadmin_updatesavailable' => 'Updates verfügbar! Machen Sie ein ',
+	'df_webadmin_globalupdate' => 'Globales Update',
 	'df_webadmin_extension' => 'Extension',
     'df_webadmin_description' => 'Beschreibung',
     'df_webadmin_action' => 'Aktion',
@@ -82,7 +83,11 @@ class DF_Language_De extends DF_Language {
 	'df_webadmin_nothingfound' => 'Keine passenden Pakete für <b>"{{search-value}}"</b> gefunden!',
 	'df_webadmin_searchinfoifnothingfound' => 'Um das Ontoprise-Repository zu browsen klicken Sie hier: ',
 	'df_webadmin_norestorepoints' => 'Keine Wiederherstellungspunkte gefundend.',
-	'df_webadmin_nouploadedfiles' => 'Keine Dateien gefunden.'
-    
+	'df_webadmin_nouploadedfiles' => 'Keine Dateien gefunden.',
+	
+	'df_restore_warning' => 'Ein Rücksetzen bewirkt sowohl die Zurücksetzung der Installation wie auch des Inhalts des Wikis. Wollen Sie fortfahren?',
+    'df_uninstall_warning' => 'Die folg. Extensions werden de-installiert. Wollen Sie fortfahren?',
+    'df_globalupdate_warning' => 'Global Update durchführen?',
+	'df_checkextension_heading' => 'Extension-Details'
 	);
 }

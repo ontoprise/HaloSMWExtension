@@ -211,6 +211,16 @@ $html .= "<body><img src=\"skins/logo.png\" style=\"float:left; margin-right: 30
          "<a href=\"$wgServer$wgScriptPath/deployment/tools/webadmin/logout.php\">".$dfgLang->getLanguageString('df_logout')."</a>".
          "</div>".
          "<div id=\"df_header\">Deployment Framework WebAdmin $wikiName</div>";
+
+$restoreWarning = $dfgLang->getLanguageString('df_restore_warning');
+$deinstallWarning = $dfgLang->getLanguageString('df_uninstall_warning');
+$globalUpdateWarning = $dfgLang->getLanguageString('df_globalupdate_warning');
+
+$checkExtensionHeading = $dfgLang->getLanguageString('df_inspectextension_heading');
+$deinstallHeading = $dfgLang->getLanguageString('df_webadmin_deinstall');
+$globalUpdateHeading = $dfgLang->getLanguageString('df_webadmin_globalupdate');
+$restoreHeading = $dfgLang->getLanguageString('df_webadmin_maintenacetab');
+
 $html .= <<<ENDS
 <div id="tabs">
 
@@ -228,17 +238,17 @@ $html .= <<<ENDS
 			<div id="tabs-4">$maintenanceTabHtml</div>
 			<div id="tabs-5">$dfgSettingsTabHtml</div>
 </div>
-<div id="global-updatedialog-confirm" title="Global update" style="display:none">
-    <p><span style="float:left; margin:0 7px 20px 0;"></span><span id="global-updatedialog-confirm-text">Perform global update?</span></p>
+<div id="global-updatedialog-confirm" title="$globalUpdateHeading" style="display:none">
+    <p><span style="float:left; margin:0 7px 20px 0;"></span><span id="global-updatedialog-confirm-text">$globalUpdateWarning</span></p>
 </div>
-<div id="deinstall-dialog-confirm" title="Uninstall extension" style="display:none">
-    <p><span style="float:left; margin:0 7px 20px 0;"></span><span id="deinstall-dialog-confirm-text">The following extensions will be uninstalled. Are you sure?</span></p>
+<div id="deinstall-dialog-confirm" title="$deinstallHeading" style="display:none">
+    <p><span style="float:left; margin:0 7px 20px 0;"></span><span id="deinstall-dialog-confirm-text">$deinstallWarning</span></p>
 </div>
-<div id="restore-dialog-confirm" title="Restore installation" style="display:none">
-    <p><span style="float:left; margin:0 7px 20px 0;"></span><span id="restore-dialog-confirm-text">This operation restores an old wiki installation. Are you sure?</span></p>
+<div id="restore-dialog-confirm" title="$restoreHeading" style="display:none">
+    <p><span style="float:left; margin:0 7px 20px 0;"></span><span id="restore-dialog-confirm-text">$restoreWarning</span></p>
 </div>
-<div id="check-extension-dialog" title="Information" style="display:none">
-    <p><span style="float:left; margin:0 7px 20px 0;"></span><span id="check-extension-dialog-text">Check extension</span></p>
+<div id="check-extension-dialog" title="$checkExtensionHeading" style="display:none">
+    <p><span style="float:left; margin:0 7px 20px 0;"></span><span id="check-extension-dialog-text"></span></p>
 </div>
 <div id="df_extension_details" style="display:none"></div>
 <div id="df_install_dialog" style="display:none"></div>
