@@ -498,8 +498,8 @@ class Tools {
         $pLicense = SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString('df_license'));
         $pLicenseValue = $pLicense->getTypesValue();
         $typeID = reset($pLicenseValue->getDBkeys());
-        if ($typeID != '_str') {
-            $dfgOut->outputln("'".$pLicenseTitle->getPrefixedText()."' is not a string type.");
+        if ($typeID != '_wpg') {
+            $dfgOut->outputln("'".$pLicenseTitle->getPrefixedText()."' is not a page type.");
             $check = false;
         }
         
