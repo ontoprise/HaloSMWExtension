@@ -70,9 +70,11 @@ class FSFacetedSearchSpecial extends SpecialPage {
 		</div> 
 	</div>
 	<div class="results" id="results">
+		<div id="field_namespaces">
+		</div>
 		<div class="search">
-			<span class="xfsFacetHeader">{{fs_search}}</span>
 	        <input type="text" id="query" name="query"/>
+	        <input type="button" name="search" value="{{fs_search}}" />
 		</div>
 		<hr class="xfsSeparatorLine">
 		<div id="navigation">
@@ -123,6 +125,7 @@ class FSFacetedSearchSpecial extends SpecialPage {
 		$wgOut->addScript("<script type=\"text/javascript\" src=\"". $fsgScriptPath .  "/scripts/FacetedSearch/FS_ResultWidget.js\"></script>");        
 		$wgOut->addScript("<script type=\"text/javascript\" src=\"". $fsgScriptPath .  "/scripts/FacetedSearch/FS_PagerWidget.js\"></script>");        
 		$wgOut->addScript("<script type=\"text/javascript\" src=\"". $fsgScriptPath .  "/scripts/FacetedSearch/FS_FacetWidget.js\"></script>");        
+		$wgOut->addScript("<script type=\"text/javascript\" src=\"". $fsgScriptPath .  "/scripts/FacetedSearch/FS_NamespaceFacetWidget.js\"></script>");        
 		$wgOut->addScript("<script type=\"text/javascript\" src=\"". $fsgScriptPath .  "/scripts/FacetedSearch/FS_FacetPropertyValueWidget.js\"></script>");        
 		$wgOut->addScript("<script type=\"text/javascript\" src=\"". $fsgScriptPath .  "/scripts/FacetedSearch/FS_CurrentSearchWidget.js\"></script>");
 		$wgOut->addScript("<script type=\"text/javascript\" src=\"". $fsgScriptPath .  "/scripts/FacetedSearch/FS_FacetedSearch.js\"></script>");

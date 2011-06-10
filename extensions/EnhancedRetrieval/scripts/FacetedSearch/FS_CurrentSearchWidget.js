@@ -42,12 +42,17 @@ FacetedSearch.classes.CurrentSearchWidget = AjaxSolr.AbstractWidget.extend({
 		
 		var self = this;
 		var links = [];
+		var facetFields = FacetedSearch.singleton.FacetedSearchInstance.FACET_FIELDS;
+		var ignoreFacets = [facetFields[3]]; // Ignore namespaces here
 
 		var fq = this.manager.store.values('fq');
 		var facetQueries = {};
+		
+		// Generate links for the standard facets like categories or attributes
 		for ( var i = 0, l = fq.length; i < l; i++) { 
 			var match = fq[i].match(FIELD_PREFIX_REGEX);
-			if ($.inArray(match[1], FacetedSearch.singleton.FacetedSearchInstance.FACET_FIELDS) >= 0) {
+			if ($.inArray(match[1], facetFields) >= 0
+				&& $.inArray(match[1], ignoreFacets) < 0) {
 				var facetName = match[2];
 				links.push(AjaxSolr.theme('facet', match[2], -1, self.removeFacet(fq[i]), FacetedSearch.classes.ClusterWidget.showPropertyDetailsHandler, true));
 				var nameWithoutType = facetName.match(EXTRACT_TYPE_REGEX);
@@ -58,9 +63,12 @@ FacetedSearch.classes.CurrentSearchWidget = AjaxSolr.AbstractWidget.extend({
 				}
 			}
 		}
+		
+		// Generate links for property or attribute names
 		for ( var i = 0, l = fq.length; i < l; i++) {
 			var match = fq[i].match(FIELD_PREFIX_REGEX);
-			if ($.inArray(match[1], FacetedSearch.singleton.FacetedSearchInstance.FACET_FIELDS) < 0) {
+			if ($.inArray(match[1], facetFields) < 0
+				&& $.inArray(match[1], ignoreFacets) < 0) {
 				var facetName = match[1];
 				// Do not include fields that end with "datevalue_l"
 				if (facetName.match(/.*?_datevalue_l$/)) {
@@ -87,8 +95,7 @@ FacetedSearch.classes.CurrentSearchWidget = AjaxSolr.AbstractWidget.extend({
 			$(self.target).empty();
 			$.each(links, function() {
 				$(self.target)
-					.append(this)
-					.append('<br>');
+					.append(this);
 			});
 		} else {
 			$(this.target).html(AjaxSolr.theme('no_facet_filter_set'));

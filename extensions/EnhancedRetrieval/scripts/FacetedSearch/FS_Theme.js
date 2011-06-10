@@ -45,6 +45,8 @@
 		102 : ['Property', wgScriptPath + IMAGE_PATH + 'smw_plus_property_icon_16x16.png'],
 		700 : ['Comment', wgScriptPath + IMAGE_PATH + 'smw_plus_comment_icon_16x16.png']
 	};
+	
+	var REMOVE_ICON = wgScriptPath + IMAGE_PATH + 'delete.png';
 
 	var NS_CAT_ID = 14;
 	var NS_PROP_ID = 102;
@@ -115,6 +117,7 @@
 	 * 		"false" is returned.
 	 */
 	function makeShortName(longName, width, className) {
+		
 // Fast version that does not consider the actual rendered width of the text
 //		var maxLength = 25;
 //		if (longName.length > maxLength) {
@@ -300,6 +303,41 @@
 
 
 	/**
+	 * This function generates the HTML for a namespace facet. The namespace is
+	 * given as the namespace number. The namespace name is retrieved and returned
+	 * as HTML.
+	 * 
+	 * @param {string} facet
+	 * 		Name of the facet
+	 * @param {int} count
+	 * 		Number of documents that match the facet
+	 * @param {Function} handler
+	 * 		Click handler for the facet.
+	 * @param {Function} showPropertyDetailsHandler
+	 * 		This function is called when the details of a property are to be
+	 * 		shown.
+	 * 		
+	 */
+	AjaxSolr.theme.prototype.namespaceFacet = function(facet, count, handler, showPropertyDetailsHandler, isRemove){
+		var lang = FacetedSearch.singleton.Language;
+		var name = facet === 'all' 
+					? lang.getMessage('allNamespaces')
+					: wgFormattedNamespaces[facet];
+		if (name === '') {
+			// Main namespace
+			name = lang.getMessage('mainNamespace');
+		}
+		var tooltip = 'title="' + lang.getMessage('namespaceTooltip', count) + '" ';
+		var emptyNamespace = count === 0 ? " xfsEmptyNamespace" : "";
+		html = $('<span namespace="' + facet + '" class="xfsNamespace' + emptyNamespace + '"/>')
+				.append('&nbsp;')
+				.append($('<span ' + tooltip + '>' + name + '</span>'))
+				.append('&nbsp;');
+		html.find("span").click(handler)
+		return html;				
+	}
+	
+	/**
 	 * This function generates the HTML for a facet which may be a category or
 	 * a property. Properties have details e.g. clusters of values or lists of
 	 * values.
@@ -319,29 +357,31 @@
 		var html;
 		var lang = FacetedSearch.singleton.Language;
 		var plainName = extractPlainName(facet);
-		var maxWidth = $('.facets').width() * 0.8;
+		var maxWidth = $('.facets').width() * 0.7;
 		var shortName = makeShortName(plainName, maxWidth);
 		var tooltip = shortName === false ? "" : ' title="' + plainName + '" ';
 		var name = shortName === false ? plainName : shortName;
+		
 		if (isRemove) {
-			html = $('<span' + tooltip + '>')
-				.append(name)
-				.append($('<img src="' 
-				          + wgScriptPath 
-						  + '/extensions/SMWHalo/skins/QueryInterface/images/delete.png" '
-						  + 'title="'+ lang.getMessage('removeFilter') +'"/>')
-				.click(handler));
+			html =	
+				'<span' + tooltip + '>' +
+					name +
+					'<img class="xfsRemoveFacet" src="' + REMOVE_ICON +'" ' +
+						'title="'+ lang.getMessage('removeFilter') +'"/>' +
+				'</span>';
 		} else {
-			html = $('<span>')
-				.append($('<a href="#"' + tooltip + '>' + name + '</a>').click(handler))
-				.append(' ')
-				.append('<span class="xfsMinor">(' + count + ')</span>');
+			html =
+				'<span class="addFacet">' +
+					'<a href="#"' + tooltip + '>' + name + '</a> ' +
+					'<span class="xfsMinor">(' + count + ')</span>' +
+				'</span>';
 		}
 		var path = wgScriptPath + IMAGE_PATH;
 		if (isProperty(facet)) {
 			var divID = 'property_' + facet + '_values';
 			var img1ID = 'show_details' + divID;
 			var img2ID = 'hide_details' + divID;
+			
 			var toggleFunc = function () {
 				if ($('#' + divID).is(':visible')) {
 					$('#' + divID).hide();
@@ -352,28 +392,34 @@
 				$('#' + img1ID).toggle();
 				$('#' + img2ID).toggle();
 			};
+			
 			var img1 = 
-				$('<img src="'+ path + 'right.png" ' +
-				  'title="'+ lang.getMessage('showDetails') +
-				  '" id="'+img1ID+'" class="detailsImage"/>')
-				.click(toggleFunc);
+				'<img src="'+ path + 'right.png" ' +
+					'title="'+ lang.getMessage('showDetails') +
+					'" id="'+img1ID+'" class="detailsImage"/>';
 			var img2 = 
-				$('<img src="'+ path + 'down.png" ' +
-				  'title="'+ lang.getMessage('hideDetails') +
-				  '" style="display:none" id="'+img2ID+'" class="detailsImage"/>')
-				.click(toggleFunc);
-			html = img1.add(img2).add(html);
-			html = html.add($('<div id="' + divID + '" style="display:none"></div>'));
+				'<img src="'+ path + 'down.png" ' +
+					'title="'+ lang.getMessage('hideDetails') +
+					'" style="display:none" id="'+img2ID+'" class="detailsImage"/>';
+			html = img1 + img2 + html;
+			html += '<div id="' + divID + '" style="display:none"></div>';
 		} else {
-			var img = $('<img src="' + path + 'item.png">');
-			html = img.add(html);
+			var img = '<img src="' + path + 'item.png">';
+			html = img + html;
+		}
+		html = $('<div>' + html + '</div>');
+		// Attach the event handlers
+		html.find('.addFacet').click(handler);
+		html.find('.xfsRemoveFacet').click(handler);
+		if (isProperty(facet)) {
+			html.find('.detailsImage').click(toggleFunc);
 		}
 		return html;
 	};
 
 	AjaxSolr.theme.prototype.propertyValueFacet = function(facet, count, handler, showPropertyDetailsHandler, isRemove){
 		var html = AjaxSolr.theme('facet', facet, count, handler, showPropertyDetailsHandler, isRemove);
-		html = $('<span class="xfsClusterEntry" />').append(html);
+		html = $('<div class="xfsClusterEntry" />').append(html);
 		return html;	
 	};
 	
@@ -381,21 +427,25 @@
 		return $('<a href="#"/>'+ value + '</a>').click(handler);
 	};
 	
-	AjaxSolr.theme.prototype.moreLessLink = function() {
+	AjaxSolr.theme.prototype.moreLessLink = function(moreHandler, lessHandler) {
 		var lang = FacetedSearch.singleton.Language;
+		var $ = jQuery;
 		
-		var html =  
-			'<a class="xfsFMore">' +
-				lang.getMessage('more') +
-			'</a>' +
-			'<span style="display: none">' +
-			' &#124; ' + 
-			'</span>' +
-			'<a class="xfsFLess" style="display: none">' +
-				lang.getMessage('less') +
-			'</a>' +
-			'<br/>';
-			
+		var html = 
+			'<div>' +
+				'<a class="xfsFMore">' +
+					lang.getMessage('more') +
+				'</a>' +
+				'<span style="display: none">' +
+				' &#124; ' + 
+				'</span>' +
+				'<a class="xfsFLess" style="display: none">' +
+					lang.getMessage('less') +
+				'</a>' +
+			'</div>';
+		html = $(html);
+		html.find('.xfsFMore').click(moreHandler);
+		html.find('.xfsFLess').click(lessHandler);
 		return html;
 	};
 
@@ -419,14 +469,7 @@
 		var lang = FacetedSearch.singleton.Language;
 		return lang.getMessage('addFacetOrQuery');
 	};
-	
-	AjaxSolr.theme.prototype.cluster_remove_range_filter = function(handler) {
-		var lang = FacetedSearch.singleton.Language;
-		return $('<a href="#" class="xfsClusterEntry"/>')
-				.text(lang.getMessage('removeRestriction'))
-				.click(handler);
-	};
-	
+		
 	AjaxSolr.theme.prototype.filter_debug = function(filters) {
 		var list = $('<ul id="xfsFilterDebug>');
 		$.each(filters, function(index, value) {
@@ -448,13 +491,44 @@
 	 * 		Number of elements in this range
 	 * @param {function} handler
 	 * 		This function is called when the cluster is clicked.
+	 * @param {bool} isClusterTitle
+	 * 		If true, this range is displayed as the cluster title. It shows the 
+	 * 		absolute borders of all clusters it contains.
+	 * @param {bool} isRangeRestricted
+	 * 		If true, there is a range restriction on the facet. The icon for
+	 * 		deleting the range is displayed.
+	 * 
 	 */
-	AjaxSolr.theme.prototype.cluster = function(from, to, count, handler) {
-		return $('<a href="#" class="xfsClusterEntry">'
-				+ from + ' - ' + to + ' (' + count + ')'
-				+ '</a>')
-			.click(handler)
-			.add('<br />');
+	AjaxSolr.theme.prototype.cluster = function(from, to, count, handler, 
+											isClusterTitle, isRangeRestricted) {
+		var html;
+		
+		if (isClusterTitle) {
+			var lang = FacetedSearch.singleton.Language;
+			var removeIcon = isRangeRestricted 
+				? '<img class="xfsRemoveRange" src="' + REMOVE_ICON +'" ' +
+					    'title="'+ lang.getMessage('removeRestriction') +'"/>'
+				: "";
+			html = 
+				$('<div>' +
+						'<span class="xfsClusterTitle">' +
+							from + ' - ' + to + ' (' + count + ')' +
+							removeIcon +
+						'</span>' +
+					'</div>');
+			if (removeIcon) {
+				html.find('img').click(handler);
+			}
+		} else {
+			html = 			
+				$('<div>' +
+						'<a href="#" class="xfsClusterEntry">' +
+							from + ' - ' + to + ' (' + count + ')' +
+						'</a>' +
+					'</div>')
+				.click(handler);
+		}
+		return html;
 	};
 	
 })(jQuery);

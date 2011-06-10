@@ -44,7 +44,7 @@ FacetedSearch.classes.FSLanguageEn = function () {
 'more' 				: 'more',
 'less' 				: 'less',
 'noFacetFilter'		: '(no facets selected)',
-'removeFilter'		: 'Remove filter',
+'removeFilter'		: 'Remove this facet',
 'removeRestriction'	: 'Remove restriction',
 'removeAllFilters'	: 'Remove all facets',
 'pagerPrevious'		: '&lt; Previous',
@@ -59,7 +59,10 @@ FacetedSearch.classes.FSLanguageEn = function () {
 'showDetails'		: 'Show details',
 'hideDetails'		: 'Hide details',
 'lastChange'		: 'Last change',
-'addFacetOrQuery'	: 'Please enter a search term or select a facet!'
+'addFacetOrQuery'	: 'Please enter a search term or select a facet!',
+'mainNamespace'		: 'Main',
+'namespaceTooltip'  : '$1 article(s) in this namespace match the selection.',
+'allNamespaces'		: 'All namespaces'
 
 		
 	};

@@ -76,6 +76,13 @@ FacetedSearch.classes.FSLanguage = function () {
 		msg = msg.replace(/\$t/g,wgTitle);
 		msg = msg.replace(/\$u/g,wgUserName);
 		msg = msg.replace(/\$s/g,wgServer);
+		
+		// Replace additional parameters
+		for (var i = 1; i < arguments.length; ++i) {
+			var pattern = "\\$" + i;
+			var re = new RegExp(pattern,'g');
+			msg = msg.replace(re, arguments[i]);
+		}
 		return msg;
 	}
 	that.getMessage = getMessage;

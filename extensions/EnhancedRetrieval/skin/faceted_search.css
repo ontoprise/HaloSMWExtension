@@ -76,6 +76,10 @@
 }
 
 .xfsClusterEntry {
+	margin-left: 3em;
+}
+
+.xfsClusterTitle {
 	margin-left: 2em;
 }
 
@@ -118,4 +122,33 @@ a.xfsFMore, a.xfsFLess {
   background: none repeat scroll 0 0 #AAAAAA;
   border: medium none;
   height: 1px;
+}
+
+.xfsSelectedNamespace {
+	font-weight: bold;
+	font-size: larger;
+	color: black !important;
+}
+
+.xfsNamespace {
+	color: #116988;
+	cursor: pointer;
+}
+
+.xfsEmptyNamespace {
+	color: #CC2200 !important;
+}
+
+.xfsRemoveFacet {
+	vertical-align: middle;
+	cursor: pointer;
+}
+
+.xfsRemoveRange {
+	vertical-align: middle;
+	cursor: pointer;
+}
+
+#field_namespaces {
+	height: 30px;
 }

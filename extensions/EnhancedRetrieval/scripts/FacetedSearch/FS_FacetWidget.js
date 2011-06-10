@@ -35,21 +35,61 @@ if (typeof FacetedSearch == "undefined") {
  */
 FacetedSearch.classes.FacetWidget = AjaxSolr.AbstractFacetWidget.extend({
 	
-	facetTheme: 'facet',
-	removeSelectedFacet: true,
+	//--- Constants ---
+	GROUP_SIZE: 10,
+
+	//--- Members ---
+	// {string} The theme that is used for rendering the facets
+	mFacteTheme: 'facet',
+	
+	// {bool} If true, all selected facets are hidden by this widget
+	mHideSelectedFacet: true,
+	
+	// {array object} Array of all facet objects that are displayed. They are
+	// stored because the facets are only shown on demand
+	mFacetItems: [],
+	
+	// {int} Index of the facet group that is currently being displayed
+	mCurrentGroup : 0,
+	
+	// {bool} If true, the facets are decorated with the delete icon
+	mRemoveFacet: false,
+	
+	// {Function} The click handler for facets can be overwritten
+	mClickHandler: null,
+	
+	//--- Getters/Setters
 	
 	setFacetTheme: function (facetTheme) {
-		this.facetTheme = facetTheme;
+		this.mFacteTheme = facetTheme;
 	},
-	setRemoveSelectedFacet: function (removeFacet) {
-		this.removeSelectedFacet = removeFacet;
+	setHideSelectedFacet: function (hideFacet) {
+		this.mHideSelectedFacet = hideFacet;
+	},
+	setRemoveFacet: function (removeFacet) {
+		this.mRemoveFacet = removeFacet;
+	},
+	setClickHandler: function (clickHandler) {
+		this.mClickHandler = clickHandler;
 	},
 	
+	//--- Methods ---
 	afterRequest: function () {
 		if (this.noRender) {
+			// This widget does not render anything (due to unification of 
+			// attributes and relations in one widget.)
 			return;
 		}
 		
+		this.retrieveFacetItems();
+		this.showFacetsForGroup(0);
+		
+	},
+	
+	/**
+	 * Retrieves and stores all facet items of the last request.
+	 */
+	retrieveFacetItems: function () {
 		var $ = jQuery;
 		
 		if (this.fields === undefined) {
@@ -58,8 +98,7 @@ FacetedSearch.classes.FacetWidget = AjaxSolr.AbstractFacetWidget.extend({
 		
 		var fq = this.manager.store.values('fq');
 
-		var maxCount = 0;
-		var objectedItems = [];
+		this.mFacetItems = [];
 		for (var i = 0; i < this.fields.length; i++) {
 			var field = this.fields[i];
 			if (this.manager.response.facet_counts.facet_fields[field] === undefined) {
@@ -67,76 +106,126 @@ FacetedSearch.classes.FacetWidget = AjaxSolr.AbstractFacetWidget.extend({
 			}
 			for (var facet in this.manager.response.facet_counts.facet_fields[field]) {
 				var count = parseInt(this.manager.response.facet_counts.facet_fields[field][facet]);
-				if (count > maxCount) {
-					maxCount = count;
-				}
-				if (this.removeSelectedFacet) {
+				
+				if (this.mHideSelectedFacet) {
+					// Do not show facets that are selected 
 					var fullName = field + ':' + facet;
 					if ($.inArray(fullName, fq) >= 0) {
 						continue;
 					}
 				}
-				objectedItems.push({
+				this.mFacetItems.push({
 					field: field,
 					facet: facet,
 					count: count
 				});
 			}
 		}
-
-		if (objectedItems.length == 0) {
-			$(this.target).html(AjaxSolr.theme('no_items_found'));
-			return;
-		}
-		
-		objectedItems.sort(function(a, b) {
+				
+		this.mFacetItems.sort(function(a, b) {
 			return a.count > b.count ? -1 : 1;
 		});
-		
-		// show facets using grouping
-		var GROUP_SIZE = 10;
-		var self = this;
-		$(this.target).empty();
-		for (var i = 0, l = objectedItems.length; i < l; i++) {
-			if (i % GROUP_SIZE == 0) {
-				var ntarget = $('<div>');
-				if (i != 0) {
-					$(ntarget).hide();
-				}
-				$(this.target).append(ntarget);
-			}
-			var facet = objectedItems[i].facet;
-			var target;
-			if (objectedItems[i].field == this.field) {
-				target = self;
-			} else {
-				target = FacetedSearch.singleton.FacetedSearchInstance.getRelationWidget();
-			}
-			var entry = AjaxSolr.theme(this.facetTheme, facet, 
-			                           objectedItems[i].count, 
-									   target.clickHandler(facet), 
-									   FacetedSearch.classes.ClusterWidget.showPropertyDetailsHandler, 
-									   false);
-			$(ntarget)
-				.append(entry)
-				.append('<br/>');
-		}
-		if (objectedItems.length > GROUP_SIZE) {
-			$(this.target).append(AjaxSolr.theme('moreLessLink'));
-		}
+			
 	},
 	
-	init: function () {
+	/**
+	 * Not all facet items are shown at once. They are unfolded in groups with
+	 * GROUP_SIZE elements. 
+	 * This function shows the elements of the group with the given index.
+	 * @param {int} group
+	 * 		Index of the group to show
+	 * @return {bool}
+	 * 		true, if there are further groups to display
+	 * 		false, if this was the last group
+	 */
+	showFacetsForGroup : function (group) {
 		var $ = jQuery;
-		$('a.xfsFMore').live('click', function() {
+		var target = $(this.target);
+		
+		this.mCurrentGroup = group;
+		
+		if (group === 0) {
+			// Clear the target for the first group of items
+			target.html('<div/>');
+		}
+		
+		var contentDiv = target.find(':first');
+		
+		if (this.mFacetItems.length == 0) {
+			target.html(AjaxSolr.theme('no_items_found'));
+			return false;
+		}
+		
+		var html = "";
+		var start = group * this.GROUP_SIZE;
+		var end   = Math.min((group+1)*this.GROUP_SIZE, this.mFacetItems.length);
+		// All items are enclosed in a group div
+		var groupDiv = $('<div group="' + group + '" />');
+		contentDiv.append(groupDiv); 
+		for (var i = start, l = end; i < l; i++) {
+			var facet = this.mFacetItems[i].facet;
+			var clickHandler = this.mClickHandler;
+			if (!clickHandler) {
+				var widget = this;
+				if (this.mFacetItems[i].field !== this.field) {
+					// Unify handling of attributes and relations
+					widget = FacetedSearch.singleton.FacetedSearchInstance.getRelationWidget();
+				}
+				clickHandler = widget.clickHandler(facet);
+			}
+			
+			var entry = AjaxSolr.theme(this.mFacteTheme, facet, 
+						               this.mFacetItems[i].count, 
+									   clickHandler, 
+									   FacetedSearch.classes.ClusterWidget.showPropertyDetailsHandler, 
+									   this.mRemoveFacet);			
+			groupDiv.append(entry);
+		}
+		
+		// Show the "more | less" links if needed
+		if (group === 0 && this.mFacetItems.length > this.GROUP_SIZE) {
+			target.append(AjaxSolr.theme('moreLessLink', 
+			                             this.moreClickHandler(),
+										 this.lessClickHandler()));
+		}
+		
+		// Return if there are more groups to show
+		return this.mFacetItems.length > (this.mCurrentGroup+1) * this.GROUP_SIZE;
+	},
+	
+	
+	init: function () {
+	},
+	
+	/**
+	 * Click handler for the "more" link.
+	 */
+	moreClickHandler: function(){
+		var self = this;
+		return function() {
+			var $ = jQuery;
+			var nextGroup = self.mCurrentGroup+1;
+			var moreAvailable = self.mFacetItems.length > (nextGroup+1) * self.GROUP_SIZE;
+			
+			// Check if the html of the next group is already present
+			var target = $(self.target);
+			var nextGroupDiv = target.find('[group=' + nextGroup + ']');
+			if (nextGroupDiv.length === 1) {
+				// Group already exists => show it
+				nextGroupDiv.show();
+				self.mCurrentGroup++;
+			} else {
+				// Generate the content for the next group
+				self.showFacetsForGroup(nextGroup);
+			}
 			var morePresent = true;
-			if ($(this).parent().children('div:hidden').filter(':first').show().end().length <= 1) {
+			if (!moreAvailable) {
 				// Hide the link "more" and the following separator "|"
 				$(this).hide();
 				$(this).next().hide();
 				morePresent = false;
 			}
-			if ($(this).parent().children('div:visible').length > 1) {
+			if (self.mCurrentGroup > 0) {
 				// Show the link "less" and the preceding separator "|"
 				var less = $(this).parent().children('a.xfsFLess');
 				less.show();
@@ -144,24 +233,43 @@ FacetedSearch.classes.FacetWidget = AjaxSolr.AbstractFacetWidget.extend({
 					less.prev().show();
 				}
 			}
+			
 			return false;
-		});
-		$('a.xfsFLess').live('click', function() {
+		}
+	},
+	
+	/**
+	 * Click handler for the "less" link.
+	 */
+	lessClickHandler: function(){
+		var self = this;
+		return function() {
+			var $ = jQuery;
+			
+			// Get the html of the current group
+			var target = $(self.target);
+			var groupDiv = target.find('[group=' + self.mCurrentGroup + ']');
+			if (groupDiv.length === 1) {
+				// Hide the content of the current group
+				groupDiv.hide();
+				self.mCurrentGroup--;
+			}
+
 			var lessPresent = true;
-			if ($(this).parent().children('div:visible').filter(':last').hide().end().length <= 2) {
+			if (self.mCurrentGroup === 0) {
 				// Hide the link "less" and the preceding separator "|"
 				$(this).hide();
 				$(this).prev().hide();
 				lessPresent = false;
 			}
-			if ($(this).parent().children('div:hidden').length >= 1) {
-				$(this).parent().children('a.xfsFMore').show();
-				if (lessPresent) {
-					$(this).prev().show();
-				}
+			// Show the "more" link
+			$(this).parent().children('a.xfsFMore').show();
+			if (lessPresent) {
+				$(this).prev().show();
 			}
 			return false;
-		});
-	}
+		}
+	},
+	
 });
 

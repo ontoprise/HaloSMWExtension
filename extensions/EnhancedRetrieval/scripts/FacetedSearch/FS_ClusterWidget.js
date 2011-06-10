@@ -91,14 +91,20 @@ FacetedSearch.classes.ClusterWidget = AjaxSolr.AbstractWidget.extend({
 		// e.g. 42 - 52 (5)
 		var regex = new RegExp(this.statisticsFieldName+':\\[(\\d*) TO (\\d*)\\]'); 
 		var ranges = data.facet_counts.facet_queries;
+		var minValue = null;
+		var maxValue = null;
 		$(this.target).empty();
 		for (var range in ranges) {
 			var matches = range.match(regex);
 			if (matches) {
 				var from = matches[1];
 				var displayFrom = this.clusterer.formatBoundary(from);
+				if (!minValue) {
+					minValue = displayFrom;
+				}
 				var to = matches[2];
 				var displayTo = this.clusterer.formatBoundary(to);
+				maxValue = displayTo;
 				var count = ranges[range];
 				if (count > 0) {
 					// Create the HTML for the cluster
@@ -112,13 +118,25 @@ FacetedSearch.classes.ClusterWidget = AjaxSolr.AbstractWidget.extend({
 				}
 			}
 		}
+
+		// Check if the range is already restricted
+		var rangeRestricted = false;
 		var fq = this.manager.store.values('fq');
 		for (var i = 0, l = fq.length; i < l; i++) {
 			if (fq[i].indexOf(this.statisticsFieldName) == 0) {
-				$(this.target).append(AjaxSolr.theme('cluster_remove_range_filter', self.clickRemoveRangeHandler(this.statisticsFieldName)));
+				rangeRestricted = true;
 				break;
 			}
 		}
+				
+		// Show the cluster title
+		$(this.target)
+			.prepend(AjaxSolr.theme('cluster', minValue, maxValue, 
+								   data.response.numFound, 
+								   this.clickRemoveRangeHandler(this.statisticsFieldName),
+								   true, rangeRestricted));
+		
+		
 		// Remove the statistic parameters
 		this.manager.store.remove('facet.query');
 		

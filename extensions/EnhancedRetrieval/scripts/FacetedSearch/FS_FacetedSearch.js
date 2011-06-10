@@ -41,7 +41,8 @@ FacetedSearch.classes.FacetedSearch = function () {
 	var QUERY_FIELD = 'smwh_title';
 	
 	// Names of the facet classes
-	var FACET_FIELDS = ['smwh_categories', 'smwh_attributes', 'smwh_properties'];
+	var FACET_FIELDS = ['smwh_categories', 'smwh_attributes', 'smwh_properties',
+						'smwh_namespace_id'];
 
 	
 	//--- Private members ---
@@ -84,10 +85,16 @@ FacetedSearch.classes.FacetedSearch = function () {
 		var categoryFacet = FACET_FIELDS[0];
 		var relationFacet = FACET_FIELDS[1];
 		var attributeFacet = FACET_FIELDS[2];
+		var namespaceFacet = FACET_FIELDS[3];
 		mAjaxSolrManager.addWidget(new FacetedSearch.classes.FacetWidget({
 			id : 'fsf' + categoryFacet,
 			target : '#field_categories',
 			field : categoryFacet
+		}));
+		mAjaxSolrManager.addWidget(new FacetedSearch.classes.NamespaceFacetWidget({
+			id : 'fsf' + namespaceFacet,
+			target : '#field_namespaces',
+			field : namespaceFacet
 		}));
 		mRelationWidget = new FacetedSearch.classes.FacetWidget({
 			id : 'fsf' + relationFacet,

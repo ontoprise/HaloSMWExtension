@@ -45,7 +45,7 @@ FacetedSearch.classes.FSLanguageDe = function () {
 'more' 				: 'mehr',
 'less' 				: 'weniger',
 'noFacetFilter'		: '(Keine Facetten ausgewählt.)',
-'removeFilter'		: 'Filter enfernen',
+'removeFilter'		: 'Diese Facette enfernen',
 'removeRestriction'	: 'Einschränkung entfernen',
 'removeAllFilters'	: 'Alle Facetten entfernen',
 'pagerPrevious'		: '&lt; Vorherige',
@@ -60,7 +60,10 @@ FacetedSearch.classes.FSLanguageDe = function () {
 'showDetails'		: 'Zeige Details',
 'hideDetails'		: 'Details ausblenden',
 'lastChange'		: 'Letzte Änderung',
-'addFacetOrQuery'	: 'Bitte geben Sie einen Suchbegriff ein oder wählen Sie eine Facette aus!'
+'addFacetOrQuery'	: 'Bitte geben Sie einen Suchbegriff ein oder wählen Sie eine Facette aus!',
+'mainNamespace'		: 'Main',
+'namespaceTooltip'  : '$1 Artikel in diesem Namensraum passen zur Auswahl',
+'allNamespaces'		: 'Alle Namensräume'
 	};
 	
 	return that;

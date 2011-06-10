@@ -75,18 +75,24 @@ FacetedSearch.classes.FacetPropertyValueWidget = FacetedSearch.classes.FacetWidg
 	
 	fpvwAfterRequest: function(){
 		var $ = jQuery;
-		this.setFacetTheme('propertyValueFacet');
-		this.setRemoveSelectedFacet(false);
-		this.superAfterRequest();
-
+		
+		// Check if there is a restriction on property values
+		var propValRestricted = false;
 		var mgr = FacetedSearch.singleton.FacetedSearchInstance.getAjaxSolrManager();
 		var fq = mgr.store.values('fq');
 		for (var i = 0, l = fq.length; i < l; i++) {
 			if (fq[i].indexOf(this.field) == 0) {
-				$(this.target).append(AjaxSolr.theme('cluster_remove_range_filter', this.clickRemoveRangeHandler(this.field)));
+				propValRestricted = true;
 				break;
 			}
 		}
+		this.setFacetTheme('propertyValueFacet');
+		this.setHideSelectedFacet(false);
+		this.setRemoveFacet(propValRestricted);
+		if (propValRestricted) {
+			this.setClickHandler(this.clickRemoveRangeHandler(this.field));
+		}
+		this.superAfterRequest();
 		
 	},
 	
