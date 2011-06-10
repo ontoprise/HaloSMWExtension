@@ -234,6 +234,9 @@ $html .= <<<ENDS
 <div id="deinstall-dialog-confirm" title="Uninstall extension" style="display:none">
     <p><span style="float:left; margin:0 7px 20px 0;"></span><span id="deinstall-dialog-confirm-text">The following extensions will be uninstalled. Are you sure?</span></p>
 </div>
+<div id="restore-dialog-confirm" title="Restore installation" style="display:none">
+    <p><span style="float:left; margin:0 7px 20px 0;"></span><span id="restore-dialog-confirm-text">This operation restores an old wiki installation. Are you sure?</span></p>
+</div>
 <div id="check-extension-dialog" title="Information" style="display:none">
     <p><span style="float:left; margin:0 7px 20px 0;"></span><span id="check-extension-dialog-text">Check extension</span></p>
 </div>
