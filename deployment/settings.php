@@ -56,6 +56,9 @@ class DF_Config  {
 	// set PHP path if it does not exist in path or it has the wrong version
 	// PHP 5 is required at least
 	//'df_php_path' => 'php',
+	
+	// upload directory for DF-GUI, if not set home directory or temp is used.
+	//'df_uploaddir' => '', 
 
 	);
 	public static function getValue($identifier){
