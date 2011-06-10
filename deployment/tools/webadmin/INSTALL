@@ -1,7 +1,10 @@
 Installation of the webadmin console:
+=====================================
 
 (1) Make sure deployment/tools/webadmin is accessible via HTTP
-(2) Allow the webserver to write in 
+(2) Set the $scriptPath variable in deployment/settings.php 
+    (same as $wgScriptPath in LocalSettings.php)
+(3) Allow the webserver to write in 
         - deployment/tools/webadmin/sessiondata
         - LocalSettings.php
         - extensions folder (and all extensions contained)
@@ -10,14 +13,13 @@ Installation of the webadmin console:
     It is recommended to make the user which runs the webserver the owner of
     these files and directories. It can be a different webserver than used for the wiki.    
         
-(3) Allow the webserver to run external PHP processes.
-(4) For wiki auth. make sure that the 'curl' extension is installed.
-    Otherwise auth. by wiki is not possible and you have to configure a separate
+(4) Allow the webserver/PHP to run external PHP processes (normally granted per default).
+(5) For wiki authentication make sure that the 'curl' PHP-extension is installed.
+    Otherwise authentication by wiki is not possible and you have to configure a separate
     user. Take a look in deployment/settings.php for that.
-(5) If you want to upload bundles you have to enable uploads in your webserver conf. They
+(6) If you want to upload bundles you have to enable uploads in your webserver conf. 
+    You can configure the upload directory in settings.php. Otherwise uploads 
     are stored in $HOME/df_upload or $TEMP/df_upload if $HOME is not defined.
-(6) Set the $scriptPath variable in deployment/settings.php 
-    (same as $wgScriptPath in LocalSettings.php)
 (7) If you want to restore from a restore point the whole wiki directory
     must be writable by the webserver.        
 
