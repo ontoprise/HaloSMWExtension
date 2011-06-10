@@ -497,7 +497,6 @@ CKEDITOR.customprocessor.prototype =
 
 		var stringBuilder = new Array();
 		this._AppendNode( rootNode, stringBuilder, '' );
-//		return stringBuilder.join( '' ).Trim() + '\n';
 		return stringBuilder.join( '' ).Trim();
 	},
 
@@ -738,10 +737,19 @@ CKEDITOR.customprocessor.prototype =
 							if ( href == null ) {
 								href = htmlNode.getAttribute( 'href' ) || '';
 							}
-
-                            if ( hrefType == '' && href.indexOf(':') > -1) {
-                                hrefType = href.substring(0, href.indexOf(':')).toLowerCase();
-                            }
+							
+							//fix: Issue 14792 - Link with anchor is changed
+							//hrefType is a substring of href from the beginning until the colon. 
+							//it consists only of alphanumeric chars and optional url encoded chars in the middle.
+							var hrefTypeRegexp = /^(\w+(?:%\d{0,3})*\w*):/i;
+							var matches = href.match(hrefTypeRegexp);
+							if(hrefType == '' && matches) {
+								hrefType = matches[1]; 
+							}
+							
+//						  if ( hrefType == '' && href.indexOf(':') > -1) {
+//                            hrefType = href.substring(0, href.indexOf(':')).toLowerCase();
+//						  }
 
 							var isWikiUrl = true;
 
