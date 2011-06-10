@@ -18,8 +18,10 @@ class TFQueryAnalyser {
 		
 		//todo: what about sparql queries
 		
-		//first get manually defined preload values from the query serialization
-		$preloadValues = array();
+		$annotationPreloadValues = array();
+		$instanceNamePreloadValue = null;
+		
+		//first get manually defined annotation preload values from the query serialization
 		foreach($querySerialization as $part){
 			if($part[0] == '?'){
 				$part = explode('=', substr($part, 1), 3);
@@ -38,8 +40,17 @@ class TFQueryAnalyser {
 						$part[0] = TF_CATEGORY_KEYWORD;
 					}
 					
-					$preloadValues[ucfirst($part[0])] = $values;;
+					$annotationPreloadValues[ucfirst($part[0])] = $values;;
 				}
+			}
+		}
+		
+		//check if there is a manual instance name preload value
+		foreach($querySerialization as $part){
+			if(strpos($part, 'instance name preload value') === 0
+					&& strpos($part, '=') > ß){
+				$part = explode('=', $part, 2);
+				$instanceNamePreloadValue = trim($part[1]);
 			}
 		}
 		
@@ -48,14 +59,27 @@ class TFQueryAnalyser {
 		
 		//combine manual and automatic preload values
 		foreach($conditions as $name => $condition){
-			if(!array_key_exists($name, $preloadValues)){
-				if(array_key_exists(SMW_CMP_EQ, $condition)){
-					$preloadValues[$name] = $condition[SMW_CMP_EQ];
-				}  
+			if($name == TF_INSTANCENAME_KEYWORD){ //instance name preload value
+				if($instanceNamePreloadValue == null){ //nor LEWs< set manually
+					if(array_key_exists(TF_NAMESPACE_CMP, $condition) && count($condition[TF_NAMESPACE_CMP]) == 1){
+						$instanceNamePreloadValue = 
+							$wgLang->getNSText($condition[TF_NAMESPACE_CMP][0]).':';
+					}
+				}	
+			} else { //annotation reload value
+				if(!array_key_exists($name, $annotationPreloadValues)){
+					if(array_key_exists(SMW_CMP_EQ, $condition)){
+						$annotationPreloadValues[$name] = $condition[SMW_CMP_EQ];
+					}  
+				}
 			}
 		}
 		
-		return $preloadValues;
+		if($instanceNamePreloadValue == null){
+			$instanceNamePreloadValue = '';
+		}
+		
+		return array($annotationPreloadValues, $instanceNamePreloadValue);
 	}
 	
 	
@@ -100,7 +124,7 @@ class TFQueryAnalyser {
 				$categoryTitles = $desc->getCategories();
 				foreach($categoryTitles as $title){
 					if($title instanceof Title){			
-						if(@ !in_array($title->getText(), $conditions[TF_CATEGORY_KEYWORD])){
+						if(@ !in_array($title->getText(), $conditions[TF_CATEGORY_KEYWORD][SMW_CMP_EQ])){
 							$conditions[TF_CATEGORY_KEYWORD][SMW_CMP_EQ][] = $title->getText(); 
 						}
 					}
@@ -121,6 +145,11 @@ class TFQueryAnalyser {
 					if(@ !in_array($value, $conditions[ucfirst($name)][$comparator])){
 						$conditions[ucfirst($name)][$comparator][] = $value;
 					}
+				}
+			} else if($desc instanceof SMWNamespaceDescription){
+				$namespaceId = $desc->getNamespace();
+				if(@ !in_array($namespaceId, $conditions[TF_INSTANCENAME_KEYWORD][TF_NAMESPACE_CMP])){
+					$conditions[TF_INSTANCENAME_KEYWORD][TF_NAMESPACE_CMP][] = $namespaceId; 
 				}
 			} else if($desc instanceof SMWDisjunction || $desc instanceof SMWConjunction){
 				$conditions = TFQueryAnalyser::doGetQueryConditions(

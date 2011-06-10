@@ -100,6 +100,9 @@ class TFTabularFormQueryPrinter extends SMWResultPrinter {
 		//todo make sure tha this paramer also works with sparqö queries
 		$params[] = array( 'name' => 'write protected annotations', 'type' => 'string', 
 			'description' => 'Write protected annotations');
+		$params[] = array( 'name' => 'instance name preload value', 'type' => 'string', 
+			'description' => 'Instance name preload value');
+		
 		return $params;
 	}
 
@@ -128,6 +131,7 @@ class TFTabularFormData {
 	private $enableInstanceDelete = false;
 	private $enableInstanceAdd = false;
 	private $annotationPreloadValues = array();
+	private $instanceNamePreloadValue = '';
 	private $writeProtectedAnnotations = array();
 	private $annotationQueryConditions = array();
 		
@@ -254,7 +258,7 @@ class TFTabularFormData {
 		
 		$this->initializeAnnotationAutocompletion();
 		
-		$this->annotationPreloadValues = 
+		list($this->annotationPreloadValues, $this->instanceNamePreloadValue) = 
 			TFQueryAnalyser::getPreloadValues($this->getQuerySerialization());
 		
 		$this->annotationQueryConditions = 
@@ -374,6 +378,10 @@ class TFTabularFormData {
 		$errors = array();
 		
 		foreach(TFQueryAnalyser::getQueryConditions($this->getQuerySerialization()) as $name => $conditions){
+			
+			if($name == TF_INSTANCENAME_KEYWORD){
+				continue;
+			}
 			
 			global $wgLang;
 			if($name == $wgLang->getNSText(NS_CATEGORY)){
@@ -502,7 +510,7 @@ class TFTabularFormData {
 		
 		$html = '<tr style="display: none" class="tabf_table_row tabf_add_instance_template">';
 		
-		$html .= '<td revision-id="-1" ><textarea rows="1"></textarea>';
+		$html .= '<td revision-id="-1" ><textarea rows="1" >'.$this->parsePreloadValue($this->instanceNamePreloadValue).'</textarea>';
 		$html .= '<input class="tabf-delete-button" type="button" value="Delete" style="display: none" onclick="tf.deleteInstance(event)"/>';
 		$html .= '</td>';
 
