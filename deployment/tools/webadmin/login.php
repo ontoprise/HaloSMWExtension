@@ -22,7 +22,7 @@
  * @defgroup WebAdmin Web-administration tool
  * @ingroup DeployFramework
  *
- * Installation tool.
+ * Script for handling login.
  *
  * @author: Kai Kühn / ontoprise / 2011
  *

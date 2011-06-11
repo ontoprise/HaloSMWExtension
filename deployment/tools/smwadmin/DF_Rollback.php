@@ -52,8 +52,10 @@ class Rollback {
 			$homeDir = DF_Config::$settings['df_homedir'];
 		} else {
 			$homeDir = Tools::getHomeDir();
+			if (is_null($homeDir)) throw new DF_SettingError(DEPLOY_FRAMEWORK_NO_HOME_DIR, "No homedir found. Please configure one in settings.php");
 		}
-		$this->tmpDir = "$homeDir/rollback_smwadmin";
+		$wikiname = DF_Config::$df_wikiName;
+		$this->tmpDir = "$homeDir/$wikiname/df_restore";
 
 	}
 
@@ -212,6 +214,7 @@ class Rollback {
 	 * @return string Name of restore point directory.
 	 */
 	protected function getRestorePointName() {
+		global $dfgOut;
 		$done = false;
 		do {
 			$dfgOut->outputln("Please enter a name for the restore point: ");

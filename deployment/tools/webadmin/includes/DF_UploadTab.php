@@ -31,12 +31,28 @@ if (!defined("DF_WEBADMIN_TOOL")) {
 require_once($mwrootDir.'/deployment/tools/smwadmin/DF_Tools.php');
 
 class DFUploadTab {
+	
+	private $uploadDirectory;
+	
 	/**
 	 * Status tab
 	 *
 	 */
 	public function __construct() {
-
+		if (array_key_exists('df_uploaddir', DF_Config::$settings)) {
+			$uploadDirectory = DF_Config::$settings['df_uploaddir'];
+		} else {
+			if (array_key_exists('df_homedir', DF_Config::$settings)) {
+				$homedir = DF_Config::$settings['df_homedir'];
+			} else {
+				$homedir = Tools::getHomeDir();
+			}
+			if (is_null($homedir)) {
+				throw new DF_SettingError(DEPLOY_FRAMEWORK_NO_HOME_DIR, "No homedir found. Please configure one in settings.php");
+			}
+			$wikiname = DF_Config::$df_wikiName;
+			$this->uploadDirectory = "$homedir/$wikiname/df_upload";
+		}
 	}
 
 	public function getTabName() {
@@ -72,18 +88,12 @@ ENDS
 		$html .= "<th>";
 		$html .= $dfgLang->getLanguageString('df_webadmin_action');
 		$html .= "</th>";
-	
-		if (array_key_exists('df_homedir', DF_Config::$settings)) {
-			$uploadDirectory = DF_Config::$settings['df_homedir'];
-		} else {
-			$uploadDirectory = Tools::getHomeDir()."/df_upload";
-		}
-		if ($uploadDirectory == '/df_upload') {
-			$uploadDirectory = Tools::getTempDir()."/df_upload";
-		}
-		
+
+
+
+
 		$uploadFilesCounter = 0;
-		$handle = @opendir($uploadDirectory);
+		$handle = @opendir($this->uploadDirectory);
 		if ($handle !== false) {
 
 			while ($entry = readdir($handle) ){
@@ -91,7 +101,7 @@ ENDS
 					continue;
 				}
 
-				$filepath = $uploadDirectory."/".$entry;
+				$filepath = $this->uploadDirectory."/".$entry;
 				$file_ext = Tools::getFileExtension($filepath);
 				$filename = basename($filepath);
 
@@ -127,10 +137,10 @@ ENDS
 		@closedir($handle);
 		$html .= "</table>";
 		if ($uploadFilesCounter == 0) {
-            $html .= "</table><br/>";
-            $html .= $dfgLang->getLanguageString('df_webadmin_nouploadedfiles');
-        }
-		
+			$html .= "</table><br/>";
+			$html .= $dfgLang->getLanguageString('df_webadmin_nouploadedfiles');
+		}
+
 		return $html;
 	}
 }

@@ -37,6 +37,8 @@ define('DF_PRINTSTREAM_TYPE_WARN', 1);
 define('DF_PRINTSTREAM_TYPE_ERROR', 2);
 define('DF_PRINTSTREAM_TYPE_FATAL', 4);
 
+//require_once($rootDir."/io/DF_Log.php");
+
 class DFPrintoutStream {
 
 	/*
@@ -69,8 +71,10 @@ class DFPrintoutStream {
 		$this->target = $target;
 		if ($target == DF_OUTPUT_TARGET_STDOUT) return;
 		if ($target == DF_OUTPUT_TARGET_FILE) {
+			$logger = Logger::getInstance();
+			$logdir = $logger->getLogDir();
 			$local = $data;
-			$file = Tools::getTempDir()."/".$local;
+			$file = "$logdir/$local";
 			Tools::mkpath(dirname($file));
 			$this->tmpfile = $file;
             return $local;

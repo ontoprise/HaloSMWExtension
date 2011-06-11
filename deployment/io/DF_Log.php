@@ -48,14 +48,20 @@ class Logger {
 		}
 		return self::$instance;
 	}
+	
+	public function getLogDir() {
+		return $this->logDir;
+	} 
 
 	private function __construct() {
 		if (array_key_exists('df_homedir', DF_Config::$settings)) {
 			$homeDir = DF_Config::$settings['df_homedir'];
 		} else {
 			$homeDir = Tools::getHomeDir();
+			if (is_null($homeDir)) throw new DF_SettingError(DEPLOY_FRAMEWORK_NO_HOME_DIR, "No homedir found. Please configure one in settings.php");
 		}
-		$this->logDir = "$homeDir/df_log";
+		$wikiname = DF_Config::$df_wikiName;
+		$this->logDir = "$homeDir/$wikiname/df_log";
 		Tools::mkpath($this->logDir);
 		if (is_writable($this->logDir)) {
 			$i = 1;

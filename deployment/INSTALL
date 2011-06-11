@@ -63,10 +63,10 @@ Table of contents
     
     However, it is REQUIRED if you want to import ontologies via DF.
     
-(8) Webadmin console
-    This is OPTIONAL! 
+(8) This is OPTIONAL! 
+	There is a web-based version of DF called 'webadmin console'
     
-    see deployment/tools/webadmin/INSTALL
+    for installation instructions see deployment/tools/webadmin/INSTALL
     
 #
 # 1a.

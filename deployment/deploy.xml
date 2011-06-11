@@ -39,9 +39,13 @@
 			<exclude file="deployment/tools/unzip.exe" />
 		</new>
 
+		<update from="131">
+			<exclude file="deployment/tools/repositories" />
+			<exclude file="deployment/tools/unzip.exe" />
+		</update>
+		
 		<update from="130">
 			<exclude file="deployment/tools/repositories" />
-			<exclude file="deployment/settings.php" />
 			<exclude file="deployment/tools/unzip.exe" />
 		</update>
 

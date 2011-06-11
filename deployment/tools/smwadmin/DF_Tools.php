@@ -443,7 +443,7 @@ class Tools {
 			$dfgOut->outputln("'".$pOntologyVersionTitle->getPrefixedText()."' is not a number type.");
 			$check = false;
 		}
-		
+
 		// Installation dir
 		$pInstallationDirTitle = Title::newFromText($dfgLang->getLanguageString('df_instdir'), SMW_NS_PROPERTY);
 		$pInstallationDir = SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString('df_instdir'));
@@ -452,7 +452,7 @@ class Tools {
 			$dfgOut->outputln("'".$pInstallationDirTitle->getPrefixedText()."' is not a string type.");
 			$check = false;
 		}
-		
+
 		// Vendor
 		$pVendorTitle = Title::newFromText($dfgLang->getLanguageString('df_vendor'), SMW_NS_PROPERTY);
 		$pVendor = SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString('df_vendor'));
@@ -461,7 +461,7 @@ class Tools {
 			$dfgOut->outputln("'".$pVendorTitle->getPrefixedText()."' is not a string type.");
 			$check = false;
 		}
-		
+
 		// Rationale
 		$pRationaleTitle = Title::newFromText($dfgLang->getLanguageString('df_rationale'), SMW_NS_PROPERTY);
 		$pRationale = SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString('df_rationale'));
@@ -471,38 +471,38 @@ class Tools {
 			$dfgOut->outputln("'".$pRationaleTitle->getPrefixedText()."' is not a string type.");
 			$check = false;
 		}
-		
-	    // Maintainer
-        $pMaintainerTitle = Title::newFromText($dfgLang->getLanguageString('df_maintainer'), SMW_NS_PROPERTY);
-        $pMaintainer = SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString('df_maintainer'));
-        $pMaintainerValue = $pMaintainer->getTypesValue();
-        $typeID = reset($pMaintainerValue->getDBkeys());
-        if ($typeID != '_str') {
-            $dgOut->outputln("'".$pMaintainerTitle->getPrefixedText()."' is not a string type.");
-            // ignore maintainer
-            //$check = false;
-        }
-        
-	    // Help URL
-        $pHelpURLTitle = Title::newFromText($dfgLang->getLanguageString('df_helpurl'), SMW_NS_PROPERTY);
-        $pHelpURL = SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString('df_helpurl'));
-        $pHelpURLValue = $pHelpURL->getTypesValue();
-        $typeID = reset($pHelpURLValue->getDBkeys());
-        if ($typeID != '_str') {
-            $dfgOut->outputln("'".$pHelpURLTitle->getPrefixedText()."' is not a string type.");
-            $check = false;
-        }
-        
-	    // License
-        $pLicenseTitle = Title::newFromText($dfgLang->getLanguageString('df_license'), SMW_NS_PROPERTY);
-        $pLicense = SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString('df_license'));
-        $pLicenseValue = $pLicense->getTypesValue();
-        $typeID = reset($pLicenseValue->getDBkeys());
-        if ($typeID != '_wpg') {
-            $dfgOut->outputln("'".$pLicenseTitle->getPrefixedText()."' is not a page type.");
-            $check = false;
-        }
-        
+
+		// Maintainer
+		$pMaintainerTitle = Title::newFromText($dfgLang->getLanguageString('df_maintainer'), SMW_NS_PROPERTY);
+		$pMaintainer = SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString('df_maintainer'));
+		$pMaintainerValue = $pMaintainer->getTypesValue();
+		$typeID = reset($pMaintainerValue->getDBkeys());
+		if ($typeID != '_str') {
+			$dgOut->outputln("'".$pMaintainerTitle->getPrefixedText()."' is not a string type.");
+			// ignore maintainer
+			//$check = false;
+		}
+
+		// Help URL
+		$pHelpURLTitle = Title::newFromText($dfgLang->getLanguageString('df_helpurl'), SMW_NS_PROPERTY);
+		$pHelpURL = SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString('df_helpurl'));
+		$pHelpURLValue = $pHelpURL->getTypesValue();
+		$typeID = reset($pHelpURLValue->getDBkeys());
+		if ($typeID != '_str') {
+			$dfgOut->outputln("'".$pHelpURLTitle->getPrefixedText()."' is not a string type.");
+			$check = false;
+		}
+
+		// License
+		$pLicenseTitle = Title::newFromText($dfgLang->getLanguageString('df_license'), SMW_NS_PROPERTY);
+		$pLicense = SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString('df_license'));
+		$pLicenseValue = $pLicense->getTypesValue();
+		$typeID = reset($pLicenseValue->getDBkeys());
+		if ($typeID != '_wpg') {
+			$dfgOut->outputln("'".$pLicenseTitle->getPrefixedText()."' is not a page type.");
+			$check = false;
+		}
+
 		return $check;
 	}
 
@@ -531,10 +531,14 @@ class Tools {
 	public static function getHomeDir() {
 		if (self::isWindows()) {
 			exec("echo %UserProfile%", $out, $ret);
-			return str_replace("\\", "/", reset($out));
+			$homedir = str_replace("\\", "/", reset($out));
+			if (empty($homedir)) return NULL;
+			return $homedir;
 		} else {
 			exec('echo $HOME', $out, $ret);
-			return reset($out);
+			$homedir = reset($out);
+			if (empty($homedir)) return NULL;
+			return $homedir;
 		}
 	}
 
@@ -547,14 +551,18 @@ class Tools {
 	public static function getTempDir() {
 		if (self::isWindows()) {
 			exec("echo %TEMP%", $out, $ret);
-			return str_replace("\\", "/", reset($out));
+			$tmpdir = str_replace("\\", "/", reset($out));
+			if (empty($tmpdir)) return 'c:\temp'; // fallback
+			return $tmpdir;
 		} else {
 			@exec('echo $TMPDIR', $out, $ret);
 			if ($ret == 0) {
 				$val = reset($out);
-				return ($val == '' || $val === false) ? '/tmp' : $val;
+				$tmpdir = ($val == '' || $val === false) ? '/tmp' : $val;
+				if (empty($tmpdir)) return '/tmp'; // fallback
+				return $tmpdir;
 			} else {
-				return '/tmp';
+				return '/tmp'; // fallback if echo fails for some reason
 			}
 		}
 	}

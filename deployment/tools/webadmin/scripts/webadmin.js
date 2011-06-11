@@ -563,6 +563,8 @@ $(function() {
 		        
 		 });
 	});
+	
+	// called when document is loaded completely
 	$(document).ready(function(e) { 
 		
 		// make tables sortable

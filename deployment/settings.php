@@ -16,22 +16,25 @@
  */
 
 class DF_Config  {
-	
+
 	// MANDATORY setting!
 	// This is required for the webadmin tool. It is the same as specified in
 	// LocalSettings.php for $wgScriptPath
 	public static $scriptPath = "/deploywiki";
-	
+
 	// DF GUI language (default is english)
 	public static $df_lang = "en";
-	
-	// Wiki name the DF is working on (OPTIONAL setting)
-	public static $df_wikiName = "";
+
+	// Wiki name the DF is working on
+	// if you use more than one wiki on a machine, make sure you
+	// use different names for each. Don't change it afterwards,
+	// otherwise DF won't find your restore points again.
+	public static $df_wikiName = "mywiki";
 
 	/*
 	 * Uncomment the lines and set $df_authorizeByWiki to false
 	 * if you do not want to authorize webadmin tool by the wiki user base.
-	 * 
+	 *
 	 * This is required if 'curl' is NOT installed!
 	 *
 	 */
@@ -52,13 +55,13 @@ class DF_Config  {
 	// restore points, logs, uploaded files.
 	// normally $HOME is used.
 	// 'df_homedir' => '',
-	
+
+	// upload directory for DF-GUI, if not set home directory or temp is used.
+	//'df_uploaddir' => '',
+
 	// set PHP path if it does not exist in path or it has the wrong version
 	// PHP 5 is required at least
 	//'df_php_path' => 'php',
-	
-	// upload directory for DF-GUI, if not set home directory or temp is used.
-	//'df_uploaddir' => '', 
 
 	);
 	public static function getValue($identifier){
@@ -69,5 +72,38 @@ class DF_Config  {
 			//key not present, so no value is set
 			return "";
 		}
+	}
+
+
+}
+
+define('DEPLOY_FRAMEWORK_NO_HOME_DIR', 1);
+
+class DF_SettingError extends Exception {
+	var $msg;
+	var $arg1;
+	var $arg2;
+
+	public function __construct($errCode, $msg = '', $arg1 = NULL, $arg2 = NULL) {
+		$this->errCode = $errCode;
+		$this->msg = $msg;
+		$this->arg1 = $arg1;
+		$this->arg2 = $arg2;
+	}
+
+	public function getMsg() {
+		return $this->msg;
+	}
+
+	public function getErrorCode() {
+		return $this->errCode;
+	}
+
+	public function getArg1() {
+		return $this->arg1;
+	}
+
+	public function getArg2() {
+		return $this->arg2;
 	}
 }

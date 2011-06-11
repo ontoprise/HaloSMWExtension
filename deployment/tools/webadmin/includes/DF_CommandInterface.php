@@ -31,11 +31,12 @@ if (!defined("DF_WEBADMIN_TOOL")) {
 require_once ( $mwrootDir.'/deployment/tools/smwadmin/DF_PackageRepository.php' );
 require_once($mwrootDir.'/deployment/tools/smwadmin/DF_Tools.php');
 require_once($mwrootDir.'/deployment/tools/smwadmin/DF_Installer.php');
-
+require_once($mwrootDir.'/deployment/io/DF_Log.php');
 require_once($mwrootDir.'/deployment/tools/smwadmin/DF_UserInput.php');
 
 class DFCommandInterface {
 	
+	// path to PHP executable
 	var $phpExe;
 	
 	/**
@@ -60,8 +61,11 @@ class DFCommandInterface {
 
 	public function readLog($filename) {
 		global $mwrootDir, $dfgOut;
-
-		$absoluteFilePath = Tools::getTempDir()."/$filename";
+		$logger = Logger::getInstance();
+		$logdir = $logger->getLogDir();
+		
+		$absoluteFilePath = "$logdir/$filename";
+		Tools::mkpath(dirname($absoluteFilePath));
 		if (!file_exists($absoluteFilePath)) {
 			return '$$NOTEXISTS$$';
 		}
@@ -165,7 +169,10 @@ class DFCommandInterface {
 		global $mwrootDir, $dfgOut;
 
 		$filename = uniqid().".log";
-		touch(Tools::getTempDir()."/$filename");
+		$logger = Logger::getInstance();
+		$logdir = $logger->getLogDir();
+		touch("$logdir/$filename");
+		
 		chdir($mwrootDir.'/deployment/tools');
 		$php = $this->phpExe;
 		if (Tools::isWindows()) {
@@ -184,7 +191,10 @@ class DFCommandInterface {
 		global $mwrootDir, $dfgOut;
 
 		$filename = uniqid().".log";
-		touch(Tools::getTempDir()."/$filename");
+		$logger = Logger::getInstance();
+		$logdir = $logger->getLogDir();
+		touch("$logdir/$filename");
+		
 		chdir($mwrootDir.'/deployment/tools');
 		$php = $this->phpExe;
 		if (Tools::isWindows()) {
@@ -203,7 +213,10 @@ class DFCommandInterface {
 		global $mwrootDir, $dfgOut;
 
 		$filename = uniqid().".log";
-		touch(Tools::getTempDir()."/$filename");
+		$logger = Logger::getInstance();
+		$logdir = $logger->getLogDir();
+		touch("$logdir/$filename");
+		
 		chdir($mwrootDir.'/deployment/tools');
 		$php = $this->phpExe;
 		if (Tools::isWindows()) {
@@ -222,7 +235,10 @@ class DFCommandInterface {
 		global $mwrootDir, $dfgOut;
 
 		$filename = uniqid().".log";
-		touch(Tools::getTempDir()."/$filename");
+		$logger = Logger::getInstance();
+		$logdir = $logger->getLogDir();
+		touch("$logdir/$filename");
+		
 		chdir($mwrootDir.'/deployment/tools');
 		$php = $this->phpExe;
 		if (Tools::isWindows()) {
@@ -262,7 +278,10 @@ class DFCommandInterface {
 		global $mwrootDir, $dfgOut;
 
 		$filename = uniqid().".log";
-		touch(Tools::getTempDir()."/$filename");
+		$logger = Logger::getInstance();
+		$logdir = $logger->getLogDir();
+		touch("$logdir/$filename");
+		
 		chdir($mwrootDir.'/deployment/tools');
 		$php = $this->phpExe;
 		if (Tools::isWindows()) {
@@ -281,7 +300,10 @@ class DFCommandInterface {
 		global $mwrootDir, $dfgOut;
 
 		$filename = uniqid().".log";
-		touch(Tools::getTempDir()."/$filename");
+		$logger = Logger::getInstance();
+		$logdir = $logger->getLogDir();
+		touch("$logdir/$filename");
+		
 		chdir($mwrootDir.'/deployment/tools');
 		$php = $this->phpExe;
 		if (Tools::isWindows()) {
@@ -300,7 +322,10 @@ class DFCommandInterface {
 		global $mwrootDir, $dfgOut;
 
 		$filename = uniqid().".log";
-		touch(Tools::getTempDir()."/$filename");
+		$logger = Logger::getInstance();
+		$logdir = $logger->getLogDir();
+		touch("$logdir/$filename");
+		
 		chdir($mwrootDir.'/deployment/tools');
 		$php = $this->phpExe;
 		if (Tools::isWindows()) {

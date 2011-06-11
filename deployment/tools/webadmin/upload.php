@@ -22,10 +22,9 @@
  * @defgroup WebAdmin Web-administration tool
  * @ingroup DeployFramework
  *
- * Installation tool.
+ * Script for handling upload.
  *
  * @author: Kai Kühn / ontoprise / 2011
- *
  *
  */
 
@@ -36,15 +35,25 @@ require_once($rootDir.'/tools/smwadmin/DF_Tools.php');
 require_once($rootDir.'/settings.php');
 
 // get upload directory
-if (array_key_exists('df_uploaddir', DF_Config::$settings)) {
-	$uploadDirectory = DF_Config::$settings['df_uploaddir'];
-} else {
-	$uploadDirectory = Tools::getHomeDir()."/df_upload";
-	if ($uploadDirectory == 'df_upload') {
-		$uploadDirectory = Tools::getTempDir()."/df_upload";
+try {
+	if (array_key_exists('df_uploaddir', DF_Config::$settings)) {
+		$uploadDirectory = DF_Config::$settings['df_uploaddir'];
+	} else {
+		if (array_key_exists('df_homedir', DF_Config::$settings)) {
+			$homedir = DF_Config::$settings['df_homedir'];
+		} else {
+			$homedir = Tools::getHomeDir();
+		}
+		if (is_null($homeDir)) {
+			throw new DF_SettingError(DEPLOY_FRAMEWORK_NO_HOME_DIR, "No homedir found. Please configure one in settings.php");
+		}
+		$wikiname = DF_Config::$df_wikiName;
+		$uploadDirectory = "$homedir/$wikiname/df_upload";
 	}
+} catch(DF_SettingError $e) {
+	echo $e->getMsg();
+	die();
 }
-
 // create upload directory if necessary
 Tools::mkpath($uploadDirectory);
 

@@ -34,6 +34,7 @@ define('DEPLOY_FRAMEWORK_WRONG_VERSION', 14);
 define('DEPLOY_FRAMEWORK_UNCOMPRESS_ERROR', 15);
 define('DEPLOY_FRAMEWORK_ONTOLOGYCONFLICT_ERROR', 16);
 
+
 require_once 'DF_PackageRepository.php';
 require_once 'DF_Tools.php';
 require_once 'DF_Rollback.php';
@@ -93,7 +94,8 @@ class Installer {
 	private function __construct($rootDir = NULL, $force = false, $noRollback = false) {
 		// create temp folder
 		$this->errors = array();
-		$this->tmpFolder = Tools::getTempDir().'/mw_deploy_tool';
+		$wikiname = DF_Config::$df_wikiName;
+		$this->tmpFolder = Tools::getTempDir()."/$wikiname/df_downloads";
 		if (!file_exists($this->tmpFolder)) { 
 		    Tools::mkpath($this->tmpFolder);	
 		    @chmod($this->tmpFolder, 0777);

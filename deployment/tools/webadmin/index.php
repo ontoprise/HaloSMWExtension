@@ -29,6 +29,12 @@
  *
  */
 
+// uncomment the lines to get detailed error information
+// DO NOT use error reporting in production use.
+ 
+// error_reporting(E_ALL);
+// ini_set('display_errors', "On");
+
 session_start();
 
 $hostname = $_SERVER['HTTP_HOST'];
@@ -49,6 +55,7 @@ $mwrootDir = dirname(__FILE__);
 $mwrootDir = str_replace("\\", "/", $mwrootDir);
 $mwrootDir = realpath($mwrootDir."/../../../");
 
+
 require_once($mwrootDir.'/deployment/settings.php');
 $wgScriptPath=isset(DF_Config::$scriptPath) ? DF_Config::$scriptPath : "/mediawiki";
 
@@ -68,6 +75,15 @@ require_once($mwrootDir.'/deployment/io/DF_Log.php');
 require_once($mwrootDir.'/deployment/io/DF_PrintoutStream.php');
 
 $dfgOut = DFPrintoutStream::getInstance(DF_OUTPUT_FORMAT_HTML);
+
+try {
+	Logger::getInstance();
+	Rollback::getInstance($mwrootDir);
+
+} catch(DF_SettingError $e) {
+	echo $e->getMsg();
+	die();
+}
 
 dffInitLanguage();
 $dfgNoAsk=true;
@@ -134,26 +150,30 @@ switch( $mode ) {
 }
 
 // initialize tabs
+try {
+	$dfgStatusTab = new DFStatusTab();
+	$statusTabName = $dfgStatusTab->getTabName();
+	$statusTabHtml = $dfgStatusTab->getHTML();
 
-$dfgStatusTab = new DFStatusTab();
-$statusTabName = $dfgStatusTab->getTabName();
-$statusTabHtml = $dfgStatusTab->getHTML();
+	$dfgSearchTab = new DFSearchTab();
+	$searchTabName = $dfgSearchTab->getTabName();
+	$searchTabHtml = $dfgSearchTab->getHTML();
 
-$dfgSearchTab = new DFSearchTab();
-$searchTabName = $dfgSearchTab->getTabName();
-$searchTabHtml = $dfgSearchTab->getHTML();
+	$dfgMaintenanceTab = new DFMaintenanceTab();
+	$maintenanceTabName = $dfgMaintenanceTab->getTabName();
+	$maintenanceTabHtml = $dfgMaintenanceTab->getHTML();
 
-$dfgMaintenanceTab = new DFMaintenanceTab();
-$maintenanceTabName = $dfgMaintenanceTab->getTabName();
-$maintenanceTabHtml = $dfgMaintenanceTab->getHTML();
+	$dfgUploadTab = new DFUploadTab();
+	$dfgUploadTabName = $dfgUploadTab->getTabName();
+	$dfgUploadTabHtml = $dfgUploadTab->getHTML();
 
-$dfgUploadTab = new DFUploadTab();
-$dfgUploadTabName = $dfgUploadTab->getTabName();
-$dfgUploadTabHtml = $dfgUploadTab->getHTML();
-
-$dfgSettingsTab = new DFSettingsTab();
-$dfgSettingsTabName = $dfgSettingsTab->getTabName();
-$dfgSettingsTabHtml = $dfgSettingsTab->getHTML();
+	$dfgSettingsTab = new DFSettingsTab();
+	$dfgSettingsTabName = $dfgSettingsTab->getTabName();
+	$dfgSettingsTabHtml = $dfgSettingsTab->getHTML();
+} catch(DF_SettingError $e) {
+	echo $e->getMsg();
+	die();
+}
 
 // for ajax calls
 if (isset($func_name)) {
@@ -260,6 +280,7 @@ $html .= "</body>";
 echo $html;
 
 die();
+
 
 
 /**

@@ -50,6 +50,11 @@ $mwrootDir = dirname(__FILE__);
 $mwrootDir = str_replace("\\", "/", $mwrootDir);
 $mwrootDir = realpath($mwrootDir."/../../../");
 
+//Load Settings
+if(file_exists($rootDir.'/settings.php'))
+{
+	require_once($rootDir.'/settings.php');
+}
 require_once('DF_Tools.php');
 require_once('DF_UserInput.php');
 require_once('DF_Installer.php');
@@ -61,11 +66,6 @@ dffInitLanguage();
 $dfgOut = DFPrintoutStream::getInstance(DF_OUTPUT_FORMAT_TEXT);
 $dfgOut->start(DF_OUTPUT_TARGET_STDOUT);
 
-//Load Settings
-if(file_exists($rootDir.'/settings.php'))
-{
-	require_once($rootDir.'/settings.php');
-}
 
 // check PHP version
 $phpver = str_replace(".","",phpversion());
@@ -267,9 +267,13 @@ if ($dfgOutputFormat != "text") {
 	$dfgOut->setMode($dfgOutputFormat);
 }
 
-$logger = Logger::getInstance();
-$installer = Installer::getInstance($mwrootDir, $dfgForce);
-$rollback = Rollback::getInstance($mwrootDir);
+try {
+	$logger = Logger::getInstance();
+	$installer = Installer::getInstance($mwrootDir, $dfgForce);
+	$rollback = Rollback::getInstance($mwrootDir);
+} catch(DF_SettingError $e) {
+	dffExitOnFatalError($e);
+}
 
 if ($dfgInstallPackages) {
 	// include commandLine.inc to be in maintenance mode
@@ -386,7 +390,7 @@ if ($dfgListPackages) {
 // install
 
 // if more than one bundle is installed at once,
-// consolidate the bundle list first, ie. remove all redundant bundles. 
+// consolidate the bundle list first, ie. remove all redundant bundles.
 if (count($packageToInstall) > 1) {
 	$packageToInstall = PackageRepository::getTopMostExtensions($packageToInstall);
 }
@@ -528,9 +532,9 @@ if (count($localBundlesToInstall) > 0) {
 // if more than one bundle is de-installed at once,
 // consolidate the bundle list first, ie. correct the order and add additional extensions if necessary.
 if (count($packageToDeinstall) > 1) {
-    $packageToDeinstall = PackageRepository::getDeletionOrder($packageToDeinstall, $mwrootDir);
-    
-    //TODO: ask for confirmation?
+	$packageToDeinstall = PackageRepository::getDeletionOrder($packageToDeinstall, $mwrootDir);
+
+	//TODO: ask for confirmation?
 }
 
 foreach($packageToDeinstall as $toDeInstall) {
@@ -679,7 +683,7 @@ if (count($installer->getErrors()) === 0) {
 }
 
 function dffShowHelp() {
-	global $dfgOut;
+	global $dfgOut, $logger;
 	$dfgOut->outputln( "smwhalo admin utility v".DEPLOY_FRAMEWORK_VERSION.", Ontoprise 2009-2011");
 	$dfgOut->outputln( "Usage: smwadmin [ -i | -d ] <package>[-<version>] [ additional-options ]");
 	$dfgOut->outputln( "       smwadmin -u [ <package>[-<version>] ] [ additional-options ]");
@@ -718,12 +722,8 @@ function dffShowHelp() {
 	$dfgOut->outputln( "\tsmwadmin -u --noask: Updates the complete installation with no check for environment.");
 	$dfgOut->outputln( "\n");
 
-	if (array_key_exists('df_homedir', DF_Config::$settings)) {
-		$logDir = DF_Config::$settings['df_homedir'];
-	} else {
-		$logDir = Tools::getHomeDir()."/df_log";
-	}
-	$dfgOut->outputln( "The DF's log files are stored in: $logDir");
+
+	$dfgOut->outputln( "The DF's log files are stored in: ".$logger->getLogDir());
 	$dfgOut->outputln( "\n");
 }
 
@@ -868,7 +868,7 @@ function dffExitOnFatalError($e) {
 	global $dfgOut;
 	$dfgOut->outputln();
 
-	if ($e instanceof InstallationError) {
+	if ($e instanceof InstallationError || $e instanceof DF_SettingError) {
 		switch($e->getErrorCode()) {
 			case DEPLOY_FRAMEWORK_DEPENDENCY_EXIST: {
 				$packages = $e->getArg1();
