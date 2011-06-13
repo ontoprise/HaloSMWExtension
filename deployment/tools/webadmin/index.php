@@ -46,6 +46,7 @@ if (!isset($_SESSION['angemeldet']) || !$_SESSION['angemeldet']) {
 }
 
 define("DF_WEBADMIN_TOOL", 1);
+define("DF_WEBADMIN_TOOL_VERSION", '{{$VERSION}} [B{{$BUILD_NUMBER}}]');
 
 $rootDir = dirname(__FILE__);
 $rootDir = str_replace("\\", "/", $rootDir);
@@ -81,6 +82,7 @@ try {
 	Rollback::getInstance($mwrootDir);
 
 } catch(DF_SettingError $e) {
+	echo "<h1>Installation problem</h1>";
 	echo $e->getMsg();
 	die();
 }
@@ -225,12 +227,13 @@ $javascriptLang
 ENDS
 ;
 $wikiName = !empty(DF_Config::$df_wikiName) ? "(".DF_Config::$df_wikiName.")" : "";
+$wikiVersion = DF_WEBADMIN_TOOL_VERSION;
 $html .= "<body><img src=\"skins/logo.png\" style=\"float:left; margin-right: 30px\" />".
          "<div style=\"float:right\">".
          "<a href=\"$wgServer$wgScriptPath/index.php\">".$dfgLang->getLanguageString('df_linktowiki')."</a> | ".
          "<a href=\"$wgServer$wgScriptPath/deployment/tools/webadmin/logout.php\">".$dfgLang->getLanguageString('df_logout')."</a>".
          "</div>".
-         "<div id=\"df_header\">Deployment Framework WebAdmin $wikiName</div>";
+         "<div id=\"df_header\">Deployment Framework WebAdmin $wikiVersion $wikiName</div>";
 
 $restoreWarning = $dfgLang->getLanguageString('df_restore_warning');
 $deinstallWarning = $dfgLang->getLanguageString('df_uninstall_warning');

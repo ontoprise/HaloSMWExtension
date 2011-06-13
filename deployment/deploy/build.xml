@@ -78,6 +78,12 @@
 			<arg value="../tools/smwadmin/smwadmin.php" />
 			<arg value="${env.BUILD_NUMBER}" />
 		</exec>
+		<exec executable="php">
+			<arg value="../../buildtools/replaceVersionHintDF.php" />
+			<arg value="../deploy.xml" />
+			<arg value="../tools/webadmin/index.php" />
+			<arg value="${env.BUILD_NUMBER}" />
+		</exec>
 	</target>
 
 	<target name="onto2mwxml">
