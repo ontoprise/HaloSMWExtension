@@ -18,7 +18,6 @@
 
 // Error constants
 define('DEPLOY_FRAMEWORK_INSTALL_LOWER_VERSION', 1);
-define('DEPLOY_FRAMEWORK_NO_TMP_DIR', 2);
 define('DEPLOY_FRAMEWORK_COULD_NOT_FIND_UPDATE', 3);
 define('DEPLOY_FRAMEWORK_PACKAGE_NOT_EXISTS', 4);
 define('DEPLOY_FRAMEWORK_DEPENDENCY_EXIST',5);
@@ -100,8 +99,8 @@ class Installer {
 		    Tools::mkpath($this->tmpFolder);	
 		    @chmod($this->tmpFolder, 0777);
 		}
-		if (!file_exists($this->tmpFolder)) {
-			throw new InstallationError(DEPLOY_FRAMEWORK_NO_TMP_DIR, "Could not create temporary directory. Not Logged in as root?");
+		if (!file_exists($this->tmpFolder) || !is_writable($this->tmpFolder)) {
+			throw new DF_SettingError(DEPLOY_FRAMEWORK_NO_TMP_DIR, "Could not create or write temporary directory. Make sure at least /tmp or c:\temp exists and is writable.");
 		}
 
 		// get root dir
