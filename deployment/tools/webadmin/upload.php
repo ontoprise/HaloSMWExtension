@@ -44,13 +44,14 @@ try {
 		} else {
 			$homedir = Tools::getHomeDir();
 		}
-		if (is_null($homeDir)) {
+		if (is_null($homedir)) {
 			throw new DF_SettingError(DEPLOY_FRAMEWORK_NO_HOME_DIR, "No homedir found. Please configure one in settings.php");
 		}
 		$wikiname = DF_Config::$df_wikiName;
 		$uploadDirectory = "$homedir/$wikiname/df_upload";
 	}
 } catch(DF_SettingError $e) {
+	echo "<h1>Installation problem</h1>";
 	echo $e->getMsg();
 	die();
 }
@@ -59,7 +60,12 @@ Tools::mkpath($uploadDirectory);
 
 // move file
 $filename = $_FILES['datei']['name'];
-move_uploaded_file($_FILES['datei']['tmp_name'], "$uploadDirectory/$filename");
+$uploadDone = move_uploaded_file($_FILES['datei']['tmp_name'], "$uploadDirectory/$filename");
+if (!$uploadDone) {
+	echo "<h1>Problem occured</h1>";
+	echo "Could not upload file '$filename' to '$uploadDirectory'. Missing rights? Uploads not enabled?";
+	die();
+}
 
 // redirect to index.php
 $hostname = $_SERVER['HTTP_HOST'];
