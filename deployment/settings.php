@@ -78,7 +78,14 @@ class DF_Config  {
 }
 
 define('DEPLOY_FRAMEWORK_NO_HOME_DIR', 1);
+define('DEPLOY_FRAMEWORK_NO_TMP_DIR', 2);
 
+/**
+ * Setting errors
+ * 
+ * @author kai
+ *
+ */
 class DF_SettingError extends Exception {
 	var $msg;
 	var $arg1;
