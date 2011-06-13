@@ -173,10 +173,9 @@ if ($mediawiki) {
     
     </resources>
     <configs>
-     <new>
-
+     <update>
        <script file="maintenance/update.php" />
-     </new>
+     </update>
     </configs>
 </deploydescriptor>
 	
