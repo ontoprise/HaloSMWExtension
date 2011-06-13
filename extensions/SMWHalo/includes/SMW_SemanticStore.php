@@ -135,6 +135,8 @@
 	
 	/**
 	 * Returns root categories (categories which have no super-category).
+	 * Also returns non-existing root categories, ie. root categories which
+	 * do only exist implicitly.
 	 * 
 	 * @return array of (Title t, boolean isLeaf)
 	 */
