@@ -530,7 +530,7 @@ class PackageRepository {
 		if (file_exists($ext_dir.'/init$.ext')) {
 			$init_ext_file = trim(file_get_contents($ext_dir.'/init$.ext'));
 			list($id, $fromVersion) = explode(",", $init_ext_file);
-			$dd = self::createMWDeployDescriptor(realpath($ext_dir));
+			$dd = self::createMWDeployDescriptor(realpath($ext_dir), $fromVersion);
 			self::$localPackagesToInitialize[$id] = array($dd, $fromVersion);
 		}
 
@@ -567,7 +567,7 @@ class PackageRepository {
 		@closedir($handle);
 	}
 
-	private static function createMWDeployDescriptor($rootDir) {
+	private static function createMWDeployDescriptor($rootDir, $fromVersion = NULL) {
 		$version = Tools::getMediawikiVersion($rootDir);
 		$version = intval(str_replace(".","", $version));
 		$xml = '<?xml version="1.0" encoding="UTF-8"?>
@@ -585,10 +585,14 @@ class PackageRepository {
 				    <codefiles/>
 				    <wikidumps/>
 				    <resources/>
-				    <configs/>
+				    <configs>
+				    	<update>
+				    		<script file="maintenance/update.php"/>
+				    	</update>
+				    </configs>
 				    </deploydescriptor>';
 
-		return new DeployDescriptor($xml);
+		return new DeployDescriptor($xml, $fromVersion);
 	}
 
 	/**

@@ -37,7 +37,7 @@ class DeployDescriptor {
 	var $codefiles; // code files or directories (which are controlled by hash)
 	var $codeHash; // accumalted hash over all codefiles
 	var $wikidumps; // wiki XML dump file (Halo format)
-	var $ontologies; // ontologies 
+	var $ontologies; // ontologies
 	var $mappings; // mappings (LOD)
 	var $resources; // resources: images
 	var $oc_resources; // resources which get only copied
@@ -138,7 +138,7 @@ class DeployDescriptor {
 	public function getUninstallScripts() {
 		return $this->uninstall_scripts;
 	}
-	
+
 	/**
 	 * Returns excluded files.
 	 * @return Array of string (full path of files within zip)
@@ -183,11 +183,16 @@ class DeployDescriptor {
 
 			$update = $this->dom->xpath($path);
 			if (count($update) === 0) {
-				// if update config is missing, use the patches from the new section, nothing else.
-				// this makes sense because users often forget to specify them in an update section.
-				// moreover it is safe, because the patches are checked before they are applied.
-				$patches = $this->dom->xpath('/deploydescriptor/configs/new/patch');
-				
+				// try general update section (without from)
+				$path = "//update[not(@from)]";
+				$update = $this->dom->xpath($path);
+				if (count($update) === 0) {
+					// if update config is completely missing, use the patches from the new section, nothing else.
+					// this makes sense because users often forget to specify them in an update section.
+					// moreover it is safe, because the patches are checked before they are applied.
+					$patches = $this->dom->xpath('/deploydescriptor/configs/new/patch');
+				}
+
 			}
 
 			if (isset($update[0]) && isset($update[0]->attributes()->removeAll)) {
@@ -262,9 +267,9 @@ class DeployDescriptor {
 				$from = trim((string) $p->attributes()->from);
 				$to = trim((string) $p->attributes()->to);
 				$mayfail = trim((string) $p->attributes()->mayfail);
-				
+
 				if (is_null($patchFile) || $patchFile == '') throw new IllegalArgument("Patch 'file'-atrribute missing");
-				
+
 				if (empty($from)) $from = 0;
 				if (empty($to)) $to = 9999;
 				$this->patches[] = array(array($ext, $from, $to), array($patchFile, $mayfail));
@@ -282,7 +287,7 @@ class DeployDescriptor {
 				$to = trim((string) $p->attributes()->to);
 				if (is_null($patchFile) || $patchFile == '') throw new IllegalArgument("Patch 'file'-atrribute missing");
 				if (empty($from)) $from = 0;
-                if (empty($to)) $to = 9999;
+				if (empty($to)) $to = 9999;
 				$this->uninstallpatches[] = array(array($ext, $from, $to), $patchFile);
 			}
 		}
@@ -353,15 +358,15 @@ class DeployDescriptor {
 		// notice is optional
 		return isset($this->globalElement[0]->notice) ? trim((string) $this->globalElement[0]->notice) : '';
 	}
-	
-    /**
-     * Returns license (which is optional). 
-     * @return string
-     */
-    function getLicense() {
-        // license is optional
-        return isset($this->globalElement[0]->license) ? trim((string) $this->globalElement[0]->license) : '';
-    }
+
+	/**
+	 * Returns license (which is optional).
+	 * @return string
+	 */
+	function getLicense() {
+		// license is optional
+		return isset($this->globalElement[0]->license) ? trim((string) $this->globalElement[0]->license) : '';
+	}
 
 	/**
 	 * Returns installation directory.
@@ -370,11 +375,11 @@ class DeployDescriptor {
 	function getInstallationDirectory() {
 		return trim((string) $this->globalElement[0]->instdir);
 	}
-	
+
 	/**
-	 * Returns true if the deployable should be installed to a non-public location. 
-	 * 
-     * @return boolean
+	 * Returns true if the deployable should be installed to a non-public location.
+	 *
+	 * @return boolean
 	 */
 	function isNonPublic() {
 		$instdir = $this->globalElement[0]->instdir;
@@ -434,7 +439,7 @@ class DeployDescriptor {
 	function hasDependency($ext_id) {
 		return !is_null($this->getDependency($ext_id));
 	}
-	
+
 	/**
 	 * Checks if $ext_id exists as an optional dependecy
 	 * @param $ext_id Extension ID
@@ -446,7 +451,7 @@ class DeployDescriptor {
 		list($id, $from, $to, $optional) =  $dep;
 		return $optional;
 	}
-	
+
 
 	/**
 	 * Returns patches which are suitable for the given local packages.
@@ -527,19 +532,19 @@ class DeployDescriptor {
 		}
 		return $this->wikidumps;
 	}
-	
-    /**
-     * Returns the location of ontology files (relative paths)
-     * @return array of string
-     */
-    function getOntologies() {
-        if (!is_null($this->ontologies)) return $this->ontologies;
-        $this->ontologies = array();
-        foreach($this->ontologies_xml as $file) {
-            $this->ontologies[] = (string) $file->attributes()->loc;
-        }
-        return $this->ontologies;
-    }
+
+	/**
+	 * Returns the location of ontology files (relative paths)
+	 * @return array of string
+	 */
+	function getOntologies() {
+		if (!is_null($this->ontologies)) return $this->ontologies;
+		$this->ontologies = array();
+		foreach($this->ontologies_xml as $file) {
+			$this->ontologies[] = (string) $file->attributes()->loc;
+		}
+		return $this->ontologies;
+	}
 
 	/**
 	 * Returns the location of mappings (relative paths)
@@ -701,7 +706,7 @@ class DeployDescriptor {
 		if ($this->configs === false) {
 			return;
 		}
-        global $dfgOut;
+		global $dfgOut;
 		$dp = new DeployDescriptionProcessor($rootDir.'/LocalSettings.php', $this);
 
 		$dfgOut->outputln("[Configure LocalSettings.php...");
