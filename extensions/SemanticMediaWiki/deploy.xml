@@ -12,6 +12,7 @@
 		<dependencies>
             <dependency from="1120" to="1170">MW</dependency>
         </dependencies>
+        <license>GPL-v2</license>
     </global>
     <codefiles>
         <file loc="deploy.xml" />
