@@ -14,7 +14,9 @@ For licensing, see LICENSE.html or http://ckeditor.com/license
 	var nonExitableElementNames = { table:1,pre:1 };
 
 	// Matching an empty paragraph at the end of document.
-	var emptyParagraphRegexp = /(^|<body\b[^>]*>)\s*<(p|div|address|h\d|center)[^>]*>\s*(?:<br[^>]*>|&nbsp;|\u00A0|&#160;)?\s*(:?<\/\2>)?\s*(?=$|<\/body>)/gi;
+//	var emptyParagraphRegexp = /(^|<body\b[^>]*>)\s*<(p|div|address|h\d|center)[^>]*>\s*(?:<br[^>]*>|&nbsp;|\u00A0|&#160;)?\s*(:?<\/\2>)?\s*(?=$|<\/body>)/gi;
+//	CKEditor 5638.patch
+	var emptyParagraphRegexp = /\s*(:?<(p|div|address|h\d|center)[^>]*>\s*)?(?:<br[^>]*>|&nbsp;|\u00A0|&#160;)?\s*(:?<\/\1>)?\s*(?=$|<\/body>)/gi; 
 
 	var notWhitespaceEval = CKEDITOR.dom.walker.whitespaces( true );
 
@@ -877,6 +879,14 @@ For licensing, see LICENSE.html or http://ckeditor.com/license
 									fullPage = config.fullPage,
 									docType = fullPage && editor.docType,
 									doc = iframe.getFrameDocument();
+								
+								// BR at the end of document is mozilla editor bogus node (#5293). 
+                                if ( CKEDITOR.env.gecko ) 
+                                { 
+                                        var last = doc.getBody().getLast(); 
+                                        if ( last.type == CKEDITOR.NODE_ELEMENT && last.is( 'br' ) ) 
+                                                last.remove(); 
+                                } 
 
 								var data = fullPage
 									? doc.getDocumentElement().getOuterHtml()
@@ -1137,7 +1147,7 @@ CKEDITOR.config.disableNativeSpellChecker = true;
  * @example
  * config.ignoreEmptyParagraph = false;
  */
-CKEDITOR.config.ignoreEmptyParagraph = true;
+CKEDITOR.config.ignoreEmptyParagraph = false;
 
 /**
  * Fired when data is loaded and ready for retrieval in an editor instance.

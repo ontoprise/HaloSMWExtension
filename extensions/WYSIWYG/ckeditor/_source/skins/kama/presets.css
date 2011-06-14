@@ -4,8 +4,7 @@ For licensing, see LICENSE.html or http://ckeditor.com/license
 */
 
 /* "Source" button label */
-.cke_skin_kama .cke_button_source .cke_label,
-.cke_skin_kama .cke_button_SMWtoolbar .cke_label
+.cke_skin_kama .cke_button_source .cke_label
 {
 	display: inline;
 }
