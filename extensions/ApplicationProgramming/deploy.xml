@@ -5,6 +5,7 @@
 		<id>ApplicationProgramming</id>
 		<vendor>Ontoprise GmbH</vendor>
 		<maintainer>Ontoprise GmbH</maintainer>
+        <license>GPL-v2, MIT, Public Domain</license>
 		<instdir>extensions/ApplicationProgramming</instdir>
 		<description>
 			Provides utility functionality for wikitext-programming.
