@@ -74,7 +74,7 @@ $(function() {
 					// make sure it is visible
 					dialog[0].scrollTop = dialog[0].clientHeight;
 				}
-				
+				$('.ui-dialog-titlebar-close').show();
 			} });
 			
 			
@@ -436,7 +436,7 @@ $(function() {
 							
 					$dialog.dialog('open');
 					$dialog.html('<img src="skins/ajax-loader.gif"/>');
-					
+					$('.ui-dialog-titlebar-close').hide();
 					$.ajax( { url : url, dataType:"json", complete : installStarted });
 					
 					
@@ -627,6 +627,7 @@ $(function() {
 		        			$dialog.html("<div></div>");				
 		        			$dialog.dialog('open');
 		        			$dialog.html('<img src="skins/ajax-loader.gif"/>');
+		        			$('.ui-dialog-titlebar-close').hide();
 		        			$.ajax( { url : url, dataType:"json", complete : deinstallStarted });		 
 		                   }
 		              },
@@ -664,6 +665,7 @@ $(function() {
 			$dialog.html("<div></div>");				
 			$dialog.dialog('open');
 			$dialog.html('<img src="skins/ajax-loader.gif"/>');
+			$('.ui-dialog-titlebar-close').hide();
 			$.ajax( { url : url, dataType:"json", complete : updateStarted });
 		});
 		
@@ -715,6 +717,7 @@ $(function() {
 			          							$dialog.html("<div></div>");			
 			          							$dialog.dialog('open');
 			          							$dialog.html('<img src="skins/ajax-loader.gif"/>');
+			          							$('.ui-dialog-titlebar-close').hide();
 			          							$.ajax( { url : url, dataType:"json", complete : globalUpdateStarted }); 
 			                   }
 			              },
@@ -826,6 +829,7 @@ $(function() {
 		$dialog.html("<div></div>");	
 		$dialog.dialog('open');
 		$dialog.html('<img src="skins/ajax-loader.gif"/>');
+		$('.ui-dialog-titlebar-close').hide();
 		$.ajax( { url : url, dataType:"json", complete :restoreStarted });
 	}
 	
