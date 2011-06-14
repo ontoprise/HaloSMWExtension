@@ -13,6 +13,7 @@
         <dependencies>
             <dependency from="146">smwhalo</dependency>
         </dependencies>
+        <license>GPL-v2</license>
     </global>
     <codefiles>
     </codefiles>
