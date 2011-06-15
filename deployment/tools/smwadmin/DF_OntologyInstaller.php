@@ -56,23 +56,41 @@ class OntologyInstaller {
 	 *
 	 * @param string $bundleID ID of stub bundle which will be created for the ontology.
 	 * @param string $inputfile Full path of input file
-	 * @param object $callback method askForOntologyPrefix(& $answer)
 	 * @param boolean $noBundlePage Should a bundle page be created or not.
 	 * @param int $mode How to deal with conflicts  (see DF_ONOLOGYIMPORT_.. constants)
 	 *
 	 * @return string Prefixed used to make ontology pages unique (can be null)
 	 *
 	 */
-	public function installOntology($bundleID, $inputfile, $callback, $noBundlePage = false, $mode = 0) {
+	public function installOntology($bundleID, $inputfile, $noBundlePage = false, $mode = 0) {
 		global $dfgOut;
 		$outputfile = $inputfile.".xml";
 		try {
+			// create input file with additional settings
+			$dfgOut->outputln("[Get used prefixes...");
+			$prefixNamespaceMappings = DFBundleTools::getRegisteredPrefixes();
+			$settingsFile = $inputfile.".settings";
+			$settings = $prefixNamespaceMappings;
+		
+			$handle = fopen($settingsFile, "w");
+			fwrite($handle, json_encode($settings));
+			fclose($handle);
+			$dfgOut->output("done.]");
+				
 			$ret = $this->convertOntology($inputfile, $outputfile, $bundleID, $noBundlePage);
-
+			
 			if ($ret != 0) {
 				$dfgOut->outputln("Could not convert ontology.");
+	            unlink($settingsFile);
 				die(1);
 			}
+			$dfgOut->outputln("[Update prefixes...");
+			$prefixNamespaceMappingsText = file_get_contents($settingsFile);
+			$prefixNamespaceMappings = json_decode($prefixNamespaceMappingsText);
+			DFBundleTools::storeRegisteredPrefixes($prefixNamespaceMappings);
+			unlink($settingsFile);
+			$dfgOut->output("done.]");
+			
 		} catch(Exception $e) {
 			// onto2mwxml might not be installed
 			$dfgOut->outputln("Could not convert ontology. Reason: ");
@@ -80,27 +98,21 @@ class OntologyInstaller {
 			die(DF_TERMINATION_ERROR);
 		}
 
-		// read possible existing prefix if this is an update
-		$prefix = DFBundleTools::getOntologyPrefix($bundleID);
 
 		$outputfile_rel = $inputfile.".xml";
 
-		if ($mode != DF_ONTOLOGYIMPORT_FORCEOVERWRITE) {
-			// verifies the ontologies
-			$dfgOut->outputln("[Verifying ontology $inputfile...");
-			do {
-				$verificationLog = $this->verifyOntology($outputfile_rel, $bundleID, $prefix);
 
-				//var_dump($verificationLog);
-				$conflict = $this->checkForConflict($verificationLog, $callback, $mode);
-				if ($conflict !== false) $prefix = $conflict;
+		// verifies the ontologies
+		$dfgOut->outputln("[Verifying ontology $inputfile...");
 
-			} while ($conflict !== false);
-			$dfgOut->output("done.");
-		}
-		if ($prefix != '') {
+		$verificationLog = $this->verifyOntology($outputfile_rel, $bundleID);
+		$conflict = $this->checkForConflict($verificationLog);
+
+		$dfgOut->output("done.");
+
+		if ($conflict) {
 			// write prefix file
-			$dfgOut->outputln("[Conflict detected. Using prefix '$prefix']");
+			$dfgOut->outputln("[Conflict detected. Merge some pages]");
 
 		} else {
 			$dfgOut->outputln("[No Conflict detected]");
@@ -136,13 +148,6 @@ class OntologyInstaller {
 			$prefix = $this->installOntology($dd->getID(), $this->rootDir.$dd->getInstallationDirectory()."/".$loc, $callback, $noBundlePage, $mode);
 			$noBundlePage = true; // make sure that only the first ontology creates a bundle page
 
-			// store prefix
-			if ($prefix != '') {
-				$basename = basename($this->rootDir.$dd->getInstallationDirectory()."/".$loc);
-				$handle = fopen("$mwrootDir/extensions/$bundleID/".$basename.".prefix", "w");
-				fwrite($handle, $prefix);
-				fclose($handle);
-			}
 		}
 	}
 
@@ -159,7 +164,12 @@ class OntologyInstaller {
 	public function deinstallOntology($dd) {
 		if (count($dd->getOntologies()) == 0) return;
 		if (!defined('SMW_VERSION')) throw new InstallationError(DEPLOY_FRAMEWORK_NOT_INSTALLED, "SMW is not installed. Can not delete ontology.");
-        global $dfgRemoveReferenced, $dfgRemoveStillUsed;
+		
+		$overlaps = Tools::getBundleOverlaps($dd->getID());
+		//$om = new OntologyMerger();
+		
+		
+		global $dfgRemoveReferenced, $dfgRemoveStillUsed;
 		foreach($dd->getOntologies() as $loc) {
 			$bundleID = $dd->getID();
 			Tools::deletePagesOfBundle($bundleID, $this->logger, $dfgRemoveReferenced, !$dfgRemoveStillUsed);
@@ -254,13 +264,13 @@ ENDS
 	 * @return array of (Title t, string status)
 	 *     status can be 'merge', 'conflict' or 'notexist'
 	 */
-	private function verifyOntology($inputfile, $bundleID, $prefix = '') {
+	private function verifyOntology($inputfile, $bundleID) {
 
 		if( preg_match( '/\.gz$/', $inputfile ) ) {
 			$filename = 'compress.zlib://' . $inputfile;
 		}
 		$fileHandle = fopen( $inputfile, 'rt' );
-		return $this->verifyFromHandle( $fileHandle, $bundleID , $prefix);
+		return $this->verifyFromHandle( $fileHandle, $bundleID);
 	}
 
 	/**
@@ -271,7 +281,7 @@ ENDS
 	 * @param string bundleID
 	 * @param string $prefix
 	 */
-	private function installOrUpdateOntology($inputfile, $verificationLog, $bundleID, $prefix = '') {
+	private function installOrUpdateOntology($inputfile, $verificationLog, $bundleID) {
 
 		// remove ontology elements which do not exist anymore.
 		global $dfgLang, $dfgOut;
@@ -316,7 +326,7 @@ ENDS
 			$filename = 'compress.zlib://' . $inputfile;
 		}
 		$fileHandle = fopen( $inputfile, 'rt' );
-		return $this->importFromHandle( $fileHandle, $bundleID , $prefix);
+		return $this->importFromHandle( $fileHandle, $bundleID );
 	}
 
 	/**
@@ -324,14 +334,14 @@ ENDS
 	 *
 	 * @param int $handle
 	 * @param string $bundleID
-	 * @param string $prefix
+
 	 *
 	 * @return array of (Title t, string status)
 	 *     status can be 'merge', 'conflict' or 'notexist'
 	 */
-	private function verifyFromHandle( $handle, $bundleID , $prefix) {
+	private function verifyFromHandle( $handle, $bundleID) {
 		$source = new ImportStreamSource( $handle );
-		$importer = new DeployWikiImporterDetector( $source, $bundleID, $prefix, 1, DFUserInput::getInstance() );
+		$importer = new DeployWikiImporterDetector( $source, $bundleID, 1);
 
 		$importer->setDebug( false );
 
@@ -346,14 +356,14 @@ ENDS
 	 *
 	 * @param int $handle
 	 * @param string $bundleID
-	 * @param string $prefix
+
 	 *
 	 */
-	private function importFromHandle( $handle, $bundleID , $prefix) {
+	private function importFromHandle( $handle, $bundleID ) {
 
 
 		$source = new ImportStreamSource( $handle );
-		$importer = new DeployWikiOntologyImporter( $source, $bundleID, $prefix, 1, $this );
+		$importer = new DeployWikiOntologyImporter( $source, $bundleID, 1);
 
 		$importer->setDebug( false );
 
@@ -416,12 +426,10 @@ ENDS
 	 * Checks for a conflict.
 	 *
 	 * @param array ($title, $msg) $verificationLog
-	 * @param object $callback method askForOntologyPrefix(& $answer)
-	 * @param int $mode How to deal with conflicts (see DF_ONOLOGYIMPORT_.. constants)
 	 *
 	 * @return mixed false if no conflict otherwise prefix to make solve conflict.
 	 */
-	private function checkForConflict($verificationLog, $callback, $mode) {
+	private function checkForConflict($verificationLog) {
 		$conflict = false;
 		global $dfgOut;
 		foreach($verificationLog as $l) {
@@ -429,18 +437,10 @@ ENDS
 			if ($msg == 'conflict') {
 				$dfgOut->outputln("Conflict with: '$title'");
 				$conflict = true;
-				break;
 			}
-		}
-		$answer=false;
-		if ($conflict) {
-			if ($mode == DF_ONTOLOGYIMPORT_STOPONCONFLICT) {
-				throw new InstallationError(DEPLOY_FRAMEWORK_ONTOLOGYCONFLICT_ERROR, "Ontology conflict occured. Conflict with (at least): '$title' ");
-			}
-			$callback->askForOntologyPrefix($answer);
 		}
 
-		return $answer;
+		return $conflict;
 	}
 
 

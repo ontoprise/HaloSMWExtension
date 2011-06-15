@@ -478,13 +478,6 @@ if (count($ontologiesToInstall) > 0) {
 			copy($filePath, $mwrootDir."/extensions/$bundleID/".basename($filePath));
 			copy($filePath.".xml", $mwrootDir."/extensions/$bundleID/".basename($filePath).".xml");
 
-			// store prefix
-			if ($prefix != '') {
-				$handle = fopen("$mwrootDir/extensions/$bundleID/".basename($filePath).".prefix", "w");
-				fwrite($handle, $prefix);
-				fclose($handle);
-			}
-
 			// register in Localsettings.php
 			$ls = file_get_contents("$mwrootDir/LocalSettings.php");
 			if (strpos($ls, "/*start-$bundleID*/" ) === false) {

@@ -190,7 +190,8 @@ function smwgHaloSetupExtension() {
 	$wgHooks['smwInitDatatypes'][] = 'smwfHaloInitDatatypes';
 
 	$wgHooks['smwInitProperties'][] = 'smwfInitSpecialPropertyOfSMWHalo';
-
+    $wgHooks['ArticleSaveComplete'][] = 'smwfSavesNamespaceMappings';
+    
 	global $smwgDefaultStore, $smwgShowDerivedFacts, $wgRequest;
 	if ($smwgShowDerivedFacts === true) {
 		$wgHooks['smwShowFactbox'][] = 'smwfAddDerivedFacts';
@@ -2095,3 +2096,17 @@ function smwfAddIsExtensionInstalledMagic(&$magicWords, $langCode = "en"){
 	return true;
 }
 
+function smwfSavesNamespaceMappings(&$article, &$user, $text, $summary,
+ $minoredit, $watchthis, $sectionanchor, &$flags, $revision, &$status, $baseRevId, &$redirect) {
+    if (!defined('DF_VERSION')) return;
+    global $dfgLang;
+    if ($article->getTitle()->getText() == $dfgLang->getLanguageString('df_namespace_mappings_page')
+        && $article->getTitle()->getNamespace() == NS_MEDIAWIKI) {
+        $namespaceMappings = DFBundleTools::parseRegisteredPrefixes($text);
+        smwfGetSemanticStore()->clearNamespaceMappings();
+        foreach($namespaceMappings as $prefix => $uri) {
+            smwfGetSemanticStore()->addNamespaceMapping($prefix, $uri);
+        }
+    }
+    return true;
+}

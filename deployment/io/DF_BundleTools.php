@@ -88,42 +88,64 @@ class DFBundleTools {
 		return NULL;
 	}
 
+    /**
+     * Returns prefix/namespace URI mappings.
+     * 
+     * @param string $wikiText
+     * 
+     * @return array($prefix => $namespace URI)
+     */
+    public static function getRegisteredPrefixes($text) {
+        $dbw = wfGetDB( DB_SLAVE );
+        global $dfgLang;
+        $nsMappingPage = $dfgLang->getLanguageString('df_namespace_mappings_page');
+        $nsMappingPageTitle = Title::newFromText($nsMappingPage, NS_MEDIAWIKI);
+        if (!$nsMappingPageTitle->exists()) {
+            return array();
+        }
+        $rev = Revision::loadFromTitle( $dbw, $nsMappingPageTitle );
+        $text = $rev->getRawText();
+        
+        return self::parseRegisteredPrefixes($text);
+    }
+    
 	/**
-	 * Returns the ontology prefix (if any). Otherwise an empty string.
-	 *
-	 * @param $bundleID
+	 * Parses prefix/namespace URI mappings from wiki text.
+	 * 
+	 * @param string $wikiText
+	 * 
+	 * @return array($prefix => $namespace URI)
 	 */
-	public static function getOntologyPrefix($bundleID) {
-		global $dfgLang;
-		$instDirProperty = $dfgLang->getLanguageString('df_instdir');
-		$bundleTitle = Title::newFromText($bundleID);
-		$values = smwfGetStore()->getPropertyValues($bundleTitle, SMWPropertyValue::makeUserProperty($instDirProperty));
-		if (count($values) > 0) {
-			$value = reset($values);
-			$dbkeys = $value->getDBkeys();
-			$installationDir = reset($dbkeys);
-			global $IP;
-
-			$handle = @opendir("$IP/$installationDir");
-			if (!$handle) {
-				return ''; // TODO: should not happen
+	public static function parseRegisteredPrefixes($text) {
+		$lines = explode("\n", $text);
+		$results = array();
+		foreach($lines as $l) {
+			if (strpos($l, ":") !== false) {
+				$prefix = trim(substr($l, 0, strpos($l, ":")));
+				$uri = trim(substr($l, strpos($l, ":")+1));
+				$results[$prefix] = $uri;
 			}
-
-			while ($entry = readdir($handle) ){
-				if ($entry[0] == '.'){
-					continue;
-				}
-				
-				$parts = explode(".", $entry);
-				if ($parts[count($parts)-1] == 'prefix') {
-					$prefix = file_get_contents("$IP/$installationDir/$entry");
-					return trim($prefix);
-				}
-			}
-
 		}
+		return $results;
+	}
 
-		return '';
+	/**
+	 * Stores prefix/namespace URI mappings.
+	 *
+	 * @param array($prefix => $namespace URI)
+	 *
+	 */
+	public static function storeRegisteredPrefixes($namespaceMappings) {
+		$dbw = wfGetDB( DB_SLAVE );
+		global $dfgLang;
+		$nsMappingPage = $dfgLang->getLanguageString('df_namespace_mappings_page');
+		$nsMappingPageTitle = Title::newFromText($nsMappingPage, NS_MEDIAWIKI);
+		$result = "";
+		foreach($namespaceMappings as $prefix => $uri) {
+			$result .= "\n$prefix : $uri";
+		}
+		$article = new Article($nsMappingPageTitle);
+		$article->doEdit($result, "auto-generated namespace mappings");
 	}
 
 	/**

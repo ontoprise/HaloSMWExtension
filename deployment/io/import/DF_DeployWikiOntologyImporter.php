@@ -41,17 +41,17 @@ class DeployWikiOntologyImporter extends WikiImporter {
 
 	var $result;
 	var $ontologyID;
-	var $prefix;
+
 	var $mode;
-	var $callback;
+
 	var $logger;
 
-	function __construct($source, $ontologyID, $prefix, $mode, $callback) {
+	function __construct($source, $ontologyID, $mode) {
 		parent::__construct($source);
 		$this->mode = $mode;
-		$this->callback = $callback;
+	
 		$this->ontologyID = $ontologyID;
-		$this->prefix = $prefix;
+	
 		$this->logger = Logger::getInstance();
 	}
 
@@ -76,7 +76,7 @@ class DeployWikiOntologyImporter extends WikiImporter {
 			case "revision":
 				$this->push( "revision" );
 				if( is_object( $this->pageTitle ) ) {
-					$this->workRevision = new DeployWikiOntologyRevision($this->mode, $this->ontologyID, $this->prefix, $this->callback);
+					$this->workRevision = new DeployWikiOntologyRevision($this->mode, $this->ontologyID);
 					$this->workRevision->setTitle( $this->pageTitle );
 					$this->workRevisionCount++;
 				} else {
@@ -88,7 +88,7 @@ class DeployWikiOntologyImporter extends WikiImporter {
 			case "upload":
 				$this->push( "upload" );
 				if( is_object( $this->pageTitle ) ) {
-					$this->workRevision = new DeployWikiOntologyRevision($this->mode, $this->ontologyID, $this->prefix, $this->callback);
+					$this->workRevision = new DeployWikiOntologyRevision($this->mode, $this->ontologyID);
 					$this->workRevision->setTitle( $this->pageTitle );
 					$this->uploadCount++;
 				} else {
@@ -148,31 +148,16 @@ class DeployWikiOntologyRevision extends WikiRevision {
 	// ontology ID
 	var $ontologyID;
 
-	// prefix used for import
-	var $prefix;
-
-	var $ontologyMerger;
-
-	// callback function for user interaction
-	var $callback;
-
 	var $logger;
 
-	public function __construct($mode = 0, $ontologyID, $prefix, $callback = NULL) {
+	public function __construct($mode = 0, $ontologyID) {
 		global $dfgLang;
 
 		$this->mode = $mode;
-		$this->callback = $callback;
+	
 		$this->ontologyID = $ontologyID;
-		$this->prefix = $prefix;
-		$this->ontologyMerger = new OntologyMerger(
-		array($dfgLang->getLanguageString('is_inverse_of')),
-		array($dfgLang->getLanguageString('has_domain_and_range') => array('Type:Page', 'Type:Page')),
-		array($dfgLang->getLanguageString('has_domain_and_range'), $dfgLang->getLanguageString('imported_from'), $dfgLang->getLanguageString('df_partofbundle'),
-		      $dfgLang->getLanguageString('df_ontologyversion'), $dfgLang->getLanguageString('df_instdir'), $dfgLang->getLanguageString('df_rationale'),
-	          $dfgLang->getLanguageString('df_ontologyuri'), $dfgLang->getLanguageString('df_license'), $dfgLang->getLanguageString('df_maintainer'),
-	          $dfgLang->getLanguageString('df_helpurl'), $dfgLang->getLanguageString('df_vendor'))
-		);
+
+
 		$this->logger = Logger::getInstance();
 	}
 
@@ -188,7 +173,7 @@ class DeployWikiOntologyRevision extends WikiRevision {
 	 */
 	function importOldRevision() {
 
-        global $dfgOut;
+		global $dfgOut;
 		$dbw = wfGetDB( DB_MASTER );
 		// check revision here
 		$linkCache = LinkCache::singleton();
@@ -197,92 +182,35 @@ class DeployWikiOntologyRevision extends WikiRevision {
 		global $dfgLang;
 		if ($this->title->getNamespace() == NS_TEMPLATE && $this->title->getText() === $dfgLang->getLanguageString('df_contenthash')) return false;
 		if ($this->title->getNamespace() == NS_TEMPLATE && $this->title->getText() === $dfgLang->getLanguageString('df_partofbundle')) return false;
-
-		//  only rename if prefix is set and it is NOT the ontology page itself.
-		if ($this->prefix != '' && $this->title->getPrefixedText() != ucfirst($this->ontologyID)) {
-			$nsText = $this->title->getNamespace() !== NS_MAIN ? $this->title->getNsText().":" : "";
-			$this->setTitle(Title::newFromText($nsText.$this->prefix.$this->title->getText()));
-		}
-
+		
 		$article = new Article( $this->title );
 		$pageId = $article->getId();
 		global $smwgTripleStoreGraph;
-		//if( $pageId == 0 ) {
-
-		// set base URI for rules entities
-		$rules = $this->ontologyMerger->extractRules($this->text);
-		if (count($rules) > 0) {
-			// there are rules
-			$this->text = str_replace('http://$$_graph_$$', $smwgTripleStoreGraph, $this->text);
-		}
-        
-		// refactor (necessary if prefix is non-empty)
-		if ($this->prefix != '') {
-			$this->text = $this->ontologyMerger->transformOntologyElements($this->prefix, $this->text);
-			$rules = $this->ontologyMerger->transformRulesElements($this->prefix, $rules);
-		}
+		if( $pageId == 0 ) {
+            // page does not exist, just import
+			$res = parent::importOldRevision();
+		} else{
 			
+			// merge, only happens if two bundles contain page about same entity. 
+			$prior = Revision::loadFromTitle( $dbw, $this->title );
 
-		$res = parent::importOldRevision();
+			if( !is_null( $prior ) ) {
+				$wikitext = $prior->getRawText();
+				$om = new OntologyMerger();
+				if ($om->containsBundle($this->ontologyID, $wikitext)) {
+					$wikitext = $om->removeBundle($this->ontologyID, $wikitext);
+				}
+				$om->addBundle($this->ontologyID, $wikitext,$this->title->getText());
+			}
+		}
 
-		// run parser and store data
-		global $wgParser, $wgTitle;
-		$wgTitle = $this->title;
-		$wgParser->mOptions = new ParserOptions();
-		$parseOutput = $wgParser->parse($this->text, $this->title, $wgParser->mOptions);
-		SMWParseData::storeData($parseOutput, $this->title);
 
 		$this->logger->info("Imported page: ".$this->title->getPrefixedText());
 		$dfgOut->outputln("\t[Imported page] ".$this->title->getPrefixedText());
 			
 		return $res;
 
-		//} else {
 
-		/*$prior = Revision::loadFromTitle( $dbw, $this->title );
-
-
-		if( !is_null( $prior ) ) {
-
-		// merge new annotations with existing wikitext
-		$wikitext = $prior->getRawText();
-		$wikitext = $this->ontologyMerger->stripAnnotations($wikitext);
-
-		$extractAnnotations = $this->ontologyMerger->extractAnnotations($this->getText());
-		$wikitext .= implode("\n", $extractAnnotations);
-		$wikitext = $this->ontologyMerger->transformOntologyElements($this->prefix, $wikitext);
-
-		// strip rules from existing revision
-		$wikitext = $this->ontologyMerger->stripRules($wikitext);
-			
-		// extract rules from new and add prefix if necessary
-		$rules = $this->ontologyMerger->extractRules($this->text);
-		$rules = $this->ontologyMerger->transformRulesElements($this->prefix, $rules);
-
-		// update text
-
-		$this->text = $wikitext;
-		foreach($rules as $r) {
-		list($name, $ruletag) = $r;
-		// replace http://$$__graph__$$
-		$ruletag = str_replace('http://$$_graph_$$', $smwgTripleStoreGraph, $ruletag);
-		$this->text .= "\n$ruletag";
-
-		}
-
-		$res = $this->importAsNewRevision();
-
-		// run parser and store data
-		global $wgParser, $wgTitle;
-		$wgTitle = $this->title;
-		$wgParser->mOptions = new ParserOptions();
-		$parseOutput = $wgParser->parse($this->text, $this->title, $wgParser->mOptions);
-		SMWParseData::storeData($parseOutput, $this->title);
-		return $res;
-
-
-		}
-		}*/
 		return false;
 
 	}
@@ -291,7 +219,7 @@ class DeployWikiOntologyRevision extends WikiRevision {
 
 
 	function importAsNewRevision() {
-        global $dfgOut;
+		global $dfgOut;
 		$dbw = wfGetDB( DB_MASTER );
 
 		# Sneak a single revision into place

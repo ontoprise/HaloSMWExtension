@@ -43,6 +43,8 @@ class DF_Language_De extends DF_Language {
     'has_domain_and_range' => 'Hat Domain und Range',
 	'imported_from'=>'Importiert aus',
 	
+	'df_namespace_mappings_page' => 'NamespaceMappings',
+	
 	// user
     'checkinstallation' => 'Prüfe Installation',
     'df_checkforupdates' => 'Prüfe auf Updates',

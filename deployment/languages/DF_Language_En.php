@@ -43,6 +43,8 @@ class DF_Language_En extends DF_Language {
 	'is_inverse_of' => 'Is inverse of',
 	'has_domain_and_range' => 'Has domain and range',
 	'imported_from'=>'Imported from',
+	
+	'df_namespace_mappings_page' => 'NamespaceMappings',
 
 	// user
 	'checkinstallation' => 'Check Installation',

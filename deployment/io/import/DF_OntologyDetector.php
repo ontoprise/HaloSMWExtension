@@ -43,17 +43,17 @@ class DeployWikiImporterDetector extends WikiImporter {
     
     var $result;
     var $ontologyID;
-    var $prefix;
+  
     var $mode;
-    var $callback;
+  
     var $logger;
 
-    function __construct($source, $ontologyID, $prefix, $mode, $callback) {
+    function __construct($source, $ontologyID, $mode) {
         parent::__construct($source);
         $this->mode = $mode;
-        $this->callback = $callback;
+     
         $this->ontologyID = $ontologyID;
-        $this->prefix = $prefix;
+        
         $this->logger = Logger::getInstance();
         $this->result = array();
     }
@@ -79,7 +79,7 @@ class DeployWikiImporterDetector extends WikiImporter {
             case "revision":
                 $this->push( "revision" );
                 if( is_object( $this->pageTitle ) ) {
-                    $this->workRevision = new DeployWikiRevisionDetector($this->mode, $this->ontologyID, $this->prefix, $this->callback);
+                    $this->workRevision = new DeployWikiRevisionDetector($this->mode, $this->ontologyID);
                     $this->workRevision->setTitle( $this->pageTitle );
                     $this->workRevisionCount++;
                 } else {
@@ -91,7 +91,7 @@ class DeployWikiImporterDetector extends WikiImporter {
             case "upload":
                 $this->push( "upload" );
                 if( is_object( $this->pageTitle ) ) {
-                    $this->workRevision = new DeployWikiRevisionDetector($this->mode, $this->ontologyID, $this->prefix, $this->callback);
+                    $this->workRevision = new DeployWikiRevisionDetector($this->mode, $this->ontologyID);
                     $this->workRevision->setTitle( $this->pageTitle );
                     $this->uploadCount++;
                 } else {
@@ -153,19 +153,14 @@ class DeployWikiRevisionDetector extends WikiRevision {
     
     // ontology ID
     var $ontologyID;
-    
-    var $prefix;
-    
-    // callback function for user interaction
-    var $callback;
-
+   
     var $logger;
 
-    public function __construct($mode = 0, $ontologyID, $prefix, $callback = NULL) {
+    public function __construct($mode = 0, $ontologyID) {
         $this->mode = $mode;
-        $this->callback = $callback;
+     
         $this->ontologyID = $ontologyID;
-        $this->prefix = $prefix;
+  
         $this->result = NULL;
         $this->logger = Logger::getInstance();
     }
@@ -192,11 +187,7 @@ class DeployWikiRevisionDetector extends WikiRevision {
         if ($this->title->getNamespace() == NS_TEMPLATE && $this->title->getText() === $dfgLang->getLanguageString('df_contenthash')) return false;
         if ($this->title->getNamespace() == NS_TEMPLATE && $this->title->getText() === $dfgLang->getLanguageString('df_partofbundle')) return false;
 
-        // only rename if prefix is set and it is NOT the ontology page itself.
-		if ($this->prefix != '' && $this->title->getPrefixedText() != ucfirst($this->ontologyID)) {
-			$nsText = $this->title->getNamespace() !== NS_MAIN ? $this->title->getNsText().":" : "";
-			$this->setTitle(Title::newFromText($nsText.$this->prefix.$this->title->getText()));
-		}
+       
 
         $article = new Article( $this->title );
         $pageId = $article->getId();

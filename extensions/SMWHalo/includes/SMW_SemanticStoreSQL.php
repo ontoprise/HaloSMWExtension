@@ -57,22 +57,22 @@ class SMWSemanticStoreSQL extends SMWSemanticStore {
 		DBHelper::reportProgress(" ... done!\n",$verbose);
 		return true;
 	}
-    
+
 	/**
 	 * Checks if the extension is correctly installed.
-	 * 
+	 *
 	 *  (1) Checks existance of database tables
 	 *  (2) Checks if certain pages with special Halo semantics exist
-	 *  
+	 *
 	 *  FIXME: i18n the messages.
-	 *  
-	 * @param (out) array $messages 
+	 *
+	 * @param (out) array $messages
 	 */
 	function isInitialized(& $messages) {
 		$db =& wfGetDB( DB_SLAVE );
 		$smw_loggingExists = $db->tableExists('smw_logging');
-		if (!$smw_loggingExists) { 
-		  $messages[] = "smw_logging does not exist!\n";
+		if (!$smw_loggingExists) {
+			$messages[] = "smw_logging does not exist!\n";
 		}
 		$smw_urimappingExists = $db->tableExists('smw_urimapping');
 		if (!$smw_urimappingExists) {
@@ -1110,16 +1110,16 @@ class SMWSemanticStoreSQL extends SMWSemanticStore {
 				DBHelper::reportProgress("   ... Create page ".$t->getNsText().":".$t->getText()."...\n",$verbose);
 			}
 		}
-		
+
 		// create NEP templates
 		global $smwgHaloIP;
 		$contents = file_get_contents("$smwgHaloIP/resources/nep/NEP_Generic.template");
-	    $t = Title::newFromText("NEP/Generic", NS_MEDIAWIKI);
-            if (!$t->exists()) {
-                $article = new Article($t);
-                $article->insertNewArticle($contents, "", false, false);
-                DBHelper::reportProgress("   ... Create page ".$t->getNsText().":".$t->getText()."...\n",$verbose);
-            }
+		$t = Title::newFromText("NEP/Generic", NS_MEDIAWIKI);
+		if (!$t->exists()) {
+			$article = new Article($t);
+			$article->insertNewArticle($contents, "", false, false);
+			DBHelper::reportProgress("   ... Create page ".$t->getNsText().":".$t->getText()."...\n",$verbose);
+		}
 
 		$this->createHelpAttributes($verbose);
 
@@ -1219,14 +1219,22 @@ class SMWSemanticStoreSQL extends SMWSemanticStore {
 		global $wgDBname;
 		$db =& wfGetDB( DB_MASTER );
 
-		// create gardening table
-		$smw_logging = $db->tableName('smw_urimapping');
-		$fname = 'SMW::setupLogging';
-
-		// create relation table
-		DBHelper::setupTable($smw_logging, array(
+		$table = $db->tableName('smw_urimapping');
+		DBHelper::setupTable($table, array(
                   'smw_id'              =>  'INT(8) UNSIGNED NOT NULL PRIMARY KEY' ,
                   'page_id'              =>  'INTEGER UNSIGNED NOT NULL ' ,
+                  'smw_uri'       =>  'VARBINARY(255)'), $db, $verbose);
+
+		DBHelper::reportProgress("   ... done!\n",$verbose);
+
+		DBHelper::reportProgress("   ... Creating prefix/namespace mapping database \n",$verbose);
+		global $wgDBname;
+		$db =& wfGetDB( DB_MASTER );
+
+
+		$table = $db->tableName('smw_nsmapping');
+		DBHelper::setupTable($table, array(
+                  'smw_prefix'              =>  'VARBINARY(255) NOT NULL PRIMARY KEY' ,
                   'smw_uri'       =>  'VARBINARY(255)'), $db, $verbose);
 
 		DBHelper::reportProgress("   ... done!\n",$verbose);
@@ -1362,7 +1370,46 @@ class SMWSemanticStoreSQL extends SMWSemanticStore {
 		$db =& wfGetDB( DB_SLAVE );
 		$smw_urimapping = $db->tableName('smw_urimapping');
 		$tscURI = $db->selectRow($smw_urimapping, array('smw_uri'), array('page_id'=>$title->getArticleID()));
-		return $tscURI !== false ? $tscURI->smw_uri : NULL;
+		if ($tscURI !== false) return $tscURI->smw_uri;
+		
+		$parts = explode("/", $title->getText());
+		$prefix = $parts[0];
+		$ns_uri = $this->getNamespaceMapping($prefix);
+		if (is_null($ns_uri)) return NULL;
+		return $ns_uri.substr($title->getText(), strlen($prefix)+1);
+	}
+
+	public function getNamespaceMapping($prefix) {
+		$db =& wfGetDB( DB_SLAVE );
+		$smw_nsmapping = $db->tableName('smw_nsmapping');
+		$uri = $db->selectRow($smw_nsmapping, array('smw_uri'), array('smw_prefix'=>$prefix));
+		return $uri !== false ? $uri->smw_nsmapping : NULL;
+	}
+	
+    public function getAllNamespaceMappings() {
+        $db =& wfGetDB( DB_SLAVE );
+        $smw_nsmapping = $db->tableName('smw_nsmapping');
+        $res = $db->select($smw_nsmapping, array('smw_prefix', 'smw_uri'));
+        $result = array();
+        if($db->numRows( $res ) > 0) {
+            while($row = $db->fetchObject($res)) {
+                $result[$row->smw_prefix] = $row->smw_uri;
+            }
+        }
+        $db->freeResult($res);
+        return $result;
+    }
+	
+	public function addNamespaceMapping($prefix, $uri) {
+		$db =& wfGetDB( DB_MASTER );
+        $smw_nsmapping = $db->tableName('smw_nsmapping');
+        $db->query('INSERT INTO '.$smw_nsmapping.' VALUES ('.$db->addQuotes($prefix).', '.$db->addQuotes($uri).')');
+	}
+	
+	public function clearNamespaceMappings() {
+		$db =& wfGetDB( DB_MASTER );
+        $smw_nsmapping = $db->tableName('smw_nsmapping');
+        $db->query('DELETE FROM '.$smw_nsmapping);
 	}
 }
 

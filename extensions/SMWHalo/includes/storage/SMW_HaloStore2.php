@@ -35,17 +35,17 @@ class SMWHaloStore2 extends SMWSQLStore2 {
 			$this->mapping = NULL;
 			$this->handleURIMappings($data);
 			return $updateData;
-				
+
 		} else {
 			$updateData = parent::doDataUpdate($data);
 			$this->mapping = NULL;
 			$this->handleURIMappings($data);
 			return $updateData;
-				
+
 		}
 	}
 
-	
+
 
 	/**
 	 * Creates URI mapping table. Maps the SMW ids to URIs.
@@ -61,6 +61,7 @@ class SMWHaloStore2 extends SMWSQLStore2 {
 		$subjectTitle = $data->getSubject()->getTitle();
 		$ontologyURIProperty = smwfGetSemanticStore()->ontologyURIProp->getDBkey();
 
+
 		if (!isset($id)) {
 			$id = $db->selectRow($smw_ids, array('smw_id'), array('smw_title'=>$subjectTitle->getDBkey(), 'smw_namespace'=>$subjectTitle->getNamespace()));
 		}
@@ -70,7 +71,11 @@ class SMWHaloStore2 extends SMWSQLStore2 {
 		// delete old mappings
 		$db->delete($smw_urimapping, array('smw_id' => $id->smw_id));
 
+		// addOntologyURI mappings, if any
+		$ontologyURIMappingAdded = false;
 		foreach($data->getProperties() as $key => $property) {
+				
+			// only if OntologyURI property
 			if ($ontologyURIProperty == $property->getDBkey()) {
 
 				$propertyValueArray = $data->getPropertyValues($property);
@@ -80,7 +85,7 @@ class SMWHaloStore2 extends SMWSQLStore2 {
 				$uriValue = reset($propertyValueArray);
 				$uriDBkeys = $uriValue->getDBkeys();
 				$tscURI = array_shift($uriDBkeys);
-				 
+					
 				// make sure to decode "(", ")", ",". Normally they are encoded in SMW URIs
 				// This is crucial for OBL functional terms!
 				$tscURI = str_replace("%28", "(", $tscURI);
@@ -89,6 +94,20 @@ class SMWHaloStore2 extends SMWSQLStore2 {
 
 				$db->insert($smw_urimapping, array('smw_id' => $id->smw_id, 'page_id' => $subjectTitle->getArticleID(), 'smw_uri'=>$tscURI));
 
+				$wikiURI = TSNamespaces::getInstance()->getFullURI($subjectTitle);
+				$this->mapping = array($wikiURI, $tscURI);
+				$ontologyURIMappingAdded = true;
+			}
+		}
+		if (!$ontologyURIMappingAdded) {
+			// that means ontology URL might be implicitly defined by a prefix in the title: Category:Foaf/Person
+			$namespaceMapping = smwfGetSemanticStore()->getAllNamespaceMappings();
+			$parts = explode("/", $subjectTitle->getText());
+			$prefix = strtolower($parts[0]);
+			if (array_key_exists($prefix, $namespaceMapping)) {
+				$local = substr($subjectTitle->getText(), strlen($prefix) + 1);
+				$tscURI = $namespaceMapping[$prefix] . $local;
+				$db->insert($smw_urimapping, array('smw_id' => $id->smw_id, 'page_id' => $subjectTitle->getArticleID(), 'smw_uri'=>$tscURI));
 				$wikiURI = TSNamespaces::getInstance()->getFullURI($subjectTitle);
 				$this->mapping = array($wikiURI, $tscURI);
 			}

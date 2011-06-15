@@ -742,6 +742,39 @@ class Tools {
 		$db->query('DROP TEMPORARY TABLE df_page_of_templates_must_persist');
 	}
 
+	public static function getBundleOverlaps($ext_id, $logger = NULL) {
+		global $dfgLang;
+		global $dfgOut;
+
+		$partOfBundlePropertyID = smwfGetStore()->getSMWPropertyID(SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString("df_partofbundle")));
+		$ext_id = strtoupper(substr($ext_id, 0, 1)).substr($ext_id, 1);
+		$partOfBundleID = smwfGetStore()->getSMWPageID($ext_id, NS_MAIN, "");
+
+		$smw_ids = $db->tableName('smw_ids');
+		$smw_rels2 = $db->tableName('smw_rels2');
+			
+		$result = array();
+		$res = $db->query( 'SELECT s.smw_title AS partOfBundleTitle, s.smw_namespace AS partOfBundleNamespace,  GROUP_CONCAT(o.smw_title) AS bundleTitle, GROUP_CONCAT(o.smw_namespace) AS bundleNamespace'.
+                            ' FROM '.$smw_ids.' s JOIN '.$smw_rels2.' ON s.smw_id = s_id JOIN '.$smw_ids.' o ON o.smw_id = o_id  WHERE p_id = '.$partOfBundlePropertyID.
+                            ' GROUP BY partOfBundleTitle, partOfBundleNamespace HAVING count(o.smw_title) > 1');
+
+		if($db->numRows( $res ) > 0) {
+
+			while($row = $db->fetchObject($res)) {
+                
+				$bundleTitles = explode(",", $row->bundleTitle);
+				
+				if (in_array(ucfirst($ext_id), $bundleTitles)) {
+					$title = Title::newFromText($row->partOfBundleTitle, $row->partOfBundleNamespace);
+					$result[] = $title;
+				}
+					
+			}
+
+		}
+		$db->freeResult($res);
+		return $result;
+	}
 	/**
 	 * Removes referenced images of a bundle (ie. images which are used on bundle pages). If $keepStillRequiredImages
 	 * is true, image used by pages other than those of the bundle are kept.
