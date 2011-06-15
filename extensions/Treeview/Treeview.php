@@ -60,6 +60,7 @@ $wgHooks['SkinTemplateToolboxEnd'][] = 'smwhg_AddTreeToToolbox';
 class SemanticTreeview {
 
     var $version  = SEMANTIC_TREEVIEW_VERSION;
+    var $styleVer = '';      # will hold a number build from the version number
     var $uniq     = '';      # uniq part of all tree id's
     var $uniqname = 'tv';    # input name for uniqid
     var $id       = '';      # id for specific tree
@@ -88,6 +89,7 @@ class SemanticTreeview {
 
         $this->useLines = $wgTreeViewShowLines ? 'true' : 'false';
         $this->uniq     = uniqid($this->uniqname);
+        $this->styleVer = preg_replace('/[^\d]/', '', $this->version);
 
         # Convert image titles to file paths and store as JS to update dTree
         foreach ($wgTreeViewImages as $k => $v) {
@@ -106,8 +108,8 @@ class SemanticTreeview {
             $wgOut->addScript("<script type=\"$wgJsMimeType\" src=\"{$this->baseUrl}/prototype.js\"></script>\n");
 
         # Add link to output to load dtree.js script
-        $wgOut->addScript("<script type=\"$wgJsMimeType\" src=\"{$this->baseUrl}/dtree.js\"><!-- Semantic Treeview ".SEMANTIC_TREEVIEW_VERSION." --></script>\n");
-        $wgOut->addStyle($this->baseUrl.'/dtree.css', 'screen, projection');
+        $wgOut->addScript("<script type=\"$wgJsMimeType\" src=\"{$this->baseUrl}/dtree.js?{$this->styleVer}\"><!-- Semantic Treeview ".SEMANTIC_TREEVIEW_VERSION." --></script>\n");
+        $wgOut->addStyle($this->baseUrl.'/dtree.css?'.$this->styleVer, 'screen, projection');
     }
 
 
