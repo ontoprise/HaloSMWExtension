@@ -94,7 +94,7 @@
 		<java fork="true" jar="../../../buildtools/closure/compiler.jar" failonerror="true">
 			<arg value="--js=../../Collaboration/scripts/overlay.js" />
 			<arg value="--js=../../Collaboration/scripts/Comment/CE_Comment.js" />
-			<arg value="--js_output_file=../../SMWHalo/scripts/deployCollaboration.js" />
+			<arg value="--js_output_file=../../Collaboration/scripts/deployCollaboration.js" />
 		</java>
 	</target>
 
