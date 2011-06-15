@@ -3,8 +3,8 @@
 	<global>
 		<version>156</version>
 		<id>smwhalo</id>
-		<vendor>Ontoprise GmbH</vendor>
-		<maintainer>Ontoprise GmbH</maintainer>
+		<vendor>ontoprise GmbH</vendor>
+		<maintainer>ontoprise GmbH</maintainer>
 		<instdir>extensions/SMWHalo</instdir>
 		<description>
 			Eases the usage and enhances the benefits of Semantic

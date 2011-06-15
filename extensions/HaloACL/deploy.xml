@@ -3,8 +3,8 @@
 	<global>
 		<version>140</version>
 		<id>haloacl</id>
-		<vendor>Ontoprise GmbH</vendor>
-		<maintainer>Ontoprise GmbH</maintainer>
+		<vendor>ontoprise GmbH</vendor>
+		<maintainer>ontoprise GmbH</maintainer>
 		<license>GPL-v2</license>
 		<instdir>extensions/HaloACL</instdir>
 		<description>

@@ -4,8 +4,8 @@
         <version>113</version>
         <id>ultrapedia</id>
         <license>GPL-v2</license>
-        <vendor>Ontoprise GmbH</vendor>
-        <maintainer>Ontoprise GmbH</maintainer>
+        <vendor>ontoprise GmbH</vendor>
+        <maintainer>ontoprise GmbH</maintainer>
         <instdir>extensions/Ultrapedia</instdir>
         <description>
             Provides a tab function and a dynamic ask query.

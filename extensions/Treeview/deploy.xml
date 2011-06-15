@@ -4,8 +4,8 @@
 		<version>143</version>
 		<id>treeview</id>
         <license>GPL-v2</license>
-		<vendor>Ontoprise GmbH</vendor>
-		<maintainer>Ontoprise GmbH</maintainer>
+		<vendor>ontoprise GmbH</vendor>
+		<maintainer>ontoprise GmbH</maintainer>
 		<instdir>extensions/Treeview</instdir>
 		<description>
 			Treeview which gets populated by semantic data.

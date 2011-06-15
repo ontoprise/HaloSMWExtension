@@ -5,8 +5,8 @@
         <patchlevel>1</patchlevel>
         <id>semanticforms</id>
         <license>GPL-v2</license>
-        <vendor>Ontoprise GmbH / Yaron Koren</vendor>
-        <maintainer>Ontoprise GmbH</maintainer>
+        <vendor>ontoprise GmbH / Yaron Koren</vendor>
+        <maintainer>ontoprise GmbH</maintainer>
         <instdir>extensions/SemanticForms</instdir>
         <description>
             Forms for adding and editing semantic data.

@@ -3,8 +3,8 @@
 	<global>
 		<version>100</version>
 		<id>arclibrary</id>
-		<vendor>Ontoprise GmbH</vendor>
-		<maintainer>Ontoprise GmbH</maintainer>
+		<vendor>ontoprise GmbH</vendor>
+		<maintainer>ontoprise GmbH</maintainer>
 		<instdir>extensions/ARCLibrary</instdir>
 		<description>
 			Provides the ARC library to other MW extensions.

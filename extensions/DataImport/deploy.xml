@@ -3,8 +3,8 @@
 	<global>
 		<version>142</version>
 		<id>dataimport</id>
-		<vendor>Ontoprise GmbH</vendor>
-		<maintainer>Ontoprise GmbH</maintainer>
+		<vendor>ontoprise GmbH</vendor>
+		<maintainer>ontoprise GmbH</maintainer>
 		<instdir>extensions/DataImport</instdir>
 		<description>
 			Connects external datasources to your wiki.

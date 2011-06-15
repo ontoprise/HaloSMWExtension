@@ -4,8 +4,8 @@
 		<version>156</version>
 		<patchlevel>0</patchlevel>
 		<id>deployment</id>
-		<vendor>Ontoprise GmbH</vendor>
-		<maintainer>Ontoprise GmbH</maintainer>
+		<vendor>ontoprise GmbH</vendor>
+		<maintainer>ontoprise GmbH</maintainer>
 		<instdir>deployment</instdir>
 		<description>
 			Simplifies installation and update of extensions
