@@ -17,6 +17,7 @@
             <dependency from="101">scriptmanager</dependency>
             <dependency from="151" optional="true">smwhalo</dependency>
         </dependencies>
+        <license>GPL-v2</license>
     </global>
     <codefiles>
         <!-- empty -->
