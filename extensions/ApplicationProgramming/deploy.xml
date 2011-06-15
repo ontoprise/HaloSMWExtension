@@ -3,8 +3,8 @@
 	<global>
 		<version>103</version>
 		<id>ApplicationProgramming</id>
-		<vendor>Ontoprise GmbH</vendor>
-		<maintainer>Ontoprise GmbH</maintainer>
+		<vendor>ontoprise GmbH</vendor>
+		<maintainer>ontoprise GmbH</maintainer>
         <license>GPL-v2, MIT, Public Domain</license>
 		<instdir>extensions/ApplicationProgramming</instdir>
 		<description>
