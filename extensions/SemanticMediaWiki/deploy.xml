@@ -4,8 +4,8 @@
         <version>156</version>
         <patchlevel>0</patchlevel>
         <id>smw</id>
-        <vendor>Ontoprise GmbH</vendor>
-        <maintainer>Ontoprise GmbH</maintainer>
+        <vendor>ontoprise GmbH</vendor>
+        <maintainer>ontoprise GmbH</maintainer>
         <instdir>extensions/SemanticMediaWiki</instdir>
         <description>Enhances the wiki with semantic annotations.</description>
         <helpurl>http://semantic-mediawiki.org/wiki/Help:User_manual</helpurl>
