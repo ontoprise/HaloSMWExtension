@@ -3,8 +3,8 @@
 	<global>
 		<version>110</version>
 		<id>automaticsemanticforms</id>
-		<vendor>Ontoprise GmbH</vendor>
-		<maintainer>Ontoprise GmbH</maintainer>
+		<vendor>ontoprise GmbH</vendor>
+		<maintainer>ontoprise GmbH</maintainer>
 		<instdir>extensions/AutomaticSemanticForms</instdir>
 		<description>
 			Automatically creates Semantic Forms based on the Wiki ontology.
