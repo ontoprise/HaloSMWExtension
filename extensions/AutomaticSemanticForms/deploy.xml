@@ -10,6 +10,7 @@
 			Automatically creates Semantic Forms based on the Wiki ontology.
 		</description>
 		<helpurl>http://smwforum.ontoprise.com/smwforum/index.php/Help:Automatic_Semantic_Forms_Extension</helpurl>
+        <license>GPL-v2</license>
 		<dependencies>
 			<dependency from="152" to="156">smwhalo</dependency>
 			<dependency from="200" to="212">semanticforms</dependency>
