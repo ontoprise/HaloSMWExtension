@@ -5,8 +5,8 @@
         <patchlevel>1</patchlevel>
         <id>semanticresultformats</id>
         <license>GPL-v2</license>
-        <vendor>Ontoprise GmbH</vendor>
-        <maintainer>Ontoprise GmbH</maintainer>
+        <vendor>ontoprise GmbH</vendor>
+        <maintainer>ontoprise GmbH</maintainer>
         <instdir>extensions/SemanticResultFormats</instdir>
         <description>
             Semantic Result Formats provides several new result printer for ASK (and SPARQL).
