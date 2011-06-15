@@ -25,7 +25,7 @@
  *
  */
 if (!defined("DF_WEBADMIN_TOOL")) {
-    die();
+	die();
 }
 
 require_once ( $mwrootDir.'/deployment/tools/smwadmin/DF_PackageRepository.php' );
@@ -40,7 +40,7 @@ class DFStatusTab {
 	public function __construct() {
 
 	}
-	
+
 	public function getTabName() {
 		global $dfgLang;
 		return $dfgLang->getLanguageString('df_webadmin_statustab');
@@ -59,15 +59,15 @@ class DFStatusTab {
 			$html .= "<input type=\"button\" value=\"Global update\" id=\"df_global_update\"></input>";
 			$html .= "</div>";
 		}
-		
+
 		$dfgOut->setVerbose(true);
 		$html .= "<table id=\"df_statustable\">";
 		$html .= "<th>";
 		$html .= $dfgLang->getLanguageString('df_webadmin_extension');
 		$html .= "</th>";
 		$html .= "<th>";
-        $html .= $dfgLang->getLanguageString('df_webadmin_version');
-        $html .= "</th>";
+		$html .= $dfgLang->getLanguageString('df_webadmin_version');
+		$html .= "</th>";
 		$html .= "<th>";
 		$html .= $dfgLang->getLanguageString('df_webadmin_description');
 		$html .= "</th>";
@@ -84,20 +84,24 @@ class DFStatusTab {
 			$html .= $id;
 			$html .= "</td>";
 			$html .= "<td class=\"df_extension_version\">";
-            $html .= Tools::addVersionSeparators(array($p->getVersion(), $p->getPatchlevel()));
-            $html .= "</td>";
+			$html .= Tools::addVersionSeparators(array($p->getVersion(), $p->getPatchlevel()));
+			$html .= "</td>";
 			$html .= "<td class=\"df_description\">";
 			$html .= $p->getDescription();
 			$html .= "</td>";
 			$html .= "<td class=\"df_actions\">";
 			$updateText = $dfgLang->getLanguageString('df_webadmin_update');
 			$deinstallText = $dfgLang->getLanguageString('df_webadmin_deinstall');
+			$disabledDeInstall = "";
+			if ($id == 'mw' || $id == 'deployment') {
+				$disabledDeInstall = 'disabled="true"';
+			}
 			if (array_key_exists($id, $updates)) {
 				$html .= "<input type=\"button\" class=\"df_update_button\" value=\"$updateText\" id=\"df_update__$id\"></input>";
-				$html .= "<input type=\"button\" class=\"df_deinstall_button\" value=\"$deinstallText\" id=\"df_deinstall__$id\"></input>";
+				$html .= "<input type=\"button\" class=\"df_deinstall_button\" value=\"$deinstallText\" id=\"df_deinstall__$id\" $disabledDeInstall></input>";
 			} else {
 				$html .= "<input type=\"button\" class=\"df_update_button\" value=\"$updateText\" id=\"df_update__$id\" disabled=\"true\"></input>";
-				$html .= "<input type=\"button\" class=\"df_deinstall_button\" value=\"$deinstallText\" id=\"df_update__$id\"></input>";
+				$html .= "<input type=\"button\" class=\"df_deinstall_button\" value=\"$deinstallText\" id=\"df_update__$id\" $disabledDeInstall></input>";
 			}
 			$html .= "</td>";
 			$html .= "</tr>";
