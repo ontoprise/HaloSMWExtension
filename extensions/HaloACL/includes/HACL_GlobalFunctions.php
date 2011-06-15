@@ -758,7 +758,7 @@ function haclfAddToolbarForEditPage ($content_actions) {
             YAHOO.haloacl.toolbar.loadContentToDiv('content','haclGetHACLToolbar',{title:'{$content_actions->mTitle}'});
         </script>
 HTML;
-    $content_actions->editFormTextBeforeContent = $html;
+    $content_actions->editFormTextBeforeContent .= $html;
 
     return true;
 }
