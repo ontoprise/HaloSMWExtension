@@ -31,9 +31,9 @@ if (!defined("DF_WEBADMIN_TOOL")) {
 require_once($mwrootDir.'/deployment/tools/smwadmin/DF_Tools.php');
 
 class DFUploadTab {
-	
+
 	private $uploadDirectory;
-	
+
 	/**
 	 * Status tab
 	 *
@@ -95,7 +95,7 @@ ENDS
 		$uploadFilesCounter = 0;
 		$handle = @opendir($this->uploadDirectory);
 		if ($handle !== false) {
-
+			$i=0;
 			while ($entry = readdir($handle) ){
 				if ($entry[0] == '.'){
 					continue;
@@ -113,7 +113,9 @@ ENDS
 				|| $file_ext == 'ntriple'
 				|| $file_ext == 'n3') {
 					$uploadFilesCounter++;
-					$html .= "<tr>";
+					$j = $i % 2;
+					$html .= "<tr class=\"df_row_$j\">";
+					$i++;
 					$html .= "<td>";
 					$html .= $filename;
 					$html .= "</td>";

@@ -66,14 +66,17 @@ class DFMaintenanceTab {
 		$html .= "<th>";
 		$html .= $dfgLang->getLanguageString('df_webadmin_action');
 		$html .= "</th>";
-        
+
 		if (count($restorepoints) == 0) {
 			$html .= "</table></div><br/>";
 			$html .= $dfgLang->getLanguageString('df_webadmin_norestorepoints');
 			return $html;
 		}
+		$i=0;
 		foreach($restorepoints as $rp) {
-			$html .= "<tr>";
+			$j = $i % 2;
+			$html .= "<tr class=\"df_row_$j\">";
+			$i++;
 			$html .= "<td>";
 			$name = basename($rp);
 			$html .= $name;

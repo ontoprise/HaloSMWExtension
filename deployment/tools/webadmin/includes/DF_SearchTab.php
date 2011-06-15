@@ -69,9 +69,12 @@ public function getTabName() {
 		$html .= "<th>";
 		$html .= $dfgLang->getLanguageString('df_webadmin_action');
 		$html .= "</th>";
+		$i=0;
 		foreach($results as $id => $description) {
 
-			$html .= "<tr>";
+			$j = $i % 2;
+			$html .= "<tr class=\"df_row_$j\">";
+			$i++;
 			$html .= "<td class=\"df_extension_id\">";
 			$html .= $id;
 			$html .= "</td>";
