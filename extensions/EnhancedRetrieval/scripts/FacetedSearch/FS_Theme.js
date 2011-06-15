@@ -378,6 +378,9 @@
 		}
 		var path = wgScriptPath + IMAGE_PATH;
 		if (isProperty(facet)) {
+			var facetsExpanded = FacetedSearch.singleton.FacetedSearchInstance.isExpandedFacet(facet);
+			var img1Visible = facetsExpanded ? ' style="display:none" ' : '';
+			var img2Visible = facetsExpanded ? '' : ' style="display:none" ';
 			var divID = 'property_' + facet + '_values';
 			var img1ID = 'show_details' + divID;
 			var img2ID = 'hide_details' + divID;
@@ -385,8 +388,12 @@
 			var toggleFunc = function () {
 				if ($('#' + divID).is(':visible')) {
 					$('#' + divID).hide();
+					FacetedSearch.singleton.FacetedSearchInstance
+						.removeExpandedFacet(facet);
 				} else {
 					$('#' + divID).show();
+					FacetedSearch.singleton.FacetedSearchInstance
+						.addExpandedFacet(facet);
 					showPropertyDetailsHandler(facet);
 				} 
 				$('#' + img1ID).toggle();
@@ -396,13 +403,13 @@
 			var img1 = 
 				'<img src="'+ path + 'right.png" ' +
 					'title="'+ lang.getMessage('showDetails') +
-					'" id="'+img1ID+'" class="detailsImage"/>';
+					'" id="'+img1ID+'"'+img1Visible+' class="detailsImage"/>';
 			var img2 = 
 				'<img src="'+ path + 'down.png" ' +
 					'title="'+ lang.getMessage('hideDetails') +
-					'" style="display:none" id="'+img2ID+'" class="detailsImage"/>';
+					'" id="'+img2ID+'"'+img2Visible+'" class="detailsImage"/>';
 			html = img1 + img2 + html;
-			html += '<div id="' + divID + '" style="display:none"></div>';
+			html += '<div id="' + divID +'"'+ img2Visible + '></div>';
 		} else {
 			var img = '<img src="' + path + 'item.png">';
 			html = img + html;

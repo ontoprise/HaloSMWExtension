@@ -8,6 +8,7 @@ VERSION 1.5.6
   CHANGES:
 
   BUGFIXES:
+  14666 - Expand selected facets to support drilldown process
   14660 - Always show currently selected facet in "Selected Facets" area
   14668 - Move search field to main area
   14667 - Rename "Remove all filters"

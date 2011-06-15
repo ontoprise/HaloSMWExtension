@@ -43,7 +43,9 @@ FacetedSearch.classes.FacetedSearch = function () {
 	// Names of the facet classes
 	var FACET_FIELDS = ['smwh_categories', 'smwh_attributes', 'smwh_properties',
 						'smwh_namespace_id'];
-
+						
+	var RELATION_REGEX = /^smwh_(.*)_(.*)$/;
+	var ATTRIBUTE_REGEX = /smwh_(.*)_xsdvalue_(.*)/;
 	
 	//--- Private members ---
 
@@ -58,6 +60,10 @@ FacetedSearch.classes.FacetedSearch = function () {
 	
 	// reference to the (dummy) relation widget
 	var mRelationWidget;
+	
+	// {Array} Array of strings. It contains the names of all facets that are
+	// currently expanded in the UI.
+	var mExpandedFacets = [];
 	 
 	//--- Getters/Setters ---
 	that.getAjaxSolrManager = function() {
@@ -66,6 +72,66 @@ FacetedSearch.classes.FacetedSearch = function () {
 	
 	that.getRelationWidget = function() {
 		return mRelationWidget;
+	}
+	
+	/**
+	 * Adds the given facet to the set of expanded facets in the UI, if it is a
+	 * property facet.
+	 * 
+	 * @param {String} facet
+	 * 		Name of the facet
+	 */
+	that.addExpandedFacet = function (facet) {
+		if ($.inArray(facet, mExpandedFacets) === -1) {
+			if (isProperty(facet)) {
+				mExpandedFacets.push(facet);
+			}
+		}
+	}
+	
+	/**
+	 * Return true if the given facet is expanded in the User Interface.
+	 * 
+	 * @param {String} facet
+	 * 		Name of the facet
+	 * @return {bool}
+	 * 		true, if the facet is expanded
+	 */
+	that.isExpandedFacet = function (facet) {
+		return $.inArray(facet, mExpandedFacets) >= 0;
+	}
+	
+	/**
+	 * Removes the given facet from the set of expanded facets in the UI. If no
+	 * facet name is given, all facets are removed.
+	 * 
+	 * @param {String} facet
+	 * 		Name of the facet. If this parameter is missing, all facets are removed.
+	 */
+	that.removeExpandedFacet = function (facet) {
+		if (typeof facet === 'undefined') {
+			mExpandedFacets.length = 0;
+			return;
+		}
+		var pos = $.inArray(facet, mExpandedFacets);
+		if (pos === -1) {
+			return;
+		}
+		// Replace the element to be removed by the last element of the array...
+		var len = mExpandedFacets.length;
+		mExpandedFacets[pos] = mExpandedFacets[len-1];
+		// ... and reduce the array's length
+		mExpandedFacets.length = len - 1;
+	}
+	
+	/**
+	 * Shows the property values of all expanded facets.
+	 */
+	that.showExpandedFacets = function () {
+		for (var i = 0; i < mExpandedFacets.length; ++i) {
+			var facet = mExpandedFacets[i];
+			FacetedSearch.classes.ClusterWidget.showPropertyDetailsHandler(facet);
+		}
 	}
 	
 	/**
@@ -184,7 +250,7 @@ FacetedSearch.classes.FacetedSearch = function () {
 	
 	
 	/**
-	 * Initializes the event handlers for th User Interface.
+	 * Initializes the event handlers for the User Interface.
 	 */
 	function addEventHandlers() {
 		
@@ -214,6 +280,19 @@ FacetedSearch.classes.FacetedSearch = function () {
 		}, 2000);
 
 	}
+	
+	/**
+	 * Checks if the given name is a name for an attribute or relation.
+	 * 
+	 * @param {string} name
+	 * 		The name to examine
+	 * @return {bool}
+	 * 		true, if name is a property name
+	 */
+	function isProperty(name) {
+		return name.match(ATTRIBUTE_REGEX)|| name.match(RELATION_REGEX);
+	}
+	
 	
 	construct();
 	addEventHandlers();

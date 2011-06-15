@@ -175,8 +175,11 @@ AjaxSolr.AbstractManager = AjaxSolr.Class.extend(
   handleResponse: function (data) {
     this.response = data;
 
+//	console.time("handleResponse");
     for (var widgetId in this.widgets) {
       this.widgets[widgetId].afterRequest();
     }
+//	console.timeEnd("handleResponse");
+	
   }
 });

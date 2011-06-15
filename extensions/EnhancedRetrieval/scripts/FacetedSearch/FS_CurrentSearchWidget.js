@@ -28,6 +28,10 @@ if (typeof FacetedSearch == "undefined") {
 	};
 }
 
+/**
+ * This widget renders the state of the current search i.e. all selected facets
+ * and their restrictions on values. 
+ */
 FacetedSearch.classes.CurrentSearchWidget = AjaxSolr.AbstractWidget.extend({
 
 	/**
@@ -85,6 +89,7 @@ FacetedSearch.classes.CurrentSearchWidget = AjaxSolr.AbstractWidget.extend({
 
 		if (links.length > 1) {
 			links.push(AjaxSolr.theme('remove_all_filters', function() {
+				FacetedSearch.singleton.FacetedSearchInstance.removeExpandedFacet();
 				self.manager.store.remove('fq');
 				self.manager.doRequest(0);
 				return false;
@@ -103,6 +108,9 @@ FacetedSearch.classes.CurrentSearchWidget = AjaxSolr.AbstractWidget.extend({
 		if (DEBUG) {
 			$(self.target).append(AjaxSolr.theme('filter_debug', self.manager.store.values('fq')));
 		}
+		
+		// Show the expanded facets
+		FacetedSearch.singleton.FacetedSearchInstance.showExpandedFacets();
 	},
 
 	/**
@@ -130,6 +138,7 @@ FacetedSearch.classes.CurrentSearchWidget = AjaxSolr.AbstractWidget.extend({
 				if (facet.match(CATEGORY_FACET_REGEX)) {
 					store.removeByValue('fq', split[0]);
 				} else {
+					fs.removeExpandedFacet(split[2]);
 					// The type suffix of the property name may be wrong 
 					// i.e. string and are equivalent => ignore the suffix
 					var nameWithoutType = split[2].match(/^(.*_).*$/); 

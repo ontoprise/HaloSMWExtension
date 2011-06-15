@@ -40,7 +40,7 @@ FacetedSearch.classes.FacetWidget = AjaxSolr.AbstractFacetWidget.extend({
 
 	//--- Members ---
 	// {string} The theme that is used for rendering the facets
-	mFacteTheme: 'facet',
+	mFacetTheme: 'facet',
 	
 	// {bool} If true, all selected facets are hidden by this widget
 	mHideSelectedFacet: true,
@@ -61,7 +61,7 @@ FacetedSearch.classes.FacetWidget = AjaxSolr.AbstractFacetWidget.extend({
 	//--- Getters/Setters
 	
 	setFacetTheme: function (facetTheme) {
-		this.mFacteTheme = facetTheme;
+		this.mFacetTheme = facetTheme;
 	},
 	setHideSelectedFacet: function (hideFacet) {
 		this.mHideSelectedFacet = hideFacet;
@@ -171,10 +171,10 @@ FacetedSearch.classes.FacetWidget = AjaxSolr.AbstractFacetWidget.extend({
 					// Unify handling of attributes and relations
 					widget = FacetedSearch.singleton.FacetedSearchInstance.getRelationWidget();
 				}
-				clickHandler = widget.clickHandler(facet);
+				clickHandler = widget.facetClickHandler(facet);
 			}
 			
-			var entry = AjaxSolr.theme(this.mFacteTheme, facet, 
+			var entry = AjaxSolr.theme(this.mFacetTheme, facet, 
 						               this.mFacetItems[i].count, 
 									   clickHandler, 
 									   FacetedSearch.classes.ClusterWidget.showPropertyDetailsHandler, 
@@ -270,6 +270,21 @@ FacetedSearch.classes.FacetWidget = AjaxSolr.AbstractFacetWidget.extend({
 			return false;
 		}
 	},
+	
+	/**
+	 * Click handler for the given facet.
+	 * The facet is marked as expanded facet for the UI and the click handler of
+	 * the super class is called.
+	 * @param {String} facet
+	 * 		Name of the facet.
+	 */	
+	facetClickHandler: function (facet) {
+		var superClickHandler = this.clickHandler(facet);
+		return function () {
+			FacetedSearch.singleton.FacetedSearchInstance.addExpandedFacet(facet);
+			superClickHandler();
+		}
+	}
 	
 });
 
