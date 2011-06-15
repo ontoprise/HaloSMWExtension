@@ -3,7 +3,7 @@
 	<global>
 		<version>142</version>
 		<id>SMW</id>
-		<vendor>Ontoprise GmbH</vendor>
+		<vendor>ontoprise GmbH</vendor>
 		<instdir>extensions/SemanticMediaWiki</instdir>
 		<description>Dummy</description>
 		<dependencies>

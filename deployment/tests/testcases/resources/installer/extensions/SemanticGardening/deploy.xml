@@ -3,7 +3,7 @@
     <global>
         <version>110</version>
         <id>SemanticGardening</id>
-        <vendor>Ontoprise GmbH</vendor>
+        <vendor>ontoprise GmbH</vendor>
         <instdir>extensions/SemanticGardening</instdir>
         <description>Dummy</description>
         <dependencies>

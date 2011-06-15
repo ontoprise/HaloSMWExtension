@@ -3,7 +3,7 @@
 	<global>
 		<version>144</version>
 		<id>SMWHalo</id>
-		<vendor>Ontoprise GmbH</vendor>
+		<vendor>ontoprise GmbH</vendor>
 		<instdir>extensions/SMWHalo</instdir>
 		<description>Dummy</description>
 		<dependencies>
