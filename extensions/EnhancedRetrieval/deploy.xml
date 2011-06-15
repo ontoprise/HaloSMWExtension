@@ -3,8 +3,8 @@
 	<global>
 		<version>156</version>
 		<id>unifiedsearch</id>
-		<vendor>Ontoprise GmbH</vendor>
-		<maintainer>Ontoprise GmbH</maintainer>
+		<vendor>ontoprise GmbH</vendor>
+		<maintainer>ontoprise GmbH</maintainer>
 		<license>GPL-v2</license>
 		<instdir>extensions/EnhancedRetrieval</instdir>
 		<description>A client for the lucene wiki server.</description>
