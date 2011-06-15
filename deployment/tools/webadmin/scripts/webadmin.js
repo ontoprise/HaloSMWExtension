@@ -171,6 +171,7 @@ $(function() {
 					$('#df_progress_indicator').hide();
 					var $dialog = $('#df_install_dialog');
 					$dialog.dialog('option', 'title', dfgWebAdminLanguage.getMessage('df_webadmin_finished'));
+					$('.ui-dialog-titlebar-close').show();
 				}
 				
 			} });
