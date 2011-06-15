@@ -269,6 +269,7 @@ class SCProcessor {
 		        		}
 		        	} elseif ($default_value == 'always current user' || $default_value == 'current user') {
 		        		if ($input_type == 'text' || $input_type == '') {
+		        			global $wgUser;
 		        			$default_value = $wgUser->getName();
 		        		}
 		        	} elseif ($default_value == 'revision id') {
