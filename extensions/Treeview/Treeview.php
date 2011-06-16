@@ -89,7 +89,7 @@ class SemanticTreeview {
 
         $this->useLines = $wgTreeViewShowLines ? 'true' : 'false';
         $this->uniq     = uniqid($this->uniqname);
-        $this->styleVer = preg_replace('/[^\d]/', '', $this->version);
+        $this->styleVer = preg_replace('/[^\d]/', '', '{{$BUILDNUMBER}}' );
 
         # Convert image titles to file paths and store as JS to update dTree
         foreach ($wgTreeViewImages as $k => $v) {
