@@ -46,11 +46,9 @@ http://smwforum.ontoprise.com/smwforum/index.php/Help:Repairing_data"
 		<new>
 			<require name="widget_init"
 				file="extensions/Widgets/Widgets.php" />
-			<variable name="$wgGroupPermissions['sysop']['editwidgets']">
-				<boolean name="sysop"
-					description="allow editing widgets for sysops">
-					true
-				</boolean>
+			<variable name="group_permissions">
+				<boolean name="$wgGroupPermissions['sysop']['editwidgets']"
+					description="allow editing widgets for sysops">true</boolean>
 			</variable>
 		</new>
 	</configs>
