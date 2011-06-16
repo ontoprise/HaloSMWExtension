@@ -38,6 +38,7 @@ class WOMTableModel extends WikiObjectModelCollection {
 	}
 
 	protected function getXMLAttributes() {
-		return "style=\"{$this->m_style}\"";
+		$style = str_replace( '"', "'", $this->m_style );
+		return "style=\"{$style}\"";
 	}
 }

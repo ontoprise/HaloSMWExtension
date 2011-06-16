@@ -43,6 +43,7 @@ class WOMTableCellModel extends WikiObjectModelCollection {
 
 	protected function getXMLAttributes() {
 		$prefix = str_replace( "\n", '\n', $this->m_prefix );
+		$prefix = str_replace( '"', "'", $prefix );
 		return "prefix=\"{$prefix}\"";
 	}
 }
