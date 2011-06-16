@@ -201,6 +201,8 @@ if (isset($_GET['tab'])) {
 	$selectedTab = 0;
 }
 
+$dfVersion = DF_WEBADMIN_TOOL_VERSION;
+
 $html = <<<ENDS
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" dir="ltr" lang="en-gb" xml:lang="en-gb">
@@ -213,6 +215,7 @@ $html = <<<ENDS
 
             wgServer="$wgServer";
             wgScriptPath="$wgScriptPath";
+            dfgVersion="$dfVersion";
             
 			$(function(){
 		
@@ -227,13 +230,14 @@ $javascriptLang
 ENDS
 ;
 $wikiName = !empty(DF_Config::$df_wikiName) ? "(".DF_Config::$df_wikiName.")" : "";
-$wikiVersion = DF_WEBADMIN_TOOL_VERSION;
+
 $html .= "<body><img src=\"skins/logo.png\" style=\"float:left; margin-right: 30px\" />".
          "<div style=\"float:right\">".
+         "<a id=\"df_webadmin_aboutlink\">".$dfgLang->getLanguageString('df_webadmin_about')."</a> | ".
          "<a href=\"$wgServer$wgScriptPath/index.php\">".$dfgLang->getLanguageString('df_linktowiki')."</a> | ".
          "<a href=\"$wgServer$wgScriptPath/deployment/tools/webadmin/logout.php\">".$dfgLang->getLanguageString('df_logout')."</a>".
          "</div>".
-         "<div id=\"df_header\">Deployment Framework WebAdmin $wikiVersion $wikiName</div>";
+         "<div id=\"df_header\">Deployment Framework WebAdmin $wikiName</div>";
 
 $restoreWarning = $dfgLang->getLanguageString('df_restore_warning');
 $deinstallWarning = $dfgLang->getLanguageString('df_uninstall_warning');
@@ -275,6 +279,7 @@ $html .= <<<ENDS
 </div>
 <div id="df_extension_details" style="display:none"></div>
 <div id="df_install_dialog" style="display:none"></div>
+<div id="df_webadmin_about_dialog" style="display:none"></div>
 
 ENDS
 ;

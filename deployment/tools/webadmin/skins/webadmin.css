@@ -18,6 +18,10 @@
 	margin-top: 20px;
 }
 
+#df_webadmin_aboutlink {
+    cursor: pointer;	
+}
+
 .df_row_0 {
 	background-color: #AAA;
 }

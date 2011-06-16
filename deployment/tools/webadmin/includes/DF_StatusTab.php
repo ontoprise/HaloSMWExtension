@@ -50,7 +50,8 @@ class DFStatusTab {
 		global $mwrootDir;
 		global $dfgOut, $dfgLang;
 		$cc = new ConsistencyChecker($mwrootDir);
-		$html = "";
+		
+		$html = $dfgLang->getLanguageString('df_webadmin_status_text');
 		$localPackages = PackageRepository::getLocalPackages($mwrootDir);
 		$dfgOut->setVerbose(false);
 		$updates = $cc->checksForUpdates();

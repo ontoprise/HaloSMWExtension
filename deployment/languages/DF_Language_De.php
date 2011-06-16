@@ -62,6 +62,9 @@ class DF_Language_De extends DF_Language {
 	// webadmin
 	'df_linktowiki' => 'Gehe zum Wiki',
     'df_logout' => 'Ausloggen',
+	'df_webadmin_findall' => 'Suche all',
+	'df_webadmin_about' => 'Über',
+	'df_webadmin_status_text' => 'Diese Tabelle zeigt all Pakete und Ontologien, die derzeit in ihrem Wiki installiert sind.',
 	'df_webadmin_updatesavailable' => 'Updates verfügbar! Machen Sie ein ',
 	'df_webadmin_globalupdate' => 'Globales Update',
 	'df_webadmin_extension' => 'Extension',
@@ -75,8 +78,8 @@ class DF_Language_De extends DF_Language {
 	'df_webadmin_statustab' => 'Status',
     'df_webadmin_searchtab' => 'Suche Extensions',
     'df_webadmin_maintenacetab' => 'Systemwiederherstellung',
-	'df_webadmin_uploadtab' => 'Hochladen von Bundles/Ontologien',
-	'df_webadmin_settingstab' => 'Einstellungen',
+	'df_webadmin_uploadtab' => 'Hochladen von lokalen Bundles/Ontologien',
+	'df_webadmin_settingstab' => 'Paketquellen',
 	
 	'df_webadmin_restorepoint' => 'Rücksetzpunkt',
 	'df_webadmin_creationdate' => 'Datum der Erzeugung',

@@ -380,18 +380,18 @@ $(function() {
 		}
 	
 		
-		var html = $('#df_extension_details').html('<div><table class="df_extension_details">'
-					+'<tr><td description="true">'+dfgWebAdminLanguage.getMessage('df_webadmin_id')+'</td><td value="true">'+id+'-'+version+'</td></tr>'
-					+'<tr><td description="true">'+dfgWebAdminLanguage.getMessage('df_webadmin_patchlevel')+'</td><td value="true">'+patchlevel+'</td></tr>'
-					+'<tr><td description="true">'+dfgWebAdminLanguage.getMessage('df_webadmin_dependencies')+'</td><td value="true">'+dependenciesHTML+'</td></tr>'
-					+'<tr><td description="true">'+dfgWebAdminLanguage.getMessage('df_webadmin_maintainer')+'</td><td value="true">'+maintainer+'</td></tr>'
-					+'<tr><td description="true">'+dfgWebAdminLanguage.getMessage('df_webadmin_vendor')+'</td><td value="true">'+vendor+'</td></tr>'
-					+'<tr><td description="true">'+dfgWebAdminLanguage.getMessage('df_webadmin_license')+'</td><td value="true">'+license+'</td></tr>'
-					+'<tr><td description="true">'+dfgWebAdminLanguage.getMessage('df_webadmin_helpurl')+'</td><td value="true"><a href="'+helpurl+'">Help</td></tr>'
-					+'<tr><td description="true">'+dfgWebAdminLanguage.getMessage('df_webadmin_wikidumps')+'</td><td value="true">'+wikidumpsHTML+'</td></tr>'
-					+'<tr><td description="true">'+dfgWebAdminLanguage.getMessage('df_webadmin_ontologies')+'</td><td value="true">'+ontologiesHTML+'</td></tr>'
-					+'<tr><td description="true">'+dfgWebAdminLanguage.getMessage('df_webadmin_resources')+'</td><td value="true">'+resourcesHTML+'</td></tr>'
-					+'<tr><td description="true">'+dfgWebAdminLanguage.getMessage('df_webadmin_resourcecopyonly')+'</td><td value="true">'+resourcesCopyOnlyHTML+'</td></tr>'
+		var html = $('#df_extension_details').html('<div><table class="df_extension_details" style="width: 100%;">'
+					+'<tr class="df_row_0"><td description="true">'+dfgWebAdminLanguage.getMessage('df_webadmin_id')+'</td><td value="true">'+id+'-'+version+'</td></tr>'
+					+'<tr class="df_row_1"><td description="true">'+dfgWebAdminLanguage.getMessage('df_webadmin_patchlevel')+'</td><td value="true">'+patchlevel+'</td></tr>'
+					+'<tr class="df_row_0"><td description="true">'+dfgWebAdminLanguage.getMessage('df_webadmin_dependencies')+'</td><td value="true">'+dependenciesHTML+'</td></tr>'
+					+'<tr class="df_row_1"><td description="true">'+dfgWebAdminLanguage.getMessage('df_webadmin_maintainer')+'</td><td value="true">'+maintainer+'</td></tr>'
+					+'<tr class="df_row_0"><td description="true">'+dfgWebAdminLanguage.getMessage('df_webadmin_vendor')+'</td><td value="true">'+vendor+'</td></tr>'
+					+'<tr class="df_row_1"><td description="true">'+dfgWebAdminLanguage.getMessage('df_webadmin_license')+'</td><td value="true">'+license+'</td></tr>'
+					+'<tr class="df_row_0"><td description="true">'+dfgWebAdminLanguage.getMessage('df_webadmin_helpurl')+'</td><td value="true"><a href="'+helpurl+'" target="_blank">Help</td></tr>'
+					+'<tr class="df_row_1"><td description="true">'+dfgWebAdminLanguage.getMessage('df_webadmin_wikidumps')+'</td><td value="true">'+wikidumpsHTML+'</td></tr>'
+					+'<tr class="df_row_0"><td description="true">'+dfgWebAdminLanguage.getMessage('df_webadmin_ontologies')+'</td><td value="true">'+ontologiesHTML+'</td></tr>'
+					+'<tr class="df_row_1"><td description="true">'+dfgWebAdminLanguage.getMessage('df_webadmin_resources')+'</td><td value="true">'+resourcesHTML+'</td></tr>'
+					+'<tr class="df_row_0"><td description="true">'+dfgWebAdminLanguage.getMessage('df_webadmin_resourcecopyonly')+'</td><td value="true">'+resourcesCopyOnlyHTML+'</td></tr>'
 					+'</table></div>');
 		
 		
@@ -573,6 +573,24 @@ $(function() {
 		smw_makeSortable($('#df_statustable')[0]);
 		smw_makeSortable($('#df_bundlefilelist_table')[0]);
 		smw_makeSortable($('#df_restorepoint_table')[0]);
+		
+		// add about link
+		$('#df_webadmin_aboutlink').click(function(e2) {
+			var $dialog = $('#df_webadmin_about_dialog')
+			.dialog( {
+				autoOpen : false,
+				title : dfgWebAdminLanguage.getMessage('df_webadmin_about_title'),
+				modal: true,
+				width: 350,
+				height: 250
+			});
+			var parts = dfgVersion.split(" ");
+			var text = dfgWebAdminLanguage.getMessage('df_webadmin_about_desc');
+			text += "<br/><br/>Version: "+parts[0];
+			text += "<br/>Build: "+parts[1];
+			$dialog.html("<div>"+text+"</div>");
+			$dialog.dialog('open');
+		});
 		
 		// register every extension in status view for showing extension details on a click event.
 		$('.df_extension_id').click(function(e2) {

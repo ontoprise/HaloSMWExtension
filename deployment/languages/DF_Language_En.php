@@ -63,6 +63,9 @@ class DF_Language_En extends DF_Language {
 	// webadmin
 	'df_linktowiki' => 'Go to wiki',
 	'df_logout' => 'Logout',
+	'df_webadmin_findall' => 'Find all',
+	'df_webadmin_about' => 'About',
+	'df_webadmin_status_text' => 'This table shows all extensions and content bundles that are currently installed in this wiki.',
 	'df_webadmin_updatesavailable' => 'Updates available! Do a ',
 	'df_webadmin_globalupdate' => 'Global update',
 	'df_webadmin_extension' => 'Extension',
@@ -76,8 +79,8 @@ class DF_Language_En extends DF_Language {
 	'df_webadmin_statustab' => 'Status',
 	'df_webadmin_searchtab' => 'Find extensions',
 	'df_webadmin_maintenacetab' => 'System Restore',
-	'df_webadmin_uploadtab' => 'Upload bundles/ontologies',
-	'df_webadmin_settingstab' => 'Settings',
+	'df_webadmin_uploadtab' => 'Upload local bundles/ontologies',
+	'df_webadmin_settingstab' => 'Repositories',
 	
 	'df_webadmin_restorepoint' => 'Restore point',
 	'df_webadmin_creationdate' => 'Creation date',
