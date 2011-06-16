@@ -2098,7 +2098,7 @@ function smwfAddIsExtensionInstalledMagic(&$magicWords, $langCode = "en"){
 
 function smwfSavesNamespaceMappings(&$article, &$user, $text, $summary,
  $minoredit, $watchthis, $sectionanchor, &$flags, $revision, &$status, $baseRevId, &$redirect) {
-    if (!defined('DF_VERSION')) return;
+    if (!defined('DF_VERSION')) return false;
     global $dfgLang;
     if ($article->getTitle()->getText() == $dfgLang->getLanguageString('df_namespace_mappings_page')
         && $article->getTitle()->getNamespace() == NS_MEDIAWIKI) {
