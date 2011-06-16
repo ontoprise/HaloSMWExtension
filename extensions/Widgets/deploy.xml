@@ -47,7 +47,7 @@ http://smwforum.ontoprise.com/smwforum/index.php/Help:Repairing_data"
 			<require name="widget_init"
 				file="extensions/Widgets/Widgets.php" />
 			<php name="group_permissions">$wgGroupPermissions['sysop']['editwidgets']=true;</php>
-			</variable>
+			
 		</new>
 	</configs>
 </deploydescriptor>
