@@ -413,12 +413,15 @@ $(function() {
 			
 			// register install buttons
 			$('.df_install_button').click(function(e) {
-				var id = $(e.currentTarget).attr('id');
-				id = id.split("__")[1];
-				var url = wgServer+wgScriptPath+"/deployment/tools/webadmin?rs=getDependencies&rsargs[]="+encodeURIComponent(id);
+				var idAttr = $(e.currentTarget).attr('id');
+				var parts = idAttr.split("__");
+				var id = parts[1];
+				var version = parts[2].split("_")[0];
+				var patchlevel = parts[2].split("_")[1];
+				var url = wgServer+wgScriptPath+"/deployment/tools/webadmin?rs=getDependencies&rsargs[]="+encodeURIComponent(id+"-"+version);
 				var callbackForExtensions = function(xhr, status) {
 					var extensionsToInstall = $.parseJSON(xhr.responseText);
-					var url = wgServer+wgScriptPath+"/deployment/tools/webadmin?rs=install&rsargs[]="+encodeURIComponent(id);
+					var url = wgServer+wgScriptPath+"/deployment/tools/webadmin?rs=install&rsargs[]="+encodeURIComponent(id+"-"+version);
 										
 					var $dialog = $('#df_install_dialog')
 					.dialog( {

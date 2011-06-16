@@ -25,7 +25,7 @@
  *
  */
 if (!defined("DF_WEBADMIN_TOOL")) {
-    die();
+	die();
 }
 
 class DFSearchTab {
@@ -37,14 +37,14 @@ class DFSearchTab {
 	public function __construct() {
 
 	}
-	
-public function getTabName() {
-        global $dfgLang;
-        return $dfgLang->getLanguageString('df_webadmin_searchtab');
-    }
+
+	public function getTabName() {
+		global $dfgLang;
+		return $dfgLang->getLanguageString('df_webadmin_searchtab');
+	}
 
 	public function getHTML() {
-		 global $dfgLang;
+		global $dfgLang;
 		$findall = $dfgLang->getLanguageString('df_webadmin_findall');
 		$html = "<input type=\"text\" value=\"$findall\" onfocus=\"this.value='';\" style=\"width: 450px;\" value=\"\" id=\"df_searchinput\"></input>";
 		$html .= "<input type=\"button\"  value=\"Search\" id=\"df_search\"></input><img id=\"df_search_progress_indicator\" src=\"skins/ajax-loader.gif\" style=\"display:none\"/>";
@@ -54,7 +54,7 @@ public function getTabName() {
 
 	public function searializeSearchResults($results, $localPackages, $searchValue) {
 		global $dfgLang;
-		
+
 		if (count($results) == 0) {
 			$html = $dfgLang->getLanguageString('df_webadmin_nothingfound', array('{{search-value}}' => $searchValue));
 			$html .= "<br/><br/>".$dfgLang->getLanguageString('df_webadmin_searchinfoifnothingfound');
@@ -66,33 +66,67 @@ public function getTabName() {
 		$html .= $dfgLang->getLanguageString('df_webadmin_extension');
 		$html .= "</th>";
 		$html .= "<th>";
+		$html .= $dfgLang->getLanguageString('df_webadmin_version');
+		$html .= "</th>";
+		$html .= "<th>";
 		$html .= $dfgLang->getLanguageString('df_webadmin_description');
 		$html .= "</th>";
 		$html .= "<th>";
 		$html .= $dfgLang->getLanguageString('df_webadmin_action');
 		$html .= "</th>";
 		$i=0;
-		foreach($results as $id => $description) {
+		foreach($results as $id => $versions) {
+			$numOfVersion = count($versions);
+			$first = true;
+			ksort($versions);
+			$versions = array_reverse($versions);
+			foreach($versions as $v => $description) {
+				$j = $i % 2;
+				$html .= "<tr class=\"df_row_$j\">";
 
-			$j = $i % 2;
-			$html .= "<tr class=\"df_row_$j\">";
-			$i++;
-			$html .= "<td class=\"df_extension_id\">";
-			$html .= $id;
-			$html .= "</td>";
-			$html .= "<td class=\"df_description\">";
-			$html .= $description;
-			$html .= "</td>";
-			$html .= "<td class=\"df_actions\">";
-			if (!array_key_exists($id, $localPackages)) {
-				$html .= "<input type=\"button\" class=\"df_install_button\" value=\"Install\" id=\"df_install__$id\"></input>";
-				$html .= "<input type=\"button\" class=\"df_check_button\" value=\"Check\" id=\"df_showdependencies__$id\"></input>";
-			} else {
-				$html .= "Installed";
+				if ($first) {
+					$html .= "<td rowspan=\"$numOfVersion\" class=\"df_extension_id\">";
+					$html .= $id;
+					$html .= "</td>";
+						
+				}
+				$html .= "<td class=\"df_version\" version=\"$v\">";
+				$html .= Tools::addVersionSeparators(explode("_", $v));
+				$html .= "</td>";
+				if ($first) {
+					$html .= "<td rowspan=\"$numOfVersion\" class=\"df_description\">"; // FIXME: consider that descriptions for different version can be different
+					$html .= $description;
+					$html .= "</td>";
+				}
+				$html .= "<td class=\"df_actions\">";
+				if (!array_key_exists($id, $localPackages)) {
+					$html .= "<input type=\"button\" class=\"df_install_button\" value=\"Install\" id=\"df_install__$id__$v\"></input>";
+					$html .= "<input type=\"button\" class=\"df_check_button\" value=\"Check\" id=\"df_showdependencies__$id__$v\"></input>";
+				} else {
+					$dd = $localPackages[$id];
+					list($ver, $patchlevel) = explode("_", $v);
+
+					// already installed
+					if ($dd->getVersion() == $ver && $dd->getPatchlevel() == $patchlevel) {
+						$html .= "Installed";
+					}
+
+					// mark as updateable
+					if ($dd->getVersion() < $ver || ($dd->getVersion() < $ver && $dd->getPatchlevel() < $patchlevel)) {
+						$html .= "<input type=\"button\" class=\"df_update_button\" value=\"Update\" id=\"df_update__$id__$v\"></input>";
+					}
+
+					// downgrades are not possible
+					if ($dd->getVersion() > $v) {
+						$html .= "n/a";
+					}
+				}
+
+				$html .= "</td>";
+				$html .= "</tr>";
+				$first=false;
 			}
-
-			$html .= "</td>";
-			$html .= "</tr>";
+			$i++;
 		}
 		$html .= "</table>";
 		return $html;
