@@ -6,7 +6,7 @@
  */
 if ( !defined( 'MEDIAWIKI' ) ) die;
 
-define( 'WOM_VERSION', '0.1' );
+define( 'WOM_VERSION', '1.0' );
 
 $wgOMIP = $IP . '/extensions/WikiObjectModel';
 $wgOMScriptPath = $wgScriptPath . '/extensions/WikiObjectModel';
