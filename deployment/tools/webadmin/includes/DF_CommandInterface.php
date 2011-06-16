@@ -341,8 +341,10 @@ class DFCommandInterface {
 	}
 
 	public function search($searchValue) {
-		global $mwrootDir, $dfgOut, $dfgSearchTab;
+		global $mwrootDir, $dfgOut, $dfgLang, $dfgSearchTab;
 		$results = array();
+		$findall = $dfgLang->getLanguageString('df_webadmin_findall');
+		if ($searchValue == $findall) $searchValue = '';
 		$packages = PackageRepository::searchAllPackages($searchValue);
 		$localPackages = PackageRepository::getLocalPackages($mwrootDir);
 		$dfgOut->outputln($dfgSearchTab->searializeSearchResults($packages, $localPackages, $searchValue));
