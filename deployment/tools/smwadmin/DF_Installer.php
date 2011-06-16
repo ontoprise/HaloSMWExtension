@@ -95,9 +95,9 @@ class Installer {
 		$this->errors = array();
 		$wikiname = DF_Config::$df_wikiName;
 		$this->tmpFolder = Tools::getTempDir()."/$wikiname/df_downloads";
-		if (!file_exists($this->tmpFolder)) { 
-		    Tools::mkpath($this->tmpFolder);	
-		    @chmod($this->tmpFolder, 0777);
+		if (!file_exists($this->tmpFolder)) {
+			Tools::mkpath($this->tmpFolder);
+			@chmod($this->tmpFolder, 0777);
 		}
 		if (!file_exists($this->tmpFolder) || !is_writable($this->tmpFolder)) {
 			throw new DF_SettingError(DEPLOY_FRAMEWORK_NO_TMP_DIR, "Could not create or write temporary directory. Make sure at least /tmp or c:\temp exists and is writable.");
@@ -304,7 +304,7 @@ class Installer {
 	 * @return true, if anything was updated.
 	 */
 	public function updateAll($onlyDependencyCheck = false) {
-        global $dfgOut;
+		global $dfgOut;
 		$localPackages = PackageRepository::getLocalPackages($this->rootDir);
 
 		// iterate through all installed packages, check if new or patched versions
@@ -594,7 +594,7 @@ class Installer {
 			} else {
 				$mode = DF_ONTOLOGYIMPORT_ASKINTERACTIVELY;
 			}
-			$ont_installer->installOntologies($desc, $this, $mode);
+			$ont_installer->installOntologies($desc);
 			$res_installer->installOrUpdateResources($desc);
 			$res_installer->installOrUpdateWikidumps($desc, $fromVersion, $this->force ? DEPLOYWIKIREVISION_FORCE : DEPLOYWIKIREVISION_WARN);
 			$res_installer->installOrUpdateMappings($desc);
@@ -648,22 +648,28 @@ class Installer {
 		$ont_installer = OntologyInstaller::getInstance($this->rootDir);
 
 		// delete resources
-		$this->logger->info("Delete resourcs: ".$dd->getID());
-		$dfgOut->outputln("[Deleting resources...");
-		$res_installer->deleteResources($dd);
-		$dfgOut->outputln("done.]");
+		if (count($dd->getResources()) > 0) {
+			$this->logger->info("Delete resourcs: ".$dd->getID());
+			$dfgOut->outputln("[Deleting resources...");
+			$res_installer->deleteResources($dd);
+			$dfgOut->outputln("done.]");
+		}
 		// remove wikidumps
-		$this->logger->info("De-installing wikidumps: ".$dd->getID());
-		$dfgOut->outputln("[De-installing wikidumps...");
-		$res_installer->deinstallWikidump($dd);
-		$dfgOut->outputln("done.]");
+
+		if (count($dd->getWikidumps()) > 0) {
+			$this->logger->info("De-installing wikidumps: ".$dd->getID());
+			$dfgOut->outputln("[De-installing wikidumps...");
+			$res_installer->deinstallWikidump($dd);
+			$dfgOut->outputln("done.]");
+		}
 
 		// remove ontologies
-		$this->logger->info("De-installing ontologies: ".$dd->getID());
-		$dfgOut->outputln("[De-installing ontologies...");
-		$ont_installer->deinstallOntology($dd);
-		$dfgOut->outputln("done.]");
-
+		if (count($dd->getOntologies()) > 0) {
+			$this->logger->info("De-installing ontologies: ".$dd->getID());
+			$dfgOut->outputln("[De-installing ontologies...");
+			$ont_installer->deinstallAllOntologies($dd->getID());
+			$dfgOut->outputln("done.]");
+		}
 
 	}
 
@@ -691,7 +697,7 @@ class Installer {
 		$dfgOut->outputln("done.]");
 	}
 
-	
+
 
 	/**
 	 * Unzips the package denoted by $id and $version
@@ -835,7 +841,7 @@ class Installer {
 
 	}
 
-	
+
 
 
 

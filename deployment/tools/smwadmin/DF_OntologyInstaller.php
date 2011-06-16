@@ -62,35 +62,43 @@ class OntologyInstaller {
 	 * @return string Prefixed used to make ontology pages unique (can be null)
 	 *
 	 */
-	public function installOntology($bundleID, $inputfile, $noBundlePage = false, $mode = 0) {
+	public function installOrUpdateOntology($inputfile, $noBundlePage = false, $bundleID = '') {
 		global $dfgOut;
 		$outputfile = $inputfile.".xml";
 		try {
 			// create input file with additional settings
+			global $smwgTripleStoreGraph;
 			$dfgOut->outputln("[Get used prefixes...");
 			$prefixNamespaceMappings = DFBundleTools::getRegisteredPrefixes();
 			$settingsFile = $inputfile.".settings";
-			$settings = $prefixNamespaceMappings;
-		
+			$settings->ns_mappings = $prefixNamespaceMappings;
+			$settings->base_uri = $smwgTripleStoreGraph;
+			if (!empty($bundleID)) {
+				$settings->bundle_id = $bundleID;
+			}
+
 			$handle = fopen($settingsFile, "w");
 			fwrite($handle, json_encode($settings));
 			fclose($handle);
 			$dfgOut->output("done.]");
-				
-			$ret = $this->convertOntology($inputfile, $outputfile, $bundleID, $noBundlePage);
-			
+
+			// convert ontology file
+			$ret = $this->convertOntology($inputfile, $outputfile, $noBundlePage);
+
 			if ($ret != 0) {
 				$dfgOut->outputln("Could not convert ontology.");
-	            unlink($settingsFile);
+				unlink($settingsFile);
 				die(1);
 			}
+				
+			// update prefixes (comes from onto2mwxml)
 			$dfgOut->outputln("[Update prefixes...");
-			$prefixNamespaceMappingsText = file_get_contents($settingsFile);
-			$prefixNamespaceMappings = json_decode($prefixNamespaceMappingsText);
-			DFBundleTools::storeRegisteredPrefixes($prefixNamespaceMappings);
-			unlink($settingsFile);
+			$outputFromOnto2mwxmlText = file_get_contents($settingsFile);
+			$outputFromOnto2mwxml = json_decode($outputFromOnto2mwxmlText);
+			DFBundleTools::storeRegisteredPrefixes($outputFromOnto2mwxml->ns_mappings);
+			//unlink($settingsFile);
 			$dfgOut->output("done.]");
-			
+
 		} catch(Exception $e) {
 			// onto2mwxml might not be installed
 			$dfgOut->outputln("Could not convert ontology. Reason: ");
@@ -101,10 +109,11 @@ class OntologyInstaller {
 
 		$outputfile_rel = $inputfile.".xml";
 
-
 		// verifies the ontologies
+		// has only informative character. The only conflicts appearing
+		// now occur if two ontologies use the same entity.
 		$dfgOut->outputln("[Verifying ontology $inputfile...");
-
+		$bundleID = $outputFromOnto2mwxml->bundle_id;
 		$verificationLog = $this->verifyOntology($outputfile_rel, $bundleID);
 		$conflict = $this->checkForConflict($verificationLog);
 
@@ -112,15 +121,24 @@ class OntologyInstaller {
 
 		if ($conflict) {
 			// write prefix file
-			$dfgOut->outputln("[Conflict detected. Merge some pages]");
+			$dfgOut->outputln("[Conflict detected. Some pages are used by more than one bundle]");
 
 		} else {
 			$dfgOut->outputln("[No Conflict detected]");
 		}
 
+		// check if ontology is already installed
+		$ontologyURI = DFBundleTools::getOntologyURI($bundleID);
+		if (!is_null($ontologyURI)) {
+			if ($outputFromOnto2mwxml->ontology_uri  == $ontologyURI) {
+				// it is an update,so remove old version first
+				deinstallAllOntologies($bundleID);
+			}
+		}
+
 		// do actual ontology install/update
 		$dfgOut->outputln("[Installing/updating ontology $inputfile...");
-		$this->installOrUpdateOntology($outputfile_rel, $verificationLog, $bundleID, $prefix);
+		$this->installOrUpdateOntologyXML($outputfile_rel, $verificationLog, $bundleID, $prefix);
 
 		// import external artifacts (e.g. mapping metadata/rules)
 		$externalArtifactFile = $inputfile.".external";
@@ -130,50 +148,69 @@ class OntologyInstaller {
 			$dfgOut->output("done.]");
 		}
 
-		return $prefix;
+		return $bundleID;
 	}
 
 	/**
 	 * Installs or updates ontologies specified in the deploy descriptor
 	 *
 	 * @param DeployDescriptor $dd
-	 * @param object $callback method askForOntologyPrefix(& $answer)
-	 * @param int $mode How to deal with conflicts  (see DF_ONOLOGYIMPORT_.. constants)
 	 *
 	 */
-	public function installOntologies($dd, $callback, $mode = 0) {
+	public function installOntologies($dd) {
 		$ontologies = $dd->getOntologies();
 		$noBundlePage = false;
 		foreach($ontologies as $loc) {
-			$prefix = $this->installOntology($dd->getID(), $this->rootDir.$dd->getInstallationDirectory()."/".$loc, $callback, $noBundlePage, $mode);
+			$prefix = $this->installOrUpdateOntology($this->rootDir.$dd->getInstallationDirectory()."/".$loc, $noBundlePage, $dd->getID());
 			$noBundlePage = true; // make sure that only the first ontology creates a bundle page
-
 		}
 	}
 
 
-
-
-
-
 	/**
-	 * De-installs ontologies contained in a bundle.
+	 * De-installs all ontologies contained in a bundle.
 	 *
-	 * @param DeployDescriptor $dd
+	 * @param string $bundleID
 	 */
-	public function deinstallOntology($dd) {
-		if (count($dd->getOntologies()) == 0) return;
+	public function deinstallAllOntologies($bundleID) {
+
 		if (!defined('SMW_VERSION')) throw new InstallationError(DEPLOY_FRAMEWORK_NOT_INSTALLED, "SMW is not installed. Can not delete ontology.");
-		
-		$overlaps = Tools::getBundleOverlaps($dd->getID());
-		//$om = new OntologyMerger();
-		
-		
-		global $dfgRemoveReferenced, $dfgRemoveStillUsed;
-		foreach($dd->getOntologies() as $loc) {
-			$bundleID = $dd->getID();
-			Tools::deletePagesOfBundle($bundleID, $this->logger, $dfgRemoveReferenced, !$dfgRemoveStillUsed);
+
+		// process the pages which are populated by several bundles
+		// remove the part of the bundle which should be deleted.
+		$overlaps = DFBundleTools::getBundleOverlaps($bundleID);
+		$om = new OntologyMerger();
+		$db =& wfGetDB( DB_MASTER );
+		global $wgUser;
+		foreach($overlaps as $title) {
+			$rev = Revision::loadFromTitle( $db, $title);
+
+			if ($om->containsBundle($bundleID, $rev->getRawText())) {
+				$newText = $om->removeBundle($bundleID, $rev->getRawText());
+				if (trim($newText) == '') {
+					$a = new Article(page);
+
+					if( wfRunHooks('ArticleDelete', array(&$a, &$wgUser, &$reason, &$error)) ) {
+						if( $a->doDeleteArticle( "article is empty" ) ) {
+							if (!is_null($logger)) $logger->info("Removing page: ".$title->getPrefixedText());
+							$dfgOut->outputln("\t\t[Removing page]: ".$title->getPrefixedText()."...");
+							wfRunHooks('ArticleDeleteComplete', array(&$a, &$wgUser, "article is empty", $bundleID));
+							$dfgOut->output("done.]");
+						}
+					}
+				} else {
+					global $wgParser;
+					$a->doEdit($newText, "auto-generated by smwadmin");
+					//$parseOutput = $wgParser->parse($rev->getText(), $title, $wgParser->mOptions);
+					//SMWParseData::storeData($parseOutput, $title);
+				}
+			}
 		}
+
+		global $dfgRemoveReferenced, $dfgRemoveStillUsed;
+	
+		DFBundleTools::deletePagesOfBundle($bundleID, $this->logger, $dfgRemoveReferenced, !$dfgRemoveStillUsed);
+
 	}
 
 	/**
@@ -281,7 +318,7 @@ ENDS
 	 * @param string bundleID
 	 * @param string $prefix
 	 */
-	private function installOrUpdateOntology($inputfile, $verificationLog, $bundleID) {
+	private function installOrUpdateOntologyXML($inputfile, $verificationLog, $bundleID) {
 
 		// remove ontology elements which do not exist anymore.
 		global $dfgLang, $dfgOut;
@@ -380,10 +417,10 @@ ENDS
 	 *
 	 * @param string $inputfile
 	 * @param string $outputfile
-	 * @param string $bundleID
 	 * @param boolean $noBundlePage
+	 * @param string $bundleID (optional)
 	 */
-	private function convertOntology($inputfile, $outputfile, $bundleID, $noBundlePage = false) {
+	private function convertOntology($inputfile, $outputfile, $noBundlePage = false, $bundleID = '') {
 		// convert ontology
 		global $dfgOut;
 		$cwd = getcwd();
@@ -397,7 +434,8 @@ ENDS
 				throw new Exception("Onto2MWXML tool is not correctly installed. Please take a look in deployment/tools/onto2mwxml/README.TXT.");
 			} else {
 				if ($noBundlePage) $noBundlePageParam = "--nobundlepage"; else $noBundlePageParam = "";
-				exec("\"$onto2mwxml_dir/onto2mwxml.bat\" \"$inputfile\" -o \"$outputfile\" --bundleid \"$bundleID\" $noBundlePageParam", $output, $ret);
+				if (!empty($bundleID)) $bundleID ='--bundleid \"$bundleID\"';
+				exec("\"$onto2mwxml_dir/onto2mwxml.bat\" \"$inputfile\" -o \"$outputfile\" $bundleID $noBundlePageParam", $output, $ret);
 				if ($ret != 0) {
 					foreach($output as $l) $dfgOut->outputln("$l");
 					throw new Exception("Onto2MWXML exited abnormally.");
@@ -408,7 +446,8 @@ ENDS
 				throw new Exception("Onto2MWXML tool is not correctly installed. Please take a look in deployment/tools/onto2mwxml/README.TXT.");
 			} else {
 				if ($noBundlePage) $noBundlePageParam = "--nobundlepage"; else $noBundlePageParam = "";
-				exec("\"$onto2mwxml_dir/onto2mwxml.sh\" \"$inputfile\" -o \"$outputfile\" --bundleid \"$bundleID\" $noBundlePageParam", $output, $ret);
+				if (!empty($bundleID)) $bundleID ='--bundleid \"$bundleID\"';
+				exec("\"$onto2mwxml_dir/onto2mwxml.sh\" \"$inputfile\" -o \"$outputfile\" $bundleID $noBundlePageParam", $output, $ret);
 				if ($ret != 0) {
 					foreach($output as $l) $dfgOut->outputln("$l");
 					throw new Exception("Onto2MWXML exited abnormally.");

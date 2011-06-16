@@ -185,7 +185,7 @@ class DeployWikiOntologyRevision extends WikiRevision {
 		
 		$article = new Article( $this->title );
 		$pageId = $article->getId();
-		global $smwgTripleStoreGraph;
+		
 		if( $pageId == 0 ) {
             // page does not exist, just import
 			$res = parent::importOldRevision();

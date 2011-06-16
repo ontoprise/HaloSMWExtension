@@ -20,6 +20,7 @@ global $rootDir;
 require_once($rootDir.'/../maintenance/commandLine.inc' );
 require_once($rootDir.'/io/import/DF_DeployWikiBundleImporter.php');
 require_once($rootDir.'/io/import/DF_BackupReader.php');
+require_once($rootDir.'/io//DF_BundleTools.php');
 
 /**
  * @file
@@ -111,7 +112,7 @@ class ResourceInstaller {
 		if (count($dd->getWikidumps()) == 0) return;
 		if (!defined('SMW_VERSION')) throw new InstallationError(DEPLOY_FRAMEWORK_NOT_INSTALLED, "SMW is not installed. Can not delete ontology.");
 		global $dfgRemoveReferenced, $dfgRemoveStillUsed;
-		Tools::deletePagesOfBundle($dd->getID(), $this->logger, $dfgRemoveReferenced, !$dfgRemoveStillUsed);
+		DFBundleTools::deletePagesOfBundle($dd->getID(), $this->logger, $dfgRemoveReferenced, !$dfgRemoveStillUsed);
 	}
 
 
@@ -128,7 +129,7 @@ class ResourceInstaller {
 		global $dfgRemoveReferenced, $dfgRemoveStillUsed;
 		if ($dfgRemoveReferenced) {
 			
-			Tools::deleteReferencedImagesOfBundle($dd->getID(), $this->logger, !$dfgRemoveStillUsed);
+			DFBundleTools::deleteReferencedImagesOfBundle($dd->getID(), $this->logger, !$dfgRemoveStillUsed);
 		
 		}
 		

@@ -189,7 +189,27 @@ for( $arg = reset( $args ); $arg !== false; $arg = next( $args ) ) {
 			$dfgGlobalUpdate = true;
 			continue;
 		}
-		$packageToUpdate[] = $package;
+		
+	    if (file_exists($package)) {
+            $file_ext = reset(array_reverse(explode(".", $package)));
+            if ($file_ext == 'owl' || $file_ext == 'rdf' || $file_ext == 'obl') {
+                // import ontology
+                $ontologiesToInstall[] = $package;
+            } else if ($file_ext == 'zip') {
+                // import bundle
+                $localBundlesToInstall[] = $package;
+            }
+
+        } else {
+            // assume it is a package but print a warning if the name has a
+            // ontology extension.
+            $file_ext = reset(array_reverse(explode(".", $package)));
+            if ($file_ext == 'owl' || $file_ext == 'rdf' || $file_ext == 'obl') {
+                $dfgOut->outputln("Are you sure '$package' is intended to be a package? It does not exist as a file.\n", DF_PRINTSTREAM_TYPE_WARN);
+            }
+            $packageToUpdate[] = $package;
+        }
+		
 		continue;
 	} else if ($arg == '-l') { // => list packages
 		$dfgListPackages = true;
@@ -419,7 +439,7 @@ foreach($packageToInstall as $toInstall) {
 	}
 }
 
-// install ontologies
+// install/updates ontologies
 if (count($ontologiesToInstall) > 0) {
 
 	$mediaWikiLocation = dirname(__FILE__) . '/../../..';
@@ -440,19 +460,10 @@ if (count($ontologiesToInstall) > 0) {
 
 		$oInstaller = OntologyInstaller::getInstance(realpath($rootDir."/../"));
 
-
-
-		if (!isset($ontologyID)) {
-			$fileName = basename($filePath);
-			$bundleID = reset(explode(".", $fileName));
-		}
-
 		// make path absolute is given as relative
 		if (file_exists($rootDir."/tools/".$filePath)) {
 			$filePath = $rootDir."/tools/".$filePath;
 		}
-
-		$bundleID = strtolower($bundleID);
 
 		global $dfgForce, $dfgNoConflict;
 		if ($dfgForce) {
@@ -464,7 +475,8 @@ if (count($ontologiesToInstall) > 0) {
 		}
 
 		try {
-			$prefix = $oInstaller->installOntology($bundleID, $filePath, DFUserInput::getInstance(), false, $mode);
+			
+			$bundleID = $oInstaller->installOrUpdateOntology($filePath, false);
 
 			// copy ontology and create ontology bundle
 			$dfgOut->outputln( "[Creating deploy descriptor...");

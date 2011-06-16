@@ -342,7 +342,7 @@ class PackageRepository {
 	 * several words (separated by withspace). All must be contained.
 	 *
 	 * @param string $searchValue
-	 * @return array (id => DeployDescriptor)
+	 * @return array (id => array($ver => $description))
 	 */
 	public static function searchAllPackages($searchValue) {
 		$results = array();
@@ -363,7 +363,16 @@ class PackageRepository {
 						}
 					}
 					if ($found || empty($searchValue)) {
-						$results[$id] = $description;
+						if (!array_key_exists($id, $results)) {
+							$results[$id] = array();
+						}
+						foreach($versions as $v) {
+							$ver = (string) $v->attributes()->ver;
+							$patchlevel = (string) $v->attributes()->patchlevel;
+							if (empty($patchlevel)) $patchlevel = 0;
+							$description = (string) $v->attributes()->description;
+							$results[$id][$ver."_".$patchlevel] = $description;
+						}
 					}
 				}
 
@@ -597,11 +606,11 @@ class PackageRepository {
 
 	/**
 	 * Returns the top most extensions in a list of extensions, ie.
-	 * extensions which are not already included by others. This method returns 
+	 * extensions which are not already included by others. This method returns
 	 * in effect the least minimal set to install the given set of extensions.
 	 *
 	 * @param string[] $extIDs Extension-IDs
-	 * @param string $rootDir 
+	 * @param string $rootDir
 	 *         Directory of MW. If given, the top most extensions of
 	 *         the *local* installations are calculated not in the repository.
 	 */
@@ -641,32 +650,32 @@ class PackageRepository {
 	public static function getDeletionOrder($extIDs, $rootDir = NULL) {
 		$localpackages = PackageRepository::getLocalPackages($rootDir, false);
 		$superExtensions = array();
-		
+
 		foreach($extIDs as $id) {
 			// add the extension itself
 			$superExtensions[$id] = $localpackages[$id];
 			// and its super extensions
 			self::getLocalSuperExtensions($id, $superExtensions, $rootDir);
 		}
-		
+
 		// topological sorting according to the dependencies
 		$resultExtensionIDs = self::sortForDependencies($superExtensions);
-		
+
 		// reverse so that top most come first
 		$resultExtensionIDs = array_reverse($resultExtensionIDs);
-		
+
 		return $resultExtensionIDs;
 	}
-    
+
 	/**
 	 * Returns all dependencies and their frequency of an extension $dd
-	 * 
+	 *
 	 * @param DeployDescriptor $dd
 	 * @param (out) array $descriptorMap
 	 * @param (out) array $depCounterMap
 	 * @param string $rootDir Directory of MW. If given, the dependencies of
-     *                        the *local* installations are calculated not in the repository.
-     *                        
+	 *                        the *local* installations are calculated not in the repository.
+	 *
 	 * @throws RepositoryError
 	 */
 	private static function getAllDependencies($dd, & $descriptorMap, & $depCounterMap, $rootDir) {
@@ -687,10 +696,10 @@ class PackageRepository {
 			self::getAllDependencies($descriptorMap[$id], $descriptorMap, $depCounterMap, $rootDir);
 		}
 	}
-    
+
 	/**
 	 * Returns the local superextensions of an extension.
-	 *  
+	 *
 	 * @param string $extID
 	 * @param (out) array $superExtensions
 	 * @param string $rootDir
