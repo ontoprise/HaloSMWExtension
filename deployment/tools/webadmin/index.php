@@ -234,7 +234,7 @@ $wikiName = !empty(DF_Config::$df_wikiName) ? "(".DF_Config::$df_wikiName.")" : 
 $html .= "<body><img src=\"skins/logo.png\" style=\"float:left; margin-right: 30px\" />".
          "<div style=\"float:right\">".
          "<a id=\"df_webadmin_aboutlink\">".$dfgLang->getLanguageString('df_webadmin_about')."</a> | ".
-         "<a href=\"$wgServer$wgScriptPath/index.php\">".$dfgLang->getLanguageString('df_linktowiki')."</a> | ".
+         "<a href=\"$wgServer$wgScriptPath/index.php\" target=\"_blank\">".$dfgLang->getLanguageString('df_linktowiki')."</a> | ".
          "<a href=\"$wgServer$wgScriptPath/deployment/tools/webadmin/logout.php\">".$dfgLang->getLanguageString('df_logout')."</a>".
          "</div>".
          "<div id=\"df_header\">Deployment Framework WebAdmin $wikiName</div>";
