@@ -30,6 +30,7 @@
 		<copy todir="bin/zip/extensions/Widgets/">
 			<fileset dir="../">
 				<include name="Widget*" />
+				<include name="deploy.xml" />
 			</fileset>
 		</copy>
 		<zip destfile="bin/widgets.zip" basedir="bin/zip" />
