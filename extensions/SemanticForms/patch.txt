@@ -327,13 +327,11 @@ Index: extensions/SemanticForms/libs/SemanticForms.js
 ===================================================================
 --- extensions/SemanticForms/libs/SemanticForms.js	(revision 10879)
 +++ extensions/SemanticForms/libs/SemanticForms.js	(working copy)
-@@ -333,9 +333,18 @@
+@@ -333,7 +333,16 @@
  // Show this div if the current value is any of the relevant options -
  // otherwise, hide it.
  function showDivIfSelected(options, div_id, inputVal, instanceWrapperDiv) {
 -	for (var j in options) {
--		// If it's a listbox and the user has selected more than one
--		// value, it'll be an array - handle either case.
 +	/* op-patch|BL|2011-05-10|SemanticForms|ForInLoops|start */
 +	/*
 +	 * op-patch|BL|2011-05-10|SemanticForms|ForInLoops|doc|
@@ -344,16 +342,19 @@ Index: extensions/SemanticForms/libs/SemanticForms.js
 +	// for (var j in options) {
 +	for ( var j = 0; j < options.length; j++ ) {
 +	/* op-patch|BL|2011-05-10|end */
-+	// If it's a listbox and the user has selected more than one
-+	// value, it'll be an array - handle either case.
+ 		// If it's a listbox and the user has selected more than one
+ 		// value, it'll be an array - handle either case.
  		if ((jQuery.isArray(inputVal) && jQuery.inArray(options[j], inputVal) >= 0) ||
- 		    (!jQuery.isArray(inputVal) && (inputVal == options[j]))) {
- 			showDiv(div_id, instanceWrapperDiv);
-@@ -355,7 +364,14 @@
+@@ -355,7 +364,19 @@
  		var showOnSelectVals = sfgShowOnSelect[this.attr("id")];
  		var instanceWrapperDiv = null;
  	}
 -	for (i in showOnSelectVals) {
++	/*op-patch|SR|2011-06-16|SemanticForms|FixShowOnSelect|start*/
++	/*op-patch|SR|2011-06-16|SemanticForms|FixShowOnSelect|doc|
++	 *  http://dmwiki.ontoprise.com:8888/dmwiki/index.php/Fix_undefined_show_on_select */
++	if (! showOnSelectVals ) return;
++	/*op-patch|SR|2011-06-16|SemanticForms|FixShowOnSelect|end*/
 +	/*op-patch|BL|2011-05-10|SemanticForms|ForInLoops|start*/
 +	/*op-patch|BL|2011-05-10|SemanticForms|ForInLoops|doc|
 +	 *  http://dmwiki.ontoprise.com:8888/dmwiki/index.php/For_in_loops_in_SF */
@@ -365,7 +366,7 @@ Index: extensions/SemanticForms/libs/SemanticForms.js
  		var options = showOnSelectVals[i][0];
  		var div_id = showOnSelectVals[i][1];
  		showDivIfSelected(options, div_id, inputVal, instanceWrapperDiv);
-@@ -365,7 +381,14 @@
+@@ -365,7 +386,14 @@
  // Show this div if any of the relevant selections are checked -
  // otherwise, hide it.
  jQuery.fn.showDivIfChecked = function(options, div_id, instanceWrapperDiv) {
@@ -381,7 +382,7 @@ Index: extensions/SemanticForms/libs/SemanticForms.js
  		if (jQuery(this).find('[value="' + options[i] + '"]').is(":checked")) {
  			showDiv(div_id, instanceWrapperDiv);
  			return;
-@@ -384,7 +407,16 @@
+@@ -384,7 +412,16 @@
  		var showOnSelectVals = sfgShowOnSelect[this.attr("id")];
  		var instanceWrapperDiv = null;
  	}
@@ -399,7 +400,7 @@ Index: extensions/SemanticForms/libs/SemanticForms.js
  		var options = showOnSelectVals[i][0];
  		var div_id = showOnSelectVals[i][1];
  		this.showDivIfChecked(options, div_id, instanceWrapperDiv);
-@@ -656,8 +688,14 @@
+@@ -656,8 +693,14 @@
  					// For every initialization method for
  					// input with id old_id, register the
  					// method for the new input.
@@ -416,7 +417,7 @@ Index: extensions/SemanticForms/libs/SemanticForms.js
  						jQuery(this).SemanticForms_registerInputInit(
  							sfdata.initFunctions[old_id][i].initFunction,
  							sfdata.initFunctions[old_id][i].parameters,
-@@ -734,7 +772,14 @@
+@@ -734,7 +777,14 @@
  				if (sfdata) { // if anything registered at all
  					// Call every initialization method
  					// for this input
