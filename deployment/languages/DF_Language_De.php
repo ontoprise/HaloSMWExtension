@@ -36,6 +36,7 @@ class DF_Language_De extends DF_Language {
     'df_license' => 'Lizenz',
 	'df_contentbundle' => 'Content bundle',
     'df_ontologyuri' => 'Ontologie URI',
+	'df_usesprefix' => 'Bundle benutzt Namensraumpräfix',
 	
 	'checkinstallation' => 'Prüfe Installation',
 	'category' => 'Kategorie',

@@ -543,7 +543,7 @@ if (count($packageToDeinstall) > 1) {
 }
 
 foreach($packageToDeinstall as $toDeInstall) {
-	$toDeInstall = str_replace(".", "", $toDeInstall);
+	
 	try {
 		$dd = $installer->deinstall($toDeInstall);
 		if (count($dd->getWikidumps()) > 0

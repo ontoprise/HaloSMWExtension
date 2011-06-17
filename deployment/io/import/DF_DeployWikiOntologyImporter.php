@@ -40,18 +40,18 @@
 class DeployWikiOntologyImporter extends WikiImporter {
 
 	var $result;
-	var $ontologyID;
+	var $bundleID;
 
 	var $mode;
 
 	var $logger;
 
-	function __construct($source, $ontologyID, $mode) {
+	function __construct($source, $bundleID, $mode) {
 		parent::__construct($source);
 		$this->mode = $mode;
-	
-		$this->ontologyID = $ontologyID;
-	
+
+		$this->bundleID = $bundleID;
+
 		$this->logger = Logger::getInstance();
 	}
 
@@ -76,7 +76,7 @@ class DeployWikiOntologyImporter extends WikiImporter {
 			case "revision":
 				$this->push( "revision" );
 				if( is_object( $this->pageTitle ) ) {
-					$this->workRevision = new DeployWikiOntologyRevision($this->mode, $this->ontologyID);
+					$this->workRevision = new DeployWikiOntologyRevision($this->mode, $this->bundleID);
 					$this->workRevision->setTitle( $this->pageTitle );
 					$this->workRevisionCount++;
 				} else {
@@ -88,7 +88,7 @@ class DeployWikiOntologyImporter extends WikiImporter {
 			case "upload":
 				$this->push( "upload" );
 				if( is_object( $this->pageTitle ) ) {
-					$this->workRevision = new DeployWikiOntologyRevision($this->mode, $this->ontologyID);
+					$this->workRevision = new DeployWikiOntologyRevision($this->mode, $this->bundleID);
 					$this->workRevision->setTitle( $this->pageTitle );
 					$this->uploadCount++;
 				} else {
@@ -146,16 +146,16 @@ class DeployWikiOntologyRevision extends WikiRevision {
 	var $result;
 
 	// ontology ID
-	var $ontologyID;
+	var $bundleID;
 
 	var $logger;
 
-	public function __construct($mode = 0, $ontologyID) {
+	public function __construct($mode = 0, $bundleID) {
 		global $dfgLang;
 
 		$this->mode = $mode;
-	
-		$this->ontologyID = $ontologyID;
+
+		$this->bundleID = $bundleID;
 
 
 		$this->logger = Logger::getInstance();
@@ -182,36 +182,56 @@ class DeployWikiOntologyRevision extends WikiRevision {
 		global $dfgLang;
 		if ($this->title->getNamespace() == NS_TEMPLATE && $this->title->getText() === $dfgLang->getLanguageString('df_contenthash')) return false;
 		if ($this->title->getNamespace() == NS_TEMPLATE && $this->title->getText() === $dfgLang->getLanguageString('df_partofbundle')) return false;
-		
+
 		$article = new Article( $this->title );
-		$pageId = $article->getId();
-		
+		$pageId = $this->title->getArticleId(GAID_FOR_UPDATE);
+
 		if( $pageId == 0 ) {
-            // page does not exist, just import
+			// page does not exist, just import
 			$res = parent::importOldRevision();
+			$this->logger->info("Imported page: ".$this->title->getPrefixedText());
+			$dfgOut->outputln("\t[Imported page] ".$this->title->getPrefixedText());
+			return $res;
 		} else{
-			
-			// merge, only happens if two bundles contain page about same entity. 
+
+			// merge, only happens if two bundles contain page about same entity.
 			$prior = Revision::loadFromTitle( $dbw, $this->title );
 
 			if( !is_null( $prior ) ) {
+				$dfgOut->outputln("\t[Merging page] ".$this->title->getPrefixedText());
 				$wikitext = $prior->getRawText();
 				$om = new OntologyMerger();
-				if ($om->containsBundle($this->ontologyID, $wikitext)) {
-					$wikitext = $om->removeBundle($this->ontologyID, $wikitext);
+				if (!$om->containsAnyBundle()) {
+					
+					// create section for existing content if it belongs to a bundle
+					$existingBundle = DFBundleTools::getBundleID($this->title);
+					print "\nExisting bundle: $existingBundle";
+					print "\nTitle bundle: ".$this->title->getText();
+					if (!is_null($existingBundle)) {
+						$newPageText = "";
+						$newPageText = $om->addBundle($existingBundle, $newPageText, $wikitext);
+					} else{
+						// do not create section if not part of a bundle
+						$newPageText = $wikitext;
+					}
+					
+					// add the bundle section of the currently installed ontology
+					$this->setText($om->addBundle($this->bundleID, $newPageText, $this->text));
+				} else {
+					// check if currently installed ontology already exists and
+					// remove in this case before add the new section.
+					if ($om->containsBundle($this->bundleID, $wikitext)) {
+						$wikitext = $om->removeBundle($this->bundleID, $wikitext);
+					}
+					$this->setText($om->addBundle($this->bundleID, $wikitext, $this->text));
 				}
-				$om->addBundle($this->ontologyID, $wikitext,$this->title->getText());
 			}
+
+			$res = $this->importAsNewRevision();
+			return $res;
+
+
 		}
-
-
-		$this->logger->info("Imported page: ".$this->title->getPrefixedText());
-		$dfgOut->outputln("\t[Imported page] ".$this->title->getPrefixedText());
-			
-		return $res;
-
-
-		return false;
 
 	}
 

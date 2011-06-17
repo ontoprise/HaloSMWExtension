@@ -45,7 +45,7 @@ class OntologyMerger {
 
 	/**
 	 * Semantic patterns
-     * 
+	 *
 	 * @var regular expressions (string)
 	 */
 	private static $PROPERTY_LINK_PATTERN;
@@ -53,6 +53,7 @@ class OntologyMerger {
 
 
 	public function __construct() {
+		global $dfgLang;
 		self::$PROPERTY_LINK_PATTERN = '/\[\[                 # Beginning of the link
                                     (?:([^:][^]]*):[=:])+ # Property name (or a list of those)
                                     ([^\[\]]*)            # content: anything but [, |, ]
@@ -67,9 +68,18 @@ class OntologyMerger {
                                     /ixu';
 	}
 
+	public function containsAnyBundle($wikiText) {
+
+		$pattern = '/<!--\s*BEGIN ontology: /';
+		$begin = preg_match($pattern, $wikiText, $matches) > 0;
+		$pattern = '/<!--\s*END ontology: /';
+		$end = preg_match($pattern, $wikiText, $matches) > 0;
+		return $begin && $end;
+	}
+
 	public function containsBundle($bundleID, $wikiText) {
 		$bundleID = preg_quote($bundleID);
-		print "\nQuoted: $bundleID";
+
 		$pattern = '/<!--\s*BEGIN ontology:\s*'.$bundleID.'\s*-->([^<]*)<!--\s*END ontology:\s*'.$bundleID.'\s*-->/';
 		return preg_match($pattern, $wikiText, $matches) > 0;
 	}
