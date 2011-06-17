@@ -13,7 +13,7 @@
 </thead><tbody>
 <tr>
 	<td>open</td>
-	<td>/mediawiki/index.php?title=MyNewTestPage&amp;action=edit&amp;mode=wysiwyg</td>
+	<td>/mediawiki/index.php?title=MyNewTestPage&amp;action=edit</td>
 	<td></td>
 </tr>
 <tr>
@@ -113,12 +113,12 @@
 </tr>
 <tr>
 	<td>open</td>
-	<td>/mediawiki/index.php?title=MyNewTestPage&amp;action=edit&amp;mode=wikitext</td>
+	<td>/mediawiki/index.php?title=MyNewTestPage&amp;action=edit</td>
 	<td></td>
 </tr>
 <tr>
 	<td>waitForTextPresent</td>
-	<td>*List item1 **List item11 *List item2</td>
+	<td>*List item1</td>
 	<td></td>
 </tr>
 <tr>
@@ -143,7 +143,17 @@
 </tr>
 <tr>
 	<td>verifyTextPresent</td>
-	<td>*List item1 **List item11 *List item2</td>
+	<td>*List item1</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyTextPresent</td>
+	<td>**List item11</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyTextPresent</td>
+	<td>*List item2</td>
 	<td></td>
 </tr>
 <tr>

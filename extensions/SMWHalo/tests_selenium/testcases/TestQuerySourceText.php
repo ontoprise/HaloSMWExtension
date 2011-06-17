@@ -9,7 +9,7 @@ class TestQuerySourceText extends SeleniumTestCase_Base
   public function testMyTestCase()
   {
     $this->open("/mediawiki/index.php/Special:QueryInterface");
-    $this->click("qiDefTab3");
+    $this->click("//td[contains(@id, 'qiDefTab') and text()='Query source']");
     $this->type("fullAskText", "{{#ask: [[Category:Project]]\n[[Start date::<2010-01-01]]\n[[Has member::<q>\n[[Category:Person]]\n[[Knows::Joe Mystery]]\n</q>]]\n| format=table\n| merge=false\n|}}");
     $this->click("//button[@onclick='qihelper.loadFromSource(true)']");
     for ($second = 0; ; $second++) {

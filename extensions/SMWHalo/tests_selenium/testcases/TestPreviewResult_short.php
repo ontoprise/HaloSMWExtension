@@ -9,11 +9,11 @@ class TestPreviewResult_short extends SeleniumTestCase_Base
   public function testMyTestCase()
   {
     $this->open("/mediawiki/index.php/Special:QueryInterface");
-    $this->click("//button[@onclick='qihelper.newCategoryDialogue(true)']");
+    $this->click("//button[text()='Add Category']");
     $this->type("input0", "Person");
     $this->click("//button[text()='Add']");
     for ($second = 0; ; $second++) {
-        if ($second >= 60) $this->fail("timeout");
+        if ($second >= 60) $this->fail("Query didn't return any results");
         try {
             if ($this->isElementPresent("//table[@id='querytable0']")) break;
         } catch (Exception $e) {}

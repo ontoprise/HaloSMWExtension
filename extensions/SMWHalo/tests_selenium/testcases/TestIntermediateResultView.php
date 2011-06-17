@@ -9,16 +9,15 @@ class TestIntermediateResultView extends SeleniumTestCase_Base
 	public function testMyTestCase()
 	{
 		$this->open("/mediawiki/index.php/Special:QueryInterface");
-		$this->click("//button[@onclick='qihelper.newCategoryDialogue(true)']");
+		$this->click("//button[text()='Add Category']");
 		$this->type("input0", "Person1");
 		$this->click("//button[@onclick='qihelper.add()']");
-		$this->click("//button[@onclick='qihelper.newPropertyDialogue(true)']");
+		$this->click("//button[text()='Add Property']");
 		$this->focus("//input[@id=\"input_p0\"]");
 		$this->controlKeyDown();
 		$this->altKeyDown();
 		$this->typeKeys("//input[@id=\"input_p0\"]", "' '");
-		//    $this->controlKeyUp();
-		//    $this->altKeyUp();
+		
 		for ($second = 0; ; $second++) {
 			if ($second >= 60) $this->fail("Autocomplete list failed to open");
 			try {

@@ -11,14 +11,14 @@ class TestWikiMarkup extends SeleniumTestCase_Base
     $this->runScript("CKEDITOR.instances.wpTextbox1.setData(\"This page is called: {{{PAGENAME}}}<br/><br/>Template Call: 2 < 3<br/>{{template|sdf|param=2|pagea2={{Some Other template}}}} and a nowiki part&lt;nowiki&gt;bla<br/>blub done<br/>&lt;/nowiki&gt;<br/><br/>Tepmplates like this {{TempLateBlub|param1={{{arg_x}}}}} can also use parameters.<br/><br/>Here we have magic words like __SGDGfsar__ and __NOTOC__ and __SOFOR__ that should be<br/>replaced.<br/><br/>We have {{#ask:[[Category:Person]]|format=ol}} in the wiki.\")");
     $this->setSpeed("1000");
     for ($second = 0; ; $second++) {
-        if ($second >= 60) $this->fail("Element not present: //span[@id='cke_46']/a");
+        if ($second >= 60) $this->fail("Element not present: //a[@title='Paragraph Format']");
         try {
-            if ($this->isElementPresent("//span[@id='cke_46']/a")) break;
+            if ($this->isElementPresent("//a[@title='Paragraph Format']")) break;
         } catch (Exception $e) {}
         sleep(1);
     }
 
-    $this->click("//span[@id='cke_46']/a");
+    $this->click("//a[@title='Paragraph Format']");
   	for ($second = 0; ; $second++) {
         if ($second >= 60) $this->fail("Element not present: //a/p[text()='Normal']");
         try {
@@ -76,17 +76,17 @@ class TestWikiMarkup extends SeleniumTestCase_Base
     } catch (PHPUnit_Framework_AssertionFailedError $e) {
         array_push($this->verificationErrors, $e->toString());
     }
-    $this->click("link=Edit");
+    $this->click("//a/img[@id='editimage']");
     $this->waitForPageToLoad("30000");
     for ($second = 0; ; $second++) {
-        if ($second >= 60) $this->fail("Element not present: //a[@id='cke_6']");
+        if ($second >= 60) $this->fail("Element not present: //a[contains(@class, 'cke_button_source')]");
         try {
-            if ($this->isElementPresent("//a[@id='cke_6']")) break;
+            if ($this->isElementPresent("//a[contains(@class, 'cke_button_source')]")) break;
         } catch (Exception $e) {}
         sleep(1);
     }
 
-    $this->click("//a[@id='cke_6']");
+    $this->click("//a[contains(@class, 'cke_button_source')]");
   	try {
         $this->assertTrue(false !== strpos(strtolower($this->getValue("//td[@id='cke_contents_wpTextbox1']/textarea")), strtolower("This page is called: &#x7B;&#x7B;&#x7B;PAGENAME&#x7D;&#x7D;&#x7D;<br/><br/>Template Call: 2 < 3<br/>&#x7B;&#x7B;template|sdf|param=2|pagea2=&#x7B;&#x7B;Some Other template&#x7D;&#x7D;&#x7D;&#x7D; and a nowiki part&lt;nowiki&gt;bla<br/>blub done<br/>&lt;/nowiki&gt;<br/><br/>Tepmplates like this &#x7B;&#x7B;TempLateBlub|param1=&#x7B;&#x7B;&#x7B;arg_x&#x7D;&#x7D;&#x7D;&#x7D;&#x7D; can also use parameters.<br/><br/>Here we have magic words like __SGDGfsar__ and &#95;&#95;NOTOC&#95;&#95; and __SOFOR__ that should be<br/>replaced.<br/><br/>We have &#x7B;&#x7B;#ask:&#x5B;&#x5B;Category:Person&#x5D;&#x5D;|format=ol&#x7D;&#x7D; in the wiki.")));
     } catch (PHPUnit_Framework_AssertionFailedError $e) {

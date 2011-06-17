@@ -9,7 +9,7 @@ class TestFormatQueryPreview extends SeleniumTestCase_Base
   public function testMyTestCase()
   {
     $this->open("/mediawiki/index.php/Special:QueryInterface");
-    $this->click("//button[@onclick='qihelper.newCategoryDialogue(true)']");
+    $this->click("//button[text()='Add Category']");
     $this->type("input0", "Person");
     $this->click("//button[@onclick='qihelper.add()']");
     $this->setSpeed("1000");

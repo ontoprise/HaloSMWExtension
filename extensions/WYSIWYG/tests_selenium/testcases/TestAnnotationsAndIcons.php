@@ -7,7 +7,7 @@ class TestAnnotationsAndIcons extends SeleniumTestCase_Base
 
 	public function testMyTestCase()
 	{
-		$this->open("/mediawiki/index.php?title=MyNewTestPage&action=edit&mode=wysiwyg");
+		$this->open("/mediawiki/index.php?title=MyNewTestPage&action=edit");
 		$this->type("//*[@id='wpTextbox1']", "This is Berlin located in [[located in::Germany]]. The city is also is [[is capital::Germany]] of Germany and has [[Inhabitants::3524000|3.5 Mio]].\n\n== Heading 2 ==\n\nHere follows a nowiki part <nowiki>'''Note the bold'''</nowiki>. It ends here.\n\n=== Heading 2.2 ===\n\n*List item1\n**List item11\n*List item2\n\n=== Heading 2.3 ===\n\nThis wiki contains {{#ask:[[Category:Person]]|format=list}} as a person. {{Copyright}}\n\n[[Category:City]]");
 		$this->click("wpSave");
 		$this->waitForPageToLoad("30000");
@@ -51,7 +51,7 @@ class TestAnnotationsAndIcons extends SeleniumTestCase_Base
 			array_push($this->verificationErrors, $e->toString());
 		}
 		try {
-			$this->assertTrue($this->isTextPresent("Is capital"), "Is capital");
+			$this->assertTrue($this->isTextPresent("Is capital"), "Text not present: Is capital");
 		} catch (PHPUnit_Framework_AssertionFailedError $e) {
 			array_push($this->verificationErrors, $e->toString());
 		}

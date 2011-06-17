@@ -8,7 +8,7 @@ class TestUnitsInQuery extends SeleniumTestCase_Base
 	public function testMyTestCase()
 	{
 		$this->open("/mediawiki/index.php/Special:QueryInterface");
-		$this->click("qiDefTab3");
+		$this->click("//td[contains(@id, 'qiDefTab') and text()='Query source']");
 		$this->type("fullAskText", "{{#ask: [[Category:Person]]\n| ?Height #cm \n| format=table\n| merge=false\n|}}");
 		$this->click("//button[@onclick='qihelper.loadFromSource(true)']");
 		for ($second = 0; ; $second++) {
@@ -54,7 +54,7 @@ class TestUnitsInQuery extends SeleniumTestCase_Base
 		} catch (PHPUnit_Framework_AssertionFailedError $e) {
 			array_push($this->verificationErrors, $e->toString());
 		}
-		$this->click("qiDefTab3");
+		$this->click("//td[contains(@id, 'qiDefTab') and text()='Query source']");
 		$this->type("fullAskText", "{{#ask: [[Category:Person]]\n| ?Height #inch \n| format=table\n| headers=show\n| link=all\n| order=ascending\n| merge=false\n|}}");
 		$this->click("//button[@onclick='qihelper.loadFromSource(true)']");
 		for ($second = 0; ; $second++) {
@@ -100,7 +100,7 @@ class TestUnitsInQuery extends SeleniumTestCase_Base
 		} catch (PHPUnit_Framework_AssertionFailedError $e) {
 			array_push($this->verificationErrors, $e->toString());
 		}
-		$this->click("qiDefTab3");
+		$this->click("//td[contains(@id, 'qiDefTab') and text()='Query source']");
 		$this->type("fullAskText", "{{#ask: [[Category:Person]]\n[[Height::<1.8 m]]\n| ?Height #cm \n| format=table\n| headers=show\n| link=all\n| order=ascending\n| merge=false\n|}}");
 		$this->click("//button[@onclick='qihelper.loadFromSource(true)']");
 		for ($second = 0; ; $second++) {

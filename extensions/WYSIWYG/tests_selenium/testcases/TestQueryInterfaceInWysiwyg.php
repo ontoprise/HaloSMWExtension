@@ -12,26 +12,26 @@ class TestQueryInterfaceInWysiwyg extends SeleniumTestCase_Base
     $this->type("wpTextbox1", "[[HasCitizen::33333333]]\n[[HasCapital::Paris]]\n[[Category:State]]");
     $this->click("wpSave");
     $this->waitForPageToLoad("30000");
-    $this->open("/mediawiki/index.php?title=Portugal&action=edit&mode=wikitext");
+    $this->open("/mediawiki/index.php?title=Portugal&action=edit");
     $this->type("wpTextbox1", "[[HasCitizen::44444444444]]\n[[HasCapital::Lissabon]]\n[[Category:State]]");
     $this->click("wpSave");
     $this->waitForPageToLoad("30000");
-    $this->open("/mediawiki/index.php?title=Germany&action=edit&mode=wikitext");
-    $this->type("wpTextbox1", "[[HasCitizen::55555555]]  [[HasCapital::Berlin]] [[Category:State]]");
+    $this->open("/mediawiki/index.php?title=Germany&action=edit");
+    $this->type("wpTextbox1", "[[HasCitizen::55555555]]\n[[HasCapital::Berlin]]\n[[Category:State]]");
     $this->click("wpSave");
     $this->waitForPageToLoad("30000");
     $this->open("/mediawiki/index.php?title=WYSIWYGTest&action=edit&mode=wysiwyg");
     for ($second = 0; ; $second++) {
         if ($second >= 60) $this->fail("timeout");
         try {
-            if ($this->isElementPresent("//*[@id=\"cke_36\"]")) break;
+            if ($this->isElementPresent("//a[contains(@class, 'SMWqi')]/span[contains(text(), 'Query Interface')]")) break;
         } catch (Exception $e) {}
         sleep(1);
     }
 
     $this->runScript("CKEDITOR.instances.wpTextbox1.setData(\"\")");
     $this->setSpeed("5000");
-    $this->click("//*[@id=\"cke_36\"]");
+    $this->click("//a[contains(@class, 'SMWqi')]/span[contains(text(), 'Query Interface')]");
     $this->selectFrame("CKeditorQueryInterface");
     $this->setSpeed("0");
     $this->click("qiDefTab3");

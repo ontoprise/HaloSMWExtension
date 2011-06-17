@@ -9,7 +9,7 @@ class TestInferredResults extends SeleniumTestCase_Base
   public function testMyTestCase()
   {
     $this->open("/mediawiki/index.php/Special:QueryInterface");
-    $this->click("qiDefTab3");
+    $this->click("//td[contains(@id, 'qiDefTab') and text()='Query source']");
     $this->type("fullAskText", "{{#sparql: [[Itemnumber::+]]\n| ?Itemnumber\n| format=csv\n| headers=show\n| link=all\n| order=ascending\n| merge=false\n|}}");
     $this->click("//button[@onclick='qihelper.loadFromSource(true)']");
     for ($second = 0; ; $second++) {
@@ -25,14 +25,14 @@ class TestInferredResults extends SeleniumTestCase_Base
     } catch (PHPUnit_Framework_AssertionFailedError $e) {
         array_push($this->verificationErrors, $e->toString());
     }
-    $this->click("qiDefTab1");
+    $this->click("//td[contains(@id, 'qiDefTab') and text()='Query as tree']");
     $this->click("link=Itemnumber");
     $this->click("qidelete");
-    $this->click("qiDefTab3");
+    $this->click("//td[contains(@id, 'qiDefTab') and text()='Query source']");
     $this->type("fullAskText", "{{#sparql: [[Itemnumber::+]]\n| ?Itemnumber\n| format=broadtable\n| headers=show\n| link=all\n| order=ascending\n| merge=false\n|}}");
     $this->click("//button[@onclick='qihelper.loadFromSource(true)']");
     for ($second = 0; ; $second++) {
-        if ($second >= 60) $this->fail("timeout");
+        if ($second >= 60) $this->fail("Element is not present: link=CSV");
         try {
             if ($this->isElementPresent("//table[@id=\"querytable0\"][@width=\"100%\"]", "Element is not present: link=CSV")) break;
         } catch (Exception $e) {}
@@ -64,13 +64,13 @@ class TestInferredResults extends SeleniumTestCase_Base
     } catch (PHPUnit_Framework_AssertionFailedError $e) {
         array_push($this->verificationErrors, $e->toString());
     }
-    $this->click("qiDefTab1");
+    $this->click("//td[contains(@id, 'qiDefTab') and text()='Query as tree']");
     $this->click("link=Itemnumber");
     $this->click("//input[@name='input_r0' and @value='-2']");
     $this->select("//tr[@id='row_r1']/td[2]/select", "label=greater (>=)");
     $this->type("input_r1", "3");
     $this->click("//button[@onclick='qihelper.add()']");
-    $this->click("qiDefTab3");
+    $this->click("//td[contains(@id, 'qiDefTab') and text()='Query source']");
     try {
         $this->assertTrue((bool)preg_match('/^\{\{#ask: \[\[Itemnumber::>3\]\]
 													    | [\s\S]Itemnumber 
