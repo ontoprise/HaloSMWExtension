@@ -24,8 +24,10 @@ class SCProcessor {
 			'href' => $smwgConnectorScriptPath . '/scripts/extjs/resources/css/ext-all.css' ) );
 		$wgOut->addLink( array( 'rel' => 'stylesheet', 'type' => 'text/css',
 			'href' => $smwgConnectorScriptPath . '/scripts/extjs/ux/css/MultiSelect.css' ) );
-
+		
 		$wgOut->addScript('<script type="text/javascript" src="' . $smwgConnectorScriptPath . '/scripts/extjs/adapter/ext/ext-base.js"></script>');
+//		global $smgJSLibs; $smgJSLibs[] = 'jquery';
+//		$wgOut->addScript('<script type="text/javascript" src="' . $smwgConnectorScriptPath . '/scripts/extjs/adapter/jquery/ext-jquery-adapter.js"></script>');
 		$wgOut->addScript('<script type="text/javascript" src="' . $smwgConnectorScriptPath . '/scripts/extjs/ext-all.js"></script>');
 		$wgOut->addScript('<script type="text/javascript" src="' . $smwgConnectorScriptPath . '/scripts/extjs/ux/MultiSelect.js"></script>');
 		$wgOut->addScript('<script type="text/javascript" src="' . $smwgConnectorScriptPath . '/scripts/ItemSelector.js"></script>');
@@ -90,10 +92,13 @@ class SCProcessor {
 			// just remove field values
 			$content = StringUtils::delimiterReplace('<nowiki>', '</nowiki>', '', $content);
 				
-			preg_match_all("/(\\{?\\{\\{)([^#\\|\\}\n]+)/", $content, $matches, PREG_SET_ORDER);
+			preg_match_all('/(\{{2,3})([^{#|}]+)/', $content, $matches, PREG_SET_ORDER);
 			foreach($matches as $m) {
 				if($m[1] == '{{{') continue;
-				$template = Title::newFromText(trim($m[2]))->getText();
+				$tmpl = explode("\n", trim($m[2]), 2);
+				$t = Title::newFromText($tmpl[0]);
+				if($t == null) continue;
+				$template = $t->getText();
 				if (isset($template_forms[$template])) {
 					foreach($template_forms[$template] as $form) {
 						$valid_forms[] = $form;
@@ -434,6 +439,10 @@ class SCProcessor {
 					$full_field_text = $matches[0][$i];
 					if (($full_field_text != '') && (! in_array($field_name, $field_names_array))) {
 						$cur_pos = stripos($template_text, $full_field_text, $cur_pos);
+						// special case, e.g., table, {| => {{{!}}
+						if(preg_match('/(\|)|(}{2,3})/', substr($template_text, $cur_pos), $m)) {
+							if($m[0] == '}}') { $cur_pos += 3; continue; }
+						}
 						$template_fields[$cur_pos] = SFTemplateField::create($field_name, ucfirst($field_name));
 						$field_names_array[] = $field_name;
 						$cur_pos += strlen($full_field_text);
