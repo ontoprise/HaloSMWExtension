@@ -88,7 +88,7 @@ $wgExtensionCredits['other'][] = array(
 	'path' => __FILE__,
 	'name' => 'WYSIWYG extension',
 	'author' => array( 'Frederico Caldeira Knabben', 'Wiktor Walc', 'others', 'Jack Phoenix', 'ontoprise GmbH' ),
-	'version' => WYSIWYG_EDITOR_VERSION.', CKEditor 3.4.2 (revision 6041)',
+	'version' => WYSIWYG_EDITOR_VERSION.', CKEditor 3.6 (revision 6902)',
 	'url' => 'http://smwforum.ontoprise.com/smwforum/index.php/Help:WYSIWYG_Extension',
 	'descriptionmsg' => 'fckeditor-desc',
 );
