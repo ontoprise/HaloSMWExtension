@@ -46,7 +46,7 @@ $asfCombineCategorySectionsWherePossible = true;
  * Decide whether to display property labels and category labels as links
  */
 global $asfDisplayPropertiesAndCategoriesAsLinks;
-$asfDisplayPropertiesAndCategoriesAsLinks = true;
+$asfDisplayPropertiesAndCategoriesAsLinks = false;
 
 
 /*

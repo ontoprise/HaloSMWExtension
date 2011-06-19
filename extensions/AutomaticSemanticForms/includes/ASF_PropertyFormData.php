@@ -48,6 +48,7 @@ class ASFPropertyFormData {
 	 * Extracts metadata from the ontology and sets the fields of this form input field
 	 */
 	private function initializeFormCreationMetadata(){
+		
 		$this->objectType = 
 			ASFFormGeneratorUtils::getPropertyValue($this->semanticData, ASF_PROP_HAS_TYPE);
 		$this->autocompletionRange = 
@@ -92,7 +93,7 @@ class ASFPropertyFormData {
 		$syntax .= '|'.$this->titleObject->getText();
 		
 		//deal with input type
-		list($inputType, $size, $rows, $cols, $autocompletion, $values) = 
+		list($inputType, $size, $rows, $cols, $autocompletion, $values, $extraSyntaxParameters) = 
 			$this->getFormFieldInputTypeMetadata();
 			
 			
@@ -129,7 +130,6 @@ class ASFPropertyFormData {
 		
 		$autocompletion .= '|pasteNS=true';
 		
-			
 		$syntax .= ' |input type='.$inputType;
 		if($size) $syntax .= ' |size='.$size;
 		if($rows) $syntax .= ' |rows='.$rows;
@@ -176,6 +176,8 @@ class ASFPropertyFormData {
 			$syntax .= ' |default='.$this->defaultValue;
 		}
 		
+		$syntax .= $extraSyntaxParameters;
+		
 		$syntax .= '}}}';
 		
 		//deal with form input help
@@ -202,6 +204,7 @@ class ASFPropertyFormData {
 		
 		//add form field label
 		global $asfDisplayPropertiesAndCategoriesAsLinks;
+		
 		if($asfDisplayPropertiesAndCategoriesAsLinks){
 			$intro .= "[[".$this->titleObject->getFullText().'|' . $this->inputLabel . ']]:';
 		} else {
@@ -248,6 +251,7 @@ class ASFPropertyFormData {
 		$formFieldRow = $this->getFormFieldIntro();
 		$formFieldRow .= $this->getFormFieldSyntax();
 		$formFieldRow .= $this->getFormFieldOutro();
+		
 		return $formFieldRow;
 	}
 	
@@ -283,15 +287,24 @@ class ASFPropertyFormData {
 		$cols = false;
 		$autocompletion = false;
 		$values = false;
+		$extraSyntaxParameters = '';
 		
 		if($this->explicitInputType){
-			$inputType = strtolower($this->explicitInputType);
-			$objectType = '-'.strtolower($this->objectType).'-';
-			if(strpos(LONGTEXTDATATYPES, $objectType) !== false
-					|| strpos(SHORTTEXTDATATYPES, $objectType) !== false){
-				$autocompletion = 'values';
-			} else{
-				$autocompletion = 'category';
+			
+			global $dapi_instantiations;
+			if(array_key_exists(ucfirst($this->explicitInputType), $dapi_instantiations)){
+				$inputType = 'datapicker';
+				$extraSyntaxParameters = '|datapicker id='.ucfirst($this->explicitInputType);
+				$size = '6';
+			} else {
+				$inputType = strtolower($this->explicitInputType);
+				$objectType = '-'.strtolower($this->objectType).'-';
+				if(strpos(LONGTEXTDATATYPES, $objectType) !== false
+						|| strpos(SHORTTEXTDATATYPES, $objectType) !== false){
+					$autocompletion = 'values';
+				} else{
+					$autocompletion = 'category';
+				}#
 			}
 		} else {
 			$objectType = '-'.strtolower($this->objectType).'-';
@@ -334,7 +347,7 @@ class ASFPropertyFormData {
 		if($forToolTip){
 			return $autocompletion;	
 		} else {
-			return array($inputType, $size, $rows, $cols, $autocompletion, $values);
+			return array($inputType, $size, $rows, $cols, $autocompletion, $values, $extraSyntaxParameters);
 		}
 	}
 	

@@ -22,6 +22,8 @@ class ASFFormPrinter extends SFFormPrinter {
 		} else {
 			parent::__construct();
 		}
+		
+		$this->setInputTypeHook( 'datapicker', array( 'ASFDataPickerInputType', 'getHTML' ), array());
 	}
 
 
@@ -117,5 +119,6 @@ class ASFFormPrinter extends SFFormPrinter {
 			
 		return array($form_text, $javascript_text, $data_text, $form_page_title, $generated_page_name);
 	}
-
+	
+	
 }

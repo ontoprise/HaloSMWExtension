@@ -75,6 +75,10 @@ $asfScriptPath = $wgScriptPath . '/extensions/AutomaticSemanticForms';
 	if($asfEnableRedLinkHandler){
 		$wgHooks['LinkEnd'][] = 'ASFRedLinkHandler::handleRedLinks';
 	}
+	
+	//initialize input type ajac access poiints
+	require_once($asfIP . '/includes/inputtypes/ASF_DataPickerInputType.php');
+	require_once($asfIP . '/includes/inputtypes/ASF_DataPickerSettings.php');
 }
 
 /*
@@ -186,6 +190,10 @@ function asfAddHeaders(& $out){
 			case 'asf.css' :
 				$cssFile = $asfScriptPath . "/skins/asf.css";
 				$out->addExtensionStyle($cssFile);
+				break ;
+			case 'datapicker.js' :
+				$scriptFile = $asfScriptPath . "/scripts/datapicker.js";
+				$out->addScriptFile( $scriptFile );
 				break ;
 		}
 	}
