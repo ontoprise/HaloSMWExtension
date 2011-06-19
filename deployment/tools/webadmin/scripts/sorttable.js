@@ -129,15 +129,14 @@ function smw_resortTable( lnk, clid ) {
 		}
 	}
 
-	newRows.sort( sortfn );
-
 	var ARROW;
 	if ( span.getAttribute( 'sortdir' ) == 'down' ) {
 		ARROW = '<img alt="[&gt;]" src="' + SMW_PATH + '/sort_up.gif"/>';
-		newRows.reverse();
+		smw_sortTable( newRows, sortfn, false,  table.rows[0].cells.length );
 		span.setAttribute( 'sortdir', 'up' );
 	} else {
 		ARROW = '<img alt="[&lt;]" src="' + SMW_PATH + '/sort_down.gif"/>';
+		smw_sortTable( newRows, sortfn, true,  table.rows[0].cells.length );
 		span.setAttribute( 'sortdir', 'down' );
 	}
 
@@ -172,6 +171,62 @@ function smw_resortTable( lnk, clid ) {
 }
 window.smw_resortTable = smw_resortTable;
 
+/**
+ * Sorts the given table. Can handle tables which merged columns, ie.
+ * columns which reach over serveral rows.
+ * 
+ * @param array of rows t
+ * @param function sortfn order function
+ * @param boolean up up/down
+ * @param int numberOfColumns
+ */
+function smw_sortTable(t, sortfn, up, numberOfColumns) {
+var i,j;
+  var upMul = up ? 1 : -1;
+	for(i = 0; i < t.length; i++ ) {
+	var blocksize = 1;
+		for(j = 0; j < t.length-1; j+=blocksize ) {
+		 if (j >= t.length) break;
+			var startBlock1 = j;
+			var m = j+1;
+			
+			while (m <= t.length-1 && t[m].cells.length < numberOfColumns) m++;
+			var endBlock1 = m-1;
+			var startBlock2 = m;
+			if (!t[startBlock2]) { 
+				break;
+			}
+			var c = sortfn(t[startBlock1], t[startBlock2]) * upMul;
+			if (c < 0) {
+				m++;
+				while (m <= t.length-1 && t[m].cells.length < numberOfColumns) m++;
+				m--;
+				var endBlock2 = m;
+				// switch blocks
+				smw_switchblocks(t, startBlock1, startBlock2, endBlock2);
+				blocksize = endBlock2-startBlock2+1;
+			} else {
+			   blocksize = endBlock1-startBlock1+1;
+			}
+		}
+	}
+}
+
+function smw_switchblocks(arr, start, m, end) {
+	var i;
+	var tmp=new Array();
+	for(i = 0; i < m-start; i++) {
+		tmp.push(arr[start+i]);
+	}
+	
+	for(i = 0; i < end-m+1; i++) {
+		arr[start+i] = arr[m+i];
+	}
+	
+	for(i = 0; i < m-start; i++) {
+		arr[start+end-m+1+i] = tmp[i];
+	}
+}
 function smw_getParent( el, pTagName ) {
 	if ( el == null ) {
 		return null;
