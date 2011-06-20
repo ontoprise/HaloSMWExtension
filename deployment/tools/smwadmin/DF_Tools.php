@@ -263,9 +263,9 @@ class Tools {
 			if (count($out) > 0 && strpos(reset($out), "root") !== false) return true; // is root
 
 			// try to create and delete a file in local dir and temp dir.
-			$touched = touch("foo_bar_test");
+			$touched = @touch("foo_bar_test");
 			exec('rm foo_bar_test', $output, $ret);
-			$touched2 = touch("/tmp/foo_bar_test");
+			$touched2 = @touch("/tmp/foo_bar_test");
 			exec('rm /tmp/foo_bar_test', $output, $ret2);
 			$removed = ($ret == 0) && ($ret2 == 0);
 
