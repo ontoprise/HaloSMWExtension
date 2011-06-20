@@ -117,6 +117,10 @@ class Rollback {
 			// possible since MW 1.16
 			$wgDBadminuser = $this->getVariableValue("LocalSettings.php", "wgDBadminuser");
 			$wgDBadminpassword = $this->getVariableValue("LocalSettings.php", "wgDBadminpassword");
+			
+			if (empty($wgDBadminuser) || empty($wgDBadminpassword)) {
+				$dfgOut->outputln('$wgDBadminuser and $wgDBadminpassword is empty! Please set.', DF_PRINTSTREAM_TYPE_WARN);
+			}
 		}
 
 		if (is_null($name)) {
@@ -311,7 +315,7 @@ class Rollback {
 		global $mwrootDir;
 		$ls_content = file_get_contents("$mwrootDir/$file");
 		preg_match('/\$'.$varname.'\s*=\s*["\']([^"\']+)["\']/', $ls_content, $matches);
-		return $matches[1];
+		return array_key_exists(1, $matches) ? $matches[1] : '';
 	}
 
 
