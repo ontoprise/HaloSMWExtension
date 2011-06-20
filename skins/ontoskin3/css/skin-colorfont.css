@@ -77,11 +77,11 @@ dt {
     background: url(../img/menue_hover.gif) repeat-x;
 	margin-left: 3px;
 	margin-right: 3px;
+    cursor: pointer;
 }
 
 .smwh_menudropdown{
     background: url(../img/menu_arrow.gif) right no-repeat;
-    cursor: pointer;
 }
 
 
