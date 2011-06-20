@@ -2,9 +2,9 @@
 	<dataSource 
 		type="JdbcDataSource" 
 		driver="com.mysql.jdbc.Driver"
-		url="jdbc:mysql://{{wgDBserver}}:{{wgDBport}}/{{wgDBname}}"
-		user="{{wgDBuser}}"
-		password="{{wgDBpassword}}"
+		url="jdbc:mysql://localhost:3306/testdb" 
+		user="root" 
+		password="m8nix"
 		batchSize="-1" 
 		/>
 	<script>
@@ -65,12 +65,13 @@
 					var ymd = date.split('-');
 					var m = parseInt(ymd[1]);
 					m = (m < 10) ? '0'+m : m.toString();
-					var d = parseInt(ymd[2]);
+          var d = parseInt(ymd[2]);
 					d = (d < 10) ? '0'+d : d.toString();
 					time = time.replace(":", '').replace(":", '');
 					var dateTime = ymd[0]+m+d+time;
 					var propDate = 'smwh_'+prop+'_datevalue_l';
 					row.put(propDate, dateTime);
+//					row.put('smwh_attributes', propDate);
 				} else if (
 					type == '_txt' ||
 					type == '_cod' ||
@@ -116,6 +117,15 @@
 			<field column="pns" name="smwh_namespace_id" />
 			<field column="pt"  name="smwh_title" />
 			
+			<!-- Store the full text of the article -->
+			<entity 
+				name="fulltext"
+				query="SELECT CAST(t.old_text AS CHAR) ft
+               FROM text t
+               WHERE old_id='${pages.pid}'">
+				<field column="ft" name="smwh_full_text" />
+			</entity>
+		
 			<!-- Store all categories for each subject -->
 			<entity 
 				name="categories"

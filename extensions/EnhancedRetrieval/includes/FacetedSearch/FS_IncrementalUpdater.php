@@ -59,9 +59,9 @@ class FSIncrementalUpdater  {
 	 * @param Article $article
 	 * 		The saved article.
 	 */
-	public static function onArticleSaveComplete(Article &$article) {
+	public static function onArticleSaveComplete(Article &$article, $user, $text) {
 		$indexer = FSIndexerFactory::create();
-		$indexer->updateIndexForArticle($article);
+		$indexer->updateIndexForArticle($article, $user, $text);
 		return true;
 	}
 	

@@ -74,7 +74,15 @@ class FSFacetedSearchSpecial extends SpecialPage {
 		</div>
 		<div class="search">
 	        <input type="text" id="query" name="query"/>
-	        <input type="button" name="search" value="{{fs_search}}" />
+	        <input type="button" id="search_button" name="search" value="{{fs_search}}" />
+	        {{fs_sort_by}}
+			<select id="search_order" name="search_order" size="1">
+				<option value="relevance">{{fs_relevance}}</option>
+				<option value="newest" selected="selected">{{fs_newest_date_first}}</option>
+				<option value="oldest">{{fs_oldest_date_first}}</option>
+				<option value="ascending">{{fs_title_ascending}}</option>
+				<option value="descending">{{fs_title_descending}}</option>
+			</select>
 		</div>
 		<hr class="xfsSeparatorLine">
 		<div id="navigation">
@@ -125,6 +133,7 @@ class FSFacetedSearchSpecial extends SpecialPage {
 		$wgOut->addScript("<script type=\"text/javascript\" src=\"". $fsgScriptPath .  "/scripts/FacetedSearch/FS_ResultWidget.js\"></script>");        
 		$wgOut->addScript("<script type=\"text/javascript\" src=\"". $fsgScriptPath .  "/scripts/FacetedSearch/FS_PagerWidget.js\"></script>");        
 		$wgOut->addScript("<script type=\"text/javascript\" src=\"". $fsgScriptPath .  "/scripts/FacetedSearch/FS_FacetWidget.js\"></script>");        
+		$wgOut->addScript("<script type=\"text/javascript\" src=\"". $fsgScriptPath .  "/scripts/FacetedSearch/FS_ArticlePropertiesWidget.js\"></script>");        
 		$wgOut->addScript("<script type=\"text/javascript\" src=\"". $fsgScriptPath .  "/scripts/FacetedSearch/FS_NamespaceFacetWidget.js\"></script>");        
 		$wgOut->addScript("<script type=\"text/javascript\" src=\"". $fsgScriptPath .  "/scripts/FacetedSearch/FS_FacetPropertyValueWidget.js\"></script>");        
 		$wgOut->addScript("<script type=\"text/javascript\" src=\"". $fsgScriptPath .  "/scripts/FacetedSearch/FS_CurrentSearchWidget.js\"></script>");

@@ -203,7 +203,7 @@ class TestSolrIndexer extends PHPUnit_Framework_TestCase {
     	
     	// Send a query for all documents and asserts that all articles were added.
     	$qr = $indexer->sendRawQuery("q=*:*");
-    	$expResult = 'numFound="161"';
+    	$expResult = 'numFound="160"';
     	$this->assertContains($expResult, $qr, "The index does not contain the expected number of documents.");
     }
 
@@ -266,22 +266,32 @@ class TestSolrFullIndexContent extends PHPUnit_Framework_TestCase {
     
     public function providerForIndexContent() {
     	return array(
-    		array("q=*:*", array('numFound="161"')),
+    		array("q=*:*", array('numFound="160"')),
     		array("q=*:*&fl=smwh_title&wt=json&indent=on&start=0",
     		      array(
     		      	'"smwh_title":"Main_Page"',
     		      	'"smwh_title":"Image"',
+    		      	'"smwh_title":"Located_in"',
+    		      	'"smwh_title":"Located_in_state"',
     		      	'"smwh_title":"Height_stories"',
     		      	'"smwh_title":"Building_name"',
     		      	'"smwh_title":"Year_built"',
     		      	'"smwh_title":"Description"',
     		      	'"smwh_title":"1201_Third_Avenue"',
-    		      	'"smwh_title":"1801_California_Street"',
-    		      	'"smwh_title":"191_Peachtree_Tower"',
-    		      	'"smwh_title":"20_Exchange_Place"'
+    		      	'"smwh_title":"1801_California_Street"'
     		      )
     		),
-    		array("q=smwh_title:*Wells*&fl=smwh_title&wt=json&indent=on",
+    		array("q=smwh_title_s:*Wells*&fl=smwh_title&wt=json&indent=on",
+    		      array(
+    		      	'"smwh_title":"Wells_Fargo_Tower"',
+    		      	'"smwh_title":"Wells_Fargo_Plaza_(Houston)"',
+    		      	'"smwh_title":"Wells_Fargo_Plaza"',
+    		      	'"smwh_title":"Wells_Fargo_Center_(Minneapolis)"',
+    		      	'"smwh_title":"Wells_Fargo_Center"',
+    		        '"numFound":5'
+    		      )
+    		),
+    		array("q=smwh_title:*wells*&fl=smwh_title&wt=json&indent=on",
     		      array(
     		      	'"smwh_title":"Wells_Fargo_Tower"',
     		      	'"smwh_title":"Wells_Fargo_Plaza_(Houston)"',
@@ -295,7 +305,7 @@ class TestSolrFullIndexContent extends PHPUnit_Framework_TestCase {
     		      array(
     		      	'"smwh_Located_in_t",34',
     		      	'"smwh_Located_in_state_t",22',
-    		        '"numFound":161',
+    		        '"numFound":160',
     		      	'"smwh_Modification_date_xsdvalue_dt",160',
     		      	'"smwh_Building_name_xsdvalue_t",34',
     		      	'"smwh_Image_xsdvalue_t",34',
@@ -306,7 +316,7 @@ class TestSolrFullIndexContent extends PHPUnit_Framework_TestCase {
     		      	'"Bank_of_America_buildings",10',
     		      )
     		),
-    		array("q=smwh_title:*Wells*&fl=smwh_title&facet=true&wt=json&indent=on&facet.field=smwh_properties&facet.field=smwh_attributes&facet.field=smwh_categories",
+    		array("q=smwh_title_s:*Wells*&fl=smwh_title&facet=true&wt=json&indent=on&facet.field=smwh_properties&facet.field=smwh_attributes&facet.field=smwh_categories",
     		      array(
     		      	'"smwh_title":"Wells_Fargo_Tower"',
     		      	'"smwh_title":"Wells_Fargo_Plaza_(Houston)"',
@@ -405,7 +415,7 @@ class TestSolrIncrementalIndex extends PHPUnit_Framework_TestCase {
     		array(
     			array("edit" =>
     			      array("Article without relations" => "No annotations here.")),
-    			"q=smwh_title:*Wells*&fl=smwh_title&wt=json&indent=on",
+    			"q=smwh_title_s:*Wells*&fl=smwh_title&wt=json&indent=on",
     		    array(
     		      	'"smwh_title":"Wells_Fargo_Tower"',
     		      	'"smwh_title":"Wells_Fargo_Plaza_(Houston)"',
@@ -419,7 +429,7 @@ class TestSolrIncrementalIndex extends PHPUnit_Framework_TestCase {
     		array(
     			array("edit" =>
     				  array("Orson Wells" => "A famous author. [[Category:Author]][[Description::Orson Wells was a famous author]]")),
-    			"q=smwh_title:*Wells*&fl=smwh_title&wt=json&indent=on",
+    			"q=smwh_title_s:*Wells*&fl=smwh_title&wt=json&indent=on",
     		    array(
     		      	'"smwh_title":"Wells_Fargo_Tower"',
     		      	'"smwh_title":"Wells_Fargo_Plaza_(Houston)"',
@@ -437,7 +447,7 @@ class TestSolrIncrementalIndex extends PHPUnit_Framework_TestCase {
     				  "delete" =>
     				  array("Orson Wells")
     				  ),
-    			"q=smwh_title:*Wells*&fl=smwh_title&wt=json&indent=on",
+    			"q=smwh_title_s:*Wells*&fl=smwh_title&wt=json&indent=on",
     		    array(
     		      	'"smwh_title":"Wells_Fargo_Tower"',
     		      	'"smwh_title":"Wells_Fargo_Plaza_(Houston)"',
@@ -452,7 +462,7 @@ class TestSolrIncrementalIndex extends PHPUnit_Framework_TestCase {
     			array("edit" =>
     				  array("Orson Wells" => "A famous author. [[Category:Author]][[Description::Orson Wells was a famous author]]"),
     				),
-    			"q=smwh_title:*Or*Wells*&wt=json",
+    			"q=smwh_title_s:*Or*Wells*&wt=json",
     		    array(
     				'"smwh_namespace_id":0',
     				'"smwh_title":"Orson_Wells"',
@@ -468,7 +478,7 @@ class TestSolrIncrementalIndex extends PHPUnit_Framework_TestCase {
     		array(
     			array("edit" =>
 				      array("Wells Fargo NewYork" => "[[Category:Building]][[Height stories::42]][[Located in::New York]][[Located in::Manhattan]][[Located in state::New York]][[Description::This building does not exist.]]")),
-    			"q=smwh_title:*Wells*&fl=smwh_title&wt=json&indent=on",
+    			"q=smwh_title_s:*Wells*&fl=smwh_title&wt=json&indent=on",
     		    array(
     		      	'"smwh_title":"Wells_Fargo_Tower"',
     		      	'"smwh_title":"Wells_Fargo_Plaza_(Houston)"',
@@ -483,7 +493,7 @@ class TestSolrIncrementalIndex extends PHPUnit_Framework_TestCase {
     		array(
     			array("edit" =>
 				      array("Wells Fargo NewYork" => "[[Category:Building]][[Height stories::42]][[Located in::New York]][[Located in::Manhattan]][[Located in state::New York]][[Description::This building does not exist.]]")),
-    			"q=smwh_title:*Wells_Fargo_NewYork*&wt=json",
+    			"q=smwh_title_s:*Wells_Fargo_NewYork*&wt=json",
     		    array(
     				'"smwh_namespace_id":0',
     				'"smwh_title":"Wells_Fargo_NewYork"',
@@ -507,7 +517,7 @@ class TestSolrIncrementalIndex extends PHPUnit_Framework_TestCase {
 				      "edit2" =>
 				      array("Wells Fargo NewYork" => "Removed some annotations: [[Category:Building]][[Located in::New York]][[Description::This building does really not exist.]]")
 				      ),
-    			"q=smwh_title:*Wells_Fargo_NewYork*&wt=json",
+    			"q=smwh_title_s:*Wells_Fargo_NewYork*&wt=json",
     		    array(
     				'"smwh_namespace_id":0',
     				'"smwh_title":"Wells_Fargo_NewYork"',
@@ -525,7 +535,7 @@ class TestSolrIncrementalIndex extends PHPUnit_Framework_TestCase {
     				  array("Orson Wells" => "A famous author. [[Category:Author]][[Description::Orson Wells was a famous author]]"),
     				  "move" =>
 				      array("Orson_Wells" => "O_Wells")),
-    			"q=smwh_title:*Or*Wells*&wt=json",
+    			"q=smwh_title_s:*Or*Wells*&wt=json",
     		    array(
     				'"numFound":0'
     		    )
@@ -536,7 +546,7 @@ class TestSolrIncrementalIndex extends PHPUnit_Framework_TestCase {
     				  array("Orson Wells" => "A famous author. [[Category:Author]][[Description::Orson Wells was a famous author]]"),
     				  "move" =>
 				      array("Orson_Wells" => "O_Wells")),
-    		    "q=smwh_title:*O_Wells*&wt=json",
+    		    "q=smwh_title_s:*O_Wells*&wt=json",
     		    array(
     				'"smwh_namespace_id":0',
     				'"smwh_title":"O_Wells"',

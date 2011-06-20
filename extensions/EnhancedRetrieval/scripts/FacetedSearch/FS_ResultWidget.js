@@ -28,10 +28,14 @@ if (typeof FacetedSearch == "undefined") {
 	};
 }
 
+(function ($) {
 FacetedSearch.classes.ResultWidget = AjaxSolr.AbstractWidget.extend({
+
+	// AjaxSolr.Manager - The manager from the AjaxSolr library. It is used for
+	// retrieving the properties of an article
+	mAjaxSolrManager: null,
 		
 	beforeRequest: function () {
-		var $ = jQuery;
 //		$(this.target).html($('<img/>').attr('src', 'images/ajax-loader.gif'));
 	},
 
@@ -56,7 +60,6 @@ FacetedSearch.classes.ResultWidget = AjaxSolr.AbstractWidget.extend({
 	},
 	
 	afterRequest: function () {
-		var $ = jQuery;
 		$(this.target).empty();
 		var query = this.manager.store.values('q');
 		var emptyQuery = true;
@@ -72,15 +75,44 @@ FacetedSearch.classes.ResultWidget = AjaxSolr.AbstractWidget.extend({
 		} 
 
 		// Add all results
+		var docIdField = FacetedSearch.singleton.FacetedSearchInstance.DOCUMENT_ID;
+		var highlightField = FacetedSearch.singleton.FacetedSearchInstance.HIGHLIGHT_FIELD;
 		for (var i = 0, l = this.manager.response.response.docs.length; i < l; i++) {
 			var doc = this.manager.response.response.docs[i];
-			$(this.target).append(AjaxSolr.theme('article', doc, AjaxSolr.theme('data', doc)));
+			// Attach this result widget instance to the doc
+			doc.resultWidget = this;
+			var highlight = "";
+			if (!emptyQuery) {
+				// Get the highlight information
+				highlight = this.manager.response.highlighting[doc[docIdField]];
+				highlight = highlight[highlightField][0];
+				highlight = AjaxSolr.theme('highlight', highlight);
+			}			
+			$(this.target).append(AjaxSolr.theme('article', doc, 
+												 AjaxSolr.theme('data', doc),
+												 highlight,
+												 this.showPropertiesHandler
+												 ));
 		}
 	},
 
+	/**
+	 * Initializes this object.
+	 * Creates a new AjaxSolrManager.
+	 */
 	init: function () {
+		
+		this.mAjaxSolrManager = new AjaxSolr.Manager({
+			solrUrl : wgFSSolrURL
+		});
+		this.mAjaxSolrManager.init();
+		this.mArticlePropertiesWidget = new FacetedSearch.classes.ArticlePropertiesWidget({
+			id: 'fsArticleProperties'
+		});
+		this.mAjaxSolrManager.addWidget(this.mArticlePropertiesWidget);
+		
+		
 		var lang = FacetedSearch.singleton.Language;
-		var $ = jQuery;
 		$('a.xfsMore').live('click', function() {
 			if ($(this).prev('span.xfsToggle').is(':visible')) {
 				$(this).prev('span.xfsToggle').hide();
@@ -91,16 +123,75 @@ FacetedSearch.classes.ResultWidget = AjaxSolr.AbstractWidget.extend({
 			}
 			return false;
 		});
-		$('a.xfsShow').live('click', function() {
-			if ($(this).next('table').is(':visible')) {
-				$(this).next('table').hide();
-				$(this).text(lang.getMessage('show'));
-			} else {
-				$(this).next('table').show();
-				$(this).text(lang.getMessage('hide'));
-			}
-			return false;
-		});
+	},
+	
+	/**
+	 * Callback for the "show" link that shows the property details of an article.
+	 * A new SOLR query for the properties of an article is started.
+	 */
+	showPropertiesHandler: function () {
+		// "this" is now the clicked element and not the result widget
+		var $this= $(this);
+		var lang = FacetedSearch.singleton.Language;
+		
+		// Check if the table with property values is already present
+		var table = $this.parent().find('table');
+		if (table.length === 0) {
+			$this.text(lang.getMessage('hide'));
+			
+			var docData = $this.data('documentData');
+			var resultWidget = docData.resultWidget;
+		
+			resultWidget.retrieveDocumentProperties(docData, this);
+			return false;		
+		}
+		
+		if (table.is(':visible')) {
+			table.hide();
+			$this.text(lang.getMessage('show'));
+		} else {
+			table.show();
+			$this.text(lang.getMessage('hide'));
+		}
+		
+		return false;
+	},
+	
+	/**
+	 * Makes a SOLR request for the property values of the given document
+	 * @param {Object} docData
+	 * 		The SOLR document whose properties are retrieved.
+	 * @param {Object} domElement
+	 * 		The DOM element that has to be extented with the property values
+	 */
+	retrieveDocumentProperties: function (docData, domElement) {
+		var fs = FacetedSearch.singleton.FacetedSearchInstance;
+		var asm = this.mAjaxSolrManager;
+		
+		// Reinitialize the manager's store
+		asm.setStore(new AjaxSolr.ParameterStore());
+		asm.store.init();
+		
+		asm.store.addByValue('json.nl', 'map');
+		
+		var fields = [];
+		// add all relation fields
+		if (docData[fs.RELATION_FIELD]) {
+			fields = fields.concat(docData[fs.RELATION_FIELD]);
+		}
+		// add all attribute fields
+		if (docData[fs.ATTRIBUTE_FIELD]) {
+			fields = fields.concat(docData[fs.ATTRIBUTE_FIELD]);
+		}
+		asm.store.addByValue('fl', fields);
+		var query = fs.DOCUMENT_ID + ':' + docData.id;
+		asm.store.addByValue('q', query);
+		
+		this.mArticlePropertiesWidget.setTarget(domElement);
+		asm.doRequest(0);
+		
 	}
+	
 });
 
+})(jQuery);

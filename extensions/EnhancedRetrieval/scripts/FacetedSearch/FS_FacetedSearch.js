@@ -38,11 +38,42 @@ FacetedSearch.classes.FacetedSearch = function () {
 	
 	//--- Constants ---
 	// The field with this name is used on SOLR queries
-	var QUERY_FIELD = 'smwh_title';
+	var QUERY_FIELD = 'smwh_search_field';
+
+	// The field on which highlighting is enabled
+	var HIGHLIGHT_FIELD = 'smwh_search_field';
+	
+	// Name of the field with the document ID
+	var DOCUMENT_ID = 'id';
+	
+	// Name of the SOLR field that stores relation values
+	var RELATION_FIELD = 'smwh_properties';
+	
+	// Name of the SOLR field that stores attribute values
+	var ATTRIBUTE_FIELD = 'smwh_attributes';
+
+	// Name of the SOLR field that stores the modification date of an article
+	var MODIFICATION_DATE_FIELD = 'smwh_Modification_date_xsdvalue_dt';
+
+	// Name of the SOLR field that stores the title of an article with type
+	// 'wiki'
+	var TITLE_FIELD = 'smwh_title';
+
+	// Name of the SOLR field that stores the title of an article as string.
+	// This is used for sorting search results.
+	var TITLE_STRING_FIELD = 'smwh_title_s';
 	
 	// Names of the facet classes
-	var FACET_FIELDS = ['smwh_categories', 'smwh_attributes', 'smwh_properties',
+	var FACET_FIELDS = ['smwh_categories', ATTRIBUTE_FIELD, RELATION_FIELD,
 						'smwh_namespace_id'];
+						
+	// Names of all fields that are returned in a query for documents
+	var QUERY_FIELD_LIST = [MODIFICATION_DATE_FIELD,
+							'smwh_categories', 
+							ATTRIBUTE_FIELD, 
+							RELATION_FIELD,
+							DOCUMENT_ID,
+							TITLE_FIELD];
 						
 	var RELATION_REGEX = /^smwh_(.*)_(.*)$/;
 	var ATTRIBUTE_REGEX = /smwh_(.*)_xsdvalue_(.*)/;
@@ -204,12 +235,18 @@ FacetedSearch.classes.FacetedSearch = function () {
 		// init
 		mAjaxSolrManager.init();
 
-		// add facets
+		// add parametes
 		var params = {
 			facet: true,
 			'facet.field': FACET_FIELDS,
 			'facet.mincount': 1,
-			'json.nl': 'map'
+			'json.nl': 'map',
+			fl: QUERY_FIELD_LIST,
+			hl: true,
+			'hl.fl': HIGHLIGHT_FIELD,
+			'hl.simple.pre' : '<b>',
+			'hl.simple.post': '</b>',
+			'sort' : MODIFICATION_DATE_FIELD + ' desc'
 		};
 		for (var name in params) {
 			mAjaxSolrManager.store.addByValue(name, params[name]);
@@ -235,19 +272,52 @@ FacetedSearch.classes.FacetedSearch = function () {
 		if (mSearch.length == 0) {
 			qs = '*';
 		}
+		qs = qs.toLowerCase();
 		mAjaxSolrManager.store.addByValue('q', QUERY_FIELD+':'+qs);
 		mAjaxSolrManager.doRequest(0);
-		
-//		if (mDebug) { console.log("Filter: "+mFilter+"\n"); }
-//		if (typeof mFilterTimeout !== 'undefined') {
-//			if (mDebug) { console.log("Clearing timeout.\n"); }
-//			clearTimeout(mFilterTimeout);
-//		}
-//		mFilterTimeout = setTimeout(that.filterGroupTree, 300, mFilter);
 
 		return false;
 	};
 	
+	/**
+	 * Event handler for the search order selection field. A new SOLR resquest is
+	 * sent for the new search result order.
+	 */
+	that.onSearchOrderChanged = function() {
+	
+		var selected =  $("#search_order option:selected");
+		var order = selected[0].value;
+		var sort = MODIFICATION_DATE_FIELD + ' desc';
+		switch (order) {
+			case "relevance":
+				sort = 'score desc';
+				break;
+			case "newest":
+				sort = MODIFICATION_DATE_FIELD + ' desc, score desc';
+				break;
+			case "oldest":
+				sort = MODIFICATION_DATE_FIELD + ' asc, score desc';
+				break;
+			case "ascending":
+				sort = TITLE_STRING_FIELD + ' asc, score desc';
+				break;
+			case "descending":
+				sort = TITLE_STRING_FIELD + ' desc, score desc';
+				break;
+		}
+		mAjaxSolrManager.store.addByValue('sort', sort);
+		mAjaxSolrManager.doRequest(0);
+		return false;
+	}
+	
+	/**
+	 * Event handler for clicking the search button. A new SOLR request is 
+	 * triggered.
+	 */
+	that.onSearchButtonClicked = function () {
+		// Simulate a key press
+		that.onSearchKeyup();
+	}
 	
 	/**
 	 * Initializes the event handlers for the User Interface.
@@ -256,6 +326,8 @@ FacetedSearch.classes.FacetedSearch = function () {
 		
 		// Keyup handler for the search input field
 		$('#query').keyup(that.onSearchKeyup);
+		$('#search_order').change(that.onSearchOrderChanged);
+		$('#search_button').click(that.onSearchButtonClicked);
 	}
 	
 	/**
@@ -300,7 +372,12 @@ FacetedSearch.classes.FacetedSearch = function () {
 	// Show all results at start up
 	mAjaxSolrManager.doRequest(0);
 	
-	that.FACET_FIELDS = FACET_FIELDS;
+	// Public constants
+	that.FACET_FIELDS		= FACET_FIELDS;
+	that.DOCUMENT_ID		= DOCUMENT_ID;
+	that.HIGHLIGHT_FIELD	= HIGHLIGHT_FIELD;
+	that.RELATION_FIELD		= RELATION_FIELD;
+	that.ATTRIBUTE_FIELD	= ATTRIBUTE_FIELD;
 	return that;
 	
 }

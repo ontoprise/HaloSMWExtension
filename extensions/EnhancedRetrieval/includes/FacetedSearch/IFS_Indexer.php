@@ -66,6 +66,6 @@ interface IFSIndexer {
 	 * @param Article $article
 	 * 		The article that changed.
 	 */
-	public function updateIndexForArticle(Article $article);
+	public function updateIndexForArticle(Article $article, $user, $text);
 	
 }

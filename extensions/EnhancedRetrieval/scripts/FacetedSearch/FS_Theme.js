@@ -169,24 +169,68 @@
 	}
 	
 	/**
-	 * Theme for article titles and their semantic data.
+	 * Checks if the given name is a name for a relation.
+	 * 
+	 * @param {string} name
+	 * 		The name to examine
+	 * @return {bool}
+	 * 		true, if name is a relation name
+	 */
+	function isRelation(name) {
+		return name.match(RELATION_REGEX) && !name.match(ATTRIBUTE_REGEX);
+	}
+	
+	/**
+	 * Theme for article titles and their semantic data with highlighting.
 	 * 
 	 * @param doc
 	 * 		The article given as SOLR document
 	 * @param data
 	 * 		HTML representation of the semantic data
+	 * @param highlight
+	 * 		HTML representation of the semantic data
 	 */
-	AjaxSolr.theme.prototype.article = function (doc, data) {
+	AjaxSolr.theme.prototype.article = function (doc, data, highlight, showDataHandler) {
 		var output = '<div class="xfsResult"><a class="xfsResultTitle" href="' + getLink(doc.smwh_namespace_id, doc.smwh_title) + '">';
 		output += noUnderscore(doc.smwh_title) + '</a>';
 		output += getIconForNSID(doc.smwh_namespace_id);
 		// output += '<p id="links_' + doc.id + '" class="links"></p>';
-		output += '<div>' + data + '</div></div>';
+		output += '<div class="xfsHighlightSearch">' + highlight + '</div>';
+		output += '<div>' + data + '</div>';
+		// Add the modification date
+		if (doc[MOD_ATT]) {
+			var lang = FacetedSearch.singleton.Language;
+			output += 
+				'<div class="xfsResultModified">' + 
+					'<p>'+ lang.getMessage('lastChange') +': ' + 
+						String(doc[MOD_ATT])
+							.replace('T', ' ')
+							.substring(0, 16) + 
+					'</p>' + 
+				'</div>';
+		}
+		output += '</div>';
+		
+		output = $(output);
+		output.find('.xfsShow').data('documentData', doc).click(showDataHandler);
+		
 		return output;
 	};
 	
 	/**
-	 * Theme for the semantic data of an article.
+	 * Theme for rendering a highlighted text.
+	 * 
+	 * @param highlight
+	 * 		The highlighted text
+	 */
+	AjaxSolr.theme.prototype.highlight = function (highlight) {
+		return '&hellip;' + highlight + '&hellip;';
+	};
+	
+	/**
+	 * Theme for the semantic data of an article. Only categories are displayed
+	 * to the full extent. If there are properties for the article, a link to
+	 * show them is displayed.
 	 * 
 	 * @param doc
 	 * 		The article given as SOLR document
@@ -229,78 +273,56 @@
 		if (props.length + attr.length > 0) {
 			// Properties or attributes are present 
 			// => add a table header
-			output += '<div class="xfsResultTable">' +
-				lang.getMessage('hasProperties') + 
-				': (<a class="xfsShow">'+ lang.getMessage('show') +'</a>)' + 
-				'<table>';
+			output += 
+				'<div>' +
+					lang.getMessage('hasProperties') +
+					': (<a class="xfsShow">' +
+						lang.getMessage('show') +
+					'</a>)' +
+					'<div class="xfsResultTable"></div>' +
+				'</div>';
 		}
+		return output;
+	};
+
+	/**
+	 * Theme for the semantic properties of an article.
+	 * 
+	 * @param doc
+	 * 		The article given as SOLR document
+	 */
+	AjaxSolr.theme.prototype.articleProperties = function(doc) {
+		
+		var lang = FacetedSearch.singleton.Language;
+		
+ 		var output = '<table>';
 		var row = 0;
 		
-		// Show all properties
-		if (props.length > 0) {
-			// The property array may contain duplicates 
-			// => create an object without duplicates
-			var propMap = {};
-			for (var i = 0; i < props.length; i++) {
-				propMap[props[i]] = true;
-			}
-			
-			// Show all properties in a table
-			for (var property in propMap) {
-				// Get the property name without prefix, suffix and type
-				var plainName = extractPlainName(property);
-				output += '<tr class="s' + (row % 2) + '">';
-				row += 1;
-				output += '<td>' + plainName + '</td>';
+		// Show all relations and attributes in a table
+		for (var property in doc) {
+			// Get the property name without prefix, suffix and type
+			var plainName = extractPlainName(property);
+			output += '<tr class="s' + (row % 2) + '">';
+			row += 1;
+			output += '<td>' + plainName + '</td>';
+			if (isRelation(property)) {
+				// Relation values are rendered as link
 				var vals = [];
 				$.each(doc[property], function() {
 					// TODO check link namespace, has to be extracetd from value, e.g. Namespace:Page_Title
 					vals.push('<a href="' + this + '">' + noUnderscore(this) + '</a>');
 				});
 				output += '<td>' + vals.join(', ') + '</td>';
-				output += '</tr>';
+			} else {
+				// Attribute values are rendered as normal text
+				output += '<td>'+doc[property].join(', ')+'</td>';
 			}
+			output += '</tr>';
 		}
-		
-		if (attr.length > 0) {
-			// The property array may contain duplicates 
-			// => create an object without duplicates
-			var attrMap = {};
-			for (var i = 0; i < attr.length; i++) {
-				attrMap[attr[i]] = true;
-			}
-			
-			for (var attribute in attrMap) {
-				// Get the property name without prefix, suffix and type
-				var plainName = extractPlainName(attribute);
-				output += '<tr class="s' + (row % 2) + '">';
-				row += 1;
-				output += '<td>'+plainName+'</td>';
-				output += '<td>'+doc[attribute].join(', ')+'</td>';
-				output += '</tr>';
-			}
-		}
-		
-		if (props.length + attr.length > 0) {
-			// Properties or attributes are present 
-			// => close the table
-			output += '</table></div>';
-		}
-		
-		if (doc[MOD_ATT]) {
-			output += 
-				'<div class="xfsResultModified">' + 
-					'<p>'+ lang.getMessage('lastChange') +': ' + 
-						String(doc[MOD_ATT])
-							.replace('T', ' ')
-							.substring(0, 16) + 
-					'</p>' + 
-				'</div>';
-		}
-		
-		return output;
-	};
 
+		output += '</table>';
+		return output;						
+	};
 
 	/**
 	 * This function generates the HTML for a namespace facet. The namespace is

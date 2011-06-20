@@ -38,14 +38,19 @@ $messages['en'] = array(
 
 	//--- Messages for the special page ---
 	'fs_title'	          => "Faceted Search",
-	'fs_search'           => "Find articles",
+	'fs_search'           => "Find",
 	'fs_categories'       => "Categories",
 	'fs_properties'       => "Properties",
 	'fs_namespaces'       => "Namespaces",
 	'fs_search_results'   => "Search results",
 	'fs_selected'         => "Selected facets",
-	'fs_available_facets' => "Available facets"
-
+	'fs_available_facets' => "Available facets",
+	'fs_relevance'		  => 'Relevance',
+	'fs_newest_date_first'=> 'Latest article first',
+	'fs_oldest_date_first'=> 'Oldest article first',
+	'fs_title_ascending'  => 'Title ascending',
+	'fs_title_descending' => 'Title descending',
+	'fs_sort_by'		  => 'Sort by'
 );
 
 /** 
@@ -59,12 +64,17 @@ $messages['de'] = array(
 
 	//--- Messages for the special page ---
 	'fs_title'	          => "Facettensuche",
-	'fs_search'           => "Finde Artikel",
+	'fs_search'           => "Finde",
 	'fs_categories'       => "Kategorien",
 	'fs_properties'       => "Eigenschaften",
 	'fs_namespaces'       => "Namensräume",
 	'fs_search_results'   => "Suchresultate",
 	'fs_selected'         => "Facettenfilter",
-	'fs_available_facets' => "Verfügbare Facetten"
-
+	'fs_available_facets' => "Verfügbare Facetten",
+	'fs_relevance'		  => 'Relevanz',
+	'fs_newest_date_first'=> 'Neuester Artikel zuerst',
+	'fs_oldest_date_first'=> 'Ältester Artikel zuerst',
+	'fs_title_ascending'  => 'Artikelname aufsteigend',
+	'fs_title_descending' => 'Artikelname absteigend',
+	'fs_sort_by'		  => 'Sortierung:'
 );

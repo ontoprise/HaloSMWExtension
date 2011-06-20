@@ -62,7 +62,7 @@ class FSSolrSMWDB extends FSSolrIndexer {
 	 * @param Article $article
 	 * 		The article that changed.
 	 */
-	public function updateIndexForArticle(Article $article) {
+	public function updateIndexForArticle(Article $article, $user, $text) {
 		$doc = array();
 		
 		$db =& wfGetDB( DB_SLAVE );
@@ -76,6 +76,7 @@ class FSSolrSMWDB extends FSSolrIndexer {
 		$doc['id'] = $pid;
 		$doc['smwh_namespace_id'] = $pns;
 		$doc['smwh_title'] = $pt;
+		$doc['smwh_full_text'] = $text;
 		
 		// Get the categories of the article
 		$this->retrieveCategories($db, $pid, $doc);
@@ -102,9 +103,11 @@ class FSSolrSMWDB extends FSSolrIndexer {
 	 */
 	public function updateIndexForMovedArticle($oldid, $newid) {
 		if ($this->deleteDocument($oldid)) {
+			global $wgUser;
 			// The article with the new name has the same page id as before
-			$article = Article::newFromID($oldid); 
-			return $this->updateIndexForArticle($article);
+			$article = Article::newFromID($oldid);
+			$text = $article->getContent();
+			return $this->updateIndexForArticle($article, $wgUser, $text);
 		}
 		return false;
 	}
