@@ -114,11 +114,14 @@ class DFBundleTools {
     }
 
 	/**
-	 * Returns namespace prefixes which are only used by $bundleID
+	 * Returns namespace prefixes which are used by $bundleID
 	 * 
 	 * @param string $bundleID
+	 * @param boolean $only Find those prefies ONLY used by $bundleID
+	 * 
+	 * @return string[]
 	 */
-	public static function getPrefixesUsedBy($bundleID) {
+	public static function getPrefixesUsedBy($bundleID, $only = true) {
 		global $dfgLang;
 
 		// find prefixes used for $bundleID
@@ -126,14 +129,16 @@ class DFBundleTools {
 		$bundleTitle = Title::newFromText($bundleID);
 		$values = smwfGetStore()->getPropertyValues($bundleTitle, SMWPropertyValue::makeUserProperty($usesprefixPropertyName));
 		$results = array();
-		if (count($values) > 0) {
-			$value = reset($values);
+		foreach($values as $value) {
 			$dbkeys = $value->getDBkeys();
 			$prefix = reset($dbkeys);
-			$results[] = $prefix;
+			$results[] = strtolower($prefix);
 		}
 
+		if (!$only) return $results;
+		
 		// find those ONLY used for $bundleID
+		$prefixesOnlyUsedBy = array();
 		foreach($results as $prefix) {
 			$rawparams = array();
 			$rawparams[] = "[[$usesprefixPropertyName::".$prefix."]]";
@@ -142,10 +147,10 @@ class DFBundleTools {
 			$query  = SMWQueryProcessor::createQuery( $querystring, $params, SMWQueryProcessor::INLINE_QUERY, '', $printouts );
 			$res = smwfGetStore()->getQueryResult( $query );
 			if ($res->getCount() == 1) {
-				$prefixesToRemove[] = trim(strtolower($prefix));
+				$prefixesOnlyUsedBy[] = trim(strtolower($prefix));
 			}
 		}
-		return $prefixesToRemove;
+		return $prefixesOnlyUsedBy;
 
 
 	}

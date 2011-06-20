@@ -417,6 +417,16 @@ class ExportObjectLogicBot extends GardeningBot {
 ENDS;
 		return $header;
 	}
+	
+	private function getNamespacePrefixes($bundleName) {
+		$prefixString = "";
+		$prefixes = DFBundleTools::getPrefixesUsedBy($bundleName, false);
+		foreach($prefixes as $prefix) {
+		  $uri = smwfGetSemanticStore()->getNamespaceMapping($prefix);
+		  $prefixString .= "\n:- prefix $prefix = \"$uri\".";
+		}
+		return $prefixString;
+	}
 
 	/**
 	 * Export ontology
@@ -435,7 +445,7 @@ ENDS;
 
 			if (!defined('DF_VERSION')) {
 				return "Bundle export requires the DF to be installed. ".
-			 	"[http://smwforum.ontoprise.com/smwforum/index.php/Deployment_Framework Deployment Framework]";
+                "[http://smwforum.ontoprise.com/smwforum/index.php/Deployment_Framework Deployment Framework]";
 			}
 			$downloadLink="";
 
@@ -443,9 +453,7 @@ ENDS;
 			$this->setNumberOfTasks(3);
 			$bundleName = $paramArray['GARD_OBLEXPORT_BUNDLE'];
 
-			$ontologyPrefix = DFBundleTools::getOntologyPrefix($bundleName);
-
-
+				
 			$this->addSubTask(4);
 			echo "\nCreate OBL export from bundle $bundleName...";
 			$obl = "";
@@ -482,31 +490,24 @@ ENDS;
 				$oblExt .= file_get_contents($localFile->getPath());
 
 				//FIXME: does not work for more than one attached ontology because of OBL header.
-					
+
 			}
 
 			// export ontology from wiki content
 			$this->addSubTask(1);
-
-			// store file temporarily
-			$f = "export".uniqid().".obl";
-			echo "\nCreate temporary file: $tempdir/$f...";
 			$ontologyURI = DFBundleTools::getOntologyURI($bundleName);
 			if (is_null($ontologyURI) || empty($ontologyURI)) {
 				$ontologyURI = trim($smwgTripleStoreGraph . "/ontology/$bundleName");
 			}
-
-			$header = $this->createOBLHeader($ontologyURI, $bundleName);
-			$obl = $oblExt ."\n\n" . $obl;
-			echo "done.";
-
-			// refactor ontology
-			echo "\nRefactor ontology...";
-			$con = TSConnection::getConnector();
-			$con->connect();
-			$obl = $con->refactorOblOntology($ontologyPrefix, $ontologyURI, $obl, $smwgTripleStoreGraph, $wgLanguageCode);
-			$con->disconnect();
-			echo "done.";
+			$f = "export".uniqid().".obl";
+			
+			if (empty($oblExt)) {
+				$oblExt .= $this->createOBLHeader($ontologyURI, $bundleName);
+			}
+			
+			$prefixString = $this->getNamespacePrefixes($bundleName);
+			
+			$obl = $oblExt . $prefixString. "\n\n" . $obl;
 
 			// save temporarily
 			$handle = fopen($tempdir."/".$f, "w");
@@ -723,7 +724,7 @@ class SGA_HttpDownload {
 
 
 	public function __construct() {
-			
+
 	}
 
 	/**
@@ -829,7 +830,7 @@ class SGA_HttpDownload {
 		$address = gethostbyname($host);
 		$res = "";
 		$socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
-			
+
 		socket_connect($socket, $address, $port);
 		$in = "GET $path HTTP/1.0\r\n";
 		$in .= "Host: $host\r\n";

@@ -1383,7 +1383,7 @@ class SMWSemanticStoreSQL extends SMWSemanticStore {
 		$db =& wfGetDB( DB_SLAVE );
 		$smw_nsmapping = $db->tableName('smw_nsmapping');
 		$uri = $db->selectRow($smw_nsmapping, array('smw_uri'), array('smw_prefix'=>$prefix));
-		return $uri !== false ? $uri->smw_nsmapping : NULL;
+		return $uri !== false ? $uri->smw_uri : NULL;
 	}
 	
     public function getAllNamespaceMappings() {
