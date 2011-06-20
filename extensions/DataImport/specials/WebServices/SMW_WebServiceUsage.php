@@ -125,7 +125,7 @@ public static function processSMWQueryASWSCall($parameters){
 	 * @return string
 	 * 		the rendered wikitext
 	 */
-	public static function processCall(&$parser, $parameters, $preview=false, $smwQueryMode=false) {
+	public static function processCall(&$parser, $parameters, $preview=false, $smwQueryMode=false, $rawResults = false) {
 		global $wgsmwRememberedWSUsages, $purgePage, $wgsmwRememberedWSTriplifications;
 		$purgePage = true;
 		
@@ -219,6 +219,10 @@ public static function processSMWQueryASWSCall($parameters){
 		
 		} else {
 			
+			if($rawResults){
+				return $wsResults;
+			}
+			
 			//process triplification instructions
 			if(($wsTriplify || $displayTripleSubjects) && !is_string($wsResults)){
 				$wsResultsForTriplification = $wsResults;
@@ -279,7 +283,7 @@ public static function processSMWQueryASWSCall($parameters){
 				WSStorage::getDatabase()->removeParameterSet($parameterSetId);
 			}
 		}
-
+		
 		if($preview){
 			global $wgParser;
 			$t = Title::makeTitleSafe(0, $parser);
