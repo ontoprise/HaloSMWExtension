@@ -81,6 +81,7 @@ dt {
 
 .smwh_menudropdown{
     background: url(../img/menu_arrow.gif) right no-repeat;
+    cursor: pointer;
 }
 
 
