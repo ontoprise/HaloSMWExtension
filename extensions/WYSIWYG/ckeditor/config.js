@@ -60,7 +60,7 @@ CKEDITOR.editorConfig = function( config )
     }
 
     config.toolbar_Wiki = [
-        ['Source', '-', 'Print','SpellChecker','Scayt'],
+        ['Source'], ['Print','SpellChecker','Scayt'],
         ['PasteText','PasteFromWord', '-','Find','Replace'],
         ['SelectAll','RemoveFormat'],
         ['Subscript','Superscript'],
@@ -70,6 +70,7 @@ CKEDITOR.editorConfig = function( config )
         ['MWSpecialTags', 'MWTemplate', 'MWSignature', qiButton, wsButton, rmButton ],
         [ stbButton ],
         ['About'],
+        '/',
         ['Styles','Format','Font','FontSize'],
         ['Bold','Italic','Underline','Strike'],
         ['JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock'],
