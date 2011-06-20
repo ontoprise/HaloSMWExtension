@@ -183,9 +183,9 @@ class SMWTripleStore extends SMWStore {
 		try {
 			$con = TSConnection::getConnector();
 			$sparulCommands = array();
+			$sparulCommands[] = "DELETE MAPPING $subject_iri";
 			if (!is_null($this->smwstore->getMapping())) {
 				list($wikiURI, $tscURI) = $this->smwstore->getMapping();
-				$sparulCommands[] = "DELETE MAPPING <".$wikiURI.">";
 				if (!is_null($tscURI) && !empty($tscURI)) {
 					$sparulCommands[] = "INSERT MAPPING <".$wikiURI."> : <".$tscURI.">";
 				}
