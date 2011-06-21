@@ -1,15 +1,17 @@
 Rich Media extension ChangeLog
 =============================
 
-VERSION 1.5.X
+VERSION 1.5.2
 
   FEATURES:
 
   CHANGES:
+	* The inclusion of namespace for SF can be handled withh the setting "$smwgRMPasteNSForFiles"
 	* Provided new patch to let Rich Media extension be compatible with SF 2.1.2
 	* Migrate upload functionality from PrototypeJS to jQuery.
 
   BUGFIXES:
+	14956 - Wrong jQuery selector broke upload process.
 	14592 - SemanticForms uses "for ... in" loops in its JavaScript (moved patch part from RM to SF)
 	14570 - Refresh Error after installation of the richmedia extension
 

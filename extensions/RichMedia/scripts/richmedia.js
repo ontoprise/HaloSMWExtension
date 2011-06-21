@@ -43,15 +43,15 @@ function RichMediaPage() {
 		if( typeof destFormName === 'undefined' ){
 			destFormName = '#mw-upload-form';
 		}
-		//validate the form fields!
+		// validate the form fields!
 		error = validateAll();
 		if ( !error ) {
 			return false;
 		}
-		sForm = jQuery('.createbox');
-		destForm = jQuery(destFormName);
+		sForm = jQuery( '.createbox' );
+		destForm = jQuery( destFormName );
 		//merge SemanticForm into UploadForm
-		this.mergeFormsToForm([sForm], destForm);
+		this.mergeFormsToForm( [sForm], destForm );
 
 		el = document.createElement( 'input' );
 		jQuery( el ).attr( 'type', 'hidden' );
@@ -99,10 +99,10 @@ function RichMediaPage() {
 				}
 				// Just clone and hide everything
 				// Fix: #10678; just clone nodes which have a value 
-				if (clonedElement.val().length > 0) {
+				if ( clonedElement.val().length > 0 ) {
 					clonedElement.removeAttr( 'id' );
 					clonedElement.hide();
-					destForm.append(clonedElement);
+					destForm.append( clonedElement );
 				}
 			});
 		}
@@ -114,9 +114,9 @@ function RichMediaPage() {
 	 * Copy the SF
 	 */
 	this.copyToUploadWarning = function() {
-		var	sForm = jQuery('.form.createbox'), //array
-			destForm = jQuery('#uploadwarning');
-		richMediaPage.mergeFormsToForm([sForm], destForm);
+		var	sForm = jQuery( '.form.createbox' ), //array
+			destForm = jQuery( '#uploadwarning' );
+		richMediaPage.mergeFormsToForm( [sForm], destForm );
 	};
 }
 

@@ -922,13 +922,12 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow2.php
 ===================================================================
 --- extensions/SemanticForms/specials/SF_UploadWindow2.php	(revision 10528)
 +++ extensions/SemanticForms/specials/SF_UploadWindow2.php	(working copy)
-@@ -70,9 +70,14 @@
+@@ -70,8 +70,13 @@
  
  		// Guess the desired name from the filename if not provided
  		$this->mDesiredDestName   = $request->getText( 'wpDestFile' );
 -		if ( !$this->mDesiredDestName )
 -			$this->mDesiredDestName = $request->getText( 'wpUploadFile' );
--		$this->mComment	   = $request->getText( 'wpUploadDescription' );
 +		/*op-patch|BL|2010-10-05|RichMedia|RichMedia patch for SF|start*/
 +		/*op-patch|BL|2010-10-05|RichMedia|RichMedia patch for SF|doc|
 +		 *  http://dmwiki.ontoprise.com:8888/dmwiki/index.php/RichMedia_patch_for_SF */
@@ -936,9 +935,8 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow2.php
 +		if( !$this->mDesiredDestName && $request->getFileName( 'wpUploadFile' ) !== null )
 +			$this->mDesiredDestName = $request->getFileName( 'wpUploadFile' );
 +		/*op-patch|BL|2010-10-05|end*/
-+				$this->mComment	   = $request->getText( 'wpUploadDescription' );
+ 		$this->mComment	   = $request->getText( 'wpUploadDescription' );
  		$this->mLicense	   = $request->getText( 'wpLicense' );
- 
  
 @@ -100,6 +105,13 @@
  		}
@@ -954,25 +952,24 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow2.php
  	}
  
  	/**
-@@ -173,7 +185,16 @@
+@@ -175,7 +187,16 @@
  		if ( $this->mTokenOk && !$this->mCancelUpload
  				&& ( $this->mUpload && $this->mUploadClicked ) ) {
  			$this->processUpload();
--		} else {
 +		/*op-patch|BL|2010-10-05|RichMedia|RichMedia patch for SF|start*/
 +		/*op-patch|BL|2010-10-05|RichMedia|RichMedia patch for SF|doc|
 +		 *  http://dmwiki.ontoprise.com:8888/dmwiki/index.php/RichMedia_patch_for_SF */
 +		// Embed the Richmedia functionality into the Semantic Forms extension.
 +		} else if( 'uploaded' == $this->mRMFileStatus) {
 +			$this->showSuccessfulMsg();
-+ 		} else {
+ 		} else {
 +			global $smwgRMShowMainForm;
 +			$smwgRMShowMainForm = true;
 +		/*op-patch|BL|2010-10-05|end*/
  			$this->showUploadForm( $this->getUploadForm() );
  		}
  
-@@ -216,6 +237,7 @@
+@@ -218,6 +239,7 @@
  			'destfile' => $this->mDesiredDestName,
  			'sfInputID' => $this->mInputID,
  			'sfDelimiter' => $this->mDelimiter,
@@ -980,7 +977,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow2.php
  		) );
  		$form->setTitle( $this->getTitle() );
  
-@@ -294,6 +316,17 @@
+@@ -296,6 +318,17 @@
  	protected function uploadWarning( $warnings ) {
  		global $wgUser;
  
@@ -998,7 +995,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow2.php
  		$sessionKey = $this->mUpload->stashSession();
  
  		$sk = $wgUser->getSkin();
-@@ -326,7 +359,55 @@
+@@ -328,7 +361,55 @@
  		$form->setSubmitText( wfMsg( 'upload-tryagain' ) );
  		$form->addButton( 'wpUploadIgnoreWarning', wfMsg( 'ignorewarning' ) );
  		$form->addButton( 'wpCancelUpload', wfMsg( 'reuploaddesc' ) );
@@ -1054,7 +1051,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow2.php
  		$this->showUploadForm( $form );
  	}
  
-@@ -368,8 +449,14 @@
+@@ -370,9 +451,15 @@
  		// Check warnings if necessary
  		if ( !$this->mIgnoreWarning ) {
  			$warnings = $this->mUpload->checkWarnings();
@@ -1066,25 +1063,23 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow2.php
 +			// Embed the Richmedia functionality into the Semantic Forms extension.
 +			if( $this->uploadWarning( $warnings ) ) {
 +				return;
-+			}
-+			/*op-patch|BL|2010-10-05|end*/
  		}
++			/*op-patch|BL|2010-10-05|end*/
++		}
  
  		// Get the page text if this is not a reupload
-@@ -395,39 +482,100 @@
+ 		if ( !$this->mForReUpload ) {
+@@ -397,11 +484,57 @@
  		}
  
  		$basename = str_replace( '_', ' ', $basename );
 -		$output = '     <script type="text/javascript">' . "\n";
--		if ( $this->mDelimiter == null ) {
--			$output .= <<<END
--		parent.document.getElementById("{$this->mInputID}").value = '$basename';
 +		/*op-patch|BL|2010-10-05|RichMedia|RichMedia patch for SF|start*/
 +		/*op-patch|BL|2010-10-05|RichMedia|RichMedia patch for SF|doc|
 +		 *  http://dmwiki.ontoprise.com:8888/dmwiki/index.php/RichMedia_patch_for_SF */
 +		// Embed the Richmedia functionality into the Semantic Forms extension.
 +		$target = $this->mLocalFile->title->getPrefixedText();
-+		global $smwgRMFormByNamespace;
++		global $smwgRMFormByNamespace, $smwgRMPasteNSForFiles;
 +		$rMUploadFormName = $smwgRMFormByNamespace['RMUpload'];
 +		global $wgRequest;
 +		$uploadFormContent = $wgRequest->getArray($rMUploadFormName, array());
@@ -1109,12 +1104,16 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow2.php
 +		// Title->exists gets the article ID for this Title from the link cache
 +		// and this ID is not correct now (always 0). So do an ID update once.
 +		$testID = $target_title->getArticleID(GAID_FOR_UPDATE);
- 
++
 +		if (!$this->mForReUpload){
 +			$wgRequest->setVal($rMDestFormName, $uploadFormContent);
 +		}
 +		$form_add = new SFFormEdit();
 +		$form_add_test = $form_add->execute($myQuery);
++		if( isset ( $smwgRMPasteNSForFiles ) && $smwgRMPasteNSForFiles ) {
++			$pasteNS = $this->mLocalFile->title->getNsText();
++			$basename = $pasteNS . ':' . $basename;
++		}
 +		/*op-patch|BL|2010-10-05|end*/
 +		$output = '<script type="text/javascript">' . "\n";
 +		/*op-patch|BL|2010-10-05|RichMedia|RichMedia patch for SF|start*/
@@ -1123,50 +1122,20 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow2.php
 +		// Embed the Richmedia functionality into the Semantic Forms extension.
 +		if ( $this->mInputID ) {
 +		/*op-patch|BL|2010-10-05|end*/
-+			if ( $this->mDelimiter == null ) {
-+				$output .= <<<END
-+			parent.document.getElementById("{$this->mInputID}").value = '$basename';
- END;
--		} else {
--			$output .= <<<END
--		// if the current value is blank, set it to this file name;
--		// if it's not blank and ends in a space or delimiter, append
--		// the file name; if it ends with a normal character, append
--		// both a delimiter and a file name; and add on a delimiter
--		// at the end in any case
--		var cur_value = parent.document.getElementById("{$this->mInputID}").value;
--		if (cur_value == '') {
--			parent.document.getElementById("{$this->mInputID}").value = '$basename' + '{$this->mDelimiter} ';
--		} else {
--			var last_char = cur_value.charAt(cur_value.length - 1);
--			if (last_char == '{$this->mDelimiter}' || last_char == ' ') {
--				parent.document.getElementById("{$this->mInputID}").value += '$basename' + '{$this->mDelimiter} ';
-+			} else {
-+				$output .= <<<END
-+			// if the current value is blank, set it to this file name;
-+			// if it's not blank and ends in a space or delimiter, append
-+			// the file name; if it ends with a normal character, append
-+			// both a delimiter and a file name; and add on a delimiter
-+			// at the end in any case
-+			var cur_value = parent.document.getElementById("{$this->mInputID}").value;
-+			if (cur_value == '') {
-+				parent.document.getElementById("{$this->mInputID}").value = '$basename' + '{$this->mDelimiter} ';
- 			} else {
--				parent.document.getElementById("{$this->mInputID}").value += '{$this->mDelimiter} $basename{$this->mDelimiter} ';
-+				var last_char = cur_value.charAt(cur_value.length - 1);
-+				if (last_char == '{$this->mDelimiter}' || last_char == ' ') {
-+					parent.document.getElementById("{$this->mInputID}").value += '$basename' + '{$this->mDelimiter} ';
-+				} else {
-+					parent.document.getElementById("{$this->mInputID}").value += '{$this->mDelimiter} $basename{$this->mDelimiter} ';
-+				}
- 			}
--		}
+ 		if ( $this->mDelimiter == null ) {
+ 			$output .= <<<END
+ 		parent.document.getElementById("{$this->mInputID}").value = '$basename';
 -
  END;
--		}
--		$output .= <<<END
--		parent.jQuery.fancybox.close();
-+			}
+ 		} else {
+ 			$output .= <<<END
+@@ -421,15 +554,34 @@
+ 				parent.document.getElementById("{$this->mInputID}").value += '{$this->mDelimiter} $basename{$this->mDelimiter} ';
+ 			}
+ 		}
+-
+ END;
+ 		}
 +		/*op-patch|BL|2010-10-05|RichMedia|RichMedia patch for SF|start*/
 +		/*op-patch|BL|2010-10-05|RichMedia|RichMedia patch for SF|doc|
 +		 *  http://dmwiki.ontoprise.com:8888/dmwiki/index.php/RichMedia_patch_for_SF */
@@ -1184,7 +1153,8 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow2.php
 +		$relatedArticles = urlencode($relatedArticles);
 +		$successString = "filestatus=uploaded&uploadedFile=".urlencode($target)."&RelatedArticles=$relatedArticles&sfInputID=$this->mInputID";
 +		$uploadWindowUrlSuccess = $uploadWindowPage->getTitle()->getFullURL($successString);
-+ 		$output .= <<<END
+ 		$output .= <<<END
+-		parent.jQuery.fancybox.close();
 +		top.saveRichMediaData('{$target}', '{$imageURL}', '{$this->mInputID}');
 +		//load the upload success message
 +		top.jQuery('#fancybox-inner').load('{$uploadWindowUrlSuccess}');
@@ -1198,11 +1168,10 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow2.php
  		print $output;
  		$img = null; // @todo: added to avoid passing a ref to null - should this be defined somewhere?
  
-@@ -691,7 +839,49 @@
- 			return '';
+@@ -694,7 +846,49 @@
  		}
  	}
-+	
+ 
 +	/*op-patch|BL|2010-10-05|RichMedia|RichMedia patch for SF|start*/
 +	/*op-patch|BL|2010-10-05|RichMedia|RichMedia patch for SF|doc|
 +	 *  http://dmwiki.ontoprise.com:8888/dmwiki/index.php/RichMedia_patch_for_SF */
@@ -1241,14 +1210,15 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow2.php
 +
 +		$uploadSuccessHTML .= '<div id="rmUploadSuccessCloseText">';
 +		$uploadSuccessHTML .= wfMsgNoTrans( 'smw_rm_uploadsuccess_closewindow' ) . '</div><br/>';
- 
++
 +		print($uploadSuccessHTML);
-+	}
-+	/*op-patch|BL|2010-10-05|end*/
  }
++	/*op-patch|BL|2010-10-05|end*/
++}
  
  /**
-@@ -703,6 +893,13 @@
+  * Sub class of HTMLForm that provides the form section of SpecialUpload
+@@ -705,7 +899,14 @@
  	protected $mSessionKey;
  	protected $mHideIgnoreWarning;
  	protected $mDestWarningAck;
@@ -1258,11 +1228,12 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow2.php
 +	// Embed the Richmedia functionality into the Semantic Forms extension.
 +	protected $mDestFile;
 +	/*op-patch|BL|2010-10-05|end*/
-+	
  	
++	
  	protected $mSourceIds;
  
-@@ -715,6 +912,12 @@
+ 	public function __construct( $options = array() ) {
+@@ -717,6 +918,12 @@
  				? $options['sessionkey'] : '';
  		$this->mHideIgnoreWarning = !empty( $options['hideignorewarning'] );
  		$this->mDestFile = isset( $options['destfile'] ) ? $options['destfile'] : '';
@@ -1275,7 +1246,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow2.php
  
  		$sourceDescriptor = $this->getSourceSection();
  		$descriptor = $sourceDescriptor
-@@ -777,12 +980,12 @@
+@@ -779,12 +986,12 @@
  				'label-message' => 'sourcefilename',
  				'upload-type' => 'File',
  				'radio' => &$radio,
@@ -1290,7 +1261,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow2.php
  				'checked' => $selectedSourceType == 'file',
  		);
  		if ( $canUploadByUrl ) {
-@@ -803,12 +1006,12 @@
+@@ -805,12 +1012,12 @@
  		}
  		wfRunHooks( 'UploadFormSourceDescriptors', array( &$descriptor, &$radio, $selectedSourceType ) );
  
@@ -1305,7 +1276,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow2.php
  		return $descriptor;
  	}
  
-@@ -913,6 +1116,13 @@
+@@ -915,6 +1122,13 @@
  				'label-message' => 'filesource',
  			);
  		}
@@ -1319,7 +1290,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow2.php
  
  		return $descriptor;
  	}
-@@ -958,7 +1168,175 @@
+@@ -960,7 +1174,175 @@
  	 */
  	public function show() {
  		$this->addUploadJS();
@@ -1479,7 +1450,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow2.php
 +			global $smwgRMScriptPath;
 +			$wgOut->addScript('<script type="text/javascript" src="' . $smwgRMScriptPath . '/scripts/richmedia.js"></script>' . "\n");
 +			$wgOut->addHTML("<table id=\"rmUploadButtonTable\"><tr><td align=\"center\">
-+				<input type=\"button\" value=\"$saveButtonText\" class=\"rmUploadButton\" onclick=\"richMediaPage.doUpload('mw-upload-form')\"/ ></td></tr></table>");
++				<input type=\"button\" value=\"$saveButtonText\" class=\"rmUploadButton\" onclick=\"richMediaPage.doUpload('#mw-upload-form')\"/ ></td></tr></table>");
 +			global $wgJsMimeType;
 +			$remove_uploadbutton = <<<END
 +				<script type="{$wgJsMimeType}">
@@ -1495,7 +1466,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow2.php
  		// disable $wgOut - we'll print out the page manually,
  		// taking the body created by the form, plus the necessary
  		// Javascript files, and turning them into an HTML page
-@@ -970,6 +1348,36 @@
+@@ -972,6 +1354,36 @@
  		$sk->initPage( $wgOut ); // need to call this to set skin name correctly
  		$wgTitle = SpecialPage::getTitleFor( 'Upload' );
  
@@ -1531,8 +1502,8 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow2.php
 +
  		if ( method_exists( $wgOut, 'addModules' ) ) {
  			$head_scripts = '';
- 			$wgOut->addModules( array( 'mediawiki.legacy.edit', 'mediawiki.legacy.upload', 'mediawiki.legacy.wikibits', 'mediawiki.legacy.ajax', 'mediawiki.legacy.ajaxwatch' ) );
-@@ -1002,7 +1410,11 @@
+ 			$wgOut->addModules( array( 'mediawiki.legacy.edit', 'mediawiki.legacy.upload', 'mediawiki.legacy.wikibits', 'mediawiki.legacy.ajax' ) );
+@@ -1004,7 +1416,11 @@
  
  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
  <head>

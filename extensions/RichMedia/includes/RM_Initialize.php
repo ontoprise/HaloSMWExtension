@@ -46,6 +46,9 @@ global $smwgRMPreviewWhitelist;
 $smwgRMPreviewWhitelist = array( 'doc','gif', 'svg', 'bmp', 'jpg', 'jpeg', 'png', 
 	'pdf', 'ac3', 'avi', 'mp3', 'ogg', 'mpg', 'mpeg', 'mpp', 'mov', 'wmv');
 
+global $smwgRMPasteNSForFiles;
+$smwgRMPasteNSForFiles = true;
+
 // Handles the behaviour of the #rmew parser function.
 // Setting this to "true" means that the parser function will ignore the
 // white list and set every link to the embed window.
@@ -147,7 +150,6 @@ function enableRichMediaExtension() {
 	
 	global $smgJSLibs, $sfgFancyBoxIncluded;
 	$smgJSLibs[] = 'jquery';
-	$smgJSLibs[] = 'prototype';
 	// following can not be in the BeforePageDisplay hook
 	if ( !$sfgFancyBoxIncluded ) {
 		$smgJSLibs[] = 'fancybox';
