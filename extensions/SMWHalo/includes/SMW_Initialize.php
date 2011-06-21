@@ -10,7 +10,7 @@
  */
 if ( !defined( 'MEDIAWIKI' ) ) die;
 
-define('SMW_HALO_VERSION', '{{$VERSION}}-for-SMW-1.5.2 [B{{$BUILDNUMBER}}]');
+define('SMW_HALO_VERSION', '{{$VERSION}}-for-SMW-1.5.6 [B{{$BUILDNUMBER}}]');
 
 // constant for special schema properties
 define('SMW_SSP_HAS_DOMAIN_AND_RANGE_HINT', 1);
@@ -37,6 +37,9 @@ $smwgHaloAAMParser = null;
 $smwgDisableAAMParser = false;
 $smwgProcessedAnnotations = null;
 $wgCustomVariables = array('CURRENTUSER', 'CURRENTUSERNS', 'NOW', 'TODAY');
+$smwgHaloStyleVersion = preg_replace('/[^\d]/', '', '{{$BUILDNUMBER}}' );
+if (strlen($smwgHaloStyleVersion) > 0)
+    $smwgHaloStyleVersion= '?'.$smwgHaloStyleVersion;
 
 //Disable default mediawiki autocompletion, so it does not interfere with the mw one
 $wgEnableMWSuggest = false;
