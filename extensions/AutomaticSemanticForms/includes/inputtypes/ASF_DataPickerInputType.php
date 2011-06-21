@@ -83,6 +83,10 @@ class ASFDataPickerInputType {
 			$delimiter = ",";
 		}
 		
+		if(is_array($currentValue) && array_key_exists(0, $currentValue)){
+			$currentValue = $currentValue[0];
+		}
+		
 		$json = substr($currentValue, 
 			strpos($currentValue, '{{#DataPickerValues:') + strlen('{{#DataPickerValues:'));
 		$json = substr($json, 0,  
