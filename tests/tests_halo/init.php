@@ -72,8 +72,10 @@ function tstInitializeDatabase() {
 
 	// Import empty
 	echo "\nImporting database...";
-	echo "$mysqlExe -u $wgDBuser --password=$wgDBpassword < \"$mw_dir"."tests/tests_halo/mw16_1_db.sql\"";
-	runProcess("$mysqlExe -u $wgDBuser --password=$wgDBpassword < \"$mw_dir"."tests/tests_halo/mw16_1_db.sql\"");
+    echo "$mysqlExe -u $wgDBuser --password=$wgDBpassword --execute=\"DROP DATABASE IF EXISTS testdb; CREATE DATABASE testdb;\"";
+    runProcess("$mysqlExe -u $wgDBuser --password=$wgDBpassword --execute=\"DROP DATABASE IF EXISTS testdb; CREATE DATABASE testdb;\"");
+	echo "$mysqlExe -u $wgDBuser --password=$wgDBpassword testdb < \"$mw_dir"."tests/tests_halo/mw16_1_db.sql\"";
+	runProcess("$mysqlExe -u $wgDBuser --password=$wgDBpassword testdb < \"$mw_dir"."tests/tests_halo/mw16_1_db.sql\"");
 	echo "\ndone.\n";
 
    	echo "\nRun mediawiki update...";
