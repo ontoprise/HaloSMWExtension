@@ -2,8 +2,8 @@
 
 global $dapi_instantiations;
 
-$dapi_instantiations['Rxnorm'] = array(
-	'ws-name' => 'RxNormGetConceptProperties',
+$dapi_instantiations['RxnormLookup'] = array(
+	'ws-name' => 'RXNormLookup',
 	'param' => 'name',
 	'label' => 'name',
 	'id' => 'rxuri',

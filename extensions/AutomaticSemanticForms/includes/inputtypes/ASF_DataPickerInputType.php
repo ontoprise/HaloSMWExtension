@@ -44,7 +44,7 @@ function dapi_refreshData($wsParam, $dapiId, $selectedIds, $containerId){
 				'label' 	=> $wsresult[$dapi_instantiations[$dapiId]['label']][$i], 'selected' => $selected); 		
 		}
 	} else {
-		//dd sme error processing
+		//todo: error processing (optional(
 	}
 	
 	$result = array('results' => $resultItems, 'containerId' => $containerId);
@@ -71,6 +71,7 @@ class ASFDataPickerInputType {
 		if(array_key_exists('class', $otherArgs)){
 			$className .= " " . $otherArgs['class'];
 		}
+		$className .= " dapi_values_multiselect ";
 		
 		global $sfgFieldNum;
 		$inputFieldId = "input_$sfgFieldNum";
@@ -118,9 +119,10 @@ class ASFDataPickerInputType {
 		
 		global $asfHeaders;
 		$asfHeaders['datapicker.js'] = true;
-		
-		$html = '<span class="dapi-form-field-container" id="todo" 
-			onmouseover="dapi_showRefreshdControls(event)">';
+				
+		$html = '<span class="dapi-form-field-container" id="dapi-container-'.$sfgFieldNum.'" 
+			onmouseover="dapi_showRefreshdControls(event)" onmouseout="dapi_hideRefreshdControls(event)" 
+			dapi_container="true">';
 		
 		$html .= self::getRefreshControlsHTML($wsParam);
 		
@@ -142,7 +144,7 @@ class ASFDataPickerInputType {
 		//todo: use lanfuage file
 		$attributes = array('type' => 'button'
 			,'onclick' => 'dapi_doRefresh(event)'
-			,'value' => 'Ok');
+			,'value' => 'Refresh');
 		$html .= Xml::tags('input', $attributes, '');
 		
 		$html .= '<br/>';
@@ -175,7 +177,9 @@ class ASFDataPickerInputType {
 			'class' => $className,
 			'multiple' => 'multiple',
 			'width' => '50%',
-			'style' => 'max-width: 80%'
+			'style' => 'max-width: 80%',
+			'style' => "width: 100%",
+			'onmouseover' => "dapi_showRefreshdControls(event)"
 		);
 		if(!is_null($size)){
 			$attributes['size'] = $size;
@@ -185,15 +189,13 @@ class ASFDataPickerInputType {
 		}
 		$html .= Xml::tags( 'select', $attributes, $optionsText );
 		$html .= "\t" . Xml::hidden( $inputName . '[is_list]', 1 ) . "\n";
-		if ( $isMandatory ) {
-			$html = Xml::tags( 'span', array( 'class' => 'inputSpan mandatoryFieldSpan' ), $text );
-		}
 		
-		//todo: use lanfuage file
-		$attributes = array('type' => 'button'
-			,'onclick' => 'dapi_showRefreshdControls(event)'
-			,'value' => 'Refresh');
-		//$html .= Xml::tags('input', $attributes, '');		
+		//necessary for sf's mandatory field handling
+		$extraSpanclass = ''; 
+		if ( $isMandatory ) {
+			$extraSpanclass = 'inputSpan mandatoryFieldSpan';
+		}
+		$html = Xml::tags( 'span', array( 'class' => $extraSpanclass ), $html );
 		
 		$html .= '</span>';
 		

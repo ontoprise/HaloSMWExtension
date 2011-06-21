@@ -4,8 +4,17 @@ function dapi_showRefreshdControls(event){
 
 	var container = jQuery(Event.element(event)).parent().parent();
 	
+	if(jQuery(container).attr('dapi_container') != 'true'){
+		container = jQuery(container).parent();
+		
+		if(jQuery(container).attr('dapi_container') != 'true'){
+			container = jQuery(container).parent();
+		}
+	}
+	
 	jQuery('.dapi-refresh-controls', container).css('display', '');
 	
+	jQuery('.dapi-refresh-controls', container).attr('hasmousefocus', 'true');
 }
 
 function dapi_doRefresh(event){
@@ -50,7 +59,6 @@ function dapi_doRefreshCallBack(data){
 		
 		html += '<option value="' + data.results[i].id + '" ' + selected +'>' + data.results[i].label + '</option>';
 	}
-	html += '<option style="display: none" value="fritz" selected="selected">fl</option>';
 	
 	jQuery('#' + data.containerId + ' .dapi-choose-value-controls select:first-child').html(html);
 	
@@ -63,6 +71,7 @@ function dapi_createsubmitvalues(){
 	jQuery('.dapi-choose-value-controls select:first-child').each(function(){
 		
 		var values = new Array();
+		var selected = 0;
 		jQuery('option', this).each(function (){
 			var o = new Object();
 			o.value = jQuery(this).attr('value');
@@ -70,6 +79,7 @@ function dapi_createsubmitvalues(){
 			
 			if(jQuery(this).get(0).selected){
 				o.selected = 'true';
+				selected ++;
 			} else {
 				o.selected = 'false';
 			}
@@ -77,21 +87,23 @@ function dapi_createsubmitvalues(){
 			values.push(o);
 		});
 		
-		var json = new Array();
-		json.push(values);
-		
-		var delimiter = jQuery('.dapi-delimiter', jQuery(this).parent().parent()).html();
-		json.push(delimiter);
-		
-		var wsParam = jQuery('.dapi-refresh-controls input:first-child', 
-				jQuery(this).parent().parent()).attr('value');
-		json.push(wsParam);
-		
-		json = dapi_encodeJSON(json);
-		
-		json = '{{#DataPickerValues:' + json + '}}';
+		if(selected > 0 || !jQuery(this).parent().attr('class').indexOf('mandatory')) {
+			var json = new Array();
+			json.push(values);
 			
-		jQuery(this).html('<option selected="selected" style="display: none">' +  json + '</option>');
+			var delimiter = jQuery('.dapi-delimiter', jQuery(this).parent().parent().parent()).html();
+			json.push(delimiter);
+			
+			var wsParam = jQuery('.dapi-refresh-controls input:first-child', 
+					jQuery(this).parent().parent().parent()).attr('value');
+			json.push(wsParam);
+			
+			json = dapi_encodeJSON(json);
+			
+			json = '{{#DataPickerValues:' + json + '}}';
+				
+			jQuery(this).html('<option selected="selected" style="display: none">' +  json + '</option>');
+		}
 	});
 	
 }
@@ -109,8 +121,47 @@ function dapi_encodeJSON(object){
 }
 
 
+function dapi_hideRefreshdControls(event){
+	
+	var container = jQuery(Event.element(event)).parent().parent();
+	
+	if(jQuery(container).attr('dapi_container') != 'true'){
+		container = jQuery(container).parent();
+		
+		if(jQuery(container).attr('dapi_container') != 'true'){
+			container = jQuery(container).parent();
+		}
+	}
+	
+	var id = jQuery(container).attr('id');
+	
+	jQuery('.dapi-refresh-controls', container).attr('hasmousefocus', 'false');
+	
+	setTimeout('dapi_doHideRefreshdControls("' + id + '")', 1000);
+}
+
+function dapi_doHideRefreshdControls(containerId){
+	
+	var container = jQuery('#' + containerId);
+	
+	if(jQuery('.dapi-refresh-controls', container).attr('hasmousefocus') != 'true'){
+		jQuery('.dapi-refresh-controls', container).css('display', 'none');
+	}
+}
+
+function dapi_handleEnterKey(event){
+	if(event.which == 13){
+		event.preventDefault();
+		
+		jQuery('input:nth-child(2)', jQuery(this).parent()).click();
+	}
+}
+
+
 jQuery(document).ready( function($) {
 	jQuery('#sfForm').submit( function() { return dapi_createsubmitvalues(); } );
+	
+	jQuery('.dapi-refresh-controls input:first-child').keypress(dapi_handleEnterKey);
 });
 
 
