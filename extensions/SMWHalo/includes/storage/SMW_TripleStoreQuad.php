@@ -122,8 +122,11 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 		}
 
 		if ($naryPropertiesPresent) {
-			list($property, $value) = $this->readRecordPropertyValues($subject);
-			$semanticData->addPropertyObjectValue($property, $value);
+			$naryProps = $this->readRecordPropertyValues($subject);
+			foreach($naryProps as $tuple) {
+				list($property, $value) = $tuple;
+				$semanticData->addPropertyObjectValue($property, $value);
+			}
 		}
 
 		return $semanticData;
@@ -601,6 +604,7 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 		$properties = array();
 
 		$results = $dom->xpath('//sparqlxml:result');
+		$naryProps = array();
 		foreach ($results as $r) {
 			$values = array();
 			$children = $r->children(); // binding nodes
@@ -619,9 +623,13 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 			$v2 = $this->getResultValue($children->binding[4]);
 			$v3 = $this->getResultValue($children->binding[5]);
 			$v4 = $this->getResultValue($children->binding[6]);
+			
+			if (!is_null($property)) {
+			     $naryProps[] = array($property, SMWDataValueFactory::newPropertyObjectValue($property, implode(";",array($v0, $v1, $v2, $v3, $v4))));
+			}
 		}
 
-		return array($property, SMWDataValueFactory::newPropertyObjectValue($property, implode(";",array($v0, $v1, $v2, $v3, $v4))));
+		return $naryProps;
 	}
 
 	private function getResultValue($b) {
