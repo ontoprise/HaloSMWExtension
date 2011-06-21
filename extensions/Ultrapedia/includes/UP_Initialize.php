@@ -12,6 +12,12 @@ $smwgUltraPediaIP = $IP . '/extensions/Ultrapedia';
 $smwgUltraPediaScriptPath = $wgScriptPath . '/extensions/Ultrapedia';
 $smwgUltraPediaEnabled = true;
 
+// internal variable to add a version number when the css and js files are retrieved
+$smwgUltraPediaStyleVersion= preg_replace('/[^\d]/', '', '{{$BUILDNUMBER}}' );
+if (strlen($smwgUltraPediaStyleVersion) > 0)
+    $smwgUltraPediaStyleVersion= '?'.$smwgUltraPediaStyleVersion;
+
+
 global $wgExtensionFunctions, $wgHooks, $wgAutoloadClasses, $smwgUltraPediaEnableLocalEdit;
 $wgExtensionFunctions[] = 'smwgUltraPediaSetupExtension';
 $wgHooks['LanguageGetMagic'][] = 'UPParserFunctions::languageGetMagic';
@@ -167,7 +173,8 @@ function smwgUltraPediaSetupExtension() {
 }
 
 function smwfUltraPediaGetJSLanguageScripts(&$pathlng, &$userpathlng) {
-	global $smwgUltraPediaIP, $wgLanguageCode, $smwgUltraPediaScriptPath, $wgUser;
+	global $smwgUltraPediaIP, $wgLanguageCode, $smwgUltraPediaScriptPath,
+           $wgUser, $smwgUltraPediaStyleVersion;
 
 	// content language file
 	$lng = '/scripts/Language/UP_Language';
@@ -176,10 +183,10 @@ function smwfUltraPediaGetJSLanguageScripts(&$pathlng, &$userpathlng) {
 		if (file_exists($smwgUltraPediaIP . $lng)) {
 			$pathlng = $smwgUltraPediaScriptPath . $lng;
 		} else {
-			$pathlng = $smwgUltraPediaScriptPath . '/scripts/Language/UP_LanguageEn.js';
+			$pathlng = $smwgUltraPediaScriptPath . '/scripts/Language/UP_LanguageEn.js'.$smwgUltraPediaStyleVersion;
 		}
 	} else {
-		$pathlng = $smwgUltraPediaScriptPath . '/scripts/Language/UP_LanguageEn.js';
+		$pathlng = $smwgUltraPediaScriptPath . '/scripts/Language/UP_LanguageEn.js'.$smwgUltraPediaStyleVersion;
 	}
 
 	// user language file
@@ -189,10 +196,10 @@ function smwfUltraPediaGetJSLanguageScripts(&$pathlng, &$userpathlng) {
 		if (file_exists($smwgUltraPediaIP . $lng)) {
 			$userpathlng = $smwgUltraPediaScriptPath . $lng;
 		} else {
-			$userpathlng = $smwgUltraPediaScriptPath . '/scripts/Language/UP_LanguageUserEn.js';
+			$userpathlng = $smwgUltraPediaScriptPath . '/scripts/Language/UP_LanguageUserEn.js'.$smwgUltraPediaStyleVersion;
 		}
 	} else {
-		$userpathlng = $smwgUltraPediaScriptPath . '/scripts/Language/UP_LanguageUserEn.js';
+		$userpathlng = $smwgUltraPediaScriptPath . '/scripts/Language/UP_LanguageUserEn.js'.$smwgUltraPediaStyleVersion;
 	}
 }
 
@@ -200,16 +207,17 @@ function smwfUltraPediaAddHTMLHeader(& $out) {
     // ext library causes problems with the Halo extension.
     return true;
 	// add Ultrapedia abstract tooltip
-	global $wgJsMimeType, $wgStylePath, $wgScriptPath, $smwgUltraPediaScriptPath, $upAbstractSparql;
+	global $wgJsMimeType, $wgStylePath, $wgScriptPath, $smwgUltraPediaScriptPath,
+           $upAbstractSparql, $smwgUltraPediaStyleVersion;
 	$out->addLink( array(
 		'rel' => 'stylesheet',
 		'type' => 'text/css',
 		'media' => "screen, projection",
-        'href' => $smwgUltraPediaScriptPath. '/scripts/extjs/resources/css/ext-all.css'
+        'href' => $smwgUltraPediaScriptPath. '/scripts/extjs/resources/css/ext-all.css'.$smwgUltraPediaStyleVersion
 	));
-	$out->addScript("<script type=\"{$wgJsMimeType}\" src=\"{$wgStylePath}/common/extjs/adapter/prototype/ext-prototype-adapter.js\"></script>
-    <script type=\"{$wgJsMimeType}\" src=\"{$smwgUltraPediaScriptPath}/scripts/extjs/ext-all.js\"></script>
-	<script type=\"text/javascript\" src=\"{$smwgUltraPediaScriptPath}/scripts/abstractilink.js\"></script>
+	$out->addScript("<script type=\"{$wgJsMimeType}\" src=\"{$wgStylePath}/common/extjs/adapter/prototype/ext-prototype-adapter.js{$smwgUltraPediaStyleVersion}\"></script>
+    <script type=\"{$wgJsMimeType}\" src=\"{$smwgUltraPediaScriptPath}/scripts/extjs/ext-all.js{$smwgUltraPediaStyleVersion}\"></script>
+	<script type=\"text/javascript\" src=\"{$smwgUltraPediaScriptPath}/scripts/abstractilink.js{$smwgUltraPediaStyleVersion}\"></script>
 	<script type=\"{$wgJsMimeType}\">
 		AjaxInternalLinks.baseUrl = \"{$wgScriptPath}\";
 		AjaxInternalLinks.sparql = \"{$upAbstractSparql}\";
