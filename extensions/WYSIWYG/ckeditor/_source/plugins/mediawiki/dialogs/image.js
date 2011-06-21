@@ -601,7 +601,7 @@ CKEDITOR.dialog.add( 'MWImage', function( editor ) {
 				this.originalElement.setAttribute( 'alt', '' );
 				this.originalElement.setCustomData( 'isReady', 'false' );
 
-				if ( element && element.getName() == 'img' && !element.getAttribute( '_cke_realelement' )
+				if ( element && element.getName() == 'img' && !element.getAttribute( 'data-cke-realelement' )
 					|| element && element.getName() == 'input' && element.getAttribute( 'type' ) == 'image' )
 				{
 					this.imageEditMode = element.getName();

@@ -555,7 +555,7 @@ CKEDITOR.customprocessor.prototype =
 					return;
 
                 // get real element from fake element
-                if ( htmlNode.getAttribute( '_cke_realelement' ) ) {
+                if ( htmlNode.getAttribute( 'data-cke-realelement' ) ) {
                     this._AppendNode( this._getRealElement( htmlNode ), stringBuilder, prefix );
                     return;
                 }
@@ -1408,7 +1408,7 @@ CKEDITOR.customprocessor.prototype =
     _getRealElement : function( element ) {
 
         var attributes = element.attributes;
-        var realHtml = attributes && attributes.getNamedItem('_cke_realelement');
+        var realHtml = attributes && attributes.getNamedItem('data-cke-realelement');
 		var realNode = realHtml && decodeURIComponent( realHtml.nodeValue );
         var realElement = realNode && this._getNodeFromHtml( realNode );
 
