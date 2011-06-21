@@ -131,6 +131,43 @@ class DeployDescriptionProcessor {
 		$this->writeLocalSettingsFile($ls);
 		return $ls;
 	}
+	
+	/**
+	 * Returns the configuration fragment.
+	 * 
+	 * @param string $extid
+	 * 
+	 * @return string config fragment (without enclosing tags)
+	 */
+	function getConfigFragment($extid) {
+		$start = strpos("/*start-$extid*/", $this->localSettingsContent);
+		$end = strpos("/*end-$extid*/", $this->localSettingsContent);
+		if ($start === false) return NULL;
+		if ($end === false) return NULL;
+		
+		$start = $start + strlen("/*start-$extid*/") + 1;
+		return substr($this->localSettingsContent, $start , $end-$start);
+	}
+	
+    /**
+     * Replaces the configuration fragment.
+     * 
+     * @param string $extid
+     * @param string $replacment
+     * 
+     * @return boolean True if configuration fragment was replaced.
+     */
+    function replacesConfigFragment($extid, $replacment) {
+        $start = strpos("/*start-$extid*/", $this->localSettingsContent);
+        $end = strpos("/*end-$extid*/", $this->localSettingsContent);
+        if ($start === false) return false;
+        if ($end === false) return false;
+        
+        $start = $start + strlen("/*start-$extid*/") + 1;
+        $fragment = substr($this->localSettingsContent, $start , $end-$start);
+        $this->localSettingsContent = str_replace($fragment, $replacement, $this->localSettingsContent);
+        return true;
+    }
 
 	/**
 	 * Runs the given setup scripts.
