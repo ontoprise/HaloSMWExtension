@@ -1,16 +1,16 @@
 <?php
 /**
  * Created on 01.03.2007
- * 
+ *
  * @file
  * @ingroup SMWHaloOntologyBrowser
- * 
+ *
  * @defgroup SMWHaloOntologyBrowser SMWHalo Ontology Browser
  * @ingroup SMWHaloSpecials
- * 
+ *
  * @author Kai K�hn
  */
- if (!defined('MEDIAWIKI')) die();
+if (!defined('MEDIAWIKI')) die();
 
 
 global $IP;
@@ -34,12 +34,12 @@ define('SMW_OB_COMMAND_ADD_SCHEMAPROPERTY', 9);
 //function doSMW_OntologyBrowser() {
 //		SMW_OntologyBrowser::execute();
 //}
-	
+
 //SpecialPage::addPage( new SpecialPage(wfMsg('ontologybrowser'),'',true,'doSMW_OntologyBrowser',false) );
 
 
 class SMW_OntologyBrowser extends SpecialPage {
-	
+
 	public function __construct() {
 		parent::__construct('OntologyBrowser');
 	}
@@ -48,97 +48,129 @@ class SMW_OntologyBrowser extends SpecialPage {
 		//$skin = $wgUser->getSkin();
 		$wgOut->setPageTitle(wfMsg('ontologybrowser'));
 		/*STARTLOG*/
-		if ($wgRequest->getVal('src') == 'toolbar') { 
-    			smwLog("","OB","opened_from_menu");
-		} else if ($wgRequest->getVal('entitytitle') != '') { 
-			    $ns = $wgRequest->getVal('ns') == '' ? '' : $wgRequest->getVal('ns').":";
-    			smwLog($ns.$wgRequest->getVal('entitytitle'),"Factbox","open_in_OB");
+		if ($wgRequest->getVal('src') == 'toolbar') {
+			smwLog("","OB","opened_from_menu");
+		} else if ($wgRequest->getVal('entitytitle') != '') {
+			$ns = $wgRequest->getVal('ns') == '' ? '' : $wgRequest->getVal('ns').":";
+			smwLog($ns.$wgRequest->getVal('entitytitle'),"Factbox","open_in_OB");
 		} else {
-				smwLog("","OB","opened");
+			smwLog("","OB","opened");
 		}
 		/*ENDLOG*/
 		$showMenuBar = $wgUser->isAllowed("ontologyediting");
 		// display query browser
-		//$spectitle = Title::makeTitle( NS_SPECIAL, wfMsg('ontologybrowser') );	
+		//$spectitle = Title::makeTitle( NS_SPECIAL, wfMsg('ontologybrowser') );
 		$refactorstatstitle = Title::makeTitle( NS_SPECIAL, "RefactorStatistics" );
-					
-	    // add another container
-	    $treeContainer = "";
-	    $menu = "";
-	    $switch = "";
+			
+		// add another container
+		$treeContainer = "";
+		$menu = "";
+		$switch = "";
 		wfRunHooks('smw_ob_add', array(& $treeContainer, & $boxContainer, & $menu, & $switch));
-		
+
 		$html = "<span id=\"OBHelp\">".wfMsg('smw_ob_help')."</span><br>";
 		$html .= "<span id=\"OBHint\">".wfMsg('smw_ac_hint') . "</span>\n";
 		$html .= "<br><input type=\"text\" size=\"32\" id=\"FilterBrowserInput\" name=\"prefix\" class=\"wickEnabled\" constraints=\"all\"/>";
-	
+
 		$html .= "<button type=\"button\" id=\"filterBrowseButton\" name=\"filterBrowsing\" onclick=\"globalActionListener.filterBrowsing(event, true)\">".wfMsg('smw_ob_filterbrowsing')."</button>";
 		$html .= "<button type=\"button\" name=\"refresh\" onclick=\"globalActionListener.reset(event)\">".wfMsg('smw_ob_reset')."</button>";
 		$html .= "<button type=\"button\" id=\"hideInstancesButton\" name=\"hideInstances\" onclick=\"instanceActionListener.toggleInstanceBox(event)\">".wfMsg('smw_ob_hideinstances')."</button>";//  <a href=\"".$refactorstatstitle->getFullURL()."\">".wfMsg('smw_ob_link_stats')."</a>";
-		
+
 		$html .= "<div id=\"ontologybrowser\">";
 
-//TODO: Add the following code to a hook. However, the problem is, that 
-// advancedOption.js should also be moved to the Linked Data Extension, but it
-// is used for getting parameters for the ajax calls to smwf_ob_OntologyBrowserAccess().	
+		//TODO: Add the following code to a hook. However, the problem is, that
+		// advancedOption.js should also be moved to the Linked Data Extension, but it
+		// is used for getting parameters for the ajax calls to smwf_ob_OntologyBrowserAccess().
+		$sourceOptions = "";
+		$connectionError = "";
 		if (defined('LOD_LINKEDDATA_VERSION')) {
 			// Check if the triples store is propertly connected.
-			$connectionError = "";
 			$tsa = new LODTripleStoreAccess();
 			if (!$tsa->isConnected()) {
 				$connectionError = "<div class=\"aoConnectionError\">".wfMsg("smw_ob_ts_not_connected")."</div>";
 			}
-			
+				
 			$ids = LODAdministrationStore::getInstance()->getAllSourceDefinitionIDsAndLabels();
 			$sourceOptions = "";
 			foreach ($ids as $tuple) {
 				list($sourceID, $sourceLabel) = $tuple;
 				$sourceOptions .= "<option sourceid=\"$sourceID\">$sourceLabel</option>";
 			}
-			$advancedOptions  = wfMsg("smw_ob_advanced_options");
-			$fromWiki         = wfMsg("smw_ob_source_wiki");
-			$selectDatasource = wfMsg("smw_ob_select_datasource");
-			$selectMultiHint  = wfMsg("smw_ob_select_multiple");
-			
-			$html .= <<<TEXT
+		}
+		
+		// add content bundles
+		global $dfgLang;
+		$bundleOptions="";
+		$contentBundles = smwfGetSemanticStore()->getDirectInstances(Title::newFromText($dfgLang->getLanguageString('df_contentbundle'), NS_CATEGORY));
+		foreach($contentBundles as $cb) {
+			$bundleOptions .= "<option bundleid=\"".strtolower($cb->getDBkey())."\">".$cb->getText()."</option>";
+		}		
+		
+		$advancedOptions  = wfMsg("smw_ob_advanced_options");
+		$fromWiki         = wfMsg("smw_ob_source_wiki");
+		$selectDatasource = wfMsg("smw_ob_select_datasource");
+		$selectBundle = wfMsg("smw_ob_select_bundle");
+		$selectMultiHint  = wfMsg("smw_ob_select_multiple");
+
+	   $dataSourcesHtml = "";
+if (!empty($sourceOptions)) {
+$dataSourcesHtml = <<<TEXT
+<div style="float: left;">
+        <div><b>$selectDatasource</b></div>
+        <select id="dataSourceSelector" name="DataSource" size="5" multiple="multiple" class="aoDataSourceSelector">
+            <option>$fromWiki</option>
+            $sourceOptions
+        </select>
+        </div>
+        <div class="OBStaticHint">$selectMultiHint</div>
+TEXT;
+}
+$bundlesHtml = "";
+if (!empty($bundleOptions)) {
+$bundlesHtml = <<<TEXT
+<div><div><b>$selectBundle</b></div>
+        <select id="bundleSelector" name="Bundles" size="5" class="aoDataSourceSelector">
+            <option>$fromWiki</option>
+            $bundleOptions
+        </select>
+        </div>
+TEXT;
+}
+$html .= <<<TEXT
 <div id="advancedOptions" class="advancedOptions">
 	<div id="aoFoldIcon" class="aoFoldClosed"> </div>
 	<span id="aoTitle" class="aoTitle"><b>$advancedOptions</b> </span>
 	<div id="aoContent" class="aoContent">
-		$connectionError
-		<div><b>$selectDatasource</b></div>
-		<select id="dataSourceSelector" name="DataSource" size="5" multiple="multiple" class="aoDataSourceSelector">
-			<option>$fromWiki</option>
-			$sourceOptions
-		</select>
-		<div class="OBStaticHint">$selectMultiHint</div>
+	$connectionError
+	    $dataSourcesHtml
+		$bundlesHtml
+		
 	</div>
 </div>
 TEXT;
-		}
-		$html .= "		
+			$html .= "
 		<!-- Categore Tree hook -->	" .
 		"<div id=\"treeContainer\"><span class=\"OB-header\">	
 			<img src=\"$wgScriptPath/extensions/SMWHalo/skins/concept.gif\" style=\"margin-bottom: -1px\"></img><a class=\"selectedSwitch treeSwitch\" id=\"categoryTreeSwitch\" onclick=\"globalActionListener.switchTreeComponent(event,'categoryTree')\">".wfMsg('smw_ob_categoryTree')."</a>
 			<img src=\"$wgScriptPath/extensions/SMWHalo/skins/property.gif\" style=\"margin-bottom: -1px\"></img><a class=\"treeSwitch\" id=\"propertyTreeSwitch\" onclick=\"globalActionListener.switchTreeComponent(event,'propertyTree')\">".wfMsg('smw_ob_attributeTree')."</a>";
-		    $html .= $switch;
-		    
-		$html .= "</span>";
-		if ($showMenuBar) 
-		{  
-			$html .= "<span class=\"menuBar menuBarTree menuBarcategoryTree\" id=\"menuBarcategoryTree\"><a onclick=\"categoryActionListener.showSubMenu(".SMW_OB_COMMAND_ADDSUBCATEGORY_SAMELEVEL.")\">".wfMsg('smw_ob_cmd_createsubcategorysamelevel')."</a> | <a onclick=\"categoryActionListener.showSubMenu(".SMW_OB_COMMAND_ADDSUBCATEGORY.")\">".wfMsg('smw_ob_cmd_createsubcategory')."</a> | <a onclick=\"categoryActionListener.showSubMenu(".SMW_OB_COMMAND_CATEGORY_RENAME.")\">".wfMsg('smw_ob_cmd_renamecategory')."</a><div id=\"categoryTreeMenu\"></div></span>
-			<span style=\"display:none;\" class=\"menuBar menuBarTree menuBarpropertyTree\" id=\"menuBarpropertyTree\"><a onclick=\"propertyActionListener.showSubMenu(".SMW_OB_COMMAND_ADDSUBPROPERTY_SAMELEVEL.")\">".wfMsg('smw_ob_cmd_createsubpropertysamelevel')."</a> | <a onclick=\"propertyActionListener.showSubMenu(".SMW_OB_COMMAND_ADDSUBPROPERTY.")\">".wfMsg('smw_ob_cmd_createsubproperty')."</a> | <a onclick=\"propertyActionListener.showSubMenu(".SMW_OB_COMMAND_PROPERTY_RENAME.")\">".wfMsg('smw_ob_cmd_renameproperty')."</a><div id=\"propertyTreeMenu\"></div></span>";
-			$html .= $menu;
-		}
+			$html .= $switch;
 
-		// add containers
-	    $html .= "<div id=\"categoryTree\" class=\"categoryTreeColors treeContainer\">
+			$html .= "</span>";
+			if ($showMenuBar)
+			{
+				$html .= "<span class=\"menuBar menuBarTree menuBarcategoryTree\" id=\"menuBarcategoryTree\"><a onclick=\"categoryActionListener.showSubMenu(".SMW_OB_COMMAND_ADDSUBCATEGORY_SAMELEVEL.")\">".wfMsg('smw_ob_cmd_createsubcategorysamelevel')."</a> | <a onclick=\"categoryActionListener.showSubMenu(".SMW_OB_COMMAND_ADDSUBCATEGORY.")\">".wfMsg('smw_ob_cmd_createsubcategory')."</a> | <a onclick=\"categoryActionListener.showSubMenu(".SMW_OB_COMMAND_CATEGORY_RENAME.")\">".wfMsg('smw_ob_cmd_renamecategory')."</a><div id=\"categoryTreeMenu\"></div></span>
+			<span style=\"display:none;\" class=\"menuBar menuBarTree menuBarpropertyTree\" id=\"menuBarpropertyTree\"><a onclick=\"propertyActionListener.showSubMenu(".SMW_OB_COMMAND_ADDSUBPROPERTY_SAMELEVEL.")\">".wfMsg('smw_ob_cmd_createsubpropertysamelevel')."</a> | <a onclick=\"propertyActionListener.showSubMenu(".SMW_OB_COMMAND_ADDSUBPROPERTY.")\">".wfMsg('smw_ob_cmd_createsubproperty')."</a> | <a onclick=\"propertyActionListener.showSubMenu(".SMW_OB_COMMAND_PROPERTY_RENAME.")\">".wfMsg('smw_ob_cmd_renameproperty')."</a><div id=\"propertyTreeMenu\"></div></span>";
+				$html .= $menu;
+			}
+
+			// add containers
+			$html .= "<div id=\"categoryTree\" class=\"categoryTreeColors treeContainer\">
 		   </div>		
 		   <div id=\"propertyTree\" style=\"display:none\" class=\"propertyTreeListColors treeContainer\">
 		   </div>";
-		$html .= $treeContainer;
-		
-		$html .= "<span class=\"OB-filters\"><span>".wfMsg('smw_ob_filter')."</span><input type=\"text\" id=\"treeFilter\"><button type=\"button\" name=\"filterCategories\" onclick=\"globalActionListener.filterTree(event)\">".wfMsg('smw_ob_filter')."</button></span>
+			$html .= $treeContainer;
+
+			$html .= "<span class=\"OB-filters\"><span>".wfMsg('smw_ob_filter')."</span><input type=\"text\" id=\"treeFilter\"><button type=\"button\" name=\"filterCategories\" onclick=\"globalActionListener.filterTree(event)\">".wfMsg('smw_ob_filter')."</button></span>
 		</div>
 		
 		<!-- Attribute Tree hook -->
@@ -147,9 +179,9 @@ TEXT;
 			<img src=\"$wgScriptPath/extensions/SMWHalo/skins/OntologyBrowser/images/bigarrow.gif\" onclick=\"globalActionListener.toogleCatInstArrow(event)\" />
 		</div>";
 
-		$html .= $boxContainer;
-		
-		$html .= "<!-- Instance List hook -->	
+			$html .= $boxContainer;
+
+			$html .= "<!-- Instance List hook -->
 		<div id=\"instanceContainer\">
 		  <span class=\"OB-header\"><img style=\"margin-bottom: -3px\" src=\"$wgScriptPath/extensions/SMWHalo/skins/instance.gif\"></img> ".wfMsg('smw_ob_instanceList')."</span>
 		  ".($showMenuBar ? "<span class=\"menuBar menuBarInstance\" id=\"menuBarInstance\"><a onclick=\"instanceActionListener.showSubMenu(".SMW_OB_COMMAND_INSTANCE_CREATE.")\">".wfMsg('smw_ob_cmd_createinstance')."</a> | <a onclick=\"instanceActionListener.showSubMenu(".SMW_OB_COMMAND_INSTANCE_RENAME.")\">".wfMsg('smw_ob_cmd_renameinstance')."</a> | <a onclick=\"instanceActionListener.showSubMenu(".SMW_OB_COMMAND_INSTANCE_DELETE.")\">".wfMsg('smw_ob_cmd_deleteinstance')."</a> <div id=\"instanceListMenu\"></div></span>" : "")."			
@@ -179,7 +211,7 @@ TEXT;
 		</div>
 		</div>
 		";
-		$wgOut->addHTML($html);
+			$wgOut->addHTML($html);
 	}
 
 }

@@ -235,7 +235,28 @@ class DFBundleTools {
 		}
 		return 'OBL'; // assume ObjectLogic per default.
 	}
-
+    
+	/**
+	 * Checks if $title is part of bundle $bundleID.
+	 * 
+	 * @param Title $title
+	 * @param string $bundleID
+	 * 
+	 * @return boolean
+	 */
+	public static function isPartOfBundle($title, $bundleID) {
+		global $dfgLang;
+		$partOfBundlePropertyID = smwfGetStore()->getSMWPropertyID(SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString("df_partofbundle")));
+		$bundleID = ucfirst($bundleID);
+        $bundleSMWID = smwfGetStore()->getSMWPageID($bundleID, NS_MAIN, "");
+        $db =& wfGetDB( DB_SLAVE );
+        $smw_ids = $db->tableName('smw_ids');
+        $smw_rels2 = $db->tableName('smw_rels2');
+		$bundleSql = 'SELECT smw_id FROM '.$smw_ids.' JOIN '.$smw_rels2.' ON s_id = smw_id AND p_id = '.$partOfBundlePropertyID.' AND o_id = '.$bundleSMWID.' WHERE smw_title = '.$db->addQuotes($title->getDBkey()).' AND smw_namespace = '.$title->getNamespace();
+		$res = $db->query($bundleSql);
+		return $db->numRows( $res ) > 0;
+	}
+	
 	/**
 	 * Removes articles belonging to a bundle. If $removeReferenced == true, it is assumed that everything other than instances of categories of a bundle
 	 * and templates used by such is marked with the 'Part of bundle' annotation. Otherwise _everything_ must be marked with 'Part of bundle'.

@@ -20,7 +20,7 @@ require_once( "SMW_OntologyManipulator.php");
 
 
 
-class SMWSemanticStoreSQL extends SMWSemanticStore {
+abstract class SMWSemanticStoreSQL extends SMWSemanticStore {
 
 	public function SMWSemanticStoreSQL() {
 		global $smwgHaloContLang;
@@ -128,7 +128,7 @@ class SMWSemanticStoreSQL extends SMWSemanticStore {
 		return true;
 	}
 
-	public function getPages($namespaces = NULL, $requestoptions = NULL, $addRedirectTargets = false) {
+	public function getPages($namespaces = NULL, $requestoptions = NULL, $addRedirectTargets = false, $bundleID = '') {
 		$result = "";
 		$db =& wfGetDB( DB_SLAVE );
 		$sql = "";
@@ -169,10 +169,22 @@ class SMWSemanticStoreSQL extends SMWSemanticStore {
 
 		$result = array();
 
+		global $dfgLang;
+		$partOfBundlePropertyID = smwfGetStore()->getSMWPropertyID(SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString("df_partofbundle")));
+		//$partOfBundleID = smwfGetStore()->getSMWPageID($ext_id, NS_MAIN, "");
+		$bundleID = ucfirst($bundleID);
+		$bundleSMWID = smwfGetStore()->getSMWPageID($bundleID, NS_MAIN, "");
+		$smw_ids = $db->tableName('smw_ids');
+		$smw_rels2 = $db->tableName('smw_rels2');
+		$page = $db->tableName('page');
+		$redirect = $db->tableName('redirect');
+		$bundleSql = empty($bundleID) ? '' : ' AND page_id IN (SELECT pc.page_id  FROM '.$page.' pc JOIN '.$smw_ids.' ON pc.page_title = smw_title JOIN '.$smw_rels2.' ON s_id = smw_id AND p_id = '.$partOfBundlePropertyID.' AND o_id = '.$bundleSMWID.')';
+
+
 		if (!$addRedirectTargets) {
 			$res = $db->select( $db->tableName('page'),
 			array('page_title','page_namespace'),
-			$sql.'  AND page_is_redirect = 0', 'SMW::getPages', DBHelper::getSQLOptions($requestoptions,'page_namespace') );
+			$sql.'  AND page_is_redirect = 0 '.$bundleSql, 'SMW::getPages', DBHelper::getSQLOptions($requestoptions,'page_namespace') );
 			if($db->numRows( $res ) > 0) {
 				while($row = $db->fetchObject($res)) {
 					if (smwf_om_userCan($row->page_title, 'read', $row->page_namespace) === "true") {
@@ -181,11 +193,11 @@ class SMWSemanticStoreSQL extends SMWSemanticStore {
 				}
 			}
 		} else {
-			$page = $db->tableName('page');
-			$redirect = $db->tableName('redirect');
-			$res = $db->query( '(SELECT page_title AS title, page_namespace AS ns FROM '.$page.' WHERE '.$sql.' AND page_is_redirect = 0) ' .
+
+
+			$res = $db->query( '(SELECT page_title AS title, page_namespace AS ns FROM '.$page.' WHERE '.$sql.' AND page_is_redirect = 0 '.$bundleSql.') ' .
 		   					'UNION DISTINCT ' .
-		   					  '(SELECT rd_title AS title, rd_namespace AS ns FROM '.$page.' JOIN '.$redirect.' ON page_id = rd_from WHERE '.$sql.' AND page_is_redirect = 1)  '.
+		   					  '(SELECT rd_title AS title, rd_namespace AS ns FROM '.$page.' JOIN '.$redirect.' ON page_id = rd_from WHERE '.$sql.' AND page_is_redirect = 1 '.$bundleSql.')  '.
 			DBHelper::getSQLOptionsAsString($requestoptions,'ns'));
 			if($db->numRows( $res ) > 0) {
 				while($row = $db->fetchObject($res)) {
@@ -203,24 +215,46 @@ class SMWSemanticStoreSQL extends SMWSemanticStore {
 
 
 
-	function getRootCategories($requestoptions = NULL) {
+	function getRootCategories($requestoptions = NULL, $bundleID = '') {
 		$result = array();
 		$db =& wfGetDB( DB_SLAVE );
+		global $dfgLang;
+		$partOfBundlePropertyID = smwfGetStore()->getSMWPropertyID(SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString("df_partofbundle")));
+		//$partOfBundleID = smwfGetStore()->getSMWPageID($ext_id, NS_MAIN, "");
+		$bundleID = ucfirst($bundleID);
+		$bundleSMWID = smwfGetStore()->getSMWPageID($bundleID, NS_MAIN, "");
+		$smw_ids = $db->tableName('smw_ids');
+		$smw_rels2 = $db->tableName('smw_rels2');
+
+
+
 		$categorylinks = $db->tableName('categorylinks');
 		$page = $db->tableName('page');
+
+		// get categories with
 		$sql = 'page_namespace=' . NS_CATEGORY .
                ' AND page_is_redirect = 0 AND NOT EXISTS (SELECT cl_from FROM '.$categorylinks.' WHERE cl_from = page_id) AND NOT EXISTS (SELECT c.cl_from FROM '.$categorylinks.' c JOIN '.$page.' p ON p.page_id = c.cl_from WHERE c.cl_to = t.page_title AND p.page_namespace=14)';
+
+		// and without subcategories
 		$sql2 = 'page_namespace=' . NS_CATEGORY .
                ' AND page_is_redirect = 0 AND NOT EXISTS (SELECT cl_from FROM '.$categorylinks.' WHERE cl_from = page_id) AND EXISTS (SELECT c.cl_from FROM '.$categorylinks.' c JOIN '.$page.' p ON p.page_id = c.cl_from WHERE c.cl_to = t.page_title AND p.page_namespace=14)';
-		
-		
+
 		// get all categories which exist only implicitly as a supercategory of another.
-		$sql3 = '(SELECT c.cl_to, "true" AS has_subcategories FROM '.$categorylinks.' c LEFT JOIN '.$page.' p ON c.cl_to = p.page_title AND p.page_namespace = 14 WHERE p.page_id IS NULL)';
-		
-		$res = $db->query('(SELECT page_title, "false" AS has_subcategories FROM '.$page.' t WHERE '.$sql.') '.
-							'UNION DISTINCT (SELECT page_title, "true" AS has_subcategories FROM '.$page.' t WHERE '.$sql2.') '.
-							'UNION DISTINCT '.$sql3.' '. 
-							DBHelper::getSQLOptionsAsString($requestoptions,'page_title'));
+		$sql3 = 'ON c.cl_to = p.page_title JOIN '.$page.' p2 ON c.cl_from = p2.page_id AND p2.page_namespace = '.NS_CATEGORY.' WHERE p.page_id IS NULL';
+
+		// set of categories of a bundle
+		$bundleSql1 = $bundleSql2 = $bundleSql3 = '';
+		if (!empty($bundleID)) {
+			$bundleSql = ' (SELECT pc.page_id pc FROM '.$page.' pc JOIN '.$smw_ids.' ON pc.page_title = smw_title AND pc.page_namespace = '.NS_CATEGORY.' JOIN '.$smw_rels2.' ON s_id = smw_id AND p_id = '.$partOfBundlePropertyID.' AND o_id = '.$bundleSMWID.')';
+			$bundleSql1 = 'AND page_id IN '.$bundleSql;
+			$bundleSql2 = 'AND page_id IN '.$bundleSql;
+			$bundleSql3 = 'AND c.cl_to IN '.$bundleSql;
+		}
+
+		$res = $db->query('(SELECT page_title, "false" AS has_subcategories FROM '.$page.' t WHERE '.$sql.' '.$bundleSql1.') '.
+							'UNION DISTINCT (SELECT page_title, "true" AS has_subcategories FROM '.$page.' t WHERE '.$sql2.' '.$bundleSql2.') '.
+							'UNION DISTINCT (SELECT c.cl_to, "true" AS has_subcategories FROM '.$categorylinks.' c LEFT JOIN '.$page.' p '.$sql3.' '.$bundleSql3.') '. 
+		DBHelper::getSQLOptionsAsString($requestoptions,'page_title'));
 
 
 
@@ -236,42 +270,22 @@ class SMWSemanticStoreSQL extends SMWSemanticStore {
 		return $result;
 	}
 
-	/*
-	 * @deprecated
-	 */
-	function getRootProperties($requestoptions = NULL) {
-
-		$result = array();
-		$db =& wfGetDB( DB_SLAVE );
-		$smw_subprops = $db->tableName('smw_subprops');
-		$page = $db->tableName('page');
-		$sql = 'page_namespace=' . SMW_NS_PROPERTY .
-			   ' AND page_is_redirect = 0 AND NOT EXISTS (SELECT subject_title FROM '.$smw_subprops.' WHERE subject_title = page_title)'.
-		DBHelper::getSQLConditions($requestoptions,'page_title','page_title');
-
-		$res = $db->select( $page,
-		                    'page_title',
-		$sql, 'SMW::getRootProperties', DBHelper::getSQLOptions($requestoptions,'page_title') );
-
-		if($db->numRows( $res ) > 0) {
-			while($row = $db->fetchObject($res)) {
-				if (smwf_om_userCan($row->page_title, 'read', SMW_NS_PROPERTY) === "true") {
-					$result[] = Title::newFromText($row->page_title, SMW_NS_PROPERTY);
-				}
-			}
-		}
-		$db->freeResult($res);
-		return $result;
-	}
 
 
 
-
-
-	function getDirectSubCategories(Title $categoryTitle, $requestoptions = NULL) {
+	function getDirectSubCategories(Title $categoryTitle, $requestoptions = NULL, $bundleID = '') {
 			
 		$db =& wfGetDB( DB_SLAVE );
 		$categorylinks = $db->tableName('categorylinks');
+
+		global $dfgLang;
+		$partOfBundlePropertyID = smwfGetStore()->getSMWPropertyID(SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString("df_partofbundle")));
+		//$partOfBundleID = smwfGetStore()->getSMWPageID($ext_id, NS_MAIN, "");
+		$bundleID = ucfirst($bundleID);
+		$bundleSMWID = smwfGetStore()->getSMWPageID($bundleID, NS_MAIN, "");
+		$smw_ids = $db->tableName('smw_ids');
+		$smw_rels2 = $db->tableName('smw_rels2');
+
 		$page = $db->tableName('page');
 		$sql = 'page_namespace=' . NS_CATEGORY .
                ' AND page_is_redirect = 0 AND cl_to =' . $db->addQuotes($categoryTitle->getDBkey()) . ' AND cl_from = page_id AND NOT EXISTS (SELECT c.cl_from FROM '.$categorylinks.' c JOIN '.$page.' p ON p.page_id = c.cl_from WHERE c.cl_to = t.page_title AND p.page_namespace=14)';
@@ -279,9 +293,13 @@ class SMWSemanticStoreSQL extends SMWSemanticStore {
 		$sql2 = 'page_namespace=' . NS_CATEGORY .
                ' AND page_is_redirect = 0 AND cl_to =' . $db->addQuotes($categoryTitle->getDBkey()) . ' AND cl_from = page_id AND EXISTS (SELECT c.cl_from FROM '.$categorylinks.' c JOIN '.$page.' p ON p.page_id = c.cl_from WHERE c.cl_to = t.page_title AND p.page_namespace=14)';
 
+		$bundleSql = '';
+		if (!empty($bundleID)) {
+			$bundleSql = ' AND page_id IN (SELECT pc.page_id pc FROM '.$page.' pc JOIN '.$smw_ids.' ON pc.page_title = smw_title AND pc.page_namespace = '.NS_CATEGORY.' JOIN '.$smw_rels2.' ON s_id = smw_id AND p_id = '.$partOfBundlePropertyID.' AND o_id = '.$bundleSMWID.')';
+		}
 
-		$res = $db->query('(SELECT page_title, "true" AS has_subcategories FROM '.$page.' t, '.$categorylinks.' WHERE '.$sql.') UNION '.
-		                   '(SELECT page_title, "false" AS has_subcategories FROM '.$page.' t, '.$categorylinks.' WHERE '.$sql2.')'.
+		$res = $db->query('(SELECT page_title, "true" AS has_subcategories FROM '.$page.' t, '.$categorylinks.' WHERE '.$sql.$bundleSql.') UNION '.
+		                   '(SELECT page_title, "false" AS has_subcategories FROM '.$page.' t, '.$categorylinks.' WHERE '.$sql2.$bundleSql.')'.
 		DBHelper::getSQLOptionsAsString($requestoptions,'page_title'));
 
 		$result = array();
@@ -342,12 +360,21 @@ class SMWSemanticStoreSQL extends SMWSemanticStore {
 		return $result;
 	}
 
-	function getCategoriesForInstance(Title $instanceTitle, $requestoptions = NULL) {
+	function getCategoriesForInstance(Title $instanceTitle, $requestoptions = NULL, $bundleID = '') {
 
 		$db =& wfGetDB( DB_SLAVE );
+		global $dfgLang;
+		$partOfBundlePropertyID = smwfGetStore()->getSMWPropertyID(SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString("df_partofbundle")));
+		//$partOfBundleID = smwfGetStore()->getSMWPageID($ext_id, NS_MAIN, "");
+		$bundleID = ucfirst($bundleID);
+		$bundleSMWID = smwfGetStore()->getSMWPageID($bundleID, NS_MAIN, "");
+		$smw_ids = $db->tableName('smw_ids');
+		$smw_rels2 = $db->tableName('smw_rels2');
 		$page = $db->tableName('page');
 		$categorylinks = $db->tableName('categorylinks');
-		$sql = 'p1.page_title=' . $db->addQuotes($instanceTitle->getDBkey()) . ' AND p1.page_id = cl_from '.
+		$bundleSql = empty($bundleID) ? '' : ' AND cl_to IN (SELECT pc.page_title FROM '.$page.' pc JOIN '.$smw_ids.' ON pc.page_title = smw_title AND pc.page_namespace = '.NS_CATEGORY.' JOIN '.$smw_rels2.' ON s_id = smw_id AND p_id = '.$partOfBundlePropertyID.' AND o_id = '.$bundleSMWID.')';
+
+		$sql = 'p1.page_title=' . $db->addQuotes($instanceTitle->getDBkey()) . ' AND p1.page_id = cl_from '.$bundleSql.' '.
 		DBHelper::getSQLConditions($requestoptions,'cl_to','cl_to');
 
 		$res = $db->select( array($page.' p1', $categorylinks),
@@ -763,17 +790,20 @@ class SMWSemanticStoreSQL extends SMWSemanticStore {
 	/**
 	 * Returns all domain categories for a given property.
 	 */
-	function getDomainCategories($propertyTitle, $reqfilter = NULL) {
+	function getDomainCategories($propertyTitle, $reqfilter = NULL, $bundleID = '') {
 		$db =& wfGetDB( DB_SLAVE );
 		$page = $db->tableName('page');
 		$domainRangeRelation = smwfGetSemanticStore()->domainRangeHintRelation;
-
 		$categories = smwfGetStore()->getPropertyValues($propertyTitle, smwfGetSemanticStore()->domainRangeHintProp, $reqfilter);
+
 		$result = array();
 		foreach($categories as $value) {
 			$dvs = $value->getDVs();
 			if ($dvs[0] instanceof SMWWikiPageValue) {
 				$t = $dvs[0]->getTitle();
+				if (!empty($bundleID)) {
+					if (!DFBundleTools::isPartOfBundle($t, $bundleID)) continue;
+				}
 				if (!SMWSemanticStoreSQL::isRedirect($t, $page, $db)) $result[] = $t;
 			}
 		}
@@ -1371,7 +1401,7 @@ class SMWSemanticStoreSQL extends SMWSemanticStore {
 		$smw_urimapping = $db->tableName('smw_urimapping');
 		$tscURI = $db->selectRow($smw_urimapping, array('smw_uri'), array('page_id'=>$title->getArticleID()));
 		if ($tscURI !== false) return $tscURI->smw_uri;
-		
+
 		$parts = explode("/", $title->getText());
 		$prefix = $parts[0];
 		$ns_uri = $this->getNamespaceMapping($prefix);
@@ -1385,31 +1415,31 @@ class SMWSemanticStoreSQL extends SMWSemanticStore {
 		$uri = $db->selectRow($smw_nsmapping, array('smw_uri'), array('smw_prefix'=>$prefix));
 		return $uri !== false ? $uri->smw_uri : NULL;
 	}
-	
-    public function getAllNamespaceMappings() {
-        $db =& wfGetDB( DB_SLAVE );
-        $smw_nsmapping = $db->tableName('smw_nsmapping');
-        $res = $db->select($smw_nsmapping, array('smw_prefix', 'smw_uri'));
-        $result = array();
-        if($db->numRows( $res ) > 0) {
-            while($row = $db->fetchObject($res)) {
-                $result[$row->smw_prefix] = $row->smw_uri;
-            }
-        }
-        $db->freeResult($res);
-        return $result;
-    }
-	
+
+	public function getAllNamespaceMappings() {
+		$db =& wfGetDB( DB_SLAVE );
+		$smw_nsmapping = $db->tableName('smw_nsmapping');
+		$res = $db->select($smw_nsmapping, array('smw_prefix', 'smw_uri'));
+		$result = array();
+		if($db->numRows( $res ) > 0) {
+			while($row = $db->fetchObject($res)) {
+				$result[$row->smw_prefix] = $row->smw_uri;
+			}
+		}
+		$db->freeResult($res);
+		return $result;
+	}
+
 	public function addNamespaceMapping($prefix, $uri) {
 		$db =& wfGetDB( DB_MASTER );
-        $smw_nsmapping = $db->tableName('smw_nsmapping');
-        $db->query('INSERT INTO '.$smw_nsmapping.' VALUES ('.$db->addQuotes($prefix).', '.$db->addQuotes($uri).')');
+		$smw_nsmapping = $db->tableName('smw_nsmapping');
+		$db->query('INSERT INTO '.$smw_nsmapping.' VALUES ('.$db->addQuotes($prefix).', '.$db->addQuotes($uri).')');
 	}
-	
+
 	public function clearNamespaceMappings() {
 		$db =& wfGetDB( DB_MASTER );
-        $smw_nsmapping = $db->tableName('smw_nsmapping');
-        $db->query('DELETE FROM '.$smw_nsmapping);
+		$smw_nsmapping = $db->tableName('smw_nsmapping');
+		$db->query('DELETE FROM '.$smw_nsmapping);
 	}
 }
 

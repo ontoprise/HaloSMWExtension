@@ -13,18 +13,30 @@ require_once( "$smwgHaloIP/includes/SMW_SemanticStoreSQL.php" );
 class SMWSemanticStoreSQL2 extends SMWSemanticStoreSQL {
 
 
-	function getRootProperties($requestoptions = NULL) {
+	function getRootProperties($requestoptions = NULL, $bundleID = '') {
 
 		$result = array();
 		$db =& wfGetDB( DB_SLAVE );
-		$smw_ids = $db->tableName('smw_ids');
+		
+		global $dfgLang;
+        $partOfBundlePropertyID = smwfGetStore()->getSMWPropertyID(SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString("df_partofbundle")));
+        //$partOfBundleID = smwfGetStore()->getSMWPageID($ext_id, NS_MAIN, "");
+        $bundleID = ucfirst($bundleID);
+        $bundleSMWID = smwfGetStore()->getSMWPageID($bundleID, NS_MAIN, "");
+        $smw_ids = $db->tableName('smw_ids');
+        $smw_rels2 = $db->tableName('smw_rels2');
+        
 		$smw_subs2 = $db->tableName('smw_subp2');
 		$page = $db->tableName('page');
+		
+		$bundleSql = empty($bundleID) ? '' : ' AND page_id IN (SELECT pc.page_id FROM '.$page.' pc JOIN '.$smw_ids.' ON pc.page_title = smw_title AND pc.page_namespace = '.SMW_NS_PROPERTY.' JOIN '.$smw_rels2.' ON s_id = smw_id AND p_id = '.$partOfBundlePropertyID.' AND o_id = '.$bundleSMWID.')';
+        
+		 
 		$sqlOptions = DBHelper::getSQLOptionsAsString($requestoptions, 'page_title');
 		$res = $db->query('(SELECT page_title, "true" AS has_subproperties FROM '.$page.' JOIN '.$smw_ids.' t ON page_title=smw_title AND smw_namespace = '.SMW_NS_PROPERTY.
-        ' AND page_is_redirect = 0 AND NOT EXISTS (SELECT s.s_id FROM '.$smw_subs2.' s WHERE s.s_id = smw_id) AND NOT EXISTS (SELECT s2.s_id FROM '.$smw_subs2.' s2 WHERE s2.o_id = t.smw_id)) UNION '.
+        ' AND page_is_redirect = 0 AND NOT EXISTS (SELECT s.s_id FROM '.$smw_subs2.' s WHERE s.s_id = smw_id) AND NOT EXISTS (SELECT s2.s_id FROM '.$smw_subs2.' s2 WHERE s2.o_id = t.smw_id) '.$bundleSql.') UNION '.
         '(SELECT page_title, "false" AS has_subproperties FROM '.$page.' JOIN '.$smw_ids.' t ON page_title=smw_title AND smw_namespace = '.SMW_NS_PROPERTY.
-        ' AND page_is_redirect = 0 AND NOT EXISTS (SELECT s.s_id FROM '.$smw_subs2.' s WHERE s.s_id = smw_id) AND EXISTS (SELECT s2.s_id FROM '.$smw_subs2.' s2 WHERE s2.o_id = t.smw_id))'.$sqlOptions);
+        ' AND page_is_redirect = 0 AND NOT EXISTS (SELECT s.s_id FROM '.$smw_subs2.' s WHERE s.s_id = smw_id) AND EXISTS (SELECT s2.s_id FROM '.$smw_subs2.' s2 WHERE s2.o_id = t.smw_id) '.$bundleSql.')'.$sqlOptions);
         
 		
    
@@ -44,19 +56,31 @@ class SMWSemanticStoreSQL2 extends SMWSemanticStoreSQL {
 
 
 
-	function getDirectSubProperties(Title $attribute, $requestoptions = NULL) {
+	function getDirectSubProperties(Title $attribute, $requestoptions = NULL, $bundleID = '') {
 
 		$result = array();
 		$db =& wfGetDB( DB_SLAVE );
+		
+		global $dfgLang;
+        $partOfBundlePropertyID = smwfGetStore()->getSMWPropertyID(SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString("df_partofbundle")));
+        //$partOfBundleID = smwfGetStore()->getSMWPageID($ext_id, NS_MAIN, "");
+        $bundleID = ucfirst($bundleID);
+        $bundleSMWID = smwfGetStore()->getSMWPageID($bundleID, NS_MAIN, "");
+        $smw_ids = $db->tableName('smw_ids');
+        $smw_rels2 = $db->tableName('smw_rels2');
+        
 		$smw_ids = $db->tableName('smw_ids');
 		$smw_subs2 = $db->tableName('smw_subp2');
 		$page = $db->tableName('page');
+		
+		$bundleSql = empty($bundleID) ? '' : ' AND smw_id IN (SELECT smw_id FROM '.$smw_ids.' JOIN '.$smw_rels2.' ON s_id = smw_id AND p_id = '.$partOfBundlePropertyID.' AND o_id = '.$bundleSMWID.')';
+		
 		$sqlOptions = DBHelper::getSQLOptionsAsString($requestoptions);
 
 		$res = $db->query('(SELECT s.smw_title AS subject_title, "true" AS has_subproperties FROM '.$smw_ids.' s JOIN '.$smw_subs2.' sub ON s.smw_id = sub.s_id JOIN '.$smw_ids.' o ON o.smw_id = sub.o_id '.
-        ' AND s.smw_namespace = '.SMW_NS_PROPERTY. ' AND o.smw_namespace = '.SMW_NS_PROPERTY. ' AND o.smw_title = ' . $db->addQuotes($attribute->getDBkey()).' AND NOT EXISTS (SELECT s2.s_id FROM '.$smw_subs2.' s2 WHERE s2.o_id = s.smw_id)) UNION '.
+        ' AND s.smw_namespace = '.SMW_NS_PROPERTY. ' AND o.smw_namespace = '.SMW_NS_PROPERTY. ' AND o.smw_title = ' . $db->addQuotes($attribute->getDBkey()).' AND NOT EXISTS (SELECT s2.s_id FROM '.$smw_subs2.' s2 WHERE s2.o_id = s.smw_id) '.$bundleSql.') UNION '.
         '(SELECT s.smw_title AS subject_title, "false" AS has_subproperties FROM '.$smw_ids.' s JOIN '.$smw_subs2.' sub ON s.smw_id = sub.s_id JOIN '.$smw_ids.' o ON o.smw_id = sub.o_id '.
-        ' AND s.smw_namespace = '.SMW_NS_PROPERTY. ' AND o.smw_namespace = '.SMW_NS_PROPERTY. ' AND o.smw_title = ' . $db->addQuotes($attribute->getDBkey()).' AND EXISTS (SELECT s2.s_id FROM '.$smw_subs2.' s2 WHERE s2.o_id = s.smw_id)) '.$sqlOptions);
+        ' AND s.smw_namespace = '.SMW_NS_PROPERTY. ' AND o.smw_namespace = '.SMW_NS_PROPERTY. ' AND o.smw_title = ' . $db->addQuotes($attribute->getDBkey()).' AND EXISTS (SELECT s2.s_id FROM '.$smw_subs2.' s2 WHERE s2.o_id = s.smw_id) '.$bundleSql.') '.$sqlOptions);
 
 			
 		if($db->numRows( $res ) > 0) {

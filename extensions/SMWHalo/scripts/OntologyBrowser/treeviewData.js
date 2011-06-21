@@ -159,7 +159,7 @@ updateTree: function(xmlText, rootElement) {
 initializeRootCategories: function(partition, force) {
 	if (!this.OB_categoriesInitialized || force) {
 		OB_tree_pendingIndicator.show(globalActionListener.activeTreeName);
-		sajax_do_call('smwf_ob_OntologyBrowserAccess', ['getRootCategories',OB_partitionSize+"##"+partition, obAdvancedOptions.getDataSource()], this.initializeRootCategoriesCallback.bind(this));
+		sajax_do_call('smwf_ob_OntologyBrowserAccess', ['getRootCategories',OB_partitionSize+"##"+partition, obAdvancedOptions.getBundle()], this.initializeRootCategoriesCallback.bind(this));
 	} else {
   		// copy from cache
   		this.OB_currentlyDisplayedTree = GeneralXMLTools.createDocumentFromString("<result/>");
@@ -170,7 +170,7 @@ initializeRootCategories: function(partition, force) {
 initializeRootProperties: function(partition, force) {
 	 if (!this.OB_attributesInitialized || force) {
 	 	OB_tree_pendingIndicator.show(globalActionListener.activeTreeName);
-		sajax_do_call('smwf_ob_OntologyBrowserAccess', ['getRootProperties',OB_partitionSize+"##"+partition, obAdvancedOptions.getDataSource()], this.initializeRootPropertyCallback.bind(this));
+		sajax_do_call('smwf_ob_OntologyBrowserAccess', ['getRootProperties',OB_partitionSize+"##"+partition, obAdvancedOptions.getBundle()], this.initializeRootPropertyCallback.bind(this));
 	 } else {
   		// copy from cache
   		this.OB_currentlyDisplayedTree = GeneralXMLTools.createDocumentFromString("<result/>");
@@ -255,20 +255,20 @@ getAnnotationsByURI: function(instanceURI, callback) {
 getCategoryPartition: function(isRootLevel, partition, categoryName, selectPartitionCallback) {
 	if (isRootLevel) {
 		// root level
-		sajax_do_call('smwf_ob_OntologyBrowserAccess', ['getRootCategories',OB_partitionSize+'##'+partition, obAdvancedOptions.getDataSource()],  selectPartitionCallback);
+		sajax_do_call('smwf_ob_OntologyBrowserAccess', ['getRootCategories',OB_partitionSize+'##'+partition, obAdvancedOptions.getBundle()],  selectPartitionCallback);
 	} else {
 		// every other level
-		sajax_do_call('smwf_ob_OntologyBrowserAccess', ['getSubCategory',categoryName+"##"+OB_partitionSize+"##"+partition, obAdvancedOptions.getDataSource()],  selectPartitionCallback);
+		sajax_do_call('smwf_ob_OntologyBrowserAccess', ['getSubCategory',categoryName+"##"+OB_partitionSize+"##"+partition, obAdvancedOptions.getBundle()],  selectPartitionCallback);
 	}
 },
 
 getPropertyPartition: function(isRootLevel, partition, attributeName, selectPartitionCallback) {
 	if (isRootLevel) {
 		// root level
-		sajax_do_call('smwf_ob_OntologyBrowserAccess', ['getRootProperties',OB_partitionSize+'##'+partition, obAdvancedOptions.getDataSource()],  selectPartitionCallback);
+		sajax_do_call('smwf_ob_OntologyBrowserAccess', ['getRootProperties',OB_partitionSize+'##'+partition, obAdvancedOptions.getBundle()],  selectPartitionCallback);
 	} else {
 		// every other level
-		sajax_do_call('smwf_ob_OntologyBrowserAccess', ['getSubProperties',attributeName+"##"+OB_partitionSize+"##"+partition, obAdvancedOptions.getDataSource()],  selectPartitionCallback);
+		sajax_do_call('smwf_ob_OntologyBrowserAccess', ['getSubProperties',attributeName+"##"+OB_partitionSize+"##"+partition, obAdvancedOptions.getBundle()],  selectPartitionCallback);
 	}
 },
 
@@ -298,7 +298,7 @@ filterBrowseCategories: function(title) {
 	 }
 	OB_tree_pendingIndicator.show(); 
    	globalActionListener.switchTreeComponent(null, 'categoryTree', true);
-	sajax_do_call('smwf_ob_OntologyBrowserAccess', ['filterBrowse',"category,"+title, obAdvancedOptions.getDataSource()], filterBrowsingCategoryCallback);
+	sajax_do_call('smwf_ob_OntologyBrowserAccess', ['filterBrowse',"category,"+title, obAdvancedOptions.getBundle()], filterBrowsingCategoryCallback);
    	
 },
 
