@@ -19,11 +19,6 @@
 -- Create schema mw16_1_db
 --
 
-DROP DATABASE IF EXISTS testdb;
-
-CREATE DATABASE testdb;
-USE testdb;
-
 --
 -- Table structure for table `archive`
 --
