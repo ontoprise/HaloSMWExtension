@@ -96,6 +96,7 @@
  	 * @param $out OutputPage
  	 */
  	public function serializeScripts(& $out) {
+        global $smwgHaloStyleVersion;
  		$alreadyRegistered = array();
  		foreach($this->scripts as $script) {
  			if ($this->matchesAction($script) 
@@ -103,7 +104,7 @@
  					&& $this->matchesPage($script) 
  					&& !array_key_exists($script->path, $alreadyRegistered)) {
  				$id = $script->id != NULL ? "id=\"".$script->id."\"" : "";
- 				$out->addScript('<script type="text/javascript" '.$id.' src="'.$script->path.'"></script>');
+ 				$out->addScript('<script type="text/javascript" '.$id.' src="'.$script->path.$smwgHaloStyleVersion.'"></script>');
  				$alreadyRegistered[$script->path] = 1;
  			}
  		}
@@ -116,10 +117,11 @@
  	 * @param $out OutputPage
  	 */
  	public function serializeCSS(& $out) {
+        global $smwgHaloStyleVersion;
  		$alreadyRegistered = array();
  		foreach($this->css as $css) {
  			if ($this->matchesAction($css) && $this->matchesNamespace($css) && $this->matchesPage($css) && !array_key_exists($css->path, $alreadyRegistered)) {
- 				$out->addStyle($css->path, 'screen, projection');
+ 				$out->addStyle($css->path.$smwgHaloStyleVersion, 'screen, projection');
  				$alreadyRegistered[$css->path] = 1;
  			}
  		}
