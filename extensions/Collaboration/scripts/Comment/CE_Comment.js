@@ -15,6 +15,8 @@
 *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+//@TODO: Do file attachments need to be validated?
+
 /**
  * The CommentForm "class"
  * 
@@ -40,7 +42,7 @@ function CECommentForm() {
 	this.savedStructure = null;
 	this.currentView = null;
 	this.replyCommentName = null;
-	/* edit mode */
+	// edit mode
 	this.savedCommentContent = null;
 	this.editCommentName = null;
 	this.editCommentRelatedComment = null;
@@ -95,6 +97,10 @@ function CECommentForm() {
 		textArea = textArea.replace( /</g, '&lt;' );
 		textArea = textArea.replace( />/g, '&gt;' );
 		textArea = this.textEncode( textArea );
+		// file attachments: process the content from the input field
+		var fileAttach = ( $jq( '#collabComFormFileAttach' ).val())? $jq( '#collabComFormFileAttach' ).val(): '';
+		var fileAttachString = '|AttachedFiles=' + fileAttach;
+
 		var userNameString = '';
 		if ( wgUserName !== null && wgCEUserNS !== null ) {
 			userNameString = '|CommentPerson=' + wgCEUserNS + ':' + wgUserName;
@@ -113,7 +119,8 @@ function CECommentForm() {
 			ratingString  +
 			relatedCommentString +
 			'|CommentDatetime=##DATE##' +
-			'|CommentContent=' + textArea + '|}}';
+			'|CommentContent=' + textArea +
+			fileAttachString + '|}}';
 
 		this.currentPageName = escape( pageName );
 		this.currentPageContent = escape( pageContent );
@@ -179,6 +186,7 @@ function CECommentForm() {
 
 	/**
 	 * This function deletes a single comment page.
+	 * 
 	 * @param pageName
 	 * @param container
 	 */
@@ -290,7 +298,7 @@ function CECommentForm() {
 		var ratingDiv, elemSelector, container, content, ratingIconSrc,
 			editRatingValue, ratingExistent, ratingText, ratingTextOpt,
 			ratingTextOpt2, ratingSpan, ratingIcons, ratingIcon1, ratingIcon2, ratingIcon3,
-			textarea, submitButton, cancelSpan, cancelText, msgDiv;
+			textarea, fileAttachField, submitButton, cancelSpan, cancelText, msgDiv;
 		this.editCommentName = pageName;
 		elemSelector = '#' + pageName.replace( /(:|\.)/g, '\\$1' );
 		this.editCommentRelatedComment = $jq( elemSelector +
@@ -382,6 +390,25 @@ function CECommentForm() {
 			null, [['rows', '5']], null, content
 		);
 
+		// file attachments: create input element
+//		var namespaces = typeof wgNamespaceIds['file'] !== 'undefined'? wgNamespaceIds['file'] : '';
+//		if( typeof wgNamespaceIds['document'] !== 'undefined' ) {
+//			// Rich media is installed. Use the additional namespaces.
+//			var addNS = [
+//				wgNamespaceIds['document'],
+//				wgNamespaceIds['audio'],
+//				wgNamespaceIds['video'],
+//				wgNamespaceIds['pdf'],
+//				wgNamespaceIds['icalendar'],
+//				wgNamespaceIds['vcard']
+//			];
+//			namespaces = namespaces + ',' + addNS.join( ',' );
+//		}
+		fileAttachField = this.createDOMElement( 'input',
+			'collabComEditFormFileAttach', ['wickEnabled'],
+			[['pastens', 'true']],
+			null, $jq( elemSelector + ' .collabComResFileAttachSaved' ).html()
+		);
 		//buttons
 		submitButton = this.createDOMElement( 'input',
 			'collabComEditFormSubmit', null, [['type', 'button']],
@@ -409,6 +436,7 @@ function CECommentForm() {
 			$jq( elemSelector + ' .collabComResText' ).append( ratingDiv );
 		}
 		$jq( elemSelector + ' .collabComResText' ).append( textarea );
+		$jq( elemSelector + ' .collabComResText' ).append( fileAttachField );
 		$jq( elemSelector + ' .collabComResText' ).append( submitButton );
 		$jq( elemSelector + ' .collabComResText' ).append( cancelSpan );
 		$jq( elemSelector + ' .collabComResText' ).append( msgDiv );
@@ -478,6 +506,10 @@ function CECommentForm() {
 		} else {
 			editorString = '|CommentLastEditor=';
 		}
+		// file attachments: process the content from the input field
+		var fileAttach = ( $jq( '#collabComEditFormFileAttach' ).val())? $jq( '#collabComEditFormFileAttach' ).val(): '';
+		var fileAttachString = '|AttachedFiles=' + fileAttach;
+
 		var pageContent = '{{Comment' +
 			commentPerson +
 			'|CommentRelatedArticle=' + wgPageName +
@@ -485,7 +517,8 @@ function CECommentForm() {
 			'|CommentDatetime=##DATE##'+
 			'|CommentContent=' + textArea + 
 			relatedComment + 
-			editorString + '|}}';
+			editorString + 
+			fileAttachString + '|}}';
 		this.currentPageName = escape( this.editCommentName );
 		this.currentPageContent = escape( pageContent );
 		//do ajax call
@@ -737,8 +770,7 @@ function CECommentForm() {
 		comToggle.html( ' | ' + newComToggleText );
 		commentResults.toggle( 'slow' );
 		//hide "Add" and "View"
-		$jq( '#collabComFormToggle' ).toggle();
-		$jq( '#collabComViewToggle' ).toggle();
+		$jq( '#collabComFormToggle, #collabComViewToggle, #collabComFileToggle' ).toggle();
 		return true;
 	};
 
@@ -756,6 +788,22 @@ function CECommentForm() {
 			} else if ( newView === 1 ) {
 				this.showFlat();
 			}
+		}
+		return true;
+	};
+
+	/**
+	 *  This functions either toggles one given or all file attachments for comments
+	 *  depending on the parameter commentID.
+	 *  
+	 * @param commentID: the HTML id of the comment to toggle
+	 * @return true
+	 */
+	this.toggleFileAttachment = function( commentID ) {
+		if( typeof commentID !== 'string' || commentID === '' ) {
+			$jq( '.collabComResFileAttach' ).toggle( 'slow' );
+		} else {
+			$jq( ' .collanComResFileAttach', $jq( '#' + commentID ) ).toggle( 'slow' );
 		}
 		return true;
 	};
@@ -795,6 +843,11 @@ function CECommentForm() {
 		this.currentView = 1;
 		// overlays
 		this.bindOverlays();
+		if( $jq( '#collabComFileToggle > input' ).attr( 'checked' ) === false
+			&& $jq( '.collabComResFileAttach:first' ).filter( ':visible' ) )
+		{
+			$jq( '.collabComResFileAttach' ).hide();
+		}
 		return true;
 	};
 
@@ -810,7 +863,7 @@ function CECommentForm() {
 			var superComInfo = $jq( '.collabComResInfoSuper', resCom );
 			// name of the comment, the actual comment is related to (if there's one)
 			var superComName = superComInfo.html();
-			if ( typeof( superComName ) !== 'undefined'
+			if ( typeof superComName !== 'undefined'
 				&& superComName !== null && superComName !== false 
 				&& superComName !== '')
 			{
@@ -891,6 +944,7 @@ function CECommentForm() {
 				this.addFormToggler( true ); //remove header
 			}
 			this.addHeaderView();
+			this.addFileToggler();
 			this.addHeaderRating();
 		}
 		return true;
@@ -912,7 +966,8 @@ function CECommentForm() {
 	/**
 	 * Adds the default header text and makes it bold.
 	 * This text is normally sthg like "Add comment"
-	 * @returns false
+	 * 
+	 * @return false
 	 */
 	this.addDefaultHeaderText = function() {
 		this.addFormToggler( false );
@@ -951,10 +1006,11 @@ function CECommentForm() {
 		$jq( '.collabComInternHeader' ).append( $jq( toggleSpan ) );
 		return true;
 	};
-
+	
 	/**
 	 * This function adds the toggle element for the comment form.
-	 * @param withPipe: Indicates if the Text should be extended with a leading pipe symbol
+	 * 
+	 * @param (boolean) withPipe Indicates if the Text should be extended with a leading pipe symbol
 	 */
 	this.addFormToggler = function( withPipe ) {
 		var toggleSpan ='';
@@ -983,6 +1039,8 @@ function CECommentForm() {
 
 	/**
 	 * Creates the "change view" select box element.
+	 * 
+	 * @return true
 	 */
 	this.addHeaderView = function() {
 		// "change view" functionality
@@ -1020,6 +1078,39 @@ function CECommentForm() {
 		$jq( viewSpan ).append( $jq( selectEl ) );
 		$jq( '.collabComInternHeader' ).append( $jq( viewSpan ) );
 		this.currentView = 0;
+		return true;
+	};
+
+	/**
+	 * Creates the HTML to change the display of file attachments and attaches it to the header item.
+	 *
+	 * @return boolean
+	 */
+	this.addFileToggler = function() {
+		// we can skip this if there are no file attachments at all.
+		if( $jq('.collabComResFileAttach').length === 0 ) {
+			return false;
+		}
+		var fileSpan = this.createDOMElement( 'span',
+			'collabComFileToggle',
+			null,
+			null,
+			' | ' + ceLanguage.getMessage( 'ce_com_file_toggle' ) + ': '
+		);
+		var checked = null;
+		if( $jq('.collabComResFileAttach:first').filter(':visible') ) {
+			checked = ['checked', 'checked'];
+		}
+		var checkEl = this.createDOMElement( 'input',
+			'id',
+			['classes'],
+			[['type', 'checkbox'], checked]
+		);
+		$jq( fileSpan ).append( $jq( checkEl ) );
+		$jq( checkEl ).bind( 'change', function() {
+			ceCommentForm.toggleFileAttachment();
+		});
+		$jq( '.collabComInternHeader' ).append( $jq( fileSpan ) );
 		return true;
 	};
 
@@ -1166,7 +1257,7 @@ function CECommentForm() {
 	};
 
 	/**
-	 * MW 1.16.x comes with jQuery version 1.3.
+	 * MW 1.16.x comes with jQuery version 1.3.2
 	 * This framework is missing the fancy way
 	 * of adding new DOM elements as described in 
 	 * http://api.jquery.com/jQuery/#jQuery2.
@@ -1373,6 +1464,7 @@ $jq(document).ready(
 				//hide "Add" and "View"
 				$jq( '#collabComFormToggle' ).toggle();
 				$jq( '#collabComViewToggle' ).toggle();
+				$jq( '#collabComFileToggle' ).toggle();
 			}
 		}
 	}

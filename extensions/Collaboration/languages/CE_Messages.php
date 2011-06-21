@@ -62,6 +62,9 @@ $messages['en'] = array(
 	'ce_cf_predef'					=> 'Enter your comment here...',
 	'ce_cf_submit_button_name'		=> 'Add Comment',
 	'ce_cf_reset_button_name'		=> 'Cancel',
+	'ce_cf_file_attach'				=> 'Attach article(s):',
+	'ce_cf_file_upload_text'			=> 'Upload file',
+	'ce_cf_file_upload_link'			=> 'Upload file',
 
 	/* comment processing */
 	'ce_com_cannot_create'			=> 'Can not create comment.',
@@ -116,6 +119,9 @@ $messages['de'] = array(
 	'ce_cf_predef'					=> 'Geben Sie hier Ihren Kommentar ein...',
 	'ce_cf_submit_button_name'		=> 'Kommentar hinzufügen',
 	'ce_cf_reset_button_name'		=> 'Abbrechen',
+	'ce_cf_file_attach'				=> 'Artikel anhängen:',
+	'ce_cf_file_upload_text'			=> 'Datei hochladen',
+	'ce_cf_file_upload_link'			=> 'Datei hochladen',
 
 	/* comment processing */
 	'ce_com_cannot_create'			=> 'Kann Kommentar nicht erstellen.',

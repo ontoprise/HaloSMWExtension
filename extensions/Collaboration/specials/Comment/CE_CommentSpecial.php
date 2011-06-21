@@ -10,6 +10,9 @@
  *
  * @author Benjamin Langguth
  */
+
+//@TODO: license & modify query...
+
 if (!defined('MEDIAWIKI')) die();
 
 global $IP;

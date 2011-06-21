@@ -164,8 +164,8 @@
     <title>Template:CommentResult</title>
     <id>109</id>
     <revision>
-      <id>118</id>
-      <timestamp>2011-03-31T08:29:50Z</timestamp>
+      <id>1408</id>
+      <timestamp>2011-06-21T14:16:58Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -204,10 +204,11 @@
 --&gt;&lt;!-- start comment content
 --&gt;&lt;div class=&quot;collabComResText&quot;&gt;{{{4}}}&lt;/div&gt;&lt;/div&gt;&lt;!-- end comment content
 --&gt;{{#if:{{{7|}}}|&lt;div class=&quot;collabComResDeletion&quot;&gt;{{{7|}}}&lt;/div&gt;&lt;!-- end deletion info --&gt;|}}
-{{#if:{{{8|}}}|&lt;div class=&quot;collabComEditInfo&quot;&gt;&lt;span class=&quot;collabComEditorPre&quot;&gt;&lt;/span&gt;&lt;span class=&quot;collabComEditor&quot;&gt;{{{8|}}}&lt;/span&gt;&lt;span class=&quot;collabComEditDatePre&quot;&gt;&lt;/span&gt;&lt;span class=&quot;collabComEditDate&quot;&gt;{{{9|}}}&lt;/span&gt;&lt;/div&gt;&lt;!-- end deletion info --&gt;|}}
+{{#if:{{{8|}}}|&lt;div class=&quot;collabComEditInfo&quot;&gt;&lt;span class=&quot;collabComEditorPre&quot;&gt;&lt;/span&gt;&lt;span class=&quot;collabComEditor&quot;&gt;{{{8|}}}&lt;/span&gt;&lt;span class=&quot;collabComEditDatePre&quot;&gt;&lt;/span&gt;&lt;span class=&quot;collabComEditDate&quot;&gt;{{{9|}}}&lt;/span&gt;&lt;/div&gt;&lt;!-- end deletion info --&gt;|}}&lt;!--
+begin attached files --&gt;{{#if:{{{10|}}}|&lt;div class=&quot;collabComResFileAttach&quot;&gt;Attached article(s): {{#arraymapce:{{{10|}}}|,|x|[[:x]]|&amp;nbsp;}}&lt;/div&gt;&lt;div class=&quot;collabComResFileAttachSaved&quot;&gt;{{{10|}}}&lt;/div&gt;|}}&lt;!-- end attached files --&gt;
 &lt;/div&gt;&lt;!-- end comment 
 --&gt;&lt;/includeonly&gt;</text>
-    <hash>729b3432fa632fdcdb48f01b03d3bd6f</hash>
+    <hash>4fc2fff3106a82c3b43886d3e2e93851</hash>
     </revision>
   </page>
   <page>
@@ -234,8 +235,8 @@
     <title>Template:ShowCommentsIntern</title>
     <id>111</id>
     <revision>
-      <id>1362</id>
-      <timestamp>2011-05-03T11:49:24Z</timestamp>
+      <id>1410</id>
+      <timestamp>2011-06-21T14:19:04Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -261,6 +262,7 @@
   | ?Comment was deleted#true,false
   | ?Has comment editor
   | ?Modification date
+  | ?Has attached article
   | format=template
   | template=CommentResult
   | sort=Has comment date
@@ -270,7 +272,7 @@
 }}
 &lt;/div&gt;
 &lt;/div&gt;&lt;!-- end surround div --&gt;&lt;/includeonly&gt;</text>
-    <hash>0a6c37619bd09abfeee7b55b7b8b43fe</hash>
+    <hash>1696549addea6841b0524bcd650e7db4</hash>
     </revision>
   </page>
   <page>
@@ -392,8 +394,8 @@
     <title>Template:Comment</title>
     <id>166</id>
     <revision>
-      <id>175</id>
-      <timestamp>2011-03-31T08:29:05Z</timestamp>
+      <id>1409</id>
+      <timestamp>2011-06-21T14:17:42Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -437,9 +439,9 @@
 |[[Has comment text::{{{CommentContent|}}}]]}}&lt;/div&gt;
 &lt;!-- end comment content--&gt;&lt;/div&gt;
 [[Comment was deleted::{{{CommentWasDeleted|false}}}]]
-&lt;!-- end comment --&gt;[[Category:Comment]]
-&lt;/includeonly&gt;</text>
-    <hash>481f47fcf45849f5ad7de5e6f05657ef</hash>
+{{#if:{{{AttachedArticles|}}}|{{#arraymapce:{{{AttachedArticles|}}}|,|x|[[Has attached article::x]]}}|no attached articles}}
+&lt;!-- end comment --&gt;[[Category:Comment]]&lt;/includeonly&gt;</text>
+    <hash>8c6ce08c9d2d370b00341d3e2b95eaca</hash>
     </revision>
   </page>
   <page>
@@ -466,16 +468,16 @@
     <title>Collaboration</title>
     <id>217</id>
     <revision>
-      <id>1313</id>
-      <timestamp>2011-04-18T11:30:42Z</timestamp>
+      <id>1412</id>
+      <timestamp>2011-06-21T14:28:49Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
       <text xml:space="preserve">{{Content bundle
 |rationale=This content bundle features a set of basic elements that are necessary for the Collaboration extension.
-}} {{Part of bundle|value=Collaboration}} [[Vendor::Ontoprise| ]] [[Ontology version::131| ]] [[Installation dir::extensions/Collaboration| ]] 
-[[Dependency::Smwplus; 153; 153| ]] [[License::GPL v2| ]] 
+}} {{Part of bundle|value=Collaboration}} [[Vendor::ontoprise GmbH| ]] [[Ontology version::140| ]] [[Installation dir::extensions/Collaboration| ]] 
+[[Dependency::Smwplus; 153; 153| ]][[Dependency::Richmedia; 152; 152| ]] [[License::GPL v2| ]] 
 ;This content bundle comprises a set of articles that are necessary to make use of the Collaboration extension.
 
 ;How to use
@@ -500,7 +502,7 @@ More information about the Collaboration extension and how to use it can be foun
 
 [[Category:Content bundle|Content_bundle]]
 {{Content hash|value=a5b59c7c93de4673e7a007ab705bdafa}}</text>
-    <hash>4053bb15515227003f64eed21b2cfebc</hash>
+    <hash>5b381a9235dba23cb09f2df91f8b332d</hash>
     </revision>
   </page>
   <page>
@@ -938,6 +940,28 @@ More information can be found also in the [http://smwforum.ontoprise.com/smwforu
 {{Content hash|value=}}
 &lt;/noinclude&gt;</text>
     <hash>6905da8523208160be7e6dcd1d2e21dc</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Has attached article</title>
+    <id>651</id>
+    <revision>
+      <id>1411</id>
+      <timestamp>2011-06-21T14:21:16Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <comment>Created page with &quot;{{Property |rationale=An article that is attached to a comment. }} {{Part of bundle|value=Collaboration}} {{Content hash|value=}} [[Has domain and range::Category:Comment;]] [[Ha...&quot;</comment>
+      <text xml:space="preserve">{{Property
+|rationale=An article that is attached to a comment.
+}}
+{{Part of bundle|value=Collaboration}}
+{{Content hash|value=}}
+[[Has domain and range::Category:Comment;]]
+[[Has type::Type:Page]]
+[[Category:Property]]</text>
+    <hash>713ecf55b4b452a779d86979a5bd2960</hash>
     </revision>
   </page>
 </mediawiki>

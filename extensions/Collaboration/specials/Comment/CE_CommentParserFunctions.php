@@ -44,19 +44,17 @@ function cefInitCommentParserfunctions() {
 
 	CECommentParserFunctions::getInstance();
 
-	$wgParser->setFunctionHook('showcommentform', array('CECommentParserFunctions', 'showcommentform'));
-	$wgParser->setFunctionHook('averagerating', array('CECommentParserFunctions', 'getAverageRating'));
+	$wgParser->setFunctionHook( 'showcommentform', array( 'CECommentParserFunctions', 'showcommentform' ) );
+	$wgParser->setFunctionHook( 'averagerating', array( 'CECommentParserFunctions', 'getAverageRating' ) );
+	$wgParser->setFunctionHook( 'arraymapce', array( 'CECommentParserFunctions', 'renderArrayMap' ) );
 	return true;
 }
 
 function cefCommentLanguageGetMagic( &$magicWords, $langCode ) {
 	global $cegContLang;
-	$magicWords['showcommentform']
-		= array(0, 'showcommentform'
-	);
-	$magicWords['averagerating']
-		= array( 0, 'averagerating'
-	);
+	$magicWords['showcommentform'] = array(0, 'showcommentform' );
+	$magicWords['averagerating'] = array( 0, 'averagerating' );
+	$magicWords['arraymapce'] = array ( 0, 'arraymapce' );
 
 	return true;
 }
@@ -129,7 +127,9 @@ class CECommentParserFunctions {
 	 * 			... if there's sthg wrong, that can not be caught by CE itself
 	 */
 	public static function showcommentform(&$parser) {
-		global $cegContLang, $wgUser, $cegScriptPath, $cegEnableRatingForArticles, $wgJsMimeType;
+		global $cegContLang, $wgUser, $cegScriptPath, $cegEnableRatingForArticles,
+			$cegEnableFileAttachments, $cegUseRMUploadFunc, $cegDefaultDelimiter,
+			$smwgEnableRichMedia, $wgJsMimeType, $wgParser;
 
 		# do checks #
 		$status = self::$mInstance->doInitialChecks($parser);
@@ -202,7 +202,7 @@ class CECommentParserFunctions {
 			}
 		}
 		if(!isset($userImgSrc) || !$userImgSrc) {
-			// We provide own icon, if there non in the wiki
+			// We provide own icon, if there is none in the wiki
 			$userImgSrc = $cegScriptPath. '/skins/Comment/icons/defaultuser.gif';
 		}
 
@@ -246,6 +246,32 @@ class CECommentParserFunctions {
 			'/*]]>*/</script>';
 		SMWOutputs::requireHeadItem('CEJS_Variables3', $script);
 
+		// file attachments
+		$fileAttachmentHTML = '';
+		if( isset( $cegEnableFileAttachments ) && $cegEnableFileAttachments ) {
+			$fileAttachmentHTML = XML::openElement( 'div',
+				array( 'id' => 'collabComFormFileAttachHelp' ) ) . 
+				wfMsg( 'ce_cf_file_attach' ) . XML::closeElement( 'div' ) .
+				XML::input( 'collabComFormFileAttach', '', '',
+					array( 'id' => 'collabComFormFileAttach',
+						'class' => 'wickEnabled',
+						'pastens' => 'true'
+					)
+				);
+			if( isset( $cegUseRMUploadFunc ) && $cegUseRMUploadFunc
+				&& isset( $smwgEnableRichMedia ) && $smwgEnableRichMedia ) {
+				// we need an additional upload link that is connected to the input field
+				$uploadtext = 'Upload file';
+				$uploadTitle = 'Upload title';
+				$rmlWikiText = '{{#rml:' . wfMsg('ce_cf_file_upload_text') . '|' .
+					wfMsg('ce_cf_file_upload_link'). '|sfInputID=collabComFormFileAttach&sfDelimiter=' .
+					$cegDefaultDelimiter . '}}';
+				$fileAttachmentHTML .= XML::openElement( 'span', array(
+						'id' => 'collabComFormFileAttachLink' ) ) .
+					$wgParser->recursiveTagParse( $rmlWikiText ) .
+					XML::closeElement( 'span' );
+			}
+		}
 		$html = XML::openElement( 'div', array( 'id' => 'collabComFormHeader' )) .
 			XML::openElement( 'form', array( 'id' => 'collabComForm',
 			'style' => 'display:none',		
@@ -274,6 +300,8 @@ class CECommentParserFunctions {
 					'onKeyDown' => 'ceCommentForm.textareaKeyPressed();')) .
 				$encPreComment .
 				XML::closeElement('textarea') .
+				$fileAttachmentHTML .
+				XML::openElement('div', array( 'id' => 'collabComFormButtons' ) ) .
 			XML::submitButton( wfMsg( 'ce_cf_submit_button_name' ), 
 				array ( 'id' => $submitButtonID) ) .
 			XML::element( 'span', array(
@@ -282,6 +310,7 @@ class CECommentParserFunctions {
 				' | ' . wfMsg( 'ce_cf_reset_button_name' ) .
 			XML::closeElement('span') .
 			XML::closeElement('div') . //end collabComFormRight
+			XML::closeElement('div') . //end collabComFormButtons
 			XML::closeElement('form') .
 			XML::openElement('div', array('id' => 'collabComFormMessage', 
 				'style' => 'display:none')) .
@@ -333,10 +362,50 @@ class CECommentParserFunctions {
 
 		return $sum / $count;
 	}
+	
+	/**
+	 * This function is equal to Semantic Form's parser function 'arraymap'
+	 * to store attached articles as property values.
+	 * We can skip a template like 'http://meta.wikimedia.org/wiki/Template:For' with this PF.
+	 * 
+	 * {{#arraymapce:value|delimiter|var|formula|new_delimiter}}
+	 * 
+	 * @param parser the parser object
+	 * @param value
+	 * @param delimiter the actual delimiter
+	 * @param var the variable name
+	 * @param formula the formula used to represent the new value
+	 * @param delimiter the new delimiter
+	 */
+	static function renderArrayMap( &$parser, $value = '', $delimiter = ',', $var = 'x', $formula = 'x', $new_delimiter = ', ' ) {
+		// let '\n' represent newlines - chances that anyone will
+		// actually need the '\n' literal are small
+		$delimiter = str_replace( '\n', "\n", $delimiter );
+		$actual_delimiter = $parser->mStripState->unstripNoWiki( $delimiter );
+		$new_delimiter = str_replace( '\n', "\n", $new_delimiter );
+
+		if ( $actual_delimiter == '' ) {
+			$values_array = preg_split( '/(.)/u', $value, -1, PREG_SPLIT_NO_EMPTY | PREG_SPLIT_DELIM_CAPTURE );
+		} else {
+			$values_array = explode( $actual_delimiter, $value );
+		}
+
+		$results = array();
+		foreach ( $values_array as $cur_value ) {
+			$cur_value = trim( $cur_value );
+			// ignore a value if it's null
+			if ( $cur_value != '' ) {
+				// remove whitespaces
+				$results[] = str_replace( $var, $cur_value, $formula );
+			}
+		}
+		return implode( $new_delimiter, $results );
+	}
+	
 	/**
 	 * This method is called, when an article is deleted. If the article "has" comment article(s)
 	 * they should be also deleted to prevent article corps.
-	 *
+	 * 
 	 * @param unknown_type $specialPage
 	 * @param Title $title
 	 */

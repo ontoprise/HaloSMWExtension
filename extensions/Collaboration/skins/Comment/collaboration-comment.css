@@ -27,11 +27,18 @@ span.collabComInternComment {
 span#collabComToggle, span#collabComFormToggle {
 	color: #116988;
 	cursor: pointer;
-	display: inline;
 }
 span#collabComViewToggle {
 	color: grey;
-	display: inline;
+}
+
+span#collabComFileToggle {
+	color: grey;
+}
+
+span#collabComFileToggle > input[type=checkbox] {
+	margin: 0;
+	vertical-align: text-bottom;
 }
 
 span.collabComInternAvg {
@@ -119,6 +126,14 @@ div.collabComResRatingIcon img {
 div.collabComResText {
 	padding-top: 5px;
 }
+div.collabComResFileAttach {
+	background-color: #F2F2F2;
+	border: 1px solid lightgrey;
+	padding: 2px 4px;
+}
+div.collabComResFileAttachSaved {
+	display:none;
+}
 
 .collabComDeleted {
 	color: grey;
@@ -157,6 +172,9 @@ div.collabComEditInfo {
 }
 span.collabComEditor, span.collabComEditorPre, span.collabComEditDatePre, span.collabComEditDate {
 	padding-right: 3px;
+}
+input#collabComEditFormFileAttach{
+	width: 100%;
 }
 
 /* Comment form */
@@ -266,8 +284,23 @@ div#collabComFormHelp span {
 #collabComFormTextarea {
 	margin: 5px 0;
 }
+div#collabComFormFileAttachHelp{
+	margin: 5px 0;
+	color: grey;
+}
+
+input#collabComFormFileAttach {
+	width: 80%;
+}
+span#collabComFormFileAttachLink {
+	margin: 5px;
+}
 
 /*the two buttons in the form*/
+div#collabComFormButtons {
+	margin-top: 5px;
+}
+
 #collabComFormSubmitbuttonID, #collabComEditFormSubmit {
 	font-weight: bold;
 }

@@ -79,6 +79,28 @@ $cegEnableRatingForArticles = true;
 $cegEnableFullDeletion = true;
 
 ###
+# Enable file attachments for comments.
+# Setting this to true adds an additional input field where you can enter links to files.
+###
+$cegEnableFileAttachments = true;
+
+###
+# Use upload functionality from Rich Media.
+# Setting this to true adds a link to upload new files next to the input field.
+# The name of successfully uploaded files will be entered in the field at the end of the process.
+# Note: Rich media needs to be installed and activated.
+###
+$cegUseRMUploadFunc = true;
+
+###
+# Default delimiter for file attachment field.
+# This delimiter is used in the file attachment field to distinguish the files.
+# Default of this setting is ','
+###
+$cegDefaultDelimiter = ',';
+
+
+###
 # Use ScriptManager
 ###
 global $smgJSLibs;
@@ -101,7 +123,23 @@ cefInitNamespaces();
 # Comments are searched by default. Remove these lines if not wanted.
 ###
 global $wgNamespacesToBeSearchedDefault;
-if( isset($wgNamespacesToBeSearchedDefault) && is_array($wgNamespacesToBeSearchedDefault))
+if( isset($wgNamespacesToBeSearchedDefault) && is_array($wgNamespacesToBeSearchedDefault)) {
 	array_push($wgNamespacesToBeSearchedDefault, array(CE_COMMENT_NS => true) );
-else
+} else {
 	$wgNamespacesToBeSearchedDefault = array(CE_COMMENT_NS => true);
+}
+
+###
+# Comments are by default shown in the autocompletion.
+# The following lines remove comments from the autocompletetion list.
+# See http://smwforum.ontoprise.com/smwbugs/show_bug.cgi?id=11724 for the reason.
+# Remove these lines or overwrite it in your LocalSettings.php if you do not want this.
+###
+global $smwhgDefaultACNamespaces;
+if( is_array( $smwhgDefaultACNamespaces )
+	&& !array_key_exists( -CE_COMMENT_NS, $smwhgDefaultACNamespaces ) )
+{
+	$smwhgDefaultACNamespaces[] = -CE_COMMENT_NS;
+} else {
+	$smwhgDefaultACNamespaces = array( -CE_COMMENT_NS );
+}
