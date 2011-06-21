@@ -472,6 +472,12 @@ class TSNamespaces {
 		self::$ALL_PREFIXES .= "\nPREFIX cat:<".$smwgTripleStoreGraph."/".str_replace(" ","_",strtolower($wgContLang->getNSText(NS_CATEGORY))).'/> '.
 							   "\nPREFIX prop:<".$smwgTripleStoreGraph."/".str_replace(" ","_",strtolower($wgContLang->getNSText(SMW_NS_PROPERTY))).'/> ';
 
+        // add prefixes defined on Mediawiki:NamespaceMappings
+        $allNSMappings = smwfGetSemanticStore()->getAllNamespaceMappings();
+        foreach($allNSMappings as $prefix => $uri) {
+        	self::$ALL_PREFIXES .= "\nPREFIX $prefix:<$uri> ";
+        }
+      
 		// SET $W3C_PREFIXES constant
 		self::$W3C_PREFIXES = 'PREFIX xsd:<'.self::$XSD_NS.'> PREFIX owl:<'.self::$OWL_NS.'> PREFIX rdfs:<'.
 		self::$RDFS_NS.'> PREFIX rdf:<'.self::$RDF_NS.'> ';
@@ -479,7 +485,6 @@ class TSNamespaces {
 		// SET $TSC_PREFIXES constant
 		self::$TSC_PREFIXES = "PREFIX tsctype:<".self::$TSCTYPE_NS."> ";
 		self::$TSC_PREFIXES .= "PREFIX haloprop:<".self::$HALOPROP_NS."> ";
-
 
 	}
 
