@@ -127,6 +127,9 @@ If you're using Debian the commands for installing these packages are:
 apt-get install xpdf
 apt-get install abiword
 
+For some systems where xpdf is not available in the repositroy, the required pdf
+tools can be obtained by installing the package "poppler-utils".
+
 The conversion of office documents (.doc) may fail on Unix systems due to MIME type detection problems of PHP.
 You may want to see https://bugzilla.wikimedia.org/show_bug.cgi?id=20924 for futher details.
 
