@@ -107,6 +107,11 @@ $umegSmwforumPass = '';
 
 /* User options end here */
 
+// internal variable to add a version number when the css and js files are retrieved
+$umegStyleVersion= preg_replace('/[^\d]/', '', '{{$BUILDNUMBER}}' );
+if (strlen($umegStyleVersion) > 0)
+    $umegStyleVersion= '?'.$umegStyleVersion;
+
 // SMWHalo is needed, check if it's installed and quit, if this is not the case
 if (!defined("SMW_HALO_VERSION")) {
 	trigger_error("SMWHalo extension is required but not installed.");
@@ -249,14 +254,15 @@ function initSMWUserManualNamespaces() {
  */
 function umefAddHtml2Page(&$out) {
     global $umegSendFeedbackToSMWplus, $umegSendCommentsToSMWplus,
-           $umegPopupWidth, $umegPopupHeight, $umegNamespace, $umegSmwforumUser, $umegSmwforumPass;
+           $umegPopupWidth, $umegPopupHeight, $umegNamespace, $umegSmwforumUser,
+           $umegSmwforumPass, $umegStyleVersion;
     $out->addScript('
             <script type="text/javascript">/*<![CDATA[*/
                 var DND_POPUP_DIR = "'.SMW_UME_PATH.'";
             /*]]>*/</script>
-            <script type="text/javascript" src="'. SMW_UME_PATH . '/scripts/DndPopup.js"></script>
-            <script type="text/javascript" src="'. SMW_UME_PATH . '/scripts/smwCSH.js"></script>
-            <script type="text/javascript" src="'. SMW_UME_PATH . '/scripts/md5.js"></script>
+            <script type="text/javascript" src="'. SMW_UME_PATH . '/scripts/DndPopup.js'.$umegStyleVersion.'"></script>
+            <script type="text/javascript" src="'. SMW_UME_PATH . '/scripts/smwCSH.js'.$umegStyleVersion.'"></script>
+            <script type="text/javascript" src="'. SMW_UME_PATH . '/scripts/md5.js'.$umegStyleVersion.'"></script>
             <script type="text/javascript">/*<![CDATA[*/
                 var umegNamespace = "'.$umegNamespace.'";
                 var umegPopupWidth = '.$umegPopupWidth.';
@@ -279,7 +285,7 @@ function umefAddHtml2Page(&$out) {
             /*]]>*/</script>
         ');
     }
-    $out->addStyle(SMW_UME_PATH . '/skins/usermanual_csh.css', 'screen, projection' );
+    $out->addStyle(SMW_UME_PATH . '/skins/usermanual_csh.css'.$umegStyleVersion, 'screen, projection' );
 
     $out->addHTML(umefDivBox().'
         <script type="text/javascript">/*<![CDATA[*/
