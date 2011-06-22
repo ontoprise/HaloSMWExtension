@@ -128,7 +128,7 @@ Breadcrumb.prototype = {
         //remove title=$foobar& from querystring
         querystring = querystring.replace(/title=(.*?)&/i,"");
         //if title= is the only query and so the regex above doesn't match, remove it completely
-        querystring = querystring.replace(/\?title=(.*?)/i,"");
+        querystring = querystring.replace(/\?title=(.*?)$/i,"");
       } else {
         querystring = "";
       }
