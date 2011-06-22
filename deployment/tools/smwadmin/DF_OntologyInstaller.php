@@ -227,8 +227,8 @@ class OntologyInstaller {
 
 
 		// removes bundle pages
-		global $dfgRemoveReferenced, $dfgRemoveStillUsed;
-		DFBundleTools::deletePagesOfBundle($bundleID, $this->logger, $dfgRemoveReferenced, !$dfgRemoveStillUsed);
+		global $dfgRemoveReferenced, $dfgIncludeTemplates, $dfgIncludeInstances, $dfgRemoveStillUsed;
+		DFBundleTools::deletePagesOfBundle($bundleID, $this->logger, $dfgRemoveReferenced || $dfgIncludeTemplates, $dfgRemoveReferenced || $dfgIncludeInstances, !$dfgRemoveStillUsed);
 
 	}
 

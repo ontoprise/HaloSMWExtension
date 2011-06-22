@@ -35,7 +35,7 @@ require_once 'DF_DeployUploadExporter.php';
 class DeployBackupDumper extends BackupDumper {
 
 	private $bundleToExport;
-	
+
 	function __construct($argv) {
 		parent::__construct($argv);
 		$this->includeInstances = false;
@@ -50,17 +50,25 @@ class DeployBackupDumper extends BackupDumper {
 				$this->bundleToExport = $bundleToExport;
 				continue;
 			}
-			
+				
 			// --includeInstances means: consider member of categories beloning to a bundle
 			else if (strpos($arg, '--includeInstances') === 0) {
-				list($option, $value) = explode("=", $arg);
-				$this->includeInstances = ($value == 'true' || $value == '1' || $value == 'yes');
+				if ($arg=='--includeInstances') {
+					$this->includeInstances = true;
+				} else {
+					list($option, $value) = explode("=", $arg);
+					$this->includeInstances = ($value == 'true' || $value == '1' || $value == 'yes');
+				}
 			}
 
 			// --includeTemplates means: consider all templates used on pages of bundle
 			else if (strpos($arg, '--includeTemplates') === 0) {
-				list($option, $value) = explode("=", $arg);
-				$this->includeTemplates = ($value == 'true' || $value == '1' || $value == 'yes');
+				if ($arg=='--includeTemplates') {
+					$this->includeTemplates = true;
+				} else {
+					list($option, $value) = explode("=", $arg);
+					$this->includeTemplates = ($value == 'true' || $value == '1' || $value == 'yes');
+				}
 			}
 		}
 	}

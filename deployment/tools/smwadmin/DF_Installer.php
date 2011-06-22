@@ -584,13 +584,11 @@ class Installer {
 		}
 
 		// do the actual work
-		global $dfgForce, $dfgNoConflict;
+		global $dfgForce;
 		foreach($localPackages as $tupl) {
 			list($desc, $fromVersion) = $tupl;
 			if ($dfgForce) {
 				$mode = DF_ONTOLOGYIMPORT_FORCEOVERWRITE;
-			} else if ($dfgNoConflict) {
-				$mode = DF_ONTOLOGYIMPORT_STOPONCONFLICT;
 			} else {
 				$mode = DF_ONTOLOGYIMPORT_ASKINTERACTIVELY;
 			}

@@ -29,7 +29,7 @@
  *
  *
  */
-define('DEPLOY_FRAMEWORK_VERSION', '{{$VERSION}} [B{{$BUILD_NUMBER}}]');
+define('DEPLOY_FRAMEWORK_VERSION', '1.5.6_0 [B${env.BUILD_NUMBER}]');
 
 // termination constants
 define('DF_TERMINATION_WITH_FINALIZE', 0);
@@ -121,12 +121,14 @@ $dfgCheckInst=false;
 $dfgInstallPackages=false;
 $dfgRestoreList=false;
 $dfgCreateRestorePoint=false;
-$dfgNoConflict=false;
 $dfgLogToFile=false;
 $dfgOutputFormat="text";
 $dfgListpages="no";
 $dfgRemoveReferenced=false;
 $dfgRemoveStillUsed=false;
+$dfgIncludeImages=false;
+$dfgIncludeImages=false;
+$dfgIncludeInstances=false;
 
 $args = $_SERVER['argv'];
 array_shift($args); // remove script name
@@ -189,27 +191,27 @@ for( $arg = reset( $args ); $arg !== false; $arg = next( $args ) ) {
 			$dfgGlobalUpdate = true;
 			continue;
 		}
-		
-	    if (file_exists($package)) {
-            $file_ext = reset(array_reverse(explode(".", $package)));
-            if ($file_ext == 'owl' || $file_ext == 'rdf' || $file_ext == 'obl') {
-                // import ontology
-                $ontologiesToInstall[] = $package;
-            } else if ($file_ext == 'zip') {
-                // import bundle
-                $localBundlesToInstall[] = $package;
-            }
 
-        } else {
-            // assume it is a package but print a warning if the name has a
-            // ontology extension.
-            $file_ext = reset(array_reverse(explode(".", $package)));
-            if ($file_ext == 'owl' || $file_ext == 'rdf' || $file_ext == 'obl') {
-                $dfgOut->outputln("Are you sure '$package' is intended to be a package? It does not exist as a file.\n", DF_PRINTSTREAM_TYPE_WARN);
-            }
-            $packageToUpdate[] = $package;
-        }
-		
+		if (file_exists($package)) {
+			$file_ext = reset(array_reverse(explode(".", $package)));
+			if ($file_ext == 'owl' || $file_ext == 'rdf' || $file_ext == 'obl') {
+				// import ontology
+				$ontologiesToInstall[] = $package;
+			} else if ($file_ext == 'zip') {
+				// import bundle
+				$localBundlesToInstall[] = $package;
+			}
+
+		} else {
+			// assume it is a package but print a warning if the name has a
+			// ontology extension.
+			$file_ext = reset(array_reverse(explode(".", $package)));
+			if ($file_ext == 'owl' || $file_ext == 'rdf' || $file_ext == 'obl') {
+				$dfgOut->outputln("Are you sure '$package' is intended to be a package? It does not exist as a file.\n", DF_PRINTSTREAM_TYPE_WARN);
+			}
+			$packageToUpdate[] = $package;
+		}
+
 		continue;
 	} else if ($arg == '-l') { // => list packages
 		$dfgListPackages = true;
@@ -245,9 +247,6 @@ for( $arg = reset( $args ); $arg !== false; $arg = next( $args ) ) {
 		$dfgCreateRestorePoint = true;
 		$dfgRestorePoint = next($args);
 		continue;
-	} else if ($arg == '--noconflict') {
-		$dfgNoConflict = true;
-		continue;
 	} else if ($arg == '--noask') {
 		$dfgNoAsk = true;
 		continue;
@@ -263,6 +262,15 @@ for( $arg = reset( $args ); $arg !== false; $arg = next( $args ) ) {
 	} else if ($arg == '--removereferenced') {
 		$dfgRemoveReferenced = true;
 		continue;
+	} else if ($arg == '--includeImages') {
+		$dfgIncludeImages = true;
+		continue;
+	} else if ($arg == '--includeTemplates') {
+		$dfgIncludeTemplates = true;
+		continue;
+	} else if ($arg == '--includeInstances') {
+		$dfgIncludeInstances = true;
+		continue;
 	} else if ($arg == '--removestillused') {
 		$dfgRemoveStillUsed = true;
 		continue;
@@ -275,9 +283,6 @@ for( $arg = reset( $args ); $arg !== false; $arg = next( $args ) ) {
 	$params[] = $arg;
 }
 
-if ($dfgForce && $dfgNoConflict) {
-	$dfgOut->outputln("\n-f and --noconflict are incompatible options. --noconflict is IGNORED.", DF_PRINTSTREAM_TYPE_WARN);
-}
 
 if ($dfgLogToFile !== false) {
 	$dfgOut->start(DF_OUTPUT_TARGET_FILE, $dfgLogToFile);
@@ -465,17 +470,15 @@ if (count($ontologiesToInstall) > 0) {
 			$filePath = $rootDir."/tools/".$filePath;
 		}
 
-		global $dfgForce, $dfgNoConflict;
+		global $dfgForce;
 		if ($dfgForce) {
 			$mode = DF_ONTOLOGYIMPORT_FORCEOVERWRITE;
-		} else if ($dfgNoConflict) {
-			$mode = DF_ONTOLOGYIMPORT_STOPONCONFLICT;
 		} else {
 			$mode = DF_ONTOLOGYIMPORT_ASKINTERACTIVELY;
 		}
 
 		try {
-			
+				
 			$bundleID = $oInstaller->installOrUpdateOntology($filePath, false);
 
 			// copy ontology and create ontology bundle
@@ -543,7 +546,7 @@ if (count($packageToDeinstall) > 1) {
 }
 
 foreach($packageToDeinstall as $toDeInstall) {
-	
+
 	try {
 		$dd = $installer->deinstall($toDeInstall);
 		if (count($dd->getWikidumps()) > 0
@@ -688,7 +691,7 @@ if (count($installer->getErrors()) === 0) {
 }
 
 function dffShowHelp() {
-	global $dfgOut, $logger;
+	global $dfgOut;
 	$dfgOut->outputln( "smwhalo admin utility v".DEPLOY_FRAMEWORK_VERSION.", Ontoprise 2009-2011");
 	$dfgOut->outputln( "Usage: smwadmin [ -i | -d ] <package>[-<version>] [ additional-options ]");
 	$dfgOut->outputln( "       smwadmin -u [ <package>[-<version>] ] [ additional-options ]");
@@ -711,10 +714,12 @@ function dffShowHelp() {
 	$dfgOut->outputln( "\t--dep : Check only dependencies but do not install.");
 	$dfgOut->outputln( "\t-f: Force operation (ignore any problems if possible)");
 	//$dfgOut->outputln( "\t--checkdump <package>: Check only dumps for changes but do not install.");
-	$dfgOut->outputln( "\t--noconflict: Assures that there are no conflicts on ontology import. Will stop the process, if not.");
 	$dfgOut->outputln( "\t--nocheck: Skips the environment checks");
 	$dfgOut->outputln( "\t--noask: Skips all questions (assuming mostly 'yes' except for optional packages");
 	$dfgOut->outputln( "\t--removereferenced: Removes all templates, images and instances referenced used by a bundle. Used with -d");
+	$dfgOut->outputln( "\t\t--removeTemplates: Removes all templates referenced used by a bundle. Used with -d");
+	$dfgOut->outputln( "\t\t--removeInstances: Removes all instances referenced used by a bundle. Used with -d");
+	$dfgOut->outputln( "\t\t--removeImages: Removes all images referenced used by a bundle. Used with -d");
 	$dfgOut->outputln( "\t--removestillused: Removes also pages which are used by other bundles. Used with -d --removereferenced");
 
 	$dfgOut->outputln();
@@ -727,7 +732,7 @@ function dffShowHelp() {
 	$dfgOut->outputln( "\tsmwadmin -u --noask: Updates the complete installation with no check for environment.");
 	$dfgOut->outputln( "\n");
 
-
+    $logger = Logger::getInstance();
 	$dfgOut->outputln( "The DF's log files are stored in: ".$logger->getLogDir());
 	$dfgOut->outputln( "\n");
 }

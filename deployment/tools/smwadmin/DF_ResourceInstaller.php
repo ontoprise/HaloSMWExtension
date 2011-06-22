@@ -111,8 +111,8 @@ class ResourceInstaller {
 
 		if (count($dd->getWikidumps()) == 0) return;
 		if (!defined('SMW_VERSION')) throw new InstallationError(DEPLOY_FRAMEWORK_NOT_INSTALLED, "SMW is not installed. Can not delete ontology.");
-		global $dfgRemoveReferenced, $dfgRemoveStillUsed;
-		DFBundleTools::deletePagesOfBundle($dd->getID(), $this->logger, $dfgRemoveReferenced, !$dfgRemoveStillUsed);
+		global $dfgRemoveReferenced, $dfgIncludeTemplates, $dfgIncludeInstances, $dfgRemoveStillUsed;
+		DFBundleTools::deletePagesOfBundle($dd->getID(), $this->logger, $dfgRemoveReferenced || $dfgIncludeTemplates, $dfgRemoveReferenced || $dfgIncludeInstances, !$dfgRemoveStillUsed);
 	}
 
 
@@ -126,11 +126,9 @@ class ResourceInstaller {
 		global $wgUser, $dfgOut;
 		if (count($dd->getResources()) ==  0) return;
 		
-		global $dfgRemoveReferenced, $dfgRemoveStillUsed;
-		if ($dfgRemoveReferenced) {
-			
+		global $dfgRemoveReferenced, $dfgIncludeImages,  $dfgRemoveStillUsed;
+		if ($dfgRemoveReferenced || $dfgIncludeImages) {
 			DFBundleTools::deleteReferencedImagesOfBundle($dd->getID(), $this->logger, !$dfgRemoveStillUsed);
-		
 		}
 		
 		$resources = $dd->getResources();

@@ -267,7 +267,7 @@ class DFBundleTools {
 	 * @param boolean $removeReferenced
 	 * @param boolean $keepStillRequiredTemplates
 	 */
-	public static function deletePagesOfBundle($ext_id, $logger = NULL, $removeReferenced = false, $keepStillRequiredTemplates = true) {
+	public static function deletePagesOfBundle($ext_id, $logger = NULL, $removeTemplates = false, $removeInstances = false, $keepStillRequiredTemplates = true) {
 		global $dfgLang;
 		global $wgUser;
 		global $dfgOut;
@@ -292,7 +292,7 @@ class DFBundleTools {
 		// put all pages belonging to a bundle (all except templates, ie. categories, properties, instances of categories and all other pages denoted by
 		// the 'part of bundle' annotation like Forms, Help pages, etc..) in df_page_of_bundle
 		$db->query('INSERT INTO df_page_of_bundle (SELECT page_id FROM '.$page.' JOIN '.$smw_ids.' ON smw_namespace = page_namespace AND smw_title = page_title JOIN '.$smw_rels2.' ON smw_id = s_id WHERE p_id = '.$partOfBundlePropertyID.' AND o_id = '.$partOfBundleID.')');
-		if ($removeReferenced) {
+		if ($removeInstances) {
 			$db->query('INSERT INTO df_page_of_bundle (SELECT cl_from FROM '.$categorylinks.' JOIN '.$page.' ON cl_to = page_title AND page_namespace = '.NS_CATEGORY.' JOIN '.$smw_ids.' ON smw_namespace = page_namespace AND smw_title = page_title JOIN '.$smw_rels2.' ON smw_id = s_id WHERE p_id = '.$partOfBundlePropertyID.' AND o_id = '.$partOfBundleID.')');
 		}
 
@@ -311,7 +311,7 @@ class DFBundleTools {
 		$res = $db->query('SELECT DISTINCT title FROM df_page_of_templates_used');
 
 		// DELETE templates
-		if(($db->numRows( $res ) > 0) && $removeReferenced) {
+		if(($db->numRows( $res ) > 0) && $removeTemplates) {
 			$logger->info("Removing referenced templates");
 			$dfgOut->outputln("\t[Removing referenced templates...");
 			while($row = $db->fetchObject($res)) {
