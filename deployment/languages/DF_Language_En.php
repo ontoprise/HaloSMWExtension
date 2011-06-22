@@ -82,6 +82,7 @@ class DF_Language_En extends DF_Language {
 	'df_webadmin_maintenacetab' => 'System Restore',
 	'df_webadmin_uploadtab' => 'Upload local bundles/ontologies',
 	'df_webadmin_settingstab' => 'Repositories',
+	'df_webadmin_localsettingstab' => 'LocalSettings',
 	
 	'df_webadmin_restorepoint' => 'Restore point',
 	'df_webadmin_creationdate' => 'Creation date',
@@ -96,8 +97,9 @@ class DF_Language_En extends DF_Language {
 	'df_restore_warning' => 'Restoring will roll back both the wiki setup and its entire contents to a previous point. Do you wish to continue?',
 	'df_uninstall_warning' => 'The following extensions will be uninstalled. Are you sure?',
 	'df_globalupdate_warning' => 'Perform global update?',
-	'df_inspectextension_heading' => 'Inspect extension'
-	
+	'df_inspectextension_heading' => 'Inspect extension',
+	'df_select_extension' => 'Select extension',
+	'df_webadmin_localsettings_description' => "Edit an extensions's section in LocalSettings.php. Don't forget to save your changes."
 	
 	);
 

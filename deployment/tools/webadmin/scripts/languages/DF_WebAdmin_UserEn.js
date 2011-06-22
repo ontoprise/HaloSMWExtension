@@ -55,7 +55,12 @@ var dfgUserDFWebAdmin_LanguageStrings = {
 	'df_webadmin_deinstall_successful' : 'Deinstallation successfull!',
 	'df_webadmin_deinstall_failure' : 'Errors occured during deinstallation',
 	'df_webadmin_update_successful' : 'Update successfull!',
-	'df_webadmin_update_failure' : 'Errors occured during update'
+	'df_webadmin_update_failure' : 'Errors occured during update',
+	'df_webadmin_select_extension' : 'Select extension',
+	'df_webadmin_fragment_not_found' : 'Section not found',
+	'df_webadmin_save_ok' : 'LocalSettings successfully saved.',
+	'df_webadmin_save_failed' : 'Error when saving LocalSettings.php'
+	
 };
 
 var dfgContDFWebAdmin_LanguageStrings = {};

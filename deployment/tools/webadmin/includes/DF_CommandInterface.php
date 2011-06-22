@@ -28,6 +28,7 @@ if (!defined("DF_WEBADMIN_TOOL")) {
 	die();
 }
 
+require_once ( $mwrootDir.'/deployment/descriptor/DF_DeployDescriptorProcessor.php' );
 require_once ( $mwrootDir.'/deployment/tools/smwadmin/DF_PackageRepository.php' );
 require_once($mwrootDir.'/deployment/tools/smwadmin/DF_Tools.php');
 require_once($mwrootDir.'/deployment/tools/smwadmin/DF_Installer.php');
@@ -35,10 +36,10 @@ require_once($mwrootDir.'/deployment/io/DF_Log.php');
 require_once($mwrootDir.'/deployment/tools/smwadmin/DF_UserInput.php');
 
 class DFCommandInterface {
-	
+
 	// path to PHP executable
 	var $phpExe;
-	
+
 	/**
 	 *
 	 *
@@ -63,7 +64,7 @@ class DFCommandInterface {
 		global $mwrootDir, $dfgOut;
 		$logger = Logger::getInstance();
 		$logdir = $logger->getLogDir();
-		
+
 		$absoluteFilePath = "$logdir/$filename";
 		Tools::mkpath(dirname($absoluteFilePath));
 		if (!file_exists($absoluteFilePath)) {
@@ -71,6 +72,32 @@ class DFCommandInterface {
 		}
 		$log = file_get_contents($absoluteFilePath);
 		return $log;
+	}
+
+	public function getLocalSettingFragment($extid) {
+		global $mwrootDir;
+		$localPackages = PackageRepository::getLocalPackages($mwrootDir);
+		if (!array_key_exists($extid, $localPackages)) {
+			throw new Exception("Extension not found: $extid", 400);
+		}
+		$ddproc = new DeployDescriptionProcessor($mwrootDir."/LocalSettings.php",$localPackages[$extid]);
+		$fragment = $ddproc->getConfigFragment($extid);
+		if (is_null($fragment)) {
+			throw new Exception("Fragment not found: $extid", 400);
+		}
+		return $fragment;
+	}
+
+	public function saveLocalSettingFragment($extid, $fragment) {
+		global $mwrootDir;
+		$localPackages = PackageRepository::getLocalPackages($mwrootDir);
+		$ddproc = new DeployDescriptionProcessor($mwrootDir."/LocalSettings.php",$localPackages[$extid]);
+		$content = $ddproc->replaceConfigFragment($extid, $fragment);
+		if ($content === false) {
+			throw new Exception("Replacing fragment for $extid failed!", 500);
+		}
+		$ddproc->writeLocalSettingsFile();
+		return true;
 	}
 
 	public function getLocalDeployDescriptor($extid) {
@@ -172,7 +199,7 @@ class DFCommandInterface {
 		$logger = Logger::getInstance();
 		$logdir = $logger->getLogDir();
 		touch("$logdir/$filename");
-		
+
 		chdir($mwrootDir.'/deployment/tools');
 		$php = $this->phpExe;
 		if (Tools::isWindows()) {
@@ -194,7 +221,7 @@ class DFCommandInterface {
 		$logger = Logger::getInstance();
 		$logdir = $logger->getLogDir();
 		touch("$logdir/$filename");
-		
+
 		chdir($mwrootDir.'/deployment/tools');
 		$php = $this->phpExe;
 		if (Tools::isWindows()) {
@@ -216,7 +243,7 @@ class DFCommandInterface {
 		$logger = Logger::getInstance();
 		$logdir = $logger->getLogDir();
 		touch("$logdir/$filename");
-		
+
 		chdir($mwrootDir.'/deployment/tools');
 		$php = $this->phpExe;
 		if (Tools::isWindows()) {
@@ -238,7 +265,7 @@ class DFCommandInterface {
 		$logger = Logger::getInstance();
 		$logdir = $logger->getLogDir();
 		touch("$logdir/$filename");
-		
+
 		chdir($mwrootDir.'/deployment/tools');
 		$php = $this->phpExe;
 		if (Tools::isWindows()) {
@@ -281,7 +308,7 @@ class DFCommandInterface {
 		$logger = Logger::getInstance();
 		$logdir = $logger->getLogDir();
 		touch("$logdir/$filename");
-		
+
 		chdir($mwrootDir.'/deployment/tools');
 		$php = $this->phpExe;
 		if (Tools::isWindows()) {
@@ -303,7 +330,7 @@ class DFCommandInterface {
 		$logger = Logger::getInstance();
 		$logdir = $logger->getLogDir();
 		touch("$logdir/$filename");
-		
+
 		chdir($mwrootDir.'/deployment/tools');
 		$php = $this->phpExe;
 		if (Tools::isWindows()) {
@@ -325,7 +352,7 @@ class DFCommandInterface {
 		$logger = Logger::getInstance();
 		$logdir = $logger->getLogDir();
 		touch("$logdir/$filename");
-		
+
 		chdir($mwrootDir.'/deployment/tools');
 		$php = $this->phpExe;
 		if (Tools::isWindows()) {

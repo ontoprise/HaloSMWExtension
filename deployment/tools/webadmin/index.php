@@ -71,6 +71,7 @@ require_once('includes/DF_SearchTab.php');
 require_once('includes/DF_MaintenanceTab.php');
 require_once('includes/DF_UploadTab.php');
 require_once('includes/DF_SettingsTab.php');
+require_once('includes/DF_LocalSettingsTab.php');
 require_once('includes/DF_CommandInterface.php');
 require_once($mwrootDir.'/deployment/io/DF_Log.php');
 require_once($mwrootDir.'/deployment/io/DF_PrintoutStream.php');
@@ -172,6 +173,11 @@ try {
 	$dfgSettingsTab = new DFSettingsTab();
 	$dfgSettingsTabName = $dfgSettingsTab->getTabName();
 	$dfgSettingsTabHtml = $dfgSettingsTab->getHTML();
+	
+	$dfgLocalSettingsTab = new DFLocalSettingsTab();
+	$dfgLocalSettingsTabName = $dfgLocalSettingsTab->getTabName();
+	$dfgLocalSettingsTabHtml = $dfgLocalSettingsTab->getHTML();
+	
 } catch(DF_SettingError $e) {
 	echo $e->getMsg();
 	die();
@@ -258,6 +264,7 @@ $html .= <<<ENDS
 				<li><a href="#tabs-3">$dfgUploadTabName</a></li>
 				<li><a href="#tabs-4">$maintenanceTabName</a></li>
 				<li><a href="#tabs-5">$dfgSettingsTabName</a></li>
+				<li><a href="#tabs-6">$dfgLocalSettingsTabName</a></li>
 				
 			</ul>
 			<div id="tabs-1">$statusTabHtml</div>
@@ -265,6 +272,8 @@ $html .= <<<ENDS
 			<div id="tabs-3">$dfgUploadTabHtml</div>
 			<div id="tabs-4">$maintenanceTabHtml</div>
 			<div id="tabs-5">$dfgSettingsTabHtml</div>
+			<div id="tabs-6">$dfgLocalSettingsTabHtml</div>
+			
 </div>
 <div id="global-updatedialog-confirm" title="$globalUpdateHeading" style="display:none">
     <p><span style="float:left; margin:0 7px 20px 0;"></span><span id="global-updatedialog-confirm-text">$globalUpdateWarning</span></p>

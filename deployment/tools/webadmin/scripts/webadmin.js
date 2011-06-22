@@ -577,6 +577,57 @@ $(function() {
 		smw_makeSortable($('#df_bundlefilelist_table')[0]);
 		smw_makeSortable($('#df_restorepoint_table')[0]);
 		
+		// register LocalSettings content
+		$('#df_settings_save_button').click(function(e2) {
+			// save content
+			var saveLocalSettingsCallback = function(xhr, status) {
+				if (xhr.status == 200) {
+					alert(dfgWebAdminLanguage.getMessage('df_webadmin_save_ok'));
+					$('#df_settings_save_button').attr('disabled', true);
+				} else {
+					alert(dfgWebAdminLanguage.getMessage('df_webadmin_save_failed'));
+				}
+			};
+			var fragment = $('#df_settings_textfield').val();
+			var selectedId = $("#df_settings_extension_selector option:selected").text();
+			var url = wgServer+wgScriptPath+"/deployment/tools/webadmin/index.php";
+			$.ajax( { url : url, type : "POST", data : { "rs": "saveLocalSettingFragment", "rsargs[]" : [selectedId,fragment]}, dataType:"json", complete : saveLocalSettingsCallback });
+		});
+		
+		$('#df_settings_textfield').keydown(function(e2) {
+			// activate save button
+			var selectedId = $("#df_settings_extension_selector option:selected").text();
+			if (selectedId == dfgWebAdminLanguage.getMessage('df_webadmin_select_extension')) {
+				return;
+			}
+			$('#df_settings_save_button').attr('disabled', false);
+
+		});
+		
+		$('#df_settings_extension_selector').change(function(e2) {
+			// load content
+			
+			var getLocalSettingsCallback = function(xhr, status) {
+				if (xhr.status != 200) {
+					$('#df_settings_textfield').val("");
+					$('#df_settings_textfield').attr('disabled', true);
+					alert(dfgWebAdminLanguage.getMessage('df_webadmin_fragment_not_found'));
+					return;
+				}
+				$('#df_settings_textfield').attr('disabled', false);
+				$('#df_settings_textfield').val(xhr.responseText);
+			};
+			$('#df_settings_save_button').attr('disabled', true);
+			var selectedId = $("#df_settings_extension_selector option:selected").text();
+			if (selectedId == dfgWebAdminLanguage.getMessage('df_webadmin_select_extension')) {
+				$('#df_settings_textfield').attr('disabled', true);
+				$('#df_settings_textfield').val("");
+				return;
+			}
+			var url = wgServer+wgScriptPath+"/deployment/tools/webadmin?rs=getLocalSettingFragment&rsargs[]="+encodeURIComponent(selectedId);
+			$.ajax( { url : url, dataType:"json", complete : getLocalSettingsCallback });
+		});
+		
 		// add about link
 		$('#df_webadmin_aboutlink').click(function(e2) {
 			var $dialog = $('#df_webadmin_about_dialog')

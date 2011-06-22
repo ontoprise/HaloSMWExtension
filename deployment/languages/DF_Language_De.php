@@ -81,6 +81,7 @@ class DF_Language_De extends DF_Language {
     'df_webadmin_maintenacetab' => 'Systemwiederherstellung',
 	'df_webadmin_uploadtab' => 'Hochladen von lokalen Bundles/Ontologien',
 	'df_webadmin_settingstab' => 'Paketquellen',
+	'df_webadmin_localsettingstab' => 'LocalSettings',
 	
 	'df_webadmin_restorepoint' => 'Rücksetzpunkt',
 	'df_webadmin_creationdate' => 'Datum der Erzeugung',
@@ -94,6 +95,8 @@ class DF_Language_De extends DF_Language {
 	'df_restore_warning' => 'Ein Rücksetzen bewirkt sowohl die Zurücksetzung der Installation wie auch des Inhalts des Wikis. Wollen Sie fortfahren?',
     'df_uninstall_warning' => 'Die folg. Extensions werden de-installiert. Wollen Sie fortfahren?',
     'df_globalupdate_warning' => 'Global Update durchführen?',
-	'df_checkextension_heading' => 'Extension-Details'
+	'df_checkextension_heading' => 'Extension-Details',
+	'df_select_extension' => 'Wähle Extension',
+	'df_webadmin_localsettings_description' => "Editieren die Konfiguration einer Extension in LocalSettings.php. Nicht vergessen die Änderungen zu speichern."
 	);
 }

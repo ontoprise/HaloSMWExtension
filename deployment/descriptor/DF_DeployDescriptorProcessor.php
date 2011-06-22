@@ -104,7 +104,7 @@ class DeployDescriptionProcessor {
 		$this->localSettingsContent = $prefix . $startTag . $insertions . $endTag . $suffix;
 
 		$this->logger->info("Added to LocalSettings.php: $startTag . $insertions . $endTag");
-		if (!$dryRun) $this->writeLocalSettingsFile($this->localSettingsContent);
+		if (!$dryRun) $this->writeLocalSettingsFile();
 		return $this->localSettingsContent;
 	}
 
@@ -126,48 +126,30 @@ class DeployDescriptionProcessor {
 			return $this->localSettingsContent;
 		}
 		$this->logger->info("Remove from LocalSettings.php: $fragment");
-		$ls = str_replace($fragment, "", $this->localSettingsContent);
-		$ls = Tools::removeTrailingWhitespaces($ls);
-		$this->writeLocalSettingsFile($ls);
-		return $ls;
+		$this->localSettingsContent = str_replace($fragment, "", $this->localSettingsContent);
+		$this->localSettingsContent = Tools::removeTrailingWhitespaces($this->localSettingsContent);
+		$this->writeLocalSettingsFile();
+		return $this->localSettingsContent;
 	}
-	
-	/**
-	 * Returns the configuration fragment.
-	 * 
-	 * @param string $extid
-	 * 
-	 * @return string config fragment (without enclosing tags)
-	 */
+
 	function getConfigFragment($extid) {
-		$start = strpos("/*start-$extid*/", $this->localSettingsContent);
-		$end = strpos("/*end-$extid*/", $this->localSettingsContent);
-		if ($start === false) return NULL;
-		if ($end === false) return NULL;
 		
-		$start = $start + strlen("/*start-$extid*/") + 1;
-		return substr($this->localSettingsContent, $start , $end-$start);
+		$start = strpos($this->localSettingsContent, "/*start-$extid*/");
+		$end = strpos($this->localSettingsContent, "/*end-$extid*/");
+
+		if ($start === false || $end === false) return NULL;
+
+		$start += strlen("/*start-$extid*/") + 1;
+
+		return substr($this->localSettingsContent, $start, $end - $start);
 	}
-	
-    /**
-     * Replaces the configuration fragment.
-     * 
-     * @param string $extid
-     * @param string $replacment
-     * 
-     * @return boolean True if configuration fragment was replaced.
-     */
-    function replacesConfigFragment($extid, $replacment) {
-        $start = strpos("/*start-$extid*/", $this->localSettingsContent);
-        $end = strpos("/*end-$extid*/", $this->localSettingsContent);
-        if ($start === false) return false;
-        if ($end === false) return false;
-        
-        $start = $start + strlen("/*start-$extid*/") + 1;
-        $fragment = substr($this->localSettingsContent, $start , $end-$start);
-        $this->localSettingsContent = str_replace($fragment, $replacement, $this->localSettingsContent);
-        return true;
-    }
+
+	function replaceConfigFragment($extid, $replacement) {
+		$fragment = $this->getConfigFragment($extid);
+		if (is_null($fragment)) return false;
+		$this->localSettingsContent = str_replace($fragment, $replacement, $this->localSettingsContent);
+		return $this->localSettingsContent;
+	}
 
 	/**
 	 * Runs the given setup scripts.
@@ -262,7 +244,7 @@ class DeployDescriptionProcessor {
 			exec("php \"".$rootDir."/deployment/tools/patch.php\" -p \"".$rootDir."/".$patch."\" -d \"".$rootDir."\" --dry-run --onlypatch", $out, $ret);
 			$dfgOut->output( "done.]");
 			$patchFailed = false;
-			
+
 			$out = $this->eliminateWhichMayFail($out, $mayfail);
 			foreach($out as $line) {
 				if (strpos($line, "FAILED") !== false) {
@@ -309,7 +291,7 @@ class DeployDescriptionProcessor {
 	 *
 	 * @param array of string $out Patch output in lines
 	 * @param string $mayfail Filenames of files to be patched but which may fail (comma separated).
-	 * 
+	 *
 	 * @return array of string Cleaned-up patch output.
 	 */
 	private function eliminateWhichMayFail($out, $mayfail) {
@@ -401,7 +383,7 @@ class DeployDescriptionProcessor {
 			exec("php \"".$rootDir."/deployment/tools/patch.php\" -r -p \"".$rootDir."/".$patch."\" -d \"".$rootDir."\" --dry-run --onlypatch", $out, $ret);
 			$dfgOut->output( "done.]");
 			$patchFailed = false;
-			
+
 			$out = $this->eliminateWhichMayFail($out, $mayfail);
 			foreach($out as $line) {
 				if (strpos($line, "FAILED") !== false) {
@@ -420,14 +402,14 @@ class DeployDescriptionProcessor {
 	 * Writes LocalSettings.php
 	 *
 	 */
-	function writeLocalSettingsFile(& $content) {
-		if (empty($content)) {
+	function writeLocalSettingsFile() {
+		if (empty($this->localSettingsContent)) {
 			$this->errorMessages[] = "WARNING: LocalSettings.php is empty. Nothing done here.";
 			// do never write an empty localsettings file.
 			return;
 		}
 		$handle = fopen($this->ls_loc, "wb");
-		fwrite($handle, $content);
+		fwrite($handle, $this->localSettingsContent);
 		fclose($handle);
 	}
 
