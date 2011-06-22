@@ -20,7 +20,6 @@ class SMWSemanticStoreSQL2 extends SMWSemanticStoreSQL {
 		
 		global $dfgLang;
         $partOfBundlePropertyID = smwfGetStore()->getSMWPropertyID(SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString("df_partofbundle")));
-        //$partOfBundleID = smwfGetStore()->getSMWPageID($ext_id, NS_MAIN, "");
         $bundleID = ucfirst($bundleID);
         $bundleSMWID = smwfGetStore()->getSMWPageID($bundleID, NS_MAIN, "");
         $smw_ids = $db->tableName('smw_ids');

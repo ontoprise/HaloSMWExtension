@@ -37,12 +37,16 @@ class SRRuleEndpoint {
 	 * Return root rules by accessing the TSC rule endpoint. Encapsulates the results
 	 * in a XML structure which is transformable by ruleTree.xslt.
 	 *
+	 * @param string urifragment Fragment which must appear in the rule URI
+	 * 
 	 * @return string XML
 	 */
-	public function getRootRules() {
+	public function getRootRules($urifragment) {
 		global $smwgWebserviceProtocol, $smwgTripleStoreGraph;
-
+        $urifragment = urlencode($urifragment);
+        
 		$payload = "graph=".urlencode($smwgTripleStoreGraph);
+		$payload .= "&urifragment=".urlencode($urifragment);
 		list($header, $status, $res) = self::$_client->send($payload, "/getRootRules");
 
 		$response = new AjaxResponse($this->encapsulateTreeElementAsXML($res));
@@ -61,8 +65,8 @@ class SRRuleEndpoint {
 	 * @param ruleID
 	 * @return string XML
 	 */
-	public function getDependantRules($params) {
-		$ruleID = urlencode($params[0]);
+	public function getDependantRules($ruleID) {
+		$ruleID = urlencode($ruleID);
 		global $smwgWebserviceProtocol, $smwgTripleStoreGraph;
 
 		$payload = "graph=".urlencode($smwgTripleStoreGraph)."&ruleID=$ruleID";
@@ -78,13 +82,15 @@ class SRRuleEndpoint {
 	/**
 	 * Returns rules which define the given entities.
 	 *
-	 * @param resources (as array)
+	 * @param string [] resources 
 	 *
 	 * @note: not intended to be called via ajax. No serialization yet available.
+	 * 
+	 * @return XML
 	 */
-	public function getDefiningRules($params) {
+	public function getDefiningRules($resourceURIs) {
 		$resources = "";
-		foreach($params as $r) $resources .= "&resource=".urlencode($r);
+		foreach($resourceURIs as $r) $resources .= "&resource=".urlencode($r);
 		global $smwgWebserviceProtocol, $smwgTripleStoreGraph;
 
 		$payload = "graph=".urlencode($smwgTripleStoreGraph).$resources;
@@ -110,10 +116,12 @@ class SRRuleEndpoint {
 	/**
 	 * Returns rule metadata.
 	 *
-	 * @param $ruleID
+	 * @param string $ruleID
+	 * 
+	 * @return XML
 	 */
-	public function getRule($params) {
-		$ruleID = urlencode($params[0]);
+	public function getRule($ruleID) {
+		$ruleID = urlencode($ruleID);
 		global $smwgWebserviceProtocol, $smwgTripleStoreGraph;
 
 		$payload = "graph=".urlencode($smwgTripleStoreGraph)."&ruleID=$ruleID";
@@ -130,13 +138,16 @@ class SRRuleEndpoint {
 	/**
 	 * Returns rule containing the string given as filter in a resource or literal.
 	 *
-	 * @param $params (string filter, boolean asTree)
+	 * @param string $filter 
+	 * @param boolean asTree
 	 * @param $resultformat
 	 * @param $ajaxCall (if false, do not return AjaxResponse object but simple text)
+	 * 
+	 * @return XML
 	 */
-	public function searchForRulesByFragment($params, $resultformat = "xml", $ajaxCall = true) {
-		$filter = urlencode($params[0]);
-		$asTree = urlencode($params[1]);
+	public function searchForRulesByFragment($filter, $asTree, $resultformat = "xml", $ajaxCall = true) {
+		$filter = urlencode($filter);
+		$asTree = urlencode($asTree);
 		global $smwgWebserviceProtocol, $smwgTripleStoreGraph;
 
 		$payload = "graph=".urlencode($smwgTripleStoreGraph)."&fragment=$filter&asTree=$asTree";
@@ -157,11 +168,13 @@ class SRRuleEndpoint {
 	/**
 	 * Serialize the given rules in several flavors: Easyreadible and stylized english.
 	 *
-	 * @param $ruleID
+	 * @param JSON $ruleTuples { ruletext : "...", ruleID: "...", native : true/false }
+	 * 
+	 * @return XML serialized rules
 	 */
-	public function serializeRules($params) {
-		for($i = 0; $i < count($params); $i++) $params[$i] = urlencode($params[$i]);
-		$ruleIDs = implode("&ruletuple=",$params);
+	public function serializeRules($ruleTuples) {
+		for($i = 0; $i < count($ruleTuples); $i++) $ruleTuples[$i] = urlencode($ruleTuples[$i]);
+		$ruleIDs = implode("&ruletuple=",$ruleTuples);
 		global $smwgWebserviceProtocol, $smwgTripleStoreGraph;
 
 		$payload = "graph=".urlencode($smwgTripleStoreGraph)."&ruletuple=".$ruleIDs;

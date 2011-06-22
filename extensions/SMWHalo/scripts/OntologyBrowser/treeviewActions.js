@@ -938,6 +938,7 @@ OBInstanceActionListener.prototype = {
 						: node.getAttribute("uri");
 				sajax_do_call('smwf_ob_OntologyBrowserAccess', [
 						'getCategoryForInstance', instanceParam,
+						obAdvancedOptions.getDataSource(), 
 						obAdvancedOptions.getBundle() ],
 						callbackOnInstanceSelectToLeft);
 			}
@@ -1502,6 +1503,7 @@ OBSchemaPropertyActionListener.prototype = {
 				// TODO: externalize in dataAccess
 				sajax_do_call('smwf_ob_OntologyBrowserAccess', [
 						'getCategoryForProperty', attributeName,
+						obAdvancedOptions.getDataSource(), 
 						obAdvancedOptions.getBundle() ],
 						callbackOnPropertySelectForCategory);
 			}
@@ -1561,6 +1563,7 @@ OBSchemaPropertyActionListener.prototype = {
 				// TODO: externalize in dataAccess
 				sajax_do_call('smwf_ob_OntologyBrowserAccess', [
 						'getCategoryForProperty', propertyTitle,
+						obAdvancedOptions.getDataSource(), 
 						obAdvancedOptions.getBundle() ],
 						callbackOnPropertySelectForCategory);
 			}
@@ -1576,6 +1579,7 @@ OBSchemaPropertyActionListener.prototype = {
 				// TODO: externalize in dataAccess
 				sajax_do_call('smwf_ob_OntologyBrowserAccess', [
 						'getCategoryForProperty', propertyTitle,
+						obAdvancedOptions.getDataSource(), 
 						obAdvancedOptions.getBundle() ],
 						callbackOnPropertySelectForCategory);
 			}
@@ -2092,13 +2096,13 @@ OBGlobalActionListener.prototype = {
 			OB_tree_pendingIndicator.show(this.activeTreeName);
 			// TODO: externalize in dataAccess
 			sajax_do_call('smwf_ob_OntologyBrowserAccess', [ 'filterBrowse',
-					"category##" + hint, obAdvancedOptions.getBundle() ],
+					"category##" + hint, obAdvancedOptions.getDataSource(), obAdvancedOptions.getBundle() ],
 					filterBrowsingCategoryCallback);
 		} else if (this.activeTreeName == 'propertyTree') {
 			OB_tree_pendingIndicator.show(this.activeTreeName);
 			// TODO: externalize in dataAccess
 			sajax_do_call('smwf_ob_OntologyBrowserAccess',
-					[ 'filterBrowse', "propertyTree##" + hint,
+					[ 'filterBrowse', "propertyTree##" + hint, obAdvancedOptions.getDataSource(), 
 							obAdvancedOptions.getBundle() ],
 					filterBrowsingAttributeCallback);
 		} else {

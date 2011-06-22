@@ -125,8 +125,7 @@ $dataSourcesHtml = <<<TEXT
         <div class="OBStaticHint">$selectMultiHint</div>
 TEXT;
 }
-$bundlesHtml = "";
-if (!empty($bundleOptions)) {
+
 $bundlesHtml = <<<TEXT
 <div><div><b>$selectBundle</b></div>
         <select id="bundleSelector" name="Bundles" size="5" class="aoDataSourceSelector">
@@ -135,7 +134,7 @@ $bundlesHtml = <<<TEXT
         </select>
         </div>
 TEXT;
-}
+
 $html .= <<<TEXT
 <div id="advancedOptions" class="advancedOptions">
 	<div id="aoFoldIcon" class="aoFoldClosed"> </div>

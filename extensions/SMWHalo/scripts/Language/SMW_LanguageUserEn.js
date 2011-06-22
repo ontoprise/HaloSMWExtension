@@ -178,6 +178,7 @@ var wgUserLanguageStrings = {
 	'AC_LEXICAL' : 'All pages containing: ',
 	'AC_SCHEMA_PROPERTY_TYPE' : 'All properties of type: ',
 	'AC_ASF' : 'TODO: ask ingo about this',
+	'AC_FROM_BUNDLE' : 'Pages coming from bundle: ',
 	
 
 	// Combined search

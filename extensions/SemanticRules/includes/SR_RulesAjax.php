@@ -331,6 +331,13 @@ function srf_sr_AccessRuleEndpoint($method, $params) {
 	$re = SRRuleEndpoint::getInstance();
 	$p_array = explode("##", $params);
 	$method = new ReflectionMethod(get_class($re), $method);
+	switch(count($p_array)) {
+		case 0: return $method->invoke($re); 
+		case 1: return $method->invoke($re, $p_array[0]); 
+		case 2: return $method->invoke($re, $p_array[0], $p_array[1]); 
+		case 3: return $method->invoke($re, $p_array[0], $p_array[1], $p_array[2]); 
+		case 4: return $method->invoke($re, $p_array[0], $p_array[1], $p_array[2], $p_array[3]); 
+	}
 	return $method->invoke($re, $p_array);
 }
 

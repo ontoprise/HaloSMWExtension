@@ -1354,6 +1354,8 @@ AutoCompleter.prototype = {
     			showText += gLanguage.getMessage('AC_SCHEMA_PROPERTY_TYPE') + parameter;
     		} else if (command == 'asf-ac') {
     			showText += gLanguage.getMessage('AC_ASF') + parameter;
+    		} else if (command == 'from-bundle') {
+    			showText += gLanguage.getMessage('AC_FROM_BUNDLE') + parameter;
     		} else {
     			showText += "Unknown constraint: "+c;
     		} 

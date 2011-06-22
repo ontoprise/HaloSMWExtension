@@ -1006,7 +1006,16 @@ class AutoCompletionHandler {
 				$inf = self::setInferred($titles, !$first);
 				self::mergeResults($result, $inf);
 				if (count($result) >= SMW_AC_MAX_RESULTS) break;
-			}
+			} else if($commandText == "from-bundle"){
+              
+                if (empty($params[0]) || is_null($params[0])) continue;
+                $bundleID = $params[0];
+                
+                $titles = smwfGetAutoCompletionStore()->getPages($userInput, NULL, $bundleID);
+                $inf = self::setInferred($titles, !$first);
+                self::mergeResults($result, $inf);
+                if (count($result) >= SMW_AC_MAX_RESULTS) break;
+            }
 
 			$first = false;
 		}

@@ -176,6 +176,7 @@ var wgUserLanguageStrings = {
 	'AC_LEXICAL' : 'Alle Seiten die folgenden Text im Titel enthalten: ',
 	'AC_SCHEMA_PROPERTY_TYPE' : 'Alle Attribute dieses Typs: ',
 	'AC_ASF' : 'TODO: ask ingo about this',
+	'AC_FROM_BUNDLE' : 'Seiten aus dem Bundle: ',
 
 	// Combined search
 	'ADD_COMB_SEARCH_RES'     : 'Zusätzliche Ergebnisse der Combined-Search.',

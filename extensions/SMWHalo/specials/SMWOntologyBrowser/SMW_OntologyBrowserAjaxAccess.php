@@ -31,11 +31,24 @@ require_once( "$smwgHaloIP/includes/storage/SMW_TS_Helper.php" );
 
 
 class OB_Storage {
-
+    
+	/**
+	 * Datasource according to the LOD metamodel
+	 * 
+	 * @var string (URI)
+	 */
 	protected $dataSource;
+	
+	/**
+	 * Bundle ID
+	 * 
+	 * @var string
+	 */
+	protected $bundleID;
 
-	public function __construct($dataSource = null) {
+	public function __construct($dataSource = null, $bundleID = '') {
 		$this->dataSource = $dataSource;
+		$this->bundleID = is_null($bundleID) ? '' : $bundleID;
 	}
 
 
@@ -47,10 +60,10 @@ class OB_Storage {
 		$reqfilter->sort = true;
 		$partitionNum = isset($p_array[1]) ? intval($p_array[1]) : 0;
 		$reqfilter->offset = $partitionNum*$reqfilter->limit;
-        $bundleID = $this->dataSource == 'null' ? '' : $this->dataSource;
+        
       
          
-		$rootcats = smwfGetSemanticStore()->getRootCategories($reqfilter, $bundleID);
+		$rootcats = smwfGetSemanticStore()->getRootCategories($reqfilter, $this->bundleID);
 		$resourceAttachments = array();
 		wfRunHooks('smw_ob_attachtoresource', array($rootcats, & $resourceAttachments, NS_CATEGORY));
 
@@ -73,9 +86,9 @@ class OB_Storage {
 		$partitionNum = isset($p_array[2]) ? intval($p_array[2]) : 0;
 		$reqfilter->offset = $partitionNum*$reqfilter->limit;
 		$supercat = Title::newFromText($p_array[0], NS_CATEGORY);
-        $bundleID = $this->dataSource == 'null' ? '' : $this->dataSource;
         
-		$directsubcats = smwfGetSemanticStore()->getDirectSubCategories($supercat, $reqfilter, $bundleID);
+        
+		$directsubcats = smwfGetSemanticStore()->getDirectSubCategories($supercat, $reqfilter, $this->bundleID);
 		$resourceAttachments = array();
 		wfRunHooks('smw_ob_attachtoresource', array($directsubcats, & $resourceAttachments, NS_CATEGORY));
 
@@ -151,7 +164,8 @@ class OB_Storage {
 		$cat = Title::newFromText($p_array[0], NS_CATEGORY);
 		$onlyDirect = $p_array[1] == "true";
 		$dIndex = $p_array[2];
-		$properties = smwfGetSemanticStore()->getPropertiesWithSchemaByCategory($cat, $onlyDirect, $dIndex, $reqfilter);
+		
+		$properties = smwfGetSemanticStore()->getPropertiesWithSchemaByCategory($cat, $onlyDirect, $dIndex, $reqfilter, $this->bundleID);
 
 		$propertySchemaElement = array();
 		foreach($properties as $p) {
@@ -171,8 +185,8 @@ class OB_Storage {
 		$reqfilter->limit =  isset($p_array[0]) ? intval($p_array[0]) : SMWH_OB_DEFAULT_PARTITION_SIZE;
 		$partitionNum = isset($p_array[1]) ? intval($p_array[1]) : 0;
 		$reqfilter->offset = $partitionNum*$reqfilter->limit;
-        $bundleID = $this->dataSource == 'null' ? '' : $this->dataSource;
-		$rootatts = smwfGetSemanticStore()->getRootProperties($reqfilter, $bundleID);
+        
+		$rootatts = smwfGetSemanticStore()->getRootProperties($reqfilter, $this->bundleID);
 		$resourceAttachments = array();
 		wfRunHooks('smw_ob_attachtoresource', array($rootatts, & $resourceAttachments, SMW_NS_PROPERTY));
 
@@ -196,8 +210,8 @@ class OB_Storage {
 		$partitionNum = isset($p_array[2]) ? intval($p_array[2]) : 0;
 		$reqfilter->offset = $partitionNum*$reqfilter->limit;
 		$superatt = Title::newFromText($p_array[0], SMW_NS_PROPERTY);
-		 $bundleID = $this->dataSource == 'null' ? '' : $this->dataSource;
-		$directsubatts = smwfGetSemanticStore()->getDirectSubProperties($superatt, $reqfilter, $bundleID);
+		 
+		$directsubatts = smwfGetSemanticStore()->getDirectSubProperties($superatt, $reqfilter, $this->bundleID);
 		$resourceAttachments = array();
 		wfRunHooks('smw_ob_attachtoresource', array($directsubatts, & $resourceAttachments, SMW_NS_PROPERTY));
 		$ts = TSNamespaces::getInstance();
@@ -346,9 +360,9 @@ class OB_Storage {
 			$reqfilter->addStringCondition($hint, SMWStringCondition::STRCOND_MID);
 		}
 		$reqfilter->isCaseSensitive = false;
-		$bundleID = $this->dataSource == 'null' ? '' : $this->dataSource;
 		
-		$foundCategories = smwfGetSemanticStore()->getPages(array(NS_CATEGORY), $reqfilter, true, $bundleID);
+		
+		$foundCategories = smwfGetSemanticStore()->getPages(array(NS_CATEGORY), $reqfilter, true, $this->bundleID);
 
 		return $this->getCategoryTree($foundCategories);
 	}
@@ -360,8 +374,8 @@ class OB_Storage {
 	 * @return xml string (category tree)
 	 */
 	protected function filterForCategoriesWithInstance(Title $articleTitle, $reqfilter) {
-		$bundleID = $this->dataSource == 'null' ? '' : $this->dataSource;
-		$categories = smwfGetSemanticStore()->getCategoriesForInstance($articleTitle, $reqfilter, $bundleID);
+		
+		$categories = smwfGetSemanticStore()->getCategoriesForInstance($articleTitle, $reqfilter, $this->bundleID);
 		return $this->getCategoryTree($categories);
 	}
 
@@ -372,8 +386,8 @@ class OB_Storage {
 	 * @return xml string (category tree)
 	 */
 	protected function filterForCategoriesWithProperty(Title $propertyTitle, $reqfilter) {
-		$bundleID = $this->dataSource == 'null' ? '' : $this->dataSource;
-		$categories = smwfGetSemanticStore()->getDomainCategories($propertyTitle, $reqfilter, $bundleID);
+		
+		$categories = smwfGetSemanticStore()->getDomainCategories($propertyTitle, $reqfilter, $this->bundleID);
 		return $this->getCategoryTree($categories);
 	}
 
@@ -432,9 +446,9 @@ class OB_Storage {
 		}
 
 		$reqfilter->isCaseSensitive = false;
-		$bundleID = $this->dataSource == 'null' ? '' : $this->dataSource;
 		
-		$foundAttributes = smwfGetSemanticStore()->getPages(array(SMW_NS_PROPERTY), $reqfilter, false, $bundleID);
+		
+		$foundAttributes = smwfGetSemanticStore()->getPages(array(SMW_NS_PROPERTY), $reqfilter, false, $this->bundleID);
 
 
 		// create root object
@@ -611,8 +625,8 @@ class OB_StorageTS extends OB_Storage {
 
 	private $tsNamespaceHelper;
 
-	public function __construct($dataSource = null) {
-		parent::__construct($dataSource);
+	public function __construct($dataSource = null, $bundleID = '') {
+		parent::__construct($dataSource, $bundleID);
 		$this->tsNamespaceHelper = TSNamespaces::getInstance(); // initialize namespaces
 	}
 
@@ -624,9 +638,9 @@ class OB_StorageTS extends OB_Storage {
 		$reqfilter->sort = true;
 		$partitionNum = isset($p_array[1]) ? intval($p_array[1]) : 0;
 		$reqfilter->offset = $partitionNum*$reqfilter->limit;
-        $bundleID = $this->dataSource == 'null' ? '' : $this->dataSource;
+        
        
-		$rootcats = smwfGetSemanticStore()->getRootCategories($reqfilter, $bundleID);
+		$rootcats = smwfGetSemanticStore()->getRootCategories($reqfilter, $this->bundleID);
 		$resourceAttachments = array();
 		wfRunHooks('smw_ob_attachtoresource', array($rootcats, & $resourceAttachments, NS_CATEGORY));
 
@@ -649,9 +663,9 @@ class OB_StorageTS extends OB_Storage {
 		$partitionNum = isset($p_array[2]) ? intval($p_array[2]) : 0;
 		$reqfilter->offset = $partitionNum*$reqfilter->limit;
 		$supercat = Title::newFromText($p_array[0], NS_CATEGORY);
-        $bundleID = $this->dataSource == 'null' ? '' : $this->dataSource;
         
-		$directsubcats = smwfGetSemanticStore()->getDirectSubCategories($supercat, $reqfilter, $bundleID);
+        
+		$directsubcats = smwfGetSemanticStore()->getDirectSubCategories($supercat, $reqfilter, $this->bundleID);
 		$resourceAttachments = array();
 		wfRunHooks('smw_ob_attachtoresource', array($directsubcats, & $resourceAttachments, NS_CATEGORY));
 
@@ -674,9 +688,9 @@ class OB_StorageTS extends OB_Storage {
 		$reqfilter->limit =  isset($p_array[0]) ? intval($p_array[0]) : SMWH_OB_DEFAULT_PARTITION_SIZE;
 		$partitionNum = isset($p_array[1]) ? intval($p_array[1]) : 0;
 		$reqfilter->offset = $partitionNum*$reqfilter->limit;
-        $bundleID = $this->dataSource == 'null' ? '' : $this->dataSource;
+        
        
-		$rootatts = smwfGetSemanticStore()->getRootProperties($reqfilter, $bundleID);
+		$rootatts = smwfGetSemanticStore()->getRootProperties($reqfilter, $this->bundleID);
         
 		$resourceAttachments = array();
 		wfRunHooks('smw_ob_attachtoresource', array($rootatts, & $resourceAttachments, SMW_NS_PROPERTY));
@@ -700,10 +714,10 @@ class OB_StorageTS extends OB_Storage {
 		$reqfilter->limit =  intval($p_array[1]);
 		$partitionNum = isset($p_array[2]) ? intval($p_array[2]) : 0;
 		$reqfilter->offset = $partitionNum*$reqfilter->limit;
-		$bundleID = $this->dataSource == 'null' ? '' : $this->dataSource;
+		
 		
 		$superatt = Title::newFromText($p_array[0], SMW_NS_PROPERTY);
-		$directsubatts = smwfGetSemanticStore()->getDirectSubProperties($superatt, $reqfilter, $bundleID);
+		$directsubatts = smwfGetSemanticStore()->getDirectSubProperties($superatt, $reqfilter, $this->bundleID);
 		$resourceAttachments = array();
 		wfRunHooks('smw_ob_attachtoresource', array($directsubatts, & $resourceAttachments, SMW_NS_PROPERTY));
 		$ts = TSNamespaces::getInstance();
@@ -723,7 +737,8 @@ class OB_StorageTS extends OB_Storage {
 		$cat = Title::newFromText($p_array[0], NS_CATEGORY);
 		$onlyDirect = $p_array[1] == "true";
 		$dIndex = $p_array[2];
-		$properties = smwfGetSemanticStore()->getPropertiesWithSchemaByCategory($cat, $onlyDirect, $dIndex, $reqfilter);
+		
+        $properties = smwfGetSemanticStore()->getPropertiesWithSchemaByCategory($cat, $onlyDirect, $dIndex, $reqfilter, $this->bundleID);
 
 		$ts = TSNamespaces::getInstance();
 		$propertySchemaElement = array();
@@ -1133,9 +1148,15 @@ class OB_StorageTS extends OB_Storage {
 			global $smwgTripleStoreGraph;
 
 			$instanceURI = $p_array[0];
-
+			$bundleSPARQL = "";
+            if ($this->bundleID != '') {
+            	global $dfgLang;
+            	$partOfBundleURI = TSHelper::getUriFromTitle(Title::newFromText($dfgLang->getLanguageString("df_partofbundle"), SMW_NS_PROPERTY));
+            	$bundleURI = TSHelper::getUriFromTitle(Title::newFromText($this->bundleID, NS_MAIN));
+            	$bundleSPARQL = " ?cat <$partOfBundleURI> <$bundleURI> .";
+            } 
 			// query
-			$response = $client->query(TSNamespaces::getW3CPrefixes()." SELECT ?cat WHERE { <$instanceURI> rdf:type ?cat.  }",  "", $smwgTripleStoreGraph);
+			$response = $client->query(TSNamespaces::getW3CPrefixes()." SELECT ?cat WHERE { <$instanceURI> rdf:type ?cat. $bundleSPARQL }",  "", $smwgTripleStoreGraph);
 
 			$categories = array();
 			$this->parseCategories($response, $categories);
@@ -1277,19 +1298,19 @@ class OB_StorageTS extends OB_Storage {
 }
 
 
-function smwf_ob_OntologyBrowserAccess($method, $params, $dataSource) {
+function smwf_ob_OntologyBrowserAccess($method, $params, $dataSource = '', $bundleID = '') {
 
 	$browseWiki = wfMsg("smw_ob_source_wiki");
 	global $smwgDefaultStore;
 	if ($smwgDefaultStore == 'SMWTripleStoreQuad' && !empty($dataSource) && $dataSource != $browseWiki) {
 		// dataspace parameter. so assume quad driver is installed
-		$storage = new OB_StorageTSQuad($dataSource);
+		$storage = new OB_StorageTSQuad($dataSource, $bundleID);
 	} else if ($smwgDefaultStore == 'SMWTripleStore') {
 		// assume normal (non-quad) TSC is running
-		$storage = new OB_StorageTS($dataSource);
+		$storage = new OB_StorageTS($dataSource, $bundleID);
 	} else {
 		// no TSC installed
-		$storage = new OB_Storage($dataSource);
+		$storage = new OB_Storage($dataSource, $bundleID);
 	}
 
 	$p_array = explode("##", $params);

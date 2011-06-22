@@ -172,7 +172,7 @@ abstract class SMWSemanticStoreSQL extends SMWSemanticStore {
 		global $dfgLang;
 		$partOfBundlePropertyID = smwfGetStore()->getSMWPropertyID(SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString("df_partofbundle")));
 		//$partOfBundleID = smwfGetStore()->getSMWPageID($ext_id, NS_MAIN, "");
-		$bundleID = ucfirst($bundleID);
+		$bundleID = str_replace(" ","_",ucfirst($bundleID));
 		$bundleSMWID = smwfGetStore()->getSMWPageID($bundleID, NS_MAIN, "");
 		$smw_ids = $db->tableName('smw_ids');
 		$smw_rels2 = $db->tableName('smw_rels2');
@@ -221,7 +221,7 @@ abstract class SMWSemanticStoreSQL extends SMWSemanticStore {
 		global $dfgLang;
 		$partOfBundlePropertyID = smwfGetStore()->getSMWPropertyID(SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString("df_partofbundle")));
 		//$partOfBundleID = smwfGetStore()->getSMWPageID($ext_id, NS_MAIN, "");
-		$bundleID = ucfirst($bundleID);
+		$bundleID = str_replace(" ","_",ucfirst($bundleID));
 		$bundleSMWID = smwfGetStore()->getSMWPageID($bundleID, NS_MAIN, "");
 		$smw_ids = $db->tableName('smw_ids');
 		$smw_rels2 = $db->tableName('smw_rels2');
@@ -281,7 +281,7 @@ abstract class SMWSemanticStoreSQL extends SMWSemanticStore {
 		global $dfgLang;
 		$partOfBundlePropertyID = smwfGetStore()->getSMWPropertyID(SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString("df_partofbundle")));
 		//$partOfBundleID = smwfGetStore()->getSMWPageID($ext_id, NS_MAIN, "");
-		$bundleID = ucfirst($bundleID);
+		$bundleID = str_replace(" ","_",ucfirst($bundleID));
 		$bundleSMWID = smwfGetStore()->getSMWPageID($bundleID, NS_MAIN, "");
 		$smw_ids = $db->tableName('smw_ids');
 		$smw_rels2 = $db->tableName('smw_rels2');
@@ -366,7 +366,7 @@ abstract class SMWSemanticStoreSQL extends SMWSemanticStore {
 		global $dfgLang;
 		$partOfBundlePropertyID = smwfGetStore()->getSMWPropertyID(SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString("df_partofbundle")));
 		//$partOfBundleID = smwfGetStore()->getSMWPageID($ext_id, NS_MAIN, "");
-		$bundleID = ucfirst($bundleID);
+		$bundleID = str_replace(" ","_",ucfirst($bundleID));
 		$bundleSMWID = smwfGetStore()->getSMWPageID($bundleID, NS_MAIN, "");
 		$smw_ids = $db->tableName('smw_ids');
 		$smw_rels2 = $db->tableName('smw_rels2');
@@ -550,12 +550,25 @@ abstract class SMWSemanticStoreSQL extends SMWSemanticStore {
 	}
 
 
-	function getPropertiesWithSchemaByCategory(Title $categoryTitle, $onlyDirect = false, $dIndex = 0, $requestoptions = NULL) {
+	function getPropertiesWithSchemaByCategory(Title $categoryTitle, $onlyDirect = false, $dIndex = 0, $requestoptions = NULL,$bundleID= '') {
 		$db =& wfGetDB( DB_SLAVE );
-		$page = $db->tableName('page');
+				
+		global $dfgLang;
+        $partOfBundlePropertyID = smwfGetStore()->getSMWPropertyID(SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString("df_partofbundle")));
+        $bundleID = ucfirst($bundleID);
+        $bundleSMWID = smwfGetStore()->getSMWPageID($bundleID, NS_MAIN, "");
+        $smw_ids = $db->tableName('smw_ids');
+        $smw_rels2 = $db->tableName('smw_rels2');
+        
+        $smw_subs2 = $db->tableName('smw_subp2');
+        $page = $db->tableName('page');
+        
+        $bundleSql = empty($bundleID) ? '' : ' WHERE property IN (SELECT pc.page_title FROM '.$page.' pc JOIN '.$smw_ids.' ON pc.page_title = smw_title AND pc.page_namespace = '.SMW_NS_PROPERTY.' JOIN '.$smw_rels2.' ON s_id = smw_id AND p_id = '.$partOfBundlePropertyID.' AND o_id = '.$bundleSMWID.')';
+        
+        
 		$this->createVirtualTableWithPropertiesByCategory($categoryTitle, $db, $onlyDirect, $dIndex);
 
-		$res = $db->query( 'SELECT DISTINCT property, inherited FROM smw_ob_properties '.DBHelper::getSQLOptionsAsString($requestoptions,array('inherited','property')));
+		$res = $db->query( 'SELECT DISTINCT property, inherited FROM smw_ob_properties '.$bundleSql.' '.DBHelper::getSQLOptionsAsString($requestoptions,array('inherited','property')));
 
 		$properties = array();
 		if($db->numRows( $res ) > 0) {

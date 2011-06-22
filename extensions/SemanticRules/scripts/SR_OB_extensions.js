@@ -256,7 +256,7 @@ SRRuleActionListener.prototype = {
 	initializeRootRules : function(force) {
 		if (!this.OB_rulesInitialized || force) {
 			OB_tree_pendingIndicator.show(globalActionListener.activeTreeName);
-			sajax_do_call('srf_sr_AccessRuleEndpoint', [ 'getRootRules', '' ],
+			sajax_do_call('srf_sr_AccessRuleEndpoint', [ 'getRootRules', obAdvancedOptions.getBundle() ],
 					this.initializeRootRulesCallback.bind(this));
 		}
 	},

@@ -206,17 +206,28 @@ class AutoCompletionStorageSQL2 extends AutoCompletionStorage {
 		return $result;
 	}
 
-	public function getPages($match, $namespaces = NULL) {
+	public function getPages($match, $namespaces = NULL, $bundleID = '') {
 		$result = "";
 		$db =& wfGetDB( DB_SLAVE );
 		$sql = "";
 		$page = $db->tableName('page');
+		global $dfgLang;
+		$partOfBundlePropertyID = smwfGetStore()->getSMWPropertyID(SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString("df_partofbundle")));
+
+		$bundleID = str_replace(" ","_",ucfirst($bundleID));
+		$bundleSMWID = smwfGetStore()->getSMWPageID($bundleID, NS_MAIN, "");
+		$smw_ids = $db->tableName('smw_ids');
+		$smw_rels2 = $db->tableName('smw_rels2');
+		$page = $db->tableName('page');
+		$redirect = $db->tableName('redirect');
+		$bundleSql = empty($bundleID) ? '' : ' AND page_id IN (SELECT pc.page_id  FROM '.$page.' pc JOIN '.$smw_ids.' ON pc.page_title = smw_title JOIN '.$smw_rels2.' ON s_id = smw_id AND p_id = '.$partOfBundlePropertyID.' AND o_id = '.$bundleSMWID.')';
+
 		$requestoptions = new SMWRequestOptions();
 		$requestoptions->limit = SMW_AC_MAX_RESULTS;
 		$options = DBHelper::getSQLOptionsAsString($requestoptions);
 		if ($namespaces == NULL || count($namespaces) == 0) {
 
-			$sql .= 'SELECT page_title, page_namespace FROM '.$page.' WHERE UPPER('.DBHelper::convertColumn('page_title').') LIKE UPPER('.$db->addQuotes($match.'%').') ORDER BY page_title ';
+			$sql .= 'SELECT page_title, page_namespace FROM '.$page.' WHERE UPPER('.DBHelper::convertColumn('page_title').') LIKE UPPER('.$db->addQuotes('%'.$match.'%').') '.$bundleSql.' ORDER BY page_title ';
 
 		} else {
 
@@ -232,32 +243,32 @@ class AutoCompletionStorageSQL2 extends AutoCompletionStorage {
 				}
 			}
 
-				
+
 			$wantedNamespacesCond = "";
 			$first = true;
 			foreach ($wantedNamespaces as $ns) {
 				if (!$first) $wantedNamespacesCond .= ' OR ';
 				$first = false;
-				
+
 				$wantedNamespacesCond .= " page_namespace = '$ns' ";
 			}
 			if (!empty($wantedNamespacesCond)) $wantedNamespacesCond = " AND (".$wantedNamespacesCond.")";
-				
+
 			$unwantedNamespacesCond = "";
 			$first = true;
 			foreach ($unwantedNamespaces as $ns) {
 				if (!$first) $unwantedNamespacesCond .= ' AND ';
 				$first = false;
-			
+					
 				$unwantedNamespacesCond .= " page_namespace != '$ns' ";
 			}
 			if (!empty($unwantedNamespacesCond)) $unwantedNamespacesCond = " AND (".$unwantedNamespacesCond.")";
 
-				//echo print_r($wantedNamespacesCond, true);die();
-				
-			$sql .= '(SELECT page_title, page_namespace FROM '.$page.' WHERE UPPER('.DBHelper::convertColumn('page_title').') LIKE UPPER('.$db->addQuotes($match.'%').') '.$wantedNamespacesCond.' '.$unwantedNamespacesCond.' ORDER BY page_title) UNION ';
-			$sql .= '(SELECT page_title, page_namespace FROM '.$page.' WHERE UPPER('.DBHelper::convertColumn('page_title').') LIKE UPPER('.$db->addQuotes('%'.$match.'%').') '.$wantedNamespacesCond.' '.$unwantedNamespacesCond.' ORDER BY page_title) ';
-				
+			//echo print_r($wantedNamespacesCond, true);die();
+
+			$sql .= '(SELECT page_title, page_namespace FROM '.$page.' WHERE UPPER('.DBHelper::convertColumn('page_title').') LIKE UPPER('.$db->addQuotes($match.'%').') '.$wantedNamespacesCond.' '.$unwantedNamespacesCond.' '.$bundleSql.' ORDER BY page_title) UNION ';
+			$sql .= '(SELECT page_title, page_namespace FROM '.$page.' WHERE UPPER('.DBHelper::convertColumn('page_title').') LIKE UPPER('.$db->addQuotes('%'.$match.'%').') '.$wantedNamespacesCond.' '.$unwantedNamespacesCond.' '.$bundleSql.' ORDER BY page_title) ';
+
 
 		}
 

@@ -218,6 +218,7 @@ abstract class SMWSemanticStore {
 	/**
 	 * Returns all direct instances of $categoryTitle
 	 *
+	 * @param SMWRequestOption $requestOptions
 	 * @return array of Title
 	 */
 	public abstract function getDirectInstances(Title $categoryTitle, $requestoptions = NULL);
@@ -225,15 +226,22 @@ abstract class SMWSemanticStore {
 
 	/**
 	 * Returns all properties with schema of $categoryTitle (including inherited).
-	 *
-	 * @return array of tuples: (title, minCard, maxCard, type, isSym, isTrans, range)
+	 * 
+	 * @param Title $categoryTitle Category whose properties should be returned. 
+	 * @param boolean $onlyDirect Show only direct properties (no inherited from super categories)
+	 * @param int $dIndex 0 = get properties with the given category as domain
+	 *                    1 = get properties with the given category as range
+	 * @param SMWRequestOption $requestOptions
+	 * @param string $bundleID Retrieve only properties of the given bundle.
+	 * @return tuples (title, minCard, maxCard, type, isSym, isTrans, range)
 	 */
-	public abstract function getPropertiesWithSchemaByCategory(Title $categoryTitle, $requestoptions = NULL);
+	public abstract function getPropertiesWithSchemaByCategory(Title $categoryTitle, $onlyDirect = false, $dIndex = 0, $requestoptions = NULL,$bundleID= '');
 
 	/**
 	 * Returns all properties of matching $requestoptions
-	 *
-	 * array of tuples: (title, minCard, maxCard, type, isSym, isTrans, range)
+	 * 
+	 * @param SMWRequestOption $requestOptions
+	 * @return tuples: (title, minCard, maxCard, type, isSym, isTrans, range)
 	 */
 	public abstract function getPropertiesWithSchemaByName($requestoptions);
 
