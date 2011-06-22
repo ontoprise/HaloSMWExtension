@@ -4324,6 +4324,7 @@ function haclGetUsersForGroups($groupsstring) {
  * @return <string> json-formed list of groups
  */
 function haclGetGroupsForRightPanel($clickedGroup, $search=null, $recursive=false, $level=0,$subgroupsToCall = null) {
+
     $array = array();
     if ($search) 
     	$recursive = true;
@@ -4340,7 +4341,6 @@ function haclGetGroupsForRightPanel($clickedGroup, $search=null, $recursive=fals
         }
         foreach ( $groups as $key => $value) {
             if ($recursive) {
-
                 $parent = HACLGroup::newFromName($value->getGroupName());
                 $subgroupsToCall = $parent->getGroups(HACLGroup::OBJECT);
                 if (sizeof($subgroupsToCall)> 0 || $level == 0) {
@@ -4352,8 +4352,8 @@ function haclGetGroupsForRightPanel($clickedGroup, $search=null, $recursive=fals
                     || (isset($subgroups) 
                         && (sizeof($subgroups) > 0))) {
 					$name = haclRemoveGroupPrefix($value->getGroupName());
-					$g = $array[$name];
-					if (!isset($g) || $g['type'] == 'HaloACL') {
+					$g = in_array($name, $array) ? $array[$name] : null;
+					if (is_null($g) || $g['type'] == 'HaloACL') {
 						$tempgroup = array('name'   => $name,
 						                   'id'     => $value->getGroupId(),
 						                   'checked'=> 'false',
@@ -4368,15 +4368,14 @@ function haclGetGroupsForRightPanel($clickedGroup, $search=null, $recursive=fals
 
             // non recursive part
             } else {
-
                 if (!$search 
                     || preg_match("/$search/is", haclRemoveGroupPrefix($value->getGroupName()))) {
                     try {
                         $subparent = HACLGroup::newFromName($value->getGroupName());
                         $subgroups = $subparent->getGroups(HACLGroup::OBJECT);
 						$name = haclRemoveGroupPrefix($value->getGroupName());
-						$g = $array[$name];
-						if (!isset($g) || $g['type'] == 'HaloACL') {
+						$g = in_array($name, $array) ? $array[$name] : null;
+						if (is_null($g) || $g['type'] == 'HaloACL') {
 							$tempgroup = array('name'    => $name,
 											   'id'      => $value->getGroupId(),
 											   'checked' => 'false',
@@ -4402,8 +4401,8 @@ function haclGetGroupsForRightPanel($clickedGroup, $search=null, $recursive=fals
             $subparent = HACLGroup::newFromName($value->getGroupName());
             $subgroups = $subparent->getGroups(HACLGroup::OBJECT);
 			$name = haclRemoveGroupPrefix($value->getGroupName());
-			$g = $array[$name];
-			if (!isset($g) || $g['type'] == 'HaloACL') {
+			$g = in_array($name, $array) ? $array[$name] : null;
+			if (is_null($g) || $g['type'] == 'HaloACL') {
 				$tempgroup = array('name'    => $name,
 	                               'id'      => $value->getGroupId(),
 	                               'checked' => 'false',
