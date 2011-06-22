@@ -40,22 +40,22 @@ $messages['en'] = array(
 
 	/* comment form */
 	/* warnings */
-	'ce_cf_disabled'				=> 'Comments has been disabled.',
+	'ce_cf_disabled'					=> 'Comments are currently disabled.',
 	'ce_cf_already_shown'			=> 'The comment form is already shown in this page.',
 	'ce_cf_all_not_allowed'			=> 'Nobody is actually allowed to enter comments.',
-	'ce_cf_you_not_allowed'			=> 'You are actually not allowed to enter comments.',
+	'ce_cf_you_not_allowed'			=> 'You are actually not allowed to enter comments. Please log in first.',
 
 	/* author */
 	'ce_cf_author'					=> 'Author:',
 	/* rating */
-	'ce_cf_article_rating'			=> 'Rate the quality of this article',
+	'ce_cf_article_rating'				=> 'Rate the quality of this article',
 	'ce_cf_article_rating2'			=> '(optional)',
 	'ce_ce_rating_0'				=> 'good',
 	'ce_ce_rating_1'				=> 'ok',
 	'ce_ce_rating_2'				=> 'bad',
-	'ce_cf_rating_title_b'			=> 'You can add a bad rating to your comment by clicking this icon.',
-	'ce_cf_rating_title_n'			=> 'You can add a neutral rating to your comment by clicking this icon.',
-	'ce_cf_rating_title_g'			=> 'You can add a good rating to your comment by clicking this icon.',
+	'ce_cf_rating_title_b'				=> 'You can add a bad rating to your comment by clicking this icon.',
+	'ce_cf_rating_title_n'				=> 'You can add a neutral rating to your comment by clicking this icon.',
+	'ce_cf_rating_title_g'				=> 'You can add a good rating to your comment by clicking this icon.',
 	
 	/*comments*/
 	'ce_cf_comment'					=> 'Comment',
@@ -72,10 +72,11 @@ $messages['en'] = array(
 	'ce_com_edit_sum'				=> 'This comment article was edited by Collaboration Extension.',
 	'ce_comment_exists'				=> 'Comment article "$1" already exists.',
 	'ce_com_created'				=> 'Comment article successfully created.',
-	'ce_com_edited'					=> 'Comment article successfully edited.',
-	'ce_nothing_deleted'			=> 'No comment deleted.',
+	'ce_com_edited'				=> 'Comment article successfully edited.',
+	'ce_com_edit_not_exists'			=> 'You tried to edit a non-existing comment. Please check again.',
+	'ce_nothing_deleted'				=> 'No comment deleted.',
 	'ce_comment_delete_reason'		=> 'Comment has been deleted via Collaboration GUI.',
-	'ce_comment_deletion_successful'=> 'Comment has been successfully deleted.',
+	'ce_comment_deletion_successful'	=> 'Comment has been successfully deleted.',
 	'ce_comment_massdeletion_successful' => 'Comments have been successfully deleted.',
 	'ce_comment_deletion_error'		=> 'Comment could not be deleted.',
 	'ce_comment_has_deleted'		=> 'deleted this comment on'
@@ -87,7 +88,7 @@ $messages['en'] = array(
 $messages['de'] = array(
 	/* general/maintenance messages */
 	'collaboration'					=> 'Collaboration',
-	'collaboration_desc'			=> 'Collaboration',
+	'collaboration_desc'				=> 'Collaboration',
 	'ce_sp_intro'					=> 'Diese Spezialseite erlaubt Ihnen einen schnellen Überblick über die neusten Kommentare in Ihrem Wiki.',
 	'ce_allowed'					=> 'Gratulation! CE funktioniert wie erwartet.',
 	'ce_warning'					=> 'Collaboration Extension Warnung',
@@ -95,23 +96,23 @@ $messages['de'] = array(
 
 	/* comment form */
 	/* warnings */
-	'ce_cf_disabled'				=> 'Kommentare sind deaktiviert.',
+	'ce_cf_disabled'					=> 'Kommentare sind deaktiviert.',
 	'ce_cf_already_shown'			=> 'Das Kommentar-Formular wird auf dieser Seite bereits angezeigt.',
 	'ce_cf_all_not_allowed'			=> 'Niemand darf aktuell Kommentare eingeben.',
-	'ce_cf_you_not_allowed'			=> 'Sie dürfen aktuell keine Kommentare eingeben.',
+	'ce_cf_you_not_allowed'			=> 'Sie dürfen aktuell keine Kommentare eingeben. Bitte melden sich sich an.',
  
 	/* author */
 	'ce_cf_author'					=> 'Autor:',
 
 	/* rating */
-	'ce_cf_article_rating'			=> 'Bewerten Sie die Qualit&auml;t dieses Artikels',
+	'ce_cf_article_rating'				=> 'Bewerten Sie die Qualit&auml;t dieses Artikels',
 	'ce_cf_article_rating2'			=> '(optional)',
 	'ce_ce_rating_0'				=> 'gut',
 	'ce_ce_rating_1'				=> 'ok',
 	'ce_ce_rating_2'				=> 'schlecht',
-	'ce_cf_rating_title_b'			=> 'Sie können Ihrem Kommentar durch Klicken dieses Bildes eine schlechte Bewertung hinzufügen.',
-	'ce_cf_rating_title_n'			=> 'Sie können Ihrem Kommentar durch Klicken dieses Bildes eine neutrale Bewertung hinzufügen.',
-	'ce_cf_rating_title_g'			=> 'Sie können Ihrem Kommentar durch Klicken dieses Bildes eine gute Bewertung hinzufügen.',
+	'ce_cf_rating_title_b'				=> 'Sie können Ihrem Kommentar durch Klicken dieses Bildes eine schlechte Bewertung hinzufügen.',
+	'ce_cf_rating_title_n'				=> 'Sie können Ihrem Kommentar durch Klicken dieses Bildes eine neutrale Bewertung hinzufügen.',
+	'ce_cf_rating_title_g'				=> 'Sie können Ihrem Kommentar durch Klicken dieses Bildes eine gute Bewertung hinzufügen.',
 
 
 	/*comments*/
@@ -125,14 +126,15 @@ $messages['de'] = array(
 
 	/* comment processing */
 	'ce_com_cannot_create'			=> 'Kann Kommentar nicht erstellen.',
-	'ce_com_create_sum'				=> 'Dieser Artikel wurde von der Collaboration Extension erstellt.',
+	'ce_com_create_sum'			=> 'Dieser Artikel wurde von der Collaboration Extension erstellt.',
 	'ce_com_edit_sum'				=> 'Dieser Artikel wurde von der Collaboration Extension editiert.',
 	'ce_comment_exists'				=> 'Kommentar Artikel "$1" bereits vorhanden.',
 	'ce_com_created'				=> 'Kommentar Artikel erfolgreich erstellt.',
-	'ce_com_edited'					=> 'Kommentar Artikel erfolgreich editiert.',
-	'ce_nothing_deleted'			=> 'Kein Kommentar gelöscht.',
+	'ce_com_edited'				=> 'Kommentar Artikel erfolgreich editiert.',
+	'ce_com_edit_not_exists'			=> 'You tried to edit a non-existing comment. Please check again.',
+	'ce_nothing_deleted'				=> 'Kein Kommentar gelöscht.',
 	'ce_comment_delete_reason'		=> 'Kommentar wurde per Collaboration GUI gelöscht.',
-	'ce_comment_deletion_successful'=> 'Kommentar wurde erfolgreich gelöscht.',
+	'ce_comment_deletion_successful	'=> 'Kommentar wurde erfolgreich gelöscht.',
 	'ce_comment_massdeletion_successful' => 'Kommentare wurden erfolgreich gelöscht.',
 	'ce_comment_deletion_error'		=> 'Kommentar konnte nicht gelöscht werden.',
 	'ce_comment_has_deleted'		=> 'löschte diesen Kommentar am'

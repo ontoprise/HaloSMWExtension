@@ -84,7 +84,7 @@ class CEComment {
 			}
 			if( !$title->userCan( 'edit' ) ) {
 				return CECommentUtils::createXMLResponse(
-					wfMsg( 'ce_com_cannot_create' ),
+					wfMsg( 'ce_cf_you_not_allowed' ),
 					self::PERMISSION_ERROR, $pageName);
 			} else {
 				// Insert current Date
@@ -125,7 +125,7 @@ class CEComment {
 					);
 				} else {
 					return CECommentUtils::createXMLResponse(
-						wfMsg( 'ce_com_cannot_create' ),
+						wfMsg( 'ce_com_edit_not_exists' ),
 						self::PERMISSION_ERROR, $pageName
 					);
 				}
