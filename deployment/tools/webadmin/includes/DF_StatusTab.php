@@ -98,10 +98,11 @@ class DFStatusTab {
 				$disabledDeInstall = 'disabled="true"';
 			}
 			if (array_key_exists($id, $updates)) {
-				$html .= "<input type=\"button\" class=\"df_update_button\" value=\"$updateText\" id=\"df_update__$id\"></input>";
+				list( $tmpid, $tmpversion, $tmppatchlevel) = $updates[$id];
+				$html .= "<input type=\"button\" class=\"df_update_button\" value=\"$updateText\" id=\"df_update__$id"."__$tmpversion"."_$tmppatchlevel\"></input>";
 				$html .= "<input type=\"button\" class=\"df_deinstall_button\" value=\"$deinstallText\" id=\"df_deinstall__$id\" $disabledDeInstall></input>";
 			} else {
-				$html .= "<input type=\"button\" class=\"df_update_button\" value=\"$updateText\" id=\"df_update__$id\" disabled=\"true\"></input>";
+				$html .= "<input type=\"button\" class=\"df_update_button\" value=\"$updateText\" id=\"df_update__invalid\" disabled=\"true\"></input>";
 				$html .= "<input type=\"button\" class=\"df_deinstall_button\" value=\"$deinstallText\" id=\"df_update__$id\" $disabledDeInstall></input>";
 			}
 			$html .= "</td>";

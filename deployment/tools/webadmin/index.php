@@ -246,6 +246,7 @@ $globalUpdateWarning = $dfgLang->getLanguageString('df_globalupdate_warning');
 $checkExtensionHeading = $dfgLang->getLanguageString('df_inspectextension_heading');
 $deinstallHeading = $dfgLang->getLanguageString('df_webadmin_deinstall');
 $globalUpdateHeading = $dfgLang->getLanguageString('df_webadmin_globalupdate');
+$updateHeading = $dfgLang->getLanguageString('df_webadmin_update');
 $restoreHeading = $dfgLang->getLanguageString('df_webadmin_maintenacetab');
 
 $html .= <<<ENDS
@@ -267,6 +268,9 @@ $html .= <<<ENDS
 </div>
 <div id="global-updatedialog-confirm" title="$globalUpdateHeading" style="display:none">
     <p><span style="float:left; margin:0 7px 20px 0;"></span><span id="global-updatedialog-confirm-text">$globalUpdateWarning</span></p>
+</div>
+<div id="updatedialog-confirm" title="$updateHeading" style="display:none">
+    <p><span style="float:left; margin:0 7px 20px 0;"></span><span id="updatedialog-confirm-text"></span></p>
 </div>
 <div id="deinstall-dialog-confirm" title="$deinstallHeading" style="display:none">
     <p><span style="float:left; margin:0 7px 20px 0;"></span><span id="deinstall-dialog-confirm-text">$deinstallWarning</span></p>
