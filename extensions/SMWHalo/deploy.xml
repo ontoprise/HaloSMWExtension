@@ -35,7 +35,7 @@
 		<!-- empty -->
 	</resources>
 	<configs>
-
+        <successor ext="haloacl"/>
 		<new>
 			<patch file="patch_for_SMW1.5.2.txt" ext="smw" from="152" to="152"/>
             <patch file="patch_for_SMW1.5.4.txt" ext="smw" from="154" to="154"/>
