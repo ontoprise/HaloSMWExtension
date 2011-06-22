@@ -35,13 +35,13 @@ if (typeof FacetedSearch == "undefined") {
  */
 FacetedSearch.classes.NamespaceFacetWidget = AjaxSolr.AbstractFacetWidget.extend({
 
-	facetTheme: 'namespaceFacet',
+	mFacetTheme: 'namespaceFacet',
 	
 	setFacetTheme: function(facetTheme){
-		this.facetTheme = facetTheme;
+		this.mFacetTheme = facetTheme;
 	},
 	
-	namespaces: [],
+	mNamespaces: [],
 	
 	afterRequest: function(){
 	
@@ -63,13 +63,21 @@ FacetedSearch.classes.NamespaceFacetWidget = AjaxSolr.AbstractFacetWidget.extend
 		}
 		
 		var objectedItems = [];
-		var initNamespaces = this.namespaces.length === 0;
 		var currentNamespaces = [];
 		for (var facet in this.manager.response.facet_counts.facet_fields[field]) {
 			var count = parseInt(this.manager.response.facet_counts.facet_fields[field][facet]);
-			if (initNamespaces) {
-				this.namespaces.push(facet);
+			// Check if a new namespace was populated
+			var nsFound = false;
+			for (var i = 0; i < this.mNamespaces.length; ++i) {
+				if (this.mNamespaces[i] === facet) {
+					nsFound = true;
+					break;
+				}
 			}
+			if (!nsFound) {
+				this.mNamespaces.push(facet);
+			}
+			
 			currentNamespaces.push(facet);
 			objectedItems.push({
 				field: field,
@@ -79,11 +87,11 @@ FacetedSearch.classes.NamespaceFacetWidget = AjaxSolr.AbstractFacetWidget.extend
 		}
 		
 		// Create object items for the missing namespaces of the current search
-		for (var i = 0; i < this.namespaces.length; ++i) {
-			if ($.inArray(this.namespaces[i], currentNamespaces) === -1) {
+		for (var i = 0; i < this.mNamespaces.length; ++i) {
+			if ($.inArray(this.mNamespaces[i], currentNamespaces) === -1) {
 				objectedItems.push({
 					field: field,
-					facet: this.namespaces[i],
+					facet: this.mNamespaces[i],
 					count: 0
 				});
 			}
@@ -96,14 +104,14 @@ FacetedSearch.classes.NamespaceFacetWidget = AjaxSolr.AbstractFacetWidget.extend
 		
 		$(this.target).empty();
 		// Add the "All namespaces" link
-		var entry = AjaxSolr.theme(this.facetTheme, "all", 
+		var entry = AjaxSolr.theme(this.mFacetTheme, "all", 
 								   this.manager.response.response.numFound, 
 								   this.clickHandler('all'), null, false);
 		$(this.target).append(entry);
 		// Add all namespaces
 		for (var i = 0, l = objectedItems.length; i < l; i++) {
 			var facet = objectedItems[i].facet;
-			var entry = AjaxSolr.theme(this.facetTheme, facet, 
+			var entry = AjaxSolr.theme(this.mFacetTheme, facet, 
 			                           objectedItems[i].count, 
 									   this.clickHandler(facet), null, false);
 			$(this.target).append(entry);
@@ -121,6 +129,8 @@ FacetedSearch.classes.NamespaceFacetWidget = AjaxSolr.AbstractFacetWidget.extend
 	},
 	
 	/**
+	 * This function is called when a namespace is clicked in the UI.
+	 * 
 	 * @param {String} value The value.
 	 * @returns {Function} Sends a request to Solr if it successfully adds a
 	 *   filter query with the given value.

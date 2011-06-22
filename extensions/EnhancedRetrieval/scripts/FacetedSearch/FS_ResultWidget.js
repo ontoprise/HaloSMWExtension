@@ -33,7 +33,11 @@ FacetedSearch.classes.ResultWidget = AjaxSolr.AbstractWidget.extend({
 
 	// AjaxSolr.Manager - The manager from the AjaxSolr library. It is used for
 	// retrieving the properties of an article
-	mAjaxSolrManager: null,
+	mASMforProperties: null,
+		
+	// AjaxSolr.Manager - The manager from the AjaxSolr library. It is used for
+	// checking if the search term is an existing article
+	mASMforTitleCheck: null,
 		
 	beforeRequest: function () {
 //		$(this.target).html($('<img/>').attr('src', 'images/ajax-loader.gif'));
@@ -61,22 +65,32 @@ FacetedSearch.classes.ResultWidget = AjaxSolr.AbstractWidget.extend({
 	
 	afterRequest: function () {
 		$(this.target).empty();
+		var fsi = FacetedSearch.singleton.FacetedSearchInstance;
+		
 		var query = this.manager.store.values('q');
 		var emptyQuery = true;
 		if (query.length == 1) {
 			query = query[0];	
 			emptyQuery = query.match(/^.*:\*$/) !== null;
+			if (!emptyQuery) {
+				query = query.match(/^.*?:(.*)$/);
+				if (query) {
+					query = query[1];
+				}
+			}
 		}
 		var facetQuery = this.manager.store.values('fq');
 		if (emptyQuery && facetQuery.length == 0) {
 			// No query present => hide results and show a message
 			$(this.target).append(AjaxSolr.theme('emptyQuery'));
+			$('#create_article').empty();
+
 			return;
 		} 
 
 		// Add all results
-		var docIdField = FacetedSearch.singleton.FacetedSearchInstance.DOCUMENT_ID;
-		var highlightField = FacetedSearch.singleton.FacetedSearchInstance.HIGHLIGHT_FIELD;
+		var docIdField = fsi.DOCUMENT_ID;
+		var highlightField = fsi.HIGHLIGHT_FIELD;
 		for (var i = 0, l = this.manager.response.response.docs.length; i < l; i++) {
 			var doc = this.manager.response.response.docs[i];
 			// Attach this result widget instance to the doc
@@ -94,6 +108,10 @@ FacetedSearch.classes.ResultWidget = AjaxSolr.AbstractWidget.extend({
 												 this.showPropertiesHandler
 												 ));
 		}
+		
+		// Check if the search term is an existing article
+		this.updateCreateArticleWidget(fsi.getSearch());
+			
 	},
 
 	/**
@@ -101,15 +119,28 @@ FacetedSearch.classes.ResultWidget = AjaxSolr.AbstractWidget.extend({
 	 * Creates a new AjaxSolrManager.
 	 */
 	init: function () {
-		
-		this.mAjaxSolrManager = new AjaxSolr.Manager({
+		var fsi = FacetedSearch.singleton.FacetedSearchInstance;
+		// Initialize the AjaxSolrManager for getting properties of the articles
+		this.mASMforProperties = new AjaxSolr.Manager({
 			solrUrl : wgFSSolrURL
 		});
-		this.mAjaxSolrManager.init();
+		this.mASMforProperties.init();
 		this.mArticlePropertiesWidget = new FacetedSearch.classes.ArticlePropertiesWidget({
 			id: 'fsArticleProperties'
 		});
-		this.mAjaxSolrManager.addWidget(this.mArticlePropertiesWidget);
+		this.mASMforProperties.addWidget(this.mArticlePropertiesWidget);
+		
+		// Initialize the AjaxSolrManager for checking if the search term is an
+		// existing article
+		this.mASMforTitleCheck = new AjaxSolr.Manager({
+			solrUrl : wgFSSolrURL
+		});
+		this.mASMforTitleCheck.init();
+		this.mCreateArticleWidget = new FacetedSearch.classes.CreateArticleWidget({
+			id: 'fsCreateArticle',
+			target: '#create_article'
+		});
+		this.mASMforTitleCheck.addWidget(this.mCreateArticleWidget);
 		
 		
 		var lang = FacetedSearch.singleton.Language;
@@ -166,7 +197,7 @@ FacetedSearch.classes.ResultWidget = AjaxSolr.AbstractWidget.extend({
 	 */
 	retrieveDocumentProperties: function (docData, domElement) {
 		var fs = FacetedSearch.singleton.FacetedSearchInstance;
-		var asm = this.mAjaxSolrManager;
+		var asm = this.mASMforProperties;
 		
 		// Reinitialize the manager's store
 		asm.setStore(new AjaxSolr.ParameterStore());
@@ -189,6 +220,77 @@ FacetedSearch.classes.ResultWidget = AjaxSolr.AbstractWidget.extend({
 		
 		this.mArticlePropertiesWidget.setTarget(domElement);
 		asm.doRequest(0);
+		
+	},
+	
+	/**
+	 * This function triggers a SOLR request. It checks if the search term
+	 * given in "query" is the name of an existing article. If not, a link for
+	 * creating such an article is displayed.
+	 * @param {String} query
+	 * 		The current query string. It may be the name of an existing article.
+	 */
+	updateCreateArticleWidget: function (query) {
+		var fsi = FacetedSearch.singleton.FacetedSearchInstance;
+		
+		// Check if there are wildcards in the query
+		var containsWildcards = query.indexOf('*') >= 0 
+								|| query.indexOf('?') >= 0;
+		// Wildcards may not be part of an article name	
+		if (!query || containsWildcards) {
+			$('#create_article').empty();
+			return;
+		}
+		
+		// Does the search term start with a valid namespace?
+		var ns = '';
+		var selectedNamespace = false; 
+		var title = query;
+		for (var nsid in wgFormattedNamespaces) {
+			var fns = wgFormattedNamespaces[nsid];
+			if (title.indexOf(fns + ':') === 0) {
+				ns = fns;
+				title = title.substr(fns.length + 1);
+				selectedNamespace = nsid;
+				break;
+			}
+		}
+
+		if (selectedNamespace === false) {
+			// Is a namespace selected in the UI?
+			var fq = this.manager.store.values('fq');
+			var nsField = fsi.NAMESPACE_FIELD;
+			var re = new RegExp(nsField + ':(\\d+)');
+			for (var i = 0; i < fq.length; ++i) {
+				var matches = fq[i].match(re);
+				if (matches) {
+					selectedNamespace = matches[1];
+				}
+			}
+		}
+		
+		// Send a SOLR request for the existence of the title
+		this.mASMforTitleCheck.store.remove('fq');
+		if (selectedNamespace !== false) {
+			this.mASMforTitleCheck.store.addByValue('fq', 
+				fsi.NAMESPACE_FIELD + ':' + selectedNamespace);
+		}
+		var lcfTitle = title.charAt(0).toLowerCase() + title.substr(1);
+		var ucfTitle = title.charAt(0).toUpperCase() + title.substr(1);
+		this.mASMforTitleCheck.store.addByValue('q', 
+			fsi.TITLE_FIELD + ':' + title + 
+			' OR ' +
+			fsi.TITLE_STRING_FIELD + ':' + title +
+			' OR ' +
+			fsi.TITLE_STRING_FIELD + ':' + ucfTitle +
+			' OR ' +
+			fsi.TITLE_STRING_FIELD + ':' + lcfTitle);
+		this.mASMforTitleCheck.store.addByValue('fl', [fsi.TITLE_STRING_FIELD, fsi.NAMESPACE_FIELD]);
+		this.mASMforTitleCheck.doRequest(0);
+		this.mASMforTitleCheck.titleCheckData = {
+			title: title,
+			namespace: selectedNamespace
+		};
 		
 	}
 	

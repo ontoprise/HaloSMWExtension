@@ -139,7 +139,8 @@ a.xfsFMore, a.xfsFLess {
 }
 
 .xfsEmptyNamespace {
-	color: #CC2200 !important;
+/*	color: #CC2200 !important;*/
+	color: gray !important;
 }
 
 .xfsRemoveFacet {
@@ -152,6 +153,10 @@ a.xfsFMore, a.xfsFLess {
 	cursor: pointer;
 }
 
-#field_namespaces {
-	height: 30px;
+.xfsNamespaces {
+	margin-bottom: 10px;
+}
+
+.xfsSortOrder {
+	margin-left: 1em;
 }

@@ -70,19 +70,22 @@ class FSFacetedSearchSpecial extends SpecialPage {
 		</div> 
 	</div>
 	<div class="results" id="results">
-		<div id="field_namespaces">
+		<div id="field_namespaces" class="xfsNamespaces">
 		</div>
 		<div class="search">
-	        <input type="text" id="query" name="query"/>
+	        <input type="text" id="query" name="query" value="{{searchTerm}}" />
 	        <input type="button" id="search_button" name="search" value="{{fs_search}}" />
-	        {{fs_sort_by}}
-			<select id="search_order" name="search_order" size="1">
-				<option value="relevance">{{fs_relevance}}</option>
-				<option value="newest" selected="selected">{{fs_newest_date_first}}</option>
-				<option value="oldest">{{fs_oldest_date_first}}</option>
-				<option value="ascending">{{fs_title_ascending}}</option>
-				<option value="descending">{{fs_title_descending}}</option>
-			</select>
+	        <span class="xfsSortOrder">
+		        {{fs_sort_by}}
+				<select id="search_order" name="search_order" size="1">
+					<option value="relevance">{{fs_relevance}}</option>
+					<option value="newest" selected="selected">{{fs_newest_date_first}}</option>
+					<option value="oldest">{{fs_oldest_date_first}}</option>
+					<option value="ascending">{{fs_title_ascending}}</option>
+					<option value="descending">{{fs_title_descending}}</option>
+				</select>
+			</span>
+			<div id="create_article"/>
 		</div>
 		<hr class="xfsSeparatorLine">
 		<div id="navigation">
@@ -100,7 +103,8 @@ class FSFacetedSearchSpecial extends SpecialPage {
 ';
 
     public function __construct() {
-        parent::__construct('FacetedSearch');
+//        parent::__construct('FacetedSearch');
+        parent::__construct('Search');
 		global $wgHooks;
 		$wgHooks['MakeGlobalVariablesScript'][] = "FSFacetedSearchSpecial::addJavaScriptVariables";
         
@@ -111,9 +115,42 @@ class FSFacetedSearchSpecial extends SpecialPage {
      */
     public function execute($par) {
 
-        global $wgOut, $wgRequest, $wgLang,$wgUser;
+        global $wgOut, $wgRequest;
+        
+		$search = str_replace( "\n", " ", $wgRequest->getText( 'search', '' ) );
+		$restrict = $wgRequest->getText( 'restrict', '' );
+		$specialPageTitle = $wgRequest->getText( 'title', '' );
+		$t = Title::newFromText( $search );
 
-		$wgOut->addHTML($this->replaceLanguageStrings(self::SPECIAL_PAGE_HTML));
+		$fulltext = $wgRequest->getVal( 'fulltext', '' );
+        $fulltext_x = $wgRequest->getVal( 'fulltext_x', '' );
+        if ($fulltext == NULL && $fulltext_x == NULL) {
+			
+			# If the string cannot be used to create a title
+			if(!is_null( $t ) ){
+
+
+				# If there's an exact or very near match, jump right there.
+				$t = SearchEngine::getNearMatch( $search );
+				if( !is_null( $t ) ) {
+					$wgOut->redirect( $t->getFullURL() );
+					return;
+				}
+
+				# If just the case is wrong, jump right there.
+//				$t = USStore::getStore()->getSingleTitle($search);
+//				if (!is_null( $t ) ) {
+//					$wgOut->redirect( $t->getFullURL() );
+//					return;
+//				}
+			}
+		}
+        
+		// Insert the search term into the input field of the UI
+		$html = self::SPECIAL_PAGE_HTML;
+		$html = str_replace('{{searchTerm}}', $search, $html);
+		
+		$wgOut->addHTML($this->replaceLanguageStrings($html));
 		$this->addJSLanguageScripts();
 		
 		global $fsgScriptPath;
@@ -134,6 +171,7 @@ class FSFacetedSearchSpecial extends SpecialPage {
 		$wgOut->addScript("<script type=\"text/javascript\" src=\"". $fsgScriptPath .  "/scripts/FacetedSearch/FS_PagerWidget.js\"></script>");        
 		$wgOut->addScript("<script type=\"text/javascript\" src=\"". $fsgScriptPath .  "/scripts/FacetedSearch/FS_FacetWidget.js\"></script>");        
 		$wgOut->addScript("<script type=\"text/javascript\" src=\"". $fsgScriptPath .  "/scripts/FacetedSearch/FS_ArticlePropertiesWidget.js\"></script>");        
+		$wgOut->addScript("<script type=\"text/javascript\" src=\"". $fsgScriptPath .  "/scripts/FacetedSearch/FS_CreateArticleWidget.js\"></script>");        
 		$wgOut->addScript("<script type=\"text/javascript\" src=\"". $fsgScriptPath .  "/scripts/FacetedSearch/FS_NamespaceFacetWidget.js\"></script>");        
 		$wgOut->addScript("<script type=\"text/javascript\" src=\"". $fsgScriptPath .  "/scripts/FacetedSearch/FS_FacetPropertyValueWidget.js\"></script>");        
 		$wgOut->addScript("<script type=\"text/javascript\" src=\"". $fsgScriptPath .  "/scripts/FacetedSearch/FS_CurrentSearchWidget.js\"></script>");

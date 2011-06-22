@@ -63,7 +63,10 @@ FacetedSearch.classes.FSLanguageDe = function () {
 'addFacetOrQuery'	: 'Bitte geben Sie einen Suchbegriff ein oder wählen Sie eine Facette aus!',
 'mainNamespace'		: 'Main',
 'namespaceTooltip'  : '$1 Artikel in diesem Namensraum passen zur Auswahl',
-'allNamespaces'		: 'Alle Namensräume'
+'allNamespaces'		: 'Alle Namensräume',
+'nonexArticle'		: 'Der Artikel $1 existiert nicht.',
+'createArticle'		: 'Klicken Sie hier, um den ihn zu erstellen.'
+
 	};
 	
 	return that;

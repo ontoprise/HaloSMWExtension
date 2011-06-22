@@ -128,7 +128,12 @@ function wfUSSetupExtension() {
 	$wgSpecialPages['EnhancedRetrievalStatistics'] = array('SpecialPage','EnhancedRetrievalStatistics', '', true, 'smwfDoSpecialUSSearch', $dir . 'includes/EnhancedRetrievalStatistics.php');
 	//$wgSpecialPageGroups['EnhancedRetrievalStatistics'] = 'maintenance';
 
-	$wgSpecialPages['Search'] = array('USSpecialPage');
+	global $fsgFacetedSearchForMW;
+	if ($fsgFacetedSearchForMW) {
+		$wgSpecialPages['Search'] = array('FSFacetedSearchSpecial');
+	} else {
+		$wgSpecialPages['Search'] = array('USSpecialPage');
+	}
 
 	// use default namespaces unless explicitly specified
 	if (!isset($usgAllNamespaces)) {

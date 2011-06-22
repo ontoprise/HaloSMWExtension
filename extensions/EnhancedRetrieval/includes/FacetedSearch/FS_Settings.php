@@ -55,3 +55,9 @@ $fsgFacetedSearchConfig = array(
     'host'    => '127.0.0.1',
     'port'    => 8983
 );
+
+###
+# If this variable is <true>, a search in the MediaWiki search field is redirected
+# to the faceted search special page. 
+# If <false>, Enhanced Retrieval is installed. 
+$fsgFacetedSearchForMW = true;

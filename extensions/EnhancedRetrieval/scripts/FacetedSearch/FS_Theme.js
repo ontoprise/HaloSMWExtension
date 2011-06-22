@@ -350,11 +350,12 @@
 			name = lang.getMessage('mainNamespace');
 		}
 		var tooltip = 'title="' + lang.getMessage('namespaceTooltip', count) + '" ';
+		name = name.replace(/ /g, '&nbsp;')
 		var emptyNamespace = count === 0 ? " xfsEmptyNamespace" : "";
 		html = $('<span namespace="' + facet + '" class="xfsNamespace' + emptyNamespace + '"/>')
 				.append('&nbsp;')
 				.append($('<span ' + tooltip + '>' + name + '</span>'))
-				.append('&nbsp;');
+				.append(' ');
 		html.find("span").click(handler)
 		return html;				
 	}
@@ -497,6 +498,15 @@
 	AjaxSolr.theme.prototype.emptyQuery = function(handler) {
 		var lang = FacetedSearch.singleton.Language;
 		return lang.getMessage('addFacetOrQuery');
+	};
+		
+	AjaxSolr.theme.prototype.createArticle = function(articleName, link) {
+		var lang = FacetedSearch.singleton.Language;
+		var html = lang.getMessage('nonexArticle', '<em>'+articleName+'</em>') + 
+					' <a href="' + link + '">' + 
+						lang.getMessage('createArticle') + 
+					'</a>';
+		return html;
 	};
 		
 	AjaxSolr.theme.prototype.filter_debug = function(filters) {

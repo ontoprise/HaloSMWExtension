@@ -59,13 +59,16 @@ FacetedSearch.classes.FacetedSearch = function () {
 	// 'wiki'
 	var TITLE_FIELD = 'smwh_title';
 
+	// Name of the SOLR field that stores the namespace id of an article
+	var NAMESPACE_FIELD = 'smwh_namespace_id';
+
 	// Name of the SOLR field that stores the title of an article as string.
 	// This is used for sorting search results.
 	var TITLE_STRING_FIELD = 'smwh_title_s';
 	
 	// Names of the facet classes
 	var FACET_FIELDS = ['smwh_categories', ATTRIBUTE_FIELD, RELATION_FIELD,
-						'smwh_namespace_id'];
+						NAMESPACE_FIELD];
 						
 	// Names of all fields that are returned in a query for documents
 	var QUERY_FIELD_LIST = [MODIFICATION_DATE_FIELD,
@@ -73,7 +76,8 @@ FacetedSearch.classes.FacetedSearch = function () {
 							ATTRIBUTE_FIELD, 
 							RELATION_FIELD,
 							DOCUMENT_ID,
-							TITLE_FIELD];
+							TITLE_FIELD,
+							NAMESPACE_FIELD];
 						
 	var RELATION_REGEX = /^smwh_(.*)_(.*)$/;
 	var ATTRIBUTE_REGEX = /smwh_(.*)_xsdvalue_(.*)/;
@@ -103,6 +107,10 @@ FacetedSearch.classes.FacetedSearch = function () {
 	
 	that.getRelationWidget = function() {
 		return mRelationWidget;
+	}
+	
+	that.getSearch = function () {
+		return mSearch;
 	}
 	
 	/**
@@ -182,16 +190,10 @@ FacetedSearch.classes.FacetedSearch = function () {
 		var categoryFacet = FACET_FIELDS[0];
 		var relationFacet = FACET_FIELDS[1];
 		var attributeFacet = FACET_FIELDS[2];
-		var namespaceFacet = FACET_FIELDS[3];
 		mAjaxSolrManager.addWidget(new FacetedSearch.classes.FacetWidget({
 			id : 'fsf' + categoryFacet,
 			target : '#field_categories',
 			field : categoryFacet
-		}));
-		mAjaxSolrManager.addWidget(new FacetedSearch.classes.NamespaceFacetWidget({
-			id : 'fsf' + namespaceFacet,
-			target : '#field_namespaces',
-			field : namespaceFacet
 		}));
 		mRelationWidget = new FacetedSearch.classes.FacetWidget({
 			id : 'fsf' + relationFacet,
@@ -260,6 +262,7 @@ FacetedSearch.classes.FacetedSearch = function () {
 		}
 		
 		checkSolrPresent();	
+		
 	};
 	that.construct = construct;
 	
@@ -267,15 +270,7 @@ FacetedSearch.classes.FacetedSearch = function () {
 	 * Keyup event handler for the search input field.
 	 */
 	that.onSearchKeyup = function () {
-		mSearch = $('#query').val();
-		var qs = '*'+mSearch+'*';
-		if (mSearch.length == 0) {
-			qs = '*';
-		}
-		qs = qs.toLowerCase();
-		mAjaxSolrManager.store.addByValue('q', QUERY_FIELD+':'+qs);
-		mAjaxSolrManager.doRequest(0);
-
+		updateSearchResults();
 		return false;
 	};
 	
@@ -315,8 +310,27 @@ FacetedSearch.classes.FacetedSearch = function () {
 	 * triggered.
 	 */
 	that.onSearchButtonClicked = function () {
-		// Simulate a key press
-		that.onSearchKeyup();
+		updateSearchResults();
+	}
+	
+	/**
+	 * Gets the search term from the input field and triggers a new SOLR request.
+	 * All widgets will be updated.
+	 */
+	function updateSearchResults() {
+		mSearch = $('#query').val();
+//		var qs = '*'+mSearch+'*';
+		var qs = mSearch+'*';
+		if (mSearch.length == 0) {
+			qs = '*';
+		}
+		// A colon in the search term must be escaped otherwise SOLR will throw
+		// a parser exception
+		qs = qs.replace(/:/g,'\\:', qs);
+		qs = qs.toLowerCase();
+		mAjaxSolrManager.store.addByValue('q', QUERY_FIELD+':'+qs);
+		mAjaxSolrManager.doRequest(0);
+		
 	}
 	
 	/**
@@ -354,6 +368,38 @@ FacetedSearch.classes.FacetedSearch = function () {
 	}
 	
 	/**
+	 * This function retrieves all namespaces that are currently populated in the
+	 * wiki. The namespace widget is initialized with these namespaces.
+	 */
+	function initNamespaces() {
+		var sm = new AjaxSolr.Manager({
+			solrUrl : wgFSSolrURL,
+			handleResponse : function (data) {
+				var namespaces = data.facet_counts.facet_fields[NAMESPACE_FIELD];
+				var ns = [];
+				for (var nsid in namespaces) {
+					ns.push(nsid);
+				}
+				mAjaxSolrManager.addWidget(new FacetedSearch.classes.NamespaceFacetWidget({
+					id : 'fsf' + NAMESPACE_FIELD,
+					target : '#field_namespaces',
+					field : NAMESPACE_FIELD,
+					mNamespaces: ns
+				}));
+				
+			}
+		});
+		sm.init();
+		sm.store.addByValue('q', '*:*');		
+		sm.store.addByValue('fl', NAMESPACE_FIELD);		
+		sm.store.addByValue('facet', true);		
+		sm.store.addByValue('facet.field', NAMESPACE_FIELD);		
+		sm.store.addByValue('json.nl', 'map');	
+		sm.doRequest(0);
+
+	}
+	
+	/**
 	 * Checks if the given name is a name for an attribute or relation.
 	 * 
 	 * @param {string} name
@@ -369,8 +415,10 @@ FacetedSearch.classes.FacetedSearch = function () {
 	construct();
 	addEventHandlers();
 	
+	initNamespaces();
+	
 	// Show all results at start up
-	mAjaxSolrManager.doRequest(0);
+	updateSearchResults();
 	
 	// Public constants
 	that.FACET_FIELDS		= FACET_FIELDS;
@@ -378,6 +426,9 @@ FacetedSearch.classes.FacetedSearch = function () {
 	that.HIGHLIGHT_FIELD	= HIGHLIGHT_FIELD;
 	that.RELATION_FIELD		= RELATION_FIELD;
 	that.ATTRIBUTE_FIELD	= ATTRIBUTE_FIELD;
+	that.NAMESPACE_FIELD	= NAMESPACE_FIELD;
+	that.TITLE_STRING_FIELD	= TITLE_STRING_FIELD;
+	that.TITLE_FIELD		= TITLE_FIELD;
 	return that;
 	
 }
