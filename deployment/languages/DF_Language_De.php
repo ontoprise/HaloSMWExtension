@@ -61,8 +61,13 @@ class DF_Language_De extends DF_Language {
     'df_ok' => 'OK',
 	
 	// webadmin
+	'df_webadmin' => 'Deployment Framework WebAdmin',
+	'df_username' => 'Benutzername',
+	'df_password' => 'Passwort',
+	'df_login' => 'Einloggen',
 	'df_linktowiki' => 'Gehe zum Wiki',
     'df_logout' => 'Ausloggen',
+	'df_webadmin_login_failed' => 'Login fehlgeschlagen',
 	'df_webadmin_findall' => 'Suche all',
 	'df_webadmin_about' => 'Über',
 	'df_webadmin_status_text' => 'Diese Tabelle zeigt all Pakete und Ontologien, die derzeit in ihrem Wiki installiert sind.',

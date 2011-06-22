@@ -46,7 +46,7 @@ if (!isset($_SESSION['angemeldet']) || !$_SESSION['angemeldet']) {
 }
 
 define("DF_WEBADMIN_TOOL", 1);
-define("DF_WEBADMIN_TOOL_VERSION", '{{$VERSION}} [B{{$BUILD_NUMBER}}]');
+define("DF_WEBADMIN_TOOL_VERSION", '1.5.6_0 [B${env.BUILD_NUMBER}]');
 
 $rootDir = dirname(__FILE__);
 $rootDir = str_replace("\\", "/", $rootDir);
@@ -66,6 +66,7 @@ $smwgDFIP=$rootDir;
 // touch the login marker
 touch("$rootDir/tools/webadmin/sessiondata/userloggedin");
 
+require_once($mwrootDir.'/deployment/languages/DF_Language.php');
 require_once('includes/DF_StatusTab.php');
 require_once('includes/DF_SearchTab.php');
 require_once('includes/DF_MaintenanceTab.php');
@@ -236,14 +237,14 @@ $javascriptLang
 ENDS
 ;
 $wikiName = !empty(DF_Config::$df_wikiName) ? "(".DF_Config::$df_wikiName.")" : "";
-
+$heading = $dfgLang->getLanguageString('df_webadmin');
 $html .= "<body><img src=\"skins/logo.png\" style=\"float:left; margin-right: 30px\" />".
          "<div style=\"float:right\">".
          "<a id=\"df_webadmin_aboutlink\">".$dfgLang->getLanguageString('df_webadmin_about')."</a> | ".
          "<a href=\"$wgServer$wgScriptPath/index.php\" target=\"_blank\">".$dfgLang->getLanguageString('df_linktowiki')."</a> | ".
          "<a href=\"$wgServer$wgScriptPath/deployment/tools/webadmin/logout.php\">".$dfgLang->getLanguageString('df_logout')."</a>".
          "</div>".
-         "<div id=\"df_header\">Deployment Framework WebAdmin $wikiName</div>";
+         "<div id=\"df_header\">$heading $wikiName</div>";
 
 $restoreWarning = $dfgLang->getLanguageString('df_restore_warning');
 $deinstallWarning = $dfgLang->getLanguageString('df_uninstall_warning');
@@ -301,21 +302,3 @@ $html .= "</body>";
 echo $html;
 
 die();
-
-
-
-/**
- * Initializes the language object
- *
- * Note: Requires wiki context
- */
-function dffInitLanguage() {
-	global $dfgLang, $mwrootDir;
-	$langCode = isset(DF_Config::$df_lang) ? ucfirst(DF_Config::$df_lang) : "En";
-	$langClass = "DF_Language_$langCode";
-	if (!file_exists($mwrootDir."/deployment/languages/$langClass.php")) {
-		$langClass = "DF_Language_En";
-	}
-	require_once($mwrootDir."/deployment/languages/$langClass.php");
-	$dfgLang = new $langClass();
-}

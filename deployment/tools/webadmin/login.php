@@ -34,6 +34,8 @@ $mwrootDir = realpath($mwrootDir."/../../../");
 require_once($mwrootDir.'/deployment/settings.php');
 $wgScriptPath=isset(DF_Config::$scriptPath) ? DF_Config::$scriptPath : "/mediawiki";
 
+require_once($mwrootDir.'/deployment/languages/DF_Language.php');
+dffInitLanguage();
 
 // make an environment check before showing login
 $envCheck = dffCheckEnvironment();
@@ -44,7 +46,7 @@ if ($envCheck !== true) {
 	exit();
 }
 
-
+$loginHint = "";
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	session_start();
 
@@ -67,21 +69,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 	// user name and password is checked
 	if (DF_Config::$df_authorizeByWiki) {
-		$result = authenticateUser($username, $passwort);
-		if ($result === 400) {
+		$isAuthorized = authenticateUser($username, $passwort);
+		if ($isAuthorized === 400) {
 			echo "Authentication by Wiki sysop-users requires Deployment framework to be included in LocalSettings.php";
 			echo "<br>please add: <pre>require_once('deployment/Deployment.php');</pre>";
 			exit;
 		}
 	} else{
-		$result = $username == DF_Config::$df_webadmin_user
+		$isAuthorized = $username == DF_Config::$df_webadmin_user
 		&& $passwort == DF_Config::$df_webadmin_pass;
 	}
 
-	if ($result == true) {
+	if ($isAuthorized == true) {
 		$_SESSION['angemeldet'] = true;
 		touch("$currentDir/sessiondata/userloggedin");
-		
+
 		if ($_SERVER['SERVER_PROTOCOL'] == 'HTTP/1.1') {
 			if (php_sapi_name() == 'cgi') {
 				header('Status: 303 See Other');
@@ -93,7 +95,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 		header('Location: http://'.$hostname.($path == '/' ? '' : $path).'/index.php');
 		exit;
+	} else {
+		// login failed
+		global $dfgLang;
+		$loginHint = "<div id=\"df_login_failed\">".$dfgLang->getLanguageString('df_webadmin_login_failed')."</div>";
 	}
+
 }
 
 function authenticateUser($username, $password, $acceptMIME=NULL) {
@@ -128,7 +135,7 @@ function authenticateUser($username, $password, $acceptMIME=NULL) {
          
         $status = curl_getinfo($ch,CURLINFO_HTTP_CODE);
         curl_close($ch);
-        
+
         if ($status != 200) {
         	return $status;
         }
@@ -150,81 +157,92 @@ function authenticateUser($username, $password, $acceptMIME=NULL) {
 function dffCheckEnvironment() {
 	global $mwrootDir;
 	require_once($mwrootDir.'/deployment/tools/smwadmin/DF_Tools.php');
-    $result = "";
-    
-    // check if LocalSettings can be written.
-    @$res = fopen("$mwrootDir/LocalSettings.php", "a");
-    if ($res === false) {
-        $result .= "<br>Could not open LocalSettings.php for writing.";
-    } else {
-        fclose($res);
-    }
-    
-    // check if the sessiondata folder can be written
-    @$res = fopen("$mwrootDir/deployment/tools/webadmin/sessiondata/test_file_for_webadmin", "a");
-    if ($res === false) {
-        $result .= "<br>Could not write into the 'deployment/tools/webadmin/sessiondata' subfolder";
-    } else {
-        fclose($res);
-    }
+	$result = "";
 
-    // check if extensions folder is writeable
-    @touch("$mwrootDir/extensions/test_file_for_webadmin");
-    if (!file_exists("$mwrootDir/extensions/test_file_for_webadmin")) {
-        $result .= "<br>Could not write into the 'extensions' subfolder";
-    } else {
-        unlink("$mwrootDir/extensions/test_file_for_webadmin");
-    }
+	// check if LocalSettings can be written.
+	@$res = fopen("$mwrootDir/LocalSettings.php", "a");
+	if ($res === false) {
+		$result .= "<br>Could not open LocalSettings.php for writing.";
+	} else {
+		fclose($res);
+	}
 
-    // check if external processes can be run
-    $phpExe = 'php';
-    if (array_key_exists('df_php_path', DF_Config::$settings)) {
-    	$phpExe = DF_Config::$settings['df_php_path'];
-    }
-    @exec("$phpExe --version", $out, $ret);
-    if ($ret != 0 || stripos($out[0], "PHP") === false) {
-        $result .= "<br>Could not run external processes: <pre>".implode("\n",$out)."</pre>";
-    } else if ($ret == 0 && preg_match("/5\\.\\d+\\.\\d+/", $out[0]) === 0) {
-    	$result .= "<br>Wrong PHP version: ".$out[0]." (PHP 5.x.x required, except 5.3.1)";
-    }
-    
-    // check if temp folder can be written
-    $tempFolder = Tools::getTempDir();
-    @touch("$tempFolder/test_file_for_webadmin");
-    if (!file_exists("$tempFolder/test_file_for_webadmin")) {
-        $result .= "<br>Could not write into the temp folder at $tempFolder.";
-    } else {
-        unlink("$tempFolder/test_file_for_webadmin");
-    }
-    
-    // check for curl (needed for wiki auth)
-    if (DF_Config::$df_authorizeByWiki) {
-    	if (!extension_loaded("curl")) {
-    		$result .= "<br>Could not find 'curl'-PHP extension. Install it or deactivate authentication by wiki. (DF_Config::\$df_authorizeByWiki=false;)";
-    	}
-    }
-    return empty($result) ? true : $result;
+	// check if the sessiondata folder can be written
+	@$res = fopen("$mwrootDir/deployment/tools/webadmin/sessiondata/test_file_for_webadmin", "a");
+	if ($res === false) {
+		$result .= "<br>Could not write into the 'deployment/tools/webadmin/sessiondata' subfolder";
+	} else {
+		fclose($res);
+	}
+
+	// check if extensions folder is writeable
+	@touch("$mwrootDir/extensions/test_file_for_webadmin");
+	if (!file_exists("$mwrootDir/extensions/test_file_for_webadmin")) {
+		$result .= "<br>Could not write into the 'extensions' subfolder";
+	} else {
+		unlink("$mwrootDir/extensions/test_file_for_webadmin");
+	}
+
+	// check if external processes can be run
+	$phpExe = 'php';
+	if (array_key_exists('df_php_path', DF_Config::$settings)) {
+		$phpExe = DF_Config::$settings['df_php_path'];
+	}
+	@exec("$phpExe --version", $out, $ret);
+	if ($ret != 0 || stripos($out[0], "PHP") === false) {
+		$result .= "<br>Could not run external processes: <pre>".implode("\n",$out)."</pre>";
+	} else if ($ret == 0 && preg_match("/5\\.\\d+\\.\\d+/", $out[0]) === 0) {
+		$result .= "<br>Wrong PHP version: ".$out[0]." (PHP 5.x.x required, except 5.3.1)";
+	}
+
+	// check if temp folder can be written
+	$tempFolder = Tools::getTempDir();
+	@touch("$tempFolder/test_file_for_webadmin");
+	if (!file_exists("$tempFolder/test_file_for_webadmin")) {
+		$result .= "<br>Could not write into the temp folder at $tempFolder.";
+	} else {
+		unlink("$tempFolder/test_file_for_webadmin");
+	}
+
+	// check for curl (needed for wiki auth)
+	if (DF_Config::$df_authorizeByWiki) {
+		if (!extension_loaded("curl")) {
+			$result .= "<br>Could not find 'curl'-PHP extension. Install it or deactivate authentication by wiki. (DF_Config::\$df_authorizeByWiki=false;)";
+		}
+	}
+	return empty($result) ? true : $result;
 }
+$heading = $dfgLang->getLanguageString('df_webadmin');
+$username = $dfgLang->getLanguageString('df_username');
+$password = $dfgLang->getLanguageString('df_password');
+$login = $dfgLang->getLanguageString('df_login');
 $html = <<<ENDS
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="de" lang="de">
 <head>
-<title>Login webadmin console</title>
+<link type="text/css" href="skins/login.css" rel="stylesheet" />
+<title>$heading</title>
 </head>
 <body>
-<h1>Deployment framework webadmin console</h1>
+<div id="df_login">
+<h1>$heading</h1>
 <form action="login.php" method="post">
-Username:
-<input type="text" name="username" />
-<br />
-Password:
-<input type="password" name="passwort" />
-<br />
-<input type="submit" value="Login" />
+<table align="center">
+<tr>
+<td>$username:</td>
+<td><input type="text" name="username" /></td>
+</tr>
+<tr>
+<td>$password:</td>
+<td><input type="password" name="passwort" /></td>
+</tr>
+</table>
+<input type="submit" value="$login" id="df_login_button"/>
 </form>
+</div>
 </body>
 </html>
 ENDS
 ;
 
-echo $html;
+echo $html . $loginHint;

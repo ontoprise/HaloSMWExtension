@@ -34,4 +34,22 @@ abstract class DF_Language {
 	public function getLanguageArray() {
 		return $this->language_constants;
 	}
+	
+	
+}
+
+/**
+ * Initializes the language object
+ *
+ * Note: Requires wiki context
+ */
+function dffInitLanguage() {
+	global $dfgLang, $mwrootDir;
+	$langCode = isset(DF_Config::$df_lang) ? ucfirst(DF_Config::$df_lang) : "En";
+	$langClass = "DF_Language_$langCode";
+	if (!file_exists($mwrootDir."/deployment/languages/$langClass.php")) {
+		$langClass = "DF_Language_En";
+	}
+	require_once($mwrootDir."/deployment/languages/$langClass.php");
+	$dfgLang = new $langClass();
 }

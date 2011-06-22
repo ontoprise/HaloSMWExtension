@@ -62,8 +62,13 @@ class DF_Language_En extends DF_Language {
 	'df_ok' => 'OK',
 	
 	// webadmin
+	'df_webadmin' => 'Deployment Framework WebAdmin',
+	'df_username' => 'Username',
+	'df_password' => 'Password',
+	'df_login' => 'Login',
 	'df_linktowiki' => 'Go to wiki',
 	'df_logout' => 'Logout',
+	'df_webadmin_login_failed' => 'Login failed',
 	'df_webadmin_findall' => 'Find all',
 	'df_webadmin_about' => 'About',
 	'df_webadmin_status_text' => 'This table shows all extensions and content bundles that are currently installed in this wiki.',

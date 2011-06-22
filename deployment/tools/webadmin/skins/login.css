@@ -1,0 +1,15 @@
+
+#df_login {
+	text-align: center;
+	background:  no-repeat scroll center center, -moz-linear-gradient(center top , #FFFFFF, #F6A828) repeat scroll 0 0 transparent
+}
+
+#df_login_failed {
+	text-align: center;
+	color:red;
+	margin-top: 10px;
+}
+
+#df_login_button {
+	margin: 10px;
+}
