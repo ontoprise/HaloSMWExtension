@@ -8,6 +8,7 @@ Version 1.5
     - Added support (i.e. patch) for MW 1.16.4
   	
   BUGFIXES: (Bug numbers according to http://smwforum.ontoprise.com/smwbugs/)
+    14895 - Anonymous deletion of ACLs possible
     14985 - Groups do not show up when creating an ACL
   	14908 - Conflict with Liquid Threads
   	14546 - User can modify SD of a subpage

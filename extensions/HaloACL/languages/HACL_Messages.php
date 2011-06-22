@@ -96,6 +96,7 @@ $messages['en'] = array(
     'hacl_acl_element_not_in_db'	=> 'No entry has been made in the ACL database about this article. It may have been deleted and restored. Please store it again with all the articles that use it ',
     'hacl_whitelist_mismatch'		=> 'The whitelist in this article contains nonexistent articles. Please remove them and save the whitelist again.',
     'hacl_unprotectable_namespace'  => 'This namespace cannot be protected. Please contact the wiki administrator.',
+	'hacl_user_cannot_delete_right' => 'The current user can not delete the right $1.',
 
 	/* Messages for semantic protection (properties etc.) */
 
@@ -316,7 +317,7 @@ $messages['en'] = array(
     'hacl_quickACL_4' => 'QuickACL saved',
 
     'hacl_general_nextStep' => 'Next Step',
-    'hacl_nothing_deleted' => 'No elements have been deleted',
+    'hacl_nothing_deleted' => 'No elements have been deleted. ',
     'hacl_quickacl_limit' => 'Only 15 templates are allowed in the QuickAccessList.',
     'hacl_nodefusertpl'=>"no default template for user",
     'hacl_nodefusertpl_link'=>"click here to create",
@@ -480,6 +481,7 @@ $messages['de'] = array(
     'hacl_acl_element_not_in_db'	=> 'Zu diesem Artikel gibt es keinen Eintrag in der Rechtedatenbank. Vermutlich wurde er gelöscht und wiederhergestellt. Bitte speichern Sie ihn und alle Artikel die ihn verwenden neu.',
     'hacl_whitelist_mismatch'		=> 'Die "Positivliste" in diesem Artikel enthält Artikel, die nicht existieren. Bitte entfernen Sie diese und speichern Sie die "Positivliste" erneut.' ,
     'hacl_unprotectable_namespace'  => 'Dieser Namensraum kann nicht geschützt werden. Bitte fragen Sie Ihren Wikiadministrator.',
+	'hacl_user_cannot_delete_right' => 'Der aktuelle Benutzer kann das Recht $1 nicht löschen.',
 
 	/* Messages for semantic protection (properties etc.) */
 
@@ -696,7 +698,7 @@ $messages['de'] = array(
     'hacl_quickACL_4' => 'Favoriten wurden gespeichert.',
 
     'hacl_general_nextStep' => 'Nächster Schritt',
-    'hacl_nothing_deleted' => 'Es wurden keine Elemente gelöscht',
+    'hacl_nothing_deleted' => 'Es wurden keine Elemente gelöscht. ',
     'hacl_quickacl_limit' => 'Es sind maximal 15 Templates in der Schnellauswahl erlaubt.',
     'hacl_nodefusertpl' => "Es existiert kein Standard Nutzer Template",
     'hacl_nodefusertpl_link' => "Es existiert kein Standard Nutzer Template",
@@ -860,6 +862,7 @@ $messages['es'] = array(
     'hacl_acl_element_not_in_db'        => 'No se ha creado ningun registro en la base de datos del ACL referido a este articulo. Este quizas haya sido eliminado y luego recuperado. Por favor guardelo de nuevo junto con todos los articulos que lo utilizan ',
     'hacl_whitelist_mismatch'           => 'La Lista Blanca contiene articulos inexistentes. Por favor borrelos y guarde la Lista Blanca nuevamente.',
     'hacl_unprotectable_namespace'  => 'Este Espacio de Nombres no puede ser protegido. Por favor contacta al administrador de la wiki.',
+	'hacl_user_cannot_delete_right' => 'The current user can not delete the right $1.',
 
         /* Messages for semantic protection (properties etc.) */
 
@@ -1080,7 +1083,7 @@ $messages['es'] = array(
     'hacl_quickACL_4' => 'Acceso rapido guardado',
 
     'hacl_general_nextStep' => 'Siguiente Paso',
-    'hacl_nothing_deleted' => 'Ningun elemento ha sido borrado',
+    'hacl_nothing_deleted' => 'Ningun elemento ha sido borrado. ',
     'hacl_quickacl_limit' => 'Solo 15 plantillas son permitidas en la lista de acceso rapido.',
     'hacl_nodefusertpl'=>"No hay ninguna plantilla por defecto para el usuario",
     'hacl_nodefusertpl_link'=>"Clic aqui para crear",

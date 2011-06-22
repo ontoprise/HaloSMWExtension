@@ -3548,8 +3548,15 @@ function haclDeleteSecurityDescriptor($sdIds) {
         $sd = unescape($sd);
         if ($sd != null) {
             try {
-                $sdarticle = new Article(Title::newFromText("$ns:$sd"));
-                $sdarticle->doDelete("gui-deletion");
+            	$sdObj = HACLSecurityDescriptor::newFromName("$ns:$sd");
+            	// Check if the current user can modify the SD
+            	if ($sdObj->userCanModify(null)) {
+	                $sdarticle = new Article(Title::newFromText("$ns:$sd"));
+	                $sdarticle->doDelete("gui-deletion");
+            	} else {
+	                $result .= wfMsg('hacl_user_cannot_delete_right',"$ns:$sd");
+	                $success = false;
+            	}
                 if ($success) {
                 	$result = wfMsg('hacl_deleteSecurityDescriptor_1');
                 }
