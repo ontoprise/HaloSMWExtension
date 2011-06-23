@@ -216,15 +216,26 @@ $heading = $dfgLang->getLanguageString('df_webadmin');
 $username = $dfgLang->getLanguageString('df_username');
 $password = $dfgLang->getLanguageString('df_password');
 $login = $dfgLang->getLanguageString('df_login');
+if (!isset($isAuthorized)) {
+	$isAuthorizedText = "notset";
+} else $isAuthorizedText = $isAuthorized ? "true" : "false";
+
 $html = <<<ENDS
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="de" lang="de">
 <head>
 <link type="text/css" href="skins/login.css" rel="stylesheet" />
+<script type="text/javascript">
+
+            dfIsAuthorized="$isAuthorizedText";
+         
+</script>
+<script type="text/javascript" src="scripts/jquery-1.6.1.min.js"></script>
+<script type="text/javascript" src="scripts/login.js"></script>
 <title>$heading</title>
 </head>
 <body>
-<div id="df_login">
+<div id="df_login" style="display:none;">
 <h1>$heading</h1>
 <form action="login.php" method="post">
 <table align="center">
