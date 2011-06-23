@@ -60,8 +60,9 @@ require_once('DF_UserInput.php');
 require_once('DF_Installer.php');
 require_once($mwrootDir.'/deployment/io/DF_Log.php');
 require_once($mwrootDir.'/deployment/io/DF_PrintoutStream.php');
-
+require_once($mwrootDir.'/deployment/languages/DF_Language.php');
 // output format of smwadmin as a console app is text
+
 dffInitLanguage();
 $dfgOut = DFPrintoutStream::getInstance(DF_OUTPUT_FORMAT_TEXT);
 $dfgOut->start(DF_OUTPUT_TARGET_STDOUT);
@@ -853,21 +854,7 @@ function dffCheckWikiContext() {
 }
 
 
-/**
- * Initializes the language object
- *
- * Note: Requires wiki context
- */
-function dffInitLanguage() {
-	global $wgLanguageCode, $dfgLang, $mwrootDir;
-	$langCode = ucfirst($wgLanguageCode);
-	$langClass = "DF_Language_$langCode";
-	if (!file_exists($mwrootDir."/deployment/languages/$langClass.php")) {
-		$langClass = "DF_Language_En";
-	}
-	require_once($mwrootDir."/deployment/languages/$langClass.php");
-	$dfgLang = new $langClass();
-}
+
 
 /**
  * Shows a fatal error which aborts installation.
