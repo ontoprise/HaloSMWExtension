@@ -762,6 +762,7 @@ class AutoCompletionStorageSQL2 extends AutoCompletionStorage {
 
 		$smw_rels2 = $db->tableName('smw_rels2');
 		$smw_ids = $db->tableName('smw_ids');
+		$page = $db->tableName('page');
 
 		$requestoptions = new SMWRequestOptions();
 		$requestoptions->limit = SMW_AC_MAX_RESULTS;
@@ -774,7 +775,7 @@ class AutoCompletionStorageSQL2 extends AutoCompletionStorage {
 			$domainAndRangeID = $domainAndRange->smw_id;
 		}
 
-		$sql = 'SELECT smw_title FROM '.$smw_ids.' q LEFT JOIN '.$smw_rels2.' s ON q.smw_id = s.s_id AND s.p_id = '.$domainAndRangeID.' '.
+		$sql = 'SELECT smw_title FROM '.$page.' JOIN '.$smw_ids.' q ON q.smw_title = page_title AND q.smw_namespace = page_namespace LEFT JOIN '.$smw_rels2.' s ON q.smw_id = s.s_id AND s.p_id = '.$domainAndRangeID.' '.
         'WHERE smw_namespace = '.SMW_NS_PROPERTY.' AND s.p_id IS NULL AND UPPER('.DBHelper::convertColumn('smw_title').') LIKE UPPER('.$db->addQuotes('%'.$userInputToMatch.'%').') '.$options;
 
 
