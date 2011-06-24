@@ -90,7 +90,7 @@ function ruleSetupExtension() {
 	 $wgSpecialPages['Explanations'] = array('SRExplanations');
 	 $wgSpecialPageGroups['Explanations'] = 'smwplus_group';*/
 
-	$wgExtensionCredits['parserhook'][]= array('name'=>'SemanticRules&nbsp;Extension', 'version'=>SEMANTIC_RULES_VERSION,
+	$wgExtensionCredits['parserhook'][]= array('name'=>'Rule&nbsp;knowledge&nbsp;extension', 'version'=>SEMANTIC_RULES_VERSION,
             'author'=>"Thomas&nbsp;Schweitzer, Kai&nbsp;K&uuml;hn. Owned by [http://www.ontoprise.de ontoprise GmbH].", 
             'url'=>'http://smwforum.ontoprise.com/smwforum/index.php/Help:Rule_Knowledge_Extension',
             'description' => 'Enables the power of rules to SMWHalo');
