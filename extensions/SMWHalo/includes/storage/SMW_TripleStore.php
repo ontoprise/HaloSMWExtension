@@ -897,7 +897,23 @@ class SMWTripleStore extends SMWStore {
 				foreach($print_requests as $pr) {
 
 					$data = $pr->getData();
-					if ($data == NULL) { // main column
+					if ($data == NULL) { 
+						
+						// special case: Category printout
+						global $wgLang;
+						if ($pr->getLabel() == 'Category' || $pr->getLabel() == $wgLang->getNsText(NS_CATEGORY)) {
+							if (array_key_exists('Category', $mapPRTOColumns)) {
+								$mapPRTOColumns['Category'][] = $index;
+							} else {
+								$mapPRTOColumns['Category'] = array($index);
+							}
+
+							$prs[] = $pr;
+							$index++;
+							continue;
+						}
+						
+						// special case: main column printout
 						$hasMainColumn = true;
 						if (in_array('_X_', $variableSet)) { // x is missing for INSTANCE queries
 							$mapPRTOColumns['_X_'] = array($index);
@@ -906,6 +922,8 @@ class SMWTripleStore extends SMWStore {
 						}
 
 					} else  {
+						
+						// all other printouts
 						if ( $data instanceof Title) {
 							$label = $data->getDBkey();
 						} else {
@@ -917,7 +935,7 @@ class SMWTripleStore extends SMWStore {
 						} else {
 							$mapPRTOColumns[$label] = array($index);
 						}
-						//var_dump($pr);
+						
 						$rewritten_pr = $this->rewritePrintrequest($pr);
 						$prs[] = $rewritten_pr;
 						$index++;
@@ -1353,7 +1371,7 @@ class SMWTripleStore extends SMWStore {
 	protected function serializeParams($query) {
 		$result = "";
 		$first = true;
-		
+
 		// serializes printouts
 		foreach ($query->getExtraPrintouts() as $printout) {
 			if (!$first) $result .= "|";
@@ -1361,7 +1379,7 @@ class SMWTripleStore extends SMWStore {
 				$label = $printout->getLabel();
 				global $wgContLang;
 				if ($label == $wgContLang->getNsText(NS_CATEGORY)) {
-					$result .= "?$label"; // category printout	
+					$result .= "?$label"; // category printout
 				} else {
 					$result .= "?=$label";
 				}
@@ -1460,6 +1478,9 @@ class SMWTripleStore extends SMWStore {
 					$dbkeys = $po->getData()->getDBkeys();
 					$label =  array_shift($dbkeys);
 				}
+				$contains |= strtolower($label) == strtolower($var_name);
+			} else {
+				$label = $po->getLabel();
 				$contains |= strtolower($label) == strtolower($var_name);
 			}
 
