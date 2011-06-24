@@ -204,6 +204,12 @@ function dffCheckEnvironment() {
 		unlink("$tempFolder/test_file_for_webadmin");
 	}
 
+	// check if deployment/tools/repositories is writeable
+	$repositoryFileWritable = is_writable("$mwrootDir/deployment/tools/repositories");
+	if ($repositoryFileWritable === false) {
+		$result .= "<br>Could not open deployment/tools/repositories for writing.";
+	} 
+
 	// check for curl (needed for wiki auth)
 	if (DF_Config::$df_authorizeByWiki) {
 		if (!extension_loaded("curl")) {

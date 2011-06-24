@@ -80,7 +80,7 @@ if (array_key_exists('SERVER_NAME', $_SERVER) && $_SERVER['SERVER_NAME'] != NULL
 
 // check if the user is allowed to create files, directory.
 if (!in_array("--nocheck", $_SERVER['argv'])) {
-	$check = Tools::checkPriviledges();
+	$check = Tools::checkPriviledges($mwrootDir);
 	if ($check !== true) {
 		dffExitOnFatalError($check);
 	}
@@ -479,7 +479,7 @@ if (count($ontologiesToInstall) > 0) {
 		}
 
 		try {
-				
+
 			$bundleID = $oInstaller->installOrUpdateOntology($filePath, false);
 
 			// copy ontology and create ontology bundle
@@ -509,7 +509,8 @@ if (count($ontologiesToInstall) > 0) {
 				case DEPLOY_FRAMEWORK_ONTOLOGYCONFLICT_ERROR:
 					$dfgOut->outputln("ontology conflict\n", DF_PRINTSTREAM_TYPE_ERROR);
 			}
-			$dfgOut->outputln('$$ERROR$$');
+			global $dfgLogToFile;
+			if ($dfgLogToFile != false) $dfgOut->outputln('$$ERROR$$');
 			die(DF_TERMINATION_WITHOUT_FINALIZE);
 		}
 	}
@@ -733,7 +734,7 @@ function dffShowHelp() {
 	$dfgOut->outputln( "\tsmwadmin -u --noask: Updates the complete installation with no check for environment.");
 	$dfgOut->outputln( "\n");
 
-    $logger = Logger::getInstance();
+	$logger = Logger::getInstance();
 	$dfgOut->outputln( "The DF's log files are stored in: ".$logger->getLogDir());
 	$dfgOut->outputln( "\n");
 }
@@ -895,7 +896,9 @@ function dffExitOnFatalError($e) {
 	$dfgOut->outputln();
 	$dfgOut->outputln();
 
-	$dfgOut->outputln('$$ERROR$$');
+	global $dfgLogToFile;
+	if ($dfgLogToFile != false) $dfgOut->outputln('$$ERROR$$');
+	$dfgOut->outputln();
 	// stop installation
 	die(DF_TERMINATION_ERROR);
 }

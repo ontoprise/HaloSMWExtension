@@ -2,8 +2,8 @@ Installation of the webadmin console:
 =====================================
 
 (1) Make sure deployment/tools/webadmin is accessible via HTTP
-(2) Set the $scriptPath variable in deployment/settings.php to your wiki location
-    (same as $wgScriptPath in LocalSettings.php)
+(2) Set the $scriptPath and $df_lang variable in deployment/settings.php to your wiki location
+    (same as $wgScriptPath and $wgLang in LocalSettings.php)
 (3) Change the wiki name in deployment/settings.php. Do not use spaces or 
 	special characters since it is used as a directoy name. Underscores are OK.
 (4) Configure a home directory in deployment/settings.php if $HOME/%HOME% is not defined
@@ -34,7 +34,9 @@ Installation of the webadmin console:
     are stored in $HOME/df_upload. If that does neither work, error is thrown. 
     Note: The upload directory for DF-GUI is not the same as used for the webserver conf!
 (9) If you want to restore from a restore point the whole wiki directory
-    must be writable by the webserver. ( see (4) )        
+    must be writable by the webserver. ( see (4) )  
+    Make also sure that the database credentials $wgDBadminuser and $wgDBadminpassword 
+    are both set in LocalSettings.php.
 
 You get a warning if something is missing when you first access the webadmin console.
 

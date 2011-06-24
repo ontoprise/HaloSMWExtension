@@ -21,8 +21,10 @@ class DF_Config  {
 	// This is required for the webadmin tool. It is the same as specified in
 	// LocalSettings.php for $wgScriptPath
 	public static $scriptPath = "/deploywiki";
-
+	
+	// MANDATORY setting!
 	// DF GUI language (default is english)
+	// same as in LocalSettings.php for $wgLang
 	public static $df_lang = "en";
 
 	// Wiki name the DF is working on

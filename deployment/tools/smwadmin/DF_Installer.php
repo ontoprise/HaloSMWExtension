@@ -862,14 +862,14 @@ class Installer {
 
 		foreach($dependencies as $dep) {
 			list($id, $from, $to, $optional, $message) = $dep;
-			if ($optional && !$globalUpdate) {
+			if ($optional) {
 				// ask for installation of optional packages
 				// do not ask if it is a global update or if it already exists.
 				if (array_key_exists($id, $localPackages)) {
 					continue;
 				}
 				DFUserInput::getInstance()->getUserConfirmation("$message\nInstall optional extension '$id'? ", $result);
-				if ($result != 'y') {
+				if ($globalUpdate || $result != 'y') {
 					continue;
 				}
 			}

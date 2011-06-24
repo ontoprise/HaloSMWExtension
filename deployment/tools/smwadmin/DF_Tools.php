@@ -254,25 +254,37 @@ class Tools {
 		return true;
 	}
 
-	public static function checkPriviledges() {
+	public static function checkPriviledges($mwrootDir) {
+		
+		// check for root/admin access
 		if (self::isWindows()) {
-			exec("fsutil", $output, $ret);
+			exec("fsutil", $output, $ret); // fsutil is only accessible as administrator
 			if  ($ret == 0) return true;
 		} else {
 			exec('who am i', $out);
-			if (count($out) > 0 && strpos(reset($out), "root") !== false) return true; // is root
-
-			// try to create and delete a file in local dir and temp dir.
-			$touched = @touch("foo_bar_test");
-			exec('rm foo_bar_test', $output, $ret);
-			$touched2 = @touch("/tmp/foo_bar_test");
-			exec('rm /tmp/foo_bar_test', $output, $ret2);
-			$removed = ($ret == 0) && ($ret2 == 0);
-
-			// if true, we can assume that the user has proper rights
-			if ($removed && $touched && $touched2) return true;
+			if (count($out) > 0 && strpos(reset($out), "root") !== false) return true; // is (most likely) root, ok
 		}
-		return "You have to run smwadmin as admin or root.";
+			
+		// otherwise check relevant locations for write acess
+		$result = "";
+		$homeDir = self::getHomeDir();
+		$tmpDir = self::getTempDir();
+			
+		if (!is_writable($mwrootDir."/LocalSettings.php")) {
+			$result .= "\nCannot write to $mwrootDir/LocalSettings.php";
+		}
+		if (!is_writable($mwrootDir."/extensions")) {
+			$result .= "\nCannot write to $mwrootDir/extensions";
+		}
+		if (!is_writable($tmpDir)) {
+			$result .= "\nCannot write to $tmpDir";
+		}
+		if (!is_writable($homeDir)) {
+			$result .= "\nCannot write to $homeDir";
+		}
+
+
+		return empty($result) ? true : "\nPlease run as administrator/root or with appropriate rights:\n" . $result;
 	}
 
 	/**
@@ -401,110 +413,7 @@ class Tools {
 		return array_shift($dataValue->getDBkeys());
 	}
 
-	public static function checkPackageProperties() {
-		global $dfgLang;
-		global $wgContLang;
-		global $dfgOut;
-		$propNSText = $wgContLang->getNsText(SMW_NS_PROPERTY);
-		// check if the required properties exist
-		$check = true;
-		// Property:Dependecy
-		$pDependencyTitle = Title::newFromText($dfgLang->getLanguageString('df_dependencies'), SMW_NS_PROPERTY);
-		$pDependency = SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString('df_dependencies'));
-		$pDependencyTypeValue = $pDependency->getTypesValue();
-
-		if (reset($pDependencyTypeValue->getDBkeys()) != '_rec') {
-			$dfgOut->outputln("'".$pDependencyTitle->getPrefixedText()."' is not a record type.");
-			$check = false;
-		}
-
-		$pDependencyTypes = reset(smwfGetStore()->getPropertyValues( $pDependency->getWikiPageValue(), SMWPropertyValue::makeProperty( '_LIST' ) ));
-		if ($pDependencyTypes !== false) {
-			$typeIDs = explode(";",reset($pDependencyTypes->getDBkeys()));
-			if (count($typeIDs) != 3) {
-				$dfgOut->outputln("'".$pDependencyTitle->getPrefixedText()."' wrong number of fields.");
-				$check = false;
-			}
-		} else {
-			$dfgOut->outputln("\nCould not read fields of '".$pDependencyTitle->getPrefixedText());
-			$check = false;
-		}
-		list($ext_id, $from, $to) = $typeIDs;
-		if ($ext_id != '_str' || $from != '_num' || $to != '_num') {
-			$dfgOut->outputln("'".$pDependencyTitle->getPrefixedText()."' property has wrong field types.");
-			$check = false;
-		}
-
-		// Ontology version
-		$pOntologyVersionTitle = Title::newFromText($dfgLang->getLanguageString('df_ontologyversion'), SMW_NS_PROPERTY);
-		$pOntologyVersion = SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString('df_ontologyversion'));
-		$pOntologyVersionValue = $pOntologyVersion->getTypesValue();
-		if (reset($pOntologyVersionValue->getDBkeys()) != '_num') {
-			$dfgOut->outputln("'".$pOntologyVersionTitle->getPrefixedText()."' is not a number type.");
-			$check = false;
-		}
-
-		// Installation dir
-		$pInstallationDirTitle = Title::newFromText($dfgLang->getLanguageString('df_instdir'), SMW_NS_PROPERTY);
-		$pInstallationDir = SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString('df_instdir'));
-		$pInstallationDirValue = $pInstallationDir->getTypesValue();
-		if (reset($pInstallationDirValue->getDBkeys()) != '_str') {
-			$dfgOut->outputln("'".$pInstallationDirTitle->getPrefixedText()."' is not a string type.");
-			$check = false;
-		}
-
-		// Vendor
-		$pVendorTitle = Title::newFromText($dfgLang->getLanguageString('df_vendor'), SMW_NS_PROPERTY);
-		$pVendor = SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString('df_vendor'));
-		$pVendorValue = $pVendor->getTypesValue();
-		if (reset($pVendorValue->getDBkeys()) != '_str') {
-			$dfgOut->outputln("'".$pVendorTitle->getPrefixedText()."' is not a string type.");
-			$check = false;
-		}
-
-		// Rationale
-		$pRationaleTitle = Title::newFromText($dfgLang->getLanguageString('df_rationale'), SMW_NS_PROPERTY);
-		$pRationale = SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString('df_rationale'));
-		$pRationaleValue = $pRationale->getTypesValue();
-		$typeID = reset($pRationaleValue->getDBkeys());
-		if ($typeID != '_str' && $typeID != '_txt') {
-			$dfgOut->outputln("'".$pRationaleTitle->getPrefixedText()."' is not a string type.");
-			$check = false;
-		}
-
-		// Maintainer
-		$pMaintainerTitle = Title::newFromText($dfgLang->getLanguageString('df_maintainer'), SMW_NS_PROPERTY);
-		$pMaintainer = SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString('df_maintainer'));
-		$pMaintainerValue = $pMaintainer->getTypesValue();
-		$typeID = reset($pMaintainerValue->getDBkeys());
-		if ($typeID != '_str') {
-			$dgOut->outputln("'".$pMaintainerTitle->getPrefixedText()."' is not a string type.");
-			// ignore maintainer
-			//$check = false;
-		}
-
-		// Help URL
-		$pHelpURLTitle = Title::newFromText($dfgLang->getLanguageString('df_helpurl'), SMW_NS_PROPERTY);
-		$pHelpURL = SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString('df_helpurl'));
-		$pHelpURLValue = $pHelpURL->getTypesValue();
-		$typeID = reset($pHelpURLValue->getDBkeys());
-		if ($typeID != '_str') {
-			$dfgOut->outputln("'".$pHelpURLTitle->getPrefixedText()."' is not a string type.");
-			$check = false;
-		}
-
-		// License
-		$pLicenseTitle = Title::newFromText($dfgLang->getLanguageString('df_license'), SMW_NS_PROPERTY);
-		$pLicense = SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString('df_license'));
-		$pLicenseValue = $pLicense->getTypesValue();
-		$typeID = reset($pLicenseValue->getDBkeys());
-		if ($typeID != '_wpg') {
-			$dfgOut->outputln("'".$pLicenseTitle->getPrefixedText()."' is not a page type.");
-			$check = false;
-		}
-
-		return $check;
-	}
+	
 
 
 
@@ -631,7 +540,7 @@ class Tools {
 		return $res == 0;
 	}
 
-	
+
 
 	/**
 	 * Removes the (last) file ending.

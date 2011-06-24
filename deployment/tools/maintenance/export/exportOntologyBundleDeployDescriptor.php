@@ -22,22 +22,32 @@
  *
  * @author: Kai K�hn
  */
+// termination constants
+define('DF_TERMINATION_WITH_FINALIZE', 0);
+define('DF_TERMINATION_ERROR', 1);
+define('DF_TERMINATION_WITHOUT_FINALIZE', 2);
 
 // get root dir of DF
 global $rootDir;
 $rootDir = dirname(__FILE__);
 $rootDir = str_replace("\\", "/", $rootDir);
 $rootDir = realpath($rootDir."/../../../");
+
+global $mwrootDir;
+$mwrootDir = dirname(__FILE__);
+$mwrootDir = str_replace("\\", "/", $rootDir);
+$mwrootDir = realpath($rootDir."/..");
+
 require_once($rootDir. '/../maintenance/commandLine.inc' );
 require_once($rootDir.'/tools/smwadmin/DF_Tools.php');
+require_once( $rootDir.'/io/DF_BundleTools.php');
+require_once( $rootDir.'/io/DF_PrintoutStream.php');
 require_once($rootDir.'/io/export/DF_DeployUploadExporter.php');
+require_once( $rootDir.'/languages/DF_Language.php');
+dffInitLanguage();
 
-$langClass = "DF_Language_$wgLanguageCode";
-if (!file_exists("../../../languages/$langClass.php")) {
-	$langClass = "DF_Language_En";
-}
-require_once("../../../languages/$langClass.php");
-$dfgLang = new $langClass();
+$dfgOut = DFPrintoutStream::getInstance(DF_OUTPUT_FORMAT_TEXT);
+$dfgOut->start(DF_OUTPUT_TARGET_STDOUT);
 
 for( $arg = reset( $argv ); $arg !== false; $arg = next( $argv ) ) {
 
@@ -75,14 +85,12 @@ for( $arg = reset( $argv ); $arg !== false; $arg = next( $argv ) ) {
 // check bundle page
 $bundlePage = Title::newFromText($bundleToExport, NS_MAIN);
 if (!$bundlePage->exists()) {
-	print "\n\n".$bundlePage->getText()." does not exist. Please create first.";
-	die();
+	Tools::exitOnFatalError("\n\n".$bundlePage->getText()." does not exist. Please create first.\n");
 }
 
 // check if relevant package properties exist
-if (Tools::checkPackageProperties() === false) {
-	print "\n\nCorrect the errors and try again!\n";
-	die();
+if (DFBundleTools::checkBundleProperties() === false) {
+	Tools::exitOnFatalError("\n\nCorrect the errors and try again!\n");
 }
 
 dumpDescriptor($bundleToExport, $output, $dumpFile);

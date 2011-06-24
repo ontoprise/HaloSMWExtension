@@ -26,7 +26,25 @@
 
 $(function() {
 	
-		
+	/**
+	 * Add dots for the version number (e.g. 103 => 1.0.3)
+	 * 
+	 *  @param string version (integer number)
+	 *  
+	 *  @return string
+	 */
+	var addVersionSeparators = function(version) {
+		var result = "";
+		if (version.length == 3) {
+			result = version[0]+"."+version[1]+"."+version[2];
+		} else if (version.length == 4) {
+			result = version[0]+"."+version[1]+version[2]+"+"+version[3];
+		} else {
+			result = version;
+		}
+		return result;
+	}
+	
 	/**
 	 * Called when finalization process has been started.
 	 * 
@@ -725,7 +743,7 @@ $(function() {
   			var version = parts[2].split("_")[0];
   			var patchlevel = parts[2].split("_")[1];
   			var dialogText = dfgWebAdminLanguage.getMessage('df_webadmin_wouldbeupdated')
-  			$('#updatedialog-confirm-text').html(dialogText+"<ul><li>"+id+"-"+version+"</li></ul>");
+  			$('#updatedialog-confirm-text').html(dialogText+"<ul><li>"+id+"-"+addVersionSeparators(version)+"_"+patchlevel+"</li></ul>");
 			$( "#updatedialog-confirm" ).dialog({
 				resizable: false,
 				height:350,

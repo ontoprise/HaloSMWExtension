@@ -1,19 +1,19 @@
 <?php
 /*  Copyright 2009, ontoprise GmbH
-*  
-*   The deployment tool is free software; you can redistribute it and/or modify
-*   it under the terms of the GNU General Public License as published by
-*   the Free Software Foundation; either version 3 of the License, or
-*   (at your option) any later version.
-*
-*   The deployment tool is distributed in the hope that it will be useful,
-*   but WITHOUT ANY WARRANTY; without even the implied warranty of
-*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-*   GNU General Public License for more details.
-*
-*   You should have received a copy of the GNU General Public License
-*   along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ *
+ *   The deployment tool is free software; you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation; either version 3 of the License, or
+ *   (at your option) any later version.
+ *
+ *   The deployment tool is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 /**
  * Language abstraction.
  *
@@ -30,12 +30,12 @@ abstract class DF_Language {
 		}
 		return $template;
 	}
-	
+
 	public function getLanguageArray() {
 		return $this->language_constants;
 	}
-	
-	
+
+
 }
 
 /**
@@ -44,8 +44,14 @@ abstract class DF_Language {
  * Note: Requires wiki context
  */
 function dffInitLanguage() {
-	global $dfgLang, $mwrootDir;
-	$langCode = isset(DF_Config::$df_lang) ? ucfirst(DF_Config::$df_lang) : "En";
+	global $dfgLang, $mwrootDir, $wgLanguageCode;
+	if (isset($wgLanguageCode)) {
+		// if wiki language code available use it
+		$langCode = $wgLanguageCode;
+	} else {
+		// otherwise as configured in settings.php
+		$langCode = isset(DF_Config::$df_lang) ? ucfirst(DF_Config::$df_lang) : "En";
+	}
 	$langClass = "DF_Language_$langCode";
 	if (!file_exists($mwrootDir."/deployment/languages/$langClass.php")) {
 		$langClass = "DF_Language_En";

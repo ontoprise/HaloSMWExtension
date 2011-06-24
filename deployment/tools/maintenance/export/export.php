@@ -36,6 +36,7 @@ require_once( $rootDir.'/../maintenance/commandLine.inc' );
 require_once( $rootDir.'/../maintenance/backup.inc' );
 require_once( $rootDir.'/io/export/DF_DeployWikiExporter.php');
 require_once( $rootDir.'/tools/smwadmin/DF_Tools.php');
+require_once( $rootDir.'/io/DF_BundleTools.php');
 
 
 $langClass = "DF_Language_".ucfirst($wgLanguageCode);
@@ -48,7 +49,7 @@ $dfgLang = new $langClass();
 
 // check if required properties exist
 // return false if not
-$check = Tools::checkPackageProperties();
+$check = DFBundleTools::checkBundleProperties();
 if (!$check) {
 	print "\n\nCorrect the errors and try again!\n";
 	die();

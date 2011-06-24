@@ -51,7 +51,10 @@ class DFPrintoutStream {
 	static $instance = NULL; // singleton
 
 	public static function getInstance($mode = DF_OUTPUT_FORMAT_TEXT) {
-		if (!is_null(self::$instance)) return self::$instance;
+		if (!is_null(self::$instance)) {
+			self::$instance->mode = $mode;
+			return self::$instance;	
+		}
 		self::$instance = new DFPrintoutStream($mode);
 		return self::$instance;
 	}

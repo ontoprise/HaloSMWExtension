@@ -7,7 +7,7 @@
 #
 # Note: You'll find the created bundle in /tmp/mybundle
 # 
-# Author: Kai Kühn / ontoprise / 2011
+# Author: Kai Kï¿½hn / ontoprise / 2011
 #
 
 # Create output dir
@@ -21,7 +21,18 @@ fi
 
 # Export bundle
 php export.php --current --output=file:$OUTPUTDIR/dump.xml -b $1 $2 $3 $4 $5
+
+if [ $? -ne 0 ]
+then
+exit $?
+fi
+
 php exportOntologyBundleDeployDescriptor.php -o $OUTPUTDIR/deploy.xml -b $1 -d dump.xml $2 $3 $4 $5
+
+if [ $? -ne 0 ]
+then
+exit $?
+fi
 
 # Zip bundle
 PWD=pwd
