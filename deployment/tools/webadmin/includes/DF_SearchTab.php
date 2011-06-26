@@ -113,7 +113,7 @@ class DFSearchTab {
 
 					// mark as updateable
 					if ($dd->getVersion() < $ver || ($dd->getVersion() < $ver && $dd->getPatchlevel() < $patchlevel)) {
-						$html .= "<input type=\"button\" class=\"df_update_button\" value=\"Update\" id=\"df_update__".$id."__$v\"></input>";
+						$html .= "<input type=\"button\" class=\"df_update_button_search\" value=\"Update\" id=\"df_update__".$id."__$v\"></input>";
 					}
 
 					// downgrades are not possible

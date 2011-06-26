@@ -510,6 +510,56 @@ $(function() {
 				$.ajax( { url : url, dataType:"json", complete : callbackForExtensions });
 			});
 			
+			$('.df_update_button_search').click(function(e2) {
+				var idAttr = $(e2.currentTarget).attr('id');
+	  			var parts = idAttr.split("__");
+	  			var id = parts[1];
+	  			var version = parts[2].split("_")[0];
+	  			var patchlevel = parts[2].split("_")[1];
+	  			var dialogText = dfgWebAdminLanguage.getMessage('df_webadmin_wouldbeupdated')
+	  			$('#updatedialog-confirm-text').html(dialogText+"<ul><li>"+id+"-"+addVersionSeparators(version)+"_"+patchlevel+"</li></ul>");
+				$( "#updatedialog-confirm" ).dialog({
+					resizable: false,
+					height:350,
+					modal: true,
+					 buttons: [
+			              {
+			                  text: dfgWebAdminLanguage.getMessage('df_webadmin_doupdate'),
+			                  click: function() {
+			                  	$( this ).dialog( "close" );
+			          			
+	                			var url = wgServer+wgScriptPath+"/deployment/tools/webadmin?rs=update&rsargs[]="+encodeURIComponent(id+"-"+version);
+	                			var $dialog = $('#df_install_dialog')
+	                			.dialog( {
+	                				autoOpen : false,
+	                				title : dfgWebAdminLanguage.getMessage('df_webadmin_pleasewait'),
+	                				modal: true,
+	                				width: 800,
+	                				height: 500,
+	                				operation : "update",
+	                				close: function(event, ui) { 
+	                					window.location.href = wgServer+wgScriptPath+"/deployment/tools/webadmin/index.php?tab=0";
+	                
+	                				}
+	                			});
+	                			$dialog.html("<div></div>");				
+	                			$dialog.dialog('open');
+	                			$dialog.html('<img src="skins/ajax-loader.gif"/>');
+	                			$('.ui-dialog-titlebar-close').hide();
+	                			$.ajax( { url : url, dataType:"json", complete : updateStarted });
+			                   }
+			              },
+			               {
+			                  text: dfgWebAdminLanguage.getMessage('df_webadmin_cancel'),
+			                  click: function() {
+			          							$( this ).dialog( "close" );
+			          						}
+			              }
+			         ]
+					
+				});
+			});
+			
 			$('#df_search_results .df_extension_id').click(function(e2) {
 				var id = $(e2.currentTarget).html();
 				var url = wgServer+wgScriptPath+"/deployment/tools/webadmin?rs=getDeployDescriptor&rsargs[]="+encodeURIComponent(id);
