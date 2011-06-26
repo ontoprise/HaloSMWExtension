@@ -96,9 +96,7 @@ class OntologyInstaller {
 
 		} catch(Exception $e) {
 			// onto2mwxml might not be installed
-			$dfgOut->outputln("Could not convert ontology. Reason: ");
-			$dfgOut->outputln("\n".$e->getMessage()."\n");
-			die(DF_TERMINATION_ERROR);
+			dffExitOnFatalError("Could not convert ontology. Reason: ".$e->getMessage());
 		}
 
 
