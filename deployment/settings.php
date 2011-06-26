@@ -27,7 +27,7 @@ class DF_Config  {
 	// same as in LocalSettings.php for $wgLang
 	public static $df_lang = "en";
 
-	// Wiki name the DF is working on
+	// Arbitrary name for the wiki the DF is working on
 	// if you use more than one wiki on a machine, make sure you
 	// use different names for each. Don't change it afterwards,
 	// otherwise DF won't find your restore points again.
@@ -37,7 +37,7 @@ class DF_Config  {
 	 * Uncomment the lines and set $df_authorizeByWiki to false
 	 * if you do not want to authorize webadmin tool by the wiki user base.
 	 *
-	 * This is required if 'curl' is NOT installed!
+	 * This is REQUIRED if 'curl'-extension is NOT installed in your PHP installation!
 	 *
 	 */
 	public static $df_authorizeByWiki = true;
@@ -51,7 +51,7 @@ class DF_Config  {
 	public static $settings = array(
 
 	//Proxy server e.g. "proxy.example.com:8080"
-    'df_proxy' => '', 
+    //'df_proxy' => '', 
 
 	// Home directory where several information is stored
 	// restore points, logs, uploaded files.
@@ -64,6 +64,10 @@ class DF_Config  {
 	// set PHP path if it does not exist in path or it has the wrong version
 	// PHP 5 is required at least
 	//'df_php_path' => 'php',
+	
+	// do not check directory for external apps /usr/share/local/Ontoprise
+	// if set to 'true' you can not install external apps like TSC 
+	//'df_no_external_apps'=>true,
 
 	);
 	public static function getValue($identifier){

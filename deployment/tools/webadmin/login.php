@@ -162,7 +162,7 @@ function dffCheckEnvironment() {
 	// check if LocalSettings can be written.
 	@$res = fopen("$mwrootDir/LocalSettings.php", "a");
 	if ($res === false) {
-		$result .= "<br>Could not open LocalSettings.php for writing.";
+		$result .= "<li>Could not open LocalSettings.php for writing.</li>";
 	} else {
 		fclose($res);
 	}
@@ -170,7 +170,7 @@ function dffCheckEnvironment() {
 	// check if the sessiondata folder can be written
 	@$res = fopen("$mwrootDir/deployment/tools/webadmin/sessiondata/test_file_for_webadmin", "a");
 	if ($res === false) {
-		$result .= "<br>Could not write into the 'deployment/tools/webadmin/sessiondata' subfolder";
+		$result .= "<li>Could not write into the 'deployment/tools/webadmin/sessiondata' subfolder</li>";
 	} else {
 		fclose($res);
 	}
@@ -178,7 +178,7 @@ function dffCheckEnvironment() {
 	// check if extensions folder is writeable
 	@touch("$mwrootDir/extensions/test_file_for_webadmin");
 	if (!file_exists("$mwrootDir/extensions/test_file_for_webadmin")) {
-		$result .= "<br>Could not write into the 'extensions' subfolder";
+		$result .= "<li>Could not write into the 'extensions' subfolder</li>";
 	} else {
 		unlink("$mwrootDir/extensions/test_file_for_webadmin");
 	}
@@ -190,16 +190,16 @@ function dffCheckEnvironment() {
 	}
 	@exec("$phpExe --version", $out, $ret);
 	if ($ret != 0 || stripos($out[0], "PHP") === false) {
-		$result .= "<br>Could not run external processes: <pre>".implode("\n",$out)."</pre>";
+		$result .= "<li>Could not run external processes: <pre>".implode("\n",$out)."</pre></li>";
 	} else if ($ret == 0 && preg_match("/5\\.\\d+\\.\\d+/", $out[0]) === 0) {
-		$result .= "<br>Wrong PHP version: ".$out[0]." (PHP 5.x.x required, except 5.3.1)";
+		$result .= "<li>Wrong PHP version: ".$out[0]." (PHP 5.x.x required, except 5.3.1)</li>";
 	}
 
 	// check if temp folder can be written
 	$tempFolder = Tools::getTempDir();
 	@touch("$tempFolder/test_file_for_webadmin");
 	if (!file_exists("$tempFolder/test_file_for_webadmin")) {
-		$result .= "<br>Could not write into the temp folder at $tempFolder.";
+		$result .= "<li>Could not write into the temp folder at $tempFolder.</li>";
 	} else {
 		unlink("$tempFolder/test_file_for_webadmin");
 	}
@@ -207,16 +207,40 @@ function dffCheckEnvironment() {
 	// check if deployment/tools/repositories is writeable
 	$repositoryFileWritable = is_writable("$mwrootDir/deployment/tools/repositories");
 	if ($repositoryFileWritable === false) {
-		$result .= "<br>Could not open deployment/tools/repositories for writing.";
-	} 
+		$result .= "<li>Could not open deployment/tools/repositories for writing.</li>";
+	}
+
+	// check if OP software directory exists and is writable (for external applications like TSC for instance)
+	if (!array_key_exists('df_no_external_apps', DF_Config::$settings) || DF_Config::$settings['df_no_external_apps'] === false) {
+		$opSoftwareDir = Tools::getProgramDir()."/Ontoprise";
+		if (!file_exists($opSoftwareDir)) {
+			$result .= "<li>Please create directory and make writable: ".$opSoftwareDir."</li>";
+		} else {
+			if (!is_writable($opSoftwareDir)) {
+				$result .= "<li>Please make writable: ".$opSoftwareDir."</li>";
+			}
+		}
+	}
+
+	// check homedir/tempdir
+	require_once($mwrootDir.'/deployment/io/DF_Log.php');
+	require_once($mwrootDir.'/deployment/tools/smwadmin/DF_Rollback.php');
+	try {
+		Logger::getInstance();
+		Rollback::getInstance($mwrootDir);
+
+	} catch(DF_SettingError $e) {
+		$msg = $e->getMsg();
+		$result .= "<li>$msg</li>";
+	}
 
 	// check for curl (needed for wiki auth)
 	if (DF_Config::$df_authorizeByWiki) {
 		if (!extension_loaded("curl")) {
-			$result .= "<br>Could not find 'curl'-PHP extension. Install it or deactivate authentication by wiki. (DF_Config::\$df_authorizeByWiki=false;)";
+			$result .= "<li>Could not find 'curl'-PHP extension. Install it or deactivate authentication by wiki. (DF_Config::\$df_authorizeByWiki=false;)</li>";
 		}
 	}
-	return empty($result) ? true : $result;
+	return empty($result) ? true : "<ul>$result</ul>";
 }
 $heading = $dfgLang->getLanguageString('df_webadmin');
 $username = $dfgLang->getLanguageString('df_username');

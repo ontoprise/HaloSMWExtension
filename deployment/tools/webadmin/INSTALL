@@ -6,7 +6,7 @@ Installation of the webadmin console:
     (same as $wgScriptPath and $wgLang in LocalSettings.php)
 (3) Change the wiki name in deployment/settings.php. Do not use spaces or 
 	special characters since it is used as a directoy name. Underscores are OK.
-(4) Configure a home directory in deployment/settings.php if $HOME/%HOME% is not defined
+(4) Configure a home directory in deployment/settings.php if $HOME or %HOME% is not defined
 	for the user which runs the webserver.
 (5) Allow the webserver to write in 
 
@@ -14,11 +14,13 @@ Installation of the webadmin console:
         - LocalSettings.php
         - extensions folder (and all extensions contained)
         - deployment/tools/webadmin
+        - deployment/tools/repositories
+        - /usr/share/local/Ontoprise (optional, see settings.php to deactivate that check (df_no_external_apps))
         
     It is recommended to make the user which runs the webserver the owner of
     these files and directories. It can be a different webserver than used for the wiki.    
         
-(6) Allow the webserver/PHP to run external PHP processes (normally granted per default).
+(6) Allow the webserver/PHP to run external PHP processes (normally granted per default in PHP).
 (7) For wiki authentication make sure that the 'curl' PHP-extension is installed. 
     Otherwise authentication by wiki is not possible and you have to configure a separate
     user solely for DF-GUI. Take a look in deployment/settings.php for that:
@@ -29,7 +31,7 @@ Installation of the webadmin console:
 	
 	In case of wiki authentication all Wiki sysops are allowed to use the DF-GUI.
 	
-(8) If you want to upload bundles you have to enable uploads in your webserver conf (php.ini). 
+(8) If you want to upload bundles you have to enable uploads in your webserver conf and in php.ini. 
     You can configure the upload directory for DF-GUI in settings.php. Otherwise uploads 
     are stored in $HOME/df_upload. If that does neither work, error is thrown. 
     Note: The upload directory for DF-GUI is not the same as used for the webserver conf!
