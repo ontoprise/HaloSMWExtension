@@ -201,7 +201,7 @@ class DeployWikiOntologyRevision extends WikiRevision {
 				$dfgOut->outputln("\t[Merging page] ".$this->title->getPrefixedText());
 				$wikitext = $prior->getRawText();
 				$om = new OntologyMerger();
-				if (!$om->containsAnyBundle()) {
+				if (!$om->containsAnyBundle($wikitext)) {
 					
 					// create section for existing content if it belongs to a bundle
 					$existingBundle = DFBundleTools::getBundleID($this->title);
