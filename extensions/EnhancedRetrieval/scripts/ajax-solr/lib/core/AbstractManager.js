@@ -175,13 +175,13 @@ AjaxSolr.AbstractManager = AjaxSolr.Class.extend(
   handleResponse: function (data) {
     this.response = data;
 
-	if (console && console.time) {
+	if (typeof console !== 'undefined' && console.time) {
 		console.time("handleResponse");
 	}
     for (var widgetId in this.widgets) {
       this.widgets[widgetId].afterRequest();
     }
-	if (console && console.timeEnd) {
+	if (typeof console !== 'undefined' && console.timeEnd) {
 		console.timeEnd("handleResponse");
 	}
 	
