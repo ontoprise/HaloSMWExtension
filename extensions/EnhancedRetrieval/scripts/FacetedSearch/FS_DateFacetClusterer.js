@@ -89,11 +89,11 @@ FacetedSearch.classes.DateFacetClusterer = function (facetName, plainName) {
 			case dto.DAY:
 				return dto.getYear() + '-' + dto.getMonthStr() + '-' + dto.getDayStr();
 			case dto.HOUR:
-				return dto.getDayStr()+ '-' + dto.getHourStr()+ ':' +dto.getMinStr()+ ':' +dto.getSecStr();
+				return dto.getDayStr() + '-' + dto.getHourStr()+ ':' +dto.getMinStr();
 			case dto.MINUTE:
-				return dto.getHourStr()+ ':' +dto.getMinStr()+ ':' +dto.getSecStr();
+				return dto.getHourStr()+ ':' +dto.getMinStr();
 			case dto.SECOND:
-				return dto.getHourStr()+ ':' +dto.getMinStr()+ ':' +dto.getSecStr();
+				return dto.getHourStr()+ ':' +dto.getMinStr();
 		}
 	}
 
