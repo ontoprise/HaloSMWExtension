@@ -535,10 +535,13 @@
 	 * @param {bool} isRangeRestricted
 	 * 		If true, there is a range restriction on the facet. The icon for
 	 * 		deleting the range is displayed.
+	 * @param {bool} isLastRange
+	 * 		If true, this is the last range. It will not be displayed as link.
 	 * 
 	 */
 	AjaxSolr.theme.prototype.cluster = function(from, to, count, handler, 
-											isClusterTitle, isRangeRestricted) {
+											isClusterTitle, isRangeRestricted,
+											isLastRange) {
 		var html;
 		
 		var range = from === to 
@@ -562,13 +565,22 @@
 				html.find('img').click(handler);
 			}
 		} else {
-			html = 			
-				$('<div>' +
+			 if (isLastRange) {
+			 	html =
+					'<div>' +
+						'<span class="xfsClusterEntry">' +
+							range + ' (' + count + ')' +
+						'</span>' +
+					'</div>';
+			 } else {
+				html = 			
+					$('<div>' +
 						'<a href="#" class="xfsClusterEntry">' +
 							range + ' (' + count + ')' +
-						'</a>' +
-					'</div>')
-				.click(handler);
+				  		'</a>' +
+				  	'</div>')
+					.click(handler);
+			 }
 		}
 		return html;
 	};
