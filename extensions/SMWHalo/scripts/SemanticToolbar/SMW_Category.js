@@ -143,6 +143,11 @@ fillList: function(forceShowList) {
 				categories[i].exists = this.categoryExists[i][1];
 			}
 		}
+		if( wgNamespaceNumber === 14 ) {
+			// special handling for category pages
+			cats += gLanguage.getMessage('CATEGORY_NS') + 'Category' + ',';
+			this.recommendedRelsNeedRefresh = true;
+		}
 		if( cats.length > 0 && this.recommendedRelsNeedRefresh ) {
 			this.recommendedRelsNeedRefresh = false;
 			// Get all properties with that have one of the annotated categories as domain
