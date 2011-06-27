@@ -174,7 +174,11 @@ span.collabComEditor, span.collabComEditorPre, span.collabComEditDatePre, span.c
 	padding-right: 3px;
 }
 input#collabComEditFormFileAttach{
-	width: 100%;
+	width: 80%;
+}
+
+span#collabComEditFormFileAttachLink {
+	margin: 5px;
 }
 
 /* Comment form */
@@ -289,7 +293,7 @@ div#collabComFormFileAttachHelp{
 	color: grey;
 }
 
-input#collabComFormFileAttach {
+input#collabComFormFileAttach, input#collabComEditFormAttach {
 	width: 80%;
 }
 span#collabComFormFileAttachLink {

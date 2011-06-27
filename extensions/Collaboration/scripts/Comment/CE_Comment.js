@@ -298,7 +298,8 @@ function CECommentForm() {
 		var ratingDiv, elemSelector, container, content, ratingIconSrc,
 			editRatingValue, ratingExistent, ratingText, ratingTextOpt,
 			ratingTextOpt2, ratingSpan, ratingIcons, ratingIcon1, ratingIcon2, ratingIcon3,
-			textarea, fileAttachField, submitButton, cancelSpan, cancelText, msgDiv;
+			textarea, fileAttachField, buttonBox, submitButton, cancelSpan, cancelText, msgDiv,
+			fileAttachUploadLink = '', fileAttachSpan = '';
 		this.editCommentName = pageName;
 		elemSelector = '#' + pageName.replace( /(:|\.)/g, '\\$1' );
 		this.editCommentRelatedComment = $jq( elemSelector +
@@ -391,25 +392,27 @@ function CECommentForm() {
 		);
 
 		// file attachments: create input element
-//		var namespaces = typeof wgNamespaceIds['file'] !== 'undefined'? wgNamespaceIds['file'] : '';
-//		if( typeof wgNamespaceIds['document'] !== 'undefined' ) {
-//			// Rich media is installed. Use the additional namespaces.
-//			var addNS = [
-//				wgNamespaceIds['document'],
-//				wgNamespaceIds['audio'],
-//				wgNamespaceIds['video'],
-//				wgNamespaceIds['pdf'],
-//				wgNamespaceIds['icalendar'],
-//				wgNamespaceIds['vcard']
-//			];
-//			namespaces = namespaces + ',' + addNS.join( ',' );
-//		}
-		fileAttachField = this.createDOMElement( 'input',
-			'collabComEditFormFileAttach', ['wickEnabled'],
-			[['pastens', 'true']],
-			null, $jq( elemSelector + ' .collabComResFileAttachSaved' ).html()
-		);
+		if( typeof wgCEEnableAttachments !== 'undefined' ) {
+			fileAttachField = this.createDOMElement( 'input',
+				'collabComEditFormFileAttach', ['wickEnabled'],
+				[['pastens', 'true']],
+				null, $jq( elemSelector + ' .collabComResFileAttachSaved' ).html()
+			);
+			if( typeof wgCEEditUploadURL !== 'undefined' ) {
+				fileAttachSpan = this.createDOMElement( 'span', 'collabComEditFormFileAttachLink' );
+				fileAttachUploadLink = this.createDOMElement( 'a',
+					'collabComEditFormFileAttach',
+					['rmAlink'],
+					[['title', 'Upload file'],
+					['href', wgCEEditUploadURL]],
+					'Upload file'
+				);
+				$jq( fileAttachSpan ).append( $jq( fileAttachUploadLink ) );
+			}
+		}
+		
 		//buttons
+		buttonBox = this.createDOMElement( 'div' );
 		submitButton = this.createDOMElement( 'input',
 			'collabComEditFormSubmit', null, [['type', 'button']],
 			null,  ceLanguage.getMessage( 'ce_edit_button' )
@@ -426,7 +429,8 @@ function CECommentForm() {
 			+ ceLanguage.getMessage( 'ce_cancel_button' ) 
 		);
 		$jq( cancelSpan ).append( $jq( cancelText ) );
-
+		$jq( buttonBox ).append( submitButton );
+		$jq( buttonBox ).append( cancelSpan );
 		// message div
 		msgDiv = this.createDOMElement( 'div', 'collabComEditFormMessage' );
 		$jq( msgDiv ).css( 'display', 'none' );
@@ -437,8 +441,9 @@ function CECommentForm() {
 		}
 		$jq( elemSelector + ' .collabComResText' ).append( textarea );
 		$jq( elemSelector + ' .collabComResText' ).append( fileAttachField );
-		$jq( elemSelector + ' .collabComResText' ).append( submitButton );
-		$jq( elemSelector + ' .collabComResText' ).append( cancelSpan );
+		$jq( elemSelector + ' .collabComResText' ).append( fileAttachSpan );
+		$jq( elemSelector + ' .collabComResText' ).append( buttonBox );
+		
 		$jq( elemSelector + ' .collabComResText' ).append( msgDiv );
 
 		if ( ratingExistent ) {
