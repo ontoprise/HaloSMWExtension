@@ -632,7 +632,7 @@ class Tools {
 	public static function getOntopriseSoftware($id = '') {
 		if (!Tools::isWindows($os)) return NULL;
 
-		exec("reg QUERY \"HKEY_CURRENT_USER\Software\Ontoprise\" /s /ve", $out, $res);
+		exec("reg QUERY \"HKEY_CURRENT_USER\Software\Ontoprise\" /s", $out, $res);
 
 		if ($res != 0) return NULL;
 
@@ -650,6 +650,7 @@ class Tools {
 		for($i = 0; $i < $n; $i++) {
 			if (stripos($out[$i], "HKEY_CURRENT_USER\\Software\\Ontoprise\\") !== false
 			&& (stripos($out[$i], $programname) !== false || $programname == '')) {
+				while (stripos($out[$i+1], "(Standard)") === false && stripos($out[$i+1], "(<NO NAME>)") === false) $i++;
 				$defValue = $out[$i+1];
 				$parts = explode("   ", $defValue);
 				$prgName = substr($out[$i], strlen("HKEY_CURRENT_USER\\Software\\Ontoprise\\"));
