@@ -275,8 +275,7 @@
 			// => add a table header
 			output += 
 				'<div>' +
-					lang.getMessage('hasProperties') +
-					': (<a class="xfsShow">' +
+					'(<a class="xfsShow">' +
 						lang.getMessage('show') +
 					'</a>)' +
 					'<div class="xfsResultTable"></div>' +
