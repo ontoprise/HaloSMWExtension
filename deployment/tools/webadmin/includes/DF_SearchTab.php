@@ -90,7 +90,7 @@ class DFSearchTab {
 					$html .= "</td>";
 						
 				}
-				$html .= "<td class=\"df_version\" version=\"$v\">";
+				$html .= "<td class=\"df_version\" extid=\"$id\" version=\"$v\">";
 				$html .= Tools::addVersionSeparators(explode("_", $v));
 				$html .= "</td>";
 				if ($first) {

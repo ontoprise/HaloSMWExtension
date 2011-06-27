@@ -73,6 +73,11 @@
 	cursor: pointer;
 }
 
+.df_version:hover {
+    background-color: yellow;
+    cursor: pointer;
+}
+
 .df_bundlefilelist td {
 	width: 30%;
 	text-align: center;

@@ -136,10 +136,14 @@ class DFCommandInterface {
 		return json_encode($result);
 	}
 
-	public function getDeployDescriptor($extid) {
+	public function getDeployDescriptor($extid, $version = '') {
 		global $mwrootDir, $dfgOut;
-
-		$dd = PackageRepository::getLatestDeployDescriptor($extid);
+        
+		if (empty($version)) {
+		    $dd = PackageRepository::getLatestDeployDescriptor($extid);
+		} else{
+			$dd = PackageRepository::getDeployDescriptor($extid, $version);
+		}
 		if (is_null($dd)) {
 			return NULL;
 		}

@@ -560,6 +560,7 @@ $(function() {
 				});
 			});
 			
+			// addhandler for click on extension column
 			$('#df_search_results .df_extension_id').click(function(e2) {
 				var id = $(e2.currentTarget).html();
 				var url = wgServer+wgScriptPath+"/deployment/tools/webadmin?rs=getDeployDescriptor&rsargs[]="+encodeURIComponent(id);
@@ -576,6 +577,27 @@ $(function() {
 				$dialog.html('<img src="skins/ajax-loader.gif"/>');
 				$.ajax( { url : url, dataType:"json", complete : extensionsDetailsStarted });
 			});
+			
+			// addhandler for click on version column
+			$('#df_search_results .df_version').click(function(e2) {
+				var id = $(e2.currentTarget).attr('extid');
+				var version = $(e2.currentTarget).attr('version');
+				version = version.split("_")[0]; // remove patchlevel
+				var url = wgServer+wgScriptPath+"/deployment/tools/webadmin?rs=getDeployDescriptor&rsargs[]="+encodeURIComponent(id)+"&rsargs[]="+encodeURIComponent(version);
+				var $dialog = $('#df_extension_details')
+				.dialog( {
+					autoOpen : false,
+					title : dfgWebAdminLanguage.getMessage('df_webadmin_extension_details'),
+					modal: true,
+					width: 800,
+					height: 500
+				});
+				$dialog.html("<div></div>");
+				$dialog.dialog('open');
+				$dialog.html('<img src="skins/ajax-loader.gif"/>');
+				$.ajax( { url : url, dataType:"json", complete : extensionsDetailsStarted });
+			});
+			
 		}
 		var searchvalue = $('#df_searchinput').val();
 		$('#df_search_progress_indicator').show();
@@ -614,9 +636,13 @@ $(function() {
 	
 	$('#df_addrepository').click(addRepositoryHandler);
 	$('#df_newrepository_input').keypress(function(e) { 
-		if (e.keyCode == 13) {
+		if (e.keyCode == 13) { // 13 == enter
 			addRepositoryHandler();
 		}
+	});
+	$('#df_repository_list').change(function(e) {
+		var selectedURI = $("#df_repository_list option:selected").text();
+		$('#df_newrepository_input').val(selectedURI);
 	});
 	$('#df_removerepository').click(function(e) { 
 		 $('#df_repository_list option:selected').each(function(){
