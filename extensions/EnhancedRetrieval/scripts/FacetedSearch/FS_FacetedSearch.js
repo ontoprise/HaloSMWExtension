@@ -319,15 +319,27 @@ FacetedSearch.classes.FacetedSearch = function () {
 	 */
 	function updateSearchResults() {
 		mSearch = $('#query').val();
+		// trim the search term
+		mSearch = mSearch.replace(/^\s*(.*?)\s*$/,'$1');
+		
 //		var qs = '*'+mSearch+'*';
-		var qs = mSearch+'*';
+		var qs = mSearch;
 		if (mSearch.length == 0) {
 			qs = '*';
 		}
+
+		// If the query is enclosed in braces it is treated as expert query.
+		// Expert queries may contain logical operators. Text is not converted
+		// to lowercase.
+		var isExpertQuery = qs.charAt(0) === '(' 
+							&& qs.charAt(mSearch.length-1) === ')';
 		// A colon in the search term must be escaped otherwise SOLR will throw
 		// a parser exception
 		qs = qs.replace(/:/g,'\\:', qs);
-		qs = qs.toLowerCase();
+		if (!isExpertQuery) {
+			qs = qs.toLowerCase();
+			qs = qs + '*';
+		}
 		mAjaxSolrManager.store.addByValue('q', QUERY_FIELD+':'+qs);
 		mAjaxSolrManager.doRequest(0);
 		
