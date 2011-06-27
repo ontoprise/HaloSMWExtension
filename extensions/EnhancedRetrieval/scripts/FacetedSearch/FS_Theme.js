@@ -542,6 +542,10 @@
 											isClusterTitle, isRangeRestricted) {
 		var html;
 		
+		var range = from === to 
+						? from
+						: from + ' - ' + to;
+						
 		if (isClusterTitle) {
 			var lang = FacetedSearch.singleton.Language;
 			var removeIcon = isRangeRestricted 
@@ -551,7 +555,7 @@
 			html = 
 				$('<div>' +
 						'<span class="xfsClusterTitle">' +
-							from + ' - ' + to + ' (' + count + ')' +
+							range + ' (' + count + ')' +
 							removeIcon +
 						'</span>' +
 					'</div>');
@@ -562,7 +566,7 @@
 			html = 			
 				$('<div>' +
 						'<a href="#" class="xfsClusterEntry">' +
-							from + ' - ' + to + ' (' + count + ')' +
+							range + ' (' + count + ')' +
 						'</a>' +
 					'</div>')
 				.click(handler);

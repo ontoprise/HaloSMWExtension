@@ -8,6 +8,7 @@ VERSION 1.5.6
   CHANGES:
 
   BUGFIXES:
+  14662 - Don't show ranges if only one number is left for drilldown
   14661 - Text for date drilldown unclear
   12265 - Sorting search results by date, relevance etc.  
   13941 - Combine the special pages for fulltext search and faceted browsing
