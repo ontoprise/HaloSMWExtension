@@ -99,7 +99,7 @@ function CECommentForm() {
 		textArea = this.textEncode( textArea );
 		// file attachments: process the content from the input field
 		var fileAttach = ( $jq( '#collabComFormFileAttach' ).val())? $jq( '#collabComFormFileAttach' ).val(): '';
-		var fileAttachString = '|AttachedFiles=' + fileAttach;
+		var fileAttachString = '|AttachedArticles=' + fileAttach;
 
 		var userNameString = '';
 		if ( wgUserName !== null && wgCEUserNS !== null ) {
@@ -508,7 +508,7 @@ function CECommentForm() {
 		}
 		// file attachments: process the content from the input field
 		var fileAttach = ( $jq( '#collabComEditFormFileAttach' ).val())? $jq( '#collabComEditFormFileAttach' ).val(): '';
-		var fileAttachString = '|AttachedFiles=' + fileAttach;
+		var fileAttachString = '|AttachedArticles=' + fileAttach;
 
 		var pageContent = '{{Comment' +
 			commentPerson +
@@ -1454,17 +1454,19 @@ $jq(document).ready(
 				var comToggle = $jq( '#collabComToggle' );
 				var commentResults = $jq( '#collabComResults' );
 				var newComToggleText = '';
-				if ( commentResults.css( 'display' ) === 'block' ) {
-					newComToggleText = ceLanguage.getMessage( 'ce_com_hide' );
-				} else {
+				// handling default visibillity of comments
+				if( !wgCEShowCommentsExpanded ) {
 					newComToggleText = ceLanguage.getMessage( 'ce_com_show' );
+					commentResults.hide();
+					//hide "Add" and "View"
+					$jq( '#collabComFormToggle, #collabComViewToggle, #collabComFileToggle' )
+						.toggle();
+				} else {
+					newComToggleText = ceLanguage.getMessage( 'ce_com_hide' );
+					commentResults.show();
 				}
 				comToggle.html( ' | ' + newComToggleText );
-				commentResults.hide();
-				//hide "Add" and "View"
-				$jq( '#collabComFormToggle' ).toggle();
-				$jq( '#collabComViewToggle' ).toggle();
-				$jq( '#collabComFileToggle' ).toggle();
+				
 			}
 		}
 	}
