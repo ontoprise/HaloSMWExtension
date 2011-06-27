@@ -56,12 +56,12 @@ FacetedSearch.classes.NumericFacetClusterer = function (facetName, plainName) {
 	
 	
 	/**
-	 * This function generates clusters for date values between min and max.
+	 * This function generates clusters for number values between min and max.
 	 * 
 	 * @param {int} min
-	 * 		The minimal date value of the value range.
+	 * 		The minimal number value of the value range.
 	 * @param {int} max
-	 * 		The maximal date value of the value range.
+	 * 		The maximal number value of the value range.
 	 */
 	that.makeClusters = function makeClusters(min, max) {
 		var diff = max - min;
