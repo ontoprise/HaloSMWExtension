@@ -79,6 +79,13 @@ $cegEnableRatingForArticles = true;
 $cegEnableFullDeletion = true;
 
 ###
+# Default visibillity of available comments
+#     false: comments are hidden by default and only visible after click on 'show comments'.
+#     true: comments are always listed and can be hidden with click on 'hide comments'.
+###
+$cegShowCommentsExpanded = true;
+
+###
 # Enable file attachments for comments.
 # Setting this to true adds an additional input field where you can enter links to files.
 ###

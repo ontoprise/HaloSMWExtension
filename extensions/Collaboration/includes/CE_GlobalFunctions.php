@@ -163,7 +163,6 @@ function cefAddNonSpecialPageHeader(&$out) {
 			'screen, projection' );
 	}
 	return true;
-	return true;
 }
 
 /**
@@ -364,11 +363,12 @@ function cefRegisterACIcon( &$namespaceMappings) {
 }
 
 function cefAddGlobalJSVariables( &$vars ) {
-	global $cegScriptPath, $cegEnableRatingForArticles;
+	global $cegScriptPath, $cegEnableRatingForArticles, $cegShowCommentsExpanded;
 	$ns = MWNamespace::getCanonicalName(NS_USER);
 
 	$vars['wgCEScriptPath'] = $cegScriptPath;
 	$vars['wgCEUserNS'] = $ns;
 	$vars['wgCEEnableFullDeletion'] = $cegEnableRatingForArticles;
+	$vars['wgCEShowComments'] = $cegShowCommentsExpanded;
 	return true;
 }
