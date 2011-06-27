@@ -136,12 +136,9 @@ class DFPrintoutStream {
 			fclose($handle);
 			return;
 		}
-		if (ob_get_level() == 0) { // be sure to have some buffer, otherwise some PHPs complain
-			ob_start();
-		}
+		
 		print $this->formatText($msg, $type);
-		ob_flush();
-		flush();
+	
 	}
 
 	/**
@@ -158,12 +155,9 @@ class DFPrintoutStream {
             fwrite($handle, $this->formatText($msg, $type, "\n"));
             fclose($handle);
 		}
-		if (ob_get_level() == 0) { // be sure to have some buffer, otherwise some PHPs complain
-			ob_start();
-		}
+		
 		print $this->formatText($msg, $type, "\n");
-		ob_flush();
-		flush();
+		
 	}
 
 	/**

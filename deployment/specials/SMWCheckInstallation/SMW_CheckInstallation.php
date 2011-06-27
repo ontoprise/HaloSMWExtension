@@ -24,7 +24,8 @@ class SMWCheckInstallation extends SpecialPage {
 	 * Overloaded function that is responsible for the creation of the Special Page
 	 */
 	public function execute($par) {
-		global $wgOut,$wgScriptPath, $wgRequest;
+		global $wgOut,$wgScriptPath, $wgRequest, $dfgOut;
+		$dfgOut = DFPrintoutStream::getInstance(DF_OUTPUT_FORMAT_HTML);
 		$wgOut->addLink(array('rel'   => 'stylesheet','type'  => 'text/css',
                         'media' => 'screen, projection','href'  => $wgScriptPath . '/deployment/skins/df.css'));
 			

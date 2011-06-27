@@ -17,7 +17,7 @@ function dfgSetupExtension() {
 	$wgAutoloadClasses['DFPrintoutStream'] = $smwgDFIP . '/io/DF_PrintoutStream.php';
 	$wgSpecialPages['CheckInstallation'] = array('SMWCheckInstallation');
 	$wgSpecialPageGroups['CheckInstallation'] = 'smwplus_group';
-	$dfgOut = DFPrintoutStream::getInstance(DF_OUTPUT_FORMAT_HTML);
+	
 
 	$wgExtensionCredits['other'][] = array(
         'path' => __FILE__,
@@ -47,8 +47,9 @@ function dfgCheckUpdate(&$wgUser, &$injected_html) {
 	global $rootDir;
 	global $dfgOut;
 	$rootDir = "$IP/deployment";
-	 
+	global $dfgOut;
 	require_once "$IP/deployment/tools/maintenance/maintenanceTools.inc";
+	$dfgOut = DFPrintoutStream::getInstance(DF_OUTPUT_FORMAT_HTML);
 	$cc = new ConsistencyChecker($IP);
 	$dfgOut->setVerbose(false);
 	$updates = $cc->checksForUpdates();

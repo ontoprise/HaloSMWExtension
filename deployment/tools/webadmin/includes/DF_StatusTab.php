@@ -58,6 +58,7 @@ class DFStatusTab {
 		if (count($updates) > 0) {
 			$html .= "<div id=\"df_updateavailable\">".$dfgLang->getLanguageString('df_webadmin_updatesavailable');
 			$html .= "<input type=\"button\" value=\"Global update\" id=\"df_global_update\"></input>";
+			$html .= "<img id=\"df_gu_progress_indicator\" src=\"skins/ajax-loader.gif\" style=\"display:none\"/>";
 			$html .= "</div>";
 		}
 

@@ -99,7 +99,7 @@ class DF_Language_En extends DF_Language {
 	'df_webadmin_norestorepoints' => 'No restore points found.',
 	'df_webadmin_nouploadedfiles' => 'No uploaded files found.',
 	
-	'df_restore_warning' => 'Restoring will roll back both the wiki setup and its entire contents to a previous point. Do you wish to continue?',
+	'df_restore_warning' => 'Restoring will REPLACE both the wiki setup and its ENTIRE contents by a previous version. YOU WILL LOOSE YOUR CURRENT WIKI CONTENT!. Do you wish to continue?',
 	'df_uninstall_warning' => 'The following extensions will be uninstalled. Are you sure?',
 	'df_globalupdate_warning' => 'Perform global update?',
 	'df_inspectextension_heading' => 'Inspect extension',

@@ -305,7 +305,8 @@ if ($dfgInstallPackages) {
 	// include commandLine.inc to be in maintenance mode
 	$mediaWikiLocation = dirname(__FILE__) . '/../../..';
 	require_once "$mediaWikiLocation/maintenance/commandLine.inc";
-
+    $dfgOut->setMode($dfgOutputFormat);
+    
 	dffInitLanguage();
 	// include the resource installer
 	require_once('DF_ResourceInstaller.php');
@@ -456,6 +457,7 @@ if (count($ontologiesToInstall) > 0) {
 	// requires a wiki environment, so check and include a few things more
 	dffCheckWikiContext();
 	require_once($rootDir.'/tools/smwadmin/DF_OntologyInstaller.php');
+	$dfgOut->setMode($dfgOutputFormat);
 
 	$localpackages = PackageRepository::getLocalPackages($mwrootDir);
 	if (!array_key_exists('smw', $localpackages)) {
@@ -564,7 +566,7 @@ foreach($packageToDeinstall as $toDeInstall) {
 			// include the resource installer
 			require_once('DF_ResourceInstaller.php');
 			require_once('DF_OntologyInstaller.php');
-
+            $dfgOut->setMode($dfgOutputFormat);
 			// include commandLine.inc to be in maintenance mode
 			dffCheckWikiContext();
 
@@ -800,7 +802,7 @@ function dffHandleInstallOrUpdate($packageID, $version) {
 
 		// include the resource installer
 		require_once('DF_ResourceInstaller.php');
-
+        $dfgOut->setMode($dfgOutputFormat);
 		$res_installer = ResourceInstaller::getInstance($mwrootDir);
 		$res_installer->checkWikidump($packageID, $version);
 		$dfgOut->outputln("\n");

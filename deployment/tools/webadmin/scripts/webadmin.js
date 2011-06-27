@@ -841,6 +841,7 @@ $(function() {
 			
 			
 			var checkforGlobalUpdate = function(xhr, status) {
+				$('#df_gu_progress_indicator').hide();
 				var extensionsToInstall = $.parseJSON(xhr.responseText);
 				
 				var text = "";
@@ -898,6 +899,7 @@ $(function() {
 					
 				});
 			}
+			$('#df_gu_progress_indicator').show();
 			var url = wgServer+wgScriptPath+"/deployment/tools/webadmin?rs=checkforGlobalUpdate&rsargs[]=";
 			$.ajax( { url : url, dataType:"json", complete : checkforGlobalUpdate });
 		});
@@ -914,11 +916,16 @@ $(function() {
 				modal: true,
 				width: 800,
 				height: 500,
-				operation : "install"
+				operation : "install",
+				close: function(event, ui) { 
+					window.location.href = wgServer+wgScriptPath+"/deployment/tools/webadmin/index.php?tab=0";
+
+				}
 			});
 			$dialog.html("<div></div>");				
 			$dialog.dialog('open');
 			$dialog.html('<img src="skins/ajax-loader.gif"/>');
+			$('.ui-dialog-titlebar-close').hide();
 			$.ajax( { url : url, dataType:"json", complete : installStarted });
 		});
 		
@@ -1046,11 +1053,16 @@ $(function() {
 	            			title : dfgWebAdminLanguage.getMessage('df_webadmin_pleasewait'),
 	            			modal: true,
 	            			width: 800,
-	            			height: 500
+	            			height: 500,
+	            			close: function(event, ui) { 
+	            				window.location.href = wgServer+wgScriptPath+"/deployment/tools/webadmin/index.php?tab=0";
+
+	            			}
 	            		});
 	            		$dialog.html("<div></div>");				
 	            		$dialog.dialog('open');
 	            		$dialog.html('<img src="skins/ajax-loader.gif"/>');
+	            		$('.ui-dialog-titlebar-close').hide();
 	            		$.ajax( { url : url, dataType:"json", complete :restoreStarted });
 	        			 
 	                   }
