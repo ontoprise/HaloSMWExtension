@@ -93,6 +93,10 @@ FacetedSearch.classes.FacetedSearch = function () {
 	// string - The current search string
 	var mSearch = '';
 	
+	// {bool} If true, the current search term is an expert query (i.e. may
+	//        contain logical operations and more)
+	var mExpertQuery = false;
+	
 	// reference to the (dummy) relation widget
 	var mRelationWidget;
 	
@@ -111,6 +115,10 @@ FacetedSearch.classes.FacetedSearch = function () {
 	
 	that.getSearch = function () {
 		return mSearch;
+	}
+	
+	that.isExpertQuery = function () {
+		return mExpertQuery;
 	}
 	
 	/**
@@ -322,23 +330,25 @@ FacetedSearch.classes.FacetedSearch = function () {
 		// trim the search term
 		mSearch = mSearch.replace(/^\s*(.*?)\s*$/,'$1');
 		
-//		var qs = '*'+mSearch+'*';
 		var qs = mSearch;
-		if (mSearch.length == 0) {
-			qs = '*';
-		}
 
 		// If the query is enclosed in braces it is treated as expert query.
 		// Expert queries may contain logical operators. Text is not converted
 		// to lowercase.
-		var isExpertQuery = qs.charAt(0) === '(' 
-							&& qs.charAt(mSearch.length-1) === ')';
-		// A colon in the search term must be escaped otherwise SOLR will throw
-		// a parser exception
-		qs = qs.replace(/:/g,'\\:', qs);
-		if (!isExpertQuery) {
+		mExpertQuery = qs.charAt(0) === '(' 
+					   && qs.charAt(mSearch.length-1) === ')';
+		if (!mExpertQuery) {
 			qs = qs.toLowerCase();
+			// Escape the special characters:
+			// + - && || ! ( ) { } [ ] ^ " ~ * ? : \			
+			qs = qs.replace(/([\+\-!\(\)\{\}\[\]\^"~\*\?\\:])/g, '\\$1');
+			qs = qs.replace(/(&&|\|\|)/g,'\\$1');
+			// Match all tokens that start with the search term
 			qs = qs + '*';
+		} else {
+			// A colon in the search term must be escaped otherwise SOLR will throw
+			// a parser exception
+			qs = qs.replace(/(:)/g,"\\$1");
 		}
 		mAjaxSolrManager.store.addByValue('q', QUERY_FIELD+':'+qs);
 		mAjaxSolrManager.doRequest(0);

@@ -4,6 +4,9 @@ Enhanced Retrieval extension ChangeLog
 VERSION 1.5.6
 
   FEATURES:
+  Expert mode: Added an expert mode for entering search terms with logical 
+  	operations. This mode is used for search terms within braces.
+  	Example: (chicag* OR "New York")
 
   CHANGES:
 

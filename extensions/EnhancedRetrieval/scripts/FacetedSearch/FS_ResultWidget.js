@@ -79,11 +79,11 @@ FacetedSearch.classes.ResultWidget = AjaxSolr.AbstractWidget.extend({
 				}
 			}
 		}
+		$('#create_article').empty();
 		var facetQuery = this.manager.store.values('fq');
 		if (emptyQuery && facetQuery.length == 0) {
 			// No query present => hide results and show a message
 			$(this.target).append(AjaxSolr.theme('emptyQuery'));
-			$('#create_article').empty();
 
 			return;
 		} 
@@ -110,7 +110,9 @@ FacetedSearch.classes.ResultWidget = AjaxSolr.AbstractWidget.extend({
 		}
 		
 		// Check if the search term is an existing article
-		this.updateCreateArticleWidget(fsi.getSearch());
+		if (!fsi.isExpertQuery()) {
+			this.updateCreateArticleWidget(fsi.getSearch());
+		}
 			
 	},
 
@@ -232,15 +234,6 @@ FacetedSearch.classes.ResultWidget = AjaxSolr.AbstractWidget.extend({
 	 */
 	updateCreateArticleWidget: function (query) {
 		var fsi = FacetedSearch.singleton.FacetedSearchInstance;
-		
-		// Check if there are wildcards in the query
-		var containsWildcards = query.indexOf('*') >= 0 
-								|| query.indexOf('?') >= 0;
-		// Wildcards may not be part of an article name	
-		if (!query || containsWildcards) {
-			$('#create_article').empty();
-			return;
-		}
 		
 		// Does the search term start with a valid namespace?
 		var ns = '';
