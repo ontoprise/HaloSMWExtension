@@ -48,6 +48,11 @@ $langClass = "DF_Language_$wgLanguageCode";
 if (!file_exists("$rootDir/languages/$langClass.php")) {
 	$langClass = "DF_Language_En";
 }
+//Load Settings
+if(file_exists($rootDir.'/settings.php'))
+{
+    require_once($rootDir.'/settings.php');
+}
 require_once("$rootDir/languages/$langClass.php");
 $dfgLang = new $langClass();
 
