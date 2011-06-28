@@ -130,6 +130,7 @@ createList: function(list,id) {
 					valuePageInfo = list[i].valuePageInfo;
 				}
 				var category = null;
+				var categoryInfo = null;
 				if (list[i].categoryInfo) {
 					categoryInfo = list[i].categoryInfo;
 				}
@@ -139,7 +140,9 @@ createList: function(list,id) {
 				var linkDeco = '';
 				var editArticleURL = '';
 				var categoryNS = wgFormattedNamespaces['14'];
-				var categoryParam = categoryInfo[0] !== null && valuePageInfo[0] === 'redlink'
+				var categoryParam = (categoryInfo && 
+									 categoryInfo[0] !== null && 
+									 valuePageInfo[0] === 'redlink')
 									? '&category='+escape(categoryInfo[0]) 
 									  + '&preloadtext=[['
 									  + categoryNS

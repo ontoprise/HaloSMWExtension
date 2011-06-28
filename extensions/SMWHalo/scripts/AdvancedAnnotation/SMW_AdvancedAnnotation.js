@@ -1567,10 +1567,10 @@ AdvancedAnnotation.create = function() {
 	if (wgAction == "annotate" || this.fck || this.cke ) {
 		smwhgAdvancedAnnotation = new AdvancedAnnotation();
 		new PeriodicalExecuter(function(pe) {
-			var content = $('smwh_AAM');
+			var content = $('globalWrapper'); //$('smwh_AAM');
 			Event.observe(content, 'mouseup', 
 			              smwhgAdvancedAnnotation.onMouseUp.bindAsEventListener(smwhgAdvancedAnnotation));
-			Event.observe('smwh_AAM', 'keyup',
+			Event.observe('globalWrapper', 'keyup',
 			              smwhgAdvancedAnnotation.onKeyUp.bindAsEventListener(smwhgAdvancedAnnotation));
 						              
 			pe.stop();

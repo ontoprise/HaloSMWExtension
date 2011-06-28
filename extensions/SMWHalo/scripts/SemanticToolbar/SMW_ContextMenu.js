@@ -19,7 +19,8 @@ initialize: function() {
                         if (zindex < 30) zindex = 30;
 			var menu = '<div id="contextmenu" style="z-index: '+ zindex +'"></div>';
 			if ($('smwh_AAM'))
-			    new Insertion.After($('smwh_AAM'), menu );
+//			    new Insertion.After($('smwh_AAM'), menu );
+			    new Insertion.After($('ontomenuanchor'), menu );
 			else // in edit mode smwh_AAM doesn't exist.
 			    new Insertion.After($('ontomenuanchor'), menu );
 		}
