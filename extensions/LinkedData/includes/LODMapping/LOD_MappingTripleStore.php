@@ -70,13 +70,11 @@ class LODMappingTripleStore implements ILODMappingStore {
 		$target = 'smwDatasources:'.$target; 
 		$target = $pm->makeAbsoluteURI($target);
 		$where .= '?mapping '.$property.' '.$target.'. ';
-		
-		$template = '?mapping';
-		
+				
 		$graph = 'smwGraphs:MappingRepository';
 		$graph = $pm->makeAbsoluteURI($graph, false);
 		
-		$tripleStoreAccess->deleteTriples($graph, $where, $template);
+		$tripleStoreAccess->deleteTriples($graph, $where, $where);
 		$tripleStoreAccess->flushCommands();
 		
 		$tripleStoreAccess->deletePersistentTriples('MappingStore', $persistencyLayerId);
