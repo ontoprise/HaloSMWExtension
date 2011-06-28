@@ -650,7 +650,12 @@ class Tools {
 		for($i = 0; $i < $n; $i++) {
 			if (stripos($out[$i], "HKEY_CURRENT_USER\\Software\\Ontoprise\\") !== false
 			&& (stripos($out[$i], $programname) !== false || $programname == '')) {
-				while (stripos($out[$i+1], "(Standard)") === false && stripos($out[$i+1], "(<NO NAME>)") === false) $i++;
+				while ($i+1 < count($out) 
+				        && stripos($out[$i+1], "(Standard)") === false 
+				        && stripos($out[$i+1], "<NO NAME>") === false 
+				        && stripos($out[$i+1], "HKEY_CURRENT_USER\\Software\\Ontoprise\\") === false 
+				        ) $i++;
+				if (stripos($out[$i+1], "HKEY_CURRENT_USER\\Software\\Ontoprise\\") !== false) continue;
 				$defValue = $out[$i+1];
 				$parts = explode("   ", $defValue);
 				$prgName = substr($out[$i], strlen("HKEY_CURRENT_USER\\Software\\Ontoprise\\"));
