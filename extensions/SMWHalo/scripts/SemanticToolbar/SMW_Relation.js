@@ -23,7 +23,7 @@
 var RelationToolBar = Class.create();
 
 var SMW_REL_VALID_PROPERTY_NAME =
-	'smwValidValue="^[^<>\\|&$\\/=\\?\\{\\}\\[\\]]{1,255}$: valid ' +
+	'smwValidValue="^[^<>\\|&$=\\?\\{\\}\\[\\]]{1,255}$: valid ' +
 		'? (color: white, hideMessage, valid:true) ' +
 	 	': (color: red, showMessage:PROPERTY_NAME_TOO_LONG, valid:false)" ';
 
@@ -58,7 +58,7 @@ var SMW_REL_CHECK_PROPERTY_IIE = // Invalid if exists
 	 	': (color: lightgreen, hideMessage, valid:true)" ';
 
 var SMW_REL_VALID_CATEGORY_NAME =
-	'smwValidValue="^[^<>\\|!&$%&\\/=\\?]{1,255}$: valid ' +
+	'smwValidValue="^[^<>\\|!&$%&=\\?]{1,255}$: valid ' +
 		'? (color: white, hideMessage, valid:true) ' +
 	 	': (color: red, showMessage:CATEGORY_NAME_TOO_LONG, valid:false)" ';
 

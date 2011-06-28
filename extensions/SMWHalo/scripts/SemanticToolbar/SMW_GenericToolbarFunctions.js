@@ -171,7 +171,9 @@ createList: function(list,id) {
 	  				//values[j].length > maxlen1 ? maxlen1 = values[j].length : "";
 	  				var v = values[j].escapeHTML();
 					var linkDeco = '';
-					var categoryParam = categoryInfo[j] !== null && valuePageInfo[j] === 'redlink'
+					var categoryParam = (categoryInfo &&
+										 categoryInfo[j] !== null && 
+										 valuePageInfo[j] === 'redlink')
 									? '&category='+escape(categoryInfo[j]) 
 									  + '&preloadtext=[['
 									  + categoryNS 

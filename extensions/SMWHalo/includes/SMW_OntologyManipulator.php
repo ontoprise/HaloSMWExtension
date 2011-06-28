@@ -478,8 +478,13 @@ function smwf_om_MultipleRelationInfo($relations) {
 				// Type info for value exists
 				if ($relSchema[$i] == '_wpg') {
 					// Value should be a page
-					$exists = smwf_om_ExistsArticle($relDescr->values[$i]);
-					$valuePageInfo[] = $exists == 'true' ? "exists" : "redlink";
+					$val = $relDescr->values[$i];
+					if (empty($val)) { 
+						$valuePageInfo[] = "no page";
+					} else {
+						$exists = smwf_om_ExistsArticle($relDescr->values[$i]);
+						$valuePageInfo[] = $exists == 'true' ? "exists" : "redlink";
+					}
 				} else {
 					// value is of another type
 					$valuePageInfo[] = "no page";
