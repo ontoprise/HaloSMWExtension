@@ -1,0 +1,87 @@
+@CHARSET "ISO-8859-1";
+
+.pageAlreadyExists{
+	border: 2px solid red;
+    background: #ffc;	
+    cursor: pointer;
+    color: maroon;
+    text-decoration: underline;
+}
+
+.pageDoesntExist{
+	border: 2px solid green;
+    background: #ffc;
+}
+
+.fancyboxTitleTd, .userInstructionSpan, .articleExistsErrorTd, .layoutDescriptionTd, .userInstructionTd, .btnTable a{
+	font-family: sans-serif;
+	font-size: 12px;
+	font-weight: bold;	
+}
+
+.fancyboxTitleTd{
+	border-bottom: 1px solid silver;
+	text-align: center;
+	font-size: larger;
+}
+
+.userInstructionTd{
+	color: gray;
+	padding-top: 10px;	
+}
+
+.userInstructionSpan{
+	
+}
+
+.articleExistsErrorTd{
+	color: red;
+	padding-bottom: 5px;	
+}
+
+.articleExistsErrorTd span{
+}
+
+.articleNameInput{
+	width: 350px;	
+}
+
+.templatesAndCategoriesSelect{
+	width: 355px;	
+}
+
+.layoutDescriptionSpan{
+	font-weight: normal;	
+}
+
+.layoutDescriptionTd{
+	color: gray;
+	padding-top: 10px;
+	width: 300px;		
+}
+
+.btnTableTd{
+	border-top: 1px solid silver;	
+}
+
+.btnTable td{
+	padding: 5px;	
+}
+
+.btnTable a{
+	text-decoration: none;
+	cursor: pointer;
+	color: blue;	
+	font-weight: normal;
+}
+
+.btnTable input{
+	width: 100px;	
+}
+
+#createNewArticleCtrl{
+	float: left;
+	padding: 10px;
+	margin-right: 30px;
+	font-size: smaller;
+}

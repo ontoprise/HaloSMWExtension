@@ -157,11 +157,13 @@ function smwgHaloSetupExtension() {
 	$wgAutoloadClasses['SMWQueryList'] = $smwgHaloIP . '/specials/SMWQueryList/SMW_QueryList.php';
 	$wgAutoloadClasses['SMWArticleBuiltinProperties'] = $smwgHaloIP . '/includes/SMW_ArticleBuiltinProperties.php';
 	$wgAutoloadClasses['SMWPivotTableResultPrinter'] = $smwgHaloIP . '/includes/queryprinters/SMW_QP_PivotTable.php';
+	
 
 	//patch Special:Browse in order to hide special Query Management Property
 	$wgSpecialPages['Browse']  = array( 'SMWQMSpecialBrowse' );
 
 	require_once $smwgHaloIP.'/includes/queryprinters/SMW_QP_Halo.php';
+	require_once $smwgHaloIP . '/includes/SMW_CreateNewArticle.php';
 
 	global $smwgResultFormats;
 
@@ -1018,6 +1020,8 @@ function smwfHaloAddHTMLHeader(&$out) {
 	$jsm->addCSSIf($smwgHaloScriptPath . '/skins/Annotation/annotation.css', "all", NS_SPECIAL, array(NS_SPECIAL.':AddData', NS_SPECIAL.':EditData', NS_SPECIAL.':FormEdit'));
 
 	$jsm->addCSSIf($smwgHaloScriptPath . '/skins/derivedFactsTab.css');
+	//create new article css
+	$jsm->addCSSIf($smwgHaloScriptPath . '/skins/createNewArticle.css');
 
 	//    $jsm->addCSSIf($smwgHaloScriptPath . '/skins/Glossary/glossary.css');
 	
@@ -1188,6 +1192,10 @@ function smwfHaloAddHTMLHeader(&$out) {
 		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/AdvancedAnnotation/SMW_AdvancedAnnotation.js', "all", NS_SPECIAL, array(NS_SPECIAL.':AddData', NS_SPECIAL.':EditData', NS_SPECIAL.':FormEdit'));
 
 		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/SMW_DerivedFactsTab.js');
+		
+		//create new article scripts
+		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/GeneralGUI/createNewArticle.js');
+		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/GeneralGUI/jquery.query-2.1.7.js');
 
 	} else {
 		//$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/prototype.js');
