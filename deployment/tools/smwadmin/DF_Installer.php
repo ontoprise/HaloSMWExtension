@@ -125,7 +125,7 @@ class Installer {
 		list($new_package, $old_package, $extensions_to_update, $contradictions) = $this->collectPackagesToInstall($packageID, $version);
 
 		if (count($extensions_to_update) == 0)
-		throw new InstallationError(DEPLOY_FRAMEWORK_COULD_NOT_FIND_UPDATE, "Set of packages to install is empty.", $packageID);
+		throw new InstallationError(DEPLOY_FRAMEWORK_COULD_NOT_FIND_UPDATE, "Set of bundles to install is empty.", $packageID);
 		// Install/update all dependant and super extensions
 		$dfgOut->outputln("The following packages need to be installed");
 		foreach($extensions_to_update as $etu) {
@@ -239,7 +239,7 @@ class Installer {
 		}
 		if (is_null($ext)) {
 			$this->logger->error("Package does not exist $packageID");
-			throw new InstallationError(DEPLOY_FRAMEWORK_PACKAGE_NOT_EXISTS, "Package does not exist", $packageID);
+			throw new InstallationError(DEPLOY_FRAMEWORK_PACKAGE_NOT_EXISTS, "Bundle does not exist", $packageID);
 		}
 		$dfgOut->output( "done.]");
 
@@ -261,8 +261,8 @@ class Installer {
 		}
 		$dfgOut->output( "done.]");
 		if ($existDependency) {
-			$this->logger->error("Can not remove package. Dependency from the following packages exists: ".implode(",", $dependantPackages));
-			throw new InstallationError(DEPLOY_FRAMEWORK_DEPENDENCY_EXIST, "Can not remove package. Dependency from the following packages exists:", $dependantPackages);
+			$this->logger->error("Can not remove package. Dependency from the following bundles exists: ".implode(",", $dependantPackages));
+			throw new InstallationError(DEPLOY_FRAMEWORK_DEPENDENCY_EXIST, "Can not remove bundle. Dependency from the following bundles exists:", $dependantPackages);
 		}
 
 
@@ -981,7 +981,7 @@ class Installer {
 		list($new_package, $old_package, $extensions_to_update, $contradictions) = $this->collectPackagesToInstall($packageID, $version);
 
 		if (count($extensions_to_update) == 0)
-		throw new InstallationError(DEPLOY_FRAMEWORK_COULD_NOT_FIND_UPDATE, "Set of packages to install is empty.", $packageID);
+		throw new InstallationError(DEPLOY_FRAMEWORK_COULD_NOT_FIND_UPDATE, "Set of bundles to install is empty.", $packageID);
 		$result = array();
 		$result['newpackage'] = array($new_package->getID(), $new_package->getVersion(), $new_package->getPatchlevel());;
 		$result['oldpackage'] = is_null($old_package) ? NULL : array($old_package->getID(), $old_package->getVersion(), $old_package->getPatchlevel());;

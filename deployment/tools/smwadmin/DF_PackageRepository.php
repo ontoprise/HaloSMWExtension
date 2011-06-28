@@ -211,7 +211,7 @@ class PackageRepository {
 		$url = reset($rpURLs);
 
 
-		if ($url === false) throw new RepositoryError(DEPLOY_FRAMEWORK_REPO_PACKAGE_DOES_NOT_EXIST, "Can not find package: $ext_id. Missing repository?");
+		if ($url === false) throw new RepositoryError(DEPLOY_FRAMEWORK_REPO_PACKAGE_DOES_NOT_EXIST, "Can not find bundle: $ext_id. Missing repository?");
 
 		// download descriptor
 		$d = new HttpDownload();
@@ -238,7 +238,7 @@ class PackageRepository {
 				// try next version
 			}
 		}
-		throw new RepositoryError(DEPLOY_FRAMEWORK_REPO_PACKAGE_DOES_NOT_EXIST, "Can not find package: $ext_id in version range $minversion-$maxversion");
+		throw new RepositoryError(DEPLOY_FRAMEWORK_REPO_PACKAGE_DOES_NOT_EXIST, "Can not find bundle: $ext_id in version range $minversion-$maxversion");
 	}
 
 	/**
@@ -262,7 +262,7 @@ class PackageRepository {
 			$repourl = $url;
 			break;
 		}
-		if (!isset($repourl)) throw new RepositoryError(DEPLOY_FRAMEWORK_REPO_PACKAGE_DOES_NOT_EXIST, "Can not find package: $ext_id-$version");
+		if (!isset($repourl)) throw new RepositoryError(DEPLOY_FRAMEWORK_REPO_PACKAGE_DOES_NOT_EXIST, "Can not find bundle: $ext_id-$version");
 
 		// download descriptor
 		$d = new HttpDownload();
@@ -425,7 +425,7 @@ class PackageRepository {
 			$download_url = trim((string) $package[0]->attributes()->url);
 			break;
 		}
-		if (!isset($download_url)) throw new RepositoryError(DEPLOY_FRAMEWORK_REPO_PACKAGE_DOES_NOT_EXIST, "Can not find package: $packageID-$version. Missing repository?");
+		if (!isset($download_url)) throw new RepositoryError(DEPLOY_FRAMEWORK_REPO_PACKAGE_DOES_NOT_EXIST, "Can not find bundle: $packageID-$version. Missing repository?");
 
 		return array($download_url, $repo_url);
 	}
@@ -622,7 +622,7 @@ class PackageRepository {
 			if (!array_key_exists($id, $descriptorMap)) {
 				$desc = is_null($rootDir) ? self::getLatestDeployDescriptor($id) : $localpackages[$id];
 				if (is_null($desc)) {
-					throw new RepositoryError(DEPLOY_FRAMEWORK_REPO_PACKAGE_DOES_NOT_EXIST, "Extension not found: $id", $id);
+					throw new RepositoryError(DEPLOY_FRAMEWORK_REPO_PACKAGE_DOES_NOT_EXIST, "Bundle not found: $id", $id);
 				}
 				$descriptorMap[$id] = $desc;
 				$depCounterMap[$id] = 0;
@@ -686,7 +686,7 @@ class PackageRepository {
 			if (!array_key_exists($id, $descriptorMap)) {
 				$desc = is_null($rootDir) ? self::getLatestDeployDescriptor($id) : $localpackages[$id];
 				if (is_null($desc)) {
-					throw new RepositoryError(DEPLOY_FRAMEWORK_REPO_PACKAGE_DOES_NOT_EXIST, "Extension not found: $id", $id);
+					throw new RepositoryError(DEPLOY_FRAMEWORK_REPO_PACKAGE_DOES_NOT_EXIST, "Bundle not found: $id", $id);
 				}
 				$descriptorMap[$id] = $desc;
 				$depCounterMap[$id] = 0;

@@ -189,7 +189,7 @@ class ResourceInstaller {
 		$package = array_key_exists($packageID, $localPackages) ? $localPackages[$packageID] : NULL;
 		$packageFound = !is_null($package) && ($package->getVersion() == $version || $version == NULL);
 		if (!$packageFound) {
-			throw new InstallationError(DEPLOY_FRAMEWORK_NOT_INSTALLED, "The specified package is not installed. Nothing to check.");
+			throw new InstallationError(DEPLOY_FRAMEWORK_NOT_INSTALLED, "The specified bundle is not installed. Nothing to check.");
 		}
 
 		$dfgOut->outputln("\n[Checking ontology...");
