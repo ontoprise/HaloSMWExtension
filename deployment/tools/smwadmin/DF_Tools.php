@@ -610,7 +610,7 @@ class Tools {
 	public static function checkIfOntologyFile($filename) {
 		$ext = self::getFileExtension($filename);
 		return ($ext == 'owl' || $ext == 'rdf' || $ext == 'obl'
-		|| $ext == 'n3' || $ext == 'nt');
+		|| $ext == 'n3' || $ext == 'nt' || $ext == 'ttl');
 	}
 
 	/**

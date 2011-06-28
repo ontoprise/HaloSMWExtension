@@ -151,7 +151,7 @@ for( $arg = reset( $args ); $arg !== false; $arg = next( $args ) ) {
 
 		if (file_exists($package)) {
 			$file_ext = reset(array_reverse(explode(".", $package)));
-			if ($file_ext == 'owl' || $file_ext == 'rdf' || $file_ext == 'obl') {
+			if (Tools::checkIfOntologyFile($package)) {
 				// import ontology
 				$ontologiesToInstall[] = $package;
 			} else if ($file_ext == 'zip') {
@@ -162,8 +162,7 @@ for( $arg = reset( $args ); $arg !== false; $arg = next( $args ) ) {
 		} else {
 			// assume it is a package but print a warning if the name has a
 			// ontology extension.
-			$file_ext = reset(array_reverse(explode(".", $package)));
-			if ($file_ext == 'owl' || $file_ext == 'rdf' || $file_ext == 'obl') {
+			if (Tools::checkIfOntologyFile($package)) {
 				$dfgOut->outputln("Are you sure '$package' is intended to be a package? It does not exist as a file.\n", DF_PRINTSTREAM_TYPE_WARN);
 			}
 			$packageToInstall[] = $package;
