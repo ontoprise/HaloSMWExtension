@@ -231,11 +231,11 @@ abstract class SMWSemanticStoreSQL extends SMWSemanticStore {
 		$categorylinks = $db->tableName('categorylinks');
 		$page = $db->tableName('page');
 
-		// get categories with
+		// get root categories with
 		$sql = 'page_namespace=' . NS_CATEGORY .
                ' AND page_is_redirect = 0 AND NOT EXISTS (SELECT cl_from FROM '.$categorylinks.' WHERE cl_from = page_id) AND NOT EXISTS (SELECT c.cl_from FROM '.$categorylinks.' c JOIN '.$page.' p ON p.page_id = c.cl_from WHERE c.cl_to = t.page_title AND p.page_namespace=14)';
 
-		// and without subcategories
+		// and those without subcategories
 		$sql2 = 'page_namespace=' . NS_CATEGORY .
                ' AND page_is_redirect = 0 AND NOT EXISTS (SELECT cl_from FROM '.$categorylinks.' WHERE cl_from = page_id) AND EXISTS (SELECT c.cl_from FROM '.$categorylinks.' c JOIN '.$page.' p ON p.page_id = c.cl_from WHERE c.cl_to = t.page_title AND p.page_namespace=14)';
 
@@ -256,12 +256,35 @@ abstract class SMWSemanticStoreSQL extends SMWSemanticStore {
 							'UNION DISTINCT (SELECT c.cl_to, "true" AS has_subcategories FROM '.$categorylinks.' c LEFT JOIN '.$page.' p '.$sql3.' '.$bundleSql3.') '. 
 		DBHelper::getSQLOptionsAsString($requestoptions,'page_title'));
 
-
+		 
 
 		if($db->numRows( $res ) > 0) {
 			while($row = $db->fetchObject($res)) {
 				if (smwf_om_userCan($row->page_title, 'read', NS_CATEGORY) === "true") {
 					$result[] = array(Title::newFromText($row->page_title, NS_CATEGORY), $row->has_subcategories != 'true');
+				}
+			}
+		} else if (!empty($bundleID)) {
+			// this might mean that the selected bundle has no root categories
+			// in this case search for 'root categories' within the bundle
+			$res = $db->query('(SELECT subcat.page_title, "false" AS has_subcategories FROM '.$page.' subcat '.
+			                     'JOIN '.$categorylinks.' c ON c.cl_from = subcat.page_id '.
+			                     'JOIN '.$page.' supercat ON c.cl_to = supercat.page_title AND supercat.page_namespace = 14 '.
+			                     'WHERE subcat.page_id IN '.$bundleSql.' AND supercat.page_id NOT IN '.$bundleSql.' '.
+			                     'AND NOT EXISTS (SELECT c.cl_from FROM '.$categorylinks.' c JOIN '.$page.' p ON p.page_id = c.cl_from '.
+			                     'WHERE c.cl_to = subcat.page_title AND p.page_namespace=14)) '.
+			            ' UNION (SELECT subcat.page_title, "true" AS has_subcategories FROM '.$page.' subcat '.
+			                    'JOIN '.$categorylinks.' c ON c.cl_from = subcat.page_id '.
+			                    'JOIN '.$page.' supercat ON c.cl_to = supercat.page_title AND supercat.page_namespace = 14 '.
+			                    'WHERE subcat.page_id IN '.$bundleSql.' AND supercat.page_id NOT IN '.$bundleSql.' '.
+			                    'AND EXISTS (SELECT c.cl_from FROM '.$categorylinks.' c JOIN '.$page.' p ON p.page_id = c.cl_from '.
+			                    'WHERE c.cl_to = subcat.page_title AND p.page_namespace=14)) '.DBHelper::getSQLOptionsAsString($requestoptions,'page_title'));
+        
+			if($db->numRows( $res ) > 0) {
+				while($row = $db->fetchObject($res)) {
+					if (smwf_om_userCan($row->page_title, 'read', NS_CATEGORY) === "true") {
+						$result[] = array(Title::newFromText($row->page_title, NS_CATEGORY), $row->has_subcategories != 'true');
+					}
 				}
 			}
 		}
@@ -552,20 +575,20 @@ abstract class SMWSemanticStoreSQL extends SMWSemanticStore {
 
 	function getPropertiesWithSchemaByCategory(Title $categoryTitle, $onlyDirect = false, $dIndex = 0, $requestoptions = NULL,$bundleID= '') {
 		$db =& wfGetDB( DB_SLAVE );
-				
+
 		global $dfgLang;
-        $partOfBundlePropertyID = smwfGetStore()->getSMWPropertyID(SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString("df_partofbundle")));
-        $bundleID = ucfirst($bundleID);
-        $bundleSMWID = smwfGetStore()->getSMWPageID($bundleID, NS_MAIN, "");
-        $smw_ids = $db->tableName('smw_ids');
-        $smw_rels2 = $db->tableName('smw_rels2');
-        
-        $smw_subs2 = $db->tableName('smw_subp2');
-        $page = $db->tableName('page');
-        
-        $bundleSql = empty($bundleID) ? '' : ' WHERE property IN (SELECT pc.page_title FROM '.$page.' pc JOIN '.$smw_ids.' ON pc.page_title = smw_title AND pc.page_namespace = '.SMW_NS_PROPERTY.' JOIN '.$smw_rels2.' ON s_id = smw_id AND p_id = '.$partOfBundlePropertyID.' AND o_id = '.$bundleSMWID.')';
-        
-        
+		$partOfBundlePropertyID = smwfGetStore()->getSMWPropertyID(SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString("df_partofbundle")));
+		$bundleID = ucfirst($bundleID);
+		$bundleSMWID = smwfGetStore()->getSMWPageID($bundleID, NS_MAIN, "");
+		$smw_ids = $db->tableName('smw_ids');
+		$smw_rels2 = $db->tableName('smw_rels2');
+
+		$smw_subs2 = $db->tableName('smw_subp2');
+		$page = $db->tableName('page');
+
+		$bundleSql = empty($bundleID) ? '' : ' WHERE property IN (SELECT pc.page_title FROM '.$page.' pc JOIN '.$smw_ids.' ON pc.page_title = smw_title AND pc.page_namespace = '.SMW_NS_PROPERTY.' JOIN '.$smw_rels2.' ON s_id = smw_id AND p_id = '.$partOfBundlePropertyID.' AND o_id = '.$bundleSMWID.')';
+
+
 		$this->createVirtualTableWithPropertiesByCategory($categoryTitle, $db, $onlyDirect, $dIndex);
 
 		$res = $db->query( 'SELECT DISTINCT property, inherited FROM smw_ob_properties '.$bundleSql.' '.DBHelper::getSQLOptionsAsString($requestoptions,array('inherited','property')));
