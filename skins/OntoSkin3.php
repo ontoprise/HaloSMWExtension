@@ -287,7 +287,7 @@ class OntoSkin3Template extends QuickTemplate {
 
 	/*************************************************************************************************/
     function searchBox() {
-        global $wgUseTwoButtonsSearchForm;
+        global $wgUseTwoButtonsSearchForm, $wgScriptPath;
         ?>
         
  <div id="smwh_search" class="portlet">
@@ -295,7 +295,7 @@ class OntoSkin3Template extends QuickTemplate {
         <form action="<?php $this->text('wgScript') ?>" id="searchform">
         
                 <input type='hidden' name="title" value="<?php $this->text('searchtitle') ?>"/>
-                <a id="createNewArticleCtrl" href="#">Create New Article</a>
+                <div id="createNewArticleCtrl"><img src="<?php echo $wgScriptPath . '/extensions/SMWHalo/skins/CreateNewArticle/Addcontent.png'?>"></img><a href="">Create New Article</a></div>
                 <input id="searchInput" pasteNS="true" class="wickEnabled" name="search" constraints="all" onfocus="this.value='';" type="text"<?php echo $this->skin->tooltipAndAccesskey('search'); ?>
                      value="<?php $this->msg('smw_search_this_wiki'); ?>"/>
 
