@@ -533,15 +533,10 @@ Section "Solr" solr
     SetOutPath "$INSTDIR\solr\wiki"
     StrCpy $PHP "$INSTDIR\php\php.exe"
 
-    DetailPrint "Run Solr"
-    ; run the solr server
-    Exec '"$INSTDIR\solr\wiki\startSolr.bat"'
-
     ${If} $0 == 1
         SetOutPath "$INSTDIR\solr\wiki"
         CreateDirectory "$SMPROGRAMS\$STARTMENU_FOLDER"
         CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\${PRODUCT} ${VERSION} Start Solr.lnk" "$INSTDIR\solr\wiki\startSolr.bat"
-        CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\${PRODUCT} ${VERSION} Solr Create Index.lnk" '"$INSTDIR\solr\wiki\createIndex.bat"'
     ${EndIf}
 
     DetailPrint "set solr_ip to $IP"
@@ -556,8 +551,9 @@ Section "Solr" solr
 
     CreateDirectory "$INSTDIR\solr\wiki\logs"
 
-    ; create index
-    nsExec::ExecToLog '"$PHP" "$INSTDIR\solr\wiki\createIndex.php"'
+    DetailPrint "Run Solr"
+    ; run the solr server
+    Exec '"$INSTDIR\solr\wiki\startSolr.bat"'
 
 SectionEnd
 
