@@ -195,7 +195,7 @@ protected $smwUserMessages = array(
 	'smw_ob_cmd_addpropertytodomain' => 'Attribut hinzufügen zur Kategorie: ',
 	
 	/* Advanced options in the ontology browser */
-	'smw_ob_source_wiki' => "-Wiki-" ,
+	'smw_ob_source_wiki' => "-Wiki- (alle Bundles)" ,
 	'smw_ob_advanced_options' => "Einstellungen" ,
 	'smw_ob_select_datasource' => "Zu durchsuchende Datenquellen:" ,
     'smw_ob_select_bundle' => "Zu durchsuchendes Bundle" ,
