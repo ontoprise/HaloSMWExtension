@@ -62,11 +62,10 @@ class DFUploadTab {
 
 	public function getHTML() {
 		global $dfgLang;
-		$uploadButtonText = $dfgLang->getLanguageString('df_webadmin_upload');
+
 		$html = <<<ENDS
-<form action="upload.php" method="post" enctype="multipart/form-data">
-<input type="file" name="datei"><br>
-<input type="submit" value="$uploadButtonText">
+<form id="df_upload_file_form" action="upload.php" method="post" enctype="multipart/form-data">
+<input id="df_upload_file_input" type="file" name="datei" size="100"><br>
 </form>
 ENDS
 		;

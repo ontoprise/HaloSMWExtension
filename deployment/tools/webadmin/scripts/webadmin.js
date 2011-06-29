@@ -671,6 +671,11 @@ $(function() {
 		smw_makeSortable($('#df_bundlefilelist_table')[0]);
 		smw_makeSortable($('#df_restorepoint_table')[0]);
 		
+		// upload input field
+		$('#df_upload_file_input').change(function(e) { 
+			$('#df_upload_file_form').submit();
+		});
+		
 		// register LocalSettings content
 		$('#df_settings_save_button').click(function(e2) {
 			// save content
