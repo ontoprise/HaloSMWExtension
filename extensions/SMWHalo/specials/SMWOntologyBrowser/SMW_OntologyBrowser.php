@@ -94,7 +94,7 @@ class SMW_OntologyBrowser extends SpecialPage {
 			$sourceOptions = "";
 			foreach ($ids as $tuple) {
 				list($sourceID, $sourceLabel) = $tuple;
-				$sourceOptions .= "<option sourceid=\"$sourceID\">$sourceLabel</option>";
+				$sourceOptions .= "<option sourceid=\"$sourceID\" title=\"$sourceID\">$sourceLabel</option>";
 			}
 		}
 		
@@ -103,7 +103,7 @@ class SMW_OntologyBrowser extends SpecialPage {
 		$bundleOptions="";
 		$contentBundles = smwfGetSemanticStore()->getDirectInstances(Title::newFromText($dfgLang->getLanguageString('df_contentbundle'), NS_CATEGORY));
 		foreach($contentBundles as $cb) {
-			$bundleOptions .= "<option bundleid=\"".strtolower($cb->getDBkey())."\">".$cb->getText()."</option>";
+			$bundleOptions .= "<option bundleid=\"".strtolower($cb->getDBkey())."\" title=\"".strtolower($cb->getDBkey())."\">".$cb->getText()."</option>";
 		}		
 		
 		$advancedOptions  = wfMsg("smw_ob_advanced_options");
