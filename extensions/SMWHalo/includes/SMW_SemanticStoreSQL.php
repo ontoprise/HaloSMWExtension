@@ -1431,6 +1431,7 @@ abstract class SMWSemanticStoreSQL extends SMWSemanticStore {
 
 	public function getAllNamespaceMappings() {
 		$db =& wfGetDB( DB_SLAVE );
+		if (!$db->tableExists('smw_nsmapping')) return array();
 		$smw_nsmapping = $db->tableName('smw_nsmapping');
 		$res = $db->select($smw_nsmapping, array('smw_prefix', 'smw_uri'));
 		$result = array();
