@@ -26,34 +26,55 @@
 
 $wgAjaxExportList[] = "cna_getForms";
 $wgAjaxExportList[] = "cna_getCategories";
-
-//$wgHooks['UnknownAction'][] = 'cna_actionHook';
+$wgAjaxExportList[] = "cna_getPropertyValue";
+$wgAjaxExportList[] = "cna_articleExists";
 
 
 function cna_getForms() {
-	$forms = SFUtils::getAllForms();
 	$resultString = '';
-	
-	for ($i = 0; $i < count($forms); $i++) {
-		$resultString .= $forms[$i];
-		if($i < count($forms))
-			$resultString .= ',';
+
+	//search for forms only if SF installed
+	if (defined('SF_VERSION')) {
+		$forms = SFUtils::getAllForms();
+		
+		for ($i = 0; $i < count($forms); $i++) {
+			$resultString .= $forms[$i];
+			if($i < count($forms))
+				$resultString .= ',';
+		}
 	}
 	
 	return $resultString;
 }
 
 function cna_getCategories() {
-	$categories = ASFCategoryAC::getCategories('');
 	$resultString = '';
-	
-	for ($i = 0; $i < count($categories); $i++) {
-		$resultString .= $categories[$i];
-		if($i < count($categories))
-			$resultString .= ',';
+
+	//search for categories only if ASF installed
+	if(defined('ASF_VERSION')){
+		$categories = ASFCategoryAC::getCategories('');
+		
+		for ($i = 0; $i < count($categories); $i++) {
+			$resultString .= $categories[$i];
+		}
 	}
 	
 	return $resultString;
 }
 
+
+function cna_getPropertyValue($titleName, $propertyName){
+	$propertyValue = 'no description available';
+	$title = Title::newFromText($titleName);
+	$prop = SMWPropertyValue::makeUserProperty($propertyName);
+	$propValues = smwfGetStore()->getPropertyValues($title, $prop);
+	if($propValues && count($propValues) > 0){
+		$propertyValue = $propValues[0]->getWikiValue();
+	}
+	return $propertyValue;
+}
+
+function cna_articleExists($titleName) {
+	return smwf_om_ExistsArticle($titleName) . ';' .$titleName;
+}
 
