@@ -228,7 +228,7 @@ getInstances: function(categoryName, partition, callback) {
 },
 
 getProperties: function(categoryName, onlyDirect, dIndex, callback) {
-	sajax_do_call('smwf_ob_OntologyBrowserAccess', ['getProperties',categoryName+"##"+onlyDirect+"##"+dIndex, obAdvancedOptions.getDataSource()], callback);
+	sajax_do_call('smwf_ob_OntologyBrowserAccess', ['getProperties',categoryName+"##"+onlyDirect+"##"+dIndex, obAdvancedOptions.getDataSource(), obAdvancedOptions.getBundle()], callback);
 },
 
 getAnnotations: function(instanceName, onlyDirect, callback) {
