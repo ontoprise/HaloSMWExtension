@@ -502,8 +502,8 @@
 	AjaxSolr.theme.prototype.createArticle = function(articleName, link) {
 		var lang = FacetedSearch.singleton.Language;
 		var html = lang.getMessage('nonexArticle', '<em>'+articleName+'</em>') + 
-					' <a href="' + link + '">' + 
-						lang.getMessage('createArticle') + 
+					' <a href="' + link + '" class="xfsRedLink">' + 
+						articleName + 
 					'</a>';
 		return html;
 	};

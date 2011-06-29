@@ -62,8 +62,7 @@ FacetedSearch.classes.FSLanguageEn = function () {
 'mainNamespace'		: 'Main',
 'namespaceTooltip'  : '$1 article(s) in this namespace match the selection.',
 'allNamespaces'		: 'All namespaces',
-'nonexArticle'		: 'The article $1 does not exist.',
-'createArticle'		: 'Click here to create the article.'
+'nonexArticle'		: 'The article does not exist. Click here to create it:'
 		
 	};
 	

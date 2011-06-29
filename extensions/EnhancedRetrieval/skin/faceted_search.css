@@ -160,3 +160,7 @@ a.xfsFMore, a.xfsFLess {
 .xfsSortOrder {
 	margin-left: 1em;
 }
+
+.xfsRedLink {
+	color: #CC2200 !important;
+}

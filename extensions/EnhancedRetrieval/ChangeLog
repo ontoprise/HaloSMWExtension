@@ -11,6 +11,7 @@ VERSION 1.5.6
   CHANGES:
 
   BUGFIXES:
+  15074 - link to create article must be red
   15030 - SOLR doesn't use 'OR' in multi word search phrases
   14664 - Last drilldown facet should not be a link
   14663 - Change label "has properties: (show)"  

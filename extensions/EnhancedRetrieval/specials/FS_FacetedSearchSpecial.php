@@ -194,15 +194,17 @@ class FSFacetedSearchSpecial extends SpecialPage {
 	 * Add a global JavaScript variable for the SOLR URL.
 	 * @param $vars
 	 * 		This array of global variables is enhanced with "wgFSSolrURL"
+	 * 		and "wgFSCreateNewPageLink"
 	 */
 	public static function addJavaScriptVariables(&$vars) {
-		global $fsgFacetedSearchConfig;
+		global $fsgFacetedSearchConfig, $fsgCreateNewPageLink;
 		$solrURL = "http://".$fsgFacetedSearchConfig['host']
 		           .':'
 		           .$fsgFacetedSearchConfig['port']
 		           .'/solr/';
 		
 		$vars['wgFSSolrURL'] = $solrURL;
+		$vars['wgFSCreateNewPageLink'] = $fsgCreateNewPageLink;
 		
 		return true;
 	}
