@@ -544,8 +544,7 @@ Section "Solr" solr
     ${WriteToFile} "<?php$\r$\n$$solrIP='$IP';" "$MEDIAWIKIDIR\extensions\EnhancedRetrieval\SOLR\solr_ip.php"
     ;${ConfigWrite} "$MEDIAWIKIDIR\extensions\EnhancedRetrieval\SOLR\solr_ip.php" "<?php$\n\$$solrIP=" '"$IP";' $R0
     
-    nsExec::ExecToLog '"$PHP" "$MEDIAWIKIDIR\installer\changeVariable.php" in=createIndex.bat out=createIndex.bat noslash=true php-exe="$PHP"'
-    nsExec::ExecToLog '"$PHP" "$MEDIAWIKIDIR\installer\changeVariable.php" in=startSolr.bat out=startSolr.bat noslash=true install-dir="$INSTDIR\solr\wiki"'
+    nsExec::ExecToLog '"$PHP" "$MEDIAWIKIDIR\installer\changeVariable.php" in=createIndex.bat out=createIndex.bat noslash=true php-exe="$PHP" install-dir="$INSTDIR\solr\wiki"'
     CopyFiles "$INSTDIR\htdocs\mediawiki\extensions\EnhancedRetrieval\SOLR\smwdb-data-config.xml" "$INSTDIR\solr\wiki\solr\conf\smwdb-data-config.xml"
     CopyFiles "$INSTDIR\htdocs\mediawiki\extensions\EnhancedRetrieval\SOLR\schema.xml" "$INSTDIR\solr\wiki\solr\conf\schema.xml"
     CopyFiles "$INSTDIR\htdocs\mediawiki\extensions\EnhancedRetrieval\SOLR\solrconfig.xml" "$INSTDIR\solr\wiki\solr\conf\solrconfig.xml"
