@@ -135,6 +135,8 @@ function tff_checkArticleName($articleName, $rowNr, $tabularFormId){
 	}
 	$articleName = implode(':', $articleName);
 
+	$exists = false;
+	
 	$validTitle = false;
 	if(strpos($articleName, '#') === false){
 		$title = Title::newFromText($articleName);
@@ -142,12 +144,27 @@ function tff_checkArticleName($articleName, $rowNr, $tabularFormId){
 			if($title->getFullText() == $articleName){
 				if(!$title->exists()){
 					$validTitle = true;
+					$exists = true;
 				}
 			}
 		}
 	}
+	
+	//todo: language
+	if(strlen($articleName) == 0){
+		$message = 'Instance names cannot be blank.';
+	} else {
+		$articleName = str_replace(array('<', '>'), array('&lt;', '&gt;'), $articleName);
+		if($eyists){
+			$message = "'".ucfirst($articleName)."' is not a valid instance name.";
+		} else {
+			$message = "The article '".ucfirst($articleName)."' already exists.";
+		}
+	}
+		
 
-	$result = array('validTitle' => $validTitle, 'rowNr' => $rowNr, 'tabularFormId' => $tabularFormId);
+	$result = array('validTitle' => $validTitle, 'rowNr' => $rowNr, 
+		'tabularFormId' => $tabularFormId, 'message' => $message);
 	$result = json_encode($result);
 
 	return '--##starttf##--' . $result . '--##endtf##--';
@@ -252,7 +269,8 @@ function tff_getLostInstances($querySerialization, $isSPARQL, $tabularFormId, $i
  * 1) valid according to the annotations type
  * 2) if the annotation matches the query's constraints, i.e. if the corresponding instance is part of the query result
  */
-function tff_checkAnnotationValues($annotationLabel, $annotationValue, $annotationValues, $queryConditions, $cssSelector){
+function tff_checkAnnotationValues($annotationLabel, $annotationValue, 
+		$annotationValues, $queryConditions, $cssSelector, $fieldNr, $articleName){
 
 	//first check type
 	$property = SMWPropertyValue::makeUserProperty($annotationLabel);
@@ -265,6 +283,17 @@ function tff_checkAnnotationValues($annotationLabel, $annotationValue, $annotati
 	} else {
 		$nDV = SMWDataValueFactory::newPropertyObjectValue($property, $annotationValue);
 		$isValid = $nDV->isValid();
+	}
+	$invalidValueMsg = '';
+	if(!$isValid){
+		//todo language
+		if(strlen($annotationValue) > 30){
+			$annotationValue = substr($annotationValue, 0,30).'...';
+		}
+		$articleName = str_replace(array('<', '>'), array('&lt;', '&gt;'), $articleName);
+		$annotationValue = str_replace(array('<', '>'), array('&lt;', '&gt;'), $annotationValue);
+		$invalidValueMsg .= "'".$articleName."' has an invalid value: ";
+		$invalidValueMsg .= "The value '".$annotationValue."' of property '".$annotationLabel."' is invalid."; 
 	}
 	
 	//do instance looose test
@@ -382,24 +411,43 @@ function tff_checkAnnotationValues($annotationLabel, $annotationValue, $annotati
 					
 				//todo: language
 				$lWarning = array();
-				$lWarning['smw_tf_lost-reason_'.SMW_CMP_EQ] = "None of the annotation's values are equal to: ";
-				$lWarning['smw_tf_lost-reason_'.SMW_CMP_NEQ] = "None of the annotation's values are unequal to: ";
-				$lWarning['smw_tf_lost-reason_'.SMW_CMP_LEQ] = "None of the annotation's values are smaller or equal to: ";
-				$lWarning['smw_tf_lost-reason_'.SMW_CMP_GEQ] = "None of the annotation's values are greater or equal to: ";
-				$lWarning['smw_tf_lost-reason_'.SMW_CMP_LESS] = "None of the annotation's values are smaller than: ";
-				$lWarning['smw_tf_lost-reason_'.SMW_CMP_GRTR] = "None of the annotation's values are greater than: ";
-				$lWarning['smw_tf_lost-reason_'.TF_IS_EXISTS_CMP] = "Does not have any valid annotation values";
+				$lWarning['smw_tf_lost-reason_'.SMW_CMP_EQ] = "is equal to";
+				$lWarning['smw_tf_lost-reason_'.SMW_CMP_NEQ] = "is unequal to";
+				$lWarning['smw_tf_lost-reason_'.SMW_CMP_LEQ] = "is smaller or equal to";
+				$lWarning['smw_tf_lost-reason_'.SMW_CMP_GEQ] = "is greater or equal to";
+				$lWarning['smw_tf_lost-reason_'.SMW_CMP_LESS] = "is smaller than";
+				$lWarning['smw_tf_lost-reason_'.SMW_CMP_GRTR] = "is greater than";
+				$lWarning['smw_tf_lost-reason_'.TF_IS_EXISTS_CMP] = "is a valid annotation value";
 				
 				if($getsLost){
+					if(strlen($compareValue) > 0){
+						$compareValue = " '".$compareValue."'";
+					}
 					$warnings[] = 	$lWarning['smw_tf_lost-reason_'.$comparator].$compareValue;
 				}
 			}
 		}
 	}
 	
+	if(count($warnings) > 0){
+		$getsLost = 0;
+		$articleName = str_replace(array('<', '>'), array('&lt;', '&gt;'), $articleName);
+		//todo: use language
+		if(count($warnings) > 1){
+			$tmp = $warnings[count($warnings)-1];
+			unset($warnings[count($warnings)-1]);
+			$warnings = implode(', none ', $warnings).' and none '.$tmp;
+		} else {
+			$warnings = $warnings[0];
+		}
+		$warnings = "'<span class=\"tabf_nin\">".$articleName."</span>', because none of the values of the '".$annotationLabel
+			."' annotation ".$warnings.".";
+	}
+	
 	$getsLost = (count($warnings) > 0) ? true : false;
 		
-	$result = array('isValid' => $isValid, 'lost' => $getsLost, 'warnings' => $warnings,'cssSelector' => $cssSelector);
+	$result = array('isValid' => $isValid, 'lost' => $getsLost, 'looseWarnings' => $warnings,
+		'cssSelector' => $cssSelector, 'fieldNr' => $fieldNr, 'invalidValueMsg' => $invalidValueMsg);
 	$result = json_encode($result);
 
 	return '--##starttf##--' . $result . '--##endtf##--';

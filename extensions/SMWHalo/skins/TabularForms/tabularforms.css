@@ -6,10 +6,13 @@
 	Author		: steinbauer and langguth
 	Description	:
 		Tabular Forms extension style sheet.
-*/
-/* general settings */
+*/ /* general settings */
 .tabf_container {
 	width: 100%;
+}
+
+.tabf_in_edit_mode {
+		
 }
 
 .tabf_container table {
@@ -29,7 +32,7 @@
 	vertical-align: bottom;
 }
 
-.tabf_container th > span {
+.tabf_container th>span {
 	margin-right: 1em;
 }
 
@@ -46,7 +49,7 @@
 }
 
 /* table row */
-.tabf_table_row, .tabf_new_row {
+.tabf_table_row,.tabf_new_row {
 	vertical-align: top;
 	height: 2.5em;
 }
@@ -54,6 +57,7 @@
 .tabf_table_row td:first-child {
 	border-left: 0;
 }
+
 .tabf-delete-button {
 	position: absolute;
 	font-size: smaller;
@@ -73,14 +77,17 @@
 .tabf_status_cell {
 	border-left: 1px inset grey;
 	background-color: transparent !important;
-	vertical-align: middle;
+	vertical-align: top;
 	text-align: center;
+	width: 35px;
 }
+
 .tabf_table_cell div {
 	height: 2.5em;
 	width: 100%;
 	background-color: #F0F0F0; /*all divs are write protected*/
 }
+
 /* textareas */
 .tabf_table_cell textarea {
 	/*background:url(../edit.gif)no-repeat 100% 0%;*/
@@ -90,12 +97,13 @@
 	min-width: 125px;
 	width: 100%;
 	height: 2.5em;
-	overflow:hidden;
+	overflow: hidden;
 }
 
 .tabf_table_cell textarea:hover {
-	background:url(edit.gif)no-repeat 100% 0%;
+	background: url(edit.gif) no-repeat 100% 0%;
 }
+
 .tabf_table_cell textarea:focus {
 	background: 0;
 }
@@ -111,7 +119,7 @@
 
 .tabf_table_footer input {
 	margin-top: 4px;
-/*	margin-left: 4px;*/
+	/*	margin-left: 4px;*/
 	width: 100%;
 }
 
@@ -121,54 +129,59 @@
 }
 
 /* action dependent styles */
-/* One or more values in the row have been modified */
-.tabf_modified_row td:first-child {
-	font-weight: bold;
+	/* One or more values in the row have been modified */
+.tabf_modified_row td:first-child { /*font-weight: bold;*/
+	
 }
 
 .tabf_modified_value {
 	font-weight: bold;
-	background-color: #FFCD87;
+	/*background-color: #FFCD87;'/
 }
 
-/* Teaxtarea has focus */
-.tabf_selected_value {
-	background-color: #E8EDFF !important;
+/* Teaxtarea has focus */ . tabf_selected_value { background-color :
+	#E8EDFF !important;
 	outline: 1px solid black;
 }
 
 /* The row has been deleted */
-.tabf_deleted_row .tabf_table_cell {
-	background-color: red;
+.tabf_deleted_row .tabf_table_cell { /*background-color: red;*/
+	
 }
-.tabf_deleted_row textarea {
-	background-color: red;
+
+.tabf_deleted_row textarea { /*background-color: red;*/
+	
 }
 
 /* A row has been added, because user has pressed 'Add instance' button or
 because the query has found an instance, which does not exist and the user is
 allowed to create new instances. */
-.tabf_new_row .tabf_table_cell {
-	background-color: #FFCD87;
+.tabf_new_row .tabf_table_cell { /*background-color: #FFCD87;*/
+	
 }
-.tabf_new_row textarea {
-	background-color: #FFCD87;
+
+.tabf_new_row textarea { /*background-color: #FFCD87;*/
+	
 }
+
 .tabf_new_row .tabf_table_cell:last-child {
-	background-color: transparent !important;
+	/*background-color: transparent !important;*/
+	
 }
 
 /* The query has found an instance that does not exist and the user is not
 allowed to create new instances. */
-.tabf_non_existing_row {
-	background-color: red;
+.tabf_non_existing_row { /*background-color: red;*/
+	
 }
-.tabf_non_existing_row textarea {
-	background-color: red;
+
+.tabf_non_existing_row textarea { /*background-color: red;*/
+	
 }
 
 /* The row is read protected */
-.tabf_read_protected_row .tabf_table_cell, .tabf_read_protected_row .tabf_table_cell textarea {
+.tabf_read_protected_row .tabf_table_cell,.tabf_read_protected_row .tabf_table_cell textarea
+	{
 	background: 0;
 	background-color: #F0F0F0;
 	color: #6D6D6D;
@@ -187,16 +200,16 @@ allowed to create new instances. */
 
 /* ...successfully */
 .tabf_table_row_saved_successfull .tabf_table_cell {
-	background-color: lightgreen;
+	/*background-color: lightgreen;
 }
 
 .tabf_table_row_saved_successfull textarea {
 	background-color: lightgreen;
 }
 
-/* ...erroneous */
-.tabf_table_row_saved_error .tabf_table_cell {
-	background-color: red;
+/* ...erroneous */ .tabf_table_row_saved_error .tabf_table_cell {
+	background-color:red;
+	
 }
 
 .tabf_table_row_saved_error textarea {
@@ -204,15 +217,31 @@ allowed to create new instances. */
 }
 
 /* for the instances (first column) */
-.tabf_valid_instance_name {
-	background-color: lightgreen !important;
+.tabf_valid_instance_name { /*background-color: lightgreen !important;*/
+	
 }
 
-.tabf_erronious_instance_name {
-	font-weight: bold;
-	background-color: red !important;
+.tabf_erronious_instance_name { /*font-weight: bold;*/
+	/*background-color: red !important;*/
+	
 }
 
 .tabf_finally_lost_instance {
-	display : none;
+	
 }
+
+.tabf_invalid_input_filed_value {
+	
+}
+
+.tabf_probably_lost_cell {
+	display: none !important;
+}
+
+
+
+
+
+
+
+

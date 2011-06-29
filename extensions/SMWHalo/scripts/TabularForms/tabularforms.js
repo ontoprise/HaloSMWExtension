@@ -57,10 +57,34 @@ var TF = Class.create({
 		jQuery('#' + data.tabularFormId + ' tr td:first-child').each(tf.initializeDeleteButtons);
 		
 		if(jQuery('#' + data.tabularFormId + ' .tabf_new_row').get().length > 0){
-			jQuery('#' + data.tabularFormId + ' .tabf_save_button').css('display', 'inline');
+			jQuery('#' + data.tabularFormId + ' .tabf_save_button').removeAttr('disabled');
 		}
 		
 		//todo: validate subject title textarea values 
+		
+		//store html forr cancel feature
+		data.result = jQuery('#' + data.tabularFormId + ' .tabf_table_container').html();
+		data.result = data.result.replace(/</g, '##--lt--##');
+		data.result = data.result.replace(/>/g, '##--gt--##');
+		jQuery('#' + data.tabularFormId + ' .tabf_table_container_cache').html(data.result);
+		
+		//display edit mode again if this was the previous mode
+		if(jQuery('#' + data.tabularFormId).attr('isInEditMode') == 'true'){
+			tf.switchToEditMode(data.tabularFormId);
+		}
+	},
+	
+	
+	cancelFormEdit : function(tabularFormId){
+		var cachedTF = jQuery('#' + tabularFormId + ' .tabf_table_container_cache').html();
+		cachedTF = cachedTF.replace(/##--lt--##/g, '<');
+		cachedTF = cachedTF.replace(/##--gt--##/g, '>');
+		
+		jQuery('#' + tabularFormId + ' .tabf_table_container').html(cachedTF);
+		
+		jQuery('#' + tabularFormId).attr('isInEditMode' , 'false');
+		
+		//tf.switchToViewMode(tabularFormId);
 	},
 	
 	/*
@@ -112,6 +136,7 @@ var TF = Class.create({
 	 * - article name changes (detecting valid article names)
 	 */
 	cellKeyUpHandler : function(event){
+		
 		if(event.which == '16'){
 			tf.shiftKeyPressed = false;
 		}
@@ -123,12 +148,11 @@ var TF = Class.create({
 		//do checks only if values really have changed
 		if(jQuery(this).attr('currentValue') != jQuery(this).attr('value')){
 			jQuery(this).attr('currentValue', jQuery(this).attr('value'));
-				
+			
 			tf.checkNewInstanceName(this, event.which);
 				
 			tf.checkAnnotationValue(this, event.which);
 		}
-		
 	},
 	
 	/*
@@ -382,7 +406,8 @@ var TF = Class.create({
 	 * Detect if a cell value has been changed
 	 */
 	cellValueChangeHandler : function(node){
-		var parentRow = jQuery(node).parent('td').parent('tr');
+		
+		var parentRow = jQuery(node).parent().parent();
 		
 		if(jQuery(node).attr('class').indexOf('tabf_erronious_instance_name') > -1
 				|| jQuery(node).attr('class').indexOf('tabf_valid_instance_name') > -1){
@@ -390,6 +415,7 @@ var TF = Class.create({
 		}
 		
 		if(jQuery(node).attr('originalValue') != jQuery.trim(jQuery(node).attr('value'))){
+			
 			jQuery(node).addClass('tabf_modified_value');
 			jQuery(node).attr('isModified', 'true');
 		
@@ -397,15 +423,16 @@ var TF = Class.create({
 				return;
 			}
 			
-			parentRow.attr('isModified', 'true');
-			parentRow.addClass('tabf_modified_row');
+			jQuery(parentRow).attr('isModified', 'true');
+			jQuery(parentRow).addClass('tabf_modified_row');
 			
 			//jQuery('td:last-child .tabf_ok_status', parentRow).css('display', 'none');
 			jQuery('td:last-child .tabf_modified_status', parentRow).css('display', 'inline');
 			
-			if(jQuery('..tabf_erronious_instance_name', jQuery(parentRow).parent().parent()).length == 0){
-				jQuery('.tabf_save_button', jQuery(parentRow).parent().parent()).css('display', 'inline');
+			if(jQuery('.tabf_erronious_instance_name', jQuery(parentRow).parent().parent()).length == 0){
+				jQuery('.tabf_save_button', jQuery(parentRow).parent().parent()).removeAttr('disabled');
 			}
+			
 		} else {
 			jQuery(node).removeClass('tabf_modified_value');
 			jQuery(node).attr('isModified', false);
@@ -424,7 +451,7 @@ var TF = Class.create({
 				if(jQuery('.tabf_modified_row', jQuery(parentRow).parent().parent()).length == 0
 						&& jQuery('.tabf_deleted_row', jQuery(parentRow).parent().parent()).length == 0
 						&& jQuery('.tabf_new_row .tabf_valid_instance_name', jQuery(parentRow).parent().parent()).length == 0){
-					jQuery('.tabf_save_button', jQuery(parentRow).parent().parent()).css('display', 'none');
+					jQuery('.tabf_save_button', jQuery(parentRow).parent().parent()).attr('disabled', 'disabled');
 				}
 			}
 		}
@@ -641,10 +668,14 @@ var TF = Class.create({
 		
 		var instances = jQuery(
 				'#'+data.tabularFormId +' .tabf_table_row .tabf_table_cell:first-child a').get();		
+		
+		var container = jQuery('#'+data.tabularFormId);
 		for(var i=0; i < instances.length; i++){
 			for(var k=0; k < data.result.length; k++){
 				if('#' + jQuery(instances[i]).html() == '#' + data.result[k]){
-					jQuery(instances[i]).parent().parent().addClass('tabf_finally_lost_instance');
+					tf.addNotification(container, 'tabf_lost_instance_warning', i + '-' + k, data.result[k]);
+					
+					//jQuery(instances[i]).parent().parent().addClass('tabf_finally_lost_instance');
 				}
 			}
 		}
@@ -672,7 +703,9 @@ var TF = Class.create({
 		
 		jQuery('td:first-child textarea', newRow).focus();
 		
-		jQuery('.tabf_save_button', jQuery(newRow).parent().parent()).css('display', 'none');
+		jQuery('.tabf_save_button', jQuery(newRow).parent().parent()).attr('disabled', 'disabled');
+		
+		tf.checkNewInstanceName(jQuery('td:first-child textarea', newRow), 55);
 	},
 	
 	/*
@@ -681,6 +714,9 @@ var TF = Class.create({
 	 * checks if instance name is valid and new via an Ajax Call.
 	 */
 	checkNewInstanceName : function(element, keyCode){
+		
+		//todo: alsi check that none of the other new instances has the same name
+		
 		if(jQuery(element).attr('class').indexOf('tabf_erronious_instance_name') == -1 
 				&& jQuery(element).attr('class').indexOf('tabf_valid_instance_name') == -1){
 			return;
@@ -715,17 +751,25 @@ var TF = Class.create({
 			jQuery('td:first-child textarea', jQuery(row)).removeClass('tabf_erronious_instance_name');
 			jQuery('td:first-child textarea', jQuery(row)).addClass('tabf_valid_instance_name');
 			jQuery('td:first-child textarea', jQuery(row)).attr('isValidInstanceName', 'true');
+			
+			tf.deleteNotification(jQuery(row).parent().parent().parent(), 'tabf_add_instance_error', data.rowNr);
 		} else {
 			jQuery('td:first-child textarea', jQuery(row)).removeClass('tabf_valid_instance_name');
 			jQuery('td:first-child textarea', jQuery(row)).addClass('tabf_erronious_instance_name');
 			jQuery('td:first-child textarea', jQuery(row)).attr('isValidInstanceName', 'false');
+			
+			tf.addNotification(jQuery(row).parent().parent().parent(), 'tabf_add_instance_error', data.rowNr, data.rowNr, data.message);
 		}
 		
 		if(jQuery('.tabf_new_row .tabf_erronious_instance_name', jQuery(row).parent().parent()).length == 0){
-			jQuery('.tabf_save_button', jQuery(row).parent().parent()).css('display', 'inline');
+			jQuery('.tabf_save_button', jQuery(row).parent().parent()).removeAttr('disabled');
 		} else {
-			jQuery('.tabf_save_button', jQuery(row).parent().parent()).css('display', 'none');
+			jQuery('.tabf_save_button', jQuery(row).parent().parent()).attr('disabled', 'disabled');
 		} 
+		
+		//update notifications
+		tf.updateInstanceNameInNotifications( jQuery('#' + data.tabularFormId)
+				, data.rowNr, jQuery('td:first-child textarea', row).attr('value'));
 			
 	},
 	
@@ -754,6 +798,8 @@ var TF = Class.create({
 		var row = jQuery(input).parent().parent();
 		
 		if(jQuery(row).attr('isNew') == 'true'){
+		
+			tf.hideNotificationsForInstance(jQuery(row).parent().parent().parent().parent(), tf.getChildNumber(row, 1), true);
 			
 			var rowParent = jQuery(row).parent().parent();
 			
@@ -762,18 +808,21 @@ var TF = Class.create({
 			if(jQuery('.tabf_modified_row', jQuery(rowParent)).length == 0
 					&& jQuery('.tabf_deleted_row', jQuery(rowParent)).length == 0
 					&& jQuery('.tabf_new_row .tabf_valid_instance_name', jQuery(rowParent)).length == 0){
-				jQuery('.tabf_save_button', jQuery(rowParent)).css('display', 'none');
+				jQuery('.tabf_save_button', jQuery(rowParent)).attr('disabled', 'disabled');
 			} else if ((jQuery('.tabf_modified_row', jQuery(rowParent)).length > 0
 					|| jQuery('.tabf_deleted_row', jQuery(rowParent)).length > 0
 					|| jQuery('.tabf_new_row .tabf_valid_instance_name', jQuery(rowParent)).length > 0)
 					&& jQuery('.tabf_new_row .tabf_erronious_instance_name', jQuery(rowParent)).length == 0){
-				jQuery('.tabf_save_button', jQuery(rowParent)).css('display', 'inline');
+				jQuery('.tabf_save_button', jQuery(rowParent)).removeAttr('disabled');
 			}
 			
 			
 			
 		} else {
+			
 			if(jQuery(row).attr('isDeleted') == 'true'){
+				tf.restoreNotificationsForInstance(jQuery(row).parent().parent().parent().parent(), tf.getChildNumber(row, 1));
+				
 				jQuery(row).attr('isDeleted', false);
 				jQuery(row).removeClass('tabf_deleted_row');
 				jQuery(input).attr('value', 'Delete');
@@ -790,9 +839,11 @@ var TF = Class.create({
 				if(jQuery('.tabf_modified_row', jQuery(row).parent().parent()).length == 0
 						&& jQuery('.tabf_deleted_row', jQuery(row).parent().parent()).length == 0
 						&& jQuery('.tabf_new_row .tabf_valid_instance_name', jQuery(row).parent().parent()).length == 0){
-					jQuery('.tabf_save_button', jQuery(row).parent().parent()).css('display', 'none');
+					jQuery('.tabf_save_button', jQuery(row).parent().parent()).attr('disabled', 'disabled');
 				}
 			} else {
+				tf.hideNotificationsForInstance(jQuery(row).parent().parent().parent().parent(), tf.getChildNumber(row, 1), false);
+				
 				jQuery(row).attr('isDeleted', true);
 				jQuery(row).addClass('tabf_deleted_row');
 				jQuery(input).attr('value', 'Undelete');
@@ -804,7 +855,7 @@ var TF = Class.create({
 				jQuery('td textarea', row).attr('readonly', 'true');
 				
 				if(jQuery('..tabf_erronious_instance_name', jQuery(row).parent().parent()).length == 0){
-					jQuery('.tabf_save_button', jQuery(row).parent().parent()).css('display', 'inline');
+					jQuery('.tabf_save_button', jQuery(row).parent().parent()).removeAttr('disabled');
 				}
 			}
 		}
@@ -1114,14 +1165,18 @@ var TF = Class.create({
 		if( jQuery('#' + tabularFormId + ' table tr:first-child th:nth-child(' + columnNr 
 				+ ')').attr('is-template') != 'true'){
 		
-			var cssSelector = '#' + tabularFormId + ' table tr:nth-child(' + rowNr + ') td:nth-child(' + columnNr 
-				+ ') textarea:nth-child(' + fieldNr	+ ')';
+			var cssSelector = '#' + tabularFormId + ' table tr:nth-child(' + rowNr + ') td:nth-child(' + columnNr  + ')';
 			
 			var annotationName = jQuery('#' + tabularFormId + ' table tr:first-child th:nth-child(' + columnNr 
 					+ ')').attr('field-address');
 			
 			var queryConditions = jQuery('#' + tabularFormId + ' table tr:first-child th:nth-child(' + columnNr 
-					+ ') .tabf-query-conditions').html();
+					+ ')' ).get();
+			if(queryConditions[0].childNodes.length == 4){
+				queryConditions = queryConditions[0].lastChild.innerHTML;
+			} else {
+				queryConditions = '';
+			}
 			
 			var annotationValue = jQuery(element).attr('value');
 			
@@ -1148,12 +1203,19 @@ var TF = Class.create({
 				queryConditions = false;
 			}
 			
+			var articleName = '';
+			if(jQuery('td:first-child ',jQuery(element).parent().parent()).attr('revision-id') == '-1'){
+				var articleName = jQuery('td:first-child textarea',jQuery(element).parent().parent()).attr('value');
+			} else {
+				var articleName = jQuery('td:first-child ',jQuery(element).parent().parent()).attr('article-name');
+			}
+			
 			var url = wgServer + wgScriptPath + "/index.php";
 			jQuery.ajax({ url:  url, 
 				data: {
 					'action' : 'ajax',
 					'rs' : 'tff_checkAnnotationValues',
-					'rsargs[]' : [annotationName, annotationValue, annotationValues, queryConditions, cssSelector],
+					'rsargs[]' : [annotationName, annotationValue, annotationValues, queryConditions, cssSelector, fieldNr, articleName],
 				},
 				success: tf.checkAnnotationValueCallBack,
 				
@@ -1165,21 +1227,217 @@ var TF = Class.create({
 	 * Call back for the check annotation value ajax call
 	 */
 	checkAnnotationValueCallBack : function(data){
+		
 		data = data.substr(data.indexOf('--##starttf##--') + 15, data.indexOf('--##endtf##--') - data.indexOf('--##starttf##--') - 15); 
 		data = JSON.parse(data);
 		
-		var currentValue = jQuery(data.cssSelector).attr('value');
-		
+		var container = jQuery(data.cssSelector).parent().parent().parent().parent();
+		var instanceId = tf.getChildNumber(jQuery(data.cssSelector).parent(), 1);
 		if(data.isValid == false){
-			alert(currentValue + ' is invalid.');
+			tf.addNotification(container, 'tabf_invalid_value_warning', data.cssSelector + '-' + data.fieldNr, instanceId, data.invalidValueMsg);
+			jQuery(data.cssSelector + ' textarea:nth-child(' + data.fieldNr + ')').addClass('tabf_invalid_input_filed_value');
+		} else {
+			tf.deleteNotification(container, 'tabf_invalid_value_warning', data.cssSelector  + '-' + data.fieldNr);
+			jQuery(data.cssSelector + ' textarea:nth-child(' + data.fieldNr + ')').removeClass('tabf_invalid_input_filed_value');
+		}
+		
+		//uppdate row state
+		if(jQuery('.tabf_invalid_input_filed_value', jQuery(data.cssSelector).parent()).get().length > 0){
+			Query('.tabf_invalid_value_status', jQuery(data.cssSelector).parent()).css('display', '');
+		} else {
+			jQuery('.tabf_invalid_value_status', jQuery(data.cssSelector).parent()).css('display', 'none');
 		}
 		
 		if(data.lost == true){
-			for(var i = 0; i < data.warnings.length; i++){
-				alert(data.warnings[i]);
-			}
+			tf.addNotification(container, 'tabf_probably_lost_instance', data.cssSelector, instanceId, data.looseWarnings);
+			jQuery(data.cssSelector).addClass('tabf_probably_lost_cell');
+		} else {
+			tf.deleteNotification(container, 'tabf_probably_lost_instance', data.cssSelector);
+			jQuery(data.cssSelector).removeClass('tabf_probably_lost_cell');
 		}
-	}
+		
+		//uppdate row state
+		if(jQuery('.tabf_probably_lost_cell', jQuery(data.cssSelector).parent()).get().length > 0){
+			jQuery('.tabf_getslost_status', jQuery(data.cssSelector).parent()).css('display', '');
+		} else {
+			jQuery('.tabf_getslost_status', jQuery(data.cssSelector).parent()).css('display', 'none');
+		}
+	},
+	
+	addNotification : function(container, notificationClass, id, instanceId, message){
+		
+		jQuery("." + notificationClass, container).css('display', '');
+		
+		var found = false;
+		jQuery("." + notificationClass + ' ul li', container).each( function(){
+			if(!found && jQuery(this).attr('messageId') == id){
+				found = true;
+				jQuery(this).html('<li messageId="' + id + '" instanceId="' + instanceId + '">' + message + '</li>');
+			}	
+		});
+		
+		if(!found){
+			jQuery("." + notificationClass + ' ul', container).append(
+						'<li messageId="' + id + '" instanceId="' + instanceId + '">' + message + '</li>');
+			jQuery('.tabf_notifications_heading > span > span').html(
+					jQuery('.tabf_notifications_heading > span > span').html()*1 + 1);
+		}
+		
+	},
+	
+	deleteNotification : function(container, notificationClass, id){
+		
+		var found = false;
+		jQuery("." + notificationClass + ' ul li', container).each( function(){
+			if(!found && jQuery(this).attr('messageId') == id){
+				found = true;
+				jQuery(this).remove();
+				jQuery('.tabf_notifications_heading > span > span').html(
+						jQuery('.tabf_notifications_heading > span > span').html()*1 - 1);
+			}
+		});
+		
+		var found = false;
+		jQuery("." + notificationClass + ' ul li', container).each(function(){
+			if(jQuery(this).css('display') != 'none'){
+				found = true;
+			}
+		})
+		
+		if(!found){
+			jQuery("." + notificationClass, container).css('display', 'none');
+		}
+	
+	},
+	
+	
+	updateInstanceNameInNotifications : function(container, instanceId, newInstanceName){
+		
+		jQuery('.tabf_notifications ol > li', container).each(function(){
+			
+			jQuery('li', this).each(function(){
+		
+				if(jQuery(this).attr('instanceId') == instanceId){
+					
+					var replacement = jQuery(this).html();
+					
+					if(replacement.indexOf('<span class="tabf_nin">') != -1){
+						replacement = 
+							replacement.substr(0, replacement.indexOf('<span class="tabf_nin">') + 23)
+							+ newInstanceName
+							+ replacement.substr(replacement.indexOf('</span>'));
+						jQuery(this).html(replacement);
+					}
+				}
+				
+			});
+		});
+			
+	},
+	
+	hideNotificationsForInstance : function(container, instanceId, permanently){
+		
+		jQuery('.tabf_notifications ol > li', container).each(function(){
+			
+			jQuery('li', this).each(function(){
+				
+				if(jQuery(this).attr('instanceId') == instanceId){
+					if(permanently){
+						jQuery(this).remove();
+					} else {
+						jQuery(this).css('display', 'none');
+					}
+					
+					jQuery('.tabf_notifications_heading > span > span').html(
+							jQuery('.tabf_notifications_heading > span > span').html()*1 - 1);
+				}
+			});
+			
+			var found = false;
+			jQuery('li', this).each(function(){
+				if(jQuery(this).css('display') != 'none'){
+					found = true;
+				}
+			})
+			
+			if(!found){
+				jQuery(this).css('display', 'none');
+			}
+				
+		});
+			
+	},
+	
+	restoreNotificationsForInstance : function(container, instanceId){
+		
+		jQuery('.tabf_notifications ol > li', container).each(function(){
+			
+			var found = false;
+			
+			jQuery('li', this).each(function(){
+				
+				if(jQuery(this).attr('instanceId') == instanceId){
+					jQuery(this).css('display', '');
+					
+					jQuery('.tabf_notifications_heading > span > span').html(
+							jQuery('.tabf_notifications_heading > span > span').html()*1 + 1);
+					
+					found = true;
+				}
+			});
+			
+			if(found){
+				jQuery(this).css('display', '');
+			}
+				
+		});
+			
+	},
+	
+	expandNotificationSystem : function(event){
+		var container = jQuery(Event.element(event)).parent();
+		jQuery('img:nth-child(1)', container).css('display', 'none');
+		jQuery('img:nth-child(2)', container).css('display', '');
+		
+		jQuery('.tabf_notifications', jQuery(container).parent()).css('display', '');
+		
+	},
+	
+	collapseNotificationSystem : function(event){
+		var container = jQuery(Event.element(event)).parent();
+		jQuery('img:nth-child(1)', container).css('display', '');
+		jQuery('img:nth-child(2)', container).css('display', 'none');
+		
+		jQuery('.tabf_notifications', jQuery(container).parent()).css('display', 'none');
+	},
+	
+	
+	switchToEditMode : function(tabularFormId){
+		var container = jQuery('#' + tabularFormId);
+		jQuery(container).attr('isInEditMode' , 'true');
+
+		
+		jQuery('.tabf_in_view_mode', container).addClass('tabf_in_edit_mode');
+		jQuery('.tabf_in_view_mode', container).removeClass('tabf_in_view_mode');
+		
+		//show butttons
+		jQuery('.tabf_add_button', container).parent().css('display', '');
+		jQuery('.tabf_save_button', container).parent().parent().css('display', '');
+		jQuery('.tabf_cancel_button', container).css('display', '');
+		jQuery('.tabf_edit_button', container).css('display', 'none');
+		
+		//display status column
+		jQuery('.tabf_status_column_header', container).css('display', '');
+		jQuery('.tabf_status_cell', container).css('display', '');
+		
+		//make textareas editable
+		jQuery('textarea', container).removeAttr('disabled');
+		
+		//display notification system
+		jQuery('.tabf_notification_system', container).css('display', '');
+		
+		//todo: instance lost messages should only be displayed in edit mode
+	},
 	
 });
 
