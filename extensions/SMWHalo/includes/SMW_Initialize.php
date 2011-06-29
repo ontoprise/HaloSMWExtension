@@ -1192,10 +1192,6 @@ function smwfHaloAddHTMLHeader(&$out) {
 		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/AdvancedAnnotation/SMW_AdvancedAnnotation.js', "all", NS_SPECIAL, array(NS_SPECIAL.':AddData', NS_SPECIAL.':EditData', NS_SPECIAL.':FormEdit'));
 
 		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/SMW_DerivedFactsTab.js');
-		
-		//create new article scripts
-		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/GeneralGUI/createNewArticle.js');
-		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/GeneralGUI/jquery.query-2.1.7.js');
 
 	} else {
 		//$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/prototype.js');
@@ -1213,7 +1209,9 @@ function smwfHaloAddHTMLHeader(&$out) {
 
 
 	}
-
+	//create new article scripts
+	$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/GeneralGUI/createNewArticle.js');
+	$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/GeneralGUI/jquery.query-2.1.7.js');
 
 
 	// serialize the scripts
