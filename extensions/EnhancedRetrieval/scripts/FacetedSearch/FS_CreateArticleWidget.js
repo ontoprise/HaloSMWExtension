@@ -69,8 +69,8 @@ FacetedSearch.classes.CreateArticleWidget = AjaxSolr.AbstractWidget.extend({
 			var ns = wgFormattedNamespaces[tcd.namespace] || '';
 			var colon = ns ? ':' : '';
 			var articleName = ns+colon+title;
-			var link = wgServer + wgScript + '/Create_new_page?target=' + articleName;
-			link += '&redlink=1'
+			var cnpLink = wgFSCreateNewPageLink.replace(/\{article\}/g, articleName);
+			var link = wgServer + wgScript + '/' + cnpLink;
 			$(this.target)
 				.append(AjaxSolr.theme('createArticle', articleName, link));
 		}
