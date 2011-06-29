@@ -45,6 +45,7 @@ the authors.
  * ScriptManager 1.0 (see installation guide)
  * Semantic MediaWiki 1.5.2 (see installation section in SemanticMediaWiki/INSTALL)
  * ARC Library 1.0 (see installation guide)
+ * Deployment framework 1.56 (see installation guide)
  * Web browser (for clients, recommended Firefox 3.x or Internet Explorer 8. There might be glitches with other browsers)
 
 == Requirements (bundled) ==
@@ -52,6 +53,7 @@ the authors.
  * PHP 5.2.x or PHP 5.3.x
  * MediaWiki 1.16.x (see installation guide)
  * Semantic MediaWiki 1.5.2 (see installation section in SemanticMediaWiki/INSTALL)
+ * Deployment framework 1.56 (see installation guide)
  * Web browser (for clients, recommended Firefox 3.x or Internet Explorer 8. There might be glitches with other browsers)
 
 == Installation ==
@@ -69,8 +71,11 @@ SMW+, also read the remarks in the section "Notes on Upgrading" below.
     
 (2) Download and install the ARCLibrary extension into your Mediawiki
     installation. In case you have the bundled version you can skip this step.
+    
+(2) Download and install the Deployment framework extension into your Mediawiki
+    installation. Extract the ZIP archive to the root directory of MediaWiki.
 
-(3) Extract the ZIP archive to the root directory of MediaWiki.
+(3) Extract the smwhalo ZIP archive to the root directory of MediaWiki.
 
 (4) Edit the configuration file <mw-dir>\LocalSettings.php
 
@@ -78,6 +83,7 @@ SMW+, also read the remarks in the section "Notes on Upgrading" below.
     initializes the ScriptManager and the ARCLibrary extension first, so that
     all following extensions make use of these two that are already available.
 
+     require_once("deployment/Deployment.php");
 	 require_once("extensions/ScriptManager/SM_Initialize.php");
 	 require_once("extensions/ARCLibrary/ARCLibrary.php");
      enableARCLibrary();
@@ -216,10 +222,9 @@ graph-uri is an arbitrary URI which works as an identifier for the wiki in the
 TSC. Every URI is possible as long as it does not contain a hash character (#).
 
 Then add:
-    $smwgMessageBroker="localhost";
     $smwgWebserviceEndpoint="localhost:8080";
 
-If the webserver requires HTTP authorization, add:
+If the webserver requires (Basic) HTTP authorization, add:
     $smwgWebserviceUser = "username";
     $smwgWebservicePassword = "password";
 
