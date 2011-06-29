@@ -46,8 +46,8 @@ class DFCommandInterface {
 	 */
 	public function __construct() {
 		$this->phpExe = 'php';
-		if (array_key_exists('df_php_path', DF_Config::$settings)) {
-			$this->phpExe = DF_Config::$settings['df_php_path'];
+		if (array_key_exists('df_php_executable', DF_Config::$settings)) {
+			$this->phpExe = DF_Config::$settings['df_php_executable'];
 		}
 	}
 

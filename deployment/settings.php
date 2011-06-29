@@ -50,24 +50,24 @@ class DF_Config  {
 	 */
 	public static $settings = array(
 
-	//Proxy server e.g. "proxy.example.com:8080"
-    //'df_proxy' => '', 
+//Proxy server e.g. "proxy.example.com:8080"
+//'df_proxy' => '', 
 
-	// Home directory where several information is stored
-	// restore points, logs, uploaded files.
-	// normally $HOME is used.
-	// 'df_homedir' => '',
+// Home directory where several information is stored
+// restore points, logs, uploaded files.
+// normally $HOME is used.
+// 'df_homedir' => '',
 
-	// upload directory for DF-GUI, if not set home directory or temp is used.
-	//'df_uploaddir' => '',
+// upload directory for DF-GUI, if not set home directory or temp is used.
+//'df_uploaddir' => '',
 
-	// set PHP path if it does not exist in path or it has the wrong version
-	// PHP 5 is required at least
-	//'df_php_path' => 'php',
+// set PHP executable if it does not exist in PATH or it has the wrong version
+// PHP 5 is required at least
+'df_php_executable' => 'php',
 	
-	// do not check directory for external apps /usr/share/local/Ontoprise
-	// if set to 'true' you can not install external apps like TSC 
-	//'df_no_external_apps'=>true,
+// do not check directory for external apps /usr/share/local/Ontoprise
+// if set to 'true' you can not install external apps like TSC 
+//'df_no_external_apps'=>true,
 
 	);
 	public static function getValue($identifier){

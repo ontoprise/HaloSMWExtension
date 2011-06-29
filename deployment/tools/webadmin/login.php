@@ -185,8 +185,8 @@ function dffCheckEnvironment() {
 
 	// check if external processes can be run
 	$phpExe = 'php';
-	if (array_key_exists('df_php_path', DF_Config::$settings)) {
-		$phpExe = DF_Config::$settings['df_php_path'];
+	if (array_key_exists('df_php_executable', DF_Config::$settings)) {
+		$phpExe = DF_Config::$settings['df_php_executable'];
 	}
 	@exec("$phpExe --version", $out, $ret);
 	if ($ret != 0 || stripos($out[0], "PHP") === false) {
