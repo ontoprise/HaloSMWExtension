@@ -634,7 +634,7 @@ Function checkForApacheAndMySQLAndMemcached
    IntOp $2 0 + $R0
    FindProcDLL::FindProc "lucene-wiki.exe"
    IntOp $3 0 + $R0
-   FindProcDLL::FindProc "startSolr.bat"
+   FindProcDLL::FindProc "solr.exe"
    IntOp $4 0 + $R0
    ${If} $0 == 1
    ${OrIf} $1 == 1
