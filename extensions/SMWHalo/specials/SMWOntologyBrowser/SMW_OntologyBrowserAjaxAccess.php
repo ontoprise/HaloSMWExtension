@@ -46,9 +46,9 @@ class OB_Storage {
 	 */
 	protected $bundleID;
 
-	public function __construct($dataSource = null, $bundleID = '') {
+	public function __construct($dataSource = '', $bundleID = '') {
 		$this->dataSource = $dataSource;
-		$this->bundleID = is_null($bundleID) ? '' : $bundleID;
+		$this->bundleID = $bundleID;
 	}
 
 
@@ -62,7 +62,7 @@ class OB_Storage {
 		$reqfilter->offset = $partitionNum*$reqfilter->limit;
 
 
-			
+		echo print_r($this->bundleID);die();
 		$rootcats = smwfGetSemanticStore()->getRootCategories($reqfilter, $this->bundleID);
 		$resourceAttachments = array();
 		wfRunHooks('smw_ob_attachtoresource', array($rootcats, & $resourceAttachments, NS_CATEGORY));
@@ -1324,7 +1324,7 @@ class OB_StorageTS extends OB_Storage {
 
 
 function smwf_ob_OntologyBrowserAccess($method, $params, $dataSource = '', $bundleID = '') {
-
+    
 	$browseWiki = wfMsg("smw_ob_source_wiki");
 	global $smwgDefaultStore;
 	if ($smwgDefaultStore == 'SMWTripleStoreQuad' && !empty($dataSource) && $dataSource != $browseWiki) {
@@ -1338,6 +1338,7 @@ function smwf_ob_OntologyBrowserAccess($method, $params, $dataSource = '', $bund
 		$storage = new OB_Storage($dataSource, $bundleID);
 	}
 
+	
 	$p_array = explode("##", $params);
 	$method = new ReflectionMethod(get_class($storage), $method);
 	return $method->invoke($storage, $p_array, $dataSource);

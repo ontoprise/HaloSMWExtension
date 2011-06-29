@@ -118,7 +118,7 @@ $dataSourcesHtml = <<<TEXT
 <div style="float: left;">
         <div><b>$selectDatasource</b></div>
         <select id="dataSourceSelector" name="DataSource" size="5" multiple="multiple" class="aoDataSourceSelector">
-            <option>$fromWiki</option>
+            <option sourceid="" selected="selected">$fromWiki</option>
             $sourceOptions
         </select>
         </div>
@@ -129,7 +129,7 @@ TEXT;
 $bundlesHtml = <<<TEXT
 <div><div><b>$selectBundle</b></div>
         <select id="bundleSelector" name="Bundles" size="5" class="aoDataSourceSelector">
-            <option>$fromWiki</option>
+            <option bundleid="" selected="selected">$fromWiki</option>
             $bundleOptions
         </select>
         </div>
