@@ -172,13 +172,6 @@ for( $arg = reset( $args ); $arg !== false; $arg = next( $args ) ) {
 		$package = next($args);
 		if ($package === false) dffExitOnFatalError("No package found");
 
-		// check if given package is a file path to an ontology file
-		// if so, derive the package ID from this
-		if (Tools::checkIfOntologyFile(basename($package))) {
-			$filename = substr(basename($package), 0, strrpos(basename($package), "."));
-			$package = strtolower($filename);
-		}
-
 		$packageToDeinstall[] = $package;
 			
 		continue;
