@@ -243,17 +243,30 @@ abstract class SMWSemanticStoreSQL extends SMWSemanticStore {
 		$sql3 = 'ON c.cl_to = p.page_title JOIN '.$page.' p2 ON c.cl_from = p2.page_id AND p2.page_namespace = '.NS_CATEGORY.' WHERE p.page_id IS NULL';
 
 		// set of categories of a bundle
-		$bundleSql1 = $bundleSql2 = $bundleSql3 = '';
+		$bundleSql1 = $bundleSql2 = $bundleSql3 = $noRootCategoryBundles = '';
 		if (!empty($bundleID)) {
 			$bundleSql = ' (SELECT pc.page_id pc FROM '.$page.' pc JOIN '.$smw_ids.' ON pc.page_title = smw_title AND pc.page_namespace = '.NS_CATEGORY.' JOIN '.$smw_rels2.' ON s_id = smw_id AND p_id = '.$partOfBundlePropertyID.' AND o_id = '.$bundleSMWID.')';
 			$bundleSql1 = 'AND page_id IN '.$bundleSql;
 			$bundleSql2 = 'AND page_id IN '.$bundleSql;
 			$bundleSql3 = 'AND c.cl_to IN '.$bundleSql;
+			
+			$noRootCategoryBundles = ' UNION DISTINCT (SELECT subcat.page_title, "false" AS has_subcategories FROM '.$page.' subcat '.
+                                 'JOIN '.$categorylinks.' c ON c.cl_from = subcat.page_id '.
+                                 'JOIN '.$page.' supercat ON c.cl_to = supercat.page_title AND supercat.page_namespace = 14 '.
+                                 'WHERE subcat.page_id IN '.$bundleSql.' AND supercat.page_id NOT IN '.$bundleSql.' '.
+                                 'AND NOT EXISTS (SELECT c.cl_from FROM '.$categorylinks.' c JOIN '.$page.' p ON p.page_id = c.cl_from '.
+                                 'WHERE c.cl_to = subcat.page_title AND p.page_namespace=14)) '.
+                        ' UNION DISTINCT (SELECT subcat.page_title, "true" AS has_subcategories FROM '.$page.' subcat '.
+                                'JOIN '.$categorylinks.' c ON c.cl_from = subcat.page_id '.
+                                'JOIN '.$page.' supercat ON c.cl_to = supercat.page_title AND supercat.page_namespace = 14 '.
+                                'WHERE subcat.page_id IN '.$bundleSql.' AND supercat.page_id NOT IN '.$bundleSql.' '.
+                                'AND EXISTS (SELECT c.cl_from FROM '.$categorylinks.' c JOIN '.$page.' p ON p.page_id = c.cl_from '.
+                                'WHERE c.cl_to = subcat.page_title AND p.page_namespace=14)) ';
 		}
 
 		$res = $db->query('(SELECT page_title, "false" AS has_subcategories FROM '.$page.' t WHERE '.$sql.' '.$bundleSql1.') '.
 							'UNION DISTINCT (SELECT page_title, "true" AS has_subcategories FROM '.$page.' t WHERE '.$sql2.' '.$bundleSql2.') '.
-							'UNION DISTINCT (SELECT c.cl_to, "true" AS has_subcategories FROM '.$categorylinks.' c LEFT JOIN '.$page.' p '.$sql3.' '.$bundleSql3.') '. 
+							'UNION DISTINCT (SELECT c.cl_to, "true" AS has_subcategories FROM '.$categorylinks.' c LEFT JOIN '.$page.' p '.$sql3.' '.$bundleSql3.') '. $noRootCategoryBundles . 
 		DBHelper::getSQLOptionsAsString($requestoptions,'page_title'));
 
 		 
@@ -264,30 +277,7 @@ abstract class SMWSemanticStoreSQL extends SMWSemanticStore {
 					$result[] = array(Title::newFromText($row->page_title, NS_CATEGORY), $row->has_subcategories != 'true');
 				}
 			}
-		} else if (!empty($bundleID)) {
-			// this might mean that the selected bundle has no root categories
-			// in this case search for 'root categories' within the bundle
-			$res = $db->query('(SELECT subcat.page_title, "false" AS has_subcategories FROM '.$page.' subcat '.
-			                     'JOIN '.$categorylinks.' c ON c.cl_from = subcat.page_id '.
-			                     'JOIN '.$page.' supercat ON c.cl_to = supercat.page_title AND supercat.page_namespace = 14 '.
-			                     'WHERE subcat.page_id IN '.$bundleSql.' AND supercat.page_id NOT IN '.$bundleSql.' '.
-			                     'AND NOT EXISTS (SELECT c.cl_from FROM '.$categorylinks.' c JOIN '.$page.' p ON p.page_id = c.cl_from '.
-			                     'WHERE c.cl_to = subcat.page_title AND p.page_namespace=14)) '.
-			            ' UNION (SELECT subcat.page_title, "true" AS has_subcategories FROM '.$page.' subcat '.
-			                    'JOIN '.$categorylinks.' c ON c.cl_from = subcat.page_id '.
-			                    'JOIN '.$page.' supercat ON c.cl_to = supercat.page_title AND supercat.page_namespace = 14 '.
-			                    'WHERE subcat.page_id IN '.$bundleSql.' AND supercat.page_id NOT IN '.$bundleSql.' '.
-			                    'AND EXISTS (SELECT c.cl_from FROM '.$categorylinks.' c JOIN '.$page.' p ON p.page_id = c.cl_from '.
-			                    'WHERE c.cl_to = subcat.page_title AND p.page_namespace=14)) '.DBHelper::getSQLOptionsAsString($requestoptions,'page_title'));
-        
-			if($db->numRows( $res ) > 0) {
-				while($row = $db->fetchObject($res)) {
-					if (smwf_om_userCan($row->page_title, 'read', NS_CATEGORY) === "true") {
-						$result[] = array(Title::newFromText($row->page_title, NS_CATEGORY), $row->has_subcategories != 'true');
-					}
-				}
-			}
-		}
+		} 
 
 		$db->freeResult($res);
 		return $result;
