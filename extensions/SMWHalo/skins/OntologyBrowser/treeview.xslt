@@ -374,15 +374,22 @@
 				</xsl:if>
 			</td>
 			<td>
-				<xsl:if test="@superCat">
-					<a style="margin-left:5px;">
+				<xsl:if test="count(child::category) > 0">
+				<select name="selector">
+				
+				<xsl:for-each select="child::category">
+					<option>						
 						<xsl:attribute name="onclick">instanceActionListener.showSuperCategory(event, this,'<xsl:call-template
-							name="replace-string"><xsl:with-param name="text" select="@superCat" /><xsl:with-param
+							name="replace-string"><xsl:with-param name="text" select="." /><xsl:with-param
 							name="from" select="$var-simple-quote" /><xsl:with-param
 							name="to" select="$var-slash-quote" /></xsl:call-template>')</xsl:attribute>
-						<xsl:variable name="superCategory" select="@superCat" />
-						&lt;<xsl:value-of select="translate($superCategory, '_', $var-nonbreakspace)"></xsl:value-of>&gt;
-					</a>
+						<xsl:variable name="superCategory" select="." />
+						<xsl:value-of select="translate($superCategory, '_', $var-nonbreakspace)"></xsl:value-of>
+					
+					</option>
+				</xsl:for-each>
+				
+				</select>
 				</xsl:if>
 			</td>
 		</tr>

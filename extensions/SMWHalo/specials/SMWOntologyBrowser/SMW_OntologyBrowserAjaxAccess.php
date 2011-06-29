@@ -31,17 +31,17 @@ require_once( "$smwgHaloIP/includes/storage/SMW_TS_Helper.php" );
 
 
 class OB_Storage {
-    
+
 	/**
 	 * Datasource according to the LOD metamodel
-	 * 
+	 *
 	 * @var string (URI)
 	 */
 	protected $dataSource;
-	
+
 	/**
 	 * Bundle ID
-	 * 
+	 *
 	 * @var string
 	 */
 	protected $bundleID;
@@ -60,9 +60,9 @@ class OB_Storage {
 		$reqfilter->sort = true;
 		$partitionNum = isset($p_array[1]) ? intval($p_array[1]) : 0;
 		$reqfilter->offset = $partitionNum*$reqfilter->limit;
-        
-      
-         
+
+
+			
 		$rootcats = smwfGetSemanticStore()->getRootCategories($reqfilter, $this->bundleID);
 		$resourceAttachments = array();
 		wfRunHooks('smw_ob_attachtoresource', array($rootcats, & $resourceAttachments, NS_CATEGORY));
@@ -86,8 +86,8 @@ class OB_Storage {
 		$partitionNum = isset($p_array[2]) ? intval($p_array[2]) : 0;
 		$reqfilter->offset = $partitionNum*$reqfilter->limit;
 		$supercat = Title::newFromText($p_array[0], NS_CATEGORY);
-        
-        
+
+
 		$directsubcats = smwfGetSemanticStore()->getDirectSubCategories($supercat, $reqfilter, $this->bundleID);
 		$resourceAttachments = array();
 		wfRunHooks('smw_ob_attachtoresource', array($directsubcats, & $resourceAttachments, NS_CATEGORY));
@@ -119,9 +119,18 @@ class OB_Storage {
 		foreach($instances as $i) {
 			if (is_array($i) && !is_null($i[1])) {
 				$c = new CategoryTreeElement($i[1], NULL);
-				$results[] = new InstanceListElement($i[0], NULL, $c);
+				if (!array_key_exists($i[0]->getPrefixedText(), $results)) {
+					$results[$i[0]->getPrefixedText()] = new InstanceListElement($i[0], NULL);
+					$results[$i[0]->getPrefixedText()]->addCategoryTreeElement($c);
+				} else {
+					$instanceElement = $results[$i[0]->getPrefixedText()];
+					$instanceElement->addCategoryTreeElement($c);
+				}
 			} else {
-				$results[] = new InstanceListElement($i[0], NULL, NULL);
+				if (!array_key_exists($i[0]->getPrefixedText(), $results)) {
+					$results[$i[0]->getPrefixedText()] = new InstanceListElement($i[0], NULL);
+					$results[$i[0]->getPrefixedText()]->addCategoryTreeElement(NULL);
+				}
 			}
 		}
 
@@ -164,7 +173,7 @@ class OB_Storage {
 		$cat = Title::newFromText($p_array[0], NS_CATEGORY);
 		$onlyDirect = $p_array[1] == "true";
 		$dIndex = $p_array[2];
-		
+
 		$properties = smwfGetSemanticStore()->getPropertiesWithSchemaByCategory($cat, $onlyDirect, $dIndex, $reqfilter, $this->bundleID);
 
 		$propertySchemaElement = array();
@@ -185,7 +194,7 @@ class OB_Storage {
 		$reqfilter->limit =  isset($p_array[0]) ? intval($p_array[0]) : SMWH_OB_DEFAULT_PARTITION_SIZE;
 		$partitionNum = isset($p_array[1]) ? intval($p_array[1]) : 0;
 		$reqfilter->offset = $partitionNum*$reqfilter->limit;
-        
+
 		$rootatts = smwfGetSemanticStore()->getRootProperties($reqfilter, $this->bundleID);
 		$resourceAttachments = array();
 		wfRunHooks('smw_ob_attachtoresource', array($rootatts, & $resourceAttachments, SMW_NS_PROPERTY));
@@ -210,7 +219,7 @@ class OB_Storage {
 		$partitionNum = isset($p_array[2]) ? intval($p_array[2]) : 0;
 		$reqfilter->offset = $partitionNum*$reqfilter->limit;
 		$superatt = Title::newFromText($p_array[0], SMW_NS_PROPERTY);
-		 
+			
 		$directsubatts = smwfGetSemanticStore()->getDirectSubProperties($superatt, $reqfilter, $this->bundleID);
 		$resourceAttachments = array();
 		wfRunHooks('smw_ob_attachtoresource', array($directsubatts, & $resourceAttachments, SMW_NS_PROPERTY));
@@ -355,13 +364,13 @@ class OB_Storage {
 		if (count($categoryHints) == 0) {
 			return "<result isEmpty=\"true\" textToDisplay=\"".wfMsg('smw_ob_no_categories')."\"/>";
 		}
-    
+
 		foreach($categoryHints as $hint) {
 			$reqfilter->addStringCondition($hint, SMWStringCondition::STRCOND_MID);
 		}
 		$reqfilter->isCaseSensitive = false;
-		
-		
+
+
 		$foundCategories = smwfGetSemanticStore()->getPages(array(NS_CATEGORY), $reqfilter, true, $this->bundleID);
 
 		return $this->getCategoryTree($foundCategories);
@@ -374,7 +383,7 @@ class OB_Storage {
 	 * @return xml string (category tree)
 	 */
 	protected function filterForCategoriesWithInstance(Title $articleTitle, $reqfilter) {
-		
+
 		$categories = smwfGetSemanticStore()->getCategoriesForInstance($articleTitle, $reqfilter, $this->bundleID);
 		return $this->getCategoryTree($categories);
 	}
@@ -386,7 +395,7 @@ class OB_Storage {
 	 * @return xml string (category tree)
 	 */
 	protected function filterForCategoriesWithProperty(Title $propertyTitle, $reqfilter) {
-		
+
 		$categories = smwfGetSemanticStore()->getDomainCategories($propertyTitle, $reqfilter, $this->bundleID);
 		return $this->getCategoryTree($categories);
 	}
@@ -446,8 +455,8 @@ class OB_Storage {
 		}
 
 		$reqfilter->isCaseSensitive = false;
-		
-		
+
+
 		$foundAttributes = smwfGetSemanticStore()->getPages(array(SMW_NS_PROPERTY), $reqfilter, false, $this->bundleID);
 
 
@@ -638,8 +647,8 @@ class OB_StorageTS extends OB_Storage {
 		$reqfilter->sort = true;
 		$partitionNum = isset($p_array[1]) ? intval($p_array[1]) : 0;
 		$reqfilter->offset = $partitionNum*$reqfilter->limit;
-        
-       
+
+			
 		$rootcats = smwfGetSemanticStore()->getRootCategories($reqfilter, $this->bundleID);
 		$resourceAttachments = array();
 		wfRunHooks('smw_ob_attachtoresource', array($rootcats, & $resourceAttachments, NS_CATEGORY));
@@ -663,8 +672,8 @@ class OB_StorageTS extends OB_Storage {
 		$partitionNum = isset($p_array[2]) ? intval($p_array[2]) : 0;
 		$reqfilter->offset = $partitionNum*$reqfilter->limit;
 		$supercat = Title::newFromText($p_array[0], NS_CATEGORY);
-        
-        
+
+
 		$directsubcats = smwfGetSemanticStore()->getDirectSubCategories($supercat, $reqfilter, $this->bundleID);
 		$resourceAttachments = array();
 		wfRunHooks('smw_ob_attachtoresource', array($directsubcats, & $resourceAttachments, NS_CATEGORY));
@@ -688,10 +697,10 @@ class OB_StorageTS extends OB_Storage {
 		$reqfilter->limit =  isset($p_array[0]) ? intval($p_array[0]) : SMWH_OB_DEFAULT_PARTITION_SIZE;
 		$partitionNum = isset($p_array[1]) ? intval($p_array[1]) : 0;
 		$reqfilter->offset = $partitionNum*$reqfilter->limit;
-        
-       
+
+			
 		$rootatts = smwfGetSemanticStore()->getRootProperties($reqfilter, $this->bundleID);
-        
+
 		$resourceAttachments = array();
 		wfRunHooks('smw_ob_attachtoresource', array($rootatts, & $resourceAttachments, SMW_NS_PROPERTY));
 
@@ -714,8 +723,8 @@ class OB_StorageTS extends OB_Storage {
 		$reqfilter->limit =  intval($p_array[1]);
 		$partitionNum = isset($p_array[2]) ? intval($p_array[2]) : 0;
 		$reqfilter->offset = $partitionNum*$reqfilter->limit;
-		
-		
+
+
 		$superatt = Title::newFromText($p_array[0], SMW_NS_PROPERTY);
 		$directsubatts = smwfGetSemanticStore()->getDirectSubProperties($superatt, $reqfilter, $this->bundleID);
 		$resourceAttachments = array();
@@ -737,8 +746,8 @@ class OB_StorageTS extends OB_Storage {
 		$cat = Title::newFromText($p_array[0], NS_CATEGORY);
 		$onlyDirect = $p_array[1] == "true";
 		$dIndex = $p_array[2];
-		
-        $properties = smwfGetSemanticStore()->getPropertiesWithSchemaByCategory($cat, $onlyDirect, $dIndex, $reqfilter, $this->bundleID);
+
+		$properties = smwfGetSemanticStore()->getPropertiesWithSchemaByCategory($cat, $onlyDirect, $dIndex, $reqfilter, $this->bundleID);
 
 		$ts = TSNamespaces::getInstance();
 		$propertySchemaElement = array();
@@ -819,32 +828,48 @@ class OB_StorageTS extends OB_Storage {
 
 			$metadataMap = $this->parseMetadata($sv->metadata);
 			list($url, $title) = TSHelper::makeLocalURL((string) $sv);
-			$instance = new InstanceListElement($title, (string) $sv, NULL, $metadataMap);
+			$instance = new InstanceListElement($title, (string) $sv, $metadataMap);
 
 			$categories = array();
-
+			$assertedCategories = smwfGetSemanticStore()->getCategoriesForInstance($title);
+			
 			if (count($children->binding) > 1) {
 				// category binding node exists
 				$b = $children->binding[1]; // categories
-
+				$inherited = true;
 				foreach($b->children()->uri as $sv) {
 					$category = TSHelper::getTitleFromURI((string) $sv);
 					if (!is_null($instance) && !is_null($category)) {
-						if (is_null($categoryTitle) || !$category->equals($categoryTitle)) {
-							$c = new CategoryTreeElement($category, (string) $sv);
-							$instance->setCategoryTreeElement($c);
+						if (!array_key_exists($title->getPrefixedText(), $titles)) {
+							$titles[$title->getPrefixedText()] = $instance;
+						} else {
+							$instance = $titles[$title->getPrefixedText()];
 						}
+
+						$c = new CategoryTreeElement($category, (string) $sv);
+						$instance->addCategoryTreeElement($c);
+
 					}
-					$titles[] = $instance;
+
 
 				}
+				if (is_null($categoryTitle) || $this->containsTitle($assertedCategories, $categoryTitle)) {
+					$instance->addCategoryTreeElement(NULL);
+				}
 			} else {
-				$titles[] = $instance;
+				$titles[$title->getPrefixedText()] = $instance;
 			}
 
 
 		}
 
+	}
+
+	private function containsTitle($titleSet, $title) {
+		foreach($titleSet as $t) {
+			if ($title->equals($t)) return true;
+		}
+		return false;
 	}
 
 
@@ -1149,12 +1174,12 @@ class OB_StorageTS extends OB_Storage {
 
 			$instanceURI = $p_array[0];
 			$bundleSPARQL = "";
-            if ($this->bundleID != '') {
-            	global $dfgLang;
-            	$partOfBundleURI = TSHelper::getUriFromTitle(Title::newFromText($dfgLang->getLanguageString("df_partofbundle"), SMW_NS_PROPERTY));
-            	$bundleURI = TSHelper::getUriFromTitle(Title::newFromText($this->bundleID, NS_MAIN));
-            	$bundleSPARQL = " ?cat <$partOfBundleURI> <$bundleURI> .";
-            } 
+			if ($this->bundleID != '') {
+				global $dfgLang;
+				$partOfBundleURI = TSHelper::getUriFromTitle(Title::newFromText($dfgLang->getLanguageString("df_partofbundle"), SMW_NS_PROPERTY));
+				$bundleURI = TSHelper::getUriFromTitle(Title::newFromText($this->bundleID, NS_MAIN));
+				$bundleSPARQL = " ?cat <$partOfBundleURI> <$bundleURI> .";
+			}
 			// query
 			$response = $client->query(TSNamespaces::getW3CPrefixes()." SELECT ?cat WHERE { <$instanceURI> rdf:type ?cat. $bundleSPARQL }",  "", $smwgTripleStoreGraph);
 
@@ -1585,19 +1610,18 @@ class InstanceListElement {
 	 * CategoryTreeElement
 	 * member category
 	 */
-	private $categoryTreeElement;
+	private $categoryTreeElements;
 
 
 	private $metadata;
 
-	public function __construct($title, $uri, $categoryTreeElement, $metadata = NULL) {
+	public function __construct($title, $uri, $metadata = NULL) {
 		$this->title = $title;
 		$this->uri = $uri;
 		$this->url = $title->getFullURL();
-		$this->categoryTreeElement = $categoryTreeElement;
+		$this->categoryTreeElements = array();
 		$this->metadata = $metadata;
 	}
-
 
 
 	public function getTitle() {
@@ -1610,11 +1634,11 @@ class InstanceListElement {
 		return $this->url;
 	}
 
-	public function setCategoryTreeElement($categoryTreeElement) {
-		$this->categoryTreeElement = $categoryTreeElement;
+	public function addCategoryTreeElement($categoryTreeElement) {
+		$this->categoryTreeElements[] = $categoryTreeElement;
 	}
-	public function getCategoryTreeElement() {
-		return $this->categoryTreeElement;
+	public function getCategoryTreeElements() {
+		return $this->categoryTreeElements;
 	}
 	public function getMetadata() {
 		return $this->metadata;

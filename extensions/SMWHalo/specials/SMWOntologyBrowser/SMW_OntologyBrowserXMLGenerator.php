@@ -110,12 +110,13 @@ class SMWOntologyBrowserXMLGenerator {
 			$instanceTitle = $t->getTitle();
 			$instanceURI = $t->getURI();
 			$url = $t->getURL();
-			$categoryTreeElement = $t->getCategoryTreeElement();
-			$categoryURI = NULL;
-			$categoryTitle = NULL;
-			if (!is_null($categoryTreeElement)) {
-				$categoryURI = $categoryTreeElement->getURI();
-				$categoryTitle = $categoryTreeElement->getTitle();
+			$categoryTreeElements = $t->getCategoryTreeElements();
+			
+			$categoryTitles = array();
+			if (!is_null($categoryTreeElements)) {
+				foreach($categoryTreeElements as $ce) {
+					$categoryTitles[] = is_null($ce) ? NULL : $ce->getTitle();
+				}
 			}
 			$metadata = $t->getMetadata();
 
@@ -164,13 +165,19 @@ class SMWOntologyBrowserXMLGenerator {
 			if (!$instanceTitle->exists()) {
 				$notexist_att = 'notexists="true"';
 			}
-
-			if (!is_null($categoryTitle)) {
-				$categoryTitle = htmlspecialchars($categoryTitle->getDBkey());
-				$result = $result."<instance $instanceURI_att $localurl_att title_url=\"$titleURLEscaped\" title=\"".$titleEscaped."\" namespace=\"$namespace\" $notexist_att superCat=\"$categoryTitle\" img=\"instance.gif\" id=\"ID_$id$count\" inherited=\"true\">$gi_issues$metadataTags</instance>";
-			} else {
-				$result = $result."<instance $instanceURI_att $localurl_att title_url=\"$titleURLEscaped\" title=\"".$titleEscaped."\" namespace=\"$namespace\" $notexist_att img=\"instance.gif\" id=\"ID_$id$count\">$gi_issues$metadataTags</instance>";
+			
+			$categoryXML = "";
+			$inherited = 'inherited="true"';
+			
+			foreach($categoryTitles as $ctitle) {
+				if (is_null($ctitle)) {
+					$inherited = ""; // is not inherited
+					continue;
+				}
+				$categoryXML .= "<category>".htmlspecialchars($ctitle->getDBkey())."</category>";
 			}
+			$result = $result."<instance $instanceURI_att $localurl_att title_url=\"$titleURLEscaped\" title=\"".$titleEscaped."\" namespace=\"$namespace\" $notexist_att img=\"instance.gif\" id=\"ID_$id$count\" $inherited>$categoryXML$gi_issues$metadataTags</instance>";
+			
 			$count++;
 		}
 
