@@ -381,6 +381,7 @@ Section "SMW+ Setup" smwplussetup
   ; Set PHP path for deployment framework
   DetailPrint "Set PHP path for deployment framework"
   ${ConfigWrite} "$MEDIAWIKIDIR\deployment\tools\smwadmin.bat" "SET PHP=" '"$INSTDIR\php\php.exe"' $R0
+  ${ConfigWrite} "$MEDIAWIKIDIR\deployment\settings.php" "'df_php_executable' =>" "'$INSTDIR\php\php.exe'" $R0
 
   DetailPrint "Install bundles into wiki"
   nsExec::ExecToLog '"$PHP" "$MEDIAWIKIDIR\deployment\tools\smwadmin\smwadmin.php" --nocheck -f -i Smwplus.zip'
