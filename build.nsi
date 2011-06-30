@@ -8,6 +8,7 @@
 * Needs NSIS 2.35 or higher
 * additional extensions: (see extension folder) 
 *    - FindProcDLL.dll
+*    - KillProcDLL.dll
 */
 
 ;Without files (compiles much faster, for debugging)
@@ -1116,7 +1117,7 @@ Function un.checkForApacheAndMySQLAndMemcached
    IntOp $2 0 + $R0
    FindProcDLL::FindProc "lucene-wiki.exe"
    IntOp $3 0 + $R0
-   FindProcDLL::FindProc "startSolr.bat"
+   FindProcDLL::FindProc "solr.exe"
    IntOp $4 0 + $R0
    ${If} $0 == 1
    ${OrIf} $1 == 1
@@ -1167,7 +1168,6 @@ Section "Uninstall"
     Delete "$SMPROGRAMS\$MUI_TEMP\${PRODUCT} ${VERSION} Start Lucene.lnk" 
     #Delete "$SMPROGRAMS\$MUI_TEMP\${PRODUCT} ${VERSION} Start Lucene Updater.lnk"
     Delete "$SMPROGRAMS\$MUI_TEMP\${PRODUCT} ${VERSION} Start Solr.lnk"
-    Delete "$SMPROGRAMS\$MUI_TEMP\${PRODUCT} ${VERSION} Solr Create Index.lnk"
     Delete "$SMPROGRAMS\$MUI_TEMP\${PRODUCT} ${VERSION} Main Page.lnk"
     #Delete "$SMPROGRAMS\$MUI_TEMP\${PRODUCT} ${VERSION} Help.lnk"
     
@@ -1187,10 +1187,8 @@ Section "Uninstall"
     DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT} ${VERSION}"
 
     nsExec::ExecToLog '"$INSTDIR\xampp_stop.exe"'
-    Push "${PRODUCT} ${VERSION} Start Lucene"
-    Call un.CloseProgram
-    Push "${PRODUCT} ${VERSION} Start Solr"
-    Call un.CloseProgram
+    KillProcDLL::KillProc "lucene-wiki.exe"
+    KillProcDLL::KillProc "solr.exe"
 
     Delete "$INSTDIR\*"
    
@@ -1655,21 +1653,6 @@ Function GetWindowsVersion
   Pop $R1
   Exch $R0
  
-FunctionEnd
- 
-Function un.CloseProgram
-  Exch $1
-  Push $0
-  loop:
-    FindWindow $0 $1
-    IntCmp $0 0 done
-      #SendMessage $0 ${WM_DESTROY} 0 0
-      SendMessage $0 ${WM_CLOSE} 0 0
-    Sleep 100
-    Goto loop
-  done:
-  Pop $0
-  Pop $1
 FunctionEnd
 
 Function WriteToFile
