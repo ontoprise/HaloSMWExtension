@@ -64,22 +64,6 @@ var CREATENEWARTICLE = {
 				form.append('<input type="hidden" name="mode" value="wysiwyg">');
 				break;
 				
-//			case this.ADD_AND_EDIT_CATEGORY:
-//				form.attr('action', wgServer + wgScriptPath + '/index.php/Special:FormEdit/Add_and_edit_Category/' + articleTitle);
-//				break;
-//				
-//			case this.ADD_AND_EDIT_PROPERTY:
-//				form.attr('action', wgServer + wgScriptPath + '/index.php/Special:FormEdit/Add_and_edit_Property/' + articleTitle);
-//				break;
-//				
-//			case this.ADD_AND_EDIT_TEMPLATE:
-//				form.attr('action', wgServer + wgScriptPath + '/index.php/Special:FormEdit/Add_and_edit_Template/' + articleTitle);
-//				break;
-//				
-//			case this.ADD_AND_EDIT_FORM:
-//				form.attr('action', wgServer + wgScriptPath + '/index.php/Special:FormEdit/Add_and_edit_Form/' + articleTitle);
-//				break;
-			
 			default: 
 				if(creationMathod.indexOf(this.CATEGORY_STR) > 0){
 					var category = jQuery("#listOfTemplatesAndCategories option:selected").val();
@@ -103,60 +87,22 @@ var CREATENEWARTICLE = {
 		switch(selectedValue){
 			case this.EMPTY_IN_WIKITEXT:
 				jQuery('#selectedTitleTd').html(selectedValue + ':');
-				jQuery('#selectedDescTd').html('Create an empty article in WikiText editor');
+				jQuery('#selectedDescTd').text('Create an empty article in WikiText editor');
 				jQuery('#selectedDescImgTd').html('<img src="' + this.imgPath + 'info.png"/>');
-				jQuery.fancybox.resize();
+//				jQuery.fancybox.resize();
 				jQuery('#listOfTemplatesAndCategories').focus();
+				jQuery.fancybox.hideActivity();
 				break;
 				
 			case this.EMPTY_IN_WYSIWYG:
 				jQuery('#selectedTitleTd').html(selectedValue + ':');
-				jQuery('#selectedDescTd').html('Create an empty article in WYSIWYG editor');
+				jQuery('#selectedDescTd').text('Create an empty article in WYSIWYG editor');
 				jQuery('#selectedDescImgTd').html('<img src="' + this.imgPath + 'info.png"/>');
-				jQuery.fancybox.resize();
+//				jQuery.fancybox.resize();
 				jQuery('#listOfTemplatesAndCategories').focus();
+				jQuery.fancybox.hideActivity();
 				break;
 				
-//			case this.ADD_AND_EDIT_CATEGORY:
-//				sajax_do_call('cna_getPropertyValue', ['Form:Add_and_edit_Category', 'Rationale'], function(request){
-//					jQuery('#selectedTitleTd').html(selectedValue + ':');
-//					jQuery('#selectedDescTd').html(request.responseText);
-//					jQuery('#selectedDescImgTd').html('<img src="' + CREATENEWARTICLE.imgPath + 'info.png"/>');
-//					jQuery.fancybox.resize();
-//					jQuery('#listOfTemplatesAndCategories').focus();
-//				});
-//				break;
-//				
-//			case this.ADD_AND_EDIT_PROPERTY:
-//				sajax_do_call('cna_getPropertyValue', ['Form:Add_and_edit_Property', 'Rationale'], function(request){
-//					jQuery('#selectedTitleTd').html(selectedValue + ':');
-//					jQuery('#selectedDescTd').html(request.responseText);
-//					jQuery('#selectedDescImgTd').html('<img src="' + CREATENEWARTICLE.imgPath + 'info.png"/>');
-//					jQuery.fancybox.resize();
-//					jQuery('#listOfTemplatesAndCategories').focus();
-//				});
-//				break;
-//				
-//			case this.ADD_AND_EDIT_TEMPLATE:
-//				sajax_do_call('cna_getPropertyValue', ['Form:Add_and_edit_Template', 'Rationale'], function(request){
-//					jQuery('#selectedTitleTd').html(selectedValue + ':');
-//					jQuery('#selectedDescTd').html(request.responseText);
-//					jQuery('#selectedDescImgTd').html('<img src="' + CREATENEWARTICLE.imgPath + 'info.png"/>');
-//					jQuery.fancybox.resize();
-//					jQuery('#listOfTemplatesAndCategories').focus();
-//				});
-//				break;
-//				
-//			case this.ADD_AND_EDIT_FORM:
-//				sajax_do_call('cna_getPropertyValue', ['Form:Add_and_edit_Form', 'Rationale'], function(request){
-//					jQuery('#selectedTitleTd').html(selectedValue + ':');
-//					jQuery('#selectedDescTd').html(request.responseText);
-//					jQuery('#selectedDescImgTd').html('<img src="' + CREATENEWARTICLE.imgPath + 'info.png"/>');
-//					jQuery.fancybox.resize();
-//					jQuery('#listOfTemplatesAndCategories').focus();
-//				});
-//				break;
-//			
 			default:
 				var titleString;
 				var categoryIndex = selectedValue.indexOf(this.CATEGORY_STR);
@@ -169,12 +115,26 @@ var CREATENEWARTICLE = {
 				}
 				jQuery.fancybox.showActivity();	
 				sajax_do_call('cna_getPropertyValue', [titleString, 'Rationale'], function(request){
-					jQuery('#selectedTitleTd').html(selectedValue + ':');
-					jQuery('#selectedDescTd').html(request.responseText);
-					jQuery('#selectedDescImgTd').html('<img src="' + CREATENEWARTICLE.imgPath + 'info.png"/>');
-					jQuery.fancybox.resize();
+					var formStr = 'Form:';
+					var categoryStr = 'Category:';
+					var responseText = request.responseText.split(';');
+					var title = responseText[1];
+					var formIndex = title.indexOf(formStr);
+					var categoryIndex = title.indexOf(categoryStr);
+					if(formIndex === 0)
+						title = title.substr(formStr.length, title.length - 1);
+					else if(categoryIndex === 0)
+						title = title.substr(categoryStr.length, title.length - 1);
+					
+					if(jQuery('#listOfTemplatesAndCategories option:selected').val().indexOf(title) == 0){
+						jQuery('#selectedTitleTd').html(selectedValue + ':');
+						jQuery('#selectedDescTd').html(request.responseText);
+						jQuery('#selectedDescImgTd').html('<img src="' + CREATENEWARTICLE.imgPath + 'info.png"/>');
+	//					jQuery.fancybox.resize();
+						jQuery.fancybox.hideActivity();
+					}
 					jQuery('#listOfTemplatesAndCategories').focus();
-					jQuery.fancybox.hideActivity();
+					
 				});
 				break;
 			}
@@ -222,6 +182,23 @@ var CREATENEWARTICLE = {
 		});
 		
 		
+	},
+	
+	shorterString : function(theString, numOfLetters){
+		if(theString && jQuery.trim(theString).length > numOfLetters){
+			theString = theString.substr(0, numOfLetters - 3);
+			theString += '...';
+		}
+		return theString;
+	},
+	
+	validate : function(){
+		if(jQuery('#newArticleName').val() && jQuery('#listOfTemplatesAndCategories option:selected').val()){
+			jQuery('#cna_submitBtn').removeAttr('disabled');
+		}
+		else{
+			jQuery('#cna_submitBtn').attr('disabled', 'disabled');
+		}
 	}
 }
 
@@ -252,23 +229,21 @@ jQuery(document).ready(function() {
 				var articleExistsErrorMsgSpan = jQuery('#errorMsg');
 				var articleExistsErrorLinkSpan = jQuery('#errorLink');
 				var articleExistsErrorImgTd = jQuery('#errorImgTd');
-				var submitBtn = jQuery("#cna_submitBtn");
+				var inputBox = jQuery('#newArticleName');
 				articleNameTextBox.val(jQuery.query.get('newarticletitle'));
 				articleNameTextBox.focus();
 			
 				articleNameTextBox.keyup(function(event){
-					var keycode = event.which;
-
+//					var keycode = event.which;
+					CREATENEWARTICLE.validate();
 					var articleTitle = articleNameTextBox.val();
-					if(!articleTitle){
-						articleExistsErrorMsgSpan.attr('display', 'none');
-						articleExistsErrorLinkSpan.attr('display', 'none');
+					if(!jQuery('#newArticleName').val()){
 						articleExistsErrorImgTd.empty();
 						articleExistsErrorMsgSpan.empty();
 						articleExistsErrorLinkSpan.empty();
-						submitBtn.removeAttr('disabled');
-						jQuery.fancybox.resize();
-						articleNameTextBox.focus();
+						inputBox.removeClass('redInputBox');
+						inputBox.removeClass('greenInputBox');
+						inputBox.addClass('whiteInputBox');						
 					}
 //					else if(keycode !== 37 && keycode !== 39){
 					else{
@@ -276,27 +251,34 @@ jQuery(document).ready(function() {
 						sajax_do_call('cna_articleExists', [articleTitle], function(request){
 							var articleExists = request.responseText;
 							articleExists = articleExists.split(';');
-							if(articleTitle === articleExists[1] && articleExists[0] !== 'false'){
-								articleExistsErrorMsgSpan.removeAttr('display');
-								articleExistsErrorLinkSpan.removeAttr('display');
-								articleExistsErrorImgTd.html('<img src=\"' + CREATENEWARTICLE.imgPath + 'warning.png\"/>');
-								articleExistsErrorMsgSpan.html('This page name already exists. You can enter a different article name or open this article: ');
-								articleExistsErrorLinkSpan.html('<a href=\"' + wgServer + wgScriptPath + '/index.php/' + articleTitle + '\">' + articleTitle + '</a>');
-								submitBtn.attr('disabled', 'disabled');
-//								jQuery.fancybox.resize();
-//								articleNameTextBox.focus();
+							if(jQuery('#newArticleName').val() === articleExists[1]){
+								if(articleExists[0] !== 'false'){
+									articleExistsErrorImgTd.html('<img src=\"' + CREATENEWARTICLE.imgPath + 'warning.png\"/>');
+									articleExistsErrorMsgSpan.html('This page name already exists. You can enter a different article name or open this article: ');
+									articleExistsErrorLinkSpan.html('<a href=\"' + wgServer + wgScriptPath + '/index.php/' + articleTitle + '\">' + CREATENEWARTICLE.shorterString(articleTitle, 20) + '</a>');
+									inputBox.removeClass('greenInputBox');
+									inputBox.removeClass('whiteInputBox');			
+									inputBox.addClass('redInputBox');
+									
+								}
+								else if(jQuery('#newArticleName').val()){
+									articleExistsErrorImgTd.empty();
+									articleExistsErrorMsgSpan.empty();
+									articleExistsErrorLinkSpan.empty();
+									inputBox.removeClass('redInputBox');
+									inputBox.removeClass('whiteInputBox');	
+									inputBox.addClass('greenInputBox');
+								}
+								else{
+									articleExistsErrorImgTd.empty();
+									articleExistsErrorMsgSpan.empty();
+									articleExistsErrorLinkSpan.empty();
+									inputBox.removeClass('redInputBox');
+									inputBox.removeClass('greenInputBox');
+									inputBox.addClass('whiteInputBox');		
+								}
+								jQuery.fancybox.hideActivity();
 							}
-							else{
-								articleExistsErrorMsgSpan.attr('display', 'none');
-								articleExistsErrorLinkSpan.attr('display', 'none');
-								articleExistsErrorImgTd.empty();
-								articleExistsErrorMsgSpan.empty();
-								articleExistsErrorLinkSpan.empty();
-								submitBtn.removeAttr('disabled');
-//								jQuery.fancybox.resize();
-//								articleNameTextBox.focus();
-							}
-							jQuery.fancybox.hideActivity();
 						});
 					}
 				});
@@ -314,13 +296,18 @@ jQuery(document).ready(function() {
 				
 				jQuery('#listOfTemplatesAndCategories').change(function()
 				{
-					CREATENEWARTICLE.setRationaleDescription(jQuery('#listOfTemplatesAndCategories option:selected').val())
+					CREATENEWARTICLE.setRationaleDescription(jQuery('#listOfTemplatesAndCategories option:selected').val());
+					CREATENEWARTICLE.validate();
 				});
 				
 				jQuery('.fancyboxTitleTd img').click(function()
 				{
 					jQuery.fancybox.close();
 				});
+				
+				jQuery.fancybox.resize();
+				jQuery.fancybox.center();
+				
 			}
 	}).trigger('click');
 	}

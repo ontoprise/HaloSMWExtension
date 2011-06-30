@@ -71,7 +71,7 @@ function cna_getPropertyValue($titleName, $propertyName){
 	if($propValues && count($propValues) > 0){
 		$propertyValue = $propValues[0]->getWikiValue();
 	}
-	return $propertyValue;
+	return $propertyValue . ';' . $titleName;
 }
 
 function cna_articleExists($titleName) {

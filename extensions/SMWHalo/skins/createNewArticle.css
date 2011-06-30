@@ -69,7 +69,8 @@
 }
 
 .layoutDescriptionTd{
-	height: 54px;	
+	height: 60px; !important
+	
 }
 
 .layoutDescriptionSpan{
@@ -122,4 +123,19 @@
 
 #selectedDescImgTd{
 	vertical-align: top;	
+}
+
+.greenInputBox{
+	background-color: lightgreen;
+	border: 1px solid gray;	
+}
+
+.redInputBox{
+	background-color: red;
+	border: 1px solid gray;	
+}
+
+.whiteInputBox{
+	background-color: white;
+	border: 1px solid gray;		
 }
