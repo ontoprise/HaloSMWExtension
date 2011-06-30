@@ -256,6 +256,7 @@ FacetedSearch.classes.FacetedSearch = function () {
 			'hl.fl': HIGHLIGHT_FIELD,
 			'hl.simple.pre' : '<b>',
 			'hl.simple.post': '</b>',
+			'hl.fragsize': '250',
 			'sort' : MODIFICATION_DATE_FIELD + ' desc'
 		};
 		for (var name in params) {
