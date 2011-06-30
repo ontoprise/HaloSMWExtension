@@ -9,7 +9,7 @@ var CREATENEWARTICLE = {
 	FORM_STR : '(Form)',
 	BIND_CONTROL_ID : '#createNewArticleCtrl',
 	imgPath : wgScriptPath + '/extensions/SMWHalo/skins/CreateNewArticle/',
-	lastTitleValue : '',
+	articleExists : false,
 	fancyBoxContent : function(){
 		return '<form action=\"\" method=\"get\">\
 			<table id=\"fancyboxTable\">\<tr>\<td colspan=\"2\" class=\"fancyboxTitleTd\"><span>Create New Article</span><img src=\"' + this.imgPath + '_delete.png\"></img></td></tr>\
@@ -48,7 +48,6 @@ var CREATENEWARTICLE = {
 	},
 	
 	initForm : function(form, articleTitle, creationMathod){
-		var actionUrl;
 		form.remove(':hidden');
 		switch(creationMathod){
 			case this.EMPTY_IN_WIKITEXT:
@@ -91,7 +90,8 @@ var CREATENEWARTICLE = {
 				jQuery('#selectedDescImgTd').html('<img src="' + this.imgPath + 'info.png"/>');
 //				jQuery.fancybox.resize();
 				jQuery('#listOfTemplatesAndCategories').focus();
-				jQuery.fancybox.hideActivity();
+				CREATENEWARTICLE.hideActivity();
+				jQuery('#newArticleName').removeAttr('disabled');
 				break;
 				
 			case this.EMPTY_IN_WYSIWYG:
@@ -100,23 +100,25 @@ var CREATENEWARTICLE = {
 				jQuery('#selectedDescImgTd').html('<img src="' + this.imgPath + 'info.png"/>');
 //				jQuery.fancybox.resize();
 				jQuery('#listOfTemplatesAndCategories').focus();
-				jQuery.fancybox.hideActivity();
+				CREATENEWARTICLE.hideActivity();
+				jQuery('#newArticleName').removeAttr('disabled');
 				break;
 				
 			default:
 				var titleString;
 				var categoryIndex = selectedValue.indexOf(this.CATEGORY_STR);
 				var formIndex = selectedValue.indexOf(this.FORM_STR);
+				var formStr = 'Form:';
+				var categoryStr = 'Category:';
 				if(categoryIndex > 0){
-					titleString = 'Category:' + selectedValue.substr(0, categoryIndex);
+					titleString = categoryStr + selectedValue.substr(0, categoryIndex);
 				}
 				else if(formIndex > 0){
-					titleString = 'Form:' + selectedValue.substr(0, formIndex);
+					titleString = formStr + selectedValue.substr(0, formIndex);
 				}
-				jQuery.fancybox.showActivity();	
+				CREATENEWARTICLE.showActivity();
+				jQuery('#newArticleName').attr('disabled', 'disabled');
 				sajax_do_call('cna_getPropertyValue', [titleString, 'Rationale'], function(request){
-					var formStr = 'Form:';
-					var categoryStr = 'Category:';
 					var responseText = request.responseText.split(';');
 					var title = responseText[1];
 					var formIndex = title.indexOf(formStr);
@@ -128,10 +130,11 @@ var CREATENEWARTICLE = {
 					
 					if(jQuery('#listOfTemplatesAndCategories option:selected').val().indexOf(title) == 0){
 						jQuery('#selectedTitleTd').html(selectedValue + ':');
-						jQuery('#selectedDescTd').html(request.responseText);
+						jQuery('#selectedDescTd').html(responseText[0]);
 						jQuery('#selectedDescImgTd').html('<img src="' + CREATENEWARTICLE.imgPath + 'info.png"/>');
 	//					jQuery.fancybox.resize();
-						jQuery.fancybox.hideActivity();
+						CREATENEWARTICLE.hideActivity();
+						jQuery('#newArticleName').removeAttr('disabled');
 					}
 					jQuery('#listOfTemplatesAndCategories').focus();
 					
@@ -147,7 +150,7 @@ var CREATENEWARTICLE = {
 		var listBox = jQuery('#listOfTemplatesAndCategories');
 		
 		//ajax call to get a list of forms
-		jQuery.fancybox.showActivity();	
+		CREATENEWARTICLE.showActivity();	
 		sajax_do_call('cna_getForms', [''], function(request){
 			forms = request.responseText;
 			forms = forms.split(',');
@@ -177,7 +180,7 @@ var CREATENEWARTICLE = {
 				for(i = 0; mergedArray && i < mergedArray.length; i++){
 					listBox.append('<option>' + mergedArray[i] + '</option>')
 				}
-				jQuery.fancybox.hideActivity();
+				CREATENEWARTICLE.hideActivity();
 			});
 		});
 		
@@ -193,12 +196,23 @@ var CREATENEWARTICLE = {
 	},
 	
 	validate : function(){
-		if(jQuery('#newArticleName').val() && jQuery('#listOfTemplatesAndCategories option:selected').val()){
+		if(jQuery('#newArticleName').val() && jQuery('#listOfTemplatesAndCategories option:selected').val() &&
+				!CREATENEWARTICLE.articleExists){
 			jQuery('#cna_submitBtn').removeAttr('disabled');
 		}
 		else{
 			jQuery('#cna_submitBtn').attr('disabled', 'disabled');
 		}
+	},
+	
+	showActivity : function(){
+		jQuery('#cna_submitBtn').attr('disabled', 'disabled');
+		jQuery.fancybox.showActivity();	
+	},
+	
+	hideActivity : function(){
+		CREATENEWARTICLE.validate();
+		jQuery.fancybox.hideActivity();	
 	}
 }
 
@@ -247,8 +261,9 @@ jQuery(document).ready(function() {
 					}
 //					else if(keycode !== 37 && keycode !== 39){
 					else{
-						jQuery.fancybox.showActivity();	
+						CREATENEWARTICLE.showActivity();	
 						sajax_do_call('cna_articleExists', [articleTitle], function(request){
+							CREATENEWARTICLE.articleExists = false;
 							var articleExists = request.responseText;
 							articleExists = articleExists.split(';');
 							if(jQuery('#newArticleName').val() === articleExists[1]){
@@ -259,6 +274,7 @@ jQuery(document).ready(function() {
 									inputBox.removeClass('greenInputBox');
 									inputBox.removeClass('whiteInputBox');			
 									inputBox.addClass('redInputBox');
+									CREATENEWARTICLE.articleExists = true;
 									
 								}
 								else if(jQuery('#newArticleName').val()){
@@ -277,7 +293,7 @@ jQuery(document).ready(function() {
 									inputBox.removeClass('greenInputBox');
 									inputBox.addClass('whiteInputBox');		
 								}
-								jQuery.fancybox.hideActivity();
+								CREATENEWARTICLE.hideActivity();
 							}
 						});
 					}
@@ -297,7 +313,6 @@ jQuery(document).ready(function() {
 				jQuery('#listOfTemplatesAndCategories').change(function()
 				{
 					CREATENEWARTICLE.setRationaleDescription(jQuery('#listOfTemplatesAndCategories option:selected').val());
-					CREATENEWARTICLE.validate();
 				});
 				
 				jQuery('.fancyboxTitleTd img').click(function()

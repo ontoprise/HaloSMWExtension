@@ -69,18 +69,17 @@
 }
 
 .layoutDescriptionTd{
-	height: 60px; !important
+	height: 60px !important;
+	color: gray;
+	padding-top: 10px;
+	
 	
 }
 
 .layoutDescriptionSpan{
-	font-weight: normal;	
-}
-
-.layoutDescriptionTd{
-	color: gray;
-	padding-top: 10px;
-	width: 300px;		
+	font-weight: normal;
+	width: 200px;	
+	overflow: hidden;
 }
 
 .btnTableTd{
@@ -123,6 +122,7 @@
 
 #selectedDescImgTd{
 	vertical-align: top;	
+	overflow: hidden;
 }
 
 .greenInputBox{
