@@ -118,7 +118,8 @@ function tff_updateInstanceData($updates, $articleTitle, $revisionId, $rowNr, $t
 		$msg = '';
 	}
 
-	$result = array('success' => $result, 'msg' => $msg, 'rowNr' => $rowNr, 'tabularFormId' => $tabularFormId, $revisionId);
+	$result = array('success' => $result, 'msg' => $msg, 'rowNr' => $rowNr, 
+		'tabularFormId' => $tabularFormId, $revisionId, 'title' => $title->getFullText());
 	$result = json_encode($result);
 
 	return '--##starttf##--' . $result . '--##endtf##--';

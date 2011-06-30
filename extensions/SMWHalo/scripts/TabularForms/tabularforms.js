@@ -72,6 +72,36 @@ var TF = Class.create({
 		if(jQuery('#' + data.tabularFormId).attr('isInEditMode') == 'true'){
 			tf.switchToEditMode(data.tabularFormId);
 		}
+		
+		var container = jQuery('#' + data.tabularFormId);
+		var lostInstances = jQuery(container).get(0).lostInstances;  
+		if(lostInstances != undefined){
+			for(var k=0; k < lostInstances.length; k++){
+				tf.addNotification(container, 'tabf_lost_instance_warning', i + '-' + k, lostInstances[k], lostInstances[k]);
+			}
+		}
+
+		//xyz
+		var instancesWithSaveErrors = jQuery(container).get(0).instancesWithSaveErrors;  
+		if(instancesWithSaveErrors != undefined){
+			jQuery('tr td:firest-child a', container).each( function(){
+				for(var k=0; k < instancesWithSaveErrors.length; k++){
+					if(jQuery(this).html() == instancesWithSaveErrors[k]){
+						jQuery(this).parent().parent().addClass('tabf_table_row_saved_error');
+						jQuery('.tabf_error_status', jQuery(this).parent().parent()).css('display', 'inline');
+					}
+				}
+			});
+			
+			for(var k=0; k < instancesWithSaveErrors.length; k++){
+				tf.addNotification(container, 'tabf_save_error_warning', instancesWithSaveErrors[k], 
+					instancesWithSaveErrors[k], instancesWithSaveErrors[k]);
+			}
+			
+		} else {
+			jQuery(container).get(0).instancesWithSaveErrors = new Array();
+		}
+		
 	},
 	
 	
@@ -414,6 +444,11 @@ var TF = Class.create({
 			return;
 		}
 		
+		if(jQuery(node).parent().parent().attr('class').indexOf('tabf_table_row_saved_error') > -1){
+			jQuery(node).parent().parent().removeClass('tabf_table_row_saved_error');
+			jQuery('.tabf_error_status', jQuery(node).parent().parent()).css('display', 'none');
+		}
+		
 		if(jQuery(node).attr('originalValue') != jQuery.trim(jQuery(node).attr('value'))){
 			
 			jQuery(node).addClass('tabf_modified_value');
@@ -595,26 +630,31 @@ var TF = Class.create({
 		
 		var row = jQuery('#' + data.tabularFormId + ' tr:nth-child(' + data.rowNr + ')');
 		if(data.success == true){
-			jQuery(row).addClass('tabf_table_row_saved_successfull');
-			jQuery('td:last-child .tabf_pending_status', row).css('display', 'none');
-			jQuery('td:last-child .tabf_saved_status', row).css('display', 'inline');
-			//replace article name input of new instance with textarea
-			
-			if(jQuery('td:first-child textarea', row).attr('class') != null &&
-					jQuery('td:first-child textarea', row).attr('class').indexOf('tabf_valid_instance_name') > -1){
-				var text = '<a href="' + wgServer + wgScriptPath + "/index.php" + "?title=";
-				text += encodeURI(jQuery('td:first-child textarea', row).attr('value'));
-				text += '">' + jQuery('td:first-child textarea', row).attr('value') + '</a>';
-				jQuery('td:first-child', row).html(text);
-				jQuery(row).addClass('tabf_table_row');
-			}
+				// jQuery(row).addClass('tabf_table_row_saved_successfull');
+				// jQuery('td:last-child .tabf_pending_status', row).css('display', 'none');
+				// jQuery('td:last-child .tabf_saved_status', row).css('display', 'inline');
+				// //replace article name input of new instance with textarea
+				//			
+				// if(jQuery('td:first-child textarea', row).attr('class') != null &&
+				// jQuery('td:first-child textarea',
+				// row).attr('class').indexOf('tabf_valid_instance_name') > -1){
+				// var text = '<a href="' + wgServer + wgScriptPath + "/index.php" + "?title=";
+				// text += encodeURI(jQuery('td:first-child textarea', row).attr('value'));
+				// text += '">' + jQuery('td:first-child textarea', row).attr('value') + '</a>';
+				// jQuery('td:first-child', row).html(text);
+				// jQuery(row).addClass('tabf_table_row');
+				// }
 		} else {
-			jQuery(row).addClass('tabf_table_row_saved_error');
-			jQuery('td:last-child .tabf_pending_status', row).css('display', 'none');
-			jQuery('td:last-child .tabf_error_status', row).attr('title', data.msg);
-			jQuery('td:last-child .tabf_error_status', row).css('display', 'inline');
+			var container = jQuery('#' + data.tabularFormId);
 			
-			tf.updateErrors += 1;
+			jQuery(container).get(0).instancesWithSaveErrors.push(data.title);
+			
+			// jQuery(row).addClass('tabf_table_row_saved_error');
+			// jQuery('td:last-child .tabf_pending_status', row).css('display', 'none');
+			// jQuery('td:last-child .tabf_error_status', row).attr('title', data.msg);
+			// jQuery('td:last-child .tabf_error_status', row).css('display', 'inline');
+			
+			//tf.updateErrors += 1;
 		}
 		
 		tf.updateJobs -= 1;
@@ -670,15 +710,10 @@ var TF = Class.create({
 				'#'+data.tabularFormId +' .tabf_table_row .tabf_table_cell:first-child a').get();		
 		
 		var container = jQuery('#'+data.tabularFormId);
-		for(var i=0; i < instances.length; i++){
-			for(var k=0; k < data.result.length; k++){
-				if(jQuery(instances[i]).html() == data.result[k]){
-					tf.addNotification(container, 'tabf_lost_instance_warning', i + '-' + k, data.result[k], data.result[k]);
-					
-					//jQuery(instances[i]).parent().parent().addClass('tabf_finally_lost_instance');
-				}
-			}
-		}
+		
+		jQuery(container).get(0).lostInstances = data.result;
+		
+		tf.loadForm(container);
 	},
 	
 	/*

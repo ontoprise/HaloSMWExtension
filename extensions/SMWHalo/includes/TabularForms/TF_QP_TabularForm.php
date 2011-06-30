@@ -351,6 +351,12 @@ class TFTabularFormData {
 		$html .= 'The following instances are now not part of the query result anymore';
 		$html .= '<ul></ul>';
 		$html .= '</li>';
+		
+		$html .= '<li class="tabf_save_error_warning" style="display: none">';
+		//todo: Use lanfuage
+		$html .= 'The following instances could not be saved since they have been modified by someone else in the meantime.';
+		$html .= '<ul></ul>';
+		$html .= '</li>';
 
 		if(count($this->addInstanceBlockers) > 0){
 			$html .= '<li class="tabf_add_instance_warnings">';
@@ -1306,7 +1312,8 @@ class TFTabularFormRowData {
 		$html .= '<img class="tabf_invalid_value_status" title="'.$title.'" style="display: none" src="'
 		.$smwgHaloScriptPath.'/skins/TabularForms/Attention.png"></img>';
 		
-		$title = '';
+		//todo: use language
+		$title = 'Changes for this instance could not be applied because it has been modified by someone else in the meantime.';
 		$html .= '<img class="tabf_error_status" title="'.$title.'" style="display: none" src="'
 		.$smwgHaloScriptPath.'/skins/TabularForms/Error.png"></img>';
 
