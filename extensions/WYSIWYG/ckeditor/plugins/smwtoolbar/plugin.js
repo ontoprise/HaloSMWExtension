@@ -1096,7 +1096,7 @@ CKEDITOR.plugins.add('smwtoolbar', {
                     label : 'Semantic Toolbar',
                     command : 'SMWtoolbar',
                     icon: this.path + 'images/tb_icon_semtoolbar.png',
-                    title: 'Semantic Toolbar',
+                    title: 'Semantic Toolbar'
                 });
             editor.getCommand('SMWtoolbar').setState(CKEDITOR.TRISTATE_OFF)
         }
