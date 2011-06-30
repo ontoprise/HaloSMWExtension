@@ -222,8 +222,10 @@ class TestMapping extends PHPUnit_Framework_TestCase {
 
 		// Make sure the mappings exist
 		$mwSource = ucfirst($this->mMappingSource);
-		
-		file_put_contents('d://mapi.rtf', $store->getAllMappings($mwSource, $myTarget), true);
+
+        // FIXME using system dependent paths here is considered a Bad Thing, but Windows specific
+        // paths even are even worse! MagnusNiemann
+		file_put_contents('/tmp/mapi.rtf', $store->getAllMappings($mwSource, $myTarget), true);
 
 		$mapping = new LODR2RMapping(null, $this->mMappingText1, $mwSource, $this->mMappingTarget);
 		$this->assertTrue($store->existsMapping($mapping));
@@ -421,7 +423,7 @@ class TestMapping extends PHPUnit_Framework_TestCase {
 		$mapping = new LODSILKMapping(null, $this->getSILKMappingText(), ucfirst($this->mMappingSource)
 			, 'wiki', '<http://halowiki/ob>', 
 			array('<'.$this->mintLabelPredicate.'>', '<http://halowiki/ob/property/ABC>'));
-		$this->assertTrue($store->existsMapping($mapping));
+		$this->assertFalse($store->existsMapping($mapping));
 		
 		
 		//Delete all mappings again
