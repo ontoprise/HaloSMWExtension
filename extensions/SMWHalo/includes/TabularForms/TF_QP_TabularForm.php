@@ -1305,7 +1305,7 @@ class TFTabularFormRowData {
 		// todo: language $title = wfMsg('tabf_status_gets_lost');
 		$title = 'Instance may not be included in the query result anymore after applying changes.';
 		$html .= '<img class="tabf_getslost_status" title="'.$title.'" style="display: none" src="'
-		.$smwgHaloScriptPath.'/skins/TabularForms/Modified.png"></img>';
+		.$smwgHaloScriptPath.'/skins/TabularForms/Attention.png"></img>';
 		
 		// todo: language $title = wfMsg('tabf_status_invalid_value');
 		$title = 'Some annotation values of this instance are invalid.';
