@@ -71,12 +71,23 @@ class  LODNonExistingPageHandler  {
 		$isRedlink = $wgRequest->getVal('redlink', '') === '1';
 		$uri = $wgRequest->getVal('uri', '');
         
-		// ignore NEP on NS_FILE pages
-		if ($title->getNamespace() === NS_FILE) return true;
+		// ignore NEP on NS_FILE pages and other namespaces that expect an Image
+		// article
+		$ns = $title->getNamespace();
+		if ($ns === NS_FILE) {
+			return true;
+		}
+		global $smwgEnableRichMedia;
+		if ($smwgEnableRichMedia) {
+			RMNamespace::isImage($ns, $isRMns);
+			if ($isRMns) {
+				return true;
+			}
+		}
 		
 		if (!$title->exists()
-		&& ($isView || $isRedlink)
-		&& $wgRequest->getVal('title') === $title->getPrefixedDBkey()) {
+			&& ($isView || $isRedlink)
+			&& $wgRequest->getVal('title') === $title->getPrefixedDBkey()) {
 			$article = new LODNonExistingPage($title, $uri);
 			// Overwrite the edit mode in case of a redlink
 			if ($action === 'edit') {
