@@ -115,8 +115,10 @@ initializeRootCategoriesCallback: function (request) {
  
   // parse root category xml and transform it to HTML
    	this.OB_cachedCategoryTree = GeneralXMLTools.createDocumentFromString(request.responseText);
-  	//transformer.transformXMLToHTML(this.OB_cachedCategoryTree, rootElement, true);
-  	this.OB_currentlyDisplayedTree = GeneralXMLTools.createDocumentFromString(request.responseText);
+  	
+   	if (globalActionListener.activeTreeName == 'categoryTree') {
+   		this.OB_currentlyDisplayedTree = GeneralXMLTools.createDocumentFromString(request.responseText);
+   	}
   	selectionProvider.fireBeforeRefresh();
   	transformer.transformXMLToHTML(this.OB_currentlyDisplayedTree, rootElement, true);
  	selectionProvider.fireRefresh();
@@ -139,8 +141,10 @@ initializeRootPropertyCallback: function (request) {
  
   // parse root category xml and transform it to HTML
    	this.OB_cachedPropertyTree = GeneralXMLTools.createDocumentFromString(request.responseText);
-  	//transformer.transformXMLToHTML(this.OB_cachedPropertyTree, rootElement, true);
-  	this.OB_currentlyDisplayedTree = GeneralXMLTools.createDocumentFromString(request.responseText);
+
+	if (globalActionListener.activeTreeName == 'propertyTree') {
+		this.OB_currentlyDisplayedTree = GeneralXMLTools.createDocumentFromString(request.responseText);
+	}
   	selectionProvider.fireBeforeRefresh();
   	transformer.transformXMLToHTML(this.OB_currentlyDisplayedTree, rootElement, true);
  	selectionProvider.fireRefresh();

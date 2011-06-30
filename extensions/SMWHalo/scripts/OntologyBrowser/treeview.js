@@ -278,8 +278,8 @@ var transformer = new TreeTransformer(
 function resetOntologyBrowser() {
 	
 	// reset category or property view
-	dataAccess.initializeRootCategories(0, true)
-	dataAccess.initializeRootProperties(0, true)
+	dataAccess.initializeRootCategories(0, true);
+	dataAccess.initializeRootProperties(0, true);
 	
 	if ($('instanceList') != null && $('instanceList').down() != null) {
 		$('instanceList').down().remove();
