@@ -525,11 +525,12 @@ var TF = Class.create({
 		jQuery(this).addClass('tabf_table_row_saved');
 		jQuery('textarea', this).attr('readonly', 'true');
 		
+		var tabularFormId = jQuery(this).parent().parent().parent().parent().attr('id');
+		
 		if(jQuery(this).attr('isDeleted') == 'true'){
 			jQuery('td:last-child .tabf_deleted_status', this).css('display', 'none');
 			jQuery('td:last-child .tabf_pending_status', this).css('display', 'inline');
 			
-			var tabularFormId = jQuery(this).parent().parent().parent().parent().attr('id');
 			var revisionId = jQuery('td:first-child ',this).attr('revision-id');
 			var articleTitle = jQuery('td:first-child ',this).attr('article-name');
 			
@@ -584,7 +585,7 @@ var TF = Class.create({
 			
 			//deal with hidden preload values
 			if(jQuery(this).attr('isNew') == 'true'){
-				jQuery('#tf-hidden-preload-values > div').each( function(){
+				jQuery('#tf-hidden-preload-values > div', jQuery('tabularFormId')).each( function(){
 					var modifiedValue = new Object();
 					modifiedValue['newValue'] = jQuery(this).html();
 					modifiedValue['originalValue'] = '';
@@ -679,6 +680,16 @@ var TF = Class.create({
 		var instances = jQuery('.tabf_table_row .tabf_table_cell:first-child a', container).get();		
 		for(var i=0; i < instances.length; i++){
 			var name = jQuery(instances[i]).html();;
+			
+			if(instanceNames.length > 0 && name.length > 0){
+				instanceNames += ' || ';
+			}
+			instanceNames += name;
+		}
+		
+		instances = jQuery('.tabf_new_row .tabf_table_cell:first-child textarea', container).get();
+		for(var i=0; i < instances.length; i++){
+			var name = jQuery(instances[i]).attr('value');
 			
 			if(instanceNames.length > 0 && name.length > 0){
 				instanceNames += ' || ';
