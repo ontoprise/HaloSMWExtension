@@ -672,8 +672,8 @@ var TF = Class.create({
 		var container = jQuery('#'+data.tabularFormId);
 		for(var i=0; i < instances.length; i++){
 			for(var k=0; k < data.result.length; k++){
-				if('#' + jQuery(instances[i]).html() == '#' + data.result[k]){
-					tf.addNotification(container, 'tabf_lost_instance_warning', i + '-' + k, data.result[k]);
+				if(jQuery(instances[i]).html() == data.result[k]){
+					tf.addNotification(container, 'tabf_lost_instance_warning', i + '-' + k, data.result[k], data.result[k]);
 					
 					//jQuery(instances[i]).parent().parent().addClass('tabf_finally_lost_instance');
 				}

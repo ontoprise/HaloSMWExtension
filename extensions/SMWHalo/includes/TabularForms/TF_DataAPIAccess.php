@@ -416,6 +416,7 @@ class TFDataAPIACCESS {
 			}
 			
 			$this->article->doEdit($text, 'tabular forms');
+			smwfGetStore()->refreshData($this->article->getID(), 1, false, false);
 			
 			return true;
 		}
@@ -478,6 +479,7 @@ class TFDataAPIACCESS {
 		
 		$this->article = new Article($this->title);
 		$this->article->doEdit($text, 'tabular forms');
+					smwfGetStore()->refreshData($this->article->getID(), 1, false, false);
 			
 		return true;
 	}
