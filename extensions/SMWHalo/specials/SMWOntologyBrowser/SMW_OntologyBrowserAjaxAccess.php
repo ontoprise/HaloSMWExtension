@@ -61,8 +61,6 @@ class OB_Storage {
 		$partitionNum = isset($p_array[1]) ? intval($p_array[1]) : 0;
 		$reqfilter->offset = $partitionNum*$reqfilter->limit;
 
-
-		echo print_r($this->bundleID);die();
 		$rootcats = smwfGetSemanticStore()->getRootCategories($reqfilter, $this->bundleID);
 		$resourceAttachments = array();
 		wfRunHooks('smw_ob_attachtoresource', array($rootcats, & $resourceAttachments, NS_CATEGORY));
