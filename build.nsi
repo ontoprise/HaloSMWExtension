@@ -1187,7 +1187,15 @@ Section "Uninstall"
     DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT} ${VERSION}"
 
     nsExec::ExecToLog '"$INSTDIR\xampp_stop.exe"'
+
+    ; for some reason there are several lucene-wiki processes
+    KillLucene:
     KillProcDLL::KillProc "lucene-wiki.exe"
+    FindProcDLL::FindProc "lucene-wiki.exe"
+    ${If} $R0 == 1
+        goto KillLucene
+    ${EndIf}
+    
     KillProcDLL::KillProc "solr.exe"
 
     Delete "$INSTDIR\*"
