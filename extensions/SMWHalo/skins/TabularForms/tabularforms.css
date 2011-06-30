@@ -6,13 +6,19 @@
 	Author		: steinbauer and langguth
 	Description	:
 		Tabular Forms extension style sheet.
-*/ /* general settings */
+*/
+
+/* general settings */
 .tabf_container {
 	width: 100%;
 }
 
+.tabf_in_view_mode {
+	/* help container: TabForm is in view mode now */
+}
+
 .tabf_in_edit_mode {
-		
+	/* help container: TabForm is in edit mode now */
 }
 
 .tabf_container table {
@@ -32,7 +38,7 @@
 	vertical-align: bottom;
 }
 
-.tabf_container th>span {
+.tabf_container th > span {
 	margin-right: 1em;
 }
 
@@ -45,11 +51,12 @@
 }
 
 .tabf_column_header a {
+	/* no possible red links?*/
 	color: #116988 !important;
 }
 
 /* table row */
-.tabf_table_row,.tabf_new_row {
+.tabf_table_row, .tabf_new_row {
 	vertical-align: top;
 	height: 2.5em;
 }
@@ -77,20 +84,22 @@
 .tabf_status_cell {
 	border-left: 1px inset grey;
 	background-color: transparent !important;
-	vertical-align: top;
+	vertical-align: middle;
 	text-align: center;
 	width: 35px;
+/*	height: 100%;*/
 }
 
 .tabf_table_cell div {
 	height: 2.5em;
 	width: 100%;
+}
+.tabf_in_edit_mode .tabf_table_cell div {
 	background-color: #F0F0F0; /*all divs are write protected*/
 }
 
 /* textareas */
 .tabf_table_cell textarea {
-	/*background:url(../edit.gif)no-repeat 100% 0%;*/
 	padding: 0;
 	margin: 0;
 	border: 0;
@@ -99,13 +108,16 @@
 	height: 2.5em;
 	overflow: hidden;
 }
-
-.tabf_table_cell textarea:hover {
-	background: url(edit.gif) no-repeat 100% 0%;
+.tabf_in_view_mode .tabf_table_cell textarea[disabled] {
+	background-color: transparent; /* we don't want grey background in this mode */
 }
 
-.tabf_table_cell textarea:focus {
-	background: 0;
+.tabf_in_edit_mode .tabf_table_cell textarea:hover {
+	background: url(edit.gif) no-repeat 95% 50%;
+}
+
+.tabf_in_edit_mode .tabf_table_cell textarea:focus {
+	background: none;
 }
 
 /* footer */
@@ -119,7 +131,7 @@
 
 .tabf_table_footer input {
 	margin-top: 4px;
-	/*	margin-left: 4px;*/
+	/*margin-left: 4px;*/
 	width: 100%;
 }
 
@@ -129,112 +141,161 @@
 }
 
 /* action dependent styles */
-	/* One or more values in the row have been modified */
-.tabf_modified_row td:first-child { /*font-weight: bold;*/
-	
+/* One or more values in the row have been modified */
+.tabf_in_edit_mode .tabf_modified_row td:first-child {
 }
 
-.tabf_modified_value {
+.tabf_in_edit_mode .tabf_modified_value {
 	font-weight: bold;
-	/*background-color: #FFCD87;'/
+	/*background-color: #FFCD87;'*/
 }
 
-/* Teaxtarea has focus */ . tabf_selected_value { background-color :
-	#E8EDFF !important;
-	outline: 1px solid black;
+/* Teaxtarea has focus */
+.tabf_in_edit_mode .tabf_selected_value {
+	background-color: #E8EDFF !important;
+	/*outline: 1px solid black;*/
 }
 
 /* The row has been deleted */
-.tabf_deleted_row .tabf_table_cell { /*background-color: red;*/
-	
+.tabf_deleted_row {
+	color: lightgrey;
 }
 
-.tabf_deleted_row textarea { /*background-color: red;*/
-	
+.tabf_deleted_row .tabf_table_cell {
+	color: lightgrey;
+}
+
+.tabf_deleted_row textarea {
+	color: lightgrey;
 }
 
 /* A row has been added, because user has pressed 'Add instance' button or
 because the query has found an instance, which does not exist and the user is
 allowed to create new instances. */
-.tabf_new_row .tabf_table_cell { /*background-color: #FFCD87;*/
-	
+.tabf_new_row .tabf_table_cell {
+	/*background-color: #FFCD87;*/
 }
 
-.tabf_new_row textarea { /*background-color: #FFCD87;*/
-	
+.tabf_new_row textarea {
+	/*background-color: #FFCD87;*/
 }
 
 .tabf_new_row .tabf_table_cell:last-child {
 	/*background-color: transparent !important;*/
-	
 }
 
 /* The query has found an instance that does not exist and the user is not
 allowed to create new instances. */
-.tabf_non_existing_row { /*background-color: red;*/
-	
+.tabf_non_existing_row {
+	/*background-color: red;*/
 }
 
-.tabf_non_existing_row textarea { /*background-color: red;*/
-	
+.tabf_non_existing_row textarea {
+	/*background-color: red;*/
 }
 
 /* The row is read protected */
-.tabf_read_protected_row .tabf_table_cell,.tabf_read_protected_row .tabf_table_cell textarea
-	{
+.tabf_read_protected_row .tabf_table_cell,
+.tabf_read_protected_row .tabf_table_cell textarea {
 	background: 0;
 	background-color: #F0F0F0;
 	color: #6D6D6D;
 }
 
 /* The row is write protected */
-.tabf_write_protected_row .tabf_table_cell {
+.tabf_in_edit_mode .tabf_write_protected_row .tabf_table_cell {
 	background-color: #F0F0F0;
 	color: #6D6D6D;
 }
 
 /* The row has been saved... */
 .tabf_table_row_saved {
-	
 }
 
 /* ...successfully */
 .tabf_table_row_saved_successfull .tabf_table_cell {
-	/*background-color: lightgreen;
+	/*background-color: lightgreen;*/
 }
 
 .tabf_table_row_saved_successfull textarea {
-	background-color: lightgreen;
+	/*background-color: lightgreen;*/
 }
 
-/* ...erroneous */ .tabf_table_row_saved_error .tabf_table_cell {
-	background-color:red;
-	
+/* ...erroneous */
+.tabf_table_row_saved_error {
+	border-color: red;
+	border-width: medium;
+}
+.tabf_table_row_saved_error .tabf_table_cell {
+/*	border-color: red;*/
 }
 
 .tabf_table_row_saved_error textarea {
-	background-color: red;
+/*	background-color: red;*/
 }
 
 /* for the instances (first column) */
-.tabf_valid_instance_name { /*background-color: lightgreen !important;*/
-	
+.tabf_valid_instance_name {
+	/*background-color: lightgreen !important;*/
 }
 
-.tabf_erronious_instance_name { /*font-weight: bold;*/
+.tabf_erronious_instance_name {
+	/*font-weight: bold;*/
 	/*background-color: red !important;*/
-	
 }
 
 .tabf_invalid_input_filed_value {
+	outline: 1px solid red;
+	background: url(Attention.png) no-repeat 95% 50% !important;
+}
+
+.tabf_probably_lost_cell textarea, .tabf_probably_lost_cell textarea:hover {
+	background: url(Magnifier.png) no-repeat 95% 50% !important;
+}
+
+/* The notification system that is displayed under the TF results */
+.tabf_notification_system {
 	
 }
 
+.tabf_notifications_heading {
+	background-color: lightgrey;
+}
 
+.tabf-warnings-number {
+	
+}
 
+.tabf_notifications {
+	margin: 0 5px;
+	padding: 5px 0;
+	border: 1px solid lightgrey;
+	border-top: 0;
+}
+.tabf_notifications ol {
+	margin: 0;
+}
 
+.tabf_notifications .tabf_add_instance_error {
+	
+}
 
+.tabf_notifications .tabf_invalid_value_warning {
+	
+}
 
+.tabf_notifications .tabf_probably_lost_instance {
+	
+}
 
+.tabf_notifications .tabf_lost_instance_warning {
+	
+}
 
+.tabf_notifications .tabf_save_error_warning {
+	
+}
 
+.tabf_rowindex_comparator {
+	
+}
