@@ -64,7 +64,7 @@ class DFLocalSettingsTab {
 $html = <<<ENDS
 <div id=\"df_localsettings\">
 $description
-<div style="margin-bottom: 10px;">
+<div style="margin: 10px;">
 $selectorHTML
 </div>
 <div>

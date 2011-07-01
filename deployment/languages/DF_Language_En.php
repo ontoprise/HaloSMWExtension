@@ -104,7 +104,7 @@ class DF_Language_En extends DF_Language {
 	'df_globalupdate_warning' => 'Perform global update?',
 	'df_inspectextension_heading' => 'Inspect extension',
 	'df_select_extension' => 'Select extension',
-	'df_webadmin_localsettings_description' => "Edit an extensions's section in LocalSettings.php. Don't forget to save your changes."
+	'df_webadmin_localsettings_description' => "Edit an extensions's section in LocalSettings.php. Don't forget to save your changes. If you edit LocalSettings.php manually, make sure that you <b>do not remove</b> the extension-tags in LocalSettings.php. Otherwise this view gets messed up."
 	
 	);
 

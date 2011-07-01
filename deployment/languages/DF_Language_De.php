@@ -102,6 +102,6 @@ class DF_Language_De extends DF_Language {
     'df_globalupdate_warning' => 'Global Update durchführen?',
 	'df_checkextension_heading' => 'Extension-Details',
 	'df_select_extension' => 'Wähle Extension',
-	'df_webadmin_localsettings_description' => "Editieren die Konfiguration einer Extension in LocalSettings.php. Nicht vergessen die Änderungen zu speichern."
+	'df_webadmin_localsettings_description' => "Editieren die Konfiguration einer Extension in LocalSettings.php. Nicht vergessen die Änderungen zu speichern. Wenn Sie die Datei LocalSettings.php in irgendeiner Form manuell editieren, verändern Sie nicht die Extension-Tags, sonst geht diese Ansicht kaputt."
 	);
 }
