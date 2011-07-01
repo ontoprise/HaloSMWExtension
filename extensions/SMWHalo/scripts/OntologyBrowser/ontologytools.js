@@ -48,6 +48,8 @@ var OB_REFRESHLISTENER = 'refresh';
 var OB_FILTERTREE = 'filterTree';
 var OB_FILTERBROWSING = 'filterBrowsing';
 var OB_RESET = 'reset';
+var MandatoryChecked = false;
+var InputSelection = '';
 
 /**
  * Event Provider. Supports following events:
@@ -790,12 +792,12 @@ OBOntologyModifier.prototype = {
 	 * @param domainCategoryID
 	 *            ID of domain category in OB data model (XML)
 	 */
-	addSchemaProperty : function(propertyTitle, minCard, maxCard, rangeOrTypes,
+	addSchemaProperty : function(propertyTitle, minCard, maxCard, rangeOrTypes, rangeOrTypes1,
 			builtinTypes, domainCategoryTitle, domainCategoryID) {
 		function callback() {
 			var newPropertyXML = GeneralXMLTools.createDocumentFromString(this
 					.createSchemaProperty(propertyTitle, minCard, maxCard,
-							rangeOrTypes, builtinTypes, domainCategoryTitle,
+							rangeOrTypes, rangeOrTypes1, builtinTypes, domainCategoryTitle,
 							domainCategoryID));
 			dataAccess.OB_cachedProperties.documentElement
 					.removeAttribute('isEmpty');
@@ -818,18 +820,18 @@ OBOntologyModifier.prototype = {
 
 		var rangeTypeStr = "";
 		var rangeCategories = new Array();
-		for ( var i = 0, n = rangeOrTypes.length; i < n; i++) {
-			if (builtinTypes.indexOf(rangeOrTypes[i]) != -1) {
+		for ( var i = 0, n = rangeOrTypes1.length; i < n; i++) {
+			if (builtinTypes.indexOf(rangeOrTypes1[i]) != -1) {
 				// is type
 				rangeTypeStr += gLanguage.getMessage('TYPE_NS')
-						+ rangeOrTypes[i] + (i == n - 1 ? "" : ";");
+						+ rangeOrTypes1[i] + (i == n - 1 ? "" : ";");
 			} else {
 				rangeTypeStr += gLanguage.getMessage('TYPE_PAGE')
 						+ (i == n - 1 ? "" : ";");
-				rangeCategories.push(rangeOrTypes[i]);
+				rangeCategories.push(rangeOrTypes1[i]);
 			}
 		}
-		if (rangeOrTypes.length > 1) {
+		if (rangeOrTypes1.length > 1) {
 			content += "\n[[_TYPE::_rec]]";
 			content += "\n[[_LIST::" + rangeTypeStr + "]]";
 		} else {
@@ -850,6 +852,7 @@ OBOntologyModifier.prototype = {
 				.getMessage('CREATE_PROPERTY'), callback.bind(this),
 				$(domainCategoryID));
 	},
+	
 
 	/**
 	 * @public
@@ -2204,12 +2207,12 @@ OBSchemaPropertySubMenu.prototype = Object
 						this.selectedTitle = null;
 						this.selectedID = null;
 
-						this.maxCardValidator = null;
+                        this.maxCardValidator = null;
 						this.minCardValidator = null;
-						this.rangeValidators = [];
+						this.rangeValidator = [];
 
 						this.builtinTypes = [];
-						this.count = 0;
+						this.count = 1;
 
 						selectionProvider.addListener(this,
 								OB_SELECTIONLISTENER);
@@ -2227,18 +2230,32 @@ OBSchemaPropertySubMenu.prototype = Object
 						switch (this.commandID) {
 
 						case SMW_OB_COMMAND_ADD_SCHEMAPROPERTY: {
-							var propertyTitle = $F(this.id + '_propertytitle_ontologytools');
-							var minCard = $F(this.id + '_minCard_ontologytools');
-							var maxCard = $F(this.id + '_maxCard_ontologytools');
-							var rangeOrTypes = [];
-							for ( var i = 0; i < this.count; i++) {
-								if ($('typeRange' + i + '_ontologytools') != null) {
-									rangeOrTypes
-											.push($F('typeRange' + i + '_ontologytools'));
-								}
+							var propertyTitle = $F(this.id + '_propertytitle_ontologytools');                          
+						    if(MandatoryChecked == true){
+							var minCard = '1';
+							var maxCard = '';						
 							}
+							if(MandatoryChecked == false){
+							 var minCard = '0';
+							 var maxCard = '';						
+							}
+							MandatoryChecked = false;
+							var rangeOrTypes1 = [];
+							var rangeOrTypes = [];
+
+								if ($('typeRange1_ontologytools') != null) {
+									rangeOrTypes
+											.push($F('typeRange1_ontologytools'));
+								}
+								
+								
+								  if ($('typeRange2_ontologytools') != null) {
+									  rangeOrTypes1
+											  .push($F('typeRange2_ontologytools'));
+								  }
+
 							ontologyTools.addSchemaProperty(propertyTitle,
-									minCard, maxCard, rangeOrTypes,
+									minCard, maxCard, rangeOrTypes, rangeOrTypes1,
 									this.builtinTypes, this.selectedTitle,
 									this.selectedID);
 							this.cancel();
@@ -2249,6 +2266,7 @@ OBSchemaPropertySubMenu.prototype = Object
 							alert('Unknown command!');
 						}
 					},
+
 
 					getCommandText : function() {
 						switch (this.commandID) {
@@ -2261,9 +2279,11 @@ OBSchemaPropertySubMenu.prototype = Object
 						}
 
 					},
-
+                    
 					getUserDefinedControls : function() {
-						return '<div id="'
+					    var typebox = this.newTypeInputBox();
+						var rangebox = this.newRangeInputBox();
+						return  '<div id="'
 								+ this.id
 								+ '">'
 								+ '<table class="menuBarProperties"><tr>'
@@ -2275,52 +2295,53 @@ OBSchemaPropertySubMenu.prototype = Object
 								+ '_propertytitle_ontologytools" type="text" tabIndex="101"/></td>'
 								+ '</tr>'
 								+ '<tr>'
-								+ '<td width="60px;">'
-								+ gLanguage.getMessage('MIN_CARD')
+								+ '<td>'
+								+ gLanguage.getMessage('Mandatory')
 								+ '</td>'
 								+ '<td><input id="'
 								+ this.id
-								+ '_minCard_ontologytools" type="text" size="5" tabIndex="102"/></td>'
+								+ '_minCard_ontologytools" onclick="'
+								+ this.objectname
+			                    + '.Mandatory(this)" type="checkbox" name="Mandatory" size="5" tabIndex="102"/></td>'
 								+ '</tr>'
-								+ '<tr>'
-								+ '<td width="60px;">'
-								+ gLanguage.getMessage('MAX_CARD')
-								+ '</td>'
-								+ '<td><input id="'
-								+ this.id
-								+ '_maxCard_ontologytools" type="text" size="5" tabIndex="103"/></td>'
-								+ '</tr>'
+								+ '</table>'
 								+ '</table>'
 								+ '<table class="menuBarProperties" id="typesAndRanges"></table>'
 								+ '<table class="menuBarProperties">' + '<tr>'
-								+ '<td><a onclick="' + this.objectname
-								+ '.addType()">'
+								+ '<td width="60px;">'
 								+ gLanguage.getMessage('ADD_TYPE')
-								+ '</a></td>' + '<td><a onclick="'
-								+ this.objectname + '.addRange()">'
+								+ '</td><td>'+ typebox + '</td></tr>' + '<tr><td width="60px;">'
 								+ gLanguage.getMessage('ADD_RANGE')
-								+ '</a></td>' + '</tr>' + '</table>'
+								+ '</td><td>'+ rangebox +'</td>' + '</tr>' + '</table>'
 								+ '<span style="margin-left: 10px;" id="'
 								+ this.id + '_apply_ontologytools">'
 								+ gLanguage.getMessage('OB_ENTER_TITLE')
 								+ '</span> | ' + '<a onclick="'
 								+ this.objectname + '.cancel()">'
 								+ gLanguage.getMessage('CANCEL') + '</a>'
-								+ '</div>';
+								+ '</div>'; 
+
+					},
+					
+				
+					Mandatory : function(el){
+					  if (el.checked == true){
+					  MandatoryChecked = true;
+					  alert(InputSelection);
+					  }
 					},
 
 					setValidators : function() {
+					    var c = this.count+1;
 						this.titleInputValidator = new OBInputTitleValidator(
 								this.id + '_propertytitle_ontologytools',
 								gLanguage.getMessage('PROPERTY_NS_WOC'), false,
 								this);
-						this.maxCardValidator = new OBInputFieldValidator(
-								this.id + '_maxCard_ontologytools', true, this,
-								this.checkMaxCard.bind(this));
-						this.minCardValidator = new OBInputFieldValidator(
-								this.id + '_minCard_ontologytools', true, this,
-								this.checkMinCard.bind(this));
-						this.rangeValidators = [];
+						this.rangeValidator = new OBInputTitleValidator(
+								'typeRange' + c + '_ontologytools',
+								gLanguage.getMessage('CATEGORY_NS_WOC'), true,
+								this);
+					
 					},
 
 					/**
@@ -2353,13 +2374,7 @@ OBSchemaPropertySubMenu.prototype = Object
 
 					cancel : function() {
 						this.titleInputValidator.deregisterListeners();
-						this.maxCardValidator.deregisterListeners();
-						this.minCardValidator.deregisterListeners();
-						this.rangeValidators.each(function(e) {
-							if (e != null)
-								e.deregisterListeners()
-						});
-
+						this.rangeValidator.deregisterListeners();
 						this._cancel();
 					},
 
@@ -2425,18 +2440,11 @@ OBSchemaPropertySubMenu.prototype = Object
 					 * @return true/false
 					 */
 					allIsValid : function() {
-						var valid = this.titleInputValidator.isValid
-								&& this.maxCardValidator.isValid
-								&& this.minCardValidator.isValid;
-						
-						// FIX 14347. 
+						var valid = this.titleInputValidator.isValid;
+						valid = valid && this.rangeValidator.isValid;
 						// Ignore validators for range categories
 						// instead show a hint
-						
-						/*this.rangeValidators.each(function(e) {
-							if (e != null)
-								valid &= e.isValid
-						});*/
+
 						return valid;
 					},
 
@@ -2473,7 +2481,20 @@ OBSchemaPropertySubMenu.prototype = Object
 						sajax_do_call('smwf_tb_GetUserDatatypes', [],
 								fillUserTypesCallback.bind(this));
 					},
+					
+                    onchangeTypeSelector: function(event) {
+						var value = $F(event.currentTarget);
+						if (value.toLowerCase() == gLanguage.getMessage('PAGE_TYPE')) {
+							$('typeRange2_ontologytools').enable();
+							$('typeRange2_ontologytools').setStyle( {backgroundColor : '#fff'})
+						} else {
+						    $('typeRange2_ontologytools').value = "";							
+							$('typeRange2_ontologytools').setStyle( {backgroundColor : '#aaa'})
+							$('typeRange2_ontologytools').disable();
+						}						
+					},					
 
+					
 					/**
 					 * @private
 					 * 
@@ -2482,24 +2503,22 @@ OBSchemaPropertySubMenu.prototype = Object
 					 * @return HTML
 					 */
 					newTypeInputBox : function() {
+					   
 						var toReplace = '<select id="typeRange' + this.count
 								+ '_ontologytools" name="types' + this.count
-								+ '">';
+								+ '" onchange="obSchemaPropertiesMenuProvider.onchangeTypeSelector(event)">';
+		
 						for ( var i = 1; i < this.builtinTypes.length; i++) {
 							toReplace += '<option>' + this.builtinTypes[i] + '</option>';
 						}
-						toReplace += '</select><img style="cursor: pointer; cursor: hand;" src="'
-								+ wgServer
-								+ wgScriptPath
-								+ '/extensions/SMWHalo/skins/redcross.gif" onclick="'
-								+ this.objectname
-								+ '.removeTypeOrRange(\'typeRange'
-								+ this.count
-								+ '_ontologytools\', false)"/>';
-
+						toReplace += '</select>';
+						
 						return toReplace;
 					},
 
+			
+					
+					
 					/**
 					 * @private
 					 * 
@@ -2507,20 +2526,14 @@ OBSchemaPropertySubMenu.prototype = Object
 					 * auto-completion.
 					 * 
 					 * @return HTML
-					 */
+					 */					 
+
 					newRangeInputBox : function() {
-						var toReplace = '<input class="wickEnabled" constraints="namespace: 14" type="text" id="typeRange'
-								+ this.count
+					    var c = this.count +1 ;
+						var toReplace = '<input class="wickEnabled" constraints="namespace: 14" disabled="false" type="text" id="typeRange'
+						        + c
 								+ '_ontologytools" tabIndex="'
-								+ (this.count + 104) + '"/>';
-						toReplace += '<img style="cursor: pointer; cursor: hand;" src="'
-								+ wgServer
-								+ wgScriptPath
-								+ '/extensions/SMWHalo/skins/redcross.gif" onclick="'
-								+ this.objectname
-								+ '.removeTypeOrRange(\'typeRange'
-								+ this.count
-								+ '_ontologytools\', true)"/>';
+								+ (c + 104) + '"/>';
 						return toReplace;
 					},
 
@@ -2547,6 +2560,10 @@ OBSchemaPropertySubMenu.prototype = Object
 					this.adjustSize();
 				},
 
+				
+				
+			
+					
 				/**
 				 * @private
 				 * 
@@ -2567,11 +2584,11 @@ OBSchemaPropertySubMenu.prototype = Object
 									.newRangeInputBox() + '</td></tr>');
 					autoCompleter.registerAllInputs();
 
-					this.rangeValidators[this.count] = (new OBInputTitleValidator(
+					this.rangeValidator[this.count] = (new OBInputTitleValidator(
 							'typeRange' + this.count + '_ontologytools',
-							gLanguage.getMessage('CATEGORY_NS_WOC'), true, this));
-					this.enable(false,
-							'typeRange' + this.count + '_ontologytools');
+							gLanguage.getMessage('CATEGORY_NS_WOC'), false, this));
+					 this.enable(true,
+							 'typeRange' + this.count + '_ontologytools');
 
 					this.count++;
 					this.adjustSize();
@@ -2589,8 +2606,8 @@ OBSchemaPropertySubMenu.prototype = Object
 						// deregisterValidator
 					var match = /typeRange(\d+)/;
 					var num = match.exec(id)[1];
-					this.rangeValidators[num].deregisterListeners();
-					this.rangeValidators[num] = null;
+					this.rangeValidator[num].deregisterListeners();
+					this.rangeValidator[num] = null;
 				}
 
 				var row = $(id);
