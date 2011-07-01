@@ -233,13 +233,13 @@ class OntologyInstaller {
 	/**
 	 * Creates an deploy descriptor for an ontology bundle.
 	 *
-	 * @param string $ontologyID
+	 * @param string $bundleID
 	 * @param string $inputfile
 	 */
-	public function createDeployDescriptor($ontologyID, $inputfile, $prefix) {
+	public function createDeployDescriptor($bundleID, $inputfile) {
 		global $dfgLang;
 
-		$ontologyBundlePage = Title::newFromText($ontologyID);
+		$ontologyBundlePage = Title::newFromText($bundleID);
 		$ontologyVersion = smwfGetStore()->getPropertyValues($ontologyBundlePage, SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString('df_ontologyversion')));
 		$installationDir = smwfGetStore()->getPropertyValues($ontologyBundlePage, SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString('df_instdir')));
 		$ontologyVersion = reset($ontologyVersion);
@@ -262,7 +262,7 @@ class OntologyInstaller {
     <global>
         <version>$version</version>
         <patchlevel>0</patchlevel>
-        <id>$ontologyID</id>
+        <id>$bundleID</id>
         <vendor>$vendor</vendor>
         <maintainer>$maintainer</maintainer>
         <instdir>$installDir</instdir>
@@ -283,7 +283,7 @@ class OntologyInstaller {
         <!-- empty -->
     </resources>
     <ontologies>
-        <file loc="$filename" ontologyid="$ontologyID"/>
+        <file loc="$filename"/>
     </ontologies>
     <configs>
 
@@ -313,7 +313,6 @@ ENDS
 	 *
 	 * @param $inputfile filepath relative to extension
 	 * @param string $bundleID
-	 * @param string $prefix Prefix used to distinguish 2 ontologies
 	 *
 	 * @return array of (Title t, string status)
 	 *     status can be 'merge', 'conflict' or 'notexist'
@@ -333,7 +332,6 @@ ENDS
 	 * @param $file filepath relative to extension
 	 * @param array $verificationLog
 	 * @param string bundleID
-	 * @param string $prefix
 	 */
 	private function installOrUpdateOntologyXML($inputfile, $verificationLog, $bundleID) {
 
