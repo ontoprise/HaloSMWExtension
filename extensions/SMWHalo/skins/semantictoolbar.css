@@ -113,16 +113,12 @@ triggered by the nested floats. It should not be removed
     margin-right: 5px;
 }
 a.minusplus{
-    background-image:url(Annotation/images/minus.gif);
     float:left;
     height:12px;
     margin-right:4px;
     margin-top:0.25em;
     overflow:hidden;
     width:12px;
-}
-a.minusplus:hover{
-    background-image:url(Annotation/images/minus-act.gif);
 }
 
 a.plusminus{
@@ -132,12 +128,6 @@ a.plusminus{
     margin-top:0.25em;
     overflow:hidden;
     width:12px;
-}
-.plusminus{
-    background-image:url(Annotation/images/plus.gif);
-}
-a.plusminus:hover{
-    background-image:url(Annotation/images/plus-act.gif);
 }
 
 #tab_0{
