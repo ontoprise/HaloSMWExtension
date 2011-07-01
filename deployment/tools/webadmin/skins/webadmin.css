@@ -111,3 +111,7 @@
 #df_existingrepository_section {
 	margin-top: 20px;
 }
+
+.onto2mwxml_error {
+	color: red;
+}
