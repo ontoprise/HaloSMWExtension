@@ -65,7 +65,9 @@ class DFUploadTab {
 
 		$html = <<<ENDS
 <form id="df_upload_file_form" action="upload.php" method="post" enctype="multipart/form-data">
-<input id="df_upload_file_input" type="file" name="datei" size="100"><br>
+<input id="df_upload_file_input" type="file" name="datei" size="100">
+<img id="df_upload_progress_indicator" src="skins/ajax-loader.gif" style="display:none"/>
+<br>
 </form>
 ENDS
 		;

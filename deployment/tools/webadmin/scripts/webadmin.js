@@ -673,6 +673,7 @@ $(function() {
 		
 		// upload input field
 		$('#df_upload_file_input').change(function(e) { 
+			$('#df_upload_progress_indicator').show();
 			$('#df_upload_file_form').submit();
 		});
 		
