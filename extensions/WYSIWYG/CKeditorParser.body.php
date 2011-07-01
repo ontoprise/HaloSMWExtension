@@ -553,7 +553,7 @@ class CKeditorParser extends CKeditorParserWrapper {
                     global $wgTitle;
                     if (defined('SF_VERSION') && 
                         $wgTitle && $wgTitle->getNamespace() == SF_NS_FORM &&
-                        $fck_mw_template = 'fck_mw_template') {
+                        $fck_mw_template == 'fck_mw_template') {
                         foreach ($this->FCKeditorSFspecialTags as $sfTag) {
                             if (preg_match('/^\{'.$sfTag.'(\s|\}|\|)/', $funcName)) {
                                 $fck_mw_template = 'sf';
