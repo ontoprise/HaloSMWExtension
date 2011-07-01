@@ -233,11 +233,11 @@ abstract class SMWSemanticStoreSQL extends SMWSemanticStore {
 
 		// get root categories with
 		$sql = 'page_namespace=' . NS_CATEGORY .
-               ' AND page_is_redirect = 0 AND NOT EXISTS (SELECT cl_from FROM '.$categorylinks.' WHERE cl_from = page_id) AND NOT EXISTS (SELECT c.cl_from FROM '.$categorylinks.' c JOIN '.$page.' p ON p.page_id = c.cl_from WHERE c.cl_to = t.page_title AND p.page_namespace=14)';
+               ' AND page_is_redirect = 0 AND NOT EXISTS (SELECT cl_from FROM '.$categorylinks.' WHERE cl_from = page_id) AND NOT EXISTS (SELECT c.cl_from FROM '.$categorylinks.' c JOIN '.$page.' p ON p.page_id = c.cl_from WHERE c.cl_to = t.page_title AND p.page_namespace='.NS_CATEGORY.')';
 
 		// and those without subcategories
 		$sql2 = 'page_namespace=' . NS_CATEGORY .
-               ' AND page_is_redirect = 0 AND NOT EXISTS (SELECT cl_from FROM '.$categorylinks.' WHERE cl_from = page_id) AND EXISTS (SELECT c.cl_from FROM '.$categorylinks.' c JOIN '.$page.' p ON p.page_id = c.cl_from WHERE c.cl_to = t.page_title AND p.page_namespace=14)';
+               ' AND page_is_redirect = 0 AND NOT EXISTS (SELECT cl_from FROM '.$categorylinks.' WHERE cl_from = page_id) AND EXISTS (SELECT c.cl_from FROM '.$categorylinks.' c JOIN '.$page.' p ON p.page_id = c.cl_from WHERE c.cl_to = t.page_title AND p.page_namespace='.NS_CATEGORY.')';
 
 		// get all categories which exist only implicitly as a supercategory of another.
 		$sql3 = 'ON c.cl_to = p.page_title JOIN '.$page.' p2 ON c.cl_from = p2.page_id AND p2.page_namespace = '.NS_CATEGORY.' WHERE p.page_id IS NULL';
@@ -252,16 +252,16 @@ abstract class SMWSemanticStoreSQL extends SMWSemanticStore {
 			
 			$noRootCategoryBundles = ' UNION DISTINCT (SELECT subcat.page_title, "false" AS has_subcategories FROM '.$page.' subcat '.
                                  'JOIN '.$categorylinks.' c ON c.cl_from = subcat.page_id '.
-                                 'JOIN '.$page.' supercat ON c.cl_to = supercat.page_title AND supercat.page_namespace = 14 '.
+                                 'JOIN '.$page.' supercat ON c.cl_to = supercat.page_title AND supercat.page_namespace = '.NS_CATEGORY.' '.
                                  'WHERE subcat.page_id IN '.$bundleSql.' AND supercat.page_id NOT IN '.$bundleSql.' '.
                                  'AND NOT EXISTS (SELECT c.cl_from FROM '.$categorylinks.' c JOIN '.$page.' p ON p.page_id = c.cl_from '.
-                                 'WHERE c.cl_to = subcat.page_title AND p.page_namespace=14)) '.
+                                 'WHERE c.cl_to = subcat.page_title AND p.page_namespace='.NS_CATEGORY.')) '.
                         ' UNION DISTINCT (SELECT subcat.page_title, "true" AS has_subcategories FROM '.$page.' subcat '.
                                 'JOIN '.$categorylinks.' c ON c.cl_from = subcat.page_id '.
-                                'JOIN '.$page.' supercat ON c.cl_to = supercat.page_title AND supercat.page_namespace = 14 '.
+                                'JOIN '.$page.' supercat ON c.cl_to = supercat.page_title AND supercat.page_namespace = '.NS_CATEGORY.' '.
                                 'WHERE subcat.page_id IN '.$bundleSql.' AND supercat.page_id NOT IN '.$bundleSql.' '.
                                 'AND EXISTS (SELECT c.cl_from FROM '.$categorylinks.' c JOIN '.$page.' p ON p.page_id = c.cl_from '.
-                                'WHERE c.cl_to = subcat.page_title AND p.page_namespace=14)) ';
+                                'WHERE c.cl_to = subcat.page_title AND p.page_namespace='.NS_CATEGORY.')) ';
 		}
 
 		$res = $db->query('(SELECT page_title, "false" AS has_subcategories FROM '.$page.' t WHERE '.$sql.' '.$bundleSql1.') '.
@@ -301,10 +301,10 @@ abstract class SMWSemanticStoreSQL extends SMWSemanticStore {
 
 		$page = $db->tableName('page');
 		$sql = 'page_namespace=' . NS_CATEGORY .
-               ' AND page_is_redirect = 0 AND cl_to =' . $db->addQuotes($categoryTitle->getDBkey()) . ' AND cl_from = page_id AND NOT EXISTS (SELECT c.cl_from FROM '.$categorylinks.' c JOIN '.$page.' p ON p.page_id = c.cl_from WHERE c.cl_to = t.page_title AND p.page_namespace=14)';
+               ' AND page_is_redirect = 0 AND cl_to =' . $db->addQuotes($categoryTitle->getDBkey()) . ' AND cl_from = page_id AND NOT EXISTS (SELECT c.cl_from FROM '.$categorylinks.' c JOIN '.$page.' p ON p.page_id = c.cl_from WHERE c.cl_to = t.page_title AND p.page_namespace='.NS_CATEGORY.')';
 
 		$sql2 = 'page_namespace=' . NS_CATEGORY .
-               ' AND page_is_redirect = 0 AND cl_to =' . $db->addQuotes($categoryTitle->getDBkey()) . ' AND cl_from = page_id AND EXISTS (SELECT c.cl_from FROM '.$categorylinks.' c JOIN '.$page.' p ON p.page_id = c.cl_from WHERE c.cl_to = t.page_title AND p.page_namespace=14)';
+               ' AND page_is_redirect = 0 AND cl_to =' . $db->addQuotes($categoryTitle->getDBkey()) . ' AND cl_from = page_id AND EXISTS (SELECT c.cl_from FROM '.$categorylinks.' c JOIN '.$page.' p ON p.page_id = c.cl_from WHERE c.cl_to = t.page_title AND p.page_namespace='.NS_CATEGORY.')';
 
 		$bundleSql = '';
 		if (!empty($bundleID)) {
