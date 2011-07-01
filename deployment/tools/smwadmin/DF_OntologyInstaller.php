@@ -437,7 +437,7 @@ ENDS
 	 */
 	private function convertOntology($inputfile, $outputfile, $noBundlePage = false, $bundleID = '') {
 		// convert ontology
-		global $dfgOut;
+		global $dfgOut, $dfgOutputFormat;
 		$cwd = getcwd();
 		$onto2mwxml_dir = $this->rootDir."/deployment/tools/onto2mwxml";
 		$dfgOut->outputln("[Convert ontology $inputfile...");
@@ -450,7 +450,7 @@ ENDS
 			} else {
 				if ($noBundlePage) $noBundlePageParam = "--nobundlepage"; else $noBundlePageParam = "";
 				if (!empty($bundleID)) $bundleID ='--bundleid \"$bundleID\"';
-				exec("\"$onto2mwxml_dir/onto2mwxml.bat\" \"$inputfile\" -o \"$outputfile\" $bundleID $noBundlePageParam --outputformat html", $output, $ret);
+				exec("\"$onto2mwxml_dir/onto2mwxml.bat\" \"$inputfile\" -o \"$outputfile\" $bundleID $noBundlePageParam --outputformat $dfgOutputFormat", $output, $ret);
 				if ($ret != 0) {
 					foreach($output as $l) $dfgOut->outputln("$l");
 					throw new Exception("Onto2MWXML exited abnormally.");
@@ -462,7 +462,7 @@ ENDS
 			} else {
 				if ($noBundlePage) $noBundlePageParam = "--nobundlepage"; else $noBundlePageParam = "";
 				if (!empty($bundleID)) $bundleID ='--bundleid \"$bundleID\"';
-				exec("\"$onto2mwxml_dir/onto2mwxml.sh\" \"$inputfile\" -o \"$outputfile\" $bundleID $noBundlePageParam --outputformat html", $output, $ret);
+				exec("\"$onto2mwxml_dir/onto2mwxml.sh\" \"$inputfile\" -o \"$outputfile\" $bundleID $noBundlePageParam --outputformat $dfgOutputFormat", $output, $ret);
 				if ($ret != 0) {
 					foreach($output as $l) $dfgOut->outputln("$l");
 					throw new Exception("Onto2MWXML exited abnormally.");
