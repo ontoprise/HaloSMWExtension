@@ -9,7 +9,10 @@ CKEDITOR.dialog.add( 'MWImage', function( editor ) {
 		regexGetSize = /^\s*(\d+)((px)|\%)?\s*$/i,
 		regexGetSizeOrEmpty = /(^\s*(\d+)((px)|\%)?\s*$)|^$/i,
 		pxLengthRegex = /^\d+px$/,
-		SrcInWiki;
+		SrcInWiki,
+        imgLabelField = (window.parent.wgAllowExternalImages || window.parent.wgAllowExternalImagesFrom )
+            ? editor.lang.mwplugin.fileNameExtUrl
+            : editor.lang.mwplugin.fileName;
 
 	var onImgLoadEvent = function()	{
 		// Image is ready.
@@ -202,7 +205,7 @@ CKEDITOR.dialog.add( 'MWImage', function( editor ) {
                                         {
                                             id: 'imgFilename',
                                             type: 'text',
-                                            label: editor.lang.mwplugin.fileName,
+                                            label: imgLabelField,
                                             title: 'image file name',
                                             style: 'border: 1px;',
                                             onKeyUp: function () {
