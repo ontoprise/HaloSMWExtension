@@ -61,3 +61,14 @@ $fsgFacetedSearchConfig = array(
 # to the faceted search special page. 
 # If <false>, Enhanced Retrieval is installed. 
 $fsgFacetedSearchForMW = true;
+
+###
+# This is the pattern for the link that leads to the creation of new pages.
+# Faceted Search checks if the entered search term is the name of an existing 
+# article. If this is not the case it offers a link for creating this article. 
+# The variable {article} will be replace by the actual article name.
+# The link will be appended to the base URL like "http://localhost/mediawiki/index.php"
+#
+//$fsgCreateNewPageLink = "/Create_new_page?target={article}&redlink=1";
+//$fsgCreateNewPageLink = "/{article}?action=edit";
+$fsgCreateNewPageLink = "?todo=createnewarticle&title={article}";
