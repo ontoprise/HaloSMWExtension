@@ -35,6 +35,7 @@ $messages['en'] = array(
 	'tog-riched_use_popup' => 'Open rich editor in a popup',
 	'tog-riched_use_toggle' => 'Use toggle to switch between wikitext and rich editor (replace textarea with rich editor)',
 	'tog-riched_toggle_remember_state' => 'Remember last toggle state',
+    'load-stb-on-startup' => 'Open Semantic Toolbar automatically',
 );
 
 /** Message documentation (Message documentation)
@@ -251,6 +252,7 @@ $messages['de'] = array(
 	'tog-riched_use_popup' => 'Texteditor als Popup öffnen',
 	'tog-riched_use_toggle' => 'Schalter zum Wechseln zwischen Wikitext und Texteditor benutzen (ersetzt den Textbereich mit dem Texteditor)',
 	'tog-riched_toggle_remember_state' => 'Letzten Umschaltzustand merken',
+    'load-stb-on-startup' => 'Öffne die Semantic Toolbar automatisch',
 );
 
 /** Lower Sorbian (Dolnoserbski)
@@ -329,6 +331,7 @@ $messages['es'] = array(
 	'tog-riched_use_popup' => 'Abrir editor enriquecido en un popup',
 	'tog-riched_use_toggle' => 'Utilizar un selector para cambiar entre wikitext y editor enriquecido',
 	'tog-riched_toggle_remember_state' => 'Recordar la última selección del editor',
+    'load-stb-on-startup' => 'Abrir Semantic Toolbar automático',
 );
 
 /** Basque (Euskara)
