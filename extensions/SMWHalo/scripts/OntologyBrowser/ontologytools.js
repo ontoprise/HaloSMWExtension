@@ -2327,7 +2327,6 @@ OBSchemaPropertySubMenu.prototype = Object
 					Mandatory : function(el){
 					  if (el.checked == true){
 					  MandatoryChecked = true;
-					  alert(InputSelection);
 					  }
 					},
 
