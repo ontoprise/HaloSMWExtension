@@ -83,8 +83,8 @@ $(function() {
 					$dialog.dialog( "option", "buttons", { "Ok": function() { $(this).dialog("close"); } } );
 					var operation = $dialog.dialog('option', 'operation');
 					
-					
-					if (resultLog.indexOf("$$ERROR$$") != -1) {
+					var errorstatus = $dialog.dialog('option', 'errorstatus');
+					if (resultLog.indexOf("$$ERROR$$") != -1 || errorstatus == 'true') {
 						dialog[0].innerHTML += "<br/><br/>"+dfgWebAdminLanguage.getMessage('df_webadmin_'+operation+'_failure');
 					} else {
 						dialog[0].innerHTML += "<br/><br/>"+dfgWebAdminLanguage.getMessage('df_webadmin_'+operation+'_successful');
@@ -137,7 +137,7 @@ $(function() {
 					$('#df_progress_indicator').hide();
 					var $dialog = $('#df_install_dialog');
 					$dialog.dialog('option', 'title', dfgWebAdminLanguage.getMessage('df_webadmin_finished'));
-					
+					$dialog.dialog('option', 'errorstatus', 'true');
 					
 					// start finalize
 					var finalizeurl = wgServer+wgScriptPath+"/deployment/tools/webadmin?rs=finalize&rsargs[]=";
@@ -189,6 +189,7 @@ $(function() {
 					$('#df_progress_indicator').hide();
 					var $dialog = $('#df_install_dialog');
 					$dialog.dialog('option', 'title', dfgWebAdminLanguage.getMessage('df_webadmin_finished'));
+					$dialog.dialog('option', 'errorstatus', 'true');
 					$('.ui-dialog-titlebar-close').show();
 				}
 				
@@ -237,6 +238,7 @@ $(function() {
 					$('#df_progress_indicator').hide();
 					var $dialog = $('#df_install_dialog');
 					$dialog.dialog('option', 'title', dfgWebAdminLanguage.getMessage('df_webadmin_finished'));
+					$dialog.dialog('option', 'errorstatus', 'true');
 				}
 				
 			} });
