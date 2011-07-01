@@ -2208,26 +2208,27 @@ QIHelper.prototype = {
 		    }
 		    if (! op) return;
 			var selected = (op[0] == option) ? 'selected="selected"' : '';
-            var esc_op = escapeXMLEntities(op[0]);
-            html += '<option value="'+esc_op+'" '+selected+'>'+op[1] + ' ('+esc_op+')</option>';
+            html += '<option value="'+escapeXMLEntities(op[0])+'" '+selected+'>'+op[2] + ' ('+escapeXMLEntities(op[1])+')</option>';
 		}
 		if (type == 1) {
-			[ 
-                ["=", gLanguage.getMessage('QI_EQUAL') ],
-                [">=", gLanguage.getMessage('QI_GT') ],
-                ["<=", gLanguage.getMessage('QI_LT') ],
-                ["!", gLanguage.getMessage('QI_NOT') ]
+			[   // internal operator, shown op to user, textual message
+                ["=", "=", gLanguage.getMessage('QI_EQUAL') ],
+                [">", ">=", gLanguage.getMessage('QI_GT') ],
+                [">>", ">", gLanguage.getMessage('QI_GT') ],
+                ["<", "<=", gLanguage.getMessage('QI_LT') ],
+                ["<<", "<", gLanguage.getMessage('QI_LT') ],
+                ["!", "!", gLanguage.getMessage('QI_NOT') ]
             ].each(optionsFunc);
 		} else if (type == 2) {
 			[
-                ["=", gLanguage.getMessage('QI_EQUAL') ],
-                ["!", gLanguage.getMessage('QI_NOT') ],
-                ["~", gLanguage.getMessage('QI_LIKE') ]
+                ["=", "=", gLanguage.getMessage('QI_EQUAL') ],
+                ["!", "!", gLanguage.getMessage('QI_NOT') ],
+                ["~", "~", gLanguage.getMessage('QI_LIKE') ]
             ].each(optionsFunc);
 		} else {
 		    [
-                ["=", gLanguage.getMessage('QI_EQUAL') ],
-                ["!", gLanguage.getMessage('QI_NOT') ]
+                ["=", "=", gLanguage.getMessage('QI_EQUAL') ],
+                ["!", "=", gLanguage.getMessage('QI_NOT') ]
             ].each(optionsFunc);
         }
 		
@@ -2944,6 +2945,7 @@ handleQueryString : function(args, queryId, pMustShow) {
 
 	// list of properties (each property has an own pgoup)
 	var propList = new PropertyList();
+    var operators= ['<', '<<', '>', '>>', '~', '!', '!~', '≤', '≥'];
 
 	for ( var i = 0; i < args.length; i++) {
 		// Category
@@ -3054,11 +3056,17 @@ handleQueryString : function(args, queryId, pMustShow) {
                     }
                     for (j = 0; j < vals.length; j++) {
                         // check for restricion (makes sence for numeric properties)
-        				var op = vals[j].match(/^([\!|<|>|~]?=?)(.*)/);
-            			if (op[1].length > 0) {
-                			restriction = ( op[1].indexOf('=') == -1 && (op[1] == '>' || op[1] == '<') )
-                                ? op[1] + '='
-                        		: op[1];
+                    	var op = vals[j].match(/^([\!|<|>|=|~]{0,2})(.*)/);
+                        if (op[1].length > 0) {
+                            if (operators.inArray(op[1])) {
+                                switch (op[1]) {
+                                    case '≤': restriction= '<'; break
+                                    case '≥': restriction= '>'; break
+                                    default : restriction= op[1];
+                                }
+                            }
+                            else
+                                restriction= ''; // default value for any invalid operator
                             paramvalue = op[2];
                         }
                         else {
@@ -3089,11 +3097,17 @@ handleQueryString : function(args, queryId, pMustShow) {
         			var vals = pval.split(/\s*\|\|\s*/);
             		for ( var j = 0; j < vals.length; j++) {
                         // check for restricion (makes sence for numeric properties)
-                    	var op = vals[j].match(/^([\!|<|>]?=?)(.*)/);
+                    	var op = vals[j].match(/^([\!|<|>|=|~]{0,2})(.*)/);
                         if (op[1].length > 0) {
-                            restriction = ( op[1].indexOf('=') == -1 && (op[1] == '>' || op[1] == '<') )
-                                ? op[1] + '='
-                                : op[1];
+                            if (operators.inArray(op[1])) {
+                                switch (op[1]) {
+                                    case '≤': restriction= '<'; break
+                                    case '≥': restriction= '>'; break
+                                    default : restriction= op[1];
+                                }
+                            }
+                            else
+                                restriction= ''; // default value for any invalid operator
                             paramvalue = op[2];
                         }
                         else
