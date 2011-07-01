@@ -179,6 +179,7 @@ a.plusminus:hover{
     z-index: 25;
     /*overflow: auto;*/
     position: relative;
+	font-family: helvetica;
 }
 
 #ontomenuanchor a{
