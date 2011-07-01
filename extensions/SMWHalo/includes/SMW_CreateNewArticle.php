@@ -26,16 +26,19 @@
  *
  */
 
-$wgAjaxExportList[] = "cna_getForms";
-$wgAjaxExportList[] = "cna_getCategories";
-$wgAjaxExportList[] = "cna_getPropertyValue";
-$wgAjaxExportList[] = "cna_articleExists";
+$wgAjaxExportList[] = "smwf_na_getForms";
+$wgAjaxExportList[] = "smwf_na_getCategories";
+$wgAjaxExportList[] = "smwf_na_getPropertyValue";
+$wgAjaxExportList[] = "smwf_na_articleExists";
+
+//hack for bug in ASF category retrieval 
+define('SMW_AC_MAX_RESULTS', 99999999);
 
 /**
  * Get all forms which can be used for creating a new article
  * 
  */
-function cna_getForms() {
+function smwf_na_getForms() {
 	$resultString = '';
 
 	//search for forms only if SF installed
@@ -56,7 +59,7 @@ function cna_getForms() {
  * Get all categories which can be used for creating a new article
  * 
  */
-function cna_getCategories() {
+function smwf_na_getCategories() {
 	$resultString = '';
 
 	//search for categories only if ASF installed
@@ -77,7 +80,7 @@ function cna_getCategories() {
  * @param string $titleName article title
  * @param string $propertyName property name
  */
-function cna_getPropertyValue($titleName, $propertyName){
+function smwf_na_getPropertyValue($titleName, $propertyName){
 	$propertyValue = 'no description available';
 	$title = Title::newFromText($titleName);
 	$prop = SMWPropertyValue::makeUserProperty($propertyName);
@@ -92,7 +95,7 @@ function cna_getPropertyValue($titleName, $propertyName){
  * Check if an article with specified title already exists 
  * @param string $titleName
  */
-function cna_articleExists($titleName) {
+function smwf_na_articleExists($titleName) {
 	return smwf_om_ExistsArticle($titleName) . ';' .$titleName;
 }
 

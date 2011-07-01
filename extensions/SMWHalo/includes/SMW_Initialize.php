@@ -163,7 +163,7 @@ function smwgHaloSetupExtension() {
 	$wgSpecialPages['Browse']  = array( 'SMWQMSpecialBrowse' );
 
 	require_once $smwgHaloIP.'/includes/queryprinters/SMW_QP_Halo.php';
-	require_once $smwgHaloIP . '/includes/SMW_CreateNewArticle.php';
+	
 
 	global $smwgResultFormats;
 
@@ -399,6 +399,12 @@ function smwgHaloSetupExtension() {
 			case '_ts_' :
 				smwfHaloInitMessages();
 				break; // contained in this file
+			
+			case '_na_' :   //create new article feature. 
+				smwfHaloInitMessages();
+				require_once $smwgHaloIP . '/includes/SMW_CreateNewArticle.php';
+				require_once($smwgHaloIP . '/includes/SMW_OntologyManipulator.php');
+				break;		//we have to make sure SMW_Autocomplete.php is not included for this ajax call
 
 			default: // default case just imports everything (should be avoided)
 				smwfHaloInitMessages();

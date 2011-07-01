@@ -12,7 +12,8 @@ var CREATENEWARTICLE = {
 	articleExists : false,
 	fancyBoxContent : function(){
 		return '<form action=\"\" method=\"get\">\
-			<table id=\"fancyboxTable\">\<tr>\<td colspan=\"2\" class=\"fancyboxTitleTd\"><span>Create New Article</span><img src=\"' + this.imgPath + '_delete.png\"></img></td></tr>\
+			<table id=\"fancyboxTable\">\<tr>\<td colspan=\"2\" class=\"fancyboxTitleTd\">\
+		<table id=\"fancyboxTitleTable\"><tr><td id=\"titleNameTd\">Create New Article</td><td id=\"titleImgTd\"><img src=\"' + this.imgPath + 'fancy_close.png\"></td></tr></table>\
 		<tr><td colspan=\"2\" class=\"userInstructionTd\"><span>Enter the name for the new article:</span></td></tr>\
 		<tr><td colspan=\"2\"><input type=\"text\" id=\"newArticleName\" class=\"articleNameInput\"/></td></tr>\
 		<tr><td id=\"articleExistTableTd\"><table id=\"articleExistTable\"><tr>\
@@ -82,13 +83,60 @@ var CREATENEWARTICLE = {
 		}
 	},
 	
+	articleTitleChange : function(){
+		var articleExistsErrorMsgSpan = jQuery('#errorMsg');
+		var articleExistsErrorLinkSpan = jQuery('#errorLink');
+		var articleExistsErrorImgTd = jQuery('#errorImgTd');
+		var articleTitleTextBox = jQuery('#newArticleName');
+//			var keycode = event.which;
+			CREATENEWARTICLE.validate();
+			var articleTitle = articleTitleTextBox.val();
+			if(!articleTitle){
+				articleExistsErrorImgTd.empty();
+				articleExistsErrorMsgSpan.empty();
+				articleExistsErrorLinkSpan.empty();
+				articleTitleTextBox.removeClass('redInputBox');
+				articleTitleTextBox.removeClass('greenInputBox');
+				articleTitleTextBox.addClass('whiteInputBox');						
+			}
+//			else if(keycode !== 37 && keycode !== 39){
+			else{
+				CREATENEWARTICLE.showActivity();	
+				sajax_do_call('smwf_na_articleExists', [articleTitle], function(request){
+					var articleExists = request.responseText;
+					articleExists = articleExists.split(';');
+					if(jQuery('#newArticleName').val() === articleExists[1]){
+						if(articleExists[0] !== 'false'){
+							CREATENEWARTICLE.articleExists = true;
+							articleExistsErrorImgTd.html('<img src=\"' + CREATENEWARTICLE.imgPath + 'warning.png\"/>');
+							articleExistsErrorMsgSpan.html('This page name already exists. You can enter a different article name or open this article: ');
+							articleExistsErrorLinkSpan.html('<a href=\"' + wgServer + wgScriptPath + '/index.php/' + articleTitle + '\">' + CREATENEWARTICLE.shorterString(articleTitle, 20) + '</a>');
+							articleTitleTextBox.removeClass('greenInputBox');
+							articleTitleTextBox.removeClass('whiteInputBox');			
+							articleTitleTextBox.addClass('redInputBox');
+						}
+						else{
+							CREATENEWARTICLE.articleExists = false;
+							articleExistsErrorImgTd.empty();
+							articleExistsErrorMsgSpan.empty();
+							articleExistsErrorLinkSpan.empty();
+							articleTitleTextBox.removeClass('redInputBox');
+							articleTitleTextBox.removeClass('whiteInputBox');	
+							articleTitleTextBox.addClass('greenInputBox');
+						}
+				
+						CREATENEWARTICLE.hideActivity();
+					}
+				});
+			}
+	},
+	
 	setRationaleDescription : function(selectedValue){
 		switch(selectedValue){
 			case this.EMPTY_IN_WIKITEXT:
 				jQuery('#selectedTitleTd').html(selectedValue + ':');
 				jQuery('#selectedDescTd').text('Create an empty article in WikiText editor');
 				jQuery('#selectedDescImgTd').html('<img src="' + this.imgPath + 'info.png"/>');
-//				jQuery.fancybox.resize();
 				jQuery('#listOfTemplatesAndCategories').focus();
 				CREATENEWARTICLE.hideActivity();
 				jQuery('#newArticleName').removeAttr('disabled');
@@ -98,7 +146,6 @@ var CREATENEWARTICLE = {
 				jQuery('#selectedTitleTd').html(selectedValue + ':');
 				jQuery('#selectedDescTd').text('Create an empty article in WYSIWYG editor');
 				jQuery('#selectedDescImgTd').html('<img src="' + this.imgPath + 'info.png"/>');
-//				jQuery.fancybox.resize();
 				jQuery('#listOfTemplatesAndCategories').focus();
 				CREATENEWARTICLE.hideActivity();
 				jQuery('#newArticleName').removeAttr('disabled');
@@ -118,7 +165,7 @@ var CREATENEWARTICLE = {
 				}
 				CREATENEWARTICLE.showActivity();
 				jQuery('#newArticleName').attr('disabled', 'disabled');
-				sajax_do_call('cna_getPropertyValue', [titleString, 'Rationale'], function(request){
+				sajax_do_call('smwf_na_getPropertyValue', [titleString, 'Rationale'], function(request){
 					var responseText = request.responseText.split(';');
 					var title = responseText[1];
 					var formIndex = title.indexOf(formStr);
@@ -136,6 +183,7 @@ var CREATENEWARTICLE = {
 						CREATENEWARTICLE.hideActivity();
 						jQuery('#newArticleName').removeAttr('disabled');
 					}
+					CREATENEWARTICLE.validate();
 					jQuery('#listOfTemplatesAndCategories').focus();
 					
 				});
@@ -151,7 +199,7 @@ var CREATENEWARTICLE = {
 		
 		//ajax call to get a list of forms
 		CREATENEWARTICLE.showActivity();	
-		sajax_do_call('cna_getForms', [''], function(request){
+		sajax_do_call('smwf_na_getForms', [''], function(request){
 			forms = request.responseText;
 			forms = forms.split(',');
 			forms = jQuery.grep(forms, function(element, index){
@@ -161,7 +209,7 @@ var CREATENEWARTICLE = {
 				forms[i] += '  (Form)';
 			}
 			//ajax call to get a list of categories
-			sajax_do_call('cna_getCategories', [''], function(request){
+			sajax_do_call('smwf_na_getCategories', [''], function(request){
 				categories = request.responseText;
 				categories = categories.split('Category:');
 				categories = jQuery.grep(categories, function(element, index){
@@ -223,83 +271,32 @@ jQuery(document).ready(function() {
 		jQuery.fancybox({ 
 			'content'  : CREATENEWARTICLE.fancyBoxContent(),
 			'modal'  : true,
-			'showCloseButton'	: true,
 			'width'		: '75%',
 			'height'	: '75%',
 			'autoScale'	: false,
-			'transitionIn'	: 'none',
-			'transitionOut'	: 'none',
 			'overlayColor'  : '#222',
 			'overlayOpacity' : '0.8',
 			'scrolling' : 'no',
+			'titleShow'  : false,
 			'onCleanup'  : function(){
 				document.location.search = jQuery.query.remove('todo');
 			},
 			'onComplete'  : function(){
+				var articleTitleTextBox = jQuery('#newArticleName');
 				//build list of forms and categories
 				CREATENEWARTICLE.buildListOfFormsAndCategories();
+				//set article title from url parameter
+				articleTitleTextBox.val(jQuery.query.get('newarticletitle'));
 				
-				var articleNameTextBox = jQuery('#newArticleName');
-				var articleExistsErrorMsgSpan = jQuery('#errorMsg');
-				var articleExistsErrorLinkSpan = jQuery('#errorLink');
-				var articleExistsErrorImgTd = jQuery('#errorImgTd');
-				var inputBox = jQuery('#newArticleName');
-				articleNameTextBox.val(jQuery.query.get('newarticletitle'));
-				articleNameTextBox.focus();
-			
-				articleNameTextBox.keyup(function(event){
-//					var keycode = event.which;
-					CREATENEWARTICLE.validate();
-					var articleTitle = articleNameTextBox.val();
-					if(!jQuery('#newArticleName').val()){
-						articleExistsErrorImgTd.empty();
-						articleExistsErrorMsgSpan.empty();
-						articleExistsErrorLinkSpan.empty();
-						inputBox.removeClass('redInputBox');
-						inputBox.removeClass('greenInputBox');
-						inputBox.addClass('whiteInputBox');						
-					}
-//					else if(keycode !== 37 && keycode !== 39){
-					else{
-						CREATENEWARTICLE.showActivity();	
-						sajax_do_call('cna_articleExists', [articleTitle], function(request){
-							CREATENEWARTICLE.articleExists = false;
-							var articleExists = request.responseText;
-							articleExists = articleExists.split(';');
-							if(jQuery('#newArticleName').val() === articleExists[1]){
-								if(articleExists[0] !== 'false'){
-									articleExistsErrorImgTd.html('<img src=\"' + CREATENEWARTICLE.imgPath + 'warning.png\"/>');
-									articleExistsErrorMsgSpan.html('This page name already exists. You can enter a different article name or open this article: ');
-									articleExistsErrorLinkSpan.html('<a href=\"' + wgServer + wgScriptPath + '/index.php/' + articleTitle + '\">' + CREATENEWARTICLE.shorterString(articleTitle, 20) + '</a>');
-									inputBox.removeClass('greenInputBox');
-									inputBox.removeClass('whiteInputBox');			
-									inputBox.addClass('redInputBox');
-									CREATENEWARTICLE.articleExists = true;
-									
-								}
-								else if(jQuery('#newArticleName').val()){
-									articleExistsErrorImgTd.empty();
-									articleExistsErrorMsgSpan.empty();
-									articleExistsErrorLinkSpan.empty();
-									inputBox.removeClass('redInputBox');
-									inputBox.removeClass('whiteInputBox');	
-									inputBox.addClass('greenInputBox');
-								}
-								else{
-									articleExistsErrorImgTd.empty();
-									articleExistsErrorMsgSpan.empty();
-									articleExistsErrorLinkSpan.empty();
-									inputBox.removeClass('redInputBox');
-									inputBox.removeClass('greenInputBox');
-									inputBox.addClass('whiteInputBox');		
-								}
-								CREATENEWARTICLE.hideActivity();
-							}
-						});
-					}
+				articleTitleTextBox.change(function(){
+					articleTitleTextBox.trigger('keyup');
 				});
 				
-				articleNameTextBox.trigger('keyup');
+				articleTitleTextBox.keyup(function() {
+					CREATENEWARTICLE.articleTitleChange();
+				});
+				
+				articleTitleTextBox.trigger('keyup');
 				
 				jQuery('#cna_cancelBtn').click(function() {
 					jQuery.fancybox.close();
@@ -315,7 +312,7 @@ jQuery(document).ready(function() {
 					CREATENEWARTICLE.setRationaleDescription(jQuery('#listOfTemplatesAndCategories option:selected').val());
 				});
 				
-				jQuery('.fancyboxTitleTd img').click(function()
+				jQuery('#fancyboxTitleTable img').click(function()
 				{
 					jQuery.fancybox.close();
 				});
@@ -323,8 +320,9 @@ jQuery(document).ready(function() {
 				jQuery.fancybox.resize();
 				jQuery.fancybox.center();
 				
-			}
-	}).trigger('click');
+				articleTitleTextBox.trigger('focus');
+				}
+		}).click();
 	}
 		
 	

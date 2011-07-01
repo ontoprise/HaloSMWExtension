@@ -13,8 +13,10 @@
     background: #ffc;
 }
 
-.fancyboxTable{
-	width: 100%;
+#fancyboxTable{
+	width: 400px;
+	height: 100%;
+	margin: 0;
 }
 
 
@@ -28,13 +30,24 @@
 	border-bottom: 1px solid silver;
 	text-align: center;
 	font-size: larger;
+	vertical-align: top;
+}
+
+#titleImgTd{
+	text-align: right;
+}
+
+#titleImgTd img{
+	cursor: pointer;	
+}
+
+#titleNameTd{
+	width: 100%;
 	vertical-align: middle;
 }
 
-.fancyboxTitleTd img{
-	float: right;
-	margin: 0;
-	cursor: pointer;
+#fancyboxTitleTable{
+	margin-top: 0;
 }
 
 .userInstructionTd{
@@ -61,11 +74,11 @@
 }
 
 .articleNameInput{
-	width: 350px;	
+	width: 100%;	
 }
 
 .templatesAndCategoriesSelect{
-	width: 355px;	
+	width: 100%;	
 }
 
 .layoutDescriptionTd{
