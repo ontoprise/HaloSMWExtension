@@ -773,6 +773,8 @@ function ToggleCKEditor( mode, objId ){
             smw_links_callme();
             gEditInterface = new SMWEditInterface();
             obContributor.activateTextArea(SRCtextarea);
+            smwhg_dragresizetoolbar.draggable=null;
+            smwhg_dragresizetoolbar.callme();
         }
 	} else {
 		// FCKeditor hidden -> visible
