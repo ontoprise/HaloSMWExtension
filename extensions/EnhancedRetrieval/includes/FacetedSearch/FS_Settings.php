@@ -71,4 +71,4 @@ $fsgFacetedSearchForMW = true;
 #
 //$fsgCreateNewPageLink = "/Create_new_page?target={article}&redlink=1";
 //$fsgCreateNewPageLink = "/{article}?action=edit";
-$fsgCreateNewPageLink = "?todo=createnewarticle&title={article}";
+$fsgCreateNewPageLink = "?todo=createnewarticle&newarticletitle={article}";
