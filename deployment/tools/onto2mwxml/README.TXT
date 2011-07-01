@@ -6,33 +6,24 @@ However, the DF is fully functional without this tool except that ontology impor
 you need Java 1.6 to be installed when using the "onto2mwxml" tool.
 
 #
-# Installation on Windows 7 / Vista / Server 2008
+# Installation on Windows 7 / Vista / Server 2008 / XP
 #
 
-Run the following command in deployment/tools/onto2mwxml:
+   (1) Set TSCDIR containing the full path to the TSC directory in onto2mwxml.bat:
+   
+        SET TSCDIR=c:\Programme\Ontoprise\TSC           (example)
 
-   mklink /D tsc <tsc-dir>
-
-#
-# Installation on Windows XP 
-#
-
- Windows XP users can use the tool linkd.exe from Microsoft to create directory links.
- 
- (1) Download: [http://www.microsoft.com/downloads/en/details.aspx?FamilyID=9d467a69-57ff-4ae7-96ee-b18c4790cffd&displaylang=en]
- 
- (2) Then run the following command in deployment/tools/onto2mwxml:
- 
-   linkd tsc <tsc-dir>
-
+        Note: Paths containing whitespaces MUST be quoted!
 #
 # Installation on Linux
 #
 
 Run the following commands in deployment/tools/onto2mwxml:
 
-   chmod +x onto2mwxml.sh
-   ln -s <tsc-dir> tsc
+   (1) chmod +x onto2mwxml.sh
+   (2) Set TSCDIR containing the full path to the TSC directory in onto2mwxml.sh:
+            
+            TSCDIR=/usr/local/share/Ontoprise/tsc       (example)
 
    
 #

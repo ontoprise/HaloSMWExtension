@@ -1,5 +1,7 @@
 @echo off
-cd tsc
-onto2mwxml.exe %*
+SET TSCDIR=
+SET CURRENT=%cd%
+cd %TSCDIR%
+%TSCDIR%\onto2mwxml.exe %*
 IF %ERRORLEVEL% NEQ 0 EXIT %ERRORLEVEL%
-cd ..
+CD %CURRENT%
