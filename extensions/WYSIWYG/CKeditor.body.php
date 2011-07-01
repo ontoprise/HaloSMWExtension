@@ -17,6 +17,7 @@ define('RTE_POPUP', 4);
 
 class CKeditor_MediaWiki {
 	public $showFCKEditor;
+    public $loadSTBonStartup;
 	private $count = array();
 	private $wgFCKBypassText = '';
 	private $debug = 0;
@@ -359,6 +360,14 @@ class CKeditor_MediaWiki {
 			'label-message' => 'tog-riched_toggle_remember_state',
 		);
 
+        if (defined('SMW_HALO_VERSION')) {
+            $preferences['riched_load_semantic_toolbar'] = array(
+                'type' => 'toggle',
+    			'section' => 'editing/fckeditor',
+        		'label-message' => 'load-stb-on-startup',
+            );
+        }
+
 		// Show default options in Special:Preferences
 		if( !array_key_exists( 'riched_disable', $user->mOptions ) && !empty( $wgDefaultUserOptions['riched_disable'] ) )
 			$user->setOption( 'riched_disable', $wgDefaultUserOptions['riched_disable'] );
@@ -408,6 +417,12 @@ class CKeditor_MediaWiki {
 				$this->showFCKEditor += RTE_TOGGLE_LINK;
 			}
 		}
+        if (!isset( $this->loadSTBonStartup ) ) {
+            $this->loadSTBonStartup = 0;
+            if ( $wgUser->getOption( 'riched_load_semantic_toolbar', $wgDefaultUserOptions['riched_load_semantic_toolbar'] ) ) {
+				$this->loadSTBonStartup = 1;
+			}
+        }
 
 		if( ( !empty( $_SESSION['showMyFCKeditor'] ) ) && ( $wgUser->getOption( 'riched_toggle_remember_state', $wgDefaultUserOptions['riched_toggle_remember_state'] ) ) ){
             $rteSettingsFromSession=true;
@@ -501,6 +516,7 @@ HEREDOC;
 		wfLoadExtensionMessages( 'CKeditor' );
 		$script .= '
 var showFCKEditor = ' . $this->showFCKEditor . ';
+var loadSTBonStartup = '. $this->loadSTBonStartup . ';
 var popup = false; // pointer to popup document
 var firstLoad = true;
 var editorMsgOn = "' . Xml::escapeJsString( wfMsgHtml( 'textrichditor' ) ) . '";
@@ -593,6 +609,12 @@ function onLoadCKeditor(){
 		if ( toolbar ) toolbar.style.display = 'none';
 
 	}
+    // enable semantic toolbar in the editor after 2s
+    if ( loadSTBonStartup ) {
+        setTimeout(function() {
+            wgCKeditorInstance.execCommand('SMWtoolbar');
+        }, 2000);
+    }
 }
 function checkSelected(){
 	if( !selText ) {
@@ -764,8 +786,10 @@ function ToggleCKEditor( mode, objId ){
 		showFCKEditor += RTE_VISIBLE; // showFCKEditor+=RTE_VISIBLE
 		if( oToggleLink ) oToggleLink.innerHTML = editorMsgOff;
 		if( oPopupLink ) oPopupLink.style.display = 'none';
-        if (CKEDITOR.plugins.smwtoolbar)
+        if (typeof AdvancedAnnotation != 'undefined')
             AdvancedAnnotation.unload();
+        if ( loadSTBonStartup )
+            CKEDITOR.instances[objId].execCommand('SMWtoolbar');
 	}
 
 	return true;
