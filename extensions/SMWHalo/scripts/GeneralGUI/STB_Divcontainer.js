@@ -87,17 +87,23 @@ DivContainer.prototype = {
 
 	setHeadline : function(headline) {
 		this.headline = headline;
-		var imgsrc = wgScriptPath + (this.visibility ? STBIMGMINUS : STBIMGPLUS)  
-		$("stb_cont"+this.getContainerNr()+"-headline").update("<div style=\"cursor:pointer;cursor:hand;\" onclick=\"stb_control.contarray["+this.getContainerNr()+"].switchVisibility()\"><a id=\"stb_cont" + this.getContainerNr() + "-link\" class=\"minusplus\" href=\"javascript:void(0)\"><img id=\"stb_cont" + this.getContainerNr() + "-icon\" src=\""+imgsrc+"\" border=\"0\"/></a>" + headline);
+		var imgsrc = wgScriptPath + (this.visibility ? STBIMGMINUS : STBIMGPLUS)
+        try {
+            $("stb_cont"+this.getContainerNr()+"-headline").update("<div style=\"cursor:pointer;cursor:hand;\" onclick=\"stb_control.contarray["+this.getContainerNr()+"].switchVisibility()\"><a id=\"stb_cont" + this.getContainerNr() + "-link\" class=\"minusplus\" href=\"javascript:void(0)\"><img id=\"stb_cont" + this.getContainerNr() + "-icon\" src=\""+imgsrc+"\" border=\"0\"/></a>" + headline);
+        } catch (e) {}
 	},
 
 	setContent : function(content) {
 		this.content = content;
-		$("stb_cont"+this.getContainerNr()+"-content").update(content);
+        try {
+            $("stb_cont"+this.getContainerNr()+"-content").update(content);
+        } catch (e) {}
 	},
 
 	setContentStyle : function(style) {
-		$("stb_cont"+this.getContainerNr()+"-content").setStyle(style);
+        try {
+            $("stb_cont"+this.getContainerNr()+"-content").setStyle(style);
+        } catch (e) {}
 	},
 
 	switchVisibility : function(container) {
@@ -117,10 +123,18 @@ DivContainer.prototype = {
 	},
 
 	getVisibleHeight : function() {
-		return $('stb_cont'+this.getContainerNr()+"-content").offsetHeight;
+        try {
+            return $('stb_cont'+this.getContainerNr()+"-content").offsetHeight;
+        } catch(e) {
+            return 0;
+        }
 	},
 
 	getNeededHeight : function() {
-		return $('stb_cont'+this.getContainerNr()+"-content").scrollHeight;
+        try {
+    		return $('stb_cont'+this.getContainerNr()+"-content").scrollHeight;
+        } catch(e) {
+            return 0;
+        }
 	}
 }
