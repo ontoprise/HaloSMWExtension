@@ -53,6 +53,7 @@
 		<delete dir="Treeview" />
 		<delete dir="Ultrapedia" />
 		<delete dir="Validator" />
+        <delete dir="Widgets" />
 	</target>
 
 </project>
