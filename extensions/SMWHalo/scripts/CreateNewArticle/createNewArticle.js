@@ -28,7 +28,7 @@ var CREATENEWARTICLE = {
 			<td colspan=\"2\" class=\"layoutDescriptionTd\">\
 			<table><tr>\
 			<td rowspan=\"2\" id=\"selectedDescImgTd\"></td><td id=\"selectedTitleTd\"></td></tr>\
-			<tr><td id=\"selectedDescTd\" class=\"layoutDescriptionSpan\"></td>\
+			<tr><td id=\"selectedDescTd\" class=\"layoutDescriptionTd\"></td>\
 			</tr></table>\
 			</td>\
 		</tr>\

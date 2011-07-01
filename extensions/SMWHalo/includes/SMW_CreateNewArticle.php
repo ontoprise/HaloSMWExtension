@@ -17,7 +17,9 @@
  */
 
 /**
- * Insert description here
+ * "Create New Article" feature script. 
+ * Contains functions invoked via ajax from the client.
+ *  
  *
  * @author dmitry
  * Date: 27.06.2011
@@ -29,7 +31,10 @@ $wgAjaxExportList[] = "cna_getCategories";
 $wgAjaxExportList[] = "cna_getPropertyValue";
 $wgAjaxExportList[] = "cna_articleExists";
 
-
+/**
+ * Get all forms which can be used for creating a new article
+ * 
+ */
 function cna_getForms() {
 	$resultString = '';
 
@@ -47,6 +52,10 @@ function cna_getForms() {
 	return $resultString;
 }
 
+/**
+ * Get all categories which can be used for creating a new article
+ * 
+ */
 function cna_getCategories() {
 	$resultString = '';
 
@@ -63,6 +72,11 @@ function cna_getCategories() {
 }
 
 
+/**
+ * Get specific property value
+ * @param string $titleName article title
+ * @param string $propertyName property name
+ */
 function cna_getPropertyValue($titleName, $propertyName){
 	$propertyValue = 'no description available';
 	$title = Title::newFromText($titleName);
@@ -74,6 +88,10 @@ function cna_getPropertyValue($titleName, $propertyName){
 	return $propertyValue . ';' . $titleName;
 }
 
+/**
+ * Check if an article with specified title already exists 
+ * @param string $titleName
+ */
 function cna_articleExists($titleName) {
 	return smwf_om_ExistsArticle($titleName) . ';' .$titleName;
 }

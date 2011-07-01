@@ -1021,7 +1021,7 @@ function smwfHaloAddHTMLHeader(&$out) {
 
 	$jsm->addCSSIf($smwgHaloScriptPath . '/skins/derivedFactsTab.css');
 	//create new article css
-	$jsm->addCSSIf($smwgHaloScriptPath . '/skins/createNewArticle.css');
+	$jsm->addCSSIf($smwgHaloScriptPath . '/skins/CreateNewArticle/createNewArticle.css');
 
 	//    $jsm->addCSSIf($smwgHaloScriptPath . '/skins/Glossary/glossary.css');
 	
@@ -1210,8 +1210,8 @@ function smwfHaloAddHTMLHeader(&$out) {
 
 	}
 	//create new article scripts
-	$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/GeneralGUI/createNewArticle.js');
-	$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/GeneralGUI/jquery.query-2.1.7.js');
+	$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/CreateNewArticle/createNewArticle.js');
+	$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/CreateNewArticle/jquery.query-2.1.7.js');
 
 
 	// serialize the scripts
