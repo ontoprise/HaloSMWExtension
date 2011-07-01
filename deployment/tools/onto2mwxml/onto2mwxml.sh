@@ -1,9 +1,14 @@
 #!/bin/sh
 
+# ---- set this variable before using ---------
+
+TSCDIR=
+
+# ---------------------------------------------
+
 #
 # Starts onto2mwxml and returns the error code
 #
-TSCDIR=
 CURRENTDIR=$PWD
 cd $TSCDIR
 sh ./onto2mwxml.sh $*
