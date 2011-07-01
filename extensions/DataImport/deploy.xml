@@ -17,7 +17,7 @@
 			<dependency from="132" to="140">semanticgardening</dependency>
 			<dependency from="100" to="199">scriptmanager</dependency>
 			<dependency from="100" to="199">arclibrary</dependency>
-			<dependency from="100" to="110" optional="true">linkeddata</dependency>
+			<dependency from="100" to="120" optional="true">linkeddata</dependency>
 		</dependencies>
 		<patchlevel>0</patchlevel>
 		<license>GPL v2</license>
