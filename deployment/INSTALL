@@ -36,7 +36,12 @@ Table of contents
 # 1. Installation:
 # =================
 
-
+ Note: If you upgrade from DF 1.31 make sure that you configured:
+ 
+        require_once('deployment/Deployment.php');
+        
+    This was optional before DF 1.56!
+    
 (1) Unzip deployment-x.x.x.zip in the MediaWiki root folder.
 (2) Replace in AdminSettings.php the example values given for  $wgDBadminuser (e.g. 'wikiadmin') and 
       $wgDBadminpassword (e.g 'adminpass') with the name and passwort of the 
@@ -59,7 +64,9 @@ Table of contents
  
     It enables a special page for checking the integrity of the MW installation. 
     
-(8) This is OPTIONAL! 
+    Be careful: Up to DF 1.31 this step was optional. It is not anymmore.
+    
+(8) Webadmin console. !This is OPTIONAL! 
 	There is a web-based version of DF called 'webadmin console'
     
     for installation instructions see deployment/tools/webadmin/INSTALL
@@ -103,31 +110,43 @@ semantic extensions containing SMW + SF among others.
 # 3. HowTo use the deployment framework
 # ======================================
 
-smwhalo admin utility v1.3, Ontoprise 2010
+smwhalo admin utility v1.5.6_0 [B525], Ontoprise 2009-2011
+Usage: smwadmin [ -i | -d ] <bundle>[-<version>] [ additional-options ]
+       smwadmin -u [ <bundle>[-<version>] ] [ additional-options ]
+       smwadmin -r [ <restore point name> ]
+       smwadmin -l [--desc ]
+       smwadmin --rcreate [ <restore point name> ]
+       smwadmin --rlist
+       smwadmin --finalize
 
-Usage: smwadmin [ -i | -d ] <package>[-<version>]
-       smwadmin -u [ <package>[-<version>] ]
-       smwadmin --install
-
-        -i <package>: Install
-        --install: Finalizes installation
-        -d <package> ]: De-Install
-        -u <package>: Update
+        -i <bundle>: Install
+        -d <bundle> ]: De-Install
+        -u <bundle>: Update
+        -l [ pattern ] : List installed bundles.
+        -l --desc: Shows additional description about the bundles.
+        -r [ name ]: Restore from a wiki-restore-point.
+        --rcreate [ name ]: Explicitly creates a wiki-restore-point.
+        --rlist : Shows all existing wiki-restore-points
+        --finalize: Finalizes installation
+        Additional options (can only be used with the optional above):
         --dep : Check only dependencies but do not install.
-        -l [ pattern ] : List installed packages.
-        -r [name] : Restore installation. If name is missing, user is prompted.
-        -rcreate [name]: Creates a restore point. If name is missing, a unique ID is created.
-        -rlist: Lists existing restore points.
+        -f: Force operation (ignore any problems if possible)
+        --nocheck: Skips the environment checks
+        --noask: Skips all questions (assuming mostly 'yes' except for optional bundles
+        --removereferenced: Removes all templates, images and instances referenced used by a bundle. Used with -d
+                --removeTemplates: Removes all templates referenced used by a bundle. Used with -d
+                --removeInstances: Removes all instances referenced used by a bundle. Used with -d
+                --removeImages: Removes all images referenced used by a bundle. Used with -d
+        --removestillused: Removes also pages which are used by other bundles. Used with -d --removereferenced
 
-Examples:
 
-        smwadmin -i smwhalo: Installs latest version of smwhalo.
-        smwadmin --finalize: Finalizes every installation. Must be called after something was installed or updated.
-        smwadmin -u smw: Updates the given package to the specified version. (if possible)
-        smwadmin -u: Updates complete installation
-        smwadmin -u --dep: Shows what would be updated.
-        smwadmin -d smw: Removes the package smw.
-        smwadmin -l: List all installed/available packages 
+Examples:       smwadmin -i smwhalo Installs the given bundles
+                smwadmin -u: Updates complete installation
+                smwadmin -u --dep: Shows what would be updated.
+                smwadmin -d smw: Removes the bundle smw.
+                smwadmin -r [name] : Restores old installation from a restore point. User is prompted for which.
+                smwadmin -i smwhalo -f: Installs smwhalo ignoring any problems
+                smwadmin -u --noask: Updates the complete installation with no check for environment.
 
 #
 # 4. Restore wiki from restore point
@@ -169,19 +188,14 @@ You may add new repositories here, the Ontoprise repo is already configured.
 # 6. Using Deployment Framework with a Proxy
 # ===========================================
 
-
 Open <mediawiki-install-dir>/deployment/settings.php and set the proxy server address for
 'df_proxy'. For Example: 'df_proxy' => 'proxy.example.com:8080'
 
 #
 # 7. Deployment Framework log
 # ============================
-The DF writes a log about the operations. It is stored in your system's temporary folder:
-
-On Windows:
-    C:\temp\df_log
-On Linux:
-    /tmp/df_log
+The DF writes a log about the operations. It is stored in $HOME/$wikiname/df_log
+Both $HOME and $wikiname can be configured in <mediawiki-install-dir>/deployment/settings.php
     
 The are usually two log files for each run of smwadmin. One for the installation process and
 one for the initialization process.
@@ -189,7 +203,7 @@ one for the initialization process.
 #
 # 8. Importing ontologies
 # ========================
-First, take a look into tools/onto2mwxml/README.TXT and install onto2mwxml.
+First, take a look into tools/onto2mwxml/README.TXT and install onto2mwxml (requires TSC).
 
 Importing an ontology is as follows:
 
