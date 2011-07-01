@@ -138,4 +138,8 @@ $wgDefaultUserOptions['riched_use_popup'] = 1;
 $wgDefaultUserOptions['riched_toggle_remember_state'] = 1;
 
 // when SMWHalo is used then the QueryInterface opens in an Iframe
-if (defined('SMW_HALO_VERSION')) $wgEditPageFrameOptions = 'SAMEORIGIN';
+// also add setting that the Semantic toobar is loaded by default
+if (defined('SMW_HALO_VERSION')) {
+    $wgEditPageFrameOptions = 'SAMEORIGIN';
+    $wgDefaultUserOptions['riched_load_semantic_toolbar'] = 1;
+}
