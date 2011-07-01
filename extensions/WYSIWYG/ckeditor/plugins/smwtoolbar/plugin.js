@@ -980,6 +980,9 @@ CKEDITOR.plugins.smwtoolbar = {
         if (window.parent.smwhgGardeningHints)
             window.parent.smwhgGardeningHints.createContainer();
         window.parent.smw_links_callme();
+        // enable draging
+        window.parent.smwhg_dragresizetoolbar.draggable=null;
+        window.parent.smwhg_dragresizetoolbar.callme();
         this.SetEventHandler4AnnotationBox( editor );
         editor.getCommand('SMWtoolbar').setState(CKEDITOR.TRISTATE_ON);
 		// Set the z-index of the semantic toolbar
