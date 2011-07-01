@@ -981,7 +981,14 @@ CKEDITOR.plugins.smwtoolbar = {
             window.parent.smwhgGardeningHints.createContainer();
         window.parent.smw_links_callme();
         this.SetEventHandler4AnnotationBox( editor );
-        editor.getCommand('SMWtoolbar').setState(CKEDITOR.TRISTATE_ON)
+        editor.getCommand('SMWtoolbar').setState(CKEDITOR.TRISTATE_ON);
+		// Set the z-index of the semantic toolbar
+        var ontomenu = window.parent.document.getElementById('ontomenuanchor');
+        ontomenu.style.zIndex = editor.config.baseFloatZIndex + 10;
+        var acFloater = window.parent.document.getElementById('smartInputFloater');
+        acFloater.style.zIndex = editor.config.baseFloatZIndex + 2000;
+        acFloater.style.right = '0px';
+		
     },
     DisableAnnotationToolbar: function( editor ) {
         this.stbIsActive = false;
@@ -1130,10 +1137,10 @@ CKEDITOR.plugins.add('smwtoolbar', {
         });
         editor.on("resize", function(event) {
             if (plugin.stbIsActive) {
-                //var ontomenu = window.parent.document.getElementById('ontomenuanchor');
+                var ontomenu = window.parent.document.getElementById('ontomenuanchor');
                 // I have no clue how to know in which mode we are, so just set the z-index to some
                 // value that works in both modes
-                //ontomenu.style.zIndex = editor.config.baseFloatZIndex + 10;
+                ontomenu.style.zIndex = editor.config.baseFloatZIndex + 10;
             }
         })
 
