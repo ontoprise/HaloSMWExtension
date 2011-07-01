@@ -117,6 +117,7 @@ class OB_Storage {
 		foreach($instances as $i) {
 			if (is_array($i) && !is_null($i[1])) {
 				$c = new CategoryTreeElement($i[1], NULL);
+					
 				if (!array_key_exists($i[0]->getPrefixedText(), $results)) {
 					$results[$i[0]->getPrefixedText()] = new InstanceListElement($i[0], NULL);
 					$results[$i[0]->getPrefixedText()]->addCategoryTreeElement($c);
@@ -132,7 +133,7 @@ class OB_Storage {
 			}
 		}
 
-		return SMWOntologyBrowserXMLGenerator::encapsulateAsInstancePartition($results, $reqfilter->limit, $partitionNum);
+		return SMWOntologyBrowserXMLGenerator::encapsulateAsInstancePartition(count($instances), $results, $reqfilter->limit, $partitionNum);
 
 	}
 
@@ -254,7 +255,7 @@ class OB_Storage {
 		}
 
 		$propertyName_xml = str_replace( array('"'),array('&quot;'),$prop->getDBkey());
-		return SMWOntologyBrowserXMLGenerator::encapsulateAsInstancePartition($results, $reqfilter->limit, $partitionNum, 'getInstancesUsingProperty,'.$propertyName_xml);
+		return SMWOntologyBrowserXMLGenerator::encapsulateAsInstancePartition(count($attinstances), $results, $reqfilter->limit, $partitionNum, 'getInstancesUsingProperty,'.$propertyName_xml);
 	}
 
 	public function getInstanceUsingPropertyValue($p_array) {
@@ -283,7 +284,7 @@ class OB_Storage {
 		}
 
 		$propertyName_xml = str_replace( array('"'),array('&quot;'),$prop->getDBkey());
-		return SMWOntologyBrowserXMLGenerator::encapsulateAsInstancePartition($results, $reqfilter->limit, $partitionNum, 'getInstanceUsingPropertyValue,'.$propertyName_xml);
+		return SMWOntologyBrowserXMLGenerator::encapsulateAsInstancePartition(count($attinstances), $results, $reqfilter->limit, $partitionNum, 'getInstanceUsingPropertyValue,'.$propertyName_xml);
 	}
 
 	public function getPropertyValues($p_array) {
@@ -409,7 +410,7 @@ class OB_Storage {
 		$reqfilter->sort = true;
 
 		if (count($instanceHints) == 0) {
-			return SMWOntologyBrowserXMLGenerator::encapsulateAsInstancePartition(array(), $reqfilter->limit, 0);
+			return SMWOntologyBrowserXMLGenerator::encapsulateAsInstancePartition(0, array(), $reqfilter->limit, 0);
 		}
 		foreach($instanceHints as $hint) {
 			$reqfilter->addStringCondition($hint, SMWStringCondition::STRCOND_MID);
@@ -429,7 +430,7 @@ class OB_Storage {
 			$results[] = new InstanceListElement($i, NULL, NULL);
 		}
 
-		return SMWOntologyBrowserXMLGenerator::encapsulateAsInstancePartition($results, $reqfilter->limit, 0);
+		return SMWOntologyBrowserXMLGenerator::encapsulateAsInstancePartition(count($foundInstances), $results, $reqfilter->limit, 0);
 
 	}
 
@@ -777,11 +778,11 @@ class OB_StorageTS extends OB_Storage {
 			$dataSpace = $this->getDataSourceParameters();
 
 			// query
-			$response = $client->query("[[Category:$categoryName]]", "?Category|limit=$limit|offset=$offset|merge=false$dataSpace$metadataRequest", $smwgTripleStoreGraph);
+			$response = $client->query("[[Category:$categoryName]]", "?Category|limit=$limit|offset=$offset|merge=false|sort=_X_$dataSpace$metadataRequest", $smwgTripleStoreGraph);
 
 			$categoryTitle = Title::newFromText($categoryName, NS_CATEGORY);
 			$titles = array();
-			$this->parseInstances($response, $titles, $categoryTitle);
+			$numOfresults = $this->parseInstances($response, $titles, $categoryTitle);
 
 
 		} catch(Exception $e) {
@@ -789,7 +790,7 @@ class OB_StorageTS extends OB_Storage {
 			return $this->createErrorMessage($e->getCode(), "Error accessing the TSC at $smwgWebserviceEndpoint");
 		}
 
-		return SMWOntologyBrowserXMLGenerator::encapsulateAsInstancePartition($titles, $limit, $partition);
+		return SMWOntologyBrowserXMLGenerator::encapsulateAsInstancePartition($numOfresults, $titles, $limit, $partition);
 	}
 
 
@@ -830,7 +831,7 @@ class OB_StorageTS extends OB_Storage {
 
 			$categories = array();
 			$assertedCategories = smwfGetSemanticStore()->getCategoriesForInstance($title);
-			
+				
 			if (count($children->binding) > 1) {
 				// category binding node exists
 				$b = $children->binding[1]; // categories
@@ -844,23 +845,23 @@ class OB_StorageTS extends OB_Storage {
 							$instance = $titles[$title->getPrefixedText()];
 						}
 
-						$c = new CategoryTreeElement($category, (string) $sv);
-						$instance->addCategoryTreeElement($c);
-
+						if ($this->containsTitle($assertedCategories, $categoryTitle)) {
+							$instance->addCategoryTreeElement(NULL);
+						} else {
+							$c = new CategoryTreeElement($category, (string) $sv);
+							$instance->addCategoryTreeElement($c);
+						}
 					}
 
+				}
 
-				}
-				if (is_null($categoryTitle) || $this->containsTitle($assertedCategories, $categoryTitle)) {
-					$instance->addCategoryTreeElement(NULL);
-				}
 			} else {
 				$titles[$title->getPrefixedText()] = $instance;
 			}
 
 
 		}
-
+		return count($results);
 	}
 
 	private function containsTitle($titleSet, $title) {
@@ -1088,7 +1089,7 @@ class OB_StorageTS extends OB_Storage {
 			$response = $client->query("[[$propertyName::+]]",  "?Category|limit=$limit|offset=$offset|merge=false", $smwgTripleStoreGraph);
 
 			$titles = array();
-			$this->parseInstances($response, $titles, NULL);
+			$numOfResults = $this->parseInstances($response, $titles, NULL);
 
 		} catch(Exception $e) {
 			global $smwgWebserviceEndpoint;
@@ -1096,7 +1097,7 @@ class OB_StorageTS extends OB_Storage {
 		}
 
 		$propertyName_xml = str_replace( array('"'),array('&quot;'),$propertyName);
-		return SMWOntologyBrowserXMLGenerator::encapsulateAsInstancePartition($titles, $limit, $partition, 'getInstancesUsingProperty,'.$propertyName_xml);
+		return SMWOntologyBrowserXMLGenerator::encapsulateAsInstancePartition($numOfResults, $titles, $limit, $partition, 'getInstancesUsingProperty,'.$propertyName_xml);
 	}
 
 	public function getInstanceUsingPropertyValue($p_array) {
@@ -1116,7 +1117,7 @@ class OB_StorageTS extends OB_Storage {
 			$response = $client->query("[[$propertyName::$value]]",  "?Category|limit=$limit|offset=$offset|merge=false", $smwgTripleStoreGraph);
 
 			$titles = array();
-			$this->parseInstances($response, $titles, NULL);
+			$numOfResults = $this->parseInstances($response, $titles, NULL);
 
 		} catch(Exception $e) {
 			global $smwgWebserviceEndpoint;
@@ -1124,7 +1125,7 @@ class OB_StorageTS extends OB_Storage {
 		}
 
 		$propertyName_xml = str_replace( array('"'),array('&quot;'),$propertyName);
-		return SMWOntologyBrowserXMLGenerator::encapsulateAsInstancePartition($titles, $limit, $partition, 'getInstanceUsingPropertyValue,'.$propertyName_xml);
+		return SMWOntologyBrowserXMLGenerator::encapsulateAsInstancePartition($numOfResults, $titles, $limit, $partition, 'getInstanceUsingPropertyValue,'.$propertyName_xml);
 	}
 
 	public function getPropertyValues($p_array) {
@@ -1259,7 +1260,7 @@ class OB_StorageTS extends OB_Storage {
 
 
 			$titles = array();
-			$this->parseInstances($response, $titles, NULL);
+			$numOfResults = $this->parseInstances($response, $titles, NULL);
 
 
 		} catch(Exception $e) {
@@ -1268,7 +1269,7 @@ class OB_StorageTS extends OB_Storage {
 		}
 
 		// do not show partitions. 1000 instances is maximum here.
-		return SMWOntologyBrowserXMLGenerator::encapsulateAsInstancePartition($titles, 1001, 0);
+		return SMWOntologyBrowserXMLGenerator::encapsulateAsInstancePartition($numOfResults, $titles, 1001, 0);
 	}
 
 	/**
@@ -1322,7 +1323,7 @@ class OB_StorageTS extends OB_Storage {
 
 
 function smwf_ob_OntologyBrowserAccess($method, $params, $dataSource = '', $bundleID = '') {
-    
+
 	$browseWiki = wfMsg("smw_ob_source_wiki");
 	global $smwgDefaultStore;
 	if ($smwgDefaultStore == 'SMWTripleStoreQuad' && !empty($dataSource) && $dataSource != $browseWiki) {
@@ -1336,7 +1337,7 @@ function smwf_ob_OntologyBrowserAccess($method, $params, $dataSource = '', $bund
 		$storage = new OB_Storage($dataSource, $bundleID);
 	}
 
-	
+
 	$p_array = explode("##", $params);
 	$method = new ReflectionMethod(get_class($storage), $method);
 	return $method->invoke($storage, $p_array, $dataSource);
@@ -1439,7 +1440,7 @@ class OB_StorageTSQuad extends OB_StorageTS {
 			$response = $client->query(TSNamespaces::getW3CPrefixes()." SELECT ?s ?cat WHERE { ?s <$propertyURI> ?o. OPTIONAL { ?s rdf:type ?cat. } }",  "limit=$limit|offset=$offset$dataSpace$metadataRequest");
 
 			$titles = array();
-			$this->parseInstances($response, $titles, NULL);
+			$numOfResults = $this->parseInstances($response, $titles, NULL);
 
 		} catch(Exception $e) {
 			global $smwgWebserviceEndpoint;
@@ -1447,7 +1448,7 @@ class OB_StorageTSQuad extends OB_StorageTS {
 		}
 			
 		$propertyURI = str_replace( array('"'),array('&quot;'),$propertyURI);
-		return SMWOntologyBrowserXMLGenerator::encapsulateAsInstancePartition($titles, $limit, $partition, 'getInstancesUsingProperty,'.$propertyURI);
+		return SMWOntologyBrowserXMLGenerator::encapsulateAsInstancePartition($numOfResults, $titles, $limit, $partition, 'getInstancesUsingProperty,'.$propertyURI);
 	}
 
 	public function getCategoryForInstance($p_array) {
@@ -1513,7 +1514,7 @@ class OB_StorageTSQuad extends OB_StorageTS {
 
 
 			$titles = array();
-			$this->parseInstances($response, $titles, NULL);
+			$numOfResults = $this->parseInstances($response, $titles, NULL);
 
 
 		} catch(Exception $e) {
@@ -1522,7 +1523,7 @@ class OB_StorageTSQuad extends OB_StorageTS {
 		}
 
 		// do not show partitions. 1000 instances is maximum here.
-		return SMWOntologyBrowserXMLGenerator::encapsulateAsInstancePartition($titles, 1001, 0);
+		return SMWOntologyBrowserXMLGenerator::encapsulateAsInstancePartition($numOfResults, $titles, 1001, 0);
 	}
 }
 

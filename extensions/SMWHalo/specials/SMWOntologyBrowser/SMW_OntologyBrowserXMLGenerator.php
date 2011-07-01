@@ -86,20 +86,20 @@ class SMWOntologyBrowserXMLGenerator {
 	 * 
 	 * @return XML string
 	 */
-	public static function encapsulateAsInstancePartition(array & $instances, $limit, $partitionNum, $dataSrc = NULL) {
+	public static function encapsulateAsInstancePartition($numOfresults, array & $instances, $limit, $partitionNum, $dataSrc = NULL) {
 		$id = uniqid (rand());
 		$count = 0;
 		$result = "";
 		$dataSrc = (!is_null($dataSrc)) ? 'dataSrc="'.$dataSrc.'"' : '';
 
-		if (count($instances) == $limit) {
+		if ($numOfresults == $limit) {
 			if ($partitionNum == 0) {
 				$result .= "<instancePartition id=\"ID_$id$count\" partitionNum=\"$partitionNum\" length=\"$limit\" hidePreviousArrow=\"true\" $dataSrc/>";
 			} else {
 				$result .= "<instancePartition id=\"ID_$id$count\" partitionNum=\"$partitionNum\" length=\"$limit\" $dataSrc/>";
 			}
 		}
-		if (count($instances) < $limit && $partitionNum > 0) {
+		if ($numOfresults < $limit && $partitionNum > 0) {
 			$result .= "<instancePartition id=\"ID_$id$count\" partitionNum=\"$partitionNum\" length=\"$limit\" hideNextArrow=\"true\"/>";
 		}
 		$count++;
