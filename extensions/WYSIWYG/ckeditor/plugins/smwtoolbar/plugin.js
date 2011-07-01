@@ -972,6 +972,7 @@ CKEDITOR.plugins.smwtoolbar = {
         window.parent.relToolBar.callme();
         window.parent.catToolBar.callme();
         window.parent.propToolBar.callme();
+        window.parent.smwhgASKQuery.createContainer();
         // rule toolbar, only available if SemanticRuls extension is included
         // disable it for now, because the rule editor doesn't work with the FCK
         if (window.parent.ruleToolBar)
