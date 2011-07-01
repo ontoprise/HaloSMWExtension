@@ -188,7 +188,8 @@ ToolbarFramework.prototype = {
 		this.resizeToolbar();
 		
 		// send show/hide container event
-		this.contarray[contnum].showContainerEvent();
+        if (typeof this.contarray[contnum] != 'undefined')
+            this.contarray[contnum].showContainerEvent();
 
 	},
 
