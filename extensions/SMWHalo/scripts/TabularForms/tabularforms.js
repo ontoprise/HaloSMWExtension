@@ -1325,8 +1325,8 @@ var TF = Class.create({
 		if(!found){
 			jQuery("." + notificationClass + ' ul', container).append(
 						'<li messageId="' + id + '" instanceId="' + instanceId + '">' + message + '</li>');
-			jQuery('.tabf_notifications_heading > span > span').html(
-					jQuery('.tabf_notifications_heading > span > span').html()*1 + 1);
+			jQuery('.tabf_notifications_heading > span > span', container).html(
+					jQuery('.tabf_notifications_heading > span > span', container).html()*1 + 1);
 		}
 		
 	},
@@ -1338,8 +1338,8 @@ var TF = Class.create({
 			if(!found && jQuery(this).attr('messageId') == id){
 				found = true;
 				jQuery(this).remove();
-				jQuery('.tabf_notifications_heading > span > span').html(
-						jQuery('.tabf_notifications_heading > span > span').html()*1 - 1);
+				jQuery('.tabf_notifications_heading > span > span', container).html(
+						jQuery('.tabf_notifications_heading > span > span', container).html()*1 - 1);
 			}
 		});
 		
@@ -1394,8 +1394,8 @@ var TF = Class.create({
 						jQuery(this).css('display', 'none');
 					}
 					
-					jQuery('.tabf_notifications_heading > span > span').html(
-							jQuery('.tabf_notifications_heading > span > span').html()*1 - 1);
+					jQuery('.tabf_notifications_heading > span > span', container).html(
+							jQuery('.tabf_notifications_heading > span > span', container).html()*1 - 1);
 				}
 			});
 			
@@ -1425,8 +1425,8 @@ var TF = Class.create({
 				if(jQuery(this).attr('instanceId') == instanceId){
 					jQuery(this).css('display', '');
 					
-					jQuery('.tabf_notifications_heading > span > span').html(
-							jQuery('.tabf_notifications_heading > span > span').html()*1 + 1);
+					jQuery('.tabf_notifications_heading > span > span', container).html(
+							jQuery('.tabf_notifications_heading > span > span', container).html()*1 + 1);
 					
 					found = true;
 				}
