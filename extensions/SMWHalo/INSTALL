@@ -246,6 +246,26 @@ which are documented here:
 
 http://smwforum.ontoprise.com/smwforum/index.php/Help:Customizing_SMW%2B
 
+=== Renaming categories in the Ontology Browser ===
+
+By default Mediawiki doesn't allow the move operation on categories. When a
+category is renamed, this is a move operation internally. Therefore if you want
+to rename categories in the Ontology Browser a Mediawiki file must be mdofied to
+achieve this. Please edit the file includes/Namespace.php in your wiki
+installation. Replace the line:
+
+  return !( $index < NS_MAIN || ($index == NS_FILE && !$wgAllowImageMoving)  || $index == NS_CATEGORY );
+
+with:
+
+  return !( $index < NS_MAIN || ($index == NS_FILE && !$wgAllowImageMoving) );
+
+The location of this content is around line 50ff.
+
+If you have installed the RichMedia extension the changes have been applied
+already and you don't need to do anything.
+
+
 == Notes on Upgrading ==
 
 === Upgrading from earlier versions ===
