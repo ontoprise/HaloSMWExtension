@@ -145,6 +145,8 @@ ToolbarFramework.prototype = {
 
 	showSemanticToolbarContainer : function(container) {
 		if (container != null) {
+            // query container doesn't exist in WYSIWYG editor
+            if ( typeof this.contarray[container] == 'undefined') return;
 			if (this.contarray[container].getTab() == this.curtabShown) {
 				if (this.contarray[container].headline != null) {
 					$("stb_cont"+container+"-headline").show();
