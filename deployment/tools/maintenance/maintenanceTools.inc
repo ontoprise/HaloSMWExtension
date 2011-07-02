@@ -540,7 +540,7 @@ class ConsistencyChecker {
 							}
 							break;
 						case 'Data&nbsp;Import&nbsp;Extension':
-							if (strpos($ls, '/*start-datatimport*/') === false) {
+							if (strpos($ls, '/*start-dataimport*/') === false) {
 								$this->statusLog[] = $dfgOut->getln(array("\n","\t","[FAILED]","DataImport Extension is already installed but not visible to DF."));
 								$errorFound=true;
 							}
