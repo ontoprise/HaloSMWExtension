@@ -478,7 +478,7 @@ if (count($ontologiesToInstall) > 0) {
 
 			// copy ontology and create ontology bundle
 			$dfgOut->outputln( "[Creating deploy descriptor...");
-			$xml = $oInstaller->createDeployDescriptor($bundleID, $filePath, $prefix);
+			$xml = $oInstaller->createDeployDescriptor($bundleID, $filePath);
 			Tools::mkpath($mwrootDir."/extensions/$bundleID");
 			$handle = fopen($mwrootDir."/extensions/$bundleID/deploy.xml", "w");
 			fwrite($handle, $xml);
