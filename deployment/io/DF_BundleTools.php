@@ -188,6 +188,7 @@ class DFBundleTools {
 		foreach($lines as $l) {
 			if (strpos($l, ":") !== false) {
 				$prefix = trim(substr($l, 0, strpos($l, ":")));
+				if (substr($prefix,0,1) == '*') $prefix = substr($prefix, 1);
 				$uri = trim(substr($l, strpos($l, ":")+1));
 				$results[$prefix] = $uri;
 			}
@@ -208,7 +209,7 @@ class DFBundleTools {
 		$nsMappingPageTitle = Title::newFromText($nsMappingPage, NS_MEDIAWIKI);
 		$result = "";
 		foreach($namespaceMappings as $prefix => $uri) {
-			$result .= "\n$prefix : $uri";
+			$result .= "\n*$prefix : $uri";
 		}
 		$article = new Article($nsMappingPageTitle);
 		$article->doEdit($result, "auto-generated namespace mappings");
