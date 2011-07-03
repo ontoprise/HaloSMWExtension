@@ -173,13 +173,13 @@ class DFCommandInterface {
 		return json_encode($result);
 	}
 
-	public function getDependencies($extid) {
+	public function getDependencies($extid, $version) {
 		global $mwrootDir, $dfgOut;
 
 		try {
 			$dfgOut->setVerbose(false);
 			$installer = Installer::getInstance($mwrootDir);
-			$dependencies = $installer->getExtensionsToInstall($extid);
+			$dependencies = $installer->getExtensionsToInstall($extid, $version);
 
 			$dfgOut->setVerbose(true);
 			return json_encode($dependencies);
