@@ -6,12 +6,12 @@ VERSION 1.40a
 	FR #13053: Included an option to completely delete a comment
 	FR #14882: Provide PHS with a new release of collaboration extension that supports attaching links to comments
 	FR #14934: Direct upload of files in the comment form is now possible (with Rich media installed)
-	FR #14XXX:
   CHANGES:
 	Issue  #14358: Removed localization of parser functions
   BUGFIXES:
 	14481 - Editing of comments was not possible in IE 8
 	14559 - Wiki slows considerable down after installing Collaboration extension
+	14991 - Add style version to css and js includes to improve (loading) performance
 
 VERSION 1.31
   FEATURES:
