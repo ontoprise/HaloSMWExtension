@@ -257,34 +257,40 @@ class Tools {
 	public static function checkPriviledges($mwrootDir) {
 		
 		// check for root/admin access
+		$errorOccured = false;
+        $result = "";
 		if (self::isWindows()) {
 			exec("fsutil", $output, $ret); // fsutil is only accessible as administrator
 			if  ($ret == 0) return true;
+            $errorOccured = true; // no admin, we require this for windows
 		} else {
 			exec('who am i', $out);
 			if (count($out) > 0 && strpos(reset($out), "root") !== false) return true; // is (most likely) root, ok
 		}
 			
 		// otherwise check relevant locations for write acess
-		$result = "";
 		$homeDir = self::getHomeDir();
 		$tmpDir = self::getTempDir();
 			
 		if (!is_writable($mwrootDir."/LocalSettings.php")) {
+			$errorOccured = true;
 			$result .= "\nCannot write to $mwrootDir/LocalSettings.php";
 		}
 		if (!is_writable($mwrootDir."/extensions")) {
+			$errorOccured = true;
 			$result .= "\nCannot write to $mwrootDir/extensions";
 		}
 		if (!is_writable($tmpDir)) {
+			$errorOccured = true;
 			$result .= "\nCannot write to $tmpDir";
 		}
 		if (!is_writable($homeDir)) {
+			$errorOccured = true;
 			$result .= "\nCannot write to $homeDir";
 		}
 
 
-		return empty($result) ? true : "\nPlease run as administrator/root or with appropriate rights:\n" . $result;
+		return !$errorOccured ? true : "\nPlease run as administrator/root or with appropriate rights.\n" . $result;
 	}
 
 	/**
