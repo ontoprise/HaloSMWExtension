@@ -10,7 +10,7 @@
         <description>
             Additional inputs for SemanticForms
         </description>
-        <helpurl>http://www.mediawiki.org/wiki/Extension:Semantic_Forms_Inputs</helpurl>
+        <helpurl>http://smwforum.ontoprise.com/smwforum/index.php/Help:Semantic_Forms_Inputs_extension</helpurl>
         <dependencies>
             <dependency from="208">semanticforms</dependency>
         </dependencies>
