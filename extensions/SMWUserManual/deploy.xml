@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <deploydescriptor>
     <global>
-        <version>103</version>
+        <version>104</version>
         <id>smwusermanual</id>
         <vendor>ontoprise GmbH</vendor>
         <maintainer>ontoprise GmbH</maintainer>
@@ -11,15 +11,16 @@
         </description>
 		<helpurl>http://smwforum.ontoprise.com/smwforum/index.php/Help:Semantic_MediaWiki_User_Manual</helpurl>
         <dependencies>
-            <dependency from="146">smwhalo</dependency>
+            <dependency from="156">smwhalo</dependency>
+            <dependency from="156">smwplus</dependency>
         </dependencies>
         <license>GPL-v2</license>
     </global>
     <codefiles>
     </codefiles>
-    <wikidumps>
-        <!-- empty -->
-    </wikidumps>
+	<wikidumps>
+		<file loc="import/smwusermanual.xml"/>
+	</wikidumps>
     <resources>
         <!-- empty -->
     </resources>
@@ -30,11 +31,6 @@
                 file="extensions/SMWUserManual/includes/SMW_UserManual.php" />
             <function name="enableSMWUserManual">
             </function>
-            <script file="maintenance/UME_setup.php" params="-o" />
-      
         </new>
-        <uninstall>
-            <script file="maintenance/UME_setup.php" params="-d" />
-        </uninstall>
     </configs>
 </deploydescriptor>
