@@ -5,11 +5,6 @@ Install instructions for the latest version of User Manual Extension are also on
 
  http://smwforum.ontoprise.com/smwforum/index.php/Help:Installing_User_Manual_Extension
  
-For the full manual of the User Manual Extension have a look at:
-
- http://smwforum.ontoprise.com/smwforum/index.php/Help:User_Manual_Extension_1.0.1
-
-
 Requirements: 
 =============
 
@@ -17,8 +12,23 @@ Requirements:
     SMWHalo 1.4.6 or higher
     ParserFunctions (optional)
 
-Installation:
-=============
+Installation with the Deployment Framework:
+===========================================
+
+When you have the Deployment Framework installed then the setup is very easy:
+
+   (1) On the server of your wiki installation open a command line window
+
+   (2) Change to the directory of your wiki installation
+       (e.g. /usr/share/mediawiki)
+
+   (3) Change to the subdirectory deployment/tools
+
+   (4) Run the command ./smwadmin.sh -i smwusermanual
+
+
+Manual Installation:
+====================
 
    (1) Unpack the zip file in the extension directory: /mediawiki_dir/extensions
 
@@ -34,7 +44,8 @@ Installation:
       /skins
 
    (2) Edit your LocalSettings.php and add the following: 
-   	   require_once("$IP/extensions/SMWUserManual/includes/SMW_UserManual.php"); enableSMWUserManual(); 
+   	   require_once("$IP/extensions/SMWUserManual/includes/SMW_UserManual.php");
+       enableSMWUserManual();
 
 	This enables the SMWUserManual in your wiki and you will see a question mark on the right tab section 
 	(Ontoskin 3) or a help link below the tab section on the right side (all other skins). 
@@ -44,48 +55,49 @@ Installation:
 Importing help articles:
 ========================
 
-Before you are able to see any help articles, you have to import these.
+On a manual installation you need to import the help articles before you are
+able to see any.
 
-   (1) Go into the maintenance directory of this extensions. There are two files:
-          - SMW_setup.php
-          - cshPages.xml 
-   (2) Execute now the following command. This will read the articles from the XML file and import 
-   	   them into your wiki: 
-   	   
-   	   php SMW_setup.php -i --file=cshPages.xml
+   (1) Change to the installation directory of your Mediawiki installation
+       (e.g. /usr/share/mediawiki)
 
-	After the import, you can find the articles in Namespace:UserManual. All articles got the properties 
-	"UME discourse state" and "UME link". 
-	
-	You can also download the latest version from the help articles 
-	from the SMW+ forum. Then run simply the following command:
+   (2) Run the following command:
+       php maintenance/importDump.php extensions/SMWUserManual/import/smwusermanual.xml
 
-	php UME_setup.php
+
+Updating help articles:
+=======================
+
+The help articles are audited in the SMW+ Forum (http://smwforum.ontoprise.com).
+We change them as new requirements come up and features change. Also user
+feedback is included.
+With the setup script in the maintenance directory you can always fetch
+a new version of all help articles that are available.
+
+   (1) Go into the maintenance directory of this extensions
+       (e.g. /usr/share/mediawiki/exentsions/SMWUserManual/maintenance)
+
+   (2) Execute the following command:
+   	   php UME_setup.php -o
+
+    This will read the articles from the SMWForum and import them into your wiki.
+
+    The setup script knows the following options:
+        no option given: fetch all help articles from the SMW+ forum and install
+                  these in your wiki.
+        -d delete all help articles from your wiki
+        -e fetch articles from the SMW+ forum and write them to a local xml file
+        -i read a local xml file and import all help articles into your wiki
+        -o overwrite must be set to overwrite existing help articles in your
+           wiki with a new version. Also use this to overwrite and existing
+           xml file when exporting the help articles
+        --file=<filename> this is needed by the -e and -i switch, when the xml
+           file is used to export or import help articles.
 
 If you do not have the Parser Functions extension installed, modify the page Template:Copyright_of_article 
-that makes use of parser functions [1] that come with this extension. 
+that makes use of extension parser functions:
+http://www.mediawiki.org/wiki/Help:Extension:ParserFunctions
 
-
-[1] http://www.mediawiki.org/wiki/Help:Extension:ParserFunctions
-
-Updating the help articles:
-===========================
-
-The help articles are audited in the SMW+ Forum. We change them as new
-requirements come up and features change. Also user feedback is included.
-With the setup script in the maintenance directory you can always fetch
-a new version of all help articles that are available. The setup script
-know the following options:
- no option given: fetch all help articles from the SMW+ forum and install
-                  these in your wiki.
- -d delete all help articles from your wiki
- -e fetch articles from the SMW+ forum and write them to a local xml file
- -i read a local xml file and import all help articles into your wiki
- -o overwrite must be set to overwrite existing help articles in your
-    wiki with a new version. Also use this to overwrite and existing
-    xml file when exporting the help articles
- --file=<filename> this is needed by the -e and -i switch, when the xml
-                   file is used to export or import help articles.
 
 Configuration for the extension:
 ================================
