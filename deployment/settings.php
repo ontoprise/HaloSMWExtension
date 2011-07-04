@@ -61,9 +61,12 @@ class DF_Config  {
 // upload directory for DF-GUI, if not set home directory or temp is used.
 //'df_uploaddir' => '',
 
-// set PHP executable if it does not exist in PATH or it has the wrong version
+// set PHP executable (only if it is not in PATH or it has the wrong version)
 // PHP 5 is required at least
 'df_php_executable' => 'php',
+	
+// set MYSQL directory (only if it is not in PATH)
+'df_mysql_dir' => '',
 	
 // do not check directory for external apps /usr/share/local/Ontoprise
 // if set to 'true' you can not install external apps like TSC 

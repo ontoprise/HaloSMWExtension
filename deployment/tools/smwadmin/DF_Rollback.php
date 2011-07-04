@@ -135,12 +135,19 @@ class Rollback {
 
 		$wgDBname = $this->getVariableValue("LocalSettings.php", "wgDBname");
 		$dfgOut->outputln("[Saving database...");
-		//print "\nmysqldump -u $wgDBadminuser --password=$wgDBadminpassword $wgDBname > ".$this->tmpDir."/$name/dump.sql";
-		exec("mysqldump -u $wgDBadminuser --password=$wgDBadminpassword $wgDBname > \"".$this->tmpDir."/$name/dump.sql\"", $out, $ret);
+		
+		$mysqlDump = "mysqldump";
+		if (array_key_exists('df_mysql_dir', DF_Config::$settings) && !empty(DF_Config::$settings['df_mysql_dir'])) {
+			$mysqlDump = DF_Config::$settings['df_mysql_dir']."/bin/mysqldump";
+		}
+		
+		$logger->info("\n\"$mysqlDump\" -u $wgDBadminuser --password=$wgDBadminpassword $wgDBname > ".$this->tmpDir."/$name/dump.sql");
+		exec("\"$mysqlDump\" -u $wgDBadminuser --password=$wgDBadminpassword $wgDBname > \"".$this->tmpDir."/$name/dump.sql\"", $out, $ret);
 		$dfgOut->output("done.]");
 		$savedDataBase = true;
 
 		if ($ret != 0) {
+			$dfgOut->outputln("Could not run myqsqldump. Skip that. Please set 'df_mysql_dir'. See log for details.");
 			$logger->error("Could not save the database.");
 		}
 		return $ret == 0;
@@ -296,10 +303,15 @@ class Rollback {
 		$dfgOut->outputln("[Restore database...");
 		$logger = Logger::getInstance();
 		$logger->info("Restore database");
-		exec("mysql -u $wgDBadminuser --password=$wgDBadminpassword --database=$wgDBname < \"".$this->tmpDir."/$name/dump.sql\"", $out, $ret);
+	    $mysqlExec = "mysql";
+        if (array_key_exists('df_mysql_dir', DF_Config::$settings) && !empty(DF_Config::$settings['df_mysql_dir'])) {
+            $mysqlExec = DF_Config::$settings['df_mysql_dir']."/bin/mysql";
+        }
+        $logger->info("\"$mysqlExec\" -u $wgDBadminuser --password=$wgDBadminpassword --database=$wgDBname < \"".$this->tmpDir."/$name/dump.sql\"");
+		exec("\"$mysqlExec\" -u $wgDBadminuser --password=$wgDBadminpassword --database=$wgDBname < \"".$this->tmpDir."/$name/dump.sql\"", $out, $ret);
 		if ($ret != 0){
 			$logger->error("Could not restore database.");
-			$dfgOut->outputln("Could not restore database.", DF_PRINTSTREAM_TYPE_ERROR);
+			$dfgOut->outputln("Could not restore database. See log for details.", DF_PRINTSTREAM_TYPE_ERROR);
 		}  else $dfgOut->output("done.]");
 		return ($ret == 0);
 	}
