@@ -46,7 +46,9 @@ class UME_FetchArticles {
                 $newTitle = preg_replace('/^Help:/', '', $o->getTitle());
                 $text = $o->getContent().
                     self::makeDiscourseStatesProperty($o->getDiscourseState()).
-                    "\n[[UME link::".$o->getLink()."| ]]";
+                    "\n[[UME link::".$o->getLink()."| ]]\n".
+                    "{{Content hash|value=}}\n".
+                    "{{Part of bundle|value=Smwusermanual}}\n";
                 self::createPage(SMW_NS_USER_MANUAL, $newTitle, $text);
             }
         }
