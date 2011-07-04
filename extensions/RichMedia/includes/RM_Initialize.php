@@ -369,12 +369,24 @@ function smwRMFormAddHTMLHeader(&$out){
 	global $smwgRMScriptPath;
 	static $rmScriptLoaded = false;
 
-	if(!$rmScriptLoaded){
-		$out->addScript('<script type="text/javascript" src="'.$smwgRMScriptPath. '/scripts/richmedia.js"></script>');
-		$out->addScript('<script type="text/javascript" src="'.$smwgRMScriptPath. '/scripts/fck_connect.js"></script>');
-		$out->addScript('<script type="text/javascript" src="'.$smwgRMScriptPath. '/scripts/richmedia_links.js"></script>');
+	$rmStyleVer = preg_replace( '/[^\d]/', '', '{{$BUILDNUMBER}}' );
+	if( strlen( $rmStyleVer ) > 0 ) {
+		$rmStyleVer = '?' . $rmStyleVer;
+	}
+	if( !$rmScriptLoaded ){
+		$out->addScript( '<script type="text/javascript" src="' . $smwgRMScriptPath .
+			'/scripts/richmedia.js' . $rmStyleVer . '"></script>'
+		);
+		$out->addScript( '<script type="text/javascript" src="' . $smwgRMScriptPath .
+			'/scripts/fck_connect.js' . $rmStyleVer . '"></script>'
+		);
+		$out->addScript( '<script type="text/javascript" src="' . $smwgRMScriptPath .
+			'/scripts/richmedia_links.js' . $rmStyleVer . '"></script>' 
+		);
 
-		$out->addStyle($smwgRMScriptPath . '/skins/richmedia.css', 'screen, projection');
+		$out->addStyle( $smwgRMScriptPath . '/skins/richmedia.css' . $rmStyleVer,
+			'screen, projection'
+		);
 
 		$rmScriptLoaded = true;
 	}
@@ -397,16 +409,18 @@ function smwfRMInitMessages() {
  */
 function smwfRMInitContentLanguage($langcode) {
 	global $smwgRMIP, $smwgRMContLang;
-	if (!empty($smwgRMContLang)) { return; }
+	if ( !empty( $smwgRMContLang ) ) {
+		return;
+	}
 
 	$smwContLangClass = 'SMW_RMLanguage' . str_replace( '-', '_', ucfirst( $langcode ) );
 
-	if (file_exists($smwgRMIP . '/languages/'. $smwContLangClass . '.php')) {
+	if( file_exists( $smwgRMIP . '/languages/' . $smwContLangClass . '.php' ) ) {
 		include_once( $smwgRMIP . '/languages/'. $smwContLangClass . '.php' );
 	}
 
 	// fallback if language not supported
-	if ( !class_exists($smwContLangClass)) {
+	if( !class_exists( $smwContLangClass ) ) {
 		include_once($smwgRMIP . '/languages/SMW_RMLanguageEn.php');
 		$smwContLangClass = 'SMW_RMLanguageEn';
 	}
@@ -421,15 +435,17 @@ function smwfRMInitUserMessages() {
 	smwfRMInitContentLanguage($wgLanguageCode);
 
 	global $smwgRMIP, $smwgRMLang;
-	if (!empty($smwgRMLang)) { return; }
+	if( !empty( $smwgRMLang ) ) {
+		return;
+	}
 	global $wgMessageCache, $wgLang;
 	$smwLangClass = 'SMW_RMLanguage' . str_replace( '-', '_', ucfirst( $wgLang->getCode() ) );
 
-	if (file_exists($smwgRMIP . '/languages/'. $smwLangClass . '.php')) {
+	if( file_exists( $smwgRMIP . '/languages/' . $smwLangClass . '.php' ) ) {
 		include_once( $smwgRMIP . '/languages/'. $smwLangClass . '.php' );
 	}
 	// fallback if language not supported
-	if ( !class_exists($smwLangClass)) {
+	if( !class_exists( $smwLangClass ) ) {
 		global $smwgRMContLang;
 		$smwgRMLang = $smwgRMContLang;
 	} else {
@@ -445,33 +461,50 @@ function smwfRMInitUserMessages() {
 function smwfRMAddJSLanguageScripts(& $jsm, $mode = "all", $namespace = -1, $pages = array()) {
 	global $wgLanguageCode, $smwgRMScriptPath, $wgUser;
 	
+	$rmStyleVer = preg_replace( '/[^\d]/', '', '{{$BUILDNUMBER}}' );
+	if( strlen( $rmStyleVer ) > 0 ) {
+		$rmStyleVer = '?' . $rmStyleVer;
+	}
+
 	// content language file
 	$lng = '/scripts/Language/SMWRM_Language';
 	
-	$jsm->addScriptIf($smwgRMScriptPath . $lng.".js", $mode, $namespace, $pages);
+	$jsm->addScriptIf( $smwgRMScriptPath . $lng . ".js", $mode, $namespace, $pages );
 	
-	if (!empty($wgLanguageCode)) {
-		$lng .= ucfirst($wgLanguageCode).'.js';
-		if (file_exists($smwgRMScriptPath . $lng)) {
-			$jsm->addScriptIf($smwgRMScriptPath . $lng, $mode, $namespace, $pages);
+	if( !empty( $wgLanguageCode ) ) {
+		$lng .= ucfirst( $wgLanguageCode ) . '.js';
+		if ( file_exists( $smwgRMScriptPath . $lng ) ) {
+			$jsm->addScriptIf( $smwgRMScriptPath . $lng . $rmStyleVer,
+				$mode, $namespace, $pages
+			);
 		} else {
-			$jsm->addScriptIf($smwgRMScriptPath . '/scripts/Language/SMWRM_LanguageEn.js', $mode, $namespace, $pages);
+			$jsm->addScriptIf( $smwgRMScriptPath . '/scripts/Language/SMW_RMLanguageEn.js' .
+				$rmStyleVer, $mode, $namespace, $pages
+			);
 		}
 	} else {
-		$jsm->addScriptIf($smwgRMScriptPath . '/scripts/Language/SMWRM_LanguageEn.js', $mode, $namespace, $pages);
+		$jsm->addScriptIf( $smwgRMScriptPath . '/scripts/Language/SMW_RMLanguageEn.js' .
+			$rmStyleVer, $mode, $namespace, $pages
+		);
 	}
 
 	// user language file
-	$lng = '/scripts/Language/SMWRM_Language';
-	if (isset($wgUser)) {
-		$lng .= "User".ucfirst($wgUser->getOption('language')).'.js';
-		if (file_exists($smwgRMScriptPath . $lng)) {
-			$jsm->addScriptIf($smwgRMScriptPath . $lng, $mode, $namespace, $pages);
+	$lng = '/scripts/Language/SMW_RMLanguage';
+	if( isset( $wgUser ) ) {
+		$lng .= "User" . ucfirst( $wgUser->getOption( 'language' ) ) . '.js';
+		if ( file_exists( $smwgRMScriptPath . $lng ) ) {
+			$jsm->addScriptIf( $smwgRMScriptPath . $lng .$rmStyleVer,
+				$mode, $namespace, $pages
+			);
 		} else {
-			$jsm->addScriptIf($smwgRMScriptPath . '/scripts/Language/SMWRM_LanguageUserEn.js', $mode, $namespace, $pages);
+			$jsm->addScriptIf( $smwgRMScriptPath . '/scripts/Language/SMW_RMLanguageUserEn.js' .
+				$rmStyleVer, $mode, $namespace, $pages
+			);
 		}
 	} else {
-		$jsm->addScriptIf($smwgRMScriptPath . '/scripts/Language/SMWRM_LanguageUserEn.js', $mode, $namespace, $pages);
+		$jsm->addScriptIf( $smwgRMScriptPath . '/scripts/Language/SMW_RMLanguageUserEn.js' .
+			$rmStyleVer, $mode, $namespace, $pages
+		);
 	}
 }
 
