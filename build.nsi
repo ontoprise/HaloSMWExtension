@@ -372,7 +372,7 @@ Section "SMW+ Setup" smwplussetup
   StrCpy $PHP "$INSTDIR\php\php.exe"
   StrCpy $MEDIAWIKIDIR "$INSTDIR\htdocs\mediawiki"
 
-  nsExec::ExecToLog '"$PHP" "$MEDIAWIKIDIR\maintenance\update.php"'
+  nsExec::ExecToLog '"$PHP" "$MEDIAWIKIDIR\maintenance\update.php --quick"'
   nsExec::ExecToLog '"$PHP" "$MEDIAWIKIDIR\extensions\SemanticMediaWiki\maintenance\SMW_setup.php"'
   nsExec::ExecToLog '"$PHP" "$MEDIAWIKIDIR\extensions\SMWHalo\maintenance\SMW_setup.php"'
   nsExec::ExecToLog '"$PHP" "$MEDIAWIKIDIR\extensions\EnhancedRetrieval\maintenance\setup.php"'
@@ -801,7 +801,7 @@ Function changeConfigForSMWPlusUpdate
     CALL checkForApacheAndMySQLAndMemcached
     ; update MediaWiki
     DetailPrint "Update MediaWiki database"
-    nsExec::ExecToLog '"$INSTDIR\php\php.exe" "$INSTDIR\htdocs\mediawiki\maintenance\update.php"'
+    nsExec::ExecToLog '"$INSTDIR\php\php.exe" "$INSTDIR\htdocs\mediawiki\maintenance\update.php --quick"'
     
     ; update SMW tables
     DetailPrint "Update SMW tables"
