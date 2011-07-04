@@ -436,14 +436,18 @@ function parseQuery($query, $page) {
  * @return string $html
  */
 function smwf_qi_getPage($args= "") {
-	global $wgServer, $wgScript, $wgLang;
+	global $wgServer, $wgScript, $wgLang, $smwgQueryInterfaceHost4Wysiwyg;
         $qiScript = $wgScript.'/'.$wgLang->getNsText(NS_SPECIAL).':QueryInterface';
 
-        // fetch the Query Interface by calling the URL http://host/wiki/index.php/Special:QueryInterface
-	// save the source code of the above URL in $page 
+    // fetch the Query Interface by calling the URL http://host/wiki/index.php/Special:QueryInterface
+	// save the source code of the above URL in $page
+    $host = (isset($smwgQueryInterfaceHost4Wysiwyg))
+        ? $smwgQueryInterfaceHost4Wysiwyg
+        : $wgServer;
+
 	$page = "";
 	if (function_exists('curl_init')) {
-		list($httpErr, $page) = doHttpRequestWithCurl($wgServer, $qiScript);
+		list($httpErr, $page) = doHttpRequestWithCurl($host, $qiScript);
 	}
 	else {
       return "Error: please activate the Curl module in your PHP configuration";
@@ -633,9 +637,16 @@ function mvDataFromPage(&$page, &$newPage, $pattern, $copy= true) {
  */
 function doHttpRequestWithCurl($server, $file, $debug = false) {
 	if ($file{0} != "/") $file = "/".$file;
+    // check if a port is give in the URL
+    if (preg_match('/.*:(\d+)$/', $server, $match)) {
+		$port= $match[1];
+		$server = substr($server, 0, 0- strlen($port) -1);
+	}
 	$c = curl_init();
 	curl_setopt($c, CURLOPT_URL, $server.$file);
 	curl_setopt($c, CURLOPT_RETURNTRANSFER, true);
+    if (isset($port))
+        curl_setopt($c, CURLOPT_PORT, $port);
     // needs authentication?	
     if (isset($_SERVER['AUTH_TYPE']) ) {
         if (isset($_SERVER['PHP_AUTH_USER']) && isset($_SERVER['PHP_AUTH_PW'])) {
@@ -651,13 +662,24 @@ function doHttpRequestWithCurl($server, $file, $debug = false) {
     // user agent (important i.e. for Popup in FCK Editor)
 	if (isset($_SERVER['HTTP_USER_AGENT']))
 		curl_setopt($c, CURLOPT_USERAGENT, $_SERVER['HTTP_USER_AGENT']);
-
+    // if the secret is set, then create some key and hash it with the secret
+    global $smwgQueryInterfaceSecret;
+    if (isset($smwgQueryInterfaceSecret)) {
+        global $wgRequest;
+        $token = $wgRequest->getText('s');
+        $hash = $wgRequest->getText('t');
+        $data= array( 's' => $token, 't' => $hash );
+        curl_setopt($c, CURLOPT_POST, true);
+        curl_setopt($c, CURLOPT_POSTFIELDS, $data);
+    }
+   
 	$page = curl_exec($c); 
 	$httpErr = curl_getinfo($c, CURLINFO_HTTP_CODE);
     if ($debug) {
         $contentType = curl_getinfo($c, CURLINFO_CONTENT_TYPE);
         $curlErr = curl_errno ( $c );
-        var_dump($httpErr, $contentType, $curlErr);
+        $calledUrl = curl_getinfo($c, CURLINFO_EFFECTIVE_URL);
+        var_dump($httpErr, $contentType, $curlErr, $calledUrl);
     }
 	curl_close($c);
 	return array($httpErr, $page);
@@ -876,4 +898,22 @@ function qiParseHttpDigest($digest) {
 		unset($needed_parts[$bits[0]]);
     }
     return $needed_parts ? false : $data;
+}
+
+// Function to create a hash key
+function qiCreateHash($token= '') {
+    global $smwgQueryInterfaceSecret;
+    if (!isset($smwgQueryInterfaceSecret))
+        return array(null, null);
+    global $smwgHaloScriptPath, $smwgHaloStyleVersion;
+    if ($token == '')
+        $token = md5(mt_rand().time().$smwgHaloScriptPath.$smwgHaloStyleVersion);
+    $hash = md5($token.$smwgQueryInterfaceSecret);
+    return array($token, $hash);
+}
+
+// Function to check the hash key
+function qiCheckHash($token, $hash) {
+    list($new_token, $new_hash) = qiCreateHash($token);
+    return ($hash == $new_hash);
 }
