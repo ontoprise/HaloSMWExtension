@@ -63,118 +63,149 @@
     <title>Category:Comment</title>
     <id>104</id>
     <revision>
-      <id>904</id>
-      <timestamp>2011-04-14T12:30:35Z</timestamp>
+      <id>2744</id>
+      <timestamp>2011-07-04T13:32:09Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
-      <text xml:space="preserve">{{Category
-|rationale=This category contains all comments created by the Collaboration Extension.
-|No automatic formedit=Yes
-}}
+      <text xml:space="preserve">{{Category}}
+ __NOTOC__  __NOEDITSECTION__
+== Information about this category ==
+[[Rationale::This category contains all comments created by the Collaboration Extension.]]
+[[Category has icon::File:Smw_plus_comment_icon_2_16x16.gif| ]]
+[[No automatic formedit::true| ]]
 {{Part of bundle|value=Collaboration}}
-{{Content hash|value=f1e103217093fed9e18a79989b7e1c72}}
-[[Category:Entity]]
-[[Category has icon::File:Smw plus comment icon 2 16x16.gif]]</text>
-    <hash>ed1d00d099c1c82cd9e869d5b0895658</hash>
+{{Content hash|value=}}</text>
+    <hash>6490c9b3ff2f120adf2050fad3f00541</hash>
     </revision>
   </page>
   <page>
     <title>Property:Has comment rating</title>
     <id>105</id>
     <revision>
-      <id>114</id>
-      <timestamp>2011-03-31T08:34:23Z</timestamp>
+      <id>2736</id>
+      <timestamp>2011-07-04T13:24:54Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
-      <text xml:space="preserve">{{Property
-|rationale=The rating value of a comment.
-}}
+      <text xml:space="preserve">{{Property}} __NOTOC__  __NOEDITSECTION__ 
+
+== Information about this property ==
+
+[[Rationale::The rating value of a comment.]]
+
+{{NoteInText|The characteristics of this property are visible in the factbox below.}}
+
 [[Category:Property]]
+
+{{Content hash|value=}} 
+
 {{Part of bundle|value=Collaboration}}
-{{Content hash|value=}}
+
 [[has domain and range::Category:Comment; | ]][[has type::Type:Number| ]] [[Allows value::1| ]] [[Allows value::0| ]] [[Allows value::-1| ]]</text>
-    <hash>ea370f9a22b4538c5f469989f6d91020</hash>
+    <hash>86a08e3062c2d893f69a2c14880d2e64</hash>
     </revision>
   </page>
   <page>
     <title>Property:Has comment date</title>
     <id>106</id>
     <revision>
-      <id>115</id>
-      <timestamp>2011-03-31T08:30:26Z</timestamp>
+      <id>2733</id>
+      <timestamp>2011-07-04T13:23:30Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
-      <text xml:space="preserve">{{Property
-|rationale=The date of a comment.
-}}
+      <text xml:space="preserve">{{Property}} __NOTOC__  __NOEDITSECTION__ 
+
+== Information about this property ==
+
+[[Rationale::The date of a comment.]]
+
+{{NoteInText|The characteristics of this property are visible in the factbox below.}}
+
 [[Category:Property]]
+
+{{Content hash|value=}} 
+
 {{Part of bundle|value=Collaboration}}
-{{Content hash|value=}}
+
 [[has domain and range::Category:Comment; | ]][[has type::Type:Date| ]]</text>
-    <hash>aaa8395f67b7cb47cfdf5d462b910921</hash>
+    <hash>80be7c6ff7794007516a2f727e41c904</hash>
     </revision>
   </page>
   <page>
     <title>Property:Has comment text</title>
     <id>107</id>
     <revision>
-      <id>116</id>
-      <timestamp>2011-03-31T08:34:50Z</timestamp>
+      <id>2737</id>
+      <timestamp>2011-07-04T13:25:22Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
-      <text xml:space="preserve">{{Property
-|rationale=Contains a comment text.
-}}
+      <text xml:space="preserve">{{Property}} __NOTOC__  __NOEDITSECTION__ 
+
+== Information about this property ==
+
+[[Rationale::Contains a comment text.]]
+
+{{NoteInText|The characteristics of this property are visible in the factbox below.}}
+
 [[Category:Property]]
+
+{{Content hash|value=}} 
+
 {{Part of bundle|value=Collaboration}}
-{{Content hash|value=}}
+
 [[has domain and range::Category:Comment; | ]][[has type::Type:Text| ]]</text>
-    <hash>ade87f3e4975a2418eec99ae13e2eb01</hash>
+    <hash>3bb02ff4761246a107d5a6a9bdbdc92f</hash>
     </revision>
   </page>
   <page>
     <title>Property:Has comment person</title>
     <id>108</id>
     <revision>
-      <id>117</id>
-      <timestamp>2011-03-31T08:33:50Z</timestamp>
+      <id>2735</id>
+      <timestamp>2011-07-04T13:24:23Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
-      <text xml:space="preserve">{{Property
-|rationale=Contains the commenting person.
-}}
+      <text xml:space="preserve">{{Property}} __NOTOC__  __NOEDITSECTION__ 
+
+== Information about this property ==
+
+[[Rationale::Contains the commenting person.]]
+
+{{NoteInText|The characteristics of this property are visible in the factbox below.}}
+
 [[Category:Property]]
+
+{{Content hash|value=}} 
+
 {{Part of bundle|value=Collaboration}}
-{{Content hash|value=}}
+
 [[has domain and range::Category:Comment; | ]][[has type::Type:String| ]]</text>
-    <hash>9e24fac3f915c3b60b8cc9bf5494ca47</hash>
+    <hash>23c7ffc586c58115fd337f8139df01ef</hash>
     </revision>
   </page>
   <page>
     <title>Template:CommentResult</title>
     <id>109</id>
     <revision>
-      <id>1408</id>
-      <timestamp>2011-06-21T14:16:58Z</timestamp>
+      <id>2750</id>
+      <timestamp>2011-07-04T13:46:11Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
-      <text xml:space="preserve">&lt;noinclude&gt;{{Template
-|rationale=Used as result printer template.
-}}
-{{Part of bundle|value=Collaboration}}
-{{Content hash|value=78a7adf5e5b60939873e0ec79f04f8f1}}
+      <text xml:space="preserve">&lt;noinclude&gt;{{Template}}
+
+[[Rationale::Used as result printer template.]]
+[[Category:Template]]
 &lt;/noinclude&gt;&lt;includeonly&gt;&lt;!-- start comment (do not change css-classes)
 --&gt;{{#vardefine:resID
 |{{PAGENAMEE:{{#ifeq: {{#pos:{{{6}}}|:}} 
@@ -207,47 +238,59 @@
 {{#if:{{{8|}}}|&lt;div class=&quot;collabComEditInfo&quot;&gt;&lt;span class=&quot;collabComEditorPre&quot;&gt;&lt;/span&gt;&lt;span class=&quot;collabComEditor&quot;&gt;{{{8|}}}&lt;/span&gt;&lt;span class=&quot;collabComEditDatePre&quot;&gt;&lt;/span&gt;&lt;span class=&quot;collabComEditDate&quot;&gt;{{{9|}}}&lt;/span&gt;&lt;/div&gt;&lt;!-- end deletion info --&gt;|}}&lt;!--
 begin attached files --&gt;{{#if:{{{10|}}}|&lt;div class=&quot;collabComResFileAttach&quot;&gt;Attached article(s): {{#arraymapce:{{{10|}}}|,|x|[[:x]]|&amp;nbsp;}}&lt;/div&gt;&lt;div class=&quot;collabComResFileAttachSaved&quot;&gt;{{{10|}}}&lt;/div&gt;|}}&lt;!-- end attached files --&gt;
 &lt;/div&gt;&lt;!-- end comment 
---&gt;&lt;/includeonly&gt;</text>
-    <hash>4fc2fff3106a82c3b43886d3e2e93851</hash>
+--&gt;&lt;/includeonly&gt;&lt;noinclude&gt;
+
+{{Part of bundle|value=Collaboration}}
+
+{{Content hash|value=}}
+
+&lt;/noinclude&gt;</text>
+    <hash>d3838ffe8d38a6b2532181209bf067f9</hash>
     </revision>
   </page>
   <page>
     <title>Property:Belongs to article</title>
     <id>110</id>
     <revision>
-      <id>119</id>
-      <timestamp>2011-03-31T08:21:47Z</timestamp>
+      <id>2738</id>
+      <timestamp>2011-07-04T13:26:42Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
-      <text xml:space="preserve">{{Property
-|rationale=Used to create a relation between comments and articles.
-}}
+      <text xml:space="preserve">{{Property}} __NOTOC__  __NOEDITSECTION__ 
+
+== Information about this property ==
+
+[[Rationale::Used to create a relation between comments and articles.]]
+
+{{NoteInText|The characteristics of this property are visible in the factbox below.}}
+
 [[Category:Property]]
+
+{{Content hash|value=}} 
+
 {{Part of bundle|value=Collaboration}}
-{{Content hash|value=}}
+
 [[has type::Type:Page| ]][[Has max cardinality::1| ]][[Has min cardinality::1| ]][[has domain and range::Category:Comment; | ]]</text>
-    <hash>cf636370aa9c03b9142ffb07d94c1b57</hash>
+    <hash>620b59b1f1ed5bc5f6415f95fa976aa6</hash>
     </revision>
   </page>
   <page>
     <title>Template:ShowCommentsIntern</title>
     <id>111</id>
     <revision>
-      <id>1410</id>
-      <timestamp>2011-06-21T14:19:04Z</timestamp>
+      <id>2758</id>
+      <timestamp>2011-07-04T13:58:12Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
-      <text xml:space="preserve">&lt;noinclude&gt;{{Template
-|rationale=Show all comments incl. form.
-}}
-{{Part of bundle|value=Collaboration}}
-{{Content hash|value=01e755447c667809898f7a6227c779dc}}
-&lt;/noinclude&gt;&lt;includeonly&gt;
-&lt;!--start surrounding div --&gt;&lt;div class=&quot;collabComInternSurround&quot;&gt;&lt;!-- start header div --&gt;&lt;div class=&quot;collabComInternHeader&quot;&gt;[[File:Comment_icon_crystal.png|text-bottom|nopreview|16px|link=]]&lt;/div&gt;&lt;!-- end header div --&gt;
+      <text xml:space="preserve">&lt;noinclude&gt;{{Template}}
+
+[[Rationale::Show all comments incl. form.]]
+[[Category:Template]]
+&lt;/noinclude&gt;&lt;includeonly&gt;&lt;!--start surrounding div --&gt;&lt;div class=&quot;collabComInternSurround&quot;&gt;&lt;!-- start header div --&gt;&lt;div class=&quot;collabComInternHeader&quot;&gt;[[File:Comment_icon_crystal.png|text-bottom|nopreview|16px|link=]]&lt;/div&gt;&lt;!-- end header div --&gt;
 {{#set:
 |Article has average rating={{#averagerating:}}
 }}
@@ -271,48 +314,70 @@ begin attached files --&gt;{{#if:{{{10|}}}|&lt;div class=&quot;collabComResFileA
   | limit=100
 }}
 &lt;/div&gt;
-&lt;/div&gt;&lt;!-- end surround div --&gt;&lt;/includeonly&gt;</text>
-    <hash>1696549addea6841b0524bcd650e7db4</hash>
+&lt;/div&gt;&lt;!-- end surround div --&gt;&lt;/includeonly&gt;&lt;noinclude&gt;
+
+{{Part of bundle|value=Collaboration}}
+
+{{Content hash|value=}}
+
+&lt;/noinclude&gt;</text>
+    <hash>9c403ad6b46d6ffd44306eab3f9d2185</hash>
     </revision>
   </page>
   <page>
     <title>Property:Comment was deleted</title>
     <id>121</id>
     <revision>
-      <id>130</id>
-      <timestamp>2011-03-31T08:29:29Z</timestamp>
+      <id>2731</id>
+      <timestamp>2011-07-04T13:20:18Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
-      <text xml:space="preserve">{{Property
-|rationale=Flag for comment deletion.
-}}
+      <text xml:space="preserve">{{Property}} __NOTOC__  __NOEDITSECTION__ 
+
+== Information about this property ==
+
+[[Rationale::Flag for comment deletion.]]
+
+{{NoteInText|The characteristics of this property are visible in the factbox below.}}
+
 [[Category:Property]]
+
+{{Content hash|value=}} 
+
 {{Part of bundle|value=Collaboration}}
-{{Content hash|value=}}
+
 [[has domain and range::Category:Comment; | ]][[has type::Type:Boolean| ]]</text>
-    <hash>d44c288bd4a7c8356a7175c871a4256f</hash>
+    <hash>8cc26b8f3f600df31c0eb8d2f982ac21</hash>
     </revision>
   </page>
   <page>
     <title>Property:Belongs to comment</title>
     <id>122</id>
     <revision>
-      <id>131</id>
-      <timestamp>2011-03-31T08:22:18Z</timestamp>
+      <id>2739</id>
+      <timestamp>2011-07-04T13:27:18Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
-      <text xml:space="preserve">{{Property
-|rationale=Used to create a relation between comments and other comments.
-}}
+      <text xml:space="preserve">{{Property}} __NOTOC__  __NOEDITSECTION__ 
+
+== Information about this property ==
+
+[[Rationale::Used to create a relation between comments and other comments.]]
+
+{{NoteInText|The characteristics of this property are visible in the factbox below.}}
+
 [[Category:Property]]
+
+{{Content hash|value=}} 
+
 {{Part of bundle|value=Collaboration}}
-{{Content hash|value=}}
+
 [[has type::Type:Page| ]][[Has max cardinality::1| ]][[Has min cardinality::1| ]][[has domain and range::Category:Comment;Category:Comment | ]]</text>
-    <hash>01938031d2d906cfa070b2fb044e7d0f</hash>
+    <hash>fa4f9ceb457c33fef4daf4b2014b28ca</hash>
     </revision>
   </page>
   <page>
@@ -394,17 +459,16 @@ begin attached files --&gt;{{#if:{{{10|}}}|&lt;div class=&quot;collabComResFileA
     <title>Template:Comment</title>
     <id>166</id>
     <revision>
-      <id>1409</id>
-      <timestamp>2011-06-21T14:17:42Z</timestamp>
+      <id>2759</id>
+      <timestamp>2011-07-04T15:10:51Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
-      <text xml:space="preserve">&lt;noinclude&gt;{{Template
-|rationale=Creates a comment.
-}}
-{{Part of bundle|value=Collaboration}}
-{{Content hash|value=4480f4670d8215f224c9c83a3c5d76dd}}
+      <text xml:space="preserve">&lt;noinclude&gt;{{Template}}
+
+[[Rationale::Creates a comment.]]
+[[Category:Template]]
 &lt;/noinclude&gt;&lt;includeonly&gt;''Comment for {{#if: {{{CommentRelatedArticle|}}} 
 | [[Belongs to article::{{{CommentRelatedArticle|}}}]] | nothing
 }}{{#if: {{{CommentRelatedComment|}}} 
@@ -440,44 +504,54 @@ begin attached files --&gt;{{#if:{{{10|}}}|&lt;div class=&quot;collabComResFileA
 &lt;!-- end comment content--&gt;&lt;/div&gt;
 [[Comment was deleted::{{{CommentWasDeleted|false}}}]]
 {{#if:{{{AttachedArticles|}}}|{{#arraymapce:{{{AttachedArticles|}}}|,|x|[[Has attached article::x]]}}|no attached articles}}
-&lt;!-- end comment --&gt;[[Category:Comment]]&lt;/includeonly&gt;</text>
-    <hash>8c6ce08c9d2d370b00341d3e2b95eaca</hash>
+&lt;!-- end comment --&gt;[[Category:Comment]]&lt;/includeonly&gt;&lt;noinclude&gt;
+
+{{Part of bundle|value=Collaboration}}
+
+{{Content hash|value=}}
+
+&lt;/noinclude&gt;</text>
+    <hash>defd61e9147dc7ccb44e3f39950241e8</hash>
     </revision>
   </page>
   <page>
     <title>Template:ShowComments</title>
     <id>167</id>
     <revision>
-      <id>176</id>
-      <timestamp>2011-03-31T08:35:15Z</timestamp>
+      <id>2755</id>
+      <timestamp>2011-07-04T13:56:02Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
-      <text xml:space="preserve">&lt;noinclude&gt;{{Template
-|rationale=Shows all comments incl. a form entry field for the given article.
-}}
+      <text xml:space="preserve">&lt;noinclude&gt;{{Template}}
+
+[[Rationale::Shows all comments incl. a form entry field for the given article.]]
+[[Category:Template]]
+&lt;/noinclude&gt;&lt;includeonly&gt;{{#ifeq:{{{show|}}}|True|{{ShowCommentsIntern}}|}}&lt;/includeonly&gt;&lt;noinclude&gt;
+
 {{Part of bundle|value=Collaboration}}
-{{Content hash|value=09f6461f4882b5496d68baa15933a29b}}
-&lt;/noinclude&gt;&lt;includeonly&gt;
-{{#ifeq:{{{show|}}}|True|{{ShowCommentsIntern}}|}}&lt;/includeonly&gt;</text>
-    <hash>8f6e54f11b580b499e607708851c571a</hash>
+
+{{Content hash|value=}}
+
+&lt;/noinclude&gt;</text>
+    <hash>38b0122f095b2e00c357ecf529a0f69f</hash>
     </revision>
   </page>
   <page>
     <title>Collaboration</title>
     <id>217</id>
     <revision>
-      <id>1412</id>
-      <timestamp>2011-06-21T14:28:49Z</timestamp>
+      <id>2729</id>
+      <timestamp>2011-07-04T13:15:41Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
-      <text xml:space="preserve">{{Content bundle
-|rationale=This content bundle features a set of basic elements that are necessary for the Collaboration extension.
-}} {{Part of bundle|value=Collaboration}} [[Vendor::ontoprise GmbH| ]] [[Ontology version::140| ]] [[Installation dir::extensions/Collaboration| ]] 
+      <text xml:space="preserve">{{Content bundle}}
+[[Rationale::This content bundle features a set of basic elements that are necessary for the Collaboration extension.| ]] {{Part of bundle|value=Collaboration}} [[Maintainer::ontoprise GmbH| ]] [[Vendor::ontoprise GmbH| ]] [[Help Url::http://smwforum.ontoprise.com/smwforum/index.php/Help:Collaboration_Extension | ]] [[Ontology version::140| ]] [[Installation dir::extensions/Collaboration| ]] 
 [[Dependency::Smwplus; 153; 153| ]][[Dependency::Richmedia; 152; 152| ]] [[License::GPL v2| ]] 
+
 ;This content bundle comprises a set of articles that are necessary to make use of the Collaboration extension.
 
 ;How to use
@@ -498,11 +572,12 @@ More information about the Collaboration extension and how to use it can be foun
 |link=subject
 |default=''none''
 |mainlabel=-
+|source=wiki
 }}
 
 [[Category:Content bundle|Content_bundle]]
 {{Content hash|value=a5b59c7c93de4673e7a007ab705bdafa}}</text>
-    <hash>5b381a9235dba23cb09f2df91f8b332d</hash>
+    <hash>0ecb5655b71c11d921842631b60d9911</hash>
     </revision>
   </page>
   <page>
@@ -642,41 +717,56 @@ More information can be found also in the [http://smwforum.ontoprise.com/smwforu
     <title>Property:Has comment editor</title>
     <id>276</id>
     <revision>
-      <id>288</id>
-      <timestamp>2011-03-31T08:31:34Z</timestamp>
+      <id>2734</id>
+      <timestamp>2011-07-04T13:23:58Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
-      <text xml:space="preserve">{{Property
-|rationale=Contains the name of the last editor.
-}}
+      <text xml:space="preserve">{{Property}} __NOTOC__  __NOEDITSECTION__ 
+
+== Information about this property ==
+
+[[Rationale::Contains the name of the last editor.]]
+
+{{NoteInText|The characteristics of this property are visible in the factbox below.}}
+
 [[Category:Property]]
+
+{{Content hash|value=}} 
+
 {{Part of bundle|value=Collaboration}}
-{{Content hash|value=}}
+
 [[has domain and range::Category:Comment; | ]][[has type::Type:String| ]]</text>
-    <hash>d3d5aeab5e5764cebab6e81473327e60</hash>
+    <hash>0b6d1b542e8459fe9b3f4e9f63cbce79</hash>
     </revision>
   </page>
   <page>
     <title>Property:Article has average rating</title>
     <id>285</id>
     <revision>
-      <id>298</id>
-      <timestamp>2011-03-31T12:48:33Z</timestamp>
+      <id>2730</id>
+      <timestamp>2011-07-04T13:18:11Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
-      <text xml:space="preserve">{{Property
-|rationale=Contains the average rating for the article.
-}}
+      <text xml:space="preserve">{{Property}} __NOTOC__  __NOEDITSECTION__ 
+
+== Information about this property ==
+
+[[Rationale::Contains the average rating for the article.]]
+
+{{NoteInText|The characteristics of this property are visible in the factbox below.}}
+
 [[Category:Property]]
+
+{{Content hash|value=}} 
+
 {{Part of bundle|value=Collaboration}}
-{{Content hash|value=}}
 
 [[has type::Type:Number| ]]</text>
-    <hash>913344dc4491cf882354be3485d17849</hash>
+    <hash>9db3cd7a1e32f29c9f743c5a8ffb5574</hash>
     </revision>
   </page>
   <page>
@@ -723,39 +813,40 @@ More information can be found also in the [http://smwforum.ontoprise.com/smwforu
     <title>Template:Show comments infobox for user</title>
     <id>484</id>
     <revision>
-      <id>882</id>
-      <timestamp>2011-04-14T11:35:22Z</timestamp>
+      <id>2754</id>
+      <timestamp>2011-07-04T13:55:06Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
-      <comment>Created page with &quot;&lt;noinclude&gt;{{Template |rationale=Wrapper template for switching the comments info box on a user page on or off. }} {{Part of bundle|value=Collaboration}} {{Content hash|value=}} ...&quot;</comment>
-      <text xml:space="preserve">&lt;noinclude&gt;{{Template
-|rationale=Wrapper template for switching the comments info box on a user page on or off.
-}}
-{{Part of bundle|value=Collaboration}}
-{{Content hash|value=}}
+      <text xml:space="preserve">&lt;noinclude&gt;{{Template}}
+
+[[Rationale::Wrapper template for switching the comments info box on a user page on or off.]]
+[[Category:Template]]
 &lt;/noinclude&gt;&lt;includeonly&gt;{{#ifeq:{{{show|}}}|True|{{Comments infobox for user}}|}}&lt;/includeonly&gt;&lt;noinclude&gt;
+
+{{Part of bundle|value=Collaboration}}
+
+{{Content hash|value=}}
+
 &lt;/noinclude&gt;</text>
-    <hash>827e9f2ec4a1b35398c11460336016a6</hash>
+    <hash>73b84088440253e08c798c913122de1f</hash>
     </revision>
   </page>
   <page>
     <title>Template:Comments infobox for user</title>
     <id>485</id>
     <revision>
-      <id>883</id>
-      <timestamp>2011-04-14T11:39:44Z</timestamp>
+      <id>2751</id>
+      <timestamp>2011-07-04T13:51:12Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
-      <comment>Created page with &quot;&lt;noinclude&gt;{{Template |rationale=Shows an infobox of the most recent comments made by a user. This template should be called on a user's page. }} {{Part of bundle|value=Collabora...&quot;</comment>
-      <text xml:space="preserve">&lt;noinclude&gt;{{Template
-|rationale=Shows an infobox of the most recent comments made by a user. This template should be called on a user's page.
-}}
-{{Part of bundle|value=Collaboration}}
-{{Content hash|value=}}
+      <text xml:space="preserve">&lt;noinclude&gt;{{Template}}
+
+[[Rationale::Shows an infobox of the most recent comments made by a user. This template should be called on a user's page.]]
+[[Category:Template]]
 &lt;/noinclude&gt;&lt;includeonly&gt;{{#vardefine:query|[[Category:Comment]] [[Has comment person::{{FULLPAGENAME}}]] [[Modification date::+]]}} {{#vardefine:resultLimit|5}} {{#vardefine:resultNumber|{{#ask: {{#var:query}} | format=count}}}} 
 
 {| cellspacing=&quot;0&quot; cellpadding=&quot;5&quot; style=&quot;border: 1px solid rgb(170, 170, 170); margin: 0pt 0pt 0.5em 1em; background: rgb(255, 255, 255) none repeat scroll 0% 0%; position: relative; border-collapse: collapse; -moz-background-clip: border; -moz-background-origin: padding; -moz-background-inline-policy: continuous; float: right; clear: right; width: 35%;&quot;
@@ -778,25 +869,29 @@ More information can be found also in the [http://smwforum.ontoprise.com/smwforu
 |-
 | colspan=&quot;2&quot; | {{#ifexpr: {{#var:resultNumber}} &gt; {{#var:resultLimit}} | &lt;small&gt;For all comments of {{FULLPAGENAME}} click [{{fullurl:Template:Comments overview|ofUser={{urlencode:{{FULLPAGENAME}}}}}} here...]&lt;/small&gt;}}
 |}&lt;/includeonly&gt;&lt;noinclude&gt;
+
+{{Part of bundle|value=Collaboration}}
+
+{{Content hash|value=}}
+
 &lt;/noinclude&gt;</text>
-    <hash>b73cde52ac8b6152ce929bce0ecd077b</hash>
+    <hash>055ed2364175853f3f087183d77d09cd</hash>
     </revision>
   </page>
   <page>
     <title>Template:Comments overview</title>
     <id>486</id>
     <revision>
-      <id>885</id>
-      <timestamp>2011-04-14T11:43:23Z</timestamp>
+      <id>2752</id>
+      <timestamp>2011-07-04T13:52:54Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
-      <text xml:space="preserve">&lt;noinclude&gt;{{Template
-|rationale=Template for displaying the latest comments of a given user specified by the argument ''ofUser''.
-}}
-{{Part of bundle|value=Collaboration}}
-{{Content hash|value=}}
+      <text xml:space="preserve">&lt;noinclude&gt;{{Template}}
+
+[[Rationale::Template for displaying the latest comments of a given user specified by the argument ''ofUser''.]]
+[[Category:Template]]
 &lt;/noinclude&gt;&lt;includeonly&gt;
 == Comments {{#if:{{#arg:ofUser|}}|made by [[{{#arg:ofUser|}}]]|}} ==
 
@@ -812,48 +907,57 @@ More information can be found also in the [http://smwforum.ontoprise.com/smwforu
   | template=CommentResult
   | link=none
   | limit=100
-}}&lt;/includeonly&gt;</text>
-    <hash>b0dffbe9d9a208ac0871ce5e6ef94eb0</hash>
+}}&lt;/includeonly&gt;&lt;noinclude&gt;
+
+{{Part of bundle|value=Collaboration}}
+
+{{Content hash|value=}}
+
+&lt;/noinclude&gt;</text>
+    <hash>0a3902e7e3eb576873ebfa065d556d61</hash>
     </revision>
   </page>
   <page>
     <title>Template:Comment row for user</title>
     <id>487</id>
     <revision>
-      <id>886</id>
-      <timestamp>2011-04-14T11:45:21Z</timestamp>
+      <id>2749</id>
+      <timestamp>2011-07-04T13:44:44Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
-      <comment>Created page with &quot;&lt;noinclude&gt;{{Template |rationale=Result template to display a comment in a table row for the comment info box. }} {{Part of bundle|value=Collaboration}} {{Content hash|value=}} &lt;...&quot;</comment>
-      <text xml:space="preserve">&lt;noinclude&gt;{{Template
-|rationale=Result template to display a comment in a table row for the comment info box.
-}}
-{{Part of bundle|value=Collaboration}}
-{{Content hash|value=}}
+      <text xml:space="preserve">&lt;noinclude&gt;{{Template}}
+
+[[Rationale::Result template to display a comment in a table row for the comment info box.]]
+[[Category:Template]]
 &lt;/noinclude&gt;&lt;includeonly&gt;{|
 |[[File:Smw_plus_comment_icon_2_16x16.gif|link={{{1|}}}]]
 | {{#ifexpr: {{#len:{{{2|}}}}} &gt; 125 | ''{{#sub:{{{2|}}}|0|125}} ...'' | ''{{{2|}}}'' }} &lt;br/&gt; &lt;!--comment rating: {{{3|}}}--&gt; &lt;small&gt;date: {{{4|}}} &lt;br/&gt; to: [[{{{5|}}}]]&lt;/small&gt;
-|}&lt;/includeonly&gt;</text>
-    <hash>34f8259179257f4c127900b24eb3bd44</hash>
+|}&lt;/includeonly&gt;&lt;noinclude&gt;
+
+{{Part of bundle|value=Collaboration}}
+
+{{Content hash|value=}}
+
+&lt;/noinclude&gt;</text>
+    <hash>f5b3c0ad56a5853ca99ca10c0785f342</hash>
     </revision>
   </page>
   <page>
     <title>Template:Best rated articles</title>
     <id>491</id>
     <revision>
-      <id>931</id>
-      <timestamp>2011-04-14T13:38:10Z</timestamp>
+      <id>2747</id>
+      <timestamp>2011-07-04T13:41:24Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
-      <text xml:space="preserve">&lt;noinclude&gt;{{Template
-|rationale=Shows an info box of the best rated comments in this wiki.
-}}
-{{Part of bundle|value=Collaboration}}
-{{Content hash|value=}}
+      <text xml:space="preserve">&lt;noinclude&gt;{{Template}}
+
+[[Rationale::Shows an info box of the best rated comments in this wiki.]]
+[[Category:Template]]
 &lt;/noinclude&gt;&lt;includeonly&gt;{{#vardefine:query|[[Article has average rating::+]]}} {{#vardefine:resultLimit|5}} {{#vardefine:resultNumber|{{#ask: {{#var:query}} | format=count}}}} 
 
 {| cellspacing=&quot;0&quot; cellpadding=&quot;5&quot; style=&quot;border: 1px solid rgb(170, 170, 170); margin: 0pt 0pt 0.5em 1em; background: rgb(255, 255, 255) none repeat scroll 0% 0%; position: relative; border-collapse: collapse; -moz-background-clip: border; -moz-background-origin: padding; -moz-background-inline-policy: continuous; float: right; clear: right; width: 35%;&quot;
@@ -872,52 +976,64 @@ More information can be found also in the [http://smwforum.ontoprise.com/smwforu
 | default=*''no article commented yet''
 }}
 |}&lt;/includeonly&gt;&lt;noinclude&gt;
+
+{{Part of bundle|value=Collaboration}}
+
+{{Content hash|value=}}
+
 &lt;/noinclude&gt;</text>
-    <hash>192d4dd413d4d10b39c0636e54697706</hash>
+    <hash>9dc82beb138cfc97409749c4b829f91c</hash>
     </revision>
   </page>
   <page>
     <title>Template:Article row for comment ratings</title>
     <id>492</id>
     <revision>
-      <id>930</id>
-      <timestamp>2011-04-14T13:38:02Z</timestamp>
+      <id>2746</id>
+      <timestamp>2011-07-04T13:40:15Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
-      <text xml:space="preserve">&lt;noinclude&gt;{{Template
-|rationale=Result template to display a row with a rated article in an info box.
-}}
-{{Part of bundle|value=Collaboration}}
-{{Content hash|value=}}
+      <text xml:space="preserve">&lt;noinclude&gt;{{Template}}
+
+[[Rationale::Result template to display a row with a rated article in an info box.]]
+[[Category:Template]]
 &lt;/noinclude&gt;&lt;includeonly&gt;{|
 | [[{{{1|}}}]]
 | with average rating: {{{2|}}}
-|}&lt;/includeonly&gt;</text>
-    <hash>f208a310fa13f2fe6e9d78b3cb5cc4c2</hash>
+|}&lt;/includeonly&gt;&lt;noinclude&gt;
+
+{{Part of bundle|value=Collaboration}}
+
+{{Content hash|value=}}
+
+&lt;/noinclude&gt;</text>
+    <hash>6cdb2bef7dc70324914aa223fd99fb3d</hash>
     </revision>
   </page>
   <page>
     <title>Template:Show best rated articles</title>
     <id>493</id>
     <revision>
-      <id>914</id>
-      <timestamp>2011-04-14T13:11:07Z</timestamp>
+      <id>2753</id>
+      <timestamp>2011-07-04T13:54:13Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
-      <minor/>
-      <comment>moved [[Template:Show best rated comments]] to [[Template:Show best rated articles]]</comment>
-      <text xml:space="preserve">&lt;noinclude&gt;{{Template
-|rationale=Wrapper template for switching the best rated articles info box on or off.
-}}
-{{Part of bundle|value=Collaboration}}
-{{Content hash|value=}}
+      <text xml:space="preserve">&lt;noinclude&gt;{{Template}}
+
+[[Rationale::Wrapper template for switching the best rated articles info box on or off.]]
+[[Category:Template]]
 &lt;/noinclude&gt;&lt;includeonly&gt;{{#ifeq:{{{show|}}}|True|{{Best rated articles}}|}}&lt;/includeonly&gt;&lt;noinclude&gt;
+
+{{Part of bundle|value=Collaboration}}
+
+{{Content hash|value=}}
+
 &lt;/noinclude&gt;</text>
-    <hash>cff630c51e0b2ce23b8ae6d378d226cf</hash>
+    <hash>f04b6d19ce41a4eae88bb9f85f9c44c6</hash>
     </revision>
   </page>
   <page>
@@ -946,22 +1062,30 @@ More information can be found also in the [http://smwforum.ontoprise.com/smwforu
     <title>Property:Has attached article</title>
     <id>651</id>
     <revision>
-      <id>1411</id>
-      <timestamp>2011-06-21T14:21:16Z</timestamp>
+      <id>2732</id>
+      <timestamp>2011-07-04T13:21:00Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
-      <comment>Created page with &quot;{{Property |rationale=An article that is attached to a comment. }} {{Part of bundle|value=Collaboration}} {{Content hash|value=}} [[Has domain and range::Category:Comment;]] [[Ha...&quot;</comment>
-      <text xml:space="preserve">{{Property
-|rationale=An article that is attached to a comment.
-}}
+      <text xml:space="preserve">{{Property}} __NOTOC__  __NOEDITSECTION__ 
+
+== Information about this property ==
+
+[[Rationale::An article that is attached to a comment.]]
+
+{{NoteInText|The characteristics of this property are visible in the factbox below.}}
+
+[[Category:Property]]
+
+{{Content hash|value=}} 
+
 {{Part of bundle|value=Collaboration}}
-{{Content hash|value=}}
+
 [[Has domain and range::Category:Comment;]]
 [[Has type::Type:Page]]
 [[Category:Property]]</text>
-    <hash>713ecf55b4b452a779d86979a5bd2960</hash>
+    <hash>01d24503212f33dea2e06a4171f717ee</hash>
     </revision>
   </page>
 </mediawiki>
