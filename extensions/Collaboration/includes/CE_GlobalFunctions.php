@@ -40,7 +40,8 @@ if ( !defined( 'MEDIAWIKI' ) ) {
  */
 function enableCollaboration() {
 	global $cegIP, $cegEnableCollaboration,  $cegEnableComment,
-	$wgExtensionMessagesFiles, $wgExtensionAliasesFiles, $wgExtensionFunctions, $wgAutoloadClasses, $wgHooks;
+		$wgExtensionMessagesFiles, $wgExtensionAliasesFiles, $wgExtensionFunctions,
+		$wgAutoloadClasses, $wgHooks;
 
 	#global $wgSpecialPages, $wgSpecialPageGroups;
 
@@ -64,7 +65,7 @@ function enableCollaboration() {
 
 	//so that other extensions know about the Collaboration-Extension
 	$cegEnableCollaboration = true;
-
+	
 	return true;
 }
 
@@ -78,8 +79,9 @@ function enableCollaboration() {
 function cefSetupExtension() {
 	wfProfileIn('cefSetupExtension');
 	global $cegIP, $wgHooks, $wgParser, $wgExtensionCredits,
-	$wgLanguageCode, $wgVersion, $wgRequest, $wgContLang,
-	$cegEnableComment, $cegEnableCurrentUsers;
+		$wgLanguageCode, $wgVersion, $wgRequest, $wgContLang,
+		$cegEnableComment, $cegEnableCurrentUsers, $wgSpecialPages,
+		$wgSpecialPageGroups;
 
 	//--- Register hooks ---
 	#global $wgHooks;
@@ -87,7 +89,6 @@ function cefSetupExtension() {
 	wfLoadExtensionMessages('Collaboration');
 
 	///// Register specials pages
-	global $wgSpecialPages, $wgSpecialPageGroups;
 	$wgSpecialPages['Collaboration'] = array('CECommentSpecial');
 
 	$spns_text = $wgContLang->getNsText(NS_SPECIAL);
@@ -117,6 +118,7 @@ function cefSetupExtension() {
 
 	### Register autocompletion icon ###
 	$wgHooks['smwhACNamespaceMappings'][] = 'cefRegisterACIcon';
+
 	wfProfileOut('cefSetupExtension');
 
 	return true;
@@ -130,7 +132,7 @@ function cefSetupExtension() {
  * @return bool: true
  */
 function cefAddNonSpecialPageHeader(&$out) {
-	global $cegScriptPath, $wgRequest,$wgContLang;
+	global $cegScriptPath, $wgRequest,$wgContLang, $smwgDeployVersion;
 
 	$spns_text = $wgContLang->getNsText(NS_SPECIAL);
 	// register AddHTMLHeader functions for special pages
@@ -141,26 +143,36 @@ function cefAddNonSpecialPageHeader(&$out) {
 //		|| ($wgRequest->getText('action', 'view') !== 'view') ) {
 //		return true;
 //	}
-	cefAddJSLanguageScripts($out);
-	global $smwgDeployVersion;
-	if ( isset( $smwgDeployVersion ) && $smwgDeployVersion === true ) {
-		$out->addScript( "<script type=\"text/javascript\" src=\"" . $cegScriptPath .
-			"/scripts/deployCollaboration.js\"></script>" );
+	$ceStyleVer = preg_replace( '/[^\d]/', '', '{{$BUILDNUMBER}}' );
+	if( strlen( $ceStyleVer ) > 0 ) {
+		$ceStyleVer = '?' . $ceStyleVer;
+	}
+	//echo "Style version: " . $ceStyleVer . "\n";
+	cefAddJSLanguageScripts( $out );
+	if( isset( $smwgDeployVersion ) && $smwgDeployVersion === true ) {
+		$out->addScript( "<script type=\"text/javascript\" src=\"" . $ceStyleVer .
+			"/scripts/deployCollaboration.js" . $ceStyleVer . "\"></script>" );
 
-		$out->addStyle( $cegScriptPath . '/skins/Comment/collaboration-comment.css',
-			'screen, projection' );
-		$out->addStyle( $cegScriptPath . '/skins/Comment/collaboration-overlay.css',
-			'screen, projection' );
+		$out->addStyle( $cegScriptPath . '/skins/Comment/collaboration-comment.css' . $ceStyleVer ,
+			'screen, projection'
+		);
+		$out->addStyle( $cegScriptPath . '/skins/Comment/collaboration-overlay.css' . $ceStyleVer ,
+			'screen, projection'
+		);
 	} else {
 		$out->addScript( "<script type=\"text/javascript\" src=\"" . $cegScriptPath .
-			"/scripts/overlay.js\"></script>" );
+			"/scripts/overlay.js" . $ceStyleVer . "\"></script>"
+		);
 		$out->addScript( "<script type=\"text/javascript\" src=\"" . $cegScriptPath .
-			"/scripts/Comment/CE_Comment.js\"></script>" );
+			"/scripts/Comment/CE_Comment.js" . $ceStyleVer . "\"></script>"
+		);
 
-		$out->addStyle( $cegScriptPath . '/skins/Comment/collaboration-comment.css',
-			'screen, projection' );
-		$out->addStyle( $cegScriptPath . '/skins/Comment/collaboration-overlay.css',
-			'screen, projection' );
+		$out->addStyle( $cegScriptPath . '/skins/Comment/collaboration-comment.css'. $ceStyleVer,
+			'screen, projection'
+		);
+		$out->addStyle( $cegScriptPath . '/skins/Comment/collaboration-overlay.css' . $ceStyleVer,
+			'screen, projection'
+		);
 	}
 	return true;
 }
@@ -174,17 +186,24 @@ function cefAddNonSpecialPageHeader(&$out) {
  */
 function cefAddSpecialPageHeader(&$out) {
 	global $smwgScriptPath, $wgTitle, $wgUser;
+
+	$ceStyleVer = preg_replace( '/[^\d]/', '', '{{$BUILDNUMBER}}' );
+	if( strlen( $ceStyleVer ) > 0 ) {
+		$ceStyleVer = '?' . $ceStyleVer;
+	}
 	//SMW_sorttableto handle table sorting
-	if ($wgTitle->getNamespace() != NS_SPECIAL) {
+	if($wgTitle->getNamespace() != NS_SPECIAL) {
 		return true;
 	} else {
-		$out->addScript("<script type=\"text/javascript\" src=\"". $smwgScriptPath .  "/skins/SMW_sorttable.js\"></script>");
+		$out->addScript("<script type=\"text/javascript\" src=\"". $smwgScriptPath . 
+			"/skins/SMW_sorttable.js" . $ceStyleVer . "\"></script>"
+		);
 		//css to format sortkeys
-		$out->addLink(array(
+		$out->addLink( array(
 			'rel'   => 'stylesheet',
 			'type'  => 'text/css',
 			'media' => 'screen, projection',
-			'href'  => $smwgScriptPath. '/skins/SMW_custom.css'
+			'href'  => $smwgScriptPath. '/skins/SMW_custom.css' . $ceStyleVer
 		));
 		return true;
 	}
@@ -201,7 +220,7 @@ function cefAddSpecialPageHeader(&$out) {
  */
 function cefInitNamespaces() {
 	global $cegCommentNamespaceIndex, $wgExtraNamespaces, $wgNamespaceAliases,
-	$wgNamespacesWithSubpages, $wgLanguageCode, $cegContLang;
+		$wgNamespacesWithSubpages, $wgLanguageCode, $cegContLang;
 
 	if (!isset($cegCommentNamespaceIndex)) {
 		$cegCommentNamespaceIndex = 700;
@@ -318,35 +337,46 @@ function cefInitUserMessages() {
 function cefAddJSLanguageScripts(&$out, $mode = "all", $namespace = -1, $pages = array()) {
 	global $wgLanguageCode, $cegIP, $cegScriptPath, $wgUser;
 
+	$ceStyleVer = preg_replace( '/[^\d]/', '', '{{$BUILDNUMBER}}' );
+	if( strlen( $ceStyleVer ) > 0 ) {
+		$ceStyleVer = '?' . $ceStyleVer;
+	}
+
 	// content language file
 	$lng = '/scripts/Language/CE_Language';
-	$out->addScript("<script type=\"text/javascript\" src=\"".$cegScriptPath.$lng.".js\"></script>");
+	$out->addScript("<script type=\"text/javascript\" src=\"".$cegScriptPath.$lng.".js" . $ceStyleVer . "\"></script>");
 	
 	if (!empty($wgLanguageCode)) {
 		$lng .= ucfirst($wgLanguageCode).'.js';
-		if (file_exists($cegIP . $lng)) {
-			$out->addScript("<script type=\"text/javascript\" src=\"".$cegScriptPath.$lng."\"></script>");
+		if( file_exists( $cegIP . $lng ) ) {
+			$out->addScript("<script type=\"text/javascript\" src=\"" . $cegScriptPath . $lng . $ceStyleVer .
+				"\"></script>"
+			);
 		} else {
 			$out->addScript("<script type=\"text/javascript\" src=\"".$cegScriptPath.
-				"/scripts/Language/CE_LanguageEn.js\"></script>");
+				"/scripts/Language/CE_LanguageEn.js" . $ceStyleVer . "\"></script>"
+			);
 		}
 	} else {
 		$out->addScript("<script type=\"text/javascript\" src=\"".$cegScriptPath.
-			"/scripts/Language/CE_LanguageEn.js\"></script>");
+			"/scripts/Language/CE_LanguageEn.js" . $ceStyleVer . "\"></script>"
+		);
 	}
 
 	// user language file
 	if (isset($wgUser)) {
 		$lng = '/scripts/Language/CE_LanguageUser'.ucfirst($wgUser->getOption('language')).'.js';
 		if (file_exists($cegIP . $lng)) {
-			$out->addScript("<script type=\"text/javascript\" src=\"".$cegScriptPath.$lng."\"></script>");
+			$out->addScript("<script type=\"text/javascript\" src=\"".$cegScriptPath.$lng.$ceStyleVer."\"></script>");
 		} else {
 			$out->addScript("<script type=\"text/javascript\" src=\"".$cegScriptPath.
-				"/scripts/Language/CE_LanguageUserEn.js\"></script>");
+				"/scripts/Language/CE_LanguageUserEn.js" . $ceStyleVer . "\"></script>"
+			);
 		}
 	} else {
 		$out->addScript("<script type=\"text/javascript\" src=\"".$cegScriptPath.
-			"/scripts/Language/CE_LanguageUserEn.js\"></script>");
+			"/scripts/Language/CE_LanguageUserEn.js" . $ceStyleVer . "\"></script>"
+		);
 	}
 	return true;
 }
