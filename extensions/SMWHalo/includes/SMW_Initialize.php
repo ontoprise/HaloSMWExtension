@@ -525,6 +525,21 @@ function smwgHaloSetupExtension() {
 	define('TF_IS_QC_CMP', 'qc_');
 	define('TF_IS_EXISTS_CMP', 'plus_');
 	define('TF_CATEGORY_KEYWORD', '__Category__');
+
+    // Check if qi is called via an curl call and if a token is set
+    if (!is_null($title) && $title->getText() == 'QueryInterface') {
+        global $smwgQueryInterfaceSecret;
+        if (isset($smwgQueryInterfaceSecret)) {
+            global $wgRequest;
+            $token = $wgRequest->getText('s');
+            $hash = $wgRequest->getText('t');
+            require_once $smwgHaloIP.'/specials/SMWQueryInterface/SMW_QIAjaxAccess.php';
+            if (!empty ($token) && !empty($hash) && qiCheckHash( $token, $hash)) {
+                global $wgWhitelistRead;
+                $wgWhitelistRead[]= MWNamespace::getCanonicalName(-1).':QueryInterface';
+            }
+        }
+    }
 	
 	return true;
 }
