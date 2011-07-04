@@ -121,9 +121,9 @@ class OntologyInstaller {
 		}
 
 		// check if ontology is already installed
-		$dfgOut->outputln("Converted: $bundleID");
+		
 		$ontologyURI = DFBundleTools::getOntologyURI($bundleID);
-		$dfgOut->outputln("Installed: $ontologyURI");
+		
 		if (!is_null($ontologyURI)) {
 			if ($outputFromOnto2mwxml->ontology_uri  == $ontologyURI) {
 				// it is an update,so remove old version first
