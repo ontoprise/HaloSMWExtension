@@ -12,8 +12,7 @@ var CREATENEWARTICLE = {
 	articleExists : false,
 	fancyBoxContent : function(){
 		return '<form action=\"\" method=\"get\">\
-			<table id=\"fancyboxTable\">\<tr>\<td colspan=\"2\" class=\"fancyboxTitleTd\">\
-		<table id=\"fancyboxTitleTable\"><tr><td id=\"titleNameTd\">Create New Article</td><td id=\"titleImgTd\"><img src=\"' + this.imgPath + 'fancy_close.png\"></td></tr></table>\
+			<table id=\"fancyboxTable\">\<tr>\<td colspan=\"2\" class=\"fancyboxTitleTd\">Create New Article</td></tr>\
 		<tr><td colspan=\"2\" class=\"userInstructionTd\"><span>Enter the name for the new article:</span></td></tr>\
 		<tr><td colspan=\"2\"><input type=\"text\" id=\"newArticleName\" class=\"articleNameInput\"/></td></tr>\
 		<tr><td id=\"articleExistTableTd\"><table id=\"articleExistTable\"><tr>\
@@ -282,6 +281,8 @@ jQuery(document).ready(function() {
 				document.location.search = jQuery.query.remove('todo');
 			},
 			'onComplete'  : function(){
+				jQuery('#fancybox-close').css('background-image','url("' + CREATENEWARTICLE.imgPath + 'fancy_close.png")').css('display', 'inline');
+				
 				var articleTitleTextBox = jQuery('#newArticleName');
 				//build list of forms and categories
 				CREATENEWARTICLE.buildListOfFormsAndCategories();

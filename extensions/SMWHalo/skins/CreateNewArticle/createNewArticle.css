@@ -33,23 +33,6 @@
 	vertical-align: top;
 }
 
-#titleImgTd{
-	text-align: right;
-}
-
-#titleImgTd img{
-	cursor: pointer;	
-}
-
-#titleNameTd{
-	width: 100%;
-	vertical-align: middle;
-}
-
-#fancyboxTitleTable{
-	margin-top: 0;
-}
-
 .userInstructionTd{
 	color: gray;
 	padding-top: 10px;	
@@ -157,4 +140,14 @@
 .whiteInputBox{
 	background-color: white;
 	border: 1px solid gray;		
+}
+
+#fancybox-close{
+	display: none;
+	background-position: -32px 0;
+    cursor: pointer;
+    position: absolute;
+    right: -15px;
+    top: -15px;
+    z-index: 1103;
 }
