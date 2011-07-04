@@ -10,20 +10,21 @@ class ASFCategoryAC {
 	/*
 	 * Get categories for which ASFs can be created.
 	 */
-	public static function getCategories($userInput, $rootCategory = '_'){
+	public static function getCategories($userInput, $maxResults = SMW_AC_MAX_RESULTS,
+			$rootCategory = '_', $queryLimit = 500){
 		
 		if($rootCategory == '_'){
-			$categoryCandidates = self::getCategoryCandidates();
+			$categoryCandidates = self::getCategoryCandidates($queryLimit);
 		} else {
 			$categoryCandidates = self::getSubCategoryCandidates($rootCategory);
 		}
 		
 		$textTitles = array();
-
+		
 		foreach($categoryCandidates as $c) {
 			if (empty($userInput) || stripos(str_replace(" ", "_", (string) $c[0]), $userInput) !== false) {
 				$textTitles[] = (string) $c[0];
-				if (count($textTitles) >= SMW_AC_MAX_RESULTS) break;
+				if (count($textTitles) >= $maxResults) break;
 			}
 		}
 		
@@ -40,7 +41,7 @@ class ASFCategoryAC {
 	/*
 	 * Get Category candidates
 	 */
-	private static function getCategoryCandidates(){
+	private static function getCategoryCandidates($queryLimit){
 		global $smwgResultFormats, $smwgHaloIP;
 		require_once "$smwgHaloIP/includes/queryprinters/SMW_QP_XML.php";
 		$smwgResultFormats['xml'] = 'SMWXMLResultPrinter';
@@ -53,7 +54,7 @@ class ASFCategoryAC {
 
 		SMWQueryProcessor::processFunctionParams($rawParams,$querystring,$params,$printouts);
 		$params['format'] = "xml";
-		$params['limit'] = 400;
+		$params['limit'] = $queryLimit;
 		$xmlResult = SMWQueryProcessor::getResultFromQueryString($querystring,$params,$printouts, SMW_OUTPUT_FILE);
 		
 		$dom = simplexml_load_string($xmlResult);

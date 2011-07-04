@@ -556,13 +556,10 @@ class ASFParserFunctions {
 					.'" class="wickEnabled" constraints="'.$cACConstraint.'"/>';
 			} else {
 				$str .= '<select size="1" name="categories" size="'.$categorySize.'">';
-				if(!defined('SMW_AC_MAX_RESULTS')){
-					define('SMW_AC_MAX_RESULTS', 500);
-				}
 				if(strlen($rootCategory) == 0){
-					$categories = ASFCategoryAC::getCategories('');
+					$categories = ASFCategoryAC::getCategories('', 500);
 				} else {
-					$categories = ASFCategoryAC::getCategories('', $rootCategory);
+					$categories = ASFCategoryAC::getCategories('', 500, $rootCategory);
 				}
 				foreach($categories as $category){
 					$str .= '<option>'.$category->getText().'</option>';
