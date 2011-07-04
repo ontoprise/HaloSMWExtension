@@ -80,6 +80,7 @@ class DF_Language_En extends DF_Language {
 	'df_webadmin_install' => 'Install',
 	'df_webadmin_deinstall' => 'Uninstall',
 	'df_webadmin_update' => 'Update',
+	'df_webadmin_checkdependency' => 'Check dependencies',
 	'df_webadmin_remove' => 'Remove file',
 	
 	'df_webadmin_statustab' => 'Status',

@@ -75,6 +75,11 @@ class DFSearchTab {
 		$html .= $dfgLang->getLanguageString('df_webadmin_action');
 		$html .= "</th>";
 		$i=0;
+		
+		$installText = $dfgLang->getLanguageString('df_webadmin_install');
+		$updateText = $dfgLang->getLanguageString('df_webadmin_update');
+		$checkDependencyText = $dfgLang->getLanguageString('df_webadmin_checkdependency');
+		
 		foreach($results as $id => $versions) {
 			$numOfVersion = count($versions);
 			$first = true;
@@ -100,8 +105,8 @@ class DFSearchTab {
 				}
 				$html .= "<td class=\"df_actions\">";
 				if (!array_key_exists($id, $localPackages)) {
-					$html .= "<input type=\"button\" class=\"df_install_button\" value=\"Install\" id=\"df_install__".$id."__$v\"></input>";
-					$html .= "<input type=\"button\" class=\"df_check_button\" value=\"Check\" id=\"df_showdependencies__".$id."__$v\"></input>";
+					$html .= "<input type=\"button\" class=\"df_install_button\" value=\"$installText\" id=\"df_install__".$id."__$v\"></input>";
+					$html .= "<input type=\"button\" class=\"df_check_button\" value=\"$checkDependencyText\" id=\"df_showdependencies__".$id."__$v\"></input>";
 				} else {
 					$dd = $localPackages[$id];
 					list($ver, $patchlevel) = explode("_", $v);
@@ -113,7 +118,7 @@ class DFSearchTab {
 
 					// mark as updateable
 					if ($dd->getVersion() < $ver || ($dd->getVersion() < $ver && $dd->getPatchlevel() < $patchlevel)) {
-						$html .= "<input type=\"button\" class=\"df_update_button_search\" value=\"Update\" id=\"df_update__".$id."__$v\"></input>";
+						$html .= "<input type=\"button\" class=\"df_update_button_search\" value=\"$updateText\" id=\"df_update__".$id."__$v\"></input>";
 					}
 
 					// downgrades are not possible
