@@ -11104,26 +11104,4 @@ Documentation License|GNU Free Documentation License]].
       </text>
     </revision>
   </page>
-  <page>
-    <title>Template:ShowComments</title>
-    <id>167</id>
-    <revision>
-      <id>176</id>
-      <timestamp>2011-03-31T08:35:15Z</timestamp>
-      <contributor>
-        <username>WikiSysop</username>
-        <id>1</id>
-      </contributor>
-      <text xml:space="preserve">&lt;noinclude&gt;{{Template
-|rationale=Shows all comments incl. a form entry field for the given article.
-}}
-{{Part of bundle|value=Collaboration}}
-{{Content hash|value=09f6461f4882b5496d68baa15933a29b}}
-&lt;/noinclude&gt;&lt;includeonly&gt;
-{{#ifeq:{{{show|}}}|True|{{ShowCommentsIntern}}|}}&lt;/includeonly&gt;
-{{Content hash|value=}}
-{{Part of bundle|value=Smwusermanual}}
-</text>
-    </revision>
-  </page>
 </mediawiki>
