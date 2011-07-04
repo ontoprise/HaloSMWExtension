@@ -396,13 +396,7 @@ function cefAddGlobalJSVariables( &$vars ) {
 	global $cegScriptPath, $cegEnableRatingForArticles, $wgParser,
 		$cegShowCommentsExpanded, $cegEnableFileAttachments,
 		$cegUseRMUploadFunc, $smwgEnableRichMedia, $cegDefaultDelimiter;
-	$ns = MWNamespace::getCanonicalName(NS_USER);
-
-	$uploadWindowPage = SpecialPage::getPage( 'UploadWindow' );
-	$uploadWindowUrl = $uploadWindowPage->getTitle()->getFullURL( 'sfDelimiter=' .
-		urlencode( $cegDefaultDelimiter ) . '&sfInputID=collabComEditFormFileAttach' .
-		'&wpIgnoreWarning=true'
-	);
+	
 	$vars['wgCEScriptPath'] = $cegScriptPath;
 	$vars['wgCEUserNS'] = $ns;
 	$vars['wgCEEnableFullDeletion'] = $cegEnableRatingForArticles;
@@ -412,7 +406,16 @@ function cefAddGlobalJSVariables( &$vars ) {
 		if( isset( $cegUseRMUploadFunc ) && $cegUseRMUploadFunc
 			&& isset( $smwgEnableRichMedia ) && $smwgEnableRichMedia )
 		{
-			$vars['wgCEEditUploadURL'] = $uploadWindowUrl;
+			$ns = MWNamespace::getCanonicalName( NS_USER );
+
+			$uploadWindowPage = SpecialPage::getPage( 'UploadWindow' );
+			if( isset( $uploadWindowPage ) ) {
+				$uploadWindowUrl = $uploadWindowPage->getTitle()->getFullURL( 'sfDelimiter=' .
+					urlencode( $cegDefaultDelimiter ) . '&sfInputID=collabComEditFormFileAttach' .
+					'&wpIgnoreWarning=true'
+				);
+				$vars['wgCEEditUploadURL'] = $uploadWindowUrl;
+			}
 		}
 	}
 
