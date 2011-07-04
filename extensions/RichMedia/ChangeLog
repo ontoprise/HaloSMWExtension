@@ -6,7 +6,7 @@ VERSION 1.5.2
   FEATURES:
 
   CHANGES:
-	* The inclusion of namespace for SF can be handled withh the setting "$smwgRMPasteNSForFiles"
+	* The inclusion of namespace for SF can be handled with the setting "$smwgRMPasteNSForFiles"
 	* Provided new patch to let Rich Media extension be compatible with SF 2.1.2
 	* Migrate upload functionality from PrototypeJS to jQuery.
 
@@ -14,6 +14,7 @@ VERSION 1.5.2
 	14956 - Wrong jQuery selector broke upload process.
 	14592 - SemanticForms uses "for ... in" loops in its JavaScript (moved patch part from RM to SF)
 	14570 - Refresh Error after installation of the richmedia extension
+	14991 - Add style version to css and js includes to improve (loading) performance
 
 
 VERSION 1.5.1
