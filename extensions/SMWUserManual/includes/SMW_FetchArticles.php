@@ -31,7 +31,7 @@ class UME_FetchArticles {
     const SMW_TEMPLATES = SMW_TEMPLATES_USED;
     const SMW_TEMPLATE_PREFIX = SMW_TEMPLATE_PREFIX;
     
-    public function installPages($overwrite) {
+    public static function installPages($overwrite) {
         self::$error = 0;
         self::$overwrite = $overwrite;
         self::installProperties($overwrite);
@@ -53,7 +53,7 @@ class UME_FetchArticles {
         self::installTemplates();
     }
     
-    public function exportPages($file, $overwrite) {
+    public static function exportPages($file, $overwrite) {
         if (!$overwrite && file_exists($file)) {
             echo wfMsg('smw_ume_export_fexists')."\n";
             return;
@@ -70,7 +70,7 @@ class UME_FetchArticles {
         fclose(self::$fp);
     }
     
-    public function importPages($file, $overwrite) {
+    public static function importPages($file, $overwrite) {
         if (!file_exists($file)) {
             echo wfMsg('smw_ume_import_fmissing')."\n";
             return;
@@ -92,7 +92,7 @@ class UME_FetchArticles {
         }
     }
 
-    private function installProperties($overwrite) {
+    private static function installProperties($overwrite) {
         self::$error = 0;
         self::$overwrite = $overwrite;
         self::createPage(SMW_NS_PROPERTY,
@@ -105,7 +105,7 @@ class UME_FetchArticles {
         );
     }
     
-    private function installTemplates() {
+    private static function installTemplates() {
         $templates = explode(',', self::SMW_TEMPLATES);
         for($i= 0; $i < count($templates); $i++) {
             $templates[$i]= self::SMW_TEMPLATE_PREFIX.':'.$templates[$i];
@@ -139,7 +139,7 @@ class UME_FetchArticles {
         }
     }
 
-    public function deletePages() {
+    public static function deletePages() {
         self::$error = 0;
         $db =& wfGetDB(DB_SLAVE);
         $page = $db->tableName('page');
@@ -156,7 +156,7 @@ class UME_FetchArticles {
         self::deletePage(SMW_NS_PROPERTY, self::PROPERTY_LINK_TITLE);
     }
     
-    private function createPage($ns, $title, $text) {
+    private static function createPage($ns, $title, $text) {
         global $wgLang;
         if (in_array($title, explode(',', SMW_SKIP_CSH_ARTICLE))) return;
         echo sprintf(wfMsg('smw_ume_create_page'),
@@ -188,7 +188,7 @@ class UME_FetchArticles {
         echo wfMsg('smw_ume_done')."\n";
     }
     
-    private function deletePage($ns, $title) {
+    private static function deletePage($ns, $title) {
         global $wgLang;
         $t = Title::makeTitle($ns, $title);
         if ($t->exists()){
@@ -202,7 +202,7 @@ class UME_FetchArticles {
         }
     }
     
-    private function getPageList() {
+    private static function getPageList() {
         $params = 'action=ajax&'.
             'rs=smwf_qi_QIAccess&'.
             'rsargs[]=getQueryResult&'.
@@ -227,7 +227,7 @@ class UME_FetchArticles {
         return $pages;
     }
 
-    private function getPages($pageList) {
+    private static function getPages($pageList) {
         $params = array(
             'action' => 'query',
             'titles' => implode('|', $pageList),
@@ -251,7 +251,7 @@ class UME_FetchArticles {
         return $myList;
     }
 
-    private function callWiki($server, $params) {
+    private static function callWiki($server, $params) {
         // remove the "http://" protocol from host name
         $host = substr($server, strpos($server, ':') + 3);
         // split server and path at the first / after the "http://"
@@ -307,7 +307,7 @@ class UME_FetchArticles {
         return $cont;
     }
     
-    private function makeDiscourseStatesProperty($dsStr) {
+    private static function makeDiscourseStatesProperty($dsStr) {
         $txt = "";
         $ds = explode(',', $dsStr);
         for ($i = 0; $i < count($ds); $i++)
