@@ -130,6 +130,7 @@ $dfgRemoveStillUsed=false;
 $dfgIncludeImages=false;
 $dfgIncludeImages=false;
 $dfgIncludeInstances=false;
+$dfgBundleID = "";
 
 $args = $_SERVER['argv'];
 array_shift($args); // remove script name
@@ -267,7 +268,10 @@ for( $arg = reset( $args ); $arg !== false; $arg = next( $args ) ) {
 	} else if ($arg == '--removestillused') {
 		$dfgRemoveStillUsed = true;
 		continue;
-	} else if ($arg == '--nocheck') {
+	} else if ($arg == '--bundleid') {
+        $dfgBundleID = next($args);
+        continue;
+    } else if ($arg == '--nocheck') {
 		// ignore
 		continue;
 	} else {
@@ -474,7 +478,7 @@ if (count($ontologiesToInstall) > 0) {
 
 		try {
 
-			$bundleID = $oInstaller->installOrUpdateOntology($filePath, false);
+			$bundleID = $oInstaller->installOrUpdateOntology($filePath, false, $dfgBundleID);
 
 			// copy ontology and create ontology bundle
 			$dfgOut->outputln( "[Creating deploy descriptor...");
