@@ -528,6 +528,7 @@ var RTE_TOGGLE_LINK = ' . RTE_TOGGLE_LINK . ';
 var RTE_POPUP = ' . RTE_POPUP . ';
 var wgCKeditorInstance = null;
 var wgCKeditorCurrentMode = "wysiwyg";
+var smwghQiLoadUrl = "'. CKeditor_MediaWiki::GetQILoadUrl() .'";
 CKEDITOR.ready=true;
 
 ';
@@ -559,6 +560,17 @@ $script .= '</script>';
 		return true;
 	}
 
+    private static function GetQILoadUrl() {
+        global $smwgQueryInterfaceSecret, $smwgHaloIP;
+        $qiUrl = '?action=ajax&rs=smwf_qi_getPage&rsargs[]=CKE';
+        if (isset($smwgQueryInterfaceSecret)) {
+            require_once $smwgHaloIP.'/specials/SMWQueryInterface/SMW_QIAjaxAccess.php';
+            list($token, $hash) = qiCreateHash();
+            return $qiUrl.'&s='.$token.'&t='. $hash;
+        }
+        return $qiUrl;
+    }
+
     public static function InitializeScripts($textfield, $newWinMsg) {
         global $wgFCKEditorHeight;
         $ckeHeight = (empty($wgFCKEditorHeight)) ? 0 : $wgFCKEditorHeight;
@@ -573,6 +585,8 @@ function FCK_sajax(func_name, args, target) {
 		}
 	);
 }
+
+// qi url tokens
 
 function onLoadCKeditor(){
 	if( !( showFCKEditor & RTE_VISIBLE ) )
