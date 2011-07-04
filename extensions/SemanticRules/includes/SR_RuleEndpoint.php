@@ -168,13 +168,17 @@ class SRRuleEndpoint {
 	/**
 	 * Serialize the given rules in several flavors: Easyreadible and stylized english.
 	 *
-	 * @param JSON $ruleTuples { ruletext : "...", ruleID: "...", native : true/false }
+	 * @param JSON $ruleTuples
+	 *              
+	 *             [ { ruletext : "...", ruleID: "...", native : true/false }, ... ]
 	 * 
 	 * @return XML serialized rules
 	 */
 	public function serializeRules($ruleTuples) {
-		for($i = 0; $i < count($ruleTuples); $i++) $ruleTuples[$i] = urlencode($ruleTuples[$i]);
-		$ruleIDs = implode("&ruletuple=",$ruleTuples);
+		$encodedRuleTuples = array();
+		$ruleTuplesObjects = json_decode($ruleTuples);
+		foreach($ruleTuplesObjects as $rt) $encodedRuleTuples[] = urlencode(json_encode($rt));
+		$ruleIDs = implode("&ruletuple=",$encodedRuleTuples);
 		global $smwgWebserviceProtocol, $smwgTripleStoreGraph;
 
 		$payload = "graph=".urlencode($smwgTripleStoreGraph)."&ruletuple=".$ruleIDs;

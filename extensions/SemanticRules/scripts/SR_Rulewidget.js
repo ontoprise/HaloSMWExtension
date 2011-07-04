@@ -32,8 +32,8 @@ SRRuleWidget.prototype = {
 	},
 	
 	renderWidgets: function() {
-		var rulelist = "";
-		var isfirst = true;
+		var rulelist = new Array();
+		
 		var pendingIndicators = new Array();
 		$$('.ruleWidget').each(function(w) { 
 			var ruleID = w.getAttribute("ruleID");
@@ -45,8 +45,8 @@ SRRuleWidget.prototype = {
 	        
 	        var o = { 'ruleID' : ruleID, 'ruletext' : ruletext, 'native':natives };
 	      
-	        rulelist += isfirst ? Object.toJSON(o) : "##"+Object.toJSON(o);
-	        if (isfirst) isfirst = false;
+	        rulelist.push(o);
+	      
 	       		    
 		});
 		
@@ -93,7 +93,7 @@ SRRuleWidget.prototype = {
 		});
 		
 		if (rulelist != '') {	sajax_do_call('srf_sr_AccessRuleEndpoint', [
-					'serializeRules', rulelist ], callbackOnRequest
+					'serializeRules', Object.toJSON(rulelist) ], callbackOnRequest
 					.bind(this));
 		}
 	},
