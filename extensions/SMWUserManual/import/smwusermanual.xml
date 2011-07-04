@@ -46,11 +46,13 @@
         <id>1</id>
       </contributor>
       <comment>Created page with &quot;{{Content bundle |rationale=This content bundle contains all help articles for the context sensitive help. It also contains some properties to determine which help article to dis...&quot;</comment>
-      <text xml:space="preserve">{{Content bundle
-|rationale=This content bundle contains all help articles for the context sensitive help. It also contains some properties to determine which help article to display. These articles are necessary for the User Manual extension.
-}} {{Part of bundle|value=Smwusermanual}} [[Vendor::Ontoprise| ]] [[Ontology version::104| ]] [[Installation dir::extensions/SMWUserManual| ]] 
+      <text xml:space="preserve">{{Content bundle}}
+[[Rationale:This content bundle contains all help articles for the context sensitive help. It also contains some properties to determine which help article to display. These articles are necessary for the User Manual extension.]]
+{{Part of bundle|value=Smwusermanual}} [[Vendor::Ontoprise| ]] [[Ontology version::104| ]] [[Installation dir::extensions/SMWUserManual| ]] 
 [[Dependency::smwhalo;156;156| ]] 
-[[Dependency::applicationprogramming;103;103| ]][[Dependency::Smwplus; 156; 156| ]] [[License::GPL v2| ]] 
+[[Dependency::applicationprogramming;103;103| ]]
+[[Dependency::Smwplus; 156; 156| ]]
+[[License::GPL v2| ]] 
 ;This content bundle comprises a set of articles that are necessary to make use of the Smwusermanual extension.
 
 ;How to use
