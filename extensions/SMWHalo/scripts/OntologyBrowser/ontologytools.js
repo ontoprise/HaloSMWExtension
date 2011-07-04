@@ -2330,17 +2330,12 @@ OBSchemaPropertySubMenu.prototype = Object
 					  }
 					},
 
-					setValidators : function() {
-					    var c = this.count+1;
+					setValidators : function() {					
 						this.titleInputValidator = new OBInputTitleValidator(
 								this.id + '_propertytitle_ontologytools',
 								gLanguage.getMessage('PROPERTY_NS_WOC'), false,
 								this);
-						this.rangeValidator = new OBInputTitleValidator(
-								'typeRange' + c + '_ontologytools',
-								gLanguage.getMessage('CATEGORY_NS_WOC'), true,
-								this);
-					
+											
 					},
 
 					/**
@@ -2373,7 +2368,6 @@ OBSchemaPropertySubMenu.prototype = Object
 
 					cancel : function() {
 						this.titleInputValidator.deregisterListeners();
-						this.rangeValidator.deregisterListeners();
 						this._cancel();
 					},
 
@@ -2440,10 +2434,6 @@ OBSchemaPropertySubMenu.prototype = Object
 					 */
 					allIsValid : function() {
 						var valid = this.titleInputValidator.isValid;
-						valid = valid && this.rangeValidator.isValid;
-						// Ignore validators for range categories
-						// instead show a hint
-
 						return valid;
 					},
 
