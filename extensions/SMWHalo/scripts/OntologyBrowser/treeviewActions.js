@@ -738,7 +738,8 @@ OBCategoryTreeActionListener.prototype = Object
 								if ($("hideInstancesButton").getAttribute(
 										"hidden") != "true") {
 									OB_instance_pendingIndicator.show();
-									dataAccess.getInstances(categoryName, 0,
+									var onlyAssertedCategories = $('assertedCategoriesSwitch').checked;
+									dataAccess.getInstances(categoryName, 0, onlyAssertedCategories,
 											callbackOnCategorySelect);
 								}
 							}
@@ -963,8 +964,9 @@ OBInstanceActionListener.prototype = {
 		}
 		// TODO: refactor this to use dataSrc
 		if (globalActionListener.activeTreeName == 'categoryTree') {
+			var onlyAssertedCategories = $('assertedCategoriesSwitch').checked;
 			dataAccess.getInstances(categoryActionListener.selectedCategory,
-					partition, this.selectPartitionCallback.bind(this));
+					partition, onlyAssertedCategories, this.selectPartitionCallback.bind(this));
 		} else if (globalActionListener.activeTreeName == 'propertyTree') {
 			dataAccess.getInstancesUsingProperty(
 					propertyActionListener.selectedProperty, partition,
@@ -978,8 +980,9 @@ OBInstanceActionListener.prototype = {
 		partition--;
 		OB_instance_pendingIndicator.show();
 		if (globalActionListener.activeTreeName == 'categoryTree') {
+			var onlyAssertedCategories = $('assertedCategoriesSwitch').checked;
 			dataAccess.getInstances(categoryActionListener.selectedCategory,
-					partition, this.selectPartitionCallback.bind(this));
+					partition, onlyAssertedCategories, this.selectPartitionCallback.bind(this));
 		} else if (globalActionListener.activeTreeName == 'propertyTree') {
 			dataAccess.getInstancesUsingProperty(
 					propertyActionListener.selectedProperty, partition,

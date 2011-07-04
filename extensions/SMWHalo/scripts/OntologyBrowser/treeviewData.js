@@ -226,9 +226,9 @@ getPropertySubTree: function (attributeID, attributeName, callBackOnAjax, callBa
 
 
 
-getInstances: function(categoryName, partition, callback) {
+getInstances: function(categoryName, partition, onlyAssertedCategories, callback) {
 	var requestMetaproperties = obAdvancedOptions.requestedMetaproperties();
-	sajax_do_call('smwf_ob_OntologyBrowserAccess', ['getInstance',categoryName+"##"+OB_partitionSize+"##"+partition+"##"+requestMetaproperties, obAdvancedOptions.getDataSource()], callback);
+	sajax_do_call('smwf_ob_OntologyBrowserAccess', ['getInstance',categoryName+"##"+OB_partitionSize+"##"+partition+"##"+onlyAssertedCategories+"##"+requestMetaproperties, obAdvancedOptions.getDataSource()], callback);
 },
 
 getProperties: function(categoryName, onlyDirect, dIndex, callback) {

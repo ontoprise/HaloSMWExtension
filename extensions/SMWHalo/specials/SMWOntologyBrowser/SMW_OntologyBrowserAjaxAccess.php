@@ -104,13 +104,19 @@ class OB_Storage {
 		// param0 : category
 		// param1 : limit
 		// param2 : partitionNum
+		// param3 : onlyDirect
 		$reqfilter = new SMWRequestOptions();
 		$reqfilter->sort = true;
 		$reqfilter->limit =  intval($p_array[1]);
 		$partitionNum = isset($p_array[2]) ? intval($p_array[2]) : 0;
 		$reqfilter->offset = $partitionNum*$reqfilter->limit;
+		$onlyAssertedCategories = $p_array[3] == 'true';
 		$cat = Title::newFromText($p_array[0], NS_CATEGORY);
+		
+		
 		$instances = smwfGetSemanticStore()->getAllInstances($cat,  $reqfilter);
+			
+		
 
 		$ts = TSNamespaces::getInstance();
 		$results = array();
@@ -126,9 +132,10 @@ class OB_Storage {
 					$instanceElement->addCategoryTreeElement($c);
 				}
 			} else {
-				if (!array_key_exists($i[0]->getPrefixedText(), $results)) {
-					$results[$i[0]->getPrefixedText()] = new InstanceListElement($i[0], NULL);
-					$results[$i[0]->getPrefixedText()]->addCategoryTreeElement(NULL);
+				$instanceTitle = is_array($i) ? reset($i) : $i;
+				if (!array_key_exists($instanceTitle->getPrefixedText(), $results)) {
+					$results[$instanceTitle->getPrefixedText()] = new InstanceListElement($instanceTitle, NULL);
+					$results[$instanceTitle->getPrefixedText()]->addCategoryTreeElement(NULL);
 				}
 			}
 		}
@@ -772,13 +779,25 @@ class OB_StorageTS extends OB_Storage {
 			$limit =  intval($p_array[1]);
 			$partition =  intval($p_array[2]);
 			$offset = $partition * $limit;
-			$metadata = isset($p_array[3]) ? $p_array[3] : false;
+			$onlyAssertedCategories = $p_array[3] == 'true';
+			$metadata = isset($p_array[4]) ? $p_array[4] : false;
 			$metadataRequest = $metadata != false ? "|metadata=$metadata" : "";
 
 			$dataSpace = $this->getDataSourceParameters();
 
 			// query
-			$response = $client->query("[[Category:$categoryName]]", "?Category|limit=$limit|offset=$offset|merge=false|sort=_X_$dataSpace$metadataRequest", $smwgTripleStoreGraph);
+			if ($onlyAssertedCategories) {
+				$allSubCategories = smwfGetSemanticStore()->getSubCategories(Title::newFromText($categoryName, NS_CATEGORY));
+				$categoryDisjuction = '';
+				foreach($allSubCategories as $sc) {
+					list($c, $isLeaf) = $sc;
+					$categoryDisjuction .= '||'.$c->getText();
+				}
+				$categoryDisjuction = substr($categoryDisjuction, 2);
+				$response = $client->query("[[Category:$categoryDisjuction]]", "?Category|limit=$limit|offset=$offset|merge=false|sort=_X_|infer=false$dataSpace$metadataRequest", $smwgTripleStoreGraph);
+			} else {
+				$response = $client->query("[[Category:$categoryName]]", "?Category|limit=$limit|offset=$offset|merge=false|sort=_X_$dataSpace$metadataRequest", $smwgTripleStoreGraph);
+			}
 
 			$categoryTitle = Title::newFromText($categoryName, NS_CATEGORY);
 			$titles = array();

@@ -147,6 +147,14 @@ $html .= <<<TEXT
 	</div>
 </div>
 TEXT;
+
+// show switch for asserted categories only when TSC is available
+$showAssertedCategoriesSwitch="";
+if(!smwfIsTripleStoreConfigured()) {
+	$showAssertedCategoriesSwitch = 'style="display:none"';
+}
+
+
 			$html .= "
 		<!-- Categore Tree hook -->	" .
 		"<div id=\"treeContainer\"><span class=\"OB-header\">	
@@ -186,7 +194,8 @@ TEXT;
 		  ".($showMenuBar ? "<span class=\"menuBar menuBarInstance\" id=\"menuBarInstance\"><a onclick=\"instanceActionListener.showSubMenu(".SMW_OB_COMMAND_INSTANCE_CREATE.")\">".wfMsg('smw_ob_cmd_createinstance')."</a> | <a onclick=\"instanceActionListener.showSubMenu(".SMW_OB_COMMAND_INSTANCE_RENAME.")\">".wfMsg('smw_ob_cmd_renameinstance')."</a> | <a onclick=\"instanceActionListener.showSubMenu(".SMW_OB_COMMAND_INSTANCE_DELETE.")\">".wfMsg('smw_ob_cmd_deleteinstance')."</a> <div id=\"instanceListMenu\"></div></span>" : "")."			
 		  <div id=\"instanceList\" class=\"instanceListColors\">
 		  </div>
-		  <span class=\"OB-filters\"><span>".wfMsg('smw_ob_filter')."</span><input type=\"text\" id=\"instanceFilter\"><button type=\"button\" name=\"filterInstances\" onclick=\"globalActionListener.filterInstances(event)\">".wfMsg('smw_ob_filter')."</button></span>
+		  <span class=\"OB-filters\"><span>".wfMsg('smw_ob_filter')."</span><input type=\"text\" id=\"instanceFilter\"><button type=\"button\" name=\"filterInstances\" onclick=\"globalActionListener.filterInstances(event)\">".wfMsg('smw_ob_filter')."</button>
+		  <div><input type=\"checkbox\" id=\"assertedCategoriesSwitch\" checked=\"true\" $showAssertedCategoriesSwitch/>".wfMsg('smw_ob_onlyAssertedCategories')."</input></div></span>
 		</div>
 			
 		<div id=\"rightArrow\" class=\"pfeil\">

@@ -169,6 +169,7 @@ Druk de rechter knop om resultaten te verkrijgen. Enkel <i>Return</i> drukken ge
 	'smw_ob_undefined_type' => '*ongedefinieerd range*',
 	'smw_ob_hideinstances' => 'Entiteiten verbergen',
     'smw_ob_onlyDirect' => 'show inherited properties',
+	'smw_ob_onlyAssertedCategories' => 'show asserted categories only',
     'smw_ob_showRange' => 'show properties with selected category as range',
 	'smw_ob_hasnumofsubcategories' => 'Aantal subcategorieën',
 	'smw_ob_hasnumofinstances' => 'Aantal entiteiten',
