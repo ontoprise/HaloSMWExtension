@@ -212,6 +212,20 @@ the FAQ section, then contact the user support list (see the Contact section).
     http://smwforum.ontoprise.com/smwforum/index.php/Help:Creating_a_new_page_1.5.3
     This feature will not be used when $lodgNEPEnabled is set in the LocalSettings.
 
+9.  $smwgQueryInterfaceHost4Wysiwyg: optional string for the hostname, default
+    is undefined. Use this option when the Query Interface cannot be opened in
+    the WYSIWYG editor. This can happen when the URL to access the wiki from
+    outside is different as when accessing the wiki from the server itself. The
+    latter is done to get the page content of the Query Interface when it's
+    openend from within the wiki itself (e.g. the WYSIWYG editor or the Semantic
+    Toolbar).
+
+10. $smwgQueryInterfaceSecret: optional string for a hash, default is undefined.
+    This option is needed when you block your wiki for anonymous reading access.
+    When opening the Query Interface inside the WYSIWYG extension the access is
+    done without sending the authentication token, therefore the access must be
+    checked by creating authentication tokens by a random string and this
+    secret, so that the Query Interface cannot be accessed as an anonymous user.
 
 === Configuring a triplestore ===
 Change the line with 'enableSMWHalo' to:
