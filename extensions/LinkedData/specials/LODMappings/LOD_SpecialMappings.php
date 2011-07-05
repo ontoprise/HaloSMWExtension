@@ -77,22 +77,22 @@ class LODMappingsPage extends SpecialPage {
     function execute($p) {
         global $wgOut;
         global $wgScript;
-        global $lodgScriptPath;
+        global $lodgScriptPath, $lodgStyleVersion;
 
         $scriptFile = $lodgScriptPath . "/scripts/LOD_SpecialMappings.js";
         SMWOutputs::requireHeadItem("LOD_SpecialMappings.js",
-                        '<script type="text/javascript" src="' . $scriptFile . '"></script>');
+                        '<script type="text/javascript" src="' . $scriptFile . $lodgStyleVersion . '"></script>');
         SMWOutputs::requireHeadItem("lod_mappings.css",
-                        '<link rel="stylesheet" type="text/css" href="' . $lodgScriptPath . '/skins/mappings.css" />');
+                        '<link rel="stylesheet" type="text/css" href="' . $lodgScriptPath . '/skins/mappings.css'.$lodgStyleVersion.'" />');
                         
 		foreach(self::$r2rEditScripts as $script) {
 	        SMWOutputs::requireHeadItem(basename($script),
-	                        '<script type="text/javascript" src="' . $lodgScriptPath . self::$r2rEditPath . '/' . $script . '"></script>');
+	                        '<script type="text/javascript" src="' . $lodgScriptPath . self::$r2rEditPath . '/' . $script . $lodgStyleVersion .'"></script>');
 		}
 
 		foreach(self::$r2rEditStyles as $style) {
 	        SMWOutputs::requireHeadItem(basename($style),
-	                       '<link rel="stylesheet" type="text/css" href="' . $lodgScriptPath . self::$r2rEditPath . '/' . $style . '"/>');
+	                       '<link rel="stylesheet" type="text/css" href="' . $lodgScriptPath . self::$r2rEditPath . '/' . $style . $lodgStyleVersion .'"/>');
 		}
 
         SMWOutputs::commitToOutputPage($wgOut);

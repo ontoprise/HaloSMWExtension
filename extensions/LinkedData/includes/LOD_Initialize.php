@@ -46,7 +46,11 @@ define('LOD_LINKEDDATA_VERSION', '{{$VERSION}} [B{{$BUILDNUMBER}}]');
 
 define('LOD_STORE_SQL', 'LODStoreSQL');
 
-
+// buildnumber index for MW to define a script's version.
+$lodgStyleVersion = preg_replace('/[^\d]/', '', '{{$BUILDNUMBER}}' );
+if (strlen($lodgStyleVersion) > 0) {
+    $lodgStyleVersion= '?'.$lodgStyleVersion;
+}
 ###
 # This is the path to your installation of LinkedData as seen on your
 # local filesystem. Used against some PHP file path issues.

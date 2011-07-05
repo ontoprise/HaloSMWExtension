@@ -122,11 +122,11 @@ abstract class LODMetaDataPrinter  {
 	 * 		the "scripts" folder of this extension.
 	 */
 	protected function addJS($script) {
-		global $lodgScriptPath;
+		global $lodgScriptPath, $lodgStyleVersion;
 		
 		$scriptFile = $lodgScriptPath . "/scripts/$script";
 		SMWOutputs::requireHeadItem($script,
-			'<script type="text/javascript" src="' . $scriptFile . '"></script>');
+			'<script type="text/javascript" src="' . $scriptFile . $lodgStyleVersion .'"></script>');
 		
 	}
 
@@ -138,11 +138,11 @@ abstract class LODMetaDataPrinter  {
 	 * 		the "skins" folder of this extension.
 	 */
 	protected function addCSS($css) {
-		global $lodgScriptPath;
+		global $lodgScriptPath, $lodgStyleVersion;
 		
 		$cssFile = $lodgScriptPath . "/skins/$css";
 		SMWOutputs::requireHeadItem($css,
-			'<link rel="stylesheet" media="screen, projection" type="text/css" href="'.$cssFile.'" />');
+			'<link rel="stylesheet" media="screen, projection" type="text/css" href="'.$cssFile.$lodgStyleVersion.'" />');
 		
 	}
 	

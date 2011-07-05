@@ -34,13 +34,13 @@ class LODSourcesPage extends SpecialPage {
 
 	function execute( $p ) {
 		global $wgOut;
-		global $lodgScriptPath;
+		global $lodgScriptPath, $lodgStyleVersion;
         
         $scriptFile = $lodgScriptPath . "/scripts/LOD_SpecialSources.js";
         SMWOutputs::requireHeadItem("LOD_SpecialSources.js",
-            '<script type="text/javascript" src="' . $scriptFile . '"></script>');
+            '<script type="text/javascript" src="' . $scriptFile . $lodgStyleVersion .'"></script>');
             SMWOutputs::requireHeadItem("lod_sources.css",
-            '<link rel="stylesheet" type="text/css" href="' . $lodgScriptPath . '/skins/sources.css" />');
+            '<link rel="stylesheet" type="text/css" href="' . $lodgScriptPath . '/skins/sources.css'.$lodgStyleVersion.'" />');
         
         SMWOutputs::commitToOutputPage( $wgOut );
 		$this->setHeaders();

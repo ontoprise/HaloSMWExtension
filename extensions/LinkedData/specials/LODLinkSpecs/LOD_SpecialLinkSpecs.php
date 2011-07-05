@@ -31,11 +31,11 @@ class LODLinkSpecsPage extends SpecialPage {
     function execute($p) {
         global $wgOut;
         global $wgScript;
-        global $lodgScriptPath;
-	global $lodgSilkServerUrl;
+        global $lodgScriptPath, $lodgStyleVersion;
+	    global $lodgSilkServerUrl;
 
         SMWOutputs::requireHeadItem("lod_linkspec.css",
-                        '<link rel="stylesheet" type="text/css" href="' . $lodgScriptPath . '/skins/linkspec.css" />');
+                        '<link rel="stylesheet" type="text/css" href="' . $lodgScriptPath . '/skins/linkspec.css'.$lodgStyleVersion.'" />');
 
         SMWOutputs::commitToOutputPage($wgOut);
         $this->setHeaders();

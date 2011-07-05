@@ -18,6 +18,12 @@ if (!defined("SMW_HALO_VERSION")) {
 	die();
 }
 
+// buildnumber index for MW to define a script's version.
+$srgStyleVersion = preg_replace('/[^\d]/', '', '{{$BUILDNUMBER}}' );
+if (strlen($srgStyleVersion) > 0) {
+    $srgStyleVersion= '?'.$srgStyleVersion;
+}
+
 global $smwgDefaultStore;
 if($smwgDefaultStore == 'SMWTripleStoreQuad') {
 	echo "Rule extension will not work with the 'SMWTripleStoreQuad' client. Please deactivate it and replace it by 'SMWTripleStore'.";
@@ -199,7 +205,7 @@ function srfSRInitUserMessages() {
  * @param $out
  */
 function srfAddJSLanguageScripts(& $out) {
-	global $srgSRIP, $wgLanguageCode, $wgUser, $wgScriptPath;
+	global $srgSRIP, $wgLanguageCode, $wgUser, $wgScriptPath, $srgStyleVersion;
 
 	// content language file
 	$lng = '/scripts/languages/SR_Language';
@@ -219,17 +225,17 @@ function srfAddJSLanguageScripts(& $out) {
 	if (isset($wgUser)) {
 		$lng .= "User".ucfirst($wgUser->getOption('language')).'.js';
 		if (file_exists($srgSRIP . $lng)) {
-			$out->addScript('<script type="text/javascript" src="'.$wgScriptPath .'/extensions/SemanticRules'. $lng .'"></script>');
+			$out->addScript('<script type="text/javascript" src="'.$wgScriptPath .'/extensions/SemanticRules'. $lng .$srgStyleVersion.'"></script>');
 		} else {
-			$out->addScript('<script type="text/javascript" src="'.$wgScriptPath .'/extensions/SemanticRules'. '/scripts/languages/SR_LanguageUserEn.js"></script>');
+			$out->addScript('<script type="text/javascript" src="'.$wgScriptPath .'/extensions/SemanticRules'. '/scripts/languages/SR_LanguageUserEn.js'.$srgStyleVersion.'"></script>');
 
 		}
 	} else {
-		$out->addScript('<script type="text/javascript" src="'.$wgScriptPath .'/extensions/SemanticRules'. '/scripts/languages/SR_LanguageUserEn.js"></script>');
+		$out->addScript('<script type="text/javascript" src="'.$wgScriptPath .'/extensions/SemanticRules'. '/scripts/languages/SR_LanguageUserEn.js'.$srgStyleVersion.'"></script>');
 	}
 
 	// base language script
-	$out->addScript('<script type="text/javascript" src="'.$wgScriptPath .'/extensions/SemanticRules'. '/scripts/languages/SR_Language.js"></script>');
+	$out->addScript('<script type="text/javascript" src="'.$wgScriptPath .'/extensions/SemanticRules'. '/scripts/languages/SR_Language.js'.$srgStyleVersion.'"></script>');
 }
 
 /**
@@ -239,7 +245,7 @@ function srfAddJSLanguageScripts(& $out) {
  * @return boolean (MW hook)
  */
 function srfAddHTMLHeader(& $out) {
-	global $srgSRIP, $wgScriptPath, $smwgEnableObjectLogicRules, $wgRequest, $wgTitle;
+	global $srgSRIP, $wgScriptPath, $smwgEnableObjectLogicRules, $wgRequest, $wgTitle, $srgStyleVersion;
 
 	
 
@@ -247,24 +253,24 @@ function srfAddHTMLHeader(& $out) {
 	if (isset($smwgDeployVersion) && $smwgDeployVersion === true) {
 		srfAddJSLanguageScripts($out);
 		$out->addLink(array('rel'   => 'stylesheet','type'  => 'text/css',
-                        'media' => 'screen, projection','href'  => $wgScriptPath . '/extensions/SemanticRules/skins/rules.css'));
+                        'media' => 'screen, projection','href'  => $wgScriptPath . '/extensions/SemanticRules/skins/rules.css'.$srgStyleVersion));
         $out->addLink(array('rel'   => 'stylesheet','type'  => 'text/css',
-                        'media' => 'screen, projection','href'  => $wgScriptPath . '/extensions/SemanticRules/skins/prettyPrinterForRules.css'));
+                        'media' => 'screen, projection','href'  => $wgScriptPath . '/extensions/SemanticRules/skins/prettyPrinterForRules.css'.$srgStyleVersion));
 		
 
 		$rulesEnabled = isset($smwgEnableObjectLogicRules)
 		? (($smwgEnableObjectLogicRules) ? 'true' : 'false')
 		: 'false';
 		$out->addScript('<script type= "text/javascript">var smwgEnableFlogicRules='.$rulesEnabled.';</script>'."\n");
-		$out->addScript('<script type="text/javascript" src="'.$wgScriptPath . '/extensions/SemanticRules/scripts/deployRulescripts.js"></script>');
+		$out->addScript('<script type="text/javascript" src="'.$wgScriptPath . '/extensions/SemanticRules/scripts/deployRulescripts.js'.$srgStyleVersion.'"></script>');
 	} else {
         // load these two on every page
 		srfAddJSLanguageScripts($out);
-		$out->addScript('<script type="text/javascript" src="'.$wgScriptPath . '/extensions/SemanticRules/scripts/SR_Rulewidget.js"></script>');
+		$out->addScript('<script type="text/javascript" src="'.$wgScriptPath . '/extensions/SemanticRules/scripts/SR_Rulewidget.js'.$srgStyleVersion.'"></script>');
 		$out->addLink(array('rel'   => 'stylesheet','type'  => 'text/css',
-                        'media' => 'screen, projection','href'  => $wgScriptPath . '/extensions/SemanticRules/skins/rules.css'));
+                        'media' => 'screen, projection','href'  => $wgScriptPath . '/extensions/SemanticRules/skins/rules.css'.$srgStyleVersion));
         $out->addLink(array('rel'   => 'stylesheet','type'  => 'text/css',
-                        'media' => 'screen, projection','href'  => $wgScriptPath . '/extensions/SemanticRules/skins/prettyPrinterForRules.css'));
+                        'media' => 'screen, projection','href'  => $wgScriptPath . '/extensions/SemanticRules/skins/prettyPrinterForRules.css'.$srgStyleVersion));
         
 		$SF = ($wgTitle->getNamespace() == -1 &&
 		in_array($wgTitle->getBasetext(), array("AddData", "EditData")));
@@ -278,10 +284,10 @@ function srfAddHTMLHeader(& $out) {
 		$out->addScript('<script type= "text/javascript">var smwgEnableFlogicRules='.$rulesEnabled.';</script>'."\n");
 
 
-		$out->addScript('<script type="text/javascript" src="'.$wgScriptPath . '/extensions/SemanticRules/scripts/SR_Rule.js"></script>');
-		$out->addScript('<script type="text/javascript" src="'.$wgScriptPath . '/extensions/SemanticRules/scripts/SR_CategoryRule.js"></script>');
-		$out->addScript('<script type="text/javascript" src="'.$wgScriptPath . '/extensions/SemanticRules/scripts/SR_CalculationRule.js"></script>');
-		$out->addScript('<script type="text/javascript" src="'.$wgScriptPath . '/extensions/SemanticRules/scripts/SR_PropertyChain.js"></script>');
+		$out->addScript('<script type="text/javascript" src="'.$wgScriptPath . '/extensions/SemanticRules/scripts/SR_Rule.js'.$srgStyleVersion.'"></script>');
+		$out->addScript('<script type="text/javascript" src="'.$wgScriptPath . '/extensions/SemanticRules/scripts/SR_CategoryRule.js'.$srgStyleVersion.'"></script>');
+		$out->addScript('<script type="text/javascript" src="'.$wgScriptPath . '/extensions/SemanticRules/scripts/SR_CalculationRule.js'.$srgStyleVersion.'"></script>');
+		$out->addScript('<script type="text/javascript" src="'.$wgScriptPath . '/extensions/SemanticRules/scripts/SR_PropertyChain.js'.$srgStyleVersion.'"></script>');
 	}
 
 	return true;

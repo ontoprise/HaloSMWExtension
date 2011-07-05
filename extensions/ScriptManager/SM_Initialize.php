@@ -29,6 +29,12 @@ if ( !defined( 'MEDIAWIKI' ) ) {
 
 define('SCM_VERSION', '{{$VERSION}} [B{{$BUILDNUMBER}}]');
 
+// buildnumber index for MW to define a script's version.
+$smgStyleVersion = preg_replace('/[^\d]/', '', '{{$BUILDNUMBER}}' );
+if (strlen($smgStyleVersion) > 0) {
+    $smgStyleVersion= '?'.$smgStyleVersion;
+}
+
 global $wgExtensionFunctions, $wgScriptPath;;
 $smgSMPath = $wgScriptPath . '/extensions/ScriptManager';
 
@@ -47,7 +53,7 @@ function smgSetupExtension() {
 }
 
 function smfAddHTMLHeader(& $out) {
-	global $smgJSLibs, $smgSMPath, $smwgDeployVersion;
+	global $smgJSLibs, $smgSMPath, $smwgDeployVersion, $smgStyleVersion;
     static $outputSend;
     if (isset($outputSend) || !is_array($smgJSLibs)) return true;
 	$smgJSLibs = array_unique($smgJSLibs);
@@ -56,7 +62,7 @@ function smfAddHTMLHeader(& $out) {
 
 		switch($lib_id) {
 			case 'prototype':
-				$out->addScript("<script type=\"text/javascript\" src=\"". "$smgSMPath/scripts/prototype.js\" id=\"Prototype_script_inclusion\"></script>");
+				$out->addScript("<script type=\"text/javascript\" src=\"". "$smgSMPath/scripts/prototype.js$smgStyleVersion\" id=\"Prototype_script_inclusion\"></script>");
 				break;
 			case 'jquery':
 				if ( method_exists( 'OutputPage', 'includeJQuery' ) ) {
@@ -64,31 +70,31 @@ function smfAddHTMLHeader(& $out) {
 					//make it not conflicting with other libraries like prototype
 					$out->addScript("<script type=\"text/javascript\">var \$jq = jQuery.noConflict();</script>");
 				} else {
-					$out->addScript("<script type=\"text/javascript\" src=\"". "$smgSMPath/scripts/jquery.js\"></script>");
+					$out->addScript("<script type=\"text/javascript\" src=\"". "$smgSMPath/scripts/jquery.js$smgStyleVersion\"></script>");
 					global $smwgJQueryIncluded;
 					$smwgJQueryIncluded = true;
 				}
 				break;
 			case 'qtip':
 					if (isset($smwgDeployVersion) && $smwgDeployVersion !== false)
-					$out->addScript("<script type=\"text/javascript\" src=\"". "$smgSMPath/scripts/qTip/jquery.qtip-1.0.0-rc3.min.js\"></script>");
+					$out->addScript("<script type=\"text/javascript\" src=\"". "$smgSMPath/scripts/qTip/jquery.qtip-1.0.0-rc3.min.js$smgStyleVersion\"></script>");
                 else
-					$out->addScript("<script type=\"text/javascript\" src=\"". "$smgSMPath/scripts/qTip/jquery.qtip-1.0.0-rc3.js\"></script>");
+					$out->addScript("<script type=\"text/javascript\" src=\"". "$smgSMPath/scripts/qTip/jquery.qtip-1.0.0-rc3.js$smgStyleVersion\"></script>");
 				break;
 			case 'json':
                 if (isset($smwgDeployVersion) && $smwgDeployVersion !== false)
-					$out->addScript("<script type=\"text/javascript\" src=\"". "$smgSMPath/scripts/json2.min.js\"></script>");
+					$out->addScript("<script type=\"text/javascript\" src=\"". "$smgSMPath/scripts/json2.min.js$smgStyleVersion\"></script>");
                 else
-					$out->addScript("<script type=\"text/javascript\" src=\"". "$smgSMPath/scripts/json2.js\"></script>");
+					$out->addScript("<script type=\"text/javascript\" src=\"". "$smgSMPath/scripts/json2.js$smgStyleVersion\"></script>");
 				break;
 			case 'fancybox':
-				$out->addScript("<script type=\"text/javascript\" src=\"". "$smgSMPath/scripts/fancybox/jquery.fancybox-1.3.1.js\"></script>");
-				$out->addStyle($smgSMPath."/scripts/fancybox/jquery.fancybox-1.3.1.css", 'screen, projection');
+				$out->addScript("<script type=\"text/javascript\" src=\"". "$smgSMPath/scripts/fancybox/jquery.fancybox-1.3.1.js$smgStyleVersion\"></script>");
+				$out->addStyle($smgSMPath."/scripts/fancybox/jquery.fancybox-1.3.1.css$smgStyleVersion", 'screen, projection');
 				break;
 			case 'ext':
-				$out->addLink($smgSMPath.'/scripts/extjs/resources/css/ext-all.css', 'screen, projection');
-				$out->addScript('<script type="text/javascript" src="' . $smgSMPath . '/scripts/extjs/adapter/ext/ext-base.js"></script>');
-				$out->addScript('<script type="text/javascript" src="' . $smgSMPath . '/scripts/extjs/ext-all.js"></script>');
+				$out->addLink($smgSMPath.'/scripts/extjs/resources/css/ext-all.css'.$smgStyleVersion, 'screen, projection');
+				$out->addScript('<script type="text/javascript" src="' . $smgSMPath . '/scripts/extjs/adapter/ext/ext-base.js'.$smgStyleVersion.'"></script>');
+				$out->addScript('<script type="text/javascript" src="' . $smgSMPath . '/scripts/extjs/ext-all.js'.$smgStyleVersion.'"></script>');
 				break;
 						
 		}
@@ -236,6 +242,9 @@ function smfMergeHeadScripts( $scripts ) {
 		'yui' => false,
 		'extjs' => false
 	);
+	
+	global $smgStyleVersion;
+	$smgStyleVersionQuoted = preg_quote($smgStyleVersion);
 	foreach ( $sc as $s ) {
 		// test if current script piece is in common script src pattern, <script ... src="JS_FILE" ... >
 		if ( preg_match( '/\<\s*script\b[^\>]+\bsrc\s*=\s*[\'"]([^\'"]*)[\'"][^\>]*\>/i', $s, $script, PREG_OFFSET_CAPTURE ) )
@@ -247,13 +256,13 @@ function smfMergeHeadScripts( $scripts ) {
 			$start = strrpos( $script[1][0], '/' );
 			$key = substr( $script[1][0], ($start === false ? -1 : $start) + 1 );
 			// judge common js frameworks with filename patterns
-			if ( preg_match( '/^jquery(-[\d]+(\.[\d]+)*)?(\.min)?\.js\b/i', $key ) ) {
+			if ( preg_match( '/^jquery(-[\d]+(\.[\d]+)*)?(\.min)?\.js'.$smgStyleVersionQuoted.'\b/i', $key ) ) {
 				// jquery, jquery.js / jquery-1.3.2.js / jquery-1.3.2.min.js / jquery.min.js
 				$js_frameworks['jquery'] = true;
-			} else if ( preg_match( '/\bjquery-ui(-[\d]+(\.[\d]+)*)?(\.min)?\.js\b/i', $key ) ) {
+			} else if ( preg_match( '/\bjquery-ui(-[\d]+(\.[\d]+)*)?(\.min)?\.js'.$smgStyleVersionQuoted.'\b/i', $key ) ) {
 				// jquery-ui.js / jquery-ui-1.7.2.js / jquery-ui-1.7.2.min.js
 				$js_frameworks['jqueryui'] = true;
-			} else if ( preg_match( '/\bjquery.fancybox(-[\d]+(\.[\d]+)*)?(\.min)?\.js\b/i', $key ) ) {
+			} else if ( preg_match( '/\bjquery.fancybox(-[\d]+(\.[\d]+)*)?(\.min)?\.js'.$smgStyleVersionQuoted.'\b/i', $key ) ) {
 				// jquery's fancybox plugin
 				if( $js_frameworks['jquery'] ) {
 					// jquery has to be included before
@@ -262,10 +271,10 @@ function smfMergeHeadScripts( $scripts ) {
 					// otherwise, just append js piece
 					$newscript .= $s . '</script>';
 				}
-			} else if ( preg_match( '/\bprototype(-[\d]+(\.[\d]+)*)?(\.min)?\.js\b/i', $key ) ) {
+			} else if ( preg_match( '/\bprototype(-[\d]+(\.[\d]+)*)?(\.min)?\.js'.$smgStyleVersionQuoted.'\b/i', $key ) ) {
 				// prototype, prototype.js / prototype-1.6.0.js / prototype-1.6.0.min.js
 				$js_frameworks['prototype'] = true;
-			} else if ( preg_match( '/\bext-[^\.]+\.js\b/i', $key ) ) {
+			} else if ( preg_match( '/\bext-[^\.]+\.js'.$smgStyleVersionQuoted.'\b/i', $key ) ) {
 				// extjs, ext-all.js / ext-base.js / ext-jquery-adapter.js / ...
 				$js_frameworks['extjs'] = true;
 			} else {
@@ -287,33 +296,33 @@ function smfMergeHeadScripts( $scripts ) {
 	$frameworks = '';
 	if ( $js_frameworks['jquery'] ) {
 		// jquery with noConflict flag
-		$frameworks .= "<script type=\"{$wgJsMimeType}\" src=\"{$smgSMPath}/scripts/jquery-1.3.2.min.js\"></script>\n";
+		$frameworks .= "<script type=\"{$wgJsMimeType}\" src=\"{$smgSMPath}/scripts/jquery-1.3.2.min.js$smgStyleVersion\"></script>\n";
 		$frameworks .= "<script type=\"{$wgJsMimeType}\">jQuery.noConflict();jQuery.noConflict=function( deep ) {return jQuery;};</script>\n";
 	}
 	if ( $js_frameworks['jqueryui'] ) {
 		// jquery ui
-		$frameworks .= "<script type=\"{$wgJsMimeType}\" src=\"{$smgSMPath}/scripts/jquery-ui-1.7.2.custom.min.js\"></script>\n";
+		$frameworks .= "<script type=\"{$wgJsMimeType}\" src=\"{$smgSMPath}/scripts/jquery-ui-1.7.2.custom.min.js$smgStyleVersion\"></script>\n";
 	}
 	if ( $js_frameworks['jqueryfancybox'] ) {
 		// jQuery's fancybox plugin
-		$frameworks .= "<script type=\"{$wgJsMimeType}\" src=\"{$smgSMPath}/scripts/fancybox/jquery.fancybox-1.3.1.js\"></script>\n";
+		$frameworks .= "<script type=\"{$wgJsMimeType}\" src=\"{$smgSMPath}/scripts/fancybox/jquery.fancybox-1.3.1.js$smgStyleVersion\"></script>\n";
 	}
 	if ( $js_frameworks['prototype'] ) {
 		// prototype
-		$frameworks .= "<script type=\"{$wgJsMimeType}\" src=\"{$smgSMPath}/scripts/prototype.js\"></script>\n";
+		$frameworks .= "<script type=\"{$wgJsMimeType}\" src=\"{$smgSMPath}/scripts/prototype.js$smgStyleVersion\"></script>\n";
 	}
 	if ( $js_frameworks['extjs'] ) {
 		// extjs with multiple adapter
 		if ( $js_frameworks['prototype'] ) {
-			$frameworks .= "<script type=\"{$wgJsMimeType}\" src=\"{$smgSMPath}/scripts/extjs/adapter/prototype/ext-prototype-adapter.js\"></script>\n";
+			$frameworks .= "<script type=\"{$wgJsMimeType}\" src=\"{$smgSMPath}/scripts/extjs/adapter/prototype/ext-prototype-adapter.js$smgStyleVersion\"></script>\n";
 		} else if ( $js_frameworks['yui'] ) {
-			$frameworks .= "<script type=\"{$wgJsMimeType}\" src=\"{$smgSMPath}/scripts/extjs/adapter/yui/ext-yui-adapter.js\"></script>\n";
+			$frameworks .= "<script type=\"{$wgJsMimeType}\" src=\"{$smgSMPath}/scripts/extjs/adapter/yui/ext-yui-adapter.js$smgStyleVersion\"></script>\n";
 		} else if ( $js_frameworks['jquery'] ) {
-			$frameworks .= "<script type=\"{$wgJsMimeType}\" src=\"{$smgSMPath}/scripts/extjs/adapter/jquery/ext-jquery-adapter.js\"></script>\n";
+			$frameworks .= "<script type=\"{$wgJsMimeType}\" src=\"{$smgSMPath}/scripts/extjs/adapter/jquery/ext-jquery-adapter.js$smgStyleVersion\"></script>\n";
 		} else {
-			$frameworks .= "<script type=\"{$wgJsMimeType}\" src=\"{$smgSMPath}/scripts/extjs/adapter/ext/ext-base.js\"></script>\n";
+			$frameworks .= "<script type=\"{$wgJsMimeType}\" src=\"{$smgSMPath}/scripts/extjs/adapter/ext/ext-base.js$smgStyleVersion\"></script>\n";
 		}
-		$frameworks .= "<script type=\"{$wgJsMimeType}\" src=\"{$smgSMPath}/scripts/extjs/ext-all.js\"></script>\n";
+		$frameworks .= "<script type=\"{$wgJsMimeType}\" src=\"{$smgSMPath}/scripts/extjs/ext-all.js$smgStyleVersion\"></script>\n";
 	}
 	// add js framework to top
 	return $frameworks . $newscript;

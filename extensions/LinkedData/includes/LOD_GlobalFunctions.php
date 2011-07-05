@@ -370,17 +370,17 @@ function lodfSetupRating() {
     $wgHooks['ArticleSave'][] 			  = 'LODRatingAccess::onArticleSave';
     $wgHooks['BeforePageDisplay'][]		  =	'lodfOnBeforePageDisplayRating';
     
-	global $lodgScriptPath;
+	global $lodgScriptPath, $lodgStyleVersion;
 		
 	$css = "rating.css";
 	$cssFile = $lodgScriptPath . "/skins/$css";
 	SMWOutputs::requireHeadItem($css,
-			'<link rel="stylesheet" media="screen, projection" type="text/css" href="'.$cssFile.'" />');
+			'<link rel="stylesheet" media="screen, projection" type="text/css" href="'.$cssFile.$lodgStyleVersion.'" />');
 	
 	$script = "LOD_Rating.js";
 	$scriptFile = $lodgScriptPath . "/scripts/$script";
 	SMWOutputs::requireHeadItem($script,
-			'<script type="text/javascript" src="' . $scriptFile . '"></script>');
+			'<script type="text/javascript" src="' . $scriptFile . $lodgStyleVersion . '"></script>');
 	
 }
 
@@ -392,12 +392,12 @@ function lodfSetupRating() {
  */
 function lodfOnBeforePageDisplayRating(& $out) {
 	// Include scripts for OntologyBrowser
-	global $lodgScriptPath;
+	global $lodgScriptPath, $lodgStyleVersion;
 	$t = $out->getTitle();
 	if ($t->getNamespace() == NS_SPECIAL && $t->getDBkey() == 'OntologyBrowser') {
 		$script = "LOD_Rating.js";
 		$scriptFile = $lodgScriptPath . "/scripts/$script";
-		$out->addScript('<script type="text/javascript" src="' . $scriptFile . '"></script>');
+		$out->addScript('<script type="text/javascript" src="' . $scriptFile . $lodgStyleVersion . '"></script>');
 		
 		$css = "rating.css";
 		$cssFile = $lodgScriptPath . "/skins/$css";

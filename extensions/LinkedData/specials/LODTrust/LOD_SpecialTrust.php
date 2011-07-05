@@ -57,13 +57,13 @@ EOT;
     function execute($p) {
         global $wgOut;
         global $wgScript;
-        global $lodgScriptPath;
+        global $lodgScriptPath, $lodgStyleVersion;
 
         $scriptFile = $lodgScriptPath . "/scripts/LOD_SpecialTrust.js";
         SMWOutputs::requireHeadItem("LOD_SpecialTrust.js",
-                        '<script type="text/javascript" src="' . $scriptFile . '"></script>');
+                        '<script type="text/javascript" src="' . $scriptFile . $lodgStyleVersion . '"></script>');
         SMWOutputs::requireHeadItem("lod_trust.css",
-                        '<link rel="stylesheet" type="text/css" href="' . $lodgScriptPath . '/skins/trust.css" />');
+                        '<link rel="stylesheet" type="text/css" href="' . $lodgScriptPath . '/skins/trust.css'.$lodgStyleVersion.'" />');
 
         SMWOutputs::commitToOutputPage($wgOut);
         $this->setHeaders();
