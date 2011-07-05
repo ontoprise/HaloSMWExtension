@@ -28,6 +28,7 @@ REM Export bundle
 ECHO Export bundle %1
 php export.php --current --output=file:%OUTPUTDIR%/dump.xml -b %1 %2 %3 %4 %5
 php exportOntologyBundleDeployDescriptor.php -o %OUTPUTDIR%/deploy.xml -b %1 -d dump.xml %2 %3 %4 %5
+IF %ERRORLEVEL% NEQ 0 GOTO end
 
 REM Zip bundle
 ECHO Zip bundle

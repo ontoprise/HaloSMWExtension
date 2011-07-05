@@ -47,9 +47,12 @@ if (!file_exists("../../../languages/$langClass.php")) {
 require_once("../../../languages/$langClass.php");
 $dfgLang = new $langClass();
 
+$dfgOut = DFPrintoutStream::getInstance(DF_OUTPUT_FORMAT_TEXT);
+$dfgOut->start(DF_OUTPUT_TARGET_STDOUT);
+
 // check if required properties exist
 // return false if not
-$check = DFBundleTools::checkBundleProperties();
+$check = DFBundleTools::checkBundleProperties($dfgOut);
 if (!$check) {
 	print "\n\nCorrect the errors and try again!\n";
 	die();

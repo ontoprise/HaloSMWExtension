@@ -492,10 +492,15 @@ class DFBundleTools {
 		$db->query('DROP TEMPORARY TABLE df_page_of_images_must_persist');
 	}
 	
-	public static function checkBundleProperties() {
+	/**
+     * Checks if all bundle properties exist and if they have correct types.
+     * 
+     * @param DFPrintoutStream 
+	 */
+	public static function checkBundleProperties($dfgOut) {
 		global $dfgLang;
 		global $wgContLang;
-		global $dfgOut;
+		
 		$propNSText = $wgContLang->getNsText(SMW_NS_PROPERTY);
 		// check if the required properties exist
 		$check = true;
