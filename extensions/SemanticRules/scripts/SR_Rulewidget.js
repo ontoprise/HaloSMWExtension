@@ -74,7 +74,7 @@ SRRuleWidget.prototype = {
 						
 						var html = ruletextNodes[i].textContent;
 											
-						if (type == "easyreadible") $(wID+"_easyreadible").innerHTML = html;
+						if (type == null || type == "easyreadible") $(wID+"_easyreadible").innerHTML = html;
 						else if (type == "stylized") $(wID+"_stylized").innerHTML = html;
 						
 						if (status == "invalid") { 
