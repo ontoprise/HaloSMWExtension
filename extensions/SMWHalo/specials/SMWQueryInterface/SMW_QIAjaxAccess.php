@@ -758,7 +758,8 @@ function qiGetPropertyInformation($relationName) {
 			   			$pvalues = smwfGetStore()->getPropertyValues($relationTitle, $possibleValueDV);
 			   			$relSchema .= '<param name="'.$typeValues[$i]->getWikiValue().'" type="'.$typeValues[$i]->getDBkey().'"'.$range.'>';
 			   			for($j = 0; $j < sizeof($pvalues); $j++){
-			   				$relSchema .= '<allowedValue value="' . array_shift($pvalues[$j]->getDBkeys()) . '"/>';
+                            $dbKeys= $pvalues[$j]->getDBkeys();
+			   				$relSchema .= '<allowedValue value="' . array_shift($dbKeys) . '"/>';
 			   			}
 						$relSchema .= $units.'</param>';
 					}
