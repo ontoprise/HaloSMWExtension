@@ -569,7 +569,7 @@ class DFBundleTools {
 		$pMaintainerValue = $pMaintainer->getTypesValue();
 		$typeID = reset($pMaintainerValue->getDBkeys());
 		if ($typeID != '_str') {
-			$dgOut->outputln("'".$pMaintainerTitle->getPrefixedText()."' is not a string type.");
+			$dfgOut->outputln("'".$pMaintainerTitle->getPrefixedText()."' is not a string type.");
 			// ignore maintainer
 			//$check = false;
 		}
