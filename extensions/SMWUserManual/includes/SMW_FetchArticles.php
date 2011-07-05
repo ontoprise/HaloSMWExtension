@@ -43,7 +43,7 @@ class UME_FetchArticles {
                 $text = $o->getContent().
                     self::makeDiscourseStatesProperty($o->getDiscourseState()).
                     "\n[[UME link::".$o->getLink()."| ]]\n".
-                    "[[Rationale::This is an help article.| ]]\n".
+                    "[[Rationale::This is an article for the context sensitive help.| ]]\n".
                     "{{Content hash|value=}}\n".
                     "{{Part of bundle|value=Smwusermanual}}\n";
                 self::createPage(SMW_NS_USER_MANUAL, $newTitle, $text);
@@ -132,7 +132,9 @@ class UME_FetchArticles {
             echo wfMsg('smw_ume_overwrite_page').' ';
         }
         $a = new Article($t);
-        $a->doEdit($text,"", EDIT_NEW);
+        $res= $a->doEdit($text,"", EDIT_NEW);
+        if (is_object($res))
+            $a->doEdit($text,"", EDIT_UPDATE);
         echo wfMsg('smw_ume_done')."\n";
     }
     
