@@ -1034,9 +1034,9 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 		foreach ($pages as $page) {
 			$page = substr($page, 3); // remove the "[[:"
 			$title = Title::newFromDBkey($page);
-			if (is_null($title)) continue;
+			if (empty($title)) continue;
 			$smw_id = $this->getSmwIdByTitle($title);
-			if (is_null($smw_id)) continue;
+			if (empty($smw_id)) continue;
 			$smwIds[] = $smw_id;
 
 			// fill the elementProperties variable for this element. Almost all neccessary data
