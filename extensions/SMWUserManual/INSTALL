@@ -20,11 +20,13 @@ When you have the Deployment Framework installed then the setup is very easy:
    (1) On the server of your wiki installation open a command line window
 
    (2) Change to the directory of your wiki installation
-       (e.g. /usr/share/mediawiki)
+       (e.g. /usr/share/mediawiki on Linux
+        or C:\SMWPLUS\htdocs\mediawiki on Windows)
 
    (3) Change to the subdirectory deployment/tools
 
-   (4) Run the command ./smwadmin.sh -i smwusermanual
+   (4) On Linux run the command: ./smwadmin.sh -i smwusermanual
+       On Windows run the command: smwadmin.bat -i smwusermanual
 
 
 Manual Installation:
@@ -47,22 +49,12 @@ Manual Installation:
    	   require_once("$IP/extensions/SMWUserManual/includes/SMW_UserManual.php");
        enableSMWUserManual();
 
-	This enables the SMWUserManual in your wiki and you will see a question mark on the right tab section 
-	(Ontoskin 3) or a help link below the tab section on the right side (all other skins). 
-
-
-
-Importing help articles:
-========================
-
-On a manual installation you need to import the help articles before you are
-able to see any.
-
-   (1) Change to the installation directory of your Mediawiki installation
-       (e.g. /usr/share/mediawiki)
-
-   (2) Run the following command:
+   (3) Inside the mediawiki directory run the following command:
        php maintenance/importDump.php extensions/SMWUserManual/import/smwusermanual.xml
+
+	This enables the SMWUserManual in your wiki and you will see a question mark
+    on the right tab section (Ontoskin 3) or a help link below the tab section
+    on the right side (all other skins).
 
 
 Updating help articles:
@@ -75,12 +67,17 @@ With the setup script in the maintenance directory you can always fetch
 a new version of all help articles that are available.
 
    (1) Go into the maintenance directory of this extensions
-       (e.g. /usr/share/mediawiki/exentsions/SMWUserManual/maintenance)
+       (e.g. /mediawiki_dir/exentsions/SMWUserManual/maintenance)
 
    (2) Execute the following command:
    	   php UME_setup.php -o
 
-    This will read the articles from the SMWForum and import them into your wiki.
+    This will read the articles from the SMWForum and import them into your
+    wiki.
+    This script will only update/delete any help articles. If will not remove
+    any other articles that belong to this extension. To remove these, please
+    make use of the Deployment Framework or do a query that selects all pages
+    that have the annotation [[Part of bundle::Smwusermanual]].
 
     The setup script knows the following options:
         no option given: fetch all help articles from the SMW+ forum and install
@@ -94,8 +91,9 @@ a new version of all help articles that are available.
         --file=<filename> this is needed by the -e and -i switch, when the xml
            file is used to export or import help articles.
 
-If you do not have the Parser Functions extension installed, modify the page Template:Copyright_of_article 
-that makes use of extension parser functions:
+If you do not have the Parser Functions extension installed, modify the page
+Template:Copyright_of_article that makes use of extension parser functions. More
+information about that extension can be found here:
 http://www.mediawiki.org/wiki/Help:Extension:ParserFunctions
 
 
