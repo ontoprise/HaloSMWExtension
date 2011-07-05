@@ -823,17 +823,21 @@ var TF = Class.create({
 	 * Displays delete/undelete button if one moves mouse over a subject name
 	 */
 	displayDeleteButton : function(event){
-		//todo: rempve minus 3
-		var bottomPos = jQuery(this).position().top + jQuery(this).innerHeight() - jQuery('input', this).height() - 3;
-		jQuery('.tabf-delete-button', this).css('top', bottomPos);
-		jQuery('.tabf-delete-button', this).css('display', 'block');
+		if(jQuery(this).parent().parent().parent().attr('class').indexOf('edit_mode') > 0){
+			//todo: rempve minus 3
+			var bottomPos = jQuery(this).position().top + jQuery(this).innerHeight() - jQuery('input', this).height() - 3;
+			jQuery('.tabf-delete-button', this).css('top', bottomPos);
+			jQuery('.tabf-delete-button', this).css('display', 'block');
+		}
 	},
 	
 	/*
 	 * Hides delete/undelete button if mouse is moved out of subject name
 	 */
 	hideDeleteButton : function(){
-		jQuery('.tabf-delete-button', this).css('display', 'none');
+		if(jQuery(this).parent().parent().parent().attr('class').indexOf('edit_mode') > 0){
+			jQuery('.tabf-delete-button', this).css('display', 'none');
+		}
 	},
 	
 	/*
@@ -1215,6 +1219,14 @@ var TF = Class.create({
 			
 			var annotationName = jQuery('#' + tabularFormId + ' table tr:first-child th:nth-child(' + columnNr 
 					+ ')').attr('field-address');
+			var annotationLabel = '';
+			if(annotationName == '__Category__'){
+				annotationLabel = jQuery('#' + tabularFormId + ' table tr:first-child th:nth-child(' + columnNr 
+						+ ') span:nth-child(2)').html();
+			} else {
+				annotationLabel = jQuery('#' + tabularFormId + ' table tr:first-child th:nth-child(' + columnNr 
+						+ ') span:nth-child(2) a').html();
+			}
 			
 			var queryConditions = jQuery('#' + tabularFormId + ' table tr:first-child th:nth-child(' + columnNr 
 					+ ')' ).get();
@@ -1261,7 +1273,7 @@ var TF = Class.create({
 				data: {
 					'action' : 'ajax',
 					'rs' : 'tff_checkAnnotationValues',
-					'rsargs[]' : [annotationName, annotationValue, annotationValues, queryConditions, cssSelector, fieldNr, articleName],
+					'rsargs[]' : [annotationName, annotationLabel, annotationValue, annotationValues, queryConditions, cssSelector, fieldNr, articleName],
 				},
 				success: tf.checkAnnotationValueCallBack,
 				
