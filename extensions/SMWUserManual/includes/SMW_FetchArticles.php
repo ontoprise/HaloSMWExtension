@@ -25,16 +25,12 @@ class UME_FetchArticles {
     const LIMIT_TITLES4API = 20; // how many titles to fetch in one call from the api
 
     const PROPERTY_DISCOURSE_STATE_TITLE = SMW_UME_PROPERTY_DISCOURSE_STATE;
-    const PROPERTY_DISCOURSE_STATE_TEXT = SMW_UME_PROPERTYTEXT_DISCOURSE_STATE;
     const PROPERTY_LINK_TITLE = SMW_UME_PROPERTY_LINK;
-    const PROPERTY_LINK_TEXT = SMW_UME_PROPERTYTEXT_LINK;
-    const SMW_TEMPLATES = SMW_TEMPLATES_USED;
     const SMW_TEMPLATE_PREFIX = SMW_TEMPLATE_PREFIX;
     
     public static function installPages($overwrite) {
         self::$error = 0;
         self::$overwrite = $overwrite;
-        self::installProperties($overwrite);
         $pages = self::getPageList();
         while (count($pages) > 0) {
             $chunk = array();
@@ -47,12 +43,12 @@ class UME_FetchArticles {
                 $text = $o->getContent().
                     self::makeDiscourseStatesProperty($o->getDiscourseState()).
                     "\n[[UME link::".$o->getLink()."| ]]\n".
+                    "[[Rationale::This is an help article.| ]]\n".
                     "{{Content hash|value=}}\n".
                     "{{Part of bundle|value=Smwusermanual}}\n";
                 self::createPage(SMW_NS_USER_MANUAL, $newTitle, $text);
             }
         }
-        self::installTemplates();
     }
     
     public static function exportPages($file, $overwrite) {
@@ -94,53 +90,6 @@ class UME_FetchArticles {
         }
     }
 
-    private static function installProperties($overwrite) {
-        self::$error = 0;
-        self::$overwrite = $overwrite;
-        self::createPage(SMW_NS_PROPERTY,
-            self::PROPERTY_DISCOURSE_STATE_TITLE,
-            self::PROPERTY_DISCOURSE_STATE_TEXT
-        );
-        self::createPage(SMW_NS_PROPERTY,
-            self::PROPERTY_LINK_TITLE,
-            self::PROPERTY_LINK_TEXT
-        );
-    }
-    
-    private static function installTemplates() {
-        $templates = explode(',', self::SMW_TEMPLATES);
-        for($i= 0; $i < count($templates); $i++) {
-            $templates[$i]= self::SMW_TEMPLATE_PREFIX.':'.$templates[$i];
-        }
-        $params = array(
-            'action' => 'query',
-            'titles' => implode('|', $templates),
-            'prop'   => 'revisions',
-            'rvprop' => 'content',
-            'format' => 'php'
-        );
-        $pageData = self::callWiki(SMW_FORUM_API, $params);
-        $pageList = unserialize(trim($pageData));
-
-        if (isset($pageList['query']['pages']))
-            $pages = &$pageList['query']['pages'];
-        if (is_array($pages)) {
-            while ($page = array_shift($pages)) {
-                $title= substr($page['title'], strlen(SMW_TEMPLATE_PREFIX) + 1);
-                if (isset($page['revisions'][0]['*'])) {
-                    $s = strpos($page['revisions'][0]['*'], '<includeonly>');
-                    if ($s === false) $s=0; else $s+=13; 
-                    $e = strpos($page['revisions'][0]['*'], '</includeonly>');
-                    if ($e === false) $e=strlen($page['revisions'][0]['*']); else $e=$e-$s;
-                    $text = substr($page['revisions'][0]['*'], $s, $e);
-                    // never overwrite Templates, because these exist in the SMW+ ontology (if installed)
-                    self::$overwrite=false;
-                    self::createPage(NS_TEMPLATE, $title, $text);
-                }
-            }
-        }
-    }
-
     public static function deletePages() {
         self::$error = 0;
         $db =& wfGetDB(DB_SLAVE);
@@ -153,9 +102,6 @@ class UME_FetchArticles {
                 self::deletePage(SMW_NS_USER_MANUAL, $row->page_title);
             }
         }
-        // delete properties
-        self::deletePage(SMW_NS_PROPERTY, self::PROPERTY_DISCOURSE_STATE_TITLE);
-        self::deletePage(SMW_NS_PROPERTY, self::PROPERTY_LINK_TITLE);
     }
     
     private static function createPage($ns, $title, $text) {
