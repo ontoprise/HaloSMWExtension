@@ -3209,6 +3209,7 @@ applyOptionParams : function(query) {
 	var format = "table"; // default format
     var tpeeParamsObj = new Object(); // empty policy params
     var tpeePolicyId = ''; // empty name of TPEE
+    var useTscSwitch = false;
     // selector of TPEE or DS
     var selectorDsTpee = ( $('qioptioncontent') )
         ? $('qioptioncontent').getElementsBySelector('[name="qiDsTpeeSelector"]') : [];
@@ -3248,7 +3249,11 @@ applyOptionParams : function(query) {
                 $('qio_showmetadata').checked = "checked";
                 $('qio_showmetadata').value = val;
             }
+            else if ( key == 'source' ) {
+                useTscSwitch = ( val == 'tsc' ) ? true : false;
+            }
             else if (key == "dataspace" && $('qidatasourceselector') ) {
+                useTscSwitch = true;
                 var dsVals = val.split(',');
                 for (var s= 0; s < $('qidatasourceselector').length; s++ ) {
                     $('qidatasourceselector').options[s].selected = null;
@@ -3260,6 +3265,7 @@ applyOptionParams : function(query) {
             }
             // trust policy settings
             else if (key == "policyid" && selectorDsTpee.length > 0 ) {
+                useTscSwitch = true;
                 tpeePolicyId = val;
                 this.selectDsTpee(this.TPEE_SELECTED, true);
                 for (var s= 0; s < $('qitpeeselector').options.length; s++ ) {
@@ -3325,7 +3331,10 @@ applyOptionParams : function(query) {
                 $('qitpeeparamval_' + tpeePolicyId + '_' + parname).value = tpeeParamsObj[parname];
         }
     }
-	
+	if (useTscSwitch)
+        $('usetriplestore').checked="checked";
+    else
+        $('usetriplestore').checked=null;
 
     // The following callback is called after the query printer parameters were displayed.
 	var callback = function() {
