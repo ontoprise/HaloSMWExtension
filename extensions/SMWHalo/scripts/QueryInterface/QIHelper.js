@@ -3352,7 +3352,6 @@ applyOptionParams : function(query) {
 				// special handling for format
 				var layout_format = $('layout_format');
 				layout_format.value = val;
-				this.updatePreview();
 			} else {
 			    var optionParameter = $('qp_param_' + key);
 			    if (optionParameter == null) continue; // ignore unknown options
