@@ -1,6 +1,12 @@
 <?php
 
-//todo: add notification if one enables delete, but delete is not allowed
+//todo: probide better warnings for invalid types
+
+//todo:  are input fields for new instance write protected if property is wrote protected via acls
+
+//todo: make sure that new parameters are not killed by tsc query processor
+
+
 
 /*
  * Query printer which displays a tabular form
@@ -98,12 +104,10 @@ class TFTabularFormQueryPrinter extends SMWResultPrinter {
 		$params[] = array( 'name' => 'use silent annotations template', 'type' => 'enumeration',
 			'description' => wfMsg( 'smw_tf_paramdesc_delete' ),
 			'values' => array( 'true', 'false' ) );
-		//todo: use language file
-		//todo make sure tha this paramer also works with sparqö queries
 		$params[] = array( 'name' => 'write protected annotations', 'type' => 'string',
-			'description' => 'Write protected annotations');
+			'description' => wfMsg('tabf_parameter_write_protected_desc'));
 		$params[] = array( 'name' => 'instance name preload value', 'type' => 'string',
-			'description' => 'Instance name preload value');
+			'description' => wfMsg('tabf_parameter_instance_preload_desc'));
 
 		return $params;
 	}
@@ -166,14 +170,13 @@ class TFTabularFormData {
 			$this->enableInstanceDelete = true;
 		}
 
-		//todo: make parameter available in QI?
 		if(array_key_exists('write protected annotations', $this->queryParams)){
-			$wPAs = str_replace('/;', '##,-,##', $this->queryParams['write protected annotations']);
+			$wPAs = str_replace('\;', '##,-,##', $this->queryParams['write protected annotations']);
 			$wPAs = explode(';', $wPAs);
 			foreach($wPAs as $key => $wPA){
-				//todo use language string
-				if(trim($wPA) == 'Category') $wPA = TF_CATEGORY_KEYWORD;
-				$wPAs[$key] = trim($wPA);
+				global $wgLang;
+				if(trim($wPA) == $wgLang->getNSText(NS_CATEGORY)) $wPA = TF_CATEGORY_KEYWORD;
+					$wPAs[$key] = trim($wPA);
 			}
 			$this->writeProtectedAnnotations = array_flip($wPAs);
 		}
@@ -262,10 +265,10 @@ class TFTabularFormData {
 		$this->initializeAnnotationAutocompletion();
 
 		list($this->annotationPreloadValues, $this->instanceNamePreloadValue) =
-		TFQueryAnalyser::getPreloadValues($this->getQuerySerialization());
+			TFQueryAnalyser::getPreloadValues($this->getQuerySerialization(), $this->isSPARQLQuery);
 
 		$this->annotationQueryConditions =
-		TFQueryAnalyser::getQueryConditions($this->getQuerySerialization());
+			TFQueryAnalyser::getQueryConditions($this->getQuerySerialization());
 
 		$this->checkEnableAddInstance();
 
@@ -316,52 +319,43 @@ class TFTabularFormData {
 
 		$numberOfWarnings = count($this->addInstanceBlockers) + count($this->queryResult->getErrors());
 
-		//todo make expandabel
-		// todo display number of notifications
 		$html .= '<div class="tabf_notifications_heading">';
-		//todo: use language file
 		$html .= '<img title="Expand" src="'.$smwgHaloScriptPath.'/skins/TabularForms/right.png" onclick="tf.expandNotificationSystem(event)" style="cursor: pointer"></img>';
 		$html .= '<img title="Expand" src="'.$smwgHaloScriptPath.'/skins/TabularForms/down.png" onclick="tf.collapseNotificationSystem(event)" style="cursor: pointer; display: none"></img>';
-		$html .= '<span>System notifications (<span class="tabf-warnings-number">'.$numberOfWarnings.'</span>):</span>';
+		$html .= '<span>'.wfMsg('tabf_ns_header').' (<span class="tabf-warnings-number">'.$numberOfWarnings.'</span>):</span>';
 		$html .= '</div>';
 
 		$html .= '<div class="tabf_notifications" style="display: none">';
 		$html .= '<ol>';
 
 		$html .= '<li class="tabf_add_instance_error" style="display: none">';
-		//todo: Use lanfuage
-		$html .= 'Changes currently cannot be applied, because some new instance names are erronious:';
+		$html .= wfMsg('tabf_ns_warning_invalid_instance_name');
 		$html .= '<ul></ul>';
 		$html .= '</li>';
 
 		$html .= '<li class="tabf_invalid_value_warning" style="display: none">';
-		//todo: Use lanfuage
-		$html .= 'The following annotation values are invalid::';
+		$html .= wfMsg('tabf_ns_warning_invalid_value');
 		$html .= '<ul></ul>';
 		$html .= '</li>';
 
 		$html .= '<li class="tabf_probably_lost_instance" style="display: none">';
-		//todo: Use lanfuage
-		$html .= 'The following instances may not be included in the query result anymore after applying changes::';
+		$html .= wfMsg('tabf_ns_warning_lost_instance_otf'); 
 		$html .= '<ul></ul>';
 		$html .= '</li>';
 
 		$html .= '<li class="tabf_lost_instance_warning" style="display: none">';
-		//todo: Use lanfuage
-		$html .= 'The following instances are now not part of the query result anymore';
+		$html .= wfMsg('tabf_ns_warning_lost_instance'); 
 		$html .= '<ul></ul>';
 		$html .= '</li>';
 		
 		$html .= '<li class="tabf_save_error_warning" style="display: none">';
-		//todo: Use lanfuage
-		$html .= 'The following instances could not be saved since they have been modified by someone else in the meantime.';
+		$html .= wfMsg('tabf_ns_warning_save_error');
 		$html .= '<ul></ul>';
 		$html .= '</li>';
 
 		if(count($this->addInstanceBlockers) > 0){
 			$html .= '<li class="tabf_add_instance_warnings">';
-			//todo: use language file
-			$html .= "The 'Add instance' button had to be disabled. Please provide a preload value for the following annotations, mark them as write-protected or show them in the Tabular Form:";
+			$html .= wfMsg('tabf_ns_warning_add_disabled');
 			$html .= '<ul><li>';
 			$html .= implode('</li><li>', $this->addInstanceBlockers);
 			$html .= '</li></ul>';
@@ -370,8 +364,7 @@ class TFTabularFormData {
 
 		if(count($this->queryResult->getErrors()) > 0){
 			$html .= '<li class="tabf_generic_query_warnings">';
-			//todo: use language file
-			$html .= 'Notifications and warnings from the query processor:';
+			$html .= wfMsg('tabf_ns_warning_by_system');
 			$html .= '<ul><li>';
 			$html .= implode('</li><li>', $this->queryResult->getErrors());
 			$html .= '</li></ul>';
@@ -744,7 +737,6 @@ class TFTabularFormData {
 		$html .= '</td>';
 		
 		
-		//todo language
 		$html .= '<td>';
 		$html .= '<input class="tabf_cancel_button" type="button" value="Cancel" onclick="tf.cancelFormEdit('."'".$tabularFormId."'".')"/ style="display: none">';
 		$html .= '<input class="tabf_edit_button" type="button" value="Edit" onclick="tf.switchToEditMode('."'".$tabularFormId."'".')"/>';
@@ -1299,21 +1291,15 @@ class TFTabularFormRowData {
 		//		$html .= '<img class="tabf_saved_status" title="'.$title.'" style="display: none" src="'
 		//		.$smwgHaloScriptPath.'/skins/TabularForms/Saved.png"></img>';
 
-		//todo. adust javascript sorting according to new states
-		
-		//dodo: when to initially apply this state?
-		// todo: language $title = wfMsg('tabf_status_gets_lost');
-		$title = 'Instance may not be included in the query result anymore after applying changes.';
+		$title = wfMsg('tabf_nc_icon_title_lost_instance');;
 		$html .= '<img class="tabf_getslost_status" title="'.$title.'" style="display: none" src="'
 		.$smwgHaloScriptPath.'/skins/TabularForms/Attention.png"></img>';
 		
-		// todo: language $title = wfMsg('tabf_status_invalid_value');
-		$title = 'Some annotation values of this instance are invalid.';
+		$title = wfMsg('tabf_nc_icon_title_invalid_value');
 		$html .= '<img class="tabf_invalid_value_status" title="'.$title.'" style="display: none" src="'
 		.$smwgHaloScriptPath.'/skins/TabularForms/Attention.png"></img>';
 		
-		//todo: use language
-		$title = 'Changes for this instance could not be applied because it has been modified by someone else in the meantime.';
+		$title = wfMsg('tabf_nc_icon_title_save_error');
 		$html .= '<img class="tabf_error_status" title="'.$title.'" style="display: none" src="'
 		.$smwgHaloScriptPath.'/skins/TabularForms/Error.png"></img>';
 

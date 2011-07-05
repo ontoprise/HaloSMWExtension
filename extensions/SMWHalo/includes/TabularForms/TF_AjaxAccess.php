@@ -137,29 +137,30 @@ function tff_checkArticleName($articleName, $rowNr, $tabularFormId){
 	$articleName = implode(':', $articleName);
 
 	$exists = false;
+	$message = "";
 	
 	$validTitle = false;
 	if(strpos($articleName, '#') === false){
 		$title = Title::newFromText($articleName);
 		if($title){
 			if($title->getFullText() == $articleName){
-				if(!$title->exists()){
-					$validTitle = true;
+				if($title->exists()){
 					$exists = true;
+				} else {
+					$validTitle = true;
 				}
 			}
 		}
 	}
 	
-	//todo: language
 	if(strlen($articleName) == 0){
-		$message = 'Instance names cannot be blank.';
-	} else {
+		$message = wfMsg( 'tabf_instancename_blank');
+	} else if(!$validTitle){
 		$articleName = str_replace(array('<', '>'), array('&lt;', '&gt;'), $articleName);
-		if($eyists){
-			$message = "'".ucfirst($articleName)."' is not a valid instance name.";
+		if($exists){
+			$message = wfMsg( 'tabf_instancename_exists', ucfirst($articleName));
 		} else {
-			$message = "The article '".ucfirst($articleName)."' already exists.";
+			$message = wfMsg( 'tabf_instancename_invalid', ucfirst($articleName));	
 		}
 	}
 		
@@ -204,27 +205,37 @@ function tff_getLostInstances($querySerialization, $isSPARQL, $tabularFormId, $i
 	$queryParams = array();
 	$printRequests = array();
 
-	if($isSPARQL){
-		//todo; deal with sparql queries
+	$queryString = TFQueryAnalyser::getQueryString($querySerialization, $isSPARQL);
+	
+	global $smwgQMaxInlineLimit;
+	$offset = TFQueryAnalyser::getQueryOffset($querySerialization, $isSPARQL);
+	if($offset > $smwgQMaxInlineLimit){
+		$offset -= $smwgQMaxInlineLimit/2;
 	} else {
-		$queryString = TFQueryAnalyser::getQueryString($querySerialization); 
+		$offset = 0;
+	}
+	
+	$querySerialization = array();
+	$querySerialization[] = $queryString;
+	$querySerialization[] = 'format = ul';
+	$querySerialization[] = 'limit = '.$smwgQMaxInlineLimit;
+	$querySerialization[] = 'offset = '.$offset;
+	$querySerialization[] = 'link = none';
 		
-		global $smwgQMaxInlineLimit;
-		$offset = TFQueryAnalyser::getQueryOffset($querySerialization);
-		if($offset > $smwgQMaxInlineLimit){
-			$offset -= $smwgQMaxInlineLimit/2;
-		} else {
-			$offset = 0;
-		}
+	if($isSPARQL){
+		$querySerialization[] = 'src = tsc';
 		
+		SMWSPARQLQueryProcessor::processFunctionParams(
+			$querySerialization, $queryString, $queryParams, $printRequests);
 		
-		$querySerialization = array();
-		$querySerialization[] = $queryString;
-		$querySerialization[] = 'format = ul';
-		$querySerialization[] = 'limit = '.$smwgQMaxInlineLimit;
-		$querySerialization[] = 'offset = '.$offset;
-		$querySerialization[] = 'link = none';
-
+		$queryFormat = 'ul';
+		$queryQbject = SMWSPARQLQueryProcessor::createQuery(
+			$queryString, $queryParams, 0, $queryFormat, $printRequests );
+			
+		$result = SMWSPARQLQueryProcessor::getResultFromQueryString
+			( $queryString, $queryParams, $printRequests, 0);
+	} else {
+					
 		SMWQueryProcessor::processFunctionParams(
 			$querySerialization, $queryString, $queryParams, $printRequests);
 
@@ -234,29 +245,28 @@ function tff_getLostInstances($querySerialization, $isSPARQL, $tabularFormId, $i
 			
 		$result = SMWQueryProcessor::getResultFromQueryString
 			( $queryString, $queryParams, $printRequests, 0);
-			
-		
-		$result = substr($result, 0, strpos($result, '</ul>'));
-		$result = substr($result, strpos($result, '<ul>') + strlen('<ul>'));
-		$result = str_replace('<li>', '', $result);
-		$result = explode('</li>', trim($result));
-		foreach($result as $key => $val){
-			$result[$key] = trim($val);
-		}
-
-		$instanceNames = explode('||', $instanceNames);
-		foreach($instanceNames as $key => $name){
-			$instanceNames[$key] = trim($name);
-		}
-
-		foreach($instanceNames as $key => $name){
-			if(in_array(ucfirst($name), $result)){
-				unset($instanceNames[$key]);
-			}
-		}
-			
-		$result = array_values($instanceNames);
 	}
+	
+	$result = substr($result, 0, strpos($result, '</ul>'));
+	$result = substr($result, strpos($result, '<ul>') + strlen('<ul>'));
+	$result = str_replace('<li>', '', $result);
+	$result = explode('</li>', trim($result));
+	foreach($result as $key => $val){
+		$result[$key] = trim($val);
+	}
+
+	$instanceNames = explode('||', $instanceNames);
+	foreach($instanceNames as $key => $name){
+		$instanceNames[$key] = trim($name);
+	}
+
+	foreach($instanceNames as $key => $name){
+		if(in_array(ucfirst($name), $result)){
+			unset($instanceNames[$key]);
+		}
+	}
+		
+	$result = array_values($instanceNames);
 
 	$result = array('result' => $result, 'tabularFormId' => $tabularFormId);
 	$result = json_encode($result);
@@ -270,11 +280,11 @@ function tff_getLostInstances($querySerialization, $isSPARQL, $tabularFormId, $i
  * 1) valid according to the annotations type
  * 2) if the annotation matches the query's constraints, i.e. if the corresponding instance is part of the query result
  */
-function tff_checkAnnotationValues($annotationLabel, $annotationValue, 
+function tff_checkAnnotationValues($annotationName, $annotationLabel, $annotationValue, 
 		$annotationValues, $queryConditions, $cssSelector, $fieldNr, $articleName){
 
 	//first check type
-	$property = SMWPropertyValue::makeUserProperty($annotationLabel);
+	$property = SMWPropertyValue::makeUserProperty($annotationName);
 	
 	//test with record data type
 	
@@ -287,21 +297,20 @@ function tff_checkAnnotationValues($annotationLabel, $annotationValue,
 	}
 	$invalidValueMsg = '';
 	if(!$isValid){
-		//todo language
 		if(strlen($annotationValue) > 30){
 			$annotationValue = substr($annotationValue, 0,30).'...';
 		}
 		$articleName = str_replace(array('<', '>'), array('&lt;', '&gt;'), $articleName);
 		$annotationValue = str_replace(array('<', '>'), array('&lt;', '&gt;'), $annotationValue);
-		$invalidValueMsg .= "'".$articleName."' has an invalid value: ";
-		$invalidValueMsg .= "The value '".$annotationValue."' of property '".$annotationLabel."' is invalid."; 
+		 $invalidValueMsg = 		wfMsg('tabf_annotationnamme_invalid', 
+			$articleName, $annotationValue, $annotationLabel); 
 	}
 	
 	//do instance looose test
 	$warnings = array();
 	if($queryConditions != 'false'){
 
-		$annotationValues = substr(str_replace('/;', '++##/##++', $annotationValues),1);
+		$annotationValues = substr(str_replace('\;', '++##/##++', $annotationValues),1);
 		$annotationValues = explode(';', $annotationValues);
 		
 		foreach($annotationValues as $i => $value){
@@ -312,7 +321,11 @@ function tff_checkAnnotationValues($annotationLabel, $annotationValue,
 			}
 		}
 		
+		file_put_contents('d://record.rtf', print_r($queryConditions, true));
+		
 		$queryConditions = json_decode($queryConditions, true);
+		
+		
 		
 		foreach($queryConditions as $comparator => $compareValues){
 			
@@ -323,7 +336,7 @@ function tff_checkAnnotationValues($annotationLabel, $annotationValue,
 				$cVal = $cdbKeys[$cDV->getValueIndex()];
 				
 				if($cDV instanceof SMWWikiPageValue ){
-					if($annotationLabel != TF_CATEGORY_KEYWORD){
+					if($annotationName != TF_CATEGORY_KEYWORD){
 						$cVal = $cDV->getNamespace()-':'.$cVal;
 					} 
 				}
@@ -333,17 +346,19 @@ function tff_checkAnnotationValues($annotationLabel, $annotationValue,
 				if(count($annotationValues) == 0){
 					
 					$supportedComparators = array();
-					$supportedComparators[TF_IS_EXISTS_CMP] = true;
-					$supportedComparators[SMW_CMP_EQ] = true;
-					$supportedComparators[SMW_CMP_NEQ] = true;
-					$supportedComparators[SMW_CMP_LEQ] = true;
-					$supportedComparators[SMW_CMP_GEQ] = true;
-					$supportedComparators[SMW_CMP_LESS] = true;
-					$supportedComparators[SMW_CMP_GRTR] = true;
+					$supportedComparators[TF_IS_EXISTS_CMP] = 'EXISTS';
+					$supportedComparators[SMW_CMP_EQ] = 'EQ';
+					$supportedComparators[SMW_CMP_NEQ] = 'NEQ';
+					$supportedComparators[SMW_CMP_LEQ] = 'LEQ';
+					$supportedComparators[SMW_CMP_GEQ] = 'GEQ';
+					$supportedComparators[SMW_CMP_LESS] = 'LESS';
+					$supportedComparators[SMW_CMP_GRTR] = 'GRTR';
 					
 					if(!array_key_exists($comparator, $supportedComparators)){
 						$getsLost = false;	
-					}	
+					} else {
+						$compareId = $supportedComparators[$comparator];
+					}
 				} else {
 					foreach($annotationValues as $key => $annotationValue){
 					
@@ -353,44 +368,51 @@ function tff_checkAnnotationValues($annotationLabel, $annotationValue,
 						$aVal = $adbKeys[$aDV->getValueIndex()];
 						
 						if($aDV instanceof SMWWikiPageValue){
-							if($annotationLabel != TF_CATEGORY_KEYWORD){
+							if($annotationName != TF_CATEGORY_KEYWORD){
 								$aVal = $aDV->getNamespace()-':'.$aVal;
 							} 
 						}
 					
 						switch($comparator){
 							case SMW_CMP_EQ :
+								$compareId = 'EQ';
 								if($aVal == $cVal){
 									$getsLost = false;
 								}
 								break;
 							case SMW_CMP_NEQ :
+								$compareId = 'NEQ';
 								if($aVal != $cVal){
 									$getsLost = false;
 								}
 								break;
 							case SMW_CMP_LEQ :
+								$compareId = 'LEQ';
 								if($aVal <= $cVal){
 									$getsLost = false;
 								}
 								break;
 							case SMW_CMP_GEQ :
+								$compareId = 'GEQ';
 								if($aVal >= $cVal){
 									$getsLost = false;
 								}
 								break;
 							case SMW_CMP_LESS :
+								$compareId = 'LESS';
 								if($aVal < $cVal){
 									$getsLost = false;
 								}
 								break;
 							case SMW_CMP_GRTR :
+								$compareId = 'GRTR';
 								if($aVal > $cVal){
 									$getsLost = false;
 								}
 								break;
 							case TF_IS_EXISTS_CMP :
-								if($aDVl->isValid()){
+								$compareId = 'EXISTS';
+								if($aDV->isValid()){
 									$getsLost = false;
 								}
 								break;
@@ -410,21 +432,8 @@ function tff_checkAnnotationValues($annotationLabel, $annotationValue,
 				
 				}
 					
-				//todo: language
-				$lWarning = array();
-				$lWarning['smw_tf_lost-reason_'.SMW_CMP_EQ] = "is equal to";
-				$lWarning['smw_tf_lost-reason_'.SMW_CMP_NEQ] = "is unequal to";
-				$lWarning['smw_tf_lost-reason_'.SMW_CMP_LEQ] = "is smaller or equal to";
-				$lWarning['smw_tf_lost-reason_'.SMW_CMP_GEQ] = "is greater or equal to";
-				$lWarning['smw_tf_lost-reason_'.SMW_CMP_LESS] = "is smaller than";
-				$lWarning['smw_tf_lost-reason_'.SMW_CMP_GRTR] = "is greater than";
-				$lWarning['smw_tf_lost-reason_'.TF_IS_EXISTS_CMP] = "is a valid annotation value";
-				
 				if($getsLost){
-					if(strlen($compareValue) > 0){
-						$compareValue = " '".$compareValue."'";
-					}
-					$warnings[] = 	$lWarning['smw_tf_lost-reason_'.$comparator].$compareValue;
+					$warnings[] = 	wfMsg('tabf_lost_reason_'.$compareId, $compareValue);
 				}
 			}
 		}
@@ -433,7 +442,6 @@ function tff_checkAnnotationValues($annotationLabel, $annotationValue,
 	if(count($warnings) > 0){
 		$getsLost = 0;
 		$articleName = str_replace(array('<', '>'), array('&lt;', '&gt;'), $articleName);
-		//todo: use language
 		if(count($warnings) > 1){
 			$tmp = $warnings[count($warnings)-1];
 			unset($warnings[count($warnings)-1]);
@@ -441,8 +449,8 @@ function tff_checkAnnotationValues($annotationLabel, $annotationValue,
 		} else {
 			$warnings = $warnings[0];
 		}
-		$warnings = "'<span class=\"tabf_nin\">".$articleName."</span>', because none of the values of the '".$annotationLabel
-			."' annotation ".$warnings.".";
+		
+		$warnings = wfMsg('tabf_lost_reason_introTS', $articleName, $annotationLabel).$warnings;
 	}
 	
 	$getsLost = (count($warnings) > 0) ? true : false;

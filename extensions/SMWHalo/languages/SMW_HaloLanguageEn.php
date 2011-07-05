@@ -478,6 +478,37 @@ clicking the big arrows between the columns.',
 	'tabf_response_nodeletepermission' => "You do not have the permission to delete this instance.",
 	
 	'tabf_update_warning' => "Some errors occured while applying changes. Please have a look at the status icons.",
+	
+	'tabf_instancename_blank' => "Instance names cannot be blank.",
+	'tabf_instancename_invalid' => "'$1' is not a valid instance name.",
+	'tabf_instancename_exists' => "'$1' already exists.",
+	'tabf_annotationnamme_invalid' => "'$1' has an invalid value: The value '$2' of property '$3' is invalid.",
+	
+	'tabf_lost_reason_EQ' => "is equal to '$1'",
+	'tabf_lost_reason_NEQ' => "is unequal to '$1'",
+	'tabf_lost_reason_LEQ' => "is smaller or equal to '$1'",
+	'tabf_lost_reason_GEQ' => "is greater or equal to '$1'",
+	'tabf_lost_reason_LESS' => "is smaller than '$1'",
+	'tabf_lost_reason_GRTR' => "is greater than '$1'",
+	'tabf_lost_reason_EXISTS' => "is a valid annotation value",
+	'tabf_lost_reason_introTS' => "'<span class=\"tabf_nin\">$1</span>', because none of the values of the '$2'  annotation ",
+	
+	'tabf_parameter_write_protected_desc' => "Write protected annotations",
+	'tabf_parameter_instance_preload_desc' => "Instance name preload value",
+	
+	'tabf_ns_header' => "System Notifications",
+	'tabf_ns_warning_invalid_instance_name' => "Changes currently cannot be applied, because some new instance names are erronious:",
+	'tabf_ns_warning_invalid_value' => "The following annotation values are invalid:",
+	'tabf_ns_warning_lost_instance_otf' => "The following instances may not be included in the query result anymore after applying changes::",
+	'tabf_ns_warning_lost_instance' => "The following instances are now not part of the query result anymore",
+	'tabf_ns_warning_save_error' => "The following instances could not be saved since they have been modified by someone else in the meantime.",
+	'tabf_ns_warning_add_disabled' => "The 'Add instance' button was disabled by the system. Please provide a preload value for the following properties, mark them as write-protected, or use them as printout statements in order to enable 'Add instance' button again:",
+	'tabf_ns_warning_by_system' => "Notifications and warnings from the query processor:",
+	
+	'tabf_nc_icon_title_lost_instance' => "Instance may not be included in the query result anymore after applying changes.",
+	'tabf_nc_icon_title_invalid_value' => "Some annotation values of this instance are invalid.",
+	'tabf_nc_icon_title_save_error' => "Changes for this instance could not be applied because it has been modified by someone else in the meantime.'",
+	
 	);
 
 

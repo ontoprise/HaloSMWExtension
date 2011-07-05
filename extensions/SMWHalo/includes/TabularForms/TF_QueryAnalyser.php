@@ -12,11 +12,9 @@ class TFQueryAnalyser {
 	 * 
 	 * @param querySerialization : arry of #ask üarser function paramerers
 	 */
-	public static function getPreloadValues($querySerialization){
+	public static function getPreloadValues($querySerialization, $isSPARQL){
 		
 		global $wgLang;
-		
-		//todo: what about sparql queries
 		
 		$annotationPreloadValues = array();
 		$instanceNamePreloadValue = null;
@@ -29,7 +27,7 @@ class TFQueryAnalyser {
 				if(array_key_exists(2, $part)){
 					
 					$values = trim($part[2]);
-					$values = str_replace('/;', '##,-,##', $values);
+					$values = str_replace('\;', '##,-,##', $values);
 					$values = explode(';', $values);
 					foreach($values as $key => $value){
 						$values[$key] = trim(str_replace('##,-,##', ';', $value));
@@ -55,7 +53,11 @@ class TFQueryAnalyser {
 		}
 		
 		//get conditions from the instance selector of the query
-		$conditions = self::getQueryConditions($querySerialization);
+		if($isSPARQL){
+			$conditions = array();
+		} else {
+			$conditions = self::getQueryConditions($querySerialization);
+		}
 		
 		//combine manual and automatic preload values
 		foreach($conditions as $name => $condition){
@@ -88,18 +90,20 @@ class TFQueryAnalyser {
 	 * 
 	 * @param querySerialization : arry of #ask üarser function paramerers
 	 */
-	public static function getQueryConditions(array $querySerialization){
+	public static function getQueryConditions(array $querySerialization, $isSPARQL){
 		
-		//todo: what about sparql queries
-		
-		//first create query objectt in irder to retrieve query description
-		$queryObject = self::getQueryObject($querySerialization);
+		if($isSPARQL){
+			return array();
+		} else {
+			//first create query objectt in irder to retrieve query description
+			$queryObject = self::getQueryObject($querySerialization);
+	
+			$conditions = self::doGetQueryConditions($queryObject->getDescription());
+	
+			//file_put_contents("d://tf_conditions.rtf", print_r($conditions, true));
 
-		$conditions = self::doGetQueryConditions($queryObject->getDescription());
-
-		//file_put_contents("d://tf_conditions.rtf", print_r($conditions, true));
-
-		return $conditions; 
+			return $conditions;
+		}
 	}
 	
 	
@@ -225,11 +229,29 @@ class TFQueryAnalyser {
 	}
 	
 	
+	/*
+	 * Create SPARQL query object from query serialization
+	 */
+	private static function getQueryObjectSPARQL($querySerialization){
+		SMWSPARQLQueryProcessor::processFunctionParams( 
+			$querySerialization, $queryString, $queryParams, $printRequests);
+		$queryFormat = 'table';
+		$queryObject = SMWSPARQLQueryProcessor::createQuery( 
+			$queryString, $queryParams, 0, $queryFormat, $printRequests );
+			
+		return $queryObject;
+	}
+	
+		
 	/**
 	 * Get the query steing from a query serialization (array of inline query params)
 	 */
-	public static function getQueryString($querySerialization){
-		$queryObject = self::getQueryObject($querySerialization);
+	public static function getQueryString($querySerialization, $isSPARQL = false){
+		if($isSPARQL){
+			$queryObject = self::getQueryObjectSPARQL($querySerialization);
+		} else {
+			$queryObject = self::getQueryObject($querySerialization);
+		}
 		
 		return  $queryObject->getDescription()->getQueryString();
 	}
@@ -237,8 +259,12 @@ class TFQueryAnalyser {
 /**
 	 * Get offset rom query serialization (array of inline query params)
 	 */
-	public static function getQueryOffset($querySerialization){
-		$queryObject = self::getQueryObject($querySerialization);
+	public static function getQueryOffset($querySerialization, $isSPARQL = false){
+		if($isSPARQL){
+			$queryObject = self::getQueryObjectSPARQL($querySerialization);
+		} else {
+			$queryObject = self::getQueryObject($querySerialization);
+		}
 		
 		return  $queryObject->getOffset();
 	}
