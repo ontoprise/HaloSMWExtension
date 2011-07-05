@@ -756,7 +756,11 @@ CKEDITOR.customprocessor.prototype =
 
 							var isWikiUrl = true;
 
-							if ( hrefType != "" && hrefType != "http" && hrefType != "mailto" && !href.StartsWith(hrefType.FirstToUpper() + ':') )
+							if ( hrefType != "" && 
+                                 hrefType != "http" &&
+                                 hrefType != "https" &&
+                                 hrefType != "mailto" &&
+                                 !href.StartsWith(hrefType.FirstToUpper() + ':') )
 								stringBuilder.push( '[[' + hrefType.FirstToUpper() + ':' );
 							else if ( htmlNode.className == "extiw" ){
 								stringBuilder.push( '[[' );
