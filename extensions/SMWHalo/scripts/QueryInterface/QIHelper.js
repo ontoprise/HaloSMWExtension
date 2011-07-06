@@ -3331,13 +3331,12 @@ applyOptionParams : function(query) {
                 $('qitpeeparamval_' + tpeePolicyId + '_' + parname).value = tpeeParamsObj[parname];
         }
     }
-	if (useTscSwitch)
-        $('usetriplestore').checked="checked";
-    else
-        $('usetriplestore').checked=null;
+    if ( $('usetriplestore') )
+        $('usetriplestore').checked= (useTscSwitch) ? "checked" : null;
 
     // The following callback is called after the query printer parameters were displayed.
 	var callback = function() {
+        var qpChanged = false;
 		// start by 1, first element is the query itself
 		for ( var i = 1; i < options.length; i++) {
 			
@@ -3352,6 +3351,7 @@ applyOptionParams : function(query) {
 				// special handling for format
 				var layout_format = $('layout_format');
 				layout_format.value = val;
+                qpChanged = true;
 			} else {
 			    var optionParameter = $('qp_param_' + key);
 			    if (optionParameter == null) continue; // ignore unknown options
@@ -3363,6 +3363,7 @@ applyOptionParams : function(query) {
 			    }
 			}
 		}
+        if (qpChanged) this.updatePreview();
 	}
 	
 	// and request according format printer parameters
