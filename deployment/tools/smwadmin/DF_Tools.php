@@ -416,7 +416,8 @@ class Tools {
 	}
 
 	public static function getXSDValue($dataValue) {
-		return array_shift($dataValue->getDBkeys());
+        $dbKeys= $dataValue->getDBkeys();
+		return array_shift($dbKeys);
 	}
 
 	
