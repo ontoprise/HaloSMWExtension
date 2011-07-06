@@ -1088,4 +1088,73 @@ More information can be found also in the [http://smwforum.ontoprise.com/smwforu
     <hash>01d24503212f33dea2e06a4171f717ee</hash>
     </revision>
   </page>
+  <page>
+    <title>Template:Article row for comment attachments</title>
+    <id>2268</id>
+    <revision>
+      <id>4967</id>
+      <timestamp>2011-07-06T11:43:05Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <comment>Created page with &quot;&lt;noinclude&gt;{{Template}}  [[Rationale::Result template to display a row with an article and the latest attachments in its comments in an info box.]] [[Category:Template]] &lt;/noincl...&quot;</comment>
+      <text xml:space="preserve">&lt;noinclude&gt;{{Template}}
+
+[[Rationale::Result template to display a row with an article and the latest attachments in its comments in an info box.]]
+[[Category:Template]]
+&lt;/noinclude&gt;&lt;includeonly&gt;{|
+| [[{{{2|}}}]]
+| with attached article(s): {{#arraymapce:{{{3|}}}|,|x|[[:x]]|&amp;nbsp;}}
+|}&lt;/includeonly&gt;&lt;noinclude&gt;
+
+{{Part of bundle|value=Collaboration}}
+
+{{Content hash|value=}}
+
+&lt;/noinclude&gt;</text>
+    <hash>5a79f03e65097d75e995a1df0e872c20</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Template:Comments with attached articles</title>
+    <id>2269</id>
+    <revision>
+      <id>4968</id>
+      <timestamp>2011-07-06T11:43:32Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <comment>Created page with &quot;&lt;noinclude&gt;{{Template}}  [[Rationale::Shows articles in this wiki that have attached articles by comments.]] [[Category:Template]] &lt;/noinclude&gt;&lt;includeonly&gt;{{#vardefine:query|[[C...&quot;</comment>
+      <text xml:space="preserve">&lt;noinclude&gt;{{Template}}
+
+[[Rationale::Shows articles in this wiki that have attached articles by comments.]]
+[[Category:Template]]
+&lt;/noinclude&gt;&lt;includeonly&gt;{{#vardefine:query|[[Comment:+]][[Has attached article::+]]}} {{#vardefine:resultLimit|5}} {{#vardefine:resultNumber|{{#ask: {{#var:query}} | format=count}}}} 
+
+{| cellspacing=&quot;0&quot; cellpadding=&quot;5&quot; style=&quot;border: 1px solid rgb(170, 170, 170); margin: 0pt 0pt 0.5em 1em; background: rgb(255, 255, 255) none repeat scroll 0% 0%; position: relative; border-collapse: collapse; -moz-background-clip: border; -moz-background-origin: padding; -moz-background-inline-policy: continuous; float: right; clear: right; width: 35%;&quot;
+|-
+! style=&quot;background: rgb(237, 244, 252) none repeat scroll 0% 0%; -moz-background-clip: border; -moz-background-origin: padding; -moz-background-inline-policy: continuous; color: black;&quot; colspan=&quot;2&quot; | ({{#var:resultNumber}}) attached articles
+|-
+| {{#ask: {{#var:query}} 
+|?Belongs to article
+|?Has attached article
+| format=template
+| template=Article row for comment attachments
+| limit={{#var:resultLimit}} 
+| searchlabel= 
+| link=none 
+| default=*''no articles with attached articles yet''
+}}
+|}&lt;/includeonly&gt;&lt;noinclude&gt;
+
+{{Part of bundle|value=Collaboration}}
+
+{{Content hash|value=}}
+
+&lt;/noinclude&gt;</text>
+    <hash>dd3ffcb498fe1901eba39fd62738c55a</hash>
+    </revision>
+  </page>
 </mediawiki>
