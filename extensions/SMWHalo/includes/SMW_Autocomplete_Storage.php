@@ -227,8 +227,9 @@ class AutoCompletionStorageSQL2 extends AutoCompletionStorage {
 		$options = DBHelper::getSQLOptionsAsString($requestoptions);
 		if ($namespaces == NULL || count($namespaces) == 0) {
 
-			$sql .= 'SELECT page_title, page_namespace FROM '.$page.' WHERE UPPER('.DBHelper::convertColumn('page_title').') LIKE UPPER('.$db->addQuotes('%'.$match.'%').') '.$bundleSql.' ORDER BY page_title ';
-
+			$sql .= '(SELECT page_title, page_namespace FROM '.$page.' WHERE UPPER('.DBHelper::convertColumn('page_title').') LIKE UPPER('.$db->addQuotes($match.'%').') ORDER BY page_title) UNION ';
+            $sql .= '(SELECT page_title, page_namespace FROM '.$page.' WHERE UPPER('.DBHelper::convertColumn('page_title').') LIKE UPPER('.$db->addQuotes('%'.$match.'%').') ORDER BY page_title) ';
+            
 		} else {
 
 			//wanted and unwanted namespace
