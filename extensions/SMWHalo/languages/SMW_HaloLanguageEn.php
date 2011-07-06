@@ -482,7 +482,7 @@ clicking the big arrows between the columns.',
 	'tabf_instancename_blank' => "Instance names cannot be blank.",
 	'tabf_instancename_invalid' => "'$1' is not a valid instance name.",
 	'tabf_instancename_exists' => "'$1' already exists.",
-	'tabf_annotationnamme_invalid' => "'$1' has an invalid value: The value '$2' of property '$3' is invalid.",
+	'tabf_annotationnamme_invalid' => "'$1' has an invalid value: The value '$2' of property '$3' is not of type $4.",
 	
 	'tabf_lost_reason_EQ' => "is equal to '$1'",
 	'tabf_lost_reason_NEQ' => "is unequal to '$1'",
