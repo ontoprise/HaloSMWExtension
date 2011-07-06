@@ -2,7 +2,7 @@
   <siteinfo>
     <sitename>Contentwiki</sitename>
     <base>http://localhost/index.php/Main_Page</base>
-    <generator>MediaWiki 1.16.1</generator>
+    <generator>MediaWiki 1.16.4</generator>
     <case>first-letter</case>
     <namespaces>
       <namespace key="-2" case="first-letter">Media</namespace>
@@ -63,17 +63,16 @@
     <title>Template:RMListInnerTable</title>
     <id>58</id>
     <revision>
-      <id>67</id>
-      <timestamp>2011-03-31T13:49:56Z</timestamp>
+      <id>5028</id>
+      <timestamp>2011-07-06T13:47:45Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
-      <text xml:space="preserve">&lt;noinclude&gt;{{Template
-|rationale=Builds the inner table
-}}
-{{Part of bundle|value=Richmedia}}
-{{Content hash|value=bd37e28349330f2501b07313fe564997}}
+      <text xml:space="preserve">&lt;noinclude&gt;{{Template}}
+
+[[Rationale::Template that builds the inner table for the Rich Media list.]]
+[[Category:Template]]
 &lt;/noinclude&gt;&lt;includeonly&gt;
 |-
 | align=&quot;center&quot; |&lt;span style=&quot;display: none;&quot;&gt;{{{1}}}&lt;/span&gt;&lt;span class=&quot;plainlinks&quot; title=&quot;This indicates the category of the file.&quot;&gt;{{RMCategoryLinkIcon|{{{1}}}}}&lt;/span&gt;
@@ -81,25 +80,31 @@
 |[[{{{3}}}]]
 |&lt;span style=&quot;display: none;&quot;&gt;{{#formatdate:{{{4}}}|ISO 8601}}&lt;/span&gt;{{{4}}}
 | align=&quot;center&quot; |&lt;span class=&quot;plainlinks rmListInfoIcon&quot;&gt;[{{fullurl:{{{1}}}}} {{SERVER}}{{SCRIPTPATH}}/skins/common/images/icons/smw_plus_info_icon_16x16.png]&lt;/span&gt;&lt;span class=&quot;plainlinks&quot;&gt;[{{fullurl:{{{1}}}|action=formedit}} {{SERVER}}{{SCRIPTPATH}}/skins/common/images/icons/smw_plus_edit_with_forms_icon_16x16.gif]&lt;/span&gt;
-| align=&quot;center&quot; |&lt;span class=&quot;plainlinks&quot; title=&quot;delete description&quot;&gt;[{{fullurl:{{{1}}}|action=delete}} {{SERVER}}{{SCRIPTPATH}}/skins/common/images/icons/smw_plus_delete_icon_16x16.png]&lt;/span&gt;&lt;/includeonly&gt;</text>
-    <hash>d377270d45320715cc9814f543e4b8a9</hash>
+| align=&quot;center&quot; |&lt;span class=&quot;plainlinks&quot; title=&quot;delete description&quot;&gt;[{{fullurl:{{{1}}}|action=delete}} {{SERVER}}{{SCRIPTPATH}}/skins/common/images/icons/smw_plus_delete_icon_16x16.png]&lt;/span&gt;
+&lt;/includeonly&gt;&lt;noinclude&gt;
+
+{{Part of bundle|value=Richmedia}}
+
+{{Content hash|value=}}
+
+&lt;/noinclude&gt;</text>
+    <hash>658387b9876d1f6d06ff28b9d5901d8d</hash>
     </revision>
   </page>
   <page>
     <title>Template:RMCategoryLinkIcon</title>
     <id>59</id>
     <revision>
-      <id>68</id>
-      <timestamp>2011-03-31T13:45:28Z</timestamp>
+      <id>5022</id>
+      <timestamp>2011-07-06T13:42:20Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
-      <text xml:space="preserve">&lt;noinclude&gt;{{Template
-|rationale=detects the right icon for the file
-}}
-{{Part of bundle|value=Richmedia}}
-{{Content hash|value=cb9f56d99f35dcc53f734f8a853b08b5}}
+      <text xml:space="preserve">&lt;noinclude&gt;{{Template}}
+
+[[Rationale::Call this template to detect the right icon for a file.]]
+[[Category:Template]]
 &lt;/noinclude&gt;&lt;includeonly&gt;{{#switch:
   {{#sub:
     {{lc: {{{1}}} }} 
@@ -116,25 +121,28 @@
   | icalendar={{SERVER}}/{{SCRIPTPATH}}/skins/common/images/icons/smw_plus_icalendar_icon_16x16.gif
   | default {{SERVER}}/{{SCRIPTPATH}}/skins/common/images/icons/smw_plus_image_icon_16x16.png
 }}&lt;/includeonly&gt;&lt;noinclude&gt;
+
+{{Part of bundle|value=Richmedia}}
+
+{{Content hash|value=}}
+
 &lt;/noinclude&gt;</text>
-    <hash>a979d2e191c7942a657761f561e2d82f</hash>
+    <hash>393cdf6586c350bcd495eac056c15a23</hash>
     </revision>
   </page>
   <page>
     <title>Form:RMUpload</title>
     <id>60</id>
     <revision>
-      <id>839</id>
-      <timestamp>2011-04-12T08:43:50Z</timestamp>
+      <id>5044</id>
+      <timestamp>2011-07-06T14:30:58Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
-      <text xml:space="preserve">&lt;noinclude&gt;{{Form
-|rationale=This form is used to edit the information of rm uploads.
-}}
-{{Part of bundle|value=Richmedia}}
-{{Content hash|value=d4108e34f1a362de7ec8e6deb6460013}}
+      <text xml:space="preserve">&lt;noinclude&gt;{{Form}}
+[[Rationale::This form is used to edit the information of rm uploads.]]
+[[Category:Form]]
 &lt;/noinclude&gt;&lt;includeonly&gt;__NORICHEDITOR__
 {{{info|page name=RMUploadPage&lt;unique number;start=1&gt;}}} {{{for template|RMUpload|label=Meta information|collapsible}}} 
 
@@ -187,25 +195,25 @@
 |}
 
 {{{end template}}}&lt;/includeonly&gt;&lt;noinclude&gt;
+{{Part of bundle|value=Richmedia}}
+{{Content hash|value=}}
 &lt;/noinclude&gt;</text>
-    <hash>303b18fa4b4b33350e0b0971cbacd78a</hash>
+    <hash>c30c69178954e7ec8fe0bd23ea9f7b4b</hash>
     </revision>
   </page>
   <page>
     <title>Form:RMImage</title>
     <id>61</id>
     <revision>
-      <id>836</id>
-      <timestamp>2011-04-12T08:43:08Z</timestamp>
+      <id>5043</id>
+      <timestamp>2011-07-06T14:30:15Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
-      <text xml:space="preserve">&lt;noinclude&gt;{{Form
-|rationale=This form is used to edit the information of uploaded images.
-}}
-{{Part of bundle|value=Richmedia}}
-{{Content hash|value=e950d750995d04c1a00e9962089d824f}}
+      <text xml:space="preserve">&lt;noinclude&gt;{{Form}}
+[[Rationale::This form is used to edit the information of uploaded images.]]
+[[Category:Form]]
 &lt;/noinclude&gt;&lt;includeonly&gt;__NORICHEDITOR__
 {{{for template|RMImage|label=Meta Information|collapsible}}} 
 
@@ -271,25 +279,25 @@
 {{{end template}}} {{{standard input|minor edit}}} {{{standard input|watch}}} 
 
 {{{standard input|save}}} {{{standard input|preview}}} {{{standard input|changes}}} {{{standard input|cancel}}}&lt;/includeonly&gt;&lt;noinclude&gt;
+{{Part of bundle|value=Richmedia}}
+{{Content hash|value=}}
 &lt;/noinclude&gt;</text>
-    <hash>bd40a26d6d5ab48bdad253b2c6f668cc</hash>
+    <hash>c25678de6737d661ed314a6dd913368f</hash>
     </revision>
   </page>
   <page>
     <title>Form:RMPdf</title>
     <id>62</id>
     <revision>
-      <id>837</id>
-      <timestamp>2011-04-12T08:43:13Z</timestamp>
+      <id>5047</id>
+      <timestamp>2011-07-06T14:36:22Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
-      <text xml:space="preserve">&lt;noinclude&gt;{{Form
-|rationale=This form is used to edit the information of uploaded pdf files.
-}}
-{{Part of bundle|value=Richmedia}}
-{{Content hash|value=a5bd184f7f44da17b20c45a305747e54}}
+      <text xml:space="preserve">&lt;noinclude&gt;{{Form}}
+[[Rationale::This form is used to edit the information of uploaded pdf files.]]
+[[Category:Form]]
 &lt;/noinclude&gt;&lt;includeonly&gt;__NORICHEDITOR__
 {{{info|WYSIWYG}}} {{{for template|RMPdf|label=Meta information|collapsible}}} 
 
@@ -358,25 +366,26 @@
 
 {{{standard input|minor edit}}} {{{standard input|watch}}} 
 
-{{{standard input|save}}} {{{standard input|preview}}} {{{standard input|changes}}} {{{standard input|cancel}}}&lt;/includeonly&gt;</text>
-    <hash>c73e149cbea9a6f3af12da75ebe0534a</hash>
+{{{standard input|save}}} {{{standard input|preview}}} {{{standard input|changes}}} {{{standard input|cancel}}}&lt;/includeonly&gt;&lt;noinclude&gt;
+{{Part of bundle|value=Richmedia}}
+{{Content hash|value=}}
+&lt;/noinclude&gt;</text>
+    <hash>6749c58a06f3fb11e3238f597e9fa805</hash>
     </revision>
   </page>
   <page>
     <title>Form:RMDocument</title>
     <id>63</id>
     <revision>
-      <id>835</id>
-      <timestamp>2011-04-12T08:42:29Z</timestamp>
+      <id>5041</id>
+      <timestamp>2011-07-06T14:28:09Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
-      <text xml:space="preserve">&lt;noinclude&gt;{{Form
-|rationale=This form is used to edit the information of uploaded documents.
-}}
-{{Part of bundle|value=Richmedia}}
-{{Content hash|value=48bd6cdb16cac9d1d62022853b850f59}}
+      <text xml:space="preserve">&lt;noinclude&gt;{{Form}}
+[[Rationale::This form is used to edit the information of uploaded documents.]]
+[[Category:Form]]
 &lt;/noinclude&gt;&lt;includeonly&gt;__NORICHEDITOR__
 {{{info|WYSIWYG}}} {{{for template|RMDocument|label=Meta information|collapsible}}} 
 
@@ -449,24 +458,27 @@
 
 {{{standard input|minor edit}}} {{{standard input|watch}}} 
 
-{{{standard input|save}}} {{{standard input|preview}}} {{{standard input|changes}}} {{{standard input|cancel}}}&lt;/includeonly&gt;&lt;noinclude&gt;
+{{{standard input|save}}} {{{standard input|preview}}} {{{standard input|changes}}} {{{standard input|cancel}}}
+&lt;/includeonly&gt;&lt;noinclude&gt;
+{{Part of bundle|value=Richmedia}}
+{{Content hash|value=}}
 &lt;/noinclude&gt;</text>
-    <hash>43941997cd933436bc58a9cea378e6fa</hash>
+    <hash>78e4baf43ddf9ef794b420be776d880c</hash>
     </revision>
   </page>
   <page>
     <title>Form:RMAudio</title>
     <id>64</id>
     <revision>
-      <id>834</id>
-      <timestamp>2011-04-12T08:40:13Z</timestamp>
+      <id>5040</id>
+      <timestamp>2011-07-06T14:27:07Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
-      <text xml:space="preserve">&lt;noinclude&gt;{{Form
-|rationale=This form is used to edit the information of uploaded audio files.
-}}
+      <text xml:space="preserve">&lt;noinclude&gt;{{Form}}
+[[Rationale::This form is used to edit the information of uploaded audio files.]]
+[[Category:Form]]
 &lt;/noinclude&gt;&lt;includeonly&gt;__NORICHEDITOR__
 {{{for template|RMAudio|label=Meta information|collapsible}}} 
 
@@ -529,30 +541,27 @@
 | align=&quot;center&quot; colspan=&quot;2&quot; style=&quot;color: red; &quot; | Fields marked with a &quot;*&quot; are mandatory
 |}
 
-{{{end template}}}&lt;/includeonly&gt;&lt;noinclude&gt;
-{{Part of bundle
-|value=Richmedia
-}}
-{{Content hash|value=52d0024d9ca5eb7808a722b9abc04ace}}
+{{{end template}}}
+&lt;/includeonly&gt;&lt;noinclude&gt;
+{{Part of bundle|value=Richmedia}}
+{{Content hash|value=}}
 &lt;/noinclude&gt;</text>
-    <hash>3f8f2f4ec09fe6287caaee7755e6326f</hash>
+    <hash>514aa7c012db3c355798603d8663e369</hash>
     </revision>
   </page>
   <page>
     <title>Form:RMVideo</title>
     <id>65</id>
     <revision>
-      <id>841</id>
-      <timestamp>2011-04-12T08:44:22Z</timestamp>
+      <id>5046</id>
+      <timestamp>2011-07-06T14:34:15Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
-      <text xml:space="preserve">&lt;noinclude&gt;{{Form
-|rationale=This form is used to edit the information of uploaded video files.
-}}
-{{Part of bundle|value=Richmedia}}
-{{Content hash|value=3f63208d7b046e3ea198ae18873e66f7}}
+      <text xml:space="preserve">&lt;noinclude&gt;{{Form}}
+[[Rationale::This form is used to edit the information of uploaded video files.]]
+[[Category:Form]]
 &lt;/noinclude&gt;&lt;includeonly&gt;__NORICHEDITOR__
 {{{for template|RMVideo|label=Meta information|collapsible}}} 
 
@@ -616,271 +625,315 @@
 |}
 
 {{{end template}}}&lt;/includeonly&gt;&lt;noinclude&gt;
+{{Part of bundle|value=Richmedia}}
+{{Content hash|value=}}
 &lt;/noinclude&gt;</text>
-    <hash>e14418f360ed3c5a351e1c604eac54bc</hash>
+    <hash>ff80dd822b83e02fbbfa67581f4a858b</hash>
     </revision>
   </page>
   <page>
     <title>Property:HasCreationDate</title>
     <id>66</id>
     <revision>
-      <id>75</id>
-      <timestamp>2011-03-31T13:39:29Z</timestamp>
+      <id>5001</id>
+      <timestamp>2011-07-06T13:17:15Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
-      <text xml:space="preserve">{{Property
-|rationale=Attribute for specifying the creation date of a media file.
-}}
+      <text xml:space="preserve">{{Property}} __NOTOC__  __NOEDITSECTION__ 
+
+== Information about this property ==
+
+[[Rationale::Attribute for specifying the creation date of a media file.]]
+
+{{NoteInText|The characteristics of this property are visible in the factbox below.}}
+
 [[Category:Property]]
 {{Part of bundle|value=Richmedia}}
 {{Content hash|value=}}
+
 [[Has type::Date| ]] [[has domain and range::Category:Media; | ]]</text>
-    <hash>b74879a8daf6472f60d148381bad5f57</hash>
+    <hash>264cce56ea5d59f4f12409588d0f7504</hash>
     </revision>
   </page>
   <page>
     <title>Property:HasFilename</title>
     <id>67</id>
     <revision>
-      <id>76</id>
-      <timestamp>2011-03-31T13:40:37Z</timestamp>
+      <id>5003</id>
+      <timestamp>2011-07-06T13:18:23Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
-      <text xml:space="preserve">{{Property
-|rationale=Used to specify a file name for a media file. The file name will be used as page title for the uploaded file.
-}}
+      <text xml:space="preserve">{{Property}} __NOTOC__  __NOEDITSECTION__ 
+
+== Information about this property ==
+
+[[Rationale::Used to specify a file name for a media file. The file name will be used as page title for the uploaded file.]]
+
+{{NoteInText|The characteristics of this property are visible in the factbox below.}}
+
 [[Category:Property]]
 {{Part of bundle|value=Richmedia}}
 {{Content hash|value=}}
+
 [[has type::Type:String| ]] [[has domain and range::Category:Media; | ]]</text>
-    <hash>7810ed339ff6eac8b723404e016bc276</hash>
+    <hash>1d89bcc71238f89c854e0ad65af1cd6b</hash>
     </revision>
   </page>
   <page>
     <title>Property:HasUploadDate</title>
     <id>68</id>
     <revision>
-      <id>77</id>
-      <timestamp>2011-03-31T13:42:21Z</timestamp>
+      <id>5007</id>
+      <timestamp>2011-07-06T13:19:44Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
-      <text xml:space="preserve">{{Property
-|rationale=Denotes the date at which a media file was uploaded. The property value is automatically determined by the system upon uploading.
-}}
+      <text xml:space="preserve">{{Property}} __NOTOC__  __NOEDITSECTION__ 
+
+== Information about this property ==
+
+[[Rationale::Denotes the date at which a media file was uploaded. The property value is automatically determined by the system upon uploading.]]
+
+{{NoteInText|The characteristics of this property are visible in the factbox below.}}
+
 [[Category:Property]]
 {{Part of bundle|value=Richmedia}}
 {{Content hash|value=}}
+
 [[Has type::Type:Date| ]] [[has domain and range::Category:Media; | ]]</text>
-    <hash>f72b37db3c8ea918af548ceda39b0bde</hash>
+    <hash>ea9d0bc8c0ccfcda6397a65bf60cd4f6</hash>
     </revision>
   </page>
   <page>
     <title>Property:HasUploader</title>
     <id>69</id>
     <revision>
-      <id>845</id>
-      <timestamp>2011-04-12T08:51:30Z</timestamp>
+      <id>5009</id>
+      <timestamp>2011-07-06T13:21:09Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
-      <text xml:space="preserve">{{Property
-|rationale=Relates a media file with the user who uploaded the file (e.g. User:WikiSysop).
-}}
+      <text xml:space="preserve">{{Property}} __NOTOC__  __NOEDITSECTION__ 
+
+== Information about this property ==
+
+[[Rationale::Relates a media file with the user who uploaded the file (e.g. User:WikiSysop).]]
+
+{{NoteInText|The characteristics of this property are visible in the factbox below.}}
+
 [[Category:Property]]
 {{Part of bundle|value=Richmedia}}
 {{Content hash|value=}}
+
 [[Has type::Type:Page| ]] [[has domain and range::Category:Media;Category:User| ]]</text>
-    <hash>6cc8338f3c441c62c58d3c46fd20768b</hash>
+    <hash>25fce11ee46dec0d8e142092091ce32d</hash>
     </revision>
   </page>
   <page>
     <title>Property:HasCopyrightBy</title>
     <id>70</id>
     <revision>
-      <id>79</id>
-      <timestamp>2011-04-07T15:28:59Z</timestamp>
+      <id>5000</id>
+      <timestamp>2011-07-06T13:16:49Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
-      <text xml:space="preserve">{{Property
-|rationale=Relates a media file with its copyright owner (e.g. a wiki-user).
-}}
+      <text xml:space="preserve">{{Property}} __NOTOC__  __NOEDITSECTION__ 
+
+== Information about this property ==
+
+[[Rationale::Relates a media file with its copyright owner (e.g. a wiki-user).]]
+
+{{NoteInText|The characteristics of this property are visible in the factbox below.}}
+
 [[Category:Property]]
+
 {{Part of bundle|value=Richmedia}}
 {{Content hash|value=}}
+
 [[Has type::Type:Page| ]] [[has domain and range::Category:Media;Category:User| ]]</text>
-    <hash>19e1bf14c88f91e248493ac9f3088f17</hash>
+    <hash>fc4b6f4bb2c2ae5e76e9088c0aea8f91</hash>
     </revision>
   </page>
   <page>
     <title>Property:HasDescription</title>
     <id>71</id>
     <revision>
-      <id>80</id>
-      <timestamp>2011-03-31T13:40:11Z</timestamp>
+      <id>5002</id>
+      <timestamp>2011-07-06T13:17:41Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
-      <text xml:space="preserve">{{Property
-|rationale=Used for giving a textual description of a media file (see Category:Media).
-}}
+      <text xml:space="preserve">{{Property}} __NOTOC__  __NOEDITSECTION__ 
+
+== Information about this property ==
+
+[[Rationale::Used for giving a textual description of a media file (see Category:Media).]]
+
+{{NoteInText|The characteristics of this property are visible in the factbox below.}}
+
 [[Category:Property]]
 {{Part of bundle|value=Richmedia}}
 {{Content hash|value=}}
+
 [[Has type::Type:Text| ]] [[Subproperty of::Property:Description| ]] [[has domain and range::Category:Media; | ]]</text>
-    <hash>2b9f3abd936b8dbd89d63292dfa83a9e</hash>
+    <hash>dc872b79bcd129f28abca9a1ff1c1321</hash>
     </revision>
   </page>
   <page>
     <title>Category:Media</title>
     <id>72</id>
     <revision>
-      <id>81</id>
-      <timestamp>2011-04-07T15:25:15Z</timestamp>
+      <id>4975</id>
+      <timestamp>2011-07-06T12:40:47Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
-      <text xml:space="preserve">{{Category
-|rationale=This category subsumes media content coming from media files (e.g. document, audio, image and video files).
-|Has default form=
-|No automatic formedit=Yes
-}}
+      <text xml:space="preserve">{{Category}}
+ __NOTOC__  __NOEDITSECTION__
+== Information about this category ==
+[[Rationale::This category subsumes media content coming from media files (e.g. document, audio, image and video files).]]
+[[No automatic formedit::true]]
 {{Part of bundle|value=Richmedia}}
-{{Content hash|value=c6a9db5077de5e7638b69668aa8380b3}}
+{{Content hash|value=}}
+
 [[Category:Content|Content]]</text>
-    <hash>7496f62dee5c7ba46a23c6159153bae0</hash>
+    <hash>05a6e635beefaaddb58bf4329e747d0d</hash>
     </revision>
   </page>
   <page>
     <title>Category:Image</title>
     <id>73</id>
     <revision>
-      <id>82</id>
-      <timestamp>2011-03-31T13:58:19Z</timestamp>
+      <id>4974</id>
+      <timestamp>2011-07-06T12:40:01Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
-      <text xml:space="preserve">{{Category
-|rationale=Denotes all images.
-|Has default form=Form:RMImage
-|No automatic formedit=Yes
-}}
+      <text xml:space="preserve">{{Category}}
+ __NOTOC__  __NOEDITSECTION__
+== Information about this category ==
+[[Rationale::This category is used to identify all images]]
+[[No automatic formedit::true]]
 {{Part of bundle|value=Richmedia}}
 {{Content hash|value=}}
+
 [[Category:Media|Image]]</text>
-    <hash>6363e2c65c577afd61bc978b79c84778</hash>
+    <hash>903eae239e3588348ed5ef1bf1c68ff2</hash>
     </revision>
   </page>
   <page>
     <title>Category:Pdf</title>
     <id>74</id>
     <revision>
-      <id>83</id>
-      <timestamp>2011-03-31T13:44:31Z</timestamp>
+      <id>4976</id>
+      <timestamp>2011-07-06T12:41:32Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
-      <text xml:space="preserve">{{Category
-|rationale=Contains all PDF documents.
-|Has default form=Form:RMPdf
-|No automatic formedit=Yes
-}}
+      <text xml:space="preserve">{{Category}}
+ __NOTOC__  __NOEDITSECTION__
+== Information about this category ==
+[[Rationale::This category is used to identify all PDF documents.]]
+[[No automatic formedit::true]]
 {{Part of bundle|value=Richmedia}}
 {{Content hash|value=}}
+
 [[Category:Media|Media]]</text>
-    <hash>03904d0e53ffbc813bc61605bf417580</hash>
+    <hash>a15f041167636e9c463896b8e6ee7940</hash>
     </revision>
   </page>
   <page>
     <title>Category:Document</title>
     <id>75</id>
     <revision>
-      <id>84</id>
-      <timestamp>2011-03-31T13:38:46Z</timestamp>
+      <id>4972</id>
+      <timestamp>2011-07-06T12:38:45Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
-      <text xml:space="preserve">{{Category
-|rationale=Contains all documents.
-|Has default form=Form:RMDocument
-|No automatic formedit=Yes
-}}
+      <text xml:space="preserve">{{Category}}
+ __NOTOC__  __NOEDITSECTION__
+== Information about this category ==
+[[Rationale::This category is used to identify all documents.]]
+[[No automatic formedit::true]]
 {{Part of bundle|value=Richmedia}}
 {{Content hash|value=}}
+
 [[Category:Media|Document]]</text>
-    <hash>33f5f9cc2055011c71b14a5f91a496b8</hash>
+    <hash>b30807e50de8d0ca3b581776cb01cf4e</hash>
     </revision>
   </page>
   <page>
     <title>Category:Audio</title>
     <id>76</id>
     <revision>
-      <id>85</id>
-      <timestamp>2011-03-31T13:22:42Z</timestamp>
+      <id>4971</id>
+      <timestamp>2011-07-06T12:37:50Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
-      <text xml:space="preserve">{{Category
-|rationale=Contains all audio documents.
-|Has default form=Form:RMAudio
-|No automatic formedit=Yes
-}}
+      <text xml:space="preserve">{{Category}}
+ __NOTOC__  __NOEDITSECTION__
+== Information about this category ==
+[[Rationale::This category is used to identify all audio documents.]]
+[[No automatic formedit::true]]
 {{Part of bundle|value=Richmedia}}
 {{Content hash|value=}}
+
 [[Category:Media|Media]]</text>
-    <hash>373b6ba05ecb8ead51dfc3176948efb4</hash>
+    <hash>3728b103b269475b050bce5d1d1e3674</hash>
     </revision>
   </page>
   <page>
     <title>Category:Video</title>
     <id>77</id>
     <revision>
-      <id>86</id>
-      <timestamp>2011-03-31T13:55:46Z</timestamp>
+      <id>4978</id>
+      <timestamp>2011-07-06T12:42:46Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
-      <text xml:space="preserve">{{Category
-|rationale=Category which is used for tagging video files.
-|Has default form=Form:RMVideo
-|No automatic formedit=Yes
-}}
+      <text xml:space="preserve">{{Category}}
+ __NOTOC__  __NOEDITSECTION__
+== Information about this category ==
+[[Rationale::This category is used to identify video files.]]
+[[No automatic formedit::true]]
 {{Part of bundle|value=Richmedia}}
 {{Content hash|value=}}
+
 [[Category:Media|Video]]</text>
-    <hash>9480cb14d347a6e291a1832e30be97b2</hash>
+    <hash>bb0256583b62f61231173b6b1ee375cc</hash>
     </revision>
   </page>
   <page>
     <title>Template:RMMedia</title>
     <id>79</id>
     <revision>
-      <id>1115</id>
-      <timestamp>2011-04-15T08:00:03Z</timestamp>
+      <id>5030</id>
+      <timestamp>2011-07-06T13:50:16Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
-      <text xml:space="preserve">&lt;noinclude&gt;{{Template
-|rationale=This template displays information of media (i.e. document, image, etc) in a box.
-}}
-{{Part of bundle|value=Richmedia}}
-{{Content hash|value=ee76af1c1d38bb3b276e218646355470}}
+      <text xml:space="preserve">&lt;noinclude&gt;{{Template}}
+
+[[Rationale::This template displays information of media (i.e. document, image, etc) in a box.]]
+[[Category:Template]]
 &lt;/noinclude&gt;&lt;includeonly&gt;{| cellspacing=&quot;0&quot; cellpadding=&quot;5&quot; class=&quot;rmMetadataTable&quot;
 ! colspan=&quot;2&quot; class=&quot;rmMetadataTH&quot; | ''{{{Media subcategory|}}}&amp;nbsp;Metadata''
 |-
@@ -915,45 +968,54 @@
 {{!}} valign=&quot;top&quot; {{!}} Subsection of:
 {{!}} valign=&quot;top&quot; {{!}} {{#if:{{{SubSectionOf|}}}|{{#arraymap:{{{SubSectionOf|}}}|,|x|[[subsection of::x]]}}|undefined}} }}
 |}&lt;/includeonly&gt;&lt;noinclude&gt;
+
+{{Part of bundle|value=Richmedia}}
+
+{{Content hash|value=}}
+
 &lt;/noinclude&gt;</text>
-    <hash>9aa7a13d72e7ae20485aba88f6ca8166</hash>
+    <hash>09694d7496c02a2653059bfb49406d44</hash>
     </revision>
   </page>
   <page>
     <title>Property:HasRelatedArticle</title>
     <id>82</id>
     <revision>
-      <id>91</id>
-      <timestamp>2011-03-31T13:41:55Z</timestamp>
+      <id>5006</id>
+      <timestamp>2011-07-06T13:19:16Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
-      <text xml:space="preserve">{{Property
-|rationale=Used to attach a wiki article with an uploaded media file.
-}}
+      <text xml:space="preserve">{{Property}} __NOTOC__  __NOEDITSECTION__ 
+
+== Information about this property ==
+
+[[Rationale::Used to attach a wiki article with an uploaded media file.]]
+
+{{NoteInText|The characteristics of this property are visible in the factbox below.}}
+
 [[Category:Property]]
 {{Part of bundle|value=Richmedia}}
 {{Content hash|value=}}
+
 [[Is inverse of::Property:Attachment| ]] [[Has domain and range::Category:Media; | ]]</text>
-    <hash>516a637cfc3e4730df8a27272cbb8636</hash>
+    <hash>81e850df96e203ca9e600ddd94c72bef</hash>
     </revision>
   </page>
   <page>
     <title>Form:RMICalendar</title>
     <id>88</id>
     <revision>
-      <id>838</id>
-      <timestamp>2011-04-12T08:43:14Z</timestamp>
+      <id>5042</id>
+      <timestamp>2011-07-06T14:29:14Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
-      <text xml:space="preserve">&lt;noinclude&gt;{{Form
-|rationale=This form is used to edit the information of uploaded ICalendar files.
-}}
-{{Part of bundle|value=Richmedia}}
-{{Content hash|value=e96a141eeb394e780619489af5fbb699}}
+      <text xml:space="preserve">&lt;noinclude&gt;{{Form}}
+[[Rationale::This form is used to edit the information of uploaded ICalendar files.]]
+[[Category:Form]]
 &lt;/noinclude&gt;&lt;includeonly&gt;__NORICHEDITOR__
 {{{info|WYSIWYG}}} {{{for template|RMICalendar|label=Meta information|collapsible}}} 
 
@@ -1023,25 +1085,26 @@
 {{{standard input|minor edit}}} {{{standard input|watch}}} 
 
 {{{standard input|save}}} {{{standard input|preview}}} {{{standard input|changes}}} {{{standard input|cancel}}}&lt;/includeonly&gt;&lt;noinclude&gt;
+{{Part of bundle|value=Richmedia}}
+{{Content hash|value=}}
 &lt;/noinclude&gt;</text>
-    <hash>288472e353e88131d61c2f7969ae0ffd</hash>
+    <hash>1c33ff61de4f3c5cb6cdbb7f30f47521</hash>
     </revision>
   </page>
   <page>
     <title>Template:RMVCard</title>
     <id>89</id>
     <revision>
-      <id>98</id>
-      <timestamp>2011-03-31T13:53:41Z</timestamp>
+      <id>5035</id>
+      <timestamp>2011-07-06T13:56:04Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
-      <text xml:space="preserve">&lt;noinclude&gt;{{Template
-|rationale=Displays and annotates the metadata of an uploaded VCard.
-}}
-{{Part of bundle|value=Richmedia}}
-{{Content hash|value=1d275d6db80c57a5290cfca292920531}}
+      <text xml:space="preserve">&lt;noinclude&gt;{{Template}}
+
+[[Rationale::Displays and annotates the metadata of an uploaded VCard.]]
+[[Category:Template]]
 &lt;/noinclude&gt;&lt;includeonly&gt;{{RMMedia
 |Media subcategory=VCard
 |Filename={{{Filename|}}}
@@ -1057,25 +1120,29 @@
 }} 
 
 [[Category:VCard]]&lt;/includeonly&gt;&lt;noinclude&gt;
+
+{{Part of bundle|value=Richmedia}}
+
+{{Content hash|value=}}
+
 &lt;/noinclude&gt;</text>
-    <hash>4c5080711caafb1bff3a457484edd97e</hash>
+    <hash>11bb5418ad26ecba0390d5adf92761bb</hash>
     </revision>
   </page>
   <page>
     <title>Template:RMICalendar</title>
     <id>90</id>
     <revision>
-      <id>99</id>
-      <timestamp>2011-03-31T13:46:36Z</timestamp>
+      <id>5024</id>
+      <timestamp>2011-07-06T13:44:23Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
-      <text xml:space="preserve">&lt;noinclude&gt;{{Template
-|rationale=Displays and annotates the metadata of an uploaded ICalendar.
-}}
-{{Part of bundle|value=Richmedia}}
-{{Content hash|value=fadfd73f808d6d848e6d621c7f40f8fc}}
+      <text xml:space="preserve">&lt;noinclude&gt;{{Template}}
+
+[[Rationale::Displays and annotates the metadata of an uploaded ICalendar.]]
+[[Category:Template]]
 &lt;/noinclude&gt;&lt;includeonly&gt;{{RMMedia
 |Media subcategory=ICalendar
 |Filename={{{Filename|}}}
@@ -1090,108 +1157,127 @@
 |SubSectionOf={{{SubSectionOf|}}}
 }} 
 
-[[Category:ICalendar]]&lt;/includeonly&gt;&lt;noinclude&gt;
+[[Category:ICalendar]]
+&lt;/includeonly&gt;&lt;noinclude&gt;
+
+{{Part of bundle|value=Richmedia}}
+
+{{Content hash|value=}}
+
 &lt;/noinclude&gt;</text>
-    <hash>dd978178dee085e70e62ab27f835ae6d</hash>
+    <hash>357a65970934d7e81e909d7fbdc0cac9</hash>
     </revision>
   </page>
   <page>
     <title>Category:ICalendar</title>
     <id>91</id>
     <revision>
-      <id>100</id>
-      <timestamp>2011-03-31T13:43:37Z</timestamp>
+      <id>4973</id>
+      <timestamp>2011-07-06T12:39:25Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
-      <text xml:space="preserve">{{Category
-|rationale=Denotes all Calendars.
-|Has default form=Form:RMICalendar
-|No automatic formedit=Yes
-}}
+      <text xml:space="preserve">{{Category}}
+ __NOTOC__  __NOEDITSECTION__
+== Information about this category ==
+[[Rationale::This category is used to identify all calendars.]]
+[[No automatic formedit::true]]
 {{Part of bundle|value=Richmedia}}
 {{Content hash|value=}}
+
 [[Category:Media|ICalendar]]</text>
-    <hash>d8ad2f827be9fbf9dda6c4c9ce86d5e5</hash>
+    <hash>42e5908545783b6e778a9c5adb08f065</hash>
     </revision>
   </page>
   <page>
     <title>Category:VCard</title>
     <id>92</id>
     <revision>
-      <id>101</id>
-      <timestamp>2011-03-31T13:55:14Z</timestamp>
+      <id>4977</id>
+      <timestamp>2011-07-06T12:42:01Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
-      <text xml:space="preserve">{{Category
-|rationale=Denotes vcards
-|Has default form=Form:RMVCard
-|No automatic formedit=Yes
-}}
+      <text xml:space="preserve">{{Category}}
+ __NOTOC__  __NOEDITSECTION__
+== Information about this category ==
+[[Rationale::This category is used to identify all VCards.]]
+[[No automatic formedit::true]]
 {{Part of bundle|value=Richmedia}}
 {{Content hash|value=}}
+
 [[Category:Media|VCard]]</text>
-    <hash>ae424e90a2694be9cb046155631b779e</hash>
+    <hash>8e2d17d9994665d5ca6dbf40a67d2f4c</hash>
     </revision>
   </page>
   <page>
     <title>Property:HasFormat</title>
     <id>93</id>
     <revision>
-      <id>102</id>
-      <timestamp>2011-03-31T13:41:03Z</timestamp>
+      <id>5008</id>
+      <timestamp>2011-07-06T13:20:24Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
-      <text xml:space="preserve">{{Property
-|rationale=Displays the format of this file as it's MIME type.
-}}
+      <text xml:space="preserve">{{Property}} __NOTOC__  __NOEDITSECTION__ 
+
+== Information about this property ==
+
+[[Rationale::Displays the format of this file as it's MIME type.]]
+
+{{NoteInText|The characteristics of this property are visible in the factbox below.}}
+
 [[Category:Property]]
 {{Part of bundle|value=Richmedia}}
 {{Content hash|value=}}
+
 [[has type::Type:String| ]] [[has domain and range::Category:Media; | ]]</text>
-    <hash>9991d9f12a1b3535b7fd7607a0c895ac</hash>
+    <hash>9c2471562eca25a6c2c157fd59cd7325</hash>
     </revision>
   </page>
   <page>
     <title>Property:HasKeywords</title>
     <id>94</id>
     <revision>
-      <id>103</id>
-      <timestamp>2011-03-31T13:41:29Z</timestamp>
+      <id>5005</id>
+      <timestamp>2011-07-06T13:18:47Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
-      <text xml:space="preserve">{{Property
-|rationale=Keywords associated with this file.
-}}
+      <text xml:space="preserve">{{Property}} __NOTOC__  __NOEDITSECTION__ 
+
+== Information about this property ==
+
+[[Rationale::Keywords associated with this file.]]
+
+{{NoteInText|The characteristics of this property are visible in the factbox below.}}
+
 [[Category:Property]]
 {{Part of bundle|value=Richmedia}}
 {{Content hash|value=}}
+
 [[has type::Type:String| ]] [[has domain and range::Category:Media; | ]]</text>
-    <hash>e3d8735701dcf8aa22ae5df78e9b9e87</hash>
+    <hash>33ccd3946c605a0fde2d97c6c33c7f48</hash>
     </revision>
   </page>
   <page>
     <title>Template:RMUpload</title>
     <id>154</id>
     <revision>
-      <id>163</id>
-      <timestamp>2011-03-31T13:52:39Z</timestamp>
+      <id>5033</id>
+      <timestamp>2011-07-06T13:52:37Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
-      <text xml:space="preserve">&lt;noinclude&gt;{{Template
-|rationale=This template displays and annotates the metadata of uploaded media.
-}}
-{{Part of bundle|value=Richmedia}}
-{{Content hash|value=9a1af498bcfd0652f98957ed3bf2579e}}
+      <text xml:space="preserve">&lt;noinclude&gt;{{Template}}
+
+[[Rationale::This template displays and annotates the metadata of uploaded media.]]
+[[Category:Template]]
 &lt;/noinclude&gt;&lt;includeonly&gt;{{RMMedia
 |Media subcategory=Media
 |Filename={{{Filename|}}}
@@ -1207,25 +1293,29 @@
 }} 
 
 [[Category:Media]]&lt;/includeonly&gt;&lt;noinclude&gt;
+
+{{Part of bundle|value=Richmedia}}
+
+{{Content hash|value=}}
+
 &lt;/noinclude&gt;</text>
-    <hash>5c4bfacc0f81ebe4b815bd7ccff0a837</hash>
+    <hash>23af19d4de3ab6586fac74e773240d22</hash>
     </revision>
   </page>
   <page>
     <title>Template:RMImage</title>
     <id>155</id>
     <revision>
-      <id>1116</id>
-      <timestamp>2011-04-15T08:00:05Z</timestamp>
+      <id>5026</id>
+      <timestamp>2011-07-06T13:45:15Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
-      <text xml:space="preserve">&lt;noinclude&gt;{{Template
-|rationale=Displays and annotates the metadata of an uploaded image.
-}}
-{{Part of bundle|value=Richmedia}}
-{{Content hash|value=f64dcd4b47227ac74e28abfec10a489d}}
+      <text xml:space="preserve">&lt;noinclude&gt;{{Template}}
+
+[[Rationale::Displays and annotates the metadata of an uploaded image.]]
+[[Category:Template]]
 &lt;/noinclude&gt;&lt;includeonly&gt;{{RMMedia
 |Media subcategory=Image
 |Filename={{{Filename|}}}
@@ -1240,26 +1330,31 @@
 |SubSectionOf={{{SubSectionOf|}}}
 }} 
 
-[[Category:Image]]&lt;/includeonly&gt;&lt;noinclude&gt;
+[[Category:Image]]
+&lt;/includeonly&gt;&lt;noinclude&gt;
+
+{{Part of bundle|value=Richmedia}}
+
+{{Content hash|value=}}
+
 &lt;/noinclude&gt;</text>
-    <hash>5b407f20fb46023221dc63cd5412aa45</hash>
+    <hash>997baaacccfbf093cbd7209ee79f5cfc</hash>
     </revision>
   </page>
   <page>
     <title>Template:RMPdf</title>
     <id>156</id>
     <revision>
-      <id>165</id>
-      <timestamp>2011-03-31T13:52:16Z</timestamp>
+      <id>5032</id>
+      <timestamp>2011-07-06T13:51:46Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
-      <text xml:space="preserve">&lt;noinclude&gt;{{Template
-|rationale=Displays and annotates the metadata of an uploaded pdf file.
-}}
-{{Part of bundle|value=Richmedia}}
-{{Content hash|value=b8d113df1e8dc9482c8a2020987e2cde}}
+      <text xml:space="preserve">&lt;noinclude&gt;{{Template}}
+
+[[Rationale::Displays and annotates the metadata of an uploaded pdf file.]]
+[[Category:Template]]
 &lt;/noinclude&gt;&lt;includeonly&gt;{{RMMedia
 |Media subcategory=Pdf
 |Filename={{{Filename|}}}
@@ -1275,25 +1370,29 @@
 }} 
 
 [[Category:Pdf]]&lt;/includeonly&gt;&lt;noinclude&gt;
+
+{{Part of bundle|value=Richmedia}}
+
+{{Content hash|value=}}
+
 &lt;/noinclude&gt;</text>
-    <hash>bda4aa13a0c0f95ffacc60a08b808dfb</hash>
+    <hash>6b35b4df623a7537c7883bb00cabbd4a</hash>
     </revision>
   </page>
   <page>
     <title>Template:RMDocument</title>
     <id>157</id>
     <revision>
-      <id>166</id>
-      <timestamp>2011-03-31T13:45:34Z</timestamp>
+      <id>5023</id>
+      <timestamp>2011-07-06T13:43:23Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
-      <text xml:space="preserve">&lt;noinclude&gt;{{Template
-|rationale=Annotates and displays the metadata of a document.
-}}
-{{Part of bundle|value=Richmedia}}
-{{Content hash|value=e2004770e1062173f5ffc6ec297d4416}}
+      <text xml:space="preserve">&lt;noinclude&gt;{{Template}}
+
+[[Rationale::Annotates and displays the metadata of a document.]]
+[[Category:Template]]
 &lt;/noinclude&gt;&lt;includeonly&gt;{{RMMedia
 |Media subcategory=Document
 |Filename={{{Filename|}}}
@@ -1307,26 +1406,31 @@
 |RelatedArticles={{{RelatedArticles|}}}
 |SubSectionOf={{{SubSectionOf|}}}
 }}
-[[Category:Document]]&lt;/includeonly&gt;&lt;noinclude&gt;
+[[Category:Document]]
+&lt;/includeonly&gt;&lt;noinclude&gt;
+
+{{Part of bundle|value=Richmedia}}
+
+{{Content hash|value=}}
+
 &lt;/noinclude&gt;</text>
-    <hash>e5f99a739100246d00bf062b2eb04f3d</hash>
+    <hash>fa4251aef745ab6db5b9bd8e575bac09</hash>
     </revision>
   </page>
   <page>
     <title>Template:RMAudio</title>
     <id>158</id>
     <revision>
-      <id>167</id>
-      <timestamp>2011-03-31T13:45:23Z</timestamp>
+      <id>5021</id>
+      <timestamp>2011-07-06T13:39:47Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
-      <text xml:space="preserve">&lt;noinclude&gt;{{Template
-|rationale=Displays and annotates the metadata of an uploaded audio file.
-}}
-{{Part of bundle|value=Richmedia}}
-{{Content hash|value=156bb94176f59d07ea6be5edfa19c20e}}
+      <text xml:space="preserve">&lt;noinclude&gt;{{Template}}
+
+[[Rationale::Displays and annotates the metadata of an uploaded audio file.]]
+[[Category:Template]]
 &lt;/noinclude&gt;&lt;includeonly&gt;{{RMMedia
 |Media subcategory=Audio
 |Filename={{{Filename|}}}
@@ -1342,25 +1446,29 @@
 }} 
 
 [[Category:Audio]]&lt;/includeonly&gt;&lt;noinclude&gt;
+
+{{Part of bundle|value=Richmedia}}
+
+{{Content hash|value=}}
+
 &lt;/noinclude&gt;</text>
-    <hash>1ec87699fb76edd3d4ac4fe8897837dd</hash>
+    <hash>ec9989fc283605cd2b65a8a1ee84edbb</hash>
     </revision>
   </page>
   <page>
     <title>Template:RMVideo</title>
     <id>159</id>
     <revision>
-      <id>168</id>
-      <timestamp>2011-03-31T13:54:51Z</timestamp>
+      <id>5034</id>
+      <timestamp>2011-07-06T13:53:22Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
-      <text xml:space="preserve">&lt;noinclude&gt;{{Template
-|rationale=Displays and annotates the metadata of an uploaded video file.
-}}
-{{Part of bundle|value=Richmedia}}
-{{Content hash|value=a9279b2aa337fae0cc829c96f5d722a1}}
+      <text xml:space="preserve">&lt;noinclude&gt;{{Template}}
+
+[[Rationale::Displays and annotates the metadata of an uploaded video file.]]
+[[Category:Template]]
 &lt;/noinclude&gt;&lt;includeonly&gt;{{RMMedia
 |Media subcategory=Video
 |Filename={{{Filename|}}}
@@ -1376,49 +1484,56 @@
 }} 
 
 [[Category:Video]]&lt;/includeonly&gt;&lt;noinclude&gt;
+
+{{Part of bundle|value=Richmedia}}
+
+{{Content hash|value=}}
+
 &lt;/noinclude&gt;</text>
-    <hash>7000db4d04b8b4dd63660371dc5f9afd</hash>
+    <hash>358ec4e960847c0fe0b71948c0c86859</hash>
     </revision>
   </page>
   <page>
     <title>Template:RMList</title>
     <id>160</id>
     <revision>
-      <id>169</id>
-      <timestamp>2011-03-17T15:21:43Z</timestamp>
+      <id>5027</id>
+      <timestamp>2011-07-06T13:46:18Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
-      <text xml:space="preserve">&lt;noinclude&gt;{{Template
-|rationale=This template lists all media which has been uploaded and attached to a particular article.
-}}
+      <text xml:space="preserve">&lt;noinclude&gt;{{Template}}
+
+[[Rationale::This template lists all media which has been uploaded and attached to a particular article.]]
+[[Category:Template]]
 &lt;/noinclude&gt;&lt;includeonly&gt;&lt;div style=&quot;float: left; width: 100%; &quot;&gt;
 {{#ifeq:{{{show|}}}|True|{{RMListOuterTable}}|}} 
 &lt;/div&gt;&lt;/includeonly&gt;&lt;noinclude&gt;
+
 {{Part of bundle|value=Richmedia}}
-{{Content hash|value=8ccdac6750116b265a14f1aed38e821b}}
+
+{{Content hash|value=}}
+
 &lt;/noinclude&gt;</text>
-    <hash>93d5053d51592cf456c0e564fa43db42</hash>
+    <hash>05bf97fed4f300ef63627ba8b6f1f02e</hash>
     </revision>
   </page>
   <page>
     <title>Template:RMListOuterTable</title>
     <id>161</id>
     <revision>
-      <id>170</id>
-      <timestamp>2011-03-31T13:50:17Z</timestamp>
+      <id>5029</id>
+      <timestamp>2011-07-06T13:49:24Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
-      <text xml:space="preserve">&lt;noinclude&gt;{{Template
-|rationale=Builds the outer table
-}}
-{{Part of bundle|value=Richmedia}}
-{{Content hash|value=74352be0e24e1c35e7a8d36c4b41ce76}}
-&lt;/noinclude&gt;&lt;includeonly&gt;
-{| cellpadding=&quot;5&quot; border=&quot;0&quot; width=&quot;100%&quot; class=&quot;rmListTable&quot;
+      <text xml:space="preserve">&lt;noinclude&gt;{{Template}}
+
+[[Rationale::Template that builds the outer table for the Rich Media list.]]
+[[Category:Template]]
+&lt;/noinclude&gt;&lt;includeonly&gt;{| cellpadding=&quot;5&quot; border=&quot;0&quot; width=&quot;100%&quot; class=&quot;rmListTable&quot;
 |-
 ! class=&quot;rmListInfoText&quot; colspan=&quot;6&quot; |Attached documents, images and media
 |}
@@ -1439,6 +1554,7 @@
   | template=RMListInnerTable
   | link=none
   | limit=250
+  | source=wiki
 }}
 |}
 {| cellpadding=&quot;5&quot; border=&quot;0&quot; width=&quot;100%&quot; class=&quot;rmListTable&quot;
@@ -1448,25 +1564,29 @@
 |-
 ! class=&quot;rmListTableEnding&quot; colspan=&quot;6&quot; | 
 |}
-&lt;/includeonly&gt;</text>
-    <hash>0cfafe28384b29e0c9141c128f5d4782</hash>
+&lt;/includeonly&gt;&lt;noinclude&gt;
+
+{{Part of bundle|value=Richmedia}}
+
+{{Content hash|value=}}
+
+&lt;/noinclude&gt;</text>
+    <hash>8b9d978523dde9d5ace85dd70e485601</hash>
     </revision>
   </page>
   <page>
     <title>Form:RMVCard</title>
     <id>164</id>
     <revision>
-      <id>840</id>
-      <timestamp>2011-04-12T08:44:09Z</timestamp>
+      <id>5045</id>
+      <timestamp>2011-07-06T14:31:48Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
-      <text xml:space="preserve">&lt;noinclude&gt;{{Form
-|rationale=This form is used to edit the information of uploaded VCards.
-}}
-{{Part of bundle|value=Richmedia}}
-{{Content hash|value=0f98a12496ec4070a768fffbaede4a30}}
+      <text xml:space="preserve">&lt;noinclude&gt;{{Form}}
+[[Rationale::This form is used to edit the information of uploaded VCards.]]
+[[Category:Form]]
 &lt;/noinclude&gt;&lt;includeonly&gt;__NORICHEDITOR__
 {{{info|WYSIWYG}}} {{{for template|RMVCard|label=Meta information|collapsible}}} 
 
@@ -1535,30 +1655,28 @@
 
 {{{standard input|minor edit}}} {{{standard input|watch}}} 
 
-{{{standard input|save}}} {{{standard input|preview}}} {{{standard input|changes}}} {{{standard input|cancel}}} 
-
-&lt;/includeonly&gt;&lt;noinclude&gt;
+{{{standard input|save}}} {{{standard input|preview}}} {{{standard input|changes}}} {{{standard input|cancel}}} &lt;/includeonly&gt;&lt;noinclude&gt;
+{{Part of bundle|value=Richmedia}}
+{{Content hash|value=}}
 &lt;/noinclude&gt;</text>
-    <hash>daa1bda1cd3fd5473cb2216166ca29fe</hash>
+    <hash>2fb17f666dc4f3702a2b247db0377761</hash>
     </revision>
   </page>
   <page>
     <title>Template:DataRMICal</title>
     <id>187</id>
     <revision>
-      <id>196</id>
-      <timestamp>2011-04-05T09:57:49Z</timestamp>
+      <id>5018</id>
+      <timestamp>2011-07-06T13:35:09Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
-      <text xml:space="preserve">&lt;noinclude&gt;{{Template
-|rationale=Used for formatting and annotating uploaded iCalendar files (which come into the wiki e.g. via file upload or email import with file attachment).
-}}
-{{Part of bundle|value=Richmedia}}
-{{Content hash|value=5e75d76a43e30f286f582c6fb6158b4e}}
-&lt;/noinclude&gt;&lt;includeonly&gt;
-{| cellspacing=&quot;0&quot; cellpadding=&quot;5&quot; style=&quot;border: 1px solid rgb(170, 170, 170); margin: 0pt 0pt 0.5em 1em; background: rgb(255, 255, 255) none repeat scroll 0% 0%; position: relative; border-collapse: collapse; -moz-background-clip: border; -moz-background-origin: padding; -moz-background-inline-policy: continuous; float: right; clear: right; width: 30%;&quot;
+      <text xml:space="preserve">&lt;noinclude&gt;{{Template}}
+
+[[Rationale::Used for formatting and annotating uploaded iCalendar files (which come into the wiki e.g. via file upload or email import with file attachment).]]
+[[Category:Template]]
+&lt;/noinclude&gt;&lt;includeonly&gt;{| cellspacing=&quot;0&quot; cellpadding=&quot;5&quot; style=&quot;border: 1px solid rgb(170, 170, 170); margin: 0pt 0pt 0.5em 1em; background: rgb(255, 255, 255) none repeat scroll 0% 0%; position: relative; border-collapse: collapse; -moz-background-clip: border; -moz-background-origin: padding; -moz-background-inline-policy: continuous; float: right; clear: right; width: 30%;&quot;
 |-
 ! style=&quot;background: rgb(174, 229, 219) none repeat scroll 0% 0%; -moz-background-clip: border; -moz-background-origin: padding; -moz-background-inline-policy: continuous; color: black;&quot; colspan=&quot;2&quot; | &lt;span style=&quot;font-size: 80%; float: right;&quot;&gt;[[Image:Calendar.gif|link=]]&lt;/span&gt;iCalendar Data
 |-
@@ -1584,25 +1702,29 @@
 {{#if:{{{description|}}}|{{Tablerow||Label=Description: |Value={{{description|}}}}}|}}
 |-
 |}&lt;/includeonly&gt;&lt;noinclude&gt;
+
+{{Part of bundle|value=Richmedia}}
+
+{{Content hash|value=}}
+
 &lt;/noinclude&gt;</text>
-    <hash>330a12b0015e8bddc5581682499a2789</hash>
+    <hash>703083d387849d8c34c8d5c277624a69</hash>
     </revision>
   </page>
   <page>
     <title>Template:DataRMVCard</title>
     <id>188</id>
     <revision>
-      <id>197</id>
-      <timestamp>2011-04-05T09:58:36Z</timestamp>
+      <id>5020</id>
+      <timestamp>2011-07-06T13:37:33Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
-      <text xml:space="preserve">&lt;noinclude&gt;{{Template
-|rationale=Used for formatting and annotating uploaded vCard files (which come into the wiki e.g. via file upload or email import with file attachment).
-}}
-{{Part of bundle|value=Richmedia}}
-{{Content hash|value=5892f668e10e1ccc689e08514ebbb057}}
+      <text xml:space="preserve">&lt;noinclude&gt;{{Template}}
+
+[[Rationale::Used for formatting and annotating uploaded vCard files (which come into the wiki e.g. via file upload or email import with file attachment).]]
+[[Category:Template]]
 &lt;/noinclude&gt;&lt;includeonly&gt;
 {| cellspacing=&quot;0&quot; cellpadding=&quot;5&quot; style=&quot;border: 1px solid rgb(170, 170, 170); margin: 0pt 0pt 0.5em 1em; background: rgb(255, 255, 255) none repeat scroll 0% 0%; position: relative; border-collapse: collapse; -moz-background-clip: border; -moz-background-origin: padding; -moz-background-inline-policy: continuous; float: right; clear: right; width: 30%;&quot;
 |-
@@ -1633,24 +1755,29 @@
 |}
 
 {{#ifexist:{{#extractEmailID: {{{email}}} | Mbox }} | [[HasRelatedArticle::{{#extractEmailID: {{{email}}} | Mbox }}| ]] | [[HasRelatedArticle::{{{name|}}}| ]] }}&lt;/includeonly&gt;&lt;noinclude&gt;
+
+{{Part of bundle|value=Richmedia}}
+
+{{Content hash|value=}}
+
 &lt;/noinclude&gt;</text>
-    <hash>9b046fe6f8881afc57a15b9badcfd0ab</hash>
+    <hash>5282371b9cc236467c826d216efa18e7</hash>
     </revision>
   </page>
   <page>
     <title>Richmedia</title>
     <id>215</id>
     <revision>
-      <id>1303</id>
-      <timestamp>2011-04-15T17:36:17Z</timestamp>
+      <id>5053</id>
+      <timestamp>2011-07-06T14:53:04Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
-      <text xml:space="preserve">{{Content bundle}}[[Vendor::Ontoprise| ]][[Ontology version::151| ]][[Installation dir::extensions/RichMedia| ]]
+      <text xml:space="preserve">{{Content bundle}}[[Vendor::ontoprise GmbH| ]][[Maintainer::ontoprise GmbH| ]][[Ontology version::152| ]][[Installation dir::extensions/RichMedia| ]] [[Help Url::http://smwforum.ontoprise.com/smwforum/index.php/Help:Rich_Media_Extension | ]]
 ;dependencies
-:[[Dependency::semanticforms;208;208]]
-:[[Dependency::Smwplus;153;153]]
+:[[Dependency::semanticforms;212;212]]
+:[[Dependency::Smwplus;156;156]]
 ;License
 :[[License::GPL v2| ]]
 [[Rationale::This content bundle features a set of basic elements that are necessary for the Rich Media extension.| ]]
@@ -1675,53 +1802,65 @@ More information about the RichMedia extension and how to use it can be found in
 |link=subject
 |default=''none''
 |mainlabel=-
+|source=wiki
 }}
 
 [[Category:Content bundle|Content_bundle]]
-{{Content hash|value=60d3b7281dde4625d9aeff2b822e500e}}
+{{Content hash|value=}}
 {{Part of bundle|value=Richmedia}}</text>
-    <hash>c39a8cdc8c766d126cfe0a9a551661a7</hash>
+    <hash>30b174f6f6e2af46d1e599e5fb52b978</hash>
     </revision>
   </page>
   <page>
     <title>Template:RMNoNamespace</title>
     <id>216</id>
     <revision>
-      <id>225</id>
-      <timestamp>2011-03-31T13:51:25Z</timestamp>
+      <id>5031</id>
+      <timestamp>2011-07-06T13:51:01Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
-      <text xml:space="preserve">&lt;noinclude&gt;{{Template
-|rationale=Removes namespace from article.
-}}
+      <text xml:space="preserve">&lt;noinclude&gt;{{Template}}
+
+[[Rationale::Removes namespace from article.]]
+[[Category:Template]]
+&lt;/noinclude&gt;&lt;includeonly&gt;{{#ifeq: {{#pos:{{{1}}}|:}} | | {{{1}}} | {{#sub:{{{1}}}|{{#expr:{{#pos:{{{1}}}|:}}+1}}|0}} }}&lt;/includeonly&gt;&lt;noinclude&gt;
+
 {{Part of bundle|value=Richmedia}}
-{{Content hash|value=d2762f3a2b968782204e53c732e3d759}}
-&lt;/noinclude&gt;&lt;includeonly&gt;{{#ifeq: {{#pos:{{{1}}}|:}} | | {{{1}}} | {{#sub:{{{1}}}|{{#expr:{{#pos:{{{1}}}|:}}+1}}|0}} }}&lt;/includeonly&gt;</text>
-    <hash>0ff4cb2967216660d1e5b08f5be4b149</hash>
+
+{{Content hash|value=}}
+
+&lt;/noinclude&gt;</text>
+    <hash>18235edf8aaa46b1b8eada0385ab57ab</hash>
     </revision>
   </page>
   <page>
     <title>Property:Attachment</title>
     <id>283</id>
     <revision>
-      <id>296</id>
-      <timestamp>2011-03-28T10:06:45Z</timestamp>
+      <id>4985</id>
+      <timestamp>2011-07-06T13:09:17Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
-      <text xml:space="preserve">{{Property
-|rationale=Used to attach an uploaded media file with a wiki article.
-}}
+      <text xml:space="preserve">{{Property}} __NOTOC__  __NOEDITSECTION__ 
+
+== Information about this property ==
+
+[[Rationale::Used to attach an uploaded media file with a wiki article.]]
+
+{{NoteInText|The characteristics of this property are visible in the factbox below.}}
+
 [[Category:Property]]
 
 {{Part of bundle|value=Richmedia}}
 {{Content hash|value=}}
+
 [[Is inverse of::Property:HasRelatedArticle| ]]
 [[has domain and range::; Category:Media| ]][[has type::Type:Page| ]]</text>
-    <hash>ce54027aaad3dd4f8f4894c47c252185</hash>
+    <hash>43919b586faa9004242b3ccce70199ce</hash>
     </revision>
   </page>
   <page>
@@ -1754,12 +1893,12 @@ More information can be found also in the [http://smwforum.ontoprise.com/smwforu
     <title>Document:Richmedia Sandbox.doc</title>
     <id>286</id>
     <revision>
-      <id>448</id>
-      <timestamp>2011-04-08T14:28:41Z</timestamp>
+      <id>5050</id>
+      <timestamp>2011-07-06T14:47:46Z</timestamp>
       <contributor>
-        <ip>127.0.0.1</ip>
+        <username>WikiSysop</username>
+        <id>1</id>
       </contributor>
-      <comment>uploaded &amp;quot;[[Document:Richmedia Sandbox.doc]]&amp;quot;: (recovered file, missing upload log entry)</comment>
       <text xml:space="preserve">{{RMDocument
 |Filename=Document:Richmedia Sandbox.doc
 |CopyrightBy=Ontoprise GmbH
@@ -1772,22 +1911,23 @@ More information can be found also in the [http://smwforum.ontoprise.com/smwforu
 |RelatedArticles=Richmedia_Sandbox
 }}
 &lt;noinclude&gt;
+[[Rationale::Example document for the Rich Media sandbox.]]
 {{Part of bundle|value=Richmedia}}
 {{Content hash|value=}}
 &lt;/noinclude&gt;</text>
-    <hash>fc8cf7f24ccef87eb9eb234f1f9f64ca</hash>
+    <hash>5d6492acf277be0f5b4c8a6971ae7300</hash>
     </revision>
   </page>
   <page>
     <title>Pdf:Richmedia Sandbox.pdf</title>
     <id>287</id>
     <revision>
-      <id>493</id>
-      <timestamp>2011-04-08T14:28:42Z</timestamp>
+      <id>5051</id>
+      <timestamp>2011-07-06T14:47:59Z</timestamp>
       <contributor>
-        <ip>127.0.0.1</ip>
+        <username>WikiSysop</username>
+        <id>1</id>
       </contributor>
-      <comment>uploaded &amp;quot;[[Pdf:Richmedia Sandbox.pdf]]&amp;quot;: (recovered file, missing upload log entry)</comment>
       <text xml:space="preserve">{{RMPdf
 |Filename=Pdf:Richmedia Sandbox.pdf
 |CopyrightBy=Ontoprise GmbH
@@ -1800,22 +1940,23 @@ More information can be found also in the [http://smwforum.ontoprise.com/smwforu
 |RelatedArticles=Richmedia_Sandbox
 }}
 &lt;noinclude&gt;
+[[Rationale::Example PDF for the Rich Media sandbox.]]
 {{Part of bundle|value=Richmedia}}
 {{Content hash|value=}}
 &lt;/noinclude&gt;</text>
-    <hash>c96d196aae0269b96d4efedb99bca855</hash>
+    <hash>df57fac7e3e9c895078c7de7c3cd11ce</hash>
     </revision>
   </page>
   <page>
     <title>File:Richmedia Sandbox.png</title>
     <id>288</id>
     <revision>
-      <id>475</id>
-      <timestamp>2011-04-08T14:28:42Z</timestamp>
+      <id>5052</id>
+      <timestamp>2011-07-06T14:48:31Z</timestamp>
       <contributor>
-        <ip>127.0.0.1</ip>
+        <username>WikiSysop</username>
+        <id>1</id>
       </contributor>
-      <comment>uploaded &amp;quot;[[File:Richmedia Sandbox.png]]&amp;quot;: (recovered file, missing upload log entry)</comment>
       <text xml:space="preserve">{{RMImage
 |Filename=File:Richmedia Sandbox.png
 |CopyrightBy=Ontoprise GmbH
@@ -1828,36 +1969,64 @@ More information can be found also in the [http://smwforum.ontoprise.com/smwforu
 |RelatedArticles=Richmedia_Sandbox
 }}
 &lt;noinclude&gt;
+[[Rationale::Example image for the Rich Media sandbox.]]
 {{Part of bundle|value=Richmedia}}
 {{Content hash|value=}}
 &lt;/noinclude&gt;</text>
-    <hash>4441cd10a1e27b1f9ea520fc01face18</hash>
+    <hash>5c0928154c56ce7320124baceb198ddc</hash>
     </revision>
   </page>
   <page>
     <title>Property:Related to</title>
     <id>442</id>
     <revision>
-      <id>567</id>
-      <timestamp>2011-03-28T10:01:05Z</timestamp>
+      <id>5013</id>
+      <timestamp>2011-07-06T13:22:19Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
-      <text xml:space="preserve">{{Property
-|rationale=Relates an entity to another entity (e.g. a task to a project).
-}}
-[[Has type::Type:Page| ]] [[Has domain and range::Category:Content| ]]
+      <text xml:space="preserve">{{Property}} __NOTOC__  __NOEDITSECTION__ 
 
-&lt;br/&gt;[[Category:Transitive properties|Transitive_properties]]
+== Information about this property ==
+
+[[Rationale::Relates an entity to another entity (e.g. a task to a project).]]
+
+{{NoteInText|The characteristics of this property are visible in the factbox below.}}
+
 [[Category:Property]]
-{{Part of bundle
-|value=	Richmedia
-}}
-{{Content hash
-|value=769ad0280d164df9305f132fed97b509
-}}</text>
-    <hash>7a414bc8c24294cd3e1029764088a7c1</hash>
+{{Part of bundle|value=	Richmedia}}
+{{Content hash|value=}}
+
+[[Has type::Type:Page| ]] [[Has domain and range::Category:Content| ]]
+[[Category:Transitive properties|Transitive_properties]]</text>
+    <hash>fb7c90b1524ec7faddc9d0935509248b</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Template:Content hash</title>
+    <id>248</id>
+    <revision>
+      <id>257</id>
+      <timestamp>2010-12-21T14:25:49Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">[[Content hash::{{{value|}}}| ]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Template:Part of bundle</title>
+    <id>247</id>
+    <revision>
+      <id>256</id>
+      <timestamp>2010-12-21T14:25:58Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+    <text xml:space="preserve">[[Part of bundle::{{{value|}}}| ]]</text>
     </revision>
   </page>
 </mediawiki>
