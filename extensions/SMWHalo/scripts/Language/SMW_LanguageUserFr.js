@@ -176,7 +176,7 @@ var wgUserLanguageStrings = {
 	'AC_NAMESPACE' : 'All pages in namespace(s): ',
 	'AC_LEXICAL' : 'All pages containing: ',
 	'AC_SCHEMA_PROPERTY_TYPE' : 'All properties of type: ',
-	'AC_ASF' : 'TODO: ask ingo about this',
+	'AC_ASF' : 'Categories for which automatic semantic forms can be created',
 	'AC_FROM_BUNDLE' : 'Pages coming from bundle: ',
     
     // Combined search
@@ -203,8 +203,8 @@ var wgUserLanguageStrings = {
     'OB_RENAME'               : 'Renommer',
     'OB_DELETE'               : 'Supprimer',
     'OB_PREVIEW'              : 'AperÃ§u',
-    'OB_TITLE_EXISTS'         : 'Cet élément existe!',
-    'OB_TITLE_NOTEXISTS'	  : 'Cet élément n\'existe pas!',
+    'OB_TITLE_EXISTS'         : 'Cet ï¿½lï¿½ment existe!',
+    'OB_TITLE_NOTEXISTS'	  : 'Cet ï¿½lï¿½ment n\'existe pas!',
     'OB_ENTER_TITLE'          : 'Saisir le titre',
     'OB_SELECT_CATEGORY'      : 'SÃ©lectionner la catÃ©gorie en premier',
     'OB_SELECT_PROPERTY'      : 'SÃ©lectionner la propriÃ©tÃ© en premier',

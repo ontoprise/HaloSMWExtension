@@ -177,7 +177,7 @@ var wgUserLanguageStrings = {
 	'AC_NAMESPACE' : 'All pages in namespace(s): ',
 	'AC_LEXICAL' : 'All pages containing: ',
 	'AC_SCHEMA_PROPERTY_TYPE' : 'All properties of type: ',
-	'AC_ASF' : 'TODO: ask ingo about this',
+	'AC_ASF' : 'Categories for which automatic semantic forms can be created',
 	'AC_FROM_BUNDLE' : 'Pages coming from bundle: ',
     
 	// Combined search

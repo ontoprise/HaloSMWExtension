@@ -174,7 +174,7 @@ var wgUserLanguageStrings = {
 	'AC_NAMESPACE' : 'Alle Seiten im Namensraum: ',
 	'AC_LEXICAL' : 'Alle Seiten die folgenden Text im Titel enthalten: ',
 	'AC_SCHEMA_PROPERTY_TYPE' : 'Alle Attribute dieses Typs: ',
-	'AC_ASF' : 'TODO: ask ingo about this',
+	'AC_ASF' : 'Kategorien für die Automatic Semantic Forms generiert werden können',
 	'AC_FROM_BUNDLE' : 'Seiten aus dem Bundle: ',
 
 	// Combined search
