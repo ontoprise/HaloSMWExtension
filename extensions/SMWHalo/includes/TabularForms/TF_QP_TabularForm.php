@@ -1,7 +1,5 @@
 <?php
 
-//todo: probide better warnings for invalid types
-
 //todo:  are input fields for new instance write protected if property is wrote protected via acls
 
 //todo: make sure that new parameters are not killed by tsc query processor

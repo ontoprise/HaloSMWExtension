@@ -300,10 +300,11 @@ function tff_checkAnnotationValues($annotationName, $annotationLabel, $annotatio
 		if(strlen($annotationValue) > 30){
 			$annotationValue = substr($annotationValue, 0,30).'...';
 		}
+		$typeLabel = SMWDataValueFactory::findTypeLabel($nDV->getTypeID());
 		$articleName = str_replace(array('<', '>'), array('&lt;', '&gt;'), $articleName);
 		$annotationValue = str_replace(array('<', '>'), array('&lt;', '&gt;'), $annotationValue);
 		 $invalidValueMsg = 		wfMsg('tabf_annotationnamme_invalid', 
-			$articleName, $annotationValue, $annotationLabel); 
+			$articleName, $annotationValue, $annotationLabel, $typeLabel);
 	}
 	
 	//do instance looose test
