@@ -38,7 +38,7 @@ $(function() {
 		if (version.length == 3) {
 			result = version[0]+"."+version[1]+"."+version[2];
 		} else if (version.length == 4) {
-			result = version[0]+"."+version[1]+version[2]+"+"+version[3];
+			result = version[0]+"."+version[1]+version[2]+"."+version[3];
 		} else {
 			result = version;
 		}
@@ -886,7 +886,7 @@ $(function() {
 					text = dfgWebAdminLanguage.getMessage('df_webadmin_wouldbeupdated');
 					text += "<ul>";
 					$.each(extensionsToInstall['extensions'], function(index, value) { 
-						text += "<li>"+value[0]+"-"+value[1]+"</li>";
+						text += "<li>"+value[0]+"-"+addVersionSeparators(value[1])+"_"+value[2]+"</li>";
 					});
 					text += "</ul>";
 				}
