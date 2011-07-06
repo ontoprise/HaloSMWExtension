@@ -1,31 +1,43 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="ISO-8859-1"?>
 <deploydescriptor>
-    <global>
-        <version>104</version>
-        <id>smwusermanual</id>
-        <vendor>ontoprise GmbH</vendor>
-        <maintainer>ontoprise GmbH</maintainer>
-        <instdir>extensions/SMWUserManual</instdir>
-        <description>
-            Context sensitive help and feedback for Semantic MediaWiki and SMW based extentions.
-        </description>
-		<helpurl>http://smwforum.ontoprise.com/smwforum/index.php/Help:Semantic_MediaWiki_User_Manual</helpurl>
-        <dependencies>
-            <dependency from="156">smwhalo</dependency>
-            <dependency from="156">smwplus</dependency>
-        </dependencies>
-        <license>GPL-v2</license>
-    </global>
-    <codefiles>
-    </codefiles>
+	<global>
+		<version>104</version>
+		<id>smwusermanual</id>
+		<instdir>extensions/SMWUserManual</instdir>
+		<vendor>ontoprise GmbH</vendor>
+		<description>This content bundle contains all help articles for the context sensitive help. It also contains some properties to determine which help article to display. These articles are necessary for the User Manual extension.</description>
+		<maintainer>ontoprise GmbH</maintainer>
+		<helpurl>http://smwforum.ontoprise.com/smwforum/index.php/Help:User_Manual_extension </helpurl>
+		<license>GPL_v2</license>
+		<dependencies>
+			<dependency from="156" to="156">smwhalo</dependency>
+			<dependency from="103" to="103">applicationprogramming</dependency>
+			<dependency from="156" to="156">Smwplus</dependency>
+	</dependencies>
+<notice>"Your Wiki contains now new pages. Since existing pages can make
+use of newly imported pages (e.g. templates), it is necessary to
+REFRESH all pages in this Wiki now.
+
+How to refresh all pages in this Wiki?
+* open in this cmd-line the following directory: "[path to SMW]/maintenance"
+  example:
+  cd
+C:\Programme\Ontoprise\SMWplus\htdocs\mediawiki\extensions\SemanticMediaWiki\maintenance
+* call the script "SMW_refreshData.php -v"
+  example:
+  php SMW_refreshData.php -v
+
+NOTE: in some cases it is required to call this script aborts with an error. In
+such cases you have to run the script multiple times. Please read more about
+repairing data here: 
+http://smwforum.ontoprise.com/smwforum/index.php/Help:Repairing_data"
+</notice>	</global>
 	<wikidumps>
 		<file loc="import/smwusermanual.xml"/>
 	</wikidumps>
-    <resources>
-        <!-- empty -->
-    </resources>
+	<resources>
+	</resources>
     <configs>
-
         <new>
             <require name="smwusermanual"
                 file="extensions/SMWUserManual/includes/SMW_UserManual.php" />
