@@ -509,14 +509,17 @@ class DFBundleTools {
 		$pDependency = SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString('df_dependencies'));
 		$pDependencyTypeValue = $pDependency->getTypesValue();
 
-		if (reset($pDependencyTypeValue->getDBkeys()) != '_rec') {
+        $dbKeys=$pDependencyTypeValue->getDBkeys();
+		if (reset($dbKeys) != '_rec') {
 			$dfgOut->outputln("'".$pDependencyTitle->getPrefixedText()."' is not a record type.");
 			$check = false;
 		}
 
-		$pDependencyTypes = reset(smwfGetStore()->getPropertyValues( $pDependency->getWikiPageValue(), SMWPropertyValue::makeProperty( '_LIST' ) ));
+        $dbKeys= smwfGetStore()->getPropertyValues( $pDependency->getWikiPageValue(), SMWPropertyValue::makeProperty( '_LIST' ) );
+		$pDependencyTypes = reset($dbKeys);
 		if ($pDependencyTypes !== false) {
-			$typeIDs = explode(";",reset($pDependencyTypes->getDBkeys()));
+            $dbKeys= $pDependencyTypes->getDBkeys();
+			$typeIDs = explode(";",reset($dbKeys));
 			if (count($typeIDs) != 3) {
 				$dfgOut->outputln("'".$pDependencyTitle->getPrefixedText()."' wrong number of fields.");
 				$check = false;
@@ -535,7 +538,8 @@ class DFBundleTools {
 		$pOntologyVersionTitle = Title::newFromText($dfgLang->getLanguageString('df_ontologyversion'), SMW_NS_PROPERTY);
 		$pOntologyVersion = SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString('df_ontologyversion'));
 		$pOntologyVersionValue = $pOntologyVersion->getTypesValue();
-		if (reset($pOntologyVersionValue->getDBkeys()) != '_num') {
+        $dbKeys= $pOntologyVersionValue->getDBkeys();
+		if (reset($dbKeys) != '_num') {
 			$dfgOut->outputln("'".$pOntologyVersionTitle->getPrefixedText()."' is not a number type.");
 			$check = false;
 		}
@@ -544,7 +548,8 @@ class DFBundleTools {
 		$pInstallationDirTitle = Title::newFromText($dfgLang->getLanguageString('df_instdir'), SMW_NS_PROPERTY);
 		$pInstallationDir = SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString('df_instdir'));
 		$pInstallationDirValue = $pInstallationDir->getTypesValue();
-		if (reset($pInstallationDirValue->getDBkeys()) != '_str') {
+        $dbKeys= $pInstallationDirValue->getDBkeys();
+		if (reset($dbKeys) != '_str') {
 			$dfgOut->outputln("'".$pInstallationDirTitle->getPrefixedText()."' is not a string type.");
 			$check = false;
 		}
@@ -553,7 +558,8 @@ class DFBundleTools {
 		$pVendorTitle = Title::newFromText($dfgLang->getLanguageString('df_vendor'), SMW_NS_PROPERTY);
 		$pVendor = SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString('df_vendor'));
 		$pVendorValue = $pVendor->getTypesValue();
-		if (reset($pVendorValue->getDBkeys()) != '_str') {
+        $dbKeys= $pVendorValue->getDBkeys();
+		if (reset($dbKeys) != '_str') {
 			$dfgOut->outputln("'".$pVendorTitle->getPrefixedText()."' is not a string type.");
 			$check = false;
 		}
@@ -562,7 +568,8 @@ class DFBundleTools {
 		$pRationaleTitle = Title::newFromText($dfgLang->getLanguageString('df_rationale'), SMW_NS_PROPERTY);
 		$pRationale = SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString('df_rationale'));
 		$pRationaleValue = $pRationale->getTypesValue();
-		$typeID = reset($pRationaleValue->getDBkeys());
+        $dbKeys= $pRationaleValue->getDBkeys();
+		$typeID = reset($dbKeys);
 		if ($typeID != '_str' && $typeID != '_txt') {
 			$dfgOut->outputln("'".$pRationaleTitle->getPrefixedText()."' is not a string type.");
 			$check = false;
@@ -572,7 +579,8 @@ class DFBundleTools {
 		$pMaintainerTitle = Title::newFromText($dfgLang->getLanguageString('df_maintainer'), SMW_NS_PROPERTY);
 		$pMaintainer = SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString('df_maintainer'));
 		$pMaintainerValue = $pMaintainer->getTypesValue();
-		$typeID = reset($pMaintainerValue->getDBkeys());
+        $dbKeys= $pMaintainerValue->getDBkeys();
+		$typeID = reset($dbKeys);
 		if ($typeID != '_str') {
 			$dfgOut->outputln("'".$pMaintainerTitle->getPrefixedText()."' is not a string type.");
 			// ignore maintainer
@@ -583,7 +591,8 @@ class DFBundleTools {
 		$pHelpURLTitle = Title::newFromText($dfgLang->getLanguageString('df_helpurl'), SMW_NS_PROPERTY);
 		$pHelpURL = SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString('df_helpurl'));
 		$pHelpURLValue = $pHelpURL->getTypesValue();
-		$typeID = reset($pHelpURLValue->getDBkeys());
+        $dbKeys= $pHelpURLValue->getDBkeys();
+		$typeID = reset($dbKeys);
 		if ($typeID != '_str') {
 			$dfgOut->outputln("'".$pHelpURLTitle->getPrefixedText()."' is not a string type.");
 			$check = false;
@@ -593,7 +602,8 @@ class DFBundleTools {
 		$pLicenseTitle = Title::newFromText($dfgLang->getLanguageString('df_license'), SMW_NS_PROPERTY);
 		$pLicense = SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString('df_license'));
 		$pLicenseValue = $pLicense->getTypesValue();
-		$typeID = reset($pLicenseValue->getDBkeys());
+        $dbKeys= $pLicenseValue->getDBkeys();
+		$typeID = reset($dbKeys);
 		if ($typeID != '_wpg') {
 			$dfgOut->outputln("'".$pLicenseTitle->getPrefixedText()."' is not a page type.");
 			$check = false;
