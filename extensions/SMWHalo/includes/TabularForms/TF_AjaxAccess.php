@@ -289,7 +289,7 @@ function tff_checkAnnotationValues($annotationName, $annotationLabel, $annotatio
 	//test with record data type
 	
 	//do type check
-	if(strlen($annotationValue) == 0){
+	if(strlen(trim($annotationValue)) == 0){
 		$isValid = true;
 	} else {
 		$nDV = SMWDataValueFactory::newPropertyObjectValue($property, $annotationValue);
