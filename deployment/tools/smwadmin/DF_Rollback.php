@@ -147,7 +147,7 @@ class Rollback {
 		$savedDataBase = true;
 
 		if ($ret != 0) {
-			$dfgOut->outputln("Could not run myqsqldump. Skip that. Please set 'df_mysql_dir'. See log for details.");
+			$dfgOut->outputln("Could not run mysqldump. Skip that. Please set 'df_mysql_dir'. See log for details.");
 			$logger->error("Could not save the database.");
 		}
 		return $ret == 0;
