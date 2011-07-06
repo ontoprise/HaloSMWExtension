@@ -7,7 +7,7 @@ VERSION 1.5.2
 
   CHANGES:
 	* The inclusion of namespace for SF can be handled with the setting "$smwgRMPasteNSForFiles"
-	* Provided new patch to let Rich Media extension be compatible with SF 2.1.2
+	* Provided new patch to let Rich Media extension be compatible with SF 2.1.2 and MW 1.16.4
 	* Migrate upload functionality from PrototypeJS to jQuery.
 
   BUGFIXES:

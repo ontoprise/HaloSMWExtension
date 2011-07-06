@@ -3,7 +3,7 @@
 	<global>
 		<version>152</version>
 		<id>richmedia</id>
-        <license>GPL-v2</license>
+		<license>GPL-v2</license>
 		<vendor>ontoprise GmbH</vendor>
 		<maintainer>ontoprise GmbH</maintainer>
 		<instdir>extensions/RichMedia</instdir>
@@ -13,7 +13,7 @@
 		<helpurl>http://smwforum.ontoprise.com/smwforum/index.php/Help:Rich_Media_Extension</helpurl>
 		<dependencies>
 			<dependency from="212">semanticforms</dependency>
-			<dependency from="153" to="156">smwplus</dependency>
+			<dependency from="156" to="156">smwplus</dependency>
 		</dependencies>
 		<notice>
 "Your Wiki contains now new pages. Since existing pages can make
@@ -76,7 +76,7 @@ http://smwforum.ontoprise.com/smwforum/index.php/Help:Repairing_data"
 			</function>
 			<require name="webdav_init"
 				file="extensions/RichMedia/includes/WebDAV/WD_Initialize.php" />
-			
+
 			<patch file="RichMediaPatchForSF1_9.txt" ext="semanticforms"
 				from="190" to="190" />
 			<patch file="RichMediaPatchForSF1_9_1.txt" ext="semanticforms"
@@ -95,9 +95,8 @@ http://smwforum.ontoprise.com/smwforum/index.php/Help:Repairing_data"
 				from="1161" to="1161" mayfail="Namespace.php" />
 			<patch file="RichMediaPatchForMW1_16_4.txt" ext="mw"
 				from="1164" to="1164" mayfail="Namespace.php" />
-
 		</new>
-		<update from="141">
+		<update from="151">
 			<patch file="RichMediaPatchForSF2_1_2.txt" />
 			<patch file="RichMediaPatchForMW1_16_4.txt" />
 		</update>
@@ -123,4 +122,3 @@ http://smwforum.ontoprise.com/smwforum/index.php/Help:Repairing_data"
 		</uninstall>
 	</configs>
 </deploydescriptor>
-
