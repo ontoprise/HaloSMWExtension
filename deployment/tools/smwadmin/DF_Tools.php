@@ -469,14 +469,18 @@ class Tools {
 			exec("echo %TEMP%", $out, $ret);
 			$tmpdir = str_replace("\\", "/", reset($out));
 			if (empty($tmpdir)) return 'c:\temp'; // fallback
-			return $tmpdir;
+			$parts = explode(";", $tmpdir);
+			$tmpdir = reset($parts);
+			return trim($tmpdir);
 		} else {
 			@exec('echo $TMPDIR', $out, $ret);
 			if ($ret == 0) {
 				$val = reset($out);
 				$tmpdir = ($val == '' || $val === false) ? '/tmp' : $val;
 				if (empty($tmpdir)) return '/tmp'; // fallback
-				return $tmpdir;
+				$parts = explode(":", $tmpdir);
+				$tmpdir = reset($parts);
+                return trim($tmpdir);
 			} else {
 				return '/tmp'; // fallback if echo fails for some reason
 			}
