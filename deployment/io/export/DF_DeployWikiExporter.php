@@ -359,7 +359,7 @@ class DeployXmlDumpWriter extends XmlDumpWriter {
 		wfProfileIn( $fname );
 
 		$out  = "    <revision>\n";
-		$out .= "      " . wfElement( 'id', null, strval( $row->rev_id ) ) . "\n";
+		//$out .= "      " . wfElement( 'id', null, strval( $row->rev_id ) ) . "\n";
 
 		$out .= $this->writeTimestamp( $row->rev_timestamp );
 
