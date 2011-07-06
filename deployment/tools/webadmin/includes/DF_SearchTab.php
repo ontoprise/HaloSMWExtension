@@ -75,16 +75,18 @@ class DFSearchTab {
 		$html .= $dfgLang->getLanguageString('df_webadmin_action');
 		$html .= "</th>";
 		$i=0;
-		
+
 		$installText = $dfgLang->getLanguageString('df_webadmin_install');
 		$updateText = $dfgLang->getLanguageString('df_webadmin_update');
 		$checkDependencyText = $dfgLang->getLanguageString('df_webadmin_checkdependency');
-		
+
 		foreach($results as $id => $versions) {
 			$numOfVersion = count($versions);
 			$first = true;
 			ksort($versions);
 			$versions = array_reverse($versions);
+			$descRowSpansMap = $this->getDescriptionRowSpan($versions);
+			$vcount = 0;
 			foreach($versions as $v => $description) {
 				$j = $i % 2;
 				$html .= "<tr class=\"df_row_$j\">";
@@ -93,13 +95,14 @@ class DFSearchTab {
 					$html .= "<td rowspan=\"$numOfVersion\" class=\"df_extension_id\">";
 					$html .= $id;
 					$html .= "</td>";
-						
+
 				}
 				$html .= "<td class=\"df_version\" extid=\"$id\" version=\"$v\">";
 				$html .= Tools::addVersionSeparators(explode("_", $v));
 				$html .= "</td>";
-				if ($first) {
-					$html .= "<td rowspan=\"$numOfVersion\" class=\"df_description\">"; // FIXME: consider that descriptions for different version can be different
+				if (array_key_exists($vcount, $descRowSpansMap)) {
+					$descRowSpan = $descRowSpansMap[$vcount];
+					$html .= "<td rowspan=\"$descRowSpan\" class=\"df_description\">"; 
 					$html .= $description;
 					$html .= "</td>";
 				}
@@ -130,10 +133,39 @@ class DFSearchTab {
 				$html .= "</td>";
 				$html .= "</tr>";
 				$first=false;
+				$vcount++;
 			}
 			$i++;
 		}
 		$html .= "</table>";
 		return $html;
+	}
+	
+	/**
+	 * Calculates the indices and rowspan of versions with same description.
+	 * 
+	 * @param array($version => $description) $versions
+	 * 
+	 * @return array(index of version => rowspan)
+	 */
+	private function getDescriptionRowSpan($versions) {
+		$rowSpans = array(0 => 1);
+		$oldDescription = NULL;
+		$i = 0;
+		$spanIndex = 0;
+		foreach($versions as $v => $description) {
+			if (is_null($oldDescription) || $oldDescription == $description) {
+				$oldDescription = $description;
+				$spanIndex++;
+				continue;
+			}
+			$rowSpans[$i] = $spanIndex;
+			$i += $spanIndex;
+			$spanIndex = 1;
+				
+			
+		}
+		$rowSpans[$i] = $spanIndex;
+		return $rowSpans;
 	}
 }
