@@ -203,12 +203,20 @@ getSelectedItem: function(selindex) {
  */
 setUpdatedAskQuery: function() {
 //	alert('Query Interface is going to be closed! Saving Query now...');
-	var newQuery = window.top.frames[0].qihelper.getAskQueryFromGui();
-	if( typeof( window.top.frames[0].qihelper.querySaved) == 'undefined' || 
-		window.top.frames[0].qihelper.querySaved !== true ) {
+    var qiHelperObj;
+    // some extensions use the YUI lib that adds an additional iframe
+    for (i=0; i<window.top.frames.length; i++) {
+        if (window.top.frames[i].qihelper) {
+            qiHelperObj= window.top.frames[i].qihelper;
+            break;
+        }
+    }
+	var newQuery = qiHelperObj.getAskQueryFromGui();
+	if( typeof( qiHelperObj.querySaved) == 'undefined' ||
+		qiHelperObj.querySaved !== true ) {
 		return;
 	}
-	if( typeof( window.top.frames[0].qihelper.queryFormated ) === 'undefined' ) { 
+	if( typeof( qiHelperObj.queryFormated ) === 'undefined' ) {
 		// format query if not already done
 		newQuery = newQuery.replace(/\]\]\[\[/g, "]]\n[[");
 		newQuery = newQuery.replace(/>\[\[/g, ">\n[[");
@@ -236,9 +244,17 @@ setUpdatedAskQuery: function() {
  * set new query annotations
  */
 setNewAskQuery:function() {
-	var newQuery = window.top.frames[0].qihelper.getAskQueryFromGui();
-	if( typeof( window.top.frames[0].qihelper.querySaved) == 'undefined' || 
-		window.top.frames[0].qihelper.querySaved !== true ) {
+    var qiHelperObj;
+    // some extensions use the YUI lib that adds an additional iframe
+    for (i=0; i<window.top.frames.length; i++) {
+        if (window.top.frames[i].qihelper) {
+            qiHelperObj= window.top.frames[i].qihelper;
+            break;
+        }
+    }
+    var newQuery = qiHelperObj.getAskQueryFromGui();
+	if( typeof( qiHelperObj.querySaved) == 'undefined' ||
+		qiHelperObj.querySaved !== true ) {
 		return;
 	}
 		newQuery = newQuery.replace(/\]\]\[\[/g, "]]\n[[");
