@@ -459,7 +459,6 @@ class TFDataAPIACCESS {
 			}
 			
 			$silentAnnotations = "{{CreateSilentAnnotations:";
-			file_put_contents('d://annos.rtf', print_r($aggregatedAnnotations, true));
 			
 			foreach($aggregatedAnnotations as $name => $annotations){
 				if($name == TF_CATEGORY_KEYWORD){
