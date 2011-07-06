@@ -321,8 +321,6 @@ function tff_checkAnnotationValues($annotationName, $annotationLabel, $annotatio
 			}
 		}
 		
-		file_put_contents('d://record.rtf', print_r($queryConditions, true));
-		
 		$queryConditions = json_decode($queryConditions, true);
 		
 		

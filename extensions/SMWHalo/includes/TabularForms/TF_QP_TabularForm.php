@@ -263,7 +263,7 @@ class TFTabularFormData {
 		}
 
 		$this->initializeAnnotationAutocompletion();
-
+		
 		list($this->annotationPreloadValues, $this->instanceNamePreloadValue) =
 			TFQueryAnalyser::getPreloadValues($this->getQuerySerialization(), $this->isSPARQLQuery);
 
@@ -645,7 +645,7 @@ class TFTabularFormData {
 			
 		$html .= '</td>';
 
-		$html .= '<div id="tf-hidden-preload-values" style="display: none">';
+		$html .= '<div class="tf-hidden-preload-values" style="display: none">';
 		foreach($this->annotationPreloadValues as $name => $values){
 			if(!array_key_exists($name, $this->writeProtectedAnnotations)){
 				foreach($values as $value){

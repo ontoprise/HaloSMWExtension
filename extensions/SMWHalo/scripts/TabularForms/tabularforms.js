@@ -583,9 +583,12 @@ var TF = Class.create({
 				}
 			}
 			
+			//this is uglay
+			var tabularFormId = jQuery(this).parent().parent().parent().parent().attr('id');
+			
 			//deal with hidden preload values
 			if(jQuery(this).attr('isNew') == 'true'){
-				jQuery('#tf-hidden-preload-values > div', jQuery('tabularFormId')).each( function(){
+				jQuery('#tf-hidden-preload-values > div', jQuery('#' + tabularFormId)).each( function(){
 					var modifiedValue = new Object();
 					modifiedValue['newValue'] = jQuery(this).html();
 					modifiedValue['originalValue'] = '';
@@ -594,8 +597,7 @@ var TF = Class.create({
 				});
 			}
 			
-			//this is uglay
-			var tabularFormId = jQuery(this).parent().parent().parent().parent().attr('id');
+			
 			var revisionId = jQuery('td:first-child ',this).attr('revision-id');
 			var useSAT = jQuery(this).parent().parent().parent().attr('usesat'); 
 			if(revisionId == '-1'){
@@ -1301,7 +1303,7 @@ var TF = Class.create({
 		
 		//uppdate row state
 		if(jQuery('.tabf_invalid_input_filed_value', jQuery(data.cssSelector).parent()).get().length > 0){
-			Query('.tabf_invalid_value_status', jQuery(data.cssSelector).parent()).css('display', '');
+			jQuery('.tabf_invalid_value_status', jQuery(data.cssSelector).parent()).css('display', '');
 		} else {
 			jQuery('.tabf_invalid_value_status', jQuery(data.cssSelector).parent()).css('display', 'none');
 		}
