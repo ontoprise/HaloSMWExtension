@@ -150,7 +150,7 @@ function cefAddNonSpecialPageHeader(&$out) {
 	//echo "Style version: " . $ceStyleVer . "\n";
 	cefAddJSLanguageScripts( $out );
 	if( isset( $smwgDeployVersion ) && $smwgDeployVersion === true ) {
-		$out->addScript( "<script type=\"text/javascript\" src=\"" . $ceStyleVer .
+		$out->addScript( "<script type=\"text/javascript\" src=\"" . $cegScriptPath .
 			"/scripts/deployCollaboration.js" . $ceStyleVer . "\"></script>" );
 
 		$out->addStyle( $cegScriptPath . '/skins/Comment/collaboration-comment.css' . $ceStyleVer ,
