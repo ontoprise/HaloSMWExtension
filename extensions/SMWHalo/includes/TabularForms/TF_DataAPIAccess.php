@@ -442,8 +442,6 @@ class TFDataAPIACCESS {
 		
 		$text = '';
 		
-		file_put_contents('d://annotations.rtf', print_r($annotations, trie));
-		
 		$annotations = $annotations->getNewAnnotations();
 		if($useSAT != 'true'){
 			foreach($annotations as $annotation){
@@ -454,12 +452,29 @@ class TFDataAPIACCESS {
 				}
 			}
 		} else {
-			$silentAnnotations = "{{CreateSilentAnnotations:";
+			
+			$aggregatedAnnotations = array();
 			foreach($annotations as $annotation){
-				if($annotation['name'] == TF_CATEGORY_KEYWORD){
-					$text .= '[[Category:'.$annotation['value'].'| ]]';
-				} else if (strlen($annotation['name']) >0){
-					$silentAnnotations .= '| '.$annotation['name'].'='.$annotation['value'];
+				$aggregatedAnnotations[$annotation['name']][] = $annotation;
+			}
+			
+			$silentAnnotations = "{{CreateSilentAnnotations:";
+			file_put_contents('d://annos.rtf', print_r($aggregatedAnnotations, true));
+			
+			foreach($aggregatedAnnotations as $name => $annotations){
+				if($name == TF_CATEGORY_KEYWORD){
+					foreach($annotations as $annotation){
+						$text .= '[[Category:'.$annotation['value'].'| ]]';
+					}	
+				} else if (strlen($name) >0){
+					$delimiter = $this->getSilentAnnotationsDelimiter($name);
+					$silentAnnotations .= '| '.$name.'=';
+					$first = true;
+					foreach($annotations as $annotation){
+						if(!$first) $silentAnnotations .= $delimiter;
+						$first = false;
+						$silentAnnotations .= $annotation['value'];
+					}
 				}
 			}
 			
