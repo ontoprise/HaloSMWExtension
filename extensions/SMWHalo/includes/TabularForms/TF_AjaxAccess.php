@@ -140,13 +140,18 @@ function tff_checkArticleName($articleName, $rowNr, $tabularFormId){
 	$message = "";
 	
 	$validTitle = false;
+	$permissionError = false;
 	if(strpos($articleName, '#') === false){
 		$title = Title::newFromText($articleName);
 		if($title){
 			if($title->getFullText() == $articleName){
 				if($title->exists()){
 					$exists = true;
-				} else {
+				} else if(!$title->userCan('createpage')){
+					$permissionError = true;
+				}else if(!$title->userCan('edit')){
+					$permissionError = true;
+				}	else {
 					$validTitle = true;
 				}
 			}
@@ -159,6 +164,8 @@ function tff_checkArticleName($articleName, $rowNr, $tabularFormId){
 		$articleName = str_replace(array('<', '>'), array('&lt;', '&gt;'), $articleName);
 		if($exists){
 			$message = wfMsg( 'tabf_instancename_exists', ucfirst($articleName));
+		} else if($permissionError){
+			$message = wfMsg( 'tabf_instancename_permission_error', ucfirst($articleName));
 		} else {
 			$message = wfMsg( 'tabf_instancename_invalid', ucfirst($articleName));	
 		}

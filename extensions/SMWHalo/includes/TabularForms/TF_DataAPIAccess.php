@@ -440,6 +440,10 @@ class TFDataAPIACCESS {
 			return wfMsg('tabf_response_nocreatepermission');
 		}
 		
+		if(!$this->title->userCan('edit')){
+			return wfMsg('tabf_response_nocreatepermission');
+		}
+		
 		$text = '';
 		
 		$annotations = $annotations->getNewAnnotations();
