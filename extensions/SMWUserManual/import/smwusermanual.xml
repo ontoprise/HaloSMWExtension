@@ -1,6 +1,6 @@
 <mediawiki xmlns="http://www.mediawiki.org/halowikiexport/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.ontoprise.de/halowikiexport-1.0.xsd" version="1.0" xml:lang="en">
   <siteinfo>
-    <sitename>Halo3wiki</sitename>
+    <sitename>Contentwiki</sitename>
     <base>http://localhost/index.php/Main_Page</base>
     <generator>MediaWiki 1.16.4</generator>
     <case>first-letter</case>
@@ -11,8 +11,8 @@
       <namespace key="1" case="first-letter">Talk</namespace>
       <namespace key="2" case="first-letter">User</namespace>
       <namespace key="3" case="first-letter">User talk</namespace>
-      <namespace key="4" case="first-letter">Halo3wiki</namespace>
-      <namespace key="5" case="first-letter">Halo3wiki talk</namespace>
+      <namespace key="4" case="first-letter">Contentwiki</namespace>
+      <namespace key="5" case="first-letter">Contentwiki talk</namespace>
       <namespace key="6" case="first-letter">File</namespace>
       <namespace key="7" case="first-letter">File talk</namespace>
       <namespace key="8" case="first-letter">MediaWiki</namespace>
@@ -31,15 +31,39 @@
       <namespace key="107" case="first-letter">Form talk</namespace>
       <namespace key="108" case="first-letter">Concept</namespace>
       <namespace key="109" case="first-letter">Concept talk</namespace>
-      <namespace key="110" case="first-letter">UserManual</namespace>
-      <namespace key="111" case="first-letter">UserManual talk</namespace>
+      <namespace key="120" case="first-letter">Document</namespace>
+      <namespace key="121" case="first-letter">Document talk</namespace>
+      <namespace key="122" case="first-letter">Audio</namespace>
+      <namespace key="123" case="first-letter">Audio talk</namespace>
+      <namespace key="124" case="first-letter">Video</namespace>
+      <namespace key="125" case="first-letter">Video talk</namespace>
+      <namespace key="126" case="first-letter">Pdf</namespace>
+      <namespace key="127" case="first-letter">Pdf talk</namespace>
+      <namespace key="128" case="first-letter">ICalendar</namespace>
+      <namespace key="129" case="first-letter">ICalendar talk</namespace>
+      <namespace key="130" case="first-letter">VCard</namespace>
+      <namespace key="131" case="first-letter">VCard talk</namespace>
+      <namespace key="200" case="first-letter">WebService</namespace>
+      <namespace key="201" case="first-letter">WebService talk</namespace>
+      <namespace key="202" case="first-letter">TermImport</namespace>
+      <namespace key="203" case="first-letter">TermImport talk</namespace>
+      <namespace key="220" case="first-letter">E-mail</namespace>
+      <namespace key="221" case="first-letter">E-mail talk</namespace>
+      <namespace key="300" case="first-letter">ACL</namespace>
+      <namespace key="301" case="first-letter">ACL talk</namespace>
+      <namespace key="400" case="first-letter">IAI</namespace>
+      <namespace key="401" case="first-letter">IAI talk</namespace>
+      <namespace key="700" case="first-letter">Comment</namespace>
+      <namespace key="701" case="first-letter">Comment talk</namespace>
+      <namespace key="702" case="first-letter">UserManual</namespace>
+      <namespace key="703" case="first-letter">UserManual talk</namespace>
     </namespaces>
   </siteinfo>
   <page>
     <title>Template:Copyright of article</title>
-    <id>983</id>
+    <id>1938</id>
     <revision>
-      <id>2142</id>
+      <id>4635</id>
       <timestamp>2011-07-04T16:40:09Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
@@ -71,10 +95,10 @@
   </page>
   <page>
     <title>Smwusermanual</title>
-    <id>1313</id>
+    <id>1939</id>
     <revision>
-      <id>3801</id>
-      <timestamp>2011-07-06T09:23:49Z</timestamp>
+      <id>4964</id>
+      <timestamp>2011-07-06T10:19:45Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -90,7 +114,7 @@
 [[Dependency::applicationprogramming;103;103| ]]
 [[Dependency::Smwplus; 156; 156| ]]
 [[License::GPL v2| ]] 
-[[Help Url::http://smwforum.ontoprise.com/smwforum/index.php/Help:User_Manual_extension| ]] 
+[[Help Url::http://smwforum.ontoprise.com/smwforum/index.php/Help:User_Manual_extension | ]] 
 
 ;This content bundle comprises a set of articles that are necessary to make use of the Smwusermanual extension.
 
@@ -109,18 +133,19 @@ More information about the User Manual extension can be found in our [http://smw
 |link=subject
 |default=''none''
 |mainlabel=-
+|source=wiki
 }}
 
 [[Category:Content bundle|Content_bundle]]
 {{Content hash|value=}}</text>
-    <hash>492a7cc53f8464c7affeaa9f3e600ad1</hash>
+    <hash>cc7d5331e3709c96b710a67ddec88856</hash>
     </revision>
   </page>
   <page>
     <title>Property:UME discourse state</title>
-    <id>1768</id>
+    <id>1940</id>
     <revision>
-      <id>2726</id>
+      <id>4637</id>
       <timestamp>2011-07-04T16:10:59Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
@@ -146,9 +171,9 @@ More information about the User Manual extension can be found in our [http://smw
   </page>
   <page>
     <title>Property:UME link</title>
-    <id>1769</id>
+    <id>1941</id>
     <revision>
-      <id>2727</id>
+      <id>4638</id>
       <timestamp>2011-07-04T16:13:06Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
@@ -174,9 +199,9 @@ More information about the User Manual extension can be found in our [http://smw
   </page>
   <page>
     <title>UserManual:Can I configure the menu myself</title>
-    <id>2096</id>
+    <id>1942</id>
     <revision>
-      <id>3380</id>
+      <id>4639</id>
       <timestamp>2011-07-05T10:44:07Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -197,9 +222,9 @@ Yes you can. For details read the article [http://smwforum.ontoprise.com/smwforu
   </page>
   <page>
     <title>UserManual:Can I customize the footer</title>
-    <id>2097</id>
+    <id>1943</id>
     <revision>
-      <id>3381</id>
+      <id>4640</id>
       <timestamp>2011-07-05T10:44:07Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -220,9 +245,9 @@ You can edit the footer content at [[MediaWiki:Haloquicklinks|MediaWiki:haloquic
   </page>
   <page>
     <title>UserManual:Can I enable the MediaWiki menu</title>
-    <id>2098</id>
+    <id>1944</id>
     <revision>
-      <id>3382</id>
+      <id>4641</id>
       <timestamp>2011-07-05T10:44:07Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -246,9 +271,9 @@ Yes you can set OntoSkin3 to display the normal mediawiki menu. You need to have
   </page>
   <page>
     <title>UserManual:Can I enable the page title</title>
-    <id>2099</id>
+    <id>1945</id>
     <revision>
-      <id>3383</id>
+      <id>4642</id>
       <timestamp>2011-07-05T10:44:08Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -269,9 +294,9 @@ Right now this is not supported. The pagetitle is shown in the breadcrumbs and i
   </page>
   <page>
     <title>UserManual:Can I set expanded as default</title>
-    <id>2100</id>
+    <id>1946</id>
     <revision>
-      <id>3384</id>
+      <id>4643</id>
       <timestamp>2011-07-05T10:44:08Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -302,9 +327,9 @@ Logically it seems to be the same, but 'state' can also be null if no cookie is 
   </page>
   <page>
     <title>UserManual:Do I have to use OntoSkin3 as default or can I use another skin</title>
-    <id>2101</id>
+    <id>1947</id>
     <revision>
-      <id>3385</id>
+      <id>4644</id>
       <timestamp>2011-07-05T10:44:08Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -325,9 +350,9 @@ No, you don't. If you prefer to use another skin, you can make it work with the 
   </page>
   <page>
     <title>UserManual:Does JavaScript have to be enabled</title>
-    <id>2102</id>
+    <id>1948</id>
     <revision>
-      <id>3386</id>
+      <id>4645</id>
       <timestamp>2011-07-05T10:44:09Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -348,9 +373,9 @@ OntoSkin3 needs JavaScript enabled to operate as expected. For example the menu 
   </page>
   <page>
     <title>UserManual:How can I access the Context Sensitive Help</title>
-    <id>2103</id>
+    <id>1949</id>
     <revision>
-      <id>3387</id>
+      <id>4646</id>
       <timestamp>2011-07-05T10:44:09Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -382,9 +407,9 @@ Upon clicking it, a new window opens. This window has the corresponding CSH text
   </page>
   <page>
     <title>UserManual:How can I activate the advanced annotation mode</title>
-    <id>2104</id>
+    <id>1950</id>
     <revision>
-      <id>3388</id>
+      <id>4647</id>
       <timestamp>2011-07-05T10:44:09Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -414,9 +439,9 @@ Note that the '''AAM''' is only available in the '''''Ontoskin'''''.
   </page>
   <page>
     <title>UserManual:How can I active the factbox</title>
-    <id>2105</id>
+    <id>1951</id>
     <revision>
-      <id>3389</id>
+      <id>4648</id>
       <timestamp>2011-07-05T10:44:10Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -444,9 +469,9 @@ To enable the Factbox, please follow the following steps:&lt;br&gt;
   </page>
   <page>
     <title>UserManual:How can I add a rights template</title>
-    <id>2106</id>
+    <id>1952</id>
     <revision>
-      <id>3390</id>
+      <id>4649</id>
       <timestamp>2011-07-05T10:44:10Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -472,9 +497,9 @@ Once you have created an ACL, you will be able to add rights template by followi
   </page>
   <page>
     <title>UserManual:How can I add a web service call</title>
-    <id>2107</id>
+    <id>1953</id>
     <revision>
-      <id>3391</id>
+      <id>4650</id>
       <timestamp>2011-07-05T10:44:10Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -503,9 +528,9 @@ Once you have gone through all the five GUI steps, you will again be redirected 
   </page>
   <page>
     <title>UserManual:How can I add an image on a page</title>
-    <id>2108</id>
+    <id>1954</id>
     <revision>
-      <id>3392</id>
+      <id>4651</id>
       <timestamp>2011-07-05T10:44:11Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -530,9 +555,9 @@ The option entry may be omitted or one may enter one or a combination of any of 
   </page>
   <page>
     <title>UserManual:How can I add interwiki links to other languages</title>
-    <id>2109</id>
+    <id>1955</id>
     <revision>
-      <id>3393</id>
+      <id>4652</id>
       <timestamp>2011-07-05T10:44:11Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -567,9 +592,9 @@ For example, let’s apply this on:&lt;br&gt;
   </page>
   <page>
     <title>UserManual:How can I add interwiki links to other projects</title>
-    <id>2110</id>
+    <id>1956</id>
     <revision>
-      <id>3394</id>
+      <id>4653</id>
       <timestamp>2011-07-05T10:44:11Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -599,9 +624,9 @@ If you want to setup interwiki links, you might need to edit the wiki's database
   </page>
   <page>
     <title>UserManual:How can I add links to a page</title>
-    <id>2111</id>
+    <id>1957</id>
     <revision>
-      <id>3395</id>
+      <id>4654</id>
       <timestamp>2011-07-05T10:44:12Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -638,9 +663,9 @@ Selflinks to the current page are not transformed in URLs, they are displayed in
   </page>
   <page>
     <title>UserManual:How can I add modification rights</title>
-    <id>2112</id>
+    <id>1958</id>
     <revision>
-      <id>3396</id>
+      <id>4655</id>
       <timestamp>2011-07-05T10:44:12Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -666,9 +691,9 @@ Modifying the rights serves the purpose of allocating /restricting your ACL’s 
   </page>
   <page>
     <title>UserManual:How can I add service links to a wiki</title>
-    <id>2113</id>
+    <id>1959</id>
     <revision>
-      <id>3397</id>
+      <id>4656</id>
       <timestamp>2011-07-05T10:44:12Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -702,9 +727,9 @@ To add a new ''Swoogle service'' to the [http://ontoworld.org/wiki/Property:Name
   </page>
   <page>
     <title>UserManual:How can I add the 'Upload-file'-link to a form</title>
-    <id>2114</id>
+    <id>1960</id>
     <revision>
-      <id>3398</id>
+      <id>4657</id>
       <timestamp>2011-07-05T10:44:13Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -735,9 +760,9 @@ The value of this parameter can also include the variable &quot;&lt;page name&gt
   </page>
   <page>
     <title>UserManual:How can I add tooltips to my form</title>
-    <id>2115</id>
+    <id>1961</id>
     <revision>
-      <id>3399</id>
+      <id>4658</id>
       <timestamp>2011-07-05T10:44:13Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -766,9 +791,9 @@ E.g., &lt;nowiki&gt;{{#info:tooltip text}}&lt;/nowiki&gt;. ''(This parser functi
   </page>
   <page>
     <title>UserManual:How can I annotate a n-ary property</title>
-    <id>2116</id>
+    <id>1962</id>
     <revision>
-      <id>3400</id>
+      <id>4659</id>
       <timestamp>2011-07-05T10:44:15Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -797,9 +822,9 @@ N-ary properties can have multiple values at a time. When the properties name is
   </page>
   <page>
     <title>UserManual:How can I annotate a part in the AAM</title>
-    <id>2117</id>
+    <id>1963</id>
     <revision>
-      <id>3401</id>
+      <id>4660</id>
       <timestamp>2011-07-05T10:44:15Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -832,9 +857,9 @@ Example&amp;nbsp;: Every Car has an '''engine'''.&lt;br&gt;
   </page>
   <page>
     <title>UserManual:How can I annotate a property with the semantic toolbar</title>
-    <id>2118</id>
+    <id>1964</id>
     <revision>
-      <id>3402</id>
+      <id>4661</id>
       <timestamp>2011-07-05T10:44:15Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -872,9 +897,9 @@ The property should now appear in the fact box.  &lt;br&gt;&lt;br&gt;
   </page>
   <page>
     <title>UserManual:How can I annotate a property with wiki text</title>
-    <id>2119</id>
+    <id>1965</id>
     <revision>
-      <id>3403</id>
+      <id>4662</id>
       <timestamp>2011-07-05T10:44:16Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -907,9 +932,9 @@ The whole annotation is to be closed by   ''']]'''. This is done automatically w
   </page>
   <page>
     <title>UserManual:How can I ask for specific properties of an object in the wiki</title>
-    <id>2120</id>
+    <id>1966</id>
     <revision>
-      <id>3404</id>
+      <id>4663</id>
       <timestamp>2011-07-05T10:44:16Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -949,9 +974,9 @@ There are 3 possibilities of doing this.
   </page>
   <page>
     <title>UserManual:How can I ask new questions in the CSH</title>
-    <id>2121</id>
+    <id>1967</id>
     <revision>
-      <id>3405</id>
+      <id>4664</id>
       <timestamp>2011-07-05T10:44:17Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -985,9 +1010,9 @@ If you want to add new question in the CSH, you should:&lt;br&gt;
   </page>
   <page>
     <title>UserManual:How can I attach service links to a property</title>
-    <id>2122</id>
+    <id>1968</id>
     <revision>
-      <id>3406</id>
+      <id>4665</id>
       <timestamp>2011-07-05T10:44:17Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -1012,9 +1037,9 @@ To attach some services to a property, you should use the '''special property pr
   </page>
   <page>
     <title>UserManual:How can I browse the OntologyBrowser with filters</title>
-    <id>2123</id>
+    <id>1969</id>
     <revision>
-      <id>3407</id>
+      <id>4666</id>
       <timestamp>2011-07-05T10:44:17Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -1039,9 +1064,9 @@ To use auto-completion, you may press '''Ctrl+Q'''.
   </page>
   <page>
     <title>UserManual:How can I categorize a category</title>
-    <id>2124</id>
+    <id>1970</id>
     <revision>
-      <id>3408</id>
+      <id>4667</id>
       <timestamp>2011-07-05T10:44:18Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -1072,9 +1097,9 @@ For example, ''Category:american Artist'' should be in both the ''Category:artis
   </page>
   <page>
     <title>UserManual:How can I change an annotated category</title>
-    <id>2125</id>
+    <id>1971</id>
     <revision>
-      <id>3409</id>
+      <id>4668</id>
       <timestamp>2011-07-05T10:44:18Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -1113,9 +1138,9 @@ The list of categories and the wiki text will be changed accordingly.&lt;br&gt;
   </page>
   <page>
     <title>UserManual:How can I change an annotated property</title>
-    <id>2126</id>
+    <id>1972</id>
     <revision>
-      <id>3410</id>
+      <id>4669</id>
       <timestamp>2011-07-05T10:44:18Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -1154,9 +1179,9 @@ If you '''change''' it, the values in the list are updated, but the value in the
   </page>
   <page>
     <title>UserManual:How can I change my user preferences</title>
-    <id>2127</id>
+    <id>1973</id>
     <revision>
-      <id>3411</id>
+      <id>4670</id>
       <timestamp>2011-07-05T10:44:19Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -1199,9 +1224,9 @@ You will be presented with the '''User profile section''', as well as a bar of t
   </page>
   <page>
     <title>UserManual:How can I change my wiki skin</title>
-    <id>2128</id>
+    <id>1974</id>
     <revision>
-      <id>3412</id>
+      <id>4671</id>
       <timestamp>2011-07-05T10:44:19Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -1235,9 +1260,9 @@ Clicking on the '''my preferences''' link in the upper right section while logge
   </page>
   <page>
     <title>UserManual:How can I change the links in the Navigation Box</title>
-    <id>2129</id>
+    <id>1975</id>
     <revision>
-      <id>3413</id>
+      <id>4672</id>
       <timestamp>2011-07-05T10:44:20Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -1275,9 +1300,9 @@ The syntax of the bullet points is as follows:
   </page>
   <page>
     <title>UserManual:How can I change the links in the navigation tree</title>
-    <id>2130</id>
+    <id>1976</id>
     <revision>
-      <id>3414</id>
+      <id>4673</id>
       <timestamp>2011-07-05T10:44:20Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -1320,9 +1345,9 @@ To change the navigation tree:
   </page>
   <page>
     <title>UserManual:How can I change the logo</title>
-    <id>2131</id>
+    <id>1977</id>
     <revision>
-      <id>3415</id>
+      <id>4674</id>
       <timestamp>2011-07-05T10:44:20Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -1349,9 +1374,9 @@ If You want to change the logo of mediawiki.&lt;br&gt;
   </page>
   <page>
     <title>UserManual:How can I choose result parts in a new web service</title>
-    <id>2132</id>
+    <id>1978</id>
     <revision>
-      <id>3416</id>
+      <id>4675</id>
       <timestamp>2011-07-05T10:44:21Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -1380,9 +1405,9 @@ If you like to define further result parts, click on the '''Add result parts'''-
   </page>
   <page>
     <title>UserManual:How can I configure the 'edit with form' tab</title>
-    <id>2133</id>
+    <id>1979</id>
     <revision>
-      <id>3417</id>
+      <id>4676</id>
       <timestamp>2011-07-05T10:44:21Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -1414,9 +1439,9 @@ If these settings are added to LocalSettings.php, they should be placed in the f
   </page>
   <page>
     <title>UserManual:How can I control Template inclusion</title>
-    <id>2134</id>
+    <id>1980</id>
     <revision>
-      <id>3418</id>
+      <id>4677</id>
       <timestamp>2011-07-05T10:44:21Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -1442,9 +1467,9 @@ You can control template inclusion using &lt;code&gt;&lt;nowiki&gt;
   </page>
   <page>
     <title>UserManual:How can I control the pages to watch</title>
-    <id>2135</id>
+    <id>1981</id>
     <revision>
-      <id>3419</id>
+      <id>4678</id>
       <timestamp>2011-07-05T10:44:22Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -1496,9 +1521,9 @@ Other additional options are:
   </page>
   <page>
     <title>UserManual:How can I create ACLs</title>
-    <id>2136</id>
+    <id>1982</id>
     <revision>
-      <id>3420</id>
+      <id>4679</id>
       <timestamp>2011-07-05T10:44:23Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -1531,9 +1556,9 @@ A new restricted special page Access Control Lists should now appear.
   </page>
   <page>
     <title>UserManual:How can I create Ranges and Types in new property</title>
-    <id>2137</id>
+    <id>1983</id>
     <revision>
-      <id>3421</id>
+      <id>4680</id>
       <timestamp>2011-07-05T10:44:23Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -1569,9 +1594,9 @@ The default settings set the type to &quot;Type:Page&quot; i.e. the value of the
   </page>
   <page>
     <title>UserManual:How can I create a default ACL user template</title>
-    <id>2138</id>
+    <id>1984</id>
     <revision>
-      <id>3422</id>
+      <id>4681</id>
       <timestamp>2011-07-05T10:44:23Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -1601,9 +1626,9 @@ Note: You need to be logged-in and have WikiSysop rights. You can only create an
   </page>
   <page>
     <title>UserManual:How can I create a form with preloaded data</title>
-    <id>2139</id>
+    <id>1985</id>
     <revision>
-      <id>3423</id>
+      <id>4682</id>
       <timestamp>2011-07-05T10:44:24Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -1642,9 +1667,9 @@ You have several ways of creating a form with preloaded data:&lt;br&gt;
   </page>
   <page>
     <title>UserManual:How can I create a link to a category page</title>
-    <id>2140</id>
+    <id>1986</id>
     <revision>
-      <id>3424</id>
+      <id>4683</id>
       <timestamp>2011-07-05T10:44:24Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -1678,9 +1703,9 @@ To display '''''alternate text''''' for the link do as follows:
   </page>
   <page>
     <title>UserManual:How can I create a new category</title>
-    <id>2141</id>
+    <id>1987</id>
     <revision>
-      <id>3425</id>
+      <id>4684</id>
       <timestamp>2011-07-05T10:44:24Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -1707,9 +1732,9 @@ If you belong to the '''sysop''' or '''gardener''' user groups, you can:
   </page>
   <page>
     <title>UserManual:How can I create a new page with automatic semantic forms</title>
-    <id>2142</id>
+    <id>1988</id>
     <revision>
-      <id>3426</id>
+      <id>4685</id>
       <timestamp>2011-07-05T10:44:25Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -1743,9 +1768,9 @@ To create a new page with an automatically created semantic form:
   </page>
   <page>
     <title>UserManual:How can I create a new property</title>
-    <id>2143</id>
+    <id>1989</id>
     <revision>
-      <id>3427</id>
+      <id>4686</id>
       <timestamp>2011-07-05T10:44:25Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -1787,9 +1812,9 @@ __SHOWFACTBOX__
   </page>
   <page>
     <title>UserManual:How can I create a new property (Ontology Browser)</title>
-    <id>2144</id>
+    <id>1990</id>
     <revision>
-      <id>3428</id>
+      <id>4687</id>
       <timestamp>2011-07-05T10:44:25Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -1822,9 +1847,9 @@ Click on '''Add type''' or '''Add range''',  to add one or more types and ranges
   </page>
   <page>
     <title>UserManual:How can I create a redirect</title>
-    <id>2145</id>
+    <id>1991</id>
     <revision>
-      <id>3429</id>
+      <id>4688</id>
       <timestamp>2011-07-05T10:44:26Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -1858,9 +1883,9 @@ Generally you will be redirecting to an existing page name, so the link should b
   </page>
   <page>
     <title>UserManual:How can I create a right</title>
-    <id>2146</id>
+    <id>1992</id>
     <revision>
-      <id>3430</id>
+      <id>4689</id>
       <timestamp>2011-07-05T10:44:26Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -1892,9 +1917,9 @@ Once you have created an ACL, you will be able to create a right by following th
   </page>
   <page>
     <title>UserManual:How can I create a standard Access Control List</title>
-    <id>2147</id>
+    <id>1993</id>
     <revision>
-      <id>3431</id>
+      <id>4690</id>
       <timestamp>2011-07-05T10:44:26Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -1922,9 +1947,9 @@ Go to the specialpage '''''Special:HaloACL''''' using the Administration-menu or
   </page>
   <page>
     <title>UserManual:How can I create a sub- or super-category in AAM</title>
-    <id>2148</id>
+    <id>1994</id>
     <revision>
-      <id>3432</id>
+      <id>4691</id>
       <timestamp>2011-07-05T10:44:27Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -1956,9 +1981,9 @@ The interface and the workflow are the same as in the edit mode:
   </page>
   <page>
     <title>UserManual:How can I create a whitelist</title>
-    <id>2149</id>
+    <id>1995</id>
     <revision>
-      <id>3433</id>
+      <id>4692</id>
       <timestamp>2011-07-05T10:44:27Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -1985,9 +2010,9 @@ You need first to be logged-in and have WikiSysop rights.
   </page>
   <page>
     <title>UserManual:How can I create an Access Control List Template</title>
-    <id>2150</id>
+    <id>1996</id>
     <revision>
-      <id>3434</id>
+      <id>4693</id>
       <timestamp>2011-07-05T10:44:28Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -2014,9 +2039,9 @@ Go to the specialpage '''''Special:HaloACL''''' using the Administration-menu or
   </page>
   <page>
     <title>UserManual:How can I create an external search for a topic</title>
-    <id>2151</id>
+    <id>1997</id>
     <revision>
-      <id>3435</id>
+      <id>4694</id>
       <timestamp>2011-07-05T10:44:28Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -2045,9 +2070,9 @@ It is possible to create external searches about a topic using key words using a
   </page>
   <page>
     <title>UserManual:How can I create an image gallery</title>
-    <id>2152</id>
+    <id>1998</id>
     <revision>
-      <id>3436</id>
+      <id>4695</id>
       <timestamp>2011-07-05T10:44:28Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -2088,9 +2113,9 @@ Captions are optional and they may contain wiki links or other formatting.
   </page>
   <page>
     <title>UserManual:How can I create an new ACL group</title>
-    <id>2153</id>
+    <id>1999</id>
     <revision>
-      <id>3437</id>
+      <id>4696</id>
       <timestamp>2011-07-05T10:44:29Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -2120,9 +2145,9 @@ To start this first go to the specialpage '''Special:HaloACL''' using the Admini
   </page>
   <page>
     <title>UserManual:How can I create automatic semantic forms</title>
-    <id>2154</id>
+    <id>2000</id>
     <revision>
-      <id>3438</id>
+      <id>4697</id>
       <timestamp>2011-07-05T10:44:29Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -2157,9 +2182,9 @@ For each direct category annotation of the edited article, there will be a colla
   </page>
   <page>
     <title>UserManual:How can I create hierarchies of categories</title>
-    <id>2155</id>
+    <id>2001</id>
     <revision>
-      <id>3439</id>
+      <id>4698</id>
       <timestamp>2011-07-05T10:44:30Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -2201,9 +2226,9 @@ The steps to be followed are same as in the second case, only that you in this c
   </page>
   <page>
     <title>UserManual:How can I create hierarchies of properties</title>
-    <id>2156</id>
+    <id>2002</id>
     <revision>
-      <id>3440</id>
+      <id>4699</id>
       <timestamp>2011-07-05T10:44:31Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -2239,9 +2264,9 @@ In order to create hierarchies of properties you should:
   </page>
   <page>
     <title>UserManual:How can I create links for adding and editing articles with semantic forms</title>
-    <id>2157</id>
+    <id>2003</id>
     <revision>
-      <id>3441</id>
+      <id>4700</id>
       <timestamp>2011-07-05T10:44:31Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -2274,9 +2299,9 @@ If no form name is specified, a dropdown of all available forms in the wiki will
   </page>
   <page>
     <title>UserManual:How can I create n-ary properties</title>
-    <id>2158</id>
+    <id>2004</id>
     <revision>
-      <id>3442</id>
+      <id>4701</id>
       <timestamp>2011-07-05T10:44:32Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -2315,9 +2340,9 @@ N-ary properties are defined by a semi-colon separated list of types. What appea
   </page>
   <page>
     <title>UserManual:How can I deal with conflicts</title>
-    <id>2159</id>
+    <id>2005</id>
     <revision>
-      <id>3443</id>
+      <id>4702</id>
       <timestamp>2011-07-05T10:44:32Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -2339,9 +2364,9 @@ Read the fine manual!
   </page>
   <page>
     <title>UserManual:How can I debug Mediawiki</title>
-    <id>2160</id>
+    <id>2006</id>
     <revision>
-      <id>3444</id>
+      <id>4703</id>
       <timestamp>2011-07-05T10:44:32Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -2369,9 +2394,9 @@ To debug Mediawiki, follow these steps:
   </page>
   <page>
     <title>UserManual:How can I define ACLs with parser functions</title>
-    <id>2161</id>
+    <id>2007</id>
     <revision>
-      <id>3445</id>
+      <id>4704</id>
       <timestamp>2011-07-05T10:44:33Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -2404,9 +2429,9 @@ Below is a list of parser functions and the various effects of using them:
   </page>
   <page>
     <title>UserManual:How can I define Semantic Forms</title>
-    <id>2162</id>
+    <id>2008</id>
     <revision>
-      <id>3446</id>
+      <id>4705</id>
       <timestamp>2011-07-05T10:44:33Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -2435,9 +2460,9 @@ Wiki-text, and some HTML, can be freely embedded anywhere outside of the tags.
   </page>
   <page>
     <title>UserManual:How can I define a new web service</title>
-    <id>2163</id>
+    <id>2009</id>
     <revision>
-      <id>3447</id>
+      <id>4706</id>
       <timestamp>2011-07-05T10:44:33Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -2469,9 +2494,9 @@ If you want to define a new web service, please follow the following steps:
   </page>
   <page>
     <title>UserManual:How can I define a set of allowed values for a property</title>
-    <id>2164</id>
+    <id>2010</id>
     <revision>
-      <id>3448</id>
+      <id>4707</id>
       <timestamp>2011-07-05T10:44:34Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -2511,9 +2536,9 @@ Having done this, you will have defined the values that are allowed for the attr
   </page>
   <page>
     <title>UserManual:How can I define credentials in a new web service</title>
-    <id>2165</id>
+    <id>2011</id>
     <revision>
-      <id>3449</id>
+      <id>4708</id>
       <timestamp>2011-07-05T10:44:34Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -2539,9 +2564,9 @@ The special page '''''Special:DefineWebService''''', provides a graphical user i
   </page>
   <page>
     <title>UserManual:How can I define multiple values for the same field</title>
-    <id>2166</id>
+    <id>2012</id>
     <revision>
-      <id>3450</id>
+      <id>4709</id>
       <timestamp>2011-07-05T10:44:34Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -2575,9 +2600,9 @@ If you want an actual line break to appear between values, you should have two n
   </page>
   <page>
     <title>UserManual:How can I define parameters in a new web service</title>
-    <id>2167</id>
+    <id>2013</id>
     <revision>
-      <id>3451</id>
+      <id>4710</id>
       <timestamp>2011-07-05T10:44:35Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -2608,9 +2633,9 @@ Follow the following steps to define parameters in a new web service:
   </page>
   <page>
     <title>UserManual:How can I define queries within the WYSIWYG-editor</title>
-    <id>2168</id>
+    <id>2014</id>
     <revision>
-      <id>3452</id>
+      <id>4711</id>
       <timestamp>2011-07-05T10:44:35Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -2640,9 +2665,9 @@ To do this one uses the embedded query interface  which is  just like the regula
   </page>
   <page>
     <title>UserManual:How can I define sub- and super properties</title>
-    <id>2169</id>
+    <id>2015</id>
     <revision>
-      <id>3453</id>
+      <id>4712</id>
       <timestamp>2011-07-05T10:44:35Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -2686,9 +2711,9 @@ Presuming that the &quot;property number of children&quot; exists one can for ex
   </page>
   <page>
     <title>UserManual:How can I define the bottom of the form</title>
-    <id>2170</id>
+    <id>2016</id>
     <revision>
-      <id>3454</id>
+      <id>4713</id>
       <timestamp>2011-07-05T10:44:36Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -2726,9 +2751,9 @@ The eight allowed values are:&lt;br&gt;
   </page>
   <page>
     <title>UserManual:How can I define update policy in a new web service</title>
-    <id>2171</id>
+    <id>2017</id>
     <revision>
-      <id>3455</id>
+      <id>4714</id>
       <timestamp>2011-07-05T10:44:36Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -2755,9 +2780,9 @@ The eight allowed values are:&lt;br&gt;
   </page>
   <page>
     <title>UserManual:How can I delete a page</title>
-    <id>2172</id>
+    <id>2018</id>
     <revision>
-      <id>3456</id>
+      <id>4715</id>
       <timestamp>2011-07-05T10:44:37Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -2795,9 +2820,9 @@ The eight allowed values are:&lt;br&gt;
   </page>
   <page>
     <title>UserManual:How can I delete a redirect</title>
-    <id>2173</id>
+    <id>2019</id>
     <revision>
-      <id>3457</id>
+      <id>4716</id>
       <timestamp>2011-07-05T10:44:37Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -2824,9 +2849,9 @@ If you do need to delete a redirect, e.g. if the page name of the redirect is of
   </page>
   <page>
     <title>UserManual:How can I delete an existing group</title>
-    <id>2174</id>
+    <id>2020</id>
     <revision>
-      <id>3458</id>
+      <id>4717</id>
       <timestamp>2011-07-05T10:44:37Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -2855,9 +2880,9 @@ Note: You need to be logged-in and have '''WikiSysop''' rights for you to do thi
   </page>
   <page>
     <title>UserManual:How can I delete an existing whitelisted page</title>
-    <id>2175</id>
+    <id>2021</id>
     <revision>
-      <id>3459</id>
+      <id>4718</id>
       <timestamp>2011-07-05T10:44:38Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -2884,9 +2909,9 @@ As a prerequisite, you need to be logged-in and have WikiSysop rights then:
   </page>
   <page>
     <title>UserManual:How can I describe my edit</title>
-    <id>2176</id>
+    <id>2022</id>
     <revision>
-      <id>3460</id>
+      <id>4719</id>
       <timestamp>2011-07-05T10:44:39Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -2916,9 +2941,9 @@ If you are applying substitution, it is especially useful to provide the wikitex
   </page>
   <page>
     <title>UserManual:How can I disable the TreeView</title>
-    <id>2177</id>
+    <id>2023</id>
     <revision>
-      <id>3461</id>
+      <id>4720</id>
       <timestamp>2011-07-05T10:44:39Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -2939,9 +2964,9 @@ Leave [[MediaWiki:NavTree|MediaWiki:NavTree]] empty or disable the Semantic Tree
   </page>
   <page>
     <title>UserManual:How can I disable the overlay preview of files</title>
-    <id>2178</id>
+    <id>2024</id>
     <revision>
-      <id>3462</id>
+      <id>4721</id>
       <timestamp>2011-07-05T10:44:40Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -2972,9 +2997,9 @@ To stop your pdf file from displaying in the overlay
   </page>
   <page>
     <title>UserManual:How can I discuss an article</title>
-    <id>2179</id>
+    <id>2025</id>
     <revision>
-      <id>3463</id>
+      <id>4722</id>
       <timestamp>2011-07-05T10:44:40Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -3008,9 +3033,9 @@ Please note that certain editing conventions for talk pages are recommended:
   </page>
   <page>
     <title>UserManual:How can I display information</title>
-    <id>2180</id>
+    <id>2026</id>
     <revision>
-      <id>3464</id>
+      <id>4723</id>
       <timestamp>2011-07-05T10:44:40Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -3047,9 +3072,9 @@ Different labels can be assigned with the equality symbol like before e.g.
   </page>
   <page>
     <title>UserManual:How can I do a simple search</title>
-    <id>2181</id>
+    <id>2027</id>
     <revision>
-      <id>3465</id>
+      <id>4724</id>
       <timestamp>2011-07-05T10:44:41Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -3084,9 +3109,9 @@ If you click the Search button without filling in anything, you will be taken to
   </page>
   <page>
     <title>UserManual:How can I do an advanced search</title>
-    <id>2182</id>
+    <id>2028</id>
     <revision>
-      <id>3466</id>
+      <id>4725</id>
       <timestamp>2011-07-05T10:44:41Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -3117,9 +3142,9 @@ If you click the Search button without filling in anything, you will be taken to
   </page>
   <page>
     <title>UserManual:How can I edit a n-ary property</title>
-    <id>2183</id>
+    <id>2029</id>
     <revision>
-      <id>3467</id>
+      <id>4726</id>
       <timestamp>2011-07-05T10:44:41Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -3154,9 +3179,9 @@ Two additional links will appear at the bottom of the Property Properties toolbo
   </page>
   <page>
     <title>UserManual:How can I edit a new group</title>
-    <id>2184</id>
+    <id>2030</id>
     <revision>
-      <id>3468</id>
+      <id>4727</id>
       <timestamp>2011-07-05T10:44:42Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -3188,9 +3213,9 @@ If you want to edit a new group or an existing group, you should follow the foll
   </page>
   <page>
     <title>UserManual:How can I edit pages</title>
-    <id>2185</id>
+    <id>2031</id>
     <revision>
-      <id>3469</id>
+      <id>4728</id>
       <timestamp>2011-07-05T10:44:42Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -3227,9 +3252,9 @@ That's just it.
   </page>
   <page>
     <title>UserManual:How can I edit the import file</title>
-    <id>2186</id>
+    <id>2032</id>
     <revision>
-      <id>3470</id>
+      <id>4729</id>
       <timestamp>2011-07-05T10:44:42Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -3260,9 +3285,9 @@ The '''XML file''' that is used in upload import is in a simple readable file fo
   </page>
   <page>
     <title>UserManual:How can I edit the whole watchlist</title>
-    <id>2187</id>
+    <id>2033</id>
     <revision>
-      <id>3471</id>
+      <id>4730</id>
       <timestamp>2011-07-05T10:44:42Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -3292,9 +3317,9 @@ The '''XML file''' that is used in upload import is in a simple readable file fo
   </page>
   <page>
     <title>UserManual:How can I embed a page within another page</title>
-    <id>2188</id>
+    <id>2034</id>
     <revision>
-      <id>3472</id>
+      <id>4731</id>
       <timestamp>2011-07-05T10:44:43Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -3327,9 +3352,9 @@ The syntax that is used to embed a page in another is:
   </page>
   <page>
     <title>UserManual:How can I embed a page within another unembedable special page</title>
-    <id>2189</id>
+    <id>2035</id>
     <revision>
-      <id>3473</id>
+      <id>4732</id>
       <timestamp>2011-07-05T10:44:43Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -3372,9 +3397,9 @@ The possible values for &lt;code&gt;PageType:&lt;/code&gt; are:
   </page>
   <page>
     <title>UserManual:How can I embed media files into articles</title>
-    <id>2190</id>
+    <id>2036</id>
     <revision>
-      <id>3474</id>
+      <id>4733</id>
       <timestamp>2011-07-05T10:44:44Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -3413,9 +3438,9 @@ Simply add the following template to the area where you would like to display th
   </page>
   <page>
     <title>UserManual:How can I embed the upload media files links</title>
-    <id>2191</id>
+    <id>2037</id>
     <revision>
-      <id>3475</id>
+      <id>4734</id>
       <timestamp>2011-07-05T10:44:44Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -3453,9 +3478,9 @@ To embed the upload media files links, so that they may be used to upload rich m
   </page>
   <page>
     <title>UserManual:How can I embed web service call into a page</title>
-    <id>2192</id>
+    <id>2038</id>
     <revision>
-      <id>3476</id>
+      <id>4735</id>
       <timestamp>2011-07-05T10:44:45Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -3492,9 +3517,9 @@ In case you navigated to this GUI from the semantic toolbar while you were editi
   </page>
   <page>
     <title>UserManual:How can I enable the comments feature in an article</title>
-    <id>2193</id>
+    <id>2039</id>
     <revision>
-      <id>3477</id>
+      <id>4736</id>
       <timestamp>2011-07-05T10:44:45Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -3533,9 +3558,9 @@ To enable the comments feature in an article, add the following template to the 
   </page>
   <page>
     <title>UserManual:How can I evaluate annotations</title>
-    <id>2194</id>
+    <id>2040</id>
     <revision>
-      <id>3478</id>
+      <id>4737</id>
       <timestamp>2011-07-05T10:44:46Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -3565,9 +3590,9 @@ There are three possible ways of rating an annotation:
   </page>
   <page>
     <title>UserManual:How can I export articles</title>
-    <id>2195</id>
+    <id>2041</id>
     <revision>
-      <id>3479</id>
+      <id>4738</id>
       <timestamp>2011-07-05T10:44:46Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -3610,9 +3635,9 @@ Additionally you can copy the SQL database.  Versions prior to MediaWiki 1.5 use
   </page>
   <page>
     <title>UserManual:How can I filter the search results</title>
-    <id>2196</id>
+    <id>2042</id>
     <revision>
-      <id>3480</id>
+      <id>4739</id>
       <timestamp>2011-07-05T10:44:47Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -3639,9 +3664,9 @@ The result list changes accordingly and this time it will only display the resul
   </page>
   <page>
     <title>UserManual:How can I find close matches</title>
-    <id>2197</id>
+    <id>2043</id>
     <revision>
-      <id>3481</id>
+      <id>4740</id>
       <timestamp>2011-07-05T10:44:47Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -3689,9 +3714,9 @@ A new function for calculating the edit distance needs to be added to the existi
   </page>
   <page>
     <title>UserManual:How can I find work</title>
-    <id>2198</id>
+    <id>2044</id>
     <revision>
-      <id>3482</id>
+      <id>4741</id>
       <timestamp>2011-07-05T10:44:48Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -3723,9 +3748,9 @@ The articles that are suggested to you in the '''Specialpage [[Special:FindWork]
   </page>
   <page>
     <title>UserManual:How can I format text</title>
-    <id>2199</id>
+    <id>2045</id>
     <revision>
-      <id>3483</id>
+      <id>4742</id>
       <timestamp>2011-07-05T10:44:48Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -3753,9 +3778,9 @@ For example, to format a word in ''italic'', you include it in two single quotes
   </page>
   <page>
     <title>UserManual:How can I format text (WYSIWYG)</title>
-    <id>2200</id>
+    <id>2046</id>
     <revision>
-      <id>3484</id>
+      <id>4743</id>
       <timestamp>2011-07-05T10:44:48Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -3870,9 +3895,9 @@ The wikitext will also change its content whenever:
   </page>
   <page>
     <title>UserManual:How can I format the export file</title>
-    <id>2201</id>
+    <id>2047</id>
     <revision>
-      <id>3485</id>
+      <id>4744</id>
       <timestamp>2011-07-05T10:44:49Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -3908,9 +3933,9 @@ In the current version, the export format does not contain an XML replacement of
   </page>
   <page>
     <title>UserManual:How can I formulate a query</title>
-    <id>2202</id>
+    <id>2048</id>
     <revision>
-      <id>3486</id>
+      <id>4745</id>
       <timestamp>2011-07-05T10:44:49Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -3945,9 +3970,9 @@ In the current version, the export format does not contain an XML replacement of
   </page>
   <page>
     <title>UserManual:How can I get a list of all pages</title>
-    <id>2203</id>
+    <id>2049</id>
     <revision>
-      <id>3487</id>
+      <id>4746</id>
       <timestamp>2011-07-05T10:44:49Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -3971,9 +3996,9 @@ A list of all pages in the is in the specialpage [http://smwforum.ontoprise.com/
   </page>
   <page>
     <title>UserManual:How can I get a preview of an article</title>
-    <id>2204</id>
+    <id>2050</id>
     <revision>
-      <id>3488</id>
+      <id>4747</id>
       <timestamp>2011-07-05T10:44:50Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -3997,9 +4022,9 @@ This is done by clicking on the '''magnifying glass icon''' which is right next 
   </page>
   <page>
     <title>UserManual:How can I get an overview of the search log</title>
-    <id>2205</id>
+    <id>2051</id>
     <revision>
-      <id>3489</id>
+      <id>4748</id>
       <timestamp>2011-07-05T10:44:50Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -4023,9 +4048,9 @@ You can show in the specialpage [http://smwforum.ontoprise.com/smwforum/index.ph
   </page>
   <page>
     <title>UserManual:How can I get notified about changes in the semantic annotations</title>
-    <id>2206</id>
+    <id>2052</id>
     <revision>
-      <id>3490</id>
+      <id>4749</id>
       <timestamp>2011-07-05T10:44:51Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -4063,9 +4088,9 @@ To do this:
   </page>
   <page>
     <title>UserManual:How can I get the 'edit with form' tab to appear for specific pages (Based on category)</title>
-    <id>2207</id>
+    <id>2053</id>
     <revision>
-      <id>3491</id>
+      <id>4750</id>
       <timestamp>2011-07-05T10:44:51Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -4094,9 +4119,9 @@ To enable a page to have a tab using categories (''recommended way''), you must 
   </page>
   <page>
     <title>UserManual:How can I get the 'edit with form' tab to appear for specific pages (Based on namespace)</title>
-    <id>2208</id>
+    <id>2054</id>
     <revision>
-      <id>3492</id>
+      <id>4751</id>
       <timestamp>2011-07-05T10:44:52Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -4128,9 +4153,9 @@ Once you've added this property, every page within that namespace will have that
   </page>
   <page>
     <title>UserManual:How can I get the 'edit with form' tab to appear for specific pages (Within the page)</title>
-    <id>2209</id>
+    <id>2055</id>
     <revision>
-      <id>3493</id>
+      <id>4752</id>
       <timestamp>2011-07-05T10:44:52Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -4158,9 +4183,9 @@ This is especially useful when the category and namespace options aren't possibl
   </page>
   <page>
     <title>UserManual:How can I get the list of special pages</title>
-    <id>2210</id>
+    <id>2056</id>
     <revision>
-      <id>3494</id>
+      <id>4753</id>
       <timestamp>2011-07-05T10:44:52Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -4193,9 +4218,9 @@ This is especially useful when the category and namespace options aren't possibl
   </page>
   <page>
     <title>UserManual:How can I give feedback about the software</title>
-    <id>2211</id>
+    <id>2057</id>
     <revision>
-      <id>3495</id>
+      <id>4754</id>
       <timestamp>2011-07-05T10:44:53Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -4228,9 +4253,9 @@ If you wish to '''give feedback''' or even make  '''Feature Requests''' please f
   </page>
   <page>
     <title>UserManual:How can I identify entities that could be unified</title>
-    <id>2212</id>
+    <id>2058</id>
     <revision>
-      <id>3496</id>
+      <id>4755</id>
       <timestamp>2011-07-05T10:44:53Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -4262,9 +4287,9 @@ There are 4 parameters (all are optional):
   </page>
   <page>
     <title>UserManual:How can I identify errors in the knowledge base</title>
-    <id>2213</id>
+    <id>2059</id>
     <revision>
-      <id>3497</id>
+      <id>4756</id>
       <timestamp>2011-07-05T10:44:54Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -4302,9 +4327,9 @@ The results are saved in the database and available in several places:
   </page>
   <page>
     <title>UserManual:How can I import articles</title>
-    <id>2214</id>
+    <id>2060</id>
     <revision>
-      <id>3498</id>
+      <id>4757</id>
       <timestamp>2011-07-05T10:44:54Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -4345,9 +4370,9 @@ If you included history information during export, you should also see informati
   </page>
   <page>
     <title>UserManual:How can I import emails to the wiki</title>
-    <id>2215</id>
+    <id>2061</id>
     <revision>
-      <id>3499</id>
+      <id>4758</id>
       <timestamp>2011-07-05T10:44:54Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -4385,9 +4410,9 @@ To import emails to the wiki, follow these steps:&lt;br&gt;
   </page>
   <page>
     <title>UserManual:How can I import vocabulary</title>
-    <id>2216</id>
+    <id>2062</id>
     <revision>
-      <id>3500</id>
+      <id>4759</id>
       <timestamp>2011-07-05T10:44:56Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -4415,9 +4440,9 @@ An example of this functionality is the use of the [http://ontoworld.org/wiki/FO
   </page>
   <page>
     <title>UserManual:How can I keep track of what is going on in the wiki</title>
-    <id>2217</id>
+    <id>2063</id>
     <revision>
-      <id>3501</id>
+      <id>4760</id>
       <timestamp>2011-07-05T10:44:56Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -4460,9 +4485,9 @@ Following on there is a flag that describes the article modification type:
   </page>
   <page>
     <title>UserManual:How can I link to a subpage</title>
-    <id>2218</id>
+    <id>2064</id>
     <revision>
-      <id>3502</id>
+      <id>4761</id>
       <timestamp>2011-07-05T10:44:57Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -4498,9 +4523,9 @@ Like most '''page name''' letters , the first letter after the slash is case-sen
   </page>
   <page>
     <title>UserManual:How can I load an existing query into an article</title>
-    <id>2219</id>
+    <id>2065</id>
     <revision>
-      <id>3503</id>
+      <id>4762</id>
       <timestamp>2011-07-05T10:44:57Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -4534,9 +4559,9 @@ After clicking Ok button, the query interface will exit, you will automatically 
   </page>
   <page>
     <title>UserManual:How can I log in</title>
-    <id>2220</id>
+    <id>2066</id>
     <revision>
-      <id>3504</id>
+      <id>4763</id>
       <timestamp>2011-07-05T10:44:57Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -4565,9 +4590,9 @@ After clicking Ok button, the query interface will exit, you will automatically 
   </page>
   <page>
     <title>UserManual:How can I make a double redirect</title>
-    <id>2221</id>
+    <id>2067</id>
     <revision>
-      <id>3505</id>
+      <id>4764</id>
       <timestamp>2011-07-05T10:44:58Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -4600,9 +4625,9 @@ Use the '''what links here''' toolbox link to find double redirects to a particu
   </page>
   <page>
     <title>UserManual:How can I make a redirect to a page in the category namespace</title>
-    <id>2222</id>
+    <id>2068</id>
     <revision>
-      <id>3506</id>
+      <id>4765</id>
       <timestamp>2011-07-05T10:44:58Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -4631,9 +4656,9 @@ To prevent a page that redirects to a category from appearing in the category; p
   </page>
   <page>
     <title>UserManual:How can I make bots run automatically</title>
-    <id>2223</id>
+    <id>2069</id>
     <revision>
-      <id>3507</id>
+      <id>4766</id>
       <timestamp>2011-07-05T10:44:58Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -4674,9 +4699,9 @@ Remember that you have to change the fields &quot;Execute&quot; and &quot;Execut
   </page>
   <page>
     <title>UserManual:How can I make the wiki pump primed</title>
-    <id>2224</id>
+    <id>2070</id>
     <revision>
-      <id>3508</id>
+      <id>4767</id>
       <timestamp>2011-07-05T10:44:59Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -4736,9 +4761,9 @@ This needs only to be done only one time once the wiki system has been installed
   </page>
   <page>
     <title>UserManual:How can I manage a quick access list</title>
-    <id>2225</id>
+    <id>2071</id>
     <revision>
-      <id>3509</id>
+      <id>4768</id>
       <timestamp>2011-07-05T10:44:59Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -4766,9 +4791,9 @@ As a prerequisite, you first need to be logged-in and have WikiSysop rights.
   </page>
   <page>
     <title>UserManual:How can I manage an existing ACL</title>
-    <id>2226</id>
+    <id>2072</id>
     <revision>
-      <id>3510</id>
+      <id>4769</id>
       <timestamp>2011-07-05T10:45:00Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -4799,9 +4824,9 @@ If you want to delete your ACL:
   </page>
   <page>
     <title>UserManual:How can I manage my own Default ACL User Template</title>
-    <id>2227</id>
+    <id>2073</id>
     <revision>
-      <id>3511</id>
+      <id>4770</id>
       <timestamp>2011-07-05T10:45:00Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -4828,9 +4853,9 @@ You will be able to make all desired changes in your default template (add new r
   </page>
   <page>
     <title>UserManual:How can I mark an edit as patrolled</title>
-    <id>2228</id>
+    <id>2074</id>
     <revision>
-      <id>3512</id>
+      <id>4771</id>
       <timestamp>2011-07-05T10:45:00Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -4862,9 +4887,9 @@ To mark an edit as '''patrolled''' you should:
   </page>
   <page>
     <title>UserManual:How can I modify predefined rights</title>
-    <id>2229</id>
+    <id>2075</id>
     <revision>
-      <id>3513</id>
+      <id>4772</id>
       <timestamp>2011-07-05T10:45:01Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -4890,9 +4915,9 @@ Rights can be modified from the '''security descriptor''' page, and from the '''
   </page>
   <page>
     <title>UserManual:How can I modify the annotation of a property</title>
-    <id>2230</id>
+    <id>2076</id>
     <revision>
-      <id>3514</id>
+      <id>4773</id>
       <timestamp>2011-07-05T10:45:01Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -4921,9 +4946,9 @@ The '''Properties''' section contains a list of all properties in the current ar
   </page>
   <page>
     <title>UserManual:How can I move (rename) a page</title>
-    <id>2231</id>
+    <id>2077</id>
     <revision>
-      <id>3515</id>
+      <id>4774</id>
       <timestamp>2011-07-05T10:45:01Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -4954,9 +4979,9 @@ Under normal circumstances, you would wish to leave '''Move associated talk page
   </page>
   <page>
     <title>UserManual:How can I move a category</title>
-    <id>2232</id>
+    <id>2078</id>
     <revision>
-      <id>3516</id>
+      <id>4775</id>
       <timestamp>2011-07-05T10:45:02Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -4994,9 +5019,9 @@ However, this is undesirable in cases where the wiki is structured differently s
   </page>
   <page>
     <title>UserManual:How can I name a page</title>
-    <id>2233</id>
+    <id>2079</id>
     <revision>
-      <id>3517</id>
+      <id>4776</id>
       <timestamp>2011-07-05T10:45:02Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -5033,9 +5058,9 @@ Here are a few guidelines that you should follow while naming a page:
   </page>
   <page>
     <title>UserManual:How can I organize Templates</title>
-    <id>2234</id>
+    <id>2080</id>
     <revision>
-      <id>3518</id>
+      <id>4777</id>
       <timestamp>2011-07-05T10:45:02Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -5074,9 +5099,9 @@ Having done this, an editor can for example simply copy and paste the example an
   </page>
   <page>
     <title>UserManual:How can I perform export and export the full history</title>
-    <id>2235</id>
+    <id>2081</id>
     <revision>
-      <id>3519</id>
+      <id>4778</id>
       <timestamp>2011-07-05T10:45:03Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -5115,9 +5140,9 @@ A checkbox in the [[Special:Export|Special:Export]] interface selects whether to
   </page>
   <page>
     <title>UserManual:How can I point red link to a form</title>
-    <id>2236</id>
+    <id>2082</id>
     <revision>
-      <id>3520</id>
+      <id>4779</id>
       <timestamp>2011-07-05T10:45:04Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -5149,9 +5174,9 @@ If your version of MediaWiki is older than 1.13, you must make a small modificat
   </page>
   <page>
     <title>UserManual:How can I populate red-linked pages automatically</title>
-    <id>2237</id>
+    <id>2083</id>
     <revision>
-      <id>3521</id>
+      <id>4780</id>
       <timestamp>2011-07-05T10:45:05Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -5181,9 +5206,9 @@ For instance, if you have pages that point with the property &quot;Has country&q
   </page>
   <page>
     <title>UserManual:How can I prevent edit conflicts</title>
-    <id>2238</id>
+    <id>2084</id>
     <revision>
-      <id>3522</id>
+      <id>4781</id>
       <timestamp>2011-07-05T10:45:05Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -5213,9 +5238,9 @@ Wikipedia has an &quot;In Use&quot; notice in its  [http://smwforum.ontoprise.co
   </page>
   <page>
     <title>UserManual:How can I print a wiki page</title>
-    <id>2239</id>
+    <id>2085</id>
     <revision>
-      <id>3523</id>
+      <id>4782</id>
       <timestamp>2011-07-05T10:45:05Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -5248,9 +5273,9 @@ You can create a URL to the printable version of the current page with:
   </page>
   <page>
     <title>UserManual:How can I print category</title>
-    <id>2240</id>
+    <id>2086</id>
     <revision>
-      <id>3524</id>
+      <id>4783</id>
       <timestamp>2011-07-05T10:45:06Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -5286,9 +5311,9 @@ There are two ways to print [http://smwforum.ontoprise.com/smwforum/index.php/He
   </page>
   <page>
     <title>UserManual:How can I print format</title>
-    <id>2241</id>
+    <id>2087</id>
     <revision>
-      <id>3525</id>
+      <id>4784</id>
       <timestamp>2011-07-05T10:45:06Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -5329,9 +5354,9 @@ This will show the text «an actor» for all pages that are actors. Otherwise it
   </page>
   <page>
     <title>UserManual:How can I print property values</title>
-    <id>2242</id>
+    <id>2088</id>
     <revision>
-      <id>3526</id>
+      <id>4785</id>
       <timestamp>2011-07-05T10:45:06Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -5369,9 +5394,9 @@ As mentioned above, property printouts may have an empty result for some pages, 
   </page>
   <page>
     <title>UserManual:How can I process an image</title>
-    <id>2243</id>
+    <id>2089</id>
     <revision>
-      <id>3527</id>
+      <id>4786</id>
       <timestamp>2011-07-05T10:45:07Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -5406,9 +5431,9 @@ The following processing actions can be taken on an Image:
   </page>
   <page>
     <title>UserManual:How can I query data with forms</title>
-    <id>2244</id>
+    <id>2090</id>
     <revision>
-      <id>3528</id>
+      <id>4787</id>
       <timestamp>2011-07-05T10:45:07Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -5435,9 +5460,9 @@ Instead, when you submit the form by hitting the Run query button, you see what 
   </page>
   <page>
     <title>UserManual:How can I relate my type to the correct SI unit</title>
-    <id>2245</id>
+    <id>2091</id>
     <revision>
-      <id>3529</id>
+      <id>4788</id>
       <timestamp>2011-07-05T10:45:08Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -5479,9 +5504,9 @@ Products are written with '''*''' or blank. Exponents are introduced by '''^''',
   </page>
   <page>
     <title>UserManual:How can I reuse form elements</title>
-    <id>2246</id>
+    <id>2092</id>
     <revision>
-      <id>3530</id>
+      <id>4789</id>
       <timestamp>2011-07-05T10:45:08Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -5511,9 +5536,9 @@ If that template contains form elements (like field definitions), the characters
   </page>
   <page>
     <title>UserManual:How can I revert an edit</title>
-    <id>2247</id>
+    <id>2093</id>
     <revision>
-      <id>3531</id>
+      <id>4790</id>
       <timestamp>2011-07-05T10:45:08Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -5550,9 +5575,9 @@ For example, if edit number 1000 adds a paragraph and edit number 1005 modifies 
   </page>
   <page>
     <title>UserManual:How can I search for help articles</title>
-    <id>2248</id>
+    <id>2094</id>
     <revision>
-      <id>3532</id>
+      <id>4791</id>
       <timestamp>2011-07-05T10:45:09Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -5588,9 +5613,9 @@ Furthermore all desired help pages are stored in SMW Forum in the category Conte
   </page>
   <page>
     <title>UserManual:How can I see a preview</title>
-    <id>2249</id>
+    <id>2095</id>
     <revision>
-      <id>3533</id>
+      <id>4792</id>
       <timestamp>2011-07-05T10:45:09Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -5624,9 +5649,9 @@ If you are logged in, you can set your preferences to show the preview positione
   </page>
   <page>
     <title>UserManual:How can I see all pages that link to a page</title>
-    <id>2250</id>
+    <id>2096</id>
     <revision>
-      <id>3534</id>
+      <id>4793</id>
       <timestamp>2011-07-05T10:45:10Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -5658,9 +5683,9 @@ Looking at the toolbox of every page, you should see a link that is labeled as '
   </page>
   <page>
     <title>UserManual:How can I see if my page is protected</title>
-    <id>2251</id>
+    <id>2097</id>
     <revision>
-      <id>3535</id>
+      <id>4794</id>
       <timestamp>2011-07-05T10:45:10Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -5687,9 +5712,9 @@ There are two possibilities of checking whether a page is protected:
   </page>
   <page>
     <title>UserManual:How can I see the contributions of a user</title>
-    <id>2252</id>
+    <id>2098</id>
     <revision>
-      <id>3536</id>
+      <id>4795</id>
       <timestamp>2011-07-05T10:45:10Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -5720,9 +5745,9 @@ If the user has no login name, there are two ways of looking at their contributi
   </page>
   <page>
     <title>UserManual:How can I see the differences in history</title>
-    <id>2253</id>
+    <id>2099</id>
     <revision>
-      <id>3537</id>
+      <id>4796</id>
       <timestamp>2011-07-05T10:45:11Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -5749,9 +5774,9 @@ For special cases (the diff for a single edit or between an old and the current 
   </page>
   <page>
     <title>UserManual:How can I see the history of a page</title>
-    <id>2254</id>
+    <id>2100</id>
     <revision>
-      <id>3538</id>
+      <id>4797</id>
       <timestamp>2011-07-05T10:45:11Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -5785,9 +5810,9 @@ All changes made to the page are listed in reverse-chronological order.
   </page>
   <page>
     <title>UserManual:How can I see the size of a page</title>
-    <id>2255</id>
+    <id>2101</id>
     <revision>
-      <id>3539</id>
+      <id>4798</id>
       <timestamp>2011-07-05T10:45:12Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -5826,9 +5851,9 @@ In older versions of MediaWiki finding the size of the wikitext of a page can on
   </page>
   <page>
     <title>UserManual:How can I select method in a new web service</title>
-    <id>2256</id>
+    <id>2102</id>
     <revision>
-      <id>3540</id>
+      <id>4799</id>
       <timestamp>2011-07-05T10:45:13Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -5856,9 +5881,9 @@ In most cases, HTTP-get is appropriate.
   </page>
   <page>
     <title>UserManual:How can I select pages</title>
-    <id>2257</id>
+    <id>2103</id>
     <revision>
-      <id>3541</id>
+      <id>4800</id>
       <timestamp>2011-07-05T10:45:13Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -5888,9 +5913,9 @@ The most important part of the Semantic search features in '''Semantic MediaWiki
   </page>
   <page>
     <title>UserManual:How can I show the values of a property in the results</title>
-    <id>2258</id>
+    <id>2104</id>
     <revision>
-      <id>3542</id>
+      <id>4801</id>
       <timestamp>2011-07-05T10:45:14Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -5921,9 +5946,9 @@ The most important part of the Semantic search features in '''Semantic MediaWiki
   </page>
   <page>
     <title>UserManual:How can I solve common problems of Semantic Forms (Data design issues)</title>
-    <id>2259</id>
+    <id>2105</id>
     <revision>
-      <id>3543</id>
+      <id>4802</id>
       <timestamp>2011-07-05T10:45:14Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -5952,9 +5977,9 @@ The most important part of the Semantic search features in '''Semantic MediaWiki
   </page>
   <page>
     <title>UserManual:How can I solve common problems of Semantic Forms (MediaWiki issues)</title>
-    <id>2260</id>
+    <id>2106</id>
     <revision>
-      <id>3544</id>
+      <id>4803</id>
       <timestamp>2011-07-05T10:45:14Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -5985,9 +6010,9 @@ The most important part of the Semantic search features in '''Semantic MediaWiki
   </page>
   <page>
     <title>UserManual:How can I solve common problems of Semantic Forms (Semantic MediaWiki issues)</title>
-    <id>2262</id>
+    <id>2107</id>
     <revision>
-      <id>3546</id>
+      <id>4804</id>
       <timestamp>2011-07-05T10:45:15Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -6022,9 +6047,9 @@ The most important part of the Semantic search features in '''Semantic MediaWiki
   </page>
   <page>
     <title>UserManual:How can I solve edit conflicts</title>
-    <id>2263</id>
+    <id>2108</id>
     <revision>
-      <id>3547</id>
+      <id>4805</id>
       <timestamp>2011-07-05T10:45:16Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -6056,9 +6081,9 @@ User 2 should not just post his changes over the top of User 1's. We assume good
   </page>
   <page>
     <title>UserManual:How can I start a new page</title>
-    <id>2264</id>
+    <id>2109</id>
     <revision>
-      <id>3548</id>
+      <id>4806</id>
       <timestamp>2011-07-05T10:45:16Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -6092,9 +6117,9 @@ There are several ways of starting up a new page:
   </page>
   <page>
     <title>UserManual:How can I start a new page Using Wikilinks</title>
-    <id>2265</id>
+    <id>2110</id>
     <revision>
-      <id>3549</id>
+      <id>4807</id>
       <timestamp>2011-07-05T10:45:16Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -6127,9 +6152,9 @@ Once the page has been created, the link will change from &lt;span style=&quot;c
   </page>
   <page>
     <title>UserManual:How can I start a new page Using the URL</title>
-    <id>2266</id>
+    <id>2111</id>
     <revision>
-      <id>3550</id>
+      <id>4808</id>
       <timestamp>2011-07-05T10:45:17Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -6172,9 +6197,9 @@ You will be taken to a blank page which indicates that there is currently no art
   </page>
   <page>
     <title>UserManual:How can I start a new page from the search page</title>
-    <id>2267</id>
+    <id>2112</id>
     <revision>
-      <id>3551</id>
+      <id>4809</id>
       <timestamp>2011-07-05T10:45:17Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -6202,9 +6227,9 @@ If you search for a page that doesn't exist through the '''search box''' and the
   </page>
   <page>
     <title>UserManual:How can I submit changes in the AAM</title>
-    <id>2268</id>
+    <id>2113</id>
     <revision>
-      <id>3552</id>
+      <id>4810</id>
       <timestamp>2011-07-05T10:45:18Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -6241,9 +6266,9 @@ If you try to leave a changed article, a popup window will always ask you if you
   </page>
   <page>
     <title>UserManual:How can I turn a link into a property</title>
-    <id>2269</id>
+    <id>2114</id>
     <revision>
-      <id>3553</id>
+      <id>4811</id>
       <timestamp>2011-07-05T10:45:18Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -6279,9 +6304,9 @@ To simplify this re-use, every property has its own article in the wiki, just as
   </page>
   <page>
     <title>UserManual:How can I turn forms into tabbed sections</title>
-    <id>2270</id>
+    <id>2115</id>
     <revision>
-      <id>3554</id>
+      <id>4812</id>
       <timestamp>2011-07-05T10:45:18Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -6314,9 +6339,9 @@ you can turn a form  into sections, with a tab interface to navigate between the
   </page>
   <page>
     <title>UserManual:How can I update annotations from changed templates</title>
-    <id>2271</id>
+    <id>2116</id>
     <revision>
-      <id>3555</id>
+      <id>4813</id>
       <timestamp>2011-07-05T10:45:19Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -6352,9 +6377,9 @@ you can turn a form  into sections, with a tab interface to navigate between the
   </page>
   <page>
     <title>UserManual:How can I upload and annotate media</title>
-    <id>2272</id>
+    <id>2117</id>
     <revision>
-      <id>3556</id>
+      <id>4814</id>
       <timestamp>2011-07-05T10:45:19Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -6403,9 +6428,9 @@ You will be able to:&lt;br&gt;
   </page>
   <page>
     <title>UserManual:How can I upload media with the WYSIWYG-editor</title>
-    <id>2273</id>
+    <id>2118</id>
     <revision>
-      <id>3557</id>
+      <id>4815</id>
       <timestamp>2011-07-05T10:45:20Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -6444,9 +6469,9 @@ To do this:
   </page>
   <page>
     <title>UserManual:How can I use Concepts for Semantic Search</title>
-    <id>2274</id>
+    <id>2119</id>
     <revision>
-      <id>3558</id>
+      <id>4816</id>
       <timestamp>2011-07-05T10:45:20Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -6479,9 +6504,9 @@ Concept descriptions are also included in SMW's '''RDF export''' in form of ''''
   </page>
   <page>
     <title>UserManual:How can I use Display templates</title>
-    <id>2275</id>
+    <id>2120</id>
     <revision>
-      <id>3559</id>
+      <id>4817</id>
       <timestamp>2011-07-05T10:45:20Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -6509,9 +6534,9 @@ One major advantage of the Display Templates feature is the separation of the an
   </page>
   <page>
     <title>UserManual:How can I use LDAP authentication</title>
-    <id>2276</id>
+    <id>2121</id>
     <revision>
-      <id>3560</id>
+      <id>4818</id>
       <timestamp>2011-07-05T10:45:22Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -6562,9 +6587,9 @@ $wgMinimalPasswordLength = 1;    // (8)
   </page>
   <page>
     <title>UserManual:How can I use Semantic Forms</title>
-    <id>2277</id>
+    <id>2122</id>
     <revision>
-      <id>3561</id>
+      <id>4819</id>
       <timestamp>2011-07-05T10:45:22Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -6595,9 +6620,9 @@ $wgMinimalPasswordLength = 1;    // (8)
   </page>
   <page>
     <title>UserManual:How can I use Templates</title>
-    <id>2278</id>
+    <id>2123</id>
     <revision>
-      <id>3562</id>
+      <id>4820</id>
       <timestamp>2011-07-05T10:45:22Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -6632,9 +6657,9 @@ Templates are wiki pages which can be used in other pages in three ways:
   </page>
   <page>
     <title>UserManual:How can I use autocompletion in the wiki</title>
-    <id>2279</id>
+    <id>2124</id>
     <revision>
-      <id>3563</id>
+      <id>4821</id>
       <timestamp>2011-07-05T10:45:23Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -6665,9 +6690,9 @@ It is used as a string for pattern matching. Therefore one character must be at 
   </page>
   <page>
     <title>UserManual:How can I use chemical equations</title>
-    <id>2280</id>
+    <id>2125</id>
     <revision>
-      <id>3564</id>
+      <id>4822</id>
       <timestamp>2011-07-05T10:45:23Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -6706,9 +6731,9 @@ There must be no spaces within the arrows. An equation must also begin and end w
   </page>
   <page>
     <title>UserManual:How can I use chemical formulas</title>
-    <id>2281</id>
+    <id>2126</id>
     <revision>
-      <id>3565</id>
+      <id>4823</id>
       <timestamp>2011-07-05T10:45:23Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -6733,9 +6758,9 @@ A chemical formula describes an atom or a molecule such as '''Fe''' or '''FeCl&l
   </page>
   <page>
     <title>UserManual:How can I use custom units of measurement</title>
-    <id>2282</id>
+    <id>2127</id>
     <revision>
-      <id>3566</id>
+      <id>4824</id>
       <timestamp>2011-07-05T10:45:24Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -6766,9 +6791,9 @@ To specify custom display units, add the special property [http://smwforum.ontop
   </page>
   <page>
     <title>UserManual:How can I use inferencing</title>
-    <id>2283</id>
+    <id>2128</id>
     <revision>
-      <id>3567</id>
+      <id>4825</id>
       <timestamp>2011-07-05T10:45:24Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -6796,9 +6821,9 @@ To specify custom display units, add the special property [http://smwforum.ontop
   </page>
   <page>
     <title>UserManual:How can I use lists</title>
-    <id>2284</id>
+    <id>2129</id>
     <revision>
-      <id>3568</id>
+      <id>4826</id>
       <timestamp>2011-07-05T10:45:24Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -6826,9 +6851,9 @@ To specify custom display units, add the special property [http://smwforum.ontop
   </page>
   <page>
     <title>UserManual:How can I use mathematical formulas</title>
-    <id>2285</id>
+    <id>2130</id>
     <revision>
-      <id>3569</id>
+      <id>4827</id>
       <timestamp>2011-07-05T10:45:25Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -6866,9 +6891,9 @@ Properties that should use this type must contain the following type definition:
   </page>
   <page>
     <title>UserManual:How can I use namespaces</title>
-    <id>2286</id>
+    <id>2131</id>
     <revision>
-      <id>3570</id>
+      <id>4828</id>
       <timestamp>2011-07-05T10:45:25Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -6905,9 +6930,9 @@ User contributions can only show all or be restricted to a namespace of choice.
   </page>
   <page>
     <title>UserManual:How can I use piped links</title>
-    <id>2287</id>
+    <id>2132</id>
     <revision>
-      <id>3571</id>
+      <id>4829</id>
       <timestamp>2011-07-05T10:45:26Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -6951,9 +6976,9 @@ For external links a space is used instead of a pipe character. &lt;noinclude&gt
   </page>
   <page>
     <title>UserManual:How can I use semantic search</title>
-    <id>2288</id>
+    <id>2133</id>
     <revision>
-      <id>3572</id>
+      <id>4830</id>
       <timestamp>2011-07-05T10:45:26Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -6976,9 +7001,9 @@ For external links a space is used instead of a pipe character. &lt;noinclude&gt
   </page>
   <page>
     <title>UserManual:How can I use tables</title>
-    <id>2289</id>
+    <id>2134</id>
     <revision>
-      <id>3573</id>
+      <id>4831</id>
       <timestamp>2011-07-05T10:45:27Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -7005,9 +7030,9 @@ One may create '''tables''' in wiki pages using either '''XHTML table elements''
   </page>
   <page>
     <title>UserManual:How can I use talk pages</title>
-    <id>2290</id>
+    <id>2135</id>
     <revision>
-      <id>3574</id>
+      <id>4832</id>
       <timestamp>2011-07-05T10:45:27Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -7033,9 +7058,9 @@ Talk pages can be used for any kind of discussion about an article - for example
   </page>
   <page>
     <title>UserManual:How can I use templates to simplify annotations</title>
-    <id>2291</id>
+    <id>2136</id>
     <revision>
-      <id>3575</id>
+      <id>4833</id>
       <timestamp>2011-07-05T10:45:27Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -7067,9 +7092,9 @@ For these reasons, we recommend you use semantic templates when introducing sema
   </page>
   <page>
     <title>UserManual:How can I use the Data Import Repository</title>
-    <id>2292</id>
+    <id>2137</id>
     <revision>
-      <id>3576</id>
+      <id>4834</id>
       <timestamp>2011-07-05T10:45:28Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -7106,9 +7131,9 @@ Updating the web service call results
   </page>
   <page>
     <title>UserManual:How can I use the Go button</title>
-    <id>2293</id>
+    <id>2138</id>
     <revision>
-      <id>3577</id>
+      <id>4835</id>
       <timestamp>2011-07-05T10:45:28Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -7146,9 +7171,9 @@ Having said this, we note that using the text &quot;create an article with this 
   </page>
   <page>
     <title>UserManual:How can I use the ParserFunctions extension</title>
-    <id>2294</id>
+    <id>2139</id>
     <revision>
-      <id>3578</id>
+      <id>4836</id>
       <timestamp>2011-07-05T10:45:28Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -7178,9 +7203,9 @@ The '''ParserFunctions''' extension is a collection of parser functions (note th
   </page>
   <page>
     <title>UserManual:How can I use the RDF export functionality</title>
-    <id>2295</id>
+    <id>2140</id>
     <revision>
-      <id>3579</id>
+      <id>4837</id>
       <timestamp>2011-07-05T10:45:29Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -7207,9 +7232,9 @@ You can easily access the generated RDF via the page [[Special:ExportRDF]] by en
   </page>
   <page>
     <title>UserManual:How can I view all properties</title>
-    <id>2296</id>
+    <id>2141</id>
     <revision>
-      <id>3580</id>
+      <id>4838</id>
       <timestamp>2011-07-05T10:45:30Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -7225,9 +7250,9 @@ You can easily access the generated RDF via the page [[Special:ExportRDF]] by en
   </page>
   <page>
     <title>UserManual:Types and values</title>
-    <id>2297</id>
+    <id>2142</id>
     <revision>
-      <id>3581</id>
+      <id>4839</id>
       <timestamp>2011-07-05T10:45:30Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -7243,9 +7268,9 @@ You can easily access the generated RDF via the page [[Special:ExportRDF]] by en
   </page>
   <page>
     <title>UserManual:How can I use the autocompletion in forms</title>
-    <id>2298</id>
+    <id>2143</id>
     <revision>
-      <id>3582</id>
+      <id>4840</id>
       <timestamp>2011-07-05T10:45:30Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -7281,9 +7306,9 @@ If you want use autocomplete based on the values in an '''external URL''', which
   </page>
   <page>
     <title>UserManual:How can I use the calendar</title>
-    <id>2299</id>
+    <id>2144</id>
     <revision>
-      <id>3583</id>
+      <id>4841</id>
       <timestamp>2011-07-05T10:45:30Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -7316,9 +7341,9 @@ You can also display multiple sets of data on the same calendar, by separating t
   </page>
   <page>
     <title>UserManual:How can I view a redirect</title>
-    <id>2300</id>
+    <id>2145</id>
     <revision>
-      <id>3584</id>
+      <id>4842</id>
       <timestamp>2011-07-05T10:45:31Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -7347,9 +7372,9 @@ In doing this, you are able to do all the things that any wiki page allows you t
   </page>
   <page>
     <title>UserManual:How can I view all semantic links and properties of a page</title>
-    <id>2301</id>
+    <id>2146</id>
     <revision>
-      <id>3585</id>
+      <id>4843</id>
       <timestamp>2011-07-05T10:45:31Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -7378,9 +7403,9 @@ In doing this, you are able to do all the things that any wiki page allows you t
   </page>
   <page>
     <title>UserManual:How can I view comments stored in the wiki</title>
-    <id>2302</id>
+    <id>2147</id>
     <revision>
-      <id>3586</id>
+      <id>4844</id>
       <timestamp>2011-07-05T10:45:32Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -7429,9 +7454,9 @@ The inline query for listing all comments has the the following structure:&lt;br
   </page>
   <page>
     <title>UserManual:How can I work with Semantic Forms</title>
-    <id>2303</id>
+    <id>2148</id>
     <revision>
-      <id>3587</id>
+      <id>4845</id>
       <timestamp>2011-07-05T10:45:32Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -7479,9 +7504,9 @@ These actions are all explained further below. &lt;/li&gt;
   </page>
   <page>
     <title>UserManual:How can I work with Semantic Forms (Create categories)</title>
-    <id>2304</id>
+    <id>2149</id>
     <revision>
-      <id>3588</id>
+      <id>4846</id>
       <timestamp>2011-07-05T10:45:32Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -7506,9 +7531,9 @@ One template in each form should define each article that the form creates as be
   </page>
   <page>
     <title>UserManual:How can I work with Semantic Forms (Create forms)</title>
-    <id>2305</id>
+    <id>2150</id>
     <revision>
-      <id>3589</id>
+      <id>4847</id>
       <timestamp>2011-07-05T10:45:33Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -7540,9 +7565,9 @@ However, looking at the programming aspect, this is harder to implement than cre
   </page>
   <page>
     <title>UserManual:How can I work with Semantic Forms (Create properties)</title>
-    <id>2306</id>
+    <id>2151</id>
     <revision>
-      <id>3590</id>
+      <id>4848</id>
       <timestamp>2011-07-05T10:45:33Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -7567,9 +7592,9 @@ The basic building blocks of any semantic site are the connections between data,
   </page>
   <page>
     <title>UserManual:How can I work with Semantic Forms (Create templates)</title>
-    <id>2307</id>
+    <id>2152</id>
     <revision>
-      <id>3591</id>
+      <id>4849</id>
       <timestamp>2011-07-05T10:45:33Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -7598,9 +7623,9 @@ The easiest way to create templates is using the '''CreateTemplate''' special pa
   </page>
   <page>
     <title>UserManual:How can annotate within the WYSIWYG-editor</title>
-    <id>2308</id>
+    <id>2153</id>
     <revision>
-      <id>3592</id>
+      <id>4850</id>
       <timestamp>2011-07-05T10:45:34Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -7638,9 +7663,9 @@ To annotate within the WYSIWYG-editor, please follow these steps:
   </page>
   <page>
     <title>UserManual:How do I access the Query interface</title>
-    <id>2309</id>
+    <id>2154</id>
     <revision>
-      <id>3593</id>
+      <id>4851</id>
       <timestamp>2011-07-05T10:45:34Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -7664,9 +7689,9 @@ The '''Query interface''' is a special page and it may thus be accessed from:
   </page>
   <page>
     <title>UserManual:How does the Go button work</title>
-    <id>2310</id>
+    <id>2155</id>
     <revision>
-      <id>3594</id>
+      <id>4852</id>
       <timestamp>2011-07-05T10:45:34Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -7705,9 +7730,9 @@ This '''Go''' button generates little server load, and therefore usually remains
   </page>
   <page>
     <title>UserManual:How should I annotate the essence of an article</title>
-    <id>2311</id>
+    <id>2156</id>
     <revision>
-      <id>3595</id>
+      <id>4853</id>
       <timestamp>2011-07-05T10:45:35Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -7753,9 +7778,9 @@ The article has now been annotated with the normal property '''Example'''. Some 
   </page>
   <page>
     <title>UserManual:How to access and use the online user manuals</title>
-    <id>2312</id>
+    <id>2157</id>
     <revision>
-      <id>3596</id>
+      <id>4854</id>
       <timestamp>2011-07-05T10:45:35Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -7781,9 +7806,9 @@ Please follow the link below to access the online user manuals.
   </page>
   <page>
     <title>UserManual:How to add a subquery to a query</title>
-    <id>2313</id>
+    <id>2158</id>
     <revision>
-      <id>3597</id>
+      <id>4855</id>
       <timestamp>2011-07-05T10:45:35Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -7822,9 +7847,9 @@ Please follow the link below to access the online user manuals.
   </page>
   <page>
     <title>UserManual:How to comment on an article</title>
-    <id>2314</id>
+    <id>2159</id>
     <revision>
-      <id>3598</id>
+      <id>4856</id>
       <timestamp>2011-07-05T10:45:36Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -7851,9 +7876,9 @@ Read more about comments {{LinkToHelp|Help:Commenting_articles|Help:Commenting a
   </page>
   <page>
     <title>UserManual:How to confirm a web service</title>
-    <id>2315</id>
+    <id>2160</id>
     <revision>
-      <id>3599</id>
+      <id>4857</id>
       <timestamp>2011-07-05T10:45:36Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -7889,9 +7914,9 @@ To confirm a web service and give wiki users access to it, please follow these s
   </page>
   <page>
     <title>UserManual:How to create an account in SMWFORUM</title>
-    <id>2316</id>
+    <id>2161</id>
     <revision>
-      <id>3600</id>
+      <id>4858</id>
       <timestamp>2011-07-05T10:45:37Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -7924,9 +7949,9 @@ If you want to contribute you need to create a user account in the SMW+ User For
   </page>
   <page>
     <title>UserManual:How to define a query by adding a category</title>
-    <id>2317</id>
+    <id>2162</id>
     <revision>
-      <id>3601</id>
+      <id>4859</id>
       <timestamp>2011-07-05T10:45:38Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -7956,9 +7981,9 @@ If you want to contribute you need to create a user account in the SMW+ User For
   </page>
   <page>
     <title>UserManual:How to define a query by adding a property</title>
-    <id>2318</id>
+    <id>2163</id>
     <revision>
-      <id>3602</id>
+      <id>4860</id>
       <timestamp>2011-07-05T10:45:38Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -7992,9 +8017,9 @@ If you want to contribute you need to create a user account in the SMW+ User For
   </page>
   <page>
     <title>UserManual:How to define a query by adding an Instance</title>
-    <id>2319</id>
+    <id>2164</id>
     <revision>
-      <id>3603</id>
+      <id>4861</id>
       <timestamp>2011-07-05T10:45:38Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -8025,9 +8050,9 @@ If you want to contribute you need to create a user account in the SMW+ User For
   </page>
   <page>
     <title>UserManual:How to define a user group-specific navigation toolbar</title>
-    <id>2320</id>
+    <id>2165</id>
     <revision>
-      <id>3604</id>
+      <id>4862</id>
       <timestamp>2011-07-05T10:45:39Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -8073,9 +8098,9 @@ The last two variables may only be used in the 'url parameters' part.
   </page>
   <page>
     <title>UserManual:How to file a feature request</title>
-    <id>2321</id>
+    <id>2166</id>
     <revision>
-      <id>3605</id>
+      <id>4863</id>
       <timestamp>2011-07-05T10:45:39Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -8121,9 +8146,9 @@ It is also advisable that you check the [[Development/Release_Status|Release Sta
   </page>
   <page>
     <title>UserManual:How to format the way the query results are displayed</title>
-    <id>2322</id>
+    <id>2167</id>
     <revision>
-      <id>3606</id>
+      <id>4864</id>
       <timestamp>2011-07-05T10:45:39Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -8151,9 +8176,9 @@ You may also '''[[Help:Description_of_the_Query_Interface_1.5.3#The_Result_secti
   </page>
   <page>
     <title>UserManual:How to include inferred results via triple store</title>
-    <id>2323</id>
+    <id>2168</id>
     <revision>
-      <id>3607</id>
+      <id>4865</id>
       <timestamp>2011-07-05T10:45:40Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -8182,9 +8207,9 @@ You may also '''[[Help:Description_of_the_Query_Interface_1.5.3#The_Result_secti
   </page>
   <page>
     <title>UserManual:How to insert a query as a notification</title>
-    <id>2324</id>
+    <id>2169</id>
     <revision>
-      <id>3608</id>
+      <id>4866</id>
       <timestamp>2011-07-05T10:45:40Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -8211,9 +8236,9 @@ You may also '''[[Help:Description_of_the_Query_Interface_1.5.3#The_Result_secti
   </page>
   <page>
     <title>UserManual:How to preview your query results in the Query interface</title>
-    <id>2325</id>
+    <id>2170</id>
     <revision>
-      <id>3609</id>
+      <id>4867</id>
       <timestamp>2011-07-05T10:45:40Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -8239,9 +8264,9 @@ You may also '''[[Help:Description_of_the_Query_Interface_1.5.3#The_Result_secti
   </page>
   <page>
     <title>UserManual:How to report a bug</title>
-    <id>2326</id>
+    <id>2171</id>
     <revision>
-      <id>3610</id>
+      <id>4868</id>
       <timestamp>2011-07-05T10:45:41Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -8337,9 +8362,9 @@ If you want to propose a new feature please read {{LinkToHelp|Help:How_to_file_a
   </page>
   <page>
     <title>UserManual:How to use a coupon</title>
-    <id>2327</id>
+    <id>2172</id>
     <revision>
-      <id>3611</id>
+      <id>4869</id>
       <timestamp>2011-07-05T10:45:42Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -8415,9 +8440,9 @@ Once you bought the SMW+ Flatrate, you receive a coupon via email. This coupon i
   </page>
   <page>
     <title>UserManual:How to use the community discussion board</title>
-    <id>2328</id>
+    <id>2173</id>
     <revision>
-      <id>3612</id>
+      <id>4870</id>
       <timestamp>2011-07-05T10:45:42Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -8463,9 +8488,9 @@ If you feel that we are not taking care of your posting appropriately then drop 
   </page>
   <page>
     <title>UserManual:How to view a query as a tree</title>
-    <id>2329</id>
+    <id>2174</id>
     <revision>
-      <id>3613</id>
+      <id>4871</id>
       <timestamp>2011-07-05T10:45:42Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -8491,9 +8516,9 @@ If you feel that we are not taking care of your posting appropriately then drop 
   </page>
   <page>
     <title>UserManual:How to view the syntax of a query in the ask source code</title>
-    <id>2330</id>
+    <id>2175</id>
     <revision>
-      <id>3614</id>
+      <id>4872</id>
       <timestamp>2011-07-05T10:45:43Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -8519,9 +8544,9 @@ If you feel that we are not taking care of your posting appropriately then drop 
   </page>
   <page>
     <title>UserManual:What about the annotation proposals</title>
-    <id>2331</id>
+    <id>2176</id>
     <revision>
-      <id>3615</id>
+      <id>4873</id>
       <timestamp>2011-07-05T10:45:43Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -8552,9 +8577,9 @@ If you feel that we are not taking care of your posting appropriately then drop 
   </page>
   <page>
     <title>UserManual:What are Annotations</title>
-    <id>2332</id>
+    <id>2177</id>
     <revision>
-      <id>3616</id>
+      <id>4874</id>
       <timestamp>2011-07-05T10:45:43Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -8579,9 +8604,9 @@ SMW+ introduces special markup elements which allow editors to provide «hints»
   </page>
   <page>
     <title>UserManual:What are Automatic Semantic Forms</title>
-    <id>2333</id>
+    <id>2178</id>
     <revision>
-      <id>3617</id>
+      <id>4875</id>
       <timestamp>2011-07-05T10:45:44Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -8606,9 +8631,9 @@ Semantic Forms Extension  based on the Wiki ontology if no appropriate manually 
   </page>
   <page>
     <title>UserManual:What are Namespaces</title>
-    <id>2334</id>
+    <id>2179</id>
     <revision>
-      <id>3618</id>
+      <id>4876</id>
       <timestamp>2011-07-05T10:45:44Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -8648,9 +8673,9 @@ A typical scheme would be as follows:
   </page>
   <page>
     <title>UserManual:What are Semantic Forms</title>
-    <id>2335</id>
+    <id>2180</id>
     <revision>
-      <id>3619</id>
+      <id>4877</id>
       <timestamp>2011-07-05T10:45:45Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -8680,9 +8705,9 @@ Putting it simply, we can say that '''Semantic Forms''' allows you to have '''fo
   </page>
   <page>
     <title>UserManual:What are Special pages</title>
-    <id>2336</id>
+    <id>2181</id>
     <revision>
-      <id>3620</id>
+      <id>4878</id>
       <timestamp>2011-07-05T10:45:46Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -8711,9 +8736,9 @@ Some special pages depend on the preferences that have been set by a user, e.g. 
   </page>
   <page>
     <title>UserManual:What are categories</title>
-    <id>2337</id>
+    <id>2182</id>
     <revision>
-      <id>3621</id>
+      <id>4879</id>
       <timestamp>2011-07-05T10:45:46Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -8746,9 +8771,9 @@ So as to reference a category within a page as a normal wiki link (without addin
   </page>
   <page>
     <title>UserManual:What are data types</title>
-    <id>2338</id>
+    <id>2183</id>
     <revision>
-      <id>3622</id>
+      <id>4880</id>
       <timestamp>2011-07-05T10:45:46Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -8774,9 +8799,9 @@ For instance: [http://semantic-mediawiki.org/wiki/Type:Page Page], [http://seman
   </page>
   <page>
     <title>UserManual:What are datatypes and units of measurement</title>
-    <id>2339</id>
+    <id>2184</id>
     <revision>
-      <id>3623</id>
+      <id>4881</id>
       <timestamp>2011-07-05T10:45:47Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -8808,9 +8833,9 @@ To support automatic conversion and multiple unit formats, you can define your o
   </page>
   <page>
     <title>UserManual:What are domains and ranges</title>
-    <id>2340</id>
+    <id>2185</id>
     <revision>
-      <id>3624</id>
+      <id>4882</id>
       <timestamp>2011-07-05T10:45:47Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -8850,9 +8875,9 @@ To find out errors of this kind, the articles for properties should be annotated
   </page>
   <page>
     <title>UserManual:What are double redirects</title>
-    <id>2341</id>
+    <id>2186</id>
     <revision>
-      <id>3625</id>
+      <id>4883</id>
       <timestamp>2011-07-05T10:45:48Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -8885,9 +8910,9 @@ Use the 'what links here' toolbox link to find double redirects to a particular 
   </page>
   <page>
     <title>UserManual:What are edit conflicts</title>
-    <id>2342</id>
+    <id>2187</id>
     <revision>
-      <id>3626</id>
+      <id>4884</id>
       <timestamp>2011-07-05T10:45:48Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -8920,9 +8945,9 @@ In order to understand what an edit conflict is, consider the following situatio
   </page>
   <page>
     <title>UserManual:What are interwiki links</title>
-    <id>2343</id>
+    <id>2188</id>
     <revision>
-      <id>3627</id>
+      <id>4885</id>
       <timestamp>2011-07-05T10:45:48Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -8952,9 +8977,9 @@ A link like &lt;code&gt;&lt;nowiki&gt;[[Wikipedia:Main Page]]&lt;/nowiki&gt;&lt;
   </page>
   <page>
     <title>UserManual:What are multiple-instance templates</title>
-    <id>2344</id>
+    <id>2189</id>
     <revision>
-      <id>3628</id>
+      <id>4886</id>
       <timestamp>2011-07-05T10:45:49Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -8983,9 +9008,9 @@ If you look at the form that this definition generates, you will notice that the
   </page>
   <page>
     <title>UserManual:What are n-ary properties</title>
-    <id>2345</id>
+    <id>2190</id>
     <revision>
-      <id>3629</id>
+      <id>4887</id>
       <timestamp>2011-07-05T10:45:49Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -9015,9 +9040,9 @@ N-ary properties are like binary properties with additional conditions.They&amp;
   </page>
   <page>
     <title>UserManual:What are n-ary relations</title>
-    <id>2346</id>
+    <id>2191</id>
     <revision>
-      <id>3630</id>
+      <id>4888</id>
       <timestamp>2011-07-05T10:45:49Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -9044,9 +9069,9 @@ An '''n-ary relation''' is a relation that maps between a subject and '''two or 
   </page>
   <page>
     <title>UserManual:What are patrolled edits</title>
-    <id>2347</id>
+    <id>2192</id>
     <revision>
-      <id>3631</id>
+      <id>4889</id>
       <timestamp>2011-07-05T10:45:50Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -9079,9 +9104,9 @@ In MediaWiki 1.9, this user preference has been removed and replaced by a new ''
   </page>
   <page>
     <title>UserManual:What are properties</title>
-    <id>2348</id>
+    <id>2193</id>
     <revision>
-      <id>3632</id>
+      <id>4890</id>
       <timestamp>2011-07-05T10:45:50Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -9107,9 +9132,9 @@ In SMW+, a property gives machine-processable description of some feature of an 
   </page>
   <page>
     <title>UserManual:What are redirects</title>
-    <id>2349</id>
+    <id>2194</id>
     <revision>
-      <id>3633</id>
+      <id>4891</id>
       <timestamp>2011-07-05T10:45:50Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -9143,9 +9168,9 @@ You can:
   </page>
   <page>
     <title>UserManual:What are relations</title>
-    <id>2350</id>
+    <id>2195</id>
     <revision>
-      <id>3634</id>
+      <id>4892</id>
       <timestamp>2011-07-05T10:45:51Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -9178,9 +9203,9 @@ A relation always describes a directed relationship between the article with the
   </page>
   <page>
     <title>UserManual:What are semantic templates</title>
-    <id>2351</id>
+    <id>2196</id>
     <revision>
-      <id>3635</id>
+      <id>4893</id>
       <timestamp>2011-07-05T10:45:51Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -9213,9 +9238,9 @@ A relation always describes a directed relationship between the article with the
   </page>
   <page>
     <title>UserManual:What are service links</title>
-    <id>2352</id>
+    <id>2197</id>
     <revision>
-      <id>3636</id>
+      <id>4894</id>
       <timestamp>2011-07-05T10:45:52Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -9243,9 +9268,9 @@ SMW+ can provide links to online services when printing certain data in the fact
   </page>
   <page>
     <title>UserManual:What are special properties</title>
-    <id>2353</id>
+    <id>2198</id>
     <revision>
-      <id>3637</id>
+      <id>4895</id>
       <timestamp>2011-07-05T10:45:52Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -9282,9 +9307,9 @@ These internal special properties do not appear in the [[Special:Properties|Spec
   </page>
   <page>
     <title>UserManual:What are sub- and super properties</title>
-    <id>2354</id>
+    <id>2199</id>
     <revision>
-      <id>3638</id>
+      <id>4896</id>
       <timestamp>2011-07-05T10:45:52Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -9318,9 +9343,9 @@ Below are the steps to follow while defining sub- and superproperties:
   </page>
   <page>
     <title>UserManual:What are subpages</title>
-    <id>2355</id>
+    <id>2200</id>
     <revision>
-      <id>3639</id>
+      <id>4897</id>
       <timestamp>2011-07-05T10:45:53Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -9366,9 +9391,9 @@ There are various uses for the subpage mechanism. The main two intended uses are
   </page>
   <page>
     <title>UserManual:What can I do</title>
-    <id>2356</id>
+    <id>2201</id>
     <revision>
-      <id>3640</id>
+      <id>4898</id>
       <timestamp>2011-07-05T10:45:54Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -9384,9 +9409,9 @@ There are various uses for the subpage mechanism. The main two intended uses are
   </page>
   <page>
     <title>UserManual:If I get PHP error messages displayed</title>
-    <id>2357</id>
+    <id>2202</id>
     <revision>
-      <id>3641</id>
+      <id>4899</id>
       <timestamp>2011-07-05T10:45:54Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -9402,9 +9427,9 @@ There are various uses for the subpage mechanism. The main two intended uses are
   </page>
   <page>
     <title>UserManual:What are templates</title>
-    <id>2358</id>
+    <id>2203</id>
     <revision>
-      <id>3642</id>
+      <id>4900</id>
       <timestamp>2011-07-05T10:45:54Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -9431,9 +9456,9 @@ MediaWiki template feature lets you use '''standard '''texts time and again in '
   </page>
   <page>
     <title>UserManual:What are types</title>
-    <id>2359</id>
+    <id>2204</id>
     <revision>
-      <id>3643</id>
+      <id>4901</id>
       <timestamp>2011-07-05T10:45:55Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -9464,9 +9489,9 @@ The [[Special:Types|Special:Types]] page has a list of all built-in and custom d
   </page>
   <page>
     <title>UserManual:What are variables</title>
-    <id>2360</id>
+    <id>2205</id>
     <revision>
-      <id>3644</id>
+      <id>4902</id>
       <timestamp>2011-07-05T10:45:55Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -9501,9 +9526,9 @@ With '''Special:ExpandTemplates''' one can view the value of a variable, or from
   </page>
   <page>
     <title>UserManual:What basic navigation elements are there in a wiki</title>
-    <id>2361</id>
+    <id>2206</id>
     <revision>
-      <id>3645</id>
+      <id>4903</id>
       <timestamp>2011-07-05T10:45:55Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -9537,9 +9562,9 @@ When viewing any page on a MediaWiki wiki, you'll find three main navigation ele
   </page>
   <page>
     <title>UserManual:What can I do if I have SMW and/or SF installed manually and I want to use the Deployment Framework</title>
-    <id>2362</id>
+    <id>2207</id>
     <revision>
-      <id>3646</id>
+      <id>4904</id>
       <timestamp>2011-07-05T10:45:56Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -9574,9 +9599,9 @@ You already have SMW or Semantic Forms installed and you wish to use the Deploym
   </page>
   <page>
     <title>UserManual:What can I do if an extension is installed but not referenced in the LocalSettings.php</title>
-    <id>2363</id>
+    <id>2208</id>
     <revision>
-      <id>3647</id>
+      <id>4905</id>
       <timestamp>2011-07-05T10:45:56Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -9611,9 +9636,9 @@ Your extension containing a deploy descriptor (formal description of the deploya
   </page>
   <page>
     <title>UserManual:What can I do if an extension is referenced but not installed</title>
-    <id>2364</id>
+    <id>2209</id>
     <revision>
-      <id>3648</id>
+      <id>4906</id>
       <timestamp>2011-07-05T10:45:57Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -9642,9 +9667,9 @@ There are DF tags in LocalSettings.php for an extension which does not exist or 
   </page>
   <page>
     <title>UserManual:What can I do if an extension is referenced twice</title>
-    <id>2365</id>
+    <id>2210</id>
     <revision>
-      <id>3649</id>
+      <id>4907</id>
       <timestamp>2011-07-05T10:45:57Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -9673,9 +9698,9 @@ An extension is included twice !&lt;br&gt;
   </page>
   <page>
     <title>UserManual:What can I do if starting 'smwadmin -i' requires parameters for namespace</title>
-    <id>2366</id>
+    <id>2211</id>
     <revision>
-      <id>3650</id>
+      <id>4908</id>
       <timestamp>2011-07-05T10:45:57Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -9708,9 +9733,9 @@ You want to install an extension using the Deployment Framework, the system tell
   </page>
   <page>
     <title>UserManual:What can I do if the AdminSettings.php file is missing</title>
-    <id>2367</id>
+    <id>2212</id>
     <revision>
-      <id>3651</id>
+      <id>4909</id>
       <timestamp>2011-07-05T10:45:58Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -9743,9 +9768,9 @@ The AdminSettings.php is missing. It is required for all scripts working on main
   </page>
   <page>
     <title>UserManual:What can I do if the LocalSettings.php file is missing</title>
-    <id>2368</id>
+    <id>2213</id>
     <revision>
-      <id>3652</id>
+      <id>4910</id>
       <timestamp>2011-07-05T10:45:58Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -9775,9 +9800,9 @@ The LocalSettings.php is completely missing. This is a severe error. You should 
   </page>
   <page>
     <title>UserManual:What can I do if there are missing dependencies in an extension</title>
-    <id>2369</id>
+    <id>2214</id>
     <revision>
-      <id>3653</id>
+      <id>4911</id>
       <timestamp>2011-07-05T10:45:59Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -9807,9 +9832,9 @@ This error occurs when there are extensions installed which lacks other extensio
   </page>
   <page>
     <title>UserManual:What can I do with the Query Interface</title>
-    <id>2370</id>
+    <id>2215</id>
     <revision>
-      <id>3654</id>
+      <id>4912</id>
       <timestamp>2011-07-05T10:45:59Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -9842,9 +9867,9 @@ Here are some of the things you can do with the Query interface:
   </page>
   <page>
     <title>UserManual:What can I specify in Property Properties</title>
-    <id>2371</id>
+    <id>2216</id>
     <revision>
-      <id>3655</id>
+      <id>4913</id>
       <timestamp>2011-07-05T10:46:00Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -9889,9 +9914,9 @@ The properties of a property are:
   </page>
   <page>
     <title>UserManual:What does the highlighting indicate</title>
-    <id>2372</id>
+    <id>2217</id>
     <revision>
-      <id>3656</id>
+      <id>4914</id>
       <timestamp>2011-07-05T10:46:00Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -9925,9 +9950,9 @@ Below are the interpretations of various color, highlight, background and border
   </page>
   <page>
     <title>UserManual:What does the more tab show and can I customize it</title>
-    <id>2373</id>
+    <id>2218</id>
     <revision>
-      <id>3657</id>
+      <id>4915</id>
       <timestamp>2011-07-05T10:46:00Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -9948,9 +9973,9 @@ The more tab shows all mediawiki tabs different to page, discussion, refresh, hi
   </page>
   <page>
     <title>UserManual:What does the orange highlight with black border indicate</title>
-    <id>2374</id>
+    <id>2219</id>
     <revision>
-      <id>3658</id>
+      <id>4916</id>
       <timestamp>2011-07-05T10:46:01Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -9983,9 +10008,9 @@ This helps you can keep an '''overview''' of all the newly added annotations bef
   </page>
   <page>
     <title>UserManual:What does the triangle warning indicate</title>
-    <id>2375</id>
+    <id>2220</id>
     <revision>
-      <id>3659</id>
+      <id>4917</id>
       <timestamp>2011-07-05T10:46:01Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -10010,9 +10035,9 @@ If a category is in orange and it does not have a warning triangle this indicate
   </page>
   <page>
     <title>UserManual:What external tools can be used with SMW+ (FOAF Explorer)</title>
-    <id>2376</id>
+    <id>2221</id>
     <revision>
-      <id>3660</id>
+      <id>4918</id>
       <timestamp>2011-07-05T10:46:02Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -10039,9 +10064,9 @@ Like most FOAF tools, FOAF Explorer is still somewhat limited and does not arbit
   </page>
   <page>
     <title>UserManual:What external tools can be used with SMW+ (Geocoding Tools)</title>
-    <id>2377</id>
+    <id>2222</id>
     <revision>
-      <id>3661</id>
+      <id>4919</id>
       <timestamp>2011-07-05T10:46:03Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -10067,9 +10092,9 @@ The '''[http://blog.case.edu/bmb12/2006/09/geocoding_tools_for_python_and_casecl
   </page>
   <page>
     <title>UserManual:What external tools can be used with SMW+ (KAON2)</title>
-    <id>2378</id>
+    <id>2223</id>
     <revision>
-      <id>3662</id>
+      <id>4920</id>
       <timestamp>2011-07-05T10:46:03Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -10097,9 +10122,9 @@ When used together with [http://ontoworld.org/wiki/OWL_tools OWL tools], one can
   </page>
   <page>
     <title>UserManual:What external tools can be used with SMW+ (Longwell)</title>
-    <id>2379</id>
+    <id>2224</id>
     <revision>
-      <id>3663</id>
+      <id>4921</id>
       <timestamp>2011-07-05T10:46:03Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -10131,9 +10156,9 @@ It works very well with the RDF's generated by SMW+ and its faceted browsing cap
   </page>
   <page>
     <title>UserManual:What external tools can be used with SMW+ (Piggy Bank)</title>
-    <id>2380</id>
+    <id>2225</id>
     <revision>
-      <id>3664</id>
+      <id>4922</id>
       <timestamp>2011-07-05T10:46:04Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -10161,9 +10186,9 @@ In effect, Piggy Bank will collect RDF of all visited articles during browsing. 
   </page>
   <page>
     <title>UserManual:What external tools can be used with SMW+ (RDF Browser)</title>
-    <id>2381</id>
+    <id>2226</id>
     <revision>
-      <id>3665</id>
+      <id>4923</id>
       <timestamp>2011-07-05T10:46:04Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -10192,9 +10217,9 @@ The deliverables includes a [http://demo.openlinksw.com/DAV/JS/demo/index.html l
   </page>
   <page>
     <title>UserManual:What external tools can be used with SMW+ (Tabulator)</title>
-    <id>2382</id>
+    <id>2227</id>
     <revision>
-      <id>3666</id>
+      <id>4924</id>
       <timestamp>2011-07-05T10:46:04Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -10224,9 +10249,9 @@ The interface is still somewhat not fully refined, but the tool shows that dynam
   </page>
   <page>
     <title>UserManual:What if the menu is not displayed</title>
-    <id>2383</id>
+    <id>2228</id>
     <revision>
-      <id>3667</id>
+      <id>4925</id>
       <timestamp>2011-07-05T10:46:05Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -10247,9 +10272,9 @@ First check if the version of PHP fits the requirement. If this is the case, rea
   </page>
   <page>
     <title>UserManual:What is a Talk page</title>
-    <id>2384</id>
+    <id>2229</id>
     <revision>
-      <id>3668</id>
+      <id>4926</id>
       <timestamp>2011-07-05T10:46:05Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -10278,9 +10303,9 @@ A talk page is actually very similar to any other wiki page, but it is in the ''
   </page>
   <page>
     <title>UserManual:What is a User page</title>
-    <id>2385</id>
+    <id>2230</id>
     <revision>
-      <id>3669</id>
+      <id>4927</id>
       <timestamp>2011-07-05T10:46:05Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -10311,9 +10336,9 @@ You may also link to your user page within a wiki page’s text. This is mainly 
   </page>
   <page>
     <title>UserManual:What is a concept</title>
-    <id>2386</id>
+    <id>2231</id>
     <revision>
-      <id>3670</id>
+      <id>4928</id>
       <timestamp>2011-07-05T10:46:06Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -10348,9 +10373,9 @@ Its concept page contains the following text which enables it to fulfill this fu
   </page>
   <page>
     <title>UserManual:What is a magic word</title>
-    <id>2387</id>
+    <id>2232</id>
     <revision>
-      <id>3671</id>
+      <id>4929</id>
       <timestamp>2011-07-05T10:46:06Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -10378,9 +10403,9 @@ Whenever it is used in a page  text and not as a comment, it triggers some speci
   </page>
   <page>
     <title>UserManual:What is a query</title>
-    <id>2388</id>
+    <id>2233</id>
     <revision>
-      <id>3672</id>
+      <id>4930</id>
       <timestamp>2011-07-05T10:46:07Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -10427,9 +10452,9 @@ Typically, a '''query''' might be formulated as follows:
   </page>
   <page>
     <title>UserManual:What is a watchlist</title>
-    <id>2389</id>
+    <id>2234</id>
     <revision>
-      <id>3673</id>
+      <id>4931</id>
       <timestamp>2011-07-05T10:46:07Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -10476,9 +10501,9 @@ In this case the preference '''Enhanced recent changes (JavaScript)''', which to
   </page>
   <page>
     <title>UserManual:What is an inline query</title>
-    <id>2390</id>
+    <id>2235</id>
     <revision>
-      <id>3674</id>
+      <id>4932</id>
       <timestamp>2011-07-05T10:46:07Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -10510,9 +10535,9 @@ Inline queries are similar to other semantic search features, and can also be re
   </page>
   <page>
     <title>UserManual:What is semantic search</title>
-    <id>2391</id>
+    <id>2236</id>
     <revision>
-      <id>3675</id>
+      <id>4933</id>
       <timestamp>2011-07-05T10:46:08Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -10539,9 +10564,9 @@ It is clear that answering queries requires additional resources and the adminis
   </page>
   <page>
     <title>UserManual:What is shownow parser function</title>
-    <id>2392</id>
+    <id>2237</id>
     <revision>
-      <id>3676</id>
+      <id>4934</id>
       <timestamp>2011-07-05T10:46:08Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -10567,9 +10592,9 @@ The Automatic Semantic Forms extension therefore introduced the #shownow parser 
   </page>
   <page>
     <title>UserManual:What is the Factbox</title>
-    <id>2393</id>
+    <id>2238</id>
     <revision>
-      <id>3677</id>
+      <id>4935</id>
       <timestamp>2011-07-05T10:46:08Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -10604,9 +10629,9 @@ Below is some useful information about the '''Factbox''':
   </page>
   <page>
     <title>UserManual:What is the FindWork special page</title>
-    <id>2394</id>
+    <id>2239</id>
     <revision>
-      <id>3678</id>
+      <id>4936</id>
       <timestamp>2011-07-05T10:46:09Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -10642,9 +10667,9 @@ The user can use this page in two ways:
   </page>
   <page>
     <title>UserManual:What is the Gardening Log special page</title>
-    <id>2395</id>
+    <id>2240</id>
     <revision>
-      <id>3679</id>
+      <id>4937</id>
       <timestamp>2011-07-05T10:46:09Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -10675,9 +10700,9 @@ There is also a button at the bottom of the page  which lets you '''expand/colla
   </page>
   <page>
     <title>UserManual:What is the LDAP authentification</title>
-    <id>2396</id>
+    <id>2241</id>
     <revision>
-      <id>3680</id>
+      <id>4938</id>
       <timestamp>2011-07-05T10:46:10Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -10707,9 +10732,9 @@ You can additionally use the LDAP server together with the normal authentication
   </page>
   <page>
     <title>UserManual:What is the OntologyBrowser</title>
-    <id>2397</id>
+    <id>2242</id>
     <revision>
-      <id>3681</id>
+      <id>4939</id>
       <timestamp>2011-07-05T10:46:10Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -10740,9 +10765,9 @@ You can additionally use the LDAP server together with the normal authentication
   </page>
   <page>
     <title>UserManual:What is the Property Properties box</title>
-    <id>2398</id>
+    <id>2243</id>
     <revision>
-      <id>3682</id>
+      <id>4940</id>
       <timestamp>2011-07-05T10:46:11Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -10783,9 +10808,9 @@ The properties of a property are:
   </page>
   <page>
     <title>UserManual:What is the context sensitive auto completion</title>
-    <id>2399</id>
+    <id>2244</id>
     <revision>
-      <id>3683</id>
+      <id>4941</id>
       <timestamp>2011-07-05T10:46:11Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -10821,9 +10846,9 @@ Auto completion will always try to find the matching properties for:
   </page>
   <page>
     <title>UserManual:What is the context sensitive help</title>
-    <id>2400</id>
+    <id>2245</id>
     <revision>
-      <id>3684</id>
+      <id>4942</id>
       <timestamp>2011-07-05T10:46:12Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -10859,9 +10884,9 @@ Users may read these help contents. You may even ask new questions ,answer unans
   </page>
   <page>
     <title>UserManual:What is the difference between the 'go' and the 'search'-button</title>
-    <id>2401</id>
+    <id>2246</id>
     <revision>
-      <id>3685</id>
+      <id>4943</id>
       <timestamp>2011-07-05T10:46:12Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -10889,9 +10914,9 @@ Putting a keyword in the search box and pressing:
   </page>
   <page>
     <title>UserManual:What is the master template for initial rights</title>
-    <id>2402</id>
+    <id>2247</id>
     <revision>
-      <id>3686</id>
+      <id>4944</id>
       <timestamp>2011-07-05T10:46:13Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -10917,9 +10942,9 @@ Experienced users can '''modify''' their default template.
   </page>
   <page>
     <title>UserManual:What is the navigation box</title>
-    <id>2403</id>
+    <id>2248</id>
     <revision>
-      <id>3687</id>
+      <id>4945</id>
       <timestamp>2011-07-05T10:46:13Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -10951,9 +10976,9 @@ These links will take you to  the wiki's most important pages and  site administ
   </page>
   <page>
     <title>UserManual:What is the path search</title>
-    <id>2404</id>
+    <id>2249</id>
     <revision>
-      <id>3688</id>
+      <id>4946</id>
       <timestamp>2011-07-05T10:46:13Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -10977,9 +11002,9 @@ The '''Path search''' is a part of the '''Enhanced Retrieval Extension'''. It tr
   </page>
   <page>
     <title>UserManual:What is the query interface</title>
-    <id>2405</id>
+    <id>2250</id>
     <revision>
-      <id>3689</id>
+      <id>4947</id>
       <timestamp>2011-07-05T10:46:14Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -11016,9 +11041,9 @@ You might want to read:
   </page>
   <page>
     <title>UserManual:What is the semantic toolbar</title>
-    <id>2406</id>
+    <id>2251</id>
     <revision>
-      <id>3690</id>
+      <id>4948</id>
       <timestamp>2011-07-05T10:46:14Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -11049,9 +11074,9 @@ Annotations may be contributed to an article by&amp;nbsp;templates. These annota
   </page>
   <page>
     <title>UserManual:What is the similarities bot</title>
-    <id>2407</id>
+    <id>2252</id>
     <revision>
-      <id>3691</id>
+      <id>4949</id>
       <timestamp>2011-07-05T10:46:14Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -11084,9 +11109,9 @@ It has 4 parameters (all are optional):
   </page>
   <page>
     <title>UserManual:What kind of pages exist</title>
-    <id>2408</id>
+    <id>2253</id>
     <revision>
-      <id>3692</id>
+      <id>4950</id>
       <timestamp>2011-07-05T10:46:15Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -11121,9 +11146,9 @@ GNU Free Documentation License
   </page>
   <page>
     <title>UserManual:What simple semantic search interfaces exist</title>
-    <id>2409</id>
+    <id>2254</id>
     <revision>
-      <id>3693</id>
+      <id>4951</id>
       <timestamp>2011-07-05T10:46:15Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -11164,9 +11189,9 @@ Cite web in help
   </page>
   <page>
     <title>UserManual:What system requirements does OntoSkin3 have</title>
-    <id>2410</id>
+    <id>2255</id>
     <revision>
-      <id>3694</id>
+      <id>4952</id>
       <timestamp>2011-07-05T10:46:15Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -11187,9 +11212,9 @@ The system requirements are the same as for the Halo extension and can be found 
   </page>
   <page>
     <title>UserManual:What types of links exist</title>
-    <id>2411</id>
+    <id>2256</id>
     <revision>
-      <id>3695</id>
+      <id>4953</id>
       <timestamp>2011-07-05T10:46:16Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -11222,9 +11247,9 @@ There are four types of links :
   </page>
   <page>
     <title>UserManual:Where can I access my Preferences</title>
-    <id>2412</id>
+    <id>2257</id>
     <revision>
-      <id>3696</id>
+      <id>4954</id>
       <timestamp>2011-07-05T10:46:16Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -11245,9 +11270,9 @@ You will find a link to you're preferences in the menu of {{SMW+}} at &quot;My D
   </page>
   <page>
     <title>UserManual:Where can I get OntoSkin3</title>
-    <id>2413</id>
+    <id>2258</id>
     <revision>
-      <id>3697</id>
+      <id>4955</id>
       <timestamp>2011-07-05T10:46:16Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -11268,9 +11293,9 @@ It is included in {{SMW+}} and the Halo extension package. See the [http://smwfo
   </page>
   <page>
     <title>UserManual:Where do I find the page title</title>
-    <id>2414</id>
+    <id>2259</id>
     <revision>
-      <id>3698</id>
+      <id>4956</id>
       <timestamp>2011-07-05T10:46:17Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -11291,9 +11316,9 @@ OntoSkin3 provides a clear and concise design. The page name is shown in the bre
   </page>
   <page>
     <title>UserManual:Where do I get the menu like in smwdemo.ontoprise.com</title>
-    <id>2415</id>
+    <id>2260</id>
     <revision>
-      <id>3699</id>
+      <id>4957</id>
       <timestamp>2011-07-05T10:46:17Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -11314,9 +11339,9 @@ The menu is shipped with {{SMW+}}. You can order a copy at our [http://shop.onto
   </page>
   <page>
     <title>UserManual:P:Why is there only one edit tab</title>
-    <id>2416</id>
+    <id>2261</id>
     <revision>
-      <id>3700</id>
+      <id>4958</id>
       <timestamp>2011-07-05T10:46:18Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -11332,9 +11357,9 @@ The menu is shipped with {{SMW+}}. You can order a copy at our [http://shop.onto
   </page>
   <page>
     <title>UserManual:Where do i find the treeview</title>
-    <id>2417</id>
+    <id>2262</id>
     <revision>
-      <id>3701</id>
+      <id>4959</id>
       <timestamp>2011-07-05T10:46:18Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -11355,9 +11380,9 @@ If the semantic treeview is installed and enabled. You'll see icons on the right
   </page>
   <page>
     <title>UserManual:Where do the &quot;Annotation Hints&quot; come from</title>
-    <id>2418</id>
+    <id>2263</id>
     <revision>
-      <id>3702</id>
+      <id>4960</id>
       <timestamp>2011-07-05T10:46:18Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -11385,9 +11410,9 @@ Once you correct the problems, you should restart the gardening bots again so as
   </page>
   <page>
     <title>UserManual:Where is the MediaWiki footer</title>
-    <id>2419</id>
+    <id>2264</id>
     <revision>
-      <id>3703</id>
+      <id>4961</id>
       <timestamp>2011-07-05T10:46:19Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -11408,9 +11433,9 @@ OntoSkin3 got its own footer, which can be customized by the WikiSysop. The modi
   </page>
   <page>
     <title>UserManual:Where is the mediawiki menu</title>
-    <id>2420</id>
+    <id>2265</id>
     <revision>
-      <id>3704</id>
+      <id>4962</id>
       <timestamp>2011-07-05T10:46:19Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -11432,9 +11457,9 @@ OntoSkin3 does not feature the normal mediawiki menu by default. The OntoSkin3 m
   </page>
   <page>
     <title>UserManual:Why is the factbox not displayed</title>
-    <id>2421</id>
+    <id>2266</id>
     <revision>
-      <id>3705</id>
+      <id>4963</id>
       <timestamp>2011-07-05T10:46:19Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -11453,6 +11478,56 @@ to the page content
 {{Content hash|value=}}
 {{Part of bundle|value=Smwusermanual}}</text>
     <hash>395e372e254b480a51c32b052be91362</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Template:GNU Free Documentation License</title>
+    <id>2267</id>
+    <revision>
+      <id>4966</id>
+      <timestamp>2011-07-06T10:27:11Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">&lt;noinclude&gt;{{Template}}
+
+[[Rationale::This template is used to display copyright information.]]
+[[Category:Template]]
+&lt;/noinclude&gt;&lt;includeonly&gt;__NOEDITSECTION__ 
+
+&lt;div style=&quot;border: 1px solid rgb(240, 240, 240); 
+margin-bottom: 15px; 
+padding-left: 10px;
+font-family: tahoma, sans-serif; 
+font-size:x-small;&quot;&gt;
+;Copyright &amp;copy; {{{year}}} {{{copyright holder}}}.&lt;br/&gt;
+
+Permission is granted to copy, distribute and/or modify this document 
+under the terms of the GNU Free Documentation License, Version 1.2 
+or any later version published by the Free Software Foundation; 
+with no Invariant Sections, no Front-Cover Texts, and no Back-Cover Texts. 
+A copy of the license is included in the article &quot;[[GNU_Free_Documentation_License|GNU 
+Free Documentation License]]&quot;. 
+&lt;/div&gt;
+
+&lt;/includeonly&gt;&lt;noinclude&gt;
+
+Usage:
+&lt;pre&gt;
+{{
+GNU Free Documentation License
+|year=
+|copyright holder=
+}}
+&lt;/pre&gt;
+
+{{Part of bundle|value=Smwusermanual}}
+
+{{Content hash|value=29455079260ac678824c08ca52ed1ed1}}
+
+&lt;/noinclude&gt;</text>
+    <hash>ebfa701c9f1776dcf78124e004964794</hash>
     </revision>
   </page>
 </mediawiki>
