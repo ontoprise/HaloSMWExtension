@@ -2,10 +2,6 @@
 
 //todo:  are input fields for new instance write protected if property is wrote protected via acls
 
-//todo: make sure that new parameters are not killed by tsc query processor
-
-
-
 /*
  * Query printer which displays a tabular form
  */
@@ -35,8 +31,9 @@ class TFTabularFormQueryPrinter extends SMWResultPrinter {
 	public function getScripts() {
 		global $smwgHaloScriptPath;
 		$scripts=array();
+		global $smwgHaloStyleVersion;
 		$scripts[] = '<script type="text/javascript" src="' . $smwgHaloScriptPath .
-				'/scripts/TabularForms/tabularforms.js"></script>' . "\n";
+				'/scripts/TabularForms/tabularforms.js'.$smwgHaloStyleVersion.'"></script>' . "\n";
 		return $scripts;
 	}
 
@@ -45,12 +42,13 @@ class TFTabularFormQueryPrinter extends SMWResultPrinter {
 	 */
 	function getStylesheets() {
 		global $smwgHaloScriptPath;
+		global $smwgHaloStyleVersion;
 		$css = array();
 		$css[] = array(
             'rel' => 'stylesheet',
             'type' => 'text/css',
             'media' => "screen, projection",
-            'href' => $smwgHaloScriptPath . '/skins/TabularForms/tabularforms.css'
+            'href' => $smwgHaloScriptPath . '/skins/TabularForms/tabularforms.css'.$smwgHaloStyleVersion
             );
             return $css;
 	}
