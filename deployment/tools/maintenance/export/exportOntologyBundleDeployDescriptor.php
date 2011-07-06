@@ -89,7 +89,7 @@ if (!$bundlePage->exists()) {
 }
 
 // check if relevant package properties exist
-if (DFBundleTools::checkBundleProperties() === false) {
+if (DFBundleTools::checkBundleProperties($dfgOut) === false) {
 	Tools::exitOnFatalError("\n\nCorrect the errors and try again!\n");
 }
 
