@@ -318,9 +318,9 @@ class TFTabularFormData {
 		$numberOfWarnings = count($this->addInstanceBlockers) + count($this->queryResult->getErrors());
 
 		$html .= '<div class="tabf_notifications_heading">';
-		$html .= '<img title="Expand" src="'.$smwgHaloScriptPath.'/skins/TabularForms/right.png" onclick="tf.expandNotificationSystem(event)" style="cursor: pointer"></img>';
-		$html .= '<img title="Expand" src="'.$smwgHaloScriptPath.'/skins/TabularForms/down.png" onclick="tf.collapseNotificationSystem(event)" style="cursor: pointer; display: none"></img>';
-		$html .= '<span>'.wfMsg('tabf_ns_header').' (<span class="tabf-warnings-number">'.$numberOfWarnings.'</span>):</span>';
+		$html .= '<img title="Expand" src="'.$smwgHaloScriptPath.'/skins/Annotation/images/plus.gif" onclick="tf.expandNotificationSystem(event)" style="cursor: pointer"></img>';
+		$html .= '<img title="Hide" src="'.$smwgHaloScriptPath.'/skins/Annotation/images/minus.gif" onclick="tf.collapseNotificationSystem(event)" style="cursor: pointer; display: none"></img>';
+		$html .= '<span>'.wfMsg('tabf_ns_header').'</span><span class="tabf-warnings-number">'.$numberOfWarnings.'</span>';
 		$html .= '</div>';
 
 		$html .= '<div class="tabf_notifications" style="display: none">';

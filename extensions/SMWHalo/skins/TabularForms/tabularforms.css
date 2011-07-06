@@ -51,7 +51,7 @@
 }
 
 .tabf_column_header a {
-	/* no possible red links?*/
+	/* no possible red links? */
 	color: #116988 !important;
 }
 
@@ -246,7 +246,7 @@ allowed to create new instances. */
 
 .tabf_invalid_input_filed_value {
 	outline: 1px solid red;
-	background: url(Attention.png) no-repeat 95% 50% !important;
+	background: url(Magnifier.png) no-repeat 95% 50% !important;
 }
 
 .tabf_probably_lost_cell textarea, .tabf_probably_lost_cell textarea:hover {
@@ -259,21 +259,41 @@ allowed to create new instances. */
 }
 
 .tabf_notifications_heading {
+	/*width: 100%;*/
 	background-color: lightgrey;
+	font-weight: bold;
+	padding: 2px 5px;
+	min-height: 24px;
+}
+.tabf_notifications_heading > img {
+	vertical-align: baseline;
+	margin-right: 5px;
 }
 
 .tabf-warnings-number {
-	
+	float: right;
+	vertical-align: middle;
+	padding: 0 5px;
+	border: 1px solid white;
+	background-color: #269FB2;
+	color: white;
 }
 
 .tabf_notifications {
+	clear: both;
 	margin: 0 5px;
 	padding: 5px 0;
 	border: 1px solid lightgrey;
 	border-top: 0;
+	background-color: #F7F7F7;
 }
 .tabf_notifications ol {
 	margin: 0;
+}
+
+.tabf_notifications ul {
+	padding: 3px 10px;
+	list-style-type: disc;
 }
 
 .tabf_notifications .tabf_add_instance_error {
