@@ -16,5 +16,6 @@ GOTO end
 
 :installationHint
 echo "Please set TSCDIR before using onto2mwxml."
+EXIT 1
 
 :end
