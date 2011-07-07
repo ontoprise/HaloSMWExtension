@@ -1,7 +1,5 @@
 <?php
 
-//todo:  are input fields for new instance write protected if property is wrote protected via acls
-
 /*
  * Query printer which displays a tabular form
  */
@@ -166,16 +164,7 @@ class TFTabularFormData {
 			$this->enableInstanceDelete = true;
 		}
 
-		if(array_key_exists('write protected annotations', $this->queryParams)){
-			$wPAs = str_replace('\;', '##,-,##', $this->queryParams['write protected annotations']);
-			$wPAs = explode(';', $wPAs);
-			foreach($wPAs as $key => $wPA){
-				global $wgLang;
-				if(trim($wPA) == $wgLang->getNSText(NS_CATEGORY)) $wPA = TF_CATEGORY_KEYWORD;
-					$wPAs[$key] = trim($wPA);
-			}
-			$this->writeProtectedAnnotations = array_flip($wPAs);
-		}
+		$this->initializeWriteProtectedAnnotations();
 	}
 
 
@@ -300,6 +289,48 @@ class TFTabularFormData {
 		$html .= '<textarea class="tabf_rowindex_comparator" style="visibility: hidden; height: 1em"></textarea><br/>';
 
 		return $html;
+	}
+	
+	
+	/*
+	 * Detect which annotation print requests are write protected and which are not
+	 */
+	private function initializeWriteProtectedAnnotations(){
+
+		//first deal with the ones set by the query designer
+		if(array_key_exists('write protected annotations', $this->queryParams)){
+			$wPAs = str_replace('\;', '##,-,##', $this->queryParams['write protected annotations']);
+			$wPAs = explode(';', $wPAs);
+			foreach($wPAs as $key => $wPA){
+				global $wgLang;
+				if(trim($wPA) == $wgLang->getNSText(NS_CATEGORY)) $wPA = TF_CATEGORY_KEYWORD;
+					$wPAs[$key] = trim($wPA);
+			}
+			$this->writeProtectedAnnotations = array_flip($wPAs);
+		}
+		
+		//now deal with the ones set via HaloACL
+		if(defined('HACL_HALOACL_VERSION')){
+			
+			global $wgUser, $wgLang;
+			foreach($this->annotationPrintRequests as $annotation){
+				$isWriteProtected = false;
+				if($annotation['title'] != TF_CATEGORY_KEYWORD){
+				 	$annotationId = Title::newFromText($wgLang->getNSText(SMW_NS_PROPERTY)
+				 		.':'.$annotation['title'])->getArticleID();
+				 	
+				 	$isWriteProtected = !HACLEvaluator::hasPropertyRight($annotationId, 
+						$wgUser->getId(), HACLRight::CREATE);
+						
+					$isEditProtected = !HACLEvaluator::hasPropertyRight($annotationId, 
+						$wgUser->getId(), HACLRight::EDIT);
+
+					if($isWriteProtected || $isEditProtected){
+						$this->writeProtectedAnnotations[$annotation['title']] = true;
+					}	
+				}
+			}
+		}
 	}
 
 
@@ -992,6 +1023,8 @@ class TFTabularFormRowData {
 		$collection->addAnnotations($this->annotations);
 		$this->annotations = $this->dataAPIAccess->getWritableAnnotations($collection);
 
+		file_put_contents('d://anns.rtf', print_r($this->annotations, true));
+		
 		//All values are read-only if article does not exist and add is not enabled
 		if((!($this->title instanceof Title && $this->title->exists()) && !$enableInstanceAdd)
 		|| $this->isReadProtected || $this->isWriteProtected){
