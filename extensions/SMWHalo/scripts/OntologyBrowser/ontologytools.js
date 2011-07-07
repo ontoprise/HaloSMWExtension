@@ -2495,7 +2495,7 @@ OBSchemaPropertySubMenu.prototype = Object
 					   
 						var toReplace = '<select id="typeRange' + this.count
 								+ '_ontologytools" name="types' + this.count
-								+ '" onchange="obSchemaPropertiesMenuProvider.onchangeTypeSelector(event)">';
+								+ '" onchange="obSchemaPropertiesMenuProvider.onchangeTypeSelector(event)" tabIndex="103">';
 		
 						for ( var i = 1; i < this.builtinTypes.length; i++) {
 							toReplace += '<option>' + this.builtinTypes[i] + '</option>';
@@ -2521,8 +2521,7 @@ OBSchemaPropertySubMenu.prototype = Object
 					    var c = this.count +1 ;
 						var toReplace = '<input class="wickEnabled" constraints="namespace: 14" disabled="false" type="text" id="typeRange'
 						        + c
-								+ '_ontologytools" tabIndex="'
-								+ (c + 104) + '"/>';
+								+ '_ontologytools" tabIndex="104"/>';
 						return toReplace;
 					},
 
