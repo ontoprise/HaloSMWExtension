@@ -36,7 +36,6 @@ var SMW_OB_COMMAND_SUBPROPERTY_RENAME = 6;
 var SMW_OB_COMMAND_INSTANCE_DELETE = 7;
 var SMW_OB_COMMAND_INSTANCE_CREATE = 10;
 var SMW_OB_COMMAND_INSTANCE_RENAME = 8;
-
 var SMW_OB_COMMAND_ADD_SCHEMAPROPERTY = 9;
 
 // Event types
@@ -50,6 +49,7 @@ var OB_FILTERBROWSING = 'filterBrowsing';
 var OB_RESET = 'reset';
 var MandatoryChecked = false;
 var InputSelection = '';
+var pageselected = false;
 
 /**
  * Event Provider. Supports following events:
@@ -792,12 +792,12 @@ OBOntologyModifier.prototype = {
 	 * @param domainCategoryID
 	 *            ID of domain category in OB data model (XML)
 	 */
-	addSchemaProperty : function(propertyTitle, minCard, maxCard, rangeOrTypes, rangeOrTypes1,
+	addSchemaProperty : function(propertyTitle, minCard, maxCard, rangeOrTypes,
 			builtinTypes, domainCategoryTitle, domainCategoryID) {
 		function callback() {
 			var newPropertyXML = GeneralXMLTools.createDocumentFromString(this
 					.createSchemaProperty(propertyTitle, minCard, maxCard,
-							rangeOrTypes, rangeOrTypes1, builtinTypes, domainCategoryTitle,
+							rangeOrTypes, builtinTypes, domainCategoryTitle,
 							domainCategoryID));
 			dataAccess.OB_cachedProperties.documentElement
 					.removeAttribute('isEmpty');
@@ -820,23 +820,26 @@ OBOntologyModifier.prototype = {
 
 		var rangeTypeStr = "";
 		var rangeCategories = new Array();
-		for ( var i = 0, n = rangeOrTypes1.length; i < n; i++) {
-			if (builtinTypes.indexOf(rangeOrTypes1[i]) != -1) {
+		for ( var i = 0, n = rangeOrTypes.length; i < n; i++) {
+			if (builtinTypes.indexOf(rangeOrTypes[i]) != -1) {
 				// is type
 				rangeTypeStr += gLanguage.getMessage('TYPE_NS')
-						+ rangeOrTypes1[i] + (i == n - 1 ? "" : ";");
+						+ rangeOrTypes[i] + (i == n - 1 ? "" : ";");
 			} else {
 				rangeTypeStr += gLanguage.getMessage('TYPE_PAGE')
 						+ (i == n - 1 ? "" : ";");
-				rangeCategories.push(rangeOrTypes1[i]);
+				rangeCategories.push(rangeOrTypes[i]);				
 			}
 		}
-		if (rangeOrTypes1.length > 1) {
-			content += "\n[[_TYPE::_rec]]";
-			content += "\n[[_LIST::" + rangeTypeStr + "]]";
-		} else {
-			content += "\n[[_TYPE::" + rangeTypeStr + "]]";
-		}
+		if (rangeOrTypes.length > 1) {
+			
+		    content += "\n[[_TYPE::" + rangeOrTypes[0] + "]]";
+		    
+	 } else {
+	     //
+		 content += "\n[[_TYPE::" + rangeTypeStr + "]]";
+	
+	 }
 		rangeCategories.each(function(c) {
 			content += "\n[[SMW_SSP_HAS_DOMAIN_AND_RANGE_HINT::"
 					+ gLanguage.getMessage('CATEGORY_NS') + domainCategoryTitle
@@ -2243,19 +2246,24 @@ OBSchemaPropertySubMenu.prototype = Object
 							var rangeOrTypes1 = [];
 							var rangeOrTypes = [];
 
+						
 								if ($('typeRange1_ontologytools') != null) {
 									rangeOrTypes
 											.push($F('typeRange1_ontologytools'));
 								}
 								
-								
-								  if ($('typeRange2_ontologytools') != null) {
+								if(pageselected == true){
+								  if ($('typeRange2_ontologytools') != null) {							  
 									  rangeOrTypes1
 											  .push($F('typeRange2_ontologytools'));
+									  if(rangeOrTypes1 != ''){
+									      rangeOrTypes
+											  .push($F('typeRange2_ontologytools'));
+                                         }									  
 								  }
-
+                                }
 							ontologyTools.addSchemaProperty(propertyTitle,
-									minCard, maxCard, rangeOrTypes, rangeOrTypes1,
+									minCard, maxCard, rangeOrTypes, 
 									this.builtinTypes, this.selectedTitle,
 									this.selectedID);
 							this.cancel();
@@ -2475,11 +2483,13 @@ OBSchemaPropertySubMenu.prototype = Object
 						var value = $F(event.currentTarget);
 						if (value.toLowerCase() == gLanguage.getMessage('PAGE_TYPE')) {
 							$('typeRange2_ontologytools').enable();
-							$('typeRange2_ontologytools').setStyle( {backgroundColor : '#fff'})
+							$('typeRange2_ontologytools').setStyle( {backgroundColor : '#fff'});
+							pageselected = true;
 						} else {
 						    $('typeRange2_ontologytools').value = "";							
-							$('typeRange2_ontologytools').setStyle( {backgroundColor : '#aaa'})
+							$('typeRange2_ontologytools').setStyle( {backgroundColor : '#aaa'});
 							$('typeRange2_ontologytools').disable();
+							pageselected = false;
 						}						
 					},					
 
