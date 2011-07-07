@@ -23,8 +23,11 @@ class ASFCategoryAC {
 		
 		foreach($categoryCandidates as $c) {
 			if (empty($userInput) || stripos(str_replace(" ", "_", (string) $c[0]), $userInput) !== false) {
-				$textTitles[] = (string) $c[0];
-				if (count($textTitles) >= $maxResults) break;
+				$titleText = (string)TSHelper::getTitleFromURI((string)$c[0], true);
+				if(Title::newFromText($titleText)->exists()){
+					$textTitles[] = (string)$c[0];
+					if (count($textTitles) >= $maxResults) break;
+				}
 			}
 		}
 		
