@@ -1044,13 +1044,6 @@ CKEDITOR.plugins.smwtoolbar = {
         window.parent.smwhg_dragresizetoolbar.callme();
         this.SetEventHandler4AnnotationBox( editor );
         editor.getCommand('SMWtoolbar').setState(CKEDITOR.TRISTATE_ON);
-		// Set the z-index of the semantic toolbar
-        var ontomenu = window.parent.document.getElementById('ontomenuanchor');
-        ontomenu.style.zIndex = editor.config.baseFloatZIndex + 10;
-        var acFloater = window.parent.document.getElementById('smartInputFloater');
-        acFloater.style.zIndex = editor.config.baseFloatZIndex + 2000;
-        acFloater.style.right = '0px';
-		
     },
     DisableAnnotationToolbar: function( editor ) {
         this.stbIsActive = false;
@@ -1286,7 +1279,7 @@ CKEDITOR.plugins.add('smwtoolbar', {
                 {
                     label : 'Semantic Toolbar',
                     command : 'SMWtoolbar',
-                    icon: this.path + 'images/tb_icon_semtoolbar.png',
+                    icon: this.path + 'images/tb_icon_semtoolbar.gif',
                     title: 'Semantic Toolbar'
                 });
             editor.getCommand('SMWtoolbar').setState(CKEDITOR.TRISTATE_OFF);
@@ -1362,7 +1355,7 @@ CKEDITOR.plugins.add( 'smwtoolbar',
 				label : 'Semantic Toolbar',
                 title : 'Semantic Toolbar',
 				command : 'SMWtoolbar',
-                icon: this.path + 'images/tb_icon_semtoolbar.png'
+                icon: this.path + 'images/tb_icon_semtoolbar.gif'
 			});
 
 		CKEDITOR.dialog.add( 'SMWtoolbar', this.path + 'dialogs/teaser.js' );

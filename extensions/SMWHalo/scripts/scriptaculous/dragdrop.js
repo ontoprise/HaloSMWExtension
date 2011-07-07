@@ -243,7 +243,7 @@ var Draggable = Class.create({
           }
         }); 
       },
-      zindex: 1000,
+      zindex: 10010,
       revert: false,
       quiet: false,
       scroll: false,

@@ -551,7 +551,14 @@ AutoCompleter.prototype = {
                     this.siw.floater.style.left = x + "px";
                     this.siw.floater.style.top = y + "px";
                 } else {
-                    this.siw.floater.style.right = (content.offsetWidth - x - this.currentInputBox.offsetWidth) + "px";
+                    if( content.offsetWidth == 0 ) {
+                    //this happens in WYSIWYG fullscreen mode
+                        if( typeof window.innerWidth !== 'undefined' ) {
+                            this.siw.floater.style.right = (window.innerWidth - x - this.currentInputBox.offsetWidth) + "px";
+                        }
+                    } else {
+                        this.siw.floater.style.right = (content.offsetWidth - x - this.currentInputBox.offsetWidth) + "px";
+                    }
                     this.siw.floater.style.top = y + "px";
                 }
             } else {

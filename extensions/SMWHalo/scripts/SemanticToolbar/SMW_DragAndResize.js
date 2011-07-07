@@ -197,7 +197,7 @@ Resizeable.prototype = {
       right: 6,
       minHeight: 0,
       minWidth: 0,
-      zindex: 1000,
+      zindex: 10010,
       resize: null
     }, arguments[1] || {});
 
