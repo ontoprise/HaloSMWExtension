@@ -36,7 +36,8 @@ class SMWHaloQueryResult extends SMWQueryResult {
 		$this->mResults = $results;
 		$this->mResultSubjects = array();
 		foreach($results as $r) {
-			$rs = $r[0]->getResultSubject();
+			$first = reset($r);
+			$rs = $first->getResultSubject();
 			$this->mResultSubjects[] = $rs;
 		}
 	}
