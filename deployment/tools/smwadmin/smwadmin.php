@@ -693,6 +693,7 @@ if (count($installer->getErrors()) === 0) {
 function dffShowHelp() {
 	global $dfgOut;
 	$dfgOut->outputln( "smwhalo admin utility v".DEPLOY_FRAMEWORK_VERSION.", Ontoprise 2009-2011");
+	$dfgOut->outputln();
 	$dfgOut->outputln( "Usage: smwadmin [ -i | -d ] <bundle>[-<version>] [ additional-options ]");
 	$dfgOut->outputln( "       smwadmin -u [ <bundle>[-<version>] ] [ additional-options ]");
 	$dfgOut->outputln( "       smwadmin -r [ <restore point name> ]");
@@ -723,7 +724,8 @@ function dffShowHelp() {
 	$dfgOut->outputln( "\t--removestillused: Removes also pages which are used by other bundles. Used with -d --removereferenced");
 
 	$dfgOut->outputln();
-	$dfgOut->outputln( "Examples:\tsmwadmin -i smwhalo Installs the given bundles");
+	$dfgOut->outputln('Examples:');
+	$dfgOut->outputln( "\tsmwadmin -i smwhalo Installs the given bundles");
 	$dfgOut->outputln( "\tsmwadmin -u: Updates complete installation");
 	$dfgOut->outputln( "\tsmwadmin -u --dep: Shows what would be updated.");
 	$dfgOut->outputln( "\tsmwadmin -d smw: Removes the bundle smw.");
