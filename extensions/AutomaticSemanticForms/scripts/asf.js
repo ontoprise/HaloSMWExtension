@@ -195,6 +195,7 @@ function initializeNiceASFTooltips(){
 	
 	//do form input label ttoltips
 	$('.asf_use_qtip').each( function () {
+	
 		var ttContent = $('.asf_qtip_content', this).html();
 		
 		if(ttContent.length > 0){
@@ -273,6 +274,10 @@ function asf_initializeCollapsableSectionsTabIndexes(){
 		}
 	});
 }
+
+jQuery(document).ready( function($) {
+	initializeNiceASFTooltips();
+});
 
 window.onload = asf_initializeCollapsableSectionsTabIndexes;
 
