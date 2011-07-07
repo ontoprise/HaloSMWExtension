@@ -67,10 +67,6 @@ class DF_Config  {
 	
 // set MYSQL directory (only if it is not in PATH)
 'df_mysql_dir' => '',
-	
-// do not check directory for external apps /usr/share/local/Ontoprise
-// if set to 'true' you can not install external apps like TSC 
-//'df_no_external_apps'=>true,
 
 	);
 	public static function getValue($identifier){

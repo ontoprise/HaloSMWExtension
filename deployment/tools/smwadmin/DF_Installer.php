@@ -496,6 +496,29 @@ class Installer {
 		$d = new HttpDownload();
 		$localPackages = PackageRepository::getLocalPackages($this->rootDir);
 		$num = 0;
+
+		// check if any external apps are about to be installed
+		// in this case check if the location is writable. This is not checked by default.
+		$errorOccured = false;
+		foreach($extensions_to_update as $arr) {
+			list($desc, $min, $max) = $arr;
+			if ($desc->isNonPublic()) {
+				// check if OP software directory exists and is writable (for external applications like TSC for instance)
+				$opSoftwareDir = Tools::getProgramDir()."/Ontoprise";
+				if (!file_exists($opSoftwareDir)) {
+					$result = "Please create directory and make writable: ".$opSoftwareDir;
+					$errorOccured=true;
+				} else {
+					if (!is_writable($opSoftwareDir)) {
+						$result = "Please make writable: ".$opSoftwareDir;
+						$errorOccured=true;
+					}
+				}
+
+				if ($errorOccured) dffExitOnFatalError($result);
+			}
+		}
+
 		foreach($extensions_to_update as $arr) {
 			list($desc, $min, $max) = $arr;
 			$id = $desc->getID();

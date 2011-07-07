@@ -15,7 +15,7 @@ Installation of the webadmin console:
         - extensions folder (and all extensions contained)
         - deployment/tools/webadmin
         - deployment/tools/repositories
-        - /usr/share/local/Ontoprise (optional, see settings.php to deactivate that check (df_no_external_apps))
+        - /usr/share/local/Ontoprise (optional, only required if you plan to install external apps like TSC)
         
     It is recommended to make the user which runs the webserver the owner of
     these files and directories. It can be a different webserver than used for the wiki.    

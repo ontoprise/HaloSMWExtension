@@ -210,18 +210,7 @@ function dffCheckEnvironment() {
 		$result .= "<li>Could not open deployment/tools/repositories for writing.</li>";
 	}
 
-	// check if OP software directory exists and is writable (for external applications like TSC for instance)
-	if (!array_key_exists('df_no_external_apps', DF_Config::$settings) || DF_Config::$settings['df_no_external_apps'] === false) {
-		$opSoftwareDir = Tools::getProgramDir()."/Ontoprise";
-		if (!file_exists($opSoftwareDir)) {
-			$result .= "<li>Please create directory and make writable: ".$opSoftwareDir."</li>";
-		} else {
-			if (!is_writable($opSoftwareDir)) {
-				$result .= "<li>Please make writable: ".$opSoftwareDir."</li>";
-			}
-		}
-	}
-
+	
 	// check homedir/tempdir
 	require_once($mwrootDir.'/deployment/io/DF_Log.php');
 	require_once($mwrootDir.'/deployment/tools/smwadmin/DF_Rollback.php');
