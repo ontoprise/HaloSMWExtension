@@ -444,11 +444,12 @@ ENDS
 
 		chdir($onto2mwxml_dir);
 		$ret = 0;
+		$langCode = dffGetLanguageCode();
 		if (Tools::isWindows()) {
 				
 			if ($noBundlePage) $noBundlePageParam = "--nobundlepage"; else $noBundlePageParam = "";
 			if (!empty($bundleID)) $bundleID ='--bundleid \"$bundleID\"';
-			exec("\"$onto2mwxml_dir/onto2mwxml.bat\" -i \"$inputfile\" -o \"$outputfile\" $bundleID $noBundlePageParam --outputformat $dfgOutputFormat", $output, $ret);
+			exec("\"$onto2mwxml_dir/onto2mwxml.bat\" -i \"$inputfile\" -o \"$outputfile\" $bundleID $noBundlePageParam --outputformat $dfgOutputFormat --lang $langCode", $output, $ret);
 			if ($ret != 0) {
 				foreach($output as $l) $dfgOut->outputln("$l");
 				throw new Exception("Onto2MWXML exited abnormally.");
@@ -458,7 +459,7 @@ ENDS
 				
 			if ($noBundlePage) $noBundlePageParam = "--nobundlepage"; else $noBundlePageParam = "";
 			if (!empty($bundleID)) $bundleID ='--bundleid \"$bundleID\"';
-			exec("\"$onto2mwxml_dir/onto2mwxml.sh\" -i \"$inputfile\" -o \"$outputfile\" $bundleID $noBundlePageParam --outputformat $dfgOutputFormat", $output, $ret);
+			exec("\"$onto2mwxml_dir/onto2mwxml.sh\" -i \"$inputfile\" -o \"$outputfile\" $bundleID $noBundlePageParam --outputformat $dfgOutputFormat --lang $langCode", $output, $ret);
 			if ($ret != 0) {
 				foreach($output as $l) $dfgOut->outputln("$l");
 				throw new Exception("Onto2MWXML exited abnormally.");

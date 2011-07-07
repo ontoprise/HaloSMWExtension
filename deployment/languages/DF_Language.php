@@ -39,9 +39,27 @@ abstract class DF_Language {
 }
 
 /**
+ * Returns the language code
+ * 
+ * Note: In case of wiki context, the wiki content language is returned.
+ * Otherwise which is configured in settings.php. Anyway, this must always be the SAME!
+ */
+function dffGetLanguageCode() {
+	global $wgLanguageCode;
+	if (isset($wgLanguageCode)) {
+		// if wiki language code available use it
+		$langCode = $wgLanguageCode;
+	} else {
+		// otherwise as configured in settings.php
+		$langCode = isset(DF_Config::$df_lang) ? ucfirst(DF_Config::$df_lang) : "En";
+	}
+	return strtolower($langCode);
+}
+/**
  * Initializes the language object
  *
- * Note: Requires wiki context
+ * Note: In case of wiki context, the wiki content language is returned.
+ * Otherwise which is configured in settings.php. Anyway, this must always be the SAME!
  */
 function dffInitLanguage() {
 	global $dfgLang, $mwrootDir, $wgLanguageCode;
