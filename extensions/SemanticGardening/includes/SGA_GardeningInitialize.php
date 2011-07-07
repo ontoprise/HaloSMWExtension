@@ -30,6 +30,11 @@ $wgExtensionCredits['other'][] = array(
             'several other features like term import, webservice import or semantic notifications.',
 );
 
+global $smwgSGAStyleVersion;
+$smwgSGAStyleVersion = preg_replace('/[^\d]/', '', '{{$BUILDNUMBER}}' );
+if (strlen($smwgSGAStyleVersion) > 0)
+    $smwgSGAStyleVersion = '?'.$smwgSGAStyleVersion;
+
 function sgagGardeningSetupExtension() {
 
 	global $wgAutoloadClasses, $wgHooks, $sgagIP;
@@ -219,13 +224,14 @@ function sgafGAAddHTMLHeader(&$out) {
 	global $wgTitle;
 	if ($wgTitle->getNamespace() != NS_SPECIAL) return true;
 
+	global $smwgSGAStyleVersion;
 	global $wgScriptPath;
 
 	$out->addLink(array(
                     'rel'   => 'stylesheet',
                     'type'  => 'text/css',
                     'media' => 'screen, projection',
-                    'href'  => $wgScriptPath . '/extensions/SemanticGardening/skins/gardening.css'
+                    'href'  => $wgScriptPath . '/extensions/SemanticGardening/skins/gardening.css'.$smwgSGAStyleVersion
                     ));
                     $out->addLink(array(
                     'rel'   => 'stylesheet',
@@ -234,7 +240,7 @@ function sgafGAAddHTMLHeader(&$out) {
                     'href'  => $wgScriptPath . '/extensions/SemanticGardening/skins/gardeningLog.css'
                     ));
                      
-                    $out->addScript('<script type="text/javascript" src="'.$wgScriptPath .  '/extensions/SemanticGardening/scripts/gardening.js"></script>');
+                    $out->addScript('<script type="text/javascript" src="'.$wgScriptPath .  '/extensions/SemanticGardening/scripts/gardening.js'.$smwgSGAStyleVersion.'"></script>');
 
                      
                     return true;
@@ -246,15 +252,16 @@ function sgaFWAddHTMLHeader(& $out) {
 	global $wgTitle;
 	if ($wgTitle->getNamespace() != NS_SPECIAL) return true;
 
+	global $smwgSGAStyleVersion;
 	global $wgScriptPath;
 	$out->addLink(array(
                     'rel'   => 'stylesheet',
                     'type'  => 'text/css',
                     'media' => 'screen, projection',
-                    'href'  => $wgScriptPath . '/extensions/SemanticGardening/skins/findwork.css'
+                    'href'  => $wgScriptPath . '/extensions/SemanticGardening/skins/findwork.css'.$smwgSGAStyleVersion
                     ));
                      
-                    $out->addScript('<script type="text/javascript" src="'.$wgScriptPath .  '/extensions/SemanticGardening/scripts/findwork.js"></script>');
+                    $out->addScript('<script type="text/javascript" src="'.$wgScriptPath .  '/extensions/SemanticGardening/scripts/findwork.js'.$smwgSGAStyleVersion.'"></script>');
                     return true;
 }
 
