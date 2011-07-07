@@ -146,6 +146,8 @@ $smwghHaloTests=true;
 // load script manager for all tests
 require_once('extensions/ScriptManager/SM_Initialize.php');
 
+require_once('deployment/Deployment.php');
+
 /*USERDEFINED*/
 
 ?>
