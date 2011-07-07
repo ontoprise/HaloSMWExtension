@@ -1,4 +1,11 @@
 
+------------------- !IMPORTANT! ------------------------------------------------------------ 
+
+Users which update from SMW+ 1.5.3: The symbolic link to the TSC is NOT necessary anymore.
+Instead a variable in the start script is used. See below.
+
+------------------- !IMPORTANT! ------------------------------------------------------------
+
 The tool "onto2mwxml" is not shipped with the Deployment Framework but with the TripleStore Connector (TSC).
 Please download the TSC and put a link to it named 'tsc' in this directory here (ie. deployment/tools/onto2mwxml).
 
@@ -14,6 +21,8 @@ you need Java 1.6 to be installed when using the "onto2mwxml" tool.
         SET TSCDIR=c:\Programme\Ontoprise\TSC           (example)
 
         Note: Paths containing whitespaces MUST be quoted!
+        
+        
 #
 # Installation on Linux
 #
@@ -25,7 +34,7 @@ Run the following commands in deployment/tools/onto2mwxml:
             
             TSCDIR=/usr/local/share/Ontoprise/tsc       (example)
 
-   
+        Note: Paths containing whitespaces MUST be quoted!
 #
 # Test installation
 #
@@ -38,7 +47,8 @@ On Linux:
         ./onto2mwxml.sh
 
 You should see something like this:
-
-    Onto2MWXML version 0.1 Patchlevel 0
+----------------------------------------
+    Onto2MWXML version 1.0 Patchlevel 0
     
     Missing input file. Use -i [file]
+----------------------------------------
