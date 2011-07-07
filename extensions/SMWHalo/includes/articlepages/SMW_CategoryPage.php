@@ -105,7 +105,7 @@ class SMWCategoryViewer extends CategoryViewer {
 
 		$r = $this->getCategoryTop() .
 			$this->getSubcategorySection() .
-			$this->getSemanticSearchLinks() .
+			//$this->getSemanticSearchLinks() .
 			$this->getPagesSection() .
 			$this->getImageSection() .
 			$this->getProperties().
