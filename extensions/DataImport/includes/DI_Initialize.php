@@ -24,6 +24,12 @@ $smwgDIScriptPath = $wgScriptPath . '/extensions/DataImport';
 $wgHooks['smwInitializeTables'][] = 'smwfDIInitializeTables';
 
 
+global $smwgDIStyleVersion;
+$smwgDIStyleVersion = preg_replace('/[^\d]/', '', '{{$BUILDNUMBER}}' );
+if (strlen($smwgDIStyleVersion) > 0)
+    $smwgDIStyleVersion = '?'.$smwgDIStyleVersion;
+    
+    
 /**
  * Configures Data Import Extension for initialization.
  * Must be called *AFTER* SMWHalo is intialized.
@@ -273,56 +279,59 @@ function smwfDIInitUserMessages() {
 //function smwfDIAddJSLanguageScripts(& $jsm, $mode = "all", $namespace = -1, $pages = array()) {
 function smwfDIAddJSLanguageScripts(&$out, $mode = "all", $namespace = -1, $pages = array()) {
 	global $wgLanguageCode, $smwgDIScriptPath, $wgUser, $smwgDIIP;
+	global $smwgDIStyleVersion;
 	
 	// content language file
 	$lng = '/scripts/Language/SMWDI_Language';
 	
-	$out->addScript("<script type=\"text/javascript\" src=\"".$smwgDIScriptPath.$lng.".js\"></script>");
+	$out->addScript("<script type=\"text/javascript\" src=\"".$smwgDIScriptPath.$lng.".js".$smwgDIStyleVersion."\"></script>");
 	
 	if (!empty($wgLanguageCode)) {
-		$lng .= ucfirst($wgLanguageCode).'.js';
+		$lng .= ucfirst($wgLanguageCode).'.js'.$smwgDIStyleVersion;
 		if (file_exists($smwgDIIP . $lng)) {
 			$out->addScript("<script type=\"text/javascript\" src=\"".$smwgDIScriptPath.$lng."\"></script>");
 		} else {
-			$out->addScript("<script type=\"text/javascript\" src=\"".$smwgDIScriptPath."/scripts/Language/SMWDI_LanguageEn.js\"></script>");
+			$out->addScript("<script type=\"text/javascript\" src=\"".$smwgDIScriptPath."/scripts/Language/SMWDI_LanguageEn.js".$smwgDIStyleVersion."\"></script>");
 		}
 	} else {
-		$out->addScript("<script type=\"text/javascript\" src=\"".$smwgDIScriptPath."/scripts/Language/SMWDI_LanguageEn.js\"></script>");
+		$out->addScript("<script type=\"text/javascript\" src=\"".$smwgDIScriptPath."/scripts/Language/SMWDI_LanguageEn.js".$smwgDIStyleVersion."\"></script>");
 	}
 
 	// user language file
 	$lng = '/scripts/Language/SMWDI_Language';
 	if (isset($wgUser)) {
-		$lng .= "User".ucfirst($wgUser->getOption('language')).'.js';
+		$lng .= "User".ucfirst($wgUser->getOption('language')).'.js'.$smwgDIStyleVersion;
 		//$temp = $smwgDIScriptPath . $lng;
 		if (file_exists($smwgDIIP . $lng)) {
 			$out->addScript("<script type=\"text/javascript\" src=\"".$smwgDIScriptPath.$lng."\"></script>");
 		} else {
-			$out->addScript("<script type=\"text/javascript\" src=\"".$smwgDIScriptPath."/scripts/Language/SMWDI_LanguageUserEn.js\"></script>");
+			$out->addScript("<script type=\"text/javascript\" src=\"".$smwgDIScriptPath."/scripts/Language/SMWDI_LanguageUserEn.js".$smwgDIStyleVersion."\"></script>");
 		}
 	} else {
-		$out->addScript("<script type=\"text/javascript\" src=\"".$smwgDIScriptPath."/scripts/Language/SMWDI_LanguageUserEn.js\"></script>");
+		$out->addScript("<script type=\"text/javascript\" src=\"".$smwgDIScriptPath."/scripts/Language/SMWDI_LanguageUserEn.js".$smwgDIStyleVersion."\"></script>");
 	}
 }
 
 function smwDIWSAddHTMLHeader(&$out) {
 	global $wgTitle;
+	global $smwgDIStyleVersion;
+	
 	if ($wgTitle->getNamespace() != NS_SPECIAL) return true;
 	
 	global $smwgDIScriptPath;
 	$includeCSS = false;
 	if($wgTitle->getText() == "DefineWebService"){
-		$out->addScript("<script type=\"text/javascript\" src=\"".$smwgDIScriptPath."/scripts/WebServices/def-webservices.js\"></script>");	
+		$out->addScript("<script type=\"text/javascript\" src=\"".$smwgDIScriptPath."/scripts/WebServices/def-webservices.js".$smwgDIStyleVersion."\"></script>");	
 		$includeCSS = true;
 	}
 	
 	if($wgTitle->getText() == "DataImportRepository"){
-		$out->addScript("<script type=\"text/javascript\" src=\"".$smwgDIScriptPath."/scripts/WebServices/webservices-rep.js\"></script>");
+		$out->addScript("<script type=\"text/javascript\" src=\"".$smwgDIScriptPath."/scripts/WebServices/webservices-rep.js".$smwgDIStyleVersion."\"></script>");
 		$includeCSS = true;
 	}
 	
 	if($wgTitle->getText() == "UseWebService"){
-		$out->addScript("<script type=\"text/javascript\" src=\"".$smwgDIScriptPath."/scripts/WebServices/use-webservice.js\"></script>");
+		$out->addScript("<script type=\"text/javascript\" src=\"".$smwgDIScriptPath."/scripts/WebServices/use-webservice.js".$smwgDIStyleVersion."\"></script>");
 		$includeCSS = true;
 	}
 	
@@ -336,7 +345,7 @@ function smwDIWSAddHTMLHeader(&$out) {
                     'rel'   => 'stylesheet',
                     'type'  => 'text/css',
                     'media' => 'screen, projection',
-                    'href'  => $smwgDIScriptPath . '/skins/webservices/webservices.css'
+                    'href'  => $smwgDIScriptPath . '/skins/webservices/webservices.css'.$smwgDIStyleVersion
                     ));
 	
 		//$jsm->serializeScripts($out);
@@ -350,6 +359,7 @@ function smwDIWSAddHTMLHeader(&$out) {
 // includes necessary css files.
 function smwDITIAddHTMLHeader(&$out){
 	global $wgTitle;
+	global $smwgDIStyleVersion;
 	if ($wgTitle->getNamespace() != NS_SPECIAL || $wgTitle->getText() != "TermImport") return true;
 
 	global $smwgDIScriptPath;
@@ -357,7 +367,7 @@ function smwDITIAddHTMLHeader(&$out){
 	//$jsm = SMWResourceManager::SINGLETON();
 	//$jsm->addScriptIf($smwgDIScriptPath .  '/scripts/TermImport/termImport.js', "all", -1, array(NS_SPECIAL.":TermImport"));
 	
-	$out->addScript("<script type=\"text/javascript\" src=\"".$smwgDIScriptPath .  "/scripts/TermImport/termImport.js\"></script>");
+	$out->addScript("<script type=\"text/javascript\" src=\"".$smwgDIScriptPath .  "/scripts/TermImport/termImport.js".$smwgDIStyleVersion."\"></script>");
 	
 	//smwfDIAddJSLanguageScripts($jsm, "all", -1, array(NS_SPECIAL.":TermImport"));
 	smwfDIAddJSLanguageScripts($out, "all", -1, array(NS_SPECIAL.":TermImport"));
@@ -368,7 +378,7 @@ function smwDITIAddHTMLHeader(&$out){
                     'rel'   => 'stylesheet',
                     'type'  => 'text/css',
                     'media' => 'screen, projection',
-                    'href'  => $smwgDIScriptPath . '/skins/TermImport/termimport.css'
+                    'href'  => $smwgDIScriptPath . '/skins/TermImport/termimport.css'.$smwgDIStyleVersion
                     ));
 	
 	//$jsm->serializeScripts($out);
@@ -380,6 +390,7 @@ function smwDITIAddHTMLHeader(&$out){
 
 function smwDITBAddHTMLHeader(&$out){
 	global $smwgDIScriptPath, $wgRequest, $wgTitle;
+	global $smwgDIStyleVersion;;
 	
 	$ns = "";
 	$text = "";
@@ -390,8 +401,8 @@ function smwDITBAddHTMLHeader(&$out){
 	
 	$action = $wgRequest->getVal('action');
 	if ($action == 'edit' || $action == 'formedit' || $ns == NS_SPECIAL && $text == "FormEdit") {
-		$out->addScript("<script type=\"text/javascript\" src=\"".$smwgDIScriptPath .  "/scripts/WebServices/semantic-toolbar-container.js\"></script>");
-		$out->addScript("<script type=\"text/javascript\" src=\"".$smwgDIScriptPath."/scripts/WebServices/use-webservice.js\"></script>");
+		$out->addScript("<script type=\"text/javascript\" src=\"".$smwgDIScriptPath .  "/scripts/WebServices/semantic-toolbar-container.js".$smwgDIStyleVersion."\"></script>");
+		$out->addScript("<script type=\"text/javascript\" src=\"".$smwgDIScriptPath."/scripts/WebServices/use-webservice.js".$smwgDIStyleVersion."\"></script>");
 	}
 	
 	return true;

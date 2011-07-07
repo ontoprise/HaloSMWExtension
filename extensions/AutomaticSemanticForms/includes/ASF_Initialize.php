@@ -12,6 +12,11 @@ if( !defined( 'SF_VERSION' ) ) {
 global $asfIP, $asfScriptPath;
 $asfIP = $IP . '/extensions/AutomaticSemanticForms';
 $asfScriptPath = $wgScriptPath . '/extensions/AutomaticSemanticForms';
+
+global $smwgASFStyleVersion;
+$smwgASFStyleVersion = preg_replace('/[^\d]/', '', '{{$BUILDNUMBER}}' );
+if (strlen($smwgASFStyleVersion) > 0)
+    $smwgASFStyleVersion = '?'.$smwgASFStyleVersion;
 	
 /*
  * This method must be called in Local Settings
@@ -180,19 +185,20 @@ function asfInitContentLanguage($langcode) {
  */
 function asfAddHeaders(& $out){
 	global $asfHeaders, $asfScriptPath;
+	global $smwgASFStyleVersion;
 	
 	foreach($asfHeaders as $script => $dc){
 		switch($script){
 			case 'asf.js' :
-				$scriptFile = $asfScriptPath . "/scripts/asf.js";
+				$scriptFile = $asfScriptPath . "/scripts/asf.js".$smwgASFStyleVersion;
 				$out->addScriptFile( $scriptFile );
 				break ;
 			case 'asf.css' :
-				$cssFile = $asfScriptPath . "/skins/asf.css";
+				$cssFile = $asfScriptPath . "/skins/asf.css".$smwgASFStyleVersion;
 				$out->addExtensionStyle($cssFile);
 				break ;
 			case 'datapicker.js' :
-				$scriptFile = $asfScriptPath . "/scripts/datapicker.js";
+				$scriptFile = $asfScriptPath . "/scripts/datapicker.js".$smwgASFStyleVersion;
 				$out->addScriptFile( $scriptFile );
 				break ;
 		}
