@@ -16,14 +16,14 @@ Modified by Ontoprise GmbH 2007 (KK)
 
 .pendingElement {
 position:fixed;
-z-index:100;
+z-index:12000;
 top:0px;
 left:0px;
 display:none;
 }
 .floater {
 position:absolute;
-z-index:100;
+z-index:12000;
 top:0px;
 /*left:0px;*/
 display:none;
