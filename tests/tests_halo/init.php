@@ -231,8 +231,8 @@ function tstRunSetupCfg($name) {
 		while(!feof($handle)) {
 			$line = fgets($handle);
 			$prgArg = explode("|", $line);
-			$prg = $prgArg[0];
-			$arg = count($prgArg) > 1 ? implode(' ', $prgArg) : "";
+			$prg = array_shift($prgArg);
+			$arg = count($prgArg) > 0 ? implode(' ', $prgArg) : "";
 			$cmd = $phpExe." \"".$mw_dir."extensions/".$prg."\" $arg";
 			$cmd = str_replace("\n", "", $cmd);
 			$cmd = str_replace("\r", "", $cmd);
