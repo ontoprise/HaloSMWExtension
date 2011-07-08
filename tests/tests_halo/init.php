@@ -232,7 +232,7 @@ function tstRunSetupCfg($name) {
 			$line = fgets($handle);
 			$prgArg = explode("|", $line);
 			$prg = $prgArg[0];
-			$arg = count($prgArg) > 1 ? $prgArg[1] : "";
+			$arg = count($prgArg) > 1 ? implode(' ', $prgArg) : "";
 			$cmd = $phpExe." \"".$mw_dir."extensions/".$prg."\" $arg";
 			$cmd = str_replace("\n", "", $cmd);
 			$cmd = str_replace("\r", "", $cmd);
