@@ -282,9 +282,14 @@ class ASFFormGenerator {
 			$syntax .= wfMsg('asf_categories_with_no_props_section')."| true}}\n";
 			
 			$syntax .= '<ul>';
+			global $wgLang, $asfDisplayPropertiesAndCategoriesAsLinks;
 			foreach($categoriesWithNoProperties as $c => $dc){
-				global $wgLang;
-				$syntax .= '<li>[[:'.$wgLang->getNSText(NS_CATEGORY).':'.$c.'|'.$c.']]</li>';
+				if($asfDisplayPropertiesAndCategoriesAsLinks){
+					$link = ASFFormGeneratorUtils::createParseSaveLink($wgLang->getNSText(NS_CATEGORY).':'.$c, $c);
+					$syntax .= '<li>'.$link.'</li>';
+				} else {
+					$syntax .= '<li>'.$c.'</li>';
+				}
 			}
 			$syntax .= '</ul>';
 			

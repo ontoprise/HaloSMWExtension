@@ -35,6 +35,7 @@ class ASFFormPrinter extends SFFormPrinter {
 	 * parent method and then does some postprocessing.
 	 */
 	function formHTML( $form_def, $form_submitted, $source_is_page, $form_id = null, $existing_page_content = null, $page_name = null, $page_name_formula = null, $is_query = false, $embedded = false ) {
+		
 		global $asfFormDefData;  
 		$postProcess = false;
 		if(isset($asfFormDefData) && array_key_exists('formdef', $asfFormDefData) && $asfFormDefData['formdef'] != false){
@@ -44,8 +45,13 @@ class ASFFormPrinter extends SFFormPrinter {
 		
 		list ($form_text, $javascript_text, $data_text, $form_page_title, $generated_page_name) =
 			parent::formHTML( $form_def, $form_submitted, $source_is_page, $form_id, $existing_page_content, $page_name, $page_name_formula, $is_query, $embedded);
-			
+
 		if($postProcess){
+			//remove this if bug has been fixed in sf
+			if($asfDisplayPropertiesAndCategoriesAsLinks){
+				$form_text = ASFFormGeneratorUtils::retranslateParseSaveLink($form_text);
+			}
+
 			//deal with autocompletion div - necessary because otherwise no other
 			//HTML elements are possible in the same row as the input field
 			$form_text = str_replace('<div class="page_name_auto_complete"', 
@@ -95,7 +101,7 @@ class ASFFormPrinter extends SFFormPrinter {
 				$form_text = substr($form_text, 0, $styleStartPos).'width: 100%;'.substr($form_text, $styleStartPos);
 			} else {
 				$endPos = strpos($form_text, '>', $startPos);
-				$form_text = substr($form_text, 0, $endPos).'style="width: 100%"'.substr($form_text, $endPos);
+				$form_text = substr($form_text, 0, $endPos).'style="width: 100%;"'.substr($form_text, $endPos);
 			}
 			
 			

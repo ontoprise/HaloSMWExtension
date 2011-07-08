@@ -206,7 +206,7 @@ class ASFPropertyFormData {
 		global $asfDisplayPropertiesAndCategoriesAsLinks;
 		
 		if($asfDisplayPropertiesAndCategoriesAsLinks){
-			$intro .= "[[".$this->titleObject->getFullText().'|' . $this->inputLabel . ']]:';
+			$intro .= ASFFormGeneratorUtils::createParseSaveLink($this->titleObject->getFullText(), $this->inputLabel);
 		} else {
 			$intro .= '<span class="asf_input_label">'.$this->inputLabel . ':</span>';
 		}

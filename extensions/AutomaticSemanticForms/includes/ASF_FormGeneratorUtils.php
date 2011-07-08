@@ -1,5 +1,6 @@
 <?php
 
+
 /*
  * This class provides some helper methods
  * for the form generation process
@@ -183,6 +184,19 @@ class ASFFormGeneratorUtils {
 		}
 		
 		return $properties;
+	}
+	
+	
+	public static function createParseSaveLink($titleText, $label = ''){
+		$linker = new Linker();
+		$link = $linker->makeLink($titleText, $label);
+		$link = str_replace(array('<', '>'), array('*asf-st-*', '*asf-gt-*'), $link);
+		return $link;
+	}
+	
+	public static function retranslateParseSaveLink($text){
+		$text = str_replace(array('*asf-st-*', '*asf-gt-*'), array('<', '>'), $text);
+		return $text;
 	}
 	
 } 

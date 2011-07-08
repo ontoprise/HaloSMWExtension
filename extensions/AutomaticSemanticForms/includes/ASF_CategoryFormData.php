@@ -129,7 +129,8 @@ class ASFCategoryFormData {
 		global $asfDisplayPropertiesAndCategoriesAsLinks;
 		if($asfDisplayPropertiesAndCategoriesAsLinks){
 			$categoryLabel = '{{#qTip:';
-			$categoryLabel .= '[[:'.$this->titleObject->getFullText().'|'.$this->titleObject->getText().']]';
+			$categoryLabel .= ASFFormGeneratorUtils::createParseSaveLink(
+				$this->titleObject->getFullText(), $this->titleObject->getText());
 			$categoryLabel .= '| '.$this->getCategoryTooltip().'}}';
 		} else {
 			$categoryLabel = "<i>".$this->titleObject->getText()."</i>";
