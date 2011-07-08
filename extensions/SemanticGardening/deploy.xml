@@ -34,6 +34,10 @@
 		    <php name="GardeningRights">
     			// Gardening privileges for the WikiSysop
                 $wgGroupPermissions['sysop']['gardening'] = true;
+                #Enable upload of owl files
+                $wgVerifyMimeType=false;
+                array_push($wgFileExtensions, "owl");
+                array_push($wgFileExtensions, "obl");
 			</php>
 			<variable name="phpInterpreter">
 				<string name="phpInterpreterPath"
