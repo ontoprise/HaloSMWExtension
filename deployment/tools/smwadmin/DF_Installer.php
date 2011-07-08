@@ -757,7 +757,8 @@ class Installer {
 		$dfgOut->outputln("unzip into $unzipDirectory");
 		$dfgOut->outputln("[unzip ".$id."-$version.zip...");
 		if (Tools::isWindows()) {
-			exec('unzip -o "'.$this->tmpFolder."\\".$id."-$version.zip\" -d \"".$unzipDirectory.'" '.$excludedFilesString);
+			global $rootDir;
+			exec($rootDir.'/tools/unzip.exe -o "'.$this->tmpFolder."\\".$id."-$version.zip\" -d \"".$unzipDirectory.'" '.$excludedFilesString);
 		} else {
 			exec('unzip -o "'.$this->tmpFolder."/".$id."-$version.zip\" -d \"".$unzipDirectory.'" '.$excludedFilesString);
 		}
@@ -790,7 +791,12 @@ class Installer {
 		}
 
 		$dfgOut->outputln("[unzip ".$filePath."...");
-		exec('unzip -o "'.$filePath.'" -d "'.$unzipDirectory.'"');
+		if (Tools::isWindows()) {
+			global $rootDir;
+			exec($rootDir.'/tools/unzip.exe -o "'.$filePath.'" -d "'.$unzipDirectory.'"');
+		} else {
+			exec('unzip -o "'.$filePath.'" -d "'.$unzipDirectory.'"');
+		}
 		$dfgOut->output("done.]");
 
 	}
