@@ -150,13 +150,8 @@ array_push($wgFileExtensions, "svg");
 
 $wgShowExceptionDetails = true;
 
-#Enable upload of owl files
-$wgVerifyMimeType=false;
-array_push($wgFileExtensions, "owl");
-array_push($wgFileExtensions, "obl");
 // rights
 $wgGroupPermissions['*']['edit']=false;
-$wgGroupPermissions['*']['gardening']=false;
 
 $wgGroupPermissions['user']['annotate']=true;
 $wgGroupPermissions['user']['edit']=true;
@@ -164,10 +159,8 @@ $wgGroupPermissions['user']['wysiwyg']=false;
 $wgGroupPermissions['user']['move']=false;
 
 $wgGroupPermissions['sysop']['wysiwyg']=true;
-$wgGroupPermissions['sysop']['gardening']=true;
 $wgGroupPermissions['sysop']['userrights']=true;
 $wgGroupPermissions['sysop']['ontologyediting'] = true;
-
 
 // extensions
 
@@ -215,7 +208,6 @@ $smwgQComparators = '<|>|!|~';
 include_once($IP.'/extensions/SMWHalo/includes/SMW_Initialize.php');
 enableSMWHalo(/*param-start-enableSMWHalo*/'SMWHaloStore2', NULL, NULL/*param-end-enableSMWHalo*/);
 $wgUseAjax = /*start-variable-wgUseAjax*/true;/*end-variable-wgUseAjax*/
-$smwgShowDerivedFacts=true;
 /*end-smwhalo*/
 
 
