@@ -48,6 +48,7 @@ class ASFFormPrinter extends SFFormPrinter {
 
 		if($postProcess){
 			//remove this if bug has been fixed in sf
+			global $asfDisplayPropertiesAndCategoriesAsLinks;
 			if($asfDisplayPropertiesAndCategoriesAsLinks){
 				$form_text = ASFFormGeneratorUtils::retranslateParseSaveLink($form_text);
 			}
