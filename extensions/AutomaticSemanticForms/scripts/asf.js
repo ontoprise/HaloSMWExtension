@@ -33,13 +33,15 @@ var ASFAdmin = {
 			data: {
 				'action' : 'ajax',
 				'rs' : 'asff_getFormPreview',
-				'rsargs[]' : [categories],
+				'rsargs[]' : [categories]
 			},
-			success: ASFAdmin.refreshTabsCallBack,
+			success: ASFAdmin.refreshTabsCallBack
 		});
 	},
 	
 	refreshTabsCallBack : function(data){
+		alert(JSON.stringify);
+		
 		data = data.substr(data.indexOf('--##startasf##--') + 16, data.indexOf('--##endasf##--') - data.indexOf('--##startasf##--') - 16); 
 		data = JSON.parse(data);
 	
@@ -121,13 +123,15 @@ var ASFAdmin = {
 			data: {
 				'action' : 'ajax',
 				'rs' : 'asff_saveForm',
-				'rsargs[]' : [formName, formDefinition],
+				'rsargs[]' : [formName, formDefinition]
 			},
-			success: ASFAdmin.saveFormCallBack,
+			success: ASFAdmin.saveFormCallBack
 		});
 	},
 	
 	saveFormCallBack : function(data){
+		alert('---'.JSON.stringify);
+		
 		data = data.substr(data.indexOf('--##startasf##--') + 16, data.indexOf('--##endasf##--') - data.indexOf('--##startasf##--') - 16); 
 		data = JSON.parse(data);
 		
@@ -165,9 +169,9 @@ var ASFAdmin = {
 				data: {
 					'action' : 'ajax',
 					'rs' : 'asff_checkFormName',
-					'rsargs[]' : [formName],
+					'rsargs[]' : [formName]
 				},
-				success: ASFAdmin.checkFormNameCallBack,
+				success: ASFAdmin.checkFormNameCallBack
 			});
 		}
 	},
@@ -260,10 +264,6 @@ function asf_hit_category_section(id){
 		asf_hide_category_section(id);
 	}
 }
-
-//initialize tooltips
-window.onload = initializeNiceASFTooltips;
-
 
 
 function asf_initializeCollapsableSectionsTabIndexes(){
