@@ -123,6 +123,7 @@ fillList: function(forceShowList) {
 		this.wtp.initialize();
 		var categories = this.wtp.getCategories();
 		var cats = '';
+		var delim = '';
 		for (var i = 0; i < categories.length; ++i) {
 			cats += gLanguage.getMessage('CATEGORY_NS') + categories[i].getName()+',';
 		}
@@ -145,7 +146,10 @@ fillList: function(forceShowList) {
 		}
 		if( wgNamespaceNumber === 14 ) {
 			// special handling for category pages
-			cats += gLanguage.getMessage('CATEGORY_NS') + 'Category' + ',';
+			if( cats.length > 0 ) {
+				delim = ', ';
+			}
+			cats += delim + gLanguage.getMessage( 'CATEGORY_NS' ) + 'Category';
 			this.recommendedRelsNeedRefresh = true;
 		}
 		if( cats.length > 0 && this.recommendedRelsNeedRefresh ) {
