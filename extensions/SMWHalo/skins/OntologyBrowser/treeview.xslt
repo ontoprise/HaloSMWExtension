@@ -336,6 +336,7 @@
                                 select="@localurl" />
                                  <xsl:choose>
                                     <xsl:when test="@uri and @notexists">&amp;action=edit&amp;preloadNEP=true</xsl:when>
+                                    <xsl:when test="@uri">&amp;action=edit</xsl:when>
                                     <xsl:otherwise>?action=edit</xsl:otherwise>
                                 </xsl:choose>
                             </xsl:attribute>
@@ -346,6 +347,7 @@
                                 select="@title_url" />
                                  <xsl:choose>
                                     <xsl:when test="@uri and @notexists">&amp;action=edit&amp;preloadNEP=true</xsl:when>
+                                    <xsl:when test="@uri">&amp;action=edit</xsl:when>
                                     <xsl:otherwise>?action=edit</xsl:otherwise>
                                 </xsl:choose>
                             </xsl:attribute>
@@ -356,6 +358,7 @@
                                 select="@namespace" />:<xsl:value-of select="@title_url" />
                                  <xsl:choose>
                                     <xsl:when test="@uri and @notexists">&amp;action=edit&amp;preloadNEP=true</xsl:when>
+                                    <xsl:when test="@uri">&amp;action=edit</xsl:when>
                                     <xsl:otherwise>?action=edit</xsl:otherwise>
                                 </xsl:choose>
                             </xsl:attribute>
