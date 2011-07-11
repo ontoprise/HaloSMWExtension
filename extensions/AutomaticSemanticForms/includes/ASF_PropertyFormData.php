@@ -129,7 +129,7 @@ class ASFPropertyFormData {
 		
 		//deal with validator
 		global $asfUseSemanticFormsInputsFeatures;
-		$regexp;
+		$regexp = '';
 		if($this->validator && class_exists('SFIInputs') && $asfUseSemanticFormsInputsFeatures){
 			$inputType = 'regexp';
 			$regexp = ' |regexp='.$this->validator;
