@@ -1,5 +1,3 @@
-<?php
-
 # set permissions for registered users and anonymous
 $wgGroupPermissions['*']['wysiwyg']=true;
 $wgGroupPermissions['user']['wysiwyg']=true;
@@ -14,5 +12,5 @@ enableSMWHalo('SMWHaloStore2');
 # the FCK Editor itself
 require_once('extensions/WYSIWYG/WYSIWYG.php');
 
-$smwgShowFactbox = SMW_FACTBOX_NONEMPTY;
+
 

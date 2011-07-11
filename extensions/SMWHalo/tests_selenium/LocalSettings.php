@@ -31,3 +31,5 @@ $pomWSServer=true;
 include_once('extensions/SMWHalo/DataAPI/PageObjectModel/POM.php');
 include_once('extensions/SMWHalo/DataAPI/SemanticFormsAPI/SemanticFormsAPI.php');
 
+$smwgShowFactbox = SMW_FACTBOX_NONEMPTY;
+
