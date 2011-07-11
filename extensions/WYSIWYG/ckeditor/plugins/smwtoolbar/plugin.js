@@ -1179,7 +1179,10 @@ CKEDITOR.plugins.add('smwtoolbar', {
 
 					exec: function( editor )
 					{
-						editCategoryCommmand.element.remove();	
+						var sortAttr = editCategoryCommmand.element.getAttribute('sort');
+						var classAttr = editCategoryCommmand.element.getAttribute('class');
+						var jQueryLocator = '.' + classAttr + '[sort=' + sortAttr + ']'; 
+						jQuery('iframe').contents().find(jQueryLocator).trigger('dblclick');
 					}
 			};
 			var removePropertyCommmand =
@@ -1191,7 +1194,7 @@ CKEDITOR.plugins.add('smwtoolbar', {
 
 					exec: function( editor )
 					{
-						editPropertyCommmand.element.remove();	
+						removePropertyCommmand.element.remove();
 					}
 			};
 			
@@ -1204,10 +1207,7 @@ CKEDITOR.plugins.add('smwtoolbar', {
 
 					exec: function( editor )
 					{
-						var sortAttr = editCategoryCommmand.element.getAttribute('sort');
-						var classAttr = editCategoryCommmand.element.getAttribute('class');
-						var jQueryLocator = '.' + classAttr + '[sort=' + sortAttr + ']'; 
-						jQuery('iframe').contents().find(jQueryLocator).remove();
+						removeCategoryCommmand.element.remove();
 					}
 			};
 			editor.addCommand( 'editProperty', editPropertyCommmand);
