@@ -495,7 +495,7 @@ For licensing, see LICENSE.html or http://ckeditor.com/license
 							[
 								{
 									type : 'hbox',
-									widths : [ '280px', '110px' ],
+									widths : [ '380px', '110px' ],
 									align : 'right',
 									children :
 									[
@@ -568,18 +568,19 @@ For licensing, see LICENSE.html or http://ckeditor.com/license
 												}
 											},
 											validate : CKEDITOR.dialog.validate.notEmpty( editor.lang.image.urlMissing )
-										},
-										{
-											type : 'button',
-											id : 'browse',
-											// v-align with the 'txtUrl' field.
-											// TODO: We need something better than a fixed size here.
-											style : 'display:inline-block;margin-top:10px;',
-											align : 'center',
-											label : editor.lang.common.browseServer,
-											hidden : true,
-											filebrowser : 'info:txtUrl'
 										}
+//                                                                                ,
+//										{
+//											type : 'button',
+//											id : 'browse',
+//											// v-align with the 'txtUrl' field.
+//											// TODO: We need something better than a fixed size here.
+//											style : 'display:inline-block;margin-top:10px;',
+//											align : 'center',
+//											label : editor.lang.common.browseServer,
+//											hidden : true,
+//											filebrowser : 'info:txtUrl'
+//										}
 									]
 								}
 							]
@@ -1127,71 +1128,71 @@ For licensing, see LICENSE.html or http://ckeditor.com/license
 								}
 							}
 						},
-						{
-							type : 'button',
-							id : 'browse',
-							filebrowser :
-							{
-								action : 'Browse',
-								target: 'Link:txtUrl',
-								url: editor.config.filebrowserImageBrowseLinkUrl
-							},
-							style : 'float:right',
-							hidden : true,
-							label : editor.lang.common.browseServer
-						},
-						{
-							id : 'cmbTarget',
-							type : 'select',
-							label : editor.lang.common.target,
-							'default' : '',
-							items :
-							[
-								[ editor.lang.common.notSet , ''],
-								[ editor.lang.common.targetNew , '_blank'],
-								[ editor.lang.common.targetTop , '_top'],
-								[ editor.lang.common.targetSelf , '_self'],
-								[ editor.lang.common.targetParent , '_parent']
-							],
-							setup : function( type, element )
-							{
-								if ( type == LINK )
-									this.setValue( element.getAttribute( 'target' ) || '' );
-							},
-							commit : function( type, element )
-							{
-								if ( type == LINK )
-								{
-									if ( this.getValue() || this.isChanged() )
-										element.setAttribute( 'target', this.getValue() );
-								}
-							}
-						}
+//						{
+//							type : 'button',
+//							id : 'browse',
+//							filebrowser :
+//							{
+//								action : 'Browse',
+//								target: 'Link:txtUrl',
+//								url: editor.config.filebrowserImageBrowseLinkUrl
+//							},
+//							style : 'float:right',
+//							hidden : true,
+//							label : editor.lang.common.browseServer
+//						},
+//						{
+//							id : 'cmbTarget',
+//							type : 'select',
+//							label : editor.lang.common.target,
+//							'default' : '',
+//							items :
+//							[
+//								[ editor.lang.common.notSet , ''],
+//								[ editor.lang.common.targetNew , '_blank'],
+//								[ editor.lang.common.targetTop , '_top'],
+//								[ editor.lang.common.targetSelf , '_self'],
+//								[ editor.lang.common.targetParent , '_parent']
+//							],
+//							setup : function( type, element )
+//							{
+//								if ( type == LINK )
+//									this.setValue( element.getAttribute( 'target' ) || '' );
+//							},
+//							commit : function( type, element )
+//							{
+//								if ( type == LINK )
+//								{
+//									if ( this.getValue() || this.isChanged() )
+//										element.setAttribute( 'target', this.getValue() );
+//								}
+//							}
+//						}
 					]
 				},
-				{
-					id : 'Upload',
-					hidden : true,
-					filebrowser : 'uploadButton',
-					label : editor.lang.image.upload,
-					elements :
-					[
-						{
-							type : 'file',
-							id : 'upload',
-							label : editor.lang.image.btnUpload,
-							style: 'height:40px',
-							size : 38
-						},
-						{
-							type : 'fileButton',
-							id : 'uploadButton',
-							filebrowser : 'info:txtUrl',
-							label : editor.lang.image.btnUpload,
-							'for' : [ 'Upload', 'upload' ]
-						}
-					]
-				},
+//				{
+//					id : 'Upload',
+//					hidden : true,
+//					filebrowser : 'uploadButton',
+//					label : editor.lang.image.upload,
+//					elements :
+//					[
+//						{
+//							type : 'file',
+//							id : 'upload',
+//							label : editor.lang.image.btnUpload,
+//							style: 'height:40px',
+//							size : 38
+//						},
+//						{
+//							type : 'fileButton',
+//							id : 'uploadButton',
+//							filebrowser : 'info:txtUrl',
+//							label : editor.lang.image.btnUpload,
+//							'for' : [ 'Upload', 'upload' ]
+//						}
+//					]
+//				},
 				{
 					id : 'advanced',
 					label : editor.lang.common.advancedTab,

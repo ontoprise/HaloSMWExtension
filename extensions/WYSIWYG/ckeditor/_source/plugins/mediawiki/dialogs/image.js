@@ -9,7 +9,10 @@ CKEDITOR.dialog.add( 'MWImage', function( editor ) {
 		regexGetSize = /^\s*(\d+)((px)|\%)?\s*$/i,
 		regexGetSizeOrEmpty = /(^\s*(\d+)((px)|\%)?\s*$)|^$/i,
 		pxLengthRegex = /^\d+px$/,
-		SrcInWiki;
+		SrcInWiki,
+        imgLabelField = (window.parent.wgAllowExternalImages || window.parent.wgAllowExternalImagesFrom )
+            ? editor.lang.mwplugin.fileNameExtUrl
+            : editor.lang.mwplugin.fileName;
 
 	var onImgLoadEvent = function()	{
 		// Image is ready.
@@ -202,32 +205,32 @@ CKEDITOR.dialog.add( 'MWImage', function( editor ) {
                                         {
                                             id: 'imgFilename',
                                             type: 'text',
-                                            label: editor.lang.mwplugin.fileName,
+                                            label: imgLabelField,
                                             title: 'image file name',
                                             style: 'border: 1px;',
                                             onKeyUp: function () {
                                                 OnUrlChange( this.getDialog() );
                                             },
                                             setup : function( type, element )
-											{
-												if ( type == IMAGE )
-												{
-													var url = element.getAttribute( '_fck_mw_filename' ) ||
+                                            {
+                                                    if ( type == IMAGE )
+                                                    {
+                                                            var url = element.getAttribute( '_fck_mw_filename' ) ||
                                                               element.getAttribute( '_cke_saved_src' ) ||
                                                               element.getAttribute( 'src' );
-													var field = this;
+                                                            var field = this;
 
-													this.getDialog().dontResetSize = true;
+                                                            this.getDialog().dontResetSize = true;
 
-													field.setValue( url );		// And call this.onChange()
-													// Manually set the initial value.(#4191)
-													field.setInitValue();
-												}
-											},
-											commit : function( type, element )
-											{
-												if ( type == IMAGE && ( this.getValue() || this.isChanged() ) )
-												{
+                                                            field.setValue( url );		// And call this.onChange()
+                                                            // Manually set the initial value.(#4191)
+                                                            field.setInitValue();
+                                                    }
+                                            },
+                                            commit : function( type, element )
+                                            {
+                                                    if ( type == IMAGE && ( this.getValue() || this.isChanged() ) )
+                                                    {
                                                     var doImageLink = createImageLink( this.getValue() );
                                                     if ( doImageLink > 0) {
                                                         element.setAttribute( '_cke_saved_src', decodeURI( this.getValue() ) );
@@ -240,17 +243,45 @@ CKEDITOR.dialog.add( 'MWImage', function( editor ) {
                                                     else {
                                                         element.setAttribute( 'href', decodeURI( this.getValue() ) );
                                                     }
-												}
-												else if ( type == CLEANUP )
-												{
-													element.setAttribute( 'src', '' );	// If removeAttribute doesn't work.
-													element.removeAttribute( 'src' );
-                                                    element.setAttribute('href', '');
-                                                    element.removeAttribute( 'href' );
-												}
-											},
-											validate : CKEDITOR.dialog.validate.notEmpty( editor.lang.image.urlMissing )
+                                                }
+                                                else if ( type == CLEANUP )
+                                                {
+                                                        element.setAttribute( 'src', '' );	// If removeAttribute doesn't work.
+                                                        element.removeAttribute( 'src' );
+                                                        element.setAttribute('href', '');
+                                                        element.removeAttribute( 'href' );
+                                                }
+                                            },
+                                            validate : CKEDITOR.dialog.validate.notEmpty( editor.lang.image.urlMissing )
                                         },
+                                        
+                                          ////////////////
+                                        {
+                                            id: 'imgLink',
+                                            type: 'text',
+                                            label: 'Target page or URL',
+                                            title: 'image link',
+                                            style: 'border: 1px;',
+                                            onKeyUp: function () {
+//                                                OnUrlChange( this.getDialog() );
+                                            },
+                                            setup : function( type, element )
+                                            {
+                                                if ( type == IMAGE )
+                                                {                                                                                                
+                                                    this.setValue(element.getAttribute('link'));		                                                  
+                                                }
+                                            },
+                                            commit : function( type, element )
+                                            {
+                                                if ( type == IMAGE && (this.getValue() || this.isChanged()))
+                                                {
+                                                    element.setAttribute('link', decodeURI(this.getValue()));                                                    
+                                                }                                            
+                                            }                                          
+                                        },
+
+                                        ////////////////
 
                                         {
                                             id: 'imgList',
@@ -342,7 +373,7 @@ CKEDITOR.dialog.add( 'MWImage', function( editor ) {
                                     {
                                         id: 'imgSpecialType',
                                         type: 'select',
-                                        label: editor.lang.mwplugin.imgType,
+                                        label: editor.lang.mwplugin.imgType,                                        
                                         items: [
                                             [ ' ' ],
                                             [ 'Thumbnail' ],
@@ -392,12 +423,12 @@ CKEDITOR.dialog.add( 'MWImage', function( editor ) {
                                     {
                                         id: 'imgAlign',
                                         type: 'select',
-                                        label: editor.lang.image.align,
+                                        label: editor.lang.common.align,                       
                                         items: [
                                             [ ' ' ],
-                                            [ editor.lang.image.alignRight, 'Right' ],
-                                            [ editor.lang.image.alignLeft , 'Left' ],
-                                            [ editor.lang.mwplugin.alignCenter, 'Center' ]
+                                            [ editor.lang.common.alignRight, 'Right' ],
+                                            [ editor.lang.common.alignLeft , 'Left' ],
+                                            [ editor.lang.common.alignCenter, 'Center' ]
                                         ],
                                         setup : function( type, element ) {
                                             var className = element.getAttribute( 'class') || '',
@@ -422,9 +453,9 @@ CKEDITOR.dialog.add( 'MWImage', function( editor ) {
                                                     }
                                                     else {
                                                         element.setAttribute('_fck_mw_location', 'none');
-                                                        element.removeClass('fck_mw_left');
+                                                        element.removeClass('fck_mw_right');
                                                         element.removeClass('fck_mw_center');
-                                                        element.addClass('fck_mw_right');
+                                                        element.addClass('fck_mw_left');
                                                     }
                                                 }
                                             }
@@ -433,8 +464,7 @@ CKEDITOR.dialog.add( 'MWImage', function( editor ) {
                                     {
                                         id: 'imgWidth',
                                         type: 'text',
-                                        label: editor.lang.image.width,
-                                        size: '4',
+                                        label: editor.lang.common.width,                                        
                                         setup : function( type, element ) {
                                             var imgStyle = element.getAttribute( 'style') || '',
                                                 match = /(?:^|\s)width\s*:\s*(\d+)/i.exec( imgStyle ),
@@ -476,8 +506,7 @@ CKEDITOR.dialog.add( 'MWImage', function( editor ) {
                                     {
                                         id: 'imgHeight',
                                         type: 'text',
-                                        label: editor.lang.image.height,
-                                        size: '4',
+                                        label: editor.lang.common.height,                                        
                                         setup : function( type, element ) {
                                             var imgStyle = element.getAttribute( 'style') || '',
                                                 match = /(?:^|\s)height\s*:\s*(\d+)/i.exec( imgStyle ),
@@ -517,12 +546,7 @@ CKEDITOR.dialog.add( 'MWImage', function( editor ) {
 											}
 										}
 
-                                    },
-                                    {
-                                        type: 'html',
-                                        width: '100%',
-                                        html: ''
-                                    }
+                                    }                                   
                                 ]
                         }
                     ]

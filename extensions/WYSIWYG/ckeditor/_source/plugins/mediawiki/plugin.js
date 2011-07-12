@@ -737,21 +737,6 @@ CKEDITOR.customprocessor.prototype =
 							if ( href == null ) {
 								href = htmlNode.getAttribute( 'href' ) || '';
 							}
-<<<<<<< .mine
-
-							//fix: Issue 14792 - Link with anchor is changed
-							//hrefType is a substring of href from the beginning until the colon. 
-							//it consists only of alphanumeric chars and optional url encoded chars in the middle.
-							var hrefTypeRegexp = /^(\w+(?:%\d{0,3})*\w*):/i;
-							var matches = href.match(hrefTypeRegexp);
-							if(hrefType == '' && matches) {
-								hrefType = matches[1]; 
-							}
-							
-//						  if ( hrefType == '' && href.indexOf(':') > -1) {
-//                            hrefType = href.substring(0, href.indexOf(':')).toLowerCase();
-//						  }
-=======
 							
 							//fix: Issue 14792 - Link with anchor is changed
 							//hrefType is a substring of href from the beginning until the colon. 
@@ -762,10 +747,7 @@ CKEDITOR.customprocessor.prototype =
 								hrefType = matches[1]; 
 							}
 							
-//						  if ( hrefType == '' && href.indexOf(':') > -1) {
-//                            hrefType = href.substring(0, href.indexOf(':')).toLowerCase();
-//						  }
->>>>>>> .r11163
+					  }
 
 							var isWikiUrl = true;
 

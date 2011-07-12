@@ -655,6 +655,7 @@ body .cke_dialog
 {
 	border: 1px solid #a0a0a0;
 	background-color: white;
+        width: 100%;
 }
 
 .cke_skin_kama .cke_dialog_ui_input_file
@@ -734,7 +735,7 @@ body .cke_dialog
 	border : 2px ridge black;
 	overflow : scroll;
 	height : 200px;
-	width : 300px;
+	width : 300px;     
 	padding : 2px;
 	background-color : white;
 }
