@@ -58,6 +58,11 @@
 				<exclude name="**/.svn, **/CVS" />
 			</fileset>
 		</copy>
+		<copy todir="bin/zip/extensions/EnhancedRetrieval/SOLR">
+			<fileset dir="../SOLR/">
+				<exclude name="**/.svn, **/CVS" />
+			</fileset>
+		</copy>
 		<copy todir="bin/zip/extensions/EnhancedRetrieval/">
 			<fileset dir="../">
 				<include name="COPYING" />
