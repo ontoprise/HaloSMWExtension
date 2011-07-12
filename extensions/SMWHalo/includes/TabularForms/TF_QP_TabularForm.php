@@ -1023,7 +1023,6 @@ class TFTabularFormRowData {
 		$collection->addAnnotations($this->annotations);
 		$this->annotations = $this->dataAPIAccess->getWritableAnnotations($collection);
 
-		file_put_contents('d://anns.rtf', print_r($this->annotations, true));
 		
 		//All values are read-only if article does not exist and add is not enabled
 		if((!($this->title instanceof Title && $this->title->exists()) && !$enableInstanceAdd)
