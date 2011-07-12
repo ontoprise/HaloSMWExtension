@@ -398,9 +398,9 @@ CKEDITOR.dialog.add( 'MWImage', function( editor ) {
                                         label: editor.lang.image.align,
                                         items: [
                                             [ ' ' ],
-                                            [ editor.lang.image.alignRight, 'Right' ],
-                                            [ editor.lang.image.alignLeft , 'Left' ],
-                                            [ editor.lang.mwplugin.alignCenter, 'Center' ]
+                                            [ editor.lang.common.alignRight, 'Right' ],
+                                            [ editor.lang.common.alignLeft , 'Left' ],
+                                            [ editor.lang.common.alignCenter, 'Center' ]
                                         ],
                                         setup : function( type, element ) {
                                             var className = element.getAttribute( 'class') || '',
