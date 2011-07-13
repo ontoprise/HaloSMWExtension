@@ -44,10 +44,11 @@ function smwhf_loadNavTree(){
 function smwhf_insertNavTree(param){
     if(param.status!=200){
         //Something went wrong with the ajax call
-        alert('NavTree insertion  failed. \n'
-            + 'param.status: ' + param.status + '\n'
-            + 'param.statusText: ' + param.statusText +'\n'
-            + 'param.responseText: ' + param.responseText);
+		// alert is realy annoying here
+//        alert('NavTree insertion  failed. \n'
+//            + 'param.status: ' + param.status + '\n'
+//            + 'param.statusText: ' + param.statusText +'\n'
+//            + 'param.responseText: ' + param.responseText);
     } else {
        //get return value
        var tree = param.responseText;
