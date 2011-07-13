@@ -884,7 +884,8 @@ class OB_StorageTS extends OB_Storage {
 	}
 
 	private function containsTitle($titleSet, $title) {
-		foreach($titleSet as $t) {
+        if (! is_object($title)) return false;
+        foreach($titleSet as $t) {
 			if ($title->equals($t)) return true;
 		}
 		return false;
