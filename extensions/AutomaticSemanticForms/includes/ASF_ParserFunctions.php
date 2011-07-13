@@ -170,25 +170,23 @@ class ASFParserFunctions {
 		}
 		
 		$result = "";
-		$result .= '<fieldset id="fieldset_'.$asfCollapsableFieldSetCounter.'">';
+		$result .= '<fieldset id="fieldset_'.$asfCollapsableFieldSetCounter.'_hidden" style="display: '.$collapsedDisplay.'">';
 		
-		$result .= '<legend class="asf_legend" onKeyDown="javascript:if (event.keyCode == 32){ '
-							." asf_hit_category_section('fieldset_$asfCollapsableFieldSetCounter');".'};">';
+		$result .= '<legend>';
 		$imgSRC = $wgScriptPath . '/extensions/AutomaticSemanticForms/skins/plus-act.gif';
-		$result .= '<span style="display: '.$collapsedDisplay.'" class="asf_collapsed_legend">';
 		$result .= "<img src=\"$imgSRC\" onclick=\"asf_show_category_section('fieldset_$asfCollapsableFieldSetCounter')\"></img>";
 		$result .= $legend;
-		$result .= '</img>';
-		$result .= "</span>";
+		$result .= '</legend>';
+		
+		$result .= '</fieldset>';
+		
+		$result .= '<fieldset id="fieldset_'.$asfCollapsableFieldSetCounter.'_visible" style="display: '.$unCollapsedDisplay.'">';
 		
 		$imgSRC = $wgScriptPath . '/extensions/AutomaticSemanticForms/skins/minus-act.gif';
-		$result .= '<span style="display: '.$unCollapsedDisplay.'" class="asf_visible_legend">';
+		$result .= '<legend>';
 		$result .= "<img src=\"$imgSRC\" onclick=\"asf_hide_category_section('fieldset_$asfCollapsableFieldSetCounter')\"></img>";
 		$result .= $legend;
-		$result .= '</img>';
-		$result .= "</span>";
 		$result .= '</legend>';
-		$result .= '<span class="asf_fieldset_content" style="display: '.$unCollapsedDisplay.'">';
 		
 		//Add javascript and css
 		global $smgJSLibs; 
@@ -202,7 +200,7 @@ class ASFParserFunctions {
 	 * Display end of collapsable fieldset
 	 */
 	static function renderCollapsableFieldSetEnd( &$parser) {
-		return $parser->insertStripItem( '</span></fieldset>', $parser->mStripState );
+		return $parser->insertStripItem( '</fieldset>', $parser->mStripState );
 	}
 	
 	/*
@@ -556,10 +554,13 @@ class ASFParserFunctions {
 					.'" class="wickEnabled" constraints="'.$cACConstraint.'"/>';
 			} else {
 				$str .= '<select size="1" name="categories" size="'.$categorySize.'">';
+				if(!defined('SMW_AC_MAX_RESULTS')){
+					define('SMW_AC_MAX_RESULTS', 500);
+				}
 				if(strlen($rootCategory) == 0){
-					$categories = ASFCategoryAC::getCategories('', 500);
+					$categories = ASFCategoryAC::getCategories('');
 				} else {
-					$categories = ASFCategoryAC::getCategories('', 500, $rootCategory);
+					$categories = ASFCategoryAC::getCategories('', $rootCategory);
 				}
 				foreach($categories as $category){
 					$str .= '<option>'.$category->getText().'</option>';
@@ -580,13 +581,24 @@ class ASFParserFunctions {
 			$queryString = str_replace( '&amp;', '%26', $queryString);
 			$queryComponents = explode( '&', $queryString);
 			foreach ( $queryComponents as $queryComponent ) {
-				$queryComponent = urldecode( $queryComponent );
+				$queryComponent = urldecode($queryComponent);
+				
 				if(strpos($queryComponent, 'Property[') === 0){
 					$queryComponent = 'CreateSilentAnnotations:[' . substr($queryComponent, strlen('Property['));
 				}
-				$varAndVal = explode( '=', $queryComponent );
+				
+				$varAndVal = explode( '=', $queryComponent, 2);
 				if ( count($varAndVal) == 2){
-					$str .= '<input type="hidden" name="' . $varAndVal[0] . '" value="' . $varAndVal[1] . '" /> ';
+					//$str .= '<input type="hidden" name="' . $varAndVal[0] . '" value="' . $varAndVal[1] . '" /> ';
+					
+					$str .= Xml::element( 'input',
+						array(
+							'type' => 'hidden',
+							'name' => $varAndVal[0],
+							'value' => $varAndVal[1],
+						)
+					) . "";
+			
 				}
 			}
 		}
