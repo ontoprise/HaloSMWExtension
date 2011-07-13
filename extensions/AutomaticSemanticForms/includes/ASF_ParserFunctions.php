@@ -170,23 +170,25 @@ class ASFParserFunctions {
 		}
 		
 		$result = "";
-		$result .= '<fieldset id="fieldset_'.$asfCollapsableFieldSetCounter.'_hidden" style="display: '.$collapsedDisplay.'">';
+		$result .= '<fieldset id="fieldset_'.$asfCollapsableFieldSetCounter.'">';
 		
-		$result .= '<legend>';
+		$result .= '<legend class="asf_legend" onKeyDown="javascript:if (event.keyCode == 32){ '
+							." asf_hit_category_section('fieldset_$asfCollapsableFieldSetCounter');".'};">';
 		$imgSRC = $wgScriptPath . '/extensions/AutomaticSemanticForms/skins/plus-act.gif';
+		$result .= '<span style="display: '.$collapsedDisplay.'" class="asf_collapsed_legend">';
 		$result .= "<img src=\"$imgSRC\" onclick=\"asf_show_category_section('fieldset_$asfCollapsableFieldSetCounter')\"></img>";
 		$result .= $legend;
-		$result .= '</legend>';
-		
-		$result .= '</fieldset>';
-		
-		$result .= '<fieldset id="fieldset_'.$asfCollapsableFieldSetCounter.'_visible" style="display: '.$unCollapsedDisplay.'">';
+		$result .= '</img>';
+		$result .= "</span>";
 		
 		$imgSRC = $wgScriptPath . '/extensions/AutomaticSemanticForms/skins/minus-act.gif';
-		$result .= '<legend>';
+		$result .= '<span style="display: '.$unCollapsedDisplay.'" class="asf_visible_legend">';
 		$result .= "<img src=\"$imgSRC\" onclick=\"asf_hide_category_section('fieldset_$asfCollapsableFieldSetCounter')\"></img>";
 		$result .= $legend;
+		$result .= '</img>';
+		$result .= "</span>";
 		$result .= '</legend>';
+		$result .= '<span class="asf_fieldset_content" style="display: '.$unCollapsedDisplay.'">';
 		
 		//Add javascript and css
 		global $smgJSLibs; 
@@ -200,7 +202,7 @@ class ASFParserFunctions {
 	 * Display end of collapsable fieldset
 	 */
 	static function renderCollapsableFieldSetEnd( &$parser) {
-		return $parser->insertStripItem( '</fieldset>', $parser->mStripState );
+		return $parser->insertStripItem( '</span></fieldset>', $parser->mStripState );
 	}
 	
 	/*
@@ -554,13 +556,10 @@ class ASFParserFunctions {
 					.'" class="wickEnabled" constraints="'.$cACConstraint.'"/>';
 			} else {
 				$str .= '<select size="1" name="categories" size="'.$categorySize.'">';
-				if(!defined('SMW_AC_MAX_RESULTS')){
-					define('SMW_AC_MAX_RESULTS', 500);
-				}
 				if(strlen($rootCategory) == 0){
-					$categories = ASFCategoryAC::getCategories('');
+					$categories = ASFCategoryAC::getCategories('', 500);
 				} else {
-					$categories = ASFCategoryAC::getCategories('', $rootCategory);
+					$categories = ASFCategoryAC::getCategories('', 500, $rootCategory);
 				}
 				foreach($categories as $category){
 					$str .= '<option>'.$category->getText().'</option>';

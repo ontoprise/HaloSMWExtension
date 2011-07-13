@@ -71,15 +71,19 @@ class ASFFormGeneratorUtils {
 		}
 		
 		foreach($directSuperCatgeories as $category => $dC){
-			if($asTree){
-				$superCategoryTitles[$categoryTitle->getText()] = 
-					self::getSuperCategories(Title::newFromText($category), $asTree, $superCategoryTitles[$categoryTitle->getText()]);
-			} else {
-				$superCategoryTitles[substr($category, strpos($category, ':') + 1)] =
-					Title::newFromText($category);
-				$superCategoryTitles = self::getSuperCategories(
-					Title::newFromText($category), $asTree, $superCategoryTitles);
-			}
+			
+			//if(!array_key_exists($categoryTitle->getText(), $superCategoryTitles)){
+			
+				if($asTree){
+					$superCategoryTitles[$categoryTitle->getText()] = 
+						self::getSuperCategories(Title::newFromText($category), $asTree, $superCategoryTitles[$categoryTitle->getText()]);
+				} else {
+					$superCategoryTitles[substr($category, strpos($category, ':') + 1)] =
+						Title::newFromText($category);
+					$superCategoryTitles = self::getSuperCategories(
+						Title::newFromText($category), $asTree, $superCategoryTitles);
+				}
+			//}
 		}
 		
 		return $superCategoryTitles;

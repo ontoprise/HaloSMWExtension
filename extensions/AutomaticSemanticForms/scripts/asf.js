@@ -241,7 +241,7 @@ function initializeNiceASFTooltips(){
  * hide a form section 
  */
 function asf_hide_category_section(id){
-	jQuery('#' + id + ' .asf_visible_legend').hide();
+	jQuery('#' + id + '  .asf_visible_legend').hide();
 	jQuery('#' + id + ' .asf_collapsed_legend').show();
 	jQuery('#' + id + ' .asf_fieldset_content').hide();
 	//jQuery('#' + id + '_hidden legend').focus();
@@ -264,7 +264,6 @@ function asf_hit_category_section(id){
 		asf_hide_category_section(id);
 	}
 }
-
 
 function asf_initializeCollapsableSectionsTabIndexes(){
 	jQuery(".asf_legend").each( function(){
