@@ -81,9 +81,9 @@ class TestQueryInterfaceInWysiwyg extends SeleniumTestCase_Base
         array_push($this->verificationErrors, $e->toString());
     }
     $this->selectWindow("null");
-    $this->click("//span[@class='cke_dialog_ui_button'][text()='OK']");
+    $this->click("//a[contains(@class, 'cke_dialog_ui_button_ok')]");
     try {
-        $this->assertTrue($this->isElementPresent("//img[@class='FCK__SMWquery'][@src='http://localhost/mediawiki/extensions/WYSIWYG/ckeditor/images/spacer.gif?t=AA4E4NT']"), "Element not present: //img[@class='FCK__SMWquery']");
+        $this->assertTrue($this->isElementPresent("//img[@class='FCK__SMWquery'][@data-cke-real-node-type='1'][@data-cke-real-element-type='span']"), "Element not present: //img[@class='FCK__SMWquery']");
     } catch (PHPUnit_Framework_AssertionFailedError $e) {
         array_push($this->verificationErrors, $e->toString());
     }

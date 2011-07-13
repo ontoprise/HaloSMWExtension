@@ -56,7 +56,7 @@ echo "\ndone!\n";
 
 echo "\nSetup log directory ...";
 if (!is_dir($testDir.'/'.$logDir)) {
-    runProcess('mkdir "'.$testDir.'/'.$logDir.'"');
+    echo runProcess('mkdir "'.$testDir.'/'.$logDir.'"');
     echo " created";
 }
 else echo " exists";
@@ -73,14 +73,14 @@ function tstInitializeDatabase() {
 	// Import empty
 	echo "\nImporting database...";
     echo "$mysqlExe -u $wgDBuser --password=$wgDBpassword --execute=\"DROP DATABASE IF EXISTS testdb; CREATE DATABASE testdb;\"";
-    runProcess("$mysqlExe -u $wgDBuser --password=$wgDBpassword --execute=\"DROP DATABASE IF EXISTS testdb; CREATE DATABASE testdb;\"");
+    echo runProcess("$mysqlExe -u $wgDBuser --password=$wgDBpassword --execute=\"DROP DATABASE IF EXISTS testdb; CREATE DATABASE testdb;\"");
 	echo "$mysqlExe -u $wgDBuser --password=$wgDBpassword testdb < \"$mw_dir"."tests/tests_halo/mw16_1_db.sql\"";
-	runProcess("$mysqlExe -u $wgDBuser --password=$wgDBpassword testdb < \"$mw_dir"."tests/tests_halo/mw16_1_db.sql\"");
+	echo runProcess("$mysqlExe -u $wgDBuser --password=$wgDBpassword testdb < \"$mw_dir"."tests/tests_halo/mw16_1_db.sql\"");
 	echo "\ndone.\n";
 
    	echo "\nRun mediawiki update...";
 	echo $phpExe.' "'.$mw_dir.'maintenance/update.php" --quick ';
-	runProcess($phpExe.' "'.$mw_dir.'maintenance/update.php" --quick ');
+	echo runProcess($phpExe.' "'.$mw_dir.'maintenance/update.php" --quick ');
 	echo "\ndone.\n";
 
 }
@@ -166,7 +166,7 @@ function tstImportWikiPages() {
 				if (strpos($entry, ".xml") !== false) {
 					echo "\nAdding: ".$entry;
 					echo "\n".$phpExe." \"".$mw_dir."maintenance/importDump.php\" < \"".$pagesDir."/".$entry."\"";
-					runProcess($phpExe." \"".$mw_dir."maintenance/importDump.php\" < \"".$pagesDir."/".$entry."\"");
+					echo runProcess($phpExe." \"".$mw_dir."maintenance/importDump.php\" < \"".$pagesDir."/".$entry."\"");
 				}
 			}
 		}
@@ -186,7 +186,7 @@ function tstImportWikiPages() {
 			$cmd = str_replace("\n", "", $cmd);
 			$cmd = str_replace("\r", "", $cmd);
 			echo "$cmd\n";
-			runProcess($cmd);
+			echo runProcess($cmd);
 
 		}
 		fclose($handle);
@@ -237,7 +237,7 @@ function tstRunSetupCfg($name) {
 			$cmd = str_replace("\n", "", $cmd);
 			$cmd = str_replace("\r", "", $cmd);
 			echo "$cmd\n";
-			runProcess($cmd);
+			echo runProcess($cmd);
 
 		}
 		fclose($handle);
