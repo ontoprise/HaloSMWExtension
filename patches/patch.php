@@ -124,13 +124,16 @@ foreach($patches as $p) {
 	//Note that if the array already contains some elements, exec() will append to the end of the array. 
 	//If you do not want the function to append elements, call unset() on the array before passing it to exec().
 	unset($out); 
-	if (!$onlypatch) echo "\nExecute patch:\n ".'patch -u -l -f -s '.$dryRun.' '.$reversePatch.' --no-backup-if-mismatch -i __patch__.txt -d "'.$absPath.$path.'"';
-	exec($patchTool.' -u -l -f -s '.$dryRun.' '.$reversePatch.' --no-backup-if-mismatch -i __patch__.txt -d "'.$absPath.$path.'"', $out, $ret);
+	$command = "patch -u -l -f -s ".$dryRun." ".$reversePatch." --no-backup-if-mismatch -i __patch__.txt -d \"".$absPath.$path."\"";
+	if (!$onlypatch) echo "\nExecute patch:\n " .$command;
+
+	echo exec($command, $out, $ret);
+	
 	
 	foreach($out as $line) print "\n".$line;
 	
 	// delete patch file
-	if (!$onlypatch) echo "\nDelete patch file:\n ".$absPath.$path.'/__patch__.txt';
+	if (!$onlypatch) echo "\nDelete patch file:\n \"".$absPath.$path. "/__patch__.txt\"";
 	unlink($absPath.$path.'/__patch__.txt');
 	
 	if (!$onlypatch) echo "\n------------\n";
