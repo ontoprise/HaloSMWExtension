@@ -29,6 +29,8 @@ class ASFPropertyFormData {
 	public $delimiter; 							//value of  'Delimiter' property
 	public $fieldSequenceNumber; 	//value of  'Field_sequence_number' property
 	public $defaultValue;					//use a default value
+	public $hideProperty;
+	
 	
 	
 	/*
@@ -76,6 +78,8 @@ class ASFPropertyFormData {
 			ASFFormGeneratorUtils::getPropertyValue($this->semanticData, ASF_PROP_FIELD_SEQUENCE_NUMBER);
 		$this->defaultValue = 
 			ASFFormGeneratorUtils::getPropertyValue($this->semanticData, ASF_PROP_DEFAULT_VALUE);
+		$this->hideProperty = 
+			ASFFormGeneratorUtils::getPropertyValue($this->semanticData, ASF_PROP_HIDE_PROP, false, false);
 			
 	}
 	
@@ -252,6 +256,10 @@ class ASFPropertyFormData {
 	 * form field definition and an outro
 	 */
 	public function getFormFieldRow(){
+		if(strtolower($this->hideProperty) == 'true'){
+			return '';
+		}
+		
 		$formFieldRow = $this->getFormFieldIntro();
 		$formFieldRow .= $this->getFormFieldSyntax();
 		$formFieldRow .= $this->getFormFieldOutro();
@@ -381,9 +389,8 @@ class ASFPropertyFormData {
 		return $result;
 	}
 	
-	
-	
-	
-	
-	
+	public function isHiddenProperty(){
+		return strtolower($this->hideProperty) == 'true' ? true : false;	
+	}
+
 }

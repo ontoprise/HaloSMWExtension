@@ -135,7 +135,7 @@ class ASFCategoryFormData {
 	public function getCategorySectionIntro(){
 		if(!is_null($this->categorySectionIntro)) return $this->categorySectionIntro;
 		
-		if(count($this->propertiesFormData) == 0){
+		if($this->isEmptyCategory()){
 			return '';
 		}
 		
@@ -182,7 +182,7 @@ class ASFCategoryFormData {
 	public function getCategorySectionOutro(){
 		if(!is_null($this->categorySectionOutro)) return $this->categorySectionOutro;
 		
-		if(count($this->propertiesFormData) == 0){
+		if($this->isEmptyCategory()){
 			return '';
 		}
 		
@@ -271,6 +271,17 @@ class ASFCategoryFormData {
 	
 	private function getCategoryTooltip(){
 		return wfMsg('asf_tt_intro', $this->titleObject->getFullText());
+	}
+	
+	public function isEmptyCategory(){
+		$isEmpty = true;
+		
+		foreach($this->propertiesFormData as $prop){
+			if(!$prop->isHiddenProperty()) $isEmpty = false;
+			break;
+		}
+		
+		return $isEmpty;
 	}
 	
 	

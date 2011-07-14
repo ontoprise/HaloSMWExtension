@@ -15,13 +15,14 @@ define('ASF_PROP_USE_CLASS', 'Use_class');
 define('ASF_PROP_DELIMITER', 'Delimiter');
 define('ASF_PROP_FIELD_SEQUENCE_NUMBER', 'Field_sequence_number');
 define('ASF_PROP_DEFAULT_VALUE', 'Default_value');
-define('ASF_PROP_PRELOAD', 'Use_preload_article');
+define('ASF_PROP_HIDE_PROP', 'Hide_property');
 
 //define form metadata properties for categories
 define('ASF_PROP_NO_AUTOMATIC_FORMEDIT', 'No_automatic_formedit');
 define('ASF_PROP_USE_DISPLAY_TEMPLATE', 'Use_display_template');
 //define('ASF_PROP_USE_CLASS', 'Use_class');
 define('ASF_PROP_NOT_DISJOINT_WITH', 'Not_disjoint_with');
+define('ASF_PROP_PRELOAD', 'Use_preload_article');
 
 //define dtata type form input type relations
 define('TEXTDATATYPES', '-page- ');
@@ -108,8 +109,6 @@ class ASFFormGenerator {
 			$asfPreloadingArticles = array_merge($asfPreloadingArticles, $c->getPreloadingArticles());
 		}
 
-		print_r($asfPreloadingArticles);
-
 		//echo('<pre>'.print_r($formDefinition, true).'</pre>');
 
 		return array($formDefinition, $categoriesWithNoFormEdit);
@@ -126,19 +125,23 @@ class ASFFormGenerator {
 		//let the category section structure processor compute which
 		//sections to create
 		list($categorySections, $categoriesWithNoProperties, $categoriesWithNoFormEdit) =
-		ASFCategorySectionStructureProcessor::getInstance()->getCategorySectionStructure($categories);
+			ASFCategorySectionStructureProcessor::getInstance()->getCategorySectionStructure($categories);
 
 		if(!$categorySections)
-		return array(array(), $categoriesWithNoProperties, $categoriesWithNoFormEdit);
+			return array(array(), $categoriesWithNoProperties, $categoriesWithNoFormEdit);
 
 		$categories = array();
 		foreach($categorySections as $categoryName => $categorySection){
 			$categoryTitle = Category::newFromName($categoryName)->getTitle();
 
 			$categoryFormDataObject =
-			new ASFCategoryFormData($categoryTitle, $categorySection);
+				new ASFCategoryFormData($categoryTitle, $categorySection);
 
 			$categories[] = $categoryFormDataObject;
+			
+			if($categoryFormDataObject->isEmptyCategory()){
+				$categoriesWithNoProperties[$categoryName] = false;
+			}
 		}
 			
 		//	} else {
