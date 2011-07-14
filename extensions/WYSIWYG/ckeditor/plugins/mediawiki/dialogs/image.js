@@ -1,6 +1,6 @@
-CKEDITOR.dialog.add( 'MWImage', function( editor ) {
+CKEDITOR.dialog.add( 'MWImage', function( editor ) {    
     {
-
+        
         // Load image preview.
         var IMAGE = 1,
         LINK = 2,
@@ -188,6 +188,7 @@ CKEDITOR.dialog.add( 'MWImage', function( editor ) {
 
         }
         return {
+            
             title : editor.lang.mwplugin.imgTitle,
             minWidth : 420,
             minHeight : 310,
@@ -257,7 +258,7 @@ CKEDITOR.dialog.add( 'MWImage', function( editor ) {
                             validate : CKEDITOR.dialog.validate.notEmpty( editor.lang.image.urlMissing )
                         },
                                         
-                        ////////////////
+                        ///////Image Link text input definition/////////
                         {
                             id: 'imgLink',
                             type: 'text',
@@ -265,16 +266,15 @@ CKEDITOR.dialog.add( 'MWImage', function( editor ) {
                             title: 'image link',
                             style: 'border: 1px;',
                                             
-                            onKeyUp: function () {
-                            //                                                OnUrlChange( this.getDialog() );
-                            },
+                          
                             setup : function( type, element )
                             {
                                 if ( type == IMAGE )
                                 {                                                                                                
                                     this.setValue(element.getAttribute('link'));	
                                     this.getInputElement().setAttribute('class', 'wickEnabled'); 
-                                    this.getInputElement().setAttribute('constraints', 'all');                                                     
+                                    this.getInputElement().setAttribute('constraints', 'all');   
+                                    this.getInputElement().setAttribute('pastens', 'true');                                  
                                 }
                             },
                             commit : function( type, element )
@@ -286,7 +286,7 @@ CKEDITOR.dialog.add( 'MWImage', function( editor ) {
                             }                                          
                         },
 
-                        ////////////////
+                        //////////////////////////////////////////////////
 
                         {
                             id: 'imgList',
