@@ -366,10 +366,10 @@ CKEDITOR.plugins.add( 'mediawiki',
 			{
 				var element = CKEDITOR.plugins.link.getSelectedLink( editor ) || evt.data.element;
 
-				if ( element.is( 'a' ) || ( element.is( 'img' ) && element.getAttribute( '_cke_real_element_type' ) == 'anchor' ) )
+				if ( element.is( 'a' ) || ( element.is( 'img' ) && element.getAttribute( 'data-cke-real-element-type' ) == 'anchor' ) )
 					evt.data.dialog = 'MWLink';
                 else if ( element.is( 'img' ) ) {
-                    if ( !element.getAttribute( '_cke_real_element_type' ) )
+                    if ( !element.getAttribute( 'data-cke-real-element-type' ) )
                         evt.data.dialog = 'MWImage';
                     else if ( element.getAttribute( 'class' ) &&
                         element.getAttribute( 'class' ).InArray( [
