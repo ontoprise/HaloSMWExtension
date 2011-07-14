@@ -121,7 +121,7 @@ class ASFFormPrinter extends SFFormPrinter {
 			//						.'value="'.implode(',',array_keys($asfAllDirectCategoryAnnotations)).'"'
 			//						.substr($form_text, $endPos + 1);
 			//				}
-		}
+			// 	}
 	}
 
 	//echo('<pre>'.print_r($form_text, true).'</pre>');
