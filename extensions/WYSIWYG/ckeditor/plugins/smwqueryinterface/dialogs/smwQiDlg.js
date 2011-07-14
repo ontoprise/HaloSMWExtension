@@ -109,8 +109,19 @@ CKEDITOR.dialog.add( 'SMWqi', function( editor ) {
             if ( editor.mode == 'wysiwyg') {
                 ask = ask.replace(/\r?\n/g, 'fckLR');
                 ask = '<span class="fck_smw_query">' + ask + '</span>';
+                
+                ////////hack for changing query object title in wysiwyg////////
+                var fakeSpanDescription = editor.lang.fakeobjects['span'];                
+                editor.lang.fakeobjects['span'] = 'Edit Query (with Query Interface)'; 
+                ///////////////////////////////////////////////////////////////
+                
                 var element = CKEDITOR.dom.element.createFromHtml(ask, editor.document),
-                    newFakeObj = editor.createFakeElement( element, 'FCK__SMWquery', 'span', false, 'Edit Query (with Query Interface)' );
+                    newFakeObj = editor.createFakeElement( element, 'FCK__SMWquery', 'span', false);
+                    
+                //////////////////////////////////////////////////////////////    
+                editor.lang.fakeobjects['span'] = fakeSpanDescription; 
+                ////////end of hack///////////////////////////////////////////
+                
                 if ( this.fakeObj ) {
                     newFakeObj.replace( this.fakeObj );
     				editor.getSelection().selectElement( newFakeObj );
