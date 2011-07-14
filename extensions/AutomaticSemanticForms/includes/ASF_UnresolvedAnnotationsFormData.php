@@ -125,4 +125,8 @@ class ASFUnresolvedAnnotationsFormData extends ASFCategoryFormData {
 		}
 	}
 	
+	public function getPreloadingArticles(){
+		return array();		
+	}
+	
 }

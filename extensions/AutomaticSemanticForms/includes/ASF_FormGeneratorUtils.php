@@ -32,6 +32,40 @@ class ASFFormGeneratorUtils {
 		return $result;
 	}
 	
+/*
+	 * Helper method for initializeFormCreationMetadata
+	 */
+	public static function getInheritedPropertyValue($semanticData, $propertyName, $getAll = false, $values = array()){
+		$properties = $semanticData->getProperties();
+		
+		if(array_key_exists($propertyName, $properties)){
+			$vals = $semanticData->getPropertyValues($properties[$propertyName]);
+			if(!$getAll){
+				$idx = array_keys($vals);
+				$idx = $idx[0];
+				$values[] = $vals[$idx]->getShortWikiText();
+			} else {
+				foreach($vals as $v){
+					$values[] = $v->getShortWikiText();
+				}
+			}
+		} else {
+			$title = $semanticData->getSubject()->getTitle();
+			$superCategories = $title->getParentCategories();
+			if(array_key_exists($title->getFullText(), $superCategories)){
+				unset($superCategories[$title->getFullText()]);
+			}
+			
+			$store = smwfNewBaseStore();
+			foreach($superCategories as $c => $dc){
+				$semanticData = $store->getSemanticData(Title::newFromText($c, NS_CATEGORY));
+				$values = self::getInheritedPropertyValue($semanticData, $propertyName, $getAll, $values);
+			}
+		}
+		
+		return $values;
+	}
+	
 	/*
 	 * Helper method for initializeFormCreationMetadata
 	 */

@@ -28,8 +28,9 @@ $asfUseSemanticFormsInputsFeatures = true;
  * to just display one category section for each category 
  * annotation of the instance
  */
-global $asfDoEnhancedCategorySectionProcessing;
-$asfDoEnhancedCategorySectionProcessing = true;
+// THIS OPTION IS DEPRECATED
+//global $asfDoEnhancedCategorySectionProcessing;
+//$asfDoEnhancedCategorySectionProcessing = true;
 
 
 /*

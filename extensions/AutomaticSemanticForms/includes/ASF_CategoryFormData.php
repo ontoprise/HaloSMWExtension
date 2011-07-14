@@ -15,23 +15,29 @@ class ASFCategoryFormData {
 	protected $categorySectionIntro;
 	protected $categorySectionOutro;
 	protected $categorySectionAppendix;
+	protected $preloadArticles;
 	
 	public $noAutomaticFormEdit; 	//value of 'no automatic formedit' property
 	public $useDisplayTemplate; 		//Value of 'use display template' property
 	public $useCSSClass; 					//value of 'use_class' property
 	public $notDisjointWith; 				//value of 'not_disjoint_with' property value
+	protected $usePreloadArticles;
+	
+	public $isLeafCategory; //is this one of the original instance annotations
 	
 	
 	
-	public function __construct($categoryTitleObject, $includedCategories = null){
+	public function __construct($categoryTitleObject, $categorySectionStructure){
 		$this->titleObject = $categoryTitleObject;
+		
+		$this->isLeafCategory = count($categorySectionStructure->children) == 0 ? true : false;
 
 		$store = smwfNewBaseStore();
 		$this->semanticData = $store->getSemanticData($this->titleObject);
 		
 		$this->initializeFormCreationMetadata();
 		
-		$this->initializePropertiesFormData($includedCategories);
+		$this->initializePropertiesFormData($categorySectionStructure->includesCategories);
 		
 		$this->sortProperties();
 	}
@@ -70,12 +76,20 @@ class ASFCategoryFormData {
 	private function initializeFormCreationMetadata(){
 		$this->noAutomaticFormEdit = 
 			ASFFormGeneratorUtils::getPropertyValue($this->semanticData, ASF_PROP_NO_AUTOMATIC_FORMEDIT);
-		$this->useDisplayTemplate = 
-			ASFFormGeneratorUtils::getPropertyValue($this->semanticData, ASF_PROP_USE_DISPLAY_TEMPLATE);
 		$this->useCSSClass = 
 			ASFFormGeneratorUtils::getPropertyValue($this->semanticData, ASF_PROP_USE_CLASS);
 		$this->notDisjointWith = 
 			ASFFormGeneratorUtils::getPropertyValue($this->semanticData, ASF_PROP_NOT_DISJOINT_WITH, true);
+			
+		if($this->isLeafCategory){
+			$this->useDisplayTemplate = 
+				ASFFormGeneratorUtils::getInheritedPropertyValue($this->semanticData, ASF_PROP_USE_DISPLAY_TEMPLATE);
+			$this->usePreloadArticles = 
+				ASFFormGeneratorUtils::getInheritedPropertyValue($this->semanticData, ASF_PROP_PRELOAD);
+		} else {
+			$this->useDisplayTemplate = array();
+			$this->usePreloadArticles = array();
+		}
 	}
 	
 	/*
@@ -223,23 +237,36 @@ class ASFCategoryFormData {
 	public function getCategorySectionAppendix(){
 		if(!is_null($this->categorySectionAppendix)) return $this->categorySectionAppendix;
 		
-		$appendix = "";
+		$this->categorySectionAppendix = array();
 		
-		if($this->useDisplayTemplate){
-			//todo: Use something better than a global variable here
-			global $asfAllDirectCategoryAnnotations;
-			if(array_key_exists($this->titleObject->getFullText(), $asfAllDirectCategoryAnnotations)){
-				$asfAllDirectCategoryAnnotations[$this->titleObject->getFullText()] = $this->useDisplayTemplate; 
-				$appendix .= "{{{for template| ".$this->useDisplayTemplate."}}} ";
-				$appendix .= '{{{field |categories|hidden}}}';
-				$appendix .= "{{{end template}}}";
-
+		if($this->isLeafCategory){
+			foreach($this->useDisplayTemplate as $displayTemplate){	
+				if(strtolower($displayTemplate) != 'false'){
+					$appendix = "{{{for template| ".$displayTemplate."}}} ";
+					$appendix .= '{{{field |categories|hidden}}}';
+					$appendix .= "{{{end template}}}";
+					
+					$this->categorySectionAppendix[$displayTemplate] 
+						= $appendix;
+				}
 			}
 		}
 
-		$this->categorySectionAppendix = $appendix;
+		return $this->categorySectionAppendix;		
+	}
+	
+	public function getPreloadingArticles(){
+		if(!is_null($this->preloadArticles)) return $this->preloadArticles;
 		
-		return $appendix;		
+		$this->preloadArticles = array();
+		
+		foreach($this->usePreloadArticles as $a){
+			if(strtolower($a) != 'false'){
+				$this->preloadArticles[$a] = true;
+			}
+		}
+		
+		return $this->preloadArticles;
 	}
 	
 	private function getCategoryTooltip(){

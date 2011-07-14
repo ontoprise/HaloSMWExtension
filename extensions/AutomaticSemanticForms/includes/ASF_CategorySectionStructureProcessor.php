@@ -61,9 +61,6 @@ class ASFCategorySectionStructureProcessor {
 	 * data about parents and children to each category section tree item
 	 */
 	private function initCategorySectionStructure($categories){
-		global $asfPreloadingArticles;
-		$asfPreloadingArticles = array();
-		
 		$this->categorySectionStructure = array();
 		
 		$store = smwfNewBaseStore();
@@ -89,19 +86,11 @@ class ASFCategorySectionStructureProcessor {
 				continue;
 			}
 			
-			//deal with preloading
-			$preloadArticle = ASFFormGeneratorUtils::getPropertyValue($semanticData, ASF_PROP_PRELOAD);
-			if(strlen($preloadArticle) > 0){
-				$asfPreloadingArticles[$preloadArticle] = true;
-			}
-			
 			$categoryTree = ASFFormGeneratorUtils::getSuperCategories($categoryTitle, true);
 			
 			if(array_key_exists(ucfirst($category), $categoryTree)){
 				$this->fillCategorySectionStructureWithItems($category, $categoryTree[ucfirst($category)]);
 			}
-			
-			//echo('<pre>'.print_r($tree, true).'</pre>');
 		}
 		
 		//add data about child categories to category section tree structure
@@ -173,7 +162,7 @@ class ASFCategorySectionStructureProcessor {
 			$properties = ASFFormGeneratorUtils::getPropertiesWithDomain(array($title));
 			
 			if(count($properties) == 0 && count($item->children) == 0 && count($item->parents) == 0){
-				unset($this->categorySectionStructure[$categoryName]);
+				//unset($this->categorySectionStructure[$categoryName]);
 				$this->categoriesWithNoProperties[$categoryName] = false;
 			}
 		}
