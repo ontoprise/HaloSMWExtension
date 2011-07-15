@@ -7,9 +7,10 @@ class TestTransformationOfSemanticData extends SeleniumTestCase_Base
 {
 
 	public function testMyTestCase()
-	{
+	{        
+            $this->login();
+            
 		$this->open("/mediawiki/index.php?title=Helium&action=edit&mode=wikitext");
-		$this->type("wpTextbox1", "Helium");
 		$this->type("wpTextbox1", "Helium is the chemical element with atomic number 2, which is represented by the symbol He.It is a  [[has color::none|colorless]], [[smells like::odorless]], tasteless, non-toxic, inert monatomic gas that heads the noble gas group in the periodic table.");
 		$this->click("wpSave");
 		$this->waitForPageToLoad("30000");
@@ -34,21 +35,24 @@ class TestTransformationOfSemanticData extends SeleniumTestCase_Base
 			array_push($this->verificationErrors, $e->toString());
 		}
 		$this->click("toggle_wpTextbox1");
+                $text = 'Helium is the chemical element with atomic number 2';
 		for ($second = 0; ; $second++) {
-			if ($second >= 60) $this->fail("Text not present: Helium is the chemical element with atomic number 2, which is represented by the symbol He.It is a [[has color::none|colorless]], [[smells like::odorless]], tasteless, non-toxic, inert monatomic gas that heads the noble gas group in the periodic table.");
+			if ($second >= 60) $this->fail("Text not present: " . $text);
 			try {
-				if ($this->isTextPresent("Helium is the chemical element with atomic number 2, which is represented by the symbol He.It is a [[has color::none|colorless]], [[smells like::odorless]], tasteless, non-toxic, inert monatomic gas that heads the noble gas group in the periodic table.
-            ")) break;
+				if ($this->isTextPresent($text)) 
+                                    break;
 			} catch (Exception $e) {}
 			sleep(1);
 		}
 
 		try {
-			$this->assertTrue($this->isTextPresent("Helium is the chemical element with atomic number 2, which is represented by the symbol He.It is a [[has color::none|colorless]], [[smells like::odorless]], tasteless, non-toxic, inert monatomic gas that heads the noble gas group in the periodic table."),
-			"Text not present: Helium is the chemical element with atomic number 2, which is represented by the symbol He.It is a [[has color::none|colorless]], [[smells like::odorless]], tasteless, non-toxic, inert monatomic gas that heads the noble gas group in the periodic table.");
-		} catch (PHPUnit_Framework_AssertionFailedError $e) {
-			array_push($this->verificationErrors, $e->toString());
-		}
-	}
+                    $expectedContent = "Helium is the chemical element with atomic number 2, which is represented by the symbol He.It is a [[has color::none|colorless]], [[smells like::odorless]], tasteless, non-toxic, inert monatomic gas that heads the noble gas group in the periodic table.";
+                    $actualContent = $this->getValue("wpTextbox1");
+                    $this->assertEquals($expectedContent, $actualContent, "wpTextbox1: actual textarea content:\n" . $expectedContent ."\ndoesn't match the expected content:\n" . $actualContent);
+                } catch (PHPUnit_Framework_AssertionFailedError $e) {
+                    array_push($this->verificationErrors, $e->toString());
+                }  
+           }
+        
 }
 ?>
