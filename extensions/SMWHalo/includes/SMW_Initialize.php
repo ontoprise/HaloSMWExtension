@@ -836,7 +836,7 @@ function smwfHaloFormInput($cur_value, $input_name, $is_mandatory, $is_disabled,
 	// call now the general function of SF that creates the <input> field
 	//	$html = SFFormInput::$method($cur_value, $input_name, $is_mandatory, $is_disabled, $other_args);
     // as of SF 2.1.2 the method name has changed from getHTML to getText
-    $sfMethodName = (function_exists('SFTextInput::getHTML')) ? 'getHTML' : 'getText';
+    $sfMethodName = (method_exists('SFTextInput', 'getHTML')) ? 'getHTML' : 'getText';
 	if($method == 'textEntryHTML') {
 		$html = SFTextInput::$sfMethodName($cur_value, $input_name, $is_mandatory, $is_disabled, $other_args);
 	} else {
