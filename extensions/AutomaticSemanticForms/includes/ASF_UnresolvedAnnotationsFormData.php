@@ -129,4 +129,12 @@ class ASFUnresolvedAnnotationsFormData extends ASFCategoryFormData {
 		return array();		
 	}
 	
+	public function getPageNameTemplate(){
+		return array(true, '');
+	}
+	
+	public function hideFreeText(){
+		return false;
+	}
+	
 }

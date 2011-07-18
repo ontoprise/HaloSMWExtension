@@ -274,10 +274,19 @@ function asf_initializeCollapsableSectionsTabIndexes(){
 	});
 }
 
+function asf_hideFreeText(){
+	if(jQuery('.asf-hide-freetext').get().length > 0){
+		wgHideSemanticToolbar = true;
+		jQuery('#free_text').css('display', 'none');
+	}
+}
+
 jQuery(document).ready( function($) {
 	initializeNiceASFTooltips();
+	asf_hideFreeText();	
 });
 
 window.onload = asf_initializeCollapsableSectionsTabIndexes;
+
 
 

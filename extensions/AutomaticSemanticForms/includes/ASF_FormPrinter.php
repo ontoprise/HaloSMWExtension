@@ -108,6 +108,11 @@ class ASFFormPrinter extends SFFormPrinter {
 				$endPos = strpos($form_text, '>', $startPos);
 				$form_text = substr($form_text, 0, $endPos).'style="width: 100%;"'.substr($form_text, $endPos);
 			}
+			
+			$form_text = str_replace(
+				'&lt;span class="asf-hide-freetext"/&gt;',
+				'<span class="asf-hide-freetext" style="display: none"></span>',
+				$form_text);
 				
 	}
 

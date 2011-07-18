@@ -23,6 +23,7 @@ class ASFCategoryFormData {
 	public $notDisjointWith; 				//value of 'not_disjoint_with' property value
 	protected $usePreloadArticles;
 	protected $usePageNameTemplate;
+	protected $hideFreeText;
 	
 	public $isLeafCategory; //is this one of the original instance annotations
 	
@@ -89,10 +90,13 @@ class ASFCategoryFormData {
 				ASFFormGeneratorUtils::getInheritedPropertyValue($this->semanticData, ASF_PROP_PRELOAD);
 			$this->usePageNameTemplate = 
 				ASFFormGeneratorUtils::getInheritedPropertyValue($this->semanticData, ASF_PROP_PAGE_NAME_TEMPLATE);
+			$this->hideFreeText = 
+				ASFFormGeneratorUtils::getInheritedPropertyValue($this->semanticData, ASF_PROP_HIDE_FREE_TEXT);
 		} else {
 			$this->useDisplayTemplate = array();
 			$this->usePreloadArticles = array();
 			$this->usePageNameTemplate = array();
+			$this->hideFreeText = array();
 		}
 	}
 	
@@ -311,6 +315,16 @@ class ASFCategoryFormData {
 			$pageNameTemplate );
 		
 		return array($isDefaultPageNameTemplate, trim($pageNameTemplate));
+	}
+	
+	
+	public function hideFreeText(){
+		foreach($this->hideFreeText as $hide){
+			if(strtolower($hide) == 'true'){
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	
