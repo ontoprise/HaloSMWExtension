@@ -63,15 +63,7 @@ function execute($query) {
 			return;
 		}
 		
-		//Automatically create a new target name if category names
-		//but no target name was passed
-		if(count($categoryNames) > 0 && !$targetName){
-			global $wgOut;
-			$wgOut->addHTML( '<p><b>Error:</b> No target article name was given for automatic form creation</p>');
-			return;
-		}
-		
-		if(count($categoryNames) > 0 && $targetName){
+		if(count($categoryNames) > 0){ 
 			//The given instance will be edited with forms for the given categories
 			
 			$targetTitle = Title::newFromText($targetName);
@@ -142,7 +134,7 @@ function execute($query) {
 	 */
 	private function getAdditionalCategoryAnnotations($categoryNames, $targetName){
 		$title = Title::newFromText($targetName);
-		if($title->exists()){
+		if(!is_null($title) &&$title->exists()){
 			$annotatedParentCategories = $title->getParentCategories();
 			if(count($annotatedParentCategories) > 0){
 				foreach($categoryNames as $key => $category){
