@@ -40,6 +40,10 @@ class ASFFormPrinter extends SFFormPrinter {
 		$postProcess = false;
 		if(isset($asfFormDefData) && array_key_exists('formdef', $asfFormDefData) && $asfFormDefData['formdef'] != false){
 			$form_def = $asfFormDefData['formdef'];
+
+			global $asfPageNameTemplate;
+			$page_name_formula = $asfPageNameTemplate;
+			
 			$postProcess = true;
 		}
 
@@ -70,7 +74,7 @@ class ASFFormPrinter extends SFFormPrinter {
 				//deal with preloading
 				global $asfPreloadingArticles;
 				$title = Title::newFromText($page_name);
-				if(is_array($asfPreloadingArticles) && !$title->exists()){
+				if(is_array($asfPreloadingArticles) && (is_null($title) || !$title->exists())){
 					foreach($asfPreloadingArticles as $articleName => $dC){
 						$asfPreloadingArticles[$articleName] = SFFormUtils::getPreloadedText($articleName);
 					}
@@ -105,23 +109,6 @@ class ASFFormPrinter extends SFFormPrinter {
 				$form_text = substr($form_text, 0, $endPos).'style="width: 100%;"'.substr($form_text, $endPos);
 			}
 				
-			// display templates do not need the category parameter anymore	
-			//			//Deal with display templates
-			//			//todo: Use something better than a global variable here
-			//			global $asfAllDirectCategoryAnnotations, $asfDisplayTemplates;
-			//			foreach($asfDisplayTemplates as $templateName => $dC){
-			//				if($templateName){
-			//					$startPos = strpos($form_text, 'name="'.$templateName.'[categories]"');
-			//					$startPos = strpos($form_text, 'value="', $startPos);
-			//					$endPos = strpos($form_text, '"', $startPos + strlen('value="'));
-			//
-			//					echo($templateName.'<pre>'.print_r($asfAllDirectCategoryAnnotations, true).'</pre>'.substr($form_text, $startPos, $startPos-$endPos));
-			//
-			//					$form_text = substr($form_text, 0, $startPos)
-			//						.'value="'.implode(',',array_keys($asfAllDirectCategoryAnnotations)).'"'
-			//						.substr($form_text, $endPos + 1);
-			//				}
-			// 	}
 	}
 
 	//echo('<pre>'.print_r($form_text, true).'</pre>');

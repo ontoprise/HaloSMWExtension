@@ -23,6 +23,7 @@ define('ASF_PROP_USE_DISPLAY_TEMPLATE', 'Use_display_template');
 //define('ASF_PROP_USE_CLASS', 'Use_class');
 define('ASF_PROP_NOT_DISJOINT_WITH', 'Not_disjoint_with');
 define('ASF_PROP_PRELOAD', 'Use_preload_article');
+define('ASF_PROP_PAGE_NAME_TEMPLATE', 'Use_page_name_template');
 
 //define dtata type form input type relations
 define('TEXTDATATYPES', '-page- ');
@@ -109,9 +110,56 @@ class ASFFormGenerator {
 			$asfPreloadingArticles = array_merge($asfPreloadingArticles, $c->getPreloadingArticles());
 		}
 
+		$this->computePageNameTemplate($categories);
+		
 		//echo('<pre>'.print_r($formDefinition, true).'</pre>');
 
 		return array($formDefinition, $categoriesWithNoFormEdit);
+	}
+	
+	
+	private function computePageNameTemplate($categories){
+		//todo: use s.th. better than a gloabal variable
+		global $asfPageNameTemplate;	
+		$asfPageNameTemplate = '';
+		$useDefaultTemplate = true;
+		foreach($categories as $c){
+			list($isDefault, $template) = $c->getPageNameTemplate();
+			if($isDefault){
+				if($useDefaultTemplate){
+					if(strlen($template) > 0){
+						$asfPageNameTemplate .= ' '.$template;
+					}			
+				}
+			} else {
+				if($useDefaultTemplate){
+					$asfPageNameTemplate = '';
+				}
+				if(strlen($template) > 0){
+					$asfPageNameTemplate .= ' '.$template;
+				}
+				$useDefaultTemplate = false;
+			}
+		}
+		
+		$asfPageNameTemplate = trim($asfPageNameTemplate);
+		if($useDefaultTemplate || strlen($asfPageNameTemplate) == 0){
+			$asfPageNameTemplate = trim($asfPageNameTemplate.'<unique number>');			
+		} else {
+			$addUniqueNumber = false;
+			if(strpos($asfPageNameTemplate, '<unique number>') !== false){
+				$addUniqueNumber = true;
+				$asfPageNameTemplate = str_replace(
+					'<unique number>', '', $asfPageNameTemplate);	
+			}
+			
+			$asfPageNameTemplate = str_replace(
+				array('<', '>'), array('<CreateSilentAnnotations:[', ']>'), $asfPageNameTemplate);
+
+			if($addUniqueNumber){
+				$asfPageNameTemplate = trim($asfPageNameTemplate).' <unique number>';
+			}
+		}
 	}
 
 

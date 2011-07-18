@@ -167,6 +167,7 @@ class ASFFormGeneratorUtils {
 		//Make sure that annotations in SF_NS_FORM are possible
 		$smwgNamespacesWithSemanticLinks[SF_NS_FORM] = true;
 		
+				
 		//create default form annotation text
 		$annotation = '[[';
 		$annotation .= $sfgContLang->m_SpecialProperties[SF_SP_PAGE_HAS_DEFAULT_FORM];
@@ -174,13 +175,14 @@ class ASFFormGeneratorUtils {
 		$annotation .= $asfDummyFormName;
 		$annotation .= '| ]]';
 		
+		$pageNameFormulaDummy = "{{{info| page name=Dummy <unique number>}}}";
+		
 		//check dummy title
 		$dummyTitle = Title::newFromText($asfDummyFormName, SF_NS_FORM);
 		if(!$dummyTitle->exists()){
 			//dummy article must be created
-			
 			$dummyContent = wfMsg('asf_dummy_article_content');
-			$dummyContent .= $annotation;
+			$dummyContent .= $annotation .= $pageNameFormulaDummy;
 			
 			$article = new Article($dummyTitle);
 			$article->doEdit($dummyContent, wfMsg('asf_dummy_article_edit_comment'));
@@ -188,12 +190,19 @@ class ASFFormGeneratorUtils {
 			//check if page has default form annotation is there
 			$rawText = Article::newFromID($dummyTitle->getArticleID())->getRawText();
 			
+			$doRefresh = false;
 			if(strpos($rawText, $annotation) === false){
-				//annotation must be added to dummy article
-				$rawText .= "\n\n".$annotation;
+				$doRefresh = true;
+			} else if (strpos($rawText, $pageNameFormulaDummy)=== false){
+				$doRefresh = true;
+			}
+			
+			if($doRefresh){
+				$dummyContent = wfMsg('asf_dummy_article_content');
+				$dummyContent .= $annotation .= $pageNameFormulaDummy;
 				
 				$article = new Article($dummyTitle);
-				$res = $article->doEdit($dummyContent, wfMsg('asf_dummy_article_edit_comment'));
+				$res = $article->doEdit($dummyContent, wfMsg('asf_dummy_article_edit_comment'));	
 			}
 		}
 	}

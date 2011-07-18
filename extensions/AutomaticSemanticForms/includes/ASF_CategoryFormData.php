@@ -22,6 +22,7 @@ class ASFCategoryFormData {
 	public $useCSSClass; 					//value of 'use_class' property
 	public $notDisjointWith; 				//value of 'not_disjoint_with' property value
 	protected $usePreloadArticles;
+	protected $usePageNameTemplate;
 	
 	public $isLeafCategory; //is this one of the original instance annotations
 	
@@ -86,9 +87,12 @@ class ASFCategoryFormData {
 				ASFFormGeneratorUtils::getInheritedPropertyValue($this->semanticData, ASF_PROP_USE_DISPLAY_TEMPLATE);
 			$this->usePreloadArticles = 
 				ASFFormGeneratorUtils::getInheritedPropertyValue($this->semanticData, ASF_PROP_PRELOAD);
+			$this->usePageNameTemplate = 
+				ASFFormGeneratorUtils::getInheritedPropertyValue($this->semanticData, ASF_PROP_PAGE_NAME_TEMPLATE);
 		} else {
 			$this->useDisplayTemplate = array();
 			$this->usePreloadArticles = array();
+			$this->usePageNameTemplate = array();
 		}
 	}
 	
@@ -282,6 +286,31 @@ class ASFCategoryFormData {
 		}
 		
 		return $isEmpty;
+	}
+	
+	public function getPageNameTemplate(){
+		$isDefaultPageNameTemplate = true;
+		$pageNameTemplate = '';
+		
+		if($this->isLeafCategory){
+			foreach($this->usePageNameTemplate as $template){
+				if(strtolower($template) != 'false'){
+					$isDefaultPageNameTemplate = false;
+					$pageNameTemplate .= ' '.$template;
+				}
+			}
+		
+			if($isDefaultPageNameTemplate){
+				$pageNameTemplate = $this->titleObject->getText();
+			}
+		}
+		
+		$pageNameTemplate = str_replace( 
+			array( '&lt;', '&gt;', '&#160;', '&#x003D;', '&#x0027;', '&#58;', "<br />" ),	
+			array( '<', '>', ' ', '=', "'", ':', "\n" ), 
+			$pageNameTemplate );
+		
+		return array($isDefaultPageNameTemplate, trim($pageNameTemplate));
 	}
 	
 	
