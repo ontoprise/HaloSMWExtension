@@ -29,7 +29,7 @@
  *
  *
  */
-define('DEPLOY_FRAMEWORK_VERSION', '1.5.6_0 [B${env.BUILD_NUMBER}]');
+define('DEPLOY_FRAMEWORK_VERSION', '{{$VERSION}} [B${env.BUILD_NUMBER}]');
 
 // termination constants
 define('DF_TERMINATION_WITH_FINALIZE', 0);

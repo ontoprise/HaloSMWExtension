@@ -46,7 +46,7 @@ if (!isset($_SESSION['angemeldet']) || !$_SESSION['angemeldet']) {
 }
 
 define("DF_WEBADMIN_TOOL", 1);
-define("DF_WEBADMIN_TOOL_VERSION", '1.5.6_0 [B${env.BUILD_NUMBER}]');
+define("DF_WEBADMIN_TOOL_VERSION", '{{$VERSION}} [B${env.BUILD_NUMBER}]');
 
 $rootDir = dirname(__FILE__);
 $rootDir = str_replace("\\", "/", $rootDir);
